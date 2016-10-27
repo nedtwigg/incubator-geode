@@ -47,10 +47,13 @@ import org.apache.geode.management.internal.web.util.UriUtils;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The ShellCommandsControllerJUnitTest class is a test suite of test cases testing the contract and functionality of the
- * ShellCommandsController class, and specifically ensuring that all GemFire Gfsh commands have a corresponding
- * Management REST API call and web service endpoint in the GemFire Management REST Interface.
- * <p/>
+ * The ShellCommandsControllerJUnitTest class is a test suite of test cases testing the contract and
+ * functionality of the ShellCommandsController class, and specifically ensuring that all GemFire
+ * Gfsh commands have a corresponding Management REST API call and web service endpoint in the
+ * GemFire Management REST Interface.
+ *
+ * <p>
+ *
  * @see org.junit.Test
  * @see org.apache.geode.management.internal.web.controllers.ShellCommandsController
  * @since GemFire 8.0
@@ -75,14 +78,17 @@ public class ShellCommandsControllerJUnitTest {
 
   private List<String> getCliCommands() {
     try {
-      Set<Class<?>> commandClasses = ClasspathScanLoadHelper.loadAndGet("org.apache.geode.management.internal.cli.commands", CommandMarker.class, true);
+      Set<Class<?>> commandClasses =
+          ClasspathScanLoadHelper.loadAndGet(
+              "org.apache.geode.management.internal.cli.commands", CommandMarker.class, true);
 
       List<String> commands = new ArrayList<>(commandClasses.size());
 
       for (Class<?> commandClass : commandClasses) {
         for (Method method : commandClass.getMethods()) {
           if (method.isAnnotationPresent(CliCommand.class)) {
-            if (!(method.isAnnotationPresent(CliMetaData.class) && method.getAnnotation(CliMetaData.class).shellOnly())) {
+            if (!(method.isAnnotationPresent(CliMetaData.class)
+                && method.getAnnotation(CliMetaData.class).shellOnly())) {
               CliCommand commandAnnotation = method.getAnnotation(CliCommand.class);
               commands.addAll(Arrays.asList(commandAnnotation.value()));
             }
@@ -102,7 +108,11 @@ public class ShellCommandsControllerJUnitTest {
     String scheme = servletRequest.getScheme();
 
     try {
-      Set<Class<?>> controllerClasses = ClasspathScanLoadHelper.loadAndGet("org.apache.geode.management.internal.web.controllers", AbstractCommandsController.class, true);
+      Set<Class<?>> controllerClasses =
+          ClasspathScanLoadHelper.loadAndGet(
+              "org.apache.geode.management.internal.web.controllers",
+              AbstractCommandsController.class,
+              true);
 
       List<String> controllerWebServiceEndpoints = new ArrayList<>(controllerClasses.size());
 
@@ -112,12 +122,23 @@ public class ShellCommandsControllerJUnitTest {
             if (method.isAnnotationPresent(RequestMapping.class)) {
               RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
 
-              String webServiceEndpoint = String.format("%1$s %2$s", requestMappingAnnotation.method()[0], UriUtils.decode(controller.toUri(requestMappingAnnotation.value()[0], scheme).toString()));
+              String webServiceEndpoint =
+                  String.format(
+                      "%1$s %2$s",
+                      requestMappingAnnotation.method()[0],
+                      UriUtils.decode(
+                          controller
+                              .toUri(requestMappingAnnotation.value()[0], scheme)
+                              .toString()));
 
               String[] requestParameters = requestMappingAnnotation.params();
 
               if (requestParameters.length > 0) {
-                webServiceEndpoint += "?".concat(org.apache.geode.internal.lang.StringUtils.concat(requestParameters, "&amp;"));
+                webServiceEndpoint +=
+                    "?"
+                        .concat(
+                            org.apache.geode.internal.lang.StringUtils.concat(
+                                requestParameters, "&amp;"));
               }
 
               controllerWebServiceEndpoints.add(webServiceEndpoint);
@@ -141,7 +162,12 @@ public class ShellCommandsControllerJUnitTest {
 
     for (Link link : linkIndex) {
       if (uriRelationMapping.containsKey(link.toHttpRequestLine())) {
-        conflicts.add(String.format("REST API endpoint (%1$s) for (%2$s) conflicts with the REST API endpoint for (%3$s)", link.toHttpRequestLine(), link.getRelation(), uriRelationMapping.get(link.toHttpRequestLine())));
+        conflicts.add(
+            String.format(
+                "REST API endpoint (%1$s) for (%2$s) conflicts with the REST API endpoint for (%3$s)",
+                link.toHttpRequestLine(),
+                link.getRelation(),
+                uriRelationMapping.get(link.toHttpRequestLine())));
       } else {
         uriRelationMapping.put(link.toHttpRequestLine(), link.getRelation());
       }
@@ -174,7 +200,11 @@ public class ShellCommandsControllerJUnitTest {
 
     missingLinkCommands.removeAll(linkCommands);
 
-    assertTrue(String.format("The GemFire Management REST API Link Index is missing Link(s) for the following command(s): %1$s", missingLinkCommands), missingLinkCommands.isEmpty());
+    assertTrue(
+        String.format(
+            "The GemFire Management REST API Link Index is missing Link(s) for the following command(s): %1$s",
+            missingLinkCommands),
+        missingLinkCommands.isEmpty());
   }
 
   @Test
@@ -201,7 +231,11 @@ public class ShellCommandsControllerJUnitTest {
 
     missingControllerWebServiceEndpoints.removeAll(controllerWebServiceEndpoints);
 
-    assertTrue(String.format("The Management REST API Web Service Controllers in (%1$s) are missing the following REST API Web Service Endpoint(s): %2$s!", getClass().getPackage().getName(), missingControllerWebServiceEndpoints), missingControllerWebServiceEndpoints.isEmpty());
+    assertTrue(
+        String.format(
+            "The Management REST API Web Service Controllers in (%1$s) are missing the following REST API Web Service Endpoint(s): %2$s!",
+            getClass().getPackage().getName(), missingControllerWebServiceEndpoints),
+        missingControllerWebServiceEndpoints.isEmpty());
   }
 
   @Test
@@ -218,6 +252,8 @@ public class ShellCommandsControllerJUnitTest {
     assertNotNull(linkIndex);
     assertFalse(linkIndex.isEmpty());
 
-    assertTrue(String.format("Link does not have correct scheme %1$s", linkIndex.find(versionCmd)), testScheme.equals(linkIndex.find(versionCmd).getHref().getScheme()));
+    assertTrue(
+        String.format("Link does not have correct scheme %1$s", linkIndex.find(versionCmd)),
+        testScheme.equals(linkIndex.find(versionCmd).getHref().getScheme()));
   }
 }

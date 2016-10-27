@@ -38,10 +38,8 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VMStatsDiskRegionEntryHeapLongKey extends VMStatsDiskRegionEntryHeap {
   public VMStatsDiskRegionEntryHeapLongKey(RegionEntryContext context, long key, Object value) {
@@ -55,9 +53,14 @@ public class VMStatsDiskRegionEntryHeapLongKey extends VMStatsDiskRegionEntryHea
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VMStatsDiskRegionEntryHeapLongKey> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VMStatsDiskRegionEntryHeapLongKey.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VMStatsDiskRegionEntryHeapLongKey>
+      lastModifiedUpdater =
+          AtomicLongFieldUpdater.newUpdater(
+              VMStatsDiskRegionEntryHeapLongKey.class, "lastModified");
   private volatile Object value;
 
   @Override
@@ -78,9 +81,7 @@ public class VMStatsDiskRegionEntryHeapLongKey extends VMStatsDiskRegionEntryHea
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -89,16 +90,12 @@ public class VMStatsDiskRegionEntryHeapLongKey extends VMStatsDiskRegionEntryHea
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -120,16 +117,16 @@ public class VMStatsDiskRegionEntryHeapLongKey extends VMStatsDiskRegionEntryHea
     DiskStoreImpl ds = drs.getDiskStore();
     long maxOplogSize = ds.getMaxOplogSize();
     //get appropriate instance of DiskId implementation based on maxOplogSize
-    this.id = DiskId.createDiskId(maxOplogSize, true/* is persistence */, ds.needsLinkedList());
+    this.id = DiskId.createDiskId(maxOplogSize, true /* is persistence */, ds.needsLinkedList());
     Helper.initialize(this, drs, value);
   }
 
   /**
    * DiskId
-   * 
+   *
    * @since GemFire 5.1
    */
-  protected DiskId id;//= new DiskId();
+  protected DiskId id; //= new DiskId();
 
   public DiskId getDiskId() {
     return this.id;
@@ -148,7 +145,7 @@ public class VMStatsDiskRegionEntryHeapLongKey extends VMStatsDiskRegionEntryHea
   //   * 1 byte = users bits
   //   * 2-8 bytes = oplog id
   //   * least significant.
-  //   * 
+  //   *
   //   * The highest bit in the oplog id part is set to 1 if the oplog id
   //   * is negative.
   //   * @todo this field could be an int for an overflow only region
@@ -202,8 +199,13 @@ public class VMStatsDiskRegionEntryHeapLongKey extends VMStatsDiskRegionEntryHea
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VMStatsDiskRegionEntryHeapLongKey> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsDiskRegionEntryHeapLongKey.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VMStatsDiskRegionEntryHeapLongKey> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsDiskRegionEntryHeapLongKey.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsDiskRegionEntryHeapLongKey>
+      hitCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(VMStatsDiskRegionEntryHeapLongKey.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsDiskRegionEntryHeapLongKey>
+      missCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VMStatsDiskRegionEntryHeapLongKey.class, "missCount");
 
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {

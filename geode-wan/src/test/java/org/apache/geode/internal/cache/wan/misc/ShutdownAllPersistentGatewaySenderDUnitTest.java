@@ -71,8 +71,14 @@ public class ShutdownAllPersistentGatewaySenderDUnitTest extends WANTestBase {
     vm3.invoke(() -> WANTestBase.createCache(nyPort));
     vm2.invoke(() -> WANTestBase.createReceiver());
 
-    vm2.invoke(() -> WANTestBase.createPersistentPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPersistentPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPersistentPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPersistentPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.createCache(lnPort));
 
@@ -80,36 +86,46 @@ public class ShutdownAllPersistentGatewaySenderDUnitTest extends WANTestBase {
 
     vm4.invoke(() -> WANTestBase.startSender("ln"));
 
-    vm4.invoke(() -> WANTestBase.createPersistentPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPersistentPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
 
     // set the CacheObserver to block the ShutdownAll
-    SerializableRunnable waitAtShutdownAll = new SerializableRunnable() {
-      @Override
-      public void run() {
-        LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-        CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    SerializableRunnable waitAtShutdownAll =
+        new SerializableRunnable() {
           @Override
-          public void beforeShutdownAll() {
-            final Region region = cache.getRegion(getTestMethodName() + "_PR");
-            Wait.waitForCriterion(new WaitCriterion() {
-              @Override
-              public boolean done() {
-                return region.size() >= 2;
-              }
+          public void run() {
+            LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
+            CacheObserverHolder.setInstance(
+                new CacheObserverAdapter() {
+                  @Override
+                  public void beforeShutdownAll() {
+                    final Region region = cache.getRegion(getTestMethodName() + "_PR");
+                    Wait.waitForCriterion(
+                        new WaitCriterion() {
+                          @Override
+                          public boolean done() {
+                            return region.size() >= 2;
+                          }
 
-              @Override
-              public String description() {
-                return "Wait for wan to have processed several events";
-              }
-            }, 30000, 100, true);
+                          @Override
+                          public String description() {
+                            return "Wait for wan to have processed several events";
+                          }
+                        },
+                        30000,
+                        100,
+                        true);
+                  }
+                });
           }
-        });
-      }
-    };
+        };
     vm2.invoke(waitAtShutdownAll);
     vm3.invoke(waitAtShutdownAll);
 
-    AsyncInvocation vm4_future = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", NUM_KEYS));
+    AsyncInvocation vm4_future =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", NUM_KEYS));
 
     // ShutdownAll will be suspended at observer, so puts will continue
     AsyncInvocation future = shutDownAllMembers(vm2, 2, MAX_WAIT);
@@ -119,76 +135,104 @@ public class ShutdownAllPersistentGatewaySenderDUnitTest extends WANTestBase {
     LogWriterUtils.getLogWriter().info("restart in VM2");
     vm2.invoke(() -> WANTestBase.createCache(nyPort));
     vm3.invoke(() -> WANTestBase.createCache(nyPort));
-    AsyncInvocation vm3_future = vm3.invokeAsync(() -> WANTestBase.createPersistentPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm2.invoke(() -> WANTestBase.createPersistentPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    AsyncInvocation vm3_future =
+        vm3.invokeAsync(
+            () ->
+                WANTestBase.createPersistentPartitionedRegion(
+                    getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPersistentPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
     vm3_future.join(MAX_WAIT);
 
-    vm3.invoke(new SerializableRunnable() {
-      public void run() {
-        final Region region = cache.getRegion(getTestMethodName() + "_PR");
-        cache.getLogger().info("vm1's region size before restart gatewayHub is " + region.size());
-      }
-    });
+    vm3.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            final Region region = cache.getRegion(getTestMethodName() + "_PR");
+            cache
+                .getLogger()
+                .info("vm1's region size before restart gatewayHub is " + region.size());
+          }
+        });
     vm2.invoke(() -> WANTestBase.createReceiver());
 
     // wait for vm0 to finish its work
     vm4_future.join(MAX_WAIT);
-    vm4.invoke(new SerializableRunnable() {
-      public void run() {
-        Region region = cache.getRegion(getTestMethodName() + "_PR");
-        assertEquals(NUM_KEYS, region.size());
-      }
-    });
+    vm4.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Region region = cache.getRegion(getTestMethodName() + "_PR");
+            assertEquals(NUM_KEYS, region.size());
+          }
+        });
 
     // verify the other side (vm1)'s entries received from gateway
-    vm2.invoke(new SerializableRunnable() {
-      public void run() {
-        final Region region = cache.getRegion(getTestMethodName() + "_PR");
+    vm2.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            final Region region = cache.getRegion(getTestMethodName() + "_PR");
 
-        cache.getLogger().info("vm1's region size after restart gatewayHub is " + region.size());
-        Wait.waitForCriterion(new WaitCriterion() {
-          public boolean done() {
-            Object lastValue = region.get(NUM_KEYS - 1);
-            if (lastValue != null && lastValue.equals(NUM_KEYS - 1)) {
-              region.getCache().getLogger().info("Last key has arrived, its value is " + lastValue + ", end of wait.");
-              return true;
-            } else
-              return (region.size() == NUM_KEYS);
+            cache
+                .getLogger()
+                .info("vm1's region size after restart gatewayHub is " + region.size());
+            Wait.waitForCriterion(
+                new WaitCriterion() {
+                  public boolean done() {
+                    Object lastValue = region.get(NUM_KEYS - 1);
+                    if (lastValue != null && lastValue.equals(NUM_KEYS - 1)) {
+                      region
+                          .getCache()
+                          .getLogger()
+                          .info(
+                              "Last key has arrived, its value is " + lastValue + ", end of wait.");
+                      return true;
+                    } else return (region.size() == NUM_KEYS);
+                  }
+
+                  public String description() {
+                    return "Waiting for destination region to reach size: "
+                        + NUM_KEYS
+                        + ", current is "
+                        + region.size();
+                  }
+                },
+                MAX_WAIT,
+                100,
+                true);
+            assertEquals(NUM_KEYS, region.size());
           }
-
-          public String description() {
-            return "Waiting for destination region to reach size: " + NUM_KEYS + ", current is " + region.size();
-          }
-        }, MAX_WAIT, 100, true);
-        assertEquals(NUM_KEYS, region.size());
-      }
-    });
-
+        });
   }
 
   private AsyncInvocation shutDownAllMembers(VM vm, final int expectedNumber, final long timeout) {
-    AsyncInvocation future = vm.invokeAsync(new SerializableRunnable("Shutdown all the members") {
+    AsyncInvocation future =
+        vm.invokeAsync(
+            new SerializableRunnable("Shutdown all the members") {
 
-      public void run() {
-        DistributedSystemConfig config;
-        AdminDistributedSystemImpl adminDS = null;
-        try {
-          config = AdminDistributedSystemFactory.defineDistributedSystem(cache.getDistributedSystem(), "");
-          adminDS = (AdminDistributedSystemImpl) AdminDistributedSystemFactory.getDistributedSystem(config);
-          adminDS.connect();
-          Set members = adminDS.shutDownAllMembers(timeout);
-          int num = members == null ? 0 : members.size();
-          assertEquals(expectedNumber, num);
-        } catch (AdminException e) {
-          throw new RuntimeException(e);
-        } finally {
-          if (adminDS != null) {
-            adminDS.disconnect();
-          }
-        }
-      }
-    });
+              public void run() {
+                DistributedSystemConfig config;
+                AdminDistributedSystemImpl adminDS = null;
+                try {
+                  config =
+                      AdminDistributedSystemFactory.defineDistributedSystem(
+                          cache.getDistributedSystem(), "");
+                  adminDS =
+                      (AdminDistributedSystemImpl)
+                          AdminDistributedSystemFactory.getDistributedSystem(config);
+                  adminDS.connect();
+                  Set members = adminDS.shutDownAllMembers(timeout);
+                  int num = members == null ? 0 : members.size();
+                  assertEquals(expectedNumber, num);
+                } catch (AdminException e) {
+                  throw new RuntimeException(e);
+                } finally {
+                  if (adminDS != null) {
+                    adminDS.disconnect();
+                  }
+                }
+              }
+            });
     return future;
   }
-
 }

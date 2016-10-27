@@ -27,9 +27,9 @@ import org.apache.geode.internal.process.signal.SignalEvent;
 import sun.misc.SignalHandler;
 
 /**
- * This class externalizes signal handling in order to make the GemFire build process a bit cleaner - for example
- * we have to have exceptions for sun.misc classes when building javadocs.
- * </p>
+ * This class externalizes signal handling in order to make the GemFire build process a bit cleaner
+ * - for example we have to have exceptions for sun.misc classes when building javadocs.
+ *
  * @see org.apache.geode.internal.process.signal.AbstractSignalNotificationHandler
  * @see org.apache.geode.internal.process.signal.Signal
  * @see sun.misc.Signal
@@ -38,7 +38,8 @@ import sun.misc.SignalHandler;
 @SuppressWarnings("unused")
 public class GfshSignalHandler extends AbstractSignalNotificationHandler implements SignalHandler {
 
-  private final Map<Signal, SignalHandler> originalSignalHandlers = Collections.synchronizedMap(new Hashtable<Signal, SignalHandler>(Signal.values().length));
+  private final Map<Signal, SignalHandler> originalSignalHandlers =
+      Collections.synchronizedMap(new Hashtable<Signal, SignalHandler>(Signal.values().length));
 
   public GfshSignalHandler() {
     for (final Signal signal : Signal.values()) {
@@ -48,7 +49,8 @@ public class GfshSignalHandler extends AbstractSignalNotificationHandler impleme
       //if (!Signal.SIGQUIT.equals(signal)) {
       // TODO uncomment above if statement if all Signals need to be handled by this SignalHandler
       if (Signal.SIGINT.equals(signal)) {
-        originalSignalHandlers.put(signal, sun.misc.Signal.handle(new sun.misc.Signal(signal.getName()), this));
+        originalSignalHandlers.put(
+            signal, sun.misc.Signal.handle(new sun.misc.Signal(signal.getName()), this));
       }
     }
   }
@@ -64,13 +66,13 @@ public class GfshSignalHandler extends AbstractSignalNotificationHandler impleme
   protected void handleDefault(final sun.misc.Signal sig) {
     final Signal signal = Signal.valueOfName(sig.getName());
     switch (signal) {
-    case SIGINT:
-      break; // ignore the interrupt signal
-    default:
-      final SignalHandler handler = getOriginalSignalHandler(signal);
-      if (handler != null) {
-        handler.handle(sig);
-      }
+      case SIGINT:
+        break; // ignore the interrupt signal
+      default:
+        final SignalHandler handler = getOriginalSignalHandler(signal);
+        if (handler != null) {
+          handler.handle(sig);
+        }
     }
   }
 
@@ -78,5 +80,4 @@ public class GfshSignalHandler extends AbstractSignalNotificationHandler impleme
     final SignalHandler handler = originalSignalHandlers.get(signal);
     return (handler == SignalHandler.SIG_DFL || handler == SignalHandler.SIG_IGN ? null : handler);
   }
-
 }

@@ -24,10 +24,7 @@ import org.springframework.shell.core.MethodTarget;
 
 import org.apache.geode.management.cli.ConverterHint;
 
-/***
- * Added converter to enable auto-completion for index-type
- *
- */
+/** * Added converter to enable auto-completion for index-type */
 public class IndexTypeConverter implements Converter<String> {
 
   @Override
@@ -41,7 +38,12 @@ public class IndexTypeConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
 
     if (String.class.equals(targetType) && ConverterHint.INDEX_TYPE.equals(optionContext)) {
       completions.add(new Completion("range"));

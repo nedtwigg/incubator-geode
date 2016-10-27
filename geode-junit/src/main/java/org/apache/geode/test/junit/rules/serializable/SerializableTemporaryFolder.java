@@ -27,8 +27,8 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
- * Serializable subclass of {@link org.junit.rules.TemporaryFolder TemporaryFolder}.
- * Instance variables of TemporaryFolder are serialized by reflection.
+ * Serializable subclass of {@link org.junit.rules.TemporaryFolder TemporaryFolder}. Instance
+ * variables of TemporaryFolder are serialized by reflection.
  */
 public class SerializableTemporaryFolder extends TemporaryFolder implements SerializableTestRule {
 
@@ -48,9 +48,7 @@ public class SerializableTemporaryFolder extends TemporaryFolder implements Seri
     return new SerializationProxy(this);
   }
 
-  /**
-   * Serialization proxy for {@code SerializableTemporaryFolder}.
-   */
+  /** Serialization proxy for {@code SerializableTemporaryFolder}. */
   private static class SerializationProxy implements Serializable {
 
     private final File parentFolder;

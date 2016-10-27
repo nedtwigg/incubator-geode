@@ -20,14 +20,9 @@ import java.io.File;
 import org.apache.geode.internal.cache.DiskStoreImpl;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
-/**
- * @since GemFire 7.0
- */
-
+/** @since GemFire 7.0 */
 public class DiskStoreValidater {
-  /**
-   * @param args
-   */
+  /** @param args */
   public static void main(String[] args) {
     if (args.length < 2 || args.length > 2) {
       throw new IllegalArgumentException("Requires only 2  arguments : <DiskStore> <Dirs>");
@@ -50,7 +45,9 @@ public class DiskStoreValidater {
       }
       DiskStoreImpl.validate(diskStoreName, dirs);
     } catch (Exception e) {
-      System.out.println(CliStrings.format(CliStrings.VALIDATE_DISK_STORE__MSG__ERROR, diskStoreName, e.getMessage()));
+      System.out.println(
+          CliStrings.format(
+              CliStrings.VALIDATE_DISK_STORE__MSG__ERROR, diskStoreName, e.getMessage()));
     }
   }
 }

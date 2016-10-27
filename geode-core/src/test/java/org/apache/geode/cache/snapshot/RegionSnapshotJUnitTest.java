@@ -84,24 +84,33 @@ public class RegionSnapshotJUnitTest extends SnapshotTestCase {
         region.destroyRegion();
         region = rgen.createRegion(cache, ds.getName(), rt, name);
 
-        region.getAttributesMutator().setCacheWriter(new CacheWriterAdapter<Integer, MyObject>() {
-          @Override
-          public void beforeCreate(EntryEvent<Integer, MyObject> event) {
-            fail("CacheWriter invoked during import");
-          }
-        });
+        region
+            .getAttributesMutator()
+            .setCacheWriter(
+                new CacheWriterAdapter<Integer, MyObject>() {
+                  @Override
+                  public void beforeCreate(EntryEvent<Integer, MyObject> event) {
+                    fail("CacheWriter invoked during import");
+                  }
+                });
 
         final AtomicBoolean cltest = new AtomicBoolean(false);
-        region.getAttributesMutator().addCacheListener(new CacheListenerAdapter<Integer, MyObject>() {
-          @Override
-          public void afterCreate(EntryEvent<Integer, MyObject> event) {
-            cltest.set(true);
-          }
-        });
+        region
+            .getAttributesMutator()
+            .addCacheListener(
+                new CacheListenerAdapter<Integer, MyObject>() {
+                  @Override
+                  public void afterCreate(EntryEvent<Integer, MyObject> event) {
+                    cltest.set(true);
+                  }
+                });
 
         region.getSnapshotService().load(f, SnapshotFormat.GEMFIRE);
 
-        assertEquals("Comparison failure for " + rt.name() + "/" + st.name(), expected.entrySet(), region.entrySet());
+        assertEquals(
+            "Comparison failure for " + rt.name() + "/" + st.name(),
+            expected.entrySet(),
+            region.entrySet());
         assertEquals("CacheListener invoked during import", false, cltest.get());
       }
     }
@@ -109,19 +118,21 @@ public class RegionSnapshotJUnitTest extends SnapshotTestCase {
 
   @Test
   public void testFilter() throws Exception {
-    SnapshotFilter<Integer, MyObject> even = new SnapshotFilter<Integer, MyObject>() {
-      @Override
-      public boolean accept(Entry<Integer, MyObject> entry) {
-        return entry.getKey() % 2 == 0;
-      }
-    };
+    SnapshotFilter<Integer, MyObject> even =
+        new SnapshotFilter<Integer, MyObject>() {
+          @Override
+          public boolean accept(Entry<Integer, MyObject> entry) {
+            return entry.getKey() % 2 == 0;
+          }
+        };
 
-    SnapshotFilter<Integer, MyObject> odd = new SnapshotFilter<Integer, MyObject>() {
-      @Override
-      public boolean accept(Entry<Integer, MyObject> entry) {
-        return entry.getKey() % 2 == 1;
-      }
-    };
+    SnapshotFilter<Integer, MyObject> odd =
+        new SnapshotFilter<Integer, MyObject>() {
+          @Override
+          public boolean accept(Entry<Integer, MyObject> entry) {
+            return entry.getKey() % 2 == 1;
+          }
+        };
 
     for (final RegionType rt : RegionType.values()) {
       for (final SerializationType st : SerializationType.values()) {
@@ -148,12 +159,13 @@ public class RegionSnapshotJUnitTest extends SnapshotTestCase {
 
   @Test
   public void testFilterExportException() throws Exception {
-    SnapshotFilter<Integer, MyObject> oops = new SnapshotFilter<Integer, MyObject>() {
-      @Override
-      public boolean accept(Entry<Integer, MyObject> entry) {
-        throw new RuntimeException();
-      }
-    };
+    SnapshotFilter<Integer, MyObject> oops =
+        new SnapshotFilter<Integer, MyObject>() {
+          @Override
+          public boolean accept(Entry<Integer, MyObject> entry) {
+            throw new RuntimeException();
+          }
+        };
 
     for (final RegionType rt : RegionType.values()) {
       for (final SerializationType st : SerializationType.values()) {
@@ -186,12 +198,13 @@ public class RegionSnapshotJUnitTest extends SnapshotTestCase {
 
   @Test
   public void testFilterImportException() throws Exception {
-    SnapshotFilter<Integer, MyObject> oops = new SnapshotFilter<Integer, MyObject>() {
-      @Override
-      public boolean accept(Entry<Integer, MyObject> entry) {
-        throw new RuntimeException();
-      }
-    };
+    SnapshotFilter<Integer, MyObject> oops =
+        new SnapshotFilter<Integer, MyObject>() {
+          @Override
+          public boolean accept(Entry<Integer, MyObject> entry) {
+            throw new RuntimeException();
+          }
+        };
 
     for (final RegionType rt : RegionType.values()) {
       for (final SerializationType st : SerializationType.values()) {
@@ -224,7 +237,8 @@ public class RegionSnapshotJUnitTest extends SnapshotTestCase {
 
   @Test
   public void testInvalidate() throws Exception {
-    Region<Integer, MyObject> region = rgen.createRegion(cache, ds.getName(), RegionType.REPLICATE, "test");
+    Region<Integer, MyObject> region =
+        rgen.createRegion(cache, ds.getName(), RegionType.REPLICATE, "test");
     MyObject obj = rgen.createData(SerializationType.SERIALIZABLE, 1, "invalidated value");
 
     region.put(1, obj);
@@ -242,7 +256,12 @@ public class RegionSnapshotJUnitTest extends SnapshotTestCase {
   public void testDSID() throws Exception {
     cache.close();
 
-    CacheFactory cf = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "error").setPdxSerializer(new MyPdxSerializer()).set(DISTRIBUTED_SYSTEM_ID, "1");
+    CacheFactory cf =
+        new CacheFactory()
+            .set(MCAST_PORT, "0")
+            .set(LOG_LEVEL, "error")
+            .setPdxSerializer(new MyPdxSerializer())
+            .set(DISTRIBUTED_SYSTEM_ID, "1");
     cache = cf.create();
 
     RegionType rt = RegionType.REPLICATE;
@@ -258,7 +277,12 @@ public class RegionSnapshotJUnitTest extends SnapshotTestCase {
     cache.close();
 
     // change the DSID from 1 -> 100
-    CacheFactory cf2 = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "error").setPdxSerializer(new MyPdxSerializer()).set(DISTRIBUTED_SYSTEM_ID, "100");
+    CacheFactory cf2 =
+        new CacheFactory()
+            .set(MCAST_PORT, "0")
+            .set(LOG_LEVEL, "error")
+            .setPdxSerializer(new MyPdxSerializer())
+            .set(DISTRIBUTED_SYSTEM_ID, "100");
     cache = cf2.create();
 
     final Map<Integer, Object> read = new HashMap<Integer, Object>();

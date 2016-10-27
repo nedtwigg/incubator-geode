@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal.index;
 
 import org.junit.experimental.categories.Category;
@@ -60,9 +58,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
-/**
- *
- */
+/** */
 @Category(DistributedTest.class)
 public class IndexTrackingQueryObserverDUnitTest extends JUnit4CacheTestCase {
 
@@ -82,16 +78,18 @@ public class IndexTrackingQueryObserverDUnitTest extends JUnit4CacheTestCase {
     VM ds0 = host.getVM(0);
     VM ds1 = host.getVM(1);
 
-    ds0.invoke(new SerializableRunnable("Set system property") {
-      public void run() {
-        DefaultQuery.QUERY_VERBOSE = true;
-      }
-    });
-    ds1.invoke(new SerializableRunnable("Set system property") {
-      public void run() {
-        DefaultQuery.QUERY_VERBOSE = true;
-      }
-    });
+    ds0.invoke(
+        new SerializableRunnable("Set system property") {
+          public void run() {
+            DefaultQuery.QUERY_VERBOSE = true;
+          }
+        });
+    ds1.invoke(
+        new SerializableRunnable("Set system property") {
+          public void run() {
+            DefaultQuery.QUERY_VERBOSE = true;
+          }
+        });
 
     createPR(ds0);
     createPR(ds1);
@@ -112,23 +110,25 @@ public class IndexTrackingQueryObserverDUnitTest extends JUnit4CacheTestCase {
     async1.join();
     async2.join();
 
-    ds0.invoke(new SerializableRunnable("Test Query Verbose Data") {
-      public void run() {
-        // Reset the observer.
-        QueryObserverHolder.reset();
-        // Reset System Property
-        DefaultQuery.QUERY_VERBOSE = false;
-      }
-    });
-    ds1.invoke(new SerializableRunnable("Test Query Verbose Data") {
+    ds0.invoke(
+        new SerializableRunnable("Test Query Verbose Data") {
+          public void run() {
+            // Reset the observer.
+            QueryObserverHolder.reset();
+            // Reset System Property
+            DefaultQuery.QUERY_VERBOSE = false;
+          }
+        });
+    ds1.invoke(
+        new SerializableRunnable("Test Query Verbose Data") {
 
-      public void run() {
-        // Reset the observer.
-        QueryObserverHolder.reset();
-        // Reset System Property
-        DefaultQuery.QUERY_VERBOSE = false;
-      }
-    });
+          public void run() {
+            // Reset the observer.
+            QueryObserverHolder.reset();
+            // Reset System Property
+            DefaultQuery.QUERY_VERBOSE = false;
+          }
+        });
 
     if (async1.exceptionOccurred()) {
       Assert.fail("", async1.getException());
@@ -141,156 +141,165 @@ public class IndexTrackingQueryObserverDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * CReates a PR on a VM with NUM_BKTS buckets.
+   *
    * @param vm
    */
   private void createPR(VM vm) {
 
-    SerializableRunnable createDS = new SerializableRunnable("Creating PR Datastore") {
+    SerializableRunnable createDS =
+        new SerializableRunnable("Creating PR Datastore") {
 
-      public void run() {
+          public void run() {
 
-        QueryObserver observer = QueryObserverHolder.setInstance(new IndexTrackingQueryObserver());
+            QueryObserver observer =
+                QueryObserverHolder.setInstance(new IndexTrackingQueryObserver());
 
-        //Create Partition Region
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setTotalNumBuckets(NUM_BKTS);
-        AttributesFactory af = new AttributesFactory();
-        af.setPartitionAttributes(paf.create());
+            //Create Partition Region
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setTotalNumBuckets(NUM_BKTS);
+            AttributesFactory af = new AttributesFactory();
+            af.setPartitionAttributes(paf.create());
 
-        Region region = getCache().createRegion("portfolio", af.create());
-
-      }
-    };
+            Region region = getCache().createRegion("portfolio", af.create());
+          }
+        };
 
     vm.invoke(createDS);
   }
 
   private void initializeRegion(VM vm) {
 
-    SerializableRunnable initRegion = new SerializableRunnable("Initialize the PR") {
+    SerializableRunnable initRegion =
+        new SerializableRunnable("Initialize the PR") {
 
-      public void run() {
+          public void run() {
 
-        Region region = getCache().getRegion("portfolio");
+            Region region = getCache().getRegion("portfolio");
 
-        if (region.size() == 0) {
-          for (int i = 0; i < TOTAL_OBJECTS; i++) {
-            region.put(Integer.toString(i), new Portfolio(i, i));
+            if (region.size() == 0) {
+              for (int i = 0; i < TOTAL_OBJECTS; i++) {
+                region.put(Integer.toString(i), new Portfolio(i, i));
+              }
+            }
+            assertEquals(TOTAL_OBJECTS, region.size());
           }
-        }
-        assertEquals(TOTAL_OBJECTS, region.size());
-
-      }
-    };
+        };
     vm.invoke(initRegion);
   }
 
   private void createQueryIndex(VM vm, final boolean create) {
 
-    SerializableRunnable createIndex = new SerializableRunnable("Create index on PR") {
+    SerializableRunnable createIndex =
+        new SerializableRunnable("Create index on PR") {
 
-      public void run() {
+          public void run() {
 
-        //Query VERBOSE has to be true for the test
-        assertTrue(DefaultQuery.QUERY_VERBOSE);
+            //Query VERBOSE has to be true for the test
+            assertTrue(DefaultQuery.QUERY_VERBOSE);
 
-        QueryService qs = getCache().getQueryService();
+            QueryService qs = getCache().getQueryService();
 
-        Index keyIndex1 = null;
-        try {
-          if (create) {
-            keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
-            assertNotNull(keyIndex1);
-            assertTrue(keyIndex1 instanceof PartitionedIndex);
+            Index keyIndex1 = null;
+            try {
+              if (create) {
+                keyIndex1 =
+                    (IndexProtocol)
+                        qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+                assertNotNull(keyIndex1);
+                assertTrue(keyIndex1 instanceof PartitionedIndex);
+              }
+            } catch (Exception e) {
+              Assert.fail("While creating Index on PR", e);
+            }
+            Region region = getCache().getRegion("portfolio");
+            //Inject TestHook in QueryObserver before running query.
+            IndexTrackingTestHook th = new IndexTrackingTestHook(region, NUM_BKTS / 2);
+            QueryObserver observer = QueryObserverHolder.getInstance();
+            assertTrue(QueryObserverHolder.hasObserver());
+
+            ((IndexTrackingQueryObserver) observer).setTestHook(th);
           }
-        } catch (Exception e) {
-          Assert.fail("While creating Index on PR", e);
-        }
-        Region region = getCache().getRegion("portfolio");
-        //Inject TestHook in QueryObserver before running query.
-        IndexTrackingTestHook th = new IndexTrackingTestHook(region, NUM_BKTS / 2);
-        QueryObserver observer = QueryObserverHolder.getInstance();
-        assertTrue(QueryObserverHolder.hasObserver());
-
-        ((IndexTrackingQueryObserver) observer).setTestHook(th);
-      }
-    };
+        };
 
     vm.invoke(createIndex);
   }
 
   private void runQuery(VM vm) {
 
-    SerializableRunnable runQuery = new SerializableRunnable("Run Query on PR") {
+    SerializableRunnable runQuery =
+        new SerializableRunnable("Run Query on PR") {
 
-      public void run() {
+          public void run() {
 
-        QueryService qs = getCache().getQueryService();
-        Query query = qs.newQuery(queryStr);
-        Region region = getCache().getRegion("portfolio");
+            QueryService qs = getCache().getQueryService();
+            Query query = qs.newQuery(queryStr);
+            Region region = getCache().getRegion("portfolio");
 
-        SelectResults results = null;
-        try {
-          results = (SelectResults) query.execute();
-        } catch (Exception e) {
-          Assert.fail("While running query on PR", e);
-        }
+            SelectResults results = null;
+            try {
+              results = (SelectResults) query.execute();
+            } catch (Exception e) {
+              Assert.fail("While running query on PR", e);
+            }
 
-        // The query should return all elements in region.
-        assertEquals(region.size(), results.size());
-      }
-    };
+            // The query should return all elements in region.
+            assertEquals(region.size(), results.size());
+          }
+        };
     vm.invoke(runQuery);
   }
 
   private AsyncInvocation verifyQueryVerboseData(VM vm, final int results) {
 
-    SerializableRunnable testQueryVerbose = new SerializableRunnable("Test Query Verbose Data") {
+    SerializableRunnable testQueryVerbose =
+        new SerializableRunnable("Test Query Verbose Data") {
 
-      public void run() {
-        //Query VERBOSE has to be true for the test
-        assertTrue(DefaultQuery.QUERY_VERBOSE);
+          public void run() {
+            //Query VERBOSE has to be true for the test
+            assertTrue(DefaultQuery.QUERY_VERBOSE);
 
-        // Get TestHook from observer.
-        QueryObserver observer = QueryObserverHolder.getInstance();
-        assertTrue(QueryObserverHolder.hasObserver());
+            // Get TestHook from observer.
+            QueryObserver observer = QueryObserverHolder.getInstance();
+            assertTrue(QueryObserverHolder.hasObserver());
 
-        final IndexTrackingTestHook th = (IndexTrackingTestHook) ((IndexTrackingQueryObserver) observer).getTestHook();
+            final IndexTrackingTestHook th =
+                (IndexTrackingTestHook) ((IndexTrackingQueryObserver) observer).getTestHook();
 
-        Wait.waitForCriterion(new WaitCriterion() {
+            Wait.waitForCriterion(
+                new WaitCriterion() {
 
-          public boolean done() {
-            if (th.getRegionMap() != null) {
-              return th.getRegionMap().getResults() != null;
+                  public boolean done() {
+                    if (th.getRegionMap() != null) {
+                      return th.getRegionMap().getResults() != null;
+                    }
+                    return false;
+                  }
+
+                  public String description() {
+                    return null;
+                  }
+                },
+                60 * 1000,
+                200,
+                true);
+
+            IndexInfo regionMap = th.getRegionMap();
+
+            Collection<Integer> rslts = regionMap.getResults().values();
+            int totalResults = 0;
+            for (Integer i : rslts) {
+              totalResults += i.intValue();
             }
-            return false;
+
+            LogWriterUtils.getLogWriter().fine("Index Info result size is " + totalResults);
+            assertEquals(results, totalResults);
           }
-
-          public String description() {
-            return null;
-          }
-        }, 60 * 1000, 200, true);
-
-        IndexInfo regionMap = th.getRegionMap();
-
-        Collection<Integer> rslts = regionMap.getResults().values();
-        int totalResults = 0;
-        for (Integer i : rslts) {
-          totalResults += i.intValue();
-        }
-
-        LogWriterUtils.getLogWriter().fine("Index Info result size is " + totalResults);
-        assertEquals(results, totalResults);
-      }
-    };
+        };
     AsyncInvocation asyncInv = vm.invokeAsync(testQueryVerbose);
     return asyncInv;
   }
 
-  /**
-   * TODO: Not implemented fully for all the hooks.
-   *
-   */
+  /** TODO: Not implemented fully for all the hooks. */
   public static class IndexTrackingTestHook implements TestHook {
     IndexInfo rMap;
     Region regn;

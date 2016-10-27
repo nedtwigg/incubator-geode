@@ -24,5 +24,4 @@ public interface GemFireXDAggregateTableMBean {
   public long getEntrySize();
 
   public int getNumberOfRows();
-
 }

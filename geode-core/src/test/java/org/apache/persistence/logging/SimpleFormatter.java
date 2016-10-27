@@ -20,9 +20,7 @@ import java.io.*;
 //import java.text.*;
 import java.util.*;
 
-/**
- * A Formatter that returns a textual description of a LogRecord
- */
+/** A Formatter that returns a textual description of a LogRecord */
 public class SimpleFormatter extends Formatter {
 
   public String format(LogRecord record) {
@@ -73,5 +71,4 @@ public class SimpleFormatter extends Formatter {
 
     return (sb.toString());
   }
-
 }

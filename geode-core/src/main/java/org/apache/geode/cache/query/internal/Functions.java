@@ -28,13 +28,14 @@ import java.text.*;
 /**
  * Class Description
  *
- * @version     $Revision: 1.1 $
+ * @version $Revision: 1.1 $
  */
-
 public class Functions {
   public static final int ELEMENT = 1;
 
-  public static Object nvl(CompiledValue arg1, CompiledValue arg2, ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public static Object nvl(CompiledValue arg1, CompiledValue arg2, ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     Object value = arg1.evaluate(context);
     if (value == null) {
       return arg2.evaluate(context);
@@ -42,11 +43,16 @@ public class Functions {
     return value;
   }
 
-  public static Date to_date(CompiledValue cv1, CompiledValue cv2, ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public static Date to_date(CompiledValue cv1, CompiledValue cv2, ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     Object value1 = cv1.evaluate(context);
     Object value2 = cv2.evaluate(context);
     if (!(value1 instanceof String) || !(value2 instanceof String)) {
-      throw new QueryInvalidException(LocalizedStrings.Functions_PARAMETERS_TO_THE_TO_DATE_FUNCTION_SHOULD_BE_STRICTLY_SIMPLE_STRINGS.toLocalizedString());
+      throw new QueryInvalidException(
+          LocalizedStrings
+              .Functions_PARAMETERS_TO_THE_TO_DATE_FUNCTION_SHOULD_BE_STRICTLY_SIMPLE_STRINGS
+              .toLocalizedString());
     }
     String dateStr = (String) value1;
     String format = (String) value2;
@@ -72,20 +78,23 @@ public class Functions {
       dt = sdf1.parse(dateStr);
 
     } catch (Exception ex) {
-      throw new QueryInvalidException(LocalizedStrings.Functions_MALFORMED_DATE_FORMAT_STRING_AS_THE_FORMAT_IS_0.toLocalizedString(format), ex);
+      throw new QueryInvalidException(
+          LocalizedStrings.Functions_MALFORMED_DATE_FORMAT_STRING_AS_THE_FORMAT_IS_0
+              .toLocalizedString(format),
+          ex);
     }
     return dt;
   }
   //end of to_date
 
-  public static Object element(Object arg, ExecutionContext context) throws FunctionDomainException, TypeMismatchException {
-    if (arg == null || arg == QueryService.UNDEFINED)
-      return QueryService.UNDEFINED;
+  public static Object element(Object arg, ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException {
+    if (arg == null || arg == QueryService.UNDEFINED) return QueryService.UNDEFINED;
 
     if (arg instanceof Collection) {
       Collection c = (Collection) arg;
       // for remote distinct queries, the result of sub query could contain a
-      // mix of String and PdxString which could be duplicates, so convert all 
+      // mix of String and PdxString which could be duplicates, so convert all
       // PdxStrings to String
       if (context.isDistinct() && ((DefaultQuery) context.getQuery()).isRemoteQuery()) {
         Set tempResults = new HashSet();
@@ -106,7 +115,9 @@ public class Functions {
     // not a Collection, must be an array
     Class clazz = arg.getClass();
     if (!clazz.isArray())
-      throw new TypeMismatchException(LocalizedStrings.Functions_THE_ELEMENT_FUNCTION_CANNOT_BE_APPLIED_TO_AN_OBJECT_OF_TYPE_0.toLocalizedString(clazz.getName()));
+      throw new TypeMismatchException(
+          LocalizedStrings.Functions_THE_ELEMENT_FUNCTION_CANNOT_BE_APPLIED_TO_AN_OBJECT_OF_TYPE_0
+              .toLocalizedString(clazz.getName()));
 
     // handle arrays
     if (arg instanceof Object[]) {
@@ -171,12 +182,15 @@ public class Functions {
     }
 
     // did I miss something?
-    throw new TypeMismatchException(LocalizedStrings.Functions_THE_ELEMENT_FUNCTION_CANNOT_BE_APPLIED_TO_AN_OBJECT_OF_TYPE_0.toLocalizedString(clazz.getName()));
+    throw new TypeMismatchException(
+        LocalizedStrings.Functions_THE_ELEMENT_FUNCTION_CANNOT_BE_APPLIED_TO_AN_OBJECT_OF_TYPE_0
+            .toLocalizedString(clazz.getName()));
   }
 
   private static void checkSingleton(int size) throws FunctionDomainException {
     if (size != 1)
-      throw new FunctionDomainException(LocalizedStrings.Functions_ELEMENT_APPLIED_TO_PARAMETER_OF_SIZE_0.toLocalizedString(Integer.valueOf(size)));
+      throw new FunctionDomainException(
+          LocalizedStrings.Functions_ELEMENT_APPLIED_TO_PARAMETER_OF_SIZE_0.toLocalizedString(
+              Integer.valueOf(size)));
   }
-
 }

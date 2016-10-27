@@ -41,16 +41,16 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This class is used to hold the information about the servers and
- * their Filters (CQs and Interest List) that are satisfied by the 
- * cache update operation.
+ * This class is used to hold the information about the servers and their Filters (CQs and Interest
+ * List) that are satisfied by the cache update operation.
+ *
  * @since GemFire 6.5
  */
 public class FilterRoutingInfo implements VersionedDataSerializable {
 
   private static boolean OLD_MEMBERS_OPTIMIZED = Boolean.getBoolean("optimized-cq-serialization");
 
-  private static Version[] serializationVersions = new Version[] { Version.GFE_71 };
+  private static Version[] serializationVersions = new Version[] {Version.GFE_71};
 
   /** Set to true if any peer members has any filters. */
   private boolean memberWithFilterInfoExists = false;
@@ -61,13 +61,13 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
   /** whether local interest has been computed (not CQs - just interest) */
   private transient boolean hasLocalInterestBeenComputed;
 
-  /**
-   * Map containing peer-server to filter message.
-   */
-  private HashMap<InternalDistributedMember, FilterInfo> serverFilterInfo = new HashMap<InternalDistributedMember, FilterInfo>();
+  /** Map containing peer-server to filter message. */
+  private HashMap<InternalDistributedMember, FilterInfo> serverFilterInfo =
+      new HashMap<InternalDistributedMember, FilterInfo>();
 
   /**
-   * Sets the local CQ filter information. 
+   * Sets the local CQ filter information.
+   *
    * @param cqInfo map of server side CQ Name to CQ event type.
    */
   public void setLocalCqInfo(HashMap cqInfo) {
@@ -80,6 +80,7 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
 
   /**
    * Sets the local Interest information.
+   *
    * @param clients interested clients with receiveValues=true.
    * @param clientsInv interested clients with receiveValues=false;
    */
@@ -93,16 +94,15 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
     this.hasLocalInterestBeenComputed = true;
   }
 
-  /**
-   * returns true if local interest has been computed
-   */
+  /** returns true if local interest has been computed */
   public boolean hasLocalInterestBeenComputed() {
     return this.hasLocalInterestBeenComputed;
   }
 
   /**
    * Returns local Filter information.
-   * @return FilterInfo local filter info having CQs and interested client info. 
+   *
+   * @return FilterInfo local filter info having CQs and interested client info.
    */
   public FilterInfo getLocalFilterInfo() {
     return this.localFilterInfo;
@@ -110,6 +110,7 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
 
   /**
    * Sets CQ routing information.
+   *
    * @param member for which CQs are satisfied.
    * @param cqInfo map of server side CQ Name to CQ event type.
    */
@@ -124,12 +125,14 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
 
   /**
    * Sets interested clients routing information
+   *
    * @param member on which the client interests are satisfied
    * @param clients Set containing interested clients with receiveValues=true
    * @param clientsInv Set containing interested clients with receiveValues=false
    * @param longIDs whether the client IDs may be long integers
    */
-  public void addInterestedClients(InternalDistributedMember member, Set clients, Set clientsInv, boolean longIDs) {
+  public void addInterestedClients(
+      InternalDistributedMember member, Set clients, Set clientsInv, boolean longIDs) {
     this.memberWithFilterInfoExists = true;
     FilterInfo fInfo = this.serverFilterInfo.get(member);
     if (fInfo == null) {
@@ -149,6 +152,7 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
 
   /**
    * Returns the members list that has filters satisfied.
+   *
    * @return the members who have filter routing information
    */
   public Set<InternalDistributedMember> getMembers() {
@@ -156,7 +160,8 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
   }
 
   /**
-   * Returns true if the local filter information is set. 
+   * Returns true if the local filter information is set.
+   *
    * @return whether there is local routing information in this object
    */
   public boolean hasLocalFilterInfo() {
@@ -165,6 +170,7 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
 
   /**
    * Returns true if there is any member with filters satisfied.
+   *
    * @return true if we have any filter information in this object
    */
   public boolean hasMemberWithFilterInfo() {
@@ -173,6 +179,7 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
 
   /**
    * Returns the Filter Information for the member.
+   *
    * @param member the member whose filter information is desired
    * @return the filter information for the given member
    */
@@ -181,13 +188,14 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
   }
 
   /**
-   * This adds the filter information from the given routing object to this
-   * object's tables.  This is used to merge routing information for putAll
-   * operations.
-   * @param eventRouting  the routing information for a single putAll event
+   * This adds the filter information from the given routing object to this object's tables. This is
+   * used to merge routing information for putAll operations.
+   *
+   * @param eventRouting the routing information for a single putAll event
    */
   public void addFilterInfo(FilterRoutingInfo eventRouting) {
-    for (Map.Entry<InternalDistributedMember, FilterInfo> entry : eventRouting.serverFilterInfo.entrySet()) {
+    for (Map.Entry<InternalDistributedMember, FilterInfo> entry :
+        eventRouting.serverFilterInfo.entrySet()) {
       FilterInfo existing = this.serverFilterInfo.get(entry.getKey());
       if (existing == null) {
         existing = new FilterInfo();
@@ -285,9 +293,7 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
     return result + ")";
   }
 
-  /**
-   * This holds the information about the CQs and interest list.
-   */
+  /** This holds the information about the CQs and interest list. */
   public static class FilterInfo implements VersionedDataSerializable {
 
     public boolean longIDs;
@@ -298,10 +304,9 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
     private HashMap<Long, Integer> cqs;
 
     /**
-     * serialized routing data.  This is only deserialized when requested so that
-     * routing information for other members included in a cach op message
-     * stays serialized, reducing the cost of having to send all routing
-     * info to all members
+     * serialized routing data. This is only deserialized when requested so that routing information
+     * for other members included in a cach op message stays serialized, reducing the cost of having
+     * to send all routing info to all members
      */
     private transient byte[] myData;
 
@@ -346,7 +351,7 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
       this.cqs = null;
     }
 
-    private static Version[] serializationVersions = new Version[] { Version.GFE_80 };
+    private static Version[] serializationVersions = new Version[] {Version.GFE_80};
 
     public Version[] getSerializationVersions() {
       return serializationVersions;
@@ -369,7 +374,7 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
       } else {
         hdos.writeBoolean(true);
         InternalDataSerializer.writeArrayLength(cqs.size(), hdos);
-        for (Iterator it = this.cqs.entrySet().iterator(); it.hasNext();) {
+        for (Iterator it = this.cqs.entrySet().iterator(); it.hasNext(); ) {
           Map.Entry e = (Map.Entry) it.next();
           // most cq IDs and all event types are small ints, so we use an optimized
           // write that serializes 7 bits at a time in a compact form
@@ -396,13 +401,14 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
 
     public void toDataPre_GFE_8_0_0_0(DataOutput out) throws IOException {
       if (OLD_MEMBERS_OPTIMIZED) {
-        HeapDataOutputStream hdos = new HeapDataOutputStream(1000, InternalDataSerializer.getVersionForDataStream(out));
+        HeapDataOutputStream hdos =
+            new HeapDataOutputStream(1000, InternalDataSerializer.getVersionForDataStream(out));
         if (this.cqs == null) {
           hdos.writeBoolean(false);
         } else {
           hdos.writeBoolean(true);
           InternalDataSerializer.writeArrayLength(cqs.size(), hdos);
-          for (Iterator it = this.cqs.entrySet().iterator(); it.hasNext();) {
+          for (Iterator it = this.cqs.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry e = (Map.Entry) it.next();
             // most cq IDs and all event types are small ints, so we use an optimized
             // write that serializes 7 bits at a time in a compact form
@@ -455,10 +461,9 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
     }
 
     /**
-     * FilterInfo fields are only deserialized if they are needed.  We send
-     * all FilterInfo routings to all members that receive a cach op message
-     * but each member is only interested in its own routing, so there is no
-     * need to deserialize the routings for other members
+     * FilterInfo fields are only deserialized if they are needed. We send all FilterInfo routings
+     * to all members that receive a cach op message but each member is only interested in its own
+     * routing, so there is no need to deserialize the routings for other members
      */
     private void deserialize() {
       try {
@@ -511,5 +516,4 @@ public class FilterRoutingInfo implements VersionedDataSerializable {
       return sb.toString();
     }
   }
-
 }

@@ -40,9 +40,7 @@ import org.apache.geode.test.junit.categories.FlakyTest;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-/**
- * Dunit class for testing gemfire function commands : export logs
- */
+/** Dunit class for testing gemfire function commands : export logs */
 @Category(DistributedTest.class)
 public class MiscellaneousCommandsExportLogsPart4DUnitTest extends CliCommandTestBase {
 
@@ -52,18 +50,20 @@ public class MiscellaneousCommandsExportLogsPart4DUnitTest extends CliCommandTes
     final VM vm1 = Host.getHost(0).getVM(1);
     setUpJmxManagerOnVm0ThenConnect(null);
 
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
-        // no need to close cache as it will be closed as part of teardown2
-        Cache cache = getCache();
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            // no need to close cache as it will be closed as part of teardown2
+            Cache cache = getCache();
 
-        RegionFactory<Integer, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-        Region region = dataRegionFactory.create("testRegion");
-        for (int i = 0; i < 5; i++) {
-          region.put("key" + (i + 200), "value" + (i + 200));
-        }
-      }
-    });
+            RegionFactory<Integer, Integer> dataRegionFactory =
+                cache.createRegionFactory(RegionShortcut.PARTITION);
+            Region region = dataRegionFactory.create("testRegion");
+            for (int i = 0; i < 5; i++) {
+              region.put("key" + (i + 200), "value" + (i + 200));
+            }
+          }
+        });
   }
 
   String getCurrentTimeString() {
@@ -89,7 +89,17 @@ public class MiscellaneousCommandsExportLogsPart4DUnitTest extends CliCommandTes
     MiscellaneousCommands misc = new MiscellaneousCommands();
     getCache();
 
-    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForTimeRange1" + dir, null, null, logLevel, false, false, start, end, 1);
+    Result cmdResult =
+        misc.exportLogsPreprocessing(
+            "./testExportLogsForTimeRange1" + dir,
+            null,
+            null,
+            logLevel,
+            false,
+            false,
+            start,
+            end,
+            1);
 
     getLogWriter().info("testExportLogsForTimeRange1 command result =" + cmdResult);
 
@@ -118,13 +128,24 @@ public class MiscellaneousCommandsExportLogsPart4DUnitTest extends CliCommandTes
     MiscellaneousCommands misc = new MiscellaneousCommands();
     getCache();
 
-    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForTimeRangeForOnlyStartTime" + dir, null, null, logLevel, false, false, s, null, 1);
+    Result cmdResult =
+        misc.exportLogsPreprocessing(
+            "./testExportLogsForTimeRangeForOnlyStartTime" + dir,
+            null,
+            null,
+            logLevel,
+            false,
+            false,
+            s,
+            null,
+            1);
 
     getLogWriter().info("testExportLogsForTimeRangeForOnlyStartTime command result =" + cmdResult);
 
     if (cmdResult != null) {
       String cmdStringRsult = commandResultToString((CommandResult) cmdResult);
-      getLogWriter().info("testExportLogsForTimeRangeForOnlyStartTime cmdStringRsult=" + cmdStringRsult);
+      getLogWriter()
+          .info("testExportLogsForTimeRangeForOnlyStartTime cmdStringRsult=" + cmdStringRsult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
     } else {
       fail("testExportLogsForTimeRangeForOnlyStartTime failed as did not get CommandResult");

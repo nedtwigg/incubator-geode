@@ -44,7 +44,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class RegionCreateDestroyDUnitTest extends JUnit4CacheTestCase {
 
   private static final String GOOD_REGION_NAME = "Good-Region";
@@ -68,7 +68,6 @@ public class RegionCreateDestroyDUnitTest extends JUnit4CacheTestCase {
     props.setProperty(LOCATORS, "");
 
     getSystem(props);
-
   }
 
   private void startServer(final Cache cache) throws IOException {
@@ -104,12 +103,18 @@ public class RegionCreateDestroyDUnitTest extends JUnit4CacheTestCase {
     } catch (IOException e) {
       fail(e.getMessage());
     }
-    client1.invoke(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties()).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(GOOD_REGION_NAME);
-      region.destroyRegion();
-      assertThat(region.isDestroyed()).isTrue();
-    });
+    client1.invoke(
+        () -> {
+          ClientCache cache =
+              new ClientCacheFactory(createClientProperties())
+                  .setPoolSubscriptionEnabled(true)
+                  .addPoolServer("localhost", serverPort)
+                  .create();
+          Region region =
+              cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(GOOD_REGION_NAME);
+          region.destroyRegion();
+          assertThat(region.isDestroyed()).isTrue();
+        });
   }
 
   @Test
@@ -118,7 +123,9 @@ public class RegionCreateDestroyDUnitTest extends JUnit4CacheTestCase {
     try {
       serverCache.createRegionFactory(RegionShortcut.REPLICATE).create(BAD_REGION_NAME);
     } catch (IllegalArgumentException iae) {
-      assertEquals("Region names may only be alphanumeric and may contain hyphens or underscores: Bad@Region", iae.getMessage());
+      assertEquals(
+          "Region names may only be alphanumeric and may contain hyphens or underscores: Bad@Region",
+          iae.getMessage());
     }
 
     try {
@@ -126,15 +133,22 @@ public class RegionCreateDestroyDUnitTest extends JUnit4CacheTestCase {
     } catch (IOException e) {
       fail(e.getMessage());
     }
-    client1.invoke(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties()).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
-      try {
-        cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(BAD_REGION_NAME);
-        fail("Should have thrown an IllegalArgumentException");
-      } catch (IllegalArgumentException iae) {
-        assertEquals("Region names may only be alphanumeric and may contain hyphens or underscores: Bad@Region", iae.getMessage());
-      }
-    });
+    client1.invoke(
+        () -> {
+          ClientCache cache =
+              new ClientCacheFactory(createClientProperties())
+                  .setPoolSubscriptionEnabled(true)
+                  .addPoolServer("localhost", serverPort)
+                  .create();
+          try {
+            cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(BAD_REGION_NAME);
+            fail("Should have thrown an IllegalArgumentException");
+          } catch (IllegalArgumentException iae) {
+            assertEquals(
+                "Region names may only be alphanumeric and may contain hyphens or underscores: Bad@Region",
+                iae.getMessage());
+          }
+        });
   }
 
   @Category(FlakyTest.class) // GEODE-1878
@@ -145,7 +159,9 @@ public class RegionCreateDestroyDUnitTest extends JUnit4CacheTestCase {
       serverCache.createRegionFactory(RegionShortcut.REPLICATE).create(RESERVED_REGION_NAME);
       fail("Should have thrown an IllegalArgumentException");
     } catch (IllegalArgumentException arg) {
-      assertEquals("Region names may not begin with a double-underscore: __ReservedRegion", arg.getMessage());
+      assertEquals(
+          "Region names may not begin with a double-underscore: __ReservedRegion",
+          arg.getMessage());
     }
     try {
       startServer(serverCache);
@@ -154,18 +170,26 @@ public class RegionCreateDestroyDUnitTest extends JUnit4CacheTestCase {
     }
 
     try {
-      client1.invoke(() -> {
-        ClientCache cache = new ClientCacheFactory(createClientProperties()).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
-        try {
-          cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(RESERVED_REGION_NAME);
-          fail("Should have thrown an IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-          assertEquals("Region names may not begin with a double-underscore: __ReservedRegion", e.getMessage());
-        }
-      });
+      client1.invoke(
+          () -> {
+            ClientCache cache =
+                new ClientCacheFactory(createClientProperties())
+                    .setPoolSubscriptionEnabled(true)
+                    .addPoolServer("localhost", serverPort)
+                    .create();
+            try {
+              cache
+                  .createClientRegionFactory(ClientRegionShortcut.PROXY)
+                  .create(RESERVED_REGION_NAME);
+              fail("Should have thrown an IllegalArgumentException");
+            } catch (IllegalArgumentException e) {
+              assertEquals(
+                  "Region names may not begin with a double-underscore: __ReservedRegion",
+                  e.getMessage());
+            }
+          });
     } catch (RMIException rmi) {
       rmi.getCause();
     }
-
   }
 }

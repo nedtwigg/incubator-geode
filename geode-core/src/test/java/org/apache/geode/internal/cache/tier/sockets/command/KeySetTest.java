@@ -55,33 +55,24 @@ public class KeySetTest {
   private static final Object CALLBACK_ARG = "arg";
   private static final byte[] EVENT = new byte[8];
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private AuthorizeRequest authzRequest;
-  @Mock
-  private LocalRegion region;
-  @Mock
-  private Cache cache;
-  @Mock
-  private ChunkedMessage chunkedResponseMessage;
-  @Mock
-  private Part regionNamePart;
-  @Mock
-  private KeySetOperationContext keySetOperationContext;
-  @InjectMocks
-  private KeySet keySet;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private ServerConnection serverConnection;
+  @Mock private AuthorizeRequest authzRequest;
+  @Mock private LocalRegion region;
+  @Mock private Cache cache;
+  @Mock private ChunkedMessage chunkedResponseMessage;
+  @Mock private Part regionNamePart;
+  @Mock private KeySetOperationContext keySetOperationContext;
+  @InjectMocks private KeySet keySet;
 
   @Before
   public void setUp() throws Exception {
     this.keySet = new KeySet();
     MockitoAnnotations.initMocks(this);
 
-    when(this.authzRequest.keySetAuthorize(eq(REGION_NAME))).thenReturn(this.keySetOperationContext);
+    when(this.authzRequest.keySetAuthorize(eq(REGION_NAME)))
+        .thenReturn(this.keySetOperationContext);
 
     when(this.cache.getRegion(isA(String.class))).thenReturn(this.region);
     when(this.cache.getCancelCriterion()).thenReturn(mock(CancelCriterion.class));
@@ -121,7 +112,9 @@ public class KeySetTest {
   public void integratedSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(true);
-    doThrow(new NotAuthorizedException("")).when(this.securityService).authorizeRegionRead(eq(REGION_NAME));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.securityService)
+        .authorizeRegionRead(eq(REGION_NAME));
 
     this.keySet.cmdExecute(this.message, this.serverConnection, 0);
 
@@ -144,16 +137,18 @@ public class KeySetTest {
   public void oldSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
-    doThrow(new NotAuthorizedException("")).when(this.authzRequest).keySetAuthorize(eq(REGION_NAME));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.authzRequest)
+        .keySetAuthorize(eq(REGION_NAME));
 
     this.keySet.cmdExecute(this.message, this.serverConnection, 0);
 
     verify(this.authzRequest).keySetAuthorize(eq(REGION_NAME));
 
-    ArgumentCaptor<NotAuthorizedException> argument = ArgumentCaptor.forClass(NotAuthorizedException.class);
+    ArgumentCaptor<NotAuthorizedException> argument =
+        ArgumentCaptor.forClass(NotAuthorizedException.class);
     verify(this.chunkedResponseMessage).addObjPart(argument.capture());
     assertThat(argument.getValue()).isExactlyInstanceOf(NotAuthorizedException.class);
     verify(this.chunkedResponseMessage).sendChunk(eq(this.serverConnection));
   }
-
 }

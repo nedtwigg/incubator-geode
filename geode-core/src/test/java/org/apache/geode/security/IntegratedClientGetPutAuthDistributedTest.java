@@ -34,7 +34,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class, FlakyTest.class })
+@Category({DistributedTest.class, SecurityTest.class, FlakyTest.class})
 public class IntegratedClientGetPutAuthDistributedTest extends AbstractSecureServerDUnitTest {
 
   @Test
@@ -48,60 +48,66 @@ public class IntegratedClientGetPutAuthDistributedTest extends AbstractSecureSer
     keys.add("key2");
 
     // client1 connects to server as a user not authorized to do any operations
-    AsyncInvocation ai1 = client1.invokeAsync(() -> {
-      ClientCache cache = createClientCache("stranger", "1234567", serverPort);
-      Region region = cache.getRegion(REGION_NAME);
+    AsyncInvocation ai1 =
+        client1.invokeAsync(
+            () -> {
+              ClientCache cache = createClientCache("stranger", "1234567", serverPort);
+              Region region = cache.getRegion(REGION_NAME);
 
-      assertNotAuthorized(() -> region.put("key3", "value3"), "DATA:WRITE:AuthRegion:key3");
-      assertNotAuthorized(() -> region.get("key3"), "DATA:READ:AuthRegion:key3");
+              assertNotAuthorized(() -> region.put("key3", "value3"), "DATA:WRITE:AuthRegion:key3");
+              assertNotAuthorized(() -> region.get("key3"), "DATA:READ:AuthRegion:key3");
 
-      //putall
-      assertNotAuthorized(() -> region.putAll(allValues), "DATA:WRITE:AuthRegion");
+              //putall
+              assertNotAuthorized(() -> region.putAll(allValues), "DATA:WRITE:AuthRegion");
 
-      // not authorized for either keys, get no record back
-      Map keyValues = region.getAll(keys);
-      assertEquals(0, keyValues.size());
+              // not authorized for either keys, get no record back
+              Map keyValues = region.getAll(keys);
+              assertEquals(0, keyValues.size());
 
-      assertNotAuthorized(() -> region.keySetOnServer(), "DATA:READ:AuthRegion");
-    });
+              assertNotAuthorized(() -> region.keySetOnServer(), "DATA:READ:AuthRegion");
+            });
 
     // client2 connects to user as a user authorized to use AuthRegion region
-    AsyncInvocation ai2 = client2.invokeAsync(() -> {
-      ClientCache cache = createClientCache("authRegionUser", "1234567", serverPort);
-      Region region = cache.getRegion(REGION_NAME);
+    AsyncInvocation ai2 =
+        client2.invokeAsync(
+            () -> {
+              ClientCache cache = createClientCache("authRegionUser", "1234567", serverPort);
+              Region region = cache.getRegion(REGION_NAME);
 
-      region.put("key3", "value3");
-      assertEquals("value3", region.get("key3"));
+              region.put("key3", "value3");
+              assertEquals("value3", region.get("key3"));
 
-      // put all
-      region.putAll(allValues);
+              // put all
+              region.putAll(allValues);
 
-      // get all
-      Map keyValues = region.getAll(keys);
-      assertEquals(2, keyValues.size());
+              // get all
+              Map keyValues = region.getAll(keys);
+              assertEquals(2, keyValues.size());
 
-      // keyset
-      Set keySet = region.keySetOnServer();
-      assertEquals(5, keySet.size());
-    });
+              // keyset
+              Set keySet = region.keySetOnServer();
+              assertEquals(5, keySet.size());
+            });
 
     // client3 connects to user as a user authorized to use key1 in AuthRegion region
-    AsyncInvocation ai3 = client3.invokeAsync(() -> {
-      ClientCache cache = createClientCache("key1User", "1234567", serverPort);
-      Region region = cache.getRegion(REGION_NAME);
+    AsyncInvocation ai3 =
+        client3.invokeAsync(
+            () -> {
+              ClientCache cache = createClientCache("key1User", "1234567", serverPort);
+              Region region = cache.getRegion(REGION_NAME);
 
-      assertNotAuthorized(() -> region.put("key2", "value1"), "DATA:WRITE:AuthRegion:key2");
-      assertNotAuthorized(() -> region.get("key2"), "DATA:READ:AuthRegion:key2");
+              assertNotAuthorized(() -> region.put("key2", "value1"), "DATA:WRITE:AuthRegion:key2");
+              assertNotAuthorized(() -> region.get("key2"), "DATA:READ:AuthRegion:key2");
 
-      assertNotAuthorized(() -> region.putAll(allValues), "DATA:WRITE:AuthRegion");
+              assertNotAuthorized(() -> region.putAll(allValues), "DATA:WRITE:AuthRegion");
 
-      // only authorized for one recrod
-      Map keyValues = region.getAll(keys);
-      assertEquals(1, keyValues.size());
+              // only authorized for one recrod
+              Map keyValues = region.getAll(keys);
+              assertEquals(1, keyValues.size());
 
-      // keyset
-      assertNotAuthorized(() -> region.keySetOnServer(), "DATA:READ:AuthRegion");
-    });
+              // keyset
+              assertNotAuthorized(() -> region.keySetOnServer(), "DATA:READ:AuthRegion");
+            });
 
     ai1.join();
     ai2.join();
@@ -111,5 +117,4 @@ public class IntegratedClientGetPutAuthDistributedTest extends AbstractSecureSer
     ai2.checkException();
     ai3.checkException();
   }
-
 }

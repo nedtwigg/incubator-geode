@@ -34,8 +34,9 @@ import org.apache.geode.internal.security.SecurableCommunicationChannel;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The JettyHelperJUnitTest class is a test suite of test cases testing the
- * contract and functionality of the JettyHelper class. Does not start Jetty.
+ * The JettyHelperJUnitTest class is a test suite of test cases testing the contract and
+ * functionality of the JettyHelper class. Does not start Jetty.
+ *
  * @see org.apache.geode.management.internal.JettyHelper
  * @see org.jmock.Mockery
  * @see org.junit.Assert
@@ -59,7 +60,11 @@ public class JettyHelperJUnitTest {
 
     final Server jetty;
     try {
-      jetty = JettyHelper.initJetty(null, 8090, SSLConfigurationFactory.getSSLConfigForComponent(SecurableCommunicationChannel.WEB));
+      jetty =
+          JettyHelper.initJetty(
+              null,
+              8090,
+              SSLConfigurationFactory.getSSLConfigForComponent(SecurableCommunicationChannel.WEB));
       assertNotNull(jetty);
       assertNotNull(jetty.getConnectors()[0]);
       assertEquals(8090, ((ServerConnector) jetty.getConnectors()[0]).getPort());
@@ -71,7 +76,11 @@ public class JettyHelperJUnitTest {
   @Test
   public void testSetPortWithBindAddress() throws Exception {
     try {
-      final Server jetty = JettyHelper.initJetty("10.123.50.1", 10480, SSLConfigurationFactory.getSSLConfigForComponent(SecurableCommunicationChannel.WEB));
+      final Server jetty =
+          JettyHelper.initJetty(
+              "10.123.50.1",
+              10480,
+              SSLConfigurationFactory.getSSLConfigForComponent(SecurableCommunicationChannel.WEB));
 
       assertNotNull(jetty);
       assertNotNull(jetty.getConnectors()[0]);

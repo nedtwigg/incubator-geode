@@ -52,10 +52,7 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     IgnoredException.addIgnoredException("Unexpected IOException");
   }
 
-  /**
-   * this test is disabled due to a high rate of failure in unit test runs
-   * see ticket #52190
-   */
+  /** this test is disabled due to a high rate of failure in unit test runs see ticket #52190 */
   @Ignore("TODO: test is disabled because of #52190")
   @Test
   public void testReplicatedSerialPropagation_withoutRemoteLocator() throws Exception {
@@ -83,8 +80,10 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm2.invoke(() -> WANTestBase.createReceiver());
     vm3.invoke(() -> WANTestBase.createReceiver());
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 1000));
 
@@ -122,8 +121,10 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
 
     createCacheInVMs(nyPort, vm2, vm3);
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     vm2.invoke(() -> WANTestBase.createReceiver());
     vm3.invoke(() -> WANTestBase.createReceiver());
@@ -134,9 +135,7 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm3.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 1000));
   }
 
-  /**
-   * Added to reproduce the bug #46595
-   */
+  /** Added to reproduce the bug #46595 */
   @Test
   public void testReplicatedSerialPropagationWithoutRemoteSite_defect46595() throws Exception {
     Integer lnPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
@@ -167,8 +166,10 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
 
     createCacheInVMs(nyPort, vm2, vm3);
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     vm2.invoke(() -> WANTestBase.createReceiver());
     vm3.invoke(() -> WANTestBase.createReceiver());
@@ -192,8 +193,10 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
@@ -221,8 +224,10 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
@@ -239,7 +244,8 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.killSender());
     vm7.invoke(() -> WANTestBase.killSender());
 
-    Integer regionSize = (Integer) vm2.invoke(() -> WANTestBase.getRegionSize(getTestMethodName() + "_RR"));
+    Integer regionSize =
+        (Integer) vm2.invoke(() -> WANTestBase.getRegionSize(getTestMethodName() + "_RR"));
     LogWriterUtils.getLogWriter().info("Region size on remote is: " + regionSize);
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
@@ -270,9 +276,8 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
   }
 
   /**
-   * Two regions configured with the same sender and put is in progress 
-   * on both the regions.
-   * One of the two regions is destroyed in the middle.
+   * Two regions configured with the same sender and put is in progress on both the regions. One of
+   * the two regions is destroyed in the middle.
    */
   @Test
   public void testReplicatedSerialPropagationWithLocalRegionDestroy() throws Exception {
@@ -291,30 +296,43 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 20, false, false, null, true));
 
     //create one RR (RR_1) on remote site
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
 
     //create another RR (RR_2) on remote site
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", null, isOffHeap()));
 
     //start the senders on local site
     startSenderInVMs("ln", vm4, vm5);
 
     //create one RR (RR_1) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
 
     //create another RR (RR_2) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
 
     //start puts in RR_1 in another thread
-    AsyncInvocation inv1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 1000));
+    AsyncInvocation inv1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 1000));
     //do puts in RR_2 in main thread
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_2", 500));
     //destroy RR_2 after above puts are complete
@@ -328,9 +346,8 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
   }
 
   /**
-   * 1 region and sender configured on local site and 1 region and a 
-   * receiver configured on remote site. Puts to the local region are in progress.
-   * Remote region is destroyed in the middle.
+   * 1 region and sender configured on local site and 1 region and a receiver configured on remote
+   * site. Puts to the local region are in progress. Remote region is destroyed in the middle.
    */
   @Test
   public void testReplicatedSerialPropagationWithRemoteRegionDestroy() throws Exception {
@@ -349,23 +366,30 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 500, false, false, null, true));
 
     //create one RR (RR_1) on remote site
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
 
     //start the senders on local site
     startSenderInVMs("ln", vm4, vm5);
 
     //create one RR (RR_1) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
 
     IgnoredException.addIgnoredException(BatchException70.class.getName());
     IgnoredException.addIgnoredException(ServerOperationException.class.getName());
 
     //start puts in RR_1 in another thread
-    AsyncInvocation inv1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 1000));
+    AsyncInvocation inv1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 1000));
     //destroy RR_1 in remote site
     vm2.invoke(() -> WANTestBase.destroyRegion(getTestMethodName() + "_RR_1"));
 
@@ -375,15 +399,15 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR_1", 1000));
     //assuming some events might have been dispatched before the remote region was destroyed,
     //sender's region queue will have events less than 1000 but the queue will not be empty.
-    //NOTE: this much verification might be sufficient in DUnit. Hydra will take care of 
+    //NOTE: this much verification might be sufficient in DUnit. Hydra will take care of
     //more in depth validations.
     vm4.invoke(() -> WANTestBase.verifyRegionQueueNotEmpty("ln"));
   }
 
   /**
-   * Two regions configured in local with the same sender and put is in progress 
-   * on both the regions. Same two regions are configured on remote site as well.
-   * One of the two regions is destroyed in the middle on remote site.
+   * Two regions configured in local with the same sender and put is in progress on both the
+   * regions. Same two regions are configured on remote site as well. One of the two regions is
+   * destroyed in the middle on remote site.
    */
   @Test
   public void testReplicatedSerialPropagationWithRemoteRegionDestroy2() throws Exception {
@@ -402,27 +426,39 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 200, false, false, null, true));
 
     //create one RR (RR_1) on remote site
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
 
     //create another RR (RR_2) on remote site
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", null, isOffHeap()));
 
     //start the senders on local site
     startSenderInVMs("ln", vm4, vm5);
 
     //create one RR (RR_1) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
 
     //create another RR (RR_2) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
     //destroy RR_2 on remote site in the middle
     vm2.invoke(() -> WANTestBase.destroyRegion(getTestMethodName() + "_RR_2"));
 
@@ -434,11 +470,12 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_2", 1000));
 
     //start puts in RR_1 in another thread
-    AsyncInvocation inv1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 1000));
+    AsyncInvocation inv1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 1000));
 
     inv1.join();
 
-    //though region RR_2 is destroyed, RR_1 should still get all the events put in it 
+    //though region RR_2 is destroyed, RR_1 should still get all the events put in it
     //in local site
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR_1", 1000));
   }
@@ -451,12 +488,16 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     createCacheInVMs(nyPort, vm2, vm3);
 
     // create one RR (RR_1) on remote site
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
 
     // create another RR (RR_2) on remote site
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", null, isOffHeap()));
 
     createReceiverInVMs(vm2, vm3);
 
@@ -464,16 +505,24 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
     // create one RR (RR_1) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
 
     // create another RR (RR_2) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_2", "ln", isOffHeap()));
 
     // senders are created on local site
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 200, false, false, null, true));
@@ -486,9 +535,11 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     IgnoredException.addIgnoredException(ServerOperationException.class.getName());
 
     // start puts in RR_1 in another thread
-    AsyncInvocation inv1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 1000));
+    AsyncInvocation inv1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 1000));
     // start puts in RR_2 in another thread
-    AsyncInvocation inv2 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_2", 1000));
+    AsyncInvocation inv2 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_2", 1000));
     // destroy RR_2 on remote site in the middle
     vm2.invoke(() -> WANTestBase.destroyRegion(getTestMethodName() + "_RR_2"));
 
@@ -503,25 +554,35 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     try {
       vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR_1", 1000));
     } finally {
-      System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.REMOVE_FROM_QUEUE_ON_EXCEPTION", "False");
-      vm4.invoke(new CacheSerializableRunnable("UnSetting system property ") {
-        public void run2() throws CacheException {
-          System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.REMOVE_FROM_QUEUE_ON_EXCEPTION", "False");
-        }
-      });
+      System.setProperty(
+          DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.REMOVE_FROM_QUEUE_ON_EXCEPTION",
+          "False");
+      vm4.invoke(
+          new CacheSerializableRunnable("UnSetting system property ") {
+            public void run2() throws CacheException {
+              System.setProperty(
+                  DistributionConfig.GEMFIRE_PREFIX
+                      + "GatewaySender.REMOVE_FROM_QUEUE_ON_EXCEPTION",
+                  "False");
+            }
+          });
 
-      vm5.invoke(new CacheSerializableRunnable("UnSetting system property ") {
-        public void run2() throws CacheException {
-          System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.REMOVE_FROM_QUEUE_ON_EXCEPTION", "False");
-        }
-      });
+      vm5.invoke(
+          new CacheSerializableRunnable("UnSetting system property ") {
+            public void run2() throws CacheException {
+              System.setProperty(
+                  DistributionConfig.GEMFIRE_PREFIX
+                      + "GatewaySender.REMOVE_FROM_QUEUE_ON_EXCEPTION",
+                  "False");
+            }
+          });
     }
   }
 
   /**
-   * one region and sender configured on local site and the same region and a 
-   * receiver configured on remote site. Puts to the local region are in progress.
-   * Receiver on remote site is stopped in the middle by closing remote site cache.
+   * one region and sender configured on local site and the same region and a receiver configured on
+   * remote site. Puts to the local region are in progress. Receiver on remote site is stopped in
+   * the middle by closing remote site cache.
    */
   @Category(FlakyTest.class) // GEODE-1552
   @Test
@@ -536,25 +597,31 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     //these are part of local site
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    //senders are created on local site. Batch size is kept to a high (170) so 
-    //there will be less number of exceptions (occur during dispatchBatch) in the log 
+    //senders are created on local site. Batch size is kept to a high (170) so
+    //there will be less number of exceptions (occur during dispatchBatch) in the log
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 350, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 350, false, false, null, true));
 
     //create one RR (RR_1) on remote site
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
 
     //start the senders on local site
     startSenderInVMs("ln", vm4, vm5);
 
     //create one RR (RR_1) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
 
     //start puts in RR_1 in another thread
-    AsyncInvocation inv1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 500));
+    AsyncInvocation inv1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 500));
     //close cache in remote site. This will automatically kill the remote receivers.
     vm2.invoke(() -> WANTestBase.closeCache());
 
@@ -583,16 +650,19 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 350, false, false, null, true));
 
     // create one RR (RR_1) on remote site
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
 
     // start the senders on local site
     vm4.invoke(() -> WANTestBase.startSender("ln"));
 
     // create one RR (RR_1) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
 
     // start puts in RR_1 in another thread
-    AsyncInvocation inv1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 8000));
+    AsyncInvocation inv1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 8000));
     // close cache in remote site. This will automatically kill the remote
     // receivers.
     Wait.pause(2000);
@@ -606,7 +676,8 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR_1", 8000));
 
     createCacheInVMs(nyPort, vm2);
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
     vm2.invoke(() -> WANTestBase.createReceiver());
 
     vm4.invoke(() -> WANTestBase.validateQueueContents("ln", 0));
@@ -615,7 +686,8 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
   }
 
   @Test
-  public void testReplicatedSerialPropagationWithRemoteReceiverRestarted_SenderReceiverPersistent() throws Exception {
+  public void testReplicatedSerialPropagationWithRemoteReceiverRestarted_SenderReceiverPersistent()
+      throws Exception {
     Integer lnPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
     Integer nyPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, lnPort));
 
@@ -633,16 +705,22 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 350, false, true, null, true));
 
     // create one RR (RR_1) on remote site
-    vm2.invoke(() -> WANTestBase.createPersistentReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
-    vm2.invoke(() -> WANTestBase.addListenerToSleepAfterCreateEvent(2000, getTestMethodName() + "_RR_1"));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPersistentReplicatedRegion(
+                getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.addListenerToSleepAfterCreateEvent(2000, getTestMethodName() + "_RR_1"));
     // start the senders on local site
     startSenderInVMs("ln", vm4, vm5);
 
     // create one RR (RR_1) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
 
     // start puts in RR_1 in another thread
-    AsyncInvocation inv1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 8000));
+    AsyncInvocation inv1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 8000));
     // close cache in remote site. This will automatically kill the remote
     // receivers.
     vm2.invoke(() -> WANTestBase.closeCache());
@@ -655,7 +733,10 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.verifyRegionQueueNotEmpty("ln"));
 
     createCacheInVMs(nyPort, vm2);
-    vm2.invoke(() -> WANTestBase.createPersistentReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPersistentReplicatedRegion(
+                getTestMethodName() + "_RR_1", null, isOffHeap()));
     vm2.invoke(() -> WANTestBase.createReceiver());
 
     vm4.invoke(() -> WANTestBase.validateQueueContents("ln", 0));
@@ -666,7 +747,8 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
   }
 
   @Test
-  public void testReplicatedSerialPropagationWithRemoteSiteBouncedBack_ReceiverPersistent() throws Exception {
+  public void testReplicatedSerialPropagationWithRemoteSiteBouncedBack_ReceiverPersistent()
+      throws Exception {
     Integer lnPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
     Integer nyPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, lnPort));
 
@@ -683,16 +765,21 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 350, false, false, null, true));
 
     // create one RR (RR_1) on remote site
-    vm2.invoke(() -> WANTestBase.createPersistentReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPersistentReplicatedRegion(
+                getTestMethodName() + "_RR_1", null, isOffHeap()));
 
     // start the senders on local site
     vm4.invoke(() -> WANTestBase.startSender("ln"));
 
     // create one RR (RR_1) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
 
     // start puts in RR_1 in another thread
-    AsyncInvocation inv1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 8000));
+    AsyncInvocation inv1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 8000));
     // close cache in remote site. This will automatically kill the remote
     // receivers.
     Wait.pause(2000);
@@ -713,7 +800,10 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
 
     createCacheInVMs(nyPort, vm2);
 
-    vm2.invoke(() -> WANTestBase.createPersistentReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPersistentReplicatedRegion(
+                getTestMethodName() + "_RR_1", null, isOffHeap()));
 
     vm2.invoke(() -> WANTestBase.createReceiver());
 
@@ -725,10 +815,12 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
   }
 
   @Test
-  public void testReplicatedSerialPropagationWithRemoteSiteBouncedBackWithMultipleRemoteLocators() throws Exception {
+  public void testReplicatedSerialPropagationWithRemoteSiteBouncedBackWithMultipleRemoteLocators()
+      throws Exception {
     Integer lnPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
     Integer nyPort1 = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, lnPort));
-    Integer nyPort2 = (Integer) vm3.invoke(() -> WANTestBase.createSecondRemoteLocator(2, nyPort1, lnPort));
+    Integer nyPort2 =
+        (Integer) vm3.invoke(() -> WANTestBase.createSecondRemoteLocator(2, nyPort1, lnPort));
 
     // these are part of remote site
     createCacheInVMs(nyPort1, vm2);
@@ -743,16 +835,19 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 350, false, false, null, true));
 
     // create one RR (RR_1) on remote site
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
 
     // start the senders on local site
     vm4.invoke(() -> WANTestBase.startSender("ln"));
 
     // create one RR (RR_1) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
 
     // start puts in RR_1 in another thread
-    AsyncInvocation inv1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 8000));
+    AsyncInvocation inv1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 8000));
     // close cache in remote site. This will automatically kill the remote
     // receivers.
     Wait.pause(2000);
@@ -768,7 +863,8 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.verifyRegionQueueNotEmpty("ln"));
 
     createCacheInVMs(nyPort2, vm6);
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
     vm6.invoke(() -> WANTestBase.createReceiver());
 
     vm4.invoke(() -> WANTestBase.validateQueueContents("ln", 0));
@@ -777,7 +873,8 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
   }
 
   @Test
-  public void testReplicatedSerialPropagationWithRemoteReceiverRestartedOnOtherNode() throws Exception {
+  public void testReplicatedSerialPropagationWithRemoteReceiverRestartedOnOtherNode()
+      throws Exception {
     Integer lnPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
     Integer nyPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, lnPort));
 
@@ -793,21 +890,29 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 350, false, false, null, true));
 
     // create one RR (RR_1) on remote site
-    vm2.invoke(() -> WANTestBase.createPersistentReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPersistentReplicatedRegion(
+                getTestMethodName() + "_RR_1", null, isOffHeap()));
     vm2.invoke(() -> WANTestBase.createReceiver());
 
-    vm3.invoke(() -> WANTestBase.createPersistentReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPersistentReplicatedRegion(
+                getTestMethodName() + "_RR_1", null, isOffHeap()));
 
     vm2.invoke(() -> addListenerToSleepAfterCreateEvent(2000, getTestMethodName() + "_RR_1"));
     vm3.invoke(() -> addListenerToSleepAfterCreateEvent(2000, getTestMethodName() + "_RR_1"));
 
     // create one RR (RR_1) on local site
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR_1", "ln", isOffHeap()));
     // start the senders on local site
     vm4.invoke(() -> WANTestBase.startSender("ln"));
 
     // start puts in RR_1 in another thread
-    AsyncInvocation inv1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 8000));
+    AsyncInvocation inv1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR_1", 8000));
     // close cache in remote site. This will automatically kill the remote
     // receivers.
     vm2.invoke(() -> WANTestBase.closeCache());
@@ -821,7 +926,10 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.verifyRegionQueueNotEmpty("ln"));
 
     createCacheInVMs(nyPort, vm3);
-    vm3.invoke(() -> WANTestBase.createPersistentReplicatedRegion(getTestMethodName() + "_RR_1", null, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPersistentReplicatedRegion(
+                getTestMethodName() + "_RR_1", null, isOffHeap()));
     vm3.invoke(() -> WANTestBase.createReceiver());
 
     vm4.invoke(() -> WANTestBase.validateQueueContents("ln", 0));
@@ -843,22 +951,40 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createSender("lnSerial1", 2, false, 100, 10, false, false, null, true));
-    vm5.invoke(() -> WANTestBase.createSender("lnSerial1", 2, false, 100, 10, false, false, null, true));
+    vm4.invoke(
+        () -> WANTestBase.createSender("lnSerial1", 2, false, 100, 10, false, false, null, true));
+    vm5.invoke(
+        () -> WANTestBase.createSender("lnSerial1", 2, false, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createSender("lnSerial2", 3, false, 100, 10, false, false, null, true));
-    vm5.invoke(() -> WANTestBase.createSender("lnSerial2", 3, false, 100, 10, false, false, null, true));
+    vm4.invoke(
+        () -> WANTestBase.createSender("lnSerial2", 3, false, 100, 10, false, false, null, true));
+    vm5.invoke(
+        () -> WANTestBase.createSender("lnSerial2", 3, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     startSenderInVMs("lnSerial1", vm4, vm5);
     startSenderInVMs("lnSerial2", vm4, vm5);
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial1,lnSerial2", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial1,lnSerial2", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial1,lnSerial2", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial1,lnSerial2", isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial1,lnSerial2", isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial1,lnSerial2", isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial1,lnSerial2", isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial1,lnSerial2", isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
 
@@ -879,8 +1005,10 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
@@ -889,7 +1017,8 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm6.invoke(createReplicatedRegionRunnable());
     vm7.invoke(createReplicatedRegionRunnable());
 
-    AsyncInvocation inv1 = vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 10000));
+    AsyncInvocation inv1 =
+        vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 10000));
     Wait.pause(2000);
     AsyncInvocation inv2 = vm4.invokeAsync(() -> WANTestBase.killSender());
 
@@ -902,13 +1031,13 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
 
   /**
    * Local site:: vm4: Primary vm5: Secondary
-   * 
-   * Remote site:: vm2, vm3, vm6, vm7: All hosting receivers
-   * 
-   * vm4 is killed, so vm5 takes primary charge
    *
-   * SUR: disabling due to connection information not available in open source
-   * enable this once in closed source
+   * <p>Remote site:: vm2, vm3, vm6, vm7: All hosting receivers
+   *
+   * <p>vm4 is killed, so vm5 takes primary charge
+   *
+   * <p>SUR: disabling due to connection information not available in open source enable this once
+   * in closed source
    */
   @Ignore("TODO: test is disabled")
   @Test
@@ -927,10 +1056,14 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
@@ -939,11 +1072,13 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(createReplicatedRegionRunnable());
     vm5.invoke(createReplicatedRegionRunnable());
 
-    AsyncInvocation inv1 = vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 10000));
+    AsyncInvocation inv1 =
+        vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 10000));
     LogWriterUtils.getLogWriter().info("Started async puts on local site");
     Wait.pause(1000);
 
-    Map oldConnectionInfo = (Map) vm4.invoke(() -> WANTestBase.getSenderToReceiverConnectionInfo("ln"));
+    Map oldConnectionInfo =
+        (Map) vm4.invoke(() -> WANTestBase.getSenderToReceiverConnectionInfo("ln"));
     assertNotNull(oldConnectionInfo);
     String oldServerHost = (String) oldConnectionInfo.get("serverHost");
     int oldServerPort = (Integer) oldConnectionInfo.get("serverPort");
@@ -952,9 +1087,10 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     AsyncInvocation inv2 = vm4.invokeAsync(() -> WANTestBase.killSender());
     inv2.join();
     LogWriterUtils.getLogWriter().info("Killed primary sender on local site");
-    Wait.pause(5000);// give some time for vm5 to take primary charge
+    Wait.pause(5000); // give some time for vm5 to take primary charge
 
-    Map newConnectionInfo = (Map) vm5.invoke(() -> WANTestBase.getSenderToReceiverConnectionInfo("ln"));
+    Map newConnectionInfo =
+        (Map) vm5.invoke(() -> WANTestBase.getSenderToReceiverConnectionInfo("ln"));
     assertNotNull(newConnectionInfo);
     String newServerHost = (String) newConnectionInfo.get("serverHost");
     int newServerPort = (Integer) newConnectionInfo.get("serverPort");
@@ -962,7 +1098,9 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     assertEquals(oldServerHost, newServerHost);
     assertEquals(oldServerPort, newServerPort);
 
-    LogWriterUtils.getLogWriter().info("Matched the new connection info with old connection info. Receiver affinity verified.");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Matched the new connection info with old connection info. Receiver affinity verified.");
 
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 10000));
     vm3.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 10000));
@@ -970,14 +1108,14 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
 
   /**
    * Local site:: vm4: Primary vm5: Secondary
-   * 
-   * Remote site:: vm2, vm3, vm6, vm7: All hosting receivers
-   * 
-   * vm4 is killed, so vm5 takes primary charge. vm4 brought up. vm5 is killed,
-   * so vm4 takes primary charge again.
    *
-   * SUR: commenting due to connection information not available in open source
-   * enable this once in closed source
+   * <p>Remote site:: vm2, vm3, vm6, vm7: All hosting receivers
+   *
+   * <p>vm4 is killed, so vm5 takes primary charge. vm4 brought up. vm5 is killed, so vm4 takes
+   * primary charge again.
+   *
+   * <p>SUR: commenting due to connection information not available in open source enable this once
+   * in closed source
    */
   @Ignore("TODO: test is disabled")
   @Test
@@ -996,10 +1134,14 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
@@ -1008,11 +1150,13 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(createReplicatedRegionRunnable());
     vm5.invoke(createReplicatedRegionRunnable());
 
-    AsyncInvocation inv1 = vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 10000));
+    AsyncInvocation inv1 =
+        vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 10000));
     LogWriterUtils.getLogWriter().info("Started async puts on local site");
     Wait.pause(1000);
 
-    Map oldConnectionInfo = (Map) vm4.invoke(() -> WANTestBase.getSenderToReceiverConnectionInfo("ln"));
+    Map oldConnectionInfo =
+        (Map) vm4.invoke(() -> WANTestBase.getSenderToReceiverConnectionInfo("ln"));
     assertNotNull(oldConnectionInfo);
     String oldServerHost = (String) oldConnectionInfo.get("serverHost");
     int oldServerPort = (Integer) oldConnectionInfo.get("serverPort");
@@ -1027,7 +1171,7 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
 
     vm5.invoke(() -> WANTestBase.waitForSenderToBecomePrimary("ln"));
     LogWriterUtils.getLogWriter().info("vm5 sender has now acquired primary status");
-    Wait.pause(5000);// give time to process unprocessedEventsMap
+    Wait.pause(5000); // give time to process unprocessedEventsMap
 
     // ---------------------------REBUILD vm4
     // --------------------------------------
@@ -1041,7 +1185,7 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
 
     // --------------------------- KILL vm5
     // ----------------------------------------
-    inv1.join();// once the puts are done, kill vm5
+    inv1.join(); // once the puts are done, kill vm5
     LogWriterUtils.getLogWriter().info("puts in vm5 are done");
 
     inv2 = vm5.invokeAsync(() -> WANTestBase.killSender());
@@ -1049,14 +1193,17 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.waitForSenderToBecomePrimary("ln"));
     // -----------------------------------------------------------------------------
 
-    Map newConnectionInfo = (Map) vm4.invoke(() -> WANTestBase.getSenderToReceiverConnectionInfo("ln"));
+    Map newConnectionInfo =
+        (Map) vm4.invoke(() -> WANTestBase.getSenderToReceiverConnectionInfo("ln"));
     assertNotNull(newConnectionInfo);
     String newServerHost = (String) newConnectionInfo.get("serverHost");
     int newServerPort = (Integer) newConnectionInfo.get("serverPort");
     LogWriterUtils.getLogWriter().info("Got new sender to receiver connection information");
     assertEquals(oldServerHost, newServerHost);
     assertEquals(oldServerPort, newServerPort);
-    LogWriterUtils.getLogWriter().info("Matched the new connection info with old connection info. Receiver affinity verified.");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Matched the new connection info with old connection info. Receiver affinity verified.");
 
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 10000));
     vm3.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 10000));
@@ -1075,7 +1222,8 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.startSender("ln"));
     vm5.invoke(() -> WANTestBase.startSender("ln"));
@@ -1099,10 +1247,8 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
   }
 
   /**
-   * Added for defect #48582 NPE when WAN sender configured but not started.
-   * All to all topology with 2 WAN sites:
-   * Site 1 (LN site): vm4, vm5, vm6, vm7
-   * Site 2 (NY site): vm2, vm3
+   * Added for defect #48582 NPE when WAN sender configured but not started. All to all topology
+   * with 2 WAN sites: Site 1 (LN site): vm4, vm5, vm6, vm7 Site 2 (NY site): vm2, vm3
    */
   @Test
   public void testReplicatedSerialPropagationWithRemoteSenderConfiguredButNotStarted() {
@@ -1128,8 +1274,10 @@ public class SerialWANPropagationDUnitTest extends WANTestBase {
     vm2.invoke(() -> WANTestBase.createSender("ny", 1, false, 100, 10, false, false, null, true));
     vm3.invoke(() -> WANTestBase.createSender("ny", 1, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ny", isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ny", isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ny", isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ny", isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
 

@@ -45,13 +45,12 @@ public abstract class SetOpExecutor extends SetExecutor implements Extendable {
     }
     RegionProvider rC = context.getRegionProvider();
     ByteArrayWrapper destination = null;
-    if (isStorage())
-      destination = command.getKey();
+    if (isStorage()) destination = command.getKey();
 
     ByteArrayWrapper firstSetKey = new ByteArrayWrapper(commandElems.get(setsStartIndex++));
-    if (!isStorage())
-      checkDataType(firstSetKey, RedisDataType.REDIS_SET, context);
-    Region<ByteArrayWrapper, Boolean> region = (Region<ByteArrayWrapper, Boolean>) rC.getRegion(firstSetKey);
+    if (!isStorage()) checkDataType(firstSetKey, RedisDataType.REDIS_SET, context);
+    Region<ByteArrayWrapper, Boolean> region =
+        (Region<ByteArrayWrapper, Boolean>) rC.getRegion(firstSetKey);
     Set<ByteArrayWrapper> firstSet = null;
     if (region != null) {
       firstSet = new HashSet<ByteArrayWrapper>(region.keySet());
@@ -61,10 +60,8 @@ public abstract class SetOpExecutor extends SetExecutor implements Extendable {
       ByteArrayWrapper key = new ByteArrayWrapper(commandElems.get(i));
       checkDataType(key, RedisDataType.REDIS_SET, context);
       region = (Region<ByteArrayWrapper, Boolean>) rC.getRegion(key);
-      if (region != null)
-        setList.add(region.keySet());
-      else if (this instanceof SInterExecutor)
-        setList.add(null);
+      if (region != null) setList.add(region.keySet());
+      else if (this instanceof SInterExecutor) setList.add(null);
     }
     if (setList.isEmpty()) {
       if (isStorage()) {
@@ -74,24 +71,28 @@ public abstract class SetOpExecutor extends SetExecutor implements Extendable {
         if (firstSet == null)
           command.setResponse(Coder.getNilResponse(context.getByteBufAllocator()));
         else
-          command.setResponse(Coder.getBulkStringArrayResponse(context.getByteBufAllocator(), firstSet));
+          command.setResponse(
+              Coder.getBulkStringArrayResponse(context.getByteBufAllocator(), firstSet));
       }
       return;
     }
 
     Set<ByteArrayWrapper> resultSet = setOp(firstSet, setList);
     if (isStorage()) {
-      Region<ByteArrayWrapper, Boolean> newRegion = null; // (Region<ByteArrayWrapper, Boolean>) rC.getRegion(destination);
+      Region<ByteArrayWrapper, Boolean> newRegion =
+          null; // (Region<ByteArrayWrapper, Boolean>) rC.getRegion(destination);
       rC.removeKey(destination);
       if (resultSet != null) {
         Map<ByteArrayWrapper, Boolean> map = new HashMap<ByteArrayWrapper, Boolean>();
-        for (ByteArrayWrapper entry : resultSet)
-          map.put(entry, Boolean.TRUE);
+        for (ByteArrayWrapper entry : resultSet) map.put(entry, Boolean.TRUE);
         if (!map.isEmpty()) {
-          newRegion = (Region<ByteArrayWrapper, Boolean>) rC.getOrCreateRegion(destination, RedisDataType.REDIS_SET, context);
+          newRegion =
+              (Region<ByteArrayWrapper, Boolean>)
+                  rC.getOrCreateRegion(destination, RedisDataType.REDIS_SET, context);
           newRegion.putAll(map);
         }
-        command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), resultSet.size()));
+        command.setResponse(
+            Coder.getIntegerResponse(context.getByteBufAllocator(), resultSet.size()));
       } else {
         command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), 0));
       }
@@ -99,11 +100,13 @@ public abstract class SetOpExecutor extends SetExecutor implements Extendable {
       if (resultSet == null || resultSet.isEmpty())
         command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
       else
-        command.setResponse(Coder.getBulkStringArrayResponse(context.getByteBufAllocator(), resultSet));
+        command.setResponse(
+            Coder.getBulkStringArrayResponse(context.getByteBufAllocator(), resultSet));
     }
   }
 
   protected abstract boolean isStorage();
 
-  protected abstract Set<ByteArrayWrapper> setOp(Set<ByteArrayWrapper> firstSet, List<Set<ByteArrayWrapper>> setList);
+  protected abstract Set<ByteArrayWrapper> setOp(
+      Set<ByteArrayWrapper> firstSet, List<Set<ByteArrayWrapper>> setList);
 }

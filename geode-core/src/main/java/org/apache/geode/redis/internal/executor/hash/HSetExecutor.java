@@ -46,7 +46,8 @@ public class HSetExecutor extends HashExecutor implements Extendable {
 
     ByteArrayWrapper key = command.getKey();
 
-    Region<ByteArrayWrapper, ByteArrayWrapper> keyRegion = getOrCreateRegion(context, key, RedisDataType.REDIS_HASH);
+    Region<ByteArrayWrapper, ByteArrayWrapper> keyRegion =
+        getOrCreateRegion(context, key, RedisDataType.REDIS_HASH);
 
     byte[] byteField = commandElems.get(FIELD_INDEX);
     ByteArrayWrapper field = new ByteArrayWrapper(byteField);
@@ -55,16 +56,13 @@ public class HSetExecutor extends HashExecutor implements Extendable {
 
     Object oldValue;
 
-    if (onlySetOnAbsent())
-      oldValue = keyRegion.putIfAbsent(field, new ByteArrayWrapper(value));
-    else
-      oldValue = keyRegion.put(field, new ByteArrayWrapper(value));
+    if (onlySetOnAbsent()) oldValue = keyRegion.putIfAbsent(field, new ByteArrayWrapper(value));
+    else oldValue = keyRegion.put(field, new ByteArrayWrapper(value));
 
     if (oldValue == null)
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NEW_FIELD));
     else
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), EXISTING_FIELD));
-
   }
 
   protected boolean onlySetOnAbsent() {

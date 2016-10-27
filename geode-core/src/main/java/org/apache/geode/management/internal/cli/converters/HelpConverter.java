@@ -28,7 +28,6 @@ import org.apache.geode.management.internal.cli.shell.Gfsh;
 
 /**
  * {@link Converter} for {@link GfshHelpCommands#obtainHelp(String)}
- * 
  *
  * @since GemFire 7.0
  */
@@ -45,7 +44,12 @@ public class HelpConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completionCandidates, Class<?> dataType, String existingData, String optionContext, MethodTarget arg4) {
+  public boolean getAllPossibleValues(
+      List<Completion> completionCandidates,
+      Class<?> dataType,
+      String existingData,
+      String optionContext,
+      MethodTarget arg4) {
 
     List<String> commandNames = Gfsh.getCurrentInstance().obtainHelpCommandNames(existingData);
 
@@ -60,7 +64,8 @@ public class HelpConverter implements Converter<String> {
 
   @Override
   public boolean supports(Class<?> arg0, String optionContext) {
-    if (String.class.isAssignableFrom(arg0) && optionContext.equals(CliStrings.PARAM_CONTEXT_HELP)) {
+    if (String.class.isAssignableFrom(arg0)
+        && optionContext.equals(CliStrings.PARAM_CONTEXT_HELP)) {
       return true;
     }
     return false;

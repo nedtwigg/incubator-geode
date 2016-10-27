@@ -30,20 +30,21 @@ import java.util.*;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * Used to interact with operating system processes.
- * Use <code>exec</code> to create a new process by executing a command.
- * Use <code>kill</code> to kill a process.
- *
- *
+ * Used to interact with operating system processes. Use <code>exec</code> to create a new process
+ * by executing a command. Use <code>kill</code> to kill a process.
  */
 public class OSProcess {
   private static final Logger logger = LogService.getLogger();
 
-  public static final String DISABLE_OUTPUT_REDIRECTION_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "OSProcess.DISABLE_OUTPUT_REDIRECTION";
-  public static final String ENABLE_OUTPUT_REDIRECTION_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "OSProcess.ENABLE_OUTPUT_REDIRECTION";
+  public static final String DISABLE_OUTPUT_REDIRECTION_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "OSProcess.DISABLE_OUTPUT_REDIRECTION";
+  public static final String ENABLE_OUTPUT_REDIRECTION_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "OSProcess.ENABLE_OUTPUT_REDIRECTION";
 
-  private static final boolean DISABLE_OUTPUT_REDIRECTION = Boolean.getBoolean(DISABLE_OUTPUT_REDIRECTION_PROPERTY);
-  private static final boolean ENABLE_OUTPUT_REDIRECTION = Boolean.getBoolean(ENABLE_OUTPUT_REDIRECTION_PROPERTY);
+  private static final boolean DISABLE_OUTPUT_REDIRECTION =
+      Boolean.getBoolean(DISABLE_OUTPUT_REDIRECTION_PROPERTY);
+  private static final boolean ENABLE_OUTPUT_REDIRECTION =
+      Boolean.getBoolean(ENABLE_OUTPUT_REDIRECTION_PROPERTY);
 
   static final boolean pureMode = PureJavaMode.isPure();
 
@@ -54,61 +55,57 @@ public class OSProcess {
   }
 
   /**
-   * Starts a background command writing its stdout and stderr to
-   * the specified log file.
+   * Starts a background command writing its stdout and stderr to the specified log file.
    *
-   * @param cmdarray An array of strings that specify the command to run.
-   * The first element must be the executable.
-   * Each additional command line argument should have its own entry
-   *  in the array.
+   * @param cmdarray An array of strings that specify the command to run. The first element must be
+   *     the executable. Each additional command line argument should have its own entry in the
+   *     array.
    * @param workdir the current directory of the created process
-   * @param logfile the file the created process will write
-   * stdout and stderr to.
-   * @param inheritLogfile can be set to false if the child process
-   *  is willing to create its own log file. Setting to false can help
-   *  on Windows because it keeps the child process from inheriting
-   *  handles from the parent.
+   * @param logfile the file the created process will write stdout and stderr to.
+   * @param inheritLogfile can be set to false if the child process is willing to create its own log
+   *     file. Setting to false can help on Windows because it keeps the child process from
+   *     inheriting handles from the parent.
    * @return the process id of the created process; -1 on failure
    * @exception IOException if a child process could not be created.
    */
-  private static native int bgexecInternal(String[] cmdarray, String workdir, String logfile, boolean inheritLogfile) throws IOException;
+  private static native int bgexecInternal(
+      String[] cmdarray, String workdir, String logfile, boolean inheritLogfile) throws IOException;
 
   /**
-   * Starts execution of the specified command and arguments in a separate
-   * detached process in the specified
-   * working directory writing output to the specified log file.
-   * <p>
-   * If there is a security manager, its <code>checkExec</code> method
-   * is called with the first component of the array
-   * <code>cmdarray</code> as its argument. This may result in a security
-   * exception.
-   * <p>
-   * Given an array of strings <code>cmdarray</code>, representing the
-   * tokens of a command line,
-   * this method creates a new process in which to execute
-   * the specified command.
+   * Starts execution of the specified command and arguments in a separate detached process in the
+   * specified working directory writing output to the specified log file.
    *
-   * @param cmdarray   array containing the command to call and its arguments.
-   * @param workdir the current directory of the created process; null
-   * causes working directory to default to the current directory.
-   * @param logfile the file the created process will write
-   * stdout and stderr to; null causes a default log file name
-   * to be used.
-   * @param inheritLogfile can be set to false if the child process
-   *  is willing to create its own log file. Setting to false can help
-   *  on Windows because it keeps the child process from inheriting
-   *  handles from the parent.
-   * @param env any extra environment variables as key,value map;
-   *          these will be in addition to those inherited from the 
-   *          parent process and will overwrite same keys
+   * <p>If there is a security manager, its <code>checkExec</code> method is called with the first
+   * component of the array <code>cmdarray</code> as its argument. This may result in a security
+   * exception.
+   *
+   * <p>Given an array of strings <code>cmdarray</code>, representing the tokens of a command line,
+   * this method creates a new process in which to execute the specified command.
+   *
+   * @param cmdarray array containing the command to call and its arguments.
+   * @param workdir the current directory of the created process; null causes working directory to
+   *     default to the current directory.
+   * @param logfile the file the created process will write stdout and stderr to; null causes a
+   *     default log file name to be used.
+   * @param inheritLogfile can be set to false if the child process is willing to create its own log
+   *     file. Setting to false can help on Windows because it keeps the child process from
+   *     inheriting handles from the parent.
+   * @param env any extra environment variables as key,value map; these will be in addition to those
+   *     inherited from the parent process and will overwrite same keys
    * @return the process id of the created process; -1 on failure
-   * @exception  SecurityException  if the current thread cannot create a
-   *               subprocess.
-   * @see     java.lang.SecurityException
-   * @see     java.lang.SecurityManager#checkExec(java.lang.String)
+   * @exception SecurityException if the current thread cannot create a subprocess.
+   * @see java.lang.SecurityException
+   * @see java.lang.SecurityManager#checkExec(java.lang.String)
    */
-  public static int bgexec(String cmdarray[], File workdir, File logfile, boolean inheritLogfile, Map<String, String> env) throws IOException {
-    String commandShell = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "commandShell", "bash");
+  public static int bgexec(
+      String cmdarray[],
+      File workdir,
+      File logfile,
+      boolean inheritLogfile,
+      Map<String, String> env)
+      throws IOException {
+    String commandShell =
+        System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "commandShell", "bash");
     if (cmdarray.length == 0) {
       throw new java.lang.IndexOutOfBoundsException();
     }
@@ -161,7 +158,9 @@ public class OSProcess {
     }
     File cmd = new File(cmdarray[0]);
     if (!cmd.exists()) {
-      throw new IOException(LocalizedStrings.OSProcess_THE_EXECUTABLE_0_DOES_NOT_EXIST.toLocalizedString(cmd.getPath()));
+      throw new IOException(
+          LocalizedStrings.OSProcess_THE_EXECUTABLE_0_DOES_NOT_EXIST.toLocalizedString(
+              cmd.getPath()));
     }
     SecurityManager security = System.getSecurityManager();
     if (security != null) {
@@ -169,7 +168,9 @@ public class OSProcess {
     }
     if (workdir != null && !workdir.isDirectory()) {
       String curDir = new File("").getAbsolutePath();
-      System.out.println(LocalizedStrings.OSProcess_WARNING_0_IS_NOT_A_DIRECTORY_DEFAULTING_TO_CURRENT_DIRECTORY_1.toLocalizedString(new Object[] { workdir, curDir }));
+      System.out.println(
+          LocalizedStrings.OSProcess_WARNING_0_IS_NOT_A_DIRECTORY_DEFAULTING_TO_CURRENT_DIRECTORY_1
+              .toLocalizedString(new Object[] {workdir, curDir}));
       workdir = null;
     }
     if (workdir == null) {
@@ -186,16 +187,22 @@ public class OSProcess {
     if (logfile.exists()) {
       // it already exists so make sure its a file and can be written
       if (!logfile.isFile()) {
-        throw new IOException(LocalizedStrings.OSProcess_THE_LOG_FILE_0_WAS_NOT_A_NORMAL_FILE.toLocalizedString(logfile.getPath()));
+        throw new IOException(
+            LocalizedStrings.OSProcess_THE_LOG_FILE_0_WAS_NOT_A_NORMAL_FILE.toLocalizedString(
+                logfile.getPath()));
       }
       if (!logfile.canWrite()) {
-        throw new IOException(LocalizedStrings.OSProcess_NEED_WRITE_ACCESS_FOR_THE_LOG_FILE_0.toLocalizedString(logfile.getPath()));
+        throw new IOException(
+            LocalizedStrings.OSProcess_NEED_WRITE_ACCESS_FOR_THE_LOG_FILE_0.toLocalizedString(
+                logfile.getPath()));
       }
     } else {
       try {
         logfile.createNewFile();
       } catch (IOException io) {
-        throw new IOException(LocalizedStrings.OSProcess_COULD_NOT_CREATE_LOG_FILE_0_BECAUSE_1.toLocalizedString(new Object[] { logfile.getPath(), io.getMessage() }));
+        throw new IOException(
+            LocalizedStrings.OSProcess_COULD_NOT_CREATE_LOG_FILE_0_BECAUSE_1.toLocalizedString(
+                new Object[] {logfile.getPath(), io.getMessage()}));
       }
     }
     String trace = System.getProperty("org.apache.geode.internal.OSProcess.trace");
@@ -227,8 +234,7 @@ public class OSProcess {
       }
       //Add the actual command
       for (int i = 0; i < cmdarray.length; i++) {
-        if (i != 0)
-          sb.append(" ");
+        if (i != 0) sb.append(" ");
         if (cmdarray[i].length() != 0 && cmdarray[i].charAt(0) == '\"') {
           //The token has already been quoted, see bug 40835
           sb.append(cmdarray[i]);
@@ -238,7 +244,7 @@ public class OSProcess {
           sb.append("\"");
         }
       }
-      //Add the IO redirction code, this prevents hangs and IO blocking 
+      //Add the IO redirction code, this prevents hangs and IO blocking
       sb.append(" >> ");
       sb.append(logfile.getPath());
       sb.append(" 2>&1");
@@ -307,76 +313,77 @@ public class OSProcess {
   }
 
   /**
-   * Checks to make sure that we are operating on a valid process id.
-   * Sending signals to processes with <code>pid</code> 0 or -1 can
-   * have unintended consequences.
+   * Checks to make sure that we are operating on a valid process id. Sending signals to processes
+   * with <code>pid</code> 0 or -1 can have unintended consequences.
    *
-   * @throws IllegalArgumentException
-   *         If <code>pid</code> is not positive
-   *
+   * @throws IllegalArgumentException If <code>pid</code> is not positive
    * @since GemFire 4.0
    */
   private static void checkPid(int pid) {
     if (pid <= 0) {
-      throw new IllegalArgumentException(LocalizedStrings.OSProcess_SHOULD_NOT_SEND_A_SIGNAL_TO_PID_0.toLocalizedString(Integer.valueOf(pid)));
+      throw new IllegalArgumentException(
+          LocalizedStrings.OSProcess_SHOULD_NOT_SEND_A_SIGNAL_TO_PID_0.toLocalizedString(
+              Integer.valueOf(pid)));
     }
   }
 
   /**
-   * Ask a process to shut itself down.
-   * The process may catch and ignore this shutdown request.
+   * Ask a process to shut itself down. The process may catch and ignore this shutdown request.
+   *
    * @param pid the id of the process to shutdown
-   * @return true if the request was sent to the process;
-   * false if the process does not exist or can not be asked to shutdown.
+   * @return true if the request was sent to the process; false if the process does not exist or can
+   *     not be asked to shutdown.
    */
-  static public boolean shutdown(int pid) {
+  public static boolean shutdown(int pid) {
     if (pureMode) {
-      throw new RuntimeException(LocalizedStrings.OSProcess_SHUTDOWN_NOT_ALLOWED_IN_PURE_JAVA_MODE.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.OSProcess_SHUTDOWN_NOT_ALLOWED_IN_PURE_JAVA_MODE.toLocalizedString());
     } else {
       checkPid(pid);
       return _shutdown(pid);
     }
   }
 
-  static private native boolean _shutdown(int pid);
+  private static native boolean _shutdown(int pid);
 
   /**
-   * Terminate a process without warning and without a chance of an
-   * orderly shutdown. This method should only be used as a last resort.
-   * The {@link #shutdown(int)} method should be used in most cases.
+   * Terminate a process without warning and without a chance of an orderly shutdown. This method
+   * should only be used as a last resort. The {@link #shutdown(int)} method should be used in most
+   * cases.
+   *
    * @param pid the id of the process to kill
-   * @return true if the process was killed;
-   * false if it does not exist or can not be killed.
+   * @return true if the process was killed; false if it does not exist or can not be killed.
    */
-  static public boolean kill(int pid) {
+  public static boolean kill(int pid) {
     if (pureMode) {
-      throw new RuntimeException(LocalizedStrings.OSProcess_KILL_NOT_ALLOWED_IN_PURE_JAVA_MODE.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.OSProcess_KILL_NOT_ALLOWED_IN_PURE_JAVA_MODE.toLocalizedString());
     } else {
       checkPid(pid);
       return _kill(pid);
     }
   }
 
-  static private native boolean _kill(int pid);
+  private static native boolean _kill(int pid);
 
   /**
    * Tells a process to print its stacks to its standard output
+   *
    * @param pid the id of the process that will print its stacks, or zero for the current process
-   * @return true if the process was told;
-   * false if it does not exist or can not be told.
+   * @return true if the process was told; false if it does not exist or can not be told.
    */
-  static public boolean printStacks(int pid) {
+  public static boolean printStacks(int pid) {
     return printStacks(pid, false);
   }
 
   /**
    * Tells a process to print its stacks to its standard output or the given log writer
+   *
    * @param pid the id of the process that will print its stacks, or zero for the current process
    * @param useNative if true we attempt to use native code, which goes to stdout
-   * @return true if the process was told;
-   * false if it does not exist or can not be told.
+   * @return true if the process was told; false if it does not exist or can not be told.
    */
-  static public boolean printStacks(int pid, boolean useNative) {
+  public static boolean printStacks(int pid, boolean useNative) {
     if (pureMode || !useNative) {
       if (pid > 0 && pid != myPid[0]) {
         return false;
@@ -397,8 +404,7 @@ public class OSProcess {
       logger.warn(cw.toString());
       return true;
     } else {
-      if (pid < 0)
-        checkPid(pid);
+      if (pid < 0) checkPid(pid);
       return _printStacks(pid);
     }
   }
@@ -423,9 +429,9 @@ public class OSProcess {
     return result;
   }
 
-  static private native boolean _printStacks(int pid);
+  private static native boolean _printStacks(int pid);
 
-  final static int MAX_STACK_FRAMES = 75;
+  static final int MAX_STACK_FRAMES = 75;
 
   private static void formatThreadInfo(ThreadInfo t, PrintWriter pw) {
     // this is largely copied from the JDK's ThreadInfo.java, but it limits the
@@ -446,7 +452,11 @@ public class OSProcess {
       pw.append(" (in native)");
     }
     if (t.getLockOwnerName() != null) {
-      pw.append(" owned by \"" + t.getLockOwnerName() + "\" tid=0x" + Long.toHexString(t.getLockOwnerId()));
+      pw.append(
+          " owned by \""
+              + t.getLockOwnerName()
+              + "\" tid=0x"
+              + Long.toHexString(t.getLockOwnerId()));
     }
     pw.append('\n');
     pw.append("    java.lang.Thread.State: " + t.getThreadState() + "\n");
@@ -459,19 +469,19 @@ public class OSProcess {
       if (i == 0 && t.getLockInfo() != null) {
         Thread.State ts = t.getThreadState();
         switch (ts) {
-        case BLOCKED:
-          pw.append("\t-  blocked on " + t.getLockInfo());
-          pw.append('\n');
-          break;
-        case WAITING:
-          pw.append("\t-  waiting on " + t.getLockInfo());
-          pw.append('\n');
-          break;
-        case TIMED_WAITING:
-          pw.append("\t-  waiting on " + t.getLockInfo());
-          pw.append('\n');
-          break;
-        default:
+          case BLOCKED:
+            pw.append("\t-  blocked on " + t.getLockInfo());
+            pw.append('\n');
+            break;
+          case WAITING:
+            pw.append("\t-  waiting on " + t.getLockInfo());
+            pw.append('\n');
+            break;
+          case TIMED_WAITING:
+            pw.append("\t-  waiting on " + t.getLockInfo());
+            pw.append('\n');
+            break;
+          default:
         }
       }
 
@@ -501,12 +511,14 @@ public class OSProcess {
 
   /**
    * Find out if a process exists.
+   *
    * @param pid the id of the process to check for
    * @return true if the process exists; false if it does not.
    */
-  static public boolean exists(int pid) {
+  public static boolean exists(int pid) {
     if (pureMode) {
-      throw new RuntimeException(LocalizedStrings.OSProcess_EXISTS_NOT_ALLOWED_IN_PURE_JAVA_MODE.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.OSProcess_EXISTS_NOT_ALLOWED_IN_PURE_JAVA_MODE.toLocalizedString());
     }
     checkPid(pid);
 
@@ -526,18 +538,18 @@ public class OSProcess {
   private static native boolean nativeExists(int pid);
 
   // Private stuff
-  /**
-   * Waits for a child process to die and reaps it.
-   */
-  static private native void waitForPid(int pid);
+  /** Waits for a child process to die and reaps it. */
+  private static native void waitForPid(int pid);
 
   /**
-   * Waits until the identified process exits. If the process does
-   * not exist then returns immediately.
+   * Waits until the identified process exits. If the process does not exist then returns
+   * immediately.
    */
-  static public void waitForPidToExit(int pid) {
+  public static void waitForPidToExit(int pid) {
     if (pureMode) {
-      throw new RuntimeException(LocalizedStrings.OSProcess_WAITFORPIDTOEXIT_NOT_ALLOWED_IN_PURE_JAVA_MODE.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.OSProcess_WAITFORPIDTOEXIT_NOT_ALLOWED_IN_PURE_JAVA_MODE
+              .toLocalizedString());
     }
     checkPid(pid);
     waitForPid(pid);
@@ -545,28 +557,27 @@ public class OSProcess {
 
   /**
    * Sets the current directory of this process.
+   *
    * @return true if current directory was set; false if not.
    */
-  static public boolean setCurrentDirectory(File curDir) {
+  public static boolean setCurrentDirectory(File curDir) {
     if (pureMode) {
-      throw new RuntimeException(LocalizedStrings.OSProcess_SETCURRENTDIRECTORY_NOT_ALLOWED_IN_PURE_JAVA_MODE.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.OSProcess_SETCURRENTDIRECTORY_NOT_ALLOWED_IN_PURE_JAVA_MODE
+              .toLocalizedString());
     }
     return jniSetCurDir(curDir.getAbsolutePath());
   }
 
-  /**
-   * Returns true on success. Returns false and current directory
-   * is unchanged on failure.
-   */
+  /** Returns true on success. Returns false and current directory is unchanged on failure. */
   private static native boolean jniSetCurDir(String dir);
 
   /**
-   * Reaps a child process if it has died.
-   * Does not wait for the child.
+   * Reaps a child process if it has died. Does not wait for the child.
+   *
    * @param pid the id of the process to reap
-   * @return true if it was reaped or lost (someone else reaped it);
-   * false if the child still exists.
-   * HACK: If pid is -1 then returns true if this platform needs reaping.
+   * @return true if it was reaped or lost (someone else reaped it); false if the child still
+   *     exists. HACK: If pid is -1 then returns true if this platform needs reaping.
    */
   protected static native boolean reapPid(int pid);
 
@@ -579,8 +590,7 @@ public class OSProcess {
   static final int[] myPid = new int[1]; // cache of my processId
   static boolean reaperStarted = false; // true if cache is valid
 
-  /** On Linux, getProcessId returns the processId of the calling thread
-   */
+  /** On Linux, getProcessId returns the processId of the calling thread */
   static native int getProcessId();
 
   static {
@@ -606,54 +616,60 @@ public class OSProcess {
     } else {
       if (reapPid(-1)) {
         pids = Collections.synchronizedSet(new HashSet());
-        ThreadGroup group = LoggingThreadGroup.createThreadGroup(LocalizedStrings.OSProcess_REAPER_THREAD.toLocalizedString());
-        reaperThread = new Thread(group, new Runnable() {
-          public void run() {
-            synchronized (myPid) {
-              myPid[0] = getProcessId();
-              reaperStarted = true;
-            }
-            String trace = System.getProperty("org.apache.geode.internal.OSProcess.trace");
-            int secondsToSleep = (1000 * 60) * 1; // one minute
-            if (trace != null && trace.length() > 0) {
-              secondsToSleep = 1000; // every second
-            }
-            // reap all the pids we have every once in a while
-            while (true) {
-              SystemFailure.checkFailure();
-              try {
-                Iterator it = pids.iterator();
-                while (it.hasNext()) {
-                  Object o = it.next();
-                  int pid = ((Integer) o).intValue();
-                  if (reapPid(pid)) {
-                    try {
-                      it.remove();
-                      if (trace != null && trace.length() > 0) {
-                        System.out.println("reaped pid: " + pid);
+        ThreadGroup group =
+            LoggingThreadGroup.createThreadGroup(
+                LocalizedStrings.OSProcess_REAPER_THREAD.toLocalizedString());
+        reaperThread =
+            new Thread(
+                group,
+                new Runnable() {
+                  public void run() {
+                    synchronized (myPid) {
+                      myPid[0] = getProcessId();
+                      reaperStarted = true;
+                    }
+                    String trace = System.getProperty("org.apache.geode.internal.OSProcess.trace");
+                    int secondsToSleep = (1000 * 60) * 1; // one minute
+                    if (trace != null && trace.length() > 0) {
+                      secondsToSleep = 1000; // every second
+                    }
+                    // reap all the pids we have every once in a while
+                    while (true) {
+                      SystemFailure.checkFailure();
+                      try {
+                        Iterator it = pids.iterator();
+                        while (it.hasNext()) {
+                          Object o = it.next();
+                          int pid = ((Integer) o).intValue();
+                          if (reapPid(pid)) {
+                            try {
+                              it.remove();
+                              if (trace != null && trace.length() > 0) {
+                                System.out.println("reaped pid: " + pid);
+                              }
+                            } catch (Exception e) {
+                              // make sure and remove it since it was
+                              // reaped.
+                              pids.remove(o);
+                              if (trace != null && trace.length() > 0) {
+                                System.out.println("reaped pid: " + pid);
+                              }
+                              throw e;
+                            }
+                          }
+                        }
+                        Thread.sleep(secondsToSleep);
+                      } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                      } catch (Exception e) {
+                        // e.printStackTrace(); // DEBUG
+                        // ignore
                       }
-                    } catch (Exception e) {
-                      // make sure and remove it since it was
-                      // reaped.
-                      pids.remove(o);
-                      if (trace != null && trace.length() > 0) {
-                        System.out.println("reaped pid: " + pid);
-                      }
-                      throw e;
                     }
                   }
-                }
-                Thread.sleep(secondsToSleep);
-              } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-              } catch (Exception e) {
-                // e.printStackTrace(); // DEBUG
-                // ignore
-              }
-            }
-          }
-        }, "osprocess reaper");
+                },
+                "osprocess reaper");
         reaperThread.setDaemon(true);
         reaperThread.start();
       } else {
@@ -668,23 +684,20 @@ public class OSProcess {
   }
 
   /**
-   * Get the vm's process id.  On Linux, this returns the processId
-   * of the reaper thread.  If we are in {@linkplain
-   * PureJavaMode#isPure pure Java mode}, then <code>0</code> is
-   * returned.
+   * Get the vm's process id. On Linux, this returns the processId of the reaper thread. If we are
+   * in {@linkplain PureJavaMode#isPure pure Java mode}, then <code>0</code> is returned.
    *
    * @return the vm's process id.
    */
   public static int getId() {
     boolean done = false;
     int result = -1;
-    for (;;) {
+    for (; ; ) {
       synchronized (myPid) {
         done = reaperStarted;
         result = myPid[0];
       }
-      if (done)
-        break;
+      if (done) break;
 
       // wait for reaper thread to initialize myPid
       try {
@@ -707,11 +720,14 @@ public class OSProcess {
     } catch (FileNotFoundException e) {
       throw new IOException("File not found: " + newOutput, e);
     }
-    final PrintStream newPrintStream = new PrintStream(new BufferedOutputStream(newFileStream, 128), true);
+    final PrintStream newPrintStream =
+        new PrintStream(new BufferedOutputStream(newFileStream, 128), true);
     if (ENABLE_OUTPUT_REDIRECTION && !DISABLE_OUTPUT_REDIRECTION && setOut) {
       System.setOut(newPrintStream);
       if (System.err instanceof TeePrintStream) {
-        ((TeePrintStream) System.err).getTeeOutputStream().setBranchOutputStream(new BufferedOutputStream(newFileStream, 128));
+        ((TeePrintStream) System.err)
+            .getTeeOutputStream()
+            .setBranchOutputStream(new BufferedOutputStream(newFileStream, 128));
       } else {
         System.setErr(newPrintStream);
       }
@@ -725,8 +741,6 @@ public class OSProcess {
 
   private static native void redirectCOutput(String file);
 
-  /**
-   * Registers a signal handler for SIGQUIT on UNIX platforms.
-   */
+  /** Registers a signal handler for SIGQUIT on UNIX platforms. */
   private static native void registerSigQuitHandler();
 }

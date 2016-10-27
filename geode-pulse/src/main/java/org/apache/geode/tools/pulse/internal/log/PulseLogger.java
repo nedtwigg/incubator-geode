@@ -34,16 +34,17 @@ import org.apache.geode.tools.pulse.internal.data.PulseConstants;
 
 /**
  * Class PulseLogger
- * 
- * PulseLogger is the custom logger class for Pulse Web Application. It logs
- * messages to the file in custom format.
- * 
+ *
+ * <p>PulseLogger is the custom logger class for Pulse Web Application. It logs messages to the file
+ * in custom format.
+ *
  * @since GemFire version 7.0.Beta
  */
 public class PulseLogger {
 
   // Pulse Application Log File
-  private static final String LOG_FILE_NAME = PulseConstants.PULSE_LOG_FILE_LOCATION + "/" + PulseConstants.PULSE_LOG_FILE;
+  private static final String LOG_FILE_NAME =
+      PulseConstants.PULSE_LOG_FILE_LOCATION + "/" + PulseConstants.PULSE_LOG_FILE;
 
   // Date pattern to be used in log messages
   public static final String LOG_MESSAGE_DATE_PATTERN = "dd/MM/yyyy hh:mm:ss.SSS";
@@ -100,10 +101,9 @@ public class PulseLogger {
 
   /**
    * Class MessageFormatter
-   * 
-   * MessageFormatter is the custom formatter class for formatting the log
-   * messages.
-   * 
+   *
+   * <p>MessageFormatter is the custom formatter class for formatting the log messages.
+   *
    * @since GemFire version 7.0.Beta 2012-09-23
    */
   private static class MessageFormatter extends Formatter {

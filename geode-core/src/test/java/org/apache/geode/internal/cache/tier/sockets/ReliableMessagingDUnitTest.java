@@ -58,8 +58,8 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 
 /**
- * Tests the reliable messaging functionality - Client sends a periodic
- * ack to the primary server for the messages received.
+ * Tests the reliable messaging functionality - Client sends a periodic ack to the primary server
+ * for the messages received.
  */
 @Category(DistributedTest.class)
 public class ReliableMessagingDUnitTest extends JUnit4DistributedTestCase {
@@ -87,10 +87,11 @@ public class ReliableMessagingDUnitTest extends JUnit4DistributedTestCase {
   static int CLIENT_ACK_INTERVAL = 5000;
 
   /** name of the test region */
-  private static final String REGION_NAME = ReliableMessagingDUnitTest.class.getSimpleName() + "_Region";
+  private static final String REGION_NAME =
+      ReliableMessagingDUnitTest.class.getSimpleName() + "_Region";
 
   /*
-   * Test verifies that client is sending periodic ack to the primary 
+   * Test verifies that client is sending periodic ack to the primary
    * server for messages received.
    */
   @Test
@@ -104,9 +105,8 @@ public class ReliableMessagingDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * If the primary fails before receiving an ack from the messages it delivered
-   * then it should send an ack to the new primary so that new primary can sends
-   * QRM to other redundant servers.    
+   * If the primary fails before receiving an ack from the messages it delivered then it should send
+   * an ack to the new primary so that new primary can sends QRM to other redundant servers.
    */
   @Category(FlakyTest.class) // GEODE-694: async queuing
   @Test
@@ -126,7 +126,7 @@ public class ReliableMessagingDUnitTest extends JUnit4DistributedTestCase {
 
   /**
    * Wait for acknowledgment from client, verify creation time is correct
-   * 
+   *
    * @throws Exception
    */
   public static void waitForClientAck() throws Exception {
@@ -140,30 +140,35 @@ public class ReliableMessagingDUnitTest extends JUnit4DistributedTestCase {
     Map.Entry entry = (Map.Entry) iter.next();
     seo = (SequenceIdAndExpirationObject) entry.getValue();
 
-    for (;;) {
+    for (; ; ) {
       if (seo.getAckSend()) {
         break;
       }
-      assertTrue("Waited over " + maxWaitTime + " for client ack ", +(System.currentTimeMillis() - start) < maxWaitTime);
+      assertTrue(
+          "Waited over " + maxWaitTime + " for client ack ",
+          +(System.currentTimeMillis() - start) < maxWaitTime);
       sleep(1000);
     }
     LogWriterUtils.getLogWriter().info("seo = " + seo);
-    assertTrue("Creation time " + creationTime + " supposed to be same as seo " + seo.getCreationTime(), creationTime == seo.getCreationTime());
+    assertTrue(
+        "Creation time " + creationTime + " supposed to be same as seo " + seo.getCreationTime(),
+        creationTime == seo.getCreationTime());
   }
 
   public static void setCreationTimeTidAndSeq() {
     final Map map = pool.getThreadIdToSequenceIdMap();
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        synchronized (map) {
-          return map.entrySet().size() > 0;
-        }
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            synchronized (map) {
+              return map.entrySet().size() > 0;
+            }
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 10 * 1000, 200, true);
     Map.Entry entry;
     synchronized (map) {
@@ -177,7 +182,12 @@ public class ReliableMessagingDUnitTest extends JUnit4DistributedTestCase {
     LogWriterUtils.getLogWriter().info("seo is " + seo.toString());
     assertTrue("Creation time not set", creationTime != 0);
 
-    Object args[] = new Object[] { ((ThreadIdentifier) entry.getKey()).getMembershipID(), new Long(((ThreadIdentifier) entry.getKey()).getThreadID()), new Long(seo.getSequenceId()) };
+    Object args[] =
+        new Object[] {
+          ((ThreadIdentifier) entry.getKey()).getMembershipID(),
+          new Long(((ThreadIdentifier) entry.getKey()).getThreadID()),
+          new Long(seo.getSequenceId())
+        };
     server1.invoke(ReliableMessagingDUnitTest.class, "setTidAndSeq", args);
     server2.invoke(ReliableMessagingDUnitTest.class, "setTidAndSeq", args);
   }
@@ -220,7 +230,7 @@ public class ReliableMessagingDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  static private void sleep(int ms) {
+  private static void sleep(int ms) {
     try {
       Thread.sleep(ms);
     } catch (InterruptedException e) {
@@ -231,11 +241,13 @@ public class ReliableMessagingDUnitTest extends JUnit4DistributedTestCase {
   public static void checkServerCount(int expectedDeadServers, int expectedLiveServers) {
     final long maxWaitTime = 60000;
     long start = System.currentTimeMillis();
-    for (;;) {
+    for (; ; ) {
       if (pool.getConnectedServerCount() == expectedLiveServers) {
         break; // met
       }
-      assertTrue("Waited over " + maxWaitTime + "for active servers to become :" + expectedLiveServers, (System.currentTimeMillis() - start) < maxWaitTime);
+      assertTrue(
+          "Waited over " + maxWaitTime + "for active servers to become :" + expectedLiveServers,
+          (System.currentTimeMillis() - start) < maxWaitTime);
       sleep(2000);
     }
   }
@@ -252,49 +264,51 @@ public class ReliableMessagingDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * Wait for new value on bridge server to become visible in this cache
-   */
+  /** Wait for new value on bridge server to become visible in this cache */
   public static void waitForServerUpdate() {
     Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     assertNotNull(r1);
     final long maxWaitTime = 60000;
     final long start = System.currentTimeMillis();
-    for (;;) {
+    for (; ; ) {
       if (r1.getEntry("server-4").getValue().equals("val-4")) {
         break;
       }
-      assertTrue("Waited over " + maxWaitTime + " ms for entry to be refreshed", (System.currentTimeMillis() - start) < maxWaitTime);
+      assertTrue(
+          "Waited over " + maxWaitTime + " ms for entry to be refreshed",
+          (System.currentTimeMillis() - start) < maxWaitTime);
       sleep(1000);
     }
   }
 
   public static void setClientServerObserverForBeforeSendingClientAck() throws Exception {
     PoolImpl.BEFORE_SENDING_CLIENT_ACK_CALLBACK_FLAG = true;
-    origObserver = ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-      public void beforeSendingClientAck() {
-        LogWriterUtils.getLogWriter().info("beforeSendingClientAck invoked");
-        setCreationTimeTidAndSeq();
-        server1.invoke(() -> ReliableMessagingDUnitTest.stopServer());
-        checkServerCount(1, 1);
-        server2.invoke(() -> ReliableMessagingDUnitTest.checkEmptyDispatchedMsgs());
-        PoolImpl.BEFORE_SENDING_CLIENT_ACK_CALLBACK_FLAG = false;
-        LogWriterUtils.getLogWriter().info("end of beforeSendingClientAck");
-      }
-    });
+    origObserver =
+        ClientServerObserverHolder.setInstance(
+            new ClientServerObserverAdapter() {
+              public void beforeSendingClientAck() {
+                LogWriterUtils.getLogWriter().info("beforeSendingClientAck invoked");
+                setCreationTimeTidAndSeq();
+                server1.invoke(() -> ReliableMessagingDUnitTest.stopServer());
+                checkServerCount(1, 1);
+                server2.invoke(() -> ReliableMessagingDUnitTest.checkEmptyDispatchedMsgs());
+                PoolImpl.BEFORE_SENDING_CLIENT_ACK_CALLBACK_FLAG = false;
+                LogWriterUtils.getLogWriter().info("end of beforeSendingClientAck");
+              }
+            });
   }
 
-  /**
-   * Wait for magic callback
-   */
+  /** Wait for magic callback */
   public static void waitForCallback() {
     final long maxWaitTime = 60000;
     final long start = System.currentTimeMillis();
-    for (;;) {
+    for (; ; ) {
       if (!PoolImpl.BEFORE_SENDING_CLIENT_ACK_CALLBACK_FLAG) {
         break;
       }
-      assertTrue("Waited over " + maxWaitTime + "to send an ack from client : ", (System.currentTimeMillis() - start) < maxWaitTime);
+      assertTrue(
+          "Waited over " + maxWaitTime + "to send an ack from client : ",
+          (System.currentTimeMillis() - start) < maxWaitTime);
       sleep(2000);
     }
   }
@@ -305,8 +319,10 @@ public class ReliableMessagingDUnitTest extends JUnit4DistributedTestCase {
     server1 = host.getVM(0);
     server2 = host.getVM(1);
 
-    PORT1 = ((Integer) server1.invoke(() -> ReliableMessagingDUnitTest.createServerCache())).intValue();
-    PORT2 = ((Integer) server2.invoke(() -> ReliableMessagingDUnitTest.createServerCache())).intValue();
+    PORT1 =
+        ((Integer) server1.invoke(() -> ReliableMessagingDUnitTest.createServerCache())).intValue();
+    PORT2 =
+        ((Integer) server2.invoke(() -> ReliableMessagingDUnitTest.createServerCache())).intValue();
 
     CacheServerTestUtil.disableShufflingOfEndpoints();
     createClientCache(PORT1, PORT2);
@@ -354,7 +370,20 @@ public class ReliableMessagingDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(LOCATORS, "");
     cache = test.createCache(props);
     String host = NetworkUtils.getServerHostName(Host.getHost(0));
-    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, PORT1).addServer(host, PORT2).setSubscriptionEnabled(true).setSubscriptionRedundancy(1).setThreadLocalConnections(true).setMinConnections(6).setReadTimeout(20000).setPingInterval(10000).setRetryAttempts(5).setSubscriptionAckInterval(CLIENT_ACK_INTERVAL).create("ReliableMessagingDUnitTestPool");
+    PoolImpl p =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(host, PORT1)
+                .addServer(host, PORT2)
+                .setSubscriptionEnabled(true)
+                .setSubscriptionRedundancy(1)
+                .setThreadLocalConnections(true)
+                .setMinConnections(6)
+                .setReadTimeout(20000)
+                .setPingInterval(10000)
+                .setRetryAttempts(5)
+                .setSubscriptionAckInterval(CLIENT_ACK_INTERVAL)
+                .create("ReliableMessagingDUnitTestPool");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -388,5 +417,4 @@ public class ReliableMessagingDUnitTest extends JUnit4DistributedTestCase {
   public static void resetCallBack() {
     ClientServerObserverHolder.setInstance(origObserver);
   }
-
 }

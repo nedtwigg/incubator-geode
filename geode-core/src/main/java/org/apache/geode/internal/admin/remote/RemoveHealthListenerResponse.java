@@ -27,16 +27,18 @@ import org.apache.geode.distributed.internal.membership.*;
 
 /**
  * The response to adding a health listener.
+ *
  * @since GemFire 3.5
  */
 public final class RemoveHealthListenerResponse extends AdminResponse {
   // instance variables
 
   /**
-   * Returns a <code>RemoveHealthListenerResponse</code> that will be returned to the
-   * specified recipient.
+   * Returns a <code>RemoveHealthListenerResponse</code> that will be returned to the specified
+   * recipient.
    */
-  public static RemoveHealthListenerResponse create(DistributionManager dm, InternalDistributedMember recipient, int id) {
+  public static RemoveHealthListenerResponse create(
+      DistributionManager dm, InternalDistributedMember recipient, int id) {
     RemoveHealthListenerResponse m = new RemoveHealthListenerResponse();
     m.setRecipient(recipient);
     dm.removeHealthMonitor(recipient, id);

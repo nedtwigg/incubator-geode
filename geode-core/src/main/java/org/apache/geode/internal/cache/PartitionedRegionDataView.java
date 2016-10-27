@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * File comment
- */
+/** File comment */
 package org.apache.geode.internal.cache;
 
 import java.util.Set;
@@ -26,9 +24,7 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.cache.Region.Entry;
 import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 
-/**
- * @since GemFire 6.0tx
- */
+/** @since GemFire 6.0tx */
 public class PartitionedRegionDataView extends LocalRegionDataView {
 
   @Override
@@ -38,13 +34,15 @@ public class PartitionedRegionDataView extends LocalRegionDataView {
   }
 
   @Override
-  public void invalidateExistingEntry(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {
+  public void invalidateExistingEntry(
+      EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {
     PartitionedRegion pr = (PartitionedRegion) event.getLocalRegion();
     pr.invalidateInBucket(event);
   }
 
   @Override
-  public void destroyExistingEntry(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) {
+  public void destroyExistingEntry(
+      EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) {
     PartitionedRegion pr = (PartitionedRegion) event.getLocalRegion();
     pr.destroyInBucket(event, expectedOldValue);
   }
@@ -61,10 +59,30 @@ public class PartitionedRegionDataView extends LocalRegionDataView {
   }
 
   @Override
-  public Object findObject(KeyInfo key, LocalRegion r, boolean isCreate, boolean generateCallbacks, Object value, boolean disableCopyOnRead, boolean preferCD, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent, boolean returnTombstones) {
+  public Object findObject(
+      KeyInfo key,
+      LocalRegion r,
+      boolean isCreate,
+      boolean generateCallbacks,
+      Object value,
+      boolean disableCopyOnRead,
+      boolean preferCD,
+      ClientProxyMembershipID requestingClient,
+      EntryEventImpl clientEvent,
+      boolean returnTombstones) {
     TXStateProxy tx = r.cache.getTXMgr().internalSuspend();
     try {
-      return r.findObjectInSystem(key, isCreate, tx, generateCallbacks, value, disableCopyOnRead, preferCD, requestingClient, clientEvent, returnTombstones);
+      return r.findObjectInSystem(
+          key,
+          isCreate,
+          tx,
+          generateCallbacks,
+          value,
+          disableCopyOnRead,
+          preferCD,
+          requestingClient,
+          clientEvent,
+          returnTombstones);
     } finally {
       r.cache.getTXMgr().resume(tx);
     }
@@ -77,26 +95,54 @@ public class PartitionedRegionDataView extends LocalRegionDataView {
   }
 
   @Override
-  public Object getSerializedValue(LocalRegion localRegion, KeyInfo keyInfo, boolean doNotLockEntry, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent, boolean returnTombstones) throws DataLocationException {
+  public Object getSerializedValue(
+      LocalRegion localRegion,
+      KeyInfo keyInfo,
+      boolean doNotLockEntry,
+      ClientProxyMembershipID requestingClient,
+      EntryEventImpl clientEvent,
+      boolean returnTombstones)
+      throws DataLocationException {
     PartitionedRegion pr = (PartitionedRegion) localRegion;
-    return pr.getDataStore().getSerializedLocally(keyInfo, doNotLockEntry, requestingClient, clientEvent, returnTombstones);
+    return pr.getDataStore()
+        .getSerializedLocally(
+            keyInfo, doNotLockEntry, requestingClient, clientEvent, returnTombstones);
   }
 
   @Override
-  public boolean putEntryOnRemote(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) throws DataLocationException {
+  public boolean putEntryOnRemote(
+      EntryEventImpl event,
+      boolean ifNew,
+      boolean ifOld,
+      Object expectedOldValue,
+      boolean requireOldValue,
+      long lastModified,
+      boolean overwriteDestroyed)
+      throws DataLocationException {
     PartitionedRegion pr = (PartitionedRegion) event.getLocalRegion();
-    return pr.getDataStore().putLocally(event.getKeyInfo().getBucketId(), event, ifNew, ifOld, expectedOldValue, requireOldValue, lastModified);
+    return pr.getDataStore()
+        .putLocally(
+            event.getKeyInfo().getBucketId(),
+            event,
+            ifNew,
+            ifOld,
+            expectedOldValue,
+            requireOldValue,
+            lastModified);
   }
 
   @Override
-  public void destroyOnRemote(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) throws DataLocationException {
+  public void destroyOnRemote(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue)
+      throws DataLocationException {
     PartitionedRegion pr = (PartitionedRegion) event.getLocalRegion();
     pr.getDataStore().destroyLocally(event.getKeyInfo().getBucketId(), event, expectedOldValue);
     return;
   }
 
   @Override
-  public void invalidateOnRemote(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) throws DataLocationException {
+  public void invalidateOnRemote(
+      EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry)
+      throws DataLocationException {
     PartitionedRegion pr = (PartitionedRegion) event.getLocalRegion();
     pr.getDataStore().invalidateLocally(event.getKeyInfo().getBucketId(), event);
   }
@@ -108,24 +154,29 @@ public class PartitionedRegionDataView extends LocalRegionDataView {
   }
 
   @Override
-  public Entry getEntryOnRemote(KeyInfo keyInfo, LocalRegion localRegion, boolean allowTombstones) throws DataLocationException {
+  public Entry getEntryOnRemote(KeyInfo keyInfo, LocalRegion localRegion, boolean allowTombstones)
+      throws DataLocationException {
     PartitionedRegion pr = (PartitionedRegion) localRegion;
-    return pr.getDataStore().getEntryLocally(keyInfo.getBucketId(), keyInfo.getKey(), false, allowTombstones);
+    return pr.getDataStore()
+        .getEntryLocally(keyInfo.getBucketId(), keyInfo.getKey(), false, allowTombstones);
   }
 
   @Override
-  public Object getKeyForIterator(KeyInfo curr, LocalRegion currRgn, boolean rememberReads, boolean allowTombstones) {
+  public Object getKeyForIterator(
+      KeyInfo curr, LocalRegion currRgn, boolean rememberReads, boolean allowTombstones) {
     // do not perform a value check here, it will send out an
     // extra message. Also BucketRegion will check to see if
     // the value for this key is a removed token
     return curr.getKey();
   }
 
-  /**
-   * @see InternalDataView#getEntryForIterator(KeyInfo, LocalRegion, boolean, boolean)
-   */
+  /** @see InternalDataView#getEntryForIterator(KeyInfo, LocalRegion, boolean, boolean) */
   @Override
-  public Region.Entry<?, ?> getEntryForIterator(final KeyInfo keyInfo, final LocalRegion currRgn, boolean rememberRead, boolean allowTombstones) {
+  public Region.Entry<?, ?> getEntryForIterator(
+      final KeyInfo keyInfo,
+      final LocalRegion currRgn,
+      boolean rememberRead,
+      boolean allowTombstones) {
     return currRgn.nonTXGetEntry(keyInfo, false, allowTombstones);
   }
 }

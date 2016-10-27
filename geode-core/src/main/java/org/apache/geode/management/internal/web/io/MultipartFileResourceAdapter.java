@@ -23,9 +23,12 @@ import org.springframework.core.io.AbstractResource;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * The MultipartFileResourceAdapter class is an Adapter for adapting the MultipartFile interface into an instance of
- * the Resource interface in the context where a Resource object is required instead.
- * <p/>
+ * The MultipartFileResourceAdapter class is an Adapter for adapting the MultipartFile interface
+ * into an instance of the Resource interface in the context where a Resource object is required
+ * instead.
+ *
+ * <p>
+ *
  * @see org.springframework.core.io.AbstractResource
  * @see org.springframework.core.io.Resource
  * @see org.springframework.web.multipart.MultipartFile
@@ -64,5 +67,4 @@ public class MultipartFileResourceAdapter extends AbstractResource {
   public InputStream getInputStream() throws IOException {
     return getMultipartFile().getInputStream();
   }
-
 }

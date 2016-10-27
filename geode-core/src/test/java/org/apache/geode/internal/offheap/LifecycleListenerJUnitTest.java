@@ -29,16 +29,19 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Tests LifecycleListener
- */
+/** Tests LifecycleListener */
 @Category(UnitTest.class)
 public class LifecycleListenerJUnitTest {
 
-  private final List<LifecycleListenerCallback> afterCreateCallbacks = new ArrayList<LifecycleListenerCallback>();
-  private final List<LifecycleListenerCallback> afterReuseCallbacks = new ArrayList<LifecycleListenerCallback>();
-  private final List<LifecycleListenerCallback> beforeCloseCallbacks = new ArrayList<LifecycleListenerCallback>();
-  private final TestLifecycleListener listener = new TestLifecycleListener(this.afterCreateCallbacks, this.afterReuseCallbacks, this.beforeCloseCallbacks);
+  private final List<LifecycleListenerCallback> afterCreateCallbacks =
+      new ArrayList<LifecycleListenerCallback>();
+  private final List<LifecycleListenerCallback> afterReuseCallbacks =
+      new ArrayList<LifecycleListenerCallback>();
+  private final List<LifecycleListenerCallback> beforeCloseCallbacks =
+      new ArrayList<LifecycleListenerCallback>();
+  private final TestLifecycleListener listener =
+      new TestLifecycleListener(
+          this.afterCreateCallbacks, this.afterReuseCallbacks, this.beforeCloseCallbacks);
 
   @Rule
   public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
@@ -58,7 +61,11 @@ public class LifecycleListenerJUnitTest {
     LifecycleListener.removeLifecycleListener(this.listener);
 
     SlabImpl slab = new SlabImpl(1024); // 1k
-    MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+    MemoryAllocatorImpl ma =
+        MemoryAllocatorImpl.createForUnitTest(
+            new NullOutOfOffHeapMemoryListener(),
+            new NullOffHeapMemoryStats(),
+            new SlabImpl[] {slab});
 
     assertEquals(0, this.afterCreateCallbacks.size());
     assertEquals(0, this.afterReuseCallbacks.size());
@@ -77,7 +84,11 @@ public class LifecycleListenerJUnitTest {
   public void testCallbacksAreCalledAfterCreate() {
     LifecycleListener.addLifecycleListener(this.listener);
     SlabImpl slab = new SlabImpl(1024); // 1k
-    MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+    MemoryAllocatorImpl ma =
+        MemoryAllocatorImpl.createForUnitTest(
+            new NullOutOfOffHeapMemoryListener(),
+            new NullOffHeapMemoryStats(),
+            new SlabImpl[] {slab});
 
     assertEquals(1, this.afterCreateCallbacks.size());
     assertEquals(0, this.afterReuseCallbacks.size());
@@ -99,7 +110,11 @@ public class LifecycleListenerJUnitTest {
     System.setProperty(MemoryAllocatorImpl.FREE_OFF_HEAP_MEMORY_PROPERTY, "false");
 
     SlabImpl slab = new SlabImpl(1024); // 1k
-    MemoryAllocatorImpl ma = createAllocator(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+    MemoryAllocatorImpl ma =
+        createAllocator(
+            new NullOutOfOffHeapMemoryListener(),
+            new NullOffHeapMemoryStats(),
+            new SlabImpl[] {slab});
 
     assertEquals(1, this.afterCreateCallbacks.size());
     assertEquals(0, this.afterReuseCallbacks.size());
@@ -117,7 +132,11 @@ public class LifecycleListenerJUnitTest {
     assertEquals(1, this.afterReuseCallbacks.size());
     assertEquals(1, this.beforeCloseCallbacks.size());
 
-    MemoryAllocatorImpl ma2 = createAllocator(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+    MemoryAllocatorImpl ma2 =
+        createAllocator(
+            new NullOutOfOffHeapMemoryListener(),
+            new NullOffHeapMemoryStats(),
+            new SlabImpl[] {slab});
     assertEquals(null, ma2);
 
     assertEquals(1, this.afterCreateCallbacks.size());
@@ -131,7 +150,8 @@ public class LifecycleListenerJUnitTest {
     assertEquals(2, this.beforeCloseCallbacks.size());
   }
 
-  private MemoryAllocatorImpl createAllocator(OutOfOffHeapMemoryListener ooohml, OffHeapMemoryStats ohms, SlabImpl[] slab) {
+  private MemoryAllocatorImpl createAllocator(
+      OutOfOffHeapMemoryListener ooohml, OffHeapMemoryStats ohms, SlabImpl[] slab) {
     try {
       return MemoryAllocatorImpl.createForUnitTest(ooohml, ohms, slab);
     } catch (IllegalStateException e) {
@@ -153,7 +173,11 @@ public class LifecycleListenerJUnitTest {
     LifecycleListener.addLifecycleListener(this.listener);
 
     SlabImpl slab = new SlabImpl(1024); // 1k
-    MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+    MemoryAllocatorImpl ma =
+        MemoryAllocatorImpl.createForUnitTest(
+            new NullOutOfOffHeapMemoryListener(),
+            new NullOffHeapMemoryStats(),
+            new SlabImpl[] {slab});
 
     assertEquals(1, this.afterCreateCallbacks.size());
     assertEquals(0, this.afterReuseCallbacks.size());
@@ -166,7 +190,11 @@ public class LifecycleListenerJUnitTest {
     assertEquals(1, this.beforeCloseCallbacks.size());
 
     slab = new SlabImpl(1024); // 1k
-    MemoryAllocatorImpl ma2 = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+    MemoryAllocatorImpl ma2 =
+        MemoryAllocatorImpl.createForUnitTest(
+            new NullOutOfOffHeapMemoryListener(),
+            new NullOffHeapMemoryStats(),
+            new SlabImpl[] {slab});
 
     assertEquals(2, this.afterCreateCallbacks.size());
     assertEquals(0, this.afterReuseCallbacks.size());
@@ -196,7 +224,10 @@ public class LifecycleListenerJUnitTest {
     private final List<LifecycleListenerCallback> afterReuseCallbacks;
     private final List<LifecycleListenerCallback> beforeCloseCallbacks;
 
-    TestLifecycleListener(List<LifecycleListenerCallback> afterCreateCallbacks, List<LifecycleListenerCallback> afterReuseCallbacks, List<LifecycleListenerCallback> beforeCloseCallbacks) {
+    TestLifecycleListener(
+        List<LifecycleListenerCallback> afterCreateCallbacks,
+        List<LifecycleListenerCallback> afterReuseCallbacks,
+        List<LifecycleListenerCallback> beforeCloseCallbacks) {
       this.afterCreateCallbacks = afterCreateCallbacks;
       this.afterReuseCallbacks = afterReuseCallbacks;
       this.beforeCloseCallbacks = beforeCloseCallbacks;

@@ -41,7 +41,25 @@ public class GatewaySenderFunctionArgs implements Serializable {
   private final String[] gatewayEventFilters;
   private final String[] gatewayTransportFilters;
 
-  public GatewaySenderFunctionArgs(String id, Integer remoteDSId, Boolean parallel, Boolean manualStart, Integer socketBufferSize, Integer socketReadTimeout, Boolean enableBatchConflation, Integer batchSize, Integer batchTimeInterval, Boolean enablePersistence, String diskStoreName, Boolean diskSynchronous, Integer maxQueueMemory, Integer alertThreshold, Integer dispatcherThreads, String orderPolicy, String[] gatewayEventFilters, String[] gatewayTransportFilters) {
+  public GatewaySenderFunctionArgs(
+      String id,
+      Integer remoteDSId,
+      Boolean parallel,
+      Boolean manualStart,
+      Integer socketBufferSize,
+      Integer socketReadTimeout,
+      Boolean enableBatchConflation,
+      Integer batchSize,
+      Integer batchTimeInterval,
+      Boolean enablePersistence,
+      String diskStoreName,
+      Boolean diskSynchronous,
+      Integer maxQueueMemory,
+      Integer alertThreshold,
+      Integer dispatcherThreads,
+      String orderPolicy,
+      String[] gatewayEventFilters,
+      String[] gatewayTransportFilters) {
 
     this.id = id;
     this.remoteDSId = remoteDSId;

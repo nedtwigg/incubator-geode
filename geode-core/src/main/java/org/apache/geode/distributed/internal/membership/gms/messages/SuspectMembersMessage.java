@@ -83,9 +83,11 @@ public class SuspectMembersMessage extends HighPriorityDistributionMessage {
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     int size = in.readInt();
     for (int i = 0; i < size; i++) {
-      SuspectRequest sr = new SuspectRequest((InternalDistributedMember) DataSerializer.readObject(in), DataSerializer.readString(in));
+      SuspectRequest sr =
+          new SuspectRequest(
+              (InternalDistributedMember) DataSerializer.readObject(in),
+              DataSerializer.readString(in));
       suspectRequests.add(sr);
     }
   }
-
 }

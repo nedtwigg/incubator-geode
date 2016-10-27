@@ -36,15 +36,18 @@ public class Bug51616JUnitTest {
     final Cache cache = (new CacheFactory(props)).create();
     try {
       RegionFactory<Integer, String> rf1 = cache.createRegionFactory(RegionShortcut.PARTITION);
-      FixedPartitionAttributes fpa = FixedPartitionAttributes.createFixedPartition("one", true, 111);
-      PartitionAttributesFactory<Integer, String> paf = new PartitionAttributesFactory<Integer, String>();
+      FixedPartitionAttributes fpa =
+          FixedPartitionAttributes.createFixedPartition("one", true, 111);
+      PartitionAttributesFactory<Integer, String> paf =
+          new PartitionAttributesFactory<Integer, String>();
       paf.setTotalNumBuckets(111).setRedundantCopies(0).addFixedPartitionAttributes(fpa);
       rf1.setPartitionAttributes(paf.create());
 
       Region<Integer, String> region1 = rf1.create("region1");
 
       RegionFactory<String, Object> rf2 = cache.createRegionFactory(RegionShortcut.PARTITION);
-      PartitionAttributesFactory<String, Object> paf2 = new PartitionAttributesFactory<String, Object>();
+      PartitionAttributesFactory<String, Object> paf2 =
+          new PartitionAttributesFactory<String, Object>();
       paf2.setColocatedWith(region1.getFullPath()).setTotalNumBuckets(111).setRedundantCopies(0);
       PartitionAttributes<String, Object> attrs2 = paf2.create();
       rf2.setPartitionAttributes(attrs2);

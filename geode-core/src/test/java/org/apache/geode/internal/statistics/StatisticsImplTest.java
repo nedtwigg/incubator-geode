@@ -32,13 +32,10 @@ import org.junit.rules.ExpectedException;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit tests for {@link StatisticsImpl}.
- */
+/** Unit tests for {@link StatisticsImpl}. */
 @Category(UnitTest.class)
 public class StatisticsImplTest {
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @Rule public ExpectedException thrown = ExpectedException.none();
 
   private StatisticsImpl stats;
 
@@ -54,7 +51,9 @@ public class StatisticsImplTest {
     final int osStatFlags = 0;
     final boolean atomicIncrements = false;
     final StatisticsManager system = mock(StatisticsManager.class);
-    stats = new LocalStatisticsImpl(type, textId, numbericId, uniqueId, atomicIncrements, osStatFlags, system);
+    stats =
+        new LocalStatisticsImpl(
+            type, textId, numbericId, uniqueId, atomicIncrements, osStatFlags, system);
   }
 
   @Test
@@ -117,10 +116,12 @@ public class StatisticsImplTest {
       when(supplier1.getAsInt()).thenThrow(NullPointerException.class);
       stats.setIntSupplier(4, supplier1);
       assertEquals(1, stats.invokeSuppliers());
-      verify(logger, times(1)).warn(anyString(), anyString(), anyInt(), isA(NullPointerException.class));
+      verify(logger, times(1))
+          .warn(anyString(), anyString(), anyInt(), isA(NullPointerException.class));
       assertEquals(1, stats.invokeSuppliers());
       //Make sure the logger isn't invoked again
-      verify(logger, times(1)).warn(anyString(), anyString(), anyInt(), isA(NullPointerException.class));
+      verify(logger, times(1))
+          .warn(anyString(), anyString(), anyInt(), isA(NullPointerException.class));
     } finally {
       StatisticsImpl.logger = originalLogger;
     }

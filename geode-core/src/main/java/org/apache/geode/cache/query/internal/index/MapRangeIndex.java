@@ -27,10 +27,38 @@ import org.apache.geode.internal.cache.RegionEntry;
 public class MapRangeIndex extends AbstractMapIndex {
   protected final RegionEntryToValuesMap entryToMapKeysMap;
 
-  MapRangeIndex(String indexName, Region region, String fromClause, String indexedExpression, String projectionAttributes, String origFromClause, String origIndxExpr, String[] defintions, boolean isAllKeys, String[] multiIndexingKeysPattern, Object[] mapKeys, IndexStatistics stats) {
-    super(indexName, region, fromClause, indexedExpression, projectionAttributes, origFromClause, origIndxExpr, defintions, isAllKeys, multiIndexingKeysPattern, mapKeys, stats);
+  MapRangeIndex(
+      String indexName,
+      Region region,
+      String fromClause,
+      String indexedExpression,
+      String projectionAttributes,
+      String origFromClause,
+      String origIndxExpr,
+      String[] defintions,
+      boolean isAllKeys,
+      String[] multiIndexingKeysPattern,
+      Object[] mapKeys,
+      IndexStatistics stats) {
+    super(
+        indexName,
+        region,
+        fromClause,
+        indexedExpression,
+        projectionAttributes,
+        origFromClause,
+        origIndxExpr,
+        defintions,
+        isAllKeys,
+        multiIndexingKeysPattern,
+        mapKeys,
+        stats);
     RegionAttributes ra = region.getAttributes();
-    this.entryToMapKeysMap = new RegionEntryToValuesMap(new java.util.concurrent.ConcurrentHashMap(ra.getInitialCapacity(), ra.getLoadFactor(), ra.getConcurrencyLevel()), true /* user target list as the map keys will be unique*/);
+    this.entryToMapKeysMap =
+        new RegionEntryToValuesMap(
+            new java.util.concurrent.ConcurrentHashMap(
+                ra.getInitialCapacity(), ra.getLoadFactor(), ra.getConcurrencyLevel()),
+            true /* user target list as the map keys will be unique*/);
   }
 
   @Override
@@ -112,7 +140,8 @@ public class MapRangeIndex extends AbstractMapIndex {
     }
   }
 
-  protected void doIndexAddition(Object mapKey, Object indexKey, Object value, RegionEntry entry) throws IMQException {
+  protected void doIndexAddition(Object mapKey, Object indexKey, Object value, RegionEntry entry)
+      throws IMQException {
     boolean isPr = this.region instanceof BucketRegion;
     // Get RangeIndex for it or create it if absent
     RangeIndex rg = (RangeIndex) this.mapKeyToValueIndex.get(mapKey);
@@ -124,7 +153,17 @@ public class MapRangeIndex extends AbstractMapIndex {
         prIndex = (PartitionedIndex) this.getPRIndex();
         prIndex.incNumMapKeysStats(mapKey);
       }
-      rg = new RangeIndex(indexName + "-" + mapKey, region, fromClause, indexedExpression, projectionAttributes, this.originalFromClause, this.originalIndexedExpression, this.canonicalizedDefinitions, stats);
+      rg =
+          new RangeIndex(
+              indexName + "-" + mapKey,
+              region,
+              fromClause,
+              indexedExpression,
+              projectionAttributes,
+              this.originalFromClause,
+              this.originalIndexedExpression,
+              this.canonicalizedDefinitions,
+              stats);
       //Shobhit: We need evaluator to verify RegionEntry and IndexEntry inconsistency.
       rg.evaluator = this.evaluator;
       this.mapKeyToValueIndex.put(mapKey, rg);
@@ -143,7 +182,8 @@ public class MapRangeIndex extends AbstractMapIndex {
     this.entryToMapKeysMap.add(entry, mapKey);
   }
 
-  protected void saveIndexAddition(Object mapKey, Object indexKey, Object value, RegionEntry entry) throws IMQException {
+  protected void saveIndexAddition(Object mapKey, Object indexKey, Object value, RegionEntry entry)
+      throws IMQException {
     boolean isPr = this.region instanceof BucketRegion;
     // Get RangeIndex for it or create it if absent
     RangeIndex rg = (RangeIndex) this.mapKeyToValueIndex.get(mapKey);
@@ -155,7 +195,17 @@ public class MapRangeIndex extends AbstractMapIndex {
         prIndex = (PartitionedIndex) this.getPRIndex();
         prIndex.incNumMapKeysStats(mapKey);
       }
-      rg = new RangeIndex(indexName + "-" + mapKey, region, fromClause, indexedExpression, projectionAttributes, this.originalFromClause, this.originalIndexedExpression, this.canonicalizedDefinitions, stats);
+      rg =
+          new RangeIndex(
+              indexName + "-" + mapKey,
+              region,
+              fromClause,
+              indexedExpression,
+              projectionAttributes,
+              this.originalFromClause,
+              this.originalIndexedExpression,
+              this.canonicalizedDefinitions,
+              stats);
       rg.evaluator = this.evaluator;
       this.mapKeyToValueIndex.put(mapKey, rg);
       if (!isPr) {

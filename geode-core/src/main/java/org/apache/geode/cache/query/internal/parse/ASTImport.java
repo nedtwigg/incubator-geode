@@ -24,8 +24,7 @@ import org.apache.geode.cache.query.internal.QCompiler;
 public class ASTImport extends GemFireAST {
   private static final long serialVersionUID = 6002078657881181949L;
 
-  public ASTImport() {
-  }
+  public ASTImport() {}
 
   public ASTImport(Token t) {
     super(t);

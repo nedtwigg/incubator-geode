@@ -41,83 +41,67 @@ import org.apache.geode.internal.cache.tier.sockets.ClientUpdateMessageImpl.CqNa
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * This new class acts as a wrapper for the existing
- * <code>ClientUpdateMessageImpl</code>. Now, the <code>HARegionQueue</code>s
- * will contain instances of <code>HAEventWrapper</code> as value, instead
- * that of <code>ClientUpdateMessagesImpl</code>. It implements the
- * <code>Conflatable</code> interface to fit itself into the
- * <code>HARegionQueue</code> mechanics. It also has a property to indicate
- * the number of <code>HARegionQueue</code>s referencing this instance.
- * 
+ * This new class acts as a wrapper for the existing <code>ClientUpdateMessageImpl</code>. Now, the
+ * <code>HARegionQueue</code>s will contain instances of <code>HAEventWrapper</code> as value,
+ * instead that of <code>ClientUpdateMessagesImpl</code>. It implements the <code>Conflatable</code>
+ * interface to fit itself into the <code>HARegionQueue</code> mechanics. It also has a property to
+ * indicate the number of <code>HARegionQueue</code>s referencing this instance.
+ *
  * @since GemFire 5.7
- * 
  */
 public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Sizeable {
   private static final long serialVersionUID = 5874226899495609988L;
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * The name of the <code>Region</code> that was updated
-   */
+  /** The name of the <code>Region</code> that was updated */
   private String regionName;
 
-  /**
-   * The key that was updated
-   */
+  /** The key that was updated */
   private Object keyOfInterest;
 
-  /**
-   * If the event should be conflated.
-   */
+  /** If the event should be conflated. */
   private boolean shouldConflate = false;
 
-  /**
-   * The event id of the event
-   */
+  /** The event id of the event */
   private EventID eventIdentifier;
 
-  /**
-   * The underlying map for all the ha region queues associated with a bridge
-   * server.
-   */
+  /** The underlying map for all the ha region queues associated with a bridge server. */
   private Map haContainer;
 
   /**
-   * Indicates the number of <code>HARegionQueue</code>s referencing
-   * <code>this</code> instance.
-   * All access should be done using rcUpdater.
+   * Indicates the number of <code>HARegionQueue</code>s referencing <code>this</code> instance. All
+   * access should be done using rcUpdater.
    */
   @SuppressWarnings("unused")
   private volatile long referenceCount;
-  private static final AtomicLongFieldUpdater<HAEventWrapper> rcUpdater = AtomicLongFieldUpdater.newUpdater(HAEventWrapper.class, "referenceCount");
+
+  private static final AtomicLongFieldUpdater<HAEventWrapper> rcUpdater =
+      AtomicLongFieldUpdater.newUpdater(HAEventWrapper.class, "referenceCount");
 
   /**
-   * If true, the entry containing this HAEventWrapper instance will not be
-   * removed from the haContainer, even if the referenceCount value is zero.
+   * If true, the entry containing this HAEventWrapper instance will not be removed from the
+   * haContainer, even if the referenceCount value is zero.
    */
   private transient boolean putInProgress = false;
 
   /**
-   * A value true indicates that this instance is not used in the
-   * <code>haContainer</code>. So any changes in this instance will not be
-   * visible to the <code>haContainer</code>.
+   * A value true indicates that this instance is not used in the <code>haContainer</code>. So any
+   * changes in this instance will not be visible to the <code>haContainer</code>.
    */
   private transient boolean isRefFromHAContainer = false;
 
-  /**
-   * A reference to its <code>ClientUpdateMessage</code> instance.
-   */
+  /** A reference to its <code>ClientUpdateMessage</code> instance. */
   private ClientUpdateMessage clientUpdateMessage = null;
 
   /**
-   * This will hold the CQ list while its ClientUpdateMessageImpl is overflown
-   * to disk, and reassign it back when it's faulted-in.
+   * This will hold the CQ list while its ClientUpdateMessageImpl is overflown to disk, and reassign
+   * it back when it's faulted-in.
    */
   private ClientCqConcurrentMap clientCqs = null;
 
   /**
    * Parameterized constructor.
-   * 
+   *
    * @param event
    */
   public HAEventWrapper(ClientUpdateMessage event) {
@@ -130,25 +114,21 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
     this.clientCqs = ((ClientUpdateMessageImpl) event).getClientCqs();
   }
 
-  /**
-   * @param eventId
-   */
+  /** @param eventId */
   public HAEventWrapper(EventID eventId) {
     this.eventIdentifier = eventId;
-    this.clientUpdateMessage = new ClientUpdateMessageImpl(EnumListenerEvent.AFTER_CREATE, new ClientProxyMembershipID(), eventId);
+    this.clientUpdateMessage =
+        new ClientUpdateMessageImpl(
+            EnumListenerEvent.AFTER_CREATE, new ClientProxyMembershipID(), eventId);
     rcUpdater.set(this, 0);
   }
 
-  /**
-   * Default constructor
-   * 
-   */
-  public HAEventWrapper() {
-  }
+  /** Default constructor */
+  public HAEventWrapper() {}
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.cache.Conflatable#getEventId()
    */
   public EventID getEventId() {
@@ -157,7 +137,7 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.cache.Conflatable#getKeyToConflate()
    */
   public Object getKeyToConflate() {
@@ -166,7 +146,7 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.cache.Conflatable#getRegionToConflate()
    */
   public String getRegionToConflate() {
@@ -175,7 +155,7 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.cache.Conflatable#getValueToConflate()
    */
   public Object getValueToConflate() {
@@ -184,7 +164,7 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.cache.Conflatable#setLatestValue(java.lang.Object)
    */
   public void setLatestValue(Object value) {
@@ -193,7 +173,7 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.cache.Conflatable#shouldBeConflated()
    */
   public boolean shouldBeConflated() {
@@ -205,9 +185,9 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
   }
 
   /**
-   * Use this method <B>only</B> when put operation on HARegionQueue is in
-   * progress. It'll always return null otherwise.
-   * 
+   * Use this method <B>only</B> when put operation on HARegionQueue is in progress. It'll always
+   * return null otherwise.
+   *
    * @return an instance of <code>ClientUpdateMessage</code> implementation.
    */
   public ClientUpdateMessage getClientUpdateMessage() {
@@ -239,16 +219,11 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
   }
 
   /**
-   * This implementation considers only the EventID of
-   * <code>HAEventWrapper</code> for the equality test. It allows an instance
-   * of {@link EventID} to be tested for equality.
-   * 
-   * @param other
-   *          The instance of HAEventWrapper or EventID to be tested for
-   *          equality.
-   * 
-   * @return boolean true if <code>this</code> object's event id matches with
-   *         that of other.
+   * This implementation considers only the EventID of <code>HAEventWrapper</code> for the equality
+   * test. It allows an instance of {@link EventID} to be tested for equality.
+   *
+   * @param other The instance of HAEventWrapper or EventID to be tested for equality.
+   * @return boolean true if <code>this</code> object's event id matches with that of other.
    */
   @Override
   public boolean equals(Object other) {
@@ -261,7 +236,7 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
 
   /**
    * Returns the hash code of underlying event id.
-   * 
+   *
    * @return int The hash code of underlying EventID instance.
    */
   @Override
@@ -272,18 +247,40 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
   @Override
   public String toString() {
     if (this.clientUpdateMessage != null) {
-      return "HAEventWrapper[refCount=" + getReferenceCount() + "; msg=" + this.clientUpdateMessage + "]";
+      return "HAEventWrapper[refCount="
+          + getReferenceCount()
+          + "; msg="
+          + this.clientUpdateMessage
+          + "]";
     } else {
-      return "HAEventWrapper[region=" + this.regionName + "; key=" + this.keyOfInterest + "; refCount=" + getReferenceCount() + "; inContainer=" + this.isRefFromHAContainer + "; putInProgress=" + this.putInProgress + "; event=" + this.eventIdentifier + ((this.clientUpdateMessage == null) ? "; no message" : ";with message") + ((this.clientUpdateMessage == null) ? "" : ("; op=" + this.clientUpdateMessage.getOperation())) + ((this.clientUpdateMessage == null) ? "" : ("; version=" + this.clientUpdateMessage.getVersionTag())) + "]";
+      return "HAEventWrapper[region="
+          + this.regionName
+          + "; key="
+          + this.keyOfInterest
+          + "; refCount="
+          + getReferenceCount()
+          + "; inContainer="
+          + this.isRefFromHAContainer
+          + "; putInProgress="
+          + this.putInProgress
+          + "; event="
+          + this.eventIdentifier
+          + ((this.clientUpdateMessage == null) ? "; no message" : ";with message")
+          + ((this.clientUpdateMessage == null)
+              ? ""
+              : ("; op=" + this.clientUpdateMessage.getOperation()))
+          + ((this.clientUpdateMessage == null)
+              ? ""
+              : ("; version=" + this.clientUpdateMessage.getVersionTag()))
+          + "]";
     }
   }
 
   /**
-   * Calls toData() on its clientUpdateMessage present in the
-   * haContainer (client-messages-region or the map).
-   * 
-   * @param out
-   *          The output stream which the object should be written to.
+   * Calls toData() on its clientUpdateMessage present in the haContainer (client-messages-region or
+   * the map).
+   *
+   * @param out The output stream which the object should be written to.
    */
   public void toData(DataOutput out) throws IOException {
     ClientUpdateMessageImpl cum = (ClientUpdateMessageImpl) this.haContainer.get(this);
@@ -298,7 +295,9 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
       DataSerializer.writePrimitiveBoolean(false, out);
       DataSerializer.writeObject(new EventID(), out);
       // Create a dummy ClientUpdateMessageImpl instance
-      cum = new ClientUpdateMessageImpl(EnumListenerEvent.AFTER_CREATE, new ClientProxyMembershipID(), null);
+      cum =
+          new ClientUpdateMessageImpl(
+              EnumListenerEvent.AFTER_CREATE, new ClientProxyMembershipID(), null);
     }
     InternalDataSerializer.invokeToData(cum, out);
     if (cum.hasCqs()) {
@@ -307,11 +306,10 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
   }
 
   /**
-   * Calls fromData() on ClientUpdateMessage and sets it as its member variable.
-   * Also, sets the referenceCount to zero.
-   * 
-   * @param in
-   *          The input stream from which the object should be constructed.
+   * Calls fromData() on ClientUpdateMessage and sets it as its member variable. Also, sets the
+   * referenceCount to zero.
+   *
+   * @param in The input stream from which the object should be constructed.
    */
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     if (DataSerializer.readPrimitiveBoolean(in)) {
@@ -329,32 +327,35 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
           } else {
             cqMap = new ClientCqConcurrentMap(size, 1.0f, 1);
             for (int i = 0; i < size; i++) {
-              ClientProxyMembershipID key = DataSerializer.<ClientProxyMembershipID> readObject(in);
+              ClientProxyMembershipID key = DataSerializer.<ClientProxyMembershipID>readObject(in);
               CqNameToOp value;
               {
                 byte typeByte = in.readByte();
                 if (typeByte == DSCODE.HASH_MAP) {
                   int cqNamesSize = InternalDataSerializer.readArrayLength(in);
                   if (cqNamesSize == -1) {
-                    throw new IllegalStateException("The value of a ConcurrentHashMap is not allowed to be null.");
+                    throw new IllegalStateException(
+                        "The value of a ConcurrentHashMap is not allowed to be null.");
                   } else if (cqNamesSize == 1) {
-                    String cqNamesKey = DataSerializer.<String> readObject(in);
-                    Integer cqNamesValue = DataSerializer.<Integer> readObject(in);
+                    String cqNamesKey = DataSerializer.<String>readObject(in);
+                    Integer cqNamesValue = DataSerializer.<Integer>readObject(in);
                     value = new CqNameToOpSingleEntry(cqNamesKey, cqNamesValue);
                   } else if (cqNamesSize == 0) {
                     value = new CqNameToOpSingleEntry(null, 0);
                   } else {
                     value = new CqNameToOpHashMap(cqNamesSize);
                     for (int j = 0; j < cqNamesSize; j++) {
-                      String cqNamesKey = DataSerializer.<String> readObject(in);
-                      Integer cqNamesValue = DataSerializer.<Integer> readObject(in);
+                      String cqNamesKey = DataSerializer.<String>readObject(in);
+                      Integer cqNamesValue = DataSerializer.<Integer>readObject(in);
                       value.add(cqNamesKey, cqNamesValue);
                     }
                   }
                 } else if (typeByte == DSCODE.NULL) {
-                  throw new IllegalStateException("The value of a ConcurrentHashMap is not allowed to be null.");
+                  throw new IllegalStateException(
+                      "The value of a ConcurrentHashMap is not allowed to be null.");
                 } else {
-                  throw new IllegalStateException("Expected DSCODE.NULL or DSCODE.HASH_MAP but read " + typeByte);
+                  throw new IllegalStateException(
+                      "Expected DSCODE.NULL or DSCODE.HASH_MAP but read " + typeByte);
                 }
               }
               cqMap.put(key, value);
@@ -376,7 +377,8 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
       // hasCq will be false here, so client CQs are not read from this input
       // stream.
       if (logger.isDebugEnabled()) {
-        logger.debug("HAEventWrapper.fromData(): The event has already been sent to the client by the primary server.");
+        logger.debug(
+            "HAEventWrapper.fromData(): The event has already been sent to the client by the primary server.");
       }
     }
   }
@@ -386,10 +388,10 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
   }
 
   /**
-   * Returning zero as default size. This is because this method will be called
-   * only in case of ha-overflow, in which case, we ignore size of instances of
-   * <code>HAEventWrapper</code>, as they are never overflown to disk.
-   * 
+   * Returning zero as default size. This is because this method will be called only in case of
+   * ha-overflow, in which case, we ignore size of instances of <code>HAEventWrapper</code>, as they
+   * are never overflown to disk.
+   *
    * @return int Size of this instance in bytes.
    */
   public int getSizeInBytes() {
@@ -412,5 +414,4 @@ public class HAEventWrapper implements Conflatable, DataSerializableFixedID, Siz
   public long decAndGetReferenceCount() {
     return rcUpdater.decrementAndGet(this);
   }
-
 }

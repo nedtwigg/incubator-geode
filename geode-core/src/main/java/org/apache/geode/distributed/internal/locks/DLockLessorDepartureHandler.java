@@ -21,13 +21,11 @@ import org.apache.geode.distributed.internal.membership.*;
 
 /**
  * Provides hook for handling departure of a lease holder (lessor).
- * <p>
- * Implementation is optional and will be called from 
- * <code>DLockGrantor.handlehandleDepartureOf(Serializable)</code>
  *
+ * <p>Implementation is optional and will be called from <code>
+ * DLockGrantor.handlehandleDepartureOf(Serializable)</code>
  */
 public interface DLockLessorDepartureHandler {
 
   public void handleDepartureOf(InternalDistributedMember owner, DLockGrantor grantor);
-
 }

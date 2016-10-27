@@ -49,9 +49,7 @@ import org.apache.geode.internal.cache.PartitionedRegionHelper;
 import org.apache.geode.internal.cache.partitioned.Bucket;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- *
- */
+/** */
 public class MembershipViewRequest extends DistributionMessage implements MessageWithReply {
 
   private static final Logger logger = LogService.getLogger();
@@ -60,9 +58,7 @@ public class MembershipViewRequest extends DistributionMessage implements Messag
   private int processorId;
   private boolean targetReinitializing;
 
-  public MembershipViewRequest() {
-
-  }
+  public MembershipViewRequest() {}
 
   public MembershipViewRequest(String regionPath, int processorId, boolean targetReinitializing) {
     this.regionPath = regionPath;
@@ -70,30 +66,40 @@ public class MembershipViewRequest extends DistributionMessage implements Messag
     this.targetReinitializing = targetReinitializing;
   }
 
-  public static PersistentMembershipView send(InternalDistributedMember recipient, DM dm, String regionPath, boolean targetReinitializing) throws ReplyException {
-    MembershipViewRequestReplyProcessor processor = new MembershipViewRequestReplyProcessor(dm, recipient);
-    MembershipViewRequest msg = new MembershipViewRequest(regionPath, processor.getProcessorId(), targetReinitializing);
+  public static PersistentMembershipView send(
+      InternalDistributedMember recipient, DM dm, String regionPath, boolean targetReinitializing)
+      throws ReplyException {
+    MembershipViewRequestReplyProcessor processor =
+        new MembershipViewRequestReplyProcessor(dm, recipient);
+    MembershipViewRequest msg =
+        new MembershipViewRequest(regionPath, processor.getProcessorId(), targetReinitializing);
     msg.setRecipient(recipient);
     dm.putOutgoing(msg);
     return processor.getResult();
   }
 
-  public static Set<PersistentMembershipView> send(Set<InternalDistributedMember> recipients, DM dm, String regionPath) throws ReplyException {
-    MembershipViewRequestReplyProcessor processor = new MembershipViewRequestReplyProcessor(dm, recipients);
-    MembershipViewRequest msg = new MembershipViewRequest(regionPath, processor.getProcessorId(), false);
+  public static Set<PersistentMembershipView> send(
+      Set<InternalDistributedMember> recipients, DM dm, String regionPath) throws ReplyException {
+    MembershipViewRequestReplyProcessor processor =
+        new MembershipViewRequestReplyProcessor(dm, recipients);
+    MembershipViewRequest msg =
+        new MembershipViewRequest(regionPath, processor.getProcessorId(), false);
     msg.setRecipients(recipients);
     dm.putOutgoing(msg);
     return processor.getResults();
   }
 
   @Override
-  final public int getProcessorType() {
-    return this.targetReinitializing ? DistributionManager.WAITING_POOL_EXECUTOR : DistributionManager.HIGH_PRIORITY_EXECUTOR;
+  public final int getProcessorType() {
+    return this.targetReinitializing
+        ? DistributionManager.WAITING_POOL_EXECUTOR
+        : DistributionManager.HIGH_PRIORITY_EXECUTOR;
   }
 
   @Override
   protected void process(DistributionManager dm) {
-    int initLevel = this.targetReinitializing ? LocalRegion.AFTER_INITIAL_IMAGE : LocalRegion.ANY_INIT;
+    int initLevel =
+        this.targetReinitializing ? LocalRegion.AFTER_INITIAL_IMAGE : LocalRegion.ANY_INIT;
     int oldLevel = LocalRegion.setThreadInitLevelRequirement(initLevel);
 
     PersistentMembershipView view = null;
@@ -108,7 +114,9 @@ public class MembershipViewRequest extends DistributionMessage implements Messag
       if (region instanceof DistributedRegion) {
         persistenceAdvisor = ((DistributedRegion) region).getPersistenceAdvisor();
       } else if (region == null) {
-        Bucket proxy = PartitionedRegionHelper.getProxyBucketRegion(GemFireCacheImpl.getInstance(), this.regionPath, false);
+        Bucket proxy =
+            PartitionedRegionHelper.getProxyBucketRegion(
+                GemFireCacheImpl.getInstance(), this.regionPath, false);
         if (proxy != null) {
           persistenceAdvisor = proxy.getPersistenceAdvisor();
         }
@@ -135,7 +143,8 @@ public class MembershipViewRequest extends DistributionMessage implements Messag
       replyMsg.setProcessorId(processorId);
       replyMsg.view = view;
       if (logger.isDebugEnabled()) {
-        logger.debug("MembershipViewRequest returning view {} for region {}", view, this.regionPath);
+        logger.debug(
+            "MembershipViewRequest returning view {} for region {}", view, this.regionPath);
       }
       if (exception != null) {
         replyMsg.setException(exception);

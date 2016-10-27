@@ -43,8 +43,7 @@ import org.apache.geode.test.junit.runners.CategoryWithParameterizedRunnerFactor
 @Parameterized.UseParametersRunnerFactory(CategoryWithParameterizedRunnerFactory.class)
 public class RestAPIsOnGroupsFunctionExecutionDUnitTest extends RestAPITestBase {
 
-  @Parameterized.Parameter
-  public String urlContext;
+  @Parameterized.Parameter public String urlContext;
 
   @Parameterized.Parameters
   public static Collection<String> data() {
@@ -57,13 +56,28 @@ public class RestAPIsOnGroupsFunctionExecutionDUnitTest extends RestAPITestBase 
   }
 
   private void setupCacheWithGroupsAndFunction() {
-    restURLs.add(vm0.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm0.getHost().getHostName(), "g0,gm", urlContext)));
-    restURLs.add(vm1.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm1.getHost().getHostName(), "g1", urlContext)));
-    restURLs.add(vm2.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm2.getHost().getHostName(), "g0,g1", urlContext)));
+    restURLs.add(
+        vm0.invoke(
+            "createCacheWithGroups",
+            () -> createCacheWithGroups(vm0.getHost().getHostName(), "g0,gm", urlContext)));
+    restURLs.add(
+        vm1.invoke(
+            "createCacheWithGroups",
+            () -> createCacheWithGroups(vm1.getHost().getHostName(), "g1", urlContext)));
+    restURLs.add(
+        vm2.invoke(
+            "createCacheWithGroups",
+            () -> createCacheWithGroups(vm2.getHost().getHostName(), "g0,g1", urlContext)));
 
-    vm0.invoke("registerFunction(new OnGroupsFunction())", () -> FunctionService.registerFunction(new OnGroupsFunction()));
-    vm1.invoke("registerFunction(new OnGroupsFunction())", () -> FunctionService.registerFunction(new OnGroupsFunction()));
-    vm2.invoke("registerFunction(new OnGroupsFunction())", () -> FunctionService.registerFunction(new OnGroupsFunction()));
+    vm0.invoke(
+        "registerFunction(new OnGroupsFunction())",
+        () -> FunctionService.registerFunction(new OnGroupsFunction()));
+    vm1.invoke(
+        "registerFunction(new OnGroupsFunction())",
+        () -> FunctionService.registerFunction(new OnGroupsFunction()));
+    vm2.invoke(
+        "registerFunction(new OnGroupsFunction())",
+        () -> FunctionService.registerFunction(new OnGroupsFunction()));
   }
 
   @Test
@@ -71,7 +85,8 @@ public class RestAPIsOnGroupsFunctionExecutionDUnitTest extends RestAPITestBase 
     setupCacheWithGroupsAndFunction();
 
     for (int i = 0; i < 10; i++) {
-      CloseableHttpResponse response = executeFunctionThroughRestCall("OnGroupsFunction", null, null, null, "g0,g1", null);
+      CloseableHttpResponse response =
+          executeFunctionThroughRestCall("OnGroupsFunction", null, null, null, "g0,g1", null);
       assertHttpResponse(response, 200, 3);
     }
 
@@ -87,7 +102,8 @@ public class RestAPIsOnGroupsFunctionExecutionDUnitTest extends RestAPITestBase 
 
     //Execute function randomly (in iteration) on all available (per VM) REST end-points and verify its result
     for (int i = 0; i < 10; i++) {
-      CloseableHttpResponse response = executeFunctionThroughRestCall("OnGroupsFunction", null, "someKey", null, "g1", null);
+      CloseableHttpResponse response =
+          executeFunctionThroughRestCall("OnGroupsFunction", null, "someKey", null, "g1", null);
       assertHttpResponse(response, 500, 0);
     }
 
@@ -101,14 +117,17 @@ public class RestAPIsOnGroupsFunctionExecutionDUnitTest extends RestAPITestBase 
 
     //Step-3 : Execute function randomly (in iteration) on all available (per VM) REST end-points and verify its result
     for (int i = 0; i < 5; i++) {
-      CloseableHttpResponse response = executeFunctionThroughRestCall("OnGroupsFunction", null, null, null, "no%20such%20group", null);
+      CloseableHttpResponse response =
+          executeFunctionThroughRestCall(
+              "OnGroupsFunction", null, null, null, "no%20such%20group", null);
       assertHttpResponse(response, 500, 0);
     }
     assertCorrectInvocationCount(0, vm0, vm1, vm2);
 
     for (int i = 0; i < 5; i++) {
 
-      CloseableHttpResponse response = executeFunctionThroughRestCall("OnGroupsFunction", null, null, null, "gm", null);
+      CloseableHttpResponse response =
+          executeFunctionThroughRestCall("OnGroupsFunction", null, null, null, "gm", null);
       assertHttpResponse(response, 200, 1);
     }
 

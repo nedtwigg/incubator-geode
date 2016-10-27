@@ -48,7 +48,8 @@ public class DestroyIndexFunction extends FunctionAdapter implements InternalEnt
       String indexName = indexInfo.getIndexName();
       String regionPath = indexInfo.getRegionPath();
 
-      XmlEntity xmlEntity = new XmlEntity(CacheXml.REGION, "name", regionPath, CacheXml.INDEX, "name", indexName);
+      XmlEntity xmlEntity =
+          new XmlEntity(CacheXml.REGION, "name", regionPath, CacheXml.INDEX, "name", indexName);
 
       if (regionPath != null && !regionPath.isEmpty()) {
         Region<?, ?> region = cache.getRegion(regionPath);
@@ -64,11 +65,24 @@ public class DestroyIndexFunction extends FunctionAdapter implements InternalEnt
               queryService.removeIndex(index);
               context.getResultSender().lastResult(new CliFunctionResult(memberId, xmlEntity));
             } else {
-              context.getResultSender().lastResult(new CliFunctionResult(memberId, false, CliStrings.format(CliStrings.DESTROY_INDEX__INDEX__NOT__FOUND, indexName)));
+              context
+                  .getResultSender()
+                  .lastResult(
+                      new CliFunctionResult(
+                          memberId,
+                          false,
+                          CliStrings.format(
+                              CliStrings.DESTROY_INDEX__INDEX__NOT__FOUND, indexName)));
             }
           }
         } else {
-          context.getResultSender().lastResult(new CliFunctionResult(memberId, false, CliStrings.format(CliStrings.DESTROY_INDEX__REGION__NOT__FOUND, regionPath)));
+          context
+              .getResultSender()
+              .lastResult(
+                  new CliFunctionResult(
+                      memberId,
+                      false,
+                      CliStrings.format(CliStrings.DESTROY_INDEX__REGION__NOT__FOUND, regionPath)));
         }
 
       } else {
@@ -79,7 +93,13 @@ public class DestroyIndexFunction extends FunctionAdapter implements InternalEnt
           if (removeIndexByName(indexName, queryService)) {
             context.getResultSender().lastResult(new CliFunctionResult(memberId, xmlEntity));
           } else {
-            context.getResultSender().lastResult(new CliFunctionResult(memberId, false, CliStrings.format(CliStrings.DESTROY_INDEX__INDEX__NOT__FOUND, indexName)));
+            context
+                .getResultSender()
+                .lastResult(
+                    new CliFunctionResult(
+                        memberId,
+                        false,
+                        CliStrings.format(CliStrings.DESTROY_INDEX__INDEX__NOT__FOUND, indexName)));
           }
         }
       }
@@ -90,8 +110,9 @@ public class DestroyIndexFunction extends FunctionAdapter implements InternalEnt
     }
   }
 
-  /***
-   * 
+  /**
+   * *
+   *
    * @param name
    * @param queryService
    * @return true if the index was found and removed/false if the index was not found.
@@ -115,5 +136,4 @@ public class DestroyIndexFunction extends FunctionAdapter implements InternalEnt
   public String getId() {
     return DestroyIndexFunction.class.getName();
   }
-
 }

@@ -44,9 +44,7 @@ import org.apache.geode.cache.query.internal.QueryObserverAdapter;
 import org.apache.geode.cache.query.internal.QueryObserverHolder;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class IndexUsageInNestedQueryJUnitTest {
 
@@ -54,8 +52,7 @@ public class IndexUsageInNestedQueryJUnitTest {
   public void setUp() throws java.lang.Exception {
     CacheUtils.startCache();
     Region r = CacheUtils.createRegion("portfolios", Portfolio.class);
-    for (int i = 0; i < 4; i++)
-      r.put(i + "", new Portfolio(i));
+    for (int i = 0; i < 4; i++) r.put(i + "", new Portfolio(i));
   }
 
   @After
@@ -68,10 +65,22 @@ public class IndexUsageInNestedQueryJUnitTest {
 
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "select distinct * from /portfolios p, (select distinct pos  as poos from /portfolios x, x.positions.values pos" + " where pos.secId = 'YHOO') as k", "select distinct * from /portfolios p, (select distinct pos as poos from /portfolios p, p.positions.values pos" + " where pos.secId = 'YHOO') as k", "select distinct * from /portfolios p, (select distinct x.ID as ID  from /portfolios x" + " where x.ID = p.ID) as k ", // Currently Index Not Getting Used
-        "select distinct * from /portfolios p, (select distinct pos as poos from /portfolios x, p.positions.values pos" + " where x.ID = p.ID) as k", // Currently Index Not Getting Used        
-        "select distinct * from /portfolios p, (select distinct x as pf , myPos as poos from /portfolios x, x.positions.values as myPos) as k " + "  where k.poos.secId = 'YHOO'", "select distinct * from /portfolios p, (select distinct x as pf , myPos as poos from /portfolios x, x.positions.values as myPos) as K" + "  where K.poos.secId = 'YHOO'", "select distinct * from /portfolios p, (select distinct val from positions.values as val where val.secId = 'YHOO') as k ", "select distinct * from /portfolios x, x.positions.values where " + "secId = element(select distinct vals.secId from /portfolios p, p.positions.values vals where vals.secId = 'YHOO')",
-
+    String queries[] = {
+      "select distinct * from /portfolios p, (select distinct pos  as poos from /portfolios x, x.positions.values pos"
+          + " where pos.secId = 'YHOO') as k",
+      "select distinct * from /portfolios p, (select distinct pos as poos from /portfolios p, p.positions.values pos"
+          + " where pos.secId = 'YHOO') as k",
+      "select distinct * from /portfolios p, (select distinct x.ID as ID  from /portfolios x"
+          + " where x.ID = p.ID) as k ", // Currently Index Not Getting Used
+      "select distinct * from /portfolios p, (select distinct pos as poos from /portfolios x, p.positions.values pos"
+          + " where x.ID = p.ID) as k", // Currently Index Not Getting Used
+      "select distinct * from /portfolios p, (select distinct x as pf , myPos as poos from /portfolios x, x.positions.values as myPos) as k "
+          + "  where k.poos.secId = 'YHOO'",
+      "select distinct * from /portfolios p, (select distinct x as pf , myPos as poos from /portfolios x, x.positions.values as myPos) as K"
+          + "  where K.poos.secId = 'YHOO'",
+      "select distinct * from /portfolios p, (select distinct val from positions.values as val where val.secId = 'YHOO') as k ",
+      "select distinct * from /portfolios x, x.positions.values where "
+          + "secId = element(select distinct vals.secId from /portfolios p, p.positions.values vals where vals.secId = 'YHOO')",
     };
     SelectResults r[][] = new SelectResults[queries.length][2];
 
@@ -97,8 +106,13 @@ public class IndexUsageInNestedQueryJUnitTest {
 
     qs = CacheUtils.getQueryService();
     qs.createIndex("idIndex", IndexType.FUNCTIONAL, "p.ID", "/portfolios p");
-    qs.createIndex("secIdIndex", IndexType.FUNCTIONAL, "b.secId", "/portfolios pf, pf.positions.values b");
-    qs.createIndex("cIndex", IndexType.FUNCTIONAL, "pf.collectionHolderMap[(pf.ID).toString()].arr[pf.ID]", "/portfolios pf");
+    qs.createIndex(
+        "secIdIndex", IndexType.FUNCTIONAL, "b.secId", "/portfolios pf, pf.positions.values b");
+    qs.createIndex(
+        "cIndex",
+        IndexType.FUNCTIONAL,
+        "pf.collectionHolderMap[(pf.ID).toString()].arr[pf.ID]",
+        "/portfolios pf");
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
@@ -133,5 +147,4 @@ public class IndexUsageInNestedQueryJUnitTest {
       }
     }
   }
-
 }

@@ -29,10 +29,9 @@ import org.apache.geode.management.internal.cli.util.RegionAttributesNames;
 
 public class EvictionAttributesInfo implements Serializable {
 
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
+
   private String evictionAction = "";
   private String evictionAlgorithm = "";
   private int evictionMaxValue = 0;
@@ -68,7 +67,9 @@ public class EvictionAttributesInfo implements Serializable {
   public boolean equals(Object obj) {
     if (obj instanceof EvictionAttributesInfo) {
       EvictionAttributesInfo their = (EvictionAttributesInfo) obj;
-      return this.evictionAction.equals(their.getEvictionAction()) && this.evictionAlgorithm.equals(their.getEvictionAlgorithm()) && this.evictionMaxValue == their.getEvictionMaxValue();
+      return this.evictionAction.equals(their.getEvictionAction())
+          && this.evictionAlgorithm.equals(their.getEvictionAlgorithm())
+          && this.evictionMaxValue == their.getEvictionMaxValue();
     } else {
       return false;
     }
@@ -76,7 +77,6 @@ public class EvictionAttributesInfo implements Serializable {
 
   public int hashCode() {
     return 42; // any arbitrary constant will do
-
   }
 
   public Map<String, String> getNonDefaultAttributes() {
@@ -85,12 +85,15 @@ public class EvictionAttributesInfo implements Serializable {
     }
 
     if (this.evictionMaxValue != RegionAttributesDefault.EVICTION_MAX_VALUE) {
-      nonDefaultAttributes.put(RegionAttributesNames.EVICTION_MAX_VALUE, Long.toString(evictionMaxValue));
+      nonDefaultAttributes.put(
+          RegionAttributesNames.EVICTION_MAX_VALUE, Long.toString(evictionMaxValue));
     }
-    if (this.evictionAction != null && !this.evictionAction.equals(RegionAttributesDefault.EVICTION_ACTION)) {
+    if (this.evictionAction != null
+        && !this.evictionAction.equals(RegionAttributesDefault.EVICTION_ACTION)) {
       nonDefaultAttributes.put(RegionAttributesNames.EVICTION_ACTION, this.evictionAction);
     }
-    if (this.evictionAlgorithm != null && !this.evictionAlgorithm.equals(RegionAttributesDefault.EVICTION_ALGORITHM)) {
+    if (this.evictionAlgorithm != null
+        && !this.evictionAlgorithm.equals(RegionAttributesDefault.EVICTION_ALGORITHM)) {
       nonDefaultAttributes.put(RegionAttributesNames.EVICTION_ALGORITHM, this.evictionAlgorithm);
     }
     return nonDefaultAttributes;

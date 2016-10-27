@@ -25,16 +25,15 @@ import org.apache.geode.DataSerializable;
 import org.apache.geode.DataSerializer;
 import org.apache.geode.distributed.DistributedMember;
 
-/**
- * Composite data type used to record colocation relationships
- */
+/** Composite data type used to record colocation relationships */
 public class ColocatedRegionDetails implements DataSerializable {
   private String host;
   private String member;
   private String parent;
   private String child;
 
-  public ColocatedRegionDetails(final String host, final String member, final String parent, final String child) {
+  public ColocatedRegionDetails(
+      final String host, final String member, final String parent, final String child) {
     this.host = host;
     this.member = member;
     this.parent = parent;
@@ -42,12 +41,11 @@ public class ColocatedRegionDetails implements DataSerializable {
   }
 
   //Used for deserialization only
-  public ColocatedRegionDetails() {
-  }
+  public ColocatedRegionDetails() {}
 
   /**
    * Returns the canonical name of the host machine
-   * 
+   *
    * @return parent
    */
   public String getHost() {
@@ -56,7 +54,7 @@ public class ColocatedRegionDetails implements DataSerializable {
 
   /**
    * Returns the name of the {@link DistributedMember}
-   * 
+   *
    * @return parent
    */
   public String getMember() {
@@ -65,7 +63,7 @@ public class ColocatedRegionDetails implements DataSerializable {
 
   /**
    * Returns the name of the parent region of a colocated pair
-   * 
+   *
    * @return parent
    */
   public String getParent() {
@@ -74,7 +72,7 @@ public class ColocatedRegionDetails implements DataSerializable {
 
   /**
    * Returns the name of the child region of a colocated pair
-   * 
+   *
    * @return child
    */
   public String getChild() {
@@ -163,12 +161,9 @@ public class ColocatedRegionDetails implements DataSerializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     ColocatedRegionDetails other = (ColocatedRegionDetails) obj;
     if (host == null) {
       if (other.host != null) {
@@ -200,5 +195,4 @@ public class ColocatedRegionDetails implements DataSerializable {
     }
     return true;
   }
-
 }

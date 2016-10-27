@@ -26,18 +26,14 @@ import org.apache.geode.cache.asyncqueue.AsyncEventListener;
 
 public class MyGatewaySenderEventListener implements AsyncEventListener, Serializable {
   String id = "MyGatewaySenderEventListener";
-  /**
-   * Creates a latency listener.
-   */
+  /** Creates a latency listener. */
   private final Map eventsMap;
 
   public MyGatewaySenderEventListener() {
     this.eventsMap = new HashMap();
   }
 
-  /**
-   * Processes events by recording their latencies.
-   */
+  /** Processes events by recording their latencies. */
   public boolean processEvents(List<AsyncEvent> events) {
     System.out.println("hitesh got event");
     synchronized (eventsMap) {
@@ -48,8 +44,7 @@ public class MyGatewaySenderEventListener implements AsyncEventListener, Seriali
     return true;
   }
 
-  public void close() {
-  }
+  public void close() {}
 
   public Map getEventsMap() {
     return this.eventsMap;
@@ -64,8 +59,7 @@ public class MyGatewaySenderEventListener implements AsyncEventListener, Seriali
     if (this == obj) {
       return true;
     }
-    if (!(obj instanceof MyGatewaySenderEventListener))
-      return false;
+    if (!(obj instanceof MyGatewaySenderEventListener)) return false;
     MyGatewaySenderEventListener listener = (MyGatewaySenderEventListener) obj;
     return this.id.equals(listener.id);
   }

@@ -29,18 +29,12 @@ import org.apache.geode.internal.statistics.StatisticsListener;
 import org.apache.geode.internal.statistics.StatisticsNotification;
 import org.apache.geode.internal.statistics.ValueMonitor;
 
-/**
- * Class to get mappings of stats name to their values
- * 
- * 
- */
+/** Class to get mappings of stats name to their values */
 public class MBeanStatsMonitor implements StatisticsListener {
 
   protected ValueMonitor monitor;
 
-  /**
-   * Map which contains statistics with their name and value
-   */
+  /** Map which contains statistics with their name and value */
   protected DefaultHashMap statsMap;
 
   protected String monitorName;
@@ -52,11 +46,10 @@ public class MBeanStatsMonitor implements StatisticsListener {
     this.monitor = new ValueMonitor();
     this.statsMap = new DefaultHashMap();
     this.logger = InternalDistributedSystem.getLoggerI18n();
-
   }
 
   public void addStatisticsToMonitor(Statistics stats) {
-    monitor.addListener(this);// if already listener is added this will be a no-op
+    monitor.addListener(this); // if already listener is added this will be a no-op
     monitor.addStatistics(stats);
   }
 
@@ -86,7 +79,6 @@ public class MBeanStatsMonitor implements StatisticsListener {
       }
       log(name, value);
       statsMap.put(name, value);
-
     }
   }
 
@@ -100,8 +92,7 @@ public class MBeanStatsMonitor implements StatisticsListener {
   public static class DefaultHashMap {
     private Map<String, Number> internalMap = new HashMap<String, Number>();
 
-    public DefaultHashMap() {
-    }
+    public DefaultHashMap() {}
 
     public Number get(String key) {
       return internalMap.get(key) != null ? internalMap.get(key) : 0;
@@ -115,5 +106,4 @@ public class MBeanStatsMonitor implements StatisticsListener {
       internalMap.clear();
     }
   }
-
 }

@@ -35,39 +35,52 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * {@link Command} for {@link GetClientPartitionAttributesOp} operation for 6.6
- * clients
+ * {@link Command} for {@link GetClientPartitionAttributesOp} operation for 6.6 clients
+ *
  * @since GemFire 6.6
  */
 public class GetClientPartitionAttributesCommand66 extends BaseCommand {
 
-  private final static GetClientPartitionAttributesCommand66 singleton = new GetClientPartitionAttributesCommand66();
+  private static final GetClientPartitionAttributesCommand66 singleton =
+      new GetClientPartitionAttributesCommand66();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  GetClientPartitionAttributesCommand66() {
-  }
+  GetClientPartitionAttributesCommand66() {}
 
   @SuppressWarnings("unchecked")
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException, InterruptedException {
     String regionFullPath = null;
     regionFullPath = msg.getPart(0).getString();
     String errMessage = "";
     if (regionFullPath == null) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.GetClientPartitionAttributes_THE_INPUT_REGION_PATH_IS_NULL));
-      errMessage = LocalizedStrings.GetClientPartitionAttributes_THE_INPUT_REGION_PATH_IS_NULL.toLocalizedString();
-      writeErrorResponse(msg, MessageType.GET_CLIENT_PARTITION_ATTRIBUTES_ERROR, errMessage.toString(), servConn);
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.GetClientPartitionAttributes_THE_INPUT_REGION_PATH_IS_NULL));
+      errMessage =
+          LocalizedStrings.GetClientPartitionAttributes_THE_INPUT_REGION_PATH_IS_NULL
+              .toLocalizedString();
+      writeErrorResponse(
+          msg, MessageType.GET_CLIENT_PARTITION_ATTRIBUTES_ERROR, errMessage.toString(), servConn);
       servConn.setAsTrue(RESPONDED);
       return;
     }
     Region region = servConn.getCache().getRegion(regionFullPath);
     if (region == null) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.GetClientPartitionAttributes_REGION_NOT_FOUND_FOR_SPECIFIED_REGION_PATH, regionFullPath));
-      errMessage = LocalizedStrings.GetClientPartitionAttributes_REGION_NOT_FOUND.toLocalizedString() + regionFullPath;
-      writeErrorResponse(msg, MessageType.GET_CLIENT_PARTITION_ATTRIBUTES_ERROR, errMessage.toString(), servConn);
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .GetClientPartitionAttributes_REGION_NOT_FOUND_FOR_SPECIFIED_REGION_PATH,
+              regionFullPath));
+      errMessage =
+          LocalizedStrings.GetClientPartitionAttributes_REGION_NOT_FOUND.toLocalizedString()
+              + regionFullPath;
+      writeErrorResponse(
+          msg, MessageType.GET_CLIENT_PARTITION_ATTRIBUTES_ERROR, errMessage.toString(), servConn);
       servConn.setAsTrue(RESPONDED);
       return;
     }
@@ -137,6 +150,5 @@ public class GetClientPartitionAttributesCommand66 extends BaseCommand {
     } finally {
       servConn.setAsTrue(Command.RESPONDED);
     }
-
   }
 }

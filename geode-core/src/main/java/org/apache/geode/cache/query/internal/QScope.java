@@ -19,26 +19,22 @@ package org.apache.geode.cache.query.internal;
 import java.util.*;
 
 /**
- * Nested name scope for name resolution Currently allow only one iterator per
- * scope, and can be known by zero or one identifier
- * 
+ * Nested name scope for name resolution Currently allow only one iterator per scope, and can be
+ * known by zero or one identifier
+ *
  * @version $Revision: 1.1 $
- *  
  */
 class QScope {
 
   //private RuntimeIterator _iterator;
   private List iterators;
   boolean _oneIndexLookup = false; // if there is exactly one index lookup in
-                                   // this scope
-                                   // set if scope evaluation is limited up to this iterator
+  // this scope
+  // set if scope evaluation is limited up to this iterator
   private RuntimeIterator limit = null;
   private int scopeID = 0;
 
-  /**
-   * 
-   * @param scopeID The scopeID assosciated with the scope
-   */
+  /** @param scopeID The scopeID assosciated with the scope */
   QScope(int scopeID) {
     iterators = new ArrayList();
     this.scopeID = scopeID;
@@ -64,8 +60,7 @@ class QScope {
     Iterator iter = iterators.iterator();
     while (iter.hasNext()) {
       RuntimeIterator _iterator = (RuntimeIterator) iter.next();
-      if (_iterator != null && name.equals(_iterator.getName()))
-        return _iterator;
+      if (_iterator != null && name.equals(_iterator.getName())) return _iterator;
     }
     return null;
   }
@@ -79,12 +74,10 @@ class QScope {
   }
 
   /**
-   * 
-   * @return unique int identifying the scope. It also indicates the relative visibility
-   * of scopes, with higher scope being able to see iterators of lower scope.
+   * @return unique int identifying the scope. It also indicates the relative visibility of scopes,
+   *     with higher scope being able to see iterators of lower scope.
    */
   int getScopeID() {
     return this.scopeID;
   }
-
 }

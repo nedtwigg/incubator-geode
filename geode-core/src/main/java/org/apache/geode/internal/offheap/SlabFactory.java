@@ -16,11 +16,11 @@
  */
 package org.apache.geode.internal.offheap;
 
-/**
- * Used to create Slab instances.
- */
+/** Used to create Slab instances. */
 public interface SlabFactory {
-  /** Create and return a Slab
+  /**
+   * Create and return a Slab
+   *
    * @throws OutOfMemoryError if the create fails
    */
   public Slab create(int size);

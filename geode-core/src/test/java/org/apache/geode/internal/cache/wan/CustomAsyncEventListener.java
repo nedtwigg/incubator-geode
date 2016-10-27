@@ -52,6 +52,5 @@ public class CustomAsyncEventListener implements AsyncEventListener {
     return eventsMap;
   }
 
-  public void close() {
-  }
+  public void close() {}
 }

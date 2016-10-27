@@ -26,12 +26,7 @@ import javax.management.openmbean.CompositeDataView;
 import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.OpenDataException;
 
-/**
- * Open type converter for Composite type
- * 
- * 
- */
-
+/** Open type converter for Composite type */
 public class CompositeConverter extends OpenTypeConverter {
 
   private final String[] itemNames;
@@ -39,7 +34,9 @@ public class CompositeConverter extends OpenTypeConverter {
   private final OpenTypeConverter[] getterConverters;
   private CompositeBuilder compositeBuilder;
 
-  CompositeConverter(Class targetClass, CompositeType compositeType, String[] itemNames, Method[] getters) throws OpenDataException {
+  CompositeConverter(
+      Class targetClass, CompositeType compositeType, String[] itemNames, Method[] getters)
+      throws OpenDataException {
     super(targetClass, compositeType, CompositeData.class);
 
     assert (itemNames.length == getters.length);
@@ -53,15 +50,11 @@ public class CompositeConverter extends OpenTypeConverter {
     }
   }
 
-  /**
-   * Converts to open value
-   */
+  /** Converts to open value */
   final Object toNonNullOpenValue(Object value) throws OpenDataException {
     CompositeType ct = (CompositeType) getOpenType();
-    if (value instanceof CompositeDataView)
-      return ((CompositeDataView) value).toCompositeData(ct);
-    if (value == null)
-      return null;
+    if (value instanceof CompositeDataView) return ((CompositeDataView) value).toCompositeData(ct);
+    if (value == null) return null;
 
     Object[] values = new Object[getters.length];
     for (int i = 0; i < getters.length; i++) {
@@ -76,22 +69,34 @@ public class CompositeConverter extends OpenTypeConverter {
   }
 
   /**
-   * Determine how to convert back from the CompositeData into the original Java
-   * type. For a type that is not reconstructible, this method will fail every
-   * time, and will throw the right exception.
+   * Determine how to convert back from the CompositeData into the original Java type. For a type
+   * that is not reconstructible, this method will fail every time, and will throw the right
+   * exception.
    */
   private synchronized void makeCompositeBuilder() throws InvalidObjectException {
-    if (compositeBuilder != null)
-      return;
+    if (compositeBuilder != null) return;
 
     Class targetClass = (Class<?>) getTargetType();
 
-    CompositeBuilder[][] builders = { { new CompositeBuilderViaFrom(targetClass, itemNames), }, { new CompositeBuilderViaConstructor(targetClass, itemNames), }, { new CompositeBuilderCheckGetters(targetClass, itemNames, getterConverters), new CompositeBuilderViaSetters(targetClass, itemNames), new CompositeBuilderViaProxy(targetClass, itemNames), }, };
+    CompositeBuilder[][] builders = {
+      {
+        new CompositeBuilderViaFrom(targetClass, itemNames),
+      },
+      {
+        new CompositeBuilderViaConstructor(targetClass, itemNames),
+      },
+      {
+        new CompositeBuilderCheckGetters(targetClass, itemNames, getterConverters),
+        new CompositeBuilderViaSetters(targetClass, itemNames),
+        new CompositeBuilderViaProxy(targetClass, itemNames),
+      },
+    };
     CompositeBuilder foundBuilder = null;
 
     StringBuilder whyNots = new StringBuilder();
     Throwable possibleCause = null;
-    find: for (CompositeBuilder[] relatedBuilders : builders) {
+    find:
+    for (CompositeBuilder[] relatedBuilders : builders) {
       for (int i = 0; i < relatedBuilders.length; i++) {
         CompositeBuilder builder = relatedBuilders[i];
         String whyNot = builder.applicable(getters);
@@ -100,21 +105,21 @@ public class CompositeConverter extends OpenTypeConverter {
           break find;
         }
         Throwable cause = builder.possibleCause();
-        if (cause != null)
-          possibleCause = cause;
+        if (cause != null) possibleCause = cause;
         if (whyNot.length() > 0) {
-          if (whyNots.length() > 0)
-            whyNots.append("; ");
+          if (whyNots.length() > 0) whyNots.append("; ");
           whyNots.append(whyNot);
-          if (i == 0)
-            break;
+          if (i == 0) break;
         }
       }
     }
     if (foundBuilder == null) {
-      String msg = "Do not know how to make a " + targetClass.getName() + " from a CompositeData: " + whyNots;
-      if (possibleCause != null)
-        msg += ". Remaining exceptions show a POSSIBLE cause.";
+      String msg =
+          "Do not know how to make a "
+              + targetClass.getName()
+              + " from a CompositeData: "
+              + whyNots;
+      if (possibleCause != null) msg += ". Remaining exceptions show a POSSIBLE cause.";
       throw invalidObjectException(msg, possibleCause);
     }
     compositeBuilder = foundBuilder;
@@ -128,5 +133,4 @@ public class CompositeConverter extends OpenTypeConverter {
     makeCompositeBuilder();
     return compositeBuilder.fromCompositeData((CompositeData) value, itemNames, getterConverters);
   }
-
 }

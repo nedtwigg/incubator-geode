@@ -25,7 +25,6 @@ import java.util.List;
 /**
  * An exception thrown during batch processing.
  *
- *
  * @since GemFire 7.0
  */
 // Note that since this class is inside of an internal package,
@@ -40,7 +39,8 @@ public class BatchException70 extends GemFireCheckedException {
 
   /**
    * Required for serialization
-   * @param l 
+   *
+   * @param l
    */
   public BatchException70(List<BatchException70> l) {
     super(l.get(0).getMessage());
@@ -58,15 +58,14 @@ public class BatchException70 extends GemFireCheckedException {
 
   /**
    * Answers the index in the batch where the exception occurred
+   *
    * @return the index in the batch where the exception occurred
    */
   public int getIndex() {
     return this.index;
   }
 
-  /**
-   * @return the batchId
-   */
+  /** @return the batchId */
   public int getBatchId() {
     return batchId;
   }
@@ -74,5 +73,4 @@ public class BatchException70 extends GemFireCheckedException {
   public List<BatchException70> getExceptions() {
     return this.exceptions;
   }
-
 }

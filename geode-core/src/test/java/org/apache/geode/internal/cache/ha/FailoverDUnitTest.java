@@ -54,9 +54,10 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Dunit test to verify HA feature. Have 2 nodes S1 & S2. Client is connected to S1 & S2 with S1 as the primary end point.
- * Do some puts on S1 .The expiry is on high side. Stop S1 , the client is failing to S2.During fail over duration do some
- * puts on S1. The client on failing to S2 may receive duplicate events but should not miss any events.
+ * Dunit test to verify HA feature. Have 2 nodes S1 & S2. Client is connected to S1 & S2 with S1 as
+ * the primary end point. Do some puts on S1 .The expiry is on high side. Stop S1 , the client is
+ * failing to S2.During fail over duration do some puts on S1. The client on failing to S2 may
+ * receive duplicate events but should not miss any events.
  */
 @Category(DistributedTest.class)
 public class FailoverDUnitTest extends JUnit4DistributedTestCase {
@@ -119,7 +120,8 @@ public class FailoverDUnitTest extends JUnit4DistributedTestCase {
     assertNotNull(cache);
   }
 
-  public static void createClientCache(String hostName, Integer port1, Integer port2) throws Exception {
+  public static void createClientCache(String hostName, Integer port1, Integer port2)
+      throws Exception {
     PORT1 = port1.intValue();
     PORT2 = port2.intValue();
     Properties props = new Properties();
@@ -129,15 +131,17 @@ public class FailoverDUnitTest extends JUnit4DistributedTestCase {
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    ClientServerTestCase.configureConnectionPoolWithName(factory, hostName, new int[] { PORT1, PORT2 }, true, -1, 2, null, "FailoverPool");
-    factory.setCacheListener(new CacheListenerAdapter() {
-      public void afterUpdate(EntryEvent event) {
-        synchronized (this) {
-          cache.getLogger().info("Event Received : key..." + event.getKey());
-          cache.getLogger().info("Event Received : value..." + event.getNewValue());
-        }
-      }
-    });
+    ClientServerTestCase.configureConnectionPoolWithName(
+        factory, hostName, new int[] {PORT1, PORT2}, true, -1, 2, null, "FailoverPool");
+    factory.setCacheListener(
+        new CacheListenerAdapter() {
+          public void afterUpdate(EntryEvent event) {
+            synchronized (this) {
+              cache.getLogger().info("Event Received : key..." + event.getKey());
+              cache.getLogger().info("Event Received : value..." + event.getNewValue());
+            }
+          }
+        });
     cache.createRegion(regionName, factory.create());
   }
 
@@ -158,24 +162,27 @@ public class FailoverDUnitTest extends JUnit4DistributedTestCase {
 
   public void waitForPrimaryAndBackups(final int numBackups) {
     final PoolImpl pool = (PoolImpl) PoolManager.find("FailoverPool");
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        if (pool.getPrimary() == null) {
-          return false;
-        }
-        if (pool.getRedundants().size() < numBackups) {
-          return false;
-        }
-        return true;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            if (pool.getPrimary() == null) {
+              return false;
+            }
+            if (pool.getRedundants().size() < numBackups) {
+              return false;
+            }
+            return true;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 20 * 1000, 200, true);
     assertNotNull(pool.getPrimary());
-    assertTrue("backups=" + pool.getRedundants() + " expected=" + numBackups, pool.getRedundants().size() >= numBackups);
+    assertTrue(
+        "backups=" + pool.getRedundants() + " expected=" + numBackups,
+        pool.getRedundants().size() >= numBackups);
   }
 
   public static void registerInterestList() {
@@ -237,15 +244,16 @@ public class FailoverDUnitTest extends JUnit4DistributedTestCase {
   public void verifyEntries() {
     final Region r = cache.getRegion("/" + regionName);
     assertNotNull(r);
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return !r.getEntry("key-3").getValue().equals("key-3");
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return !r.getEntry("key-3").getValue().equals("key-3");
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 20 * 1000, 200, true);
 
     assertEquals("value-1", r.getEntry("key-1").getValue());
@@ -255,12 +263,13 @@ public class FailoverDUnitTest extends JUnit4DistributedTestCase {
 
   public static void setClientServerObserver() {
     PoolImpl.BEFORE_PRIMARY_IDENTIFICATION_FROM_BACKUP_CALLBACK_FLAG = true;
-    ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-      public void beforePrimaryIdentificationFromBackup() {
-        primary.invoke(() -> FailoverDUnitTest.putDuringFailover());
-        PoolImpl.BEFORE_PRIMARY_IDENTIFICATION_FROM_BACKUP_CALLBACK_FLAG = false;
-      }
-    });
+    ClientServerObserverHolder.setInstance(
+        new ClientServerObserverAdapter() {
+          public void beforePrimaryIdentificationFromBackup() {
+            primary.invoke(() -> FailoverDUnitTest.putDuringFailover());
+            PoolImpl.BEFORE_PRIMARY_IDENTIFICATION_FROM_BACKUP_CALLBACK_FLAG = false;
+          }
+        });
   }
 
   public static void putDuringFailover() {
@@ -278,15 +287,16 @@ public class FailoverDUnitTest extends JUnit4DistributedTestCase {
   public void verifyEntriesAfterFailover() {
     final Region r = cache.getRegion("/" + regionName);
     assertNotNull(r);
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return !r.getEntry("key-5").getValue().equals("key-5");
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return !r.getEntry("key-5").getValue().equals("key-5");
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 20 * 1000, 200, true);
     assertEquals("value-5", r.getEntry("key-5").getValue());
     assertEquals("value-4", r.getEntry("key-4").getValue());

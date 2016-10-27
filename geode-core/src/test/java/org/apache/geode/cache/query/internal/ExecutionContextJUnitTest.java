@@ -17,7 +17,7 @@
 /*
  * Created on Oct 13, 2005
  *
- * 
+ *
  */
 package org.apache.geode.cache.query.internal;
 
@@ -47,10 +47,7 @@ import org.apache.geode.internal.cache.InternalCache;
 import org.apache.geode.test.dunit.ThreadUtils;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- *  
- */
+/** */
 @Category(IntegrationTest.class)
 public class ExecutionContextJUnitTest {
   boolean failure = false;
@@ -83,7 +80,9 @@ public class ExecutionContextJUnitTest {
         RuntimeIterator rIter = iterDef.getRuntimeIterator(context);
         context.bindIterator(rIter);
         context.addToIndependentRuntimeItrMap(iterDef);
-        assertTrue(" The index_interanal_id is not set as per expectation of iter'n'", rIter.getIndexInternalID().equals(rIter.getInternalId()));
+        assertTrue(
+            " The index_interanal_id is not set as per expectation of iter'n'",
+            rIter.getIndexInternalID().equals(rIter.getInternalId()));
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -111,7 +110,9 @@ public class ExecutionContextJUnitTest {
         RuntimeIterator rIter = iterDef.getRuntimeIterator(context);
         context.addToIndependentRuntimeItrMap(iterDef);
         context.bindIterator(rIter);
-        assertTrue(" The index_interanal_id is not set as per expectation of index_iter'n'", rIter.getIndexInternalID().equals("index_iter" + i));
+        assertTrue(
+            " The index_interanal_id is not set as per expectation of index_iter'n'",
+            rIter.getIndexInternalID().equals("index_iter" + i));
       }
     } catch (Exception e) {
       fail("Test failed sue to Exception = " + e);
@@ -139,13 +140,19 @@ public class ExecutionContextJUnitTest {
         RuntimeIterator rIter = iterDef.getRuntimeIterator(context);
         context.addToIndependentRuntimeItrMap(iterDef);
         context.bindIterator(rIter);
-        assertTrue(" The index_interanal_id is not set as per expectation of index_iter'n'", rIter.getIndexInternalID().equals("index_iter" + i));
+        assertTrue(
+            " The index_interanal_id is not set as per expectation of index_iter'n'",
+            rIter.getIndexInternalID().equals("index_iter" + i));
       }
       Set temp = new HashSet();
       context.computeUtlimateDependencies(iterDef, temp);
-      String regionPath = context.getRegionPathForIndependentRuntimeIterator((RuntimeIterator) temp.iterator().next());
+      String regionPath =
+          context.getRegionPathForIndependentRuntimeIterator(
+              (RuntimeIterator) temp.iterator().next());
       if (!(regionPath != null && regionPath.equals("/portfolio"))) {
-        fail(" Region path is either null or not equal to /portfolio. The regionpath obtained = " + regionPath);
+        fail(
+            " Region path is either null or not equal to /portfolio. The regionpath obtained = "
+                + regionPath);
       }
       System.out.println(" ***********The Region Path obatined = " + regionPath);
     } catch (Exception e) {
@@ -159,7 +166,9 @@ public class ExecutionContextJUnitTest {
     CacheUtils.createRegion("dummy", null);
     // compileFromClause returns a List<CompiledIteratorDef>
     QCompiler compiler = new QCompiler();
-    List list = compiler.compileFromClause("/portfolio p, p.positions, p.addreses addrs, addrs.collection1 coll1, /dummy d1, d1.collection2 d2");
+    List list =
+        compiler.compileFromClause(
+            "/portfolio p, p.positions, p.addreses addrs, addrs.collection1 coll1, /dummy d1, d1.collection2 d2");
     RuntimeIterator indItr = null;
     ExecutionContext context = new QueryExecutionContext(null, CacheUtils.getCache());
     context.newScope(context.assosciateScopeID());
@@ -182,7 +191,9 @@ public class ExecutionContextJUnitTest {
         ++i;
         context.bindIterator(rIter);
         context.addToIndependentRuntimeItrMap(iterDef);
-        assertTrue(" The index_interanal_id is not set as per expectation of iter'n'", rIter.getIndexInternalID().equals(rIter.getInternalId()));
+        assertTrue(
+            " The index_interanal_id is not set as per expectation of iter'n'",
+            rIter.getIndexInternalID().equals(rIter.getInternalId()));
       }
       List list1 = context.getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(indItr);
       if (list1.size() != 4) {
@@ -202,7 +213,9 @@ public class ExecutionContextJUnitTest {
     CacheUtils.createRegion("portfolios", Portfolio.class);
     CacheUtils.createRegion("positions", Position.class);
     // compileFromClause returns a List<CompiledIteratorDef>
-    String qry = "select distinct p.pf, ELEMENT(select distinct pf1 from /portfolios pf1 where pf1.getID = p.pf.getID )  from (select distinct pf, pos from /portfolios pf, pf.positions.values pos) p, (select distinct * from /positions rtPos where rtPos.secId = p.pos.secId) as y " + "where ( select distinct pf2 from /portfolios pf2 ).size() <> 0 ";
+    String qry =
+        "select distinct p.pf, ELEMENT(select distinct pf1 from /portfolios pf1 where pf1.getID = p.pf.getID )  from (select distinct pf, pos from /portfolios pf, pf.positions.values pos) p, (select distinct * from /positions rtPos where rtPos.secId = p.pos.secId) as y "
+            + "where ( select distinct pf2 from /portfolios pf2 ).size() <> 0 ";
     ExecutionContext context = new QueryExecutionContext(null, CacheUtils.getCache());
     QCompiler compiler = new QCompiler();
     CompiledValue query = compiler.compileQuery(qry);
@@ -227,7 +240,6 @@ public class ExecutionContextJUnitTest {
         assertTrue("The scopeID of inner level iterator is not 4", rItr.getScopeID() == 4);
       } else {
         fail("No such iterator with name = " + rItr.getName() + "should be available");
-
       }
     }
     helperEvaluateQuery(context, query);
@@ -251,10 +263,8 @@ public class ExecutionContextJUnitTest {
         assertTrue("The scopeID of inner level iterator is not 4", rItr.getScopeID() == 4);
       } else {
         fail("No such iterator with name = " + rItr.getName() + "should be available");
-
       }
     }
-
   }
 
   @Test
@@ -262,68 +272,82 @@ public class ExecutionContextJUnitTest {
     CacheUtils.createRegion("portfolios", Portfolio.class);
     CacheUtils.createRegion("positions", Position.class);
     // compileFromClause returns a List<CompiledIteratorDef>
-    String qry = "select distinct p.pf from (select distinct pf, pos from /portfolios pf, pf.positions.values pos) p, (select distinct * from /positions rtPos where rtPos.secId = p.pos.secId) as y";
+    String qry =
+        "select distinct p.pf from (select distinct pf, pos from /portfolios pf, pf.positions.values pos) p, (select distinct * from /positions rtPos where rtPos.secId = p.pos.secId) as y";
     final int TOATL_THREADS = 80;
     final CountDownLatch latch = new CountDownLatch(TOATL_THREADS);
 
     QCompiler compiler = new QCompiler();
     final CompiledValue query = compiler.compileQuery(qry);
-    Runnable runnable = new Runnable() {
-      public void run() {
-        try {
-          latch.countDown();
-          latch.await();
-          ExecutionContext context = new QueryExecutionContext(null, CacheUtils.getCache());
-          helperComputeDependencyPhase(context, query);
-          Set runtimeItrs = context.getDependencySet(query, true);
-          Iterator itr = runtimeItrs.iterator();
-          while (itr.hasNext()) {
-            RuntimeIterator rItr = (RuntimeIterator) itr.next();
-            if (rItr.getName().equals("p")) {
-              assertTrue("The scopeID of outer iterator is not 1", rItr.getScopeID() == 1);
-            } else if (rItr.getName().equals("pf")) {
-              assertTrue("The scopeID of first inner  level iterator is not 2", rItr.getScopeID() == 2);
-            } else if (rItr.getName().equals("pos")) {
-              assertTrue("The scopeID of first inner  level iterator is not 2", rItr.getScopeID() == 2);
-            } else if (rItr.getName().equals("rtPos")) {
-              assertTrue("The scopeID of second inner level iterator is not 3", rItr.getScopeID() == 3);
-            } else if (rItr.getName().equals("y")) {
-              assertTrue("The scopeID of outer level iterator is not 1", rItr.getScopeID() == 1);
-            } else {
-              fail("No such iterator with name = " + rItr.getName() + "should be available");
-
+    Runnable runnable =
+        new Runnable() {
+          public void run() {
+            try {
+              latch.countDown();
+              latch.await();
+              ExecutionContext context = new QueryExecutionContext(null, CacheUtils.getCache());
+              helperComputeDependencyPhase(context, query);
+              Set runtimeItrs = context.getDependencySet(query, true);
+              Iterator itr = runtimeItrs.iterator();
+              while (itr.hasNext()) {
+                RuntimeIterator rItr = (RuntimeIterator) itr.next();
+                if (rItr.getName().equals("p")) {
+                  assertTrue("The scopeID of outer iterator is not 1", rItr.getScopeID() == 1);
+                } else if (rItr.getName().equals("pf")) {
+                  assertTrue(
+                      "The scopeID of first inner  level iterator is not 2",
+                      rItr.getScopeID() == 2);
+                } else if (rItr.getName().equals("pos")) {
+                  assertTrue(
+                      "The scopeID of first inner  level iterator is not 2",
+                      rItr.getScopeID() == 2);
+                } else if (rItr.getName().equals("rtPos")) {
+                  assertTrue(
+                      "The scopeID of second inner level iterator is not 3",
+                      rItr.getScopeID() == 3);
+                } else if (rItr.getName().equals("y")) {
+                  assertTrue(
+                      "The scopeID of outer level iterator is not 1", rItr.getScopeID() == 1);
+                } else {
+                  fail("No such iterator with name = " + rItr.getName() + "should be available");
+                }
+                Thread.yield();
+              }
+              helperEvaluateQuery(context, query);
+              runtimeItrs = context.getDependencySet(query, true);
+              itr = runtimeItrs.iterator();
+              while (itr.hasNext()) {
+                RuntimeIterator rItr = (RuntimeIterator) itr.next();
+                if (rItr.getName().equals("p")) {
+                  assertTrue("The scopeID of outer iterator is not 1", rItr.getScopeID() == 1);
+                } else if (rItr.getName().equals("pf")) {
+                  assertTrue(
+                      "The scopeID of first inner  level iterator is not 2",
+                      rItr.getScopeID() == 2);
+                } else if (rItr.getName().equals("pos")) {
+                  assertTrue(
+                      "The scopeID of first inner  level iterator is not 2",
+                      rItr.getScopeID() == 2);
+                } else if (rItr.getName().equals("rtPos")) {
+                  assertTrue(
+                      "The scopeID of second inner level iterator is not 3",
+                      rItr.getScopeID() == 3);
+                } else if (rItr.getName().equals("y")) {
+                  assertTrue(
+                      "The scopeID of outer level iterator is not 1", rItr.getScopeID() == 1);
+                } else {
+                  fail("No such iterator with name = " + rItr.getName() + "should be available");
+                }
+              }
+            } catch (VirtualMachineError e) {
+              SystemFailure.initiateFailure(e);
+              throw e;
+            } catch (Throwable th) {
+              exceptionStr = th.toString();
+              failure = true;
             }
-            Thread.yield();
           }
-          helperEvaluateQuery(context, query);
-          runtimeItrs = context.getDependencySet(query, true);
-          itr = runtimeItrs.iterator();
-          while (itr.hasNext()) {
-            RuntimeIterator rItr = (RuntimeIterator) itr.next();
-            if (rItr.getName().equals("p")) {
-              assertTrue("The scopeID of outer iterator is not 1", rItr.getScopeID() == 1);
-            } else if (rItr.getName().equals("pf")) {
-              assertTrue("The scopeID of first inner  level iterator is not 2", rItr.getScopeID() == 2);
-            } else if (rItr.getName().equals("pos")) {
-              assertTrue("The scopeID of first inner  level iterator is not 2", rItr.getScopeID() == 2);
-            } else if (rItr.getName().equals("rtPos")) {
-              assertTrue("The scopeID of second inner level iterator is not 3", rItr.getScopeID() == 3);
-            } else if (rItr.getName().equals("y")) {
-              assertTrue("The scopeID of outer level iterator is not 1", rItr.getScopeID() == 1);
-            } else {
-              fail("No such iterator with name = " + rItr.getName() + "should be available");
-
-            }
-          }
-        } catch (VirtualMachineError e) {
-          SystemFailure.initiateFailure(e);
-          throw e;
-        } catch (Throwable th) {
-          exceptionStr = th.toString();
-          failure = true;
-        }
-      }
-    };
+        };
 
     Thread th[] = new Thread[TOATL_THREADS];
     for (int i = 0; i < th.length; ++i) {

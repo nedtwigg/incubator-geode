@@ -32,26 +32,29 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * 
- *
- */
+/** */
 public class TXRemoteRollbackMessage extends TXMessage {
 
   private static final Logger logger = LogService.getLogger();
 
-  public TXRemoteRollbackMessage() {
-  }
+  public TXRemoteRollbackMessage() {}
 
-  public TXRemoteRollbackMessage(int txUniqId, InternalDistributedMember onBehalfOfClientMember, ReplyProcessor21 processor) {
+  public TXRemoteRollbackMessage(
+      int txUniqId, InternalDistributedMember onBehalfOfClientMember, ReplyProcessor21 processor) {
     super(txUniqId, onBehalfOfClientMember, processor);
   }
 
-  public static ReliableReplyProcessor21 send(Cache cache, int txUniqId, InternalDistributedMember onBehalfOfClientMember, DistributedMember recipient) {
-    final InternalDistributedSystem system = (InternalDistributedSystem) cache.getDistributedSystem();
+  public static ReliableReplyProcessor21 send(
+      Cache cache,
+      int txUniqId,
+      InternalDistributedMember onBehalfOfClientMember,
+      DistributedMember recipient) {
+    final InternalDistributedSystem system =
+        (InternalDistributedSystem) cache.getDistributedSystem();
     final Set recipients = Collections.singleton(recipient);
     ReliableReplyProcessor21 response = new ReliableReplyProcessor21(system, recipients);
-    TXRemoteRollbackMessage msg = new TXRemoteRollbackMessage(txUniqId, onBehalfOfClientMember, response);
+    TXRemoteRollbackMessage msg =
+        new TXRemoteRollbackMessage(txUniqId, onBehalfOfClientMember, response);
     msg.setRecipients(recipients);
     system.getDistributionManager().putOutgoing(msg);
     return response;
@@ -61,7 +64,8 @@ public class TXRemoteRollbackMessage extends TXMessage {
   protected boolean operateOnTx(TXId txId, DistributionManager dm) {
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
     if (cache == null) {
-      throw new CacheClosedException(LocalizedStrings.CacheFactory_A_CACHE_HAS_NOT_YET_BEEN_CREATED.toLocalizedString());
+      throw new CacheClosedException(
+          LocalizedStrings.CacheFactory_A_CACHE_HAS_NOT_YET_BEEN_CREATED.toLocalizedString());
     }
     TXManagerImpl txMgr = cache.getTXMgr();
     if (logger.isDebugEnabled()) {
@@ -80,5 +84,4 @@ public class TXRemoteRollbackMessage extends TXMessage {
   public int getDSFID() {
     return TX_REMOTE_ROLLBACK_MESSAGE;
   }
-
 }

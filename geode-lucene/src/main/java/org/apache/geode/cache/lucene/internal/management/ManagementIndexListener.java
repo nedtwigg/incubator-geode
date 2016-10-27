@@ -33,6 +33,5 @@ public class ManagementIndexListener extends IndexListenerAdapter {
   }
 
   @Override
-  public void beforeIndexDestroyed(LuceneIndex index) {
-  }
+  public void beforeIndexDestroyed(LuceneIndex index) {}
 }

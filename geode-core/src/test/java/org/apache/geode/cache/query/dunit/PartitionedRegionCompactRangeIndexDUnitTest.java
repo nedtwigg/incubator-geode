@@ -68,7 +68,9 @@ public class PartitionedRegionCompactRangeIndexDUnitTest extends JUnit4Distribut
   }
 
   @Test
-  public void testGIIUpdateWithIndexDoesNotDuplicateEntryInIndexWhenAlreadyRecoveredFromPersistence() throws Exception {
+  public void
+      testGIIUpdateWithIndexDoesNotDuplicateEntryInIndexWhenAlreadyRecoveredFromPersistence()
+          throws Exception {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
@@ -85,9 +87,15 @@ public class PartitionedRegionCompactRangeIndexDUnitTest extends JUnit4Distribut
     Map<String, Portfolio> newEntries = new HashMap<>();
     IntStream.range(0, numEntries).forEach(i -> newEntries.put("key-" + i, new Portfolio(i + 1)));
 
-    File rootDiskStore1 = QueryTestUtils.createRootDiskStoreInVM(vm0, "diskDir-PersistentPartitionWithIndexDiskStore");
-    File rootDiskStore2 = QueryTestUtils.createRootDiskStoreInVM(vm1, "diskDir-PersistentPartitionWithIndexDiskStore");
-    File rootDiskStore3 = QueryTestUtils.createRootDiskStoreInVM(vm2, "diskDir-PersistentPartitionWithIndexDiskStore");
+    File rootDiskStore1 =
+        QueryTestUtils.createRootDiskStoreInVM(
+            vm0, "diskDir-PersistentPartitionWithIndexDiskStore");
+    File rootDiskStore2 =
+        QueryTestUtils.createRootDiskStoreInVM(
+            vm1, "diskDir-PersistentPartitionWithIndexDiskStore");
+    File rootDiskStore3 =
+        QueryTestUtils.createRootDiskStoreInVM(
+            vm2, "diskDir-PersistentPartitionWithIndexDiskStore");
 
     QueryTestUtils.createCacheInVM(vm0, getSystemProperties("PersistentPartitionWithIndex.xml"));
     QueryTestUtils.createCacheInVM(vm1, getSystemProperties("PersistentPartitionWithIndex.xml"));

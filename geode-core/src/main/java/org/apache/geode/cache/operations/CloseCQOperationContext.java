@@ -20,31 +20,27 @@ package org.apache.geode.cache.operations;
 import java.util.Set;
 
 /**
- * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#CLOSE_CQ} operation for the pre-operation
- * case.
- * 
+ * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#CLOSE_CQ}
+ * operation for the pre-operation case.
+ *
  * @since GemFire 5.5
  */
 public class CloseCQOperationContext extends ExecuteCQOperationContext {
 
   /**
    * Constructor for the CLOSE_CQ operation.
-   * 
-   * @param cqName
-   *                the name of the continuous query being closed
-   * @param queryString
-   *                the query string for this operation
-   * @param regionNames
-   *                names of regions that are part of the query string
+   *
+   * @param cqName the name of the continuous query being closed
+   * @param queryString the query string for this operation
+   * @param regionNames names of regions that are part of the query string
    */
   public CloseCQOperationContext(String cqName, String queryString, Set regionNames) {
     super(cqName, queryString, regionNames, false);
   }
 
   /**
-   * Return the operation associated with the <code>OperationContext</code>
-   * object.
-   * 
+   * Return the operation associated with the <code>OperationContext</code> object.
+   *
    * @return <code>OperationCode.CLOSE_CQ</code>.
    */
   @Override
@@ -52,12 +48,9 @@ public class CloseCQOperationContext extends ExecuteCQOperationContext {
     return OperationCode.CLOSE_CQ;
   }
 
-  /**
-   * True if the context is for post-operation.
-   */
+  /** True if the context is for post-operation. */
   @Override
   public boolean isPostOperation() {
     return false;
   }
-
 }

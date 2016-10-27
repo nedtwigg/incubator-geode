@@ -17,33 +17,21 @@
 package org.apache.geode.cache.server;
 
 /**
- * Metrics about the resource usage for a cache server.
- * These metrics are provided to the {@link ServerLoadProbe} for
- * use in calculating the load on the server.
- * @since GemFire 5.7
+ * Metrics about the resource usage for a cache server. These metrics are provided to the {@link
+ * ServerLoadProbe} for use in calculating the load on the server.
  *
+ * @since GemFire 5.7
  */
 public interface ServerMetrics {
-  /**
-   * Get the number of open connections
-   * for this cache server.
-   */
+  /** Get the number of open connections for this cache server. */
   int getConnectionCount();
 
-  /** Get the number of clients connected to this
-   * cache server.
-   */
+  /** Get the number of clients connected to this cache server. */
   int getClientCount();
 
-  /**
-   * Get the number of client subscription connections hosted on this
-   * cache server.
-   */
+  /** Get the number of client subscription connections hosted on this cache server. */
   int getSubscriptionConnectionCount();
 
-  /**
-   * Get the max connections for this cache server.
-   */
+  /** Get the max connections for this cache server. */
   int getMaxConnections();
-
 }

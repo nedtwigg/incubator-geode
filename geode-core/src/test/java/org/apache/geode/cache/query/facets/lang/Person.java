@@ -24,8 +24,7 @@ public class Person {
   private String _name;
   private java.sql.Date _birthdate;
 
-  public Person() {
-  }
+  public Person() {}
 
   public Person(String ssn, String name, java.util.Date birthdate) {
     _ssn = ssn;
@@ -60,8 +59,7 @@ public class Person {
 
     int age = now.get(Calendar.YEAR) - bd.get(Calendar.YEAR);
 
-    if (bdThisYear.after(now))
-      age--;
+    if (bdThisYear.after(now)) age--;
 
     return age;
   }

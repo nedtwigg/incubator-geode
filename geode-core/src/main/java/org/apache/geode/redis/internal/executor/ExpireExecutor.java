@@ -51,7 +51,8 @@ public class ExpireExecutor extends AbstractExecutor implements Extendable {
     try {
       delay = Coder.bytesToLong(delayByteArray);
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_SECONDS_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_SECONDS_NOT_USABLE));
       return;
     }
 
@@ -61,20 +62,16 @@ public class ExpireExecutor extends AbstractExecutor implements Extendable {
     }
 
     // If time unit given is not in millis convert to millis
-    if (!timeUnitMillis())
-      delay = delay * millisInSecond;
+    if (!timeUnitMillis()) delay = delay * millisInSecond;
 
     boolean expirationSet = false;
 
-    if (rC.hasExpiration(wKey))
-      expirationSet = rC.modifyExpiration(wKey, delay);
-    else
-      expirationSet = rC.setExpiration(wKey, delay);
+    if (rC.hasExpiration(wKey)) expirationSet = rC.modifyExpiration(wKey, delay);
+    else expirationSet = rC.setExpiration(wKey, delay);
 
     if (expirationSet)
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), SET));
-    else
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_SET));
+    else command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_SET));
   }
 
   /*
@@ -88,5 +85,4 @@ public class ExpireExecutor extends AbstractExecutor implements Extendable {
   public String getArgsError() {
     return ArityDef.EXPIRE;
   }
-
 }

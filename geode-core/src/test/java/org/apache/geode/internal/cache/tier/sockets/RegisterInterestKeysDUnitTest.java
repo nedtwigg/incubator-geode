@@ -49,8 +49,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Test code copied from UpdatePropagationDUnitTest
- * Tests that registering interest KEYS works correctly.
+ * Test code copied from UpdatePropagationDUnitTest Tests that registering interest KEYS works
+ * correctly.
  */
 @Category(DistributedTest.class)
 public class RegisterInterestKeysDUnitTest extends JUnit4DistributedTestCase {
@@ -106,8 +106,18 @@ public class RegisterInterestKeysDUnitTest extends JUnit4DistributedTestCase {
     PORT1 = ((Integer) server1.invoke(() -> impl.createServerCache())).intValue();
     PORT2 = ((Integer) server2.invoke(() -> impl.createServerCache())).intValue();
 
-    client1.invoke(() -> impl.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT1), new Integer(PORT2)));
-    client2.invoke(() -> impl.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT1), new Integer(PORT2)));
+    client1.invoke(
+        () ->
+            impl.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()),
+                new Integer(PORT1),
+                new Integer(PORT2)));
+    client2.invoke(
+        () ->
+            impl.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()),
+                new Integer(PORT1),
+                new Integer(PORT2)));
   }
 
   /** subclass support */
@@ -122,9 +132,8 @@ public class RegisterInterestKeysDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * This tests whether the updates are received by other clients or not , if there are
-   * situation of Interest List fail over
-   *
+   * This tests whether the updates are received by other clients or not , if there are situation of
+   * Interest List fail over
    */
   @Test
   public void testRegisterCreatesInvalidEntry() {
@@ -133,10 +142,7 @@ public class RegisterInterestKeysDUnitTest extends JUnit4DistributedTestCase {
     client2.invoke(() -> impl.registerKeysK1());
   }
 
-  /**
-   * Creates entries on the server
-   *
-   */
+  /** Creates entries on the server */
   public static void createEntriesK1() {
     try {
       Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -158,10 +164,18 @@ public class RegisterInterestKeysDUnitTest extends JUnit4DistributedTestCase {
     CacheServerTestUtil.disableShufflingOfEndpoints();
     Pool p;
     try {
-      p = PoolManager.createFactory().addServer(host, PORT1).addServer(host, PORT2).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(2000).setSocketBufferSize(1000).setMinConnections(4)
-          // retryAttempts 2
-          // retryInterval 250
-          .create("RegisterInterestKeysDUnitTestPool");
+      p =
+          PoolManager.createFactory()
+              .addServer(host, PORT1)
+              .addServer(host, PORT2)
+              .setSubscriptionEnabled(true)
+              .setSubscriptionRedundancy(-1)
+              .setReadTimeout(2000)
+              .setSocketBufferSize(1000)
+              .setMinConnections(4)
+              // retryAttempts 2
+              // retryInterval 250
+              .create("RegisterInterestKeysDUnitTestPool");
     } finally {
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
@@ -170,7 +184,6 @@ public class RegisterInterestKeysDUnitTest extends JUnit4DistributedTestCase {
     factory.setPoolName(p.getName());
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
-
   }
 
   public static Integer createServerCache() throws Exception {
@@ -194,9 +207,7 @@ public class RegisterInterestKeysDUnitTest extends JUnit4DistributedTestCase {
     return factory.create();
   }
 
-  /**
-   *
-   */
+  /** */
   public static void registerKeysK1() {
     try {
       Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);

@@ -25,18 +25,18 @@ import java.util.Set;
 
 /**
  * Delegates all operations to a collection of OutputStreams.
- * 
+ *
  * @since GemFire 7.0
  */
 public class CompositeOutputStream extends OutputStream implements Iterable<OutputStream> {
 
   protected final Object lock = new Object();
 
-  private volatile Set<OutputStream> streams = Collections.<OutputStream> emptySet();
+  private volatile Set<OutputStream> streams = Collections.<OutputStream>emptySet();
 
   /**
    * Constructs a new instance of CompositeOutputStream with zero or more OutputStreams.
-   * 
+   *
    * @param out zero or more OutputStreams to add to the new instance of CompositeOutputStream
    */
   public CompositeOutputStream(OutputStream... out) {
@@ -48,7 +48,8 @@ public class CompositeOutputStream extends OutputStream implements Iterable<Outp
   }
 
   /**
-   * @return <tt>true</tt> if this CompositeOutputStream did not already contain the specified OutputStream
+   * @return <tt>true</tt> if this CompositeOutputStream did not already contain the specified
+   *     OutputStream
    */
   public boolean addOutputStream(OutputStream out) {
     synchronized (this.lock) {
@@ -64,16 +65,14 @@ public class CompositeOutputStream extends OutputStream implements Iterable<Outp
     }
   }
 
-  /**
-   * @return <tt>true</tt> if this CompositeOutputStream contained the specified OutputStream
-   */
+  /** @return <tt>true</tt> if this CompositeOutputStream contained the specified OutputStream */
   public boolean removeOutputStream(OutputStream out) {
     synchronized (this.lock) {
       final Set<OutputStream> oldSet = this.streams;
       if (!oldSet.contains(out)) {
         return false;
       } else if (oldSet.size() == 1) {
-        this.streams = Collections.<OutputStream> emptySet();
+        this.streams = Collections.<OutputStream>emptySet();
         return true;
       } else {
         final Set<OutputStream> newSet = new HashSet<OutputStream>(oldSet);
@@ -107,16 +106,15 @@ public class CompositeOutputStream extends OutputStream implements Iterable<Outp
   }
 
   /**
-   * Writes the specified <code>byte</code> to this output stream. 
-   * <p>
-   * The <code>write</code> method of <code>FilterOutputStream</code> 
-   * calls the <code>write</code> method of its underlying output stream, 
-   * that is, it performs <tt>out.write(b)</tt>.
-   * <p>
-   * Implements the abstract <tt>write</tt> method of <tt>OutputStream</tt>. 
+   * Writes the specified <code>byte</code> to this output stream.
    *
-   * @param      b   the <code>byte</code>.
-   * @exception  IOException  if an I/O error occurs.
+   * <p>The <code>write</code> method of <code>FilterOutputStream</code> calls the <code>write
+   * </code> method of its underlying output stream, that is, it performs <tt>out.write(b)</tt>.
+   *
+   * <p>Implements the abstract <tt>write</tt> method of <tt>OutputStream</tt>.
+   *
+   * @param b the <code>byte</code>.
+   * @exception IOException if an I/O error occurs.
    */
   public void write(int b) throws IOException {
     Set<OutputStream> outputStreams = this.streams;
@@ -126,14 +124,14 @@ public class CompositeOutputStream extends OutputStream implements Iterable<Outp
   }
 
   /**
-   * Flushes this output stream and forces any buffered output bytes 
-   * to be written out to the stream. 
-   * <p>
-   * The <code>flush</code> method of <code>FilterOutputStream</code> 
-   * calls the <code>flush</code> method of its underlying output stream. 
+   * Flushes this output stream and forces any buffered output bytes to be written out to the
+   * stream.
    *
-   * @exception  IOException  if an I/O error occurs.
-   * @see        java.io.FilterOutputStream#out
+   * <p>The <code>flush</code> method of <code>FilterOutputStream</code> calls the <code>flush
+   * </code> method of its underlying output stream.
+   *
+   * @exception IOException if an I/O error occurs.
+   * @see java.io.FilterOutputStream#out
    */
   public void flush() throws IOException {
     Set<OutputStream> outputStreams = this.streams;
@@ -143,16 +141,14 @@ public class CompositeOutputStream extends OutputStream implements Iterable<Outp
   }
 
   /**
-   * Closes this output stream and releases any system resources 
-   * associated with the stream. 
-   * <p>
-   * The <code>close</code> method of <code>FilterOutputStream</code> 
-   * calls its <code>flush</code> method, and then calls the 
-   * <code>close</code> method of its underlying output stream. 
+   * Closes this output stream and releases any system resources associated with the stream.
    *
-   * @exception  IOException  if an I/O error occurs.
-   * @see        java.io.FilterOutputStream#flush()
-   * @see        java.io.FilterOutputStream#out
+   * <p>The <code>close</code> method of <code>FilterOutputStream</code> calls its <code>flush
+   * </code> method, and then calls the <code>close</code> method of its underlying output stream.
+   *
+   * @exception IOException if an I/O error occurs.
+   * @see java.io.FilterOutputStream#flush()
+   * @see java.io.FilterOutputStream#out
    */
   public void close() throws IOException {
     Set<OutputStream> outputStreams = this.streams;

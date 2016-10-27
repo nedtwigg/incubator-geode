@@ -29,5 +29,4 @@ public class ZRevRangeExecutor extends ZRangeExecutor {
   public String getArgsError() {
     return ArityDef.ZREVRANGE;
   }
-
 }

@@ -67,7 +67,8 @@ public class CompiledAggregateFunctionJUnitTest {
     ExecutionContext context1 = new ExecutionContext(null, cache);
     assertTrue(caf1.evaluate(context1) instanceof Count);
 
-    CompiledAggregateFunction caf2 = new CompiledAggregateFunction(null, OQLLexerTokenTypes.COUNT, true);
+    CompiledAggregateFunction caf2 =
+        new CompiledAggregateFunction(null, OQLLexerTokenTypes.COUNT, true);
     ExecutionContext context2 = new ExecutionContext(null, cache);
     assertTrue(caf2.evaluate(context2) instanceof CountDistinct);
 
@@ -82,12 +83,14 @@ public class CompiledAggregateFunctionJUnitTest {
     context4.setBucketList(bucketList);
     assertTrue(caf4.evaluate(context4) instanceof Count);
 
-    CompiledAggregateFunction caf5 = new CompiledAggregateFunction(null, OQLLexerTokenTypes.COUNT, true);
+    CompiledAggregateFunction caf5 =
+        new CompiledAggregateFunction(null, OQLLexerTokenTypes.COUNT, true);
     ExecutionContext context5 = new ExecutionContext(null, cache);
     context5.setIsPRQueryNode(true);
     assertTrue(caf5.evaluate(context5) instanceof CountDistinctPRQueryNode);
 
-    CompiledAggregateFunction caf6 = new CompiledAggregateFunction(null, OQLLexerTokenTypes.COUNT, true);
+    CompiledAggregateFunction caf6 =
+        new CompiledAggregateFunction(null, OQLLexerTokenTypes.COUNT, true);
     QueryExecutionContext context6 = new QueryExecutionContext(null, cache);
     context6.setBucketList(bucketList);
     assertTrue(caf6.evaluate(context6) instanceof DistinctAggregator);
@@ -99,7 +102,8 @@ public class CompiledAggregateFunctionJUnitTest {
     ExecutionContext context1 = new ExecutionContext(null, cache);
     assertTrue(caf1.evaluate(context1) instanceof Sum);
 
-    CompiledAggregateFunction caf2 = new CompiledAggregateFunction(null, OQLLexerTokenTypes.SUM, true);
+    CompiledAggregateFunction caf2 =
+        new CompiledAggregateFunction(null, OQLLexerTokenTypes.SUM, true);
     ExecutionContext context2 = new ExecutionContext(null, cache);
     assertTrue(caf2.evaluate(context2) instanceof SumDistinct);
 
@@ -113,12 +117,14 @@ public class CompiledAggregateFunctionJUnitTest {
     context4.setBucketList(bucketList);
     assertTrue(caf4.evaluate(context4) instanceof Sum);
 
-    CompiledAggregateFunction caf5 = new CompiledAggregateFunction(null, OQLLexerTokenTypes.SUM, true);
+    CompiledAggregateFunction caf5 =
+        new CompiledAggregateFunction(null, OQLLexerTokenTypes.SUM, true);
     ExecutionContext context5 = new ExecutionContext(null, cache);
     context5.setIsPRQueryNode(true);
     assertTrue(caf5.evaluate(context5) instanceof SumDistinctPRQueryNode);
 
-    CompiledAggregateFunction caf6 = new CompiledAggregateFunction(null, OQLLexerTokenTypes.SUM, true);
+    CompiledAggregateFunction caf6 =
+        new CompiledAggregateFunction(null, OQLLexerTokenTypes.SUM, true);
     QueryExecutionContext context6 = new QueryExecutionContext(null, cache);
     context6.setBucketList(bucketList);
     assertTrue(caf6.evaluate(context6) instanceof DistinctAggregator);
@@ -130,7 +136,8 @@ public class CompiledAggregateFunctionJUnitTest {
     ExecutionContext context1 = new ExecutionContext(null, cache);
     assertTrue(caf1.evaluate(context1) instanceof Avg);
 
-    CompiledAggregateFunction caf2 = new CompiledAggregateFunction(null, OQLLexerTokenTypes.AVG, true);
+    CompiledAggregateFunction caf2 =
+        new CompiledAggregateFunction(null, OQLLexerTokenTypes.AVG, true);
     ExecutionContext context2 = new ExecutionContext(null, cache);
     assertTrue(caf2.evaluate(context2) instanceof AvgDistinct);
 
@@ -144,12 +151,14 @@ public class CompiledAggregateFunctionJUnitTest {
     context4.setBucketList(this.bucketList);
     assertTrue(caf4.evaluate(context4) instanceof AvgBucketNode);
 
-    CompiledAggregateFunction caf5 = new CompiledAggregateFunction(null, OQLLexerTokenTypes.AVG, true);
+    CompiledAggregateFunction caf5 =
+        new CompiledAggregateFunction(null, OQLLexerTokenTypes.AVG, true);
     ExecutionContext context5 = new ExecutionContext(null, cache);
     context5.setIsPRQueryNode(true);
     assertTrue(caf5.evaluate(context5) instanceof AvgDistinctPRQueryNode);
 
-    CompiledAggregateFunction caf6 = new CompiledAggregateFunction(null, OQLLexerTokenTypes.AVG, true);
+    CompiledAggregateFunction caf6 =
+        new CompiledAggregateFunction(null, OQLLexerTokenTypes.AVG, true);
     QueryExecutionContext context6 = new QueryExecutionContext(null, cache);
     context6.setBucketList(this.bucketList);
     assertTrue(caf6.evaluate(context6) instanceof DistinctAggregator);

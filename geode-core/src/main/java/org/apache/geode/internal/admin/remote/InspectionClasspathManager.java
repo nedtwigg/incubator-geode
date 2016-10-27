@@ -75,7 +75,7 @@ public class InspectionClasspathManager {
       try {
         f = f.getCanonicalFile();
       } catch (IOException ex) {
-        continue; //ignore?          
+        continue; //ignore?
       }
       try {
         urls.add(f.toURL());
@@ -86,5 +86,4 @@ public class InspectionClasspathManager {
     URL[] array = new URL[urls.size()];
     return (URL[]) urls.toArray(array);
   }
-
 }

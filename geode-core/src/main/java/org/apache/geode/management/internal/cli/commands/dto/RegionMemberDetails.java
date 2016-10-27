@@ -47,10 +47,15 @@ public class RegionMemberDetails implements CliJsonSerializable {
 
   private String[] fieldsToSkipOnUI;
 
-  public RegionMemberDetails() {
-  }
+  public RegionMemberDetails() {}
 
-  public RegionMemberDetails(String id, long primaryEntryCount, long backupEntryCount, String memory, int numOfCopies, int numOfBuckets) {
+  public RegionMemberDetails(
+      String id,
+      long primaryEntryCount,
+      long backupEntryCount,
+      String memory,
+      int numOfCopies,
+      int numOfBuckets) {
     this.id = id;
     this.primaryEntryCount = primaryEntryCount;
     this.backupEntryCount = backupEntryCount;
@@ -154,33 +159,21 @@ public class RegionMemberDetails implements CliJsonSerializable {
 
   @Override
   public boolean equals(Object obj) { // eclipse generated
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     RegionMemberDetails other = (RegionMemberDetails) obj;
-    if (backupEntryCount != other.backupEntryCount)
-      return false;
-    if (!Arrays.equals(fieldsToSkipOnUI, other.fieldsToSkipOnUI))
-      return false;
+    if (backupEntryCount != other.backupEntryCount) return false;
+    if (!Arrays.equals(fieldsToSkipOnUI, other.fieldsToSkipOnUI)) return false;
     if (id == null) {
-      if (other.id != null)
-        return false;
-    } else if (!id.equals(other.id))
-      return false;
+      if (other.id != null) return false;
+    } else if (!id.equals(other.id)) return false;
     if (memory == null) {
-      if (other.memory != null)
-        return false;
-    } else if (!memory.equals(other.memory))
-      return false;
-    if (numOfBuckets != other.numOfBuckets)
-      return false;
-    if (numOfCopies != other.numOfCopies)
-      return false;
-    if (primaryEntryCount != other.primaryEntryCount)
-      return false;
+      if (other.memory != null) return false;
+    } else if (!memory.equals(other.memory)) return false;
+    if (numOfBuckets != other.numOfBuckets) return false;
+    if (numOfCopies != other.numOfCopies) return false;
+    if (primaryEntryCount != other.primaryEntryCount) return false;
     return true;
   }
 

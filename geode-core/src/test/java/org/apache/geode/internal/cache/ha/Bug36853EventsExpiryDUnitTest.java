@@ -48,17 +48,15 @@ import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * This is a bug test for 36853 (Expiry logic in HA is used to expire early data
- * that a secondary picks up that is not in the primary. But it is also possible
- * that it would cause data that is in the primary queue to be expired. And this
- * can cause a data loss. This issue is mostly related to Expiry mechanism and
- * not HA, but it affects HA functionality).
- * 
- * This test has a cache-client connected to one cache-server. The expiry-time
- * of events in the queue for the client at the server is set low and dispatcher
- * is set for delayed start. This will make some of the events in the queue
- * expire before dispatcher can start picking them up for delivery to the
- * client.
+ * This is a bug test for 36853 (Expiry logic in HA is used to expire early data that a secondary
+ * picks up that is not in the primary. But it is also possible that it would cause data that is in
+ * the primary queue to be expired. And this can cause a data loss. This issue is mostly related to
+ * Expiry mechanism and not HA, but it affects HA functionality).
+ *
+ * <p>This test has a cache-client connected to one cache-server. The expiry-time of events in the
+ * queue for the client at the server is set low and dispatcher is set for delayed start. This will
+ * make some of the events in the queue expire before dispatcher can start picking them up for
+ * delivery to the client.
  */
 @Category(DistributedTest.class)
 public class Bug36853EventsExpiryDUnitTest extends JUnit4CacheTestCase {
@@ -70,7 +68,8 @@ public class Bug36853EventsExpiryDUnitTest extends JUnit4CacheTestCase {
   private VM client = null;
 
   /** Name of the test region */
-  private static final String REGION_NAME = Bug36853EventsExpiryDUnitTest.class.getSimpleName() + "_region";
+  private static final String REGION_NAME =
+      Bug36853EventsExpiryDUnitTest.class.getSimpleName() + "_region";
 
   /** The cache instance for test cases */
   private static Cache cache = null;
@@ -101,18 +100,21 @@ public class Bug36853EventsExpiryDUnitTest extends JUnit4CacheTestCase {
     server = host.getVM(0);
     client = host.getVM(1);
     server.invoke(() -> ConflationDUnitTest.setIsSlowStart());
-    int PORT2 = ((Integer) server.invoke(() -> Bug36853EventsExpiryDUnitTest.createServerCache())).intValue();
+    int PORT2 =
+        ((Integer) server.invoke(() -> Bug36853EventsExpiryDUnitTest.createServerCache()))
+            .intValue();
 
-    client.invoke(() -> Bug36853EventsExpiryDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT2)));
+    client.invoke(
+        () ->
+            Bug36853EventsExpiryDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT2)));
   }
 
   /**
    * Creates the cache
-   * 
-   * @param props -
-   *          distributed system props
-   * @throws Exception -
-   *           thrown in any problem occurs in creating cache
+   *
+   * @param props - distributed system props
+   * @throws Exception - thrown in any problem occurs in creating cache
    */
   private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
@@ -120,9 +122,7 @@ public class Bug36853EventsExpiryDUnitTest extends JUnit4CacheTestCase {
     assertNotNull(cache);
   }
 
-  /**
-   * Creates cache and starts the bridge-server
-   */
+  /** Creates cache and starts the bridge-server */
   private static Integer createServerCache() throws Exception {
     System.setProperty(HARegionQueue.REGION_ENTRY_EXPIRY_TIME, "1");
     System.setProperty("slowStartTimeForTesting", String.valueOf(DISPATCHER_SLOWSTART_TIME));
@@ -146,10 +146,8 @@ public class Bug36853EventsExpiryDUnitTest extends JUnit4CacheTestCase {
    * Creates the client cache
    *
    * @param hostName the name of the server's machine
-   * @param port -
-   *          bridgeserver port
-   * @throws Exception -
-   *           thrown if any problem occurs in setting up the client
+   * @param port - bridgeserver port
+   * @throws Exception - thrown if any problem occurs in setting up the client
    */
   private static void createClientCache(String hostName, Integer port) throws Exception {
     Properties props = new Properties();
@@ -158,24 +156,26 @@ public class Bug36853EventsExpiryDUnitTest extends JUnit4CacheTestCase {
     new Bug36853EventsExpiryDUnitTest().createCache(props);
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    ClientServerTestCase.configureConnectionPool(factory, hostName, port.intValue(), -1, true, -1, 2, null);
+    ClientServerTestCase.configureConnectionPool(
+        factory, hostName, port.intValue(), -1, true, -1, 2, null);
 
-    factory.addCacheListener(new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent event) {
-        String key = (String) event.getKey();
-        LogWriterUtils.getLogWriter().info("client2 : afterCreate : key =" + key);
-        if (key.equals(LAST_KEY)) {
+    factory.addCacheListener(
+        new CacheListenerAdapter() {
+          public void afterCreate(EntryEvent event) {
+            String key = (String) event.getKey();
+            LogWriterUtils.getLogWriter().info("client2 : afterCreate : key =" + key);
+            if (key.equals(LAST_KEY)) {
 
-          synchronized (Bug36853EventsExpiryDUnitTest.class) {
-            LogWriterUtils.getLogWriter().info("Notifying client2 to proceed for validation");
-            proceedForValidation = true;
-            Bug36853EventsExpiryDUnitTest.class.notify();
+              synchronized (Bug36853EventsExpiryDUnitTest.class) {
+                LogWriterUtils.getLogWriter().info("Notifying client2 to proceed for validation");
+                proceedForValidation = true;
+                Bug36853EventsExpiryDUnitTest.class.notify();
+              }
+            } else {
+              putsRecievedByClient++;
+            }
           }
-        } else {
-          putsRecievedByClient++;
-        }
-      }
-    });
+        });
     RegionAttributes attrs = factory.create();
     Region region = cache.createRegion(REGION_NAME, attrs);
 
@@ -183,16 +183,13 @@ public class Bug36853EventsExpiryDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * First generates some events, then waits for the time equal to that of
-   * delayed start of the dispatcher and then does put on the last key for few
-   * iterations. The idea is to let the events added, before waiting, to expire
-   * before the dispatcher to pick them up and then do a put on a LAST_KEY
-   * couple of times so that atleast one of these is dispatched to client and
-   * when client recieves this in the listener, the test is notified to proceed
-   * for validation.
-   * 
-   * @throws Exception -
-   *           thrown if any problem occurs in put operation
+   * First generates some events, then waits for the time equal to that of delayed start of the
+   * dispatcher and then does put on the last key for few iterations. The idea is to let the events
+   * added, before waiting, to expire before the dispatcher to pick them up and then do a put on a
+   * LAST_KEY couple of times so that atleast one of these is dispatched to client and when client
+   * recieves this in the listener, the test is notified to proceed for validation.
+   *
+   * @throws Exception - thrown if any problem occurs in put operation
    */
   private static void generateEvents() throws Exception {
     String regionName = Region.SEPARATOR + REGION_NAME;
@@ -209,16 +206,13 @@ public class Bug36853EventsExpiryDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * First generates some events, then waits for the time equal to that of
-   * delayed start of the dispatcher and then does put on the last key for few
-   * iterations. Whenever the client the create corresponding to the LAST_KEY in
-   * the listener, the test is notified to proceed for validation. Then, it is
-   * validated that all the events that were added prior to the LAST_KEY are
-   * dispatched to the client. Due to the bug#36853, those events will expire
-   * and validation will fail.
-   * 
-   * @throws Exception -
-   *           thrown if any exception occurs in test
+   * First generates some events, then waits for the time equal to that of delayed start of the
+   * dispatcher and then does put on the last key for few iterations. Whenever the client the create
+   * corresponding to the LAST_KEY in the listener, the test is notified to proceed for validation.
+   * Then, it is validated that all the events that were added prior to the LAST_KEY are dispatched
+   * to the client. Due to the bug#36853, those events will expire and validation will fail.
+   *
+   * @throws Exception - thrown if any exception occurs in test
    */
   @Test
   public void testEventsExpiryBug() throws Exception {
@@ -229,8 +223,7 @@ public class Bug36853EventsExpiryDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Waits for the listener to receive all events and validates that no
-   * exception occured in client
+   * Waits for the listener to receive all events and validates that no exception occured in client
    */
   private static void validateEventCountAtClient() throws Exception {
     if (!proceedForValidation) {
@@ -245,16 +238,15 @@ public class Bug36853EventsExpiryDUnitTest extends JUnit4CacheTestCase {
       }
     }
     LogWriterUtils.getLogWriter().info("Starting validation on client2");
-    assertEquals("Puts recieved by client not equal to the puts done at server.", TOTAL_PUTS, putsRecievedByClient);
+    assertEquals(
+        "Puts recieved by client not equal to the puts done at server.",
+        TOTAL_PUTS,
+        putsRecievedByClient);
     LogWriterUtils.getLogWriter().info("putsRecievedByClient = " + putsRecievedByClient);
     LogWriterUtils.getLogWriter().info("Validation complete on client2");
-
   }
 
-  /**
-   * Closes the cache
-   * 
-   */
+  /** Closes the cache */
   private static void unSetExpiryTimeAndCloseCache() {
     System.clearProperty(HARegionQueue.REGION_ENTRY_EXPIRY_TIME);
     CacheTestCase.closeCache();
@@ -262,9 +254,8 @@ public class Bug36853EventsExpiryDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Closes the caches on clients and servers
-   * 
-   * @throws Exception -
-   *           thrown if any problem occurs in closing client and server caches.
+   *
+   * @throws Exception - thrown if any problem occurs in closing client and server caches.
    */
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
@@ -272,7 +263,5 @@ public class Bug36853EventsExpiryDUnitTest extends JUnit4CacheTestCase {
     client.invoke(() -> Bug36853EventsExpiryDUnitTest.unSetExpiryTimeAndCloseCache());
     // close server
     server.invoke(() -> Bug36853EventsExpiryDUnitTest.unSetExpiryTimeAndCloseCache());
-
   }
-
 }

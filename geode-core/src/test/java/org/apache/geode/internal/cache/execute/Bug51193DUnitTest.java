@@ -89,10 +89,12 @@ public class Bug51193DUnitTest extends JUnit4DistributedTestCase {
   }
 
   @SuppressWarnings("deprecation")
-  public static void createClientCache(String hostName, Integer port, Integer timeout) throws Exception {
+  public static void createClientCache(String hostName, Integer port, Integer timeout)
+      throws Exception {
     try {
       if (timeout > 0) {
-        System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "CLIENT_FUNCTION_TIMEOUT", String.valueOf(timeout));
+        System.setProperty(
+            DistributionConfig.GEMFIRE_PREFIX + "CLIENT_FUNCTION_TIMEOUT", String.valueOf(timeout));
       }
       Properties props = new Properties();
       props.setProperty(LOCATORS, "");
@@ -103,7 +105,8 @@ public class Bug51193DUnitTest extends JUnit4DistributedTestCase {
       ccf.addPoolServer(hostName, port);
       cache = (GemFireCacheImpl) ccf.create();
 
-      ClientRegionFactory<String, String> crf = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
+      ClientRegionFactory<String, String> crf =
+          cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
 
       crf.create(REGION_NAME);
     } finally {
@@ -124,7 +127,11 @@ public class Bug51193DUnitTest extends JUnit4DistributedTestCase {
     RegionFactory<String, String> rf = null;
     if (createPR) {
       rf = cache.createRegionFactory(RegionShortcut.PARTITION);
-      rf.setPartitionAttributes(new PartitionAttributesFactory<String, String>().setRedundantCopies(1).setTotalNumBuckets(4).create());
+      rf.setPartitionAttributes(
+          new PartitionAttributesFactory<String, String>()
+              .setRedundantCopies(1)
+              .setTotalNumBuckets(4)
+              .create());
     } else {
       rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
     }
@@ -149,7 +156,9 @@ public class Bug51193DUnitTest extends JUnit4DistributedTestCase {
       dataSet = FunctionService.onServers(cache).withArgs(timeout);
     }
     ResultCollector rs = dataSet.execute(function);
-    assertTrue("Server did not read client_function_timeout from client.", (Boolean) ((ArrayList) rs.getResult()).get(0));
+    assertTrue(
+        "Server did not read client_function_timeout from client.",
+        (Boolean) ((ArrayList) rs.getResult()).get(0));
   }
 
   @SuppressWarnings("rawtypes")
@@ -165,7 +174,8 @@ public class Bug51193DUnitTest extends JUnit4DistributedTestCase {
     // start server
     int port = (Integer) server0.invoke(() -> Bug51193DUnitTest.createServerCache(createPR));
     // start client
-    client0.invoke(() -> Bug51193DUnitTest.createClientCache(client0.getHost().getHostName(), port, timeout));
+    client0.invoke(
+        () -> Bug51193DUnitTest.createClientCache(client0.getHost().getHostName(), port, timeout));
     // do puts and get
     server0.invoke(() -> Bug51193DUnitTest.doPutsAndGet(10));
     // execute function & verify timeout has been received at server.

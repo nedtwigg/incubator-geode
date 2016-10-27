@@ -32,7 +32,7 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * Base test case for the management.bean.stats tests.
- * 
+ *
  * @since GemFire 7.0
  */
 public abstract class MBeanStatsTestCase {

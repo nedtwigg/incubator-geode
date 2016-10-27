@@ -39,10 +39,9 @@ import org.apache.geode.tools.pulse.internal.data.Repository;
 
 /**
  * Class ClusterMembersRGraphService
- * 
- * This class contains implementations of getting List of Cluster members and
- * their details
- * 
+ *
+ * <p>This class contains implementations of getting List of Cluster members and their details
+ *
  * @since GemFire version 7.5
  */
 @Component
@@ -97,7 +96,9 @@ public class ClusterMembersRGraphService implements PulseService {
     ObjectNode responseJSON = mapper.createObjectNode();
 
     // cluster's Members
-    responseJSON.put(this.CLUSTER, getPhysicalServerJson(cluster, repository.getJmxHost(), repository.getJmxPort()));
+    responseJSON.put(
+        this.CLUSTER,
+        getPhysicalServerJson(cluster, repository.getJmxHost(), repository.getJmxPort()));
     responseJSON.put(this.MEMBER_COUNT, cluster.getMemberCount());
 
     // Send json response
@@ -105,15 +106,14 @@ public class ClusterMembersRGraphService implements PulseService {
   }
 
   /**
-   * function used for getting all members details in format of JSON Object
-   * array defined under a cluster. This function create json based on the
-   * relation of physical host and members related to it.
-   * 
+   * function used for getting all members details in format of JSON Object array defined under a
+   * cluster. This function create json based on the relation of physical host and members related
+   * to it.
+   *
    * @param cluster
    * @param host
    * @param port
-   * @return Array list of JSON objects for required fields of members in
-   *         cluster
+   * @return Array list of JSON objects for required fields of members in cluster
    */
   private ObjectNode getPhysicalServerJson(Cluster cluster, String host, String port) {
     Map<String, List<Cluster.Member>> physicalToMember = cluster.getPhysicalToMember();
@@ -164,8 +164,7 @@ public class ClusterMembersRGraphService implements PulseService {
           double heapUsage = (currentHeap.doubleValue() / usedHeapSize.doubleValue()) * 100;
 
           memberData.put(this.MEMORY_USAGE, Double.valueOf(df2.format(heapUsage)));
-        } else
-          memberData.put(this.MEMORY_USAGE, 0);
+        } else memberData.put(this.MEMORY_USAGE, 0);
 
         double currentCPUUsage = member.getCpuUsage();
 
@@ -265,11 +264,9 @@ public class ClusterMembersRGraphService implements PulseService {
 
   /**
    * used for getting member node type based on member's current state
-   * 
-   * @param member
-   *          Member
-   * @param memberState
-   *          i.e Severe, Error, Warning or Normal
+   *
+   * @param member Member
+   * @param memberState i.e Severe, Error, Warning or Normal
    * @return
    */
   private String getMemberNodeType(Cluster.Member member, String memberState) {
@@ -296,9 +293,9 @@ public class ClusterMembersRGraphService implements PulseService {
   }
 
   /**
-   * function used for getting list of all the alerts and save the member names
-   * in respective error, warning and severe alert lists
-   * 
+   * function used for getting list of all the alerts and save the member names in respective error,
+   * warning and severe alert lists
+   *
    * @param cluster
    */
   private void updateAlertLists(Cluster cluster) {

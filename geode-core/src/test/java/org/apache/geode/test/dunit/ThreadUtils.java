@@ -25,11 +25,11 @@ import org.apache.geode.internal.OSProcess;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * <code>ThreadUtils</code> provides static utility methods to perform thread
- * related actions such as dumping thread stacks.
- * 
- * These methods can be used directly: <code>ThreadUtils.dumpAllStacks()</code>, 
- * however, they are intended to be referenced through static import:
+ * <code>ThreadUtils</code> provides static utility methods to perform thread related actions such
+ * as dumping thread stacks.
+ *
+ * <p>These methods can be used directly: <code>ThreadUtils.dumpAllStacks()</code>, however, they
+ * are intended to be referenced through static import:
  *
  * <pre>
  * import static org.apache.geode.test.dunit.ThreadUtils.*;
@@ -43,12 +43,11 @@ public class ThreadUtils {
 
   private static final Logger logger = LogService.getLogger();
 
-  protected ThreadUtils() {
-  }
+  protected ThreadUtils() {}
 
   /**
    * Print stack dumps for all vms.
-   * 
+   *
    * @since GemFire 5.0
    */
   public static void dumpAllStacks() {
@@ -57,25 +56,23 @@ public class ThreadUtils {
     }
   }
 
-  /**
-   * Dump all thread stacks
-   */
+  /** Dump all thread stacks */
   public static void dumpMyThreads() {
     OSProcess.printStacks(0, false);
   }
 
-  /** 
+  /**
    * Print a stack dump for this vm.
-   * 
+   *
    * @since GemFire 5.0
    */
   public static void dumpStack() {
     OSProcess.printStacks(0, false);
   }
 
-  /** 
+  /**
    * Print stack dumps for all vms on the given host.
-   * 
+   *
    * @since GemFire 5.0
    */
   public static void dumpStack(final Host host) {
@@ -84,9 +81,9 @@ public class ThreadUtils {
     }
   }
 
-  /** 
+  /**
    * Print a stack dump for the given vm.
-   * 
+   *
    * @since GemFire 5.0
    */
   public static void dumpStack(final VM vm) {
@@ -115,7 +112,7 @@ public class ThreadUtils {
 
   /**
    * Wait for a thread to join.
-   * 
+   *
    * @param thread thread to wait on
    * @param timeoutMilliseconds maximum time to wait
    * @throws AssertionError if the thread does not terminate
@@ -124,7 +121,7 @@ public class ThreadUtils {
     final long tilt = System.currentTimeMillis() + timeoutMilliseconds;
     final long incrementalWait = jitterInterval(timeoutMilliseconds);
     final long start = System.currentTimeMillis();
-    for (;;) {
+    for (; ; ) {
       // I really do *not* understand why this check is necessary
       // but it is, at least with JDK 1.6.  According to the source code
       // and the javadocs, one would think that join() would exit immediately

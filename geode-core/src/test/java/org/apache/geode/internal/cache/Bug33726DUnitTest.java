@@ -74,7 +74,6 @@ public class Bug33726DUnitTest extends JUnit4DistributedTestCase {
     vm1.invoke(() -> Bug33726DUnitTest.createCacheAndRegion2());
     boolean pass = vm1.invoke(() -> Bug33726DUnitTest.testFlag());
     assertTrue("The test failed", pass);
-
   }
 
   public static void createCacheAndPopulateRegion1() {
@@ -144,7 +143,6 @@ public class Bug33726DUnitTest extends JUnit4DistributedTestCase {
         } else if (regionPath.indexOf("/testRegion") >= 0) {
           flags[0] = true;
         }
-
       }
       if (flags[0] && flags[1]) {
         isOK = true;
@@ -154,5 +152,4 @@ public class Bug33726DUnitTest extends JUnit4DistributedTestCase {
       }
     }
   }
-
 }

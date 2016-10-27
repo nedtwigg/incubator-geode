@@ -26,19 +26,22 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation is used to mark a reference count decrement to an off-heap value:
+ *
  * <ul>
- * <li>Use this annotation on a parameter declaration to indicate that the method will decrement (call release) on the off-heap reference.</li>
- * <li>When used on method declarations this annotation indicates that the method will call release on one or more field members of the class instance.</li>
- * <li>When used on a local variable this annotation indicates that the variable will be released within the containing method (typically in a finally block).</li>
- * <li>Can also be used on fields to augment the @Retained annotation.</li>
+ *   <li>Use this annotation on a parameter declaration to indicate that the method will decrement
+ *       (call release) on the off-heap reference.
+ *   <li>When used on method declarations this annotation indicates that the method will call
+ *       release on one or more field members of the class instance.
+ *   <li>When used on a local variable this annotation indicates that the variable will be released
+ *       within the containing method (typically in a finally block).
+ *   <li>Can also be used on fields to augment the @Retained annotation.
  * </ul>
- * 
- * One or more OffHeapIdentifiers may be supplied if the developer wishes to link this annotation with other
- * off-heap annotations.
- * 
+ *
+ * One or more OffHeapIdentifiers may be supplied if the developer wishes to link this annotation
+ * with other off-heap annotations.
  */
 @Retention(RetentionPolicy.SOURCE)
-@Target({ ElementType.PARAMETER, ElementType.METHOD, ElementType.LOCAL_VARIABLE, ElementType.FIELD })
+@Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.LOCAL_VARIABLE, ElementType.FIELD})
 @Documented
 public @interface Released {
   OffHeapIdentifier[] value() default DEFAULT;

@@ -19,9 +19,8 @@ package org.apache.geode.pdx;
 import org.apache.geode.GemFireException;
 
 /**
- * Thrown when a an attempt is made to reuse a PDX Type. This
- * can occur if the PDX registry files are deleted from the sending
- * side of a WAN Gateway. 
+ * Thrown when a an attempt is made to reuse a PDX Type. This can occur if the PDX registry files
+ * are deleted from the sending side of a WAN Gateway.
  */
 public class PdxRegistryMismatchException extends GemFireException {
 
@@ -29,6 +28,7 @@ public class PdxRegistryMismatchException extends GemFireException {
 
   /**
    * Constructs a new exception with the given message
+   *
    * @param message the message of the new exception
    */
   public PdxRegistryMismatchException(String message) {

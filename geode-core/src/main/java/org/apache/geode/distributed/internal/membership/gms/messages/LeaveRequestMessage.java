@@ -31,14 +31,16 @@ public class LeaveRequestMessage extends HighPriorityDistributionMessage impleme
   private InternalDistributedMember memberID;
   private String reason;
 
-  public LeaveRequestMessage(Collection<InternalDistributedMember> coords, InternalDistributedMember id, String reason) {
+  public LeaveRequestMessage(
+      Collection<InternalDistributedMember> coords, InternalDistributedMember id, String reason) {
     super();
     setRecipients(coords);
     this.memberID = id;
     this.reason = reason;
   }
 
-  public LeaveRequestMessage(InternalDistributedMember coord, InternalDistributedMember id, String reason) {
+  public LeaveRequestMessage(
+      InternalDistributedMember coord, InternalDistributedMember id, String reason) {
     super();
     setRecipient(coord);
     this.memberID = id;
@@ -88,5 +90,4 @@ public class LeaveRequestMessage extends HighPriorityDistributionMessage impleme
   public String toString() {
     return getShortClassName() + "(" + memberID + "; reason=" + reason + ")";
   }
-
 }

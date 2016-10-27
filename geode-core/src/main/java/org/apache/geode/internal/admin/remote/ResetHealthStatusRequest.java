@@ -26,17 +26,15 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * reset its current health status.
+ * A message that is sent to a particular distribution manager to reset its current health status.
+ *
  * @since GemFire 3.5
  */
 public final class ResetHealthStatusRequest extends AdminRequest {
   // instance variables
   private int id;
 
-  /**
-   * Returns a <code>ResetHealthStatusRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>ResetHealthStatusRequest</code> to be sent to the specified recipient. */
   public static ResetHealthStatusRequest create(int id) {
     ResetHealthStatusRequest m = new ResetHealthStatusRequest();
     m.id = id;
@@ -44,12 +42,11 @@ public final class ResetHealthStatusRequest extends AdminRequest {
   }
 
   public ResetHealthStatusRequest() {
-    friendlyName = LocalizedStrings.ResetHealthStatusRequest_RESET_HEALTH_STATUS.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.ResetHealthStatusRequest_RESET_HEALTH_STATUS.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return ResetHealthStatusResponse.create(dm, this.getSender(), this.id);

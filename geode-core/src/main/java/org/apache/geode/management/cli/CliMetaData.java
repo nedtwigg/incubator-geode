@@ -26,45 +26,45 @@ import org.apache.geode.management.internal.cli.CliAroundInterceptor;
 /**
  * An annotation to define additional meta-data for commands.
  *
- *
  * @since GemFire 7.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.PARAMETER })
+@Target({ElementType.METHOD, ElementType.PARAMETER})
 public @interface CliMetaData {
 
-  /** Represents a default value to an option of a command. **/
+  /** Represents a default value to an option of a command. * */
   public static final String ANNOTATION_DEFAULT_VALUE = "__DEFAULT__";
 
-  /** Represents a null value to an option of a command. **/
+  /** Represents a null value to an option of a command. * */
   public static final String ANNOTATION_NULL_VALUE = "__NULL__";
 
   /**
-   * Indicates that the command will only run in the gfsh shell and will not
-   * need the management service
-   **/
+   * Indicates that the command will only run in the gfsh shell and will not need the management
+   * service
+   */
   boolean shellOnly() default false;
 
-  /** Indicates that the effect of the command is persisted or the commands affects the persistent configuration */
+  /**
+   * Indicates that the effect of the command is persisted or the commands affects the persistent
+   * configuration
+   */
   boolean isPersisted() default false;
 
   boolean readsSharedConfiguration() default false;
 
   boolean writesToSharedConfiguration() default false;
 
-  /** In help, topics that are related to this command **/
-  String[] relatedTopic() default org.apache.geode.management.internal.cli.i18n.CliStrings.DEFAULT_TOPIC_GEODE;
+  /** In help, topics that are related to this command * */
+  String[] relatedTopic() default
+      org.apache.geode.management.internal.cli.i18n.CliStrings.DEFAULT_TOPIC_GEODE;
 
   /**
-   * The fully qualified name of a class which implements the
-   * {@link CliAroundInterceptor} interface in order to provide additional pre-
-   * and post-execution functionality for a command.
+   * The fully qualified name of a class which implements the {@link CliAroundInterceptor} interface
+   * in order to provide additional pre- and post-execution functionality for a command.
    */
   String interceptor() default org.apache.geode.management.cli.CliMetaData.ANNOTATION_NULL_VALUE;
 
-  /**
-   * String used as a separator when multiple values for a command are specified
-   */
+  /** String used as a separator when multiple values for a command are specified */
   String valueSeparator() default org.apache.geode.management.cli.CliMetaData.ANNOTATION_NULL_VALUE;
 
   // TODO - Abhishek - refactor to group this
@@ -83,17 +83,14 @@ public @interface CliMetaData {
 
   /**
    * An annotation to define additional meta-data for availability of commands.
-   * 
    *
    * @since GemFire 8.0
    */
   @Retention(RetentionPolicy.RUNTIME)
-  @Target({ ElementType.METHOD })
+  @Target({ElementType.METHOD})
   public @interface AvailabilityMetadata {
-    /**
-     * String describing the availability condition.
-     */
-    String availabilityDescription() default org.apache.geode.management.cli.CliMetaData.ANNOTATION_NULL_VALUE;
+    /** String describing the availability condition. */
+    String availabilityDescription() default
+        org.apache.geode.management.cli.CliMetaData.ANNOTATION_NULL_VALUE;
   }
-
 }

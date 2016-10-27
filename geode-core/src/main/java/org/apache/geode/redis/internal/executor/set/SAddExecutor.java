@@ -41,7 +41,9 @@ public class SAddExecutor extends SetExecutor {
 
     ByteArrayWrapper key = command.getKey();
     @SuppressWarnings("unchecked")
-    Region<ByteArrayWrapper, Boolean> keyRegion = (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getOrCreateRegion(key, RedisDataType.REDIS_SET, context);
+    Region<ByteArrayWrapper, Boolean> keyRegion =
+        (Region<ByteArrayWrapper, Boolean>)
+            context.getRegionProvider().getOrCreateRegion(key, RedisDataType.REDIS_SET, context);
 
     if (commandElems.size() >= 4) {
       Map<ByteArrayWrapper, Boolean> entries = new HashMap<ByteArrayWrapper, Boolean>();
@@ -52,9 +54,8 @@ public class SAddExecutor extends SetExecutor {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), entries.size()));
     } else {
       Object v = keyRegion.put(new ByteArrayWrapper(commandElems.get(2)), true);
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), v == null ? 1 : 0));
+      command.setResponse(
+          Coder.getIntegerResponse(context.getByteBufAllocator(), v == null ? 1 : 0));
     }
-
   }
-
 }

@@ -96,15 +96,13 @@ import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 
-/**
- * Tests the basic use cases for PR persistence.
- */
+/** Tests the basic use cases for PR persistence. */
 @Category(DistributedTest.class)
 public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedRegionTestBase {
 
   private static final int NUM_BUCKETS = 15;
   //This must be bigger than the dunit ack-wait-threshold for the revoke
-  //tests. The command line is setting the ack-wait-threshold to be 
+  //tests. The command line is setting the ack-wait-threshold to be
   //60 seconds.
   private static final int MAX_WAIT = 65 * 1000;
 
@@ -112,10 +110,7 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     super();
   }
 
-  /**
-   * A simple test case that we are actually
-   * persisting with a PR.
-   */
+  /** A simple test case that we are actually persisting with a PR. */
   @Test
   public void testSinglePR() {
     Host host = Host.getHost(0);
@@ -148,8 +143,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
   }
 
   /**
-   * Test total-buckets-num getting bigger, which cause exception.
-   * but changed to smaller should be ok.
+   * Test total-buckets-num getting bigger, which cause exception. but changed to smaller should be
+   * ok.
    */
   @Test
   public void testChangedToalBucketNumberSinglePR() {
@@ -167,8 +162,13 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     } catch (RMIException exp) {
       assertTrue(exp.getCause() instanceof IllegalStateException);
       IllegalStateException ise = (IllegalStateException) exp.getCause();
-      Object[] prms = new Object[] { "/" + PR_REGION_NAME, 2, 5 };
-      assertTrue(ise.getMessage().contains(LocalizedStrings.PartitionedRegion_FOR_REGION_0_TotalBucketNum_1_SHOULD_NOT_BE_CHANGED_Previous_Configured_2.toString(prms)));
+      Object[] prms = new Object[] {"/" + PR_REGION_NAME, 2, 5};
+      assertTrue(
+          ise.getMessage()
+              .contains(
+                  LocalizedStrings
+                      .PartitionedRegion_FOR_REGION_0_TotalBucketNum_1_SHOULD_NOT_BE_CHANGED_Previous_Configured_2
+                      .toString(prms)));
     }
     closeCache(vm0);
     try {
@@ -177,38 +177,42 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     } catch (RMIException exp) {
       assertTrue(exp.getCause() instanceof IllegalStateException);
       IllegalStateException ise = (IllegalStateException) exp.getCause();
-      Object[] prms = new Object[] { "/" + PR_REGION_NAME, 10, 5 };
-      assertTrue(ise.getMessage().contains(LocalizedStrings.PartitionedRegion_FOR_REGION_0_TotalBucketNum_1_SHOULD_NOT_BE_CHANGED_Previous_Configured_2.toString(prms)));
+      Object[] prms = new Object[] {"/" + PR_REGION_NAME, 10, 5};
+      assertTrue(
+          ise.getMessage()
+              .contains(
+                  LocalizedStrings
+                      .PartitionedRegion_FOR_REGION_0_TotalBucketNum_1_SHOULD_NOT_BE_CHANGED_Previous_Configured_2
+                      .toString(prms)));
     }
     expect.remove();
   }
 
-  /**
-   * Test for bug 44184
-   */
+  /** Test for bug 44184 */
   @Test
   public void testSinglePRWithCustomExpiry() {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(1);
 
-    SerializableRunnable createPR = new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        af.setPartitionAttributes(paf.create());
-        af.setCustomEntryIdleTimeout(new TestCustomExpiration());
-        af.setEntryIdleTimeout(new ExpirationAttributes(60, ExpirationAction.INVALIDATE));
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        RegionAttributes attr = af.create();
-        cache.createRegion(PR_REGION_NAME, attr);
-      }
-    };
+    SerializableRunnable createPR =
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            af.setPartitionAttributes(paf.create());
+            af.setCustomEntryIdleTimeout(new TestCustomExpiration());
+            af.setEntryIdleTimeout(new ExpirationAttributes(60, ExpirationAction.INVALIDATE));
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            RegionAttributes attr = af.create();
+            cache.createRegion(PR_REGION_NAME, attr);
+          }
+        };
 
     vm0.invoke(createPR);
 
@@ -227,10 +231,9 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
   }
 
   /**
-   * Test to make sure that we can recover
-   * from a complete system shutdown with redundancy
-   * 0
-   * @throws Throwable 
+   * Test to make sure that we can recover from a complete system shutdown with redundancy 0
+   *
+   * @throws Throwable
    */
   @Test
   public void testTotalRecoverRedundancy0() throws Throwable {
@@ -238,10 +241,9 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
   }
 
   /**
-   * Test to make sure that we can recover
-   * from a complete system shutdown with redundancy
-   * 1
-   * @throws Throwable 
+   * Test to make sure that we can recover from a complete system shutdown with redundancy 1
+   *
+   * @throws Throwable
    */
   @Test
   public void testTotalRecoverRedundancy1() throws Throwable {
@@ -250,10 +252,7 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
 
   private static boolean FAIL_IN_THIS_VM = false;
 
-  /**
-   * Test for bug #49972 - handle a serialization error in the
-   * async writer thread.
-   */
+  /** Test for bug #49972 - handle a serialization error in the async writer thread. */
   @Ignore("Bug 50376")
   @Test
   public void testBadSerializationInAsyncThread() throws Throwable {
@@ -264,13 +263,14 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
 
     final int numBuckets = 50;
 
-    vm0.invoke(new SerializableRunnable() {
+    vm0.invoke(
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        FAIL_IN_THIS_VM = true;
-      }
-    });
+          @Override
+          public void run() {
+            FAIL_IN_THIS_VM = true;
+          }
+        });
 
     IgnoredException expected1 = IgnoredException.addIgnoredException("Fatal error from asynch");
     IgnoredException expected2 = IgnoredException.addIgnoredException("ToDataException");
@@ -284,25 +284,26 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
 
       //write objects which will fail serialization in async writer thread.
 
-      vm0.invoke(new SerializableRunnable() {
-        public void run() {
-          Cache cache = getCache();
-          Region region = cache.getRegion(PR_REGION_NAME);
-          try {
-            for (int i = 0; i < numBuckets; i++) {
-              region.put(i, new BadSerializer());
-              //this will trigger a deserialiation (could have also done this put with a function I guess.
-              region.get(i);
+      vm0.invoke(
+          new SerializableRunnable() {
+            public void run() {
+              Cache cache = getCache();
+              Region region = cache.getRegion(PR_REGION_NAME);
+              try {
+                for (int i = 0; i < numBuckets; i++) {
+                  region.put(i, new BadSerializer());
+                  //this will trigger a deserialiation (could have also done this put with a function I guess.
+                  region.get(i);
+                }
+              } catch (DiskAccessException ex) {
+                if (ex.getMessage().contains("the flusher thread had been terminated")) {
+                  // expected
+                } else {
+                  throw ex;
+                }
+              }
             }
-          } catch (DiskAccessException ex) {
-            if (ex.getMessage().contains("the flusher thread had been terminated")) {
-              // expected
-            } else {
-              throw ex;
-            }
-          }
-        }
-      });
+          });
 
       //Wait for the thread to get hosed.
 
@@ -324,21 +325,17 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
 
   public static class BadSerializer implements DataSerializable {
 
-    public BadSerializer() {
-
-    }
+    public BadSerializer() {}
 
     public void toData(DataOutput out) throws IOException {
 
-      if (Thread.currentThread().getName().contains("Asynchronous disk writer") && FAIL_IN_THIS_VM) {
+      if (Thread.currentThread().getName().contains("Asynchronous disk writer")
+          && FAIL_IN_THIS_VM) {
         throw new ConcurrentModificationException();
       }
     }
 
-    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-
-    }
-
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
   }
 
   public void totalRecoverTest(int redundancy) throws Throwable {
@@ -421,7 +418,7 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
 
     AsyncInvocation a1 = createPRAsync(vm0, 1);
     //[dsmith] Make sure that vm0 is waiting for vm1 to recover
-    //If VM(0) recovers early, that is a problem, because vm1 
+    //If VM(0) recovers early, that is a problem, because vm1
     //has newer data
     Thread.sleep(500);
     assertTrue(a1.isAlive());
@@ -436,7 +433,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     createData(vm0, numBuckets, 113, "b");
     checkData(vm0, numBuckets, 113, "b");
 
-    IgnoredException ex = IgnoredException.addIgnoredException(RevokedPersistentDataException.class.getName(), vm1);
+    IgnoredException ex =
+        IgnoredException.addIgnoredException(RevokedPersistentDataException.class.getName(), vm1);
     try {
       createPR(vm1, 1);
       fail("Should have recieved a SplitDistributedSystemException");
@@ -475,7 +473,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
       revokeAllMembers(vm2);
       fail("The revoke should have failed, because members are running");
     } catch (RMIException e) {
-      if (!(e.getCause() instanceof ReplyException && e.getCause().getCause() instanceof RevokeFailedException)) {
+      if (!(e.getCause() instanceof ReplyException
+          && e.getCause().getCause() instanceof RevokeFailedException)) {
         throw e;
       }
     }
@@ -486,12 +485,13 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     File vm1Directory = getDiskDirectory(vm1);
     closeCache(vm1);
 
-    vm0.invoke(new SerializableRunnable("get cache") {
+    vm0.invoke(
+        new SerializableRunnable("get cache") {
 
-      public void run() {
-        getCache();
-      }
-    });
+          public void run() {
+            getCache();
+          }
+        });
 
     revokeMember(vm2, vm1Directory);
 
@@ -505,7 +505,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     createData(vm0, numBuckets, 113, "b");
     checkData(vm0, numBuckets, 113, "b");
 
-    IgnoredException ex = IgnoredException.addIgnoredException(RevokedPersistentDataException.class.getName(), vm1);
+    IgnoredException ex =
+        IgnoredException.addIgnoredException(RevokedPersistentDataException.class.getName(), vm1);
     try {
       createPR(vm1, 1);
       fail("Should have recieved a SplitDistributedSystemException");
@@ -520,19 +521,18 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
   }
 
   private File getDiskDirectory(VM vm0) {
-    return (File) vm0.invoke(new SerializableCallable() {
+    return (File)
+        vm0.invoke(
+            new SerializableCallable() {
 
-      @Override
-      public Object call() throws Exception {
-        return getDiskDirs()[0];
-      }
-    });
+              @Override
+              public Object call() throws Exception {
+                return getDiskDirs()[0];
+              }
+            });
   }
 
-  /**
-   * Test that we wait for missing data to come back
-   * if the redundancy was 0.
-   */
+  /** Test that we wait for missing data to come back if the redundancy was 0. */
   @Test
   public void testMissingMemberRedundancy0() {
     Host host = Host.getHost(0);
@@ -574,7 +574,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     closeCache(vm1);
   }
 
-  private void checkReadWriteOperationsWithOfflineMember(VM vm0, final int aVM0Bucket, final int aVM1Bucket) {
+  private void checkReadWriteOperationsWithOfflineMember(
+      VM vm0, final int aVM0Bucket, final int aVM1Bucket) {
     //This should work, because this bucket is still available.
     checkData(vm0, aVM0Bucket, aVM0Bucket + 1, "a");
 
@@ -588,124 +589,126 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
       }
     }
 
-    IgnoredException expect = IgnoredException.addIgnoredException("PartitionOfflineException", vm0);
+    IgnoredException expect =
+        IgnoredException.addIgnoredException("PartitionOfflineException", vm0);
     //Try a function execution
-    vm0.invoke(new SerializableRunnable("Test ways to read") {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(PR_REGION_NAME);
+    vm0.invoke(
+        new SerializableRunnable("Test ways to read") {
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(PR_REGION_NAME);
 
-        try {
-          FunctionService.onRegion(region).execute(new TestFunction());
-          fail("Should not have been able to read from missing buckets!");
-        } catch (PartitionOfflineException e) {
-          //expected
-        }
+            try {
+              FunctionService.onRegion(region).execute(new TestFunction());
+              fail("Should not have been able to read from missing buckets!");
+            } catch (PartitionOfflineException e) {
+              //expected
+            }
 
-        //This should work, because this bucket is still available.
-        FunctionService.onRegion(region).withFilter(Collections.singleton(aVM0Bucket)).execute(new TestFunction());
+            //This should work, because this bucket is still available.
+            FunctionService.onRegion(region)
+                .withFilter(Collections.singleton(aVM0Bucket))
+                .execute(new TestFunction());
 
-        //This should fail, because this bucket is offline
-        try {
-          FunctionService.onRegion(region).withFilter(Collections.singleton(aVM1Bucket)).execute(new TestFunction());
-          fail("Should not have been able to read from missing buckets!");
-        } catch (PartitionOfflineException e) {
-          //expected
-        }
+            //This should fail, because this bucket is offline
+            try {
+              FunctionService.onRegion(region)
+                  .withFilter(Collections.singleton(aVM1Bucket))
+                  .execute(new TestFunction());
+              fail("Should not have been able to read from missing buckets!");
+            } catch (PartitionOfflineException e) {
+              //expected
+            }
 
-        //This should fail, because a bucket is offline   
-        try {
-          HashSet filter = new HashSet();
-          filter.add(aVM0Bucket);
-          filter.add(aVM1Bucket);
-          FunctionService.onRegion(region).withFilter(filter).execute(new TestFunction());
-          fail("Should not have been able to read from missing buckets!");
-        } catch (PartitionOfflineException e) {
-          //expected
-        }
+            //This should fail, because a bucket is offline
+            try {
+              HashSet filter = new HashSet();
+              filter.add(aVM0Bucket);
+              filter.add(aVM1Bucket);
+              FunctionService.onRegion(region).withFilter(filter).execute(new TestFunction());
+              fail("Should not have been able to read from missing buckets!");
+            } catch (PartitionOfflineException e) {
+              //expected
+            }
 
-        //This should fail, because a bucket is offline
-        try {
-          FunctionService.onRegion(region).execute(new TestFunction());
-          fail("Should not have been able to read from missing buckets!");
-        } catch (PartitionOfflineException e) {
-          //expected
-        }
+            //This should fail, because a bucket is offline
+            try {
+              FunctionService.onRegion(region).execute(new TestFunction());
+              fail("Should not have been able to read from missing buckets!");
+            } catch (PartitionOfflineException e) {
+              //expected
+            }
 
-        try {
-          cache.getQueryService().newQuery("select * from /" + PR_REGION_NAME).execute();
-          fail("Should not have been able to read from missing buckets!");
-        } catch (PartitionOfflineException e) {
-          //expected
-        } catch (QueryException e) {
-          throw new RuntimeException(e);
-        }
+            try {
+              cache.getQueryService().newQuery("select * from /" + PR_REGION_NAME).execute();
+              fail("Should not have been able to read from missing buckets!");
+            } catch (PartitionOfflineException e) {
+              //expected
+            } catch (QueryException e) {
+              throw new RuntimeException(e);
+            }
 
-        try {
-          Set keys = region.keySet();
-          //iterate over all of the keys
-          for (Object key : keys) {
+            try {
+              Set keys = region.keySet();
+              //iterate over all of the keys
+              for (Object key : keys) {}
+              fail("Should not have been able to iterate over keyset");
+            } catch (PartitionOfflineException e) {
+              //expected
+            }
+
+            try {
+              //iterate over all of the keys
+              for (Object key : region.values()) {}
+              fail("Should not have been able to iterate over set");
+            } catch (PartitionOfflineException e) {
+              //expected
+            }
+
+            try {
+              //iterate over all of the keys
+              for (Object key : region.entrySet()) {}
+              fail("Should not have been able to iterate over set");
+            } catch (PartitionOfflineException e) {
+              //expected
+            }
+
+            try {
+              region.get(aVM1Bucket);
+              fail("Should not have been able to get an offline key");
+            } catch (PartitionOfflineException e) {
+              //expected
+            }
+
+            try {
+              region.containsKey(aVM1Bucket);
+              fail("Should not have been able to get an offline key");
+            } catch (PartitionOfflineException e) {
+              //expected
+            }
+
+            try {
+              region.getEntry(aVM1Bucket);
+              fail("Should not have been able to get an offline key");
+            } catch (PartitionOfflineException e) {
+              //expected
+            }
+
+            try {
+              region.invalidate(aVM1Bucket);
+              fail("Should not have been able to get an offline key");
+            } catch (PartitionOfflineException e) {
+              //expected
+            }
+
+            try {
+              region.destroy(aVM1Bucket);
+              fail("Should not have been able to get an offline key");
+            } catch (PartitionOfflineException e) {
+              //expected
+            }
           }
-          fail("Should not have been able to iterate over keyset");
-        } catch (PartitionOfflineException e) {
-          //expected
-        }
-
-        try {
-          //iterate over all of the keys
-          for (Object key : region.values()) {
-          }
-          fail("Should not have been able to iterate over set");
-        } catch (PartitionOfflineException e) {
-          //expected
-        }
-
-        try {
-          //iterate over all of the keys
-          for (Object key : region.entrySet()) {
-          }
-          fail("Should not have been able to iterate over set");
-        } catch (PartitionOfflineException e) {
-          //expected
-        }
-
-        try {
-          region.get(aVM1Bucket);
-          fail("Should not have been able to get an offline key");
-        } catch (PartitionOfflineException e) {
-          //expected
-        }
-
-        try {
-          region.containsKey(aVM1Bucket);
-          fail("Should not have been able to get an offline key");
-        } catch (PartitionOfflineException e) {
-          //expected
-        }
-
-        try {
-          region.getEntry(aVM1Bucket);
-          fail("Should not have been able to get an offline key");
-        } catch (PartitionOfflineException e) {
-          //expected
-        }
-
-        try {
-          region.invalidate(aVM1Bucket);
-          fail("Should not have been able to get an offline key");
-        } catch (PartitionOfflineException e) {
-          //expected
-        }
-
-        try {
-          region.destroy(aVM1Bucket);
-          fail("Should not have been able to get an offline key");
-        } catch (PartitionOfflineException e) {
-          //expected
-        }
-
-      }
-    });
+        });
 
     try {
       createData(vm0, aVM1Bucket, aVM1Bucket + 1, "b");
@@ -719,9 +722,7 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     expect.remove();
   }
 
-  /**Test to make sure that we recreate
-  * a bucket if a member is destroyed
-  */
+  /** Test to make sure that we recreate a bucket if a member is destroyed */
   @Test
   public void testDestroyedMemberRedundancy0() {
     Host host = Host.getHost(0);
@@ -759,9 +760,7 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     assertTrue(getBucketList(vm0).contains(aVM1Bucket));
   }
 
-  /**Test to make sure that we recreate
-   * a bucket if a member is destroyed
-   */
+  /** Test to make sure that we recreate a bucket if a member is destroyed */
   @Test
   public void testDestroyedMemberRedundancy1() {
     Host host = Host.getHost(0);
@@ -793,9 +792,7 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     assertEquals(vm0Buckets, vm2Buckets);
   }
 
-  /**Test to make sure that we recreate
-   * a bucket if a member is revoked
-   */
+  /** Test to make sure that we recreate a bucket if a member is revoked */
   @Test
   public void testRevokedMemberRedundancy0() {
     Host host = Host.getHost(0);
@@ -818,7 +815,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     //This should work, because this bucket is still available.
     checkData(vm0, aVM0Bucket, aVM0Bucket + 1, "a");
 
-    IgnoredException expect = IgnoredException.addIgnoredException("PartitionOfflineException", vm0);
+    IgnoredException expect =
+        IgnoredException.addIgnoredException("PartitionOfflineException", vm0);
     try {
       checkData(vm0, aVM1Bucket, aVM1Bucket + 1, "a");
       fail("Should not have been able to read from missing buckets!");
@@ -851,7 +849,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     createData(vm2, aVM1Bucket, aVM1Bucket + 1, "a");
     checkData(vm2, aVM1Bucket, aVM1Bucket + 1, "a");
 
-    IgnoredException ex = IgnoredException.addIgnoredException(RevokedPersistentDataException.class.getName(), vm1);
+    IgnoredException ex =
+        IgnoredException.addIgnoredException(RevokedPersistentDataException.class.getName(), vm1);
     try {
       createPR(vm1, 0);
       fail("Should have recieved a RevokedPersistentDataException");
@@ -865,9 +864,10 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     ex.remove();
   }
 
-  /**Test to make sure that we recreate
-   * a bucket if a member is revoked
-   * @throws Throwable 
+  /**
+   * Test to make sure that we recreate a bucket if a member is revoked
+   *
+   * @throws Throwable
    */
   @Test
   public void testRevokedMemberRedundancy1() throws Throwable {
@@ -900,7 +900,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     Set<Integer> vm2Buckets = getBucketList(vm2);
     assertEquals(vm1Buckets, vm2Buckets);
 
-    IgnoredException ex = IgnoredException.addIgnoredException(RevokedPersistentDataException.class.getName(), vm1);
+    IgnoredException ex =
+        IgnoredException.addIgnoredException(RevokedPersistentDataException.class.getName(), vm1);
     try {
       createPR(vm1, 1);
       fail("Should have recieved a SplitDistributedSystemException");
@@ -939,11 +940,11 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     checkData(vm2, 0, NUM_BUCKETS, "b");
   }
 
-  /**Test to make sure that we recreate
-   * a bucket if a member is revoked, and
-   * that we do it immediately if recovery delay
-   * is set to 0.
-   * @throws Throwable 
+  /**
+   * Test to make sure that we recreate a bucket if a member is revoked, and that we do it
+   * immediately if recovery delay is set to 0.
+   *
+   * @throws Throwable
    */
   @Test
   public void testRevokedMemberRedundancy1ImmediateRecovery() throws Throwable {
@@ -968,17 +969,24 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
 
     //VM2 should pick up the slack
 
-    Wait.waitForCriterion(new WaitCriterion() {
+    Wait.waitForCriterion(
+        new WaitCriterion() {
 
-      public boolean done() {
-        Set<Integer> vm2Buckets = getBucketList(vm2);
-        return lostBuckets.equals(vm2Buckets);
-      }
+          public boolean done() {
+            Set<Integer> vm2Buckets = getBucketList(vm2);
+            return lostBuckets.equals(vm2Buckets);
+          }
 
-      public String description() {
-        return "expected to recover " + lostBuckets + " buckets, now have " + getBucketList(vm2);
-      }
-    }, 30000, 500, true);
+          public String description() {
+            return "expected to recover "
+                + lostBuckets
+                + " buckets, now have "
+                + getBucketList(vm2);
+          }
+        },
+        30000,
+        500,
+        true);
 
     createData(vm0, 0, NUM_BUCKETS, "b");
 
@@ -1016,9 +1024,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
   }
 
   /**
-   * This test this case
-   *   we replace buckets where are offline on A by creating them on C
-   *   We then shutdown C and restart A, which recovers those buckets
+   * This test this case we replace buckets where are offline on A by creating them on C We then
+   * shutdown C and restart A, which recovers those buckets
    */
   @Test
   public void testBug41340() throws Throwable {
@@ -1080,9 +1087,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
   }
 
   /**
-   * Test the with redundancy
-   * 1, we restore the same buckets when the
-   * missing member comes back online.
+   * Test the with redundancy 1, we restore the same buckets when the missing member comes back
+   * online.
    */
   @Category(FlakyTest.class) // GEODE-1047: thread unsafe test hook, CountDownLatch, async behavior
   @Test
@@ -1122,17 +1128,16 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     checkData(vm1, 0, NUM_BUCKETS / 2, null);
     checkData(vm1, NUM_BUCKETS / 2, NUM_BUCKETS, "b");
 
-    //Make sure we restored the buckets in the right 
+    //Make sure we restored the buckets in the right
     //place
     assertEquals(vm0Buckets, getBucketList(vm0));
     assertEquals(vm1Buckets, getBucketList(vm1));
     assertEquals(Collections.emptySet(), getBucketList(vm2));
   }
 
-  /** 
-   * Test that we don't record our old
-   * member ID as offline, preventing redundancy
-   * recovery in the future.
+  /**
+   * Test that we don't record our old member ID as offline, preventing redundancy recovery in the
+   * future.
    */
   @Test
   public void testBug41341() {
@@ -1166,7 +1171,7 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
 
     createPR(vm1, 1);
 
-    //Make sure we restored the buckets in the right 
+    //Make sure we restored the buckets in the right
     //place
     assertEquals(vm0Buckets, getBucketList(vm0));
     assertEquals(vm1Buckets, getBucketList(vm1));
@@ -1207,11 +1212,7 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     assertEquals(Collections.emptySet(), getOfflineMembers(0, vm1));
   }
 
-  /**
-   * Test that we throw away a bucket 
-   * if we restored redundancy while 
-   * that bucket was offline.
-   */
+  /** Test that we throw away a bucket if we restored redundancy while that bucket was offline. */
   @Ignore
   @Test
   public void testThrowAwayUneededBucket() {
@@ -1312,7 +1313,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     checkData(vm0, 226, 227, "a");
   }
 
-  @Category(FlakyTest.class) // GEODE-1582: race in async region creation causing GII when not expected
+  @Category(
+      FlakyTest.class) // GEODE-1582: race in async region creation causing GII when not expected
   @Test
   public void testCleanStop() throws Throwable {
     Host host = Host.getHost(0);
@@ -1367,68 +1369,70 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-    final Integer serverPort = (Integer) vm0.invoke(new SerializableCallable("create per") {
+    final Integer serverPort =
+        (Integer)
+            vm0.invoke(
+                new SerializableCallable("create per") {
 
-      public Object call() {
-        Cache cache = getCache();
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(0);
-        paf.setLocalMaxMemory(0);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PARTITION);
-        cache.createRegion(PR_REGION_NAME, af.create());
+                  public Object call() {
+                    Cache cache = getCache();
+                    AttributesFactory af = new AttributesFactory();
+                    PartitionAttributesFactory paf = new PartitionAttributesFactory();
+                    paf.setRedundantCopies(0);
+                    paf.setLocalMaxMemory(0);
+                    af.setPartitionAttributes(paf.create());
+                    af.setDataPolicy(DataPolicy.PARTITION);
+                    cache.createRegion(PR_REGION_NAME, af.create());
 
-        CacheServer server = cache.addCacheServer();
-        server.setPort(AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET));
-        server.setNotifyBySubscription(true);
-        try {
-          server.start();
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-        return server.getPort();
+                    CacheServer server = cache.addCacheServer();
+                    server.setPort(AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET));
+                    server.setNotifyBySubscription(true);
+                    try {
+                      server.start();
+                    } catch (IOException e) {
+                      throw new RuntimeException(e);
+                    }
+                    return server.getPort();
+                  }
+                });
 
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable("create client") {
 
-    vm1.invoke(new SerializableRunnable("create client") {
+          public void run() {
+            Properties props = new Properties();
+            props.setProperty(MCAST_PORT, "0");
+            props.setProperty(LOCATORS, "");
+            getSystem(props);
+            try {
+              Cache cache = getCache();
 
-      public void run() {
-        Properties props = new Properties();
-        props.setProperty(MCAST_PORT, "0");
-        props.setProperty(LOCATORS, "");
-        getSystem(props);
-        try {
-          Cache cache = getCache();
-
-          PoolFactory pf = PoolManager.createFactory();
-          pf.addServer(NetworkUtils.getServerHostName(host), serverPort);
-          pf.setSubscriptionEnabled(true);
-          pf.create("pool");
-          AttributesFactory af = new AttributesFactory();
-          af.setDataPolicy(DataPolicy.NORMAL);
-          af.setScope(Scope.LOCAL);
-          af.setPoolName("pool");
-          Region region = cache.createRegion(PR_REGION_NAME, af.create());
-          try {
-            region.registerInterestRegex(".*");
-          } catch (ServerOperationException e) {
-            if (!(e.getCause() instanceof PartitionedRegionStorageException)) {
-              throw e;
+              PoolFactory pf = PoolManager.createFactory();
+              pf.addServer(NetworkUtils.getServerHostName(host), serverPort);
+              pf.setSubscriptionEnabled(true);
+              pf.create("pool");
+              AttributesFactory af = new AttributesFactory();
+              af.setDataPolicy(DataPolicy.NORMAL);
+              af.setScope(Scope.LOCAL);
+              af.setPoolName("pool");
+              Region region = cache.createRegion(PR_REGION_NAME, af.create());
+              try {
+                region.registerInterestRegex(".*");
+              } catch (ServerOperationException e) {
+                if (!(e.getCause() instanceof PartitionedRegionStorageException)) {
+                  throw e;
+                }
+              }
+            } finally {
+              disconnectFromDS();
             }
           }
-        } finally {
-          disconnectFromDS();
-        }
-      }
-    });
+        });
   }
 
   /**
-   * This test is in here just to test to make
-   * sure that we don't get a suspect string
-   * with an exception during cache closure.
+   * This test is in here just to test to make sure that we don't get a suspect string with an
+   * exception during cache closure.
    */
   @Test
   public void testOverflowCacheClose() {
@@ -1437,7 +1441,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
     rf.setPartitionAttributes(paf.create());
     rf.setDataPolicy(DataPolicy.PARTITION);
-    rf.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(50, EvictionAction.OVERFLOW_TO_DISK));
+    rf.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(50, EvictionAction.OVERFLOW_TO_DISK));
     rf.setDiskDirs(getDiskDirs());
 
     Region region = rf.create(PR_REGION_NAME);
@@ -1446,9 +1451,7 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     //    cache.close();
   }
 
-  /**
-   * Test for bug 41336
-   */
+  /** Test for bug 41336 */
   @Category(FlakyTest.class) // GEODE-1738
   @Test
   public void testCrashDuringBucketCreation() throws Throwable {
@@ -1456,27 +1459,31 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-    vm0.invoke(new SerializableRunnable("Install observer") {
+    vm0.invoke(
+        new SerializableRunnable("Install observer") {
 
-      public void run() {
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+          public void run() {
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
 
-          @Override
-          public void beforeSendMessage(DistributionManager dm, DistributionMessage msg) {
-            if (msg instanceof ManageBucketReplyMessage) {
-              Cache cache = getCache();
-              disconnectFromDS();
+                  @Override
+                  public void beforeSendMessage(DistributionManager dm, DistributionMessage msg) {
+                    if (msg instanceof ManageBucketReplyMessage) {
+                      Cache cache = getCache();
+                      disconnectFromDS();
 
-              await().atMost(30, SECONDS).until(() -> {
-                return (cache == null || cache.isClosed());
-              });
-              LogWriterUtils.getLogWriter().info("Cache is confirmed closed");
-            }
+                      await()
+                          .atMost(30, SECONDS)
+                          .until(
+                              () -> {
+                                return (cache == null || cache.isClosed());
+                              });
+                      LogWriterUtils.getLogWriter().info("Cache is confirmed closed");
+                    }
+                  }
+                });
           }
         });
-
-      }
-    });
     createPR(vm0, 0);
     createPR(vm1, 0);
 
@@ -1485,12 +1492,13 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     Set<Integer> vm1Buckets = getBucketList(vm1);
 
     //Make sure the test hook ran
-    vm0.invoke(new SerializableRunnable("Check for no distributed system") {
+    vm0.invoke(
+        new SerializableRunnable("Check for no distributed system") {
 
-      public void run() {
-        assertEquals(null, GemFireCacheImpl.getInstance());
-      }
-    });
+          public void run() {
+            assertEquals(null, GemFireCacheImpl.getInstance());
+          }
+        });
 
     checkData(vm1, 0, 4, "a");
     assertEquals(4, vm1Buckets.size());
@@ -1545,7 +1553,7 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
 
     AsyncInvocation async0 = createNestedPRAsync(vm0);
     //[dsmith] Make sure that vm0 is waiting for vm1 and vm2 to recover
-    //If VM(0) recovers early, that is a problem, because vm1 
+    //If VM(0) recovers early, that is a problem, because vm1
     //has newer data
     Thread.sleep(50);
     assertTrue(async0.isAlive());
@@ -1584,24 +1592,25 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     createData(vm1, 0, 1, "a");
 
     //Try to make sure there are some operations in flight while closing the cache
-    SerializableCallable createData = new SerializableCallable() {
+    SerializableCallable createData =
+        new SerializableCallable() {
 
-      public Object call() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(PR_REGION_NAME);
+          public Object call() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(PR_REGION_NAME);
 
-        int i = 0;
-        while (true) {
-          try {
-            region.put(0, i);
-            i++;
-          } catch (CacheClosedException e) {
-            break;
+            int i = 0;
+            while (true) {
+              try {
+                region.put(0, i);
+                i++;
+              } catch (CacheClosedException e) {
+                break;
+              }
+            }
+            return i - 1;
           }
-        }
-        return i - 1;
-      }
-    };
+        };
 
     AsyncInvocation asyncCreate = vm0.invokeAsync(createData);
 
@@ -1623,32 +1632,36 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     create1.getResult(MAX_WAIT);
     create2.getResult(MAX_WAIT);
 
-    SerializableCallable getValue = new SerializableCallable() {
+    SerializableCallable getValue =
+        new SerializableCallable() {
 
-      public Object call() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(PR_REGION_NAME);
-        int value = (Integer) region.get(0);
-        return value;
-      }
-    };
+          public Object call() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(PR_REGION_NAME);
+            int value = (Integer) region.get(0);
+            return value;
+          }
+        };
 
     int vm1Value = (Integer) vm0.invoke(getValue);
     int vm2Value = (Integer) vm1.invoke(getValue);
     assertEquals(vm1Value, vm2Value);
-    assertTrue("value = " + vm1Value + ", lastSuccessfulInt=" + lastSuccessfulInt, vm1Value == lastSuccessfulInt || vm1Value == lastSuccessfulInt + 1);
+    assertTrue(
+        "value = " + vm1Value + ", lastSuccessfulInt=" + lastSuccessfulInt,
+        vm1Value == lastSuccessfulInt || vm1Value == lastSuccessfulInt + 1);
   }
 
   /**
-   * Test for bug 4226.
-   * 1. Member A has the bucket
-   * 2. Member B starts creating the bucket. It tells member A that it hosts the bucket
-   * 3. Member A crashes
-   * 4. Member B destroys the bucket and throws a partition offline exception, because it wasn't able to complete initialization.
-   * 5. Member A recovers, and gets stuck waiting for member B.
-   * @throws Throwable 
+   * Test for bug 4226. 1. Member A has the bucket 2. Member B starts creating the bucket. It tells
+   * member A that it hosts the bucket 3. Member A crashes 4. Member B destroys the bucket and
+   * throws a partition offline exception, because it wasn't able to complete initialization. 5.
+   * Member A recovers, and gets stuck waiting for member B.
+   *
+   * @throws Throwable
    */
-  @Category(FlakyTest.class) // GEODE-1208: time sensitive, multiple non-thread-safe test hooks, async actions
+  @Category(
+      FlakyTest
+          .class) // GEODE-1208: time sensitive, multiple non-thread-safe test hooks, async actions
   @Test
   public void testBug42226() throws Exception {
     Host host = Host.getHost(0);
@@ -1656,30 +1669,32 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     VM vm1 = host.getVM(1);
     //Add a hook which will disconnect from the distributed
     //system when the initial image message shows up.
-    vm0.invoke(new SerializableRunnable() {
+    vm0.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+          public void run() {
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
 
-          @Override
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof RequestImageMessage) {
-              RequestImageMessage rim = (RequestImageMessage) message;
-              //Don't disconnect until we see a bucket
-              if (rim.regionPath.contains("_B_")) {
-                DistributionMessageObserver.setInstance(null);
-                disconnectFromDS();
-              }
-            }
-          }
+                  @Override
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof RequestImageMessage) {
+                      RequestImageMessage rim = (RequestImageMessage) message;
+                      //Don't disconnect until we see a bucket
+                      if (rim.regionPath.contains("_B_")) {
+                        DistributionMessageObserver.setInstance(null);
+                        disconnectFromDS();
+                      }
+                    }
+                  }
 
-          @Override
-          public void afterProcessMessage(DistributionManager dm, DistributionMessage message) {
-
+                  @Override
+                  public void afterProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {}
+                });
           }
         });
-      }
-    });
 
     LogWriterUtils.getLogWriter().info("Creating region in VM0");
     createPR(vm0, 1, 0, 1);
@@ -1709,12 +1724,13 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     }
 
     //Make sure vm0 is really disconnected (avoids a race with the observer).
-    vm0.invoke(new SerializableRunnable() {
+    vm0.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        disconnectFromDS();
-      }
-    });
+          public void run() {
+            disconnectFromDS();
+          }
+        });
 
     //This should recreate the bucket
     AsyncInvocation async1 = createPRAsync(vm0, 1, 0, 1);
@@ -1724,10 +1740,9 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
   }
 
   /**
-   * A test to make sure that we allow the PR to be used
-   * after at least one copy of every bucket is recovered,
-   * but before the secondaries are initialized.
-   * 
+   * A test to make sure that we allow the PR to be used after at least one copy of every bucket is
+   * recovered, but before the secondaries are initialized.
+   *
    * @throws Throwable
    */
   @Test
@@ -1754,45 +1769,50 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     closeCache(vm1);
     closeCache(vm2);
 
-    SerializableRunnable slowGII = new SerializableRunnable("Slow down GII") {
+    SerializableRunnable slowGII =
+        new SerializableRunnable("Slow down GII") {
 
-      @SuppressWarnings("synthetic-access")
-      public void run() {
-        InternalResourceManager.setResourceObserver(new RecoveryObserver());
-        DistributionMessageObserver.setInstance(new BlockGIIMessageObserver());
-      }
-    };
+          @SuppressWarnings("synthetic-access")
+          public void run() {
+            InternalResourceManager.setResourceObserver(new RecoveryObserver());
+            DistributionMessageObserver.setInstance(new BlockGIIMessageObserver());
+          }
+        };
 
-    SerializableRunnable resetSlowGII = new SerializableRunnable("Unset the slow GII") {
+    SerializableRunnable resetSlowGII =
+        new SerializableRunnable("Unset the slow GII") {
 
-      public void run() {
+          public void run() {
 
-        BlockGIIMessageObserver messageObserver = (BlockGIIMessageObserver) DistributionMessageObserver.setInstance(null);
-        RecoveryObserver recoveryObserver = (RecoveryObserver) InternalResourceManager.getResourceObserver();
-        messageObserver.cdl.countDown();
-        try {
-          recoveryObserver.recoveryDone.await();
-        } catch (InterruptedException e) {
-          Assert.fail("Interrupted", e);
-        }
-        InternalResourceManager.setResourceObserver(null);
-      }
-    };
+            BlockGIIMessageObserver messageObserver =
+                (BlockGIIMessageObserver) DistributionMessageObserver.setInstance(null);
+            RecoveryObserver recoveryObserver =
+                (RecoveryObserver) InternalResourceManager.getResourceObserver();
+            messageObserver.cdl.countDown();
+            try {
+              recoveryObserver.recoveryDone.await();
+            } catch (InterruptedException e) {
+              Assert.fail("Interrupted", e);
+            }
+            InternalResourceManager.setResourceObserver(null);
+          }
+        };
 
     try {
       vm0.invoke(slowGII);
       vm1.invoke(slowGII);
       vm2.invoke(slowGII);
 
-      SerializableRunnable createPR = new SerializableRunnable("create PR") {
+      SerializableRunnable createPR =
+          new SerializableRunnable("create PR") {
 
-        public void run() {
+            public void run() {
 
-          Cache cache = getCache();
-          RegionAttributes attr = getPersistentPRAttributes(redundancy, -1, cache, 113, true);
-          cache.createRegion(PR_REGION_NAME, attr);
-        }
-      };
+              Cache cache = getCache();
+              RegionAttributes attr = getPersistentPRAttributes(redundancy, -1, cache, 113, true);
+              cache.createRegion(PR_REGION_NAME, attr);
+            }
+          };
 
       AsyncInvocation a1 = vm0.invokeAsync(createPR);
       AsyncInvocation a2 = vm1.invokeAsync(createPR);
@@ -1810,7 +1830,10 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
       Set<Integer> vm0InitialBuckets = getBucketList(vm0);
       Set<Integer> vm1InitialBuckets = getBucketList(vm1);
       Set<Integer> vm2InitialBuckets = getBucketList(vm2);
-      assertEquals("vm0=" + vm0InitialBuckets + ",vm1=" + vm1InitialBuckets + "vm2=" + vm2InitialBuckets, numBuckets, vm0InitialBuckets.size() + vm1InitialBuckets.size() + vm2InitialBuckets.size());
+      assertEquals(
+          "vm0=" + vm0InitialBuckets + ",vm1=" + vm1InitialBuckets + "vm2=" + vm2InitialBuckets,
+          numBuckets,
+          vm0InitialBuckets.size() + vm1InitialBuckets.size() + vm2InitialBuckets.size());
     } finally {
       //Reset the slow GII flag, and wait for the redundant buckets
       //to be recovered.
@@ -1839,9 +1862,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
   }
 
   /**
-   * A test for bug 41436. If the GII source
-   * crashes before the GII is complete, we need
-   * to make sure that later we can recover redundancy.
+   * A test for bug 41436. If the GII source crashes before the GII is complete, we need to make
+   * sure that later we can recover redundancy.
    */
   @Test
   public void testCrashDuringBucketGII() {
@@ -1855,23 +1877,25 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     createData(vm0, 0, 1, "value");
 
     //Add an observer which will close the cache when the GII starts
-    vm0.invoke(new SerializableRunnable("Set crashing observer") {
-      public void run() {
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
-          @Override
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof RequestImageMessage) {
-              RequestImageMessage rim = (RequestImageMessage) message;
-              if (rim.regionPath.contains("_0")) {
-                DistributionMessageObserver.setInstance(null);
-                getCache().close();
-              }
-            }
+    vm0.invoke(
+        new SerializableRunnable("Set crashing observer") {
+          public void run() {
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
+                  @Override
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof RequestImageMessage) {
+                      RequestImageMessage rim = (RequestImageMessage) message;
+                      if (rim.regionPath.contains("_0")) {
+                        DistributionMessageObserver.setInstance(null);
+                        getCache().close();
+                      }
+                    }
+                  }
+                });
           }
-
         });
-      }
-    });
 
     createPR(vm1, 1);
 
@@ -1888,14 +1912,13 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
   }
 
   /**
-   * Another test for bug 41436. If the GII source
-   * crashes before the GII is complete, we need
-   * to make sure that later we can recover redundancy.
-   * 
-   * In this test case, we bring the GII down before we 
-   * bring the source back up, to make sure the source still
-   * discovers that the GII target is no longer hosting the bucket.
-   * @throws InterruptedException 
+   * Another test for bug 41436. If the GII source crashes before the GII is complete, we need to
+   * make sure that later we can recover redundancy.
+   *
+   * <p>In this test case, we bring the GII down before we bring the source back up, to make sure
+   * the source still discovers that the GII target is no longer hosting the bucket.
+   *
+   * @throws InterruptedException
    */
   @Test
   public void testCrashDuringBucketGII2() throws InterruptedException {
@@ -1909,23 +1932,25 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     createData(vm0, 0, 1, "value");
 
     //Add an observer which will close the cache when the GII starts
-    vm0.invoke(new SerializableRunnable("Set crashing observer") {
-      public void run() {
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
-          @Override
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof RequestImageMessage) {
-              RequestImageMessage rim = (RequestImageMessage) message;
-              if (rim.regionPath.contains("_0")) {
-                DistributionMessageObserver.setInstance(null);
-                getCache().close();
-              }
-            }
+    vm0.invoke(
+        new SerializableRunnable("Set crashing observer") {
+          public void run() {
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
+                  @Override
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof RequestImageMessage) {
+                      RequestImageMessage rim = (RequestImageMessage) message;
+                      if (rim.regionPath.contains("_0")) {
+                        DistributionMessageObserver.setInstance(null);
+                        getCache().close();
+                      }
+                    }
+                  }
+                });
           }
-
         });
-      }
-    });
 
     createPR(vm1, 1);
 
@@ -1948,15 +1973,16 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     assertEquals(Collections.singleton(0), getBucketList(vm0));
 
     //vm1 should satisfy redundancy for the bucket as well
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return (Collections.singleton(0).equals(getBucketList(vm1)));
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return (Collections.singleton(0).equals(getBucketList(vm1)));
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 30 * 1000, 200, true);
     assertEquals(Collections.singleton(0), getBucketList(vm1));
   }
@@ -1980,7 +2006,8 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     createData(vm1, 1, 2, "a");
 
     //this should throw a conflicting data exception.
-    IgnoredException expect = IgnoredException.addIgnoredException("ConflictingPersistentDataException", vm0);
+    IgnoredException expect =
+        IgnoredException.addIgnoredException("ConflictingPersistentDataException", vm0);
     try {
       createPR(vm0, 0);
       fail("should have seen a conflicting data exception");
@@ -2019,10 +2046,7 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     checkData(vm0, 2, 3, null);
   }
 
-  /**
-   * Test to make sure that primaries are rebalanced after recovering from
-   * disk.
-   */
+  /** Test to make sure that primaries are rebalanced after recovering from disk. */
   @Test
   public void testPrimaryBalanceAfterRecovery() throws Throwable {
     Host host = Host.getHost(0);
@@ -2061,7 +2085,7 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
 
     /*
      *  Though we make best effort to get the primaries evenly distributed after bouncing the VM.
-     *  In some instances one primary could end up with 9 primaries such as GEODE-1056. And as 
+     *  In some instances one primary could end up with 9 primaries such as GEODE-1056. And as
      *  asserts fail fast we don`t get to verify if other vm`s end up having 11 primaries.
      *  So rather than asserting for 10 primaries in each VM, try asserting total primaries.
      */
@@ -2089,37 +2113,42 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     VM vm3 = host.getVM(3);
     final String regionName = getName();
 
-    SerializableCallable createPR = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        RegionFactory<Integer, String> rf = getCache().createRegionFactory(RegionShortcut.PARTITION_PERSISTENT);
-        Region<Integer, String> r = rf.create(regionName);
-        assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
-        return null;
-      }
-    };
+    SerializableCallable createPR =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            RegionFactory<Integer, String> rf =
+                getCache().createRegionFactory(RegionShortcut.PARTITION_PERSISTENT);
+            Region<Integer, String> r = rf.create(regionName);
+            assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
+            return null;
+          }
+        };
 
-    SerializableCallable createPRProxy = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        RegionFactory<Integer, String> rf = getCache().createRegionFactory(RegionShortcut.PARTITION_PROXY);
-        Region<Integer, String> r = rf.create(regionName);
-        return null;
-      }
-    };
+    SerializableCallable createPRProxy =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            RegionFactory<Integer, String> rf =
+                getCache().createRegionFactory(RegionShortcut.PARTITION_PROXY);
+            Region<Integer, String> r = rf.create(regionName);
+            return null;
+          }
+        };
     vm0.invoke(createPRProxy);
     vm1.invoke(createPR);
     vm2.invoke(createPR);
     vm3.invoke(createPRProxy);
 
-    SerializableCallable verifyConcurrenyChecks = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region r = getCache().getRegion(regionName);
-        assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
-        return null;
-      }
-    };
+    SerializableCallable verifyConcurrenyChecks =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region r = getCache().getRegion(regionName);
+            assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
+            return null;
+          }
+        };
     vm0.invoke(verifyConcurrenyChecks);
     vm3.invoke(verifyConcurrenyChecks);
   }
@@ -2132,32 +2161,38 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     VM vm3 = host.getVM(2);
     final String regionName = getName();
 
-    SerializableCallable createAccessor = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        getCache().createRegionFactory(RegionShortcut.PARTITION_PROXY).create(regionName);
-        return null;
-      }
-    };
+    SerializableCallable createAccessor =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            getCache().createRegionFactory(RegionShortcut.PARTITION_PROXY).create(regionName);
+            return null;
+          }
+        };
     vm1.invoke(createAccessor);
-    vm2.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region r = getCache().createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).create(regionName);
-        assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
-        return null;
-      }
-    });
+    vm2.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region r =
+                getCache()
+                    .createRegionFactory(RegionShortcut.PARTITION_PERSISTENT)
+                    .create(regionName);
+            assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
+            return null;
+          }
+        });
     vm3.invoke(createAccessor);
 
-    SerializableCallable verifyConcurrencyChecks = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region r = getCache().getRegion(regionName);
-        assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
-        return null;
-      }
-    };
+    SerializableCallable verifyConcurrencyChecks =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region r = getCache().getRegion(regionName);
+            assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
+            return null;
+          }
+        };
     vm1.invoke(verifyConcurrencyChecks);
     vm3.invoke(verifyConcurrencyChecks);
   }
@@ -2171,28 +2206,34 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
 
     final String regionName = getName();
 
-    SerializableCallable createPersistentReplicate = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region r = getCache().createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT).create(regionName);
-        return null;
-      }
-    };
+    SerializableCallable createPersistentReplicate =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region r =
+                getCache()
+                    .createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT)
+                    .create(regionName);
+            return null;
+          }
+        };
 
-    SerializableCallable createNonPersistentReplicate = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region r = getCache().createRegionFactory(RegionShortcut.REPLICATE).create(regionName);
-        return null;
-      }
-    };
+    SerializableCallable createNonPersistentReplicate =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region r = getCache().createRegionFactory(RegionShortcut.REPLICATE).create(regionName);
+            return null;
+          }
+        };
 
     vm1.invoke(createPersistentReplicate);
     vm2.invoke(createNonPersistentReplicate);
     vm3.invoke(createPersistentReplicate);
   }
 
-  private static final class RecoveryObserver extends InternalResourceManager.ResourceObserverAdapter {
+  private static final class RecoveryObserver
+      extends InternalResourceManager.ResourceObserverAdapter {
     final CountDownLatch recoveryDone = new CountDownLatch(1);
 
     @Override
@@ -2243,7 +2284,6 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
         }
       }
     }
-
   }
 
   private static class TestCustomExpiration implements CustomExpiry {
@@ -2253,7 +2293,9 @@ public class PersistentPartitionedRegionDUnitTest extends PersistentPartitionedR
     }
 
     public ExpirationAttributes getExpiry(Entry entry) {
-      return new ExpirationAttributes((entry.getKey().hashCode() + entry.getValue().hashCode()) % 100, ExpirationAction.INVALIDATE);
+      return new ExpirationAttributes(
+          (entry.getKey().hashCode() + entry.getValue().hashCode()) % 100,
+          ExpirationAction.INVALIDATE);
     }
   }
 }

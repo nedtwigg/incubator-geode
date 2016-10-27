@@ -27,11 +27,8 @@ import java.util.Set;
 import javax.swing.JLabel;
 
 /**
- * Created by IntelliJ IDEA.
- * User: dsmith
- * Date: Oct 29, 2010
- * Time: 3:45:07 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: dsmith Date: Oct 29, 2010 Time: 3:45:07 PM To change this
+ * template use File | Settings | File Templates.
  */
 public class LifelineState {
   private final long startTime;
@@ -91,7 +88,16 @@ public class LifelineState {
   }
 
   public Component getPopup() {
-    return new JLabel("<html>Object: " + line.getDiagramName() + "<br>Member: " + line.getName() + "<br>State: " + stateName + "<br>Time:" + new Date(startTime) + "</html>");
+    return new JLabel(
+        "<html>Object: "
+            + line.getDiagramName()
+            + "<br>Member: "
+            + line.getName()
+            + "<br>State: "
+            + stateName
+            + "<br>Time:"
+            + new Date(startTime)
+            + "</html>");
   }
 
   public Lifeline getLine() {

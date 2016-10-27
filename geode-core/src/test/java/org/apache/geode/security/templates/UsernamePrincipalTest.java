@@ -27,10 +27,8 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.SecurityTest;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit tests for {@link UsernamePrincipal}
- */
-@Category({ UnitTest.class, SecurityTest.class })
+/** Unit tests for {@link UsernamePrincipal} */
+@Category({UnitTest.class, SecurityTest.class})
 public class UsernamePrincipalTest {
 
   @Test

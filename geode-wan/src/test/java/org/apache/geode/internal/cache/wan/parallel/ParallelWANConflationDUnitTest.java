@@ -33,9 +33,7 @@ import java.util.Random;
 import org.apache.geode.internal.cache.wan.WANTestBase;
 import org.apache.geode.test.dunit.IgnoredException;
 
-/**
- * 
- */
+/** */
 @Category(DistributedTest.class)
 public class ParallelWANConflationDUnitTest extends WANTestBase {
   private static final long serialVersionUID = 1L;
@@ -75,14 +73,13 @@ public class ParallelWANConflationDUnitTest extends WANTestBase {
 
     keyValues.putAll(updateKeyValues);
     validateReceiverRegionSize(keyValues);
-
   }
 
   /**
-   * This test is disabled as it is not guaranteed to pass it everytime. This
-   * test is related to the conflation in batch. yet did find any way to
-   * ascertain that the vents in the batch will always be conflated.
-   * 
+   * This test is disabled as it is not guaranteed to pass it everytime. This test is related to the
+   * conflation in batch. yet did find any way to ascertain that the vents in the batch will always
+   * be conflated.
+   *
    * @throws Exception
    */
   @Test
@@ -118,15 +115,20 @@ public class ParallelWANConflationDUnitTest extends WANTestBase {
 
     resumeSenders();
 
-    ArrayList<Integer> v4List = (ArrayList<Integer>) vm4.invoke(() -> WANTestBase.getSenderStats("ln", 0));
-    ArrayList<Integer> v5List = (ArrayList<Integer>) vm5.invoke(() -> WANTestBase.getSenderStats("ln", 0));
-    ArrayList<Integer> v6List = (ArrayList<Integer>) vm6.invoke(() -> WANTestBase.getSenderStats("ln", 0));
-    ArrayList<Integer> v7List = (ArrayList<Integer>) vm7.invoke(() -> WANTestBase.getSenderStats("ln", 0));
+    ArrayList<Integer> v4List =
+        (ArrayList<Integer>) vm4.invoke(() -> WANTestBase.getSenderStats("ln", 0));
+    ArrayList<Integer> v5List =
+        (ArrayList<Integer>) vm5.invoke(() -> WANTestBase.getSenderStats("ln", 0));
+    ArrayList<Integer> v6List =
+        (ArrayList<Integer>) vm6.invoke(() -> WANTestBase.getSenderStats("ln", 0));
+    ArrayList<Integer> v7List =
+        (ArrayList<Integer>) vm7.invoke(() -> WANTestBase.getSenderStats("ln", 0));
 
-    assertTrue("No events conflated in batch", (v4List.get(8) + v5List.get(8) + v6List.get(8) + v7List.get(8)) > 0);
+    assertTrue(
+        "No events conflated in batch",
+        (v4List.get(8) + v5List.get(8) + v6List.get(8) + v7List.get(8)) > 0);
 
     vm2.invoke(() -> validateRegionSize(getTestMethodName(), 10));
-
   }
 
   @Test
@@ -155,11 +157,17 @@ public class ParallelWANConflationDUnitTest extends WANTestBase {
     vm4.invoke(() -> checkQueueSize("ln", keyValues.size()));
     final Map updateKeyValues = updateKeyValues();
 
-    vm4.invoke(() -> checkQueueSize("ln", keyValues.size() + updateKeyValues.size())); // creates aren't conflated
+    vm4.invoke(
+        () ->
+            checkQueueSize(
+                "ln", keyValues.size() + updateKeyValues.size())); // creates aren't conflated
 
     vm4.invoke(() -> putGivenKeyValue(getTestMethodName(), updateKeyValues));
 
-    vm4.invoke(() -> checkQueueSize("ln", keyValues.size() + updateKeyValues.size())); // creates aren't conflated
+    vm4.invoke(
+        () ->
+            checkQueueSize(
+                "ln", keyValues.size() + updateKeyValues.size())); // creates aren't conflated
 
     vm2.invoke(() -> validateRegionSize(getTestMethodName(), 0));
 
@@ -204,7 +212,6 @@ public class ParallelWANConflationDUnitTest extends WANTestBase {
 
     keyValues.putAll(updateKeyValues);
     validateReceiverRegionSize(keyValues);
-
   }
 
   @Test
@@ -223,18 +230,29 @@ public class ParallelWANConflationDUnitTest extends WANTestBase {
     Map orderKeyValues = (Map) vm4.invoke(() -> putOrderPartitionedRegion(20));
     Map shipmentKeyValues = (Map) vm4.invoke(() -> putShipmentPartitionedRegion(20));
 
-    vm4.invoke(() -> WANTestBase.checkQueueSize("ln", (custKeyValues.size() + orderKeyValues.size() + shipmentKeyValues.size())));
+    vm4.invoke(
+        () ->
+            WANTestBase.checkQueueSize(
+                "ln", (custKeyValues.size() + orderKeyValues.size() + shipmentKeyValues.size())));
 
     Map updatedCustKeyValues = (Map) vm4.invoke(() -> updateCustomerPartitionedRegion(10));
     Map updatedOrderKeyValues = (Map) vm4.invoke(() -> updateOrderPartitionedRegion(10));
     Map updatedShipmentKeyValues = (Map) vm4.invoke(() -> updateShipmentPartitionedRegion(10));
-    int sum = (custKeyValues.size() + orderKeyValues.size() + shipmentKeyValues.size()) + updatedCustKeyValues.size() + updatedOrderKeyValues.size() + updatedShipmentKeyValues.size();
+    int sum =
+        (custKeyValues.size() + orderKeyValues.size() + shipmentKeyValues.size())
+            + updatedCustKeyValues.size()
+            + updatedOrderKeyValues.size()
+            + updatedShipmentKeyValues.size();
     vm4.invoke(() -> WANTestBase.checkQueueSize("ln", sum));
 
     updatedCustKeyValues = (Map) vm4.invoke(() -> updateCustomerPartitionedRegion(10));
     updatedOrderKeyValues = (Map) vm4.invoke(() -> updateOrderPartitionedRegion(10));
     updatedShipmentKeyValues = (Map) vm4.invoke(() -> updateShipmentPartitionedRegion(10));
-    int sum2 = (custKeyValues.size() + orderKeyValues.size() + shipmentKeyValues.size()) + updatedCustKeyValues.size() + updatedOrderKeyValues.size() + updatedShipmentKeyValues.size();
+    int sum2 =
+        (custKeyValues.size() + orderKeyValues.size() + shipmentKeyValues.size())
+            + updatedCustKeyValues.size()
+            + updatedOrderKeyValues.size()
+            + updatedShipmentKeyValues.size();
     vm4.invoke(() -> WANTestBase.checkQueueSize("ln", sum2));
 
     vm2.invoke(() -> validateRegionSize(WANTestBase.customerRegionName, 0));
@@ -248,7 +266,6 @@ public class ParallelWANConflationDUnitTest extends WANTestBase {
     shipmentKeyValues.putAll(updatedShipmentKeyValues);
 
     validateColocatedRegionContents(custKeyValues, orderKeyValues, shipmentKeyValues);
-
   }
 
   //
@@ -269,20 +286,33 @@ public class ParallelWANConflationDUnitTest extends WANTestBase {
     Map orderKeyValues = (Map) vm4.invoke(() -> putOrderPartitionedRegionUsingCustId(20));
     Map shipmentKeyValues = (Map) vm4.invoke(() -> putShipmentPartitionedRegionUsingCustId(20));
 
-    vm4.invoke(() -> checkQueueSize("ln", (custKeyValues.size() + orderKeyValues.size() + shipmentKeyValues.size())));
+    vm4.invoke(
+        () ->
+            checkQueueSize(
+                "ln", (custKeyValues.size() + orderKeyValues.size() + shipmentKeyValues.size())));
 
     Map updatedCustKeyValues = (Map) vm4.invoke(() -> updateCustomerPartitionedRegion(10));
     Map updatedOrderKeyValues = (Map) vm4.invoke(() -> updateOrderPartitionedRegionUsingCustId(10));
-    Map updatedShipmentKeyValues = (Map) vm4.invoke(() -> updateShipmentPartitionedRegionUsingCustId(10));
-    int sum = (custKeyValues.size() + orderKeyValues.size() + shipmentKeyValues.size()) + updatedCustKeyValues.size() + updatedOrderKeyValues.size() + updatedShipmentKeyValues.size();
+    Map updatedShipmentKeyValues =
+        (Map) vm4.invoke(() -> updateShipmentPartitionedRegionUsingCustId(10));
+    int sum =
+        (custKeyValues.size() + orderKeyValues.size() + shipmentKeyValues.size())
+            + updatedCustKeyValues.size()
+            + updatedOrderKeyValues.size()
+            + updatedShipmentKeyValues.size();
 
     vm4.invoke(() -> checkQueueSize("ln", sum));
 
     updatedCustKeyValues = (Map) vm4.invoke(() -> updateCustomerPartitionedRegion(10));
     updatedOrderKeyValues = (Map) vm4.invoke(() -> updateOrderPartitionedRegionUsingCustId(10));
-    updatedShipmentKeyValues = (Map) vm4.invoke(() -> updateShipmentPartitionedRegionUsingCustId(10));
+    updatedShipmentKeyValues =
+        (Map) vm4.invoke(() -> updateShipmentPartitionedRegionUsingCustId(10));
 
-    int sum2 = (custKeyValues.size() + orderKeyValues.size() + shipmentKeyValues.size()) + updatedCustKeyValues.size() + updatedOrderKeyValues.size() + updatedShipmentKeyValues.size();
+    int sum2 =
+        (custKeyValues.size() + orderKeyValues.size() + shipmentKeyValues.size())
+            + updatedCustKeyValues.size()
+            + updatedOrderKeyValues.size()
+            + updatedShipmentKeyValues.size();
     vm4.invoke(() -> checkQueueSize("ln", sum2));
 
     vm2.invoke(() -> validateRegionSize(WANTestBase.customerRegionName, 0));
@@ -298,7 +328,8 @@ public class ParallelWANConflationDUnitTest extends WANTestBase {
     validateColocatedRegionContents(custKeyValues, orderKeyValues, shipmentKeyValues);
   }
 
-  protected void validateColocatedRegionContents(Map custKeyValues, Map orderKeyValues, Map shipmentKeyValues) {
+  protected void validateColocatedRegionContents(
+      Map custKeyValues, Map orderKeyValues, Map shipmentKeyValues) {
     vm2.invoke(() -> validateRegionSize(WANTestBase.customerRegionName, custKeyValues.size()));
     vm2.invoke(() -> validateRegionSize(WANTestBase.orderRegionName, orderKeyValues.size()));
     vm2.invoke(() -> validateRegionSize(WANTestBase.shipmentRegionName, shipmentKeyValues.size()));
@@ -386,10 +417,14 @@ public class ParallelWANConflationDUnitTest extends WANTestBase {
   }
 
   protected void createSenderPRs(int redundancy) {
-    vm4.invoke(() -> createPartitionedRegion(getTestMethodName(), "ln", redundancy, 8, isOffHeap()));
-    vm5.invoke(() -> createPartitionedRegion(getTestMethodName(), "ln", redundancy, 8, isOffHeap()));
-    vm6.invoke(() -> createPartitionedRegion(getTestMethodName(), "ln", redundancy, 8, isOffHeap()));
-    vm7.invoke(() -> createPartitionedRegion(getTestMethodName(), "ln", redundancy, 8, isOffHeap()));
+    vm4.invoke(
+        () -> createPartitionedRegion(getTestMethodName(), "ln", redundancy, 8, isOffHeap()));
+    vm5.invoke(
+        () -> createPartitionedRegion(getTestMethodName(), "ln", redundancy, 8, isOffHeap()));
+    vm6.invoke(
+        () -> createPartitionedRegion(getTestMethodName(), "ln", redundancy, 8, isOffHeap()));
+    vm7.invoke(
+        () -> createPartitionedRegion(getTestMethodName(), "ln", redundancy, 8, isOffHeap()));
   }
 
   protected void initialSetUp() {
@@ -415,5 +450,4 @@ public class ParallelWANConflationDUnitTest extends WANTestBase {
     vm6.invoke(() -> createSender("ln", 2, true, 100, 2, true, false, null, true));
     vm7.invoke(() -> createSender("ln", 2, true, 100, 2, true, false, null, true));
   }
-
 }

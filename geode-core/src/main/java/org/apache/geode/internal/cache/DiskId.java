@@ -20,38 +20,30 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
  * This id stores seven pieces of information:
+ *
  * <ul>
- * <li>The unique identifier which will identify this entry called the keyId
- * <li>The oplog id identifying the oplog in which this entry's value is
- * present
- * <li>The position in the oplog (the oplog offset) where this entry's value is
- * stored
- * <li>The length of the byte array (which represent the value)on disk
- * <li>Userbits of the value
+ *   <li>The unique identifier which will identify this entry called the keyId
+ *   <li>The oplog id identifying the oplog in which this entry's value is present
+ *   <li>The position in the oplog (the oplog offset) where this entry's value is stored
+ *   <li>The length of the byte array (which represent the value)on disk
+ *   <li>Userbits of the value
  * </ul>
- * 
+ *
  * @since GemFire 5.1
  */
-
 public abstract class DiskId {
 
   // @todo this field could be an int for an overflow only region
   /**
-   * id consists of
-   * most significant
-   * 1 byte = users bits
-   * 2-8 bytes = oplog id
-   * least significant.
-   * 
-   * The highest bit in the oplog id part is set to 1 if the oplog id
-   * is negative.
+   * id consists of most significant 1 byte = users bits 2-8 bytes = oplog id least significant.
+   *
+   * <p>The highest bit in the oplog id part is set to 1 if the oplog id is negative.
    */
   private long id;
 
   /**
-   * Length of the bytes on disk.
-   * This is always set. If the value is invalid then it will be set to 0.
-   * The most significant bit is used by overflow to mark it as needing to be written.
+   * Length of the bytes on disk. This is always set. If the value is invalid then it will be set to
+   * 0. The most significant bit is used by overflow to mark it as needing to be written.
    */
   protected int valueLength = 0;
 
@@ -67,21 +59,18 @@ public abstract class DiskId {
   abstract long getOffsetInOplog();
 
   /**
-   * Bit masks to extract the oplog id or user bits from the id
-   * field
-   * The oplog id is currently the lowest 7 bytes, and the user
-   * bits is the most significant byte. The sign of the oplog id
-   * is held in the highest bit of the oplog id bytes.
+   * Bit masks to extract the oplog id or user bits from the id field The oplog id is currently the
+   * lowest 7 bytes, and the user bits is the most significant byte. The sign of the oplog id is
+   * held in the highest bit of the oplog id bytes.
    */
   public static final long OPLOG_ID_MASK = 0x00FFFFFFFFFFFFFFL;
+
   public static final long USER_BITS_MASK = 0xFF00000000000000L;
   public static final long MAX_OPLOG_ID = 0x007FFFFFFFFFFFFFL;
   public static final long OPLOG_ID_SIGN_BIT = 0x0080000000000000L;
   public static final long USER_BITS_SHIFT = 24 + 32;
 
-  /**
-   * @return Returns the oplog id.
-   */
+  /** @return Returns the oplog id. */
   synchronized long getOplogId() {
     //mask the first byte to get the oplogId
     long oplogId = this.id & MAX_OPLOG_ID;
@@ -98,9 +87,8 @@ public abstract class DiskId {
 
   /**
    * Setter for oplog offset of an entry
-   * 
-   * @param offsetInOplog -
-   *          offset in oplog where the entry is stored.
+   *
+   * @param offsetInOplog - offset in oplog where the entry is stored.
    */
   abstract void setOffsetInOplog(long offsetInOplog);
 
@@ -112,17 +100,15 @@ public abstract class DiskId {
 
   abstract boolean needsToBeWritten();
 
-  /**
-   * Returns previous oplog id
-   */
+  /** Returns previous oplog id */
   synchronized long setOplogId(long oplogId) {
     long result = getOplogId();
-    long oldUserBits = this.id & USER_BITS_MASK;//only get the most significant byte containing
+    long oldUserBits = this.id & USER_BITS_MASK; //only get the most significant byte containing
     // sign bit + toggle flag + user bits
     long opId = oplogId;
     if (oplogId < 0) {
-      opId = -1 * oplogId;// make oplogId positive
-      opId |= OPLOG_ID_SIGN_BIT; //Set the highest bit of the oplog id to be 
+      opId = -1 * oplogId; // make oplogId positive
+      opId |= OPLOG_ID_SIGN_BIT; //Set the highest bit of the oplog id to be
       //1 to indicate a negative number
     }
     this.id = opId | oldUserBits;
@@ -133,7 +119,7 @@ public abstract class DiskId {
 
   //   /**
   //    * Setter for the flush buffer toggle flag
-  //    * 
+  //    *
   //    * @param flag -
   //    *          The flush buffer toggle flag which identifies whether the latest
   //    *          value is present in the pendingflushes buffer or the pending
@@ -161,19 +147,14 @@ public abstract class DiskId {
   //     //return this.flushBufferToggleFlag;
   //   }
 
-  /**
-   * @return Returns the userBits.
-   */
+  /** @return Returns the userBits. */
   synchronized byte getUserBits() {
     return (byte) (this.id >> USER_BITS_SHIFT); //shift to right to get the user bits
   }
 
-  /**
-   * @param userBits
-   *          The userBit to set.
-   */
+  /** @param userBits The userBit to set. */
   synchronized void setUserBits(byte userBits) {
-    long userLong = ((long) userBits) << USER_BITS_SHIFT;// set it as most signifcant byte.
+    long userLong = ((long) userBits) << USER_BITS_SHIFT; // set it as most signifcant byte.
 
     this.id &= OPLOG_ID_MASK; // mask the most significant byte in id.
     this.id |= userLong; // set the most significant byte in id.
@@ -182,17 +163,16 @@ public abstract class DiskId {
   }
 
   /**
-   * Return true if entry is schedule to be async written to disk.
-   * Return false if it has already been written or was never modified.
+   * Return true if entry is schedule to be async written to disk. Return false if it has already
+   * been written or was never modified.
+   *
    * @since GemFire prPersistSprint1
    */
   public boolean isPendingAsync() {
     return EntryBits.isPendingAsync(getUserBits());
   }
 
-  /**
-   * @since GemFire prPersistSprint1
-   */
+  /** @since GemFire prPersistSprint1 */
   public synchronized void setPendingAsync(boolean v) {
     byte origBits = getUserBits();
     byte newBits = EntryBits.setPendingAsync(origBits, v);
@@ -209,20 +189,16 @@ public abstract class DiskId {
     }
   }
 
-  /**
-   * @return Returns the valueLength.
-   */
+  /** @return Returns the valueLength. */
   int getValueLength() {
     return valueLength & 0x7fffffff;
   }
 
-  /**
-   * @param valueLength
-   *          The valueLength to set.
-   */
+  /** @param valueLength The valueLength to set. */
   void setValueLength(int valueLength) {
     if (valueLength < 0) {
-      throw new IllegalStateException("Expected DiskId valueLength " + valueLength + " to be >= 0.");
+      throw new IllegalStateException(
+          "Expected DiskId valueLength " + valueLength + " to be >= 0.");
     }
     this.valueLength = (this.valueLength & (0x80000000)) | valueLength;
   }
@@ -261,15 +237,15 @@ public abstract class DiskId {
   }
 
   /**
-   * Creates appropriate instance of DiskId depending upon the maxOplogSize set
-   * by the user. If the maxOplogSize (in bytes) is greater than
-   * Integer.MAX_VALUE, LongOplogOffsetDiskId will be created and for
-   * maxOplogSize lesser than that, IntOplogOffsetDiskId will be created.
-   * 
+   * Creates appropriate instance of DiskId depending upon the maxOplogSize set by the user. If the
+   * maxOplogSize (in bytes) is greater than Integer.MAX_VALUE, LongOplogOffsetDiskId will be
+   * created and for maxOplogSize lesser than that, IntOplogOffsetDiskId will be created.
+   *
    * @param maxOplogSize
    * @return the disk-id instance created.
    */
-  static DiskId createDiskId(long maxOplogSize, boolean isPersistenceType, boolean needsLinkedList) {
+  static DiskId createDiskId(
+      long maxOplogSize, boolean isPersistenceType, boolean needsLinkedList) {
     long bytes = maxOplogSize * 1024 * 1024;
     if (bytes > Integer.MAX_VALUE) {
       if (isPersistenceType) {
@@ -303,11 +279,9 @@ public abstract class DiskId {
   }
 
   /**
-   * Test method to verify if the passed DiskId is an instance of
-   * PersistenceWithIntOffset.
-   * 
-   * @param diskId -
-   *          the DiskId instance
+   * Test method to verify if the passed DiskId is an instance of PersistenceWithIntOffset.
+   *
+   * @param diskId - the DiskId instance
    * @return true if the given DiskId is an instance of PersistenceWithIntOffset
    */
   static boolean isInstanceofPersistIntOplogOffsetDiskId(DiskId diskId) {
@@ -315,59 +289,41 @@ public abstract class DiskId {
   }
 
   /**
-   * Test method to verify if the passed DiskId is an instance of
-   * PersistenceWithLongOffset.
-   * 
-   * @param diskId -
-   *          the DiskId instance
-   * @return true if the given DiskId is an instance of
-   *         PersistenceWithLongOffset
+   * Test method to verify if the passed DiskId is an instance of PersistenceWithLongOffset.
+   *
+   * @param diskId - the DiskId instance
+   * @return true if the given DiskId is an instance of PersistenceWithLongOffset
    */
   static boolean isInstanceofPersistLongOplogOffsetDiskId(DiskId diskId) {
     return diskId instanceof PersistenceWithLongOffset;
   }
 
   /**
-   * Test method to verify if the passed DiskId is an instance of
-   * OverflowOnlyWithIntOffset.
-   * 
-   * @param diskId -
-   *          the DiskId instance
-   * @return true if the given DiskId is an instance of
-   *         OverflowOnlyWithIntOffset
+   * Test method to verify if the passed DiskId is an instance of OverflowOnlyWithIntOffset.
+   *
+   * @param diskId - the DiskId instance
+   * @return true if the given DiskId is an instance of OverflowOnlyWithIntOffset
    */
   static boolean isInstanceofOverflowIntOplogOffsetDiskId(DiskId diskId) {
     return diskId instanceof OverflowOnlyWithIntOffset;
   }
 
   /**
-   * Test method to verify if the passed DiskId is an instance of
-   * PersistenceWithLongOffset.
-   * 
-   * @param diskId -
-   *          the DiskId instance
+   * Test method to verify if the passed DiskId is an instance of PersistenceWithLongOffset.
+   *
+   * @param diskId - the DiskId instance
    * @return true if the given DiskId is an instance of LongOplogOffsetDiskId
    */
   static boolean isInstanceofOverflowOnlyWithLongOffset(DiskId diskId) {
     return diskId instanceof OverflowOnlyWithLongOffset;
   }
 
-  /**
-   * Inner class implementation of DiskId which stores offset in oplog as 'int'
-   * field.
-   * 
-   *  
-   */
-  protected static abstract class IntOplogOffsetDiskId extends DiskId {
-    /**
-     * The position in the oplog (the oplog offset) where this entry's value is
-     * stored
-     */
+  /** Inner class implementation of DiskId which stores offset in oplog as 'int' field. */
+  protected abstract static class IntOplogOffsetDiskId extends DiskId {
+    /** The position in the oplog (the oplog offset) where this entry's value is stored */
     private volatile int offsetInOplog;
 
-    /**
-     * @return the offset in oplog where the entry is stored (returned as long)
-     */
+    /** @return the offset in oplog where the entry is stored (returned as long) */
     @Override
     long getOffsetInOplog() {
       return offsetInOplog;
@@ -375,9 +331,8 @@ public abstract class DiskId {
 
     /**
      * Setter for oplog offset of an entry
-     * 
-     * @param offsetInOplog -
-     *          offset in oplog where the entry is stored.
+     *
+     * @param offsetInOplog - offset in oplog where the entry is stored.
      */
     @Override
     void setOffsetInOplog(long offsetInOplog) {
@@ -385,22 +340,12 @@ public abstract class DiskId {
     }
   }
 
-  /**
-   * Inner class implementation of DiskId which stores offset in oplog as 'long'
-   * field.
-   * 
-   *  
-   */
-  protected static abstract class LongOplogOffsetDiskId extends DiskId {
-    /**
-     * The position in the oplog (the oplog offset) where this entry's value is
-     * stored
-     */
+  /** Inner class implementation of DiskId which stores offset in oplog as 'long' field. */
+  protected abstract static class LongOplogOffsetDiskId extends DiskId {
+    /** The position in the oplog (the oplog offset) where this entry's value is stored */
     private volatile long offsetInOplog;
 
-    /**
-     * @return the offset in oplog where the entry is stored.
-     */
+    /** @return the offset in oplog where the entry is stored. */
     @Override
     long getOffsetInOplog() {
       return offsetInOplog;
@@ -408,9 +353,8 @@ public abstract class DiskId {
 
     /**
      * Setter for oplog offset of an entry
-     * 
-     * @param offsetInOplog -
-     *          offset in oplog where the entry is stored.
+     *
+     * @param offsetInOplog - offset in oplog where the entry is stored.
      */
     @Override
     void setOffsetInOplog(long offsetInOplog) {
@@ -425,12 +369,16 @@ public abstract class DiskId {
 
     @Override
     long getKeyId() {
-      throw new UnsupportedOperationException(LocalizedStrings.DiskId_FOR_OVERFLOW_ONLY_MODE_THE_KEYID_SHOULD_NOT_BE_QUERIED.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings.DiskId_FOR_OVERFLOW_ONLY_MODE_THE_KEYID_SHOULD_NOT_BE_QUERIED
+              .toLocalizedString());
     }
 
     @Override
     void setKeyId(long keyId) {
-      throw new UnsupportedOperationException(LocalizedStrings.DiskId_FOR_OVERFLOW_ONLY_MODE_THE_KEYID_SHOULD_NOT_BE_SET.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings.DiskId_FOR_OVERFLOW_ONLY_MODE_THE_KEYID_SHOULD_NOT_BE_SET
+              .toLocalizedString());
     }
 
     @Override
@@ -454,14 +402,16 @@ public abstract class DiskId {
     }
   }
 
-  final protected static class OverflowOnlyWithIntOffset extends OverflowOnlyWithIntOffsetNoLL {
+  protected static final class OverflowOnlyWithIntOffset extends OverflowOnlyWithIntOffsetNoLL {
     /**
      * Used by DiskRegion for compaction
+     *
      * @since GemFire prPersistSprint1
      */
     private DiskEntry prev;
     /**
      * Used by DiskRegion for compaction
+     *
      * @since GemFire prPersistSprint1
      */
     private DiskEntry next;
@@ -494,12 +444,16 @@ public abstract class DiskId {
 
     @Override
     long getKeyId() {
-      throw new UnsupportedOperationException(LocalizedStrings.DiskId_FOR_OVERFLOW_ONLY_MODE_THE_KEYID_SHOULD_NOT_BE_QUERIED.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings.DiskId_FOR_OVERFLOW_ONLY_MODE_THE_KEYID_SHOULD_NOT_BE_QUERIED
+              .toLocalizedString());
     }
 
     @Override
     void setKeyId(long keyId) {
-      throw new UnsupportedOperationException(LocalizedStrings.DiskId_FOR_OVERFLOW_ONLY_MODE_THE_KEYID_SHOULD_NOT_BE_SET.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings.DiskId_FOR_OVERFLOW_ONLY_MODE_THE_KEYID_SHOULD_NOT_BE_SET
+              .toLocalizedString());
     }
 
     @Override
@@ -523,14 +477,16 @@ public abstract class DiskId {
     }
   }
 
-  final protected static class OverflowOnlyWithLongOffset extends OverflowOnlyWithLongOffsetNoLL {
+  protected static final class OverflowOnlyWithLongOffset extends OverflowOnlyWithLongOffsetNoLL {
     /**
      * Used by DiskRegion for compaction
+     *
      * @since GemFire prPersistSprint1
      */
     private DiskEntry prev;
     /**
      * Used by DiskRegion for compaction
+     *
      * @since GemFire prPersistSprint1
      */
     private DiskEntry next;
@@ -607,14 +563,16 @@ public abstract class DiskId {
     }
   }
 
-  final protected static class PersistenceWithIntOffset extends PersistenceWithIntOffsetNoLL {
+  protected static final class PersistenceWithIntOffset extends PersistenceWithIntOffsetNoLL {
     /**
      * Used by DiskRegion for compaction
+     *
      * @since GemFire prPersistSprint1
      */
     private DiskEntry prev;
     /**
      * Used by DiskRegion for compaction
+     *
      * @since GemFire prPersistSprint1
      */
     private DiskEntry next;
@@ -683,7 +641,6 @@ public abstract class DiskId {
       temp.append("; ");
       temp.append(super.toString());
       return temp.toString();
-
     }
 
     @Override
@@ -692,14 +649,16 @@ public abstract class DiskId {
     }
   }
 
-  final protected static class PersistenceWithLongOffset extends PersistenceWithLongOffsetNoLL {
+  protected static final class PersistenceWithLongOffset extends PersistenceWithLongOffsetNoLL {
     /**
      * Used by DiskRegion for compaction
+     *
      * @since GemFire prPersistSprint1
      */
     private DiskEntry prev;
     /**
      * Used by DiskRegion for compaction
+     *
      * @since GemFire prPersistSprint1
      */
     private DiskEntry next;

@@ -20,9 +20,7 @@ package org.apache.geode.test.dunit.rules;
 
 import org.apache.geode.test.dunit.SerializableRunnable;
 
-/**
- * Disconnects all remote DUnit JVMs including the Locator JVM.
- */
+/** Disconnects all remote DUnit JVMs including the Locator JVM. */
 public class DistributedDisconnectRule extends DistributedExternalResource {
 
   private final boolean disconnectBefore;
@@ -65,15 +63,12 @@ public class DistributedDisconnectRule extends DistributedExternalResource {
     };
   }
 
-  /**
-   * Builds an instance of DistributedDisconnectRule
-   */
+  /** Builds an instance of DistributedDisconnectRule */
   public static class Builder {
     private boolean disconnectBefore;
     private boolean disconnectAfter;
 
-    public Builder() {
-    }
+    public Builder() {}
 
     public Builder disconnectBefore(final boolean disconnectBefore) {
       this.disconnectBefore = disconnectBefore;

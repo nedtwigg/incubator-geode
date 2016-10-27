@@ -47,10 +47,9 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Test for bug 41957.
- * Basic idea is to have a client with a region with a low eviction limit
- * do a register interest with key&values and see if we end up with more entries
- * in the client than the eviction limit.
+ * Test for bug 41957. Basic idea is to have a client with a region with a low eviction limit do a
+ * register interest with key&values and see if we end up with more entries in the client than the
+ * eviction limit.
  *
  * @since GemFire 6.5
  */
@@ -73,91 +72,99 @@ public class Bug41957DUnitTest extends ClientServerTestCase {
 
     createBridgeServer(server, regionName, serverPort, false);
 
-    createBridgeClient(client, regionName, serverHost, new int[] { serverPort });
+    createBridgeClient(client, regionName, serverHost, new int[] {serverPort});
 
-    client.invoke(new CacheSerializableRunnable("register interest") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion(regionName);
-        int ENTRIES_ON_SERVER = 10;
-        for (int i = 1; i <= ENTRIES_ON_SERVER; i++) {
-          region.registerInterest("k" + i, InterestResultPolicy.KEYS_VALUES);
-        }
-        assertEquals(2, region.size());
-      }
-    });
+    client.invoke(
+        new CacheSerializableRunnable("register interest") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion(regionName);
+            int ENTRIES_ON_SERVER = 10;
+            for (int i = 1; i <= ENTRIES_ON_SERVER; i++) {
+              region.registerInterest("k" + i, InterestResultPolicy.KEYS_VALUES);
+            }
+            assertEquals(2, region.size());
+          }
+        });
 
     stopBridgeServer(server);
   }
 
-  private void createBridgeServer(VM server, final String regionName, final int serverPort, final boolean createPR) {
-    server.invoke(new CacheSerializableRunnable("Create server") {
-      public void run2() throws CacheException {
-        // Create DS
-        Properties config = new Properties();
-        config.setProperty(LOCATORS, "localhost[" + DistributedTestUtils.getDUnitLocatorPort() + "]");
-        getSystem(config);
+  private void createBridgeServer(
+      VM server, final String regionName, final int serverPort, final boolean createPR) {
+    server.invoke(
+        new CacheSerializableRunnable("Create server") {
+          public void run2() throws CacheException {
+            // Create DS
+            Properties config = new Properties();
+            config.setProperty(
+                LOCATORS, "localhost[" + DistributedTestUtils.getDUnitLocatorPort() + "]");
+            getSystem(config);
 
-        // Create Region
-        AttributesFactory factory = new AttributesFactory();
-        factory.setCacheLoader(new CacheServerCacheLoader());
-        if (createPR) {
-          factory.setDataPolicy(DataPolicy.PARTITION);
-          factory.setPartitionAttributes((new PartitionAttributesFactory()).create());
-        } else {
-          factory.setScope(Scope.DISTRIBUTED_ACK);
-          factory.setDataPolicy(DataPolicy.REPLICATE);
-        }
-        Region region = createRootRegion(regionName, factory.create());
-        if (createPR) {
-          assertTrue(region instanceof PartitionedRegion);
-        }
-        int ENTRIES_ON_SERVER = 10;
-        for (int i = 1; i <= ENTRIES_ON_SERVER; i++) {
-          region.create("k" + i, "v" + i);
-        }
-        try {
-          startBridgeServer(serverPort);
-        } catch (Exception e) {
-          Assert.fail("While starting CacheServer", e);
-        }
-      }
-    });
+            // Create Region
+            AttributesFactory factory = new AttributesFactory();
+            factory.setCacheLoader(new CacheServerCacheLoader());
+            if (createPR) {
+              factory.setDataPolicy(DataPolicy.PARTITION);
+              factory.setPartitionAttributes((new PartitionAttributesFactory()).create());
+            } else {
+              factory.setScope(Scope.DISTRIBUTED_ACK);
+              factory.setDataPolicy(DataPolicy.REPLICATE);
+            }
+            Region region = createRootRegion(regionName, factory.create());
+            if (createPR) {
+              assertTrue(region instanceof PartitionedRegion);
+            }
+            int ENTRIES_ON_SERVER = 10;
+            for (int i = 1; i <= ENTRIES_ON_SERVER; i++) {
+              region.create("k" + i, "v" + i);
+            }
+            try {
+              startBridgeServer(serverPort);
+            } catch (Exception e) {
+              Assert.fail("While starting CacheServer", e);
+            }
+          }
+        });
   }
 
-  private void createBridgeClient(VM client, final String regionName, final String serverHost, final int[] serverPorts) {
-    client.invoke(new CacheSerializableRunnable("Create client") {
-      public void run2() throws CacheException {
-        // Create DS
-        Properties config = new Properties();
-        config.setProperty(MCAST_PORT, "0");
-        config.setProperty(LOCATORS, "");
-        getSystem(config);
+  private void createBridgeClient(
+      VM client, final String regionName, final String serverHost, final int[] serverPorts) {
+    client.invoke(
+        new CacheSerializableRunnable("Create client") {
+          public void run2() throws CacheException {
+            // Create DS
+            Properties config = new Properties();
+            config.setProperty(MCAST_PORT, "0");
+            config.setProperty(LOCATORS, "");
+            getSystem(config);
 
-        // Create Region
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        {
-          PoolFactory pf = PoolManager.createFactory();
-          pf.setSubscriptionEnabled(true);
-          for (int i = 0; i < serverPorts.length; i++) {
-            pf.addServer(serverHost, serverPorts[i]);
+            // Create Region
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            {
+              PoolFactory pf = PoolManager.createFactory();
+              pf.setSubscriptionEnabled(true);
+              for (int i = 0; i < serverPorts.length; i++) {
+                pf.addServer(serverHost, serverPorts[i]);
+              }
+              pf.create("myPool");
+            }
+            int ENTRIES_ON_CLIENT = 2;
+            factory.setPoolName("myPool");
+            factory.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
+            factory.setEvictionAttributes(
+                EvictionAttributes.createLRUEntryAttributes(ENTRIES_ON_CLIENT));
+            createRootRegion(regionName, factory.create());
           }
-          pf.create("myPool");
-        }
-        int ENTRIES_ON_CLIENT = 2;
-        factory.setPoolName("myPool");
-        factory.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
-        factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(ENTRIES_ON_CLIENT));
-        createRootRegion(regionName, factory.create());
-      }
-    });
+        });
   }
 
   private void stopBridgeServer(VM server) {
-    server.invoke(new CacheSerializableRunnable("Stop Server") {
-      public void run2() throws CacheException {
-        stopBridgeServers(getCache());
-      }
-    });
+    server.invoke(
+        new CacheSerializableRunnable("Stop Server") {
+          public void run2() throws CacheException {
+            stopBridgeServers(getCache());
+          }
+        });
   }
 }

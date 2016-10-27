@@ -16,15 +16,13 @@
  */
 package org.apache.geode.internal.datasource;
 
-/**
- */
+/** */
 import java.io.Serializable;
 import javax.sql.*;
 
 /**
- * GemFireConnectionPoolManager implements ConnectionProvider interface for
- * managing the the conection pools(with and wothout transactions).
- * 
+ * GemFireConnectionPoolManager implements ConnectionProvider interface for managing the the
+ * conection pools(with and wothout transactions).
  */
 public class GemFireConnectionPoolManager implements ConnectionProvider, Serializable {
   private static final long serialVersionUID = 23723212980453813L;
@@ -32,32 +30,37 @@ public class GemFireConnectionPoolManager implements ConnectionProvider, Seriali
 
   /**
    * Creates a new instance of GemFireConnectionPoolManager
-   * 
+   *
    * @param connPool ConnectionPoolDataSource object from the database driver
-   * @param configs The ConfiguredDataSourceProperties containing the pool
-   *          properties.
+   * @param configs The ConfiguredDataSourceProperties containing the pool properties.
    * @param listener Connection event listner for the connections.
    */
-  public GemFireConnectionPoolManager(ConnectionPoolDataSource connPool, ConfiguredDataSourceProperties configs, javax.sql.ConnectionEventListener listener) throws PoolException {
+  public GemFireConnectionPoolManager(
+      ConnectionPoolDataSource connPool,
+      ConfiguredDataSourceProperties configs,
+      javax.sql.ConnectionEventListener listener)
+      throws PoolException {
     connPoolCache = new ConnectionPoolCacheImpl(connPool, listener, configs);
   }
 
   /**
    * Creates a new instance of GemFireConnectionPoolManager. Overloaded function
-   * 
+   *
    * @param connPool XADataSource object from the database driver
-   * @param configs The ConfiguredDataSourceProperties containing the pool
-   *          properties.
+   * @param configs The ConfiguredDataSourceProperties containing the pool properties.
    * @param listener Connection event listner for the connections.
    */
-  public GemFireConnectionPoolManager(XADataSource connPool, ConfiguredDataSourceProperties configs, javax.sql.ConnectionEventListener listener) throws PoolException {
+  public GemFireConnectionPoolManager(
+      XADataSource connPool,
+      ConfiguredDataSourceProperties configs,
+      javax.sql.ConnectionEventListener listener)
+      throws PoolException {
     connPoolCache = new TranxPoolCacheImpl(connPool, listener, configs);
   }
 
   /**
-   * Returns a PooledConnection object from the pool. Default username and
-   * password are used.
-   * 
+   * Returns a PooledConnection object from the pool. Default username and password are used.
+   *
    * @return Connection Object from Pool.
    */
   public Object borrowConnection() throws PoolException {
@@ -66,9 +69,8 @@ public class GemFireConnectionPoolManager implements ConnectionProvider, Seriali
 
   /**
    * Returns the connection to the pool and the closes it.
-   * 
+   *
    * @param connectionObject
-   *  
    */
   public void returnAndExpireConnection(Object connectionObject) {
     //Asif : The connection is already in the activeCache, but the
@@ -81,7 +83,7 @@ public class GemFireConnectionPoolManager implements ConnectionProvider, Seriali
 
   /**
    * Return connection to pool
-   * 
+   *
    * @param connectionObject
    */
   public void returnConnection(Object connectionObject) {
@@ -92,9 +94,7 @@ public class GemFireConnectionPoolManager implements ConnectionProvider, Seriali
     return connPoolCache;
   }
 
-  /**
-   * Clean up the resources before restart of Cache
-   */
+  /** Clean up the resources before restart of Cache */
   public void clearUp() {
     connPoolCache.clearUp();
   }

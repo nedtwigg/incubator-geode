@@ -50,13 +50,12 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Base class to be extended by other JUnit test classes. This class defines and automatically invokes test for testing server login-logout so no need to add
- * this test in each sub-class. It also provides doLogin(), doLogout() and print error functionality as protected
- * functions.
+ * Base class to be extended by other JUnit test classes. This class defines and automatically
+ * invokes test for testing server login-logout so no need to add this test in each sub-class. It
+ * also provides doLogin(), doLogout() and print error functionality as protected functions.
  *
- * <b>Sub-classes should ensure that they call doLogin() in @BeforeClass and doLogout() in @AfterClass otherwise tests will fail.</b>
- *
- *
+ * <p><b>Sub-classes should ensure that they call doLogin() in @BeforeClass and doLogout()
+ * in @AfterClass otherwise tests will fail.</b>
  */
 @Ignore
 @Category(UITest.class)
@@ -71,51 +70,54 @@ public abstract class BaseServiceTest {
   protected static String PULSE_UPDATE_URL;
 
   protected static final String PULSE_UPDATE_PARAM = "pulseData";
-  protected static final String PULSE_UPDATE_1_VALUE = "{'ClusterSelectedRegion':{'regionFullPath':'/GlobalVilage_2/GlobalVilage_9'}}";
-  protected static final String PULSE_UPDATE_2_VALUE = "{'ClusterSelectedRegion':{'regionFullPath':'/Rubbish'}}";
+  protected static final String PULSE_UPDATE_1_VALUE =
+      "{'ClusterSelectedRegion':{'regionFullPath':'/GlobalVilage_2/GlobalVilage_9'}}";
+  protected static final String PULSE_UPDATE_2_VALUE =
+      "{'ClusterSelectedRegion':{'regionFullPath':'/Rubbish'}}";
 
-  protected static final String PULSE_UPDATE_3_VALUE = "{'ClusterSelectedRegionsMember':{'regionFullPath':'/GlobalVilage_2/GlobalVilage_9'}}";
-  protected static final String PULSE_UPDATE_4_VALUE = "{'ClusterSelectedRegionsMember':{'regionFullPath':'/Rubbish'}}";
+  protected static final String PULSE_UPDATE_3_VALUE =
+      "{'ClusterSelectedRegionsMember':{'regionFullPath':'/GlobalVilage_2/GlobalVilage_9'}}";
+  protected static final String PULSE_UPDATE_4_VALUE =
+      "{'ClusterSelectedRegionsMember':{'regionFullPath':'/Rubbish'}}";
 
-  protected static final String PULSE_UPDATE_5_VALUE = "{'MemberGatewayHub':{'memberName':'pnq-visitor1'}}";
-  protected static final String PULSE_UPDATE_6_VALUE = "{'MemberGatewayHub':{'memberName':'pnq-visitor2'}}";
+  protected static final String PULSE_UPDATE_5_VALUE =
+      "{'MemberGatewayHub':{'memberName':'pnq-visitor1'}}";
+  protected static final String PULSE_UPDATE_6_VALUE =
+      "{'MemberGatewayHub':{'memberName':'pnq-visitor2'}}";
   protected static CloseableHttpClient httpclient = null;
 
   private final ObjectMapper mapper = new ObjectMapper();
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    InputStream stream = BaseServiceTest.class.getClassLoader().getResourceAsStream("pulse.properties");
+    InputStream stream =
+        BaseServiceTest.class.getClassLoader().getResourceAsStream("pulse.properties");
 
     try {
       propsForJUnit.load(stream);
     } catch (Exception exProps) {
-      System.out.println("BaseServiceTest :: Error loading properties from pulse.properties in classpath");
+      System.out.println(
+          "BaseServiceTest :: Error loading properties from pulse.properties in classpath");
     }
     strHost = propsForJUnit.getProperty("pulse.host");
     strPort = propsForJUnit.getProperty("pulse.port");
-    System.out.println("BaseServiceTest :: Loaded properties from classpath. Checking properties for hostname. Hostname found = " + strHost);
+    System.out.println(
+        "BaseServiceTest :: Loaded properties from classpath. Checking properties for hostname. Hostname found = "
+            + strHost);
     LOGIN_URL = "http://" + strHost + ":" + strPort + "/pulse/j_spring_security_check";
     LOGOUT_URL = "http://" + strHost + ":" + strPort + "/pulse/clusterLogout";
     IS_AUTHENTICATED_USER_URL = "http://" + strHost + ":" + strPort + "/pulse/authenticateUser";
     PULSE_UPDATE_URL = "http://" + strHost + ":" + strPort + "/pulse/pulseUpdate";
-
   }
 
-  /**
-  *
-  * @throws java.lang.Exception
-  */
+  /** @throws java.lang.Exception */
   @Before
   public void setUp() throws Exception {
     doLogout();
     System.out.println("BaseServiceTest :: Setup done");
   }
 
-  /**
-  *
-  * @throws java.lang.Exception
-  */
+  /** @throws java.lang.Exception */
   @After
   public void tearDown() throws Exception {
     doLogin();
@@ -123,32 +125,37 @@ public abstract class BaseServiceTest {
   }
 
   /**
-   * Login to pulse server and setup httpClient for tests
-   * To be called from setupBeforeClass in each test class
+   * Login to pulse server and setup httpClient for tests To be called from setupBeforeClass in each
+   * test class
    */
   protected static void doLogin() throws Exception {
-    System.out.println("BaseServiceTest ::  Executing doLogin with user : admin, password : admin.");
+    System.out.println(
+        "BaseServiceTest ::  Executing doLogin with user : admin, password : admin.");
 
     CloseableHttpResponse loginResponse = null;
     try {
       BasicCookieStore cookieStore = new BasicCookieStore();
       httpclient = HttpClients.custom().setDefaultCookieStore(cookieStore).build();
-      HttpUriRequest login = RequestBuilder.post().setUri(new URI(LOGIN_URL)).addParameter("j_username", "admin").addParameter("j_password", "admin").build();
+      HttpUriRequest login =
+          RequestBuilder.post()
+              .setUri(new URI(LOGIN_URL))
+              .addParameter("j_username", "admin")
+              .addParameter("j_password", "admin")
+              .build();
       loginResponse = httpclient.execute(login);
       try {
         HttpEntity entity = loginResponse.getEntity();
         EntityUtils.consume(entity);
-        System.out.println("BaseServiceTest :: HTTP request status : " + loginResponse.getStatusLine());
+        System.out.println(
+            "BaseServiceTest :: HTTP request status : " + loginResponse.getStatusLine());
 
         List<Cookie> cookies = cookieStore.getCookies();
         if (cookies.isEmpty()) {
         } else {
-          for (int i = 0; i < cookies.size(); i++) {
-          }
+          for (int i = 0; i < cookies.size(); i++) {}
         }
       } finally {
-        if (loginResponse != null)
-          loginResponse.close();
+        if (loginResponse != null) loginResponse.close();
       }
     } catch (Exception failed) {
       logException(failed);
@@ -159,11 +166,12 @@ public abstract class BaseServiceTest {
   }
 
   /**
-   * Logout to pulse server and close httpClient
-   * To be called from setupAfterClass in each test class
+   * Logout to pulse server and close httpClient To be called from setupAfterClass in each test
+   * class
    */
   protected static void doLogout() throws Exception {
-    System.out.println("BaseServiceTest ::  Executing doLogout with user : admin, password : admin.");
+    System.out.println(
+        "BaseServiceTest ::  Executing doLogout with user : admin, password : admin.");
     if (httpclient != null) {
       CloseableHttpResponse logoutResponse = null;
       try {
@@ -173,8 +181,7 @@ public abstract class BaseServiceTest {
           HttpEntity entity = logoutResponse.getEntity();
           EntityUtils.consume(entity);
         } finally {
-          if (logoutResponse != null)
-            logoutResponse.close();
+          if (logoutResponse != null) logoutResponse.close();
           httpclient.close();
           httpclient = null;
         }
@@ -197,22 +204,24 @@ public abstract class BaseServiceTest {
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
     failed.printStackTrace(pw);
-    System.out.println("BaseServiceTest :: Logging exception details : " + sw.getBuffer().toString());
+    System.out.println(
+        "BaseServiceTest :: Logging exception details : " + sw.getBuffer().toString());
   }
 
   /**
-  *
-  * Tests that service returns json object
-  *
-  * Test method for {@link org.apache.geode.tools.pulse.internal.service.ClusterSelectedRegionService#execute(javax.servlet.http.HttpServletRequest)}.
-  */
+   * Tests that service returns json object
+   *
+   * <p>Test method for {@link
+   * org.apache.geode.tools.pulse.internal.service.ClusterSelectedRegionService#execute(javax.servlet.http.HttpServletRequest)}.
+   */
   @Test
   public void testServerLoginLogout() {
     System.out.println("BaseServiceTest ::  ------TESTCASE BEGIN : SERVER LOGIN-LOGOUT------");
     try {
       doLogin();
 
-      HttpUriRequest pulseupdate = RequestBuilder.get().setUri(new URI(IS_AUTHENTICATED_USER_URL)).build();
+      HttpUriRequest pulseupdate =
+          RequestBuilder.get().setUri(new URI(IS_AUTHENTICATED_USER_URL)).build();
       CloseableHttpResponse response = httpclient.execute(pulseupdate);
       try {
         HttpEntity entity = response.getEntity();
@@ -232,8 +241,11 @@ public abstract class BaseServiceTest {
 
         JsonNode jsonObj = mapper.readTree(jsonResp);
         boolean isUserLoggedIn = jsonObj.get("isUserLoggedIn").booleanValue();
-        Assert.assertNotNull("BaseServiceTest :: Server returned null response in 'isUserLoggedIn'", isUserLoggedIn);
-        Assert.assertTrue("BaseServiceTest :: User login failed for this username, password", (isUserLoggedIn == true));
+        Assert.assertNotNull(
+            "BaseServiceTest :: Server returned null response in 'isUserLoggedIn'", isUserLoggedIn);
+        Assert.assertTrue(
+            "BaseServiceTest :: User login failed for this username, password",
+            (isUserLoggedIn == true));
       } finally {
         response.close();
       }

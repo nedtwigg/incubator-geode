@@ -37,5 +37,4 @@ public class AsyncEventListenerOffHeapDUnitTest extends AsyncEventListenerDUnitT
   public boolean isOffHeap() {
     return true;
   }
-
 }

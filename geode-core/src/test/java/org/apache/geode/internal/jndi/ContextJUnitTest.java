@@ -36,9 +36,7 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Tests all basic methods of ContextImpl.
- */
+/** Tests all basic methods of ContextImpl. */
 @Category(UnitTest.class)
 public class ContextJUnitTest {
 
@@ -50,7 +48,9 @@ public class ContextJUnitTest {
   @Before
   public void setUp() throws Exception {
     Hashtable table = new Hashtable();
-    table.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.geode.internal.jndi.InitialContextFactoryImpl");
+    table.put(
+        Context.INITIAL_CONTEXT_FACTORY,
+        "org.apache.geode.internal.jndi.InitialContextFactoryImpl");
     initialContext = new InitialContext(table);
     initialContext.bind("java:gf/env/datasource/oracle", "a");
     gemfireContext = (Context) initialContext.lookup("java:gf");
@@ -69,11 +69,11 @@ public class ContextJUnitTest {
 
   /**
    * Removes all entries from the specified context, including subcontexts.
-   * 
+   *
    * @param context context to clear
    */
   private void clearContext(Context context) throws NamingException {
-    for (NamingEnumeration e = context.listBindings(""); e.hasMoreElements();) {
+    for (NamingEnumeration e = context.listBindings(""); e.hasMoreElements(); ) {
       Binding binding = (Binding) e.nextElement();
       if (binding.getObject() instanceof Context) {
         clearContext((Context) binding.getObject());
@@ -82,9 +82,7 @@ public class ContextJUnitTest {
     }
   }
 
-  /**
-   * Tests inability to create duplicate subcontexts.
-   */
+  /** Tests inability to create duplicate subcontexts. */
   @Test
   public void testSubcontextCreationOfDuplicates() throws NamingException {
     // Try to create duplicate subcontext
@@ -101,9 +99,7 @@ public class ContextJUnitTest {
     }
   }
 
-  /**
-   * Tests inability to destroy non empty subcontexts.
-   */
+  /** Tests inability to destroy non empty subcontexts. */
   @Test
   public void testSubcontextNonEmptyDestruction() throws Exception {
     // Bind some object in ejb subcontext
@@ -126,9 +122,7 @@ public class ContextJUnitTest {
     }
   }
 
-  /**
-   * Tests ability to destroy empty subcontexts.
-   */
+  /** Tests ability to destroy empty subcontexts. */
   @Test
   public void testSubcontextDestruction() throws Exception {
     // Create three new subcontexts
@@ -157,9 +151,7 @@ public class ContextJUnitTest {
     }
   }
 
-  /**
-   * Tests inability to invoke methods on destroyed subcontexts.
-   */
+  /** Tests inability to invoke methods on destroyed subcontexts. */
   @Test
   public void testSubcontextInvokingMethodsOnDestroyedContext() throws Exception {
     //Create subcontext and destroy it.
@@ -209,9 +201,7 @@ public class ContextJUnitTest {
     }
   }
 
-  /**
-   * Tests ability to bind name to object.
-   */
+  /** Tests ability to bind name to object. */
   @Test
   public void testBindLookup() throws Exception {
     Object obj1 = new String("Object1");
@@ -232,9 +222,7 @@ public class ContextJUnitTest {
     assertSame(dataSourceContext.lookup("sub25/sub26"), obj3);
   }
 
-  /**
-   * Tests ability to unbind names.
-   */
+  /** Tests ability to unbind names. */
   @Test
   public void testUnbind() throws Exception {
     envContext.bind("sub31", null);
@@ -262,10 +250,7 @@ public class ContextJUnitTest {
     }
   }
 
-  /**
-   * Tests ability to list bindings for a context - specified by name through
-   * object reference.
-   */
+  /** Tests ability to list bindings for a context - specified by name through object reference. */
   @Test
   public void testListBindings() throws Exception {
     gemfireContext.bind("env/datasource/sub41", "ListBindings1");
@@ -278,21 +263,22 @@ public class ContextJUnitTest {
     verifyListBindings(initialContext, "java:gf/env", "ListBindings1", "ListBindings2");
   }
 
-  private void verifyListBindings(Context c, String name, Object obj1, Object obj2) throws NamingException {
+  private void verifyListBindings(Context c, String name, Object obj1, Object obj2)
+      throws NamingException {
     boolean datasourceFoundFlg = false;
     boolean o2FoundFlg = false;
     boolean datasourceO1FoundFlg = false;
     boolean datasourceNullFoundFlg = false;
 
     // List bindings for the specified context
-    for (NamingEnumeration en = c.listBindings(name); en.hasMore();) {
+    for (NamingEnumeration en = c.listBindings(name); en.hasMore(); ) {
       Binding b = (Binding) en.next();
       if (b.getName().equals("datasource")) {
         assertEquals(b.getObject(), dataSourceContext);
         datasourceFoundFlg = true;
 
         Context nextCon = (Context) b.getObject();
-        for (NamingEnumeration en1 = nextCon.listBindings(""); en1.hasMore();) {
+        for (NamingEnumeration en1 = nextCon.listBindings(""); en1.hasMore(); ) {
           Binding b1 = (Binding) en1.next();
           if (b1.getName().equals("sub41")) {
             assertEquals(b1.getObject(), obj1);
@@ -334,9 +320,7 @@ public class ContextJUnitTest {
     assertEquals(obj, ctx.lookup("a"));
   }
 
-  /**
-   * Tests "getCompositeName" method
-   */
+  /** Tests "getCompositeName" method */
   @Test
   public void testGetCompositeName() throws Exception {
     ContextImpl ctx = new ContextImpl();
@@ -351,9 +335,7 @@ public class ContextJUnitTest {
     assertEquals("a/b/c", subCtx.getCompoundStringName());
   }
 
-  /**
-   * Tests substitution of '.' with '/' when parsing string names.
-   */
+  /** Tests substitution of '.' with '/' when parsing string names. */
   @Test
   public void testTwoSeparatorNames() throws Exception {
     ContextImpl ctx = new ContextImpl();
@@ -364,5 +346,4 @@ public class ContextJUnitTest {
     assertEquals(ctx.lookup("a.b/c.d.e"), obj);
     assertTrue(ctx.lookup("a.b.c.d") instanceof Context);
   }
-
 }

@@ -26,13 +26,10 @@ import org.apache.geode.management.internal.configuration.domain.ConfigurationCh
 
 public class AddJarFunction extends FunctionAdapter implements InternalEntity {
 
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
 
-  public AddJarFunction() {
-  }
+  public AddJarFunction() {}
 
   public void execute(FunctionContext context) {
     InternalLocator locator = InternalLocator.getLocator();
@@ -49,7 +46,8 @@ public class AddJarFunction extends FunctionAdapter implements InternalEntity {
         sharedConfiguration.addJars(jarFilenames, jarBytes, groups);
 
       } else {
-        configChangeResult.setErrorMessage("Shared Configuration has not been started in locator : " + locator);
+        configChangeResult.setErrorMessage(
+            "Shared Configuration has not been started in locator : " + locator);
       }
     } catch (Exception e) {
       configChangeResult.setException(e);
@@ -63,5 +61,4 @@ public class AddJarFunction extends FunctionAdapter implements InternalEntity {
   public String getId() {
     return AddJarFunction.class.getName();
   }
-
 }

@@ -69,38 +69,26 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 /**
  * Test Scenario :
  *
- * Test 1:  testInterestListRegistration()
+ * <p>Test 1: testInterestListRegistration()
  *
- * one server two clients
- * create Entries in all the vms
- * c1 : register (k1)
- * c2 : register (k2)
- * c1 : put (k1 -> vm1-k1) AND (k2 -> vm1-k2)
- * c2 : validate (k1 == k1) AND (k2 == vm1-k2) // as k1 is not registered
- * c2 : put (k1 -> vm2-k1)
- * c1 : validate (k1 == vm2-k1) AND (k2 == vm1-k2)// as k2 is not registered
- * c1 : unregister(k1)
- * c2 : unregister(k2)
- * c1 : put (k1 -> vm1-k1-again) AND (k2 -> vm1-k2-again)
- * c2 : validate (k1 == vm2-k1) AND (k2 == vm2-k2) // as both are not registered
- * c2 : put (k1 -> vm2-k1-again) AND (k2 -> vm2-k2-again)
- * c1 : validate (k1 == vm1-k1-again) AND (k2 == vm1-k2-again)// as both are not registered
+ * <p>one server two clients create Entries in all the vms c1 : register (k1) c2 : register (k2) c1
+ * : put (k1 -> vm1-k1) AND (k2 -> vm1-k2) c2 : validate (k1 == k1) AND (k2 == vm1-k2) // as k1 is
+ * not registered c2 : put (k1 -> vm2-k1) c1 : validate (k1 == vm2-k1) AND (k2 == vm1-k2)// as k2 is
+ * not registered c1 : unregister(k1) c2 : unregister(k2) c1 : put (k1 -> vm1-k1-again) AND (k2 ->
+ * vm1-k2-again) c2 : validate (k1 == vm2-k1) AND (k2 == vm2-k2) // as both are not registered c2 :
+ * put (k1 -> vm2-k1-again) AND (k2 -> vm2-k2-again) c1 : validate (k1 == vm1-k1-again) AND (k2 ==
+ * vm1-k2-again)// as both are not registered
  *
- * Test2: testInterestListRegistration_ALL_KEYS
+ * <p>Test2: testInterestListRegistration_ALL_KEYS
  *
- * one server two clients
- * create Entries in all the vms
- * register ALL_KEYS and verifies that updates are receving to all the keys
+ * <p>one server two clients create Entries in all the vms register ALL_KEYS and verifies that
+ * updates are receving to all the keys
  *
+ * <p>Test3: testInitializationOfRegionFromInterestList
  *
- * Test3:  testInitializationOfRegionFromInterestList
- *
- * one server two clients
- * create Entries in all the vms
- * server directly puts some values
- * then both client connects to the server
- * c1 register(k1,k2,k3) and c2 register (k4,k5)
- * then verify that updates has occurred as a result of interest registration.
+ * <p>one server two clients create Entries in all the vms server directly puts some values then
+ * both client connects to the server c1 register(k1,k2,k3) and c2 register (k4,k5) then verify that
+ * updates has occurred as a result of interest registration.
  */
 @Category(DistributedTest.class)
 public class InterestListDUnitTest extends JUnit4DistributedTestCase {
@@ -108,10 +96,10 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   private static final String REGION_NAME = "InterestListDUnitTest_region";
 
   // using a Integer instead of String to make sure ALL_KEYS works on non-String keys
-  private final static Integer key1 = new Integer(1);
-  private final static Integer key2 = new Integer(2);
-  private final static String key1_originalValue = "key-1-orig-value";
-  private final static String key2_originalValue = "key-2-orig-value";
+  private static final Integer key1 = new Integer(1);
+  private static final Integer key2 = new Integer(2);
+  private static final String key1_originalValue = "key-1-orig-value";
+  private static final String key2_originalValue = "key-2-orig-value";
 
   private static Cache cache = null;
 
@@ -153,35 +141,35 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     server = null;
     interestListener = null;
 
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        cache = null;
-        server = null;
-        interestListener = null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            cache = null;
+            server = null;
+            interestListener = null;
+          }
+        });
   }
 
   /**
-   * one server two clients
-   * create Entries in all the vms
-   * c1 : register (k1)
-   * c2 : register (k2)
-   * c1 : put (k1 -> vm1-k1) AND (k2 -> vm1-k2)
-   * c2 : validate (k1 == k1) AND (k2 == vm1-k2) // as k1 is not registered
-   * c2 : put (k1 -> vm2-k1)
-   * c1 : validate (k1 == vm2-k1) AND (k2 == vm1-k2)// as k2 is not registered
-   * c1 : unregister(k1)
-   * c2 : unregister(k2)
-   * c1 : put (k1 -> vm1-k1-again) AND (k2 -> vm1-k2-again)
-   * c2 : validate (k1 == vm2-k1) AND (k2 == vm2-k2) // as both are not registered
-   * c2 : put (k1 -> vm2-k1-again) AND (k2 -> vm2-k2-again)
-   * c1 : validate (k1 == vm1-k1-again) AND (k2 == vm1-k2-again)// as both are not registered
+   * one server two clients create Entries in all the vms c1 : register (k1) c2 : register (k2) c1 :
+   * put (k1 -> vm1-k1) AND (k2 -> vm1-k2) c2 : validate (k1 == k1) AND (k2 == vm1-k2) // as k1 is
+   * not registered c2 : put (k1 -> vm2-k1) c1 : validate (k1 == vm2-k1) AND (k2 == vm1-k2)// as k2
+   * is not registered c1 : unregister(k1) c2 : unregister(k2) c1 : put (k1 -> vm1-k1-again) AND (k2
+   * -> vm1-k2-again) c2 : validate (k1 == vm2-k1) AND (k2 == vm2-k2) // as both are not registered
+   * c2 : put (k1 -> vm2-k1-again) AND (k2 -> vm2-k2-again) c1 : validate (k1 == vm1-k1-again) AND
+   * (k2 == vm1-k2-again)// as both are not registered
    */
   @Test
   public void testInterestListRegistration() throws Exception {
-    vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
-    vm2.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm1.invoke(
+        () ->
+            InterestListDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm2.invoke(
+        () ->
+            InterestListDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
 
     vm1.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
     vm2.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
@@ -208,35 +196,31 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * one server two clients
-   * create Entries in all the vms
+   * one server two clients create Entries in all the vms
    *
-   * STEP 1:
-   * c2:  put (k2 -> vm-k2)
-   * c1:  validate k2 == k2 (not updated because no interest)
+   * <p>STEP 1: c2: put (k2 -> vm-k2) c1: validate k2 == k2 (not updated because no interest)
    *
-   * STEP 2
-   * c1:  register k2
-   * c1 : validate k2 == vm-k2 (updated because of registerInterest)
-   * c1:  validate k1 == k1 (other key not updated because still no interest)
+   * <p>STEP 2 c1: register k2 c1 : validate k2 == vm-k2 (updated because of registerInterest) c1:
+   * validate k1 == k1 (other key not updated because still no interest)
    *
-   * STEP 3:
-   * c1:  put (k1 -> vm-k1)
-   * c2:  validate k1 == k1 (not updated because no interest)
-   * c2:  register k1
-   * c2:  validate k1 == vm-k1 (updated because of registerInterest)
+   * <p>STEP 3: c1: put (k1 -> vm-k1) c2: validate k1 == k1 (not updated because no interest) c2:
+   * register k1 c2: validate k1 == vm-k1 (updated because of registerInterest)
    *
-   * STEP 4:
-   * c2:  unregister k1
-   * c1:  put k1->k1 (old value)
-   * c2:  validate k1 == vm-k1 (no interest, so missing update)
+   * <p>STEP 4: c2: unregister k1 c1: put k1->k1 (old value) c2: validate k1 == vm-k1 (no interest,
+   * so missing update)
    */
   @Test
   public void testValueRefresh() throws Exception {
     // Initialization
     Host host = Host.getHost(0);
-    vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1)));
-    vm2.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1)));
+    vm1.invoke(
+        () ->
+            InterestListDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT1)));
+    vm2.invoke(
+        () ->
+            InterestListDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT1)));
 
     vm1.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
     vm2.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
@@ -250,17 +234,25 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     // Force key2 to synchronize with server cache
     vm1.invoke(() -> InterestListDUnitTest.registerKey(key2));
     // Verify that new value is present
-    vm1.invoke(() -> InterestListDUnitTest.validateSingleEntry(key2, "vm2")); // value now magically changed
+    vm1.invoke(
+        () ->
+            InterestListDUnitTest.validateSingleEntry(key2, "vm2")); // value now magically changed
     // but the other key should not have changed
-    vm1.invoke(() -> InterestListDUnitTest.validateSingleEntry(key1, key1_originalValue)); // still unchanged
+    vm1.invoke(
+        () ->
+            InterestListDUnitTest.validateSingleEntry(key1, key1_originalValue)); // still unchanged
 
     // STEP 3
     vm1.invoke(() -> InterestListDUnitTest.putSingleEntry(key1, "vm1"));
     Wait.pause(2000);
-    vm2.invoke(() -> InterestListDUnitTest.validateSingleEntry(key1, key1_originalValue)); // still unchanged
+    vm2.invoke(
+        () ->
+            InterestListDUnitTest.validateSingleEntry(key1, key1_originalValue)); // still unchanged
     vm2.invoke(() -> InterestListDUnitTest.registerKey(key1));
     // Verify that new value is present
-    vm2.invoke(() -> InterestListDUnitTest.validateSingleEntry(key1, "vm1")); // value now magically changed
+    vm2.invoke(
+        () ->
+            InterestListDUnitTest.validateSingleEntry(key1, "vm1")); // value now magically changed
 
     // STEP 4
     // unregister on one key
@@ -271,14 +263,19 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * one server two clients
-   * create Entries in all the vms
-   * register ALL_KEYS and verifies that updates are receiving to all the keys
+   * one server two clients create Entries in all the vms register ALL_KEYS and verifies that
+   * updates are receiving to all the keys
    */
   @Test
   public void testInterestListRegistration_ALL_KEYS() throws Exception {
-    vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
-    vm2.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm1.invoke(
+        () ->
+            InterestListDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm2.invoke(
+        () ->
+            InterestListDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
 
     vm1.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
     vm2.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
@@ -291,12 +288,9 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * one server two clients
-   * create Entries in all the vms
-   * server directly puts some values
-   * then both clients connect to the server
-   * c1 register(k1,k2,k3) and c2 register (k4,k5)
-   * then verify that updates has occured as a result of interest registration.
+   * one server two clients create Entries in all the vms server directly puts some values then both
+   * clients connect to the server c1 register(k1,k2,k3) and c2 register (k4,k5) then verify that
+   * updates has occured as a result of interest registration.
    */
   @Test
   public void testInitializationOfRegionFromInterestList() throws Exception {
@@ -304,8 +298,14 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     vm0.invoke(() -> InterestListDUnitTest.multiple_put());
     Wait.pause(1000);
     // create clients to connect to that server
-    vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
-    vm2.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm1.invoke(
+        () ->
+            InterestListDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm2.invoke(
+        () ->
+            InterestListDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
 
     // register interest
     vm1.invoke(() -> InterestListDUnitTest.registerKeys());
@@ -317,25 +317,28 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * one server two clients
-   * create Entries in all the vms
-   * s1 : register (k1) for c1
-   * s1 : register (k2) for c2
-   * c1 : put (k1 -> vm1-k1) AND (k2 -> vm1-k2)
-   * c2 : validate (k1 == k1) AND (k2 == vm1-k2) // as k1 is not registered
-   * c2 : put (k1 -> vm2-k1)
-   * c1 : validate (k1 == vm2-k1) AND (k2 == vm1-k2)// as k2 is not registered
-   * s1 : unregister(k1) for c1
-   * s1 : unregister(k2) for c2
-   * c1 : put (k1 -> vm1-k1-again) AND (k2 -> vm1-k2-again)
-   * c2 : validate (k1 == vm2-k1) AND (k2 == vm2-k2) // as both are not registered
-   * c2 : put (k1 -> vm2-k1-again) AND (k2 -> vm2-k2-again)
-   * c1 : validate (k1 == vm1-k1-again) AND (k2 == vm1-k2-again)// as both are not registered
+   * one server two clients create Entries in all the vms s1 : register (k1) for c1 s1 : register
+   * (k2) for c2 c1 : put (k1 -> vm1-k1) AND (k2 -> vm1-k2) c2 : validate (k1 == k1) AND (k2 ==
+   * vm1-k2) // as k1 is not registered c2 : put (k1 -> vm2-k1) c1 : validate (k1 == vm2-k1) AND (k2
+   * == vm1-k2)// as k2 is not registered s1 : unregister(k1) for c1 s1 : unregister(k2) for c2 c1 :
+   * put (k1 -> vm1-k1-again) AND (k2 -> vm1-k2-again) c2 : validate (k1 == vm2-k1) AND (k2 ==
+   * vm2-k2) // as both are not registered c2 : put (k1 -> vm2-k1-again) AND (k2 -> vm2-k2-again) c1
+   * : validate (k1 == vm1-k1-again) AND (k2 == vm1-k2-again)// as both are not registered
    */
   @Test
   public void testInterestListRegistrationOnServer() throws Exception {
-    DistributedMember c1 = (DistributedMember) vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), PORT1));
-    DistributedMember c2 = (DistributedMember) vm2.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), PORT1));
+    DistributedMember c1 =
+        (DistributedMember)
+            vm1.invoke(
+                () ->
+                    InterestListDUnitTest.createClientCache(
+                        NetworkUtils.getServerHostName(vm0.getHost()), PORT1));
+    DistributedMember c2 =
+        (DistributedMember)
+            vm2.invoke(
+                () ->
+                    InterestListDUnitTest.createClientCache(
+                        NetworkUtils.getServerHostName(vm0.getHost()), PORT1));
 
     vm1.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
     vm2.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
@@ -372,10 +375,8 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * two servers one client
-   * create Entries in all the vms
-   * register interest in various ways and ensure that registration listeners
-   * are properly invoked
+   * two servers one client create Entries in all the vms register interest in various ways and
+   * ensure that registration listeners are properly invoked
    */
   @Test
   public void testInterestRegistrationListeners() throws Exception {
@@ -389,8 +390,18 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     vm0.invoke(() -> InterestListDUnitTest.addRegisterInterestListener());
 
     // servers are set up, now do the clients
-    DistributedMember c1 = (DistributedMember) vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), PORT1, port2));
-    DistributedMember c2 = (DistributedMember) vm2.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), PORT1, port2));
+    DistributedMember c1 =
+        (DistributedMember)
+            vm1.invoke(
+                () ->
+                    InterestListDUnitTest.createClientCache(
+                        NetworkUtils.getServerHostName(vm0.getHost()), PORT1, port2));
+    DistributedMember c2 =
+        (DistributedMember)
+            vm2.invoke(
+                () ->
+                    InterestListDUnitTest.createClientCache(
+                        NetworkUtils.getServerHostName(vm0.getHost()), PORT1, port2));
 
     vm1.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
     vm2.invoke(() -> InterestListDUnitTest.createEntriesK1andK2());
@@ -436,13 +447,15 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * This tests whether an exception is thrown in register/unregister when no
-   * server is available.
+   * This tests whether an exception is thrown in register/unregister when no server is available.
    */
   @Test
   public void testNoAvailableServer() throws Exception {
     // Register interest in key1.
-    vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
+    vm1.invoke(
+        () ->
+            InterestListDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1)));
     vm1.invoke(() -> InterestListDUnitTest.registerKey(key1));
 
     // Stop the server.
@@ -470,16 +483,25 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     vm0.invoke(() -> InterestListDUnitTest.closeCache());
 
     // Start two servers with the appropriate region
-    int port1 = ((Integer) vm0.invoke(() -> InterestListDUnitTest.createServerCache(addReplicatedRegion))).intValue();
+    int port1 =
+        ((Integer) vm0.invoke(() -> InterestListDUnitTest.createServerCache(addReplicatedRegion)))
+            .intValue();
     VM server2VM = Host.getHost(0).getVM(3);
-    int port2 = ((Integer) server2VM.invoke(() -> InterestListDUnitTest.createServerCache(addReplicatedRegion))).intValue();
+    int port2 =
+        ((Integer)
+                server2VM.invoke(
+                    () -> InterestListDUnitTest.createServerCache(addReplicatedRegion)))
+            .intValue();
 
     // Add a cache loader to the region in both cache servers
     vm0.invoke(() -> InterestListDUnitTest.addCacheLoader());
     server2VM.invoke(() -> InterestListDUnitTest.addCacheLoader());
 
     // Create client cache
-    vm1.invoke(() -> InterestListDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), port1, port2));
+    vm1.invoke(
+        () ->
+            InterestListDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(vm0.getHost()), port1, port2));
 
     // Register interest in all keys
     vm1.invoke(() -> InterestListDUnitTest.registerALL_KEYS());
@@ -511,14 +533,23 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     return createClientCache(host, port, 0);
   }
 
-  private static DistributedMember createClientCache(String host, int port, int port2) throws Exception {
+  private static DistributedMember createClientCache(String host, int port, int port2)
+      throws Exception {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     props.setProperty(DELTA_PROPAGATION, "false");
 
     new InterestListDUnitTest().createCache(props);
-    PoolFactory pfactory = PoolManager.createFactory().addServer(host, port).setThreadLocalConnections(true).setMinConnections(3).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(10000).setSocketBufferSize(32768);
+    PoolFactory pfactory =
+        PoolManager.createFactory()
+            .addServer(host, port)
+            .setThreadLocalConnections(true)
+            .setMinConnections(3)
+            .setSubscriptionEnabled(true)
+            .setSubscriptionRedundancy(-1)
+            .setReadTimeout(10000)
+            .setSocketBufferSize(32768);
     // .setRetryInterval(10000)
     // .setRetryAttempts(5)
     if (port2 > 0) {
@@ -589,17 +620,18 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     CacheServerImpl impl = (CacheServerImpl) server;
     for (CacheClientProxy proxy : (Set<CacheClientProxy>) impl.getAllClientSessions()) {
       final CacheClientProxy fproxy = proxy;
-      WaitCriterion ev = new WaitCriterion() {
-        @Override
-        public boolean done() {
-          return fproxy.getHARegionQueue().size() == 0;
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            @Override
+            public boolean done() {
+              return fproxy.getHARegionQueue().size() == 0;
+            }
 
-        @Override
-        public String description() {
-          return "waiting for queues to drain for " + fproxy.getProxyID();
-        }
-      };
+            @Override
+            public String description() {
+              return "waiting for queues to drain for " + fproxy.getProxyID();
+            }
+          };
       Wait.waitForCriterion(ev, 5 * 10 * 1000, 200, true);
     }
   }
@@ -636,19 +668,21 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   private static void waitForCacheListenerCreates() throws Exception {
     // Wait for the EventCountingCacheListener to receive all of its create events
     Region region = cache.getRegion(REGION_NAME);
-    final EventCountingCacheListener fCacheListener = (EventCountingCacheListener) region.getAttributes().getCacheListener();
+    final EventCountingCacheListener fCacheListener =
+        (EventCountingCacheListener) region.getAttributes().getCacheListener();
 
-    WaitCriterion ev = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return fCacheListener.hasReceivedAllCreateEvents();
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return fCacheListener.hasReceivedAllCreateEvents();
+          }
 
-      @Override
-      public String description() {
-        return "waiting for " + fCacheListener.getExpectedCreates() + " create events";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for " + fCacheListener.getExpectedCreates() + " create events";
+          }
+        };
     Wait.waitForCriterion(ev, 5 * 10 * 1000, 200, true);
   }
 
@@ -656,16 +690,18 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     // Confirm there are no EventCountingCacheListener update events.
     // These would be coming from the subscription channel.
     Region region = cache.getRegion(REGION_NAME);
-    EventCountingCacheListener cacheListener = (EventCountingCacheListener) region.getAttributes().getCacheListener();
-    assertEquals(0/*expected*/, cacheListener.getUpdates()/*actual*/);
+    EventCountingCacheListener cacheListener =
+        (EventCountingCacheListener) region.getAttributes().getCacheListener();
+    assertEquals(0 /*expected*/, cacheListener.getUpdates() /*actual*/);
   }
 
   private static void confirmNoCacheListenerInvalidates() throws Exception {
     // Confirm there are no EventCountingCacheListener invalidate events.
     // These would be coming from the subscription channel.
     Region region = cache.getRegion(REGION_NAME);
-    EventCountingCacheListener cacheListener = (EventCountingCacheListener) region.getAttributes().getCacheListener();
-    assertEquals(0/*expected*/, cacheListener.getInvalidates()/*actual*/);
+    EventCountingCacheListener cacheListener =
+        (EventCountingCacheListener) region.getAttributes().getCacheListener();
+    assertEquals(0 /*expected*/, cacheListener.getInvalidates() /*actual*/);
   }
 
   private static void verifyCountsAndClear(int count1, int count2) {
@@ -705,8 +741,8 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * exercises the ClientSession interface to register interest in a server
-   * on behalf of a client
+   * exercises the ClientSession interface to register interest in a server on behalf of a client
+   *
    * @param clientId the DM of the client
    * @param key the key that the client is interested in
    */
@@ -714,7 +750,8 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     try {
       ClientSession cs = server.getClientSession(clientId);
       if (cs.isPrimary()) {
-        cs.registerInterest(Region.SEPARATOR + REGION_NAME, key, InterestResultPolicy.KEYS_VALUES, false);
+        cs.registerInterest(
+            Region.SEPARATOR + REGION_NAME, key, InterestResultPolicy.KEYS_VALUES, false);
       }
     } catch (Exception ex) {
       Assert.fail("failed while registering key(" + key + ")", ex);
@@ -808,6 +845,7 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
 
   /**
    * unregister a key for a particular client in the server
+   *
    * @param clientId the client's ID
    * @param key the key it's no longer interest in
    */
@@ -920,34 +958,35 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
   }
 
   private static void validateEntriesK1andK2(final String vm) {
-    WaitCriterion ev = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        try {
-          Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-          assertNotNull(r);
-          if (vm.equals("vm1")) {
-            // Verify that 'key-1' was updated, but 'key-2' was not and contains the
-            // original value
-            assertEquals("vm2-key-1", r.getEntry(key1).getValue());
-            assertEquals("vm1-key-2", r.getEntry(key2).getValue());
-          } else {
-            // Verify that 'key-2' was updated, but 'key-1' was not and contains the
-            // original value
-            assertEquals(key1_originalValue, r.getEntry(key1).getValue());
-            assertEquals("vm1-key-2", r.getEntry(key2).getValue());
+    WaitCriterion ev =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            try {
+              Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+              assertNotNull(r);
+              if (vm.equals("vm1")) {
+                // Verify that 'key-1' was updated, but 'key-2' was not and contains the
+                // original value
+                assertEquals("vm2-key-1", r.getEntry(key1).getValue());
+                assertEquals("vm1-key-2", r.getEntry(key2).getValue());
+              } else {
+                // Verify that 'key-2' was updated, but 'key-1' was not and contains the
+                // original value
+                assertEquals(key1_originalValue, r.getEntry(key1).getValue());
+                assertEquals("vm1-key-2", r.getEntry(key2).getValue());
+              }
+              return true;
+            } catch (AssertionError ex) {
+              return false;
+            }
           }
-          return true;
-        } catch (AssertionError ex) {
-          return false;
-        }
-      }
 
-      @Override
-      public String description() {
-        return "waiting for client to apply events from server";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for client to apply events from server";
+          }
+        };
     Wait.waitForCriterion(ev, 5 * 10 * 1000, 200, true);
   }
 
@@ -993,13 +1032,15 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
 
     @Override
     public void afterRegisterInterest(InterestRegistrationEvent event) {
-      LogWriterUtils.getLogWriter().info("InterestListener.afterRegisterInterest invoked with this event: " + event);
+      LogWriterUtils.getLogWriter()
+          .info("InterestListener.afterRegisterInterest invoked with this event: " + event);
       registrationCount++;
     }
 
     @Override
     public void afterUnregisterInterest(InterestRegistrationEvent event) {
-      LogWriterUtils.getLogWriter().info("InterestListener.afterUnregisterInterest invoked with this event: " + event);
+      LogWriterUtils.getLogWriter()
+          .info("InterestListener.afterUnregisterInterest invoked with this event: " + event);
       unregistrationCount++;
     }
 
@@ -1017,11 +1058,9 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 
-    public InterestListener() {
-    }
+    public InterestListener() {}
   }
 
   private static class EventCountingCacheListener extends CacheListenerAdapter {
@@ -1048,13 +1087,21 @@ public class InterestListDUnitTest extends JUnit4DistributedTestCase {
     @Override
     public void afterUpdate(EntryEvent event) {
       incrementUpdates();
-      event.getRegion().getCache().getLogger().warning("Received update event " + getUpdates() + " for " + event.getKey());
+      event
+          .getRegion()
+          .getCache()
+          .getLogger()
+          .warning("Received update event " + getUpdates() + " for " + event.getKey());
     }
 
     @Override
     public void afterInvalidate(EntryEvent event) {
       incrementInvalidates();
-      event.getRegion().getCache().getLogger().warning("Received invalidate event " + getInvalidates() + " for " + event.getKey());
+      event
+          .getRegion()
+          .getCache()
+          .getLogger()
+          .warning("Received invalidate event " + getInvalidates() + " for " + event.getKey());
     }
 
     private void incrementCreates() {

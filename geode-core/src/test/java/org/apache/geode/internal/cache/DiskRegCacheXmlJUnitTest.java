@@ -41,10 +41,10 @@ import org.apache.geode.util.test.TestUtil;
 
 /**
  * This test is for testing Disk attributes set via xml.
- * 
- * A cache and region are created using an xml. The regions are then verified to make sure
- * that all the attributes have been correctly set
- * 
+ *
+ * <p>A cache and region are created using an xml. The regions are then verified to make sure that
+ * all the attributes have been correctly set
+ *
  * @since GemFire 5.1
  */
 @Category(IntegrationTest.class)
@@ -93,7 +93,11 @@ public class DiskRegCacheXmlJUnitTest {
       }
     } else {
       if (!Arrays.equals(dirs, region1.getAttributes().getDiskDirs())) {
-        fail("expected=" + Arrays.toString(dirs) + " actual=" + region1.getAttributes().getDiskDirs());
+        fail(
+            "expected="
+                + Arrays.toString(dirs)
+                + " actual="
+                + region1.getAttributes().getDiskDirs());
       }
     }
 
@@ -220,7 +224,7 @@ public class DiskRegCacheXmlJUnitTest {
   public void tearDown() throws Exception {
     try {
       if (cache != null && !cache.isClosed()) {
-        for (Iterator itr = cache.rootRegions().iterator(); itr.hasNext();) {
+        for (Iterator itr = cache.rootRegions().iterator(); itr.hasNext(); ) {
           Region root = (Region) itr.next();
           if (root.isDestroyed() || root instanceof HARegion) {
             continue;
@@ -241,7 +245,7 @@ public class DiskRegCacheXmlJUnitTest {
   }
 
   /** Close the cache */
-  private synchronized final void closeCache() {
+  private final synchronized void closeCache() {
     if (cache != null) {
       try {
         if (!cache.isClosed()) {
@@ -259,4 +263,4 @@ public class DiskRegCacheXmlJUnitTest {
       }
     }
   }
-}// end of DiskRegCacheXmlJUnitTest
+} // end of DiskRegCacheXmlJUnitTest

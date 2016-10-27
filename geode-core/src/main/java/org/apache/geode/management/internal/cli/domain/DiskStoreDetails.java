@@ -31,9 +31,10 @@ import org.apache.geode.internal.lang.ObjectUtils;
 import org.apache.geode.internal.lang.StringUtils;
 
 /**
- * The DiskStoreDetails class captures information about a particular disk store for a GemFire distributed system
- * member.  Each disk store for a member should be captured in separate instance of this class.
- * </p>
+ * The DiskStoreDetails class captures information about a particular disk store for a GemFire
+ * distributed system member. Each disk store for a member should be captured in separate instance
+ * of this class.
+ *
  * @see org.apache.geode.cache.DiskStore
  * @see org.apache.geode.cache.DiskStoreFactory
  * @see org.apache.geode.lang.Identifiable
@@ -44,7 +45,11 @@ import org.apache.geode.internal.lang.StringUtils;
  * @since GemFire 7.0
  */
 @SuppressWarnings("unused")
-public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableIdentifiable<UUID>, Iterable<DiskStoreDetails.DiskDirDetails>, Serializable {
+public class DiskStoreDetails
+    implements Comparable<DiskStoreDetails>,
+        MutableIdentifiable<UUID>,
+        Iterable<DiskStoreDetails.DiskDirDetails>,
+        Serializable {
 
   public static final String DEFAULT_DISK_STORE_NAME = DiskStoreFactory.DEFAULT_DISK_STORE_NAME;
 
@@ -70,7 +75,8 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
   private Float diskUsageWarningPercentage;
   private Float diskUsageCriticalPercentage;
 
-  private Set<AsyncEventQueueDetails> asyncEventQueueDetailsSet = new TreeSet<AsyncEventQueueDetails>();
+  private Set<AsyncEventQueueDetails> asyncEventQueueDetailsSet =
+      new TreeSet<AsyncEventQueueDetails>();
 
   private Set<CacheServerDetails> cacheServerDetailsSet = new TreeSet<CacheServerDetails>();
 
@@ -89,7 +95,8 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
 
   private UUID id;
 
-  protected static void assertNotNull(final Object obj, final String message, final Object... args) {
+  protected static void assertNotNull(
+      final Object obj, final String message, final Object... args) {
     if (obj == null) {
       throw new NullPointerException(String.format(message, args));
     }
@@ -97,7 +104,9 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
 
   // NOTE sort nulls last
   protected static <T extends Comparable<T>> int compare(final T obj1, final T obj2) {
-    return (obj1 == null && obj2 == null ? 0 : (obj1 == null ? 1 : (obj2 == null ? -1 : obj1.compareTo(obj2))));
+    return (obj1 == null && obj2 == null
+        ? 0
+        : (obj1 == null ? 1 : (obj2 == null ? -1 : obj1.compareTo(obj2))));
   }
 
   @SuppressWarnings("null")
@@ -110,9 +119,13 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
     this(id, name, memberId, null);
   }
 
-  public DiskStoreDetails(final UUID id, final String name, final String memberId, final String memberName) {
+  public DiskStoreDetails(
+      final UUID id, final String name, final String memberId, final String memberName) {
     assertNotNull(name, "The name of the disk store cannot be null!");
-    assertNotNull(memberId, "The id of the member to which the disk store (%1$s) belongs cannot be null!", name);
+    assertNotNull(
+        memberId,
+        "The id of the member to which the disk store (%1$s) belongs cannot be null!",
+        name);
     this.id = id;
     this.name = name;
     this.memberId = memberId;
@@ -187,7 +200,8 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
     return offline;
   }
 
-  public String getOfflineAsString(final String online, final String offline, final String nullValue) {
+  public String getOfflineAsString(
+      final String online, final String offline, final String nullValue) {
     return (getOffline() == null ? nullValue : (isOffline() ? offline : online));
   }
 
@@ -252,34 +266,54 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
   }
 
   public boolean add(final AsyncEventQueueDetails asyncEventQueueDetails) {
-    assertNotNull(asyncEventQueueDetails, "Details concerning Asynchronous Event Queues that use this disk store ($1%s) cannot be null!", getName());
+    assertNotNull(
+        asyncEventQueueDetails,
+        "Details concerning Asynchronous Event Queues that use this disk store ($1%s) cannot be null!",
+        getName());
     return asyncEventQueueDetailsSet.add(asyncEventQueueDetails);
   }
 
   public boolean add(final CacheServerDetails cacheServerDetails) {
-    assertNotNull(cacheServerDetails, "Details concerning Cache Servers that use this disk store (%1$s) cannot be null!", getName());
+    assertNotNull(
+        cacheServerDetails,
+        "Details concerning Cache Servers that use this disk store (%1$s) cannot be null!",
+        getName());
     return cacheServerDetailsSet.add(cacheServerDetails);
   }
 
   public boolean add(final DiskDirDetails diskDirDetails) {
-    assertNotNull(diskDirDetails, "Details for the disk store's (%1$s) directory information cannot be null!", getName());
+    assertNotNull(
+        diskDirDetails,
+        "Details for the disk store's (%1$s) directory information cannot be null!",
+        getName());
     return diskDirDetailsSet.add(diskDirDetails);
   }
 
   public boolean add(final GatewayDetails gatewayDetails) {
-    assertNotNull(gatewayDetails, "Details concerning Gateways that use this disk store (%1$s) cannot be null!", getName());
+    assertNotNull(
+        gatewayDetails,
+        "Details concerning Gateways that use this disk store (%1$s) cannot be null!",
+        getName());
     return gatewayDetailsSet.add(gatewayDetails);
   }
 
   public boolean add(final RegionDetails regionDetails) {
-    assertNotNull(regionDetails, "Details concerning Regions that use this disk store (%1$%s) cannot be null!", getName());
+    assertNotNull(
+        regionDetails,
+        "Details concerning Regions that use this disk store (%1$%s) cannot be null!",
+        getName());
     return regionDetailsSet.add(regionDetails);
   }
 
   public int compareTo(final DiskStoreDetails diskStoreDetails) {
     int comparisonValue = compare(getMemberName(), diskStoreDetails.getMemberName());
-    comparisonValue = (comparisonValue != 0 ? comparisonValue : compare(getMemberId(), diskStoreDetails.getMemberId()));
-    return (comparisonValue != 0 ? comparisonValue : getName().compareTo(diskStoreDetails.getName()));
+    comparisonValue =
+        (comparisonValue != 0
+            ? comparisonValue
+            : compare(getMemberId(), diskStoreDetails.getMemberId()));
+    return (comparisonValue != 0
+        ? comparisonValue
+        : getName().compareTo(diskStoreDetails.getName()));
   }
 
   @Override
@@ -294,7 +328,9 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
 
     final DiskStoreDetails that = (DiskStoreDetails) obj;
 
-    return ObjectUtils.equalsIgnoreNull(getId(), that.getId()) && ObjectUtils.equals(getName(), that.getName()) && ObjectUtils.equals(getMemberId(), that.getMemberId());
+    return ObjectUtils.equalsIgnoreNull(getId(), that.getId())
+        && ObjectUtils.equals(getName(), that.getName())
+        && ObjectUtils.equals(getMemberId(), that.getMemberId());
   }
 
   @Override
@@ -339,7 +375,9 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
     buffer.append(", memberName = ").append(getMemberName());
     buffer.append(", name = ").append(getName());
     buffer.append(", offline = ").append(getOffline());
-    buffer.append(", pdxSerializationMetaDataStored = ").append(getPdxSerializationMetaDataStored());
+    buffer
+        .append(", pdxSerializationMetaDataStored = ")
+        .append(getPdxSerializationMetaDataStored());
     buffer.append(", queueSize = ").append(getQueueSize());
     buffer.append(", timeInterval = ").append(getTimeInterval());
     buffer.append(", writeBufferSize = ").append(getWriteBufferSize());
@@ -369,7 +407,8 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
     return buffer.toString();
   }
 
-  public static class AsyncEventQueueDetails implements Comparable<AsyncEventQueueDetails>, Serializable {
+  public static class AsyncEventQueueDetails
+      implements Comparable<AsyncEventQueueDetails>, Serializable {
 
     private final String id;
 
@@ -446,8 +485,11 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
     }
 
     public int compareTo(final CacheServerDetails cacheServerDetails) {
-      final int valueOfBindAddressComparison = getBindAddress().compareTo(cacheServerDetails.getBindAddress());
-      return (valueOfBindAddressComparison != 0 ? valueOfBindAddressComparison : (getPort() - cacheServerDetails.getPort()));
+      final int valueOfBindAddressComparison =
+          getBindAddress().compareTo(cacheServerDetails.getBindAddress());
+      return (valueOfBindAddressComparison != 0
+          ? valueOfBindAddressComparison
+          : (getPort() - cacheServerDetails.getPort()));
     }
 
     @Override
@@ -462,7 +504,8 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
 
       final CacheServerDetails that = (CacheServerDetails) obj;
 
-      return ObjectUtils.equals(getBindAddress(), that.getBindAddress()) && ObjectUtils.equals(getPort(), that.getPort());
+      return ObjectUtils.equals(getBindAddress(), that.getBindAddress())
+          && ObjectUtils.equals(getPort(), that.getPort());
     }
 
     @Override
@@ -495,7 +538,8 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
     }
 
     public DiskDirDetails(final String absolutePath, final int size) {
-      DiskStoreDetails.assertNotNull(absolutePath, "The directory location of the disk store cannot be null!");
+      DiskStoreDetails.assertNotNull(
+          absolutePath, "The directory location of the disk store cannot be null!");
       this.absolutePath = absolutePath;
       this.size = size;
     }
@@ -684,5 +728,4 @@ public class DiskStoreDetails implements Comparable<DiskStoreDetails>, MutableId
       return buffer.toString();
     }
   }
-
 }

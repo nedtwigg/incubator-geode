@@ -20,10 +20,9 @@ import org.apache.geode.CancelException;
 
 /**
  * Thrown when a GemFire WAN gateway has been terminated.
- * 
+ *
  * @since GemFire 6.0
  */
-
 public class GatewayCancelledException extends CancelException {
   private static final long serialVersionUID = -1444310105860938512L;
 
@@ -42,5 +41,4 @@ public class GatewayCancelledException extends CancelException {
   public GatewayCancelledException(String s) {
     super(s);
   }
-
 }

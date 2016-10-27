@@ -22,13 +22,12 @@ import java.lang.reflect.Method;
 import org.apache.geode.internal.Assert;
 
 /**
- * UserSpecifiedDiskStoreAttributes provides an way to detect departures from default attribute values.
- * It may be used when collecting attributes from an XML parser or from attribute changes made using the
- * {@link org.apache.geode.cache.DiskStoreFactory}.  Its initial usage was to validate
+ * UserSpecifiedDiskStoreAttributes provides an way to detect departures from default attribute
+ * values. It may be used when collecting attributes from an XML parser or from attribute changes
+ * made using the {@link org.apache.geode.cache.DiskStoreFactory}. Its initial usage was to validate
  * when a user set a value which should not be set (for DiskStore).
- * 
- * @since GemFire prPersistSprint2
  *
+ * @since GemFire prPersistSprint2
  */
 public class UserSpecifiedDiskStoreAttributes extends DiskStoreAttributes {
   private boolean hasAutoCompact = false;
@@ -141,7 +140,8 @@ public class UserSpecifiedDiskStoreAttributes extends DiskStoreAttributes {
         try {
           thisFields[i].setBoolean(this, b);
         } catch (IllegalAccessException ouch) {
-          Assert.assertTrue(false, "Could not access field" + thisFields[i].getName() + " on " + getClass());
+          Assert.assertTrue(
+              false, "Could not access field" + thisFields[i].getName() + " on " + getClass());
         }
       }
     }
@@ -160,14 +160,15 @@ public class UserSpecifiedDiskStoreAttributes extends DiskStoreAttributes {
         boolean bval = false;
 
         try {
-          Method otherMeth = other.getClass().getMethod(fieldName/*, (Class[])null*/);
+          Method otherMeth = other.getClass().getMethod(fieldName /*, (Class[])null*/);
           bval = ((Boolean) otherMeth.invoke(other, emptyArgs)).booleanValue();
         } catch (NoSuchMethodException darnit) {
           Assert.assertTrue(false, "A has* method accessor is required for field " + fieldName);
         } catch (IllegalAccessException boom) {
           Assert.assertTrue(false, "Could not access method " + fieldName + " on " + getClass());
         } catch (IllegalArgumentException e) {
-          Assert.assertTrue(false, "Illegal argument trying to set field " + e.getLocalizedMessage());
+          Assert.assertTrue(
+              false, "Illegal argument trying to set field " + e.getLocalizedMessage());
         } catch (InvocationTargetException e) {
           Assert.assertTrue(false, "Failed trying to invoke method " + e.getLocalizedMessage());
         }
@@ -179,7 +180,9 @@ public class UserSpecifiedDiskStoreAttributes extends DiskStoreAttributes {
         }
       }
     }
-    Assert.assertTrue(hasCounter == HAS_COUNT, "Expected " + HAS_COUNT + " methods, got " + hasCounter + " last field: " + fieldName);
+    Assert.assertTrue(
+        hasCounter == HAS_COUNT,
+        "Expected " + HAS_COUNT + " methods, got " + hasCounter + " last field: " + fieldName);
     Assert.assertTrue(thisFields.length == HAS_COUNT);
   }
 }

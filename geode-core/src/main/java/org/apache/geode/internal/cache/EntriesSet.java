@@ -52,7 +52,8 @@ public class EntriesSet extends AbstractSet {
 
   protected boolean ignoreCopyOnReadForQuery = false;
 
-  EntriesSet(LocalRegion region, boolean recursive, IteratorType viewType, boolean allowTombstones) {
+  EntriesSet(
+      LocalRegion region, boolean recursive, IteratorType viewType, boolean allowTombstones) {
     this.topRegion = region;
     this.recursive = recursive;
     this.iterType = viewType;
@@ -65,11 +66,17 @@ public class EntriesSet extends AbstractSet {
   protected final void checkTX() {
     if (this.myTX != null) {
       if (!myTX.isInProgress()) {
-        throw new IllegalStateException(LocalizedStrings.LocalRegion_REGION_COLLECTION_WAS_CREATED_WITH_TRANSACTION_0_THAT_IS_NO_LONGER_ACTIVE.toLocalizedString(myTX.getTransactionId()));
+        throw new IllegalStateException(
+            LocalizedStrings
+                .LocalRegion_REGION_COLLECTION_WAS_CREATED_WITH_TRANSACTION_0_THAT_IS_NO_LONGER_ACTIVE
+                .toLocalizedString(myTX.getTransactionId()));
       }
     } else {
       if (this.topRegion.isTX()) {
-        throw new IllegalStateException(LocalizedStrings.LocalRegion_NON_TRANSACTIONAL_REGION_COLLECTION_IS_BEING_USED_IN_A_TRANSACTION.toLocalizedString(this.topRegion.getTXState().getTransactionId()));
+        throw new IllegalStateException(
+            LocalizedStrings
+                .LocalRegion_NON_TRANSACTIONAL_REGION_COLLECTION_IS_BEING_USED_IN_A_TRANSACTION
+                .toLocalizedString(this.topRegion.getTXState().getTransactionId()));
       }
     }
   }
@@ -116,7 +123,9 @@ public class EntriesSet extends AbstractSet {
     }
 
     public void remove() {
-      throw new UnsupportedOperationException(LocalizedStrings.LocalRegion_THIS_ITERATOR_DOES_NOT_SUPPORT_MODIFICATION.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings.LocalRegion_THIS_ITERATOR_DOES_NOT_SUPPORT_MODIFICATION
+              .toLocalizedString());
     }
 
     public boolean hasNext() {
@@ -136,7 +145,7 @@ public class EntriesSet extends AbstractSet {
       // keep looping until:
       // we find an element and return it
       // OR we run out of elements and return null
-      for (;;) {
+      for (; ; ) {
         if (this.currItr.hasNext()) {
           final Object currKey = this.currItr.next();
           final Object result;
@@ -150,21 +159,28 @@ public class EntriesSet extends AbstractSet {
             }
           }
           if (iterType == IteratorType.KEYS) {
-            result = view.getKeyForIterator(this.keyInfo, this.currRgn, rememberReads, allowTombstones);
+            result =
+                view.getKeyForIterator(this.keyInfo, this.currRgn, rememberReads, allowTombstones);
             if (result != null) {
               return result;
             }
           } else if (iterType == IteratorType.ENTRIES) {
-            result = view.getEntryForIterator(this.keyInfo, this.currRgn, rememberReads, allowTombstones);
+            result =
+                view.getEntryForIterator(
+                    this.keyInfo, this.currRgn, rememberReads, allowTombstones);
             if (result != null) {
               return result;
             }
           } else {
-            Region.Entry re = (Region.Entry) view.getEntryForIterator(this.keyInfo, currRgn, rememberReads, allowTombstones);
+            Region.Entry re =
+                (Region.Entry)
+                    view.getEntryForIterator(this.keyInfo, currRgn, rememberReads, allowTombstones);
             if (re != null) {
               try {
                 if (keepSerialized) {
-                  result = ((NonTXEntry) re).getRawValue(); // OFFHEAP: need to either copy into a cd or figure out when result will be released.
+                  result =
+                      ((NonTXEntry) re)
+                          .getRawValue(); // OFFHEAP: need to either copy into a cd or figure out when result will be released.
                 } else if (ignoreCopyOnReadForQuery) {
                   result = ((NonTXEntry) re).getValue(true);
                 } else {
@@ -258,5 +274,4 @@ public class EntriesSet extends AbstractSet {
   public boolean isIgnoreCopyOnReadForQuery() {
     return this.ignoreCopyOnReadForQuery;
   }
-
 }

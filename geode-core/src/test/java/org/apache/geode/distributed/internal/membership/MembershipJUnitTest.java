@@ -91,12 +91,10 @@ public class MembershipJUnitTest {
   //  }
 
   /**
-   * This test creates a locator with a colocated
-   * membership manager and then creates a second
+   * This test creates a locator with a colocated membership manager and then creates a second
    * manager that joins the system of the first.
-   * 
-   * It then makes assertions about the state of
-   * the membership view, closes one of the managers
+   *
+   * <p>It then makes assertions about the state of the membership view, closes one of the managers
    * and makes more assertions.
    */
   @Category(FlakyTest.class) // GEODE-1550
@@ -115,7 +113,20 @@ public class MembershipJUnitTest {
 
       // this locator will hook itself up with the first MembershipManager
       // to be created
-      l = InternalLocator.startLocator(port, new File(""), null, null, null, localHost, false, new Properties(), true, false, null, false);
+      l =
+          InternalLocator.startLocator(
+              port,
+              new File(""),
+              null,
+              null,
+              null,
+              localHost,
+              false,
+              new Properties(),
+              true,
+              false,
+              null,
+              false);
 
       // create configuration objects
       Properties nonDefault = new Properties();
@@ -127,7 +138,8 @@ public class MembershipJUnitTest {
       nonDefault.put(MEMBER_TIMEOUT, "2000");
       nonDefault.put(LOCATORS, localHost.getHostName() + '[' + port + ']');
       DistributionConfigImpl config = new DistributionConfigImpl(nonDefault);
-      RemoteTransportConfig transport = new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
+      RemoteTransportConfig transport =
+          new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
 
       // start the first membership manager
       try {
@@ -155,7 +167,7 @@ public class MembershipJUnitTest {
       JoinLeave jl1 = ((GMSMembershipManager) m1).getServices().getJoinLeave();
       JoinLeave jl2 = ((GMSMembershipManager) m2).getServices().getJoinLeave();
       long giveUp = System.currentTimeMillis() + 15000;
-      for (;;) {
+      for (; ; ) {
         try {
           assertTrue("view = " + jl2.getView(), jl2.getView().size() == 2);
           assertTrue("view = " + jl1.getView(), jl1.getView().size() == 2);
@@ -176,7 +188,7 @@ public class MembershipJUnitTest {
       SerialAckedMessage msg = new SerialAckedMessage();
       msg.setRecipient(m2.getLocalMember());
       msg.setMulticast(true);
-      m1.send(new InternalDistributedMember[] { m2.getLocalMember() }, msg, null);
+      m1.send(new InternalDistributedMember[] {m2.getLocalMember()}, msg, null);
       giveUp = System.currentTimeMillis() + 5000;
       boolean verified = false;
       Throwable problem = null;
@@ -219,15 +231,12 @@ public class MembershipJUnitTest {
   }
 
   /**
-   * This test ensures that secure communications are
-   * enabled.
+   * This test ensures that secure communications are enabled.
    *
-   * This test creates a locator with a colocated
-   * membership manager and then creates a second
+   * <p>This test creates a locator with a colocated membership manager and then creates a second
    * manager that joins the system of the first.
    *
-   * It then makes assertions about the state of
-   * the membership view, closes one of the managers
+   * <p>It then makes assertions about the state of the membership view, closes one of the managers
    * and makes more assertions.
    */
   @Test
@@ -246,7 +255,9 @@ public class MembershipJUnitTest {
       p.setProperty(ConfigurationProperties.SECURITY_UDP_DHALGO, "AES:128");
       // this locator will hook itself up with the first MembershipManager
       // to be created
-      l = InternalLocator.startLocator(port, new File(""), null, null, null, localHost, false, p, true, false, null, false);
+      l =
+          InternalLocator.startLocator(
+              port, new File(""), null, null, null, localHost, false, p, true, false, null, false);
 
       // create configuration objects
       Properties nonDefault = new Properties();
@@ -259,7 +270,8 @@ public class MembershipJUnitTest {
       nonDefault.put(DistributionConfig.LOCATORS_NAME, localHost.getHostName() + '[' + port + ']');
       nonDefault.put(ConfigurationProperties.SECURITY_UDP_DHALGO, "AES:128");
       DistributionConfigImpl config = new DistributionConfigImpl(nonDefault);
-      RemoteTransportConfig transport = new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
+      RemoteTransportConfig transport =
+          new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
 
       // start the first membership manager
       try {
@@ -287,7 +299,7 @@ public class MembershipJUnitTest {
       JoinLeave jl1 = ((GMSMembershipManager) m1).getServices().getJoinLeave();
       JoinLeave jl2 = ((GMSMembershipManager) m2).getServices().getJoinLeave();
       long giveUp = System.currentTimeMillis() + 15000;
-      for (;;) {
+      for (; ; ) {
         try {
           assertTrue("view = " + jl2.getView(), jl2.getView().size() == 2);
           assertTrue("view = " + jl1.getView(), jl1.getView().size() == 2);
@@ -308,7 +320,7 @@ public class MembershipJUnitTest {
       SerialAckedMessage msg = new SerialAckedMessage();
       msg.setRecipient(m2.getLocalMember());
       msg.setMulticast(true);
-      m1.send(new InternalDistributedMember[] { m2.getLocalMember() }, msg, null);
+      m1.send(new InternalDistributedMember[] {m2.getLocalMember()}, msg, null);
       giveUp = System.currentTimeMillis() + 5000;
       boolean verified = false;
       Throwable problem = null;
@@ -357,9 +369,11 @@ public class MembershipJUnitTest {
     Properties nonDefault = new Properties();
     nonDefault.put(MEMBER_TIMEOUT, "" + timeout);
     DistributionConfigImpl config = new DistributionConfigImpl(nonDefault);
-    RemoteTransportConfig transport = new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
+    RemoteTransportConfig transport =
+        new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
     ServiceConfig sc = new ServiceConfig(transport, config);
-    assertEquals(2 * timeout + ServiceConfig.MEMBER_REQUEST_COLLECTION_INTERVAL, sc.getJoinTimeout());
+    assertEquals(
+        2 * timeout + ServiceConfig.MEMBER_REQUEST_COLLECTION_INTERVAL, sc.getJoinTimeout());
 
     nonDefault.clear();
     config = new DistributionConfigImpl(nonDefault);
@@ -384,7 +398,6 @@ public class MembershipJUnitTest {
     } finally {
       System.getProperties().remove("p2p.joinTimeout");
     }
-
   }
 
   @Test
@@ -396,7 +409,8 @@ public class MembershipJUnitTest {
     nonDefault.put(LOG_LEVEL, "fine");
     nonDefault.put(LOCATORS, "");
     DistributionConfigImpl config = new DistributionConfigImpl(nonDefault);
-    RemoteTransportConfig transport = new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
+    RemoteTransportConfig transport =
+        new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
 
     ServiceConfig serviceConfig = mock(ServiceConfig.class);
     when(serviceConfig.getDistributionConfig()).thenReturn(config);
@@ -408,15 +422,14 @@ public class MembershipJUnitTest {
     GMSJoinLeave joinLeave = new GMSJoinLeave();
     try {
       joinLeave.init(services);
-      throw new Error("expected a GemFireConfigException to be thrown because no locators are configured");
+      throw new Error(
+          "expected a GemFireConfigException to be thrown because no locators are configured");
     } catch (GemFireConfigException e) {
       // expected
     }
   }
 
-  /**
-   * test the GMSUtil.formatBytes() method
-   */
+  /** test the GMSUtil.formatBytes() method */
   @Test
   public void testFormatBytes() throws Exception {
     byte[] bytes = new byte[200];
@@ -486,5 +499,4 @@ public class MembershipJUnitTest {
       // okay
     }
   }
-
 }

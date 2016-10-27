@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -82,13 +82,15 @@ public class LuceneIndexCreation implements LuceneIndex, Extension<Region<?, ?>>
   @Override
   public void beforeCreate(Extensible<Region<?, ?>> source, Cache cache) {
     LuceneServiceImpl service = (LuceneServiceImpl) LuceneServiceProvider.get(cache);
-    Analyzer analyzer = this.fieldAnalyzers == null ? new StandardAnalyzer() : new PerFieldAnalyzerWrapper(new StandardAnalyzer(), this.fieldAnalyzers);
+    Analyzer analyzer =
+        this.fieldAnalyzers == null
+            ? new StandardAnalyzer()
+            : new PerFieldAnalyzerWrapper(new StandardAnalyzer(), this.fieldAnalyzers);
     service.createIndex(getName(), getRegionPath(), analyzer, this.fieldAnalyzers, getFieldNames());
   }
 
   @Override
-  public void onCreate(Extensible<Region<?, ?>> source, Extensible<Region<?, ?>> target) {
-  }
+  public void onCreate(Extensible<Region<?, ?>> source, Extensible<Region<?, ?>> target) {}
 
   protected void addField(String name) {
     this.fieldNames.add(name);

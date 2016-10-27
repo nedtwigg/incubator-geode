@@ -50,22 +50,19 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * This operation ensures that a particular member has seen all state
- * changes for a Region prior to a point in time.  Currently this is
- * fixed at the time the member using this operation exchanged profiles
- * with other users of the Region, and is useful only for ensuring
- * consistency for InitialImageOperation.
- * 
- * StateFlushOperation works with distribution advisors and with the
- * membership manager to flush cache operations from threads to communications
- * channels and then from the communications channels to the cache of the
- * member selected to be an initial image provider.
- * 
- * To make an operation subject to StateFlushOperation you must encapsulate
- * the message part of the operation (prior to asking for distribution advice)
- * in a try/finally block.  The try/finally block must work with the
- * distribution manager like this:
- * 
+ * This operation ensures that a particular member has seen all state changes for a Region prior to
+ * a point in time. Currently this is fixed at the time the member using this operation exchanged
+ * profiles with other users of the Region, and is useful only for ensuring consistency for
+ * InitialImageOperation.
+ *
+ * <p>StateFlushOperation works with distribution advisors and with the membership manager to flush
+ * cache operations from threads to communications channels and then from the communications
+ * channels to the cache of the member selected to be an initial image provider.
+ *
+ * <p>To make an operation subject to StateFlushOperation you must encapsulate the message part of
+ * the operation (prior to asking for distribution advice) in a try/finally block. The try/finally
+ * block must work with the distribution manager like this:
+ *
  * <pre>
  * try {
  *   long version = advisor.startOperation();
@@ -78,25 +75,23 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  *     advisor.endOperation(version);
  *   }
  * }
- * </pre> 
- * 
- * On the receiving side the messaging system will look at the result of
- * invoking containsCacheContentChange() on the message.  If the message
- * does not return true from this message then state-flush will not wait
- * for it to be applied to the cache before GII starts.
- * 
+ * </pre>
+ *
+ * On the receiving side the messaging system will look at the result of invoking
+ * containsCacheContentChange() on the message. If the message does not return true from this
+ * message then state-flush will not wait for it to be applied to the cache before GII starts.
+ *
  * <pre>
  * \@Override
  * public boolean containsCacheContentChange() {
  *   return true;
  * }
  * </pre>
- * 
- * The messaging infrastructure will handle the rest for you.  For examples
- * look at the uses of startOperation() and endOperation().  There are some
- * complex examples in transaction processing and a more straightforward
- * example in DistributedCacheOperation.
- * 
+ *
+ * The messaging infrastructure will handle the rest for you. For examples look at the uses of
+ * startOperation() and endOperation(). There are some complex examples in transaction processing
+ * and a more straightforward example in DistributedCacheOperation.
+ *
  * @since GemFire 5.0.1
  */
 public class StateFlushOperation {
@@ -113,7 +108,8 @@ public class StateFlushOperation {
     DistributedRegion r = region;
     boolean initialized = r.isInitialized();
     if (initialized) {
-      r.getDistributionAdvisor().forceNewMembershipVersion(); //force a new "view" so we can track current ops
+      r.getDistributionAdvisor()
+          .forceNewMembershipVersion(); //force a new "view" so we can track current ops
       try {
         r.getDistributionAdvisor().waitForCurrentOperations();
       } catch (RegionDestroyedException e) {
@@ -130,8 +126,12 @@ public class StateFlushOperation {
       ReplyProcessor21 processor = new ReplyProcessor21(dm, target);
       gr.processorId = processor.getProcessorId();
       gr.channelState = dm.getMembershipManager().getMessageState(target, false);
-      if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP) && ((gr.channelState != null) && (gr.channelState.size() > 0))) {
-        logger.trace(LogMarker.STATE_FLUSH_OP, "channel states: {}", gr.channelStateDescription(gr.channelState));
+      if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)
+          && ((gr.channelState != null) && (gr.channelState.size() > 0))) {
+        logger.trace(
+            LogMarker.STATE_FLUSH_OP,
+            "channel states: {}",
+            gr.channelStateDescription(gr.channelState));
       }
       if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
         logger.trace(LogMarker.STATE_FLUSH_OP, "Sending {}", gr);
@@ -154,9 +154,10 @@ public class StateFlushOperation {
     }
   }
 
-  /** Constructor for StateFlushOperation
-   * @param r
-   *    The region whose state is to be flushed
+  /**
+   * Constructor for StateFlushOperation
+   *
+   * @param r The region whose state is to be flushed
    */
   public StateFlushOperation(DistributedRegion r) {
     this.region = r;
@@ -165,6 +166,7 @@ public class StateFlushOperation {
 
   /**
    * Constructor for StateFlushOperation for flushing all regions
+   *
    * @param dm the distribution manager to use in distributing the operation
    */
   public StateFlushOperation(DM dm) {
@@ -172,26 +174,23 @@ public class StateFlushOperation {
   }
 
   /**
-  * flush state to the given target
-  * @param recipients
-  *    The members who may be making state changes to the region.  This is
-  *    typically taken from a CacheDistributionAdvisor membership set
-  * @param target
-  *    The member who should have all state flushed to it
-  * @param processorType
-  *    The execution processor type for the marker message that is sent to
-  *    all members using the given region
-  * @param flushNewOps
-  *      normally only ops that were started before region profile exchange
-  *      are flushed.  Setting this to true causes the flush to wait for
-  *      any started after the profile exchange as well.
-  * @throws InterruptedException
-  *     If the operation is interrupted, usually for shutdown, an
-  *     InterruptedException will be thrown
-  * @return
-  *    true if the state was flushed, false if not
-  */
-  public boolean flush(Set recipients, DistributedMember target, int processorType, boolean flushNewOps) throws InterruptedException {
+   * flush state to the given target
+   *
+   * @param recipients The members who may be making state changes to the region. This is typically
+   *     taken from a CacheDistributionAdvisor membership set
+   * @param target The member who should have all state flushed to it
+   * @param processorType The execution processor type for the marker message that is sent to all
+   *     members using the given region
+   * @param flushNewOps normally only ops that were started before region profile exchange are
+   *     flushed. Setting this to true causes the flush to wait for any started after the profile
+   *     exchange as well.
+   * @throws InterruptedException If the operation is interrupted, usually for shutdown, an
+   *     InterruptedException will be thrown
+   * @return true if the state was flushed, false if not
+   */
+  public boolean flush(
+      Set recipients, DistributedMember target, int processorType, boolean flushNewOps)
+      throws InterruptedException {
 
     Set recips = recipients; // do not use recipients parameter past this point
     if (Thread.interrupted()) {
@@ -222,7 +221,9 @@ public class StateFlushOperation {
 
     StateFlushReplyProcessor gfprocessor = new StateFlushReplyProcessor(dm, recips, target);
     smm.processorId = gfprocessor.getProcessorId();
-    if (region != null && region.isUsedForPartitionedRegionBucket() && region.getDistributionConfig().getAckSevereAlertThreshold() > 0) {
+    if (region != null
+        && region.isUsedForPartitionedRegionBucket()
+        && region.getDistributionConfig().getAckSevereAlertThreshold() > 0) {
       smm.severeAlertEnabled = true;
       gfprocessor.enableSevereAlertProcessing();
     }
@@ -233,7 +234,10 @@ public class StateFlushOperation {
     if (failures != null) {
       if (failures.contains(target)) {
         if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
-          logger.trace(LogMarker.STATE_FLUSH_OP, "failed to send StateMarkerMessage to target {}; returning from flush without waiting for replies", target);
+          logger.trace(
+              LogMarker.STATE_FLUSH_OP,
+              "failed to send StateMarkerMessage to target {}; returning from flush without waiting for replies",
+              target);
         }
         return false;
       }
@@ -247,32 +251,36 @@ public class StateFlushOperation {
         logger.trace(LogMarker.STATE_FLUSH_OP, "Finished processing {}", smm);
       }
     } catch (ReplyException re) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.StateFlushOperation_STATE_FLUSH_TERMINATED_WITH_EXCEPTION), re);
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.StateFlushOperation_STATE_FLUSH_TERMINATED_WITH_EXCEPTION),
+          re);
       return false;
     }
     return true;
   }
 
   /**
-   * This message is sent, e.g., before requesting an initial image from a single provider.
-   * It is sent to all members holding the region, and has the effect of causing
-   * those members to send a serial distribution message (a StateStabilizationMessage)
-   * to the image provider.  The provider then sends a reply message back to
-   * this process on behalf of the member receiving the .
+   * This message is sent, e.g., before requesting an initial image from a single provider. It is
+   * sent to all members holding the region, and has the effect of causing those members to send a
+   * serial distribution message (a StateStabilizationMessage) to the image provider. The provider
+   * then sends a reply message back to this process on behalf of the member receiving the .
+   *
    * <pre>
    * requestor ----> member1 --StateStabilizationMessage--> provider --StateStabilizedMessage--> requestor
    *           ----> member2 --StateStabilizationMessage--> provider --StateStabilizedMessage--> requestor
    *           ----> provider --StateStabilizedMessage--> requestor
    * </pre>
-   * This flushes the ordered messages in flight between members and the gii
-   * provider, so we don't miss data when the image is requested.
-   * 
+   *
+   * This flushes the ordered messages in flight between members and the gii provider, so we don't
+   * miss data when the image is requested.
+   *
    * @since GemFire 5.0.1
    * @see StateFlushOperation.StateStabilizationMessage
    * @see StateFlushOperation.StateStabilizedMessage
-   *
    */
-  public static final class StateMarkerMessage extends DistributionMessage implements MessageWithReply {
+  public static final class StateMarkerMessage extends DistributionMessage
+      implements MessageWithReply {
     /** roll the membership version to force flushing of new ops */
     public boolean flushNewOps;
     /** the member acting as the relay point */
@@ -288,8 +296,8 @@ public class StateFlushOperation {
     /** whether to enable severe alert processing */
     protected transient boolean severeAlertEnabled;
     /**
-     * whether all regions must be flushed to the relay target.
-     * If this is true, then regionPath may be null.
+     * whether all regions must be flushed to the relay target. If this is true, then regionPath may
+     * be null.
      */
     protected boolean allRegions;
 
@@ -303,7 +311,7 @@ public class StateFlushOperation {
     }
 
     @Override
-    final public int getProcessorType() {
+    public final int getProcessorType() {
       return processorType;
     }
 
@@ -388,7 +396,8 @@ public class StateFlushOperation {
               boolean initialized = r.isInitialized();
               if (initialized) {
                 if (this.flushNewOps) {
-                  r.getDistributionAdvisor().forceNewMembershipVersion(); //force a new "view" so we can track current ops
+                  r.getDistributionAdvisor()
+                      .forceNewMembershipVersion(); //force a new "view" so we can track current ops
                 }
                 try {
                   r.getDistributionAdvisor().waitForCurrentOperations();
@@ -396,16 +405,22 @@ public class StateFlushOperation {
                   // continue with the next region
                 }
               }
-              boolean useMulticast = r.getMulticastEnabled() && r.getSystem().getConfig().getMcastPort() != 0;
+              boolean useMulticast =
+                  r.getMulticastEnabled() && r.getSystem().getConfig().getMcastPort() != 0;
               if (initialized) {
-                Map channelStates = dm.getMembershipManager().getMessageState(relayRecipient, useMulticast);
+                Map channelStates =
+                    dm.getMembershipManager().getMessageState(relayRecipient, useMulticast);
                 if (gr.channelState != null) {
                   gr.channelState.putAll(channelStates);
                 } else {
                   gr.channelState = channelStates;
                 }
-                if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP) && ((gr.channelState != null) && (gr.channelState.size() > 0))) {
-                  logger.trace(LogMarker.STATE_FLUSH_OP, "channel states: {}", gr.channelStateDescription(gr.channelState));
+                if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)
+                    && ((gr.channelState != null) && (gr.channelState.size() > 0))) {
+                  logger.trace(
+                      LogMarker.STATE_FLUSH_OP,
+                      "channel states: {}",
+                      gr.channelStateDescription(gr.channelState));
                 }
               }
             }
@@ -414,7 +429,12 @@ public class StateFlushOperation {
           // cache is closed - no distribution advisor available for the region so nothing to do but
           // send the stabilization message
         } catch (Exception e) {
-          logger.fatal(LocalizedMessage.create(LocalizedStrings.StateFlushOperation_0__EXCEPTION_CAUGHT_WHILE_DETERMINING_CHANNEL_STATE, this), e);
+          logger.fatal(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .StateFlushOperation_0__EXCEPTION_CAUGHT_WHILE_DETERMINING_CHANNEL_STATE,
+                  this),
+              e);
         } catch (ThreadDeath td) {
           throw td;
         } catch (VirtualMachineError err) {
@@ -429,7 +449,12 @@ public class StateFlushOperation {
           // error condition, so you also need to check to see if the JVM
           // is still usable:
           SystemFailure.checkFailure();
-          logger.fatal(LocalizedMessage.create(LocalizedStrings.StateFlushOperation_0__THROWABLE_CAUGHT_WHILE_DETERMINING_CHANNEL_STATE, this), t);
+          logger.fatal(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .StateFlushOperation_0__THROWABLE_CAUGHT_WHILE_DETERMINING_CHANNEL_STATE,
+                  this),
+              t);
         } finally {
           if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
             logger.trace(LogMarker.STATE_FLUSH_OP, "Sending {}", gr);
@@ -469,22 +494,30 @@ public class StateFlushOperation {
 
     @Override
     public String toString() {
-      return "StateMarkerMessage(requestingMember=" + this.getSender() + ",processorId=" + processorId + ",target=" + relayRecipient + ",region=" + regionPath + ")";
+      return "StateMarkerMessage(requestingMember="
+          + this.getSender()
+          + ",processorId="
+          + processorId
+          + ",target="
+          + relayRecipient
+          + ",region="
+          + regionPath
+          + ")";
     }
 
     @Override
     public boolean isSevereAlertCompatible() {
       return severeAlertEnabled;
     }
-
   }
 
   /**
-   * StateStabilizationMessage is sent by a distributed member to a member who
-   * is the target of a state flush.  The target then sends a StateStabilizedMessage
-   * to the sender of the StateStabilizationMessage when all state has been
-   * flushed to it.
+   * StateStabilizationMessage is sent by a distributed member to a member who is the target of a
+   * state flush. The target then sends a StateStabilizedMessage to the sender of the
+   * StateStabilizationMessage when all state has been flushed to it.
+   *
    * <p>author bruce
+   *
    * @see StateFlushOperation.StateStabilizedMessage
    * @see StateFlushOperation.StateMarkerMessage
    * @since GemFire 5.0.1
@@ -494,8 +527,10 @@ public class StateFlushOperation {
     protected DistributedMember requestingMember;
     /** the processor id for the requesting member */
     protected int processorId;
-    /** a map of the communication channel state between the sending process
-     *  and the receiving process */
+    /**
+     * a map of the communication channel state between the sending process and the receiving
+     * process
+     */
     protected Map channelState;
     /** whether this is a simple request/response two-party flush or (false) a proxied flush */
     protected boolean isSingleFlushTo;
@@ -510,7 +545,7 @@ public class StateFlushOperation {
       } else {
         Map csmap = (Map) state;
         StringBuffer result = new StringBuffer(200);
-        for (Iterator it = csmap.entrySet().iterator(); it.hasNext();) {
+        for (Iterator it = csmap.entrySet().iterator(); it.hasNext(); ) {
           Map.Entry entry = (Map.Entry) it.next();
           result.append(entry.getKey()).append('=').append(entry.getValue());
           if (it.hasNext()) {
@@ -526,67 +561,77 @@ public class StateFlushOperation {
       // though this message must be transmitted on an ordered connection to
       // ensure that datagram channnels are flushed, we need to execute
       // in the waiting pool to avoid blocking those connections
-      dm.getWaitingThreadPool().execute(new Runnable() {
-        public void run() {
-          if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
-            logger.trace(LogMarker.STATE_FLUSH_OP, "Processing {}", this);
-          }
-          try {
-            if (channelState != null) {
-              if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP) && ((channelState != null) && (channelState.size() > 0))) {
-                logger.trace(LogMarker.STATE_FLUSH_OP, "Waiting for channel states:  {}", channelStateDescription(channelState));
-              }
-              for (;;) {
-                dm.getCancelCriterion().checkCancelInProgress(null);
-                boolean interrupted = Thread.interrupted();
-                try {
-                  dm.getMembershipManager().waitForMessageState(getSender(), channelState);
-                  break;
-                } catch (InterruptedException e) {
-                  interrupted = true;
-                } finally {
-                  if (interrupted) {
-                    Thread.currentThread().interrupt();
+      dm.getWaitingThreadPool()
+          .execute(
+              new Runnable() {
+                public void run() {
+                  if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
+                    logger.trace(LogMarker.STATE_FLUSH_OP, "Processing {}", this);
+                  }
+                  try {
+                    if (channelState != null) {
+                      if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)
+                          && ((channelState != null) && (channelState.size() > 0))) {
+                        logger.trace(
+                            LogMarker.STATE_FLUSH_OP,
+                            "Waiting for channel states:  {}",
+                            channelStateDescription(channelState));
+                      }
+                      for (; ; ) {
+                        dm.getCancelCriterion().checkCancelInProgress(null);
+                        boolean interrupted = Thread.interrupted();
+                        try {
+                          dm.getMembershipManager().waitForMessageState(getSender(), channelState);
+                          break;
+                        } catch (InterruptedException e) {
+                          interrupted = true;
+                        } finally {
+                          if (interrupted) {
+                            Thread.currentThread().interrupt();
+                          }
+                        }
+                      } // for
+                    }
+                  } catch (ThreadDeath td) {
+                    throw td;
+                  } catch (VirtualMachineError err) {
+                    SystemFailure.initiateFailure(err);
+                    // If this ever returns, rethrow the error.  We're poisoned
+                    // now, so don't let this thread continue.
+                    throw err;
+                  } catch (Throwable e) {
+                    // Whenever you catch Error or Throwable, you must also
+                    // catch VirtualMachineError (see above).  However, there is
+                    // _still_ a possibility that you are dealing with a cascading
+                    // error condition, so you also need to check to see if the JVM
+                    // is still usable:
+                    SystemFailure.checkFailure();
+                    logger.fatal(
+                        LocalizedMessage.create(
+                            LocalizedStrings
+                                .StateFlushOperation_EXCEPTION_CAUGHT_WHILE_WAITING_FOR_CHANNEL_STATE),
+                        e);
+                  } finally {
+                    StateStabilizedMessage ga = new StateStabilizedMessage();
+                    ga.setRecipient((InternalDistributedMember) requestingMember);
+                    if (isSingleFlushTo) {
+                      // not a proxied message but a simple request-response
+                      ga.sendingMember = dm.getDistributionManagerId();
+                    } else {
+                      ga.sendingMember = getSender();
+                    }
+                    ga.setProcessorId(processorId);
+                    if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
+                      logger.trace(LogMarker.STATE_FLUSH_OP, "Sending {}", ga);
+                    }
+                    if (requestingMember.equals(dm.getDistributionManagerId())) {
+                      ga.dmProcess(dm);
+                    } else {
+                      dm.putOutgoing(ga);
+                    }
                   }
                 }
-              } // for
-            }
-          } catch (ThreadDeath td) {
-            throw td;
-          } catch (VirtualMachineError err) {
-            SystemFailure.initiateFailure(err);
-            // If this ever returns, rethrow the error.  We're poisoned
-            // now, so don't let this thread continue.
-            throw err;
-          } catch (Throwable e) {
-            // Whenever you catch Error or Throwable, you must also
-            // catch VirtualMachineError (see above).  However, there is
-            // _still_ a possibility that you are dealing with a cascading
-            // error condition, so you also need to check to see if the JVM
-            // is still usable:
-            SystemFailure.checkFailure();
-            logger.fatal(LocalizedMessage.create(LocalizedStrings.StateFlushOperation_EXCEPTION_CAUGHT_WHILE_WAITING_FOR_CHANNEL_STATE), e);
-          } finally {
-            StateStabilizedMessage ga = new StateStabilizedMessage();
-            ga.setRecipient((InternalDistributedMember) requestingMember);
-            if (isSingleFlushTo) {
-              // not a proxied message but a simple request-response
-              ga.sendingMember = dm.getDistributionManagerId();
-            } else {
-              ga.sendingMember = getSender();
-            }
-            ga.setProcessorId(processorId);
-            if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
-              logger.trace(LogMarker.STATE_FLUSH_OP, "Sending {}", ga);
-            }
-            if (requestingMember.equals(dm.getDistributionManagerId())) {
-              ga.dmProcess(dm);
-            } else {
-              dm.putOutgoing(ga);
-            }
-          }
-        }
-      });
+              });
     }
 
     @Override
@@ -613,19 +658,26 @@ public class StateFlushOperation {
 
     @Override
     public String toString() {
-      return "StateStabilizationMessage(recipients=" + getRecipientsDescription() + ",requestingMember=" + requestingMember + ",processorId=" + processorId + ")";
+      return "StateStabilizationMessage(recipients="
+          + getRecipientsDescription()
+          + ",requestingMember="
+          + requestingMember
+          + ",processorId="
+          + processorId
+          + ")";
     }
   }
 
   /**
-   * StateStabilizedMessage is sent from a VM that will provide an initial image and is
-   * part of a higher-order protocol that is intended to force data in serial
-   * execution queues to be processed before the initial image is requested.
+   * StateStabilizedMessage is sent from a VM that will provide an initial image and is part of a
+   * higher-order protocol that is intended to force data in serial execution queues to be processed
+   * before the initial image is requested.
+   *
    * <p>author bruce
+   *
    * @see StateFlushOperation.StateMarkerMessage
    * @see StateFlushOperation.StateStabilizationMessage
    * @since GemFire 5.0.1
-   *
    */
   public static final class StateStabilizedMessage extends ReplyMessage {
     /** the member for whom this ack is being sent */
@@ -693,8 +745,8 @@ public class StateFlushOperation {
   }
 
   /**
-   * StateFlushReplyProcessor waits for proxy acks (StateStabilizedMessages) from the target
-   * vm.  If the target vm goes away, this processor wakes up immediately
+   * StateFlushReplyProcessor waits for proxy acks (StateStabilizedMessages) from the target vm. If
+   * the target vm goes away, this processor wakes up immediately
    */
   public static class StateFlushReplyProcessor extends ReplyProcessor21 {
 
@@ -710,13 +762,14 @@ public class StateFlushOperation {
       super(manager, initMembers);
       this.targetMember = (InternalDistributedMember) target;
       this.originalCount = initMembers.size();
-      this.targetMemberHasLeft = targetMemberHasLeft // bug #43583 - perform an initial membership check
-          || !manager.isCurrentMember((InternalDistributedMember) target);
+      this.targetMemberHasLeft =
+          targetMemberHasLeft // bug #43583 - perform an initial membership check
+              || !manager.isCurrentMember((InternalDistributedMember) target);
     }
 
     /** process the failure set from sending the message */
     public void messageNotSentTo(Set failures) {
-      for (Iterator it = failures.iterator(); it.hasNext();) {
+      for (Iterator it = failures.iterator(); it.hasNext(); ) {
         this.memberDeparted((InternalDistributedMember) it.next(), true);
       }
     }
@@ -736,13 +789,28 @@ public class StateFlushOperation {
 
     @Override
     protected boolean stillWaiting() {
-      targetMemberHasLeft = targetMemberHasLeft || !getDistributionManager().isCurrentMember(targetMember);
+      targetMemberHasLeft =
+          targetMemberHasLeft || !getDistributionManager().isCurrentMember(targetMember);
       return super.stillWaiting() && !targetMemberHasLeft;
     }
 
     @Override
     public String toString() {
-      return "<" + shortName() + " " + this.getProcessorId() + " targeting " + targetMember + " waiting for " + numMembers() + " replies out of " + this.originalCount + " " + (exception == null ? "" : (" exception: " + exception)) + " from " + membersToString() + ">";
+      return "<"
+          + shortName()
+          + " "
+          + this.getProcessorId()
+          + " targeting "
+          + targetMember
+          + " waiting for "
+          + numMembers()
+          + " replies out of "
+          + this.originalCount
+          + " "
+          + (exception == null ? "" : (" exception: " + exception))
+          + " from "
+          + membersToString()
+          + ">";
     }
   }
 }

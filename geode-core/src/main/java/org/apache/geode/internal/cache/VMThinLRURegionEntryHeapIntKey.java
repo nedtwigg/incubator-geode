@@ -38,10 +38,8 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VMThinLRURegionEntryHeapIntKey extends VMThinLRURegionEntryHeap {
   public VMThinLRURegionEntryHeapIntKey(RegionEntryContext context, int key, Object value) {
@@ -54,9 +52,12 @@ public class VMThinLRURegionEntryHeapIntKey extends VMThinLRURegionEntryHeap {
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VMThinLRURegionEntryHeapIntKey> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VMThinLRURegionEntryHeapIntKey.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VMThinLRURegionEntryHeapIntKey> lastModifiedUpdater =
+      AtomicLongFieldUpdater.newUpdater(VMThinLRURegionEntryHeapIntKey.class, "lastModified");
   private volatile Object value;
 
   @Override
@@ -77,9 +78,7 @@ public class VMThinLRURegionEntryHeapIntKey extends VMThinLRURegionEntryHeap {
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -88,16 +87,12 @@ public class VMThinLRURegionEntryHeapIntKey extends VMThinLRURegionEntryHeap {
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -110,7 +105,9 @@ public class VMThinLRURegionEntryHeapIntKey extends VMThinLRURegionEntryHeap {
   }
 
   public final synchronized int updateEntrySize(EnableLRU capacityController) {
-    return updateEntrySize(capacityController, _getValue()); // OFHEAP: _getValue ok w/o incing refcount because we are synced and only getting the size
+    return updateEntrySize(
+        capacityController,
+        _getValue()); // OFHEAP: _getValue ok w/o incing refcount because we are synced and only getting the size
   }
 
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp

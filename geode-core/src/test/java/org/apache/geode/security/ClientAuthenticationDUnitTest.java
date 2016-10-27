@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -27,13 +27,13 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 /**
- * Test for authentication from client to server. This tests for both valid and
- * invalid credentials/modules. It also checks for authentication
- * success/failure in case of failover and for the notification channel.
- * 
+ * Test for authentication from client to server. This tests for both valid and invalid
+ * credentials/modules. It also checks for authentication success/failure in case of failover and
+ * for the notification channel.
+ *
  * @since GemFire 5.5
  */
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class ClientAuthenticationDUnitTest extends ClientAuthenticationTestCase {
 
   @Test

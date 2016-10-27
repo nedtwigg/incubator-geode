@@ -32,25 +32,22 @@ import org.junit.rules.TestName;
 
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Integration tests for DistributedSystem class. These tests require file system I/O.
- */
+/** Integration tests for DistributedSystem class. These tests require file system I/O. */
 @Category(IntegrationTest.class)
 public class DistributedSystemIntegrationJUnitTest {
 
   @Rule
   public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
-  @Rule
-  public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public final TestName testName = new TestName();
+  @Rule public final TestName testName = new TestName();
 
   @Test
   public void getPropertiesFileShouldUsePathInSystemProperty() throws Exception {
     File propertiesFile = this.temporaryFolder.newFile("test.properties");
-    System.setProperty(DistributedSystem.PROPERTIES_FILE_PROPERTY, propertiesFile.getCanonicalPath());
+    System.setProperty(
+        DistributedSystem.PROPERTIES_FILE_PROPERTY, propertiesFile.getCanonicalPath());
     Properties properties = new Properties();
     properties.store(new FileWriter(propertiesFile, false), this.testName.getMethodName());
 
@@ -60,7 +57,8 @@ public class DistributedSystemIntegrationJUnitTest {
   @Test
   public void getPropertiesFileUrlShouldUsePathInSystemProperty() throws Exception {
     File propertiesFile = this.temporaryFolder.newFile("test.properties");
-    System.setProperty(DistributedSystem.PROPERTIES_FILE_PROPERTY, propertiesFile.getCanonicalPath());
+    System.setProperty(
+        DistributedSystem.PROPERTIES_FILE_PROPERTY, propertiesFile.getCanonicalPath());
     Properties properties = new Properties();
     properties.store(new FileWriter(propertiesFile, false), this.testName.getMethodName());
 
@@ -71,17 +69,20 @@ public class DistributedSystemIntegrationJUnitTest {
   @Test
   public void getSecurityPropertiesFileShouldUsePathInSystemProperty() throws Exception {
     File propertiesFile = this.temporaryFolder.newFile("testsecurity.properties");
-    System.setProperty(DistributedSystem.SECURITY_PROPERTIES_FILE_PROPERTY, propertiesFile.getCanonicalPath());
+    System.setProperty(
+        DistributedSystem.SECURITY_PROPERTIES_FILE_PROPERTY, propertiesFile.getCanonicalPath());
     Properties properties = new Properties();
     properties.store(new FileWriter(propertiesFile, false), this.testName.getMethodName());
 
-    assertThat(DistributedSystem.getSecurityPropertiesFile()).isEqualTo(propertiesFile.getCanonicalPath());
+    assertThat(DistributedSystem.getSecurityPropertiesFile())
+        .isEqualTo(propertiesFile.getCanonicalPath());
   }
 
   @Test
   public void getSecurityPropertiesFileUrlShouldUsePathInSystemProperty() throws Exception {
     File propertiesFile = this.temporaryFolder.newFile("testsecurity.properties");
-    System.setProperty(DistributedSystem.SECURITY_PROPERTIES_FILE_PROPERTY, propertiesFile.getCanonicalPath());
+    System.setProperty(
+        DistributedSystem.SECURITY_PROPERTIES_FILE_PROPERTY, propertiesFile.getCanonicalPath());
     Properties properties = new Properties();
     properties.store(new FileWriter(propertiesFile, false), this.testName.getMethodName());
 

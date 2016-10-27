@@ -28,7 +28,9 @@ public class BackupDataStoreResult {
 
   private Map<DistributedMember, Set<PersistentID>> successfulMembers;
 
-  public BackupDataStoreResult(Map<DistributedMember, Set<PersistentID>> existingDataStores, Map<DistributedMember, Set<PersistentID>> successfulMembers) {
+  public BackupDataStoreResult(
+      Map<DistributedMember, Set<PersistentID>> existingDataStores,
+      Map<DistributedMember, Set<PersistentID>> successfulMembers) {
     this.existingDataStores = existingDataStores;
     this.successfulMembers = successfulMembers;
   }
@@ -42,6 +44,14 @@ public class BackupDataStoreResult {
   }
 
   public String toString() {
-    return new StringBuilder().append(getClass().getSimpleName()).append("[").append("existingDataStores=").append(this.existingDataStores).append("; successfulMembers=").append(this.successfulMembers).append("]").toString();
+    return new StringBuilder()
+        .append(getClass().getSimpleName())
+        .append("[")
+        .append("existingDataStores=")
+        .append(this.existingDataStores)
+        .append("; successfulMembers=")
+        .append(this.successfulMembers)
+        .append("]")
+        .toString();
   }
 }

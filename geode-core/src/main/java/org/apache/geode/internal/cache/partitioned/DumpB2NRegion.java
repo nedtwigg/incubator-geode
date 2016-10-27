@@ -49,11 +49,10 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * A message used for debugging purposes. For example if a test fails it can
- * call 
- * {@link org.apache.geode.internal.cache.PartitionedRegion#sendDumpB2NRegionForBucket(int)}
- * which sends this message to all VMs that have that PartitionedRegion defined.
- * 
+ * A message used for debugging purposes. For example if a test fails it can call {@link
+ * org.apache.geode.internal.cache.PartitionedRegion#sendDumpB2NRegionForBucket(int)} which sends
+ * this message to all VMs that have that PartitionedRegion defined.
+ *
  * @see org.apache.geode.internal.cache.PartitionedRegion#sendDumpB2NRegionForBucket(int)
  */
 public final class DumpB2NRegion extends PartitionMessage {
@@ -62,16 +61,17 @@ public final class DumpB2NRegion extends PartitionMessage {
   private int bucketId;
   private boolean onlyReturnPrimaryInfo;
 
-  public DumpB2NRegion() {
-  }
+  public DumpB2NRegion() {}
 
-  private DumpB2NRegion(Set recipients, int regionId, ReplyProcessor21 processor, int bId, boolean justPrimaryInfo) {
+  private DumpB2NRegion(
+      Set recipients, int regionId, ReplyProcessor21 processor, int bId, boolean justPrimaryInfo) {
     super(recipients, regionId, processor);
     this.bucketId = bId;
     this.onlyReturnPrimaryInfo = justPrimaryInfo;
   }
 
-  public static DumpB2NResponse send(Set recipients, PartitionedRegion r, int bId, boolean justPrimaryInfo) {
+  public static DumpB2NResponse send(
+      Set recipients, PartitionedRegion r, int bId, boolean justPrimaryInfo) {
     DumpB2NResponse p = new DumpB2NResponse(r.getSystem(), recipients);
     DumpB2NRegion m = new DumpB2NRegion(recipients, r.getPRId(), p, bId, justPrimaryInfo);
     r.getDistributionManager().putOutgoing(m);
@@ -85,7 +85,7 @@ public final class DumpB2NRegion extends PartitionMessage {
     // Get the region, or die trying...
     final long finish = System.currentTimeMillis() + 10 * 1000;
     try {
-      for (;;) {
+      for (; ; ) {
         dm.getCancelCriterion().checkCancelInProgress(null);
 
         //      pr = null; (redundant assignment)
@@ -96,7 +96,8 @@ public final class DumpB2NRegion extends PartitionMessage {
         }
 
         if (System.currentTimeMillis() > finish) {
-          ReplyException rex = new ReplyException(new TimeoutException("Waited too long for region to initialize"));
+          ReplyException rex =
+              new ReplyException(new TimeoutException("Waited too long for region to initialize"));
           sendReply(getSender(), this.processorId, dm, rex, null, 0);
           return;
         }
@@ -109,8 +110,7 @@ public final class DumpB2NRegion extends PartitionMessage {
           interrupted = true;
           pr.checkReadiness();
         } finally {
-          if (interrupted)
-            Thread.currentThread().interrupt();
+          if (interrupted) Thread.currentThread().interrupt();
         }
       }
 
@@ -131,10 +131,15 @@ public final class DumpB2NRegion extends PartitionMessage {
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
     PrimaryInfo pinfo = null;
     if (this.onlyReturnPrimaryInfo) {
-      pinfo = new PrimaryInfo(pr.getRegionAdvisor().getBucket(this.bucketId).isHosting(), pr.getRegionAdvisor().isPrimaryForBucket(this.bucketId), "");
+      pinfo =
+          new PrimaryInfo(
+              pr.getRegionAdvisor().getBucket(this.bucketId).isHosting(),
+              pr.getRegionAdvisor().isPrimaryForBucket(this.bucketId),
+              "");
     } else {
       pr.dumpB2NForBucket(this.bucketId);
     }
@@ -164,8 +169,7 @@ public final class DumpB2NRegion extends PartitionMessage {
   public static final class DumpB2NReplyMessage extends ReplyMessage {
     private PrimaryInfo primaryInfo;
 
-    public DumpB2NReplyMessage() {
-    }
+    public DumpB2NReplyMessage() {}
 
     private DumpB2NReplyMessage(int procid, PrimaryInfo pinfo) {
       super();
@@ -173,7 +177,8 @@ public final class DumpB2NRegion extends PartitionMessage {
       this.primaryInfo = pinfo;
     }
 
-    public static void send(InternalDistributedMember recipient, int processorId, DM dm, PrimaryInfo pinfo) {
+    public static void send(
+        InternalDistributedMember recipient, int processorId, DM dm, PrimaryInfo pinfo) {
       DumpB2NReplyMessage m = new DumpB2NReplyMessage(processorId, pinfo);
       m.setRecipient(recipient);
       dm.putOutgoing(m);
@@ -183,7 +188,10 @@ public final class DumpB2NRegion extends PartitionMessage {
     public void process(final DM dm, final ReplyProcessor21 processor) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "DumpB2NReplyMessage process invoking reply processor with processorId: {}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "DumpB2NReplyMessage process invoking reply processor with processorId: {}",
+            this.processorId);
       }
 
       if (processor == null) {
@@ -249,13 +257,22 @@ public final class DumpB2NRegion extends PartitionMessage {
       if (msg instanceof DumpB2NReplyMessage) {
         DumpB2NReplyMessage reply = (DumpB2NReplyMessage) msg;
         if (reply.getPrimaryInfo() != null && reply.getPrimaryInfo().isHosting) {
-          Object[] newBucketHost = new Object[] { reply.getSender(), Boolean.valueOf(reply.getPrimaryInfo().isPrimary), reply.getPrimaryInfo().hostToken };
+          Object[] newBucketHost =
+              new Object[] {
+                reply.getSender(),
+                Boolean.valueOf(reply.getPrimaryInfo().isPrimary),
+                reply.getPrimaryInfo().hostToken
+              };
           synchronized (this.primaryInfos) {
             this.primaryInfos.add(newBucketHost);
           }
         }
         if (logger.isTraceEnabled(LogMarker.DM)) {
-          logger.trace(LogMarker.DM, "DumpB2NResponse got a primaryInfo {} from {}", reply.getPrimaryInfo(), reply.getSender());
+          logger.trace(
+              LogMarker.DM,
+              "DumpB2NResponse got a primaryInfo {} from {}",
+              reply.getPrimaryInfo(),
+              reply.getSender());
         }
       }
       super.process(msg);
@@ -268,8 +285,15 @@ public final class DumpB2NRegion extends PartitionMessage {
         logger.debug("B2NResponse got ForceReattemptException; rethrowing {}", e.getMessage(), e);
         throw e;
       } catch (CacheException e) {
-        logger.debug("B2NResponse got remote CacheException, throwing ForceReattemptException. {}", e.getMessage(), e);
-        throw new ForceReattemptException(LocalizedStrings.DumpB2NRegion_B2NRESPONSE_GOT_REMOTE_CACHEEXCEPTION_THROWING_FORCEREATTEMPTEXCEPTION.toLocalizedString(), e);
+        logger.debug(
+            "B2NResponse got remote CacheException, throwing ForceReattemptException. {}",
+            e.getMessage(),
+            e);
+        throw new ForceReattemptException(
+            LocalizedStrings
+                .DumpB2NRegion_B2NRESPONSE_GOT_REMOTE_CACHEEXCEPTION_THROWING_FORCEREATTEMPTEXCEPTION
+                .toLocalizedString(),
+            e);
       }
       synchronized (this.primaryInfos) {
         return this.primaryInfos;
@@ -298,7 +322,10 @@ public final class DumpB2NRegion extends PartitionMessage {
   @Override
   protected void appendFields(StringBuffer buff) {
     super.appendFields(buff);
-    buff.append(" bucketId=").append(this.bucketId).append(" primaryInfoOnly=").append(this.onlyReturnPrimaryInfo);
+    buff.append(" bucketId=")
+        .append(this.bucketId)
+        .append(" primaryInfoOnly=")
+        .append(this.onlyReturnPrimaryInfo);
   }
 
   /* (non-Javadoc)

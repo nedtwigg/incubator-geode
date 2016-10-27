@@ -30,13 +30,11 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.GemFireVersion;
 
 /**
- * Provides optional data fields as properties for StartupMessage and 
- * StartupResponseMessage. This is handled by serializing and deserializing
- * a new Properties instance if and only if the member version is 6.6.3 or
- * greater. New fields can be added to the Properties without breaking
- * backwards compatibility. All new fields added should be written to allow
- * for version compatibility.
- * 
+ * Provides optional data fields as properties for StartupMessage and StartupResponseMessage. This
+ * is handled by serializing and deserializing a new Properties instance if and only if the member
+ * version is 6.6.3 or greater. New fields can be added to the Properties without breaking backwards
+ * compatibility. All new fields added should be written to allow for version compatibility.
+ *
  * @since GemFire 7.0
  */
 class StartupMessageData {
@@ -50,10 +48,9 @@ class StartupMessageData {
   private Properties optionalFields;
 
   /**
-   * Constructs a new instance with empty Properties. After construction
-   * the instance should optionally invoke one or more "write" methods such 
-   * as {@link #writeHostedLocators(Collection)} before invoking 
-   * <code>toData(DataOutput)</code> to marshal the Properties into the DataOutput
+   * Constructs a new instance with empty Properties. After construction the instance should
+   * optionally invoke one or more "write" methods such as {@link #writeHostedLocators(Collection)}
+   * before invoking <code>toData(DataOutput)</code> to marshal the Properties into the DataOutput
    * (onto the wire).
    */
   StartupMessageData() {
@@ -64,10 +61,7 @@ class StartupMessageData {
     this.optionalFields = DataSerializer.readObject(in);
   }
 
-  /**
-   * Check for the optional field {@link #HOSTED_LOCATORS} and return the
-   * value or null.
-   */
+  /** Check for the optional field {@link #HOSTED_LOCATORS} and return the value or null. */
   Collection<String> readHostedLocators() {
     if (this.optionalFields == null || this.optionalFields.isEmpty()) {
       return null;
@@ -123,9 +117,7 @@ class StartupMessageData {
     return Boolean.parseBoolean((this.optionalFields.getProperty(IS_SHARED_CONFIG_ENABLED)));
   }
 
-  /**
-   * Write the value for the optional field {@link #HOSTED_LOCATORS}.
-   */
+  /** Write the value for the optional field {@link #HOSTED_LOCATORS}. */
   void writeHostedLocators(Collection<String> hostedLocators) {
     if (this.optionalFields == null) {
       return;
@@ -149,12 +141,13 @@ class StartupMessageData {
   //      }
   //    }
   //  }
-  //  
+  //
   void writeIsSharedConfigurationEnabled(boolean isSharedConfigurationEnabled) {
     if (this.optionalFields == null) {
       return;
     }
-    this.optionalFields.setProperty(IS_SHARED_CONFIG_ENABLED, Boolean.toString(isSharedConfigurationEnabled));
+    this.optionalFields.setProperty(
+        IS_SHARED_CONFIG_ENABLED, Boolean.toString(isSharedConfigurationEnabled));
   }
 
   int readMcastPort() {
@@ -193,9 +186,8 @@ class StartupMessageData {
   }
 
   /**
-   * Writes all optional fields to the DataOutput or null for minimal
-   * wire footprint.
-   * 
+   * Writes all optional fields to the DataOutput or null for minimal wire footprint.
+   *
    * @throws IOException
    */
   void writeTo(DataOutput out) throws IOException {
@@ -206,16 +198,14 @@ class StartupMessageData {
     }
   }
 
-  /**
-   * Returns {@link #optionalFields} for testing.
-   */
+  /** Returns {@link #optionalFields} for testing. */
   Properties getOptionalFields() {
     return this.optionalFields;
   }
 
   /**
-   * Marshals a collection of strings to a single comma-delimited string.
-   * Returns null if collection is null or empty.
+   * Marshals a collection of strings to a single comma-delimited string. Returns null if collection
+   * is null or empty.
    */
   public static String asCommaDelimitedString(Collection<String> strings) {
     StringBuilder sb = new StringBuilder();

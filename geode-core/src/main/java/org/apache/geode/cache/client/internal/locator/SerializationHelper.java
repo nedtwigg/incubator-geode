@@ -30,38 +30,39 @@ import org.apache.geode.distributed.internal.ServerLocation;
 import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.internal.cache.BucketServerLocation66;
 
-/**
- *
- */
+/** */
 public class SerializationHelper {
 
-  private static void writeServerLocations(Collection/*<ServerLocation>*/ serverLocations, DataOutput out) throws IOException {
+  private static void writeServerLocations(
+      Collection /*<ServerLocation>*/ serverLocations, DataOutput out) throws IOException {
     if (serverLocations == null) {
       out.writeInt(-1);
       return;
     }
     int length = serverLocations.size();
     out.writeInt(length);
-    for (Iterator itr = serverLocations.iterator(); itr.hasNext();) {
+    for (Iterator itr = serverLocations.iterator(); itr.hasNext(); ) {
       ServerLocation next = (ServerLocation) itr.next();
       InternalDataSerializer.invokeToData(next, out);
     }
   }
 
-  private static void writeBucketServerLocations(Collection<BucketServerLocation66> bucketServerLocations, DataOutput out) throws IOException {
+  private static void writeBucketServerLocations(
+      Collection<BucketServerLocation66> bucketServerLocations, DataOutput out) throws IOException {
     if (bucketServerLocations == null) {
       out.writeInt(-1);
       return;
     }
     int length = bucketServerLocations.size();
     out.writeInt(length);
-    for (Iterator itr = bucketServerLocations.iterator(); itr.hasNext();) {
+    for (Iterator itr = bucketServerLocations.iterator(); itr.hasNext(); ) {
       ServerLocation next = (ServerLocation) itr.next();
       InternalDataSerializer.invokeToData(next, out);
     }
   }
 
-  public static ArrayList/*<ServerLocation>*/ readServerLocationList(DataInput in) throws IOException, ClassNotFoundException {
+  public static ArrayList /*<ServerLocation>*/ readServerLocationList(DataInput in)
+      throws IOException, ClassNotFoundException {
     int size = in.readInt();
     if (size < 0) {
       return null;
@@ -75,19 +76,23 @@ public class SerializationHelper {
     return serverLocations;
   }
 
-  public static void writeServerLocationList(List/*<ServerLocation>*/ serverLocations, DataOutput out) throws IOException {
+  public static void writeServerLocationList(
+      List /*<ServerLocation>*/ serverLocations, DataOutput out) throws IOException {
     writeServerLocations(serverLocations, out);
   }
 
-  public static void writeServerLocationSet(Set/*<ServerLocation>*/ serverLocations, DataOutput out) throws IOException {
+  public static void writeServerLocationSet(
+      Set /*<ServerLocation>*/ serverLocations, DataOutput out) throws IOException {
     writeServerLocations(serverLocations, out);
   }
 
-  public static void writeBucketServerLocationSet(Set<BucketServerLocation66> bucketServerLocations, DataOutput out) throws IOException {
+  public static void writeBucketServerLocationSet(
+      Set<BucketServerLocation66> bucketServerLocations, DataOutput out) throws IOException {
     writeBucketServerLocations(bucketServerLocations, out);
   }
 
-  public static HashSet/*<ServerLocation>*/ readServerLocationSet(DataInput in) throws IOException, ClassNotFoundException {
+  public static HashSet /*<ServerLocation>*/ readServerLocationSet(DataInput in)
+      throws IOException, ClassNotFoundException {
     int size = in.readInt();
     if (size < 0) {
       return null;
@@ -101,7 +106,8 @@ public class SerializationHelper {
     return serverLocations;
   }
 
-  public static HashSet<BucketServerLocation66> readBucketServerLocationSet(DataInput in) throws IOException, ClassNotFoundException {
+  public static HashSet<BucketServerLocation66> readBucketServerLocationSet(DataInput in)
+      throws IOException, ClassNotFoundException {
     int size = in.readInt();
     if (size < 0) {
       return null;
@@ -115,7 +121,5 @@ public class SerializationHelper {
     return bucketServerLocations;
   }
 
-  private SerializationHelper() {
-  }
-
+  private SerializationHelper() {}
 }

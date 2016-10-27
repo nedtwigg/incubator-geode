@@ -28,9 +28,11 @@ import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 
 public class HIncrByFloatExecutor extends HashExecutor {
 
-  private final String ERROR_FIELD_NOT_USABLE = "The value at this field cannot be incremented numerically because it is not a float";
+  private final String ERROR_FIELD_NOT_USABLE =
+      "The value at this field cannot be incremented numerically because it is not a float";
 
-  private final String ERROR_INCREMENT_NOT_USABLE = "The increment on this key must be floating point numeric";
+  private final String ERROR_INCREMENT_NOT_USABLE =
+      "The increment on this key must be floating point numeric";
 
   private final int FIELD_INDEX = 2;
 
@@ -41,7 +43,8 @@ public class HIncrByFloatExecutor extends HashExecutor {
     List<byte[]> commandElems = command.getProcessedCommand();
 
     if (commandElems.size() < 4) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.HINCRBYFLOAT));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.HINCRBYFLOAT));
       return;
     }
 
@@ -51,13 +54,15 @@ public class HIncrByFloatExecutor extends HashExecutor {
     try {
       increment = Coder.bytesToDouble(incrArray);
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_INCREMENT_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_INCREMENT_NOT_USABLE));
       return;
     }
 
     ByteArrayWrapper key = command.getKey();
 
-    Region<ByteArrayWrapper, ByteArrayWrapper> keyRegion = getOrCreateRegion(context, key, RedisDataType.REDIS_HASH);
+    Region<ByteArrayWrapper, ByteArrayWrapper> keyRegion =
+        getOrCreateRegion(context, key, RedisDataType.REDIS_HASH);
 
     byte[] byteField = commandElems.get(FIELD_INDEX);
     ByteArrayWrapper field = new ByteArrayWrapper(byteField);
@@ -79,7 +84,8 @@ public class HIncrByFloatExecutor extends HashExecutor {
      */
     String valueS = oldValue.toString();
     if (valueS.contains(" ")) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_FIELD_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_FIELD_NOT_USABLE));
       return;
     }
     Double value;
@@ -87,7 +93,8 @@ public class HIncrByFloatExecutor extends HashExecutor {
     try {
       value = Coder.stringToDouble(valueS);
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_FIELD_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_FIELD_NOT_USABLE));
       return;
     }
 
@@ -95,5 +102,4 @@ public class HIncrByFloatExecutor extends HashExecutor {
     keyRegion.put(field, new ByteArrayWrapper(Coder.doubleToBytes(value)));
     command.setResponse(Coder.getBulkStringResponse(context.getByteBufAllocator(), value));
   }
-
 }

@@ -21,8 +21,8 @@ import org.apache.geode.cache.*;
 import java.io.*;
 
 /**
- * This class represents a snapshot of a {@link org.apache.geode.cache.CacheStatistics}
- * from a remote vm
+ * This class represents a snapshot of a {@link org.apache.geode.cache.CacheStatistics} from a
+ * remote vm
  */
 public class RemoteCacheStatistics implements CacheStatistics, DataSerializable {
   private static final long serialVersionUID = 53585856563375154L;
@@ -40,11 +40,8 @@ public class RemoteCacheStatistics implements CacheStatistics, DataSerializable 
     this.hitRatio = stats.getHitRatio();
   }
 
-  /**
-   * For use only by DataExternalizable mechanism
-   */
-  public RemoteCacheStatistics() {
-  }
+  /** For use only by DataExternalizable mechanism */
+  public RemoteCacheStatistics() {}
 
   public long getLastModifiedTime() {
     return lastModified;

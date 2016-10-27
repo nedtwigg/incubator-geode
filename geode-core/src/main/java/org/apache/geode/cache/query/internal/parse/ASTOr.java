@@ -27,8 +27,7 @@ public class ASTOr extends GemFireAST {
     super(t);
   }
 
-  public ASTOr() {
-  }
+  public ASTOr() {}
 
   @Override
   public void compile(QCompiler compiler) {

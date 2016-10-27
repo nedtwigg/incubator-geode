@@ -40,7 +40,8 @@ public class PFCountExecutor extends HllExecutor {
       return;
     }
 
-    Region<ByteArrayWrapper, HyperLogLogPlus> keyRegion = context.getRegionProvider().gethLLRegion();
+    Region<ByteArrayWrapper, HyperLogLogPlus> keyRegion =
+        context.getRegionProvider().gethLLRegion();
 
     List<HyperLogLogPlus> hlls = new ArrayList<HyperLogLogPlus>();
 
@@ -48,8 +49,7 @@ public class PFCountExecutor extends HllExecutor {
       ByteArrayWrapper k = new ByteArrayWrapper(commandElems.get(i));
       checkDataType(k, RedisDataType.REDIS_HLL, context);
       HyperLogLogPlus h = keyRegion.get(k);
-      if (h != null)
-        hlls.add(h);
+      if (h != null) hlls.add(h);
     }
     if (hlls.isEmpty()) {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), 0));
@@ -66,5 +66,4 @@ public class PFCountExecutor extends HllExecutor {
     long cardinality = tmp.cardinality();
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), cardinality));
   }
-
 }

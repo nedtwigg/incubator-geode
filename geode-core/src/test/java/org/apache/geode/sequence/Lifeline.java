@@ -23,11 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by IntelliJ IDEA.
- * User: dsmith
- * Date: Oct 29, 2010
- * Time: 3:59:02 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: dsmith Date: Oct 29, 2010 Time: 3:59:02 PM To change this
+ * template use File | Settings | File Templates.
  */
 public class Lifeline {
   private List<LifelineState> states;

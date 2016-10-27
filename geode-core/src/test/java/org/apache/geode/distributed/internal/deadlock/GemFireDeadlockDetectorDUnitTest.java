@@ -58,7 +58,8 @@ import org.apache.geode.test.junit.categories.FlakyTest;
 @Category(DistributedTest.class)
 public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
 
-  private static final Set<Thread> stuckThreads = Collections.synchronizedSet(new HashSet<Thread>());
+  private static final Set<Thread> stuckThreads =
+      Collections.synchronizedSet(new HashSet<Thread>());
 
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
@@ -66,21 +67,22 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void stopStuckThreads() {
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
 
-      public void run() {
-        for (Thread thread : stuckThreads) {
-          thread.interrupt();
-          disconnectFromDS();
-          try {
-            thread.join(30000);
-            assertTrue(!thread.isAlive());
-          } catch (InterruptedException e) {
-            Assert.fail("interrupted", e);
+          public void run() {
+            for (Thread thread : stuckThreads) {
+              thread.interrupt();
+              disconnectFromDS();
+              try {
+                thread.join(30000);
+                assertTrue(!thread.isAlive());
+              } catch (InterruptedException e) {
+                Assert.fail("interrupted", e);
+              }
+            }
           }
-        }
-      }
-    });
+        });
   }
 
   public GemFireDeadlockDetectorDUnitTest() {
@@ -134,21 +136,23 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
   }
 
   private AsyncInvocation lockTheLocks(VM vm0, final InternalDistributedMember member) {
-    return vm0.invokeAsync(new SerializableRunnable() {
+    return vm0.invokeAsync(
+        new SerializableRunnable() {
 
-      public void run() {
-        lock.lock();
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e) {
-          Assert.fail("interrupted", e);
-        }
-        ResultCollector collector = FunctionService.onMember(member).execute(new TestFunction());
-        //wait the function to lock the lock on member.
-        collector.getResult();
-        lock.unlock();
-      }
-    });
+          public void run() {
+            lock.lock();
+            try {
+              Thread.sleep(1000);
+            } catch (InterruptedException e) {
+              Assert.fail("interrupted", e);
+            }
+            ResultCollector collector =
+                FunctionService.onMember(member).execute(new TestFunction());
+            //wait the function to lock the lock on member.
+            collector.getResult();
+            lock.unlock();
+          }
+        });
   }
 
   @Category(FlakyTest.class) // GEODE-1580 uses asyncs with pauses
@@ -181,38 +185,40 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
   }
 
   private AsyncInvocation lockTheDLocks(VM vm, final String first, final String second) {
-    return vm.invokeAsync(new SerializableRunnable() {
+    return vm.invokeAsync(
+        new SerializableRunnable() {
 
-      public void run() {
-        getCache();
-        DistributedLockService dls = DistributedLockService.create("deadlock_test", getSystem());
-        dls.lock(first, 10 * 1000, -1);
+          public void run() {
+            getCache();
+            DistributedLockService dls =
+                DistributedLockService.create("deadlock_test", getSystem());
+            dls.lock(first, 10 * 1000, -1);
 
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        try {
-          dls.lock(second, 10 * 1000, -1);
-        } catch (LockServiceDestroyedException expected) {
-          //this is ok, the test is terminating
-        } catch (DistributedSystemDisconnectedException expected) {
-          //this is ok, the test is terminating
-        }
-
-      }
-    });
-
+            try {
+              Thread.sleep(1000);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+            try {
+              dls.lock(second, 10 * 1000, -1);
+            } catch (LockServiceDestroyedException expected) {
+              //this is ok, the test is terminating
+            } catch (DistributedSystemDisconnectedException expected) {
+              //this is ok, the test is terminating
+            }
+          }
+        });
   }
 
   private InternalDistributedMember createCache(VM vm) {
-    return (InternalDistributedMember) vm.invoke(new SerializableCallable() {
-      public Object call() {
-        getCache();
-        return getSystem().getDistributedMember();
-      }
-    });
+    return (InternalDistributedMember)
+        vm.invoke(
+            new SerializableCallable() {
+              public Object call() {
+                getCache();
+                return getSystem().getDistributedMember();
+              }
+            });
   }
 
   private static class TestFunction implements Function {
@@ -245,7 +251,5 @@ public class GemFireDeadlockDetectorDUnitTest extends JUnit4CacheTestCase {
     public boolean isHA() {
       return false;
     }
-
   }
-
 }

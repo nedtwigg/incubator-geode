@@ -25,8 +25,7 @@ public class Department {
   private String _office;
   private Faculty _chairperson;
 
-  public Department() {
-  }
+  public Department() {}
 
   public Department(String name, String id, String office, Faculty chairperson) {
     _name = name;
@@ -70,5 +69,4 @@ public class Department {
   public void setId(String id) {
     _id = id;
   }
-
 }

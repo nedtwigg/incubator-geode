@@ -26,24 +26,20 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular app vm to request all the subregions
- * of a given parent region.
+ * A message that is sent to a particular app vm to request all the subregions of a given parent
+ * region.
  */
 public final class RegionSizeRequest extends RegionAdminRequest implements Cancellable {
   private transient boolean cancelled;
   private transient RegionSizeResponse resp;
 
-  /**
-   * Returns a <code>ObjectNamesRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>ObjectNamesRequest</code> to be sent to the specified recipient. */
   public static RegionSizeRequest create() {
     RegionSizeRequest m = new RegionSizeRequest();
     return m;
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     Assert.assertTrue(this.getSender() != null);

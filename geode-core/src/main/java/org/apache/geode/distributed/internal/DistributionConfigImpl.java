@@ -52,14 +52,16 @@ import org.apache.geode.internal.security.SecurableCommunicationChannel;
 import org.apache.geode.memcached.GemFireMemcachedServer;
 
 /**
- * Provides an implementation of <code>DistributionConfig</code> that
- * knows how to read the configuration file.
+ * Provides an implementation of <code>DistributionConfig</code> that knows how to read the
+ * configuration file.
+ *
  * <p>
+ *
  * <p>
- * <p>
- * Note that if you add a property to this interface, should should
- * update  the {@link
+ *
+ * <p>Note that if you add a property to this interface, should should update the {@link
  * #DistributionConfigImpl(DistributionConfig) copy constructor}.
+ *
  * @see InternalDistributedSystem
  * @since GemFire 2.1
  */
@@ -67,346 +69,233 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
   private static final long serialVersionUID = 4096393792893825167L;
 
-  /**
-   * The name of the distribution manager/shared memory connection
-   */
+  /** The name of the distribution manager/shared memory connection */
   private String name = DEFAULT_NAME;
 
-  /**
-   * The tcp/ip port used for distribution
-   */
+  /** The tcp/ip port used for distribution */
   private int tcpPort = DEFAULT_TCP_PORT;
 
-  /**
-   * The multicast port used for distribution
-   */
+  /** The multicast port used for distribution */
   private int mcastPort = DEFAULT_MCAST_PORT;
 
-  /**
-   * The multicast ttl used for distribution
-   */
+  /** The multicast ttl used for distribution */
   private int mcastTtl = DEFAULT_MCAST_TTL;
 
   private int socketLeaseTime = DEFAULT_SOCKET_LEASE_TIME;
   private int socketBufferSize = DEFAULT_SOCKET_BUFFER_SIZE;
   private boolean conserveSockets = DEFAULT_CONSERVE_SOCKETS;
 
-  /**
-   * Comma-delimited list of the application roles performed by this member.
-   */
+  /** Comma-delimited list of the application roles performed by this member. */
   private String roles = DEFAULT_ROLES;
 
-  /**
-   * The multicast address used for distribution
-   */
+  /** The multicast address used for distribution */
   private InetAddress mcastAddress = DEFAULT_MCAST_ADDRESS;
 
-  /**
-   * The address server socket's should listen on
-   */
+  /** The address server socket's should listen on */
   private String bindAddress = DEFAULT_BIND_ADDRESS;
 
-  /**
-   * The address server socket's in a  client-server topology should listen on
-   */
+  /** The address server socket's in a client-server topology should listen on */
   private String serverBindAddress = DEFAULT_SERVER_BIND_ADDRESS;
 
-  /**
-   * The locations of the distribution locators
-   */
+  /** The locations of the distribution locators */
   private String locators = DEFAULT_LOCATORS;
 
-  /**
-   * The amount of time to wait for a locator to appear when starting up
-   */
+  /** The amount of time to wait for a locator to appear when starting up */
   private int locatorWaitTime;
 
-  /**
-   * The name of the log file
-   */
+  /** The name of the log file */
   private File logFile = DEFAULT_LOG_FILE;
 
   protected File deployWorkingDir = DEFAULT_DEPLOY_WORKING_DIR;
 
   /**
    * The level at which log messages are logged
+   *
    * @see org.apache.geode.internal.logging.LogWriterImpl#levelNameToCode(String)
    */
   protected int logLevel = DEFAULT_LOG_LEVEL;
 
-  /**
-   * bind-address and host of locator to start
-   */
+  /** bind-address and host of locator to start */
   private String startLocator = DEFAULT_START_LOCATOR;
 
-  /**
-   * port of locator to start.  use bind-address as host name
-   */
+  /** port of locator to start. use bind-address as host name */
   private int startLocatorPort;
 
-  /**
-   * Is statistic sampling enabled?
-   */
+  /** Is statistic sampling enabled? */
   protected boolean statisticSamplingEnabled = DEFAULT_STATISTIC_SAMPLING_ENABLED;
 
-  /**
-   * The rate (in milliseconds) at which statistics are sampled
-   */
+  /** The rate (in milliseconds) at which statistics are sampled */
   protected int statisticSampleRate = DEFAULT_STATISTIC_SAMPLE_RATE;
 
-  /**
-   * The name of the file to which statistics should be archived
-   */
+  /** The name of the file to which statistics should be archived */
   protected File statisticArchiveFile = DEFAULT_STATISTIC_ARCHIVE_FILE;
 
-  /**
-   * The amount of time to wait for a ACK message
-   */
+  /** The amount of time to wait for a ACK message */
   private int ackWaitThreshold = DEFAULT_ACK_WAIT_THRESHOLD;
 
   /**
-   * The amount of time to wait for a ACK message after the ackWaitThreshold
-   * before shunning members that haven't responded.  If zero, this feature
-   * is disabled.
+   * The amount of time to wait for a ACK message after the ackWaitThreshold before shunning members
+   * that haven't responded. If zero, this feature is disabled.
    */
   private int ackForceDisconnectThreshold = DEFAULT_ACK_SEVERE_ALERT_THRESHOLD;
 
-  /**
-   * The name of an XML file used to initialize the cache
-   */
-  private File cacheXmlFile = Boolean.getBoolean(InternalLocator.FORCE_LOCATOR_DM_TYPE) ? new File("") : DEFAULT_CACHE_XML_FILE;
+  /** The name of an XML file used to initialize the cache */
+  private File cacheXmlFile =
+      Boolean.getBoolean(InternalLocator.FORCE_LOCATOR_DM_TYPE)
+          ? new File("")
+          : DEFAULT_CACHE_XML_FILE;
 
   protected int archiveDiskSpaceLimit = DEFAULT_ARCHIVE_DISK_SPACE_LIMIT;
   protected int archiveFileSizeLimit = DEFAULT_ARCHIVE_FILE_SIZE_LIMIT;
   protected int logDiskSpaceLimit = DEFAULT_LOG_DISK_SPACE_LIMIT;
   protected int logFileSizeLimit = DEFAULT_LOG_FILE_SIZE_LIMIT;
 
-  @Deprecated
-  private boolean clusterSSLEnabled = DEFAULT_SSL_ENABLED;
-  @Deprecated
-  private String clusterSSLProtocols = DEFAULT_SSL_PROTOCOLS;
-  @Deprecated
-  private String clusterSSLCiphers = DEFAULT_SSL_CIPHERS;
-  @Deprecated
-  private boolean clusterSSLRequireAuthentication = DEFAULT_SSL_REQUIRE_AUTHENTICATION;
-  @Deprecated
-  private String clusterSSLKeyStore = DEFAULT_SSL_KEYSTORE;
-  @Deprecated
-  private String clusterSSLKeyStoreType = DEFAULT_CLUSTER_SSL_KEYSTORE_TYPE;
-  @Deprecated
-  private String clusterSSLKeyStorePassword = DEFAULT_SSL_KEYSTORE_PASSWORD;
-  @Deprecated
-  private String clusterSSLTrustStore = DEFAULT_SSL_TRUSTSTORE;
-  @Deprecated
-  private String clusterSSLTrustStorePassword = DEFAULT_SSL_TRUSTSTORE_PASSWORD;
+  @Deprecated private boolean clusterSSLEnabled = DEFAULT_SSL_ENABLED;
+  @Deprecated private String clusterSSLProtocols = DEFAULT_SSL_PROTOCOLS;
+  @Deprecated private String clusterSSLCiphers = DEFAULT_SSL_CIPHERS;
+  @Deprecated private boolean clusterSSLRequireAuthentication = DEFAULT_SSL_REQUIRE_AUTHENTICATION;
+  @Deprecated private String clusterSSLKeyStore = DEFAULT_SSL_KEYSTORE;
+  @Deprecated private String clusterSSLKeyStoreType = DEFAULT_CLUSTER_SSL_KEYSTORE_TYPE;
+  @Deprecated private String clusterSSLKeyStorePassword = DEFAULT_SSL_KEYSTORE_PASSWORD;
+  @Deprecated private String clusterSSLTrustStore = DEFAULT_SSL_TRUSTSTORE;
+  @Deprecated private String clusterSSLTrustStorePassword = DEFAULT_SSL_TRUSTSTORE_PASSWORD;
 
   private String clusterSSLAlias = DEFAULT_SSL_ALIAS;
 
-  /**
-   * multicast send buffer size, in bytes
-   */
+  /** multicast send buffer size, in bytes */
   protected int mcastSendBufferSize = DEFAULT_MCAST_SEND_BUFFER_SIZE;
-  /**
-   * multicast receive buffer size, in bytes
-   */
+  /** multicast receive buffer size, in bytes */
   protected int mcastRecvBufferSize = DEFAULT_MCAST_RECV_BUFFER_SIZE;
-  /**
-   * flow-of-control parameters for multicast messaging
-   */
+  /** flow-of-control parameters for multicast messaging */
   protected FlowControlParams mcastFlowControl = DEFAULT_MCAST_FLOW_CONTROL;
 
-  /**
-   * datagram socket send buffer size, in bytes
-   */
+  /** datagram socket send buffer size, in bytes */
   protected int udpSendBufferSize = DEFAULT_UDP_SEND_BUFFER_SIZE;
-  /**
-   * datagram socket receive buffer size, in bytes
-   */
+  /** datagram socket receive buffer size, in bytes */
   protected int udpRecvBufferSize = DEFAULT_UDP_RECV_BUFFER_SIZE;
-  /**
-   * max datagram message size, in bytes.  This should be < 64k
-   */
+  /** max datagram message size, in bytes. This should be < 64k */
   protected int udpFragmentSize = DEFAULT_UDP_FRAGMENT_SIZE;
 
-  /**
-   * whether tcp/ip sockets should be disabled
-   */
+  /** whether tcp/ip sockets should be disabled */
   protected boolean disableTcp = DEFAULT_DISABLE_TCP;
 
-  /**
-   * whether time statistics should be enabled for the distributed system
-   */
+  /** whether time statistics should be enabled for the distributed system */
   protected boolean enableTimeStatistics = DEFAULT_ENABLE_TIME_STATISTICS;
 
-  /**
-   * member contact timeout, in milliseconds, for failure detection
-   */
+  /** member contact timeout, in milliseconds, for failure detection */
   protected int memberTimeout = DEFAULT_MEMBER_TIMEOUT;
 
-  /**
-   * the Jgroups port ranges allowed
-   */
+  /** the Jgroups port ranges allowed */
   private int[] membershipPortRange = DEFAULT_MEMBERSHIP_PORT_RANGE;
 
-  /**
-   * Max wait time for the member before reconnecting to the DS in case of
-   * required role loss.
-   */
+  /** Max wait time for the member before reconnecting to the DS in case of required role loss. */
   private int maxWaitTimeForReconnect = DEFAULT_MAX_WAIT_TIME_FOR_RECONNECT;
-  /**
-   * Max number of tries allowed for reconnect in case of required role loss.
-   */
+  /** Max number of tries allowed for reconnect in case of required role loss. */
   private int maxNumReconnectTries = DEFAULT_MAX_NUM_RECONNECT_TRIES;
 
   private int asyncDistributionTimeout = DEFAULT_ASYNC_DISTRIBUTION_TIMEOUT;
   private int asyncQueueTimeout = DEFAULT_ASYNC_QUEUE_TIMEOUT;
   private int asyncMaxQueueSize = DEFAULT_ASYNC_MAX_QUEUE_SIZE;
 
-  /**
-   * @since GemFire 5.7
-   */
+  /** @since GemFire 5.7 */
   private String clientConflation = CLIENT_CONFLATION_PROP_VALUE_DEFAULT;
 
-  /**
-   * The id of the durable client
-   */
+  /** The id of the durable client */
   private String durableClientId = DEFAULT_DURABLE_CLIENT_ID;
 
-  /**
-   * The timeout of the durable client
-   */
+  /** The timeout of the durable client */
   private int durableClientTimeout = DEFAULT_DURABLE_CLIENT_TIMEOUT;
 
-  /**
-   * The client authentication initialization method name
-   */
+  /** The client authentication initialization method name */
   private String securityClientAuthInit = DEFAULT_SECURITY_CLIENT_AUTH_INIT;
 
-  /**
-   * The client authenticating method name
-   */
+  /** The client authenticating method name */
   private String securityClientAuthenticator = DEFAULT_SECURITY_CLIENT_AUTHENTICATOR;
 
-  /**
-   * The security manager class name
-   */
+  /** The security manager class name */
   private String securityManager = DEFAULT_SECURITY_MANAGER;
 
-  /**
-   * The post processor class name
-   */
+  /** The post processor class name */
   private String postProcessor = DEFAULT_SECURITY_POST_PROCESSOR;
 
-  /**
-   * The client Diffie-Hellman method name
-   */
+  /** The client Diffie-Hellman method name */
   private String securityClientDHAlgo = DEFAULT_SECURITY_CLIENT_DHALGO;
 
-  /**
-   * The udp Diffie-Hellman method name
-   */
+  /** The udp Diffie-Hellman method name */
   private String securityUDPDHAlgo = DEFAULT_SECURITY_UDP_DHALGO;
 
-  /**
-   * The peer authentication initialization method name
-   */
+  /** The peer authentication initialization method name */
   private String securityPeerAuthInit = DEFAULT_SECURITY_PEER_AUTH_INIT;
 
-  /**
-   * The peer authenticating method name
-   */
+  /** The peer authenticating method name */
   private String securityPeerAuthenticator = DEFAULT_SECURITY_PEER_AUTHENTICATOR;
 
-  /**
-   * The client authorization method name
-   */
+  /** The client authorization method name */
   private String securityClientAccessor = DEFAULT_SECURITY_CLIENT_ACCESSOR;
 
-  /**
-   * The post-processing client authorization method name
-   */
+  /** The post-processing client authorization method name */
   private String securityClientAccessorPP = DEFAULT_SECURITY_CLIENT_ACCESSOR_PP;
 
   /**
    * The level at which security related log messages are logged
+   *
    * @see org.apache.geode.internal.logging.LogWriterImpl#levelNameToCode(String)
    */
   protected int securityLogLevel = DEFAULT_LOG_LEVEL;
 
-  /**
-   * whether network partition detection algorithms are enabled
-   */
+  /** whether network partition detection algorithms are enabled */
   private boolean enableNetworkPartitionDetection = DEFAULT_ENABLE_NETWORK_PARTITION_DETECTION;
 
-  /**
-   * whether auto reconnect after network partition is disabled
-   */
+  /** whether auto reconnect after network partition is disabled */
   private boolean disableAutoReconnect = DEFAULT_DISABLE_AUTO_RECONNECT;
 
-  /**
-   * The security log file
-   */
+  /** The security log file */
   private File securityLogFile = DEFAULT_SECURITY_LOG_FILE;
 
-  /**
-   * The p2p membership check timeout
-   */
+  /** The p2p membership check timeout */
   private int securityPeerMembershipTimeout = DEFAULT_SECURITY_PEER_VERIFYMEMBER_TIMEOUT;
 
-  /**
-   * The member security credentials
-   */
+  /** The member security credentials */
   private Properties security = new Properties();
 
-  /**
-   * The User defined properties to be used for cache.xml replacements
-   */
+  /** The User defined properties to be used for cache.xml replacements */
   private Properties userDefinedProps = new Properties();
   /**
-   * Prefix to use for properties that are put as JVM java properties for use
-   * with layers (e.g. jgroups membership) that do not have a
-   * <code>DistributionConfig</code> object.
+   * Prefix to use for properties that are put as JVM java properties for use with layers (e.g.
+   * jgroups membership) that do not have a <code>DistributionConfig</code> object.
    */
   public static final String SECURITY_SYSTEM_PREFIX = GEMFIRE_PREFIX + "sys.";
 
-  /**
-   * whether to remove unresponsive client or not
-   */
+  /** whether to remove unresponsive client or not */
   private boolean removeUnresponsiveClient = DEFAULT_REMOVE_UNRESPONSIVE_CLIENT;
 
-  /**
-   * Is delta propagation enabled or not
-   **/
+  /** Is delta propagation enabled or not */
   private boolean deltaPropagation = DEFAULT_DELTA_PROPAGATION;
 
   private Map props;
 
   private int distributedSystemId = DistributionConfig.DEFAULT_DISTRIBUTED_SYSTEM_ID;
 
-  /**
-   * The locations of the remote distribution locators
-   */
+  /** The locations of the remote distribution locators */
   private String remoteLocators = DEFAULT_REMOTE_LOCATORS;
 
   private boolean enforceUniqueHost = DistributionConfig.DEFAULT_ENFORCE_UNIQUE_HOST;
 
   private String redundancyZone = DistributionConfig.DEFAULT_REDUNDANCY_ZONE;
 
-  /**
-   * holds the ssl properties specified in gfsecurity.properties
-   */
+  /** holds the ssl properties specified in gfsecurity.properties */
   private Properties sslProperties = new Properties();
 
-  /**
-   * holds the ssl properties specified in gfsecurity.properties
-   */
+  /** holds the ssl properties specified in gfsecurity.properties */
   private Properties clusterSSLProperties = new Properties();
 
   private String groups = DEFAULT_GROUPS;
 
-  protected boolean enableSharedConfiguration = DistributionConfig.DEFAULT_ENABLE_CLUSTER_CONFIGURATION;
+  protected boolean enableSharedConfiguration =
+      DistributionConfig.DEFAULT_ENABLE_CLUSTER_CONFIGURATION;
   protected boolean useSharedConfiguration = DistributionConfig.DEFAULT_USE_CLUSTER_CONFIGURATION;
-  protected boolean loadSharedConfigurationFromDir = DistributionConfig.DEFAULT_LOAD_CLUSTER_CONFIG_FROM_DIR;
+  protected boolean loadSharedConfigurationFromDir =
+      DistributionConfig.DEFAULT_LOAD_CLUSTER_CONFIG_FROM_DIR;
   protected String clusterConfigDir = "";
 
   private int httpServicePort = DEFAULT_HTTP_SERVICE_PORT;
@@ -414,39 +303,28 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   private String httpServiceBindAddress = DEFAULT_HTTP_SERVICE_BIND_ADDRESS;
 
   private boolean startDevRestApi = DEFAULT_START_DEV_REST_API;
-  /**
-   * port on which {@link GemFireMemcachedServer} server is started
-   */
+  /** port on which {@link GemFireMemcachedServer} server is started */
   private int memcachedPort;
 
-  /**
-   * protocol for GemFireMemcachedServer
-   */
+  /** protocol for GemFireMemcachedServer */
   private String memcachedProtocol = DEFAULT_MEMCACHED_PROTOCOL;
 
-  /**
-   * Bind address for GemFireMemcachedServer
-   */
+  /** Bind address for GemFireMemcachedServer */
   private String memcachedBindAddress = DEFAULT_MEMCACHED_BIND_ADDRESS;
 
-  /**
-   * Are distributed transactions enabled or not
-   */
+  /** Are distributed transactions enabled or not */
   private boolean distributedTransactions = DEFAULT_DISTRIBUTED_TRANSACTIONS;
 
-  /**
-   * port on which {@link GeodeRedisServer} is started
-   */
+  /** port on which {@link GeodeRedisServer} is started */
   private int redisPort = DEFAULT_REDIS_PORT;
 
-  /**
-   * Bind address for GeodeRedisServer
-   */
+  /** Bind address for GeodeRedisServer */
   private String redisBindAddress = DEFAULT_REDIS_BIND_ADDRESS;
 
   private String redisPassword = DEFAULT_REDIS_PASSWORD;
 
-  private boolean jmxManager = Boolean.getBoolean(InternalLocator.FORCE_LOCATOR_DM_TYPE) ? true : DEFAULT_JMX_MANAGER;
+  private boolean jmxManager =
+      Boolean.getBoolean(InternalLocator.FORCE_LOCATOR_DM_TYPE) ? true : DEFAULT_JMX_MANAGER;
   private boolean jmxManagerStart = DEFAULT_JMX_MANAGER_START;
   private int jmxManagerPort = DEFAULT_JMX_MANAGER_PORT;
   private String jmxManagerBindAddress = DEFAULT_JMX_MANAGER_BIND_ADDRESS;
@@ -456,99 +334,84 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   private int jmxManagerHttpPort = DEFAULT_HTTP_SERVICE_PORT;
   private int jmxManagerUpdateRate = DEFAULT_JMX_MANAGER_UPDATE_RATE;
 
+  @Deprecated private boolean jmxManagerSSLEnabled = DEFAULT_JMX_MANAGER_SSL_ENABLED;
+
   @Deprecated
-  private boolean jmxManagerSSLEnabled = DEFAULT_JMX_MANAGER_SSL_ENABLED;
-  @Deprecated
-  private boolean jmxManagerSslRequireAuthentication = DEFAULT_JMX_MANAGER_SSL_REQUIRE_AUTHENTICATION;
-  @Deprecated
-  private String jmxManagerSslProtocols = DEFAULT_JMX_MANAGER_SSL_PROTOCOLS;
-  @Deprecated
-  private String jmxManagerSslCiphers = DEFAULT_JMX_MANAGER_SSL_CIPHERS;
-  @Deprecated
-  private Properties jmxManagerSslProperties = new Properties();
-  @Deprecated
-  private String jmxManagerSSLKeyStore = DEFAULT_JMX_MANAGER_SSL_KEYSTORE;
-  @Deprecated
-  private String jmxManagerSSLKeyStoreType = DEFAULT_JMX_MANAGER_SSL_KEYSTORE_TYPE;
+  private boolean jmxManagerSslRequireAuthentication =
+      DEFAULT_JMX_MANAGER_SSL_REQUIRE_AUTHENTICATION;
+
+  @Deprecated private String jmxManagerSslProtocols = DEFAULT_JMX_MANAGER_SSL_PROTOCOLS;
+  @Deprecated private String jmxManagerSslCiphers = DEFAULT_JMX_MANAGER_SSL_CIPHERS;
+  @Deprecated private Properties jmxManagerSslProperties = new Properties();
+  @Deprecated private String jmxManagerSSLKeyStore = DEFAULT_JMX_MANAGER_SSL_KEYSTORE;
+  @Deprecated private String jmxManagerSSLKeyStoreType = DEFAULT_JMX_MANAGER_SSL_KEYSTORE_TYPE;
+
   @Deprecated
   private String jmxManagerSSLKeyStorePassword = DEFAULT_JMX_MANAGER_SSL_KEYSTORE_PASSWORD;
-  @Deprecated
-  private String jmxManagerSSLTrustStore = DEFAULT_JMX_MANAGER_SSL_TRUSTSTORE;
+
+  @Deprecated private String jmxManagerSSLTrustStore = DEFAULT_JMX_MANAGER_SSL_TRUSTSTORE;
+
   @Deprecated
   private String jmxManagerSSLTrustStorePassword = DEFAULT_JMX_MANAGER_SSL_TRUSTSTORE_PASSWORD;
 
   private String jmxManagerSSLAlias = DEFAULT_SSL_ALIAS;
 
-  @Deprecated
-  private boolean serverSSLEnabled = DEFAULT_SERVER_SSL_ENABLED;
+  @Deprecated private boolean serverSSLEnabled = DEFAULT_SERVER_SSL_ENABLED;
+
   @Deprecated
   private boolean serverSslRequireAuthentication = DEFAULT_SERVER_SSL_REQUIRE_AUTHENTICATION;
-  @Deprecated
-  private String serverSslProtocols = DEFAULT_SERVER_SSL_PROTOCOLS;
-  @Deprecated
-  private String serverSslCiphers = DEFAULT_SERVER_SSL_CIPHERS;
-  @Deprecated
-  private Properties serverSslProperties = new Properties();
-  @Deprecated
-  private String serverSSLKeyStore = DEFAULT_SERVER_SSL_KEYSTORE;
-  @Deprecated
-  private String serverSSLKeyStoreType = DEFAULT_SERVER_SSL_KEYSTORE_TYPE;
-  @Deprecated
-  private String serverSSLKeyStorePassword = DEFAULT_SERVER_SSL_KEYSTORE_PASSWORD;
-  @Deprecated
-  private String serverSSLTrustStore = DEFAULT_SERVER_SSL_TRUSTSTORE;
-  @Deprecated
-  private String serverSSLTrustStorePassword = DEFAULT_SERVER_SSL_TRUSTSTORE_PASSWORD;
+
+  @Deprecated private String serverSslProtocols = DEFAULT_SERVER_SSL_PROTOCOLS;
+  @Deprecated private String serverSslCiphers = DEFAULT_SERVER_SSL_CIPHERS;
+  @Deprecated private Properties serverSslProperties = new Properties();
+  @Deprecated private String serverSSLKeyStore = DEFAULT_SERVER_SSL_KEYSTORE;
+  @Deprecated private String serverSSLKeyStoreType = DEFAULT_SERVER_SSL_KEYSTORE_TYPE;
+  @Deprecated private String serverSSLKeyStorePassword = DEFAULT_SERVER_SSL_KEYSTORE_PASSWORD;
+  @Deprecated private String serverSSLTrustStore = DEFAULT_SERVER_SSL_TRUSTSTORE;
+  @Deprecated private String serverSSLTrustStorePassword = DEFAULT_SERVER_SSL_TRUSTSTORE_PASSWORD;
 
   private String serverSSLAlias = DEFAULT_SSL_ALIAS;
 
-  @Deprecated
-  private boolean gatewaySSLEnabled = DEFAULT_GATEWAY_SSL_ENABLED;
+  @Deprecated private boolean gatewaySSLEnabled = DEFAULT_GATEWAY_SSL_ENABLED;
+
   @Deprecated
   private boolean gatewaySslRequireAuthentication = DEFAULT_GATEWAY_SSL_REQUIRE_AUTHENTICATION;
-  @Deprecated
-  private String gatewaySslProtocols = DEFAULT_GATEWAY_SSL_PROTOCOLS;
-  @Deprecated
-  private String gatewaySslCiphers = DEFAULT_GATEWAY_SSL_CIPHERS;
-  @Deprecated
-  private Properties gatewaySslProperties = new Properties();
-  @Deprecated
-  private String gatewaySSLKeyStore = DEFAULT_GATEWAY_SSL_KEYSTORE;
-  @Deprecated
-  private String gatewaySSLKeyStoreType = DEFAULT_GATEWAY_SSL_KEYSTORE_TYPE;
-  @Deprecated
-  private String gatewaySSLKeyStorePassword = DEFAULT_GATEWAY_SSL_KEYSTORE_PASSWORD;
-  @Deprecated
-  private String gatewaySSLTrustStore = DEFAULT_GATEWAY_SSL_TRUSTSTORE;
-  @Deprecated
-  private String gatewaySSLTrustStorePassword = DEFAULT_GATEWAY_SSL_TRUSTSTORE_PASSWORD;
+
+  @Deprecated private String gatewaySslProtocols = DEFAULT_GATEWAY_SSL_PROTOCOLS;
+  @Deprecated private String gatewaySslCiphers = DEFAULT_GATEWAY_SSL_CIPHERS;
+  @Deprecated private Properties gatewaySslProperties = new Properties();
+  @Deprecated private String gatewaySSLKeyStore = DEFAULT_GATEWAY_SSL_KEYSTORE;
+  @Deprecated private String gatewaySSLKeyStoreType = DEFAULT_GATEWAY_SSL_KEYSTORE_TYPE;
+  @Deprecated private String gatewaySSLKeyStorePassword = DEFAULT_GATEWAY_SSL_KEYSTORE_PASSWORD;
+  @Deprecated private String gatewaySSLTrustStore = DEFAULT_GATEWAY_SSL_TRUSTSTORE;
+  @Deprecated private String gatewaySSLTrustStorePassword = DEFAULT_GATEWAY_SSL_TRUSTSTORE_PASSWORD;
 
   private String gatewaySSLAlias = DEFAULT_SSL_ALIAS;
 
+  @Deprecated private boolean httpServiceSSLEnabled = DEFAULT_HTTP_SERVICE_SSL_ENABLED;
+
   @Deprecated
-  private boolean httpServiceSSLEnabled = DEFAULT_HTTP_SERVICE_SSL_ENABLED;
-  @Deprecated
-  private boolean httpServiceSSLRequireAuthentication = DEFAULT_HTTP_SERVICE_SSL_REQUIRE_AUTHENTICATION;
-  @Deprecated
-  private String httpServiceSSLProtocols = DEFAULT_HTTP_SERVICE_SSL_PROTOCOLS;
-  @Deprecated
-  private String httpServiceSSLCiphers = DEFAULT_HTTP_SERVICE_SSL_CIPHERS;
-  @Deprecated
-  private Properties httpServiceSSLProperties = new Properties();
-  @Deprecated
-  private String httpServiceSSLKeyStore = DEFAULT_HTTP_SERVICE_SSL_KEYSTORE;
-  @Deprecated
-  private String httpServiceSSLKeyStoreType = DEFAULT_HTTP_SERVICE_SSL_KEYSTORE_TYPE;
+  private boolean httpServiceSSLRequireAuthentication =
+      DEFAULT_HTTP_SERVICE_SSL_REQUIRE_AUTHENTICATION;
+
+  @Deprecated private String httpServiceSSLProtocols = DEFAULT_HTTP_SERVICE_SSL_PROTOCOLS;
+  @Deprecated private String httpServiceSSLCiphers = DEFAULT_HTTP_SERVICE_SSL_CIPHERS;
+  @Deprecated private Properties httpServiceSSLProperties = new Properties();
+  @Deprecated private String httpServiceSSLKeyStore = DEFAULT_HTTP_SERVICE_SSL_KEYSTORE;
+  @Deprecated private String httpServiceSSLKeyStoreType = DEFAULT_HTTP_SERVICE_SSL_KEYSTORE_TYPE;
+
   @Deprecated
   private String httpServiceSSLKeyStorePassword = DEFAULT_HTTP_SERVICE_SSL_KEYSTORE_PASSWORD;
-  @Deprecated
-  private String httpServiceSSLTrustStore = DEFAULT_HTTP_SERVICE_SSL_TRUSTSTORE;
+
+  @Deprecated private String httpServiceSSLTrustStore = DEFAULT_HTTP_SERVICE_SSL_TRUSTSTORE;
+
   @Deprecated
   private String httpServiceSSLTrustStorePassword = DEFAULT_HTTP_SERVICE_SSL_TRUSTSTORE_PASSWORD;
 
   private String httpServiceSSLAlias = DEFAULT_SSL_ALIAS;
 
-  private SecurableCommunicationChannel[] securableCommunicationChannels = DEFAULT_SSL_ENABLED_COMPONENTS;
+  private SecurableCommunicationChannel[] securableCommunicationChannels =
+      DEFAULT_SSL_ENABLED_COMPONENTS;
 
   private String sslProtocols = DEFAULT_SSL_PROTOCOLS;
   private String sslCiphers = DEFAULT_SSL_CIPHERS;
@@ -558,25 +421,22 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   private String sslKeyStorePassword = DEFAULT_SSL_KEYSTORE_PASSWORD;
   private String sslTrustStore = DEFAULT_SSL_TRUSTSTORE;
   private String sslTrustStorePassword = DEFAULT_SSL_TRUSTSTORE_PASSWORD;
-  private boolean sslWebServiceRequireAuthentication = DEFAULT_SSL_WEB_SERVICE_REQUIRE_AUTHENTICATION;
+  private boolean sslWebServiceRequireAuthentication =
+      DEFAULT_SSL_WEB_SERVICE_REQUIRE_AUTHENTICATION;
 
   private String locatorSSLAlias = DEFAULT_SSL_ALIAS;
 
   private String sslDefaultAlias = DEFAULT_SSL_ALIAS;
 
-  private Map<String, ConfigSource> sourceMap = Collections.synchronizedMap(new HashMap<String, ConfigSource>());
+  private Map<String, ConfigSource> sourceMap =
+      Collections.synchronizedMap(new HashMap<String, ConfigSource>());
 
   protected String userCommandPackages = DEFAULT_USER_COMMAND_PACKAGES;
 
-  /**
-   * "off-heap-memory-size" with value of "" or "<size>[g|m]"
-   */
-
+  /** "off-heap-memory-size" with value of "" or "<size>[g|m]" */
   protected String offHeapMemorySize = DEFAULT_OFF_HEAP_MEMORY_SIZE;
 
-  /**
-   * Whether pages should be locked into memory or allowed to swap to disk
-   */
+  /** Whether pages should be locked into memory or allowed to swap to disk */
   private boolean lockMemory = DEFAULT_LOCK_MEMORY;
 
   private String shiroInit = "";
@@ -584,8 +444,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   //////////////////////  Constructors  //////////////////////
 
   /**
-   * Create a new <code>DistributionConfigImpl</code> from the
-   * contents of another <code>DistributionConfig</code>.
+   * Create a new <code>DistributionConfigImpl</code> from the contents of another <code>
+   * DistributionConfig</code>.
    */
   public DistributionConfigImpl(DistributionConfig other) {
     this.name = other.getName();
@@ -766,7 +626,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     this.serverSSLAlias = other.getServerSSLAlias();
     this.locatorSSLAlias = other.getLocatorSSLAlias();
 
-    this.securableCommunicationChannels = ((DistributionConfigImpl) other).securableCommunicationChannels;
+    this.securableCommunicationChannels =
+        ((DistributionConfigImpl) other).securableCommunicationChannels;
 
     this.sslCiphers = other.getSSLCiphers();
     this.sslProtocols = other.getSSLProtocols();
@@ -779,13 +640,11 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     this.sslProperties = other.getSSLProperties();
     this.sslDefaultAlias = other.getSSLDefaultAlias();
     this.sslWebServiceRequireAuthentication = other.getSSLWebRequireAuthentication();
-
   }
 
   /**
-   * Set to true to make attributes writable.
-   * Set to false to make attributes read only.
-   * By default they are read only.
+   * Set to true to make attributes writable. Set to false to make attributes read only. By default
+   * they are read only.
    */
   protected boolean modifiable = false;
 
@@ -795,18 +654,18 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   /**
-   * Creates a default application config. Does not read any
-   * properties. Currently only used by DistributionConfigImpl.main.
+   * Creates a default application config. Does not read any properties. Currently only used by
+   * DistributionConfigImpl.main.
    */
   private DistributionConfigImpl() {
     // do nothing. We just want a default config
   }
 
   /**
-   * Creates a new <code>DistributionConfigImpl</code> with the given
-   * non-default configuration properties.  See {@link
-   * org.apache.geode.distributed.DistributedSystem#connect} for a
-   * list of exceptions that may be thrown.
+   * Creates a new <code>DistributionConfigImpl</code> with the given non-default configuration
+   * properties. See {@link org.apache.geode.distributed.DistributedSystem#connect} for a list of
+   * exceptions that may be thrown.
+   *
    * @param nonDefault The configuration properties specified by the caller
    */
   public DistributionConfigImpl(Properties nonDefault) {
@@ -814,38 +673,36 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   /**
-   * Creates a new <code>DistributionConfigImpl</code> with the given
-   * non-default configuration properties. See
-   * {@link org.apache.geode.distributed.DistributedSystem#connect} for a
-   * list of exceptions that may be thrown.
+   * Creates a new <code>DistributionConfigImpl</code> with the given non-default configuration
+   * properties. See {@link org.apache.geode.distributed.DistributedSystem#connect} for a list of
+   * exceptions that may be thrown.
+   *
    * @param nonDefault The configuration properties specified by the caller
    * @param ignoreGemFirePropsFile whether to skip loading distributed system properties from
-   * gemfire.properties file
-   *
+   *     gemfire.properties file
    * @since GemFire 6.5
    */
-
   public DistributionConfigImpl(Properties nonDefault, boolean ignoreGemFirePropsFile) {
     this(nonDefault, ignoreGemFirePropsFile, false);
   }
 
   /**
-   * Creates a new <code>DistributionConfigImpl</code> with the given
-   * non-default configuration properties. See
-   * {@link org.apache.geode.distributed.DistributedSystem#connect} for a
-   * list of exceptions that may be thrown.
+   * Creates a new <code>DistributionConfigImpl</code> with the given non-default configuration
+   * properties. See {@link org.apache.geode.distributed.DistributedSystem#connect} for a list of
+   * exceptions that may be thrown.
+   *
    * @param nonDefault The configuration properties specified by the caller
    * @param ignoreGemFirePropsFile whether to skip loading distributed system properties from
-   * gemfire.properties file
-   * @param isConnected whether to skip Validation for SSL properties and copy of ssl
-   * properties to other ssl properties. This parameter will be used
-   * till we provide support for ssl-* properties.
-   *
+   *     gemfire.properties file
+   * @param isConnected whether to skip Validation for SSL properties and copy of ssl properties to
+   *     other ssl properties. This parameter will be used till we provide support for ssl-*
+   *     properties.
    * @since GemFire 8.0
    */
-  public DistributionConfigImpl(Properties nonDefault, boolean ignoreGemFirePropsFile, boolean isConnected) {
+  public DistributionConfigImpl(
+      Properties nonDefault, boolean ignoreGemFirePropsFile, boolean isConnected) {
     HashMap props = new HashMap();
-    if (!ignoreGemFirePropsFile) {//For admin bug #40434
+    if (!ignoreGemFirePropsFile) { //For admin bug #40434
       props.putAll(loadPropertiesFromURL(DistributedSystem.getPropertyFileURL(), false));
     }
     props.putAll(loadPropertiesFromURL(DistributedSystem.getSecurityPropertiesFileURL(), true));
@@ -880,7 +737,9 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     while (sysPropsIter.hasNext()) {
       Map.Entry sysEntry = (Map.Entry) sysPropsIter.next();
       String sysName = (String) sysEntry.getKey();
-      if (attNameSet.contains(sysName) || sysName.startsWith(GEMFIRE_PREFIX + SECURITY_PREFIX_NAME) || sysName.startsWith(GEMFIRE_PREFIX + SSL_SYSTEM_PROPS_NAME)) {
+      if (attNameSet.contains(sysName)
+          || sysName.startsWith(GEMFIRE_PREFIX + SECURITY_PREFIX_NAME)
+          || sysName.startsWith(GEMFIRE_PREFIX + SSL_SYSTEM_PROPS_NAME)) {
         String sysValue = (String) sysEntry.getValue();
         if (sysValue != null) {
           String attName = sysName.substring(GEMFIRE_PREFIX.length());
@@ -895,7 +754,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     if (!overriddenDefaults.isEmpty()) {
       for (String key : overriddenDefaults.stringPropertyNames()) {
         // only apply the overridden default if it's not already specified in props
-        final String property = key.substring(ProcessLauncherContext.OVERRIDDEN_DEFAULTS_PREFIX.length());
+        final String property =
+            key.substring(ProcessLauncherContext.OVERRIDDEN_DEFAULTS_PREFIX.length());
         if (!props.containsKey((property))) {
           props.put(property, overriddenDefaults.getProperty(key));
           this.sourceMap.put(property, ConfigSource.launcher());
@@ -909,13 +769,15 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       System.setProperty(SECURITY_SYSTEM_PREFIX + SECURITY_PEER_AUTH_INIT, securityPeerAuthInit);
     }
     if (securityPeerAuthenticator != null && securityPeerAuthenticator.length() > 0) {
-      System.setProperty(SECURITY_SYSTEM_PREFIX + SECURITY_PEER_AUTHENTICATOR, securityPeerAuthenticator);
+      System.setProperty(
+          SECURITY_SYSTEM_PREFIX + SECURITY_PEER_AUTHENTICATOR, securityPeerAuthenticator);
     }
 
     Iterator iter = security.entrySet().iterator();
     while (iter.hasNext()) {
       Map.Entry entry = (Map.Entry) iter.next();
-      System.setProperty(SECURITY_SYSTEM_PREFIX + (String) entry.getKey(), (String) entry.getValue());
+      System.setProperty(
+          SECURITY_SYSTEM_PREFIX + (String) entry.getKey(), (String) entry.getValue());
     }
     if (!isConnected) {
       copySSLPropsToServerSSLProps();
@@ -930,7 +792,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     validateSSLEnabledComponentsConfiguration();
     // Make attributes read only
     this.modifiable = false;
-
   }
 
   private void validateSSLEnabledComponentsConfiguration() {
@@ -947,58 +808,100 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       if (e.getCause() instanceof RuntimeException) {
         throw (RuntimeException) e.getCause();
       } else {
-        throw new InternalGemFireException("error invoking getter for property" + ConfigurationProperties.SSL_ENABLED_COMPONENTS);
+        throw new InternalGemFireException(
+            "error invoking getter for property" + ConfigurationProperties.SSL_ENABLED_COMPONENTS);
       }
     }
     SecurableCommunicationChannel[] sslEnabledComponents = (SecurableCommunicationChannel[]) value;
     for (SecurableCommunicationChannel securableCommunicationChannel : sslEnabledComponents) {
       if (!isAliasCorrectlyConfiguredForComponents(securableCommunicationChannel)) {
-        throw new IllegalArgumentException(LocalizedStrings.AbstractDistributionConfig_SSL_ENABLED_COMPONENTS_INVALID_ALIAS_OPTIONS.toLocalizedString());
+        throw new IllegalArgumentException(
+            LocalizedStrings.AbstractDistributionConfig_SSL_ENABLED_COMPONENTS_INVALID_ALIAS_OPTIONS
+                .toLocalizedString());
       }
     }
-
   }
 
-  private boolean isAliasCorrectlyConfiguredForComponents(final SecurableCommunicationChannel component) {
+  private boolean isAliasCorrectlyConfiguredForComponents(
+      final SecurableCommunicationChannel component) {
     switch (component) {
-    case ALL: {
-      //If the default alias is not set, then check that all the other component aliases are set
-      if (StringUtils.isEmpty(getSSLDefaultAlias())) {
-        boolean correctAlias = true;
-        correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.CLUSTER);
-        correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.GATEWAY);
-        correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.WEB);
-        correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.JMX);
-        correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.LOCATOR);
-        correctAlias &= isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.SERVER);
-        return correctAlias;
-      }
-    }
-    case CLUSTER: {
-      return StringUtils.isEmpty(getClusterSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
-    }
-    case GATEWAY: {
-      return StringUtils.isEmpty(getGatewaySSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
-    }
-    case WEB: {
-      return StringUtils.isEmpty(getHTTPServiceSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
-    }
-    case JMX: {
-      return StringUtils.isEmpty(getJMXSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
-    }
-    case LOCATOR: {
-      return StringUtils.isEmpty(getLocatorSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
-    }
-    case SERVER: {
-      return StringUtils.isEmpty(getServerSSLAlias()) ? true : (getSecurableCommunicationChannels().length > 1 ? !StringUtils.isEmpty(getSSLDefaultAlias()) : true);
-    }
-    default:
-      return false;
+      case ALL:
+        {
+          //If the default alias is not set, then check that all the other component aliases are set
+          if (StringUtils.isEmpty(getSSLDefaultAlias())) {
+            boolean correctAlias = true;
+            correctAlias &=
+                isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.CLUSTER);
+            correctAlias &=
+                isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.GATEWAY);
+            correctAlias &=
+                isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.WEB);
+            correctAlias &=
+                isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.JMX);
+            correctAlias &=
+                isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.LOCATOR);
+            correctAlias &=
+                isAliasCorrectlyConfiguredForComponents(SecurableCommunicationChannel.SERVER);
+            return correctAlias;
+          }
+        }
+      case CLUSTER:
+        {
+          return StringUtils.isEmpty(getClusterSSLAlias())
+              ? true
+              : (getSecurableCommunicationChannels().length > 1
+                  ? !StringUtils.isEmpty(getSSLDefaultAlias())
+                  : true);
+        }
+      case GATEWAY:
+        {
+          return StringUtils.isEmpty(getGatewaySSLAlias())
+              ? true
+              : (getSecurableCommunicationChannels().length > 1
+                  ? !StringUtils.isEmpty(getSSLDefaultAlias())
+                  : true);
+        }
+      case WEB:
+        {
+          return StringUtils.isEmpty(getHTTPServiceSSLAlias())
+              ? true
+              : (getSecurableCommunicationChannels().length > 1
+                  ? !StringUtils.isEmpty(getSSLDefaultAlias())
+                  : true);
+        }
+      case JMX:
+        {
+          return StringUtils.isEmpty(getJMXSSLAlias())
+              ? true
+              : (getSecurableCommunicationChannels().length > 1
+                  ? !StringUtils.isEmpty(getSSLDefaultAlias())
+                  : true);
+        }
+      case LOCATOR:
+        {
+          return StringUtils.isEmpty(getLocatorSSLAlias())
+              ? true
+              : (getSecurableCommunicationChannels().length > 1
+                  ? !StringUtils.isEmpty(getSSLDefaultAlias())
+                  : true);
+        }
+      case SERVER:
+        {
+          return StringUtils.isEmpty(getServerSSLAlias())
+              ? true
+              : (getSecurableCommunicationChannels().length > 1
+                  ? !StringUtils.isEmpty(getSSLDefaultAlias())
+                  : true);
+        }
+      default:
+        return false;
     }
   }
 
   /**
-   * Here we will validate the correctness of the set properties as per the CheckAttributeChecker annotations defined in #AbstractDistributionConfig
+   * Here we will validate the correctness of the set properties as per the CheckAttributeChecker
+   * annotations defined in #AbstractDistributionConfig
+   *
    * @param props
    */
   private void validateConfigurationProperties(final HashMap props) {
@@ -1027,7 +930,7 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   /*
    * if jmx-manager-ssl is true and jmx-manager-ssl-enabled is false then override jmx-manager-ssl-enabled with jmx-manager-ssl
    * if jmx-manager-ssl-enabled is false, then use the properties from cluster-ssl-* properties
-   * if jmx-manager-ssl-*properties are given then use them, and copy the unspecified jmx-manager properties from cluster-properties 
+   * if jmx-manager-ssl-*properties are given then use them, and copy the unspecified jmx-manager properties from cluster-properties
    */
   private void copySSLPropsToJMXSSLProps() {
     boolean jmxSSLEnabledOverriden = this.sourceMap.get(JMX_MANAGER_SSL_ENABLED) != null;
@@ -1049,7 +952,9 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
       if (this.sourceMap.get(CLUSTER_SSL_REQUIRE_AUTHENTICATION) != null) {
         this.jmxManagerSslRequireAuthentication = this.clusterSSLRequireAuthentication;
-        this.sourceMap.put(JMX_MANAGER_SSL_REQUIRE_AUTHENTICATION, this.sourceMap.get(CLUSTER_SSL_REQUIRE_AUTHENTICATION));
+        this.sourceMap.put(
+            JMX_MANAGER_SSL_REQUIRE_AUTHENTICATION,
+            this.sourceMap.get(CLUSTER_SSL_REQUIRE_AUTHENTICATION));
       }
 
       if (this.sourceMap.get(CLUSTER_SSL_KEYSTORE) != null) {
@@ -1058,11 +963,13 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       }
       if (this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE) != null) {
         this.jmxManagerSSLKeyStoreType = this.clusterSSLKeyStoreType;
-        this.sourceMap.put(JMX_MANAGER_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
+        this.sourceMap.put(
+            JMX_MANAGER_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
       }
       if (this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD) != null) {
         this.jmxManagerSSLKeyStorePassword = this.clusterSSLKeyStorePassword;
-        this.sourceMap.put(JMX_MANAGER_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
+        this.sourceMap.put(
+            JMX_MANAGER_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
       }
       if (this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE) != null) {
         this.jmxManagerSSLTrustStore = this.clusterSSLTrustStore;
@@ -1070,38 +977,49 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       }
       if (this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD) != null) {
         this.jmxManagerSSLTrustStorePassword = this.clusterSSLTrustStorePassword;
-        this.sourceMap.put(JMX_MANAGER_SSL_TRUSTSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
+        this.sourceMap.put(
+            JMX_MANAGER_SSL_TRUSTSTORE_PASSWORD,
+            this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
       }
       this.jmxManagerSslProperties.putAll(this.clusterSSLProperties);
     }
 
     if (jmxSSLEnabledOverriden) {
-      if (this.sourceMap.get(JMX_MANAGER_SSL_KEYSTORE) == null && this.sourceMap.get(CLUSTER_SSL_KEYSTORE) != null) {
+      if (this.sourceMap.get(JMX_MANAGER_SSL_KEYSTORE) == null
+          && this.sourceMap.get(CLUSTER_SSL_KEYSTORE) != null) {
         this.jmxManagerSSLKeyStore = this.clusterSSLKeyStore;
         this.sourceMap.put(JMX_MANAGER_SSL_KEYSTORE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE));
       }
-      if (this.sourceMap.get(JMX_MANAGER_SSL_KEYSTORE_TYPE) == null && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE) != null) {
+      if (this.sourceMap.get(JMX_MANAGER_SSL_KEYSTORE_TYPE) == null
+          && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE) != null) {
         this.jmxManagerSSLKeyStoreType = this.clusterSSLKeyStoreType;
-        this.sourceMap.put(JMX_MANAGER_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
+        this.sourceMap.put(
+            JMX_MANAGER_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
       }
-      if (this.sourceMap.get(JMX_MANAGER_SSL_KEYSTORE_PASSWORD) == null && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD) != null) {
+      if (this.sourceMap.get(JMX_MANAGER_SSL_KEYSTORE_PASSWORD) == null
+          && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD) != null) {
         this.jmxManagerSSLKeyStorePassword = this.clusterSSLKeyStorePassword;
-        this.sourceMap.put(JMX_MANAGER_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
+        this.sourceMap.put(
+            JMX_MANAGER_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
       }
-      if (this.sourceMap.get(JMX_MANAGER_SSL_TRUSTSTORE) == null && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE) != null) {
+      if (this.sourceMap.get(JMX_MANAGER_SSL_TRUSTSTORE) == null
+          && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE) != null) {
         this.jmxManagerSSLTrustStore = this.clusterSSLTrustStore;
         this.sourceMap.put(JMX_MANAGER_SSL_TRUSTSTORE, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE));
       }
-      if (this.sourceMap.get(JMX_MANAGER_SSL_TRUSTSTORE_PASSWORD) == null && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD) != null) {
+      if (this.sourceMap.get(JMX_MANAGER_SSL_TRUSTSTORE_PASSWORD) == null
+          && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD) != null) {
         this.jmxManagerSSLTrustStorePassword = this.clusterSSLTrustStorePassword;
-        this.sourceMap.put(JMX_MANAGER_SSL_TRUSTSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
+        this.sourceMap.put(
+            JMX_MANAGER_SSL_TRUSTSTORE_PASSWORD,
+            this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
       }
     }
   }
 
   /*
    * if http-service-ssl-enabled is false, then use the properties from cluster-ssl-* properties
-   * if http-service-ssl-*properties are given then use them, and copy the unspecified http-service properties from cluster-properties 
+   * if http-service-ssl-*properties are given then use them, and copy the unspecified http-service properties from cluster-properties
    */
   private void copySSLPropsToHTTPSSLProps() {
     boolean httpServiceSSLEnabledOverriden = this.sourceMap.get(HTTP_SERVICE_SSL_ENABLED) != null;
@@ -1124,7 +1042,9 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
       if (this.sourceMap.get(CLUSTER_SSL_REQUIRE_AUTHENTICATION) != null) {
         this.httpServiceSSLRequireAuthentication = this.clusterSSLRequireAuthentication;
-        this.sourceMap.put(HTTP_SERVICE_SSL_REQUIRE_AUTHENTICATION, this.sourceMap.get(CLUSTER_SSL_REQUIRE_AUTHENTICATION));
+        this.sourceMap.put(
+            HTTP_SERVICE_SSL_REQUIRE_AUTHENTICATION,
+            this.sourceMap.get(CLUSTER_SSL_REQUIRE_AUTHENTICATION));
       }
 
       if (this.sourceMap.get(CLUSTER_SSL_KEYSTORE) != null) {
@@ -1133,11 +1053,13 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       }
       if (this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE) != null) {
         setHttpServiceSSLKeyStoreType(this.clusterSSLKeyStoreType);
-        this.sourceMap.put(HTTP_SERVICE_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
+        this.sourceMap.put(
+            HTTP_SERVICE_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
       }
       if (this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD) != null) {
         setHttpServiceSSLKeyStorePassword(this.clusterSSLKeyStorePassword);
-        this.sourceMap.put(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
+        this.sourceMap.put(
+            HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
       }
       if (this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE) != null) {
         setHttpServiceSSLTrustStore(this.clusterSSLTrustStore);
@@ -1145,39 +1067,49 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       }
       if (this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD) != null) {
         setHttpServiceSSLTrustStorePassword(this.clusterSSLTrustStorePassword);
-        this.sourceMap.put(HTTP_SERVICE_SSL_TRUSTSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
+        this.sourceMap.put(
+            HTTP_SERVICE_SSL_TRUSTSTORE_PASSWORD,
+            this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
       }
       this.httpServiceSSLProperties.putAll(this.clusterSSLProperties);
     }
 
     if (httpServiceSSLEnabledOverriden) {
-      if (this.sourceMap.get(HTTP_SERVICE_SSL_KEYSTORE) == null && this.sourceMap.get(CLUSTER_SSL_KEYSTORE) != null) {
+      if (this.sourceMap.get(HTTP_SERVICE_SSL_KEYSTORE) == null
+          && this.sourceMap.get(CLUSTER_SSL_KEYSTORE) != null) {
         this.httpServiceSSLKeyStore = this.clusterSSLKeyStore;
         this.sourceMap.put(HTTP_SERVICE_SSL_KEYSTORE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE));
       }
-      if (this.sourceMap.get(HTTP_SERVICE_SSL_KEYSTORE_TYPE) == null && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE) != null) {
+      if (this.sourceMap.get(HTTP_SERVICE_SSL_KEYSTORE_TYPE) == null
+          && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE) != null) {
         this.httpServiceSSLKeyStoreType = this.clusterSSLKeyStoreType;
-        this.sourceMap.put(HTTP_SERVICE_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
+        this.sourceMap.put(
+            HTTP_SERVICE_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
       }
-      if (this.sourceMap.get(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD) == null && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD) != null) {
+      if (this.sourceMap.get(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD) == null
+          && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD) != null) {
         this.httpServiceSSLKeyStorePassword = this.clusterSSLKeyStorePassword;
-        this.sourceMap.put(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
+        this.sourceMap.put(
+            HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
       }
-      if (this.sourceMap.get(HTTP_SERVICE_SSL_TRUSTSTORE) == null && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE) != null) {
+      if (this.sourceMap.get(HTTP_SERVICE_SSL_TRUSTSTORE) == null
+          && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE) != null) {
         this.httpServiceSSLTrustStore = this.clusterSSLTrustStore;
         this.sourceMap.put(HTTP_SERVICE_SSL_TRUSTSTORE, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE));
       }
-      if (this.sourceMap.get(HTTP_SERVICE_SSL_TRUSTSTORE_PASSWORD) == null && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD) != null) {
+      if (this.sourceMap.get(HTTP_SERVICE_SSL_TRUSTSTORE_PASSWORD) == null
+          && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD) != null) {
         this.httpServiceSSLTrustStorePassword = this.clusterSSLTrustStorePassword;
-        this.sourceMap.put(HTTP_SERVICE_SSL_TRUSTSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
+        this.sourceMap.put(
+            HTTP_SERVICE_SSL_TRUSTSTORE_PASSWORD,
+            this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
       }
     }
-
   }
 
   /*
    * if server-ssl-enabled is false, then use the properties from cluster-ssl-* properties
-   * if server-ssl-*properties are given then use them, and copy the unspecified server properties from cluster-properties 
+   * if server-ssl-*properties are given then use them, and copy the unspecified server properties from cluster-properties
    */
   private void copySSLPropsToServerSSLProps() {
     boolean cacheServerSSLOverriden = this.sourceMap.get(SERVER_SSL_ENABLED) != null;
@@ -1199,7 +1131,9 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
       if (this.sourceMap.get(CLUSTER_SSL_REQUIRE_AUTHENTICATION) != null) {
         this.serverSslRequireAuthentication = this.clusterSSLRequireAuthentication;
-        this.sourceMap.put(SERVER_SSL_REQUIRE_AUTHENTICATION, this.sourceMap.get(CLUSTER_SSL_REQUIRE_AUTHENTICATION));
+        this.sourceMap.put(
+            SERVER_SSL_REQUIRE_AUTHENTICATION,
+            this.sourceMap.get(CLUSTER_SSL_REQUIRE_AUTHENTICATION));
       }
 
       if (this.sourceMap.get(CLUSTER_SSL_KEYSTORE) != null) {
@@ -1212,7 +1146,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       }
       if (this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD) != null) {
         this.serverSSLKeyStorePassword = this.clusterSSLKeyStorePassword;
-        this.sourceMap.put(SERVER_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
+        this.sourceMap.put(
+            SERVER_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
       }
       if (this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE) != null) {
         this.serverSSLTrustStore = this.clusterSSLTrustStore;
@@ -1220,38 +1155,46 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       }
       if (this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD) != null) {
         this.serverSSLTrustStorePassword = this.clusterSSLTrustStorePassword;
-        this.sourceMap.put(SERVER_SSL_TRUSTSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
+        this.sourceMap.put(
+            SERVER_SSL_TRUSTSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
       }
       this.serverSslProperties.putAll(this.clusterSSLProperties);
     }
 
     if (cacheServerSSLOverriden) {
-      if (this.sourceMap.get(SERVER_SSL_KEYSTORE) == null && this.sourceMap.get(CLUSTER_SSL_KEYSTORE) != null) {
+      if (this.sourceMap.get(SERVER_SSL_KEYSTORE) == null
+          && this.sourceMap.get(CLUSTER_SSL_KEYSTORE) != null) {
         this.serverSSLKeyStore = this.clusterSSLKeyStore;
         this.sourceMap.put(SERVER_SSL_KEYSTORE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE));
       }
-      if (this.sourceMap.get(SERVER_SSL_KEYSTORE_TYPE) == null && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE) != null) {
+      if (this.sourceMap.get(SERVER_SSL_KEYSTORE_TYPE) == null
+          && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE) != null) {
         this.serverSSLKeyStoreType = this.clusterSSLKeyStoreType;
         this.sourceMap.put(SERVER_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
       }
-      if (this.sourceMap.get(SERVER_SSL_KEYSTORE_PASSWORD) == null && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD) != null) {
+      if (this.sourceMap.get(SERVER_SSL_KEYSTORE_PASSWORD) == null
+          && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD) != null) {
         this.serverSSLKeyStorePassword = this.clusterSSLKeyStorePassword;
-        this.sourceMap.put(SERVER_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
+        this.sourceMap.put(
+            SERVER_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
       }
-      if (this.sourceMap.get(SERVER_SSL_TRUSTSTORE) == null && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE) != null) {
+      if (this.sourceMap.get(SERVER_SSL_TRUSTSTORE) == null
+          && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE) != null) {
         this.serverSSLTrustStore = this.clusterSSLTrustStore;
         this.sourceMap.put(SERVER_SSL_TRUSTSTORE, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE));
       }
-      if (this.sourceMap.get(SERVER_SSL_TRUSTSTORE_PASSWORD) == null && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD) != null) {
+      if (this.sourceMap.get(SERVER_SSL_TRUSTSTORE_PASSWORD) == null
+          && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD) != null) {
         this.serverSSLTrustStorePassword = this.clusterSSLTrustStorePassword;
-        this.sourceMap.put(SERVER_SSL_TRUSTSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
+        this.sourceMap.put(
+            SERVER_SSL_TRUSTSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
       }
     }
   }
 
   /*
    * if gateway-ssl-enabled is false, then use the properties from cluster-ssl-* properties
-   * if gateway-ssl-*properties are given then use them, and copy the unspecified gateway properties from cluster-properties 
+   * if gateway-ssl-*properties are given then use them, and copy the unspecified gateway properties from cluster-properties
    */
   private void copyClusterSSLPropsToGatewaySSLProps() {
     boolean gatewaySSLOverriden = this.sourceMap.get(GATEWAY_SSL_ENABLED) != null;
@@ -1273,7 +1216,9 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
       if (this.sourceMap.get(CLUSTER_SSL_REQUIRE_AUTHENTICATION) != null) {
         this.gatewaySslRequireAuthentication = this.clusterSSLRequireAuthentication;
-        this.sourceMap.put(GATEWAY_SSL_REQUIRE_AUTHENTICATION, this.sourceMap.get(CLUSTER_SSL_REQUIRE_AUTHENTICATION));
+        this.sourceMap.put(
+            GATEWAY_SSL_REQUIRE_AUTHENTICATION,
+            this.sourceMap.get(CLUSTER_SSL_REQUIRE_AUTHENTICATION));
       }
 
       if (this.sourceMap.get(CLUSTER_SSL_KEYSTORE) != null) {
@@ -1282,11 +1227,13 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       }
       if (this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE) != null) {
         this.gatewaySSLKeyStoreType = this.clusterSSLKeyStoreType;
-        this.sourceMap.put(GATEWAY_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
+        this.sourceMap.put(
+            GATEWAY_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
       }
       if (this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD) != null) {
         this.gatewaySSLKeyStorePassword = this.clusterSSLKeyStorePassword;
-        this.sourceMap.put(GATEWAY_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
+        this.sourceMap.put(
+            GATEWAY_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
       }
       if (this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE) != null) {
         this.gatewaySSLTrustStore = this.clusterSSLTrustStore;
@@ -1294,38 +1241,45 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       }
       if (this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD) != null) {
         this.gatewaySSLTrustStorePassword = this.clusterSSLTrustStorePassword;
-        this.sourceMap.put(GATEWAY_SSL_TRUSTSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
+        this.sourceMap.put(
+            GATEWAY_SSL_TRUSTSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
       }
       this.gatewaySslProperties.putAll(this.clusterSSLProperties);
     }
 
     if (gatewaySSLOverriden) {
-      if (this.sourceMap.get(GATEWAY_SSL_KEYSTORE) == null && this.sourceMap.get(CLUSTER_SSL_KEYSTORE) != null) {
+      if (this.sourceMap.get(GATEWAY_SSL_KEYSTORE) == null
+          && this.sourceMap.get(CLUSTER_SSL_KEYSTORE) != null) {
         this.gatewaySSLKeyStore = this.clusterSSLKeyStore;
         this.sourceMap.put(GATEWAY_SSL_KEYSTORE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE));
       }
-      if (this.sourceMap.get(GATEWAY_SSL_KEYSTORE_TYPE) == null && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE) != null) {
+      if (this.sourceMap.get(GATEWAY_SSL_KEYSTORE_TYPE) == null
+          && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE) != null) {
         this.gatewaySSLKeyStoreType = this.clusterSSLKeyStoreType;
-        this.sourceMap.put(GATEWAY_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
+        this.sourceMap.put(
+            GATEWAY_SSL_KEYSTORE_TYPE, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_TYPE));
       }
-      if (this.sourceMap.get(GATEWAY_SSL_KEYSTORE_PASSWORD) == null && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD) != null) {
+      if (this.sourceMap.get(GATEWAY_SSL_KEYSTORE_PASSWORD) == null
+          && this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD) != null) {
         this.gatewaySSLKeyStorePassword = this.clusterSSLKeyStorePassword;
-        this.sourceMap.put(GATEWAY_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
+        this.sourceMap.put(
+            GATEWAY_SSL_KEYSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_KEYSTORE_PASSWORD));
       }
-      if (this.sourceMap.get(GATEWAY_SSL_TRUSTSTORE) == null && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE) != null) {
+      if (this.sourceMap.get(GATEWAY_SSL_TRUSTSTORE) == null
+          && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE) != null) {
         this.gatewaySSLTrustStore = this.clusterSSLTrustStore;
         this.sourceMap.put(GATEWAY_SSL_TRUSTSTORE, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE));
       }
-      if (this.sourceMap.get(GATEWAY_SSL_TRUSTSTORE_PASSWORD) == null && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD) != null) {
+      if (this.sourceMap.get(GATEWAY_SSL_TRUSTSTORE_PASSWORD) == null
+          && this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD) != null) {
         this.gatewaySSLTrustStorePassword = this.clusterSSLTrustStorePassword;
-        this.sourceMap.put(GATEWAY_SSL_TRUSTSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
+        this.sourceMap.put(
+            GATEWAY_SSL_TRUSTSTORE_PASSWORD, this.sourceMap.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD));
       }
     }
   }
 
-  /**
-   * Produce a DistributionConfigImpl for the given properties and return it.
-   */
+  /** Produce a DistributionConfigImpl for the given properties and return it. */
   public static DistributionConfigImpl produce(Properties props) {
     if (props != null) {
       Object o = props.get(DS_CONFIG_NAME);
@@ -1336,9 +1290,7 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     return new DistributionConfigImpl(props, false, false);
   }
 
-  /**
-   * Produce a DistributionConfigImpl for the given properties and return it.
-   */
+  /** Produce a DistributionConfigImpl for the given properties and return it. */
   public static DistributionConfigImpl produce(Properties props, boolean isConnected) {
     if (props != null) {
       Object o = props.get(DS_CONFIG_NAME);
@@ -1372,7 +1324,14 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   public static boolean specialPropName(String propName) {
-    return propName.equalsIgnoreCase(CLUSTER_SSL_ENABLED) || propName.equals(SECURITY_PEER_AUTH_INIT) || propName.equals(SECURITY_PEER_AUTHENTICATOR) || propName.equals(LOG_WRITER_NAME) || propName.equals(DS_CONFIG_NAME) || propName.equals(SECURITY_LOG_WRITER_NAME) || propName.equals(LOG_OUTPUTSTREAM_NAME) || propName.equals(SECURITY_LOG_OUTPUTSTREAM_NAME);
+    return propName.equalsIgnoreCase(CLUSTER_SSL_ENABLED)
+        || propName.equals(SECURITY_PEER_AUTH_INIT)
+        || propName.equals(SECURITY_PEER_AUTHENTICATOR)
+        || propName.equals(LOG_WRITER_NAME)
+        || propName.equals(DS_CONFIG_NAME)
+        || propName.equals(SECURITY_LOG_WRITER_NAME)
+        || propName.equals(LOG_OUTPUTSTREAM_NAME)
+        || propName.equals(SECURITY_LOG_OUTPUTSTREAM_NAME);
   }
 
   @Override
@@ -1385,10 +1344,10 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   /**
-   * Loads the properties from gemfire.properties & gfsecurity.properties files
-   * into given Properties object.
-   * @param p the Properties to fill in
+   * Loads the properties from gemfire.properties & gfsecurity.properties files into given
+   * Properties object.
    *
+   * @param p the Properties to fill in
    * @throws GemFireIOException when error occurs while reading properties file
    */
   public static void loadGemFireProperties(Properties p) throws GemFireIOException {
@@ -1396,16 +1355,17 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   /**
-   * Loads the properties from gemfire.properties & gfsecurity.properties files
-   * into given Properties object. if <code>ignoreGemFirePropsFile</code> is
-   * <code>true</code>, properties are not read from gemfire.properties.
+   * Loads the properties from gemfire.properties & gfsecurity.properties files into given
+   * Properties object. if <code>ignoreGemFirePropsFile</code> is <code>true</code>, properties are
+   * not read from gemfire.properties.
+   *
    * @param p the Properties to fill in
    * @param ignoreGemFirePropsFile whether to ignore properties from gemfire.properties
-   *
    * @throws GemFireIOException when error occurs while reading properties file
    */
   // Fix for #44924
-  public static void loadGemFireProperties(Properties p, boolean ignoreGemFirePropsFile) throws GemFireIOException {
+  public static void loadGemFireProperties(Properties p, boolean ignoreGemFirePropsFile)
+      throws GemFireIOException {
     if (!ignoreGemFirePropsFile) {
       loadPropertiesFromURL(p, DistributedSystem.getPropertyFileURL());
     }
@@ -1413,9 +1373,7 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     loadPropertiesFromURL(p, DistributedSystem.getSecurityPropertiesFileURL());
   }
 
-  /**
-   * For every key in p mark it as being from the given source.
-   */
+  /** For every key in p mark it as being from the given source. */
   private void setSource(Properties p, ConfigSource source) {
     if (source == null) {
       throw new IllegalArgumentException("Valid ConfigSource must be specified instead of null.");
@@ -1439,7 +1397,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       try {
         p.load(url.openStream());
       } catch (IOException io) {
-        throw new GemFireIOException(LocalizedStrings.DistributionConfigImpl_FAILED_READING_0.toLocalizedString(url), io);
+        throw new GemFireIOException(
+            LocalizedStrings.DistributionConfigImpl_FAILED_READING_0.toLocalizedString(url), io);
       }
     }
   }
@@ -1458,20 +1417,30 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
         continue;
       }
       Object propVal = me.getValue();
-      if (propVal != null && (propVal instanceof String)) { // weed out extraneous non-string properties
+      if (propVal != null
+          && (propVal instanceof String)) { // weed out extraneous non-string properties
         this.setAttribute(propName, ((String) propVal).trim(), this.sourceMap.get(propName));
       }
     }
     if (props.containsKey(CLUSTER_SSL_ENABLED)) {
-      this.setAttribute(CLUSTER_SSL_ENABLED, (String) props.get(CLUSTER_SSL_ENABLED), this.sourceMap.get(CLUSTER_SSL_ENABLED));
+      this.setAttribute(
+          CLUSTER_SSL_ENABLED,
+          (String) props.get(CLUSTER_SSL_ENABLED),
+          this.sourceMap.get(CLUSTER_SSL_ENABLED));
     }
     // now set the security authInit if needed
     if (props.containsKey(SECURITY_PEER_AUTH_INIT)) {
-      this.setAttribute(SECURITY_PEER_AUTH_INIT, (String) props.get(SECURITY_PEER_AUTH_INIT), this.sourceMap.get(SECURITY_PEER_AUTH_INIT));
+      this.setAttribute(
+          SECURITY_PEER_AUTH_INIT,
+          (String) props.get(SECURITY_PEER_AUTH_INIT),
+          this.sourceMap.get(SECURITY_PEER_AUTH_INIT));
     }
     // and security authenticator if needed
     if (props.containsKey(SECURITY_PEER_AUTHENTICATOR)) {
-      this.setAttribute(SECURITY_PEER_AUTHENTICATOR, (String) props.get(SECURITY_PEER_AUTHENTICATOR), this.sourceMap.get(SECURITY_PEER_AUTHENTICATOR));
+      this.setAttribute(
+          SECURITY_PEER_AUTHENTICATOR,
+          (String) props.get(SECURITY_PEER_AUTHENTICATOR),
+          this.sourceMap.get(SECURITY_PEER_AUTHENTICATOR));
     }
 
     // Make attributes read only
@@ -1580,7 +1549,10 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
         return this.bindAddress + "[" + this.startLocatorPort + "]";
       }
       try {
-        return SocketCreator.getHostName(SocketCreator.getLocalHost()) + "[" + this.startLocatorPort + "]";
+        return SocketCreator.getHostName(SocketCreator.getLocalHost())
+            + "["
+            + this.startLocatorPort
+            + "]";
       } catch (UnknownHostException e) {
         // punt and use this.startLocator instead
       }
@@ -1795,10 +1767,10 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   /**
-   * the locator startup code must be able to modify the locator log file in order
-   * to establish a default log file if one hasn't been specified by the user.
-   * This method will change the log file, but only in the configuration settings -
-   * it won't affect a running distributed system's log file
+   * the locator startup code must be able to modify the locator log file in order to establish a
+   * default log file if one hasn't been specified by the user. This method will change the log
+   * file, but only in the configuration settings - it won't affect a running distributed system's
+   * log file
    */
   public void unsafeSetLogFile(File value) {
     this.logFile = value;
@@ -1845,7 +1817,13 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       // fix 48228
       InternalDistributedSystem ids = InternalDistributedSystem.getConnectedInstance();
       if (ids != null) {
-        ids.getLogWriter().info("Setting statistic-sample-rate to " + DEFAULT_STATISTIC_SAMPLE_RATE + " instead of the requested " + value + " because VSD does not work with sub-second sampling.");
+        ids.getLogWriter()
+            .info(
+                "Setting statistic-sample-rate to "
+                    + DEFAULT_STATISTIC_SAMPLE_RATE
+                    + " instead of the requested "
+                    + value
+                    + " because VSD does not work with sub-second sampling.");
       }
       value = DEFAULT_STATISTIC_SAMPLE_RATE;
     }
@@ -1930,7 +1908,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   public void setClusterSSLKeyStorePassword(String value) {
-    this.getClusterSSLProperties().setProperty(SSL_SYSTEM_PROPS_NAME + KEY_STORE_PASSWORD_NAME, value);
+    this.getClusterSSLProperties()
+        .setProperty(SSL_SYSTEM_PROPS_NAME + KEY_STORE_PASSWORD_NAME, value);
     this.clusterSSLKeyStorePassword = value;
   }
 
@@ -1940,7 +1919,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   public void setClusterSSLTrustStorePassword(String value) {
-    this.getClusterSSLProperties().setProperty(SSL_SYSTEM_PROPS_NAME + TRUST_STORE_PASSWORD_NAME, value);
+    this.getClusterSSLProperties()
+        .setProperty(SSL_SYSTEM_PROPS_NAME + TRUST_STORE_PASSWORD_NAME, value);
     this.clusterSSLTrustStorePassword = value;
   }
 
@@ -2028,16 +2008,12 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     memberTimeout = (Integer) value;
   }
 
-  /**
-   * @since GemFire 5.7
-   */
+  /** @since GemFire 5.7 */
   public String getClientConflation() {
     return this.clientConflation;
   }
 
-  /**
-   * @since GemFire 5.7
-   */
+  /** @since GemFire 5.7 */
   public void setClientConflation(String value) {
     this.clientConflation = (String) value;
   }
@@ -2206,7 +2182,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
   public void setDistributedSystemId(int distributedSystemId) {
     this.distributedSystemId = (Integer) distributedSystemId;
-
   }
 
   public boolean getEnforceUniqueHost() {
@@ -2220,12 +2195,10 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
   public void setEnforceUniqueHost(boolean enforceUniqueHost) {
     this.enforceUniqueHost = (Boolean) enforceUniqueHost;
-
   }
 
   public void setRedundancyZone(String redundancyZone) {
     this.redundancyZone = (String) redundancyZone;
-
   }
 
   public void setSSLProperty(String attName, String attValue) {
@@ -2233,7 +2206,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
       attName = attName.substring(SYS_PROP_NAME.length());
     }
     if (attName.endsWith(JMX_SSL_PROPS_SUFFIX)) {
-      this.jmxManagerSslProperties.setProperty(attName.substring(0, attName.length() - JMX_SSL_PROPS_SUFFIX.length()), attValue);
+      this.jmxManagerSslProperties.setProperty(
+          attName.substring(0, attName.length() - JMX_SSL_PROPS_SUFFIX.length()), attValue);
     } else {
       this.sslProperties.setProperty(attName, attValue);
 
@@ -2370,7 +2344,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
   public void setJmxManagerSSLTrustStorePassword(String value) {
 
-    this.getJmxSSLProperties().setProperty(SSL_SYSTEM_PROPS_NAME + TRUST_STORE_PASSWORD_NAME, value);
+    this.getJmxSSLProperties()
+        .setProperty(SSL_SYSTEM_PROPS_NAME + TRUST_STORE_PASSWORD_NAME, value);
     this.jmxManagerSSLTrustStorePassword = value;
   }
 
@@ -2562,7 +2537,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   @Override
-  public void setSecurableCommunicationChannels(final SecurableCommunicationChannel[] sslEnabledComponents) {
+  public void setSecurableCommunicationChannels(
+      final SecurableCommunicationChannel[] sslEnabledComponents) {
     this.securableCommunicationChannels = sslEnabledComponents;
   }
 
@@ -2671,9 +2647,9 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   ///////////////////////  Utility Methods  ///////////////////////
 
   /**
-   * Two instances of <code>DistributedConfigImpl</code> are equal if all of
-   * their configuration properties are the same. Be careful if you need to
-   * remove final and override this. See bug #50939.
+   * Two instances of <code>DistributedConfigImpl</code> are equal if all of their configuration
+   * properties are the same. Be careful if you need to remove final and override this. See bug
+   * #50939.
    */
   @Override
   public boolean equals(final Object o) {
@@ -2687,35 +2663,358 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
     final DistributionConfigImpl that = (DistributionConfigImpl) o;
 
-    return new EqualsBuilder().append(tcpPort, that.tcpPort).append(mcastPort, that.mcastPort).append(mcastTtl, that.mcastTtl).append(socketLeaseTime, that.socketLeaseTime).append(socketBufferSize, that.socketBufferSize).append(conserveSockets, that.conserveSockets).append(locatorWaitTime, that.locatorWaitTime).append(logLevel, that.logLevel).append(startLocatorPort, that.startLocatorPort).append(statisticSamplingEnabled, that.statisticSamplingEnabled).append(statisticSampleRate, that.statisticSampleRate).append(ackWaitThreshold, that.ackWaitThreshold).append(ackForceDisconnectThreshold, that.ackForceDisconnectThreshold).append(archiveDiskSpaceLimit, that.archiveDiskSpaceLimit).append(archiveFileSizeLimit, that.archiveFileSizeLimit).append(logDiskSpaceLimit, that.logDiskSpaceLimit).append(logFileSizeLimit, that.logFileSizeLimit).append(clusterSSLEnabled, that.clusterSSLEnabled).append(clusterSSLRequireAuthentication, that.clusterSSLRequireAuthentication)
-        .append(mcastSendBufferSize, that.mcastSendBufferSize).append(mcastRecvBufferSize, that.mcastRecvBufferSize).append(udpSendBufferSize, that.udpSendBufferSize).append(udpRecvBufferSize, that.udpRecvBufferSize).append(udpFragmentSize, that.udpFragmentSize).append(disableTcp, that.disableTcp).append(enableTimeStatistics, that.enableTimeStatistics).append(memberTimeout, that.memberTimeout).append(maxWaitTimeForReconnect, that.maxWaitTimeForReconnect).append(maxNumReconnectTries, that.maxNumReconnectTries).append(asyncDistributionTimeout, that.asyncDistributionTimeout).append(asyncQueueTimeout, that.asyncQueueTimeout).append(asyncMaxQueueSize, that.asyncMaxQueueSize).append(durableClientTimeout, that.durableClientTimeout).append(securityLogLevel, that.securityLogLevel).append(enableNetworkPartitionDetection, that.enableNetworkPartitionDetection).append(disableAutoReconnect, that.disableAutoReconnect).append(securityPeerMembershipTimeout, that.securityPeerMembershipTimeout)
-        .append(removeUnresponsiveClient, that.removeUnresponsiveClient).append(deltaPropagation, that.deltaPropagation).append(distributedSystemId, that.distributedSystemId).append(enforceUniqueHost, that.enforceUniqueHost).append(enableSharedConfiguration, that.enableSharedConfiguration).append(useSharedConfiguration, that.useSharedConfiguration).append(loadSharedConfigurationFromDir, that.loadSharedConfigurationFromDir).append(httpServicePort, that.httpServicePort).append(startDevRestApi, that.startDevRestApi).append(memcachedPort, that.memcachedPort).append(distributedTransactions, that.distributedTransactions).append(redisPort, that.redisPort).append(jmxManager, that.jmxManager).append(jmxManagerStart, that.jmxManagerStart).append(jmxManagerPort, that.jmxManagerPort).append(jmxManagerHttpPort, that.jmxManagerHttpPort).append(jmxManagerUpdateRate, that.jmxManagerUpdateRate).append(jmxManagerSSLEnabled, that.jmxManagerSSLEnabled)
-        .append(jmxManagerSslRequireAuthentication, that.jmxManagerSslRequireAuthentication).append(serverSSLEnabled, that.serverSSLEnabled).append(serverSslRequireAuthentication, that.serverSslRequireAuthentication).append(gatewaySSLEnabled, that.gatewaySSLEnabled).append(gatewaySslRequireAuthentication, that.gatewaySslRequireAuthentication).append(httpServiceSSLEnabled, that.httpServiceSSLEnabled).append(httpServiceSSLRequireAuthentication, that.httpServiceSSLRequireAuthentication).append(sslRequireAuthentication, that.sslRequireAuthentication).append(sslWebServiceRequireAuthentication, that.sslWebServiceRequireAuthentication).append(lockMemory, that.lockMemory).append(modifiable, that.modifiable).append(name, that.name).append(roles, that.roles).append(mcastAddress, that.mcastAddress).append(bindAddress, that.bindAddress).append(serverBindAddress, that.serverBindAddress).append(locators, that.locators).append(logFile, that.logFile).append(deployWorkingDir, that.deployWorkingDir)
-        .append(startLocator, that.startLocator).append(statisticArchiveFile, that.statisticArchiveFile).append(cacheXmlFile, that.cacheXmlFile).append(clusterSSLProtocols, that.clusterSSLProtocols).append(clusterSSLCiphers, that.clusterSSLCiphers).append(clusterSSLKeyStore, that.clusterSSLKeyStore).append(clusterSSLKeyStoreType, that.clusterSSLKeyStoreType).append(clusterSSLKeyStorePassword, that.clusterSSLKeyStorePassword).append(clusterSSLTrustStore, that.clusterSSLTrustStore).append(clusterSSLTrustStorePassword, that.clusterSSLTrustStorePassword).append(clusterSSLAlias, that.clusterSSLAlias).append(mcastFlowControl, that.mcastFlowControl).append(membershipPortRange, that.membershipPortRange).append(clientConflation, that.clientConflation).append(durableClientId, that.durableClientId).append(securityClientAuthInit, that.securityClientAuthInit).append(securityClientAuthenticator, that.securityClientAuthenticator).append(securityManager, that.securityManager)
-        .append(postProcessor, that.postProcessor).append(securityClientDHAlgo, that.securityClientDHAlgo).append(securityPeerAuthInit, that.securityPeerAuthInit).append(securityPeerAuthenticator, that.securityPeerAuthenticator).append(securityClientAccessor, that.securityClientAccessor).append(securityClientAccessorPP, that.securityClientAccessorPP).append(securityLogFile, that.securityLogFile).append(security, that.security).append(userDefinedProps, that.userDefinedProps).append(props, that.props).append(remoteLocators, that.remoteLocators).append(redundancyZone, that.redundancyZone).append(sslProperties, that.sslProperties).append(clusterSSLProperties, that.clusterSSLProperties).append(groups, that.groups).append(clusterConfigDir, that.clusterConfigDir).append(httpServiceBindAddress, that.httpServiceBindAddress).append(memcachedProtocol, that.memcachedProtocol).append(memcachedBindAddress, that.memcachedBindAddress).append(redisBindAddress, that.redisBindAddress)
-        .append(redisPassword, that.redisPassword).append(jmxManagerBindAddress, that.jmxManagerBindAddress).append(jmxManagerHostnameForClients, that.jmxManagerHostnameForClients).append(jmxManagerPasswordFile, that.jmxManagerPasswordFile).append(jmxManagerAccessFile, that.jmxManagerAccessFile).append(jmxManagerSslProtocols, that.jmxManagerSslProtocols).append(jmxManagerSslCiphers, that.jmxManagerSslCiphers).append(jmxManagerSslProperties, that.jmxManagerSslProperties).append(jmxManagerSSLKeyStore, that.jmxManagerSSLKeyStore).append(jmxManagerSSLKeyStoreType, that.jmxManagerSSLKeyStoreType).append(jmxManagerSSLKeyStorePassword, that.jmxManagerSSLKeyStorePassword).append(jmxManagerSSLTrustStore, that.jmxManagerSSLTrustStore).append(jmxManagerSSLTrustStorePassword, that.jmxManagerSSLTrustStorePassword).append(jmxManagerSSLAlias, that.jmxManagerSSLAlias).append(serverSslProtocols, that.serverSslProtocols).append(serverSslCiphers, that.serverSslCiphers)
-        .append(serverSslProperties, that.serverSslProperties).append(serverSSLKeyStore, that.serverSSLKeyStore).append(serverSSLKeyStoreType, that.serverSSLKeyStoreType).append(serverSSLKeyStorePassword, that.serverSSLKeyStorePassword).append(serverSSLTrustStore, that.serverSSLTrustStore).append(serverSSLTrustStorePassword, that.serverSSLTrustStorePassword).append(serverSSLAlias, that.serverSSLAlias).append(gatewaySslProtocols, that.gatewaySslProtocols).append(gatewaySslCiphers, that.gatewaySslCiphers).append(gatewaySslProperties, that.gatewaySslProperties).append(gatewaySSLKeyStore, that.gatewaySSLKeyStore).append(gatewaySSLKeyStoreType, that.gatewaySSLKeyStoreType).append(gatewaySSLKeyStorePassword, that.gatewaySSLKeyStorePassword).append(gatewaySSLTrustStore, that.gatewaySSLTrustStore).append(gatewaySSLTrustStorePassword, that.gatewaySSLTrustStorePassword).append(gatewaySSLAlias, that.gatewaySSLAlias).append(httpServiceSSLProtocols, that.httpServiceSSLProtocols)
-        .append(httpServiceSSLCiphers, that.httpServiceSSLCiphers).append(httpServiceSSLProperties, that.httpServiceSSLProperties).append(httpServiceSSLKeyStore, that.httpServiceSSLKeyStore).append(httpServiceSSLKeyStoreType, that.httpServiceSSLKeyStoreType).append(httpServiceSSLKeyStorePassword, that.httpServiceSSLKeyStorePassword).append(httpServiceSSLTrustStore, that.httpServiceSSLTrustStore).append(httpServiceSSLTrustStorePassword, that.httpServiceSSLTrustStorePassword).append(httpServiceSSLAlias, that.httpServiceSSLAlias).append(securableCommunicationChannels, that.securableCommunicationChannels).append(sslProtocols, that.sslProtocols).append(sslCiphers, that.sslCiphers).append(sslKeyStore, that.sslKeyStore).append(sslKeyStoreType, that.sslKeyStoreType).append(sslKeyStorePassword, that.sslKeyStorePassword).append(sslTrustStore, that.sslTrustStore).append(sslTrustStorePassword, that.sslTrustStorePassword).append(locatorSSLAlias, that.locatorSSLAlias)
-        .append(sslDefaultAlias, that.sslDefaultAlias).append(sourceMap, that.sourceMap).append(userCommandPackages, that.userCommandPackages).append(offHeapMemorySize, that.offHeapMemorySize).append(shiroInit, that.shiroInit).isEquals();
+    return new EqualsBuilder()
+        .append(tcpPort, that.tcpPort)
+        .append(mcastPort, that.mcastPort)
+        .append(mcastTtl, that.mcastTtl)
+        .append(socketLeaseTime, that.socketLeaseTime)
+        .append(socketBufferSize, that.socketBufferSize)
+        .append(conserveSockets, that.conserveSockets)
+        .append(locatorWaitTime, that.locatorWaitTime)
+        .append(logLevel, that.logLevel)
+        .append(startLocatorPort, that.startLocatorPort)
+        .append(statisticSamplingEnabled, that.statisticSamplingEnabled)
+        .append(statisticSampleRate, that.statisticSampleRate)
+        .append(ackWaitThreshold, that.ackWaitThreshold)
+        .append(ackForceDisconnectThreshold, that.ackForceDisconnectThreshold)
+        .append(archiveDiskSpaceLimit, that.archiveDiskSpaceLimit)
+        .append(archiveFileSizeLimit, that.archiveFileSizeLimit)
+        .append(logDiskSpaceLimit, that.logDiskSpaceLimit)
+        .append(logFileSizeLimit, that.logFileSizeLimit)
+        .append(clusterSSLEnabled, that.clusterSSLEnabled)
+        .append(clusterSSLRequireAuthentication, that.clusterSSLRequireAuthentication)
+        .append(mcastSendBufferSize, that.mcastSendBufferSize)
+        .append(mcastRecvBufferSize, that.mcastRecvBufferSize)
+        .append(udpSendBufferSize, that.udpSendBufferSize)
+        .append(udpRecvBufferSize, that.udpRecvBufferSize)
+        .append(udpFragmentSize, that.udpFragmentSize)
+        .append(disableTcp, that.disableTcp)
+        .append(enableTimeStatistics, that.enableTimeStatistics)
+        .append(memberTimeout, that.memberTimeout)
+        .append(maxWaitTimeForReconnect, that.maxWaitTimeForReconnect)
+        .append(maxNumReconnectTries, that.maxNumReconnectTries)
+        .append(asyncDistributionTimeout, that.asyncDistributionTimeout)
+        .append(asyncQueueTimeout, that.asyncQueueTimeout)
+        .append(asyncMaxQueueSize, that.asyncMaxQueueSize)
+        .append(durableClientTimeout, that.durableClientTimeout)
+        .append(securityLogLevel, that.securityLogLevel)
+        .append(enableNetworkPartitionDetection, that.enableNetworkPartitionDetection)
+        .append(disableAutoReconnect, that.disableAutoReconnect)
+        .append(securityPeerMembershipTimeout, that.securityPeerMembershipTimeout)
+        .append(removeUnresponsiveClient, that.removeUnresponsiveClient)
+        .append(deltaPropagation, that.deltaPropagation)
+        .append(distributedSystemId, that.distributedSystemId)
+        .append(enforceUniqueHost, that.enforceUniqueHost)
+        .append(enableSharedConfiguration, that.enableSharedConfiguration)
+        .append(useSharedConfiguration, that.useSharedConfiguration)
+        .append(loadSharedConfigurationFromDir, that.loadSharedConfigurationFromDir)
+        .append(httpServicePort, that.httpServicePort)
+        .append(startDevRestApi, that.startDevRestApi)
+        .append(memcachedPort, that.memcachedPort)
+        .append(distributedTransactions, that.distributedTransactions)
+        .append(redisPort, that.redisPort)
+        .append(jmxManager, that.jmxManager)
+        .append(jmxManagerStart, that.jmxManagerStart)
+        .append(jmxManagerPort, that.jmxManagerPort)
+        .append(jmxManagerHttpPort, that.jmxManagerHttpPort)
+        .append(jmxManagerUpdateRate, that.jmxManagerUpdateRate)
+        .append(jmxManagerSSLEnabled, that.jmxManagerSSLEnabled)
+        .append(jmxManagerSslRequireAuthentication, that.jmxManagerSslRequireAuthentication)
+        .append(serverSSLEnabled, that.serverSSLEnabled)
+        .append(serverSslRequireAuthentication, that.serverSslRequireAuthentication)
+        .append(gatewaySSLEnabled, that.gatewaySSLEnabled)
+        .append(gatewaySslRequireAuthentication, that.gatewaySslRequireAuthentication)
+        .append(httpServiceSSLEnabled, that.httpServiceSSLEnabled)
+        .append(httpServiceSSLRequireAuthentication, that.httpServiceSSLRequireAuthentication)
+        .append(sslRequireAuthentication, that.sslRequireAuthentication)
+        .append(sslWebServiceRequireAuthentication, that.sslWebServiceRequireAuthentication)
+        .append(lockMemory, that.lockMemory)
+        .append(modifiable, that.modifiable)
+        .append(name, that.name)
+        .append(roles, that.roles)
+        .append(mcastAddress, that.mcastAddress)
+        .append(bindAddress, that.bindAddress)
+        .append(serverBindAddress, that.serverBindAddress)
+        .append(locators, that.locators)
+        .append(logFile, that.logFile)
+        .append(deployWorkingDir, that.deployWorkingDir)
+        .append(startLocator, that.startLocator)
+        .append(statisticArchiveFile, that.statisticArchiveFile)
+        .append(cacheXmlFile, that.cacheXmlFile)
+        .append(clusterSSLProtocols, that.clusterSSLProtocols)
+        .append(clusterSSLCiphers, that.clusterSSLCiphers)
+        .append(clusterSSLKeyStore, that.clusterSSLKeyStore)
+        .append(clusterSSLKeyStoreType, that.clusterSSLKeyStoreType)
+        .append(clusterSSLKeyStorePassword, that.clusterSSLKeyStorePassword)
+        .append(clusterSSLTrustStore, that.clusterSSLTrustStore)
+        .append(clusterSSLTrustStorePassword, that.clusterSSLTrustStorePassword)
+        .append(clusterSSLAlias, that.clusterSSLAlias)
+        .append(mcastFlowControl, that.mcastFlowControl)
+        .append(membershipPortRange, that.membershipPortRange)
+        .append(clientConflation, that.clientConflation)
+        .append(durableClientId, that.durableClientId)
+        .append(securityClientAuthInit, that.securityClientAuthInit)
+        .append(securityClientAuthenticator, that.securityClientAuthenticator)
+        .append(securityManager, that.securityManager)
+        .append(postProcessor, that.postProcessor)
+        .append(securityClientDHAlgo, that.securityClientDHAlgo)
+        .append(securityPeerAuthInit, that.securityPeerAuthInit)
+        .append(securityPeerAuthenticator, that.securityPeerAuthenticator)
+        .append(securityClientAccessor, that.securityClientAccessor)
+        .append(securityClientAccessorPP, that.securityClientAccessorPP)
+        .append(securityLogFile, that.securityLogFile)
+        .append(security, that.security)
+        .append(userDefinedProps, that.userDefinedProps)
+        .append(props, that.props)
+        .append(remoteLocators, that.remoteLocators)
+        .append(redundancyZone, that.redundancyZone)
+        .append(sslProperties, that.sslProperties)
+        .append(clusterSSLProperties, that.clusterSSLProperties)
+        .append(groups, that.groups)
+        .append(clusterConfigDir, that.clusterConfigDir)
+        .append(httpServiceBindAddress, that.httpServiceBindAddress)
+        .append(memcachedProtocol, that.memcachedProtocol)
+        .append(memcachedBindAddress, that.memcachedBindAddress)
+        .append(redisBindAddress, that.redisBindAddress)
+        .append(redisPassword, that.redisPassword)
+        .append(jmxManagerBindAddress, that.jmxManagerBindAddress)
+        .append(jmxManagerHostnameForClients, that.jmxManagerHostnameForClients)
+        .append(jmxManagerPasswordFile, that.jmxManagerPasswordFile)
+        .append(jmxManagerAccessFile, that.jmxManagerAccessFile)
+        .append(jmxManagerSslProtocols, that.jmxManagerSslProtocols)
+        .append(jmxManagerSslCiphers, that.jmxManagerSslCiphers)
+        .append(jmxManagerSslProperties, that.jmxManagerSslProperties)
+        .append(jmxManagerSSLKeyStore, that.jmxManagerSSLKeyStore)
+        .append(jmxManagerSSLKeyStoreType, that.jmxManagerSSLKeyStoreType)
+        .append(jmxManagerSSLKeyStorePassword, that.jmxManagerSSLKeyStorePassword)
+        .append(jmxManagerSSLTrustStore, that.jmxManagerSSLTrustStore)
+        .append(jmxManagerSSLTrustStorePassword, that.jmxManagerSSLTrustStorePassword)
+        .append(jmxManagerSSLAlias, that.jmxManagerSSLAlias)
+        .append(serverSslProtocols, that.serverSslProtocols)
+        .append(serverSslCiphers, that.serverSslCiphers)
+        .append(serverSslProperties, that.serverSslProperties)
+        .append(serverSSLKeyStore, that.serverSSLKeyStore)
+        .append(serverSSLKeyStoreType, that.serverSSLKeyStoreType)
+        .append(serverSSLKeyStorePassword, that.serverSSLKeyStorePassword)
+        .append(serverSSLTrustStore, that.serverSSLTrustStore)
+        .append(serverSSLTrustStorePassword, that.serverSSLTrustStorePassword)
+        .append(serverSSLAlias, that.serverSSLAlias)
+        .append(gatewaySslProtocols, that.gatewaySslProtocols)
+        .append(gatewaySslCiphers, that.gatewaySslCiphers)
+        .append(gatewaySslProperties, that.gatewaySslProperties)
+        .append(gatewaySSLKeyStore, that.gatewaySSLKeyStore)
+        .append(gatewaySSLKeyStoreType, that.gatewaySSLKeyStoreType)
+        .append(gatewaySSLKeyStorePassword, that.gatewaySSLKeyStorePassword)
+        .append(gatewaySSLTrustStore, that.gatewaySSLTrustStore)
+        .append(gatewaySSLTrustStorePassword, that.gatewaySSLTrustStorePassword)
+        .append(gatewaySSLAlias, that.gatewaySSLAlias)
+        .append(httpServiceSSLProtocols, that.httpServiceSSLProtocols)
+        .append(httpServiceSSLCiphers, that.httpServiceSSLCiphers)
+        .append(httpServiceSSLProperties, that.httpServiceSSLProperties)
+        .append(httpServiceSSLKeyStore, that.httpServiceSSLKeyStore)
+        .append(httpServiceSSLKeyStoreType, that.httpServiceSSLKeyStoreType)
+        .append(httpServiceSSLKeyStorePassword, that.httpServiceSSLKeyStorePassword)
+        .append(httpServiceSSLTrustStore, that.httpServiceSSLTrustStore)
+        .append(httpServiceSSLTrustStorePassword, that.httpServiceSSLTrustStorePassword)
+        .append(httpServiceSSLAlias, that.httpServiceSSLAlias)
+        .append(securableCommunicationChannels, that.securableCommunicationChannels)
+        .append(sslProtocols, that.sslProtocols)
+        .append(sslCiphers, that.sslCiphers)
+        .append(sslKeyStore, that.sslKeyStore)
+        .append(sslKeyStoreType, that.sslKeyStoreType)
+        .append(sslKeyStorePassword, that.sslKeyStorePassword)
+        .append(sslTrustStore, that.sslTrustStore)
+        .append(sslTrustStorePassword, that.sslTrustStorePassword)
+        .append(locatorSSLAlias, that.locatorSSLAlias)
+        .append(sslDefaultAlias, that.sslDefaultAlias)
+        .append(sourceMap, that.sourceMap)
+        .append(userCommandPackages, that.userCommandPackages)
+        .append(offHeapMemorySize, that.offHeapMemorySize)
+        .append(shiroInit, that.shiroInit)
+        .isEquals();
   }
 
   /**
-   * The hash code of a <code>DistributionConfigImpl</code> is based on the
-   * value of all of its configuration properties. Be careful if you need to
-   * remove final and override this. See bug #50939.
+   * The hash code of a <code>DistributionConfigImpl</code> is based on the value of all of its
+   * configuration properties. Be careful if you need to remove final and override this. See bug
+   * #50939.
    */
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(name).append(tcpPort).append(mcastPort).append(mcastTtl).append(socketLeaseTime).append(socketBufferSize).append(conserveSockets).append(roles).append(mcastAddress).append(bindAddress).append(serverBindAddress).append(locators).append(locatorWaitTime).append(logFile).append(deployWorkingDir).append(logLevel).append(startLocator).append(startLocatorPort).append(statisticSamplingEnabled).append(statisticSampleRate).append(statisticArchiveFile).append(ackWaitThreshold).append(ackForceDisconnectThreshold).append(cacheXmlFile).append(archiveDiskSpaceLimit).append(archiveFileSizeLimit).append(logDiskSpaceLimit).append(logFileSizeLimit).append(clusterSSLEnabled).append(clusterSSLProtocols).append(clusterSSLCiphers).append(clusterSSLRequireAuthentication).append(clusterSSLKeyStore).append(clusterSSLKeyStoreType).append(clusterSSLKeyStorePassword).append(clusterSSLTrustStore).append(clusterSSLTrustStorePassword).append(clusterSSLAlias)
-        .append(mcastSendBufferSize).append(mcastRecvBufferSize).append(mcastFlowControl).append(udpSendBufferSize).append(udpRecvBufferSize).append(udpFragmentSize).append(disableTcp).append(enableTimeStatistics).append(memberTimeout).append(membershipPortRange).append(maxWaitTimeForReconnect).append(maxNumReconnectTries).append(asyncDistributionTimeout).append(asyncQueueTimeout).append(asyncMaxQueueSize).append(clientConflation).append(durableClientId).append(durableClientTimeout).append(securityClientAuthInit).append(securityClientAuthenticator).append(securityManager).append(postProcessor).append(securityClientDHAlgo).append(securityPeerAuthInit).append(securityPeerAuthenticator).append(securityClientAccessor).append(securityClientAccessorPP).append(securityLogLevel).append(enableNetworkPartitionDetection).append(disableAutoReconnect).append(securityLogFile).append(securityPeerMembershipTimeout).append(security).append(userDefinedProps).append(removeUnresponsiveClient)
-        .append(deltaPropagation).append(props).append(distributedSystemId).append(remoteLocators).append(enforceUniqueHost).append(redundancyZone).append(sslProperties).append(clusterSSLProperties).append(groups).append(enableSharedConfiguration).append(useSharedConfiguration).append(loadSharedConfigurationFromDir).append(clusterConfigDir).append(httpServicePort).append(httpServiceBindAddress).append(startDevRestApi).append(memcachedPort).append(memcachedProtocol).append(memcachedBindAddress).append(distributedTransactions).append(redisPort).append(redisBindAddress).append(redisPassword).append(jmxManager).append(jmxManagerStart).append(jmxManagerPort).append(jmxManagerBindAddress).append(jmxManagerHostnameForClients).append(jmxManagerPasswordFile).append(jmxManagerAccessFile).append(jmxManagerHttpPort).append(jmxManagerUpdateRate).append(jmxManagerSSLEnabled).append(jmxManagerSslRequireAuthentication).append(jmxManagerSslProtocols).append(jmxManagerSslCiphers)
-        .append(jmxManagerSslProperties).append(jmxManagerSSLKeyStore).append(jmxManagerSSLKeyStoreType).append(jmxManagerSSLKeyStorePassword).append(jmxManagerSSLTrustStore).append(jmxManagerSSLTrustStorePassword).append(jmxManagerSSLAlias).append(serverSSLEnabled).append(serverSslRequireAuthentication).append(serverSslProtocols).append(serverSslCiphers).append(serverSslProperties).append(serverSSLKeyStore).append(serverSSLKeyStoreType).append(serverSSLKeyStorePassword).append(serverSSLTrustStore).append(serverSSLTrustStorePassword).append(serverSSLAlias).append(gatewaySSLEnabled).append(gatewaySslRequireAuthentication).append(gatewaySslProtocols).append(gatewaySslCiphers).append(gatewaySslProperties).append(gatewaySSLKeyStore).append(gatewaySSLKeyStoreType).append(gatewaySSLKeyStorePassword).append(gatewaySSLTrustStore).append(gatewaySSLTrustStorePassword).append(gatewaySSLAlias).append(httpServiceSSLEnabled).append(httpServiceSSLRequireAuthentication)
-        .append(httpServiceSSLProtocols).append(httpServiceSSLCiphers).append(httpServiceSSLProperties).append(httpServiceSSLKeyStore).append(httpServiceSSLKeyStoreType).append(httpServiceSSLKeyStorePassword).append(httpServiceSSLTrustStore).append(httpServiceSSLTrustStorePassword).append(httpServiceSSLAlias).append(securableCommunicationChannels).append(sslProtocols).append(sslCiphers).append(sslRequireAuthentication).append(sslKeyStore).append(sslKeyStoreType).append(sslKeyStorePassword).append(sslTrustStore).append(sslTrustStorePassword).append(sslWebServiceRequireAuthentication).append(locatorSSLAlias).append(sslDefaultAlias).append(sourceMap).append(userCommandPackages).append(offHeapMemorySize).append(lockMemory).append(shiroInit).append(modifiable).toHashCode();
+    return new HashCodeBuilder(17, 37)
+        .append(name)
+        .append(tcpPort)
+        .append(mcastPort)
+        .append(mcastTtl)
+        .append(socketLeaseTime)
+        .append(socketBufferSize)
+        .append(conserveSockets)
+        .append(roles)
+        .append(mcastAddress)
+        .append(bindAddress)
+        .append(serverBindAddress)
+        .append(locators)
+        .append(locatorWaitTime)
+        .append(logFile)
+        .append(deployWorkingDir)
+        .append(logLevel)
+        .append(startLocator)
+        .append(startLocatorPort)
+        .append(statisticSamplingEnabled)
+        .append(statisticSampleRate)
+        .append(statisticArchiveFile)
+        .append(ackWaitThreshold)
+        .append(ackForceDisconnectThreshold)
+        .append(cacheXmlFile)
+        .append(archiveDiskSpaceLimit)
+        .append(archiveFileSizeLimit)
+        .append(logDiskSpaceLimit)
+        .append(logFileSizeLimit)
+        .append(clusterSSLEnabled)
+        .append(clusterSSLProtocols)
+        .append(clusterSSLCiphers)
+        .append(clusterSSLRequireAuthentication)
+        .append(clusterSSLKeyStore)
+        .append(clusterSSLKeyStoreType)
+        .append(clusterSSLKeyStorePassword)
+        .append(clusterSSLTrustStore)
+        .append(clusterSSLTrustStorePassword)
+        .append(clusterSSLAlias)
+        .append(mcastSendBufferSize)
+        .append(mcastRecvBufferSize)
+        .append(mcastFlowControl)
+        .append(udpSendBufferSize)
+        .append(udpRecvBufferSize)
+        .append(udpFragmentSize)
+        .append(disableTcp)
+        .append(enableTimeStatistics)
+        .append(memberTimeout)
+        .append(membershipPortRange)
+        .append(maxWaitTimeForReconnect)
+        .append(maxNumReconnectTries)
+        .append(asyncDistributionTimeout)
+        .append(asyncQueueTimeout)
+        .append(asyncMaxQueueSize)
+        .append(clientConflation)
+        .append(durableClientId)
+        .append(durableClientTimeout)
+        .append(securityClientAuthInit)
+        .append(securityClientAuthenticator)
+        .append(securityManager)
+        .append(postProcessor)
+        .append(securityClientDHAlgo)
+        .append(securityPeerAuthInit)
+        .append(securityPeerAuthenticator)
+        .append(securityClientAccessor)
+        .append(securityClientAccessorPP)
+        .append(securityLogLevel)
+        .append(enableNetworkPartitionDetection)
+        .append(disableAutoReconnect)
+        .append(securityLogFile)
+        .append(securityPeerMembershipTimeout)
+        .append(security)
+        .append(userDefinedProps)
+        .append(removeUnresponsiveClient)
+        .append(deltaPropagation)
+        .append(props)
+        .append(distributedSystemId)
+        .append(remoteLocators)
+        .append(enforceUniqueHost)
+        .append(redundancyZone)
+        .append(sslProperties)
+        .append(clusterSSLProperties)
+        .append(groups)
+        .append(enableSharedConfiguration)
+        .append(useSharedConfiguration)
+        .append(loadSharedConfigurationFromDir)
+        .append(clusterConfigDir)
+        .append(httpServicePort)
+        .append(httpServiceBindAddress)
+        .append(startDevRestApi)
+        .append(memcachedPort)
+        .append(memcachedProtocol)
+        .append(memcachedBindAddress)
+        .append(distributedTransactions)
+        .append(redisPort)
+        .append(redisBindAddress)
+        .append(redisPassword)
+        .append(jmxManager)
+        .append(jmxManagerStart)
+        .append(jmxManagerPort)
+        .append(jmxManagerBindAddress)
+        .append(jmxManagerHostnameForClients)
+        .append(jmxManagerPasswordFile)
+        .append(jmxManagerAccessFile)
+        .append(jmxManagerHttpPort)
+        .append(jmxManagerUpdateRate)
+        .append(jmxManagerSSLEnabled)
+        .append(jmxManagerSslRequireAuthentication)
+        .append(jmxManagerSslProtocols)
+        .append(jmxManagerSslCiphers)
+        .append(jmxManagerSslProperties)
+        .append(jmxManagerSSLKeyStore)
+        .append(jmxManagerSSLKeyStoreType)
+        .append(jmxManagerSSLKeyStorePassword)
+        .append(jmxManagerSSLTrustStore)
+        .append(jmxManagerSSLTrustStorePassword)
+        .append(jmxManagerSSLAlias)
+        .append(serverSSLEnabled)
+        .append(serverSslRequireAuthentication)
+        .append(serverSslProtocols)
+        .append(serverSslCiphers)
+        .append(serverSslProperties)
+        .append(serverSSLKeyStore)
+        .append(serverSSLKeyStoreType)
+        .append(serverSSLKeyStorePassword)
+        .append(serverSSLTrustStore)
+        .append(serverSSLTrustStorePassword)
+        .append(serverSSLAlias)
+        .append(gatewaySSLEnabled)
+        .append(gatewaySslRequireAuthentication)
+        .append(gatewaySslProtocols)
+        .append(gatewaySslCiphers)
+        .append(gatewaySslProperties)
+        .append(gatewaySSLKeyStore)
+        .append(gatewaySSLKeyStoreType)
+        .append(gatewaySSLKeyStorePassword)
+        .append(gatewaySSLTrustStore)
+        .append(gatewaySSLTrustStorePassword)
+        .append(gatewaySSLAlias)
+        .append(httpServiceSSLEnabled)
+        .append(httpServiceSSLRequireAuthentication)
+        .append(httpServiceSSLProtocols)
+        .append(httpServiceSSLCiphers)
+        .append(httpServiceSSLProperties)
+        .append(httpServiceSSLKeyStore)
+        .append(httpServiceSSLKeyStoreType)
+        .append(httpServiceSSLKeyStorePassword)
+        .append(httpServiceSSLTrustStore)
+        .append(httpServiceSSLTrustStorePassword)
+        .append(httpServiceSSLAlias)
+        .append(securableCommunicationChannels)
+        .append(sslProtocols)
+        .append(sslCiphers)
+        .append(sslRequireAuthentication)
+        .append(sslKeyStore)
+        .append(sslKeyStoreType)
+        .append(sslKeyStorePassword)
+        .append(sslTrustStore)
+        .append(sslTrustStorePassword)
+        .append(sslWebServiceRequireAuthentication)
+        .append(locatorSSLAlias)
+        .append(sslDefaultAlias)
+        .append(sourceMap)
+        .append(userCommandPackages)
+        .append(offHeapMemorySize)
+        .append(lockMemory)
+        .append(shiroInit)
+        .append(modifiable)
+        .toHashCode();
   }
 
   /**
-   * Used by gemfire build.xml to generate a default gemfire.properties
-   * for use by applications. See bug 30995 for the feature request.
+   * Used by gemfire build.xml to generate a default gemfire.properties for use by applications. See
+   * bug 30995 for the feature request.
    */
   public static void main(String args[]) throws IOException {
     DistributionConfigImpl cfg = new DistributionConfigImpl();
@@ -2728,15 +3027,18 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   /**
-   * For dunit tests we do not allow use of the default multicast address/port.
-   * Please use AvailablePort.getRandomAvailablePort(AvailablePort.JGROUPS)
-   * to obtain a free port for your test.
+   * For dunit tests we do not allow use of the default multicast address/port. Please use
+   * AvailablePort.getRandomAvailablePort(AvailablePort.JGROUPS) to obtain a free port for your
+   * test.
    */
   public void checkForDisallowedDefaults() {
     if (Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disallowMcastDefaults")) {
       if (getMcastPort() != 0) { // it is not disabled
-        if (getMcastAddress().equals(DistributionConfig.DEFAULT_MCAST_ADDRESS) && getMcastPort() == DistributionConfig.DEFAULT_MCAST_PORT) {
-          throw new IllegalStateException(DistributionConfig.GEMFIRE_PREFIX + "disallowMcastDefaults set and default address and port are being used");
+        if (getMcastAddress().equals(DistributionConfig.DEFAULT_MCAST_ADDRESS)
+            && getMcastPort() == DistributionConfig.DEFAULT_MCAST_PORT) {
+          throw new IllegalStateException(
+              DistributionConfig.GEMFIRE_PREFIX
+                  + "disallowMcastDefaults set and default address and port are being used");
         }
       }
     }
@@ -2756,16 +3058,12 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
     membershipPortRange = (int[]) range;
   }
 
-  /**
-   * Set the host-port information of remote site locator
-   */
+  /** Set the host-port information of remote site locator */
   public void setRemoteLocators(String value) {
     this.remoteLocators = (String) value;
   }
 
-  /**
-   * get the host-port information of remote site locator
-   */
+  /** get the host-port information of remote site locator */
   public String getRemoteLocators() {
     return this.remoteLocators;
   }
@@ -2892,7 +3190,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   @Override
   public void setServerSSLEnabled(boolean value) {
     this.serverSSLEnabled = (Boolean) value;
-
   }
 
   @Override
@@ -2936,7 +3233,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   public void setServerSSLKeyStorePassword(String value) {
-    this.getServerSSLProperties().setProperty(SSL_SYSTEM_PROPS_NAME + KEY_STORE_PASSWORD_NAME, value);
+    this.getServerSSLProperties()
+        .setProperty(SSL_SYSTEM_PROPS_NAME + KEY_STORE_PASSWORD_NAME, value);
     this.serverSSLKeyStorePassword = value;
   }
 
@@ -2946,7 +3244,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   public void setServerSSLTrustStorePassword(String value) {
-    this.getServerSSLProperties().setProperty(SSL_SYSTEM_PROPS_NAME + TRUST_STORE_PASSWORD_NAME, value);
+    this.getServerSSLProperties()
+        .setProperty(SSL_SYSTEM_PROPS_NAME + TRUST_STORE_PASSWORD_NAME, value);
     this.serverSSLTrustStorePassword = value;
   }
 
@@ -2983,7 +3282,6 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   @Override
   public void setGatewaySSLEnabled(boolean value) {
     this.gatewaySSLEnabled = (Boolean) value;
-
   }
 
   @Override
@@ -3027,7 +3325,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   public void setGatewaySSLKeyStorePassword(String value) {
-    this.getGatewaySSLProperties().setProperty(SSL_SYSTEM_PROPS_NAME + KEY_STORE_PASSWORD_NAME, value);
+    this.getGatewaySSLProperties()
+        .setProperty(SSL_SYSTEM_PROPS_NAME + KEY_STORE_PASSWORD_NAME, value);
     this.gatewaySSLKeyStorePassword = value;
   }
 
@@ -3037,7 +3336,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   }
 
   public void setGatewaySSLTrustStorePassword(String value) {
-    this.getGatewaySSLProperties().setProperty(SSL_SYSTEM_PROPS_NAME + TRUST_STORE_PASSWORD_NAME, value);
+    this.getGatewaySSLProperties()
+        .setProperty(SSL_SYSTEM_PROPS_NAME + TRUST_STORE_PASSWORD_NAME, value);
     this.gatewaySSLTrustStorePassword = value;
   }
 
@@ -3114,7 +3414,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
   @Override
   public void setHttpServiceSSLKeyStore(String httpServiceSSLKeyStore) {
-    this.getHttpServiceSSLProperties().setProperty(SSL_SYSTEM_PROPS_NAME + KEY_STORE_NAME, httpServiceSSLKeyStore);
+    this.getHttpServiceSSLProperties()
+        .setProperty(SSL_SYSTEM_PROPS_NAME + KEY_STORE_NAME, httpServiceSSLKeyStore);
     this.httpServiceSSLKeyStore = httpServiceSSLKeyStore;
   }
 
@@ -3125,7 +3426,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
   @Override
   public void setHttpServiceSSLKeyStoreType(String httpServiceSSLKeyStoreType) {
-    this.getHttpServiceSSLProperties().setProperty(SSL_SYSTEM_PROPS_NAME + KEY_STORE_TYPE_NAME, httpServiceSSLKeyStoreType);
+    this.getHttpServiceSSLProperties()
+        .setProperty(SSL_SYSTEM_PROPS_NAME + KEY_STORE_TYPE_NAME, httpServiceSSLKeyStoreType);
     this.httpServiceSSLKeyStoreType = httpServiceSSLKeyStoreType;
   }
 
@@ -3136,7 +3438,9 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
   @Override
   public void setHttpServiceSSLKeyStorePassword(String httpServiceSSLKeyStorePassword) {
-    this.getHttpServiceSSLProperties().setProperty(SSL_SYSTEM_PROPS_NAME + KEY_STORE_PASSWORD_NAME, httpServiceSSLKeyStorePassword);
+    this.getHttpServiceSSLProperties()
+        .setProperty(
+            SSL_SYSTEM_PROPS_NAME + KEY_STORE_PASSWORD_NAME, httpServiceSSLKeyStorePassword);
     this.httpServiceSSLKeyStorePassword = httpServiceSSLKeyStorePassword;
   }
 
@@ -3147,7 +3451,8 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
   @Override
   public void setHttpServiceSSLTrustStore(String httpServiceSSLTrustStore) {
-    this.getHttpServiceSSLProperties().setProperty(SSL_SYSTEM_PROPS_NAME + TRUST_STORE_NAME, httpServiceSSLTrustStore);
+    this.getHttpServiceSSLProperties()
+        .setProperty(SSL_SYSTEM_PROPS_NAME + TRUST_STORE_NAME, httpServiceSSLTrustStore);
     this.httpServiceSSLTrustStore = httpServiceSSLTrustStore;
   }
 
@@ -3158,7 +3463,9 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
 
   @Override
   public void setHttpServiceSSLTrustStorePassword(String httpServiceSSLTrustStorePassword) {
-    this.getHttpServiceSSLProperties().setProperty(SSL_SYSTEM_PROPS_NAME + TRUST_STORE_PASSWORD_NAME, httpServiceSSLTrustStorePassword);
+    this.getHttpServiceSSLProperties()
+        .setProperty(
+            SSL_SYSTEM_PROPS_NAME + TRUST_STORE_PASSWORD_NAME, httpServiceSSLTrustStorePassword);
     this.httpServiceSSLTrustStorePassword = httpServiceSSLTrustStorePassword;
   }
 
@@ -3177,5 +3484,4 @@ public class DistributionConfigImpl extends AbstractDistributionConfig implement
   public void setDistributedTransactions(boolean value) {
     this.distributedTransactions = value;
   }
-
 }

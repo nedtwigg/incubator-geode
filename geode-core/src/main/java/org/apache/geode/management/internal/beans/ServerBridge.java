@@ -62,13 +62,10 @@ public class ServerBridge {
     stopMonitor();
   }
 
-  /**
-   * While starting the cache server stats can be monitored.
-   */
+  /** While starting the cache server stats can be monitored. */
   private void startMonitor() {
     CacheServerStats stats = acceptor.getStats();
     addCacheServerStats(stats);
-
   }
 
   public void stopMonitor() {
@@ -81,10 +78,13 @@ public class ServerBridge {
 
     putRequestRate = new StatsRate(StatsKey.PUT_REQUESTS, StatType.INT_TYPE, monitor);
 
-    getRequestAvgLatency = new StatsAverageLatency(StatsKey.GET_REQUESTS, StatType.INT_TYPE, StatsKey.PROCESS_GET_TIME, monitor);
+    getRequestAvgLatency =
+        new StatsAverageLatency(
+            StatsKey.GET_REQUESTS, StatType.INT_TYPE, StatsKey.PROCESS_GET_TIME, monitor);
 
-    putRequestAvgLatency = new StatsAverageLatency(StatsKey.PUT_REQUESTS, StatType.INT_TYPE, StatsKey.PROCESS_PUT_TIME, monitor);
-
+    putRequestAvgLatency =
+        new StatsAverageLatency(
+            StatsKey.PUT_REQUESTS, StatType.INT_TYPE, StatsKey.PROCESS_PUT_TIME, monitor);
   }
 
   public ServerBridge() {
@@ -163,7 +163,5 @@ public class ServerBridge {
     } else {
       return 0;
     }
-
   }
-
 }

@@ -28,13 +28,13 @@ public class LongBuffer {
     length = 0;
   }
 
-  /** construct a new instance, installing the argument as the data array*/
+  /** construct a new instance, installing the argument as the data array */
   LongBuffer(long[] someIds) {
     data = someIds;
     length = someIds.length;
   }
 
-  /** change the capacity to the specified size, without loosing elements*/
+  /** change the capacity to the specified size, without loosing elements */
   private void changeSize(int newSize) {
     if (newSize >= length) { // only change size if we won't loose data
       long[] oldData = data;
@@ -48,10 +48,8 @@ public class LongBuffer {
   public synchronized void add(long id) {
     if (length >= data.length) {
       // if buffer is large, don't double to reduce out-of-mem problems
-      if (length > 10000)
-        changeSize(length + 2000);
-      else
-        changeSize(length * 2);
+      if (length > 10000) changeSize(length + 2000);
+      else changeSize(length * 2);
     }
     data[length++] = id;
   }

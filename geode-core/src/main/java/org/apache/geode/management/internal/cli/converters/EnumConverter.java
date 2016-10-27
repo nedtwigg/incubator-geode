@@ -29,25 +29,36 @@ import org.springframework.shell.core.MethodTarget;
  */
 /*
  * Use this EnumConverter instead of SHL's EnumConverter. Added null check for
- * existingData in getAllPossibleValues 
- * 
+ * existingData in getAllPossibleValues
+ *
  * Original authors: Ben Alex & Alan Stewart
  */
 @SuppressWarnings("all") // Enum parameter warning
 public class EnumConverter implements Converter<Enum> {
 
-  public Enum convertFromText(final String value, final Class<?> requiredType, final String optionContext) {
+  public Enum convertFromText(
+      final String value, final Class<?> requiredType, final String optionContext) {
     Class<Enum> enumClass = (Class<Enum>) requiredType;
     return Enum.valueOf(enumClass, value);
   }
 
-  public boolean getAllPossibleValues(final List<Completion> completions, final Class<?> requiredType, final String existingData, final String optionContext, final MethodTarget target) {
+  public boolean getAllPossibleValues(
+      final List<Completion> completions,
+      final Class<?> requiredType,
+      final String existingData,
+      final String optionContext,
+      final MethodTarget target) {
     Class<Enum> enumClass = (Class<Enum>) requiredType;
     for (Enum enumValue : enumClass.getEnumConstants()) {
       String candidate = enumValue.name();
-      // GemFire/gfsh addition - check 'existingData == null'. GfshParser can 
-      // pass existingData as null  
-      if ("".equals(existingData) || existingData == null || candidate.startsWith(existingData) || existingData.startsWith(candidate) || candidate.toUpperCase().startsWith(existingData.toUpperCase()) || existingData.toUpperCase().startsWith(candidate.toUpperCase())) {
+      // GemFire/gfsh addition - check 'existingData == null'. GfshParser can
+      // pass existingData as null
+      if ("".equals(existingData)
+          || existingData == null
+          || candidate.startsWith(existingData)
+          || existingData.startsWith(candidate)
+          || candidate.toUpperCase().startsWith(existingData.toUpperCase())
+          || existingData.toUpperCase().startsWith(candidate.toUpperCase())) {
         completions.add(new Completion(candidate));
       }
     }

@@ -52,39 +52,27 @@ public class DestroyRegionTest {
   private static final Object CALLBACK_ARG = "arg";
   private static final byte[] EVENT = new byte[8];
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private AuthorizeRequest authzRequest;
-  @Mock
-  private LocalRegion region;
-  @Mock
-  private Cache cache;
-  @Mock
-  private CacheServerStats cacheServerStats;
-  @Mock
-  private Message errorResponseMessage;
-  @Mock
-  private Message responseMessage;
-  @Mock
-  private Part regionNamePart;
-  @Mock
-  private Part eventPart;
-  @Mock
-  private Part callbackArgPart;
-  @InjectMocks
-  private DestroyRegion destroyRegion;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private ServerConnection serverConnection;
+  @Mock private AuthorizeRequest authzRequest;
+  @Mock private LocalRegion region;
+  @Mock private Cache cache;
+  @Mock private CacheServerStats cacheServerStats;
+  @Mock private Message errorResponseMessage;
+  @Mock private Message responseMessage;
+  @Mock private Part regionNamePart;
+  @Mock private Part eventPart;
+  @Mock private Part callbackArgPart;
+  @InjectMocks private DestroyRegion destroyRegion;
 
   @Before
   public void setUp() throws Exception {
     this.destroyRegion = new DestroyRegion();
     MockitoAnnotations.initMocks(this);
 
-    when(this.authzRequest.destroyRegionAuthorize(eq(REGION_NAME), eq(CALLBACK_ARG))).thenReturn(mock(RegionDestroyOperationContext.class));
+    when(this.authzRequest.destroyRegionAuthorize(eq(REGION_NAME), eq(CALLBACK_ARG)))
+        .thenReturn(mock(RegionDestroyOperationContext.class));
 
     when(this.cache.getRegion(isA(String.class))).thenReturn(this.region);
     when(this.cache.getCancelCriterion()).thenReturn(mock(CancelCriterion.class));
@@ -156,12 +144,13 @@ public class DestroyRegionTest {
   public void oldSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
-    doThrow(new NotAuthorizedException("")).when(this.authzRequest).destroyRegionAuthorize(eq(REGION_NAME), eq(CALLBACK_ARG));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.authzRequest)
+        .destroyRegionAuthorize(eq(REGION_NAME), eq(CALLBACK_ARG));
 
     this.destroyRegion.cmdExecute(this.message, this.serverConnection, 0);
 
     verify(this.authzRequest).destroyRegionAuthorize(eq(REGION_NAME), eq(CALLBACK_ARG));
     verify(this.errorResponseMessage).send(this.serverConnection);
   }
-
 }

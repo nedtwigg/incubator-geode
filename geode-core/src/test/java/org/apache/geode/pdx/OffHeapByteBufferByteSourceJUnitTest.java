@@ -48,5 +48,4 @@ public class OffHeapByteBufferByteSourceJUnitTest extends OffHeapByteSourceJUnit
       return ByteSourceFactory.wrap(bytes);
     }
   }
-
 }

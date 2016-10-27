@@ -29,9 +29,9 @@ import org.junit.runners.Parameterized;
 import static org.junit.Assert.assertFalse;
 
 /**
- * Subclass of LocatorLauncherLocalDUnitTest which forces the code to not find 
- * the Attach API which is in the JDK tools.jar. As a result LocatorLauncher
- * ends up using the FileProcessController implementation.
+ * Subclass of LocatorLauncherLocalDUnitTest which forces the code to not find the Attach API which
+ * is in the JDK tools.jar. As a result LocatorLauncher ends up using the FileProcessController
+ * implementation.
  *
  * @since GemFire 8.0
  */
@@ -46,8 +46,7 @@ public class LocatorLauncherLocalFileIntegrationTest extends LocatorLauncherLoca
   }
 
   @After
-  public final void tearDownLocatorLauncherLocalFileIntegrationTest() throws Exception {
-  }
+  public final void tearDownLocatorLauncherLocalFileIntegrationTest() throws Exception {}
 
   @Override
   @Test

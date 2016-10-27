@@ -25,11 +25,11 @@ import org.junit.Test;
 import org.apache.geode.test.process.ProcessWrapper;
 
 /**
- * Abstract test case for golden testing framework. This provides basis for
- * unit tests which involve an example that is expected to always pass.
- * 
+ * Abstract test case for golden testing framework. This provides basis for unit tests which involve
+ * an example that is expected to always pass.
  */
-public abstract class PassWithExpectedProblemTestCase extends GoldenTestCase implements ExecutableProcess {
+public abstract class PassWithExpectedProblemTestCase extends GoldenTestCase
+    implements ExecutableProcess {
 
   private int problemLine;
 
@@ -41,7 +41,10 @@ public abstract class PassWithExpectedProblemTestCase extends GoldenTestCase imp
   @Override
   protected String[] expectedProblemLines() {
     this.problemLine = 1;
-    return new String[] { ".*" + name() + ".*", "^\\[" + problem() + ".*\\] ExpectedStrings: This is an expected problem in the output" };
+    return new String[] {
+      ".*" + name() + ".*",
+      "^\\[" + problem() + ".*\\] ExpectedStrings: This is an expected problem in the output"
+    };
   }
 
   String name() {
@@ -52,12 +55,23 @@ public abstract class PassWithExpectedProblemTestCase extends GoldenTestCase imp
 
   abstract void outputProblemInProcess(String message);
 
-  /**
-   * Process output has an expected warning/error/severe message and should pass
-   */
+  /** Process output has an expected warning/error/severe message and should pass */
   @Test
   public void testPassWithExpectedProblem() throws Exception {
-    final String goldenString = "Begin " + name() + ".main" + "\n" + "Press Enter to continue." + "\n" + "\n" + expectedProblemLines()[this.problemLine] + "\n" + "End " + name() + ".main" + "\n";
+    final String goldenString =
+        "Begin "
+            + name()
+            + ".main"
+            + "\n"
+            + "Press Enter to continue."
+            + "\n"
+            + "\n"
+            + expectedProblemLines()[this.problemLine]
+            + "\n"
+            + "End "
+            + name()
+            + ".main"
+            + "\n";
     debug(goldenString, "GOLDEN");
 
     final ProcessWrapper process = createProcessWrapper(new ProcessWrapper.Builder(), getClass());

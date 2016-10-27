@@ -37,7 +37,10 @@ public class OffHeapWriteObjectAsByteArrayJUnitTest {
 
   @Before
   public void setUp() throws Exception {
-    MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { new SlabImpl(1024 * 1024) });
+    MemoryAllocatorImpl.createForUnitTest(
+        new NullOutOfOffHeapMemoryListener(),
+        new NullOffHeapMemoryStats(),
+        new SlabImpl[] {new SlabImpl(1024 * 1024)});
   }
 
   @After
@@ -45,8 +48,10 @@ public class OffHeapWriteObjectAsByteArrayJUnitTest {
     MemoryAllocatorImpl.freeOffHeapMemory();
   }
 
-  private StoredObject createStoredObject(byte[] bytes, boolean isSerialized, boolean isCompressed) {
-    return MemoryAllocatorImpl.getAllocator().allocateAndInitialize(bytes, isSerialized, isCompressed);
+  private StoredObject createStoredObject(
+      byte[] bytes, boolean isSerialized, boolean isCompressed) {
+    return MemoryAllocatorImpl.getAllocator()
+        .allocateAndInitialize(bytes, isSerialized, isCompressed);
   }
 
   private DataInputStream createInput(HeapDataOutputStream hdos) {
@@ -56,7 +61,7 @@ public class OffHeapWriteObjectAsByteArrayJUnitTest {
 
   @Test
   public void testByteArrayChunk() throws IOException, ClassNotFoundException {
-    byte[] expected = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    byte[] expected = new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
     StoredObject so = createStoredObject(expected, false, false);
     assertTrue(so instanceof OffHeapStoredObject);
     HeapDataOutputStream hdos = new HeapDataOutputStream(new byte[1024]);
@@ -68,7 +73,7 @@ public class OffHeapWriteObjectAsByteArrayJUnitTest {
 
   @Test
   public void testByteArrayDataAsAddress() throws IOException, ClassNotFoundException {
-    byte[] expected = new byte[] { 1, 2, 3 };
+    byte[] expected = new byte[] {1, 2, 3};
     StoredObject so = createStoredObject(expected, false, false);
     assertTrue(so instanceof TinyStoredObject);
     HeapDataOutputStream hdos = new HeapDataOutputStream(new byte[1024]);

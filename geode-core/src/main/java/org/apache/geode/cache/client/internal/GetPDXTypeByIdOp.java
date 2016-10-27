@@ -22,11 +22,13 @@ import org.apache.geode.pdx.internal.PdxType;
 
 /**
  * Retrieve the PDXType, given an integer PDX id, from a server.
+ *
  * @since GemFire 6.6
  */
 public class GetPDXTypeByIdOp {
   /**
    * Get a PdxType from the given pool.
+   *
    * @param pool the pool to use to communicate with the server.
    */
   public static PdxType execute(ExecutablePool pool, int pdxId) {
@@ -39,9 +41,7 @@ public class GetPDXTypeByIdOp {
   }
 
   private static class GetPDXTypeByIdOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public GetPDXTypeByIdOpImpl(int pdxId) {
       super(MessageType.GET_PDX_TYPE_BY_ID, 1);
       getMessage().addIntPart(pdxId);
@@ -73,8 +73,7 @@ public class GetPDXTypeByIdOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

@@ -39,28 +39,24 @@ public class PFAddExecutor extends HllExecutor {
 
     ByteArrayWrapper key = command.getKey();
     checkAndSetDataType(key, context);
-    Region<ByteArrayWrapper, HyperLogLogPlus> keyRegion = context.getRegionProvider().gethLLRegion();
+    Region<ByteArrayWrapper, HyperLogLogPlus> keyRegion =
+        context.getRegionProvider().gethLLRegion();
 
     HyperLogLogPlus hll = keyRegion.get(key);
 
     boolean changed = false;
 
-    if (hll == null)
-      hll = new HyperLogLogPlus(DEFAULT_HLL_DENSE);
+    if (hll == null) hll = new HyperLogLogPlus(DEFAULT_HLL_DENSE);
 
     for (int i = 2; i < commandElems.size(); i++) {
       byte[] bytes = commandElems.get(i);
       boolean offerChange = hll.offer(bytes);
-      if (offerChange)
-        changed = true;
+      if (offerChange) changed = true;
     }
 
     keyRegion.put(key, hll);
 
-    if (changed)
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), 1));
-    else
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), 0));
+    if (changed) command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), 1));
+    else command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), 0));
   }
-
 }

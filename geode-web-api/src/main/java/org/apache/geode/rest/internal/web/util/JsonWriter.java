@@ -46,12 +46,15 @@ import org.apache.geode.rest.internal.web.exception.GemfireRestException;
 
 /**
  * The JsonWriter class is an utility to write various java types as a JSON string.
- * <p/>
+ *
+ * <p>
+ *
  * @since GemFire 8.0
  */
 public class JsonWriter {
 
-  public static void writeLinkAsJson(JsonGenerator generator, Link value, String pdxField) throws JsonGenerationException, IOException {
+  public static void writeLinkAsJson(JsonGenerator generator, Link value, String pdxField)
+      throws JsonGenerationException, IOException {
     generator.writeArrayFieldStart("links");
 
     generator.writeStartObject();
@@ -70,13 +73,16 @@ public class JsonWriter {
     arg.add(Charset.defaultCharset());
     header.setAcceptCharset(arg);
 
-    generator.writeString(header.getContentType() + ", charset=" + header.getAcceptCharset().get(0).displayName());
+    generator.writeString(
+        header.getContentType() + ", charset=" + header.getAcceptCharset().get(0).displayName());
 
     generator.writeEndObject();
     generator.writeEndArray();
   }
 
-  public static void writeQueryListAsJson(JsonGenerator generator, String pdxField, Region<String, String> region) throws JsonGenerationException, IOException {
+  public static void writeQueryListAsJson(
+      JsonGenerator generator, String pdxField, Region<String, String> region)
+      throws JsonGenerationException, IOException {
     generator.writeStartObject();
     generator.writeFieldName(pdxField);
 
@@ -98,7 +104,8 @@ public class JsonWriter {
     generator.writeEndObject();
   }
 
-  public static void writeQueryAsJson(JsonGenerator generator, String queryId, String query) throws JsonGenerationException, IOException {
+  public static void writeQueryAsJson(JsonGenerator generator, String queryId, String query)
+      throws JsonGenerationException, IOException {
     generator.writeStartObject();
 
     generator.writeFieldName("id");
@@ -110,7 +117,9 @@ public class JsonWriter {
     generator.writeEndObject();
   }
 
-  public static void writeListAsJson(JsonGenerator generator, Map map, String name, String fieldName) throws JsonGenerationException, IOException {
+  public static void writeListAsJson(
+      JsonGenerator generator, Map map, String name, String fieldName)
+      throws JsonGenerationException, IOException {
 
     generator.writeStartObject();
     generator.writeFieldName(name);
@@ -134,7 +143,8 @@ public class JsonWriter {
     generator.writeEndObject();
   }
 
-  public static void writeCollectionAsJson(JsonGenerator generator, /*List*/ Collection<?> coll) throws JsonGenerationException, IOException {
+  public static void writeCollectionAsJson(JsonGenerator generator, /*List*/ Collection<?> coll)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
 
     for (Object obj : coll) {
@@ -143,7 +153,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeStructAsJson(JsonGenerator generator, StructImpl element) throws JsonGenerationException, IOException {
+  public static void writeStructAsJson(JsonGenerator generator, StructImpl element)
+      throws JsonGenerationException, IOException {
     generator.writeStartObject();
 
     String[] fieldNames = element.getFieldNames();
@@ -156,7 +167,8 @@ public class JsonWriter {
     generator.writeEndObject();
   }
 
-  public static String writePdxInstanceAsJson(JsonGenerator generator, PdxInstance pdxInstance) throws JsonGenerationException, IOException {
+  public static String writePdxInstanceAsJson(JsonGenerator generator, PdxInstance pdxInstance)
+      throws JsonGenerationException, IOException {
     generator.writeStartObject();
 
     List<String> pdxFields = pdxInstance.getFieldNames();
@@ -170,7 +182,8 @@ public class JsonWriter {
     return null;
   }
 
-  public static void writeArrayAsJson(JsonGenerator generator, Object value, String pdxField) throws JsonGenerationException, IOException {
+  public static void writeArrayAsJson(JsonGenerator generator, Object value, String pdxField)
+      throws JsonGenerationException, IOException {
 
     if (value.getClass().getName().equals("[Z")) {
       writePrimitiveBoolArrayAsJson(generator, (boolean[]) value);
@@ -209,11 +222,13 @@ public class JsonWriter {
     } else if (value.getClass().equals(Object[].class)) {
       writeObjectArrayAsJson(generator, (Object[]) value, pdxField);
     } else {
-      throw new IllegalStateException("PdxInstance returns unknwon pdxfield " + pdxField + " for type " + value);
+      throw new IllegalStateException(
+          "PdxInstance returns unknwon pdxfield " + pdxField + " for type " + value);
     }
   }
 
-  public static void writePrimitiveBoolArrayAsJson(JsonGenerator generator, boolean[] array) throws JsonGenerationException, IOException {
+  public static void writePrimitiveBoolArrayAsJson(JsonGenerator generator, boolean[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (boolean obj : array) {
       generator.writeBoolean(obj);
@@ -221,7 +236,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writePrimitiveByteArrayAsJson(JsonGenerator generator, byte[] array) throws JsonGenerationException, IOException {
+  public static void writePrimitiveByteArrayAsJson(JsonGenerator generator, byte[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (byte obj : array) {
       generator.writeNumber(obj);
@@ -229,7 +245,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writePrimitiveShortArrayAsJson(JsonGenerator generator, short[] array) throws JsonGenerationException, IOException {
+  public static void writePrimitiveShortArrayAsJson(JsonGenerator generator, short[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (short obj : array) {
       generator.writeNumber(obj);
@@ -237,7 +254,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writePrimitiveIntArrayAsJson(JsonGenerator generator, int[] array) throws JsonGenerationException, IOException {
+  public static void writePrimitiveIntArrayAsJson(JsonGenerator generator, int[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (int obj : array) {
       generator.writeNumber(obj);
@@ -245,7 +263,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writePrimitiveLongArrayAsJson(JsonGenerator generator, long[] array) throws JsonGenerationException, IOException {
+  public static void writePrimitiveLongArrayAsJson(JsonGenerator generator, long[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (long obj : array) {
       generator.writeNumber(obj);
@@ -253,7 +272,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writePrimitiveFloatArrayAsJson(JsonGenerator generator, float[] array) throws JsonGenerationException, IOException {
+  public static void writePrimitiveFloatArrayAsJson(JsonGenerator generator, float[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (float obj : array) {
       generator.writeNumber(obj);
@@ -261,7 +281,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writePrimitiveDoubleArrayAsJson(JsonGenerator generator, double[] array) throws JsonGenerationException, IOException {
+  public static void writePrimitiveDoubleArrayAsJson(JsonGenerator generator, double[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (double obj : array) {
       generator.writeNumber(obj);
@@ -269,7 +290,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeWrapperBoolArrayAsJson(JsonGenerator generator, Boolean[] array) throws JsonGenerationException, IOException {
+  public static void writeWrapperBoolArrayAsJson(JsonGenerator generator, Boolean[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (Boolean obj : array) {
       generator.writeBoolean(obj.booleanValue());
@@ -277,7 +299,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeWrapperByteArrayAsJson(JsonGenerator generator, Byte[] array) throws JsonGenerationException, IOException {
+  public static void writeWrapperByteArrayAsJson(JsonGenerator generator, Byte[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (Byte obj : array) {
       generator.writeNumber(obj.byteValue());
@@ -285,7 +308,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeWrapperShortArrayAsJson(JsonGenerator generator, Short[] array) throws JsonGenerationException, IOException {
+  public static void writeWrapperShortArrayAsJson(JsonGenerator generator, Short[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (Short obj : array) {
       generator.writeNumber(obj.shortValue());
@@ -293,7 +317,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeWrapperIntArrayAsJson(JsonGenerator generator, Integer[] array) throws JsonGenerationException, IOException {
+  public static void writeWrapperIntArrayAsJson(JsonGenerator generator, Integer[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (Integer obj : array) {
       generator.writeNumber(obj.intValue());
@@ -301,7 +326,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeWrapperLongArrayAsJson(JsonGenerator generator, Long[] array) throws JsonGenerationException, IOException {
+  public static void writeWrapperLongArrayAsJson(JsonGenerator generator, Long[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (Long obj : array) {
       generator.writeNumber(obj.longValue());
@@ -309,7 +335,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeWrapperFloatArrayAsJson(JsonGenerator generator, Float[] array) throws JsonGenerationException, IOException {
+  public static void writeWrapperFloatArrayAsJson(JsonGenerator generator, Float[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (Float obj : array) {
       generator.writeNumber(obj.floatValue());
@@ -317,7 +344,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeWrapperDoubleArrayAsJson(JsonGenerator generator, Double[] array) throws JsonGenerationException, IOException {
+  public static void writeWrapperDoubleArrayAsJson(JsonGenerator generator, Double[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (Double obj : array) {
       generator.writeNumber(obj.doubleValue());
@@ -325,7 +353,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeBigIntArrayAsJson(JsonGenerator generator, BigInteger[] array) throws JsonGenerationException, IOException {
+  public static void writeBigIntArrayAsJson(JsonGenerator generator, BigInteger[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (BigInteger obj : array) {
       generator.writeNumber(obj);
@@ -333,7 +362,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeBigDecimalArrayAsJson(JsonGenerator generator, BigDecimal[] array) throws JsonGenerationException, IOException {
+  public static void writeBigDecimalArrayAsJson(JsonGenerator generator, BigDecimal[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (BigDecimal obj : array) {
       generator.writeNumber(obj);
@@ -341,7 +371,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeStringArrayAsJson(JsonGenerator generator, String[] array) throws JsonGenerationException, IOException {
+  public static void writeStringArrayAsJson(JsonGenerator generator, String[] array)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
     for (String obj : array) {
       generator.writeString(obj);
@@ -349,7 +380,9 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeObjectArrayAsJson(JsonGenerator generator, Object[] array, String pdxField) throws JsonGenerationException, IOException {
+  public static void writeObjectArrayAsJson(
+      JsonGenerator generator, Object[] array, String pdxField)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
 
     if (ArrayUtils.isNotEmpty(array)) {
@@ -361,7 +394,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeRegionDetailsAsJson(JsonGenerator generator, Region<?, ?> region) throws JsonGenerationException, IOException {
+  public static void writeRegionDetailsAsJson(JsonGenerator generator, Region<?, ?> region)
+      throws JsonGenerationException, IOException {
     generator.writeStartObject();
 
     generator.writeFieldName("name");
@@ -390,10 +424,10 @@ public class JsonWriter {
     }
 
     generator.writeEndObject();
-
   }
 
-  public static void writeRegionSetAsJson(JsonGenerator generator, Set<Region<?, ?>> regions) throws JsonGenerationException, IOException {
+  public static void writeRegionSetAsJson(JsonGenerator generator, Set<Region<?, ?>> regions)
+      throws JsonGenerationException, IOException {
     generator.writeStartArray();
 
     if (!CollectionUtils.isEmpty(regions)) {
@@ -405,7 +439,8 @@ public class JsonWriter {
     generator.writeEndArray();
   }
 
-  public static void writeMapAsJson(JsonGenerator generator, Map map, String pdxField) throws JsonGenerationException, IOException {
+  public static void writeMapAsJson(JsonGenerator generator, Map map, String pdxField)
+      throws JsonGenerationException, IOException {
 
     generator.writeStartObject();
 
@@ -420,7 +455,8 @@ public class JsonWriter {
     generator.writeEndObject();
   }
 
-  public static void writeValueAsJson(JsonGenerator generator, Object value, String pdxField) throws JsonGenerationException, IOException {
+  public static void writeValueAsJson(JsonGenerator generator, Object value, String pdxField)
+      throws JsonGenerationException, IOException {
 
     if (value == null) {
       generator.writeNull();
@@ -481,17 +517,17 @@ public class JsonWriter {
       } else if (value instanceof Map) {
         writeMapAsJson(generator, (Map) value, pdxField);
       } else {
-        // TODO:: can value be a domain object...? As we have configured PdxInstance based storage,  
-        //        Throw GemfireRestException for value of type domain objects. 
+        // TODO:: can value be a domain object...? As we have configured PdxInstance based storage,
+        //        Throw GemfireRestException for value of type domain objects.
 
-        //TODO:Do we need to convert domain objects into the JSON using ObjectMapper. There is no gurantee that domain class is in classpath. 
+        //TODO:Do we need to convert domain objects into the JSON using ObjectMapper. There is no gurantee that domain class is in classpath.
         /*
         ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat(new SimpleDateFormat("MM/dd/yyyy"));
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
         mapper.writeValueAsString(value)
-        
+
         Object classInstance = mapper.readValue(JSON, Class.forName(className));
         */
         throw new GemfireRestException("Requested data could not convert into REST format[JSON] ");

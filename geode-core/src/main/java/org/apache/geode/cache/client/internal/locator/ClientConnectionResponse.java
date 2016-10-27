@@ -25,9 +25,8 @@ import org.apache.geode.distributed.internal.ServerLocation;
 import org.apache.geode.internal.DataSerializableFixedID;
 
 /**
- * A response from a locator to a client
- * Indicating which server to connect to for client to server traffic.
- *
+ * A response from a locator to a client Indicating which server to connect to for client to server
+ * traffic.
  */
 public class ClientConnectionResponse extends ServerLocationResponse {
 
@@ -80,5 +79,4 @@ public class ClientConnectionResponse extends ServerLocationResponse {
   public boolean hasResult() {
     return this.serverFound;
   }
-
 }

@@ -30,7 +30,6 @@ import org.apache.geode.internal.cache.xmlcache.XmlParser;
 
 /**
  * Mock Extension {@link XmlParser}.
- * 
  *
  * @since GemFire 8.1
  */
@@ -41,7 +40,8 @@ public class MockExtensionXmlParser extends AbstractXmlParser {
   public static final String ELEMENT_CACHE_QNAME = "mock:cache";
   public static final String ELEMENT_CACHE = "cache";
 
-  public static final String NAMESPACE = "urn:java:org.apache.geode.internal.cache.extension.mock.MockExtensionXmlParser";
+  public static final String NAMESPACE =
+      "urn:java:org.apache.geode.internal.cache.extension.mock.MockExtensionXmlParser";
   public static final String PREFIX = "mock";
 
   @Override
@@ -50,52 +50,56 @@ public class MockExtensionXmlParser extends AbstractXmlParser {
   }
 
   @Override
-  public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String uri, String localName, String qName, Attributes atts)
+      throws SAXException {
     switch (localName) {
-    case ELEMENT_CACHE: {
-      assertEquals(ELEMENT_CACHE, localName);
-      assertEquals(ELEMENT_CACHE_QNAME, qName);
-      assertEquals(NAMESPACE, uri);
-      assertNotNull(atts.getValue(ATTRIBUTE_VALUE));
-      MockCacheExtension extension = new MockCacheExtension(atts.getValue(ATTRIBUTE_VALUE));
-      stack.push(extension);
-      break;
-    }
-    case ELEMENT_REGION: {
-      assertEquals(ELEMENT_REGION, localName);
-      assertEquals(ELEMENT_REGION_QNAME, qName);
-      assertEquals(NAMESPACE, uri);
-      assertNotNull(atts.getValue(ATTRIBUTE_VALUE));
-      if ("exception".equals(atts.getValue(ATTRIBUTE_VALUE))) {
-        throw new SAXParseException("Value is 'exception'.", documentLocator);
-      }
-      MockRegionExtension extension = new MockRegionExtension(atts.getValue(ATTRIBUTE_VALUE));
-      stack.push(extension);
-      break;
-    }
-    default:
-      throw new SAXParseException("Unexpected element '" + localName + "'.", documentLocator);
+      case ELEMENT_CACHE:
+        {
+          assertEquals(ELEMENT_CACHE, localName);
+          assertEquals(ELEMENT_CACHE_QNAME, qName);
+          assertEquals(NAMESPACE, uri);
+          assertNotNull(atts.getValue(ATTRIBUTE_VALUE));
+          MockCacheExtension extension = new MockCacheExtension(atts.getValue(ATTRIBUTE_VALUE));
+          stack.push(extension);
+          break;
+        }
+      case ELEMENT_REGION:
+        {
+          assertEquals(ELEMENT_REGION, localName);
+          assertEquals(ELEMENT_REGION_QNAME, qName);
+          assertEquals(NAMESPACE, uri);
+          assertNotNull(atts.getValue(ATTRIBUTE_VALUE));
+          if ("exception".equals(atts.getValue(ATTRIBUTE_VALUE))) {
+            throw new SAXParseException("Value is 'exception'.", documentLocator);
+          }
+          MockRegionExtension extension = new MockRegionExtension(atts.getValue(ATTRIBUTE_VALUE));
+          stack.push(extension);
+          break;
+        }
+      default:
+        throw new SAXParseException("Unexpected element '" + localName + "'.", documentLocator);
     }
   }
 
   @Override
   public void endElement(String uri, String localName, String qName) throws SAXException {
     switch (localName) {
-    case ELEMENT_CACHE: {
-      MockCacheExtension extension = (MockCacheExtension) stack.pop();
-      CacheCreation cache = (CacheCreation) stack.peek();
-      cache.getExtensionPoint().addExtension(extension);
-      break;
-    }
-    case ELEMENT_REGION: {
-      MockRegionExtension extension = (MockRegionExtension) stack.pop();
-      RegionCreation region = (RegionCreation) stack.peek();
-      region.getExtensionPoint().addExtension(extension);
-      break;
-    }
-    default:
-      throw new SAXParseException("Unexpected element '" + localName + "'.", documentLocator);
+      case ELEMENT_CACHE:
+        {
+          MockCacheExtension extension = (MockCacheExtension) stack.pop();
+          CacheCreation cache = (CacheCreation) stack.peek();
+          cache.getExtensionPoint().addExtension(extension);
+          break;
+        }
+      case ELEMENT_REGION:
+        {
+          MockRegionExtension extension = (MockRegionExtension) stack.pop();
+          RegionCreation region = (RegionCreation) stack.peek();
+          region.getExtensionPoint().addExtension(extension);
+          break;
+        }
+      default:
+        throw new SAXParseException("Unexpected element '" + localName + "'.", documentLocator);
     }
   }
-
 }

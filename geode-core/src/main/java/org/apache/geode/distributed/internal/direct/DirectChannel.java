@@ -45,11 +45,10 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 
 /**
- * DirectChannel is used to interact directly with other Direct servers to
- * distribute GemFire messages to other nodes.  It is held by a
- * org.apache.geode.internal.cache.distribution.DistributionChannel,
- * which is used by the DistributionManager to send and receive asynchronous
- * messages.
+ * DirectChannel is used to interact directly with other Direct servers to distribute GemFire
+ * messages to other nodes. It is held by a
+ * org.apache.geode.internal.cache.distribution.DistributionChannel, which is used by the
+ * DistributionManager to send and receive asynchronous messages.
  */
 public class DirectChannel {
 
@@ -72,7 +71,7 @@ public class DirectChannel {
 
   /**
    * Callback to set the local address, must be done before this channel is used.
-   * 
+   *
    * @param localAddr
    * @throws ConnectionException if the conduit has stopped
    */
@@ -88,9 +87,9 @@ public class DirectChannel {
   }
 
   /**
-   * when the initial number of members is known, this method is invoked
-   * to ensure that connections to those members can be established in a
-   * reasonable amount of time.  See bug 39848 
+   * when the initial number of members is known, this method is invoked to ensure that connections
+   * to those members can be established in a reasonable amount of time. See bug 39848
+   *
    * @param numberOfMembers
    */
   public void setMembershipSize(int numberOfMembers) {
@@ -98,15 +97,15 @@ public class DirectChannel {
   }
 
   /**
-   * Returns the cancel criterion for the channel,
-   * which will note if the channel is abnormally
+   * Returns the cancel criterion for the channel, which will note if the channel is abnormally
    * closing
    */
   public CancelCriterion getCancelCriterion() {
     return conduit.getCancelCriterion();
   }
 
-  public DirectChannel(MembershipManager mgr, DirectChannelListener listener, DistributionConfig dc) throws ConnectionException {
+  public DirectChannel(MembershipManager mgr, DirectChannelListener listener, DistributionConfig dc)
+      throws ConnectionException {
     this.receiver = listener;
 
     this.address = initAddress(dc);
@@ -137,27 +136,34 @@ public class DirectChannel {
       disconnectCompleted = false;
       this.groupOrderedSenderSem = new ReentrantSemaphore(MAX_GROUP_SENDERS);
       this.groupUnorderedSenderSem = new ReentrantSemaphore(MAX_GROUP_SENDERS);
-      logger.info(LocalizedMessage.create(LocalizedStrings.DirectChannel_GEMFIRE_P2P_LISTENER_STARTED_ON__0, conduit.getLocalAddr()));
+      logger.info(
+          LocalizedMessage.create(
+              LocalizedStrings.DirectChannel_GEMFIRE_P2P_LISTENER_STARTED_ON__0,
+              conduit.getLocalAddr()));
 
     } catch (ConnectionException ce) {
-      logger.fatal(LocalizedMessage.create(LocalizedStrings.DirectChannel_UNABLE_TO_INITIALIZE_DIRECT_CHANNEL_BECAUSE__0, new Object[] { ce.getMessage() }), ce);
+      logger.fatal(
+          LocalizedMessage.create(
+              LocalizedStrings.DirectChannel_UNABLE_TO_INITIALIZE_DIRECT_CHANNEL_BECAUSE__0,
+              new Object[] {ce.getMessage()}),
+          ce);
       throw ce; // fix for bug 31973
     }
   }
 
   /**
-   * Return how many concurrent operations should be allowed by default.
-   * since 6.6, this has been raised to Integer.MAX value from the number
-   * of available processors. Setting this to a lower value raises the possibility
-   * of a deadlock when serializing a message with PDX objects, because the 
-   * PDX serialization can trigger further distribution.
+   * Return how many concurrent operations should be allowed by default. since 6.6, this has been
+   * raised to Integer.MAX value from the number of available processors. Setting this to a lower
+   * value raises the possibility of a deadlock when serializing a message with PDX objects, because
+   * the PDX serialization can trigger further distribution.
    */
-  static public final int DEFAULT_CONCURRENCY_LEVEL = Integer.getInteger("p2p.defaultConcurrencyLevel", Integer.MAX_VALUE / 2).intValue();
+  public static final int DEFAULT_CONCURRENCY_LEVEL =
+      Integer.getInteger("p2p.defaultConcurrencyLevel", Integer.MAX_VALUE / 2).intValue();
 
-  /**
-   * The maximum number of concurrent senders sending a message to a group of recipients.
-   */
-  static private final int MAX_GROUP_SENDERS = Integer.getInteger("p2p.maxGroupSenders", DEFAULT_CONCURRENCY_LEVEL).intValue();
+  /** The maximum number of concurrent senders sending a message to a group of recipients. */
+  private static final int MAX_GROUP_SENDERS =
+      Integer.getInteger("p2p.maxGroupSenders", DEFAULT_CONCURRENCY_LEVEL).intValue();
+
   private Semaphore groupUnorderedSenderSem;
   private Semaphore groupOrderedSenderSem;
 
@@ -171,11 +177,12 @@ public class DirectChannel {
 
   private void acquireGroupSendPermission(boolean ordered) {
     if (this.disconnected) {
-      throw new org.apache.geode.distributed.DistributedSystemDisconnectedException(LocalizedStrings.DirectChannel_DIRECT_CHANNEL_HAS_BEEN_STOPPED.toLocalizedString());
+      throw new org.apache.geode.distributed.DistributedSystemDisconnectedException(
+          LocalizedStrings.DirectChannel_DIRECT_CHANNEL_HAS_BEEN_STOPPED.toLocalizedString());
     }
     // @todo darrel: add some stats
     final Semaphore s = getGroupSem(ordered);
-    for (;;) {
+    for (; ; ) {
       this.conduit.getCancelCriterion().checkCancelInProgress(null);
       boolean interrupted = Thread.interrupted();
       try {
@@ -191,7 +198,8 @@ public class DirectChannel {
     } // for
     if (this.disconnected) {
       s.release();
-      throw new DistributedSystemDisconnectedException(LocalizedStrings.DirectChannel_COMMUNICATIONS_DISCONNECTED.toLocalizedString());
+      throw new DistributedSystemDisconnectedException(
+          LocalizedStrings.DirectChannel_COMMUNICATIONS_DISCONNECTED.toLocalizedString());
     }
   }
 
@@ -200,53 +208,59 @@ public class DirectChannel {
     s.release();
   }
 
-  /**
-   * Returns true if calling thread owns its own communication resources.
-   */
+  /** Returns true if calling thread owns its own communication resources. */
   boolean threadOwnsResources() {
     DM d = getDM();
     if (d != null) {
       return d.getSystem().threadOwnsResources() && !AlertAppender.isThreadAlerting();
     }
     return false;
-
   }
 
   /**
-   * This is basically just sendToMany, giving us a way to see on the stack
-   * whether we are sending to a single member or multiple members, in which
-   * case the group-send lock will be held during distribution.
-   * 
+   * This is basically just sendToMany, giving us a way to see on the stack whether we are sending
+   * to a single member or multiple members, in which case the group-send lock will be held during
+   * distribution.
+   *
    * @param mgr - the membership manager
    * @param p_destinations - the list of addresses to send the message to.
    * @param msg - the message to send
    * @param ackWaitThreshold
    * @param ackSAThreshold the severe alert threshold
    * @return number of bytes sent
-   * @throws ConnectExceptions if message could not be send to its
-   *         <code>destination</code>
-   * @throws NotSerializableException
-   *         If the msg cannot be serialized
+   * @throws ConnectExceptions if message could not be send to its <code>destination</code>
+   * @throws NotSerializableException If the msg cannot be serialized
    */
-  private final int sendToOne(final MembershipManager mgr, InternalDistributedMember[] p_destinations, final DistributionMessage msg, long ackWaitThreshold, long ackSAThreshold) throws ConnectExceptions, NotSerializableException {
+  private final int sendToOne(
+      final MembershipManager mgr,
+      InternalDistributedMember[] p_destinations,
+      final DistributionMessage msg,
+      long ackWaitThreshold,
+      long ackSAThreshold)
+      throws ConnectExceptions, NotSerializableException {
     return sendToMany(mgr, p_destinations, msg, ackWaitThreshold, ackSAThreshold);
   }
 
   /**
-   * Sends a msg to a list of destinations. This code does some special optimizations
-   * to stream large messages
+   * Sends a msg to a list of destinations. This code does some special optimizations to stream
+   * large messages
+   *
    * @param mgr - the membership manager
    * @param p_destinations - the list of addresses to send the message to.
    * @param msg - the message to send
    * @param ackWaitThreshold
    * @param ackSAThreshold the severe alert threshold
    * @return number of bytes sent
-   * @throws ConnectExceptions if message could not be send to its
-   *         <code>destination</code>
-   * @throws NotSerializableException
-   *         If the msg cannot be serialized
+   * @throws ConnectExceptions if message could not be send to its <code>destination</code>
+   * @throws NotSerializableException If the msg cannot be serialized
    */
-  private int sendToMany(final MembershipManager mgr, InternalDistributedMember[] p_destinations, final DistributionMessage msg, long ackWaitThreshold, long ackSAThreshold) throws ConnectExceptions, NotSerializableException {
+  private int sendToMany(
+      final MembershipManager mgr,
+      InternalDistributedMember[] p_destinations,
+      final DistributionMessage msg,
+      long ackWaitThreshold,
+      long ackSAThreshold)
+      throws ConnectExceptions, NotSerializableException {
     InternalDistributedMember destinations[] = p_destinations;
 
     // Collects connect exceptions that happened during previous attempts to send.
@@ -295,20 +309,21 @@ public class DirectChannel {
     try {
       do {
         interrupted = interrupted || Thread.interrupted();
-        /**
-         * Exceptions that happened during one attempt to send
-         */
+        /** Exceptions that happened during one attempt to send */
         if (retryInfo != null) {
           // need to retry to each of the guys in the exception
           List retryMembers = retryInfo.getMembers();
-          InternalDistributedMember[] retryDest = new InternalDistributedMember[retryMembers.size()];
+          InternalDistributedMember[] retryDest =
+              new InternalDistributedMember[retryMembers.size()];
           retryDest = (InternalDistributedMember[]) retryMembers.toArray(retryDest);
           destinations = retryDest;
           retryInfo = null;
           retry = true;
         }
         final List cons = new ArrayList(destinations.length);
-        ConnectExceptions ce = getConnections(mgr, msg, destinations, orderedMsg, retry, ackTimeout, ackSDTimeout, cons);
+        ConnectExceptions ce =
+            getConnections(
+                mgr, msg, destinations, orderedMsg, retry, ackTimeout, ackSDTimeout, cons);
         if (directReply && msg.getProcessorId() > 0) { // no longer a direct-reply message?
           directReply = false;
         }
@@ -351,7 +366,12 @@ public class DirectChannel {
 
         try {
           if (logger.isDebugEnabled()) {
-            logger.debug("{}{}) to {} peers ({}) via tcp/ip", (retry ? "Retrying send (" : "Sending ("), msg, cons.size(), cons);
+            logger.debug(
+                "{}{}) to {} peers ({}) via tcp/ip",
+                (retry ? "Retrying send (" : "Sending ("),
+                msg,
+                cons.size(),
+                cons);
           }
           DMStats stats = getDMStats();
           List<?> sentCons; // used for cons we sent to this time
@@ -380,7 +400,10 @@ public class DirectChannel {
           } catch (ToDataException e) {
             throw e;
           } catch (IOException ex) {
-            throw new InternalGemFireException(LocalizedStrings.DirectChannel_UNKNOWN_ERROR_SERIALIZING_MESSAGE.toLocalizedString(), ex);
+            throw new InternalGemFireException(
+                LocalizedStrings.DirectChannel_UNKNOWN_ERROR_SERIALIZING_MESSAGE
+                    .toLocalizedString(),
+                ex);
           } finally {
             try {
               ms.close();
@@ -400,7 +423,14 @@ public class DirectChannel {
               readAckStart = stats.startReplyWait();
             }
             try {
-              ce = readAcks(sentCons, startTime, ackTimeout, ackSDTimeout, ce, directMsg.getDirectReplyProcessor());
+              ce =
+                  readAcks(
+                      sentCons,
+                      startTime,
+                      ackTimeout,
+                      ackSDTimeout,
+                      ce,
+                      directMsg.getDirectReplyProcessor());
             } finally {
               if (stats != null) {
                 stats.endReplyWait(readAckStart, startTime);
@@ -431,7 +461,7 @@ public class DirectChannel {
       if (interrupted) {
         Thread.currentThread().interrupt();
       }
-      for (Iterator it = totalSentCons.iterator(); it.hasNext();) {
+      for (Iterator it = totalSentCons.iterator(); it.hasNext(); ) {
         Connection con = (Connection) it.next();
         con.setInUse(false, 0, 0, 0, null);
       }
@@ -442,11 +472,17 @@ public class DirectChannel {
     return bytesWritten;
   }
 
-  private ConnectExceptions readAcks(List sentCons, long startTime, long ackTimeout, long ackSDTimeout, ConnectExceptions cumulativeExceptions, DirectReplyProcessor processor) {
+  private ConnectExceptions readAcks(
+      List sentCons,
+      long startTime,
+      long ackTimeout,
+      long ackSDTimeout,
+      ConnectExceptions cumulativeExceptions,
+      DirectReplyProcessor processor) {
 
     ConnectExceptions ce = cumulativeExceptions;
 
-    for (Iterator it = sentCons.iterator(); it.hasNext();) {
+    for (Iterator it = sentCons.iterator(); it.hasNext(); ) {
       Connection con = (Connection) it.next();
       //We don't expect replies on shared connections.
       if (con.isSharedResource()) {
@@ -480,9 +516,9 @@ public class DirectChannel {
   }
 
   /**
-   * Obtain the connections needed to transmit a message.  The connections are
-   * put into the cons object (the last parameter)
-   * 
+   * Obtain the connections needed to transmit a message. The connections are put into the cons
+   * object (the last parameter)
+   *
    * @param mgr the membership manager
    * @param msg the message to send
    * @param destinations who to send the message to
@@ -491,9 +527,18 @@ public class DirectChannel {
    * @param ackTimeout the ack warning timeout
    * @param ackSDTimeout the ack severe alert timeout
    * @param cons a list to hold the connections
-   * @return null if everything went okay, or a ConnectExceptions object if some connections couldn't be obtained
+   * @return null if everything went okay, or a ConnectExceptions object if some connections
+   *     couldn't be obtained
    */
-  private ConnectExceptions getConnections(MembershipManager mgr, DistributionMessage msg, InternalDistributedMember[] destinations, boolean preserveOrder, boolean retry, long ackTimeout, long ackSDTimeout, List cons) {
+  private ConnectExceptions getConnections(
+      MembershipManager mgr,
+      DistributionMessage msg,
+      InternalDistributedMember[] destinations,
+      boolean preserveOrder,
+      boolean retry,
+      long ackTimeout,
+      long ackSDTimeout,
+      List cons) {
     ConnectExceptions ce = null;
     for (int i = 0; i < destinations.length; i++) {
       InternalDistributedMember destination = destinations[i];
@@ -506,21 +551,27 @@ public class DirectChannel {
         continue;
       }
 
-      if (!mgr.memberExists(destination) || mgr.shutdownInProgress() || mgr.isShunned(destination)) {
+      if (!mgr.memberExists(destination)
+          || mgr.shutdownInProgress()
+          || mgr.isShunned(destination)) {
         // This should only happen if the member is no longer in the view.
         if (logger.isTraceEnabled(LogMarker.DM)) {
           logger.trace(LogMarker.DM, "Not a member: {}", destination);
         }
-        if (ce == null)
-          ce = new ConnectExceptions();
-        ce.addFailure(destination, new ShunnedMemberException(LocalizedStrings.DirectChannel_SHUNNING_0.toLocalizedString(destination)));
+        if (ce == null) ce = new ConnectExceptions();
+        ce.addFailure(
+            destination,
+            new ShunnedMemberException(
+                LocalizedStrings.DirectChannel_SHUNNING_0.toLocalizedString(destination)));
       } else {
         try {
           long startTime = 0;
           if (ackTimeout > 0) {
             startTime = System.currentTimeMillis();
           }
-          Connection con = conduit.getConnection(destination, preserveOrder, retry, startTime, ackTimeout, ackSDTimeout);
+          Connection con =
+              conduit.getConnection(
+                  destination, preserveOrder, retry, startTime, ackTimeout, ackSDTimeout);
 
           con.setInUse(true, startTime, 0, 0, null); // fix for bug#37657
           cons.add(con);
@@ -529,8 +580,7 @@ public class DirectChannel {
             directMessage.registerProcessor();
           }
         } catch (IOException ex) {
-          if (ce == null)
-            ce = new ConnectExceptions();
+          if (ce == null) ce = new ConnectExceptions();
           ce.addFailure(destination, ex);
         }
       }
@@ -540,19 +590,25 @@ public class DirectChannel {
 
   /**
    * Method send.
+   *
    * @param mgr - the membership manager
    * @param destinations - the address(es) to send the message to.
    * @param msg - the message to send
    * @param ackWaitThreshold
    * @param ackSAThreshold severe alert threshold
    * @return number of bytes sent
-   * @throws ConnectExceptions if message could not be send to one or more
-   *         of the <code>destinations</code>
-   * @throws NotSerializableException
-   *         If the content cannot be serialized
-     * @throws ConnectionException if the conduit has stopped
+   * @throws ConnectExceptions if message could not be send to one or more of the <code>destinations
+   *     </code>
+   * @throws NotSerializableException If the content cannot be serialized
+   * @throws ConnectionException if the conduit has stopped
    */
-  public int send(MembershipManager mgr, InternalDistributedMember[] destinations, DistributionMessage msg, long ackWaitThreshold, long ackSAThreshold) throws ConnectExceptions, NotSerializableException {
+  public int send(
+      MembershipManager mgr,
+      InternalDistributedMember[] destinations,
+      DistributionMessage msg,
+      long ackWaitThreshold,
+      long ackSAThreshold)
+      throws ConnectExceptions, NotSerializableException {
 
     if (disconnected) {
       if (logger.isDebugEnabled()) {
@@ -568,7 +624,8 @@ public class DirectChannel {
     }
     if (destinations.length == 0) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Returning from DirectChannel send because empty destinations passed in {}", msg);
+        logger.debug(
+            "Returning from DirectChannel send because empty destinations passed in {}", msg);
       }
       return 0;
     }
@@ -581,9 +638,7 @@ public class DirectChannel {
     }
   }
 
-  /**
-   * Returns null if no stats available.
-   */
+  /** Returns null if no stats available. */
   public DMStats getDMStats() {
     DM dm = getDM();
     if (dm != null) {
@@ -595,6 +650,7 @@ public class DirectChannel {
 
   /**
    * Returns null if no config is available.
+   *
    * @since GemFire 4.2.2
    */
   public DistributionConfig getDMConfig() {
@@ -606,22 +662,21 @@ public class DirectChannel {
     }
   }
 
-  /**
-   * Returns null if no dm available.
-   */
+  /** Returns null if no dm available. */
   public DM getDM() {
     return this.receiver.getDM();
   }
 
   /**
-   * 
    * @param ackTimeout ack wait threshold
    * @param ackSATimeout severe alert threshold
    * @param c
-   * @param processor 
+   * @param processor
    * @throws ConnectionException
    */
-  private void handleAckTimeout(long ackTimeout, long ackSATimeout, Connection c, DirectReplyProcessor processor) throws ConnectionException {
+  private void handleAckTimeout(
+      long ackTimeout, long ackSATimeout, Connection c, DirectReplyProcessor processor)
+      throws ConnectionException {
     DM dm = getDM();
     Set activeMembers = dm.getDistributionManagerIds();
 
@@ -630,15 +685,21 @@ public class DirectChannel {
 
     // an alert that will show up in the console
     {
-      final StringId msg = LocalizedStrings.DirectChannel_0_SECONDS_HAVE_ELAPSED_WHILE_WAITING_FOR_REPLY_FROM_1_ON_2_WHOSE_CURRENT_MEMBERSHIP_LIST_IS_3;
-      final Object[] msgArgs = new Object[] { Long.valueOf(ackTimeout / 1000), c.getRemoteAddress(), dm.getId(), activeMembers };
+      final StringId msg =
+          LocalizedStrings
+              .DirectChannel_0_SECONDS_HAVE_ELAPSED_WHILE_WAITING_FOR_REPLY_FROM_1_ON_2_WHOSE_CURRENT_MEMBERSHIP_LIST_IS_3;
+      final Object[] msgArgs =
+          new Object[] {
+            Long.valueOf(ackTimeout / 1000), c.getRemoteAddress(), dm.getId(), activeMembers
+          };
       logger.warn(LocalizedMessage.create(msg, msgArgs));
       msgArgs[3] = "(omitted)";
       Breadcrumbs.setProblem(msg, msgArgs);
 
       if (ReplyProcessor21.THROW_EXCEPTION_ON_TIMEOUT) {
         // init the cause to be a TimeoutException so catchers can determine cause
-        TimeoutException cause = new TimeoutException(LocalizedStrings.TIMED_OUT_WAITING_FOR_ACKS.toLocalizedString());
+        TimeoutException cause =
+            new TimeoutException(LocalizedStrings.TIMED_OUT_WAITING_FOR_ACKS.toLocalizedString());
         throw new InternalGemFireException(msg.toLocalizedString(msgArgs), cause);
       }
     }
@@ -650,18 +711,36 @@ public class DirectChannel {
           c.readAck((int) ackSATimeout, ackSATimeout, processor);
           return;
         } catch (SocketTimeoutException e) {
-          Object[] args = new Object[] { Long.valueOf((ackSATimeout + ackTimeout) / 1000), c.getRemoteAddress(), dm.getId(), activeMembers };
-          logger.fatal(LocalizedMessage.create(LocalizedStrings.DirectChannel_0_SECONDS_HAVE_ELAPSED_WHILE_WAITING_FOR_REPLY_FROM_1_ON_2_WHOSE_CURRENT_MEMBERSHIP_LIST_IS_3, args));
+          Object[] args =
+              new Object[] {
+                Long.valueOf((ackSATimeout + ackTimeout) / 1000),
+                c.getRemoteAddress(),
+                dm.getId(),
+                activeMembers
+              };
+          logger.fatal(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .DirectChannel_0_SECONDS_HAVE_ELAPSED_WHILE_WAITING_FOR_REPLY_FROM_1_ON_2_WHOSE_CURRENT_MEMBERSHIP_LIST_IS_3,
+                  args));
         }
       }
       try {
         c.readAck(0, 0, processor);
       } catch (SocketTimeoutException ex) {
         // this can never happen when called with timeout of 0
-        logger.error(LocalizedMessage.create(LocalizedStrings.DirectChannel_UNEXPECTED_TIMEOUT_WHILE_WAITING_FOR_ACK_FROM__0, c.getRemoteAddress()), ex);
+        logger.error(
+            LocalizedMessage.create(
+                LocalizedStrings.DirectChannel_UNEXPECTED_TIMEOUT_WHILE_WAITING_FOR_ACK_FROM__0,
+                c.getRemoteAddress()),
+            ex);
       }
     } else {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.DirectChannel_VIEW_NO_LONGER_HAS_0_AS_AN_ACTIVE_MEMBER_SO_WE_WILL_NO_LONGER_WAIT_FOR_IT, c.getRemoteAddress()));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .DirectChannel_VIEW_NO_LONGER_HAS_0_AS_AN_ACTIVE_MEMBER_SO_WE_WILL_NO_LONGER_WAIT_FOR_IT,
+              c.getRemoteAddress()));
       processor.memberDeparted(c.getRemoteAddress(), true);
     }
   }
@@ -679,7 +758,8 @@ public class DirectChannel {
     } catch (Exception ex) {
       // Don't freak out if the DM is shutting down
       if (!conduit.getCancelCriterion().isCancelInProgress()) {
-        logger.fatal(LocalizedMessage.create(LocalizedStrings.DirectChannel_WHILE_PULLING_A_MESSAGE), ex);
+        logger.fatal(
+            LocalizedMessage.create(LocalizedStrings.DirectChannel_WHILE_PULLING_A_MESSAGE), ex);
       }
     }
   }
@@ -690,7 +770,7 @@ public class DirectChannel {
 
   /**
    * Ensure that the TCPConduit class gets loaded.
-   * 
+   *
    * @see SystemFailure#loadEmergencyClasses()
    */
   public static void loadEmergencyClasses() {
@@ -699,7 +779,7 @@ public class DirectChannel {
 
   /**
    * Close the Conduit
-   * 
+   *
    * @see SystemFailure#emergencyClose()
    */
   public void emergencyClose() {
@@ -707,9 +787,9 @@ public class DirectChannel {
   }
 
   /**
-   * This closes down the Direct connection.  Theoretically you can disconnect
-   * and, if you need to use the channel again you can and it will automatically
-   * reconnect.  Reconnection will cause a new local address to be generated.
+   * This closes down the Direct connection. Theoretically you can disconnect and, if you need to
+   * use the channel again you can and it will automatically reconnect. Reconnection will cause a
+   * new local address to be generated.
    */
   public synchronized void disconnect(Exception cause) {
     //    this.shutdownCause = cause;
@@ -738,9 +818,7 @@ public class DirectChannel {
     return receiver;
   }
 
-  /**
-   * Returns the port on which this direct channel sends messages
-   */
+  /** Returns the port on which this direct channel sends messages */
   public int getPort() {
     return this.conduit.getPort();
   }
@@ -759,8 +837,8 @@ public class DirectChannel {
     String bindAddress = dc.getBindAddress();
 
     try {
-      /* note: had to change the following to make sure the prop wasn't empty 
-         in addition to not null for admin.DistributedSystemFactory */
+      /* note: had to change the following to make sure the prop wasn't empty
+      in addition to not null for admin.DistributedSystemFactory */
       if (bindAddress != null && bindAddress.length() > 0) {
         return InetAddress.getByName(bindAddress);
 
@@ -769,7 +847,6 @@ public class DirectChannel {
       }
     } catch (java.net.UnknownHostException unhe) {
       throw new RuntimeException(unhe);
-
     }
   }
 
@@ -777,10 +854,9 @@ public class DirectChannel {
     closeEndpoint(member, reason, true);
   }
 
-  /**
-   * Closes any connections used to communicate with the given jgroupsAddress.
-   */
-  public void closeEndpoint(InternalDistributedMember member, String reason, boolean notifyDisconnect) {
+  /** Closes any connections used to communicate with the given jgroupsAddress. */
+  public void closeEndpoint(
+      InternalDistributedMember member, String reason, boolean notifyDisconnect) {
     TCPConduit tc = this.conduit;
     if (tc != null) {
       tc.removeEndpoint(member, reason, notifyDisconnect);
@@ -788,13 +864,12 @@ public class DirectChannel {
   }
 
   /**
-   * adds state for thread-owned serial connections to the given member to
-   * the parameter <i>result</i>.  This can be used to wait for the state to
-   * reach the given level in the member's vm.
-   * @param member
-   *    the member whose state is to be captured
-   * @param result
-   *    the map to add the state to
+   * adds state for thread-owned serial connections to the given member to the parameter
+   * <i>result</i>. This can be used to wait for the state to reach the given level in the member's
+   * vm.
+   *
+   * @param member the member whose state is to be captured
+   * @param result the map to add the state to
    * @since GemFire 5.1
    */
   public void getChannelStates(DistributedMember member, Map result) {
@@ -805,28 +880,24 @@ public class DirectChannel {
   }
 
   /**
-   * wait for the given connections to process the number of messages
-   * associated with the connection in the given map
+   * wait for the given connections to process the number of messages associated with the connection
+   * in the given map
    */
-  public void waitForChannelState(DistributedMember member, Map channelState) throws InterruptedException {
-    if (Thread.interrupted())
-      throw new InterruptedException();
+  public void waitForChannelState(DistributedMember member, Map channelState)
+      throws InterruptedException {
+    if (Thread.interrupted()) throw new InterruptedException();
     TCPConduit tc = this.conduit;
     if (tc != null) {
       tc.waitForThreadOwnedOrderedConnectionState(member, channelState);
     }
   }
 
-  /**
-   * returns true if there are still receiver threads for the given member
-   */
+  /** returns true if there are still receiver threads for the given member */
   public boolean hasReceiversFor(DistributedMember mbr) {
     return this.conduit.hasReceiversFor(mbr);
   }
 
-  /**
-   * cause the channel to be sick
-   */
+  /** cause the channel to be sick */
   public void beSick() {
     TCPConduit tc = this.conduit;
     if (tc != null) {
@@ -834,14 +905,11 @@ public class DirectChannel {
     }
   }
 
-  /**
-   * cause the channel to be healthy
-   */
+  /** cause the channel to be healthy */
   public void beHealthy() {
     TCPConduit tc = this.conduit;
     if (tc != null) {
       tc.beHealthy();
     }
   }
-
 }

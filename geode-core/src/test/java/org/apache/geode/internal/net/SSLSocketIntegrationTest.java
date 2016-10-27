@@ -50,7 +50,9 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
  * Integration tests for SocketCreatorFactory with SSL.
+ *
  * <p>
+ *
  * <p>Renamed from {@code JSSESocketJUnitTest}.
  *
  * @see ClientSocketFactoryIntegrationTest
@@ -69,17 +71,13 @@ public class SSLSocketIntegrationTest {
   private ServerSocket serverSocket;
   private Socket clientSocket;
 
-  @Rule
-  public ErrorCollector errorCollector = new ErrorCollector();
+  @Rule public ErrorCollector errorCollector = new ErrorCollector();
 
-  @Rule
-  public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+  @Rule public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
@@ -137,7 +135,9 @@ public class SSLSocketIntegrationTest {
     output.flush();
 
     // this is the real assertion of this test
-    await().atMost(1, TimeUnit.MINUTES).until(() -> assertThat(this.messageFromClient.get()).isEqualTo(MESSAGE));
+    await()
+        .atMost(1, TimeUnit.MINUTES)
+        .until(() -> assertThat(this.messageFromClient.get()).isEqualTo(MESSAGE));
   }
 
   private File findTestKeystore() throws IOException {
@@ -154,16 +154,21 @@ public class SSLSocketIntegrationTest {
   }
 
   private Thread startServer(final ServerSocket serverSocket) throws Exception {
-    Thread serverThread = new Thread(new MyThreadGroup(this.testName.getMethodName()), () -> {
-      try {
-        Socket socket = serverSocket.accept();
-        SocketCreatorFactory.getSocketCreatorForComponent(CLUSTER).configureServerSSLSocket(socket);
-        ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-        messageFromClient.set((String) ois.readObject());
-      } catch (IOException | ClassNotFoundException e) {
-        throw new Error(e);
-      }
-    }, this.testName.getMethodName() + "-server");
+    Thread serverThread =
+        new Thread(
+            new MyThreadGroup(this.testName.getMethodName()),
+            () -> {
+              try {
+                Socket socket = serverSocket.accept();
+                SocketCreatorFactory.getSocketCreatorForComponent(CLUSTER)
+                    .configureServerSSLSocket(socket);
+                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                messageFromClient.set((String) ois.readObject());
+              } catch (IOException | ClassNotFoundException e) {
+                throw new Error(e);
+              }
+            },
+            this.testName.getMethodName() + "-server");
 
     serverThread.start();
     return serverThread;
@@ -180,5 +185,4 @@ public class SSLSocketIntegrationTest {
       errorCollector.addError(throwable);
     }
   }
-
 }

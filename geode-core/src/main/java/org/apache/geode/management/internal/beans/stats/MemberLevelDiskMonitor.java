@@ -29,10 +29,7 @@ import org.apache.geode.internal.statistics.StatisticsNotification;
 import org.apache.geode.internal.statistics.ValueMonitor;
 import org.apache.geode.management.internal.beans.stats.MBeanStatsMonitor.DefaultHashMap;
 
-/**
- * 
- *
- */
+/** */
 public class MemberLevelDiskMonitor extends MBeanStatsMonitor {
 
   private volatile long diskReadBytes = 0;
@@ -150,33 +147,27 @@ public class MemberLevelDiskMonitor extends MBeanStatsMonitor {
           Number deltaValue = computeDelta(statsMap, name, value);
           statsMap.put(name, value);
           increaseStats(name, deltaValue);
-
         }
-
       }
     }
 
     /**
-     * Only decrease those values which can both increase and decrease and not
-     * values which can only increase like read/writes
-     * 
-     * Remove last sample value from the aggregate. Last Sampled value can be
-     * obtained from the DefaultHashMap for the disk
-     * 
+     * Only decrease those values which can both increase and decrease and not values which can only
+     * increase like read/writes
+     *
+     * <p>Remove last sample value from the aggregate. Last Sampled value can be obtained from the
+     * DefaultHashMap for the disk
+     *
      * @param stats
      */
-
     public void decreaseDiskStoreStats(Statistics stats) {
       synchronized (statsMap) {
         queueSize -= statsMap.get(StatsKey.DISK_QUEUE_SIZE).intValue();
         backupsInProgress -= statsMap.get(StatsKey.BACKUPS_IN_PROGRESS).intValue();
         ;
         removed = true;
-
       }
-
     }
-
   };
 
   private Number computeDelta(DefaultHashMap statsMap, String name, Number currentValue) {
@@ -198,11 +189,8 @@ public class MemberLevelDiskMonitor extends MBeanStatsMonitor {
     }
     if (name.equals(StatsKey.BACKUPS_IN_PROGRESS)) {
       /**
-       *  A negative value is also OK. 
-       * previous backup_in_progress = 5
-       * curr_backup_in_progress = 2
-       * delta = -3
-       * delta should be added to aggregate backup in progress
+       * A negative value is also OK. previous backup_in_progress = 5 curr_backup_in_progress = 2
+       * delta = -3 delta should be added to aggregate backup in progress
        */
       Number prevValue = statsMap.get(StatsKey.BACKUPS_IN_PROGRESS).longValue();
       Number deltaValue = currentValue.longValue() - prevValue.longValue();

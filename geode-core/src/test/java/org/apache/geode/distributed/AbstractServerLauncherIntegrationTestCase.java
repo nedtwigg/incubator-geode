@@ -32,26 +32,24 @@ import java.util.concurrent.Callable;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * @since GemFire 8.0
- */
-public abstract class AbstractServerLauncherIntegrationTestCase extends AbstractLauncherIntegrationTestCase {
+/** @since GemFire 8.0 */
+public abstract class AbstractServerLauncherIntegrationTestCase
+    extends AbstractLauncherIntegrationTestCase {
 
   protected volatile int serverPort;
   protected volatile ServerLauncher launcher;
   protected volatile String workingDirectory;
 
-  @Rule
-  public ErrorCollector errorCollector = new ErrorCollector();
+  @Rule public ErrorCollector errorCollector = new ErrorCollector();
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
   @Before
   public final void setUpServerLauncherTest() throws Exception {
     System.setProperty(DistributionConfig.GEMFIRE_PREFIX + MCAST_PORT, Integer.toString(0));
     final int port = AvailablePortHelper.getRandomAvailableTCPPort();
-    System.setProperty(AbstractCacheServer.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY, String.valueOf(port));
+    System.setProperty(
+        AbstractCacheServer.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY, String.valueOf(port));
     this.serverPort = port;
     this.workingDirectory = this.temporaryFolder.getRoot().getCanonicalPath();
   }
@@ -65,26 +63,34 @@ public abstract class AbstractServerLauncherIntegrationTestCase extends Abstract
     }
   }
 
-  protected void waitForServerToStart(final ServerLauncher launcher, int timeout, int interval, boolean throwOnTimeout) throws Exception {
-    assertEventuallyTrue("waiting for local Server to start: " + launcher.status(), new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        try {
-          final ServerState serverState = launcher.status();
-          assertNotNull(serverState);
-          return Status.ONLINE.equals(serverState.getStatus());
-        } catch (RuntimeException e) {
-          return false;
-        }
-      }
-    }, timeout, interval);
+  protected void waitForServerToStart(
+      final ServerLauncher launcher, int timeout, int interval, boolean throwOnTimeout)
+      throws Exception {
+    assertEventuallyTrue(
+        "waiting for local Server to start: " + launcher.status(),
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            try {
+              final ServerState serverState = launcher.status();
+              assertNotNull(serverState);
+              return Status.ONLINE.equals(serverState.getStatus());
+            } catch (RuntimeException e) {
+              return false;
+            }
+          }
+        },
+        timeout,
+        interval);
   }
 
-  protected void waitForServerToStart(final ServerLauncher launcher, boolean throwOnTimeout) throws Exception {
+  protected void waitForServerToStart(final ServerLauncher launcher, boolean throwOnTimeout)
+      throws Exception {
     waitForServerToStart(launcher, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, throwOnTimeout);
   }
 
-  protected void waitForServerToStart(final ServerLauncher launcher, int timeout, boolean throwOnTimeout) throws Exception {
+  protected void waitForServerToStart(
+      final ServerLauncher launcher, int timeout, boolean throwOnTimeout) throws Exception {
     waitForServerToStart(launcher, timeout, INTERVAL_MILLISECONDS, throwOnTimeout);
   }
 

@@ -21,17 +21,17 @@ import org.apache.geode.internal.cache.InternalRegionArguments;
 import org.apache.geode.internal.cache.AbstractRegionEntry;
 
 /**
- * NewLIFOClockHand holds the behavior for LIFO logic , Overwriting
- * getLRUEntry() to return most recently added Entry
- * 
+ * NewLIFOClockHand holds the behavior for LIFO logic , Overwriting getLRUEntry() to return most
+ * recently added Entry
+ *
  * @since GemFire 5.7
  */
-
 public class NewLIFOClockHand extends NewLRUClockHand {
   /*
    * constructor
    */
-  public NewLIFOClockHand(Object region, EnableLRU ccHelper, InternalRegionArguments internalRegionArgs) {
+  public NewLIFOClockHand(
+      Object region, EnableLRU ccHelper, InternalRegionArguments internalRegionArgs) {
     super(region, ccHelper, internalRegionArgs);
   }
 
@@ -61,7 +61,7 @@ public class NewLIFOClockHand extends NewLRUClockHand {
   }
 
   /*
-   *  return the Entry that is considered most recently used and available 
+   *  return the Entry that is considered most recently used and available
    * to be evicted to overflow
    */
   @Override
@@ -69,7 +69,7 @@ public class NewLIFOClockHand extends NewLRUClockHand {
     long numEvals = 0;
     LRUClockNode aNode = null;
     //search for entry to return from list
-    for (;;) {
+    for (; ; ) {
       aNode = getTailEntry();
       //end of Lifo list stop searching
       if (aNode == null) {

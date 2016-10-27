@@ -19,12 +19,11 @@ package org.apache.geode.cache;
 import org.apache.geode.cache.control.RebalanceOperation;
 
 /**
- * Thrown when a {@link RebalanceOperation} occurs concurrently with a transaction.
- * This can be thrown while doing transactional operations or during commit.
+ * Thrown when a {@link RebalanceOperation} occurs concurrently with a transaction. This can be
+ * thrown while doing transactional operations or during commit.
  *
- * <p>This exception only occurs when a transaction
- * involves partitioned regions.
- * 
+ * <p>This exception only occurs when a transaction involves partitioned regions.
+ *
  * @since GemFire 6.6
  */
 public class TransactionDataRebalancedException extends TransactionException {

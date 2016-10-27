@@ -30,7 +30,7 @@ public class CommitReplyException extends ReplyException {
   /** Exceptions generated when attempting to process a commit operation */
   private final Set exceptions;
 
-  /** 
+  /**
    * Constructs a <code>CommitReplyException</code> with a message.
    *
    * @param s the String message
@@ -40,25 +40,22 @@ public class CommitReplyException extends ReplyException {
     this.exceptions = Collections.EMPTY_SET;
   }
 
-  /** 
-   * Constructs a <code>CommitReplyException</code> with a message and
-   * set of exceptions generated when attempting to process a commit operation.
+  /**
+   * Constructs a <code>CommitReplyException</code> with a message and set of exceptions generated
+   * when attempting to process a commit operation.
    *
    * @param s the String message
-   * @param exceptions set of exceptions generated when attempting to process
-   * a commit operation
+   * @param exceptions set of exceptions generated when attempting to process a commit operation
    */
   public CommitReplyException(String s, Set exceptions) {
     super(s);
     this.exceptions = exceptions;
   }
 
-  /** 
-   * Returns set of exceptions generated when attempting to process a 
-   * commit operation
+  /**
+   * Returns set of exceptions generated when attempting to process a commit operation
    *
-   * @return set of exceptions generated when attempting to process a 
-   * commit operation
+   * @return set of exceptions generated when attempting to process a commit operation
    */
   public Set getExceptions() {
     return this.exceptions;

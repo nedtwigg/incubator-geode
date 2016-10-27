@@ -27,15 +27,9 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.LOCATORS;
 
 /**
- * 
- * TODO
- * 0. SystemAlerts
- * 1. Operations like member-up/down/crash, region create/destroy [7.5 scope]
- * 2. Read events like member-up/down/crash, region create/destroy [7.5 scope]
- * 3. PropFile Writing
- * 4. Link to other remote systems, topology - multi-cluster [7.5] 
- * 
- *
+ * TODO 0. SystemAlerts 1. Operations like member-up/down/crash, region create/destroy [7.5 scope]
+ * 2. Read events like member-up/down/crash, region create/destroy [7.5 scope] 3. PropFile Writing
+ * 4. Link to other remote systems, topology - multi-cluster [7.5]
  */
 public class GemFireDistributedSystem {
 
@@ -131,14 +125,12 @@ public class GemFireDistributedSystem {
       cq.init(propertiesFile, dsName, cqName);
       cqs.add(cq);
     }
-
   }
 
   public List<Region> getRegions(String memberName) {
     List<Region> list = new ArrayList<Region>();
     for (Region r : regions) {
-      if (r.getMembers().contains(memberName))
-        list.add(r);
+      if (r.getMembers().contains(memberName)) list.add(r);
     }
     return list;
   }
@@ -220,16 +212,12 @@ public class GemFireDistributedSystem {
       String values = properties.get(string);
       String array[] = values.split(",");
       List<String> list = new ArrayList<String>();
-      for (String s : array)
-        list.add(s);
+      for (String s : array) list.add(s);
       return list;
     }
-
   }
 
-  public static class Host extends Base {
-
-  }
+  public static class Host extends Base {}
 
   public static class Server extends Base {
     public String toString() {
@@ -243,7 +231,7 @@ public class GemFireDistributedSystem {
 
   public static class Client extends Base {
     public String toString() {
-      return properties.get("name");//+ "[on host=" + properties.get("host");
+      return properties.get("name"); //+ "[on host=" + properties.get("host");
     }
 
     public String getHost() {
@@ -284,12 +272,9 @@ public class GemFireDistributedSystem {
     public List<String> getMembers() {
       return values("members");
     }
-
   }
 
-  public static class WanSender extends Base {
-
-  }
+  public static class WanSender extends Base {}
 
   public static class Function extends Base {
     public String getMemberId() {
@@ -318,5 +303,4 @@ public class GemFireDistributedSystem {
     System.out.println("Regions = " + ds.getRegions());
     System.out.println("Clients = " + ds.getClients());
   }
-
 }

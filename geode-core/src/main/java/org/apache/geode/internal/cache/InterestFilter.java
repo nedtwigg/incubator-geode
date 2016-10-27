@@ -29,5 +29,4 @@ public interface InterestFilter extends CacheCallback {
   public boolean notifyOnInvalidate(InterestEvent event);
 
   public boolean notifyOnRegister(InterestEvent event);
-
 }

@@ -27,7 +27,7 @@ import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 
 /**
  * <code>ClientHandShake</code> represents a handshake from the client.
- *   
+ *
  * @since GemFire 5.7
  */
 public interface ClientHandShake {
@@ -41,5 +41,12 @@ public interface ClientHandShake {
 
   public Version getVersion();
 
-  public void accept(OutputStream out, InputStream in, byte epType, int qSize, byte communicationMode, Principal principal) throws IOException;
+  public void accept(
+      OutputStream out,
+      InputStream in,
+      byte epType,
+      int qSize,
+      byte communicationMode,
+      Principal principal)
+      throws IOException;
 }

@@ -65,5 +65,4 @@ public class ObjectWithAuthz implements DataSerializable {
     DataSerializer.writeObject(this.val, out);
     DataSerializer.writeObject(this.authz, out);
   }
-
 }

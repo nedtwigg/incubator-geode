@@ -20,62 +20,41 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.distributed.internal.membership.NetView;
 import org.apache.geode.distributed.internal.membership.gms.Services;
 
-/**
- * Services in GMS all implement this interface
- *
- */
+/** Services in GMS all implement this interface */
 public interface Service {
   void init(Services s);
 
   /**
-   * called after all services have been initialized 
-   * with init() and all services are available via Services
+   * called after all services have been initialized with init() and all services are available via
+   * Services
    */
   void start();
 
-  /**
-   * called after all servers have been started
-   */
+  /** called after all servers have been started */
   void started();
 
-  /**
-   * called when the GMS is stopping
-   */
+  /** called when the GMS is stopping */
   void stop();
 
-  /**
-   * called after all services have been stopped
-   */
+  /** called after all services have been stopped */
   void stopped();
 
-  /**
-   * called when a new view is installed by Membership
-   */
+  /** called when a new view is installed by Membership */
   void installView(NetView v);
 
-  /**
-   * test method for simulating a sick/dead member
-   */
+  /** test method for simulating a sick/dead member */
   void beSick();
 
-  /**
-   * test method for simulating a sick/dead member
-   */
+  /** test method for simulating a sick/dead member */
   void playDead();
 
-  /**
-   * test method for simulating a sick/dead member
-   */
+  /** test method for simulating a sick/dead member */
   void beHealthy();
 
-  /**
-   * shut down threads, cancel timers, etc.
-   */
+  /** shut down threads, cancel timers, etc. */
   void emergencyClose();
 
-  /**
-   * a member is suspected of having crashed
-   */
-  void memberSuspected(InternalDistributedMember initiator, InternalDistributedMember suspect, String reason);
-
+  /** a member is suspected of having crashed */
+  void memberSuspected(
+      InternalDistributedMember initiator, InternalDistributedMember suspect, String reason);
 }

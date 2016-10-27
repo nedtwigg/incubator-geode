@@ -46,8 +46,8 @@ import static org.apache.geode.test.dunit.LogWriterUtils.getLogWriter;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * The ListIndexCommandDUnitTest class is distributed test suite of test cases for testing the index-based GemFire shell
- * (Gfsh) commands.
+ * The ListIndexCommandDUnitTest class is distributed test suite of test cases for testing the
+ * index-based GemFire shell (Gfsh) commands.
  *
  * @see org.apache.geode.management.internal.cli.commands.CliCommandTestBase
  * @see org.apache.geode.management.internal.cli.commands.IndexCommands
@@ -80,22 +80,35 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
     return buffer.toString();
   }
 
-  private Index createIndex(final String name, final String indexedExpression, final String fromClause) {
+  private Index createIndex(
+      final String name, final String indexedExpression, final String fromClause) {
     return createIndex(name, IndexType.FUNCTIONAL, indexedExpression, fromClause);
   }
 
-  private Index createIndex(final String name, final IndexType type, final String indexedExpression, final String fromClause) {
+  private Index createIndex(
+      final String name,
+      final IndexType type,
+      final String indexedExpression,
+      final String fromClause) {
     return new IndexAdapter(name, type, indexedExpression, fromClause);
   }
 
-  private Peer createPeer(final VM vm, final Properties distributedSystemProperties, final RegionDefinition... regions) {
+  private Peer createPeer(
+      final VM vm,
+      final Properties distributedSystemProperties,
+      final RegionDefinition... regions) {
     final Peer peer = new Peer(vm, distributedSystemProperties);
     peer.add(regions);
     return peer;
   }
 
-  private RegionDefinition createRegionDefinition(final String regionName, final Class<?> keyConstraint, final Class<?> valueConstraint, final Index... indexes) {
-    final RegionDefinition regionDefinition = new RegionDefinition(regionName, keyConstraint, valueConstraint);
+  private RegionDefinition createRegionDefinition(
+      final String regionName,
+      final Class<?> keyConstraint,
+      final Class<?> valueConstraint,
+      final Index... indexes) {
+    final RegionDefinition regionDefinition =
+        new RegionDefinition(regionName, keyConstraint, valueConstraint);
     regionDefinition.add(indexes);
     return regionDefinition;
   }
@@ -106,9 +119,26 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
     final VM vm1 = host.getVM(1);
     final VM vm2 = host.getVM(2);
 
-    final Peer peer1 = createPeer(vm1, createDistributedSystemProperties("consumerServer"), createRegionDefinition("consumers", Long.class, Consumer.class, createIndex("cidIdx", IndexType.PRIMARY_KEY, "id", "/consumers"), createIndex("cnameIdx", "name", "/consumers")));
+    final Peer peer1 =
+        createPeer(
+            vm1,
+            createDistributedSystemProperties("consumerServer"),
+            createRegionDefinition(
+                "consumers",
+                Long.class,
+                Consumer.class,
+                createIndex("cidIdx", IndexType.PRIMARY_KEY, "id", "/consumers"),
+                createIndex("cnameIdx", "name", "/consumers")));
 
-    final Peer peer2 = createPeer(vm2, createDistributedSystemProperties("producerServer"), createRegionDefinition("producers", Long.class, Producer.class, createIndex("pidIdx", "id", "/producers")));
+    final Peer peer2 =
+        createPeer(
+            vm2,
+            createDistributedSystemProperties("producerServer"),
+            createRegionDefinition(
+                "producers",
+                Long.class,
+                Producer.class,
+                createIndex("pidIdx", "id", "/producers")));
 
     createRegionWithIndexes(peer1);
     createRegionWithIndexes(peer2);
@@ -127,165 +157,200 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
   }
 
   private void createRegionWithIndexes(final Peer peer) throws Exception {
-    peer.run(new SerializableRunnable(String.format("Creating Regions with Indexes on GemFire peer (%1$s).", peer.getName())) {
-      public void run() {
-        // create the GemFire distributed system with custom configuration properties...
-        getSystem(peer.getConfiguration());
+    peer.run(
+        new SerializableRunnable(
+            String.format(
+                "Creating Regions with Indexes on GemFire peer (%1$s).", peer.getName())) {
+          public void run() {
+            // create the GemFire distributed system with custom configuration properties...
+            getSystem(peer.getConfiguration());
 
-        final Cache cache = getCache();
-        final RegionFactory regionFactory = cache.createRegionFactory();
+            final Cache cache = getCache();
+            final RegionFactory regionFactory = cache.createRegionFactory();
 
-        for (RegionDefinition regionDefinition : peer) {
-          regionFactory.setDataPolicy(DataPolicy.REPLICATE);
-          regionFactory.setIndexMaintenanceSynchronous(true);
-          regionFactory.setInitialCapacity(DEFAULT_REGION_INITIAL_CAPACITY);
-          regionFactory.setKeyConstraint(regionDefinition.getKeyConstraint());
-          regionFactory.setScope(Scope.DISTRIBUTED_NO_ACK);
-          regionFactory.setStatisticsEnabled(true);
-          regionFactory.setValueConstraint(regionDefinition.getValueConstraint());
+            for (RegionDefinition regionDefinition : peer) {
+              regionFactory.setDataPolicy(DataPolicy.REPLICATE);
+              regionFactory.setIndexMaintenanceSynchronous(true);
+              regionFactory.setInitialCapacity(DEFAULT_REGION_INITIAL_CAPACITY);
+              regionFactory.setKeyConstraint(regionDefinition.getKeyConstraint());
+              regionFactory.setScope(Scope.DISTRIBUTED_NO_ACK);
+              regionFactory.setStatisticsEnabled(true);
+              regionFactory.setValueConstraint(regionDefinition.getValueConstraint());
 
-          final Region region = regionFactory.create(regionDefinition.getRegionName());
-          String indexName = null;
+              final Region region = regionFactory.create(regionDefinition.getRegionName());
+              String indexName = null;
 
-          try {
-            for (Index index : regionDefinition) {
-              indexName = index.getName();
-              if (IndexType.PRIMARY_KEY.equals(index.getType())) {
-                cache.getQueryService().createKeyIndex(indexName, index.getIndexedExpression(), region.getFullPath());
-              } else {
-                cache.getQueryService().createIndex(indexName, index.getIndexedExpression(), region.getFullPath());
+              try {
+                for (Index index : regionDefinition) {
+                  indexName = index.getName();
+                  if (IndexType.PRIMARY_KEY.equals(index.getType())) {
+                    cache
+                        .getQueryService()
+                        .createKeyIndex(
+                            indexName, index.getIndexedExpression(), region.getFullPath());
+                  } else {
+                    cache
+                        .getQueryService()
+                        .createIndex(indexName, index.getIndexedExpression(), region.getFullPath());
+                  }
+                }
+              } catch (Exception e) {
+                getLogWriter()
+                    .error(
+                        String.format(
+                            "Error occurred creating Index (%1$s) on Region (%2$s) - (%3$s)",
+                            indexName, region.getFullPath(), e.getMessage()));
               }
             }
-          } catch (Exception e) {
-            getLogWriter().error(String.format("Error occurred creating Index (%1$s) on Region (%2$s) - (%3$s)", indexName, region.getFullPath(), e.getMessage()));
           }
-        }
-      }
-    });
+        });
   }
 
   private void loadConsumerData(final Peer peer, final int operationsTotal) throws Exception {
-    peer.run(new SerializableRunnable("Load /consumers Region with data") {
-      public void run() {
-        final Cache cache = getCache();
-        final Region<Long, Consumer> consumerRegion = cache.getRegion("/consumers");
+    peer.run(
+        new SerializableRunnable("Load /consumers Region with data") {
+          public void run() {
+            final Cache cache = getCache();
+            final Region<Long, Consumer> consumerRegion = cache.getRegion("/consumers");
 
-        final Random random = new Random(System.currentTimeMillis());
-        int count = 0;
+            final Random random = new Random(System.currentTimeMillis());
+            int count = 0;
 
-        final List<Proxy> proxies = new ArrayList<Proxy>();
+            final List<Proxy> proxies = new ArrayList<Proxy>();
 
-        Consumer consumer;
-        Proxy proxy;
+            Consumer consumer;
+            Proxy proxy;
 
-        while (count++ < operationsTotal) {
-          switch (CrudOperation.values()[random.nextInt(CrudOperation.values().length)]) {
-          case RETRIEVE:
-            if (!proxies.isEmpty()) {
-              proxy = proxies.get(random.nextInt(proxies.size()));
-              consumer = query(consumerRegion, "id = " + proxy.getId() + "l"); // works
-              //consumer = query(consumerRegion, "Id = " + proxy.getId()); // works
-              //consumer = query(consumerRegion, "id = " + proxy.getId()); // does not work
-              proxy.setUnitsSnapshot(consumer.getUnits());
-              break;
+            while (count++ < operationsTotal) {
+              switch (CrudOperation.values()[random.nextInt(CrudOperation.values().length)]) {
+                case RETRIEVE:
+                  if (!proxies.isEmpty()) {
+                    proxy = proxies.get(random.nextInt(proxies.size()));
+                    consumer = query(consumerRegion, "id = " + proxy.getId() + "l"); // works
+                    //consumer = query(consumerRegion, "Id = " + proxy.getId()); // works
+                    //consumer = query(consumerRegion, "id = " + proxy.getId()); // does not work
+                    proxy.setUnitsSnapshot(consumer.getUnits());
+                    break;
+                  }
+                case UPDATE:
+                  if (!proxies.isEmpty()) {
+                    proxy = proxies.get(random.nextInt(proxies.size()));
+                    consumer = query(consumerRegion, "Name = " + proxy.getName());
+                    consumer.consume();
+                    break;
+                  }
+                case CREATE:
+                default:
+                  consumer = new Consumer(idGenerator.incrementAndGet());
+                  proxies.add(new Proxy(consumer));
+                  consumerRegion.put(consumer.getId(), consumer);
+                  assertTrue(consumerRegion.containsKey(consumer.getId()));
+                  assertTrue(consumerRegion.containsValueForKey(consumer.getId()));
+                  assertSame(consumer, consumerRegion.get(consumer.getId()));
+              }
             }
-          case UPDATE:
-            if (!proxies.isEmpty()) {
-              proxy = proxies.get(random.nextInt(proxies.size()));
-              consumer = query(consumerRegion, "Name = " + proxy.getName());
-              consumer.consume();
-              break;
-            }
-          case CREATE:
-          default:
-            consumer = new Consumer(idGenerator.incrementAndGet());
-            proxies.add(new Proxy(consumer));
-            consumerRegion.put(consumer.getId(), consumer);
-            assertTrue(consumerRegion.containsKey(consumer.getId()));
-            assertTrue(consumerRegion.containsValueForKey(consumer.getId()));
-            assertSame(consumer, consumerRegion.get(consumer.getId()));
           }
-        }
-      }
-    });
+        });
   }
 
   private void loadProducerData(final Peer peer, final int operationsTotal) throws Exception {
-    peer.run(new SerializableRunnable("Load /producers Region with data") {
-      public void run() {
-        final Cache cache = getCache();
-        final Region<Long, Producer> producerRegion = cache.getRegion("/producers");
+    peer.run(
+        new SerializableRunnable("Load /producers Region with data") {
+          public void run() {
+            final Cache cache = getCache();
+            final Region<Long, Producer> producerRegion = cache.getRegion("/producers");
 
-        final Random random = new Random(System.currentTimeMillis());
-        int count = 0;
+            final Random random = new Random(System.currentTimeMillis());
+            int count = 0;
 
-        final List<Proxy> proxies = new ArrayList<Proxy>();
+            final List<Proxy> proxies = new ArrayList<Proxy>();
 
-        Producer producer;
-        Proxy proxy;
+            Producer producer;
+            Proxy proxy;
 
-        while (count++ < operationsTotal) {
-          switch (CrudOperation.values()[random.nextInt(CrudOperation.values().length)]) {
-          case RETRIEVE:
-            if (!proxies.isEmpty()) {
-              proxy = proxies.get(random.nextInt(proxies.size()));
-              producer = query(producerRegion, "Id = " + proxy.getId());
-              proxy.setUnitsSnapshot(producer.getUnits());
-              break;
+            while (count++ < operationsTotal) {
+              switch (CrudOperation.values()[random.nextInt(CrudOperation.values().length)]) {
+                case RETRIEVE:
+                  if (!proxies.isEmpty()) {
+                    proxy = proxies.get(random.nextInt(proxies.size()));
+                    producer = query(producerRegion, "Id = " + proxy.getId());
+                    proxy.setUnitsSnapshot(producer.getUnits());
+                    break;
+                  }
+                case UPDATE:
+                  if (!proxies.isEmpty()) {
+                    proxy = proxies.get(random.nextInt(proxies.size()));
+                    producer = query(producerRegion, "Id = " + proxy.getId());
+                    producer.produce();
+                    break;
+                  }
+                case CREATE:
+                default:
+                  producer = new Producer(idGenerator.incrementAndGet());
+                  proxies.add(new Proxy(producer));
+                  producerRegion.put(producer.getId(), producer);
+                  assertTrue(producerRegion.containsKey(producer.getId()));
+                  assertTrue(producerRegion.containsValueForKey(producer.getId()));
+                  assertSame(producer, producerRegion.get(producer.getId()));
+              }
             }
-          case UPDATE:
-            if (!proxies.isEmpty()) {
-              proxy = proxies.get(random.nextInt(proxies.size()));
-              producer = query(producerRegion, "Id = " + proxy.getId());
-              producer.produce();
-              break;
-            }
-          case CREATE:
-          default:
-            producer = new Producer(idGenerator.incrementAndGet());
-            proxies.add(new Proxy(producer));
-            producerRegion.put(producer.getId(), producer);
-            assertTrue(producerRegion.containsKey(producer.getId()));
-            assertTrue(producerRegion.containsValueForKey(producer.getId()));
-            assertSame(producer, producerRegion.get(producer.getId()));
           }
-        }
-      }
-    });
+        });
   }
 
   @SuppressWarnings("unchecked")
-  private <T extends Comparable<T>, B extends AbstractBean<T>> B query(final Cache cache, final String queryString) {
+  private <T extends Comparable<T>, B extends AbstractBean<T>> B query(
+      final Cache cache, final String queryString) {
     try {
       getLogWriter().info(String.format("Running Query (%1$s) in GemFire...", queryString));
 
-      final SelectResults<B> results = (SelectResults<B>) cache.getQueryService().newQuery(queryString).execute();
+      final SelectResults<B> results =
+          (SelectResults<B>) cache.getQueryService().newQuery(queryString).execute();
 
-      getLogWriter().info(String.format("Running Query (%1$s) in GemFire returned (%2$d) result(s).", queryString, results.size()));
+      getLogWriter()
+          .info(
+              String.format(
+                  "Running Query (%1$s) in GemFire returned (%2$d) result(s).",
+                  queryString, results.size()));
 
       return (results.iterator().hasNext() ? results.iterator().next() : null);
     } catch (Exception e) {
-      throw new RuntimeException(String.format("An error occurred running Query (%1$s)!", queryString), e);
+      throw new RuntimeException(
+          String.format("An error occurred running Query (%1$s)!", queryString), e);
     }
   }
 
-  private <T extends Comparable<T>, B extends AbstractBean<T>> B query(final Region<T, B> region, final String queryPredicate) {
+  private <T extends Comparable<T>, B extends AbstractBean<T>> B query(
+      final Region<T, B> region, final String queryPredicate) {
     try {
-      getLogWriter().info(String.format("Running Query (%1$s) on Region (%2$s)...", queryPredicate, region.getFullPath()));
+      getLogWriter()
+          .info(
+              String.format(
+                  "Running Query (%1$s) on Region (%2$s)...",
+                  queryPredicate, region.getFullPath()));
 
       final SelectResults<B> results = region.query(queryPredicate);
 
-      getLogWriter().info(String.format("Running Query (%1$s) on Region (%2$s) returned (%3$d) result(s).", queryPredicate, region.getFullPath(), results.size()));
+      getLogWriter()
+          .info(
+              String.format(
+                  "Running Query (%1$s) on Region (%2$s) returned (%3$d) result(s).",
+                  queryPredicate, region.getFullPath(), results.size()));
 
       return (results.iterator().hasNext() ? results.iterator().next() : null);
     } catch (Exception e) {
-      throw new RuntimeException(String.format("An error occurred running Query (%1$s) on Region (%2$s)!", queryPredicate, region.getFullPath()), e);
+      throw new RuntimeException(
+          String.format(
+              "An error occurred running Query (%1$s) on Region (%2$s)!",
+              queryPredicate, region.getFullPath()),
+          e);
     }
   }
 
   @Test
   public void testListIndex() throws Exception {
-    final Result result = executeCommand(CliStrings.LIST_INDEX + " --" + CliStrings.LIST_INDEX__STATS);
+    final Result result =
+        executeCommand(CliStrings.LIST_INDEX + " --" + CliStrings.LIST_INDEX__STATS);
 
     assertNotNull(result);
     getLogWriter().info(toString(result));
@@ -301,7 +366,8 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
     private final VM vm;
 
     public Peer(final VM vm, final Properties distributedSystemProperties) {
-      assert distributedSystemProperties != null : "The GemFire Distributed System configuration properties cannot be null!";
+      assert distributedSystemProperties != null
+          : "The GemFire Distributed System configuration properties cannot be null!";
       this.distributedSystemProperties = distributedSystemProperties;
       this.vm = vm;
     }
@@ -358,16 +424,25 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
     private final String indexedExpression;
     private final String name;
 
-    protected IndexAdapter(final String name, final String indexedExpression, final String fromClause) {
+    protected IndexAdapter(
+        final String name, final String indexedExpression, final String fromClause) {
       this(name, IndexType.FUNCTIONAL, indexedExpression, fromClause);
     }
 
-    protected IndexAdapter(final String name, final IndexType type, final String indexedExpression, final String fromClause) {
+    protected IndexAdapter(
+        final String name,
+        final IndexType type,
+        final String indexedExpression,
+        final String fromClause) {
       assert name != null : "The name of the Index cannot be null!";
-      assert indexedExpression != null : String.format("The expression to index for Index (%1$s) cannot be null!", name);
-      assert fromClause != null : String.format("The from clause for Index (%1$s) cannot be null!", name);
+      assert indexedExpression != null
+          : String.format("The expression to index for Index (%1$s) cannot be null!", name);
+      assert fromClause != null
+          : String.format("The from clause for Index (%1$s) cannot be null!", name);
 
-      this.type = ObjectUtils.defaultIfNull(IndexDetails.IndexType.valueOf(type), IndexDetails.IndexType.FUNCTIONAL);
+      this.type =
+          ObjectUtils.defaultIfNull(
+              IndexDetails.IndexType.valueOf(type), IndexDetails.IndexType.FUNCTIONAL);
       this.name = name;
       this.indexedExpression = indexedExpression;
       this.fromClause = fromClause;
@@ -445,7 +520,8 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
     private final String regionName;
 
     @SuppressWarnings("unchecked")
-    protected RegionDefinition(final String regionName, final Class<?> keyConstraint, final Class<?> valueConstraint) {
+    protected RegionDefinition(
+        final String regionName, final Class<?> keyConstraint, final Class<?> valueConstraint) {
       assert !StringUtils.isBlank(regionName) : "The name of the Region must be specified!";
       this.regionName = regionName;
       this.keyConstraint = ObjectUtils.defaultIfNull(keyConstraint, Object.class);
@@ -510,13 +586,13 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
     }
   }
 
-  private static abstract class AbstractBean<T extends Comparable<T>> implements MutableIdentifiable<T>, Serializable {
+  private abstract static class AbstractBean<T extends Comparable<T>>
+      implements MutableIdentifiable<T>, Serializable {
 
     private T id;
     private String name;
 
-    public AbstractBean() {
-    }
+    public AbstractBean() {}
 
     public AbstractBean(final T id) {
       this.id = id;
@@ -576,8 +652,7 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
 
     private volatile int units;
 
-    public Consumer() {
-    }
+    public Consumer() {}
 
     public Consumer(final Long id) {
       super(id);
@@ -596,8 +671,7 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
 
     private volatile int units;
 
-    public Producer() {
-    }
+    public Producer() {}
 
     public Producer(final Long id) {
       super(id);
@@ -646,6 +720,9 @@ public class ListIndexCommandDUnitTest extends CliCommandTestBase {
   }
 
   private static enum CrudOperation {
-    CREATE, RETRIEVE, UPDATE, DELETE
+    CREATE,
+    RETRIEVE,
+    UPDATE,
+    DELETE
   }
 }

@@ -24,9 +24,8 @@ import org.apache.geode.internal.cache.partitioned.rebalance.PartitionedRegionLo
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * A director to remove copies of buckets when the bucket exceeds the redundancy
- * level. This is most commonly used as an element of the composite director.
- *
+ * A director to remove copies of buckets when the bucket exceeds the redundancy level. This is most
+ * commonly used as an element of the composite director.
  */
 public class RemoveOverRedundancy extends RebalanceDirectorAdapter {
 
@@ -37,7 +36,6 @@ public class RemoveOverRedundancy extends RebalanceDirectorAdapter {
   @Override
   public void initialize(PartitionedRegionLoadModel model) {
     this.model = model;
-
   }
 
   @Override
@@ -50,10 +48,7 @@ public class RemoveOverRedundancy extends RebalanceDirectorAdapter {
     return removeOverRedundancy();
   }
 
-  /**
-   * Remove copies of buckets that have more
-   * than the expected number of redundant copies.
-   */
+  /** Remove copies of buckets that have more than the expected number of redundant copies. */
   private boolean removeOverRedundancy() {
     Move bestMove = null;
     BucketRollup first = null;
@@ -66,7 +61,9 @@ public class RemoveOverRedundancy extends RebalanceDirectorAdapter {
       bestMove = model.findBestRemove(first);
       if (bestMove == null) {
         if (logger.isDebugEnabled()) {
-          logger.debug("Skipping overredundancy bucket {} because couldn't find a member to remove from?", first);
+          logger.debug(
+              "Skipping overredundancy bucket {} because couldn't find a member to remove from?",
+              first);
         }
         model.ignoreOverRedundancyBucket(first);
       }

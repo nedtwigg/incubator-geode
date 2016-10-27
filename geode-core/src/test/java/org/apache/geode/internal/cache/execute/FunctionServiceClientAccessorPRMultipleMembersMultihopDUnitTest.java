@@ -22,11 +22,10 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.junit.Ignore;
 import org.junit.experimental.categories.Category;
 
-/**
- * Tests onRegion using multiple servers from a single client that has single hop disabled
- */
+/** Tests onRegion using multiple servers from a single client that has single hop disabled */
 @Category(DistributedTest.class)
-public class FunctionServiceClientAccessorPRMultipleMembersMultihopDUnitTest extends FunctionServiceClientAccessorPRBase {
+public class FunctionServiceClientAccessorPRMultipleMembersMultihopDUnitTest
+    extends FunctionServiceClientAccessorPRBase {
 
   @Override
   public void configureClient(final ClientCacheFactory cacheFactory) {
@@ -41,6 +40,5 @@ public class FunctionServiceClientAccessorPRMultipleMembersMultihopDUnitTest ext
 
   @Ignore("Multihop clients don't support returning partial results after a cache close")
   @Override
-  public void nonHAFunctionResultCollectorIsPassedPartialResultsAfterCloseCache() {
-  }
+  public void nonHAFunctionResultCollectorIsPassedPartialResultsAfterCloseCache() {}
 }

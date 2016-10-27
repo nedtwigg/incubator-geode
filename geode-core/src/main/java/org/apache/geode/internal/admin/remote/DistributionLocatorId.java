@@ -32,27 +32,21 @@ import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
 
-/**
- * Identifies the host, port, and bindAddress a distribution locator is 
- * listening on.
- *
- *
- */
+/** Identifies the host, port, and bindAddress a distribution locator is listening on. */
 public class DistributionLocatorId implements java.io.Serializable {
   private static final long serialVersionUID = 6587390186971937865L;
 
   private final InetAddress host;
   private final int port;
   private final String bindAddress;
-  transient private SSLConfig sslConfig;
+  private transient SSLConfig sslConfig;
   private boolean peerLocator = true;
   private boolean serverLocator = true;
   private String hostnameForClients;
 
-  /**
-   * Constructs a DistributionLocatorId with the given host and port.
-   */
-  public DistributionLocatorId(InetAddress host, int port, String bindAddress, SSLConfig sslConfig) {
+  /** Constructs a DistributionLocatorId with the given host and port. */
+  public DistributionLocatorId(
+      InetAddress host, int port, String bindAddress, SSLConfig sslConfig) {
     this.host = host;
     this.port = port;
     this.bindAddress = validateBindAddress(bindAddress);
@@ -60,8 +54,7 @@ public class DistributionLocatorId implements java.io.Serializable {
   }
 
   /**
-   * Constructs a DistributionLocatorId with the given port. The host will be 
-   * set to the local host.
+   * Constructs a DistributionLocatorId with the given port. The host will be set to the local host.
    */
   public DistributionLocatorId(int port, String bindAddress) {
     this(port, bindAddress, null);
@@ -71,7 +64,8 @@ public class DistributionLocatorId implements java.io.Serializable {
     try {
       this.host = SocketCreator.getLocalHost();
     } catch (UnknownHostException ex) {
-      throw new InternalGemFireException(LocalizedStrings.DistributionLocatorId_FAILED_GETTING_LOCAL_HOST.toLocalizedString(), ex);
+      throw new InternalGemFireException(
+          LocalizedStrings.DistributionLocatorId_FAILED_GETTING_LOCAL_HOST.toLocalizedString(), ex);
     }
     this.port = port;
     this.bindAddress = validateBindAddress(bindAddress);
@@ -79,7 +73,14 @@ public class DistributionLocatorId implements java.io.Serializable {
     this.hostnameForClients = hostnameForClients;
   }
 
-  public DistributionLocatorId(InetAddress host, int port, String bindAddress, SSLConfig sslConfig, boolean peerLocator, boolean serverLocator, String hostnameForClients) {
+  public DistributionLocatorId(
+      InetAddress host,
+      int port,
+      String bindAddress,
+      SSLConfig sslConfig,
+      boolean peerLocator,
+      boolean serverLocator,
+      String hostnameForClients) {
     this.host = host;
     this.port = port;
     this.bindAddress = validateBindAddress(bindAddress);
@@ -90,25 +91,26 @@ public class DistributionLocatorId implements java.io.Serializable {
   }
 
   /**
-   * Constructs a DistributionLocatorId with a String of the form:
-   * hostname[port] or hostname:bindaddress[port] or hostname@bindaddress[port]
-   * <p>
-   * The :bindaddress portion is optional.  hostname[port] is the more common
-   * form.
-   * <p>
-   * Example: merry.gemstone.com[7056]<br>
+   * Constructs a DistributionLocatorId with a String of the form: hostname[port] or
+   * hostname:bindaddress[port] or hostname@bindaddress[port]
+   *
+   * <p>The :bindaddress portion is optional. hostname[port] is the more common form.
+   *
+   * <p>Example: merry.gemstone.com[7056]<br>
    * Example w/ bind address: merry.gemstone.com:81.240.0.1[7056], or
    * merry.gemstone.com@fdf0:76cf:a0ed:9449::16[7056]
-   * <p>
-   * Use bindaddress[port] or hostname[port].  This object doesn't need to
-   * differentiate between the two.
+   *
+   * <p>Use bindaddress[port] or hostname[port]. This object doesn't need to differentiate between
+   * the two.
    */
   public DistributionLocatorId(String marshalled) {
     final int portStartIdx = marshalled.indexOf('[');
     final int portEndIdx = marshalled.indexOf(']');
 
     if (portStartIdx < 0 || portEndIdx < portStartIdx) {
-      throw new IllegalArgumentException(LocalizedStrings.DistributionLocatorId__0_IS_NOT_IN_THE_FORM_HOSTNAMEPORT.toLocalizedString(marshalled));
+      throw new IllegalArgumentException(
+          LocalizedStrings.DistributionLocatorId__0_IS_NOT_IN_THE_FORM_HOSTNAMEPORT
+              .toLocalizedString(marshalled));
     }
 
     int bindIdx = marshalled.lastIndexOf('@');
@@ -126,13 +128,17 @@ public class DistributionLocatorId implements java.io.Serializable {
     try {
       this.host = InetAddress.getByName(hostname);
     } catch (UnknownHostException ex) {
-      throw new InternalGemFireException(LocalizedStrings.DistributionLocatorId_FAILED_GETTING_HOST_FROM_NAME_0.toLocalizedString(hostname));
+      throw new InternalGemFireException(
+          LocalizedStrings.DistributionLocatorId_FAILED_GETTING_HOST_FROM_NAME_0.toLocalizedString(
+              hostname));
     }
 
     try {
       this.port = Integer.parseInt(marshalled.substring(portStartIdx + 1, portEndIdx));
     } catch (NumberFormatException nfe) {
-      throw new IllegalArgumentException(LocalizedStrings.DistributionLocatorId_0_DOES_NOT_CONTAIN_A_VALID_PORT_NUMBER.toLocalizedString(marshalled));
+      throw new IllegalArgumentException(
+          LocalizedStrings.DistributionLocatorId_0_DOES_NOT_CONTAIN_A_VALID_PORT_NUMBER
+              .toLocalizedString(marshalled));
     }
 
     if (bindIdx > -1) {
@@ -156,7 +162,11 @@ public class DistributionLocatorId implements java.io.Serializable {
           } else if (optionFields[0].equalsIgnoreCase("hostname-for-clients")) {
             this.hostnameForClients = optionFields[1];
           } else {
-            throw new IllegalArgumentException(marshalled + " invalid option " + optionFields[0] + ". valid options are \"peer\" or \"server\"");
+            throw new IllegalArgumentException(
+                marshalled
+                    + " invalid option "
+                    + optionFields[0]
+                    + ". valid options are \"peer\" or \"server\"");
           }
         }
       }
@@ -164,7 +174,14 @@ public class DistributionLocatorId implements java.io.Serializable {
   }
 
   public DistributionLocatorId(InetAddress address, Locator locator) {
-    this(address, locator.getPort(), locator.getBindAddress() == null ? null : locator.getBindAddress().getHostAddress(), null, locator.isPeerLocator(), locator.isServerLocator(), locator.getHostnameForClients());
+    this(
+        address,
+        locator.getPort(),
+        locator.getBindAddress() == null ? null : locator.getBindAddress().getHostAddress(),
+        null,
+        locator.isPeerLocator(),
+        locator.isServerLocator(),
+        locator.getHostnameForClients());
   }
 
   /**
@@ -187,8 +204,7 @@ public class DistributionLocatorId implements java.io.Serializable {
   }
 
   private SSLConfig validateSSLConfig(SSLConfig sslConfig) {
-    if (sslConfig == null)
-      return new SSLConfig(); // uses defaults
+    if (sslConfig == null) return new SSLConfig(); // uses defaults
     return sslConfig;
   }
 
@@ -215,31 +231,22 @@ public class DistributionLocatorId implements java.io.Serializable {
     return this.host.isMulticastAddress();
   }
 
-  /** 
-   * Returns the bindAddress; value is "" unless host has multiple network 
-   * interfaces. 
-   */
+  /** Returns the bindAddress; value is "" unless host has multiple network interfaces. */
   public String getBindAddress() {
     return this.bindAddress;
   }
 
-  /**
-   * @since GemFire 5.7
-   */
+  /** @since GemFire 5.7 */
   public boolean isPeerLocator() {
     return this.peerLocator;
   }
 
-  /**
-   * @since GemFire 5.7
-   */
+  /** @since GemFire 5.7 */
   public boolean isServerLocator() {
     return this.serverLocator;
   }
 
-  /**
-   * @since GemFire 5.7
-   */
+  /** @since GemFire 5.7 */
   public String getHostnameForClients() {
     return this.hostnameForClients;
   }
@@ -262,7 +269,7 @@ public class DistributionLocatorId implements java.io.Serializable {
 
   /**
    * Returns a string representation of the object.
-   * 
+   *
    * @return a string representation of the object
    */
   @Override
@@ -290,33 +297,26 @@ public class DistributionLocatorId implements java.io.Serializable {
   /**
    * Indicates whether some other object is "equal to" this one.
    *
-   * @param  other  the reference object with which to compare.
-   * @return true if this object is the same as the obj argument;
-   *         false otherwise.
+   * @param other the reference object with which to compare.
+   * @return true if this object is the same as the obj argument; false otherwise.
    */
   @Override
   public boolean equals(Object other) {
-    if (other == this)
-      return true;
-    if (other == null)
-      return false;
-    if (!(other instanceof DistributionLocatorId))
-      return false;
+    if (other == this) return true;
+    if (other == null) return false;
+    if (!(other instanceof DistributionLocatorId)) return false;
     final DistributionLocatorId that = (DistributionLocatorId) other;
 
-    if (this.host != that.host && !(this.host != null && this.host.equals(that.host)))
-      return false;
-    if (this.port != that.port)
-      return false;
-    if (!StringUtils.equals(this.bindAddress, that.bindAddress))
-      return false;
+    if (this.host != that.host && !(this.host != null && this.host.equals(that.host))) return false;
+    if (this.port != that.port) return false;
+    if (!StringUtils.equals(this.bindAddress, that.bindAddress)) return false;
 
     return true;
   }
 
   /**
-   * Returns a hash code for the object. This method is supported for the
-   * benefit of hashtables such as those provided by java.util.Hashtable.
+   * Returns a hash code for the object. This method is supported for the benefit of hashtables such
+   * as those provided by java.util.Hashtable.
    *
    * @return the integer 0 if description is null; otherwise a unique integer.
    */
@@ -333,34 +333,34 @@ public class DistributionLocatorId implements java.io.Serializable {
   }
 
   /**
-   * Converts a collection of {@link Locator} instances to a collection of
-   * DistributionLocatorId instances. Note this will use {@link 
-   * SocketCreator#getLocalHost()} as the host for DistributionLocatorId.
-   * This is because all instances of Locator are local only.
-   * 
+   * Converts a collection of {@link Locator} instances to a collection of DistributionLocatorId
+   * instances. Note this will use {@link SocketCreator#getLocalHost()} as the host for
+   * DistributionLocatorId. This is because all instances of Locator are local only.
+   *
    * @param locators collection of Locator instances
    * @return collection of DistributionLocatorId instances
    * @throws UnknownHostException
    * @see Locator
    */
-  public static Collection<DistributionLocatorId> asDistributionLocatorIds(Collection<Locator> locators) throws UnknownHostException {
+  public static Collection<DistributionLocatorId> asDistributionLocatorIds(
+      Collection<Locator> locators) throws UnknownHostException {
     if (locators.isEmpty()) {
       return Collections.emptyList();
     }
     Collection<DistributionLocatorId> locatorIds = new ArrayList<DistributionLocatorId>();
     for (Locator locator : locators) {
-      DistributionLocatorId locatorId = new DistributionLocatorId(SocketCreator.getLocalHost(), locator);
+      DistributionLocatorId locatorId =
+          new DistributionLocatorId(SocketCreator.getLocalHost(), locator);
       locatorIds.add(locatorId);
     }
     return locatorIds;
   }
 
   /**
-   * Marshals a collection of {@link Locator} instances to a collection of
-   * DistributionLocatorId instances. Note this will use {@link 
-   * SocketCreator#getLocalHost()} as the host for DistributionLocatorId.
-   * This is because all instances of Locator are local only.
-   * 
+   * Marshals a collection of {@link Locator} instances to a collection of DistributionLocatorId
+   * instances. Note this will use {@link SocketCreator#getLocalHost()} as the host for
+   * DistributionLocatorId. This is because all instances of Locator are local only.
+   *
    * @param locatorIds collection of DistributionLocatorId instances
    * @return collection of String instances
    * @see #marshal()
@@ -375,5 +375,4 @@ public class DistributionLocatorId implements java.io.Serializable {
     }
     return strings;
   }
-
 }

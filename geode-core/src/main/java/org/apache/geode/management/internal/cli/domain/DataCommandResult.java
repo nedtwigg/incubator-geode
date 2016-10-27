@@ -44,16 +44,14 @@ import org.json.JSONObject;
 
 /**
  * Domain object used for Data Commands Functions
- * 
- * TODO : Implement DataSerializable
  *
+ * <p>TODO : Implement DataSerializable
  */
 public class DataCommandResult implements /*Data*/ Serializable {
 
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
+
   private String command;
   private Object putResult;
   private Object getResult;
@@ -114,51 +112,41 @@ public class DataCommandResult implements /*Data*/ Serializable {
       sb.append(" Results  : ").append(locateEntryResult).append(NEW_LINE);
       sb.append(" Locations  : ").append(locateEntryLocations).append(NEW_LINE);
     }
-    if (errorString != null)
-      sb.append(" ERROR ").append(errorString);
+    if (errorString != null) sb.append(" ERROR ").append(errorString);
     return sb.toString();
   }
 
   public boolean isGet() {
-    if (CliStrings.GET.equals(command))
-      return true;
-    else
-      return false;
+    if (CliStrings.GET.equals(command)) return true;
+    else return false;
   }
 
   public boolean isPut() {
-    if (CliStrings.PUT.equals(command))
-      return true;
-    else
-      return false;
+    if (CliStrings.PUT.equals(command)) return true;
+    else return false;
   }
 
   public boolean isRemove() {
-    if (CliStrings.REMOVE.equals(command))
-      return true;
-    else
-      return false;
+    if (CliStrings.REMOVE.equals(command)) return true;
+    else return false;
   }
 
   public boolean isLocateEntry() {
-    if (CliStrings.LOCATE_ENTRY.equals(command))
-      return true;
-    else
-      return false;
+    if (CliStrings.LOCATE_ENTRY.equals(command)) return true;
+    else return false;
   }
 
   public boolean isSelect() {
-    if (CliStrings.QUERY.equals(command))
-      return true;
-    else
-      return false;
+    if (CliStrings.QUERY.equals(command)) return true;
+    else return false;
   }
 
   public List<SelectResultRow> getSelectResult() {
     return selectResult;
   }
 
-  public static DataCommandResult createGetResult(Object inputKey, Object value, Throwable error, String errorString, boolean flag) {
+  public static DataCommandResult createGetResult(
+      Object inputKey, Object value, Throwable error, String errorString, boolean flag) {
     DataCommandResult result = new DataCommandResult();
     result.command = CliStrings.GET;
     result.inputKey = inputKey;
@@ -169,7 +157,8 @@ public class DataCommandResult implements /*Data*/ Serializable {
     return result;
   }
 
-  public static DataCommandResult createGetInfoResult(Object inputKey, Object value, Throwable error, String infoString, boolean flag) {
+  public static DataCommandResult createGetInfoResult(
+      Object inputKey, Object value, Throwable error, String infoString, boolean flag) {
     DataCommandResult result = new DataCommandResult();
     result.command = CliStrings.GET;
     result.inputKey = inputKey;
@@ -180,7 +169,8 @@ public class DataCommandResult implements /*Data*/ Serializable {
     return result;
   }
 
-  public static DataCommandResult createLocateEntryResult(Object inputKey, KeyInfo locationResult, Throwable error, String errorString, boolean flag) {
+  public static DataCommandResult createLocateEntryResult(
+      Object inputKey, KeyInfo locationResult, Throwable error, String errorString, boolean flag) {
     DataCommandResult result = new DataCommandResult();
     result.command = CliStrings.LOCATE_ENTRY;
     result.inputKey = inputKey;
@@ -197,7 +187,8 @@ public class DataCommandResult implements /*Data*/ Serializable {
     return result;
   }
 
-  public static DataCommandResult createLocateEntryInfoResult(Object inputKey, KeyInfo locationResult, Throwable error, String infoString, boolean flag) {
+  public static DataCommandResult createLocateEntryInfoResult(
+      Object inputKey, KeyInfo locationResult, Throwable error, String infoString, boolean flag) {
     DataCommandResult result = new DataCommandResult();
     result.command = CliStrings.LOCATE_ENTRY;
     result.inputKey = inputKey;
@@ -214,7 +205,8 @@ public class DataCommandResult implements /*Data*/ Serializable {
     return result;
   }
 
-  public static DataCommandResult createPutResult(Object inputKey, Object value, Throwable error, String errorString, boolean flag) {
+  public static DataCommandResult createPutResult(
+      Object inputKey, Object value, Throwable error, String errorString, boolean flag) {
     DataCommandResult result = new DataCommandResult();
     result.command = CliStrings.PUT;
     result.inputKey = inputKey;
@@ -225,7 +217,8 @@ public class DataCommandResult implements /*Data*/ Serializable {
     return result;
   }
 
-  public static DataCommandResult createPutInfoResult(Object inputKey, Object value, Throwable error, String infoString, boolean flag) {
+  public static DataCommandResult createPutInfoResult(
+      Object inputKey, Object value, Throwable error, String infoString, boolean flag) {
     DataCommandResult result = new DataCommandResult();
     result.command = CliStrings.PUT;
     result.inputKey = inputKey;
@@ -235,7 +228,8 @@ public class DataCommandResult implements /*Data*/ Serializable {
     return result;
   }
 
-  public static DataCommandResult createRemoveResult(Object inputKey, Object value, Throwable error, String errorString, boolean flag) {
+  public static DataCommandResult createRemoveResult(
+      Object inputKey, Object value, Throwable error, String errorString, boolean flag) {
     DataCommandResult result = new DataCommandResult();
     result.command = CliStrings.REMOVE;
     result.inputKey = inputKey;
@@ -246,7 +240,8 @@ public class DataCommandResult implements /*Data*/ Serializable {
     return result;
   }
 
-  public static DataCommandResult createRemoveInfoResult(Object inputKey, Object value, Throwable error, String infoString, boolean flag) {
+  public static DataCommandResult createRemoveInfoResult(
+      Object inputKey, Object value, Throwable error, String infoString, boolean flag) {
     DataCommandResult result = new DataCommandResult();
     result.command = CliStrings.REMOVE;
     result.inputKey = inputKey;
@@ -257,7 +252,13 @@ public class DataCommandResult implements /*Data*/ Serializable {
     return result;
   }
 
-  public static DataCommandResult createSelectResult(Object inputQuery, List<SelectResultRow> value, String queryTraceString, Throwable error, String errorString, boolean flag) {
+  public static DataCommandResult createSelectResult(
+      Object inputQuery,
+      List<SelectResultRow> value,
+      String queryTraceString,
+      Throwable error,
+      String errorString,
+      boolean flag) {
     DataCommandResult result = new DataCommandResult();
     result.command = CliStrings.QUERY;
     result.inputQuery = inputQuery;
@@ -270,7 +271,13 @@ public class DataCommandResult implements /*Data*/ Serializable {
     return result;
   }
 
-  public static DataCommandResult createSelectInfoResult(Object inputQuery, List<SelectResultRow> value, int limit, Throwable error, String infoString, boolean flag) {
+  public static DataCommandResult createSelectInfoResult(
+      Object inputQuery,
+      List<SelectResultRow> value,
+      int limit,
+      Throwable error,
+      String infoString,
+      boolean flag) {
     DataCommandResult result = new DataCommandResult();
     result.command = CliStrings.QUERY;
     result.inputQuery = inputQuery;
@@ -380,11 +387,9 @@ public class DataCommandResult implements /*Data*/ Serializable {
 
   public Result toCommandResult() {
 
-    if (keyClass == null || keyClass.isEmpty())
-      keyClass = "java.lang.String";
+    if (keyClass == null || keyClass.isEmpty()) keyClass = "java.lang.String";
 
-    if (valueClass == null || valueClass.isEmpty())
-      valueClass = "java.lang.String";
+    if (valueClass == null || valueClass.isEmpty()) valueClass = "java.lang.String";
 
     if (errorString != null) {
       //return ResultBuilder.createGemFireErrorResult(errorString);
@@ -399,30 +404,23 @@ public class DataCommandResult implements /*Data*/ Serializable {
       TabularResultData table = section.addTable();
 
       section.addData(RESULT_FLAG, operationCompletedSuccessfully);
-      if (infoString != null)
-        section.addData("Message", infoString);
+      if (infoString != null) section.addData("Message", infoString);
 
       if (isGet()) {
 
         section.addData("Key Class", getKeyClass());
-        if (!isDeclaredPrimitive(keyClass))
-          addJSONStringToTable(table, inputKey);
-        else
-          section.addData("Key", inputKey);
+        if (!isDeclaredPrimitive(keyClass)) addJSONStringToTable(table, inputKey);
+        else section.addData("Key", inputKey);
 
         section.addData("Value Class", getValueClass());
-        if (!isDeclaredPrimitive(valueClass))
-          addJSONStringToTable(table, getResult);
-        else
-          section.addData("Value", getResult);
+        if (!isDeclaredPrimitive(valueClass)) addJSONStringToTable(table, getResult);
+        else section.addData("Value", getResult);
 
       } else if (isLocateEntry()) {
 
         section.addData("Key Class", getKeyClass());
-        if (!isDeclaredPrimitive(keyClass))
-          addJSONStringToTable(table, inputKey);
-        else
-          section.addData("Key", inputKey);
+        if (!isDeclaredPrimitive(keyClass)) addJSONStringToTable(table, inputKey);
+        else section.addData("Key", inputKey);
 
         if (locateEntryLocations != null) {
           TabularResultData locationTable = section.addTable();
@@ -443,11 +441,9 @@ public class DataCommandResult implements /*Data*/ Serializable {
                   String bucketId = (String) array[4];
                   locationTable.accumulate("MemberName", info.getMemberName());
                   locationTable.accumulate("MemberId", info.getMemberId());
-                  if (bucketId != null) {//PR
-                    if (primary)
-                      locationTable.accumulate("Primary", "*Primary PR*");
-                    else
-                      locationTable.accumulate("Primary", "No");
+                  if (bucketId != null) { //PR
+                    if (primary) locationTable.accumulate("Primary", "*Primary PR*");
+                    else locationTable.accumulate("Primary", "No");
                     locationTable.accumulate("BucketId", bucketId);
                   }
                 }
@@ -462,11 +458,9 @@ public class DataCommandResult implements /*Data*/ Serializable {
                     locationTable.accumulate("MemberName", info.getMemberName());
                     locationTable.accumulate("MemberId", info.getMemberId());
                     locationTable.accumulate("RegionPath", regionPath);
-                    if (bucketId != null) {//PR
-                      if (primary)
-                        locationTable.accumulate("Primary", "*Primary PR*");
-                      else
-                        locationTable.accumulate("Primary", "No");
+                    if (bucketId != null) { //PR
+                      if (primary) locationTable.accumulate("Primary", "*Primary PR*");
+                      else locationTable.accumulate("Primary", "No");
                       locationTable.accumulate("BucketId", bucketId);
                     }
                   }
@@ -484,22 +478,18 @@ public class DataCommandResult implements /*Data*/ Serializable {
 
         if (!isDeclaredPrimitive(keyClass)) {
           addJSONStringToTable(table, inputKey);
-        } else
-          section.addData("Key", inputKey);
+        } else section.addData("Key", inputKey);
 
         section.addData("Value Class", getValueClass());
         if (!isDeclaredPrimitive(valueClass)) {
           addJSONStringToTable(table, putResult);
-        } else
-          section.addData("Old Value", putResult);
+        } else section.addData("Old Value", putResult);
 
       } else if (isRemove()) {
-        if (inputKey != null) {//avoids printing key when remove ALL is called
+        if (inputKey != null) { //avoids printing key when remove ALL is called
           section.addData("Key Class", getKeyClass());
-          if (!isDeclaredPrimitive(keyClass))
-            addJSONStringToTable(table, inputKey);
-          else
-            section.addData("Key", inputKey);
+          if (!isDeclaredPrimitive(keyClass)) addJSONStringToTable(table, inputKey);
+          else section.addData("Key", inputKey);
         }
         /*if(valueClass!=null && !valueClass.isEmpty()){
           section.addData("Value Class", getValueClass());
@@ -516,8 +506,8 @@ public class DataCommandResult implements /*Data*/ Serializable {
   /**
    * This method returns result when flag interactive=false i.e. Command returns result in one go
    * and does not goes through steps waiting for user input. Method returns CompositeResultData
-   * instead of Result as Command Step is required to add NEXT_STEP information to guide executionStragey
-   * to route it through final step.
+   * instead of Result as Command Step is required to add NEXT_STEP information to guide
+   * executionStragey to route it through final step.
    */
   public CompositeResultData toSelectCommandResult() {
     if (errorString != null) {
@@ -541,8 +531,7 @@ public class DataCommandResult implements /*Data*/ Serializable {
         }
         if (this.selectResult != null) {
           section.addData(NUM_ROWS, this.selectResult.size());
-          if (this.queryTraceString != null)
-            section.addData("Query Trace", this.queryTraceString);
+          if (this.queryTraceString != null) section.addData("Query Trace", this.queryTraceString);
           buildTable(table, 0, selectResult.size());
         }
       }
@@ -551,10 +540,10 @@ public class DataCommandResult implements /*Data*/ Serializable {
   }
 
   /**
-   * This method returns a "Page" as dictated by arguments startCount and endCount.
-   * Returned result is not standard CommandResult and its consumed by Display Step
+   * This method returns a "Page" as dictated by arguments startCount and endCount. Returned result
+   * is not standard CommandResult and its consumed by Display Step
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public Result pageResult(int startCount, int endCount, String step) {
     List<String> fields = new ArrayList<String>();
     List values = new ArrayList<String>();
@@ -599,14 +588,13 @@ public class DataCommandResult implements /*Data*/ Serializable {
           }
           return createPageResult(fields, values, step, headers, rows);
         } catch (GfJsonException e) {
-          String[] headers = new String[] { "Error" };
-          Object[][] rows = { { e.getMessage() } };
-          String fieldsArray[] = { QUERY_PAGE_START, QUERY_PAGE_END };
-          Object valuesArray[] = { startCount, endCount };
+          String[] headers = new String[] {"Error"};
+          Object[][] rows = {{e.getMessage()}};
+          String fieldsArray[] = {QUERY_PAGE_START, QUERY_PAGE_END};
+          Object valuesArray[] = {startCount, endCount};
           return createPageResult(fieldsArray, valuesArray, step, headers, rows);
         }
-      } else
-        return createBannerResult(fields, values, step);
+      } else return createBannerResult(fields, values, step);
     }
   }
 
@@ -614,22 +602,20 @@ public class DataCommandResult implements /*Data*/ Serializable {
     int rowCount = 0;
     //Introspect first using tabular data
     for (int i = startCount; i <= endCount; i++) {
-      if (i >= selectResult.size())
-        break;
-      else
-        rowCount++;
+      if (i >= selectResult.size()) break;
+      else rowCount++;
 
       SelectResultRow row = selectResult.get(i);
       switch (row.type) {
-      case ROW_TYPE_BEAN:
-        addJSONStringToTable(table, row.value);
-        break;
-      case ROW_TYPE_STRUCT_RESULT:
-        addJSONStringToTable(table, row.value);
-        break;
-      case ROW_TYPE_PRIMITIVE:
-        table.accumulate(RESULT_FLAG, row.value);
-        break;
+        case ROW_TYPE_BEAN:
+          addJSONStringToTable(table, row.value);
+          break;
+        case ROW_TYPE_STRUCT_RESULT:
+          addJSONStringToTable(table, row.value);
+          break;
+        case ROW_TYPE_PRIMITIVE:
+          table.accumulate(RESULT_FLAG, row.value);
+          break;
       }
     }
     return rowCount;
@@ -652,7 +638,7 @@ public class DataCommandResult implements /*Data*/ Serializable {
         Class klass = object.getClass();
         GfJsonObject jsonObject = null;
         if (String.class.equals(klass)) {
-          // InputString in JSON Form but with round brackets          
+          // InputString in JSON Form but with round brackets
           String json = (String) object;
           String newString = json.replaceAll("'", "\"");
           if (newString.charAt(0) == '(') {
@@ -686,15 +672,14 @@ public class DataCommandResult implements /*Data*/ Serializable {
   private Object getDomainValue(Object value) {
     if (value instanceof String) {
       String str = (String) value;
-      if (str.contains("{") && str.contains("}")) {// small filter to see if its json string
+      if (str.contains("{") && str.contains("}")) { // small filter to see if its json string
         try {
           JSONObject json = new JSONObject(str);
           return json.get("type-class");
         } catch (Exception e) {
           return str;
         }
-      } else
-        return str;
+      } else return str;
     }
     return value;
   }
@@ -718,8 +703,7 @@ public class DataCommandResult implements /*Data*/ Serializable {
     private ArrayList<Object[]> locations = null;
 
     public void addLocation(Object[] locationArray) {
-      if (this.locations == null)
-        locations = new ArrayList<Object[]>();
+      if (this.locations == null) locations = new ArrayList<Object[]>();
 
       locations.add(locationArray);
     }
@@ -766,20 +750,22 @@ public class DataCommandResult implements /*Data*/ Serializable {
       for (Object[] array : locations) {
         boolean primary = (Boolean) array[3];
         String bucketId = (String) array[4];
-        sb.append(" [ Primary : ").append(primary).append(" , BucketId : ").append(bucketId).append(" ]");
+        sb.append(" [ Primary : ")
+            .append(primary)
+            .append(" , BucketId : ")
+            .append(bucketId)
+            .append(" ]");
       }
       sb.append(" }");
       return sb.toString();
     }
 
     public boolean hasLocation() {
-      if (locations == null)
-        return false;
+      if (locations == null) return false;
       else {
         for (Object[] array : locations) {
           boolean found = (Boolean) array[1];
-          if (found)
-            return true;
+          if (found) return true;
         }
       }
       return false;
@@ -792,7 +778,6 @@ public class DataCommandResult implements /*Data*/ Serializable {
       DataSerializer.writeString(host, out);
       DataSerializer.writePrimitiveInt(pid, out);
       DataSerializer.writeArrayList(locations, out);
-
     }
 
     //@Override
@@ -834,7 +819,6 @@ public class DataCommandResult implements /*Data*/ Serializable {
     public void setValue(Object value) {
       this.value = value;
     }
-
   }
 
   public void aggregate(DataCommandResult result) {
@@ -845,7 +829,7 @@ public class DataCommandResult implements /*Data*/ Serializable {
         locateEntryLocations = new ArrayList<KeyInfo>();
       }
 
-      if (result == null) {//self-transform result from single to aggregate when numMember==1
+      if (result == null) { //self-transform result from single to aggregate when numMember==1
         if (this.locateEntryResult != null) {
           locateEntryLocations.add(locateEntryResult);
           //TODO : Decide whether to show value or not this.getResult = locateEntryResult.getValue();
@@ -860,15 +844,17 @@ public class DataCommandResult implements /*Data*/ Serializable {
       }
 
       //append messsage only when it differs for negative results
-      if (!operationCompletedSuccessfully && result.infoString != null && !result.infoString.equals(infoString)) {
+      if (!operationCompletedSuccessfully
+          && result.infoString != null
+          && !result.infoString.equals(infoString)) {
         infoString = result.infoString;
       }
 
       if (result.hasResultForAggregation /*&& result.errorString==null*/) {
-        this.operationCompletedSuccessfully = true;//override this result.operationCompletedSuccessfully
+        this.operationCompletedSuccessfully =
+            true; //override this result.operationCompletedSuccessfully
         infoString = result.infoString;
-        if (result.locateEntryResult != null)
-          locateEntryLocations.add(result.locateEntryResult);
+        if (result.locateEntryResult != null) locateEntryLocations.add(result.locateEntryResult);
       }
     }
   }
@@ -911,5 +897,4 @@ public class DataCommandResult implements /*Data*/ Serializable {
     valueClass = DataSerializer.readString(in);
     operationCompletedSuccessfully = DataSerializer.readBoolean(in);
   }
-
 }

@@ -38,43 +38,43 @@ import org.apache.geode.internal.cache.PartitionedRegion;
 import org.apache.geode.internal.cache.PartitionedRegionDataStore;
 
 /**
- * A message sent to a data store telling that data store to globally
- * destroy the region on behalf of a PR accessor.
- * 
+ * A message sent to a data store telling that data store to globally destroy the region on behalf
+ * of a PR accessor.
+ *
  * @since GemFire 5.0
  */
 public final class DestroyRegionOnDataStoreMessage extends PartitionMessage {
 
   private Object callbackArg;
 
-  /**
-   * Empty contstructor provided for {@link org.apache.geode.DataSerializer}
-   */
+  /** Empty contstructor provided for {@link org.apache.geode.DataSerializer} */
   public DestroyRegionOnDataStoreMessage() {
     super();
   }
 
-  private DestroyRegionOnDataStoreMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 rp, Object callbackArg) {
+  private DestroyRegionOnDataStoreMessage(
+      InternalDistributedMember recipient, int regionId, ReplyProcessor21 rp, Object callbackArg) {
     super(recipient, regionId, rp);
     this.callbackArg = callbackArg;
   }
 
   /**
-   * Sends a DestroyRegionOnDataStoreMessage requesting that another VM destroy an existing
-   * region
-   * 
+   * Sends a DestroyRegionOnDataStoreMessage requesting that another VM destroy an existing region
    */
-  public static void send(InternalDistributedMember recipient, PartitionedRegion r, Object callbackArg) {
+  public static void send(
+      InternalDistributedMember recipient, PartitionedRegion r, Object callbackArg) {
     DM dm = r.getDistributionManager();
     ReplyProcessor21 rp = new ReplyProcessor21(dm, recipient);
     int procId = rp.getProcessorId();
-    DestroyRegionOnDataStoreMessage m = new DestroyRegionOnDataStoreMessage(recipient, r.getPRId(), rp, callbackArg);
+    DestroyRegionOnDataStoreMessage m =
+        new DestroyRegionOnDataStoreMessage(recipient, r.getPRId(), rp, callbackArg);
     r.getDistributionManager().putOutgoing(m);
     rp.waitForRepliesUninterruptibly();
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
 
     // This call has come to an uninitialized region.
     if (pr == null || !pr.isInitialized()) {

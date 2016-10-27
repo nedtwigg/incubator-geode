@@ -21,12 +21,12 @@ package org.apache.geode.cache.query;
  *
  * @since GemFire 4.0
  */
-
 public class NameResolutionException extends QueryException {
   private static final long serialVersionUID = -7409771357534316562L;
 
   /**
    * Constructs a NameResolutionException
+   *
    * @param msg the error message
    */
   public NameResolutionException(String msg) {
@@ -35,11 +35,11 @@ public class NameResolutionException extends QueryException {
 
   /**
    * Constructs a NameResolutionException
+   *
    * @param msg the error message
    * @param cause a Throwable that is a cause of this exception
    */
   public NameResolutionException(String msg, Throwable cause) {
     super(msg, cause);
   }
-
 }

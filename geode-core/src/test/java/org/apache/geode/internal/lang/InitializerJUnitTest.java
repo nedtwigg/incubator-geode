@@ -29,9 +29,11 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The InitializerJUnitTest class is a test suite of test cases testing the contract and functionality of the Initializer
- * utility class.
- * <p/>
+ * The InitializerJUnitTest class is a test suite of test cases testing the contract and
+ * functionality of the Initializer utility class.
+ *
+ * <p>
+ *
  * @see org.apache.geode.internal.lang.Initializer
  * @see org.jmock.Mockery
  * @see org.junit.Assert
@@ -57,13 +59,15 @@ public class InitializerJUnitTest {
 
   @Test
   public void testInitWithInitableObject() {
-    final Initable initableObject = mockContext.mock(Initable.class, "testInitWithInitableObject.Initable");
+    final Initable initableObject =
+        mockContext.mock(Initable.class, "testInitWithInitableObject.Initable");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(initableObject).init();
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(initableObject).init();
+          }
+        });
 
     assertTrue(Initializer.init(initableObject));
   }
@@ -72,5 +76,4 @@ public class InitializerJUnitTest {
   public void testInitWithNonInitiableObject() {
     assertFalse(Initializer.init(new Object()));
   }
-
 }

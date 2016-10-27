@@ -17,9 +17,7 @@
 
 package org.apache.geode.modules.session.internal.jmx;
 
-/**
- * MXBean interface to retrieve Session statistics
- */
+/** MXBean interface to retrieve Session statistics */
 public interface SessionStatisticsMXBean {
 
   public int getActiveSessions();

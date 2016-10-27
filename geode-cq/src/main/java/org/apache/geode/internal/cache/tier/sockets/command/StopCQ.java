@@ -37,14 +37,13 @@ import org.apache.geode.internal.security.AuthorizeRequest;
 
 public class StopCQ extends BaseCQCommand {
 
-  private final static StopCQ singleton = new StopCQ();
+  private static final StopCQ singleton = new StopCQ();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private StopCQ() {
-  }
+  private StopCQ() {}
 
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
@@ -62,12 +61,17 @@ public class StopCQ extends BaseCQCommand {
     String cqName = msg.getPart(0).getString();
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received stop CQ request from {} cqName: {}", servConn.getName(), servConn.getSocketString(), cqName);
+      logger.debug(
+          "{}: Received stop CQ request from {} cqName: {}",
+          servConn.getName(),
+          servConn.getSocketString(),
+          cqName);
     }
 
     // Process the query request
     if (cqName == null) {
-      String err = LocalizedStrings.StopCQ_THE_CQNAME_FOR_THE_CQ_STOP_REQUEST_IS_NULL.toLocalizedString();
+      String err =
+          LocalizedStrings.StopCQ_THE_CQNAME_FOR_THE_CQ_STOP_REQUEST_IS_NULL.toLocalizedString();
       sendCqResponse(MessageType.CQDATAERROR_MSG_TYPE, err, msg.getTransactionId(), null, servConn);
       return;
     }
@@ -100,19 +104,24 @@ public class StopCQ extends BaseCQCommand {
         authzRequest.stopCQAuthorize(cqName, queryStr, cqRegionNames);
       }
       cqService.stopCq(cqName, id);
-      if (cqQuery != null)
-        servConn.removeCq(cqName, cqQuery.isDurable());
+      if (cqQuery != null) servConn.removeCq(cqName, cqQuery.isDurable());
     } catch (CqException cqe) {
       sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, "", msg.getTransactionId(), cqe, servConn);
       return;
     } catch (Exception e) {
-      String err = LocalizedStrings.StopCQ_EXCEPTION_WHILE_STOPPING_CQ_NAMED_0.toLocalizedString(cqName);
+      String err =
+          LocalizedStrings.StopCQ_EXCEPTION_WHILE_STOPPING_CQ_NAMED_0.toLocalizedString(cqName);
       sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, err, msg.getTransactionId(), e, servConn);
       return;
     }
 
     // Send OK to client
-    sendCqResponse(MessageType.REPLY, LocalizedStrings.StopCQ_CQ_STOPPED_SUCCESSFULLY.toLocalizedString(), msg.getTransactionId(), null, servConn);
+    sendCqResponse(
+        MessageType.REPLY,
+        LocalizedStrings.StopCQ_CQ_STOPPED_SUCCESSFULLY.toLocalizedString(),
+        msg.getTransactionId(),
+        null,
+        servConn);
 
     servConn.setAsTrue(RESPONDED);
 
@@ -121,7 +130,5 @@ public class StopCQ extends BaseCQCommand {
       start = DistributionStats.getStatTime();
       stats.incProcessStopCqTime(start - oldStart);
     }
-
   }
-
 }

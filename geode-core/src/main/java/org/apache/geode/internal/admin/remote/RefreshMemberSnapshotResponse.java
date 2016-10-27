@@ -30,20 +30,19 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 /**
- * A message that is sent to a particular distribution manager to get its
- * current {@link org.apache.geode.admin.GemFireMemberStatus}.
- * 
+ * A message that is sent to a particular distribution manager to get its current {@link
+ * org.apache.geode.admin.GemFireMemberStatus}.
  */
 public class RefreshMemberSnapshotResponse extends AdminResponse {
   // instance variables
   GemFireMemberStatus snapshot;
 
   /**
-   * Returns a <code>FetchSysCfgResponse</code> that will be returned to the
-   * specified recipient. The message will contains a copy of the local
-   * manager's config.
+   * Returns a <code>FetchSysCfgResponse</code> that will be returned to the specified recipient.
+   * The message will contains a copy of the local manager's config.
    */
-  public static RefreshMemberSnapshotResponse create(DistributionManager dm, InternalDistributedMember recipient) {
+  public static RefreshMemberSnapshotResponse create(
+      DistributionManager dm, InternalDistributedMember recipient) {
     RefreshMemberSnapshotResponse m = new RefreshMemberSnapshotResponse();
     m.setRecipient(recipient);
 
@@ -57,9 +56,7 @@ public class RefreshMemberSnapshotResponse extends AdminResponse {
     return m;
   }
 
-  /**
-   * @return return the snapshot of Gemfire member vm
-   */
+  /** @return return the snapshot of Gemfire member vm */
   public GemFireMemberStatus getSnapshot() {
     return this.snapshot;
   }
@@ -76,15 +73,16 @@ public class RefreshMemberSnapshotResponse extends AdminResponse {
     this.snapshot = (GemFireMemberStatus) DataSerializer.readObject(in);
   }
 
-  /**
-   * Returns the DataSerializer fixed id for the class that implements this method.
-   */
+  /** Returns the DataSerializer fixed id for the class that implements this method. */
   public int getDSFID() {
     return REFRESH_MEMBER_SNAP_RESPONSE;
   }
 
   @Override
   public String toString() {
-    return "RefreshMemberSnapshotResponse from " + this.getRecipient() + " snapshot=" + this.snapshot;
+    return "RefreshMemberSnapshotResponse from "
+        + this.getRecipient()
+        + " snapshot="
+        + this.snapshot;
   }
 }

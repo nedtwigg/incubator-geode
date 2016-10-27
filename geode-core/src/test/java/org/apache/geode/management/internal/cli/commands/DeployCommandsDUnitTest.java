@@ -51,40 +51,54 @@ import static org.apache.geode.test.dunit.Assert.*;
 @Category(DistributedTest.class)
 public class DeployCommandsDUnitTest extends CliCommandTestBase {
 
-  private final Pattern pattern = Pattern.compile("^" + JarDeployer.JAR_PREFIX + "DeployCommandsDUnit.*#\\d++$");
+  private final Pattern pattern =
+      Pattern.compile("^" + JarDeployer.JAR_PREFIX + "DeployCommandsDUnit.*#\\d++$");
   private File newDeployableJarFile;
   private transient ClassBuilder classBuilder;
   private transient CommandProcessor commandProcessor;
 
   @Override
   public final void postSetUpCliCommandTestBase() throws Exception {
-    this.newDeployableJarFile = new File(this.temporaryFolder.getRoot().getCanonicalPath() + File.separator + "DeployCommandsDUnit1.jar");
+    this.newDeployableJarFile =
+        new File(
+            this.temporaryFolder.getRoot().getCanonicalPath()
+                + File.separator
+                + "DeployCommandsDUnit1.jar");
     this.classBuilder = new ClassBuilder();
     this.commandProcessor = new CommandProcessor();
     assertFalse(this.commandProcessor.isStopped());
 
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      public void run() {
-        deleteSavedJarFiles();
-      }
-    });
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                deleteSavedJarFiles();
+              }
+            });
     deleteSavedJarFiles();
   }
 
   @SuppressWarnings("serial")
   @Override
   protected final void preTearDownCliCommandTestBase() throws Exception {
-    Host.getHost(0).getVM(1).invoke(new SerializableRunnable() {
-      public void run() {
-        DistributionManager.isDedicatedAdminVM = false;
-      }
-    });
+    Host.getHost(0)
+        .getVM(1)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                DistributionManager.isDedicatedAdminVM = false;
+              }
+            });
 
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      public void run() {
-        deleteSavedJarFiles();
-      }
-    });
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                deleteSavedJarFiles();
+              }
+            });
     deleteSavedJarFiles();
   }
 
@@ -102,19 +116,24 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
     getCache();
 
     // Create the cache in the other VM
-    vm.invoke(new SerializableRunnable() {
-      public void run() {
-        props.setProperty(NAME, vmName);
-        props.setProperty(GROUPS, "Group2");
-        getSystem(props);
-        getCache();
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            props.setProperty(NAME, vmName);
+            props.setProperty(GROUPS, "Group2");
+            getSystem(props);
+            getCache();
+          }
+        });
 
     DeployCommands deployCommands = new DeployCommands();
 
     // Single JAR all members
-    CommandExecutionContext.setBytesFromShell(new byte[][] { "DeployCommandsDUnit1.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitA") });
+    CommandExecutionContext.setBytesFromShell(
+        new byte[][] {
+          "DeployCommandsDUnit1.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitA")
+        });
     Result result = deployCommands.deploy(null, "DeployCommandsDUnit1.jar", null);
 
     assertEquals(true, result.hasNextLine());
@@ -126,8 +145,12 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
     assertEquals(4, countMatchesInString(resultString, "DeployCommandsDUnit1.jar"));
 
     // Single JAR with group
-    CommandExecutionContext.setBytesFromShell(new byte[][] { "DeployCommandsDUnit2.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitB") });
-    result = deployCommands.deploy(new String[] { "Group2" }, "DeployCommandsDUnit2.jar", null);
+    CommandExecutionContext.setBytesFromShell(
+        new byte[][] {
+          "DeployCommandsDUnit2.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitB")
+        });
+    result = deployCommands.deploy(new String[] {"Group2"}, "DeployCommandsDUnit2.jar", null);
 
     assertEquals(true, result.hasNextLine());
 
@@ -138,7 +161,13 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
     assertEquals(2, countMatchesInString(resultString, "DeployCommandsDUnit2.jar"));
 
     // Multiple JARs to all members
-    CommandExecutionContext.setBytesFromShell(new byte[][] { "DeployCommandsDUnit3.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitC"), "DeployCommandsDUnit4.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitD") });
+    CommandExecutionContext.setBytesFromShell(
+        new byte[][] {
+          "DeployCommandsDUnit3.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitC"),
+          "DeployCommandsDUnit4.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitD")
+        });
     result = deployCommands.deploy(null, null, "AnyDirectory");
 
     assertEquals(true, result.hasNextLine());
@@ -151,8 +180,14 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
     assertEquals(4, countMatchesInString(resultString, "DeployCommandsDUnit4.jar"));
 
     // Multiple JARs to a group
-    CommandExecutionContext.setBytesFromShell(new byte[][] { "DeployCommandsDUnit5.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitE"), "DeployCommandsDUnit6.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitF") });
-    result = deployCommands.deploy(new String[] { "Group1" }, null, "AnyDirectory");
+    CommandExecutionContext.setBytesFromShell(
+        new byte[][] {
+          "DeployCommandsDUnit5.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitE"),
+          "DeployCommandsDUnit6.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitF")
+        });
+    result = deployCommands.deploy(new String[] {"Group1"}, null, "AnyDirectory");
 
     assertEquals(true, result.hasNextLine());
 
@@ -178,31 +213,52 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
     getCache();
 
     // Create the cache in the other VM
-    vm.invoke(new SerializableRunnable() {
-      public void run() {
-        props.setProperty(NAME, vmName);
-        props.setProperty(GROUPS, "Group2");
-        getSystem(props);
-        getCache();
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            props.setProperty(NAME, vmName);
+            props.setProperty(GROUPS, "Group2");
+            getSystem(props);
+            getCache();
+          }
+        });
 
     DeployCommands deployCommands = new DeployCommands();
 
     // Deploy a couple of JAR files which can be undeployed
-    CommandExecutionContext.setBytesFromShell(new byte[][] { "DeployCommandsDUnit1.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitA") });
-    deployCommands.deploy(new String[] { "Group1" }, "DeployCommandsDUnit1.jar", null);
-    CommandExecutionContext.setBytesFromShell(new byte[][] { "DeployCommandsDUnit2.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitB") });
-    deployCommands.deploy(new String[] { "Group2" }, "DeployCommandsDUnit2.jar", null);
-    CommandExecutionContext.setBytesFromShell(new byte[][] { "DeployCommandsDUnit3.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitC") });
+    CommandExecutionContext.setBytesFromShell(
+        new byte[][] {
+          "DeployCommandsDUnit1.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitA")
+        });
+    deployCommands.deploy(new String[] {"Group1"}, "DeployCommandsDUnit1.jar", null);
+    CommandExecutionContext.setBytesFromShell(
+        new byte[][] {
+          "DeployCommandsDUnit2.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitB")
+        });
+    deployCommands.deploy(new String[] {"Group2"}, "DeployCommandsDUnit2.jar", null);
+    CommandExecutionContext.setBytesFromShell(
+        new byte[][] {
+          "DeployCommandsDUnit3.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitC")
+        });
     deployCommands.deploy(null, "DeployCommandsDUnit3.jar", null);
-    CommandExecutionContext.setBytesFromShell(new byte[][] { "DeployCommandsDUnit4.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitD") });
+    CommandExecutionContext.setBytesFromShell(
+        new byte[][] {
+          "DeployCommandsDUnit4.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitD")
+        });
     deployCommands.deploy(null, "DeployCommandsDUnit4.jar", null);
-    CommandExecutionContext.setBytesFromShell(new byte[][] { "DeployCommandsDUnit5.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitE") });
+    CommandExecutionContext.setBytesFromShell(
+        new byte[][] {
+          "DeployCommandsDUnit5.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitE")
+        });
     deployCommands.deploy(null, "DeployCommandsDUnit5.jar", null);
 
     // Undeploy for 1 group
-    Result result = deployCommands.undeploy(new String[] { "Group1" }, "DeployCommandsDUnit1.jar");
+    Result result = deployCommands.undeploy(new String[] {"Group1"}, "DeployCommandsDUnit1.jar");
     assertEquals(true, result.hasNextLine());
     String resultString = result.nextLine();
     assertEquals(false, resultString.contains("ERROR"));
@@ -245,22 +301,31 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
     getCache();
 
     // Create the cache in the other VM
-    vm.invoke(new SerializableRunnable() {
-      public void run() {
-        props.setProperty(NAME, vmName);
-        props.setProperty(GROUPS, "Group2");
-        getSystem(props);
-        getCache();
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            props.setProperty(NAME, vmName);
+            props.setProperty(GROUPS, "Group2");
+            getSystem(props);
+            getCache();
+          }
+        });
 
     DeployCommands deployCommands = new DeployCommands();
 
     // Deploy a couple of JAR files which can be listed
-    CommandExecutionContext.setBytesFromShell(new byte[][] { "DeployCommandsDUnit1.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitA") });
-    deployCommands.deploy(new String[] { "Group1" }, "DeployCommandsDUnit1.jar", null);
-    CommandExecutionContext.setBytesFromShell(new byte[][] { "DeployCommandsDUnit2.jar".getBytes(), this.classBuilder.createJarFromName("DeployCommandsDUnitB") });
-    deployCommands.deploy(new String[] { "Group2" }, "DeployCommandsDUnit2.jar", null);
+    CommandExecutionContext.setBytesFromShell(
+        new byte[][] {
+          "DeployCommandsDUnit1.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitA")
+        });
+    deployCommands.deploy(new String[] {"Group1"}, "DeployCommandsDUnit1.jar", null);
+    CommandExecutionContext.setBytesFromShell(
+        new byte[][] {
+          "DeployCommandsDUnit2.jar".getBytes(),
+          this.classBuilder.createJarFromName("DeployCommandsDUnitB")
+        });
+    deployCommands.deploy(new String[] {"Group2"}, "DeployCommandsDUnit2.jar", null);
 
     // List for all members
     Result result = deployCommands.listDeployed(null);
@@ -294,7 +359,8 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
   }
 
   /**
-   * Does an end-to-end test using the complete CLI framework while ensuring that the shared configuration is updated.
+   * Does an end-to-end test using the complete CLI framework while ensuring that the shared
+   * configuration is updated.
    */
   @Test
   public void testEndToEnd() throws Exception {
@@ -302,41 +368,53 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
 
     // Start the Locator and wait for shared configuration to be available
     final int locatorPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
-    final String locatorLogPath = this.temporaryFolder.getRoot().getCanonicalPath() + File.separator + "locator-" + locatorPort + ".log";
+    final String locatorLogPath =
+        this.temporaryFolder.getRoot().getCanonicalPath()
+            + File.separator
+            + "locator-"
+            + locatorPort
+            + ".log";
 
-    Host.getHost(0).getVM(3).invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
+    Host.getHost(0)
+        .getVM(3)
+        .invoke(
+            new SerializableRunnable() {
+              @Override
+              public void run() {
 
-        final File locatorLogFile = new File(locatorLogPath);
+                final File locatorLogFile = new File(locatorLogPath);
 
-        final Properties locatorProps = new Properties();
-        locatorProps.setProperty(NAME, "Locator");
-        locatorProps.setProperty(MCAST_PORT, "0");
-        locatorProps.setProperty(LOG_LEVEL, "fine");
-        locatorProps.setProperty(ENABLE_CLUSTER_CONFIGURATION, "true");
+                final Properties locatorProps = new Properties();
+                locatorProps.setProperty(NAME, "Locator");
+                locatorProps.setProperty(MCAST_PORT, "0");
+                locatorProps.setProperty(LOG_LEVEL, "fine");
+                locatorProps.setProperty(ENABLE_CLUSTER_CONFIGURATION, "true");
 
-        try {
-          final InternalLocator locator = (InternalLocator) Locator.startLocatorAndDS(locatorPort, locatorLogFile, null, locatorProps);
+                try {
+                  final InternalLocator locator =
+                      (InternalLocator)
+                          Locator.startLocatorAndDS(
+                              locatorPort, locatorLogFile, null, locatorProps);
 
-          WaitCriterion wc = new WaitCriterion() {
-            @Override
-            public boolean done() {
-              return locator.isSharedConfigurationRunning();
-            }
+                  WaitCriterion wc =
+                      new WaitCriterion() {
+                        @Override
+                        public boolean done() {
+                          return locator.isSharedConfigurationRunning();
+                        }
 
-            @Override
-            public String description() {
-              return "Waiting for shared configuration to be started";
-            }
-          };
-          Wait.waitForCriterion(wc, 5000, 500, true);
+                        @Override
+                        public String description() {
+                          return "Waiting for shared configuration to be started";
+                        }
+                      };
+                  Wait.waitForCriterion(wc, 5000, 500, true);
 
-        } catch (IOException e) {
-          fail("Unable to create a locator with a shared configuration", e);
-        }
-      }
-    });
+                } catch (IOException e) {
+                  fail("Unable to create a locator with a shared configuration", e);
+                }
+              }
+            });
 
     // Start the default manager
     Properties managerProps = new Properties();
@@ -349,13 +427,19 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
     this.classBuilder.writeJarFromName("DeployCommandsDUnitA", this.newDeployableJarFile);
 
     // Deploy the JAR
-    CommandResult cmdResult = executeCommand("deploy --jar=" + this.newDeployableJarFile.getCanonicalPath());
+    CommandResult cmdResult =
+        executeCommand("deploy --jar=" + this.newDeployableJarFile.getCanonicalPath());
     assertEquals(Result.Status.OK, cmdResult.getStatus());
 
     String stringResult = commandResultToString(cmdResult);
     assertEquals(3, countLinesInString(stringResult, false));
     assertTrue(stringContainsLine(stringResult, "Member.*JAR.*JAR Location"));
-    assertTrue(stringContainsLine(stringResult, "Manager.*DeployCommandsDUnit1.jar.*" + JarDeployer.JAR_PREFIX + "DeployCommandsDUnit1.jar#1"));
+    assertTrue(
+        stringContainsLine(
+            stringResult,
+            "Manager.*DeployCommandsDUnit1.jar.*"
+                + JarDeployer.JAR_PREFIX
+                + "DeployCommandsDUnit1.jar#1"));
 
     // Undeploy the JAR
     cmdResult = executeCommand("undeploy --jar=DeployCommandsDUnit1.jar");
@@ -364,29 +448,52 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
     stringResult = commandResultToString(cmdResult);
     assertEquals(3, countLinesInString(stringResult, false));
     assertTrue(stringContainsLine(stringResult, "Member.*JAR.*Un-Deployed From JAR Location"));
-    assertTrue(stringContainsLine(stringResult, "Manager.*DeployCommandsDUnit1.jar.*" + JarDeployer.JAR_PREFIX + "DeployCommandsDUnit1.jar#1"));
+    assertTrue(
+        stringContainsLine(
+            stringResult,
+            "Manager.*DeployCommandsDUnit1.jar.*"
+                + JarDeployer.JAR_PREFIX
+                + "DeployCommandsDUnit1.jar#1"));
 
     // Deploy the JAR to a group
-    cmdResult = executeCommand("deploy --jar=" + this.newDeployableJarFile.getCanonicalPath() + " --group=" + groupName);
+    cmdResult =
+        executeCommand(
+            "deploy --jar="
+                + this.newDeployableJarFile.getCanonicalPath()
+                + " --group="
+                + groupName);
     assertEquals(Result.Status.OK, cmdResult.getStatus());
 
     stringResult = commandResultToString(cmdResult);
     assertEquals(3, countLinesInString(stringResult, false));
     assertTrue(stringContainsLine(stringResult, "Member.*JAR.*JAR Location"));
-    assertTrue(stringContainsLine(stringResult, "Manager.*DeployCommandsDUnit1.jar.*" + JarDeployer.JAR_PREFIX + "DeployCommandsDUnit1.jar#1"));
+    assertTrue(
+        stringContainsLine(
+            stringResult,
+            "Manager.*DeployCommandsDUnit1.jar.*"
+                + JarDeployer.JAR_PREFIX
+                + "DeployCommandsDUnit1.jar#1"));
 
     // Make sure the deployed jar in the shared config
-    Host.getHost(0).getVM(3).invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        SharedConfiguration sharedConfig = ((InternalLocator) Locator.getLocator()).getSharedConfiguration();
-        try {
-          assertTrue(sharedConfig.getConfiguration(groupName).getJarNames().contains("DeployCommandsDUnit1.jar"));
-        } catch (Exception e) {
-          Assert.fail("Error occurred in cluster configuration service", e);
-        }
-      }
-    });
+    Host.getHost(0)
+        .getVM(3)
+        .invoke(
+            new SerializableRunnable() {
+              @Override
+              public void run() {
+                SharedConfiguration sharedConfig =
+                    ((InternalLocator) Locator.getLocator()).getSharedConfiguration();
+                try {
+                  assertTrue(
+                      sharedConfig
+                          .getConfiguration(groupName)
+                          .getJarNames()
+                          .contains("DeployCommandsDUnit1.jar"));
+                } catch (Exception e) {
+                  Assert.fail("Error occurred in cluster configuration service", e);
+                }
+              }
+            });
 
     // List deployed for group
     cmdResult = executeCommand("list deployed --group=" + groupName);
@@ -395,7 +502,12 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
     stringResult = commandResultToString(cmdResult);
     assertEquals(3, countLinesInString(stringResult, false));
     assertTrue(stringContainsLine(stringResult, "Member.*JAR.*JAR Location"));
-    assertTrue(stringContainsLine(stringResult, "Manager.*DeployCommandsDUnit1.jar.*" + JarDeployer.JAR_PREFIX + "DeployCommandsDUnit1.jar#1"));
+    assertTrue(
+        stringContainsLine(
+            stringResult,
+            "Manager.*DeployCommandsDUnit1.jar.*"
+                + JarDeployer.JAR_PREFIX
+                + "DeployCommandsDUnit1.jar#1"));
 
     // Undeploy for group
     cmdResult = executeCommand("undeploy --group=" + groupName);
@@ -404,25 +516,39 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
     stringResult = commandResultToString(cmdResult);
     assertEquals(3, countLinesInString(stringResult, false));
     assertTrue(stringContainsLine(stringResult, "Member.*JAR.*Un-Deployed From JAR Location"));
-    assertTrue(stringContainsLine(stringResult, "Manager.*DeployCommandsDUnit1.jar.*" + JarDeployer.JAR_PREFIX + "DeployCommandsDUnit1.jar#1"));
+    assertTrue(
+        stringContainsLine(
+            stringResult,
+            "Manager.*DeployCommandsDUnit1.jar.*"
+                + JarDeployer.JAR_PREFIX
+                + "DeployCommandsDUnit1.jar#1"));
 
     // Make sure the deployed jar was removed from the shared config
-    Host.getHost(0).getVM(3).invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        SharedConfiguration sharedConfig = ((InternalLocator) Locator.getLocator()).getSharedConfiguration();
-        try {
-          assertFalse(sharedConfig.getConfiguration(groupName).getJarNames().contains("DeployCommandsDUnit1.jar"));
-        } catch (Exception e) {
-          Assert.fail("Error occurred in cluster configuration service", e);
-        }
-      }
-    });
+    Host.getHost(0)
+        .getVM(3)
+        .invoke(
+            new SerializableRunnable() {
+              @Override
+              public void run() {
+                SharedConfiguration sharedConfig =
+                    ((InternalLocator) Locator.getLocator()).getSharedConfiguration();
+                try {
+                  assertFalse(
+                      sharedConfig
+                          .getConfiguration(groupName)
+                          .getJarNames()
+                          .contains("DeployCommandsDUnit1.jar"));
+                } catch (Exception e) {
+                  Assert.fail("Error occurred in cluster configuration service", e);
+                }
+              }
+            });
 
     // List deployed with nothing deployed
     cmdResult = executeCommand("list deployed");
     assertEquals(Result.Status.OK, cmdResult.getStatus());
-    assertTrue(commandResultToString(cmdResult).contains(CliStrings.LIST_DEPLOYED__NO_JARS_FOUND_MESSAGE));
+    assertTrue(
+        commandResultToString(cmdResult).contains(CliStrings.LIST_DEPLOYED__NO_JARS_FOUND_MESSAGE));
   }
 
   private void deleteSavedJarFiles() {
@@ -431,12 +557,14 @@ public class DeployCommandsDUnitTest extends CliCommandTestBase {
     File dirFile = new File(".");
 
     // Find all deployed JAR files
-    File[] oldJarFiles = dirFile.listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(final File file, final String name) {
-        return DeployCommandsDUnitTest.this.pattern.matcher(name).matches();
-      }
-    });
+    File[] oldJarFiles =
+        dirFile.listFiles(
+            new FilenameFilter() {
+              @Override
+              public boolean accept(final File file, final String name) {
+                return DeployCommandsDUnitTest.this.pattern.matcher(name).matches();
+              }
+            });
 
     // Now delete them
     if (oldJarFiles != null) {

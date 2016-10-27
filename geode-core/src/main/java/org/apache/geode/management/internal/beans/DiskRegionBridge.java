@@ -26,10 +26,7 @@ import org.apache.geode.management.internal.beans.stats.StatsAverageLatency;
 import org.apache.geode.management.internal.beans.stats.StatsKey;
 import org.apache.geode.management.internal.beans.stats.StatsRate;
 
-/**
- * 
- * 
- */
+/** */
 public class DiskRegionBridge {
 
   private DiskRegionStats diskRegionStats;
@@ -86,11 +83,22 @@ public class DiskRegionBridge {
 
     diskRegionReadsRate = new StatsRate(StatsKey.DISK_READS, StatType.LONG_TYPE, diskRegionMonitor);
 
-    diskRegionWritesRate = new StatsRate(StatsKey.DISK_WRITES, StatType.LONG_TYPE, diskRegionMonitor);
+    diskRegionWritesRate =
+        new StatsRate(StatsKey.DISK_WRITES, StatType.LONG_TYPE, diskRegionMonitor);
 
-    diskRegionReadsAverageLatency = new StatsAverageLatency(StatsKey.DISK_READS, StatType.LONG_TYPE, StatsKey.DISK_REGION_READ_TIME, diskRegionMonitor);
+    diskRegionReadsAverageLatency =
+        new StatsAverageLatency(
+            StatsKey.DISK_READS,
+            StatType.LONG_TYPE,
+            StatsKey.DISK_REGION_READ_TIME,
+            diskRegionMonitor);
 
-    diskRegionWritesAverageLatency = new StatsAverageLatency(StatsKey.DISK_WRITES, StatType.LONG_TYPE, StatsKey.DISK_REGION_WRITE_TIMES, diskRegionMonitor);
+    diskRegionWritesAverageLatency =
+        new StatsAverageLatency(
+            StatsKey.DISK_WRITES,
+            StatType.LONG_TYPE,
+            StatsKey.DISK_REGION_WRITE_TIMES,
+            diskRegionMonitor);
   }
 
   public float getDiskReadsRate() {
@@ -129,5 +137,4 @@ public class DiskRegionBridge {
   public long getDiskTaskWaiting() {
     return ManagementConstants.NOT_AVAILABLE_LONG;
   }
-
 }

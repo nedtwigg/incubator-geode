@@ -28,19 +28,18 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
 /**
- * Implementation of SelectResults that extends TreeSet This is the sorted
- * version of ResultSet used for order by clause If the elements are Structs,
- * then use SortedStructSet instead.
- * 
+ * Implementation of SelectResults that extends TreeSet This is the sorted version of ResultSet used
+ * for order by clause If the elements are Structs, then use SortedStructSet instead.
+ *
  * @since GemFire 4.0
  */
-public final class SortedResultSet extends TreeSet implements SelectResults, Ordered, DataSerializableFixedID {
+public final class SortedResultSet extends TreeSet
+    implements SelectResults, Ordered, DataSerializableFixedID {
   private static final long serialVersionUID = 5184711453750319224L;
 
   private ObjectType elementType;
 
-  public SortedResultSet() {
-  }
+  public SortedResultSet() {}
 
   SortedResultSet(Collection c) {
     super(c);
@@ -73,7 +72,9 @@ public final class SortedResultSet extends TreeSet implements SelectResults, Ord
 
   public void setElementType(ObjectType elementType) {
     if (elementType instanceof StructType)
-      throw new IllegalArgumentException(LocalizedStrings.SortedResultSet_THIS_COLLECTION_DOES_NOT_SUPPORT_STRUCT_ELEMENTS.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SortedResultSet_THIS_COLLECTION_DOES_NOT_SUPPORT_STRUCT_ELEMENTS
+              .toLocalizedString());
     this.elementType = elementType;
   }
 
@@ -113,7 +114,7 @@ public final class SortedResultSet extends TreeSet implements SelectResults, Ord
     // how do we serialize the comparator?
     out.writeInt(this.size());
     DataSerializer.writeObject(this.elementType, out);
-    for (Iterator i = this.iterator(); i.hasNext();) {
+    for (Iterator i = this.iterator(); i.hasNext(); ) {
       DataSerializer.writeObject(i.next(), out);
     }
   }

@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.apache.geode.modules.session.internal.common;
 
@@ -36,9 +36,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Class which defines a peer-to-peer cache
- */
+/** Class which defines a peer-to-peer cache */
 public class PeerToPeerSessionCache extends AbstractSessionCache {
 
   private static final Logger LOG = LoggerFactory.getLogger(PeerToPeerSessionCache.class.getName());
@@ -59,18 +57,13 @@ public class PeerToPeerSessionCache extends AbstractSessionCache {
     super();
     this.cache = cache;
 
-    /**
-     * Set some default properties for this cache if they haven't already
-     * been set
-     */
+    /** Set some default properties for this cache if they haven't already been set */
     this.properties.put(CacheProperty.REGION_ATTRIBUTES_ID, DEFAULT_REGION_ATTRIBUTES_ID);
     this.properties.put(CacheProperty.ENABLE_LOCAL_CACHE, DEFAULT_ENABLE_LOCAL_CACHE);
     this.properties.putAll(properties);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void initialize() {
     // Register Functions
@@ -80,9 +73,8 @@ public class PeerToPeerSessionCache extends AbstractSessionCache {
     createOrRetrieveRegion();
 
     /**
-     * If local cache is enabled, create the local region fronting the
-     * session region and set it as the operating region; otherwise, use
-     * the session region directly as the operating region.
+     * If local cache is enabled, create the local region fronting the session region and set it as
+     * the operating region; otherwise, use the session region directly as the operating region.
      */
     boolean enableLocalCache = (Boolean) properties.get(CacheProperty.ENABLE_LOCAL_CACHE);
     operatingRegion = enableLocalCache ? createOrRetrieveLocalRegion() : this.sessionRegion;
@@ -91,9 +83,7 @@ public class PeerToPeerSessionCache extends AbstractSessionCache {
     createStatistics();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public GemFireCache getCache() {
     return cache;
@@ -150,7 +140,8 @@ public class PeerToPeerSessionCache extends AbstractSessionCache {
 
     if (frontingRegion == null) {
       // Create the region factory
-      RegionFactory<String, HttpSession> factory = this.cache.createRegionFactory(RegionShortcut.LOCAL_HEAP_LRU);
+      RegionFactory<String, HttpSession> factory =
+          this.cache.createRegionFactory(RegionShortcut.LOCAL_HEAP_LRU);
 
       // Add the cache loader and writer
       factory.setCacheLoader(new LocalSessionCacheLoader(this.sessionRegion));

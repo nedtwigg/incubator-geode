@@ -18,16 +18,14 @@
 package org.apache.geode.distributed.internal;
 
 /**
- * A PooledDistributionMessage passes processing off to a thread that
- * executes on the DistributionManager's getThreadPool().  This is
- * sufficient for messages that don't need to be processed serially
- * with respect to any other message.
+ * A PooledDistributionMessage passes processing off to a thread that executes on the
+ * DistributionManager's getThreadPool(). This is sufficient for messages that don't need to be
+ * processed serially with respect to any other message.
  */
 public abstract class PooledDistributionMessage extends DistributionMessage {
 
   @Override
-  final public int getProcessorType() {
+  public final int getProcessorType() {
     return DistributionManager.STANDARD_EXECUTOR;
   }
-
 }

@@ -65,7 +65,8 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
 @Category(DistributedTest.class)
-public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRClientServerTestBase {
+public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest
+    extends PRClientServerTestBase {
 
   private static final String TEST_FUNCTION7 = TestFunction.TEST_FUNCTION7;
 
@@ -86,7 +87,7 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
   }
 
   /*
-   * Execution of the function on server with 
+   * Execution of the function on server with
    */
   @Test
   public void testServerAllKeyExecution_byInstance() {
@@ -94,11 +95,14 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     Function function = new TestFunction(true, TEST_FUNCTION2);
     registerFunctionAtServer(function);
     isByName = new Boolean(false);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverAllKeyExecution(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverAllKeyExecution(
+                isByName));
   }
 
   /*
-   * Execution of the function on server with 
+   * Execution of the function on server with
    */
   @Test
   public void testServerGetAllFunction() {
@@ -107,7 +111,7 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
   }
 
   /*
-   * Execution of the function on server with 
+   * Execution of the function on server with
    */
   @Test
   public void testServerPutAllFunction() {
@@ -125,7 +129,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     Function function = new TestFunction(true, TEST_FUNCTION2);
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverSingleKeyExecution(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverSingleKeyExecution(
+                isByName));
   }
 
   /*
@@ -137,7 +144,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
   @Test
   public void testserverSingleKeyExecution_FunctionInvocationTargetException() {
     createScenario();
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverSingleKeyExecution_FunctionInvocationTargetException());
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest
+                .serverSingleKeyExecution_FunctionInvocationTargetException());
   }
 
   @Test
@@ -147,9 +157,14 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     registerFunctionAtServer(function);
     isByName = Boolean.TRUE;
     // add expected exception for server going down after wait
-    final IgnoredException expectedEx = IgnoredException.addIgnoredException(DistributedSystemDisconnectedException.class.getName(), server1);
+    final IgnoredException expectedEx =
+        IgnoredException.addIgnoredException(
+            DistributedSystemDisconnectedException.class.getName(), server1);
     try {
-      client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverSingleKeyExecutionSocketTimeOut(isByName));
+      client.invoke(
+          () ->
+              PRClientServerRegionFunctionExecutionSingleHopDUnitTest
+                  .serverSingleKeyExecutionSocketTimeOut(isByName));
     } finally {
       expectedEx.remove();
     }
@@ -165,7 +180,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     Function function = new TestFunction(true, TEST_FUNCTION2);
     registerFunctionAtServer(function);
     isByName = new Boolean(false);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverSingleKeyExecution(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverSingleKeyExecution(
+                isByName));
   }
 
   /*
@@ -175,7 +193,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
   @Test
   public void testServerSingleKeyExecution_byInlineFunction() {
     createScenario();
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverSingleKeyExecution_Inline());
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest
+                .serverSingleKeyExecution_Inline());
   }
 
   /*
@@ -188,10 +209,16 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     Function function = new TestFunction(true, TEST_FUNCTION2);
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverMultiKeyExecution(isByName));
-    server1.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.checkBucketsOnServer());
-    server2.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.checkBucketsOnServer());
-    server3.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.checkBucketsOnServer());
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverMultiKeyExecution(
+                isByName));
+    server1.invoke(
+        () -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.checkBucketsOnServer());
+    server2.invoke(
+        () -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.checkBucketsOnServer());
+    server3.invoke(
+        () -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.checkBucketsOnServer());
   }
 
   /*
@@ -228,8 +255,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     keyFilterSet.add(75);
     keyFilterSet.add(25);
 
-    client.invoke(() -> PRClientServerTestBase.serverBucketFilterOverrideExecution(bucketFilterSet, keyFilterSet));
-
+    client.invoke(
+        () ->
+            PRClientServerTestBase.serverBucketFilterOverrideExecution(
+                bucketFilterSet, keyFilterSet));
   }
 
   @Test
@@ -238,7 +267,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SOCKET_TIMEOUT);
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverMultiKeyExecutionSocketTimeOut(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest
+                .serverMultiKeyExecutionSocketTimeOut(isByName));
   }
 
   /*
@@ -248,7 +280,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
   @Test
   public void testserverMultiKeyExecution_byInlineFunction() {
     createScenario();
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverMultiKeyExecution_Inline());
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest
+                .serverMultiKeyExecution_Inline());
   }
 
   /*
@@ -260,9 +295,13 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
   @Test
   public void testserverMultiKeyExecution_FunctionInvocationTargetException() {
     IgnoredException.addIgnoredException("FunctionException: IOException while sending");
-    IgnoredException.addIgnoredException("java.net.SocketException: Software caused connection abort");
+    IgnoredException.addIgnoredException(
+        "java.net.SocketException: Software caused connection abort");
     createScenario();
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverMultiKeyExecution_FunctionInvocationTargetException());
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest
+                .serverMultiKeyExecution_FunctionInvocationTargetException());
   }
 
   /*
@@ -276,7 +315,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     Function function = new TestFunction(false, TEST_FUNCTION7);
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverMultiKeyExecutionNoResult(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverMultiKeyExecutionNoResult(
+                isByName));
   }
 
   /*
@@ -289,7 +331,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     Function function = new TestFunction(true, TEST_FUNCTION2);
     registerFunctionAtServer(function);
     isByName = new Boolean(false);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverMultiKeyExecution(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverMultiKeyExecution(
+                isByName));
   }
 
   /*
@@ -303,7 +348,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     Function function = new TestFunction(true, TEST_FUNCTION2);
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverMultiKeyExecutionOnASingleBucket(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest
+                .serverMultiKeyExecutionOnASingleBucket(isByName));
   }
 
   /*
@@ -317,16 +365,20 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     Function function = new TestFunction(true, TEST_FUNCTION2);
     registerFunctionAtServer(function);
     isByName = new Boolean(false);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.serverMultiKeyExecutionOnASingleBucket(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest
+                .serverMultiKeyExecutionOnASingleBucket(isByName));
   }
 
   /*
-   * Ensure that the while executing the function if the servers is down then 
+   * Ensure that the while executing the function if the servers is down then
    * the execution is failover to other available server
    */
   @Test
   public void testServerFailoverWithTwoServerAliveHA() throws InterruptedException {
-    ArrayList commonAttributes = createCommonServerAttributes("TestPartitionedRegion", null, 1, 13, null);
+    ArrayList commonAttributes =
+        createCommonServerAttributes("TestPartitionedRegion", null, 1, 13, null);
     createClientServerScenarion(commonAttributes, 20, 20, 20);
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_HA);
     registerFunctionAtServer(function);
@@ -336,11 +388,16 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
 
     int AsyncInvocationArrSize = 1;
     AsyncInvocation[] async = new AsyncInvocation[AsyncInvocationArrSize];
-    async[0] = client.invokeAsync(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.executeFunctionHA());
+    async[0] =
+        client.invokeAsync(
+            () -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.executeFunctionHA());
     server2.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.startServerHA());
     server3.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.startServerHA());
     server1.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.stopServerHA());
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.verifyDeadAndLiveServers(new Integer(1), new Integer(2)));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.verifyDeadAndLiveServers(
+                new Integer(1), new Integer(2)));
     ThreadUtils.join(async[0], 6 * 60 * 1000);
     if (async[0].getException() != null) {
       Assert.fail("UnExpected Exception Occured : ", async[0].getException());
@@ -351,12 +408,13 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
   }
 
   /*
-   * Ensure that the while executing the function if the servers is down then 
+   * Ensure that the while executing the function if the servers is down then
    * the execution is failover to other available server
    */
   @Test
   public void testServerCacheClosedFailoverWithTwoServerAliveHA() throws InterruptedException {
-    ArrayList commonAttributes = createCommonServerAttributes("TestPartitionedRegion", null, 1, 13, null);
+    ArrayList commonAttributes =
+        createCommonServerAttributes("TestPartitionedRegion", null, 1, 13, null);
     createClientServerScenarion(commonAttributes, 20, 20, 20);
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_HA);
     registerFunctionAtServer(function);
@@ -365,11 +423,16 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.putOperation());
     int AsyncInvocationArrSize = 1;
     AsyncInvocation[] async = new AsyncInvocation[AsyncInvocationArrSize];
-    async[0] = client.invokeAsync(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.executeFunctionHA());
+    async[0] =
+        client.invokeAsync(
+            () -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.executeFunctionHA());
     server2.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.startServerHA());
     server3.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.startServerHA());
     server1.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.closeCacheHA());
-    client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.verifyDeadAndLiveServers(new Integer(1), new Integer(2)));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionSingleHopDUnitTest.verifyDeadAndLiveServers(
+                new Integer(1), new Integer(2)));
     ThreadUtils.join(async[0], 5 * 60 * 1000);
     if (async[0].getException() != null) {
       Assert.fail("UnExpected Exception Occured : ", async[0].getException());
@@ -381,34 +444,39 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
   @Test
   public void testBug40714() {
     createScenario();
-    server1.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.registerFunction());
-    server1.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.registerFunction());
-    server1.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.registerFunction());
+    server1.invoke(
+        () -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.registerFunction());
+    server1.invoke(
+        () -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.registerFunction());
+    server1.invoke(
+        () -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.registerFunction());
     client.invoke(() -> PRClientServerRegionFunctionExecutionSingleHopDUnitTest.registerFunction());
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.FunctionExecution_Inline_Bug40714());
+    client.invoke(
+        () -> PRClientServerRegionFunctionExecutionDUnitTest.FunctionExecution_Inline_Bug40714());
   }
 
   public static void registerFunction() {
-    FunctionService.registerFunction(new FunctionAdapter() {
-      @Override
-      public void execute(FunctionContext context) {
-        if (context.getArguments() instanceof String) {
-          context.getResultSender().lastResult("Failure");
-        } else if (context.getArguments() instanceof Boolean) {
-          context.getResultSender().lastResult(Boolean.FALSE);
-        }
-      }
+    FunctionService.registerFunction(
+        new FunctionAdapter() {
+          @Override
+          public void execute(FunctionContext context) {
+            if (context.getArguments() instanceof String) {
+              context.getResultSender().lastResult("Failure");
+            } else if (context.getArguments() instanceof Boolean) {
+              context.getResultSender().lastResult(Boolean.FALSE);
+            }
+          }
 
-      @Override
-      public String getId() {
-        return "Function";
-      }
+          @Override
+          public String getId() {
+            return "Function";
+          }
 
-      @Override
-      public boolean hasResult() {
-        return true;
-      }
-    });
+          @Override
+          public boolean hasResult() {
+            return true;
+          }
+        });
   }
 
   public static void FunctionExecution_Inline_Bug40714() {
@@ -419,30 +487,36 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
       testKeysSet.add("execKey-" + i);
     }
     int j = 0;
-    for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+    for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
       Integer val = new Integer(j++);
       region.put(i.next(), val);
     }
-    HashMap resultMap = (HashMap) FunctionService.onRegion(region).withArgs(Boolean.TRUE).execute(new FunctionAdapter() {
-      @Override
-      public void execute(FunctionContext context) {
-        if (context.getArguments() instanceof String) {
-          context.getResultSender().lastResult("Success");
-        } else if (context.getArguments() instanceof Boolean) {
-          context.getResultSender().lastResult(Boolean.TRUE);
-        }
-      }
+    HashMap resultMap =
+        (HashMap)
+            FunctionService.onRegion(region)
+                .withArgs(Boolean.TRUE)
+                .execute(
+                    new FunctionAdapter() {
+                      @Override
+                      public void execute(FunctionContext context) {
+                        if (context.getArguments() instanceof String) {
+                          context.getResultSender().lastResult("Success");
+                        } else if (context.getArguments() instanceof Boolean) {
+                          context.getResultSender().lastResult(Boolean.TRUE);
+                        }
+                      }
 
-      @Override
-      public String getId() {
-        return "Function";
-      }
+                      @Override
+                      public String getId() {
+                        return "Function";
+                      }
 
-      @Override
-      public boolean hasResult() {
-        return true;
-      }
-    }).getResult();
+                      @Override
+                      public boolean hasResult() {
+                        return true;
+                      }
+                    })
+                .getResult();
 
     assertEquals(3, resultMap.size());
 
@@ -458,27 +532,33 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
         assertEquals(Boolean.TRUE, result);
       }
     }
-
   }
 
-  public static void verifyDeadAndLiveServers(final Integer expectedDeadServers, final Integer expectedLiveServers) {
-    WaitCriterion wc = new WaitCriterion() {
-      String excuse;
+  public static void verifyDeadAndLiveServers(
+      final Integer expectedDeadServers, final Integer expectedLiveServers) {
+    WaitCriterion wc =
+        new WaitCriterion() {
+          String excuse;
 
-      public boolean done() {
-        int sz = pool.getConnectedServerCount();
-        LogWriterUtils.getLogWriter().info("Checking for the Live Servers : Expected  : " + expectedLiveServers + " Available :" + sz);
-        if (sz == expectedLiveServers.intValue()) {
-          return true;
-        }
-        excuse = "Expected " + expectedLiveServers.intValue() + " but found " + sz;
-        return false;
-      }
+          public boolean done() {
+            int sz = pool.getConnectedServerCount();
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "Checking for the Live Servers : Expected  : "
+                        + expectedLiveServers
+                        + " Available :"
+                        + sz);
+            if (sz == expectedLiveServers.intValue()) {
+              return true;
+            }
+            excuse = "Expected " + expectedLiveServers.intValue() + " but found " + sz;
+            return false;
+          }
 
-      public String description() {
-        return excuse;
-      }
-    };
+          public String description() {
+            return excuse;
+          }
+        };
     Wait.waitForCriterion(wc, 3 * 60 * 1000, 1000, true);
   }
 
@@ -495,7 +575,8 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     FunctionService.registerFunction(function);
     Execution dataSet = FunctionService.onRegion(region);
     try {
-      ResultCollector rc1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(function.getId());
+      ResultCollector rc1 =
+          dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(function.getId());
 
       HashMap resultMap = ((HashMap) rc1.getResult());
       assertEquals(3, resultMap.size());
@@ -514,7 +595,13 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
       }
     } catch (Exception e) {
       LogWriterUtils.getLogWriter().info("Got an exception : " + e.getMessage());
-      assertTrue(e instanceof EOFException || e instanceof SocketException || e instanceof SocketTimeoutException || e instanceof ServerException || e instanceof IOException || e instanceof CacheClosedException);
+      assertTrue(
+          e instanceof EOFException
+              || e instanceof SocketException
+              || e instanceof SocketTimeoutException
+              || e instanceof ServerException
+              || e instanceof IOException
+              || e instanceof CacheClosedException);
     }
   }
 
@@ -528,7 +615,8 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_HA);
     FunctionService.registerFunction(function);
     Execution dataSet = FunctionService.onRegion(region);
-    ResultCollector rc1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(function.getId());
+    ResultCollector rc1 =
+        dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(function.getId());
     List l = ((List) rc1.getResult());
     LogWriterUtils.getLogWriter().info("Result size : " + l.size());
     return l;
@@ -543,7 +631,7 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     }
     int j = 0;
     HashSet origVals = new HashSet();
-    for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+    for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
       Integer val = new Integer(j++);
       origVals.add(val);
       region.put(i.next(), val);
@@ -551,19 +639,27 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
   }
 
   private void createScenario() {
-    ArrayList commonAttributes = createCommonServerAttributes("TestPartitionedRegion", null, 0, 13, null);
+    ArrayList commonAttributes =
+        createCommonServerAttributes("TestPartitionedRegion", null, 0, 13, null);
     createClientServerScenarioSingleHop(commonAttributes, 20, 20, 20);
   }
 
   private void createScenarioForBucketFilter() {
-    ArrayList commonAttributes = createCommonServerAttributes("TestPartitionedRegion", new BucketFilterPRResolver(), 0, 113, null);
+    ArrayList commonAttributes =
+        createCommonServerAttributes(
+            "TestPartitionedRegion", new BucketFilterPRResolver(), 0, 113, null);
     createClientServerScenarioSingleHop(commonAttributes, 20, 20, 20);
   }
 
   public static void checkBucketsOnServer() {
     PartitionedRegion region = (PartitionedRegion) cache.getRegion(PartitionedRegionName);
     HashMap localBucket2RegionMap = (HashMap) region.getDataStore().getSizeLocally();
-    LogWriterUtils.getLogWriter().info("Size of the " + PartitionedRegionName + " in this VM :- " + localBucket2RegionMap.size());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Size of the "
+                + PartitionedRegionName
+                + " in this VM :- "
+                + localBucket2RegionMap.size());
     Set entrySet = localBucket2RegionMap.entrySet();
     assertNotNull(entrySet);
   }
@@ -582,7 +678,7 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     try {
       int j = 0;
       HashSet origVals = new HashSet();
-      for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+      for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
         Integer val = new Integer(j++);
         origVals.add(val);
         region.put(i.next(), val);
@@ -608,10 +704,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
       l2 = ((List) rc2.getResult());
       assertEquals(3, l2.size());
       HashSet foundVals = new HashSet();
-      for (Iterator i = l2.iterator(); i.hasNext();) {
+      for (Iterator i = l2.iterator(); i.hasNext(); ) {
         ArrayList subL = (ArrayList) (i.next());
         assertTrue(subL.size() > 0);
-        for (Iterator subI = subL.iterator(); subI.hasNext();) {
+        for (Iterator subI = subL.iterator(); subI.hasNext(); ) {
           assertTrue(foundVals.add(subI.next()));
         }
       }
@@ -619,7 +715,6 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
 
     } catch (Exception e) {
       Assert.fail("Test failed after the put operation", e);
-
     }
   }
 
@@ -634,7 +729,7 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     try {
       int j = 0;
       Map origVals = new HashMap();
-      for (Iterator i = testKeysList.iterator(); i.hasNext();) {
+      for (Iterator i = testKeysList.iterator(); i.hasNext(); ) {
         Integer val = new Integer(j++);
         Object key = i.next();
         origVals.put(key, val);
@@ -648,7 +743,6 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
 
     } catch (Exception e) {
       Assert.fail("Test failed after the put operation", e);
-
     }
   }
 
@@ -663,7 +757,7 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     try {
       int j = 0;
       Map origVals = new HashMap();
-      for (Iterator i = testKeysList.iterator(); i.hasNext();) {
+      for (Iterator i = testKeysList.iterator(); i.hasNext(); ) {
         Integer val = new Integer(j++);
         Object key = i.next();
         origVals.put(key, val);
@@ -677,7 +771,6 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
 
     } catch (Exception e) {
       Assert.fail("Test failed after the put operation", e);
-
     }
   }
 
@@ -689,12 +782,12 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
       testKeysSet.add("execKey-" + i);
     }
     int j = 0;
-    for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+    for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
       Integer val = new Integer(j++);
       region.put(i.next(), val);
     }
     DistributedSystem.setThreadsSocketPolicy(false);
-    for (Iterator kiter = testKeysSet.iterator(); kiter.hasNext();) {
+    for (Iterator kiter = testKeysSet.iterator(); kiter.hasNext(); ) {
       try {
         Set singleKeySet = Collections.singleton(kiter.next());
         Function function = new TestFunction(true, TEST_FUNCTION2);
@@ -705,7 +798,8 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
         l = ((List) rc1.getResult());
         assertEquals(1, l.size());
 
-        ResultCollector rc2 = execute(dataSet, singleKeySet, new HashSet(singleKeySet), function, isByName);
+        ResultCollector rc2 =
+            execute(dataSet, singleKeySet, new HashSet(singleKeySet), function, isByName);
         List l2 = null;
         l2 = ((List) rc2.getResult());
 
@@ -735,7 +829,7 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     try {
       int j = 0;
       HashSet origVals = new HashSet();
-      for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+      for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
         Integer val = new Integer(j++);
         origVals.add(val);
         region.put(i.next(), val);
@@ -745,7 +839,7 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
       l = ((List) rc1.getResult());
       LogWriterUtils.getLogWriter().info("Result size : " + l.size());
       assertEquals(3, l.size());
-      for (Iterator i = l.iterator(); i.hasNext();) {
+      for (Iterator i = l.iterator(); i.hasNext(); ) {
         assertEquals(Boolean.TRUE, i.next());
       }
 
@@ -754,10 +848,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
       l2 = ((List) rc2.getResult());
       assertEquals(3, l2.size());
       HashSet foundVals = new HashSet();
-      for (Iterator i = l2.iterator(); i.hasNext();) {
+      for (Iterator i = l2.iterator(); i.hasNext(); ) {
         ArrayList subL = (ArrayList) i.next();
         assertTrue(subL.size() > 0);
-        for (Iterator subI = subL.iterator(); subI.hasNext();) {
+        for (Iterator subI = subL.iterator(); subI.hasNext(); ) {
           assertTrue(foundVals.add(subI.next()));
         }
       }
@@ -765,7 +859,6 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
 
     } catch (Exception e) {
       Assert.fail("Test failed after the put operation", e);
-
     }
   }
 
@@ -783,7 +876,7 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     try {
       int j = 0;
       HashSet origVals = new HashSet();
-      for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+      for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
         Integer val = new Integer(j++);
         origVals.add(val);
         region.put(i.next(), val);
@@ -793,13 +886,12 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
       l = ((List) rc1.getResult());
       LogWriterUtils.getLogWriter().info("Result size : " + l.size());
       assertEquals(3, l.size());
-      for (Iterator i = l.iterator(); i.hasNext();) {
+      for (Iterator i = l.iterator(); i.hasNext(); ) {
         assertEquals(Boolean.TRUE, i.next());
       }
 
     } catch (Exception e) {
       Assert.fail("Test failed after the function execution", e);
-
     }
   }
 
@@ -842,43 +934,47 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     try {
       int j = 0;
       HashSet origVals = new HashSet();
-      for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+      for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
         Integer val = new Integer(j++);
         origVals.add(val);
         region.put(i.next(), val);
       }
       List l = null;
-      ResultCollector rc1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(new FunctionAdapter() {
-        @Override
-        public void execute(FunctionContext context) {
-          if (context.getArguments() instanceof String) {
-            context.getResultSender().lastResult("Success");
-          } else if (context.getArguments() instanceof Boolean) {
-            context.getResultSender().lastResult(Boolean.TRUE);
-          }
-        }
+      ResultCollector rc1 =
+          dataSet
+              .withFilter(testKeysSet)
+              .withArgs(Boolean.TRUE)
+              .execute(
+                  new FunctionAdapter() {
+                    @Override
+                    public void execute(FunctionContext context) {
+                      if (context.getArguments() instanceof String) {
+                        context.getResultSender().lastResult("Success");
+                      } else if (context.getArguments() instanceof Boolean) {
+                        context.getResultSender().lastResult(Boolean.TRUE);
+                      }
+                    }
 
-        @Override
-        public String getId() {
-          return getClass().getName();
-        }
+                    @Override
+                    public String getId() {
+                      return getClass().getName();
+                    }
 
-        @Override
-        public boolean hasResult() {
-          return true;
-        }
-      });
+                    @Override
+                    public boolean hasResult() {
+                      return true;
+                    }
+                  });
       l = ((List) rc1.getResult());
       LogWriterUtils.getLogWriter().info("Result size : " + l.size());
       assertEquals(3, l.size());
-      for (Iterator i = l.iterator(); i.hasNext();) {
+      for (Iterator i = l.iterator(); i.hasNext(); ) {
         assertEquals(Boolean.TRUE, i.next());
       }
     } catch (Exception e) {
       LogWriterUtils.getLogWriter().info("Exception : " + e.getMessage());
       e.printStackTrace();
       fail("Test failed after the put operation");
-
     }
   }
 
@@ -893,35 +989,41 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     Execution dataSet = FunctionService.onRegion(region);
     int j = 0;
     HashSet origVals = new HashSet();
-    for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+    for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
       Integer val = new Integer(j++);
       origVals.add(val);
       region.put(i.next(), val);
     }
     ResultCollector rc1 = null;
     try {
-      rc1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(new FunctionAdapter() {
-        @Override
-        public void execute(FunctionContext context) {
-          if (((RegionFunctionContext) context).isPossibleDuplicate()) {
-            context.getResultSender().lastResult(new Integer(retryCount));
-            return;
-          }
-          if (context.getArguments() instanceof Boolean) {
-            throw new FunctionInvocationTargetException("I have been thrown from TestFunction");
-          }
-        }
+      rc1 =
+          dataSet
+              .withFilter(testKeysSet)
+              .withArgs(Boolean.TRUE)
+              .execute(
+                  new FunctionAdapter() {
+                    @Override
+                    public void execute(FunctionContext context) {
+                      if (((RegionFunctionContext) context).isPossibleDuplicate()) {
+                        context.getResultSender().lastResult(new Integer(retryCount));
+                        return;
+                      }
+                      if (context.getArguments() instanceof Boolean) {
+                        throw new FunctionInvocationTargetException(
+                            "I have been thrown from TestFunction");
+                      }
+                    }
 
-        @Override
-        public String getId() {
-          return getClass().getName();
-        }
+                    @Override
+                    public String getId() {
+                      return getClass().getName();
+                    }
 
-        @Override
-        public boolean hasResult() {
-          return true;
-        }
-      });
+                    @Override
+                    public boolean hasResult() {
+                      return true;
+                    }
+                  });
 
       List list = (ArrayList) rc1.getResult();
       assertEquals(list.get(0), 0);
@@ -929,7 +1031,6 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
       e.printStackTrace();
       Assert.fail("This is not expected Exception", e);
     }
-
   }
 
   public static void serverMultiKeyExecutionNoResult(Boolean isByName) {
@@ -948,7 +1049,7 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
       cache.getLogger().info(msg);
       int j = 0;
       HashSet origVals = new HashSet();
-      for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+      for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
         Integer val = new Integer(j++);
         origVals.add(val);
         region.put(i.next(), val);
@@ -960,11 +1061,18 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     } catch (FunctionException expected) {
       expected.printStackTrace();
       LogWriterUtils.getLogWriter().info("Exception : " + expected.getMessage());
-      assertTrue(expected.getMessage().startsWith((LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("return any"))));
+      assertTrue(
+          expected
+              .getMessage()
+              .startsWith(
+                  (LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE
+                      .toLocalizedString("return any"))));
     } catch (Exception notexpected) {
       Assert.fail("Test failed during execute or sleeping", notexpected);
     } finally {
-      cache.getLogger().info("<ExpectedException action=remove>" + "FunctionException" + "</ExpectedException>");
+      cache
+          .getLogger()
+          .info("<ExpectedException action=remove>" + "FunctionException" + "</ExpectedException>");
     }
   }
 
@@ -982,7 +1090,10 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     try {
       execute(dataSet, testKeysSet, Boolean.TRUE, function, isByName);
     } catch (Exception expected) {
-      assertTrue(expected.getMessage().contains("No target node found for KEY = " + testKey) || expected.getMessage().startsWith("Server could not send the reply") || expected.getMessage().startsWith("Unexpected exception during"));
+      assertTrue(
+          expected.getMessage().contains("No target node found for KEY = " + testKey)
+              || expected.getMessage().startsWith("Server could not send the reply")
+              || expected.getMessage().startsWith("Unexpected exception during"));
     }
 
     region.put(testKey, new Integer(1));
@@ -1043,77 +1154,108 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
 
     Execution dataSet = FunctionService.onRegion(region);
     try {
-      cache.getLogger().info("<ExpectedException action=add>" + "No target node found for KEY = " + "|Server could not send the reply" + "|Unexpected exception during" + "</ExpectedException>");
-      dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(new FunctionAdapter() {
-        @Override
-        public void execute(FunctionContext context) {
-          if (context.getArguments() instanceof String) {
-            context.getResultSender().lastResult("Success");
-          }
-          context.getResultSender().lastResult("Failure");
-        }
+      cache
+          .getLogger()
+          .info(
+              "<ExpectedException action=add>"
+                  + "No target node found for KEY = "
+                  + "|Server could not send the reply"
+                  + "|Unexpected exception during"
+                  + "</ExpectedException>");
+      dataSet
+          .withFilter(testKeysSet)
+          .withArgs(Boolean.TRUE)
+          .execute(
+              new FunctionAdapter() {
+                @Override
+                public void execute(FunctionContext context) {
+                  if (context.getArguments() instanceof String) {
+                    context.getResultSender().lastResult("Success");
+                  }
+                  context.getResultSender().lastResult("Failure");
+                }
 
-        @Override
-        public String getId() {
-          return getClass().getName();
-        }
+                @Override
+                public String getId() {
+                  return getClass().getName();
+                }
 
-        @Override
-        public boolean hasResult() {
-          return true;
-        }
-      });
+                @Override
+                public boolean hasResult() {
+                  return true;
+                }
+              });
     } catch (Exception expected) {
       LogWriterUtils.getLogWriter().fine("Exception occured : " + expected.getMessage());
-      assertTrue(expected.getMessage().contains("No target node found for KEY = " + testKey) || expected.getMessage().startsWith("Server could not send the reply") || expected.getMessage().startsWith("Unexpected exception during"));
+      assertTrue(
+          expected.getMessage().contains("No target node found for KEY = " + testKey)
+              || expected.getMessage().startsWith("Server could not send the reply")
+              || expected.getMessage().startsWith("Unexpected exception during"));
     } finally {
-      cache.getLogger().info("<ExpectedException action=remove>" + "No target node found for KEY = " + "|Server could not send the reply" + "|Unexpected exception during" + "</ExpectedException>");
+      cache
+          .getLogger()
+          .info(
+              "<ExpectedException action=remove>"
+                  + "No target node found for KEY = "
+                  + "|Server could not send the reply"
+                  + "|Unexpected exception during"
+                  + "</ExpectedException>");
     }
 
     region.put(testKey, new Integer(1));
     try {
-      ResultCollector rs = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(new FunctionAdapter() {
-        @Override
-        public void execute(FunctionContext context) {
-          if (context.getArguments() instanceof String) {
-            context.getResultSender().lastResult("Success");
-          } else {
-            context.getResultSender().lastResult("Failure");
-          }
-        }
+      ResultCollector rs =
+          dataSet
+              .withFilter(testKeysSet)
+              .withArgs(Boolean.TRUE)
+              .execute(
+                  new FunctionAdapter() {
+                    @Override
+                    public void execute(FunctionContext context) {
+                      if (context.getArguments() instanceof String) {
+                        context.getResultSender().lastResult("Success");
+                      } else {
+                        context.getResultSender().lastResult("Failure");
+                      }
+                    }
 
-        @Override
-        public String getId() {
-          return getClass().getName();
-        }
+                    @Override
+                    public String getId() {
+                      return getClass().getName();
+                    }
 
-        @Override
-        public boolean hasResult() {
-          return true;
-        }
-      });
+                    @Override
+                    public boolean hasResult() {
+                      return true;
+                    }
+                  });
       assertEquals("Failure", ((List) rs.getResult()).get(0));
 
-      ResultCollector rs2 = dataSet.withFilter(testKeysSet).withArgs(testKey).execute(new FunctionAdapter() {
-        @Override
-        public void execute(FunctionContext context) {
-          if (context.getArguments() instanceof String) {
-            context.getResultSender().lastResult("Success");
-          } else {
-            context.getResultSender().lastResult("Failure");
-          }
-        }
+      ResultCollector rs2 =
+          dataSet
+              .withFilter(testKeysSet)
+              .withArgs(testKey)
+              .execute(
+                  new FunctionAdapter() {
+                    @Override
+                    public void execute(FunctionContext context) {
+                      if (context.getArguments() instanceof String) {
+                        context.getResultSender().lastResult("Success");
+                      } else {
+                        context.getResultSender().lastResult("Failure");
+                      }
+                    }
 
-        @Override
-        public String getId() {
-          return getClass().getName();
-        }
+                    @Override
+                    public String getId() {
+                      return getClass().getName();
+                    }
 
-        @Override
-        public boolean hasResult() {
-          return true;
-        }
-      });
+                    @Override
+                    public boolean hasResult() {
+                      return true;
+                    }
+                  });
       assertEquals("Success", ((List) rs2.getResult()).get(0));
 
     } catch (Exception ex) {
@@ -1123,16 +1265,19 @@ public class PRClientServerRegionFunctionExecutionSingleHopDUnitTest extends PRC
     }
   }
 
-  private static ResultCollector execute(Execution dataSet, Set testKeysSet, Serializable args, Function function, Boolean isByName) throws Exception {
-    if (isByName.booleanValue()) {// by name
+  private static ResultCollector execute(
+      Execution dataSet, Set testKeysSet, Serializable args, Function function, Boolean isByName)
+      throws Exception {
+    if (isByName.booleanValue()) { // by name
       return dataSet.withFilter(testKeysSet).withArgs(args).execute(function.getId());
     } else { // By Instance
       return dataSet.withFilter(testKeysSet).withArgs(args).execute(function);
     }
   }
 
-  private static ResultCollector executeOnAll(Execution dataSet, Serializable args, Function function, Boolean isByName) throws Exception {
-    if (isByName.booleanValue()) {// by name
+  private static ResultCollector executeOnAll(
+      Execution dataSet, Serializable args, Function function, Boolean isByName) throws Exception {
+    if (isByName.booleanValue()) { // by name
       return dataSet.withArgs(args).execute(function.getId());
     } else { // By Instance
       return dataSet.withArgs(args).execute(function);

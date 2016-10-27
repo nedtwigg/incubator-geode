@@ -39,8 +39,8 @@ import java.net.UnknownHostException;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * get its current {@link org.apache.geode.internal.Config}
+ * A message that is sent to a particular distribution manager to get its current {@link
+ * org.apache.geode.internal.Config}
  */
 public final class FetchHostResponse extends AdminResponse {
   private static final Logger logger = LogService.getLogger();
@@ -57,10 +57,11 @@ public final class FetchHostResponse extends AdminResponse {
   String name;
 
   /**
-   * Returns a <code>FetchHostResponse</code> that will be returned to the
-   * specified recipient. The message will contains a copy of this vm's local host.
+   * Returns a <code>FetchHostResponse</code> that will be returned to the specified recipient. The
+   * message will contains a copy of this vm's local host.
    */
-  public static FetchHostResponse create(DistributionManager dm, InternalDistributedMember recipient) {
+  public static FetchHostResponse create(
+      DistributionManager dm, InternalDistributedMember recipient) {
     FetchHostResponse m = new FetchHostResponse();
     m.setRecipient(recipient);
     try {
@@ -87,7 +88,8 @@ public final class FetchHostResponse extends AdminResponse {
 
       URL url = GemFireVersion.getJarURL();
       if (url == null) {
-        throw new IllegalStateException(LocalizedStrings.FetchHostResponse_COULD_NOT_FIND_GEMFIREJAR.toLocalizedString());
+        throw new IllegalStateException(
+            LocalizedStrings.FetchHostResponse_COULD_NOT_FIND_GEMFIREJAR.toLocalizedString());
       }
       String path = url.getPath();
       if (path.startsWith("file:")) {
@@ -97,7 +99,8 @@ public final class FetchHostResponse extends AdminResponse {
       File gemfireJar = new File(path);
       File lib = gemfireJar.getParentFile();
       File product = lib.getParentFile();
-      m.gemfireDir = product.getCanonicalFile();//may thro' IOException if url is not in a proper format
+      m.gemfireDir =
+          product.getCanonicalFile(); //may thro' IOException if url is not in a proper format
     } catch (Exception ex) {
       if (dm != null && !dm.getCancelCriterion().isCancelInProgress()) {
         logger.debug(ex.getMessage(), ex);
@@ -105,7 +108,10 @@ public final class FetchHostResponse extends AdminResponse {
       m.name = m.name != null ? m.name : DistributionConfig.DEFAULT_NAME;
       m.host = m.host != null ? m.host : null;
       m.gemfireDir = m.gemfireDir != null ? m.gemfireDir : new File("");
-      m.workingDir = m.workingDir != null ? m.workingDir : new File(System.getProperty("user.dir")).getAbsoluteFile();
+      m.workingDir =
+          m.workingDir != null
+              ? m.workingDir
+              : new File(System.getProperty("user.dir")).getAbsoluteFile();
     }
 
     return m;
@@ -164,6 +170,7 @@ public final class FetchHostResponse extends AdminResponse {
 
   @Override
   public String toString() {
-    return LocalizedStrings.FetchHostResponse_FETCHHOSTRESPONSE_FOR_0_HOST_1.toLocalizedString(new Object[] { this.getRecipient(), this.host });
+    return LocalizedStrings.FetchHostResponse_FETCHHOSTRESPONSE_FOR_0_HOST_1.toLocalizedString(
+        new Object[] {this.getRecipient(), this.host});
   }
 }

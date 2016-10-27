@@ -63,8 +63,8 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 @Category(DistributedTest.class)
 public class PutAllGlobalDUnitTest extends JUnit4DistributedTestCase { // TODO: reformat
   /**
-   * timeout period for the put() operation, when it is run
-   * concurrent with a conflicting putAll() operation
+   * timeout period for the put() operation, when it is run concurrent with a conflicting putAll()
+   * operation
    */
   static final int TIMEOUT_PERIOD = 1000;
 
@@ -98,11 +98,12 @@ public class PutAllGlobalDUnitTest extends JUnit4DistributedTestCase { // TODO: 
     vm0.invoke(() -> PutAllGlobalDUnitTest.closeCache());
     vm1.invoke(() -> PutAllGlobalDUnitTest.closeCache());
     cache = null;
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        cache = null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            cache = null;
+          }
+        });
   }
 
   public static void createCacheForVM0() {
@@ -164,47 +165,58 @@ public class PutAllGlobalDUnitTest extends JUnit4DistributedTestCase { // TODO: 
 
     AsyncInvocation async1 = vm0.invokeAsync(() -> this.putAllMethod());
 
-    AsyncInvocation async2 = vm1.invokeAsync(new CacheSerializableRunnable("put from another vm") {
-      public void run2() throws CacheException {
-        long endTime = System.currentTimeMillis() + 5000;
-        boolean connected = false;
-        while (!connected && (System.currentTimeMillis() < endTime)) {
-          try {
-            Socket sock = new Socket(InetAddress.getLocalHost(), socketPort);
-            connected = true;
-            sock.close();
-          } catch (IOException ioe) {
-            // ignored - will time out using 'endTime'
-            try {
-              Thread.sleep(500);
-            } catch (InterruptedException ie) {
-              fail("Interrupted while waiting for async1 invocation");
-            }
-          }
-        }
-        if (!connected) {
-          fail("unable to connect to async1 invocation");
-        }
-        long startTime = 0;
-        try {
-          Thread.sleep(500);
-          LogWriterUtils.getLogWriter().info("async2 proceeding with put operation");
-          startTime = System.currentTimeMillis();
-          region.put(new Integer(1), "mapVal");
-          LogWriterUtils.getLogWriter().info("async2 done with put operation");
-          fail("Should have thrown TimeoutException");
-        } catch (TimeoutException Tx) {
-          // Tx.printStackTrace();
-          LogWriterUtils.getLogWriter().info("PASS: As expected Caught TimeoutException ");
-          if (startTime + TIMEOUT_PERIOD + DLockGrantor.GRANTOR_THREAD_MAX_WAIT /* slop of grantor max wait ms */ < System.currentTimeMillis()) {
-            LogWriterUtils.getLogWriter().warning("though this test passed, the put() timed out in " + (System.currentTimeMillis() - startTime) + " instead of the expected " + TIMEOUT_PERIOD + " milliseconds");
-          }
-        } catch (Exception ex) {
-          Assert.fail("async2 threw unexpected exception", ex);
-          //ex.printStackTrace();
-        }
-      }
-    });
+    AsyncInvocation async2 =
+        vm1.invokeAsync(
+            new CacheSerializableRunnable("put from another vm") {
+              public void run2() throws CacheException {
+                long endTime = System.currentTimeMillis() + 5000;
+                boolean connected = false;
+                while (!connected && (System.currentTimeMillis() < endTime)) {
+                  try {
+                    Socket sock = new Socket(InetAddress.getLocalHost(), socketPort);
+                    connected = true;
+                    sock.close();
+                  } catch (IOException ioe) {
+                    // ignored - will time out using 'endTime'
+                    try {
+                      Thread.sleep(500);
+                    } catch (InterruptedException ie) {
+                      fail("Interrupted while waiting for async1 invocation");
+                    }
+                  }
+                }
+                if (!connected) {
+                  fail("unable to connect to async1 invocation");
+                }
+                long startTime = 0;
+                try {
+                  Thread.sleep(500);
+                  LogWriterUtils.getLogWriter().info("async2 proceeding with put operation");
+                  startTime = System.currentTimeMillis();
+                  region.put(new Integer(1), "mapVal");
+                  LogWriterUtils.getLogWriter().info("async2 done with put operation");
+                  fail("Should have thrown TimeoutException");
+                } catch (TimeoutException Tx) {
+                  // Tx.printStackTrace();
+                  LogWriterUtils.getLogWriter().info("PASS: As expected Caught TimeoutException ");
+                  if (startTime
+                          + TIMEOUT_PERIOD
+                          + DLockGrantor.GRANTOR_THREAD_MAX_WAIT /* slop of grantor max wait ms */
+                      < System.currentTimeMillis()) {
+                    LogWriterUtils.getLogWriter()
+                        .warning(
+                            "though this test passed, the put() timed out in "
+                                + (System.currentTimeMillis() - startTime)
+                                + " instead of the expected "
+                                + TIMEOUT_PERIOD
+                                + " milliseconds");
+                  }
+                } catch (Exception ex) {
+                  Assert.fail("async2 threw unexpected exception", ex);
+                  //ex.printStackTrace();
+                }
+              }
+            });
 
     ThreadUtils.join(async2, 30 * 1000);
     if (async2.exceptionOccurred()) {
@@ -216,13 +228,13 @@ public class PutAllGlobalDUnitTest extends JUnit4DistributedTestCase { // TODO: 
     if (async1.exceptionOccurred()) {
       Assert.fail("async1 failed", async1.getException());
     }
-
-  }//end of test case1
+  } //end of test case1
 
   public static void putAllMethod() throws Exception {
     Map m = new HashMap();
     serverSocket.accept();
-    LogWriterUtils.getLogWriter().info("async1 connection received - continuing with putAll operation");
+    LogWriterUtils.getLogWriter()
+        .info("async1 connection received - continuing with putAll operation");
     serverSocket.close();
     try {
       for (int i = 1; i < 2; i++) {
@@ -235,7 +247,7 @@ public class PutAllGlobalDUnitTest extends JUnit4DistributedTestCase { // TODO: 
       //            ex.printStackTrace();
       Assert.fail("Failed while region.putAll", ex);
     }
-  }//end of putAllMethod
+  } //end of putAllMethod
 
   public static Object getMethod(Object ob) {
     Object obj = null;
@@ -284,8 +296,6 @@ public class PutAllGlobalDUnitTest extends JUnit4DistributedTestCase { // TODO: 
         fail("interrupted");
       }
       LogWriterUtils.getLogWriter().info("beforeCreate done for " + event.getKey());
-
     }
-  }// end of BeforeCreateCallback
-
-}// endof class
+  } // end of BeforeCreateCallback
+} // endof class

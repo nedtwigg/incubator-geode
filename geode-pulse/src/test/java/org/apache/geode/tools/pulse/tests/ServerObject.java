@@ -35,17 +35,18 @@ public class ServerObject extends NotificationBroadcasterSupport implements Serv
   private String name = null;
 
   private TabularDataSupport wanInfo;
-  private static String[] itemNames = { "key", "value" };
-  private static String[] itemDescriptions = { "Key", "Value" };
-  private static OpenType[] itemTypes = { SimpleType.STRING, SimpleType.BOOLEAN };
+  private static String[] itemNames = {"key", "value"};
+  private static String[] itemDescriptions = {"Key", "Value"};
+  private static OpenType[] itemTypes = {SimpleType.STRING, SimpleType.BOOLEAN};
   private static CompositeType wanInfoType = null;
 
-  private static String[] indexNames = { "key" };
+  private static String[] indexNames = {"key"};
   private static TabularType wanType = null;
 
   static {
     try {
-      wanInfoType = new CompositeType("wanInfo", "WAN Information", itemNames, itemDescriptions, itemTypes);
+      wanInfoType =
+          new CompositeType("wanInfo", "WAN Information", itemNames, itemDescriptions, itemTypes);
 
       wanType = new TabularType("wanInfo", "WAN Information", wanInfoType, indexNames);
 
@@ -133,13 +134,15 @@ public class ServerObject extends NotificationBroadcasterSupport implements Serv
   // For SQLFire/GemFireXD
   @Override
   public int getTransactionCommitted() {
-    return Integer.parseInt(JMXProperties.getInstance().getProperty(getKey("TransactionCommitted")));
+    return Integer.parseInt(
+        JMXProperties.getInstance().getProperty(getKey("TransactionCommitted")));
   }
 
   // For SQLFire/GemFireXD
   @Override
   public int getTransactionRolledBack() {
-    return Integer.parseInt(JMXProperties.getInstance().getProperty(getKey("TransactionRolledBack")));
+    return Integer.parseInt(
+        JMXProperties.getInstance().getProperty(getKey("TransactionRolledBack")));
   }
 
   @Override
@@ -198,7 +201,8 @@ public class ServerObject extends NotificationBroadcasterSupport implements Serv
 
   @Override
   public double getQueryRequestRate() {
-    return Double.parseDouble(JMXProperties.getInstance().getProperty(getKey("queryRequestRate"), ""));
+    return Double.parseDouble(
+        JMXProperties.getInstance().getProperty(getKey("queryRequestRate"), ""));
   }
 
   @Override
@@ -212,7 +216,7 @@ public class ServerObject extends NotificationBroadcasterSupport implements Serv
   }
 
   private CompositeData buildWanInfoType(String key, Boolean state) throws OpenDataException {
-    Object[] itemValues = { key, state };
+    Object[] itemValues = {key, state};
     CompositeData result = new CompositeDataSupport(wanInfoType, itemNames, itemValues);
 
     return result;

@@ -21,18 +21,18 @@ import org.apache.geode.internal.lang.ObjectUtils;
 
 /**
  * The Customer class models a customer entity.
- * <p/>
+ *
+ * <p>
+ *
  * @since GemFire 8.0
  */
-
 public class Customer implements Serializable {
 
   private Long customerId;
   private String firstName;
   private String lastName;
 
-  public Customer() {
-  }
+  public Customer() {}
 
   public Customer(final Long custId) {
     this.customerId = custId;
@@ -80,7 +80,9 @@ public class Customer implements Serializable {
 
     final Customer that = (Customer) obj;
 
-    return (ObjectUtils.equals(this.getCustomerId(), that.getCustomerId()) && ObjectUtils.equals(this.getLastName(), that.getLastName()) && ObjectUtils.equals(this.getFirstName(), that.getFirstName()));
+    return (ObjectUtils.equals(this.getCustomerId(), that.getCustomerId())
+        && ObjectUtils.equals(this.getLastName(), that.getLastName())
+        && ObjectUtils.equals(this.getFirstName(), that.getFirstName()));
   }
 
   @Override
@@ -102,5 +104,4 @@ public class Customer implements Serializable {
     buffer.append(" }");
     return buffer.toString();
   }
-
 }

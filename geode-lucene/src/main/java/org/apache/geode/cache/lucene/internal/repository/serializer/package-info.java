@@ -16,8 +16,5 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/**
- * Classes for converting gemfire objects into lucene documents.
- */
-
+/** Classes for converting gemfire objects into lucene documents. */
 package org.apache.geode.cache.lucene.internal.repository.serializer;

@@ -39,13 +39,17 @@ import org.apache.geode.test.junit.categories.UnitTest;
 public class OffHeapValueWrapperJUnitTest {
 
   private OffHeapValueWrapper createChunkValueWrapper(byte[] bytes, boolean isSerialized) {
-    StoredObject c = MemoryAllocatorImpl.getAllocator().allocateAndInitialize(bytes, isSerialized, false);
+    StoredObject c =
+        MemoryAllocatorImpl.getAllocator().allocateAndInitialize(bytes, isSerialized, false);
     return new OffHeapValueWrapper(c);
   }
 
   @Before
   public void setUp() throws Exception {
-    MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { new SlabImpl(1024 * 1024) });
+    MemoryAllocatorImpl.createForUnitTest(
+        new NullOutOfOffHeapMemoryListener(),
+        new NullOffHeapMemoryStats(),
+        new SlabImpl[] {new SlabImpl(1024 * 1024)});
   }
 
   @After
@@ -73,25 +77,29 @@ public class OffHeapValueWrapperJUnitTest {
 
   @Test
   public void testGetBytesAsString() {
-    assertEquals("byte[0, 0, 0, 0, 0, 0, 0, 0]", createChunkValueWrapper(new byte[8], false).getBytesAsString());
+    assertEquals(
+        "byte[0, 0, 0, 0, 0, 0, 0, 0]",
+        createChunkValueWrapper(new byte[8], false).getBytesAsString());
   }
 
   @Test
   public void testSendTo() throws IOException {
     final ByteBuffer bb = ByteBuffer.allocateDirect(18);
     bb.limit(8);
-    OffHeapValueWrapper vw = createChunkValueWrapper(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, false);
-    vw.sendTo(bb, new Flushable() {
-      @Override
-      public void flush() throws IOException {
-        fail("should not have been called");
-      }
+    OffHeapValueWrapper vw = createChunkValueWrapper(new byte[] {1, 2, 3, 4, 5, 6, 7, 8}, false);
+    vw.sendTo(
+        bb,
+        new Flushable() {
+          @Override
+          public void flush() throws IOException {
+            fail("should not have been called");
+          }
 
-      @Override
-      public void flush(ByteBuffer bb, ByteBuffer chunkbb) throws IOException {
-        fail("should not have been called");
-      }
-    });
+          @Override
+          public void flush(ByteBuffer bb, ByteBuffer chunkbb) throws IOException {
+            fail("should not have been called");
+          }
+        });
     assertEquals(8, bb.position());
     bb.flip();
     assertEquals(1, bb.get());
@@ -105,28 +113,30 @@ public class OffHeapValueWrapperJUnitTest {
 
     bb.clear();
     bb.limit(8);
-    vw = createChunkValueWrapper(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, false);
+    vw = createChunkValueWrapper(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9}, false);
     final int[] flushCalls = new int[1];
-    vw.sendTo(bb, new Flushable() {
-      @Override
-      public void flush() throws IOException {
-        if (flushCalls[0] != 0) {
-          fail("expected flush to only be called once");
-        }
-        flushCalls[0]++;
-        assertEquals(8, bb.position());
-        for (int i = 0; i < 8; i++) {
-          assertEquals(i + 1, bb.get(i));
-        }
-        bb.clear();
-        bb.limit(8);
-      }
+    vw.sendTo(
+        bb,
+        new Flushable() {
+          @Override
+          public void flush() throws IOException {
+            if (flushCalls[0] != 0) {
+              fail("expected flush to only be called once");
+            }
+            flushCalls[0]++;
+            assertEquals(8, bb.position());
+            for (int i = 0; i < 8; i++) {
+              assertEquals(i + 1, bb.get(i));
+            }
+            bb.clear();
+            bb.limit(8);
+          }
 
-      @Override
-      public void flush(ByteBuffer bb, ByteBuffer chunkbb) throws IOException {
-        fail("should not have been called");
-      }
-    });
+          @Override
+          public void flush(ByteBuffer bb, ByteBuffer chunkbb) throws IOException {
+            fail("should not have been called");
+          }
+        });
     assertEquals(1, bb.position());
     bb.flip();
     assertEquals(9, bb.get());
@@ -134,27 +144,31 @@ public class OffHeapValueWrapperJUnitTest {
     bb.clear();
     bb.limit(8);
     flushCalls[0] = 0;
-    vw = createChunkValueWrapper(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 }, false);
-    vw.sendTo(bb, new Flushable() {
-      @Override
-      public void flush() throws IOException {
-        if (flushCalls[0] > 1) {
-          fail("expected flush to only be called twice");
-        }
-        assertEquals(8, bb.position());
-        for (int i = 0; i < 8; i++) {
-          assertEquals((flushCalls[0] * 8) + i + 1, bb.get(i));
-        }
-        flushCalls[0]++;
-        bb.clear();
-        bb.limit(8);
-      }
+    vw =
+        createChunkValueWrapper(
+            new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}, false);
+    vw.sendTo(
+        bb,
+        new Flushable() {
+          @Override
+          public void flush() throws IOException {
+            if (flushCalls[0] > 1) {
+              fail("expected flush to only be called twice");
+            }
+            assertEquals(8, bb.position());
+            for (int i = 0; i < 8; i++) {
+              assertEquals((flushCalls[0] * 8) + i + 1, bb.get(i));
+            }
+            flushCalls[0]++;
+            bb.clear();
+            bb.limit(8);
+          }
 
-      @Override
-      public void flush(ByteBuffer bb, ByteBuffer chunkbb) throws IOException {
-        fail("should not have been called");
-      }
-    });
+          @Override
+          public void flush(ByteBuffer bb, ByteBuffer chunkbb) throws IOException {
+            fail("should not have been called");
+          }
+        });
     assertEquals(1, bb.position());
     bb.flip();
     assertEquals(17, bb.get());
@@ -163,25 +177,29 @@ public class OffHeapValueWrapperJUnitTest {
     bb.clear();
     flushCalls[0] = 0;
     bb.put((byte) 0);
-    vw = createChunkValueWrapper(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 }, false);
-    vw.sendTo(bb, new Flushable() {
-      @Override
-      public void flush() throws IOException {
-        fail("should not have been called");
-      }
+    vw =
+        createChunkValueWrapper(
+            new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}, false);
+    vw.sendTo(
+        bb,
+        new Flushable() {
+          @Override
+          public void flush() throws IOException {
+            fail("should not have been called");
+          }
 
-      @Override
-      public void flush(ByteBuffer bb, ByteBuffer chunkbb) throws IOException {
-        flushCalls[0]++;
-        assertEquals(1, bb.position());
-        bb.flip();
-        assertEquals(0, bb.get());
-        assertEquals(19, chunkbb.remaining());
-        for (int i = 1; i <= 19; i++) {
-          assertEquals(i, chunkbb.get());
-        }
-      }
-    });
+          @Override
+          public void flush(ByteBuffer bb, ByteBuffer chunkbb) throws IOException {
+            flushCalls[0]++;
+            assertEquals(1, bb.position());
+            bb.flip();
+            assertEquals(0, bb.get());
+            assertEquals(19, chunkbb.remaining());
+            for (int i = 1; i <= 19; i++) {
+              assertEquals(i, chunkbb.get());
+            }
+          }
+        });
     assertEquals(1, flushCalls[0]);
   }
 }

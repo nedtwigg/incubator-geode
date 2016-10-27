@@ -22,12 +22,9 @@ import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
 
 /**
-* This class is serializable version of the java 1.6 ThreadInfo
-* class. It also holds a locality field to identify the VM
-* where the thread exists.
-* 
-*
-*/
+ * This class is serializable version of the java 1.6 ThreadInfo class. It also holds a locality
+ * field to identify the VM where the thread exists.
+ */
 public class LocalThread implements Serializable, ThreadReference {
   private static final long serialVersionUID = 1L;
 
@@ -46,7 +43,12 @@ public class LocalThread implements Serializable, ThreadReference {
   private String generateThreadStack(ThreadInfo info) {
     //This is annoying, but the to string method on info sucks.
     StringBuilder result = new StringBuilder();
-    result.append(info.getThreadName()).append(" ID=").append(info.getThreadId()).append(" state=").append(info.getThreadState());
+    result
+        .append(info.getThreadName())
+        .append(" ID=")
+        .append(info.getThreadId())
+        .append(" state=")
+        .append(info.getThreadState());
 
     if (info.getLockInfo() != null) {
       result.append("\n\twaiting to lock <" + info.getLockInfo() + ">");
@@ -63,8 +65,8 @@ public class LocalThread implements Serializable, ThreadReference {
     if (info.getLockedSynchronizers().length > 0) {
       result.append("\nLocked synchronizers:");
       for (LockInfo sync : info.getLockedSynchronizers()) {
-        result.append("\n" + sync.getClassName() + "@" + Integer.toHexString(sync.getIdentityHashCode()));
-
+        result.append(
+            "\n" + sync.getClassName() + "@" + Integer.toHexString(sync.getIdentityHashCode()));
       }
     }
 
@@ -99,20 +101,14 @@ public class LocalThread implements Serializable, ThreadReference {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (!(obj instanceof LocalThread))
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (!(obj instanceof LocalThread)) return false;
     LocalThread other = (LocalThread) obj;
-    if (threadId != other.threadId)
-      return false;
+    if (threadId != other.threadId) return false;
     if (locality == null) {
-      if (other.locality != null)
-        return false;
-    } else if (!locality.equals(other.locality))
-      return false;
+      if (other.locality != null) return false;
+    } else if (!locality.equals(other.locality)) return false;
     return true;
   }
 

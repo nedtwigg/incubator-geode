@@ -19,11 +19,7 @@ package org.apache.geode.compression;
 
 import org.apache.geode.GemFireException;
 
-/**
- * Wraps specific compression errors for {@link Compressor
- * compressors}.
- * 
- */
+/** Wraps specific compression errors for {@link Compressor compressors}. */
 public class CompressionException extends GemFireException {
 
   private static final long serialVersionUID = 4118639654597191235L;

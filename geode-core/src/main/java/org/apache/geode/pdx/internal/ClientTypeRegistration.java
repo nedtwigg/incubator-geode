@@ -75,7 +75,11 @@ public class ClientTypeRegistration implements TypeRegistration {
     try {
       AddPDXTypeOp.execute((ExecutablePool) pool, id, type);
     } catch (ServerConnectivityException serverConnectivityException) {
-      logger.debug("Received an exception sending pdx type to pool {}, {}", pool, serverConnectivityException.getMessage(), serverConnectivityException);
+      logger.debug(
+          "Received an exception sending pdx type to pool {}, {}",
+          pool,
+          serverConnectivityException.getMessage(),
+          serverConnectivityException);
       throw serverConnectivityException;
     }
   }
@@ -91,7 +95,8 @@ public class ClientTypeRegistration implements TypeRegistration {
           return type;
         }
       } catch (ServerConnectivityException e) {
-        logger.debug("Received an exception getting pdx type from pool {}, {}", pool, e.getMessage(), e);
+        logger.debug(
+            "Received an exception getting pdx type from pool {}, {}", pool, e.getMessage(), e);
         //ignore, try the next pool.
         lastException = e;
       }
@@ -107,7 +112,7 @@ public class ClientTypeRegistration implements TypeRegistration {
   private Collection<Pool> getAllPools() {
     Collection<Pool> pools = PoolManagerImpl.getPMI().getMap().values();
 
-    for (Iterator<Pool> itr = pools.iterator(); itr.hasNext();) {
+    for (Iterator<Pool> itr = pools.iterator(); itr.hasNext(); ) {
       PoolImpl pool = (PoolImpl) itr.next();
       if (pool.isUsedByGateway()) {
         itr.remove();
@@ -118,7 +123,8 @@ public class ClientTypeRegistration implements TypeRegistration {
       if (this.cache.isClosed()) {
         throw new CacheClosedException("PDX detected cache was closed");
       }
-      throw new CacheClosedException("Client pools have been closed so the PDX type registry is not available.");
+      throw new CacheClosedException(
+          "Client pools have been closed so the PDX type registry is not available.");
     }
     return pools;
   }
@@ -172,7 +178,11 @@ public class ClientTypeRegistration implements TypeRegistration {
     try {
       AddPDXEnumOp.execute((ExecutablePool) pool, id, enumInfo);
     } catch (ServerConnectivityException serverConnectivityException) {
-      logger.debug("Received an exception sending pdx type to pool {}, {}", pool, serverConnectivityException.getMessage(), serverConnectivityException);
+      logger.debug(
+          "Received an exception sending pdx type to pool {}, {}",
+          pool,
+          serverConnectivityException.getMessage(),
+          serverConnectivityException);
       throw serverConnectivityException;
     }
   }
@@ -196,7 +206,8 @@ public class ClientTypeRegistration implements TypeRegistration {
           return result;
         }
       } catch (ServerConnectivityException e) {
-        logger.debug("Received an exception getting pdx type from pool {}, {}", pool, e.getMessage(), e);
+        logger.debug(
+            "Received an exception getting pdx type from pool {}, {}", pool, e.getMessage(), e);
         //ignore, try the next pool.
         lastException = e;
       }
@@ -205,7 +216,7 @@ public class ClientTypeRegistration implements TypeRegistration {
     throw returnCorrectExceptionForFailure(pools, enumId, lastException);
   }
 
-  @SuppressWarnings({ "unchecked", "serial" })
+  @SuppressWarnings({"unchecked", "serial"})
   @Override
   public Map<Integer, PdxType> types() {
     Collection<Pool> pools = getAllPools();
@@ -221,7 +232,7 @@ public class ClientTypeRegistration implements TypeRegistration {
     return types;
   }
 
-  @SuppressWarnings({ "unchecked", "serial" })
+  @SuppressWarnings({"unchecked", "serial"})
   @Override
   public Map<Integer, EnumInfo> enums() {
     Collection<Pool> pools = getAllPools();
@@ -247,8 +258,7 @@ public class ClientTypeRegistration implements TypeRegistration {
   }
 
   @Override
-  public void testClearRegistry() {
-  }
+  public void testClearRegistry() {}
 
   @Override
   public boolean isClient() {
@@ -294,7 +304,10 @@ public class ClientTypeRegistration implements TypeRegistration {
     throw returnCorrectExceptionForFailure(pools, enumId, lastException);
   }
 
-  private RuntimeException returnCorrectExceptionForFailure(final Collection<Pool> pools, final int typeId, final ServerConnectivityException lastException) {
+  private RuntimeException returnCorrectExceptionForFailure(
+      final Collection<Pool> pools,
+      final int typeId,
+      final ServerConnectivityException lastException) {
     if (lastException != null) {
       throw lastException;
     } else {

@@ -72,52 +72,56 @@ public class CallbackArgDUnitTest extends JUnit4CacheTestCase {
 
   private void initOtherId() {
     VM vm = getOtherVm();
-    vm.invoke(new CacheSerializableRunnable("Connect") {
-      public void run2() throws CacheException {
-        getCache();
-      }
-    });
+    vm.invoke(
+        new CacheSerializableRunnable("Connect") {
+          public void run2() throws CacheException {
+            getCache();
+          }
+        });
     vm.invoke(() -> CallbackArgDUnitTest.getVMDistributedMember());
   }
 
   private void doCommitOtherVm() {
     VM vm = getOtherVm();
-    vm.invoke(new CacheSerializableRunnable("create root") {
-      public void run2() throws CacheException {
-        AttributesFactory af = new AttributesFactory();
-        CacheListener cl1 = new CacheListenerAdapter() {
-          public void afterCreate(EntryEvent e) {
-            assertEquals(callbackArg, e.getCallbackArgument());
+    vm.invoke(
+        new CacheSerializableRunnable("create root") {
+          public void run2() throws CacheException {
+            AttributesFactory af = new AttributesFactory();
+            CacheListener cl1 =
+                new CacheListenerAdapter() {
+                  public void afterCreate(EntryEvent e) {
+                    assertEquals(callbackArg, e.getCallbackArgument());
+                  }
+                };
+            af.addCacheListener(cl1);
+            af.setScope(Scope.DISTRIBUTED_ACK);
+            Region r1 = createRootRegion("r1", af.create());
+            Region r2 = r1.createSubregion("r2", af.create());
+            Region r3 = r2.createSubregion("r3", af.create());
+            CacheTransactionManager ctm = getCache().getCacheTransactionManager();
+            TransactionListener tl1 =
+                new TransactionListenerAdapter() {
+                  public void afterCommit(TransactionEvent e) {
+                    assertEquals(6, e.getEvents().size());
+                    Iterator it = e.getEvents().iterator();
+                    while (it.hasNext()) {
+                      EntryEvent ee = (EntryEvent) it.next();
+                      assertEquals(callbackArg, ee.getCallbackArgument());
+                      assertEquals(true, ee.isCallbackArgumentAvailable());
+                    }
+                  }
+                };
+            ctm.addListener(tl1);
+            ctm.begin();
+            r2.put("b", "value1", callbackArg);
+            r3.put("c", "value2", callbackArg);
+            r1.put("a", "value3", callbackArg);
+            r1.put("a2", "value4", callbackArg);
+            r3.put("c2", "value5", callbackArg);
+            r2.put("b2", "value6", callbackArg);
+            ctm.commit();
           }
-        };
-        af.addCacheListener(cl1);
-        af.setScope(Scope.DISTRIBUTED_ACK);
-        Region r1 = createRootRegion("r1", af.create());
-        Region r2 = r1.createSubregion("r2", af.create());
-        Region r3 = r2.createSubregion("r3", af.create());
-        CacheTransactionManager ctm = getCache().getCacheTransactionManager();
-        TransactionListener tl1 = new TransactionListenerAdapter() {
-          public void afterCommit(TransactionEvent e) {
-            assertEquals(6, e.getEvents().size());
-            Iterator it = e.getEvents().iterator();
-            while (it.hasNext()) {
-              EntryEvent ee = (EntryEvent) it.next();
-              assertEquals(callbackArg, ee.getCallbackArgument());
-              assertEquals(true, ee.isCallbackArgumentAvailable());
-            }
-          }
-        };
-        ctm.addListener(tl1);
-        ctm.begin();
-        r2.put("b", "value1", callbackArg);
-        r3.put("c", "value2", callbackArg);
-        r1.put("a", "value3", callbackArg);
-        r1.put("a2", "value4", callbackArg);
-        r3.put("c2", "value5", callbackArg);
-        r2.put("b2", "value6", callbackArg);
-        ctm.commit();
-      }
-    });
+        });
   }
 
   public static DistributedMember getVMDistributedMember() {
@@ -135,9 +139,7 @@ public class CallbackArgDUnitTest extends JUnit4CacheTestCase {
     return result;
   }
 
-  /**
-   * make sure callback arg is NOT_AVAILABLE in all the places it should be
-   */
+  /** make sure callback arg is NOT_AVAILABLE in all the places it should be */
   @Test
   public void testForNA_CA() throws CacheException {
     doTest();
@@ -146,12 +148,14 @@ public class CallbackArgDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testForCA() throws Exception {
     callbackArg = "cbArg";
-    getOtherVm().invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        callbackArg = "cbArg";
-        return null;
-      }
-    });
+    getOtherVm()
+        .invoke(
+            new SerializableCallable() {
+              public Object call() throws Exception {
+                callbackArg = "cbArg";
+                return null;
+              }
+            });
     doTest();
   }
 
@@ -160,39 +164,41 @@ public class CallbackArgDUnitTest extends JUnit4CacheTestCase {
     AttributesFactory af = new AttributesFactory();
     af.setDataPolicy(DataPolicy.REPLICATE);
     af.setScope(Scope.DISTRIBUTED_ACK);
-    CacheListener cl1 = new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent e) {
-        assertEquals(getCurrentExpectedKey(), e.getKey());
-        assertEquals(callbackArg, e.getCallbackArgument());
-        assertEquals(true, e.isCallbackArgumentAvailable());
-      }
-    };
+    CacheListener cl1 =
+        new CacheListenerAdapter() {
+          public void afterCreate(EntryEvent e) {
+            assertEquals(getCurrentExpectedKey(), e.getKey());
+            assertEquals(callbackArg, e.getCallbackArgument());
+            assertEquals(true, e.isCallbackArgumentAvailable());
+          }
+        };
     af.addCacheListener(cl1);
     Region r1 = createRootRegion("r1", af.create());
     Region r2 = r1.createSubregion("r2", af.create());
     r2.createSubregion("r3", af.create());
 
-    TransactionListener tl1 = new TransactionListenerAdapter() {
-      public void afterCommit(TransactionEvent e) {
-        assertEquals(6, e.getEvents().size());
-        ArrayList keys = new ArrayList();
-        Iterator it = e.getEvents().iterator();
-        while (it.hasNext()) {
-          EntryEvent ee = (EntryEvent) it.next();
-          keys.add(ee.getKey());
-          assertEquals(callbackArg, ee.getCallbackArgument());
-          assertEquals(true, ee.isCallbackArgumentAvailable());
-        }
-        assertEquals(CallbackArgDUnitTest.this.expectedKeys, keys);
-        CallbackArgDUnitTest.this.invokeCount = 1;
-      }
-    };
+    TransactionListener tl1 =
+        new TransactionListenerAdapter() {
+          public void afterCommit(TransactionEvent e) {
+            assertEquals(6, e.getEvents().size());
+            ArrayList keys = new ArrayList();
+            Iterator it = e.getEvents().iterator();
+            while (it.hasNext()) {
+              EntryEvent ee = (EntryEvent) it.next();
+              keys.add(ee.getKey());
+              assertEquals(callbackArg, ee.getCallbackArgument());
+              assertEquals(true, ee.isCallbackArgumentAvailable());
+            }
+            assertEquals(CallbackArgDUnitTest.this.expectedKeys, keys);
+            CallbackArgDUnitTest.this.invokeCount = 1;
+          }
+        };
     CacheTransactionManager ctm = getCache().getCacheTransactionManager();
     ctm.addListener(tl1);
 
     this.invokeCount = 0;
     this.clCount = 0;
-    this.expectedKeys = Arrays.asList(new String[] { "b", "c", "a", "a2", "c2", "b2" });
+    this.expectedKeys = Arrays.asList(new String[] {"b", "c", "a", "a2", "c2", "b2"});
     doCommitOtherVm();
     assertEquals(1, this.invokeCount);
     assertEquals(6, this.clCount);

@@ -29,12 +29,10 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.Logger;
 
-/** TXRegionState is the entity that tracks all the changes a transaction
- * has made to a region.
+/**
+ * TXRegionState is the entity that tracks all the changes a transaction has made to a region.
  *
- * 
  * @since GemFire 4.0
- * 
  * @see TXManagerImpl
  */
 public class TXRegionState {
@@ -56,11 +54,19 @@ public class TXRegionState {
   private boolean createdDuringCommit;
 
   public TXRegionState(LocalRegion r, TXState txState) {
-    if (r.getPersistBackup() && !r.isMetaRegionWithTransactions() && !TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS) {
-      throw new UnsupportedOperationException(LocalizedStrings.TXRegionState_OPERATIONS_ON_PERSISTBACKUP_REGIONS_ARE_NOT_ALLOWED_BECAUSE_THIS_THREAD_HAS_AN_ACTIVE_TRANSACTION.toLocalizedString());
+    if (r.getPersistBackup()
+        && !r.isMetaRegionWithTransactions()
+        && !TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS) {
+      throw new UnsupportedOperationException(
+          LocalizedStrings
+              .TXRegionState_OPERATIONS_ON_PERSISTBACKUP_REGIONS_ARE_NOT_ALLOWED_BECAUSE_THIS_THREAD_HAS_AN_ACTIVE_TRANSACTION
+              .toLocalizedString());
     }
     if (r.getScope().isGlobal()) {
-      throw new UnsupportedOperationException(LocalizedStrings.TXRegionState_OPERATIONS_ON_GLOBAL_REGIONS_ARE_NOT_ALLOWED_BECAUSE_THIS_THREAD_HAS_AN_ACTIVE_TRANSACTION.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings
+              .TXRegionState_OPERATIONS_ON_GLOBAL_REGIONS_ARE_NOT_ALLOWED_BECAUSE_THIS_THREAD_HAS_AN_ACTIVE_TRANSACTION
+              .toLocalizedString());
     }
     if (r.hasServerProxy()) {
       //      throw new UnsupportedOperationException(LocalizedStrings.TXRegionState_OPERATIONS_ON_REGION_WITH_CLIENT_POOL_ARE_NOT_ALLOWED_BECAUSE_THIS_THREAD_HAS_AN_ACTIVE_TRANSACTION.toLocalizedString());
@@ -89,7 +95,8 @@ public class TXRegionState {
     return this.entryMods.get(entryKey);
   }
 
-  public TXEntryState createReadEntry(LocalRegion r, Object entryKey, RegionEntry re, Object vId, Object pendingValue) {
+  public TXEntryState createReadEntry(
+      LocalRegion r, Object entryKey, RegionEntry re, Object vId, Object pendingValue) {
     GemFireCacheImpl cache = r.getCache();
     boolean isDistributed = false;
     if (cache.getTxManager().getTXState() != null) {
@@ -98,7 +105,10 @@ public class TXRegionState {
       // TXCoordinator and datanode are same
       isDistributed = cache.getTxManager().isDistributed();
     }
-    TXEntryState result = cache.getTXEntryStateFactory().createEntry(re, vId, pendingValue, entryKey, this, isDistributed);
+    TXEntryState result =
+        cache
+            .getTXEntryStateFactory()
+            .createEntry(re, vId, pendingValue, entryKey, this, isDistributed);
     this.entryMods.put(entryKey, result);
     return result;
   }
@@ -145,9 +155,8 @@ public class TXRegionState {
   }
 
   /**
-   * Returns the total number of modifications made by this transaction
-   * to this region's entry count. The result will have a +1 for every
-   * create and a -1 for every destroy.
+   * Returns the total number of modifications made by this transaction to this region's entry
+   * count. The result will have a +1 for every create and a -1 for every destroy.
    */
   int entryCountMod() {
     int result = 0;
@@ -165,7 +174,8 @@ public class TXRegionState {
 
   /**
    * Fills in a set of any entries created by this transaction for the provided region.
-   * @param ret the HashSet to fill in with key objects 
+   *
+   * @param ret the HashSet to fill in with key objects
    */
   void fillInCreatedEntryKeys(HashSet ret) {
     Iterator<Entry<Object, TXEntryState>> it = this.entryMods.entrySet().iterator();
@@ -178,15 +188,17 @@ public class TXRegionState {
     }
   }
 
-  /**
-   * Create a lock request on this region state and adds it to req
-   */
+  /** Create a lock request on this region state and adds it to req */
   void createLockRequest(LocalRegion r, TXLockRequest req) {
     if (this.uaMods == null && this.entryMods.isEmpty()) {
       return;
     }
     if (this.txState.logger.isDebugEnabled()) {
-      this.txState.logger.debug("TXRegionState.createLockRequest 1 " + r.getClass().getSimpleName() + " region-state=" + this);
+      this.txState.logger.debug(
+          "TXRegionState.createLockRequest 1 "
+              + r.getClass().getSimpleName()
+              + " region-state="
+              + this);
     }
     if (r.getScope().isDistributed()) {
       // [DISTTX] Do not take lock for RR on replicates
@@ -236,8 +248,8 @@ public class TXRegionState {
   }
 
   /**
-   * Returns a set of entry keys that this tx needs to request
-   * a lock for at commit time.
+   * Returns a set of entry keys that this tx needs to request a lock for at commit time.
+   *
    * @return <code>null</code> if no entries need to be locked.
    */
   private Set getLockRequestEntryKeys() {
@@ -282,10 +294,9 @@ public class TXRegionState {
   }
 
   /**
-   * For each entry that is not dirty (all we did was read it)
-   * decrement its refcount (so it can be evicted as we apply our writes)
-   * and remove it from entryMods (so we don't keep iterating over it
-   * and se we don't try to clean it up again later).
+   * For each entry that is not dirty (all we did was read it) decrement its refcount (so it can be
+   * evicted as we apply our writes) and remove it from entryMods (so we don't keep iterating over
+   * it and se we don't try to clean it up again later).
    */
   void cleanupNonDirtyEntries(LocalRegion r) {
     if (!this.entryMods.isEmpty()) {
@@ -326,11 +337,10 @@ public class TXRegionState {
           if (txes.getAdjunctRecipients() != null) {
             newMemberSet.addAll(txes.getAdjunctRecipients());
           }
-
         }
 
         if (!newMemberSet.equals(this.otherMembers)) {
-          // r.getCache().getLogger().info("DEBUG: participants list has changed! bug 32999."); 
+          // r.getCache().getLogger().info("DEBUG: participants list has changed! bug 32999.");
           // Flag the message that the lock manager needs to be updated with the new member set
           msg.setUpdateLockMembers();
           this.otherMembers = newMemberSet;
@@ -373,7 +383,7 @@ public class TXRegionState {
         }
 
         if (!newMemberSet.equals(this.otherMembers)) {
-          // r.getCache().getLogger().info("DEBUG: participants list has changed! bug 32999."); 
+          // r.getCache().getLogger().info("DEBUG: participants list has changed! bug 32999.");
           // Flag the message that the lock manager needs to be updated with the new member set
           msg.setUpdateLockMembers();
           this.otherMembers = newMemberSet;
@@ -472,10 +482,10 @@ public class TXRegionState {
   }
 
   /**
-   * Put all the entries this region knows about into the given "entries" list
-   * as instances of TXEntryStateWithRegionAndKey.
+   * Put all the entries this region knows about into the given "entries" list as instances of
+   * TXEntryStateWithRegionAndKey.
    */
-  void getEntries(ArrayList/*<TXEntryStateWithRegionAndKey>*/ entries, LocalRegion r) {
+  void getEntries(ArrayList /*<TXEntryStateWithRegionAndKey>*/ entries, LocalRegion r) {
     Iterator it = this.entryMods.entrySet().iterator();
     while (it.hasNext()) {
       Map.Entry me = (Map.Entry) it.next();
@@ -486,8 +496,7 @@ public class TXRegionState {
   }
 
   void cleanup(LocalRegion r) {
-    if (this.cleanedUp)
-      return;
+    if (this.cleanedUp) return;
     this.cleanedUp = true;
     Iterator it = this.entryMods.values().iterator();
     while (it.hasNext()) {
@@ -533,17 +542,12 @@ public class TXRegionState {
     return str.toString();
   }
 
-  /**
-   * @return the createdDuringCommit
-   */
+  /** @return the createdDuringCommit */
   public boolean isCreatedDuringCommit() {
     return createdDuringCommit;
   }
 
-  /**
-   * @param createdDuringCommit
-   *          the createdDuringCommit to set
-   */
+  /** @param createdDuringCommit the createdDuringCommit to set */
   public void setCreatedDuringCommit(boolean createdDuringCommit) {
     this.createdDuringCommit = createdDuringCommit;
   }
@@ -559,7 +563,15 @@ public class TXRegionState {
           DistTxThinEntryState thinEntryState = txes.getDistTxEntryStates();
           entryStateList.add(thinEntryState);
           if (logger.isDebugEnabled()) {
-            logger.debug("TXRegionState.populateDistTxEntryStateList Added " + thinEntryState + " for key=" + mKey + " ,op=" + txes.opToString() + " ,region=" + regionFullPath);
+            logger.debug(
+                "TXRegionState.populateDistTxEntryStateList Added "
+                    + thinEntryState
+                    + " for key="
+                    + mKey
+                    + " ,op="
+                    + txes.opToString()
+                    + " ,region="
+                    + regionFullPath);
           }
         }
       }
@@ -574,7 +586,8 @@ public class TXRegionState {
       // passed. So do nothing.
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("TXRegionState.populateDistTxEntryStateList Got exception for region " + regionFullPath);
+      logger.debug(
+          "TXRegionState.populateDistTxEntryStateList Got exception for region " + regionFullPath);
     }
     return false;
   }
@@ -584,7 +597,10 @@ public class TXRegionState {
     int entryModsSize = this.entryMods.size();
     int entryEventListSize = entryEventList.size();
     if (entryModsSize != entryEventListSize) {
-      throw new UnsupportedOperationInTransactionException(LocalizedStrings.DISTTX_TX_EXPECTED.toLocalizedString("entry size of " + entryModsSize + " for region " + regionFullPath, entryEventListSize));
+      throw new UnsupportedOperationInTransactionException(
+          LocalizedStrings.DISTTX_TX_EXPECTED.toLocalizedString(
+              "entry size of " + entryModsSize + " for region " + regionFullPath,
+              entryEventListSize));
     }
 
     int index = 0;
@@ -595,7 +611,15 @@ public class TXRegionState {
       DistTxThinEntryState thinEntryState = entryEventList.get(index++);
       txes.setDistTxEntryStates(thinEntryState);
       if (logger.isDebugEnabled()) {
-        logger.debug("TxRegionState.setDistTxEntryStates Added " + thinEntryState + " for key=" + mKey + " ,op=" + txes.opToString() + " ,region=" + regionFullPath);
+        logger.debug(
+            "TxRegionState.setDistTxEntryStates Added "
+                + thinEntryState
+                + " for key="
+                + mKey
+                + " ,op="
+                + txes.opToString()
+                + " ,region="
+                + regionFullPath);
       }
     }
   }

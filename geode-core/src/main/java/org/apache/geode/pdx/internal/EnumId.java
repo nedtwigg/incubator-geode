@@ -31,8 +31,7 @@ public class EnumId implements DataSerializableFixedID {
     this.id = id;
   }
 
-  public EnumId() {
-  }
+  public EnumId() {}
 
   public int getDSFID() {
     return ENUM_ID;
@@ -68,15 +67,11 @@ public class EnumId implements DataSerializableFixedID {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     EnumId other = (EnumId) obj;
-    if (id != other.id)
-      return false;
+    if (id != other.id) return false;
     return true;
   }
 
@@ -89,5 +84,4 @@ public class EnumId implements DataSerializableFixedID {
   public Version[] getSerializationVersions() {
     return null;
   }
-
 }

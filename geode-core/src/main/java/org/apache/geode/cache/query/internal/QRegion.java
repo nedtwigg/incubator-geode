@@ -27,28 +27,25 @@ import org.apache.geode.internal.cache.LocalDataSet;
 import org.apache.geode.internal.cache.PartitionedRegion;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * @since GemFire 4.0
- */
+/** @since GemFire 4.0 */
 public class QRegion implements SelectResults {
 
   private final Region region;
-  /**
-   * values is an unmodifiable facade on the region values.
-   */
+  /** values is an unmodifiable facade on the region values. */
   private final SelectResults values;
 
   /** Creates a new instance of QRegion */
   public QRegion(Region region, boolean includeKeys) {
     if (region == null)
-      throw new IllegalArgumentException(LocalizedStrings.QRegion_REGION_CAN_NOT_BE_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.QRegion_REGION_CAN_NOT_BE_NULL.toLocalizedString());
     this.region = region;
     Class constraint = this.region.getAttributes().getValueConstraint();
-    if (constraint == null)
-      constraint = Object.class;
+    if (constraint == null) constraint = Object.class;
     ResultsCollectionWrapper res = null;
     if (includeKeys) {
-      res = new ResultsCollectionWrapper(TypeUtils.getObjectType(constraint), this.region.entrySet());
+      res =
+          new ResultsCollectionWrapper(TypeUtils.getObjectType(constraint), this.region.entrySet());
     } else {
       res = new ResultsCollectionWrapper(TypeUtils.getObjectType(constraint), this.region.values());
     }
@@ -62,20 +59,25 @@ public class QRegion implements SelectResults {
   public QRegion(Region region, boolean includeKeys, ExecutionContext context) {
 
     if (region == null)
-      throw new IllegalArgumentException(LocalizedStrings.QRegion_REGION_CAN_NOT_BE_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.QRegion_REGION_CAN_NOT_BE_NULL.toLocalizedString());
 
     Class constraint = region.getAttributes().getValueConstraint();
-    if (constraint == null)
-      constraint = Object.class;
+    if (constraint == null) constraint = Object.class;
 
     ResultsCollectionWrapper res = null;
     if (context.getBucketList() != null && region instanceof PartitionedRegion) {
-      LocalDataSet localData = new LocalDataSet(((PartitionedRegion) region), new HashSet(context.getBucketList()));
+      LocalDataSet localData =
+          new LocalDataSet(((PartitionedRegion) region), new HashSet(context.getBucketList()));
       this.region = localData;
       if (includeKeys) {
-        res = new ResultsCollectionWrapper(TypeUtils.getObjectType(constraint), localData.localEntrySet());
+        res =
+            new ResultsCollectionWrapper(
+                TypeUtils.getObjectType(constraint), localData.localEntrySet());
       } else {
-        res = new ResultsCollectionWrapper(TypeUtils.getObjectType(constraint), localData.localValues());
+        res =
+            new ResultsCollectionWrapper(
+                TypeUtils.getObjectType(constraint), localData.localValues());
       }
     } else {
       this.region = region;
@@ -113,8 +115,8 @@ public class QRegion implements SelectResults {
   }
 
   /**
-   * Returns unmodifiable SelectResults for keys. When the "keys" attribute is
-   * accessed, this is the preferred method that will be executed.
+   * Returns unmodifiable SelectResults for keys. When the "keys" attribute is accessed, this is the
+   * preferred method that will be executed.
    */
   public SelectResults getKeys() {
     ResultsCollectionWrapper res;
@@ -129,32 +131,36 @@ public class QRegion implements SelectResults {
   }
 
   /**
-   * Accessing the values is the same as accessing this. Must return Collection
-   * to satisfy Region interface
+   * Accessing the values is the same as accessing this. Must return Collection to satisfy Region
+   * interface
    */
   public Collection values() {
     return this;
   }
 
   /**
-   * getValues is the same as values except returns a SelectResults. This
-   * method is invoked when access the "values" attribute in a query.
+   * getValues is the same as values except returns a SelectResults. This method is invoked when
+   * access the "values" attribute in a query.
    */
   public SelectResults getValues() {
     return this;
   }
 
   /**
-   * Returns the entries as an unmodifiable SelectResults. This is the
-   * preferred method that is invoked when accessing the attribute "entries".
+   * Returns the entries as an unmodifiable SelectResults. This is the preferred method that is
+   * invoked when accessing the attribute "entries".
    */
   public SelectResults getEntries() {
     ResultsCollectionWrapper res;
     if (this.region instanceof LocalDataSet) {
       LocalDataSet localData = (LocalDataSet) this.region;
-      res = new ResultsCollectionWrapper(TypeUtils.getRegionEntryType(this.region), localData.localEntrySet());
+      res =
+          new ResultsCollectionWrapper(
+              TypeUtils.getRegionEntryType(this.region), localData.localEntrySet());
     } else {
-      res = new ResultsCollectionWrapper(TypeUtils.getRegionEntryType(this.region), this.region.entries(false));
+      res =
+          new ResultsCollectionWrapper(
+              TypeUtils.getRegionEntryType(this.region), this.region.entries(false));
     }
     res.setModifiable(false);
     return res;
@@ -167,8 +173,8 @@ public class QRegion implements SelectResults {
   }
 
   /**
-   * Getter for property modifiable. Since a QRegion as a collection represents
-   * an unmodifiable facade on the values of this region, return false.
+   * Getter for property modifiable. Since a QRegion as a collection represents an unmodifiable
+   * facade on the values of this region, return false.
    *
    * @return Value of property modifiable.
    */
@@ -179,7 +185,7 @@ public class QRegion implements SelectResults {
   public int occurrences(Object element) {
     // expensive!!
     int count = 0;
-    for (Iterator itr = this.values.iterator(); itr.hasNext();) {
+    for (Iterator itr = this.values.iterator(); itr.hasNext(); ) {
       Object v = itr.next();
       if (element == null ? v == null : element.equals(v)) {
         count++;
@@ -202,15 +208,18 @@ public class QRegion implements SelectResults {
 
   //////////// Set methods ///////////////////////////////////
   public boolean add(Object obj) {
-    throw new UnsupportedOperationException(LocalizedStrings.QRegion_REGION_VALUES_IS_NOT_MODIFIABLE.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.QRegion_REGION_VALUES_IS_NOT_MODIFIABLE.toLocalizedString());
   }
 
   public boolean addAll(Collection collection) {
-    throw new UnsupportedOperationException(LocalizedStrings.QRegion_REGION_VALUES_IS_NOT_MODIFIABLE.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.QRegion_REGION_VALUES_IS_NOT_MODIFIABLE.toLocalizedString());
   }
 
   public void clear() {
-    throw new UnsupportedOperationException(LocalizedStrings.QRegion_REGION_VALUES_IS_NOT_MODIFIABLE.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.QRegion_REGION_VALUES_IS_NOT_MODIFIABLE.toLocalizedString());
   }
 
   // to be sure, we need to iterate to make sure the region isn't full of
@@ -238,15 +247,18 @@ public class QRegion implements SelectResults {
   }
 
   public boolean remove(Object obj) {
-    throw new UnsupportedOperationException(LocalizedStrings.QRegion_REGION_VALUES_IS_NOT_MODIFIABLE.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.QRegion_REGION_VALUES_IS_NOT_MODIFIABLE.toLocalizedString());
   }
 
   public boolean removeAll(Collection collection) {
-    throw new UnsupportedOperationException(LocalizedStrings.QRegion_REGION_VALUES_IS_NOT_MODIFIABLE.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.QRegion_REGION_VALUES_IS_NOT_MODIFIABLE.toLocalizedString());
   }
 
   public boolean retainAll(Collection collection) {
-    throw new UnsupportedOperationException(LocalizedStrings.QRegion_REGION_VALUES_IS_NOT_MODIFIABLE.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.QRegion_REGION_VALUES_IS_NOT_MODIFIABLE.toLocalizedString());
   }
 
   public int size() {
@@ -273,23 +285,28 @@ public class QRegion implements SelectResults {
     return this.region.containsValueForKey(key);
   }
 
-  public void create(Object key, Object value) throws TimeoutException, EntryExistsException, CacheWriterException {
+  public void create(Object key, Object value)
+      throws TimeoutException, EntryExistsException, CacheWriterException {
     this.region.create(key, value);
   }
 
-  public void create(Object key, Object value, Object aCacheWriterParam) throws TimeoutException, EntryExistsException, CacheWriterException {
+  public void create(Object key, Object value, Object aCacheWriterParam)
+      throws TimeoutException, EntryExistsException, CacheWriterException {
     this.region.create(key, value, aCacheWriterParam);
   }
 
-  public Region createSubregion(String subregionName, RegionAttributes aRegionAttributes) throws RegionExistsException, TimeoutException {
+  public Region createSubregion(String subregionName, RegionAttributes aRegionAttributes)
+      throws RegionExistsException, TimeoutException {
     return this.region.createSubregion(subregionName, aRegionAttributes);
   }
 
-  public void destroy(Object key) throws TimeoutException, EntryNotFoundException, CacheWriterException {
+  public void destroy(Object key)
+      throws TimeoutException, EntryNotFoundException, CacheWriterException {
     this.region.destroy(key);
   }
 
-  public void destroy(Object key, Object aCacheWriterParam) throws TimeoutException, EntryNotFoundException, CacheWriterException {
+  public void destroy(Object key, Object aCacheWriterParam)
+      throws TimeoutException, EntryNotFoundException, CacheWriterException {
     this.region.destroy(key, aCacheWriterParam);
   }
 
@@ -297,7 +314,8 @@ public class QRegion implements SelectResults {
     this.region.destroyRegion();
   }
 
-  public void destroyRegion(Object aCallbackArgument) throws CacheWriterException, TimeoutException {
+  public void destroyRegion(Object aCallbackArgument)
+      throws CacheWriterException, TimeoutException {
     this.region.destroyRegion(aCallbackArgument);
   }
 
@@ -305,7 +323,9 @@ public class QRegion implements SelectResults {
     return this.region.entries(recursive);
   }
 
-  public boolean existsValue(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public boolean existsValue(String queryPredicate)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     return this.region.existsValue(queryPredicate);
   }
 
@@ -313,7 +333,8 @@ public class QRegion implements SelectResults {
     return this.region.get(key);
   }
 
-  public Object get(Object key, Object aCallbackArgument) throws TimeoutException, CacheLoaderException {
+  public Object get(Object key, Object aCallbackArgument)
+      throws TimeoutException, CacheLoaderException {
     return this.region.get(key, aCallbackArgument);
   }
 
@@ -369,7 +390,8 @@ public class QRegion implements SelectResults {
     this.region.invalidate(key);
   }
 
-  public void invalidate(Object key, Object aCallbackArgument) throws TimeoutException, EntryNotFoundException {
+  public void invalidate(Object key, Object aCallbackArgument)
+      throws TimeoutException, EntryNotFoundException {
     this.region.invalidate(key, aCallbackArgument);
   }
 
@@ -429,15 +451,20 @@ public class QRegion implements SelectResults {
     this.region.put(key, value);
   }
 
-  public void put(Object key, Object value, Object aCallbackArgument) throws TimeoutException, CacheWriterException {
+  public void put(Object key, Object value, Object aCallbackArgument)
+      throws TimeoutException, CacheWriterException {
     this.region.put(key, value, aCallbackArgument);
   }
 
-  public SelectResults query(String predicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public SelectResults query(String predicate)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     return this.region.query(predicate);
   }
 
-  public Object selectValue(String predicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object selectValue(String predicate)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     return this.region.selectValue(predicate);
   }
 
@@ -447,10 +474,12 @@ public class QRegion implements SelectResults {
 
   public Set subregions(boolean recursive) {
     //return this.region.subregions(recursive);
-    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
-  public void loadSnapshot(InputStream inputStream) throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException {
+  public void loadSnapshot(InputStream inputStream)
+      throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException {
     this.region.loadSnapshot(inputStream);
   }
 
@@ -459,35 +488,45 @@ public class QRegion implements SelectResults {
   }
 
   public void registerInterest(Object key) throws CacheWriterException {
-    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
   public void registerInterestRegex(String regex) throws CacheWriterException {
-    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
-  public void registerInterest(Object key, InterestResultPolicy policy) throws CacheWriterException {
-    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+  public void registerInterest(Object key, InterestResultPolicy policy)
+      throws CacheWriterException {
+    throw new UnsupportedOperationException(
+        LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
-  public void registerInterestRegex(String regex, InterestResultPolicy policy) throws CacheWriterException {
-    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+  public void registerInterestRegex(String regex, InterestResultPolicy policy)
+      throws CacheWriterException {
+    throw new UnsupportedOperationException(
+        LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
   public void unregisterInterest(Object key) throws CacheWriterException {
-    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
   public void unregisterInterestRegex(String regex) throws CacheWriterException {
-    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
   public List getInterestList() throws CacheWriterException {
-    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
   public List getInterestListRegex() throws CacheWriterException {
-    throw new UnsupportedOperationException(LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.UNSUPPORTED_AT_THIS_TIME.toLocalizedString());
   }
 
   // Object methods
@@ -512,11 +551,12 @@ public class QRegion implements SelectResults {
 
   public void putAll(Map arg0) {
     this.region.putAll(arg0);
-
   }
 
   public SelectResults entrySet() {
-    ResultsCollectionWrapper res = new ResultsCollectionWrapper(new ObjectTypeImpl(Map.Entry.class), this.region.entries(false));
+    ResultsCollectionWrapper res =
+        new ResultsCollectionWrapper(
+            new ObjectTypeImpl(Map.Entry.class), this.region.entries(false));
     res.setModifiable(false);
     return res;
   }
@@ -524,5 +564,4 @@ public class QRegion implements SelectResults {
   public Set keySet() {
     return this.region.keys();
   }
-
 }

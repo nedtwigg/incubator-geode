@@ -19,9 +19,9 @@ package org.apache.geode.distributed.internal;
 import java.nio.ByteBuffer;
 
 /**
- * Used to uniquely identify a conflatable message. If two messages have
- * keys that are equal then the latter message can replace (i.e. conflate)
- * the earlier message.
+ * Used to uniquely identify a conflatable message. If two messages have keys that are equal then
+ * the latter message can replace (i.e. conflate) the earlier message.
+ *
  * @since GemFire 4.2.1
  */
 public class ConflationKey {
@@ -30,9 +30,7 @@ public class ConflationKey {
   private final boolean allowsConflation;
   private ByteBuffer buffer;
 
-  /**
-   * Create a new conflation key given its entry key and region
-   */
+  /** Create a new conflation key given its entry key and region */
   public ConflationKey(Object entryKey, String regionPath, boolean allowsConflation) {
     this.entryKey = entryKey;
     this.regionPath = regionPath;
@@ -74,8 +72,8 @@ public class ConflationKey {
   }
 
   /**
-   * Returns true if this key (and the operation that generated it) allows conflation; returns false if it does not support conflation.
-   * Retur
+   * Returns true if this key (and the operation that generated it) allows conflation; returns false
+   * if it does not support conflation. Retur
    */
   public boolean allowsConflation() {
     return this.allowsConflation;

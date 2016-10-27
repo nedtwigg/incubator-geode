@@ -22,11 +22,13 @@ import org.apache.geode.management.internal.cli.parser.OptionSet;
 
 public class CliCommandOptionNotApplicableException extends CliCommandOptionException {
 
-  public CliCommandOptionNotApplicableException(final CommandTarget commandTarget, final Option option) {
+  public CliCommandOptionNotApplicableException(
+      final CommandTarget commandTarget, final Option option) {
     this(commandTarget, option, null, null);
   }
 
-  public CliCommandOptionNotApplicableException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet) {
+  public CliCommandOptionNotApplicableException(
+      final CommandTarget commandTarget, final Option option, final OptionSet optionSet) {
     this(commandTarget, option, optionSet, null);
   }
 
@@ -38,7 +40,11 @@ public class CliCommandOptionNotApplicableException extends CliCommandOptionExce
     this(null, option, null, cause);
   }
 
-  public CliCommandOptionNotApplicableException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet, Throwable cause) {
+  public CliCommandOptionNotApplicableException(
+      final CommandTarget commandTarget,
+      final Option option,
+      final OptionSet optionSet,
+      Throwable cause) {
     super(commandTarget, option, optionSet, cause);
   }
 }

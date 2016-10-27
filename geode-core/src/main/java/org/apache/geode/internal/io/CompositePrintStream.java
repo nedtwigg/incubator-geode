@@ -20,9 +20,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Iterator;
 
-/**
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class CompositePrintStream extends PrintStream {
 
   private final CompositeOutputStream compositeOutputStream;
@@ -41,15 +39,14 @@ public class CompositePrintStream extends PrintStream {
   }
 
   /**
-   * @return <tt>true</tt> if this CompositePrintStream did not already contain the specified OutputStream
+   * @return <tt>true</tt> if this CompositePrintStream did not already contain the specified
+   *     OutputStream
    */
   public boolean addOutputStream(OutputStream out) {
     return this.compositeOutputStream.addOutputStream(out);
   }
 
-  /**
-   * @return <tt>true</tt> if this CompositePrintStream contained the specified OutputStream
-   */
+  /** @return <tt>true</tt> if this CompositePrintStream contained the specified OutputStream */
   public boolean removeOutputStream(OutputStream out) {
     return this.compositeOutputStream.removeOutputStream(out);
   }

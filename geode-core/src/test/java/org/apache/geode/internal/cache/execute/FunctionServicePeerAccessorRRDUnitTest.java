@@ -27,9 +27,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.junit.Before;
 import org.junit.experimental.categories.Category;
 
-/**
- * Test of the behavior of a custom ResultCollector when handling exceptions
- */
+/** Test of the behavior of a custom ResultCollector when handling exceptions */
 @Category(DistributedTest.class)
 public class FunctionServicePeerAccessorRRDUnitTest extends FunctionServiceBase {
 
@@ -42,11 +40,10 @@ public class FunctionServicePeerAccessorRRDUnitTest extends FunctionServiceBase 
     region = getCache().createRegionFactory(RegionShortcut.REPLICATE_PROXY).create(REGION);
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
-    vm0.invoke(() -> {
-
-      getCache().createRegionFactory(RegionShortcut.REPLICATE).create(REGION);
-
-    });
+    vm0.invoke(
+        () -> {
+          getCache().createRegionFactory(RegionShortcut.REPLICATE).create(REGION);
+        });
   }
 
   @Override
@@ -58,5 +55,4 @@ public class FunctionServicePeerAccessorRRDUnitTest extends FunctionServiceBase 
   public int numberOfExecutions() {
     return 1;
   }
-
 }

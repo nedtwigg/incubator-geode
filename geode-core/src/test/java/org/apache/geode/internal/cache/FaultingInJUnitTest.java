@@ -25,8 +25,8 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Tests faulting in from current oplog, old oplog
- * and htree for different modes (overflow only, persist+overflow : Sync/Async)
+ * Tests faulting in from current oplog, old oplog and htree for different modes (overflow only,
+ * persist+overflow : Sync/Async)
  */
 @Category(IntegrationTest.class)
 public class FaultingInJUnitTest extends DiskRegionTestingBase {
@@ -50,9 +50,7 @@ public class FaultingInJUnitTest extends DiskRegionTestingBase {
     deleteFiles();
   }
 
-  /**
-   * fault in a value from teh current oplog
-   */
+  /** fault in a value from teh current oplog */
   private void faultInFromCurrentOplog() {
     put100Int();
     putTillOverFlow(region);
@@ -63,9 +61,7 @@ public class FaultingInJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * fault in a value from an old oplog
-   */
+  /** fault in a value from an old oplog */
   private void faultInFromOldOplog() {
     put100Int();
     putTillOverFlow(region);
@@ -77,34 +73,33 @@ public class FaultingInJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * fault in a value that has been copied forward by compaction
-   */
+  /** fault in a value that has been copied forward by compaction */
   private void faultInFromCompactedOplog() {
     put100Int();
     putTillOverFlow(region);
     region.put(new Integer(101), new Integer(101));
     region.put(new Integer(102), new Integer(102));
     region.put(new Integer(103), new Integer(103));
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      public void beforeGoingToCompact() {
-        region.getCache().getLogger().info("beforeGoingToCompact before sleep");
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException ignore) {
-          fail("interrupted");
-        }
-        region.getCache().getLogger().info("beforeGoingToCompact after sleep");
-      }
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
+          public void beforeGoingToCompact() {
+            region.getCache().getLogger().info("beforeGoingToCompact before sleep");
+            try {
+              Thread.sleep(1000);
+            } catch (InterruptedException ignore) {
+              fail("interrupted");
+            }
+            region.getCache().getLogger().info("beforeGoingToCompact after sleep");
+          }
 
-      public void afterHavingCompacted() {
-        region.getCache().getLogger().info("afterHavingCompacted");
-        synchronized (region) {
-          hasBeenNotified = true;
-          region.notify();
-        }
-      }
-    });
+          public void afterHavingCompacted() {
+            region.getCache().getLogger().info("afterHavingCompacted");
+            synchronized (region) {
+              hasBeenNotified = true;
+              region.notify();
+            }
+          }
+        });
     // first give time for possible async writes to be written to disk
     ((LocalRegion) region).forceFlush();
     // no need to force roll or wait for compact if overflow only
@@ -130,9 +125,7 @@ public class FaultingInJUnitTest extends DiskRegionTestingBase {
     verify100Int(false);
   }
 
-  /**
-   * test OverflowOnly Sync Faultin  From CurrentOplog
-   */
+  /** test OverflowOnly Sync Faultin From CurrentOplog */
   @Test
   public void testOverflowOnlyFaultinSyncFromCurrentOplog() {
     region = DiskRegionHelperFactory.getSyncOverFlowOnlyRegion(cache, diskProps);

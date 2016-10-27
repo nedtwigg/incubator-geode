@@ -64,7 +64,17 @@ public class WanCommandGatewaySenderStopDUnitTest extends WANCommandTestBase {
 
     final DistributedMember vm1Member = (DistributedMember) vm3.invoke(() -> getMember());
 
-    String command = CliStrings.STOP_GATEWAYSENDER + " --" + CliStrings.STOP_GATEWAYSENDER__ID + "=ln --" + CliStrings.STOP_GATEWAYSENDER__MEMBER + "=" + vm1Member.getId() + " --" + CliStrings.STOP_GATEWAYSENDER__GROUP + "=SenderGroup1";
+    String command =
+        CliStrings.STOP_GATEWAYSENDER
+            + " --"
+            + CliStrings.STOP_GATEWAYSENDER__ID
+            + "=ln --"
+            + CliStrings.STOP_GATEWAYSENDER__MEMBER
+            + "="
+            + vm1Member.getId()
+            + " --"
+            + CliStrings.STOP_GATEWAYSENDER__GROUP
+            + "=SenderGroup1";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
@@ -105,7 +115,8 @@ public class WanCommandGatewaySenderStopDUnitTest extends WANCommandTestBase {
     vm5.invoke(() -> verifySenderState("ln", true, false));
 
     pause(10000);
-    String command = CliStrings.STOP_GATEWAYSENDER + " --" + CliStrings.STOP_GATEWAYSENDER__ID + "=ln";
+    String command =
+        CliStrings.STOP_GATEWAYSENDER + " --" + CliStrings.STOP_GATEWAYSENDER__ID + "=ln";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
@@ -126,10 +137,7 @@ public class WanCommandGatewaySenderStopDUnitTest extends WANCommandTestBase {
     vm5.invoke(() -> verifySenderState("ln", false, false));
   }
 
-  /**
-   * test to validate that the start gateway sender starts the gateway sender on
-   * a member
-   */
+  /** test to validate that the start gateway sender starts the gateway sender on a member */
   @Test
   public void testStopGatewaySender_onMember() {
 
@@ -152,7 +160,14 @@ public class WanCommandGatewaySenderStopDUnitTest extends WANCommandTestBase {
 
     final DistributedMember vm1Member = (DistributedMember) vm3.invoke(() -> getMember());
     pause(10000);
-    String command = CliStrings.STOP_GATEWAYSENDER + " --" + CliStrings.STOP_GATEWAYSENDER__ID + "=ln --" + CliStrings.STOP_GATEWAYSENDER__MEMBER + "=" + vm1Member.getId();
+    String command =
+        CliStrings.STOP_GATEWAYSENDER
+            + " --"
+            + CliStrings.STOP_GATEWAYSENDER__ID
+            + "=ln --"
+            + CliStrings.STOP_GATEWAYSENDER__MEMBER
+            + "="
+            + vm1Member.getId();
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
@@ -167,8 +182,7 @@ public class WanCommandGatewaySenderStopDUnitTest extends WANCommandTestBase {
   }
 
   /**
-   * test to validate that the start gateway sender starts the gateway sender on
-   * a group of members
+   * test to validate that the start gateway sender starts the gateway sender on a group of members
    */
   @Test
   public void testStopGatewaySender_Group() {
@@ -199,7 +213,13 @@ public class WanCommandGatewaySenderStopDUnitTest extends WANCommandTestBase {
     vm5.invoke(() -> verifySenderState("ln", true, false));
 
     pause(10000);
-    String command = CliStrings.STOP_GATEWAYSENDER + " --" + CliStrings.STOP_GATEWAYSENDER__ID + "=ln --" + CliStrings.STOP_GATEWAYSENDER__GROUP + "=SenderGroup1";
+    String command =
+        CliStrings.STOP_GATEWAYSENDER
+            + " --"
+            + CliStrings.STOP_GATEWAYSENDER__ID
+            + "=ln --"
+            + CliStrings.STOP_GATEWAYSENDER__GROUP
+            + "=SenderGroup1";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
@@ -221,8 +241,8 @@ public class WanCommandGatewaySenderStopDUnitTest extends WANCommandTestBase {
   }
 
   /**
-   * Test to validate the scenario gateway sender is started when one or more
-   * sender members belongs to multiple groups
+   * Test to validate the scenario gateway sender is started when one or more sender members belongs
+   * to multiple groups
    */
   @Test
   public void testStopGatewaySender_MultipleGroup() {
@@ -261,7 +281,13 @@ public class WanCommandGatewaySenderStopDUnitTest extends WANCommandTestBase {
     vm7.invoke(() -> verifySenderState("ln", true, false));
 
     pause(10000);
-    String command = CliStrings.STOP_GATEWAYSENDER + " --" + CliStrings.STOP_GATEWAYSENDER__ID + "=ln --" + CliStrings.STOP_GATEWAYSENDER__GROUP + "=SenderGroup1,SenderGroup2";
+    String command =
+        CliStrings.STOP_GATEWAYSENDER
+            + " --"
+            + CliStrings.STOP_GATEWAYSENDER__ID
+            + "=ln --"
+            + CliStrings.STOP_GATEWAYSENDER__GROUP
+            + "=SenderGroup1,SenderGroup2";
     CommandResult cmdResult = executeCommandWithIgnoredExceptions(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);

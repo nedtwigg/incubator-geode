@@ -29,11 +29,7 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
-/**
- * Tests ConcurrentMap operations on a PartitionedRegion on a single node.
- *
- */
-
+/** Tests ConcurrentMap operations on a PartitionedRegion on a single node. */
 @Category(IntegrationTest.class)
 public class PRConcurrentMapOpsJUnitTest {
 
@@ -42,9 +38,8 @@ public class PRConcurrentMapOpsJUnitTest {
   static Cache cache;
 
   /**
-   * Supports running test in two standalone VMs for debugging purposes.
-   * Start one VM with the argument "far" to only host data.
-   * Start the second VM with no arg or "near" to run the test in. 
+   * Supports running test in two standalone VMs for debugging purposes. Start one VM with the
+   * argument "far" to only host data. Start the second VM with no arg or "near" to run the test in.
    */
   public static void main(String[] args) throws Exception {
     if (args.length > 0 && "far".equals(args[0])) {
@@ -127,7 +122,7 @@ public class PRConcurrentMapOpsJUnitTest {
     assertEquals("Size doesn't return expected value", end, size);
     assertFalse("isEmpty doesnt return proper state of the PartitionedRegion", pr.isEmpty());
 
-    // successful replace(Object, Object)    
+    // successful replace(Object, Object)
     for (int i = start; i <= end; i++) {
       Object replaceResult = pr.replace(Integer.toString(i), Integer.toString(-i));
       assertEquals("for i=" + i, Integer.toString(i), replaceResult);
@@ -148,7 +143,8 @@ public class PRConcurrentMapOpsJUnitTest {
 
     // successful replace(Object key, Object oldValue, Object newValue)
     for (int i = start; i <= end; i++) {
-      boolean replaceResult = pr.replace(Integer.toString(i), Integer.toString(-i), Integer.toString(i * 2));
+      boolean replaceResult =
+          pr.replace(Integer.toString(i), Integer.toString(-i), Integer.toString(i * 2));
       assertTrue("for i=" + i, replaceResult);
       assertEquals("for i=" + i, Integer.toString(i * 2), pr.get(Integer.toString(i)));
     }
@@ -158,9 +154,11 @@ public class PRConcurrentMapOpsJUnitTest {
 
     // unsuccessful replace(Object key, Object oldValue, Object newValue)
     for (int i = start; i <= end2; i++) {
-      boolean replaceResult = pr.replace(Integer.toString(i), Integer.toString(-i), Integer.toString(i * -4));
+      boolean replaceResult =
+          pr.replace(Integer.toString(i), Integer.toString(-i), Integer.toString(i * -4));
       assertFalse("for i=" + i, replaceResult);
-      assertEquals("for i=" + i, i <= end ? Integer.toString(i * 2) : null, pr.get(Integer.toString(i)));
+      assertEquals(
+          "for i=" + i, i <= end ? Integer.toString(i * 2) : null, pr.get(Integer.toString(i)));
     }
     size = pr.size();
     assertEquals("Size doesn't return expected value", end, size);
@@ -170,7 +168,8 @@ public class PRConcurrentMapOpsJUnitTest {
     for (int i = start; i <= end2; i++) {
       boolean removeResult = pr.remove(Integer.toString(i), Integer.toString(-i));
       assertFalse("for i=" + i, removeResult);
-      assertEquals("for i=" + i, i <= end ? Integer.toString(i * 2) : null, pr.get(Integer.toString(i)));
+      assertEquals(
+          "for i=" + i, i <= end ? Integer.toString(i * 2) : null, pr.get(Integer.toString(i)));
     }
     size = pr.size();
     assertEquals("Size doesn't return expected value", end, size);
@@ -186,5 +185,4 @@ public class PRConcurrentMapOpsJUnitTest {
     assertEquals("Size doesn't return expected value", 0, size);
     assertTrue("isEmpty doesnt return proper state of the PartitionedRegion", pr.isEmpty());
   }
-
 }

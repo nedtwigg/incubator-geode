@@ -27,12 +27,13 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular agent who was registered
- * a health listener on a GemFireVM. This message is only sent when
- * the health status changes.
+ * A message that is sent to a particular agent who was registered a health listener on a GemFireVM.
+ * This message is only sent when the health status changes.
+ *
  * @since GemFire 3.5
  */
-public final class HealthListenerMessage extends PooledDistributionMessage implements AdminMessageType {
+public final class HealthListenerMessage extends PooledDistributionMessage
+    implements AdminMessageType {
   //instance variables
   private int listenerId;
   private GemFireHealth.Health status;
@@ -80,7 +81,7 @@ public final class HealthListenerMessage extends PooledDistributionMessage imple
 
   @Override
   public String toString() {
-    return LocalizedStrings.HealthListenerMessage_THE_STATUS_OF_LISTENER_0_IS_1.toLocalizedString(new Object[] { Integer.valueOf(this.listenerId), this.status });
+    return LocalizedStrings.HealthListenerMessage_THE_STATUS_OF_LISTENER_0_IS_1.toLocalizedString(
+        new Object[] {Integer.valueOf(this.listenerId), this.status});
   }
-
 }

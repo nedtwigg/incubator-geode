@@ -19,8 +19,8 @@ package org.apache.geode.codeAnalysis.decode.cp;
 import java.io.*;
 
 /**
- * Cp represents an entry in the constant pool of a class.
- * See https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4
+ * Cp represents an entry in the constant pool of a class. See
+ * https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4
  */
 public class Cp {
 
@@ -44,36 +44,36 @@ public class Cp {
 
     tag = (byte) source.readUnsignedByte();
     switch (tag) {
-    case TAG_Class:
-      return new CpClass(source);
-    case TAG_Fieldref:
-      return new CpFieldref(source);
-    case TAG_Methodref:
-      return new CpMethodref(source);
-    case TAG_InterfaceMethodref:
-      return new CpInterfaceMethodref(source);
-    case TAG_String:
-      return new CpString(source);
-    case TAG_Integer:
-      return new CpInteger(source);
-    case TAG_Float:
-      return new CpFloat(source);
-    case TAG_Long:
-      return new CpLong(source);
-    case TAG_Double:
-      return new CpDouble(source);
-    case TAG_NameAndType:
-      return new CpNameAndType(source);
-    case TAG_Utf8:
-      return new CpUtf8(source);
-    case TAG_MethodHandle:
-      return new CpMethodHandle(source);
-    case TAG_MethodType:
-      return new CpMethodType(source);
-    case TAG_InvokeDynamic:
-      return new CpInvokeDynamic(source);
-    default:
-      throw new IOException("Unknown tag type in constant pool: " + tag);
+      case TAG_Class:
+        return new CpClass(source);
+      case TAG_Fieldref:
+        return new CpFieldref(source);
+      case TAG_Methodref:
+        return new CpMethodref(source);
+      case TAG_InterfaceMethodref:
+        return new CpInterfaceMethodref(source);
+      case TAG_String:
+        return new CpString(source);
+      case TAG_Integer:
+        return new CpInteger(source);
+      case TAG_Float:
+        return new CpFloat(source);
+      case TAG_Long:
+        return new CpLong(source);
+      case TAG_Double:
+        return new CpDouble(source);
+      case TAG_NameAndType:
+        return new CpNameAndType(source);
+      case TAG_Utf8:
+        return new CpUtf8(source);
+      case TAG_MethodHandle:
+        return new CpMethodHandle(source);
+      case TAG_MethodType:
+        return new CpMethodType(source);
+      case TAG_InvokeDynamic:
+        return new CpInvokeDynamic(source);
+      default:
+        throw new IOException("Unknown tag type in constant pool: " + tag);
     }
   }
 }

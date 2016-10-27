@@ -43,7 +43,6 @@ import org.apache.geode.test.fake.Fakes;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
-
 public class LuceneCreateIndexFunctionJUnitTest {
 
   private InternalLuceneService service;
@@ -79,7 +78,9 @@ public class LuceneCreateIndexFunctionJUnitTest {
     analyzerNames.add(StandardAnalyzer.class.getCanonicalName());
     String[] analyzers = new String[3];
     analyzerNames.toArray(analyzers);
-    LuceneIndexInfo indexInfo = new LuceneIndexInfo("index1", "/region1", new String[] { "field1", "field2", "field3" }, analyzers);
+    LuceneIndexInfo indexInfo =
+        new LuceneIndexInfo(
+            "index1", "/region1", new String[] {"field1", "field2", "field3"}, analyzers);
     when(context.getArguments()).thenReturn(indexInfo);
 
     LuceneCreateIndexFunction function = new LuceneCreateIndexFunction();
@@ -105,7 +106,7 @@ public class LuceneCreateIndexFunctionJUnitTest {
   @Test
   @SuppressWarnings("unchecked")
   public void testExecuteWithoutAnalyzer() throws Throwable {
-    String fields[] = new String[] { "field1", "field2", "field3" };
+    String fields[] = new String[] {"field1", "field2", "field3"};
     LuceneIndexInfo indexInfo = new LuceneIndexInfo("index1", "/region1", fields, null);
     when(context.getArguments()).thenReturn(indexInfo);
 
@@ -114,7 +115,8 @@ public class LuceneCreateIndexFunctionJUnitTest {
     doReturn(cache).when(function).getCache();
     function.execute(context);
 
-    verify(service).createIndex(eq("index1"), eq("/region1"), eq("field1"), eq("field2"), eq("field3"));
+    verify(service)
+        .createIndex(eq("index1"), eq("/region1"), eq("field1"), eq("field2"), eq("field3"));
 
     ArgumentCaptor<Set> resultCaptor = ArgumentCaptor.forClass(Set.class);
     verify(resultSender).lastResult(resultCaptor.capture());

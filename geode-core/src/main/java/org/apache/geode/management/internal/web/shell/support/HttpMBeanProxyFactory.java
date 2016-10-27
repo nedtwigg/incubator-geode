@@ -23,7 +23,9 @@ import org.apache.geode.management.internal.web.shell.HttpOperationInvoker;
 
 /**
  * The HttpMBeanProxyFactory class is an abstract factory for creating
- * <p/>
+ *
+ * <p>
+ *
  * @see java.lang.reflect.Proxy
  * @see org.apache.geode.management.internal.web.shell.HttpOperationInvoker
  * @since GemFire 8.0
@@ -32,8 +34,14 @@ import org.apache.geode.management.internal.web.shell.HttpOperationInvoker;
 public class HttpMBeanProxyFactory {
 
   @SuppressWarnings("unchecked")
-  public static <T> T createMBeanProxy(final HttpOperationInvoker connection, final ObjectName objectName, final Class<T> mbeanInterface) {
-    return mbeanInterface.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] { mbeanInterface }, new HttpInvocationHandler(connection, objectName)));
+  public static <T> T createMBeanProxy(
+      final HttpOperationInvoker connection,
+      final ObjectName objectName,
+      final Class<T> mbeanInterface) {
+    return mbeanInterface.cast(
+        Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] {mbeanInterface},
+            new HttpInvocationHandler(connection, objectName)));
   }
-
 }

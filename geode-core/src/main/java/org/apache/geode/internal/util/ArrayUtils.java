@@ -23,22 +23,23 @@ import org.apache.geode.internal.lang.StringUtils;
 import org.apache.geode.internal.offheap.annotations.Unretained;
 
 /**
- *
  * Handle some simple editing of fixed-length arrays.
  *
- * TODO use Java 1.5 template classes to simplify this interface
- *
+ * <p>TODO use Java 1.5 template classes to simplify this interface
  */
 public abstract class ArrayUtils {
 
   /**
-   * Gets the element at index in the array in a bound-safe manner.  If index is not a valid index in the given array,
-   * then the default value is returned.
-   * <p/>
+   * Gets the element at index in the array in a bound-safe manner. If index is not a valid index in
+   * the given array, then the default value is returned.
+   *
+   * <p>
+   *
    * @param <T> the class type of the elements in the array.
    * @param array the array from which the element at index is retrieved.
    * @param index the index into the array to retrieve the element.
-   * @param defaultValue the default value of element type to return in the event that the array index is invalid.
+   * @param defaultValue the default value of element type to return in the event that the array
+   *     index is invalid.
    * @return the element at index from the array or the default value if the index is invalid.
    */
   public static <T> T getElementAtIndex(T[] array, int index, T defaultValue) {
@@ -50,11 +51,15 @@ public abstract class ArrayUtils {
   }
 
   /**
-   * Gets the first element from the given array or null if the array reference is null or the array length is 0.
-   * <p/>
+   * Gets the first element from the given array or null if the array reference is null or the array
+   * length is 0.
+   *
+   * <p>
+   *
    * @param <T> the Class type of the elements in the array.
    * @param array the array of elements from which to retrieve the first element.
-   * @return the first element from the array or null if either the array reference is null or the array length is 0.
+   * @return the first element from the array or null if either the array reference is null or the
+   *     array length is 0.
    */
   public static <T> T getFirst(final T... array) {
     return (array != null && array.length > 0 ? array[0] : null);
@@ -62,7 +67,9 @@ public abstract class ArrayUtils {
 
   /**
    * Converts the specified Object array into a String representation.
-   * <p/>
+   *
+   * <p>
+   *
    * @param array the Object array of elements to convert to a String.
    * @return a String representation of the Object array.
    * @see java.lang.StringBuilder
@@ -87,8 +94,8 @@ public abstract class ArrayUtils {
   }
 
   /**
-   * Insert an element into an array.  The element is inserted at the
-   * given position, all elements afterwards are moved to the right.
+   * Insert an element into an array. The element is inserted at the given position, all elements
+   * afterwards are moved to the right.
    *
    * @param originalArray array to insert into
    * @param pos position at which to insert the element
@@ -96,7 +103,10 @@ public abstract class ArrayUtils {
    * @return the new array
    */
   public static Object[] insert(Object[] originalArray, int pos, Object element) {
-    Object[] newArray = (Object[]) java.lang.reflect.Array.newInstance(originalArray.getClass().getComponentType(), originalArray.length + 1);
+    Object[] newArray =
+        (Object[])
+            java.lang.reflect.Array.newInstance(
+                originalArray.getClass().getComponentType(), originalArray.length + 1);
 
     // Test Cases (proof of correctness by examining corner cases)
     // 1) A B C D insert at 0: expect X A B C D
@@ -105,7 +115,8 @@ public abstract class ArrayUtils {
 
     // copy everything before the given position
     if (pos > 0) {
-      System.arraycopy(originalArray, 0, newArray, 0, pos); // does not copy originalArray[pos], where we insert
+      System.arraycopy(
+          originalArray, 0, newArray, 0, pos); // does not copy originalArray[pos], where we insert
     }
 
     // 1) A B C D insert at 0: no change, ". . . . ."
@@ -121,8 +132,11 @@ public abstract class ArrayUtils {
 
     // copy remaining elements
     if (pos < originalArray.length) {
-      System.arraycopy(originalArray, pos, // originalArray[pos] first element copied
-          newArray, pos + 1, // newArray[pos + 1] first destination
+      System.arraycopy(
+          originalArray,
+          pos, // originalArray[pos] first element copied
+          newArray,
+          pos + 1, // newArray[pos + 1] first destination
           originalArray.length - pos); // number of elements left
     }
 
@@ -133,15 +147,18 @@ public abstract class ArrayUtils {
   }
 
   /**
-   * Remove element from an array.  The element is removed at the
-   * specified position, and all remaining elements are moved to the left.
+   * Remove element from an array. The element is removed at the specified position, and all
+   * remaining elements are moved to the left.
    *
    * @param originalArray array to remove from
    * @param pos position to remove
    * @return the new array
    */
   public static Object[] remove(Object[] originalArray, int pos) {
-    Object[] newArray = (Object[]) java.lang.reflect.Array.newInstance(originalArray.getClass().getComponentType(), originalArray.length - 1);
+    Object[] newArray =
+        (Object[])
+            java.lang.reflect.Array.newInstance(
+                originalArray.getClass().getComponentType(), originalArray.length - 1);
 
     // Test cases: (proof of correctness)
     // 1) A B C D E remove 0: expect "B C D E"
@@ -150,7 +167,8 @@ public abstract class ArrayUtils {
 
     // Copy everything before
     if (pos > 0) {
-      System.arraycopy(originalArray, 0, newArray, 0, pos); // originalArray[pos - 1] is last element copied
+      System.arraycopy(
+          originalArray, 0, newArray, 0, pos); // originalArray[pos - 1] is last element copied
     }
 
     // 1) A B C D E remove 0: no change, ". . . ."
@@ -159,8 +177,11 @@ public abstract class ArrayUtils {
 
     // Copy everything after
     if (pos < originalArray.length - 1) {
-      System.arraycopy(originalArray, pos + 1, // originalArray[pos + 1] is first element copied
-          newArray, pos, // first position to copy into
+      System.arraycopy(
+          originalArray,
+          pos + 1, // originalArray[pos + 1] is first element copied
+          newArray,
+          pos, // first position to copy into
           originalArray.length - 1 - pos);
     }
 
@@ -171,12 +192,16 @@ public abstract class ArrayUtils {
   }
 
   public static String objectRefString(Object obj) {
-    return obj != null ? obj.getClass().getSimpleName() + '@' + Integer.toHexString(System.identityHashCode(obj)) : "(null)";
+    return obj != null
+        ? obj.getClass().getSimpleName() + '@' + Integer.toHexString(System.identityHashCode(obj))
+        : "(null)";
   }
 
   public static void objectRefString(Object obj, StringBuilder sb) {
     if (obj != null) {
-      sb.append(obj.getClass().getSimpleName()).append('@').append(Integer.toHexString(System.identityHashCode(obj)));
+      sb.append(obj.getClass().getSimpleName())
+          .append('@')
+          .append(Integer.toHexString(System.identityHashCode(obj)));
     } else {
       sb.append("(null)");
     }
@@ -208,10 +233,7 @@ public abstract class ArrayUtils {
     }
   }
 
-  /**
-   * Get proper string for an an object including arrays with upto one dimension
-   * of arrays.
-   */
+  /** Get proper string for an an object including arrays with upto one dimension of arrays. */
   public static String objectStringNonRecursive(@Unretained Object obj) {
     StringBuilder sb = new StringBuilder();
     objectStringNonRecursive(obj, sb);
@@ -232,10 +254,7 @@ public abstract class ArrayUtils {
     return areEqual;
   }
 
-  /**
-   * Get proper string for an an object including arrays with upto one dimension
-   * of arrays.
-   */
+  /** Get proper string for an an object including arrays with upto one dimension of arrays. */
   public static void objectStringNonRecursive(@Unretained Object obj, StringBuilder sb) {
     if (obj instanceof Object[]) {
       sb.append('(');
@@ -281,10 +300,7 @@ public abstract class ArrayUtils {
     }
   }
 
-  /**
-   * Check if two objects, possibly null, are equal. Doesn't really belong to
-   * this class...
-   */
+  /** Check if two objects, possibly null, are equal. Doesn't really belong to this class... */
   public static boolean objectEquals(Object o1, Object o2) {
     if (o1 == o2) {
       return true;
@@ -297,7 +313,7 @@ public abstract class ArrayUtils {
 
   /**
    * Converts the primitive int array into an Integer wrapper object array.
-   * </p>
+   *
    * @param array the primitive int array to convert into an Integer wrapper object array.
    * @return an Integer array containing the values from the elements in the primitive int array.
    */
@@ -314,8 +330,8 @@ public abstract class ArrayUtils {
   }
 
   /**
-   * Converts a double byte array into a double Byte array. 
-   * 
+   * Converts a double byte array into a double Byte array.
+   *
    * @param array the double byte array to convert into double Byte array
    * @return a double array of Byte objects containing values from the double byte array
    */
@@ -334,8 +350,8 @@ public abstract class ArrayUtils {
   }
 
   /**
-   * Converts a double Byte array into a double byte array. 
-   * 
+   * Converts a double Byte array into a double byte array.
+   *
    * @param byteArray the double Byte array to convert into a double byte array
    * @return a double byte array containing byte values from the double Byte array
    */

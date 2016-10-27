@@ -31,9 +31,9 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Tests the basic functionality of the lru eviction 
- * controller and its statistics using off-heap regions.
- * 
+ * Tests the basic functionality of the lru eviction controller and its statistics using off-heap
+ * regions.
+ *
  * @since Geode 1.0
  */
 @Category(DistributedTest.class)
@@ -45,15 +45,16 @@ public class OffHeapLRUEvictionControllerDUnitTest extends LRUEvictionController
 
   @Override
   public final void preTearDownAssertions() throws Exception {
-    SerializableRunnable checkOrphans = new SerializableRunnable() {
+    SerializableRunnable checkOrphans =
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        if (hasCache()) {
-          OffHeapTestUtil.checkOrphans();
-        }
-      }
-    };
+          @Override
+          public void run() {
+            if (hasCache()) {
+              OffHeapTestUtil.checkOrphans();
+            }
+          }
+        };
     Invoke.invokeInEveryVM(checkOrphans);
     checkOrphans.run();
   }

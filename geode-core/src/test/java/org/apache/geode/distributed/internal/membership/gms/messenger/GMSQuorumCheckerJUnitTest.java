@@ -189,7 +189,8 @@ public class GMSQuorumCheckerJUnitTest {
   }
 
   @Test
-  public void testQuorumChecker10Servers2Locators5ServersAnd2LocatorsButNotLeadMemberLost() throws Exception {
+  public void testQuorumChecker10Servers2Locators5ServersAnd2LocatorsButNotLeadMemberLost()
+      throws Exception {
     NetView view = prepareView();
     mockMembers[0].setVmKind(DistributionManager.LOCATOR_DM_TYPE);
     mockMembers[1].setVmKind(DistributionManager.LOCATOR_DM_TYPE);
@@ -221,7 +222,8 @@ public class GMSQuorumCheckerJUnitTest {
   }
 
   @Test
-  public void testQuorumChecker10Servers2Locators5ServerAnd1LocatorWithLeadMemberLost() throws Exception {
+  public void testQuorumChecker10Servers2Locators5ServerAnd1LocatorWithLeadMemberLost()
+      throws Exception {
     NetView view = prepareView();
     mockMembers[0].setVmKind(DistributionManager.LOCATOR_DM_TYPE);
     mockMembers[1].setVmKind(DistributionManager.LOCATOR_DM_TYPE);
@@ -339,7 +341,9 @@ public class GMSQuorumCheckerJUnitTest {
             if (pingPonger.isPingMessage((byte[]) content)) {
               pingCount++;
               if (simulatedPongRespondersByPort.contains(((JGAddress) msg.getDest()).getPort())) {
-                channel.getReceiver().receive(pingPonger.createPongMessage(msg.getDest(), msg.getSrc()));
+                channel
+                    .getReceiver()
+                    .receive(pingPonger.createPongMessage(msg.getDest(), msg.getSrc()));
               }
             }
           }

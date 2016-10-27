@@ -19,10 +19,9 @@ package org.apache.geode.management;
 import java.beans.ConstructorProperties;
 
 public class CompositeStats {
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
+
   private final String connectionStatsType; // shouldn't change
   private long connectionsOpened;
   private long connectionsClosed;
@@ -30,8 +29,23 @@ public class CompositeStats {
   private long connectionsFailed;
   private long connectionLifeTime; // is this total TTL??
 
-  @ConstructorProperties(value = { "connectionStatsType", "connectionsOpened", "connectionsClosed", "connectionsAttempted", "connectionsFailed", "connectionLifeTime" })
-  public CompositeStats(String connectionStatsType, long connectionsOpen, long connectionsClosed, long connectionsAttempts, long connectionsFailures, long connectionLifeTime) {
+  @ConstructorProperties(
+    value = {
+      "connectionStatsType",
+      "connectionsOpened",
+      "connectionsClosed",
+      "connectionsAttempted",
+      "connectionsFailed",
+      "connectionLifeTime"
+    }
+  )
+  public CompositeStats(
+      String connectionStatsType,
+      long connectionsOpen,
+      long connectionsClosed,
+      long connectionsAttempts,
+      long connectionsFailures,
+      long connectionLifeTime) {
     this.connectionStatsType = connectionStatsType;
     this.connectionsOpened = connectionsOpen;
     this.connectionsClosed = connectionsClosed;
@@ -40,44 +54,32 @@ public class CompositeStats {
     this.connectionLifeTime = connectionLifeTime;
   }
 
-  /**
-   * @return the connectionStatsType
-   */
+  /** @return the connectionStatsType */
   public String getConnectionStatsType() {
     return connectionStatsType;
   }
 
-  /**
-   * @return the connectionsOpened
-   */
+  /** @return the connectionsOpened */
   public long getConnectionsOpened() {
     return connectionsOpened;
   }
 
-  /**
-   * @return the connectionsClosed
-   */
+  /** @return the connectionsClosed */
   public long getConnectionsClosed() {
     return connectionsClosed;
   }
 
-  /**
-   * @return the connectionsAttempted
-   */
+  /** @return the connectionsAttempted */
   public long getConnectionsAttempted() {
     return connectionsAttempted;
   }
 
-  /**
-   * @return the connectionsFailed
-   */
+  /** @return the connectionsFailed */
   public long getConnectionsFailed() {
     return connectionsFailed;
   }
 
-  /**
-   * @return the connectionLifeTime
-   */
+  /** @return the connectionLifeTime */
   public long getConnectionLifeTime() {
     return connectionLifeTime;
   }
@@ -95,5 +97,4 @@ public class CompositeStats {
     builder.append("]");
     return builder.toString();
   }
-
 }

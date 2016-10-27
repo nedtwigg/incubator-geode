@@ -36,9 +36,7 @@ import org.apache.geode.cache.query.internal.ResultsSet;
 import org.apache.geode.distributed.DistributedSystem;
 import org.apache.geode.internal.NanoTimer;
 
-/**
- *
- */
+/** */
 public class PerfQuery {
   private static int NUM_ITERATIONS = 20000;
 
@@ -47,8 +45,9 @@ public class PerfQuery {
   private static final int BRUTE_FORCE = 1;
   private static final int INDEXED = 2;
   private static final int INDEX_CREATE = 3;
-  private static final String[] execTypeStrings = new String[] { "hand-coded", "brute force", "indexed", "index-create" };
-  private static final int[] DATA_SET_SIZES = new int[] { 100, 1000, 10000, 20000 };
+  private static final String[] execTypeStrings =
+      new String[] {"hand-coded", "brute force", "indexed", "index-create"};
+  private static final int[] DATA_SET_SIZES = new int[] {100, 1000, 10000, 20000};
 
   private DistributedSystem ds;
   private Region region = null;
@@ -93,7 +92,7 @@ public class PerfQuery {
     System.out.println("Average query execution time in ms");
     System.out.println();
 
-    String[] setNames = new String[] { "33% Retrieval", "0% Retrieval" };
+    String[] setNames = new String[] {"33% Retrieval", "0% Retrieval"};
     for (int setI = 0; setI < setNames.length; setI++) {
       String setName = setNames[setI];
       System.out.println(setName + ":");
@@ -181,7 +180,7 @@ public class PerfQuery {
       public Object execute() {
         Region region = PerfQuery.this.cache.getRegion("/portfolios");
         SelectResults results = new ResultsSet();
-        for (Iterator itr = region.values().iterator(); itr.hasNext();) {
+        for (Iterator itr = region.values().iterator(); itr.hasNext(); ) {
           Portfolio ptflo = (Portfolio) itr.next();
           if ("type1".equals(ptflo.getType())) {
             results.add(ptflo);
@@ -197,7 +196,7 @@ public class PerfQuery {
       public Object execute() {
         Region region = PerfQuery.this.cache.getRegion("/portfolios");
         SelectResults results = new ResultsSet();
-        for (Iterator itr = region.values().iterator(); itr.hasNext();) {
+        for (Iterator itr = region.values().iterator(); itr.hasNext(); ) {
           Portfolio ptflo = (Portfolio) itr.next();
           if ("miss".equals(ptflo.getType())) {
             results.add(ptflo);
@@ -258,9 +257,7 @@ public class PerfQuery {
     }
   }
 
-  /**
-   * @param args the command line arguments
-   */
+  /** @param args the command line arguments */
   public static void main(String[] args) throws Exception {
     new PerfQuery().run();
   }
@@ -272,7 +269,9 @@ public class PerfQuery {
       this.queryString = queryString;
     }
 
-    public abstract Object execute() throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException;
+    public abstract Object execute()
+        throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+            QueryInvocationTargetException;
 
     public void compile() throws TypeMismatchException, NameResolutionException {
       // already compiled
@@ -286,7 +285,9 @@ public class PerfQuery {
       return this.queryString;
     }
 
-    public Object execute(Object[] params) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+    public Object execute(Object[] params)
+        throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+            QueryInvocationTargetException {
       throw new UnsupportedOperationException();
     }
 
@@ -299,15 +300,17 @@ public class PerfQuery {
     }
 
     @Override
-    public Object execute(RegionFunctionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+    public Object execute(RegionFunctionContext context)
+        throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+            QueryInvocationTargetException {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object execute(RegionFunctionContext context, Object[] params) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+    public Object execute(RegionFunctionContext context, Object[] params)
+        throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+            QueryInvocationTargetException {
       throw new UnsupportedOperationException();
     }
-
   }
-
 }

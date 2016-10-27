@@ -49,12 +49,11 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
  * Implementation used by PoolManager.
  *
  * @since GemFire 5.7
- *
  */
 public class PoolManagerImpl {
   private static final Logger logger = LogService.getLogger();
 
-  private final static PoolManagerImpl impl = new PoolManagerImpl(true);
+  private static final PoolManagerImpl impl = new PoolManagerImpl(true);
 
   public static PoolManagerImpl getPMI() {
     PoolManagerImpl result = CacheCreation.getCurrentPoolManager();
@@ -68,31 +67,28 @@ public class PoolManagerImpl {
   private volatile Iterator<Map.Entry<String, Pool>> itrForEmergencyClose = null;
   private final Object poolLock = new Object();
   /**
-   * True if this manager is a normal one owned by the PoolManager.
-   * False if this is a special one owned by a xml CacheCreation.
+   * True if this manager is a normal one owned by the PoolManager. False if this is a special one
+   * owned by a xml CacheCreation.
    */
   private final boolean normalManager;
 
   /**
-   * @param addListener will be true if the is a real manager that needs to
-   *                    register a connect listener. False if it is a fake
-   *                    manager used internally by the XML code.
+   * @param addListener will be true if the is a real manager that needs to register a connect
+   *     listener. False if it is a fake manager used internally by the XML code.
    */
   public PoolManagerImpl(boolean addListener) {
     this.normalManager = addListener;
   }
 
-  /**
-   * Returns true if this is a normal manager; false if it is a fake one used
-   * for xml parsing.
-   */
+  /** Returns true if this is a normal manager; false if it is a fake one used for xml parsing. */
   public boolean isNormal() {
     return this.normalManager;
   }
 
   /**
-   * Creates a new {@link PoolFactory pool factory},
-   * which is used to configure and create new {@link Pool}s.
+   * Creates a new {@link PoolFactory pool factory}, which is used to configure and create new
+   * {@link Pool}s.
+   *
    * @return the new pool factory
    */
   public PoolFactory createFactory() {
@@ -100,8 +96,9 @@ public class PoolManagerImpl {
   }
 
   /**
-   * Find by name an existing connection pool returning
-   * the existing pool or <code>null</code> if it does not exist.
+   * Find by name an existing connection pool returning the existing pool or <code>null</code> if it
+   * does not exist.
+   *
    * @param name the name of the connection pool
    * @return the existing connection pool or <code>null</code> if it does not exist.
    */
@@ -109,14 +106,12 @@ public class PoolManagerImpl {
     return this.pools.get(name);
   }
 
-  /**
-   * Destroys all created pool in this manager.
-   */
+  /** Destroys all created pool in this manager. */
   public void close(boolean keepAlive) {
     // destroying connection pools
     boolean foundClientPool = false;
     synchronized (poolLock) {
-      for (Iterator<Map.Entry<String, Pool>> itr = pools.entrySet().iterator(); itr.hasNext();) {
+      for (Iterator<Map.Entry<String, Pool>> itr = pools.entrySet().iterator(); itr.hasNext(); ) {
         Map.Entry<String, Pool> entry = itr.next();
         PoolImpl pool = (PoolImpl) entry.getValue();
         pool.basicDestroy(keepAlive);
@@ -131,9 +126,7 @@ public class PoolManagerImpl {
     }
   }
 
-  /**
-   * @return a copy of the Pools Map
-   */
+  /** @return a copy of the Pools Map */
   public Map<String, Pool> getMap() {
     //debugStack("getMap: " + this.pools);
     return new HashMap<String, Pool>(this.pools);
@@ -141,6 +134,7 @@ public class PoolManagerImpl {
 
   /**
    * This is called by {@link PoolImpl#create}
+   *
    * @throws IllegalStateException if a pool with same name is already registered.
    */
   public void register(Pool pool) {
@@ -150,7 +144,8 @@ public class PoolManagerImpl {
       //debugStack("register pool=" + name);
       Object old = copy.put(name, pool);
       if (old != null) {
-        throw new IllegalStateException(LocalizedStrings.PoolManagerImpl_POOL_NAMED_0_ALREADY_EXISTS.toLocalizedString(name));
+        throw new IllegalStateException(
+            LocalizedStrings.PoolManagerImpl_POOL_NAMED_0_ALREADY_EXISTS.toLocalizedString(name));
       }
       //      Boolean specialCase=Boolean.getBoolean("gemfire.SPECIAL_DURABLE");
       //      if(specialCase && copy.size()>1){
@@ -164,6 +159,7 @@ public class PoolManagerImpl {
 
   /**
    * This is called by {@link Pool#destroy(boolean)}
+   *
    * @return true if pool unregistered from cache; false if someone else already did it
    */
   public boolean unregister(Pool pool) {
@@ -189,13 +185,11 @@ public class PoolManagerImpl {
     return result.toString();
   }
 
-  /**
-   * @param xmlPoolsOnly if true then only call readyForEvents on pools declared in XML.
-   */
+  /** @param xmlPoolsOnly if true then only call readyForEvents on pools declared in XML. */
   public static void readyForEvents(InternalDistributedSystem system, boolean xmlPoolsOnly) {
     boolean foundDurablePool = false;
     Map<String, Pool> pools = PoolManager.getAll();
-    for (Iterator<Pool> itr = pools.values().iterator(); itr.hasNext();) {
+    for (Iterator<Pool> itr = pools.values().iterator(); itr.hasNext(); ) {
       PoolImpl p = (PoolImpl) itr.next();
       if (p.isDurableClient()) {
         //TODO - handle an exception and attempt on all pools?
@@ -206,27 +200,31 @@ public class PoolManagerImpl {
       }
     }
     if (pools.size() > 0 && !foundDurablePool) {
-      throw new IllegalStateException(LocalizedStrings.PoolManagerImpl_ONLY_DURABLE_CLIENTS_SHOULD_CALL_READYFOREVENTS.toLocalizedString());
+      throw new IllegalStateException(
+          LocalizedStrings.PoolManagerImpl_ONLY_DURABLE_CLIENTS_SHOULD_CALL_READYFOREVENTS
+              .toLocalizedString());
     }
   }
 
-  /**
-   * @param instantiator
-   */
+  /** @param instantiator */
   public static void allPoolsRegisterInstantiator(Instantiator instantiator) {
     Instantiator[] instantiators = new Instantiator[1];
     instantiators[0] = instantiator;
-    for (Iterator<Pool> itr = PoolManager.getAll().values().iterator(); itr.hasNext();) {
+    for (Iterator<Pool> itr = PoolManager.getAll().values().iterator(); itr.hasNext(); ) {
       PoolImpl next = (PoolImpl) itr.next();
       try {
         EventID eventId = InternalInstantiator.generateEventId();
         if (eventId == null) {
           //cache must not exist, do nothing
         } else {
-          RegisterInstantiatorsOp.execute(next, instantiators, InternalInstantiator.generateEventId());
+          RegisterInstantiatorsOp.execute(
+              next, instantiators, InternalInstantiator.generateEventId());
         }
       } catch (RuntimeException e) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.PoolmanagerImpl_ERROR_REGISTERING_INSTANTIATOR_ON_POOL), e);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.PoolmanagerImpl_ERROR_REGISTERING_INSTANTIATOR_ON_POOL),
+            e);
       } finally {
         next.releaseThreadLocalConnection();
       }
@@ -236,7 +234,7 @@ public class PoolManagerImpl {
   public static void allPoolsRegisterInstantiator(InstantiatorAttributesHolder holder) {
     InstantiatorAttributesHolder[] holders = new InstantiatorAttributesHolder[1];
     holders[0] = holder;
-    for (Iterator<Pool> itr = PoolManager.getAll().values().iterator(); itr.hasNext();) {
+    for (Iterator<Pool> itr = PoolManager.getAll().values().iterator(); itr.hasNext(); ) {
       PoolImpl next = (PoolImpl) itr.next();
       try {
         EventID eventId = InternalInstantiator.generateEventId();
@@ -246,7 +244,10 @@ public class PoolManagerImpl {
           RegisterInstantiatorsOp.execute(next, holders, InternalInstantiator.generateEventId());
         }
       } catch (RuntimeException e) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.PoolmanagerImpl_ERROR_REGISTERING_INSTANTIATOR_ON_POOL), e);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.PoolmanagerImpl_ERROR_REGISTERING_INSTANTIATOR_ON_POOL),
+            e);
       } finally {
         next.releaseThreadLocalConnection();
       }
@@ -256,7 +257,7 @@ public class PoolManagerImpl {
   public static void allPoolsRegisterDataSerializers(DataSerializer dataSerializer) {
     DataSerializer[] dataSerializers = new DataSerializer[1];
     dataSerializers[0] = dataSerializer;
-    for (Iterator<Pool> itr = PoolManager.getAll().values().iterator(); itr.hasNext();) {
+    for (Iterator<Pool> itr = PoolManager.getAll().values().iterator(); itr.hasNext(); ) {
       PoolImpl next = (PoolImpl) itr.next();
       try {
         EventID eventId = (EventID) dataSerializer.getEventId();
@@ -269,7 +270,10 @@ public class PoolManagerImpl {
           RegisterDataSerializersOp.execute(next, dataSerializers, eventId);
         }
       } catch (RuntimeException e) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.PoolmanagerImpl_ERROR_REGISTERING_INSTANTIATOR_ON_POOL), e);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.PoolmanagerImpl_ERROR_REGISTERING_INSTANTIATOR_ON_POOL),
+            e);
       } finally {
         next.releaseThreadLocalConnection();
       }
@@ -279,7 +283,7 @@ public class PoolManagerImpl {
   public static void allPoolsRegisterDataSerializers(SerializerAttributesHolder holder) {
     SerializerAttributesHolder[] holders = new SerializerAttributesHolder[1];
     holders[0] = holder;
-    for (Iterator<Pool> itr = PoolManager.getAll().values().iterator(); itr.hasNext();) {
+    for (Iterator<Pool> itr = PoolManager.getAll().values().iterator(); itr.hasNext(); ) {
       PoolImpl next = (PoolImpl) itr.next();
       try {
         EventID eventId = (EventID) holder.getEventId();
@@ -292,7 +296,10 @@ public class PoolManagerImpl {
           RegisterDataSerializersOp.execute(next, holders, eventId);
         }
       } catch (RuntimeException e) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.PoolmanagerImpl_ERROR_REGISTERING_INSTANTIATOR_ON_POOL), e);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.PoolmanagerImpl_ERROR_REGISTERING_INSTANTIATOR_ON_POOL),
+            e);
       } finally {
         next.releaseThreadLocalConnection();
       }

@@ -27,25 +27,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.SynchronousQueue;
 
-/**
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class StatMonitorHandler implements SampleHandler {
 
   private static final Logger logger = LogService.getLogger();
 
-  static final String ENABLE_MONITOR_THREAD = DistributionConfig.GEMFIRE_PREFIX + "stats.enableMonitorThread";
+  static final String ENABLE_MONITOR_THREAD =
+      DistributionConfig.GEMFIRE_PREFIX + "stats.enableMonitorThread";
   static final boolean enableMonitorThread = Boolean.getBoolean(ENABLE_MONITOR_THREAD);
 
   /** The registered monitors */
-  private volatile List<StatisticsMonitor> monitors = Collections.<StatisticsMonitor> emptyList();
+  private volatile List<StatisticsMonitor> monitors = Collections.<StatisticsMonitor>emptyList();
 
   /** Protected by synchronization on this handler instance */
   private volatile StatMonitorNotifier notifier;
 
   /** Constructs a new StatMonitorHandler instance */
-  public StatMonitorHandler() {
-  }
+  public StatMonitorHandler() {}
 
   /** Adds a monitor which will be notified of samples */
   public boolean addMonitor(StatisticsMonitor monitor) {
@@ -83,9 +81,7 @@ public class StatMonitorHandler implements SampleHandler {
     }
   }
 
-  /**
-   * Stops the notifier thread if one exists.
-   */
+  /** Stops the notifier thread if one exists. */
   public void close() {
     synchronized (this) {
       if (enableMonitorThread && this.notifier != null) {
@@ -122,24 +118,31 @@ public class StatMonitorHandler implements SampleHandler {
         throw e;
       } catch (Error e) {
         SystemFailure.checkFailure();
-        logger.warn(LogMarker.STATISTICS, "StatisticsMonitor {} threw {}", monitor, e.getClass().getSimpleName(), e);
+        logger.warn(
+            LogMarker.STATISTICS,
+            "StatisticsMonitor {} threw {}",
+            monitor,
+            e.getClass().getSimpleName(),
+            e);
       } catch (RuntimeException e) {
-        logger.warn(LogMarker.STATISTICS, "StatisticsMonitor {} threw {}", monitor, e.getClass().getSimpleName(), e);
+        logger.warn(
+            LogMarker.STATISTICS,
+            "StatisticsMonitor {} threw {}",
+            monitor,
+            e.getClass().getSimpleName(),
+            e);
       }
     }
   }
 
   @Override
-  public void allocatedResourceType(ResourceType resourceType) {
-  }
+  public void allocatedResourceType(ResourceType resourceType) {}
 
   @Override
-  public void allocatedResourceInstance(ResourceInstance resourceInstance) {
-  }
+  public void allocatedResourceInstance(ResourceInstance resourceInstance) {}
 
   @Override
-  public void destroyedResourceInstance(ResourceInstance resourceInstance) {
-  }
+  public void destroyedResourceInstance(ResourceInstance resourceInstance) {}
 
   /** For testing only */
   List<StatisticsMonitor> getMonitorsSnapshot() {
@@ -153,9 +156,7 @@ public class StatMonitorHandler implements SampleHandler {
     }
   }
 
-  /**
-   * @since GemFire 7.0
-   */
+  /** @since GemFire 7.0 */
   class StatMonitorNotifier implements Runnable {
 
     /** True while this notifier's thread is running */
@@ -173,8 +174,7 @@ public class StatMonitorHandler implements SampleHandler {
     /** Used to hand-off from producer to consumer */
     private final SynchronousQueue<MonitorTask> task = new SynchronousQueue<MonitorTask>();
 
-    StatMonitorNotifier() {
-    }
+    StatMonitorNotifier() {}
 
     @Override
     public void run() {
@@ -222,15 +222,26 @@ public class StatMonitorHandler implements SampleHandler {
             List<StatisticsMonitor> currentMonitors = StatMonitorHandler.this.monitors;
             for (StatisticsMonitor monitor : currentMonitors) {
               try {
-                monitor.monitor(latestTask.getSampleTimeMillis(), latestTask.getResourceInstances());
+                monitor.monitor(
+                    latestTask.getSampleTimeMillis(), latestTask.getResourceInstances());
               } catch (VirtualMachineError e) {
                 SystemFailure.initiateFailure(e);
                 throw e;
               } catch (Error e) {
                 SystemFailure.checkFailure();
-                logger.warn(LogMarker.STATISTICS, "StatisticsMonitor {} threw {}", monitor, e.getClass().getSimpleName(), e);
+                logger.warn(
+                    LogMarker.STATISTICS,
+                    "StatisticsMonitor {} threw {}",
+                    monitor,
+                    e.getClass().getSimpleName(),
+                    e);
               } catch (RuntimeException e) {
-                logger.warn(LogMarker.STATISTICS, "StatisticsMonitor {} threw {}", monitor, e.getClass().getSimpleName(), e);
+                logger.warn(
+                    LogMarker.STATISTICS,
+                    "StatisticsMonitor {} threw {}",
+                    monitor,
+                    e.getClass().getSimpleName(),
+                    e);
               }
             }
           }
@@ -304,9 +315,7 @@ public class StatMonitorHandler implements SampleHandler {
     }
   }
 
-  /**
-   * @since GemFire 7.0
-   */
+  /** @since GemFire 7.0 */
   static class MonitorTask {
     private final long sampleTimeMillis;
     private final List<ResourceInstance> resourceInstances;

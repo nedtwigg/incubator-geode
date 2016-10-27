@@ -21,16 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-/***
- * Data class to hold the information of the member
- * Used in describe member command
- *
- */
+/** * Data class to hold the information of the member Used in describe member command */
 public class MemberInformation implements Serializable {
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
+
   private String name;
   private String id;
   private String workingDirPath;
@@ -203,8 +198,7 @@ public class MemberInformation implements Serializable {
   }
 
   public void addCacheServerInfo(CacheServerInfo cacheServerInfo) {
-    if (cacheServerInfo == null)
-      return;
+    if (cacheServerInfo == null) return;
     if (cacheServerList == null) {
       cacheServerList = new ArrayList<CacheServerInfo>();
     }

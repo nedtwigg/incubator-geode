@@ -65,11 +65,10 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * <code>CacheClientUpdater</code> is a thread that processes update messages
- * from a cache server and
- * {@linkplain org.apache.geode.cache.Region#localInvalidate(Object) invalidates}
- * the local cache based on the contents of those messages.
- * 
+ * <code>CacheClientUpdater</code> is a thread that processes update messages from a cache server
+ * and {@linkplain org.apache.geode.cache.Region#localInvalidate(Object) invalidates} the local
+ * cache based on the contents of those messages.
+ *
  * @since GemFire 3.5
  */
 public class CacheClientUpdater extends Thread implements ClientUpdater, DisconnectListener {
@@ -77,85 +76,61 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
   private static final Logger logger = LogService.getLogger();
 
   /**
-   * true if the constructor successfully created a connection. If false, the
-   * run method for this thread immediately exits.
+   * true if the constructor successfully created a connection. If false, the run method for this
+   * thread immediately exits.
    */
   private final boolean connected;
 
-  /**
-   * System of which we are a part
-   */
+  /** System of which we are a part */
   private final InternalDistributedSystem system;
 
-  /**
-   * The socket by which we communicate with the server
-   */
+  /** The socket by which we communicate with the server */
   private final Socket socket;
 
-  /**
-   * The output stream of the socket
-   */
+  /** The output stream of the socket */
   private final OutputStream out;
 
-  /**
-   * The input stream of the socket
-   */
+  /** The input stream of the socket */
   private final InputStream in;
-  /**
-   * Failed updater from the endpoint previously known as the primary
-   */
+  /** Failed updater from the endpoint previously known as the primary */
   private volatile ClientUpdater failedUpdater;
 
-  /**
-   * The buffer upon which we receive messages
-   */
+  /** The buffer upon which we receive messages */
   private final ByteBuffer commBuffer;
+
   private boolean commBufferReleased;
 
   private final CCUStats stats;
 
-  /**
-   * Cache for which we provide service
-   */
+  /** Cache for which we provide service */
   private /*final*/ GemFireCacheImpl cache;
+
   private /*final*/ CachedRegionHelper cacheHelper;
 
-  /**
-   * Principle flag to signal thread's run loop to terminate
-   */
+  /** Principle flag to signal thread's run loop to terminate */
   private final AtomicBoolean continueProcessing = new AtomicBoolean(true);
 
-  /**
-   * Is the client durable
-   * Used for bug 39010 fix 
-   */
+  /** Is the client durable Used for bug 39010 fix */
   private final boolean isDurableClient;
 
-  /**
-   * Represents the server we are connected to
-   */
+  /** Represents the server we are connected to */
   private final InternalDistributedMember serverId;
 
-  /**
-   * true if the EndPoint represented by this updater thread is primary
-   */
+  /** true if the EndPoint represented by this updater thread is primary */
   private final boolean isPrimary;
 
-  /**
-   * Added to avoid recording of the event if the concerned operation failed.
-   * See #43247
-   */
+  /** Added to avoid recording of the event if the concerned operation failed. See #43247 */
   private boolean isOpCompleted;
 
-  public final static String CLIENT_UPDATER_THREAD_NAME = "Cache Client Updater Thread ";
+  public static final String CLIENT_UPDATER_THREAD_NAME = "Cache Client Updater Thread ";
   /*
    * to enable test flag
    */
   public static boolean isUsedByTest;
 
   /**
-   * Indicates if full value was requested from server as a result of failure in
-   * applying delta bytes.
+   * Indicates if full value was requested from server as a result of failure in applying delta
+   * bytes.
    */
   public static boolean fullValueRequested = false;
 
@@ -166,7 +141,7 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
   //   * TODO is this still needed?
   //   * <p>
   //   * Accesses synchronized via <code>this</code>
-  //   * 
+  //   *
   //   * @see #notifyInitializationComplete()
   //   * @see #waitForInitialization()
   //   */
@@ -179,26 +154,38 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
   private EndpointManager eManager = null;
   private Endpoint endpoint = null;
 
-  static private final long MAX_CACHE_WAIT = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "CacheClientUpdater.MAX_WAIT", 120).longValue(); // seconds
+  private static final long MAX_CACHE_WAIT =
+      Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "CacheClientUpdater.MAX_WAIT", 120)
+          .longValue(); // seconds
 
   /**
    * Return true if cache appears
+   *
    * @return true if cache appears
    */
   private boolean waitForCache() {
     GemFireCacheImpl c;
     long tilt = System.currentTimeMillis() + MAX_CACHE_WAIT * 1000;
-    for (;;) {
+    for (; ; ) {
       if (quitting()) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_0_ABANDONED_WAIT_DUE_TO_CANCELLATION, this));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.CacheClientUpdater_0_ABANDONED_WAIT_DUE_TO_CANCELLATION, this));
         return false;
       }
       if (!this.connected) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_0_ABANDONED_WAIT_BECAUSE_IT_IS_NO_LONGER_CONNECTED, this));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .CacheClientUpdater_0_ABANDONED_WAIT_BECAUSE_IT_IS_NO_LONGER_CONNECTED,
+                this));
         return false;
       }
       if (System.currentTimeMillis() > tilt) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_0_WAIT_TIMED_OUT_MORE_THAN_1_SECONDS, new Object[] { this, MAX_CACHE_WAIT }));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.CacheClientUpdater_0_WAIT_TIMED_OUT_MORE_THAN_1_SECONDS,
+                new Object[] {this, MAX_CACHE_WAIT}));
         return false;
       }
       c = GemFireCacheImpl.getInstance();
@@ -222,30 +209,33 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
   }
 
   /**
-   * Creates a new <code>CacheClientUpdater</code> with a given name that
-   * waits for a server to connect on a given port.
+   * Creates a new <code>CacheClientUpdater</code> with a given name that waits for a server to
+   * connect on a given port.
    *
-   * @param name
-   *                descriptive name, used for our ThreadGroup
-   * @param location
-   *                the endpoint we represent
-   * @param primary
-   *                true if our endpoint is primary TODO ask the ep for this?
-   * @param ids
-   *                the system we are distributing messages through
-   * 
-   * @throws AuthenticationRequiredException
-   *                 when client is not configured to send credentials using
-   *                 security-* system properties but server expects credentials
-   * @throws AuthenticationFailedException
-   *                 when authentication of the client fails
-   * @throws ServerRefusedConnectionException
-   *                 when handshake fails for other reasons like using durable
-   *                 client ID that is already in use by another client or some
-   *                 server side exception while reading handshake/verifying
-   *                 credentials
+   * @param name descriptive name, used for our ThreadGroup
+   * @param location the endpoint we represent
+   * @param primary true if our endpoint is primary TODO ask the ep for this?
+   * @param ids the system we are distributing messages through
+   * @throws AuthenticationRequiredException when client is not configured to send credentials using
+   *     security-* system properties but server expects credentials
+   * @throws AuthenticationFailedException when authentication of the client fails
+   * @throws ServerRefusedConnectionException when handshake fails for other reasons like using
+   *     durable client ID that is already in use by another client or some server side exception
+   *     while reading handshake/verifying credentials
    */
-  public CacheClientUpdater(String name, ServerLocation location, boolean primary, DistributedSystem ids, HandShake handshake, QueueManager qManager, EndpointManager eManager, Endpoint endpoint, int handshakeTimeout, SocketCreator socketCreator) throws AuthenticationRequiredException, AuthenticationFailedException, ServerRefusedConnectionException {
+  public CacheClientUpdater(
+      String name,
+      ServerLocation location,
+      boolean primary,
+      DistributedSystem ids,
+      HandShake handshake,
+      QueueManager qManager,
+      EndpointManager eManager,
+      Endpoint endpoint,
+      int handshakeTimeout,
+      SocketCreator socketCreator)
+      throws AuthenticationRequiredException, AuthenticationFailedException,
+          ServerRefusedConnectionException {
     super(LoggingThreadGroup.createThreadGroup("Client update thread"), name);
     this.setDaemon(true);
     this.system = (InternalDistributedSystem) ids;
@@ -271,9 +261,12 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
     InputStream tmpIn = null;
     try {
       /** Size of the server-to-client communication socket buffers */
-      int socketBufferSize = Integer.getInteger("BridgeServer.SOCKET_BUFFER_SIZE", 32768).intValue();
+      int socketBufferSize =
+          Integer.getInteger("BridgeServer.SOCKET_BUFFER_SIZE", 32768).intValue();
 
-      mySock = socketCreator.connectForClient(location.getHostName(), location.getPort(), handshakeTimeout, socketBufferSize);
+      mySock =
+          socketCreator.connectForClient(
+              location.getHostName(), location.getPort(), handshakeTimeout, socketBufferSize);
       mySock.setTcpNoDelay(true);
       mySock.setSendBufferSize(socketBufferSize);
 
@@ -287,11 +280,18 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       tmpIn = mySock.getInputStream();
 
       if (isDebugEnabled) {
-        logger.debug("Initialized server-to-client socket with send buffer size: {} bytes and receive buffer size: {} bytes", mySock.getSendBufferSize(), mySock.getReceiveBufferSize());
+        logger.debug(
+            "Initialized server-to-client socket with send buffer size: {} bytes and receive buffer size: {} bytes",
+            mySock.getSendBufferSize(),
+            mySock.getReceiveBufferSize());
       }
 
       if (isDebugEnabled) {
-        logger.debug("Created connection from {}:{} to CacheClientNotifier on port {} for server-to-client communication", mySock.getInetAddress().getHostAddress(), mySock.getLocalPort(), mySock.getPort());
+        logger.debug(
+            "Created connection from {}:{} to CacheClientNotifier on port {} for server-to-client communication",
+            mySock.getInetAddress().getHostAddress(),
+            mySock.getLocalPort(),
+            mySock.getPort());
       }
 
       ServerQueueStatus sqs = handshake.greetNotifier(mySock, this.isPrimary, location);
@@ -320,32 +320,54 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
         // @todo - change the serverId to use the endpoint's getMemberId() which
         // returns a
         // DistributedMember (once gfecq branch is merged to trunk).
-        MemberAttributes ma = new MemberAttributes(0, -1, DistributionManager.NORMAL_DM_TYPE, -1, null, null, null);
-        sid = new InternalDistributedMember(mySock.getInetAddress(), mySock.getPort(), false, true, ma);
+        MemberAttributes ma =
+            new MemberAttributes(0, -1, DistributionManager.NORMAL_DM_TYPE, -1, null, null, null);
+        sid =
+            new InternalDistributedMember(
+                mySock.getInetAddress(), mySock.getPort(), false, true, ma);
       }
       success = true;
     } catch (ConnectException e) {
       if (!quitting()) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_0_CONNECTION_WAS_REFUSED, this));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.CacheClientUpdater_0_CONNECTION_WAS_REFUSED, this));
       }
     } catch (SSLException ex) {
       if (!quitting()) {
-        getSecurityLogger().warning(LocalizedStrings.CacheClientUpdater_0_SSL_NEGOTIATION_FAILED_1, new Object[] { this, ex });
-        throw new AuthenticationFailedException(LocalizedStrings.CacheClientUpdater_SSL_NEGOTIATION_FAILED_WITH_ENDPOINT_0.toLocalizedString(location), ex);
+        getSecurityLogger()
+            .warning(
+                LocalizedStrings.CacheClientUpdater_0_SSL_NEGOTIATION_FAILED_1,
+                new Object[] {this, ex});
+        throw new AuthenticationFailedException(
+            LocalizedStrings.CacheClientUpdater_SSL_NEGOTIATION_FAILED_WITH_ENDPOINT_0
+                .toLocalizedString(location),
+            ex);
       }
     } catch (GemFireSecurityException ex) {
       if (!quitting()) {
-        getSecurityLogger().warning(LocalizedStrings.CacheClientUpdater_0_SECURITY_EXCEPTION_WHEN_CREATING_SERVERTOCLIENT_COMMUNICATION_SOCKET_1, new Object[] { this, ex });
+        getSecurityLogger()
+            .warning(
+                LocalizedStrings
+                    .CacheClientUpdater_0_SECURITY_EXCEPTION_WHEN_CREATING_SERVERTOCLIENT_COMMUNICATION_SOCKET_1,
+                new Object[] {this, ex});
         throw ex;
       }
     } catch (IOException e) {
       if (!quitting()) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_0_CAUGHT_FOLLOWING_EXECPTION_WHILE_ATTEMPTING_TO_CREATE_A_SERVER_TO_CLIENT_COMMUNICATION_SOCKET_AND_WILL_EXIT_1, new Object[] { this, e }), logger.isDebugEnabled() ? e : null);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .CacheClientUpdater_0_CAUGHT_FOLLOWING_EXECPTION_WHILE_ATTEMPTING_TO_CREATE_A_SERVER_TO_CLIENT_COMMUNICATION_SOCKET_AND_WILL_EXIT_1,
+                new Object[] {this, e}),
+            logger.isDebugEnabled() ? e : null);
       }
       eManager.serverCrashed(this.endpoint);
     } catch (ClassNotFoundException e) {
       if (!quitting()) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_CLASS_NOT_FOUND, e.getMessage()));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.CacheClientUpdater_CLASS_NOT_FOUND, e.getMessage()));
       }
     } finally {
       connected = success;
@@ -380,7 +402,10 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
           try {
             mySock.close();
           } catch (IOException ioe) {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_CLOSING_SOCKET_IN_0_FAILED, this), ioe);
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings.CacheClientUpdater_CLOSING_SOCKET_IN_0_FAILED, this),
+                ioe);
           }
         }
       }
@@ -417,8 +442,8 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
   }
 
   /**
-   * Performs the work of the client update thread. Creates a
-   * <code>ServerSocket</code> and waits for the server to connect to it.
+   * Performs the work of the client update thread. Creates a <code>ServerSocket</code> and waits
+   * for the server to connect to it.
    */
   @Override
   public void run() {
@@ -429,7 +454,8 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       addedListener = true;
 
       if (!waitForCache()) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_0_NO_CACHE_EXITING, this));
+        logger.warn(
+            LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_0_NO_CACHE_EXITING, this));
         return;
       }
       processMessages();
@@ -446,7 +472,7 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
 
   //  /**
   //   * Waits for this thread to be initialized
-  //   * 
+  //   *
   //   * @return true if initialized; false if stopped before init
   //   */
   //  public boolean waitForInitialization() {
@@ -489,17 +515,15 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
   //    }
   //  }
 
-  /**
-   * Notifies this thread to stop processing
-   */
+  /** Notifies this thread to stop processing */
   protected void stopProcessing() {
-    continueProcessing.set(false);// = false;
+    continueProcessing.set(false); // = false;
   }
 
   /**
-   * Stops the updater. It will wait for a while for the thread to finish to try
-   * to prevent duplicates. Note: this method is not named stop because this is
-   * a Thread which has a deprecated stop method.
+   * Stops the updater. It will wait for a while for the thread to finish to try to prevent
+   * duplicates. Note: this method is not named stop because this is a Thread which has a deprecated
+   * stop method.
    */
   public void stopUpdater() {
     boolean isSelfDestroying = Thread.currentThread() == this;
@@ -540,11 +564,9 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
     } // isAlive
   }
 
-  /**
-   * Signals the run thread to stop, closes underlying resources.
-   */
+  /** Signals the run thread to stop, closes underlying resources. */
   public void close() {
-    this.continueProcessing.set(false);// = false; // signals we are done.
+    this.continueProcessing.set(false); // = false; // signals we are done.
 
     // Close the socket
     // This will also cause the underlying streams to fail.
@@ -574,8 +596,8 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
   }
 
   /**
-   * Creates a cached {@link Message}object whose state is filled in with a
-   * message received from the server.
+   * Creates a cached {@link Message}object whose state is filled in with a message received from
+   * the server.
    */
   private Message initializeMessage() {
     Message _message = new Message(2, Version.CURRENT);
@@ -584,7 +606,10 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
     } catch (IOException e) {
       if (!quitting()) {
         if (logger.isDebugEnabled()) {
-          logger.debug("{}: Caught following exception while attempting to initialize a server-to-client communication socket and will exit", this, e);
+          logger.debug(
+              "{}: Caught following exception while attempting to initialize a server-to-client communication socket and will exit",
+              this,
+              e);
         }
         stopProcessing();
       }
@@ -595,14 +620,18 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
   /* refinement of method inherited from Thread */
   @Override
   public String toString() {
-    return this.getName() + " (" + this.location.getHostName() + ":" + this.location.getPort() + ")";
+    return this.getName()
+        + " ("
+        + this.location.getHostName()
+        + ":"
+        + this.location.getPort()
+        + ")";
   }
 
   /**
    * Handle a marker message
-   * 
-   * @param m
-   *                message containing the data
+   *
+   * @param m message containing the data
    */
   private void handleMarker(Message m) {
     try {
@@ -615,16 +644,18 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
         logger.debug("Processed marker message");
       }
     } catch (Exception e) {
-      String message = LocalizedStrings.CacheClientUpdater_THE_FOLLOWING_EXCEPTION_OCCURRED_WHILE_ATTEMPTING_TO_HANDLE_A_MARKER.toLocalizedString();
+      String message =
+          LocalizedStrings
+              .CacheClientUpdater_THE_FOLLOWING_EXCEPTION_OCCURRED_WHILE_ATTEMPTING_TO_HANDLE_A_MARKER
+              .toLocalizedString();
       handleException(message, e);
     }
   }
 
   /**
    * Create or update an entry
-   * 
-   * @param m
-   *                message containing the data
+   *
+   * @param m message containing the data
    */
   private void handleUpdate(Message m) {
     String regionName = null;
@@ -671,7 +702,19 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
 
       boolean isCreate = (m.getMessageType() == MessageType.LOCAL_CREATE);
       if (isDebugEnabled) {
-        logger.debug("Putting entry for region: {} key: {} create: {}{} callbackArgument: {} withInterest={} withCQs={} eventID={} version={}", regionName, key, isCreate, (valuePart.isObject() ? new StringBuilder(" value: ").append(deserialize(valuePart.getSerializedForm())) : ""), callbackArgument, withInterest, withCQs, eventId, versionTag);
+        logger.debug(
+            "Putting entry for region: {} key: {} create: {}{} callbackArgument: {} withInterest={} withCQs={} eventID={} version={}",
+            regionName,
+            key,
+            isCreate,
+            (valuePart.isObject()
+                ? new StringBuilder(" value: ").append(deserialize(valuePart.getSerializedForm()))
+                : ""),
+            callbackArgument,
+            withInterest,
+            withCQs,
+            eventId,
+            versionTag);
       }
 
       LocalRegion region = (LocalRegion) cacheHelper.getRegion(regionName);
@@ -697,15 +740,37 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
         if (isDebugEnabled && !quitting()) {
           logger.debug("{}: Region named {} does not exist", this, regionName);
         }
-      } else if (region.hasServerProxy() && ServerResponseMatrix.checkForValidStateAfterNotification(region, key, m.getMessageType()) && (withInterest || !withCQs)) {
-        @Released
-        EntryEventImpl newEvent = null;
+      } else if (region.hasServerProxy()
+          && ServerResponseMatrix.checkForValidStateAfterNotification(
+              region, key, m.getMessageType())
+          && (withInterest || !withCQs)) {
+        @Released EntryEventImpl newEvent = null;
         try {
           // Create an event and put the entry
-          newEvent = EntryEventImpl.create(region, ((m.getMessageType() == MessageType.LOCAL_CREATE) ? Operation.CREATE : Operation.UPDATE), key, null /* newValue */, callbackArgument /* callbackArg */, true /* originRemote */, eventId.getDistributedMember());
+          newEvent =
+              EntryEventImpl.create(
+                  region,
+                  ((m.getMessageType() == MessageType.LOCAL_CREATE)
+                      ? Operation.CREATE
+                      : Operation.UPDATE),
+                  key,
+                  null /* newValue */,
+                  callbackArgument /* callbackArg */,
+                  true /* originRemote */,
+                  eventId.getDistributedMember());
           newEvent.setVersionTag(versionTag);
           newEvent.setFromServer(true);
-          region.basicBridgeClientUpdate(eventId.getDistributedMember(), key, newValue, deltaBytes, isValueObject, callbackArgument, m.getMessageType() == MessageType.LOCAL_CREATE, qManager.getState().getProcessedMarker() || !this.isDurableClient, newEvent, eventId);
+          region.basicBridgeClientUpdate(
+              eventId.getDistributedMember(),
+              key,
+              newValue,
+              deltaBytes,
+              isValueObject,
+              callbackArgument,
+              m.getMessageType() == MessageType.LOCAL_CREATE,
+              qManager.getState().getProcessedMarker() || !this.isDurableClient,
+              newEvent,
+              eventId);
           this.isOpCompleted = true;
           // bug 45520 - ConcurrentCacheModificationException is not thrown and we must check this flag
           //          if (newEvent.isConcurrencyConflict()) {
@@ -719,15 +784,28 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
           region.getCachePerfStats().incDeltaFullValuesRequested();
           fullValue = newValue = fullValuePart.getObject();
           isValueObject = Boolean.valueOf(fullValuePart.isObject());
-          region.basicBridgeClientUpdate(eventId.getDistributedMember(), key, newValue, null, isValueObject, callbackArgument, m.getMessageType() == MessageType.LOCAL_CREATE, qManager.getState().getProcessedMarker() || !this.isDurableClient, newEvent, eventId);
+          region.basicBridgeClientUpdate(
+              eventId.getDistributedMember(),
+              key,
+              newValue,
+              null,
+              isValueObject,
+              callbackArgument,
+              m.getMessageType() == MessageType.LOCAL_CREATE,
+              qManager.getState().getProcessedMarker() || !this.isDurableClient,
+              newEvent,
+              eventId);
           this.isOpCompleted = true;
         } finally {
-          if (newEvent != null)
-            newEvent.release();
+          if (newEvent != null) newEvent.release();
         }
 
         if (isDebugEnabled) {
-          logger.debug("Put entry for region: {} key: {} callbackArgument: {}", regionName, key, callbackArgument);
+          logger.debug(
+              "Put entry for region: {} key: {} callbackArgument: {}",
+              regionName,
+              key,
+              callbackArgument);
         }
       }
 
@@ -735,13 +813,28 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       if (withCQs) {
         Part numCqsPart = m.getPart(partCnt++);
         if (isDebugEnabled) {
-          logger.debug("Received message has CQ Event. Number of cqs interested in the event : {}", numCqsPart.getInt() / 2);
+          logger.debug(
+              "Received message has CQ Event. Number of cqs interested in the event : {}",
+              numCqsPart.getInt() / 2);
         }
-        partCnt = processCqs(m, partCnt, numCqsPart.getInt(), m.getMessageType(), key, fullValue, deltaBytes, eventId);
+        partCnt =
+            processCqs(
+                m,
+                partCnt,
+                numCqsPart.getInt(),
+                m.getMessageType(),
+                key,
+                fullValue,
+                deltaBytes,
+                eventId);
         this.isOpCompleted = true;
       }
     } catch (Exception e) {
-      String message = LocalizedStrings.CacheClientUpdater_THE_FOLLOWING_EXCEPTION_OCCURRED_WHILE_ATTEMPTING_TO_PUT_ENTRY_REGION_0_KEY_1_VALUE_2.toLocalizedString(new Object[] { regionName, key, deserialize(valuePart.getSerializedForm()) });
+      String message =
+          LocalizedStrings
+              .CacheClientUpdater_THE_FOLLOWING_EXCEPTION_OCCURRED_WHILE_ATTEMPTING_TO_PUT_ENTRY_REGION_0_KEY_1_VALUE_2
+              .toLocalizedString(
+                  new Object[] {regionName, key, deserialize(valuePart.getSerializedForm())});
       handleException(message, e);
     }
   }
@@ -768,9 +861,8 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
 
   /**
    * Invalidate an entry
-   * 
-   * @param m
-   *                message describing the entry
+   *
+   * @param m message describing the entry
    */
   private void handleInvalidate(Message m) {
     String regionName = null;
@@ -805,7 +897,14 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       boolean withCQs = ((Boolean) hasCqsPart.getObject()).booleanValue();
 
       if (isDebugEnabled) {
-        logger.debug("Invalidating entry for region: {} key: {} callbackArgument: {} withInterest={} withCQs={} version={}", regionName, key, callbackArgument, withInterest, withCQs, versionTag);
+        logger.debug(
+            "Invalidating entry for region: {} key: {} callbackArgument: {} withInterest={} withCQs={} version={}",
+            regionName,
+            key,
+            callbackArgument,
+            withInterest,
+            withCQs,
+            versionTag);
       }
 
       LocalRegion region = (LocalRegion) cacheHelper.getRegion(regionName);
@@ -819,7 +918,13 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
             Part eid = m.getPart(m.getNumberOfParts() - 1);
             EventID eventId = (EventID) eid.getObject();
             try {
-              region.basicBridgeClientInvalidate(eventId.getDistributedMember(), key, callbackArgument, qManager.getState().getProcessedMarker() || !this.isDurableClient, eventId, versionTag);
+              region.basicBridgeClientInvalidate(
+                  eventId.getDistributedMember(),
+                  key,
+                  callbackArgument,
+                  qManager.getState().getProcessedMarker() || !this.isDurableClient,
+                  eventId,
+                  versionTag);
             } catch (ConcurrentCacheModificationException e) {
               //            return; allow CQs to be processed
             }
@@ -828,12 +933,20 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
             qManager.getState().incrementInvalidatedStats();
 
             if (isDebugEnabled) {
-              logger.debug("Invalidated entry for region: {} key: {} callbackArgument: {}", regionName, key, callbackArgument);
+              logger.debug(
+                  "Invalidated entry for region: {} key: {} callbackArgument: {}",
+                  regionName,
+                  key,
+                  callbackArgument);
             }
           } catch (EntryNotFoundException e) {
             /*ignore*/
             if (isDebugEnabled && !quitting()) {
-              logger.debug("Already invalidated entry for region: {} key: {} callbackArgument: {}", regionName, key, callbackArgument);
+              logger.debug(
+                  "Already invalidated entry for region: {} key: {} callbackArgument: {}",
+                  regionName,
+                  key,
+                  callbackArgument);
             }
             this.isOpCompleted = true;
           }
@@ -841,27 +954,31 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       }
 
       if (withCQs) {
-        // The client may have been registered to receive invalidates for 
+        // The client may have been registered to receive invalidates for
         // create and updates operations. Get the actual region operation.
         Part regionOpType = m.getPart(partCnt++);
         Part numCqsPart = m.getPart(partCnt++);
         if (isDebugEnabled) {
-          logger.debug("Received message has CQ Event. Number of cqs interested in the event : {}", numCqsPart.getInt() / 2);
+          logger.debug(
+              "Received message has CQ Event. Number of cqs interested in the event : {}",
+              numCqsPart.getInt() / 2);
         }
         partCnt = processCqs(m, partCnt, numCqsPart.getInt(), regionOpType.getInt(), key, null);
         this.isOpCompleted = true;
       }
     } catch (Exception e) {
-      final String message = LocalizedStrings.CacheClientUpdater_THE_FOLLOWING_EXCEPTION_OCCURRED_WHILE_ATTEMPTING_TO_INVALIDATE_ENTRY_REGION_0_KEY_1.toLocalizedString(new Object[] { regionName, key });
+      final String message =
+          LocalizedStrings
+              .CacheClientUpdater_THE_FOLLOWING_EXCEPTION_OCCURRED_WHILE_ATTEMPTING_TO_INVALIDATE_ENTRY_REGION_0_KEY_1
+              .toLocalizedString(new Object[] {regionName, key});
       handleException(message, e);
     }
   }
 
   /**
    * locally destroy an entry
-   * 
-   * @param m
-   *                message describing the entry
+   *
+   * @param m message describing the entry
    */
   private void handleDestroy(Message m) {
     String regionName = null;
@@ -896,7 +1013,14 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
 
       Object callbackArgument = callbackArgumentPart.getObject();
       if (isDebugEnabled) {
-        logger.debug("Destroying entry for region: {} key: {} callbackArgument: {} withInterest={} withCQs={} version={}", regionName, key, callbackArgument, withInterest, withCQs, versionTag);
+        logger.debug(
+            "Destroying entry for region: {} key: {} callbackArgument: {} withInterest={} withCQs={} version={}",
+            regionName,
+            key,
+            callbackArgument,
+            withInterest,
+            withCQs,
+            versionTag);
       }
 
       LocalRegion region = (LocalRegion) cacheHelper.getRegion(regionName);
@@ -910,18 +1034,33 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
           Part eid = m.getPart(m.getNumberOfParts() - 1);
           eventId = (EventID) eid.getObject();
           try {
-            region.basicBridgeClientDestroy(eventId.getDistributedMember(), key, callbackArgument, qManager.getState().getProcessedMarker() || !this.isDurableClient, eventId, versionTag);
+            region.basicBridgeClientDestroy(
+                eventId.getDistributedMember(),
+                key,
+                callbackArgument,
+                qManager.getState().getProcessedMarker() || !this.isDurableClient,
+                eventId,
+                versionTag);
           } catch (ConcurrentCacheModificationException e) {
             //            return;  allow CQs to be processed
           }
           this.isOpCompleted = true;
           if (isDebugEnabled) {
-            logger.debug("Destroyed entry for region: {} key: {} callbackArgument: {}", regionName, key, callbackArgument);
+            logger.debug(
+                "Destroyed entry for region: {} key: {} callbackArgument: {}",
+                regionName,
+                key,
+                callbackArgument);
           }
         } catch (EntryNotFoundException e) {
           /*ignore*/
           if (isDebugEnabled && !quitting()) {
-            logger.debug("Already destroyed entry for region: {} key: {} callbackArgument: {} eventId={}", regionName, key, callbackArgument, eventId.expensiveToString());
+            logger.debug(
+                "Already destroyed entry for region: {} key: {} callbackArgument: {} eventId={}",
+                regionName,
+                key,
+                callbackArgument,
+                eventId.expensiveToString());
           }
           this.isOpCompleted = true;
         }
@@ -930,22 +1069,26 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       if (withCQs) {
         Part numCqsPart = m.getPart(partCnt++);
         if (isDebugEnabled) {
-          logger.debug("Received message has CQ Event. Number of cqs interested in the event : {}", numCqsPart.getInt() / 2);
+          logger.debug(
+              "Received message has CQ Event. Number of cqs interested in the event : {}",
+              numCqsPart.getInt() / 2);
         }
         partCnt = processCqs(m, partCnt, numCqsPart.getInt(), m.getMessageType(), key, null);
         this.isOpCompleted = true;
       }
     } catch (Exception e) {
-      String message = LocalizedStrings.CacheClientUpdater_THE_FOLLOWING_EXCEPTION_OCCURRED_WHILE_ATTEMPTING_TO_DESTROY_ENTRY_REGION_0_KEY_1.toLocalizedString(new Object[] { regionName, key });
+      String message =
+          LocalizedStrings
+              .CacheClientUpdater_THE_FOLLOWING_EXCEPTION_OCCURRED_WHILE_ATTEMPTING_TO_DESTROY_ENTRY_REGION_0_KEY_1
+              .toLocalizedString(new Object[] {regionName, key});
       handleException(message, e);
     }
   }
 
   /**
    * Locally destroy a region
-   * 
-   * @param m
-   *                message describing the region
+   *
+   * @param m message describing the region
    */
   private void handleDestroyRegion(Message m) {
     Part regionNamePart = null, callbackArgumentPart = null;
@@ -975,7 +1118,9 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       if (((Boolean) hasCqsPart.getObject()).booleanValue()) {
         Part numCqsPart = m.getPart(partCnt++);
         if (isDebugEnabled) {
-          logger.debug("Received message has CQ Event. Number of cqs interested in the event : {}", numCqsPart.getInt() / 2);
+          logger.debug(
+              "Received message has CQ Event. Number of cqs interested in the event : {}",
+              numCqsPart.getInt() / 2);
         }
         partCnt = processCqs(m, partCnt, numCqsPart.getInt(), m.getMessageType(), null, null);
       }
@@ -1003,16 +1148,18 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
         logger.debug("region already destroyed: {}", regionName);
       }
     } catch (Exception e) {
-      String message = LocalizedStrings.CacheClientUpdater_CAUGHT_AN_EXCEPTION_WHILE_ATTEMPTING_TO_DESTROY_REGION_0.toLocalizedString(regionName);
+      String message =
+          LocalizedStrings
+              .CacheClientUpdater_CAUGHT_AN_EXCEPTION_WHILE_ATTEMPTING_TO_DESTROY_REGION_0
+              .toLocalizedString(regionName);
       handleException(message, e);
     }
   }
 
   /**
    * Locally clear a region
-   * 
-   * @param m
-   *                message describing the region to clear
+   *
+   * @param m message describing the region to clear
    */
   private void handleClearRegion(Message m) {
     String regionName = null;
@@ -1022,7 +1169,8 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
     try {
       // Retrieve the data from the clear-region message parts
       if (isDebugEnabled) {
-        logger.debug("{}: Received clear region message of length ({} bytes)", this, m.getPayloadLength());
+        logger.debug(
+            "{}: Received clear region message of length ({} bytes)", this, m.getPayloadLength());
       }
 
       Part regionNamePart = m.getPart(partCnt++);
@@ -1039,7 +1187,9 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       if (((Boolean) hasCqsPart.getObject()).booleanValue()) {
         Part numCqsPart = m.getPart(partCnt++);
         if (isDebugEnabled) {
-          logger.debug("Received message has CQ Event. Number of cqs interested in the event : {}", numCqsPart.getInt() / 2);
+          logger.debug(
+              "Received message has CQ Event. Number of cqs interested in the event : {}",
+              numCqsPart.getInt() / 2);
         }
         partCnt = processCqs(m, partCnt, numCqsPart.getInt(), m.getMessageType(), null, null);
       }
@@ -1057,22 +1207,26 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       // message
       if (region.hasServerProxy()) {
         // Locally clear the region
-        region.basicBridgeClientClear(callbackArgument, qManager.getState().getProcessedMarker() || !this.isDurableClient);
+        region.basicBridgeClientClear(
+            callbackArgument, qManager.getState().getProcessedMarker() || !this.isDurableClient);
 
         if (isDebugEnabled) {
           logger.debug("Cleared region: {} callbackArgument: {}", regionName, callbackArgument);
         }
       }
     } catch (Exception e) {
-      String message = LocalizedStrings.CacheClientUpdater_CAUGHT_THE_FOLLOWING_EXCEPTION_WHILE_ATTEMPTING_TO_CLEAR_REGION_0.toLocalizedString(regionName);
+      String message =
+          LocalizedStrings
+              .CacheClientUpdater_CAUGHT_THE_FOLLOWING_EXCEPTION_WHILE_ATTEMPTING_TO_CLEAR_REGION_0
+              .toLocalizedString(regionName);
       handleException(message, e);
     }
   }
 
   /**
-   * Locally invalidate a region
-   * NOTE: Added as part of bug#38048. The code only takes care of CQ processing.
-   *       Support needs to be added for local region invalidate.
+   * Locally invalidate a region NOTE: Added as part of bug#38048. The code only takes care of CQ
+   * processing. Support needs to be added for local region invalidate.
+   *
    * @param m message describing the region to clear
    */
   private void handleInvalidateRegion(Message m) {
@@ -1083,7 +1237,10 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
     try {
       // Retrieve the data from the invalidate-region message parts
       if (isDebugEnabled) {
-        logger.debug("{}: Received invalidate region message of length ({} bytes)", this, m.getPayloadLength());
+        logger.debug(
+            "{}: Received invalidate region message of length ({} bytes)",
+            this,
+            m.getPayloadLength());
       }
 
       Part regionNamePart = m.getPart(partCnt++);
@@ -1097,7 +1254,9 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       if (((Boolean) hasCqsPart.getObject()).booleanValue()) {
         Part numCqsPart = m.getPart(partCnt++);
         if (isDebugEnabled) {
-          logger.debug("Received message has CQ Event. Number of cqs interested in the event : {}", numCqsPart.getInt() / 2);
+          logger.debug(
+              "Received message has CQ Event. Number of cqs interested in the event : {}",
+              numCqsPart.getInt() / 2);
         }
         partCnt = processCqs(m, partCnt, numCqsPart.getInt(), m.getMessageType(), null, null);
       }
@@ -1120,7 +1279,7 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
         // As explained in the method description, this code is added as part
         // of CQ bug fix. Cache server team needs to look into changes relating
         // to local region.
-        // 
+        //
         // Locally invalidate the region
         // region.basicBridgeClientInvalidate(callbackArgument,
         // proxy.getProcessedMarker());
@@ -1133,7 +1292,10 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       }
 
     } catch (Exception e) {
-      String message = LocalizedStrings.CacheClientUpdater_CAUGHT_THE_FOLLOWING_EXCEPTION_WHILE_ATTEMPTING_TO_INVALIDATE_REGION_0.toLocalizedString(regionName);
+      String message =
+          LocalizedStrings
+              .CacheClientUpdater_CAUGHT_THE_FOLLOWING_EXCEPTION_WHILE_ATTEMPTING_TO_INVALIDATE_REGION_0
+              .toLocalizedString(regionName);
       handleException(message, e);
     }
   }
@@ -1141,10 +1303,8 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
   /**
    * Register instantiators locally
    *
-   * @param msg
-   *                message describing the new instantiators
-   * @param eventId
-   *                eventId of the instantiators
+   * @param msg message describing the new instantiators
+   * @param eventId eventId of the instantiators
    */
   private void handleRegisterInstantiator(Message msg, EventID eventId) {
     String instantiatorClassName = null;
@@ -1152,14 +1312,18 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
     try {
       int noOfParts = msg.getNumberOfParts();
       if (isDebugEnabled) {
-        logger.debug("{}: Received register instantiators message of parts {}", getName(), noOfParts);
+        logger.debug(
+            "{}: Received register instantiators message of parts {}", getName(), noOfParts);
       }
       Assert.assertTrue((noOfParts - 1) % 3 == 0);
       for (int i = 0; i < noOfParts - 1; i = i + 3) {
-        instantiatorClassName = (String) CacheServerHelper.deserialize(msg.getPart(i).getSerializedForm());
-        String instantiatedClassName = (String) CacheServerHelper.deserialize(msg.getPart(i + 1).getSerializedForm());
+        instantiatorClassName =
+            (String) CacheServerHelper.deserialize(msg.getPart(i).getSerializedForm());
+        String instantiatedClassName =
+            (String) CacheServerHelper.deserialize(msg.getPart(i + 1).getSerializedForm());
         int id = msg.getPart(i + 2).getInt();
-        InternalInstantiator.register(instantiatorClassName, instantiatedClassName, id, false, eventId, null/* context */);
+        InternalInstantiator.register(
+            instantiatorClassName, instantiatedClassName, id, false, eventId, null /* context */);
         // distribute is false because we don't want to propagate this to
         // servers recursively
       }
@@ -1174,7 +1338,11 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
     // TODO bug: can the following catch be more specific?
     catch (Exception e) {
       if (isDebugEnabled) {
-        logger.debug("{}: Caught following exception while attempting to read Instantiator : {}", this, instantiatorClassName, e);
+        logger.debug(
+            "{}: Caught following exception while attempting to read Instantiator : {}",
+            this,
+            instantiatorClassName,
+            e);
       }
     }
   }
@@ -1186,27 +1354,35 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       int noOfParts = msg.getNumberOfParts();
       //      int numOfClasses = noOfParts - 3; // 1 for ds classname, 1 for ds id and 1 for eventId.
       if (isDebugEnabled) {
-        logger.debug("{}: Received register dataserializer message of parts {}", getName(), noOfParts);
+        logger.debug(
+            "{}: Received register dataserializer message of parts {}", getName(), noOfParts);
       }
 
-      for (int i = 0; i < noOfParts - 1;) {
+      for (int i = 0; i < noOfParts - 1; ) {
         try {
-          String dataSerializerClassName = (String) CacheServerHelper.deserialize(msg.getPart(i).getSerializedForm());
+          String dataSerializerClassName =
+              (String) CacheServerHelper.deserialize(msg.getPart(i).getSerializedForm());
           int id = msg.getPart(i + 1).getInt();
-          InternalDataSerializer.register(dataSerializerClassName, false, eventId, null/* context */, id);
+          InternalDataSerializer.register(
+              dataSerializerClassName, false, eventId, null /* context */, id);
           // distribute is false because we don't want to propagate this to
           // servers recursively
 
           int numOfClasses = msg.getPart(i + 2).getInt();
           int j = 0;
           for (; j < numOfClasses; j++) {
-            String className = (String) CacheServerHelper.deserialize(msg.getPart(i + 3 + j).getSerializedForm());
+            String className =
+                (String) CacheServerHelper.deserialize(msg.getPart(i + 3 + j).getSerializedForm());
             InternalDataSerializer.updateSupportedClassesMap(dataSerializerClassName, className);
           }
           i = i + 3 + j;
         } catch (ClassNotFoundException e) {
           if (isDebugEnabled) {
-            logger.debug("{}: Caught following exception while attempting to read DataSerializer : {}", this, dataSerializerClass, e);
+            logger.debug(
+                "{}: Caught following exception while attempting to read DataSerializer : {}",
+                this,
+                dataSerializerClass,
+                e);
           }
         }
       }
@@ -1221,30 +1397,44 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
     // TODO bug: can the following catch be more specific?
     catch (Exception e) {
       if (isDebugEnabled) {
-        logger.debug("{}: Caught following exception while attempting to read DataSerializer : {}", this, dataSerializerClass, e);
+        logger.debug(
+            "{}: Caught following exception while attempting to read DataSerializer : {}",
+            this,
+            dataSerializerClass,
+            e);
       }
     }
   }
 
   /**
    * Processes message to invoke CQ listeners.
-   * 
+   *
    * @param startMessagePart
    * @param numCqParts
    * @param messageType
    * @param key
    * @param value
    */
-  private int processCqs(Message m, int startMessagePart, int numCqParts, int messageType, Object key, Object value) {
-    return processCqs(m, startMessagePart, numCqParts, messageType, key, value, null, null/* eventId */);
+  private int processCqs(
+      Message m, int startMessagePart, int numCqParts, int messageType, Object key, Object value) {
+    return processCqs(
+        m, startMessagePart, numCqParts, messageType, key, value, null, null /* eventId */);
   }
 
-  private int processCqs(Message m, int startMessagePart, int numCqParts, int messageType, Object key, Object value, byte[] delta, EventID eventId) {
+  private int processCqs(
+      Message m,
+      int startMessagePart,
+      int numCqParts,
+      int messageType,
+      Object key,
+      Object value,
+      byte[] delta,
+      EventID eventId) {
     //String[] cqs = new String[numCqs/2];
     HashMap cqs = new HashMap();
     final boolean isDebugEnabled = logger.isDebugEnabled();
 
-    for (int cqCnt = 0; cqCnt < numCqParts;) {
+    for (int cqCnt = 0; cqCnt < numCqParts; ) {
       StringBuilder str = null;
       if (isDebugEnabled) {
         str = new StringBuilder(100);
@@ -1261,7 +1451,11 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
           str.append(cqNamePart.getString()).append(" op=").append(cqOpPart.getInt()).append("  ");
         }
       } catch (Exception ex) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_ERROR_WHILE_PROCESSING_THE_CQ_MESSAGE_PROBLEM_WITH_READING_MESSAGE_FOR_CQ_0, cqCnt));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .CacheClientUpdater_ERROR_WHILE_PROCESSING_THE_CQ_MESSAGE_PROBLEM_WITH_READING_MESSAGE_FOR_CQ_0,
+                cqCnt));
       }
       if (isDebugEnabled && str != null) {
         logger.debug(str);
@@ -1273,7 +1467,10 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       try {
         cqService.dispatchCqListeners(cqs, messageType, key, value, delta, qManager, eventId);
       } catch (Exception ex) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_FAILED_TO_INVOKE_CQ_DISPATCHER_ERROR___0, ex.getMessage()));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.CacheClientUpdater_FAILED_TO_INVOKE_CQ_DISPATCHER_ERROR___0,
+                ex.getMessage()));
         if (isDebugEnabled) {
           logger.debug("Failed to invoke CQ Dispatcher.", ex);
         }
@@ -1296,7 +1493,8 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
     try {
       // Retrieve the data from the add interest message parts
       if (isDebugEnabled) {
-        logger.debug("{}: Received add interest message of length ({} bytes)", this, m.getPayloadLength());
+        logger.debug(
+            "{}: Received add interest message of length ({} bytes)", this, m.getPayloadLength());
       }
       Part regionNamePart = m.getPart(partCnt++);
       Part keyPart = m.getPart(partCnt++);
@@ -1310,7 +1508,8 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       interestType = ((Integer) interestTypePart.getObject()).intValue();
       interestResultPolicy = ((Byte) interestResultPolicyPart.getObject()).byteValue();
       isDurable = ((Boolean) isDurablePart.getObject()).booleanValue();
-      receiveUpdatesAsInvalidates = ((Boolean) receiveUpdatesAsInvalidatesPart.getObject()).booleanValue();
+      receiveUpdatesAsInvalidates =
+          ((Boolean) receiveUpdatesAsInvalidatesPart.getObject()).booleanValue();
 
       // Confirm that region exists
       LocalRegion region = (LocalRegion) cacheHelper.getRegion(regionName);
@@ -1327,12 +1526,30 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       }
 
       if (key instanceof List) {
-        region.getServerProxy().addListInterest((List) key, InterestResultPolicy.fromOrdinal(interestResultPolicy), isDurable, receiveUpdatesAsInvalidates);
+        region
+            .getServerProxy()
+            .addListInterest(
+                (List) key,
+                InterestResultPolicy.fromOrdinal(interestResultPolicy),
+                isDurable,
+                receiveUpdatesAsInvalidates);
       } else {
-        region.getServerProxy().addSingleInterest(key, interestType, InterestResultPolicy.fromOrdinal(interestResultPolicy), isDurable, receiveUpdatesAsInvalidates);
+        region
+            .getServerProxy()
+            .addSingleInterest(
+                key,
+                interestType,
+                InterestResultPolicy.fromOrdinal(interestResultPolicy),
+                isDurable,
+                receiveUpdatesAsInvalidates);
       }
     } catch (Exception e) {
-      String message = ": The following exception occurred while attempting to add interest (region: " + regionName + " key: " + key + "): ";
+      String message =
+          ": The following exception occurred while attempting to add interest (region: "
+              + regionName
+              + " key: "
+              + key
+              + "): ";
       handleException(message, e);
     }
   }
@@ -1349,7 +1566,10 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
     try {
       // Retrieve the data from the remove interest message parts
       if (isDebugEnabled) {
-        logger.debug("{}: Received remove interest message of length ({} bytes)", this, m.getPayloadLength());
+        logger.debug(
+            "{}: Received remove interest message of length ({} bytes)",
+            this,
+            m.getPayloadLength());
       }
 
       Part regionNamePart = m.getPart(partCnt++);
@@ -1363,7 +1583,8 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       key = keyPart.getStringOrObject();
       interestType = ((Integer) interestTypePart.getObject()).intValue();
       isDurable = ((Boolean) isDurablePart.getObject()).booleanValue();
-      receiveUpdatesAsInvalidates = ((Boolean) receiveUpdatesAsInvalidatesPart.getObject()).booleanValue();
+      receiveUpdatesAsInvalidates =
+          ((Boolean) receiveUpdatesAsInvalidatesPart.getObject()).booleanValue();
 
       // Confirm that region exists
       LocalRegion region = (LocalRegion) cacheHelper.getRegion(regionName);
@@ -1380,12 +1601,21 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       }
 
       if (key instanceof List) {
-        region.getServerProxy().removeListInterest((List) key, isDurable, receiveUpdatesAsInvalidates);
+        region
+            .getServerProxy()
+            .removeListInterest((List) key, isDurable, receiveUpdatesAsInvalidates);
       } else {
-        region.getServerProxy().removeSingleInterest(key, interestType, isDurable, receiveUpdatesAsInvalidates);
+        region
+            .getServerProxy()
+            .removeSingleInterest(key, interestType, isDurable, receiveUpdatesAsInvalidates);
       }
     } catch (Exception e) {
-      String message = ": The following exception occurred while attempting to add interest (region: " + regionName + " key: " + key + "): ";
+      String message =
+          ": The following exception occurred while attempting to add interest (region: "
+              + regionName
+              + " key: "
+              + key
+              + "): ";
       handleException(message, e);
     }
   }
@@ -1407,23 +1637,25 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
         return;
       }
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Received tombstone operation for region {} with operation={}", this, region, op);
+        logger.debug(
+            "{}: Received tombstone operation for region {} with operation={}", this, region, op);
       }
       if (!region.getConcurrencyChecksEnabled()) {
         return;
       }
       switch (op) {
-      case 0:
-        Map<VersionSource, Long> regionGCVersions = (Map<VersionSource, Long>) msg.getPart(partIdx++).getObject();
-        EventID eventID = (EventID) msg.getPart(partIdx++).getObject();
-        region.expireTombstones(regionGCVersions, eventID, null);
-        break;
-      case 1:
-        Set<Object> removedKeys = (Set<Object>) msg.getPart(partIdx++).getObject();
-        region.expireTombstoneKeys(removedKeys);
-        break;
-      default:
-        throw new IllegalArgumentException("unknown operation type " + op);
+        case 0:
+          Map<VersionSource, Long> regionGCVersions =
+              (Map<VersionSource, Long>) msg.getPart(partIdx++).getObject();
+          EventID eventID = (EventID) msg.getPart(partIdx++).getObject();
+          region.expireTombstones(regionGCVersions, eventID, null);
+          break;
+        case 1:
+          Set<Object> removedKeys = (Set<Object>) msg.getPart(partIdx++).getObject();
+          region.expireTombstoneKeys(removedKeys);
+          break;
+        default:
+          throw new IllegalArgumentException("unknown operation type " + op);
       }
     } catch (Exception e) {
       handleException(": exception while removing tombstones from " + regionName, e);
@@ -1464,7 +1696,10 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
     boolean gotInterrupted = false;
     try {
       if (this.failedUpdater != null) {
-        logger.info(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater__0_IS_WAITING_FOR_1_TO_COMPLETE, new Object[] { this, this.failedUpdater }));
+        logger.info(
+            LocalizedMessage.create(
+                LocalizedStrings.CacheClientUpdater__0_IS_WAITING_FOR_1_TO_COMPLETE,
+                new Object[] {this, this.failedUpdater}));
         while (this.failedUpdater.isAlive()) {
           if (quitting()) {
             return;
@@ -1477,7 +1712,10 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
       return; // just bail, because I have not done anything yet
     } finally {
       if (!gotInterrupted && this.failedUpdater != null) {
-        logger.info(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_0_HAS_COMPLETED_WAITING_FOR_1, new Object[] { this, this.failedUpdater }));
+        logger.info(
+            LocalizedMessage.create(
+                LocalizedStrings.CacheClientUpdater_0_HAS_COMPLETED_WAITING_FOR_1,
+                new Object[] {this, this.failedUpdater}));
         failedUpdater = null;
       }
     }
@@ -1485,9 +1723,9 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
 
   /**
    * Processes messages received from the server.
-   * 
-   * Only certain types of messages are handled.
-   * 
+   *
+   * <p>Only certain types of messages are handled.
+   *
    * @see MessageType#CLIENT_MARKER
    * @see MessageType#LOCAL_CREATE
    * @see MessageType#LOCAL_UPDATE
@@ -1509,7 +1747,9 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
         // our caller calls close which will notify all waiters for our init
         return;
       }
-      logger.info(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_0_READY_TO_PROCESS_MESSAGES, this));
+      logger.info(
+          LocalizedMessage.create(
+              LocalizedStrings.CacheClientUpdater_0_READY_TO_PROCESS_MESSAGES, this));
 
       while (continueProcessing.get()) {
         // SystemFailure.checkFailure(); dm will check this
@@ -1526,7 +1766,7 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
           if (isDebugEnabled) {
             logger.debug("endpoint died");
           }
-          this.continueProcessing.set(false);// = false;
+          this.continueProcessing.set(false); // = false;
           break;
         }
 
@@ -1554,7 +1794,9 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
           }
 
           boolean isDeltaSent = false;
-          boolean isCreateOrUpdate = _message.getMessageType() == MessageType.LOCAL_CREATE || _message.getMessageType() == MessageType.LOCAL_UPDATE;
+          boolean isCreateOrUpdate =
+              _message.getMessageType() == MessageType.LOCAL_CREATE
+                  || _message.getMessageType() == MessageType.LOCAL_UPDATE;
           if (isCreateOrUpdate) {
             isDeltaSent = ((Boolean) _message.getPart(2).getObject()).booleanValue();
           }
@@ -1568,57 +1810,65 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
           EventID eventId = (EventID) eid.getObject();
 
           // no need to verify if the instantiator msg is duplicate or not
-          if (_message.getMessageType() != MessageType.REGISTER_INSTANTIATORS && _message.getMessageType() != MessageType.REGISTER_DATASERIALIZERS) {
-            if (this.qManager.getState().verifyIfDuplicate(eventId, !(this.isDurableClient || isDeltaSent))) {
+          if (_message.getMessageType() != MessageType.REGISTER_INSTANTIATORS
+              && _message.getMessageType() != MessageType.REGISTER_DATASERIALIZERS) {
+            if (this.qManager
+                .getState()
+                .verifyIfDuplicate(eventId, !(this.isDurableClient || isDeltaSent))) {
               continue;
             }
           }
           if (logger.isTraceEnabled(LogMarker.BRIDGE_SERVER)) {
-            logger.trace(LogMarker.BRIDGE_SERVER, "Processing event with id {}" + eventId.expensiveToString());
+            logger.trace(
+                LogMarker.BRIDGE_SERVER,
+                "Processing event with id {}" + eventId.expensiveToString());
           }
           this.isOpCompleted = true;
           // Process the message
           switch (_message.getMessageType()) {
-          case MessageType.LOCAL_CREATE:
-          case MessageType.LOCAL_UPDATE:
-            handleUpdate(_message);
-            break;
-          case MessageType.LOCAL_INVALIDATE:
-            handleInvalidate(_message);
-            break;
-          case MessageType.LOCAL_DESTROY:
-            handleDestroy(_message);
-            break;
-          case MessageType.LOCAL_DESTROY_REGION:
-            handleDestroyRegion(_message);
-            break;
-          case MessageType.CLEAR_REGION:
-            handleClearRegion(_message);
-            break;
-          case MessageType.REGISTER_INSTANTIATORS:
-            handleRegisterInstantiator(_message, eventId);
-            break;
-          case MessageType.REGISTER_DATASERIALIZERS:
-            handleRegisterDataSerializer(_message, eventId);
-            break;
-          case MessageType.CLIENT_MARKER:
-            handleMarker(_message);
-            break;
-          case MessageType.INVALIDATE_REGION:
-            handleInvalidateRegion(_message);
-            break;
-          case MessageType.CLIENT_REGISTER_INTEREST:
-            handleRegisterInterest(_message);
-            break;
-          case MessageType.CLIENT_UNREGISTER_INTEREST:
-            handleUnregisterInterest(_message);
-            break;
-          case MessageType.TOMBSTONE_OPERATION:
-            handleTombstoneOperation(_message);
-            break;
-          default:
-            logger.warn(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_0_RECEIVED_AN_UNSUPPORTED_MESSAGE_TYPE_1, new Object[] { this, MessageType.getString(_message.getMessageType()) }));
-            break;
+            case MessageType.LOCAL_CREATE:
+            case MessageType.LOCAL_UPDATE:
+              handleUpdate(_message);
+              break;
+            case MessageType.LOCAL_INVALIDATE:
+              handleInvalidate(_message);
+              break;
+            case MessageType.LOCAL_DESTROY:
+              handleDestroy(_message);
+              break;
+            case MessageType.LOCAL_DESTROY_REGION:
+              handleDestroyRegion(_message);
+              break;
+            case MessageType.CLEAR_REGION:
+              handleClearRegion(_message);
+              break;
+            case MessageType.REGISTER_INSTANTIATORS:
+              handleRegisterInstantiator(_message, eventId);
+              break;
+            case MessageType.REGISTER_DATASERIALIZERS:
+              handleRegisterDataSerializer(_message, eventId);
+              break;
+            case MessageType.CLIENT_MARKER:
+              handleMarker(_message);
+              break;
+            case MessageType.INVALIDATE_REGION:
+              handleInvalidateRegion(_message);
+              break;
+            case MessageType.CLIENT_REGISTER_INTEREST:
+              handleRegisterInterest(_message);
+              break;
+            case MessageType.CLIENT_UNREGISTER_INTEREST:
+              handleUnregisterInterest(_message);
+              break;
+            case MessageType.TOMBSTONE_OPERATION:
+              handleTombstoneOperation(_message);
+              break;
+            default:
+              logger.warn(
+                  LocalizedMessage.create(
+                      LocalizedStrings.CacheClientUpdater_0_RECEIVED_AN_UNSUPPORTED_MESSAGE_TYPE_1,
+                      new Object[] {this, MessageType.getString(_message.getMessageType())}));
+              break;
           }
 
           if (this.isOpCompleted && (this.isDurableClient || isDeltaSent)) {
@@ -1645,7 +1895,7 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
           // We regard it the same as an InterruptedException
           this.endPointDied = true;
 
-          continueProcessing.set(false);// = false;
+          continueProcessing.set(false); // = false;
           if (isDebugEnabled) {
             logger.debug("InterruptedIOException");
           }
@@ -1668,7 +1918,7 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
           } // !quitting
 
           // In any event, terminate this thread.
-          continueProcessing.set(false);// = false;
+          continueProcessing.set(false); // = false;
           if (isDebugEnabled) {
             logger.debug("terminated due to IOException");
           }
@@ -1682,7 +1932,7 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
             handleException(message, e);
           }
           // In any event, terminate this thread.
-          continueProcessing.set(false);// = false; // force termination
+          continueProcessing.set(false); // = false; // force termination
           if (isDebugEnabled) {
             logger.debug("CCU terminated due to Exception");
           }
@@ -1704,21 +1954,22 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
 
   /**
    * Conditionally print a warning describing the failure
-   * <p>
-   * Signals run thread to stop. Messages are not printed if the thread or the
-   * distributed system has already been instructed to terminate.
-   * 
-   * @param message
-   *                contextual string for the failure
-   * @param exception
-   *                underlying exception
+   *
+   * <p>Signals run thread to stop. Messages are not printed if the thread or the distributed system
+   * has already been instructed to terminate.
+   *
+   * @param message contextual string for the failure
+   * @param exception underlying exception
    */
   private void handleException(String message, Exception exception) {
     boolean unexpected = !quitting();
 
     // If this was a surprise, print a warning.
     if (unexpected && !(exception instanceof CancelException)) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.CacheClientUpdater_0__1__2, new Object[] { this, message, exception }), exception);
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.CacheClientUpdater_0__1__2, new Object[] {this, message, exception}),
+          exception);
     }
     // We can't shutdown the client updater just because of an exception.
     // Let the caller decide if we should continue running or not.
@@ -1726,9 +1977,8 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
 
   /**
    * Return an object from serialization. Only used in debug logging.
-   * 
-   * @param serializedBytes
-   *                the serialized form
+   *
+   * @param serializedBytes the serialized form
    * @return the deserialized object
    */
   private Object deserialize(byte[] serializedBytes) {
@@ -1743,29 +1993,26 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
     return deserializedObject;
   }
 
-  /**
-   * @return the local port of our {@link #socket}
-   */
+  /** @return the local port of our {@link #socket} */
   protected int getLocalPort() {
     return socket.getLocalPort();
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.distributed.internal.InternalDistributedSystem.DisconnectListener#onDisconnect(org.apache.geode.distributed.internal.InternalDistributedSystem)
    */
   public void onDisconnect(InternalDistributedSystem sys) {
     stopUpdater();
   }
 
-  /**
-   * true if the EndPoint represented by this updater thread has died.
-   */
+  /** true if the EndPoint represented by this updater thread has died. */
   private volatile boolean endPointDied = false;
 
   /**
    * Returns true if the end point represented by this updater is considered dead.
+   *
    * @return true if {@link #endpoint} died.
    */
   public boolean isEndPointDead() {
@@ -1774,25 +2021,44 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
 
   private void verifySocketBufferSize(int requestedBufferSize, int actualBufferSize, String type) {
     if (actualBufferSize < requestedBufferSize) {
-      logger.info(LocalizedMessage.create(LocalizedStrings.Connection_SOCKET_0_IS_1_INSTEAD_OF_THE_REQUESTED_2, new Object[] { type + " buffer size", actualBufferSize, requestedBufferSize }));
+      logger.info(
+          LocalizedMessage.create(
+              LocalizedStrings.Connection_SOCKET_0_IS_1_INSTEAD_OF_THE_REQUESTED_2,
+              new Object[] {type + " buffer size", actualBufferSize, requestedBufferSize}));
     }
   }
 
   /**
-   * Stats for a CacheClientUpdater. Currently the only thing measured
-   * are incoming bytes on the wire
+   * Stats for a CacheClientUpdater. Currently the only thing measured are incoming bytes on the
+   * wire
+   *
    * @since GemFire 5.7
    */
   public static class CCUStats implements MessageStats {
-    // static fields 
+    // static fields
     private static final StatisticsType type;
-    private final static int messagesBeingReceivedId;
-    private final static int messageBytesBeingReceivedId;
-    private final static int receivedBytesId;
+    private static final int messagesBeingReceivedId;
+    private static final int messageBytesBeingReceivedId;
+    private static final int receivedBytesId;
 
     static {
       StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
-      type = f.createType("CacheClientUpdaterStats", "Statistics about incoming subscription data", new StatisticDescriptor[] { f.createLongCounter("receivedBytes", "Total number of bytes received from the server.", "bytes"), f.createIntGauge("messagesBeingReceived", "Current number of message being received off the network or being processed after reception.", "messages"), f.createLongGauge("messageBytesBeingReceived", "Current number of bytes consumed by messages being received or processed.", "bytes"), });
+      type =
+          f.createType(
+              "CacheClientUpdaterStats",
+              "Statistics about incoming subscription data",
+              new StatisticDescriptor[] {
+                f.createLongCounter(
+                    "receivedBytes", "Total number of bytes received from the server.", "bytes"),
+                f.createIntGauge(
+                    "messagesBeingReceived",
+                    "Current number of message being received off the network or being processed after reception.",
+                    "messages"),
+                f.createLongGauge(
+                    "messageBytesBeingReceived",
+                    "Current number of bytes consumed by messages being received or processed.",
+                    "bytes"),
+              });
       receivedBytesId = type.nameToId("receivedBytes");
       messagesBeingReceivedId = type.nameToId("messagesBeingReceived");
       messageBytesBeingReceivedId = type.nameToId("messageBytesBeingReceived");
@@ -1834,12 +2100,12 @@ public class CacheClientUpdater extends Thread implements ClientUpdater, Disconn
 
     /**
      * Returns the current time (ns).
+     *
      * @return the current time (ns)
      */
     public long startTime() {
       return DistributionStats.getStatTime();
     }
-
   }
 
   public boolean isProcessing() {

@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * The ShellCommandsController class implements GemFire REST API calls for Gfsh Shell Commands.
- * <p/>
+ *
+ * <p>
+ *
  * @see org.apache.geode.management.internal.cli.commands.ClientCommands
  * @see org.apache.geode.management.internal.web.controllers.AbstractCommandsController
  * @see org.springframework.stereotype.Controller
@@ -50,11 +52,9 @@ public class ClientCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/clients/{clientID}")
   @ResponseBody
-  public String describeClient(@PathVariable("clientID")
-  final String clientId) {
+  public String describeClient(@PathVariable("clientID") final String clientId) {
     CommandStringBuilder command = new CommandStringBuilder(CliStrings.DESCRIBE_CLIENT);
     command.addOption(CliStrings.DESCRIBE_CLIENT__ID, decode(clientId));
     return processCommand(command.toString());
   }
-
 }

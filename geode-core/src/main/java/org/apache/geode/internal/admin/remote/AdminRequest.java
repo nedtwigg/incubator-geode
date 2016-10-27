@@ -37,8 +37,7 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * A message that is sent to a particular distribution manager to
- * make an administration request.
+ * A message that is sent to a particular distribution manager to make an administration request.
  */
 public abstract class AdminRequest extends PooledDistributionMessage {
 
@@ -49,8 +48,7 @@ public abstract class AdminRequest extends PooledDistributionMessage {
 
   // instance variables
 
-  /** The reply procesor used to gathering replies to an
-   * AdminRequest.  See bug 31562. */
+  /** The reply procesor used to gathering replies to an AdminRequest. See bug 31562. */
   private transient AdminReplyProcessor processor;
 
   /** The (reply processor) id of this message */
@@ -59,9 +57,7 @@ public abstract class AdminRequest extends PooledDistributionMessage {
   // static methods
 
   // constructors
-  public AdminRequest() {
-
-  }
+  public AdminRequest() {}
 
   // instance methods
 
@@ -69,9 +65,7 @@ public abstract class AdminRequest extends PooledDistributionMessage {
     return this.msgId;
   }
 
-  /**
-   * Sends this request, waits for the AdminReponse, and returns it
-   */
+  /** Sends this request, waits for the AdminReponse, and returns it */
   public AdminResponse sendAndWait(DistributionManager dm) {
     InternalDistributedMember recipient = this.getRecipient();
     if (dm.getId().equals(recipient)) {
@@ -89,11 +83,9 @@ public abstract class AdminRequest extends PooledDistributionMessage {
   }
 
   /**
-   * Waits a given number of milliseconds for the reply to this
-   * request. 
+   * Waits a given number of milliseconds for the reply to this request.
    *
    * @return Whether or not a reply was received.
-   *
    * @see #getResponse
    */
   boolean waitForResponse(long timeout) throws InterruptedException {
@@ -108,7 +100,10 @@ public abstract class AdminRequest extends PooledDistributionMessage {
         }
       }
 
-      throw new RuntimeAdminException(LocalizedStrings.AdminRequest_A_REPLYEXCEPTION_WAS_THROWN_WHILE_WAITING_FOR_A_REPLY.toLocalizedString(), ex);
+      throw new RuntimeAdminException(
+          LocalizedStrings.AdminRequest_A_REPLYEXCEPTION_WAS_THROWN_WHILE_WAITING_FOR_A_REPLY
+              .toLocalizedString(),
+          ex);
     }
   }
 
@@ -122,8 +117,8 @@ public abstract class AdminRequest extends PooledDistributionMessage {
   }
 
   /**
-   * This method is invoked on the receiver side. It creates a response
-   * message and puts it on the outgoing queue.
+   * This method is invoked on the receiver side. It creates a response message and puts it on the
+   * outgoing queue.
    */
   @Override
   protected void process(DistributionManager dm) {
@@ -141,13 +136,14 @@ public abstract class AdminRequest extends PooledDistributionMessage {
       response.setMsgId(this.getMsgId());
       dm.putOutgoing(response);
     } else {
-      logger.info(LocalizedMessage.create(LocalizedStrings.AdminRequest_RESPONSE_TO__0__WAS_CANCELLED, this.getClass().getName()));
+      logger.info(
+          LocalizedMessage.create(
+              LocalizedStrings.AdminRequest_RESPONSE_TO__0__WAS_CANCELLED,
+              this.getClass().getName()));
     }
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   protected abstract AdminResponse createResponse(DistributionManager dm);
 
   @Override
@@ -178,10 +174,12 @@ public abstract class AdminRequest extends PooledDistributionMessage {
     if (size == 0) {
       return null;
     } else if (size > 1) {
-      throw new IllegalStateException(LocalizedStrings.AdminRequest_COULD_NOT_RETURN_ONE_RECIPIENT_BECAUSE_THIS_MESSAGE_HAS_0_RECIPIENTS.toLocalizedString(Integer.valueOf(size)));
+      throw new IllegalStateException(
+          LocalizedStrings
+              .AdminRequest_COULD_NOT_RETURN_ONE_RECIPIENT_BECAUSE_THIS_MESSAGE_HAS_0_RECIPIENTS
+              .toLocalizedString(Integer.valueOf(size)));
     } else {
       return recipients[0];
     }
   }
-
 }

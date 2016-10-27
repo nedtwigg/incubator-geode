@@ -21,8 +21,7 @@ import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.internal.cache.control.InternalResourceManager.ResourceType;
 import org.apache.geode.internal.cache.control.MemoryThresholds.MemoryState;
 
-/**
- */
+/** */
 public class MemoryEvent implements ResourceEvent {
   private final ResourceType type;
   private final MemoryState state;
@@ -32,7 +31,14 @@ public class MemoryEvent implements ResourceEvent {
   private final boolean isLocal;
   private final MemoryThresholds thresholds;
 
-  public MemoryEvent(final ResourceType type, final MemoryState previousState, final MemoryState state, final DistributedMember member, final long bytesUsed, final boolean isLocal, final MemoryThresholds thresholds) {
+  public MemoryEvent(
+      final ResourceType type,
+      final MemoryState previousState,
+      final MemoryState state,
+      final DistributedMember member,
+      final long bytesUsed,
+      final boolean isLocal,
+      final MemoryThresholds thresholds) {
     this.type = type;
     this.previousState = previousState;
     this.state = state;
@@ -75,6 +81,16 @@ public class MemoryEvent implements ResourceEvent {
 
   @Override
   public String toString() {
-    return new StringBuilder().append("MemoryEvent@").append(System.identityHashCode(this)).append("[Member:" + this.member).append(",type:" + this.type).append(",previousState:" + this.previousState).append(",state:" + this.state).append(",bytesUsed:" + this.bytesUsed).append(",isLocal:" + this.isLocal).append(",thresholds:" + this.thresholds + "]").toString();
+    return new StringBuilder()
+        .append("MemoryEvent@")
+        .append(System.identityHashCode(this))
+        .append("[Member:" + this.member)
+        .append(",type:" + this.type)
+        .append(",previousState:" + this.previousState)
+        .append(",state:" + this.state)
+        .append(",bytesUsed:" + this.bytesUsed)
+        .append(",isLocal:" + this.isLocal)
+        .append(",thresholds:" + this.thresholds + "]")
+        .toString();
   }
 }

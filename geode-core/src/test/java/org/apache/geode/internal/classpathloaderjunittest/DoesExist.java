@@ -16,6 +16,4 @@
  */
 package org.apache.geode.internal.classpathloaderjunittest;
 
-public class DoesExist {
-
-}
+public class DoesExist {}

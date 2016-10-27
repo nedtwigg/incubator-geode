@@ -58,9 +58,6 @@ public class HExistsExecutor extends HashExecutor {
 
     if (hasField)
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), EXISTS));
-    else
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_EXISTS));
-
+    else command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_EXISTS));
   }
-
 }

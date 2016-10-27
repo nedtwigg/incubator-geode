@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import org.apache.geode.internal.cache.tier.Command;
@@ -29,20 +27,24 @@ import java.io.IOException;
 
 public class Invalid extends BaseCommand {
 
-  private final static Invalid singleton = new Invalid();
+  private static final Invalid singleton = new Invalid();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private Invalid() {
-  }
+  private Invalid() {}
 
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
-    logger.error(LocalizedMessage.create(LocalizedStrings.Invalid_0_INVALID_MESSAGE_TYPE_WITH_TX_1_FROM_2, new Object[] { servConn.getName(), Integer.valueOf(msg.getTransactionId()), servConn.getSocketString() }));
+    logger.error(
+        LocalizedMessage.create(
+            LocalizedStrings.Invalid_0_INVALID_MESSAGE_TYPE_WITH_TX_1_FROM_2,
+            new Object[] {
+              servConn.getName(),
+              Integer.valueOf(msg.getTransactionId()),
+              servConn.getSocketString()
+            }));
     writeErrorResponse(msg, MessageType.INVALID, servConn);
-
   }
-
 }

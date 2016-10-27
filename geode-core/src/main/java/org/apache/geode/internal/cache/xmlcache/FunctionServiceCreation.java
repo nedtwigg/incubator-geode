@@ -22,16 +22,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.execute.FunctionService;
 
-/**
- * FunctionServiceCreation to be used in CacheXmlParser
- *
- */
+/** FunctionServiceCreation to be used in CacheXmlParser */
 public class FunctionServiceCreation {
 
   private final Map<String, Function> functions = new ConcurrentHashMap<String, Function>();
 
-  public FunctionServiceCreation() {
-  }
+  public FunctionServiceCreation() {}
 
   public void registerFunction(Function f) {
     this.functions.put(f.getId(), f);

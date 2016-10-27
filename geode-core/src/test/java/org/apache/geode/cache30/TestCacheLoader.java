@@ -19,13 +19,10 @@ package org.apache.geode.cache30;
 import org.apache.geode.cache.*;
 
 /**
- * A <code>CacheLoader</code> used in testing.  Users should override
- * the "2" method.
+ * A <code>CacheLoader</code> used in testing. Users should override the "2" method.
  *
  * @see #wasInvoked
  * @see TestCacheWriter
- *
- *
  * @since GemFire 3.0
  */
 public abstract class TestCacheLoader extends TestCacheCallback implements CacheLoader {
@@ -37,5 +34,4 @@ public abstract class TestCacheLoader extends TestCacheCallback implements Cache
   }
 
   public abstract Object load2(LoaderHelper helper) throws CacheLoaderException;
-
 }

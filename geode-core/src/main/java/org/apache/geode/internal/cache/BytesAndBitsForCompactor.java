@@ -20,31 +20,31 @@ import org.apache.geode.internal.offheap.StoredObject;
 import org.apache.geode.internal.offheap.annotations.Unretained;
 
 /**
- * Used to fetch a record's raw bytes and user bits.
- * The actual data length in byte array may be less than
- * the size of the byte array itself. An integer field contains
- * the valid length. This class is used exclusively by the Oplog Compactor
- * for rolling the entries. The reason for this class is to reuse the
- * underlying byte array for rolling multiple entries there by
- * reducing the garbage.
+ * Used to fetch a record's raw bytes and user bits. The actual data length in byte array may be
+ * less than the size of the byte array itself. An integer field contains the valid length. This
+ * class is used exclusively by the Oplog Compactor for rolling the entries. The reason for this
+ * class is to reuse the underlying byte array for rolling multiple entries there by reducing the
+ * garbage.
+ *
  * @since GemFire 5.5
  */
 public class BytesAndBitsForCompactor {
   /**
-   * If offHeapData is set then ignore the "data" and "validLength" fields.
-   * The offHeapData field is unretained so it can only be used while the RegionEntry is still synced.
-   * When done with the offHeapData, null it out if you want to reuse the byte[] later.
+   * If offHeapData is set then ignore the "data" and "validLength" fields. The offHeapData field is
+   * unretained so it can only be used while the RegionEntry is still synced. When done with the
+   * offHeapData, null it out if you want to reuse the byte[] later.
    */
   private @Unretained StoredObject offHeapData;
+
   private byte[] data;
   private byte userBits = 0;
-  // length of the data present in the byte array 
+  // length of the data present in the byte array
   private int validLength;
   private static final byte[] INIT_FOR_WRAPPER = new byte[0];
   // boolean indicating if the object can be reused.
   // Typically if the data stores the reference of a value byte [] directly
   // from the RegionEntry than this byte array cannot be reused for
-  //storing another entry's data 
+  //storing another entry's data
   private boolean isReusable;
 
   public BytesAndBitsForCompactor() {
@@ -75,10 +75,9 @@ public class BytesAndBitsForCompactor {
   }
 
   /**
-   * 
-   * @param data byte array storing the data 
+   * @param data byte array storing the data
    * @param userBits byte with appropriate bits set
-   * @param validLength  The number of bytes representing the data , starting from 0 as offset
+   * @param validLength The number of bytes representing the data , starting from 0 as offset
    * @param isReusable true if this object is safe for reuse as a data holder
    */
   public void setData(byte[] data, byte userBits, int validLength, boolean isReusable) {

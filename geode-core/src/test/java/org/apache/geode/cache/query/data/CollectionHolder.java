@@ -28,13 +28,13 @@ import java.util.Arrays;
 
 import org.apache.geode.*;
 
-/**
- *
- */
+/** */
 public class CollectionHolder implements Serializable, DataSerializable {
 
   public String[] arr;
-  public static String secIds[] = { "SUN", "IBM", "YHOO", "GOOG", "MSFT", "AOL", "APPL", "ORCL", "SAP", "DELL", "RHAT", "NOVL", "HP" };
+  public static String secIds[] = {
+    "SUN", "IBM", "YHOO", "GOOG", "MSFT", "AOL", "APPL", "ORCL", "SAP", "DELL", "RHAT", "NOVL", "HP"
+  };
 
   /** Creates a new instance of CollectionHolder */
   public CollectionHolder() {
@@ -45,7 +45,6 @@ public class CollectionHolder implements Serializable, DataSerializable {
     for (int i = 5; i < 10; i++) {
       arr[i] = secIds[i - 5];
     }
-
   }
 
   public String[] getArr() {
@@ -85,5 +84,4 @@ public class CollectionHolder implements Serializable, DataSerializable {
     }
     return true;
   }
-
 }

@@ -20,9 +20,7 @@ import java.util.logging.Logger;
 
 import org.apache.geode.management.internal.cli.util.CLIConsoleBufferUtil;
 
-/**
- * Prints the warning according the CliException
- */
+/** Prints the warning according the CliException */
 public class ExceptionHandler {
 
   private static Logger LOGGER = Logger.getLogger(ExceptionHandler.class.getCanonicalName());
@@ -40,21 +38,32 @@ public class ExceptionHandler {
 
   private static void handleMultiModeOptionException(CliCommandMultiModeOptionException ce) {
     switch (ce.getCode()) {
-    case CliCommandMultiModeOptionException.MULTIPLE_LEAD_OPTIONS:
-      LOGGER.warning(CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer("Input command contains multiple lead-options from modes : " + ce.getLeadOptionString()));
-      break;
-    case CliCommandMultiModeOptionException.OPTIONS_FROM_MULTIPLE_MODES:
-      LOGGER.warning(CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer("Input command contains options from multilpe modes : " + ce.getLeadOptionString()));
-      break;
+      case CliCommandMultiModeOptionException.MULTIPLE_LEAD_OPTIONS:
+        LOGGER.warning(
+            CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer(
+                "Input command contains multiple lead-options from modes : "
+                    + ce.getLeadOptionString()));
+        break;
+      case CliCommandMultiModeOptionException.OPTIONS_FROM_MULTIPLE_MODES:
+        LOGGER.warning(
+            CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer(
+                "Input command contains options from multilpe modes : "
+                    + ce.getLeadOptionString()));
+        break;
     }
   }
 
   private static void handleCommandInvalidException(CliCommandInvalidException ccie) {
-    LOGGER.warning(CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer(ccie.getCommandTarget().getGfshMethodTarget().getKey() + " is not a valid Command"));
+    LOGGER.warning(
+        CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer(
+            ccie.getCommandTarget().getGfshMethodTarget().getKey() + " is not a valid Command"));
   }
 
   private static void handleCommandNotAvailableException(CliCommandNotAvailableException ccnae) {
-    LOGGER.warning(CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer(ccnae.getCommandTarget().getGfshMethodTarget().getKey() + " is not available at the moment"));
+    LOGGER.warning(
+        CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer(
+            ccnae.getCommandTarget().getGfshMethodTarget().getKey()
+                + " is not available at the moment"));
   }
 
   private static void handleOptionException(CliCommandOptionException ccoe) {
@@ -68,7 +77,11 @@ public class ExceptionHandler {
   }
 
   private static void handleOptionInvalidExcpetion(CliCommandOptionNotApplicableException cconae) {
-    String messege = "Parameter " + cconae.getOption().getLongOption() + " is not applicable for " + cconae.getCommandTarget().getGfshMethodTarget().getKey();
+    String messege =
+        "Parameter "
+            + cconae.getOption().getLongOption()
+            + " is not applicable for "
+            + cconae.getCommandTarget().getGfshMethodTarget().getKey();
     LOGGER.warning(CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer(messege));
   }
 
@@ -78,7 +91,8 @@ public class ExceptionHandler {
       //String parameter = ccove != null && ccove.getOption() != null ? ccove.getOption().getLongOption() : "<null>";
       String parameter = ccove.getOption().getLongOption();
       String message = "Parameter " + parameter + " can only be specified once";
-      LOGGER.warning(CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer(message));
+      LOGGER.warning(
+          CLIConsoleBufferUtil.processMessegeForExtraCharactersFromConsoleBuffer(message));
     }
   }
 }

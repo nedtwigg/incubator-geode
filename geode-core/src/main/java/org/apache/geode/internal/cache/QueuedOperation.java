@@ -25,9 +25,9 @@ import org.apache.geode.distributed.DistributedMember;
 import java.io.*;
 
 /**
- * Represents a single operation that can be queued for reliable delivery.
- * Instances are owned in the context of a region.
- * 
+ * Represents a single operation that can be queued for reliable delivery. Instances are owned in
+ * the context of a region.
+ *
  * @since GemFire 5.0
  */
 public class QueuedOperation {
@@ -41,16 +41,21 @@ public class QueuedOperation {
 
   /**
    * Deserialization policies defined in AbstractUpdateOperation
+   *
    * @see org.apache.geode.internal.cache.AbstractUpdateOperation
    */
   private final byte deserializationPolicy;
 
   private final Object cbArg; // may be null
 
-  /**
-   * Creates an instance of a queued operation with the given data.
-   */
-  public QueuedOperation(Operation op, Object key, byte[] value, Object valueObj, byte deserializationPolicy, Object cbArg) {
+  /** Creates an instance of a queued operation with the given data. */
+  public QueuedOperation(
+      Operation op,
+      Object key,
+      byte[] value,
+      Object valueObj,
+      byte deserializationPolicy,
+      Object cbArg) {
     this.op = op;
     this.key = key;
     this.value = value;
@@ -67,9 +72,11 @@ public class QueuedOperation {
       if (this.op.isRegionInvalidate()) {
         lr.basicInvalidateRegion(re);
       } else if (this.op == Operation.REGION_CLEAR) {
-        lr.cmnClearRegion(re, false/* cacheWrite */, false/*useRVV*/);
+        lr.cmnClearRegion(re, false /* cacheWrite */, false /*useRVV*/);
       } else {
-        throw new IllegalStateException(LocalizedStrings.QueuedOperation_THE_0_SHOULD_NOT_HAVE_BEEN_QUEUED.toLocalizedString(this.op));
+        throw new IllegalStateException(
+            LocalizedStrings.QueuedOperation_THE_0_SHOULD_NOT_HAVE_BEEN_QUEUED.toLocalizedString(
+                this.op));
       }
     } else {
       // it is an entry operation
@@ -79,7 +86,8 @@ public class QueuedOperation {
       try {
         //ee.setQueued(true);
         if (this.op.isCreate() || this.op.isUpdate()) {
-          UpdateOperation.UpdateMessage.setNewValueInEvent(this.value, this.valueObj, ee, this.deserializationPolicy);
+          UpdateOperation.UpdateMessage.setNewValueInEvent(
+              this.value, this.valueObj, ee, this.deserializationPolicy);
           try {
             long time = lastMod;
             if (ee.getVersionTag() != null) {
@@ -95,16 +103,22 @@ public class QueuedOperation {
           ee.setOldValueFromRegion();
           try {
             lr.basicDestroy(ee, false, null); // expectedOldValue
-                                              // ???:ezoerner:20080815
-                                              // can a remove(key, value) operation be
-                                              // queued?
+            // ???:ezoerner:20080815
+            // can a remove(key, value) operation be
+            // queued?
           } catch (ConcurrentCacheModificationException e) {
             // operation was rejected by the cache's concurrency control mechanism as being old
           } catch (EntryNotFoundException ignore) {
           } catch (CacheWriterException e) {
-            throw new Error(LocalizedStrings.QueuedOperation_CACHEWRITER_SHOULD_NOT_BE_CALLED.toLocalizedString(), e);
+            throw new Error(
+                LocalizedStrings.QueuedOperation_CACHEWRITER_SHOULD_NOT_BE_CALLED
+                    .toLocalizedString(),
+                e);
           } catch (TimeoutException e) {
-            throw new Error(LocalizedStrings.QueuedOperation_DISTRIBUTEDLOCK_SHOULD_NOT_BE_ACQUIRED.toLocalizedString(), e);
+            throw new Error(
+                LocalizedStrings.QueuedOperation_DISTRIBUTEDLOCK_SHOULD_NOT_BE_ACQUIRED
+                    .toLocalizedString(),
+                e);
           }
         } else if (this.op.isInvalidate()) {
           ee.setOldValueFromRegion();
@@ -117,7 +131,9 @@ public class QueuedOperation {
           } catch (EntryNotFoundException ignore) {
           }
         } else {
-          throw new IllegalStateException(LocalizedStrings.QueuedOperation_THE_0_SHOULD_NOT_HAVE_BEEN_QUEUED.toLocalizedString(this.op));
+          throw new IllegalStateException(
+              LocalizedStrings.QueuedOperation_THE_0_SHOULD_NOT_HAVE_BEEN_QUEUED.toLocalizedString(
+                  this.op));
         }
       } finally {
         ee.release();
@@ -125,7 +141,8 @@ public class QueuedOperation {
     }
   }
 
-  public static QueuedOperation createFromData(DataInput in) throws IOException, ClassNotFoundException {
+  public static QueuedOperation createFromData(DataInput in)
+      throws IOException, ClassNotFoundException {
     Operation op = Operation.fromOrdinal(in.readByte());
     Object key = null;
     byte[] value = null;

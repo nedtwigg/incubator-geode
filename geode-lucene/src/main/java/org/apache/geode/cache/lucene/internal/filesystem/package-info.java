@@ -17,10 +17,10 @@
  * under the License.
  */
 /**
- * A distributed filesystem implementation that uses a geode region as the underlying storage mechanism.
+ * A distributed filesystem implementation that uses a geode region as the underlying storage
+ * mechanism.
  *
- * Users of this filesystem should interact with the {@link org.apache.geode.cache.lucene.internal.filesystem.FileSystem} class.
- *
+ * <p>Users of this filesystem should interact with the {@link
+ * org.apache.geode.cache.lucene.internal.filesystem.FileSystem} class.
  */
-
 package org.apache.geode.cache.lucene.internal.filesystem;

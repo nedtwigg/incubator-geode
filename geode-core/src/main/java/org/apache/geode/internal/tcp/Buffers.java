@@ -25,17 +25,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.geode.distributed.internal.DMStats;
 import org.apache.geode.internal.Assert;
 
-/**
- *
- */
+/** */
 public class Buffers {
-  /**
-   * A list of soft references to byte buffers.
-   */
+  /** A list of soft references to byte buffers. */
   private static final ConcurrentLinkedQueue bufferQueue = new ConcurrentLinkedQueue();
 
   /**
    * Should only be called by threads that have currently acquired send permission.
+   *
    * @return a byte buffer to be used for sending on this connection.
    */
   static ByteBuffer acquireSenderBuffer(int size, DMStats stats) {
@@ -49,7 +46,8 @@ public class Buffers {
   static ByteBuffer acquireBuffer(int size, DMStats stats, boolean send) {
     ByteBuffer result;
     if (TCPConduit.useDirectBuffers) {
-      IdentityHashMap<BBSoftReference, BBSoftReference> alreadySeen = null; // keys are used like a set
+      IdentityHashMap<BBSoftReference, BBSoftReference> alreadySeen =
+          null; // keys are used like a set
       BBSoftReference ref = (BBSoftReference) bufferQueue.poll();
       while (ref != null) {
         ByteBuffer bb = ref.getBB();
@@ -103,9 +101,7 @@ public class Buffers {
     releaseBuffer(bb, stats, false);
   }
 
-  /**
-   * Releases a previously acquired buffer.
-   */
+  /** Releases a previously acquired buffer. */
   static void releaseBuffer(ByteBuffer bb, DMStats stats, boolean send) {
     if (TCPConduit.useDirectBuffers) {
       BBSoftReference bbRef = new BBSoftReference(bb, send);
@@ -137,10 +133,9 @@ public class Buffers {
   }
 
   /**
-   * A soft reference that remembers the size of the byte buffer it refers to.
-   * TODO Dan - I really think this should be a weak reference. The JVM
-   * doesn't seem to clear soft references if it is getting low on direct
-   * memory.
+   * A soft reference that remembers the size of the byte buffer it refers to. TODO Dan - I really
+   * think this should be a weak reference. The JVM doesn't seem to clear soft references if it is
+   * getting low on direct memory.
    */
   private static class BBSoftReference extends SoftReference<ByteBuffer> {
     private int size;
@@ -170,5 +165,4 @@ public class Buffers {
       return (ByteBuffer) super.get();
     }
   }
-
 }

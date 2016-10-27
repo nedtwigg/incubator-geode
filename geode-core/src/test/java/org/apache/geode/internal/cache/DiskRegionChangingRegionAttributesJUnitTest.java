@@ -25,10 +25,10 @@ import org.apache.geode.cache.Scope;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * This test will test that there are no unexpected behaviours
- * if the the region attributes are changed after starting it again.
- * 
- * The behaviour should be predictable
+ * This test will test that there are no unexpected behaviours if the the region attributes are
+ * changed after starting it again.
+ *
+ * <p>The behaviour should be predictable
  */
 @Category(IntegrationTest.class)
 public class DiskRegionChangingRegionAttributesJUnitTest extends DiskRegionTestingBase {
@@ -73,10 +73,9 @@ public class DiskRegionChangingRegionAttributesJUnitTest extends DiskRegionTesti
       fail("expected IllegalStateException");
     } catch (IllegalStateException expected) {
     }
-    //Asif Recreate the region so that it gets destroyed in teardown 
+    //Asif Recreate the region so that it gets destroyed in teardown
     //clearing up the old Oplogs
     createPersistOnly();
-
   }
 
   @Test

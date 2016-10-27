@@ -29,7 +29,8 @@ import org.apache.geode.internal.cache.wan.serial.SerialWANPersistenceEnabledGat
 
 @SuppressWarnings("serial")
 @Category(DistributedTest.class)
-public class SerialWANPersistenceEnabledGatewaySenderOffHeapDUnitTest extends SerialWANPersistenceEnabledGatewaySenderDUnitTest {
+public class SerialWANPersistenceEnabledGatewaySenderOffHeapDUnitTest
+    extends SerialWANPersistenceEnabledGatewaySenderDUnitTest {
 
   public SerialWANPersistenceEnabledGatewaySenderOffHeapDUnitTest() {
     super();
@@ -39,5 +40,4 @@ public class SerialWANPersistenceEnabledGatewaySenderOffHeapDUnitTest extends Se
   public boolean isOffHeap() {
     return true;
   }
-
 }

@@ -55,21 +55,36 @@ public class AnalyzeSerializablesJUnitTest {
     String version = System.getProperty("java.runtime.version");
     boolean jdk18 = version != null && version.startsWith("1.8");
     // sanctioned info is based on a 1.7 compiler
-    Assume.assumeTrue("AnalyzeSerializables requires a Java 8 but tests are running with v" + version, jdk18);
+    Assume.assumeTrue(
+        "AnalyzeSerializables requires a Java 8 but tests are running with v" + version, jdk18);
     if (classes.size() > 0) {
       return;
     }
     System.out.println("loadClasses starting");
 
-    List<String> excludedClasses = loadExcludedClasses(new File(TestUtil.getResourcePath(AnalyzeSerializablesJUnitTest.class, "excludedClasses.txt")));
-    List<String> openBugs = loadOpenBugs(new File(TestUtil.getResourcePath(AnalyzeSerializablesJUnitTest.class, "openBugs.txt")));
+    List<String> excludedClasses =
+        loadExcludedClasses(
+            new File(
+                TestUtil.getResourcePath(
+                    AnalyzeSerializablesJUnitTest.class, "excludedClasses.txt")));
+    List<String> openBugs =
+        loadOpenBugs(
+            new File(
+                TestUtil.getResourcePath(AnalyzeSerializablesJUnitTest.class, "openBugs.txt")));
     excludedClasses.addAll(openBugs);
 
     String cp = System.getProperty("java.class.path");
     System.out.println("java classpath is " + cp);
     System.out.flush();
     String[] entries = cp.split(File.pathSeparator);
-    String buildDirName = "geode-core" + File.separatorChar + "build" + File.separatorChar + "classes" + File.separatorChar + "main";
+    String buildDirName =
+        "geode-core"
+            + File.separatorChar
+            + "build"
+            + File.separatorChar
+            + "classes"
+            + File.separatorChar
+            + "main";
     String buildDir = null;
 
     for (int i = 0; i < entries.length && buildDir == null; i++) {
@@ -85,7 +100,12 @@ public class AnalyzeSerializablesJUnitTest {
       long start = System.currentTimeMillis();
       loadClassesFromBuild(new File(buildDir), excludedClasses);
       long finish = System.currentTimeMillis();
-      System.out.println("done loading " + classes.size() + " classes.  elapsed time = " + (finish - start) / 1000 + " seconds");
+      System.out.println(
+          "done loading "
+              + classes.size()
+              + " classes.  elapsed time = "
+              + (finish - start) / 1000
+              + " seconds");
     } else {
       fail("unable to find geode classes");
     }
@@ -139,7 +159,8 @@ public class AnalyzeSerializablesJUnitTest {
     return excludedClasses;
   }
 
-  private static void removeExclusions(Map<String, CompiledClass> classes, List<String> exclusions) {
+  private static void removeExclusions(
+      Map<String, CompiledClass> classes, List<String> exclusions) {
     for (String exclusion : exclusions) {
       exclusion = exclusion.replace('.', '/');
       classes.remove(exclusion);
@@ -153,7 +174,8 @@ public class AnalyzeSerializablesJUnitTest {
       System.out.println("... test not run due to not being able to locate product class files");
       return;
     }
-    String compareToFileName = TestUtil.getResourcePath(getClass(), "sanctionedDataSerializables.txt");
+    String compareToFileName =
+        TestUtil.getResourcePath(getClass(), "sanctionedDataSerializables.txt");
 
     String storeInFileName = "actualDataSerializables.dat";
     File storeInFile = new File(storeInFileName);
@@ -171,14 +193,21 @@ public class AnalyzeSerializablesJUnitTest {
       throw new RuntimeException("can't read " + compareToFileName);
     }
 
-    List<ClassAndMethodDetails> goldRecord = CompiledClassUtils.loadClassesAndMethods(compareToFile);
+    List<ClassAndMethodDetails> goldRecord =
+        CompiledClassUtils.loadClassesAndMethods(compareToFile);
     Collections.sort(goldRecord);
 
     String diff = CompiledClassUtils.diffSortedClassesAndMethods(goldRecord, toDatas);
     if (diff.length() > 0) {
-      System.out.println("++++++++++++++++++++++++++++++testDataSerializables found discrepencies++++++++++++++++++++++++++++++++++++");
+      System.out.println(
+          "++++++++++++++++++++++++++++++testDataSerializables found discrepencies++++++++++++++++++++++++++++++++++++");
       System.out.println(diff);
-      fail(diff + "\n\nIf the class is not persisted or sent over the wire add it to the excludedClasses.txt file in the " + "\norg/apache/geode/codeAnalysis directory.  Otherwise if this doesn't " + "\nbreak backward compatibility move the file actualDataSerializables.dat to the codeAnalysis " + "\ntest directory and rename to sanctionedDataSerializables.txt");
+      fail(
+          diff
+              + "\n\nIf the class is not persisted or sent over the wire add it to the excludedClasses.txt file in the "
+              + "\norg/apache/geode/codeAnalysis directory.  Otherwise if this doesn't "
+              + "\nbreak backward compatibility move the file actualDataSerializables.dat to the codeAnalysis "
+              + "\ntest directory and rename to sanctionedDataSerializables.txt");
     }
   }
 
@@ -209,24 +238,33 @@ public class AnalyzeSerializablesJUnitTest {
     if (!compareToFile.canRead()) {
       throw new RuntimeException("can't read " + compareToFileName);
     }
-    List<ClassAndVariableDetails> goldRecord = CompiledClassUtils.loadClassesAndVariables(compareToFile);
+    List<ClassAndVariableDetails> goldRecord =
+        CompiledClassUtils.loadClassesAndVariables(compareToFile);
     Collections.sort(goldRecord);
 
     String diff = CompiledClassUtils.diffSortedClassesAndVariables(goldRecord, serializables);
     classes.clear();
     if (diff.length() > 0) {
-      System.out.println("++++++++++++++++++++++++++++++testSerializables found discrepencies++++++++++++++++++++++++++++++++++++");
+      System.out.println(
+          "++++++++++++++++++++++++++++++testSerializables found discrepencies++++++++++++++++++++++++++++++++++++");
       System.out.println(diff);
-      fail(diff + "\n\nIf the class is not persisted or sent over the wire add it to the excludedClasses.txt file in the " + "\n/org/apache/geode/codeAnalysis/ directory.  Otherwise if this doesn't " + "\nbreak backward compatibility move the file actualSerializables.dat to the " + "\ncodeAnalysis test directory and rename to sanctionedSerializables.txt");
+      fail(
+          diff
+              + "\n\nIf the class is not persisted or sent over the wire add it to the excludedClasses.txt file in the "
+              + "\n/org/apache/geode/codeAnalysis/ directory.  Otherwise if this doesn't "
+              + "\nbreak backward compatibility move the file actualSerializables.dat to the "
+              + "\ncodeAnalysis test directory and rename to sanctionedSerializables.txt");
     }
   }
 
   /**
    * load the classes from the given files and directories
+   *
    * @param excludedClasses names of classes to exclude
    */
-  public static void loadClasses(String directory, boolean recursive, List<String> excludedClasses) {
-    String[] filenames = new String[] { directory };
+  public static void loadClasses(
+      String directory, boolean recursive, List<String> excludedClasses) {
+    String[] filenames = new String[] {directory};
     List<File> classFiles = CompiledClassUtils.findClassFiles("", filenames, recursive);
     Map<String, CompiledClass> newClasses = CompiledClassUtils.parseClassFiles(classFiles);
     removeExclusions(newClasses, excludedClasses);
@@ -239,18 +277,14 @@ public class AnalyzeSerializablesJUnitTest {
     classes.putAll(newClasses);
   }
 
-  /**
-   * load the classes from the given jar file
-   */
+  /** load the classes from the given jar file */
   public static void loadClasses(File jar, List<String> excludedClasses) {
     Map<String, CompiledClass> newClasses = CompiledClassUtils.parseClassFilesInJar(jar);
     removeExclusions(newClasses, excludedClasses);
     classes.putAll(newClasses);
   }
 
-  /**
-   * clears all loaded classes
-   */
+  /** clears all loaded classes */
   public void reset() {
     classes.clear();
   }
@@ -300,5 +334,4 @@ public class AnalyzeSerializablesJUnitTest {
     Collections.sort(result);
     return result;
   }
-
 }

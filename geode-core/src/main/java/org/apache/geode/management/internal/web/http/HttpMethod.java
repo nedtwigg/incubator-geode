@@ -18,11 +18,19 @@ package org.apache.geode.management.internal.web.http;
 
 /**
  * The HttpMethod enum is an enumeration of all HTTP methods (POST, GET, PUT, DELETE, HEADERS, etc).
- * <p/>
+ *
+ * <p>
+ *
  * @since GemFire 8.0
  */
 @SuppressWarnings("unused")
 public enum HttpMethod {
-  CONNECT, DELETE, GET, HEAD, OPTIONS, POST, PUT, TRACE
-
+  CONNECT,
+  DELETE,
+  GET,
+  HEAD,
+  OPTIONS,
+  POST,
+  PUT,
+  TRACE
 }

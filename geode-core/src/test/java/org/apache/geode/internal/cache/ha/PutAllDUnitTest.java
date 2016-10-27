@@ -63,37 +63,37 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 @Category(DistributedTest.class)
 public class PutAllDUnitTest extends JUnit4DistributedTestCase {
 
-  /** server1 VM **/
+  /** server1 VM * */
   VM server1 = null;
 
-  /** server2 VM **/
+  /** server2 VM * */
   VM server2 = null;
 
-  /** client1 VM **/
+  /** client1 VM * */
   VM client1 = null;
 
-  /** client2 VM **/
+  /** client2 VM * */
   VM client2 = null;
 
-  /** port of server1**/
+  /** port of server1* */
   public int PORT1;
 
-  /** port of server2**/
+  /** port of server2* */
   public int PORT2;
 
-  /** region name**/
+  /** region name* */
   private static final String REGION_NAME = "PutAllDUnitTest_Region";
-  /** cache **/
+  /** cache * */
   private static Cache cache = null;
-  /** server **/
+  /** server * */
   static CacheServerImpl server = null;
 
-  /** test constructor **/
+  /** test constructor * */
   public PutAllDUnitTest() {
     super();
   }
 
-  /** get the hosts and the VMs **/
+  /** get the hosts and the VMs * */
   @Override
   public final void postSetUp() throws Exception {
     final Host host = Host.getHost(0);
@@ -103,7 +103,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     client2 = host.getVM(3);
   }
 
-  /** close the caches**/
+  /** close the caches* */
   @Override
   public final void preTearDown() throws Exception {
     client1.invoke(() -> PutAllDUnitTest.closeCache());
@@ -116,22 +116,29 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     closeCache();
   }
 
-  /** stops the server **/
+  /** stops the server * */
   private CacheSerializableRunnable stopServer() {
-    CacheSerializableRunnable stopserver = new CacheSerializableRunnable("stopServer") {
-      public void run2() throws CacheException {
-        server.stop();
-      }
-    };
+    CacheSerializableRunnable stopserver =
+        new CacheSerializableRunnable("stopServer") {
+          public void run2() throws CacheException {
+            server.stop();
+          }
+        };
     return stopserver;
   }
 
-  /** function to create a 2 servers and 3 client (1 client will be in the unit controller VM) **/
+  /** function to create a 2 servers and 3 client (1 client will be in the unit controller VM) * */
   private void createClientServerConfiguration() {
     PORT1 = ((Integer) server1.invoke(() -> PutAllDUnitTest.createServerCache())).intValue();
     PORT2 = ((Integer) server2.invoke(() -> PutAllDUnitTest.createServerCache())).intValue();
-    client1.invoke(() -> PutAllDUnitTest.createClientCache1(NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT1)));
-    client2.invoke(() -> PutAllDUnitTest.createClientCache2(NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT2)));
+    client1.invoke(
+        () ->
+            PutAllDUnitTest.createClientCache1(
+                NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT1)));
+    client2.invoke(
+        () ->
+            PutAllDUnitTest.createClientCache2(
+                NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT2)));
     try {
       createClientCache2(NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT2));
     } catch (Exception e) {
@@ -139,7 +146,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /** create the server **/
+  /** create the server * */
   public static Integer createServerCache() throws Exception {
     new PutAllDUnitTest().createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
@@ -158,7 +165,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     return new Integer(server.getPort());
   }
 
-  /** function to create  cache **/
+  /** function to create cache * */
   private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
     assertNotNull(ds);
@@ -170,7 +177,9 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
 
   private static PoolImpl pool = null;
 
-  /** function to create client cache with HAEventIdPropagationListenerForClient2 as the listener  **/
+  /**
+   * function to create client cache with HAEventIdPropagationListenerForClient2 as the listener *
+   */
   public static void createClientCache2(String host, Integer port1) throws Exception {
     int PORT1 = port1.intValue();
     Properties props = new Properties();
@@ -188,7 +197,10 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty("connectionsPerServer", "2");
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    PoolImpl p = (PoolImpl) ClientServerTestCase.configureConnectionPool(factory, host, PORT1, -1, true, -1, 2, null);
+    PoolImpl p =
+        (PoolImpl)
+            ClientServerTestCase.configureConnectionPool(
+                factory, host, PORT1, -1, true, -1, 2, null);
     CacheListener clientListener = new HAEventIdPropagationListenerForClient2();
     factory.setCacheListener(clientListener);
     RegionAttributes attrs = factory.create();
@@ -199,7 +211,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     pool = p;
   }
 
-  /** function to create client cache **/
+  /** function to create client cache * */
   public static void createClientCache1(String host, Integer port1) throws Exception {
     int PORT1 = port1.intValue();
     Properties props = new Properties();
@@ -217,7 +229,10 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty("connectionsPerServer", "2");
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    PoolImpl p = (PoolImpl) ClientServerTestCase.configureConnectionPool(factory, host, PORT1, -1, true, -1, 2, null);
+    PoolImpl p =
+        (PoolImpl)
+            ClientServerTestCase.configureConnectionPool(
+                factory, host, PORT1, -1, true, -1, 2, null);
     CacheListener clientListener = new HAEventIdPropagationListenerForClient1();
     factory.setCacheListener(clientListener);
     RegionAttributes attrs = factory.create();
@@ -228,7 +243,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     pool = p;
   }
 
-  /** function to close cache **/
+  /** function to close cache * */
   public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       try {
@@ -240,17 +255,16 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /** function to assert that the ThreadIdtoSequence id Map is not Null but is empty **/
+  /** function to assert that the ThreadIdtoSequence id Map is not Null but is empty * */
   public static void assertThreadIdToSequenceIdMapisNotNullButEmpty() {
     Map map = pool.getThreadIdToSequenceIdMap();
     assertNotNull(map);
     // I didn't change this method name for merge purposes, but because of the
     // marker, the map will contain one entry
     assertTrue(map.size() == 1);
-
   }
 
-  /** function to assert that the ThreadIdtoSequence id Map is not Null and has only one entry **/
+  /** function to assert that the ThreadIdtoSequence id Map is not Null and has only one entry * */
   public static Object assertThreadIdToSequenceIdMapHasEntryId() {
     Map map = pool.getThreadIdToSequenceIdMap();
     assertNotNull(map);
@@ -262,7 +276,9 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
 
     // Set the entry to the last entry
     Map.Entry entry = null;
-    for (Iterator threadIdToSequenceIdMapIterator = map.entrySet().iterator(); threadIdToSequenceIdMapIterator.hasNext();) {
+    for (Iterator threadIdToSequenceIdMapIterator = map.entrySet().iterator();
+        threadIdToSequenceIdMapIterator.hasNext();
+        ) {
       entry = (Map.Entry) threadIdToSequenceIdMapIterator.next();
     }
 
@@ -276,7 +292,7 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     return evId;
   }
 
-  /** function to assert that the ThreadIdtoSequence id Map is not Null and has only one entry **/
+  /** function to assert that the ThreadIdtoSequence id Map is not Null and has only one entry * */
   public static Object[] assertThreadIdToSequenceIdMapHasEntryIds() {
     EventID[] evids = new EventID[5];
     Map map = pool.getThreadIdToSequenceIdMap();
@@ -296,22 +312,23 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
 
   /** EventId * */
   protected static EventID eventId = null;
-  protected volatile static EventID putAlleventId1 = null;
-  protected volatile static EventID putAlleventId2 = null;
-  protected volatile static EventID putAlleventId3 = null;
-  protected volatile static EventID putAlleventId4 = null;
-  protected volatile static EventID putAlleventId5 = null;
-  protected volatile static EntryEvent putAllevent1 = null;
-  protected volatile static EntryEvent putAllevent2 = null;
-  protected volatile static EntryEvent putAllevent3 = null;
-  protected volatile static EntryEvent putAllevent4 = null;
-  protected volatile static EntryEvent putAllevent5 = null;
 
-  protected final static String PUTALL_KEY1 = "putAllKey1";
-  protected final static String PUTALL_KEY2 = "putAllKey2";
-  protected final static String PUTALL_KEY3 = "putAllKey3";
-  protected final static String PUTALL_KEY4 = "putAllKey4";
-  protected final static String PUTALL_KEY5 = "putAllKey5";
+  protected static volatile EventID putAlleventId1 = null;
+  protected static volatile EventID putAlleventId2 = null;
+  protected static volatile EventID putAlleventId3 = null;
+  protected static volatile EventID putAlleventId4 = null;
+  protected static volatile EventID putAlleventId5 = null;
+  protected static volatile EntryEvent putAllevent1 = null;
+  protected static volatile EntryEvent putAllevent2 = null;
+  protected static volatile EntryEvent putAllevent3 = null;
+  protected static volatile EntryEvent putAllevent4 = null;
+  protected static volatile EntryEvent putAllevent5 = null;
+
+  protected static final String PUTALL_KEY1 = "putAllKey1";
+  protected static final String PUTALL_KEY2 = "putAllKey2";
+  protected static final String PUTALL_KEY3 = "putAllKey3";
+  protected static final String PUTALL_KEY4 = "putAllKey4";
+  protected static final String PUTALL_KEY5 = "putAllKey5";
 
   private static String PUTALL_VALUE1 = "putAllValue1";
   private static String PUTALL_VALUE2 = "putAllValue2";
@@ -320,13 +337,12 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
   private static String PUTALL_VALUE5 = "putAllValue5";
 
   /**
-   * This test:
-   * 1) creates a client server configuration
-   * 2) asserts that the ThreadIdToSequenceIdMap is not null but is empty (on the client)
-   * 3) does a put on the server
-   * 4) Wait till put is received by the server (and also records the eventId in a variable) and returns the eventId generated on the server
-   * 5) asserts that the ThreadIdToSequenceIdMap is not null and has one entry (on the client side) and returns the eventId stored in the map
-   * 6) verifies the equality of the two event ids
+   * This test: 1) creates a client server configuration 2) asserts that the ThreadIdToSequenceIdMap
+   * is not null but is empty (on the client) 3) does a put on the server 4) Wait till put is
+   * received by the server (and also records the eventId in a variable) and returns the eventId
+   * generated on the server 5) asserts that the ThreadIdToSequenceIdMap is not null and has one
+   * entry (on the client side) and returns the eventId stored in the map 6) verifies the equality
+   * of the two event ids
    *
    * @throws Exception
    */
@@ -343,7 +359,9 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     client2.invoke(() -> PutAllDUnitTest.waitTillOperationReceived());
 
     waitTillOperationReceived();
-    EventID[] eventIds2 = (EventID[]) client2.invoke(() -> PutAllDUnitTest.assertThreadIdToSequenceIdMapHasEntryIds());
+    EventID[] eventIds2 =
+        (EventID[])
+            client2.invoke(() -> PutAllDUnitTest.assertThreadIdToSequenceIdMapHasEntryIds());
     assertNotNull(eventIds2);
     server1.invoke(() -> PutAllDUnitTest.assertGotAllValues());
     server2.invoke(() -> PutAllDUnitTest.assertGotAllValues());
@@ -390,8 +408,8 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * does an update and return the eventid generated. Eventid is caught in the
-   * listener and stored in a static variable*
+   * does an update and return the eventid generated. Eventid is caught in the listener and stored
+   * in a static variable*
    */
   public static Object[] putAll() {
     Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -422,12 +440,12 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
     return null;
   }
 
-  /** Object to wait on till create is received **/
+  /** Object to wait on till create is received * */
   protected static Object lockObject = new Object();
-  /** boolean to signify receipt of create **/
+  /** boolean to signify receipt of create * */
   protected static volatile boolean receivedOperation = false;
 
-  /** wait till create is received. listener will send a notification if create is received**/
+  /** wait till create is received. listener will send a notification if create is received* */
   public static void waitTillOperationReceived() {
     synchronized (lockObject) {
       if (!receivedOperation) {
@@ -441,13 +459,11 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
         fail(" operation should have been received but it has not been received yet");
       }
     }
-
   }
 
   /**
-   * Listener which sends a notification after create to waiting threads and also extracts teh event id
-   * storing it in a static variable
-   *
+   * Listener which sends a notification after create to waiting threads and also extracts teh event
+   * id storing it in a static variable
    */
   static class HAEventIdPropagationListenerForClient2 extends CacheListenerAdapter {
 
@@ -490,9 +506,8 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * Listener which sends a notification after create to waiting threads and also extracts teh event ids
-   * storing them in  static variables
-   *
+   * Listener which sends a notification after create to waiting threads and also extracts teh event
+   * ids storing them in static variables
    */
   static class HAEventIdPropagationListenerForClient1 extends CacheListenerAdapter {
 
@@ -538,7 +553,5 @@ public class PutAllDUnitTest extends JUnit4DistributedTestCase {
         }
       }
     }
-
   }
-
 }

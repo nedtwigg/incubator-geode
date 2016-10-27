@@ -20,11 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.geode.management.internal.ManagementConstants;
 
-/**
- * This is a utility class to calculate various type of Metrics out of raw stats
- * 
- * 
- */
+/** This is a utility class to calculate various type of Metrics out of raw stats */
 public class MetricsCalculator {
 
   private static TimeUnit milliSeconds = TimeUnit.MILLISECONDS;
@@ -68,7 +64,6 @@ public class MetricsCalculator {
       return (XN1Time - XNTime) / (Xn1 - Xn);
     }
     return 0;
-
   }
 
   public static long getLatency(long Xn, long Xn1, long XNTime, long XN1Time) {
@@ -130,5 +125,4 @@ public class MetricsCalculator {
     float tmp = Math.round(Rval);
     return (float) tmp / p;
   }
-
 }

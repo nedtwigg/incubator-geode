@@ -39,15 +39,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/***
- * 
- * since 7.0
+/**
+ * *
+ *
+ * <p>since 7.0
  */
-
 public class GetMemberInformationFunction extends FunctionAdapter implements InternalEntity {
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
 
   @Override
@@ -56,21 +54,17 @@ public class GetMemberInformationFunction extends FunctionAdapter implements Int
   }
 
   @Override
-
   public boolean hasResult() {
     return true;
   }
 
   @Override
-
   public boolean isHA() {
     return true;
   }
 
   @Override
-  /**
-   * Read only function
-   */
+  /** Read only function */
   public boolean optimizeForWrite() {
     return false;
   }
@@ -80,7 +74,7 @@ public class GetMemberInformationFunction extends FunctionAdapter implements Int
     try {
       Cache cache = CacheFactory.getAnyInstance();
 
-      /*TODO: 
+      /*TODO:
        * 1) Get the CPU usage%
        */
 
@@ -121,7 +115,8 @@ public class GetMemberInformationFunction extends FunctionAdapter implements Int
           CacheServerInfo cacheServerInfo = new CacheServerInfo(bindAddress, port, isRunning);
           memberInfo.addCacheServerInfo(cacheServerInfo);
         }
-        Map<ClientProxyMembershipID, CacheClientStatus> allConnectedClients = InternalClientMembership.getStatusForAllClientsIgnoreSubscriptionStatus();
+        Map<ClientProxyMembershipID, CacheClientStatus> allConnectedClients =
+            InternalClientMembership.getStatusForAllClientsIgnoreSubscriptionStatus();
         Iterator<ClientProxyMembershipID> it = allConnectedClients.keySet().iterator();
         int numConnections = 0;
 

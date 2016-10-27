@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.geode.modules.session;
 
 import org.apache.geode.modules.session.catalina.JvmRouteBinderValve;
@@ -38,40 +38,31 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 
-/**
- *
- */
+/** */
 public class EmbeddedTomcat {
 
   private String contextPath = null;
   private Embedded container = null;
   private Log logger = LogFactory.getLog(getClass());
 
-  /**
-   * The directory to create the Tomcat server configuration under.
-   */
+  /** The directory to create the Tomcat server configuration under. */
   private String catalinaHome = "tomcat";
 
-  /**
-   * The port to run the Tomcat server on.
-   */
+  /** The port to run the Tomcat server on. */
   private int port = 8089;
 
-  /**
-   * The classes directory for the web application being run.
-   */
+  /** The classes directory for the web application being run. */
   private String classesDir = "target/classes";
 
   private Context rootContext = null;
 
   private Engine engine;
 
-  /**
-   * The web resources directory for the web application being run.
-   */
+  /** The web resources directory for the web application being run. */
   private String webappDir = "";
 
-  public EmbeddedTomcat(String contextPath, int port, String jvmRoute) throws MalformedURLException {
+  public EmbeddedTomcat(String contextPath, int port, String jvmRoute)
+      throws MalformedURLException {
     this.contextPath = contextPath;
     this.port = port;
 
@@ -118,25 +109,23 @@ public class EmbeddedTomcat {
     ((StandardEngine) engine).addValve(valve);
   }
 
-  /**
-   * Starts the embedded Tomcat server.
-   */
+  /** Starts the embedded Tomcat server. */
   public void startContainer() throws LifecycleException {
     // start server
     container.start();
 
     // add shutdown hook to stop server
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        stopContainer();
-      }
-    });
+    Runtime.getRuntime()
+        .addShutdownHook(
+            new Thread() {
+              @Override
+              public void run() {
+                stopContainer();
+              }
+            });
   }
 
-  /**
-   * Stops the embedded Tomcat server.
-   */
+  /** Stops the embedded Tomcat server. */
   public void stopContainer() {
     try {
       if (container != null) {
@@ -148,7 +137,8 @@ public class EmbeddedTomcat {
     }
   }
 
-  public StandardWrapper addServlet(String path, String name, String clazz) throws ServletException {
+  public StandardWrapper addServlet(String path, String name, String clazz)
+      throws ServletException {
     StandardWrapper servlet = (StandardWrapper) rootContext.createWrapper();
     servlet.setName(name);
     servlet.setServletClass(clazz);

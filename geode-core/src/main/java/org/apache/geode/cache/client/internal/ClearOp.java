@@ -22,33 +22,37 @@ import org.apache.geode.internal.cache.EventID;
 
 /**
  * Does a region clear (or create) on a server
+ *
  * @since GemFire 5.7
  */
 public class ClearOp {
   /**
-   * Does a region clear on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region clear on a server using connections from the given pool to communicate with the
+   * server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the clear on
    * @param eventId the event id for this clear
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    */
-  public static void execute(ExecutablePool pool, String region, EventID eventId, Object callbackArg) {
+  public static void execute(
+      ExecutablePool pool, String region, EventID eventId, Object callbackArg) {
     AbstractOp op = new ClearOpImpl(region, eventId, callbackArg);
     pool.execute(op);
   }
 
   /**
-   * Does a region clear on a server using the given connection
-   * from the given pool
-   * to communicate with the server.
+   * Does a region clear on a server using the given connection from the given pool to communicate
+   * with the server.
+   *
    * @param con the connection to use to send to the server
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the clear on
    * @param eventId the event id for this clear
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    */
-  public static void execute(Connection con, ExecutablePool pool, String region, EventID eventId, Object callbackArg) {
+  public static void execute(
+      Connection con, ExecutablePool pool, String region, EventID eventId, Object callbackArg) {
     AbstractOp op = new ClearOpImpl(region, eventId, callbackArg);
     pool.executeOn(con, op);
   }
@@ -58,9 +62,7 @@ public class ClearOp {
   }
 
   private static class ClearOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public ClearOpImpl(String region, EventID eventId, Object callbackArg) {
       super(MessageType.CLEAR_REGION, callbackArg != null ? 3 : 2);
       getMessage().addStringPart(region);

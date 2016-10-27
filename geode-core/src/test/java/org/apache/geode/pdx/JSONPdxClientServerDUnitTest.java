@@ -79,19 +79,21 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
     createClientRegion(vm1, port);
     createClientRegion(vm2, port);
 
-    vm1.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        JSONAllStringTest();
-        return null;
-      }
-    });
+    vm1.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            JSONAllStringTest();
+            return null;
+          }
+        });
 
-    vm2.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        JSONAllByteArrayTest();
-        return null;
-      }
-    });
+    vm2.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            JSONAllByteArrayTest();
+            return null;
+          }
+        });
   }
 
   //this is for unquote fielnames in json string
@@ -108,13 +110,13 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
     createClientRegion(vm1, port);
     createClientRegion(vm2, port);
 
-    vm1.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        JSONUnQuoteFields();
-        return null;
-      }
-    });
-
+    vm1.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            JSONUnQuoteFields();
+            return null;
+          }
+        });
   }
 
   @Test
@@ -130,12 +132,13 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
     createClientRegion(vm1, port, false, true);
     createClientRegion(vm2, port, false, true);
 
-    vm1.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        VerifyPdxInstanceAndJsonConversion();
-        return null;
-      }
-    });
+    vm1.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            VerifyPdxInstanceAndJsonConversion();
+            return null;
+          }
+        });
   }
 
   public void VerifyPdxInstanceAndJsonConversion() {
@@ -159,29 +162,71 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
 
         //Testcase-1: Validate json string against the pdxInstance.
         //validation for primitive types
-        assertEquals("VerifyPdxInstanceToJson: Int type values are not matched", testObject.getP_int(), jsonObject.getInt(testObject.getP_intFN()));
-        assertEquals("VerifyPdxInstanceToJson: long type values are not matched", testObject.getP_long(), jsonObject.getLong(testObject.getP_longFN()));
+        assertEquals(
+            "VerifyPdxInstanceToJson: Int type values are not matched",
+            testObject.getP_int(),
+            jsonObject.getInt(testObject.getP_intFN()));
+        assertEquals(
+            "VerifyPdxInstanceToJson: long type values are not matched",
+            testObject.getP_long(),
+            jsonObject.getLong(testObject.getP_longFN()));
 
         //validation for wrapper types
-        assertEquals("VerifyPdxInstanceToJson: Boolean type values are not matched", testObject.getW_bool().booleanValue(), jsonObject.getBoolean(testObject.getW_boolFN()));
-        assertEquals("VerifyPdxInstanceToJson: Float type values are not matched", testObject.getW_double().doubleValue(), jsonObject.getDouble(testObject.getW_doubleFN()), 0);
-        assertEquals("VerifyPdxInstanceToJson: bigDec type values are not matched", testObject.getW_bigDec().longValue(), jsonObject.getLong(testObject.getW_bigDecFN()));
+        assertEquals(
+            "VerifyPdxInstanceToJson: Boolean type values are not matched",
+            testObject.getW_bool().booleanValue(),
+            jsonObject.getBoolean(testObject.getW_boolFN()));
+        assertEquals(
+            "VerifyPdxInstanceToJson: Float type values are not matched",
+            testObject.getW_double().doubleValue(),
+            jsonObject.getDouble(testObject.getW_doubleFN()),
+            0);
+        assertEquals(
+            "VerifyPdxInstanceToJson: bigDec type values are not matched",
+            testObject.getW_bigDec().longValue(),
+            jsonObject.getLong(testObject.getW_bigDecFN()));
 
         //vlidation for array types
-        assertEquals("VerifyPdxInstanceToJson: Byte[] type values are not matched", (int) testObject.getW_byteArray()[1], jsonObject.getJSONArray(testObject.getW_byteArrayFN()).getInt(1));
-        assertEquals("VerifyPdxInstanceToJson: Double[] type values are not matched", testObject.getW_doubleArray()[0], jsonObject.getJSONArray(testObject.getW_doubleArrayFN()).getDouble(0), 0);
-        assertEquals("VerifyPdxInstanceToJson: String[] type values are not matched", testObject.getW_strArray()[2], jsonObject.getJSONArray(testObject.getW_strArrayFN()).getString(2));
+        assertEquals(
+            "VerifyPdxInstanceToJson: Byte[] type values are not matched",
+            (int) testObject.getW_byteArray()[1],
+            jsonObject.getJSONArray(testObject.getW_byteArrayFN()).getInt(1));
+        assertEquals(
+            "VerifyPdxInstanceToJson: Double[] type values are not matched",
+            testObject.getW_doubleArray()[0],
+            jsonObject.getJSONArray(testObject.getW_doubleArrayFN()).getDouble(0),
+            0);
+        assertEquals(
+            "VerifyPdxInstanceToJson: String[] type values are not matched",
+            testObject.getW_strArray()[2],
+            jsonObject.getJSONArray(testObject.getW_strArrayFN()).getString(2));
 
         //validation for collection types
-        assertEquals("VerifyPdxInstanceToJson: list type values are not matched", testObject.getC_list().get(0), jsonObject.getJSONArray(testObject.getC_listFN()).getString(0));
+        assertEquals(
+            "VerifyPdxInstanceToJson: list type values are not matched",
+            testObject.getC_list().get(0),
+            jsonObject.getJSONArray(testObject.getC_listFN()).getString(0));
 
-        assertEquals("VerifyPdxInstanceToJson: stack type values are not matched", testObject.getC_stack().get(2), jsonObject.getJSONArray(testObject.getC_stackFN()).getString(2));
+        assertEquals(
+            "VerifyPdxInstanceToJson: stack type values are not matched",
+            testObject.getC_stack().get(2),
+            jsonObject.getJSONArray(testObject.getC_stackFN()).getString(2));
 
         //validation for Map
-        assertEquals("VerifyPdxInstanceToJson: Map type values are not matched", testObject.getM_empByCity().get("Ahmedabad").get(0).getFname(), jsonObject.getJSONObject(testObject.getM_empByCityFN()).getJSONArray("Ahmedabad").getJSONObject(0).getString("fname"));
+        assertEquals(
+            "VerifyPdxInstanceToJson: Map type values are not matched",
+            testObject.getM_empByCity().get("Ahmedabad").get(0).getFname(),
+            jsonObject
+                .getJSONObject(testObject.getM_empByCityFN())
+                .getJSONArray("Ahmedabad")
+                .getJSONObject(0)
+                .getString("fname"));
 
         //validation Enum
-        assertEquals("VerifyPdxInstanceToJson: Enum type values are not matched", testObject.getDay().toString(), jsonObject.getString(testObject.getDayFN()));
+        assertEquals(
+            "VerifyPdxInstanceToJson: Enum type values are not matched",
+            testObject.getDay().toString(),
+            jsonObject.getString(testObject.getDayFN()));
       } catch (JSONException e) {
         fail("Error in VerifyPdxInstanceToJson, Malformed json, can not create JSONArray from it");
       }
@@ -225,10 +270,14 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
       }
 
     } catch (JsonProcessingException e) {
-      fail("JsonProcessingException:  error encountered while converting JSON from Java object: " + e.getMessage());
+      fail(
+          "JsonProcessingException:  error encountered while converting JSON from Java object: "
+              + e.getMessage());
 
     } catch (JSONException e) {
-      fail("JSONException:  error encountered while adding @type classType into Json: " + e.getMessage());
+      fail(
+          "JSONException:  error encountered while adding @type classType into Json: "
+              + e.getMessage());
     }
   }
 
@@ -240,7 +289,8 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
   public void JSONUnQuoteFields() {
     System.setProperty("pdxToJson.unqouteFieldNames", "true");
     PdxToJSON.PDXTOJJSON_UNQUOTEFIELDNAMES = true;
-    String jsonStringsDir = getJSONDir("/org/apache/geode/pdx/jsonStrings/unquoteJsonStrings/json1.txt");
+    String jsonStringsDir =
+        getJSONDir("/org/apache/geode/pdx/jsonStrings/unquoteJsonStrings/json1.txt");
     JSONAllStringTest(jsonStringsDir);
     PdxToJSON.PDXTOJJSON_UNQUOTEFIELDNAMES = false;
   }
@@ -312,17 +362,23 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
 
     String o1 = jsonParse(jd.getJsonString());
     String o2 = jsonParse(getJsonString);
-    assertEquals("Json Strings are not equal " + jd.getFileName() + " " + Boolean.getBoolean("pdxToJson.unqouteFieldNames"), o1, o2);
+    assertEquals(
+        "Json Strings are not equal "
+            + jd.getFileName()
+            + " "
+            + Boolean.getBoolean("pdxToJson.unqouteFieldNames"),
+        o1,
+        o2);
 
     PdxInstance pdx2 = JSONFormatter.fromJSON(getJsonString);
 
     assertEquals("Pdx are not equal; json filename " + jd.getFileName(), pdx, pdx2);
   }
 
-  protected final static int INT_TAB = '\t';
-  protected final static int INT_LF = '\n';
-  protected final static int INT_CR = '\r';
-  protected final static int INT_SPACE = 0x0020;
+  protected static final int INT_TAB = '\t';
+  protected static final int INT_LF = '\n';
+  protected static final int INT_CR = '\r';
+  protected static final int INT_SPACE = 0x0020;
 
   public String jsonParse(String jsonSting) {
 
@@ -334,13 +390,11 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
     for (i = 0; i < ba.length; i++) {
       int cbyte = ba[i];
 
-      if (cbyte == INT_TAB || cbyte == INT_LF || cbyte == INT_CR || cbyte == INT_SPACE)
-        continue;
+      if (cbyte == INT_TAB || cbyte == INT_LF || cbyte == INT_CR || cbyte == INT_SPACE) continue;
       withoutspace[j++] = ba[i];
     }
 
     return new String(withoutspace, 0, j);
-
   }
 
   public void VerifyJSONByteArray(JSONData jd) {
@@ -367,11 +421,11 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
 
   public void compareByteArray(byte[] b1, byte[] b2) {
     if (b1.length != b2.length)
-      throw new IllegalStateException("Json byte array length are not equal " + b1.length + " ; " + b2.length);
+      throw new IllegalStateException(
+          "Json byte array length are not equal " + b1.length + " ; " + b2.length);
 
     for (int i = 0; i < b1.length; i++) {
-      if (b1[i] != b2[i])
-        throw new IllegalStateException("Json byte arrays are not equal ");
+      if (b1[i] != b2[i]) throw new IllegalStateException("Json byte arrays are not equal ");
     }
   }
 
@@ -385,8 +439,7 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
     for (i = 0; i < ba.length; i++) {
       int cbyte = ba[i];
 
-      if (cbyte == INT_TAB || cbyte == INT_LF || cbyte == INT_CR || cbyte == INT_SPACE)
-        continue;
+      if (cbyte == INT_TAB || cbyte == INT_LF || cbyte == INT_CR || cbyte == INT_SPACE) continue;
       withoutspace[j++] = ba[i];
     }
 
@@ -397,7 +450,6 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
     }
 
     return retBA;
-
   }
 
   public static JSONData[] loadAllJSON(String jsondir) {
@@ -407,8 +459,7 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
     int i = 0;
     for (String jsonFileName : dir.list()) {
 
-      if (!jsonFileName.contains(".txt"))
-        continue;
+      if (!jsonFileName.contains(".txt")) continue;
       try {
         byte[] ba = getBytesFromFile(dir.getAbsolutePath() + File.separator + jsonFileName);
         JSONDatas[i++] = new JSONData(jsonFileName, ba);
@@ -434,7 +485,8 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
     // Read in the bytes
     int offset = 0;
     int numRead = 0;
-    while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+    while (offset < bytes.length
+        && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
       offset += numRead;
     }
 
@@ -448,120 +500,128 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void closeCache(VM vm) {
-    vm.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        closeCache();
-        return null;
-      }
-    });
+    vm.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            closeCache();
+            return null;
+          }
+        });
   }
 
   private int createServerRegion(VM vm) {
-    SerializableCallable createRegion = new SerializableCallable() {
-      public Object call() throws Exception {
-        AttributesFactory af = new AttributesFactory();
-        //af.setScope(Scope.DISTRIBUTED_ACK);
-        af.setDataPolicy(DataPolicy.PARTITION);
-        createRootRegion("testSimplePdx", af.create());
+    SerializableCallable createRegion =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            AttributesFactory af = new AttributesFactory();
+            //af.setScope(Scope.DISTRIBUTED_ACK);
+            af.setDataPolicy(DataPolicy.PARTITION);
+            createRootRegion("testSimplePdx", af.create());
 
-        CacheServer server = getCache().addCacheServer();
-        int port = AvailablePortHelper.getRandomAvailableTCPPort();
-        server.setPort(port);
-        server.start();
-        return port;
-      }
-    };
+            CacheServer server = getCache().addCacheServer();
+            int port = AvailablePortHelper.getRandomAvailableTCPPort();
+            server.setPort(port);
+            server.start();
+            return port;
+          }
+        };
 
     return (Integer) vm.invoke(createRegion);
   }
 
   private int createServerRegion(VM vm, final boolean isPdxReadSerialized) {
-    SerializableCallable createRegion = new SerializableCallable() {
-      public Object call() throws Exception {
-        AttributesFactory af = new AttributesFactory();
-        //af.setScope(Scope.DISTRIBUTED_ACK);
-        af.setDataPolicy(DataPolicy.PARTITION);
-        createRootRegion("testSimplePdx", af.create());
+    SerializableCallable createRegion =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            AttributesFactory af = new AttributesFactory();
+            //af.setScope(Scope.DISTRIBUTED_ACK);
+            af.setDataPolicy(DataPolicy.PARTITION);
+            createRootRegion("testSimplePdx", af.create());
 
-        ((GemFireCacheImpl) getCache()).getCacheConfig().setPdxReadSerialized(isPdxReadSerialized);
+            ((GemFireCacheImpl) getCache())
+                .getCacheConfig()
+                .setPdxReadSerialized(isPdxReadSerialized);
 
-        CacheServer server = getCache().addCacheServer();
-        int port = AvailablePortHelper.getRandomAvailableTCPPort();
-        server.setPort(port);
-        server.start();
-        return port;
-      }
-    };
+            CacheServer server = getCache().addCacheServer();
+            int port = AvailablePortHelper.getRandomAvailableTCPPort();
+            server.setPort(port);
+            server.start();
+            return port;
+          }
+        };
 
     return (Integer) vm.invoke(createRegion);
   }
 
   private int createServerRegionWithPersistence(VM vm, final boolean persistentPdxRegistry) {
-    SerializableCallable createRegion = new SerializableCallable() {
-      public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory();
-        if (persistentPdxRegistry) {
-          cf.setPdxPersistent(true).setPdxDiskStore("store");
-        }
-        //      
-        Cache cache = getCache(cf);
-        cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("store");
+    SerializableCallable createRegion =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            CacheFactory cf = new CacheFactory();
+            if (persistentPdxRegistry) {
+              cf.setPdxPersistent(true).setPdxDiskStore("store");
+            }
+            //
+            Cache cache = getCache(cf);
+            cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("store");
 
-        AttributesFactory af = new AttributesFactory();
-        af.setScope(Scope.DISTRIBUTED_ACK);
-        af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-        af.setDiskStoreName("store");
-        createRootRegion("testSimplePdx", af.create());
+            AttributesFactory af = new AttributesFactory();
+            af.setScope(Scope.DISTRIBUTED_ACK);
+            af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+            af.setDiskStoreName("store");
+            createRootRegion("testSimplePdx", af.create());
 
-        CacheServer server = getCache().addCacheServer();
-        int port = AvailablePortHelper.getRandomAvailableTCPPort();
-        server.setPort(port);
-        server.start();
-        return port;
-      }
-    };
+            CacheServer server = getCache().addCacheServer();
+            int port = AvailablePortHelper.getRandomAvailableTCPPort();
+            server.setPort(port);
+            server.start();
+            return port;
+          }
+        };
 
     return (Integer) vm.invoke(createRegion);
   }
 
   private int createServerAccessor(VM vm) {
-    SerializableCallable createRegion = new SerializableCallable() {
-      public Object call() throws Exception {
-        AttributesFactory af = new AttributesFactory();
-        //af.setScope(Scope.DISTRIBUTED_ACK);
-        af.setDataPolicy(DataPolicy.EMPTY);
-        createRootRegion("testSimplePdx", af.create());
+    SerializableCallable createRegion =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            AttributesFactory af = new AttributesFactory();
+            //af.setScope(Scope.DISTRIBUTED_ACK);
+            af.setDataPolicy(DataPolicy.EMPTY);
+            createRootRegion("testSimplePdx", af.create());
 
-        CacheServer server = getCache().addCacheServer();
-        int port = AvailablePortHelper.getRandomAvailableTCPPort();
-        server.setPort(port);
-        server.start();
-        return port;
-      }
-    };
+            CacheServer server = getCache().addCacheServer();
+            int port = AvailablePortHelper.getRandomAvailableTCPPort();
+            server.setPort(port);
+            server.start();
+            return port;
+          }
+        };
 
     return (Integer) vm.invoke(createRegion);
   }
 
   private int createLonerServerRegion(VM vm, final String regionName, final String dsId) {
-    SerializableCallable createRegion = new SerializableCallable() {
-      public Object call() throws Exception {
-        Properties props = new Properties();
-        props.setProperty(LOCATORS, "");
-        props.setProperty(DISTRIBUTED_SYSTEM_ID, dsId);
-        getSystem(props);
-        AttributesFactory af = new AttributesFactory();
-        af.setScope(Scope.DISTRIBUTED_ACK);
-        af.setDataPolicy(DataPolicy.REPLICATE);
-        createRootRegion(regionName, af.create());
+    SerializableCallable createRegion =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Properties props = new Properties();
+            props.setProperty(LOCATORS, "");
+            props.setProperty(DISTRIBUTED_SYSTEM_ID, dsId);
+            getSystem(props);
+            AttributesFactory af = new AttributesFactory();
+            af.setScope(Scope.DISTRIBUTED_ACK);
+            af.setDataPolicy(DataPolicy.REPLICATE);
+            createRootRegion(regionName, af.create());
 
-        CacheServer server = getCache().addCacheServer();
-        int port = AvailablePortHelper.getRandomAvailableTCPPort();
-        server.setPort(port);
-        server.start();
-        return port;
-      }
-    };
+            CacheServer server = getCache().addCacheServer();
+            int port = AvailablePortHelper.getRandomAvailableTCPPort();
+            server.setPort(port);
+            server.start();
+            return port;
+          }
+        };
 
     return (Integer) vm.invoke(createRegion);
   }
@@ -570,33 +630,39 @@ public class JSONPdxClientServerDUnitTest extends JUnit4CacheTestCase {
     createClientRegion(vm, port, false);
   }
 
-  private void createClientRegion(final VM vm, final int port, final boolean threadLocalConnections) {
-    SerializableCallable createRegion = new SerializableCallable() {
-      public Object call() throws Exception {
-        ClientCacheFactory cf = new ClientCacheFactory();
-        cf.addPoolServer(NetworkUtils.getServerHostName(vm.getHost()), port);
-        cf.setPoolThreadLocalConnections(threadLocalConnections);
-        ClientCache cache = getClientCache(cf);
-        cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create("testSimplePdx");
-        return null;
-      }
-    };
+  private void createClientRegion(
+      final VM vm, final int port, final boolean threadLocalConnections) {
+    SerializableCallable createRegion =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            ClientCacheFactory cf = new ClientCacheFactory();
+            cf.addPoolServer(NetworkUtils.getServerHostName(vm.getHost()), port);
+            cf.setPoolThreadLocalConnections(threadLocalConnections);
+            ClientCache cache = getClientCache(cf);
+            cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create("testSimplePdx");
+            return null;
+          }
+        };
     vm.invoke(createRegion);
   }
 
-  private void createClientRegion(final VM vm, final int port, final boolean threadLocalConnections, final boolean isPdxReadSerialized) {
-    SerializableCallable createRegion = new SerializableCallable() {
-      public Object call() throws Exception {
-        ClientCacheFactory cf = new ClientCacheFactory();
-        cf.addPoolServer(NetworkUtils.getServerHostName(vm.getHost()), port);
-        cf.setPoolThreadLocalConnections(threadLocalConnections);
-        cf.setPdxReadSerialized(isPdxReadSerialized);
-        ClientCache cache = getClientCache(cf);
-        cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create("testSimplePdx");
-        return null;
-      }
-    };
+  private void createClientRegion(
+      final VM vm,
+      final int port,
+      final boolean threadLocalConnections,
+      final boolean isPdxReadSerialized) {
+    SerializableCallable createRegion =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            ClientCacheFactory cf = new ClientCacheFactory();
+            cf.addPoolServer(NetworkUtils.getServerHostName(vm.getHost()), port);
+            cf.setPoolThreadLocalConnections(threadLocalConnections);
+            cf.setPdxReadSerialized(isPdxReadSerialized);
+            ClientCache cache = getClientCache(cf);
+            cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create("testSimplePdx");
+            return null;
+          }
+        };
     vm.invoke(createRegion);
   }
-
 }

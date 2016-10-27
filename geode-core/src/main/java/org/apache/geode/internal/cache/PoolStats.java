@@ -23,8 +23,7 @@ import org.apache.geode.internal.statistics.StatisticsTypeFactoryImpl;
 import static org.apache.geode.distributed.ConfigurationProperties.LOCATORS;
 
 /**
- * GemFire statistics about a Pool 
- *
+ * GemFire statistics about a Pool
  *
  * @since GemFire 5.7
  */
@@ -58,33 +57,132 @@ public class PoolStats {
   private static final int _CONNECTION_WAIT_IN_PROGRESS;
   private static final int _CONNECTION_WAITS;
   private static final int _CONNECTION_WAIT_TIME;
-  private final static int connectionsId;
+  private static final int connectionsId;
   //   private final static int conCountId;
-  private final static int poolConnectionsId;
-  private final static int connectsId;
-  private final static int disconnectsId;
-  private final static int clientOpInProgressId;
-  private final static int clientOpSendInProgressId;
-  private final static int clientOpSendId;
-  private final static int clientOpSendFailedId;
-  private final static int clientOpSendDurationId;
-  private final static int clientOpId;
-  private final static int clientOpTimedOutId;
-  private final static int clientOpFailedId;
-  private final static int clientOpDurationId;
+  private static final int poolConnectionsId;
+  private static final int connectsId;
+  private static final int disconnectsId;
+  private static final int clientOpInProgressId;
+  private static final int clientOpSendInProgressId;
+  private static final int clientOpSendId;
+  private static final int clientOpSendFailedId;
+  private static final int clientOpSendDurationId;
+  private static final int clientOpId;
+  private static final int clientOpTimedOutId;
+  private static final int clientOpFailedId;
+  private static final int clientOpDurationId;
 
   static {
     String statName = "PoolStats";
 
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    _type = f.createType(statName, statName, new StatisticDescriptor[] { f.createIntGauge(INITIAL_CONTACTS, "Number of contacts initially by user", "contacts"), f.createIntGauge(KNOWN_LOCATORS, "Current number of locators discovered", LOCATORS), f.createIntGauge(ENDPOINTS_KNOWN, "Current number of servers discovered", "servers"), f.createIntGauge(SUBSCRIPTION_SERVERS, "Number of servers hosting this clients subscriptions", "servers"), f.createLongCounter(REQUESTS_TO_LOCATOR, "Number of requests from this connection pool to a locator", "requests"), f.createLongCounter(RESPONSES_FROM_LOCATOR, "Number of responses from the locator to this connection pool", "responses"),
-
-        f.createIntGauge("connections", "Current number of connections", "connections"),
-        //             f.createIntGauge("conCount", "Current number of connections", "connections"),
-        f.createIntGauge("poolConnections", "Current number of pool connections", "connections"), f.createIntCounter("connects", "Total number of times a connection has been created.", "connects"), f.createIntCounter("disconnects", "Total number of times a connection has been destroyed.", "disconnects"), f.createIntCounter("minPoolSizeConnects", "Total number of connects done to maintain minimum pool size.", "connects"), f.createIntCounter("loadConditioningConnects", "Total number of connects done due to load conditioning.", "connects"), f.createIntCounter("loadConditioningReplaceTimeouts", "Total number of times a load conditioning connect was done but was not used.", "timeouts"), f.createIntCounter("idleDisconnects", "Total number of disconnects done due to idle expiration.", "disconnects"), f.createIntCounter("loadConditioningDisconnects", "Total number of disconnects done due to load conditioning expiration.", "disconnects"),
-        f.createIntCounter("idleChecks", "Total number of checks done for idle expiration.", "checks"), f.createIntCounter("loadConditioningChecks", "Total number of checks done for load conditioning expiration.", "checks"), f.createIntCounter("loadConditioningExtensions", "Total number of times a connection's load conditioning has been extended because the servers are still balanced.", "extensions"), f.createIntGauge("connectionWaitsInProgress", "Current number of threads waiting for a connection", "threads"), f.createIntCounter("connectionWaits", "Total number of times a thread completed waiting for a connection (by timing out or by getting a connection).", "waits"), f.createLongCounter("connectionWaitTime", "Total number of nanoseconds spent waiting for a connection.", "nanoseconds"), f.createIntGauge("clientOpsInProgress", "Current number of clientOps being executed", "clientOps"),
-        f.createIntGauge("clientOpSendsInProgress", "Current number of clientOp sends being executed", "sends"), f.createIntCounter("clientOpSends", "Total number of clientOp sends that have completed successfully", "sends"), f.createIntCounter("clientOpSendFailures", "Total number of clientOp sends that have failed", "sends"), f.createIntCounter("clientOps", "Total number of clientOps completed successfully", "clientOps"), f.createIntCounter("clientOpFailures", "Total number of clientOp attempts that have failed", "clientOps"), f.createIntCounter("clientOpTimeouts", "Total number of clientOp attempts that have timed out", "clientOps"), f.createLongCounter("clientOpSendTime", "Total amount of time, in nanoseconds spent doing clientOp sends", "nanoseconds"), f.createLongCounter("clientOpTime", "Total amount of time, in nanoseconds spent doing clientOps", "nanoseconds"), });
+    _type =
+        f.createType(
+            statName,
+            statName,
+            new StatisticDescriptor[] {
+              f.createIntGauge(
+                  INITIAL_CONTACTS, "Number of contacts initially by user", "contacts"),
+              f.createIntGauge(KNOWN_LOCATORS, "Current number of locators discovered", LOCATORS),
+              f.createIntGauge(ENDPOINTS_KNOWN, "Current number of servers discovered", "servers"),
+              f.createIntGauge(
+                  SUBSCRIPTION_SERVERS,
+                  "Number of servers hosting this clients subscriptions",
+                  "servers"),
+              f.createLongCounter(
+                  REQUESTS_TO_LOCATOR,
+                  "Number of requests from this connection pool to a locator",
+                  "requests"),
+              f.createLongCounter(
+                  RESPONSES_FROM_LOCATOR,
+                  "Number of responses from the locator to this connection pool",
+                  "responses"),
+              f.createIntGauge("connections", "Current number of connections", "connections"),
+              //             f.createIntGauge("conCount", "Current number of connections", "connections"),
+              f.createIntGauge(
+                  "poolConnections", "Current number of pool connections", "connections"),
+              f.createIntCounter(
+                  "connects", "Total number of times a connection has been created.", "connects"),
+              f.createIntCounter(
+                  "disconnects",
+                  "Total number of times a connection has been destroyed.",
+                  "disconnects"),
+              f.createIntCounter(
+                  "minPoolSizeConnects",
+                  "Total number of connects done to maintain minimum pool size.",
+                  "connects"),
+              f.createIntCounter(
+                  "loadConditioningConnects",
+                  "Total number of connects done due to load conditioning.",
+                  "connects"),
+              f.createIntCounter(
+                  "loadConditioningReplaceTimeouts",
+                  "Total number of times a load conditioning connect was done but was not used.",
+                  "timeouts"),
+              f.createIntCounter(
+                  "idleDisconnects",
+                  "Total number of disconnects done due to idle expiration.",
+                  "disconnects"),
+              f.createIntCounter(
+                  "loadConditioningDisconnects",
+                  "Total number of disconnects done due to load conditioning expiration.",
+                  "disconnects"),
+              f.createIntCounter(
+                  "idleChecks", "Total number of checks done for idle expiration.", "checks"),
+              f.createIntCounter(
+                  "loadConditioningChecks",
+                  "Total number of checks done for load conditioning expiration.",
+                  "checks"),
+              f.createIntCounter(
+                  "loadConditioningExtensions",
+                  "Total number of times a connection's load conditioning has been extended because the servers are still balanced.",
+                  "extensions"),
+              f.createIntGauge(
+                  "connectionWaitsInProgress",
+                  "Current number of threads waiting for a connection",
+                  "threads"),
+              f.createIntCounter(
+                  "connectionWaits",
+                  "Total number of times a thread completed waiting for a connection (by timing out or by getting a connection).",
+                  "waits"),
+              f.createLongCounter(
+                  "connectionWaitTime",
+                  "Total number of nanoseconds spent waiting for a connection.",
+                  "nanoseconds"),
+              f.createIntGauge(
+                  "clientOpsInProgress", "Current number of clientOps being executed", "clientOps"),
+              f.createIntGauge(
+                  "clientOpSendsInProgress",
+                  "Current number of clientOp sends being executed",
+                  "sends"),
+              f.createIntCounter(
+                  "clientOpSends",
+                  "Total number of clientOp sends that have completed successfully",
+                  "sends"),
+              f.createIntCounter(
+                  "clientOpSendFailures",
+                  "Total number of clientOp sends that have failed",
+                  "sends"),
+              f.createIntCounter(
+                  "clientOps", "Total number of clientOps completed successfully", "clientOps"),
+              f.createIntCounter(
+                  "clientOpFailures",
+                  "Total number of clientOp attempts that have failed",
+                  "clientOps"),
+              f.createIntCounter(
+                  "clientOpTimeouts",
+                  "Total number of clientOp attempts that have timed out",
+                  "clientOps"),
+              f.createLongCounter(
+                  "clientOpSendTime",
+                  "Total amount of time, in nanoseconds spent doing clientOp sends",
+                  "nanoseconds"),
+              f.createLongCounter(
+                  "clientOpTime",
+                  "Total amount of time, in nanoseconds spent doing clientOps",
+                  "nanoseconds"),
+            });
 
     // Initialize id fields
     _INITIAL_CONTACTS = _type.nameToId(INITIAL_CONTACTS);

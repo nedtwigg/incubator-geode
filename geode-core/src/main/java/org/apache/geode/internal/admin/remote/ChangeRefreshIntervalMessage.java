@@ -27,9 +27,8 @@ import org.apache.geode.internal.admin.StatAlertsManager;
 
 /**
  * Distribution message, sets refresh time interval in member's alerts manager
- * 
+ *
  * @see StatAlertsManager
- * 
  * @since GemFire 5.7
  */
 public class ChangeRefreshIntervalMessage extends PooledDistributionMessage {
@@ -44,9 +43,7 @@ public class ChangeRefreshIntervalMessage extends PooledDistributionMessage {
     return m;
   }
 
-  public ChangeRefreshIntervalMessage() {
-
-  }
+  public ChangeRefreshIntervalMessage() {}
 
   @Override
   public void toData(DataOutput out) throws IOException {
@@ -60,9 +57,7 @@ public class ChangeRefreshIntervalMessage extends PooledDistributionMessage {
     _refreshInterval = in.readLong();
   }
 
-  /**
-   * Returns the DataSerializer fixed id for the class that implements this method.
-   */
+  /** Returns the DataSerializer fixed id for the class that implements this method. */
   public int getDSFID() {
     return CHANGE_REFRESH_INT_MESSAGE;
   }
@@ -72,23 +67,19 @@ public class ChangeRefreshIntervalMessage extends PooledDistributionMessage {
     StatAlertsManager.getInstance(dm).setRefreshTimeInterval(getRefreshInterval());
   }
 
-  /**
-   * @return refresh time interval for {@link StatAlertsManager}
-   */
+  /** @return refresh time interval for {@link StatAlertsManager} */
   public long getRefreshInterval() {
     return _refreshInterval;
   }
 
-  /**
-   * @param interval
-   *                Refresh time interval for {@link StatAlertsManager}
-   */
+  /** @param interval Refresh time interval for {@link StatAlertsManager} */
   public void setRefreshInterval(long interval) {
     _refreshInterval = interval;
   }
 
   @Override
   public String toString() {
-    return "Set alerts refresh time interval in " + InternalDistributedSystem.getAnyInstance().getDistributedMember();
+    return "Set alerts refresh time interval in "
+        + InternalDistributedSystem.getAnyInstance().getDistributedMember();
   }
 }

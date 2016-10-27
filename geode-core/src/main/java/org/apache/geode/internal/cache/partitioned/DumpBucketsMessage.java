@@ -32,11 +32,10 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * A message used for debugging purposes.  For example if a test
- * fails it can call {@link PartitionedRegion#dumpAllBuckets(boolean)}
- * which sends this message to all VMs that have that 
+ * A message used for debugging purposes. For example if a test fails it can call {@link
+ * PartitionedRegion#dumpAllBuckets(boolean)} which sends this message to all VMs that have that
  * PartitionedRegion defined.
- * 
+ *
  * @see org.apache.geode.internal.cache.PartitionedRegion#dumpAllBuckets(boolean)
  */
 public final class DumpBucketsMessage extends PartitionMessage {
@@ -45,18 +44,20 @@ public final class DumpBucketsMessage extends PartitionMessage {
   boolean validateOnly;
   boolean bucketsOnly;
 
-  public DumpBucketsMessage() {
-  }
+  public DumpBucketsMessage() {}
 
-  private DumpBucketsMessage(Set recipients, int regionId, ReplyProcessor21 processor, boolean validate, boolean buckets) {
+  private DumpBucketsMessage(
+      Set recipients, int regionId, ReplyProcessor21 processor, boolean validate, boolean buckets) {
     super(recipients, regionId, processor);
     this.validateOnly = validate;
     this.bucketsOnly = buckets;
   }
 
-  public static PartitionResponse send(Set recipients, PartitionedRegion r, final boolean validateOnly, final boolean onlyBuckets) {
+  public static PartitionResponse send(
+      Set recipients, PartitionedRegion r, final boolean validateOnly, final boolean onlyBuckets) {
     PartitionResponse p = new PartitionResponse(r.getSystem(), recipients);
-    DumpBucketsMessage m = new DumpBucketsMessage(recipients, r.getPRId(), p, validateOnly, onlyBuckets);
+    DumpBucketsMessage m =
+        new DumpBucketsMessage(recipients, r.getPRId(), p, validateOnly, onlyBuckets);
 
     /*Set failures =*/ r.getDistributionManager().putOutgoing(m);
     //    if (failures != null && failures.size() > 0) {
@@ -66,7 +67,8 @@ public final class DumpBucketsMessage extends PartitionMessage {
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
 
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace(LogMarker.DM, "DumpBucketsMessage operateOnRegion: {}", pr.getFullPath());

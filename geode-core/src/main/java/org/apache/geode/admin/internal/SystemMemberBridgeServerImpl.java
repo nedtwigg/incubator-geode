@@ -31,7 +31,8 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  *
  * @since GemFire 4.0
  */
-public class SystemMemberBridgeServerImpl implements SystemMemberCacheServer, SystemMemberBridgeServer {
+public class SystemMemberBridgeServerImpl
+    implements SystemMemberCacheServer, SystemMemberBridgeServer {
 
   /** The VM in which the bridge server resides */
   private final GemFireVM vm;
@@ -45,12 +46,11 @@ public class SystemMemberBridgeServerImpl implements SystemMemberCacheServer, Sy
   /////////////////////  Constructors  /////////////////////
 
   /**
-   * Creates a new <code>SystemMemberBridgeServerImpl</code> that
-   * administers the given bridge server in the given VM.
+   * Creates a new <code>SystemMemberBridgeServerImpl</code> that administers the given bridge
+   * server in the given VM.
    */
   protected SystemMemberBridgeServerImpl(SystemMemberCacheImpl cache, AdminBridgeServer bridgeInfo)
-
-                                                                                                    throws AdminException {
+      throws AdminException {
 
     this.vm = cache.getVM();
     this.cache = cache.getCacheInfo();
@@ -59,13 +59,13 @@ public class SystemMemberBridgeServerImpl implements SystemMemberCacheServer, Sy
 
   ////////////////////  Instance Methods  ////////////////////
 
-  /**
-   * Throws an <code>AdminException</code> if this bridge server is
-   * running.
-   */
+  /** Throws an <code>AdminException</code> if this bridge server is running. */
   private void checkRunning() throws AdminException {
     if (this.isRunning()) {
-      throw new AdminException(LocalizedStrings.SystemMemberBridgeServerImpl_CANNOT_CHANGE_THE_CONFIGURATION_OF_A_RUNNING_BRIDGE_SERVER.toLocalizedString());
+      throw new AdminException(
+          LocalizedStrings
+              .SystemMemberBridgeServerImpl_CANNOT_CHANGE_THE_CONFIGURATION_OF_A_RUNNING_BRIDGE_SERVER
+              .toLocalizedString());
     }
   }
 
@@ -90,9 +90,7 @@ public class SystemMemberBridgeServerImpl implements SystemMemberCacheServer, Sy
     this.vm.stopBridgeServer(this.cache, this.bridgeInfo);
   }
 
-  /**
-   * Returns the VM-unique id of this bridge server
-   */
+  /** Returns the VM-unique id of this bridge server */
   protected int getBridgeId() {
     return this.bridgeInfo.getId();
   }
@@ -102,7 +100,10 @@ public class SystemMemberBridgeServerImpl implements SystemMemberCacheServer, Sy
       this.bridgeInfo = this.vm.getBridgeInfo(this.cache, this.bridgeInfo.getId());
 
     } catch (AdminException ex) {
-      throw new InternalGemFireException(LocalizedStrings.SystemMemberBridgeServerImpl_UNEXPECTED_EXCEPTION_WHILE_REFRESHING.toLocalizedString(), ex);
+      throw new InternalGemFireException(
+          LocalizedStrings.SystemMemberBridgeServerImpl_UNEXPECTED_EXCEPTION_WHILE_REFRESHING
+              .toLocalizedString(),
+          ex);
     }
   }
 
@@ -212,7 +213,8 @@ public class SystemMemberBridgeServerImpl implements SystemMemberCacheServer, Sy
   public void setLoadProbe(ServerLoadProbe loadProbe) throws AdminException {
     checkRunning();
     if (!(loadProbe instanceof Serializable)) {
-      throw new IllegalArgumentException("Load probe must be Serializable to be used with admin API");
+      throw new IllegalArgumentException(
+          "Load probe must be Serializable to be used with admin API");
     }
     this.bridgeInfo.setLoadProbe(loadProbe);
   }
@@ -225,5 +227,4 @@ public class SystemMemberBridgeServerImpl implements SystemMemberCacheServer, Sy
     checkRunning();
     this.bridgeInfo.setLoadPollInterval(loadPollInterval);
   }
-
 }

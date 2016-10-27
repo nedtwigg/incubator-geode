@@ -21,28 +21,23 @@ import org.apache.geode.admin.GemFireHealth;
 
 /**
  * Represents a thread that monitor the health of the vm it lives in.
+ *
  * @since GemFire 3.5
  */
 public interface HealthMonitor {
   /**
-   * Returns the id of this monitor instance. Each instance is given
-   * a unique id when it is created.
+   * Returns the id of this monitor instance. Each instance is given a unique id when it is created.
    */
   public int getId();
 
-  /**
-   * Resets the current health status to zero.
-   */
+  /** Resets the current health status to zero. */
   public void resetStatus();
 
-  /**
-   * Returns the diagnosis of the desired status.
-   */
+  /** Returns the diagnosis of the desired status. */
   public String[] getDiagnosis(GemFireHealth.Health healthCode);
 
   /**
-   * Stops the monitor so it no longer checks for health.
-   * Once stopped a monitor can not be started.
+   * Stops the monitor so it no longer checks for health. Once stopped a monitor can not be started.
    */
   public void stop();
 }

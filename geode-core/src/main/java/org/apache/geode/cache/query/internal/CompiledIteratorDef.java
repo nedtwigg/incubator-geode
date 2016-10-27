@@ -28,8 +28,7 @@ import org.apache.geode.cache.query.internal.types.TypeUtils;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- */
+/** */
 public class CompiledIteratorDef extends AbstractCompiledValue {
   private static final Logger logger = LogService.getLogger();
 
@@ -37,9 +36,7 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
   private ObjectType elementType;
   private CompiledValue collectionExpr;
 
-  /**
-   * Creates a new instance of CompiledIteratorDef name and type can be null
-   */
+  /** Creates a new instance of CompiledIteratorDef name and type can be null */
   public CompiledIteratorDef(String name, ObjectType elementType, CompiledValue collectionExpr) {
     this.name = name;
     this.elementType = elementType == null ? TypeUtils.OBJECT_TYPE : elementType;
@@ -52,14 +49,18 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
   }
 
   /**
-   * Returns a RuntimeIterator (or null if evaluates to null or UNDEFINED); the
-   * collection expr is evaluated lazily after dependencies are known
+   * Returns a RuntimeIterator (or null if evaluates to null or UNDEFINED); the collection expr is
+   * evaluated lazily after dependencies are known
    */
-  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
-    throw new UnsupportedOperationException(LocalizedStrings.CompiledIteratorDef_NOT_TO_BE_EVALUATED_DIRECTLY.toLocalizedString());
+  public Object evaluate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
+    throw new UnsupportedOperationException(
+        LocalizedStrings.CompiledIteratorDef_NOT_TO_BE_EVALUATED_DIRECTLY.toLocalizedString());
   }
 
-  public RuntimeIterator getRuntimeIterator(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  public RuntimeIterator getRuntimeIterator(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     RuntimeIterator rIter = null;
     // check cached in context
     rIter = (RuntimeIterator) context.cacheGet(this);
@@ -82,20 +83,19 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
       }
     }
     rIter = new RuntimeIterator(this, type);
-    // Rahul : generate from clause should take care of bucket region substitution if 
+    // Rahul : generate from clause should take care of bucket region substitution if
     // necessary and then set the definition.
     String fromClause = genFromClause(context);
     rIter.setDefinition(fromClause);
     /**
-     * Asif : If the type of RunTimeIterator is still ObjectType & if the
-     * RuneTimeIterator is independent of any iterator of the scopes less than
-     * or equal to its own scope, we can evaluate the collection via
-     * RuntimeIterator. This will initialize the Collection of RuntimeIterator ,
-     * which is OK. The code in RuntimeIterator will be rectified such that the
+     * Asif : If the type of RunTimeIterator is still ObjectType & if the RuneTimeIterator is
+     * independent of any iterator of the scopes less than or equal to its own scope, we can
+     * evaluate the collection via RuntimeIterator. This will initialize the Collection of
+     * RuntimeIterator , which is OK. The code in RuntimeIterator will be rectified such that the
      * ElementType of that RuntimeIterator is taken from the collection
-     *  
      */
-    if (type.equals(TypeUtils.OBJECT_TYPE) && !this.isDependentOnAnyIteratorOfScopeLessThanItsOwn(context)) {
+    if (type.equals(TypeUtils.OBJECT_TYPE)
+        && !this.isDependentOnAnyIteratorOfScopeLessThanItsOwn(context)) {
       //The current Iterator definition is independent , so lets evaluate
       // the collection
       try {
@@ -108,7 +108,11 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
         if (logger.isDebugEnabled()) {
           logger.debug("Exception while getting runtime iterator.", e);
         }
-        throw new TypeMismatchException(LocalizedStrings.CompiledIteratorDef_EXCEPTION_IN_EVALUATING_THE_COLLECTION_EXPRESSION_IN_GETRUNTIMEITERATOR_EVEN_THOUGH_THE_COLLECTION_IS_INDEPENDENT_OF_ANY_RUNTIMEITERATOR.toLocalizedString(), e);
+        throw new TypeMismatchException(
+            LocalizedStrings
+                .CompiledIteratorDef_EXCEPTION_IN_EVALUATING_THE_COLLECTION_EXPRESSION_IN_GETRUNTIMEITERATOR_EVEN_THOUGH_THE_COLLECTION_IS_INDEPENDENT_OF_ANY_RUNTIMEITERATOR
+                .toLocalizedString(),
+            e);
       }
     }
     // cache in context
@@ -120,7 +124,10 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
     ObjectType typ = this.collectionExpr.getTypecast();
     if (typ != null) {
       if (!(typ instanceof CollectionType)) {
-        throw new TypeMismatchException(LocalizedStrings.CompiledIteratorDef_AN_ITERATOR_DEFINITION_MUST_BE_A_COLLECTION_TYPE_NOT_A_0.toLocalizedString(typ));
+        throw new TypeMismatchException(
+            LocalizedStrings
+                .CompiledIteratorDef_AN_ITERATOR_DEFINITION_MUST_BE_A_COLLECTION_TYPE_NOT_A_0
+                .toLocalizedString(typ));
       }
       if (typ instanceof MapType) { // we iterate over map entries
         return ((MapType) typ).getEntryType();
@@ -131,17 +138,21 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
   }
 
   /** Evaluate just the collectionExpr */
-  SelectResults evaluateCollection(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  SelectResults evaluateCollection(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     return evaluateCollection(context, null);
   }
 
   /**
    * Evaluate just the collectionExpr
-   * 
-   * @param stopAtIter the RuntimeIterator associated with this iterator defn --
-   *          don't use this or any subsequent runtime iterators to evaluate.
+   *
+   * @param stopAtIter the RuntimeIterator associated with this iterator defn -- don't use this or
+   *     any subsequent runtime iterators to evaluate.
    */
-  SelectResults evaluateCollection(ExecutionContext context, RuntimeIterator stopAtIter) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  SelectResults evaluateCollection(ExecutionContext context, RuntimeIterator stopAtIter)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     Object coll;
 
     // Check if query execution on this thread is Canceled.
@@ -191,30 +202,26 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
   }
 
   /**
-   * TODO:Asif : We need to implement the belwo method of computeDependencies
-   * Once we come to implement changes for partitioned region querying, as in
-   * that case if first iterator itself is a Select Query , then ideally we
-   * cannot call that CompiledIteratorDef independent ( which will be the case
-   * at present). When we use this commented function we will also need to take
-   * care of correctly implementing the function isDependentOnCurrentScope etc
-   * functions.
-   * 
-   * public Set computeDependencies(ExecutionContext context) throws
-   * TypeMismatchException, AmbiguousNameException { //Asif : If a
-   * CompiledIteratorDef has a collection expression which boils down to //a
-   * CompiledRegion or CompiledBindArgumnet , then its dependency is empty . In
-   * such cases // we will assume that the current CompiledIteratorDef has a
-   * dependency on itself. // This will be required once we start the changes
-   * for partitionedRegion Querying //But when we are doing check of whether the
-   * CompiledIteratorDef is dependent on its // own RuntimeIterator we will
-   * still return false. Set set =
-   * this.collectionExpr.computeDependencies(context); Set retSet = null;
-   * if(set.isEmpty()){ retSet =
-   * context.addDependency(this,this.getRuntimeIterator(context)); }else {
-   * retSet = context.addDependencies(this, set); } return retSet; }
+   * TODO:Asif : We need to implement the belwo method of computeDependencies Once we come to
+   * implement changes for partitioned region querying, as in that case if first iterator itself is
+   * a Select Query , then ideally we cannot call that CompiledIteratorDef independent ( which will
+   * be the case at present). When we use this commented function we will also need to take care of
+   * correctly implementing the function isDependentOnCurrentScope etc functions.
+   *
+   * <p>public Set computeDependencies(ExecutionContext context) throws TypeMismatchException,
+   * AmbiguousNameException { //Asif : If a CompiledIteratorDef has a collection expression which
+   * boils down to //a CompiledRegion or CompiledBindArgumnet , then its dependency is empty . In
+   * such cases // we will assume that the current CompiledIteratorDef has a dependency on itself.
+   * // This will be required once we start the changes for partitionedRegion Querying //But when we
+   * are doing check of whether the CompiledIteratorDef is dependent on its // own RuntimeIterator
+   * we will still return false. Set set = this.collectionExpr.computeDependencies(context); Set
+   * retSet = null; if(set.isEmpty()){ retSet =
+   * context.addDependency(this,this.getRuntimeIterator(context)); }else { retSet =
+   * context.addDependencies(this, set); } return retSet; }
    */
   @Override
-  public Set computeDependencies(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  public Set computeDependencies(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     return context.addDependencies(this, this.collectionExpr.computeDependencies(context));
   }
 
@@ -236,11 +243,12 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
   }
 
   /**
-   * Convert the given object to a SelectResults. Must be a collection of some
-   * sort. The obj passed in must be unmodified, but the resulting SelectResults
-   * may or may not be modifiable. Return null if obj is null or UNDEFINED.
+   * Convert the given object to a SelectResults. Must be a collection of some sort. The obj passed
+   * in must be unmodified, but the resulting SelectResults may or may not be modifiable. Return
+   * null if obj is null or UNDEFINED.
    */
-  private SelectResults prepareIteratorDef(Object obj, ObjectType elementType, ExecutionContext context) throws TypeMismatchException {
+  private SelectResults prepareIteratorDef(
+      Object obj, ObjectType elementType, ExecutionContext context) throws TypeMismatchException {
     if (obj == null) {
       return null;
     }
@@ -285,7 +293,8 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
         elementType = TypeUtils.getObjectType(obj.getClass().getComponentType());
       }
       // do not lose ordering and duplicate information,
-      ResultsCollectionWrapper res = new ResultsCollectionWrapper(elementType, Arrays.asList((Object[]) obj));
+      ResultsCollectionWrapper res =
+          new ResultsCollectionWrapper(elementType, Arrays.asList((Object[]) obj));
       res.setModifiable(false);
       return res;
     }
@@ -296,11 +305,12 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
         // use Map.Entry
         elementType = TypeUtils.getObjectType(Map.Entry.class);
       }
-      ResultsCollectionWrapper res = new ResultsCollectionWrapper(elementType, ((Map) obj).entrySet());
+      ResultsCollectionWrapper res =
+          new ResultsCollectionWrapper(elementType, ((Map) obj).entrySet());
       res.setModifiable(false);
       return res;
     } else {
-      obj = new Object[] { obj };
+      obj = new Object[] {obj};
       // the element type is specified in the array itself, unless we have
       // something more specific
       if (elementType.equals(TypeUtils.OBJECT_TYPE)) { // if we don't have
@@ -308,13 +318,15 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
         elementType = TypeUtils.getObjectType(obj.getClass().getComponentType());
       }
       // do not lose ordering and duplicate information,
-      ResultsCollectionWrapper res = new ResultsCollectionWrapper(elementType, Arrays.asList((Object[]) obj));
+      ResultsCollectionWrapper res =
+          new ResultsCollectionWrapper(elementType, Arrays.asList((Object[]) obj));
       res.setModifiable(false);
       return res;
     }
   }
 
-  String genFromClause(ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  String genFromClause(ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     StringBuffer sbuff = new StringBuffer();
     collectionExpr.generateCanonicalizedExpression(sbuff, context);
     return sbuff.toString();
@@ -325,9 +337,9 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
   }
 
   /**
-   * Checks if the iterator in question is dependent on any other
-   * RuntimeIterator of its own or lesser scope.
-   * 
+   * Checks if the iterator in question is dependent on any other RuntimeIterator of its own or
+   * lesser scope.
+   *
    * @param context
    */
   boolean isDependentOnAnyIteratorOfScopeLessThanItsOwn(ExecutionContext context) {
@@ -341,7 +353,7 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
     // is dependent on
     Set dependencySet = context.getDependencySet(this, true);
     Iterator itr = dependencySet.iterator();
-    int currScope = context.currentScope().getScopeID();// context.getScopeCount();
+    int currScope = context.currentScope().getScopeID(); // context.getScopeCount();
     while (itr.hasNext()) {
       RuntimeIterator ritr = (RuntimeIterator) itr.next();
       if (ritr.getScopeID() <= currScope) {
@@ -350,6 +362,5 @@ public class CompiledIteratorDef extends AbstractCompiledValue {
       }
     }
     return isDep;
-
   }
 }

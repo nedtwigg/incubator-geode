@@ -34,10 +34,9 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * A message sent requesting that an evaluation of buckets be made to determine
- * if one or more needs to be backed-up in order to satisfy the redundantCopies
- * setting
- * 
+ * A message sent requesting that an evaluation of buckets be made to determine if one or more needs
+ * to be backed-up in order to satisfy the redundantCopies setting
+ *
  * @since GemFire 5.0
  */
 public final class BucketBackupMessage extends PartitionMessage {
@@ -46,9 +45,7 @@ public final class BucketBackupMessage extends PartitionMessage {
 
   private int bucketId;
 
-  /**
-   * Empty contstructor provided for {@link org.apache.geode.DataSerializer}
-   */
+  /** Empty contstructor provided for {@link org.apache.geode.DataSerializer} */
   public BucketBackupMessage() {
     super();
   }
@@ -59,13 +56,10 @@ public final class BucketBackupMessage extends PartitionMessage {
   }
 
   /**
-   * Sends a BucketBackupMessage requesting that another VM backup an existing
-   * bucket
-   * 
-   * @param recipients
-   *          the member that the contains keys/value message is sent to
-   * @param r
-   *          the PartitionedRegion that contains the bucket
+   * Sends a BucketBackupMessage requesting that another VM backup an existing bucket
+   *
+   * @param recipients the member that the contains keys/value message is sent to
+   * @param r the PartitionedRegion that contains the bucket
    */
   public static void send(Set recipients, PartitionedRegion r, int bucketId) {
     Assert.assertTrue(recipients != null, "BucketBackupMessage NULL sender list");
@@ -74,10 +68,9 @@ public final class BucketBackupMessage extends PartitionMessage {
   }
 
   /**
-   * This message may be sent to nodes before the PartitionedRegion is
-   * completely initialized due to the RegionAdvisor(s) knowing about the
-   * existance of a partitioned region at a very early part of the
-   * initialization
+   * This message may be sent to nodes before the PartitionedRegion is completely initialized due to
+   * the RegionAdvisor(s) knowing about the existance of a partitioned region at a very early part
+   * of the initialization
    */
   @Override
   protected final boolean failIfRegionMissing() {
@@ -85,10 +78,11 @@ public final class BucketBackupMessage extends PartitionMessage {
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
 
     // This call has come to an uninitialized region.
-    // This can occur as bucket grab Op is done outside the 
+    // This can occur as bucket grab Op is done outside the
     // d-lock.
     if (pr == null || !pr.isInitialized()) {
       return false;
@@ -101,7 +95,10 @@ public final class BucketBackupMessage extends PartitionMessage {
     if (ds != null) {
       pr.getRedundancyProvider().finishIncompleteBucketCreation(bucketId);
     } else {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.BucketBackupMessage_BUCKETBACKUPMESSAGE_DATA_STORE_NOT_CONFIGURED_FOR_THIS_MEMBER));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .BucketBackupMessage_BUCKETBACKUPMESSAGE_DATA_STORE_NOT_CONFIGURED_FOR_THIS_MEMBER));
     }
     pr.getPrStats().endPartitionMessagesProcessing(startTime);
     return false;
@@ -127,5 +124,4 @@ public final class BucketBackupMessage extends PartitionMessage {
     super.toData(out);
     out.writeInt(bucketId);
   }
-
 }

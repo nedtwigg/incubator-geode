@@ -21,8 +21,7 @@ public class Employee implements PdxSerializable {
   private String fname;
   private String lname;
 
-  public Employee() {
-  }
+  public Employee() {}
 
   public Employee(Long id, String fn, String ln) {
     this.Id = id;
@@ -70,22 +69,16 @@ public class Employee implements PdxSerializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
 
     Employee other = (Employee) obj;
-    if (Id.longValue() != other.Id.longValue())
-      return false;
+    if (Id.longValue() != other.Id.longValue()) return false;
 
-    if (!fname.equals(other.fname))
-      return false;
+    if (!fname.equals(other.fname)) return false;
 
-    if (!lname.equals(other.lname))
-      return false;
+    if (!lname.equals(other.lname)) return false;
 
     return true;
   }

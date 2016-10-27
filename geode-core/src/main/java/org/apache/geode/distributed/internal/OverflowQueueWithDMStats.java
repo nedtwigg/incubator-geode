@@ -21,11 +21,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.Collection;
 
-/**
- * A LinkedBlockingQueue that supports stats.
- * Named OverflowQueue for historical reasons.
- *
- */
+/** A LinkedBlockingQueue that supports stats. Named OverflowQueue for historical reasons. */
 public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
   private static final long serialVersionUID = -1846248853494394996L;
   protected final QueueStatHelper stats;
@@ -68,8 +64,7 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
 
   @Override
   public void put(Object e) throws InterruptedException {
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
     preAddInterruptibly(e);
     boolean didOp = false;
     try {
@@ -85,8 +80,7 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
 
   @Override
   public boolean offer(Object e, long timeout, TimeUnit unit) throws InterruptedException {
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
     preAddInterruptibly(e);
     boolean didOp = false;
     try {
@@ -106,8 +100,7 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
 
   @Override
   public Object take() throws InterruptedException {
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
     Object result = super.take();
     postRemove(result);
     this.stats.remove();
@@ -116,8 +109,7 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
 
   @Override
   public Object poll(long timeout, TimeUnit unit) throws InterruptedException {
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
     Object result = super.poll(timeout, unit);
     if (result != null) {
       postRemove(result);
@@ -157,30 +149,24 @@ public class OverflowQueueWithDMStats extends LinkedBlockingQueue {
     return result;
   }
 
-  /**
-   * Called before the specified object is added to this queue.
-   */
+  /** Called before the specified object is added to this queue. */
   protected void preAddInterruptibly(Object o) throws InterruptedException {
     // do nothing in this class. sub-classes can override
   }
 
-  /**
-   * Called before the specified object is added to this queue.
-   */
+  /** Called before the specified object is added to this queue. */
   protected void preAdd(Object o) {
     // do nothing in this class. sub-classes can override
   }
 
-  /**
-   * Called after the specified object is removed from this queue.
-   */
+  /** Called after the specified object is removed from this queue. */
   protected void postRemove(Object o) {
     // do nothing in this class. sub-classes can override
   }
 
   /**
-   * Called after the specified collection of objects have been
-   * drained (i.e. removed) from this queue.
+   * Called after the specified collection of objects have been drained (i.e. removed) from this
+   * queue.
    */
   protected void postDrain(Collection c) {
     // do nothing in this class. sub-classes can override

@@ -23,23 +23,20 @@ import java.io.IOException;
 import org.apache.geode.DataSerializable;
 
 /**
- * A data object containing the load information for a cache server. This object
- * is returned from {@link ServerLoadProbe#getLoad(ServerMetrics)} and indicates
- * how heavily loaded the server is.
- * 
- * The values returned by {@link #getConnectionLoad()} and
- * {@link #getSubscriptionConnectionLoad()} can be any number greater than 0. A
- * larger load value means that the server has more load.
- * 
- * The values returned by getLoadPerConnection() and
- * getLoadPerSubscriptionConnection are used to estimate the effect of new
- * connections before the connects are actually made to this server. The load is
- * estimated as <code> 
+ * A data object containing the load information for a cache server. This object is returned from
+ * {@link ServerLoadProbe#getLoad(ServerMetrics)} and indicates how heavily loaded the server is.
+ *
+ * <p>The values returned by {@link #getConnectionLoad()} and {@link
+ * #getSubscriptionConnectionLoad()} can be any number greater than 0. A larger load value means
+ * that the server has more load.
+ *
+ * <p>The values returned by getLoadPerConnection() and getLoadPerSubscriptionConnection are used to
+ * estimate the effect of new connections before the connects are actually made to this server. The
+ * load is estimated as <code>
  * load + loadPerConnection*numAdditionalConnections.
  * </code>
- * 
+ *
  * @since GemFire 5.7
- * 
  */
 public final class ServerLoad implements DataSerializable {
   private static final long serialVersionUID = -4498005291184650907L;
@@ -48,7 +45,11 @@ public final class ServerLoad implements DataSerializable {
   private float loadPerConnection;
   private float loadPerSubscriber;
 
-  public ServerLoad(float connectionLoad, float loadPerConnection, float subscriptionConnectionLoad, float loadPerSubscriptionConnection) {
+  public ServerLoad(
+      float connectionLoad,
+      float loadPerConnection,
+      float subscriptionConnectionLoad,
+      float loadPerSubscriptionConnection) {
     super();
     this.connectionLoad = connectionLoad;
     this.subscriberLoad = subscriptionConnectionLoad;
@@ -56,12 +57,11 @@ public final class ServerLoad implements DataSerializable {
     this.loadPerSubscriber = loadPerSubscriptionConnection;
   }
 
-  public ServerLoad() {
-
-  }
+  public ServerLoad() {}
 
   /**
    * Get the load on the server due to client to server connections.
+   *
    * @return a float greater than or equals to 0
    */
   public float getConnectionLoad() {
@@ -69,10 +69,10 @@ public final class ServerLoad implements DataSerializable {
   }
 
   /**
-   * Get an estimate of the how much load each new
-   * connection will add to this server. The locator uses
-   * this information to estimate the load on the server
-   * before it receives a new load snapshot.
+   * Get an estimate of the how much load each new connection will add to this server. The locator
+   * uses this information to estimate the load on the server before it receives a new load
+   * snapshot.
+   *
    * @return a float greater than or equals to 0
    */
   public float getLoadPerConnection() {
@@ -81,6 +81,7 @@ public final class ServerLoad implements DataSerializable {
 
   /**
    * Get the load on the server due to subscription connections.
+   *
    * @return a float greater than or equals to 0
    */
   public float getSubscriptionConnectionLoad() {
@@ -88,41 +89,32 @@ public final class ServerLoad implements DataSerializable {
   }
 
   /**
-   * Get an estimate of the how much load each new
-   * subscriber will add to this server. The locator uses
-   * this information to estimate the load on the server
-   * before it receives a new load snapshot.
-   * 
+   * Get an estimate of the how much load each new subscriber will add to this server. The locator
+   * uses this information to estimate the load on the server before it receives a new load
+   * snapshot.
+   *
    * @return a float greater than or equals to 0
    */
   public float getLoadPerSubscriptionConnection() {
     return loadPerSubscriber;
   }
 
-  /**
-   * Set the load due to client to server connections.
-   */
+  /** Set the load due to client to server connections. */
   public void setConnectionLoad(float connectionLoad) {
     this.connectionLoad = connectionLoad;
   }
 
-  /**
-   * Set the load due to client subscriptions.
-   */
+  /** Set the load due to client subscriptions. */
   public void setSubscriptionConnectionLoad(float subscriberLoad) {
     this.subscriberLoad = subscriberLoad;
   }
 
-  /**
-   * Set the estimated load per connection.
-   */
+  /** Set the estimated load per connection. */
   public void setLoadPerConnection(float loadPerConnection) {
     this.loadPerConnection = loadPerConnection;
   }
 
-  /**
-   * Set the estimated load per subscription connection. 
-   */
+  /** Set the estimated load per subscription connection. */
   public void setLoadPerSubscriptionConnection(float loadPerSubscriber) {
     this.loadPerSubscriber = loadPerSubscriber;
   }
@@ -154,12 +146,9 @@ public final class ServerLoad implements DataSerializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     final ServerLoad other = (ServerLoad) obj;
     if (Float.floatToIntBits(connectionLoad) != Float.floatToIntBits(other.connectionLoad))
       return false;
@@ -174,6 +163,14 @@ public final class ServerLoad implements DataSerializable {
 
   @Override
   public String toString() {
-    return "Load(" + connectionLoad + ", " + loadPerConnection + ", " + subscriberLoad + ", " + loadPerSubscriber + ")";
+    return "Load("
+        + connectionLoad
+        + ", "
+        + loadPerConnection
+        + ", "
+        + subscriberLoad
+        + ", "
+        + loadPerSubscriber
+        + ")";
   }
 }

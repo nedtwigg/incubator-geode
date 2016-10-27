@@ -55,15 +55,18 @@ public class SingleHopClientExecutor {
 
   private static final Logger logger = LogService.getLogger();
 
-  static final ExecutorService execService = Executors.newCachedThreadPool(new ThreadFactory() {
-    AtomicInteger threadNum = new AtomicInteger();
+  static final ExecutorService execService =
+      Executors.newCachedThreadPool(
+          new ThreadFactory() {
+            AtomicInteger threadNum = new AtomicInteger();
 
-    public Thread newThread(final Runnable r) {
-      Thread result = new Thread(r, "Function Execution Thread-" + threadNum.incrementAndGet());
-      result.setDaemon(true);
-      return result;
-    }
-  });
+            public Thread newThread(final Runnable r) {
+              Thread result =
+                  new Thread(r, "Function Execution Thread-" + threadNum.incrementAndGet());
+              result.setDaemon(true);
+              return result;
+            }
+          });
 
   static void submitAll(List callableTasks) {
     if (callableTasks != null && !callableTasks.isEmpty()) {
@@ -99,7 +102,12 @@ public class SingleHopClientExecutor {
     }
   }
 
-  static boolean submitAllHA(List callableTasks, LocalRegion region, boolean isHA, ResultCollector rc, Set<String> failedNodes) {
+  static boolean submitAllHA(
+      List callableTasks,
+      LocalRegion region,
+      boolean isHA,
+      ResultCollector rc,
+      Set<String> failedNodes) {
 
     ClientMetadataService cms = region.getCache().getClientMetadataService();
     boolean reexecute = false;
@@ -132,7 +140,9 @@ public class SingleHopClientExecutor {
           } catch (ExecutionException ee) {
             if (ee.getCause() instanceof InternalFunctionInvocationTargetException) {
               if (isDebugEnabled) {
-                logger.debug("ExecuteRegionFunctionSingleHopOp#ExecutionException.InternalFunctionInvocationTargetException : Caused by :{}", ee.getCause());
+                logger.debug(
+                    "ExecuteRegionFunctionSingleHopOp#ExecutionException.InternalFunctionInvocationTargetException : Caused by :{}",
+                    ee.getCause());
               }
               try {
                 cms = region.getCache().getClientMetadataService();
@@ -142,20 +152,28 @@ public class SingleHopClientExecutor {
               cms.removeBucketServerLocation(server);
               cms.scheduleGetPRMetaData(region, false);
               reexecute = true;
-              failedNodes.addAll(((InternalFunctionInvocationTargetException) ee.getCause()).getFailedNodeSet());
+              failedNodes.addAll(
+                  ((InternalFunctionInvocationTargetException) ee.getCause()).getFailedNodeSet());
               // Clear the results only if isHA so that partial results can be returned.
               if (isHA) {
                 rc.clearResults();
               } else {
                 if (ee.getCause().getCause() != null) {
-                  functionExecutionException = new FunctionInvocationTargetException(ee.getCause().getCause());
+                  functionExecutionException =
+                      new FunctionInvocationTargetException(ee.getCause().getCause());
                 } else {
-                  functionExecutionException = new FunctionInvocationTargetException(new BucketMovedException(LocalizedStrings.FunctionService_BUCKET_MIGRATED_TO_ANOTHER_NODE.toLocalizedString()));
+                  functionExecutionException =
+                      new FunctionInvocationTargetException(
+                          new BucketMovedException(
+                              LocalizedStrings.FunctionService_BUCKET_MIGRATED_TO_ANOTHER_NODE
+                                  .toLocalizedString()));
                 }
               }
             } else if (ee.getCause() instanceof FunctionException) {
               if (isDebugEnabled) {
-                logger.debug("ExecuteRegionFunctionSingleHopOp#ExecutionException.FunctionException : Caused by :{}", ee.getCause());
+                logger.debug(
+                    "ExecuteRegionFunctionSingleHopOp#ExecutionException.FunctionException : Caused by :{}",
+                    ee.getCause());
               }
               FunctionException fe = (FunctionException) ee.getCause();
               if (isHA) {
@@ -165,7 +183,9 @@ public class SingleHopClientExecutor {
               }
             } else if (ee.getCause() instanceof ServerOperationException) {
               if (isDebugEnabled) {
-                logger.debug("ExecuteRegionFunctionSingleHopOp#ExecutionException.ServerOperationException : Caused by :{}", ee.getCause());
+                logger.debug(
+                    "ExecuteRegionFunctionSingleHopOp#ExecutionException.ServerOperationException : Caused by :{}",
+                    ee.getCause());
               }
               ServerOperationException soe = (ServerOperationException) ee.getCause();
               if (isHA) {
@@ -175,7 +195,10 @@ public class SingleHopClientExecutor {
               }
             } else if (ee.getCause() instanceof ServerConnectivityException) {
               if (isDebugEnabled) {
-                logger.debug("ExecuteRegionFunctionSingleHopOp#ExecutionException.ServerConnectivityException : Caused by :{} The failed server is: {}", ee.getCause(), server);
+                logger.debug(
+                    "ExecuteRegionFunctionSingleHopOp#ExecutionException.ServerConnectivityException : Caused by :{} The failed server is: {}",
+                    ee.getCause(),
+                    server);
               }
               try {
                 cms = region.getCache().getClientMetadataService();
@@ -207,13 +230,18 @@ public class SingleHopClientExecutor {
   /**
    * execute bulk op (putAll or removeAll) on multiple PR servers, returning a map of the results.
    * Results are either a VersionedObjectList or a BulkOpPartialResultsException
+   *
    * @param callableTasks
    * @param cms
    * @param region
    * @param failedServers
    * @return the per-server results
    */
-  static Map<ServerLocation, Object> submitBulkOp(List callableTasks, ClientMetadataService cms, LocalRegion region, Map<ServerLocation, RuntimeException> failedServers) {
+  static Map<ServerLocation, Object> submitBulkOp(
+      List callableTasks,
+      ClientMetadataService cms,
+      LocalRegion region,
+      Map<ServerLocation, RuntimeException> failedServers) {
     if (callableTasks != null && !callableTasks.isEmpty()) {
       Map<ServerLocation, Object> resultMap = new HashMap<ServerLocation, Object>();
       boolean anyPartialResults = false;
@@ -293,7 +321,11 @@ public class SingleHopClientExecutor {
     return null;
   }
 
-  static Map<ServerLocation, Object> submitGetAll(Map<ServerLocation, HashSet> serverToFilterMap, List callableTasks, ClientMetadataService cms, LocalRegion region) {
+  static Map<ServerLocation, Object> submitGetAll(
+      Map<ServerLocation, HashSet> serverToFilterMap,
+      List callableTasks,
+      ClientMetadataService cms,
+      LocalRegion region) {
 
     if (callableTasks != null && !callableTasks.isEmpty()) {
       Map<ServerLocation, Object> resultMap = new HashMap<ServerLocation, Object>();
@@ -318,13 +350,18 @@ public class SingleHopClientExecutor {
             VersionedObjectList valuesFromServer = (VersionedObjectList) fut.get();
             valuesFromServer.setKeys(keys);
 
-            for (VersionedObjectList.Iterator it = valuesFromServer.iterator(); it.hasNext();) {
+            for (VersionedObjectList.Iterator it = valuesFromServer.iterator(); it.hasNext(); ) {
               VersionedObjectList.Entry entry = it.next();
               Object key = entry.getKey();
               Object value = entry.getValue();
               if (!entry.isKeyNotOnServer()) {
                 if (value instanceof Throwable) {
-                  logger.warn(LocalizedMessage.create(LocalizedStrings.GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1, new Object[] { value, key }), (Throwable) value);
+                  logger.warn(
+                      LocalizedMessage.create(
+                          LocalizedStrings
+                              .GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1,
+                          new Object[] {value, key}),
+                      (Throwable) value);
                 }
               }
             }
@@ -337,12 +374,17 @@ public class SingleHopClientExecutor {
           } catch (ExecutionException ee) {
             if (ee.getCause() instanceof ServerOperationException) {
               if (logger.isDebugEnabled()) {
-                logger.debug("GetAllOp#ExecutionException.ServerOperationException : Caused by :{}", ee.getCause());
+                logger.debug(
+                    "GetAllOp#ExecutionException.ServerOperationException : Caused by :{}",
+                    ee.getCause());
               }
               throw (ServerOperationException) ee.getCause();
             } else if (ee.getCause() instanceof ServerConnectivityException) {
               if (logger.isDebugEnabled()) {
-                logger.debug("GetAllOp#ExecutionException.ServerConnectivityException : Caused by :{} The failed server is: {}", ee.getCause(), server);
+                logger.debug(
+                    "GetAllOp#ExecutionException.ServerConnectivityException : Caused by :{} The failed server is: {}",
+                    ee.getCause(),
+                    server);
               }
               try {
                 cms = region.getCache().getClientMetadataService();
@@ -369,11 +411,8 @@ public class SingleHopClientExecutor {
 
   // Find out what exception to throw?
   private static RuntimeException executionThrowable(Throwable t) {
-    if (t instanceof RuntimeException)
-      return (RuntimeException) t;
-    else if (t instanceof Error)
-      throw (Error) t;
-    else
-      throw new IllegalStateException("Don't know", t);
+    if (t instanceof RuntimeException) return (RuntimeException) t;
+    else if (t instanceof Error) throw (Error) t;
+    else throw new IllegalStateException("Don't know", t);
   }
 }

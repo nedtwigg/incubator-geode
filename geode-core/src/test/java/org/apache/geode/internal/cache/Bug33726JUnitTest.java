@@ -30,9 +30,8 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.fail;
 
 /**
- * AFTER_REGION_CREATE was being sent before region
- * initialization (bug 33726). Test to verify that that is no longer the case.
- *
+ * AFTER_REGION_CREATE was being sent before region initialization (bug 33726). Test to verify that
+ * that is no longer the case.
  */
 @Category(IntegrationTest.class)
 public class Bug33726JUnitTest {
@@ -42,18 +41,12 @@ public class Bug33726JUnitTest {
   //  private boolean done = false;
   static boolean isOK = false;
 
-  public Bug33726JUnitTest() {
+  public Bug33726JUnitTest() {}
 
-  }
-
-  public void setup() {
-
-  }
+  public void setup() {}
 
   @After
-  public void tearDown() {
-
-  }
+  public void tearDown() {}
 
   @Test
   public void testAfterRegionCreate() {
@@ -108,7 +101,6 @@ public class Bug33726JUnitTest {
         } else if (regionPath.indexOf("/testRegion") >= 0) {
           flags[0] = true;
         }
-
       }
       if (flags[0] && flags[1]) {
         isOK = true;

@@ -66,7 +66,8 @@ public abstract class AbstractStoredObject implements StoredObject {
     if (isSerialized()) {
       return getSerializedValue();
     } else {
-      throw new IllegalStateException("Can not call getValue on StoredObject that is not serialized");
+      throw new IllegalStateException(
+          "Can not call getValue on StoredObject that is not serialized");
     }
   }
 
@@ -94,13 +95,13 @@ public abstract class AbstractStoredObject implements StoredObject {
       bytes = (byte[]) getDeserializedForReading();
     }
     DataSerializer.writeByteArray(bytes, out);
-
   }
 
   @Override
   public void sendAsCachedDeserializable(DataOutput out) throws IOException {
     if (!isSerialized()) {
-      throw new IllegalStateException("sendAsCachedDeserializable can only be called on serialized StoredObjects");
+      throw new IllegalStateException(
+          "sendAsCachedDeserializable can only be called on serialized StoredObjects");
     }
     InternalDataSerializer.writeDSFIDHeader(DataSerializableFixedID.VM_CACHED_DESERIALIZABLE, out);
     sendAsByteArray(out);
@@ -126,5 +127,4 @@ public abstract class AbstractStoredObject implements StoredObject {
     // is OffHeapStoredObjectWithHeapForm.
     return this;
   }
-
 }

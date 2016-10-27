@@ -22,9 +22,7 @@
 
 package org.apache.geode.cache.query.data;
 
-/**
- *
- */
+/** */
 public class PhoneNo {
   public int phoneNo1;
   public int phoneNo2;
@@ -38,5 +36,4 @@ public class PhoneNo {
     this.phoneNo3 = k;
     this.mobile = m;
   }
-
-}//end of class
+} //end of class

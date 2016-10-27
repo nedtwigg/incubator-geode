@@ -17,50 +17,46 @@
 package org.apache.geode.redis.internal.executor.hll;
 
 /**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * <p>Encodes signed and unsigned values using a common variable-length
- * scheme, found for example in
- * <a href="http://code.google.com/apis/protocolbuffers/docs/encoding.html">
- * Google's Protocol Buffers</a>. It uses fewer bytes to encode smaller values,
- * but will use slightly more bytes to encode large values.</p>
- * <p/>
- * <p>Signed values are further encoded using so-called zig-zag encoding
- * in order to make them "compatible" with variable-length encoding.</p>
+ * Encodes signed and unsigned values using a common variable-length scheme, found for example in <a
+ * href="http://code.google.com/apis/protocolbuffers/docs/encoding.html">Google's Protocol
+ * Buffers</a>. It uses fewer bytes to encode smaller values, but will use slightly more bytes to
+ * encode large values.
+ *
+ * <p>
+ *
+ * <p>Signed values are further encoded using so-called zig-zag encoding in order to make them
+ * "compatible" with variable-length encoding.
  */
 public final class Varint {
 
-  private Varint() {
-  }
+  private Varint() {}
 
   /**
-   * Encodes a value using the variable-length encoding from
-   * <a href="http://code.google.com/apis/protocolbuffers/docs/encoding.html">
-   * Google Protocol Buffers</a>. It uses zig-zag encoding to efficiently
-   * encode signed values. If values are known to be nonnegative,
-   * {@link #writeUnsignedVarLong(long, DataOutput)} should be used.
+   * Encodes a value using the variable-length encoding from <a
+   * href="http://code.google.com/apis/protocolbuffers/docs/encoding.html">Google Protocol
+   * Buffers</a>. It uses zig-zag encoding to efficiently encode signed values. If values are known
+   * to be nonnegative, {@link #writeUnsignedVarLong(long, DataOutput)} should be used.
    *
    * @param value value to encode
-   * @param out   to write bytes to
+   * @param out to write bytes to
    * @throws IOException if {@link DataOutput} throws {@link IOException}
    */
   public static void writeSignedVarLong(long value, DataOutput out) throws IOException {
@@ -69,14 +65,14 @@ public final class Varint {
   }
 
   /**
-   * Encodes a value using the variable-length encoding from
-   * <a href="http://code.google.com/apis/protocolbuffers/docs/encoding.html">
-   * Google Protocol Buffers</a>. Zig-zag is not used, so input must not be negative.
-   * If values can be negative, use {@link #writeSignedVarLong(long, DataOutput)}
-   * instead. This method treats negative input as like a large unsigned value.
+   * Encodes a value using the variable-length encoding from <a
+   * href="http://code.google.com/apis/protocolbuffers/docs/encoding.html">Google Protocol
+   * Buffers</a>. Zig-zag is not used, so input must not be negative. If values can be negative, use
+   * {@link #writeSignedVarLong(long, DataOutput)} instead. This method treats negative input as
+   * like a large unsigned value.
    *
    * @param value value to encode
-   * @param out   to write bytes to
+   * @param out to write bytes to
    * @throws IOException if {@link DataOutput} throws {@link IOException}
    */
   public static void writeUnsignedVarLong(long value, DataOutput out) throws IOException {
@@ -87,17 +83,13 @@ public final class Varint {
     out.writeByte((int) value & 0x7F);
   }
 
-  /**
-   * @see #writeSignedVarLong(long, DataOutput)
-   */
+  /** @see #writeSignedVarLong(long, DataOutput) */
   public static void writeSignedVarInt(int value, DataOutput out) throws IOException {
     // Great trick from http://code.google.com/apis/protocolbuffers/docs/encoding.html#types
     writeUnsignedVarInt((value << 1) ^ (value >> 31), out);
   }
 
-  /**
-   * @see #writeUnsignedVarLong(long, DataOutput)
-   */
+  /** @see #writeUnsignedVarLong(long, DataOutput) */
   public static void writeUnsignedVarInt(int value, DataOutput out) throws IOException {
     while ((value & 0xFFFFFF80) != 0L) {
       out.writeByte((value & 0x7F) | 0x80);
@@ -113,9 +105,8 @@ public final class Varint {
 
   /**
    * @see #writeUnsignedVarLong(long, DataOutput)
-   * <p/>
-   * This one does not use streams and is much faster.
-   * Makes a single object each time, and that object is a primitive array.
+   *     <p>This one does not use streams and is much faster. Makes a single object each time, and
+   *     that object is a primitive array.
    */
   public static byte[] writeUnsignedVarInt(int value) {
     byte[] byteArrayList = new byte[10];
@@ -135,9 +126,9 @@ public final class Varint {
   /**
    * @param in to read bytes from
    * @return decode value
-   * @throws IOException              if {@link DataInput} throws {@link IOException}
-   * @throws IllegalArgumentException if variable-length value does not terminate
-   *                                  after 9 bytes have been read
+   * @throws IOException if {@link DataInput} throws {@link IOException}
+   * @throws IllegalArgumentException if variable-length value does not terminate after 9 bytes have
+   *     been read
    * @see #writeSignedVarLong(long, DataOutput)
    */
   public static long readSignedVarLong(DataInput in) throws IOException {
@@ -153,9 +144,9 @@ public final class Varint {
   /**
    * @param in to read bytes from
    * @return decode value
-   * @throws IOException              if {@link DataInput} throws {@link IOException}
-   * @throws IllegalArgumentException if variable-length value does not terminate
-   *                                  after 9 bytes have been read
+   * @throws IOException if {@link DataInput} throws {@link IOException}
+   * @throws IllegalArgumentException if variable-length value does not terminate after 9 bytes have
+   *     been read
    * @see #writeUnsignedVarLong(long, DataOutput)
    */
   public static long readUnsignedVarLong(DataInput in) throws IOException {
@@ -173,9 +164,9 @@ public final class Varint {
   }
 
   /**
-   * @throws IllegalArgumentException if variable-length value does not terminate
-   *                                  after 5 bytes have been read
-   * @throws IOException              if {@link DataInput} throws {@link IOException}
+   * @throws IllegalArgumentException if variable-length value does not terminate after 5 bytes have
+   *     been read
+   * @throws IOException if {@link DataInput} throws {@link IOException}
    * @see #readSignedVarLong(DataInput)
    */
   public static int readSignedVarInt(DataInput in) throws IOException {
@@ -189,9 +180,9 @@ public final class Varint {
   }
 
   /**
-   * @throws IllegalArgumentException if variable-length value does not terminate
-   *                                  after 5 bytes have been read
-   * @throws IOException              if {@link DataInput} throws {@link IOException}
+   * @throws IllegalArgumentException if variable-length value does not terminate after 5 bytes have
+   *     been read
+   * @throws IOException if {@link DataInput} throws {@link IOException}
    * @see #readUnsignedVarLong(DataInput)
    */
   public static int readUnsignedVarInt(DataInput in) throws IOException {
@@ -235,5 +226,4 @@ public final class Varint {
     }
     return value | (rb << i);
   }
-
 }

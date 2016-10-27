@@ -57,8 +57,8 @@ public class AbstractPeerTXRegionStubTest {
     }
 
     @Override
-    public void destroyExistingEntry(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) {
-    }
+    public void destroyExistingEntry(
+        EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) {}
 
     @Override
     public Entry getEntry(KeyInfo keyInfo, boolean allowTombstone) {
@@ -66,8 +66,8 @@ public class AbstractPeerTXRegionStubTest {
     }
 
     @Override
-    public void invalidateExistingEntry(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {
-    }
+    public void invalidateExistingEntry(
+        EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {}
 
     @Override
     public boolean containsKey(KeyInfo keyInfo) {
@@ -80,7 +80,14 @@ public class AbstractPeerTXRegionStubTest {
     }
 
     @Override
-    public Object findObject(KeyInfo keyInfo, boolean isCreate, boolean generateCallbacks, Object value, boolean preferCD, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent) {
+    public Object findObject(
+        KeyInfo keyInfo,
+        boolean isCreate,
+        boolean generateCallbacks,
+        Object value,
+        boolean preferCD,
+        ClientProxyMembershipID requestingClient,
+        EntryEventImpl clientEvent) {
       return null;
     }
 
@@ -90,7 +97,14 @@ public class AbstractPeerTXRegionStubTest {
     }
 
     @Override
-    public boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) {
+    public boolean putEntry(
+        EntryEventImpl event,
+        boolean ifNew,
+        boolean ifOld,
+        Object expectedOldValue,
+        boolean requireOldValue,
+        long lastModified,
+        boolean overwriteDestroyed) {
       return false;
     }
 
@@ -100,28 +114,26 @@ public class AbstractPeerTXRegionStubTest {
     }
 
     @Override
-    public void postPutAll(DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts, LocalRegion region) {
-    }
+    public void postPutAll(
+        DistributedPutAllOperation putallOp,
+        VersionedObjectList successfulPuts,
+        LocalRegion region) {}
 
     @Override
-    public void postRemoveAll(DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion region) {
-    }
+    public void postRemoveAll(
+        DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion region) {}
 
     @Override
-    public void cleanup() {
-    }
+    public void cleanup() {}
   }
 
-  @Rule
-  public ExpectedException expectedException = ExpectedException.none();
+  @Rule public ExpectedException expectedException = ExpectedException.none();
 
   @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
-  }
+  public static void setUpBeforeClass() throws Exception {}
 
   @AfterClass
-  public static void tearDownAfterClass() throws Exception {
-  }
+  public static void tearDownAfterClass() throws Exception {}
 
   @Before
   public void setUp() throws Exception {
@@ -131,8 +143,7 @@ public class AbstractPeerTXRegionStubTest {
   }
 
   @After
-  public void tearDown() throws Exception {
-  }
+  public void tearDown() throws Exception {}
 
   @Test
   public void getRegionKeysForIterationTranslatesCacheClosedException() {
@@ -143,7 +154,8 @@ public class AbstractPeerTXRegionStubTest {
     when((region).getSystem()).thenThrow(CacheClosedException.class);
 
     txrStub.getRegionKeysForIteration(region);
-    fail("AbstractPeerTXRegionStub expected to transalate CacheClosedException to TransactionDataNodeHasDepartedException ");
+    fail(
+        "AbstractPeerTXRegionStub expected to transalate CacheClosedException to TransactionDataNodeHasDepartedException ");
   }
 
   @Test
@@ -155,7 +167,7 @@ public class AbstractPeerTXRegionStubTest {
     when((region).getSystem()).thenThrow(RegionDestroyedException.class);
 
     txrStub.getRegionKeysForIteration(region);
-    fail("AbstractPeerTXRegionStub expected to transalate CacheClosedException to TransactionDataNodeHasDepartedException ");
+    fail(
+        "AbstractPeerTXRegionStub expected to transalate CacheClosedException to TransactionDataNodeHasDepartedException ");
   }
-
 }

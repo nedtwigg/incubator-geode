@@ -24,28 +24,48 @@ import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.pdx.internal.DataSize;
 
 /**
- * Every field of a pdx must have one of these types.
- * The type of that field can never change.
- * If you do want to be able to change a field's class then its field type needs to be {@link #OBJECT}.
- * Some field types are always serialized with a certain number of bytes; these are called "fixed-width".
- * Others are serialized with a variable number of bytes; these are called "variable-width".
- * 
+ * Every field of a pdx must have one of these types. The type of that field can never change. If
+ * you do want to be able to change a field's class then its field type needs to be {@link #OBJECT}.
+ * Some field types are always serialized with a certain number of bytes; these are called
+ * "fixed-width". Others are serialized with a variable number of bytes; these are called
+ * "variable-width".
+ *
  * @since GemFire 6.6.2
  */
 public enum FieldType {
-  BOOLEAN(true, DataSize.BOOLEAN_SIZE, "boolean", new byte[] { 0 }, false), BYTE(true, DataSize.BYTE_SIZE, "byte", new byte[] { 0 }, 0), CHAR(true, DataSize.CHAR_SIZE, "char", new byte[] { 0, 0 }, (char) 0), SHORT(true, DataSize.SHORT_SIZE, "short", new byte[] { 0, 0 }, 0), INT(true, DataSize.INTEGER_SIZE, "int", new byte[] { 0, 0, 0, 0 }, 0), LONG(true, DataSize.LONG_SIZE, "long", new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }, 0), FLOAT(true, DataSize.FLOAT_SIZE, "float", new byte[] { 0, 0, 0, 0 }, 0), DOUBLE(true, DataSize.DOUBLE_SIZE, "double", new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }, 0), DATE(true, DataSize.DATE_SIZE, "Date", new byte[] { -1, -1, -1, -1, -1, -1, -1, -1 }, null), STRING(false, -1, "String", new byte[] { DSCODE.NULL_STRING }, null), OBJECT(false, -1, "Object", new byte[] { DSCODE.NULL }, null), BOOLEAN_ARRAY(false, -1, "boolean[]", new byte[] { InternalDataSerializer.NULL_ARRAY }, null), CHAR_ARRAY(false, -1, "char[]", new byte[] { InternalDataSerializer.NULL_ARRAY },
-      null), BYTE_ARRAY(false, -1, "byte[]", new byte[] { InternalDataSerializer.NULL_ARRAY }, null), SHORT_ARRAY(false, -1, "short[]", new byte[] { InternalDataSerializer.NULL_ARRAY }, null), INT_ARRAY(false, -1, "int[]", new byte[] { InternalDataSerializer.NULL_ARRAY }, null), LONG_ARRAY(false, -1, "long[]", new byte[] { InternalDataSerializer.NULL_ARRAY }, null), FLOAT_ARRAY(false, -1, "float[]", new byte[] { InternalDataSerializer.NULL_ARRAY }, null), DOUBLE_ARRAY(false, -1, "double[]", new byte[] { InternalDataSerializer.NULL_ARRAY }, null), STRING_ARRAY(false, -1, "String[]", new byte[] { InternalDataSerializer.NULL_ARRAY }, null), OBJECT_ARRAY(false, -1, "Object[]", new byte[] { InternalDataSerializer.NULL_ARRAY }, null), ARRAY_OF_BYTE_ARRAYS(false, -1, "byte[][]", new byte[] { InternalDataSerializer.NULL_ARRAY }, null);
+  BOOLEAN(true, DataSize.BOOLEAN_SIZE, "boolean", new byte[] {0}, false),
+  BYTE(true, DataSize.BYTE_SIZE, "byte", new byte[] {0}, 0),
+  CHAR(true, DataSize.CHAR_SIZE, "char", new byte[] {0, 0}, (char) 0),
+  SHORT(true, DataSize.SHORT_SIZE, "short", new byte[] {0, 0}, 0),
+  INT(true, DataSize.INTEGER_SIZE, "int", new byte[] {0, 0, 0, 0}, 0),
+  LONG(true, DataSize.LONG_SIZE, "long", new byte[] {0, 0, 0, 0, 0, 0, 0, 0}, 0),
+  FLOAT(true, DataSize.FLOAT_SIZE, "float", new byte[] {0, 0, 0, 0}, 0),
+  DOUBLE(true, DataSize.DOUBLE_SIZE, "double", new byte[] {0, 0, 0, 0, 0, 0, 0, 0}, 0),
+  DATE(true, DataSize.DATE_SIZE, "Date", new byte[] {-1, -1, -1, -1, -1, -1, -1, -1}, null),
+  STRING(false, -1, "String", new byte[] {DSCODE.NULL_STRING}, null),
+  OBJECT(false, -1, "Object", new byte[] {DSCODE.NULL}, null),
+  BOOLEAN_ARRAY(false, -1, "boolean[]", new byte[] {InternalDataSerializer.NULL_ARRAY}, null),
+  CHAR_ARRAY(false, -1, "char[]", new byte[] {InternalDataSerializer.NULL_ARRAY}, null),
+  BYTE_ARRAY(false, -1, "byte[]", new byte[] {InternalDataSerializer.NULL_ARRAY}, null),
+  SHORT_ARRAY(false, -1, "short[]", new byte[] {InternalDataSerializer.NULL_ARRAY}, null),
+  INT_ARRAY(false, -1, "int[]", new byte[] {InternalDataSerializer.NULL_ARRAY}, null),
+  LONG_ARRAY(false, -1, "long[]", new byte[] {InternalDataSerializer.NULL_ARRAY}, null),
+  FLOAT_ARRAY(false, -1, "float[]", new byte[] {InternalDataSerializer.NULL_ARRAY}, null),
+  DOUBLE_ARRAY(false, -1, "double[]", new byte[] {InternalDataSerializer.NULL_ARRAY}, null),
+  STRING_ARRAY(false, -1, "String[]", new byte[] {InternalDataSerializer.NULL_ARRAY}, null),
+  OBJECT_ARRAY(false, -1, "Object[]", new byte[] {InternalDataSerializer.NULL_ARRAY}, null),
+  ARRAY_OF_BYTE_ARRAYS(false, -1, "byte[][]", new byte[] {InternalDataSerializer.NULL_ARRAY}, null);
 
   private final boolean isFixedWidth;
-  /**
-   * For fixed width fields. All others have -1.
-   */
+  /** For fixed width fields. All others have -1. */
   private final int width;
+
   private final String name;
   private final ByteBuffer defaultSerializedValue;
   private final Object defaultValue;
 
-  private FieldType(boolean isFixedWidth, int width, String name, byte[] defaultBytes, Object defaultValue) {
+  private FieldType(
+      boolean isFixedWidth, int width, String name, byte[] defaultBytes, Object defaultValue) {
     this.isFixedWidth = isFixedWidth;
     this.width = width;
     this.name = name;
@@ -53,16 +73,14 @@ public enum FieldType {
     this.defaultValue = defaultValue;
   }
 
-  /**
-   * Returns true if the type is "fixed-width"; false if it is "variable-width".
-   */
+  /** Returns true if the type is "fixed-width"; false if it is "variable-width". */
   public boolean isFixedWidth() {
     return this.isFixedWidth;
   }
 
   /**
-   * Returns the number of bytes used to serialize fixed-width fields;
-   * -1 is returned for variable-width fields.
+   * Returns the number of bytes used to serialize fixed-width fields; -1 is returned for
+   * variable-width fields.
    */
   public int getWidth() {
     return this.width;
@@ -73,16 +91,12 @@ public enum FieldType {
     return this.name;
   }
 
-  /**
-   * Returns a ByteBuffer that contains the serialized encoding of this type's default value.
-   */
+  /** Returns a ByteBuffer that contains the serialized encoding of this type's default value. */
   public ByteBuffer getDefaultBytes() {
     return this.defaultSerializedValue;
   }
 
-  /**
-   * Given a Class return the corresponding FieldType.
-   */
+  /** Given a Class return the corresponding FieldType. */
   public static FieldType get(Class<?> c) {
     if (c.equals(boolean.class)) {
       return BOOLEAN;

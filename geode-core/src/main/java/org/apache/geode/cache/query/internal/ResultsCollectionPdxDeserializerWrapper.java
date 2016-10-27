@@ -36,9 +36,7 @@ public class ResultsCollectionPdxDeserializerWrapper implements SelectResults {
   SelectResults results;
   private boolean copyOnRead = false;
 
-  public ResultsCollectionPdxDeserializerWrapper() {
-
-  }
+  public ResultsCollectionPdxDeserializerWrapper() {}
 
   public ResultsCollectionPdxDeserializerWrapper(SelectResults results, boolean copyOnRead) {
     this.results = results;
@@ -215,5 +213,4 @@ public class ResultsCollectionPdxDeserializerWrapper implements SelectResults {
   public void setElementType(ObjectType elementType) {
     results.setElementType(elementType);
   }
-
 }

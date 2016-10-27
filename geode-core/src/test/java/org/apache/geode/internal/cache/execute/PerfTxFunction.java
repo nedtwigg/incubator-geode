@@ -34,8 +34,10 @@ public class PerfTxFunction implements Function {
   public void execute(FunctionContext context) {
     RegionFunctionContext ctx = (RegionFunctionContext) context;
     Region customerPR = ctx.getDataSet();
-    Region orderPR = customerPR.getCache().getRegion(PRColocationDUnitTest.OrderPartitionedRegionName);
-    Region shipmentPR = customerPR.getCache().getRegion(PRColocationDUnitTest.ShipmentPartitionedRegionName);
+    Region orderPR =
+        customerPR.getCache().getRegion(PRColocationDUnitTest.OrderPartitionedRegionName);
+    Region shipmentPR =
+        customerPR.getCache().getRegion(PRColocationDUnitTest.ShipmentPartitionedRegionName);
     ArrayList args = (ArrayList) ctx.getArguments();
     // put the entries
     CacheTransactionManager mgr = customerPR.getCache().getCacheTransactionManager();
@@ -67,5 +69,4 @@ public class PerfTxFunction implements Function {
   public boolean isHA() {
     return false;
   }
-
 }

@@ -20,21 +20,19 @@ import org.apache.geode.cache.CacheCallback;
 import org.apache.geode.cache.EntryEvent;
 
 /**
- * Interface <code>GatewayEventSubstitutionFilter</code> provides a way to
- * specify a substitute value to be stored in the <code>GatewayQueueEvent</code>
- * and enqueued in the <code>RegionQueue</code>.
+ * Interface <code>GatewayEventSubstitutionFilter</code> provides a way to specify a substitute
+ * value to be stored in the <code>GatewayQueueEvent</code> and enqueued in the <code>RegionQueue
+ * </code>.
  */
 public interface GatewayEventSubstitutionFilter<K, V> extends CacheCallback {
 
   /**
-   * Return the substitute value to be stored in the
-   * <code>GatewayQueueEvent</code> and enqueued in the <code>RegionQueue</code>
-   * 
-   * @param event
-   *          The originating <code>EntryEvent</code>
-   * @return the substitute value to be stored in the
-   *         <code>GatewayQueueEvent</code> and enqueued in the
-   *         <code>RegionQueue</code>
+   * Return the substitute value to be stored in the <code>GatewayQueueEvent</code> and enqueued in
+   * the <code>RegionQueue</code>
+   *
+   * @param event The originating <code>EntryEvent</code>
+   * @return the substitute value to be stored in the <code>GatewayQueueEvent</code> and enqueued in
+   *     the <code>RegionQueue</code>
    */
   public Object getSubstituteValue(EntryEvent<K, V> event);
 }

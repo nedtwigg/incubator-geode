@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -59,8 +59,7 @@ import java.util.concurrent.TimeUnit;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * Microbenchmark of the IndexRepository to compare an
- * IndexRepository built on top of cache with a 
+ * Microbenchmark of the IndexRepository to compare an IndexRepository built on top of cache with a
  * stock lucene IndexWriter with a RAMDirectory.
  */
 @Category(PerformanceTest.class)
@@ -68,7 +67,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 public class IndexRepositoryImplPerformanceTest {
 
   private static final int NUM_WORDS = 1000;
-  private static int[] COMMIT_INTERVAL = new int[] { 100, 1000, 5000 };
+  private static int[] COMMIT_INTERVAL = new int[] {100, 1000, 5000};
   private static int NUM_ENTRIES = 500_000;
   private static int NUM_QUERIES = 500_000;
 
@@ -77,229 +76,260 @@ public class IndexRepositoryImplPerformanceTest {
   @Test
   public void testIndexRepository() throws Exception {
 
-    doTest("IndexRepository", new TestCallbacks() {
+    doTest(
+        "IndexRepository",
+        new TestCallbacks() {
 
-      private Cache cache;
-      private IndexRepositoryImpl repo;
-      private IndexWriter writer;
+          private Cache cache;
+          private IndexRepositoryImpl repo;
+          private IndexWriter writer;
 
-      @Override
-      public void addObject(String key, String text) throws Exception {
-        repo.create(key, new TestObject(text));
-      }
+          @Override
+          public void addObject(String key, String text) throws Exception {
+            repo.create(key, new TestObject(text));
+          }
 
-      @Override
-      public void commit() throws Exception {
-        repo.commit();
-      }
+          @Override
+          public void commit() throws Exception {
+            repo.commit();
+          }
 
-      @Override
-      public void init() throws Exception {
-        cache = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "error").create();
-        Region<String, File> fileRegion = cache.<String, File> createRegionFactory(RegionShortcut.REPLICATE).create("files");
-        Region<ChunkKey, byte[]> chunkRegion = cache.<ChunkKey, byte[]> createRegionFactory(RegionShortcut.REPLICATE).create("chunks");
+          @Override
+          public void init() throws Exception {
+            cache = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "error").create();
+            Region<String, File> fileRegion =
+                cache.<String, File>createRegionFactory(RegionShortcut.REPLICATE).create("files");
+            Region<ChunkKey, byte[]> chunkRegion =
+                cache
+                    .<ChunkKey, byte[]>createRegionFactory(RegionShortcut.REPLICATE)
+                    .create("chunks");
 
-        RegionDirectory dir = new RegionDirectory(fileRegion, chunkRegion, new FileSystemStats(cache.getDistributedSystem(), "region-index"));
-        final LuceneIndexStats stats = new LuceneIndexStats(cache.getDistributedSystem(), "region-index");
+            RegionDirectory dir =
+                new RegionDirectory(
+                    fileRegion,
+                    chunkRegion,
+                    new FileSystemStats(cache.getDistributedSystem(), "region-index"));
+            final LuceneIndexStats stats =
+                new LuceneIndexStats(cache.getDistributedSystem(), "region-index");
 
-        IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        writer = new IndexWriter(dir, config);
-        String[] indexedFields = new String[] { "text" };
-        HeterogeneousLuceneSerializer mapper = new HeterogeneousLuceneSerializer(indexedFields);
-        repo = new IndexRepositoryImpl(fileRegion, writer, mapper, stats, null);
-      }
+            IndexWriterConfig config = new IndexWriterConfig(analyzer);
+            writer = new IndexWriter(dir, config);
+            String[] indexedFields = new String[] {"text"};
+            HeterogeneousLuceneSerializer mapper = new HeterogeneousLuceneSerializer(indexedFields);
+            repo = new IndexRepositoryImpl(fileRegion, writer, mapper, stats, null);
+          }
 
-      @Override
-      public void cleanup() throws IOException {
-        writer.close();
-        cache.close();
-      }
+          @Override
+          public void cleanup() throws IOException {
+            writer.close();
+            cache.close();
+          }
 
-      @Override
-      public void waitForAsync() throws Exception {
-        //do nothing
-      }
+          @Override
+          public void waitForAsync() throws Exception {
+            //do nothing
+          }
 
-      @Override
-      public int query(Query query) throws IOException {
-        TopEntriesCollector collector = new TopEntriesCollector();
-        repo.query(query, 100, collector);
-        return collector.size();
-      }
-    });
+          @Override
+          public int query(Query query) throws IOException {
+            TopEntriesCollector collector = new TopEntriesCollector();
+            repo.query(query, 100, collector);
+            return collector.size();
+          }
+        });
   }
 
   /**
    * Test our full lucene index implementation
+   *
    * @throws Exception
    */
   @Test
   public void testLuceneIndex() throws Exception {
 
-    doTest("LuceneIndex", new TestCallbacks() {
+    doTest(
+        "LuceneIndex",
+        new TestCallbacks() {
 
-      private Cache cache;
-      private Region<String, TestObject> region;
-      private LuceneService service;
-
-      @Override
-      public void addObject(String key, String text) throws Exception {
-        region.create(key, new TestObject(text));
-      }
-
-      @Override
-      public void commit() throws Exception {
-        //NA
-      }
-
-      @Override
-      public void init() throws Exception {
-        cache = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "warning").create();
-        service = LuceneServiceProvider.get(cache);
-        service.createIndex("index", "/region", "text");
-        region = cache.<String, TestObject> createRegionFactory(RegionShortcut.PARTITION).setPartitionAttributes(new PartitionAttributesFactory<>().setTotalNumBuckets(1).create()).create("region");
-      }
-
-      @Override
-      public void cleanup() throws IOException {
-        cache.close();
-      }
-
-      @Override
-      public void waitForAsync() throws Exception {
-        AsyncEventQueue aeq = cache.getAsyncEventQueue(LuceneServiceImpl.getUniqueIndexName("index", "/region"));
-
-        //We will be at most 10 ms off
-        while (aeq.size() > 0) {
-          Thread.sleep(10);
-        }
-      }
-
-      @Override
-      public int query(final Query query) throws Exception {
-        LuceneQuery<Object, Object> luceneQuery = service.createLuceneQueryFactory().create("index", "/region", new LuceneQueryProvider() {
+          private Cache cache;
+          private Region<String, TestObject> region;
+          private LuceneService service;
 
           @Override
-          public Query getQuery(LuceneIndex index) throws LuceneQueryException {
-            return query;
+          public void addObject(String key, String text) throws Exception {
+            region.create(key, new TestObject(text));
+          }
+
+          @Override
+          public void commit() throws Exception {
+            //NA
+          }
+
+          @Override
+          public void init() throws Exception {
+            cache = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "warning").create();
+            service = LuceneServiceProvider.get(cache);
+            service.createIndex("index", "/region", "text");
+            region =
+                cache
+                    .<String, TestObject>createRegionFactory(RegionShortcut.PARTITION)
+                    .setPartitionAttributes(
+                        new PartitionAttributesFactory<>().setTotalNumBuckets(1).create())
+                    .create("region");
+          }
+
+          @Override
+          public void cleanup() throws IOException {
+            cache.close();
+          }
+
+          @Override
+          public void waitForAsync() throws Exception {
+            AsyncEventQueue aeq =
+                cache.getAsyncEventQueue(LuceneServiceImpl.getUniqueIndexName("index", "/region"));
+
+            //We will be at most 10 ms off
+            while (aeq.size() > 0) {
+              Thread.sleep(10);
+            }
+          }
+
+          @Override
+          public int query(final Query query) throws Exception {
+            LuceneQuery<Object, Object> luceneQuery =
+                service
+                    .createLuceneQueryFactory()
+                    .create(
+                        "index",
+                        "/region",
+                        new LuceneQueryProvider() {
+
+                          @Override
+                          public Query getQuery(LuceneIndex index) throws LuceneQueryException {
+                            return query;
+                          }
+                        });
+
+            PageableLuceneQueryResults<Object, Object> results = luceneQuery.findPages();
+            return results.size();
           }
         });
-
-        PageableLuceneQueryResults<Object, Object> results = luceneQuery.findPages();
-        return results.size();
-      }
-    });
   }
 
   @Test
   public void testLuceneWithRegionDirectory() throws Exception {
-    doTest("RegionDirectory", new TestCallbacks() {
+    doTest(
+        "RegionDirectory",
+        new TestCallbacks() {
 
-      public Cache cache;
-      private IndexWriter writer;
-      private SearcherManager searcherManager;
+          public Cache cache;
+          private IndexWriter writer;
+          private SearcherManager searcherManager;
 
-      @Override
-      public void init() throws Exception {
-        cache = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "warning").create();
-        final FileSystemStats stats = new FileSystemStats(cache.getDistributedSystem(), "stats");
-        RegionDirectory dir = new RegionDirectory(new ConcurrentHashMap<String, File>(), new ConcurrentHashMap<ChunkKey, byte[]>(), stats);
-        IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        writer = new IndexWriter(dir, config);
-        searcherManager = new SearcherManager(writer, true, true, null);
-      }
+          @Override
+          public void init() throws Exception {
+            cache = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "warning").create();
+            final FileSystemStats stats =
+                new FileSystemStats(cache.getDistributedSystem(), "stats");
+            RegionDirectory dir =
+                new RegionDirectory(
+                    new ConcurrentHashMap<String, File>(),
+                    new ConcurrentHashMap<ChunkKey, byte[]>(),
+                    stats);
+            IndexWriterConfig config = new IndexWriterConfig(analyzer);
+            writer = new IndexWriter(dir, config);
+            searcherManager = new SearcherManager(writer, true, true, null);
+          }
 
-      @Override
-      public void addObject(String key, String text) throws Exception {
-        Document doc = new Document();
-        doc.add(new TextField("key", key, Store.YES));
-        doc.add(new TextField("text", text, Store.NO));
-        writer.addDocument(doc);
-      }
+          @Override
+          public void addObject(String key, String text) throws Exception {
+            Document doc = new Document();
+            doc.add(new TextField("key", key, Store.YES));
+            doc.add(new TextField("text", text, Store.NO));
+            writer.addDocument(doc);
+          }
 
-      @Override
-      public void commit() throws Exception {
-        writer.commit();
-        searcherManager.maybeRefresh();
-      }
+          @Override
+          public void commit() throws Exception {
+            writer.commit();
+            searcherManager.maybeRefresh();
+          }
 
-      @Override
-      public void cleanup() throws Exception {
-        writer.close();
-        cache.close();
-        ;
-      }
+          @Override
+          public void cleanup() throws Exception {
+            writer.close();
+            cache.close();
+            ;
+          }
 
-      @Override
-      public void waitForAsync() throws Exception {
-        //do nothing
-      }
+          @Override
+          public void waitForAsync() throws Exception {
+            //do nothing
+          }
 
-      @Override
-      public int query(Query query) throws Exception {
-        IndexSearcher searcher = searcherManager.acquire();
-        try {
-          return searcher.count(query);
-        } finally {
-          searcherManager.release(searcher);
-        }
-      }
-
-    });
-
+          @Override
+          public int query(Query query) throws Exception {
+            IndexSearcher searcher = searcherManager.acquire();
+            try {
+              return searcher.count(query);
+            } finally {
+              searcherManager.release(searcher);
+            }
+          }
+        });
   }
 
   @Test
   public void testLucene() throws Exception {
-    doTest("Lucene", new TestCallbacks() {
+    doTest(
+        "Lucene",
+        new TestCallbacks() {
 
-      private IndexWriter writer;
-      private SearcherManager searcherManager;
+          private IndexWriter writer;
+          private SearcherManager searcherManager;
 
-      @Override
-      public void init() throws Exception {
-        RAMDirectory dir = new RAMDirectory();
-        IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        writer = new IndexWriter(dir, config);
-        searcherManager = new SearcherManager(writer, true, true, null);
-      }
+          @Override
+          public void init() throws Exception {
+            RAMDirectory dir = new RAMDirectory();
+            IndexWriterConfig config = new IndexWriterConfig(analyzer);
+            writer = new IndexWriter(dir, config);
+            searcherManager = new SearcherManager(writer, true, true, null);
+          }
 
-      @Override
-      public void addObject(String key, String text) throws Exception {
-        Document doc = new Document();
-        doc.add(new TextField("key", key, Store.YES));
-        doc.add(new TextField("text", text, Store.NO));
-        writer.addDocument(doc);
-      }
+          @Override
+          public void addObject(String key, String text) throws Exception {
+            Document doc = new Document();
+            doc.add(new TextField("key", key, Store.YES));
+            doc.add(new TextField("text", text, Store.NO));
+            writer.addDocument(doc);
+          }
 
-      @Override
-      public void commit() throws Exception {
-        writer.commit();
-        searcherManager.maybeRefresh();
-      }
+          @Override
+          public void commit() throws Exception {
+            writer.commit();
+            searcherManager.maybeRefresh();
+          }
 
-      @Override
-      public void cleanup() throws Exception {
-        writer.close();
-      }
+          @Override
+          public void cleanup() throws Exception {
+            writer.close();
+          }
 
-      @Override
-      public void waitForAsync() throws Exception {
-        //do nothing
-      }
+          @Override
+          public void waitForAsync() throws Exception {
+            //do nothing
+          }
 
-      @Override
-      public int query(Query query) throws Exception {
-        IndexSearcher searcher = searcherManager.acquire();
-        try {
-          return searcher.count(query);
-        } finally {
-          searcherManager.release(searcher);
-        }
-      }
-
-    });
-
+          @Override
+          public int query(Query query) throws Exception {
+            IndexSearcher searcher = searcherManager.acquire();
+            try {
+              return searcher.count(query);
+            } finally {
+              searcherManager.release(searcher);
+            }
+          }
+        });
   }
 
   private void doTest(String testName, TestCallbacks callbacks) throws Exception {
@@ -320,19 +350,43 @@ public class IndexRepositoryImplPerformanceTest {
     words.addAll(wordSet);
 
     //warm up
-    writeRandomWords(callbacks, words, rand, NUM_ENTRIES / 10, NUM_QUERIES / 10, COMMIT_INTERVAL[0]);
+    writeRandomWords(
+        callbacks, words, rand, NUM_ENTRIES / 10, NUM_QUERIES / 10, COMMIT_INTERVAL[0]);
 
     //Do the actual test
 
     for (int i = 0; i < COMMIT_INTERVAL.length; i++) {
-      Results results = writeRandomWords(callbacks, words, rand, NUM_ENTRIES, NUM_QUERIES / 10, COMMIT_INTERVAL[i]);
+      Results results =
+          writeRandomWords(
+              callbacks, words, rand, NUM_ENTRIES, NUM_QUERIES / 10, COMMIT_INTERVAL[i]);
 
-      System.out.println(testName + " writes(entries=" + NUM_ENTRIES + ", commit=" + COMMIT_INTERVAL[i] + "): " + TimeUnit.NANOSECONDS.toMillis(results.writeTime));
-      System.out.println(testName + " queries(entries=" + NUM_ENTRIES + ", commit=" + COMMIT_INTERVAL[i] + "): " + TimeUnit.NANOSECONDS.toMillis(results.queryTime));
+      System.out.println(
+          testName
+              + " writes(entries="
+              + NUM_ENTRIES
+              + ", commit="
+              + COMMIT_INTERVAL[i]
+              + "): "
+              + TimeUnit.NANOSECONDS.toMillis(results.writeTime));
+      System.out.println(
+          testName
+              + " queries(entries="
+              + NUM_ENTRIES
+              + ", commit="
+              + COMMIT_INTERVAL[i]
+              + "): "
+              + TimeUnit.NANOSECONDS.toMillis(results.queryTime));
     }
   }
 
-  private Results writeRandomWords(TestCallbacks callbacks, List<String> words, Random rand, int numEntries, int numQueries, int commitInterval) throws Exception {
+  private Results writeRandomWords(
+      TestCallbacks callbacks,
+      List<String> words,
+      Random rand,
+      int numEntries,
+      int numQueries,
+      int commitInterval)
+      throws Exception {
     Results results = new Results();
     callbacks.init();
     int[] counts = new int[words.size()];
@@ -377,9 +431,7 @@ public class IndexRepositoryImplPerformanceTest {
   private static class TestObject implements DataSerializable {
     private String text;
 
-    public TestObject() {
-
-    }
+    public TestObject() {}
 
     public TestObject(String text) {
       super();
@@ -400,7 +452,6 @@ public class IndexRepositoryImplPerformanceTest {
     public String toString() {
       return text;
     }
-
   }
 
   private interface TestCallbacks {

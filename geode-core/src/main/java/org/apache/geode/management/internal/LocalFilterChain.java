@@ -21,23 +21,19 @@ import javax.management.ObjectName;
 import org.apache.geode.management.ManagementException;
 
 /**
- * This chain currently has only one filter.
- * Have made it a chain to support future filters
- * which should be evaluated locally before registering 
- * an MBean
- *
+ * This chain currently has only one filter. Have made it a chain to support future filters which
+ * should be evaluated locally before registering an MBean
  */
-
 public class LocalFilterChain extends FilterChain {
 
   private StringBasedFilter localMBeanFilter;
 
   public LocalFilterChain() {
-    /*		
-    		String excludeFilter = managementConfig.getLocalMBeanExcludeFilter();
-    		String includeFilter = managementConfig.getLocalMBeanIncludeFilter();
-    		FilterParam param = createFilterParam(includeFilter, excludeFilter);
-    		localMBeanFilter = new StringBasedFilter(param);*/
+    /*
+    String excludeFilter = managementConfig.getLocalMBeanExcludeFilter();
+    String includeFilter = managementConfig.getLocalMBeanIncludeFilter();
+    FilterParam param = createFilterParam(includeFilter, excludeFilter);
+    localMBeanFilter = new StringBasedFilter(param);*/
 
   }
 
@@ -49,8 +45,7 @@ public class LocalFilterChain extends FilterChain {
 
     /*boolean isExcluded = localMBeanFilter.isExcluded(objectName.getCanonicalName());
     boolean isIncluded = localMBeanFilter.isIncluded(objectName.getCanonicalName());
-    
+
     return isFiltered(isIncluded, isExcluded);*/
   }
-
 }

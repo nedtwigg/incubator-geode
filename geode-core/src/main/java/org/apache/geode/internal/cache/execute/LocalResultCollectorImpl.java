@@ -106,7 +106,8 @@ public final class LocalResultCollectorImpl implements LocalResultCollector {
 
   public Object getResult() throws FunctionException {
     if (this.resultCollected) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_RESULTS_ALREADY_COLLECTED.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.ExecuteFunction_RESULTS_ALREADY_COLLECTED.toLocalizedString());
     }
     this.resultCollected = true;
     try {
@@ -118,7 +119,8 @@ public final class LocalResultCollectorImpl implements LocalResultCollector {
     this.latch = new CountDownLatch(1);
     if (this.functionException != null && !this.execution.isIgnoreDepartedMembers()) {
       if (this.function.isHA()) {
-        if (this.functionException.getCause() instanceof InternalFunctionInvocationTargetException) {
+        if (this.functionException.getCause()
+            instanceof InternalFunctionInvocationTargetException) {
           clearResults();
           this.execution = this.execution.setIsReExecute();
           ResultCollector newRc = null;
@@ -137,11 +139,13 @@ public final class LocalResultCollectorImpl implements LocalResultCollector {
     }
   }
 
-  public Object getResult(long timeout, TimeUnit unit) throws FunctionException, InterruptedException {
+  public Object getResult(long timeout, TimeUnit unit)
+      throws FunctionException, InterruptedException {
 
     boolean resultRecieved = false;
     if (this.resultCollected) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_RESULTS_ALREADY_COLLECTED.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.ExecuteFunction_RESULTS_ALREADY_COLLECTED.toLocalizedString());
     }
     this.resultCollected = true;
     try {
@@ -151,12 +155,15 @@ public final class LocalResultCollectorImpl implements LocalResultCollector {
       Thread.currentThread().interrupt();
     }
     if (!resultRecieved) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_RESULTS_NOT_COLLECTED_IN_TIME_PROVIDED.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.ExecuteFunction_RESULTS_NOT_COLLECTED_IN_TIME_PROVIDED
+              .toLocalizedString());
     }
     this.latch = new CountDownLatch(1);
     if (this.functionException != null && !this.execution.isIgnoreDepartedMembers()) {
       if (this.function.isHA()) {
-        if (this.functionException.getCause() instanceof InternalFunctionInvocationTargetException) {
+        if (this.functionException.getCause()
+            instanceof InternalFunctionInvocationTargetException) {
           clearResults();
           this.execution = this.execution.setIsReExecute();
           ResultCollector newRc = null;

@@ -33,19 +33,15 @@ import org.apache.geode.internal.cache.lru.LRUStatistics;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Disk region Perf test for Overflow only with Sync writes. 1) Performance of
- * Put operation causing an eviction. 2) Performance of Get operation for entry
- * which will fault in.
+ * Disk region Perf test for Overflow only with Sync writes. 1) Performance of Put operation causing
+ * an eviction. 2) Performance of Get operation for entry which will fault in.
  */
 @Category(IntegrationTest.class)
 public class DiskRegOverflowSyncJUnitPerformanceTest extends DiskRegionTestingBase {
 
   private static int ENTRY_SIZE = 1024 * 5;
 
-  /**
-   * Do not change the value OP_COUNT = 400
-   * The test case is dependent on this value.
-   */
+  /** Do not change the value OP_COUNT = 400 The test case is dependent on this value. */
   private static int OP_COUNT = 400;
 
   private static int HALF_OP_COUNT = OP_COUNT / 2;
@@ -134,7 +130,8 @@ public class DiskRegOverflowSyncJUnitPerformanceTest extends DiskRegionTestingBa
     float opPerSecGet = etSecsGet == 0 ? 0 : (OP_COUNT / (etGet / 1000f));
     float bytesPerSecGet = etSecsGet == 0 ? 0 : ((OP_COUNT * ENTRY_SIZE) / (etGet / 1000f));
 
-    String statsGet = "etGet=" + etGet + "ms gets/sec=" + opPerSecGet + " bytes/sec=" + bytesPerSecGet;
+    String statsGet =
+        "etGet=" + etGet + "ms gets/sec=" + opPerSecGet + " bytes/sec=" + bytesPerSecGet;
     log.info(statsGet);
     System.out.println("Perf Stats of get which is fauting in :" + statsGet);
   }
@@ -142,5 +139,4 @@ public class DiskRegOverflowSyncJUnitPerformanceTest extends DiskRegionTestingBa
   private LRUStatistics getLRUStats(Region region) {
     return ((LocalRegion) region).getEvictionController().getLRUHelper().getStats();
   }
-
 }

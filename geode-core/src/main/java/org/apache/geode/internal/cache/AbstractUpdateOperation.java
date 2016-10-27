@@ -45,16 +45,16 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 import org.apache.geode.internal.util.DelayedAction;
 
-/**
- * Common code for both UpdateOperation and DistributedPutAllOperation.
- *
- */
+/** Common code for both UpdateOperation and DistributedPutAllOperation. */
 public abstract class AbstractUpdateOperation extends DistributedCacheOperation {
   private static final Logger logger = LogService.getLogger();
 
   public static volatile boolean test_InvalidVersion;
 
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD", justification = "test hook that is unset normally")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD",
+    justification = "test hook that is unset normally"
+  )
   public static volatile DelayedAction test_InvalidVersionAction;
 
   private final long lastModifiedTime;
@@ -97,13 +97,18 @@ public abstract class AbstractUpdateOperation extends DistributedCacheOperation 
     m.lastModified = this.lastModifiedTime;
   }
 
-  private static final boolean ALWAYS_REPLICATE_UPDATES = Boolean.getBoolean("GemFire.ALWAYS_REPLICATE_UPDATES");
+  private static final boolean ALWAYS_REPLICATE_UPDATES =
+      Boolean.getBoolean("GemFire.ALWAYS_REPLICATE_UPDATES");
 
   /** @return whether we should do a local create for a remote one */
   private static final boolean shouldDoRemoteCreate(LocalRegion rgn, EntryEventImpl ev) {
     DataPolicy dp = rgn.getAttributes().getDataPolicy();
-    if (!rgn.isAllEvents() || (dp.withReplication() && rgn.isInitialized() && ev.getOperation().isUpdate() && !rgn.concurrencyChecksEnabled // misordered CREATE and UPDATE messages can cause inconsistencies
-        && !ALWAYS_REPLICATE_UPDATES)) {
+    if (!rgn.isAllEvents()
+        || (dp.withReplication()
+            && rgn.isInitialized()
+            && ev.getOperation().isUpdate()
+            && !rgn.concurrencyChecksEnabled // misordered CREATE and UPDATE messages can cause inconsistencies
+            && !ALWAYS_REPLICATE_UPDATES)) {
       // we are not accepting all events
       // or we are a replicate and initialized and it was an update
       // (we exclude that latter to avoid resurrecting a key deleted in a replicate
@@ -114,8 +119,9 @@ public abstract class AbstractUpdateOperation extends DistributedCacheOperation 
   }
 
   /**
-   * Does a remote update (could be create or put).
-   * This code was factored into a static for QueuedOperation.
+   * Does a remote update (could be create or put). This code was factored into a static for
+   * QueuedOperation.
+   *
    * @param rgn the region to do the update on
    * @param ev the event describing the operation
    * @param lastMod the modification timestamp for this op
@@ -140,7 +146,7 @@ public abstract class AbstractUpdateOperation extends DistributedCacheOperation 
           // if the oldValue is the DESTROYED token and overwrite is disallowed,
           // then basicPut will set the blockedDestroyed flag in the event
           boolean overwriteDestroyed = ev.getOperation().isCreate();
-          if (rgn.basicUpdate(ev, true /*ifNew*/, false/*ifOld*/, lastMod, overwriteDestroyed)) {
+          if (rgn.basicUpdate(ev, true /*ifNew*/, false /*ifOld*/, lastMod, overwriteDestroyed)) {
             rgn.getCachePerfStats().endPut(startPut, ev.isOriginRemote());
             // we did a create, or replayed a create event
             doUpdate = false;
@@ -149,7 +155,9 @@ public abstract class AbstractUpdateOperation extends DistributedCacheOperation 
             // do no update.
             if (ev.oldValueIsDestroyedToken()) {
               if (rgn.getVersionVector() != null && ev.getVersionTag() != null) {
-                rgn.getVersionVector().recordVersion((InternalDistributedMember) ev.getDistributedMember(), ev.getVersionTag());
+                rgn.getVersionVector()
+                    .recordVersion(
+                        (InternalDistributedMember) ev.getDistributedMember(), ev.getVersionTag());
               }
               doUpdate = false;
             }
@@ -174,25 +182,33 @@ public abstract class AbstractUpdateOperation extends DistributedCacheOperation 
             br.getPartitionedRegion().getPrStats().startApplyReplication();
           }
           try {
-            if (rgn.basicUpdate(ev, false/*ifNew*/, true/*ifOld*/, lastMod, overwriteDestroyed)) {
+            if (rgn.basicUpdate(ev, false /*ifNew*/, true /*ifOld*/, lastMod, overwriteDestroyed)) {
               rgn.getCachePerfStats().endPut(startPut, ev.isOriginRemote());
               if (logger.isTraceEnabled()) {
                 logger.trace("Processing put key {} in region {}", ev.getKey(), rgn.getFullPath());
               }
               updated = true;
             } else { // key not here or blocked by DESTROYED token
-              if (rgn.isUsedForPartitionedRegionBucket() || (rgn.dataPolicy.withReplication() && rgn.getConcurrencyChecksEnabled())) {
+              if (rgn.isUsedForPartitionedRegionBucket()
+                  || (rgn.dataPolicy.withReplication() && rgn.getConcurrencyChecksEnabled())) {
                 overwriteDestroyed = true;
                 ev.makeCreate();
-                rgn.basicUpdate(ev, true /*ifNew*/, false/*ifOld*/, lastMod, overwriteDestroyed);
+                rgn.basicUpdate(ev, true /*ifNew*/, false /*ifOld*/, lastMod, overwriteDestroyed);
                 rgn.getCachePerfStats().endPut(startPut, ev.isOriginRemote());
                 updated = true;
               } else {
                 if (rgn.getVersionVector() != null && ev.getVersionTag() != null) {
-                  rgn.getVersionVector().recordVersion((InternalDistributedMember) ev.getDistributedMember(), ev.getVersionTag());
+                  rgn.getVersionVector()
+                      .recordVersion(
+                          (InternalDistributedMember) ev.getDistributedMember(),
+                          ev.getVersionTag());
                 }
                 if (logger.isDebugEnabled()) {
-                  logger.debug("While processing Update message, update not performed because this key is {}", (ev.oldValueIsDestroyedToken() ? "blocked by DESTROYED/TOMBSTONE token" : "not defined"));
+                  logger.debug(
+                      "While processing Update message, update not performed because this key is {}",
+                      (ev.oldValueIsDestroyedToken()
+                          ? "blocked by DESTROYED/TOMBSTONE token"
+                          : "not defined"));
                 }
               }
             }
@@ -208,28 +224,40 @@ public abstract class AbstractUpdateOperation extends DistributedCacheOperation 
           }
         }
       } else {
-        if (rgn.getVersionVector() != null && ev.getVersionTag() != null && !ev.getVersionTag().isRecorded()) {
-          rgn.getVersionVector().recordVersion((InternalDistributedMember) ev.getDistributedMember(), ev.getVersionTag());
+        if (rgn.getVersionVector() != null
+            && ev.getVersionTag() != null
+            && !ev.getVersionTag().isRecorded()) {
+          rgn.getVersionVector()
+              .recordVersion(
+                  (InternalDistributedMember) ev.getDistributedMember(), ev.getVersionTag());
         }
         if (!updated) {
           if (logger.isDebugEnabled()) {
-            logger.debug("While processing Update message, update not performed because key was created but mirroring keys only and value not in update message, OR key was not new for sender and has been destroyed here");
+            logger.debug(
+                "While processing Update message, update not performed because key was created but mirroring keys only and value not in update message, OR key was not new for sender and has been destroyed here");
           }
         }
       }
       return true;
     } catch (CacheWriterException e) {
-      throw new Error(LocalizedStrings.AbstractUpdateOperation_CACHEWRITER_SHOULD_NOT_BE_CALLED.toLocalizedString(), e);
+      throw new Error(
+          LocalizedStrings.AbstractUpdateOperation_CACHEWRITER_SHOULD_NOT_BE_CALLED
+              .toLocalizedString(),
+          e);
     } catch (TimeoutException e) {
-      throw new Error(LocalizedStrings.AbstractUpdateOperation_DISTRIBUTEDLOCK_SHOULD_NOT_BE_ACQUIRED.toLocalizedString(), e);
+      throw new Error(
+          LocalizedStrings.AbstractUpdateOperation_DISTRIBUTEDLOCK_SHOULD_NOT_BE_ACQUIRED
+              .toLocalizedString(),
+          e);
     }
   }
 
-  public static abstract class AbstractUpdateMessage extends CacheOperationMessage {
+  public abstract static class AbstractUpdateMessage extends CacheOperationMessage {
     protected long lastModified;
 
     @Override
-    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException {
+    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm)
+        throws EntryNotFoundException {
       EntryEventImpl ev = (EntryEventImpl) event;
       DistributedRegion rgn = (DistributedRegion) ev.region;
       DM mgr = dm;
@@ -251,12 +279,10 @@ public abstract class AbstractUpdateOperation extends DistributedCacheOperation 
 
     // @todo darrel: make this method static?
     /**
-     * Do the actual update after operationOnRegion has confirmed work needs to be done
-     * Note this is the default implementation used by UpdateOperation.
-     *   DistributedPutAllOperation overrides and then calls back using super
-     *   to this implementation.
-     * NOTE: be careful to not use methods like getEvent(); defer to
-     *   the ev passed as a parameter instead.
+     * Do the actual update after operationOnRegion has confirmed work needs to be done Note this is
+     * the default implementation used by UpdateOperation. DistributedPutAllOperation overrides and
+     * then calls back using super to this implementation. NOTE: be careful to not use methods like
+     * getEvent(); defer to the ev passed as a parameter instead.
      */
     protected void basicOperateOnRegion(EntryEventImpl ev, DistributedRegion rgn) {
       if (logger.isDebugEnabled()) {
@@ -296,14 +322,21 @@ public abstract class AbstractUpdateOperation extends DistributedCacheOperation 
 
     protected void checkVersionTag(DistributedRegion rgn, VersionTag tag) {
       RegionAttributes attr = rgn.getAttributes();
-      if (attr.getConcurrencyChecksEnabled() && attr.getDataPolicy().withPersistence() && attr.getScope() != Scope.GLOBAL && (tag.getMemberID() == null || test_InvalidVersion)) {
+      if (attr.getConcurrencyChecksEnabled()
+          && attr.getDataPolicy().withPersistence()
+          && attr.getScope() != Scope.GLOBAL
+          && (tag.getMemberID() == null || test_InvalidVersion)) {
 
         if (logger.isDebugEnabled()) {
           logger.debug("Version tag is missing the memberID: {}", tag);
         }
 
-        String msg = LocalizedStrings.DistributedPutAllOperation_MISSING_VERSION.toLocalizedString(tag);
-        RuntimeException ex = (sender.getVersionObject().compareTo(Version.GFE_80) < 0) ? new InternalGemFireException(msg) : new InvalidVersionException(msg);
+        String msg =
+            LocalizedStrings.DistributedPutAllOperation_MISSING_VERSION.toLocalizedString(tag);
+        RuntimeException ex =
+            (sender.getVersionObject().compareTo(Version.GFE_80) < 0)
+                ? new InternalGemFireException(msg)
+                : new InvalidVersionException(msg);
         throw ex;
       }
     }

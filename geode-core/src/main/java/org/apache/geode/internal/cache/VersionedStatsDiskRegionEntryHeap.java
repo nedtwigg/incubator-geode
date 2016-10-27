@@ -23,7 +23,8 @@ public abstract class VersionedStatsDiskRegionEntryHeap extends VersionedStatsDi
     super(context, value);
   }
 
-  private static final VersionedStatsDiskRegionEntryHeapFactory factory = new VersionedStatsDiskRegionEntryHeapFactory();
+  private static final VersionedStatsDiskRegionEntryHeapFactory factory =
+      new VersionedStatsDiskRegionEntryHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;
@@ -43,9 +44,11 @@ public abstract class VersionedStatsDiskRegionEntryHeap extends VersionedStatsDi
           if (info != null) {
             final boolean byteEncoded = info;
             if (skey.length() <= InlineKeyHelper.getMaxInlineStringKey(1, byteEncoded)) {
-              return new VersionedStatsDiskRegionEntryHeapStringKey1(context, skey, value, byteEncoded);
+              return new VersionedStatsDiskRegionEntryHeapStringKey1(
+                  context, skey, value, byteEncoded);
             } else {
-              return new VersionedStatsDiskRegionEntryHeapStringKey2(context, skey, value, byteEncoded);
+              return new VersionedStatsDiskRegionEntryHeapStringKey2(
+                  context, skey, value, byteEncoded);
             }
           }
         } else if (keyClass == UUID.class) {

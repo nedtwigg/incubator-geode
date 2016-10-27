@@ -22,12 +22,14 @@ import org.apache.geode.internal.cache.tier.InterestType;
 
 /**
  * Does a region unregisterInterest on a server
+ *
  * @since GemFire 5.7
  */
 public class UnregisterInterestOp {
   /**
-   * Does a region unregisterInterest on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region unregisterInterest on a server using connections from the given pool to
+   * communicate with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the unregisterInterest on
    * @param key describes what we are no longer interested in
@@ -35,7 +37,13 @@ public class UnregisterInterestOp {
    * @param isClosing true if this unregister is done by a close
    * @param keepAlive true if this unregister should not undo a durable registration
    */
-  public static void execute(ExecutablePool pool, String region, Object key, int interestType, boolean isClosing, boolean keepAlive) {
+  public static void execute(
+      ExecutablePool pool,
+      String region,
+      Object key,
+      int interestType,
+      boolean isClosing,
+      boolean keepAlive) {
     AbstractOp op = new UnregisterInterestOpImpl(region, key, interestType, isClosing, keepAlive);
     pool.executeOnAllQueueServers(op);
   }
@@ -45,21 +53,20 @@ public class UnregisterInterestOp {
   }
 
   private static class UnregisterInterestOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
-    public UnregisterInterestOpImpl(String region, Object key, int interestType, boolean isClosing, boolean keepAlive) {
+    /** @throws org.apache.geode.SerializationException if serialization fails */
+    public UnregisterInterestOpImpl(
+        String region, Object key, int interestType, boolean isClosing, boolean keepAlive) {
       super(MessageType.UNREGISTER_INTEREST, 5);
       getMessage().addStringPart(region);
       getMessage().addIntPart(interestType);
       getMessage().addStringOrObjPart(key);
       {
         byte closingByte = (byte) (isClosing ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] { closingByte });
+        getMessage().addBytesPart(new byte[] {closingByte});
       }
       {
         byte keepAliveByte = (byte) (keepAlive ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] { keepAliveByte });
+        getMessage().addBytesPart(new byte[] {keepAliveByte});
       }
     }
 

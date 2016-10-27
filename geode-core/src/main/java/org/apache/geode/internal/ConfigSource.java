@@ -20,14 +20,20 @@ import java.io.Serializable;
 
 /**
  * Describes where the value of a configuration attribute came from.
- * 
+ *
  * @since GemFire 7.0
  */
 public class ConfigSource implements Serializable {
   private static final long serialVersionUID = -4097017272431018553L;
 
   public enum Type {
-    API, SYSTEM_PROPERTY, FILE, SECURE_FILE, XML, RUNTIME, LAUNCHER
+    API,
+    SYSTEM_PROPERTY,
+    FILE,
+    SECURE_FILE,
+    XML,
+    RUNTIME,
+    LAUNCHER
   };
 
   private final Type type;
@@ -36,29 +42,29 @@ public class ConfigSource implements Serializable {
   private ConfigSource(Type t) {
     this.type = t;
     switch (t) {
-    case API:
-      this.description = "api";
-      break;
-    case SYSTEM_PROPERTY:
-      this.description = "system property";
-      break;
-    case FILE:
-      this.description = "file";
-      break;
-    case SECURE_FILE:
-      this.description = "secure file";
-      break;
-    case XML:
-      this.description = "cache.xml";
-      break;
-    case RUNTIME:
-      this.description = "runtime modification";
-      break;
-    case LAUNCHER:
-      this.description = "launcher";
-      break;
-    default:
-      this.description = "";
+      case API:
+        this.description = "api";
+        break;
+      case SYSTEM_PROPERTY:
+        this.description = "system property";
+        break;
+      case FILE:
+        this.description = "file";
+        break;
+      case SECURE_FILE:
+        this.description = "secure file";
+        break;
+      case XML:
+        this.description = "cache.xml";
+        break;
+      case RUNTIME:
+        this.description = "runtime modification";
+        break;
+      case LAUNCHER:
+        this.description = "launcher";
+        break;
+      default:
+        this.description = "";
     }
   }
 
@@ -72,9 +78,7 @@ public class ConfigSource implements Serializable {
     }
   }
 
-  /**
-   * @return returns the type of this source
-   */
+  /** @return returns the type of this source */
   public Type getType() {
     return this.type;
   }
@@ -124,12 +128,9 @@ public class ConfigSource implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     ConfigSource other = (ConfigSource) obj;
 
     return (type == other.type && description.equals(other.description));

@@ -61,19 +61,18 @@ import org.apache.geode.internal.cache.RegionEntry;
 import org.apache.geode.internal.cache.persistence.query.CloseableIterator;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- */
+/** */
 public class RangeIndex extends AbstractIndex {
 
   protected volatile int valueToEntriesMapSize = 0;
   /**
-   * Map for valueOf(indexedExpression)=>RegionEntries.
-   *  SortedMap<Object, (RegionEntry | List<RegionEntry>)>.
-   * Package access for unit tests.
+   * Map for valueOf(indexedExpression)=>RegionEntries. SortedMap<Object, (RegionEntry |
+   * List<RegionEntry>)>. Package access for unit tests.
    */
-  final ConcurrentNavigableMap valueToEntriesMap = new ConcurrentSkipListMap(TypeUtils.getExtendedNumericComparator());
+  final ConcurrentNavigableMap valueToEntriesMap =
+      new ConcurrentSkipListMap(TypeUtils.getExtendedNumericComparator());
   // Map for RegionEntries=>value of indexedExpression (reverse map)
-  final private RegionEntryToValuesMap entryToValuesMap;
+  private final RegionEntryToValuesMap entryToValuesMap;
   //Map for RegionEntries=>values when indexedExpression evaluates to null
   protected RegionEntryToValuesMap nullMappedEntries;
   // Map for RegionEntries=>values when indexedExpression evaluates to UNDEFINED
@@ -90,20 +89,42 @@ public class RangeIndex extends AbstractIndex {
   // @todo need more specific list of exceptions
   /**
    * Create an Range Index that can be used when executing queries.
-   * 
+   *
    * @param indexName the name of this index, used for statistics collection
-   * @param indexedExpression the expression to index on, a function dependent
-   *          on region entries individually.
-   * @param fromClause expression that evaluates to the collection(s) that will
-   *          be queried over, must contain one and only one region path.
-   * @param projectionAttributes expression that transforms each element in the
-   *          result set of a query Return the newly created Index
+   * @param indexedExpression the expression to index on, a function dependent on region entries
+   *     individually.
+   * @param fromClause expression that evaluates to the collection(s) that will be queried over,
+   *     must contain one and only one region path.
+   * @param projectionAttributes expression that transforms each element in the result set of a
+   *     query Return the newly created Index
    */
-  public RangeIndex(String indexName, Region region, String fromClause, String indexedExpression, String projectionAttributes, String origFromClause, String origIndexExpr, String[] definitions, IndexStatistics stats) {
-    super(indexName, region, fromClause, indexedExpression, projectionAttributes, origFromClause, origIndexExpr, definitions, stats);
+  public RangeIndex(
+      String indexName,
+      Region region,
+      String fromClause,
+      String indexedExpression,
+      String projectionAttributes,
+      String origFromClause,
+      String origIndexExpr,
+      String[] definitions,
+      IndexStatistics stats) {
+    super(
+        indexName,
+        region,
+        fromClause,
+        indexedExpression,
+        projectionAttributes,
+        origFromClause,
+        origIndexExpr,
+        definitions,
+        stats);
 
     RegionAttributes ra = region.getAttributes();
-    this.entryToValuesMap = new RegionEntryToValuesMap(new java.util.concurrent.ConcurrentHashMap(ra.getInitialCapacity(), ra.getLoadFactor(), ra.getConcurrencyLevel()), false /* use set*/);
+    this.entryToValuesMap =
+        new RegionEntryToValuesMap(
+            new java.util.concurrent.ConcurrentHashMap(
+                ra.getInitialCapacity(), ra.getLoadFactor(), ra.getConcurrencyLevel()),
+            false /* use set*/);
     nullMappedEntries = new RegionEntryToValuesMap(true /* use list*/);
     undefinedMappedEntries = new RegionEntryToValuesMap(true /* use list*/);
   }
@@ -152,7 +173,8 @@ public class RangeIndex extends AbstractIndex {
       }
 
       if (indxResultSet != null) {
-        if (indxResultSet.getClass().getName().startsWith("org.apache.geode.internal.cache.Token$") || indxResultSet == QueryService.UNDEFINED) {
+        if (indxResultSet.getClass().getName().startsWith("org.apache.geode.internal.cache.Token$")
+            || indxResultSet == QueryService.UNDEFINED) {
           // do nothing, Entries are either removed or invalidated or destroyed
           // by other thread.
         } else {
@@ -188,8 +210,10 @@ public class RangeIndex extends AbstractIndex {
     Map keysMap = keysToHashSetMap.get();
     //Add nullEntries
     if (nullSet != null && nullSet.size() > 0) {
-      this.internalIndexStats.incNumValues(-this.nullMappedEntries.getNumValues(entry) + nullSet.size());
-      this.nullMappedEntries.replace(entry, (nullSet.size() > 1) ? nullSet : nullSet.iterator().next());
+      this.internalIndexStats.incNumValues(
+          -this.nullMappedEntries.getNumValues(entry) + nullSet.size());
+      this.nullMappedEntries.replace(
+          entry, (nullSet.size() > 1) ? nullSet : nullSet.iterator().next());
     } else {
       this.internalIndexStats.incNumValues(-this.nullMappedEntries.getNumValues(entry));
       this.nullMappedEntries.remove(entry);
@@ -197,8 +221,10 @@ public class RangeIndex extends AbstractIndex {
 
     //Add undefined entries
     if (undefinedSet != null && undefinedSet.size() > 0) {
-      this.internalIndexStats.incNumValues(-this.undefinedMappedEntries.getNumValues(entry) + undefinedSet.size());
-      this.undefinedMappedEntries.replace(entry, (undefinedSet.size() > 1) ? undefinedSet : undefinedSet.iterator().next());
+      this.internalIndexStats.incNumValues(
+          -this.undefinedMappedEntries.getNumValues(entry) + undefinedSet.size());
+      this.undefinedMappedEntries.replace(
+          entry, (undefinedSet.size() > 1) ? undefinedSet : undefinedSet.iterator().next());
     } else {
       this.internalIndexStats.incNumValues(-this.undefinedMappedEntries.getNumValues(entry));
       this.undefinedMappedEntries.remove(entry);
@@ -224,7 +250,10 @@ public class RangeIndex extends AbstractIndex {
           }
         }
       } catch (Exception ex) {
-        throw new IMQException(LocalizedStrings.RangeIndex_COULD_NOT_ADD_OBJECT_OF_TYPE_0.toLocalizedString(oldkeys.getClass().getName()), ex);
+        throw new IMQException(
+            LocalizedStrings.RangeIndex_COULD_NOT_ADD_OBJECT_OF_TYPE_0.toLocalizedString(
+                oldkeys.getClass().getName()),
+            ex);
       }
 
       //Perform replace of new index entries in index.
@@ -235,7 +264,8 @@ public class RangeIndex extends AbstractIndex {
           boolean retry = false;
           do {
             retry = false;
-            RegionEntryToValuesMap rvMap = (RegionEntryToValuesMap) this.valueToEntriesMap.get(newKey);
+            RegionEntryToValuesMap rvMap =
+                (RegionEntryToValuesMap) this.valueToEntriesMap.get(newKey);
             if (rvMap == null) {
               rvMap = new RegionEntryToValuesMap(true /* use target list */);
               Object oldValue = this.valueToEntriesMap.putIfAbsent(newKey, rvMap);
@@ -271,7 +301,10 @@ public class RangeIndex extends AbstractIndex {
             }
           } while (retry);
         } catch (TypeMismatchException ex) {
-          throw new IMQException(LocalizedStrings.RangeIndex_COULD_NOT_ADD_OBJECT_OF_TYPE_0.toLocalizedString(key.getClass().getName()), ex);
+          throw new IMQException(
+              LocalizedStrings.RangeIndex_COULD_NOT_ADD_OBJECT_OF_TYPE_0.toLocalizedString(
+                  key.getClass().getName()),
+              ex);
         }
       } else {
         for (Object key : keys) {
@@ -281,7 +314,8 @@ public class RangeIndex extends AbstractIndex {
             // Going in a retry loop until  concurrent index update is successful.
             do {
               retry = false;
-              RegionEntryToValuesMap rvMap = (RegionEntryToValuesMap) this.valueToEntriesMap.get(newKey);
+              RegionEntryToValuesMap rvMap =
+                  (RegionEntryToValuesMap) this.valueToEntriesMap.get(newKey);
               if (rvMap == null) {
                 rvMap = new RegionEntryToValuesMap(true /* use target list */);
                 Object oldValue = this.valueToEntriesMap.putIfAbsent(newKey, rvMap);
@@ -316,7 +350,10 @@ public class RangeIndex extends AbstractIndex {
               }
             } while (retry);
           } catch (TypeMismatchException ex) {
-            throw new IMQException(LocalizedStrings.RangeIndex_COULD_NOT_ADD_OBJECT_OF_TYPE_0.toLocalizedString(key.getClass().getName()), ex);
+            throw new IMQException(
+                LocalizedStrings.RangeIndex_COULD_NOT_ADD_OBJECT_OF_TYPE_0.toLocalizedString(
+                    key.getClass().getName()),
+                ex);
           }
         } //for loop for keys
       }
@@ -335,7 +372,9 @@ public class RangeIndex extends AbstractIndex {
         Object key = valuesIter.next();
         RegionEntryToValuesMap rvMap = (RegionEntryToValuesMap) this.valueToEntriesMap.get(key);
         if (rvMap == null) {
-          throw new IMQException(LocalizedStrings.AbstractIndex_WRONG_COMPARETO_IMPLEMENTATION_IN_INDEXED_OBJECT_0.toLocalizedString(oldkeys.getClass().getName()));
+          throw new IMQException(
+              LocalizedStrings.AbstractIndex_WRONG_COMPARETO_IMPLEMENTATION_IN_INDEXED_OBJECT_0
+                  .toLocalizedString(oldkeys.getClass().getName()));
         }
         this.internalIndexStats.incNumValues(-rvMap.getNumValues(entry));
         rvMap.remove(entry);
@@ -360,7 +399,9 @@ public class RangeIndex extends AbstractIndex {
       // only be null in case when "values" has wrong compareTo()
       // implementation.
       if (rvMap == null) {
-        throw new IMQException(LocalizedStrings.AbstractIndex_WRONG_COMPARETO_IMPLEMENTATION_IN_INDEXED_OBJECT_0.toLocalizedString(oldkeys.getClass().getName()));
+        throw new IMQException(
+            LocalizedStrings.AbstractIndex_WRONG_COMPARETO_IMPLEMENTATION_IN_INDEXED_OBJECT_0
+                .toLocalizedString(oldkeys.getClass().getName()));
       }
       this.internalIndexStats.incNumValues(-rvMap.getNumValues(entry));
       rvMap.remove(entry);
@@ -408,7 +449,8 @@ public class RangeIndex extends AbstractIndex {
 
   //// IndexProtocol interface implementation
   public boolean clear() throws QueryException {
-    throw new UnsupportedOperationException(LocalizedStrings.RangeIndex_NOT_YET_IMPLEMENTED.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.RangeIndex_NOT_YET_IMPLEMENTED.toLocalizedString());
   }
 
   @Override
@@ -418,7 +460,7 @@ public class RangeIndex extends AbstractIndex {
 
   /**
    * Get the index type
-   * 
+   *
    * @return the type of index
    */
   public IndexType getType() {
@@ -439,7 +481,8 @@ public class RangeIndex extends AbstractIndex {
       this.internalIndexStats.incNumValues(1);
     } else if (key == QueryService.UNDEFINED) {
       if (value != null) {
-        if (value.getClass().getName().startsWith("org.apache.geode.internal.cache.Token$") || value == QueryService.UNDEFINED) {
+        if (value.getClass().getName().startsWith("org.apache.geode.internal.cache.Token$")
+            || value == QueryService.UNDEFINED) {
           // do nothing, Entries are either removed or invalidated or destroyed
           // by other thread.
         } else {
@@ -462,15 +505,16 @@ public class RangeIndex extends AbstractIndex {
         this.entryToValuesMap.add(entry, newKey);
         this.internalIndexStats.incNumValues(1);
       } catch (TypeMismatchException ex) {
-        throw new IMQException(LocalizedStrings.RangeIndex_COULD_NOT_ADD_OBJECT_OF_TYPE_0.toLocalizedString(key.getClass().getName()), ex);
+        throw new IMQException(
+            LocalizedStrings.RangeIndex_COULD_NOT_ADD_OBJECT_OF_TYPE_0.toLocalizedString(
+                key.getClass().getName()),
+            ex);
       }
     }
     this.internalIndexStats.incNumUpdates();
   }
 
-  /**
-   * @param opCode one of REMOVE_OP, BEFORE_UPDATE_OP, AFTER_UPDATE_OP.
-   */
+  /** @param opCode one of REMOVE_OP, BEFORE_UPDATE_OP, AFTER_UPDATE_OP. */
   void removeMapping(RegionEntry entry, int opCode) throws IMQException {
     //Shobhit: Now we are not going to remove anything before update.
     //In fact we will only Replace not remove and add now on.
@@ -516,7 +560,9 @@ public class RangeIndex extends AbstractIndex {
       // only be
       // null in case when "values" has wrong compareTo() implementation.
       if (rvMap == null) {
-        throw new IMQException(LocalizedStrings.AbstractIndex_WRONG_COMPARETO_IMPLEMENTATION_IN_INDEXED_OBJECT_0.toLocalizedString(values.getClass().getName()));
+        throw new IMQException(
+            LocalizedStrings.AbstractIndex_WRONG_COMPARETO_IMPLEMENTATION_IN_INDEXED_OBJECT_0
+                .toLocalizedString(values.getClass().getName()));
       }
       this.internalIndexStats.incNumValues(-rvMap.getNumValues(entry));
       rvMap.remove(entry);
@@ -537,7 +583,9 @@ public class RangeIndex extends AbstractIndex {
 
   //Asif TODO: Provide explanation of the method. Test this method
   @Override
-  public List queryEquijoinCondition(IndexProtocol indx, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+  public List queryEquijoinCondition(IndexProtocol indx, ExecutionContext context)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
     // get a read lock when doing a lookup
     long start = updateIndexUseStats();
     ((AbstractIndex) indx).updateIndexUseStats();
@@ -560,7 +608,8 @@ public class RangeIndex extends AbstractIndex {
       Object innerKey = null;
       // boolean incrementOuter = true;
       boolean incrementInner = true;
-      outer: while (outer.hasNext()) {
+      outer:
+      while (outer.hasNext()) {
         // if (incrementOuter) {
         outerEntry = (Map.Entry) outer.next();
         //}
@@ -573,7 +622,6 @@ public class RangeIndex extends AbstractIndex {
             } else {
               innerKey = ((Map.Entry) innerEntry).getKey();
             }
-
           }
           int compare = ((Comparable) outerKey).compareTo(innerKey);
           if (compare == 0) {
@@ -612,122 +660,129 @@ public class RangeIndex extends AbstractIndex {
     }
   }
 
-  public int getSizeEstimate(Object key, int operator, int matchLevel) throws TypeMismatchException {
+  public int getSizeEstimate(Object key, int operator, int matchLevel)
+      throws TypeMismatchException {
     // Get approx size;
     int size = 0;
     long start = updateIndexUseStats(false);
     try {
       switch (operator) {
-      case OQLLexerTokenTypes.TOK_EQ: {
-        if (key == null) {
-          size = this.nullMappedEntries.getNumValues();
-        } else if (key == QueryService.UNDEFINED) {
-          size = this.undefinedMappedEntries.getNumValues();
-        } else {
-          key = TypeUtils.indexKeyFor(key);
-          key = getPdxStringForIndexedPdxKeys(key);
-          RegionEntryToValuesMap valMap = (RegionEntryToValuesMap) this.valueToEntriesMap.get(key);
+        case OQLLexerTokenTypes.TOK_EQ:
+          {
+            if (key == null) {
+              size = this.nullMappedEntries.getNumValues();
+            } else if (key == QueryService.UNDEFINED) {
+              size = this.undefinedMappedEntries.getNumValues();
+            } else {
+              key = TypeUtils.indexKeyFor(key);
+              key = getPdxStringForIndexedPdxKeys(key);
+              RegionEntryToValuesMap valMap =
+                  (RegionEntryToValuesMap) this.valueToEntriesMap.get(key);
 
-          size = valMap == null ? 0 : valMap.getNumValues();
-        }
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_NE_ALT:
-      case OQLLexerTokenTypes.TOK_NE: // add all btree values
-        // size = matchLevel <=0 ?this.valueToEntriesMap.size():Integer.MAX_VALUE;
-        size = this.region.size();
-        if (key == null) {
-          size -= this.nullMappedEntries.getNumValues();
-        } else if (key == QueryService.UNDEFINED) {
-          size -= this.undefinedMappedEntries.getNumValues();
-        } else {
-          key = TypeUtils.indexKeyFor(key);
-          key = getPdxStringForIndexedPdxKeys(key);
-          RegionEntryToValuesMap valMap = (RegionEntryToValuesMap) this.valueToEntriesMap.get(key);
-          size -= valMap == null ? 0 : valMap.getNumValues();
-        }
-        break;
-      case OQLLexerTokenTypes.TOK_LE:
-      case OQLLexerTokenTypes.TOK_LT:
-        if (matchLevel <= 0 && key instanceof Number) {
-          int totalSize = valueToEntriesMapSize;// this.valueToEntriesMap.size();
-          if (RangeIndex.testHook != null) {
-            RangeIndex.testHook.hook(1);
+              size = valMap == null ? 0 : valMap.getNumValues();
+            }
+            break;
           }
-          if (totalSize > 1) {
-            Number keyAsNum = (Number) key;
-            int x = 0;
-            Map.Entry firstEntry = this.valueToEntriesMap.firstEntry();
-            Map.Entry lastEntry = this.valueToEntriesMap.lastEntry();
-
-            if (firstEntry != null && lastEntry != null) {
-              Number first = (Number) firstEntry.getKey();
-              Number last = (Number) lastEntry.getKey();
-              if (first.doubleValue() != last.doubleValue()) {
-                // Shobhit: Now without ReadLoack on index we can end up with 0 in
-                // denominator.
-                // can end up with 0 in denominator if the numbers are floating-point
-                // and truncated with conversion to long, and the first and last keys
-                //truncate to the same long, so safest calculation is to convert to doubles
-                x = (int) (((keyAsNum.doubleValue() - first.doubleValue()) * totalSize) / (last.doubleValue() - first.doubleValue()));
-              }
-            }
-            if (x < 0) {
-              x = 0;
-            }
-            size = (int) x;
+        case OQLLexerTokenTypes.TOK_NE_ALT:
+        case OQLLexerTokenTypes.TOK_NE: // add all btree values
+          // size = matchLevel <=0 ?this.valueToEntriesMap.size():Integer.MAX_VALUE;
+          size = this.region.size();
+          if (key == null) {
+            size -= this.nullMappedEntries.getNumValues();
+          } else if (key == QueryService.UNDEFINED) {
+            size -= this.undefinedMappedEntries.getNumValues();
           } else {
-            // not attempting to differentiate between LT & LE
-            size = this.valueToEntriesMap.containsKey(key) ? 1 : 0;
+            key = TypeUtils.indexKeyFor(key);
+            key = getPdxStringForIndexedPdxKeys(key);
+            RegionEntryToValuesMap valMap =
+                (RegionEntryToValuesMap) this.valueToEntriesMap.get(key);
+            size -= valMap == null ? 0 : valMap.getNumValues();
           }
-        } else {
-          size = Integer.MAX_VALUE;
-        }
-        break;
+          break;
+        case OQLLexerTokenTypes.TOK_LE:
+        case OQLLexerTokenTypes.TOK_LT:
+          if (matchLevel <= 0 && key instanceof Number) {
+            int totalSize = valueToEntriesMapSize; // this.valueToEntriesMap.size();
+            if (RangeIndex.testHook != null) {
+              RangeIndex.testHook.hook(1);
+            }
+            if (totalSize > 1) {
+              Number keyAsNum = (Number) key;
+              int x = 0;
+              Map.Entry firstEntry = this.valueToEntriesMap.firstEntry();
+              Map.Entry lastEntry = this.valueToEntriesMap.lastEntry();
 
-      case OQLLexerTokenTypes.TOK_GE:
-      case OQLLexerTokenTypes.TOK_GT:
-        if (matchLevel <= 0 && key instanceof Number) {
-          int totalSize = valueToEntriesMapSize;// this.valueToEntriesMap.size();
-          if (testHook != null) {
-            testHook.hook(2);
-          }
-          if (totalSize > 1) {
-            Number keyAsNum = (Number) key;
-            int x = 0;
-            Map.Entry firstEntry = this.valueToEntriesMap.firstEntry();
-            Map.Entry lastEntry = this.valueToEntriesMap.lastEntry();
-            if (firstEntry != null && lastEntry != null) {
-              Number first = (Number) firstEntry.getKey();
-              Number last = (Number) lastEntry.getKey();
-              if (first.doubleValue() != last.doubleValue()) {
-                // Shobhit: Now without ReadLoack on index we can end up with 0
-                // in
-                // denominator.
-                // can end up with 0 in denominator if the numbers are
-                // floating-point
-                // and truncated with conversion to long, and the first and last
-                // keys
-                // truncate to the same long,
-                // so safest calculation is to convert to doubles
-                double totalRange = last.doubleValue() - first.doubleValue();
-                assert totalRange != 0.0 : this.valueToEntriesMap.keySet();
-                double part = last.doubleValue() - keyAsNum.doubleValue();
-                x = (int) ((part * totalSize) / totalRange);
+              if (firstEntry != null && lastEntry != null) {
+                Number first = (Number) firstEntry.getKey();
+                Number last = (Number) lastEntry.getKey();
+                if (first.doubleValue() != last.doubleValue()) {
+                  // Shobhit: Now without ReadLoack on index we can end up with 0 in
+                  // denominator.
+                  // can end up with 0 in denominator if the numbers are floating-point
+                  // and truncated with conversion to long, and the first and last keys
+                  //truncate to the same long, so safest calculation is to convert to doubles
+                  x =
+                      (int)
+                          (((keyAsNum.doubleValue() - first.doubleValue()) * totalSize)
+                              / (last.doubleValue() - first.doubleValue()));
+                }
               }
+              if (x < 0) {
+                x = 0;
+              }
+              size = (int) x;
+            } else {
+              // not attempting to differentiate between LT & LE
+              size = this.valueToEntriesMap.containsKey(key) ? 1 : 0;
             }
-            if (x < 0) {
-              x = 0;
-            }
-            size = x;
           } else {
-            // not attempting to differentiate between GT & GE
-            size = this.valueToEntriesMap.containsKey(key) ? 1 : 0;
+            size = Integer.MAX_VALUE;
           }
-        } else {
-          size = Integer.MAX_VALUE;
-        }
-        break;
+          break;
+
+        case OQLLexerTokenTypes.TOK_GE:
+        case OQLLexerTokenTypes.TOK_GT:
+          if (matchLevel <= 0 && key instanceof Number) {
+            int totalSize = valueToEntriesMapSize; // this.valueToEntriesMap.size();
+            if (testHook != null) {
+              testHook.hook(2);
+            }
+            if (totalSize > 1) {
+              Number keyAsNum = (Number) key;
+              int x = 0;
+              Map.Entry firstEntry = this.valueToEntriesMap.firstEntry();
+              Map.Entry lastEntry = this.valueToEntriesMap.lastEntry();
+              if (firstEntry != null && lastEntry != null) {
+                Number first = (Number) firstEntry.getKey();
+                Number last = (Number) lastEntry.getKey();
+                if (first.doubleValue() != last.doubleValue()) {
+                  // Shobhit: Now without ReadLoack on index we can end up with 0
+                  // in
+                  // denominator.
+                  // can end up with 0 in denominator if the numbers are
+                  // floating-point
+                  // and truncated with conversion to long, and the first and last
+                  // keys
+                  // truncate to the same long,
+                  // so safest calculation is to convert to doubles
+                  double totalRange = last.doubleValue() - first.doubleValue();
+                  assert totalRange != 0.0 : this.valueToEntriesMap.keySet();
+                  double part = last.doubleValue() - keyAsNum.doubleValue();
+                  x = (int) ((part * totalSize) / totalRange);
+                }
+              }
+              if (x < 0) {
+                x = 0;
+              }
+              size = x;
+            } else {
+              // not attempting to differentiate between GT & GE
+              size = this.valueToEntriesMap.containsKey(key) ? 1 : 0;
+            }
+          } else {
+            size = Integer.MAX_VALUE;
+          }
+          break;
       }
     } finally {
       updateIndexUseEndStats(start, false);
@@ -735,7 +790,14 @@ public class RangeIndex extends AbstractIndex {
     return size;
   }
 
-  private void evaluate(Object key, int operator, Collection results, Set keysToRemove, int limit, ExecutionContext context) throws TypeMismatchException {
+  private void evaluate(
+      Object key,
+      int operator,
+      Collection results,
+      Set keysToRemove,
+      int limit,
+      ExecutionContext context)
+      throws TypeMismatchException {
     key = TypeUtils.indexKeyFor(key);
     Boolean orderByClause = (Boolean) context.cacheGet(CompiledValue.CAN_APPLY_ORDER_BY_AT_INDEX);
     boolean multiColOrderBy = false;
@@ -752,71 +814,80 @@ public class RangeIndex extends AbstractIndex {
 
     try {
       switch (operator) {
-      case OQLLexerTokenTypes.TOK_EQ: {
-        assert keysToRemove == null;
-        addValuesToResult(this.valueToEntriesMap.get(key), results, keysToRemove, limit, context);
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_LT: {
-        NavigableMap sm = this.valueToEntriesMap.headMap(key, false);
-        sm = asc ? sm : sm.descendingMap();
+        case OQLLexerTokenTypes.TOK_EQ:
+          {
+            assert keysToRemove == null;
+            addValuesToResult(
+                this.valueToEntriesMap.get(key), results, keysToRemove, limit, context);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_LT:
+          {
+            NavigableMap sm = this.valueToEntriesMap.headMap(key, false);
+            sm = asc ? sm : sm.descendingMap();
 
-        addValuesToResult(sm, results, keysToRemove, limit, context);
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_LE: {
+            addValuesToResult(sm, results, keysToRemove, limit, context);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_LE:
+          {
+            NavigableMap sm = this.valueToEntriesMap.headMap(key, true);
+            sm = asc ? sm : sm.descendingMap();
 
-        NavigableMap sm = this.valueToEntriesMap.headMap(key, true);
-        sm = asc ? sm : sm.descendingMap();
+            addValuesToResult(sm, results, keysToRemove, limit, context);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_GT:
+          {
+            // Asif:As tail Map returns the SortedMap vie which is greater than or
+            // equal to the key passed, the equal to key needs to be removed.
+            // However if the boundtary key is already part of the keysToRemove set
+            // then we do not have to remove it as it is already taken care of
 
-        addValuesToResult(sm, results, keysToRemove, limit, context);
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_GT: {
-        // Asif:As tail Map returns the SortedMap vie which is greater than or
-        // equal to the key passed, the equal to key needs to be removed.
-        // However if the boundtary key is already part of the keysToRemove set
-        // then we do not have to remove it as it is already taken care of
+            NavigableMap sm = this.valueToEntriesMap.tailMap(key, false);
+            sm = asc ? sm : sm.descendingMap();
+            addValuesToResult(sm, results, keysToRemove, limit, context);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_GE:
+          {
+            NavigableMap sm = this.valueToEntriesMap.tailMap(key, true);
+            sm = asc ? sm : sm.descendingMap();
+            addValuesToResult(sm, results, keysToRemove, limit, context);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_NE_ALT:
+        case OQLLexerTokenTypes.TOK_NE:
+          {
+            NavigableMap sm = this.valueToEntriesMap;
+            if (!asc) {
+              sm = sm.descendingMap();
+            }
+            if (keysToRemove == null) {
+              addValuesToResultSingleKeyToRemove(sm, results, key, limit, context);
+            } else {
+              // TODO:Asif Somehow avoid this removal & then addition
+              keysToRemove.add(key);
+              addValuesToResult(sm, results, keysToRemove, limit, context);
+            }
+            nullMappedEntries.addValuesToCollection(results, limit, context);
+            undefinedMappedEntries.addValuesToCollection(results, limit, context);
+            // removeValuesFromResult(this.valueToEntriesMap.get(key), results);
 
-        NavigableMap sm = this.valueToEntriesMap.tailMap(key, false);
-        sm = asc ? sm : sm.descendingMap();
-        addValuesToResult(sm, results, keysToRemove, limit, context);
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_GE: {
-        NavigableMap sm = this.valueToEntriesMap.tailMap(key, true);
-        sm = asc ? sm : sm.descendingMap();
-        addValuesToResult(sm, results, keysToRemove, limit, context);
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_NE_ALT:
-      case OQLLexerTokenTypes.TOK_NE: {
-        NavigableMap sm = this.valueToEntriesMap;
-        if (!asc) {
-          sm = sm.descendingMap();
-
-        }
-        if (keysToRemove == null) {
-          addValuesToResultSingleKeyToRemove(sm, results, key, limit, context);
-        } else {
-          // TODO:Asif Somehow avoid this removal & then addition
-          keysToRemove.add(key);
-          addValuesToResult(sm, results, keysToRemove, limit, context);
-        }
-        nullMappedEntries.addValuesToCollection(results, limit, context);
-        undefinedMappedEntries.addValuesToCollection(results, limit, context);
-        // removeValuesFromResult(this.valueToEntriesMap.get(key), results);
-
-        break;
-      }
-      default: {
-        throw new IllegalArgumentException(LocalizedStrings.RangeIndex_OPERATOR_0.toLocalizedString(Integer.valueOf(operator)));
-      }
+            break;
+          }
+        default:
+          {
+            throw new IllegalArgumentException(
+                LocalizedStrings.RangeIndex_OPERATOR_0.toLocalizedString(
+                    Integer.valueOf(operator)));
+          }
       } // end switch
     } catch (ClassCastException ex) {
       if (operator == OQLLexerTokenTypes.TOK_EQ) { // result is empty set
         return;
-      } else if (operator == OQLLexerTokenTypes.TOK_NE || operator == OQLLexerTokenTypes.TOK_NE_ALT) { // put
+      } else if (operator == OQLLexerTokenTypes.TOK_NE
+          || operator == OQLLexerTokenTypes.TOK_NE_ALT) { // put
         // all
         // in
         // result
@@ -833,7 +904,21 @@ public class RangeIndex extends AbstractIndex {
     }
   }
 
-  private void evaluate(Object key, int operator, Collection results, CompiledValue iterOps, RuntimeIterator runtimeItr, ExecutionContext context, List projAttrib, SelectResults intermediateResults, boolean isIntersection, int limit, boolean applyOrderBy, List orderByAttribs) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+  private void evaluate(
+      Object key,
+      int operator,
+      Collection results,
+      CompiledValue iterOps,
+      RuntimeIterator runtimeItr,
+      ExecutionContext context,
+      List projAttrib,
+      SelectResults intermediateResults,
+      boolean isIntersection,
+      int limit,
+      boolean applyOrderBy,
+      List orderByAttribs)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
     key = TypeUtils.indexKeyFor(key);
     boolean multiColOrderBy = false;
     boolean asc = true;
@@ -846,72 +931,155 @@ public class RangeIndex extends AbstractIndex {
 
     try {
       switch (operator) {
-      case OQLLexerTokenTypes.TOK_EQ: {
-        addValuesToResult(this.valueToEntriesMap.get(key), results, null, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_LT: {
+        case OQLLexerTokenTypes.TOK_EQ:
+          {
+            addValuesToResult(
+                this.valueToEntriesMap.get(key),
+                results,
+                null,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                limit);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_LT:
+          {
+            NavigableMap sm = this.valueToEntriesMap.headMap(key, false);
+            sm = asc ? sm : sm.descendingMap();
 
-        NavigableMap sm = this.valueToEntriesMap.headMap(key, false);
-        sm = asc ? sm : sm.descendingMap();
+            addValuesToResult(
+                sm,
+                results,
+                null,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                limit);
 
-        addValuesToResult(sm, results, null, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_LE:
+          {
+            NavigableMap sm = this.valueToEntriesMap.headMap(key, true);
+            sm = asc ? sm : sm.descendingMap();
 
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_LE: {
-        NavigableMap sm = this.valueToEntriesMap.headMap(key, true);
-        sm = asc ? sm : sm.descendingMap();
+            addValuesToResult(
+                sm,
+                results,
+                null,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                limit);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_GT:
+          {
+            // Asif:As tail Map returns the SortedMap vie which is greater
+            // than or equal
+            // to the key passed, the equal to key needs to be removed.
+            // However if the boundary key is already part of the
+            // keysToRemove set
+            // then we do not have to remove it as it is already taken care
+            // of
 
-        addValuesToResult(sm, results, null, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_GT: {
-        // Asif:As tail Map returns the SortedMap vie which is greater
-        // than or equal
-        // to the key passed, the equal to key needs to be removed.
-        // However if the boundary key is already part of the
-        // keysToRemove set
-        // then we do not have to remove it as it is already taken care
-        // of
+            NavigableMap sm = this.valueToEntriesMap.tailMap(key, false);
+            sm = asc ? sm : sm.descendingMap();
 
-        NavigableMap sm = this.valueToEntriesMap.tailMap(key, false);
-        sm = asc ? sm : sm.descendingMap();
+            addValuesToResult(
+                sm,
+                results,
+                null,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                limit);
 
-        addValuesToResult(sm, results, null, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_GE:
+          {
+            NavigableMap sm = this.valueToEntriesMap.tailMap(key, true);
+            sm = asc ? sm : sm.descendingMap();
 
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_GE: {
-        NavigableMap sm = this.valueToEntriesMap.tailMap(key, true);
-        sm = asc ? sm : sm.descendingMap();
+            addValuesToResult(
+                sm,
+                results,
+                null,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                limit);
 
-        addValuesToResult(sm, results, null, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_NE_ALT:
+        case OQLLexerTokenTypes.TOK_NE:
+          {
+            NavigableMap sm = this.valueToEntriesMap;
+            if (!asc) {
+              sm = sm.descendingMap();
+            }
+            addValuesToResult(
+                sm,
+                results,
+                key,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                limit);
 
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_NE_ALT:
-      case OQLLexerTokenTypes.TOK_NE: {
-        NavigableMap sm = this.valueToEntriesMap;
-        if (!asc) {
-          sm = sm.descendingMap();
-        }
-        addValuesToResult(sm, results, key, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
+            nullMappedEntries.addValuesToCollection(
+                results,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                limit);
+            undefinedMappedEntries.addValuesToCollection(
+                results,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                limit);
 
-        nullMappedEntries.addValuesToCollection(results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
-        undefinedMappedEntries.addValuesToCollection(results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
-
-        break;
-      }
-      default: {
-        throw new IllegalArgumentException("Operator = " + operator);
-      }
+            break;
+          }
+        default:
+          {
+            throw new IllegalArgumentException("Operator = " + operator);
+          }
       } // end switch
     } catch (ClassCastException ex) {
       if (operator == OQLLexerTokenTypes.TOK_EQ) { // result is empty
         // set
         return;
-      } else if (operator == OQLLexerTokenTypes.TOK_NE || operator == OQLLexerTokenTypes.TOK_NE_ALT) { // put
+      } else if (operator == OQLLexerTokenTypes.TOK_NE
+          || operator == OQLLexerTokenTypes.TOK_NE_ALT) { // put
         // all
         // in
         // result
@@ -919,10 +1087,36 @@ public class RangeIndex extends AbstractIndex {
         if (!asc) {
           sm = sm.descendingMap();
         }
-        addValuesToResult(sm, results, key, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
+        addValuesToResult(
+            sm,
+            results,
+            key,
+            iterOps,
+            runtimeItr,
+            context,
+            projAttrib,
+            intermediateResults,
+            isIntersection,
+            limit);
 
-        nullMappedEntries.addValuesToCollection(results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
-        undefinedMappedEntries.addValuesToCollection(results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
+        nullMappedEntries.addValuesToCollection(
+            results,
+            iterOps,
+            runtimeItr,
+            context,
+            projAttrib,
+            intermediateResults,
+            isIntersection,
+            limit);
+        undefinedMappedEntries.addValuesToCollection(
+            results,
+            iterOps,
+            runtimeItr,
+            context,
+            projAttrib,
+            intermediateResults,
+            isIntersection,
+            limit);
       } else { // otherwise throw exception
         throw new TypeMismatchException("", ex);
       }
@@ -930,22 +1124,15 @@ public class RangeIndex extends AbstractIndex {
   }
 
   /**
-   * 
-   * @param entriesMap
-   *                SortedMap object containing the indexed key as the key & the
-   *                value being RegionEntryToValues Map object containing the
-   *                indexed results
-   * @param result
-   *                Index Results holder Collection used for fetching the index
-   *                results
-   * @param keysToRemove
-       *            Set containing the index keys for which index results should
-       *            not be taken from the entriesMap
+   * @param entriesMap SortedMap object containing the indexed key as the key & the value being
+   *     RegionEntryToValues Map object containing the indexed results
+   * @param result Index Results holder Collection used for fetching the index results
+   * @param keysToRemove Set containing the index keys for which index results should not be taken
+   *     from the entriesMap
    */
-
-  private void addValuesToResult(Object entriesMap, Collection result, Set keysToRemove, int limit, ExecutionContext context) {
-    if (entriesMap == null || result == null)
-      return;
+  private void addValuesToResult(
+      Object entriesMap, Collection result, Set keysToRemove, int limit, ExecutionContext context) {
+    if (entriesMap == null || result == null) return;
     QueryObserver observer = QueryObserverHolder.getInstance();
     if (verifyLimit(result, limit, context)) {
       observer.limitAppliedAtIndexLevel(this, limit, result);
@@ -980,29 +1167,27 @@ public class RangeIndex extends AbstractIndex {
         return;
       }
     } else {
-      throw new RuntimeException(LocalizedStrings.RangeIndex_PROBLEM_IN_INDEX_QUERY.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.RangeIndex_PROBLEM_IN_INDEX_QUERY.toLocalizedString());
     }
   }
 
   /**
-   * 
-   * @param entriesMap
-   *                SortedMap object containing the indexed key as the key & the
-   *                value being RegionEntryToValues Map object containing the
-   *                indexed results
-   * @param result
-   *                Index Results holder Collection used for fetching the index
-   *                results
-   * @param keyToRemove
-   *                The index key object for which index result should not be
-   *                taken from the entriesMap
-   * @param limit 
-   *                The limit to be applied on the resultset. If no limit is to be applied the value 
-   *                will be -1              
+   * @param entriesMap SortedMap object containing the indexed key as the key & the value being
+   *     RegionEntryToValues Map object containing the indexed results
+   * @param result Index Results holder Collection used for fetching the index results
+   * @param keyToRemove The index key object for which index result should not be taken from the
+   *     entriesMap
+   * @param limit The limit to be applied on the resultset. If no limit is to be applied the value
+   *     will be -1
    */
-  private void addValuesToResultSingleKeyToRemove(Object entriesMap, Collection result, Object keyToRemove, int limit, ExecutionContext context) {
-    if (entriesMap == null || result == null)
-      return;
+  private void addValuesToResultSingleKeyToRemove(
+      Object entriesMap,
+      Collection result,
+      Object keyToRemove,
+      int limit,
+      ExecutionContext context) {
+    if (entriesMap == null || result == null) return;
     QueryObserver observer = QueryObserverHolder.getInstance();
     if (verifyLimit(result, limit, context)) {
       observer.limitAppliedAtIndexLevel(this, limit, result);
@@ -1028,9 +1213,23 @@ public class RangeIndex extends AbstractIndex {
     }
   }
 
-  private void addValuesToResult(Object entriesMap, Collection result, Object keyToRemove, CompiledValue iterOps, RuntimeIterator runtimeItr, ExecutionContext context, List projAttrib, SelectResults intermediateResults, boolean isIntersection, int limit) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  private void addValuesToResult(
+      Object entriesMap,
+      Collection result,
+      Object keyToRemove,
+      CompiledValue iterOps,
+      RuntimeIterator runtimeItr,
+      ExecutionContext context,
+      List projAttrib,
+      SelectResults intermediateResults,
+      boolean isIntersection,
+      int limit)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     boolean limitApplied = false;
-    if (entriesMap == null || result == null || (limitApplied = verifyLimit(result, limit, context))) {
+    if (entriesMap == null
+        || result == null
+        || (limitApplied = verifyLimit(result, limit, context))) {
       if (limitApplied) {
         QueryObserver observer = QueryObserverHolder.getInstance();
         if (observer != null) {
@@ -1054,7 +1253,15 @@ public class RangeIndex extends AbstractIndex {
         // Object key = entry.getKey();
         if (foundKeyToRemove || !keyToRemove.equals(entry.getKey())) {
           RegionEntryToValuesMap rvMap = (RegionEntryToValuesMap) entry.getValue();
-          rvMap.addValuesToCollection(result, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
+          rvMap.addValuesToCollection(
+              result,
+              iterOps,
+              runtimeItr,
+              context,
+              projAttrib,
+              intermediateResults,
+              isIntersection,
+              limit);
           if (verifyLimit(result, limit, context)) {
             observer.limitAppliedAtIndexLevel(this, limit, result);
             break;
@@ -1065,9 +1272,18 @@ public class RangeIndex extends AbstractIndex {
       }
     } else if (entriesMap instanceof RegionEntryToValuesMap) {
       RegionEntryToValuesMap rvMap = (RegionEntryToValuesMap) entriesMap;
-      rvMap.addValuesToCollection(result, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
+      rvMap.addValuesToCollection(
+          result,
+          iterOps,
+          runtimeItr,
+          context,
+          projAttrib,
+          intermediateResults,
+          isIntersection,
+          limit);
     } else {
-      throw new RuntimeException(LocalizedStrings.RangeIndex_PROBLEM_IN_INDEX_QUERY.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.RangeIndex_PROBLEM_IN_INDEX_QUERY.toLocalizedString());
     }
   }
 
@@ -1090,9 +1306,9 @@ public class RangeIndex extends AbstractIndex {
     throw new RuntimeException(LocalizedStrings.RangeIndex_PROBLEM_IN_INDEX_QUERY.toLocalizedString());
   }
   }
-  
+
   private void removeValuesFromResult(Object entriesMap, Collection result,CompiledValue iterOps,
-    RuntimeIterator runtimeItr, ExecutionContext context, List projAttrib, 
+    RuntimeIterator runtimeItr, ExecutionContext context, List projAttrib,
     SelectResults intermediateResults, boolean isIntersection)
     throws FunctionDomainException, TypeMismatchException,
     NameResolutionException, QueryInvocationTargetException
@@ -1144,7 +1360,18 @@ public class RangeIndex extends AbstractIndex {
     this.initializeIndex(true);
   }
 
-  void lockedQuery(Object key, int operator, Collection results, CompiledValue iterOps, RuntimeIterator runtimeItr, ExecutionContext context, List projAttrib, SelectResults intermediateResults, boolean isIntersection) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+  void lockedQuery(
+      Object key,
+      int operator,
+      Collection results,
+      CompiledValue iterOps,
+      RuntimeIterator runtimeItr,
+      ExecutionContext context,
+      List projAttrib,
+      SelectResults intermediateResults,
+      boolean isIntersection)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
     int limit = -1;
 
     Boolean applyLimit = (Boolean) context.cacheGet(CompiledValue.CAN_APPLY_LIMIT_AT_INDEX);
@@ -1167,47 +1394,104 @@ public class RangeIndex extends AbstractIndex {
 
     if (key == null) {
       switch (operator) {
-      case OQLLexerTokenTypes.TOK_EQ: {
-        nullMappedEntries.addValuesToCollection(results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_NE_ALT:
-      case OQLLexerTokenTypes.TOK_NE: { // add all btree values
-        NavigableMap sm = this.valueToEntriesMap;
-        if (!asc) {
-          sm = sm.descendingMap();
-
-        }
-        //keysToRemove should be null, meaning we aren't removing any keys
-        addValuesToResult(sm, results, null, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit);
-        undefinedMappedEntries.addValuesToCollection(results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
-        break;
-      }
-      default: {
-        throw new IllegalArgumentException("Invalid Operator");
-      }
+        case OQLLexerTokenTypes.TOK_EQ:
+          {
+            nullMappedEntries.addValuesToCollection(
+                results,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                limit);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_NE_ALT:
+        case OQLLexerTokenTypes.TOK_NE:
+          { // add all btree values
+            NavigableMap sm = this.valueToEntriesMap;
+            if (!asc) {
+              sm = sm.descendingMap();
+            }
+            //keysToRemove should be null, meaning we aren't removing any keys
+            addValuesToResult(
+                sm,
+                results,
+                null,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                multiColOrderBy ? -1 : limit);
+            undefinedMappedEntries.addValuesToCollection(
+                results,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                limit);
+            break;
+          }
+        default:
+          {
+            throw new IllegalArgumentException("Invalid Operator");
+          }
       } // end switch
     } else if (key == QueryService.UNDEFINED) { // do nothing
       switch (operator) {
-      case OQLLexerTokenTypes.TOK_EQ: {
-        undefinedMappedEntries.addValuesToCollection(results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_NE:
-      case OQLLexerTokenTypes.TOK_NE_ALT: { // add all btree values
-        NavigableMap sm = this.valueToEntriesMap;
+        case OQLLexerTokenTypes.TOK_EQ:
+          {
+            undefinedMappedEntries.addValuesToCollection(
+                results,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                limit);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_NE:
+        case OQLLexerTokenTypes.TOK_NE_ALT:
+          { // add all btree values
+            NavigableMap sm = this.valueToEntriesMap;
 
-        if (!asc) {
-          sm = sm.descendingMap();
-        }
-        //keysToRemove should be null
-        addValuesToResult(sm, results, null, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit);
-        nullMappedEntries.addValuesToCollection(results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
-        break;
-      }
-      default: {
-        throw new IllegalArgumentException("Invalid Operator");
-      }
+            if (!asc) {
+              sm = sm.descendingMap();
+            }
+            //keysToRemove should be null
+            addValuesToResult(
+                sm,
+                results,
+                null,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                multiColOrderBy ? -1 : limit);
+            nullMappedEntries.addValuesToCollection(
+                results,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                limit);
+            break;
+          }
+        default:
+          {
+            throw new IllegalArgumentException("Invalid Operator");
+          }
       } // end switch
     } else {
       // return if the index map is still empty at this stage
@@ -1215,13 +1499,27 @@ public class RangeIndex extends AbstractIndex {
         return;
       }
       key = getPdxStringForIndexedPdxKeys(key);
-      evaluate(key, operator, results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit, applyOrderBy, orderByAttrs);
+      evaluate(
+          key,
+          operator,
+          results,
+          iterOps,
+          runtimeItr,
+          context,
+          projAttrib,
+          intermediateResults,
+          isIntersection,
+          limit,
+          applyOrderBy,
+          orderByAttrs);
     } // end else
   }
 
   /** Method called while appropriate lock held */
   @Override
-  void lockedQuery(Object key, int operator, Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException {
+  void lockedQuery(
+      Object key, int operator, Collection results, Set keysToRemove, ExecutionContext context)
+      throws TypeMismatchException {
     int limit = -1;
 
     //not applying limit at this level currently as range index does not properly apply other conditions
@@ -1248,43 +1546,51 @@ public class RangeIndex extends AbstractIndex {
 
     if (key == null) {
       switch (operator) {
-      case OQLLexerTokenTypes.TOK_EQ: {
-        nullMappedEntries.addValuesToCollection(results, limit, context);
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_NE_ALT:
-      case OQLLexerTokenTypes.TOK_NE: { // add all btree values        
-        NavigableMap sm = this.valueToEntriesMap;
-        if (!asc) {
-          sm = sm.descendingMap();
-        }
-        //keysToRemove should be null
-        addValuesToResult(sm, results, keysToRemove, limit, context);
-        undefinedMappedEntries.addValuesToCollection(results, limit, context);
-        break;
-      }
-      default: {
-        throw new IllegalArgumentException(LocalizedStrings.RangeIndex_INVALID_OPERATOR.toLocalizedString());
-      }
+        case OQLLexerTokenTypes.TOK_EQ:
+          {
+            nullMappedEntries.addValuesToCollection(results, limit, context);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_NE_ALT:
+        case OQLLexerTokenTypes.TOK_NE:
+          { // add all btree values
+            NavigableMap sm = this.valueToEntriesMap;
+            if (!asc) {
+              sm = sm.descendingMap();
+            }
+            //keysToRemove should be null
+            addValuesToResult(sm, results, keysToRemove, limit, context);
+            undefinedMappedEntries.addValuesToCollection(results, limit, context);
+            break;
+          }
+        default:
+          {
+            throw new IllegalArgumentException(
+                LocalizedStrings.RangeIndex_INVALID_OPERATOR.toLocalizedString());
+          }
       } // end switch
     } else if (key == QueryService.UNDEFINED) { // do nothing
       switch (operator) {
-      case OQLLexerTokenTypes.TOK_EQ: {
-        undefinedMappedEntries.addValuesToCollection(results, limit, context);
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_NE:
-      case OQLLexerTokenTypes.TOK_NE_ALT: { // add all btree values
-        NavigableMap sm = this.valueToEntriesMap.headMap(key, false);
-        sm = asc ? sm : sm.descendingMap();
-        //keysToRemove should be null
-        addValuesToResult(sm, results, keysToRemove, limit, context);
-        nullMappedEntries.addValuesToCollection(results, limit, context);
-        break;
-      }
-      default: {
-        throw new IllegalArgumentException(LocalizedStrings.RangeIndex_INVALID_OPERATOR.toLocalizedString());
-      }
+        case OQLLexerTokenTypes.TOK_EQ:
+          {
+            undefinedMappedEntries.addValuesToCollection(results, limit, context);
+            break;
+          }
+        case OQLLexerTokenTypes.TOK_NE:
+        case OQLLexerTokenTypes.TOK_NE_ALT:
+          { // add all btree values
+            NavigableMap sm = this.valueToEntriesMap.headMap(key, false);
+            sm = asc ? sm : sm.descendingMap();
+            //keysToRemove should be null
+            addValuesToResult(sm, results, keysToRemove, limit, context);
+            nullMappedEntries.addValuesToCollection(results, limit, context);
+            break;
+          }
+        default:
+          {
+            throw new IllegalArgumentException(
+                LocalizedStrings.RangeIndex_INVALID_OPERATOR.toLocalizedString());
+          }
       } // end switch
     } else {
       // return if the index map is still empty at this stage
@@ -1298,7 +1604,15 @@ public class RangeIndex extends AbstractIndex {
 
   @Override
   @SuppressWarnings("fallthrough")
-  void lockedQuery(Object lowerBoundKey, int lowerBoundOperator, Object upperBoundKey, int upperBoundOperator, Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException {
+  void lockedQuery(
+      Object lowerBoundKey,
+      int lowerBoundOperator,
+      Object upperBoundKey,
+      int upperBoundOperator,
+      Collection results,
+      Set keysToRemove,
+      ExecutionContext context)
+      throws TypeMismatchException {
     int limit = -1;
     //not applying limit at this level currently as range index does not properly apply other conditions
     //we could end up returning incorrect results - missing results
@@ -1331,7 +1645,9 @@ public class RangeIndex extends AbstractIndex {
     boolean lowerBoundInclusive = lowerBoundOperator == OQLLexerTokenTypes.TOK_GE;
     boolean upperBoundInclusive = upperBoundOperator == OQLLexerTokenTypes.TOK_LE;
 
-    NavigableMap dataset = this.valueToEntriesMap.subMap(lowerBoundKey, lowerBoundInclusive, upperBoundKey, upperBoundInclusive);
+    NavigableMap dataset =
+        this.valueToEntriesMap.subMap(
+            lowerBoundKey, lowerBoundInclusive, upperBoundKey, upperBoundInclusive);
     dataset = asc ? dataset : dataset.descendingMap();
 
     Object lowerBoundKeyToRemove = null;
@@ -1340,7 +1656,9 @@ public class RangeIndex extends AbstractIndex {
 
   @Override
   public boolean containsEntry(RegionEntry entry) {
-    return (this.entryToValuesMap.containsEntry(entry) || this.nullMappedEntries.containsEntry(entry) || this.undefinedMappedEntries.containsEntry(entry));
+    return (this.entryToValuesMap.containsEntry(entry)
+        || this.nullMappedEntries.containsEntry(entry)
+        || this.undefinedMappedEntries.containsEntry(entry));
   }
 
   public String dump() {
@@ -1377,7 +1695,9 @@ public class RangeIndex extends AbstractIndex {
     while (i1.hasNext()) {
       Map.Entry indexEntry = (Map.Entry) i1.next();
       sb.append(" Key = " + indexEntry.getKey()).append("\n");
-      sb.append(" Value Type = ").append(" " + indexEntry.getValue().getClass().getName()).append("\n");
+      sb.append(" Value Type = ")
+          .append(" " + indexEntry.getValue().getClass().getName())
+          .append("\n");
       if (indexEntry.getValue() instanceof Map) {
         sb.append(" Value Size = ").append(" " + ((Map) indexEntry.getValue()).size()).append("\n");
       }
@@ -1415,12 +1735,9 @@ public class RangeIndex extends AbstractIndex {
     public RangeIndexStatistics(String indexName) {
 
       this.vsdStats = new IndexStats(getRegion().getCache().getDistributedSystem(), indexName);
-
     }
 
-    /**
-     * Return the total number of times this index has been updated
-     */
+    /** Return the total number of times this index has been updated */
     public long getNumUpdates() {
       return this.vsdStats.getNumUpdates();
     }
@@ -1473,53 +1790,37 @@ public class RangeIndex extends AbstractIndex {
       return this.vsdStats.getUseTime();
     }
 
-    /**
-     * Returns the total amount of time (in nanoseconds) spent updating this
-     * index.
-     */
+    /** Returns the total amount of time (in nanoseconds) spent updating this index. */
     public long getTotalUpdateTime() {
       return this.vsdStats.getTotalUpdateTime();
     }
 
-    /**
-     * Returns the total number of times this index has been accessed by a
-     * query.
-     */
+    /** Returns the total number of times this index has been accessed by a query. */
     public long getTotalUses() {
       return this.vsdStats.getTotalUses();
     }
 
-    /**
-     * Returns the number of keys in this index.
-     */
+    /** Returns the number of keys in this index. */
     public long getNumberOfKeys() {
       return this.vsdStats.getNumberOfKeys();
     }
 
-    /**
-     * Returns the number of values in this index.
-     */
+    /** Returns the number of values in this index. */
     public long getNumberOfValues() {
       return this.vsdStats.getNumberOfValues();
     }
 
-    /**
-     * Return the number of values for the specified key in this index.
-     */
+    /** Return the number of values for the specified key in this index. */
     public long getNumberOfValues(Object key) {
-      if (key == null)
-        return nullMappedEntries.getNumValues();
-      if (key == QueryService.UNDEFINED)
-        return undefinedMappedEntries.getNumValues();
-      RegionEntryToValuesMap rvMap = (RegionEntryToValuesMap) RangeIndex.this.valueToEntriesMap.get(key);
-      if (rvMap == null)
-        return 0;
+      if (key == null) return nullMappedEntries.getNumValues();
+      if (key == QueryService.UNDEFINED) return undefinedMappedEntries.getNumValues();
+      RegionEntryToValuesMap rvMap =
+          (RegionEntryToValuesMap) RangeIndex.this.valueToEntriesMap.get(key);
+      if (rvMap == null) return 0;
       return rvMap.getNumValues();
     }
 
-    /**
-     * Return the number of read locks taken on this index
-     */
+    /** Return the number of read locks taken on this index */
     public int getReadLockCount() {
       return this.vsdStats.getReadLockCount();
     }
@@ -1548,5 +1849,4 @@ public class RangeIndex extends AbstractIndex {
   public Map getValueToEntriesMap() {
     return valueToEntriesMap;
   }
-
 }

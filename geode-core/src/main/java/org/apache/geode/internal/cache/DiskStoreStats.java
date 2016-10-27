@@ -24,7 +24,6 @@ import org.apache.geode.internal.statistics.StatisticsTypeFactoryImpl;
 /**
  * GemFire statistics about a {@link DiskStoreImpl}.
  *
- *
  * @since GemFire prPersistSprint2
  */
 public class DiskStoreStats {
@@ -84,36 +83,142 @@ public class DiskStoreStats {
     String statName = "DiskStoreStatistics";
     String statDescription = "Statistics about a Region's use of the disk";
 
-    final String writesDesc = "The total number of region entries that have been written to disk. A write is done every time an entry is created on disk or every time its value is modified on disk.";
+    final String writesDesc =
+        "The total number of region entries that have been written to disk. A write is done every time an entry is created on disk or every time its value is modified on disk.";
     final String writeTimeDesc = "The total amount of time spent writing to disk";
     final String bytesWrittenDesc = "The total number of bytes that have been written to disk";
-    final String flushesDesc = "The total number of times the an entry has been flushed from the async queue.";
+    final String flushesDesc =
+        "The total number of times the an entry has been flushed from the async queue.";
     final String flushTimeDesc = "The total amount of time spent doing an async queue flush.";
-    final String bytesFlushedDesc = "The total number of bytes written to disk by async queue flushes.";
+    final String bytesFlushedDesc =
+        "The total number of bytes written to disk by async queue flushes.";
     final String readsDesc = "The total number of region entries that have been read from disk";
     final String readTimeDesc = "The total amount of time spent reading from disk";
     final String bytesReadDesc = "The total number of bytes that have been read from disk";
     final String recoveryTimeDesc = "The total amount of time spent doing a recovery";
-    final String recoveredBytesDesc = "The total number of bytes that have been read from disk during a recovery";
+    final String recoveredBytesDesc =
+        "The total number of bytes that have been read from disk during a recovery";
     final String oplogRecoveriesDesc = "The total number of oplogs recovered";
     final String oplogRecoveryTimeDesc = "The total amount of time spent doing an oplog recovery";
-    final String oplogRecoveredBytesDesc = "The total number of bytes that have been read from oplogs during a recovery";
-    final String removesDesc = "The total number of region entries that have been removed from disk";
+    final String oplogRecoveredBytesDesc =
+        "The total number of bytes that have been read from oplogs during a recovery";
+    final String removesDesc =
+        "The total number of region entries that have been removed from disk";
     final String removeTimeDesc = "The total amount of time spent removing from disk";
-    final String queueSizeDesc = "The current number of entries in the async queue waiting to be flushed to disk";
-    final String backupsInProgressDesc = "The current number of backups in progress on this disk store";
-    final String backupsCompletedDesc = "The number of backups of this disk store that have been taking while this VM was alive";
+    final String queueSizeDesc =
+        "The current number of entries in the async queue waiting to be flushed to disk";
+    final String backupsInProgressDesc =
+        "The current number of backups in progress on this disk store";
+    final String backupsCompletedDesc =
+        "The number of backups of this disk store that have been taking while this VM was alive";
 
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    type = f.createType(statName, statDescription, new StatisticDescriptor[] { f.createLongCounter("writes", writesDesc, "ops"), f.createLongCounter("writeTime", writeTimeDesc, "nanoseconds"), f.createLongCounter("writtenBytes", bytesWrittenDesc, "bytes"), f.createLongCounter("flushes", flushesDesc, "ops"), f.createLongCounter("flushTime", flushTimeDesc, "nanoseconds"), f.createLongCounter("flushedBytes", bytesFlushedDesc, "bytes"), f.createLongCounter("reads", readsDesc, "ops"), f.createLongCounter("readTime", readTimeDesc, "nanoseconds"), f.createLongCounter("readBytes", bytesReadDesc, "bytes"), f.createIntGauge("recoveriesInProgress", "current number of persistent regions being recovered from disk", "ops"), f.createLongCounter("recoveryTime", recoveryTimeDesc, "nanoseconds"), f.createLongCounter("recoveredBytes", recoveredBytesDesc, "bytes"), f.createLongCounter("recoveredEntryCreates", "The total number of entry create records processed while recovering oplog data.", "ops"),
-        f.createLongCounter("recoveredEntryUpdates", "The total number of entry update records processed while recovering oplog data.", "ops"), f.createLongCounter("recoveredEntryDestroys", "The total number of entry destroy records processed while recovering oplog data.", "ops"), f.createLongCounter("recoveredValuesSkippedDueToLRU", "The total number of entry values that did not need to be recovered due to the LRU.", "values"),
-
-        f.createLongCounter("recoveryRecordsSkipped", "The total number of oplog records skipped during recovery.", "ops"),
-
-        f.createIntCounter("oplogRecoveries", oplogRecoveriesDesc, "ops"), f.createLongCounter("oplogRecoveryTime", oplogRecoveryTimeDesc, "nanoseconds"), f.createLongCounter("oplogRecoveredBytes", oplogRecoveredBytesDesc, "bytes"), f.createLongCounter("removes", removesDesc, "ops"), f.createLongCounter("removeTime", removeTimeDesc, "nanoseconds"), f.createIntGauge("queueSize", queueSizeDesc, "entries"), f.createLongCounter("compactInserts", "Total number of times an oplog compact did a db insert", "inserts"), f.createLongCounter("compactInsertTime", "Total amount of time, in nanoseconds, spent doing inserts during a compact", "nanoseconds"), f.createLongCounter("compactUpdates", "Total number of times an oplog compact did an update", "updates"), f.createLongCounter("compactUpdateTime", "Total amount of time, in nanoseconds, spent doing updates during a compact", "nanoseconds"), f.createLongCounter("compactDeletes", "Total number of times an oplog compact did a delete", "deletes"),
-        f.createLongCounter("compactDeleteTime", "Total amount of time, in nanoseconds, spent doing deletes during a compact", "nanoseconds"), f.createIntGauge("compactsInProgress", "current number of oplog compacts that are in progress", "compacts"), f.createIntGauge("writesInProgress", "current number of oplog writes that are in progress", "writes"), f.createIntGauge("flushesInProgress", "current number of oplog flushes that are in progress", "flushes"), f.createLongCounter("compactTime", "Total amount of time, in nanoseconds, spent compacting oplogs", "nanoseconds"), f.createIntCounter("compacts", "Total number of completed oplog compacts", "compacts"), f.createIntGauge("openOplogs", "Current number of oplogs this disk store has open", "oplogs"), f.createIntGauge("compactableOplogs", "Current number of oplogs ready to be compacted", "oplogs"),
-        f.createIntGauge("inactiveOplogs", "Current number of oplogs that are no longer being written but are not ready ready to compact", "oplogs"), f.createLongCounter("oplogReads", "Total number of oplog reads", "reads"), f.createLongCounter("oplogSeeks", "Total number of oplog seeks", "seeks"), f.createIntGauge("uncreatedRecoveredRegions", "The current number of regions that have been recovered but have not yet been created.", "regions"), f.createIntGauge("backupsInProgress", backupsInProgressDesc, "backups"), f.createIntCounter("backupsCompleted", backupsCompletedDesc, "backups"), });
+    type =
+        f.createType(
+            statName,
+            statDescription,
+            new StatisticDescriptor[] {
+              f.createLongCounter("writes", writesDesc, "ops"),
+              f.createLongCounter("writeTime", writeTimeDesc, "nanoseconds"),
+              f.createLongCounter("writtenBytes", bytesWrittenDesc, "bytes"),
+              f.createLongCounter("flushes", flushesDesc, "ops"),
+              f.createLongCounter("flushTime", flushTimeDesc, "nanoseconds"),
+              f.createLongCounter("flushedBytes", bytesFlushedDesc, "bytes"),
+              f.createLongCounter("reads", readsDesc, "ops"),
+              f.createLongCounter("readTime", readTimeDesc, "nanoseconds"),
+              f.createLongCounter("readBytes", bytesReadDesc, "bytes"),
+              f.createIntGauge(
+                  "recoveriesInProgress",
+                  "current number of persistent regions being recovered from disk",
+                  "ops"),
+              f.createLongCounter("recoveryTime", recoveryTimeDesc, "nanoseconds"),
+              f.createLongCounter("recoveredBytes", recoveredBytesDesc, "bytes"),
+              f.createLongCounter(
+                  "recoveredEntryCreates",
+                  "The total number of entry create records processed while recovering oplog data.",
+                  "ops"),
+              f.createLongCounter(
+                  "recoveredEntryUpdates",
+                  "The total number of entry update records processed while recovering oplog data.",
+                  "ops"),
+              f.createLongCounter(
+                  "recoveredEntryDestroys",
+                  "The total number of entry destroy records processed while recovering oplog data.",
+                  "ops"),
+              f.createLongCounter(
+                  "recoveredValuesSkippedDueToLRU",
+                  "The total number of entry values that did not need to be recovered due to the LRU.",
+                  "values"),
+              f.createLongCounter(
+                  "recoveryRecordsSkipped",
+                  "The total number of oplog records skipped during recovery.",
+                  "ops"),
+              f.createIntCounter("oplogRecoveries", oplogRecoveriesDesc, "ops"),
+              f.createLongCounter("oplogRecoveryTime", oplogRecoveryTimeDesc, "nanoseconds"),
+              f.createLongCounter("oplogRecoveredBytes", oplogRecoveredBytesDesc, "bytes"),
+              f.createLongCounter("removes", removesDesc, "ops"),
+              f.createLongCounter("removeTime", removeTimeDesc, "nanoseconds"),
+              f.createIntGauge("queueSize", queueSizeDesc, "entries"),
+              f.createLongCounter(
+                  "compactInserts",
+                  "Total number of times an oplog compact did a db insert",
+                  "inserts"),
+              f.createLongCounter(
+                  "compactInsertTime",
+                  "Total amount of time, in nanoseconds, spent doing inserts during a compact",
+                  "nanoseconds"),
+              f.createLongCounter(
+                  "compactUpdates",
+                  "Total number of times an oplog compact did an update",
+                  "updates"),
+              f.createLongCounter(
+                  "compactUpdateTime",
+                  "Total amount of time, in nanoseconds, spent doing updates during a compact",
+                  "nanoseconds"),
+              f.createLongCounter(
+                  "compactDeletes",
+                  "Total number of times an oplog compact did a delete",
+                  "deletes"),
+              f.createLongCounter(
+                  "compactDeleteTime",
+                  "Total amount of time, in nanoseconds, spent doing deletes during a compact",
+                  "nanoseconds"),
+              f.createIntGauge(
+                  "compactsInProgress",
+                  "current number of oplog compacts that are in progress",
+                  "compacts"),
+              f.createIntGauge(
+                  "writesInProgress",
+                  "current number of oplog writes that are in progress",
+                  "writes"),
+              f.createIntGauge(
+                  "flushesInProgress",
+                  "current number of oplog flushes that are in progress",
+                  "flushes"),
+              f.createLongCounter(
+                  "compactTime",
+                  "Total amount of time, in nanoseconds, spent compacting oplogs",
+                  "nanoseconds"),
+              f.createIntCounter(
+                  "compacts", "Total number of completed oplog compacts", "compacts"),
+              f.createIntGauge(
+                  "openOplogs", "Current number of oplogs this disk store has open", "oplogs"),
+              f.createIntGauge(
+                  "compactableOplogs", "Current number of oplogs ready to be compacted", "oplogs"),
+              f.createIntGauge(
+                  "inactiveOplogs",
+                  "Current number of oplogs that are no longer being written but are not ready ready to compact",
+                  "oplogs"),
+              f.createLongCounter("oplogReads", "Total number of oplog reads", "reads"),
+              f.createLongCounter("oplogSeeks", "Total number of oplog seeks", "seeks"),
+              f.createIntGauge(
+                  "uncreatedRecoveredRegions",
+                  "The current number of regions that have been recovered but have not yet been created.",
+                  "regions"),
+              f.createIntGauge("backupsInProgress", backupsInProgressDesc, "backups"),
+              f.createIntCounter("backupsCompleted", backupsCompletedDesc, "backups"),
+            });
 
     // Initialize id fields
     writesId = type.nameToId("writes");
@@ -170,10 +275,7 @@ public class DiskStoreStats {
 
   ///////////////////////  Constructors  ///////////////////////
 
-  /**
-   * Creates a new <code>DiskStoreStatistics</code> for the given
-   * region. 
-   */
+  /** Creates a new <code>DiskStoreStatistics</code> for the given region. */
   public DiskStoreStats(StatisticsFactory f, String name) {
     this.stats = f.createAtomicStatistics(type, name);
   }
@@ -184,68 +286,47 @@ public class DiskStoreStats {
     this.stats.close();
   }
 
-  /**
-   * Returns the total number of region entries that have been written
-   * to disk.
-   */
+  /** Returns the total number of region entries that have been written to disk. */
   public long getWrites() {
     return this.stats.getLong(writesId);
   }
 
-  /**
-   * Returns the total number of nanoseconds spent writing to disk
-   */
+  /** Returns the total number of nanoseconds spent writing to disk */
   public long getWriteTime() {
     return this.stats.getLong(writeTimeId);
   }
 
-  /**
-   * Returns the total number of bytes that have been written to disk
-   */
+  /** Returns the total number of bytes that have been written to disk */
   public long getBytesWritten() {
     return this.stats.getLong(bytesWrittenId);
   }
 
-  /**
-   * Returns the total number of region entries that have been read
-   * from disk.
-   */
+  /** Returns the total number of region entries that have been read from disk. */
   public long getReads() {
     return this.stats.getLong(readsId);
   }
 
-  /**
-   * Returns the total number of nanoseconds spent reading from disk
-   */
+  /** Returns the total number of nanoseconds spent reading from disk */
   public long getReadTime() {
     return this.stats.getLong(readTimeId);
   }
 
-  /**
-   * Returns the total number of bytes that have been read from disk
-   */
+  /** Returns the total number of bytes that have been read from disk */
   public long getBytesRead() {
     return this.stats.getLong(bytesReadId);
   }
 
-  /**
-   * Returns the total number of region entries that have been removed
-   * from disk.
-   */
+  /** Returns the total number of region entries that have been removed from disk. */
   public long getRemoves() {
     return this.stats.getLong(removesId);
   }
 
-  /**
-   * Returns the total number of nanoseconds spent removing from disk
-   */
+  /** Returns the total number of nanoseconds spent removing from disk */
   public long getRemoveTime() {
     return this.stats.getLong(removeTimeId);
   }
 
-  /**
-   * Return the current number of entries in the async queue
-   */
+  /** Return the current number of entries in the async queue */
   public long getQueueSize() {
     return this.stats.getInt(queueSizeId);
   }
@@ -266,7 +347,6 @@ public class DiskStoreStats {
    * Invoked before data is written to disk.
    *
    * @return The timestamp that marks the start of the operation
-   *
    * @see DiskRegion#put
    */
   public long startWrite() {
@@ -286,8 +366,7 @@ public class DiskStoreStats {
   /**
    * Invoked after data has been written to disk
    *
-   * @param start
-   *        The time at which the write operation started
+   * @param start The time at which the write operation started
    */
   public long endWrite(long start) {
     this.stats.incInt(writesInProgressId, -1);
@@ -312,7 +391,6 @@ public class DiskStoreStats {
    * Invoked before data is read from disk.
    *
    * @return The timestamp that marks the start of the operation
-   *
    * @see DiskRegion#get
    */
   public long startRead() {
@@ -322,10 +400,8 @@ public class DiskStoreStats {
   /**
    * Invoked after data has been read from disk
    *
-   * @param start
-   *        The time at which the read operation started
-   * @param bytesRead
-   *        The number of bytes that were read
+   * @param start The time at which the read operation started
+   * @param bytesRead The number of bytes that were read
    */
   public long endRead(long start, long bytesRead) {
     long end = DistributionStats.getStatTime();
@@ -339,7 +415,6 @@ public class DiskStoreStats {
    * Invoked before data is recovered from disk.
    *
    * @return The timestamp that marks the start of the operation
-   *
    */
   public long startRecovery() {
     this.stats.incInt(recoveriesInProgressId, 1);
@@ -358,10 +433,8 @@ public class DiskStoreStats {
   /**
    * Invoked after data has been recovered from disk
    *
-   * @param start
-   *        The time at which the recovery operation started
-   * @param bytesRead
-   *        The number of bytes that were recovered
+   * @param start The time at which the recovery operation started
+   * @param bytesRead The number of bytes that were recovered
    */
   public void endRecovery(long start, long bytesRead) {
     this.stats.incInt(recoveriesInProgressId, -1);
@@ -408,7 +481,6 @@ public class DiskStoreStats {
    * Invoked before data is removed from disk.
    *
    * @return The timestamp that marks the start of the operation
-   *
    * @see DiskRegion#remove
    */
   public long startRemove() {
@@ -418,8 +490,7 @@ public class DiskStoreStats {
   /**
    * Invoked after data has been removed from disk
    *
-   * @param start
-   *        The time at which the read operation started
+   * @param start The time at which the read operation started
    */
   public long endRemove(long start) {
     long end = DistributionStats.getStatTime();

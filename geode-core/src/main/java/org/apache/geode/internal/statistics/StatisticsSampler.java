@@ -19,26 +19,22 @@ package org.apache.geode.internal.statistics;
 import org.apache.geode.Statistics;
 
 /**
- * Defines the minimal contract for a StatisticsSampler. This is used by
- * classes that need to interact with the sampler.
- * 
+ * Defines the minimal contract for a StatisticsSampler. This is used by classes that need to
+ * interact with the sampler.
+ *
  * @since GemFire 7.0
  */
 public interface StatisticsSampler {
 
-  /**
-   * Returns the number of times a statistics resource has been add or deleted.
-   */
+  /** Returns the number of times a statistics resource has been add or deleted. */
   public int getStatisticsModCount();
 
-  /**
-   * Returns an array of all the current statistics resource instances.
-   */
+  /** Returns an array of all the current statistics resource instances. */
   public Statistics[] getStatistics();
 
   /**
    * Waits for the SampleCollector to be created and initialized.
-   * 
+   *
    * @param timeout maximum number of milliseconds to wait
    * @return the initialized SampleCollector or null if timed out
    * @throws InterruptedException if the current thread is interrupted while waiting
@@ -47,7 +43,7 @@ public interface StatisticsSampler {
 
   /**
    * Waits for at least one statistics sample to occur before returning.
-   * 
+   *
    * @param timeout maximum number of milliseconds to wait
    * @return true if a statistics sample occurred; false if wait timed out
    * @throws InterruptedException if the current thread is interrupted while waiting

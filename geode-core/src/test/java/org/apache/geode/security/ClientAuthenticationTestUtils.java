@@ -24,28 +24,52 @@ import java.util.Properties;
 
 import org.apache.geode.cache.Region;
 
-/**
- * Extracted from ClientAuthenticationDUnitTest
- */
+/** Extracted from ClientAuthenticationDUnitTest */
 public abstract class ClientAuthenticationTestUtils {
 
-  protected ClientAuthenticationTestUtils() {
+  protected ClientAuthenticationTestUtils() {}
+
+  protected static Integer createCacheServer(
+      final int locatorPort,
+      final String locatorString,
+      final String authenticator,
+      final Properties extraProps,
+      final Properties javaProps) {
+    return createCacheServer(
+        locatorPort, locatorString, 0, authenticator, extraProps, javaProps, NO_EXCEPTION);
   }
 
-  protected static Integer createCacheServer(final int locatorPort, final String locatorString, final String authenticator, final Properties extraProps, final Properties javaProps) {
-    return createCacheServer(locatorPort, locatorString, 0, authenticator, extraProps, javaProps, NO_EXCEPTION);
+  protected static Integer createCacheServer(
+      final int locatorPort,
+      final String locatorString,
+      final int serverPort,
+      final String authenticator,
+      final Properties extraProps,
+      final Properties javaProps) {
+    return createCacheServer(
+        locatorPort, locatorString, serverPort, authenticator, extraProps, javaProps, NO_EXCEPTION);
   }
 
-  protected static Integer createCacheServer(final int locatorPort, final String locatorString, final int serverPort, final String authenticator, final Properties extraProps, final Properties javaProps) {
-    return createCacheServer(locatorPort, locatorString, serverPort, authenticator, extraProps, javaProps, NO_EXCEPTION);
+  protected static Integer createCacheServer(
+      final int locatorPort,
+      final String locatorString,
+      final String authenticator,
+      final Properties extraProps,
+      final Properties javaProps,
+      final int expectedResult) {
+
+    return createCacheServer(
+        locatorPort, locatorString, 0, authenticator, extraProps, javaProps, expectedResult);
   }
 
-  protected static Integer createCacheServer(final int locatorPort, final String locatorString, final String authenticator, final Properties extraProps, final Properties javaProps, final int expectedResult) {
-
-    return createCacheServer(locatorPort, locatorString, 0, authenticator, extraProps, javaProps, expectedResult);
-  }
-
-  protected static Integer createCacheServer(final int locatorPort, final String locatorString, final int serverPort, final String authenticator, final Properties extraProps, final Properties javaProps, int expectedResult) {
+  protected static Integer createCacheServer(
+      final int locatorPort,
+      final String locatorString,
+      final int serverPort,
+      final String authenticator,
+      final Properties extraProps,
+      final Properties javaProps,
+      int expectedResult) {
     Properties authProps;
     if (extraProps == null) {
       authProps = new Properties();
@@ -56,31 +80,113 @@ public abstract class ClientAuthenticationTestUtils {
     if (authenticator != null) {
       authProps.setProperty(SECURITY_CLIENT_AUTHENTICATOR, authenticator);
     }
-    return SecurityTestUtils.createCacheServer(authProps, javaProps, locatorPort, locatorString, serverPort, expectedResult);
+    return SecurityTestUtils.createCacheServer(
+        authProps, javaProps, locatorPort, locatorString, serverPort, expectedResult);
   }
 
-  protected static void createCacheClient(final String authInit, final Properties authProps, final Properties javaProps, final int[] ports, final int numConnections, final boolean multiUserMode, final boolean subscriptionEnabled, final int expectedResult) {
-    SecurityTestUtils.createCacheClient(authInit, authProps, javaProps, ports, numConnections, false, multiUserMode, subscriptionEnabled, expectedResult);
+  protected static void createCacheClient(
+      final String authInit,
+      final Properties authProps,
+      final Properties javaProps,
+      final int[] ports,
+      final int numConnections,
+      final boolean multiUserMode,
+      final boolean subscriptionEnabled,
+      final int expectedResult) {
+    SecurityTestUtils.createCacheClient(
+        authInit,
+        authProps,
+        javaProps,
+        ports,
+        numConnections,
+        false,
+        multiUserMode,
+        subscriptionEnabled,
+        expectedResult);
   }
 
-  protected static void createCacheClient(final String authInit, final Properties authProps, final Properties javaProps, final int[] ports, final int numConnections, final boolean multiUserMode, final int expectedResult) {
-    createCacheClient(authInit, authProps, javaProps, ports, numConnections, multiUserMode, true, expectedResult);
+  protected static void createCacheClient(
+      final String authInit,
+      final Properties authProps,
+      final Properties javaProps,
+      final int[] ports,
+      final int numConnections,
+      final boolean multiUserMode,
+      final int expectedResult) {
+    createCacheClient(
+        authInit, authProps, javaProps, ports, numConnections, multiUserMode, true, expectedResult);
   }
 
-  protected static void createCacheClient(final String authInit, final Properties authProps, final Properties javaProps, final int port1, final int numConnections, final int expectedResult) {
-    createCacheClient(authInit, authProps, javaProps, new int[] { port1 }, numConnections, false, true, expectedResult);
+  protected static void createCacheClient(
+      final String authInit,
+      final Properties authProps,
+      final Properties javaProps,
+      final int port1,
+      final int numConnections,
+      final int expectedResult) {
+    createCacheClient(
+        authInit,
+        authProps,
+        javaProps,
+        new int[] {port1},
+        numConnections,
+        false,
+        true,
+        expectedResult);
   }
 
-  protected static void createCacheClient(final String authInit, final Properties authProps, final Properties javaProps, final int port1, final int port2, final int numConnections, final int expectedResult) {
-    createCacheClient(authInit, authProps, javaProps, port1, port2, numConnections, false, expectedResult);
+  protected static void createCacheClient(
+      final String authInit,
+      final Properties authProps,
+      final Properties javaProps,
+      final int port1,
+      final int port2,
+      final int numConnections,
+      final int expectedResult) {
+    createCacheClient(
+        authInit, authProps, javaProps, port1, port2, numConnections, false, expectedResult);
   }
 
-  protected static void createCacheClient(final String authInit, final Properties authProps, final Properties javaProps, final int port1, final int port2, final int numConnections, final boolean multiUserMode, final int expectedResult) {
-    createCacheClient(authInit, authProps, javaProps, port1, port2, numConnections, multiUserMode, true, expectedResult);
+  protected static void createCacheClient(
+      final String authInit,
+      final Properties authProps,
+      final Properties javaProps,
+      final int port1,
+      final int port2,
+      final int numConnections,
+      final boolean multiUserMode,
+      final int expectedResult) {
+    createCacheClient(
+        authInit,
+        authProps,
+        javaProps,
+        port1,
+        port2,
+        numConnections,
+        multiUserMode,
+        true,
+        expectedResult);
   }
 
-  protected static void createCacheClient(final String authInit, final Properties authProps, final Properties javaProps, final int port1, final int port2, final int numConnections, final boolean multiUserMode, final boolean subscriptionEnabled, final int expectedResult) {
-    createCacheClient(authInit, authProps, javaProps, new int[] { port1, port2 }, numConnections, multiUserMode, subscriptionEnabled, expectedResult);
+  protected static void createCacheClient(
+      final String authInit,
+      final Properties authProps,
+      final Properties javaProps,
+      final int port1,
+      final int port2,
+      final int numConnections,
+      final boolean multiUserMode,
+      final boolean subscriptionEnabled,
+      final int expectedResult) {
+    createCacheClient(
+        authInit,
+        authProps,
+        javaProps,
+        new int[] {port1, port2},
+        numConnections,
+        multiUserMode,
+        subscriptionEnabled,
+        expectedResult);
   }
 
   protected static void registerAllInterest() {

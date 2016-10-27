@@ -26,10 +26,10 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
 /**
- * this class contains test methods that used to be in its superclass but
- * that test started taking too long and caused dunit runs to hang
+ * this class contains test methods that used to be in its superclass but that test started taking
+ * too long and caused dunit runs to hang
  */
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class ClientAuthenticationPart2DUnitTest extends ClientAuthenticationTestCase {
 
   @Test

@@ -26,17 +26,16 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * modify its current {@link org.apache.geode.internal.Config}.
+ * A message that is sent to a particular distribution manager to modify its current {@link
+ * org.apache.geode.internal.Config}.
  */
 public final class StoreSysCfgRequest extends AdminRequest {
   // instance variables
   Config sc;
 
   /**
-   * Returns a <code>StoreSysCfgRequest</code> that states that a
-   * given set of distribution managers are known by <code>dm</code>
-   * to be started.
+   * Returns a <code>StoreSysCfgRequest</code> that states that a given set of distribution managers
+   * are known by <code>dm</code> to be started.
    */
   public static StoreSysCfgRequest create(Config sc) {
     StoreSysCfgRequest m = new StoreSysCfgRequest();
@@ -45,12 +44,11 @@ public final class StoreSysCfgRequest extends AdminRequest {
   }
 
   public StoreSysCfgRequest() {
-    friendlyName = LocalizedStrings.StoreSysCfgRequest_APPLY_CONFIGURATION_PARAMETERS.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.StoreSysCfgRequest_APPLY_CONFIGURATION_PARAMETERS.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return StoreSysCfgResponse.create(dm, this.getSender(), this.sc);

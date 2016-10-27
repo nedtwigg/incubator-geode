@@ -28,10 +28,7 @@ import org.xml.sax.ext.EntityResolver2;
 
 import org.apache.geode.internal.ClassPathLoader;
 
-/**
- * Unit test for {@link PivotalEntityResolver} and
- * {@link DefaultEntityResolver2}.
- */
+/** Unit test for {@link PivotalEntityResolver} and {@link DefaultEntityResolver2}. */
 public abstract class AbstractEntityResolverTest {
 
   protected abstract EntityResolver getEntityResolver();
@@ -39,9 +36,8 @@ public abstract class AbstractEntityResolverTest {
   protected abstract String getSystemId();
 
   /**
-   * Assert that {@link PivotalEntityResolver} extends
-   * {@link DefaultEntityResolver2}.
-   * 
+   * Assert that {@link PivotalEntityResolver} extends {@link DefaultEntityResolver2}.
+   *
    * @since GemFire 8.1
    */
   @Test
@@ -50,16 +46,16 @@ public abstract class AbstractEntityResolverTest {
   }
 
   /**
-   * Find the {@link PivotalEntityResolver} in the {@link ClassPathLoader}.
-   * Verifies that the META-INF/services file is correctly found and the the
-   * implementation class is loadable.
-   * 
+   * Find the {@link PivotalEntityResolver} in the {@link ClassPathLoader}. Verifies that the
+   * META-INF/services file is correctly found and the the implementation class is loadable.
+   *
    * @since GemFire 8.1
    */
   @Test
   public void testDiscovery() {
     boolean found = false;
-    final ServiceLoader<EntityResolver2> entityResolvers = ServiceLoader.load(EntityResolver2.class, ClassPathLoader.getLatestAsClassLoader());
+    final ServiceLoader<EntityResolver2> entityResolvers =
+        ServiceLoader.load(EntityResolver2.class, ClassPathLoader.getLatestAsClassLoader());
     for (final EntityResolver2 entityResolver : entityResolvers) {
       if (getEntityResolver().getClass().isAssignableFrom(entityResolver.getClass())) {
         found = true;
@@ -70,9 +66,9 @@ public abstract class AbstractEntityResolverTest {
   }
 
   /**
-   * Resolve the cache.xml XSD using the {@link PivotalEntityResolver}. Verifies
-   * that the META-INF/schemas files are correctly found.
-   * 
+   * Resolve the cache.xml XSD using the {@link PivotalEntityResolver}. Verifies that the
+   * META-INF/schemas files are correctly found.
+   *
    * @since GemFire 8.1
    */
   @Test
@@ -86,7 +82,7 @@ public abstract class AbstractEntityResolverTest {
    * Test {@link PivotalEntityResolver#resolveEntity(String, String)} with
    * <code>null</code> <code>systemId</code>. Asserts that returns to
    * <code>null<code>.
-   * 
+   *
    * @since GemFire 8.1
    */
   @Test
@@ -100,7 +96,7 @@ public abstract class AbstractEntityResolverTest {
    * Test {@link PivotalEntityResolver#resolveEntity(String, String)} with
    * <code>"--not-a-valid-system-id--"</code> <code>systemId</code>, which is
    * not in the Pivotal namespace.. Asserts that returns to <code>null<code>.
-   * 
+   *
    * @since GemFire 8.1
    */
   @Test
@@ -115,7 +111,7 @@ public abstract class AbstractEntityResolverTest {
    * <code>"http://schema.pivotal.io/this/should/be/not/found.xsd"</code>
    * <code>systemId</code>, which should not be found. Asserts that returns to
    * <code>null<code>.
-   * 
+   *
    * @since GemFire 8.1
    */
   @Test
@@ -124,5 +120,4 @@ public abstract class AbstractEntityResolverTest {
     final InputSource inputSource = getEntityResolver().resolveEntity(null, systemId);
     assertNull(inputSource);
   }
-
 }

@@ -16,9 +16,7 @@
  */
 package org.apache.geode.test.junit.rules.serializable;
 
-/**
- * Names of member fields in {@link org.junit.rules.TestName}.
- */
+/** Names of member fields in {@link org.junit.rules.TestName}. */
 interface FieldsOfTestName {
   static final String FIELD_NAME = "name"; // String
 }

@@ -16,12 +16,8 @@
  */
 package org.apache.geode.internal.memcached;
 
-/**
- * encapsulate ResponseOpCodes for binary reply messages.
- * 
- */
+/** encapsulate ResponseOpCodes for binary reply messages. */
 public enum ResponseStatus {
-
   NO_ERROR {
     @Override
     public short asShort() {

@@ -24,14 +24,15 @@ import org.apache.geode.cache.query.QueryInvocationTargetException;
 import org.apache.geode.cache.query.TypeMismatchException;
 
 /**
- * An interface allowing different Region implementations to support 
- * querying. 
- * 
+ * An interface allowing different Region implementations to support querying.
+ *
  * @since GemFire 5.5
  */
 public interface QueryExecutor {
-  //TODO Yogesh , fix this signature 
-  public Object executeQuery(DefaultQuery query, Object[] parameters, Set buckets) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException;
+  //TODO Yogesh , fix this signature
+  public Object executeQuery(DefaultQuery query, Object[] parameters, Set buckets)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException;
 
   public String getName();
 }

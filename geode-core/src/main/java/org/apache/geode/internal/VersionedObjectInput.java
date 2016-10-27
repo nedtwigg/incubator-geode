@@ -21,10 +21,9 @@ import java.io.IOException;
 import java.io.ObjectInput;
 
 /**
- * An extension to {@link ObjectInput} that implements
- * {@link VersionedDataStream} wrapping given {@link ObjectInput} for a stream
- * coming from a different product version.
- * 
+ * An extension to {@link ObjectInput} that implements {@link VersionedDataStream} wrapping given
+ * {@link ObjectInput} for a stream coming from a different product version.
+ *
  * @since GemFire 7.1
  */
 public final class VersionedObjectInput implements ObjectInput, VersionedDataStream {
@@ -33,209 +32,161 @@ public final class VersionedObjectInput implements ObjectInput, VersionedDataStr
   private final Version version;
 
   /**
-   * Creates a VersionedObjectInput that wraps the specified underlying
-   * ObjectInput.
-   * 
-   * @param in
-   *          the specified {@link ObjectInput}
-   * @param version
-   *          the product version that serialized object on the given
-   *          {@link ObjectInput}
+   * Creates a VersionedObjectInput that wraps the specified underlying ObjectInput.
+   *
+   * @param in the specified {@link ObjectInput}
+   * @param version the product version that serialized object on the given {@link ObjectInput}
    */
   public VersionedObjectInput(ObjectInput in, Version version) {
     this.in = in;
     this.version = version;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public Version getVersion() {
     return this.version;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void readFully(byte[] b) throws IOException {
     this.in.readFully(b);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void readFully(byte[] b, int off, int len) throws IOException {
     this.in.readFully(b, off, len);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int skipBytes(int n) throws IOException {
     return this.in.skipBytes(n);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean readBoolean() throws IOException {
     return this.in.readBoolean();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public byte readByte() throws IOException {
     return this.in.readByte();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int readUnsignedByte() throws IOException {
     return this.in.readUnsignedByte();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public short readShort() throws IOException {
     return this.in.readShort();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int readUnsignedShort() throws IOException {
     return this.in.readUnsignedShort();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public char readChar() throws IOException {
     return this.in.readChar();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int readInt() throws IOException {
     return this.in.readInt();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public long readLong() throws IOException {
     return this.in.readLong();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public float readFloat() throws IOException {
     return this.in.readFloat();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public double readDouble() throws IOException {
     return this.in.readDouble();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String readLine() throws IOException {
     return this.in.readLine();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String readUTF() throws IOException {
     return this.in.readUTF();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public Object readObject() throws ClassNotFoundException, IOException {
     return this.in.readObject();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int read() throws IOException {
     return this.in.read();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int read(byte[] b) throws IOException {
     return this.in.read(b);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int read(byte[] b, int off, int len) throws IOException {
     return this.in.read(b, off, len);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public long skip(long n) throws IOException {
     return this.in.skip(n);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int available() throws IOException {
     return this.in.available();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void close() throws IOException {
     this.in.close();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
-    return "VersionedObjectInput@" + Integer.toHexString(System.identityHashCode(this)) + " (" + this.version + ')';
+    return "VersionedObjectInput@"
+        + Integer.toHexString(System.identityHashCode(this))
+        + " ("
+        + this.version
+        + ')';
   }
 }

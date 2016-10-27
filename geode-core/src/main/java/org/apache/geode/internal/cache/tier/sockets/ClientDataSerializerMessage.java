@@ -27,28 +27,25 @@ import org.apache.geode.internal.cache.EnumListenerEvent;
 import org.apache.geode.internal.cache.EventID;
 import org.apache.geode.internal.cache.tier.MessageType;
 
-/**
- * 
- *
- */
+/** */
 public class ClientDataSerializerMessage extends ClientUpdateMessageImpl {
   private byte[][] serializedDataSerializer;
 
   private Class[][] supportedClasses;
 
-  public ClientDataSerializerMessage(EnumListenerEvent operation, byte[][] dataSerializer, ClientProxyMembershipID memberId, EventID eventIdentifier, Class[][] supportedClasses) {
+  public ClientDataSerializerMessage(
+      EnumListenerEvent operation,
+      byte[][] dataSerializer,
+      ClientProxyMembershipID memberId,
+      EventID eventIdentifier,
+      Class[][] supportedClasses) {
     super(operation, memberId, eventIdentifier);
     this.serializedDataSerializer = dataSerializer;
     this.supportedClasses = supportedClasses;
   }
 
-  /**
-   * default constructor
-   * 
-   */
-  public ClientDataSerializerMessage() {
-
-  }
+  /** default constructor */
+  public ClientDataSerializerMessage() {}
 
   @Override
   public boolean shouldBeConflated() {
@@ -56,15 +53,13 @@ public class ClientDataSerializerMessage extends ClientUpdateMessageImpl {
   }
 
   /**
-   * Returns a <code>Message</code> generated from the fields of this
-   * <code>ClientDataSerializerMessage</code>.
-   * 
-   * @param latestValue
-   *                byte[] containing the latest value to use. This could be the
-   *                original value if conflation is not enabled, or it could be
-   *                a conflated value if conflation is enabled.
-   * @return a <code>Message</code> generated from the fields of this
-   *         <code>ClientDataSerializerMessage</code>
+   * Returns a <code>Message</code> generated from the fields of this <code>
+   * ClientDataSerializerMessage</code>.
+   *
+   * @param latestValue byte[] containing the latest value to use. This could be the original value
+   *     if conflation is not enabled, or it could be a conflated value if conflation is enabled.
+   * @return a <code>Message</code> generated from the fields of this <code>
+   *     ClientDataSerializerMessage</code>
    * @throws IOException
    * @see org.apache.geode.internal.cache.tier.sockets.Message
    */
@@ -75,7 +70,9 @@ public class ClientDataSerializerMessage extends ClientUpdateMessageImpl {
     } else if (proxy.getVersion().compareTo(Version.GFE_57) >= 0) {
       return getGFEMessage(proxy.getVersion());
     } else {
-      throw new IOException("Unsupported client version for server-to-client message creation: " + proxy.getVersion());
+      throw new IOException(
+          "Unsupported client version for server-to-client message creation: "
+              + proxy.getVersion());
     }
   }
 
@@ -162,10 +159,8 @@ public class ClientDataSerializerMessage extends ClientUpdateMessageImpl {
 
   /**
    * Writes an object to a <code>Datautput</code>.
-   * 
-   * @throws IOException
-   *                 If this serializer cannot write an object to
-   *                 <code>out</code>.
+   *
+   * @throws IOException If this serializer cannot write an object to <code>out</code>.
    * @see #fromData
    */
   @Override
@@ -183,12 +178,9 @@ public class ClientDataSerializerMessage extends ClientUpdateMessageImpl {
 
   /**
    * Reads an object from a <code>DataInput</code>.
-   * 
-   * @throws IOException
-   *                 If this serializer cannot read an object from
-   *                 <code>in</code>.
-   * @throws ClassNotFoundException
-   *                 If the class for an object being restored cannot be found.
+   *
+   * @throws IOException If this serializer cannot read an object from <code>in</code>.
+   * @throws ClassNotFoundException If the class for an object being restored cannot be found.
    * @see #toData
    */
   @Override
@@ -220,8 +212,7 @@ public class ClientDataSerializerMessage extends ClientUpdateMessageImpl {
   }
 
   @Override
-  public void setLatestValue(Object value) {
-  }
+  public void setLatestValue(Object value) {}
 
   @Override
   public boolean isClientInterested(ClientProxyMembershipID clientId) {
@@ -236,7 +227,15 @@ public class ClientDataSerializerMessage extends ClientUpdateMessageImpl {
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("ClientDataSerializerMessage[").append(";value=").append((Arrays.toString(this.serializedDataSerializer))).append(";memberId=").append(getMembershipId()).append(";eventId=").append(getEventId()).append("]");
+    buffer
+        .append("ClientDataSerializerMessage[")
+        .append(";value=")
+        .append((Arrays.toString(this.serializedDataSerializer)))
+        .append(";memberId=")
+        .append(getMembershipId())
+        .append(";eventId=")
+        .append(getEventId())
+        .append("]");
     return buffer.toString();
   }
 }

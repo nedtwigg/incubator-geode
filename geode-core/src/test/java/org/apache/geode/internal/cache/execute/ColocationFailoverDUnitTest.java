@@ -149,7 +149,8 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
     while (customerIterator.hasNext()) {
       Integer bucketId = (Integer) customerIterator.next();
       if (customeAdvisor.isPrimaryForBucket(bucketId.intValue())) {
-        customerPrimaryMap.put(bucketId, customeAdvisor.getPrimaryMemberForBucket(bucketId.intValue()).getId());
+        customerPrimaryMap.put(
+            bucketId, customeAdvisor.getPrimaryMemberForBucket(bucketId.intValue()).getId());
       }
     }
     HashMap orderPrimaryMap = new HashMap();
@@ -158,7 +159,8 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
     while (orderIterator.hasNext()) {
       Integer bucketId = (Integer) orderIterator.next();
       if (orderAdvisor.isPrimaryForBucket(bucketId.intValue())) {
-        orderPrimaryMap.put(bucketId, orderAdvisor.getPrimaryMemberForBucket(bucketId.intValue()).getId());
+        orderPrimaryMap.put(
+            bucketId, orderAdvisor.getPrimaryMemberForBucket(bucketId.intValue()).getId());
       }
     }
     HashMap shipmentPrimaryMap = new HashMap();
@@ -167,7 +169,8 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
     while (shipmentIterator.hasNext()) {
       Integer bucketId = (Integer) shipmentIterator.next();
       if (shipmentAdvisor.isPrimaryForBucket(bucketId.intValue())) {
-        shipmentPrimaryMap.put(bucketId, shipmentAdvisor.getPrimaryMemberForBucket(bucketId.intValue()).getId());
+        shipmentPrimaryMap.put(
+            bucketId, shipmentAdvisor.getPrimaryMemberForBucket(bucketId.intValue()).getId());
       }
     }
     // verification for primary
@@ -198,16 +201,17 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
   }
 
   private static void verifyPrimaryColocation() {
-    WaitCriterion wc = new WaitCriterion() {
-      public boolean done() {
-        return tryVerifyPrimaryColocation();
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          public boolean done() {
+            return tryVerifyPrimaryColocation();
+          }
 
-      public String description() {
-        dump();
-        return excuse;
-      }
-    };
+          public String description() {
+            dump();
+            return excuse;
+          }
+        };
     Wait.waitForCriterion(wc, 60 * 1000, 1000, true);
   }
 
@@ -229,9 +233,7 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
 
   protected static String excuse;
 
-  /**
-   * @return true if verified
-   */
+  /** @return true if verified */
   protected static boolean tryVerifyColocation() {
     HashMap customerMap = new HashMap();
     HashMap customerPrimaryMap = new HashMap();
@@ -242,7 +244,8 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
       Set someOwners = customeAdvisor.getBucketOwners(bucketId.intValue());
       customerMap.put(bucketId, someOwners);
       if (customeAdvisor.isPrimaryForBucket(bucketId.intValue())) {
-        customerPrimaryMap.put(bucketId, customeAdvisor.getPrimaryMemberForBucket(bucketId.intValue()).getId());
+        customerPrimaryMap.put(
+            bucketId, customeAdvisor.getPrimaryMemberForBucket(bucketId.intValue()).getId());
       }
     }
     HashMap orderMap = new HashMap();
@@ -254,7 +257,8 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
       Set someOwners = orderAdvisor.getBucketOwners(bucketId.intValue());
       orderMap.put(bucketId, someOwners);
       if (orderAdvisor.isPrimaryForBucket(bucketId.intValue())) {
-        orderPrimaryMap.put(bucketId, orderAdvisor.getPrimaryMemberForBucket(bucketId.intValue()).getId());
+        orderPrimaryMap.put(
+            bucketId, orderAdvisor.getPrimaryMemberForBucket(bucketId.intValue()).getId());
       }
     }
     HashMap shipmentMap = new HashMap();
@@ -274,7 +278,8 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
         return false;
       }
       if (shipmentAdvisor.isPrimaryForBucket(bucketId.intValue())) {
-        shipmentPrimaryMap.put(bucketId, shipmentAdvisor.getPrimaryMemberForBucket(bucketId.intValue()).getId());
+        shipmentPrimaryMap.put(
+            bucketId, shipmentAdvisor.getPrimaryMemberForBucket(bucketId.intValue()).getId());
       }
     }
 
@@ -335,15 +340,16 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
 
   private static void verifyColocation() {
     // TODO does having this WaitCriterion help?
-    WaitCriterion wc = new WaitCriterion() {
-      public boolean done() {
-        return tryVerifyColocation();
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          public boolean done() {
+            return tryVerifyColocation();
+          }
 
-      public String description() {
-        return excuse;
-      }
-    };
+          public String description() {
+            return excuse;
+          }
+        };
     Wait.waitForCriterion(wc, 2 * 60 * 1000, 1000, true);
   }
 
@@ -374,7 +380,8 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
   }
 
   private static void createCustomerPR() {
-    Object args[] = new Object[] { customerPR_Name, new Integer(1), new Integer(50), new Integer(6), null };
+    Object args[] =
+        new Object[] {customerPR_Name, new Integer(1), new Integer(50), new Integer(6), null};
     createPR(customerPR_Name, new Integer(1), new Integer(50), new Integer(6), null);
     dataStore1.invoke(ColocationFailoverDUnitTest.class, "createPR", args);
     dataStore2.invoke(ColocationFailoverDUnitTest.class, "createPR", args);
@@ -383,7 +390,10 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
   }
 
   private static void createOrderPR() {
-    Object args[] = new Object[] { orderPR_Name, new Integer(1), new Integer(50), new Integer(6), customerPR_Name };
+    Object args[] =
+        new Object[] {
+          orderPR_Name, new Integer(1), new Integer(50), new Integer(6), customerPR_Name
+        };
     createPR(orderPR_Name, new Integer(1), new Integer(50), new Integer(6), customerPR_Name);
     dataStore1.invoke(ColocationFailoverDUnitTest.class, "createPR", args);
     dataStore2.invoke(ColocationFailoverDUnitTest.class, "createPR", args);
@@ -392,7 +402,10 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
   }
 
   private static void createShipmentPR() {
-    Object args[] = new Object[] { shipmentPR_Name, new Integer(1), new Integer(50), new Integer(6), orderPR_Name };
+    Object args[] =
+        new Object[] {
+          shipmentPR_Name, new Integer(1), new Integer(50), new Integer(6), orderPR_Name
+        };
     createPR(shipmentPR_Name, new Integer(1), new Integer(50), new Integer(6), orderPR_Name);
     dataStore1.invoke(ColocationFailoverDUnitTest.class, "createPR", args);
     dataStore2.invoke(ColocationFailoverDUnitTest.class, "createPR", args);
@@ -400,10 +413,21 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
     dataStore4.invoke(ColocationFailoverDUnitTest.class, "createPR", args);
   }
 
-  public static void createPR(String partitionedRegionName, Integer redundancy, Integer localMaxMemory, Integer totalNumBuckets, String colocatedWith) {
+  public static void createPR(
+      String partitionedRegionName,
+      Integer redundancy,
+      Integer localMaxMemory,
+      Integer totalNumBuckets,
+      String colocatedWith) {
 
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
-    PartitionAttributes prAttr = paf.setRedundantCopies(redundancy.intValue()).setLocalMaxMemory(localMaxMemory.intValue()).setTotalNumBuckets(totalNumBuckets.intValue()).setColocatedWith(colocatedWith).setPartitionResolver(new KeyPartitionResolver()).create();
+    PartitionAttributes prAttr =
+        paf.setRedundantCopies(redundancy.intValue())
+            .setLocalMaxMemory(localMaxMemory.intValue())
+            .setTotalNumBuckets(totalNumBuckets.intValue())
+            .setColocatedWith(colocatedWith)
+            .setPartitionResolver(new KeyPartitionResolver())
+            .create();
     AttributesFactory attr = new AttributesFactory();
     attr.setPartitionAttributes(prAttr);
     assertNotNull(cache);
@@ -411,21 +435,30 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
     if (partitionedRegionName.equals(customerPR_Name)) {
       customerPR = cache.createRegion(partitionedRegionName, attr.create());
       assertNotNull(customerPR);
-      LogWriterUtils.getLogWriter().info("Partitioned Region " + partitionedRegionName + " created Successfully :" + customerPR);
-
+      LogWriterUtils.getLogWriter()
+          .info(
+              "Partitioned Region "
+                  + partitionedRegionName
+                  + " created Successfully :"
+                  + customerPR);
     }
     if (partitionedRegionName.equals(orderPR_Name)) {
       orderPR = cache.createRegion(partitionedRegionName, attr.create());
       assertNotNull(orderPR);
-      LogWriterUtils.getLogWriter().info("Partitioned Region " + partitionedRegionName + " created Successfully :" + orderPR);
-
+      LogWriterUtils.getLogWriter()
+          .info(
+              "Partitioned Region " + partitionedRegionName + " created Successfully :" + orderPR);
     }
 
     if (partitionedRegionName.equals(shipmentPR_Name)) {
       shipmentPR = cache.createRegion(partitionedRegionName, attr.create());
       assertNotNull(shipmentPR);
-      LogWriterUtils.getLogWriter().info("Partitioned Region " + partitionedRegionName + " created Successfully :" + shipmentPR);
-
+      LogWriterUtils.getLogWriter()
+          .info(
+              "Partitioned Region "
+                  + partitionedRegionName
+                  + " created Successfully :"
+                  + shipmentPR);
     }
   }
 
@@ -448,18 +481,18 @@ public class ColocationFailoverDUnitTest extends JUnit4DistributedTestCase {
   @Override
   public final void preTearDown() throws Exception {
     closeCache();
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        closeCache();
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            closeCache();
+          }
+        });
   }
 }
 
 class KeyPartitionResolver implements PartitionResolver {
 
-  public KeyPartitionResolver() {
-  }
+  public KeyPartitionResolver() {}
 
   public String getName() {
     return this.getClass().getName();
@@ -471,14 +504,11 @@ class KeyPartitionResolver implements PartitionResolver {
     return new RoutingObject("" + key.charAt(key.length() - 1));
   }
 
-  public void close() {
-  }
+  public void close() {}
 
   public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    if (!(o instanceof KeyPartitionResolver))
-      return false;
+    if (this == o) return true;
+    if (!(o instanceof KeyPartitionResolver)) return false;
     KeyPartitionResolver otherKeyPartitionResolver = (KeyPartitionResolver) o;
     return otherKeyPartitionResolver.getName().equals(getName());
   }

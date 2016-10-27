@@ -57,8 +57,16 @@ public class GetDefaultDiskStoreNameDUnitTest extends JUnit4DistributedTestCase 
     assertThat(getDefaultDiskStoreName()).isEqualTo(expected);
   }
 
-  private String createDefaultDiskStoreName(final int hostIndex, final int vmIndex, final String methodName) {
-    return "DiskStore-" + hostIndex + "-" + vmIndex + "-" + getClass().getCanonicalName() + "." + methodName;
+  private String createDefaultDiskStoreName(
+      final int hostIndex, final int vmIndex, final String methodName) {
+    return "DiskStore-"
+        + hostIndex
+        + "-"
+        + vmIndex
+        + "-"
+        + getClass().getCanonicalName()
+        + "."
+        + methodName;
   }
 
   private String getDefaultDiskStoreName() {

@@ -21,15 +21,11 @@ import java.io.Serializable;
 import org.apache.geode.cache.Declarable;
 
 /**
- * Represents a number of shares of a stock ("security") held in a
- * {@link NewPortfolio}.
+ * Represents a number of shares of a stock ("security") held in a {@link NewPortfolio}.
  *
- * <P>
- *
- * This class is <code>Serializable</code> because we want it to be
- * distributed to multiple members of a distributed system.  Because
- * this class is <code>Declarable</code>, we can describe instances of
- * it in a GemFire <code>cache.xml</code> file.
+ * <p>This class is <code>Serializable</code> because we want it to be distributed to multiple
+ * members of a distributed system. Because this class is <code>Declarable</code>, we can describe
+ * instances of it in a GemFire <code>cache.xml</code> file.
  *
  * @since GemFire 4.0
  */
@@ -49,23 +45,17 @@ public class Position implements Declarable, Serializable, Comparable {
     this.mktValue = Double.parseDouble(props.getProperty("mktValue"));
   }
 
-  /**
-   * Returns the id of the security held in this position.
-   */
+  /** Returns the id of the security held in this position. */
   public String getSecId() {
     return this.secId;
   }
 
-  /**
-   * Returns the number of shares held in this position.
-   */
+  /** Returns the number of shares held in this position. */
   public double getQty() {
     return this.qty;
   }
 
-  /**
-   * Returns the value of this position.
-   */
+  /** Returns the value of this position. */
   public double getMktValue() {
     return this.mktValue;
   }
@@ -88,9 +78,7 @@ public class Position implements Declarable, Serializable, Comparable {
     return aStr.toString();
   }
 
-  /**
-   * To enable the comparison.
-   */
+  /** To enable the comparison. */
   public boolean equals(Object anObj) {
     if (anObj == null) {
       return false;
@@ -121,16 +109,18 @@ public class Position implements Declarable, Serializable, Comparable {
 
   public int hashCode() {
     int result = 17;
-    result = 37 * result + (int) (Double.doubleToLongBits(mktValue) ^ (Double.doubleToLongBits(mktValue) >>> 32));
-    result = 37 * result + (int) (Double.doubleToLongBits(qty) ^ (Double.doubleToLongBits(qty) >>> 32));
+    result =
+        37 * result
+            + (int)
+                (Double.doubleToLongBits(mktValue) ^ (Double.doubleToLongBits(mktValue) >>> 32));
+    result =
+        37 * result + (int) (Double.doubleToLongBits(qty) ^ (Double.doubleToLongBits(qty) >>> 32));
     result = 37 * result + secId.hashCode();
 
     return result;
   }
 
-  /**
-   * to configure position using index, set quantity equal to the index
-   */
+  /** to configure position using index, set quantity equal to the index */
   public void init(int i) {
     this.secId = new Integer(rng.nextInt(NUM_OF_SECURITIES)).toString();
     this.qty = new Double(i).doubleValue();
@@ -141,8 +131,7 @@ public class Position implements Declarable, Serializable, Comparable {
     return (int) this.qty;
   }
 
-  public void validate(int index) {
-  }
+  public void validate(int index) {}
 
   @Override
   public int compareTo(Object o) {
@@ -150,7 +139,8 @@ public class Position implements Declarable, Serializable, Comparable {
       return 0;
     } else {
       if (o instanceof Position) {
-        return Integer.valueOf(this.hashCode()).compareTo(Integer.valueOf(((Position) o).hashCode()));
+        return Integer.valueOf(this.hashCode())
+            .compareTo(Integer.valueOf(((Position) o).hashCode()));
       } else {
         return -1;
       }

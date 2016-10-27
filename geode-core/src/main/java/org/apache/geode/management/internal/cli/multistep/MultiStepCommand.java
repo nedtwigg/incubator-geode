@@ -21,13 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/***
- * Just a marker interface to identify interactive command from other regular commands
- *
- */
-
+/** * Just a marker interface to identify interactive command from other regular commands */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface MultiStepCommand {
-
-}
+public @interface MultiStepCommand {}

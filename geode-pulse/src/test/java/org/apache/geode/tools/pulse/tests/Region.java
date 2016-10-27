@@ -31,14 +31,26 @@ import javax.management.openmbean.SimpleType;
 public class Region extends JMXBaseBean implements RegionMBean {
   private String name = null;
 
-  private static String[] regAttItemNames = { "compressionCodec", "enableOffHeapMemory", "scope", "diskStoreName", "diskSynchronous" };
-  private static String[] regAttItemDescriptions = { "compressionCodec", "enableOffHeapMemory", "scope", "diskStoreName", "diskSynchronous" };
-  private static OpenType[] regAttItemTypes = { SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN };
+  private static String[] regAttItemNames = {
+    "compressionCodec", "enableOffHeapMemory", "scope", "diskStoreName", "diskSynchronous"
+  };
+  private static String[] regAttItemDescriptions = {
+    "compressionCodec", "enableOffHeapMemory", "scope", "diskStoreName", "diskSynchronous"
+  };
+  private static OpenType[] regAttItemTypes = {
+    SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN
+  };
   private static CompositeType listRegionAttributesCompData = null;
 
   static {
     try {
-      listRegionAttributesCompData = new CompositeType("listRegionAttributes", "Regions attributes", regAttItemNames, regAttItemDescriptions, regAttItemTypes);
+      listRegionAttributesCompData =
+          new CompositeType(
+              "listRegionAttributes",
+              "Regions attributes",
+              regAttItemNames,
+              regAttItemDescriptions,
+              regAttItemTypes);
 
     } catch (OpenDataException e) {
       e.printStackTrace();
@@ -173,5 +185,4 @@ public class Region extends JMXBaseBean implements RegionMBean {
     }
     return lraCompData;
   }
-
 }

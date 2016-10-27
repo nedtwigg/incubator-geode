@@ -36,8 +36,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 @Category(IntegrationTest.class)
 public class TombstoneCreationJUnitTest {
-  @Rule
-  public TestName nameRule = new TestName();
+  @Rule public TestName nameRule = new TestName();
 
   @After
   public void tearDown() {
@@ -54,11 +53,20 @@ public class TombstoneCreationJUnitTest {
     props.put(LOCATORS, "");
     props.put(MCAST_PORT, "0");
     props.put(LOG_LEVEL, "config");
-    GemFireCacheImpl cache = (GemFireCacheImpl) CacheFactory.create(DistributedSystem.connect(props));
+    GemFireCacheImpl cache =
+        (GemFireCacheImpl) CacheFactory.create(DistributedSystem.connect(props));
     RegionFactory f = cache.createRegionFactory(RegionShortcut.REPLICATE);
     DistributedRegion region = (DistributedRegion) f.create(name);
 
-    EntryEventImpl ev = EntryEventImpl.create(region, Operation.DESTROY, "myDestroyedKey", null, null, true, new InternalDistributedMember(InetAddress.getLocalHost(), 1234));
+    EntryEventImpl ev =
+        EntryEventImpl.create(
+            region,
+            Operation.DESTROY,
+            "myDestroyedKey",
+            null,
+            null,
+            true,
+            new InternalDistributedMember(InetAddress.getLocalHost(), 1234));
     VersionTag tag = VersionTag.create((InternalDistributedMember) ev.getDistributedMember());
     tag.setIsRemoteForTesting();
     tag.setEntryVersion(2);
@@ -66,19 +74,23 @@ public class TombstoneCreationJUnitTest {
     tag.setVersionTimeStamp(System.currentTimeMillis());
     tag.setDistributedSystemId(1);
     ev.setVersionTag(tag);
-    cache.getLogger().info("destroyThread is trying to destroy the entry: " + region.getRegionEntry("myDestroyedKey"));
+    cache
+        .getLogger()
+        .info(
+            "destroyThread is trying to destroy the entry: "
+                + region.getRegionEntry("myDestroyedKey"));
     region.basicDestroy(ev, false, null); // expectedOldValue not supported on
     RegionEntry entry = region.getRegionEntry("myDestroyedKey");
     Assert.assertTrue(entry != null, "expected to find a region entry for myDestroyedKey");
-    Assert.assertTrue(entry.isTombstone(), "expected entry to be found and be a tombstone but it is " + entry);
-
+    Assert.assertTrue(
+        entry.isTombstone(), "expected entry to be found and be a tombstone but it is " + entry);
   }
 
   /**
-   * In bug #47868 a thread puts a REMOVED_PHASE1 entry in the map but is
-   * unable to lock the entry before a Destroy thread gets it.  The Destroy
-   * thread did not apply its operation but threw an EntryNotFoundException.
-   * It is supposed to create a Tombstone.
+   * In bug #47868 a thread puts a REMOVED_PHASE1 entry in the map but is unable to lock the entry
+   * before a Destroy thread gets it. The Destroy thread did not apply its operation but threw an
+   * EntryNotFoundException. It is supposed to create a Tombstone.
+   *
    * @throws Exception
    */
   @Test
@@ -88,7 +100,8 @@ public class TombstoneCreationJUnitTest {
     props.put(LOCATORS, "");
     props.put(MCAST_PORT, "0");
     props.put(LOG_LEVEL, "config");
-    final GemFireCacheImpl cache = (GemFireCacheImpl) CacheFactory.create(DistributedSystem.connect(props));
+    final GemFireCacheImpl cache =
+        (GemFireCacheImpl) CacheFactory.create(DistributedSystem.connect(props));
     RegionFactory f = cache.createRegionFactory(RegionShortcut.REPLICATE);
     final DistributedRegion region = (DistributedRegion) f.create(name);
 
@@ -96,11 +109,20 @@ public class TombstoneCreationJUnitTest {
     // that has not yet been initialized with values.  Then do a destroy that will encounter
     // the entry
     String key = "destroyedKey1";
-    VersionedThinRegionEntryHeap entry = new VersionedThinRegionEntryHeapObjectKey(region, key, Token.REMOVED_PHASE1);
+    VersionedThinRegionEntryHeap entry =
+        new VersionedThinRegionEntryHeapObjectKey(region, key, Token.REMOVED_PHASE1);
     ((AbstractRegionMap) region.getRegionMap()).putEntryIfAbsentForTest(entry);
     cache.getLogger().info("entry inserted into cache: " + entry);
 
-    EntryEventImpl ev = EntryEventImpl.create(region, Operation.DESTROY, key, null, null, true, new InternalDistributedMember(InetAddress.getLocalHost(), 1234));
+    EntryEventImpl ev =
+        EntryEventImpl.create(
+            region,
+            Operation.DESTROY,
+            key,
+            null,
+            null,
+            true,
+            new InternalDistributedMember(InetAddress.getLocalHost(), 1234));
     VersionTag tag = VersionTag.create((InternalDistributedMember) ev.getDistributedMember());
     tag.setIsRemoteForTesting();
     tag.setEntryVersion(2);
@@ -108,13 +130,21 @@ public class TombstoneCreationJUnitTest {
     tag.setVersionTimeStamp(System.currentTimeMillis());
     tag.setDistributedSystemId(1);
     ev.setVersionTag(tag);
-    cache.getLogger().info("destroyThread is trying to destroy the entry: " + region.getRegionEntry(key));
+    cache
+        .getLogger()
+        .info("destroyThread is trying to destroy the entry: " + region.getRegionEntry(key));
     region.basicDestroy(ev, false, null); // expectedOldValue not supported on
     entry = (VersionedThinRegionEntryHeap) region.getRegionEntry(key);
     region.dumpBackingMap();
     Assert.assertTrue(entry != null, "expected to find a region entry for " + key);
-    Assert.assertTrue(entry.isTombstone(), "expected entry to be found and be a tombstone but it is " + entry);
-    Assert.assertTrue(entry.getVersionStamp().getEntryVersion() == tag.getEntryVersion(), "expected " + tag.getEntryVersion() + " but found " + entry.getVersionStamp().getEntryVersion());
+    Assert.assertTrue(
+        entry.isTombstone(), "expected entry to be found and be a tombstone but it is " + entry);
+    Assert.assertTrue(
+        entry.getVersionStamp().getEntryVersion() == tag.getEntryVersion(),
+        "expected "
+            + tag.getEntryVersion()
+            + " but found "
+            + entry.getVersionStamp().getEntryVersion());
 
     RegionMap map = region.getRegionMap();
     tag = entry.asVersionTag();
@@ -132,14 +162,17 @@ public class TombstoneCreationJUnitTest {
     tag.setVersionTimeStamp(System.currentTimeMillis());
     tag.setDistributedSystemId(1);
     ev.setVersionTag(tag);
-    cache.getLogger().info("destroyThread is trying to destroy the entry: " + region.getRegionEntry(key));
+    cache
+        .getLogger()
+        .info("destroyThread is trying to destroy the entry: " + region.getRegionEntry(key));
     boolean caught = false;
     try {
       region.basicDestroy(ev, false, null); // expectedOldValue not supported on
     } catch (EntryNotFoundException e) {
       caught = true;
     }
-    Assert.assertTrue(caught, "expected an EntryNotFoundException for origin=local destroy operation");
+    Assert.assertTrue(
+        caught, "expected an EntryNotFoundException for origin=local destroy operation");
   }
 
   // bug #51184 - cache accepts an event to overwrite an expired
@@ -152,7 +185,8 @@ public class TombstoneCreationJUnitTest {
     props.put(LOCATORS, "");
     props.put(MCAST_PORT, "0");
     props.put(LOG_LEVEL, "config");
-    final GemFireCacheImpl cache = (GemFireCacheImpl) CacheFactory.create(DistributedSystem.connect(props));
+    final GemFireCacheImpl cache =
+        (GemFireCacheImpl) CacheFactory.create(DistributedSystem.connect(props));
     RegionFactory f = cache.createRegionFactory(RegionShortcut.REPLICATE);
     final DistributedRegion region = (DistributedRegion) f.create(name);
 
@@ -160,17 +194,28 @@ public class TombstoneCreationJUnitTest {
     // that has not yet been initialized with values.  Then do a destroy that will encounter
     // the entry
     String key = "destroyedKey1";
-    VersionedThinRegionEntryHeap entry = new VersionedThinRegionEntryHeapObjectKey(region, key, Token.REMOVED_PHASE1);
-    entry.setLastModified(System.currentTimeMillis() - (2 * TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT));
+    VersionedThinRegionEntryHeap entry =
+        new VersionedThinRegionEntryHeapObjectKey(region, key, Token.REMOVED_PHASE1);
+    entry.setLastModified(
+        System.currentTimeMillis() - (2 * TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT));
     ((AbstractRegionMap) region.getRegionMap()).putEntryIfAbsentForTest(entry);
     cache.getLogger().info("entry inserted into cache: " + entry);
 
-    EntryEventImpl ev = EntryEventImpl.create(region, Operation.DESTROY, key, null, null, true, new InternalDistributedMember(InetAddress.getLocalHost(), 1234));
+    EntryEventImpl ev =
+        EntryEventImpl.create(
+            region,
+            Operation.DESTROY,
+            key,
+            null,
+            null,
+            true,
+            new InternalDistributedMember(InetAddress.getLocalHost(), 1234));
     VersionTag tag = VersionTag.create((InternalDistributedMember) ev.getDistributedMember());
     tag.setIsRemoteForTesting();
     tag.setEntryVersion(3);
     tag.setRegionVersion(12345);
-    tag.setVersionTimeStamp(System.currentTimeMillis() - TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT);
+    tag.setVersionTimeStamp(
+        System.currentTimeMillis() - TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT);
     tag.setDistributedSystemId(1);
     ev.setVersionTag(tag);
     cache.getLogger().info("trying to destroy the entry: " + region.getRegionEntry(key));
@@ -178,28 +223,46 @@ public class TombstoneCreationJUnitTest {
     entry = (VersionedThinRegionEntryHeap) region.getRegionEntry(key);
     region.dumpBackingMap();
     Assert.assertTrue(entry != null, "expected to find a region entry for " + key);
-    Assert.assertTrue(entry.isTombstone(), "expected entry to be found and be a tombstone but it is " + entry);
-    Assert.assertTrue(entry.getVersionStamp().getEntryVersion() == tag.getEntryVersion(), "expected " + tag.getEntryVersion() + " but found " + entry.getVersionStamp().getEntryVersion());
+    Assert.assertTrue(
+        entry.isTombstone(), "expected entry to be found and be a tombstone but it is " + entry);
+    Assert.assertTrue(
+        entry.getVersionStamp().getEntryVersion() == tag.getEntryVersion(),
+        "expected "
+            + tag.getEntryVersion()
+            + " but found "
+            + entry.getVersionStamp().getEntryVersion());
 
     // pause to let the clock change
     Thread.sleep(100);
 
-    ev = EntryEventImpl.create(region, Operation.UPDATE, key, null, null, true, new InternalDistributedMember(InetAddress.getLocalHost(), 1234));
+    ev =
+        EntryEventImpl.create(
+            region,
+            Operation.UPDATE,
+            key,
+            null,
+            null,
+            true,
+            new InternalDistributedMember(InetAddress.getLocalHost(), 1234));
     tag = VersionTag.create((InternalDistributedMember) ev.getDistributedMember());
     tag.setIsRemoteForTesting();
     tag.setEntryVersion(1);
     tag.setRegionVersion(12340);
-    tag.setVersionTimeStamp(System.currentTimeMillis() - TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT - 10000);
+    tag.setVersionTimeStamp(
+        System.currentTimeMillis() - TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT - 10000);
     tag.setDistributedSystemId(1);
     ev.setVersionTag(tag);
-    cache.getLogger().info("trying to update the entry with an older event: " + region.getRegionEntry(key));
+    cache
+        .getLogger()
+        .info("trying to update the entry with an older event: " + region.getRegionEntry(key));
     region.virtualPut(ev, false, true, null, false, tag.getVersionTimeStamp(), true);
     entry = (VersionedThinRegionEntryHeap) region.getRegionEntry(key);
     region.dumpBackingMap();
     Assert.assertTrue(entry != null, "expected to find a region entry for " + key);
-    Assert.assertTrue(entry.isTombstone(), "expected entry to be found and be a tombstone but it is " + entry);
-    Assert.assertTrue(entry.getVersionStamp().getEntryVersion() == 3, "expected 3" + " but found " + entry.getVersionStamp().getEntryVersion());
-
+    Assert.assertTrue(
+        entry.isTombstone(), "expected entry to be found and be a tombstone but it is " + entry);
+    Assert.assertTrue(
+        entry.getVersionStamp().getEntryVersion() == 3,
+        "expected 3" + " but found " + entry.getVersionStamp().getEntryVersion());
   }
-
 }

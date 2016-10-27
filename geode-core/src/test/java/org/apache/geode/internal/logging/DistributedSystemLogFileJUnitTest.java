@@ -44,14 +44,10 @@ import java.util.Scanner;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.*;
 
-/**
- * Connects DistributedSystem and tests logging behavior at a high level.
- * 
- */
+/** Connects DistributedSystem and tests logging behavior at a high level. */
 @Category(IntegrationTest.class)
 public class DistributedSystemLogFileJUnitTest {
-  @Rule
-  public TestName name = new TestName();
+  @Rule public TestName name = new TestName();
 
   protected static final int TIMEOUT_MILLISECONDS = 180 * 1000; // 2 minutes
   protected static final int INTERVAL_MILLISECONDS = 100; // 100 milliseconds
@@ -59,8 +55,7 @@ public class DistributedSystemLogFileJUnitTest {
   private DistributedSystem system;
 
   @Before
-  public void setUp() throws Exception {
-  }
+  public void setUp() throws Exception {}
 
   @After
   public void tearDown() throws Exception {
@@ -68,7 +63,7 @@ public class DistributedSystemLogFileJUnitTest {
       this.system.disconnect();
       this.system = null;
     }
-    //We will want to remove this at some point but right now the log context 
+    //We will want to remove this at some point but right now the log context
     //does not clear out the security logconfig between tests
     LoggerContext context = (LoggerContext) LogManager.getContext(false);
     context.stop();
@@ -99,25 +94,41 @@ public class DistributedSystemLogFileJUnitTest {
     assertNotNull(this.system);
 
     DistributionConfig config = ((InternalDistributedSystem) this.system).getConfig();
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.CONFIG_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.CONFIG_LEVEL, config.getLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.CONFIG_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.CONFIG_LEVEL,
+        config.getLogLevel());
 
     // CONFIG has been replaced with INFO -- all CONFIG statements are now logged at INFO as well
     InternalLogWriter logWriter = (InternalLogWriter) system.getLogWriter();
     assertNotNull(logWriter);
     assertTrue(logWriter instanceof LogWriterLogger);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL) + " but was " + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()), InternalLogWriter.INFO_LEVEL, logWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()),
+        InternalLogWriter.INFO_LEVEL,
+        logWriter.getLogWriterLevel());
 
-    Wait.waitForCriterion(new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return logFile.exists();
-      }
+    Wait.waitForCriterion(
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return logFile.exists();
+          }
 
-      @Override
-      public String description() {
-        return "waiting for log file to exist: " + logFile;
-      }
-    }, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, true);
+          @Override
+          public String description() {
+            return "waiting for log file to exist: " + logFile;
+          }
+        },
+        TIMEOUT_MILLISECONDS,
+        INTERVAL_MILLISECONDS,
+        true);
     assertTrue(logFile.exists());
 
     // assert not empty
@@ -160,22 +171,26 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING));
 
       i++;
-      final String WARNING_STRING = "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
+      final String WARNING_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
       logWriter.warning(WARNING_STRING);
       assertTrue(fileContainsString(logFile, WARNING_STRING));
 
       i++;
-      final String ERROR_STRING = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logWriter.error(ERROR_STRING);
       assertTrue(fileContainsString(logFile, ERROR_STRING));
 
       i++;
-      final String SEVERE_STRING = "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
+      final String SEVERE_STRING =
+          "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
       logWriter.severe(SEVERE_STRING);
       assertTrue(fileContainsString(logFile, SEVERE_STRING));
 
       i++;
-      final String TRACE_STRING = "ExpectedStrings: testLogLevels Message logged at TRACE level [" + i + "]";
+      final String TRACE_STRING =
+          "ExpectedStrings: testLogLevels Message logged at TRACE level [" + i + "]";
       logger.trace(TRACE_STRING);
       assertFalse(fileContainsString(logFile, TRACE_STRING));
 
@@ -190,17 +205,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING_J));
 
       i++;
-      final String WARN_STRING = "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
+      final String WARN_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
       logger.warn(WARN_STRING);
       assertTrue(fileContainsString(logFile, WARN_STRING));
 
       i++;
-      final String ERROR_STRING_J = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING_J =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logger.error(ERROR_STRING_J);
       assertTrue(fileContainsString(logFile, ERROR_STRING_J));
 
       i++;
-      final String FATAL_STRING = "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
+      final String FATAL_STRING =
+          "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
       logger.fatal(FATAL_STRING);
       assertTrue(fileContainsString(logFile, FATAL_STRING));
 
@@ -237,8 +255,20 @@ public class DistributedSystemLogFileJUnitTest {
 
     // change log level to fine and verify
     config.setLogLevel(InternalLogWriter.FINE_LEVEL);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.FINE_LEVEL, config.getLogLevel());
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()), InternalLogWriter.FINE_LEVEL, logWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        config.getLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        logWriter.getLogWriterLevel());
 
     assertEquals(Level.DEBUG, appLogger.getLevel());
 
@@ -269,17 +299,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING));
 
       i++;
-      final String WARNING_STRING = "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
+      final String WARNING_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
       logWriter.warning(WARNING_STRING);
       assertTrue(fileContainsString(logFile, WARNING_STRING));
 
       i++;
-      final String ERROR_STRING = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logWriter.error(ERROR_STRING);
       assertTrue(fileContainsString(logFile, ERROR_STRING));
 
       i++;
-      final String SEVERE_STRING = "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
+      final String SEVERE_STRING =
+          "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
       logWriter.severe(SEVERE_STRING);
       assertTrue(fileContainsString(logFile, SEVERE_STRING));
 
@@ -299,17 +332,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING_J));
 
       i++;
-      final String WARN_STRING = "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
+      final String WARN_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
       logger.warn(WARN_STRING);
       assertTrue(fileContainsString(logFile, WARN_STRING));
 
       i++;
-      final String ERROR_STRING_J = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING_J =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logger.error(ERROR_STRING_J);
       assertTrue(fileContainsString(logFile, ERROR_STRING_J));
 
       i++;
-      final String FATAL_STRING = "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
+      final String FATAL_STRING =
+          "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
       logger.fatal(FATAL_STRING);
       assertTrue(fileContainsString(logFile, FATAL_STRING));
 
@@ -346,8 +382,20 @@ public class DistributedSystemLogFileJUnitTest {
 
     // change log level to error and verify
     config.setLogLevel(InternalLogWriter.ERROR_LEVEL);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.ERROR_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.ERROR_LEVEL, config.getLogLevel());
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.ERROR_LEVEL) + " but was " + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()), InternalLogWriter.ERROR_LEVEL, logWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.ERROR_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.ERROR_LEVEL,
+        config.getLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.ERROR_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()),
+        InternalLogWriter.ERROR_LEVEL,
+        logWriter.getLogWriterLevel());
 
     assertEquals(Level.ERROR, appLogger.getLevel());
 
@@ -378,17 +426,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertFalse(fileContainsString(logFile, INFO_STRING));
 
       i++;
-      final String WARNING_STRING = "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
+      final String WARNING_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
       logWriter.warning(WARNING_STRING);
       assertFalse(fileContainsString(logFile, WARNING_STRING));
 
       i++;
-      final String ERROR_STRING = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logWriter.error(ERROR_STRING);
       assertTrue(fileContainsString(logFile, ERROR_STRING));
 
       i++;
-      final String SEVERE_STRING = "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
+      final String SEVERE_STRING =
+          "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
       logWriter.severe(SEVERE_STRING);
       assertTrue(fileContainsString(logFile, SEVERE_STRING));
 
@@ -408,17 +459,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertFalse(fileContainsString(logFile, INFO_STRING_J));
 
       i++;
-      final String WARN_STRING = "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
+      final String WARN_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
       logger.warn(WARN_STRING);
       assertFalse(fileContainsString(logFile, WARN_STRING));
 
       i++;
-      final String ERROR_STRING_J = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING_J =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logger.error(ERROR_STRING_J);
       assertTrue(fileContainsString(logFile, ERROR_STRING_J));
 
       i++;
-      final String FATAL_STRING = "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
+      final String FATAL_STRING =
+          "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
       logger.fatal(FATAL_STRING);
       assertTrue(fileContainsString(logFile, FATAL_STRING));
 
@@ -460,7 +514,8 @@ public class DistributedSystemLogFileJUnitTest {
   @Test
   public void testDistributedSystemWithFineLogLevel() throws Exception {
     //final int port = AvailablePort.getRandomAvailablePort(AvailablePort.JGROUPS);
-    final String logFileName = name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
+    final String logFileName =
+        name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
 
     final Properties properties = new Properties();
     properties.put(LOG_FILE, logFileName);
@@ -482,28 +537,44 @@ public class DistributedSystemLogFileJUnitTest {
     assertNotNull(this.system);
 
     DistributionConfig config = ((InternalDistributedSystem) this.system).getConfig();
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.FINE_LEVEL, config.getLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        config.getLogLevel());
 
     InternalLogWriter logWriter = (InternalLogWriter) system.getLogWriter();
     assertNotNull(logWriter);
     assertTrue(logWriter instanceof LogWriterLogger);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()), InternalLogWriter.FINE_LEVEL, logWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        logWriter.getLogWriterLevel());
     assertTrue(logWriter.fineEnabled());
     assertTrue(((LogWriterLogger) logWriter).isDebugEnabled());
     assertTrue(logWriter instanceof FastLogger);
     assertTrue(((FastLogger) logWriter).isDelegating());
 
-    Wait.waitForCriterion(new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return logFile.exists();
-      }
+    Wait.waitForCriterion(
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return logFile.exists();
+          }
 
-      @Override
-      public String description() {
-        return "waiting for log file to exist: " + logFile;
-      }
-    }, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, true);
+          @Override
+          public String description() {
+            return "waiting for log file to exist: " + logFile;
+          }
+        },
+        TIMEOUT_MILLISECONDS,
+        INTERVAL_MILLISECONDS,
+        true);
     assertTrue(logFile.exists());
 
     // assert not empty
@@ -544,17 +615,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING));
 
       i++;
-      final String WARNING_STRING = "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
+      final String WARNING_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
       logWriter.warning(WARNING_STRING);
       assertTrue(fileContainsString(logFile, WARNING_STRING));
 
       i++;
-      final String ERROR_STRING = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logWriter.error(ERROR_STRING);
       assertTrue(fileContainsString(logFile, ERROR_STRING));
 
       i++;
-      final String SEVERE_STRING = "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
+      final String SEVERE_STRING =
+          "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
       logWriter.severe(SEVERE_STRING);
       assertTrue(fileContainsString(logFile, SEVERE_STRING));
 
@@ -574,25 +648,40 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING_J));
 
       i++;
-      final String WARN_STRING = "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
+      final String WARN_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
       logger.warn(WARN_STRING);
       assertTrue(fileContainsString(logFile, WARN_STRING));
 
       i++;
-      final String ERROR_STRING_J = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING_J =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logger.error(ERROR_STRING_J);
       assertTrue(fileContainsString(logFile, ERROR_STRING_J));
 
       i++;
-      final String FATAL_STRING = "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
+      final String FATAL_STRING =
+          "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
       logger.fatal(FATAL_STRING);
       assertTrue(fileContainsString(logFile, FATAL_STRING));
     }
 
     // change log level to error and verify
     config.setLogLevel(InternalLogWriter.ERROR_LEVEL);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.ERROR_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.ERROR_LEVEL, config.getLogLevel());
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.ERROR_LEVEL) + " but was " + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()), InternalLogWriter.ERROR_LEVEL, logWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.ERROR_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.ERROR_LEVEL,
+        config.getLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.ERROR_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()),
+        InternalLogWriter.ERROR_LEVEL,
+        logWriter.getLogWriterLevel());
 
     {
       i++;
@@ -621,17 +710,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertFalse(fileContainsString(logFile, INFO_STRING));
 
       i++;
-      final String WARNING_STRING = "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
+      final String WARNING_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
       logWriter.warning(WARNING_STRING);
       assertFalse(fileContainsString(logFile, WARNING_STRING));
 
       i++;
-      final String ERROR_STRING = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logWriter.error(ERROR_STRING);
       assertTrue(fileContainsString(logFile, ERROR_STRING));
 
       i++;
-      final String SEVERE_STRING = "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
+      final String SEVERE_STRING =
+          "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
       logWriter.severe(SEVERE_STRING);
       assertTrue(fileContainsString(logFile, SEVERE_STRING));
 
@@ -651,17 +743,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertFalse(fileContainsString(logFile, INFO_STRING_J));
 
       i++;
-      final String WARN_STRING = "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
+      final String WARN_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
       logger.warn(WARN_STRING);
       assertFalse(fileContainsString(logFile, WARN_STRING));
 
       i++;
-      final String ERROR_STRING_J = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING_J =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logger.error(ERROR_STRING_J);
       assertTrue(fileContainsString(logFile, ERROR_STRING_J));
 
       i++;
-      final String FATAL_STRING = "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
+      final String FATAL_STRING =
+          "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
       logger.fatal(FATAL_STRING);
       assertTrue(fileContainsString(logFile, FATAL_STRING));
     }
@@ -673,7 +768,8 @@ public class DistributedSystemLogFileJUnitTest {
   @Test
   public void testDistributedSystemWithDebugLogLevel() throws Exception {
     //final int port = AvailablePort.getRandomAvailablePort(AvailablePort.JGROUPS);
-    final String logFileName = name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
+    final String logFileName =
+        name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
 
     final Properties properties = new Properties();
     properties.put(LOG_FILE, logFileName);
@@ -695,28 +791,44 @@ public class DistributedSystemLogFileJUnitTest {
     assertNotNull(this.system);
 
     DistributionConfig config = ((InternalDistributedSystem) this.system).getConfig();
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.FINE_LEVEL, config.getLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        config.getLogLevel());
 
     InternalLogWriter logWriter = (InternalLogWriter) system.getLogWriter();
     assertNotNull(logWriter);
     assertTrue(logWriter instanceof LogWriterLogger);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()), InternalLogWriter.FINE_LEVEL, logWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        logWriter.getLogWriterLevel());
     assertTrue(logWriter.fineEnabled());
     assertTrue(((LogWriterLogger) logWriter).isDebugEnabled());
     assertTrue(logWriter instanceof FastLogger);
     assertTrue(((FastLogger) logWriter).isDelegating());
 
-    Wait.waitForCriterion(new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return logFile.exists();
-      }
+    Wait.waitForCriterion(
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return logFile.exists();
+          }
 
-      @Override
-      public String description() {
-        return "waiting for log file to exist: " + logFile;
-      }
-    }, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, true);
+          @Override
+          public String description() {
+            return "waiting for log file to exist: " + logFile;
+          }
+        },
+        TIMEOUT_MILLISECONDS,
+        INTERVAL_MILLISECONDS,
+        true);
     assertTrue(logFile.exists());
 
     // assert not empty
@@ -757,17 +869,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING));
 
       i++;
-      final String WARNING_STRING = "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
+      final String WARNING_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
       logWriter.warning(WARNING_STRING);
       assertTrue(fileContainsString(logFile, WARNING_STRING));
 
       i++;
-      final String ERROR_STRING = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logWriter.error(ERROR_STRING);
       assertTrue(fileContainsString(logFile, ERROR_STRING));
 
       i++;
-      final String SEVERE_STRING = "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
+      final String SEVERE_STRING =
+          "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
       logWriter.severe(SEVERE_STRING);
       assertTrue(fileContainsString(logFile, SEVERE_STRING));
 
@@ -787,25 +902,40 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING_J));
 
       i++;
-      final String WARN_STRING = "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
+      final String WARN_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
       logger.warn(WARN_STRING);
       assertTrue(fileContainsString(logFile, WARN_STRING));
 
       i++;
-      final String ERROR_STRING_J = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING_J =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logger.error(ERROR_STRING_J);
       assertTrue(fileContainsString(logFile, ERROR_STRING_J));
 
       i++;
-      final String FATAL_STRING = "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
+      final String FATAL_STRING =
+          "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
       logger.fatal(FATAL_STRING);
       assertTrue(fileContainsString(logFile, FATAL_STRING));
     }
 
     // change log level to error and verify
     config.setLogLevel(InternalLogWriter.ERROR_LEVEL);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.ERROR_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.ERROR_LEVEL, config.getLogLevel());
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.ERROR_LEVEL) + " but was " + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()), InternalLogWriter.ERROR_LEVEL, logWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.ERROR_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.ERROR_LEVEL,
+        config.getLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.ERROR_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()),
+        InternalLogWriter.ERROR_LEVEL,
+        logWriter.getLogWriterLevel());
 
     {
       i++;
@@ -834,17 +964,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertFalse(fileContainsString(logFile, INFO_STRING));
 
       i++;
-      final String WARNING_STRING = "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
+      final String WARNING_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
       logWriter.warning(WARNING_STRING);
       assertFalse(fileContainsString(logFile, WARNING_STRING));
 
       i++;
-      final String ERROR_STRING = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logWriter.error(ERROR_STRING);
       assertTrue(fileContainsString(logFile, ERROR_STRING));
 
       i++;
-      final String SEVERE_STRING = "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
+      final String SEVERE_STRING =
+          "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
       logWriter.severe(SEVERE_STRING);
       assertTrue(fileContainsString(logFile, SEVERE_STRING));
 
@@ -864,17 +997,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertFalse(fileContainsString(logFile, INFO_STRING_J));
 
       i++;
-      final String WARN_STRING = "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
+      final String WARN_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
       logger.warn(WARN_STRING);
       assertFalse(fileContainsString(logFile, WARN_STRING));
 
       i++;
-      final String ERROR_STRING_J = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING_J =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logger.error(ERROR_STRING_J);
       assertTrue(fileContainsString(logFile, ERROR_STRING_J));
 
       i++;
-      final String FATAL_STRING = "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
+      final String FATAL_STRING =
+          "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
       logger.fatal(FATAL_STRING);
       assertTrue(fileContainsString(logFile, FATAL_STRING));
     }
@@ -886,8 +1022,10 @@ public class DistributedSystemLogFileJUnitTest {
   @Test
   public void testDistributedSystemWithSecurityLogDefaultLevel() throws Exception {
     //final int port = AvailablePort.getRandomAvailablePort(AvailablePort.JGROUPS);
-    final String logFileName = name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
-    final String securityLogFileName = "security" + name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
+    final String logFileName =
+        name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
+    final String securityLogFileName =
+        "security" + name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
 
     final Properties properties = new Properties();
     properties.put(LOG_FILE, logFileName);
@@ -916,8 +1054,20 @@ public class DistributedSystemLogFileJUnitTest {
     assertNotNull(this.system);
 
     DistributionConfig config = ((InternalDistributedSystem) this.system).getConfig();
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.CONFIG_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.CONFIG_LEVEL, config.getSecurityLogLevel());
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.FINE_LEVEL, config.getLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.CONFIG_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.CONFIG_LEVEL,
+        config.getSecurityLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        config.getLogLevel());
 
     InternalLogWriter securityLogWriter = (InternalLogWriter) system.getSecurityLogWriter();
     InternalLogWriter logWriter = (InternalLogWriter) system.getLogWriter();
@@ -925,8 +1075,20 @@ public class DistributedSystemLogFileJUnitTest {
     assertNotNull(logWriter);
     assertTrue(securityLogWriter instanceof LogWriterLogger);
     assertTrue(logWriter instanceof LogWriterLogger);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL) + " but was " + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()), InternalLogWriter.INFO_LEVEL, securityLogWriter.getLogWriterLevel());
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()), InternalLogWriter.FINE_LEVEL, logWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()),
+        InternalLogWriter.INFO_LEVEL,
+        securityLogWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        logWriter.getLogWriterLevel());
     assertFalse(securityLogWriter.fineEnabled());
     assertTrue(logWriter.fineEnabled());
 
@@ -935,22 +1097,26 @@ public class DistributedSystemLogFileJUnitTest {
     assertTrue(securityLogWriter instanceof FastLogger);
     assertTrue(logWriter instanceof FastLogger);
     //Because debug available is a static volatile, it is shared between the two writers
-    //However we should not see any debug level logging due to the config level set in 
+    //However we should not see any debug level logging due to the config level set in
     //the log writer itself
     assertTrue(((FastLogger) securityLogWriter).isDelegating());
     assertTrue(((FastLogger) logWriter).isDelegating());
 
-    Wait.waitForCriterion(new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return securityLogFile.exists() && logFile.exists();
-      }
+    Wait.waitForCriterion(
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return securityLogFile.exists() && logFile.exists();
+          }
 
-      @Override
-      public String description() {
-        return "waiting for log files to exist: " + securityLogFile + ", " + logFile;
-      }
-    }, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, true);
+          @Override
+          public String description() {
+            return "waiting for log files to exist: " + securityLogFile + ", " + logFile;
+          }
+        },
+        TIMEOUT_MILLISECONDS,
+        INTERVAL_MILLISECONDS,
+        true);
     assertTrue(securityLogFile.exists());
     assertTrue(logFile.exists());
 
@@ -986,7 +1152,8 @@ public class DistributedSystemLogFileJUnitTest {
       assertFalse(fileContainsString(logFile, INFO_STRING));
 
       i++;
-      final String FINE_STRING_FOR_LOGGER = "testLogLevels Message logged at FINE level [" + i + "]";
+      final String FINE_STRING_FOR_LOGGER =
+          "testLogLevels Message logged at FINE level [" + i + "]";
       logger.debug(FINE_STRING_FOR_LOGGER);
       assertFalse(fileContainsString(securityLogFile, FINE_STRING_FOR_LOGGER));
       assertTrue(fileContainsString(logFile, FINE_STRING_FOR_LOGGER));
@@ -999,8 +1166,10 @@ public class DistributedSystemLogFileJUnitTest {
   @Test
   public void testDistributedSystemWithSecurityLogFineLevel() throws Exception {
     //final int port = AvailablePort.getRandomAvailablePort(AvailablePort.JGROUPS);
-    final String logFileName = name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
-    final String securityLogFileName = "security" + name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
+    final String logFileName =
+        name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
+    final String securityLogFileName =
+        "security" + name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
 
     final Properties properties = new Properties();
     properties.put(LOG_FILE, logFileName);
@@ -1030,8 +1199,20 @@ public class DistributedSystemLogFileJUnitTest {
     assertNotNull(this.system);
 
     DistributionConfig config = ((InternalDistributedSystem) this.system).getConfig();
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.FINE_LEVEL, config.getSecurityLogLevel());
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.FINE_LEVEL, config.getLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        config.getSecurityLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        config.getLogLevel());
 
     InternalLogWriter securityLogWriter = (InternalLogWriter) system.getSecurityLogWriter();
     InternalLogWriter logWriter = (InternalLogWriter) system.getLogWriter();
@@ -1039,8 +1220,20 @@ public class DistributedSystemLogFileJUnitTest {
     assertNotNull(logWriter);
     assertTrue(securityLogWriter instanceof LogWriterLogger);
     assertTrue(logWriter instanceof LogWriterLogger);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()), InternalLogWriter.FINE_LEVEL, securityLogWriter.getLogWriterLevel());
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()), InternalLogWriter.FINE_LEVEL, logWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        securityLogWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        logWriter.getLogWriterLevel());
     assertTrue(securityLogWriter.fineEnabled());
     assertTrue(logWriter.fineEnabled());
 
@@ -1051,17 +1244,21 @@ public class DistributedSystemLogFileJUnitTest {
     assertTrue(((FastLogger) securityLogWriter).isDelegating());
     assertTrue(((FastLogger) logWriter).isDelegating());
 
-    Wait.waitForCriterion(new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return securityLogFile.exists() && logFile.exists();
-      }
+    Wait.waitForCriterion(
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return securityLogFile.exists() && logFile.exists();
+          }
 
-      @Override
-      public String description() {
-        return "waiting for log files to exist: " + securityLogFile + ", " + logFile;
-      }
-    }, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, true);
+          @Override
+          public String description() {
+            return "waiting for log files to exist: " + securityLogFile + ", " + logFile;
+          }
+        },
+        TIMEOUT_MILLISECONDS,
+        INTERVAL_MILLISECONDS,
+        true);
     assertTrue(securityLogFile.exists());
     assertTrue(logFile.exists());
 
@@ -1108,19 +1305,22 @@ public class DistributedSystemLogFileJUnitTest {
       assertFalse(fileContainsString(logFile, INFO_STRING));
 
       i++;
-      final String WARNING_STRING = "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
+      final String WARNING_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
       securityLogWriter.warning(WARNING_STRING);
       assertTrue(fileContainsString(securityLogFile, WARNING_STRING));
       assertFalse(fileContainsString(logFile, WARNING_STRING));
 
       i++;
-      final String ERROR_STRING = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       securityLogWriter.error(ERROR_STRING);
       assertTrue(fileContainsString(securityLogFile, ERROR_STRING));
       assertFalse(fileContainsString(logFile, ERROR_STRING));
 
       i++;
-      final String SEVERE_STRING = "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
+      final String SEVERE_STRING =
+          "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
       securityLogWriter.severe(SEVERE_STRING);
       assertTrue(fileContainsString(securityLogFile, SEVERE_STRING));
       assertFalse(fileContainsString(logFile, SEVERE_STRING));
@@ -1144,19 +1344,22 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING_J));
 
       i++;
-      final String WARN_STRING = "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
+      final String WARN_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
       logger.warn(WARN_STRING);
       assertFalse(fileContainsString(securityLogFile, WARN_STRING));
       assertTrue(fileContainsString(logFile, WARN_STRING));
 
       i++;
-      final String ERROR_STRING_J = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING_J =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logger.error(ERROR_STRING_J);
       assertFalse(fileContainsString(securityLogFile, ERROR_STRING_J));
       assertTrue(fileContainsString(logFile, ERROR_STRING_J));
 
       i++;
-      final String FATAL_STRING = "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
+      final String FATAL_STRING =
+          "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
       logger.fatal(FATAL_STRING);
       assertFalse(fileContainsString(securityLogFile, FATAL_STRING));
       assertTrue(fileContainsString(logFile, FATAL_STRING));
@@ -1167,15 +1370,18 @@ public class DistributedSystemLogFileJUnitTest {
   }
 
   /**
-   * tests scenario where security log has not been set but a level has 
-   * been set to a less granular level than that of the regular log.
-   * Verifies that the correct logs for security show up in the regular log as expected
+   * tests scenario where security log has not been set but a level has been set to a less granular
+   * level than that of the regular log. Verifies that the correct logs for security show up in the
+   * regular log as expected
+   *
    * @throws Exception
    */
   @Test
-  public void testDistributedSystemWithSecurityInfoLevelAndLogAtFineLevelButNoSecurityLog() throws Exception {
+  public void testDistributedSystemWithSecurityInfoLevelAndLogAtFineLevelButNoSecurityLog()
+      throws Exception {
     //final int port = AvailablePort.getRandomAvailablePort(AvailablePort.JGROUPS);
-    final String logFileName = name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
+    final String logFileName =
+        name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
 
     final Properties properties = new Properties();
     properties.put(LOG_FILE, logFileName);
@@ -1198,8 +1404,20 @@ public class DistributedSystemLogFileJUnitTest {
     assertNotNull(this.system);
 
     DistributionConfig config = ((InternalDistributedSystem) this.system).getConfig();
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.INFO_LEVEL, config.getSecurityLogLevel());
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.FINE_LEVEL, config.getLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.INFO_LEVEL,
+        config.getSecurityLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        config.getLogLevel());
 
     InternalLogWriter securityLogWriter = (InternalLogWriter) system.getSecurityLogWriter();
     InternalLogWriter logWriter = (InternalLogWriter) system.getLogWriter();
@@ -1207,8 +1425,20 @@ public class DistributedSystemLogFileJUnitTest {
     assertNotNull(logWriter);
     assertTrue(securityLogWriter instanceof LogWriterLogger);
     assertTrue(logWriter instanceof LogWriterLogger);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL) + " but was " + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()), InternalLogWriter.INFO_LEVEL, securityLogWriter.getLogWriterLevel());
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()), InternalLogWriter.FINE_LEVEL, logWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()),
+        InternalLogWriter.INFO_LEVEL,
+        securityLogWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        logWriter.getLogWriterLevel());
     assertFalse(securityLogWriter.fineEnabled());
     assertTrue(logWriter.fineEnabled());
 
@@ -1219,17 +1449,21 @@ public class DistributedSystemLogFileJUnitTest {
     assertTrue(((FastLogger) securityLogWriter).isDelegating());
     assertTrue(((FastLogger) logWriter).isDelegating());
 
-    Wait.waitForCriterion(new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return logFile.exists();
-      }
+    Wait.waitForCriterion(
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return logFile.exists();
+          }
 
-      @Override
-      public String description() {
-        return "waiting for log files to exist: " + logFile;
-      }
-    }, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, true);
+          @Override
+          public String description() {
+            return "waiting for log files to exist: " + logFile;
+          }
+        },
+        TIMEOUT_MILLISECONDS,
+        INTERVAL_MILLISECONDS,
+        true);
     assertTrue(logFile.exists());
 
     final Logger logger = LogService.getLogger();
@@ -1262,17 +1496,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING));
 
       i++;
-      final String WARNING_STRING = "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
+      final String WARNING_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
       securityLogWriter.warning(WARNING_STRING);
       assertTrue(fileContainsString(logFile, WARNING_STRING));
 
       i++;
-      final String ERROR_STRING = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       securityLogWriter.error(ERROR_STRING);
       assertTrue(fileContainsString(logFile, ERROR_STRING));
 
       i++;
-      final String SEVERE_STRING = "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
+      final String SEVERE_STRING =
+          "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
       securityLogWriter.severe(SEVERE_STRING);
       assertTrue(fileContainsString(logFile, SEVERE_STRING));
 
@@ -1292,17 +1529,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING_J));
 
       i++;
-      final String WARN_STRING = "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
+      final String WARN_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
       logger.warn(WARN_STRING);
       assertTrue(fileContainsString(logFile, WARN_STRING));
 
       i++;
-      final String ERROR_STRING_J = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING_J =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logger.error(ERROR_STRING_J);
       assertTrue(fileContainsString(logFile, ERROR_STRING_J));
 
       i++;
-      final String FATAL_STRING = "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
+      final String FATAL_STRING =
+          "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
       logger.fatal(FATAL_STRING);
       assertTrue(fileContainsString(logFile, FATAL_STRING));
     }
@@ -1312,15 +1552,18 @@ public class DistributedSystemLogFileJUnitTest {
   }
 
   /**
-   * tests scenario where security log has not been set but a level has 
-   * been set to a more granular level than that of the regular log.
-   * Verifies that the correct logs for security show up in the regular log as expected
+   * tests scenario where security log has not been set but a level has been set to a more granular
+   * level than that of the regular log. Verifies that the correct logs for security show up in the
+   * regular log as expected
+   *
    * @throws Exception
    */
   @Test
-  public void testDistributedSystemWithSecurityFineLevelAndLogAtInfoLevelButNoSecurityLog() throws Exception {
+  public void testDistributedSystemWithSecurityFineLevelAndLogAtInfoLevelButNoSecurityLog()
+      throws Exception {
     //final int port = AvailablePort.getRandomAvailablePort(AvailablePort.JGROUPS);
-    final String logFileName = name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
+    final String logFileName =
+        name.getMethodName() + "-system-" + System.currentTimeMillis() + ".log";
 
     final Properties properties = new Properties();
     properties.put(LOG_FILE, logFileName);
@@ -1343,8 +1586,20 @@ public class DistributedSystemLogFileJUnitTest {
     assertNotNull(this.system);
 
     DistributionConfig config = ((InternalDistributedSystem) this.system).getConfig();
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.FINE_LEVEL, config.getSecurityLogLevel());
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.INFO_LEVEL, config.getLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        config.getSecurityLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.INFO_LEVEL,
+        config.getLogLevel());
 
     InternalLogWriter securityLogWriter = (InternalLogWriter) system.getSecurityLogWriter();
     InternalLogWriter logWriter = (InternalLogWriter) system.getLogWriter();
@@ -1352,8 +1607,20 @@ public class DistributedSystemLogFileJUnitTest {
     assertNotNull(logWriter);
     assertTrue(securityLogWriter instanceof LogWriterLogger);
     assertTrue(logWriter instanceof LogWriterLogger);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL) + " but was " + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()), InternalLogWriter.FINE_LEVEL, securityLogWriter.getLogWriterLevel());
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL) + " but was " + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()), InternalLogWriter.INFO_LEVEL, logWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.FINE_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()),
+        InternalLogWriter.FINE_LEVEL,
+        securityLogWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(securityLogWriter.getLogWriterLevel()),
+        InternalLogWriter.INFO_LEVEL,
+        logWriter.getLogWriterLevel());
     assertTrue(securityLogWriter.fineEnabled());
     assertFalse(logWriter.fineEnabled());
 
@@ -1364,17 +1631,21 @@ public class DistributedSystemLogFileJUnitTest {
     assertTrue(((FastLogger) securityLogWriter).isDelegating());
     assertTrue(((FastLogger) logWriter).isDelegating());
 
-    Wait.waitForCriterion(new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return logFile.exists();
-      }
+    Wait.waitForCriterion(
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return logFile.exists();
+          }
 
-      @Override
-      public String description() {
-        return "waiting for log files to exist: " + logFile;
-      }
-    }, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, true);
+          @Override
+          public String description() {
+            return "waiting for log files to exist: " + logFile;
+          }
+        },
+        TIMEOUT_MILLISECONDS,
+        INTERVAL_MILLISECONDS,
+        true);
     assertTrue(logFile.exists());
 
     final Logger logger = LogService.getLogger();
@@ -1407,17 +1678,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING));
 
       i++;
-      final String WARNING_STRING = "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
+      final String WARNING_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARNING level [" + i + "]";
       securityLogWriter.warning(WARNING_STRING);
       assertTrue(fileContainsString(logFile, WARNING_STRING));
 
       i++;
-      final String ERROR_STRING = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       securityLogWriter.error(ERROR_STRING);
       assertTrue(fileContainsString(logFile, ERROR_STRING));
 
       i++;
-      final String SEVERE_STRING = "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
+      final String SEVERE_STRING =
+          "ExpectedStrings: testLogLevels Message logged at SEVERE level [" + i + "]";
       securityLogWriter.severe(SEVERE_STRING);
       assertTrue(fileContainsString(logFile, SEVERE_STRING));
 
@@ -1437,17 +1711,20 @@ public class DistributedSystemLogFileJUnitTest {
       assertTrue(fileContainsString(logFile, INFO_STRING_J));
 
       i++;
-      final String WARN_STRING = "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
+      final String WARN_STRING =
+          "ExpectedStrings: testLogLevels Message logged at WARN level [" + i + "]";
       logger.warn(WARN_STRING);
       assertTrue(fileContainsString(logFile, WARN_STRING));
 
       i++;
-      final String ERROR_STRING_J = "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
+      final String ERROR_STRING_J =
+          "ExpectedStrings: testLogLevels Message logged at ERROR level [" + i + "]";
       logger.error(ERROR_STRING_J);
       assertTrue(fileContainsString(logFile, ERROR_STRING_J));
 
       i++;
-      final String FATAL_STRING = "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
+      final String FATAL_STRING =
+          "ExpectedStrings: testLogLevels Message logged at FATAL level [" + i + "]";
       logger.fatal(FATAL_STRING);
       assertTrue(fileContainsString(logFile, FATAL_STRING));
     }
@@ -1456,7 +1733,8 @@ public class DistributedSystemLogFileJUnitTest {
     this.system = null;
   }
 
-  private static boolean fileContainsString(final File file, final String string) throws FileNotFoundException {
+  private static boolean fileContainsString(final File file, final String string)
+      throws FileNotFoundException {
     Scanner scanner = new Scanner(file);
     try {
       while (scanner.hasNextLine()) {

@@ -30,25 +30,25 @@ import org.apache.geode.internal.cache.VMCachedDeserializable;
 import org.apache.geode.pdx.internal.PdxString;
 
 /**
- * A generic comparator class which compares two Object/StructImpl according to
- * their sort criterion specified in order by clause
- * 
+ * A generic comparator class which compares two Object/StructImpl according to their sort criterion
+ * specified in order by clause
  */
 public class OrderByComparator implements Comparator {
   private final ObjectType objType;
   private final ExecutionContext context;
   protected final List<CompiledSortCriterion> orderByAttrs;
 
-  public OrderByComparator(List<CompiledSortCriterion> orderByAttrs, ObjectType objType, ExecutionContext context) {
+  public OrderByComparator(
+      List<CompiledSortCriterion> orderByAttrs, ObjectType objType, ExecutionContext context) {
     this.objType = objType;
     this.context = context;
     this.orderByAttrs = orderByAttrs;
   }
 
   /**
-   * Yogesh : This methods evaluates sort criteria and returns a ArrayList of
-   * Object[] arrays of evaluated criteria
-   * 
+   * Yogesh : This methods evaluates sort criteria and returns a ArrayList of Object[] arrays of
+   * evaluated criteria
+   *
    * @param value
    * @return Object[]
    */
@@ -67,25 +67,20 @@ public class OrderByComparator implements Comparator {
         arr[1] = Boolean.valueOf(csc.getCriterion());
         array[i++] = arr;
       }
-
     }
     return array;
   }
 
   /**
-   * Compares its two arguments for order. Returns a negative integer, zero, or
-   * a positive integer as the first argument is less than, equal to, or greater
-   * than the second.
-   * 
-   * @param obj1
-   *          the first object to be compared.
-   * @param obj2
-   *          the second object to be compared.
-   * @return a negative integer, zero, or a positive integer as the first
-   *         argument is less than, equal to, or greater than the second.
-   * @throws ClassCastException
-   *           if the arguments' types prevent them from being compared by this
-   *           Comparator.
+   * Compares its two arguments for order. Returns a negative integer, zero, or a positive integer
+   * as the first argument is less than, equal to, or greater than the second.
+   *
+   * @param obj1 the first object to be compared.
+   * @param obj2 the second object to be compared.
+   * @return a negative integer, zero, or a positive integer as the first argument is less than,
+   *     equal to, or greater than the second.
+   * @throws ClassCastException if the arguments' types prevent them from being compared by this
+   *     Comparator.
    */
   public int compare(Object obj1, Object obj2) {
     int result = -1;
@@ -94,8 +89,9 @@ public class OrderByComparator implements Comparator {
     }
     assert !(obj1 instanceof VMCachedDeserializable || obj2 instanceof VMCachedDeserializable);
 
-    if ((this.objType.isStructType() && obj1 instanceof Object[] && obj2 instanceof Object[]) || !this.objType.isStructType()) { // obj1 instanceof Object && obj2
-                                                                                                                                   // instanceof Object){
+    if ((this.objType.isStructType() && obj1 instanceof Object[] && obj2 instanceof Object[])
+        || !this.objType.isStructType()) { // obj1 instanceof Object && obj2
+      // instanceof Object){
       Object[] list1 = this.evaluateSortCriteria(obj1);
       Object[] list2 = this.evaluateSortCriteria(obj2);
 
@@ -130,7 +126,6 @@ public class OrderByComparator implements Comparator {
               }
               result = ((Comparable) arr1[0]).compareTo(arr2[0]);
             }
-
           }
 
           // equals.
@@ -218,8 +213,9 @@ public class OrderByComparator implements Comparator {
     return -1;
   }
 
-  void addEvaluatedSortCriteria(Object row, ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  void addEvaluatedSortCriteria(Object row, ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     // No op
   }
-
 }

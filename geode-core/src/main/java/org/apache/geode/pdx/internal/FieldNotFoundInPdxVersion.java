@@ -23,5 +23,4 @@ public class FieldNotFoundInPdxVersion extends Exception {
   public FieldNotFoundInPdxVersion(String message) {
     super(message);
   }
-
 }

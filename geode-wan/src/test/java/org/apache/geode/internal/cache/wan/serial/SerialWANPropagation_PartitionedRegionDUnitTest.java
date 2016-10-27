@@ -58,16 +58,34 @@ public class SerialWANPropagation_PartitionedRegionDUnitTest extends WANTestBase
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.startSender("ln"));
     //vm5.invoke(() -> WANTestBase.startSender( "ln" ));
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
 
@@ -88,23 +106,47 @@ public class SerialWANPropagation_PartitionedRegionDUnitTest extends WANTestBase
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
     vm5.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
@@ -124,24 +166,58 @@ public class SerialWANPropagation_PartitionedRegionDUnitTest extends WANTestBase
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createSender("lnSerial", 2, false, 100, 10, false, false, null, true));
-    vm5.invoke(() -> WANTestBase.createSender("lnSerial", 2, false, 100, 10, false, false, null, true));
+    vm4.invoke(
+        () -> WANTestBase.createSender("lnSerial", 2, false, 100, 10, false, false, null, true));
+    vm5.invoke(
+        () -> WANTestBase.createSender("lnSerial", 2, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnSerial", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnSerial", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnSerial", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnSerial", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnSerial", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnSerial", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnSerial", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnSerial", 1, 100, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.startSender("lnSerial"));
     vm5.invoke(() -> WANTestBase.startSender("lnSerial"));
@@ -164,27 +240,63 @@ public class SerialWANPropagation_PartitionedRegionDUnitTest extends WANTestBase
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createSender("lnSerial1", 2, false, 100, 10, false, false, null, true));
-    vm5.invoke(() -> WANTestBase.createSender("lnSerial1", 2, false, 100, 10, false, false, null, true));
+    vm4.invoke(
+        () -> WANTestBase.createSender("lnSerial1", 2, false, 100, 10, false, false, null, true));
+    vm5.invoke(
+        () -> WANTestBase.createSender("lnSerial1", 2, false, 100, 10, false, false, null, true));
 
-    vm5.invoke(() -> WANTestBase.createSender("lnSerial2", 2, false, 100, 10, false, false, null, true));
-    vm6.invoke(() -> WANTestBase.createSender("lnSerial2", 2, false, 100, 10, false, false, null, true));
+    vm5.invoke(
+        () -> WANTestBase.createSender("lnSerial2", 2, false, 100, 10, false, false, null, true));
+    vm6.invoke(
+        () -> WANTestBase.createSender("lnSerial2", 2, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial1", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial1", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial1", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial1", isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial1", isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial1", isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial1", isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial1", isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnSerial2", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnSerial2", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnSerial2", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnSerial2", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnSerial2", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnSerial2", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnSerial2", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnSerial2", 1, 100, isOffHeap()));
 
     startSenderInVMs("lnSerial1", vm4, vm5);
 
@@ -211,22 +323,44 @@ public class SerialWANPropagation_PartitionedRegionDUnitTest extends WANTestBase
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createSender("lnSerial1", 2, false, 100, 10, false, false, null, true));
-    vm5.invoke(() -> WANTestBase.createSender("lnSerial1", 2, false, 100, 10, false, false, null, true));
+    vm4.invoke(
+        () -> WANTestBase.createSender("lnSerial1", 2, false, 100, 10, false, false, null, true));
+    vm5.invoke(
+        () -> WANTestBase.createSender("lnSerial1", 2, false, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createSender("lnSerial2", 3, false, 100, 10, false, false, null, true));
-    vm5.invoke(() -> WANTestBase.createSender("lnSerial2", 3, false, 100, 10, false, false, null, true));
+    vm4.invoke(
+        () -> WANTestBase.createSender("lnSerial2", 3, false, 100, 10, false, false, null, true));
+    vm5.invoke(
+        () -> WANTestBase.createSender("lnSerial2", 3, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
     startSenderInVMs("lnSerial1", vm4, vm5);
     startSenderInVMs("lnSerial2", vm4, vm5);
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnSerial1,lnSerial2", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnSerial1,lnSerial2", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnSerial1,lnSerial2", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnSerial1,lnSerial2", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnSerial1,lnSerial2", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnSerial1,lnSerial2", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnSerial1,lnSerial2", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnSerial1,lnSerial2", 1, 100, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
 
@@ -251,15 +385,33 @@ public class SerialWANPropagation_PartitionedRegionDUnitTest extends WANTestBase
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
     //do initial 100 puts to create all the buckets
     vm5.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 100));
@@ -268,7 +420,8 @@ public class SerialWANPropagation_PartitionedRegionDUnitTest extends WANTestBase
     IgnoredException.addIgnoredException(CacheClosedException.class.getName());
     IgnoredException.addIgnoredException(ForceReattemptException.class.getName());
     //start async puts
-    AsyncInvocation inv = vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
+    AsyncInvocation inv =
+        vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
     //close the cache on vm4 in between the puts
     vm4.invoke(() -> WANTestBase.killSender());
 
@@ -286,12 +439,30 @@ public class SerialWANPropagation_PartitionedRegionDUnitTest extends WANTestBase
     createCacheInVMs(nyPort, vm2, vm3);
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
     createReceiverInVMs(vm2, vm3);
 
@@ -300,8 +471,10 @@ public class SerialWANPropagation_PartitionedRegionDUnitTest extends WANTestBase
 
     startSenderInVMs("ln", vm4, vm5);
 
-    vm4.invoke(() -> WANTestBase.doMultiThreadedPuts( // TODO: eats exceptions
-        getTestMethodName() + "_PR", 1000));
+    vm4.invoke(
+        () ->
+            WANTestBase.doMultiThreadedPuts( // TODO: eats exceptions
+                getTestMethodName() + "_PR", 1000));
 
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 1000));
     vm3.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 1000));

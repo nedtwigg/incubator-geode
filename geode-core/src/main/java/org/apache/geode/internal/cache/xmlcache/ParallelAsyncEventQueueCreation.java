@@ -31,13 +31,15 @@ import org.apache.geode.internal.cache.EnumListenerEvent;
 import org.apache.geode.internal.cache.wan.AbstractGatewaySender;
 import org.apache.geode.internal.cache.wan.GatewaySenderAttributes;
 
-public class ParallelAsyncEventQueueCreation extends AbstractGatewaySender implements GatewaySender {
+public class ParallelAsyncEventQueueCreation extends AbstractGatewaySender
+    implements GatewaySender {
 
   public ParallelAsyncEventQueueCreation(Cache cache, GatewaySenderAttributes attrs) {
     super(cache, attrs);
   }
 
-  public void distribute(EnumListenerEvent operation, EntryEventImpl event, List<Integer> remoteDSIds) {
+  public void distribute(
+      EnumListenerEvent operation, EntryEventImpl event, List<Integer> remoteDSIds) {
     // TODO Auto-generated method stub
 
   }
@@ -115,5 +117,4 @@ public class ParallelAsyncEventQueueCreation extends AbstractGatewaySender imple
     // TODO Auto-generated method stub
 
   }
-
 }

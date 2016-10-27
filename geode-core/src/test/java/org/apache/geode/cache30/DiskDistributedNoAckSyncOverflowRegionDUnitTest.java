@@ -30,7 +30,8 @@ import org.apache.geode.internal.OSProcess;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 @Category(DistributedTest.class)
-public class DiskDistributedNoAckSyncOverflowRegionDUnitTest extends DiskDistributedNoAckRegionTestCase {
+public class DiskDistributedNoAckSyncOverflowRegionDUnitTest
+    extends DiskDistributedNoAckRegionTestCase {
 
   /** Creates a new instance of DiskDistributedNoAckSyncOverflowRegionDUnitTest */
   public DiskDistributedNoAckSyncOverflowRegionDUnitTest() {
@@ -41,13 +42,18 @@ public class DiskDistributedNoAckSyncOverflowRegionDUnitTest extends DiskDistrib
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_NO_ACK);
 
-    factory.setDiskStoreName(getCache().createDiskStoreFactory().setDiskDirs(getDiskDirs()).create(getUniqueName()).getName());
+    factory.setDiskStoreName(
+        getCache()
+            .createDiskStoreFactory()
+            .setDiskDirs(getDiskDirs())
+            .create(getUniqueName())
+            .getName());
 
-    factory.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(1, null, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUMemoryAttributes(1, null, EvictionAction.OVERFLOW_TO_DISK));
 
     factory.setDiskSynchronous(true);
     factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     return factory.create();
   }
-
 }

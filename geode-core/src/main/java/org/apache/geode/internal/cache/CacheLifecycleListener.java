@@ -17,21 +17,16 @@
 package org.apache.geode.internal.cache;
 
 /**
- * Defines callbacks that are invoked when a <code>GemFireCache</code> is 
- * created or closed.
- * 
+ * Defines callbacks that are invoked when a <code>GemFireCache</code> is created or closed.
+ *
  * @see GemFireCacheImpl#addCacheLifecycleListener(CacheLifecycleListener)
  * @see GemFireCacheImpl#removeCacheLifecycleListener(CacheLifecycleListener)
  */
 public interface CacheLifecycleListener {
 
-  /**
-   * Invoked when a new <code>GemFireCache</code> is created
-   */
+  /** Invoked when a new <code>GemFireCache</code> is created */
   public void cacheCreated(GemFireCacheImpl cache);
 
-  /**
-   * Invoked when a <code>GemFireCache</code> is closed
-   */
+  /** Invoked when a <code>GemFireCache</code> is closed */
   public void cacheClosed(GemFireCacheImpl cache);
 }

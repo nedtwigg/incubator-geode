@@ -26,18 +26,17 @@ import org.apache.geode.internal.cache.EntryEventImpl;
 import org.apache.geode.internal.cache.PartitionedRegion;
 
 /**
- * Used for partitioned region messages which support direct ack responses.
- * Direct ack should be used for message with a response from a single member,
- * or responses which are small.
- * 
- * Messages that extend this class *must* reply using the ReplySender returned
- * by {@link DistributionMessage#getReplySender(org.apache.geode.distributed.internal.DM)}
- * 
- * Additionally, if the ReplyProcessor used for this message extends PartitionResponse, it should
- * pass false for the register parameter of the PartitionResponse.
+ * Used for partitioned region messages which support direct ack responses. Direct ack should be
+ * used for message with a response from a single member, or responses which are small.
  *
+ * <p>Messages that extend this class *must* reply using the ReplySender returned by {@link
+ * DistributionMessage#getReplySender(org.apache.geode.distributed.internal.DM)}
+ *
+ * <p>Additionally, if the ReplyProcessor used for this message extends PartitionResponse, it should
+ * pass false for the register parameter of the PartitionResponse.
  */
-public abstract class RemoteOperationMessageWithDirectReply extends RemoteOperationMessage implements DirectReplyMessage {
+public abstract class RemoteOperationMessageWithDirectReply extends RemoteOperationMessage
+    implements DirectReplyMessage {
 
   protected DirectReplyProcessor processor;
 
@@ -45,19 +44,19 @@ public abstract class RemoteOperationMessageWithDirectReply extends RemoteOperat
     super();
   }
 
-  public RemoteOperationMessageWithDirectReply(Set recipients, String regionPath, DirectReplyProcessor processor) {
+  public RemoteOperationMessageWithDirectReply(
+      Set recipients, String regionPath, DirectReplyProcessor processor) {
     super(recipients, regionPath, processor);
     this.processor = processor;
   }
 
-  public RemoteOperationMessageWithDirectReply(InternalDistributedMember recipient, String regionPath, DirectReplyProcessor processor) {
+  public RemoteOperationMessageWithDirectReply(
+      InternalDistributedMember recipient, String regionPath, DirectReplyProcessor processor) {
     super(recipient, regionPath, processor);
     this.processor = processor;
   }
 
-  /**
-   * @param original
-   */
+  /** @param original */
   public RemoteOperationMessageWithDirectReply(RemoteOperationMessageWithDirectReply original) {
     super(original);
     this.processor = original.processor;

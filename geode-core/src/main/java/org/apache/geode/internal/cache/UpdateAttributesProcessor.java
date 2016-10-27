@@ -48,11 +48,9 @@ import org.apache.geode.internal.DSFIDFactory;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * This class is a bit misnamed. It really has more with pushing
- * a DistributionAdvisee's profile out to others and,
- * optionally if <code>profileExchange</code>,
- * fetching the profile of anyone who excepts the pushed profile.
- *
+ * This class is a bit misnamed. It really has more with pushing a DistributionAdvisee's profile out
+ * to others and, optionally if <code>profileExchange</code>, fetching the profile of anyone who
+ * excepts the pushed profile.
  */
 public class UpdateAttributesProcessor {
   private static final Logger logger = LogService.getLogger();
@@ -60,11 +58,13 @@ public class UpdateAttributesProcessor {
   protected final DistributionAdvisee advisee;
   private boolean profileExchange = false;
   /**
-   * If true then sender is telling receiver to remove the sender's profile.
-   * No profile exchange is needed in this case.
+   * If true then sender is telling receiver to remove the sender's profile. No profile exchange is
+   * needed in this case.
+   *
    * @since GemFire 5.7
    */
   private boolean removeProfile = false;
+
   private ReplyProcessor21 processor;
 
   /** Creates a new instance of UpdateAttributesProcessor */
@@ -74,6 +74,7 @@ public class UpdateAttributesProcessor {
 
   /**
    * Creates a new instance of UpdateAttributesProcessor
+   *
    * @since GemFire 5.7
    */
   public UpdateAttributesProcessor(DistributionAdvisee da, boolean removeProfile) {
@@ -82,16 +83,16 @@ public class UpdateAttributesProcessor {
   }
 
   /**
-   * Distribute new profile version without exchange of profiles. Same as 
-   * calling {@link #distribute(boolean)} with (false).
+   * Distribute new profile version without exchange of profiles. Same as calling {@link
+   * #distribute(boolean)} with (false).
    */
   void distribute() {
     distribute(false);
   }
 
-  /** 
-   * Distribute with optional exchange of profiles but do not create new 
-   * profile version.
+  /**
+   * Distribute with optional exchange of profiles but do not create new profile version.
+   *
    * @param exchangeProfiles true if we want to receive profile replies
    */
   public void distribute(boolean exchangeProfiles) {
@@ -185,8 +186,8 @@ public class UpdateAttributesProcessor {
     }
 
     /**
-     * Registers this processor as a membership listener and
-     * returns a set of the current members.
+     * Registers this processor as a membership listener and returns a set of the current members.
+     *
      * @return a Set of the current members
      * @since GemFire 5.7
      */
@@ -202,6 +203,7 @@ public class UpdateAttributesProcessor {
 
     /**
      * Unregisters this processor as a membership listener
+     *
      * @since GemFire 5.7
      */
     @Override
@@ -215,8 +217,8 @@ public class UpdateAttributesProcessor {
     }
 
     /**
-     * If this processor being used by controller then return
-     * ALL members; otherwise defer to super.
+     * If this processor being used by controller then return ALL members; otherwise defer to super.
+     *
      * @return a Set of the current members
      * @since GemFire 5.7
      */
@@ -239,13 +241,21 @@ public class UpdateAttributesProcessor {
             for (int i = 0; i < reply.profiles.length; i++) {
               // @todo Add putProfiles to DistributionAdvisor to do this
               //       with one call atomically?
-              UpdateAttributesProcessor.this.advisee.getDistributionAdvisor().putProfile(reply.profiles[i]);
+              UpdateAttributesProcessor
+                  .this
+                  .advisee
+                  .getDistributionAdvisor()
+                  .putProfile(reply.profiles[i]);
             }
           }
         } else if (msg instanceof ProfileReplyMessage) {
           ProfileReplyMessage reply = (ProfileReplyMessage) msg;
           if (reply.profile != null) {
-            UpdateAttributesProcessor.this.advisee.getDistributionAdvisor().putProfile(reply.profile);
+            UpdateAttributesProcessor
+                .this
+                .advisee
+                .getDistributionAdvisor()
+                .putProfile(reply.profile);
           }
         }
       } finally {
@@ -254,7 +264,8 @@ public class UpdateAttributesProcessor {
     }
   }
 
-  public static final class UpdateAttributesMessage extends HighPriorityDistributionMessage implements MessageWithReply {
+  public static final class UpdateAttributesMessage extends HighPriorityDistributionMessage
+      implements MessageWithReply {
 
     protected String adviseePath;
     protected int processorId = 0;
@@ -282,7 +293,8 @@ public class UpdateAttributesProcessor {
           if (this.exchangeProfiles) {
             replyProfiles = new ArrayList<Profile>();
           }
-          this.profile.processIncoming(dm, this.adviseePath, this.removeProfile, this.exchangeProfiles, replyProfiles);
+          this.profile.processIncoming(
+              dm, this.adviseePath, this.removeProfile, this.exchangeProfiles, replyProfiles);
         }
       } catch (CancelException e) {
         if (logger.isDebugEnabled()) {
@@ -369,10 +381,15 @@ public class UpdateAttributesProcessor {
     }
   }
 
-  public final static class ProfileReplyMessage extends ReplyMessage {
+  public static final class ProfileReplyMessage extends ReplyMessage {
     Profile profile;
 
-    public static void send(InternalDistributedMember recipient, int processorId, ReplyException exception, DistributionManager dm, Profile profile) {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        ReplyException exception,
+        DistributionManager dm,
+        Profile profile) {
       Assert.assertTrue(recipient != null, "Sending a ProfileReplyMessage to ALL");
       ProfileReplyMessage m = new ProfileReplyMessage();
 
@@ -429,17 +446,22 @@ public class UpdateAttributesProcessor {
     public boolean getInlineProcess() {
       return true;
     }
-
   }
 
   /**
    * Used to return multiple profiles
+   *
    * @since GemFire 5.7
    */
   public static class ProfilesReplyMessage extends ReplyMessage {
     Profile[] profiles;
 
-    public static void send(InternalDistributedMember recipient, int processorId, ReplyException exception, DistributionManager dm, Profile[] profiles) {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        ReplyException exception,
+        DistributionManager dm,
+        Profile[] profiles) {
       Assert.assertTrue(recipient != null, "Sending a ProfilesReplyMessage to ALL");
       ProfilesReplyMessage m = new ProfilesReplyMessage();
 

@@ -28,9 +28,7 @@ import org.apache.geode.internal.cache.RegionEntryContext;
 import org.apache.geode.internal.cache.RegionMap;
 import org.apache.geode.internal.cache.versions.RegionVersionVector;
 
-/**
- * Contract DiskInitFile needs a DiskRegion to provide.
- */
+/** Contract DiskInitFile needs a DiskRegion to provide. */
 public interface DiskRegionView extends PersistentMemberView, RegionEntryContext {
   public DiskStoreImpl getDiskStore();
 
@@ -76,7 +74,20 @@ public interface DiskRegionView extends PersistentMemberView, RegionEntryContext
 
   public void setConfigChanged(boolean v);
 
-  public void setConfig(byte lruAlgorithm, byte lruAction, int lruLimit, int concurrencyLevel, int initialCapacity, float loadFactor, boolean statisticsEnabled, boolean isBucket, EnumSet<DiskRegionFlag> flags, String partitionName, int startingBucketId, String compressorClassName, boolean offHeap);
+  public void setConfig(
+      byte lruAlgorithm,
+      byte lruAction,
+      int lruLimit,
+      int concurrencyLevel,
+      int initialCapacity,
+      float loadFactor,
+      boolean statisticsEnabled,
+      boolean isBucket,
+      EnumSet<DiskRegionFlag> flags,
+      String partitionName,
+      int startingBucketId,
+      String compressorClassName,
+      boolean offHeap);
 
   public byte getLruAlgorithm();
 
@@ -101,8 +112,8 @@ public interface DiskRegionView extends PersistentMemberView, RegionEntryContext
   public int getStartingBucketId();
 
   /**
-   * Return true if this region has data in disk to allow it be be recovered.
-   * Return false if it is a brand new region that has not yet written data to disk.
+   * Return true if this region has data in disk to allow it be be recovered. Return false if it is
+   * a brand new region that has not yet written data to disk.
    */
   public boolean isRecreated();
 
@@ -142,7 +153,7 @@ public interface DiskRegionView extends PersistentMemberView, RegionEntryContext
 
   public boolean isSync();
 
-  /** Update stats*/
+  /** Update stats */
   public void endRead(long start, long end, long bytesRead);
 
   public boolean isRegionClosed();

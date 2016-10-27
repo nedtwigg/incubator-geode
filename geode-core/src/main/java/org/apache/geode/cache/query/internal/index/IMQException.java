@@ -24,14 +24,13 @@ package org.apache.geode.cache.query.internal.index;
 
 import org.apache.geode.cache.query.QueryException;
 
-/**
- *
- */
+/** */
 public class IMQException extends QueryException {
   private static final long serialVersionUID = -5012914292321850775L;
 
   /**
    * Constructor used by concrete subclasses
+   *
    * @param msg the error message
    * @param cause a Throwable cause of this exception
    */
@@ -41,6 +40,7 @@ public class IMQException extends QueryException {
 
   /**
    * Constructor used by concrete subclasses
+   *
    * @param msg the error message
    */
   public IMQException(String msg) {
@@ -49,10 +49,10 @@ public class IMQException extends QueryException {
 
   /**
    * Constructor used by concrete subclasses
+   *
    * @param cause a Throwable cause of this exception
    */
   public IMQException(Throwable cause) {
     super(cause);
   }
-
 }

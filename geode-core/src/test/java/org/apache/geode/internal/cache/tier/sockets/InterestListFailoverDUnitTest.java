@@ -42,21 +42,17 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 /**
  * Test Scenario :
  *
- * one server two clients
- * create Entries in all vms
- * c1 : register (k1,k2,k3,k4,k5)
- * c2 : put (k1 -> vm2-key-1) and (k6 -> vm2-key-6)
- * c1 :  validate (r.getEntry("key-1").getValue() == "vm2-key-1")
- *                (r.getEntry("key-6").getValue() == "key-6") // as it is not registered
- * s1 : stop server
- * c2 : put (k1 -> vm2-key-1) and (k6 -> vm2-key-6)
- * c1 :  validate (r.getEntry("key-1").getValue() == "vm2-key-1")
- *                (r.getEntry("key-6").getValue() == "key-6") // as it is not registered *
+ * <p>one server two clients create Entries in all vms c1 : register (k1,k2,k3,k4,k5) c2 : put (k1
+ * -> vm2-key-1) and (k6 -> vm2-key-6) c1 : validate (r.getEntry("key-1").getValue() == "vm2-key-1")
+ * (r.getEntry("key-6").getValue() == "key-6") // as it is not registered s1 : stop server c2 : put
+ * (k1 -> vm2-key-1) and (k6 -> vm2-key-6) c1 : validate (r.getEntry("key-1").getValue() ==
+ * "vm2-key-1") (r.getEntry("key-6").getValue() == "key-6") // as it is not registered *
  */
 @Category(DistributedTest.class)
 public class InterestListFailoverDUnitTest extends JUnit4DistributedTestCase {
 
-  private static final String REGION_NAME = InterestListFailoverDUnitTest.class.getSimpleName() + "_region";
+  private static final String REGION_NAME =
+      InterestListFailoverDUnitTest.class.getSimpleName() + "_region";
 
   VM vm0 = null;
 
@@ -77,37 +73,43 @@ public class InterestListFailoverDUnitTest extends JUnit4DistributedTestCase {
     vm1 = host.getVM(1);
     vm2 = host.getVM(2);
     vm3 = host.getVM(3);
-
   }
 
   public void createServersAndClients(int redundancyLevel) {
     final Host host = Host.getHost(0);
     // start servers first
-    PORT1 = ((Integer) vm0.invoke(() -> CacheServerTestUtil.createCacheServer(REGION_NAME, new Boolean(true)))).intValue();
+    PORT1 =
+        ((Integer)
+                vm0.invoke(
+                    () -> CacheServerTestUtil.createCacheServer(REGION_NAME, new Boolean(true))))
+            .intValue();
 
-    PORT2 = ((Integer) vm3.invoke(() -> CacheServerTestUtil.createCacheServer(REGION_NAME, new Boolean(true)))).intValue();
+    PORT2 =
+        ((Integer)
+                vm3.invoke(
+                    () -> CacheServerTestUtil.createCacheServer(REGION_NAME, new Boolean(true))))
+            .intValue();
 
     vm1.invoke(() -> CacheServerTestUtil.disableShufflingOfEndpoints());
     vm2.invoke(() -> CacheServerTestUtil.disableShufflingOfEndpoints());
-    vm1.invoke(() -> CacheServerTestUtil.createCacheClient(getClientPool(NetworkUtils.getServerHostName(host), redundancyLevel), REGION_NAME));
-    vm2.invoke(() -> CacheServerTestUtil.createCacheClient(getClientPool(NetworkUtils.getServerHostName(host), 0), REGION_NAME));
+    vm1.invoke(
+        () ->
+            CacheServerTestUtil.createCacheClient(
+                getClientPool(NetworkUtils.getServerHostName(host), redundancyLevel), REGION_NAME));
+    vm2.invoke(
+        () ->
+            CacheServerTestUtil.createCacheClient(
+                getClientPool(NetworkUtils.getServerHostName(host), 0), REGION_NAME));
   }
 
   /**
-   * one server two clients
-   * create Entries in all vms
-   * c1 : register (k1,k2,k3,k4,k5)
-   * c2 : put (k1 -> vm2-key-1) and (k6 -> vm2-key-6)
-   * c1 :  validate (r.getEntry("key-1").getValue() == "vm2-key-1")
-   *                (r.getEntry("key-6").getValue() == "key-6") // as it is not registered
-   * s1 : stop server
-   * s1 : start server
-   * c2 : put (k1 -> vm2-key-1) and (k6 -> vm2-key-6)
-   * c1 :  validate (r.getEntry("key-1").getValue() == "vm2-key-1")
-   *                (r.getEntry("key-6").getValue() == "key-6") // as it is not registered
-   *
+   * one server two clients create Entries in all vms c1 : register (k1,k2,k3,k4,k5) c2 : put (k1 ->
+   * vm2-key-1) and (k6 -> vm2-key-6) c1 : validate (r.getEntry("key-1").getValue() == "vm2-key-1")
+   * (r.getEntry("key-6").getValue() == "key-6") // as it is not registered s1 : stop server s1 :
+   * start server c2 : put (k1 -> vm2-key-1) and (k6 -> vm2-key-6) c1 : validate
+   * (r.getEntry("key-1").getValue() == "vm2-key-1") (r.getEntry("key-6").getValue() == "key-6") //
+   * as it is not registered
    */
-
   @Test
   public void testInterestListRecoveryHA() {
     doTestInterestListRecovery(-1);
@@ -123,7 +125,8 @@ public class InterestListFailoverDUnitTest extends JUnit4DistributedTestCase {
     vm1.invoke(() -> InterestListFailoverDUnitTest.createEntries());
     vm2.invoke(() -> InterestListFailoverDUnitTest.createEntries());
     vm0.invoke(() -> InterestListFailoverDUnitTest.createEntries());
-    Integer primaryPort = (Integer) vm1.invoke(() -> InterestListFailoverDUnitTest.registerInterestList());
+    Integer primaryPort =
+        (Integer) vm1.invoke(() -> InterestListFailoverDUnitTest.registerInterestList());
     VM primaryVM;
     if (primaryPort.intValue() == PORT1) {
       primaryVM = vm0;
@@ -206,12 +209,16 @@ public class InterestListFailoverDUnitTest extends JUnit4DistributedTestCase {
 
   private Pool getClientPool(String host, int redundancyLevel) {
     PoolFactory pf = PoolManager.createFactory();
-    pf.addServer(host, PORT1).addServer(host, PORT2).setSubscriptionEnabled(true)
+    pf.addServer(host, PORT1)
+        .addServer(host, PORT2)
+        .setSubscriptionEnabled(true)
         // round robin?
-        .setReadTimeout(500).setSocketBufferSize(32768)
+        .setReadTimeout(500)
+        .setSocketBufferSize(32768)
         // retryAttempts 5
         // retryInterval 1000
-        .setMinConnections(4).setSubscriptionRedundancy(redundancyLevel);
+        .setMinConnections(4)
+        .setSubscriptionRedundancy(redundancyLevel);
     return ((PoolFactoryImpl) pf).getPoolAttributes();
   }
 
@@ -252,24 +259,25 @@ public class InterestListFailoverDUnitTest extends JUnit4DistributedTestCase {
       assertNotNull(r);
       // Verify that 'key-1' was updated
       // assertIndexDetailsEquals("vm2-key-1", r.getEntry("key-1").getValue());
-      WaitCriterion wc = new WaitCriterion() {
-        String excuse;
+      WaitCriterion wc =
+          new WaitCriterion() {
+            String excuse;
 
-        public boolean done() {
-          Object val = r.get(key1);
-          if (val == null) {
-            return false;
-          }
-          if (!val.equals("vm2-key-1" + v)) {
-            return false;
-          }
-          return true;
-        }
+            public boolean done() {
+              Object val = r.get(key1);
+              if (val == null) {
+                return false;
+              }
+              if (!val.equals("vm2-key-1" + v)) {
+                return false;
+              }
+              return true;
+            }
 
-        public String description() {
-          return excuse;
-        }
-      };
+            public String description() {
+              return excuse;
+            }
+          };
       Wait.waitForCriterion(wc, 40 * 1000, 1000, true);
 
       // Verify that 'key-6' was not invalidated
@@ -293,5 +301,4 @@ public class InterestListFailoverDUnitTest extends JUnit4DistributedTestCase {
     vm3.invoke(() -> CacheServerTestUtil.closeCache());
     CacheServerTestUtil.closeCache();
   }
-
 }

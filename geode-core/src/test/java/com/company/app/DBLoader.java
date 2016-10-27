@@ -38,8 +38,7 @@ public class DBLoader implements CacheLoader, Declarable {
     this.props = props;
   }
 
-  public void close() {
-  }
+  public void close() {}
 
   public boolean equals(Object obj) {
     if (this == obj) {
@@ -57,5 +56,4 @@ public class DBLoader implements CacheLoader, Declarable {
 
     return true;
   }
-
 }

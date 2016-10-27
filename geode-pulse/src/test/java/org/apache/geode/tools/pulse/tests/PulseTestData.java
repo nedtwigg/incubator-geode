@@ -20,9 +20,7 @@ package org.apache.geode.tools.pulse.tests;
 
 public class PulseTestData {
 
-  public static class TopNavigation {
-
-  }
+  public static class TopNavigation {}
 
   public static class ClusterStatus {
 
@@ -49,7 +47,7 @@ public class PulseTestData {
     //Cpu Usage sorting
     //		public static final String cpuUsagePaintStyleM1 = "left: 497px; top: 0px;";
     //		public static final String cpuUsagePaintStyleM2 = "left: 0px; top: 0px;";
-    //		public static final String cpuUsagePaintStyleM3 = "left: 265px; top: 0px;";		
+    //		public static final String cpuUsagePaintStyleM3 = "left: 265px; top: 0px;";
 
     public static final String cpuUsagePaintStyleSG1M1 = "left: 0px; top: 295px;";
     public static final String cpuUsagePaintStyleSG1M2 = "left: 0px; top: 30px;";
@@ -83,12 +81,9 @@ public class PulseTestData {
 
     public static final String cpuUsagePaintStyleRZ1RZ2M1 = "left: 0px; top: 239px;";
     public static final String cpuUsagePaintStyleRZ1RZ2M2 = "left: 0px; top: 30px;";
-
   }
 
-  public static class DataPerspectiveView {
-
-  }
+  public static class DataPerspectiveView {}
 
   public static class DataBrowser {
     public static final String partialRgnName = "R";
@@ -99,7 +94,5 @@ public class PulseTestData {
     public static final String query1Text = "select * from /R1";
 
     public static final String datePattern = "EEE, MMM dd yyyy, HH:mm:ss z";
-
   }
-
 }

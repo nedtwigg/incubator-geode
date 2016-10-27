@@ -19,22 +19,21 @@ package org.apache.geode.cache.client;
 import org.apache.geode.cache.Region;
 
 /**
- * An exception indicating that client subscriptions are not enabled on this client, but
- * the client is trying to perform an operation that requires a client subscription,
- *  such as {@link Region#registerInterest(Object)}.
+ * An exception indicating that client subscriptions are not enabled on this client, but the client
+ * is trying to perform an operation that requires a client subscription, such as {@link
+ * Region#registerInterest(Object)}.
+ *
  * @since GemFire 5.7
  */
 public class SubscriptionNotEnabledException extends ServerConnectivityException {
   private static final long serialVersionUID = -8212446737778234890L;
 
-  /**
-   * Create a new instance of SubscriptionNotEnabledException without a detail message or cause.
-   */
-  public SubscriptionNotEnabledException() {
-  }
+  /** Create a new instance of SubscriptionNotEnabledException without a detail message or cause. */
+  public SubscriptionNotEnabledException() {}
 
   /**
    * Create a new instance of SubscriptionNotEnabledException with a detail message
+   *
    * @param message the detail message
    */
   public SubscriptionNotEnabledException(String message) {
@@ -43,6 +42,7 @@ public class SubscriptionNotEnabledException extends ServerConnectivityException
 
   /**
    * Create a new instance of SubscriptionNotEnabledException with a detail message and cause
+   *
    * @param message the detail message
    * @param cause the cause
    */
@@ -52,10 +52,10 @@ public class SubscriptionNotEnabledException extends ServerConnectivityException
 
   /**
    * Create a new instance of SubscriptionNotEnabledException with a and cause
+   *
    * @param cause the cause
    */
   public SubscriptionNotEnabledException(Throwable cause) {
     super(cause);
   }
-
 }

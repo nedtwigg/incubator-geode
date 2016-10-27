@@ -46,41 +46,47 @@ import org.apache.geode.internal.cache.LocalRegion;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.rules.DiskDirRule;
 
-/**
- * Tests of lucene index creation that use persistence
- */
+/** Tests of lucene index creation that use persistence */
 @Category(IntegrationTest.class)
 @RunWith(JUnitParamsRunner.class)
 public class LuceneIndexCreationPersistenceIntegrationTest extends LuceneIntegrationTest {
 
-  @Rule
-  public DiskDirRule diskDirRule = new DiskDirRule();
+  @Rule public DiskDirRule diskDirRule = new DiskDirRule();
 
   @Override
   public void createCache() {
     super.createCache();
-    cache.createDiskStoreFactory().setDiskDirs(new File[] { diskDirRule.get() }).setMaxOplogSize(1).create(GemFireCacheImpl.getDefaultDiskStoreName());
+    cache
+        .createDiskStoreFactory()
+        .setDiskDirs(new File[] {diskDirRule.get()})
+        .setMaxOplogSize(1)
+        .create(GemFireCacheImpl.getDefaultDiskStoreName());
   }
 
   @Test
   public void shouldNotUseOverflowForInternalRegionsWhenUserRegionHasOverflow() {
     createIndex(cache, "text");
     cache.createRegionFactory(RegionShortcut.PARTITION_OVERFLOW).create(REGION_NAME);
-    verifyInternalRegions(region -> {
-      assertTrue(region.getAttributes().getEvictionAttributes().getAction().isNone());
-    });
+    verifyInternalRegions(
+        region -> {
+          assertTrue(region.getAttributes().getEvictionAttributes().getAction().isNone());
+        });
   }
 
   @Test
-  @Parameters({ "true", "false" })
+  @Parameters({"true", "false"})
   public void shouldUseDiskSynchronousWhenUserRegionHasDiskSynchronous(boolean synchronous) {
     createIndex(cache, "text");
-    cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).setDiskSynchronous(synchronous).create(REGION_NAME);
-    verifyInternalRegions(region -> {
-      assertTrue(region.getDataPolicy().withPersistence());
-      //Underlying region should always be synchronous
-      assertTrue(region.isDiskSynchronous());
-    });
+    cache
+        .createRegionFactory(RegionShortcut.PARTITION_PERSISTENT)
+        .setDiskSynchronous(synchronous)
+        .create(REGION_NAME);
+    verifyInternalRegions(
+        region -> {
+          assertTrue(region.getDataPolicy().withPersistence());
+          //Underlying region should always be synchronous
+          assertTrue(region.isDiskSynchronous());
+        });
     AsyncEventQueue queue = getIndexQueue(cache);
     assertEquals(synchronous, queue.isDiskSynchronous());
     assertEquals(true, queue.isPersistent());
@@ -89,7 +95,8 @@ public class LuceneIndexCreationPersistenceIntegrationTest extends LuceneIntegra
   @Test
   public void shouldRecoverPersistentIndexWhenDataStillInQueue() throws Exception {
     createIndex(cache, "field1", "field2");
-    Region dataRegion = cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).create(REGION_NAME);
+    Region dataRegion =
+        cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).create(REGION_NAME);
     //Pause the sender so that the entry stays in the queue
     pauseSender(cache);
 
@@ -99,21 +106,28 @@ public class LuceneIndexCreationPersistenceIntegrationTest extends LuceneIntegra
     createIndex(cache, "field1", "field2");
     dataRegion = cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).create(REGION_NAME);
     verifyIndexFinishFlushing(cache, INDEX_NAME, REGION_NAME);
-    LuceneQuery<Object, Object> query = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, "field1:world", DEFAULT_FIELD);
+    LuceneQuery<Object, Object> query =
+        luceneService
+            .createLuceneQueryFactory()
+            .create(INDEX_NAME, REGION_NAME, "field1:world", DEFAULT_FIELD);
     assertEquals(1, query.findPages().size());
   }
 
   @Test
   public void shouldRecoverPersistentIndexWhenDataIsWrittenToIndex() throws Exception {
     createIndex(cache, "field1", "field2");
-    Region dataRegion = cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).create(REGION_NAME);
+    Region dataRegion =
+        cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).create(REGION_NAME);
     dataRegion.put("A", new TestObject());
     verifyIndexFinishFlushing(cache, INDEX_NAME, REGION_NAME);
     cache.close();
     createCache();
     createIndex(cache, "field1", "field2");
     dataRegion = cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).create(REGION_NAME);
-    LuceneQuery<Object, Object> query = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, "field1:world", DEFAULT_FIELD);
+    LuceneQuery<Object, Object> query =
+        luceneService
+            .createLuceneQueryFactory()
+            .create(INDEX_NAME, REGION_NAME, "field1:world", DEFAULT_FIELD);
     assertEquals(1, query.findPages().size());
   }
 
@@ -136,38 +150,51 @@ public class LuceneIndexCreationPersistenceIntegrationTest extends LuceneIntegra
     // Create partitioned region
     createRegion(REGION_NAME, shortcut);
 
-    verifyInternalRegions(region -> {
-      region.isInternalRegion();
-      assertTrue(region.isInternalRegion());
+    verifyInternalRegions(
+        region -> {
+          region.isInternalRegion();
+          assertTrue(region.isInternalRegion());
 
-      assertNotNull(region.getAttributes().getPartitionAttributes().getColocatedWith());
-      cache.rootRegions().contains(region);
-      assertFalse(cache.rootRegions().contains(region));
-    });
+          assertNotNull(region.getAttributes().getPartitionAttributes().getColocatedWith());
+          cache.rootRegions().contains(region);
+          assertFalse(cache.rootRegions().contains(region));
+        });
   }
 
   @Test
   public void shouldStoreIndexAndQueueInTheSameDiskStoreAsTheRegion() {
     createIndex(cache, "text");
-    cache.createDiskStoreFactory().setDiskDirs(new File[] { diskDirRule.get() }).create("DiskStore");
-    cache.createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).setDiskStoreName("DiskStore").create(REGION_NAME);
+    cache.createDiskStoreFactory().setDiskDirs(new File[] {diskDirRule.get()}).create("DiskStore");
+    cache
+        .createRegionFactory(RegionShortcut.PARTITION_PERSISTENT)
+        .setDiskStoreName("DiskStore")
+        .create(REGION_NAME);
     final String diskStoreName = cache.getRegion(REGION_NAME).getAttributes().getDiskStoreName();
-    verifyInternalRegions(region -> {
-      assertEquals(diskStoreName, region.getAttributes().getDiskStoreName());
-    });
+    verifyInternalRegions(
+        region -> {
+          assertEquals(diskStoreName, region.getAttributes().getDiskStoreName());
+        });
     AsyncEventQueue queue = getIndexQueue(cache);
     assertEquals(diskStoreName, queue.getDiskStoreName());
   }
 
-  private void verifyQueryResultSize(String indexName, String regionName, String queryString, String defaultField, int size) throws Exception {
-    LuceneQuery query = luceneService.createLuceneQueryFactory().create(indexName, regionName, queryString, defaultField);
-    Awaitility.await().atMost(60, TimeUnit.SECONDS).until(() -> {
-      try {
-        assertEquals(size, query.findPages().size());
-      } catch (LuceneQueryException e) {
-        throw new RuntimeException(e);
-      }
-    });
+  private void verifyQueryResultSize(
+      String indexName, String regionName, String queryString, String defaultField, int size)
+      throws Exception {
+    LuceneQuery query =
+        luceneService
+            .createLuceneQueryFactory()
+            .create(indexName, regionName, queryString, defaultField);
+    Awaitility.await()
+        .atMost(60, TimeUnit.SECONDS)
+        .until(
+            () -> {
+              try {
+                assertEquals(size, query.findPages().size());
+              } catch (LuceneQueryException e) {
+                throw new RuntimeException(e);
+              }
+            });
   }
 
   private void verifyInternalRegions(Consumer<LocalRegion> verify) {
@@ -175,7 +202,14 @@ public class LuceneIndexCreationPersistenceIntegrationTest extends LuceneIntegra
   }
 
   private static final Object[] getRegionShortcuts() {
-    return $(new Object[] { PARTITION }, new Object[] { PARTITION_REDUNDANT }, new Object[] { PARTITION_PERSISTENT }, new Object[] { PARTITION_REDUNDANT_PERSISTENT }, new Object[] { PARTITION_OVERFLOW }, new Object[] { PARTITION_REDUNDANT_OVERFLOW }, new Object[] { PARTITION_PERSISTENT_OVERFLOW }, new Object[] { PARTITION_REDUNDANT_PERSISTENT_OVERFLOW });
+    return $(
+        new Object[] {PARTITION},
+        new Object[] {PARTITION_REDUNDANT},
+        new Object[] {PARTITION_PERSISTENT},
+        new Object[] {PARTITION_REDUNDANT_PERSISTENT},
+        new Object[] {PARTITION_OVERFLOW},
+        new Object[] {PARTITION_REDUNDANT_OVERFLOW},
+        new Object[] {PARTITION_PERSISTENT_OVERFLOW},
+        new Object[] {PARTITION_REDUNDANT_PERSISTENT_OVERFLOW});
   }
-
 }

@@ -23,10 +23,8 @@ import org.apache.geode.internal.cache.persistence.query.CloseableIterator;
 
 /**
  * An adapter from a java.util.iterator to a closable iterator.
- * 
- * The java.util.iterator is expected to be iterating over a set of 
- * CachedDeserializable objects.
  *
+ * <p>The java.util.iterator is expected to be iterating over a set of CachedDeserializable objects.
  */
 class ItrAdapter implements CloseableIterator<CachedDeserializable> {
 
@@ -49,7 +47,6 @@ class ItrAdapter implements CloseableIterator<CachedDeserializable> {
   @Override
   public void remove() {
     throw new UnsupportedOperationException();
-
   }
 
   @Override
@@ -57,5 +54,4 @@ class ItrAdapter implements CloseableIterator<CachedDeserializable> {
     //do nothing
 
   }
-
 }

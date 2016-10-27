@@ -34,7 +34,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
-@SuppressWarnings({ "rawtypes", "serial" })
+@SuppressWarnings({"rawtypes", "serial"})
 @Category(DistributedTest.class)
 public class HAInterestPart2DUnitTest extends HAInterestTestCase {
 
@@ -43,8 +43,8 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
   }
 
   /**
-   * Tests if Primary fails during interest un registration should initiate
-   * failover should pick new primary
+   * Tests if Primary fails during interest un registration should initiate failover should pick new
+   * primary
    */
   @Test
   public void testPrimaryFailureInUNregisterInterest() throws Exception {
@@ -69,10 +69,7 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
     getBackupVM().invoke(() -> HAInterestTestCase.verifyInterestUNRegistration());
   }
 
-  /**
-   * Tests if Secondary fails during interest un registration should add to dead
-   * Ep list
-   */
+  /** Tests if Secondary fails during interest un registration should add to dead Ep list */
   @Test
   public void testSecondaryFailureInUNRegisterInterest() throws Exception {
     createClientPoolCache(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
@@ -92,9 +89,8 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
   }
 
   /**
-   * Tests a scenario in which Dead Server Monitor detects Server Live Just
-   * before interest registration then interest should be registered on the newly
-   * detected live server as well
+   * Tests a scenario in which Dead Server Monitor detects Server Live Just before interest
+   * registration then interest should be registered on the newly detected live server as well
    */
   @Test
   public void testDSMDetectsServerLiveJustBeforeInterestRegistration() throws Exception {
@@ -119,9 +115,8 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
   }
 
   /**
-   * Tests a scenario in which Dead Server Monitor detects Server Live Just
-   * After interest registration then interest should be registered on the newly
-   * detected live server as well
+   * Tests a scenario in which Dead Server Monitor detects Server Live Just After interest
+   * registration then interest should be registered on the newly detected live server as well
    */
   @Test
   public void testDSMDetectsServerLiveJustAfterInterestRegistration() throws Exception {
@@ -150,11 +145,10 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
   }
 
   /**
-   * Tests a Scenario: Only one server, register interest on the server stop
-   * server , and update the registered entries on the server start the server ,
-   * DSM will recover interest list on this live server and verify that as a
-   * part of recovery it refreshes registered entries from the server, because it
-   * is primary
+   * Tests a Scenario: Only one server, register interest on the server stop server , and update the
+   * registered entries on the server start the server , DSM will recover interest list on this live
+   * server and verify that as a part of recovery it refreshes registered entries from the server,
+   * because it is primary
    */
   @Test
   public void testRefreshEntriesFromPrimaryWhenDSMDetectsServerLive() throws Exception {
@@ -162,7 +156,8 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
 
     PORT1 = ((Integer) server1.invoke(() -> HAInterestTestCase.createServerCache())).intValue();
     server1.invoke(() -> HAInterestTestCase.createEntriesK1andK2());
-    createClientPoolCacheConnectionToSingleServer(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
+    createClientPoolCacheConnectionToSingleServer(
+        this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
     registerK1AndK2();
     verifyRefreshedEntriesFromServer();
 
@@ -176,58 +171,59 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
     // Verify for interest registration after cache-server is started.
     server1.invoke(() -> HAInterestTestCase.verifyInterestRegistration());
 
-    WaitCriterion wc = new WaitCriterion() {
-      private String excuse;
+    WaitCriterion wc =
+        new WaitCriterion() {
+          private String excuse;
 
-      @Override
-      public boolean done() {
-        Region.Entry e1;
-        Region.Entry e2;
+          @Override
+          public boolean done() {
+            Region.Entry e1;
+            Region.Entry e2;
 
-        try {
-          e1 = r1.getEntry(k1);
-          if (e1 == null) {
-            excuse = "Entry for k1 is null";
-            return false;
+            try {
+              e1 = r1.getEntry(k1);
+              if (e1 == null) {
+                excuse = "Entry for k1 is null";
+                return false;
+              }
+            } catch (EntryDestroyedException e) {
+              excuse = "Entry destroyed";
+              return false;
+            }
+            if (!server_k1.equals(e1.getValue())) {
+              excuse = "e1 value is not server_k1";
+              return false;
+            }
+            try {
+              e2 = r1.getEntry(k2);
+              if (e2 == null) {
+                excuse = "Entry for k2 is null";
+                return false;
+              }
+            } catch (EntryDestroyedException e) {
+              excuse = "Entry destroyed";
+              return false;
+            }
+            if (!server_k2.equals(e2.getValue())) {
+              excuse = "e2 value is not server_k2";
+              return false;
+            }
+            return true;
           }
-        } catch (EntryDestroyedException e) {
-          excuse = "Entry destroyed";
-          return false;
-        }
-        if (!server_k1.equals(e1.getValue())) {
-          excuse = "e1 value is not server_k1";
-          return false;
-        }
-        try {
-          e2 = r1.getEntry(k2);
-          if (e2 == null) {
-            excuse = "Entry for k2 is null";
-            return false;
-          }
-        } catch (EntryDestroyedException e) {
-          excuse = "Entry destroyed";
-          return false;
-        }
-        if (!server_k2.equals(e2.getValue())) {
-          excuse = "e2 value is not server_k2";
-          return false;
-        }
-        return true;
-      }
 
-      @Override
-      public String description() {
-        return excuse;
-      }
-    };
+          @Override
+          public String description() {
+            return excuse;
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
   }
 
   /**
-   * Tests a Scenario: stop a secondary server and update the registered entries
-   * on the stopped server start the server , DSM will recover interest list on
-   * this live server and verify that as a part of recovery it does not
-   * refreshes registered entries from the server, because it is secondary
+   * Tests a Scenario: stop a secondary server and update the registered entries on the stopped
+   * server start the server , DSM will recover interest list on this live server and verify that as
+   * a part of recovery it does not refreshes registered entries from the server, because it is
+   * secondary
    */
   @Test
   public void testGIIFromSecondaryWhenDSMDetectsServerLive() throws Exception {
@@ -235,9 +231,15 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
     server2.invoke(() -> HAInterestTestCase.closeCache());
     server3.invoke(() -> HAInterestTestCase.closeCache());
 
-    PORT1 = ((Integer) server1.invoke(() -> HAInterestTestCase.createServerCacheWithLocalRegion())).intValue();
-    PORT2 = ((Integer) server2.invoke(() -> HAInterestTestCase.createServerCacheWithLocalRegion())).intValue();
-    PORT3 = ((Integer) server3.invoke(() -> HAInterestTestCase.createServerCacheWithLocalRegion())).intValue();
+    PORT1 =
+        ((Integer) server1.invoke(() -> HAInterestTestCase.createServerCacheWithLocalRegion()))
+            .intValue();
+    PORT2 =
+        ((Integer) server2.invoke(() -> HAInterestTestCase.createServerCacheWithLocalRegion()))
+            .intValue();
+    PORT3 =
+        ((Integer) server3.invoke(() -> HAInterestTestCase.createServerCacheWithLocalRegion()))
+            .intValue();
 
     server1.invoke(() -> HAInterestTestCase.createEntriesK1andK2());
     server2.invoke(() -> HAInterestTestCase.createEntriesK1andK2());
@@ -259,9 +261,8 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
   }
 
   /**
-   * Bug Test for Bug # 35945 A java level Deadlock between acquireConnection
-   * and RegionEntry during processRecoveredEndpoint by Dead Server Monitor
-   * Thread.
+   * Bug Test for Bug # 35945 A java level Deadlock between acquireConnection and RegionEntry during
+   * processRecoveredEndpoint by Dead Server Monitor Thread.
    *
    * @throws Exception
    */
@@ -269,7 +270,8 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
   public void testBug35945() throws Exception {
     PORT1 = ((Integer) server1.invoke(() -> HAInterestTestCase.createServerCache())).intValue();
     server1.invoke(() -> HAInterestTestCase.createEntriesK1andK2());
-    createClientPoolCacheConnectionToSingleServer(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
+    createClientPoolCacheConnectionToSingleServer(
+        this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
     registerK1AndK2();
     verifyRefreshedEntriesFromServer();
 
@@ -286,51 +288,52 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
     final Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     assertNotNull(r1);
 
-    WaitCriterion wc = new WaitCriterion() {
-      private String excuse;
+    WaitCriterion wc =
+        new WaitCriterion() {
+          private String excuse;
 
-      @Override
-      public boolean done() {
-        Region.Entry e1 = r1.getEntry(k1);
-        Region.Entry e2 = r1.getEntry(k2);
-        Object v1 = null;
-        if (e1 != null) {
-          try {
-            v1 = e1.getValue();
-          } catch (EntryDestroyedException ignore) {
-            // handled to fix GEODE-296
+          @Override
+          public boolean done() {
+            Region.Entry e1 = r1.getEntry(k1);
+            Region.Entry e2 = r1.getEntry(k2);
+            Object v1 = null;
+            if (e1 != null) {
+              try {
+                v1 = e1.getValue();
+              } catch (EntryDestroyedException ignore) {
+                // handled to fix GEODE-296
+              }
+            }
+            if (e1 == null || !server_k1_updated.equals(v1)) {
+              excuse = "v1=" + v1;
+              return false;
+            }
+            Object v2 = null;
+            if (e2 != null) {
+              try {
+                v2 = e2.getValue();
+              } catch (EntryDestroyedException ignore) {
+                // handled to fix GEODE-296
+              }
+            }
+            if (e2 == null || !server_k2.equals(v2)) {
+              excuse = "v2=" + v2;
+              return false;
+            }
+            return true;
           }
-        }
-        if (e1 == null || !server_k1_updated.equals(v1)) {
-          excuse = "v1=" + v1;
-          return false;
-        }
-        Object v2 = null;
-        if (e2 != null) {
-          try {
-            v2 = e2.getValue();
-          } catch (EntryDestroyedException ignore) {
-            // handled to fix GEODE-296
-          }
-        }
-        if (e2 == null || !server_k2.equals(v2)) {
-          excuse = "v2=" + v2;
-          return false;
-        }
-        return true;
-      }
 
-      @Override
-      public String description() {
-        return excuse;
-      }
-    };
+          @Override
+          public String description() {
+            return excuse;
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
   }
 
   /**
-   * Tests if failure occurred in Interest recovery thread, then it should select
-   * new endpoint to register interest
+   * Tests if failure occurred in Interest recovery thread, then it should select new endpoint to
+   * register interest
    */
   @Category(FlakyTest.class) // GEODE-108
   @Test
@@ -341,7 +344,8 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
     server1.invoke(() -> HAInterestTestCase.createEntriesK1andK2());
     PORT2 = ((Integer) server2.invoke(() -> HAInterestTestCase.createServerCache())).intValue();
     server2.invoke(() -> HAInterestTestCase.createEntriesK1andK2());
-    createClientPoolCacheWithSmallRetryInterval(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
+    createClientPoolCacheWithSmallRetryInterval(
+        this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
     registerK1AndK2();
     verifyRefreshedEntriesFromServer();
     VM backup = getBackupVM();
@@ -361,37 +365,38 @@ public class HAInterestPart2DUnitTest extends HAInterestTestCase {
     final Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     assertNotNull(r1);
 
-    WaitCriterion wc = new WaitCriterion() {
-      private String excuse;
+    WaitCriterion wc =
+        new WaitCriterion() {
+          private String excuse;
 
-      @Override
-      public boolean done() {
-        Region.Entry e1 = r1.getEntry(k1);
-        Region.Entry e2 = r1.getEntry(k2);
-        if (e1 == null) {
-          excuse = "Entry for k1 still null";
-          return false;
-        }
-        if (e2 == null) {
-          excuse = "Entry for k2 still null";
-          return false;
-        }
-        if (!(server_k1.equals(e1.getValue()))) {
-          excuse = "Value for k1 wrong";
-          return false;
-        }
-        if (!(server_k2.equals(e2.getValue()))) {
-          excuse = "Value for k2 wrong";
-          return false;
-        }
-        return true;
-      }
+          @Override
+          public boolean done() {
+            Region.Entry e1 = r1.getEntry(k1);
+            Region.Entry e2 = r1.getEntry(k2);
+            if (e1 == null) {
+              excuse = "Entry for k1 still null";
+              return false;
+            }
+            if (e2 == null) {
+              excuse = "Entry for k2 still null";
+              return false;
+            }
+            if (!(server_k1.equals(e1.getValue()))) {
+              excuse = "Value for k1 wrong";
+              return false;
+            }
+            if (!(server_k2.equals(e2.getValue()))) {
+              excuse = "Value for k2 wrong";
+              return false;
+            }
+            return true;
+          }
 
-      @Override
-      public String description() {
-        return excuse;
-      }
-    };
+          @Override
+          public String description() {
+            return excuse;
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
   }
 }

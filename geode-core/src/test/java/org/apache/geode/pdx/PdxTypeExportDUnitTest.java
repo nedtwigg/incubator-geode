@@ -69,13 +69,14 @@ public class PdxTypeExportDUnitTest extends JUnit4CacheTestCase {
 
   @Test
   public void testClient() throws Exception {
-    SerializableCallable test = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        testPeer();
-        return null;
-      }
-    };
+    SerializableCallable test =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            testPeer();
+            return null;
+          }
+        };
 
     Host.getHost(0).getVM(3).invoke(test);
   }
@@ -87,49 +88,56 @@ public class PdxTypeExportDUnitTest extends JUnit4CacheTestCase {
 
   @SuppressWarnings("serial")
   public void loadCache() throws Exception {
-    SerializableCallable peer = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
+    SerializableCallable peer =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
 
-        Cache cache = getCache(cf);
-        Region r = cache.createRegionFactory(RegionShortcut.REPLICATE).create("pdxtest");
-        r.put(1, new MyObjectPdx(1, "test", MyEnumPdx.const1));
+            Cache cache = getCache(cf);
+            Region r = cache.createRegionFactory(RegionShortcut.REPLICATE).create("pdxtest");
+            r.put(1, new MyObjectPdx(1, "test", MyEnumPdx.const1));
 
-        return null;
-      }
-    };
+            return null;
+          }
+        };
 
     final Host host = Host.getHost(0);
     host.getVM(1).invoke(peer);
 
-    SerializableCallable server = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
+    SerializableCallable server =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
 
-        CacheServer server = getCache().addCacheServer();
-        int port = AvailablePortHelper.getRandomAvailableTCPPort();
-        server.setPort(port);
-        server.start();
+            CacheServer server = getCache().addCacheServer();
+            int port = AvailablePortHelper.getRandomAvailableTCPPort();
+            server.setPort(port);
+            server.start();
 
-        Region r = getCache().createRegionFactory(RegionShortcut.REPLICATE).create("pdxtest");
-        return port;
-      }
-    };
+            Region r = getCache().createRegionFactory(RegionShortcut.REPLICATE).create("pdxtest");
+            return port;
+          }
+        };
 
     final int port = (Integer) host.getVM(2).invoke(server);
 
-    SerializableCallable client = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        ClientCacheFactory cf = new ClientCacheFactory().setPdxSerializer(new MyPdxSerializer()).addPoolServer(NetworkUtils.getServerHostName(host), port);
+    SerializableCallable client =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            ClientCacheFactory cf =
+                new ClientCacheFactory()
+                    .setPdxSerializer(new MyPdxSerializer())
+                    .addPoolServer(NetworkUtils.getServerHostName(host), port);
 
-        ClientCache cache = getClientCache(cf);
-        Region r = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create("pdxtest");
-        return null;
-      }
-    };
+            ClientCache cache = getClientCache(cf);
+            Region r =
+                cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create("pdxtest");
+            return null;
+          }
+        };
 
     host.getVM(3).invoke(client);
     peer.call();

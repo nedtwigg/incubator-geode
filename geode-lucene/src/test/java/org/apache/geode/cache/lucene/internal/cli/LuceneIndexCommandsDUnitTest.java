@@ -158,9 +158,10 @@ public class LuceneIndexCommandsDUnitTest extends CliCommandTestBase {
   @Test
   public void createIndexShouldCreateANewIndex() throws Exception {
     final VM vm1 = Host.getHost(0).getVM(1);
-    vm1.invoke(() -> {
-      getCache();
-    });
+    vm1.invoke(
+        () -> {
+          getCache();
+        });
 
     CommandManager.getInstance().add(LuceneIndexCommands.class.newInstance());
 
@@ -171,20 +172,22 @@ public class LuceneIndexCommandsDUnitTest extends CliCommandTestBase {
 
     String resultAsString = executeCommandAndLogResult(csb);
 
-    vm1.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      createRegion();
-      final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      assertArrayEquals(new String[] { "field1", "field2", "field3" }, index.getFieldNames());
-    });
+    vm1.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          createRegion();
+          final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          assertArrayEquals(new String[] {"field1", "field2", "field3"}, index.getFieldNames());
+        });
   }
 
   @Test
   public void createIndexWithAnalyzersShouldCreateANewIndex() throws Exception {
     final VM vm1 = Host.getHost(0).getVM(1);
-    vm1.invoke(() -> {
-      getCache();
-    });
+    vm1.invoke(
+        () -> {
+          getCache();
+        });
 
     CommandManager.getInstance().add(LuceneIndexCommands.class.newInstance());
 
@@ -201,30 +204,33 @@ public class LuceneIndexCommandsDUnitTest extends CliCommandTestBase {
 
     String resultAsString = executeCommandAndLogResult(csb);
 
-    vm1.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      createRegion();
-      final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      final Map<String, Analyzer> fieldAnalyzers = index.getFieldAnalyzers();
-      assertEquals(StandardAnalyzer.class, fieldAnalyzers.get("field1").getClass());
-      assertEquals(KeywordAnalyzer.class, fieldAnalyzers.get("field2").getClass());
-      assertEquals(StandardAnalyzer.class, fieldAnalyzers.get("field3").getClass());
-    });
+    vm1.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          createRegion();
+          final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          final Map<String, Analyzer> fieldAnalyzers = index.getFieldAnalyzers();
+          assertEquals(StandardAnalyzer.class, fieldAnalyzers.get("field1").getClass());
+          assertEquals(KeywordAnalyzer.class, fieldAnalyzers.get("field2").getClass());
+          assertEquals(StandardAnalyzer.class, fieldAnalyzers.get("field3").getClass());
+        });
   }
 
   @Test
   public void createIndexOnGroupShouldCreateANewIndexOnGroup() throws Exception {
     final VM vm1 = Host.getHost(0).getVM(1);
     final VM vm2 = Host.getHost(0).getVM(2);
-    vm1.invoke(() -> {
-      getCache();
-    });
-    vm2.invoke(() -> {
-      Properties props = new Properties();
-      props.setProperty(ConfigurationProperties.GROUPS, "group1");
-      getSystem(props);
-      getCache();
-    });
+    vm1.invoke(
+        () -> {
+          getCache();
+        });
+    vm2.invoke(
+        () -> {
+          Properties props = new Properties();
+          props.setProperty(ConfigurationProperties.GROUPS, "group1");
+          getSystem(props);
+          getCache();
+        });
 
     CommandManager.getInstance().add(LuceneIndexCommands.class.newInstance());
 
@@ -235,30 +241,33 @@ public class LuceneIndexCommandsDUnitTest extends CliCommandTestBase {
     csb.addOption(LuceneCliStrings.LUCENE_CREATE_INDEX__GROUP, "group1");
     String resultAsString = executeCommandAndLogResult(csb);
 
-    vm2.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      createRegion();
-      final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      assertArrayEquals(new String[] { "field1", "field2", "field3" }, index.getFieldNames());
-    });
+    vm2.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          createRegion();
+          final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          assertArrayEquals(new String[] {"field1", "field2", "field3"}, index.getFieldNames());
+        });
 
-    vm1.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      try {
-        createRegion();
-        fail("Should have thrown an exception due to the missing index");
-      } catch (IllegalStateException expected) {
+    vm1.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          try {
+            createRegion();
+            fail("Should have thrown an exception due to the missing index");
+          } catch (IllegalStateException expected) {
 
-      }
-    });
+          }
+        });
   }
 
   @Test
   public void createIndexWithoutRegionShouldReturnCorrectResults() throws Exception {
     final VM vm1 = Host.getHost(0).getVM(1);
-    vm1.invoke(() -> {
-      getCache();
-    });
+    vm1.invoke(
+        () -> {
+          getCache();
+        });
 
     CommandManager.getInstance().add(LuceneIndexCommands.class.newInstance());
 
@@ -269,23 +278,30 @@ public class LuceneIndexCommandsDUnitTest extends CliCommandTestBase {
 
     String resultAsString = executeCommandAndLogResult(csb);
 
-    vm1.invoke(() -> {
-      LuceneServiceImpl luceneService = (LuceneServiceImpl) LuceneServiceProvider.get(getCache());
-      final ArrayList<LuceneIndexCreationProfile> profiles = new ArrayList<>(luceneService.getAllDefinedIndexes());
-      assertEquals(1, profiles.size());
-      assertEquals(INDEX_NAME, profiles.get(0).getIndexName());
-    });
+    vm1.invoke(
+        () -> {
+          LuceneServiceImpl luceneService =
+              (LuceneServiceImpl) LuceneServiceProvider.get(getCache());
+          final ArrayList<LuceneIndexCreationProfile> profiles =
+              new ArrayList<>(luceneService.getAllDefinedIndexes());
+          assertEquals(1, profiles.size());
+          assertEquals(INDEX_NAME, profiles.get(0).getIndexName());
+        });
   }
 
   @Test
   public void createIndexWithNullAnalyzerShouldUseStandardAnalyzer() throws Exception {
     final VM vm1 = Host.getHost(0).getVM(1);
-    vm1.invoke(() -> {
-      getCache();
-    });
+    vm1.invoke(
+        () -> {
+          getCache();
+        });
 
     CommandManager.getInstance().add(LuceneIndexCommands.class.newInstance());
-    String analyzerList = StandardAnalyzer.class.getCanonicalName() + ",null," + KeywordAnalyzer.class.getCanonicalName();
+    String analyzerList =
+        StandardAnalyzer.class.getCanonicalName()
+            + ",null,"
+            + KeywordAnalyzer.class.getCanonicalName();
     CommandStringBuilder csb = new CommandStringBuilder(LuceneCliStrings.LUCENE_CREATE_INDEX);
     csb.addOption(LuceneCliStrings.LUCENE__INDEX_NAME, INDEX_NAME);
     csb.addOption(LuceneCliStrings.LUCENE__REGION_PATH, REGION_NAME);
@@ -294,15 +310,22 @@ public class LuceneIndexCommandsDUnitTest extends CliCommandTestBase {
 
     String resultAsString = executeCommandAndLogResult(csb);
 
-    vm1.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      createRegion();
-      final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      final Map<String, Analyzer> fieldAnalyzers = index.getFieldAnalyzers();
-      assertEquals(StandardAnalyzer.class.getCanonicalName(), fieldAnalyzers.get("field1").getClass().getCanonicalName());
-      assertEquals(StandardAnalyzer.class.getCanonicalName(), fieldAnalyzers.get("field2").getClass().getCanonicalName());
-      assertEquals(KeywordAnalyzer.class.getCanonicalName(), fieldAnalyzers.get("field3").getClass().getCanonicalName());
-    });
+    vm1.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          createRegion();
+          final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          final Map<String, Analyzer> fieldAnalyzers = index.getFieldAnalyzers();
+          assertEquals(
+              StandardAnalyzer.class.getCanonicalName(),
+              fieldAnalyzers.get("field1").getClass().getCanonicalName());
+          assertEquals(
+              StandardAnalyzer.class.getCanonicalName(),
+              fieldAnalyzers.get("field2").getClass().getCanonicalName());
+          assertEquals(
+              KeywordAnalyzer.class.getCanonicalName(),
+              fieldAnalyzers.get("field3").getClass().getCanonicalName());
+        });
   }
 
   @Test
@@ -545,7 +568,6 @@ public class LuceneIndexCommandsDUnitTest extends CliCommandTestBase {
 
     TabularResultData data = (TabularResultData) executeCommandAndGetResult(csb).getResultData();
     assertEquals(4, data.retrieveAllValues("key").size());
-
   }
 
   private void createRegion() {
@@ -573,26 +595,28 @@ public class LuceneIndexCommandsDUnitTest extends CliCommandTestBase {
   }
 
   private void createIndex(final VM vm1) {
-    vm1.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      Map<String, Analyzer> fieldAnalyzers = new HashMap();
-      fieldAnalyzers.put("field1", new StandardAnalyzer());
-      fieldAnalyzers.put("field2", new KeywordAnalyzer());
-      fieldAnalyzers.put("field3", null);
-      luceneService.createIndex(INDEX_NAME, REGION_NAME, fieldAnalyzers);
-      createRegion();
-    });
+    vm1.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          Map<String, Analyzer> fieldAnalyzers = new HashMap();
+          fieldAnalyzers.put("field1", new StandardAnalyzer());
+          fieldAnalyzers.put("field2", new KeywordAnalyzer());
+          fieldAnalyzers.put("field3", null);
+          luceneService.createIndex(INDEX_NAME, REGION_NAME, fieldAnalyzers);
+          createRegion();
+        });
   }
 
   private void createIndexWithoutRegion(final VM vm1) {
-    vm1.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      Map<String, Analyzer> fieldAnalyzers = new HashMap();
-      fieldAnalyzers.put("field1", new StandardAnalyzer());
-      fieldAnalyzers.put("field2", new KeywordAnalyzer());
-      fieldAnalyzers.put("field3", null);
-      luceneService.createIndex(INDEX_NAME, REGION_NAME, fieldAnalyzers);
-    });
+    vm1.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          Map<String, Analyzer> fieldAnalyzers = new HashMap();
+          fieldAnalyzers.put("field1", new StandardAnalyzer());
+          fieldAnalyzers.put("field2", new KeywordAnalyzer());
+          fieldAnalyzers.put("field3", null);
+          luceneService.createIndex(INDEX_NAME, REGION_NAME, fieldAnalyzers);
+        });
   }
 
   private void writeToLog(String text, String resultAsString) {
@@ -602,23 +626,30 @@ public class LuceneIndexCommandsDUnitTest extends CliCommandTestBase {
 
   private void putEntries(final VM vm1, Map<String, TestObject> entries, int countOfDocuments) {
     Cache cache = getCache();
-    vm1.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      Region region = getCache().getRegion(REGION_NAME);
-      region.putAll(entries);
-      luceneService.getIndex(INDEX_NAME, REGION_NAME).waitUntilFlushed(60000);
-      LuceneIndexImpl index = (LuceneIndexImpl) luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      Awaitility.await().atMost(65, TimeUnit.SECONDS).until(() -> assertEquals(countOfDocuments, index.getIndexStats().getDocuments()));
-
-    });
+    vm1.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          Region region = getCache().getRegion(REGION_NAME);
+          region.putAll(entries);
+          luceneService.getIndex(INDEX_NAME, REGION_NAME).waitUntilFlushed(60000);
+          LuceneIndexImpl index = (LuceneIndexImpl) luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          Awaitility.await()
+              .atMost(65, TimeUnit.SECONDS)
+              .until(() -> assertEquals(countOfDocuments, index.getIndexStats().getDocuments()));
+        });
   }
 
-  private void queryAndVerify(VM vm1, String queryString, String defaultField, List<String> expectedKeys) {
-    vm1.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      final LuceneQuery<String, TestObject> query = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, queryString, defaultField);
-      assertEquals(Collections.singletonList("A"), query.findKeys());
-    });
+  private void queryAndVerify(
+      VM vm1, String queryString, String defaultField, List<String> expectedKeys) {
+    vm1.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          final LuceneQuery<String, TestObject> query =
+              luceneService
+                  .createLuceneQueryFactory()
+                  .create(INDEX_NAME, REGION_NAME, queryString, defaultField);
+          assertEquals(Collections.singletonList("A"), query.findKeys());
+        });
   }
 
   protected class TestObject implements Serializable {

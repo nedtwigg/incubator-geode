@@ -53,13 +53,15 @@ public class HIncrByExecutor extends HashExecutor {
     try {
       increment = Coder.bytesToLong(incrArray);
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_INCREMENT_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_INCREMENT_NOT_USABLE));
       return;
     }
 
     ByteArrayWrapper key = command.getKey();
 
-    Region<ByteArrayWrapper, ByteArrayWrapper> keyRegion = getOrCreateRegion(context, key, RedisDataType.REDIS_HASH);
+    Region<ByteArrayWrapper, ByteArrayWrapper> keyRegion =
+        getOrCreateRegion(context, key, RedisDataType.REDIS_HASH);
 
     byte[] byteField = commandElems.get(FIELD_INDEX);
     ByteArrayWrapper field = new ByteArrayWrapper(byteField);
@@ -85,14 +87,16 @@ public class HIncrByExecutor extends HashExecutor {
     try {
       value = Long.parseLong(oldValue.toString());
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_FIELD_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_FIELD_NOT_USABLE));
       return;
     }
 
     /*
      * Check for overflow
      */
-    if ((value >= 0 && increment > (Long.MAX_VALUE - value)) || (value <= 0 && increment < (Long.MIN_VALUE - value))) {
+    if ((value >= 0 && increment > (Long.MAX_VALUE - value))
+        || (value <= 0 && increment < (Long.MIN_VALUE - value))) {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_OVERFLOW));
       return;
     }
@@ -103,7 +107,5 @@ public class HIncrByExecutor extends HashExecutor {
     keyRegion.put(field, new ByteArrayWrapper(Coder.longToBytes(value)));
 
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), value));
-
   }
-
 }

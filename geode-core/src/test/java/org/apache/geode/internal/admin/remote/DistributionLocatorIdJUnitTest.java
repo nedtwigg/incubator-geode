@@ -29,9 +29,7 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/** 
-* DistributionLocatorId Tester. 
-*/
+/** DistributionLocatorId Tester. */
 @Category(UnitTest.class)
 public class DistributionLocatorIdJUnitTest {
 
@@ -41,14 +39,15 @@ public class DistributionLocatorIdJUnitTest {
     DistributionLocatorId dLI1 = new DistributionLocatorId(address, 40404, "127.0.0.1", null);
     DistributionLocatorId dLI2 = dLI1;
     @SuppressWarnings("RedundantStringConstructorCall")
-    DistributionLocatorId dLI3 = new DistributionLocatorId(address, 40404, new String("127.0.0.1"), null);
+    DistributionLocatorId dLI3 =
+        new DistributionLocatorId(address, 40404, new String("127.0.0.1"), null);
     @SuppressWarnings("RedundantStringConstructorCall")
-    DistributionLocatorId dLI4 = new DistributionLocatorId(InetAddress.getByName("localhost"), 50505, new String("128.0.0.1"), null);
+    DistributionLocatorId dLI4 =
+        new DistributionLocatorId(
+            InetAddress.getByName("localhost"), 50505, new String("128.0.0.1"), null);
 
     assertTrue(dLI1.equals(dLI2));
     assertTrue(dLI1.equals(dLI3));
     assertFalse(dLI1.equals(dLI4));
-
   }
-
 }

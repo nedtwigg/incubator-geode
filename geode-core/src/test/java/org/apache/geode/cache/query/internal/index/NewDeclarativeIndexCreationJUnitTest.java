@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal.index;
 
 import org.apache.geode.cache.*;
@@ -36,10 +34,7 @@ import java.util.Properties;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
-/**
- *
- * @since GemFire 6.6.1
- */
+/** @since GemFire 6.6.1 */
 @Category(IntegrationTest.class)
 public class NewDeclarativeIndexCreationJUnitTest {
 
@@ -57,8 +52,7 @@ public class NewDeclarativeIndexCreationJUnitTest {
 
   @After
   public void tearDown() throws Exception {
-    if (!cache.isClosed())
-      cache.close();
+    if (!cache.isClosed()) cache.close();
   }
 
   @Test
@@ -72,7 +66,8 @@ public class NewDeclarativeIndexCreationJUnitTest {
       RegionAttributes ra = root.getAttributes();
       Assert.assertTrue(!ra.getIndexMaintenanceSynchronous());
     } else
-      Assert.fail("NewDeclarativeIndexCreationJUnitTest::testAsynchronousIndexCreatedOnRoot_PortfoliosRegion:No index found in the root region");
+      Assert.fail(
+          "NewDeclarativeIndexCreationJUnitTest::testAsynchronousIndexCreatedOnRoot_PortfoliosRegion:No index found in the root region");
   }
 
   @Test
@@ -87,11 +82,13 @@ public class NewDeclarativeIndexCreationJUnitTest {
       RegionAttributes ra = root.getAttributes();
       Assert.assertTrue(ra.getIndexMaintenanceSynchronous());
     } else
-      Assert.fail("NewDeclarativeIndexCreationJUnitTest::testSynchronousIndexCreatedOnRoot_StringRegion Region:No index found in the root region");
+      Assert.fail(
+          "NewDeclarativeIndexCreationJUnitTest::testSynchronousIndexCreatedOnRoot_StringRegion Region:No index found in the root region");
     root = cache.getRegion("/root/string1");
     im = IndexUtils.getIndexManager(root, true);
     if (!im.isIndexMaintenanceTypeSynchronous())
-      Assert.fail("NewDeclarativeIndexCreationJUnitTest::testSynchronousIndexCreatedOnRoot_StringRegion: The index update type not synchronous if no index-update-type attribuet specified in cache.cml");
+      Assert.fail(
+          "NewDeclarativeIndexCreationJUnitTest::testSynchronousIndexCreatedOnRoot_StringRegion: The index update type not synchronous if no index-update-type attribuet specified in cache.cml");
   }
 
   @Test
@@ -105,7 +102,8 @@ public class NewDeclarativeIndexCreationJUnitTest {
       RegionAttributes ra = root.getAttributes();
       Assert.assertTrue(ra.getIndexMaintenanceSynchronous());
     } else
-      Assert.fail("NewDeclarativeIndexCreationJUnitTest::testAsynchronousIndexCreatedOnRoot_PortfoliosRegion:No index found in the root region");
+      Assert.fail(
+          "NewDeclarativeIndexCreationJUnitTest::testAsynchronousIndexCreatedOnRoot_PortfoliosRegion:No index found in the root region");
   }
 
   // Index creation tests for new DTD changes for Index tag for 6.6.1 with no function/primary-key tag
@@ -120,7 +118,8 @@ public class NewDeclarativeIndexCreationJUnitTest {
       RegionAttributes ra = root.getAttributes();
       Assert.assertTrue(!ra.getIndexMaintenanceSynchronous());
     } else
-      Assert.fail("NewDeclarativeIndexCreationJUnitTest::testAsynchronousIndexCreatedOnRoot_PortfoliosRegion:No index found in the root region");
+      Assert.fail(
+          "NewDeclarativeIndexCreationJUnitTest::testAsynchronousIndexCreatedOnRoot_PortfoliosRegion:No index found in the root region");
   }
 
   @Test
@@ -135,27 +134,33 @@ public class NewDeclarativeIndexCreationJUnitTest {
       RegionAttributes ra = root.getAttributes();
       Assert.assertTrue(ra.getIndexMaintenanceSynchronous());
     } else
-      Assert.fail("NewDeclarativeIndexCreationJUnitTest::testSynchronousIndexCreatedOnRoot_StringRegion Region:No index found in the root region");
+      Assert.fail(
+          "NewDeclarativeIndexCreationJUnitTest::testSynchronousIndexCreatedOnRoot_StringRegion Region:No index found in the root region");
     root = cache.getRegion("/root/string1");
     im = IndexUtils.getIndexManager(root, true);
     if (!im.isIndexMaintenanceTypeSynchronous())
-      Assert.fail("DeclarativeIndexCreationTest::testSynchronousIndexCreatedOnRoot_StringRegion: The index update type not synchronous if no index-update-type attribuet specified in cache.cml");
+      Assert.fail(
+          "DeclarativeIndexCreationTest::testSynchronousIndexCreatedOnRoot_StringRegion: The index update type not synchronous if no index-update-type attribuet specified in cache.cml");
   }
 
   @Test
-  public void testIndexCreationExceptionOnRegionWithNewDTD() throws IOException, URISyntaxException {
-    if (cache != null && !cache.isClosed())
-      cache.close();
+  public void testIndexCreationExceptionOnRegionWithNewDTD()
+      throws IOException, URISyntaxException {
+    if (cache != null && !cache.isClosed()) cache.close();
     Properties props = new Properties();
-    props.setProperty(CACHE_XML_FILE, TestUtil.getResourcePath(getClass(), "cachequeryindexwitherror.xml"));
+    props.setProperty(
+        CACHE_XML_FILE, TestUtil.getResourcePath(getClass(), "cachequeryindexwitherror.xml"));
     props.setProperty(MCAST_PORT, "0");
     DistributedSystem ds = DistributedSystem.connect(props);
     try {
       Cache cache = CacheFactory.create(ds);
     } catch (CacheXmlException e) {
-      if (!e.getCause().getMessage().contains("CacheXmlParser::endIndex:Index creation attribute not correctly specified.")) {
+      if (!e.getCause()
+          .getMessage()
+          .contains("CacheXmlParser::endIndex:Index creation attribute not correctly specified.")) {
         e.printStackTrace();
-        Assert.fail("NewDeclarativeIndexCreationJUnitTest::setup: Index creation should have thrown exception for index on /root/portfolios3 region.");
+        Assert.fail(
+            "NewDeclarativeIndexCreationJUnitTest::setup: Index creation should have thrown exception for index on /root/portfolios3 region.");
       }
       return;
     }

@@ -29,8 +29,7 @@ import org.apache.geode.cache.query.internal.CompiledValue;
 public class ASTSelect extends GemFireAST {
   private static final long serialVersionUID = 1389351692304773456L;
 
-  public ASTSelect() {
-  }
+  public ASTSelect() {}
 
   public ASTSelect(Token t) {
     super(t);
@@ -60,5 +59,4 @@ public class ASTSelect extends GemFireAST {
 
     compiler.select(queryComponents);
   }
-
 }

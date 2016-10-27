@@ -25,10 +25,10 @@ import org.springframework.util.MethodInvoker;
 import org.springframework.util.ObjectUtils;
 
 /**
- * The IdentifierUtils class is a utility class for working with Objects having
- * identifiers
- * <p/>
- * 
+ * The IdentifierUtils class is a utility class for working with Objects having identifiers
+ *
+ * <p>
+ *
  * @since GemFire 8.0
  */
 @SuppressWarnings("unused")
@@ -67,7 +67,8 @@ public abstract class IdentifiableUtils {
   }
 
   public static boolean isGetIdMethodAvailable(final Object identifiableObject) {
-    return (identifiableObject != null && ClassUtils.hasMethod(identifiableObject.getClass(), "getId"));
+    return (identifiableObject != null
+        && ClassUtils.hasMethod(identifiableObject.getClass(), "getId"));
   }
 
   @SuppressWarnings("unchecked")
@@ -78,21 +79,28 @@ public abstract class IdentifiableUtils {
 
       method.setTargetObject(identifiableObject);
       method.setTargetMethod("setId");
-      method.setArguments(new Object[] { id });
+      method.setArguments(new Object[] {id});
 
       try {
         method.prepare();
         method.invoke();
       } catch (Exception e) {
-        throw new IllegalArgumentException(String.format("Failed to set ID (%1$s) on Object (%2$s)!", id, identifiableObject), e);
+        throw new IllegalArgumentException(
+            String.format("Failed to set ID (%1$s) on Object (%2$s)!", id, identifiableObject), e);
       }
     } else {
-      LOGGER.warning(String.format("Not able to set ID (%1$s) of type (%2$s) on Object of type (%3$s)", id, ObjectUtils.nullSafeClassName(id), ObjectUtils.nullSafeClassName(identifiableObject)));
+      LOGGER.warning(
+          String.format(
+              "Not able to set ID (%1$s) of type (%2$s) on Object of type (%3$s)",
+              id,
+              ObjectUtils.nullSafeClassName(id),
+              ObjectUtils.nullSafeClassName(identifiableObject)));
     }
   }
 
   public static <T> boolean isSetIdMethodAvailable(final Object identifiableObject, final T id) {
-    return (identifiableObject != null && ClassUtils.hasMethod(identifiableObject.getClass(), "setId", (id == null ? Object.class : id.getClass())));
+    return (identifiableObject != null
+        && ClassUtils.hasMethod(
+            identifiableObject.getClass(), "setId", (id == null ? Object.class : id.getClass())));
   }
-
 }

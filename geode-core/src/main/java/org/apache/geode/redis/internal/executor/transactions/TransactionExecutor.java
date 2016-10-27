@@ -18,6 +18,4 @@ package org.apache.geode.redis.internal.executor.transactions;
 
 import org.apache.geode.redis.internal.executor.AbstractExecutor;
 
-public abstract class TransactionExecutor extends AbstractExecutor {
-
-}
+public abstract class TransactionExecutor extends AbstractExecutor {}

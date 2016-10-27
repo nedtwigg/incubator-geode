@@ -21,12 +21,12 @@ package org.apache.geode.cache.query;
  *
  * @since GemFire 4.0
  */
-
 public class RegionNotFoundException extends NameResolutionException {
   private static final long serialVersionUID = 592495934010222373L;
 
   /**
    * Construct an instance of RegionNotFoundException
+   *
    * @param msg the error message
    */
   public RegionNotFoundException(String msg) {
@@ -35,6 +35,7 @@ public class RegionNotFoundException extends NameResolutionException {
 
   /**
    * Constructs an instance of RegionNotFoundException
+   *
    * @param msg the error message
    * @param cause a Throwable that is a cause of this exception
    */

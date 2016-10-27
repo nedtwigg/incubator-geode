@@ -43,14 +43,15 @@ import org.apache.geode.security.GemFireSecurityException;
 
 public class Destroy extends BaseCommand {
 
-  private final static Destroy singleton = new Destroy();
+  private static final Destroy singleton = new Destroy();
 
   public static Command getCommand() {
     return singleton;
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long startparam) throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long startparam)
+      throws IOException, InterruptedException {
     long start = startparam;
 
     Part regionNamePart = null, keyPart = null, callbackArgPart = null;
@@ -90,18 +91,34 @@ public class Destroy extends BaseCommand {
       return;
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received destroy request ({} bytes) from {} for region {} key {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), regionName, key);
+      logger.debug(
+          "{}: Received destroy request ({} bytes) from {} for region {} key {}",
+          servConn.getName(),
+          msg.getPayloadLength(),
+          servConn.getSocketString(),
+          regionName,
+          key);
     }
 
     // Process the destroy request
     if (key == null || regionName == null) {
       if (key == null) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.Destroy_0_THE_INPUT_KEY_FOR_THE_DESTROY_REQUEST_IS_NULL, servConn.getName()));
-        errMessage.append(LocalizedStrings.Destroy__THE_INPUT_KEY_FOR_THE_DESTROY_REQUEST_IS_NULL.toLocalizedString());
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.Destroy_0_THE_INPUT_KEY_FOR_THE_DESTROY_REQUEST_IS_NULL,
+                servConn.getName()));
+        errMessage.append(
+            LocalizedStrings.Destroy__THE_INPUT_KEY_FOR_THE_DESTROY_REQUEST_IS_NULL
+                .toLocalizedString());
       }
       if (regionName == null) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.Destroy_0_THE_INPUT_REGION_NAME_FOR_THE_DESTROY_REQUEST_IS_NULL, servConn.getName()));
-        errMessage.append(LocalizedStrings.Destroy__THE_INPUT_REGION_NAME_FOR_THE_DESTROY_REQUEST_IS_NULL.toLocalizedString());
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.Destroy_0_THE_INPUT_REGION_NAME_FOR_THE_DESTROY_REQUEST_IS_NULL,
+                servConn.getName()));
+        errMessage.append(
+            LocalizedStrings.Destroy__THE_INPUT_REGION_NAME_FOR_THE_DESTROY_REQUEST_IS_NULL
+                .toLocalizedString());
       }
       writeErrorResponse(msg, MessageType.DESTROY_DATA_ERROR, errMessage.toString(), servConn);
       servConn.setAsTrue(RESPONDED);
@@ -110,7 +127,9 @@ public class Destroy extends BaseCommand {
 
     LocalRegion region = (LocalRegion) servConn.getCache().getRegion(regionName);
     if (region == null) {
-      String reason = LocalizedStrings.Destroy__0_WAS_NOT_FOUND_DURING_DESTROY_REQUEST.toLocalizedString(regionName);
+      String reason =
+          LocalizedStrings.Destroy__0_WAS_NOT_FOUND_DURING_DESTROY_REQUEST.toLocalizedString(
+              regionName);
       writeRegionDestroyedEx(msg, regionName, reason, servConn);
       servConn.setAsTrue(RESPONDED);
       return;
@@ -129,19 +148,25 @@ public class Destroy extends BaseCommand {
       AuthorizeRequest authzRequest = servConn.getAuthzRequest();
       if (authzRequest != null) {
         if (DynamicRegionFactory.regionIsDynamicRegionList(regionName)) {
-          RegionDestroyOperationContext destroyContext = authzRequest.destroyRegionAuthorize((String) key, callbackArg);
+          RegionDestroyOperationContext destroyContext =
+              authzRequest.destroyRegionAuthorize((String) key, callbackArg);
           callbackArg = destroyContext.getCallbackArg();
         } else {
-          DestroyOperationContext destroyContext = authzRequest.destroyAuthorize(regionName, key, callbackArg);
+          DestroyOperationContext destroyContext =
+              authzRequest.destroyAuthorize(regionName, key, callbackArg);
           callbackArg = destroyContext.getCallbackArg();
         }
       }
-      region.basicBridgeDestroy(key, callbackArg, servConn.getProxyID(), true, new EventIDHolder(eventId));
+      region.basicBridgeDestroy(
+          key, callbackArg, servConn.getProxyID(), true, new EventIDHolder(eventId));
       servConn.setModificationInfo(true, regionName, key);
     } catch (EntryNotFoundException e) {
       // Don't send an exception back to the client if this
       // exception happens. Just log it and continue.
-      logger.info(LocalizedMessage.create(LocalizedStrings.Destroy_0_DURING_ENTRY_DESTROY_NO_ENTRY_WAS_FOUND_FOR_KEY_1, new Object[] { servConn.getName(), key }));
+      logger.info(
+          LocalizedMessage.create(
+              LocalizedStrings.Destroy_0_DURING_ENTRY_DESTROY_NO_ENTRY_WAS_FOUND_FOR_KEY_1,
+              new Object[] {servConn.getName(), key}));
     } catch (RegionDestroyedException rde) {
       writeException(msg, rde, false, servConn);
       servConn.setAsTrue(RESPONDED);
@@ -160,7 +185,10 @@ public class Destroy extends BaseCommand {
           logger.debug("{}: Unexpected Security exception", servConn.getName(), e);
         }
       } else {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.Destroy_0_UNEXPECTED_EXCEPTION, servConn.getName()), e);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.Destroy_0_UNEXPECTED_EXCEPTION, servConn.getName()),
+            e);
       }
       return;
     }
@@ -184,7 +212,8 @@ public class Destroy extends BaseCommand {
     }
     servConn.setAsTrue(RESPONDED);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Sent destroy response for region {} key {}", servConn.getName(), regionName, key);
+      logger.debug(
+          "{}: Sent destroy response for region {} key {}", servConn.getName(), regionName, key);
     }
     stats.incWriteDestroyResponseTime(DistributionStats.getStatTime() - start);
   }

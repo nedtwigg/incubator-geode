@@ -17,34 +17,25 @@
 package org.apache.geode.internal.process;
 
 /**
- * A FileAlreadyExistsException is thrown when a pid file already exists
- * and the launcher expects to create a new pid file without forcing the
- * deletion of the old one.
- * 
+ * A FileAlreadyExistsException is thrown when a pid file already exists and the launcher expects to
+ * create a new pid file without forcing the deletion of the old one.
+ *
  * @since GemFire 7.0
  */
 public final class FileAlreadyExistsException extends Exception {
   private static final long serialVersionUID = 5471082555536094256L;
 
-  /**
-   * Creates a new <code>FileAlreadyExistsException</code>.
-   */
+  /** Creates a new <code>FileAlreadyExistsException</code>. */
   public FileAlreadyExistsException(final String message) {
     super(message);
   }
 
-  /**
-   * Creates a new <code>FileAlreadyExistsException</code> that was
-   * caused by a given exception
-   */
+  /** Creates a new <code>FileAlreadyExistsException</code> that was caused by a given exception */
   public FileAlreadyExistsException(final String message, final Throwable thr) {
     super(message, thr);
   }
 
-  /**
-   * Creates a new <code>FileAlreadyExistsException</code> that was
-   * caused by a given exception
-   */
+  /** Creates a new <code>FileAlreadyExistsException</code> that was caused by a given exception */
   public FileAlreadyExistsException(final Throwable thr) {
     super(thr.getMessage(), thr);
   }

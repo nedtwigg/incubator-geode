@@ -25,10 +25,9 @@ import java.io.*;
 import org.apache.geode.distributed.internal.membership.*;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * A message that is sent as a reply to a {@link AdminRequest}.
- */
-public abstract class AdminResponse extends HighPriorityDistributionMessage implements AdminMessageType {
+/** A message that is sent as a reply to a {@link AdminRequest}. */
+public abstract class AdminResponse extends HighPriorityDistributionMessage
+    implements AdminMessageType {
 
   // instance variables
 
@@ -49,9 +48,7 @@ public abstract class AdminResponse extends HighPriorityDistributionMessage impl
     return true;
   }
 
-  /**
-   * This method is invoked on the side that sent the original AdminRequest.
-   */
+  /** This method is invoked on the side that sent the original AdminRequest. */
   @Override
   protected void process(DistributionManager dm) {
     AdminWaiters.sendResponse(this);
@@ -77,7 +74,10 @@ public abstract class AdminResponse extends HighPriorityDistributionMessage impl
     if (size == 0) {
       return null;
     } else if (size > 1) {
-      throw new IllegalStateException(LocalizedStrings.AdminResponse_COULD_NOT_RETURN_ONE_RECIPIENT_BECAUSE_THIS_MESSAGE_HAS_0_RECIPIENTS.toLocalizedString(Integer.valueOf(size)));
+      throw new IllegalStateException(
+          LocalizedStrings
+              .AdminResponse_COULD_NOT_RETURN_ONE_RECIPIENT_BECAUSE_THIS_MESSAGE_HAS_0_RECIPIENTS
+              .toLocalizedString(Integer.valueOf(size)));
     } else {
       return recipients[0];
     }

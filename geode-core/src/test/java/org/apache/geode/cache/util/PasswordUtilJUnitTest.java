@@ -25,7 +25,7 @@ import org.apache.geode.internal.util.PasswordUtil;
 import org.apache.geode.test.junit.categories.SecurityTest;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-@Category({ UnitTest.class, SecurityTest.class })
+@Category({UnitTest.class, SecurityTest.class})
 public class PasswordUtilJUnitTest {
 
   @Test

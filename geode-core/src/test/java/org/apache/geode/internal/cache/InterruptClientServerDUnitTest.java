@@ -49,10 +49,7 @@ import org.apache.geode.test.dunit.Invoke;
 import org.apache.geode.test.dunit.SerializableCallable;
 import org.apache.geode.test.dunit.VM;
 
-/**
- * Tests interrupting gemfire threads and seeing what happens
- *
- */
+/** Tests interrupting gemfire threads and seeing what happens */
 @Category(DistributedTest.class)
 public class InterruptClientServerDUnitTest extends JUnit4CacheTestCase {
 
@@ -66,20 +63,21 @@ public class InterruptClientServerDUnitTest extends JUnit4CacheTestCase {
 
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableCallable() {
+    Invoke.invokeInEveryVM(
+        new SerializableCallable() {
 
-      @Override
-      public Object call() throws Exception {
-        puttingThread = null;
-        return null;
-      }
-    });
+          @Override
+          public Object call() throws Exception {
+            puttingThread = null;
+            return null;
+          }
+        });
   }
 
   /**
-   * A simple test case that we are actually
-   * persisting with a PR.
-   * @throws Throwable 
+   * A simple test case that we are actually persisting with a PR.
+   *
+   * @throws Throwable
    */
   @Test
   public void testClientPutWithInterrupt() throws Throwable {
@@ -95,67 +93,74 @@ public class InterruptClientServerDUnitTest extends JUnit4CacheTestCase {
     //put some data in vm0
     createData(vm0, 0, 10, "a");
 
-    final SerializableCallable interruptTask = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        puttingThread.interrupt();
-        return null;
-      }
-    };
+    final SerializableCallable interruptTask =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            puttingThread.interrupt();
+            return null;
+          }
+        };
 
-    vm1.invoke(new SerializableCallable() {
-
-      @Override
-      public Object call() throws Exception {
-        disconnectFromDS();
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+    vm1.invoke(
+        new SerializableCallable() {
 
           @Override
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof UpdateMessage && ((UpdateMessage) message).regionPath.contains("region") && doInterrupt.compareAndSet(true, false)) {
-              vm2.invoke(interruptTask);
-              DistributionMessageObserver.setInstance(null);
-            }
-          }
+          public Object call() throws Exception {
+            disconnectFromDS();
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
 
+                  @Override
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof UpdateMessage
+                        && ((UpdateMessage) message).regionPath.contains("region")
+                        && doInterrupt.compareAndSet(true, false)) {
+                      vm2.invoke(interruptTask);
+                      DistributionMessageObserver.setInstance(null);
+                    }
+                  }
+                });
+            return null;
+          }
         });
-        return null;
-      }
-    });
 
     createRegion(vm1);
     createClientRegion(vm2, port);
 
-    SerializableCallable doPuts = new SerializableCallable() {
+    SerializableCallable doPuts =
+        new SerializableCallable() {
 
-      @Override
-      public Object call() throws Exception {
-        puttingThread = Thread.currentThread();
-        Region<Object, Object> region = getCache().getRegion("region");
-        long value = 0;
-        long end = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(MAX_WAIT);
-        while (!Thread.currentThread().isInterrupted()) {
-          region.put(0, value);
-          if (System.nanoTime() > end) {
-            fail("Did not get interrupted in 60 seconds");
+          @Override
+          public Object call() throws Exception {
+            puttingThread = Thread.currentThread();
+            Region<Object, Object> region = getCache().getRegion("region");
+            long value = 0;
+            long end = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(MAX_WAIT);
+            while (!Thread.currentThread().isInterrupted()) {
+              region.put(0, value);
+              if (System.nanoTime() > end) {
+                fail("Did not get interrupted in 60 seconds");
+              }
+            }
+            return null;
           }
-        }
-        return null;
-      }
-    };
+        };
 
     AsyncInvocation async0 = vm2.invokeAsync(doPuts);
 
-    vm1.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        doInterrupt.set(true);
-        return null;
-      }
-    });
+    vm1.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            doInterrupt.set(true);
+            return null;
+          }
+        });
 
     //    vm0.invoke(new SerializableCallable() {
-    //      
+    //
     //      @Override
     //      public Object call() throws Exception {
     //        long end = System.nanoTime() + TimeUnit.SECONDS.toNanos(MAX_WAIT);
@@ -165,7 +170,7 @@ public class InterruptClientServerDUnitTest extends JUnit4CacheTestCase {
     //            fail("Putting thread not set in 60 seconds");
     //          }
     //        }
-    //        
+    //
     //        puttingThread.interrupt();
     //        return null;
     //      }
@@ -177,70 +182,73 @@ public class InterruptClientServerDUnitTest extends JUnit4CacheTestCase {
     Object value1 = checkCacheAndGetValue(vm1);
 
     assertEquals(value0, value1);
-
   }
 
   private void createClientRegion(VM vm, final int port) {
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        disconnectFromDS();
-        ClientCacheFactory cf = new ClientCacheFactory();
-        cf.addPoolServer("localhost", port);
-        cf.setPoolReadTimeout(60 * 2 * 1000);
-        ClientCache cache = getClientCache(cf);
-        cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create("region");
-        return null;
-      }
-    });
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            disconnectFromDS();
+            ClientCacheFactory cf = new ClientCacheFactory();
+            cf.addPoolServer("localhost", port);
+            cf.setPoolReadTimeout(60 * 2 * 1000);
+            ClientCache cache = getClientCache(cf);
+            cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create("region");
+            return null;
+          }
+        });
   }
 
   private void createRegionAndServer(VM vm, final int port) {
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        getCache().createRegionFactory(RegionShortcut.REPLICATE).create("region");
-        Cache cache = getCache();
-        CacheServer server = cache.addCacheServer();
-        server.setPort(port);
-        server.start();
-        return null;
-      }
-    });
-
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            getCache().createRegionFactory(RegionShortcut.REPLICATE).create("region");
+            Cache cache = getCache();
+            CacheServer server = cache.addCacheServer();
+            server.setPort(port);
+            server.start();
+            return null;
+          }
+        });
   }
 
   private Object checkCacheAndGetValue(VM vm) {
-    return vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        assertFalse(basicGetCache().isClosed());
-        Region<Object, Object> region = getCache().getRegion("region");
-        return region.get(0);
-      }
-    });
+    return vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            assertFalse(basicGetCache().isClosed());
+            Region<Object, Object> region = getCache().getRegion("region");
+            return region.get(0);
+          }
+        });
   }
 
   private void createRegion(VM vm) {
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        getCache().createRegionFactory(RegionShortcut.REPLICATE).create("region");
-        return null;
-      }
-    });
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            getCache().createRegionFactory(RegionShortcut.REPLICATE).create("region");
+            return null;
+          }
+        });
   }
 
   private void createData(VM vm, final int start, final int end, final String value) {
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<Object, Object> region = getCache().getRegion("region");
-        for (int i = start; i < end; i++) {
-          region.put(i, value);
-        }
-        return null;
-      }
-    });
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<Object, Object> region = getCache().getRegion("region");
+            for (int i = start; i < end; i++) {
+              region.put(i, value);
+            }
+            return null;
+          }
+        });
   }
 }

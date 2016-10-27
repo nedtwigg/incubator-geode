@@ -40,28 +40,25 @@ import static org.mockito.Mockito.*;
 
 /**
  * Factory methods for fake objects for use in test.
- * 
+ *
  * These fakes are essentially mock objects with some limited
  * functionality. For example the fake cache can return a fake
  * distributed system.
- * 
+ *
  * All of the fakes returned by this class are Mockito.mocks, so
  * they can be modified by using Mockito stubbing, ie
- * 
+ *
  * <pre>
  * cache = Fakes.cache();
  * Mockito.when(cache.getName()).thenReturn(...)
  * <pre>
- * 
+ *
  * Please help extend this class by adding other commonly
  * used objects to this collection of fakes.
  */
 public class Fakes {
 
-  /**
-   * A fake cache, which contains a fake distributed
-   * system, distribution manager, etc.
-   */
+  /** A fake cache, which contains a fake distributed system, distribution manager, etc. */
   public static GemFireCacheImpl cache() {
     GemFireCacheImpl cache = mock(GemFireCacheImpl.class);
     InternalDistributedSystem system = mock(InternalDistributedSystem.class);
@@ -104,17 +101,12 @@ public class Fakes {
     return cache;
   }
 
-  /**
-   * A fake distributed system, which contains a fake distribution manager.
-   */
+  /** A fake distributed system, which contains a fake distribution manager. */
   public static InternalDistributedSystem distributedSystem() {
     return cache().getDistributedSystem();
   }
 
-  /**
-   * A fake region, which contains a fake cache and some other
-   * fake attributes
-   */
+  /** A fake region, which contains a fake cache and some other fake attributes */
   public static Region region(String name, Cache cache) {
     Region region = mock(Region.class);
     RegionAttributes attributes = mock(RegionAttributes.class);
@@ -127,18 +119,20 @@ public class Fakes {
   }
 
   /**
-   * Add real map behavior to a mock region. Useful for tests
-   * where you want to mock region that just behaves like a map.
+   * Add real map behavior to a mock region. Useful for tests where you want to mock region that
+   * just behaves like a map.
+   *
    * @param mock the mockito mock to add behavior too.
    */
   public static void addMapBehavior(Region mock) {
     //Allow the region to behave like a fake map
     Map underlyingMap = new HashMap();
     when(mock.get(any())).then(invocation -> underlyingMap.get(invocation.getArguments()[0]));
-    when(mock.put(any(), any())).then(invocation -> underlyingMap.put(invocation.getArguments()[0], invocation.getArguments()[1]));
+    when(mock.put(any(), any()))
+        .then(
+            invocation ->
+                underlyingMap.put(invocation.getArguments()[0], invocation.getArguments()[1]));
   }
 
-  private Fakes() {
-  }
-
+  private Fakes() {}
 }

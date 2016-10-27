@@ -17,8 +17,7 @@
 package org.apache.geode.cache;
 
 /**
- * Indicates that an attempt was mode to invoke an operation that is not
- * allowed in a transaction.
+ * Indicates that an attempt was mode to invoke an operation that is not allowed in a transaction.
  *
  * @since GemFire 6.5
  */
@@ -31,5 +30,4 @@ public class UnsupportedOperationInTransactionException extends UnsupportedOpera
   public UnsupportedOperationInTransactionException() {
     super();
   }
-
 }

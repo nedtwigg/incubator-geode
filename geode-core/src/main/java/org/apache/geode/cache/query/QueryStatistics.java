@@ -17,22 +17,15 @@
 package org.apache.geode.cache.query;
 
 /**
- * Provides statistical information about a query performed on a
- * GemFire <code>Region</code>.
+ * Provides statistical information about a query performed on a GemFire <code>Region</code>.
  *
  * @since GemFire 4.0
  */
 public interface QueryStatistics {
 
-  /**
-   * Returns the total number of times the query has been executed.
-   */
+  /** Returns the total number of times the query has been executed. */
   public long getNumExecutions();
 
-  /**
-   * Returns the total amount of time (in nanoseconds) spent executing
-   * the query.
-   */
+  /** Returns the total amount of time (in nanoseconds) spent executing the query. */
   public long getTotalExecutionTime();
-
 }

@@ -52,14 +52,16 @@ public class HashIndexSetJUnitTest {
     addPortfoliosToHashIndexSet(portfoliosMap, his);
   }
 
-  private void addPortfoliosToHashIndexSet(Map<Integer, Portfolio> portfoliosMap, HashIndexSet hashIndexSet) {
-    portfoliosMap.forEach((k, v) -> {
-      try {
-        hashIndexSet.add(k, v);
-      } catch (TypeMismatchException exception) {
-        throw new Error(exception);
-      }
-    });
+  private void addPortfoliosToHashIndexSet(
+      Map<Integer, Portfolio> portfoliosMap, HashIndexSet hashIndexSet) {
+    portfoliosMap.forEach(
+        (k, v) -> {
+          try {
+            hashIndexSet.add(k, v);
+          } catch (TypeMismatchException exception) {
+            throw new Error(exception);
+          }
+        });
   }
 
   private HashIndexSet createHashIndexSet() {
@@ -71,19 +73,21 @@ public class HashIndexSetJUnitTest {
   }
 
   /**
-   * we are "indexed" on indexKey.  Equality of portfolios is based on ID
-   * indexKeys are based on 0 -> numEntries
-   * IDs are startID -> startID + numEntries
+   * we are "indexed" on indexKey. Equality of portfolios is based on ID indexKeys are based on 0 ->
+   * numEntries IDs are startID -> startID + numEntries
+   *
    * @param numToCreate how many portfolios to create
    * @param startID the ID value to start incrementing from
    */
   private Map<Integer, Portfolio> createPortfolioObjects(int numToCreate, int startID) {
     Map<Integer, Portfolio> portfoliosMap = new HashMap<>();
-    IntStream.range(0, numToCreate).forEach(e -> {
-      Portfolio p = new Portfolio(e + startID);
-      p.indexKey = e;
-      portfoliosMap.put(p.indexKey, p);
-    });
+    IntStream.range(0, numToCreate)
+        .forEach(
+            e -> {
+              Portfolio p = new Portfolio(e + startID);
+              p.indexKey = e;
+              portfoliosMap.put(p.indexKey, p);
+            });
     return portfoliosMap;
   }
 
@@ -108,8 +112,8 @@ public class HashIndexSetJUnitTest {
   }
 
   /**
-   * we have to be sure that we dont cause a compaction or growth or else
-   * removed tokens will be removed and a new backing array created
+   * we have to be sure that we dont cause a compaction or growth or else removed tokens will be
+   * removed and a new backing array created
    */
   @Test
   public void testHashIndexSetAddUseRemoveTokenSlot() throws Exception {
@@ -184,7 +188,8 @@ public class HashIndexSetJUnitTest {
     int keyToLookup = 1;
     his = createHashIndexSet();
     Map<Integer, Portfolio> collectionOfPorts1 = this.createPortfolioObjects(numEntries, 0);
-    Map<Integer, Portfolio> collectionOfPorts2 = this.createPortfolioObjects(numEntries, numEntries);
+    Map<Integer, Portfolio> collectionOfPorts2 =
+        this.createPortfolioObjects(numEntries, numEntries);
 
     addPortfoliosToHashIndexSet(collectionOfPorts1, his);
     addPortfoliosToHashIndexSet(collectionOfPorts2, his);
@@ -206,8 +211,10 @@ public class HashIndexSetJUnitTest {
     int keyToLookup = 1;
     his = createHashIndexSet();
     Map<Integer, Portfolio> collectionOfPorts1 = this.createPortfolioObjects(numEntries, 0);
-    Map<Integer, Portfolio> collectionOfPorts2 = this.createPortfolioObjects(numEntries, numEntries);
-    Map<Integer, Portfolio> collectionOfPorts3 = this.createPortfolioObjects(numEntries, numEntries * 2);
+    Map<Integer, Portfolio> collectionOfPorts2 =
+        this.createPortfolioObjects(numEntries, numEntries);
+    Map<Integer, Portfolio> collectionOfPorts3 =
+        this.createPortfolioObjects(numEntries, numEntries * 2);
 
     addPortfoliosToHashIndexSet(collectionOfPorts1, his);
     addPortfoliosToHashIndexSet(collectionOfPorts2, his);
@@ -245,7 +252,6 @@ public class HashIndexSetJUnitTest {
       assertEquals(keyToLookup, ((Portfolio) iterator.next()).indexKey);
     }
     assertEquals(3, numIterated);
-
   }
 
   @Test
@@ -253,7 +259,8 @@ public class HashIndexSetJUnitTest {
     int numEntries = 20;
     his = createHashIndexSet();
     Map<Integer, Portfolio> collectionOfPorts1 = this.createPortfolioObjects(numEntries, 0);
-    Map<Integer, Portfolio> collectionOfPorts2 = this.createPortfolioObjects(numEntries, numEntries);
+    Map<Integer, Portfolio> collectionOfPorts2 =
+        this.createPortfolioObjects(numEntries, numEntries);
 
     addPortfoliosToHashIndexSet(collectionOfPorts1, his);
     addPortfoliosToHashIndexSet(collectionOfPorts2, his);
@@ -278,20 +285,21 @@ public class HashIndexSetJUnitTest {
     int numEntries = 10;
     his = createHashIndexSet();
     portfoliosMap = createPortfolioObjects(numEntries, 0);
-    portfoliosMap.forEach((k, v) -> {
-      try {
-        int index = his.add(k, portfoliosMap.get(k));
-        int foundIndex = his.index(portfoliosMap.get(k));
-        assertEquals(index, foundIndex);
-      } catch (TypeMismatchException ex) {
-        throw new Error(ex);
-      }
-    });
+    portfoliosMap.forEach(
+        (k, v) -> {
+          try {
+            int index = his.add(k, portfoliosMap.get(k));
+            int foundIndex = his.index(portfoliosMap.get(k));
+            assertEquals(index, foundIndex);
+          } catch (TypeMismatchException ex) {
+            throw new Error(ex);
+          }
+        });
   }
 
   /**
-   * Add multiple portfolios with the same id
-   * they should collide, we should then be able to look up each one correctly
+   * Add multiple portfolios with the same id they should collide, we should then be able to look up
+   * each one correctly
    */
   @Test
   public void testIndexOfObjectWithCollision() throws Exception {
@@ -300,24 +308,26 @@ public class HashIndexSetJUnitTest {
     Map<Integer, Portfolio> portfoliosMap1 = createPortfolioObjects(numEntries, 0);
     Map<Integer, Portfolio> portfoliosMap2 = createPortfolioObjects(numEntries, numEntries);
 
-    portfoliosMap1.forEach((k, v) -> {
-      try {
-        int index = his.add(k, portfoliosMap1.get(k));
-        int foundIndex = his.index(portfoliosMap1.get(k));
-        assertEquals(index, foundIndex);
-      } catch (TypeMismatchException ex) {
-        throw new Error(ex);
-      }
-    });
-    portfoliosMap2.forEach((k, v) -> {
-      try {
-        int index = his.add(k, portfoliosMap2.get(k));
-        int foundIndex = his.index(portfoliosMap2.get(k));
-        assertEquals(index, foundIndex);
-      } catch (TypeMismatchException ex) {
-        throw new Error(ex);
-      }
-    });
+    portfoliosMap1.forEach(
+        (k, v) -> {
+          try {
+            int index = his.add(k, portfoliosMap1.get(k));
+            int foundIndex = his.index(portfoliosMap1.get(k));
+            assertEquals(index, foundIndex);
+          } catch (TypeMismatchException ex) {
+            throw new Error(ex);
+          }
+        });
+    portfoliosMap2.forEach(
+        (k, v) -> {
+          try {
+            int index = his.add(k, portfoliosMap2.get(k));
+            int foundIndex = his.index(portfoliosMap2.get(k));
+            assertEquals(index, foundIndex);
+          } catch (TypeMismatchException ex) {
+            throw new Error(ex);
+          }
+        });
   }
 
   @Test
@@ -345,9 +355,7 @@ public class HashIndexSetJUnitTest {
     assertEquals(0, his.size());
   }
 
-  /**
-   * Test remove where we look for an instance that is not at the specified index slot
-   */
+  /** Test remove where we look for an instance that is not at the specified index slot */
   @Test
   public void testRemoveIgnoreSlot() throws Exception {
     int numEntries = 20;
@@ -384,7 +392,8 @@ public class HashIndexSetJUnitTest {
   }
 
   /**
-   * Remove all should still remove all portfolios provided, even if there are more provided then contained
+   * Remove all should still remove all portfolios provided, even if there are more provided then
+   * contained
    */
   @Test
   public void testHashIndexRemoveAllWithAdditionalPortfolios() throws Exception {
@@ -411,11 +420,12 @@ public class HashIndexSetJUnitTest {
     int numEntries = 10;
     setupHashIndexSet(numEntries);
     Set subset = new HashSet();
-    portfolioSet.forEach(e -> {
-      if (e.indexKey % 2 == 0) {
-        subset.add(e);
-      }
-    });
+    portfolioSet.forEach(
+        e -> {
+          if (e.indexKey % 2 == 0) {
+            subset.add(e);
+          }
+        });
     assertEquals(numEntries, his.size());
     his.retainAll(subset);
     his.iterator().forEachRemaining((e -> subset.remove(e)));
@@ -496,7 +506,5 @@ public class HashIndexSetJUnitTest {
       }
       return null;
     }
-
   }
-
 }

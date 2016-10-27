@@ -32,15 +32,15 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Controls a {@link ControllableProcess} using files to communicate between
- * processes.
- * 
+ * Controls a {@link ControllableProcess} using files to communicate between processes.
+ *
  * @since GemFire 8.0
  */
 public class FileProcessController implements ProcessController {
   private static final Logger logger = LogService.getLogger();
 
-  public static final String STATUS_TIMEOUT_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "FileProcessController.STATUS_TIMEOUT";
+  public static final String STATUS_TIMEOUT_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "FileProcessController.STATUS_TIMEOUT";
 
   private final long statusTimeoutMillis;
   private final FileControllerParameters arguments;
@@ -48,10 +48,9 @@ public class FileProcessController implements ProcessController {
 
   /**
    * Constructs an instance for controlling a local process.
-   * 
+   *
    * @param arguments details about the controllable process
    * @param pid process id identifying the process to control
-   * 
    * @throws IllegalArgumentException if pid is not a positive integer
    */
   public FileProcessController(final FileControllerParameters arguments, final int pid) {
@@ -60,15 +59,18 @@ public class FileProcessController implements ProcessController {
 
   /**
    * Constructs an instance for controlling a local process.
-   * 
+   *
    * @param arguments details about the controllable process
    * @param pid process id identifying the process to control
    * @param timeout the timeout that operations must complete within
    * @param units the units of the timeout
-   * 
    * @throws IllegalArgumentException if pid is not a positive integer
    */
-  public FileProcessController(final FileControllerParameters arguments, final int pid, final long timeout, final TimeUnit units) {
+  public FileProcessController(
+      final FileControllerParameters arguments,
+      final int pid,
+      final long timeout,
+      final TimeUnit units) {
     if (pid < 1) {
       throw new IllegalArgumentException("Invalid pid '" + pid + "' specified");
     }
@@ -83,51 +85,63 @@ public class FileProcessController implements ProcessController {
   }
 
   @Override
-  public String status() throws UnableToControlProcessException, IOException, InterruptedException, TimeoutException {
-    return status(this.arguments.getWorkingDirectory(), this.arguments.getProcessType().getStatusRequestFileName(), this.arguments.getProcessType().getStatusFileName());
+  public String status()
+      throws UnableToControlProcessException, IOException, InterruptedException, TimeoutException {
+    return status(
+        this.arguments.getWorkingDirectory(),
+        this.arguments.getProcessType().getStatusRequestFileName(),
+        this.arguments.getProcessType().getStatusFileName());
   }
 
   @Override
   public void stop() throws UnableToControlProcessException, IOException {
-    stop(this.arguments.getWorkingDirectory(), this.arguments.getProcessType().getStopRequestFileName());
+    stop(
+        this.arguments.getWorkingDirectory(),
+        this.arguments.getProcessType().getStopRequestFileName());
   }
 
   @Override
   public void checkPidSupport() {
-    throw new AttachAPINotFoundException(LocalizedStrings.Launcher_ATTACH_API_NOT_FOUND_ERROR_MESSAGE.toLocalizedString());
+    throw new AttachAPINotFoundException(
+        LocalizedStrings.Launcher_ATTACH_API_NOT_FOUND_ERROR_MESSAGE.toLocalizedString());
   }
 
-  private void stop(final File workingDir, final String stopRequestFileName) throws UnableToControlProcessException, IOException {
+  private void stop(final File workingDir, final String stopRequestFileName)
+      throws UnableToControlProcessException, IOException {
     final File stopRequestFile = new File(workingDir, stopRequestFileName);
     if (!stopRequestFile.exists()) {
       stopRequestFile.createNewFile();
     }
   }
 
-  private String status(final File workingDir, final String statusRequestFileName, final String statusFileName) throws UnableToControlProcessException, IOException, InterruptedException, TimeoutException {
+  private String status(
+      final File workingDir, final String statusRequestFileName, final String statusFileName)
+      throws UnableToControlProcessException, IOException, InterruptedException, TimeoutException {
     // monitor for statusFile
     final File statusFile = new File(workingDir, statusFileName);
     final AtomicReference<String> statusRef = new AtomicReference<String>();
 
-    final ControlRequestHandler statusHandler = new ControlRequestHandler() {
-      @Override
-      public void handleRequest() throws IOException {
-        // read the statusFile
-        final BufferedReader reader = new BufferedReader(new FileReader(statusFile));
-        final StringBuilder lines = new StringBuilder();
-        try {
-          String line = null;
-          while ((line = reader.readLine()) != null) {
-            lines.append(line);
+    final ControlRequestHandler statusHandler =
+        new ControlRequestHandler() {
+          @Override
+          public void handleRequest() throws IOException {
+            // read the statusFile
+            final BufferedReader reader = new BufferedReader(new FileReader(statusFile));
+            final StringBuilder lines = new StringBuilder();
+            try {
+              String line = null;
+              while ((line = reader.readLine()) != null) {
+                lines.append(line);
+              }
+            } finally {
+              statusRef.set(lines.toString());
+              reader.close();
+            }
           }
-        } finally {
-          statusRef.set(lines.toString());
-          reader.close();
-        }
-      }
-    };
+        };
 
-    final ControlFileWatchdog statusFileWatchdog = new ControlFileWatchdog(workingDir, statusFileName, statusHandler, true);
+    final ControlFileWatchdog statusFileWatchdog =
+        new ControlFileWatchdog(workingDir, statusFileName, statusHandler, true);
     statusFileWatchdog.start();
 
     final File statusRequestFile = new File(workingDir, statusRequestFileName);
@@ -140,7 +154,8 @@ public class FileProcessController implements ProcessController {
     while (statusFileWatchdog.isAlive()) {
       Thread.sleep(10);
       if (System.currentTimeMillis() >= start + this.statusTimeoutMillis) {
-        final TimeoutException te = new TimeoutException("Timed out waiting for process to create " + statusFile);
+        final TimeoutException te =
+            new TimeoutException("Timed out waiting for process to create " + statusFile);
         try {
           statusFileWatchdog.stop();
         } catch (InterruptedException e) {

@@ -69,33 +69,35 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 import org.apache.geode.internal.sequencelog.EntryLogger;
 
 /**
- * The base PartitionedRegion message type upon which other messages should be
- * based.
- * 
+ * The base PartitionedRegion message type upon which other messages should be based.
+ *
  * @since GemFire 5.0
  */
-public abstract class PartitionMessage extends DistributionMessage implements MessageWithReply, TransactionMessage {
+public abstract class PartitionMessage extends DistributionMessage
+    implements MessageWithReply, TransactionMessage {
   private static final Logger logger = LogService.getLogger();
 
   /** default exception to ensure a false-positive response is never returned */
-  static final ForceReattemptException UNHANDLED_EXCEPTION = (ForceReattemptException) new ForceReattemptException(LocalizedStrings.PartitionMessage_UNKNOWN_EXCEPTION.toLocalizedString()).fillInStackTrace();
+  static final ForceReattemptException UNHANDLED_EXCEPTION =
+      (ForceReattemptException)
+          new ForceReattemptException(
+                  LocalizedStrings.PartitionMessage_UNKNOWN_EXCEPTION.toLocalizedString())
+              .fillInStackTrace();
 
   int regionId;
 
   int processorId;
 
-  /**
-   * whether this message is being sent for listener notification
-   */
+  /** whether this message is being sent for listener notification */
   boolean notificationOnly;
 
   protected short flags = 0;
 
-  /* these bit masks are used for encoding the bits of a short on the wire 
+  /* these bit masks are used for encoding the bits of a short on the wire
    * instead of transmitting booleans. Any subclasses interested in saving
    * bits on the wire should add a mask here and then override
    *  computeCompressedShort and setBooleans
-   * 
+   *
    */
   /** flag to indicate notification message */
   protected static final short NOTIFICATION_ONLY = DistributionMessage.UNRESERVED_FLAGS_START;
@@ -114,7 +116,9 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
 
   private InternalDistributedMember txMemberId = null;
 
-  /** The unique transaction Id on the sending member, used to construct a TXId on the receiving side */
+  /**
+   * The unique transaction Id on the sending member, used to construct a TXId on the receiving side
+   */
   private int txUniqId = TXManagerImpl.NOTX;
 
   protected boolean sendDeltaWithFullValue = true;
@@ -122,10 +126,10 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
   /*TODO [DISTTX] Convert into flag*/
   protected boolean isTransactionDistributed = false;
 
-  public PartitionMessage() {
-  }
+  public PartitionMessage() {}
 
-  public PartitionMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor) {
+  public PartitionMessage(
+      InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor) {
     Assert.assertTrue(recipient != null, "PartitionMesssage recipient can not be null");
     setRecipient(recipient);
     this.regionId = regionId;
@@ -137,7 +141,8 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
     setIfTransactionDistributed();
   }
 
-  public PartitionMessage(Collection<InternalDistributedMember> recipients, int regionId, ReplyProcessor21 processor) {
+  public PartitionMessage(
+      Collection<InternalDistributedMember> recipients, int regionId, ReplyProcessor21 processor) {
     setRecipients(recipients);
     this.regionId = regionId;
     this.processorId = processor == null ? 0 : processor.getProcessorId();
@@ -155,7 +160,9 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
       // [DISTTX] Lets not throw this exception for Dist Tx
       if (canStartRemoteTransaction() && txState.isRealDealLocal() && !txState.isDistTx()) {
         //logger.error("sending rmt txId even though tx is local! txState=" + txState, new RuntimeException("STACK"));
-        throw new IllegalStateException("Sending remote txId even though transaction is local. This should never happen: txState=" + txState);
+        throw new IllegalStateException(
+            "Sending remote txId even though transaction is local. This should never happen: txState="
+                + txState);
       }
     }
     if (txState != null && txState.isMemberIdForwardingRequired()) {
@@ -165,6 +172,7 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
 
   /**
    * Copy constructor that initializes the fields declared in this class
+   *
    * @param other
    */
   public PartitionMessage(PartitionMessage other) {
@@ -192,12 +200,11 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
   }
 
   /**
-   * Severe alert processing enables suspect processing at the ack-wait-threshold
-   * and issuing of a severe alert at the end of the ack-severe-alert-threshold.
-   * Some messages should not support this type of processing
-   * (e.g., GII, or DLockRequests)
-   * @return whether severe-alert processing may be performed on behalf
-   * of this message
+   * Severe alert processing enables suspect processing at the ack-wait-threshold and issuing of a
+   * severe alert at the end of the ack-severe-alert-threshold. Some messages should not support
+   * this type of processing (e.g., GII, or DLockRequests)
+   *
+   * @return whether severe-alert processing may be performed on behalf of this message
    */
   @Override
   public boolean isSevereAlertCompatible() {
@@ -214,8 +221,7 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
   }
 
   /**
-   * @return the compact value that will be sent which represents the
-   *         PartitionedRegion
+   * @return the compact value that will be sent which represents the PartitionedRegion
    * @see PartitionedRegion#getPRId()
    */
   public final int getRegionId() {
@@ -223,8 +229,8 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
   }
 
   /**
-   * @return the {@link ReplyProcessor21}id associated with the message, null
-   *         if no acknowlegement is required.
+   * @return the {@link ReplyProcessor21}id associated with the message, null if no acknowlegement
+   *     is required.
    */
   @Override
   public final int getProcessorId() {
@@ -232,25 +238,22 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
   }
 
   /**
-   * @param processorId1 the {@link 
-   * org.apache.geode.distributed.internal.ReplyProcessor21} id associated 
-   * with the message, null if no acknowlegement is required.
+   * @param processorId1 the {@link org.apache.geode.distributed.internal.ReplyProcessor21} id
+   *     associated with the message, null if no acknowlegement is required.
    */
   public final void registerProcessor(int processorId1) {
     this.processorId = processorId1;
   }
 
   /**
-   * @return return the message that should be sent to listeners, or null if this message
-   * should not be relayed
+   * @return return the message that should be sent to listeners, or null if this message should not
+   *     be relayed
    */
   public PartitionMessage getMessageForRelayToListeners(EntryEventImpl event, Set recipients) {
     return null;
   }
 
-  /**
-   * check to see if the cache is closing
-   */
+  /** check to see if the cache is closing */
   public boolean checkCacheClosing(DistributionManager dm) {
     GemFireCacheImpl cache = getGemFireCacheImpl();
     // return (cache != null && cache.isClosed());
@@ -259,6 +262,7 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
 
   /**
    * check to see if the distributed system is closing
+   *
    * @return true if the distributed system is closing
    */
   public boolean checkDSClosing(DistributionManager dm) {
@@ -283,12 +287,12 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
   }
 
   /**
-   * Upon receipt of the message, both process the message and send an
-   * acknowledgement, not necessarily in that order. Note: Any hang in this
-   * message may cause a distributed deadlock for those threads waiting for an
-   * acknowledgement.
-   * 
-   * @throws PartitionedRegionException if the region does not exist (typically, if it has been destroyed)
+   * Upon receipt of the message, both process the message and send an acknowledgement, not
+   * necessarily in that order. Note: Any hang in this message may cause a distributed deadlock for
+   * those threads waiting for an acknowledgement.
+   *
+   * @throws PartitionedRegionException if the region does not exist (typically, if it has been
+   *     destroyed)
    */
   @Override
   public void process(final DistributionManager dm) {
@@ -299,14 +303,21 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
     EntryLogger.setSource(getSender(), "PR");
     try {
       if (checkCacheClosing(dm) || checkDSClosing(dm)) {
-        thr = new CacheClosedException(LocalizedStrings.PartitionMessage_REMOTE_CACHE_IS_CLOSED_0.toLocalizedString(dm.getId()));
+        thr =
+            new CacheClosedException(
+                LocalizedStrings.PartitionMessage_REMOTE_CACHE_IS_CLOSED_0.toLocalizedString(
+                    dm.getId()));
         return;
       }
       pr = getPartitionedRegion();
       if (pr == null && failIfRegionMissing()) {
         // if the distributed system is disconnecting, don't send a reply saying
         // the partitioned region can't be found (bug 36585)
-        thr = new ForceReattemptException(LocalizedStrings.PartitionMessage_0_COULD_NOT_FIND_PARTITIONED_REGION_WITH_ID_1.toLocalizedString(new Object[] { dm.getDistributionManagerId(), Integer.valueOf(regionId) }));
+        thr =
+            new ForceReattemptException(
+                LocalizedStrings.PartitionMessage_0_COULD_NOT_FIND_PARTITIONED_REGION_WITH_ID_1
+                    .toLocalizedString(
+                        new Object[] {dm.getDistributionManagerId(), Integer.valueOf(regionId)}));
         return; // reply sent in finally block below
       }
 
@@ -317,7 +328,8 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
 
       GemFireCacheImpl cache = getGemFireCacheImpl();
       if (cache == null) {
-        throw new ForceReattemptException(LocalizedStrings.PartitionMessage_REMOTE_CACHE_IS_CLOSED_0.toLocalizedString());
+        throw new ForceReattemptException(
+            LocalizedStrings.PartitionMessage_REMOTE_CACHE_IS_CLOSED_0.toLocalizedString());
       }
       TXManagerImpl txMgr = getTXManagerImpl(cache);
       TXStateProxy tx = txMgr.masqueradeAs(this);
@@ -356,7 +368,11 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
       //         destroyed, so we must send back an exception.  If the sender's
       //         region is also destroyed, who cares if we send it an exception
       //if (pr != null && pr.isClosed) {
-      thr = new ForceReattemptException(LocalizedStrings.PartitionMessage_REGION_IS_DESTROYED_IN_0.toLocalizedString(dm.getDistributionManagerId()), rde);
+      thr =
+          new ForceReattemptException(
+              LocalizedStrings.PartitionMessage_REGION_IS_DESTROYED_IN_0.toLocalizedString(
+                  dm.getDistributionManagerId()),
+              rde);
       //}
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
@@ -378,11 +394,15 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
         } else {
           // don't pass arbitrary runtime exceptions and errors back if this
           // cache/vm is closing
-          thr = new ForceReattemptException(LocalizedStrings.PartitionMessage_DISTRIBUTED_SYSTEM_IS_DISCONNECTING.toLocalizedString());
+          thr =
+              new ForceReattemptException(
+                  LocalizedStrings.PartitionMessage_DISTRIBUTED_SYSTEM_IS_DISCONNECTING
+                      .toLocalizedString());
         }
       }
       if (logger.isTraceEnabled(LogMarker.DM) && (t instanceof RuntimeException)) {
-        logger.trace(LogMarker.DM, "Exception caught while processing message: ", t.getMessage(), t);
+        logger.trace(
+            LogMarker.DM, "Exception caught while processing message: ", t.getMessage(), t);
       }
     } finally {
       if (sendReply) {
@@ -391,7 +411,9 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
         if (thr != null) {
           // don't transmit the exception if this message was to a listener
           // and this listener is shutting down
-          boolean excludeException = this.notificationOnly && ((thr instanceof CancelException) || (thr instanceof ForceReattemptException));
+          boolean excludeException =
+              this.notificationOnly
+                  && ((thr instanceof CancelException) || (thr instanceof ForceReattemptException));
 
           if (!excludeException) {
             rex = new ReplyException(thr);
@@ -405,12 +427,21 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
     }
   }
 
-  /** Send a generic ReplyMessage.  This is in a method so that subclasses can override the reply message type
+  /**
+   * Send a generic ReplyMessage. This is in a method so that subclasses can override the reply
+   * message type
+   *
    * @param pr the Partitioned Region for the message whose statistics are incremented
    * @param startTime the start time of the operation in nanoseconds
-   *  @see PutMessage#sendReply
+   * @see PutMessage#sendReply
    */
-  protected void sendReply(InternalDistributedMember member, int procId, DM dm, ReplyException ex, PartitionedRegion pr, long startTime) {
+  protected void sendReply(
+      InternalDistributedMember member,
+      int procId,
+      DM dm,
+      ReplyException ex,
+      PartitionedRegion pr,
+      long startTime) {
     if (pr != null && startTime > 0) {
       pr.getPrStats().endPartitionMessagesProcessing(startTime);
     }
@@ -419,9 +450,10 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
   }
 
   /**
-   * Allow classes that over-ride to choose whether 
-   * a RegionDestroyException is thrown if no partitioned region is found (typically occurs if the message will be sent 
-   * before the PartitionedRegion has been fully constructed.
+   * Allow classes that over-ride to choose whether a RegionDestroyException is thrown if no
+   * partitioned region is found (typically occurs if the message will be sent before the
+   * PartitionedRegion has been fully constructed.
+   *
    * @return true if throwing a {@link RegionDestroyedException} is acceptable
    */
   protected boolean failIfRegionMissing() {
@@ -430,6 +462,7 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
 
   /**
    * relay this message to another set of recipients for event notification
+   *
    * @param cacheOpRecipients recipients of associated bucket CacheOperationMessage
    * @param adjunctRecipients recipients who unconditionally get the message
    * @param filterRoutingInfo routing information for all recipients
@@ -437,7 +470,13 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
    * @param r the region being operated on
    * @param processor the reply processor to be notified
    */
-  public Set relayToListeners(Set cacheOpRecipients, Set adjunctRecipients, FilterRoutingInfo filterRoutingInfo, EntryEventImpl event, PartitionedRegion r, DirectReplyProcessor processor) {
+  public Set relayToListeners(
+      Set cacheOpRecipients,
+      Set adjunctRecipients,
+      FilterRoutingInfo filterRoutingInfo,
+      EntryEventImpl event,
+      PartitionedRegion r,
+      DirectReplyProcessor processor) {
     this.processorId = processor == null ? 0 : processor.getProcessorId();
     this.notificationOnly = true;
 
@@ -445,7 +484,9 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
     Set failures1 = null;
     if (!adjunctRecipients.isEmpty()) {
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "Relaying partition message to other processes for listener notification");
+        logger.trace(
+            LogMarker.DM,
+            "Relaying partition message to other processes for listener notification");
       }
       resetRecipients();
       setRecipients(adjunctRecipients);
@@ -456,37 +497,38 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
   }
 
   /**
-   * return a new reply processor for this class, for use in relaying a response.
-   * This <b>must</b> be an instance method so subclasses can override it
-   * properly.
+   * return a new reply processor for this class, for use in relaying a response. This <b>must</b>
+   * be an instance method so subclasses can override it properly.
    */
   PartitionResponse createReplyProcessor(PartitionedRegion r, Set recipients) {
     return new PartitionResponse(r.getSystem(), recipients);
   }
 
   protected boolean operateOnRegion(DistributionManager dm, PartitionedRegion pr) {
-    throw new InternalGemFireError(LocalizedStrings.PartitionMessage_SORRY_USE_OPERATEONPARTITIONEDREGION_FOR_PR_MESSAGES.toLocalizedString());
+    throw new InternalGemFireError(
+        LocalizedStrings.PartitionMessage_SORRY_USE_OPERATEONPARTITIONEDREGION_FOR_PR_MESSAGES
+            .toLocalizedString());
   }
 
   /**
-   * An operation upon the messages partitioned region which each subclassing
-   * message must implement
-   * 
-   * @param dm
-   *          the manager that received the message
-   * @param pr
-   *          the partitioned region that should be modified
+   * An operation upon the messages partitioned region which each subclassing message must implement
+   *
+   * @param dm the manager that received the message
+   * @param pr the partitioned region that should be modified
    * @param startTime the start time of the operation
    * @return true if a reply message should be sent
    * @throws CacheException if an error is generated in the remote cache
    * @throws DataLocationException if the peer is no longer available
    */
-  protected abstract boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException, QueryException, DataLocationException, InterruptedException, IOException;
+  protected abstract boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion pr, long startTime)
+      throws CacheException, QueryException, DataLocationException, InterruptedException,
+          IOException;
 
   /**
-   * Fill out this instance of the message using the <code>DataInput</code>
-   * Required to be a {@link org.apache.geode.DataSerializable}Note: must
-   * be symmetric with {@link #toData(DataOutput)}in what it reads
+   * Fill out this instance of the message using the <code>DataInput</code> Required to be a {@link
+   * org.apache.geode.DataSerializable}Note: must be symmetric with {@link #toData(DataOutput)}in
+   * what it reads
    */
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
@@ -501,27 +543,25 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
   }
 
   /**
-   * Re-construct the booleans using the compressed short. A subclass must override
-   * this method if it is using bits in the compressed short.
+   * Re-construct the booleans using the compressed short. A subclass must override this method if
+   * it is using bits in the compressed short.
    */
   protected void setBooleans(short s, DataInput in) throws IOException, ClassNotFoundException {
     if ((s & HAS_PROCESSOR_ID) != 0) {
       this.processorId = in.readInt();
       ReplyProcessor21.setMessageRPId(this.processorId);
     }
-    if ((s & NOTIFICATION_ONLY) != 0)
-      this.notificationOnly = true;
-    if ((s & HAS_TX_ID) != 0)
-      this.txUniqId = in.readInt();
+    if ((s & NOTIFICATION_ONLY) != 0) this.notificationOnly = true;
+    if ((s & HAS_TX_ID) != 0) this.txUniqId = in.readInt();
     if ((s & HAS_TX_MEMBERID) != 0) {
       this.txMemberId = (InternalDistributedMember) DataSerializer.readObject(in);
     }
   }
 
   /**
-   * Send the contents of this instance to the DataOutput Required to be a
-   * {@link org.apache.geode.DataSerializable}Note: must be symmetric with
-   * {@link #fromData(DataInput)}in what it writes
+   * Send the contents of this instance to the DataOutput Required to be a {@link
+   * org.apache.geode.DataSerializable}Note: must be symmetric with {@link #fromData(DataInput)}in
+   * what it writes
    */
   @Override
   public void toData(DataOutput out) throws IOException {
@@ -529,12 +569,9 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
     short compressedShort = 0;
     compressedShort = computeCompressedShort(compressedShort);
     out.writeShort(compressedShort);
-    if (this.processorId != 0)
-      out.writeInt(this.processorId);
-    if (this.txUniqId != TXManagerImpl.NOTX)
-      out.writeInt(this.txUniqId);
-    if (this.txMemberId != null)
-      DataSerializer.writeObject(this.txMemberId, out);
+    if (this.processorId != 0) out.writeInt(this.processorId);
+    if (this.txUniqId != TXManagerImpl.NOTX) out.writeInt(this.txUniqId);
+    if (this.txMemberId != null) DataSerializer.writeObject(this.txMemberId, out);
     out.writeInt(this.regionId);
     // extra field post 9.0
     if (InternalDataSerializer.getVersionForDataStream(out).compareTo(Version.GFE_90) >= 0) {
@@ -543,15 +580,14 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
   }
 
   /**
-   * Sets the bits of a short by using the bit masks. A subclass must override
-   * this method if it is using bits in the compressed short.
+   * Sets the bits of a short by using the bit masks. A subclass must override this method if it is
+   * using bits in the compressed short.
+   *
    * @return short with appropriate bits set
    */
   protected short computeCompressedShort(short s) {
-    if (this.processorId != 0)
-      s |= HAS_PROCESSOR_ID;
-    if (this.notificationOnly)
-      s |= NOTIFICATION_ONLY;
+    if (this.processorId != 0) s |= HAS_PROCESSOR_ID;
+    if (this.notificationOnly) s |= NOTIFICATION_ONLY;
     if (this.getTXUniqId() != TXManagerImpl.NOTX) {
       s |= HAS_TX_ID;
       if (this.txMemberId != null) {
@@ -561,14 +597,15 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
     return s;
   }
 
-  public final static String PN_TOKEN = ".cache.";
+  public static final String PN_TOKEN = ".cache.";
 
   @Override
   public String toString() {
     StringBuffer buff = new StringBuffer();
     String className = getClass().getName();
-    //    className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo> more generic version 
-    buff.append(className.substring(className.indexOf(PN_TOKEN) + PN_TOKEN.length())); // partition.<foo>
+    //    className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo> more generic version
+    buff.append(
+        className.substring(className.indexOf(PN_TOKEN) + PN_TOKEN.length())); // partition.<foo>
     buff.append("(prid="); // make sure this is the first one
     buff.append(this.regionId);
 
@@ -596,9 +633,8 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
 
   /**
    * Helper class of {@link #toString()}
-   * 
-   * @param buff
-   *          buffer in which to append the state of this instance
+   *
+   * @param buff buffer in which to append the state of this instance
    */
   protected void appendFields(StringBuffer buff) {
     buff.append(" processorId=").append(this.processorId);
@@ -623,6 +659,7 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
 
   /**
    * added to support old value to be written on wire.
+   *
    * @param value true or false
    * @since GemFire 5.5
    */
@@ -631,20 +668,16 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
     // overridden by classes like PutMessage, DestroyMessage.
   }
 
-  /**
-   * added to support routing of notification-only messages to clients
-   */
+  /** added to support routing of notification-only messages to clients */
   public void setFilterInfo(FilterRoutingInfo filterInfo) {
     // subclasses that support routing to clients should reimplement this method
   }
 
   /*
   public void appendOldValueToMessage(EntryEventImpl event) {
-    
+
   }*/
-  /**
-   * @return the txUniqId
-   */
+  /** @return the txUniqId */
   public final int getTXUniqId() {
     return txUniqId;
   }
@@ -677,27 +710,20 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
   }
 
   /**
-   * A processor on which to await a response from the {@link PartitionMessage}
-   * recipient, capturing any CacheException thrown by the recipient and handle
-   * it as an expected exception.
-   * 
+   * A processor on which to await a response from the {@link PartitionMessage} recipient, capturing
+   * any CacheException thrown by the recipient and handle it as an expected exception.
+   *
    * @since GemFire 5.0
    * @see #waitForCacheException()
    */
   public static class PartitionResponse extends DirectReplyProcessor {
-    /**
-     * The exception thrown when the recipient does not reply
-     */
+    /** The exception thrown when the recipient does not reply */
     volatile ForceReattemptException prce;
 
-    /**
-     * Whether a response has been received
-     */
+    /** Whether a response has been received */
     volatile boolean responseReceived;
 
-    /**
-     * whether a response is required
-     */
+    /** whether a response is required */
     boolean responseRequired;
 
     public PartitionResponse(InternalDistributedSystem dm, Set initMembers) {
@@ -715,16 +741,15 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
       this(dm, member, true);
     }
 
-    public PartitionResponse(InternalDistributedSystem dm, InternalDistributedMember member, boolean register) {
+    public PartitionResponse(
+        InternalDistributedSystem dm, InternalDistributedMember member, boolean register) {
       super(dm, member);
       if (register) {
         register();
       }
     }
 
-    /**
-     * require a response message to be received
-     */
+    /** require a response message to be received */
     public void requireResponse() {
       this.responseRequired = true;
     }
@@ -733,27 +758,41 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
     public void memberDeparted(final InternalDistributedMember id, final boolean crashed) {
       if (id != null) {
         if (removeMember(id, true)) {
-          this.prce = new ForceReattemptException(LocalizedStrings.PartitionMessage_PARTITIONRESPONSE_GOT_MEMBERDEPARTED_EVENT_FOR_0_CRASHED_1.toLocalizedString(new Object[] { id, Boolean.valueOf(crashed) }));
+          this.prce =
+              new ForceReattemptException(
+                  LocalizedStrings
+                      .PartitionMessage_PARTITIONRESPONSE_GOT_MEMBERDEPARTED_EVENT_FOR_0_CRASHED_1
+                      .toLocalizedString(new Object[] {id, Boolean.valueOf(crashed)}));
         }
         checkIfDone();
       } else {
-        Exception e = new Exception(LocalizedStrings.PartitionMessage_MEMBERDEPARTED_GOT_NULL_MEMBERID.toLocalizedString());
-        logger.info(LocalizedMessage.create(LocalizedStrings.PartitionMessage_MEMBERDEPARTED_GOT_NULL_MEMBERID_CRASHED_0, Boolean.valueOf(crashed)), e);
+        Exception e =
+            new Exception(
+                LocalizedStrings.PartitionMessage_MEMBERDEPARTED_GOT_NULL_MEMBERID
+                    .toLocalizedString());
+        logger.info(
+            LocalizedMessage.create(
+                LocalizedStrings.PartitionMessage_MEMBERDEPARTED_GOT_NULL_MEMBERID_CRASHED_0,
+                Boolean.valueOf(crashed)),
+            e);
       }
     }
 
     /**
      * Waits for the response from the {@link PartitionMessage}'s recipient
-     * @throws CacheException  if the recipient threw a cache exception during message processing 
-     * @throws ForceReattemptException if the recipient left the distributed system before the response
-     * was received.  
-     * @throws PrimaryBucketException 
+     *
+     * @throws CacheException if the recipient threw a cache exception during message processing
+     * @throws ForceReattemptException if the recipient left the distributed system before the
+     *     response was received.
+     * @throws PrimaryBucketException
      */
-    final public void waitForCacheException() throws CacheException, ForceReattemptException, PrimaryBucketException {
+    public final void waitForCacheException()
+        throws CacheException, ForceReattemptException, PrimaryBucketException {
       try {
         waitForRepliesUninterruptibly();
         if (this.prce != null || (this.responseRequired && !this.responseReceived)) {
-          throw new ForceReattemptException(LocalizedStrings.PartitionMessage_ATTEMPT_FAILED.toLocalizedString(), this.prce);
+          throw new ForceReattemptException(
+              LocalizedStrings.PartitionMessage_ATTEMPT_FAILED.toLocalizedString(), this.prce);
         }
       } catch (ReplyException e) {
         Throwable t = e.getCause();
@@ -763,7 +802,9 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
           ForceReattemptException ft = (ForceReattemptException) t;
           // See FetchEntriesMessage, which can marshal a ForceReattempt
           // across to the sender
-          ForceReattemptException fre = new ForceReattemptException(LocalizedStrings.PartitionMessage_PEER_REQUESTS_REATTEMPT.toLocalizedString(), t);
+          ForceReattemptException fre =
+              new ForceReattemptException(
+                  LocalizedStrings.PartitionMessage_PEER_REQUESTS_REATTEMPT.toLocalizedString(), t);
           if (ft.hasHash()) {
             fre.setHash(ft.getHash());
           }
@@ -772,15 +813,29 @@ public abstract class PartitionMessage extends DistributionMessage implements Me
           // See FetchEntryMessage, GetMessage, InvalidateMessage,
           // PutMessage
           // which can marshal a ForceReattemptacross to the sender
-          throw new PrimaryBucketException(LocalizedStrings.PartitionMessage_PEER_FAILED_PRIMARY_TEST.toLocalizedString(), t);
+          throw new PrimaryBucketException(
+              LocalizedStrings.PartitionMessage_PEER_FAILED_PRIMARY_TEST.toLocalizedString(), t);
         } else if (t instanceof CancelException) {
-          logger.debug("PartitionResponse got CacheClosedException from {}, throwing ForceReattemptException", e.getSender(), t);
-          throw new ForceReattemptException(LocalizedStrings.PartitionMessage_PARTITIONRESPONSE_GOT_REMOTE_CACHECLOSEDEXCEPTION.toLocalizedString(), t);
+          logger.debug(
+              "PartitionResponse got CacheClosedException from {}, throwing ForceReattemptException",
+              e.getSender(),
+              t);
+          throw new ForceReattemptException(
+              LocalizedStrings.PartitionMessage_PARTITIONRESPONSE_GOT_REMOTE_CACHECLOSEDEXCEPTION
+                  .toLocalizedString(),
+              t);
         } else if (t instanceof DiskAccessException) {
-          logger.debug("PartitionResponse got DiskAccessException from {}, throwing ForceReattemptException", e.getSender(), t);
-          throw new ForceReattemptException(LocalizedStrings.PartitionMessage_PARTITIONRESPONSE_GOT_REMOTE_CACHECLOSEDEXCEPTION.toLocalizedString(), t);
+          logger.debug(
+              "PartitionResponse got DiskAccessException from {}, throwing ForceReattemptException",
+              e.getSender(),
+              t);
+          throw new ForceReattemptException(
+              LocalizedStrings.PartitionMessage_PARTITIONRESPONSE_GOT_REMOTE_CACHECLOSEDEXCEPTION
+                  .toLocalizedString(),
+              t);
         } else if (t instanceof LowMemoryException) {
-          logger.debug("PartitionResponse re-throwing remote LowMemoryException from {}", e.getSender(), t);
+          logger.debug(
+              "PartitionResponse re-throwing remote LowMemoryException from {}", e.getSender(), t);
           throw (LowMemoryException) t;
         }
         e.handleAsUnexpected();

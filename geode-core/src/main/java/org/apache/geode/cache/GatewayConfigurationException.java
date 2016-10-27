@@ -17,8 +17,9 @@
 package org.apache.geode.cache;
 
 /**
- * An exception indicating that a gateway configuration
- * will not work with the remote side of the gateway's configuration.
+ * An exception indicating that a gateway configuration will not work with the remote side of the
+ * gateway's configuration.
+ *
  * @since GemFire 6.6
  */
 public class GatewayConfigurationException extends GatewayException {
@@ -38,5 +39,4 @@ public class GatewayConfigurationException extends GatewayException {
   public GatewayConfigurationException(Throwable cause) {
     super(cause);
   }
-
 }

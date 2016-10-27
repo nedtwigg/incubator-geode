@@ -29,12 +29,7 @@ import org.apache.geode.internal.memcached.ResponseStatus;
 import org.apache.geode.internal.memcached.ValueWrapper;
 import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 
-/**
- * The command "delete" allows for explicit deletion of items:
- * delete <key> [noreply]\r\n
- * 
- *
- */
+/** The command "delete" allows for explicit deletion of items: delete <key> [noreply]\r\n */
 public class DeleteCommand extends AbstractCommand {
 
   @Override
@@ -91,9 +86,7 @@ public class DeleteCommand extends AbstractCommand {
     return response;
   }
 
-  /**
-   * Overridden by Q command
-   */
+  /** Overridden by Q command */
   protected boolean isQuiet() {
     return false;
   }

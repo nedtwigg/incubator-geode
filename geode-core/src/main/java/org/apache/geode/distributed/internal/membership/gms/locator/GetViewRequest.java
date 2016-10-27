@@ -25,8 +25,7 @@ import org.apache.geode.internal.Version;
 
 public class GetViewRequest implements DataSerializableFixedID, PeerLocatorRequest {
 
-  public GetViewRequest() {
-  }
+  public GetViewRequest() {}
 
   @Override
   public Version[] getSerializationVersions() {
@@ -39,11 +38,8 @@ public class GetViewRequest implements DataSerializableFixedID, PeerLocatorReque
   }
 
   @Override
-  public void toData(DataOutput out) throws IOException {
-  }
+  public void toData(DataOutput out) throws IOException {}
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-  }
-
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 }

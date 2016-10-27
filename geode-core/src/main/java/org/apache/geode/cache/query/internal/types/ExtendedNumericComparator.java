@@ -22,11 +22,7 @@ import java.util.*;
 import org.apache.geode.cache.query.internal.NullToken;
 import org.apache.geode.cache.query.internal.Undefined;
 
-/**
- * A general comparator that will let us compare different numeric types for equality
- * 
- */
-
+/** A general comparator that will let us compare different numeric types for equality */
 public class ExtendedNumericComparator extends NumericComparator implements Comparator {
 
   @Override

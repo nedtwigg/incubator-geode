@@ -42,17 +42,20 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * Sends <code>TXOriginatorRecoveryMessage</code> to all participants of
- * a given transaction when the originator departs. The participants delay
- * reply until the commit has finished. Once all replies have come in, the
- * transaction lock (<code>TXLockId</code>) will be released.
- *
+ * Sends <code>TXOriginatorRecoveryMessage</code> to all participants of a given transaction when
+ * the originator departs. The participants delay reply until the commit has finished. Once all
+ * replies have come in, the transaction lock (<code>TXLockId</code>) will be released.
  */
 public class TXOriginatorRecoveryProcessor extends ReplyProcessor21 {
 
   private static final Logger logger = LogService.getLogger();
 
-  static void sendMessage(Set members, InternalDistributedMember originator, TXLockId txLockId, DLockGrantor grantor, DM dm) {
+  static void sendMessage(
+      Set members,
+      InternalDistributedMember originator,
+      TXLockId txLockId,
+      DLockGrantor grantor,
+      DM dm) {
     TXOriginatorRecoveryProcessor processor = new TXOriginatorRecoveryProcessor(dm, members);
 
     TXOriginatorRecoveryMessage msg = new TXOriginatorRecoveryMessage();
@@ -70,8 +73,7 @@ public class TXOriginatorRecoveryProcessor extends ReplyProcessor21 {
 
     // process msg and reply directly if this VM is a participant...
     if (members.contains(dm.getId())) {
-      if (msg.getSender() == null)
-        msg.setSender(dm.getId());
+      if (msg.getSender() == null) msg.setSender(dm.getId());
       msg.process((DistributionManager) dm);
     }
 
@@ -96,9 +98,9 @@ public class TXOriginatorRecoveryProcessor extends ReplyProcessor21 {
     }
   }
 
-  // ------------------------------------------------------------------------- 
+  // -------------------------------------------------------------------------
   //   Constructors
-  // -------------------------------------------------------------------------  
+  // -------------------------------------------------------------------------
 
   /** Creates a new instance of TXOriginatorRecoveryProcessor */
   private TXOriginatorRecoveryProcessor(DM dm, Set members) {
@@ -111,18 +113,19 @@ public class TXOriginatorRecoveryProcessor extends ReplyProcessor21 {
   }
 
   /**
-   * IllegalStateException is an anticipated reply exception.  Receiving
-   * multiple replies with this exception is normal.
+   * IllegalStateException is an anticipated reply exception. Receiving multiple replies with this
+   * exception is normal.
    */
   @Override
   protected boolean logMultipleExceptions() {
     return false;
   }
 
-  // ------------------------------------------------------------------------- 
+  // -------------------------------------------------------------------------
   //   TXOriginatorRecoveryMessage
-  // -------------------------------------------------------------------------  
-  public static final class TXOriginatorRecoveryMessage extends PooledDistributionMessage implements MessageWithReply {
+  // -------------------------------------------------------------------------
+  public static final class TXOriginatorRecoveryMessage extends PooledDistributionMessage
+      implements MessageWithReply {
 
     /** The transaction lock for which the originator orphaned */
     protected TXLockId txLockId;
@@ -140,39 +143,48 @@ public class TXOriginatorRecoveryProcessor extends ReplyProcessor21 {
       final TXOriginatorRecoveryMessage msg = this;
 
       try {
-        dm.getWaitingThreadPool().execute(new Runnable() {
-          public void run() {
-            processTXOriginatorRecoveryMessage(dm, msg);
-          }
-        });
+        dm.getWaitingThreadPool()
+            .execute(
+                new Runnable() {
+                  public void run() {
+                    processTXOriginatorRecoveryMessage(dm, msg);
+                  }
+                });
       } catch (RejectedExecutionException e) {
         logger.debug("Rejected processing of <{}>", msg, e);
       }
     }
 
-    protected void processTXOriginatorRecoveryMessage(final DistributionManager dm, final TXOriginatorRecoveryMessage msg) {
+    protected void processTXOriginatorRecoveryMessage(
+        final DistributionManager dm, final TXOriginatorRecoveryMessage msg) {
 
       ReplyException replyException = null;
-      logger.info(LocalizedMessage.create(LocalizedStrings.TXOriginatorRecoveryProcessor_PROCESSTXORIGINATORRECOVERYMESSAGE));
+      logger.info(
+          LocalizedMessage.create(
+              LocalizedStrings.TXOriginatorRecoveryProcessor_PROCESSTXORIGINATORRECOVERYMESSAGE));
       try {
         // Wait for the transaction associated with this lockid to finish processing
         TXCommitMessage.getTracker().waitToProcess(msg.txLockId, dm);
 
         // when the grantor receives reply it will release txLock...
         /* TODO: implement waitToReleaseTXLockId here
-           testTXOriginatorRecoveryProcessor in 
+           testTXOriginatorRecoveryProcessor in
            org.apache.geode.internal.cache.locks.TXLockServiceTest
            should be expanded upon also...
         */
       } catch (RuntimeException t) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.TXOriginatorRecoveryProcessor_PROCESSTXORIGINATORRECOVERYMESSAGE_THROWABLE), t);
-        //        if (replyException == null) (can only be null) 
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .TXOriginatorRecoveryProcessor_PROCESSTXORIGINATORRECOVERYMESSAGE_THROWABLE),
+            t);
+        //        if (replyException == null) (can only be null)
         {
           replyException = new ReplyException(t);
         }
         //        else {
         //          log.warning(LocalizedStrings.TXOriginatorRecoveryProcessor_MORE_THAN_ONE_EXCEPTION_THROWN_IN__0, this, t);
-        //        }        
+        //        }
         //      }
         //      catch (VirtualMachineError err) {
         //        SystemFailure.initiateFailure(err);
@@ -217,11 +229,17 @@ public class TXOriginatorRecoveryProcessor extends ReplyProcessor21 {
 
         if (getSender().equals(dm.getId())) {
           // process in-line in this VM
-          logger.info(LocalizedMessage.create(LocalizedStrings.TXOriginatorRecoveryProcessor_PROCESSTXORIGINATORRECOVERYMESSAGE_LOCALLY_PROCESS_REPLY));
+          logger.info(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .TXOriginatorRecoveryProcessor_PROCESSTXORIGINATORRECOVERYMESSAGE_LOCALLY_PROCESS_REPLY));
           replyMsg.setSender(dm.getId());
           replyMsg.dmProcess(dm);
         } else {
-          logger.info(LocalizedMessage.create(LocalizedStrings.TXOriginatorRecoveryProcessor_PROCESSTXORIGINATORRECOVERYMESSAGE_SEND_REPLY));
+          logger.info(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .TXOriginatorRecoveryProcessor_PROCESSTXORIGINATORRECOVERYMESSAGE_SEND_REPLY));
           dm.putOutgoing(replyMsg);
         }
       }
@@ -257,9 +275,9 @@ public class TXOriginatorRecoveryProcessor extends ReplyProcessor21 {
     }
   }
 
-  // ------------------------------------------------------------------------- 
+  // -------------------------------------------------------------------------
   //   TXOriginatorRecoveryReplyMessage
-  // -------------------------------------------------------------------------  
+  // -------------------------------------------------------------------------
   public static final class TXOriginatorRecoveryReplyMessage extends ReplyMessage {
 
     /** The transaction lock for which the originator orphaned */
@@ -282,8 +300,13 @@ public class TXOriginatorRecoveryProcessor extends ReplyProcessor21 {
 
     @Override
     public String toString() {
-      return "TXOriginatorRecoveryReplyMessage (processorId=" + super.processorId + "; txLockId=" + this.txLockId + "; sender=" + getSender() + ")";
+      return "TXOriginatorRecoveryReplyMessage (processorId="
+          + super.processorId
+          + "; txLockId="
+          + this.txLockId
+          + "; sender="
+          + getSender()
+          + ")";
     }
   }
-
 }

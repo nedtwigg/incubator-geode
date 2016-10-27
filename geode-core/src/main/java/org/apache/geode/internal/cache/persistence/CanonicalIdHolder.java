@@ -24,32 +24,23 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 /**
- * This class manages in memory copy of the canonical ids held in the disk
- * init file. It's used by the init file to assign numbers to new ids and 
- * retrieve existing ids.
- * 
- * This class is not thread safe, so it should be synchronized externally.
- * 
+ * This class manages in memory copy of the canonical ids held in the disk init file. It's used by
+ * the init file to assign numbers to new ids and retrieve existing ids.
  *
+ * <p>This class is not thread safe, so it should be synchronized externally.
  */
 public class CanonicalIdHolder {
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * Map of integer representation to canonicalized member ids.
-   */
+  /** Map of integer representation to canonicalized member ids. */
   private Int2ObjectOpenHashMap idToObject = new Int2ObjectOpenHashMap();
 
-  /**
-   * Map of canonicalized member ids to integer representation.
-   */
+  /** Map of canonicalized member ids to integer representation. */
   private Object2IntOpenHashMap objectToID = new Object2IntOpenHashMap();
 
   private int highestID = 0;
 
-  /**
-   * Add a mapping that we have recovered from disk
-   */
+  /** Add a mapping that we have recovered from disk */
   public void addMapping(int id, Object object) {
     //Store the mapping
     idToObject.put(id, object);
@@ -59,22 +50,19 @@ public class CanonicalIdHolder {
     highestID = highestID < id ? id : highestID;
   }
 
-  /**
-   * Get the id for a given object 
-   */
+  /** Get the id for a given object */
   public int getId(Object object) {
     return objectToID.getInt(object);
   }
 
-  /**
-   * Get the object for a given id.
-   */
+  /** Get the object for a given id. */
   public Object getObject(int id) {
     return idToObject.get(id);
   }
 
   /**
    * Create an id of the given object.
+   *
    * @param object
    * @return the id generated for this object.
    */
@@ -88,11 +76,10 @@ public class CanonicalIdHolder {
 
   /**
    * Get all of the objects that are mapped.
-   * @return a map of id to object for all objects
-   * held by this canonical id holder.
+   *
+   * @return a map of id to object for all objects held by this canonical id holder.
    */
   public Int2ObjectOpenHashMap getAllMappings() {
     return idToObject;
   }
-
 }

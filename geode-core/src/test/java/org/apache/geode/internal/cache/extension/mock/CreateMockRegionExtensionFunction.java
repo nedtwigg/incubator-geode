@@ -34,19 +34,18 @@ import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
 /**
  * Function to create {@link MockRegionExtension} on a {@link Region}.
- * 
+ *
  * <dl>
- * <dt>Arguments:</dt>
- * <dd>
- * <dl>
- * <dt>{@link String} regionName</dt>
- * <dd>Name of region on which to create {@link MockRegionExtension}.</dd>
- * <dt>{@link String} value</dt>
- * <dd>Value to set. See {@link MockRegionExtension#getValue()}.</dd>
+ *   <dt>Arguments:
+ *   <dd>
+ *       <dl>
+ *         <dt>{@link String} regionName
+ *         <dd>Name of region on which to create {@link MockRegionExtension}.
+ *         <dt>{@link String} value
+ *         <dd>Value to set. See {@link MockRegionExtension#getValue()}.
+ *       </dl>
+ *
  * </dl>
- * </dt>
- * </dl>
- * 
  *
  * @since GemFire 8.1
  */
@@ -76,10 +75,16 @@ public class CreateMockRegionExtensionFunction extends FunctionAdapter {
     XmlEntity xmlEntity = new XmlEntity(CacheXml.REGION, "name", region.getName());
 
     final ResultSender<Object> resultSender = context.getResultSender();
-    final String memberNameOrId = CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
+    final String memberNameOrId =
+        CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
 
-    resultSender.lastResult(new CliFunctionResult(memberNameOrId, xmlEntity, CliStrings.format("Mock region extension \"{0}\" created on \"{1}\"", new Object[] { region.getFullPath(), memberNameOrId })));
-
+    resultSender.lastResult(
+        new CliFunctionResult(
+            memberNameOrId,
+            xmlEntity,
+            CliStrings.format(
+                "Mock region extension \"{0}\" created on \"{1}\"",
+                new Object[] {region.getFullPath(), memberNameOrId})));
   }
 
   @Override
@@ -94,7 +99,6 @@ public class CreateMockRegionExtensionFunction extends FunctionAdapter {
    * @since GemFire 8.1
    */
   public static Object[] toArgs(final String regionName, final String value) {
-    return new Object[] { regionName, value };
+    return new Object[] {regionName, value};
   }
-
 }

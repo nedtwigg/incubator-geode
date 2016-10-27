@@ -19,13 +19,11 @@ package com.gemstone.gemfire.cache.execute;
 import org.apache.geode.distributed.DistributedMember;
 
 /**
- * Thrown if one of the function execution nodes goes away or cache is closed.
- * Function needs to be re-executed if the
- * {@link FunctionException#getCause()} is FunctionInvocationTargetException.
- * 
+ * Thrown if one of the function execution nodes goes away or cache is closed. Function needs to be
+ * re-executed if the {@link FunctionException#getCause()} is FunctionInvocationTargetException.
+ *
  * @since GemFire 6.0
  * @deprecated please use the org.apache.geode version of this class
- * 
  */
 public class FunctionInvocationTargetException extends FunctionException {
 
@@ -35,9 +33,8 @@ public class FunctionInvocationTargetException extends FunctionException {
 
   /**
    * Construct an instance of FunctionInvocationTargetException
-   * 
-   * @param cause
-   *                a Throwable cause of this exception
+   *
+   * @param cause a Throwable cause of this exception
    */
   public FunctionInvocationTargetException(Throwable cause) {
     super(cause);
@@ -45,13 +42,10 @@ public class FunctionInvocationTargetException extends FunctionException {
 
   /**
    * Construct an instance of FunctionInvocationTargetException
-   * 
-   * @param msg
-   *                the error message
-   * @param id
-   *                the DistributedMember id of the source
+   *
+   * @param msg the error message
+   * @param id the DistributedMember id of the source
    * @since GemFire 6.5
-   * 
    */
   public FunctionInvocationTargetException(String msg, DistributedMember id) {
     super(msg);
@@ -60,9 +54,8 @@ public class FunctionInvocationTargetException extends FunctionException {
 
   /**
    * Construct an instance of FunctionInvocationTargetException
-   * 
-   * @param msg
-   *                Exception message
+   *
+   * @param msg Exception message
    */
   public FunctionInvocationTargetException(String msg) {
     super(msg);
@@ -70,11 +63,9 @@ public class FunctionInvocationTargetException extends FunctionException {
 
   /**
    * Construct an instance of FunctionInvocationTargetException
-   * 
-   * @param msg
-   *                the error message
-   * @param cause
-   *                a Throwable cause of this exception
+   *
+   * @param msg the error message
+   * @param cause a Throwable cause of this exception
    */
   public FunctionInvocationTargetException(String msg, Throwable cause) {
     super(msg, cause);
@@ -82,12 +73,11 @@ public class FunctionInvocationTargetException extends FunctionException {
 
   /**
    * Method to get the member id of the Exception
-   * 
+   *
    * @return DistributedMember id
    * @since GemFire 6.5
    */
   public DistributedMember getMemberId() {
     return this.id;
   }
-
 }

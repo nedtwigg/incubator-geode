@@ -27,18 +27,18 @@ import org.apache.geode.distributed.internal.membership.*;
 import org.apache.geode.internal.statistics.GemFireStatSampler;
 
 /**
- * A message that is sent to a particular distribution manager to
- * get its current <code>RemoteCancelStatListener</code>.
+ * A message that is sent to a particular distribution manager to get its current <code>
+ * RemoteCancelStatListener</code>.
  */
 public final class CancelStatListenerResponse extends AdminResponse {
   // instance variables
 
   /**
-   * Returns a <code>CancelStatListenerResponse</code> that will be returned to the
-   * specified recipient. The message will contains a copy of the local manager's
-   * system config.
+   * Returns a <code>CancelStatListenerResponse</code> that will be returned to the specified
+   * recipient. The message will contains a copy of the local manager's system config.
    */
-  public static CancelStatListenerResponse create(DistributionManager dm, InternalDistributedMember recipient, int listenerId) {
+  public static CancelStatListenerResponse create(
+      DistributionManager dm, InternalDistributedMember recipient, int listenerId) {
     CancelStatListenerResponse m = new CancelStatListenerResponse();
     m.setRecipient(recipient);
     GemFireStatSampler sampler = null;
@@ -66,6 +66,7 @@ public final class CancelStatListenerResponse extends AdminResponse {
 
   @Override
   public String toString() {
-    return LocalizedStrings.CancelStatListenerResponse_CANCELSTATLISTENERRESPONSE_FROM_0.toLocalizedString(this.getRecipient());
+    return LocalizedStrings.CancelStatListenerResponse_CANCELSTATLISTENERRESPONSE_FROM_0
+        .toLocalizedString(this.getRecipient());
   }
 }

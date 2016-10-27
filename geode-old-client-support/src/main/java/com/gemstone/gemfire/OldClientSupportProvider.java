@@ -30,16 +30,15 @@ import org.apache.geode.management.internal.beans.CacheServiceMBeanBase;
 
 import com.gemstone.gemfire.cache.execute.EmtpyRegionFunctionException;
 
-/**
- * Support for old GemFire clients
- */
+/** Support for old GemFire clients */
 public class OldClientSupportProvider implements OldClientSupportService {
   static final String GEODE = "org.apache.geode";
   static final String GEMFIRE = "com.gemstone.gemfire";
 
   /** returns the cache's OldClientSupportService */
   public static OldClientSupportService getService(Cache cache) {
-    return (OldClientSupportService) ((InternalCache) cache).getService(OldClientSupportService.class);
+    return (OldClientSupportService)
+        ((InternalCache) cache).getService(OldClientSupportService.class);
   }
 
   @Override
@@ -68,7 +67,7 @@ public class OldClientSupportProvider implements OldClientSupportService {
 
   @Override
   public String processIncomingClassName(String name, DataInput in) {
-    // tcpserver was moved to a different package in Geode.  
+    // tcpserver was moved to a different package in Geode.
     String oldPackage = "com.gemstone.org.jgroups.stack.tcpserver";
     String newPackage = "org.apache.geode.distributed.internal.tcpserver";
     if (name.startsWith(oldPackage)) {
@@ -103,6 +102,7 @@ public class OldClientSupportProvider implements OldClientSupportService {
 
   /**
    * translates the given exception into one that can be sent to an old GemFire client
+   *
    * @param theThrowable the exception to convert
    * @param clientVersion the version of the client
    * @return the exception to give the client
@@ -127,5 +127,4 @@ public class OldClientSupportProvider implements OldClientSupportService {
     // other exceptions will be translated automatically by receivers
     return theThrowable;
   }
-
 }

@@ -36,10 +36,8 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VMStatsRegionEntryHeapObjectKey extends VMStatsRegionEntryHeap {
   public VMStatsRegionEntryHeapObjectKey(RegionEntryContext context, Object key, Object value) {
@@ -52,9 +50,12 @@ public class VMStatsRegionEntryHeapObjectKey extends VMStatsRegionEntryHeap {
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VMStatsRegionEntryHeapObjectKey> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryHeapObjectKey.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VMStatsRegionEntryHeapObjectKey> lastModifiedUpdater =
+      AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryHeapObjectKey.class, "lastModified");
   private volatile Object value;
 
   @Override
@@ -75,9 +76,7 @@ public class VMStatsRegionEntryHeapObjectKey extends VMStatsRegionEntryHeap {
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -86,16 +85,12 @@ public class VMStatsRegionEntryHeapObjectKey extends VMStatsRegionEntryHeap {
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -123,8 +118,10 @@ public class VMStatsRegionEntryHeapObjectKey extends VMStatsRegionEntryHeap {
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryHeapObjectKey> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryHeapObjectKey.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryHeapObjectKey> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryHeapObjectKey.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryHeapObjectKey> hitCountUpdater =
+      AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryHeapObjectKey.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryHeapObjectKey> missCountUpdater =
+      AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryHeapObjectKey.class, "missCount");
 
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {

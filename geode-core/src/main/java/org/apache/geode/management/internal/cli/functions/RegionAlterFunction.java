@@ -44,9 +44,8 @@ import org.apache.geode.management.internal.cli.util.RegionPath;
 import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
 /**
- * Function used by the 'alter region' gfsh command to alter a region on each
- * member.
- * 
+ * Function used by the 'alter region' gfsh command to alter a region on each member.
+ *
  * @since GemFire 8.0
  */
 public class RegionAlterFunction extends FunctionAdapter implements InternalEntity {
@@ -64,13 +63,20 @@ public class RegionAlterFunction extends FunctionAdapter implements InternalEnti
     ResultSender<Object> resultSender = context.getResultSender();
 
     Cache cache = CacheFactory.getAnyInstance();
-    String memberNameOrId = CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
+    String memberNameOrId =
+        CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
 
     RegionFunctionArgs regionAlterArgs = (RegionFunctionArgs) context.getArguments();
     try {
       Region<?, ?> alteredRegion = alterRegion(cache, regionAlterArgs);
       XmlEntity xmlEntity = new XmlEntity(CacheXml.REGION, "name", alteredRegion.getName());
-      resultSender.lastResult(new CliFunctionResult(memberNameOrId, xmlEntity, CliStrings.format(CliStrings.ALTER_REGION__MSG__REGION_0_ALTERED_ON_1, new Object[] { alteredRegion.getFullPath(), memberNameOrId })));
+      resultSender.lastResult(
+          new CliFunctionResult(
+              memberNameOrId,
+              xmlEntity,
+              CliStrings.format(
+                  CliStrings.ALTER_REGION__MSG__REGION_0_ALTERED_ON_1,
+                  new Object[] {alteredRegion.getFullPath(), memberNameOrId})));
 
     } catch (IllegalStateException e) {
       logger.error(e.getMessage(), e);
@@ -102,7 +108,9 @@ public class RegionAlterFunction extends FunctionAdapter implements InternalEnti
     RegionPath regionPath = new RegionPath(regionPathString);
     AbstractRegion region = (AbstractRegion) cache.getRegion(regionPathString);
     if (region == null) {
-      throw new IllegalArgumentException(CliStrings.format(CliStrings.ALTER_REGION__MSG__REGION_DOESNT_EXIST_0, new Object[] { regionPath }));
+      throw new IllegalArgumentException(
+          CliStrings.format(
+              CliStrings.ALTER_REGION__MSG__REGION_DOESNT_EXIST_0, new Object[] {regionPath}));
     }
 
     AttributesMutator mutator = region.getAttributesMutator();
@@ -122,33 +130,41 @@ public class RegionAlterFunction extends FunctionAdapter implements InternalEnti
     }
 
     // Alter expiration attributes
-    final RegionFunctionArgs.ExpirationAttrs newEntryExpirationIdleTime = regionAlterArgs.getEntryExpirationIdleTime();
+    final RegionFunctionArgs.ExpirationAttrs newEntryExpirationIdleTime =
+        regionAlterArgs.getEntryExpirationIdleTime();
     if (newEntryExpirationIdleTime != null) {
-      mutator.setEntryIdleTimeout(parseExpirationAttributes(newEntryExpirationIdleTime, region.getEntryIdleTimeout()));
+      mutator.setEntryIdleTimeout(
+          parseExpirationAttributes(newEntryExpirationIdleTime, region.getEntryIdleTimeout()));
       if (logger.isDebugEnabled()) {
         logger.debug("Region successfully altered - entry idle timeout");
       }
     }
 
-    final RegionFunctionArgs.ExpirationAttrs newEntryExpirationTTL = regionAlterArgs.getEntryExpirationTTL();
+    final RegionFunctionArgs.ExpirationAttrs newEntryExpirationTTL =
+        regionAlterArgs.getEntryExpirationTTL();
     if (newEntryExpirationTTL != null) {
-      mutator.setEntryTimeToLive(parseExpirationAttributes(newEntryExpirationTTL, region.getEntryTimeToLive()));
+      mutator.setEntryTimeToLive(
+          parseExpirationAttributes(newEntryExpirationTTL, region.getEntryTimeToLive()));
       if (logger.isDebugEnabled()) {
         logger.debug("Region successfully altered - entry TTL");
       }
     }
 
-    final RegionFunctionArgs.ExpirationAttrs newRegionExpirationIdleTime = regionAlterArgs.getRegionExpirationIdleTime();
+    final RegionFunctionArgs.ExpirationAttrs newRegionExpirationIdleTime =
+        regionAlterArgs.getRegionExpirationIdleTime();
     if (newRegionExpirationIdleTime != null) {
-      mutator.setRegionIdleTimeout(parseExpirationAttributes(newRegionExpirationIdleTime, region.getRegionIdleTimeout()));
+      mutator.setRegionIdleTimeout(
+          parseExpirationAttributes(newRegionExpirationIdleTime, region.getRegionIdleTimeout()));
       if (logger.isDebugEnabled()) {
         logger.debug("Region successfully altered - region idle timeout");
       }
     }
 
-    final RegionFunctionArgs.ExpirationAttrs newRegionExpirationTTL = regionAlterArgs.getRegionExpirationTTL();
+    final RegionFunctionArgs.ExpirationAttrs newRegionExpirationTTL =
+        regionAlterArgs.getRegionExpirationTTL();
     if (newRegionExpirationTTL != null) {
-      mutator.setRegionTimeToLive(parseExpirationAttributes(newRegionExpirationTTL, region.getRegionTimeToLive()));
+      mutator.setRegionTimeToLive(
+          parseExpirationAttributes(newRegionExpirationTTL, region.getRegionTimeToLive()));
       if (logger.isDebugEnabled()) {
         logger.debug("Region successfully altered - region TTL");
       }
@@ -229,8 +245,10 @@ public class RegionAlterFunction extends FunctionAdapter implements InternalEnti
         }
 
         if (!nameFound) {
-          Class<CacheListener<K, V>> cacheListenerKlass = forName(newCacheListenerName, CliStrings.ALTER_REGION__CACHELISTENER);
-          mutator.addCacheListener(newInstance(cacheListenerKlass, CliStrings.ALTER_REGION__CACHELISTENER));
+          Class<CacheListener<K, V>> cacheListenerKlass =
+              forName(newCacheListenerName, CliStrings.ALTER_REGION__CACHELISTENER);
+          mutator.addCacheListener(
+              newInstance(cacheListenerKlass, CliStrings.ALTER_REGION__CACHELISTENER));
         }
       }
 
@@ -244,7 +262,8 @@ public class RegionAlterFunction extends FunctionAdapter implements InternalEnti
       if (cacheLoader.isEmpty()) {
         mutator.setCacheLoader(null);
       } else {
-        Class<CacheLoader<K, V>> cacheLoaderKlass = forName(cacheLoader, CliStrings.ALTER_REGION__CACHELOADER);
+        Class<CacheLoader<K, V>> cacheLoaderKlass =
+            forName(cacheLoader, CliStrings.ALTER_REGION__CACHELOADER);
         mutator.setCacheLoader(newInstance(cacheLoaderKlass, CliStrings.ALTER_REGION__CACHELOADER));
       }
 
@@ -258,7 +277,8 @@ public class RegionAlterFunction extends FunctionAdapter implements InternalEnti
       if (cacheWriter.isEmpty()) {
         mutator.setCacheWriter(null);
       } else {
-        Class<CacheWriter<K, V>> cacheWriterKlass = forName(cacheWriter, CliStrings.ALTER_REGION__CACHEWRITER);
+        Class<CacheWriter<K, V>> cacheWriterKlass =
+            forName(cacheWriter, CliStrings.ALTER_REGION__CACHEWRITER);
         mutator.setCacheWriter(newInstance(cacheWriterKlass, CliStrings.ALTER_REGION__CACHEWRITER));
       }
 
@@ -271,18 +291,17 @@ public class RegionAlterFunction extends FunctionAdapter implements InternalEnti
   }
 
   /**
-   * Converts the expiration attributes passed as arguments from the command to
-   * the function into a type suitable for applying to a Region.
-   * 
-   * @param newExpirationAttrs
-   *          Attributes supplied by the command
-   * @param oldExpirationAttributes
-   *          Attributes currently applied to the Region.
-   * 
-   * @return A new pair of expiration attributes taken from the command if it
-   *         was given or the current value from the Region if it was not.
+   * Converts the expiration attributes passed as arguments from the command to the function into a
+   * type suitable for applying to a Region.
+   *
+   * @param newExpirationAttrs Attributes supplied by the command
+   * @param oldExpirationAttributes Attributes currently applied to the Region.
+   * @return A new pair of expiration attributes taken from the command if it was given or the
+   *     current value from the Region if it was not.
    */
-  private ExpirationAttributes parseExpirationAttributes(RegionFunctionArgs.ExpirationAttrs newExpirationAttrs, ExpirationAttributes oldExpirationAttributes) {
+  private ExpirationAttributes parseExpirationAttributes(
+      RegionFunctionArgs.ExpirationAttrs newExpirationAttrs,
+      ExpirationAttributes oldExpirationAttributes) {
 
     ExpirationAction action = oldExpirationAttributes.getAction();
     int timeout = oldExpirationAttributes.getTimeout();
@@ -307,9 +326,18 @@ public class RegionAlterFunction extends FunctionAdapter implements InternalEnti
         loadedClass = (Class<K>) classPathLoader.forName(classToLoadName);
       }
     } catch (ClassNotFoundException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.ALTER_REGION__MSG__COULDNOT_FIND_CLASS_0_SPECIFIED_FOR_1, new Object[] { classToLoadName, neededFor }), e);
+      throw new RuntimeException(
+          CliStrings.format(
+              CliStrings.ALTER_REGION__MSG__COULDNOT_FIND_CLASS_0_SPECIFIED_FOR_1,
+              new Object[] {classToLoadName, neededFor}),
+          e);
     } catch (ClassCastException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.ALTER_REGION__MSG__CLASS_SPECIFIED_FOR_0_SPECIFIED_FOR_1_IS_NOT_OF_EXPECTED_TYPE, new Object[] { classToLoadName, neededFor }), e);
+      throw new RuntimeException(
+          CliStrings.format(
+              CliStrings
+                  .ALTER_REGION__MSG__CLASS_SPECIFIED_FOR_0_SPECIFIED_FOR_1_IS_NOT_OF_EXPECTED_TYPE,
+              new Object[] {classToLoadName, neededFor}),
+          e);
     }
 
     return loadedClass;
@@ -320,9 +348,17 @@ public class RegionAlterFunction extends FunctionAdapter implements InternalEnti
     try {
       instance = klass.newInstance();
     } catch (InstantiationException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.ALTER_REGION__MSG__COULDNOT_INSTANTIATE_CLASS_0_SPECIFIED_FOR_1, new Object[] { klass, neededFor }), e);
+      throw new RuntimeException(
+          CliStrings.format(
+              CliStrings.ALTER_REGION__MSG__COULDNOT_INSTANTIATE_CLASS_0_SPECIFIED_FOR_1,
+              new Object[] {klass, neededFor}),
+          e);
     } catch (IllegalAccessException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.ALTER_REGION__MSG__COULDNOT_ACCESS_CLASS_0_SPECIFIED_FOR_1, new Object[] { klass, neededFor }), e);
+      throw new RuntimeException(
+          CliStrings.format(
+              CliStrings.ALTER_REGION__MSG__COULDNOT_ACCESS_CLASS_0_SPECIFIED_FOR_1,
+              new Object[] {klass, neededFor}),
+          e);
     }
 
     return instance;

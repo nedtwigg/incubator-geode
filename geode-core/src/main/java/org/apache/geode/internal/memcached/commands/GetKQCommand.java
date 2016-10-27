@@ -16,10 +16,7 @@
  */
 package org.apache.geode.internal.memcached.commands;
 
-/**
- * 
- *
- */
+/** */
 public class GetKQCommand extends GetKCommand {
 
   @Override

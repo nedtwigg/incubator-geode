@@ -42,16 +42,15 @@ import org.apache.geode.security.GemFireSecurityException;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Creates connections, using a connection source to determine
- * which server to connect to.
+ * Creates connections, using a connection source to determine which server to connect to.
+ *
  * @since GemFire 5.7
- * 
  */
 public class ConnectionFactoryImpl implements ConnectionFactory {
 
   private static final Logger logger = LogService.getLogger();
 
-  //TODO  - GEODE-1746, the handshake holds state. It seems like the code depends 
+  //TODO  - GEODE-1746, the handshake holds state. It seems like the code depends
   //on all of the handshake operations happening in a single thread. I don't think we
   //want that, need to refactor.
   private final HandShake handshake;
@@ -70,12 +69,25 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
 
   /**
    * Test hook for client version support
+   *
    * @since GemFire 5.7
    */
-
   public static boolean testFailedConnectionToServer = false;
 
-  public ConnectionFactoryImpl(ConnectionSource source, EndpointManager endpointManager, InternalDistributedSystem sys, int socketBufferSize, int handShakeTimeout, int readTimeout, ClientProxyMembershipID proxyId, CancelCriterion cancelCriterion, boolean usedByGateway, GatewaySender sender, long pingInterval, boolean multiuserSecureMode, PoolImpl pool) {
+  public ConnectionFactoryImpl(
+      ConnectionSource source,
+      EndpointManager endpointManager,
+      InternalDistributedSystem sys,
+      int socketBufferSize,
+      int handShakeTimeout,
+      int readTimeout,
+      ClientProxyMembershipID proxyId,
+      CancelCriterion cancelCriterion,
+      boolean usedByGateway,
+      GatewaySender sender,
+      long pingInterval,
+      boolean multiuserSecureMode,
+      PoolImpl pool) {
     this.handshake = new HandShake(proxyId, sys);
     this.handshake.setClientReadTimeout(readTimeout);
     this.source = source;
@@ -91,13 +103,15 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
     this.cancelCriterion = cancelCriterion;
     this.pool = pool;
     if (this.usedByGateway || (this.gatewaySender != null)) {
-      this.socketCreator = SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.GATEWAY);
+      this.socketCreator =
+          SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.GATEWAY);
       if (sender != null && !sender.getGatewayTransportFilters().isEmpty()) {
         this.socketCreator.initializeTransportFilterClientSocketFactory(sender);
       }
     } else {
       //If configured use SSL properties for cache-server
-      this.socketCreator = SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.SERVER);
+      this.socketCreator =
+          SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.SERVER);
     }
   }
 
@@ -119,7 +133,8 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
     return blackList;
   }
 
-  public Connection createClientToServerConnection(ServerLocation location, boolean forQueue) throws GemFireSecurityException {
+  public Connection createClientToServerConnection(ServerLocation location, boolean forQueue)
+      throws GemFireSecurityException {
     ConnectionImpl connection = new ConnectionImpl(this.ds, this.cancelCriterion);
     FailureTracker failureTracker = blackList.getFailureTracker(location);
 
@@ -127,7 +142,16 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
 
     try {
       HandShake connHandShake = new HandShake(handshake);
-      connection.connect(endpointManager, location, connHandShake, socketBufferSize, handShakeTimeout, readTimeout, getCommMode(forQueue), this.gatewaySender, this.socketCreator);
+      connection.connect(
+          endpointManager,
+          location,
+          connHandShake,
+          socketBufferSize,
+          handShakeTimeout,
+          readTimeout,
+          getCommMode(forQueue),
+          this.gatewaySender,
+          this.socketCreator);
       failureTracker.reset();
       connection.setHandShake(connHandShake);
       authenticateIfRequired(connection);
@@ -142,17 +166,28 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
       //propagate this up, don't retry
       throw e;
     } catch (ServerRefusedConnectionException src) {
-      //propagate this up, don't retry      	
-      logger.warn(LocalizedMessage.create(LocalizedStrings.AutoConnectionSourceImpl_COULD_NOT_CREATE_A_NEW_CONNECTION_TO_SERVER_0, src.getMessage()));
+      //propagate this up, don't retry
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .AutoConnectionSourceImpl_COULD_NOT_CREATE_A_NEW_CONNECTION_TO_SERVER_0,
+              src.getMessage()));
       testFailedConnectionToServer = true;
       throw src;
     } catch (Exception e) {
-      if (e.getMessage() != null && (e.getMessage().equals("Connection refused") || e.getMessage().equals("Connection reset"))) { // this is the most common case, so don't print an exception
+      if (e.getMessage() != null
+          && (e.getMessage().equals("Connection refused")
+              || e.getMessage()
+                  .equals(
+                      "Connection reset"))) { // this is the most common case, so don't print an exception
         if (logger.isDebugEnabled()) {
           logger.debug("Unable to connect to {}: connection refused", location);
         }
-      } else {//print a warning with the exception stack trace
-        logger.warn(LocalizedMessage.create(LocalizedStrings.ConnectException_COULD_NOT_CONNECT_TO_0, location), e);
+      } else { //print a warning with the exception stack trace
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.ConnectException_COULD_NOT_CONNECT_TO_0, location),
+            e);
       }
       testFailedConnectionToServer = true;
     } finally {
@@ -204,7 +239,8 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
     return server;
   }
 
-  public Connection createClientToServerConnection(Set excludedServers) throws GemFireSecurityException {
+  public Connection createClientToServerConnection(Set excludedServers)
+      throws GemFireSecurityException {
     final Set origExcludedServers = excludedServers;
     excludedServers = new HashSet(excludedServers);
     Set blackListedServers = blackList.getBadServers();
@@ -253,10 +289,14 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
       } catch (ServerRefusedConnectionException srce) {
         fatalException = srce;
         if (logger.isDebugEnabled()) {
-          logger.debug("ServerRefusedConnectionException attempting to connect to {}", server, srce);
+          logger.debug(
+              "ServerRefusedConnectionException attempting to connect to {}", server, srce);
         }
       } catch (Exception e) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.ConnectException_COULD_NOT_CONNECT_TO_0, server), e);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.ConnectException_COULD_NOT_CONNECT_TO_0, server),
+            e);
       }
 
       excludedServers.add(server);
@@ -264,7 +304,7 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
 
     //    if(conn == null) {
     //      logger.fine("Unable to create a connection in the allowed time.");
-    //      
+    //
     //      if(fatalException!=null) {
     //        throw fatalException;
     //      }
@@ -272,13 +312,30 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
     return conn;
   }
 
-  public ClientUpdater createServerToClientConnection(Endpoint endpoint, QueueManager qManager, boolean isPrimary, ClientUpdater failedUpdater) {
-    String clientUpdateName = CacheClientUpdater.CLIENT_UPDATER_THREAD_NAME + " on " + endpoint.getMemberId() + " port " + endpoint.getLocation().getPort();
+  public ClientUpdater createServerToClientConnection(
+      Endpoint endpoint, QueueManager qManager, boolean isPrimary, ClientUpdater failedUpdater) {
+    String clientUpdateName =
+        CacheClientUpdater.CLIENT_UPDATER_THREAD_NAME
+            + " on "
+            + endpoint.getMemberId()
+            + " port "
+            + endpoint.getLocation().getPort();
     if (logger.isDebugEnabled()) {
       logger.debug("Establishing: {}", clientUpdateName);
     }
     //  Launch the thread
-    CacheClientUpdater updater = new CacheClientUpdater(clientUpdateName, endpoint.getLocation(), isPrimary, ds, new HandShake(this.handshake), qManager, endpointManager, endpoint, handShakeTimeout, this.socketCreator);
+    CacheClientUpdater updater =
+        new CacheClientUpdater(
+            clientUpdateName,
+            endpoint.getLocation(),
+            isPrimary,
+            ds,
+            new HandShake(this.handshake),
+            qManager,
+            endpointManager,
+            endpoint,
+            handShakeTimeout,
+            this.socketCreator);
 
     if (!updater.isConnected()) {
       return null;

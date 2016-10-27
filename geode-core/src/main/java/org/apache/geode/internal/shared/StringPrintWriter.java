@@ -23,53 +23,50 @@ import java.io.Writer;
 import java.security.PrivilegedAction;
 
 /**
- * A {@link PrintWriter} that collects its output in a string builder, which can
- * then be used to construct a string. This completely avoids any locking etc.
- * 
+ * A {@link PrintWriter} that collects its output in a string builder, which can then be used to
+ * construct a string. This completely avoids any locking etc.
  */
 public class StringPrintWriter extends PrintWriter {
 
   private final StringBuilder sb;
 
-  private final static Writer dummyLock = new StringWriter();
+  private static final Writer dummyLock = new StringWriter();
 
   private final String lineSep;
 
-  /**
-   * Create a new string writer using the default initial string-buffer size.
-   */
+  /** Create a new string writer using the default initial string-buffer size. */
   public StringPrintWriter() {
     this(new StringBuilder(), null);
   }
 
   /**
    * Create a new string writer using the specified string-builder.
-   * 
-   * @param sb
-   *          the {@link StringBuilder} to use as the internal buffer
+   *
+   * @param sb the {@link StringBuilder} to use as the internal buffer
    */
   public StringPrintWriter(StringBuilder sb) {
     this(sb, null);
   }
 
   /**
-   * Create a new string writer using the specified string-builder and line
-   * separator.
-   * 
-   * @param sb
-   *          the {@link StringBuilder} to use as the internal buffer
-   * @param lineSep
-   *          the line separator to use, or null to use the default from system
-   *          "line.separator" property
+   * Create a new string writer using the specified string-builder and line separator.
+   *
+   * @param sb the {@link StringBuilder} to use as the internal buffer
+   * @param lineSep the line separator to use, or null to use the default from system
+   *     "line.separator" property
    */
   public StringPrintWriter(StringBuilder sb, String lineSep) {
     super(dummyLock, false);
     this.sb = sb;
-    this.lineSep = lineSep != null ? lineSep : java.security.AccessController.doPrivileged(new PrivilegedAction<String>() {
-      public String run() {
-        return System.getProperty("line.separator");
-      }
-    });
+    this.lineSep =
+        lineSep != null
+            ? lineSep
+            : java.security.AccessController.doPrivileged(
+                new PrivilegedAction<String>() {
+                  public String run() {
+                    return System.getProperty("line.separator");
+                  }
+                });
   }
 
   @Override
@@ -84,7 +81,11 @@ public class StringPrintWriter extends PrintWriter {
 
   @Override
   public void write(char[] cbuf, int off, int len) {
-    if ((off < 0) || (off > cbuf.length) || (len < 0) || ((off + len) > cbuf.length) || ((off + len) < 0)) {
+    if ((off < 0)
+        || (off > cbuf.length)
+        || (len < 0)
+        || ((off + len) > cbuf.length)
+        || ((off + len) < 0)) {
       throw new IndexOutOfBoundsException();
     } else if (len == 0) {
       return;
@@ -205,17 +206,13 @@ public class StringPrintWriter extends PrintWriter {
     return this;
   }
 
-  /**
-   * Return the builder's current value as a string.
-   */
+  /** Return the builder's current value as a string. */
   @Override
   public String toString() {
     return this.sb.toString();
   }
 
-  /**
-   * Return the string builder itself.
-   */
+  /** Return the string builder itself. */
   public StringBuilder getBuilder() {
     return this.sb;
   }

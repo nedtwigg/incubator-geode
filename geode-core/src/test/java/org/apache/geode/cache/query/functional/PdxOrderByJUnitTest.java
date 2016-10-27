@@ -56,27 +56,67 @@ public class PdxOrderByJUnitTest {
   private final String regionName = "PdxTest";
   private final String regName = "/" + rootRegionName + "/" + regionName;
 
-  private final String[] queryString = new String[] { "SELECT pos.secId FROM " + regName + " p, p.positions.values pos WHERE pos.secId LIKE '%L'", // 0
-      "SELECT pos.secId FROM " + regName + " p, p.positions.values pos where pos.secId = 'IBM'", // 1
-      "SELECT pos.secId, p.status FROM " + regName + " p, p.positions.values pos where pos.secId > 'APPL'", // 2
-      "SELECT pos.secId FROM " + regName + " p, p.positions.values pos WHERE pos.secId > 'APPL' and pos.secId < 'SUN'", // 3
-      "select pos.secId from " + regName + " p, p.positions.values pos where pos.secId  IN SET ('YHOO', 'VMW')", // 4
-      "select pos.secId from " + regName + " p, p.positions.values pos where NOT (pos.secId = 'VMW')", // 5
-      "select pos.secId from " + regName + " p, p.positions.values pos where NOT (pos.secId IN SET('SUN', 'ORCL')) ", // 6
-      "SELECT distinct pos.secId FROM " + regName + " p, p.positions.values pos order by pos.secId", // 7
-      "SELECT distinct pos.secId FROM " + regName + " p, p.positions.values pos WHERE p.ID > 1 order by pos.secId limit 5",// 58
-  };
+  private final String[] queryString =
+      new String[] {
+        "SELECT pos.secId FROM "
+            + regName
+            + " p, p.positions.values pos WHERE pos.secId LIKE '%L'", // 0
+        "SELECT pos.secId FROM "
+            + regName
+            + " p, p.positions.values pos where pos.secId = 'IBM'", // 1
+        "SELECT pos.secId, p.status FROM "
+            + regName
+            + " p, p.positions.values pos where pos.secId > 'APPL'", // 2
+        "SELECT pos.secId FROM "
+            + regName
+            + " p, p.positions.values pos WHERE pos.secId > 'APPL' and pos.secId < 'SUN'", // 3
+        "select pos.secId from "
+            + regName
+            + " p, p.positions.values pos where pos.secId  IN SET ('YHOO', 'VMW')", // 4
+        "select pos.secId from "
+            + regName
+            + " p, p.positions.values pos where NOT (pos.secId = 'VMW')", // 5
+        "select pos.secId from "
+            + regName
+            + " p, p.positions.values pos where NOT (pos.secId IN SET('SUN', 'ORCL')) ", // 6
+        "SELECT distinct pos.secId FROM "
+            + regName
+            + " p, p.positions.values pos order by pos.secId", // 7
+        "SELECT distinct pos.secId FROM "
+            + regName
+            + " p, p.positions.values pos WHERE p.ID > 1 order by pos.secId limit 5", // 58
+      };
 
-  private final String[] queryString2 = new String[] { "SELECT pos.secIdIndexed FROM " + regName + " p, p.positions.values pos WHERE pos.secIdIndexed LIKE '%L'", // 0
-      "SELECT pos.secIdIndexed FROM " + regName + " p, p.positions.values pos where pos.secIdIndexed = 'IBM'", // 1
-      "SELECT pos.secIdIndexed, p.status FROM " + regName + " p, p.positions.values pos where pos.secIdIndexed > 'APPL'", // 2
-      "SELECT pos.secIdIndexed FROM " + regName + " p, p.positions.values pos WHERE pos.secIdIndexed > 'APPL' and pos.secIdIndexed < 'SUN'", // 3
-      "select pos.secIdIndexed from " + regName + " p, p.positions.values pos where pos.secIdIndexed  IN SET ('YHOO', 'VMW')", // 4
-      "select pos.secIdIndexed from " + regName + " p, p.positions.values pos where NOT (pos.secIdIndexed = 'VMW')", // 5
-      "select pos.secIdIndexed from " + regName + " p, p.positions.values pos where NOT (pos.secIdIndexed IN SET('SUN', 'ORCL')) ", // 6
-      "SELECT distinct pos.secIdIndexed FROM " + regName + " p, p.positions.values pos order by pos.secIdIndexed", // 7
-      "SELECT distinct pos.secIdIndexed FROM " + regName + " p, p.positions.values pos WHERE p.ID > 1 order by pos.secIdIndexed limit 5",// 8
-  };
+  private final String[] queryString2 =
+      new String[] {
+        "SELECT pos.secIdIndexed FROM "
+            + regName
+            + " p, p.positions.values pos WHERE pos.secIdIndexed LIKE '%L'", // 0
+        "SELECT pos.secIdIndexed FROM "
+            + regName
+            + " p, p.positions.values pos where pos.secIdIndexed = 'IBM'", // 1
+        "SELECT pos.secIdIndexed, p.status FROM "
+            + regName
+            + " p, p.positions.values pos where pos.secIdIndexed > 'APPL'", // 2
+        "SELECT pos.secIdIndexed FROM "
+            + regName
+            + " p, p.positions.values pos WHERE pos.secIdIndexed > 'APPL' and pos.secIdIndexed < 'SUN'", // 3
+        "select pos.secIdIndexed from "
+            + regName
+            + " p, p.positions.values pos where pos.secIdIndexed  IN SET ('YHOO', 'VMW')", // 4
+        "select pos.secIdIndexed from "
+            + regName
+            + " p, p.positions.values pos where NOT (pos.secIdIndexed = 'VMW')", // 5
+        "select pos.secIdIndexed from "
+            + regName
+            + " p, p.positions.values pos where NOT (pos.secIdIndexed IN SET('SUN', 'ORCL')) ", // 6
+        "SELECT distinct pos.secIdIndexed FROM "
+            + regName
+            + " p, p.positions.values pos order by pos.secIdIndexed", // 7
+        "SELECT distinct pos.secIdIndexed FROM "
+            + regName
+            + " p, p.positions.values pos WHERE p.ID > 1 order by pos.secIdIndexed limit 5", // 8
+      };
 
   @Before
   public void setUp() throws java.lang.Exception {
@@ -118,7 +158,9 @@ public class PdxOrderByJUnitTest {
     }
     Index index = null;
     try {
-      index = localQueryService.createIndex("secIdIndex", "pos.secId", regName + " p, p.positions.values pos");
+      index =
+          localQueryService.createIndex(
+              "secIdIndex", "pos.secId", regName + " p, p.positions.values pos");
       if (index instanceof PartitionedIndex) {
         for (Object o : ((PartitionedIndex) index).getBucketIndexes()) {
           if (!(o instanceof RangeIndex)) {
@@ -172,10 +214,10 @@ public class PdxOrderByJUnitTest {
     factory.setPartitionAttributes(prAttr);
 
     return createRegion(this.regionName, this.rootRegionName, factory.create());
-
   }
 
-  final public Region createRegion(String name, String rootName, RegionAttributes attrs) throws CacheException {
+  public final Region createRegion(String name, String rootName, RegionAttributes attrs)
+      throws CacheException {
     Region root = getRootRegion(rootName);
     if (root == null) {
       // don't put listeners on root region
@@ -203,7 +245,8 @@ public class PdxOrderByJUnitTest {
     return CacheUtils.getRegion(rootName);
   }
 
-  public final Region createRootRegion(String rootName, RegionAttributes attrs) throws RegionExistsException, TimeoutException {
+  public final Region createRootRegion(String rootName, RegionAttributes attrs)
+      throws RegionExistsException, TimeoutException {
     return ((GemFireCacheImpl) CacheUtils.getCache()).createRegion(rootName, attrs);
   }
 
@@ -242,9 +285,12 @@ public class PdxOrderByJUnitTest {
     if (r[0].size() == r[1].size()) {
       System.out.println("Both SelectResults are of Same Size i.e.  Size= " + r[1].size());
     } else {
-      System.out.println("FAILED4: SelectResults size is different in both the cases. Size1=" + r[0].size() + " Size2 = " + r[1].size());
+      System.out.println(
+          "FAILED4: SelectResults size is different in both the cases. Size1="
+              + r[0].size()
+              + " Size2 = "
+              + r[1].size());
       ok = false;
-
     }
     if (ok) {
       set2 = (((SelectResults) r[1]).asSet());
@@ -268,7 +314,8 @@ public class PdxOrderByJUnitTest {
             }
             boolean elementEqual = true;
             for (int i = 0; i < values1.length; ++i) {
-              elementEqual = elementEqual && ((values1[i] == values2[i]) || values1[i].equals(values2[i]));
+              elementEqual =
+                  elementEqual && ((values1[i] == values2[i]) || values1[i].equals(values2[i]));
             }
             exactMatch = elementEqual;
           } else {
@@ -279,7 +326,8 @@ public class PdxOrderByJUnitTest {
           }
         }
         if (!exactMatch) {
-          System.out.println("FAILED5: Atleast one element in the pair of SelectResults supposedly identical, is not equal ");
+          System.out.println(
+              "FAILED5: Atleast one element in the pair of SelectResults supposedly identical, is not equal ");
           ok = false;
           break;
         }

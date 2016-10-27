@@ -26,14 +26,13 @@ import java.util.EnumSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
-/**
- *
- */
+/** */
 public class SequenceLoggerImpl implements SequenceLogger {
 
   private static final SequenceLoggerImpl INSTANCE;
 
-  public static final String ENABLED_TYPES_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "GraphLoggerImpl.ENABLED_TYPES";
+  public static final String ENABLED_TYPES_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "GraphLoggerImpl.ENABLED_TYPES";
 
   private final EnumSet<GraphType> enabledTypes;
 
@@ -55,9 +54,7 @@ public class SequenceLoggerImpl implements SequenceLogger {
     return INSTANCE;
   }
 
-  /**
-   * Should be invoked when GemFire cache is closing or closed. 
-   */
+  /** Should be invoked when GemFire cache is closing or closed. */
   public static void signalCacheClose() {
     if (INSTANCE != null && INSTANCE.consumerThread != null) {
       INSTANCE.consumerThread.interrupt();
@@ -68,7 +65,8 @@ public class SequenceLoggerImpl implements SequenceLogger {
     return enabledTypes.contains(type);
   }
 
-  public void logTransition(GraphType type, Object graphName, Object edgeName, Object state, Object source, Object dest) {
+  public void logTransition(
+      GraphType type, Object graphName, Object edgeName, Object state, Object source, Object dest) {
     if (isEnabled(type)) {
       Transition edge = new Transition(type, graphName, edgeName, state, source, dest);
       edges.add(edge);

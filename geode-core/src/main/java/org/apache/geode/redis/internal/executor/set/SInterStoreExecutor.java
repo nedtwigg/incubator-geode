@@ -29,5 +29,4 @@ public class SInterStoreExecutor extends SInterExecutor {
   public String getArgsError() {
     return ArityDef.SINTERSTORE;
   }
-
 }

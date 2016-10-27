@@ -22,24 +22,20 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.SetUtils;
 import org.apache.geode.internal.cache.partitioned.Bucket;
 
-/**
- * This class encapsulates the Bucket Related heuristics/algos for a PR.
- * 
- *  
- */
+/** This class encapsulates the Bucket Related heuristics/algos for a PR. */
 public class PartitionedRegionBucketMgmtHelper {
 
   /**
-   * 
    * @param b Bucket to evaluate
-   * @param moveSource 
+   * @param moveSource
    * @return true if it is allowed to be recovered
    * @since GemFire 5.9
    */
   public static boolean bucketIsAllowedOnThisHost(Bucket b, InternalDistributedMember moveSource) {
     if (b.getDistributionManager().enforceUniqueZone()) {
       Set<InternalDistributedMember> hostingMembers = b.getBucketOwners();
-      Set<InternalDistributedMember> buddyMembers = b.getDistributionManager().getMembersInThisZone();
+      Set<InternalDistributedMember> buddyMembers =
+          b.getDistributionManager().getMembersInThisZone();
       boolean intersects = SetUtils.intersectsWith(hostingMembers, buddyMembers);
       boolean sourceIsOneThisHost = moveSource != null && buddyMembers.contains(moveSource);
       return !intersects || sourceIsOneThisHost;

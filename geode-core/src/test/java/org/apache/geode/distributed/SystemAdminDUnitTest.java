@@ -66,7 +66,8 @@ public class SystemAdminDUnitTest extends JUnit4DistributedTestCase {
   public void testPrintStacks() throws Exception {
 
     // create a gemfire.properties that lets SystemAdmin find the dunit locator
-    Properties p = DistributedTestUtils.getAllDistributedSystemProperties(getDistributedSystemProperties());
+    Properties p =
+        DistributedTestUtils.getAllDistributedSystemProperties(getDistributedSystemProperties());
     try {
 
       SystemAdmin.setDistributedSystemProperties(p);
@@ -108,23 +109,28 @@ public class SystemAdminDUnitTest extends JUnit4DistributedTestCase {
     do {
       line = in.readLine();
       if (line != null) {
-        if (line.contains("GemFire Garbage Collection"))
-          foundGCThread = true;
-        else if (line.contains("Management Task"))
-          foundManagementTask = true;
-        else if (line.contains("Function Execution Processor"))
-          foundFunctionThread = true;
+        if (line.contains("GemFire Garbage Collection")) foundGCThread = true;
+        else if (line.contains("Management Task")) foundManagementTask = true;
+        else if (line.contains("Function Execution Processor")) foundFunctionThread = true;
       }
     } while (line != null);
 
     if (isPruned) {
-      assertFalse("found a GemFire Garbage Collection thread in stack dump in " + filename, foundGCThread);
-      assertFalse("found a Management Task thread in stack dump in " + filename, foundManagementTask);
-      assertFalse("found a Function Excecution Processor thread in stack dump in " + filename, foundFunctionThread);
+      assertFalse(
+          "found a GemFire Garbage Collection thread in stack dump in " + filename, foundGCThread);
+      assertFalse(
+          "found a Management Task thread in stack dump in " + filename, foundManagementTask);
+      assertFalse(
+          "found a Function Excecution Processor thread in stack dump in " + filename,
+          foundFunctionThread);
     } else {
-      assertTrue("found no GemFire Garbage Collection thread in stack dump in " + filename, foundGCThread);
-      assertTrue("found no Management Task thread in stack dump in " + filename, foundManagementTask);
-      assertTrue("found no Function Excecution Processor thread in stack dump in " + filename, foundFunctionThread);
+      assertTrue(
+          "found no GemFire Garbage Collection thread in stack dump in " + filename, foundGCThread);
+      assertTrue(
+          "found no Management Task thread in stack dump in " + filename, foundManagementTask);
+      assertTrue(
+          "found no Function Excecution Processor thread in stack dump in " + filename,
+          foundFunctionThread);
     }
     file.delete();
   }

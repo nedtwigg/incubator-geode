@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -31,10 +31,9 @@ import org.apache.geode.cache.lucene.internal.repository.IndexResultCollector;
 import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
-/**
- * Contains function arguments for text / lucene search
- */
-public class LuceneFunctionContext<C extends IndexResultCollector> implements DataSerializableFixedID {
+/** Contains function arguments for text / lucene search */
+public class LuceneFunctionContext<C extends IndexResultCollector>
+    implements DataSerializableFixedID {
   private CollectorManager<C> manager;
   private int limit;
   private LuceneQueryProvider queryProvider;
@@ -48,35 +47,34 @@ public class LuceneFunctionContext<C extends IndexResultCollector> implements Da
     this(provider, indexName, null);
   }
 
-  public LuceneFunctionContext(LuceneQueryProvider provider, String indexName, CollectorManager<C> manager) {
+  public LuceneFunctionContext(
+      LuceneQueryProvider provider, String indexName, CollectorManager<C> manager) {
     this(provider, indexName, manager, LuceneQueryFactory.DEFAULT_LIMIT);
   }
 
-  public LuceneFunctionContext(LuceneQueryProvider provider, String indexName, CollectorManager<C> manager, int limit) {
+  public LuceneFunctionContext(
+      LuceneQueryProvider provider, String indexName, CollectorManager<C> manager, int limit) {
     this.queryProvider = provider;
     this.indexName = indexName;
     this.manager = manager;
     this.limit = limit;
   }
 
-  /**
-   * @return The maximum count of result objects to be produced by the function
-   */
+  /** @return The maximum count of result objects to be produced by the function */
   public int getLimit() {
     return limit;
   }
 
-  /**
-   * Get the name of the index to query
-   */
+  /** Get the name of the index to query */
   public String getIndexName() {
     return indexName;
   }
 
   /**
-   * On each member, search query is executed on one or more {@link IndexRepository}s. A {@link CollectorManager} could
-   * be provided to customize the way results from these repositories is collected and merged.
-   * 
+   * On each member, search query is executed on one or more {@link IndexRepository}s. A {@link
+   * CollectorManager} could be provided to customize the way results from these repositories is
+   * collected and merged.
+   *
    * @return {@link CollectorManager} instance to be used by function
    */
   public CollectorManager<C> getCollectorManager() {

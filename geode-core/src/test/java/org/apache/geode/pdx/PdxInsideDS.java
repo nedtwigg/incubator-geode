@@ -30,8 +30,7 @@ class PdxInsideDS implements DataSerializable {
   private PdxSerializable myPdx;
   private String myString2;
 
-  public PdxInsideDS() {
-  }
+  public PdxInsideDS() {}
 
   public PdxInsideDS(String str1, long myLong, PdxSerializable myPdx, String str2) {
     this.myString1 = str1;
@@ -56,7 +55,15 @@ class PdxInsideDS implements DataSerializable {
 
   @Override
   public String toString() {
-    return "PdxInsideDS [myString1=" + myString1 + ", myLong=" + myLong + ", myPdx=" + myPdx + ", myString2=" + myString2 + "]";
+    return "PdxInsideDS [myString1="
+        + myString1
+        + ", myLong="
+        + myLong
+        + ", myPdx="
+        + myPdx
+        + ", myString2="
+        + myString2
+        + "]";
   }
 
   @Override
@@ -72,30 +79,20 @@ class PdxInsideDS implements DataSerializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     PdxInsideDS other = (PdxInsideDS) obj;
-    if (myLong != other.myLong)
-      return false;
+    if (myLong != other.myLong) return false;
     if (myString1 == null) {
-      if (other.myString1 != null)
-        return false;
-    } else if (!myString1.equals(other.myString1))
-      return false;
+      if (other.myString1 != null) return false;
+    } else if (!myString1.equals(other.myString1)) return false;
     if (myString2 == null) {
-      if (other.myString2 != null)
-        return false;
-    } else if (!myString2.equals(other.myString2))
-      return false;
+      if (other.myString2 != null) return false;
+    } else if (!myString2.equals(other.myString2)) return false;
     if (myPdx == null) {
-      if (other.myPdx != null)
-        return false;
-    } else if (!myPdx.equals(other.myPdx))
-      return false;
+      if (other.myPdx != null) return false;
+    } else if (!myPdx.equals(other.myPdx)) return false;
     return true;
   }
 }

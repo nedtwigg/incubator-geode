@@ -27,8 +27,9 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * get information on its current cache.
+ * A message that is sent to a particular distribution manager to get information on its current
+ * cache.
+ *
  * @since GemFire 3.5
  */
 public final class CacheConfigRequest extends AdminRequest {
@@ -36,9 +37,7 @@ public final class CacheConfigRequest extends AdminRequest {
   private int newValue;
   private int cacheId;
 
-  /**
-   * Returns a <code>CacheConfigRequest</code>.
-   */
+  /** Returns a <code>CacheConfigRequest</code>. */
   public static CacheConfigRequest create(CacheInfo c, int attCode, int v) {
     CacheConfigRequest m = new CacheConfigRequest();
     m.attributeCode = (byte) attCode;
@@ -48,15 +47,16 @@ public final class CacheConfigRequest extends AdminRequest {
   }
 
   public CacheConfigRequest() {
-    friendlyName = LocalizedStrings.CacheConfigRequest_SET_A_SINGLE_CACHE_CONFIGURATION_ATTRIBUTE.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.CacheConfigRequest_SET_A_SINGLE_CACHE_CONFIGURATION_ATTRIBUTE
+            .toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
-    return CacheConfigResponse.create(dm, this.getSender(), this.cacheId, this.attributeCode, this.newValue);
+    return CacheConfigResponse.create(
+        dm, this.getSender(), this.cacheId, this.attributeCode, this.newValue);
   }
 
   public int getDSFID() {

@@ -27,22 +27,25 @@ import org.apache.geode.internal.cache.versions.VersionTag;
 
 import java.io.IOException;
 
-/**
- *
- */
+/** */
 public class Invalidate70 extends Invalidate {
 
-  private final static Invalidate70 singleton = new Invalidate70();
+  private static final Invalidate70 singleton = new Invalidate70();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private Invalidate70() {
-  }
+  private Invalidate70() {}
 
   @Override
-  protected void writeReplyWithRefreshMetadata(Message origMsg, ServerConnection servConn, PartitionedRegion pr, byte nwHop, VersionTag versionTag) throws IOException {
+  protected void writeReplyWithRefreshMetadata(
+      Message origMsg,
+      ServerConnection servConn,
+      PartitionedRegion pr,
+      byte nwHop,
+      VersionTag versionTag)
+      throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);
@@ -58,16 +61,18 @@ public class Invalidate70 extends Invalidate {
     if (versionTag != null) {
       replyMsg.addObjPart(versionTag);
     }
-    replyMsg.addBytesPart(new byte[] { pr.getMetadataVersion(), nwHop });
+    replyMsg.addBytesPart(new byte[] {pr.getMetadataVersion(), nwHop});
     pr.getPrStats().incPRMetaDataSentCount();
     replyMsg.send(servConn);
     if (logger.isTraceEnabled()) {
-      logger.trace("{}: rpl with REFRESH_METADAT tx: {}", servConn.getName(), origMsg.getTransactionId());
+      logger.trace(
+          "{}: rpl with REFRESH_METADAT tx: {}", servConn.getName(), origMsg.getTransactionId());
     }
   }
 
   @Override
-  protected void writeReply(Message origMsg, ServerConnection servConn, VersionTag versionTag) throws IOException {
+  protected void writeReply(Message origMsg, ServerConnection servConn, VersionTag versionTag)
+      throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);
@@ -93,7 +98,11 @@ public class Invalidate70 extends Invalidate {
     replyMsg.addBytesPart(OK_BYTES); // make old single-hop code happy by putting byte[]{0} here
     replyMsg.send(servConn);
     if (logger.isTraceEnabled()) {
-      logger.trace("{}: rpl tx: {} parts={}", servConn.getName(), origMsg.getTransactionId(), replyMsg.getNumberOfParts());
+      logger.trace(
+          "{}: rpl tx: {} parts={}",
+          servConn.getName(),
+          origMsg.getTransactionId(),
+          replyMsg.getNumberOfParts());
     }
   }
 }

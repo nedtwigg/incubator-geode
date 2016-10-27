@@ -29,10 +29,7 @@ import java.util.Properties;
 
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 
-/**
- * Extracted from TXWriterJUnitTest to share with TXWriterOOMEJUnitTest.
- * 
- */
+/** Extracted from TXWriterJUnitTest to share with TXWriterOOMEJUnitTest. */
 @SuppressWarnings("deprecation")
 public class TXWriterTestCase {
 
@@ -99,78 +96,83 @@ public class TXWriterTestCase {
 
   protected void installCacheListenerAndWriter() {
     AttributesMutator<String, String> mutator = this.region.getAttributesMutator();
-    mutator.setCacheListener(new CacheListenerAdapter<String, String>() {
-      public void close() {
-        cbCount++;
-      }
+    mutator.setCacheListener(
+        new CacheListenerAdapter<String, String>() {
+          public void close() {
+            cbCount++;
+          }
 
-      public void afterCreate(EntryEvent<String, String> event) {
-        cbCount++;
-      }
+          public void afterCreate(EntryEvent<String, String> event) {
+            cbCount++;
+          }
 
-      public void afterUpdate(EntryEvent<String, String> event) {
-        cbCount++;
-      }
+          public void afterUpdate(EntryEvent<String, String> event) {
+            cbCount++;
+          }
 
-      public void afterInvalidate(EntryEvent<String, String> event) {
-        cbCount++;
-      }
+          public void afterInvalidate(EntryEvent<String, String> event) {
+            cbCount++;
+          }
 
-      public void afterDestroy(EntryEvent<String, String> event) {
-        cbCount++;
-      }
+          public void afterDestroy(EntryEvent<String, String> event) {
+            cbCount++;
+          }
 
-      public void afterRegionInvalidate(RegionEvent<String, String> event) {
-        cbCount++;
-      }
+          public void afterRegionInvalidate(RegionEvent<String, String> event) {
+            cbCount++;
+          }
 
-      public void afterRegionDestroy(RegionEvent<String, String> event) {
-        cbCount++;
-      }
-    });
-    mutator.setCacheWriter(new CacheWriter<String, String>() {
-      public void close() {
-        cbCount++;
-      }
+          public void afterRegionDestroy(RegionEvent<String, String> event) {
+            cbCount++;
+          }
+        });
+    mutator.setCacheWriter(
+        new CacheWriter<String, String>() {
+          public void close() {
+            cbCount++;
+          }
 
-      public void beforeUpdate(EntryEvent<String, String> event) throws CacheWriterException {
-        cbCount++;
-      }
+          public void beforeUpdate(EntryEvent<String, String> event) throws CacheWriterException {
+            cbCount++;
+          }
 
-      public void beforeCreate(EntryEvent<String, String> event) throws CacheWriterException {
-        cbCount++;
-      }
+          public void beforeCreate(EntryEvent<String, String> event) throws CacheWriterException {
+            cbCount++;
+          }
 
-      public void beforeDestroy(EntryEvent<String, String> event) throws CacheWriterException {
-        cbCount++;
-      }
+          public void beforeDestroy(EntryEvent<String, String> event) throws CacheWriterException {
+            cbCount++;
+          }
 
-      public void beforeRegionDestroy(RegionEvent<String, String> event) throws CacheWriterException {
-        cbCount++;
-      }
+          public void beforeRegionDestroy(RegionEvent<String, String> event)
+              throws CacheWriterException {
+            cbCount++;
+          }
 
-      public void beforeRegionClear(RegionEvent<String, String> event) throws CacheWriterException {
-        cbCount++;
-      }
-    });
+          public void beforeRegionClear(RegionEvent<String, String> event)
+              throws CacheWriterException {
+            cbCount++;
+          }
+        });
   }
 
   protected void installTransactionListener() {
-    ((CacheTransactionManager) this.txMgr).setListener(new TransactionListener() {
-      public void afterFailedCommit(TransactionEvent event) {
-        failedCommits++;
-      }
+    ((CacheTransactionManager) this.txMgr)
+        .setListener(
+            new TransactionListener() {
+              public void afterFailedCommit(TransactionEvent event) {
+                failedCommits++;
+              }
 
-      public void afterCommit(TransactionEvent event) {
-        afterCommits++;
-      }
+              public void afterCommit(TransactionEvent event) {
+                afterCommits++;
+              }
 
-      public void afterRollback(TransactionEvent event) {
-        afterRollbacks++;
-      }
+              public void afterRollback(TransactionEvent event) {
+                afterRollbacks++;
+              }
 
-      public void close() {
-      }
-    });
+              public void close() {}
+            });
   }
 }

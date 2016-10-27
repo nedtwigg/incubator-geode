@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -40,9 +40,7 @@ final class FileIndexInput extends IndexInput {
     this(resourceDesc, file, 0L, file.getLength());
   }
 
-  /**
-   * Constructor for a slice.
-   */
+  /** Constructor for a slice. */
   private FileIndexInput(String resourceDesc, File file, long offset, long length) {
     super(resourceDesc);
     this.file = file;
@@ -82,13 +80,20 @@ final class FileIndexInput extends IndexInput {
   @Override
   public IndexInput slice(String sliceDescription, long offset, long length) throws IOException {
     if (length > (this.sliceLength - offset)) {
-      throw new IllegalArgumentException("Slice length is to large. Asked for " + length + " file length is " + sliceLength + ": " + this.file.getName());
+      throw new IllegalArgumentException(
+          "Slice length is to large. Asked for "
+              + length
+              + " file length is "
+              + sliceLength
+              + ": "
+              + this.file.getName());
     }
     if (offset < 0 || offset >= this.sliceLength) {
       throw new IllegalArgumentException("Slice offset is invalid: " + this.file.getName());
     }
 
-    FileIndexInput result = new FileIndexInput(sliceDescription, file, sliceOffset + offset, length);
+    FileIndexInput result =
+        new FileIndexInput(sliceDescription, file, sliceOffset + offset, length);
     result.seek(0);
     return result;
   }

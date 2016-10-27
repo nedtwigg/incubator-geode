@@ -17,21 +17,17 @@
 package org.apache.geode;
 
 /**
- * An <code>SystemConnectException</code> is thrown when a
- * GemFire application tries to connect to an
- * existing distributed system and is unable to contact all members of
- * the distributed system to announce its presence.  This is usually due
- * to resource depletion problems (low memory or too few file descriptors)
- * in other processes.
+ * An <code>SystemConnectException</code> is thrown when a GemFire application tries to connect to
+ * an existing distributed system and is unable to contact all members of the distributed system to
+ * announce its presence. This is usually due to resource depletion problems (low memory or too few
+ * file descriptors) in other processes.
  */
 public class SystemConnectException extends GemFireException {
   private static final long serialVersionUID = -7378174428634468238L;
 
   //////////////////////  Constructors  //////////////////////
 
-  /**
-   * Creates a new <code>SystemConnectException</code>.
-   */
+  /** Creates a new <code>SystemConnectException</code>. */
   public SystemConnectException(String message) {
     super(message);
   }

@@ -21,12 +21,9 @@ import java.util.Comparator;
 import org.apache.geode.internal.cache.CachedDeserializable;
 
 /**
- * Compare two cached deserializable objects by unwrapping
- * the underlying object.
- * 
- * If either object is not a cached deserializable, just use
- * the object directly.
+ * Compare two cached deserializable objects by unwrapping the underlying object.
  *
+ * <p>If either object is not a cached deserializable, just use the object directly.
  */
 class CachedDeserializableComparator implements Comparator<Object> {
 
@@ -47,7 +44,5 @@ class CachedDeserializableComparator implements Comparator<Object> {
     }
 
     return comparator.compare(o1, o2);
-
   }
-
 }

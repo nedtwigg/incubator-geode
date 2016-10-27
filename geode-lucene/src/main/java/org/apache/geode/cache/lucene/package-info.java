@@ -17,16 +17,17 @@
  * under the License.
  */
 /**
- * This package provides an integration with Apache Lucene that allows Geode regions to be indexed in a distributed
- * Lucene index and queries using Lucene queries.
- * <p>
- * All indexing and query operations are performed through the {@link org.apache.geode.cache.lucene.LuceneService} class.
- * See {@link org.apache.geode.cache.lucene.LuceneService} for an example of how to add a lucene index to a geode region.
- * <p>
+ * This package provides an integration with Apache Lucene that allows Geode regions to be indexed
+ * in a distributed Lucene index and queries using Lucene queries.
  *
- * The Lucene indexes created using this API are stored in geode and colocated with the indexed region, which means they
- * have the same availability guarantees as the underlying region. The indexes are maintained asynchronously, so changes
- * to the region may not be immediately visible in the lucene index.
+ * <p>All indexing and query operations are performed through the {@link
+ * org.apache.geode.cache.lucene.LuceneService} class. See {@link
+ * org.apache.geode.cache.lucene.LuceneService} for an example of how to add a lucene index to a
+ * geode region.
+ *
+ * <p>The Lucene indexes created using this API are stored in geode and colocated with the indexed
+ * region, which means they have the same availability guarantees as the underlying region. The
+ * indexes are maintained asynchronously, so changes to the region may not be immediately visible in
+ * the lucene index.
  */
-
 package org.apache.geode.cache.lucene;

@@ -38,10 +38,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * A <code>LonerDistributionManager</code> is a dm that never communicates
- * with anyone else.
- *
- *
+ * A <code>LonerDistributionManager</code> is a dm that never communicates with anyone else.
  *
  * @since GemFire 3.5
  */
@@ -55,10 +52,7 @@ public class LonerDistributionManager implements DM {
   /**
    * Creates a new local distribution manager
    *
-   * @param system
-   *        The distributed system to which this distribution manager
-   *        will send messages.
-   *
+   * @param system The distributed system to which this distribution manager will send messages.
    */
   public LonerDistributionManager(InternalDistributedSystem system, InternalLogWriter logger) {
     this.system = system;
@@ -75,8 +69,7 @@ public class LonerDistributionManager implements DM {
     // no threads needed
   }
 
-  protected void shutdown() {
-  }
+  protected void shutdown() {}
 
   private final InternalDistributedMember id;
 
@@ -90,18 +83,19 @@ public class LonerDistributionManager implements DM {
               DistributionManager.LONER_DM_TYPE,
               MemberAttributes.parseRoles(system.getConfig().getRoles()));
       id = new InternalDistributedMember(host, 65535); // noise value for port number
-  
+
     } catch (UnknownHostException ex) {
       throw new InternalError(LocalizedStrings.LonerDistributionManager_CANNOT_RESOLVE_LOCAL_HOST_NAME_TO_AN_IP_ADDRESS.toLocalizedString());
     }
-  
+
   }*/
 
-  private final Set<InternalDistributedMember> allIds;// = Collections.singleton(id);
+  private final Set<InternalDistributedMember> allIds; // = Collections.singleton(id);
   private final List<InternalDistributedMember> viewMembers;
-  private ConcurrentMap<InternalDistributedMember, InternalDistributedMember> canonicalIds = new ConcurrentHashMap();
-  static private final DummyDMStats stats = new DummyDMStats();
-  static private final DummyExecutor executor = new DummyExecutor();
+  private ConcurrentMap<InternalDistributedMember, InternalDistributedMember> canonicalIds =
+      new ConcurrentHashMap();
+  private static final DummyDMStats stats = new DummyDMStats();
+  private static final DummyExecutor executor = new DummyExecutor();
 
   @Override
   public long cacheTimeMillis() {
@@ -147,8 +141,9 @@ public class LonerDistributionManager implements DM {
   }
 
   @Override // DM method
-  public void retainMembersWithSameOrNewerVersion(Collection<InternalDistributedMember> members, Version version) {
-    for (Iterator<InternalDistributedMember> it = members.iterator(); it.hasNext();) {
+  public void retainMembersWithSameOrNewerVersion(
+      Collection<InternalDistributedMember> members, Version version) {
+    for (Iterator<InternalDistributedMember> it = members.iterator(); it.hasNext(); ) {
       InternalDistributedMember id = it.next();
       if (id.getVersionObject().compareTo(version) < 0) {
         it.remove();
@@ -157,8 +152,9 @@ public class LonerDistributionManager implements DM {
   }
 
   @Override // DM method
-  public void removeMembersWithSameOrNewerVersion(Collection<InternalDistributedMember> members, Version version) {
-    for (Iterator<InternalDistributedMember> it = members.iterator(); it.hasNext();) {
+  public void removeMembersWithSameOrNewerVersion(
+      Collection<InternalDistributedMember> members, Version version) {
+    for (Iterator<InternalDistributedMember> it = members.iterator(); it.hasNext(); ) {
       InternalDistributedMember id = it.next();
       if (id.getVersionObject().compareTo(version) >= 0) {
         it.remove();
@@ -216,7 +212,9 @@ public class LonerDistributionManager implements DM {
       // do nothing
       return null;
     } else {
-      throw new RuntimeException(LocalizedStrings.LonerDistributionManager_LONER_TRIED_TO_SEND_MESSAGE_TO_0.toLocalizedString(message.getRecipientsDescription()));
+      throw new RuntimeException(
+          LocalizedStrings.LonerDistributionManager_LONER_TRIED_TO_SEND_MESSAGE_TO_0
+              .toLocalizedString(message.getRecipientsDescription()));
     }
   }
 
@@ -224,17 +222,13 @@ public class LonerDistributionManager implements DM {
     return this.system;
   }
 
-  public void addMembershipListener(MembershipListener l) {
-  }
+  public void addMembershipListener(MembershipListener l) {}
 
-  public void removeMembershipListener(MembershipListener l) {
-  }
+  public void removeMembershipListener(MembershipListener l) {}
 
-  public void removeAllMembershipListener(MembershipListener l) {
-  }
+  public void removeAllMembershipListener(MembershipListener l) {}
 
-  public void addAdminConsole(InternalDistributedMember p_id) {
-  }
+  public void addAdminConsole(InternalDistributedMember p_id) {}
 
   public DMStats getStats() {
     return stats;
@@ -248,8 +242,8 @@ public class LonerDistributionManager implements DM {
     return result;
   }
 
-  public void handleManagerDeparture(InternalDistributedMember p_id, boolean crashed, String reason) {
-  }
+  public void handleManagerDeparture(
+      InternalDistributedMember p_id, boolean crashed, String reason) {}
 
   public LogWriterI18n getLoggerI18n() {
     return this.logger;
@@ -283,12 +277,9 @@ public class LonerDistributionManager implements DM {
     return null;
   }
 
-  public void close() {
-  }
+  public void close() {}
 
-  public void restartCommunications() {
-
-  }
+  public void restartCommunications() {}
 
   @Override
   public List<InternalDistributedMember> getViewMembers() {
@@ -302,7 +293,9 @@ public class LonerDistributionManager implements DM {
         return member;
       }
     }
-    throw new NoSuchElementException(LocalizedStrings.LonerDistributionManager_MEMBER_NOT_FOUND_IN_MEMBERSHIP_SET.toLocalizedString());
+    throw new NoSuchElementException(
+        LocalizedStrings.LonerDistributionManager_MEMBER_NOT_FOUND_IN_MEMBERSHIP_SET
+            .toLocalizedString());
   }
 
   public Set getAdminMemberSet() {
@@ -316,12 +309,10 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incSentMessages(long messages) {
-    }
+    public void incSentMessages(long messages) {}
 
     @Override
-    public void incTOSentMsg() {
-    }
+    public void incTOSentMsg() {}
 
     @Override
     public long getSentCommitMessages() {
@@ -329,8 +320,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incSentCommitMessages(long messages) {
-    }
+    public void incSentCommitMessages(long messages) {}
 
     @Override
     public long getCommitWaits() {
@@ -338,8 +328,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incCommitWaits() {
-    }
+    public void incCommitWaits() {}
 
     @Override
     public long getSentMessagesTime() {
@@ -347,8 +336,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incSentMessagesTime(long nanos) {
-    }
+    public void incSentMessagesTime(long nanos) {}
 
     @Override
     public long getBroadcastMessages() {
@@ -356,8 +344,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incBroadcastMessages(long messages) {
-    }
+    public void incBroadcastMessages(long messages) {}
 
     @Override
     public long getBroadcastMessagesTime() {
@@ -365,8 +352,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incBroadcastMessagesTime(long nanos) {
-    }
+    public void incBroadcastMessagesTime(long nanos) {}
 
     @Override
     public long getReceivedMessages() {
@@ -374,8 +360,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incReceivedMessages(long messages) {
-    }
+    public void incReceivedMessages(long messages) {}
 
     @Override
     public long getReceivedBytes() {
@@ -383,12 +368,10 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incReceivedBytes(long bytes) {
-    }
+    public void incReceivedBytes(long bytes) {}
 
     @Override
-    public void incSentBytes(long bytes) {
-    }
+    public void incSentBytes(long bytes) {}
 
     @Override
     public long getProcessedMessages() {
@@ -396,8 +379,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incProcessedMessages(long messages) {
-    }
+    public void incProcessedMessages(long messages) {}
 
     @Override
     public long getProcessedMessagesTime() {
@@ -405,8 +387,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incProcessedMessagesTime(long nanos) {
-    }
+    public void incProcessedMessagesTime(long nanos) {}
 
     @Override
     public long getMessageProcessingScheduleTime() {
@@ -414,8 +395,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incMessageProcessingScheduleTime(long nanos) {
-    }
+    public void incMessageProcessingScheduleTime(long nanos) {}
 
     @Override
     public int getOverflowQueueSize() {
@@ -423,8 +403,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incOverflowQueueSize(int messages) {
-    }
+    public void incOverflowQueueSize(int messages) {}
 
     @Override
     public int getNumProcessingThreads() {
@@ -432,8 +411,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incNumProcessingThreads(int threads) {
-    }
+    public void incNumProcessingThreads(int threads) {}
 
     @Override
     public int getNumSerialThreads() {
@@ -441,16 +419,13 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incNumSerialThreads(int threads) {
-    }
+    public void incNumSerialThreads(int threads) {}
 
     @Override
-    public void incMessageChannelTime(long val) {
-    }
+    public void incMessageChannelTime(long val) {}
 
     @Override
-    public void incUDPDispatchRequestTime(long val) {
-    };
+    public void incUDPDispatchRequestTime(long val) {};
 
     @Override
     public long getUDPDispatchRequestTime() {
@@ -463,8 +438,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incReplyMessageTime(long val) {
-    }
+    public void incReplyMessageTime(long val) {}
 
     @Override
     public long getDistributeMessageTime() {
@@ -472,8 +446,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incDistributeMessageTime(long val) {
-    }
+    public void incDistributeMessageTime(long val) {}
 
     @Override
     public int getNodes() {
@@ -481,12 +454,10 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void setNodes(int val) {
-    }
+    public void setNodes(int val) {}
 
     @Override
-    public void incNodes(int val) {
-    }
+    public void incNodes(int val) {}
 
     @Override
     public int getReplyWaitsInProgress() {
@@ -509,12 +480,10 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endReplyWait(long startNanos, long startMillis) {
-    }
+    public void endReplyWait(long startNanos, long startMillis) {}
 
     @Override
-    public void incReplyTimeouts() {
-    }
+    public void incReplyTimeouts() {}
 
     @Override
     public long getReplyTimeouts() {
@@ -522,36 +491,28 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incReceivers() {
-    }
+    public void incReceivers() {}
 
     @Override
-    public void decReceivers() {
-    }
+    public void decReceivers() {}
 
     @Override
-    public void incFailedAccept() {
-    }
+    public void incFailedAccept() {}
 
     @Override
-    public void incFailedConnect() {
-    }
+    public void incFailedConnect() {}
 
     @Override
-    public void incReconnectAttempts() {
-    }
+    public void incReconnectAttempts() {}
 
     @Override
-    public void incLostLease() {
-    }
+    public void incLostLease() {}
 
     @Override
-    public void incSenders(boolean shared, boolean preserveOrder) {
-    }
+    public void incSenders(boolean shared, boolean preserveOrder) {}
 
     @Override
-    public void decSenders(boolean shared, boolean preserveOrder) {
-    }
+    public void decSenders(boolean shared, boolean preserveOrder) {}
 
     @Override
     public int getSendersSU() {
@@ -564,8 +525,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endSocketWrite(boolean sync, long start, int bytesWritten, int retries) {
-    }
+    public void endSocketWrite(boolean sync, long start, int bytesWritten, int retries) {}
 
     @Override
     public long startSerialization() {
@@ -573,8 +533,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endSerialization(long start, int bytes) {
-    }
+    public void endSerialization(long start, int bytes) {}
 
     @Override
     public long startDeserialization() {
@@ -582,8 +541,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endDeserialization(long start, int bytes) {
-    }
+    public void endDeserialization(long start, int bytes) {}
 
     @Override
     public long startMsgSerialization() {
@@ -591,8 +549,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endMsgSerialization(long start) {
-    }
+    public void endMsgSerialization(long start) {}
 
     @Override
     public long startMsgDeserialization() {
@@ -600,44 +557,34 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endMsgDeserialization(long start) {
-    }
+    public void endMsgDeserialization(long start) {}
 
     @Override
-    public void incBatchSendTime(long start) {
-    }
+    public void incBatchSendTime(long start) {}
 
     @Override
-    public void incBatchCopyTime(long start) {
-    }
+    public void incBatchCopyTime(long start) {}
 
     @Override
-    public void incBatchWaitTime(long start) {
-    }
+    public void incBatchWaitTime(long start) {}
 
     @Override
-    public void incBatchFlushTime(long start) {
-    }
+    public void incBatchFlushTime(long start) {}
 
     @Override
-    public void incUcastWriteBytes(int bytesWritten) {
-    }
+    public void incUcastWriteBytes(int bytesWritten) {}
 
     @Override
-    public void incMcastWriteBytes(int bytesWritten) {
-    }
+    public void incMcastWriteBytes(int bytesWritten) {}
 
     @Override
-    public void incUcastRetransmits() {
-    }
+    public void incUcastRetransmits() {}
 
     @Override
-    public void incMcastRetransmits() {
-    }
+    public void incMcastRetransmits() {}
 
     @Override
-    public void incMcastRetransmitRequests() {
-    }
+    public void incMcastRetransmitRequests() {}
 
     @Override
     public int getMcastRetransmits() {
@@ -655,12 +602,10 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incUcastReadBytes(int amount) {
-    }
+    public void incUcastReadBytes(int amount) {}
 
     @Override
-    public void incMcastReadBytes(int amount) {
-    }
+    public void incMcastReadBytes(int amount) {}
 
     @Override
     public int getAsyncSocketWritesInProgress() {
@@ -693,8 +638,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incAsyncQueues(int inc) {
-    }
+    public void incAsyncQueues(int inc) {}
 
     @Override
     public int getAsyncQueueFlushesInProgress() {
@@ -717,8 +661,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endAsyncQueueFlush(long start) {
-    }
+    public void endAsyncQueueFlush(long start) {}
 
     @Override
     public int getAsyncQueueTimeouts() {
@@ -726,8 +669,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incAsyncQueueTimeouts(int inc) {
-    }
+    public void incAsyncQueueTimeouts(int inc) {}
 
     @Override
     public int getAsyncQueueSizeExceeded() {
@@ -735,8 +677,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incAsyncQueueSizeExceeded(int inc) {
-    }
+    public void incAsyncQueueSizeExceeded(int inc) {}
 
     @Override
     public int getAsyncDistributionTimeoutExceeded() {
@@ -744,8 +685,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incAsyncDistributionTimeoutExceeded() {
-    }
+    public void incAsyncDistributionTimeoutExceeded() {}
 
     @Override
     public long getAsyncQueueSize() {
@@ -753,8 +693,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incAsyncQueueSize(long inc) {
-    }
+    public void incAsyncQueueSize(long inc) {}
 
     @Override
     public long getAsyncQueuedMsgs() {
@@ -762,8 +701,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incAsyncQueuedMsgs() {
-    }
+    public void incAsyncQueuedMsgs() {}
 
     @Override
     public long getAsyncDequeuedMsgs() {
@@ -771,8 +709,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incAsyncDequeuedMsgs() {
-    }
+    public void incAsyncDequeuedMsgs() {}
 
     @Override
     public long getAsyncConflatedMsgs() {
@@ -780,8 +717,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incAsyncConflatedMsgs() {
-    }
+    public void incAsyncConflatedMsgs() {}
 
     @Override
     public int getAsyncThreads() {
@@ -789,8 +725,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incAsyncThreads(int inc) {
-    }
+    public void incAsyncThreads(int inc) {}
 
     @Override
     public int getAsyncThreadInProgress() {
@@ -813,8 +748,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endAsyncThread(long start) {
-    }
+    public void endAsyncThread(long start) {}
 
     @Override
     public long getAsyncQueueAddTime() {
@@ -822,8 +756,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incAsyncQueueAddTime(long inc) {
-    }
+    public void incAsyncQueueAddTime(long inc) {}
 
     @Override
     public long getAsyncQueueRemoveTime() {
@@ -831,16 +764,13 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incAsyncQueueRemoveTime(long inc) {
-    }
+    public void incAsyncQueueRemoveTime(long inc) {}
 
     @Override
-    public void incReceiverBufferSize(int inc, boolean direct) {
-    }
+    public void incReceiverBufferSize(int inc, boolean direct) {}
 
     @Override
-    public void incSenderBufferSize(int inc, boolean direct) {
-    }
+    public void incSenderBufferSize(int inc, boolean direct) {}
 
     @Override
     public long startSocketLock() {
@@ -848,8 +778,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endSocketLock(long start) {
-    }
+    public void endSocketLock(long start) {}
 
     @Override
     public long startBufferAcquire() {
@@ -857,20 +786,16 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endBufferAcquire(long start) {
-    }
+    public void endBufferAcquire(long start) {}
 
     @Override
-    public void incMessagesBeingReceived(boolean newMsg, int bytes) {
-    }
+    public void incMessagesBeingReceived(boolean newMsg, int bytes) {}
 
     @Override
-    public void decMessagesBeingReceived(int bytes) {
-    }
+    public void decMessagesBeingReceived(int bytes) {}
 
     @Override
-    public void incReplyHandOffTime(long start) {
-    }
+    public void incReplyHandOffTime(long start) {}
 
     @Override
     public int getElders() {
@@ -878,8 +803,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incElders(int val) {
-    }
+    public void incElders(int val) {}
 
     @Override
     public int getInitialImageMessagesInFlight() {
@@ -887,8 +811,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incInitialImageMessagesInFlight(int val) {
-    }
+    public void incInitialImageMessagesInFlight(int val) {}
 
     @Override
     public int getInitialImageRequestsInProgress() {
@@ -896,16 +819,13 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incInitialImageRequestsInProgress(int val) {
-    }
+    public void incInitialImageRequestsInProgress(int val) {}
 
     @Override
-    public void incPdxSerialization(int bytesWritten) {
-    }
+    public void incPdxSerialization(int bytesWritten) {}
 
     @Override
-    public void incPdxDeserialization(int i) {
-    }
+    public void incPdxDeserialization(int i) {}
 
     @Override
     public long startPdxInstanceDeserialization() {
@@ -913,16 +833,13 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endPdxInstanceDeserialization(long start) {
-    }
+    public void endPdxInstanceDeserialization(long start) {}
 
     @Override
-    public void incPdxInstanceCreations() {
-    }
+    public void incPdxInstanceCreations() {}
 
     @Override
-    public void incThreadOwnedReceivers(long value, int dominoCount) {
-    }
+    public void incThreadOwnedReceivers(long value, int dominoCount) {}
 
     @Override
     public long getHeartbeatRequestsSent() {
@@ -930,8 +847,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incHeartbeatRequestsSent() {
-    }
+    public void incHeartbeatRequestsSent() {}
 
     @Override
     public long getHeartbeatRequestsReceived() {
@@ -939,8 +855,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incHeartbeatRequestsReceived() {
-    }
+    public void incHeartbeatRequestsReceived() {}
 
     @Override
     public long getHeartbeatsSent() {
@@ -948,8 +863,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incHeartbeatsSent() {
-    }
+    public void incHeartbeatsSent() {}
 
     @Override
     public long getHeartbeatsReceived() {
@@ -957,8 +871,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incHeartbeatsReceived() {
-    }
+    public void incHeartbeatsReceived() {}
 
     @Override
     public long getSuspectsSent() {
@@ -966,8 +879,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incSuspectsSent() {
-    }
+    public void incSuspectsSent() {}
 
     @Override
     public long getSuspectsReceived() {
@@ -975,8 +887,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incSuspectsReceived() {
-    }
+    public void incSuspectsReceived() {}
 
     @Override
     public long getFinalCheckRequestsSent() {
@@ -984,8 +895,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incFinalCheckRequestsSent() {
-    }
+    public void incFinalCheckRequestsSent() {}
 
     @Override
     public long getFinalCheckRequestsReceived() {
@@ -993,8 +903,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incFinalCheckRequestsReceived() {
-    }
+    public void incFinalCheckRequestsReceived() {}
 
     @Override
     public long getFinalCheckResponsesSent() {
@@ -1002,8 +911,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incFinalCheckResponsesSent() {
-    }
+    public void incFinalCheckResponsesSent() {}
 
     @Override
     public long getFinalCheckResponsesReceived() {
@@ -1011,8 +919,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incFinalCheckResponsesReceived() {
-    }
+    public void incFinalCheckResponsesReceived() {}
 
     @Override
     public long getTcpFinalCheckRequestsSent() {
@@ -1020,8 +927,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incTcpFinalCheckRequestsSent() {
-    }
+    public void incTcpFinalCheckRequestsSent() {}
 
     @Override
     public long getTcpFinalCheckRequestsReceived() {
@@ -1029,8 +935,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incTcpFinalCheckRequestsReceived() {
-    }
+    public void incTcpFinalCheckRequestsReceived() {}
 
     @Override
     public long getTcpFinalCheckResponsesSent() {
@@ -1038,8 +943,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incTcpFinalCheckResponsesSent() {
-    }
+    public void incTcpFinalCheckResponsesSent() {}
 
     @Override
     public long getTcpFinalCheckResponsesReceived() {
@@ -1047,8 +951,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incTcpFinalCheckResponsesReceived() {
-    }
+    public void incTcpFinalCheckResponsesReceived() {}
 
     @Override
     public long getUdpFinalCheckRequestsSent() {
@@ -1056,8 +959,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incUdpFinalCheckRequestsSent() {
-    }
+    public void incUdpFinalCheckRequestsSent() {}
 
     @Override
     public long getUdpFinalCheckResponsesReceived() {
@@ -1065,8 +967,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void incUdpFinalCheckResponsesReceived() {
-    }
+    public void incUdpFinalCheckResponsesReceived() {}
 
     @Override
     public long startUDPMsgEncryption() {
@@ -1074,8 +975,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endUDPMsgEncryption(long start) {
-    }
+    public void endUDPMsgEncryption(long start) {}
 
     @Override
     public long startUDPMsgDecryption() {
@@ -1083,8 +983,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void endUDPMsgDecryption(long start) {
-    }
+    public void endUDPMsgDecryption(long start) {}
 
     @Override
     public long getUDPMsgEncryptionTiime() {
@@ -1104,8 +1003,7 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public void shutdown() {
-    }
+    public void shutdown() {}
 
     @Override
     public List<Runnable> shutdownNow() {
@@ -1141,13 +1039,14 @@ public class LonerDistributionManager implements DM {
 
     @Override
     public <T> Future<T> submit(final Runnable task, final T result) {
-      return submit(new Callable<T>() {
-        @Override
-        public T call() throws Exception {
-          task.run();
-          return result;
-        }
-      });
+      return submit(
+          new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+              task.run();
+              return result;
+            }
+          });
     }
 
     @Override
@@ -1156,7 +1055,8 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
+    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
+        throws InterruptedException {
       List<Future<T>> results = new ArrayList<Future<T>>();
       for (Callable<T> task : tasks) {
         results.add(submit(task));
@@ -1165,12 +1065,15 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
+    public <T> List<Future<T>> invokeAll(
+        Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+        throws InterruptedException {
       return invokeAll(tasks);
     }
 
     @Override
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
+    public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
+        throws InterruptedException, ExecutionException {
 
       ExecutionException ex = null;
       for (Callable<T> task : tasks) {
@@ -1184,7 +1087,8 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+        throws InterruptedException, ExecutionException, TimeoutException {
       return invokeAny(tasks);
     }
   }
@@ -1222,7 +1126,8 @@ public class LonerDistributionManager implements DM {
     }
 
     @Override
-    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public T get(long timeout, TimeUnit unit)
+        throws InterruptedException, ExecutionException, TimeoutException {
       return get();
     }
   }
@@ -1273,25 +1178,39 @@ public class LonerDistributionManager implements DM {
       DistributionConfig config = system.getConfig();
       DurableClientAttributes dac = null;
       if (config.getDurableClientId() != null) {
-        dac = new DurableClientAttributes(config.getDurableClientId(), config.getDurableClientTimeout());
+        dac =
+            new DurableClientAttributes(
+                config.getDurableClientId(), config.getDurableClientTimeout());
       }
-      result = new InternalDistributedMember(host, lonerPort, name, uniqueString, DistributionManager.LONER_DM_TYPE, MemberAttributes.parseGroups(config.getRoles(), config.getGroups()), dac);
+      result =
+          new InternalDistributedMember(
+              host,
+              lonerPort,
+              name,
+              uniqueString,
+              DistributionManager.LONER_DM_TYPE,
+              MemberAttributes.parseGroups(config.getRoles(), config.getGroups()),
+              dac);
 
     } catch (UnknownHostException ex) {
-      throw new InternalGemFireError(LocalizedStrings.LonerDistributionManager_CANNOT_RESOLVE_LOCAL_HOST_NAME_TO_AN_IP_ADDRESS.toLocalizedString());
+      throw new InternalGemFireError(
+          LocalizedStrings.LonerDistributionManager_CANNOT_RESOLVE_LOCAL_HOST_NAME_TO_AN_IP_ADDRESS
+              .toLocalizedString());
     }
     return result;
   }
 
   /**
-   * update the loner port with an integer that may be more unique than the 
-   * default port (zero).  This updates the ID in place and establishes new
-   * default settings for the manufacture of new IDs.
-   * 
+   * update the loner port with an integer that may be more unique than the default port (zero).
+   * This updates the ID in place and establishes new default settings for the manufacture of new
+   * IDs.
+   *
    * @param newPort the new port to use
    */
   public void updateLonerPort(int newPort) {
-    this.logger.config(LocalizedStrings.LonerDistributionmanager_CHANGING_PORT_FROM_TO, new Object[] { this.lonerPort, newPort, getId() });
+    this.logger.config(
+        LocalizedStrings.LonerDistributionmanager_CHANGING_PORT_FROM_TO,
+        new Object[] {this.lonerPort, newPort, getId()});
     this.lonerPort = newPort;
     this.getId().setPort(this.lonerPort);
   }
@@ -1308,11 +1227,9 @@ public class LonerDistributionManager implements DM {
     return false;
   }
 
-  public void removeUnfinishedStartup(InternalDistributedMember m, boolean departed) {
-  }
+  public void removeUnfinishedStartup(InternalDistributedMember m, boolean departed) {}
 
-  public void setUnfinishedStartups(Collection s) {
-  }
+  public void setUnfinishedStartups(Collection s) {}
 
   protected static class Stopper extends CancelCriterion {
 
@@ -1352,8 +1269,7 @@ public class LonerDistributionManager implements DM {
   /* (non-Javadoc)
    * @see org.apache.geode.distributed.internal.DM#setRootCause(java.lang.Throwable)
    */
-  public void setRootCause(Throwable t) {
-  }
+  public void setRootCause(Throwable t) {}
 
   /* (non-Javadoc)
    * @see org.apache.geode.distributed.internal.DM#getMembersOnThisHost()
@@ -1363,29 +1279,31 @@ public class LonerDistributionManager implements DM {
     return this.allIds;
   }
 
-  public void acquireGIIPermitUninterruptibly() {
-  }
+  public void acquireGIIPermitUninterruptibly() {}
 
-  public void releaseGIIPermit() {
-  }
+  public void releaseGIIPermit() {}
 
   public int getDistributedSystemId() {
     return getSystem().getConfig().getDistributedSystemId();
   }
 
   public boolean enforceUniqueZone() {
-    return system.getConfig().getEnforceUniqueHost() || system.getConfig().getRedundancyZone() != null;
+    return system.getConfig().getEnforceUniqueHost()
+        || system.getConfig().getRedundancyZone() != null;
   }
 
-  public boolean areInSameZone(InternalDistributedMember member1, InternalDistributedMember member2) {
+  public boolean areInSameZone(
+      InternalDistributedMember member1, InternalDistributedMember member2) {
     return false;
   }
 
-  public boolean areOnEquivalentHost(InternalDistributedMember member1, InternalDistributedMember member2) {
+  public boolean areOnEquivalentHost(
+      InternalDistributedMember member1, InternalDistributedMember member2) {
     return member1 == member2;
   }
 
-  public Set<InternalDistributedMember> getMembersInSameZone(InternalDistributedMember acceptedMember) {
+  public Set<InternalDistributedMember> getMembersInSameZone(
+      InternalDistributedMember acceptedMember) {
     return Collections.singleton(acceptedMember);
   }
 
@@ -1403,16 +1321,19 @@ public class LonerDistributionManager implements DM {
     }
   }
 
-  public void addHostedLocators(InternalDistributedMember member, Collection<String> locators, boolean isSharedConfigurationEnabled) {
+  public void addHostedLocators(
+      InternalDistributedMember member,
+      Collection<String> locators,
+      boolean isSharedConfigurationEnabled) {
     // no-op
   }
 
   public Collection<String> getHostedLocators(InternalDistributedMember member) {
-    return Collections.<String> emptyList();
+    return Collections.<String>emptyList();
   }
 
   public Map<InternalDistributedMember, Collection<String>> getAllHostedLocators() {
-    return Collections.<InternalDistributedMember, Collection<String>> emptyMap();
+    return Collections.<InternalDistributedMember, Collection<String>>emptyMap();
   }
 
   @Override
@@ -1421,8 +1342,9 @@ public class LonerDistributionManager implements DM {
   }
 
   @Override
-  public Map<InternalDistributedMember, Collection<String>> getAllHostedLocatorsWithSharedConfiguration() {
-    return Collections.<InternalDistributedMember, Collection<String>> emptyMap();
+  public Map<InternalDistributedMember, Collection<String>>
+      getAllHostedLocatorsWithSharedConfiguration() {
+    return Collections.<InternalDistributedMember, Collection<String>>emptyMap();
   }
 
   @Override

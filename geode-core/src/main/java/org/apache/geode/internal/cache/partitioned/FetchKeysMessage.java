@@ -61,12 +61,19 @@ public final class FetchKeysMessage extends PartitionMessage {
   /** the interest policy to use in processing the keys */
   private int interestType;
 
-  /** the argument for the interest type (regex string, className, list of keys)*/
+  /** the argument for the interest type (regex string, className, list of keys) */
   private Object interestArg;
 
   private boolean allowTombstones;
 
-  private FetchKeysMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, Integer bucketId, int itype, Object interestArg, boolean allowTombstones) {
+  private FetchKeysMessage(
+      InternalDistributedMember recipient,
+      int regionId,
+      ReplyProcessor21 processor,
+      Integer bucketId,
+      int itype,
+      Object interestArg,
+      boolean allowTombstones) {
     super(recipient, regionId, processor);
     this.bucketId = bucketId;
     this.interestType = itype;
@@ -74,37 +81,49 @@ public final class FetchKeysMessage extends PartitionMessage {
     this.allowTombstones = allowTombstones;
   }
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public FetchKeysMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public FetchKeysMessage() {}
 
   /**
    * Sends a PartitionedRegion message to fetch keys for a bucketId
-   * @param recipient the member that the fetch keys message is sent to 
-   * @param r  the PartitionedRegion that contains the bucket
+   *
+   * @param recipient the member that the fetch keys message is sent to
+   * @param r the PartitionedRegion that contains the bucket
    * @param bucketId the identity of the bucket that contains the keys to be returned
    * @param allowTombstones whether to include destroyed entries in the result
    * @return the processor used to read the returned keys
    * @throws ForceReattemptException if the peer is no longer available
    */
-  public static FetchKeysResponse send(InternalDistributedMember recipient, PartitionedRegion r, Integer bucketId, boolean allowTombstones) throws ForceReattemptException {
+  public static FetchKeysResponse send(
+      InternalDistributedMember recipient,
+      PartitionedRegion r,
+      Integer bucketId,
+      boolean allowTombstones)
+      throws ForceReattemptException {
     Assert.assertTrue(recipient != null, "FetchKeysMessage NULL recipient");
     FetchKeysMessage tmp = new FetchKeysMessage();
-    FetchKeysResponse p = (FetchKeysResponse) tmp.createReplyProcessor(r, Collections.singleton(recipient));
-    FetchKeysMessage m = new FetchKeysMessage(recipient, r.getPRId(), p, bucketId, InterestType.REGULAR_EXPRESSION, ".*", allowTombstones);
+    FetchKeysResponse p =
+        (FetchKeysResponse) tmp.createReplyProcessor(r, Collections.singleton(recipient));
+    FetchKeysMessage m =
+        new FetchKeysMessage(
+            recipient,
+            r.getPRId(),
+            p,
+            bucketId,
+            InterestType.REGULAR_EXPRESSION,
+            ".*",
+            allowTombstones);
 
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new ForceReattemptException(LocalizedStrings.FetchKeysMessage_FAILED_SENDING_0.toLocalizedString(m));
+      throw new ForceReattemptException(
+          LocalizedStrings.FetchKeysMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
 
     return p;
   }
 
   /**
-   * 
    * @param recipient
    * @param r
    * @param bucketId
@@ -113,14 +132,24 @@ public final class FetchKeysMessage extends PartitionMessage {
    * @return the FetchKeysResponse
    * @throws ForceReattemptException if the peer is no longer available
    */
-  public static FetchKeysResponse sendInterestQuery(InternalDistributedMember recipient, PartitionedRegion r, Integer bucketId, int itype, Object arg, boolean allowTombstones) throws ForceReattemptException {
+  public static FetchKeysResponse sendInterestQuery(
+      InternalDistributedMember recipient,
+      PartitionedRegion r,
+      Integer bucketId,
+      int itype,
+      Object arg,
+      boolean allowTombstones)
+      throws ForceReattemptException {
     Assert.assertTrue(recipient != null, "FetchKeysMessage NULL recipient");
     FetchKeysMessage tmp = new FetchKeysMessage();
-    FetchKeysResponse p = (FetchKeysResponse) tmp.createReplyProcessor(r, Collections.singleton(recipient));
-    FetchKeysMessage m = new FetchKeysMessage(recipient, r.getPRId(), p, bucketId, itype, arg, allowTombstones);
+    FetchKeysResponse p =
+        (FetchKeysResponse) tmp.createReplyProcessor(r, Collections.singleton(recipient));
+    FetchKeysMessage m =
+        new FetchKeysMessage(recipient, r.getPRId(), p, bucketId, itype, arg, allowTombstones);
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new ForceReattemptException(LocalizedStrings.FetchKeysMessage_FAILED_SENDING_0.toLocalizedString(m));
+      throw new ForceReattemptException(
+          LocalizedStrings.FetchKeysMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
 
     return p;
@@ -133,17 +162,29 @@ public final class FetchKeysMessage extends PartitionMessage {
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime) throws CacheException, ForceReattemptException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion r, long startTime)
+      throws CacheException, ForceReattemptException {
     if (logger.isDebugEnabled()) {
-      logger.debug("FetchKeysMessage operateOnRegion: {} bucketId: {} type: {} {}", r.getFullPath(), this.bucketId, InterestType.getString(interestType), (allowTombstones ? " with tombstones" : " without tombstones"));
+      logger.debug(
+          "FetchKeysMessage operateOnRegion: {} bucketId: {} type: {} {}",
+          r.getFullPath(),
+          this.bucketId,
+          InterestType.getString(interestType),
+          (allowTombstones ? " with tombstones" : " without tombstones"));
     }
 
     PartitionedRegionDataStore ds = r.getDataStore();
     if (ds != null) {
       try {
-        Set keys = ds.handleRemoteGetKeys(this.bucketId, interestType, interestArg, allowTombstones);
+        Set keys =
+            ds.handleRemoteGetKeys(this.bucketId, interestType, interestArg, allowTombstones);
         if (logger.isTraceEnabled(LogMarker.DM)) {
-          logger.debug("FetchKeysMessage sending {} keys back using processorId: : {}", keys.size(), getProcessorId(), keys);
+          logger.debug(
+              "FetchKeysMessage sending {} keys back using processorId: : {}",
+              keys.size(),
+              getProcessorId(),
+              keys);
         }
         r.getPrStats().endPartitionMessagesProcessing(startTime);
         FetchKeysReplyMessage.send(getSender(), getProcessorId(), dm, keys);
@@ -151,10 +192,16 @@ public final class FetchKeysMessage extends PartitionMessage {
         if (logger.isDebugEnabled()) {
           logger.debug("FetchKeysMessage Encountered PRLocallyDestroyedException");
         }
-        throw new ForceReattemptException(LocalizedStrings.FetchKeysMessage_ENCOUNTERED_PRLOCALLYDESTROYEDEXCEPTION.toLocalizedString(), pde);
+        throw new ForceReattemptException(
+            LocalizedStrings.FetchKeysMessage_ENCOUNTERED_PRLOCALLYDESTROYEDEXCEPTION
+                .toLocalizedString(),
+            pde);
       }
     } else {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.FetchKeysMessage_FETCHKEYSMESSAGE_DATA_STORE_NOT_CONFIGURED_FOR_THIS_MEMBER));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .FetchKeysMessage_FETCHKEYSMESSAGE_DATA_STORE_NOT_CONFIGURED_FOR_THIS_MEMBER));
     }
 
     // Unless there was an exception thrown, this message handles sending the response
@@ -171,9 +218,7 @@ public final class FetchKeysMessage extends PartitionMessage {
     return PR_FETCH_KEYS_MESSAGE;
   }
 
-  /**
-   * Versions in which on-wire form has changed, requiring new toData/fromData methods
-   */
+  /** Versions in which on-wire form has changed, requiring new toData/fromData methods */
   public Version[] serializationVersions = null;
 
   public Version[] getSerializationVersions() {
@@ -212,13 +257,17 @@ public final class FetchKeysMessage extends PartitionMessage {
     /** the array holding data received */
     transient byte[] chunk;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface 
-     */
-    public FetchKeysReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public FetchKeysReplyMessage() {}
 
-    private FetchKeysReplyMessage(InternalDistributedMember recipient, int processorId, HeapDataOutputStream chunk, int seriesNum, int msgNum, int numSeries, boolean lastInSeries) {
+    private FetchKeysReplyMessage(
+        InternalDistributedMember recipient,
+        int processorId,
+        HeapDataOutputStream chunk,
+        int seriesNum,
+        int msgNum,
+        int numSeries,
+        boolean lastInSeries) {
       super();
       setRecipient(recipient);
       setProcessorId(processorId);
@@ -229,11 +278,14 @@ public final class FetchKeysMessage extends PartitionMessage {
       this.chunkStream = chunk;
     }
 
-    /** 
-     * Send an ack 
+    /**
+     * Send an ack
+     *
      * @throws ForceReattemptException if the peer is no longer available
      */
-    public static void send(final InternalDistributedMember recipient, final int processorId, final DM dm, Set keys) throws ForceReattemptException {
+    public static void send(
+        final InternalDistributedMember recipient, final int processorId, final DM dm, Set keys)
+        throws ForceReattemptException {
 
       Assert.assertTrue(recipient != null, "FetchKeysReplyMessage NULL reply message");
 
@@ -245,70 +297,106 @@ public final class FetchKeysMessage extends PartitionMessage {
         logger.debug("Starting pr keys chunking for {} kets to member {}", keys.size(), recipient);
       }
       try {
-        boolean finished = chunkSet(recipient, keys, InitialImageOperation.CHUNK_SIZE_IN_BYTES, false, new ObjectIntProcedure() {
-          int msgNum = 0;
+        boolean finished =
+            chunkSet(
+                recipient,
+                keys,
+                InitialImageOperation.CHUNK_SIZE_IN_BYTES,
+                false,
+                new ObjectIntProcedure() {
+                  int msgNum = 0;
 
-          boolean last = false;
+                  boolean last = false;
 
-          /**
-            * @param a byte[] chunk
-            * @param b positive if last chunk
-            * @return true to continue to next chunk
-            */
-          public boolean executeWith(Object a, int b) {
-            //              if (this.last)
-            //                throw new InternalGemFireError(LocalizedStrings.FetchKeysMessage_ALREADY_PROCESSED_LAST_CHUNK.toLocalizedString());
-            HeapDataOutputStream chunk = (HeapDataOutputStream) a;
-            this.last = b > 0;
-            try {
-              boolean okay = sendChunk(recipient, processorId, dm, chunk, seriesNum, msgNum++, numSeries, this.last);
-              return okay;
-            } catch (CancelException e) {
-              return false;
-            }
-          }
-        });
+                  /**
+                   * @param a byte[] chunk
+                   * @param b positive if last chunk
+                   * @return true to continue to next chunk
+                   */
+                  public boolean executeWith(Object a, int b) {
+                    //              if (this.last)
+                    //                throw new InternalGemFireError(LocalizedStrings.FetchKeysMessage_ALREADY_PROCESSED_LAST_CHUNK.toLocalizedString());
+                    HeapDataOutputStream chunk = (HeapDataOutputStream) a;
+                    this.last = b > 0;
+                    try {
+                      boolean okay =
+                          sendChunk(
+                              recipient,
+                              processorId,
+                              dm,
+                              chunk,
+                              seriesNum,
+                              msgNum++,
+                              numSeries,
+                              this.last);
+                      return okay;
+                    } catch (CancelException e) {
+                      return false;
+                    }
+                  }
+                });
 
         if (logger.isDebugEnabled()) {
           logger.debug("{} pr keys chunking", (finished ? "Finished" : "DID NOT complete"));
         }
       } catch (IOException io) {
-        throw new ForceReattemptException(LocalizedStrings.FetchKeysMessage_UNABLE_TO_SEND_RESPONSE_TO_FETCH_KEYS_REQUEST.toLocalizedString(), io);
+        throw new ForceReattemptException(
+            LocalizedStrings.FetchKeysMessage_UNABLE_TO_SEND_RESPONSE_TO_FETCH_KEYS_REQUEST
+                .toLocalizedString(),
+            io);
       }
       // TODO [bruce] pass a reference to the cache or region down here so we can do this test
       //Assert.assertTrue(!cache is closed, "chunking interrupted but cache is still open");
     }
 
-    static boolean sendChunk(InternalDistributedMember recipient, int processorId, DM dm, HeapDataOutputStream chunk, int seriesNum, int msgNum, int numSeries, boolean lastInSeries) {
-      FetchKeysReplyMessage reply = new FetchKeysReplyMessage(recipient, processorId, chunk, seriesNum, msgNum, numSeries, lastInSeries);
+    static boolean sendChunk(
+        InternalDistributedMember recipient,
+        int processorId,
+        DM dm,
+        HeapDataOutputStream chunk,
+        int seriesNum,
+        int msgNum,
+        int numSeries,
+        boolean lastInSeries) {
+      FetchKeysReplyMessage reply =
+          new FetchKeysReplyMessage(
+              recipient, processorId, chunk, seriesNum, msgNum, numSeries, lastInSeries);
       Set failures = dm.putOutgoing(reply);
       return (failures == null) || (failures.size() == 0);
     }
 
     /**
-     * Serialize the given set's elments into byte[] chunks, calling proc for each
-     * one. proc args: the byte[] chunk and an int indicating whether it
-     * is the last chunk (positive means last chunk, zero othewise).
-     * The return value of proc indicates whether to continue to the next
+     * Serialize the given set's elments into byte[] chunks, calling proc for each one. proc args:
+     * the byte[] chunk and an int indicating whether it is the last chunk (positive means last
+     * chunk, zero othewise). The return value of proc indicates whether to continue to the next
      * chunk (true) or abort (false).
      *
      * @return true if finished all chunks, false if stopped early
      */
-    static boolean chunkSet(InternalDistributedMember recipient, Set set, int CHUNK_SIZE_IN_BYTES, boolean includeValues, ObjectIntProcedure proc) throws IOException {
+    static boolean chunkSet(
+        InternalDistributedMember recipient,
+        Set set,
+        int CHUNK_SIZE_IN_BYTES,
+        boolean includeValues,
+        ObjectIntProcedure proc)
+        throws IOException {
       Iterator it = set.iterator();
 
       boolean keepGoing = true;
       boolean sentLastChunk = false;
 
       // always write at least one chunk
-      final HeapDataOutputStream mos = new HeapDataOutputStream(InitialImageOperation.CHUNK_SIZE_IN_BYTES + 2048, recipient.getVersionObject());
+      final HeapDataOutputStream mos =
+          new HeapDataOutputStream(
+              InitialImageOperation.CHUNK_SIZE_IN_BYTES + 2048, recipient.getVersionObject());
       do {
         mos.reset();
 
         int avgItemSize = 0;
         int itemCount = 0;
 
-        while ((mos.size() + avgItemSize) < InitialImageOperation.CHUNK_SIZE_IN_BYTES && it.hasNext()) {
+        while ((mos.size() + avgItemSize) < InitialImageOperation.CHUNK_SIZE_IN_BYTES
+            && it.hasNext()) {
           Object key = it.next();
           DataSerializer.writeObject(key, mos);
 
@@ -319,7 +407,6 @@ public final class FetchKeysMessage extends PartitionMessage {
           // the ByteBuffer that the chunk is stored in resulting in a copy
           // of the data.
           avgItemSize = mos.size() / itemCount;
-
         }
 
         // Write "end of chunk" entry to indicate end of chunk
@@ -338,8 +425,8 @@ public final class FetchKeysMessage extends PartitionMessage {
     }
 
     /**
-     * Processes this message.  This method is invoked by the receiver
-     * of the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
      * @param dm the distribution manager that is processing the message.
      */
     @Override
@@ -395,7 +482,14 @@ public final class FetchKeysMessage extends PartitionMessage {
       if (getSender() != null) {
         sb.append(",sender=").append(this.getSender());
       }
-      sb.append(",seriesNum=").append(seriesNum).append(",msgNum=").append(msgNum).append(",numSeries=").append(numSeries).append(",lastInSeries=").append(lastInSeries);
+      sb.append(",seriesNum=")
+          .append(seriesNum)
+          .append(",msgNum=")
+          .append(msgNum)
+          .append(",numSeries=")
+          .append(numSeries)
+          .append(",lastInSeries=")
+          .append(lastInSeries);
       if (chunkStream != null) {
         sb.append(",size=").append(chunkStream.size());
       } else if (chunk != null) {
@@ -409,8 +503,9 @@ public final class FetchKeysMessage extends PartitionMessage {
   }
 
   /**
-   * A processor to capture the value returned by {@link 
+   * A processor to capture the value returned by {@link
    * org.apache.geode.internal.cache.partitioned.GetMessage.GetReplyMessage}
+   *
    * @since GemFire 5.0
    */
   public static class FetchKeysResponse extends PartitionResponse {
@@ -475,11 +570,20 @@ public final class FetchKeysMessage extends PartitionMessage {
               doneProcessing = true;
             }
             if (logger.isTraceEnabled(LogMarker.DM)) {
-              logger.debug("{} chunksProcessed={},lastChunkReceived={},chunksExpected={},done={}", this, chunksProcessed, lastChunkReceived, chunksExpected, doneProcessing);
+              logger.debug(
+                  "{} chunksProcessed={},lastChunkReceived={},chunksExpected={},done={}",
+                  this,
+                  chunksProcessed,
+                  lastChunkReceived,
+                  chunksExpected,
+                  doneProcessing);
             }
           }
         } catch (Exception e) {
-          processException(new ReplyException(LocalizedStrings.FetchKeysMessage_ERROR_DESERIALIZING_KEYS.toLocalizedString(), e));
+          processException(
+              new ReplyException(
+                  LocalizedStrings.FetchKeysMessage_ERROR_DESERIALIZING_KEYS.toLocalizedString(),
+                  e));
           checkIfDone(); // fix for hang in 41202
         }
 
@@ -500,20 +604,31 @@ public final class FetchKeysMessage extends PartitionMessage {
       } catch (ReplyException e) {
         Throwable t = e.getCause();
         if (t instanceof CancelException) {
-          logger.debug("FetchKeysResponse got remote CacheClosedException; forcing reattempt. {}", t.getMessage(), t);
-          throw new ForceReattemptException(LocalizedStrings.FetchKeysMessage_FETCHKEYSRESPONSE_GOT_REMOTE_CACHECLOSEDEXCEPTION_FORCING_REATTEMPT.toLocalizedString(), t);
+          logger.debug(
+              "FetchKeysResponse got remote CacheClosedException; forcing reattempt. {}",
+              t.getMessage(),
+              t);
+          throw new ForceReattemptException(
+              LocalizedStrings
+                  .FetchKeysMessage_FETCHKEYSRESPONSE_GOT_REMOTE_CACHECLOSEDEXCEPTION_FORCING_REATTEMPT
+                  .toLocalizedString(),
+              t);
         }
         if (t instanceof ForceReattemptException) {
-          logger.debug("FetchKeysResponse got remote ForceReattemptException; rethrowing. {}", e.getMessage(), e);
-          throw new ForceReattemptException(LocalizedStrings.FetchKeysMessage_PEER_REQUESTS_REATTEMPT.toLocalizedString(), t);
+          logger.debug(
+              "FetchKeysResponse got remote ForceReattemptException; rethrowing. {}",
+              e.getMessage(),
+              e);
+          throw new ForceReattemptException(
+              LocalizedStrings.FetchKeysMessage_PEER_REQUESTS_REATTEMPT.toLocalizedString(), t);
         }
         e.handleAsUnexpected();
       }
       if (!this.lastChunkReceived) {
-        throw new ForceReattemptException(LocalizedStrings.FetchKeysMessage_NO_REPLIES_RECEIVED.toLocalizedString());
+        throw new ForceReattemptException(
+            LocalizedStrings.FetchKeysMessage_NO_REPLIES_RECEIVED.toLocalizedString());
       }
       return this.returnValue;
     }
   }
-
 }

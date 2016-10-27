@@ -42,34 +42,30 @@ import org.apache.geode.test.dunit.VM;
 
 /**
  * Tests compression statistics.
+ *
  * @since GemFire 8.0
  */
 @Category(DistributedTest.class)
 public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
-  /**
-   * The name of our test region.
-   */
+  /** The name of our test region. */
   public static final String REGION_NAME = "compressedRegion";
 
-  /**
-   * The name of our test region.
-   */
+  /** The name of our test region. */
   public static final String REGION_NAME_2 = "compressedRegion2";
 
-  /**
-   * Test virtual machine number.
-   */
+  /** Test virtual machine number. */
   public static final int TEST_VM = 0;
 
-  /**
-   * Used as the key for put and update ops.
-   */
+  /** Used as the key for put and update ops. */
   private static int index = 0;
 
-  private final byte[] PRE_COMPRESS_BYTES = "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890".getBytes();
+  private final byte[] PRE_COMPRESS_BYTES =
+      "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
+          .getBytes();
 
   /**
    * Creates a new CompressionStatsDUnitTest.
+   *
    * @param name test name.
    */
   public CompressionStatsDUnitTest() {
@@ -78,6 +74,7 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Asserts that all compression statistics start with zero values.
+   *
    * @param vm the virtual machine to gather statistics on.
    */
   private void assertStartingValues(final VM vm) {
@@ -107,8 +104,9 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Performs puts on region one and asserts that the second region's stats are unaffected and that the
-   * region stats have rolled up to the cache stats.
+   * Performs puts on region one and asserts that the second region's stats are unaffected and that
+   * the region stats have rolled up to the cache stats.
+   *
    * @param vm the virtual machine to perform puts on.
    * @param stats holder for stat values.
    */
@@ -172,6 +170,7 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Performs puts on the second region and asserts that the compression stats are recorded.
+   *
    * @param vm a virtual machine to peform puts on.
    * @param stats a compression stats holder.
    */
@@ -267,20 +266,30 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Asserts that the cache stats are totals of the region one and region two stats.
+   *
    * @param stats a compression stats container.
    */
   private void assertStatTotals(final CompressionStats stats) {
-    assertEquals(stats.vmTotalPreCompressedBytes, stats.region1TotalPreCompressedBytes + stats.region2TotalPreCompressedBytes);
-    assertEquals(stats.vmTotalCompressions, stats.region1TotalCompressions + stats.region2TotalCompressions);
-    assertEquals(stats.vmTotalCompressionTime, stats.region1TotalCompressionTime + stats.region2TotalCompressionTime);
-    assertEquals(stats.vmTotalPostCompressedBytes, stats.region1TotalPostCompressedBytes + stats.region2TotalPostCompressedBytes);
-    assertEquals(stats.vmTotalDecompressions, stats.region1TotalDecompressions + stats.region2TotalDecompressions);
-    assertEquals(stats.vmTotalDecompressionTime, stats.region1TotalDecompressionTime + stats.region2TotalDecompressionTime);
+    assertEquals(
+        stats.vmTotalPreCompressedBytes,
+        stats.region1TotalPreCompressedBytes + stats.region2TotalPreCompressedBytes);
+    assertEquals(
+        stats.vmTotalCompressions, stats.region1TotalCompressions + stats.region2TotalCompressions);
+    assertEquals(
+        stats.vmTotalCompressionTime,
+        stats.region1TotalCompressionTime + stats.region2TotalCompressionTime);
+    assertEquals(
+        stats.vmTotalPostCompressedBytes,
+        stats.region1TotalPostCompressedBytes + stats.region2TotalPostCompressedBytes);
+    assertEquals(
+        stats.vmTotalDecompressions,
+        stats.region1TotalDecompressions + stats.region2TotalDecompressions);
+    assertEquals(
+        stats.vmTotalDecompressionTime,
+        stats.region1TotalDecompressionTime + stats.region2TotalDecompressionTime);
   }
 
-  /**
-   * Asserts that compression stats are functioning properly.
-   */
+  /** Asserts that compression stats are functioning properly. */
   @Test
   public void testCompressionStats() {
     VM vm = Host.getHost(0).getVM(TEST_VM);
@@ -303,59 +312,64 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void doGetsOnVm(final VM vm, final String regionName) {
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        Region region = getCache().getRegion(regionName);
-        assertNotNull(region);
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            Region region = getCache().getRegion(regionName);
+            assertNotNull(region);
 
-        for (int i = 0; i < (index / 2); ++i) {
-          assertNotNull(region.get(i));
-        }
-      }
-    });
+            for (int i = 0; i < (index / 2); ++i) {
+              assertNotNull(region.get(i));
+            }
+          }
+        });
   }
 
   /**
    * Does put operations on a designated virtual machine.
+   *
    * @param vm a virtual machine.
    * @param regionName a region for the puts.
    * @param puts the number of puts to perform.
    */
   private void doPutsOnVm(final VM vm, final String regionName, final int puts) {
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        Region region = getCache().getRegion(regionName);
-        assertNotNull(region);
-        for (int i = 0; i < puts; ++i) {
-          region.put(index++, PRE_COMPRESS_BYTES);
-        }
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            Region region = getCache().getRegion(regionName);
+            assertNotNull(region);
+            for (int i = 0; i < puts; ++i) {
+              region.put(index++, PRE_COMPRESS_BYTES);
+            }
+          }
+        });
   }
 
   /**
    * Returns the total number of post-compressed bytes stat for a virtual machine.
+   *
    * @param vm a virtual machine.
-   * @param regionName designates a region on which to collect the number of decompressed bytes.  Null indicates the whole cache.
+   * @param regionName designates a region on which to collect the number of decompressed bytes.
+   *     Null indicates the whole cache.
    */
   private long getTotalPostCompressedBytesOnVm(final VM vm, final String regionName) {
-    return (Long) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        if (null == regionName) {
-          return getTotalPostCompressedBytes();
-        } else {
-          return getTotalPostCompressedBytes(regionName);
-        }
-      }
-    });
+    return (Long)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                if (null == regionName) {
+                  return getTotalPostCompressedBytes();
+                } else {
+                  return getTotalPostCompressedBytes(regionName);
+                }
+              }
+            });
   }
 
-  /**
-   * Returns the the number of post-compressed bytes stat for the cache.
-   */
+  /** Returns the the number of post-compressed bytes stat for the cache. */
   private long getTotalPostCompressedBytes() {
     GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
     return cache.getCachePerfStats().getTotalPostCompressedBytes();
@@ -363,6 +377,7 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Returns the number of post-decompressed bytes stat for a region.
+   *
    * @param regionName a region.
    */
   private long getTotalPostCompressedBytes(String regionName) {
@@ -374,25 +389,26 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Returns the number of pre-compressed bytes stat on a virtual machine.
+   *
    * @param vm a virtual machine.
-   * @param regionName a region.  Indicates whole cache if null.
+   * @param regionName a region. Indicates whole cache if null.
    */
   private long getTotalPreCompressedBytesOnVm(final VM vm, final String regionName) {
-    return (Long) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        if (null == regionName) {
-          return getTotalPreCompressedBytes();
-        } else {
-          return getTotalPreCompressedBytes(regionName);
-        }
-      }
-    });
+    return (Long)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                if (null == regionName) {
+                  return getTotalPreCompressedBytes();
+                } else {
+                  return getTotalPreCompressedBytes(regionName);
+                }
+              }
+            });
   }
 
-  /**
-   * Returns the number of compressed bytes stat for the cache.
-   */
+  /** Returns the number of compressed bytes stat for the cache. */
   private long getTotalPreCompressedBytes() {
     GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
     return cache.getCachePerfStats().getTotalPreCompressedBytes();
@@ -400,6 +416,7 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Returns the number of pre-compressed bytes stat for a region.
+   *
    * @param regionName a region.
    */
   private long getTotalPreCompressedBytes(String regionName) {
@@ -411,25 +428,26 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Returns the number of decompressions stat for a virtual machine.
+   *
    * @param vm a virtual machine.
-   * @param regionName a region.  Indicates the whole cache when null.
+   * @param regionName a region. Indicates the whole cache when null.
    */
   private long getTotalDecompressionsOnVm(final VM vm, final String regionName) {
-    return (Long) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        if (null == regionName) {
-          return getTotalDecompressions();
-        } else {
-          return getTotalDecompressions(regionName);
-        }
-      }
-    });
+    return (Long)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                if (null == regionName) {
+                  return getTotalDecompressions();
+                } else {
+                  return getTotalDecompressions(regionName);
+                }
+              }
+            });
   }
 
-  /**
-   * Returns the number of decompressions stat for the cache.
-   */
+  /** Returns the number of decompressions stat for the cache. */
   private long getTotalDecompressions() {
     GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
     return cache.getCachePerfStats().getTotalDecompressions();
@@ -437,6 +455,7 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Returns the number of decompressions stat for a region.
+   *
    * @param regionName a region.
    */
   private long getTotalDecompressions(String regionName) {
@@ -448,25 +467,26 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Returns the total number of compressions stat for a virtual machine.
+   *
    * @param vm a virtual machine.
-   * @param regionName a region.  Indicates the entire cache when null.
+   * @param regionName a region. Indicates the entire cache when null.
    */
   private long getTotalCompressionsOnVm(final VM vm, final String regionName) {
-    return (Long) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        if (null == regionName) {
-          return getTotalCompressions();
-        } else {
-          return getTotalCompressions(regionName);
-        }
-      }
-    });
+    return (Long)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                if (null == regionName) {
+                  return getTotalCompressions();
+                } else {
+                  return getTotalCompressions(regionName);
+                }
+              }
+            });
   }
 
-  /**
-   * Returns the total number of compressions stat for the cache.
-   */
+  /** Returns the total number of compressions stat for the cache. */
   private long getTotalCompressions() {
     GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
     return cache.getCachePerfStats().getTotalCompressions();
@@ -474,6 +494,7 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Returns the total number of compressions stat for a region.
+   *
    * @param regionName a region.
    */
   private long getTotalCompressions(String regionName) {
@@ -485,25 +506,26 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Returns the total decompression time stat for a virtual machine.
+   *
    * @param vm a virtual machine.
-   * @param regionName a region.  Indicates the whole cache when null.
+   * @param regionName a region. Indicates the whole cache when null.
    */
   private long getTotalDecompressionTimeOnVm(final VM vm, final String regionName) {
-    return (Long) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        if (null == regionName) {
-          return getTotalDecompressionTime();
-        } else {
-          return getTotalDecompressionTime(regionName);
-        }
-      }
-    });
+    return (Long)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                if (null == regionName) {
+                  return getTotalDecompressionTime();
+                } else {
+                  return getTotalDecompressionTime(regionName);
+                }
+              }
+            });
   }
 
-  /**
-   * Returns the total decompression time stat for the cache.
-   */
+  /** Returns the total decompression time stat for the cache. */
   private long getTotalDecompressionTime() {
     GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
     return cache.getCachePerfStats().getTotalDecompressionTime();
@@ -511,6 +533,7 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Returns the total decompression time stat for a region.
+   *
    * @param regionName a region.
    */
   private long getTotalDecompressionTime(String regionName) {
@@ -522,25 +545,26 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Returns the total compression time stat for a virtual machine.
+   *
    * @param vm a virtual machine.
    * @param regionName a region.
    */
   private long getTotalCompressionTimeOnVm(final VM vm, final String regionName) {
-    return (Long) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        if (null == regionName) {
-          return getTotalCompressionTime();
-        } else {
-          return getTotalCompressionTime(regionName);
-        }
-      }
-    });
+    return (Long)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                if (null == regionName) {
+                  return getTotalCompressionTime();
+                } else {
+                  return getTotalCompressionTime(regionName);
+                }
+              }
+            });
   }
 
-  /**
-   * Returns the total compression time stat for the cache.
-   */
+  /** Returns the total compression time stat for the cache. */
   private long getTotalCompressionTime() {
     GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
     return cache.getCachePerfStats().getTotalCompressionTime();
@@ -548,6 +572,7 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Returns the total compression time stat for a region.
+   *
    * @param regionName a region.
    */
   private long getTotalCompressionTime(String regionName) {
@@ -559,20 +584,23 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Destroys a region.
+   *
    * @param vm a virtual machine.
    * @param regionName the region to destroy.
    */
   private void destroyRegionOnVm(final VM vm, final String regionName) {
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        destroyRegion(regionName);
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            destroyRegion(regionName);
+          }
+        });
   }
 
   /**
    * Destroys a region.
+   *
    * @param regionName the region to destroy.
    */
   private void destroyRegion(String regionName) {
@@ -584,30 +612,35 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Creates a region and assigns a compressor.
+   *
    * @param vm a virtual machine to create the region on.
    * @param name a region name.
    * @param compressor a compressor.
    * @return true if successfully created, otherwise false.
    */
-  private boolean createCompressedRegionOnVm(final VM vm, final String name, final Compressor compressor) {
-    return (Boolean) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        try {
-          createRegion(name, compressor);
-        } catch (IllegalStateException e) {
-          return Boolean.FALSE;
-        }
+  private boolean createCompressedRegionOnVm(
+      final VM vm, final String name, final Compressor compressor) {
+    return (Boolean)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                try {
+                  createRegion(name, compressor);
+                } catch (IllegalStateException e) {
+                  return Boolean.FALSE;
+                }
 
-        return Boolean.TRUE;
-      }
-    });
+                return Boolean.TRUE;
+              }
+            });
   }
 
   public static final class StatCompressor implements Compressor, Serializable {
     private static final long serialVersionUID = 8116784819434199537L;
 
-    private final byte[] POST_COMPRESS_BYTES = "12345678901234567890123456789012345678901234567890".getBytes();
+    private final byte[] POST_COMPRESS_BYTES =
+        "12345678901234567890123456789012345678901234567890".getBytes();
 
     static byte[] savedCompressInput = null;
 
@@ -625,31 +658,41 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Creates a region and assigns a compressor.
+   *
    * @param name a region name.
    * @param compressor a compressor.
    */
   private Region createRegion(String name, Compressor compressor) {
-    return getCache().createRegionFactory().setDataPolicy(DataPolicy.REPLICATE).setCloningEnabled(true).setCompressor(compressor).create(name);
+    return getCache()
+        .createRegionFactory()
+        .setDataPolicy(DataPolicy.REPLICATE)
+        .setCloningEnabled(true)
+        .setCompressor(compressor)
+        .create(name);
   }
 
   /**
    * Enables clock stats on a VM.
+   *
    * @param vm a virtual machine
-   * @param clockStatsEnabled enables clock stats if true,  disables if false
-   * @return previous clock stats value 
+   * @param clockStatsEnabled enables clock stats if true, disables if false
+   * @return previous clock stats value
    */
   private boolean enableClockStatsOnVm(final VM vm, final boolean clockStatsEnabled) {
-    return (Boolean) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() {
-        return enableClockStats(clockStatsEnabled);
-      }
-    });
+    return (Boolean)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() {
+                return enableClockStats(clockStatsEnabled);
+              }
+            });
   }
 
   /**
    * Enables clock stats.
-   * @param clockStatsEnabled enables clock stats if true,  disables if false
+   *
+   * @param clockStatsEnabled enables clock stats if true, disables if false
    * @return previous clock stats value
    */
   private boolean enableClockStats(boolean clockStatsEnabled) {
@@ -660,9 +703,7 @@ public class CompressionStatsDUnitTest extends JUnit4CacheTestCase {
     return oldValue;
   }
 
-  /**
-   * Used to record compression statistics.
-   */
+  /** Used to record compression statistics. */
   private static final class CompressionStats {
     long vmTotalCompressionTime = 0;
     long region1TotalCompressionTime = 0;

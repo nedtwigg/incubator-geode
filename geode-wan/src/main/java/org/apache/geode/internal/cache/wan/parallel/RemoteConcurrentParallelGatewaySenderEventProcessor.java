@@ -24,11 +24,9 @@ import org.apache.geode.internal.cache.wan.GatewaySenderStats;
 import org.apache.geode.internal.cache.wan.GatewaySenderEventRemoteDispatcher;
 import org.apache.geode.internal.cache.wan.parallel.ParallelGatewaySenderEventProcessor;
 
-/**
- * Remote version of GatewaySenderEvent Processor
- *
- */
-public class RemoteConcurrentParallelGatewaySenderEventProcessor extends ConcurrentParallelGatewaySenderEventProcessor {
+/** Remote version of GatewaySenderEvent Processor */
+public class RemoteConcurrentParallelGatewaySenderEventProcessor
+    extends ConcurrentParallelGatewaySenderEventProcessor {
 
   public RemoteConcurrentParallelGatewaySenderEventProcessor(AbstractGatewaySender sender) {
     super(sender);
@@ -41,7 +39,9 @@ public class RemoteConcurrentParallelGatewaySenderEventProcessor extends Concurr
       logger.debug("Creating GatewaySenderEventProcessor");
     }
     for (int i = 0; i < sender.getDispatcherThreads(); i++) {
-      processors[i] = new RemoteParallelGatewaySenderEventProcessor(sender, targetRs, i, sender.getDispatcherThreads());
+      processors[i] =
+          new RemoteParallelGatewaySenderEventProcessor(
+              sender, targetRs, i, sender.getDispatcherThreads());
     }
   }
 
@@ -51,7 +51,8 @@ public class RemoteConcurrentParallelGatewaySenderEventProcessor extends Concurr
     long startTime = statistics.startLoadBalance();
     try {
       for (ParallelGatewaySenderEventProcessor parallelProcessor : this.processors) {
-        GatewaySenderEventRemoteDispatcher remoteDispatcher = (GatewaySenderEventRemoteDispatcher) parallelProcessor.getDispatcher();
+        GatewaySenderEventRemoteDispatcher remoteDispatcher =
+            (GatewaySenderEventRemoteDispatcher) parallelProcessor.getDispatcher();
         if (remoteDispatcher.isConnectedToRemote()) {
           remoteDispatcher.stopAckReaderThread();
           remoteDispatcher.destroyConnection();

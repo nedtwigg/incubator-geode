@@ -29,9 +29,8 @@ import org.apache.geode.test.process.ProcessWrapper;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Basic unit testing of the golden testing framework. This tests an 
- * example which is expected to always pass.
- * 
+ * Basic unit testing of the golden testing framework. This tests an example which is expected to
+ * always pass.
  */
 @Category(IntegrationTest.class)
 public class PassJUnitTest extends GoldenTestCase implements ExecutableProcess {
@@ -45,12 +44,20 @@ public class PassJUnitTest extends GoldenTestCase implements ExecutableProcess {
     return getClass().getSimpleName();
   }
 
-  /**
-   * Process output has no problems and should pass
-   */
+  /** Process output has no problems and should pass */
   @Test
   public void testPass() throws Exception {
-    final String goldenString = "Begin " + name() + ".main" + "\n" + "Press Enter to continue." + "\n" + "End " + name() + ".main" + "\n";
+    final String goldenString =
+        "Begin "
+            + name()
+            + ".main"
+            + "\n"
+            + "Press Enter to continue."
+            + "\n"
+            + "End "
+            + name()
+            + ".main"
+            + "\n";
 
     final ProcessWrapper process = createProcessWrapper(new ProcessWrapper.Builder(), getClass());
     process.execute(createProperties());

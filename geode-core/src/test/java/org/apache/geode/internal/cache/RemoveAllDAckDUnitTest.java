@@ -48,9 +48,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * Adapted from RemoveAllDAckDUnitTest
- */
+/** Adapted from RemoveAllDAckDUnitTest */
 @Category(DistributedTest.class)
 public class RemoveAllDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: reformat
 
@@ -114,7 +112,7 @@ public class RemoveAllDAckDUnitTest extends JUnit4DistributedTestCase { // TODO:
 
   @Test
   public void testRemoveAllRemoteVM() {
-    // Test PASS. 
+    // Test PASS.
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
@@ -128,13 +126,13 @@ public class RemoveAllDAckDUnitTest extends JUnit4DistributedTestCase { // TODO:
     flag = vm1.invoke(() -> RemoveAllDAckDUnitTest.getFlagVM1());
     assertEquals(true, flag);
 
-    vm1.invoke(new CacheSerializableRunnable("temp1") {
-      public void run2() throws CacheException {
-        assertEquals(2, beforeDestroyRemoveAllcounter);
-      }
-    });
-
-  }//end of test case1
+    vm1.invoke(
+        new CacheSerializableRunnable("temp1") {
+          public void run2() throws CacheException {
+            assertEquals(2, beforeDestroyRemoveAllcounter);
+          }
+        });
+  } //end of test case1
 
   public static Object putMethod(Object ob) {
     Object obj = null;
@@ -147,7 +145,7 @@ public class RemoveAllDAckDUnitTest extends JUnit4DistributedTestCase { // TODO:
       Assert.fail("Failed while region.put", ex);
     }
     return obj;
-  }//end of putMethod
+  } //end of putMethod
 
   public static void removeAllMethod() {
     assertEquals(3, region.size());
@@ -172,5 +170,4 @@ public class RemoveAllDAckDUnitTest extends JUnit4DistributedTestCase { // TODO:
   public static boolean getFlagVM1() {
     return beforeDestroy;
   }
-
-}// end of class
+} // end of class

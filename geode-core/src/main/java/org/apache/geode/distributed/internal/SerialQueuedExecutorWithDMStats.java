@@ -22,8 +22,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class is used for the DM's serial executor.
- * The only thing it currently does is increment stats.
+ * This class is used for the DM's serial executor. The only thing it currently does is increment
+ * stats.
  */
 public class SerialQueuedExecutorWithDMStats extends ThreadPoolExecutor {
   final PoolStatHelper stats;

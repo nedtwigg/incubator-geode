@@ -18,12 +18,11 @@ package org.apache.geode.internal.process;
 
 /**
  * Defines the methods for providing input arguments to the <code>ProcessController</code>.
- * 
- * Implementations of <code>ProcessController</code> are in this package. Classes that
- * implement <code>ProcessControllerArguments</code> would typically be in a different
- * package.
- * 
+ *
+ * <p>Implementations of <code>ProcessController</code> are in this package. Classes that implement
+ * <code>ProcessControllerArguments</code> would typically be in a different package.
+ *
  * @since GemFire 8.0
  */
-public interface ProcessControllerParameters extends FileControllerParameters, MBeanControllerParameters {
-}
+public interface ProcessControllerParameters
+    extends FileControllerParameters, MBeanControllerParameters {}

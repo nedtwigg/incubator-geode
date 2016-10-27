@@ -18,6 +18,4 @@ package org.apache.geode.redis.internal.executor.set;
 
 import org.apache.geode.redis.internal.executor.AbstractExecutor;
 
-public abstract class SetExecutor extends AbstractExecutor {
-
-}
+public abstract class SetExecutor extends AbstractExecutor {}

@@ -39,5 +39,4 @@ public class ParallelWANConflationOffHeapDUnitTest extends ParallelWANConflation
   public boolean isOffHeap() {
     return true;
   }
-
 }

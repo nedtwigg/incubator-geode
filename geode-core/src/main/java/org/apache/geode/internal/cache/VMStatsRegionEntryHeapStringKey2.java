@@ -36,13 +36,12 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VMStatsRegionEntryHeapStringKey2 extends VMStatsRegionEntryHeap {
-  public VMStatsRegionEntryHeapStringKey2(RegionEntryContext context, String key, Object value, boolean byteEncode) {
+  public VMStatsRegionEntryHeapStringKey2(
+      RegionEntryContext context, String key, Object value, boolean byteEncode) {
     super(context, value);
     // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
     // caller has already confirmed that key.length <= MAX_INLINE_STRING_KEY
@@ -80,9 +79,13 @@ public class VMStatsRegionEntryHeapStringKey2 extends VMStatsRegionEntryHeap {
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VMStatsRegionEntryHeapStringKey2> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryHeapStringKey2.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VMStatsRegionEntryHeapStringKey2>
+      lastModifiedUpdater =
+          AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryHeapStringKey2.class, "lastModified");
   private volatile Object value;
 
   @Override
@@ -103,9 +106,7 @@ public class VMStatsRegionEntryHeapStringKey2 extends VMStatsRegionEntryHeap {
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -114,16 +115,12 @@ public class VMStatsRegionEntryHeapStringKey2 extends VMStatsRegionEntryHeap {
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -151,8 +148,11 @@ public class VMStatsRegionEntryHeapStringKey2 extends VMStatsRegionEntryHeap {
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryHeapStringKey2> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryHeapStringKey2.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryHeapStringKey2> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryHeapStringKey2.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryHeapStringKey2> hitCountUpdater =
+      AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryHeapStringKey2.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryHeapStringKey2>
+      missCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryHeapStringKey2.class, "missCount");
 
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {

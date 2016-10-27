@@ -28,22 +28,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by IntelliJ IDEA.
- * User: dsmith
- * Date: Oct 29, 2010
- * Time: 4:18:40 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: dsmith Date: Oct 29, 2010 Time: 4:18:40 PM To change this
+ * template use File | Settings | File Templates.
  */
 public class SequenceDiagram extends JPanel {
 
-  /**
-  * 
-  */
+  /** */
   private static final Color HIGHLIGHT_COLOR = Color.RED;
 
   private final List<String> lineNames;
   private final Map<String, List<String>> shortLineNames;
-  private final SortedMap<Comparable, SubDiagram> subDiagrams = new TreeMap<Comparable, SubDiagram>();
+  private final SortedMap<Comparable, SubDiagram> subDiagrams =
+      new TreeMap<Comparable, SubDiagram>();
   private final StateColorMap colorMap = new StateColorMap();
   private final long minTime;
   private final long maxTime;
@@ -60,7 +56,8 @@ public class SequenceDiagram extends JPanel {
   private LifelineState mouseoverState;
   private LifelineState selectedState;
 
-  public SequenceDiagram(long minTime, long maxTime, List<String> lineNames, LineMapper lineMapper) {
+  public SequenceDiagram(
+      long minTime, long maxTime, List<String> lineNames, LineMapper lineMapper) {
     this.lineNames = lineNames;
     this.shortLineNames = parseShortNames(lineNames, lineMapper);
     this.minTime = minTime;
@@ -69,18 +66,20 @@ public class SequenceDiagram extends JPanel {
     int height = 500;
     super.setPreferredSize(new Dimension(width, height));
     resizeMe(width, height);
-    addComponentListener(new ComponentAdapter() {
-      @Override
-      public void componentResized(ComponentEvent e) {
-        Component source = (Component) e.getSource();
-        resizeMe(source.getWidth(), source.getHeight());
-      }
-    });
+    addComponentListener(
+        new ComponentAdapter() {
+          @Override
+          public void componentResized(ComponentEvent e) {
+            Component source = (Component) e.getSource();
+            resizeMe(source.getWidth(), source.getHeight());
+          }
+        });
     setBackground(Color.WHITE);
   }
 
   private Map<String, List<String>> parseShortNames(List<String> lineNames, LineMapper lineMapper) {
-    Map<String, List<String>> shortNames = new LinkedHashMap<String, List<String>>(lineNames.size());
+    Map<String, List<String>> shortNames =
+        new LinkedHashMap<String, List<String>>(lineNames.size());
     for (String name : lineNames) {
       String shortName = lineMapper.getShortNameForLine(name);
       List<String> list = shortNames.get(shortName);
@@ -96,7 +95,6 @@ public class SequenceDiagram extends JPanel {
 
   public List<Comparable> getSubDiagramsNames() {
     return new ArrayList<Comparable>(subDiagrams.keySet());
-
   }
 
   public void addSubDiagram(Comparable name, Map<String, Lifeline> lines, List<Arrow> arrows) {
@@ -158,7 +156,8 @@ public class SequenceDiagram extends JPanel {
     } else {
       Component popupContents = state.getPopup();
       mouseoverState = state;
-      mouseover = PopupFactory.getSharedInstance().getPopup(this, popupContents, xOnScreen + 20, yOnScreen);
+      mouseover =
+          PopupFactory.getSharedInstance().getPopup(this, popupContents, xOnScreen + 20, yOnScreen);
       mouseover.show();
     }
   }
@@ -220,12 +219,13 @@ public class SequenceDiagram extends JPanel {
   }
 
   private void fireRepaintOfDependencies(LifelineState state) {
-    //TODO - it might be more efficient to repaint just the changed 
+    //TODO - it might be more efficient to repaint just the changed
     //areas, but right now this will do.
     repaint();
   }
 
-  private void paintHighlightedComponents(Graphics2D g2, LifelineState endingState, Set<LifelineState> visited) {
+  private void paintHighlightedComponents(
+      Graphics2D g2, LifelineState endingState, Set<LifelineState> visited) {
     if (!visited.add(endingState)) {
       //Prevent cycles
       return;
@@ -239,7 +239,6 @@ public class SequenceDiagram extends JPanel {
         paintHighlightedComponents(g2, arrow.getStartingState(), visited);
       }
     }
-
   }
 
   public long getMinTime() {
@@ -257,14 +256,15 @@ public class SequenceDiagram extends JPanel {
   private class MemberAxis extends JComponent {
     public MemberAxis() {
       setPreferredSize(new Dimension(getWidth(), AXIS_SIZE));
-      SequenceDiagram.this.addComponentListener(new ComponentAdapter() {
-        @Override
-        public void componentResized(ComponentEvent e) {
-          int newWidth = e.getComponent().getWidth();
-          setPreferredSize(new Dimension(newWidth, AXIS_SIZE));
-          revalidate();
-        }
-      });
+      SequenceDiagram.this.addComponentListener(
+          new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+              int newWidth = e.getComponent().getWidth();
+              setPreferredSize(new Dimension(newWidth, AXIS_SIZE));
+              revalidate();
+            }
+          });
     }
 
     @Override

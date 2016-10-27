@@ -32,29 +32,27 @@ import java.util.Properties;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
-/**
- * Integration tests for AbstractLauncher class. These tests require file system I/O.
- */
+/** Integration tests for AbstractLauncher class. These tests require file system I/O. */
 @Category(IntegrationTest.class)
 public class AbstractLauncherIntegrationTest {
 
   private File gemfirePropertiesFile;
   private Properties expectedGemfireProperties;
 
-  @Rule
-  public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public final TestName testName = new TestName();
+  @Rule public final TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
-    this.gemfirePropertiesFile = this.temporaryFolder.newFile(DistributionConfig.GEMFIRE_PREFIX + "properties");
+    this.gemfirePropertiesFile =
+        this.temporaryFolder.newFile(DistributionConfig.GEMFIRE_PREFIX + "properties");
 
     this.expectedGemfireProperties = new Properties();
     this.expectedGemfireProperties.setProperty(NAME, "memberOne");
     this.expectedGemfireProperties.setProperty(GROUPS, "groupOne, groupTwo");
-    this.expectedGemfireProperties.store(new FileWriter(this.gemfirePropertiesFile, false), this.testName.getMethodName());
+    this.expectedGemfireProperties.store(
+        new FileWriter(this.gemfirePropertiesFile, false), this.testName.getMethodName());
 
     assertThat(this.gemfirePropertiesFile).isNotNull();
     assertThat(this.gemfirePropertiesFile.exists()).isTrue();
@@ -63,7 +61,8 @@ public class AbstractLauncherIntegrationTest {
 
   @Test
   public void testLoadGemFirePropertiesFromFile() throws Exception {
-    final Properties actualGemFireProperties = AbstractLauncher.loadGemFireProperties(this.gemfirePropertiesFile.toURI().toURL());
+    final Properties actualGemFireProperties =
+        AbstractLauncher.loadGemFireProperties(this.gemfirePropertiesFile.toURI().toURL());
 
     assertThat(actualGemFireProperties).isNotNull();
     assertThat(actualGemFireProperties).isEqualTo(this.expectedGemfireProperties);

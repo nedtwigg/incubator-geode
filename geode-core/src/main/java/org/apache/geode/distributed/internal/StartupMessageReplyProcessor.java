@@ -24,11 +24,12 @@ public class StartupMessageReplyProcessor extends ReplyProcessor21 {
   /** has a rejection message (license mismatch, etc) been received? */
   private boolean receivedRejectionMessage;
 
-  /** set to true once we receive a reply from someone who accepted us
-   * into the group. Note that we receive replies from admin dm but
-   * they do not have the authority to accept us into the group.
+  /**
+   * set to true once we receive a reply from someone who accepted us into the group. Note that we
+   * receive replies from admin dm but they do not have the authority to accept us into the group.
    */
   private boolean receivedAcceptance;
+
   private DM dm;
 
   public StartupMessageReplyProcessor(DM dm, Set recipients) {
@@ -59,9 +60,7 @@ public class StartupMessageReplyProcessor extends ReplyProcessor21 {
     this.receivedAcceptance = v;
   }
 
-  /**
-   * Adds any unresponsive members to s
-   */
+  /** Adds any unresponsive members to s */
   void collectUnresponsiveMembers(Set s) {
     if (stillWaiting()) {
       InternalDistributedMember[] memberList = getMembers();
@@ -104,12 +103,12 @@ public class StartupMessageReplyProcessor extends ReplyProcessor21 {
     //     }
   }
 
-  /** overridden from ReplyProcessor21 to allow early-out. 
-   * If an existing member accepted or rejected us then we are done.
+  /**
+   * overridden from ReplyProcessor21 to allow early-out. If an existing member accepted or rejected
+   * us then we are done.
    */
   @Override
   protected boolean canStopWaiting() {
     return this.receivedAcceptance || this.receivedRejectionMessage;
   }
-
 }

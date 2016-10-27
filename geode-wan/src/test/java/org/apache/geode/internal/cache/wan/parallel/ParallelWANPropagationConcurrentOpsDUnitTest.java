@@ -43,8 +43,9 @@ public class ParallelWANPropagationConcurrentOpsDUnitTest extends WANTestBase {
   }
 
   /**
-   * Normal propagation scenario test case for a PR with only one bucket.
-   * This has been added for bug# 44284.
+   * Normal propagation scenario test case for a PR with only one bucket. This has been added for
+   * bug# 44284.
+   *
    * @throws Exception
    */
   @Test
@@ -60,13 +61,25 @@ public class ParallelWANPropagationConcurrentOpsDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 1, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 1, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 1, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 1, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 1, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 1, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 1, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 1, isOffHeap()));
 
     //before doing any puts, let the senders be running in order to ensure that
     //not a single event will be lost
@@ -79,10 +92,14 @@ public class ParallelWANPropagationConcurrentOpsDUnitTest extends WANTestBase {
 
     Wait.pause(5000);
 
-    AsyncInvocation async1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 700));
-    AsyncInvocation async2 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
-    AsyncInvocation async3 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 800));
-    AsyncInvocation async4 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
+    AsyncInvocation async1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 700));
+    AsyncInvocation async2 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
+    AsyncInvocation async3 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 800));
+    AsyncInvocation async4 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
 
     async1.join();
     async2.join();
@@ -100,9 +117,9 @@ public class ParallelWANPropagationConcurrentOpsDUnitTest extends WANTestBase {
   }
 
   /**
-   * Normal propagation scenario test case for a PR with less number of buckets.
-   * Buckets have been kept to 10 for this test.
-   * This has been added for bug# 44287.
+   * Normal propagation scenario test case for a PR with less number of buckets. Buckets have been
+   * kept to 10 for this test. This has been added for bug# 44287.
+   *
    * @throws Exception
    */
   @Test
@@ -118,23 +135,39 @@ public class ParallelWANPropagationConcurrentOpsDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 10, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 10, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 10, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 10, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
 
     //before doing any puts, let the senders be running in order to ensure that
     //not a single event will be lost
     vm4.invoke(() -> WANTestBase.waitForSenderRunningState("ln"));
     vm5.invoke(() -> WANTestBase.waitForSenderRunningState("ln"));
 
-    AsyncInvocation async1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 700));
-    AsyncInvocation async2 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
-    AsyncInvocation async3 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 800));
-    AsyncInvocation async4 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
+    AsyncInvocation async1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 700));
+    AsyncInvocation async2 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
+    AsyncInvocation async3 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 800));
+    AsyncInvocation async4 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
 
     async1.join();
     async2.join();
@@ -152,7 +185,10 @@ public class ParallelWANPropagationConcurrentOpsDUnitTest extends WANTestBase {
     createCacheInVMs(nyPort, vm2);
     vm2.invoke(() -> WANTestBase.createReceiver());
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 3, 4, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 3, 4, isOffHeap()));
 
     vm2.invoke(() -> WANTestBase.addListenerOnRegion(getTestMethodName() + "_PR"));
 
@@ -163,10 +199,22 @@ public class ParallelWANPropagationConcurrentOpsDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
     vm7.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 3, 4, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 3, 4, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 3, 4, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 3, 4, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 3, 4, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 3, 4, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 3, 4, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 3, 4, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
@@ -198,10 +246,14 @@ public class ParallelWANPropagationConcurrentOpsDUnitTest extends WANTestBase {
 
     vm6.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 1000));
 
-    HashMap vm4BRUpdates = (HashMap) vm4.invoke(() -> WANTestBase.checkBR(getTestMethodName() + "_PR", 4));
-    HashMap vm5BRUpdates = (HashMap) vm5.invoke(() -> WANTestBase.checkBR(getTestMethodName() + "_PR", 4));
-    HashMap vm6BRUpdates = (HashMap) vm6.invoke(() -> WANTestBase.checkBR(getTestMethodName() + "_PR", 4));
-    HashMap vm7BRUpdates = (HashMap) vm7.invoke(() -> WANTestBase.checkBR(getTestMethodName() + "_PR", 4));
+    HashMap vm4BRUpdates =
+        (HashMap) vm4.invoke(() -> WANTestBase.checkBR(getTestMethodName() + "_PR", 4));
+    HashMap vm5BRUpdates =
+        (HashMap) vm5.invoke(() -> WANTestBase.checkBR(getTestMethodName() + "_PR", 4));
+    HashMap vm6BRUpdates =
+        (HashMap) vm6.invoke(() -> WANTestBase.checkBR(getTestMethodName() + "_PR", 4));
+    HashMap vm7BRUpdates =
+        (HashMap) vm7.invoke(() -> WANTestBase.checkBR(getTestMethodName() + "_PR", 4));
 
     List b0SenderUpdates = (List) vm4BRUpdates.get("Create0");
     List b1SenderUpdates = (List) vm4BRUpdates.get("Create1");
@@ -222,7 +274,8 @@ public class ParallelWANPropagationConcurrentOpsDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.resumeSender("ln"));
     vm7.invoke(() -> WANTestBase.resumeSender("ln"));
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 1000));
-    HashMap receiverUpdates = (HashMap) vm2.invoke(() -> WANTestBase.checkPR(getTestMethodName() + "_PR"));
+    HashMap receiverUpdates =
+        (HashMap) vm2.invoke(() -> WANTestBase.checkPR(getTestMethodName() + "_PR"));
     List<Long> createList = (List) receiverUpdates.get("Create");
     ArrayList<Long> b0ReceiverUpdates = new ArrayList<Long>();
     ArrayList<Long> b1ReceiverUpdates = new ArrayList<Long>();
@@ -250,5 +303,4 @@ public class ParallelWANPropagationConcurrentOpsDUnitTest extends WANTestBase {
     assertEquals(b2SenderUpdates, b2ReceiverUpdates);
     assertEquals(b3SenderUpdates, b3ReceiverUpdates);
   }
-
 }

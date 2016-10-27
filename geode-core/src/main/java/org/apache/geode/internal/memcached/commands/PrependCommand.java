@@ -25,11 +25,7 @@ import org.apache.geode.internal.memcached.RequestReader;
 import org.apache.geode.internal.memcached.ResponseStatus;
 import org.apache.geode.internal.memcached.ValueWrapper;
 
-/**
- * "prepend" means "add this data to an existing key before existing data".
- * 
- *
- */
+/** "prepend" means "add this data to an existing key before existing data". */
 public class PrependCommand extends StorageCommand {
 
   @Override
@@ -50,7 +46,8 @@ public class PrependCommand extends StorageCommand {
   }
 
   @Override
-  public ByteBuffer processBinaryStorageCommand(Object key, byte[] value, long cas, int flags, Cache cache, RequestReader request) {
+  public ByteBuffer processBinaryStorageCommand(
+      Object key, byte[] value, long cas, int flags, Cache cache, RequestReader request) {
     ByteBuffer response = request.getResponse();
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     try {
@@ -77,9 +74,7 @@ public class PrependCommand extends StorageCommand {
     return response;
   }
 
-  /**
-   * Overridden by Q command
-   */
+  /** Overridden by Q command */
   protected boolean isQuiet() {
     return false;
   }

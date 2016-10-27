@@ -24,10 +24,9 @@ import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 import org.apache.logging.log4j.status.StatusLogger;
 
 /**
- * Overrides is-enabled checks for log levels below INFO to avoid performance
- * penalties when the log level is INFO or above. If delegating is true
- * then it will always delegate to ExtendedLoggerWrapper for is-enabled checks.
- * 
+ * Overrides is-enabled checks for log levels below INFO to avoid performance penalties when the log
+ * level is INFO or above. If delegating is true then it will always delegate to
+ * ExtendedLoggerWrapper for is-enabled checks.
  */
 public class FastLogger extends ExtendedLoggerWrapper {
   private static final long serialVersionUID = 7084130827962463327L;
@@ -38,7 +37,8 @@ public class FastLogger extends ExtendedLoggerWrapper {
     this((ExtendedLogger) logger, logger.getName(), logger.getMessageFactory());
   }
 
-  public FastLogger(final ExtendedLogger logger, final String name, final MessageFactory messageFactory) {
+  public FastLogger(
+      final ExtendedLogger logger, final String name, final MessageFactory messageFactory) {
     super(logger, name, messageFactory);
   }
 

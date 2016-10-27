@@ -25,14 +25,7 @@ import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.internal.admin.remote.ShutdownAllRequest;
 
-/**
- * 
- * Class for Unregister function
- * 
- *  
- * 
- */
-
+/** Class for Unregister function */
 public class UnregisterFunction implements Function, InternalEntity {
   public static final String ID = UnregisterFunction.class.getName();
   private static final long serialVersionUID = 1L;
@@ -52,7 +45,6 @@ public class UnregisterFunction implements Function, InternalEntity {
   @Override
   public String getId() {
     return UnregisterFunction.ID;
-
   }
 
   @Override
@@ -70,5 +62,4 @@ public class UnregisterFunction implements Function, InternalEntity {
   public boolean isHA() {
     return false;
   }
-
 }

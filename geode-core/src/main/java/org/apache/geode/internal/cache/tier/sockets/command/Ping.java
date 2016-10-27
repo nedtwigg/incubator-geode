@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import org.apache.geode.i18n.LogWriterI18n;
@@ -32,24 +30,27 @@ import java.io.IOException;
 
 public class Ping extends BaseCommand {
 
-  private final static Ping singleton = new Ping();
+  private static final Ping singleton = new Ping();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private Ping() {
-  }
+  private Ping() {}
 
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
-      logger.debug("{}: rcv tx: {} from {} rcvTime: {}", servConn.getName(), msg.getTransactionId(), servConn.getSocketString(), (DistributionStats.getStatTime() - start));
+      logger.debug(
+          "{}: rcv tx: {} from {} rcvTime: {}",
+          servConn.getName(),
+          msg.getTransactionId(),
+          servConn.getSocketString(),
+          (DistributionStats.getStatTime() - start));
     }
     ClientHealthMonitor chm = ClientHealthMonitor.getInstance();
-    if (chm != null)
-      chm.receivedPing(servConn.getProxyID());
+    if (chm != null) chm.receivedPing(servConn.getProxyID());
     CachedRegionHelper crHelper = servConn.getCachedRegionHelper();
 
     writeReply(msg, servConn);

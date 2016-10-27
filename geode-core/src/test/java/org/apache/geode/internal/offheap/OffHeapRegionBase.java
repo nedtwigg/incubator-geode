@@ -45,10 +45,8 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
 /**
- * Basic test of regions that use off heap storage.
- * Subclasses exist for the different types of offheap store.
- * 
- *
+ * Basic test of regions that use off heap storage. Subclasses exist for the different types of
+ * offheap store.
  */
 public abstract class OffHeapRegionBase {
 
@@ -68,7 +66,8 @@ public abstract class OffHeapRegionBase {
     props.setProperty(LOCATORS, "");
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(ConfigurationProperties.OFF_HEAP_MEMORY_SIZE, getOffHeapMemorySize());
-    GemFireCacheImpl result = (GemFireCacheImpl) new CacheFactory(props).setPdxPersistent(isPersistent).create();
+    GemFireCacheImpl result =
+        (GemFireCacheImpl) new CacheFactory(props).setPdxPersistent(isPersistent).create();
     unconfigureOffHeapStorage();
     return result;
   }
@@ -139,15 +138,16 @@ public abstract class OffHeapRegionBase {
       }
       assertEquals(0, ma.getUsedMemory());
 
-      final WaitCriterion waitForDisconnect = new WaitCriterion() {
-        public boolean done() {
-          return gfc.isClosed();
-        }
+      final WaitCriterion waitForDisconnect =
+          new WaitCriterion() {
+            public boolean done() {
+              return gfc.isClosed();
+            }
 
-        public String description() {
-          return "Waiting for disconnect to complete";
-        }
-      };
+            public String description() {
+              return "Waiting for disconnect to complete";
+            }
+          };
       org.apache.geode.test.dunit.Wait.waitForCriterion(waitForDisconnect, 10 * 1000, 100, true);
 
       assertTrue(gfc.isClosed());
@@ -164,7 +164,7 @@ public abstract class OffHeapRegionBase {
       assertNotNull(ma);
       final long offHeapSize = ma.getFreeMemory();
       assertEquals(0, ma.getUsedMemory());
-      byte[] data = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+      byte[] data = new byte[] {1, 2, 3, 4, 5, 6, 7, 8};
       StoredObject mc1 = (StoredObject) ma.allocateAndInitialize(data, false, false);
       assertEquals(data.length + perObjectOverhead(), ma.getUsedMemory());
       assertEquals(offHeapSize - (data.length + perObjectOverhead()), ma.getFreeMemory());
@@ -175,7 +175,7 @@ public abstract class OffHeapRegionBase {
       assertEquals(offHeapSize, ma.getFreeMemory());
       assertEquals(0, ma.getUsedMemory());
       // try some small byte[] that don't need to be stored off heap.
-      data = new byte[] { 1, 2, 3, 4, 5, 6, 7 };
+      data = new byte[] {1, 2, 3, 4, 5, 6, 7};
       StoredObject so1 = ma.allocateAndInitialize(data, false, false);
       assertEquals(0, ma.getUsedMemory());
       assertEquals(offHeapSize, ma.getFreeMemory());
@@ -188,12 +188,15 @@ public abstract class OffHeapRegionBase {
   }
 
   private void doRegionTest(final RegionShortcut rs, final String rName) {
-    doRegionTest(rs, rName, false/*compressed*/);
+    doRegionTest(rs, rName, false /*compressed*/);
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   private void doRegionTest(final RegionShortcut rs, final String rName, boolean compressed) {
-    boolean isPersistent = rs == RegionShortcut.LOCAL_PERSISTENT || rs == RegionShortcut.REPLICATE_PERSISTENT || rs == RegionShortcut.PARTITION_PERSISTENT;
+    boolean isPersistent =
+        rs == RegionShortcut.LOCAL_PERSISTENT
+            || rs == RegionShortcut.REPLICATE_PERSISTENT
+            || rs == RegionShortcut.PARTITION_PERSISTENT;
     GemFireCacheImpl gfc = createCache(isPersistent);
     Region r = null;
     try {
@@ -453,12 +456,9 @@ public abstract class OffHeapRegionBase {
       }
       closeCache(gfc, false);
     }
-
   }
 
-  /**
-   * This class has an equals that does not compare all its bytes.
-   */
+  /** This class has an equals that does not compare all its bytes. */
   private static class MyValueWithPartialEquals implements Serializable {
     private static final long serialVersionUID = 1L;
     private final String value;
@@ -479,9 +479,7 @@ public abstract class OffHeapRegionBase {
     }
   }
 
-  /**
-   * This class has an equals that does not compare all its bytes.
-   */
+  /** This class has an equals that does not compare all its bytes. */
   private static class MyPdxWithPartialEquals implements PdxSerializable {
     private String base;
     private String value;
@@ -491,8 +489,7 @@ public abstract class OffHeapRegionBase {
       this.value = v;
     }
 
-    public MyPdxWithPartialEquals() {
-    }
+    public MyPdxWithPartialEquals() {}
 
     @Override
     public void toData(PdxWriter writer) {
@@ -512,12 +509,11 @@ public abstract class OffHeapRegionBase {
   private static class MyCacheListener extends CacheListenerAdapter {
     @Retained(OffHeapIdentifier.TEST_OFF_HEAP_REGION_BASE_LISTENER)
     public StoredObject ohOldValue;
+
     @Retained(OffHeapIdentifier.TEST_OFF_HEAP_REGION_BASE_LISTENER)
     public StoredObject ohNewValue;
 
-    /**
-     * This method retains both ohOldValue and ohNewValue
-     */
+    /** This method retains both ohOldValue and ohNewValue */
     @Retained(OffHeapIdentifier.TEST_OFF_HEAP_REGION_BASE_LISTENER)
     private void setEventData(EntryEvent e) {
       close();
@@ -614,14 +610,20 @@ public abstract class OffHeapRegionBase {
     Region r = null;
     final String value = "value big enough to force off-heap storage";
     try {
-      r = gfc.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT).setOffHeap(false).create("changedFromHeapToOffHeap");
+      r =
+          gfc.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT)
+              .setOffHeap(false)
+              .create("changedFromHeapToOffHeap");
       r.put("key", value);
     } finally {
       closeCache(gfc, false);
     }
     gfc = createCache(true);
     try {
-      r = gfc.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT).setOffHeap(true).create("changedFromHeapToOffHeap");
+      r =
+          gfc.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT)
+              .setOffHeap(true)
+              .create("changedFromHeapToOffHeap");
       assertEquals(true, r.containsKey("key"));
       LocalRegion lr = (LocalRegion) r;
       RegionEntry re = lr.getRegionEntry("key");
@@ -645,7 +647,11 @@ public abstract class OffHeapRegionBase {
     String key = "key";
 
     try {
-      r = gfc.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT).setOffHeap(true).setCompressor(new SnappyCompressor()).create("region1");
+      r =
+          gfc.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT)
+              .setOffHeap(true)
+              .setCompressor(new SnappyCompressor())
+              .create("region1");
       r.put(key, value);
     } finally {
       closeCache(gfc, false);
@@ -653,7 +659,11 @@ public abstract class OffHeapRegionBase {
 
     gfc = createCache(true);
     try {
-      r = gfc.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT).setOffHeap(true).setCompressor(null).create("region1");
+      r =
+          gfc.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT)
+              .setOffHeap(true)
+              .setCompressor(null)
+              .create("region1");
       assertEquals(true, r.containsKey(key));
       MemoryAllocatorImpl mai = MemoryAllocatorImpl.getAllocator();
       List<OffHeapStoredObject> orphans = mai.getLostChunks();

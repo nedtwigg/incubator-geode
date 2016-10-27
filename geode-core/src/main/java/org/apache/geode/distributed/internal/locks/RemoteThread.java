@@ -20,8 +20,8 @@ package org.apache.geode.distributed.internal.locks;
 import org.apache.geode.distributed.DistributedMember;
 
 /**
- * Uniquely identifies a remote thread by DistributedMember and threadId
- * sequence that is unique within the DLockService instance of that member.
+ * Uniquely identifies a remote thread by DistributedMember and threadId sequence that is unique
+ * within the DLockService instance of that member.
  */
 public class RemoteThread {
 
@@ -44,18 +44,14 @@ public class RemoteThread {
 
   @Override
   public boolean equals(Object other) {
-    if (other == this)
-      return true;
-    if (other == null)
-      return false;
-    if (!(other instanceof RemoteThread))
-      return false;
+    if (other == this) return true;
+    if (other == null) return false;
+    if (!(other instanceof RemoteThread)) return false;
     final RemoteThread that = (RemoteThread) other;
 
     if (this.member != that.member && !(this.member != null && this.member.equals(that.member)))
       return false;
-    if (this.threadId != that.threadId)
-      return false;
+    if (this.threadId != that.threadId) return false;
 
     return true;
   }
@@ -73,17 +69,19 @@ public class RemoteThread {
 
   /**
    * Returns a string representation of the object.
-   * 
+   *
    * @return a string representation of the object
    */
   @Override
   public String toString() {
     final StringBuffer sb = new StringBuffer("[RemoteThread@");
     sb.append(System.identityHashCode(this)).append(": ");
-    sb.append("member@").append(System.identityHashCode(this.member)).append("=").append(this.member);
+    sb.append("member@")
+        .append(System.identityHashCode(this.member))
+        .append("=")
+        .append(this.member);
     sb.append(", threadId=").append(this.threadId);
     sb.append("]");
     return sb.toString();
   }
-
 }

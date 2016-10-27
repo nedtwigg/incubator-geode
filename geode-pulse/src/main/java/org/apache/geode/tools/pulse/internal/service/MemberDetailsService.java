@@ -36,9 +36,9 @@ import java.text.DecimalFormat;
 
 /**
  * Class MemberDetailsService
- * 
- * This class contains implementations of getting Memeber's Statistics.
- * 
+ *
+ * <p>This class contains implementations of getting Memeber's Statistics.
+ *
  * @since GemFire version 7.5
  */
 @Component
@@ -79,7 +79,8 @@ public class MemberDetailsService implements PulseService {
       responseJSON.put("regionsCount", clusterMember.getMemberRegionsList().length);
 
       // Number of member clients
-      if (PulseController.getPulseProductSupport().equalsIgnoreCase(PulseConstants.PRODUCT_NAME_SQLFIRE)) {
+      if (PulseController.getPulseProductSupport()
+          .equalsIgnoreCase(PulseConstants.PRODUCT_NAME_SQLFIRE)) {
         responseJSON.put("numClients", clusterMember.getNumSqlfireClients());
       } else {
         responseJSON.put("numClients", clusterMember.getMemberClientsHMap().size());

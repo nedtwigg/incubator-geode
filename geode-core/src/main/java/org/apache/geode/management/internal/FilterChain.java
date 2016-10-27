@@ -17,10 +17,7 @@
 package org.apache.geode.management.internal;
 
 /**
- * Abstract class containing methods which will be accesed 
- * by both Local and Remote filter chains
- * 
- *
+ * Abstract class containing methods which will be accesed by both Local and Remote filter chains
  */
 public abstract class FilterChain {
 
@@ -41,14 +38,11 @@ public abstract class FilterChain {
     return false;
   }
 
-  /**
-   * This method splits the specified filters to array of string objects
-   */
+  /** This method splits the specified filters to array of string objects */
   protected FilterParam createFilterParam(String inclusionList, String exclusionList) {
 
     String[] inclusionListArray = inclusionList.split(";");
     String[] exclusionListArray = exclusionList.split(";");
     return new FilterParam(inclusionListArray, exclusionListArray);
   }
-
 }

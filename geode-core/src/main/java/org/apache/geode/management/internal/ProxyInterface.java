@@ -17,22 +17,22 @@
 package org.apache.geode.management.internal;
 
 /**
- * This generic interface is a place holder for all
- * the generic methods that we want to invoke for Proxies
- *
+ * This generic interface is a place holder for all the generic methods that we want to invoke for
+ * Proxies
  */
 public interface ProxyInterface {
 
   /**
    * Last refreshed time for proxy
+   *
    * @return last refreshed time
    */
   public long getLastRefreshedTime();
 
   /**
    * Sets the last refreshed time for the proxy
+   *
    * @param lastRefreshedTime
    */
   public void setLastRefreshedTime(long lastRefreshedTime);
-
 }

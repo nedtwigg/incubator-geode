@@ -32,28 +32,28 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * An instruction to all members with cache that their PR should gracefully
- * close and disconnect DS
- *
+ * An instruction to all members with cache that their PR should gracefully close and disconnect DS
  */
 public class ShutdownAllRequest extends AdminRequest {
 
   private static final Logger logger = LogService.getLogger();
 
-  static final long SLEEP_TIME_BEFORE_DISCONNECT_DS = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "sleep-before-disconnect-ds", 1000).longValue();
+  static final long SLEEP_TIME_BEFORE_DISCONNECT_DS =
+      Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "sleep-before-disconnect-ds", 1000)
+          .longValue();
 
-  public ShutdownAllRequest() {
-  }
+  public ShutdownAllRequest() {}
 
   /**
-   * Sends a shutdownAll request to all other members and performs local
-   * shutdownAll processing in the waitingThreadPool.
+   * Sends a shutdownAll request to all other members and performs local shutdownAll processing in
+   * the waitingThreadPool.
    */
   public static Set send(final DM dm, long timeout) {
 
     boolean hadCache = hasCache();
     boolean interrupted = false;
-    DistributionManager dism = (dm instanceof DistributionManager) ? (DistributionManager) dm : null;
+    DistributionManager dism =
+        (dm instanceof DistributionManager) ? (DistributionManager) dm : null;
     InternalDistributedMember myId = dm.getDistributionManagerId();
 
     Set recipients = dm.getOtherNormalDistributionManagerIds();
@@ -102,8 +102,8 @@ public class ShutdownAllRequest extends AdminRequest {
 
     // wait until all the recipients send response, shut down itself (if not a locator)
     if (hadCache) {
-      // at this point,GemFireCacheImpl.getInstance() might return null, 
-      // because the cache is closed at GemFireCacheImpl.getInstance().shutDownAll() 
+      // at this point,GemFireCacheImpl.getInstance() might return null,
+      // because the cache is closed at GemFireCacheImpl.getInstance().shutDownAll()
       if (!InternalLocator.isDedicatedLocator()) {
         InternalDistributedSystem ids = dm.getSystem();
         if (ids.isConnected()) {
@@ -140,18 +140,20 @@ public class ShutdownAllRequest extends AdminRequest {
       // and causes a 20 second delay.
       final InternalDistributedSystem ids = dm.getSystem();
       if (ids.isConnected()) {
-        Thread t = new Thread(new Runnable() {
-          public void run() {
-            try {
-              Thread.sleep(SLEEP_TIME_BEFORE_DISCONNECT_DS);
-            } catch (InterruptedException e) {
-            }
-            ConnectionTable.threadWantsSharedResources();
-            if (ids.isConnected()) {
-              ids.disconnect();
-            }
-          }
-        });
+        Thread t =
+            new Thread(
+                new Runnable() {
+                  public void run() {
+                    try {
+                      Thread.sleep(SLEEP_TIME_BEFORE_DISCONNECT_DS);
+                    } catch (InterruptedException e) {
+                    }
+                    ConnectionTable.threadWantsSharedResources();
+                    if (ids.isConnected()) {
+                      ids.disconnect();
+                    }
+                  }
+                });
         t.start();
       }
     }
@@ -225,7 +227,10 @@ public class ShutdownAllRequest extends AdminRequest {
 
   @Override
   public String toString() {
-    return "ShutdownAllRequest sent to " + Arrays.toString(this.getRecipients()) + " from " + this.getSender();
+    return "ShutdownAllRequest sent to "
+        + Arrays.toString(this.getRecipients())
+        + " from "
+        + this.getSender();
   }
 
   private static class ShutDownAllReplyProcessor extends AdminMultipleReplyProcessor {
@@ -240,8 +245,8 @@ public class ShutdownAllRequest extends AdminRequest {
       return false;
     }
 
-    /* 
-     * If response arrives, we will save into results and keep wait for member's 
+    /*
+     * If response arrives, we will save into results and keep wait for member's
      * departure. If the member is departed before sent response, no wait
      * for its response
      * @see org.apache.geode.distributed.internal.ReplyProcessor21#process(org.apache.geode.distributed.internal.DistributionMessage)

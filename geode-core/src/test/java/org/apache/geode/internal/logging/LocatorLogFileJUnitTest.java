@@ -38,9 +38,7 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Creates Locator and tests logging behavior at a high level.
- */
+/** Creates Locator and tests logging behavior at a high level. */
 @Category(IntegrationTest.class)
 public class LocatorLogFileJUnitTest {
 
@@ -50,8 +48,7 @@ public class LocatorLogFileJUnitTest {
   private Locator locator;
   private FileInputStream fis;
 
-  @Rule
-  public TestName name = new TestName();
+  @Rule public TestName name = new TestName();
 
   @After
   public void tearDown() throws Exception {
@@ -90,26 +87,42 @@ public class LocatorLogFileJUnitTest {
     assertNotNull(ds);
     DistributionConfig config = ds.getConfig();
     assertNotNull(config);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.CONFIG_LEVEL) + " but was " + LogWriterImpl.levelToString(config.getLogLevel()), InternalLogWriter.CONFIG_LEVEL, config.getLogLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.CONFIG_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(config.getLogLevel()),
+        InternalLogWriter.CONFIG_LEVEL,
+        config.getLogLevel());
 
     // CONFIG has been replaced with INFO -- all CONFIG statements are now logged at INFO as well
     InternalLogWriter logWriter = (InternalLogWriter) ds.getLogWriter();
     assertNotNull(logWriter);
     assertTrue(logWriter instanceof LogWriterLogger);
-    assertEquals("Expected " + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL) + " but was " + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()), InternalLogWriter.INFO_LEVEL, logWriter.getLogWriterLevel());
+    assertEquals(
+        "Expected "
+            + LogWriterImpl.levelToString(InternalLogWriter.INFO_LEVEL)
+            + " but was "
+            + LogWriterImpl.levelToString(logWriter.getLogWriterLevel()),
+        InternalLogWriter.INFO_LEVEL,
+        logWriter.getLogWriterLevel());
 
     assertNotNull(this.locator);
-    Wait.waitForCriterion(new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return logFile.exists();
-      }
+    Wait.waitForCriterion(
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return logFile.exists();
+          }
 
-      @Override
-      public String description() {
-        return "waiting for log file to exist: " + logFile;
-      }
-    }, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, true);
+          @Override
+          public String description() {
+            return "waiting for log file to exist: " + logFile;
+          }
+        },
+        TIMEOUT_MILLISECONDS,
+        INTERVAL_MILLISECONDS,
+        true);
     assertTrue(logFile.exists());
     // assert not empty
     this.fis = new FileInputStream(logFile);

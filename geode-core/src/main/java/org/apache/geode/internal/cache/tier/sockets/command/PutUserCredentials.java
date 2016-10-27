@@ -27,14 +27,15 @@ import org.apache.geode.security.GemFireSecurityException;
 
 public class PutUserCredentials extends BaseCommand {
 
-  private final static PutUserCredentials singleton = new PutUserCredentials();
+  private static final PutUserCredentials singleton = new PutUserCredentials();
 
   public static Command getCommand() {
     return singleton;
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException, InterruptedException {
     boolean isSecureMode = msg.isSecureMode();
 
     // if (!isSecureMode)
@@ -52,12 +53,26 @@ public class PutUserCredentials extends BaseCommand {
           writeResponse(uniqueId, null, msg, false, servConn);
         } catch (GemFireSecurityException gfse) {
           if (servConn.getSecurityLogWriter().warningEnabled()) {
-            servConn.getSecurityLogWriter().warning(LocalizedStrings.ONE_ARG, servConn.getName() + ": Security exception: " + gfse.toString() + (gfse.getCause() != null ? ", caused by: " + gfse.getCause().toString() : ""));
+            servConn
+                .getSecurityLogWriter()
+                .warning(
+                    LocalizedStrings.ONE_ARG,
+                    servConn.getName()
+                        + ": Security exception: "
+                        + gfse.toString()
+                        + (gfse.getCause() != null
+                            ? ", caused by: " + gfse.getCause().toString()
+                            : ""));
           }
           writeException(msg, gfse, false, servConn);
         } catch (Exception ex) {
           if (servConn.getLogWriter().warningEnabled()) {
-            servConn.getLogWriter().warning(LocalizedStrings.CacheClientNotifier_AN_EXCEPTION_WAS_THROWN_FOR_CLIENT_0_1, new Object[] { servConn.getProxyID(), "" }, ex);
+            servConn
+                .getLogWriter()
+                .warning(
+                    LocalizedStrings.CacheClientNotifier_AN_EXCEPTION_WAS_THROWN_FOR_CLIENT_0_1,
+                    new Object[] {servConn.getProxyID(), ""},
+                    ex);
           }
           writeException(msg, ex, false, servConn);
         } finally {
@@ -71,5 +86,4 @@ public class PutUserCredentials extends BaseCommand {
       // need to throw exception
     }
   }
-
 }

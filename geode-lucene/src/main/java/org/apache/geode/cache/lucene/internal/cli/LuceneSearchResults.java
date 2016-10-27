@@ -69,6 +69,20 @@ public class LuceneSearchResults<K, V> implements Comparable<LuceneSearchResults
 
   @Override
   public String toString() {
-    return "LuceneSearchResults{" + "key='" + key + '\'' + ", value='" + value + '\'' + ", score=" + score + ", exceptionFlag=" + exceptionFlag + ", exceptionMessage='" + exceptionMessage + '\'' + '}';
+    return "LuceneSearchResults{"
+        + "key='"
+        + key
+        + '\''
+        + ", value='"
+        + value
+        + '\''
+        + ", score="
+        + score
+        + ", exceptionFlag="
+        + exceptionFlag
+        + ", exceptionMessage='"
+        + exceptionMessage
+        + '\''
+        + '}';
   }
 }

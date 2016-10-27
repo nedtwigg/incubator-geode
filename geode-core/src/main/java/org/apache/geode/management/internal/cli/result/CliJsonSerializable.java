@@ -20,11 +20,7 @@ import java.util.Map;
 
 import org.apache.geode.management.internal.cli.json.GfJsonObject;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public interface CliJsonSerializable extends CliJsonSerializableIds {
   String FIELDS_TO_SKIP = "fieldNameToDisplayName, JSId, outputFormat, fieldsToSkipOnUI";
   String JSID = "JSId";

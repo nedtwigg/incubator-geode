@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import org.apache.geode.cache.client.internal.PutOp;
@@ -30,22 +28,26 @@ import org.apache.geode.internal.cache.versions.VersionTag;
 
 import java.io.IOException;
 
-/**
- *
- */
+/** */
 public class Put70 extends Put65 {
 
-  private final static Put70 singleton = new Put70();
+  private static final Put70 singleton = new Put70();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private Put70() {
-  }
+  private Put70() {}
 
   @Override
-  protected void writeReply(Message origMsg, ServerConnection servConn, boolean sendOldValue, boolean oldValueIsObject, Object oldValue, VersionTag versionTag) throws IOException {
+  protected void writeReply(
+      Message origMsg,
+      ServerConnection servConn,
+      boolean sendOldValue,
+      boolean oldValueIsObject,
+      Object oldValue,
+      VersionTag versionTag)
+      throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);
@@ -74,12 +76,25 @@ public class Put70 extends Put65 {
     }
     replyMsg.send(servConn);
     if (logger.isTraceEnabled()) {
-      logger.trace("{}: rpl tx: {} parts={}", servConn.getName(), origMsg.getTransactionId(), replyMsg.getNumberOfParts());
+      logger.trace(
+          "{}: rpl tx: {} parts={}",
+          servConn.getName(),
+          origMsg.getTransactionId(),
+          replyMsg.getNumberOfParts());
     }
   }
 
   @Override
-  protected void writeReplyWithRefreshMetadata(Message origMsg, ServerConnection servConn, PartitionedRegion pr, boolean sendOldValue, boolean oldValueIsObject, Object oldValue, byte nwHopType, VersionTag versionTag) throws IOException {
+  protected void writeReplyWithRefreshMetadata(
+      Message origMsg,
+      ServerConnection servConn,
+      PartitionedRegion pr,
+      boolean sendOldValue,
+      boolean oldValueIsObject,
+      Object oldValue,
+      byte nwHopType,
+      VersionTag versionTag)
+      throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);
@@ -99,7 +114,7 @@ public class Put70 extends Put65 {
     }
     replyMsg.setNumberOfParts(parts);
     replyMsg.setTransactionId(origMsg.getTransactionId());
-    replyMsg.addBytesPart(new byte[] { pr.getMetadataVersion(), nwHopType });
+    replyMsg.addBytesPart(new byte[] {pr.getMetadataVersion(), nwHopType});
     replyMsg.addIntPart(flags);
     if (sendOldValue) {
       //      if (logger.fineEnabled()) {
@@ -113,7 +128,11 @@ public class Put70 extends Put65 {
     replyMsg.send(servConn);
     pr.getPrStats().incPRMetaDataSentCount();
     if (logger.isTraceEnabled()) {
-      logger.trace("{}: rpl with REFRESH_METADAT tx: {} parts={}", servConn.getName(), origMsg.getTransactionId(), replyMsg.getNumberOfParts());
+      logger.trace(
+          "{}: rpl with REFRESH_METADAT tx: {} parts={}",
+          servConn.getName(),
+          origMsg.getTransactionId(),
+          replyMsg.getNumberOfParts());
     }
   }
 }

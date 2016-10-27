@@ -16,10 +16,7 @@
  */
 package org.apache.geode.management.internal.beans.stats;
 
-/**
- * All the stats name which we will require from various MBean
- *
- */
+/** All the stats name which we will require from various MBean */
 public class StatsKey {
 
   public static final String GET_INITIAL_IMAGE_KEYS_RECEIVED = "getInitialImageKeysReceived";
@@ -90,8 +87,7 @@ public class StatsKey {
 
   public static final String TOTAL_INDEX_UPDATE_TIME = "indexUpdateTime";
 
-  /** Lock Service Keys **/
-
+  /** Lock Service Keys * */
   public static final String LOCK_WAITS_IN_PROGRESS = "lockWaitsInProgress";
 
   public static final String LOCK_REQUEST_QUEUE = "requestQueues";
@@ -102,13 +98,11 @@ public class StatsKey {
 
   public static final String LOCK_SERVICES = "services";
 
-  /**
-   * Function Stats Keys
-   */
-
+  /** Function Stats Keys */
   public static final String FUNCTION_EXECUTIONS_COMPLETED = "functionExecutionsCompleted";
 
-  public static final String FUNCTION_EXECUTIONS_COMPLETED_PROCESSING_TIME = "functionExecutionsCompletedProcessingTime";
+  public static final String FUNCTION_EXECUTIONS_COMPLETED_PROCESSING_TIME =
+      "functionExecutionsCompletedProcessingTime";
 
   public static final String FUNCTION_EXECUTIONS_RUNNING = "functionExecutionsRunning";
 
@@ -116,16 +110,17 @@ public class StatsKey {
 
   public static final String FUNCTION_EXECUTION_CALLS = "functionExecutionCalls";
 
-  public static final String FUNCTION_EXECUTIONS_HASRESULT_COMPLETED_PROCESSING_TIME = "functionExecutionsHasResultCompletedProcessingTime";
+  public static final String FUNCTION_EXECUTIONS_HASRESULT_COMPLETED_PROCESSING_TIME =
+      "functionExecutionsHasResultCompletedProcessingTime";
 
-  public static final String FUNCTION_EXECUTIONS_HASRESULT_RUNNING = "functionExecutionsHasResultRunning";
+  public static final String FUNCTION_EXECUTIONS_HASRESULT_RUNNING =
+      "functionExecutionsHasResultRunning";
 
   public static final String FUNCTION_EXECUTION_EXCEPTIONS = "functionExecutionsExceptions";
 
   public static final String RESULTS_RECEIVED = "resultsReceived";
 
-  /** Distribution Stats **/
-
+  /** Distribution Stats * */
   public static final String RECEIVED_BYTES = "receivedBytes";
 
   public static final String SENT_BYTES = "sentBytes";
@@ -149,9 +144,9 @@ public class StatsKey {
   public static final String REPLY_WAITS_COMPLETED = "replyWaitsCompleted";
   public static final String NODES = "nodes";
 
-  /** Disk Related stats **/
-
+  /** Disk Related stats * */
   public static final String DISK_READS = "reads";
+
   public static final String DISK_READS_TIME = "readTime";
   public static final String DISK_READ_BYTES = "readBytes";
 
@@ -178,8 +173,7 @@ public class StatsKey {
 
   public static final String DISK_SPACE = "diskSpace";
 
-  /** Cache Server Related Stats **/
-
+  /** Cache Server Related Stats * */
   public static final String CONNECTION_LOAD = "connectionLoad";
 
   public static final String CONNECTION_THREADS = "connectionThreads";
@@ -218,9 +212,9 @@ public class StatsKey {
 
   public static final String CLIENT_NOTIFICATION_PROCESS_TIME = "processClientNotificationTime";
 
-  /** Region and Partition Region Stats **/
-
+  /** Region and Partition Region Stats * */
   public static final String GETS_COMPLETED = "getsCompleted";
+
   public static final String PUTS_COMPLETED = "putsCompleted";
   public static final String PUTALL_COMPLETED = "putAllsCompleted";
   public static final String PUTALL_TIME = "putAllTime";
@@ -249,9 +243,9 @@ public class StatsKey {
   public static final String DATA_STORE_ENTRY_COUNT = "dataStoreEntryCount";
   public static final String DATA_STORE_BYTES_IN_USE = "dataStoreBytesInUse";
 
-  /** Disk Region Stats **/
-
+  /** Disk Region Stats * */
   public static final String DISK_REGION_WRITES = "writes";
+
   public static final String DISK_REGION_WRITE_TIMES = "writeTime";
   public static final String DISK_REGION_WRITTEN_BYTES = "writtenBytes";
   public static final String DISK_REGION_READS = "reads";
@@ -263,9 +257,9 @@ public class StatsKey {
   public static final String DISK_REGION_ENTRIES_IN_VM = "entriesInVM";
   public static final String DISK_REGION_WRITE_IN_PROGRESS = "writesInProgress";
 
-  /** Gateway Receiver Stats **/
-
+  /** Gateway Receiver Stats * */
   public static final String DUPLICATE_BATCHES_RECEIVED = "duplicateBatchesReceived";
+
   public static final String OUT_OF_ORDER_BATCHES_RECEIVED = "outoforderBatchesReceived";
   public static final String EARLY_ACKS = "earlyAcks";
   public static final String EVENTS_RECEIVED = "eventsReceived";
@@ -277,27 +271,28 @@ public class StatsKey {
   public static final String BATCH_PROCESS_TIME = "processBatchTime";
   public static final String TOTAL_BATCHES = "processBatchRequests";
 
-  /** Gateway Sender Stats **/
-
+  /** Gateway Sender Stats * */
   public static final String GATEWAYSENDER_EVENTS_RECEIVED = "eventsReceived";
+
   public static final String GATEWAYSENDER_EVENTS_QUEUED = "eventsQueued";
   public static final String GATEWAYSENDER_BATCHES_DISTRIBUTED = "batchesDistributed";
   public static final String GATEWAYSENDER_BATCHES_DISTRIBUTE_TIME = "batchDistributionTime";
   public static final String GATEWAYSENDER_TOTAL_BATCHES_REDISTRIBUTED = "batchesRedistributed";
   public static final String GATEWAYSENDER_EVENTS_QUEUED_CONFLATED = "eventsNotQueuedConflated";
-  public static final String GATEWAYSENDER_EVENTS_EXCEEDING_ALERT_THRESHOLD = "eventsExceedingAlertThreshold";
+  public static final String GATEWAYSENDER_EVENTS_EXCEEDING_ALERT_THRESHOLD =
+      "eventsExceedingAlertThreshold";
 
-  /** AsyncEventQueue Stats **/
+  /** AsyncEventQueue Stats * */
   public static final String ASYNCEVENTQUEUE_EVENTS_QUEUE_SIZE = "eventQueueSize";
 
-  /** LRU stats **/
-
+  /** LRU stats * */
   public static final String LRU_EVICTIONS = "lruEvictions";
+
   public static final String LRU_DESTROYS = "lruDestroys";
 
-  /** VM Stats **/
-
+  /** VM Stats * */
   public static final String VM_STATS_MAX_MEMORY = "maxMemory";
+
   public static final String VM_STATS_OPEN_FDS = "fdsOpen";
   public static final String VM_STATS_FDS_LIMIT = "fdLimit";
   public static final String VM_NUM_PROCESSOR = "cpus";
@@ -315,8 +310,7 @@ public class StatsKey {
   public static final String VM_USED_MEMORY = "usedMemory";
   public static final String VM_COMMITTED_MEMORY = "committedMemory";
 
-  /** System Stats **/
-
+  /** System Stats * */
   public static final String SYSTEM_CPU_ACTIVE = "cpuActive";
 
   public static final String SYSTEM_NUM_PROCESSOR = "cpus";
@@ -328,6 +322,5 @@ public class StatsKey {
   public static final String LINUX_SYSTEM_LOAD_AVERAGE5 = "loadAverage5";
 
   //Sampler Stats
-  public final static String JVM_PAUSES = "jvmPauses"; // int
-
+  public static final String JVM_PAUSES = "jvmPauses"; // int
 }

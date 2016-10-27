@@ -37,10 +37,10 @@ import org.apache.geode.lang.AttachAPINotFoundException;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Subclass of ServerLauncherRemoteDUnitTest which forces the code to not find 
- * the Attach API which is in the JDK tools.jar.  As a result ServerLauncher
- * ends up using the FileProcessController implementation.
- * 
+ * Subclass of ServerLauncherRemoteDUnitTest which forces the code to not find the Attach API which
+ * is in the JDK tools.jar. As a result ServerLauncher ends up using the FileProcessController
+ * implementation.
+ *
  * @since GemFire 8.0
  */
 @Category(IntegrationTest.class)
@@ -52,14 +52,11 @@ public class ServerLauncherRemoteFileIntegrationTest extends ServerLauncherRemot
   }
 
   @After
-  public void tearDownServerLauncherRemoteFileTest() throws Exception {
-  }
+  public void tearDownServerLauncherRemoteFileTest() throws Exception {}
 
   @Override
   @Test
-  /**
-   * Override and assert Attach API is NOT found
-   */
+  /** Override and assert Attach API is NOT found */
   public void testIsAttachAPIFound() throws Exception {
     final ProcessControllerFactory factory = new ProcessControllerFactory();
     assertFalse(factory.isAttachAPIFound());
@@ -67,14 +64,13 @@ public class ServerLauncherRemoteFileIntegrationTest extends ServerLauncherRemot
 
   @Override
   @Test
-  /**
-   * Override because FileProcessController cannot request status with PID
-   */
+  /** Override because FileProcessController cannot request status with PID */
   public void testStatusUsingPid() throws Throwable {
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -87,13 +83,24 @@ public class ServerLauncherRemoteFileIntegrationTest extends ServerLauncherRemot
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build()
+            .start();
 
     // wait for server to start
     int pid = 0;
     ServerLauncher pidLauncher = null;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -106,7 +113,9 @@ public class ServerLauncherRemoteFileIntegrationTest extends ServerLauncherRemot
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // use launcher with pid
       pidLauncher = new Builder().setPid(pid).build();
@@ -140,14 +149,13 @@ public class ServerLauncherRemoteFileIntegrationTest extends ServerLauncherRemot
 
   @Override
   @Test
-  /**
-   * Override because FileProcessController cannot request stop with PID
-   */
+  /** Override because FileProcessController cannot request stop with PID */
   public void testStopUsingPid() throws Throwable {
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -160,13 +168,26 @@ public class ServerLauncherRemoteFileIntegrationTest extends ServerLauncherRemot
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(createLoggingListener("sysout", getUniqueName() + "#sysout")).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(createLoggingListener("syserr", getUniqueName() + "#syserr")).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .inputListener(createLoggingListener("sysout", getUniqueName() + "#sysout"))
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .inputListener(createLoggingListener("syserr", getUniqueName() + "#syserr"))
+            .build()
+            .start();
 
     // wait for server to start
     int pid = 0;
     ServerLauncher pidLauncher = null;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -179,7 +200,9 @@ public class ServerLauncherRemoteFileIntegrationTest extends ServerLauncherRemot
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // use launcher with pid
       pidLauncher = new Builder().setPid(pid).build();

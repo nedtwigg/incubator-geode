@@ -19,13 +19,9 @@ package org.apache.geode.internal.admin;
 
 import org.apache.geode.cache.RegionAttributes;
 
-/**
- * A snapshot of a GemFire <code>Region</code>
- */
+/** A snapshot of a GemFire <code>Region</code> */
 public interface RegionSnapshot extends CacheSnapshot {
 
-  /**
-   * Returns the attributes of the <code>Region</code>
-   */
+  /** Returns the attributes of the <code>Region</code> */
   public RegionAttributes getAttributes();
 }

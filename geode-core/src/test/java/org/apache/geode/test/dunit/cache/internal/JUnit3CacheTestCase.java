@@ -33,54 +33,47 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.test.dunit.IgnoredException;
 import org.apache.geode.test.dunit.internal.JUnit3DistributedTestCase;
 
-/**
- * The abstract superclass of tests that require the creation of a
- * {@link Cache}.
- */
-public abstract class JUnit3CacheTestCase extends JUnit3DistributedTestCase implements CacheTestFixture {
+/** The abstract superclass of tests that require the creation of a {@link Cache}. */
+public abstract class JUnit3CacheTestCase extends JUnit3DistributedTestCase
+    implements CacheTestFixture {
 
-  private final JUnit4CacheTestCase delegate = new JUnit4CacheTestCase(this) {
-  };
+  private final JUnit4CacheTestCase delegate = new JUnit4CacheTestCase(this) {};
 
   public JUnit3CacheTestCase(final String name) {
     super(name);
   }
 
-  /**
-   * Creates the {@code Cache} for this test that is not connected to other
-   * members.
-   */
+  /** Creates the {@code Cache} for this test that is not connected to other members. */
   public final Cache createLonerCache() {
     return delegate.createLonerCache();
   }
 
   /**
-   * Sets this test up with a {@code CacheCreation} as its cache. Any existing
-   * cache is closed. Whoever calls this must also call {@code finishCacheXml}.
+   * Sets this test up with a {@code CacheCreation} as its cache. Any existing cache is closed.
+   * Whoever calls this must also call {@code finishCacheXml}.
    */
   public static final void beginCacheXml() {
     JUnit4CacheTestCase.beginCacheXml();
   }
 
   /**
-   * Finish what {@code beginCacheXml} started. It does this be generating a
-   * cache.xml file and then creating a real cache using that cache.xml.
+   * Finish what {@code beginCacheXml} started. It does this be generating a cache.xml file and then
+   * creating a real cache using that cache.xml.
    */
   public final void finishCacheXml(final String name) {
     delegate.finishCacheXml(name);
   }
 
   /**
-   * Finish what {@code beginCacheXml} started. It does this be generating a
-   * cache.xml file and then creating a real cache using that cache.xml.
+   * Finish what {@code beginCacheXml} started. It does this be generating a cache.xml file and then
+   * creating a real cache using that cache.xml.
    */
-  public final void finishCacheXml(final String name, final boolean useSchema, final String xmlVersion) {
+  public final void finishCacheXml(
+      final String name, final boolean useSchema, final String xmlVersion) {
     delegate.finishCacheXml(name, useSchema, xmlVersion);
   }
 
-  /**
-   * Return a cache for obtaining regions, created lazily.
-   */
+  /** Return a cache for obtaining regions, created lazily. */
   public final Cache getCache() {
     return delegate.getCache();
   }
@@ -106,10 +99,7 @@ public abstract class JUnit3CacheTestCase extends JUnit3DistributedTestCase impl
     return delegate.getClientCache(factory);
   }
 
-  /**
-   * Invokes {@link #getCache()} and casts the return to
-   * {@code GemFireCacheImpl}.
-   */
+  /** Invokes {@link #getCache()} and casts the return to {@code GemFireCacheImpl}. */
   public final GemFireCacheImpl getGemfireCache() { // TODO: remove?
     return delegate.getGemfireCache();
   }
@@ -118,23 +108,17 @@ public abstract class JUnit3CacheTestCase extends JUnit3DistributedTestCase impl
     return JUnit4CacheTestCase.hasCache();
   }
 
-  /**
-   * Return current cache without creating one.
-   */
+  /** Return current cache without creating one. */
   public static final Cache basicGetCache() {
     return JUnit4CacheTestCase.basicGetCache();
   }
 
-  /**
-   * Close the cache.
-   */
+  /** Close the cache. */
   public static final void closeCache() {
     JUnit4CacheTestCase.closeCache();
   }
 
-  /**
-   * Closed the cache in all VMs.
-   */
+  /** Closed the cache in all VMs. */
   protected final void closeAllCache() {
     delegate.closeAllCache();
   }
@@ -145,28 +129,25 @@ public abstract class JUnit3CacheTestCase extends JUnit3DistributedTestCase impl
   }
 
   @Override
-  public void preTearDownCacheTestCase() throws Exception {
-  }
+  public void preTearDownCacheTestCase() throws Exception {}
 
   @Override
-  public void postTearDownCacheTestCase() throws Exception {
-  }
+  public void postTearDownCacheTestCase() throws Exception {}
 
-  /**
-   * Local destroy all root regions and close the cache.
-   */
+  /** Local destroy all root regions and close the cache. */
   protected static final void remoteTearDown() {
     JUnit4CacheTestCase.remoteTearDown();
   }
 
-  /**
-   * Returns a region with the given name and attributes
-   */
-  public final Region createRegion(final String name, final RegionAttributes attributes) throws CacheException {
+  /** Returns a region with the given name and attributes */
+  public final Region createRegion(final String name, final RegionAttributes attributes)
+      throws CacheException {
     return delegate.createRegion(name, attributes);
   }
 
-  public final Region createRegion(final String name, final String rootName, final RegionAttributes attributes) throws CacheException {
+  public final Region createRegion(
+      final String name, final String rootName, final RegionAttributes attributes)
+      throws CacheException {
     return delegate.createRegion(name, rootName, attributes);
   }
 
@@ -178,29 +159,29 @@ public abstract class JUnit3CacheTestCase extends JUnit3DistributedTestCase impl
     return delegate.getRootRegion(rootName);
   }
 
-  protected final Region createRootRegion(final RegionAttributes attributes) throws RegionExistsException, TimeoutException {
+  protected final Region createRootRegion(final RegionAttributes attributes)
+      throws RegionExistsException, TimeoutException {
     return delegate.createRootRegion(attributes);
   }
 
-  public final Region createRootRegion(final String rootName, final RegionAttributes attributes) throws RegionExistsException, TimeoutException {
+  public final Region createRootRegion(final String rootName, final RegionAttributes attributes)
+      throws RegionExistsException, TimeoutException {
     return delegate.createRootRegion(rootName, attributes);
   }
 
-  public final Region createExpiryRootRegion(final String rootName, final RegionAttributes attributes) throws RegionExistsException, TimeoutException {
+  public final Region createExpiryRootRegion(
+      final String rootName, final RegionAttributes attributes)
+      throws RegionExistsException, TimeoutException {
     return delegate.createExpiryRootRegion(rootName, attributes);
   }
 
-  /**
-   * @deprecated Please use {@link IgnoredException#addIgnoredException(String)} instead.
-   */
+  /** @deprecated Please use {@link IgnoredException#addIgnoredException(String)} instead. */
   @Deprecated
   public final CacheSerializableRunnable addExceptionTag1(final String exceptionStringToIgnore) {
     return delegate.addExceptionTag1(exceptionStringToIgnore);
   }
 
-  /**
-   * @deprecated Please use {@link IgnoredException#remove()} instead.
-   */
+  /** @deprecated Please use {@link IgnoredException#remove()} instead. */
   @Deprecated
   public final CacheSerializableRunnable removeExceptionTag1(final String exceptionStringToIgnore) {
     return delegate.removeExceptionTag1(exceptionStringToIgnore);
@@ -211,8 +192,8 @@ public abstract class JUnit3CacheTestCase extends JUnit3DistributedTestCase impl
   }
 
   /**
-   * Return a set of disk directories for persistence tests. These directories
-   * will be automatically cleaned up during tear down.
+   * Return a set of disk directories for persistence tests. These directories will be automatically
+   * cleaned up during tear down.
    */
   public static final File[] getDiskDirs() {
     return JUnit4CacheTestCase.getDiskDirs();

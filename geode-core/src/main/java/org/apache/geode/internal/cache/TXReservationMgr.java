@@ -23,18 +23,15 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 //import java.io.*;
 import java.util.*;
 
-/** Used to reserve region entries, during a transaction commit,
- * for modification by the transaction.
+/**
+ * Used to reserve region entries, during a transaction commit, for modification by the transaction.
  *
- * 
  * @since GemFire 4.0
- * 
  */
 public class TXReservationMgr {
-  /**
-   * keys are LocalRegion; values are ArrayList of Sets of held locks.
-   */
+  /** keys are LocalRegion; values are ArrayList of Sets of held locks. */
   private final Map regionLocks;
+
   private final boolean local;
 
   public TXReservationMgr(boolean local) {
@@ -64,7 +61,8 @@ public class TXReservationMgr {
     }
   }
 
-  private void checkForConflict(TXRegionLockRequestImpl rr, IdentityArrayList localLocks) throws CommitConflictException {
+  private void checkForConflict(TXRegionLockRequestImpl rr, IdentityArrayList localLocks)
+      throws CommitConflictException {
     Object r = getRegionObject(rr);
     Set keys = rr.getKeys();
     Object oldValue = this.regionLocks.put(r, keys);
@@ -96,11 +94,16 @@ public class TXReservationMgr {
     }
   }
 
-  private void checkSetForConflict(TXRegionLockRequestImpl rr, Set s, Object[] keys, IdentityArrayList localLocks) throws CommitConflictException {
+  private void checkSetForConflict(
+      TXRegionLockRequestImpl rr, Set s, Object[] keys, IdentityArrayList localLocks)
+      throws CommitConflictException {
     for (int i = 0; i < keys.length; i++) {
       if (s.contains(keys[i])) {
         release(localLocks, true);
-        throw new CommitConflictException(LocalizedStrings.TXReservationMgr_THE_KEY_0_IN_REGION_1_WAS_BEING_MODIFIED_BY_ANOTHER_TRANSACTION_LOCALLY.toLocalizedString(new Object[] { keys[i], rr.getRegionFullPath() }));
+        throw new CommitConflictException(
+            LocalizedStrings
+                .TXReservationMgr_THE_KEY_0_IN_REGION_1_WAS_BEING_MODIFIED_BY_ANOTHER_TRANSACTION_LOCALLY
+                .toLocalizedString(new Object[] {keys[i], rr.getRegionFullPath()}));
       }
     }
   }

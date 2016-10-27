@@ -29,20 +29,21 @@ import org.apache.geode.pdx.internal.PdxType;
 
 public class GetPdxTypes70 extends BaseCommand {
 
-  private final static GetPdxTypes70 singleton = new GetPdxTypes70();
+  private static final GetPdxTypes70 singleton = new GetPdxTypes70();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private GetPdxTypes70() {
-  }
+  private GetPdxTypes70() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received get pdx types from {}", servConn.getName(), servConn.getSocketString());
+      logger.debug(
+          "{}: Received get pdx types from {}", servConn.getName(), servConn.getSocketString());
     }
 
     Map<Integer, PdxType> types;

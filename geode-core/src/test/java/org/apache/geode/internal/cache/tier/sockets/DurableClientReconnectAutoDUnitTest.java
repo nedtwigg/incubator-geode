@@ -29,8 +29,7 @@ import org.apache.geode.test.dunit.NetworkUtils;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Test reconnecting a durable client that is using
- * the locator to discover its servers
+ * Test reconnecting a durable client that is using the locator to discover its servers
  *
  * @since GemFire 5.7
  */
@@ -58,8 +57,10 @@ public class DurableClientReconnectAutoDUnitTest extends DurableClientReconnectD
 
   protected PoolFactory getPoolFactory() {
     Host host = Host.getHost(0);
-    PoolFactory factory = PoolManager.createFactory().addLocator(NetworkUtils.getServerHostName(host), DistributedTestUtils.getDUnitLocatorPort());
+    PoolFactory factory =
+        PoolManager.createFactory()
+            .addLocator(
+                NetworkUtils.getServerHostName(host), DistributedTestUtils.getDUnitLocatorPort());
     return factory;
   }
-
 }

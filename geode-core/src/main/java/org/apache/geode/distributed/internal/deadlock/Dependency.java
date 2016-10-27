@@ -19,13 +19,11 @@ package org.apache.geode.distributed.internal.deadlock;
 import java.io.Serializable;
 
 /**
- * Holds a dependency between one object and another. This class is used as an
- * edge in the @link {@link DependencyGraph}.
- * 
- * An example of a dependency is a Thread that is blocking on a lock, or a lock
- * that is held by a thread.
- * 
- * 
+ * Holds a dependency between one object and another. This class is used as an edge in the @link
+ * {@link DependencyGraph}.
+ *
+ * <p>An example of a dependency is a Thread that is blocking on a lock, or a lock that is held by a
+ * thread.
  */
 public class Dependency<A, B> implements Serializable {
 
@@ -58,23 +56,16 @@ public class Dependency<A, B> implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (!(obj instanceof Dependency))
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (!(obj instanceof Dependency)) return false;
     Dependency<?, ?> other = (Dependency<?, ?>) obj;
     if (depender == null) {
-      if (other.depender != null)
-        return false;
-    } else if (!depender.equals(other.depender))
-      return false;
+      if (other.depender != null) return false;
+    } else if (!depender.equals(other.depender)) return false;
     if (dependsOn == null) {
-      if (other.dependsOn != null)
-        return false;
-    } else if (!dependsOn.equals(other.dependsOn))
-      return false;
+      if (other.dependsOn != null) return false;
+    } else if (!dependsOn.equals(other.dependsOn)) return false;
     return true;
   }
 
@@ -82,5 +73,4 @@ public class Dependency<A, B> implements Serializable {
   public String toString() {
     return depender + " -> " + dependsOn;
   }
-
 }

@@ -25,17 +25,15 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular app vm to request all the subregions
- * of a given parent region.
+ * A message that is sent to a particular app vm to request all the subregions of a given parent
+ * region.
  */
 public final class ObjectNamesRequest extends RegionAdminRequest implements Cancellable {
   // instance variables
   private transient boolean cancelled;
   private transient ObjectNamesResponse resp;
 
-  /**
-   * Returns a <code>ObjectNamesRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>ObjectNamesRequest</code> to be sent to the specified recipient. */
   public static ObjectNamesRequest create() {
     ObjectNamesRequest m = new ObjectNamesRequest();
     return m;
@@ -45,9 +43,7 @@ public final class ObjectNamesRequest extends RegionAdminRequest implements Canc
     friendlyName = LocalizedStrings.ObjectNamesRequest_LIST_CACHED_OBJECTS.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     CancellationRegistry.getInstance().registerMessage(this);

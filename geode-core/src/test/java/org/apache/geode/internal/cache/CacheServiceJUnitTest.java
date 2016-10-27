@@ -48,5 +48,4 @@ public class CacheServiceJUnitTest {
     MockCacheService service = cache.getService(MockCacheService.class);
     assertEquals(cache, service.getCache());
   }
-
 }

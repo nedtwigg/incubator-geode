@@ -52,10 +52,8 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * This message is generated based on event received on GatewayReceiver for
- * updating the time-stamp in a version tag for a RegionEntry.
- * 
- * 
+ * This message is generated based on event received on GatewayReceiver for updating the time-stamp
+ * in a version tag for a RegionEntry.
  */
 public class PRUpdateEntryVersionMessage extends PartitionMessageWithDirectReply {
 
@@ -73,15 +71,17 @@ public class PRUpdateEntryVersionMessage extends PartitionMessageWithDirectReply
   protected VersionTag versionTag;
 
   /** for deserialization */
-  public PRUpdateEntryVersionMessage() {
-  }
+  public PRUpdateEntryVersionMessage() {}
 
   /**
    * @param recipients
    * @param regionId
    * @param processor
    */
-  public PRUpdateEntryVersionMessage(Collection<InternalDistributedMember> recipients, int regionId, DirectReplyProcessor processor) {
+  public PRUpdateEntryVersionMessage(
+      Collection<InternalDistributedMember> recipients,
+      int regionId,
+      DirectReplyProcessor processor) {
     super(recipients, regionId, processor);
   }
 
@@ -91,7 +91,8 @@ public class PRUpdateEntryVersionMessage extends PartitionMessageWithDirectReply
    * @param processor
    * @param event
    */
-  public PRUpdateEntryVersionMessage(Set recipients, int regionId, DirectReplyProcessor processor, EntryEventImpl event) {
+  public PRUpdateEntryVersionMessage(
+      Set recipients, int regionId, DirectReplyProcessor processor, EntryEventImpl event) {
     super(recipients, regionId, processor, event);
     this.key = event.getKey();
     this.op = event.getOperation();
@@ -101,7 +102,7 @@ public class PRUpdateEntryVersionMessage extends PartitionMessageWithDirectReply
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.DataSerializableFixedID#getDSFID()
    */
   @Override
@@ -111,18 +112,29 @@ public class PRUpdateEntryVersionMessage extends PartitionMessageWithDirectReply
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.cache.partitioned.PartitionMessage#
    * operateOnPartitionedRegion
    * (org.apache.geode.distributed.internal.DistributionManager,
    * org.apache.geode.internal.cache.PartitionedRegion, long)
    */
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException, QueryException, DataLocationException, InterruptedException, IOException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion pr, long startTime)
+      throws CacheException, QueryException, DataLocationException, InterruptedException,
+          IOException {
     // release not needed because disallowOffHeapValues called
-    final EntryEventImpl event = EntryEventImpl.create(pr, getOperation(), getKey(), null, /* newValue */
-        null, /* callbackargs */
-        false /* originRemote - false to force distribution in buckets */, getSender() /* eventSender */, false /* generateCallbacks */, false /* initializeId */);
+    final EntryEventImpl event =
+        EntryEventImpl.create(
+            pr,
+            getOperation(),
+            getKey(),
+            null, /* newValue */
+            null, /* callbackargs */
+            false /* originRemote - false to force distribution in buckets */,
+            getSender() /* eventSender */,
+            false /* generateCallbacks */,
+            false /* initializeId */);
     event.disallowOffHeapValues();
 
     Assert.assertTrue(eventId != null);
@@ -139,14 +151,19 @@ public class PRUpdateEntryVersionMessage extends PartitionMessageWithDirectReply
     if (!notificationOnly) {
 
       PartitionedRegionDataStore ds = pr.getDataStore();
-      Assert.assertTrue(ds != null, "This process should have storage for an item in " + this.toString());
+      Assert.assertTrue(
+          ds != null, "This process should have storage for an item in " + this.toString());
       try {
         Integer bucket = Integer.valueOf(PartitionedRegionHelper.getHashKey(event));
 
         pr.getDataView().updateEntryVersion(event);
 
         if (logger.isTraceEnabled(LogMarker.DM)) {
-          logger.debug("{}: updateEntryVersionLocally in bucket: {}, key: {}", getClass().getName(), bucket, key);
+          logger.debug(
+              "{}: updateEntryVersionLocally in bucket: {}, key: {}",
+              getClass().getName(),
+              bucket,
+              key);
         }
       } catch (EntryNotFoundException eee) {
         // failed = true;
@@ -162,7 +179,6 @@ public class PRUpdateEntryVersionMessage extends PartitionMessageWithDirectReply
         sendReply(getSender(), getProcessorId(), dm, new ReplyException(pbe), pr, startTime);
         return false;
       }
-
     }
     return sendReply;
   }
@@ -195,10 +211,9 @@ public class PRUpdateEntryVersionMessage extends PartitionMessageWithDirectReply
 
   /**
    * Assists the toString method in reporting the contents of this message
-   * 
+   *
    * @see PartitionMessage#toString()
    */
-
   @Override
   protected void appendFields(StringBuffer buff) {
     super.appendFields(buff);
@@ -213,16 +228,14 @@ public class PRUpdateEntryVersionMessage extends PartitionMessageWithDirectReply
     }
   }
 
-  /**
-   * Response for PartitionMessage {@link PRUpdateEntryVersionMessage}.
-   * 
-   */
+  /** Response for PartitionMessage {@link PRUpdateEntryVersionMessage}. */
   public static final class UpdateEntryVersionResponse extends PartitionResponse {
 
     private volatile boolean versionUpdated;
     private final Object key;
 
-    public UpdateEntryVersionResponse(InternalDistributedSystem dm, InternalDistributedMember member, Object k) {
+    public UpdateEntryVersionResponse(
+        InternalDistributedSystem dm, InternalDistributedMember member, Object k) {
       super(dm, member);
       this.key = k;
     }
@@ -256,14 +269,19 @@ public class PRUpdateEntryVersionMessage extends PartitionMessageWithDirectReply
     }
   }
 
-  public static UpdateEntryVersionResponse send(InternalDistributedMember recipient, PartitionedRegion r, EntryEventImpl event) throws ForceReattemptException {
+  public static UpdateEntryVersionResponse send(
+      InternalDistributedMember recipient, PartitionedRegion r, EntryEventImpl event)
+      throws ForceReattemptException {
     Set recipients = Collections.singleton(recipient);
-    UpdateEntryVersionResponse p = new UpdateEntryVersionResponse(r.getSystem(), recipient, event.getKey());
-    PRUpdateEntryVersionMessage m = new PRUpdateEntryVersionMessage(recipients, r.getPRId(), p, event);
+    UpdateEntryVersionResponse p =
+        new UpdateEntryVersionResponse(r.getSystem(), recipient, event.getKey());
+    PRUpdateEntryVersionMessage m =
+        new PRUpdateEntryVersionMessage(recipients, r.getPRId(), p, event);
 
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new ForceReattemptException(LocalizedStrings.UpdateEntryVersionMessage_FAILED_SENDING_0.toLocalizedString(m));
+      throw new ForceReattemptException(
+          LocalizedStrings.UpdateEntryVersionMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
     return p;
   }

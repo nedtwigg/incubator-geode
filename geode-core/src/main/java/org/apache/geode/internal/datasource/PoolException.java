@@ -18,10 +18,7 @@ package org.apache.geode.internal.datasource;
 
 import org.apache.geode.GemFireCheckedException;
 
-/**
- * Exception thrown from Connection Pool.
- * 
- */
+/** Exception thrown from Connection Pool. */
 public class PoolException extends GemFireCheckedException {
   private static final long serialVersionUID = -6178632158204356727L;
 
@@ -32,23 +29,19 @@ public class PoolException extends GemFireCheckedException {
     super();
   }
 
-  /**
-   * @param message
-   */
+  /** @param message */
   public PoolException(String message) {
     super(message);
   }
 
   /**
-   * Single Argument constructor to construct a new exception with the specified
-   * detail message. Calls Exception class constructor.
-   * 
-   * @param message The detail message. The detail message is saved for later
-   *          retrieval.
+   * Single Argument constructor to construct a new exception with the specified detail message.
+   * Calls Exception class constructor.
+   *
+   * @param message The detail message. The detail message is saved for later retrieval.
    */
   public PoolException(String message, Exception ex) {
     super(message, ex);
     //this.excep = ex;
   }
-
 }

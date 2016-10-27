@@ -28,9 +28,7 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * @since GemFire 8.0
- */
+/** @since GemFire 8.0 */
 @Category(UnitTest.class)
 public class ProcessControllerFactoryJUnitTest {
 
@@ -53,11 +51,13 @@ public class ProcessControllerFactoryJUnitTest {
     assertEquals(isAttachAPIFound, factory.isAttachAPIFound());
     if (isAttachAPIFound) {
       final ProcessControllerParameters parms = new NullMBeanControllerParameters();
-      final ProcessController controller = factory.createProcessController(parms, ProcessUtils.identifyPid());
+      final ProcessController controller =
+          factory.createProcessController(parms, ProcessUtils.identifyPid());
       assertTrue(controller instanceof MBeanProcessController);
     } else {
       final ProcessControllerParameters parms = new NullFileControllerParameters();
-      final ProcessController controller = factory.createProcessController(parms, ProcessUtils.identifyPid());
+      final ProcessController controller =
+          factory.createProcessController(parms, ProcessUtils.identifyPid());
       assertTrue(controller instanceof FileProcessController);
     }
   }

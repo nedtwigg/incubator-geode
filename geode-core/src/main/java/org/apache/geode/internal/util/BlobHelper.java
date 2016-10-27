@@ -30,25 +30,24 @@ import org.apache.geode.internal.offheap.annotations.Unretained;
 import org.apache.geode.pdx.internal.PdxInputStream;
 
 /**
- * A "blob" is a serialized representation of an object into a byte[].
- * BlobHelper provides utility methods for serializing and deserializing the
- * object.
+ * A "blob" is a serialized representation of an object into a byte[]. BlobHelper provides utility
+ * methods for serializing and deserializing the object.
  *
- * TODO: compare performance with org.apache.commons.lang.SerializationUtils
+ * <p>TODO: compare performance with org.apache.commons.lang.SerializationUtils
  */
 public class BlobHelper {
 
   /**
-   * A blob is a serialized Object. This method serializes the object into a
-   * blob and returns the byte array that contains the blob.
+   * A blob is a serialized Object. This method serializes the object into a blob and returns the
+   * byte array that contains the blob.
    */
   public static byte[] serializeToBlob(Object obj) throws IOException {
     return serializeToBlob(obj, null);
   }
 
   /**
-   * A blob is a serialized Object.  This method serializes the object into a
-   * blob and returns the byte array that contains the blob.
+   * A blob is a serialized Object. This method serializes the object into a blob and returns the
+   * byte array that contains the blob.
    */
   public static byte[] serializeToBlob(Object obj, Version version) throws IOException {
     final long start = startSerialization();
@@ -60,8 +59,8 @@ public class BlobHelper {
   }
 
   /**
-   * A blob is a serialized Object.  This method serializes the object into
-   * the given HeapDataOutputStream.
+   * A blob is a serialized Object. This method serializes the object into the given
+   * HeapDataOutputStream.
    */
   public static void serializeTo(Object obj, HeapDataOutputStream hdos) throws IOException {
     final int startBytes = hdos.size();
@@ -70,19 +69,14 @@ public class BlobHelper {
     endSerialization(start, hdos.size() - startBytes);
   }
 
-  /**
-   * A blob is a serialized Object.  This method returns the deserialized
-   * object.
-   */
+  /** A blob is a serialized Object. This method returns the deserialized object. */
   public static Object deserializeBlob(byte[] blob) throws IOException, ClassNotFoundException {
     return deserializeBlob(blob, null, null);
   }
 
-  /**
-   * A blob is a serialized Object.  This method returns the deserialized
-   * object.
-   */
-  public static Object deserializeBlob(byte[] blob, Version version, ByteArrayDataInput in) throws IOException, ClassNotFoundException {
+  /** A blob is a serialized Object. This method returns the deserialized object. */
+  public static Object deserializeBlob(byte[] blob, Version version, ByteArrayDataInput in)
+      throws IOException, ClassNotFoundException {
     Object result;
     final long start = startDeserialization();
     if (blob.length > 0 && blob[0] == DSCODE.PDX) {
@@ -107,11 +101,11 @@ public class BlobHelper {
   }
 
   /**
-   * A blob is a serialized Object.  This method returns the deserialized
-   * object. If a PdxInstance is returned then it will refer to Chunk's
-   * off-heap memory with an unretained reference.
+   * A blob is a serialized Object. This method returns the deserialized object. If a PdxInstance is
+   * returned then it will refer to Chunk's off-heap memory with an unretained reference.
    */
-  public static @Unretained Object deserializeOffHeapBlob(StoredObject blob) throws IOException, ClassNotFoundException {
+  public static @Unretained Object deserializeOffHeapBlob(StoredObject blob)
+      throws IOException, ClassNotFoundException {
     Object result;
     final long start = startDeserialization();
     // For both top level and nested pdxs we just want a reference to this off-heap blob.
@@ -123,10 +117,9 @@ public class BlobHelper {
     return result;
   }
 
-  /**
-   * Unused
-   */
-  public static Object deserializeBuffer(ByteArrayDataInput in, int numBytes) throws IOException, ClassNotFoundException {
+  /** Unused */
+  public static Object deserializeBuffer(ByteArrayDataInput in, int numBytes)
+      throws IOException, ClassNotFoundException {
     final long start = startDeserialization();
     Object result = DataSerializer.readObject(in);
     endDeserialization(start, numBytes);
@@ -164,5 +157,4 @@ public class BlobHelper {
       stats.endDeserialization(start, bytes);
     }
   }
-
 }

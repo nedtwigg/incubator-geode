@@ -34,14 +34,11 @@ import org.apache.geode.internal.logging.LogService;
 //import org.apache.commons.modeler.ManagedBean;
 
 /**
- * The JMX "managed resource" that represents the health of GemFire.
- * Basically, it provides the behavior of
- * <code>GemFireHealthImpl</code>, but does some JMX stuff like
- * registering beans with the agent.
+ * The JMX "managed resource" that represents the health of GemFire. Basically, it provides the
+ * behavior of <code>GemFireHealthImpl</code>, but does some JMX stuff like registering beans with
+ * the agent.
  *
  * @see AdminDistributedSystemJmxImpl#createGemFireHealth
- *
- *
  * @since GemFire 3.5
  */
 public class GemFireHealthJmxImpl extends GemFireHealthImpl implements ManagedResource {
@@ -60,14 +57,19 @@ public class GemFireHealthJmxImpl extends GemFireHealthImpl implements ManagedRe
   ///////////////////////  Constructors  ///////////////////////
 
   /**
-   * Creates a new <code>GemFireHealthJmxImpl</code> that monitors the
-   * health of the given distributed system and uses the given JMX
-   * agent. 
+   * Creates a new <code>GemFireHealthJmxImpl</code> that monitors the health of the given
+   * distributed system and uses the given JMX agent.
    */
-  GemFireHealthJmxImpl(GfManagerAgent agent, AdminDistributedSystemJmxImpl system) throws AdminException {
+  GemFireHealthJmxImpl(GfManagerAgent agent, AdminDistributedSystemJmxImpl system)
+      throws AdminException {
 
     super(agent, system);
-    this.mbeanName = new StringBuffer().append(MBEAN_NAME_PREFIX).append("GemFireHealth,id=").append(MBeanUtil.makeCompliantMBeanNameProperty(system.getId())).toString();
+    this.mbeanName =
+        new StringBuffer()
+            .append(MBEAN_NAME_PREFIX)
+            .append("GemFireHealth,id=")
+            .append(MBeanUtil.makeCompliantMBeanNameProperty(system.getId()))
+            .toString();
     this.objectName = MBeanUtil.createMBean(this);
   }
 
@@ -103,9 +105,7 @@ public class GemFireHealthJmxImpl extends GemFireHealthImpl implements ManagedRe
     }
   }
 
-  /**
-   * Creates a new {@link DistributedSystemHealthConfigJmxImpl}
-   */
+  /** Creates a new {@link DistributedSystemHealthConfigJmxImpl} */
   @Override
   protected DistributedSystemHealthConfig createDistributedSystemHealthConfig() {
 
@@ -113,13 +113,14 @@ public class GemFireHealthJmxImpl extends GemFireHealthImpl implements ManagedRe
       return new DistributedSystemHealthConfigJmxImpl(this);
 
     } catch (AdminException ex) {
-      throw new RuntimeAdminException(LocalizedStrings.GemFireHealthJmxImpl_WHILE_GETTING_THE_DISTRIBUTEDSYSTEMHEALTHCONFIG.toLocalizedString(), ex);
+      throw new RuntimeAdminException(
+          LocalizedStrings.GemFireHealthJmxImpl_WHILE_GETTING_THE_DISTRIBUTEDSYSTEMHEALTHCONFIG
+              .toLocalizedString(),
+          ex);
     }
   }
 
-  /**
-   * Creates a new {@link GemFireHealthConfigJmxImpl}
-   */
+  /** Creates a new {@link GemFireHealthConfigJmxImpl} */
   @Override
   protected GemFireHealthConfig createGemFireHealthConfig(String hostName) {
 
@@ -127,14 +128,14 @@ public class GemFireHealthJmxImpl extends GemFireHealthImpl implements ManagedRe
       return new GemFireHealthConfigJmxImpl(this, hostName);
 
     } catch (AdminException ex) {
-      throw new RuntimeAdminException(LocalizedStrings.GemFireHealthJmxImpl_WHILE_GETTING_THE_GEMFIREHEALTHCONFIG.toLocalizedString(), ex);
+      throw new RuntimeAdminException(
+          LocalizedStrings.GemFireHealthJmxImpl_WHILE_GETTING_THE_GEMFIREHEALTHCONFIG
+              .toLocalizedString(),
+          ex);
     }
   }
 
-  /**
-   * Ensures that the three primary Health MBeans are registered and returns
-   * their ObjectNames. 
-   */
+  /** Ensures that the three primary Health MBeans are registered and returns their ObjectNames. */
   protected void ensureMBeansAreRegistered() {
     MBeanUtil.ensureMBeanIsRegistered(this);
     MBeanUtil.ensureMBeanIsRegistered((ManagedResource) this.defaultConfig);
@@ -164,5 +165,4 @@ public class GemFireHealthJmxImpl extends GemFireHealthImpl implements ManagedRe
   public void cleanupResource() {
     close();
   }
-
 }

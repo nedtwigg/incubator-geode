@@ -25,12 +25,10 @@ import javax.naming.spi.InitialContextFactory;
 import javax.naming.Context;
 
 /**
- * Factory class to creates ContextImpl. Provides implementation for
- * InitialContextFactory.
- * 
- * Optionally, this also facilitates the backup of original system property
- * which can be restored later.
- * 
+ * Factory class to creates ContextImpl. Provides implementation for InitialContextFactory.
+ *
+ * <p>Optionally, this also facilitates the backup of original system property which can be restored
+ * later.
  */
 public class InitialContextFactoryImpl implements InitialContextFactory {
 
@@ -39,13 +37,13 @@ public class InitialContextFactoryImpl implements InitialContextFactory {
   private static Context ctx;
 
   /**
-   * Singleton for initial context. Instantiates and returns root/initial
-   * ContextImpl object that will be used as starting point for all naming
-   * operations. ContextImpl is then used by javax.naming.InitialContext
-   * object. InitialContextFactoryImpl caches the context once it's created.
-   * 
-   * @param environment Hashtable, contains the Context property to set to get
-   *            the instance of this context.
+   * Singleton for initial context. Instantiates and returns root/initial ContextImpl object that
+   * will be used as starting point for all naming operations. ContextImpl is then used by
+   * javax.naming.InitialContext object. InitialContextFactoryImpl caches the context once it's
+   * created.
+   *
+   * @param environment Hashtable, contains the Context property to set to get the instance of this
+   *     context.
    * @return ContextImpl object.
    */
   public synchronized Context getInitialContext(Hashtable environment) throws NamingException {
@@ -56,14 +54,13 @@ public class InitialContextFactoryImpl implements InitialContextFactory {
   }
 
   /**
-   * Sets the InitialContextFactoryImpl as the initial context factory. This
-   * helper method sets the Context.INITIAL_CONTEXT_FACTORY system properties.
-   * The method also saves the current values of these properties so they can
-   * be restored later on using revertSetAsInitial. This method can be called
-   * from from setup. These properties can be set directly directly too or
-   * through application resource file (jndi.properties).
+   * Sets the InitialContextFactoryImpl as the initial context factory. This helper method sets the
+   * Context.INITIAL_CONTEXT_FACTORY system properties. The method also saves the current values of
+   * these properties so they can be restored later on using revertSetAsInitial. This method can be
+   * called from from setup. These properties can be set directly directly too or through
+   * application resource file (jndi.properties).
    * java.naming.factory.initial=org.apache.geode.internal.jndi.InitialContextFactoryImpl
-   * 
+   *
    * @throws NamingException
    */
   public void setAsInitial() throws NamingException {
@@ -77,9 +74,8 @@ public class InitialContextFactoryImpl implements InitialContextFactory {
   }
 
   /**
-   * Restores the properties changed by setAsInitial(). This method should be
-   * called in tearDown()to clean up all changes to the environment in case if
-   * the test is running in the app server.
+   * Restores the properties changed by setAsInitial(). This method should be called in tearDown()to
+   * clean up all changes to the environment in case if the test is running in the app server.
    */
   public static void revertSetAsInitial() {
     Iterator i = oldSystemProps.entrySet().iterator();
@@ -90,9 +86,7 @@ public class InitialContextFactoryImpl implements InitialContextFactory {
   }
 
   private static void restoreSystemProperty(String key, String value) {
-    if (value != null)
-      System.setProperty(key, value);
-    else
-      System.getProperties().remove(key);
+    if (value != null) System.setProperty(key, value);
+    else System.getProperties().remove(key);
   }
 }

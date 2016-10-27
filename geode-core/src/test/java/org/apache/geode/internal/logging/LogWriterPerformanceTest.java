@@ -33,9 +33,7 @@ import org.apache.geode.distributed.internal.DistributionConfigImpl;
 import org.apache.geode.internal.util.IOUtils;
 import org.apache.geode.test.junit.categories.PerformanceTest;
 
-/**
- * Tests performance of logging when level is OFF.
- */
+/** Tests performance of logging when level is OFF. */
 @Category(PerformanceTest.class)
 @Ignore("Tests have no assertions")
 public class LogWriterPerformanceTest extends LoggingPerformanceTestCase {
@@ -79,7 +77,9 @@ public class LogWriterPerformanceTest extends LoggingPerformanceTestCase {
     final boolean logConfig = true;
     final FileOutputStream[] fosHolder = null;
 
-    final LogWriter logWriter = TestLogWriterFactory.createLogWriter(appendToFile, isLoner, isSecurityLog, config, logConfig, fosHolder);
+    final LogWriter logWriter =
+        TestLogWriterFactory.createLogWriter(
+            appendToFile, isLoner, isSecurityLog, config, logConfig, fosHolder);
     return logWriter;
   }
 
@@ -87,17 +87,18 @@ public class LogWriterPerformanceTest extends LoggingPerformanceTestCase {
   protected PerformanceLogger createPerformanceLogger() {
     final LogWriter logWriter = createLogWriter();
 
-    final PerformanceLogger perfLogger = new PerformanceLogger() {
-      @Override
-      public void log(final String message) {
-        logWriter.info(message);
-      }
+    final PerformanceLogger perfLogger =
+        new PerformanceLogger() {
+          @Override
+          public void log(final String message) {
+            logWriter.info(message);
+          }
 
-      @Override
-      public boolean isEnabled() {
-        return logWriter.infoEnabled();
-      }
-    };
+          @Override
+          public boolean isEnabled() {
+            return logWriter.infoEnabled();
+          }
+        };
 
     return perfLogger;
   }

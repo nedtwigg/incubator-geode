@@ -27,9 +27,7 @@ import org.apache.geode.cache.execute.FunctionContext;
 import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.management.internal.cli.domain.RegionInformation;
 
-/**
- * Function that retrieves regions hosted on every member
- */
+/** Function that retrieves regions hosted on every member */
 public class GetRegionsFunction implements Function, InternalEntity {
 
   private static final long serialVersionUID = 1L;
@@ -61,5 +59,4 @@ public class GetRegionsFunction implements Function, InternalEntity {
       functionContext.getResultSender().sendException(e);
     }
   }
-
 }

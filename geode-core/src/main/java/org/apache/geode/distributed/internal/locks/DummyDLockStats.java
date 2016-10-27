@@ -20,9 +20,8 @@ package org.apache.geode.distributed.internal.locks;
 import org.apache.geode.distributed.internal.*;
 
 /**
- * Empty implementation of <code>DistributedLockStats</code> used when there is
- * currently no connection to the distributed system.
- *
+ * Empty implementation of <code>DistributedLockStats</code> used when there is currently no
+ * connection to the distributed system.
  */
 public class DummyDLockStats implements DistributedLockStats {
 
@@ -50,50 +49,43 @@ public class DummyDLockStats implements DistributedLockStats {
     return -1;
   }
 
-  public void endLockWait(long start, boolean success) {
-  }
+  public void endLockWait(long start, boolean success) {}
 
   public int getWaitingQueueSize() {
     return -1;
   }
 
-  public void incWaitingQueueSize(int messages) {
-  }
+  public void incWaitingQueueSize(int messages) {}
 
   public int getSerialQueueSize() {
     return -1;
   }
 
-  public void incSerialQueueSize(int messages) {
-  }
+  public void incSerialQueueSize(int messages) {}
 
   public int getNumSerialThreads() {
     return -1;
   }
 
-  public void incNumSerialThreads(int threads) {
-  }
+  public void incNumSerialThreads(int threads) {}
 
   public int getWaitingThreads() {
     return -1;
   }
 
-  public void incWaitingThreads(int threads) {
-  }
+  public void incWaitingThreads(int threads) {}
 
   public int getServices() {
     return -1;
   }
 
-  public void incServices(int val) {
-  }
+  public void incServices(int val) {}
 
   public int getGrantors() {
     return -1;
   }
 
-  public void incGrantors(int val) {
-  }
+  public void incGrantors(int val) {}
 
   public int getGrantWaitsInProgress() {
     return -1;
@@ -119,26 +111,19 @@ public class DummyDLockStats implements DistributedLockStats {
     return -1;
   }
 
-  public void endGrantWait(long start) {
-  }
+  public void endGrantWait(long start) {}
 
-  public void endGrantWaitNotGrantor(long start) {
-  }
+  public void endGrantWaitNotGrantor(long start) {}
 
-  public void endGrantWaitTimeout(long start) {
-  }
+  public void endGrantWaitTimeout(long start) {}
 
-  public void endGrantWaitNotHolder(long start) {
-  }
+  public void endGrantWaitNotHolder(long start) {}
 
-  public void endGrantWaitFailed(long start) {
-  }
+  public void endGrantWaitFailed(long start) {}
 
-  public void endGrantWaitSuspended(long start) {
-  }
+  public void endGrantWaitSuspended(long start) {}
 
-  public void endGrantWaitDestroyed(long start) {
-  }
+  public void endGrantWaitDestroyed(long start) {}
 
   public int getCreateGrantorsInProgress() {
     return -1;
@@ -156,8 +141,7 @@ public class DummyDLockStats implements DistributedLockStats {
     return -1;
   }
 
-  public void endCreateGrantor(long start) {
-  }
+  public void endCreateGrantor(long start) {}
 
   public int getServiceCreatesInProgress() {
     return -1;
@@ -171,11 +155,9 @@ public class DummyDLockStats implements DistributedLockStats {
     return -1;
   }
 
-  public void serviceCreateLatchReleased(long start) {
-  }
+  public void serviceCreateLatchReleased(long start) {}
 
-  public void serviceInitLatchReleased(long start) {
-  }
+  public void serviceInitLatchReleased(long start) {}
 
   public long getServiceCreateLatchTime() {
     return -1;
@@ -209,8 +191,7 @@ public class DummyDLockStats implements DistributedLockStats {
     return -1;
   }
 
-  public void endGrantorWait(long start, boolean success) {
-  }
+  public void endGrantorWait(long start, boolean success) {}
 
   public QueueStatHelper getSerialQueueHelper() {
     return new DummyQueueStatHelper();
@@ -260,18 +241,15 @@ public class DummyDLockStats implements DistributedLockStats {
     return -1;
   }
 
-  public void endGrantorThreadRemoveUnusedTokens(long timing) {
-  }
+  public void endGrantorThreadRemoveUnusedTokens(long timing) {}
 
-  public void endGrantorThread(long start) {
-  }
+  public void endGrantorThread(long start) {}
 
   public int getPendingRequests() {
     return -1;
   }
 
-  public void incPendingRequests(int val) {
-  }
+  public void incPendingRequests(int val) {}
 
   public int getDestroyReadWaitsInProgress() {
     return -1;
@@ -297,8 +275,7 @@ public class DummyDLockStats implements DistributedLockStats {
     return -1;
   }
 
-  public void endDestroyReadWait(long start, boolean success) {
-  }
+  public void endDestroyReadWait(long start, boolean success) {}
 
   public int getDestroyWriteWaitsInProgress() {
     return -1;
@@ -324,22 +301,19 @@ public class DummyDLockStats implements DistributedLockStats {
     return -1;
   }
 
-  public void endDestroyWriteWait(long start, boolean success) {
-  }
+  public void endDestroyWriteWait(long start, boolean success) {}
 
   public int getDestroyReads() {
     return -1;
   }
 
-  public void incDestroyReads(int val) {
-  }
+  public void incDestroyReads(int val) {}
 
   public int getDestroyWrites() {
     return -1;
   }
 
-  public void incDestroyWrites(int val) {
-  }
+  public void incDestroyWrites(int val) {}
 
   public int getLockReleasesInProgress() {
     return -1;
@@ -357,68 +331,55 @@ public class DummyDLockStats implements DistributedLockStats {
     return -1;
   }
 
-  public void endLockRelease(long start) {
-  }
+  public void endLockRelease(long start) {}
 
   public int getBecomeGrantorRequests() {
     return -1;
   }
 
-  public void incBecomeGrantorRequests() {
-  }
+  public void incBecomeGrantorRequests() {}
 
   public int getTokens() {
     return -1;
   }
 
-  public void incTokens(int val) {
-  }
+  public void incTokens(int val) {}
 
   public int getGrantTokens() {
     return -1;
   }
 
-  public void incGrantTokens(int val) {
-  }
+  public void incGrantTokens(int val) {}
 
   public int getRequestQueues() {
     return -1;
   }
 
-  public void incRequestQueues(int val) {
-  }
+  public void incRequestQueues(int val) {}
 
   public int getFreeResourcesCompleted() {
     return -1;
   }
 
-  public void incFreeResourcesCompleted() {
-  }
+  public void incFreeResourcesCompleted() {}
 
   public int getFreeResourcesFailed() {
     return -1;
   }
 
-  public void incFreeResourcesFailed() {
-  }
+  public void incFreeResourcesFailed() {}
 
   public static class DummyPoolStatHelper implements PoolStatHelper {
-    public void startJob() {
-    }
+    public void startJob() {}
 
-    public void endJob() {
-    }
+    public void endJob() {}
   }
 
   public static class DummyQueueStatHelper implements QueueStatHelper {
-    public void add() {
-    }
+    public void add() {}
 
-    public void remove() {
-    }
+    public void remove() {}
 
-    public void remove(int count) {
-    }
+    public void remove(int count) {}
   }
-
 }

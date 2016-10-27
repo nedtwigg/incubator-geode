@@ -18,12 +18,9 @@ package org.apache.geode.internal.admin.remote;
 
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
-/**
- *
- */
+/** */
 public class RevokePersistentIDResponse extends AdminResponse {
-  public RevokePersistentIDResponse() {
-  }
+  public RevokePersistentIDResponse() {}
 
   public RevokePersistentIDResponse(InternalDistributedMember sender) {
     this.setRecipient(sender);

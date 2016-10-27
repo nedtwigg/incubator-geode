@@ -40,15 +40,14 @@ import org.apache.geode.internal.jta.TransactionUtils;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * GemFireTransactionDataSource extends AbstractDataSource. This is a datasource
- * class which provides connections from the pool. These connection can
- * participate in the transaction. The objects of these class are
- * ConnectionEventListener for connection close and error events.
- * 
- * Modified the exception handling & changed the name of some
- * functions.
+ * GemFireTransactionDataSource extends AbstractDataSource. This is a datasource class which
+ * provides connections from the pool. These connection can participate in the transaction. The
+ * objects of these class are ConnectionEventListener for connection close and error events.
+ *
+ * <p>Modified the exception handling & changed the name of some functions.
  */
-public class GemFireTransactionDataSource extends AbstractDataSource implements ConnectionEventListener {
+public class GemFireTransactionDataSource extends AbstractDataSource
+    implements ConnectionEventListener {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -58,44 +57,44 @@ public class GemFireTransactionDataSource extends AbstractDataSource implements 
   private Map xaResourcesMap = Collections.synchronizedMap(new HashMap());
 
   /**
-   * Place holder for abstract method 
-   * isWrapperFor(java.lang.Class) in java.sql.Wrapper
-   * required by jdk 1.6
+   * Place holder for abstract method isWrapperFor(java.lang.Class) in java.sql.Wrapper required by
+   * jdk 1.6
    *
    * @param iface - a Class defining an interface.
-   * @throws SQLException 
-   * @return boolean 
+   * @throws SQLException
+   * @return boolean
    */
   public boolean isWrapperFor(Class iface) throws SQLException {
     return true;
   }
 
   /**
-   * Place holder for abstract method
-   * java.lang Object unwrap(java.lang.Class) in java.sql.Wrapper
+   * Place holder for abstract method java.lang Object unwrap(java.lang.Class) in java.sql.Wrapper
    * required by jdk 1.6
-   * 
+   *
    * @param iface - a Class defining an interface.
-   * @throws SQLException 
-   * @return java.lang.Object 
+   * @throws SQLException
+   * @return java.lang.Object
    */
-
   public Object unwrap(Class iface) throws SQLException {
     return iface;
   }
 
   /**
    * Creates a new instance of GemFireTransactionDataSource
-   * 
+   *
    * @param xaDS The XADataSource object for the database driver.
-   * @param configs - The ConfiguredDataSourceProperties containing the
-   *          datasource properties.
+   * @param configs - The ConfiguredDataSourceProperties containing the datasource properties.
    * @throws SQLException
    */
-  public GemFireTransactionDataSource(XADataSource xaDS, ConfiguredDataSourceProperties configs) throws SQLException {
+  public GemFireTransactionDataSource(XADataSource xaDS, ConfiguredDataSourceProperties configs)
+      throws SQLException {
     super(configs);
     if ((xaDS == null) || (configs == null)) {
-      throw new SQLException(LocalizedStrings.GemFireTransactionDataSource_GEMFIRETRANSACTIONDATASOURCEXADATASOURCE_CLASS_OBJECT_IS_NULL_OR_CONFIGUREDDATASOURCEPROPERTIES_OBJECT_IS_NULL.toLocalizedString());
+      throw new SQLException(
+          LocalizedStrings
+              .GemFireTransactionDataSource_GEMFIRETRANSACTIONDATASOURCEXADATASOURCE_CLASS_OBJECT_IS_NULL_OR_CONFIGUREDDATASOURCEPROPERTIES_OBJECT_IS_NULL
+              .toLocalizedString());
     }
     try {
       provider = new GemFireConnectionPoolManager(xaDS, configs, this);
@@ -110,16 +109,19 @@ public class GemFireTransactionDataSource extends AbstractDataSource implements 
   }
 
   /**
-   * Implementation of datasource function. This method is used to get the
-   * connection from the pool. Default user name and password will be used.
-   * 
+   * Implementation of datasource function. This method is used to get the connection from the pool.
+   * Default user name and password will be used.
+   *
    * @throws SQLException
    * @return ???
    */
   @Override
   public Connection getConnection() throws SQLException {
     if (!isActive) {
-      throw new SQLException(LocalizedStrings.GemFireTransactionDataSource_GEMFIRETRANSACTIONDATASOURCEGETCONNECTIONNO_VALID_CONNECTION_AVAILABLE.toLocalizedString());
+      throw new SQLException(
+          LocalizedStrings
+              .GemFireTransactionDataSource_GEMFIRETRANSACTIONDATASOURCEGETCONNECTIONNO_VALID_CONNECTION_AVAILABLE
+              .toLocalizedString());
     }
     XAConnection xaConn = null;
     try {
@@ -135,9 +137,9 @@ public class GemFireTransactionDataSource extends AbstractDataSource implements 
   }
 
   /**
-   * Implementation of datasource function. This method is used to get the
-   * connection. The specified user name and passowrd will be used.
-   * 
+   * Implementation of datasource function. This method is used to get the connection. The specified
+   * user name and passowrd will be used.
+   *
    * @param clUsername The username for the database connection.
    * @param clPassword The password for the database connection.
    * @throws SQLException
@@ -150,9 +152,9 @@ public class GemFireTransactionDataSource extends AbstractDataSource implements 
   }
 
   /**
-   * Implementation of call back function from ConnectionEventListener
-   * interface. This callback will be invoked on connection close event.
-   * 
+   * Implementation of call back function from ConnectionEventListener interface. This callback will
+   * be invoked on connection close event.
+   *
    * @param event Connection event object
    */
   public void connectionClosed(ConnectionEvent event) {
@@ -162,11 +164,11 @@ public class GemFireTransactionDataSource extends AbstractDataSource implements 
         XAResource xar = (XAResource) xaResourcesMap.get(conn);
         xaResourcesMap.remove(conn);
         Transaction txn = transManager.getTransaction();
-        if (txn != null && xar != null)
-          txn.delistResource(xar, XAResource.TMSUCCESS);
+        if (txn != null && xar != null) txn.delistResource(xar, XAResource.TMSUCCESS);
         provider.returnConnection(conn);
       } catch (Exception e) {
-        String exception = "GemFireTransactionDataSource::connectionClosed: Exception occured due to " + e;
+        String exception =
+            "GemFireTransactionDataSource::connectionClosed: Exception occured due to " + e;
         if (logger.isDebugEnabled()) {
           logger.debug(exception, e);
         }
@@ -175,9 +177,9 @@ public class GemFireTransactionDataSource extends AbstractDataSource implements 
   }
 
   /**
-   * Implementation of call back function from ConnectionEventListener
-   * interface. This callback will be invoked on connection error event.
-   * 
+   * Implementation of call back function from ConnectionEventListener interface. This callback will
+   * be invoked on connection error event.
+   *
    * @param event Connection event object
    */
   public void connectionErrorOccurred(ConnectionEvent event) {
@@ -186,7 +188,8 @@ public class GemFireTransactionDataSource extends AbstractDataSource implements 
         PooledConnection conn = (PooledConnection) event.getSource();
         provider.returnAndExpireConnection(conn);
       } catch (Exception ex) {
-        String exception = "GemFireTransactionDataSource::connectionErrorOccured: Exception occured due to " + ex;
+        String exception =
+            "GemFireTransactionDataSource::connectionErrorOccured: Exception occured due to " + ex;
         if (logger.isDebugEnabled()) {
           logger.debug(exception, ex);
         }
@@ -194,9 +197,7 @@ public class GemFireTransactionDataSource extends AbstractDataSource implements 
     }
   }
 
-  /**
-   *  
-   */
+  /** */
   void registerTranxConnection(XAConnection xaConn) throws Exception {
     try {
       synchronized (this) {
@@ -212,7 +213,11 @@ public class GemFireTransactionDataSource extends AbstractDataSource implements 
         this.xaResourcesMap.put(xaConn, xar);
       }
     } catch (Exception ex) {
-      Exception e = new Exception(LocalizedStrings.GemFireTransactionDataSource_GEMFIRETRANSACTIONDATASOURCEREGISTERTRANXCONNECTION_EXCEPTION_IN_REGISTERING_THE_XARESOURCE_WITH_THE_TRANSACTIONEXCEPTION_OCCURED_0.toLocalizedString(ex));
+      Exception e =
+          new Exception(
+              LocalizedStrings
+                  .GemFireTransactionDataSource_GEMFIRETRANSACTIONDATASOURCEREGISTERTRANXCONNECTION_EXCEPTION_IN_REGISTERING_THE_XARESOURCE_WITH_THE_TRANSACTIONEXCEPTION_OCCURED_0
+                  .toLocalizedString(ex));
       e.initCause(ex);
       throw e;
     }
@@ -220,24 +225,26 @@ public class GemFireTransactionDataSource extends AbstractDataSource implements 
 
   /**
    * gets the connection from the pool
-   * 
+   *
    * @param poolC
    * @return ???
    */
   protected Connection getSQLConnection(PooledConnection poolC) throws SQLException {
     Connection conn = poolC.getConnection();
     boolean val = validateConnection(conn);
-    if (val)
-      return conn;
+    if (val) return conn;
     else {
       provider.returnAndExpireConnection(poolC);
-      throw new SQLException(LocalizedStrings.GemFireTransactionDataSource_GEMFIRECONNPOOLEDDATASOURCEGETCONNFROMCONNPOOLJAVASQLCONNECTION_OBTAINED_IS_INVALID.toLocalizedString());
+      throw new SQLException(
+          LocalizedStrings
+              .GemFireTransactionDataSource_GEMFIRECONNPOOLEDDATASOURCEGETCONNFROMCONNPOOLJAVASQLCONNECTION_OBTAINED_IS_INVALID
+              .toLocalizedString());
     }
   }
 
   /**
    * Returns the connection provider for the datasource.
-   * 
+   *
    * @return ConnectionProvider object for the datasource
    */
   public ConnectionProvider getConnectionProvider() {

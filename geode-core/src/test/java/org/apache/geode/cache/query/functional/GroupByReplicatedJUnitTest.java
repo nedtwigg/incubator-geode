@@ -22,10 +22,7 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.cache.query.CacheUtils;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class GroupByReplicatedJUnitTest extends GroupByTestImpl {
 
@@ -33,6 +30,5 @@ public class GroupByReplicatedJUnitTest extends GroupByTestImpl {
   public Region createRegion(String regionName, Class valueConstraint) {
     Region r1 = CacheUtils.createRegion(regionName, valueConstraint);
     return r1;
-
   }
 }

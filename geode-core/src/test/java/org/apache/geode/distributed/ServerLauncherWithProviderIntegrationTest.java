@@ -30,11 +30,10 @@ import org.mockito.Mockito;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
-/**
- * Extracted from ServerLauncherLocalIntegrationTest.
- */
+/** Extracted from ServerLauncherLocalIntegrationTest. */
 @Category(IntegrationTest.class)
-public class ServerLauncherWithProviderIntegrationTest extends AbstractServerLauncherIntegrationTestCase {
+public class ServerLauncherWithProviderIntegrationTest
+    extends AbstractServerLauncherIntegrationTestCase {
 
   @Before
   public final void setUpServerLauncherWithSpringTest() throws Exception {
@@ -46,7 +45,6 @@ public class ServerLauncherWithProviderIntegrationTest extends AbstractServerLau
   public final void tearDownServerLauncherWithSpringTest() throws Exception {
     MockServerLauncherCacheProvider.setCache(null);
     disconnectFromDS();
-
   }
 
   // NOTE make sure bugs like Trac #51201 never happen again!!!
@@ -54,7 +52,14 @@ public class ServerLauncherWithProviderIntegrationTest extends AbstractServerLau
   public void testBootstrapGemFireServerWithProvider() throws Throwable {
     Cache mockCache = Mockito.mock(Cache.class);
     MockServerLauncherCacheProvider.setCache(mockCache);
-    this.launcher = new Builder().setDisableDefaultServer(true).setForce(true).setMemberName(getUniqueName()).setSpringXmlLocation("spring/spring-gemfire-context.xml").set(MCAST_PORT, "0").build();
+    this.launcher =
+        new Builder()
+            .setDisableDefaultServer(true)
+            .setForce(true)
+            .setMemberName(getUniqueName())
+            .setSpringXmlLocation("spring/spring-gemfire-context.xml")
+            .set(MCAST_PORT, "0")
+            .build();
 
     assertNotNull(this.launcher);
 

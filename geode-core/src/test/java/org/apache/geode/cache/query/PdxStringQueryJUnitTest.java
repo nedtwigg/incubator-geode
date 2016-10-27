@@ -44,10 +44,7 @@ import java.util.*;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
-/**
- * 
- * 
- */
+/** */
 @Category(IntegrationTest.class)
 public class PdxStringQueryJUnitTest {
   private Cache c;
@@ -247,7 +244,10 @@ public class PdxStringQueryJUnitTest {
   @Test
   public void testStringMethods() throws Exception {
     putPdxInstances();
-    String queries[] = { "select secId from /exampleRegion where secId.toLowerCase()  = 'ibm'", "select secId from /exampleRegion where secId.startsWith('I')" };
+    String queries[] = {
+      "select secId from /exampleRegion where secId.toLowerCase()  = 'ibm'",
+      "select secId from /exampleRegion where secId.startsWith('I')"
+    };
     for (int i = 0; i < queries.length; i++) {
       SelectResults res = (SelectResults) qs.newQuery(queries[i]).execute();
       assertEquals("Incorrect result size returned for query. " + queries[i], 1, res.size());
@@ -350,32 +350,61 @@ public class PdxStringQueryJUnitTest {
   private void executeQueriesValidateResults(int indexType) throws Exception {
     DefaultQuery.setPdxReadSerialized(true);
 
-    String[] query = { "select count(*) from /exampleRegion", "select count(*) from /exampleRegion p, p.positions.values v", "select count(*) from /exampleRegion" };
+    String[] query = {
+      "select count(*) from /exampleRegion",
+      "select count(*) from /exampleRegion p, p.positions.values v",
+      "select count(*) from /exampleRegion"
+    };
 
     SelectResults res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(4, res.iterator().next());
 
-    query = new String[] { "select secId from /exampleRegion where secId  = 'IBM'", "select p.secId from /exampleRegion p, p.positions.values v where p.secId = 'IBM'", "select secId from /exampleRegion where secId  = 'IBM'" };
+    query =
+        new String[] {
+          "select secId from /exampleRegion where secId  = 'IBM'",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.secId = 'IBM'",
+          "select secId from /exampleRegion where secId  = 'IBM'"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(1, res.size());
     validateStringResult("IBM", res.iterator().next());
 
-    query = new String[] { "select p.secId from /exampleRegion p where p.secId  = ELEMENT(select e.secId from /exampleRegion e where e.secId  = 'IBM') ", "select p.secId from /exampleRegion p, p.positions.values v where p.secId = ELEMENT(select p1.secId from /exampleRegion p1, p.positions.values v1 where p1.secId = 'IBM')", "select p.secId from /exampleRegion p where p.secId  = ELEMENT(select e.secId from /exampleRegion e where e.secId  = 'IBM' )" };
+    query =
+        new String[] {
+          "select p.secId from /exampleRegion p where p.secId  = ELEMENT(select e.secId from /exampleRegion e where e.secId  = 'IBM') ",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.secId = ELEMENT(select p1.secId from /exampleRegion p1, p.positions.values v1 where p1.secId = 'IBM')",
+          "select p.secId from /exampleRegion p where p.secId  = ELEMENT(select e.secId from /exampleRegion e where e.secId  = 'IBM' )"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(1, res.size());
     validateStringResult("IBM", res.iterator().next());
 
-    query = new String[] { "select secId from /exampleRegion where secId LIKE 'VMW'", "select p.secId from /exampleRegion p, p.positions.values v where p.secId LIKE 'VMW'", "select secId from /exampleRegion where secId LIKE 'VMW'" };
+    query =
+        new String[] {
+          "select secId from /exampleRegion where secId LIKE 'VMW'",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.secId LIKE 'VMW'",
+          "select secId from /exampleRegion where secId LIKE 'VMW'"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(1, res.size());
     validateStringResult("VMW", res.iterator().next());
 
-    query = new String[] { "select secId from /exampleRegion where secId LIKE 'VM%'", "select p.secId from /exampleRegion p, p.positions.values v where p.secId LIKE 'VM%'", "select secId from /exampleRegion where secId LIKE 'VM%'" };
+    query =
+        new String[] {
+          "select secId from /exampleRegion where secId LIKE 'VM%'",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.secId LIKE 'VM%'",
+          "select secId from /exampleRegion where secId LIKE 'VM%'"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(1, res.size());
     validateStringResult("VMW", res.iterator().next());
 
-    query = new String[] { "select secId from /exampleRegion where secId IN SET ('YHOO', 'VMW')", "select p.secId from /exampleRegion p, p.positions.values v where p.secId  IN SET ('YHOO', 'VMW')", "select secId from /exampleRegion where secId IN SET ('YHOO', 'VMW')" };
+    query =
+        new String[] {
+          "select secId from /exampleRegion where secId IN SET ('YHOO', 'VMW')",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.secId  IN SET ('YHOO', 'VMW')",
+          "select secId from /exampleRegion where secId IN SET ('YHOO', 'VMW')"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(2, res.size());
     List secIdsList = new ArrayList();
@@ -387,7 +416,12 @@ public class PdxStringQueryJUnitTest {
       validateResult(secIdsList, iter.next());
     }
 
-    query = new String[] { "select p.secId from /exampleRegion p where p.secId IN  (select e.secId from /exampleRegion e where e.secId ='YHOO' or e.secId = 'VMW')", "select p.secId from /exampleRegion p, p.positions.values v where p.secId  IN  (select e.secId from /exampleRegion e where e.secId ='YHOO' or e.secId = 'VMW')", "select p.secId from /exampleRegion p where p.secId IN  (select e.secId from /exampleRegion e where e.secId ='YHOO' or e.secId = 'VMW')" };
+    query =
+        new String[] {
+          "select p.secId from /exampleRegion p where p.secId IN  (select e.secId from /exampleRegion e where e.secId ='YHOO' or e.secId = 'VMW')",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.secId  IN  (select e.secId from /exampleRegion e where e.secId ='YHOO' or e.secId = 'VMW')",
+          "select p.secId from /exampleRegion p where p.secId IN  (select e.secId from /exampleRegion e where e.secId ='YHOO' or e.secId = 'VMW')"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(2, res.size());
     secIdsList = new ArrayList();
@@ -399,7 +433,12 @@ public class PdxStringQueryJUnitTest {
       validateResult(secIdsList, iter.next());
     }
 
-    query = new String[] { "select secId, status from /exampleRegion where secId = 'IBM'", "select p.secId, p.status from /exampleRegion p, p.positions.values v where p.secId = 'IBM'", "select secId, status from /exampleRegion where secId = 'IBM'" };
+    query =
+        new String[] {
+          "select secId, status from /exampleRegion where secId = 'IBM'",
+          "select p.secId, p.status from /exampleRegion p, p.positions.values v where p.secId = 'IBM'",
+          "select secId, status from /exampleRegion where secId = 'IBM'"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(1, res.size());
     secIdsList = new ArrayList();
@@ -412,7 +451,12 @@ public class PdxStringQueryJUnitTest {
     validateResult(secIdsList, o1);
     validateResult(secIdsList, o2);
 
-    query = new String[] { "select secId from /exampleRegion where secId < 'YHOO'", "select p.secId from /exampleRegion p, p.positions.values v where p.secId < 'YHOO'", "select secId from /exampleRegion where secId < 'YHOO'" };
+    query =
+        new String[] {
+          "select secId from /exampleRegion where secId < 'YHOO'",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.secId < 'YHOO'",
+          "select secId from /exampleRegion where secId < 'YHOO'"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(3, res.size());
     iter = res.iterator();
@@ -424,7 +468,12 @@ public class PdxStringQueryJUnitTest {
       validateResult(secIdsList, iter.next());
     }
 
-    query = new String[] { "select secId from /exampleRegion where 'YHOO' > secId", "select p.secId from /exampleRegion p, p.positions.values v where 'YHOO' >  p.secId", "select secId from /exampleRegion where 'YHOO' > secId" };
+    query =
+        new String[] {
+          "select secId from /exampleRegion where 'YHOO' > secId",
+          "select p.secId from /exampleRegion p, p.positions.values v where 'YHOO' >  p.secId",
+          "select secId from /exampleRegion where 'YHOO' > secId"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(3, res.size());
     iter = res.iterator();
@@ -436,7 +485,12 @@ public class PdxStringQueryJUnitTest {
       validateResult(secIdsList, iter.next());
     }
 
-    query = new String[] { "select secId from /exampleRegion where secId > 'IBM'", "select p.secId from /exampleRegion p, p.positions.values v where p.secId > 'IBM'", "select secId from /exampleRegion where secId > 'IBM'" };
+    query =
+        new String[] {
+          "select secId from /exampleRegion where secId > 'IBM'",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.secId > 'IBM'",
+          "select secId from /exampleRegion where secId > 'IBM'"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(2, res.size());
     iter = res.iterator();
@@ -447,7 +501,12 @@ public class PdxStringQueryJUnitTest {
       validateResult(secIdsList, iter.next());
     }
 
-    query = new String[] { "select secId from /exampleRegion where secId > 'IBM' or ID=333", "select p.secId from /exampleRegion p, p.positions.values v where p.secId > 'IBM' or p.ID=333", "select secId from /exampleRegion where secId = 'VMW' or secId = 'YHOO' or secId = 'GOOGL'" };
+    query =
+        new String[] {
+          "select secId from /exampleRegion where secId > 'IBM' or ID=333",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.secId > 'IBM' or p.ID=333",
+          "select secId from /exampleRegion where secId = 'VMW' or secId = 'YHOO' or secId = 'GOOGL'"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(3, res.size());
     iter = res.iterator();
@@ -459,7 +518,12 @@ public class PdxStringQueryJUnitTest {
       validateResult(secIdsList, iter.next());
     }
 
-    query = new String[] { "select secId from /exampleRegion where secId > 'IBM' and secId < 'YHOO'", "select p.secId from /exampleRegion p, p.positions.values v where p.secId > 'IBM' and p.secId < 'YHOO'", "select secId from /exampleRegion where secId > 'IBM' and secId < 'YHOO'" };
+    query =
+        new String[] {
+          "select secId from /exampleRegion where secId > 'IBM' and secId < 'YHOO'",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.secId > 'IBM' and p.secId < 'YHOO'",
+          "select secId from /exampleRegion where secId > 'IBM' and secId < 'YHOO'"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(1, res.size());
     iter = res.iterator();
@@ -469,7 +533,12 @@ public class PdxStringQueryJUnitTest {
       validateResult(secIdsList, iter.next());
     }
 
-    query = new String[] { "select secId from /exampleRegion where ID = 111", "select p.secId from /exampleRegion p, p.positions.values v where p.ID = 111", "select secId from /exampleRegion where secId = 'VMW' or secId = 'IBM'" };
+    query =
+        new String[] {
+          "select secId from /exampleRegion where ID = 111",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.ID = 111",
+          "select secId from /exampleRegion where secId = 'VMW' or secId = 'IBM'"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(2, res.size());
     iter = res.iterator();
@@ -480,29 +549,49 @@ public class PdxStringQueryJUnitTest {
       validateResult(secIdsList, iter.next());
     }
 
-    query = new String[] { "select distinct ID from /exampleRegion where ID = 111", "select distinct p.ID from /exampleRegion p, p.positions.values v where p.ID = 111", "select distinct secId from /exampleRegion where secId = 'VMW'" };
+    query =
+        new String[] {
+          "select distinct ID from /exampleRegion where ID = 111",
+          "select distinct p.ID from /exampleRegion p, p.positions.values v where p.ID = 111",
+          "select distinct secId from /exampleRegion where secId = 'VMW'"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(1, res.size());
 
-    query = new String[] { "select ID from /exampleRegion where ID = 111 limit 1", "select p.ID from /exampleRegion p, p.positions.values v where p.ID = 111 limit 1", "select secId from /exampleRegion where secId = 'VMW' limit 1" };
+    query =
+        new String[] {
+          "select ID from /exampleRegion where ID = 111 limit 1",
+          "select p.ID from /exampleRegion p, p.positions.values v where p.ID = 111 limit 1",
+          "select secId from /exampleRegion where secId = 'VMW' limit 1"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(1, res.size());
 
-    query = new String[] { "select distinct secId from /exampleRegion order by secId", "select distinct p.secId from /exampleRegion p, p.positions.values order by p.secId", "select distinct secId from /exampleRegion order by secId" };
+    query =
+        new String[] {
+          "select distinct secId from /exampleRegion order by secId",
+          "select distinct p.secId from /exampleRegion p, p.positions.values order by p.secId",
+          "select distinct secId from /exampleRegion order by secId"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(4, res.size());
     iter = res.iterator();
-    String[] secIds = { "GOOGL", "IBM", "VMW", "YHOO" };
+    String[] secIds = {"GOOGL", "IBM", "VMW", "YHOO"};
     int i = 0;
     while (iter.hasNext()) {
       validateStringResult(secIds[i++], iter.next());
     }
 
-    query = new String[] { "select distinct * from /exampleRegion order by secId", "select distinct * from /exampleRegion p, p.positions.values v  order by p.secId", "select distinct * from /exampleRegion order by secId" };
+    query =
+        new String[] {
+          "select distinct * from /exampleRegion order by secId",
+          "select distinct * from /exampleRegion p, p.positions.values v  order by p.secId",
+          "select distinct * from /exampleRegion order by secId"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(4, res.size());
     iter = res.iterator();
-    secIds = new String[] { "GOOGL", "IBM", "VMW", "YHOO" };
+    secIds = new String[] {"GOOGL", "IBM", "VMW", "YHOO"};
     i = 0;
     while (iter.hasNext()) {
       Object o = iter.next();
@@ -513,17 +602,27 @@ public class PdxStringQueryJUnitTest {
       }
     }
 
-    query = new String[] { "select distinct secId from /exampleRegion order by secId limit 2", "select distinct p.secId from /exampleRegion p, p.positions.values v  order by p.secId limit 2", "select distinct secId from /exampleRegion order by secId limit 2" };
+    query =
+        new String[] {
+          "select distinct secId from /exampleRegion order by secId limit 2",
+          "select distinct p.secId from /exampleRegion p, p.positions.values v  order by p.secId limit 2",
+          "select distinct secId from /exampleRegion order by secId limit 2"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(2, res.size());
     iter = res.iterator();
-    secIds = new String[] { "GOOGL", "IBM" };
+    secIds = new String[] {"GOOGL", "IBM"};
     i = 0;
     while (iter.hasNext()) {
       validateStringResult(secIds[i++], iter.next());
     }
 
-    query = new String[] { "select secId from /exampleRegion where NOT (secId = 'VMW')", "select p.secId from /exampleRegion p, p.positions.values v where  NOT (p.secId = 'VMW')", "select secId from /exampleRegion where NOT (secId = 'VMW')" };
+    query =
+        new String[] {
+          "select secId from /exampleRegion where NOT (secId = 'VMW')",
+          "select p.secId from /exampleRegion p, p.positions.values v where  NOT (p.secId = 'VMW')",
+          "select secId from /exampleRegion where NOT (secId = 'VMW')"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(3, res.size());
     iter = res.iterator();
@@ -535,7 +634,12 @@ public class PdxStringQueryJUnitTest {
       validateResult(secIdsList, iter.next());
     }
 
-    query = new String[] { "select secId from /exampleRegion p where NOT (p.ID IN SET(111, 222)) ", "select p.secId from /exampleRegion p, p.positions.values v where NOT (p.ID IN SET(111, 222)) ", "select secId from /exampleRegion where NOT (secId IN SET('VMW','IBM','YHOO'))" };
+    query =
+        new String[] {
+          "select secId from /exampleRegion p where NOT (p.ID IN SET(111, 222)) ",
+          "select p.secId from /exampleRegion p, p.positions.values v where NOT (p.ID IN SET(111, 222)) ",
+          "select secId from /exampleRegion where NOT (secId IN SET('VMW','IBM','YHOO'))"
+        };
     res = (SelectResults) qs.newQuery(query[indexType]).execute();
     assertEquals(1, res.size());
     iter = res.iterator();
@@ -545,13 +649,23 @@ public class PdxStringQueryJUnitTest {
       validateResult(secIdsList, iter.next());
     }
 
-    query = new String[] { "select secId from /exampleRegion where secId  = $1", "select p.secId from /exampleRegion p, p.positions.values v where p.secId = $1", "select secId from /exampleRegion where secId  = $1" };
-    res = (SelectResults) qs.newQuery(query[indexType]).execute(new Object[] { "IBM" });
+    query =
+        new String[] {
+          "select secId from /exampleRegion where secId  = $1",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.secId = $1",
+          "select secId from /exampleRegion where secId  = $1"
+        };
+    res = (SelectResults) qs.newQuery(query[indexType]).execute(new Object[] {"IBM"});
     assertEquals(1, res.size());
     validateStringResult("IBM", res.iterator().next());
 
-    query = new String[] { "select secId from /exampleRegion where secId > $1 and secId < $2", "select p.secId from /exampleRegion p, p.positions.values v where p.secId > $1 and p.secId < $2", "select secId from /exampleRegion where secId > $1 and secId < $2" };
-    res = (SelectResults) qs.newQuery(query[indexType]).execute(new Object[] { "IBM", "YHOO" });
+    query =
+        new String[] {
+          "select secId from /exampleRegion where secId > $1 and secId < $2",
+          "select p.secId from /exampleRegion p, p.positions.values v where p.secId > $1 and p.secId < $2",
+          "select secId from /exampleRegion where secId > $1 and secId < $2"
+        };
+    res = (SelectResults) qs.newQuery(query[indexType]).execute(new Object[] {"IBM", "YHOO"});
     assertEquals(1, res.size());
     iter = res.iterator();
     secIdsList.clear();
@@ -560,7 +674,6 @@ public class PdxStringQueryJUnitTest {
       validateResult(secIdsList, iter.next());
     }
     DefaultQuery.setPdxReadSerialized(false);
-
   }
 
   private void validateStringResult(Object str1, Object str2) {
@@ -568,7 +681,8 @@ public class PdxStringQueryJUnitTest {
       assertEquals(str1, str2.toString());
     } else if (str1 instanceof PdxString && str2 instanceof String) {
       assertEquals(str1.toString(), str2);
-    } else if ((str1 instanceof PdxString && str2 instanceof PdxString) || (str1 instanceof String && str2 instanceof String)) {
+    } else if ((str1 instanceof PdxString && str2 instanceof PdxString)
+        || (str1 instanceof String && str2 instanceof String)) {
       assertEquals(str1, str2);
     } else {
       fail("Not String or PdxString objects");
@@ -632,6 +746,5 @@ public class PdxStringQueryJUnitTest {
     public void setStatus(String status) {
       this.status = status;
     }
-
   }
 }

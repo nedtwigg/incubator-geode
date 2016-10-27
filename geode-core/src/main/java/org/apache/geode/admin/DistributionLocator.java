@@ -18,21 +18,19 @@
 package org.apache.geode.admin;
 
 /**
- * Represents a single distribution locator server, of which a
- * distributed system may use zero or many.  The distributed system
- * will be configured to use either multicast discovery or locator
+ * Represents a single distribution locator server, of which a distributed system may use zero or
+ * many. The distributed system will be configured to use either multicast discovery or locator
  * service.
  *
  * @see DistributionLocatorConfig
- *
  * @since GemFire 3.5
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public interface DistributionLocator extends ManagedEntity {
 
-  /** 
-   * Returns the identity name for this locator.
-   */
+  /** Returns the identity name for this locator. */
   public String getId();
 
   /**
@@ -41,5 +39,4 @@ public interface DistributionLocator extends ManagedEntity {
    * @since GemFire 4.0
    */
   public DistributionLocatorConfig getConfig();
-
 }

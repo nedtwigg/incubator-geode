@@ -35,32 +35,21 @@ import org.apache.geode.internal.Version;
 import org.apache.geode.internal.VersionedDataInputStream;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/** <p>MsgDestreamer supports destreaming a streamed message from a tcp Connection
- * that arrives in chunks.
- * This allows us to receive a message without needing to
- * read it completely into a buffer before we can start deserializing it.
-
-    @since GemFire 5.0.2
-   
-    */
-
+/**
+ * MsgDestreamer supports destreaming a streamed message from a tcp Connection that arrives in
+ * chunks. This allows us to receive a message without needing to read it completely into a buffer
+ * before we can start deserializing it.
+ *
+ * @since GemFire 5.0.2
+ */
 public class MsgDestreamer {
-  /**
-   * If an exception occurs during deserialization of the message it will be
-   * recorded here.
-   */
+  /** If an exception occurs during deserialization of the message it will be recorded here. */
   private Throwable failure;
-  /**
-   * Used to store the deserialized message on success.
-   */
+  /** Used to store the deserialized message on success. */
   private DistributionMessage result;
-  /**
-   * The current failed messages reply processor id if it has one
-   */
+  /** The current failed messages reply processor id if it has one */
   private int RPid;
-  /**
-   * The thread that will be doing the deserialization of the message.
-   */
+  /** The thread that will be doing the deserialization of the message. */
   private final DestreamerThread t;
 
   private int size;
@@ -99,12 +88,10 @@ public class MsgDestreamer {
   }
 
   private void waitUntilDone() throws InterruptedException {
-    if (this.t.isClosed() || Thread.interrupted())
-      throw new InterruptedException();
+    if (this.t.isClosed() || Thread.interrupted()) throw new InterruptedException();
     synchronized (this) {
       while (this.failure == null && this.result == null) {
-        if (this.t.isClosed() || Thread.interrupted())
-          throw new InterruptedException();
+        if (this.t.isClosed() || Thread.interrupted()) throw new InterruptedException();
         this.wait(); // spurious wakeup ok
       }
     }
@@ -132,6 +119,7 @@ public class MsgDestreamer {
 
   /**
    * Adds a chunk for this guy to deserialize
+   *
    * @param bb contains the bytes of the chunk
    * @param length the number of bytes in bb that are this chunk
    */
@@ -146,6 +134,7 @@ public class MsgDestreamer {
 
   /**
    * Adds a chunk for this guy to deserialize
+   *
    * @param b a byte array contains the bytes of the chunk
    */
   public void addChunk(byte[] b) throws IOException {
@@ -158,22 +147,20 @@ public class MsgDestreamer {
     }
   }
 
-  /**
-   * Returns the number of bytes added to this destreamer.
-   */
+  /** Returns the number of bytes added to this destreamer. */
   public int size() {
     return this.size;
   }
 
   /**
    * Waits for the deserialization to complete and returns the deserialized message.
-   * @throws IOException
-   *         A problem occured while deserializing the message.
-   * @throws ClassNotFoundException
-   *         The class of an object read from <code>in</code> could
-   *         not be found
+   *
+   * @throws IOException A problem occured while deserializing the message.
+   * @throws ClassNotFoundException The class of an object read from <code>in</code> could not be
+   *     found
    */
-  public DistributionMessage getMessage() throws InterruptedException, IOException, ClassNotFoundException {
+  public DistributionMessage getMessage()
+      throws InterruptedException, IOException, ClassNotFoundException {
     //    if (Thread.interrupted()) throw new InterruptedException(); not necessary done in waitUntilDone
     //this.t.join();
     waitUntilDone();
@@ -184,7 +171,10 @@ public class MsgDestreamer {
       } else if (this.failure instanceof IOException) {
         throw (IOException) this.failure;
       } else {
-        IOException io = new IOException(LocalizedStrings.MsgDestreamer_FAILURE_DURING_MESSAGE_DESERIALIZATION.toLocalizedString());
+        IOException io =
+            new IOException(
+                LocalizedStrings.MsgDestreamer_FAILURE_DURING_MESSAGE_DESERIALIZATION
+                    .toLocalizedString());
         io.initCause(this.failure);
         throw io;
       }
@@ -195,9 +185,8 @@ public class MsgDestreamer {
   }
 
   /**
-   * Returns the reply processor id for the current failed message.
-   * Returns 0 if it does not have one.
-   * Note this method should only be called after getMessage has thrown an exception.
+   * Returns the reply processor id for the current failed message. Returns 0 if it does not have
+   * one. Note this method should only be called after getMessage has thrown an exception.
    */
   public int getRPid() {
     return this.RPid;
@@ -219,9 +208,7 @@ public class MsgDestreamer {
     }
   }
 
-  /**
-   * Thread used to deserialize chunks into a message.
-   */
+  /** Thread used to deserialize chunks into a message. */
   private class DestreamerThread extends Thread {
     private volatile boolean closed = false;
     final DestreamerIS is;
@@ -246,14 +233,15 @@ public class MsgDestreamer {
 
     @Override
     public void run() {
-      for (;;) {
+      for (; ; ) {
         if (isClosed()) {
           return;
         }
         try {
           ReplyProcessor21.initMessageRPId();
           final Version v = version;
-          DataInputStream dis = v == null ? new DataInputStream(this.is) : new VersionedDataInputStream(this.is, v);
+          DataInputStream dis =
+              v == null ? new DataInputStream(this.is) : new VersionedDataInputStream(this.is, v);
           long startSer = this.stats.startMsgDeserialization();
           setResult((DistributionMessage) InternalDataSerializer.readDSFID(dis));
           this.stats.endMsgDeserialization(startSer);
@@ -288,9 +276,8 @@ public class MsgDestreamer {
   }
 
   /**
-   * This input stream waits for data to be available.
-   * Once it is provided, by a call to addChunk, it will stream the
-   * data in from that chunk, signal that is has completed, and then wait for
+   * This input stream waits for data to be available. Once it is provided, by a call to addChunk,
+   * it will stream the data in from that chunk, signal that is has completed, and then wait for
    * another chunk.
    */
   private static class DestreamerIS extends InputStream {
@@ -369,18 +356,15 @@ public class MsgDestreamer {
     }
 
     private ByteBuffer waitForData() throws InterruptedException {
-      if (isClosed() || Thread.interrupted())
-        throw new InterruptedException();
+      if (isClosed() || Thread.interrupted()) throw new InterruptedException();
       synchronized (this.dataMon) {
         ByteBuffer result = this.data;
         while (result == null) {
-          if (isClosed() || Thread.interrupted())
-            throw new InterruptedException();
+          if (isClosed() || Thread.interrupted()) throw new InterruptedException();
           //logit("about to dataMon wait");
           this.dataMon.wait(); // spurious wakeup ok
           //logit("after dataMon wait");
-          if (isClosed() || Thread.interrupted())
-            throw new InterruptedException();
+          if (isClosed() || Thread.interrupted()) throw new InterruptedException();
           result = this.data;
         }
         return result;
@@ -400,17 +384,14 @@ public class MsgDestreamer {
     }
 
     private void waitUntilDone() throws InterruptedException {
-      if (isClosed() || Thread.interrupted())
-        throw new InterruptedException();
+      if (isClosed() || Thread.interrupted()) throw new InterruptedException();
       synchronized (this.doneMon) {
         while (this.data != null) {
-          if (isClosed() || Thread.interrupted())
-            throw new InterruptedException();
+          if (isClosed() || Thread.interrupted()) throw new InterruptedException();
           //logit("about to doneMon wait");
           this.doneMon.wait(); // spurious wakeup ok
           //logit("after doneMon wait");
-          if (isClosed() || Thread.interrupted())
-            throw new InterruptedException();
+          if (isClosed() || Thread.interrupted()) throw new InterruptedException();
         }
       }
     }
@@ -425,7 +406,7 @@ public class MsgDestreamer {
 
     public void addChunk(ByteBuffer bb) throws IOException {
       provideData(bb);
-      for (;;) {
+      for (; ; ) {
         stopper.checkCancelInProgress(null);
         boolean interrupted = Thread.interrupted();
         try {
@@ -449,7 +430,7 @@ public class MsgDestreamer {
         // so I believe it is ok to do this check outside of sync.
         myData = this.data;
         if (myData == null) {
-          for (;;) {
+          for (; ; ) {
             if (isClosed()) {
               throw new IOException("owner closed"); // TODO
             }
@@ -492,10 +473,8 @@ public class MsgDestreamer {
     }
 
     /**
-     * See the InputStream read method for javadocs.
-     * Note that if an attempt
-     * to read past the end of the wrapped ByteBuffer is done this method
-     * throws BufferUnderflowException
+     * See the InputStream read method for javadocs. Note that if an attempt to read past the end of
+     * the wrapped ByteBuffer is done this method throws BufferUnderflowException
      */
     @Override
     public final int read() throws IOException {
@@ -532,7 +511,6 @@ public class MsgDestreamer {
         return bb.remaining();
       }
     }
-
   }
 
   private static LogWriterI18n getLogger() {

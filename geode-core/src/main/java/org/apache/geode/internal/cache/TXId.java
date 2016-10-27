@@ -25,14 +25,12 @@ import org.apache.geode.internal.DSFIDFactory;
 import java.io.*;
 import org.apache.geode.distributed.internal.membership.*;
 
-/** The implementation of the {@link TransactionId} interface stored
- * in the transaction state and used, amoung other things, to uniquely
- * identify a transaction in a confederation of transaction
+/**
+ * The implementation of the {@link TransactionId} interface stored in the transaction state and
+ * used, amoung other things, to uniquely identify a transaction in a confederation of transaction
  * participants (currently VM in a Distributed System).
  *
- * 
  * @since GemFire 4.0
- * 
  * @see TXManagerImpl#begin
  * @see org.apache.geode.cache.CacheTransactionManager#getTransactionId
  */
@@ -42,14 +40,12 @@ public final class TXId extends ExternalizableDSFID implements TransactionId {
   /** Per unique identifier within the transactions memberId */
   private int uniqId;
 
-  /** Default constructor meant for the Externalizable
-   */
-  public TXId() {
-  }
+  /** Default constructor meant for the Externalizable */
+  public TXId() {}
 
-  /** Constructor for the Transation Manager, the birth place of
-   * TXId objects.  The object is Serializable mainly because of
-   * the identifier type provided by JGroups.
+  /**
+   * Constructor for the Transation Manager, the birth place of TXId objects. The object is
+   * Serializable mainly because of the identifier type provided by JGroups.
    */
   public TXId(InternalDistributedMember memberId, int uniqId) {
     this.memberId = memberId;
@@ -76,15 +72,17 @@ public final class TXId extends ExternalizableDSFID implements TransactionId {
     }
 
     TXId otx = (TXId) o;
-    return (otx.uniqId == this.uniqId && ((otx.memberId == null && this.memberId == null) || (otx.memberId != null && this.memberId != null && otx.memberId.equals(this.memberId))));
-
+    return (otx.uniqId == this.uniqId
+        && ((otx.memberId == null && this.memberId == null)
+            || (otx.memberId != null
+                && this.memberId != null
+                && otx.memberId.equals(this.memberId))));
   }
 
   @Override
   public int hashCode() {
     int retval = this.uniqId;
-    if (this.memberId != null)
-      retval = retval * 37 + this.memberId.hashCode();
+    if (this.memberId != null) retval = retval * 37 + this.memberId.hashCode();
     return retval;
   }
 
@@ -119,5 +117,4 @@ public final class TXId extends ExternalizableDSFID implements TransactionId {
   public Version[] getSerializationVersions() {
     return null;
   }
-
 }

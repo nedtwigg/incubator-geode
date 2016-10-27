@@ -23,28 +23,21 @@ import java.io.InputStreamReader;
 import jline.UnixTerminal;
 
 /**
- * This is re-write of UnixTerminal with stty process spawn removed.
- * There is no process named stty in windows (non-cygwin process) so
- * that part is commented, also since erase is already applied within
- * gfsh script when running under cygwin backspaceDeleteSwitched is
- * hard-coded as true
- * 
- * To know exact changed please see UnixTerminal code.
- * 
+ * This is re-write of UnixTerminal with stty process spawn removed. There is no process named stty
+ * in windows (non-cygwin process) so that part is commented, also since erase is already applied
+ * within gfsh script when running under cygwin backspaceDeleteSwitched is hard-coded as true
  *
+ * <p>To know exact changed please see UnixTerminal code.
  */
 public class CygwinMinttyTerminal extends UnixTerminal {
 
   String encoding = System.getProperty("input.encoding", "UTF-8");
   InputStreamReader replayReader;
 
-  public CygwinMinttyTerminal() throws Exception {
-  }
+  public CygwinMinttyTerminal() throws Exception {}
 
   @Override
-  public void init() throws Exception {
-
-  }
+  public void init() throws Exception {}
 
   @Override
   public void restore() throws Exception {

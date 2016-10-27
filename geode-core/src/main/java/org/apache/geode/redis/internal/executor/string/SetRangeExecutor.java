@@ -29,7 +29,8 @@ public class SetRangeExecutor extends StringExecutor {
 
   private final String ERROR_NOT_INT = "The number provided must be numeric";
 
-  private final String ERROR_ILLEGAL_OFFSET = "The offset is out of range, must be greater than or equal to 0 and the offset added to the length of the value must be less than 536870911 (512MB), the maximum allowed size";
+  private final String ERROR_ILLEGAL_OFFSET =
+      "The offset is out of range, must be greater than or equal to 0 and the offset added to the length of the value must be less than 536870911 (512MB), the maximum allowed size";
 
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
@@ -58,13 +59,13 @@ public class SetRangeExecutor extends StringExecutor {
 
     int totalLength = offset + value.length;
     if (offset < 0 || totalLength > 536870911) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_ILLEGAL_OFFSET));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_ILLEGAL_OFFSET));
       return;
     } else if (value.length == 0) {
       int length = wrapper == null ? 0 : wrapper.toBytes().length;
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), length));
-      if (wrapper == null)
-        context.getRegionProvider().removeKey(key);
+      if (wrapper == null) context.getRegionProvider().removeKey(key);
       return;
     }
 
@@ -92,5 +93,4 @@ public class SetRangeExecutor extends StringExecutor {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), returnLength));
     }
   }
-
 }

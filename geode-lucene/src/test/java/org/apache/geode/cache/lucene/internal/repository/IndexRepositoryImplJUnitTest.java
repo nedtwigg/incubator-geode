@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -53,9 +53,8 @@ import org.apache.geode.cache.lucene.internal.repository.serializer.Type2;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Test of the {@link IndexRepository} and everything below
- * it. This tests that we can save gemfire objects or PDXInstance
- * objects into a lucene index and search for those objects later.
+ * Test of the {@link IndexRepository} and everything below it. This tests that we can save gemfire
+ * objects or PDXInstance objects into a lucene index and search for those objects later.
  */
 @Category(IntegrationTest.class)
 public class IndexRepositoryImplJUnitTest {
@@ -77,7 +76,7 @@ public class IndexRepositoryImplJUnitTest {
     RegionDirectory dir = new RegionDirectory(fileRegion, chunkRegion, fileSystemStats);
     IndexWriterConfig config = new IndexWriterConfig(analyzer);
     writer = new IndexWriter(dir, config);
-    String[] indexedFields = new String[] { "s", "i", "l", "d", "f", "s2", "missing" };
+    String[] indexedFields = new String[] {"s", "i", "l", "d", "f", "s2", "missing"};
     mapper = new HeterogeneousLuceneSerializer(indexedFields);
     region = Mockito.mock(Region.class);
     userRegion = Mockito.mock(Region.class);
@@ -89,9 +88,14 @@ public class IndexRepositoryImplJUnitTest {
   @Test
   public void testAddDocs() throws IOException, ParseException {
     repo.create("key1", new Type2("bacon maple bar", 1, 2L, 3.0, 4.0f, "Grape Ape doughnut"));
-    repo.create("key2", new Type2("McMinnville Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
-    repo.create("key3", new Type2("Voodoo Doll doughnut", 1, 2L, 3.0, 4.0f, "Toasted coconut doughnut"));
-    repo.create("key4", new Type2("Portland Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
+    repo.create(
+        "key2",
+        new Type2("McMinnville Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
+    repo.create(
+        "key3", new Type2("Voodoo Doll doughnut", 1, 2L, 3.0, 4.0f, "Toasted coconut doughnut"));
+    repo.create(
+        "key4",
+        new Type2("Portland Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
     repo.commit();
 
     checkQuery("Cream", "s", "key2", "key4");
@@ -149,8 +153,12 @@ public class IndexRepositoryImplJUnitTest {
 
   @Test
   public void queryShouldUpdateStats() throws IOException, ParseException {
-    repo.create("key2", new Type2("McMinnville Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
-    repo.create("key4", new Type2("Portland Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
+    repo.create(
+        "key2",
+        new Type2("McMinnville Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
+    repo.create(
+        "key4",
+        new Type2("Portland Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
     repo.commit();
     checkQuery("Cream", "s", "key2", "key4");
     verify(stats, times(1)).startQuery();
@@ -174,11 +182,17 @@ public class IndexRepositoryImplJUnitTest {
     assertFalse(writer.isOpen());
   }
 
-  private void updateAndRemove(Object key1, Object key2, Object key3, Object key4) throws IOException, ParseException {
+  private void updateAndRemove(Object key1, Object key2, Object key3, Object key4)
+      throws IOException, ParseException {
     repo.create(key1, new Type2("bacon maple bar", 1, 2L, 3.0, 4.0f, "Grape Ape doughnut"));
-    repo.create(key2, new Type2("McMinnville Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
-    repo.create(key3, new Type2("Voodoo Doll doughnut", 1, 2L, 3.0, 4.0f, "Toasted coconut doughnut"));
-    repo.create(key4, new Type2("Portland Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
+    repo.create(
+        key2,
+        new Type2("McMinnville Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
+    repo.create(
+        key3, new Type2("Voodoo Doll doughnut", 1, 2L, 3.0, 4.0f, "Toasted coconut doughnut"));
+    repo.create(
+        key4,
+        new Type2("Portland Cream doughnut", 1, 2L, 3.0, 4.0f, "Captain my Captain doughnut"));
     repo.commit();
 
     repo.update(key3, new Type2("Boston Cream Pie", 1, 2L, 3.0, 4.0f, "Toasted coconut doughnut"));
@@ -203,7 +217,8 @@ public class IndexRepositoryImplJUnitTest {
     return new ByteWrapper(key);
   }
 
-  private void checkQuery(String queryTerm, String queryField, Object... expectedKeys) throws IOException, ParseException {
+  private void checkQuery(String queryTerm, String queryField, Object... expectedKeys)
+      throws IOException, ParseException {
     Set<Object> expectedSet = new HashSet<Object>();
     expectedSet.addAll(Arrays.asList(expectedKeys));
 
@@ -235,10 +250,7 @@ public class IndexRepositoryImplJUnitTest {
     }
   }
 
-  /**
-   * A wrapper around a byte array that implements equals,
-   * for comparison checks.
-   */
+  /** A wrapper around a byte array that implements equals, for comparison checks. */
   private static class ByteWrapper implements Serializable {
     private byte[] bytes;
 
@@ -257,17 +269,12 @@ public class IndexRepositoryImplJUnitTest {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
       ByteWrapper other = (ByteWrapper) obj;
-      if (!Arrays.equals(bytes, other.bytes))
-        return false;
+      if (!Arrays.equals(bytes, other.bytes)) return false;
       return true;
     }
   }
-
 }

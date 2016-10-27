@@ -131,17 +131,16 @@ public class HandShake implements ClientHandShake {
   // have its own handShake instance.
   private static HandShake handshake;
 
-  final protected ClientProxyMembershipID id;
+  protected final ClientProxyMembershipID id;
 
   private Properties credentials;
 
   private Version clientVersion;
 
   /**
-   * Used at client side, indicates whether the 'delta-propagation' property is
-   * enabled on the DS this client is connected to. This variable is used to
-   * decide whether to send delta bytes or full value to the server for a
-   * delta-update operation.
+   * Used at client side, indicates whether the 'delta-propagation' property is enabled on the DS
+   * this client is connected to. This variable is used to decide whether to send delta bytes or
+   * full value to the server for a delta-update operation.
    */
   private static boolean deltaEnabledOnServer = true;
 
@@ -167,9 +166,21 @@ public class HandShake implements ClientHandShake {
   private boolean multiuserSecureMode = false;
 
   // Parameters for the Diffie-Hellman key exchange
-  private static final BigInteger dhP = new BigInteger("13528702063991073999718992897071702177131142188276542919088770094024269" + "73079899070080419278066109785292538223079165925365098181867673946" + "34756714063947534092593553024224277712367371302394452615862654308" + "11180902979719649450105660478776364198726078338308557022096810447" + "3500348898008043285865193451061481841186553");
+  private static final BigInteger dhP =
+      new BigInteger(
+          "13528702063991073999718992897071702177131142188276542919088770094024269"
+              + "73079899070080419278066109785292538223079165925365098181867673946"
+              + "34756714063947534092593553024224277712367371302394452615862654308"
+              + "11180902979719649450105660478776364198726078338308557022096810447"
+              + "3500348898008043285865193451061481841186553");
 
-  private static final BigInteger dhG = new BigInteger("13058345680719715096166513407513969537624553636623932169016704425008150" + "56576152779768716554354314319087014857769741104157332735258102835" + "93126577393912282416840649805564834470583437473176415335737232689" + "81480201869671811010996732593655666464627559582258861254878896534" + "1273697569202082715873518528062345259949959");
+  private static final BigInteger dhG =
+      new BigInteger(
+          "13058345680719715096166513407513969537624553636623932169016704425008150"
+              + "56576152779768716554354314319087014857769741104157332735258102835"
+              + "93126577393912282416840649805564834470583437473176415335737232689"
+              + "81480201869671811010996732593655666464627559582258861254878896534"
+              + "1273697569202082715873518528062345259949959");
 
   private static final int dhL = 1023;
 
@@ -214,35 +225,40 @@ public class HandShake implements ClientHandShake {
   /** @since GemFire 5.7 */
   private byte clientConflation = CONFLATION_DEFAULT;
 
-  /** @since GemFire 6.0.3
-   *  List of per client property override bits.
-   */
+  /** @since GemFire 6.0.3 List of per client property override bits. */
   private byte[] overrides = null;
 
   /**
    * Test hooks for per client conflation
+   *
    * @since GemFire 5.7
    */
   public static byte clientConflationForTesting = 0;
+
   public static boolean setClientConflationForTesting = false;
 
   /**
    * Test hook for client version support
+   *
    * @since GemFire 5.7
    */
   private static Version currentClientVersion = ConnectionProxy.VERSION;
-  /**
-   * Another test hook, holding a version ordinal that is higher than CURRENT
-   */
+  /** Another test hook, holding a version ordinal that is higher than CURRENT */
   private static short overrideClientVersion = -1;
 
   /** Constructor used by server side connection */
-  public HandShake(Socket sock, int timeout, DistributedSystem sys, Version clientVersion, byte communicationMode) throws IOException, AuthenticationRequiredException {
+  public HandShake(
+      Socket sock,
+      int timeout,
+      DistributedSystem sys,
+      Version clientVersion,
+      byte communicationMode)
+      throws IOException, AuthenticationRequiredException {
     this.clientVersion = clientVersion;
     this.system = sys;
     //SocketChannel sc = sock.getChannel();
     /*if (sc != null) {
-      } else*/ {
+    } else*/ {
       int soTimeout = -1;
       try {
         soTimeout = sock.getSoTimeout();
@@ -251,11 +267,14 @@ public class HandShake implements ClientHandShake {
         int valRead = is.read();
         //this.code =  (byte)is.read();
         if (valRead == -1) {
-          throw new EOFException(LocalizedStrings.HandShake_HANDSHAKE_EOF_REACHED_BEFORE_CLIENT_CODE_COULD_BE_READ.toLocalizedString());
+          throw new EOFException(
+              LocalizedStrings.HandShake_HANDSHAKE_EOF_REACHED_BEFORE_CLIENT_CODE_COULD_BE_READ
+                  .toLocalizedString());
         }
         this.code = (byte) valRead;
         if (this.code != REPLY_OK) {
-          throw new IOException(LocalizedStrings.HandShake_HANDSHAKE_REPLY_CODE_IS_NOT_OK.toLocalizedString());
+          throw new IOException(
+              LocalizedStrings.HandShake_HANDSHAKE_REPLY_CODE_IS_NOT_OK.toLocalizedString());
         }
         try {
           DataInputStream dis = new DataInputStream(is);
@@ -270,12 +289,13 @@ public class HandShake implements ClientHandShake {
           // Note: credentials should always be the last piece in handshake for
           // Diffie-Hellman key exchange to work
           if (clientVersion.compareTo(Version.GFE_603) >= 0) {
-            setOverrides(new byte[] { dis.readByte() });
+            setOverrides(new byte[] {dis.readByte()});
           } else {
             setClientConflation(dis.readByte());
           }
           //Hitesh
-          if (this.clientVersion.compareTo(Version.GFE_65) < 0 || communicationMode == Acceptor.GATEWAY_TO_GATEWAY) {
+          if (this.clientVersion.compareTo(Version.GFE_65) < 0
+              || communicationMode == Acceptor.GATEWAY_TO_GATEWAY) {
             this.credentials = readCredentials(dis, dos, sys);
           } else {
             this.credentials = this.readCredential(dis, dos, sys);
@@ -285,7 +305,10 @@ public class HandShake implements ClientHandShake {
           throw ioe;
         } catch (ClassNotFoundException cnfe) {
           this.code = -3;
-          throw new IOException(LocalizedStrings.HandShake_CLIENTPROXYMEMBERSHIPID_CLASS_COULD_NOT_BE_FOUND_WHILE_DESERIALIZING_THE_OBJECT.toLocalizedString());
+          throw new IOException(
+              LocalizedStrings
+                  .HandShake_CLIENTPROXYMEMBERSHIPID_CLASS_COULD_NOT_BE_FOUND_WHILE_DESERIALIZING_THE_OBJECT
+                  .toLocalizedString());
         }
       } finally {
         if (soTimeout != -1) {
@@ -303,7 +326,7 @@ public class HandShake implements ClientHandShake {
   }
 
   //private void initSingleton(DistributedSystem sys) {
-  //  id = ClientProxyMembershipID.getNewProxyMembership();    
+  //  id = ClientProxyMembershipID.getNewProxyMembership();
   //  this.system = sys;
   //  this.code = REPLY_OK;
   //}
@@ -372,9 +395,11 @@ public class HandShake implements ClientHandShake {
     byte result = CONFLATION_DEFAULT;
 
     String clientConflationValue = this.system.getProperties().getProperty(CONFLATE_EVENTS);
-    if (DistributionConfig.CLIENT_CONFLATION_PROP_VALUE_ON.equalsIgnoreCase(clientConflationValue)) {
+    if (DistributionConfig.CLIENT_CONFLATION_PROP_VALUE_ON.equalsIgnoreCase(
+        clientConflationValue)) {
       result = CONFLATION_ON;
-    } else if (DistributionConfig.CLIENT_CONFLATION_PROP_VALUE_OFF.equalsIgnoreCase(clientConflationValue)) {
+    } else if (DistributionConfig.CLIENT_CONFLATION_PROP_VALUE_OFF.equalsIgnoreCase(
+        clientConflationValue)) {
       result = CONFLATION_OFF;
     }
     return result;
@@ -384,12 +409,12 @@ public class HandShake implements ClientHandShake {
   private void setClientConflation(byte value) {
     this.clientConflation = value;
     switch (this.clientConflation) {
-    case CONFLATION_DEFAULT:
-    case CONFLATION_OFF:
-    case CONFLATION_ON:
-      break;
-    default:
-      throw new IllegalArgumentException("Illegal clientConflation");
+      case CONFLATION_DEFAULT:
+      case CONFLATION_OFF:
+      case CONFLATION_ON:
+        break;
+      default:
+        throw new IllegalArgumentException("Illegal clientConflation");
     }
   }
 
@@ -410,7 +435,7 @@ public class HandShake implements ClientHandShake {
       override = (byte)((override << 2) | this.clientConflation);
       */
       override = this.clientConflation;
-      this.overrides = new byte[] { override };
+      this.overrides = new byte[] {override};
     }
   }
 
@@ -446,7 +471,17 @@ public class HandShake implements ClientHandShake {
     }
   }
 
-  public byte write(DataOutputStream dos, DataInputStream dis, byte communicationMode, int replyCode, int readTimeout, List ports, Properties p_credentials, DistributedMember member, boolean isCallbackConnection) throws IOException {
+  public byte write(
+      DataOutputStream dos,
+      DataInputStream dis,
+      byte communicationMode,
+      int replyCode,
+      int readTimeout,
+      List ports,
+      Properties p_credentials,
+      DistributedMember member,
+      boolean isCallbackConnection)
+      throws IOException {
     HeapDataOutputStream hdos = new HeapDataOutputStream(32, Version.CURRENT);
     byte acceptanceCode = -1;
     try {
@@ -487,7 +522,9 @@ public class HandShake implements ClientHandShake {
       }
 
       if (isCallbackConnection || communicationMode == Acceptor.GATEWAY_TO_GATEWAY) {
-        if (isCallbackConnection && this.multiuserSecureMode && communicationMode != Acceptor.GATEWAY_TO_GATEWAY) {
+        if (isCallbackConnection
+            && this.multiuserSecureMode
+            && communicationMode != Acceptor.GATEWAY_TO_GATEWAY) {
           hdos.writeByte(SECURITY_MULTIUSER_NOTIFICATIONCHANNEL);
           hdos.flush();
           dos.write(hdos.toByteArray());
@@ -505,7 +542,13 @@ public class HandShake implements ClientHandShake {
     return acceptanceCode;
   }
 
-  public void writeCredentials(DataOutputStream dos, DataInputStream dis, Properties p_credentials, boolean isNotification, DistributedMember member) throws IOException, GemFireSecurityException {
+  public void writeCredentials(
+      DataOutputStream dos,
+      DataInputStream dis,
+      Properties p_credentials,
+      boolean isNotification,
+      DistributedMember member)
+      throws IOException, GemFireSecurityException {
     HeapDataOutputStream hdos = new HeapDataOutputStream(32, Version.CURRENT);
     try {
       writeCredentials(dos, dis, p_credentials, isNotification, member, hdos);
@@ -515,9 +558,8 @@ public class HandShake implements ClientHandShake {
   }
 
   /**
-   * 
    * This assumes that authentication is the last piece of info in handshake
-   * 
+   *
    * @param dos
    * @param dis
    * @param p_credentials
@@ -527,7 +569,14 @@ public class HandShake implements ClientHandShake {
    * @throws IOException
    * @throws GemFireSecurityException
    */
-  public void writeCredentials(DataOutputStream dos, DataInputStream dis, Properties p_credentials, boolean isNotification, DistributedMember member, HeapDataOutputStream heapdos) throws IOException, GemFireSecurityException {
+  public void writeCredentials(
+      DataOutputStream dos,
+      DataInputStream dis,
+      Properties p_credentials,
+      boolean isNotification,
+      DistributedMember member,
+      HeapDataOutputStream heapdos)
+      throws IOException, GemFireSecurityException {
 
     if (p_credentials == null) {
       // No credentials indicator
@@ -551,9 +600,11 @@ public class HandShake implements ClientHandShake {
     try {
       InternalLogWriter securityLogWriter = (InternalLogWriter) this.system.getSecurityLogWriter();
       securityLogWriter.fine("HandShake: using Diffie-Hellman key exchange with algo " + dhSKAlgo);
-      boolean requireAuthentication = (certificateFilePath != null && certificateFilePath.length() > 0);
+      boolean requireAuthentication =
+          (certificateFilePath != null && certificateFilePath.length() > 0);
       if (requireAuthentication) {
-        securityLogWriter.fine("HandShake: server authentication using digital " + "signature required");
+        securityLogWriter.fine(
+            "HandShake: server authentication using digital " + "signature required");
       }
       // Credentials with encryption indicator
       heapdos.writeByte(CREDENTIALS_DHENCRYPT);
@@ -592,7 +643,10 @@ public class HandShake implements ClientHandShake {
           String subject = DataSerializer.readString(dis);
           byte[] signatureBytes = DataSerializer.readByteArray(dis);
           if (!certificateMap.containsKey(subject)) {
-            throw new AuthenticationFailedException(LocalizedStrings.HandShake_HANDSHAKE_FAILED_TO_FIND_PUBLIC_KEY_FOR_SERVER_WITH_SUBJECT_0.toLocalizedString(subject));
+            throw new AuthenticationFailedException(
+                LocalizedStrings
+                    .HandShake_HANDSHAKE_FAILED_TO_FIND_PUBLIC_KEY_FOR_SERVER_WITH_SUBJECT_0
+                    .toLocalizedString(subject));
           }
 
           // Check the signature with the public key
@@ -602,9 +656,11 @@ public class HandShake implements ClientHandShake {
           sig.update(clientChallenge);
           // Check the challenge string
           if (!sig.verify(signatureBytes)) {
-            throw new AuthenticationFailedException("Mismatch in client " + "challenge bytes. Malicious server?");
+            throw new AuthenticationFailedException(
+                "Mismatch in client " + "challenge bytes. Malicious server?");
           }
-          securityLogWriter.fine("HandShake: Successfully verified the " + "digital signature from server");
+          securityLogWriter.fine(
+              "HandShake: Successfully verified the " + "digital signature from server");
         }
 
         byte[] challenge = DataSerializer.readByteArray(dis);
@@ -620,7 +676,8 @@ public class HandShake implements ClientHandShake {
           DataSerializer.writeByteArray(challenge, hdos);
 
           //  byte[] encBytes = encrypt.doFinal(hdos.toByteArray());
-          byte[] encBytes = encryptBytes(hdos.toByteArray(), getEncryptCipher(dhSKAlgo, this.clientPublicKey));
+          byte[] encBytes =
+              encryptBytes(hdos.toByteArray(), getEncryptCipher(dhSKAlgo, this.clientPublicKey));
           DataSerializer.writeByteArray(encBytes, dos);
         } finally {
           hdos.close();
@@ -631,16 +688,17 @@ public class HandShake implements ClientHandShake {
     } catch (GemFireSecurityException ex) {
       throw ex;
     } catch (Exception ex) {
-      throw new AuthenticationFailedException("HandShake failed in Diffie-Hellman key exchange", ex);
+      throw new AuthenticationFailedException(
+          "HandShake failed in Diffie-Hellman key exchange", ex);
     }
     dos.flush();
   }
 
   /**
-   * This method writes what readCredential() method expects to read. (Note the
-   * use of singular credential). It is similar to writeCredentials(), except
-   * that it doesn't write credential-properties.
-   * 
+   * This method writes what readCredential() method expects to read. (Note the use of singular
+   * credential). It is similar to writeCredentials(), except that it doesn't write
+   * credential-properties.
+   *
    * @param dos
    * @param dis
    * @param authInit
@@ -650,7 +708,14 @@ public class HandShake implements ClientHandShake {
    * @throws IOException
    * @throws GemFireSecurityException
    */
-  public byte writeCredential(DataOutputStream dos, DataInputStream dis, String authInit, boolean isNotification, DistributedMember member, HeapDataOutputStream heapdos) throws IOException, GemFireSecurityException {
+  public byte writeCredential(
+      DataOutputStream dos,
+      DataInputStream dis,
+      String authInit,
+      boolean isNotification,
+      DistributedMember member,
+      HeapDataOutputStream heapdos)
+      throws IOException, GemFireSecurityException {
 
     if (!this.multiuserSecureMode && (authInit == null || authInit.length() == 0)) {
       // No credentials indicator
@@ -675,9 +740,11 @@ public class HandShake implements ClientHandShake {
     try {
       InternalLogWriter securityLogWriter = (InternalLogWriter) this.system.getSecurityLogWriter();
       securityLogWriter.fine("HandShake: using Diffie-Hellman key exchange with algo " + dhSKAlgo);
-      boolean requireAuthentication = (certificateFilePath != null && certificateFilePath.length() > 0);
+      boolean requireAuthentication =
+          (certificateFilePath != null && certificateFilePath.length() > 0);
       if (requireAuthentication) {
-        securityLogWriter.fine("HandShake: server authentication using digital " + "signature required");
+        securityLogWriter.fine(
+            "HandShake: server authentication using digital " + "signature required");
       }
       // Credentials with encryption indicator
       heapdos.writeByte(CREDENTIALS_DHENCRYPT);
@@ -717,7 +784,10 @@ public class HandShake implements ClientHandShake {
           String subject = DataSerializer.readString(dis);
           byte[] signatureBytes = DataSerializer.readByteArray(dis);
           if (!certificateMap.containsKey(subject)) {
-            throw new AuthenticationFailedException(LocalizedStrings.HandShake_HANDSHAKE_FAILED_TO_FIND_PUBLIC_KEY_FOR_SERVER_WITH_SUBJECT_0.toLocalizedString(subject));
+            throw new AuthenticationFailedException(
+                LocalizedStrings
+                    .HandShake_HANDSHAKE_FAILED_TO_FIND_PUBLIC_KEY_FOR_SERVER_WITH_SUBJECT_0
+                    .toLocalizedString(subject));
           }
 
           // Check the signature with the public key
@@ -727,9 +797,11 @@ public class HandShake implements ClientHandShake {
           sig.update(clientChallenge);
           // Check the challenge string
           if (!sig.verify(signatureBytes)) {
-            throw new AuthenticationFailedException("Mismatch in client " + "challenge bytes. Malicious server?");
+            throw new AuthenticationFailedException(
+                "Mismatch in client " + "challenge bytes. Malicious server?");
           }
-          securityLogWriter.fine("HandShake: Successfully verified the " + "digital signature from server");
+          securityLogWriter.fine(
+              "HandShake: Successfully verified the " + "digital signature from server");
         }
 
         // Read server challenge bytes
@@ -744,7 +816,8 @@ public class HandShake implements ClientHandShake {
           // Add the challenge string
           DataSerializer.writeByteArray(serverChallenge, hdos);
           //          byte[] encBytes = encrypt.doFinal(hdos.toByteArray());
-          byte[] encBytes = encryptBytes(hdos.toByteArray(), getEncryptCipher(dhSKAlgo, this.clientPublicKey));
+          byte[] encBytes =
+              encryptBytes(hdos.toByteArray(), getEncryptCipher(dhSKAlgo, this.clientPublicKey));
           DataSerializer.writeByteArray(encBytes, dos);
         } finally {
           hdos.close();
@@ -755,7 +828,8 @@ public class HandShake implements ClientHandShake {
     } catch (GemFireSecurityException ex) {
       throw ex;
     } catch (Exception ex) {
-      throw new AuthenticationFailedException("HandShake failed in Diffie-Hellman key exchange", ex);
+      throw new AuthenticationFailedException(
+          "HandShake failed in Diffie-Hellman key exchange", ex);
     }
     dos.flush();
     return acceptanceCode;
@@ -775,7 +849,7 @@ public class HandShake implements ClientHandShake {
     }
   }
 
-  static public byte[] encryptBytes(byte[] data, Cipher encrypt) throws Exception {
+  public static byte[] encryptBytes(byte[] data, Cipher encrypt) throws Exception {
 
     try {
       byte[] encBytes = encrypt.doFinal(data);
@@ -822,7 +896,9 @@ public class HandShake implements ClientHandShake {
   }
 
   //This assumes that authentication is the last piece of info in handshake
-  public Properties readCredential(DataInputStream dis, DataOutputStream dos, DistributedSystem system) throws GemFireSecurityException, IOException {
+  public Properties readCredential(
+      DataInputStream dis, DataOutputStream dos, DistributedSystem system)
+      throws GemFireSecurityException, IOException {
 
     Properties credentials = null;
     boolean requireAuthentication = securityService.isClientSecurityRequired();
@@ -832,7 +908,8 @@ public class HandShake implements ClientHandShake {
         // when server is configured with authenticator, new joiner must
         // pass its credentials.
         if (requireAuthentication) {
-          throw new AuthenticationRequiredException(LocalizedStrings.HandShake_NO_SECURITY_PROPERTIES_ARE_PROVIDED.toLocalizedString());
+          throw new AuthenticationRequiredException(
+              LocalizedStrings.HandShake_NO_SECURITY_PROPERTIES_ARE_PROVIDED.toLocalizedString());
         }
       } else if (secureMode == CREDENTIALS_NORMAL) {
         this.appSecureMode = CREDENTIALS_NORMAL;
@@ -870,7 +947,9 @@ public class HandShake implements ClientHandShake {
             // Get the challenge string from client
             byte[] clientChallenge = DataSerializer.readByteArray(dis);
             if (privateKeyEncrypt == null) {
-              throw new AuthenticationFailedException(LocalizedStrings.HandShake_SERVER_PRIVATE_KEY_NOT_AVAILABLE_FOR_CREATING_SIGNATURE.toLocalizedString());
+              throw new AuthenticationFailedException(
+                  LocalizedStrings.HandShake_SERVER_PRIVATE_KEY_NOT_AVAILABLE_FOR_CREATING_SIGNATURE
+                      .toLocalizedString());
             }
             // Sign the challenge from client and send it to the client
             Signature sig = Signature.getInstance(privateKeySignAlgo);
@@ -906,7 +985,9 @@ public class HandShake implements ClientHandShake {
           byte[] challengeRes = DataSerializer.readByteArray(dinp);
           // Check the challenge string
           if (!Arrays.equals(challenge, challengeRes)) {
-            throw new AuthenticationFailedException(LocalizedStrings.HandShake_MISMATCH_IN_CHALLENGE_BYTES_MALICIOUS_CLIENT.toLocalizedString());
+            throw new AuthenticationFailedException(
+                LocalizedStrings.HandShake_MISMATCH_IN_CHALLENGE_BYTES_MALICIOUS_CLIENT
+                    .toLocalizedString());
           }
           dinp.close();
         } else {
@@ -923,7 +1004,8 @@ public class HandShake implements ClientHandShake {
     } catch (GemFireSecurityException ex) {
       throw ex;
     } catch (Exception ex) {
-      throw new AuthenticationFailedException(LocalizedStrings.HandShake_FAILURE_IN_READING_CREDENTIALS.toLocalizedString(), ex);
+      throw new AuthenticationFailedException(
+          LocalizedStrings.HandShake_FAILURE_IN_READING_CREDENTIALS.toLocalizedString(), ex);
     }
     return credentials;
   }
@@ -943,7 +1025,7 @@ public class HandShake implements ClientHandShake {
     }
   }
 
-  static public byte[] decryptBytes(byte[] data, Cipher decrypt) throws Exception {
+  public static byte[] decryptBytes(byte[] data, Cipher decrypt) throws Exception {
     try {
       byte[] decrptBytes = decrypt.doFinal(data);
       return decrptBytes;
@@ -990,8 +1072,8 @@ public class HandShake implements ClientHandShake {
   }
 
   /**
-   * Populate the available server public keys into a local static HashMap. This
-   * method is not thread safe.
+   * Populate the available server public keys into a local static HashMap. This method is not
+   * thread safe.
    */
   public static void initCertsMap(Properties props) throws Exception {
 
@@ -1019,9 +1101,7 @@ public class HandShake implements ClientHandShake {
     }
   }
 
-  /**
-   * Load the private key of the server. This method is not thread safe.
-   */
+  /** Load the private key of the server. This method is not thread safe. */
   public static void initPrivateKey(Properties props) throws Exception {
 
     String privateKeyFilePath = props.getProperty(PRIVATE_KEY_FILE_PROP);
@@ -1051,9 +1131,7 @@ public class HandShake implements ClientHandShake {
     }
   }
 
-  /**
-   * Initialize the Diffie-Hellman keys. This method is not thread safe
-   */
+  /** Initialize the Diffie-Hellman keys. This method is not thread safe */
   public static void initDHKeys(DistributionConfig config) throws Exception {
 
     dhSKAlgo = config.getSecurityClientDHAlgo();
@@ -1079,7 +1157,14 @@ public class HandShake implements ClientHandShake {
     }
   }
 
-  public void accept(OutputStream out, InputStream in, byte epType, int qSize, byte communicationMode, Principal principal) throws IOException {
+  public void accept(
+      OutputStream out,
+      InputStream in,
+      byte epType,
+      int qSize,
+      byte communicationMode,
+      Principal principal)
+      throws IOException {
     DataOutputStream dos = new DataOutputStream(out);
     DataInputStream dis;
     if (clientVersion.compareTo(Version.CURRENT) < 0) {
@@ -1092,7 +1177,7 @@ public class HandShake implements ClientHandShake {
     if (communicationMode == Acceptor.GATEWAY_TO_GATEWAY && principal != null) {
       dos.writeByte(REPLY_WAN_CREDENTIALS);
     } else {
-      dos.writeByte(REPLY_OK);//byte 59
+      dos.writeByte(REPLY_OK); //byte 59
     }
 
     //additional byte of wan site needs to send for Gateway BC
@@ -1111,7 +1196,8 @@ public class HandShake implements ClientHandShake {
     dos.writeUTF("");
 
     // Write delta-propagation property value if this is not WAN.
-    if (communicationMode != Acceptor.GATEWAY_TO_GATEWAY && this.clientVersion.compareTo(Version.GFE_61) >= 0) {
+    if (communicationMode != Acceptor.GATEWAY_TO_GATEWAY
+        && this.clientVersion.compareTo(Version.GFE_61) >= 0) {
       dos.writeBoolean(((InternalDistributedSystem) this.system).getConfig().getDeltaPropagation());
     }
 
@@ -1123,11 +1209,18 @@ public class HandShake implements ClientHandShake {
 
     // Write the distributed system id if this is a 6.6 or greater client
     //on the remote side of the gateway
-    if (communicationMode == Acceptor.GATEWAY_TO_GATEWAY && this.clientVersion.compareTo(Version.GFE_66) >= 0 && ServerHandShakeProcessor.currentServerVersion.compareTo(Version.GFE_66) >= 0) {
-      dos.writeByte(((InternalDistributedSystem) this.system).getDistributionManager().getDistributedSystemId());
+    if (communicationMode == Acceptor.GATEWAY_TO_GATEWAY
+        && this.clientVersion.compareTo(Version.GFE_66) >= 0
+        && ServerHandShakeProcessor.currentServerVersion.compareTo(Version.GFE_66) >= 0) {
+      dos.writeByte(
+          ((InternalDistributedSystem) this.system)
+              .getDistributionManager()
+              .getDistributedSystemId());
     }
 
-    if ((communicationMode == Acceptor.GATEWAY_TO_GATEWAY) && this.clientVersion.compareTo(Version.GFE_80) >= 0 && ServerHandShakeProcessor.currentServerVersion.compareTo(Version.GFE_80) >= 0) {
+    if ((communicationMode == Acceptor.GATEWAY_TO_GATEWAY)
+        && this.clientVersion.compareTo(Version.GFE_80) >= 0
+        && ServerHandShakeProcessor.currentServerVersion.compareTo(Version.GFE_80) >= 0) {
       int pdxSize = PeerTypeRegistration.getPdxRegistrySize();
       dos.writeInt(pdxSize);
     }
@@ -1137,9 +1230,8 @@ public class HandShake implements ClientHandShake {
   }
 
   /**
-   * Return fake, temporary DistributedMember to represent the other vm this 
-   * vm is connecting to
-   * 
+   * Return fake, temporary DistributedMember to represent the other vm this vm is connecting to
+   *
    * @param sock the socket this handshake is operating on
    * @return temporary id to reprent the other vm
    */
@@ -1147,7 +1239,9 @@ public class HandShake implements ClientHandShake {
     return new InternalDistributedMember(sock.getInetAddress(), sock.getPort(), false);
   }
 
-  public ServerQueueStatus greet(Connection conn, ServerLocation location, byte communicationMode) throws IOException, AuthenticationRequiredException, AuthenticationFailedException, ServerRefusedConnectionException {
+  public ServerQueueStatus greet(Connection conn, ServerLocation location, byte communicationMode)
+      throws IOException, AuthenticationRequiredException, AuthenticationFailedException,
+          ServerRefusedConnectionException {
     try {
       ServerQueueStatus serverQStatus = null;
       Socket sock = conn.getSocket();
@@ -1155,7 +1249,7 @@ public class HandShake implements ClientHandShake {
       final InputStream in = sock.getInputStream();
       DataInputStream dis = new DataInputStream(in);
       DistributedMember member = getDistributedMember(sock);
-      // if running in a loner system, use the new port number in the ID to 
+      // if running in a loner system, use the new port number in the ID to
       // help differentiate from other clients
       DM dm = ((InternalDistributedSystem) this.system).getDistributionManager();
       InternalDistributedMember idm = dm.getDistributionManagerId();
@@ -1169,10 +1263,22 @@ public class HandShake implements ClientHandShake {
       if (communicationMode == Acceptor.GATEWAY_TO_GATEWAY) {
         this.credentials = getCredentials(member);
       }
-      byte intermediateAcceptanceCode = write(dos, dis, communicationMode, REPLY_OK, this.clientReadTimeout, null, this.credentials, member, false);
+      byte intermediateAcceptanceCode =
+          write(
+              dos,
+              dis,
+              communicationMode,
+              REPLY_OK,
+              this.clientReadTimeout,
+              null,
+              this.credentials,
+              member,
+              false);
 
       String authInit = this.system.getProperties().getProperty(SECURITY_CLIENT_AUTH_INIT);
-      if (communicationMode != Acceptor.GATEWAY_TO_GATEWAY && intermediateAcceptanceCode != REPLY_AUTH_NOT_REQUIRED && (authInit != null && authInit.length() != 0)) {
+      if (communicationMode != Acceptor.GATEWAY_TO_GATEWAY
+          && intermediateAcceptanceCode != REPLY_AUTH_NOT_REQUIRED
+          && (authInit != null && authInit.length() != 0)) {
         location.compareAndSetRequiresCredentials(true);
       }
       // Read the acceptance code
@@ -1180,14 +1286,17 @@ public class HandShake implements ClientHandShake {
       if (acceptanceCode == (byte) 21 && !(sock instanceof SSLSocket)) {
         // This is likely the case of server setup with SSL and client not using
         // SSL
-        throw new AuthenticationRequiredException(LocalizedStrings.HandShake_SERVER_EXPECTING_SSL_CONNECTION.toLocalizedString());
+        throw new AuthenticationRequiredException(
+            LocalizedStrings.HandShake_SERVER_EXPECTING_SSL_CONNECTION.toLocalizedString());
       }
 
       //Successful handshake for GATEWAY_TO_GATEWAY mode sets the peer version in connection
-      if (communicationMode == Acceptor.GATEWAY_TO_GATEWAY && !(acceptanceCode == REPLY_EXCEPTION_AUTHENTICATION_REQUIRED || acceptanceCode == REPLY_EXCEPTION_AUTHENTICATION_FAILED)) {
+      if (communicationMode == Acceptor.GATEWAY_TO_GATEWAY
+          && !(acceptanceCode == REPLY_EXCEPTION_AUTHENTICATION_REQUIRED
+              || acceptanceCode == REPLY_EXCEPTION_AUTHENTICATION_FAILED)) {
         short wanSiteVersion = Version.readOrdinal(dis);
         conn.setWanSiteVersion(wanSiteVersion);
-        // establish a versioned stream for the other site, if necessary         
+        // establish a versioned stream for the other site, if necessary
         if (wanSiteVersion < Version.CURRENT_ORDINAL) {
           dis = new VersionedDataInputStream(dis, Version.fromOrdinalOrCurrent(wanSiteVersion));
         }
@@ -1208,20 +1317,31 @@ public class HandShake implements ClientHandShake {
       // Read delta-propagation property value from server.
       // [sumedh] Static variable below? Client can connect to different
       // DSes with different values of this. It shoule be a member variable.
-      if (communicationMode != Acceptor.GATEWAY_TO_GATEWAY && currentClientVersion.compareTo(Version.GFE_61) >= 0) {
+      if (communicationMode != Acceptor.GATEWAY_TO_GATEWAY
+          && currentClientVersion.compareTo(Version.GFE_61) >= 0) {
         deltaEnabledOnServer = dis.readBoolean();
       }
 
       //validate that the remote side has a different distributed system id.
-      if (communicationMode == Acceptor.GATEWAY_TO_GATEWAY && Version.GFE_66.compareTo(conn.getWanSiteVersion()) <= 0 && currentClientVersion.compareTo(Version.GFE_66) >= 0) {
+      if (communicationMode == Acceptor.GATEWAY_TO_GATEWAY
+          && Version.GFE_66.compareTo(conn.getWanSiteVersion()) <= 0
+          && currentClientVersion.compareTo(Version.GFE_66) >= 0) {
         int remoteDistributedSystemId = in.read();
-        int localDistributedSystemId = ((InternalDistributedSystem) system).getDistributionManager().getDistributedSystemId();
-        if (localDistributedSystemId >= 0 && localDistributedSystemId == remoteDistributedSystemId) {
-          throw new GatewayConfigurationException("Remote WAN site's distributed system id " + remoteDistributedSystemId + " matches this sites distributed system id " + localDistributedSystemId);
+        int localDistributedSystemId =
+            ((InternalDistributedSystem) system).getDistributionManager().getDistributedSystemId();
+        if (localDistributedSystemId >= 0
+            && localDistributedSystemId == remoteDistributedSystemId) {
+          throw new GatewayConfigurationException(
+              "Remote WAN site's distributed system id "
+                  + remoteDistributedSystemId
+                  + " matches this sites distributed system id "
+                  + localDistributedSystemId);
         }
       }
       //Read the PDX registry size from the remote size
-      if (communicationMode == Acceptor.GATEWAY_TO_GATEWAY && Version.GFE_80.compareTo(conn.getWanSiteVersion()) <= 0 && currentClientVersion.compareTo(Version.GFE_80) >= 0) {
+      if (communicationMode == Acceptor.GATEWAY_TO_GATEWAY
+          && Version.GFE_80.compareTo(conn.getWanSiteVersion()) <= 0
+          && currentClientVersion.compareTo(Version.GFE_80) >= 0) {
         int remotePdxSize = dis.readInt();
         serverQStatus.setPdxSize(remotePdxSize);
       }
@@ -1234,7 +1354,9 @@ public class HandShake implements ClientHandShake {
     }
   }
 
-  public ServerQueueStatus greetNotifier(Socket sock, boolean isPrimary, ServerLocation location) throws IOException, AuthenticationRequiredException, AuthenticationFailedException, ServerRefusedConnectionException, ClassNotFoundException {
+  public ServerQueueStatus greetNotifier(Socket sock, boolean isPrimary, ServerLocation location)
+      throws IOException, AuthenticationRequiredException, AuthenticationFailedException,
+          ServerRefusedConnectionException, ClassNotFoundException {
     ServerQueueStatus sqs = null;
     try {
       DataOutputStream dos = new DataOutputStream(sock.getOutputStream());
@@ -1244,7 +1366,8 @@ public class HandShake implements ClientHandShake {
       if (!this.multiuserSecureMode) {
         this.credentials = getCredentials(member);
       }
-      byte mode = isPrimary ? Acceptor.PRIMARY_SERVER_TO_CLIENT : Acceptor.SECONDARY_SERVER_TO_CLIENT;
+      byte mode =
+          isPrimary ? Acceptor.PRIMARY_SERVER_TO_CLIENT : Acceptor.SECONDARY_SERVER_TO_CLIENT;
       write(dos, dis, mode, REPLY_OK, 0, new ArrayList(), this.credentials, member, true);
 
       // Wait here for a reply before continuing. This ensures that the client
@@ -1253,7 +1376,8 @@ public class HandShake implements ClientHandShake {
       if (acceptanceCode == (byte) 21 && !(sock instanceof SSLSocket)) {
         // This is likely the case of server setup with SSL and client not using
         // SSL
-        throw new AuthenticationRequiredException(LocalizedStrings.HandShake_SERVER_EXPECTING_SSL_CONNECTION.toLocalizedString());
+        throw new AuthenticationRequiredException(
+            LocalizedStrings.HandShake_SERVER_EXPECTING_SSL_CONNECTION.toLocalizedString());
       }
 
       // No need to check for return value since DataInputStream already throws
@@ -1273,15 +1397,19 @@ public class HandShake implements ClientHandShake {
         return sqs;
       }
       HashMap instantiatorMap = DataSerializer.readHashMap(dis);
-      for (Iterator itr = instantiatorMap.entrySet().iterator(); itr.hasNext();) {
+      for (Iterator itr = instantiatorMap.entrySet().iterator(); itr.hasNext(); ) {
         Map.Entry instantiator = (Map.Entry) itr.next();
         Integer id = (Integer) instantiator.getKey();
         ArrayList instantiatorArguments = (ArrayList) instantiator.getValue();
-        InternalInstantiator.register((String) instantiatorArguments.get(0), (String) instantiatorArguments.get(1), id, false);
+        InternalInstantiator.register(
+            (String) instantiatorArguments.get(0),
+            (String) instantiatorArguments.get(1),
+            id,
+            false);
       }
 
       HashMap dataSerializersMap = DataSerializer.readHashMap(dis);
-      for (Iterator itr = dataSerializersMap.entrySet().iterator(); itr.hasNext();) {
+      for (Iterator itr = dataSerializersMap.entrySet().iterator(); itr.hasNext(); ) {
         Map.Entry dataSerializer = (Map.Entry) itr.next();
         Integer id = (Integer) dataSerializer.getKey();
         InternalDataSerializer.register((String) dataSerializer.getValue(), false, null, null, id);
@@ -1314,11 +1442,15 @@ public class HandShake implements ClientHandShake {
     } catch (EOFException e) {
       throw e;
     } catch (Exception e) {
-      throw new InternalGemFireException(LocalizedStrings.HandShake_UNABLE_TO_DESERIALIZE_MEMBER.toLocalizedString(), e);
+      throw new InternalGemFireException(
+          LocalizedStrings.HandShake_UNABLE_TO_DESERIALIZE_MEMBER.toLocalizedString(), e);
     }
   }
 
-  protected void readMessage(DataInputStream dis, DataOutputStream dos, byte acceptanceCode, DistributedMember member) throws IOException, AuthenticationRequiredException, AuthenticationFailedException, ServerRefusedConnectionException {
+  protected void readMessage(
+      DataInputStream dis, DataOutputStream dos, byte acceptanceCode, DistributedMember member)
+      throws IOException, AuthenticationRequiredException, AuthenticationFailedException,
+          ServerRefusedConnectionException {
 
     String message = dis.readUTF();
     if (message.length() == 0 && acceptanceCode != REPLY_WAN_CREDENTIALS) {
@@ -1326,17 +1458,17 @@ public class HandShake implements ClientHandShake {
     }
 
     switch (acceptanceCode) {
-    case REPLY_EXCEPTION_AUTHENTICATION_REQUIRED:
-      throw new AuthenticationRequiredException(message);
-    case REPLY_EXCEPTION_AUTHENTICATION_FAILED:
-      throw new AuthenticationFailedException(message);
-    case REPLY_EXCEPTION_DUPLICATE_DURABLE_CLIENT:
-      throw new ServerRefusedConnectionException(member, message);
-    case REPLY_WAN_CREDENTIALS:
-      checkIfAuthenticWanSite(dis, dos, member);
-      break;
-    default:
-      throw new ServerRefusedConnectionException(member, message);
+      case REPLY_EXCEPTION_AUTHENTICATION_REQUIRED:
+        throw new AuthenticationRequiredException(message);
+      case REPLY_EXCEPTION_AUTHENTICATION_FAILED:
+        throw new AuthenticationFailedException(message);
+      case REPLY_EXCEPTION_DUPLICATE_DURABLE_CLIENT:
+        throw new ServerRefusedConnectionException(member, message);
+      case REPLY_WAN_CREDENTIALS:
+        checkIfAuthenticWanSite(dis, dos, member);
+        break;
+      default:
+        throw new ServerRefusedConnectionException(member, message);
     }
   }
 
@@ -1371,26 +1503,23 @@ public class HandShake implements ClientHandShake {
   /**
    * Indicates whether some other object is "equal to" this one.
    *
-   * @param  other  the reference object with which to compare.
-   * @return true if this object is the same as the obj argument;
-   *         false otherwise.
+   * @param other the reference object with which to compare.
+   * @return true if this object is the same as the obj argument; false otherwise.
    */
   @Override
   public boolean equals(Object other) {
-    if (other == this)
-      return true;
+    if (other == this) return true;
     //    if (other == null) return false;
-    if (!(other instanceof HandShake))
-      return false;
+    if (!(other instanceof HandShake)) return false;
     final HandShake that = (HandShake) other;
 
     /*if (identity != null && identity.length > 0) {
-     for (int i = 0; i < identity.length; i++) {
-     if (this.identity[i] != that.identity[i]) return false;
-     }
-     }
-     if (this.code != that.code) return false;
-     return true;*/
+    for (int i = 0; i < identity.length; i++) {
+    if (this.identity[i] != that.identity[i]) return false;
+    }
+    }
+    if (this.code != that.code) return false;
+    return true;*/
 
     if (this.id.isSameDSMember(that.id) && this.code == that.code) {
       return true;
@@ -1400,8 +1529,8 @@ public class HandShake implements ClientHandShake {
   }
 
   /**
-   * Returns a hash code for the object. This method is supported for the
-   * benefit of hashtables such as those provided by java.util.Hashtable.
+   * Returns a hash code for the object. This method is supported for the benefit of hashtables such
+   * as those provided by java.util.Hashtable.
    *
    * @return the integer 0 if description is null; otherwise a unique integer.
    */
@@ -1411,10 +1540,10 @@ public class HandShake implements ClientHandShake {
     final int mult = 37;
 
     /*if (this.identity != null && this.identity.length > 0) {
-     for (int i = 0; i < this.identity.length; i++) {
-     result = mult * result + (int) this.identity[i];
-     }
-     }*/
+    for (int i = 0; i < this.identity.length; i++) {
+    result = mult * result + (int) this.identity[i];
+    }
+    }*/
     result = this.id.hashCode();
     result = mult * result + this.code;
 
@@ -1423,7 +1552,12 @@ public class HandShake implements ClientHandShake {
 
   @Override
   public String toString() {
-    StringBuffer buf = new StringBuffer().append("HandShake@").append(System.identityHashCode(this)).append(" code: ").append(this.code);
+    StringBuffer buf =
+        new StringBuffer()
+            .append("HandShake@")
+            .append(System.identityHashCode(this))
+            .append(" code: ")
+            .append(this.code);
     if (this.id != null) {
       buf.append(" identity: ");
       /*for(int i=0; i<this.identity.length; ++i) {
@@ -1438,7 +1572,14 @@ public class HandShake implements ClientHandShake {
     return this.id;
   }
 
-  public static Properties getCredentials(String authInitMethod, Properties securityProperties, DistributedMember server, boolean isPeer, InternalLogWriter logWriter, InternalLogWriter securityLogWriter) throws AuthenticationRequiredException {
+  public static Properties getCredentials(
+      String authInitMethod,
+      Properties securityProperties,
+      DistributedMember server,
+      boolean isPeer,
+      InternalLogWriter logWriter,
+      InternalLogWriter securityLogWriter)
+      throws AuthenticationRequiredException {
 
     Properties credentials = null;
     // if no authInit, Try to extract the credentials directly from securityProps
@@ -1458,7 +1599,10 @@ public class HandShake implements ClientHandShake {
     } catch (GemFireSecurityException ex) {
       throw ex;
     } catch (Exception ex) {
-      throw new AuthenticationRequiredException(LocalizedStrings.HandShake_FAILED_TO_ACQUIRE_AUTHINITIALIZE_METHOD_0.toLocalizedString(authInitMethod), ex);
+      throw new AuthenticationRequiredException(
+          LocalizedStrings.HandShake_FAILED_TO_ACQUIRE_AUTHINITIALIZE_METHOD_0.toLocalizedString(
+              authInitMethod),
+          ex);
     }
     return credentials;
   }
@@ -1466,11 +1610,19 @@ public class HandShake implements ClientHandShake {
   private Properties getCredentials(DistributedMember member) {
 
     String authInitMethod = this.system.getProperties().getProperty(SECURITY_CLIENT_AUTH_INIT);
-    return getCredentials(authInitMethod, this.system.getSecurityProperties(), member, false, (InternalLogWriter) this.system.getLogWriter(), (InternalLogWriter) this.system.getSecurityLogWriter());
+    return getCredentials(
+        authInitMethod,
+        this.system.getSecurityProperties(),
+        member,
+        false,
+        (InternalLogWriter) this.system.getLogWriter(),
+        (InternalLogWriter) this.system.getSecurityLogWriter());
   }
 
   // This assumes that authentication is the last piece of info in handshake
-  public static Properties readCredentials(DataInputStream dis, DataOutputStream dos, DistributedSystem system) throws GemFireSecurityException, IOException {
+  public static Properties readCredentials(
+      DataInputStream dis, DataOutputStream dos, DistributedSystem system)
+      throws GemFireSecurityException, IOException {
 
     boolean requireAuthentication = securityService.isClientSecurityRequired();
     Properties credentials = null;
@@ -1480,7 +1632,8 @@ public class HandShake implements ClientHandShake {
         // when server is configured with authenticator, new joiner must
         // pass its credentials.
         if (requireAuthentication) {
-          throw new AuthenticationRequiredException(LocalizedStrings.HandShake_NO_SECURITY_PROPERTIES_ARE_PROVIDED.toLocalizedString());
+          throw new AuthenticationRequiredException(
+              LocalizedStrings.HandShake_NO_SECURITY_PROPERTIES_ARE_PROVIDED.toLocalizedString());
         }
       } else if (secureMode == CREDENTIALS_NORMAL) {
         if (requireAuthentication) {
@@ -1514,7 +1667,9 @@ public class HandShake implements ClientHandShake {
             // Get the challenge string from client
             byte[] clientChallenge = DataSerializer.readByteArray(dis);
             if (privateKeyEncrypt == null) {
-              throw new AuthenticationFailedException(LocalizedStrings.HandShake_SERVER_PRIVATE_KEY_NOT_AVAILABLE_FOR_CREATING_SIGNATURE.toLocalizedString());
+              throw new AuthenticationFailedException(
+                  LocalizedStrings.HandShake_SERVER_PRIVATE_KEY_NOT_AVAILABLE_FOR_CREATING_SIGNATURE
+                      .toLocalizedString());
             }
             // Sign the challenge from client and send it to the client
             Signature sig = Signature.getInstance(privateKeySignAlgo);
@@ -1573,7 +1728,9 @@ public class HandShake implements ClientHandShake {
           byte[] challengeRes = DataSerializer.readByteArray(dinp);
           // Check the challenge string
           if (!Arrays.equals(challenge, challengeRes)) {
-            throw new AuthenticationFailedException(LocalizedStrings.HandShake_MISMATCH_IN_CHALLENGE_BYTES_MALICIOUS_CLIENT.toLocalizedString());
+            throw new AuthenticationFailedException(
+                LocalizedStrings.HandShake_MISMATCH_IN_CHALLENGE_BYTES_MALICIOUS_CLIENT
+                    .toLocalizedString());
           }
           dinp.close();
         } else {
@@ -1593,15 +1750,24 @@ public class HandShake implements ClientHandShake {
     } catch (GemFireSecurityException ex) {
       throw ex;
     } catch (Exception ex) {
-      throw new AuthenticationFailedException(LocalizedStrings.HandShake_FAILURE_IN_READING_CREDENTIALS.toLocalizedString(), ex);
+      throw new AuthenticationFailedException(
+          LocalizedStrings.HandShake_FAILURE_IN_READING_CREDENTIALS.toLocalizedString(), ex);
     }
     return credentials;
   }
 
   /**
-   * this could return either a Subject or a Principal depending on if it's integrated security or not
+   * this could return either a Subject or a Principal depending on if it's integrated security or
+   * not
    */
-  public static Object verifyCredentials(String authenticatorMethod, Properties credentials, Properties securityProperties, InternalLogWriter logWriter, InternalLogWriter securityLogWriter, DistributedMember member) throws AuthenticationRequiredException, AuthenticationFailedException {
+  public static Object verifyCredentials(
+      String authenticatorMethod,
+      Properties credentials,
+      Properties securityProperties,
+      InternalLogWriter logWriter,
+      InternalLogWriter securityLogWriter,
+      DistributedMember member)
+      throws AuthenticationRequiredException, AuthenticationFailedException {
 
     if (!AcceptorImpl.isAuthenticationRequired()) {
       return null;
@@ -1622,15 +1788,21 @@ public class HandShake implements ClientHandShake {
     } catch (Exception ex) {
       throw new AuthenticationFailedException(ex.getMessage(), ex);
     } finally {
-      if (auth != null)
-        auth.close();
+      if (auth != null) auth.close();
     }
   }
 
-  public Object verifyCredentials() throws AuthenticationRequiredException, AuthenticationFailedException {
+  public Object verifyCredentials()
+      throws AuthenticationRequiredException, AuthenticationFailedException {
 
     String methodName = this.system.getProperties().getProperty(SECURITY_CLIENT_AUTHENTICATOR);
-    return verifyCredentials(methodName, this.credentials, this.system.getSecurityProperties(), (InternalLogWriter) this.system.getLogWriter(), (InternalLogWriter) this.system.getSecurityLogWriter(), this.id.getDistributedMember());
+    return verifyCredentials(
+        methodName,
+        this.credentials,
+        this.system.getSecurityProperties(),
+        (InternalLogWriter) this.system.getLogWriter(),
+        (InternalLogWriter) this.system.getSecurityLogWriter(),
+        this.id.getDistributedMember());
   }
 
   public void sendCredentialsForWan(OutputStream out, InputStream in) {
@@ -1643,18 +1815,31 @@ public class HandShake implements ClientHandShake {
     }
     // The exception while getting the credentials is just logged as severe
     catch (Exception e) {
-      this.system.getSecurityLogWriter().convertToLogWriterI18n().severe(LocalizedStrings.HandShake_AN_EXCEPTION_WAS_THROWN_WHILE_SENDING_WAN_CREDENTIALS_0, e.getLocalizedMessage());
+      this.system
+          .getSecurityLogWriter()
+          .convertToLogWriterI18n()
+          .severe(
+              LocalizedStrings.HandShake_AN_EXCEPTION_WAS_THROWN_WHILE_SENDING_WAN_CREDENTIALS_0,
+              e.getLocalizedMessage());
     }
   }
 
-  private void checkIfAuthenticWanSite(DataInputStream dis, DataOutputStream dos, DistributedMember member) throws GemFireSecurityException, IOException {
+  private void checkIfAuthenticWanSite(
+      DataInputStream dis, DataOutputStream dos, DistributedMember member)
+      throws GemFireSecurityException, IOException {
 
     if (this.credentials == null) {
       return;
     }
     String authenticator = this.system.getProperties().getProperty(SECURITY_CLIENT_AUTHENTICATOR);
     Properties peerWanProps = readCredentials(dis, dos, this.system);
-    verifyCredentials(authenticator, peerWanProps, this.system.getSecurityProperties(), (InternalLogWriter) this.system.getLogWriter(), (InternalLogWriter) this.system.getSecurityLogWriter(), member);
+    verifyCredentials(
+        authenticator,
+        peerWanProps,
+        this.system.getSecurityProperties(),
+        (InternalLogWriter) this.system.getLogWriter(),
+        (InternalLogWriter) this.system.getSecurityLogWriter(),
+        member);
   }
 
   private static int getKeySize(String skAlgo) {

@@ -19,7 +19,7 @@ package org.apache.geode.security;
 
 /**
  * Thrown if authentication of this client/peer fails.
- * 
+ *
  * @since GemFire 5.5
  */
 public class AuthenticationFailedException extends GemFireSecurityException {
@@ -27,27 +27,21 @@ public class AuthenticationFailedException extends GemFireSecurityException {
 
   // TODO Derive from SecurityException
   /**
-   * Constructs instance of <code>AuthenticationFailedException</code> with
-   * error message.
-   * 
-   * @param message
-   *                the error message
+   * Constructs instance of <code>AuthenticationFailedException</code> with error message.
+   *
+   * @param message the error message
    */
   public AuthenticationFailedException(String message) {
     super(message);
   }
 
   /**
-   * Constructs instance of <code>AuthenticationFailedException</code> with
-   * error message and cause.
-   * 
-   * @param message
-   *                the error message
-   * @param cause
-   *                a <code>Throwable</code> that is a cause of this exception
+   * Constructs instance of <code>AuthenticationFailedException</code> with error message and cause.
+   *
+   * @param message the error message
+   * @param cause a <code>Throwable</code> that is a cause of this exception
    */
   public AuthenticationFailedException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

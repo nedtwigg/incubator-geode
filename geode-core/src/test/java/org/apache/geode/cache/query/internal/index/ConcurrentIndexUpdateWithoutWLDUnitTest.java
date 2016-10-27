@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal.index;
 
 import static org.junit.Assert.*;
@@ -62,8 +60,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * During validation all region operations are paused for a while. Validation
- * happens multiple time during one test run on a fixed time interval.
+ * During validation all region operations are paused for a while. Validation happens multiple time
+ * during one test run on a fixed time interval.
  */
 @Category(DistributedTest.class)
 public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTestCase {
@@ -97,7 +95,8 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
       try {
         Cache newCache = GemFireCacheImpl.getInstance();
         if (null == newCache) {
-          System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "DISABLE_DISCONNECT_DS_ON_CACHE_CLOSE", "true");
+          System.setProperty(
+              DistributionConfig.GEMFIRE_PREFIX + "DISABLE_DISCONNECT_DS_ON_CACHE_CLOSE", "true");
           newCache = CacheFactory.create(getSystem());
         }
         PRQueryDUnitHelper.setCache(newCache);
@@ -108,14 +107,15 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
       } catch (Exception ex) {
         Assert.fail("Checked exception while initializing cache??", ex);
       } finally {
-        System.clearProperty(DistributionConfig.GEMFIRE_PREFIX + "DISABLE_DISCONNECT_DS_ON_CACHE_CLOSE");
+        System.clearProperty(
+            DistributionConfig.GEMFIRE_PREFIX + "DISABLE_DISCONNECT_DS_ON_CACHE_CLOSE");
       }
     }
   }
 
   /**
-   * Tear down a PartitionedRegionTestCase by cleaning up the existing cache
-   * (mainly because we want to destroy any existing PartitionedRegions)
+   * Tear down a PartitionedRegionTestCase by cleaning up the existing cache (mainly because we want
+   * to destroy any existing PartitionedRegions)
    */
   @Override
   public final void preTearDown() throws Exception {
@@ -127,8 +127,7 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
     Cache cache = GemFireCacheImpl.getInstance();
     if (cache != null) {
       Region region = cache.getRegion(regionName);
-      if (region != null)
-        region.destroyRegion();
+      if (region != null) region.destroyRegion();
     }
   }
 
@@ -141,13 +140,17 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
     setCacheInVMs(vm0);
     vm0.invoke(helper.getCacheSerializableRunnableForReplicatedRegionCreation(regionName));
 
-    vm0.invoke(helper.getCacheSerializableRunnableForPRIndexCreate(regionName, indexName, indexedExpression, fromClause, alias));
+    vm0.invoke(
+        helper.getCacheSerializableRunnableForPRIndexCreate(
+            regionName, indexName, indexedExpression, fromClause, alias));
 
     AsyncInvocation[] asyncInvs = new AsyncInvocation[2];
 
-    asyncInvs[0] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[0] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
-    asyncInvs[1] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[1] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
     for (AsyncInvocation inv : asyncInvs) {
       ThreadUtils.join(inv, 30 * 000);
@@ -160,7 +163,6 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
     }
 
     vm0.invoke(getCacheSerializableRunnableForIndexValidation(regionName, indexName));
-
   }
 
   @Test
@@ -183,13 +185,16 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
     fromClauses.add(fromClause);
     fromClauses.add(rfromClause);
 
-    vm0.invoke(helper.getCacheSerializableRunnableForDefineIndex(regionName, names, exps, fromClauses));
+    vm0.invoke(
+        helper.getCacheSerializableRunnableForDefineIndex(regionName, names, exps, fromClauses));
 
     AsyncInvocation[] asyncInvs = new AsyncInvocation[2];
 
-    asyncInvs[0] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[0] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
-    asyncInvs[1] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[1] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
     for (AsyncInvocation inv : asyncInvs) {
       ThreadUtils.join(inv, 30 * 000);
@@ -202,10 +207,10 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
     }
 
     vm0.invoke(getCacheSerializableRunnableForIndexValidation(regionName, indexName));
-
   }
 
-  private SerializableRunnableIF getCacheSerializableRunnableForIndexValidation(final String regionName, final String indexName) {
+  private SerializableRunnableIF getCacheSerializableRunnableForIndexValidation(
+      final String regionName, final String indexName) {
     return new CacheSerializableRunnable("Index Validate") {
       @Override
       public void run2() throws CacheException {
@@ -226,13 +231,19 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
     setCacheInVMs(vm0);
     vm0.invoke(helper.getCacheSerializableRunnableForReplicatedRegionCreation(regionName));
 
-    vm0.invoke(helper.getCacheSerializableRunnableForPRIndexCreate(regionName, rindexName, rindexedExpression, rfromClause, ralias));
+    vm0.invoke(
+        helper.getCacheSerializableRunnableForPRIndexCreate(
+            regionName, rindexName, rindexedExpression, rfromClause, ralias));
 
     AsyncInvocation[] asyncInvs = new AsyncInvocation[2];
 
-    asyncInvs[0] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, totalDataSize));
+    asyncInvs[0] =
+        vm0.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, totalDataSize));
 
-    asyncInvs[1] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, totalDataSize));
+    asyncInvs[1] =
+        vm0.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, totalDataSize));
 
     for (AsyncInvocation inv : asyncInvs) {
       ThreadUtils.join(inv, 30 * 000);
@@ -244,7 +255,6 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
     }
 
     vm0.invoke(getCacheSerializableRunnableForIndexValidation(regionName, rindexName));
-
   }
 
   // Tests on Partition Region
@@ -256,41 +266,78 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
     VM vm2 = host.getVM(2);
     VM vm3 = host.getVM(3);
     setCacheInVMs(vm0, vm1, vm2, vm3);
-    vm0.invoke(helper.getCacheSerializableRunnableForPRAccessorCreate(regionName, redundancy, Portfolio.class));
+    vm0.invoke(
+        helper.getCacheSerializableRunnableForPRAccessorCreate(
+            regionName, redundancy, Portfolio.class));
 
-    vm1.invoke(helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
+    vm1.invoke(
+        helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
 
-    vm2.invoke(helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
+    vm2.invoke(
+        helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
 
-    vm3.invoke(helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
+    vm3.invoke(
+        helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
 
-    vm0.invoke(helper.getCacheSerializableRunnableForPRIndexCreate(regionName, indexName, indexedExpression, fromClause, alias));
+    vm0.invoke(
+        helper.getCacheSerializableRunnableForPRIndexCreate(
+            regionName, indexName, indexedExpression, fromClause, alias));
 
     AsyncInvocation[] asyncInvs = new AsyncInvocation[12];
 
-    asyncInvs[0] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[0] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
-    asyncInvs[1] = vm1.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, stepSize, (2 * stepSize)));
+    asyncInvs[1] =
+        vm1.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, stepSize, (2 * stepSize)));
 
-    asyncInvs[2] = vm2.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (2 * stepSize), (3 * stepSize)));
+    asyncInvs[2] =
+        vm2.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (2 * stepSize), (3 * stepSize)));
 
-    asyncInvs[3] = vm3.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (3 * (stepSize)), totalDataSize));
+    asyncInvs[3] =
+        vm3.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (3 * (stepSize)), totalDataSize));
 
-    asyncInvs[4] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[4] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
-    asyncInvs[5] = vm1.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, stepSize, (2 * stepSize)));
+    asyncInvs[5] =
+        vm1.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, stepSize, (2 * stepSize)));
 
-    asyncInvs[6] = vm2.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (2 * stepSize), (3 * stepSize)));
+    asyncInvs[6] =
+        vm2.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (2 * stepSize), (3 * stepSize)));
 
-    asyncInvs[7] = vm3.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (3 * (stepSize)), totalDataSize));
+    asyncInvs[7] =
+        vm3.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (3 * (stepSize)), totalDataSize));
 
-    asyncInvs[8] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[8] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
-    asyncInvs[9] = vm1.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, stepSize, (2 * stepSize)));
+    asyncInvs[9] =
+        vm1.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, stepSize, (2 * stepSize)));
 
-    asyncInvs[10] = vm2.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (2 * stepSize), (3 * stepSize)));
+    asyncInvs[10] =
+        vm2.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (2 * stepSize), (3 * stepSize)));
 
-    asyncInvs[11] = vm3.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (3 * (stepSize)), totalDataSize));
+    asyncInvs[11] =
+        vm3.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (3 * (stepSize)), totalDataSize));
 
     for (AsyncInvocation inv : asyncInvs) {
       ThreadUtils.join(inv, 60 * 000);
@@ -318,41 +365,78 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
     VM vm2 = host.getVM(2);
     VM vm3 = host.getVM(3);
     setCacheInVMs(vm0, vm1, vm2, vm3);
-    vm0.invoke(helper.getCacheSerializableRunnableForPRAccessorCreate(regionName, redundancy, Portfolio.class));
+    vm0.invoke(
+        helper.getCacheSerializableRunnableForPRAccessorCreate(
+            regionName, redundancy, Portfolio.class));
 
-    vm1.invoke(helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
+    vm1.invoke(
+        helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
 
-    vm2.invoke(helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
+    vm2.invoke(
+        helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
 
-    vm3.invoke(helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
+    vm3.invoke(
+        helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
 
-    vm0.invoke(helper.getCacheSerializableRunnableForPRIndexCreate(regionName, rindexName, rindexedExpression, rfromClause, ralias));
+    vm0.invoke(
+        helper.getCacheSerializableRunnableForPRIndexCreate(
+            regionName, rindexName, rindexedExpression, rfromClause, ralias));
 
     AsyncInvocation[] asyncInvs = new AsyncInvocation[12];
 
-    asyncInvs[0] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[0] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
-    asyncInvs[1] = vm1.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, stepSize, (2 * stepSize)));
+    asyncInvs[1] =
+        vm1.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, stepSize, (2 * stepSize)));
 
-    asyncInvs[2] = vm2.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (2 * stepSize), (3 * stepSize)));
+    asyncInvs[2] =
+        vm2.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (2 * stepSize), (3 * stepSize)));
 
-    asyncInvs[3] = vm3.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (3 * (stepSize)), totalDataSize));
+    asyncInvs[3] =
+        vm3.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (3 * (stepSize)), totalDataSize));
 
-    asyncInvs[4] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[4] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
-    asyncInvs[5] = vm1.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, stepSize, (2 * stepSize)));
+    asyncInvs[5] =
+        vm1.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, stepSize, (2 * stepSize)));
 
-    asyncInvs[6] = vm2.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (2 * stepSize), (3 * stepSize)));
+    asyncInvs[6] =
+        vm2.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (2 * stepSize), (3 * stepSize)));
 
-    asyncInvs[7] = vm3.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (3 * (stepSize)), totalDataSize));
+    asyncInvs[7] =
+        vm3.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (3 * (stepSize)), totalDataSize));
 
-    asyncInvs[8] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[8] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
-    asyncInvs[9] = vm1.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, stepSize, (2 * stepSize)));
+    asyncInvs[9] =
+        vm1.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, stepSize, (2 * stepSize)));
 
-    asyncInvs[10] = vm2.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (2 * stepSize), (3 * stepSize)));
+    asyncInvs[10] =
+        vm2.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (2 * stepSize), (3 * stepSize)));
 
-    asyncInvs[11] = vm3.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (3 * (stepSize)), totalDataSize));
+    asyncInvs[11] =
+        vm3.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (3 * (stepSize)), totalDataSize));
 
     for (AsyncInvocation inv : asyncInvs) {
       ThreadUtils.join(inv, 60 * 000);
@@ -379,13 +463,18 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
     VM vm2 = host.getVM(2);
     VM vm3 = host.getVM(3);
     setCacheInVMs(vm0, vm1, vm2, vm3);
-    vm0.invoke(helper.getCacheSerializableRunnableForPRAccessorCreate(regionName, redundancy, Portfolio.class));
+    vm0.invoke(
+        helper.getCacheSerializableRunnableForPRAccessorCreate(
+            regionName, redundancy, Portfolio.class));
 
-    vm1.invoke(helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
+    vm1.invoke(
+        helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
 
-    vm2.invoke(helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
+    vm2.invoke(
+        helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
 
-    vm3.invoke(helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
+    vm3.invoke(
+        helper.getCacheSerializableRunnableForPRCreate(regionName, redundancy, Portfolio.class));
 
     ArrayList<String> names = new ArrayList<String>();
     names.add(indexName);
@@ -399,33 +488,64 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
     fromClauses.add(fromClause);
     fromClauses.add(rfromClause);
 
-    vm0.invoke(helper.getCacheSerializableRunnableForDefineIndex(regionName, names, exps, fromClauses));
+    vm0.invoke(
+        helper.getCacheSerializableRunnableForDefineIndex(regionName, names, exps, fromClauses));
 
     AsyncInvocation[] asyncInvs = new AsyncInvocation[12];
 
-    asyncInvs[0] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[0] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
-    asyncInvs[1] = vm1.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, stepSize, (2 * stepSize)));
+    asyncInvs[1] =
+        vm1.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, stepSize, (2 * stepSize)));
 
-    asyncInvs[2] = vm2.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (2 * stepSize), (3 * stepSize)));
+    asyncInvs[2] =
+        vm2.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (2 * stepSize), (3 * stepSize)));
 
-    asyncInvs[3] = vm3.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (3 * (stepSize)), totalDataSize));
+    asyncInvs[3] =
+        vm3.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (3 * (stepSize)), totalDataSize));
 
-    asyncInvs[4] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[4] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
-    asyncInvs[5] = vm1.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, stepSize, (2 * stepSize)));
+    asyncInvs[5] =
+        vm1.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, stepSize, (2 * stepSize)));
 
-    asyncInvs[6] = vm2.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (2 * stepSize), (3 * stepSize)));
+    asyncInvs[6] =
+        vm2.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (2 * stepSize), (3 * stepSize)));
 
-    asyncInvs[7] = vm3.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (3 * (stepSize)), totalDataSize));
+    asyncInvs[7] =
+        vm3.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (3 * (stepSize)), totalDataSize));
 
-    asyncInvs[8] = vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
+    asyncInvs[8] =
+        vm0.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, 0, stepSize));
 
-    asyncInvs[9] = vm1.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, stepSize, (2 * stepSize)));
+    asyncInvs[9] =
+        vm1.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, stepSize, (2 * stepSize)));
 
-    asyncInvs[10] = vm2.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (2 * stepSize), (3 * stepSize)));
+    asyncInvs[10] =
+        vm2.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (2 * stepSize), (3 * stepSize)));
 
-    asyncInvs[11] = vm3.invokeAsync(helper.getCacheSerializableRunnableForPRRandomOps(regionName, (3 * (stepSize)), totalDataSize));
+    asyncInvs[11] =
+        vm3.invokeAsync(
+            helper.getCacheSerializableRunnableForPRRandomOps(
+                regionName, (3 * (stepSize)), totalDataSize));
 
     for (AsyncInvocation inv : asyncInvs) {
       ThreadUtils.join(inv, 60 * 000);
@@ -446,20 +566,18 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
   }
 
   /**
-   * This validator will iterate over RegionEntries and verify their corresponding
-   * index key and entry presence in index valuesToEntriesMap.
+   * This validator will iterate over RegionEntries and verify their corresponding index key and
+   * entry presence in index valuesToEntriesMap.
    */
   private static class IndexValidator {
 
-    public IndexValidator() {
-    }
+    public IndexValidator() {}
 
     private boolean isValidationInProgress;
 
     /**
-     * Validation is done in the end of test on all indexes of a region
-     * by verifying last on a region key and verifying state of index based
-     * on the last operation.
+     * Validation is done in the end of test on all indexes of a region by verifying last on a
+     * region key and verifying state of index based on the last operation.
      *
      * @param region being validated for all of its indexes.
      */
@@ -506,7 +624,14 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
               LogWriterUtils.getLogWriter().info("Portfolio: " + ((Portfolio) value));
               Integer ID = ((Portfolio) value).getID();
 
-              assertTrue("Did not find index key for REgionEntry [key: " + internalEntry.getKey() + " , value: " + value + " ] in index: " + index.getName(), ((CompactRangeIndex) index).getIndexStorage().get(ID) == null ? false : true);
+              assertTrue(
+                  "Did not find index key for REgionEntry [key: "
+                      + internalEntry.getKey()
+                      + " , value: "
+                      + value
+                      + " ] in index: "
+                      + index.getName(),
+                  ((CompactRangeIndex) index).getIndexStorage().get(ID) == null ? false : true);
 
               // Get Index value for the evaluated index key.
               CloseableIterator<IndexStoreEntry> valuesForKeyIterator = null;
@@ -517,7 +642,17 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
                 // evaluated from
                 // region value.
                 while (valuesForKeyIterator.hasNext()) {
-                  assertTrue("Did not find index value for REgionEntry [key: " + internalEntry.getKey() + " , value: " + value + " ] in index: " + index.getName() + " For index key: " + ID, (((MemoryIndexStoreEntry) valuesForKeyIterator.next()).getRegionEntry() == internalEntry));
+                  assertTrue(
+                      "Did not find index value for REgionEntry [key: "
+                          + internalEntry.getKey()
+                          + " , value: "
+                          + value
+                          + " ] in index: "
+                          + index.getName()
+                          + " For index key: "
+                          + ID,
+                      (((MemoryIndexStoreEntry) valuesForKeyIterator.next()).getRegionEntry()
+                          == internalEntry));
                 }
               } finally {
                 if (valuesForKeyIterator != null) {
@@ -542,9 +677,17 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
               Collection<Position> positions = ((Portfolio) value).positions.values();
               for (Position pos : positions) {
                 if (pos != null) {
-                  LogWriterUtils.getLogWriter().info("Portfolio: " + ((Portfolio) value) + "Position: " + pos);
+                  LogWriterUtils.getLogWriter()
+                      .info("Portfolio: " + ((Portfolio) value) + "Position: " + pos);
                   String secId = pos.secId;
-                  assertTrue("Did not find index key for REgionEntry [key: " + internalEntry.getKey() + " , value: " + value + " ] in index: " + index.getName(), ((RangeIndex) index).valueToEntriesMap.containsKey(secId));
+                  assertTrue(
+                      "Did not find index key for REgionEntry [key: "
+                          + internalEntry.getKey()
+                          + " , value: "
+                          + value
+                          + " ] in index: "
+                          + index.getName(),
+                      ((RangeIndex) index).valueToEntriesMap.containsKey(secId));
 
                   // Get Index value for the evaluated index key.
                   Object valuesForKey = ((RangeIndex) index).valueToEntriesMap.get(secId);
@@ -552,9 +695,27 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
                   // Check if RegionEntry is present in Index for the key evaluated from
                   // region value.
                   if (!(valuesForKey instanceof RegionEntryToValuesMap)) {
-                    assertTrue("Did not find index value for REgionEntry [key: " + internalEntry.getKey() + " , value: " + value + " ] in index: " + index.getName() + " For index key: " + secId, ((RegionEntry) valuesForKey == internalEntry));
+                    assertTrue(
+                        "Did not find index value for REgionEntry [key: "
+                            + internalEntry.getKey()
+                            + " , value: "
+                            + value
+                            + " ] in index: "
+                            + index.getName()
+                            + " For index key: "
+                            + secId,
+                        ((RegionEntry) valuesForKey == internalEntry));
                   } else {
-                    assertTrue("Did not find index value for REgionEntry [key: " + internalEntry.getKey() + " , value: " + value + " ] in index: " + index.getName() + " For index key: " + secId, (((RegionEntryToValuesMap) valuesForKey).containsEntry(internalEntry)));
+                    assertTrue(
+                        "Did not find index value for REgionEntry [key: "
+                            + internalEntry.getKey()
+                            + " , value: "
+                            + value
+                            + " ] in index: "
+                            + index.getName()
+                            + " For index key: "
+                            + secId,
+                        (((RegionEntryToValuesMap) valuesForKey).containsEntry(internalEntry)));
                   }
 
                   if (secId != null) {
@@ -615,19 +776,59 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
           getLogWriter().info(((RegionEntry) obj).getKey() + "");
         }
         */
-        LogWriterUtils.getLogWriter().info(" Expected Size of Index is: " + expectedIndexSize + " Undefined size is: " + expectedUndefinedEntries + " And NULL size is: " + expectedNullEntries);
-        assertEquals("No of index keys NOT equals the no shown in statistics for index:" + index.getName(), ((CompactRangeIndex) index).getIndexStorage().size(), stats.getNumberOfKeys());
+        LogWriterUtils.getLogWriter()
+            .info(
+                " Expected Size of Index is: "
+                    + expectedIndexSize
+                    + " Undefined size is: "
+                    + expectedUndefinedEntries
+                    + " And NULL size is: "
+                    + expectedNullEntries);
+        assertEquals(
+            "No of index keys NOT equals the no shown in statistics for index:" + index.getName(),
+            ((CompactRangeIndex) index).getIndexStorage().size(),
+            stats.getNumberOfKeys());
       } else {
-        LogWriterUtils.getLogWriter().info(" Actual Size of Index is: " + actualSize + " Undefined size is: " + ((RangeIndex) index).undefinedMappedEntries.getNumEntries() + " And NULL size is: " + ((RangeIndex) index).nullMappedEntries.getNumEntries());
+        LogWriterUtils.getLogWriter()
+            .info(
+                " Actual Size of Index is: "
+                    + actualSize
+                    + " Undefined size is: "
+                    + ((RangeIndex) index).undefinedMappedEntries.getNumEntries()
+                    + " And NULL size is: "
+                    + ((RangeIndex) index).nullMappedEntries.getNumEntries());
         for (Object obj : ((RangeIndex) index).undefinedMappedEntries.map.keySet()) {
           LogWriterUtils.getLogWriter().info(((RegionEntry) obj).getKey() + "");
         }
-        LogWriterUtils.getLogWriter().info(" Expected Size of Index is: " + expectedIndexSize + " Undefined size is: " + expectedUndefinedEntries + " And NULL size is: " + expectedNullEntries);
-        assertEquals("No of index keys NOT equals the no shown in statistics for index:" + index.getName(), ((RangeIndex) index).valueToEntriesMap.keySet().size(), stats.getNumberOfKeys());
+        LogWriterUtils.getLogWriter()
+            .info(
+                " Expected Size of Index is: "
+                    + expectedIndexSize
+                    + " Undefined size is: "
+                    + expectedUndefinedEntries
+                    + " And NULL size is: "
+                    + expectedNullEntries);
+        assertEquals(
+            "No of index keys NOT equals the no shown in statistics for index:" + index.getName(),
+            ((RangeIndex) index).valueToEntriesMap.keySet().size(),
+            stats.getNumberOfKeys());
       }
-      assertEquals("No of index entries NOT equal the No of RegionEntries Basec on statistics for index:" + index.getName(), (expectedIndexSize + expectedNullEntries), stats.getNumberOfValues());
-      assertEquals("No of index entries NOT equals the No of RegionEntries for index:" + index.getName(), expectedIndexSize, actualSize);
-      GemFireCacheImpl.getInstance().getLogger().fine("Finishing the validation for region: " + region.getFullPath() + " and Index: " + index.getName());
+      assertEquals(
+          "No of index entries NOT equal the No of RegionEntries Basec on statistics for index:"
+              + index.getName(),
+          (expectedIndexSize + expectedNullEntries),
+          stats.getNumberOfValues());
+      assertEquals(
+          "No of index entries NOT equals the No of RegionEntries for index:" + index.getName(),
+          expectedIndexSize,
+          actualSize);
+      GemFireCacheImpl.getInstance()
+          .getLogger()
+          .fine(
+              "Finishing the validation for region: "
+                  + region.getFullPath()
+                  + " and Index: "
+                  + index.getName());
     }
 
     private void validateOnPR(PartitionedRegion pr, PartitionedIndex ind) {
@@ -647,7 +848,9 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
 
       for (Object idx : ind.getBucketIndexes()) {
         Index index = (Index) idx;
-        assertTrue("Bucket stats are different than PR stats for bucket: " + index.getRegion(), index.getStatistics() == ind.getStatistics());
+        assertTrue(
+            "Bucket stats are different than PR stats for bucket: " + index.getRegion(),
+            index.getStatistics() == ind.getStatistics());
         Region region = index.getRegion();
         // do a get<indexExpr>() on each region value and verify if the
         // evaluated index key is part of index and has RE as a reference to it
@@ -666,7 +869,14 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
                 LogWriterUtils.getLogWriter().info("Portfolio: " + ((Portfolio) value));
                 Integer ID = ((Portfolio) value).getID();
 
-                assertTrue("Did not find index key for REgionEntry [key: " + internalEntry.getKey() + " , value: " + value + " ] in index: " + index.getName(), ((CompactRangeIndex) index).getIndexStorage().get(ID) == null ? false : true);
+                assertTrue(
+                    "Did not find index key for REgionEntry [key: "
+                        + internalEntry.getKey()
+                        + " , value: "
+                        + value
+                        + " ] in index: "
+                        + index.getName(),
+                    ((CompactRangeIndex) index).getIndexStorage().get(ID) == null ? false : true);
 
                 // Get Index value for the evaluated index key.
                 CloseableIterator<IndexStoreEntry> valuesForKeyIterator = null;
@@ -677,7 +887,17 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
                   // evaluated from
                   // region value.
                   while (valuesForKeyIterator.hasNext()) {
-                    assertTrue("Did not find index value for REgionEntry [key: " + internalEntry.getKey() + " , value: " + value + " ] in index: " + index.getName() + " For index key: " + ID, (((MemoryIndexStoreEntry) valuesForKeyIterator.next()).getRegionEntry() == internalEntry));
+                    assertTrue(
+                        "Did not find index value for REgionEntry [key: "
+                            + internalEntry.getKey()
+                            + " , value: "
+                            + value
+                            + " ] in index: "
+                            + index.getName()
+                            + " For index key: "
+                            + ID,
+                        (((MemoryIndexStoreEntry) valuesForKeyIterator.next()).getRegionEntry()
+                            == internalEntry));
                   }
                 } finally {
                   if (valuesForKeyIterator != null) {
@@ -701,9 +921,17 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
                 Collection<Position> positions = ((Portfolio) value).positions.values();
                 for (Position pos : positions) {
                   if (pos != null) {
-                    LogWriterUtils.getLogWriter().info("Portfolio: " + ((Portfolio) value) + "Position: " + pos);
+                    LogWriterUtils.getLogWriter()
+                        .info("Portfolio: " + ((Portfolio) value) + "Position: " + pos);
                     String secId = pos.secId;
-                    assertTrue("Did not find index key for REgionEntry [key: " + internalEntry.getKey() + " , value: " + value + " ] in index: " + index.getName(), ((RangeIndex) index).valueToEntriesMap.containsKey(secId));
+                    assertTrue(
+                        "Did not find index key for REgionEntry [key: "
+                            + internalEntry.getKey()
+                            + " , value: "
+                            + value
+                            + " ] in index: "
+                            + index.getName(),
+                        ((RangeIndex) index).valueToEntriesMap.containsKey(secId));
 
                     // Get Index value for the evaluated index key.
                     Object valuesForKey = ((RangeIndex) index).valueToEntriesMap.get(secId);
@@ -711,9 +939,27 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
                     // Check if RegionEntry is present in Index for the key evaluated from
                     // region value.
                     if (!(valuesForKey instanceof RegionEntryToValuesMap)) {
-                      assertTrue("Did not find index value for REgionEntry [key: " + internalEntry.getKey() + " , value: " + value + " ] in index: " + index.getName() + " For index key: " + secId, ((RegionEntry) valuesForKey == internalEntry));
+                      assertTrue(
+                          "Did not find index value for REgionEntry [key: "
+                              + internalEntry.getKey()
+                              + " , value: "
+                              + value
+                              + " ] in index: "
+                              + index.getName()
+                              + " For index key: "
+                              + secId,
+                          ((RegionEntry) valuesForKey == internalEntry));
                     } else {
-                      assertTrue("Did not find index value for REgionEntry [key: " + internalEntry.getKey() + " , value: " + value + " ] in index: " + index.getName() + " For index key: " + secId, (((RegionEntryToValuesMap) valuesForKey).containsEntry(internalEntry)));
+                      assertTrue(
+                          "Did not find index value for REgionEntry [key: "
+                              + internalEntry.getKey()
+                              + " , value: "
+                              + value
+                              + " ] in index: "
+                              + index.getName()
+                              + " For index key: "
+                              + secId,
+                          (((RegionEntryToValuesMap) valuesForKey).containsEntry(internalEntry)));
                     }
 
                     if (secId != null) {
@@ -736,7 +982,8 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
           try {
             iter = ((CompactRangeIndex) index).getIndexStorage().iterator(null);
             while (iter.hasNext()) {
-              LogWriterUtils.getLogWriter().info("Index Values : " + iter.next().getDeserializedValue());
+              LogWriterUtils.getLogWriter()
+                  .info("Index Values : " + iter.next().getDeserializedValue());
               actualValueSize++;
             }
           } finally {
@@ -760,10 +1007,24 @@ public class ConcurrentIndexUpdateWithoutWLDUnitTest extends JUnit4DistributedTe
           actualKeySize += ((RangeIndex) index).valueToEntriesMap.keySet().size();
         }
       }
-      assertEquals("No of index entries NOT equals the No of RegionENtries NOT based on stats for index:" + ind.getName(), expectedIndexSize, actualValueSize);
+      assertEquals(
+          "No of index entries NOT equals the No of RegionENtries NOT based on stats for index:"
+              + ind.getName(),
+          expectedIndexSize,
+          actualValueSize);
       IndexStatistics stats = ind.getStatistics();
-      assertEquals("No of index entries NOT equals the No of RegionENtries based on statistics for index:" + ind.getName(), (expectedIndexSize + expectedNullEntries), stats.getNumberOfValues());
-      GemFireCacheImpl.getInstance().getLogger().fine("Finishing the validation for region: " + pr.getFullPath() + " and Index: " + ind.getName());
+      assertEquals(
+          "No of index entries NOT equals the No of RegionENtries based on statistics for index:"
+              + ind.getName(),
+          (expectedIndexSize + expectedNullEntries),
+          stats.getNumberOfValues());
+      GemFireCacheImpl.getInstance()
+          .getLogger()
+          .fine(
+              "Finishing the validation for region: "
+                  + pr.getFullPath()
+                  + " and Index: "
+                  + ind.getName());
     }
   }
 }

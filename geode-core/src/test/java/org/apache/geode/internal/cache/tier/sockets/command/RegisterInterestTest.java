@@ -59,38 +59,27 @@ public class RegisterInterestTest {
   private static final String KEY = "key1";
   private static final byte[] DURABLE = new byte[8];
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private AuthorizeRequest authzRequest;
-  @Mock
-  private Cache cache;
-  @Mock
-  private Part regionNamePart;
-  @Mock
-  private Part interestTypePart;
-  @Mock
-  private Part durablePart;
-  @Mock
-  private Part keyPart;
-  @Mock
-  private Part notifyPart;
-  @Mock
-  private ChunkedMessage chunkedResponseMessage;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private ServerConnection serverConnection;
+  @Mock private AuthorizeRequest authzRequest;
+  @Mock private Cache cache;
+  @Mock private Part regionNamePart;
+  @Mock private Part interestTypePart;
+  @Mock private Part durablePart;
+  @Mock private Part keyPart;
+  @Mock private Part notifyPart;
+  @Mock private ChunkedMessage chunkedResponseMessage;
 
-  @InjectMocks
-  private RegisterInterest registerInterest;
+  @InjectMocks private RegisterInterest registerInterest;
 
   @Before
   public void setUp() throws Exception {
     this.registerInterest = new RegisterInterest();
     MockitoAnnotations.initMocks(this);
 
-    when(this.authzRequest.registerInterestAuthorize(eq(REGION_NAME), eq(KEY), anyInt(), any())).thenReturn(mock(RegisterInterestOperationContext.class));
+    when(this.authzRequest.registerInterestAuthorize(eq(REGION_NAME), eq(KEY), anyInt(), any()))
+        .thenReturn(mock(RegisterInterestOperationContext.class));
 
     when(this.cache.getRegion(isA(String.class))).thenReturn(mock(LocalRegion.class));
     when(this.cache.getCancelCriterion()).thenReturn(mock(CancelCriterion.class));
@@ -143,7 +132,9 @@ public class RegisterInterestTest {
   public void integratedSecurityShouldThrowIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(true);
-    doThrow(new NotAuthorizedException("")).when(this.securityService).authorizeRegionRead(eq(REGION_NAME), eq(KEY));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.securityService)
+        .authorizeRegionRead(eq(REGION_NAME), eq(KEY));
 
     this.registerInterest.cmdExecute(this.message, this.serverConnection, 0);
 
@@ -167,17 +158,19 @@ public class RegisterInterestTest {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
 
-    doThrow(new NotAuthorizedException("")).when(this.authzRequest).registerInterestAuthorize(eq(REGION_NAME), eq(KEY), anyInt(), any());
+    doThrow(new NotAuthorizedException(""))
+        .when(this.authzRequest)
+        .registerInterestAuthorize(eq(REGION_NAME), eq(KEY), anyInt(), any());
 
     this.registerInterest.cmdExecute(this.message, this.serverConnection, 0);
 
     verify(this.authzRequest).registerInterestAuthorize(eq(REGION_NAME), eq(KEY), anyInt(), any());
 
-    ArgumentCaptor<NotAuthorizedException> argument = ArgumentCaptor.forClass(NotAuthorizedException.class);
+    ArgumentCaptor<NotAuthorizedException> argument =
+        ArgumentCaptor.forClass(NotAuthorizedException.class);
     verify(this.chunkedResponseMessage).addObjPart(argument.capture());
 
     assertThat(argument.getValue()).isExactlyInstanceOf(NotAuthorizedException.class);
     verify(this.chunkedResponseMessage).sendChunk(this.serverConnection);
   }
-
 }

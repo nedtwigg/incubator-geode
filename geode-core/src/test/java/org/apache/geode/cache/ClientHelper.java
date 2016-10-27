@@ -25,13 +25,7 @@ import org.apache.geode.cache.client.internal.PoolImpl;
 import org.apache.geode.cache.client.internal.ServerProxy;
 import org.apache.geode.internal.cache.LocalRegion;
 
-/**
- * Provides methods for getting at the 
- * bridge client and connection proxies used by a
- * region.
- * 
- *
- */
+/** Provides methods for getting at the bridge client and connection proxies used by a region. */
 public class ClientHelper {
 
   public static PoolImpl getPool(Region region) {
@@ -50,17 +44,13 @@ public class ClientHelper {
   //   public static Set getDeadServers(Region region) {
   //   }
 
-  private ClientHelper() {
-
-  }
+  private ClientHelper() {}
 
   public static int getRetryInterval(Region region) {
     return (int) (getPool(region).getPingInterval());
   }
 
-  /**
-   * @param region
-   */
+  /** @param region */
   public static void release(Region region) {
 
     PoolImpl pool = getPool(region);
@@ -68,5 +58,4 @@ public class ClientHelper {
       pool.releaseThreadLocalConnection();
     }
   }
-
 }

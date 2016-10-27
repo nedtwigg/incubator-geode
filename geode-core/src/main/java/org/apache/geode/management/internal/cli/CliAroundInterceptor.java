@@ -20,10 +20,9 @@ import org.apache.geode.management.cli.Result;
 import org.apache.geode.management.internal.cli.shell.GfshExecutionStrategy;
 
 /**
- * Interceptor interface which {@link GfshExecutionStrategy} can use to
- * intercept before & after actual command execution.
- * 
- * 
+ * Interceptor interface which {@link GfshExecutionStrategy} can use to intercept before & after
+ * actual command execution.
+ *
  * @since GemFire 7.0
  */
 public interface CliAroundInterceptor {
@@ -31,5 +30,4 @@ public interface CliAroundInterceptor {
   public Result preExecution(GfshParseResult parseResult);
 
   public Result postExecution(GfshParseResult parseResult, Result commandResult);
-
 }

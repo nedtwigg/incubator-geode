@@ -18,17 +18,17 @@
 package org.apache.geode.internal.util;
 
 /**
- * The SunAPINotFoundException class is a RuntimeException indicating that the Sun API classes and components could
- * not be found, which is most likely the case when we are not running a Sun JVM (like HotSpot).
- * </p>
+ * The SunAPINotFoundException class is a RuntimeException indicating that the Sun API classes and
+ * components could not be found, which is most likely the case when we are not running a Sun JVM
+ * (like HotSpot).
+ *
  * @see java.lang.RuntimeException
  * @since GemFire 7.0
  */
 @SuppressWarnings("unused")
 public class SunAPINotFoundException extends RuntimeException {
 
-  public SunAPINotFoundException() {
-  }
+  public SunAPINotFoundException() {}
 
   public SunAPINotFoundException(final String message) {
     super(message);
@@ -41,5 +41,4 @@ public class SunAPINotFoundException extends RuntimeException {
   public SunAPINotFoundException(final String message, final Throwable t) {
     super(message, t);
   }
-
 }

@@ -25,10 +25,9 @@ import java.nio.ByteBuffer;
 import org.apache.geode.internal.tcp.ByteBufferInputStream;
 
 /**
- * Provides byte stream for testing. Use {@link #getDataInput()} and
- * {@link #getDataOutput()} to get DataInput or DataOutput as needed for
- * testing.
- * 
+ * Provides byte stream for testing. Use {@link #getDataInput()} and {@link #getDataOutput()} to get
+ * DataInput or DataOutput as needed for testing.
+ *
  * @since GemFire 7.0
  */
 public class ByteArrayData {
@@ -47,16 +46,12 @@ public class ByteArrayData {
     return this.baos.size() == 0;
   }
 
-  /**
-   * Returns a <code>DataOutput</code> to write to
-   */
+  /** Returns a <code>DataOutput</code> to write to */
   public DataOutputStream getDataOutput() {
     return new DataOutputStream(this.baos);
   }
 
-  /**
-   * Returns a <code>DataInput</code> to read from
-   */
+  /** Returns a <code>DataInput</code> to read from */
   public DataInput getDataInput() {
     ByteBuffer bb = ByteBuffer.wrap(this.baos.toByteArray());
     ByteBufferInputStream bbis = new ByteBufferInputStream(bb);
@@ -68,5 +63,4 @@ public class ByteArrayData {
     ByteBufferInputStream bbis = new ByteBufferInputStream(bb);
     return new DataInputStream(bbis);
   }
-
 }

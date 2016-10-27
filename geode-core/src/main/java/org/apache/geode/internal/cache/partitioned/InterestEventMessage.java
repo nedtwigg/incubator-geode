@@ -42,35 +42,39 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * This message is used as the notification that a client interest registration or
- * unregistration event occurred.
+ * This message is used as the notification that a client interest registration or unregistration
+ * event occurred.
  *
  * @since GemFire 5.8BetaSUISSE
  */
 public class InterestEventMessage extends PartitionMessage {
   private static final Logger logger = LogService.getLogger();
 
-  /** The <code>InterestRegistrationEvent</code>  */
+  /** The <code>InterestRegistrationEvent</code> */
   private InterestRegistrationEvent event;
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public InterestEventMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public InterestEventMessage() {}
 
-  private InterestEventMessage(Set recipients, int regionId, int processorId, final InterestRegistrationEvent event, ReplyProcessor21 processor) {
+  private InterestEventMessage(
+      Set recipients,
+      int regionId,
+      int processorId,
+      final InterestRegistrationEvent event,
+      ReplyProcessor21 processor) {
     super(recipients, regionId, processor);
     this.event = event;
   }
 
   @Override
-  final public int getProcessorType() {
+  public final int getProcessorType() {
     return DistributionManager.STANDARD_EXECUTOR;
   }
 
   @Override
-  protected final boolean operateOnPartitionedRegion(final DistributionManager dm, PartitionedRegion r, long startTime) throws ForceReattemptException {
+  protected final boolean operateOnPartitionedRegion(
+      final DistributionManager dm, PartitionedRegion r, long startTime)
+      throws ForceReattemptException {
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.debug("InterestEventMessage operateOnPartitionedRegion: {}", r.getFullPath());
     }
@@ -83,7 +87,15 @@ public class InterestEventMessage extends PartitionMessage {
         r.getPrStats().endPartitionMessagesProcessing(startTime);
         InterestEventReplyMessage.send(getSender(), getProcessorId(), dm);
       } catch (Exception e) {
-        sendReply(getSender(), getProcessorId(), dm, new ReplyException(new ForceReattemptException("Caught exception during interest registration processing:", e)), r, startTime);
+        sendReply(
+            getSender(),
+            getProcessorId(),
+            dm,
+            new ReplyException(
+                new ForceReattemptException(
+                    "Caught exception during interest registration processing:", e)),
+            r,
+            startTime);
         return false;
       }
     } else {
@@ -116,19 +128,19 @@ public class InterestEventMessage extends PartitionMessage {
   /**
    * Sends an InterestEventMessage message
    *
-   * @param recipients
-   *          the Set of members that the get message is being sent to
-   * @param region
-   *          the PartitionedRegion for which interest event was received
-   * @param event
-   *          the InterestRegistrationEvent to send
+   * @param recipients the Set of members that the get message is being sent to
+   * @param region the PartitionedRegion for which interest event was received
+   * @param event the InterestRegistrationEvent to send
    * @return the InterestEventResponse
-   * @throws ForceReattemptException
-   *           if the peer is no longer available
+   * @throws ForceReattemptException if the peer is no longer available
    */
-  public static InterestEventResponse send(Set recipients, PartitionedRegion region, final InterestRegistrationEvent event) throws ForceReattemptException {
+  public static InterestEventResponse send(
+      Set recipients, PartitionedRegion region, final InterestRegistrationEvent event)
+      throws ForceReattemptException {
     InterestEventResponse response = new InterestEventResponse(region.getSystem(), recipients);
-    InterestEventMessage m = new InterestEventMessage(recipients, region.getPRId(), response.getProcessorId(), event, response);
+    InterestEventMessage m =
+        new InterestEventMessage(
+            recipients, region.getPRId(), response.getProcessorId(), event, response);
 
     Set failures = region.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
@@ -146,35 +158,34 @@ public class InterestEventMessage extends PartitionMessage {
     /** The shared obj id of the ReplyProcessor */
     private int processorId;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public InterestEventReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public InterestEventReplyMessage() {}
 
     private InterestEventReplyMessage(int processorId) {
       this.processorId = processorId;
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient, int processorId, DM dm) throws ForceReattemptException {
+    public static void send(InternalDistributedMember recipient, int processorId, DM dm)
+        throws ForceReattemptException {
       InterestEventReplyMessage m = new InterestEventReplyMessage(processorId);
       m.setRecipient(recipient);
       dm.putOutgoing(m);
     }
 
     /**
-     * Processes this message. This method is invoked by the receiver of the
-     * message.
+     * Processes this message. This method is invoked by the receiver of the message.
      *
-     * @param dm
-     *          the distribution manager that is processing the message.
+     * @param dm the distribution manager that is processing the message.
      */
     @Override
     protected void process(final DistributionManager dm) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "InterestEventReplyMessage process invoking reply processor with processorId: {}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "InterestEventReplyMessage process invoking reply processor with processorId: {}",
+            this.processorId);
       }
 
       try {
@@ -210,7 +221,13 @@ public class InterestEventMessage extends PartitionMessage {
 
     @Override
     public String toString() {
-      StringBuffer sb = new StringBuffer().append("InterestEventReplyMessage ").append("processorid=").append(this.processorId).append(" reply to sender ").append(this.getSender());
+      StringBuffer sb =
+          new StringBuffer()
+              .append("InterestEventReplyMessage ")
+              .append("processorid=")
+              .append(this.processorId)
+              .append(" reply to sender ")
+              .append(this.getSender());
       return sb.toString();
     }
 
@@ -231,17 +248,17 @@ public class InterestEventMessage extends PartitionMessage {
       super(ds, recipients);
     }
 
-    /**
-     * @throws ForceReattemptException if the peer is no longer available
-     */
+    /** @throws ForceReattemptException if the peer is no longer available */
     public void waitForResponse() throws ForceReattemptException {
       try {
         waitForCacheException();
       } catch (ForceReattemptException e) {
-        logger.debug("InterestEventResponse got ForceReattemptException; rethrowing {}", e.getMessage(), e);
+        logger.debug(
+            "InterestEventResponse got ForceReattemptException; rethrowing {}", e.getMessage(), e);
         throw e;
       } catch (CacheException e) {
-        final String msg = "InterestEventResponse got remote CacheException, throwing ForceReattemptException";
+        final String msg =
+            "InterestEventResponse got remote CacheException, throwing ForceReattemptException";
         logger.debug(msg, e);
         throw new ForceReattemptException(msg, e);
       }

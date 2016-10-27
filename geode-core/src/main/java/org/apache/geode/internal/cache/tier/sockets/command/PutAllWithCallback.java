@@ -21,20 +21,16 @@ import org.apache.geode.internal.cache.tier.Command;
 import org.apache.geode.internal.cache.tier.sockets.Message;
 import org.apache.geode.internal.cache.tier.sockets.Part;
 
-/**
- * Adds a callbackArg to PutAll80
- *
- */
+/** Adds a callbackArg to PutAll80 */
 public class PutAllWithCallback extends PutAll80 {
 
-  private final static PutAllWithCallback singleton = new PutAllWithCallback();
+  private static final PutAllWithCallback singleton = new PutAllWithCallback();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  protected PutAllWithCallback() {
-  }
+  protected PutAllWithCallback() {}
 
   @Override
   protected String putAllClassName() {

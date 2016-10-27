@@ -41,15 +41,16 @@ public class OffHeapEvictionStatsDUnitTest extends EvictionStatsDUnitTest {
 
   @Override
   public final void preTearDownAssertions() throws Exception {
-    SerializableRunnable checkOrphans = new SerializableRunnable() {
+    SerializableRunnable checkOrphans =
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        if (hasCache()) {
-          OffHeapTestUtil.checkOrphans();
-        }
-      }
-    };
+          @Override
+          public void run() {
+            if (hasCache()) {
+              OffHeapTestUtil.checkOrphans();
+            }
+          }
+        };
     Invoke.invokeInEveryVM(checkOrphans);
     checkOrphans.run();
   }
@@ -75,8 +76,10 @@ public class OffHeapEvictionStatsDUnitTest extends EvictionStatsDUnitTest {
       LogWriterUtils.getLogWriter().info("cache= " + cache);
       LogWriterUtils.getLogWriter().info("cache closed= " + cache.isClosed());
       cache.getResourceManager().setEvictionOffHeapPercentage(20);
-      LogWriterUtils.getLogWriter().info("eviction= " + cache.getResourceManager().getEvictionOffHeapPercentage());
-      LogWriterUtils.getLogWriter().info("critical= " + cache.getResourceManager().getCriticalOffHeapPercentage());
+      LogWriterUtils.getLogWriter()
+          .info("eviction= " + cache.getResourceManager().getEvictionOffHeapPercentage());
+      LogWriterUtils.getLogWriter()
+          .info("critical= " + cache.getResourceManager().getCriticalOffHeapPercentage());
     } catch (Exception e) {
       Assert.fail("Failed while creating the cache", e);
     }

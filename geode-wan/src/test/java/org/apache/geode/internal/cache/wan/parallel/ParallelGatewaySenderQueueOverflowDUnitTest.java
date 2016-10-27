@@ -52,9 +52,7 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import com.jayway.awaitility.Awaitility;
 
-/**
- * DUnit for ParallelSenderQueue overflow operations.
- */
+/** DUnit for ParallelSenderQueue overflow operations. */
 @Category(DistributedTest.class)
 public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
 
@@ -73,10 +71,14 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.createSenderWithoutDiskStore("ln", 2, 10, 10, false, true));
     vm7.invoke(() -> WANTestBase.createSenderWithoutDiskStore("ln", 2, 10, 10, false, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
@@ -88,34 +90,65 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     //give some time for the senders to pause
     Wait.pause(1000);
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
 
     int numEventPuts = 50;
     vm4.invoke(() -> WANTestBase.doHeavyPuts(getTestMethodName(), numEventPuts));
 
     //considering a memory limit of 40 MB, maximum of 40 events can be in memory. Rest should be on disk.
-    Awaitility.await().atMost(60, TimeUnit.SECONDS).until(() -> {
-      long numOvVm4 = (Long) vm4.invoke(() -> WANTestBase.getNumberOfEntriesOverflownToDisk("ln"));
-      long numOvVm5 = (Long) vm5.invoke(() -> WANTestBase.getNumberOfEntriesOverflownToDisk("ln"));
-      long numOvVm6 = (Long) vm6.invoke(() -> WANTestBase.getNumberOfEntriesOverflownToDisk("ln"));
-      long numOvVm7 = (Long) vm7.invoke(() -> WANTestBase.getNumberOfEntriesOverflownToDisk("ln"));
+    Awaitility.await()
+        .atMost(60, TimeUnit.SECONDS)
+        .until(
+            () -> {
+              long numOvVm4 =
+                  (Long) vm4.invoke(() -> WANTestBase.getNumberOfEntriesOverflownToDisk("ln"));
+              long numOvVm5 =
+                  (Long) vm5.invoke(() -> WANTestBase.getNumberOfEntriesOverflownToDisk("ln"));
+              long numOvVm6 =
+                  (Long) vm6.invoke(() -> WANTestBase.getNumberOfEntriesOverflownToDisk("ln"));
+              long numOvVm7 =
+                  (Long) vm7.invoke(() -> WANTestBase.getNumberOfEntriesOverflownToDisk("ln"));
 
-      long numMemVm4 = (Long) vm4.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
-      long numMemVm5 = (Long) vm5.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
-      long numMemVm6 = (Long) vm6.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
-      long numMemVm7 = (Long) vm7.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
+              long numMemVm4 = (Long) vm4.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
+              long numMemVm5 = (Long) vm5.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
+              long numMemVm6 = (Long) vm6.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
+              long numMemVm7 = (Long) vm7.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
 
-      LogWriterUtils.getLogWriter().info("Entries overflown to disk: " + numOvVm4 + "," + numOvVm5 + "," + numOvVm6 + "," + numOvVm7);
-      LogWriterUtils.getLogWriter().info("Entries in VM: " + numMemVm4 + "," + numMemVm5 + "," + numMemVm6 + "," + numMemVm7);
-      long totalOverflown = numOvVm4 + numOvVm5 + numOvVm6 + numOvVm7;
-      assertTrue("Total number of entries overflown to disk should be at least greater than 55", (totalOverflown > 55));
+              LogWriterUtils.getLogWriter()
+                  .info(
+                      "Entries overflown to disk: "
+                          + numOvVm4
+                          + ","
+                          + numOvVm5
+                          + ","
+                          + numOvVm6
+                          + ","
+                          + numOvVm7);
+              LogWriterUtils.getLogWriter()
+                  .info(
+                      "Entries in VM: "
+                          + numMemVm4
+                          + ","
+                          + numMemVm5
+                          + ","
+                          + numMemVm6
+                          + ","
+                          + numMemVm7);
+              long totalOverflown = numOvVm4 + numOvVm5 + numOvVm6 + numOvVm7;
+              assertTrue(
+                  "Total number of entries overflown to disk should be at least greater than 55",
+                  (totalOverflown > 55));
 
-      long totalInMemory = numMemVm4 + numMemVm5 + numMemVm6 + numMemVm7;
-      //expected is twice the number of events put due to redundancy level of 1  
-      assertEquals("Total number of entries on disk and in VM is incorrect", (numEventPuts * 2), (totalOverflown + totalInMemory));
-
-    });
+              long totalInMemory = numMemVm4 + numMemVm5 + numMemVm6 + numMemVm7;
+              //expected is twice the number of events put due to redundancy level of 1
+              assertEquals(
+                  "Total number of entries on disk and in VM is incorrect",
+                  (numEventPuts * 2),
+                  (totalOverflown + totalInMemory));
+            });
 
     vm4.invoke(() -> WANTestBase.resumeSender("ln"));
     vm5.invoke(() -> WANTestBase.resumeSender("ln"));
@@ -126,9 +159,7 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     vm3.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName(), 50, 240000));
   }
 
-  /**
-   * Keep same max memory limit for all the VMs
-   */
+  /** Keep same max memory limit for all the VMs */
   @Ignore("TODO: test is disabled")
   @Test
   public void testParallelSenderQueueEventsOverflow() throws Exception {
@@ -145,10 +176,14 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.createSender("ln", 2, true, 10, 10, false, false, null, true));
     vm7.invoke(() -> WANTestBase.createSender("ln", 2, true, 10, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
@@ -160,8 +195,10 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     //give some time for the senders to pause
     Wait.pause(1000);
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
 
     int numEventPuts = 50;
     vm4.invoke(() -> WANTestBase.doHeavyPuts(getTestMethodName(), numEventPuts));
@@ -176,16 +213,31 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     long numMemVm6 = (Long) vm6.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
     long numMemVm7 = (Long) vm7.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
 
-    LogWriterUtils.getLogWriter().info("Entries overflown to disk: " + numOvVm4 + "," + numOvVm5 + "," + numOvVm6 + "," + numOvVm7);
-    LogWriterUtils.getLogWriter().info("Entries in VM: " + numMemVm4 + "," + numMemVm5 + "," + numMemVm6 + "," + numMemVm7);
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Entries overflown to disk: "
+                + numOvVm4
+                + ","
+                + numOvVm5
+                + ","
+                + numOvVm6
+                + ","
+                + numOvVm7);
+    LogWriterUtils.getLogWriter()
+        .info("Entries in VM: " + numMemVm4 + "," + numMemVm5 + "," + numMemVm6 + "," + numMemVm7);
 
     long totalOverflown = numOvVm4 + numOvVm5 + numOvVm6 + numOvVm7;
     //considering a memory limit of 40 MB, maximum of 40 events can be in memory. Rest should be on disk.
-    assertTrue("Total number of entries overflown to disk should be at least greater than 55", (totalOverflown > 55));
+    assertTrue(
+        "Total number of entries overflown to disk should be at least greater than 55",
+        (totalOverflown > 55));
 
     long totalInMemory = numMemVm4 + numMemVm5 + numMemVm6 + numMemVm7;
-    //expected is twice the number of events put due to redundancy level of 1  
-    assertEquals("Total number of entries on disk and in VM is incorrect", (numEventPuts * 2), (totalOverflown + totalInMemory));
+    //expected is twice the number of events put due to redundancy level of 1
+    assertEquals(
+        "Total number of entries on disk and in VM is incorrect",
+        (numEventPuts * 2),
+        (totalOverflown + totalInMemory));
 
     vm4.invoke(() -> WANTestBase.resumeSender("ln"));
     vm5.invoke(() -> WANTestBase.resumeSender("ln"));
@@ -197,8 +249,8 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
   }
 
   /**
-   * Set a different memory limit for each VM and make sure that all the VMs are utilized to
-   * full extent of available memory.
+   * Set a different memory limit for each VM and make sure that all the VMs are utilized to full
+   * extent of available memory.
    */
   @Ignore("TODO: test is disabled")
   @Test
@@ -216,10 +268,14 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.createSender("ln", 2, true, 5, 10, false, false, null, true));
     vm7.invoke(() -> WANTestBase.createSender("ln", 2, true, 20, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
@@ -231,8 +287,10 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     //give some time for the senders to pause
     Wait.pause(1000);
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
 
     int numEventPuts = 50;
     vm4.invoke(() -> WANTestBase.doHeavyPuts(getTestMethodName(), numEventPuts));
@@ -247,22 +305,41 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     long numMemVm6 = (Long) vm6.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
     long numMemVm7 = (Long) vm7.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
 
-    LogWriterUtils.getLogWriter().info("Entries overflown to disk: " + numOvVm4 + "," + numOvVm5 + "," + numOvVm6 + "," + numOvVm7);
-    LogWriterUtils.getLogWriter().info("Entries in VM: " + numMemVm4 + "," + numMemVm5 + "," + numMemVm6 + "," + numMemVm7);
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Entries overflown to disk: "
+                + numOvVm4
+                + ","
+                + numOvVm5
+                + ","
+                + numOvVm6
+                + ","
+                + numOvVm7);
+    LogWriterUtils.getLogWriter()
+        .info("Entries in VM: " + numMemVm4 + "," + numMemVm5 + "," + numMemVm6 + "," + numMemVm7);
 
     long totalOverflown = numOvVm4 + numOvVm5 + numOvVm6 + numOvVm7;
     //considering a memory limit of 40 MB, maximum of 40 events can be in memory. Rest should be on disk.
-    assertTrue("Total number of entries overflown to disk should be at least greater than 55", (totalOverflown > 55));
+    assertTrue(
+        "Total number of entries overflown to disk should be at least greater than 55",
+        (totalOverflown > 55));
 
     long totalInMemory = numMemVm4 + numMemVm5 + numMemVm6 + numMemVm7;
-    //expected is twice the number of events put due to redundancy level of 1  
-    assertEquals("Total number of entries on disk and in VM is incorrect", (numEventPuts * 2), (totalOverflown + totalInMemory));
+    //expected is twice the number of events put due to redundancy level of 1
+    assertEquals(
+        "Total number of entries on disk and in VM is incorrect",
+        (numEventPuts * 2),
+        (totalOverflown + totalInMemory));
 
     //assert the numbers for each VM
-    assertTrue("Number of entries in memory VM4 is incorrect. Should be less than 10", (numMemVm4 < 10));
-    assertTrue("Number of entries in memory VM5 is incorrect. Should be less than 5", (numMemVm5 < 5));
-    assertTrue("Number of entries in memory VM6 is incorrect. Should be less than 5", (numMemVm6 < 5));
-    assertTrue("Number of entries in memory VM7 is incorrect. Should be less than 20", (numMemVm7 < 20));
+    assertTrue(
+        "Number of entries in memory VM4 is incorrect. Should be less than 10", (numMemVm4 < 10));
+    assertTrue(
+        "Number of entries in memory VM5 is incorrect. Should be less than 5", (numMemVm5 < 5));
+    assertTrue(
+        "Number of entries in memory VM6 is incorrect. Should be less than 5", (numMemVm6 < 5));
+    assertTrue(
+        "Number of entries in memory VM7 is incorrect. Should be less than 20", (numMemVm7 < 20));
 
     vm4.invoke(() -> WANTestBase.resumeSender("ln"));
     vm5.invoke(() -> WANTestBase.resumeSender("ln"));
@@ -289,10 +366,14 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.createSender("ln", 2, true, 10, 10, false, false, null, true));
     vm7.invoke(() -> WANTestBase.createSender("ln", 2, true, 10, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
@@ -304,8 +385,10 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     //give some time for the senders to pause
     Wait.pause(1000);
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
 
     int numEventPuts = 15;
     vm4.invoke(() -> WANTestBase.doHeavyPuts(getTestMethodName(), numEventPuts));
@@ -320,16 +403,29 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     long numMemVm6 = (Long) vm6.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
     long numMemVm7 = (Long) vm7.invoke(() -> WANTestBase.getNumberOfEntriesInVM("ln"));
 
-    LogWriterUtils.getLogWriter().info("Entries overflown to disk: " + numOvVm4 + "," + numOvVm5 + "," + numOvVm6 + "," + numOvVm7);
-    LogWriterUtils.getLogWriter().info("Entries in VM: " + numMemVm4 + "," + numMemVm5 + "," + numMemVm6 + "," + numMemVm7);
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Entries overflown to disk: "
+                + numOvVm4
+                + ","
+                + numOvVm5
+                + ","
+                + numOvVm6
+                + ","
+                + numOvVm7);
+    LogWriterUtils.getLogWriter()
+        .info("Entries in VM: " + numMemVm4 + "," + numMemVm5 + "," + numMemVm6 + "," + numMemVm7);
 
     long totalOverflown = numOvVm4 + numOvVm5 + numOvVm6 + numOvVm7;
     //all 30 (considering redundant copies) events should accommodate in 40 MB space given to 4 senders
     assertEquals("Total number of entries overflown to disk is incorrect", 0, totalOverflown);
 
     long totalInMemory = numMemVm4 + numMemVm5 + numMemVm6 + numMemVm7;
-    //expected is twice the number of events put due to redundancy level of 1  
-    assertEquals("Total number of entries on disk and in VM is incorrect", (numEventPuts * 2), (totalOverflown + totalInMemory));
+    //expected is twice the number of events put due to redundancy level of 1
+    assertEquals(
+        "Total number of entries on disk and in VM is incorrect",
+        (numEventPuts * 2),
+        (totalOverflown + totalInMemory));
 
     vm4.invoke(() -> WANTestBase.resumeSender("ln"));
     vm5.invoke(() -> WANTestBase.resumeSender("ln"));
@@ -341,15 +437,16 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
   }
 
   /**
-   * Test to validate that ParallelGatewaySenderQueue diskSynchronous attribute
-   * when persistence of sender is enabled. 
+   * Test to validate that ParallelGatewaySenderQueue diskSynchronous attribute when persistence of
+   * sender is enabled.
    */
   @Ignore("TODO: test is disabled")
   @Test
   public void test_ValidateParallelGatewaySenderQueueAttributes_1() {
     Integer localLocPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
 
-    Integer remoteLocPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, localLocPort));
+    Integer remoteLocPort =
+        (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, localLocPort));
 
     WANTestBase test = new WANTestBase();
     Properties props = test.getDistributedSystemProperties();
@@ -358,19 +455,20 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     InternalDistributedSystem ds = test.getSystem(props);
     cache = CacheFactory.create(ds);
 
-    File directory = new File("TKSender" + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+    File directory =
+        new File("TKSender" + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
     directory.mkdir();
-    File[] dirs1 = new File[] { directory };
+    File[] dirs1 = new File[] {directory};
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     dsf.setDiskDirs(dirs1);
     DiskStore diskStore = dsf.create("FORNY");
 
     GatewaySenderFactory fact = cache.createGatewaySenderFactory();
-    fact.setParallel(true);//set parallel to true
+    fact.setParallel(true); //set parallel to true
     fact.setBatchConflationEnabled(true);
     fact.setBatchSize(200);
     fact.setBatchTimeInterval(300);
-    fact.setPersistenceEnabled(true);//enable the persistence
+    fact.setPersistenceEnabled(true); //enable the persistence
     fact.setDiskSynchronous(true);
     fact.setDiskStoreName("FORNY");
     fact.setMaximumQueueMemory(200);
@@ -388,7 +486,10 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
       AttributesFactory factory = new AttributesFactory();
       factory.addGatewaySenderId(sender1.getId());
       factory.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-      Region region = cache.createRegionFactory(factory.create()).create("test_ValidateGatewaySenderAttributes");
+      Region region =
+          cache
+              .createRegionFactory(factory.create())
+              .create("test_ValidateGatewaySenderAttributes");
       Set<GatewaySender> senders = cache.getGatewaySenders();
       assertEquals(senders.size(), 1);
       GatewaySender gatewaySender = senders.iterator().next();
@@ -402,15 +503,16 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
   }
 
   /**
-   * Test to validate that ParallelGatewaySenderQueue diskSynchronous attribute
-   * when persistence of sender is not enabled. 
+   * Test to validate that ParallelGatewaySenderQueue diskSynchronous attribute when persistence of
+   * sender is not enabled.
    */
   @Ignore("TODO: test is disabled")
   @Test
   public void test_ValidateParallelGatewaySenderQueueAttributes_2() {
     Integer localLocPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
 
-    Integer remoteLocPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, localLocPort));
+    Integer remoteLocPort =
+        (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, localLocPort));
 
     WANTestBase test = new WANTestBase();
     Properties props = test.getDistributedSystemProperties();
@@ -420,11 +522,11 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
     cache = CacheFactory.create(ds);
 
     GatewaySenderFactory fact = cache.createGatewaySenderFactory();
-    fact.setParallel(true);//set parallel to true
+    fact.setParallel(true); //set parallel to true
     fact.setBatchConflationEnabled(true);
     fact.setBatchSize(200);
     fact.setBatchTimeInterval(300);
-    fact.setPersistenceEnabled(false);//set persistence to false
+    fact.setPersistenceEnabled(false); //set persistence to false
     fact.setDiskSynchronous(true);
     fact.setMaximumQueueMemory(200);
     fact.setAlertThreshold(1200);
@@ -440,7 +542,10 @@ public class ParallelGatewaySenderQueueOverflowDUnitTest extends WANTestBase {
       AttributesFactory factory = new AttributesFactory();
       factory.addGatewaySenderId(sender1.getId());
       factory.setDataPolicy(DataPolicy.PARTITION);
-      Region region = cache.createRegionFactory(factory.create()).create("test_ValidateGatewaySenderAttributes");
+      Region region =
+          cache
+              .createRegionFactory(factory.create())
+              .create("test_ValidateGatewaySenderAttributes");
       Set<GatewaySender> senders = cache.getGatewaySenders();
       assertEquals(senders.size(), 1);
       GatewaySender gatewaySender = senders.iterator().next();

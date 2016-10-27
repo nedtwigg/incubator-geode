@@ -64,13 +64,11 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 
 /**
- * This class checks and verifies various data and operations exposed through
- * RegionMXBean interface.
- * 
- * Goal of the Test : RegionMBean gets created once region is created. Data like
- * Region Attributes data and stats are of proper value
- * 
- * 
+ * This class checks and verifies various data and operations exposed through RegionMXBean
+ * interface.
+ *
+ * <p>Goal of the Test : RegionMBean gets created once region is created. Data like Region
+ * Attributes data and stats are of proper value
  */
 @Category(DistributedTest.class)
 public class RegionManagementDUnitTest extends ManagementTestBase {
@@ -108,20 +106,17 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
 
   public RegionManagementDUnitTest() {
     super();
-
   }
 
   /**
    * Tests all Region MBean related Management APIs
-   * 
-   * a) Notification propagated to member MBean while a region is created
-   * 
-   * b) Creates and check a Distributed Region
-   * 
-   * 
+   *
+   * <p>a) Notification propagated to member MBean while a region is created
+   *
+   * <p>b) Creates and check a Distributed Region
+   *
    * @throws Exception
    */
-
   @Category(FlakyTest.class) // GEODE-1538
   @Test
   public void testDistributedRegion() throws Exception {
@@ -140,7 +135,6 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
 
       createDistributedRegion(vm, REGION_NAME);
       validateReplicateRegionAfterCreate(vm);
-
     }
 
     verifyRemoteDistributedRegion(managingNode, 3);
@@ -155,11 +149,11 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
 
   /**
    * Tests all Region MBean related Management APIs
-   * 
-   * a) Notification propagated to member MBean while a region is created
-   * 
-   * b) Created and check a Partitioned Region
-   * 
+   *
+   * <p>a) Notification propagated to member MBean while a region is created
+   *
+   * <p>b) Created and check a Partitioned Region
+   *
    * @throws Exception
    */
   @Test
@@ -193,11 +187,11 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
 
   /**
    * Tests all Region MBean related Management APIs
-   * 
-   * a) Notification propagated to member MBean while a region is created
-   * 
-   * b) Creates and check a Fixed Partitioned Region
-   * 
+   *
+   * <p>a) Notification propagated to member MBean while a region is created
+   *
+   * <p>b) Creates and check a Fixed Partitioned Region
+   *
    * @throws Exception
    */
   @Test
@@ -221,7 +215,6 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
       Object[] args = new Object[1];
       args[0] = fpaList;
       vm.invoke(RegionManagementDUnitTest.class, "createFixedPartitionRegion", args);
-
     }
     // Workaround for bug 46683. Renable validation when bug is fixed.
     validateRemoteFixedPartitionRegion(managingNode);
@@ -232,8 +225,9 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
   }
 
   /**
-   * Tests a Distributed Region at Managing Node side
-   * while region is created in a member node asynchronously.
+   * Tests a Distributed Region at Managing Node side while region is created in a member node
+   * asynchronously.
+   *
    * @throws Exception
    */
   @Test
@@ -253,7 +247,6 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
       VM vm = managedNodes[j];
 
       createDistributedRegion(vm, REGION_NAME);
-
     }
 
     validateDistributedMBean(managingNode, 3);
@@ -266,7 +259,6 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
       VM vm = managedNodes[j];
 
       closeRegion(vm, REGION_PATH);
-
     }
     ensureProxyCleanup(managingNode);
 
@@ -274,7 +266,6 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
 
     closeRegion(managingNode, REGION_PATH);
     validateDistributedMBean(managingNode, 0);
-
   }
 
   @Test
@@ -298,7 +289,6 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
     }
 
     closeRegion(managingNode, REGION_PATH);
-
   }
 
   @Test
@@ -317,7 +307,6 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
       closeRegion(vm, LOCAL_REGION_NAME);
       checkNullRegions(vm, LOCAL_SUB_REGION_NAME);
     }
-
   }
 
   @Test
@@ -330,43 +319,42 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
 
   public void createSpecialRegion(VM vm1) throws Exception {
     {
-      vm1.invoke(new SerializableRunnable("Check Sub Regions") {
+      vm1.invoke(
+          new SerializableRunnable("Check Sub Regions") {
 
-        public void run() {
-          Cache cache = getCache();
-          AttributesFactory attributesFactory = new AttributesFactory();
-          attributesFactory.setValueConstraint(Portfolio.class);
-          RegionAttributes regionAttributes = attributesFactory.create();
+            public void run() {
+              Cache cache = getCache();
+              AttributesFactory attributesFactory = new AttributesFactory();
+              attributesFactory.setValueConstraint(Portfolio.class);
+              RegionAttributes regionAttributes = attributesFactory.create();
 
-          cache.createRegion("p-os", regionAttributes);
-          cache.createRegion("p_os", regionAttributes);
-        }
-      });
-
+              cache.createRegion("p-os", regionAttributes);
+              cache.createRegion("p_os", regionAttributes);
+            }
+          });
     }
   }
 
   public void checkSpecialRegion(VM vm1, final DistributedMember member) throws Exception {
     {
-      vm1.invoke(new SerializableRunnable("Check Sub Regions") {
+      vm1.invoke(
+          new SerializableRunnable("Check Sub Regions") {
 
-        public void run() {
+            public void run() {
 
-          ManagementService service = getManagementService();
+              ManagementService service = getManagementService();
 
-          try {
-            MBeanUtil.getDistributedRegionMbean("/p-os", 1);
-            MBeanUtil.getDistributedRegionMbean("/p_os", 1);
+              try {
+                MBeanUtil.getDistributedRegionMbean("/p-os", 1);
+                MBeanUtil.getDistributedRegionMbean("/p_os", 1);
 
-          } catch (Exception e) {
-            InternalDistributedSystem.getLoggerI18n().fine("Undesired Result , DistributedRegionMXBean Should not be null" + e);
-          }
-
-        }
-      });
-
+              } catch (Exception e) {
+                InternalDistributedSystem.getLoggerI18n()
+                    .fine("Undesired Result , DistributedRegionMXBean Should not be null" + e);
+              }
+            }
+          });
     }
-
   }
 
   @Test
@@ -374,76 +362,75 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
     initManagement(false);
     for (VM vm : managedNodeList) {
       createDiskRegion(vm);
-
     }
     checkEntrySize(managingNode, 3);
   }
 
   public void createDiskRegion(VM vm1) throws Exception {
     {
-      vm1.invoke(new SerializableRunnable("Check Sub Regions") {
+      vm1.invoke(
+          new SerializableRunnable("Check Sub Regions") {
 
-        public void run() {
-          AttributesFactory factory = new AttributesFactory();
-          factory.setScope(Scope.LOCAL);
-          factory.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(20, new TestObjectSizerImpl(), EvictionAction.LOCAL_DESTROY));
-          /*File d = new File("DiskRegions" + OSProcess.getId());
-          d.mkdirs();
-          
-          DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-          dsf.setDiskDirs(new File[]{d});
-          factory.setDiskSynchronous(true);
-          DiskStore ds = dsf.create(REGION_NAME);
-          factory.setDiskStoreName(ds.getName());
-          */
-          Region region = getCache().createRegion(REGION_NAME, factory.create());
+            public void run() {
+              AttributesFactory factory = new AttributesFactory();
+              factory.setScope(Scope.LOCAL);
+              factory.setEvictionAttributes(
+                  EvictionAttributes.createLRUMemoryAttributes(
+                      20, new TestObjectSizerImpl(), EvictionAction.LOCAL_DESTROY));
+              /*File d = new File("DiskRegions" + OSProcess.getId());
+              d.mkdirs();
 
-          LRUStatistics lruStats = getLRUStats(region);
+              DiskStoreFactory dsf = getCache().createDiskStoreFactory();
+              dsf.setDiskDirs(new File[]{d});
+              factory.setDiskSynchronous(true);
+              DiskStore ds = dsf.create(REGION_NAME);
+              factory.setDiskStoreName(ds.getName());
+              */
+              Region region = getCache().createRegion(REGION_NAME, factory.create());
 
-          assertNotNull(lruStats);
+              LRUStatistics lruStats = getLRUStats(region);
 
-          RegionMXBean bean = managementService.getLocalRegionMBean(REGION_PATH);
+              assertNotNull(lruStats);
 
-          assertNotNull(bean);
+              RegionMXBean bean = managementService.getLocalRegionMBean(REGION_PATH);
 
-          int total;
-          for (total = 0; total < 10000; total++) {
-            int[] array = new int[250];
-            array[0] = total;
-            region.put(new Integer(total), array);
-          }
-          assertTrue(bean.getEntrySize() > 0);
-          LogWriterUtils.getLogWriter().info("DEBUG: EntrySize =" + bean.getEntrySize());
+              assertNotNull(bean);
 
-        }
-      });
-
+              int total;
+              for (total = 0; total < 10000; total++) {
+                int[] array = new int[250];
+                array[0] = total;
+                region.put(new Integer(total), array);
+              }
+              assertTrue(bean.getEntrySize() > 0);
+              LogWriterUtils.getLogWriter().info("DEBUG: EntrySize =" + bean.getEntrySize());
+            }
+          });
     }
-
   }
 
   public void checkEntrySize(VM vm1, final int expectedMembers) throws Exception {
     {
-      vm1.invoke(new SerializableRunnable("Check Sub Regions") {
+      vm1.invoke(
+          new SerializableRunnable("Check Sub Regions") {
 
-        public void run() {
+            public void run() {
 
-          DistributedRegionMXBean bean = null;
-          try {
-            bean = MBeanUtil.getDistributedRegionMbean(REGION_PATH, expectedMembers);
-          } catch (Exception e) {
-            InternalDistributedSystem.getLoggerI18n().fine("Undesired Result , DistributedRegionMXBean Should not be null" + e);
-          }
+              DistributedRegionMXBean bean = null;
+              try {
+                bean = MBeanUtil.getDistributedRegionMbean(REGION_PATH, expectedMembers);
+              } catch (Exception e) {
+                InternalDistributedSystem.getLoggerI18n()
+                    .fine("Undesired Result , DistributedRegionMXBean Should not be null" + e);
+              }
 
-          assertNotNull(bean);
+              assertNotNull(bean);
 
-          assertTrue(bean.getEntrySize() > 0);
-          LogWriterUtils.getLogWriter().info("DEBUG: EntrySize =" + bean.getEntrySize());
-        }
-      });
-
+              assertTrue(bean.getEntrySize() > 0);
+              LogWriterUtils.getLogWriter().info("DEBUG: EntrySize =" + bean.getEntrySize());
+            }
+          });
     }
-
   }
 
   protected LRUStatistics getLRUStats(Region region) {
@@ -454,126 +441,127 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
   @SuppressWarnings("serial")
   public void checkSubRegions(VM vm1, final String subRegionPath) throws Exception {
     {
-      vm1.invoke(new SerializableRunnable("Check Sub Regions") {
+      vm1.invoke(
+          new SerializableRunnable("Check Sub Regions") {
 
-        public void run() {
+            public void run() {
 
-          RegionMXBean bean = managementService.getLocalRegionMBean(subRegionPath);
-          assertNotNull(bean);
-
-        }
-      });
-
+              RegionMXBean bean = managementService.getLocalRegionMBean(subRegionPath);
+              assertNotNull(bean);
+            }
+          });
     }
   }
 
   @SuppressWarnings("serial")
   public void checkNullRegions(VM vm1, final String subRegionPath) throws Exception {
     {
-      vm1.invoke(new SerializableRunnable("Check Sub Regions") {
+      vm1.invoke(
+          new SerializableRunnable("Check Sub Regions") {
 
-        public void run() {
+            public void run() {
 
-          RegionMXBean bean = managementService.getLocalRegionMBean(subRegionPath);
-          assertNull(bean);
-
-        }
-      });
-
+              RegionMXBean bean = managementService.getLocalRegionMBean(subRegionPath);
+              assertNull(bean);
+            }
+          });
     }
   }
 
   protected void checkNavigationAPIS(final VM vm, final List<String> managedNodeMemberIds) {
-    SerializableRunnable checkNavigationAPIS = new SerializableRunnable("checkNavigationAPIS") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        ManagementService service = getManagementService();
-        final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+    SerializableRunnable checkNavigationAPIS =
+        new SerializableRunnable("checkNavigationAPIS") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            ManagementService service = getManagementService();
+            final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
 
-        assertNotNull(service.getDistributedSystemMXBean());
+            assertNotNull(service.getDistributedSystemMXBean());
 
-        waitForAllMembers(4);
-        assertTrue(bean.listDistributedRegionObjectNames().length == 2);
-        try {
-          assertNotNull(bean.fetchDistributedRegionObjectName(PARTITIONED_REGION_PATH));
-          assertNotNull(bean.fetchDistributedRegionObjectName(REGION_PATH));
-          ObjectName actualName = bean.fetchDistributedRegionObjectName(PARTITIONED_REGION_PATH);
-          ObjectName expectedName = MBeanJMXAdapter.getDistributedRegionMbeanName(PARTITIONED_REGION_PATH);
-          assertEquals(expectedName, actualName);
+            waitForAllMembers(4);
+            assertTrue(bean.listDistributedRegionObjectNames().length == 2);
+            try {
+              assertNotNull(bean.fetchDistributedRegionObjectName(PARTITIONED_REGION_PATH));
+              assertNotNull(bean.fetchDistributedRegionObjectName(REGION_PATH));
+              ObjectName actualName =
+                  bean.fetchDistributedRegionObjectName(PARTITIONED_REGION_PATH);
+              ObjectName expectedName =
+                  MBeanJMXAdapter.getDistributedRegionMbeanName(PARTITIONED_REGION_PATH);
+              assertEquals(expectedName, actualName);
 
-          actualName = bean.fetchDistributedRegionObjectName(REGION_PATH);
-          expectedName = MBeanJMXAdapter.getDistributedRegionMbeanName(REGION_PATH);
-          assertEquals(expectedName, actualName);
+              actualName = bean.fetchDistributedRegionObjectName(REGION_PATH);
+              expectedName = MBeanJMXAdapter.getDistributedRegionMbeanName(REGION_PATH);
+              assertEquals(expectedName, actualName);
 
-        } catch (Exception e) {
-          fail("fetchDistributedRegionObjectName () Unsuccessful " + e);
-        }
+            } catch (Exception e) {
+              fail("fetchDistributedRegionObjectName () Unsuccessful " + e);
+            }
 
-        for (String memberId : managedNodeMemberIds) {
-          ObjectName memberMBeanName = MBeanJMXAdapter.getMemberMBeanName(memberId);
-          ObjectName expectedName;
-          try {
-            waitForProxy(memberMBeanName, MemberMXBean.class);
+            for (String memberId : managedNodeMemberIds) {
+              ObjectName memberMBeanName = MBeanJMXAdapter.getMemberMBeanName(memberId);
+              ObjectName expectedName;
+              try {
+                waitForProxy(memberMBeanName, MemberMXBean.class);
 
-            ObjectName[] regionMBeanNames = bean.fetchRegionObjectNames(memberMBeanName);
-            assertNotNull(regionMBeanNames);
-            assertTrue(regionMBeanNames.length == 2);
-            List<ObjectName> listOfNames = Arrays.asList(regionMBeanNames);
+                ObjectName[] regionMBeanNames = bean.fetchRegionObjectNames(memberMBeanName);
+                assertNotNull(regionMBeanNames);
+                assertTrue(regionMBeanNames.length == 2);
+                List<ObjectName> listOfNames = Arrays.asList(regionMBeanNames);
 
-            expectedName = MBeanJMXAdapter.getRegionMBeanName(memberId, PARTITIONED_REGION_PATH);
-            listOfNames.contains(expectedName);
-            expectedName = MBeanJMXAdapter.getRegionMBeanName(memberId, REGION_PATH);
-            listOfNames.contains(expectedName);
-          } catch (Exception e) {
-            fail("fetchRegionObjectNames () Unsuccessful " + e);
+                expectedName =
+                    MBeanJMXAdapter.getRegionMBeanName(memberId, PARTITIONED_REGION_PATH);
+                listOfNames.contains(expectedName);
+                expectedName = MBeanJMXAdapter.getRegionMBeanName(memberId, REGION_PATH);
+                listOfNames.contains(expectedName);
+              } catch (Exception e) {
+                fail("fetchRegionObjectNames () Unsuccessful " + e);
+              }
+            }
+
+            for (String memberId : managedNodeMemberIds) {
+              ObjectName expectedName;
+              ObjectName actualName;
+              ObjectName memberMBeanName = MBeanJMXAdapter.getMemberMBeanName(memberId);
+              try {
+                waitForProxy(memberMBeanName, MemberMXBean.class);
+                expectedName =
+                    MBeanJMXAdapter.getRegionMBeanName(memberId, PARTITIONED_REGION_PATH);
+                waitForProxy(expectedName, RegionMXBean.class);
+                actualName = bean.fetchRegionObjectName(memberId, PARTITIONED_REGION_PATH);
+
+                assertEquals(expectedName, actualName);
+                expectedName = MBeanJMXAdapter.getRegionMBeanName(memberId, REGION_PATH);
+                waitForProxy(expectedName, RegionMXBean.class);
+                actualName = bean.fetchRegionObjectName(memberId, REGION_PATH);
+
+                assertEquals(expectedName, actualName);
+              } catch (Exception e) {
+                fail("fetchRegionObjectName () Unsuccessful ");
+              }
+            }
           }
-        }
-
-        for (String memberId : managedNodeMemberIds) {
-          ObjectName expectedName;
-          ObjectName actualName;
-          ObjectName memberMBeanName = MBeanJMXAdapter.getMemberMBeanName(memberId);
-          try {
-            waitForProxy(memberMBeanName, MemberMXBean.class);
-            expectedName = MBeanJMXAdapter.getRegionMBeanName(memberId, PARTITIONED_REGION_PATH);
-            waitForProxy(expectedName, RegionMXBean.class);
-            actualName = bean.fetchRegionObjectName(memberId, PARTITIONED_REGION_PATH);
-
-            assertEquals(expectedName, actualName);
-            expectedName = MBeanJMXAdapter.getRegionMBeanName(memberId, REGION_PATH);
-            waitForProxy(expectedName, RegionMXBean.class);
-            actualName = bean.fetchRegionObjectName(memberId, REGION_PATH);
-
-            assertEquals(expectedName, actualName);
-          } catch (Exception e) {
-            fail("fetchRegionObjectName () Unsuccessful ");
-          }
-        }
-
-      }
-    };
+        };
     vm.invoke(checkNavigationAPIS);
   }
 
   protected void putBulkData(final VM vm, final int numKeys) {
-    SerializableRunnable putBulkData = new SerializableRunnable("putBulkData") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        Region region = cache.getRegion(REGION_PATH);
-        for (int i = 0; i < numKeys; i++) {
-          region.put(i, i * i);
-        }
-
-      }
-    };
+    SerializableRunnable putBulkData =
+        new SerializableRunnable("putBulkData") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            Region region = cache.getRegion(REGION_PATH);
+            for (int i = 0; i < numKeys; i++) {
+              region.put(i, i * i);
+            }
+          }
+        };
     vm.invoke(putBulkData);
   }
 
   /**
    * creates a Fixed Partition List to be used for Fixed Partition Region
-   * 
-   * @param primaryIndex
-   *          index for each fixed partition
+   *
+   * @param primaryIndex index for each fixed partition
    */
   private static void createFixedPartitionList(int primaryIndex) {
     fpaList.clear();
@@ -592,11 +580,11 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
       fpaList.add(FixedPartitionAttributes.createFixedPartition("Q2", 3));
       fpaList.add(FixedPartitionAttributes.createFixedPartition("Q3", true, 3));
     }
-
   }
 
   /**
    * Creates a Fixed Partitioned Region
+   *
    * @param fpaList partition list
    */
   protected static void createFixedPartitionRegion(List<FixedPartitionAttributes> fpaList) {
@@ -615,12 +603,20 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
     attr.setPartitionAttributes(paf.create());
     fixedPrRegion = cache.createRegion(FIXED_PR_NAME, attr.create());
     assertNotNull(fixedPrRegion);
-    LogWriterUtils.getLogWriter().info("Partitioned Region " + FIXED_PR_NAME + " created Successfully :" + fixedPrRegion.toString());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Partitioned Region "
+                + FIXED_PR_NAME
+                + " created Successfully :"
+                + fixedPrRegion.toString());
 
     RegionMXBean bean = service.getLocalRegionMBean(FIXED_PR_PATH);
     RegionAttributes regAttrs = fixedPrRegion.getAttributes();
 
-    LogWriterUtils.getLogWriter().info("FixedPartitionAttribute From GemFire :" + regAttrs.getPartitionAttributes().getFixedPartitionAttributes());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "FixedPartitionAttribute From GemFire :"
+                + regAttrs.getPartitionAttributes().getFixedPartitionAttributes());
 
     RegionAttributesData data = bean.listRegionAttributes();
 
@@ -634,264 +630,297 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
 
     assertEquals(3, fixedPrData.length);
     for (int i = 0; i < fixedPrData.length; i++) {
-      LogWriterUtils.getLogWriter().info("<ExpectedString> Fixed PR Data is " + fixedPrData[i] + "</ExpectedString> ");
+      LogWriterUtils.getLogWriter()
+          .info("<ExpectedString> Fixed PR Data is " + fixedPrData[i] + "</ExpectedString> ");
     }
   }
 
   /**
    * Verifies the Fixed Partition Region for partition related attributes
-   * 
+   *
    * @param vm
    */
   protected void validateRemoteFixedPartitionRegion(final VM vm) throws Exception {
-    SerializableRunnable verifyFixedRegion = new SerializableRunnable("Verify Partition region") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
+    SerializableRunnable verifyFixedRegion =
+        new SerializableRunnable("Verify Partition region") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            Set<DistributedMember> otherMemberSet =
+                cache.getDistributionManager().getOtherNormalDistributionManagerIds();
 
-        for (DistributedMember member : otherMemberSet) {
-          RegionMXBean bean = null;
-          try {
-            bean = MBeanUtil.getRegionMbeanProxy(member, FIXED_PR_PATH);
-          } catch (Exception e) {
-            InternalDistributedSystem.getLoggerI18n().fine("Undesired Result , RegionMBean Should not be null");
+            for (DistributedMember member : otherMemberSet) {
+              RegionMXBean bean = null;
+              try {
+                bean = MBeanUtil.getRegionMbeanProxy(member, FIXED_PR_PATH);
+              } catch (Exception e) {
+                InternalDistributedSystem.getLoggerI18n()
+                    .fine("Undesired Result , RegionMBean Should not be null");
+              }
+              PartitionAttributesData data = bean.listPartitionAttributes();
+              assertNotNull(data);
+              FixedPartitionAttributesData[] fixedPrData = bean.listFixedPartitionAttributes();
+              assertNotNull(fixedPrData);
+              assertEquals(3, fixedPrData.length);
+              for (int i = 0; i < fixedPrData.length; i++) {
+                LogWriterUtils.getLogWriter()
+                    .info(
+                        "<ExpectedString> Remote PR Data is "
+                            + fixedPrData[i]
+                            + "</ExpectedString> ");
+              }
+            }
           }
-          PartitionAttributesData data = bean.listPartitionAttributes();
-          assertNotNull(data);
-          FixedPartitionAttributesData[] fixedPrData = bean.listFixedPartitionAttributes();
-          assertNotNull(fixedPrData);
-          assertEquals(3, fixedPrData.length);
-          for (int i = 0; i < fixedPrData.length; i++) {
-            LogWriterUtils.getLogWriter().info("<ExpectedString> Remote PR Data is " + fixedPrData[i] + "</ExpectedString> ");
-          }
-        }
-
-      }
-
-    };
+        };
     vm.invoke(verifyFixedRegion);
   }
 
   /**
-   * Add a Notification listener to MemberMBean 
+   * Add a Notification listener to MemberMBean
+   *
    * @param vm
    */
   protected void addMemberListener(final VM vm) {
-    SerializableRunnable addMemberListener = new SerializableRunnable("addMemberListener") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+    SerializableRunnable addMemberListener =
+        new SerializableRunnable("addMemberListener") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
 
-        SystemManagementService service = (SystemManagementService) getManagementService();
+            SystemManagementService service = (SystemManagementService) getManagementService();
 
-        Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
+            Set<DistributedMember> otherMemberSet =
+                cache.getDistributionManager().getOtherNormalDistributionManagerIds();
 
-        for (DistributedMember member : otherMemberSet) {
+            for (DistributedMember member : otherMemberSet) {
 
-          MBeanServer mbeanServer = MBeanJMXAdapter.mbeanServer;
+              MBeanServer mbeanServer = MBeanJMXAdapter.mbeanServer;
 
-          RegionNotif regionCreate = new RegionNotif();
+              RegionNotif regionCreate = new RegionNotif();
 
-          ObjectName memberMBeanName;
-          try {
-            memberMBeanName = service.getMemberMBeanName(member);
-            Set<ObjectName> names = service.queryMBeanNames(member);
-            if (names != null) {
-              for (ObjectName name : names) {
-                LogWriterUtils.getLogWriter().info("<ExpectedString> ObjectNames arr" + name + "</ExpectedString> ");
+              ObjectName memberMBeanName;
+              try {
+                memberMBeanName = service.getMemberMBeanName(member);
+                Set<ObjectName> names = service.queryMBeanNames(member);
+                if (names != null) {
+                  for (ObjectName name : names) {
+                    LogWriterUtils.getLogWriter()
+                        .info("<ExpectedString> ObjectNames arr" + name + "</ExpectedString> ");
+                  }
+                }
+                waitForProxy(memberMBeanName, MemberMXBean.class);
+                mbeanServer.addNotificationListener(memberMBeanName, regionCreate, null, null);
+              } catch (NullPointerException e) {
+                Assert.fail("FAILED WITH EXCEPION", e);
+              } catch (InstanceNotFoundException e) {
+                Assert.fail("FAILED WITH EXCEPION", e);
+              } catch (Exception e) {
+                Assert.fail("FAILED WITH EXCEPION", e);
               }
             }
-            waitForProxy(memberMBeanName, MemberMXBean.class);
-            mbeanServer.addNotificationListener(memberMBeanName, regionCreate, null, null);
-          } catch (NullPointerException e) {
-            Assert.fail("FAILED WITH EXCEPION", e);
-          } catch (InstanceNotFoundException e) {
-            Assert.fail("FAILED WITH EXCEPION", e);
-          } catch (Exception e) {
-            Assert.fail("FAILED WITH EXCEPION", e);
           }
-
-        }
-
-      }
-    };
+        };
     vm.invoke(addMemberListener);
-
   }
 
   /**
-   * Add a Notification listener to DistributedSystemMBean which should gather
-   * all the notifications which are propagated through all individual
-   * MemberMBeans Hence Region created/destroyed should be visible to this
-   * listener
-   * 
+   * Add a Notification listener to DistributedSystemMBean which should gather all the notifications
+   * which are propagated through all individual MemberMBeans Hence Region created/destroyed should
+   * be visible to this listener
+   *
    * @param vm
    */
   protected void addDistrListener(final VM vm) {
-    SerializableRunnable addDistrListener = new SerializableRunnable("addDistrListener") {
-      public void run() {
-        MBeanServer mbeanServer = MBeanJMXAdapter.mbeanServer;
+    SerializableRunnable addDistrListener =
+        new SerializableRunnable("addDistrListener") {
+          public void run() {
+            MBeanServer mbeanServer = MBeanJMXAdapter.mbeanServer;
 
-        DistrNotif regionCreate = new DistrNotif();
+            DistrNotif regionCreate = new DistrNotif();
 
-        ObjectName systemMBeanName;
-        try {
-          systemMBeanName = MBeanJMXAdapter.getDistributedSystemName();
-          mbeanServer.addNotificationListener(systemMBeanName, regionCreate, null, null);
+            ObjectName systemMBeanName;
+            try {
+              systemMBeanName = MBeanJMXAdapter.getDistributedSystemName();
+              mbeanServer.addNotificationListener(systemMBeanName, regionCreate, null, null);
 
-        } catch (NullPointerException e) {
-          Assert.fail("FAILED WITH EXCEPION", e);
-        } catch (InstanceNotFoundException e) {
-          Assert.fail("FAILED WITH EXCEPION", e);
-
-        }
-
-      }
-    };
+            } catch (NullPointerException e) {
+              Assert.fail("FAILED WITH EXCEPION", e);
+            } catch (InstanceNotFoundException e) {
+              Assert.fail("FAILED WITH EXCEPION", e);
+            }
+          }
+        };
     vm.invoke(addDistrListener);
-
   }
 
   public void ensureProxyCleanup(final VM vm) {
 
-    SerializableRunnable ensureProxyCleanup = new SerializableRunnable("Ensure Proxy cleanup") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
+    SerializableRunnable ensureProxyCleanup =
+        new SerializableRunnable("Ensure Proxy cleanup") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            Set<DistributedMember> otherMemberSet =
+                cache.getDistributionManager().getOtherNormalDistributionManagerIds();
 
-        final SystemManagementService service = (SystemManagementService) getManagementService();
+            final SystemManagementService service =
+                (SystemManagementService) getManagementService();
 
-        for (final DistributedMember member : otherMemberSet) {
-          RegionMXBean bean = null;
-          try {
-
-            Wait.waitForCriterion(new WaitCriterion() {
-
+            for (final DistributedMember member : otherMemberSet) {
               RegionMXBean bean = null;
+              try {
 
-              public String description() {
-                return "Waiting for the proxy to get deleted at managing node";
+                Wait.waitForCriterion(
+                    new WaitCriterion() {
+
+                      RegionMXBean bean = null;
+
+                      public String description() {
+                        return "Waiting for the proxy to get deleted at managing node";
+                      }
+
+                      public boolean done() {
+                        ObjectName objectName = service.getRegionMBeanName(member, REGION_PATH);
+                        bean = service.getMBeanProxy(objectName, RegionMXBean.class);
+                        boolean done = (bean == null);
+                        return done;
+                      }
+                    },
+                    MAX_WAIT,
+                    500,
+                    true);
+
+              } catch (Exception e) {
+                fail("could not remove proxies in required time");
               }
-
-              public boolean done() {
-                ObjectName objectName = service.getRegionMBeanName(member, REGION_PATH);
-                bean = service.getMBeanProxy(objectName, RegionMXBean.class);
-                boolean done = (bean == null);
-                return done;
-              }
-
-            }, MAX_WAIT, 500, true);
-
-          } catch (Exception e) {
-            fail("could not remove proxies in required time");
-
+              assertNull(bean);
+            }
           }
-          assertNull(bean);
-
-        }
-
-      }
-    };
+        };
     vm.invoke(ensureProxyCleanup);
   }
 
   /**
    * Verifies a Remote Distributed Region
-   * 
+   *
    * @param vm
    */
-  protected void verifyRemoteDistributedRegion(final VM vm, final int expectedMembers) throws Exception {
-    SerializableRunnable verifyRegion = new SerializableRunnable("Verify Distributed region") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
+  protected void verifyRemoteDistributedRegion(final VM vm, final int expectedMembers)
+      throws Exception {
+    SerializableRunnable verifyRegion =
+        new SerializableRunnable("Verify Distributed region") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            Set<DistributedMember> otherMemberSet =
+                cache.getDistributionManager().getOtherNormalDistributionManagerIds();
 
-        for (DistributedMember member : otherMemberSet) {
-          RegionMXBean bean = null;
-          try {
-            bean = MBeanUtil.getRegionMbeanProxy(member, REGION_PATH);
-          } catch (Exception e) {
-            InternalDistributedSystem.getLoggerI18n().fine("Undesired Result , RegionMBean Should not be null" + e);
+            for (DistributedMember member : otherMemberSet) {
+              RegionMXBean bean = null;
+              try {
+                bean = MBeanUtil.getRegionMbeanProxy(member, REGION_PATH);
+              } catch (Exception e) {
+                InternalDistributedSystem.getLoggerI18n()
+                    .fine("Undesired Result , RegionMBean Should not be null" + e);
+              }
+              assertNotNull(bean);
 
+              RegionAttributesData data = bean.listRegionAttributes();
+              assertNotNull(data);
+              MembershipAttributesData membershipData = bean.listMembershipAttributes();
+              EvictionAttributesData evictionData = bean.listEvictionAttributes();
+              assertNotNull(membershipData);
+              assertNotNull(evictionData);
+              LogWriterUtils.getLogWriter()
+                  .info(
+                      "<ExpectedString> Membership Data is "
+                          + membershipData.toString()
+                          + "</ExpectedString> ");
+              LogWriterUtils.getLogWriter()
+                  .info(
+                      "<ExpectedString> Eviction Data is "
+                          + membershipData.toString()
+                          + "</ExpectedString> ");
+            }
+            DistributedRegionMXBean bean = null;
+            try {
+              bean = MBeanUtil.getDistributedRegionMbean(REGION_PATH, expectedMembers);
+            } catch (Exception e) {
+              InternalDistributedSystem.getLoggerI18n()
+                  .fine("Undesired Result , DistributedRegionMXBean Should not be null" + e);
+            }
+
+            assertNotNull(bean);
+            assertEquals(REGION_PATH, bean.getFullPath());
           }
-          assertNotNull(bean);
-
-          RegionAttributesData data = bean.listRegionAttributes();
-          assertNotNull(data);
-          MembershipAttributesData membershipData = bean.listMembershipAttributes();
-          EvictionAttributesData evictionData = bean.listEvictionAttributes();
-          assertNotNull(membershipData);
-          assertNotNull(evictionData);
-          LogWriterUtils.getLogWriter().info("<ExpectedString> Membership Data is " + membershipData.toString() + "</ExpectedString> ");
-          LogWriterUtils.getLogWriter().info("<ExpectedString> Eviction Data is " + membershipData.toString() + "</ExpectedString> ");
-
-        }
-        DistributedRegionMXBean bean = null;
-        try {
-          bean = MBeanUtil.getDistributedRegionMbean(REGION_PATH, expectedMembers);
-        } catch (Exception e) {
-          InternalDistributedSystem.getLoggerI18n().fine("Undesired Result , DistributedRegionMXBean Should not be null" + e);
-        }
-
-        assertNotNull(bean);
-        assertEquals(REGION_PATH, bean.getFullPath());
-
-      }
-    };
+        };
     vm.invoke(verifyRegion);
   }
 
   protected void validateDistributedMBean(final VM vm, final int expectedMembers) {
-    SerializableRunnable verifyRegion = new SerializableRunnable("Verify Distributed region") {
-      public void run() {
-        DistributedRegionMXBean bean = null;
-        DistributedSystemMXBean sysMBean = null;
-        final ManagementService service = getManagementService();
+    SerializableRunnable verifyRegion =
+        new SerializableRunnable("Verify Distributed region") {
+          public void run() {
+            DistributedRegionMXBean bean = null;
+            DistributedSystemMXBean sysMBean = null;
+            final ManagementService service = getManagementService();
 
-        if (expectedMembers == 0) {
-          try {
-            Wait.waitForCriterion(new WaitCriterion() {
+            if (expectedMembers == 0) {
+              try {
+                Wait.waitForCriterion(
+                    new WaitCriterion() {
 
-              RegionMXBean bean = null;
+                      RegionMXBean bean = null;
 
-              public String description() {
-                return "Waiting for the proxy to get deleted at managing node";
+                      public String description() {
+                        return "Waiting for the proxy to get deleted at managing node";
+                      }
+
+                      public boolean done() {
+                        DistributedRegionMXBean bean =
+                            service.getDistributedRegionMXBean(REGION_PATH);
+                        boolean done = (bean == null);
+                        return done;
+                      }
+                    },
+                    MAX_WAIT,
+                    500,
+                    true);
+
+              } catch (Exception e) {
+                fail("could not remove Aggregate Bean in required time");
               }
+              return;
+            }
 
-              public boolean done() {
-                DistributedRegionMXBean bean = service.getDistributedRegionMXBean(REGION_PATH);
-                boolean done = (bean == null);
-                return done;
-              }
+            try {
+              bean = MBeanUtil.getDistributedRegionMbean(REGION_PATH, expectedMembers);
+              sysMBean = service.getDistributedSystemMXBean();
+            } catch (Exception e) {
+              InternalDistributedSystem.getLoggerI18n()
+                  .fine("Undesired Result , DistributedRegionMXBean Should not be null" + e);
+            }
 
-            }, MAX_WAIT, 500, true);
+            assertNotNull(bean);
+            assertEquals(REGION_PATH, bean.getFullPath());
+            assertEquals(expectedMembers, bean.getMemberCount());
+            assertEquals(expectedMembers, bean.getMembers().length);
 
-          } catch (Exception e) {
-            fail("could not remove Aggregate Bean in required time");
-
+            // Check Stats related Data
+            // Add Mock testing
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "<ExpectedString> CacheListenerCallsAvgLatency is "
+                        + bean.getCacheListenerCallsAvgLatency()
+                        + "</ExpectedString> ");
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "<ExpectedString> CacheWriterCallsAvgLatency is "
+                        + bean.getCacheWriterCallsAvgLatency()
+                        + "</ExpectedString> ");
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "<ExpectedString> CreatesRate is "
+                        + bean.getCreatesRate()
+                        + "</ExpectedString> ");
           }
-          return;
-        }
-
-        try {
-          bean = MBeanUtil.getDistributedRegionMbean(REGION_PATH, expectedMembers);
-          sysMBean = service.getDistributedSystemMXBean();
-        } catch (Exception e) {
-          InternalDistributedSystem.getLoggerI18n().fine("Undesired Result , DistributedRegionMXBean Should not be null" + e);
-        }
-
-        assertNotNull(bean);
-        assertEquals(REGION_PATH, bean.getFullPath());
-        assertEquals(expectedMembers, bean.getMemberCount());
-        assertEquals(expectedMembers, bean.getMembers().length);
-
-        // Check Stats related Data
-        // Add Mock testing
-        LogWriterUtils.getLogWriter().info("<ExpectedString> CacheListenerCallsAvgLatency is " + bean.getCacheListenerCallsAvgLatency() + "</ExpectedString> ");
-        LogWriterUtils.getLogWriter().info("<ExpectedString> CacheWriterCallsAvgLatency is " + bean.getCacheWriterCallsAvgLatency() + "</ExpectedString> ");
-        LogWriterUtils.getLogWriter().info("<ExpectedString> CreatesRate is " + bean.getCreatesRate() + "</ExpectedString> ");
-
-      }
-    };
+        };
     // Test DistributedRegionMXBean
 
     vm.invoke(verifyRegion);
@@ -899,192 +928,225 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
 
   /**
    * Verifies a Remote Partition Region
-   * 
+   *
    * @param vm
    */
   protected void validateRemotePartitionRegion(final VM vm) throws Exception {
-    SerializableRunnable verifyRegion = new SerializableRunnable("Verify Partition region") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
+    SerializableRunnable verifyRegion =
+        new SerializableRunnable("Verify Partition region") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            Set<DistributedMember> otherMemberSet =
+                cache.getDistributionManager().getOtherNormalDistributionManagerIds();
 
-        for (DistributedMember member : otherMemberSet) {
-          RegionMXBean bean = null;
-          try {
-            bean = MBeanUtil.getRegionMbeanProxy(member, PARTITIONED_REGION_PATH);
-          } catch (Exception e) {
-            InternalDistributedSystem.getLoggerI18n().fine("Undesired Result , RegionMBean Should not be null");
+            for (DistributedMember member : otherMemberSet) {
+              RegionMXBean bean = null;
+              try {
+                bean = MBeanUtil.getRegionMbeanProxy(member, PARTITIONED_REGION_PATH);
+              } catch (Exception e) {
+                InternalDistributedSystem.getLoggerI18n()
+                    .fine("Undesired Result , RegionMBean Should not be null");
+              }
+              PartitionAttributesData data = bean.listPartitionAttributes();
+              assertNotNull(data);
+            }
+
+            ManagementService service = getManagementService();
+            DistributedRegionMXBean bean =
+                service.getDistributedRegionMXBean(PARTITIONED_REGION_PATH);
+            assertEquals(3, bean.getMembers().length);
           }
-          PartitionAttributesData data = bean.listPartitionAttributes();
-          assertNotNull(data);
-        }
-
-        ManagementService service = getManagementService();
-        DistributedRegionMXBean bean = service.getDistributedRegionMXBean(PARTITIONED_REGION_PATH);
-        assertEquals(3, bean.getMembers().length);
-
-      }
-
-    };
+        };
     vm.invoke(verifyRegion);
   }
 
   /**
    * Creates a Distributed Region
-   * 
+   *
    * @param vm
    */
   protected void validateReplicateRegionAfterCreate(final VM vm) {
-    SerializableRunnable checkDistributedRegion = new SerializableRunnable("Check Distributed region") {
-      public void run() {
+    SerializableRunnable checkDistributedRegion =
+        new SerializableRunnable("Check Distributed region") {
+          public void run() {
 
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        SystemManagementService service = (SystemManagementService) getManagementService();
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            SystemManagementService service = (SystemManagementService) getManagementService();
 
-        MBeanServer mbeanServer = MBeanJMXAdapter.mbeanServer;
-        RegionNotif test = new RegionNotif();
+            MBeanServer mbeanServer = MBeanJMXAdapter.mbeanServer;
+            RegionNotif test = new RegionNotif();
 
-        String memberId = MBeanJMXAdapter.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
+            String memberId =
+                MBeanJMXAdapter.getMemberNameOrId(
+                    cache.getDistributedSystem().getDistributedMember());
 
-        ObjectName memberMBeanName;
-        try {
-          memberMBeanName = ObjectName.getInstance("GemFire:type=Member,member=" + memberId);
-          mbeanServer.addNotificationListener(memberMBeanName, test, null, null);
-        } catch (MalformedObjectNameException e) {
+            ObjectName memberMBeanName;
+            try {
+              memberMBeanName = ObjectName.getInstance("GemFire:type=Member,member=" + memberId);
+              mbeanServer.addNotificationListener(memberMBeanName, test, null, null);
+            } catch (MalformedObjectNameException e) {
 
-          Assert.fail("FAILED WITH EXCEPION", e);
-        } catch (NullPointerException e) {
-          Assert.fail("FAILED WITH EXCEPION", e);
+              Assert.fail("FAILED WITH EXCEPION", e);
+            } catch (NullPointerException e) {
+              Assert.fail("FAILED WITH EXCEPION", e);
 
-        } catch (InstanceNotFoundException e) {
-          Assert.fail("FAILED WITH EXCEPION", e);
+            } catch (InstanceNotFoundException e) {
+              Assert.fail("FAILED WITH EXCEPION", e);
+            }
 
-        }
+            assertNotNull(service.getLocalRegionMBean(REGION_PATH));
 
-        assertNotNull(service.getLocalRegionMBean(REGION_PATH));
+            RegionMXBean bean = service.getLocalRegionMBean(REGION_PATH);
+            Region region = cache.getRegion(REGION_PATH);
 
-        RegionMXBean bean = service.getLocalRegionMBean(REGION_PATH);
-        Region region = cache.getRegion(REGION_PATH);
+            RegionAttributes regAttrs = region.getAttributes();
 
-        RegionAttributes regAttrs = region.getAttributes();
+            RegionAttributesData data = bean.listRegionAttributes();
 
-        RegionAttributesData data = bean.listRegionAttributes();
-
-        assertRegionAttributes(regAttrs, data);
-        MembershipAttributesData membershipData = bean.listMembershipAttributes();
-        EvictionAttributesData evictionData = bean.listEvictionAttributes();
-        assertNotNull(membershipData);
-        assertNotNull(evictionData);
-        LogWriterUtils.getLogWriter().info("<ExpectedString> Membership Data is " + membershipData.toString() + "</ExpectedString> ");
-        LogWriterUtils.getLogWriter().info("<ExpectedString> Eviction Data is " + membershipData.toString() + "</ExpectedString> ");
-      }
-    };
+            assertRegionAttributes(regAttrs, data);
+            MembershipAttributesData membershipData = bean.listMembershipAttributes();
+            EvictionAttributesData evictionData = bean.listEvictionAttributes();
+            assertNotNull(membershipData);
+            assertNotNull(evictionData);
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "<ExpectedString> Membership Data is "
+                        + membershipData.toString()
+                        + "</ExpectedString> ");
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "<ExpectedString> Eviction Data is "
+                        + membershipData.toString()
+                        + "</ExpectedString> ");
+          }
+        };
     vm.invoke(checkDistributedRegion);
   }
 
   /**
    * Creates a partition Region
-   * 
+   *
    * @param vm
    */
   protected void validatePartitionRegionAfterCreate(final VM vm) {
-    SerializableRunnable createParRegion = new SerializableRunnable("Create Partitioned region") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        SystemManagementService service = (SystemManagementService) getManagementService();
-        assertNotNull(service.getLocalRegionMBean(PARTITIONED_REGION_PATH));
-        RegionMXBean bean = service.getLocalRegionMBean(PARTITIONED_REGION_PATH);
-        Region partitionedRegion = cache.getRegion(PARTITIONED_REGION_PATH);
-        RegionAttributes regAttrs = partitionedRegion.getAttributes();
-        RegionAttributesData data = bean.listRegionAttributes();
-        PartitionAttributesData parData = bean.listPartitionAttributes();
-        assertPartitionData(regAttrs, parData);
-
-      }
-    };
+    SerializableRunnable createParRegion =
+        new SerializableRunnable("Create Partitioned region") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            SystemManagementService service = (SystemManagementService) getManagementService();
+            assertNotNull(service.getLocalRegionMBean(PARTITIONED_REGION_PATH));
+            RegionMXBean bean = service.getLocalRegionMBean(PARTITIONED_REGION_PATH);
+            Region partitionedRegion = cache.getRegion(PARTITIONED_REGION_PATH);
+            RegionAttributes regAttrs = partitionedRegion.getAttributes();
+            RegionAttributesData data = bean.listRegionAttributes();
+            PartitionAttributesData parData = bean.listPartitionAttributes();
+            assertPartitionData(regAttrs, parData);
+          }
+        };
     vm.invoke(createParRegion);
   }
 
   /**
    * closes a Distributed Region
-   * 
+   *
    * @param vm
    */
   protected void validateReplicatedRegionAfterClose(final VM vm) {
-    SerializableRunnable closeRegion = new SerializableRunnable("Close Distributed region") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        SystemManagementService service = (SystemManagementService) getManagementService();
-        RegionMXBean bean = null;
-        try {
-          bean = service.getLocalRegionMBean(REGION_PATH);
-        } catch (ManagementException mgtEx) {
-          LogWriterUtils.getLogWriter().info("<ExpectedString> Expected Exception  " + mgtEx.getLocalizedMessage() + "</ExpectedString> ");
-        }
-        assertNull(bean);
-        ObjectName regionObjectName = service.getRegionMBeanName(cache.getDistributedSystem().getDistributedMember(), REGION_PATH);
-        assertNull(service.getLocalManager().getManagementResourceRepo().getEntryFromLocalMonitoringRegion(regionObjectName));
-      }
-    };
+    SerializableRunnable closeRegion =
+        new SerializableRunnable("Close Distributed region") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            SystemManagementService service = (SystemManagementService) getManagementService();
+            RegionMXBean bean = null;
+            try {
+              bean = service.getLocalRegionMBean(REGION_PATH);
+            } catch (ManagementException mgtEx) {
+              LogWriterUtils.getLogWriter()
+                  .info(
+                      "<ExpectedString> Expected Exception  "
+                          + mgtEx.getLocalizedMessage()
+                          + "</ExpectedString> ");
+            }
+            assertNull(bean);
+            ObjectName regionObjectName =
+                service.getRegionMBeanName(
+                    cache.getDistributedSystem().getDistributedMember(), REGION_PATH);
+            assertNull(
+                service
+                    .getLocalManager()
+                    .getManagementResourceRepo()
+                    .getEntryFromLocalMonitoringRegion(regionObjectName));
+          }
+        };
     vm.invoke(closeRegion);
   }
 
   /**
    * close a partition Region
-   * 
+   *
    * @param vm
    */
   protected void validatePartitionRegionAfterClose(final VM vm) {
-    SerializableRunnable closeParRegion = new SerializableRunnable("Close Partition region") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        ManagementService service = getManagementService();
-        LogWriterUtils.getLogWriter().info("Closing Par Region");
-        RegionMXBean bean = null;
-        try {
-          bean = service.getLocalRegionMBean(PARTITIONED_REGION_PATH);
-        } catch (ManagementException mgtEx) {
-          LogWriterUtils.getLogWriter().info("<ExpectedString> Expected Exception  " + mgtEx.getLocalizedMessage() + "</ExpectedString> ");
-        }
-        assertNull(bean);
-      }
-    };
+    SerializableRunnable closeParRegion =
+        new SerializableRunnable("Close Partition region") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            ManagementService service = getManagementService();
+            LogWriterUtils.getLogWriter().info("Closing Par Region");
+            RegionMXBean bean = null;
+            try {
+              bean = service.getLocalRegionMBean(PARTITIONED_REGION_PATH);
+            } catch (ManagementException mgtEx) {
+              LogWriterUtils.getLogWriter()
+                  .info(
+                      "<ExpectedString> Expected Exception  "
+                          + mgtEx.getLocalizedMessage()
+                          + "</ExpectedString> ");
+            }
+            assertNull(bean);
+          }
+        };
     vm.invoke(closeParRegion);
   }
 
   /**
    * Closes Fixed Partition region
-   * 
+   *
    * @param vm
    */
   protected void closeFixedPartitionRegion(final VM vm) {
-    SerializableRunnable closeParRegion = new SerializableRunnable("Close Fixed Partition region") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        ManagementService service = getManagementService();
-        LogWriterUtils.getLogWriter().info("Closing Fixed Par Region");
-        Region region = cache.getRegion(FIXED_PR_PATH);
-        region.close();
-        RegionMXBean bean = null;
-        try {
-          bean = service.getLocalRegionMBean(FIXED_PR_PATH);
-        } catch (ManagementException mgtEx) {
-          LogWriterUtils.getLogWriter().info("<ExpectedString> Expected Exception  " + mgtEx.getLocalizedMessage() + "</ExpectedString> ");
-        }
-        assertNull(bean);
-      }
-    };
+    SerializableRunnable closeParRegion =
+        new SerializableRunnable("Close Fixed Partition region") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            ManagementService service = getManagementService();
+            LogWriterUtils.getLogWriter().info("Closing Fixed Par Region");
+            Region region = cache.getRegion(FIXED_PR_PATH);
+            region.close();
+            RegionMXBean bean = null;
+            try {
+              bean = service.getLocalRegionMBean(FIXED_PR_PATH);
+            } catch (ManagementException mgtEx) {
+              LogWriterUtils.getLogWriter()
+                  .info(
+                      "<ExpectedString> Expected Exception  "
+                          + mgtEx.getLocalizedMessage()
+                          + "</ExpectedString> ");
+            }
+            assertNull(bean);
+          }
+        };
     vm.invoke(closeParRegion);
   }
 
   /**
    * Asserts and verifies all the partition related data
-   * 
+   *
    * @param regAttrs
    * @param partitionAttributesData
    */
-
-  protected static void assertPartitionData(RegionAttributes regAttrs, PartitionAttributesData partitionAttributesData) {
+  protected static void assertPartitionData(
+      RegionAttributes regAttrs, PartitionAttributesData partitionAttributesData) {
     PartitionAttributesData data = partitionAttributesData;
 
     PartitionAttributes partAttrs = regAttrs.getPartitionAttributes();
@@ -1118,20 +1180,21 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
 
     if (partAttrs.getPartitionListeners() != null) {
       for (int i = 0; i < partAttrs.getPartitionListeners().length; i++) {
-        assertEquals((partAttrs.getPartitionListeners())[i].getClass().getCanonicalName(), data.getPartitionListeners()[i]);
+        assertEquals(
+            (partAttrs.getPartitionListeners())[i].getClass().getCanonicalName(),
+            data.getPartitionListeners()[i]);
       }
-
     }
-
   }
 
   /**
    * Checks all Region Attributes
-   * 
+   *
    * @param regAttrs
    * @param data
    */
-  protected static void assertRegionAttributes(RegionAttributes regAttrs, RegionAttributesData data) {
+  protected static void assertRegionAttributes(
+      RegionAttributes regAttrs, RegionAttributesData data) {
 
     String compressorClassName = null;
     if (regAttrs.getCompressor() != null) {
@@ -1165,7 +1228,6 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
       for (int i = 0; i < listeners.length; i++) {
         assertEquals(value[i], listeners[i].getClass().getName());
       }
-
     }
 
     int regionTimeToLive = regAttrs.getRegionTimeToLive().getTimeout();
@@ -1251,44 +1313,37 @@ public class RegionManagementDUnitTest extends ManagementTestBase {
     assertEquals(diskSynchronus, data.isDiskSynchronous());
   }
 
-  /**
-   * Verifies Region related Statistics
-   */
-  public void verifyStatistics() {
+  /** Verifies Region related Statistics */
+  public void verifyStatistics() {}
 
-  }
-
-  /**
-   * User defined notification handler for Region creation handling
-   * 
-   * 
-   */
+  /** User defined notification handler for Region creation handling */
   private static class RegionNotif implements NotificationListener {
 
     @Override
     public void handleNotification(Notification notification, Object handback) {
       assertNotNull(notification);
       Notification rn = notification;
-      assertTrue(rn.getType().equals(JMXNotificationType.REGION_CREATED) || rn.getType().equals(JMXNotificationType.REGION_CLOSED));
-      LogWriterUtils.getLogWriter().info("<ExpectedString> Member Level Notifications" + rn.toString() + "</ExpectedString> ");
+      assertTrue(
+          rn.getType().equals(JMXNotificationType.REGION_CREATED)
+              || rn.getType().equals(JMXNotificationType.REGION_CLOSED));
+      LogWriterUtils.getLogWriter()
+          .info(
+              "<ExpectedString> Member Level Notifications" + rn.toString() + "</ExpectedString> ");
     }
-
   }
 
-  /**
-   * User defined notification handler for Region creation handling
-   * 
-   * 
-   */
+  /** User defined notification handler for Region creation handling */
   private static class DistrNotif implements NotificationListener {
 
     @Override
     public void handleNotification(Notification notification, Object handback) {
       assertNotNull(notification);
       Notification rn = notification;
-      LogWriterUtils.getLogWriter().info("<ExpectedString> Distributed System Notifications" + rn.toString() + "</ExpectedString> ");
+      LogWriterUtils.getLogWriter()
+          .info(
+              "<ExpectedString> Distributed System Notifications"
+                  + rn.toString()
+                  + "</ExpectedString> ");
     }
-
   }
-
 }

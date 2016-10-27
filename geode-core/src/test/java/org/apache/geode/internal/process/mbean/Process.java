@@ -16,10 +16,7 @@
  */
 package org.apache.geode.internal.process.mbean;
 
-/**
- * Extracted from LocalProcessControllerDUnitTest.
- * 
- */
+/** Extracted from LocalProcessControllerDUnitTest. */
 public class Process implements ProcessMBean {
 
   private final Object object = new Object();

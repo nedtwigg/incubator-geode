@@ -52,8 +52,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * This is the Dunit test to verify clear and destroyRegion operation in
- * Client-Server configuration.
+ * This is the Dunit test to verify clear and destroyRegion operation in Client-Server
+ * configuration.
  */
 @Category(DistributedTest.class)
 public class HAClearDUnitTest extends JUnit4DistributedTestCase {
@@ -111,11 +111,9 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * The test perorms following operations
-   * 1. Create 2 servers and 3 client
-   * 2. Perform put operations for knows set of keys directy from the client1.
-   * 3. Perform clear operation from client1
-   * 4. verify the result of operation for other clients and other servers.
+   * The test perorms following operations 1. Create 2 servers and 3 client 2. Perform put
+   * operations for knows set of keys directy from the client1. 3. Perform clear operation from
+   * client1 4. verify the result of operation for other clients and other servers.
    */
   @Test
   public void testClearWithOperationFromClient() throws Exception {
@@ -133,43 +131,43 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
     assertEquals(region.size(), regionSize);
     clearRegion();
 
-    client1.invoke(new CacheSerializableRunnable("waitForClearToCompleteFromClient1") {
+    client1.invoke(
+        new CacheSerializableRunnable("waitForClearToCompleteFromClient1") {
 
-      public void run2() throws CacheException {
-        synchronized (HAClearDUnitTest.class) {
-          while (!gotClearCallback) {
-            try {
-              HAClearDUnitTest.class.wait();
-            } catch (InterruptedException e) {
-              fail("Interrupted");
+          public void run2() throws CacheException {
+            synchronized (HAClearDUnitTest.class) {
+              while (!gotClearCallback) {
+                try {
+                  HAClearDUnitTest.class.wait();
+                } catch (InterruptedException e) {
+                  fail("Interrupted");
+                }
+              }
             }
+
+            if (!gotClearCallback) fail("test failed");
+            gotClearCallback = false;
           }
-        }
+        });
 
-        if (!gotClearCallback)
-          fail("test failed");
-        gotClearCallback = false;
-      }
-    });
+    client2.invoke(
+        new CacheSerializableRunnable("waitForClearToCompleteFromClient2") {
 
-    client2.invoke(new CacheSerializableRunnable("waitForClearToCompleteFromClient2") {
-
-      public void run2() throws CacheException {
-        synchronized (HAClearDUnitTest.class) {
-          while (!gotClearCallback) {
-            try {
-              HAClearDUnitTest.class.wait();
-            } catch (InterruptedException e) {
-              fail("interrupted");
+          public void run2() throws CacheException {
+            synchronized (HAClearDUnitTest.class) {
+              while (!gotClearCallback) {
+                try {
+                  HAClearDUnitTest.class.wait();
+                } catch (InterruptedException e) {
+                  fail("interrupted");
+                }
+              }
             }
-          }
-        }
 
-        if (!gotClearCallback)
-          fail("test failed");
-        gotClearCallback = false;
-      }
-    });
+            if (!gotClearCallback) fail("test failed");
+            gotClearCallback = false;
+          }
+        });
 
     regionSize = 0;
     client1.invoke(checkSizeRegion(regionSize));
@@ -179,11 +177,9 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * The test performs following operations
-   * 1. Create 2 servers and 3 clients
-   * 2. Perform put operations for known set of keys directy from the server1.
-   * 3. Perform clear operation from server1
-   * 4. verify the result of operation for other clients and other servers.
+   * The test performs following operations 1. Create 2 servers and 3 clients 2. Perform put
+   * operations for known set of keys directy from the server1. 3. Perform clear operation from
+   * server1 4. verify the result of operation for other clients and other servers.
    */
   @Test
   public void testClearWithOperationFromServer() throws Exception {
@@ -200,42 +196,42 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
     assertEquals(region.size(), NO_OF_PUTS);
     server1.invoke(clearRegionFromServer());
 
-    client1.invoke(new CacheSerializableRunnable("waitForClearToCompleteCleint1") {
-      public void run2() throws CacheException {
-        synchronized (HAClearDUnitTest.class) {
-          while (!gotClearCallback) {
-            try {
-              HAClearDUnitTest.class.wait();
-            } catch (InterruptedException e) {
-              fail("interrupted");
+    client1.invoke(
+        new CacheSerializableRunnable("waitForClearToCompleteCleint1") {
+          public void run2() throws CacheException {
+            synchronized (HAClearDUnitTest.class) {
+              while (!gotClearCallback) {
+                try {
+                  HAClearDUnitTest.class.wait();
+                } catch (InterruptedException e) {
+                  fail("interrupted");
+                }
+              }
             }
+
+            if (!gotClearCallback) fail("test failed");
+            gotClearCallback = false;
           }
-        }
+        });
 
-        if (!gotClearCallback)
-          fail("test failed");
-        gotClearCallback = false;
-      }
-    });
+    client2.invoke(
+        new CacheSerializableRunnable("waitForClearToCompleteClient2") {
 
-    client2.invoke(new CacheSerializableRunnable("waitForClearToCompleteClient2") {
-
-      public void run2() throws CacheException {
-        synchronized (HAClearDUnitTest.class) {
-          while (!gotClearCallback) {
-            try {
-              HAClearDUnitTest.class.wait();
-            } catch (InterruptedException e) {
-              fail("interrupted");
+          public void run2() throws CacheException {
+            synchronized (HAClearDUnitTest.class) {
+              while (!gotClearCallback) {
+                try {
+                  HAClearDUnitTest.class.wait();
+                } catch (InterruptedException e) {
+                  fail("interrupted");
+                }
+              }
             }
-          }
-        }
 
-        if (!gotClearCallback)
-          fail("test failed");
-        gotClearCallback = false;
-      }
-    });
+            if (!gotClearCallback) fail("test failed");
+            gotClearCallback = false;
+          }
+        });
 
     regionSize = 0;
     region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -263,11 +259,9 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * The test performs following operations
-   * 1. Create 2 servers and 3 client
-   * 2. Perform put operations for knows set of keys directy from the client1.
-   * 3. Perform destroyRegion operation from client1
-   * 4. verify the result of operation for other clients and other servers.
+   * The test performs following operations 1. Create 2 servers and 3 client 2. Perform put
+   * operations for knows set of keys directy from the client1. 3. Perform destroyRegion operation
+   * from client1 4. verify the result of operation for other clients and other servers.
    */
   @Test
   public void testDestroyRegionWithOperationFromClient() throws Exception {
@@ -286,43 +280,43 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
     destroyRegion();
     Thread.sleep(1000);
 
-    client1.invoke(new CacheSerializableRunnable("waitForDestroyRegionToCompleteClient1") {
+    client1.invoke(
+        new CacheSerializableRunnable("waitForDestroyRegionToCompleteClient1") {
 
-      public void run2() throws CacheException {
-        synchronized (HAClearDUnitTest.class) {
-          while (!gotDestroyRegionCallback) {
-            try {
-              HAClearDUnitTest.class.wait();
-            } catch (InterruptedException e) {
-              fail("interrupted");
+          public void run2() throws CacheException {
+            synchronized (HAClearDUnitTest.class) {
+              while (!gotDestroyRegionCallback) {
+                try {
+                  HAClearDUnitTest.class.wait();
+                } catch (InterruptedException e) {
+                  fail("interrupted");
+                }
+              }
             }
+
+            if (!gotDestroyRegionCallback) fail("test failed");
+            gotDestroyRegionCallback = false;
           }
-        }
+        });
 
-        if (!gotDestroyRegionCallback)
-          fail("test failed");
-        gotDestroyRegionCallback = false;
-      }
-    });
+    client2.invoke(
+        new CacheSerializableRunnable("waitForDestroyRegionToCompleteClient2") {
 
-    client2.invoke(new CacheSerializableRunnable("waitForDestroyRegionToCompleteClient2") {
-
-      public void run2() throws CacheException {
-        synchronized (HAClearDUnitTest.class) {
-          while (!gotDestroyRegionCallback) {
-            try {
-              HAClearDUnitTest.class.wait();
-            } catch (InterruptedException e) {
-              fail("interrupted");
+          public void run2() throws CacheException {
+            synchronized (HAClearDUnitTest.class) {
+              while (!gotDestroyRegionCallback) {
+                try {
+                  HAClearDUnitTest.class.wait();
+                } catch (InterruptedException e) {
+                  fail("interrupted");
+                }
+              }
             }
-          }
-        }
 
-        if (!gotDestroyRegionCallback)
-          fail("test failed");
-        gotDestroyRegionCallback = false;
-      }
-    });
+            if (!gotDestroyRegionCallback) fail("test failed");
+            gotDestroyRegionCallback = false;
+          }
+        });
 
     region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     assertNull(region);
@@ -333,11 +327,9 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * The test performs following operations
-   * 1. Create 2 servers and 3 clients
-   * 2. Perform put operations for known set of keys directy from the server1.
-   * 3. Perform destroyRegion operation from server1
-   * 4. verify the result of operation for other clients and other servers.
+   * The test performs following operations 1. Create 2 servers and 3 clients 2. Perform put
+   * operations for known set of keys directy from the server1. 3. Perform destroyRegion operation
+   * from server1 4. verify the result of operation for other clients and other servers.
    */
   @Test
   public void testDestroyRegionWithOperationFromServer() throws Exception {
@@ -354,41 +346,41 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
     assertEquals(region.size(), NO_OF_PUTS);
     server1.invoke(destroyRegionFromServer());
 
-    client1.invoke(new CacheSerializableRunnable("waitForDestroyRegionToCompleteFromClient1") {
-      public void run2() throws CacheException {
-        synchronized (HAClearDUnitTest.class) {
-          while (!gotDestroyRegionCallback) {
-            try {
-              HAClearDUnitTest.class.wait();
-            } catch (InterruptedException e) {
-              fail("interrupted");
+    client1.invoke(
+        new CacheSerializableRunnable("waitForDestroyRegionToCompleteFromClient1") {
+          public void run2() throws CacheException {
+            synchronized (HAClearDUnitTest.class) {
+              while (!gotDestroyRegionCallback) {
+                try {
+                  HAClearDUnitTest.class.wait();
+                } catch (InterruptedException e) {
+                  fail("interrupted");
+                }
+              }
             }
+
+            if (!gotDestroyRegionCallback) fail("test failed");
+            gotDestroyRegionCallback = false;
           }
-        }
+        });
 
-        if (!gotDestroyRegionCallback)
-          fail("test failed");
-        gotDestroyRegionCallback = false;
-      }
-    });
-
-    client2.invoke(new CacheSerializableRunnable("waitForDestroyRegionToCompleteFromClient2") {
-      public void run2() throws CacheException {
-        synchronized (HAClearDUnitTest.class) {
-          while (!gotDestroyRegionCallback) {
-            try {
-              HAClearDUnitTest.class.wait();
-            } catch (InterruptedException e) {
-              fail("interrupted");
+    client2.invoke(
+        new CacheSerializableRunnable("waitForDestroyRegionToCompleteFromClient2") {
+          public void run2() throws CacheException {
+            synchronized (HAClearDUnitTest.class) {
+              while (!gotDestroyRegionCallback) {
+                try {
+                  HAClearDUnitTest.class.wait();
+                } catch (InterruptedException e) {
+                  fail("interrupted");
+                }
+              }
             }
-          }
-        }
 
-        if (!gotDestroyRegionCallback)
-          fail("test failed");
-        gotDestroyRegionCallback = false;
-      }
-    });
+            if (!gotDestroyRegionCallback) fail("test failed");
+            gotDestroyRegionCallback = false;
+          }
+        });
 
     synchronized (HAClearDUnitTest.class) {
       while (!gotDestroyRegionCallback) {
@@ -411,21 +403,20 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
     client2.invoke(checkDestroyRegion());
     server1.invoke(checkDestroyRegion());
     server2.invoke(checkDestroyRegion());
-
   }
 
   private CacheSerializableRunnable putFromServer() {
-    CacheSerializableRunnable putFromServer = new CacheSerializableRunnable("putFromServer") {
-      public void run2() throws CacheException {
-        Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-        assertNotNull(region);
-        for (int i = 0; i < NO_OF_PUTS; i++) {
-          region.put("key" + i, "value" + i);
-        }
-      }
-    };
+    CacheSerializableRunnable putFromServer =
+        new CacheSerializableRunnable("putFromServer") {
+          public void run2() throws CacheException {
+            Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+            assertNotNull(region);
+            for (int i = 0; i < NO_OF_PUTS; i++) {
+              region.put("key" + i, "value" + i);
+            }
+          }
+        };
     return putFromServer;
-
   }
 
   // function to perform put operations for the known set of keys.
@@ -453,55 +444,58 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
 
   // function to perform clear operation from server.
   private CacheSerializableRunnable clearRegionFromServer() {
-    CacheSerializableRunnable clearFromServer = new CacheSerializableRunnable("clearFromServer") {
-      public void run2() {
-        LocalRegion region = (LocalRegion) cache.getRegion(Region.SEPARATOR + REGION_NAME);
-        assertNotNull(region);
-        region.clear();
-      }
-    };
+    CacheSerializableRunnable clearFromServer =
+        new CacheSerializableRunnable("clearFromServer") {
+          public void run2() {
+            LocalRegion region = (LocalRegion) cache.getRegion(Region.SEPARATOR + REGION_NAME);
+            assertNotNull(region);
+            region.clear();
+          }
+        };
     return clearFromServer;
   }
 
   // function to perform destroyRegion operation from server.
   private CacheSerializableRunnable destroyRegionFromServer() {
-    CacheSerializableRunnable clearFromServer = new CacheSerializableRunnable("destroyRegionFromServer") {
-      public void run2() {
-        LocalRegion region = (LocalRegion) cache.getRegion(Region.SEPARATOR + REGION_NAME);
-        assertNotNull(region);
-        region.destroyRegion();
-      }
-    };
+    CacheSerializableRunnable clearFromServer =
+        new CacheSerializableRunnable("destroyRegionFromServer") {
+          public void run2() {
+            LocalRegion region = (LocalRegion) cache.getRegion(Region.SEPARATOR + REGION_NAME);
+            assertNotNull(region);
+            region.destroyRegion();
+          }
+        };
     return clearFromServer;
   }
 
   // function to check the size of the region.
   private CacheSerializableRunnable checkSizeRegion(final int size) {
 
-    CacheSerializableRunnable clearRegion = new CacheSerializableRunnable("checkSize") {
+    CacheSerializableRunnable clearRegion =
+        new CacheSerializableRunnable("checkSize") {
 
-      public void run2() throws CacheException {
-        Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-        assertNotNull(region);
-        LogWriterUtils.getLogWriter().info("Size of the region " + region.size());
-        assertEquals(size, region.size());
-      }
-    };
+          public void run2() throws CacheException {
+            Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+            assertNotNull(region);
+            LogWriterUtils.getLogWriter().info("Size of the region " + region.size());
+            assertEquals(size, region.size());
+          }
+        };
     return clearRegion;
   }
 
   //function to check whether region is destroyed.
   private CacheSerializableRunnable checkDestroyRegion() {
-    CacheSerializableRunnable destroyRegion = new CacheSerializableRunnable("checkDestroyRegion") {
-      public void run2() throws CacheException {
-        Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-        LogWriterUtils.getLogWriter().warning("Found region " + region);
-        assertNull(region);
-      }
-    };
+    CacheSerializableRunnable destroyRegion =
+        new CacheSerializableRunnable("checkDestroyRegion") {
+          public void run2() throws CacheException {
+            Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+            LogWriterUtils.getLogWriter().warning("Found region " + region);
+            assertNull(region);
+          }
+        };
 
     return destroyRegion;
-
   }
 
   // function to create 2servers and 3 clients
@@ -509,9 +503,24 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
     int PORT1 = ((Integer) server1.invoke(() -> HAClearDUnitTest.createServerCache())).intValue();
     int PORT2 = ((Integer) server2.invoke(() -> HAClearDUnitTest.createServerCache())).intValue();
     String hostname = NetworkUtils.getServerHostName(Host.getHost(0));
-    client1.invoke(() -> HAClearDUnitTest.createClientCache(hostname, new Integer(PORT1), new Integer(PORT2), new Boolean(true), new Boolean(true)));
-    client2.invoke(() -> HAClearDUnitTest.createClientCache(hostname, new Integer(PORT1), new Integer(PORT2), new Boolean(true), new Boolean(true)));
-    createClientCache(hostname, new Integer(PORT1), new Integer(PORT2), new Boolean(true), new Boolean(true));
+    client1.invoke(
+        () ->
+            HAClearDUnitTest.createClientCache(
+                hostname,
+                new Integer(PORT1),
+                new Integer(PORT2),
+                new Boolean(true),
+                new Boolean(true)));
+    client2.invoke(
+        () ->
+            HAClearDUnitTest.createClientCache(
+                hostname,
+                new Integer(PORT1),
+                new Integer(PORT2),
+                new Boolean(true),
+                new Boolean(true)));
+    createClientCache(
+        hostname, new Integer(PORT1), new Integer(PORT2), new Boolean(true), new Boolean(true));
   }
 
   public static Integer createServerCache() throws Exception {
@@ -538,7 +547,13 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
     assertNotNull(cache);
   }
 
-  public static void createClientCache(String hostName, Integer port1, Integer port2, Boolean listenerAttached, Boolean registerInterest) throws Exception {
+  public static void createClientCache(
+      String hostName,
+      Integer port1,
+      Integer port2,
+      Boolean listenerAttached,
+      Boolean registerInterest)
+      throws Exception {
     int PORT1 = port1.intValue();
     int PORT2 = port2.intValue();
     boolean isListenerAttached = listenerAttached.booleanValue();
@@ -549,25 +564,27 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
     new HAClearDUnitTest().createCache(props);
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    ClientServerTestCase.configureConnectionPool(factory, hostName, new int[] { PORT1, PORT2 }, true, -1, 2, null);
+    ClientServerTestCase.configureConnectionPool(
+        factory, hostName, new int[] {PORT1, PORT2}, true, -1, 2, null);
     if (isListenerAttached) {
-      factory.setCacheListener(new CacheListenerAdapter() {
-        public void afterRegionClear(RegionEvent event) {
-          LogWriterUtils.getLogWriter().info("-------> afterRegionClear received");
-          synchronized (HAClearDUnitTest.class) {
-            gotClearCallback = true;
-            HAClearDUnitTest.class.notifyAll();
-          }
-        }
+      factory.setCacheListener(
+          new CacheListenerAdapter() {
+            public void afterRegionClear(RegionEvent event) {
+              LogWriterUtils.getLogWriter().info("-------> afterRegionClear received");
+              synchronized (HAClearDUnitTest.class) {
+                gotClearCallback = true;
+                HAClearDUnitTest.class.notifyAll();
+              }
+            }
 
-        public void afterRegionDestroy(RegionEvent event) {
-          synchronized (HAClearDUnitTest.class) {
-            LogWriterUtils.getLogWriter().info("-------> afterRegionDestroy received");
-            gotDestroyRegionCallback = true;
-            HAClearDUnitTest.class.notifyAll();
-          }
-        }
-      });
+            public void afterRegionDestroy(RegionEvent event) {
+              synchronized (HAClearDUnitTest.class) {
+                LogWriterUtils.getLogWriter().info("-------> afterRegionDestroy received");
+                gotDestroyRegionCallback = true;
+                HAClearDUnitTest.class.notifyAll();
+              }
+            }
+          });
     }
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
@@ -584,9 +601,15 @@ public class HAClearDUnitTest extends JUnit4DistributedTestCase {
     String p1 = "Problem removing all interest on region=";
 
     if (cache != null && !cache.isClosed()) {
-      cache.getDistributedSystem().getLogWriter().info("<ExpectedException action=add>" + p1 + "</ExpectedException>");
+      cache
+          .getDistributedSystem()
+          .getLogWriter()
+          .info("<ExpectedException action=add>" + p1 + "</ExpectedException>");
       cache.close();
-      cache.getDistributedSystem().getLogWriter().info("<ExpectedException action=remove>" + p1 + "</ExpectedException>");
+      cache
+          .getDistributedSystem()
+          .getLogWriter()
+          .info("<ExpectedException action=remove>" + p1 + "</ExpectedException>");
       cache.getDistributedSystem().disconnect();
     }
   }

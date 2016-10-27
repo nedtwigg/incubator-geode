@@ -23,10 +23,7 @@ import java.io.IOException;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 
-/**
- * 
- *
- */
+/** */
 public class ConnectionUtil {
 
   public static SocketFactory getSocketFactory(boolean usessl) throws IOException {
@@ -36,5 +33,4 @@ public class ConnectionUtil {
       return SocketFactory.getDefault();
     }
   }
-
 }

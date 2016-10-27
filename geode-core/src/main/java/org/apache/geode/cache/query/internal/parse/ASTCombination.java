@@ -20,14 +20,11 @@ package org.apache.geode.cache.query.internal.parse;
 import antlr.*;
 import org.apache.geode.cache.query.internal.QCompiler;
 
-/**
- *
- */
+/** */
 public class ASTCombination extends GemFireAST {
   private static final long serialVersionUID = -5390937242819850292L;
 
-  public ASTCombination() {
-  }
+  public ASTCombination() {}
 
   /** Creates a new instance of ASTCombination */
   public ASTCombination(Token t) {
@@ -39,5 +36,4 @@ public class ASTCombination extends GemFireAST {
     super.compile(compiler);
     compiler.combine(getNumberOfChildren());
   }
-
 }

@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import org.apache.geode.cache.EntryOperation;
@@ -35,8 +33,7 @@ public class CustomerIDPartitionResolver implements PartitionResolver {
 
   private String resolverName;
 
-  public CustomerIDPartitionResolver() {
-  }
+  public CustomerIDPartitionResolver() {}
 
   public CustomerIDPartitionResolver(String resolverID) {
     id = resolverID;
@@ -64,19 +61,14 @@ public class CustomerIDPartitionResolver implements PartitionResolver {
     return routingbject;
   }
 
-  public void close() {
-  }
+  public void close() {}
 
   public boolean equals(Object o) {
-    if (this == o)
-      return true;
+    if (this == o) return true;
 
-    if (!(o instanceof CustomerIDPartitionResolver))
-      return false;
+    if (!(o instanceof CustomerIDPartitionResolver)) return false;
 
     CustomerIDPartitionResolver otherCustomerIDPartitionResolver = (CustomerIDPartitionResolver) o;
     return otherCustomerIDPartitionResolver.id.equals(this.id);
-
   }
-
 }

@@ -23,14 +23,12 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * This class acts as a helper for the AlertManager & AlertAggregator for the
- * execution of the user specified functions
- * 
- * This class also keeps a registry of all the functions which are supported,
- * which should be used during creation of alert definition.
- * 
+ * This class acts as a helper for the AlertManager & AlertAggregator for the execution of the user
+ * specified functions
+ *
+ * <p>This class also keeps a registry of all the functions which are supported, which should be
+ * used during creation of alert definition.
  */
-
 public class FunctionHelper {
 
   private static final short FUN_AVG = 1;
@@ -51,95 +49,82 @@ public class FunctionHelper {
 
   /**
    * This function returns the available function names.
-   * 
+   *
    * @return List of the function names.
    */
   public static String[] getFunctionNames() {
-    return new String[] { STR_ADD, STR_AVG, STR_MIN, STR_MAX };
+    return new String[] {STR_ADD, STR_AVG, STR_MIN, STR_MAX};
   }
 
   /**
-   * This method returns the function's name for the requested function
-   * identifier.
-   * 
-   * @param functionId
-   *                Identifier of the function
+   * This method returns the function's name for the requested function identifier.
+   *
+   * @param functionId Identifier of the function
    * @return Function name.
    */
   public static String getFunctionName(short functionId) {
     switch (functionId) {
-    case FUN_AVG:
-      return STR_AVG;
-    case FUN_MIN:
-      return STR_MIN;
-    case FUN_MAX:
-      return STR_MAX;
-    case FUN_SUM:
-      return STR_ADD;
-    default:
-      return null;
+      case FUN_AVG:
+        return STR_AVG;
+      case FUN_MIN:
+        return STR_MIN;
+      case FUN_MAX:
+        return STR_MAX;
+      case FUN_SUM:
+        return STR_ADD;
+      default:
+        return null;
     }
   }
 
   /**
-   * This function returns the function identifier for the requested function
-   * name.
-   * 
-   * @param qFunctionName
-   *                Name of the function
+   * This function returns the function identifier for the requested function name.
+   *
+   * @param qFunctionName Name of the function
    * @return Function identifier.
    */
   public static short getFunctionIdentifier(String qFunctionName) {
 
-    if (qFunctionName == null)
-      return -1;
+    if (qFunctionName == null) return -1;
 
-    if (qFunctionName.equalsIgnoreCase(STR_ADD))
-      return FUN_SUM;
-    if (qFunctionName.equalsIgnoreCase(STR_AVG))
-      return FUN_AVG;
-    if (qFunctionName.equalsIgnoreCase(STR_MIN))
-      return FUN_MIN;
-    if (qFunctionName.equalsIgnoreCase(STR_MAX))
-      return FUN_MAX;
+    if (qFunctionName.equalsIgnoreCase(STR_ADD)) return FUN_SUM;
+    if (qFunctionName.equalsIgnoreCase(STR_AVG)) return FUN_AVG;
+    if (qFunctionName.equalsIgnoreCase(STR_MIN)) return FUN_MIN;
+    if (qFunctionName.equalsIgnoreCase(STR_MAX)) return FUN_MAX;
 
     return -1;
   }
 
   /**
    * Apply the given function of the given list of numbers and returns result
-   * 
-   * @param functorId
-   *                Id of function to be applied
-   * @param vals
-   *                List of number on which function will be applied
-   * 
+   *
+   * @param functorId Id of function to be applied
+   * @param vals List of number on which function will be applied
    */
   public static Number[] applyFunction(short functorId, Number[] vals) {
     Number[] res = new Number[1];
     switch (functorId) {
-    case FUN_SUM:
-      res[0] = SUM(vals);
-      return res;
-    case FUN_AVG:
-      res[0] = AVG(vals);
-      return res;
-    case FUN_MIN:
-      res[0] = MIN(vals);
-      return res;
-    case FUN_MAX:
-      res[0] = MAX(vals);
-      return res;
-    default:
-      return null;
+      case FUN_SUM:
+        res[0] = SUM(vals);
+        return res;
+      case FUN_AVG:
+        res[0] = AVG(vals);
+        return res;
+      case FUN_MIN:
+        res[0] = MIN(vals);
+        return res;
+      case FUN_MAX:
+        res[0] = MAX(vals);
+        return res;
+      default:
+        return null;
     }
   }
 
   /**
    * Apply the SUM function on given list of number
-   * 
-   * @param vals
-   *                Array of number
+   *
+   * @param vals Array of number
    */
   public static final Number SUM(Number[] vals) {
     try {
@@ -166,9 +151,8 @@ public class FunctionHelper {
 
   /**
    * Apply the Average function on given list of number
-   * 
-   * @param vals
-   *                Array of number
+   *
+   * @param vals Array of number
    */
   public static final Number AVG(Number[] vals) {
     try {
@@ -191,9 +175,8 @@ public class FunctionHelper {
 
   /**
    * Apply the Minimum function on given list of number
-   * 
-   * @param vals
-   *                Array of number
+   *
+   * @param vals Array of number
    */
   public static final Number MIN(Number[] vals) {
     try {
@@ -219,9 +202,8 @@ public class FunctionHelper {
 
   /**
    * Apply the Maximum function on given list of number
-   * 
-   * @param vals
-   *                Array of number
+   *
+   * @param vals Array of number
    */
   public static final Number MAX(Number[] vals) {
     try {
@@ -244,5 +226,4 @@ public class FunctionHelper {
       return null;
     }
   }
-
 }

@@ -25,8 +25,7 @@ import org.apache.geode.management.cli.CommandServiceException;
 import org.apache.geode.management.cli.CommandStatement;
 import org.apache.geode.management.cli.Result;
 
-/**
- */
+/** */
 public class MemberCommandService extends CommandService {
   private final Object modLock = new Object();
 
@@ -79,5 +78,5 @@ public class MemberCommandService extends CommandService {
   //      this.commandProcessor.stop();
   //      this.commandProcessor = null;
   //    }
-  //  }  
+  //  }
 }

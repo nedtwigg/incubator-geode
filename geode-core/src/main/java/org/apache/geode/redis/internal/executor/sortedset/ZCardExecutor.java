@@ -48,7 +48,7 @@ public class ZCardExecutor extends SortedSetExecutor {
     if (keyRegion == null)
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_EXISTS));
     else
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), keyRegion.size()));
-
+      command.setResponse(
+          Coder.getIntegerResponse(context.getByteBufAllocator(), keyRegion.size()));
   }
 }

@@ -32,11 +32,7 @@ import org.apache.geode.test.dunit.LogWriterUtils;
 import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
-/**
- * This is for testing locators from MBean
- * 
- */
-
+/** This is for testing locators from MBean */
 @Category(DistributedTest.class)
 public class TestLocatorsDUnitTest extends ManagementTestBase {
 
@@ -48,24 +44,25 @@ public class TestLocatorsDUnitTest extends ManagementTestBase {
 
   public static int getNumOfLocatorFromMBean() {
 
-    final WaitCriterion waitCriteria = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        final ManagementService service = getManagementService();
-        final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-        if (bean != null) {
-          if (bean.getLocatorCount() > 0) {
-            return true;
+    final WaitCriterion waitCriteria =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            final ManagementService service = getManagementService();
+            final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+            if (bean != null) {
+              if (bean.getLocatorCount() > 0) {
+                return true;
+              }
+            }
+            return false;
           }
-        }
-        return false;
-      }
 
-      @Override
-      public String description() {
-        return "wait for getNumOfLocatorFromMBean to complete and get results";
-      }
-    };
+          @Override
+          public String description() {
+            return "wait for getNumOfLocatorFromMBean to complete and get results";
+          }
+        };
     Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 2000, true);
     final DistributedSystemMXBean bean = getManagementService().getDistributedSystemMXBean();
     assertNotNull(bean);
@@ -75,18 +72,14 @@ public class TestLocatorsDUnitTest extends ManagementTestBase {
   @Test
   public void testLocatorsDUnitTest() throws Exception {
     initManagement(false);
-    int locatorCount = ((Number) managingNode.invoke(() -> TestLocatorsDUnitTest.getNumOfLocatorFromMBean())).intValue();
+    int locatorCount =
+        ((Number) managingNode.invoke(() -> TestLocatorsDUnitTest.getNumOfLocatorFromMBean()))
+            .intValue();
     LogWriterUtils.getLogWriter().info("TestLocatorsDUnitTest locatorCount =" + locatorCount);
     assertEquals(1, locatorCount);
-
   }
 
-  public void verifyStatistics() {
+  public void verifyStatistics() {}
 
-  }
-
-  public void invokeOperations() {
-
-  }
-
+  public void invokeOperations() {}
 }

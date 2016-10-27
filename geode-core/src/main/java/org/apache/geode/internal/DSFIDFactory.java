@@ -411,9 +411,8 @@ import org.apache.geode.pdx.internal.EnumId;
 import org.apache.geode.pdx.internal.EnumInfo;
 
 /**
- * Factory for instances of DataSerializableFixedID instances.
- * Note that this class implements DataSerializableFixedID to inherit constants but
- * is not actually an instance of this interface.
+ * Factory for instances of DataSerializableFixedID instances. Note that this class implements
+ * DataSerializableFixedID to inherit constants but is not actually an instance of this interface.
  *
  * @since GemFire 5.7
  */
@@ -453,7 +452,8 @@ public final class DSFIDFactory implements DataSerializableFixedID {
       Constructor<?> cons = dsfidClass.getConstructor((Class[]) null);
       cons.setAccessible(true);
       if (!cons.isAccessible()) {
-        throw new InternalGemFireError("default constructor not accessible " + "for DSFID=" + dsfid + ": " + dsfidClass);
+        throw new InternalGemFireError(
+            "default constructor not accessible " + "for DSFID=" + dsfid + ": " + dsfidClass);
       }
       if (dsfid >= Byte.MIN_VALUE && dsfid <= Byte.MAX_VALUE) {
         dsfidMap[dsfid + Byte.MAX_VALUE + 1] = cons;
@@ -496,29 +496,38 @@ public final class DSFIDFactory implements DataSerializableFixedID {
     registerDSFID(REPLY_MESSAGE, ReplyMessage.class);
     registerDSFID(PR_DESTROY, DestroyMessage.class);
     registerDSFID(CREATE_REGION_MESSAGE, CreateRegionProcessor.CreateRegionMessage.class);
-    registerDSFID(CREATE_REGION_REPLY_MESSAGE, CreateRegionProcessor.CreateRegionReplyMessage.class);
+    registerDSFID(
+        CREATE_REGION_REPLY_MESSAGE, CreateRegionProcessor.CreateRegionReplyMessage.class);
     registerDSFID(REGION_STATE_MESSAGE, InitialImageOperation.RegionStateMessage.class);
     registerDSFID(QUERY_MESSAGE, SearchLoadAndWriteProcessor.QueryMessage.class);
     registerDSFID(RESPONSE_MESSAGE, SearchLoadAndWriteProcessor.ResponseMessage.class);
-    registerDSFID(NET_SEARCH_REQUEST_MESSAGE, SearchLoadAndWriteProcessor.NetSearchRequestMessage.class);
-    registerDSFID(NET_SEARCH_REPLY_MESSAGE, SearchLoadAndWriteProcessor.NetSearchReplyMessage.class);
-    registerDSFID(NET_LOAD_REQUEST_MESSAGE, SearchLoadAndWriteProcessor.NetLoadRequestMessage.class);
+    registerDSFID(
+        NET_SEARCH_REQUEST_MESSAGE, SearchLoadAndWriteProcessor.NetSearchRequestMessage.class);
+    registerDSFID(
+        NET_SEARCH_REPLY_MESSAGE, SearchLoadAndWriteProcessor.NetSearchReplyMessage.class);
+    registerDSFID(
+        NET_LOAD_REQUEST_MESSAGE, SearchLoadAndWriteProcessor.NetLoadRequestMessage.class);
     registerDSFID(NET_LOAD_REPLY_MESSAGE, SearchLoadAndWriteProcessor.NetLoadReplyMessage.class);
-    registerDSFID(NET_WRITE_REQUEST_MESSAGE, SearchLoadAndWriteProcessor.NetWriteRequestMessage.class);
+    registerDSFID(
+        NET_WRITE_REQUEST_MESSAGE, SearchLoadAndWriteProcessor.NetWriteRequestMessage.class);
     registerDSFID(NET_WRITE_REPLY_MESSAGE, SearchLoadAndWriteProcessor.NetWriteReplyMessage.class);
     registerDSFID(DLOCK_REQUEST_MESSAGE, DLockRequestProcessor.DLockRequestMessage.class);
     registerDSFID(DLOCK_RESPONSE_MESSAGE, DLockRequestProcessor.DLockResponseMessage.class);
     registerDSFID(DLOCK_RELEASE_MESSAGE, DLockReleaseProcessor.DLockReleaseMessage.class);
-    registerDSFID(ADMIN_CACHE_EVENT_MESSAGE, SystemMemberCacheEventProcessor.SystemMemberCacheMessage.class);
+    registerDSFID(
+        ADMIN_CACHE_EVENT_MESSAGE, SystemMemberCacheEventProcessor.SystemMemberCacheMessage.class);
     registerDSFID(CQ_ENTRY_EVENT, CqEntry.class);
     registerDSFID(REQUEST_IMAGE_MESSAGE, InitialImageOperation.RequestImageMessage.class);
     registerDSFID(IMAGE_REPLY_MESSAGE, InitialImageOperation.ImageReplyMessage.class);
     registerDSFID(IMAGE_ENTRY, InitialImageOperation.Entry.class);
     registerDSFID(CLOSE_CACHE_MESSAGE, CloseCacheMessage.class);
-    registerDSFID(NON_GRANTOR_DESTROYED_MESSAGE, NonGrantorDestroyedProcessor.NonGrantorDestroyedMessage.class);
+    registerDSFID(
+        NON_GRANTOR_DESTROYED_MESSAGE,
+        NonGrantorDestroyedProcessor.NonGrantorDestroyedMessage.class);
     registerDSFID(DLOCK_RELEASE_REPLY, DLockReleaseProcessor.DLockReleaseReplyMessage.class);
     registerDSFID(GRANTOR_REQUEST_MESSAGE, GrantorRequestProcessor.GrantorRequestMessage.class);
-    registerDSFID(GRANTOR_INFO_REPLY_MESSAGE, GrantorRequestProcessor.GrantorInfoReplyMessage.class);
+    registerDSFID(
+        GRANTOR_INFO_REPLY_MESSAGE, GrantorRequestProcessor.GrantorInfoReplyMessage.class);
     registerDSFID(ELDER_INIT_MESSAGE, ElderInitProcessor.ElderInitMessage.class);
     registerDSFID(ELDER_INIT_REPLY_MESSAGE, ElderInitProcessor.ElderInitReplyMessage.class);
     registerDSFID(DEPOSE_GRANTOR_MESSAGE, DeposeGrantorProcessor.DeposeGrantorMessage.class);
@@ -531,13 +540,16 @@ public final class DSFIDFactory implements DataSerializableFixedID {
     registerDSFID(PR_REMOVE_ALL_MESSAGE, RemoveAllPRMessage.class);
     registerDSFID(PR_REMOVE_ALL_REPLY_MESSAGE, RemoveAllPRMessage.RemoveAllReplyMessage.class);
     registerDSFID(REMOTE_REMOVE_ALL_MESSAGE, RemoteRemoveAllMessage.class);
-    registerDSFID(REMOTE_REMOVE_ALL_REPLY_MESSAGE, RemoteRemoveAllMessage.RemoveAllReplyMessage.class);
+    registerDSFID(
+        REMOTE_REMOVE_ALL_REPLY_MESSAGE, RemoteRemoveAllMessage.RemoveAllReplyMessage.class);
     registerDSFID(DISTTX_ROLLBACK_MESSAGE, DistTXRollbackMessage.class);
     registerDSFID(DISTTX_COMMIT_MESSAGE, DistTXCommitMessage.class);
     registerDSFID(DISTTX_PRE_COMMIT_MESSAGE, DistTXPrecommitMessage.class);
-    registerDSFID(DISTTX_ROLLBACK_REPLY_MESSAGE, DistTXRollbackMessage.DistTXRollbackReplyMessage.class);
+    registerDSFID(
+        DISTTX_ROLLBACK_REPLY_MESSAGE, DistTXRollbackMessage.DistTXRollbackReplyMessage.class);
     registerDSFID(DISTTX_COMMIT_REPLY_MESSAGE, DistTXCommitMessage.DistTXCommitReplyMessage.class);
-    registerDSFID(DISTTX_PRE_COMMIT_REPLY_MESSAGE, DistTXPrecommitMessage.DistTXPrecommitReplyMessage.class);
+    registerDSFID(
+        DISTTX_PRE_COMMIT_REPLY_MESSAGE, DistTXPrecommitMessage.DistTXPrecommitReplyMessage.class);
     registerDSFID(PR_PUT_MESSAGE, PutMessage.class);
     registerDSFID(INVALIDATE_MESSAGE, InvalidateOperation.InvalidateMessage.class);
     registerDSFID(DESTROY_MESSAGE, DestroyOperation.DestroyMessage.class);
@@ -545,7 +557,8 @@ public final class DSFIDFactory implements DataSerializableFixedID {
     registerDSFID(CACHE_PROFILE, CacheDistributionAdvisor.CacheProfile.class);
     registerDSFID(HA_PROFILE, HARegion.HARegionAdvisor.HAProfile.class);
     registerDSFID(ENTRY_EVENT, EntryEventImpl.class);
-    registerDSFID(UPDATE_ATTRIBUTES_MESSAGE, UpdateAttributesProcessor.UpdateAttributesMessage.class);
+    registerDSFID(
+        UPDATE_ATTRIBUTES_MESSAGE, UpdateAttributesProcessor.UpdateAttributesMessage.class);
     registerDSFID(PROFILE_REPLY_MESSAGE, UpdateAttributesProcessor.ProfileReplyMessage.class);
     registerDSFID(PROFILES_REPLY_MESSAGE, UpdateAttributesProcessor.ProfilesReplyMessage.class);
     registerDSFID(REGION_EVENT, RegionEventImpl.class);
@@ -561,9 +574,12 @@ public final class DSFIDFactory implements DataSerializableFixedID {
     registerDSFID(FILTER_PROFILE_UPDATE, FilterProfile.OperationMessage.class);
     registerDSFID(PR_GET_MESSAGE, GetMessage.class);
     registerDSFID(R_FETCH_ENTRY_MESSAGE, RemoteFetchEntryMessage.class);
-    registerDSFID(R_FETCH_ENTRY_REPLY_MESSAGE, RemoteFetchEntryMessage.FetchEntryReplyMessage.class);
+    registerDSFID(
+        R_FETCH_ENTRY_REPLY_MESSAGE, RemoteFetchEntryMessage.FetchEntryReplyMessage.class);
     registerDSFID(R_CONTAINS_MESSAGE, RemoteContainsKeyValueMessage.class);
-    registerDSFID(R_CONTAINS_REPLY_MESSAGE, RemoteContainsKeyValueMessage.RemoteContainsKeyValueReplyMessage.class);
+    registerDSFID(
+        R_CONTAINS_REPLY_MESSAGE,
+        RemoteContainsKeyValueMessage.RemoteContainsKeyValueReplyMessage.class);
     registerDSFID(R_DESTROY_MESSAGE, RemoteDestroyMessage.class);
     registerDSFID(R_DESTROY_REPLY_MESSAGE, RemoteDestroyMessage.DestroyReplyMessage.class);
     registerDSFID(R_INVALIDATE_MESSAGE, RemoteInvalidateMessage.class);
@@ -584,7 +600,8 @@ public final class DSFIDFactory implements DataSerializableFixedID {
     registerDSFID(PR_NODE, Node.class);
     registerDSFID(UPDATE_WITH_CONTEXT_MESSAGE, UpdateOperation.UpdateWithContextMessage.class);
     registerDSFID(DESTROY_WITH_CONTEXT_MESSAGE, DestroyOperation.DestroyWithContextMessage.class);
-    registerDSFID(INVALIDATE_WITH_CONTEXT_MESSAGE, InvalidateOperation.InvalidateWithContextMessage.class);
+    registerDSFID(
+        INVALIDATE_WITH_CONTEXT_MESSAGE, InvalidateOperation.InvalidateWithContextMessage.class);
     registerDSFID(REGION_VERSION_VECTOR, VMRegionVersionVector.class);
     registerDSFID(CLIENT_PROXY_MEMBERSHIPID, ClientProxyMembershipID.class);
     registerDSFID(EVENT_ID, EventID.class);
@@ -593,7 +610,8 @@ public final class DSFIDFactory implements DataSerializableFixedID {
     registerDSFID(CLIENT_INSTANTIATOR_MESSAGE, ClientInstantiatorMessage.class);
     registerDSFID(CLIENT_DATASERIALIZER_MESSAGE, ClientDataSerializerMessage.class);
     registerDSFID(REGISTRATION_MESSAGE, InternalInstantiator.RegistrationMessage.class);
-    registerDSFID(REGISTRATION_CONTEXT_MESSAGE, InternalInstantiator.RegistrationContextMessage.class);
+    registerDSFID(
+        REGISTRATION_CONTEXT_MESSAGE, InternalInstantiator.RegistrationContextMessage.class);
     registerDSFID(RESULTS_COLLECTION_WRAPPER, ResultsCollectionWrapper.class);
     registerDSFID(RESULTS_SET, ResultsSet.class);
     registerDSFID(SORTED_RESULT_SET, SortedResultSet.class);
@@ -646,7 +664,9 @@ public final class DSFIDFactory implements DataSerializableFixedID {
     registerDSFID(INVALIDATE_PARTITIONED_REGION_MESSAGE, InvalidatePartitionedRegionMessage.class);
     registerDSFID(COMMIT_PROCESS_QUERY_MESSAGE, CommitProcessQueryMessage.class);
     registerDSFID(COMMIT_PROCESS_QUERY_REPLY_MESSAGE, CommitProcessQueryReplyMessage.class);
-    registerDSFID(DESTROY_REGION_WITH_CONTEXT_MESSAGE, DestroyRegionOperation.DestroyRegionWithContextMessage.class);
+    registerDSFID(
+        DESTROY_REGION_WITH_CONTEXT_MESSAGE,
+        DestroyRegionOperation.DestroyRegionWithContextMessage.class);
     registerDSFID(PUT_ALL_MESSAGE, PutAllMessage.class);
     registerDSFID(REMOVE_ALL_MESSAGE, RemoveAllMessage.class);
     registerDSFID(CLEAR_REGION_MESSAGE, ClearRegionMessage.class);
@@ -758,7 +778,8 @@ public final class DSFIDFactory implements DataSerializableFixedID {
     registerDSFID(CLIENT_REGION_EVENT, ClientRegionEventImpl.class);
     registerDSFID(PR_INVALIDATE_MESSAGE, InvalidateMessage.class);
     registerDSFID(PR_INVALIDATE_REPLY_MESSAGE, InvalidateMessage.InvalidateReplyMessage.class);
-    registerDSFID(TX_LOCK_UPDATE_PARTICIPANTS_REPLY_MESSAGE, TXLockUpdateParticipantsReplyMessage.class);
+    registerDSFID(
+        TX_LOCK_UPDATE_PARTICIPANTS_REPLY_MESSAGE, TXLockUpdateParticipantsReplyMessage.class);
     registerDSFID(STREAMING_REPLY_MESSAGE, StreamingReplyMessage.class);
     registerDSFID(PARTITION_REGION_CONFIG, PartitionRegionConfig.class);
     registerDSFID(PREFER_BYTES_CACHED_DESERIALIZABLE, PreferBytesCachedDeserializable.class);
@@ -839,7 +860,8 @@ public final class DSFIDFactory implements DataSerializableFixedID {
     registerDSFID(REVOKE_PERSISTENT_ID_REQUEST, RevokePersistentIDRequest.class);
     registerDSFID(REVOKE_PERSISTENT_ID_RESPONSE, RevokePersistentIDResponse.class);
     registerDSFID(REMOVE_PERSISTENT_MEMBER_REQUEST, RemovePersistentMemberMessage.class);
-    registerDSFID(FUNCTION_STREAMING_ORDERED_REPLY_MESSAGE, FunctionStreamingOrderedReplyMessage.class);
+    registerDSFID(
+        FUNCTION_STREAMING_ORDERED_REPLY_MESSAGE, FunctionStreamingOrderedReplyMessage.class);
     registerDSFID(REQUEST_SYNC_MESSAGE, InitialImageOperation.RequestSyncMessage.class);
     registerDSFID(PERSISTENT_MEMBERSHIP_FLUSH_REQUEST, MembershipFlushRequest.class);
     registerDSFID(SHUTDOWN_ALL_REQUEST, ShutdownAllRequest.class);
@@ -875,9 +897,12 @@ public final class DSFIDFactory implements DataSerializableFixedID {
     registerDSFID(SNAPSHOT_RECORD, SnapshotRecord.class);
     registerDSFID(FLOW_CONTROL_ACK, FlowControlAckMessage.class);
     registerDSFID(FLOW_CONTROL_ABORT, FlowControlAbortMessage.class);
-    registerDSFID(MGMT_COMPACT_REQUEST, org.apache.geode.management.internal.messages.CompactRequest.class);
-    registerDSFID(MGMT_COMPACT_RESPONSE, org.apache.geode.management.internal.messages.CompactResponse.class);
-    registerDSFID(MGMT_FEDERATION_COMPONENT, org.apache.geode.management.internal.FederationComponent.class);
+    registerDSFID(
+        MGMT_COMPACT_REQUEST, org.apache.geode.management.internal.messages.CompactRequest.class);
+    registerDSFID(
+        MGMT_COMPACT_RESPONSE, org.apache.geode.management.internal.messages.CompactResponse.class);
+    registerDSFID(
+        MGMT_FEDERATION_COMPONENT, org.apache.geode.management.internal.FederationComponent.class);
     registerDSFID(LOCATOR_STATUS_REQUEST, LocatorStatusRequest.class);
     registerDSFID(LOCATOR_STATUS_RESPONSE, LocatorStatusResponse.class);
     registerDSFID(R_FETCH_VERSION_MESSAGE, RemoteFetchVersionMessage.class);
@@ -886,7 +911,8 @@ public final class DSFIDFactory implements DataSerializableFixedID {
     registerDSFID(PR_TOMBSTONE_MESSAGE, PRTombstoneMessage.class);
     registerDSFID(REQUEST_RVV_MESSAGE, InitialImageOperation.RequestRVVMessage.class);
     registerDSFID(RVV_REPLY_MESSAGE, InitialImageOperation.RVVReplyMessage.class);
-    registerDSFID(SNAPPY_COMPRESSED_CACHED_DESERIALIZABLE, SnappyCompressedCachedDeserializable.class);
+    registerDSFID(
+        SNAPPY_COMPRESSED_CACHED_DESERIALIZABLE, SnappyCompressedCachedDeserializable.class);
     registerDSFID(UPDATE_ENTRY_VERSION_MESSAGE, UpdateEntryVersionMessage.class);
     registerDSFID(PR_UPDATE_ENTRY_VERSION_MESSAGE, PRUpdateEntryVersionMessage.class);
     registerDSFID(PR_FETCH_BULK_ENTRIES_MESSAGE, FetchBulkEntriesMessage.class);
@@ -894,7 +920,8 @@ public final class DSFIDFactory implements DataSerializableFixedID {
     registerDSFID(PR_QUERY_TRACE_INFO, PRQueryTraceInfo.class);
     registerDSFID(INDEX_CREATION_DATA, IndexCreationData.class);
     registerDSFID(DIST_TX_OP, DistTxEntryEvent.class);
-    registerDSFID(DIST_TX_PRE_COMMIT_RESPONSE, DistTXPrecommitMessage.DistTxPrecommitResponse.class);
+    registerDSFID(
+        DIST_TX_PRE_COMMIT_RESPONSE, DistTXPrecommitMessage.DistTxPrecommitResponse.class);
     registerDSFID(DIST_TX_THIN_ENTRY_STATE, TXEntryState.DistTxThinEntryState.class);
     registerDSFID(SERVER_PING_MESSAGE, ServerPingMessage.class);
     registerDSFID(PR_DESTROY_ON_DATA_STORE_MESSAGE, DestroyRegionOnDataStoreMessage.class);
@@ -903,93 +930,92 @@ public final class DSFIDFactory implements DataSerializableFixedID {
   }
 
   /**
-   * Creates a DataSerializableFixedID or StreamableFixedID instance by deserializing it from
-   * the data input.
+   * Creates a DataSerializableFixedID or StreamableFixedID instance by deserializing it from the
+   * data input.
    */
   public static Object create(int dsfid, DataInput in) throws IOException, ClassNotFoundException {
     switch (dsfid) {
-    case REGION:
-      return (DataSerializableFixedID) DataSerializer.readRegion(in);
-    case END_OF_STREAM_TOKEN:
-      return Token.END_OF_STREAM;
-    case DLOCK_REMOTE_TOKEN:
-      return DLockRemoteToken.createFromDataInput(in);
-    case TRANSACTION_ID:
-      return TXId.createFromData(in);
-    case INTEREST_RESULT_POLICY:
-      return readInterestResultPolicy(in);
-    case UNDEFINED:
-      return readUndefined(in);
-    case RESULTS_BAG:
-      return readResultsBag(in);
-    case TOKEN_INVALID:
-      return Token.INVALID;
-    case TOKEN_LOCAL_INVALID:
-      return Token.LOCAL_INVALID;
-    case TOKEN_DESTROYED:
-      return Token.DESTROYED;
-    case TOKEN_REMOVED:
-      return Token.REMOVED_PHASE1;
-    case TOKEN_REMOVED2:
-      return Token.REMOVED_PHASE2;
-    case TOKEN_TOMBSTONE:
-      return Token.TOMBSTONE;
-    case NULL_TOKEN:
-      return readNullToken(in);
-    case CONFIGURATION_REQUEST:
-      return readConfigurationRequest(in);
-    case CONFIGURATION_RESPONSE:
-      return readConfigurationResponse(in);
-    case PR_DESTROY_ON_DATA_STORE_MESSAGE:
-      return readDestroyOnDataStore(in);
-    default:
-      final Constructor<?> cons;
-      if (dsfid >= Byte.MIN_VALUE && dsfid <= Byte.MAX_VALUE) {
-        cons = dsfidMap[dsfid + Byte.MAX_VALUE + 1];
-      } else {
-        cons = (Constructor<?>) dsfidMap2.get(dsfid);
-      }
-      if (cons != null) {
-        try {
-          Object ds = cons.newInstance((Object[]) null);
-          InternalDataSerializer.invokeFromData(ds, in);
-          return ds;
-        } catch (InstantiationException ie) {
-          throw new IOException(ie.getMessage(), ie);
-        } catch (IllegalAccessException iae) {
-          throw new IOException(iae.getMessage(), iae);
-        } catch (InvocationTargetException ite) {
-          Throwable targetEx = ite.getTargetException();
-          if (targetEx instanceof IOException) {
-            throw (IOException) targetEx;
-          } else if (targetEx instanceof ClassNotFoundException) {
-            throw (ClassNotFoundException) targetEx;
-          } else {
-            throw new IOException(ite.getMessage(), targetEx);
+      case REGION:
+        return (DataSerializableFixedID) DataSerializer.readRegion(in);
+      case END_OF_STREAM_TOKEN:
+        return Token.END_OF_STREAM;
+      case DLOCK_REMOTE_TOKEN:
+        return DLockRemoteToken.createFromDataInput(in);
+      case TRANSACTION_ID:
+        return TXId.createFromData(in);
+      case INTEREST_RESULT_POLICY:
+        return readInterestResultPolicy(in);
+      case UNDEFINED:
+        return readUndefined(in);
+      case RESULTS_BAG:
+        return readResultsBag(in);
+      case TOKEN_INVALID:
+        return Token.INVALID;
+      case TOKEN_LOCAL_INVALID:
+        return Token.LOCAL_INVALID;
+      case TOKEN_DESTROYED:
+        return Token.DESTROYED;
+      case TOKEN_REMOVED:
+        return Token.REMOVED_PHASE1;
+      case TOKEN_REMOVED2:
+        return Token.REMOVED_PHASE2;
+      case TOKEN_TOMBSTONE:
+        return Token.TOMBSTONE;
+      case NULL_TOKEN:
+        return readNullToken(in);
+      case CONFIGURATION_REQUEST:
+        return readConfigurationRequest(in);
+      case CONFIGURATION_RESPONSE:
+        return readConfigurationResponse(in);
+      case PR_DESTROY_ON_DATA_STORE_MESSAGE:
+        return readDestroyOnDataStore(in);
+      default:
+        final Constructor<?> cons;
+        if (dsfid >= Byte.MIN_VALUE && dsfid <= Byte.MAX_VALUE) {
+          cons = dsfidMap[dsfid + Byte.MAX_VALUE + 1];
+        } else {
+          cons = (Constructor<?>) dsfidMap2.get(dsfid);
+        }
+        if (cons != null) {
+          try {
+            Object ds = cons.newInstance((Object[]) null);
+            InternalDataSerializer.invokeFromData(ds, in);
+            return ds;
+          } catch (InstantiationException ie) {
+            throw new IOException(ie.getMessage(), ie);
+          } catch (IllegalAccessException iae) {
+            throw new IOException(iae.getMessage(), iae);
+          } catch (InvocationTargetException ite) {
+            Throwable targetEx = ite.getTargetException();
+            if (targetEx instanceof IOException) {
+              throw (IOException) targetEx;
+            } else if (targetEx instanceof ClassNotFoundException) {
+              throw (ClassNotFoundException) targetEx;
+            } else {
+              throw new IOException(ite.getMessage(), targetEx);
+            }
           }
         }
-      }
-      throw new DSFIDNotFoundException("Unknown DataSerializableFixedID: " + dsfid, dsfid);
-
+        throw new DSFIDNotFoundException("Unknown DataSerializableFixedID: " + dsfid, dsfid);
     }
   }
 
   //////////////////  Reading Internal Objects  /////////////////
   /**
-   * Reads an instance of <code>IpAddress</code> from a
-   * <code>DataInput</code>.
+   * Reads an instance of <code>IpAddress</code> from a <code>DataInput</code>.
    *
-   * @throws IOException
-   *         A problem occurs while reading from <code>in</code>
+   * @throws IOException A problem occurs while reading from <code>in</code>
    */
-  public static InternalDistributedMember readInternalDistributedMember(DataInput in) throws IOException, ClassNotFoundException {
+  public static InternalDistributedMember readInternalDistributedMember(DataInput in)
+      throws IOException, ClassNotFoundException {
 
     InternalDistributedMember o = new InternalDistributedMember();
     InternalDataSerializer.invokeFromData(o, in);
     return o;
   }
 
-  private static ResultsBag readResultsBag(DataInput in) throws IOException, ClassNotFoundException {
+  private static ResultsBag readResultsBag(DataInput in)
+      throws IOException, ClassNotFoundException {
     ResultsBag o = new ResultsBag(true);
     InternalDataSerializer.invokeFromData(o, in);
     return o;
@@ -1002,42 +1028,46 @@ public final class DSFIDFactory implements DataSerializableFixedID {
   }
 
   /**
-   * Reads an instance of <code>InterestResultPolicy</code> from a
-   * <code>DataInput</code>.
+   * Reads an instance of <code>InterestResultPolicy</code> from a <code>DataInput</code>.
    *
-   * @throws IOException
-   *         A problem occurs while reading from <code>in</code>
+   * @throws IOException A problem occurs while reading from <code>in</code>
    */
-  private static InterestResultPolicyImpl readInterestResultPolicy(DataInput in) throws IOException, ClassNotFoundException {
+  private static InterestResultPolicyImpl readInterestResultPolicy(DataInput in)
+      throws IOException, ClassNotFoundException {
     byte ordinal = in.readByte();
     return (InterestResultPolicyImpl) InterestResultPolicy.fromOrdinal(ordinal);
   }
 
-  private static DataSerializableFixedID readDestroyOnDataStore(DataInput in) throws IOException, ClassNotFoundException {
+  private static DataSerializableFixedID readDestroyOnDataStore(DataInput in)
+      throws IOException, ClassNotFoundException {
     DataSerializableFixedID serializable = new DestroyRegionOnDataStoreMessage();
     serializable.fromData(in);
     return serializable;
   }
 
-  private static DataSerializableFixedID readSnappyCompressedCachedDeserializable(DataInput in) throws IOException, ClassNotFoundException {
+  private static DataSerializableFixedID readSnappyCompressedCachedDeserializable(DataInput in)
+      throws IOException, ClassNotFoundException {
     DataSerializableFixedID serializable = new SnappyCompressedCachedDeserializable();
     serializable.fromData(in);
     return serializable;
   }
 
-  private static DataSerializableFixedID readNullToken(DataInput in) throws IOException, ClassNotFoundException {
+  private static DataSerializableFixedID readNullToken(DataInput in)
+      throws IOException, ClassNotFoundException {
     DataSerializableFixedID serializable = (NullToken) IndexManager.NULL;
     serializable.fromData(in);
     return serializable;
   }
 
-  private static DataSerializableFixedID readConfigurationRequest(DataInput in) throws IOException, ClassNotFoundException {
+  private static DataSerializableFixedID readConfigurationRequest(DataInput in)
+      throws IOException, ClassNotFoundException {
     DataSerializableFixedID serializable = new ConfigurationRequest();
     serializable.fromData(in);
     return serializable;
   }
 
-  private static DataSerializableFixedID readConfigurationResponse(DataInput in) throws IOException, ClassNotFoundException {
+  private static DataSerializableFixedID readConfigurationResponse(DataInput in)
+      throws IOException, ClassNotFoundException {
     DataSerializableFixedID serializable = new ConfigurationResponse();
     serializable.fromData(in);
     return serializable;
@@ -1050,5 +1080,4 @@ public final class DSFIDFactory implements DataSerializableFixedID {
   public static Int2ObjectOpenHashMap getDsfidmap2() {
     return dsfidMap2;
   }
-
 }

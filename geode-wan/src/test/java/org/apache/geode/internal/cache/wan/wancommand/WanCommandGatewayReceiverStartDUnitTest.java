@@ -43,8 +43,8 @@ public class WanCommandGatewayReceiverStartDUnitTest extends WANCommandTestBase 
   private static final long serialVersionUID = 1L;
 
   /**
-   * Test wan commands for error in input 1> start gateway-sender command needs
-   * only one of member or group.
+   * Test wan commands for error in input 1> start gateway-sender command needs only one of member
+   * or group.
    */
   @Test
   public void testStartGatewayReceiver_ErrorConditions() {
@@ -63,12 +63,21 @@ public class WanCommandGatewayReceiverStartDUnitTest extends WANCommandTestBase 
 
     final DistributedMember vm1Member = (DistributedMember) vm3.invoke(() -> getMember());
 
-    String command = CliStrings.START_GATEWAYRECEIVER + " --" + CliStrings.START_GATEWAYRECEIVER__MEMBER + "=" + vm1Member.getId() + " --" + CliStrings.START_GATEWAYRECEIVER__GROUP + "=RG1";
+    String command =
+        CliStrings.START_GATEWAYRECEIVER
+            + " --"
+            + CliStrings.START_GATEWAYRECEIVER__MEMBER
+            + "="
+            + vm1Member.getId()
+            + " --"
+            + CliStrings.START_GATEWAYRECEIVER__GROUP
+            + "=RG1";
 
     CommandResult cmdResult = executeCommand(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
-      getLogWriter().info("testStartGatewayReceiver_ErrorConditions stringResult : " + strCmdResult + ">>>>");
+      getLogWriter()
+          .info("testStartGatewayReceiver_ErrorConditions stringResult : " + strCmdResult + ">>>>");
       assertEquals(Result.Status.ERROR, cmdResult.getStatus());
       assertTrue(strCmdResult.contains(CliStrings.PROVIDE_EITHER_MEMBER_OR_GROUP_MESSAGE));
     } else {
@@ -118,10 +127,7 @@ public class WanCommandGatewayReceiverStartDUnitTest extends WANCommandTestBase 
     vm5.invoke(() -> verifyReceiverState(true));
   }
 
-  /**
-   * test to validate that the start gateway sender starts the gateway sender on
-   * a member
-   */
+  /** test to validate that the start gateway sender starts the gateway sender on a member */
   @Test
   public void testStartGatewayReceiver_onMember() {
 
@@ -145,12 +151,18 @@ public class WanCommandGatewayReceiverStartDUnitTest extends WANCommandTestBase 
 
     final DistributedMember vm1Member = (DistributedMember) vm3.invoke(() -> getMember());
     pause(10000);
-    String command = CliStrings.START_GATEWAYRECEIVER + " --" + CliStrings.START_GATEWAYRECEIVER__MEMBER + "=" + vm1Member.getId();
+    String command =
+        CliStrings.START_GATEWAYRECEIVER
+            + " --"
+            + CliStrings.START_GATEWAYRECEIVER__MEMBER
+            + "="
+            + vm1Member.getId();
 
     CommandResult cmdResult = executeCommand(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
-      getLogWriter().info("testStartGatewayReceiver_onMember stringResult : " + strCmdResult + ">>>>");
+      getLogWriter()
+          .info("testStartGatewayReceiver_onMember stringResult : " + strCmdResult + ">>>>");
       assertEquals(Result.Status.OK, cmdResult.getStatus());
       assertTrue(strCmdResult.contains("is started on member"));
     } else {
@@ -163,8 +175,7 @@ public class WanCommandGatewayReceiverStartDUnitTest extends WANCommandTestBase 
   }
 
   /**
-   * test to validate that the start gateway sender starts the gateway sender on
-   * a group of members
+   * test to validate that the start gateway sender starts the gateway sender on a group of members
    */
   @Test
   public void testStartGatewayReceiver_Group() {
@@ -188,7 +199,8 @@ public class WanCommandGatewayReceiverStartDUnitTest extends WANCommandTestBase 
     vm5.invoke(() -> verifyReceiverState(false));
 
     pause(10000);
-    String command = CliStrings.START_GATEWAYRECEIVER + " --" + CliStrings.START_GATEWAYRECEIVER__GROUP + "=RG1";
+    String command =
+        CliStrings.START_GATEWAYRECEIVER + " --" + CliStrings.START_GATEWAYRECEIVER__GROUP + "=RG1";
     CommandResult cmdResult = executeCommand(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
@@ -210,9 +222,8 @@ public class WanCommandGatewayReceiverStartDUnitTest extends WANCommandTestBase 
   }
 
   /**
-   * Test to validate the scenario gateway sender is started when one or more
-   * sender members belongs to multiple groups
-   * 
+   * Test to validate the scenario gateway sender is started when one or more sender members belongs
+   * to multiple groups
    */
   @Test
   public void testStartGatewayReceiver_MultipleGroup() {
@@ -240,7 +251,11 @@ public class WanCommandGatewayReceiverStartDUnitTest extends WANCommandTestBase 
     vm7.invoke(() -> verifyReceiverState(false));
 
     pause(10000);
-    String command = CliStrings.START_GATEWAYRECEIVER + " --" + CliStrings.START_GATEWAYRECEIVER__GROUP + "=RG1,RG2";
+    String command =
+        CliStrings.START_GATEWAYRECEIVER
+            + " --"
+            + CliStrings.START_GATEWAYRECEIVER__GROUP
+            + "=RG1,RG2";
     CommandResult cmdResult = executeCommand(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
@@ -262,5 +277,4 @@ public class WanCommandGatewayReceiverStartDUnitTest extends WANCommandTestBase 
     vm6.invoke(() -> verifyReceiverState(true));
     vm7.invoke(() -> verifyReceiverState(false));
   }
-
 }

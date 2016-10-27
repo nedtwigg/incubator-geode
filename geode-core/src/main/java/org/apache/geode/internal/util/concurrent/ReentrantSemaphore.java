@@ -20,27 +20,24 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A special purpose semaphore that allows reentrancy. With this semaphore, a thread
- * will only acquire a real permit the first time it calls acquire. After that, the
- * thread can call acquire repeatedly, and it won't affect the semaphore count until
- * the thread calls release the same number of times as acquire.
- * 
- * This semaphore currently only supports a thread acquiring and releasing a single permit at
- * a time.
- * 
- * If a thread does not hold the semaphore, but still decrements it, then it will increase the
- * permits of the semaphore, just like a regular semaphore.
- * 
- * This semaphore is useful for allowing only a limited number of threads to enter a block of code,
- * while allowing a single thread to try to enter that block several times in it's call stack.
+ * A special purpose semaphore that allows reentrancy. With this semaphore, a thread will only
+ * acquire a real permit the first time it calls acquire. After that, the thread can call acquire
+ * repeatedly, and it won't affect the semaphore count until the thread calls release the same
+ * number of times as acquire.
  *
+ * <p>This semaphore currently only supports a thread acquiring and releasing a single permit at a
+ * time.
+ *
+ * <p>If a thread does not hold the semaphore, but still decrements it, then it will increase the
+ * permits of the semaphore, just like a regular semaphore.
+ *
+ * <p>This semaphore is useful for allowing only a limited number of threads to enter a block of
+ * code, while allowing a single thread to try to enter that block several times in it's call stack.
  */
 public class ReentrantSemaphore extends Semaphore {
   private final ThreadLocal<Integer> holdCount = new ThreadLocal<Integer>();
 
-  /**
-   * @param permits
-   */
+  /** @param permits */
   public ReentrantSemaphore(int permits) {
     super(permits);
   }
@@ -98,27 +95,32 @@ public class ReentrantSemaphore extends Semaphore {
 
   @Override
   public void acquire(int permits) throws InterruptedException {
-    throw new UnsupportedOperationException("ReentrantSemaphore doesn't support a single thread using more than one permit");
+    throw new UnsupportedOperationException(
+        "ReentrantSemaphore doesn't support a single thread using more than one permit");
   }
 
   @Override
   public void acquireUninterruptibly(int permits) {
-    throw new UnsupportedOperationException("ReentrantSemaphore doesn't support a single thread using more than one permit");
+    throw new UnsupportedOperationException(
+        "ReentrantSemaphore doesn't support a single thread using more than one permit");
   }
 
   @Override
   public boolean tryAcquire(int permits) {
-    throw new UnsupportedOperationException("ReentrantSemaphore doesn't support a single thread using more than one permit");
+    throw new UnsupportedOperationException(
+        "ReentrantSemaphore doesn't support a single thread using more than one permit");
   }
 
   @Override
   public boolean tryAcquire(int permits, long timeout, TimeUnit unit) throws InterruptedException {
-    throw new UnsupportedOperationException("ReentrantSemaphore doesn't support a single thread using more than one permit");
+    throw new UnsupportedOperationException(
+        "ReentrantSemaphore doesn't support a single thread using more than one permit");
   }
 
   @Override
   public void release(int permits) {
-    throw new UnsupportedOperationException("ReentrantSemaphore doesn't support a single thread using more than one permit");
+    throw new UnsupportedOperationException(
+        "ReentrantSemaphore doesn't support a single thread using more than one permit");
   }
 
   private boolean incHoldCount() {

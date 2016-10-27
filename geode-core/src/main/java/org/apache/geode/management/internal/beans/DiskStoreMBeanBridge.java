@@ -29,11 +29,7 @@ import org.apache.geode.management.internal.beans.stats.StatsAverageLatency;
 import org.apache.geode.management.internal.beans.stats.StatsKey;
 import org.apache.geode.management.internal.beans.stats.StatsRate;
 
-/**
- * Bridge class to act as an interface between JMX layer and GemFire DiskStores
- * 
- * 
- */
+/** Bridge class to act as an interface between JMX layer and GemFire DiskStores */
 public class DiskStoreMBeanBridge {
 
   private DiskStoreImpl diskStore;
@@ -100,7 +96,6 @@ public class DiskStoreMBeanBridge {
       diskDirStr[i] = diskDirs[i].getAbsolutePath();
     }
     this.diskDirectories = diskDirStr;
-
   }
 
   public void stopMonitor() {
@@ -110,41 +105,38 @@ public class DiskStoreMBeanBridge {
   // ** Operations On DiskStores **//
 
   /**
-   * Allows a disk compaction to be forced on this disk store. The compaction is
-   * done even if automatic compaction is not configured. If the current active
-   * oplog has had data written to it and it is compactable then an implicit
-   * call to forceRoll will be made so that the active oplog can be compacted.
-   * This method will block until the compaction completes. return true if one
-   * or more oplogs were compacted; False indicates that no oplogs were ready to
-   * be compacted or that a compaction was already in progress.
+   * Allows a disk compaction to be forced on this disk store. The compaction is done even if
+   * automatic compaction is not configured. If the current active oplog has had data written to it
+   * and it is compactable then an implicit call to forceRoll will be made so that the active oplog
+   * can be compacted. This method will block until the compaction completes. return true if one or
+   * more oplogs were compacted; False indicates that no oplogs were ready to be compacted or that a
+   * compaction was already in progress.
    */
   public boolean forceCompaction() {
     return diskStore.forceCompaction();
   }
 
   /**
-   * Asks the disk store to start writing to a new oplog. The old oplog will be
-   * asynchronously compressed if compaction is set to true. The new oplog will
-   * be created in the next available directory with free space. If there is no
-   * directory with free space available and compaction is set to false, then a
-   * DiskAccessException saying that the disk is full will be thrown. If
-   * compaction is true then the application will wait for the other oplogs to
-   * be compacted and more space to be created
+   * Asks the disk store to start writing to a new oplog. The old oplog will be asynchronously
+   * compressed if compaction is set to true. The new oplog will be created in the next available
+   * directory with free space. If there is no directory with free space available and compaction is
+   * set to false, then a DiskAccessException saying that the disk is full will be thrown. If
+   * compaction is true then the application will wait for the other oplogs to be compacted and more
+   * space to be created
    */
   public void forceRoll() {
     diskStore.forceRoll();
   }
 
   /**
-   * Causes any data that is currently in the asynchronous queue to be written
-   * to disk. Does not return until the flush is complete.
+   * Causes any data that is currently in the asynchronous queue to be written to disk. Does not
+   * return until the flush is complete.
    */
   public void flush() {
     diskStore.flush();
   }
 
-  /** DiskStore Config Data **/
-
+  /** DiskStore Config Data * */
   public int getCompactionThreshold() {
     return compactionThreshold;
   }
@@ -181,8 +173,7 @@ public class DiskStoreMBeanBridge {
     return queueSize;
   }
 
-  /** Statistics **/
-
+  /** Statistics * */
   public DiskStoreMBeanBridge() {
     this.monitor = new MBeanStatsMonitor(ManagementStrings.DISKSTORE_MONITOR.toLocalizedString());
     initializeStats();
@@ -194,16 +185,22 @@ public class DiskStoreMBeanBridge {
 
   private void initializeStats() {
 
-    String[] diskReads = new String[] { StatsKey.DISK_READ_BYTES, StatsKey.DISK_RECOVERED_BYTES };
+    String[] diskReads = new String[] {StatsKey.DISK_READ_BYTES, StatsKey.DISK_RECOVERED_BYTES};
     diskReadsRate = new StatsRate(diskReads, StatType.LONG_TYPE, monitor);
 
     diskWritesRate = new StatsRate(StatsKey.DISK_WRITEN_BYTES, StatType.LONG_TYPE, monitor);
 
-    diskFlushTimeAvgLatency = new StatsAverageLatency(StatsKey.NUM_FLUSHES, StatType.LONG_TYPE, StatsKey.TOTAL_FLUSH_TIME, monitor);
+    diskFlushTimeAvgLatency =
+        new StatsAverageLatency(
+            StatsKey.NUM_FLUSHES, StatType.LONG_TYPE, StatsKey.TOTAL_FLUSH_TIME, monitor);
 
-    diskReadsAvgLatency = new StatsAverageLatency(StatsKey.DISK_READ_BYTES, StatType.LONG_TYPE, StatsKey.DISK_READS_TIME, monitor);
+    diskReadsAvgLatency =
+        new StatsAverageLatency(
+            StatsKey.DISK_READ_BYTES, StatType.LONG_TYPE, StatsKey.DISK_READS_TIME, monitor);
 
-    diskWritesAvgLatency = new StatsAverageLatency(StatsKey.DISK_WRITEN_BYTES, StatType.LONG_TYPE, StatsKey.DISK_WRITES_TIME, monitor);
+    diskWritesAvgLatency =
+        new StatsAverageLatency(
+            StatsKey.DISK_WRITEN_BYTES, StatType.LONG_TYPE, StatsKey.DISK_WRITES_TIME, monitor);
   }
 
   public long getDiskReadsAvgLatency() {

@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-/**
- * 
- */
+/** */
 package org.apache.geode.cache30;
 
 import org.junit.Ignore;
@@ -48,30 +46,27 @@ public class DistributedAckPersistentRegionCCEDUnitTest extends DistributedAckRe
   @Ignore("Skip test for this configuration")
   @Override
   @Test
-  public void testClearOnNonReplicateWithConcurrentEvents() {
-  }
+  public void testClearOnNonReplicateWithConcurrentEvents() {}
 
   @Ignore("Skip test for this configuration")
   @Override
   @Test
-  public void testConcurrentEventsOnNonReplicatedRegion() {
-  }
+  public void testConcurrentEventsOnNonReplicatedRegion() {}
 
   @Ignore("Skip test for this configuration")
   @Override
   @Test
-  public void testGetAllWithVersions() {
-  }
+  public void testGetAllWithVersions() {}
 
   private VersionTag getVersionTag(VM vm, final String key) {
-    SerializableCallable getVersionTag = new SerializableCallable("verify recovered entry") {
-      @Override
-      public Object call() {
-        VersionTag tag = CCRegion.getVersionTag(key);
-        return tag;
-
-      }
-    };
+    SerializableCallable getVersionTag =
+        new SerializableCallable("verify recovered entry") {
+          @Override
+          public Object call() {
+            VersionTag tag = CCRegion.getVersionTag(key);
+            return tag;
+          }
+        };
     return (VersionTag) vm.invoke(getVersionTag);
   }
 
@@ -83,7 +78,7 @@ public class DistributedAckPersistentRegionCCEDUnitTest extends DistributedAckRe
   //    final int ds1Port = (Integer)params[3];
   //    final int hub0Port = (Integer)params[4];
   //    final int hub2Port = (Integer)params[5];
-  //    
+  //
   //    VersionTag tag0 = getVersionTag(vm0, key);
   //    VersionTag tag1 = getVersionTag(vm1, key);
   //    VersionTag tag2 = getVersionTag(vm2, key);
@@ -109,10 +104,10 @@ public class DistributedAckPersistentRegionCCEDUnitTest extends DistributedAckRe
   //  }
   //
   //  /**
-  //   * vm0 and vm1 are peers, each holds a DR. 
-  //   * vm0 do 3 puts to change the version to be 3, wait for distributions to vm1 
-  //   * Shutdown and restart both of them. 
-  //   * Make sure vm0 and vm1 are both at version 3. 
+  //   * vm0 and vm1 are peers, each holds a DR.
+  //   * vm0 do 3 puts to change the version to be 3, wait for distributions to vm1
+  //   * Shutdown and restart both of them.
+  //   * Make sure vm0 and vm1 are both at version 3.
   //   * Do local clear at vm0. Then do a put. It will use version 1.
   //   * This new operation should be rejected as conflicts at vm1.
   //   * That means, recovered version 3 can reject the new operation at version 1.

@@ -38,7 +38,8 @@ public class GetRegionDescriptionFunction extends FunctionAdapter implements Int
 
       if (region != null) {
         String memberName = cache.getDistributedSystem().getDistributedMember().getName();
-        RegionDescriptionPerMember regionDescription = new RegionDescriptionPerMember(region, memberName);
+        RegionDescriptionPerMember regionDescription =
+            new RegionDescriptionPerMember(region, memberName);
         context.getResultSender().lastResult(regionDescription);
       } else {
         context.getResultSender().lastResult(null);
@@ -55,5 +56,4 @@ public class GetRegionDescriptionFunction extends FunctionAdapter implements Int
     // TODO Auto-generated method stub
     return GetRegionDescriptionFunction.class.toString();
   }
-
 }

@@ -35,7 +35,8 @@ import org.apache.geode.distributed.internal.ReplyProcessor21;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.internal.logging.LogService;
 
-public class ReleaseClearLockMessage extends HighPriorityDistributionMessage implements MessageWithReply {
+public class ReleaseClearLockMessage extends HighPriorityDistributionMessage
+    implements MessageWithReply {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -43,17 +44,18 @@ public class ReleaseClearLockMessage extends HighPriorityDistributionMessage imp
   private int processorId;
 
   /** for deserialization */
-  public ReleaseClearLockMessage() {
-  }
+  public ReleaseClearLockMessage() {}
 
   public ReleaseClearLockMessage(String regionPath, int processorId) {
     this.regionPath = regionPath;
     this.processorId = processorId;
   }
 
-  public static void send(Set<InternalDistributedMember> members, DM dm, String regionPath) throws ReplyException {
+  public static void send(Set<InternalDistributedMember> members, DM dm, String regionPath)
+      throws ReplyException {
     ReplyProcessor21 processor = new ReplyProcessor21(dm, members);
-    ReleaseClearLockMessage msg = new ReleaseClearLockMessage(regionPath, processor.getProcessorId());
+    ReleaseClearLockMessage msg =
+        new ReleaseClearLockMessage(regionPath, processor.getProcessorId());
     msg.setRecipients(members);
 
     dm.putOutgoing(msg);

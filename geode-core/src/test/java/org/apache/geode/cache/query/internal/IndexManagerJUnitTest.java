@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- */
+/** */
 package org.apache.geode.cache.query.internal;
 
 import static org.junit.Assert.assertFalse;
@@ -51,7 +50,6 @@ public class IndexManagerJUnitTest {
       region.put("" + i, new Portfolio(i));
       // CacheUtils.log(new Portfolio(i));
     }
-
   }
 
   @After
@@ -60,13 +58,12 @@ public class IndexManagerJUnitTest {
   }
 
   /**
-   * This test is for a fix for #47475
-   * We added a way to determine whether to reevaluate an entry for query execution
-   * The method is to keep track of the delta and current time in a single long value
-   * The value is then used by the query to determine if a region entry needs to be reevaluated
-   * based on subtracting the value with the query execution time.  This provides a delta + some false positive time
-   * If the delta + last modified time of the region entry is > query start time, 
-   * we can assume that it needs to be reevaluated
+   * This test is for a fix for #47475 We added a way to determine whether to reevaluate an entry
+   * for query execution The method is to keep track of the delta and current time in a single long
+   * value The value is then used by the query to determine if a region entry needs to be
+   * reevaluated based on subtracting the value with the query execution time. This provides a delta
+   * + some false positive time If the delta + last modified time of the region entry is > query
+   * start time, we can assume that it needs to be reevaluated
    */
   @Test
   public void testSafeQueryTime() {
@@ -80,11 +77,14 @@ public class IndexManagerJUnitTest {
     assertTrue(IndexManager.needsRecalculation(10, 0));
     assertFalse(IndexManager.needsRecalculation(11, 0));
 
-    assertFalse(IndexManager.needsRecalculation(9, -3)); //old enough updates shouldn't trigger a recalc
-    assertTrue(IndexManager.needsRecalculation(9, -2)); //older updates but falls within the delta (false positive)
+    assertFalse(
+        IndexManager.needsRecalculation(9, -3)); //old enough updates shouldn't trigger a recalc
+    assertTrue(
+        IndexManager.needsRecalculation(
+            9, -2)); //older updates but falls within the delta (false positive)
 
     assertTrue(IndexManager.needsRecalculation(10, 5));
-    //This should eval to true only because of false positives.  
+    //This should eval to true only because of false positives.
     assertTrue(IndexManager.needsRecalculation(11, 5));
 
     //Now let's assume a new update has occurred, this update delta and time combo still is not larger
@@ -150,22 +150,26 @@ public class IndexManagerJUnitTest {
     CompiledPath cp = new CompiledPath(new CompiledID("pf"), "status");
 
     // TASK ICM1
-    String[] defintions = { "/portfolios", "index_iter1.positions" };
-    IndexData id = IndexUtils.findIndex("/portfolios", defintions, cp, "*", CacheUtils.getCache(), true, context);
+    String[] defintions = {"/portfolios", "index_iter1.positions"};
+    IndexData id =
+        IndexUtils.findIndex(
+            "/portfolios", defintions, cp, "*", CacheUtils.getCache(), true, context);
     Assert.assertEquals(id.getMatchLevel(), 0);
     Assert.assertEquals(id.getMapping()[0], 1);
     Assert.assertEquals(id.getMapping()[1], 2);
-    String[] defintions1 = { "/portfolios" };
-    IndexData id1 = IndexUtils.findIndex("/portfolios", defintions1, cp, "*", CacheUtils.getCache(), true, context);
+    String[] defintions1 = {"/portfolios"};
+    IndexData id1 =
+        IndexUtils.findIndex(
+            "/portfolios", defintions1, cp, "*", CacheUtils.getCache(), true, context);
     Assert.assertEquals(id1.getMatchLevel(), -1);
     Assert.assertEquals(id1.getMapping()[0], 1);
-    String[] defintions2 = { "/portfolios", "index_iter1.positions", "index_iter1.coll1" };
-    IndexData id2 = IndexUtils.findIndex("/portfolios", defintions2, cp, "*", CacheUtils.getCache(), true, context);
+    String[] defintions2 = {"/portfolios", "index_iter1.positions", "index_iter1.coll1"};
+    IndexData id2 =
+        IndexUtils.findIndex(
+            "/portfolios", defintions2, cp, "*", CacheUtils.getCache(), true, context);
     Assert.assertEquals(id2.getMatchLevel(), 1);
     Assert.assertEquals(id2.getMapping()[0], 1);
     Assert.assertEquals(id2.getMapping()[1], 2);
     Assert.assertEquals(id2.getMapping()[2], 0);
-
   }
-
 }

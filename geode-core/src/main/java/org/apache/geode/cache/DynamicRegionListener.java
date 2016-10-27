@@ -18,25 +18,25 @@
 package org.apache.geode.cache;
 
 /**
- * <code>DynamicRegionListener</code> is an interface that can be
- * implemented to handle dynamic region-related events.
-
- * The methods on a <code>DynamicRegionListener</code> are invoked synchronously.
- * If the listener method takes a long time to execute then it will cause the
- * operation that caused it to be invoked to take a long time.
- * <p>
- * Note: It is possible to receive duplicate create events when the DynamicRegionFactory
- * goes active due to Cache creation.
- * <p>
- * See {@link DynamicRegionFactory}
+ * <code>DynamicRegionListener</code> is an interface that can be implemented to handle dynamic
+ * region-related events.
+ *
+ * <p>The methods on a <code>DynamicRegionListener</code> are invoked synchronously. If the listener
+ * method takes a long time to execute then it will cause the operation that caused it to be invoked
+ * to take a long time.
+ *
+ * <p>Note: It is possible to receive duplicate create events when the DynamicRegionFactory goes
+ * active due to Cache creation.
+ *
+ * <p>See {@link DynamicRegionFactory}
  *
  * @since GemFire 4.3
  */
 public interface DynamicRegionListener {
 
   /**
-   * Handles the 'before region creation' event of a dynamic region. This method
-   * is invoked before the dynamic region is created in the local VM.
+   * Handles the 'before region creation' event of a dynamic region. This method is invoked before
+   * the dynamic region is created in the local VM.
    *
    * @param parentRegionName The name of the parent region
    * @param regionName The name of the region being created
@@ -44,24 +44,24 @@ public interface DynamicRegionListener {
   public void beforeRegionCreate(String parentRegionName, String regionName);
 
   /**
-   * Handles the 'after region creation' event of a dynamic region. This method
-   * is invoked after the dynamic region is created in the local VM.
+   * Handles the 'after region creation' event of a dynamic region. This method is invoked after the
+   * dynamic region is created in the local VM.
    *
    * @param event A <code>RegionEvent</code> describing the event
    */
   public void afterRegionCreate(RegionEvent<?, ?> event);
 
   /**
-   * Handles the 'before region destroyed' event of a dynamic region. This method
-   * is invoked before the dynamic region is destroyed in the local VM.
+   * Handles the 'before region destroyed' event of a dynamic region. This method is invoked before
+   * the dynamic region is destroyed in the local VM.
    *
    * @param event A <code>RegionEvent</code> describing the event
    */
   public void beforeRegionDestroy(RegionEvent<?, ?> event);
 
   /**
-   * Handles the 'after region destroyed' event of a dynamic region. This method
-   * is invoked after the dynamic region is destroyed in the local VM.
+   * Handles the 'after region destroyed' event of a dynamic region. This method is invoked after
+   * the dynamic region is destroyed in the local VM.
    *
    * @param event A <code>RegionEvent</code> describing the event
    */

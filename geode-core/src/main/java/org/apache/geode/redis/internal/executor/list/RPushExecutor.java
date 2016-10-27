@@ -29,5 +29,4 @@ public class RPushExecutor extends PushExecutor {
   public String getArgsError() {
     return ArityDef.RPUSH;
   }
-
 }

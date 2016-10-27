@@ -70,7 +70,8 @@ public class DummyAuthzCredentialGenerator extends AuthzCredentialGenerator {
   @Override
   protected Properties init() throws IllegalArgumentException {
     if (!this.generator.classCode().isDummy()) {
-      throw new IllegalArgumentException("DummyAuthorization module only works with DummyAuthenticator");
+      throw new IllegalArgumentException(
+          "DummyAuthorization module only works with DummyAuthenticator");
     }
     return null;
   }
@@ -86,25 +87,27 @@ public class DummyAuthzCredentialGenerator extends AuthzCredentialGenerator {
   }
 
   @Override
-  protected Principal getAllowedPrincipal(final OperationCode[] opCodes, final String[] regionNames, final int index) {
+  protected Principal getAllowedPrincipal(
+      final OperationCode[] opCodes, final String[] regionNames, final int index) {
     final byte roleType = getRequiredRole(opCodes);
     return getPrincipal(roleType, index);
   }
 
   @Override
-  protected Principal getDisallowedPrincipal(final OperationCode[] opCodes, final String[] regionNames, final int index) {
+  protected Principal getDisallowedPrincipal(
+      final OperationCode[] opCodes, final String[] regionNames, final int index) {
     byte roleType = getRequiredRole(opCodes);
     byte disallowedRoleType;
     switch (roleType) {
-    case READER_ROLE:
-      disallowedRoleType = WRITER_ROLE;
-      break;
-    case WRITER_ROLE:
-      disallowedRoleType = READER_ROLE;
-      break;
-    default:
-      disallowedRoleType = READER_ROLE;
-      break;
+      case READER_ROLE:
+        disallowedRoleType = WRITER_ROLE;
+        break;
+      case WRITER_ROLE:
+        disallowedRoleType = READER_ROLE;
+        break;
+      default:
+        disallowedRoleType = READER_ROLE;
+        break;
     }
     return getPrincipal(disallowedRoleType, index);
   }
@@ -115,14 +118,14 @@ public class DummyAuthzCredentialGenerator extends AuthzCredentialGenerator {
   }
 
   private Principal getPrincipal(final byte roleType, final int index) {
-    String[] admins = new String[] { "root", "admin", "administrator" };
+    String[] admins = new String[] {"root", "admin", "administrator"};
     switch (roleType) {
-    case READER_ROLE:
-      return new UsernamePrincipal("reader" + index);
-    case WRITER_ROLE:
-      return new UsernamePrincipal("writer" + index);
-    default:
-      return new UsernamePrincipal(admins[index % admins.length]);
+      case READER_ROLE:
+        return new UsernamePrincipal("reader" + index);
+      case WRITER_ROLE:
+        return new UsernamePrincipal("writer" + index);
+      default:
+        return new UsernamePrincipal(admins[index % admins.length]);
     }
   }
 }

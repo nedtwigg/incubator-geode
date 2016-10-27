@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-/**
- * 
- */
+/** */
 package org.apache.geode.cache30;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
@@ -47,8 +45,8 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * This test is only for GLOBAL REPLICATE Regions. Tests are
- * similar to {@link DistributedAckRegionCCEDUnitTest}.
+ * This test is only for GLOBAL REPLICATE Regions. Tests are similar to {@link
+ * DistributedAckRegionCCEDUnitTest}.
  */
 @Category(DistributedTest.class)
 public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
@@ -68,9 +66,7 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
     return p;
   }
 
-  /**
-   * Returns region attributes for a <code>GLOBAL</code> region
-   */
+  /** Returns region attributes for a <code>GLOBAL</code> region */
   @Override
   protected RegionAttributes getRegionAttributes() {
     AttributesFactory factory = new AttributesFactory();
@@ -107,10 +103,9 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
   }
 
   /**
-   * This test creates a server cache in vm0 and a peer cache in vm1. It then
-   * tests to see if GII transferred tombstones to vm1 like it's supposed to. A
-   * client cache is created in vm2 and the same sort of check is performed for
-   * register-interest.
+   * This test creates a server cache in vm0 and a peer cache in vm1. It then tests to see if GII
+   * transferred tombstones to vm1 like it's supposed to. A client cache is created in vm2 and the
+   * same sort of check is performed for register-interest.
    */
   @Test
   public void testGIISendsTombstones() throws Exception {
@@ -118,14 +113,14 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
   }
 
   // TODO: delete this unused method
-  protected void do_version_recovery_if_necessary(final VM vm0, final VM vm1, final VM vm2, final Object[] params) {
+  protected void do_version_recovery_if_necessary(
+      final VM vm0, final VM vm1, final VM vm2, final Object[] params) {
     // do nothing here
   }
 
   /**
-   * This tests the concurrency versioning system to ensure that event
-   * conflation happens correctly and that the statistic is being updated
-   * properly
+   * This tests the concurrency versioning system to ensure that event conflation happens correctly
+   * and that the statistic is being updated properly
    */
   @Test
   public void testConcurrentEvents() throws Exception {
@@ -159,9 +154,8 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
   }
 
   /**
-   * make sure that an operation performed on a new region entry created after a
-   * tombstone has been reaped is accepted by another member that has yet to
-   * reap the tombstone
+   * make sure that an operation performed on a new region entry created after a tombstone has been
+   * reaped is accepted by another member that has yet to reap the tombstone
    */
   @Test
   public void testTombstoneExpirationRace() {
@@ -170,62 +164,67 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
     // VM vm2 = Host.getHost(0).getVM(2);
 
     final String name = this.getUniqueName() + "-CC";
-    SerializableRunnable createRegion = new SerializableRunnable("Create Region") {
-      public void run() {
-        try {
-          RegionFactory f = getCache().createRegionFactory(getRegionAttributes());
-          CCRegion = (LocalRegion) f.create(name);
-          CCRegion.put("cckey0", "ccvalue");
-          CCRegion.put("cckey0", "ccvalue"); // version number will end up at 4
-        } catch (CacheException ex) {
-          Assert.fail("While creating region", ex);
-        }
-      }
-    };
+    SerializableRunnable createRegion =
+        new SerializableRunnable("Create Region") {
+          public void run() {
+            try {
+              RegionFactory f = getCache().createRegionFactory(getRegionAttributes());
+              CCRegion = (LocalRegion) f.create(name);
+              CCRegion.put("cckey0", "ccvalue");
+              CCRegion.put("cckey0", "ccvalue"); // version number will end up at 4
+            } catch (CacheException ex) {
+              Assert.fail("While creating region", ex);
+            }
+          }
+        };
     vm0.invoke(createRegion);
     vm1.invoke(createRegion);
     // vm2.invoke(createRegion);
-    vm1.invoke(new SerializableRunnable("Create local tombstone and adjust time") {
-      public void run() {
-        // make the entry for cckey0 a tombstone in this VM and set its
-        // modification time to be older than the tombstone GC interval. This
-        // means it could be in the process of being reaped by distributed-GC
-        RegionEntry entry = CCRegion.getRegionEntry("cckey0");
-        VersionTag tag = entry.getVersionStamp().asVersionTag();
-        assertTrue(tag.getEntryVersion() > 1);
-        tag.setVersionTimeStamp(System.currentTimeMillis() - TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT - 1000);
-        entry.getVersionStamp().setVersionTimeStamp(tag.getVersionTimeStamp());
-        try {
-          entry.makeTombstone(CCRegion, tag);
-        } catch (RegionClearedException e) {
-          Assert.fail("region was mysteriously cleared during unit testing", e);
-        }
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable("Create local tombstone and adjust time") {
+          public void run() {
+            // make the entry for cckey0 a tombstone in this VM and set its
+            // modification time to be older than the tombstone GC interval. This
+            // means it could be in the process of being reaped by distributed-GC
+            RegionEntry entry = CCRegion.getRegionEntry("cckey0");
+            VersionTag tag = entry.getVersionStamp().asVersionTag();
+            assertTrue(tag.getEntryVersion() > 1);
+            tag.setVersionTimeStamp(
+                System.currentTimeMillis() - TombstoneService.REPLICATE_TOMBSTONE_TIMEOUT - 1000);
+            entry.getVersionStamp().setVersionTimeStamp(tag.getVersionTimeStamp());
+            try {
+              entry.makeTombstone(CCRegion, tag);
+            } catch (RegionClearedException e) {
+              Assert.fail("region was mysteriously cleared during unit testing", e);
+            }
+          }
+        });
     // now remove the entry on vm0, simulating that it initiated a GC, and
     // perform a CREATE with a new version number
-    vm0.invoke(new SerializableRunnable("Locally destroy the entry and do a create that will be propagated with v1") {
-      public void run() {
-        CCRegion.getRegionMap().removeEntry("cckey0", CCRegion.getRegionEntry("cckey0"), true);
-        if (CCRegion.getRegionEntry("ckey0") != null) {
-          fail("expected removEntry to remove the entry from the region's map");
-        }
-        CCRegion.put("cckey0", "updateAfterReap");
-      }
-    });
-    vm1.invoke(new SerializableRunnable("Check that the create() was applied") {
-      public void run() {
-        RegionEntry entry = CCRegion.getRegionEntry("cckey0");
-        assertTrue(entry.getVersionStamp().getEntryVersion() == 1);
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable(
+            "Locally destroy the entry and do a create that will be propagated with v1") {
+          public void run() {
+            CCRegion.getRegionMap().removeEntry("cckey0", CCRegion.getRegionEntry("cckey0"), true);
+            if (CCRegion.getRegionEntry("ckey0") != null) {
+              fail("expected removEntry to remove the entry from the region's map");
+            }
+            CCRegion.put("cckey0", "updateAfterReap");
+          }
+        });
+    vm1.invoke(
+        new SerializableRunnable("Check that the create() was applied") {
+          public void run() {
+            RegionEntry entry = CCRegion.getRegionEntry("cckey0");
+            assertTrue(entry.getVersionStamp().getEntryVersion() == 1);
+          }
+        });
     disconnectAllFromDS();
   }
 
   /**
-   * This tests the concurrency versioning system to ensure that event
-   * conflation happens correctly and that the statistic is being updated
-   * properly
+   * This tests the concurrency versioning system to ensure that event conflation happens correctly
+   * and that the statistic is being updated properly
    */
   @Ignore("Disabling due to bug #52347")
   @Test
@@ -234,9 +233,8 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
   }
 
   /**
-   * This tests the concurrency versioning system to ensure that event
-   * conflation happens correctly and that the statistic is being updated
-   * properly
+   * This tests the concurrency versioning system to ensure that event conflation happens correctly
+   * and that the statistic is being updated properly
    */
   @Ignore("TODO: reenable this test")
   @Test
@@ -250,5 +248,4 @@ public class GlobalRegionCCEDUnitTest extends GlobalRegionDUnitTest {
   public void testGetAllWithVersions() {
     versionTestGetAllWithVersions();
   }
-
 }

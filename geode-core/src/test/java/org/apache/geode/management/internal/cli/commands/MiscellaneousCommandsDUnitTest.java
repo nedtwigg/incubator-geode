@@ -45,9 +45,7 @@ import static org.apache.geode.test.dunit.Invoke.invokeInEveryVM;
 import static org.apache.geode.test.dunit.LogWriterUtils.getLogWriter;
 import static org.apache.geode.test.dunit.Wait.waitForCriterion;
 
-/**
- * Dunit class for testing gemfire function commands : GC, Shutdown
- */
+/** Dunit class for testing gemfire function commands : GC, Shutdown */
 @Category(DistributedTest.class)
 public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
 
@@ -56,17 +54,19 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
 
   @Override
   protected final void preTearDownCliCommandTestBase() throws Exception {
-    invokeInEveryVM(new SerializableRunnable("reset log level") {
-      public void run() {
-        if (cachedLogLevel != null) {
-          System.setProperty(DistributionConfig.GEMFIRE_PREFIX + LOG_LEVEL, cachedLogLevel);
-          cachedLogLevel = null;
-        }
-      }
-    });
+    invokeInEveryVM(
+        new SerializableRunnable("reset log level") {
+          public void run() {
+            if (cachedLogLevel != null) {
+              System.setProperty(DistributionConfig.GEMFIRE_PREFIX + LOG_LEVEL, cachedLogLevel);
+              cachedLogLevel = null;
+            }
+          }
+        });
   }
 
-  @Category(FlakyTest.class) // GEODE-1034: random ports, GC sensitive, memory sensitive, HeadlessGFSH
+  @Category(
+      FlakyTest.class) // GEODE-1034: random ports, GC sensitive, memory sensitive, HeadlessGFSH
   @Test
   public void testGCForGroup() {
     Properties localProps = new Properties();
@@ -78,7 +78,8 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
     cmdResult.resetToFirstLine();
     if (cmdResult != null) {
       String cmdResultStr = commandResultToString(cmdResult);
-      getLogWriter().info("testGCForGroup cmdResultStr=" + cmdResultStr + "; cmdResult=" + cmdResult);
+      getLogWriter()
+          .info("testGCForGroup cmdResultStr=" + cmdResultStr + "; cmdResult=" + cmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
       if (cmdResult.getType().equals(ResultData.TYPE_TABULAR)) {
         TabularResultData table = (TabularResultData) cmdResult.getResultData();
@@ -175,7 +176,8 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
     cmdResult.resetToFirstLine();
     if (cmdResult != null) {
       String cmdResultStr = commandResultToString(cmdResult);
-      getLogWriter().info("testGCForEntireCluster cmdResultStr=" + cmdResultStr + "; cmdResult=" + cmdResult);
+      getLogWriter()
+          .info("testGCForEntireCluster cmdResultStr=" + cmdResultStr + "; cmdResult=" + cmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
       if (cmdResult.getType().equals(ResultData.TYPE_TABULAR)) {
         TabularResultData table = (TabularResultData) cmdResult.getResultData();
@@ -196,27 +198,31 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
     final VM vm2 = Host.getHost(0).getVM(2);
 
     setUpJmxManagerOnVm0ThenConnect(null);
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
-        // no need to close cache as it will be closed as part of teardown2
-        Cache cache = getCache();
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            // no need to close cache as it will be closed as part of teardown2
+            Cache cache = getCache();
 
-        RegionFactory<Integer, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-        Region region = dataRegionFactory.create("testRegion");
-        for (int i = 0; i < 10; i++) {
-          region.put("key" + (i + 200), "value" + (i + 200));
-        }
-      }
-    });
-    vm2.invoke(new SerializableRunnable() {
-      public void run() {
-        // no need to close cache as it will be closed as part of teardown2
-        Cache cache = getCache();
+            RegionFactory<Integer, Integer> dataRegionFactory =
+                cache.createRegionFactory(RegionShortcut.PARTITION);
+            Region region = dataRegionFactory.create("testRegion");
+            for (int i = 0; i < 10; i++) {
+              region.put("key" + (i + 200), "value" + (i + 200));
+            }
+          }
+        });
+    vm2.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            // no need to close cache as it will be closed as part of teardown2
+            Cache cache = getCache();
 
-        RegionFactory<Integer, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-        dataRegionFactory.create("testRegion");
-      }
-    });
+            RegionFactory<Integer, Integer> dataRegionFactory =
+                cache.createRegionFactory(RegionShortcut.PARTITION);
+            dataRegionFactory.create("testRegion");
+          }
+        });
   }
 
   @Category(FlakyTest.class) // GEODE-1706
@@ -242,15 +248,19 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
 
     // Need for the Gfsh HTTP enablement during shutdown to properly assess the
     // state of the connection.
-    waitForCriterion(new WaitCriterion() {
-      public boolean done() {
-        return !defaultShell.isConnectedAndReady();
-      }
+    waitForCriterion(
+        new WaitCriterion() {
+          public boolean done() {
+            return !defaultShell.isConnectedAndReady();
+          }
 
-      public String description() {
-        return "Waits for the shell to disconnect!";
-      }
-    }, 1000, 250, true);
+          public String description() {
+            return "Waits for the shell to disconnect!";
+          }
+        },
+        1000,
+        250,
+        true);
 
     assertFalse(defaultShell.isConnectedAndReady());
   }
@@ -276,15 +286,19 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
     final HeadlessGfsh defaultShell = getDefaultShell();
 
     // Need for the Gfsh HTTP enablement during shutdown to properly assess the state of the connection.
-    waitForCriterion(new WaitCriterion() {
-      public boolean done() {
-        return !defaultShell.isConnectedAndReady();
-      }
+    waitForCriterion(
+        new WaitCriterion() {
+          public boolean done() {
+            return !defaultShell.isConnectedAndReady();
+          }
 
-      public String description() {
-        return "Waits for the shell to disconnect!";
-      }
-    }, 1000, 250, false);
+          public String description() {
+            return "Waits for the shell to disconnect!";
+          }
+        },
+        1000,
+        250,
+        false);
 
     assertFalse(defaultShell.isConnectedAndReady());
   }
@@ -295,11 +309,12 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
     setupForShutDown();
     ThreadUtils.sleep(2500);
     final VM vm0 = Host.getHost(0).getVM(0);
-    vm0.invoke(new SerializableRunnable() {
-      public void run() {
-        System.setProperty("ThrowTimeoutException", "true");
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            System.setProperty("ThrowTimeoutException", "true");
+          }
+        });
 
     String command = "shutdown --time-out=15";
     CommandResult cmdResult = executeCommand(command);
@@ -307,15 +322,17 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
     if (cmdResult != null) {
       String cmdResultStr = commandResultToString(cmdResult);
       getLogWriter().info("testShutDownForTIMEOUT cmdResultStr = " + cmdResultStr);
-      CommandResult result = (CommandResult) ResultBuilder.createInfoResult(CliStrings.SHUTDOWN_TIMEDOUT);
+      CommandResult result =
+          (CommandResult) ResultBuilder.createInfoResult(CliStrings.SHUTDOWN_TIMEDOUT);
       String expectedResult = commandResultToString(result);
       assertEquals(expectedResult, cmdResultStr);
     }
-    vm0.invoke(new SerializableRunnable() {
-      public void run() {
-        System.clearProperty("ThrowTimeoutException");
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            System.clearProperty("ThrowTimeoutException");
+          }
+        });
   }
 
   void setupForChangeLogLelvel() {
@@ -323,18 +340,20 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
     final VM vm1 = Host.getHost(0).getVM(1);
 
     setUpJmxManagerOnVm0ThenConnect(null);
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
-        // no need to close cache as it will be closed as part of teardown2
-        Cache cache = getCache();
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            // no need to close cache as it will be closed as part of teardown2
+            Cache cache = getCache();
 
-        RegionFactory<Integer, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-        Region region = dataRegionFactory.create("testRegion");
-        for (int i = 0; i < 10; i++) {
-          region.put("key" + (i + 200), "value" + (i + 200));
-        }
-      }
-    });
+            RegionFactory<Integer, Integer> dataRegionFactory =
+                cache.createRegionFactory(RegionShortcut.PARTITION);
+            Region region = dataRegionFactory.create("testRegion");
+            for (int i = 0; i < 10; i++) {
+              region.put("key" + (i + 200), "value" + (i + 200));
+            }
+          }
+        });
   }
 
   void setupForShutDown() {
@@ -343,18 +362,20 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
 
     System.setProperty(CliStrings.IGNORE_INTERCEPTORS, "true");
     setUpJmxManagerOnVm0ThenConnect(null);
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
-        // no need to close cache as it will be closed as part of teardown2
-        Cache cache = getCache();
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            // no need to close cache as it will be closed as part of teardown2
+            Cache cache = getCache();
 
-        RegionFactory<Integer, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-        Region region = dataRegionFactory.create("testRegion");
-        for (int i = 0; i < 10; i++) {
-          region.put("key" + (i + 200), "value" + (i + 200));
-        }
-      }
-    });
+            RegionFactory<Integer, Integer> dataRegionFactory =
+                cache.createRegionFactory(RegionShortcut.PARTITION);
+            Region region = dataRegionFactory.create("testRegion");
+            for (int i = 0; i < 10; i++) {
+              region.put("key" + (i + 200), "value" + (i + 200));
+            }
+          }
+        });
   }
 
   void verifyShutDown() {
@@ -362,31 +383,34 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
     final VM vm1 = Host.getHost(0).getVM(1);
 
     @SuppressWarnings("serial")
-    final SerializableCallable connectedChecker = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        boolean cacheExists = true;
-        try {
-          Cache cacheInstance = CacheFactory.getAnyInstance();
-          cacheExists = cacheInstance.getDistributedSystem().isConnected();
-        } catch (CacheClosedException e) {
-          cacheExists = false;
-        }
-        return cacheExists;
-      }
-    };
+    final SerializableCallable connectedChecker =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            boolean cacheExists = true;
+            try {
+              Cache cacheInstance = CacheFactory.getAnyInstance();
+              cacheExists = cacheInstance.getDistributedSystem().isConnected();
+            } catch (CacheClosedException e) {
+              cacheExists = false;
+            }
+            return cacheExists;
+          }
+        };
 
-    WaitCriterion waitCriterion = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return Boolean.FALSE.equals(vm0.invoke(connectedChecker)) && Boolean.FALSE.equals(vm1.invoke(connectedChecker));
-      }
+    WaitCriterion waitCriterion =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return Boolean.FALSE.equals(vm0.invoke(connectedChecker))
+                && Boolean.FALSE.equals(vm1.invoke(connectedChecker));
+          }
 
-      @Override
-      public String description() {
-        return "Wait for gfsh to get disconnected from Manager.";
-      }
-    };
+          @Override
+          public String description() {
+            return "Wait for gfsh to get disconnected from Manager.";
+          }
+        };
     waitForCriterion(waitCriterion, 5000, 200, true);
 
     assertTrue(Boolean.FALSE.equals(vm1.invoke(connectedChecker)));
@@ -401,23 +425,47 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
 
     setupForChangeLogLelvel();
 
-    String serverName1 = (String) vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        cachedLogLevel = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "log-level");
-        return GemFireCacheImpl.getInstance().getDistributedSystem().getDistributedMember().getId();
-      }
-    });
+    String serverName1 =
+        (String)
+            vm0.invoke(
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    cachedLogLevel =
+                        System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "log-level");
+                    return GemFireCacheImpl.getInstance()
+                        .getDistributedSystem()
+                        .getDistributedMember()
+                        .getId();
+                  }
+                });
 
-    String serverName2 = (String) vm1.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        cachedLogLevel = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "log-level");
-        return GemFireCacheImpl.getInstance().getDistributedSystem().getDistributedMember().getId();
-      }
-    });
+    String serverName2 =
+        (String)
+            vm1.invoke(
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    cachedLogLevel =
+                        System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "log-level");
+                    return GemFireCacheImpl.getInstance()
+                        .getDistributedSystem()
+                        .getDistributedMember()
+                        .getId();
+                  }
+                });
 
-    String commandString = CliStrings.CHANGE_LOGLEVEL + " --" + CliStrings.CHANGE_LOGLEVEL__LOGLEVEL + "=finer" + " --" + CliStrings.CHANGE_LOGLEVEL__MEMBER + "=" + serverName1 + "," + serverName2;
+    String commandString =
+        CliStrings.CHANGE_LOGLEVEL
+            + " --"
+            + CliStrings.CHANGE_LOGLEVEL__LOGLEVEL
+            + "=finer"
+            + " --"
+            + CliStrings.CHANGE_LOGLEVEL__MEMBER
+            + "="
+            + serverName1
+            + ","
+            + serverName2;
 
     CommandResult commandResult = executeCommand(commandString);
     getLogWriter().info("testChangeLogLevel commandResult=" + commandResult);
@@ -428,8 +476,10 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
     TabularResultData tableRsultData = section.retrieveTable("ChangeLogLevel");
     assertNotNull(tableRsultData);
 
-    List<String> columns = tableRsultData.retrieveAllValues(CliStrings.CHANGE_LOGLEVEL__COLUMN_MEMBER);
-    List<String> status = tableRsultData.retrieveAllValues(CliStrings.CHANGE_LOGLEVEL__COLUMN_STATUS);
+    List<String> columns =
+        tableRsultData.retrieveAllValues(CliStrings.CHANGE_LOGLEVEL__COLUMN_MEMBER);
+    List<String> status =
+        tableRsultData.retrieveAllValues(CliStrings.CHANGE_LOGLEVEL__COLUMN_STATUS);
 
     assertEquals(columns.size(), 2);
     assertEquals(status.size(), 2);
@@ -452,29 +502,45 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
 
     setUpJmxManagerOnVm0ThenConnect(localProps);
 
-    String vm1id = (String) vm1.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Properties localProps = new Properties();
-        localProps.setProperty(GROUPS, grp1);
-        getSystem(localProps);
-        Cache cache = getCache();
-        return cache.getDistributedSystem().getDistributedMember().getId();
-      }
-    });
+    String vm1id =
+        (String)
+            vm1.invoke(
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    Properties localProps = new Properties();
+                    localProps.setProperty(GROUPS, grp1);
+                    getSystem(localProps);
+                    Cache cache = getCache();
+                    return cache.getDistributedSystem().getDistributedMember().getId();
+                  }
+                });
 
-    String vm2id = (String) vm2.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Properties localProps = new Properties();
-        localProps.setProperty(GROUPS, grp2);
-        getSystem(localProps);
-        Cache cache = getCache();
-        return cache.getDistributedSystem().getDistributedMember().getId();
-      }
-    });
+    String vm2id =
+        (String)
+            vm2.invoke(
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    Properties localProps = new Properties();
+                    localProps.setProperty(GROUPS, grp2);
+                    getSystem(localProps);
+                    Cache cache = getCache();
+                    return cache.getDistributedSystem().getDistributedMember().getId();
+                  }
+                });
 
-    String commandString = CliStrings.CHANGE_LOGLEVEL + " --" + CliStrings.CHANGE_LOGLEVEL__LOGLEVEL + "=finer" + " --" + CliStrings.CHANGE_LOGLEVEL__GROUPS + "=" + grp1 + "," + grp2;
+    String commandString =
+        CliStrings.CHANGE_LOGLEVEL
+            + " --"
+            + CliStrings.CHANGE_LOGLEVEL__LOGLEVEL
+            + "=finer"
+            + " --"
+            + CliStrings.CHANGE_LOGLEVEL__GROUPS
+            + "="
+            + grp1
+            + ","
+            + grp2;
 
     CommandResult commandResult = executeCommand(commandString);
     getLogWriter().info("testChangeLogLevelForGrps commandResult=" + commandResult);
@@ -487,8 +553,10 @@ public class MiscellaneousCommandsDUnitTest extends CliCommandTestBase {
     TabularResultData tableRsultData = section.retrieveTable("ChangeLogLevel");
     assertNotNull(tableRsultData);
 
-    List<String> columns = tableRsultData.retrieveAllValues(CliStrings.CHANGE_LOGLEVEL__COLUMN_MEMBER);
-    List<String> status = tableRsultData.retrieveAllValues(CliStrings.CHANGE_LOGLEVEL__COLUMN_STATUS);
+    List<String> columns =
+        tableRsultData.retrieveAllValues(CliStrings.CHANGE_LOGLEVEL__COLUMN_MEMBER);
+    List<String> status =
+        tableRsultData.retrieveAllValues(CliStrings.CHANGE_LOGLEVEL__COLUMN_STATUS);
 
     assertEquals(columns.size(), 2);
     assertEquals(status.size(), 2);

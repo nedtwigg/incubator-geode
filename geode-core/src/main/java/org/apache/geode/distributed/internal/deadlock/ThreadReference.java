@@ -19,9 +19,7 @@ package org.apache.geode.distributed.internal.deadlock;
 import java.io.Serializable;
 
 /**
- * A marker interface for thread identifiers returned from
- * {@link DeadlockDetector#getThreadReference(String, Thread)}
+ * A marker interface for thread identifiers returned from {@link
+ * DeadlockDetector#getThreadReference(String, Thread)}
  */
-public interface ThreadReference extends Serializable {
-
-}
+public interface ThreadReference extends Serializable {}

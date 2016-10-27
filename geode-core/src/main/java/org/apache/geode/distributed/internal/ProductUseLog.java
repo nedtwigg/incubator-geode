@@ -33,11 +33,11 @@ import org.apache.geode.internal.logging.PureLogWriter;
 /**
  * A log intended for recording product-use.
  *
- * This class wraps a {@link InternalLogWriter} which it uses to record messages.
- * It wipes the log when it gets too large.  The size of the log file is limited to 5mb by
- * default and can be adjusted with the system property <b>gemfire.max_product_use_file_size</b>,
- * though the size is not allowed to be less than 1mb.
- * 
+ * <p>This class wraps a {@link InternalLogWriter} which it uses to record messages. It wipes the
+ * log when it gets too large. The size of the log file is limited to 5mb by default and can be
+ * adjusted with the system property <b>gemfire.max_product_use_file_size</b>, though the size is
+ * not allowed to be less than 1mb.
+ *
  * @since GemFire 2013
  */
 public final class ProductUseLog implements MembershipListener {
@@ -60,16 +60,21 @@ public final class ProductUseLog implements MembershipListener {
     createLogWriter();
   }
 
-  /** adds the log as a membership listener to the given system and logs the view when members join */
+  /**
+   * adds the log as a membership listener to the given system and logs the view when members join
+   */
   public void monitorUse(InternalDistributedSystem system) {
     this.system = system;
     DM dmgr = system.getDistributionManager();
     dmgr.addMembershipListener(this);
     MembershipManager mmgr = dmgr.getMembershipManager();
     if (mmgr != null) {
-      log("Log opened with new distributed system connection.  " + system.getDM().getMembershipManager().getView());
+      log(
+          "Log opened with new distributed system connection.  "
+              + system.getDM().getMembershipManager().getView());
     } else { // membership manager not initialized?
-      log("Log opened with new distributed system connection.  Membership view not yet available in this VM.");
+      log(
+          "Log opened with new distributed system connection.  Membership view not yet available in this VM.");
     }
   }
 
@@ -82,9 +87,9 @@ public final class ProductUseLog implements MembershipListener {
     }
   }
 
-  /** 
-   * Closes the log.  It may be reopened with reopen().  This does not remove
-   * the log from any distributed systems it is monitoring.
+  /**
+   * Closes the log. It may be reopened with reopen(). This does not remove the log from any
+   * distributed systems it is monitoring.
    */
   public synchronized void close() {
     if (!this.logWriter.isClosed()) {
@@ -92,9 +97,7 @@ public final class ProductUseLog implements MembershipListener {
     }
   }
 
-  /**
-   * returns true if the log has been closed
-   */
+  /** returns true if the log has been closed */
   public synchronized boolean isClosed() {
     return this.logWriter.isClosed();
   }
@@ -117,7 +120,9 @@ public final class ProductUseLog implements MembershipListener {
     try {
       fos = new FileOutputStream(productUseLogFile, true);
     } catch (FileNotFoundException ex) {
-      String s = LocalizedStrings.InternalDistributedSystem_COULD_NOT_OPEN_LOG_FILE_0.toLocalizedString(productUseLogFile);
+      String s =
+          LocalizedStrings.InternalDistributedSystem_COULD_NOT_OPEN_LOG_FILE_0.toLocalizedString(
+              productUseLogFile);
       throw new GemFireIOException(s, ex);
     }
     PrintStream out = new PrintStream(fos);
@@ -130,15 +135,13 @@ public final class ProductUseLog implements MembershipListener {
   }
 
   @Override
-  public void memberDeparted(InternalDistributedMember id, boolean crashed) {
-  }
+  public void memberDeparted(InternalDistributedMember id, boolean crashed) {}
 
   @Override
-  public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
-  }
+  public void memberSuspect(
+      InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {}
 
   @Override
-  public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
-  }
-
+  public void quorumLost(
+      Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {}
 }

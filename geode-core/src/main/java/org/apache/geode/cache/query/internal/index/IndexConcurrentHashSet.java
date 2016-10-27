@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal.index;
 
 import java.util.Collection;
@@ -24,11 +22,10 @@ import java.util.Collection;
 import org.apache.geode.internal.concurrent.CompactConcurrentHashSet2;
 
 /**
- * This class overrides the size method to make it non-blocking for our query
- * engine. size() is only called index size estimation for selecting best index
- * for a query which can be approximate so it does NOT have to lock internal
- * segments for accurate count.
- * 
+ * This class overrides the size method to make it non-blocking for our query engine. size() is only
+ * called index size estimation for selecting best index for a query which can be approximate so it
+ * does NOT have to lock internal segments for accurate count.
+ *
  * @param <E>
  * @since GemFire 7.0
  */
@@ -58,9 +55,9 @@ public class IndexConcurrentHashSet<E> extends CompactConcurrentHashSet2<E> {
    * Returns the number of values in this set. If the set contains
    * more than <tt>Integer.MAX_VALUE</tt> elements, returns
    * <tt>Integer.MAX_VALUE</tt>.
-   * 
+   *
    * @return the number of values in this set
-   * 
+   *
    * Note: This has been modified for GemFire Indexes.
    */
   //  @Override

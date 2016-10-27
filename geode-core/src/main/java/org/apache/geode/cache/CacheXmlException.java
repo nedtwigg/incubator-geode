@@ -18,32 +18,22 @@ package org.apache.geode.cache;
 
 /**
  * Thrown when a problem is encountered while parsing a <A
- * href="package-summary.html#declarative">declarative caching XML
- * file</A>.  Examples of such problems are a malformed XML file or
- * the inability to load a {@link Declarable} class.
+ * href="package-summary.html#declarative">declarative caching XML file</A>. Examples of such
+ * problems are a malformed XML file or the inability to load a {@link Declarable} class.
  *
  * @see CacheFactory#create
- *
- *
  * @since GemFire 3.0
  */
 public class CacheXmlException extends CacheRuntimeException {
   private static final long serialVersionUID = -4343870964883131754L;
 
-  /**
-   * Creates a new <code>CacheXmlException</code> with the given
-   * description and cause.
-   */
+  /** Creates a new <code>CacheXmlException</code> with the given description and cause. */
   public CacheXmlException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  /**
-   * Creates a new <code>CacheXmlException</code> with the given
-   * description.
-   */
+  /** Creates a new <code>CacheXmlException</code> with the given description. */
   public CacheXmlException(String message) {
     super(message);
   }
-
 }

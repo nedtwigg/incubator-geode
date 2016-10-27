@@ -20,10 +20,8 @@ package org.apache.geode.internal.cache.xmlcache;
 import org.xml.sax.SAXException;
 
 /**
- * Interface for configuration XML generators. Used by {@link CacheXmlGenerator}
- * to generate entities defined in the XML Namespace returned by
- * {@link #getNamspaceUri()} .
- * 
+ * Interface for configuration XML generators. Used by {@link CacheXmlGenerator} to generate
+ * entities defined in the XML Namespace returned by {@link #getNamspaceUri()} .
  *
  * @since GemFire 8.1
  */
@@ -31,7 +29,7 @@ public interface XmlGenerator<T> {
 
   /**
    * Get XML Namespace this parser is responsible for.
-   * 
+   *
    * @return XML Namespace.
    * @since GemFire 8.1
    */
@@ -50,12 +48,10 @@ public interface XmlGenerator<T> {
 
   /**
    * Generate XML configuration to the given {@link CacheXmlGenerator}.
-   * 
-   * @param cacheXmlGenerator
-   *          to generate configuration to.
+   *
+   * @param cacheXmlGenerator to generate configuration to.
    * @throws SAXException
    * @since GemFire 8.1
    */
   void generate(CacheXmlGenerator cacheXmlGenerator) throws SAXException;
-
 }

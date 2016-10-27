@@ -43,8 +43,8 @@ import org.apache.geode.internal.net.SocketCreatorFactory;
 import org.apache.geode.internal.security.SecurableCommunicationChannel;
 
 /**
- * <p>Client for the TcpServer component of the Locator.
- * </p>
+ * Client for the TcpServer component of the Locator.
+ *
  * @since GemFire 5.7
  */
 public class TcpClient {
@@ -53,17 +53,20 @@ public class TcpClient {
 
   private static final int DEFAULT_REQUEST_TIMEOUT = 60 * 2 * 1000;
 
-  private static Map<InetSocketAddress, Short> serverVersions = new HashMap<InetSocketAddress, Short>();
+  private static Map<InetSocketAddress, Short> serverVersions =
+      new HashMap<InetSocketAddress, Short>();
 
   private final SocketCreator socketCreator;
 
   public TcpClient(DistributionConfig distributionConfig) {
-    this(SocketCreatorFactory.setDistributionConfig(distributionConfig).getSocketCreatorForComponent(SecurableCommunicationChannel.LOCATOR));
+    this(
+        SocketCreatorFactory.setDistributionConfig(distributionConfig)
+            .getSocketCreatorForComponent(SecurableCommunicationChannel.LOCATOR));
   }
 
   /**
-   * Constructs a new TcpClient using the default (Locator) SocketCreator.
-   * SocketCreatorFactory should be initialized before invoking this method.
+   * Constructs a new TcpClient using the default (Locator) SocketCreator. SocketCreatorFactory
+   * should be initialized before invoking this method.
    */
   public TcpClient() {
     this(SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.LOCATOR));
@@ -71,79 +74,79 @@ public class TcpClient {
 
   /**
    * Constructs a new TcpClient
+   *
    * @param socketCreator the SocketCreator to use in communicating with the Locator
    */
   public TcpClient(SocketCreator socketCreator) {
     this.socketCreator = socketCreator;
   }
 
-  /**
-   * Stops the Locator running on a given host and port
-   */
+  /** Stops the Locator running on a given host and port */
   public void stop(InetAddress addr, int port) throws java.net.ConnectException {
     try {
       ShutdownRequest request = new ShutdownRequest();
       requestToServer(addr, port, request, DEFAULT_REQUEST_TIMEOUT);
     } catch (java.net.ConnectException ce) {
-      // must not be running, rethrow so the caller can handle. 
+      // must not be running, rethrow so the caller can handle.
       // In most cases this Exception should be ignored.
       throw ce;
     } catch (Exception ex) {
-      logger.error("TcpClient.stop(): exception connecting to locator " + addr + ":" + port + ": " + ex);
+      logger.error(
+          "TcpClient.stop(): exception connecting to locator " + addr + ":" + port + ": " + ex);
     }
   }
 
   /**
-   * Contacts the Locator running on the given host,
-   * and port and gets information about it.  Two <code>String</code>s
-   * are returned: the first string is the working directory of the
-   * locator and the second string is the product directory of the
-   * locator.
+   * Contacts the Locator running on the given host, and port and gets information about it. Two
+   * <code>String</code>s are returned: the first string is the working directory of the locator and
+   * the second string is the product directory of the locator.
    */
   public String[] getInfo(InetAddress addr, int port) {
     try {
       InfoRequest request = new InfoRequest();
-      InfoResponse response = (InfoResponse) requestToServer(addr, port, request, DEFAULT_REQUEST_TIMEOUT);
+      InfoResponse response =
+          (InfoResponse) requestToServer(addr, port, request, DEFAULT_REQUEST_TIMEOUT);
       return response.getInfo();
     } catch (java.net.ConnectException ignore) {
       return null;
     } catch (Exception ex) {
-      logger.error("TcpClient.getInfo(): exception connecting to locator " + addr + ":" + port + ": " + ex);
+      logger.error(
+          "TcpClient.getInfo(): exception connecting to locator " + addr + ":" + port + ": " + ex);
       return null;
     }
-
   }
 
   /**
    * Send a request to a Locator and expect a reply
+   *
    * @param addr The locator's address
    * @param port The locator's tcp/ip port
    * @param request The request message
    * @param timeout Timeout for sending the message and receiving a reply
-   *
    * @return the reply
-   *
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  public Object requestToServer(InetAddress addr, int port, Object request, int timeout) throws IOException, ClassNotFoundException {
+  public Object requestToServer(InetAddress addr, int port, Object request, int timeout)
+      throws IOException, ClassNotFoundException {
     return requestToServer(addr, port, request, timeout, true);
   }
 
   /**
    * Send a request to a Locator
+   *
    * @param addr The locator's address
    * @param port The locator's tcp/ip port
    * @param request The request message
    * @param timeout Timeout for sending the message and receiving a reply
    * @param replyExpected Whether to wait for a reply
-   *
    * @return The reply, or null if no reply is expected
-   *
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  public Object requestToServer(InetAddress addr, int port, Object request, int timeout, boolean replyExpected) throws IOException, ClassNotFoundException {
+  public Object requestToServer(
+      InetAddress addr, int port, Object request, int timeout, boolean replyExpected)
+      throws IOException, ClassNotFoundException {
     InetSocketAddress ipAddr;
     if (addr == null) {
       ipAddr = new InetSocketAddress(port);
@@ -174,7 +177,8 @@ public class TcpClient {
 
     logger.debug("TcpClient sending {} to {}", request, ipAddr);
 
-    Socket sock = socketCreator.connect(ipAddr.getAddress(), ipAddr.getPort(), (int) newTimeout, null, false);
+    Socket sock =
+        socketCreator.connect(ipAddr.getAddress(), ipAddr.getPort(), (int) newTimeout, null, false);
     sock.setSoTimeout((int) newTimeout);
     DataOutputStream out = null;
     try {
@@ -199,14 +203,22 @@ public class TcpClient {
           logger.debug("received response: {}", response);
           return response;
         } catch (EOFException ex) {
-          throw new EOFException("Locator at " + ipAddr + " did not respond. This is normal if the locator was shutdown. If it wasn't check its log for exceptions.");
+          throw new EOFException(
+              "Locator at "
+                  + ipAddr
+                  + " did not respond. This is normal if the locator was shutdown. If it wasn't check its log for exceptions.");
         }
       } else {
         return null;
       }
     } catch (UnsupportedVersionException ex) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Remote TcpServer version: " + serverVersion + " is higher than local version: " + Version.CURRENT_ORDINAL + ". This is never expected as remoteVersion");
+        logger.debug(
+            "Remote TcpServer version: "
+                + serverVersion
+                + " is higher than local version: "
+                + Version.CURRENT_ORDINAL
+                + ". This is never expected as remoteVersion");
       }
       return null;
     } finally {
@@ -230,7 +242,8 @@ public class TcpClient {
     }
   }
 
-  private Short getServerVersion(InetSocketAddress ipAddr, int timeout) throws IOException, ClassNotFoundException {
+  private Short getServerVersion(InetSocketAddress ipAddr, int timeout)
+      throws IOException, ClassNotFoundException {
 
     int gossipVersion = TcpServer.getCurrentGossipVersion();
     Short serverVersion = null;
@@ -292,7 +305,10 @@ public class TcpClient {
       }
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("Locator " + ipAddr + " did not respond to a request for its version.  I will assume it is using v5.7 for safety.");
+      logger.debug(
+          "Locator "
+              + ipAddr
+              + " did not respond to a request for its version.  I will assume it is using v5.7 for safety.");
     }
     synchronized (serverVersions) {
       serverVersions.put(ipAddr, Version.GFE_57.ordinal());
@@ -301,15 +317,13 @@ public class TcpClient {
   }
 
   /**
-   * Clear static class information concerning Locators.
-   * This is used in unit tests.  It will force TcpClient to
-   * send version-request messages to locators to reestablish
-   * knowledge of their communication protocols.
+   * Clear static class information concerning Locators. This is used in unit tests. It will force
+   * TcpClient to send version-request messages to locators to reestablish knowledge of their
+   * communication protocols.
    */
   public static void clearStaticData() {
     synchronized (serverVersions) {
       serverVersions.clear();
     }
   }
-
 }

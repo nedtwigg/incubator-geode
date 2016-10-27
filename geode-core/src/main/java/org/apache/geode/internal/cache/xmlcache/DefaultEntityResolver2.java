@@ -28,37 +28,40 @@ import org.apache.geode.internal.ClassPathLoader;
 
 /**
  * Default behavior for EntityResolver2 implementations.
- * 
  *
  * @since GemFire 8.1
  */
 // UnitTest PivotalEntityResolverJUnitTest
-abstract public class DefaultEntityResolver2 implements EntityResolver2 {
+public abstract class DefaultEntityResolver2 implements EntityResolver2 {
 
   @Override
-  public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
+  public InputSource resolveEntity(final String publicId, final String systemId)
+      throws SAXException, IOException {
     return resolveEntity(null, publicId, null, systemId);
   }
 
   @Override
-  public InputSource getExternalSubset(final String name, final String baseURI) throws SAXException, IOException {
+  public InputSource getExternalSubset(final String name, final String baseURI)
+      throws SAXException, IOException {
     return null;
   }
 
   @Override
-  public InputSource resolveEntity(final String name, final String publicId, final String baseURI, final String systemId) throws SAXException, IOException {
+  public InputSource resolveEntity(
+      final String name, final String publicId, final String baseURI, final String systemId)
+      throws SAXException, IOException {
     return null;
   }
 
   /**
    * Get {@link InputSource} for path in class path.
-   * 
-   * @param path
-   *          to resource to get {@link InputSource} for.
+   *
+   * @param path to resource to get {@link InputSource} for.
    * @return InputSource if resource found, otherwise null.
    * @since GemFire 8.1
    */
-  protected final InputSource getClassPathInputSource(final String publicId, final String systemId, final String path) {
+  protected final InputSource getClassPathInputSource(
+      final String publicId, final String systemId, final String path) {
     final InputStream stream = ClassPathLoader.getLatest().getResourceAsStream(getClass(), path);
     if (null == stream) {
       return null;
@@ -70,5 +73,4 @@ abstract public class DefaultEntityResolver2 implements EntityResolver2 {
 
     return inputSource;
   }
-
 }

@@ -42,8 +42,7 @@ import org.apache.geode.test.dunit.Assert;
 import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
-/**
- */
+/** */
 @Category(DistributedTest.class)
 public class DistributedSystemStatsDUnitTest extends ManagementTestBase {
 
@@ -65,49 +64,52 @@ public class DistributedSystemStatsDUnitTest extends ManagementTestBase {
 
   @SuppressWarnings("serial")
   public void setDiskStats(VM vm1) throws Exception {
-    vm1.invoke(new SerializableRunnable("Set Member Stats") {
-      public void run() {
-        MemberMBean bean = (MemberMBean) managementService.getMemberMXBean();
-        MemberMBeanBridge bridge = bean.getBridge();
-        DiskStoreStats diskStoreStats = new DiskStoreStats(basicGetSystem(), "test");
-        bridge.addDiskStoreStats(diskStoreStats);
-        diskStoreStats.startRead();
-        diskStoreStats.startWrite();
-        diskStoreStats.startBackup();
-        diskStoreStats.startRecovery();
-        diskStoreStats.incWrittenBytes(20, true);
-        diskStoreStats.startFlush();
-        diskStoreStats.setQueueSize(10);
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable("Set Member Stats") {
+          public void run() {
+            MemberMBean bean = (MemberMBean) managementService.getMemberMXBean();
+            MemberMBeanBridge bridge = bean.getBridge();
+            DiskStoreStats diskStoreStats = new DiskStoreStats(basicGetSystem(), "test");
+            bridge.addDiskStoreStats(diskStoreStats);
+            diskStoreStats.startRead();
+            diskStoreStats.startWrite();
+            diskStoreStats.startBackup();
+            diskStoreStats.startRecovery();
+            diskStoreStats.incWrittenBytes(20, true);
+            diskStoreStats.startFlush();
+            diskStoreStats.setQueueSize(10);
+          }
+        });
   }
 
   @SuppressWarnings("serial")
   public void verifyDiskStats(VM vm1) throws Exception {
-    vm1.invoke(new SerializableRunnable("Set Member Stats") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+    vm1.invoke(
+        new SerializableRunnable("Set Member Stats") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
 
-        SystemManagementService service = (SystemManagementService) getManagementService();
-        DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-        assertNotNull(bean);
-        Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
+            SystemManagementService service = (SystemManagementService) getManagementService();
+            DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+            assertNotNull(bean);
+            Set<DistributedMember> otherMemberSet =
+                cache.getDistributionManager().getOtherNormalDistributionManagerIds();
 
-        for (DistributedMember member : otherMemberSet) {
-          ObjectName memberMBeanName;
-          try {
-            memberMBeanName = service.getMemberMBeanName(member);
-            waitForProxy(memberMBeanName, MemberMXBean.class);
-            MemberMXBean memberBean = service.getMBeanProxy(memberMBeanName, MemberMXBean.class);
-            waitForRefresh(2, memberMBeanName);
-          } catch (NullPointerException e) {
-            Assert.fail("FAILED WITH EXCEPION", e);
-          } catch (Exception e) {
-            Assert.fail("FAILED WITH EXCEPION", e);
+            for (DistributedMember member : otherMemberSet) {
+              ObjectName memberMBeanName;
+              try {
+                memberMBeanName = service.getMemberMBeanName(member);
+                waitForProxy(memberMBeanName, MemberMXBean.class);
+                MemberMXBean memberBean =
+                    service.getMBeanProxy(memberMBeanName, MemberMXBean.class);
+                waitForRefresh(2, memberMBeanName);
+              } catch (NullPointerException e) {
+                Assert.fail("FAILED WITH EXCEPION", e);
+              } catch (Exception e) {
+                Assert.fail("FAILED WITH EXCEPION", e);
+              }
+            }
           }
-        }
-
-      }
-    });
+        });
   }
 }

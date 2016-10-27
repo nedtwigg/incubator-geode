@@ -69,17 +69,18 @@ public class ClientSnapshotDUnitTest extends JUnit4CacheTestCase {
       region.put(i, new MyObject(i, "clienttest " + i));
     }
 
-    SerializableCallable export = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        File f = new File(getDiskDirs()[0], "client-export.snapshot");
-        Region<Integer, MyObject> r = getCache().getRegion("clienttest");
+    SerializableCallable export =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            File f = new File(getDiskDirs()[0], "client-export.snapshot");
+            Region<Integer, MyObject> r = getCache().getRegion("clienttest");
 
-        r.getSnapshotService().save(f, SnapshotFormat.GEMFIRE);
+            r.getSnapshotService().save(f, SnapshotFormat.GEMFIRE);
 
-        return f;
-      }
-    };
+            return f;
+          }
+        };
 
     File snapshot = (File) Host.getHost(0).getVM(3).invoke(export);
 
@@ -102,61 +103,73 @@ public class ClientSnapshotDUnitTest extends JUnit4CacheTestCase {
       region.put(i, new MyObject(i, "clienttest " + i));
     }
 
-    SerializableCallable export = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        File f = new File(getDiskDirs()[0], "client-import.snapshot");
-        Region<Integer, MyObject> r = getCache().getRegion("clienttest");
+    SerializableCallable export =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            File f = new File(getDiskDirs()[0], "client-import.snapshot");
+            Region<Integer, MyObject> r = getCache().getRegion("clienttest");
 
-        r.getSnapshotService().save(f, SnapshotFormat.GEMFIRE);
+            r.getSnapshotService().save(f, SnapshotFormat.GEMFIRE);
 
-        return f;
-      }
-    };
+            return f;
+          }
+        };
 
     Host.getHost(0).getVM(3).invoke(export);
     for (int i = 0; i < count; i++) {
       region.put(i, new MyObject(i, "XXX"));
     }
 
-    SerializableCallable imp = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        final AtomicBoolean cqtest = new AtomicBoolean(false);
-        CqAttributesFactory af = new CqAttributesFactory();
-        af.addCqListener(new CqListenerAdapter() {
+    SerializableCallable imp =
+        new SerializableCallable() {
           @Override
-          public void onEvent(CqEvent aCqEvent) {
-            cqtest.set(true);
+          public Object call() throws Exception {
+            final AtomicBoolean cqtest = new AtomicBoolean(false);
+            CqAttributesFactory af = new CqAttributesFactory();
+            af.addCqListener(
+                new CqListenerAdapter() {
+                  @Override
+                  public void onEvent(CqEvent aCqEvent) {
+                    cqtest.set(true);
+                  }
+                });
+
+            Region<Integer, MyObject> r = getCache().getRegion("clienttest");
+            CqQuery cq =
+                r.getRegionService()
+                    .getQueryService()
+                    .newCq("SELECT * FROM /clienttest", af.create());
+            cq.execute();
+
+            File f = new File(getDiskDirs()[0], "client-import.snapshot");
+            r.getSnapshotService().load(f, SnapshotFormat.GEMFIRE);
+
+            return cqtest.get();
           }
-        });
-
-        Region<Integer, MyObject> r = getCache().getRegion("clienttest");
-        CqQuery cq = r.getRegionService().getQueryService().newCq("SELECT * FROM /clienttest", af.create());
-        cq.execute();
-
-        File f = new File(getDiskDirs()[0], "client-import.snapshot");
-        r.getSnapshotService().load(f, SnapshotFormat.GEMFIRE);
-
-        return cqtest.get();
-      }
-    };
+        };
 
     // add callbacks
-    region.getAttributesMutator().setCacheWriter(new CacheWriterAdapter<Integer, MyObject>() {
-      @Override
-      public void beforeUpdate(EntryEvent<Integer, MyObject> event) {
-        fail("CacheWriter invoked during import");
-      }
-    });
+    region
+        .getAttributesMutator()
+        .setCacheWriter(
+            new CacheWriterAdapter<Integer, MyObject>() {
+              @Override
+              public void beforeUpdate(EntryEvent<Integer, MyObject> event) {
+                fail("CacheWriter invoked during import");
+              }
+            });
 
     final AtomicBoolean cltest = new AtomicBoolean(false);
-    region.getAttributesMutator().addCacheListener(new CacheListenerAdapter<Integer, MyObject>() {
-      @Override
-      public void afterUpdate(EntryEvent<Integer, MyObject> event) {
-        cltest.set(true);
-      }
-    });
+    region
+        .getAttributesMutator()
+        .addCacheListener(
+            new CacheListenerAdapter<Integer, MyObject>() {
+              @Override
+              public void afterUpdate(EntryEvent<Integer, MyObject> event) {
+                cltest.set(true);
+              }
+            });
 
     boolean cqtest = (Boolean) Host.getHost(0).getVM(3).invoke(imp);
     assertEquals("CacheListener invoked during import", false, cltest.get());
@@ -181,41 +194,50 @@ public class ClientSnapshotDUnitTest extends JUnit4CacheTestCase {
       region.put(i, new MyObject(i, "XXX"));
     }
 
-    SerializableCallable callbacks = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<Integer, MyObject> r = getCache().getRegion("clienttest");
-        r.registerInterestRegex(".*");
-
-        r.getAttributesMutator().setCacheWriter(new CacheWriterAdapter<Integer, MyObject>() {
+    SerializableCallable callbacks =
+        new SerializableCallable() {
           @Override
-          public void beforeUpdate(EntryEvent<Integer, MyObject> event) {
-            fail("CacheWriter invoked during import");
+          public Object call() throws Exception {
+            Region<Integer, MyObject> r = getCache().getRegion("clienttest");
+            r.registerInterestRegex(".*");
+
+            r.getAttributesMutator()
+                .setCacheWriter(
+                    new CacheWriterAdapter<Integer, MyObject>() {
+                      @Override
+                      public void beforeUpdate(EntryEvent<Integer, MyObject> event) {
+                        fail("CacheWriter invoked during import");
+                      }
+                    });
+
+            r.getAttributesMutator()
+                .addCacheListener(
+                    new CacheListenerAdapter<Integer, MyObject>() {
+                      @Override
+                      public void afterUpdate(EntryEvent<Integer, MyObject> event) {
+                        fail("CacheListener was invoked during import");
+                      }
+                    });
+
+            final AtomicBoolean cqtest = new AtomicBoolean(false);
+            CqAttributesFactory af = new CqAttributesFactory();
+            af.addCqListener(
+                new CqListenerAdapter() {
+                  @Override
+                  public void onEvent(CqEvent aCqEvent) {
+                    fail("Cq was invoked during import");
+                  }
+                });
+
+            CqQuery cq =
+                r.getRegionService()
+                    .getQueryService()
+                    .newCq("SELECT * FROM /clienttest", af.create());
+            cq.execute();
+
+            return null;
           }
-        });
-
-        r.getAttributesMutator().addCacheListener(new CacheListenerAdapter<Integer, MyObject>() {
-          @Override
-          public void afterUpdate(EntryEvent<Integer, MyObject> event) {
-            fail("CacheListener was invoked during import");
-          }
-        });
-
-        final AtomicBoolean cqtest = new AtomicBoolean(false);
-        CqAttributesFactory af = new CqAttributesFactory();
-        af.addCqListener(new CqListenerAdapter() {
-          @Override
-          public void onEvent(CqEvent aCqEvent) {
-            fail("Cq was invoked during import");
-          }
-        });
-
-        CqQuery cq = r.getRegionService().getQueryService().newCq("SELECT * FROM /clienttest", af.create());
-        cq.execute();
-
-        return null;
-      }
-    };
+        };
 
     Host.getHost(0).getVM(3).invoke(callbacks);
     region.getSnapshotService().load(f, SnapshotFormat.GEMFIRE);
@@ -223,21 +245,22 @@ public class ClientSnapshotDUnitTest extends JUnit4CacheTestCase {
 
   @Test
   public void testInvalidate() throws Exception {
-    SerializableCallable invalid = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<Integer, MyObject> r = getCache().getRegion("clienttest");
+    SerializableCallable invalid =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<Integer, MyObject> r = getCache().getRegion("clienttest");
 
-        r.put(1, new MyObject(1, "invalidate"));
-        r.invalidate(1);
+            r.put(1, new MyObject(1, "invalidate"));
+            r.invalidate(1);
 
-        File f = new File(getDiskDirs()[0], "client-invalidate.snapshot");
-        r.getSnapshotService().save(f, SnapshotFormat.GEMFIRE);
-        r.getSnapshotService().load(f, SnapshotFormat.GEMFIRE);
+            File f = new File(getDiskDirs()[0], "client-invalidate.snapshot");
+            r.getSnapshotService().save(f, SnapshotFormat.GEMFIRE);
+            r.getSnapshotService().load(f, SnapshotFormat.GEMFIRE);
 
-        return null;
-      }
-    };
+            return null;
+          }
+        };
 
     Host.getHost(0).getVM(3).invoke(invalid);
 
@@ -256,30 +279,45 @@ public class ClientSnapshotDUnitTest extends JUnit4CacheTestCase {
     server.setPort(port);
     server.start();
 
-    region = cache.<Integer, MyObject> createRegionFactory(RegionShortcut.REPLICATE).create("clienttest");
+    region =
+        cache.<Integer, MyObject>createRegionFactory(RegionShortcut.REPLICATE).create("clienttest");
 
     final Host host = Host.getHost(0);
-    SerializableCallable client = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        ClientCacheFactory cf = new ClientCacheFactory().set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel()).setPdxSerializer(new MyPdxSerializer()).addPoolServer(NetworkUtils.getServerHostName(host), port).setPoolSubscriptionEnabled(true).setPoolPRSingleHopEnabled(false);
+    SerializableCallable client =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            ClientCacheFactory cf =
+                new ClientCacheFactory()
+                    .set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel())
+                    .setPdxSerializer(new MyPdxSerializer())
+                    .addPoolServer(NetworkUtils.getServerHostName(host), port)
+                    .setPoolSubscriptionEnabled(true)
+                    .setPoolPRSingleHopEnabled(false);
 
-        ClientCache cache = getClientCache(cf);
-        Region r = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY_HEAP_LRU).setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(5)).create("clienttest");
-        return null;
-      }
-    };
+            ClientCache cache = getClientCache(cf);
+            Region r =
+                cache
+                    .createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY_HEAP_LRU)
+                    .setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(5))
+                    .create("clienttest");
+            return null;
+          }
+        };
 
-    SerializableCallable remote = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
-        Cache cache = getCache(cf);
+    SerializableCallable remote =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
+            Cache cache = getCache(cf);
 
-        cache.<Integer, MyObject> createRegionFactory(RegionShortcut.REPLICATE).create("clienttest");
-        return null;
-      }
-    };
+            cache
+                .<Integer, MyObject>createRegionFactory(RegionShortcut.REPLICATE)
+                .create("clienttest");
+            return null;
+          }
+        };
 
     host.getVM(3).invoke(client);
     host.getVM(2).invoke(remote);

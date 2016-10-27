@@ -34,18 +34,16 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/**
- * Tests fill pattern validation for the {@link MemoryAllocatorImpl}.
- */
+/** Tests fill pattern validation for the {@link MemoryAllocatorImpl}. */
 @Category(IntegrationTest.class)
 public class MemoryAllocatorFillPatternIntegrationTest {
   private static Random random = ThreadLocalRandom.current();
 
-  /**
-   * Chunk operation types.
-   */
+  /** Chunk operation types. */
   static enum Operation {
-    ALLOCATE, FREE, WRITE;
+    ALLOCATE,
+    FREE,
+    WRITE;
 
     // Holds all Operation values
     private static Operation[] values = Operation.values();
@@ -58,13 +56,13 @@ public class MemoryAllocatorFillPatternIntegrationTest {
   /** Number of worker threads for advanced tests. */
   private static final int WORKER_THREAD_COUNT = 5;
 
-  /** Size of single test slab.*/
+  /** Size of single test slab. */
   private static final int SLAB_SIZE = 1024 * 1024 * 50;
 
-  /** Maximum number of bytes a worker thread can allocate during advanced tests.  */
+  /** Maximum number of bytes a worker thread can allocate during advanced tests. */
   private static final int MAX_WORKER_ALLOCATION_TOTAL_SIZE = SLAB_SIZE / WORKER_THREAD_COUNT / 2;
 
-  /** Maximum allocation for a single Chunk.  */
+  /** Maximum allocation for a single Chunk. */
   private static final int MAX_WORKER_ALLOCATION_SIZE = 512;
 
   /** Canned data for write operations. */
@@ -85,19 +83,19 @@ public class MemoryAllocatorFillPatternIntegrationTest {
   /** Our test victim's memory slab. */
   private SlabImpl slab = null;
 
-  /**
-   * Enables fill validation and creates the test victim.
-   */
+  /** Enables fill validation and creates the test victim. */
   @Before
   public void setUp() throws Exception {
     System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "validateOffHeapWithFill", "true");
     this.slab = new SlabImpl(SLAB_SIZE);
-    this.allocator = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { this.slab });
+    this.allocator =
+        MemoryAllocatorImpl.createForUnitTest(
+            new NullOutOfOffHeapMemoryListener(),
+            new NullOffHeapMemoryStats(),
+            new SlabImpl[] {this.slab});
   }
 
-  /**
-   * Frees off heap memory.
-   */
+  /** Frees off heap memory. */
   @After
   public void tearDown() throws Exception {
     MemoryAllocatorImpl.freeOffHeapMemory();
@@ -105,40 +103,44 @@ public class MemoryAllocatorFillPatternIntegrationTest {
   }
 
   /**
-   * This test hammers a MemoryAllocatorImpl with multiple threads exercising
-   * the fill validation of tiny Chunks for one minute.  This, of course, exercises many aspects of
-   * the MemoryAllocatorImpl and its helper classes.
+   * This test hammers a MemoryAllocatorImpl with multiple threads exercising the fill validation of
+   * tiny Chunks for one minute. This, of course, exercises many aspects of the MemoryAllocatorImpl
+   * and its helper classes.
+   *
    * @throws Exception
    */
   @Test
   public void testFillPatternAdvancedForTinyAllocations() throws Exception {
-    doFillPatternAdvancedTest(new ChunkSizer() {
-      @Override
-      public int allocationSize() {
-        int allocation = random.nextInt(MAX_WORKER_ALLOCATION_SIZE + 1);
+    doFillPatternAdvancedTest(
+        new ChunkSizer() {
+          @Override
+          public int allocationSize() {
+            int allocation = random.nextInt(MAX_WORKER_ALLOCATION_SIZE + 1);
 
-        while (allocation < MIN_WORKER_ALLOCATION_SIZE) {
-          allocation = random.nextInt(MAX_WORKER_ALLOCATION_SIZE + 1);
-        }
-        return allocation;
-      }
-    });
+            while (allocation < MIN_WORKER_ALLOCATION_SIZE) {
+              allocation = random.nextInt(MAX_WORKER_ALLOCATION_SIZE + 1);
+            }
+            return allocation;
+          }
+        });
   }
 
   /**
-   * This test hammers a MemoryAllocatorImpl with multiple threads exercising
-   * the fill validation of huge Chunks for one minute.  This, of course, exercises many aspects of
-   * the MemoryAllocatorImpl and its helper classes.
+   * This test hammers a MemoryAllocatorImpl with multiple threads exercising the fill validation of
+   * huge Chunks for one minute. This, of course, exercises many aspects of the MemoryAllocatorImpl
+   * and its helper classes.
+   *
    * @throws Exception
    */
   @Test
   public void testFillPatternAdvancedForHugeAllocations() throws Exception {
-    doFillPatternAdvancedTest(new ChunkSizer() {
-      @Override
-      public int allocationSize() {
-        return HUGE_CHUNK_SIZE;
-      }
-    });
+    doFillPatternAdvancedTest(
+        new ChunkSizer() {
+          @Override
+          public int allocationSize() {
+            return HUGE_CHUNK_SIZE;
+          }
+        });
   }
 
   private interface ChunkSizer {
@@ -150,87 +152,91 @@ public class MemoryAllocatorFillPatternIntegrationTest {
     final CountDownLatch latch = new CountDownLatch(WORKER_THREAD_COUNT);
 
     // Use to track any errors the worker threads will encounter
-    final List<Throwable> threadErrorList = Collections.synchronizedList(new LinkedList<Throwable>());
+    final List<Throwable> threadErrorList =
+        Collections.synchronizedList(new LinkedList<Throwable>());
 
     /*
      * Start up a number of worker threads.  These threads will randomly allocate, free,
      * and write to Chunks.
      */
     for (int i = 0; i < WORKER_THREAD_COUNT; ++i) {
-      new Thread(new Runnable() {
-        // Total allocation in bytes for this thread
-        private int totalAllocation = 0;
+      new Thread(
+              new Runnable() {
+                // Total allocation in bytes for this thread
+                private int totalAllocation = 0;
 
-        // List of Chunks allocated by this thread
-        private List<OffHeapStoredObject> chunks = new LinkedList<OffHeapStoredObject>();
+                // List of Chunks allocated by this thread
+                private List<OffHeapStoredObject> chunks = new LinkedList<OffHeapStoredObject>();
 
-        // Time to end thread execution
-        private long endTime = System.currentTimeMillis() + RUN_TIME_IN_MILLIS;
+                // Time to end thread execution
+                private long endTime = System.currentTimeMillis() + RUN_TIME_IN_MILLIS;
 
-        /**
-         * Allocates a chunk and adds it to the thread's Chunk list.
-         */
-        private void allocate() {
-          int allocation = chunkSizer.allocationSize();
-          OffHeapStoredObject chunk = (OffHeapStoredObject) allocator.allocate(allocation);
+                /** Allocates a chunk and adds it to the thread's Chunk list. */
+                private void allocate() {
+                  int allocation = chunkSizer.allocationSize();
+                  OffHeapStoredObject chunk = (OffHeapStoredObject) allocator.allocate(allocation);
 
-          // This should always work just after allocation
-          chunk.validateFill();
+                  // This should always work just after allocation
+                  chunk.validateFill();
 
-          chunks.add(chunk);
-          totalAllocation += chunk.getSize();
-        }
+                  chunks.add(chunk);
+                  totalAllocation += chunk.getSize();
+                }
 
-        /**
-         * Frees a random chunk from the Chunk list.
-         */
-        private void free() {
-          OffHeapStoredObject chunk = chunks.remove(random.nextInt(chunks.size()));
-          totalAllocation -= chunk.getSize();
+                /** Frees a random chunk from the Chunk list. */
+                private void free() {
+                  OffHeapStoredObject chunk = chunks.remove(random.nextInt(chunks.size()));
+                  totalAllocation -= chunk.getSize();
 
-          /*
-           * Chunk is filled here but another thread may have already grabbed it so we
-           * cannot validate the fill.
-           */
-          chunk.release();
-        }
+                  /*
+                   * Chunk is filled here but another thread may have already grabbed it so we
+                   * cannot validate the fill.
+                   */
+                  chunk.release();
+                }
 
-        /**
-         * Writes canned data to a random Chunk from the Chunk list.
-         */
-        private void write() {
-          OffHeapStoredObject chunk = chunks.get(random.nextInt(chunks.size()));
-          chunk.writeDataBytes(0, WRITE_BYTES);
-        }
+                /** Writes canned data to a random Chunk from the Chunk list. */
+                private void write() {
+                  OffHeapStoredObject chunk = chunks.get(random.nextInt(chunks.size()));
+                  chunk.writeDataBytes(0, WRITE_BYTES);
+                }
 
-        /**
-         * Randomly selects Chunk operations and executes them
-         * for a period of time.  Collects any error thrown during execution.
-         */
-        @Override
-        public void run() {
-          try {
-            for (long currentTime = System.currentTimeMillis(); currentTime < endTime; currentTime = System.currentTimeMillis()) {
-              Operation op = (totalAllocation == 0 ? Operation.ALLOCATE : (totalAllocation >= MAX_WORKER_ALLOCATION_TOTAL_SIZE ? Operation.FREE : Operation.randomOperation()));
-              switch (op) {
-              case ALLOCATE:
-                allocate();
-                break;
-              case FREE:
-                free();
-                break;
-              case WRITE:
-                write();
-                break;
-              }
-            }
-          } catch (Throwable t) {
-            threadErrorList.add(t);
-          } finally {
-            latch.countDown();
-          }
-        }
-      }).start();
+                /**
+                 * Randomly selects Chunk operations and executes them for a period of time.
+                 * Collects any error thrown during execution.
+                 */
+                @Override
+                public void run() {
+                  try {
+                    for (long currentTime = System.currentTimeMillis();
+                        currentTime < endTime;
+                        currentTime = System.currentTimeMillis()) {
+                      Operation op =
+                          (totalAllocation == 0
+                              ? Operation.ALLOCATE
+                              : (totalAllocation >= MAX_WORKER_ALLOCATION_TOTAL_SIZE
+                                  ? Operation.FREE
+                                  : Operation.randomOperation()));
+                      switch (op) {
+                        case ALLOCATE:
+                          allocate();
+                          break;
+                        case FREE:
+                          free();
+                          break;
+                        case WRITE:
+                          write();
+                          break;
+                      }
+                    }
+                  } catch (Throwable t) {
+                    threadErrorList.add(t);
+                  } finally {
+                    latch.countDown();
+                  }
+                }
+              })
+          .start();
     }
 
     // Make sure each thread ended cleanly
@@ -241,5 +247,4 @@ public class MemoryAllocatorFillPatternIntegrationTest {
       fail(threadErrorList.get(0).getMessage());
     }
   }
-
 }

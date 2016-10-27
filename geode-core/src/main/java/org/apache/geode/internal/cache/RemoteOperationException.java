@@ -22,24 +22,21 @@ import org.apache.geode.internal.Assert;
 
 /**
  * Indicates that the current non-partitioned region operation failed fatally.
- * 
+ *
  * @see org.apache.geode.internal.cache.RemoteOperationMessage
  * @since GemFire 6.5
  */
 public class RemoteOperationException extends DataLocationException {
   private static final long serialVersionUID = -595988965679204903L;
-  /**
-   * If true, this exception includes a hashCode for specified key
-   */
+  /** If true, this exception includes a hashCode for specified key */
   private boolean hasHash = false;
 
-  /**
-   * The hashCode for a specified key, if {@link #hasHash()} is true
-   */
+  /** The hashCode for a specified key, if {@link #hasHash()} is true */
   private int keyHash = 0;
 
   /**
    * Used when constructing the error: sets the expected hash.
+   *
    * @param h the hash to use
    */
   public void setHash(int h) {
@@ -50,6 +47,7 @@ public class RemoteOperationException extends DataLocationException {
 
   /**
    * Fetch the hash for this exception
+   *
    * @return the expected hash
    */
   public boolean hasHash() {
@@ -64,9 +62,9 @@ public class RemoteOperationException extends DataLocationException {
   }
 
   /**
-   * If possible, validate the given key's hashCode against any
-   * that was returned by the peer.
-   * @param key the key on the current host.  If null, no check is done.
+   * If possible, validate the given key's hashCode against any that was returned by the peer.
+   *
+   * @param key the key on the current host. If null, no check is done.
    * @throws PartitionedRegionException if the keys disagree.
    */
   public void checkKey(Object key) throws PartitionedRegionException {
@@ -81,12 +79,16 @@ public class RemoteOperationException extends DataLocationException {
     if (expected == keyHash) {
       return;
     }
-    throw new PartitionedRegionException("Object hashCode inconsistent between cache peers. Here = " + expected + "; peer calculated = " + keyHash);
+    throw new PartitionedRegionException(
+        "Object hashCode inconsistent between cache peers. Here = "
+            + expected
+            + "; peer calculated = "
+            + keyHash);
   }
 
   /**
    * Reattempt required due to an underlying error
-   * 
+   *
    * @param message describes the context
    * @param cause the underlying cause
    */
@@ -96,6 +98,7 @@ public class RemoteOperationException extends DataLocationException {
 
   /**
    * Reattempt required due to detected condition
+   *
    * @param message describes the condition
    */
   public RemoteOperationException(String message) {

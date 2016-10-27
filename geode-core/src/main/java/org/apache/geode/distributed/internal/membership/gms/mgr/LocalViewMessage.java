@@ -26,19 +26,18 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.distributed.internal.membership.NetView;
 
 /**
-  LocalViewMessage is used to pass a new membership view to the GemFire cache
-  in an orderly manner.  It is intended to be queued with serially
-  executed messages so that the view takes effect at the proper time.
-  
+ * LocalViewMessage is used to pass a new membership view to the GemFire cache in an orderly manner.
+ * It is intended to be queued with serially executed messages so that the view takes effect at the
+ * proper time.
  */
-
 public final class LocalViewMessage extends SerialDistributionMessage {
 
   private GMSMembershipManager manager;
   private long viewId;
   private NetView view;
 
-  public LocalViewMessage(InternalDistributedMember addr, long viewId, NetView view, GMSMembershipManager manager) {
+  public LocalViewMessage(
+      InternalDistributedMember addr, long viewId, NetView view, GMSMembershipManager manager) {
     super();
     this.sender = addr;
     this.viewId = viewId;
@@ -47,7 +46,7 @@ public final class LocalViewMessage extends SerialDistributionMessage {
   }
 
   @Override
-  final public int getProcessorType() {
+  public final int getProcessorType() {
     return DistributionManager.VIEW_EXECUTOR;
   }
 
@@ -57,7 +56,7 @@ public final class LocalViewMessage extends SerialDistributionMessage {
     manager.processView(viewId, view);
   }
 
-  // These "messages" are never DataSerialized 
+  // These "messages" are never DataSerialized
 
   public int getDSFID() {
     throw new UnsupportedOperationException();

@@ -30,12 +30,14 @@ import java.util.HashSet;
 
 /**
  * Does a region keySet on a server
+ *
  * @since GemFire 5.7
  */
 public class KeySetOp {
   /**
-   * Does a region entry keySet on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region entry keySet on a server using connections from the given pool to communicate
+   * with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the entry keySet on
    */
@@ -49,9 +51,7 @@ public class KeySetOp {
   }
 
   private static class KeySetOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public KeySetOpImpl(String region) {
       super(MessageType.KEY_SET, 1);
       getMessage().addStringPart(region);
@@ -98,7 +98,8 @@ public class KeySetOp {
           Part part = msg.getPart(0);
           throw new ServerOperationException(part.getString());
         } else {
-          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
+          throw new InternalGemFireError(
+              "Unexpected message type " + MessageType.getString(msgType));
         }
       }
 

@@ -16,8 +16,5 @@
  */
 package org.apache.geode.management.model;
 
-/**
- */
-public class EmptyObject {
-
-}
+/** */
+public class EmptyObject {}

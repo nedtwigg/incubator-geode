@@ -19,10 +19,7 @@ package org.apache.geode.internal.admin;
 
 //import java.util.List;
 
-/**
- * Interface to represent one statistic resource
- *
- */
+/** Interface to represent one statistic resource */
 public interface StatResource extends GfObject {
 
   public long getResourceID();
@@ -39,8 +36,6 @@ public interface StatResource extends GfObject {
 
   public String getName();
 
-  /**
-   * @return the full description of this statistic resource
-   */
+  /** @return the full description of this statistic resource */
   public String getDescription();
 }

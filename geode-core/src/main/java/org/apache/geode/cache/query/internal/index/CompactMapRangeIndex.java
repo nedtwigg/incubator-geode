@@ -36,10 +36,36 @@ public class CompactMapRangeIndex extends AbstractMapIndex {
   private final Map<Object, Map> entryToMapKeyIndexKeyMap;
   private IndexCreationHelper ich;
 
-  CompactMapRangeIndex(String indexName, Region region, String fromClause, String indexedExpression, String projectionAttributes, String origFromClause, String origIndxExpr, String[] defintions, boolean isAllKeys, String[] multiIndexingKeysPattern, Object[] mapKeys, IndexStatistics stats) {
-    super(indexName, region, fromClause, indexedExpression, projectionAttributes, origFromClause, origIndxExpr, defintions, isAllKeys, multiIndexingKeysPattern, mapKeys, stats);
+  CompactMapRangeIndex(
+      String indexName,
+      Region region,
+      String fromClause,
+      String indexedExpression,
+      String projectionAttributes,
+      String origFromClause,
+      String origIndxExpr,
+      String[] defintions,
+      boolean isAllKeys,
+      String[] multiIndexingKeysPattern,
+      Object[] mapKeys,
+      IndexStatistics stats) {
+    super(
+        indexName,
+        region,
+        fromClause,
+        indexedExpression,
+        projectionAttributes,
+        origFromClause,
+        origIndxExpr,
+        defintions,
+        isAllKeys,
+        multiIndexingKeysPattern,
+        mapKeys,
+        stats);
     RegionAttributes ra = region.getAttributes();
-    this.entryToMapKeyIndexKeyMap = new java.util.concurrent.ConcurrentHashMap(ra.getInitialCapacity(), ra.getLoadFactor(), ra.getConcurrencyLevel());
+    this.entryToMapKeyIndexKeyMap =
+        new java.util.concurrent.ConcurrentHashMap(
+            ra.getInitialCapacity(), ra.getLoadFactor(), ra.getConcurrencyLevel());
   }
 
   @Override
@@ -121,7 +147,10 @@ public class CompactMapRangeIndex extends AbstractMapIndex {
     if (oldKeysAndValuesForEntry == null) {
       oldKeysAndValuesForEntry = Collections.EMPTY_MAP;
     }
-    Set<Entry> removedKeyValueEntries = oldKeysAndValuesForEntry != null ? oldKeysAndValuesForEntry.entrySet() : Collections.EMPTY_SET;
+    Set<Entry> removedKeyValueEntries =
+        oldKeysAndValuesForEntry != null
+            ? oldKeysAndValuesForEntry.entrySet()
+            : Collections.EMPTY_SET;
     Iterator<Entry> iterator = removedKeyValueEntries.iterator();
     while (iterator.hasNext()) {
       Entry keyValue = iterator.next();
@@ -134,7 +163,8 @@ public class CompactMapRangeIndex extends AbstractMapIndex {
     }
   }
 
-  protected void doIndexAddition(Object mapKey, Object indexKey, Object value, RegionEntry entry) throws IMQException {
+  protected void doIndexAddition(Object mapKey, Object indexKey, Object value, RegionEntry entry)
+      throws IMQException {
     if (indexKey == null) {
       indexKey = IndexManager.NULL;
     }
@@ -153,8 +183,19 @@ public class CompactMapRangeIndex extends AbstractMapIndex {
         prIndex = (PartitionedIndex) this.getPRIndex();
         prIndex.incNumMapKeysStats(mapKey);
       }
-      rg = new CompactRangeIndex(indexName + "-" + mapKey, region, fromClause, indexedExpression, projectionAttributes, this.originalFromClause, this.originalIndexedExpression, this.canonicalizedDefinitions, stats);
-      rg.instantiateEvaluator(this.ich, ((AbstractIndex.IMQEvaluator) this.evaluator).getIndexResultSetType());
+      rg =
+          new CompactRangeIndex(
+              indexName + "-" + mapKey,
+              region,
+              fromClause,
+              indexedExpression,
+              projectionAttributes,
+              this.originalFromClause,
+              this.originalIndexedExpression,
+              this.canonicalizedDefinitions,
+              stats);
+      rg.instantiateEvaluator(
+          this.ich, ((AbstractIndex.IMQEvaluator) this.evaluator).getIndexResultSetType());
       this.mapKeyToValueIndex.put(mapKey, rg);
       if (!isPr) {
         this.internalIndexStats.incNumMapIndexKeys(1);
@@ -177,7 +218,8 @@ public class CompactMapRangeIndex extends AbstractMapIndex {
     mapKeyToIndexKey.put(mapKey, indexKey);
   }
 
-  protected void saveIndexAddition(Object mapKey, Object indexKey, Object value, RegionEntry entry) throws IMQException {
+  protected void saveIndexAddition(Object mapKey, Object indexKey, Object value, RegionEntry entry)
+      throws IMQException {
     if (indexKey == null) {
       indexKey = IndexManager.NULL;
     }
@@ -196,8 +238,19 @@ public class CompactMapRangeIndex extends AbstractMapIndex {
         prIndex = (PartitionedIndex) this.getPRIndex();
         prIndex.incNumMapKeysStats(mapKey);
       }
-      rg = new CompactRangeIndex(indexName + "-" + mapKey, region, fromClause, indexedExpression, projectionAttributes, this.originalFromClause, this.originalIndexedExpression, this.canonicalizedDefinitions, stats);
-      rg.instantiateEvaluator(this.ich, ((AbstractIndex.IMQEvaluator) this.evaluator).getIndexResultSetType());
+      rg =
+          new CompactRangeIndex(
+              indexName + "-" + mapKey,
+              region,
+              fromClause,
+              indexedExpression,
+              projectionAttributes,
+              this.originalFromClause,
+              this.originalIndexedExpression,
+              this.canonicalizedDefinitions,
+              stats);
+      rg.instantiateEvaluator(
+          this.ich, ((AbstractIndex.IMQEvaluator) this.evaluator).getIndexResultSetType());
       this.mapKeyToValueIndex.put(mapKey, rg);
       if (!isPr) {
         this.internalIndexStats.incNumMapIndexKeys(1);
@@ -212,7 +265,7 @@ public class CompactMapRangeIndex extends AbstractMapIndex {
       mapKeyToIndexKey = new HashMap();
       entryToMapKeyIndexKeyMap.put(entry, mapKeyToIndexKey);
     }
-    //Due to the way indexes are stored, we are actually doing an "update" here 
+    //Due to the way indexes are stored, we are actually doing an "update" here
     //and removing old keys that no longer exist for this region entry
     Object oldKey = mapKeyToIndexKey.get(mapKey);
     if (oldKey == null) {

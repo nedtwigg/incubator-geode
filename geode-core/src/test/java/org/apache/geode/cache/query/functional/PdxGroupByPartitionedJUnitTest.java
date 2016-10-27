@@ -35,6 +35,5 @@ public class PdxGroupByPartitionedJUnitTest extends PdxGroupByTestImpl {
     af.setValueConstraint(valueConstraint);
     Region r1 = CacheUtils.createRegion(regionName, af.create(), false);
     return r1;
-
   }
 }

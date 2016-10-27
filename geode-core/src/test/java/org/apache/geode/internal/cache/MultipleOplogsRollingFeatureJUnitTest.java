@@ -28,7 +28,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 /**
  * The test will verify <br>
  * 1. Multiple oplogs are being rolled at once <br>
- * 2. The Number of entries getting logged to the HTree are taking care of creation 
+ * 2. The Number of entries getting logged to the HTree are taking care of creation
  */
 @Category(IntegrationTest.class)
 public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase {
@@ -54,8 +54,7 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
 
   /**
    * The test will verify <br>
-   * 1. Multiple oplogs are being rolled at once
-   * 2. The Number of entries are properly conflated
+   * 1. Multiple oplogs are being rolled at once 2. The Number of entries are properly conflated
    */
   @Test
   public void testMultipleRolling() throws Exception {
@@ -81,7 +80,7 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
       addEntries(1 /* oplogNumber*/, 50 /* byte array size*/);
 
       ((LocalRegion) region).getDiskStore().forceCompaction();
-      waitForCompactor(3000/*wait for forceRolling to finish */);
+      waitForCompactor(3000 /*wait for forceRolling to finish */);
       logWriter.info("testMultipleRolling after waitForCompactor");
       // the compactor copied two tombstone and 1 entry to oplog #2
       // The total oplog size will become 429, that why we need to
@@ -90,7 +89,9 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
 
       // check the oplog rolling is null (since the compactor was able to delete it)
       if (diskRegion.getOplogToBeCompacted() != null) {
-        logWriter.info("testMultipleRolling OplogToBeCompacted=" + java.util.Arrays.toString(diskRegion.getOplogToBeCompacted()));
+        logWriter.info(
+            "testMultipleRolling OplogToBeCompacted="
+                + java.util.Arrays.toString(diskRegion.getOplogToBeCompacted()));
       }
       assertEquals(null, diskRegion.getOplogToBeCompacted());
 
@@ -139,7 +140,9 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
     // let the main thread sleep so that rolling gets over
     waitForCompactor(5000);
 
-    assertTrue("Number of Oplogs to be rolled is not null : this is unexpected", diskRegion.getOplogToBeCompacted() == null);
+    assertTrue(
+        "Number of Oplogs to be rolled is not null : this is unexpected",
+        diskRegion.getOplogToBeCompacted() == null);
     cache.close();
     cache = createCache();
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
@@ -154,7 +157,9 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
     long start = System.currentTimeMillis();
     while (!FLAG) { // wait until
       // condition is met
-      assertTrue("Waited over " + maxWaitTime + "entry to get refreshed", (System.currentTimeMillis() - start) < maxWaitTime);
+      assertTrue(
+          "Waited over " + maxWaitTime + "entry to get refreshed",
+          (System.currentTimeMillis() - start) < maxWaitTime);
       try {
         Thread.sleep(1);
 
@@ -174,28 +179,21 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
     // Creating opLog1
     if (opLogNum == 1) {
       for (int i = 1; i < 4; i++) {
-        // create 3 entries 
+        // create 3 entries
         region.create(new Integer(i), val);
-
       }
       // destroy Entry 1 and 2
       region.destroy(new Integer(1));
       region.destroy(new Integer(2));
-    }
-
-    else if (opLogNum == 2) {
+    } else if (opLogNum == 2) {
       // update Entry 3
       region.put(new Integer(3), val);
 
-    }
-
-    else if (opLogNum == 3) {
+    } else if (opLogNum == 3) {
       //    update Entry 3
       region.put(new Integer(3), val);
 
-    }
-
-    else if (opLogNum == 4) {
+    } else if (opLogNum == 4) {
       // update Entry 3
       region.put(new Integer(3), val);
     }
@@ -210,7 +208,6 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
 
           logWriter.fine("In beforeGoingToCompact");
         }
-
       }
 
       public void afterHavingCompacted() {
@@ -228,7 +225,6 @@ public class MultipleOplogsRollingFeatureJUnitTest extends DiskRegionTestingBase
 
           logWriter.fine("In afterHavingCompacted");
         }
-
       }
     });
   }

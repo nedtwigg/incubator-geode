@@ -58,46 +58,49 @@ public class Bug40751DUnitTest extends JUnit4CacheTestCase {
       VM vm0 = host.getVM(1);
       VM vm1 = host.getVM(2);
 
-      SerializableRunnable createDataRegion = new SerializableRunnable("createRegion") {
-        public void run() {
-          Cache cache = getCache();
-          AttributesFactory attr = new AttributesFactory();
-          attr.setScope(Scope.DISTRIBUTED_ACK);
-          attr.setDataPolicy(DataPolicy.REPLICATE);
-          attr.setMulticastEnabled(true);
-          cache.createRegion("region1", attr.create());
-        }
-      };
+      SerializableRunnable createDataRegion =
+          new SerializableRunnable("createRegion") {
+            public void run() {
+              Cache cache = getCache();
+              AttributesFactory attr = new AttributesFactory();
+              attr.setScope(Scope.DISTRIBUTED_ACK);
+              attr.setDataPolicy(DataPolicy.REPLICATE);
+              attr.setMulticastEnabled(true);
+              cache.createRegion("region1", attr.create());
+            }
+          };
 
       vm0.invoke(createDataRegion);
 
-      SerializableRunnable createEmptyRegion = new SerializableRunnable("createRegion") {
-        public void run() {
-          Cache cache = getCache();
-          AttributesFactory attr = new AttributesFactory();
-          attr.setScope(Scope.DISTRIBUTED_ACK);
-          attr.setDataPolicy(DataPolicy.EMPTY);
-          Region region = cache.createRegion("region1", attr.create());
-          try {
-            region.put("A", new MyClass());
-            fail("expected ToDataException");
-          } catch (ToDataException ex) {
-            if (!(ex.getCause() instanceof RuntimeException)) {
-              fail("expected RuntimeException instead of " + ex.getCause());
+      SerializableRunnable createEmptyRegion =
+          new SerializableRunnable("createRegion") {
+            public void run() {
+              Cache cache = getCache();
+              AttributesFactory attr = new AttributesFactory();
+              attr.setScope(Scope.DISTRIBUTED_ACK);
+              attr.setDataPolicy(DataPolicy.EMPTY);
+              Region region = cache.createRegion("region1", attr.create());
+              try {
+                region.put("A", new MyClass());
+                fail("expected ToDataException");
+              } catch (ToDataException ex) {
+                if (!(ex.getCause() instanceof RuntimeException)) {
+                  fail("expected RuntimeException instead of " + ex.getCause());
+                }
+              }
             }
-          }
-        }
-      };
+          };
 
       vm1.invoke(createEmptyRegion);
     } finally {
-      Invoke.invokeInEveryVM(new SerializableCallable() {
-        public Object call() throws Exception {
-          System.getProperties().remove("p2p.oldIO");
-          System.getProperties().remove("p2p.nodirectBuffers");
-          return null;
-        }
-      });
+      Invoke.invokeInEveryVM(
+          new SerializableCallable() {
+            public Object call() throws Exception {
+              System.getProperties().remove("p2p.oldIO");
+              System.getProperties().remove("p2p.nodirectBuffers");
+              return null;
+            }
+          });
       System.getProperties().remove("p2p.oldIO");
       System.getProperties().remove("p2p.nodirectBuffers");
     }
@@ -115,15 +118,12 @@ public class Bug40751DUnitTest extends JUnit4CacheTestCase {
 
   private static final class MyClass implements DataSerializable {
 
-    public MyClass() {
-    }
+    public MyClass() {}
 
-    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-    }
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
     public void toData(DataOutput out) throws IOException {
       throw new RuntimeException("A Fake runtime exception in toData");
     }
-
   }
 }

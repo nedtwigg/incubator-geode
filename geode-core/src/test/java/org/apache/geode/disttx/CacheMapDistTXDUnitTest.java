@@ -30,8 +30,8 @@ import org.apache.geode.test.dunit.VM;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * Same tests as that of {@link CacheMapTxnDUnitTest} after setting
- * "distributed-transactions" property to true
+ * Same tests as that of {@link CacheMapTxnDUnitTest} after setting "distributed-transactions"
+ * property to true
  */
 @Category(DistributedTest.class)
 public class CacheMapDistTXDUnitTest extends CacheMapTxnDUnitTest {
@@ -78,7 +78,6 @@ public class CacheMapDistTXDUnitTest extends CacheMapTxnDUnitTest {
   @Test
   public void testCommitTxn() {
     // [DISTTX] TODO test overridden intentionally and left blank as it fails
-    // fix this 
+    // fix this
   }
-
 }

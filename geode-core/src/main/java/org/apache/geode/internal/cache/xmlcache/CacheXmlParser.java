@@ -125,11 +125,9 @@ import org.apache.geode.pdx.PdxSerializer;
 
 /**
  * Parses an XML file and creates a {@link Cache}/{@link ClientCache} and {@link Region}s from it.
- * It works in two phases. The first phase parses the XML and instantiates
- * {@link Declarable}s. If any problems occur, a {@link CacheXmlException} is
- * thrown. The second phase actually {@linkplain CacheCreation#create creates}
- * the {@link Cache}/{@link ClientCache},{@link Region}s, etc.
- *
+ * It works in two phases. The first phase parses the XML and instantiates {@link Declarable}s. If
+ * any problems occur, a {@link CacheXmlException} is thrown. The second phase actually {@linkplain
+ * CacheCreation#create creates} the {@link Cache}/{@link ClientCache},{@link Region}s, etc.
  *
  * @since GemFire 3.0
  */
@@ -138,20 +136,16 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
 
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * @since GemFire 8.1
-   */
+  /** @since GemFire 8.1 */
   private static final String BUFFER_SIZE = "http://apache.org/xml/properties/input-buffer-size";
 
-  /**
-   * @since GemFire 8.1
-   */
-  private static final String DISALLOW_DOCTYPE_DECL_FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+  /** @since GemFire 8.1 */
+  private static final String DISALLOW_DOCTYPE_DECL_FEATURE =
+      "http://apache.org/xml/features/disallow-doctype-decl";
 
-  /**
-   * @since GemFire 8.1
-   */
-  private static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
+  /** @since GemFire 8.1 */
+  private static final String JAXP_SCHEMA_LANGUAGE =
+      "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
 
   /** The cache to be created */
   private CacheCreation cache;
@@ -160,48 +154,38 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
 
   /**
    * Delegate {@link XmlParser}s mapped by namespace URI.
-   * 
+   *
    * @since GemFire 8.1
    */
   private HashMap<String, XmlParser> delegates = new HashMap<>();
 
   /**
    * Document {@link Locator} used for {@link SAXParseException}.
-   * 
+   *
    * @since GemFire 8.2
    */
   protected Locator documentLocator;
 
   ////////////////////// Static Methods //////////////////////
   /**
-   * Parses XML data and from it creates an instance of
-   * <code>CacheXmlParser</code> that can be used to {@link #create}the
-   * {@link Cache}, etc.
+   * Parses XML data and from it creates an instance of <code>CacheXmlParser</code> that can be used
+   * to {@link #create}the {@link Cache}, etc.
    *
    * @param is the <code>InputStream</code> of XML to be parsed
-   *
-   * @return a <code>CacheXmlParser</code>, typically used to create a cache
-   *         from the parsed XML
-   *
+   * @return a <code>CacheXmlParser</code>, typically used to create a cache from the parsed XML
    * @throws CacheXmlException Something went wrong while parsing the XML
-   *
    * @since GemFire 4.0
-   *
    */
   public static CacheXmlParser parse(InputStream is) {
 
     /**
-     * The API doc
-     * http://java.sun.com/javase/6/docs/api/org/xml/sax/InputSource.html for
-     * the SAX InputSource says: "... standard processing of both byte and
-     * character streams is to close them on as part of end-of-parse cleanup, so
-     * applications should not attempt to re-use such streams after they have
-     * been handed to a parser."
+     * The API doc http://java.sun.com/javase/6/docs/api/org/xml/sax/InputSource.html for the SAX
+     * InputSource says: "... standard processing of both byte and character streams is to close
+     * them on as part of end-of-parse cleanup, so applications should not attempt to re-use such
+     * streams after they have been handed to a parser."
      *
-     * In order to block the parser from closing the stream, we wrap the
-     * InputStream in a filter, i.e., UnclosableInputStream, whose close()
-     * function does nothing.
-     * 
+     * <p>In order to block the parser from closing the stream, we wrap the InputStream in a filter,
+     * i.e., UnclosableInputStream, whose close() function does nothing.
      */
     class UnclosableInputStream extends BufferedInputStream {
       public UnclosableInputStream(InputStream stream) {
@@ -209,8 +193,7 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       }
 
       @Override
-      public void close() {
-      }
+      public void close() {}
     }
 
     CacheXmlParser handler = new CacheXmlParser();
@@ -229,7 +212,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
         parser.setProperty(JAXP_SCHEMA_LANGUAGE, XMLConstants.W3C_XML_SCHEMA_NS_URI);
         parser.parse(bis, new DefaultHandlerDelegate(handler));
       } catch (CacheXmlException e) {
-        if (null != e.getCause() && e.getCause().getMessage().contains(DISALLOW_DOCTYPE_DECL_FEATURE)) {
+        if (null != e.getCause()
+            && e.getCause().getMessage().contains(DISALLOW_DOCTYPE_DECL_FEATURE)) {
           // Not schema based document, try dtd.
           bis.reset();
           factory.setFeature(DISALLOW_DOCTYPE_DECL_FEATURE, false);
@@ -268,7 +252,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
           throw (CacheXmlException) cause;
         }
       }
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_WHILE_PARSING_XML.toLocalizedString(), ex);
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_WHILE_PARSING_XML.toLocalizedString(), ex);
     }
   }
 
@@ -281,7 +266,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     try {
       return Integer.parseInt(s);
     } catch (NumberFormatException ex) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_MALFORMED_INTEGER_0.toLocalizedString(s), ex);
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_MALFORMED_INTEGER_0.toLocalizedString(s), ex);
     }
   }
 
@@ -294,14 +280,12 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     try {
       return Long.parseLong(s);
     } catch (NumberFormatException ex) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_MALFORMED_INTEGER_0.toLocalizedString(s), ex);
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_MALFORMED_INTEGER_0.toLocalizedString(s), ex);
     }
   }
 
-  /**
-   * Helper method for parsing a boolean
-   *
-   */
+  /** Helper method for parsing a boolean */
   private static boolean parseBoolean(String s) {
     return Boolean.valueOf(s).booleanValue();
   }
@@ -315,37 +299,37 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     try {
       return Float.parseFloat(s);
     } catch (NumberFormatException ex) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_MALFORMED_FLOAT_0.toLocalizedString(s), ex);
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_MALFORMED_FLOAT_0.toLocalizedString(s), ex);
     }
   }
 
   ////////////////////// Instance Methods //////////////////////
-  /**
-   * Returns the {@link CacheCreation} generated by this parser.
-   */
+  /** Returns the {@link CacheCreation} generated by this parser. */
   public CacheCreation getCacheCreation() {
     return this.cache;
   }
 
   /**
-   * Creates cache artifacts ({@link Cache}s, etc.) based upon the XML parsed
-   * by this parser.
+   * Creates cache artifacts ({@link Cache}s, etc.) based upon the XML parsed by this parser.
    *
    * @throws TimeoutException
    * @throws CacheWriterException
    * @throws RegionExistsException
    */
-  public void create(GemFireCacheImpl cache) throws TimeoutException, GatewayException, CacheWriterException, RegionExistsException {
+  public void create(GemFireCacheImpl cache)
+      throws TimeoutException, GatewayException, CacheWriterException, RegionExistsException {
     if (this.cache == null) {
       String s = "A cache or client-cache element is required";
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_NO_CACHE_ELEMENT_SPECIFIED.toLocalizedString());
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_NO_CACHE_ELEMENT_SPECIFIED.toLocalizedString());
     }
     this.cache.create(cache);
   }
 
   /**
-   * When a <code>cache</code> element is first encountered, we create a
-   * {@link CacheCreation}and fill it in appropriately
+   * When a <code>cache</code> element is first encountered, we create a {@link CacheCreation}and
+   * fill it in appropriately
    */
   private void startCache(Attributes atts) {
     if (this.cache != null) {
@@ -381,8 +365,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>client-cache</code> element is first encountered, we create a
-   * {@link ClientCacheCreation}and fill it in appropriately
+   * When a <code>client-cache</code> element is first encountered, we create a {@link
+   * ClientCacheCreation}and fill it in appropriately
    */
   private void startClientCache(Attributes atts) {
     if (this.cache != null) {
@@ -396,9 +380,7 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     stack.push(this.cache);
   }
 
-  /**
-   * @since GemFire 5.7
-   */
+  /** @since GemFire 5.7 */
   private void startPool(Attributes atts) {
     PoolFactory f = this.cache.createPoolFactory();
     String name = atts.getValue(NAME).trim();
@@ -479,18 +461,14 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     }
   }
 
-  /**
-   * @since GemFire 5.7
-   */
+  /** @since GemFire 5.7 */
   private void endPool() {
     PoolFactory f = (PoolFactory) stack.pop();
     String name = (String) stack.pop();
     f.create(name);
   }
 
-  /**
-   * @since GemFire 5.7
-   */
+  /** @since GemFire 5.7 */
   private void doLocator(Attributes atts) {
     PoolFactory f = (PoolFactory) stack.peek();
     String host = atts.getValue(HOST).trim();
@@ -498,9 +476,7 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     f.addLocator(host, port);
   }
 
-  /**
-   * @since GemFire 5.7
-   */
+  /** @since GemFire 5.7 */
   private void doServer(Attributes atts) {
     PoolFactory f = (PoolFactory) stack.peek();
     String host = atts.getValue(HOST).trim();
@@ -509,8 +485,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>cache-server</code> element is first encountered, we create
-   * a new {@link CacheCreation#addCacheServer() CacheServer} in the cache.
+   * When a <code>cache-server</code> element is first encountered, we create a new {@link
+   * CacheCreation#addCacheServer() CacheServer} in the cache.
    *
    * @since GemFire 4.0
    */
@@ -578,7 +554,7 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       gatewaySenderFactory.setParallel(Boolean.parseBoolean(parallel));
     }
 
-    //manual-start 
+    //manual-start
     String manualStart = atts.getValue(MANUAL_START);
     if (manualStart == null) {
       gatewaySenderFactory.setManualStart(GatewaySender.DEFAULT_MANUAL_START);
@@ -674,9 +650,12 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     String orderPolicy = atts.getValue(ORDER_POLICY);
     if (orderPolicy != null) {
       try {
-        gatewaySenderFactory.setOrderPolicy(GatewaySender.OrderPolicy.valueOf(orderPolicy.toUpperCase()));
+        gatewaySenderFactory.setOrderPolicy(
+            GatewaySender.OrderPolicy.valueOf(orderPolicy.toUpperCase()));
       } catch (IllegalArgumentException e) {
-        throw new InternalGemFireException(LocalizedStrings.SerialGatewaySender_UNKNOWN_GATEWAY_ORDER_POLICY_0_1.toLocalizedString(new Object[] { id, orderPolicy }));
+        throw new InternalGemFireException(
+            LocalizedStrings.SerialGatewaySender_UNKNOWN_GATEWAY_ORDER_POLICY_0_1.toLocalizedString(
+                new Object[] {id, orderPolicy}));
       }
     }
 
@@ -691,7 +670,7 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   private void startGatewayReceiver(Attributes atts) {
     GatewayReceiverFactory receiverFactory = this.cache.createGatewayReceiverFactory();
 
-    //port 
+    //port
     String startPort = atts.getValue(START_PORT);
     if (startPort == null) {
       receiverFactory.setStartPort(GatewayReceiver.DEFAULT_START_PORT);
@@ -713,15 +692,16 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       receiverFactory.setBindAddress(bindAddress);
     }
 
-    //maximum-time-between-pings  
+    //maximum-time-between-pings
     String maxTimeBetweenPings = atts.getValue(MAXIMUM_TIME_BETWEEN_PINGS);
     if (maxTimeBetweenPings == null) {
-      receiverFactory.setMaximumTimeBetweenPings(GatewayReceiver.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS);
+      receiverFactory.setMaximumTimeBetweenPings(
+          GatewayReceiver.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS);
     } else {
       receiverFactory.setMaximumTimeBetweenPings(Integer.parseInt(maxTimeBetweenPings));
     }
 
-    //socket-buffer-size   
+    //socket-buffer-size
     String socketBufferSize = atts.getValue(SOCKET_BUFFER_SIZE);
     if (socketBufferSize == null) {
       receiverFactory.setSocketBufferSize(GatewayReceiver.DEFAULT_SOCKET_BUFFER_SIZE);
@@ -729,7 +709,7 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       receiverFactory.setSocketBufferSize(Integer.parseInt(socketBufferSize));
     }
 
-    //manual-start 
+    //manual-start
     String manualStart = atts.getValue(MANUAL_START);
     if (manualStart == null) {
       receiverFactory.setManualStart(GatewayReceiver.DEFAULT_MANUAL_START);
@@ -748,9 +728,7 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     stack.push(receiverFactory);
   }
 
-  /**
-   * set attributes from clientHaQueue when we finish a cache server
-   */
+  /** set attributes from clientHaQueue when we finish a cache server */
   private void endCacheServer() {
     List groups = new ArrayList();
     ServerLoadProbe probe = null;
@@ -783,7 +761,10 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       if (diskStoreName != null) {
         csc.setDiskStoreName(diskStoreName);
       } else {
-        csc.setOverflowDirectory(haCreation.getOverflowDirectory() == null ? ClientSubscriptionConfig.DEFAULT_OVERFLOW_DIRECTORY : haCreation.getOverflowDirectory());
+        csc.setOverflowDirectory(
+            haCreation.getOverflowDirectory() == null
+                ? ClientSubscriptionConfig.DEFAULT_OVERFLOW_DIRECTORY
+                : haCreation.getOverflowDirectory());
       }
       csc.setCapacity(haCreation.getCapacity());
       csc.setEvictionPolicy(haCreation.getEvictionPolicy());
@@ -791,15 +772,17 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>load-probe</code> element is encountered,
-   * create a new probe for the current <code>CacheServer</code>.
+   * When a <code>load-probe</code> element is encountered, create a new probe for the current
+   * <code>CacheServer</code>.
    *
    * @since GemFire 5.7
    */
   private void endLoadProbe() {
     Declarable d = createDeclarable();
     if (!(d instanceof ServerLoadProbe)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_1.toLocalizedString(new Object[] { d.getClass().getName(), "BridgeLoadProbe" }));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_1.toLocalizedString(
+              new Object[] {d.getClass().getName(), "BridgeLoadProbe"}));
     }
     stack.push(d);
   }
@@ -859,27 +842,34 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     String disableRegisterInterest = (String) stack.pop();
     String disablePersistBackup = (String) stack.pop();
     DynamicRegionFactory.Config cfg;
-    cfg = new DynamicRegionFactory.Config(dir, poolName, !Boolean.valueOf(disablePersistBackup).booleanValue(), !Boolean.valueOf(disableRegisterInterest).booleanValue());
+    cfg =
+        new DynamicRegionFactory.Config(
+            dir,
+            poolName,
+            !Boolean.valueOf(disablePersistBackup).booleanValue(),
+            !Boolean.valueOf(disableRegisterInterest).booleanValue());
     CacheCreation cache = (CacheCreation) stack.peek();
     cache.setDynamicRegionFactoryConfig(cfg);
   }
 
   /**
-   * When a <code>gateway-conflict-resolver</code> element is encountered,
-   * create a new listener for the <code>Cache</code>.
+   * When a <code>gateway-conflict-resolver</code> element is encountered, create a new listener for
+   * the <code>Cache</code>.
    */
   private void endGatewayConflictResolver() {
     Declarable d = createDeclarable();
     if (!(d instanceof GatewayConflictResolver)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_GATEWAYCONFLICTRESOLVER.toLocalizedString(d.getClass().getName()));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_GATEWAYCONFLICTRESOLVER
+              .toLocalizedString(d.getClass().getName()));
     }
     CacheCreation c = (CacheCreation) stack.peek();
     c.setGatewayConflictResolver((GatewayConflictResolver) d);
   }
 
   /**
-   * When a <code>region</code> element is first encountered, we create a
-   * {@link RegionCreation}and push it on the stack.
+   * When a <code>region</code> element is first encountered, we create a {@link RegionCreation}and
+   * push it on the stack.
    */
   private void startRegion(Attributes atts) {
     String name = atts.getValue(NAME);
@@ -890,18 +880,16 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>cache-transaction-manager</code> element is found, create a
-   * container for the potential <code>transaction-listener</code> and push it
-   * on the stack
+   * When a <code>cache-transaction-manager</code> element is found, create a container for the
+   * potential <code>transaction-listener</code> and push it on the stack
    */
   private void startCacheTransactionManager() {
     stack.push(new CacheTransactionManagerCreation());
   }
 
   /**
-   * After popping the current <code>RegionCreation</code> off the stack, if
-   * the element on top of the stack is a <code>RegionCreation</code>, then
-   * it is the parent region.
+   * After popping the current <code>RegionCreation</code> off the stack, if the element on top of
+   * the stack is a <code>RegionCreation</code>, then it is the parent region.
    */
   private void endRegion() throws RegionExistsException {
     RegionCreation region = (RegionCreation) stack.pop();
@@ -919,39 +907,38 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     }
   }
 
-  /**
-   * Add the <code>transaction-manager</code> creation code to the cache
-   * creation code
-   */
+  /** Add the <code>transaction-manager</code> creation code to the cache creation code */
   private void endCacheTransactionManager() {
     CacheTransactionManagerCreation txMgrCreation = (CacheTransactionManagerCreation) stack.pop();
     this.cache.addCacheTransactionManagerCreation(txMgrCreation);
   }
 
   /**
-   * Create a <code>transaction-listener</code> using the declarable interface
-   * and set the transaction manager with the newly instantiated listener.
+   * Create a <code>transaction-listener</code> using the declarable interface and set the
+   * transaction manager with the newly instantiated listener.
    */
   private void endTransactionListener() {
     Declarable d = createDeclarable();
     if (!(d instanceof TransactionListener)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_CACHELISTENER.toLocalizedString(d.getClass().getName()));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_CACHELISTENER
+              .toLocalizedString(d.getClass().getName()));
     }
     CacheTransactionManagerCreation txMgrCreation = (CacheTransactionManagerCreation) stack.peek();
     txMgrCreation.addListener((TransactionListener) d);
   }
 
   /**
-   * When a <code>disk-store</code> element is first encountered, we
-   * create a {@link DiskStoreAttributes}, populate it accordingly, and
-   * push it on the stack.
+   * When a <code>disk-store</code> element is first encountered, we create a {@link
+   * DiskStoreAttributes}, populate it accordingly, and push it on the stack.
    */
   private void startDiskStore(Attributes atts) {
     // this is the only place to create DSAC objects
     DiskStoreAttributesCreation attrs = new DiskStoreAttributesCreation();
     String name = atts.getValue(NAME);
     if (name == null) {
-      throw new InternalGemFireException(LocalizedStrings.CacheXmlParser_NULL_DiskStoreName.toLocalizedString());
+      throw new InternalGemFireException(
+          LocalizedStrings.CacheXmlParser_NULL_DiskStoreName.toLocalizedString());
     } else {
       attrs.setName(name);
     }
@@ -1010,29 +997,33 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       try {
         return Integer.valueOf(maxInputFileSizeMB);
       } catch (NumberFormatException e) {
-        throw new CacheXmlException(LocalizedStrings.DistributedSystemConfigImpl_0_IS_NOT_A_VALID_INTEGER_1.toLocalizedString(new Object[] { maxInputFileSizeMB, param }), e);
+        throw new CacheXmlException(
+            LocalizedStrings.DistributedSystemConfigImpl_0_IS_NOT_A_VALID_INTEGER_1
+                .toLocalizedString(new Object[] {maxInputFileSizeMB, param}),
+            e);
       }
     }
     return null;
   }
 
   /**
-   * Create a <code>transaction-writer</code> using the declarable interface
-   * and set the transaction manager with the newly instantiated writer.
+   * Create a <code>transaction-writer</code> using the declarable interface and set the transaction
+   * manager with the newly instantiated writer.
    */
   private void endTransactionWriter() {
     Declarable d = createDeclarable();
     if (!(d instanceof TransactionWriter)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_TRANSACTION_WRITER.toLocalizedString(d.getClass().getName()));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_TRANSACTION_WRITER
+              .toLocalizedString(d.getClass().getName()));
     }
     CacheTransactionManagerCreation txMgrCreation = (CacheTransactionManagerCreation) stack.peek();
     txMgrCreation.setWriter((TransactionWriter) d);
   }
 
   /**
-   * When a <code>region-attributes</code> element is first encountered, we
-   * create a {@link RegionAttributesCreation}, populate it accordingly, and
-   * push it on the stack.
+   * When a <code>region-attributes</code> element is first encountered, we create a {@link
+   * RegionAttributesCreation}, populate it accordingly, and push it on the stack.
    */
   private void startRegionAttributes(Attributes atts) {
     RegionAttributesCreation attrs = new RegionAttributesCreation(this.cache);
@@ -1047,7 +1038,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     } else if (scope.equals(GLOBAL)) {
       attrs.setScope(Scope.GLOBAL);
     } else {
-      throw new InternalGemFireException(LocalizedStrings.CacheXmlParser_UNKNOWN_SCOPE_0.toLocalizedString(scope));
+      throw new InternalGemFireException(
+          LocalizedStrings.CacheXmlParser_UNKNOWN_SCOPE_0.toLocalizedString(scope));
     }
     String mirror = atts.getValue(MIRROR_TYPE);
     if (mirror == null) {
@@ -1058,7 +1050,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     } else if (mirror.equals(KEYS_VALUES)) {
       attrs.setMirrorType(MirrorType.KEYS_VALUES);
     } else {
-      throw new InternalGemFireException(LocalizedStrings.CacheXmlParser_UNKNOWN_MIRROR_TYPE_0.toLocalizedString(mirror));
+      throw new InternalGemFireException(
+          LocalizedStrings.CacheXmlParser_UNKNOWN_MIRROR_TYPE_0.toLocalizedString(mirror));
     }
     {
       String dp = atts.getValue(DATA_POLICY);
@@ -1078,7 +1071,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       } else if (dp.equals(PERSISTENT_PARTITION_DP)) {
         attrs.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
       } else {
-        throw new InternalGemFireException(LocalizedStrings.CacheXmlParser_UNKNOWN_DATA_POLICY_0.toLocalizedString(dp));
+        throw new InternalGemFireException(
+            LocalizedStrings.CacheXmlParser_UNKNOWN_DATA_POLICY_0.toLocalizedString(dp));
       }
     }
 
@@ -1123,7 +1117,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       attrs.setMulticastEnabled(Boolean.valueOf(mcastEnabled).booleanValue());
     }
     String indexUpdateType = atts.getValue(INDEX_UPDATE_TYPE);
-    attrs.setIndexMaintenanceSynchronous(indexUpdateType == null || indexUpdateType.equals(INDEX_UPDATE_TYPE_SYNCH));
+    attrs.setIndexMaintenanceSynchronous(
+        indexUpdateType == null || indexUpdateType.equals(INDEX_UPDATE_TYPE_SYNCH));
 
     String poolName = atts.getValue(POOL_NAME);
     if (poolName != null) {
@@ -1148,7 +1143,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     }
     String enableSubscriptionConflation = atts.getValue(ENABLE_SUBSCRIPTION_CONFLATION);
     if (enableSubscriptionConflation != null) {
-      attrs.setEnableSubscriptionConflation(Boolean.valueOf(enableSubscriptionConflation).booleanValue());
+      attrs.setEnableSubscriptionConflation(
+          Boolean.valueOf(enableSubscriptionConflation).booleanValue());
     }
     String enableBridgeConflation = atts.getValue(ENABLE_BRIDGE_CONFLATION);
     // as of 5.7 enable-bridge-conflation is deprecated.
@@ -1160,7 +1156,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       // 4.1 compatibility
       enableBridgeConflation = atts.getValue("enable-conflation");
       if (enableBridgeConflation != null) {
-        attrs.setEnableSubscriptionConflation(Boolean.valueOf(enableBridgeConflation).booleanValue());
+        attrs.setEnableSubscriptionConflation(
+            Boolean.valueOf(enableBridgeConflation).booleanValue());
       }
     }
     /* deprecated in prPersistSprint1
@@ -1200,9 +1197,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * After popping the current <code>DiskStoreAttributesCreation</code> off the
-   * stack, we add it to the <code>DiskStoreAttionCreation</code> that should be on the
-   * top of the stack.
+   * After popping the current <code>DiskStoreAttributesCreation</code> off the stack, we add it to
+   * the <code>DiskStoreAttionCreation</code> that should be on the top of the stack.
    */
   private void endDiskStore() {
     DiskStoreAttributesCreation dsac = (DiskStoreAttributesCreation) stack.pop();
@@ -1222,9 +1218,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * After popping the current <code>RegionAttributesCreation</code> off the
-   * stack, we add it to the <code>RegionCreation</code> that should be on the
-   * top of the stack.
+   * After popping the current <code>RegionAttributesCreation</code> off the stack, we add it to the
+   * <code>RegionCreation</code> that should be on the top of the stack.
    */
   private void endRegionAttributes() {
     RegionAttributesCreation attrs = (RegionAttributesCreation) stack.pop();
@@ -1247,22 +1242,15 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     }
   }
 
-  /**
-   * When a <code>cache</code> element is finished
-   */
-  private void endCache() {
-  }
+  /** When a <code>cache</code> element is finished */
+  private void endCache() {}
+
+  /** When a <code>client-cache</code> element is finished */
+  private void endClientCache() {}
 
   /**
-   * When a <code>client-cache</code> element is finished
-   */
-  private void endClientCache() {
-  }
-
-  /**
-   * <p>
-   * When the end of a <code>string</code> element is encountered, convert the
-   * data to a <code>String</code>
+   * When the end of a <code>string</code> element is encountered, convert the data to a <code>
+   * String</code>
    */
   // This converts the <code>StringBuffer</code> to a
   // <code>String</code> because a </code>StringBuffer</code> is
@@ -1272,11 +1260,12 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   // append and our stack order would be out of whack. See bug 32122.
   private void endString() {
     StringBuffer str = (StringBuffer) stack.pop();
-    stack.push(str.toString()/* .trim() */);
+    stack.push(str.toString() /* .trim() */);
   }
 
   /**
    * finish parsing a "group" element which is just a string
+   *
    * @since GemFire 5.7
    */
   private void endGroup() {
@@ -1290,10 +1279,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When an <code>entry</code> element is finished, the <code>value</code>
-   * should be on the stop of the stack followed by the <code>key</code>. The
-   * <code>RegionCreation</code> for the region being created should be below
-   * that.
+   * When an <code>entry</code> element is finished, the <code>value</code> should be on the stop of
+   * the stack followed by the <code>key</code>. The <code>RegionCreation</code> for the region
+   * being created should be below that.
    */
   private void endEntry() {
     Object value = stack.pop();
@@ -1304,8 +1292,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>key-constraint</code> element is finished, the name of the
-   * class should be on top of the stack.
+   * When a <code>key-constraint</code> element is finished, the name of the class should be on top
+   * of the stack.
    *
    * @throws CacheXmlException If the key constraint class cannot be loaded
    */
@@ -1315,7 +1303,10 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     try {
       c = InternalDataSerializer.getCachedClass(className);
     } catch (Exception ex) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_COULD_NOT_LOAD_KEYCONSTRAINT_CLASS_0.toLocalizedString(className), ex);
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_COULD_NOT_LOAD_KEYCONSTRAINT_CLASS_0.toLocalizedString(
+              className),
+          ex);
     }
     // The region attributes should be on top of the stack
     RegionAttributesCreation attrs = peekRegionAttributesContext("key-constraint");
@@ -1323,8 +1314,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>value-constraint</code> element is finished, the name of the
-   * class should be on top of the stack.
+   * When a <code>value-constraint</code> element is finished, the name of the class should be on
+   * top of the stack.
    *
    * @throws CacheXmlException If the value constraint class cannot be loaded
    */
@@ -1334,7 +1325,10 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     try {
       c = InternalDataSerializer.getCachedClass(className);
     } catch (Exception ex) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_COULD_NOT_LOAD_VALUECONSTRAINT_CLASS_0.toLocalizedString(className), ex);
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_COULD_NOT_LOAD_VALUECONSTRAINT_CLASS_0.toLocalizedString(
+              className),
+          ex);
     }
     // The region attributes should be on top of the stack
     RegionAttributesCreation attrs = peekRegionAttributesContext("value-constraint");
@@ -1342,10 +1336,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>region-time-to-live</code> element is finished, the
-   * {@link ExpirationAttributes} are on top of the stack followed by the
-   * {@link RegionAttributesCreation} to which the expiration attributes are
-   * assigned.
+   * When a <code>region-time-to-live</code> element is finished, the {@link ExpirationAttributes}
+   * are on top of the stack followed by the {@link RegionAttributesCreation} to which the
+   * expiration attributes are assigned.
    */
   private void endRegionTimeToLive() {
     ExpirationAttributes expire = (ExpirationAttributes) stack.pop();
@@ -1354,10 +1347,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>region-idle-time</code> element is finished, the
-   * {@link ExpirationAttributes} are on top of the stack followed by the
-   * {@link RegionAttributesCreation} to which the expiration attributes are
-   * assigned.
+   * When a <code>region-idle-time</code> element is finished, the {@link ExpirationAttributes} are
+   * on top of the stack followed by the {@link RegionAttributesCreation} to which the expiration
+   * attributes are assigned.
    */
   private void endRegionIdleTime() {
     ExpirationAttributes expire = (ExpirationAttributes) stack.pop();
@@ -1368,7 +1360,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   private RegionAttributesCreation peekRegionAttributesContext(String dependentElement) {
     Object a = stack.peek();
     if (!(a instanceof RegionAttributesCreation)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES.toLocalizedString(dependentElement));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES
+              .toLocalizedString(dependentElement));
     }
     return (RegionAttributesCreation) a;
   }
@@ -1376,18 +1370,18 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   private PartitionAttributesImpl peekPartitionAttributesImpl(String dependentElement) {
     Object a = stack.peek();
     if (!(a instanceof PartitionAttributesImpl)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_PARTITIONATTRIBUTES.toLocalizedString(dependentElement));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_PARTITIONATTRIBUTES
+              .toLocalizedString(dependentElement));
     }
     return (PartitionAttributesImpl) a;
   }
 
   /**
-   * When a <code>entry-time-to-live</code> element is finished, an optional
-   * Declarable (the custom-expiry) is followed by the
-   * {@link ExpirationAttributes} are on top of the stack followed by either the
-   * {@link RegionAttributesCreation} to which the expiration attributes are
-   * assigned, or the attributes for a {@link PartitionAttributes} to which the attributes are
-   * assigned.
+   * When a <code>entry-time-to-live</code> element is finished, an optional Declarable (the
+   * custom-expiry) is followed by the {@link ExpirationAttributes} are on top of the stack followed
+   * by either the {@link RegionAttributesCreation} to which the expiration attributes are assigned,
+   * or the attributes for a {@link PartitionAttributes} to which the attributes are assigned.
    */
   private void endEntryTimeToLive() {
     Declarable custom = null;
@@ -1405,16 +1399,17 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
         ((RegionAttributesCreation) a).setCustomEntryTimeToLive((CustomExpiry) custom);
       }
     } else {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES_OR_PARTITIONATTRIBUTES.toLocalizedString(ENTRY_TIME_TO_LIVE));
+      throw new CacheXmlException(
+          LocalizedStrings
+              .CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES_OR_PARTITIONATTRIBUTES
+              .toLocalizedString(ENTRY_TIME_TO_LIVE));
     }
   }
 
   /**
-   * When a <code>entry-idle-time</code> element is finished, an optional
-   * Declarable (the custom-expiry) is followed by the
-   * {@link ExpirationAttributes} are on top of the stack followed by the
-   * {@link RegionAttributesCreation} to which the expiration attributes are
-   * assigned.
+   * When a <code>entry-idle-time</code> element is finished, an optional Declarable (the
+   * custom-expiry) is followed by the {@link ExpirationAttributes} are on top of the stack followed
+   * by the {@link RegionAttributesCreation} to which the expiration attributes are assigned.
    */
   private void endEntryIdleTime() {
     Declarable custom = null;
@@ -1432,15 +1427,17 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
         ((RegionAttributesCreation) a).setCustomEntryIdleTimeout((CustomExpiry) custom);
       }
     } else {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES_OR_PARTITIONATTRIBUTES.toLocalizedString(ENTRY_IDLE_TIME));
+      throw new CacheXmlException(
+          LocalizedStrings
+              .CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES_OR_PARTITIONATTRIBUTES
+              .toLocalizedString(ENTRY_IDLE_TIME));
     }
   }
 
   /**
-   * When a <code>partition-attributes</code> element is finished, the
-   * {@link PartitionAttributes} are on top of the stack followed by the
-   * {@link RegionAttributesCreation} to which the partition attributes are
-   * assigned.
+   * When a <code>partition-attributes</code> element is finished, the {@link PartitionAttributes}
+   * are on top of the stack followed by the {@link RegionAttributesCreation} to which the partition
+   * attributes are assigned.
    */
   private void endPartitionAttributes() {
     PartitionAttributesImpl paf = (PartitionAttributesImpl) stack.pop();
@@ -1448,21 +1445,20 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
 
     RegionAttributesCreation rattrs = peekRegionAttributesContext(PARTITION_ATTRIBUTES);
     // change the 5.0 default data policy (EMPTY) to the current default
-    if (rattrs.hasDataPolicy() && rattrs.getDataPolicy().isEmpty() && (this.version.compareTo(CacheXmlVersion.GEMFIRE_5_0) == 0)) {
+    if (rattrs.hasDataPolicy()
+        && rattrs.getDataPolicy().isEmpty()
+        && (this.version.compareTo(CacheXmlVersion.GEMFIRE_5_0) == 0)) {
       rattrs.setDataPolicy(PartitionedRegionHelper.DEFAULT_DATA_POLICY);
     }
     rattrs.setPartitionAttributes(paf);
   }
 
-  /**
-   * When a <code>fixed-partition-attributes</code> element is finished
-   */
-  private void endFixedPartitionAttributes() {
-  }
+  /** When a <code>fixed-partition-attributes</code> element is finished */
+  private void endFixedPartitionAttributes() {}
 
   /**
-   * When a <code>membership-attributes</code> element is finished, the
-   * arguments for constructing the MembershipAttributes are on the stack.
+   * When a <code>membership-attributes</code> element is finished, the arguments for constructing
+   * the MembershipAttributes are on the stack.
    */
   private void endMembershipAttributes() {
     Set roles = new HashSet();
@@ -1482,23 +1478,22 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     LossAction laction = LossAction.fromName(laName);
     ResumptionAction raction = ResumptionAction.fromName(raName);
 
-    MembershipAttributes ra = new MembershipAttributes((String[]) roles.toArray(new String[roles.size()]), laction, raction);
+    MembershipAttributes ra =
+        new MembershipAttributes(
+            (String[]) roles.toArray(new String[roles.size()]), laction, raction);
     RegionAttributesCreation rattrs = (RegionAttributesCreation) stack.peek();
     rattrs.setMembershipAttributes(ra);
   }
 
-  /**
-   * When a <code>required-role</code> element is finished,
-   */
+  /** When a <code>required-role</code> element is finished, */
   private void endRequiredRole() {
     // do nothing... wait for endMembershipAttributes()
   }
 
   /**
-   * When a <code>disk-write-attributes</code> element is finished, the
-   * {@link DiskWriteAttributes} is on top of the stack followed by the
-   * {@link RegionAttributesCreation} to which the expiration attributes are
-   * assigned.
+   * When a <code>disk-write-attributes</code> element is finished, the {@link DiskWriteAttributes}
+   * is on top of the stack followed by the {@link RegionAttributesCreation} to which the expiration
+   * attributes are assigned.
    */
   private void endDiskWriteAttributes() {
     DiskWriteAttributes dwa = (DiskWriteAttributes) stack.pop();
@@ -1507,23 +1502,21 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>disk-dir</code> element is finished, the name of the
-   * directory is on top of the stack. Create a new {@link File}and push it on
-   * the stack.
+   * When a <code>disk-dir</code> element is finished, the name of the directory is on top of the
+   * stack. Create a new {@link File}and push it on the stack.
    */
   private void endDiskDir() {
     StringBuffer dirName = (StringBuffer) stack.pop();
     File dir = new File(dirName.toString().trim());
-    if (!dir.exists()) {
+    if (!dir.exists()) {}
 
-    }
     stack.push(dir);
   }
 
   /**
-   * When a <code>disk-dirs</code> element is finished, the directory
-   * {@link File}s are on the stack followed by the {@link
-   * RegionAttributesCreation} to which the expiration attributes are assigned.
+   * When a <code>disk-dirs</code> element is finished, the directory {@link File}s are on the stack
+   * followed by the {@link RegionAttributesCreation} to which the expiration attributes are
+   * assigned.
    */
   private void endDiskDirs() {
     List dirs = new ArrayList();
@@ -1556,13 +1549,15 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       DiskStoreAttributesCreation attrs = (DiskStoreAttributesCreation) a;
       attrs.setDiskDirsAndSize(disks, diskSizes);
     } else {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES.toLocalizedString(DISK_DIRS));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES
+              .toLocalizedString(DISK_DIRS));
     }
   }
 
   /**
-   * When a <code>synchronous-writes</code> element is encounter, we push a
-   * {@link DiskWriteAttributes} for doing synchronous writes on the stack.
+   * When a <code>synchronous-writes</code> element is encounter, we push a {@link
+   * DiskWriteAttributes} for doing synchronous writes on the stack.
    */
   private void startSynchronousWrites() {
     int maxOplogSize = ((Integer) stack.pop()).intValue();
@@ -1578,8 +1573,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>asynchronous-writes</code> element is encounter, we push a
-   * {@link DiskWriteAttributes} for doing asynchronous writes on the stack.
+   * When a <code>asynchronous-writes</code> element is encounter, we push a {@link
+   * DiskWriteAttributes} for doing asynchronous writes on the stack.
    */
   private void startAsynchronousWrites(Attributes atts) {
     int maxOplogSize = ((Integer) stack.pop()).intValue();
@@ -1599,9 +1594,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>parition-attributes</code> element is encountered, we push a
-   * ParitionAttributes?? for configuring paritioned storage on the
-   * stack.
+   * When a <code>parition-attributes</code> element is encountered, we push a ParitionAttributes??
+   * for configuring paritioned storage on the stack.
    */
   private void startPartitionAttributes(Attributes atts) {
     PartitionAttributesImpl paf = new PartitionAttributesImpl();
@@ -1637,9 +1631,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>fixed-partition-attributes</code> element is encountered, we
-   * create an instance of FixedPartitionAttributesImpl and add it to the
-   * PartitionAttributesImpl stack.
+   * When a <code>fixed-partition-attributes</code> element is encountered, we create an instance of
+   * FixedPartitionAttributesImpl and add it to the PartitionAttributesImpl stack.
    */
   private void startFixedPartitionAttributes(Attributes atts) {
     FixedPartitionAttributesImpl fpai = new FixedPartitionAttributesImpl();
@@ -1662,21 +1655,27 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>membership-attributes</code> element is encountered, we push
-   * an array of attributes for creation of a MembershipAttributes.
+   * When a <code>membership-attributes</code> element is encountered, we push an array of
+   * attributes for creation of a MembershipAttributes.
    */
   private void startMembershipAttributes(Attributes atts) {
     Object[] attrs = new Object[2]; // loss-action, resumption-action
-    attrs[0] = atts.getValue(LOSS_ACTION) == null ? LossAction.NO_ACCESS.toString() : atts.getValue(LOSS_ACTION);
-    attrs[1] = atts.getValue(RESUMPTION_ACTION) == null ? ResumptionAction.REINITIALIZE.toString() : atts.getValue(RESUMPTION_ACTION);
+    attrs[0] =
+        atts.getValue(LOSS_ACTION) == null
+            ? LossAction.NO_ACCESS.toString()
+            : atts.getValue(LOSS_ACTION);
+    attrs[1] =
+        atts.getValue(RESUMPTION_ACTION) == null
+            ? ResumptionAction.REINITIALIZE.toString()
+            : atts.getValue(RESUMPTION_ACTION);
 
     stack.push(attrs);
   }
 
   /**
-   * When a <code>subscription-attributes</code> element is first encountered,
-   * we create an SubscriptionAttibutes?? object from the element's
-   * attributes and stick it in the current region attributes.
+   * When a <code>subscription-attributes</code> element is first encountered, we create an
+   * SubscriptionAttibutes?? object from the element's attributes and stick it in the current region
+   * attributes.
    */
   private void startSubscriptionAttributes(Attributes atts) {
     String ip = atts.getValue(INTEREST_POLICY);
@@ -1688,25 +1687,24 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     } else if (ip.equals(CACHE_CONTENT)) {
       sa = new SubscriptionAttributes(InterestPolicy.CACHE_CONTENT);
     } else {
-      throw new InternalGemFireException(LocalizedStrings.CacheXmlParser_UNKNOWN_INTERESTPOLICY_0.toLocalizedString(ip));
+      throw new InternalGemFireException(
+          LocalizedStrings.CacheXmlParser_UNKNOWN_INTERESTPOLICY_0.toLocalizedString(ip));
     }
     RegionAttributesCreation rattrs = (RegionAttributesCreation) stack.peek();
     rattrs.setSubscriptionAttributes(sa);
   }
 
   /**
-   * When a <code>required-role</code> element is encountered, we push a string
-   * for creation of MembershipAttributes.
+   * When a <code>required-role</code> element is encountered, we push a string for creation of
+   * MembershipAttributes.
    */
   private void startRequiredRole(Attributes atts) {
     stack.push(atts.getValue(NAME));
   }
 
   /**
-   * When a <code>index</code> element is encounter, we create the
-   * IndexCreationData object from the Stack. Set the required parameters in the
-   * IndexCreationData object & push it on stack.
-   *
+   * When a <code>index</code> element is encounter, we create the IndexCreationData object from the
+   * Stack. Set the required parameters in the IndexCreationData object & push it on stack.
    */
   private void startIndex(Attributes atts) {
     boolean isPrimary = false;
@@ -1737,7 +1735,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
         } else if (type.equals(RANGE_INDEX_TYPE)) {
           icd.setIndexData(IndexType.FUNCTIONAL, fromClause, expression, importStr);
         } else {
-          logger.trace(LogMarker.CACHE_XML_PARSER, LocalizedMessage.create(LocalizedStrings.CacheXmlParser_UNKNOWN_INDEX_TYPE, type));
+          logger.trace(
+              LogMarker.CACHE_XML_PARSER,
+              LocalizedMessage.create(LocalizedStrings.CacheXmlParser_UNKNOWN_INDEX_TYPE, type));
           icd.setIndexData(IndexType.FUNCTIONAL, fromClause, expression, importStr);
         }
       }
@@ -1746,11 +1746,11 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When index element is ending we need to verify all attributes because of
-   * new index tag definition since 6.6.1 and support previous definition also. 
-   * 
-   * if <code>functional</code> element was not there then we need to validate
-   * expression and fromClause as not null.
+   * When index element is ending we need to verify all attributes because of new index tag
+   * definition since 6.6.1 and support previous definition also.
+   *
+   * <p>if <code>functional</code> element was not there then we need to validate expression and
+   * fromClause as not null.
    */
   private void endIndex() {
     boolean throwExcep = false;
@@ -1774,15 +1774,17 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       RegionCreation rc = (RegionCreation) this.stack.peek();
       rc.addIndexData(icd);
     } else {
-      throw new InternalGemFireException(LocalizedStrings.CacheXmlParser_CACHEXMLPARSERENDINDEXINDEX_CREATION_ATTRIBUTE_NOT_CORRECTLY_SPECIFIED.toLocalizedString());
+      throw new InternalGemFireException(
+          LocalizedStrings
+              .CacheXmlParser_CACHEXMLPARSERENDINDEXINDEX_CREATION_ATTRIBUTE_NOT_CORRECTLY_SPECIFIED
+              .toLocalizedString());
     }
   }
 
   /**
-   * When a <code>functional</code> element is encounter, we pop the
-   * IndexCreationData object from the Stack. Set the required parameters in the
-   * IndexCreationData object & set it in RegionCreation object.
-   *
+   * When a <code>functional</code> element is encounter, we pop the IndexCreationData object from
+   * the Stack. Set the required parameters in the IndexCreationData object & set it in
+   * RegionCreation object.
    */
   private void startFunctionalIndex(Attributes atts) {
     boolean throwExcep = false;
@@ -1793,8 +1795,7 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       String fromClause = atts.getValue(FROM_CLAUSE);
       String expression = atts.getValue(EXPRESSION);
       String importStr = null;
-      if (len == 3)
-        importStr = atts.getValue(IMPORTS);
+      if (len == 3) importStr = atts.getValue(IMPORTS);
       if (fromClause == null || expression == null) {
         throwExcep = true;
       } else {
@@ -1804,15 +1805,17 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       throwExcep = true;
     }
     if (throwExcep) {
-      throw new InternalGemFireException(LocalizedStrings.CacheXmlParser_CACHEXMLPARSERSTARTFUNCTIONALINDEXINDEX_CREATION_ATTRIBUTE_NOT_CORRECTLY_SPECIFIED.toLocalizedString());
+      throw new InternalGemFireException(
+          LocalizedStrings
+              .CacheXmlParser_CACHEXMLPARSERSTARTFUNCTIONALINDEXINDEX_CREATION_ATTRIBUTE_NOT_CORRECTLY_SPECIFIED
+              .toLocalizedString());
     }
   }
 
   /**
-   * When a <code>primary-key</code> element is encounter, we pop the
-   * IndexCreationData object from the Stack. Set the required parameters in the
-   * IndexCreationData object & set it in RegionCreation object.
-   *
+   * When a <code>primary-key</code> element is encounter, we pop the IndexCreationData object from
+   * the Stack. Set the required parameters in the IndexCreationData object & set it in
+   * RegionCreation object.
    */
   private void startPrimaryKeyIndex(Attributes atts) {
     IndexCreationData icd = (IndexCreationData) this.stack.peek();
@@ -1829,14 +1832,16 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       throwExcep = true;
     }
     if (throwExcep) {
-      throw new InternalGemFireException(LocalizedStrings.CacheXmlParser_CACHEXMLPARSERSTARTPRIMARYKEYINDEXPRIMARYKEY_INDEX_CREATION_FIELD_IS_NULL.toLocalizedString());
+      throw new InternalGemFireException(
+          LocalizedStrings
+              .CacheXmlParser_CACHEXMLPARSERSTARTPRIMARYKEYINDEXPRIMARYKEY_INDEX_CREATION_FIELD_IS_NULL
+              .toLocalizedString());
     }
   }
 
   /**
-   * When a <code>expiration-attributes</code> element is first encountered,
-   * we create an ExpirationAttibutes?? object from the element's
-   * attributes and push it on the stack.
+   * When a <code>expiration-attributes</code> element is first encountered, we create an
+   * ExpirationAttibutes?? object from the element's attributes and push it on the stack.
    */
   private void startExpirationAttributes(Attributes atts) {
     int timeout = parseInt(atts.getValue(TIMEOUT));
@@ -1853,7 +1858,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     } else if (action.equals(LOCAL_DESTROY)) {
       expire = new ExpirationAttributes(timeout, ExpirationAction.LOCAL_DESTROY);
     } else {
-      throw new InternalGemFireException(LocalizedStrings.CacheXmlParser_UNKNOWN_EXPIRATION_ACTION_0.toLocalizedString(action));
+      throw new InternalGemFireException(
+          LocalizedStrings.CacheXmlParser_UNKNOWN_EXPIRATION_ACTION_0.toLocalizedString(action));
     }
     stack.push(expire);
   }
@@ -1868,9 +1874,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When an <code>instantiator</code> element is first encountered,
-   * we need to hang on to the id attribute for use in registration in the end
-   * tag function.
+   * When an <code>instantiator</code> element is first encountered, we need to hang on to the id
+   * attribute for use in registration in the end tag function.
    */
   private void startInstantiator(Attributes atts) {
     int id = parseInt(atts.getValue(ID));
@@ -1878,11 +1883,10 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * Creates and initializes an instance of {@link Declarable} from the contents
-   * of the stack.
+   * Creates and initializes an instance of {@link Declarable} from the contents of the stack.
    *
-   * @throws CacheXmlException Something goes wrong while instantiating or
-   *           initializing the declarable
+   * @throws CacheXmlException Something goes wrong while instantiating or initializing the
+   *     declarable
    */
   private Declarable createDeclarable() {
     Properties props = new Properties();
@@ -1892,19 +1896,28 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       props.put(param.getName(), param.getValue());
       top = stack.pop();
     }
-    logger.trace(LogMarker.CACHE_XML_PARSER, LocalizedMessage.create(LocalizedStrings.CacheXmlParser_XML_PARSER_CREATEDECLARABLE_PROPERTIES__0, props));
+    logger.trace(
+        LogMarker.CACHE_XML_PARSER,
+        LocalizedMessage.create(
+            LocalizedStrings.CacheXmlParser_XML_PARSER_CREATEDECLARABLE_PROPERTIES__0, props));
     Assert.assertTrue(top instanceof String);
     String className = (String) top;
-    logger.trace(LogMarker.CACHE_XML_PARSER, LocalizedMessage.create(LocalizedStrings.CacheXmlParser_XML_PARSER_CREATEDECLARABLE_CLASS_NAME_0, className));
+    logger.trace(
+        LogMarker.CACHE_XML_PARSER,
+        LocalizedMessage.create(
+            LocalizedStrings.CacheXmlParser_XML_PARSER_CREATEDECLARABLE_CLASS_NAME_0, className));
     Object o;
     try {
       Class c = InternalDataSerializer.getCachedClass(className);
       o = c.newInstance();
     } catch (Exception ex) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_WHILE_INSTANTIATING_A_0.toLocalizedString(className), ex);
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_WHILE_INSTANTIATING_A_0.toLocalizedString(className), ex);
     }
     if (!(o instanceof Declarable)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_CLASS_0_IS_NOT_AN_INSTANCE_OF_DECLARABLE.toLocalizedString(className));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_CLASS_0_IS_NOT_AN_INSTANCE_OF_DECLARABLE
+              .toLocalizedString(className));
     }
     Declarable d = (Declarable) o;
     d.init(props);
@@ -1915,21 +1928,25 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * Ending the <code>compressor</code> registration should leave us with a
-   * class name on the stack.  Pull it off and setup the {@link Compressor}
-   * on the region attributes.
+   * Ending the <code>compressor</code> registration should leave us with a class name on the stack.
+   * Pull it off and setup the {@link Compressor} on the region attributes.
    */
   private void endCompressor() {
     Class<?> klass = getClassFromStack();
     if (!Compressor.class.isAssignableFrom(klass)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_COMPRESSOR.toLocalizedString(klass.getName()));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_COMPRESSOR.toLocalizedString(
+              klass.getName()));
     }
 
     Compressor compressor;
     try {
       compressor = (Compressor) klass.newInstance();
     } catch (Exception ex) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_WHILE_INSTANTIATING_A_0.toLocalizedString(klass.getName()), ex);
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_WHILE_INSTANTIATING_A_0.toLocalizedString(
+              klass.getName()),
+          ex);
     }
 
     Object a = stack.peek();
@@ -1938,24 +1955,27 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       RegionAttributesCreation attrs = (RegionAttributesCreation) a;
       attrs.setCompressor(compressor);
     } else {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES_OR_1.toLocalizedString(new Object[] { COMPRESSOR, DYNAMIC_REGION_FACTORY }));
+      throw new CacheXmlException(
+          LocalizedStrings
+              .CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES_OR_1
+              .toLocalizedString(new Object[] {COMPRESSOR, DYNAMIC_REGION_FACTORY}));
     }
   }
 
   /**
-   * When a <code>cache-loader</code> element is finished, the {@link
-   * Parameter}s and class names are popped off the stack. The cache loader is
-   * instantiated and initialized with the parameters, if appropriate.
-   * When the loader is being created in a dynamic-region-factory, there may
-   * be a disk-dir element on the stack, represented by a File object.
-   * Otherwise, dynamic-region-factory uses a RegionAttributesCreation, just
-   * like a region, and is treated the same.<p)
-   * The loader may also be created in the context of partition-attributes.
+   * When a <code>cache-loader</code> element is finished, the {@link Parameter}s and class names
+   * are popped off the stack. The cache loader is instantiated and initialized with the parameters,
+   * if appropriate. When the loader is being created in a dynamic-region-factory, there may be a
+   * disk-dir element on the stack, represented by a File object. Otherwise, dynamic-region-factory
+   * uses a RegionAttributesCreation, just like a region, and is treated the same.<p) The loader may
+   * also be created in the context of partition-attributes.
    */
   private void endCacheLoader() {
     Declarable d = createDeclarable();
     if (!(d instanceof CacheLoader)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_CACHELOADER.toLocalizedString(d.getClass().getName()));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_CACHELOADER.toLocalizedString(
+              d.getClass().getName()));
     }
     // Two peeks required to handle dynamic region context
     Object a = stack.peek();
@@ -1964,7 +1984,10 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       Object sav = stack.pop();
       a = stack.peek();
       if (!(a instanceof RegionAttributesCreation)) {
-        throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_CACHELOADER_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES.toLocalizedString());
+        throw new CacheXmlException(
+            LocalizedStrings
+                .CacheXmlParser_A_CACHELOADER_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES
+                .toLocalizedString());
       }
       stack.push(sav);
       RegionAttributesCreation attrs = (RegionAttributesCreation) a;
@@ -1975,22 +1998,27 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       RegionAttributesCreation attrs = (RegionAttributesCreation) a;
       attrs.setCacheLoader((CacheLoader) d);
     } else {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES_OR_1.toLocalizedString(new Object[] { CACHE_LOADER, DYNAMIC_REGION_FACTORY }));
+      throw new CacheXmlException(
+          LocalizedStrings
+              .CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES_OR_1
+              .toLocalizedString(new Object[] {CACHE_LOADER, DYNAMIC_REGION_FACTORY}));
     }
   }
 
   /**
-   * When a <code>cache-writer</code> element is finished, the {@link
-   * Parameter}s and class names are popped off the stack. The cache writer is
-   * instantiated and initialized with the parameters, if appropriate.
-   * <p>A cache-writer may be created in the context of region-attributes or
-   * dynamic-region-factory.  In the latter case, there may be a disk-dir on
-   * top of the stack, represented by a File object.
+   * When a <code>cache-writer</code> element is finished, the {@link Parameter}s and class names
+   * are popped off the stack. The cache writer is instantiated and initialized with the parameters,
+   * if appropriate.
+   *
+   * <p>A cache-writer may be created in the context of region-attributes or dynamic-region-factory.
+   * In the latter case, there may be a disk-dir on top of the stack, represented by a File object.
    */
   private void endCacheWriter() {
     Declarable d = createDeclarable();
     if (!(d instanceof CacheWriter)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_CACHEWRITER.toLocalizedString(d.getClass().getName()));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_CACHEWRITER.toLocalizedString(
+              d.getClass().getName()));
     }
 
     Object a = stack.peek();
@@ -2007,14 +2035,18 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       a = stack.peek();
       //
       if (!(a instanceof RegionAttributesCreation)) {
-        throw new CacheXmlException(LocalizedStrings.CacheXmlParser_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_1.toLocalizedString(new Object[] { CACHE_WRITER, DYNAMIC_REGION_FACTORY }));
+        throw new CacheXmlException(
+            LocalizedStrings.CacheXmlParser_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_1.toLocalizedString(
+                new Object[] {CACHE_WRITER, DYNAMIC_REGION_FACTORY}));
       }
       stack.push(size);
       stack.push(sav);
     }
     // check for normal region-attributes
     else if (!(a instanceof RegionAttributesCreation)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES.toLocalizedString(CACHE_WRITER));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_REGIONATTRIBUTES
+              .toLocalizedString(CACHE_WRITER));
     }
 
     RegionAttributesCreation attrs = (RegionAttributesCreation) a;
@@ -2025,20 +2057,21 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
 
     Declarable d = createDeclarable();
     if (!(d instanceof CustomExpiry)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_CUSTOMEXPIRY.toLocalizedString(d.getClass().getName()));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_CUSTOMEXPIRY.toLocalizedString(
+              d.getClass().getName()));
     }
     stack.push(d);
   }
 
   /**
-   * Create an <code>lru-entry-count</code> eviction controller, assigning
-   * it to the enclosed <code>region-attributes</code>.  Allow any combination
-   * of attributes to be provided.  Use the default values for any attribute that is not provided.
+   * Create an <code>lru-entry-count</code> eviction controller, assigning it to the enclosed <code>
+   * region-attributes</code>. Allow any combination of attributes to be provided. Use the default
+   * values for any attribute that is not provided.
+   *
    * @param atts
    */
-  /**
-   * @param atts
-   */
+  /** @param atts */
   private void startLRUEntryCount(Attributes atts) {
     final String maximum = atts.getValue(MAXIMUM);
     int max = LRUCapacityController.DEFAULT_MAXIMUM_ENTRIES;
@@ -2055,9 +2088,10 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * Start the configuration of a <code>lru-memory-size</code> eviction controller.  Allow
-   * for any of the attributes to be missing.  Store the attributes on the stack
-   * anticipating the declaration of an {@link ObjectSizer}.
+   * Start the configuration of a <code>lru-memory-size</code> eviction controller. Allow for any of
+   * the attributes to be missing. Store the attributes on the stack anticipating the declaration of
+   * an {@link ObjectSizer}.
+   *
    * @param atts
    */
   private void startLRUMemorySize(Attributes atts) {
@@ -2076,9 +2110,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * Complete the configuration of a <code>lru-memory-size</code> eviction controller.
-   * Check for the declaration of an {@link ObjectSizer}.  Assign the attributes to the
-   * enclose <code>region-attributes</code>
+   * Complete the configuration of a <code>lru-memory-size</code> eviction controller. Check for the
+   * declaration of an {@link ObjectSizer}. Assign the attributes to the enclose <code>
+   * region-attributes</code>
    */
   private void endLRUMemorySize() {
     Object declCheck = stack.peek();
@@ -2086,7 +2120,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     if (declCheck instanceof String || declCheck instanceof Parameter) {
       d = createDeclarable();
       if (!(d instanceof ObjectSizer)) {
-        throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_OBJECTSIZER.toLocalizedString(d.getClass().getName()));
+        throw new CacheXmlException(
+            LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_OBJECTSIZER
+                .toLocalizedString(d.getClass().getName()));
       }
     }
     EvictionAttributesImpl eai = (EvictionAttributesImpl) stack.pop();
@@ -2098,8 +2134,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * Create an <code>lru-heap-percentage</code> eviction controller, assigning
-   * it to the enclosed <code>region-attributes</code>
+   * Create an <code>lru-heap-percentage</code> eviction controller, assigning it to the enclosed
+   * <code>region-attributes</code>
+   *
    * @param atts
    */
   private void startLRUHeapPercentage(Attributes atts) {
@@ -2113,9 +2150,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * Complete the configuration of a <code>lru-heap-percentage</code> eviction controller.
-   * Check for the declaration of an {@link ObjectSizer}.  Assign the attributes to the
-   * enclosed <code>region-attributes</code>
+   * Complete the configuration of a <code>lru-heap-percentage</code> eviction controller. Check for
+   * the declaration of an {@link ObjectSizer}. Assign the attributes to the enclosed <code>
+   * region-attributes</code>
    */
   private void endLRUHeapPercentage() {
     Object declCheck = stack.peek();
@@ -2136,14 +2173,16 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>cache-listener</code> element is finished, the {@link
-   * Parameter}s and class names are popped off the stack. The cache listener is
-   * instantiated and initialized with the parameters, if appropriate.
+   * When a <code>cache-listener</code> element is finished, the {@link Parameter}s and class names
+   * are popped off the stack. The cache listener is instantiated and initialized with the
+   * parameters, if appropriate.
    */
   private void endCacheListener() {
     Declarable d = createDeclarable();
     if (!(d instanceof CacheListener)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_CACHELISTENER.toLocalizedString(d.getClass().getName()));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_CACHELISTENER
+              .toLocalizedString(d.getClass().getName()));
     }
     RegionAttributesCreation attrs = peekRegionAttributesContext(CACHE_LISTENER);
     attrs.addCacheListener((CacheListener) d);
@@ -2228,9 +2267,12 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     String orderPolicy = atts.getValue(ORDER_POLICY);
     if (orderPolicy != null) {
       try {
-        asyncEventQueueCreation.setOrderPolicy(GatewaySender.OrderPolicy.valueOf(orderPolicy.toUpperCase()));
+        asyncEventQueueCreation.setOrderPolicy(
+            GatewaySender.OrderPolicy.valueOf(orderPolicy.toUpperCase()));
       } catch (IllegalArgumentException e) {
-        throw new InternalGemFireException(LocalizedStrings.AsyncEventQueue_UNKNOWN_ORDER_POLICY_0_1.toLocalizedString(new Object[] { id, orderPolicy }));
+        throw new InternalGemFireException(
+            LocalizedStrings.AsyncEventQueue_UNKNOWN_ORDER_POLICY_0_1.toLocalizedString(
+                new Object[] {id, orderPolicy}));
       }
     }
 
@@ -2246,7 +2288,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   private void endAsyncEventListener() {
     Declarable d = createDeclarable();
     if (!(d instanceof AsyncEventListener)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_ASYNCEVENTLISTENER.toLocalizedString(d.getClass().getName()));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_ASYNCEVENTLISTENER
+              .toLocalizedString(d.getClass().getName()));
     }
     AsyncEventQueueCreation eventChannel = peekAsyncEventQueueContext(ASYNC_EVENT_LISTENER);
     eventChannel.setAsyncEventListener((AsyncEventListener) d);
@@ -2255,7 +2299,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   private AsyncEventQueueCreation peekAsyncEventQueueContext(String dependentElement) {
     Object a = stack.peek();
     if (!(a instanceof AsyncEventQueueCreation)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_ASYNCEVENTQUEUE.toLocalizedString(dependentElement));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_ASYNCEVENTQUEUE
+              .toLocalizedString(dependentElement));
     }
     return (AsyncEventQueueCreation) a;
   }
@@ -2274,27 +2320,31 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     factory.setDispatcherThreads(asyncEventChannelCreation.getDispatcherThreads());
     factory.setOrderPolicy(asyncEventChannelCreation.getOrderPolicy());
     factory.setForwardExpirationDestroy(asyncEventChannelCreation.isForwardExpirationDestroy());
-    List<GatewayEventFilter> gatewayEventFilters = asyncEventChannelCreation.getGatewayEventFilters();
+    List<GatewayEventFilter> gatewayEventFilters =
+        asyncEventChannelCreation.getGatewayEventFilters();
     for (GatewayEventFilter gatewayEventFilter : gatewayEventFilters) {
       factory.addGatewayEventFilter(gatewayEventFilter);
     }
-    factory.setGatewayEventSubstitutionListener(asyncEventChannelCreation.getGatewayEventSubstitutionFilter());
-    AsyncEventQueue asyncEventChannel = factory.create(asyncEventChannelCreation.getId(), asyncEventChannelCreation.getAsyncEventListener());
+    factory.setGatewayEventSubstitutionListener(
+        asyncEventChannelCreation.getGatewayEventSubstitutionFilter());
+    AsyncEventQueue asyncEventChannel =
+        factory.create(
+            asyncEventChannelCreation.getId(), asyncEventChannelCreation.getAsyncEventListener());
 
     stack.pop();
   }
 
   /**
-   * When a <code>partition-resolver</code> element is finished, the {@link
-   * Parameter}s and class names are popped off the stack. The
-   * <code>PartitionResolver</code> is instantiated and initialized with the
-   * parameters, if appropriate.
+   * When a <code>partition-resolver</code> element is finished, the {@link Parameter}s and class
+   * names are popped off the stack. The <code>PartitionResolver</code> is instantiated and
+   * initialized with the parameters, if appropriate.
    */
   private void endPartitionResolver() {
     Declarable d = createDeclarable();
     if (!(d instanceof PartitionResolver)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_1.toLocalizedString(new Object[] { d.getClass().getName(), "PartitionResolver" }));
-
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_1.toLocalizedString(
+              new Object[] {d.getClass().getName(), "PartitionResolver"}));
     }
 
     PartitionAttributesImpl pai = peekPartitionAttributesImpl(PARTITION_ATTRIBUTES);
@@ -2302,44 +2352,45 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>partition-listener</code> element is finished, the {@link
-   * Parameter}s and class names are popped off the stack. The
-   * <code>PartitionListener</code> is instantiated and initialized with the
-   * parameters, if appropriate.
+   * When a <code>partition-listener</code> element is finished, the {@link Parameter}s and class
+   * names are popped off the stack. The <code>PartitionListener</code> is instantiated and
+   * initialized with the parameters, if appropriate.
    */
   private void endPartitionListener() {
     Declarable d = createDeclarable();
     if (!(d instanceof PartitionListener)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_1.toLocalizedString(new Object[] { d.getClass().getName(), "PartitionListener" }));
-
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_1.toLocalizedString(
+              new Object[] {d.getClass().getName(), "PartitionListener"}));
     }
     PartitionAttributesImpl pai = peekPartitionAttributesImpl(PARTITION_ATTRIBUTES);
     pai.addPartitionListener((PartitionListener) d);
   }
 
   /**
-   * When we have encountered a FunctionService element, we create the object 
-   * and push it onto stack
+   * When we have encountered a FunctionService element, we create the object and push it onto stack
    */
   private void startFunctionService() {
     this.stack.push(new FunctionServiceCreation());
   }
 
   /**
-   * When we have finished a FunctionService element, we create the object 
-   * and push it onto stack
+   * When we have finished a FunctionService element, we create the object and push it onto stack
    */
   private void endFunctionService() {
     Object top = stack.pop();
     if (!(top instanceof FunctionServiceCreation)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_EXPECTED_A_FUNCTIONSERVICECREATION_INSTANCE.toLocalizedString());
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_EXPECTED_A_FUNCTIONSERVICECREATION_INSTANCE
+              .toLocalizedString());
     }
     FunctionServiceCreation fsc = (FunctionServiceCreation) top;
     fsc.create();
   }
 
   /**
-   * Start the Resource Manager element configuration 
+   * Start the Resource Manager element configuration
+   *
    * @param atts XML attributes for the resource-manager
    */
   private void startResourceManager(final Attributes atts) {
@@ -2399,20 +2450,21 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     this.cache.addBackup(backup);
   }
 
-  /**
-   * When we have finished a function element, we create the Declarable 
-   * and push it onto stack
-   */
+  /** When we have finished a function element, we create the Declarable and push it onto stack */
   private void endFunctionName() {
     Declarable d = createDeclarable();
     if (!(d instanceof Function)) {
-      String s = LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_FUNCTION.toLocalizedString(d.getClass().getName());
+      String s =
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_FUNCTION.toLocalizedString(
+              d.getClass().getName());
       throw new CacheXmlException(s);
     }
 
     Object fs = stack.peek();
     if (!(fs instanceof FunctionServiceCreation)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_ONLY_ALLOWED_IN_THE_CONTEXT_OF_1_MJTDEBUG_E_2.toLocalizedString(new Object[] { FUNCTION, FUNCTION_SERVICE, fs }));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_ONLY_ALLOWED_IN_THE_CONTEXT_OF_1_MJTDEBUG_E_2
+              .toLocalizedString(new Object[] {FUNCTION, FUNCTION_SERVICE, fs}));
     }
     FunctionServiceCreation funcService = (FunctionServiceCreation) fs;
     funcService.registerFunction((Function) d);
@@ -2421,7 +2473,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   private Class getClassFromStack() {
     Object o = this.stack.peek();
     if (!(o instanceof String)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_NO_CLASSNAME_FOUND.toLocalizedString());
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_NO_CLASSNAME_FOUND.toLocalizedString());
     }
     String className = (String) this.stack.pop();
 
@@ -2429,13 +2482,14 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       Class c = InternalDataSerializer.getCachedClass(className);
       return c;
     } catch (Exception e) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_CLASS_NOT_FOUND.toLocalizedString(className), e);
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_CLASS_NOT_FOUND.toLocalizedString(className), e);
     }
   }
 
   /**
-   * Ending the top level <code>serialization-registration</code> element and
-   * actually doing the work of registering all the components.
+   * Ending the top level <code>serialization-registration</code> element and actually doing the
+   * work of registering all the components.
    */
   private void endSerializerRegistration() {
     SerializerCreation sc = (SerializerCreation) this.stack.pop();
@@ -2444,14 +2498,14 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * Ending the serialization registration should leave us with a class name
-   * on the stack.  We will call the DataSerializer.register() with the class
-   * once we find it. 
+   * Ending the serialization registration should leave us with a class name on the stack. We will
+   * call the DataSerializer.register() with the class once we find it.
    */
   private void endSerializer() {
     Class c = getClassFromStack();
     if (!(DataSerializer.class.isAssignableFrom(c))) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_NOT_A_SERIALIZER.toLocalizedString(c.getName()));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_NOT_A_SERIALIZER.toLocalizedString(c.getName()));
     }
 
     SerializerCreation sr = (SerializerCreation) this.stack.peek();
@@ -2459,9 +2513,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * Ending the instantiator registration should leave us with a class name
-   * and an Integer ID on the stack.  Pull them off, and setup the instantiator
-   * with an anonymous inner class to do the work.
+   * Ending the instantiator registration should leave us with a class name and an Integer ID on the
+   * stack. Pull them off, and setup the instantiator with an anonymous inner class to do the work.
    */
   private void endInstantiator() {
     final Class c = getClassFromStack();
@@ -2474,7 +2527,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       }
     }
     if (!found) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_DATA_SERIALIZABLE.toLocalizedString(c.getName()));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_DATA_SERIALIZABLE.toLocalizedString(
+              c.getName()));
     }
 
     //the next thing on the stack should be the Integer registration ID
@@ -2490,8 +2545,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When we first encounter a <code>parameter</code> element, we push its
-   * name element on to the stack.
+   * When we first encounter a <code>parameter</code> element, we push its name element on to the
+   * stack.
    */
   private void startParameter(Attributes atts) {
     String name = atts.getValue(NAME);
@@ -2500,8 +2555,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When we have finished a <code>parameter</code> element, create a
-   * {@link Parameter}from the top two elements of the stack.
+   * When we have finished a <code>parameter</code> element, create a {@link Parameter}from the top
+   * two elements of the stack.
    */
   private void endParameter() {
     Object value = stack.pop();
@@ -2510,15 +2565,16 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When we have finished a <code>declarable</code>, instantiate an instance
-   * of the {@link Declarable}and push it on the stack.
+   * When we have finished a <code>declarable</code>, instantiate an instance of the {@link
+   * Declarable}and push it on the stack.
    */
   private void endDeclarable() {
     Declarable d = createDeclarable();
     stack.push(d);
   }
 
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     if (qName.equals(CACHE)) {
       startCache(atts);
     } else if (qName.equals(CLIENT_CACHE)) {
@@ -2668,7 +2724,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     } else {
       final XmlParser delegate = getDelegate(namespaceURI);
       if (null == delegate) {
-        throw new CacheXmlException(LocalizedStrings.CacheXmlParser_UNKNOWN_XML_ELEMENT_0.toLocalizedString(qName));
+        throw new CacheXmlException(
+            LocalizedStrings.CacheXmlParser_UNKNOWN_XML_ELEMENT_0.toLocalizedString(qName));
       }
 
       delegate.startElement(namespaceURI, localName, qName, atts);
@@ -2677,9 +2734,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
 
   /**
    * Get delegate {@link XmlParser} for the given <code>namespaceUri</code>
-   * 
-   * @param namespaceUri
-   *          to find {@link XmlParser} for.
+   *
+   * @param namespaceUri to find {@link XmlParser} for.
    * @return {@link XmlParser} if found, otherwise null.
    * @since GemFire 8.1
    */
@@ -2688,7 +2744,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     XmlParser delegate = delegates.get(namespaceUri);
     if (null == delegate) {
       try {
-        final ServiceLoader<XmlParser> serviceLoader = ServiceLoader.load(XmlParser.class, ClassPathLoader.getLatestAsClassLoader());
+        final ServiceLoader<XmlParser> serviceLoader =
+            ServiceLoader.load(XmlParser.class, ClassPathLoader.getLatestAsClassLoader());
         for (final XmlParser xmlParser : serviceLoader) {
           if (xmlParser.getNamspaceUri().equals(namespaceUri)) {
             delegate = xmlParser;
@@ -2725,12 +2782,12 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
   }
 
   /**
-   * When a <code>client-subscription</code> element is first encountered, 
-   * create a new {@link ClientSubscriptionConfig } to store the 
-   * <code>eviction-policy</code>,<p>
-   * <code>capacity</code> and
-   * <code>overflow-directory</code>, then pass these values to Bridge Server
-   * 
+   * When a <code>client-subscription</code> element is first encountered, create a new {@link
+   * ClientSubscriptionConfig } to store the <code>eviction-policy</code>,
+   *
+   * <p><code>capacity</code> and <code>overflow-directory</code>, then pass these values to Bridge
+   * Server
+   *
    * @since GemFire 5.7
    */
   private void startClientHaQueue(Attributes atts) {
@@ -2757,6 +2814,7 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
 
   /**
    * Add a marker string to look for when in endPartitionProperties
+   *
    * @param atts
    * @param localOrGlobal either the string LOCAL_PROPERTIES or GLOBAL_PROPERTIES
    */
@@ -2926,7 +2984,10 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
         List vsList = bc.getVendorSpecificList();
         ConfigProperty cp = (ConfigProperty) vsList.get(vsList.size() - 1);
         if (name == null) {
-          String excep = LocalizedStrings.CacheXmlParser_EXCEPTION_IN_PARSING_ELEMENT_0_THIS_IS_A_REQUIRED_FIELD.toLocalizedString(qName);
+          String excep =
+              LocalizedStrings
+                  .CacheXmlParser_EXCEPTION_IN_PARSING_ELEMENT_0_THIS_IS_A_REQUIRED_FIELD
+                  .toLocalizedString(qName);
           throw new CacheXmlException(excep);
         } else {
           // set the name.
@@ -2950,7 +3011,10 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
         List vsList = bc.getVendorSpecificList();
         ConfigProperty cp = (ConfigProperty) vsList.get(vsList.size() - 1);
         if (type == null) {
-          String excep = LocalizedStrings.CacheXmlParser_EXCEPTION_IN_PARSING_ELEMENT_0_THIS_IS_A_REQUIRED_FIELD.toLocalizedString(qName);
+          String excep =
+              LocalizedStrings
+                  .CacheXmlParser_EXCEPTION_IN_PARSING_ELEMENT_0_THIS_IS_A_REQUIRED_FIELD
+                  .toLocalizedString(qName);
           throw new CacheXmlException(excep);
         } else {
           cp.setType(type);
@@ -2992,21 +3056,26 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       } else {
         final XmlParser delegate = getDelegate(namespaceURI);
         if (null == delegate) {
-          throw new CacheXmlException(LocalizedStrings.CacheXmlParser_UNKNOWN_XML_ELEMENT_0.toLocalizedString(qName));
+          throw new CacheXmlException(
+              LocalizedStrings.CacheXmlParser_UNKNOWN_XML_ELEMENT_0.toLocalizedString(qName));
         }
 
         delegate.endElement(namespaceURI, localName, qName);
       }
     } catch (CacheException ex) {
-      throw new SAXException(LocalizedStrings.CacheXmlParser_A_CACHEEXCEPTION_WAS_THROWN_WHILE_PARSING_XML.toLocalizedString(), ex);
+      throw new SAXException(
+          LocalizedStrings.CacheXmlParser_A_CACHEEXCEPTION_WAS_THROWN_WHILE_PARSING_XML
+              .toLocalizedString(),
+          ex);
     }
   }
 
   private void endGatewayTransportFilter() {
     Declarable d = createDeclarable();
     if (!(d instanceof GatewayTransportFilter)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_1.toLocalizedString(new Object[] { d.getClass().getName(), "GatewayTransportFilter" }));
-
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_1.toLocalizedString(
+              new Object[] {d.getClass().getName(), "GatewayTransportFilter"}));
     }
     Object a = stack.peek();
     if (a instanceof GatewaySenderFactory) {
@@ -3016,14 +3085,19 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       GatewayReceiverFactory receiverFactory = (GatewayReceiverFactory) a;
       receiverFactory.addGatewayTransportFilter((GatewayTransportFilter) d);
     } else {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_GATEWAYSENDER_OR_GATEWAYRECEIVER.toLocalizedString(GATEWAY_TRANSPORT_FILTER));
+      throw new CacheXmlException(
+          LocalizedStrings
+              .CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_GATEWAYSENDER_OR_GATEWAYRECEIVER
+              .toLocalizedString(GATEWAY_TRANSPORT_FILTER));
     }
   }
 
   private void endGatewayEventFilter() {
     Declarable d = createDeclarable();
     if (!(d instanceof GatewayEventFilter)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_1.toLocalizedString(new Object[] { d.getClass().getName(), "GatewayEventFilter" }));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_1.toLocalizedString(
+              new Object[] {d.getClass().getName(), "GatewayEventFilter"}));
     }
     Object obj = stack.peek();
     if (obj instanceof GatewaySenderFactory) {
@@ -3033,14 +3107,19 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       AsyncEventQueueCreation asyncEventQueueCreation = (AsyncEventQueueCreation) obj;
       asyncEventQueueCreation.addGatewayEventFilter((GatewayEventFilter) d);
     } else {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_GATEWAY_SENDER_OR_ASYNC_EVENT_QUEUE.toLocalizedString("GatewayEventFilter"));
+      throw new CacheXmlException(
+          LocalizedStrings
+              .CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_GATEWAY_SENDER_OR_ASYNC_EVENT_QUEUE
+              .toLocalizedString("GatewayEventFilter"));
     }
   }
 
   private void endGatewayEventSubstitutionFilter() {
     Declarable d = createDeclarable();
     if (!(d instanceof GatewayEventSubstitutionFilter)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_1.toLocalizedString(new Object[] { d.getClass().getName(), "GatewayEventSubstitutionFilter" }));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_1.toLocalizedString(
+              new Object[] {d.getClass().getName(), "GatewayEventSubstitutionFilter"}));
     }
     Object obj = stack.peek();
     if (obj instanceof GatewaySenderFactory) {
@@ -3050,33 +3129,36 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       AsyncEventQueueCreation asyncEventQueueCreation = (AsyncEventQueueCreation) obj;
       asyncEventQueueCreation.setGatewayEventSubstitutionFilter((GatewayEventSubstitutionFilter) d);
     } else {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_GATEWAY_SENDER_OR_ASYNC_EVENT_QUEUE.toLocalizedString("GatewayEventSubstitutionFilter"));
+      throw new CacheXmlException(
+          LocalizedStrings
+              .CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_GATEWAY_SENDER_OR_ASYNC_EVENT_QUEUE
+              .toLocalizedString("GatewayEventSubstitutionFilter"));
     }
   }
 
   private GatewaySenderFactory peekGatewaySender(String dependentElement) {
     Object a = stack.peek();
     if (!(a instanceof GatewaySenderFactory)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_GATEWAY_SENDER.toLocalizedString(dependentElement));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_MUST_BE_DEFINED_IN_THE_CONTEXT_OF_GATEWAY_SENDER
+              .toLocalizedString(dependentElement));
     }
     return (GatewaySenderFactory) a;
   }
 
-  /**
-   * 
-   */
+  /** */
   private void endPdxSerializer() {
     Declarable d = createDeclarable();
     if (!(d instanceof PdxSerializer)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_PDX_SERIALIZER.toLocalizedString(d.getClass().getName()));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_A_0_IS_NOT_AN_INSTANCE_OF_A_PDX_SERIALIZER
+              .toLocalizedString(d.getClass().getName()));
     }
     PdxSerializer serializer = (PdxSerializer) d;
     this.cache.setPdxSerializer(serializer);
   }
 
-  private void startInitializer() {
-
-  }
+  private void startInitializer() {}
 
   private void endInitializer() {
     Properties props = new Properties();
@@ -3093,10 +3175,13 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       Class c = InternalDataSerializer.getCachedClass(className);
       o = c.newInstance();
     } catch (Exception ex) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_WHILE_INSTANTIATING_A_0.toLocalizedString(className), ex);
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_WHILE_INSTANTIATING_A_0.toLocalizedString(className), ex);
     }
     if (!(o instanceof Declarable)) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_CLASS_0_IS_NOT_AN_INSTANCE_OF_DECLARABLE.toLocalizedString(className));
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_CLASS_0_IS_NOT_AN_INSTANCE_OF_DECLARABLE
+              .toLocalizedString(className));
     }
     Declarable d = (Declarable) o;
     this.cache.setInitializer(d, props);
@@ -3104,22 +3189,26 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
 
   /**
    * Do nothing
+   *
    * @since GemFire 5.7
    */
-  private void endClientHaQueue() {
-  }
+  private void endClientHaQueue() {}
 
   /**
-   * Process either the <code>local-properties</code> or <code>global-properties</code> for a
-   * {@link org.apache.geode.internal.cache.PartitionedRegion}
-   * @param globalOrLocal either the string {@link CacheXml#LOCAL_PROPERTIES} or {@link CacheXml#GLOBAL_PROPERTIES}
+   * Process either the <code>local-properties</code> or <code>global-properties</code> for a {@link
+   * org.apache.geode.internal.cache.PartitionedRegion}
+   *
+   * @param globalOrLocal either the string {@link CacheXml#LOCAL_PROPERTIES} or {@link
+   *     CacheXml#GLOBAL_PROPERTIES}
    */
   private void endPartitionProperites(String globalOrLocal) {
     Properties props = new Properties();
     Object top = stack.pop();
     while (!top.equals(globalOrLocal)) {
       if (!(top instanceof Parameter)) {
-        throw new CacheXmlException(LocalizedStrings.CacheXmlParser_ONLY_A_PARAMETER_IS_ALLOWED_IN_THE_CONTEXT_OF_0.toLocalizedString(globalOrLocal));
+        throw new CacheXmlException(
+            LocalizedStrings.CacheXmlParser_ONLY_A_PARAMETER_IS_ALLOWED_IN_THE_CONTEXT_OF_0
+                .toLocalizedString(globalOrLocal));
       }
       Parameter param = (Parameter) top;
       props.put(param.getName(), param.getValue());
@@ -3152,12 +3241,19 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
       if (o instanceof StringBuffer) {
         chars = (StringBuffer) o;
         chars.append(ch, start, length);
-        logger.trace(LogMarker.CACHE_XML_PARSER, LocalizedMessage.create(LocalizedStrings.CacheXmlParser_XML_PARSER_CHARACTERS_APPENDED_CHARACTER_DATA_0, chars));
+        logger.trace(
+            LogMarker.CACHE_XML_PARSER,
+            LocalizedMessage.create(
+                LocalizedStrings.CacheXmlParser_XML_PARSER_CHARACTERS_APPENDED_CHARACTER_DATA_0,
+                chars));
       } else {
         chars = new StringBuffer(length);
         chars.append(ch, start, length);
         stack.push(chars);
-        logger.trace(LogMarker.CACHE_XML_PARSER, LocalizedMessage.create(LocalizedStrings.CacheXmlParser_XML_PARSER_CHARACTERS_NEW_CHARACTER_DATA_0, chars));
+        logger.trace(
+            LogMarker.CACHE_XML_PARSER,
+            LocalizedMessage.create(
+                LocalizedStrings.CacheXmlParser_XML_PARSER_CHARACTERS_NEW_CHARACTER_DATA_0, chars));
       }
     }
   }
@@ -3168,26 +3264,19 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     this.documentLocator = locator;
   }
 
-  public void startDocument() throws SAXException {
-  }
+  public void startDocument() throws SAXException {}
 
-  public void endDocument() throws SAXException {
-  }
+  public void endDocument() throws SAXException {}
 
-  public void startPrefixMapping(String prefix, String uri) throws SAXException {
-  }
+  public void startPrefixMapping(String prefix, String uri) throws SAXException {}
 
-  public void endPrefixMapping(String prefix) throws SAXException {
-  }
+  public void endPrefixMapping(String prefix) throws SAXException {}
 
-  public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-  }
+  public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {}
 
-  public void processingInstruction(String target, String data) throws SAXException {
-  }
+  public void processingInstruction(String target, String data) throws SAXException {}
 
-  public void skippedEntity(String name) throws SAXException {
-  }
+  public void skippedEntity(String name) throws SAXException {}
 
   /*
    * Binds a jndi name of datasource to a context. @param atts Attributes of
@@ -3208,11 +3297,9 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
 
   /////////////////////// Inner Classes ///////////////////////
   /**
-   * Class that delegates all of the methods of a {@link
-   * org.xml.sax.helpers.DefaultHandler} to a
-   * {@link CacheXmlParser} that implements all of the methods of
-   * <code>DefaultHandler</code>, but <B>is not </B> a
-   * <code>DefaultHandler</code>.
+   * Class that delegates all of the methods of a {@link org.xml.sax.helpers.DefaultHandler} to a
+   * {@link CacheXmlParser} that implements all of the methods of <code>DefaultHandler</code>, but
+   * <B>is not </B> a <code>DefaultHandler</code>.
    */
   static class DefaultHandlerDelegate extends DefaultHandler2 {
 
@@ -3220,20 +3307,22 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     private CacheXmlParser handler;
 
     /**
-     * Creates a new <code>DefaultHandlerDelegate</code> that delegates to the
-     * given <code>CacheXmlParser</code>.
+     * Creates a new <code>DefaultHandlerDelegate</code> that delegates to the given <code>
+     * CacheXmlParser</code>.
      */
     public DefaultHandlerDelegate(CacheXmlParser handler) {
       this.handler = handler;
     }
 
     @Override
-    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+    public InputSource resolveEntity(String publicId, String systemId)
+        throws SAXException, IOException {
       return handler.resolveEntity(publicId, systemId);
     }
 
     @Override
-    public InputSource resolveEntity(String name, String publicId, String baseURI, String systemId) throws SAXException, IOException {
+    public InputSource resolveEntity(String name, String publicId, String baseURI, String systemId)
+        throws SAXException, IOException {
       return handler.resolveEntity(name, publicId, baseURI, systemId);
     }
 
@@ -3263,7 +3352,8 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes)
+        throws SAXException {
       handler.startElement(uri, localName, qName, attributes);
     }
 
@@ -3308,9 +3398,7 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     }
   }
 
-  /**
-   * Represents a parameter used to initialize a {@link Declarable}
-   */
+  /** Represents a parameter used to initialize a {@link Declarable} */
   static class Parameter {
 
     /** The name of the parameter */
@@ -3318,9 +3406,7 @@ public class CacheXmlParser extends CacheXml implements ContentHandler {
     /** The value of the parameter */
     private Object value;
 
-    /**
-     * Creates a new <code>Parameter</code> with the given name and value.
-     */
+    /** Creates a new <code>Parameter</code> with the given name and value. */
     public Parameter(String name, Object value) {
       this.name = name;
       this.value = value;

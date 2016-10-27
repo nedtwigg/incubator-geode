@@ -57,5 +57,4 @@ public class OrderedTombstoneMapJUnitTest {
     tag.setVersionTimeStamp(timeStamp);
     return tag;
   }
-
 }

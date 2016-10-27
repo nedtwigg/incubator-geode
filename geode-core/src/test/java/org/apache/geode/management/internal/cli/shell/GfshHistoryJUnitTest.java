@@ -39,21 +39,23 @@ public class GfshHistoryJUnitTest {
 
   private GfshConfig gfshConfig;
 
-  @Rule
-  public TemporaryFolder tempDirectory = new TemporaryFolder();
+  @Rule public TemporaryFolder tempDirectory = new TemporaryFolder();
 
   @Before
   public void setUp() throws Exception {
     teardown();
     gfshHistoryFile = tempDirectory.newFile("historyFile");
-    gfshConfig = new GfshConfig(gfshHistoryFile.getAbsolutePath(), "", // defaultPrompt
-        0, // historySize
-        tempDirectory.getRoot().getAbsolutePath(), // logDir
-        null, // logLevel
-        null, // logLimit
-        null, // logCount
-        null // initFileName
-    );
+    gfshConfig =
+        new GfshConfig(
+            gfshHistoryFile.getAbsolutePath(),
+            "", // defaultPrompt
+            0, // historySize
+            tempDirectory.getRoot().getAbsolutePath(), // logDir
+            null, // logLevel
+            null, // logLimit
+            null, // logCount
+            null // initFileName
+            );
   }
 
   @After
@@ -77,10 +79,13 @@ public class GfshHistoryJUnitTest {
   @Test
   public void testHistoryFileDoesNotContainPasswords() throws Exception {
     Gfsh gfsh = Gfsh.getInstance(false, new String[] {}, gfshConfig);
-    gfsh.executeScriptLine("connect --password=foo --password = foo --password= goo --password =goo --password-param=blah --other-password-param=    gah");
+    gfsh.executeScriptLine(
+        "connect --password=foo --password = foo --password= goo --password =goo --password-param=blah --other-password-param=    gah");
 
     List<String> lines = Files.readAllLines(gfshHistoryFile.toPath());
-    assertEquals("connect --password=***** --password = ***** --password= ***** --password =***** --password-param=***** --other-password-param= *****", lines.get(1));
+    assertEquals(
+        "connect --password=***** --password = ***** --password= ***** --password =***** --password-param=***** --other-password-param= *****",
+        lines.get(1));
   }
 
   @Test

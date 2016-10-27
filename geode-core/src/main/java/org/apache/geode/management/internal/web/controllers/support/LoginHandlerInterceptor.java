@@ -38,9 +38,11 @@ import org.apache.geode.management.internal.web.util.UriUtils;
 import org.apache.geode.security.Authenticator;
 
 /**
- * The GetEnvironmentHandlerInterceptor class handles extracting Gfsh environment variables encoded in the HTTP request
- * message as request parameters.
- * <p/>
+ * The GetEnvironmentHandlerInterceptor class handles extracting Gfsh environment variables encoded
+ * in the HTTP request message as request parameters.
+ *
+ * <p>
+ *
  * @see javax.servlet.http.HttpServletRequest
  * @see javax.servlet.http.HttpServletResponse
  * @see org.springframework.web.servlet.handler.HandlerInterceptorAdapter
@@ -57,26 +59,32 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter {
 
   private SecurityService securityService = IntegratedSecurityService.getSecurityService();
 
-  private static final ThreadLocal<Map<String, String>> ENV = new ThreadLocal<Map<String, String>>() {
-    @Override
-    protected Map<String, String> initialValue() {
-      return Collections.emptyMap();
-    }
-  };
+  private static final ThreadLocal<Map<String, String>> ENV =
+      new ThreadLocal<Map<String, String>>() {
+        @Override
+        protected Map<String, String> initialValue() {
+          return Collections.emptyMap();
+        }
+      };
 
   protected static final String ENVIRONMENT_VARIABLE_REQUEST_PARAMETER_PREFIX = "vf.gf.env.";
 
-  protected static final String SECURITY_VARIABLE_REQUEST_HEADER_PREFIX = DistributionConfig.SECURITY_PREFIX_NAME;
+  protected static final String SECURITY_VARIABLE_REQUEST_HEADER_PREFIX =
+      DistributionConfig.SECURITY_PREFIX_NAME;
 
   public static Map<String, String> getEnvironment() {
     return ENV.get();
   }
 
   @Override
-  public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
+  public boolean preHandle(
+      final HttpServletRequest request, final HttpServletResponse response, final Object handler)
+      throws Exception {
     final Map<String, String> requestParameterValues = new HashMap<String, String>();
 
-    for (Enumeration<String> requestParameters = request.getParameterNames(); requestParameters.hasMoreElements();) {
+    for (Enumeration<String> requestParameters = request.getParameterNames();
+        requestParameters.hasMoreElements();
+        ) {
       final String requestParameter = requestParameters.nextElement();
       if (requestParameter.startsWith(ENVIRONMENT_VARIABLE_REQUEST_PARAMETER_PREFIX)) {
         String requestValue = request.getParameter(requestParameter);
@@ -84,18 +92,21 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter {
         if (requestParameter.contains(CLIMultiStepHelper.STEP_ARGS)) {
           requestValue = UriUtils.decode(requestValue);
         }
-        requestParameterValues.put(requestParameter.substring(ENVIRONMENT_VARIABLE_REQUEST_PARAMETER_PREFIX.length()), requestValue);
+        requestParameterValues.put(
+            requestParameter.substring(ENVIRONMENT_VARIABLE_REQUEST_PARAMETER_PREFIX.length()),
+            requestValue);
       }
     }
 
-    for (Enumeration<String> requestHeaders = request.getHeaderNames(); requestHeaders.hasMoreElements();) {
+    for (Enumeration<String> requestHeaders = request.getHeaderNames();
+        requestHeaders.hasMoreElements();
+        ) {
 
       final String requestHeader = requestHeaders.nextElement();
 
       if (requestHeader.startsWith(SECURITY_VARIABLE_REQUEST_HEADER_PREFIX)) {
         requestParameterValues.put(requestHeader, request.getHeader(requestHeader));
       }
-
     }
 
     String username = requestParameterValues.get(ResourceConstants.USER_NAME);
@@ -108,13 +119,19 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter {
   }
 
   @Override
-  public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final Exception ex) throws Exception {
+  public void afterCompletion(
+      final HttpServletRequest request,
+      final HttpServletResponse response,
+      final Object handler,
+      final Exception ex)
+      throws Exception {
     afterConcurrentHandlingStarted(request, response, handler);
     this.securityService.logout();
   }
 
   @Override
-  public void afterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+  public void afterConcurrentHandlingStarted(
+      HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
     ENV.remove();
   }
 }

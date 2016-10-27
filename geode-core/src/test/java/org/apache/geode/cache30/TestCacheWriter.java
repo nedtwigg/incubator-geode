@@ -20,13 +20,10 @@ package org.apache.geode.cache30;
 import org.apache.geode.cache.*;
 
 /**
- * A <code>CacheWriter</code> used in testing.  Its callback methods
- * are implemented to thrown {@link UnsupportedOperationException}
- * unless the user overrides the "2" methods.
+ * A <code>CacheWriter</code> used in testing. Its callback methods are implemented to thrown {@link
+ * UnsupportedOperationException} unless the user overrides the "2" methods.
  *
  * @see #wasInvoked
- *
- *
  * @since GemFire 3.0
  */
 public abstract class TestCacheWriter extends TestCacheCallback implements CacheWriter {
@@ -61,9 +58,7 @@ public abstract class TestCacheWriter extends TestCacheCallback implements Cache
     throw new UnsupportedOperationException(s);
   }
 
-  /**
-   * Causes code that uses the old API to not compile
-   */
+  /** Causes code that uses the old API to not compile */
   public final void beforeCreate2(EntryEvent event, Object arg) throws CacheWriterException {
 
     String s = "Shouldn't be invoked";
@@ -91,8 +86,7 @@ public abstract class TestCacheWriter extends TestCacheCallback implements Cache
   public final void beforeRegionDestroy(RegionEvent event) throws CacheWriterException {
 
     // check argument to see if this is during tearDown
-    if ("teardown".equals(event.getCallbackArgument()))
-      return;
+    if ("teardown".equals(event.getCallbackArgument())) return;
 
     this.invoked = true;
     beforeRegionDestroy2(event);
@@ -104,7 +98,8 @@ public abstract class TestCacheWriter extends TestCacheCallback implements Cache
     throw new UnsupportedOperationException(s);
   }
 
-  public final void beforeRegionDestroy2(RegionEvent event, Object arg) throws CacheWriterException {
+  public final void beforeRegionDestroy2(RegionEvent event, Object arg)
+      throws CacheWriterException {
 
     String s = "Shouldn't be invoked";
     throw new UnsupportedOperationException(s);

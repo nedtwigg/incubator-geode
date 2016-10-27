@@ -20,23 +20,18 @@ import org.apache.geode.cache.TransactionListener;
 import org.apache.geode.cache.TransactionEvent;
 
 /**
- * Utility class that implements all methods in <code>TransactionListener</code>
- * with empty implementations. Applications can subclass this class and only
- * override the methods for the events of interest.
- * 
- * 
+ * Utility class that implements all methods in <code>TransactionListener</code> with empty
+ * implementations. Applications can subclass this class and only override the methods for the
+ * events of interest.
+ *
  * @since GemFire 5.0
  */
 public abstract class TransactionListenerAdapter implements TransactionListener {
-  public void afterCommit(TransactionEvent event) {
-  }
+  public void afterCommit(TransactionEvent event) {}
 
-  public void afterFailedCommit(TransactionEvent event) {
-  }
+  public void afterFailedCommit(TransactionEvent event) {}
 
-  public void afterRollback(TransactionEvent event) {
-  }
+  public void afterRollback(TransactionEvent event) {}
 
-  public void close() {
-  }
+  public void close() {}
 }

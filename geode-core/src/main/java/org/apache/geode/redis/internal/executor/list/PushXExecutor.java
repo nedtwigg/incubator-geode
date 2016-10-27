@@ -55,5 +55,4 @@ public abstract class PushXExecutor extends ListExecutor implements Extendable {
   }
 
   protected abstract ListDirection pushType();
-
 }

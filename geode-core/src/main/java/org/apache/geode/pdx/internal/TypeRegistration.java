@@ -20,33 +20,21 @@ import java.util.Map;
 
 import org.apache.geode.cache.wan.GatewaySender;
 
-/**
- * Interface for the part of the type registry
- * that interacts with remote members
- *
- */
+/** Interface for the part of the type registry that interacts with remote members */
 public interface TypeRegistration {
 
-  /**
-   * Define the type in the distributed system
-   */
+  /** Define the type in the distributed system */
   public int defineType(PdxType newType);
 
-  /**
-   * Get the type id from the distributed system
-   */
+  /** Get the type id from the distributed system */
   public PdxType getType(int typeId);
 
-  /**
-   * Add a type id that has come from a remote member.
-   */
+  /** Add a type id that has come from a remote member. */
   public void addRemoteType(int typeId, PdxType type);
 
   public void addImportedType(int typeId, PdxType importedType);
 
-  /**
-   * Test hook to get the last allocated type id
-   */
+  /** Test hook to get the last allocated type id */
   public int getLastAllocatedTypeId();
 
   public void initialize();
@@ -69,18 +57,21 @@ public interface TypeRegistration {
 
   /**
    * Returns the currently defined types.
+   *
    * @return the types
    */
   Map<Integer, PdxType> types();
 
   /**
    * Returns the currently defined enums.
+   *
    * @return the enums
    */
   Map<Integer, EnumInfo> enums();
 
   /**
    * Returns PdxType having the field
+   *
    * @param fieldName
    * @param className
    * @return PdxType or null if field not present
@@ -94,8 +85,6 @@ public interface TypeRegistration {
 
   public boolean isClient();
 
-  /**
-   * Return the size of the type registry in this member.
-   */
+  /** Return the size of the type registry in this member. */
   public int getLocalSize();
 }

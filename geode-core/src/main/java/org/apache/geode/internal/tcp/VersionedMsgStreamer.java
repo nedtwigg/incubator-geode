@@ -25,31 +25,32 @@ import org.apache.geode.internal.Version;
 import org.apache.geode.internal.VersionedDataStream;
 
 /**
- * An extension of {@link MsgStreamer} that implements
- * {@link VersionedDataStream}.
- * 
+ * An extension of {@link MsgStreamer} that implements {@link VersionedDataStream}.
+ *
  * @since GemFire 7.1
  */
 final class VersionedMsgStreamer extends MsgStreamer implements VersionedDataStream {
 
   private final Version version;
 
-  VersionedMsgStreamer(List<?> cons, DistributionMessage msg, boolean directReply, DMStats stats, int sendBufferSize, Version version) {
+  VersionedMsgStreamer(
+      List<?> cons,
+      DistributionMessage msg,
+      boolean directReply,
+      DMStats stats,
+      int sendBufferSize,
+      Version version) {
     super(cons, msg, directReply, stats, sendBufferSize);
     this.version = version;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final Version getVersion() {
     return this.version;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return super.toString() + " (" + this.version + ')';

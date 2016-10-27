@@ -40,9 +40,7 @@ import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.shell.event.ParseResult;
 
-/**
- * GfshExecutionStrategyTest - Includes tests to for GfshExecutionStrategyTest
- */
+/** GfshExecutionStrategyTest - Includes tests to for GfshExecutionStrategyTest */
 @Category(UnitTest.class)
 public class GfshExecutionStrategyJUnitTest {
 
@@ -58,20 +56,20 @@ public class GfshExecutionStrategyJUnitTest {
     CommandManager.clearInstance();
   }
 
-  /**
-   * tests execute method by executing dummy method command1
-   */
+  /** tests execute method by executing dummy method command1 */
   @Test
   public void testGfshExecutionStartegyExecute() throws Exception {
     CommandManager commandManager = CommandManager.getInstance();
     assertNotNull("CommandManager should not be null.", commandManager);
     commandManager.add(Commands.class.newInstance());
     GfshParser parser = new GfshParser(commandManager);
-    String[] command1Names = ((CliCommand) Commands.class.getMethod(COMMAND1_NAME).getAnnotation(CliCommand.class)).value();
+    String[] command1Names =
+        ((CliCommand) Commands.class.getMethod(COMMAND1_NAME).getAnnotation(CliCommand.class))
+            .value();
     String input = command1Names[0];
     ParseResult parseResult = null;
     parseResult = parser.parse(input);
-    String[] args = new String[] { command1Names[0] };
+    String[] args = new String[] {command1Names[0]};
     Gfsh gfsh = Gfsh.getInstance(false, args, new GfshConfig());
     GfshExecutionStrategy gfshExecutionStrategy = new GfshExecutionStrategy(gfsh);
     Result resultObject = (Result) gfshExecutionStrategy.execute(parseResult);
@@ -80,51 +78,64 @@ public class GfshExecutionStrategyJUnitTest {
   }
 
   /**
-   * tests isReadyForCommnads method by executing dummy method command1.
-   * TODO: this method is hard coded in source which may change in future. So this
-   * test should also be accordingly changed
+   * tests isReadyForCommnads method by executing dummy method command1. TODO: this method is hard
+   * coded in source which may change in future. So this test should also be accordingly changed
    */
   @Test
   public void testGfshExecutionStartegyIsReadyForCommands() throws Exception {
     CommandManager commandManager = CommandManager.getInstance();
     assertNotNull("CommandManager should not be null.", commandManager);
     commandManager.add(Commands.class.newInstance());
-    String[] command1Names = ((CliCommand) Commands.class.getMethod(COMMAND1_NAME).getAnnotation(CliCommand.class)).value();
-    String[] args = new String[] { command1Names[0] };
+    String[] command1Names =
+        ((CliCommand) Commands.class.getMethod(COMMAND1_NAME).getAnnotation(CliCommand.class))
+            .value();
+    String[] args = new String[] {command1Names[0]};
     Gfsh gfsh = Gfsh.getInstance(false, args, new GfshConfig());
     GfshExecutionStrategy gfshExecutionStrategy = new GfshExecutionStrategy(gfsh);
     boolean ready = gfshExecutionStrategy.isReadyForCommands();
     assertTrue(ready);
   }
 
-  /**
-   * represents class for dummy methods
-   */
+  /** represents class for dummy methods */
   public static class Commands implements CommandMarker {
 
-    @CliCommand(value = { COMMAND1_NAME, COMMAND1_NAME_ALIAS }, help = COMMAND1_HELP)
+    @CliCommand(
+      value = {COMMAND1_NAME, COMMAND1_NAME_ALIAS},
+      help = COMMAND1_HELP
+    )
     @CliMetaData(shellOnly = true)
     @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
     public static Result command1() {
       return ResultBuilder.createInfoResult(COMMAND1_SUCESS);
     }
 
-    @CliCommand(value = { COMMAND2_NAME })
+    @CliCommand(value = {COMMAND2_NAME})
     @CliMetaData(shellOnly = false)
     @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
     public static Result command2() {
       return ResultBuilder.createInfoResult(COMMAND2_SUCESS);
     }
 
-    @CliCommand(value = { "testParamConcat" })
+    @CliCommand(value = {"testParamConcat"})
     @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-    public static Result testParamConcat(@CliOption(key = { "string" }) String string, @CliOption(key = { "stringArray" }) @CliMetaData(valueSeparator = ",") String[] stringArray, @CliOption(key = { "stringList" }, optionContext = ConverterHint.STRING_LIST) @CliMetaData(valueSeparator = ",") List<String> stringList, @CliOption(key = { "integer" }) Integer integer, @CliOption(key = { "colonArray" }) @CliMetaData(valueSeparator = ":") String[] colonArray) {
+    public static Result testParamConcat(
+        @CliOption(key = {"string"}) String string,
+        @CliOption(key = {"stringArray"}) @CliMetaData(valueSeparator = ",") String[] stringArray,
+        @CliOption(
+              key = {"stringList"},
+              optionContext = ConverterHint.STRING_LIST
+            )
+            @CliMetaData(valueSeparator = ",")
+            List<String> stringList,
+        @CliOption(key = {"integer"}) Integer integer,
+        @CliOption(key = {"colonArray"}) @CliMetaData(valueSeparator = ":") String[] colonArray) {
       return null;
     }
 
-    @CliCommand(value = { "testMultiWordArg" })
+    @CliCommand(value = {"testMultiWordArg"})
     @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-    public static Result testMultiWordArg(@CliArgument(name = "arg1") String arg1, @CliArgument(name = "arg2") String arg2) {
+    public static Result testMultiWordArg(
+        @CliArgument(name = "arg1") String arg1, @CliArgument(name = "arg2") String arg2) {
       return null;
     }
   }

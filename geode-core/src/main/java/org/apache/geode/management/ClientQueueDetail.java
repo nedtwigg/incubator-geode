@@ -16,61 +16,40 @@
  */
 package org.apache.geode.management;
 
-/**
- * 
- * @since GemFire  8.0
- */
+/** @since GemFire 8.0 */
 public class ClientQueueDetail {
 
-  /**
-   * Client ID
-   */
+  /** Client ID */
   private String clientId;
 
   /**
    * Current queue size of client which is derived by the formula queueSize = eventsEnqued -
-   * eventsRemoved - eventsConflated - markerEventsConflated - eventsExpired -
-   * eventsRemovedByQrm - eventsTaken - numVoidRemovals
+   * eventsRemoved - eventsConflated - markerEventsConflated - eventsExpired - eventsRemovedByQrm -
+   * eventsTaken - numVoidRemovals
    */
   private long queueSize;
-  /**
-   * Number of events added to queue.
-   */
+  /** Number of events added to queue. */
   private long eventsEnqued;
 
-  /**
-   * Number of events removed from the queue.
-   */
+  /** Number of events removed from the queue. */
   private long eventsRemoved;
 
-  /**
-   * Number of events conflated for the queue.
-   */
+  /** Number of events conflated for the queue. */
   private long eventsConflated;
 
-  /**
-   * Number of marker events conflated for the queue.
-   */
+  /** Number of marker events conflated for the queue. */
   private long markerEventsConflated;
 
-  /**
-   * Number of events expired from the queue.
-   */
+  /** Number of events expired from the queue. */
   private long eventsExpired;
 
-  /**
-   * Number of events removed by QRM message.
-   */
+  /** Number of events removed by QRM message. */
   private long eventsRemovedByQrm;
 
-  /**
-   * Number of events taken from the queue.
-   */
+  /** Number of events taken from the queue. */
   private long eventsTaken;
 
-  /**
-   * Number of void removals from the queue.
-   */
+  /** Number of void removals from the queue. */
   private long numVoidRemovals;
 
   public String getClientId() {
@@ -155,7 +134,26 @@ public class ClientQueueDetail {
 
   @Override
   public String toString() {
-    return "ClientQueueDetail [clientId=" + clientId + ", queueSize=" + queueSize + ", eventsEnqued=" + eventsEnqued + ", eventsRemoved=" + eventsRemoved + ", eventsConflated=" + eventsConflated + ", markerEventsConflated=" + markerEventsConflated + ", eventsExpired=" + eventsExpired + ", eventsRemovedByQrm=" + eventsRemovedByQrm + ", eventsTaken=" + eventsTaken + ", numVoidRemovals=" + numVoidRemovals + "]";
+    return "ClientQueueDetail [clientId="
+        + clientId
+        + ", queueSize="
+        + queueSize
+        + ", eventsEnqued="
+        + eventsEnqued
+        + ", eventsRemoved="
+        + eventsRemoved
+        + ", eventsConflated="
+        + eventsConflated
+        + ", markerEventsConflated="
+        + markerEventsConflated
+        + ", eventsExpired="
+        + eventsExpired
+        + ", eventsRemovedByQrm="
+        + eventsRemovedByQrm
+        + ", eventsTaken="
+        + eventsTaken
+        + ", numVoidRemovals="
+        + numVoidRemovals
+        + "]";
   }
-
 }

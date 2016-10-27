@@ -40,13 +40,12 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
 
   private static final CqListener[] EMPTY_LISTENERS = new CqListener[0];
 
-  /**
-   * Used to synchronize access to cqListeners
-   */
+  /** Used to synchronize access to cqListeners */
   private final Object clSync = new Object();
 
   /**
    * Returns the CqListeners set with the CQ
+   *
    * @return CqListener[]
    */
   public CqListener[] getCqListeners() {
@@ -61,11 +60,11 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
       listeners.toArray(result);
     }
     return result;
-
   }
 
   /**
    * Returns the CqListener set with the CQ
+   *
    * @return CqListener
    */
   public CqListener getCqListener() {
@@ -81,7 +80,8 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
         return listeners.get(0);
       }
     }
-    throw new IllegalStateException(LocalizedStrings.CqAttributesFactory_MORE_THAN_ONE_CQLISTENER_EXISTS.toLocalizedString());
+    throw new IllegalStateException(
+        LocalizedStrings.CqAttributesFactory_MORE_THAN_ONE_CQLISTENER_EXISTS.toLocalizedString());
   }
 
   @Override
@@ -89,18 +89,24 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
     try {
       return super.clone();
     } catch (CloneNotSupportedException e) {
-      throw new InternalError(LocalizedStrings.CqAttributesFactory_CLONENOTSUPPORTEDEXCEPTION_THROWN_IN_CLASS_THAT_IMPLEMENTS_CLONEABLE.toLocalizedString());
+      throw new InternalError(
+          LocalizedStrings
+              .CqAttributesFactory_CLONENOTSUPPORTEDEXCEPTION_THROWN_IN_CLASS_THAT_IMPLEMENTS_CLONEABLE
+              .toLocalizedString());
     }
   }
 
   /**
    * Adds a Cqlistener to the end of the list of Cqlisteners on this CqQuery.
+   *
    * @param cql the user defined cq listener to add to the CqQuery.
    * @throws IllegalArgumentException if <code>aListener</code> is null
    */
   public void addCqListener(CqListener cql) {
     if (cql == null) {
-      throw new IllegalArgumentException(LocalizedStrings.CqAttributesFactory_ADDCQLISTENER_PARAMETER_WAS_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.CqAttributesFactory_ADDCQLISTENER_PARAMETER_WAS_NULL
+              .toLocalizedString());
     }
     synchronized (this.clSync) {
       ArrayList<CqListener> oldListeners = this.cqListeners;
@@ -117,7 +123,9 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
   }
 
   /**
-   * Removes all Cqlisteners, calling on each of them, and then adds each listener in the specified array.
+   * Removes all Cqlisteners, calling on each of them, and then adds each listener in the specified
+   * array.
+   *
    * @param addedListeners a possibly null or empty array of listeners to add to this CqQuery.
    * @throws IllegalArgumentException if the <code>newListeners</code> array has a null element
    */
@@ -130,7 +138,9 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
       } else { // we have some listeners to add
         List nl = Arrays.asList(addedListeners);
         if (nl.contains(null)) {
-          throw new IllegalArgumentException(LocalizedStrings.CqAttributesFactory_INITCQLISTENERS_PARAMETER_HAD_A_NULL_ELEMENT.toLocalizedString());
+          throw new IllegalArgumentException(
+              LocalizedStrings.CqAttributesFactory_INITCQLISTENERS_PARAMETER_HAD_A_NULL_ELEMENT
+                  .toLocalizedString());
         }
         this.setCqListeners(new ArrayList(nl));
       }
@@ -138,13 +148,17 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
 
     if (oldListeners != null) {
       CqListener cql = null;
-      for (Iterator<CqListener> iter = oldListeners.iterator(); iter.hasNext();) {
+      for (Iterator<CqListener> iter = oldListeners.iterator(); iter.hasNext(); ) {
         try {
           cql = iter.next();
           cql.close();
           // Handle client side exceptions.
         } catch (Exception ex) {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.CqAttributesFactory_EXCEPTION_OCCURED_WHILE_CLOSING_CQ_LISTENER_ERROR_0, ex.getLocalizedMessage()));
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .CqAttributesFactory_EXCEPTION_OCCURED_WHILE_CLOSING_CQ_LISTENER_ERROR_0,
+                  ex.getLocalizedMessage()));
           if (logger.isDebugEnabled()) {
             logger.debug(ex.getMessage(), ex);
           }
@@ -160,7 +174,11 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
           // error condition, so you also need to check to see if the JVM
           // is still usable:
           SystemFailure.checkFailure();
-          logger.warn(LocalizedMessage.create(LocalizedStrings.CqAttributesFactory_RUNTIME_EXCEPTION_OCCURED_WHILE_CLOSING_CQ_LISTENER_ERROR_0, t.getLocalizedMessage()));
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .CqAttributesFactory_RUNTIME_EXCEPTION_OCCURED_WHILE_CLOSING_CQ_LISTENER_ERROR_0,
+                  t.getLocalizedMessage()));
           if (logger.isDebugEnabled()) {
             logger.debug(t.getMessage(), t);
           }
@@ -170,16 +188,18 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
   }
 
   /**
-   * Removes a Cqlistener from the list of Cqlisteners on this CqQuery.
-   * Does nothing if the specified listener has not been added.
-   * If the specified listener has been added then {@link CacheCallback#close()} will
-   * be called on it; otherwise does nothing.
+   * Removes a Cqlistener from the list of Cqlisteners on this CqQuery. Does nothing if the
+   * specified listener has not been added. If the specified listener has been added then {@link
+   * CacheCallback#close()} will be called on it; otherwise does nothing.
+   *
    * @param cql the Cqlistener to remove from the CqQuery.
    * @throws IllegalArgumentException if <code>cl</code> is null
    */
   public void removeCqListener(CqListener cql) {
     if (cql == null) {
-      throw new IllegalArgumentException(LocalizedStrings.CqAttributesFactory_REMOVECQLISTENER_PARAMETER_WAS_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.CqAttributesFactory_REMOVECQLISTENER_PARAMETER_WAS_NULL
+              .toLocalizedString());
     }
     synchronized (this.clSync) {
       ArrayList<CqListener> oldListeners = this.cqListeners;
@@ -192,7 +212,10 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
             cql.close();
             // Handle client side exceptions.
           } catch (Exception ex) {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.CqAttributesFactory_EXCEPTION_CLOSING_CQ_LISTENER_ERROR_0, ex.getLocalizedMessage()));
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings.CqAttributesFactory_EXCEPTION_CLOSING_CQ_LISTENER_ERROR_0,
+                    ex.getLocalizedMessage()));
             if (logger.isDebugEnabled()) {
               logger.debug(ex.getMessage(), ex);
             }
@@ -208,7 +231,11 @@ public class CqAttributesImpl implements CqAttributes, CqAttributesMutator, Clon
             // error condition, so you also need to check to see if the JVM
             // is still usable:
             SystemFailure.checkFailure();
-            logger.warn(LocalizedMessage.create(LocalizedStrings.CqAttributesFactory_RUNTIME_EXCEPTION_OCCURED_CLOSING_CQ_LISTENER_ERROR_0, t.getLocalizedMessage()));
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings
+                        .CqAttributesFactory_RUNTIME_EXCEPTION_OCCURED_CLOSING_CQ_LISTENER_ERROR_0,
+                    t.getLocalizedMessage()));
             if (logger.isDebugEnabled()) {
               logger.debug(t.getMessage(), t);
             }

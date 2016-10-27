@@ -34,7 +34,7 @@ public class ArrayUtilsJUnitTest {
   @Test
   @SuppressWarnings("null")
   public void testGetElementAtIndex() {
-    final Object[] array = { "test", "testing", "tested" };
+    final Object[] array = {"test", "testing", "tested"};
 
     assertEquals("test", ArrayUtils.getElementAtIndex(array, 0, null));
     assertEquals("testing", ArrayUtils.getElementAtIndex(array, 1, null));
@@ -48,7 +48,8 @@ public class ArrayUtilsJUnitTest {
 
   @Test
   public void testGetElementAtIndexThrowingArrayIndexOutOfBoundsExceptionOnNonEmptyArray() {
-    assertEquals("defaultValue", ArrayUtils.getElementAtIndex(new Object[] { "test" }, 1, "defaultValue"));
+    assertEquals(
+        "defaultValue", ArrayUtils.getElementAtIndex(new Object[] {"test"}, 1, "defaultValue"));
   }
 
   @Test
@@ -63,7 +64,7 @@ public class ArrayUtilsJUnitTest {
 
   @Test
   public void testToString() {
-    final Object[] array = { "test", "testing", "tested" };
+    final Object[] array = {"test", "testing", "tested"};
 
     assertEquals("[test, testing, tested]", ArrayUtils.toString(array));
   }
@@ -80,7 +81,7 @@ public class ArrayUtilsJUnitTest {
 
   @Test
   public void testGetIntegerArray() {
-    final Integer[] array = ArrayUtils.toIntegerArray(new int[] { 0, 1, 2, 4, 8 });
+    final Integer[] array = ArrayUtils.toIntegerArray(new int[] {0, 1, 2, 4, 8});
 
     assertNotNull(array);
     assertEquals(5, array.length);
@@ -173,5 +174,4 @@ public class ArrayUtilsJUnitTest {
     final Byte[][] byteArray = null;
     assertNull(ArrayUtils.toBytes(byteArray));
   }
-
 }

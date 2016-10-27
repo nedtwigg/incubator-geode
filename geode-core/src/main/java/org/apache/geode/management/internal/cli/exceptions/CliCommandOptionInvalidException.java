@@ -26,11 +26,16 @@ public class CliCommandOptionInvalidException extends CliCommandOptionException 
     this(commandTarget, option, null, null);
   }
 
-  public CliCommandOptionInvalidException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet) {
+  public CliCommandOptionInvalidException(
+      final CommandTarget commandTarget, final Option option, final OptionSet optionSet) {
     this(commandTarget, option, optionSet, null);
   }
 
-  public CliCommandOptionInvalidException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet, final Throwable cause) {
+  public CliCommandOptionInvalidException(
+      final CommandTarget commandTarget,
+      final Option option,
+      final OptionSet optionSet,
+      final Throwable cause) {
     super(commandTarget, option, optionSet, cause);
   }
 }

@@ -20,11 +20,7 @@ import java.util.Map;
 
 import org.apache.geode.internal.cache.HARegion;
 
-/**
- * Helper class to access the required functions of this package from
- * outside the package.
- */
-
+/** Helper class to access the required functions of this package from outside the package. */
 public class HAHelper {
 
   public static String getRegionQueueName(String proxyId) {

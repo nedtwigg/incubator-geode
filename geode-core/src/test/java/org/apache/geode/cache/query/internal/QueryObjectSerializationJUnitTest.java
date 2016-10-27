@@ -50,10 +50,7 @@ public class QueryObjectSerializationJUnitTest implements Serializable {
   /** A <code>ByteArrayOutputStream</code> that data is serialized to */
   private transient ByteArrayOutputStream baos;
 
-  /**
-   * Creates a new <code>ByteArrayOutputStream</code> for this test to
-   * work with.
-   */
+  /** Creates a new <code>ByteArrayOutputStream</code> for this test to work with. */
   @Before
   public void setUp() {
     this.baos = new ByteArrayOutputStream();
@@ -64,37 +61,31 @@ public class QueryObjectSerializationJUnitTest implements Serializable {
     this.baos = null;
   }
 
-  /**
-   * Returns a <code>DataOutput</code> to write to
-   */
+  /** Returns a <code>DataOutput</code> to write to */
   private DataOutputStream getDataOutput() {
     return new DataOutputStream(this.baos);
   }
 
-  /**
-   * Returns a <code>DataInput</code> to read from
-   */
+  /** Returns a <code>DataInput</code> to read from */
   private DataInputStream getDataInput() {
     ByteArrayInputStream bais = new ByteArrayInputStream(this.baos.toByteArray());
     return new DataInputStream(bais);
   }
 
   /**
-   * Data serializes and then data de-serializes the given object and
-   * asserts that the two objects satisfy o1.equals(o2)
+   * Data serializes and then data de-serializes the given object and asserts that the two objects
+   * satisfy o1.equals(o2)
    */
   private void checkRoundTrip(Object o1) throws IOException, ClassNotFoundException {
     DataOutputStream out = getDataOutput();
     DataSerializer.writeObject(o1, out);
     out.flush();
     DataInput in = getDataInput();
-    assertEquals(o1, DataSerializer.<Object> readObject(in));
+    assertEquals(o1, DataSerializer.<Object>readObject(in));
     this.baos = new ByteArrayOutputStream();
   }
 
-  /**
-   * Tests the serialization of many, but not all of the possible ResultSets
-   */
+  /** Tests the serialization of many, but not all of the possible ResultSets */
   @Test
   public void testSerializationOfQueryResults() throws IOException, ClassNotFoundException {
     Collection data = new java.util.ArrayList();
@@ -116,12 +107,12 @@ public class QueryObjectSerializationJUnitTest implements Serializable {
     rbWithData.setElementType(elementType); //avoid NPE in equals
     checkRoundTrip(rbWithData);
     /*
-    Set rbWithoutDataAsSet = new ResultsBag().asSet(); 
+    Set rbWithoutDataAsSet = new ResultsBag().asSet();
     ResultsCollectionWrapper rcw = new ResultsCollectionWrapper(elementType, rbWithoutDataAsSet, -1);
-    checkRoundTrip(rcw); 
-    Set rbWithDataAsSet = new ResultsBag(data, (CachePerfStats)null).asSet(); 
+    checkRoundTrip(rcw);
+    Set rbWithDataAsSet = new ResultsBag(data, (CachePerfStats)null).asSet();
     ResultsCollectionWrapper rcwWithData = new ResultsCollectionWrapper(elementType, rbWithDataAsSet, -1);
-    checkRoundTrip(rcwWithData); 
+    checkRoundTrip(rcwWithData);
     */
     //SortedResultSet
     SortedResultSet srsWithoutData = new SortedResultSet();
@@ -133,12 +124,11 @@ public class QueryObjectSerializationJUnitTest implements Serializable {
 
     //SortedStructSet
     //SortedStructSet sssWithoutData = new SortedStructSet();
-    //checkRoundTrip(sssWithoutData); 
+    //checkRoundTrip(sssWithoutData);
   }
 
   private static class SimpleObjectType implements ObjectType {
-    public SimpleObjectType() {
-    }
+    public SimpleObjectType() {}
 
     public boolean isCollectionType() {
       return false;
@@ -160,11 +150,9 @@ public class QueryObjectSerializationJUnitTest implements Serializable {
       return Object.class;
     }
 
-    public void toData(DataOutput out) {
-    }
+    public void toData(DataOutput out) {}
 
-    public void fromData(DataInput in) {
-    }
+    public void fromData(DataInput in) {}
 
     public boolean equals(Object o) {
       return o instanceof SimpleObjectType;

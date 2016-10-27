@@ -51,9 +51,9 @@ public class NewWanAuthenticationDUnitTest extends WANTestBase {
   public static boolean isDifferentServerInGetCredentialCall = false;
 
   /**
-   * Authentication test for new WAN with valid credentials. Although, nothing
-   * related to authentication has been changed in new WAN, this test case is
-   * added on request from QA for defect 44650.
+   * Authentication test for new WAN with valid credentials. Although, nothing related to
+   * authentication has been changed in new WAN, this test case is added on request from QA for
+   * defect 44650.
    */
   @Test
   public void testWanAuthValidCredentials() {
@@ -82,10 +82,12 @@ public class NewWanAuthenticationDUnitTest extends WANTestBase {
     }
     Properties javaProps2 = gen.getJavaProperties();
 
-    Properties props1 = buildProperties(clientauthenticator, clientauthInit, null, credentials1, null);
+    Properties props1 =
+        buildProperties(clientauthenticator, clientauthInit, null, credentials1, null);
 
     // have vm 3 start a cache with invalid credentails
-    Properties props2 = buildProperties(clientauthenticator, clientauthInit, null, credentials2, null);
+    Properties props2 =
+        buildProperties(clientauthenticator, clientauthInit, null, credentials2, null);
 
     vm2.invoke(() -> NewWanAuthenticationDUnitTest.createSecuredCache(props1, javaProps1, lnPort));
     logger.info("Created secured cache in vm2");
@@ -99,9 +101,11 @@ public class NewWanAuthenticationDUnitTest extends WANTestBase {
     vm3.invoke(() -> createReceiverInSecuredCache());
     logger.info("Created receiver in vm3");
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
     logger.info("Created RR in vm2");
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
     logger.info("Created RR in vm3");
 
     // this tests verifies that even though vm3 has invalid credentials, vm2 can still send data to vm3 because
@@ -110,10 +114,11 @@ public class NewWanAuthenticationDUnitTest extends WANTestBase {
     vm2.invoke(() -> WANTestBase.waitForSenderRunningState("ln"));
 
     vm2.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1));
-    vm3.invoke(() -> {
-      Region r = cache.getRegion(Region.SEPARATOR + getTestMethodName() + "_RR");
-      Awaitility.waitAtMost(20, TimeUnit.SECONDS).until(() -> assertTrue(r.size() > 0));
-    });
+    vm3.invoke(
+        () -> {
+          Region r = cache.getRegion(Region.SEPARATOR + getTestMethodName() + "_RR");
+          Awaitility.waitAtMost(20, TimeUnit.SECONDS).until(() -> assertTrue(r.size() > 0));
+        });
     logger.info("Done successfully.");
   }
 
@@ -140,26 +145,28 @@ public class NewWanAuthenticationDUnitTest extends WANTestBase {
     vm3.invoke(() -> createReceiverInSecuredCache());
     logger.info("Created receiver in vm3");
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
     logger.info("Created RR in vm2");
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
     logger.info("Created RR in vm3");
 
     vm2.invoke(() -> WANTestBase.startSender("ln"));
     vm2.invoke(() -> WANTestBase.waitForSenderRunningState("ln"));
     vm2.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1));
-    vm3.invoke(() -> {
-      Region r = cache.getRegion(Region.SEPARATOR + getTestMethodName() + "_RR");
-      Awaitility.waitAtMost(20, TimeUnit.SECONDS).until(() -> assertTrue(r.size() > 0));
-
-    });
+    vm3.invoke(
+        () -> {
+          Region r = cache.getRegion(Region.SEPARATOR + getTestMethodName() + "_RR");
+          Awaitility.waitAtMost(20, TimeUnit.SECONDS).until(() -> assertTrue(r.size() > 0));
+        });
     logger.info("Done successfully.");
   }
 
   /**
-   * Test authentication with new WAN with invalid credentials. Although,
-   * nothing related to authentication has been changed in new WAN, this test
-   * case is added on request from QA for defect 44650.
+   * Test authentication with new WAN with invalid credentials. Although, nothing related to
+   * authentication has been changed in new WAN, this test case is added on request from QA for
+   * defect 44650.
    */
   @Test
   public void testWanAuthInvalidCredentials() {
@@ -188,8 +195,10 @@ public class NewWanAuthenticationDUnitTest extends WANTestBase {
     }
     Properties javaProps2 = gen.getJavaProperties();
 
-    Properties props1 = buildProperties(clientauthenticator, clientauthInit, null, credentials1, null);
-    Properties props2 = buildProperties(clientauthenticator, clientauthInit, null, credentials2, null);
+    Properties props1 =
+        buildProperties(clientauthenticator, clientauthInit, null, credentials1, null);
+    Properties props2 =
+        buildProperties(clientauthenticator, clientauthInit, null, credentials2, null);
 
     logger.info("Done building auth properties");
 
@@ -205,14 +214,17 @@ public class NewWanAuthenticationDUnitTest extends WANTestBase {
     vm3.invoke(() -> createReceiverInSecuredCache());
     logger.info("Created receiver in vm3");
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
     logger.info("Created RR in vm2");
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
     logger.info("Created RR in vm3");
 
     try {
       vm2.invoke(() -> WANTestBase.startSender("ln"));
-      fail("Authentication Failed: While starting the sender, an exception should have been thrown");
+      fail(
+          "Authentication Failed: While starting the sender, an exception should have been thrown");
     } catch (Exception e) {
       if (!(e.getCause().getCause() instanceof AuthenticationFailedException)) {
         fail("Authentication is not working as expected", e);
@@ -221,9 +233,9 @@ public class NewWanAuthenticationDUnitTest extends WANTestBase {
   }
 
   /**
-   * Test authentication with new WAN with invalid credentials. Although,
-   * nothing related to authentication has been changed in new WAN, this test
-   * case is added on request from QA for defect 44650.
+   * Test authentication with new WAN with invalid credentials. Although, nothing related to
+   * authentication has been changed in new WAN, this test case is added on request from QA for
+   * defect 44650.
    */
   @Test
   public void testWanSecurityManagerWithInvalidCredentials() {
@@ -250,14 +262,17 @@ public class NewWanAuthenticationDUnitTest extends WANTestBase {
     vm3.invoke(() -> createReceiverInSecuredCache());
     logger.info("Created receiver in vm3");
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
     logger.info("Created RR in vm2");
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
     logger.info("Created RR in vm3");
 
     try {
       vm2.invoke(() -> WANTestBase.startSender("ln"));
-      fail("Authentication Failed: While starting the sender, an exception should have been thrown");
+      fail(
+          "Authentication Failed: While starting the sender, an exception should have been thrown");
     } catch (Exception e) {
       if (!(e.getCause().getCause() instanceof AuthenticationFailedException)) {
         fail("Authentication is not working as expected", e);
@@ -265,7 +280,12 @@ public class NewWanAuthenticationDUnitTest extends WANTestBase {
     }
   }
 
-  private static Properties buildProperties(String clientauthenticator, String clientAuthInit, String accessor, Properties extraAuthProps, Properties extraAuthzProps) {
+  private static Properties buildProperties(
+      String clientauthenticator,
+      String clientAuthInit,
+      String accessor,
+      Properties extraAuthProps,
+      Properties extraAuthzProps) {
     Properties authProps = new Properties();
     if (clientauthenticator != null) {
       authProps.setProperty(SECURITY_CLIENT_AUTHENTICATOR, clientauthenticator);
@@ -317,22 +337,40 @@ public class NewWanAuthenticationDUnitTest extends WANTestBase {
     }
 
     @Override
-    public Properties getCredentials(Properties props, DistributedMember server, boolean isPeer) throws AuthenticationFailedException {
-      boolean val = (CacheFactory.getAnyInstance().getDistributedSystem().getDistributedMember().getProcessId() != server.getProcessId());
+    public Properties getCredentials(Properties props, DistributedMember server, boolean isPeer)
+        throws AuthenticationFailedException {
+      boolean val =
+          (CacheFactory.getAnyInstance()
+                  .getDistributedSystem()
+                  .getDistributedMember()
+                  .getProcessId()
+              != server.getProcessId());
       Assert.assertTrue(val, "getCredentials: Server should be different");
       Properties p = super.getCredentials(props, server, isPeer);
       if (val) {
         isDifferentServerInGetCredentialCall = true;
-        CacheFactory.getAnyInstance().getLoggerI18n().convertToLogWriter().config("setting  isDifferentServerInGetCredentialCall " + isDifferentServerInGetCredentialCall);
+        CacheFactory.getAnyInstance()
+            .getLoggerI18n()
+            .convertToLogWriter()
+            .config(
+                "setting  isDifferentServerInGetCredentialCall "
+                    + isDifferentServerInGetCredentialCall);
       } else {
-        CacheFactory.getAnyInstance().getLoggerI18n().convertToLogWriter().config("setting22  isDifferentServerInGetCredentialCall " + isDifferentServerInGetCredentialCall);
+        CacheFactory.getAnyInstance()
+            .getLoggerI18n()
+            .convertToLogWriter()
+            .config(
+                "setting22  isDifferentServerInGetCredentialCall "
+                    + isDifferentServerInGetCredentialCall);
       }
       return p;
     }
   }
 
   public static void verifyDifferentServerInGetCredentialCall() {
-    Assert.assertTrue(isDifferentServerInGetCredentialCall, "verifyDifferentServerInGetCredentialCall: Server should be different");
+    Assert.assertTrue(
+        isDifferentServerInGetCredentialCall,
+        "verifyDifferentServerInGetCredentialCall: Server should be different");
     isDifferentServerInGetCredentialCall = false;
   }
 
@@ -365,13 +403,17 @@ public class NewWanAuthenticationDUnitTest extends WANTestBase {
       }
       Properties javaProps2 = gen.getJavaProperties();
 
-      Properties props1 = buildProperties(clientauthenticator, clientauthInit, null, credentials1, null);
-      Properties props2 = buildProperties(clientauthenticator, clientauthInit, null, credentials2, null);
+      Properties props1 =
+          buildProperties(clientauthenticator, clientauthInit, null, credentials1, null);
+      Properties props2 =
+          buildProperties(clientauthenticator, clientauthInit, null, credentials2, null);
 
-      vm2.invoke(() -> NewWanAuthenticationDUnitTest.createSecuredCache(props1, javaProps1, lnPort));
+      vm2.invoke(
+          () -> NewWanAuthenticationDUnitTest.createSecuredCache(props1, javaProps1, lnPort));
       logger.info("Created secured cache in vm2");
 
-      vm3.invoke(() -> NewWanAuthenticationDUnitTest.createSecuredCache(props2, javaProps2, nyPort));
+      vm3.invoke(
+          () -> NewWanAuthenticationDUnitTest.createSecuredCache(props2, javaProps2, nyPort));
       logger.info("Created secured cache in vm3");
 
       vm2.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));

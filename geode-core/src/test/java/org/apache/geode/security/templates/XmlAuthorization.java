@@ -50,54 +50,46 @@ import org.apache.geode.security.AccessControl;
 import org.apache.geode.security.NotAuthorizedException;
 
 /**
- * An implementation of the {@link AccessControl} interface that allows
- * authorization using the permissions as specified in the given XML
- * file.
- * 
- * The format of the XML file is specified in <a href="authz5_5.dtd"/>. It
- * implements a role-based authorization at the operation level for each region.
- * Each principal name may be associated with a set of roles. The name of the
- * principal is obtained using the {@link Principal#getName()} method and no other
- * information of the principal is utilized. Each role can be provided
- * permissions to execute operations for each region.
- * 
- * The top-level element in the XML is "acl" tag that contains the "role" and
- * "permission" tags. The "role" tag contains the list of users that have been
- * given that role. The name of the role is specified in the "role" attribute
- * and the users are contained in the "user" tags insided the "role" tag.
- * 
- * The "permissions" tag contains the list of operations allowed for a
- * particular region. The role name is specified as the "role" attribute, the
- * list of comma separated region names as the optional "regions" attribute and
- * the operation names are contained in the "operation" tags inside the
- * "permissions" tag. The allowed operation names are: GET, PUT, PUTALL,
- * DESTROY, REGISTER_INTEREST, UNREGISTER_INTEREST, CONTAINS_KEY, KEY_SET,
- * QUERY, EXECUTE_CQ, STOP_CQ, CLOSE_CQ, REGION_CLEAR, REGION_CREATE,
- * REGION_DESTROY. These correspond to the operations in the
+ * An implementation of the {@link AccessControl} interface that allows authorization using the
+ * permissions as specified in the given XML file.
+ *
+ * <p>The format of the XML file is specified in <a href="authz5_5.dtd"/>. It implements a
+ * role-based authorization at the operation level for each region. Each principal name may be
+ * associated with a set of roles. The name of the principal is obtained using the {@link
+ * Principal#getName()} method and no other information of the principal is utilized. Each role can
+ * be provided permissions to execute operations for each region.
+ *
+ * <p>The top-level element in the XML is "acl" tag that contains the "role" and "permission" tags.
+ * The "role" tag contains the list of users that have been given that role. The name of the role is
+ * specified in the "role" attribute and the users are contained in the "user" tags insided the
+ * "role" tag.
+ *
+ * <p>The "permissions" tag contains the list of operations allowed for a particular region. The
+ * role name is specified as the "role" attribute, the list of comma separated region names as the
+ * optional "regions" attribute and the operation names are contained in the "operation" tags inside
+ * the "permissions" tag. The allowed operation names are: GET, PUT, PUTALL, DESTROY,
+ * REGISTER_INTEREST, UNREGISTER_INTEREST, CONTAINS_KEY, KEY_SET, QUERY, EXECUTE_CQ, STOP_CQ,
+ * CLOSE_CQ, REGION_CLEAR, REGION_CREATE, REGION_DESTROY. These correspond to the operations in the
  * {@link OperationCode} enumeration with the same name.
- * 
- * When no region name is specified then the operation is allowed for all
- * regions in the cache. Any permissions specified for regions using the
- * "regions" attribute override these permissions. This allows users to provide
- * generic permissions without any region name, and override for specific
- * regions specified using the "regions" attribute. A cache-level operation
- * (e.g. {@link OperationCode#REGION_DESTROY}) specified for a particular region
- * is ignored i.e. the cache-level operations are only applicable when no region
- * name is specified. A {@link OperationCode#QUERY} operation is permitted when
- * either the {@code QUERY} permission is provided at the cache-level for
- * the user or when {@code QUERY} permission is provided for all the
- * regions that are part of the query string.
- * 
- * Any roles specified in the "user" tag that do not have a specified permission
- * set using the "permission" tags are ignored. When no {@link Principal} is
- * associated with the current connection, then empty user name is used to
- * search for the roles so an empty user name can be used to specify roles of
- * unauthenticated clients (i.e. {@code Everyone}).
- * 
- * This sample implementation is useful only for pre-operation checks and should
- * not be used for post-operation authorization since it does nothing useful for
- * post-operation case.
- * 
+ *
+ * <p>When no region name is specified then the operation is allowed for all regions in the cache.
+ * Any permissions specified for regions using the "regions" attribute override these permissions.
+ * This allows users to provide generic permissions without any region name, and override for
+ * specific regions specified using the "regions" attribute. A cache-level operation (e.g. {@link
+ * OperationCode#REGION_DESTROY}) specified for a particular region is ignored i.e. the cache-level
+ * operations are only applicable when no region name is specified. A {@link OperationCode#QUERY}
+ * operation is permitted when either the {@code QUERY} permission is provided at the cache-level
+ * for the user or when {@code QUERY} permission is provided for all the regions that are part of
+ * the query string.
+ *
+ * <p>Any roles specified in the "user" tag that do not have a specified permission set using the
+ * "permission" tags are ignored. When no {@link Principal} is associated with the current
+ * connection, then empty user name is used to search for the roles so an empty user name can be
+ * used to specify roles of unauthenticated clients (i.e. {@code Everyone}).
+ *
+ * <p>This sample implementation is useful only for pre-operation checks and should not be used for
+ * post-operation authorization since it does nothing useful for post-operation case.
+ *
  * @since GemFire 5.5
  */
 public class XmlAuthorization implements AccessControl {
@@ -121,7 +113,8 @@ public class XmlAuthorization implements AccessControl {
 
   private static String currentDocUri = null;
   private static Map<String, HashSet<String>> userRoles = null;
-  private static Map<String, Map<String, Map<OperationCode, FunctionSecurityPrmsHolder>>> rolePermissions = null;
+  private static Map<String, Map<String, Map<OperationCode, FunctionSecurityPrmsHolder>>>
+      rolePermissions = null;
   private static NotAuthorizedException xmlLoadFailure = null;
 
   private final Map<String, Map<OperationCode, FunctionSecurityPrmsHolder>> allowedOps;
@@ -130,12 +123,11 @@ public class XmlAuthorization implements AccessControl {
   protected LogWriter securityLogWriter;
 
   /**
-   * Public static factory method to create an instance of
-   * {@code XmlAuthorization}. The fully qualified name of the class
-   * ({@code org.apache.geode.security.templates.XmlAuthorization.create})
-   * should be mentioned as the {@code security-client-accessor} system
-   * property to enable pre-operation authorization checks as implemented in
-   * this class.
+   * Public static factory method to create an instance of {@code XmlAuthorization}. The fully
+   * qualified name of the class ({@code
+   * org.apache.geode.security.templates.XmlAuthorization.create}) should be mentioned as the {@code
+   * security-client-accessor} system property to enable pre-operation authorization checks as
+   * implemented in this class.
    *
    * @return an object of {@code XmlAuthorization} class
    */
@@ -143,9 +135,7 @@ public class XmlAuthorization implements AccessControl {
     return new XmlAuthorization();
   }
 
-  /**
-   * Clear all the statically cached information.
-   */
+  /** Clear all the statically cached information. */
   public static void clear() {
     XmlAuthorization.currentDocUri = null;
     if (XmlAuthorization.userRoles != null) {
@@ -160,8 +150,8 @@ public class XmlAuthorization implements AccessControl {
   }
 
   /**
-   * Change the region name to a standard format having single '/' as separator
-   * and starting with a '/' as in standard POSIX paths
+   * Change the region name to a standard format having single '/' as separator and starting with a
+   * '/' as in standard POSIX paths
    */
   public static String normalizeRegionName(final String regionName) {
     if (regionName == null || regionName.length() == 0) {
@@ -219,32 +209,25 @@ public class XmlAuthorization implements AccessControl {
   }
 
   /**
-   * Initialize the {@code XmlAuthorization} callback for a client having
-   * the given principal.
-   * 
-   * This method caches the full XML authorization file the first time it is
-   * invoked and caches all the permissions for the provided
-   * {@code principal} to speed up lookup the
-   * {@code authorizeOperation} calls. The permissions for the principal
-   * are maintained as a {@link Map} of region name to the {@link HashSet} of
-   * operations allowed for that region. A global entry with region name as
-   * empty string is also made for permissions provided for all the regions.
-   * 
-   * @param  principal
-   *         the principal associated with the authenticated client
-   * @param  cache
-   *         reference to the cache object
-   * @param  remoteMember
-   *         the {@link DistributedMember} object for the remote authenticated
-   *         client
-   * 
-   * @throws NotAuthorizedException
-   *         if some exception condition happens during the initialization
-   *         while reading the XML; in such a case all subsequent client
-   *         operations will throw {@code NotAuthorizedException}
+   * Initialize the {@code XmlAuthorization} callback for a client having the given principal.
+   *
+   * <p>This method caches the full XML authorization file the first time it is invoked and caches
+   * all the permissions for the provided {@code principal} to speed up lookup the {@code
+   * authorizeOperation} calls. The permissions for the principal are maintained as a {@link Map} of
+   * region name to the {@link HashSet} of operations allowed for that region. A global entry with
+   * region name as empty string is also made for permissions provided for all the regions.
+   *
+   * @param principal the principal associated with the authenticated client
+   * @param cache reference to the cache object
+   * @param remoteMember the {@link DistributedMember} object for the remote authenticated client
+   * @throws NotAuthorizedException if some exception condition happens during the initialization
+   *     while reading the XML; in such a case all subsequent client operations will throw {@code
+   *     NotAuthorizedException}
    */
   @Override
-  public void init(final Principal principal, final DistributedMember remoteMember, final Cache cache) throws NotAuthorizedException {
+  public void init(
+      final Principal principal, final DistributedMember remoteMember, final Cache cache)
+      throws NotAuthorizedException {
     synchronized (sync) {
       XmlAuthorization.init(cache);
     }
@@ -262,11 +245,14 @@ public class XmlAuthorization implements AccessControl {
     HashSet<String> roles = XmlAuthorization.userRoles.get(name);
     if (roles != null) {
       for (String roleName : roles) {
-        Map<String, Map<OperationCode, FunctionSecurityPrmsHolder>> regionOperationMap = XmlAuthorization.rolePermissions.get(roleName);
+        Map<String, Map<OperationCode, FunctionSecurityPrmsHolder>> regionOperationMap =
+            XmlAuthorization.rolePermissions.get(roleName);
         if (regionOperationMap != null) {
-          for (Map.Entry<String, Map<OperationCode, FunctionSecurityPrmsHolder>> regionEntry : regionOperationMap.entrySet()) {
+          for (Map.Entry<String, Map<OperationCode, FunctionSecurityPrmsHolder>> regionEntry :
+              regionOperationMap.entrySet()) {
             String regionName = regionEntry.getKey();
-            Map<OperationCode, FunctionSecurityPrmsHolder> regionOperations = this.allowedOps.get(regionName);
+            Map<OperationCode, FunctionSecurityPrmsHolder> regionOperations =
+                this.allowedOps.get(regionName);
             if (regionOperations == null) {
               regionOperations = new HashMap<OperationCode, FunctionSecurityPrmsHolder>();
               this.allowedOps.put(regionName, regionOperations);
@@ -280,18 +266,14 @@ public class XmlAuthorization implements AccessControl {
 
   /**
    * Return true if the given operation is allowed for the cache/region.
-   * 
-   * This looks up the cached permissions of the principal in the map for the
-   * provided region name. If none are found then the global permissions with
-   * empty region name are looked up. The operation is allowed if it is found
-   * this permission list.
-   * 
-   * @param  regionName
-   *         When null then it indicates a cache-level operation, else the
-   *         name of the region for the operation.
-   * @param  context
-   *         the data required by the operation
-   * 
+   *
+   * <p>This looks up the cached permissions of the principal in the map for the provided region
+   * name. If none are found then the global permissions with empty region name are looked up. The
+   * operation is allowed if it is found this permission list.
+   *
+   * @param regionName When null then it indicates a cache-level operation, else the name of the
+   *     region for the operation.
+   * @param context the data required by the operation
    * @return true if the operation is authorized and false otherwise
    */
   @Override
@@ -349,14 +331,21 @@ public class XmlAuthorization implements AccessControl {
 
         } else {
           if (!context.isPostOperation()) {
-            FunctionSecurityPrmsHolder functionParameter = operationMap.get(context.getOperationCode());
-            ExecuteFunctionOperationContext functionContext = (ExecuteFunctionOperationContext) context;
+            FunctionSecurityPrmsHolder functionParameter =
+                operationMap.get(context.getOperationCode());
+            ExecuteFunctionOperationContext functionContext =
+                (ExecuteFunctionOperationContext) context;
             // OnRegion execution
             if (functionContext.getRegionName() != null) {
-              if (functionParameter.isOptimizeForWrite() != null && functionParameter.isOptimizeForWrite().booleanValue() != functionContext.isOptimizeForWrite()) {
+              if (functionParameter.isOptimizeForWrite() != null
+                  && functionParameter.isOptimizeForWrite().booleanValue()
+                      != functionContext.isOptimizeForWrite()) {
                 return false;
               }
-              if (functionParameter.getFunctionIds() != null && !functionParameter.getFunctionIds().contains(functionContext.getFunctionId())) {
+              if (functionParameter.getFunctionIds() != null
+                  && !functionParameter
+                      .getFunctionIds()
+                      .contains(functionContext.getFunctionId())) {
                 return false;
               }
               if (functionParameter.getKeySet() != null && functionContext.getKeySet() != null) {
@@ -366,18 +355,24 @@ public class XmlAuthorization implements AccessControl {
               }
               return true;
 
-            } else {// On Server execution
-              if (functionParameter.getFunctionIds() != null && !functionParameter.getFunctionIds().contains(functionContext.getFunctionId())) {
+            } else { // On Server execution
+              if (functionParameter.getFunctionIds() != null
+                  && !functionParameter
+                      .getFunctionIds()
+                      .contains(functionContext.getFunctionId())) {
                 return false;
               }
               return true;
             }
 
           } else {
-            ExecuteFunctionOperationContext functionContext = (ExecuteFunctionOperationContext) context;
-            FunctionSecurityPrmsHolder functionParameter = operationMap.get(context.getOperationCode());
+            ExecuteFunctionOperationContext functionContext =
+                (ExecuteFunctionOperationContext) context;
+            FunctionSecurityPrmsHolder functionParameter =
+                operationMap.get(context.getOperationCode());
             if (functionContext.getRegionName() != null) {
-              if (functionContext.getResult() instanceof ArrayList && functionParameter.getKeySet() != null) {
+              if (functionContext.getResult() instanceof ArrayList
+                  && functionParameter.getKeySet() != null) {
                 ArrayList<String> resultList = (ArrayList) functionContext.getResult();
                 Set<String> nonAllowedKeys = functionParameter.getKeySet();
                 if (resultList.containsAll(nonAllowedKeys)) {
@@ -401,9 +396,7 @@ public class XmlAuthorization implements AccessControl {
     return false;
   }
 
-  /**
-   * Clears the cached information for this principal.
-   */
+  /** Clears the cached information for this principal. */
   @Override
   public void close() {
     this.allowedOps.clear();
@@ -432,19 +425,20 @@ public class XmlAuthorization implements AccessControl {
   }
 
   /**
-   * Cache authorization information for all users statically. This method is
-   * not thread-safe and is should either be invoked only once, or the caller
-   * should take the appropriate locks.
+   * Cache authorization information for all users statically. This method is not thread-safe and is
+   * should either be invoked only once, or the caller should take the appropriate locks.
    *
    * @param cache reference to the cache object for the distributed system
    */
   private static void init(final Cache cache) throws NotAuthorizedException {
     final LogWriter systemLogWriter = cache.getLogger();
-    final String xmlDocumentUri = (String) cache.getDistributedSystem().getSecurityProperties().get(DOC_URI_PROP_NAME);
+    final String xmlDocumentUri =
+        (String) cache.getDistributedSystem().getSecurityProperties().get(DOC_URI_PROP_NAME);
 
     try {
       if (xmlDocumentUri == null) {
-        throw new NotAuthorizedException("No ACL file defined using tag [" + DOC_URI_PROP_NAME + "] in system properties");
+        throw new NotAuthorizedException(
+            "No ACL file defined using tag [" + DOC_URI_PROP_NAME + "] in system properties");
       }
       if (xmlDocumentUri.equals(XmlAuthorization.currentDocUri)) {
         if (XmlAuthorization.xmlLoadFailure != null) {
@@ -466,7 +460,8 @@ public class XmlAuthorization implements AccessControl {
       final Document xmlDocument = builder.parse(xmlDocumentUri);
 
       XmlAuthorization.userRoles = new HashMap<String, HashSet<String>>();
-      XmlAuthorization.rolePermissions = new HashMap<String, Map<String, Map<OperationCode, FunctionSecurityPrmsHolder>>>();
+      XmlAuthorization.rolePermissions =
+          new HashMap<String, Map<String, Map<OperationCode, FunctionSecurityPrmsHolder>>>();
 
       final NodeList roleUserNodes = xmlDocument.getElementsByTagName(TAG_ROLE);
 
@@ -488,7 +483,9 @@ public class XmlAuthorization implements AccessControl {
             userRoleSet.add(roleName);
 
           } else {
-            throw new SAXParseException("Unknown tag [" + userNode.getNodeName() + "] as child of tag [" + TAG_ROLE + ']', null);
+            throw new SAXParseException(
+                "Unknown tag [" + userNode.getNodeName() + "] as child of tag [" + TAG_ROLE + ']',
+                null);
           }
         }
       }
@@ -498,15 +495,18 @@ public class XmlAuthorization implements AccessControl {
       for (int permIndex = 0; permIndex < rolePermissionNodes.getLength(); permIndex++) {
         final Node rolePermissionNode = rolePermissionNodes.item(permIndex);
         final String roleName = getAttributeValue(rolePermissionNode, ATTR_ROLE);
-        Map<String, Map<OperationCode, FunctionSecurityPrmsHolder>> regionOperationMap = XmlAuthorization.rolePermissions.get(roleName);
+        Map<String, Map<OperationCode, FunctionSecurityPrmsHolder>> regionOperationMap =
+            XmlAuthorization.rolePermissions.get(roleName);
 
         if (regionOperationMap == null) {
-          regionOperationMap = new HashMap<String, Map<OperationCode, FunctionSecurityPrmsHolder>>();
+          regionOperationMap =
+              new HashMap<String, Map<OperationCode, FunctionSecurityPrmsHolder>>();
           XmlAuthorization.rolePermissions.put(roleName, regionOperationMap);
         }
 
         final NodeList operationNodes = rolePermissionNode.getChildNodes();
-        final HashMap<OperationCode, FunctionSecurityPrmsHolder> operationMap = new HashMap<OperationCode, FunctionSecurityPrmsHolder>();
+        final HashMap<OperationCode, FunctionSecurityPrmsHolder> operationMap =
+            new HashMap<OperationCode, FunctionSecurityPrmsHolder>();
 
         for (int opIndex = 0; opIndex < operationNodes.getLength(); opIndex++) {
           final Node operationNode = operationNodes.item(opIndex);
@@ -523,7 +523,8 @@ public class XmlAuthorization implements AccessControl {
               operationMap.put(code, null);
 
             } else {
-              final String optimizeForWrite = getAttributeValue(operationNode, ATTR_FUNCTION_OPTIMIZE_FOR_WRITE);
+              final String optimizeForWrite =
+                  getAttributeValue(operationNode, ATTR_FUNCTION_OPTIMIZE_FOR_WRITE);
               final String functionAttr = getAttributeValue(operationNode, ATTR_FUNCTION_IDS);
               final String keysAttr = getAttributeValue(operationNode, ATTR_FUNCTION_KEY_SET);
 
@@ -557,12 +558,19 @@ public class XmlAuthorization implements AccessControl {
                 }
               }
 
-              final FunctionSecurityPrmsHolder functionContext = new FunctionSecurityPrmsHolder(isOptimizeForWrite, functionIds, keySet);
+              final FunctionSecurityPrmsHolder functionContext =
+                  new FunctionSecurityPrmsHolder(isOptimizeForWrite, functionIds, keySet);
               operationMap.put(code, functionContext);
             }
 
           } else {
-            throw new SAXParseException("Unknown tag [" + operationNode.getNodeName() + "] as child of tag [" + TAG_PERMS + ']', null);
+            throw new SAXParseException(
+                "Unknown tag ["
+                    + operationNode.getNodeName()
+                    + "] as child of tag ["
+                    + TAG_PERMS
+                    + ']',
+                null);
           }
         }
 
@@ -595,7 +603,8 @@ public class XmlAuthorization implements AccessControl {
     final Pattern authzPattern = Pattern.compile("authz.*\\.dtd");
 
     @Override
-    public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
+    public InputSource resolveEntity(final String publicId, final String systemId)
+        throws SAXException, IOException {
       try {
         final Matcher matcher = authzPattern.matcher(systemId);
         if (matcher.find()) {

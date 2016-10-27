@@ -20,10 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/****
- * Data class used for sending back names for the durable client cq
- * for a client
- */
+/** ** Data class used for sending back names for the durable client cq for a client */
 public class DurableCqNamesResult extends MemberResult implements Serializable {
 
   private static final long serialVersionUID = 1L;

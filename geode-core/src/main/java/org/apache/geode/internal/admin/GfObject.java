@@ -17,9 +17,7 @@
 
 package org.apache.geode.internal.admin;
 
-/**
- * The root of our little client side administration object model
- */
+/** The root of our little client side administration object model */
 public interface GfObject {
   public int getID();
 

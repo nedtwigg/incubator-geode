@@ -21,10 +21,7 @@ import java.util.Map;
 
 import org.apache.geode.management.internal.FederationComponent;
 
-/**
- *
- *
- */
+/** */
 public class GatewayReceiverClusterStatsMonitor {
 
   private static final String CREATE_REQUEST_RATE = "CreateRequestsRate";
@@ -54,7 +51,6 @@ public class GatewayReceiverClusterStatsMonitor {
     typeMap.put(DESTROY_REQUEST_RATE, Float.TYPE);
     typeMap.put(UPDATE_REQUEST_RATE, Float.TYPE);
     typeMap.put(EVENTS_RECEIVED_RATE, Float.TYPE);
-
   }
 
   public float getGatewayReceiverCreateRequestsRate() {
@@ -72,5 +68,4 @@ public class GatewayReceiverClusterStatsMonitor {
   public float getGatewayReceiverEventsReceivedRate() {
     return aggregator.getFloatValue(EVENTS_RECEIVED_RATE);
   }
-
 }

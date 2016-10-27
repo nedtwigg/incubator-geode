@@ -42,7 +42,8 @@ public class ExportSharedConfigurationFunction extends FunctionAdapter implement
     if (locator.isSharedConfigurationRunning()) {
       SharedConfiguration sc = locator.getSharedConfiguration();
 
-      String zipFileName = CliStrings.format(CliStrings.EXPORT_SHARED_CONFIG__FILE__NAME, UUID.randomUUID());
+      String zipFileName =
+          CliStrings.format(CliStrings.EXPORT_SHARED_CONFIG__FILE__NAME, UUID.randomUUID());
 
       String targetFilePath = FilenameUtils.concat(sc.getSharedConfigurationDirPath(), zipFileName);
       try {
@@ -50,13 +51,18 @@ public class ExportSharedConfigurationFunction extends FunctionAdapter implement
         File zippedSharedConfig = new File(targetFilePath);
         byte[] zippedConfigData = FileUtils.readFileToByteArray(zippedSharedConfig);
         FileUtils.forceDelete(zippedSharedConfig);
-        CliFunctionResult result = new CliFunctionResult(locator.getDistributedSystem().getName(), zippedConfigData, new String[] { zipFileName });
+        CliFunctionResult result =
+            new CliFunctionResult(
+                locator.getDistributedSystem().getName(),
+                zippedConfigData,
+                new String[] {zipFileName});
         context.getResultSender().lastResult(result);
       } catch (Exception e) {
         context.getResultSender().lastResult(new CliFunctionResult(memberName, e, e.getMessage()));
       }
     } else {
-      CliFunctionResult result = new CliFunctionResult(memberName, false, CliStrings.SHARED_CONFIGURATION_NOT_STARTED);
+      CliFunctionResult result =
+          new CliFunctionResult(memberName, false, CliStrings.SHARED_CONFIGURATION_NOT_STARTED);
       context.getResultSender().lastResult(result);
     }
   }

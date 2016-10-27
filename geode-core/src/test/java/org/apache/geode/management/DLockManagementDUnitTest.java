@@ -62,15 +62,16 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
 
   public DLockManagementDUnitTest() {
     super();
-
   }
 
   /**
    * Distributed Lock Service test
-   * 
+   *
    * @throws Exception
    */
-  @Category(FlakyTest.class) // GEODE-173: eats exceptions, HeadlessGFSH, time sensitive, waitForCriterions
+  @Category(
+      FlakyTest
+          .class) // GEODE-173: eats exceptions, HeadlessGFSH, time sensitive, waitForCriterions
   @Test
   public void testDLockMBean() throws Throwable {
 
@@ -99,7 +100,7 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
 
   /**
    * Distributed Lock Service test
-   * 
+   *
    * @throws Exception
    */
   @Category(FlakyTest.class) // GEODE-553: waitForCriterion, eats exceptions, HeadlessGFSH
@@ -131,312 +132,340 @@ public class DLockManagementDUnitTest extends ManagementTestBase {
     checkAggregate(managingNode, 1);
     closeLockService(managingNode);
     checkAggregate(managingNode, 0);
-
   }
 
   public void ensureProxyCleanup(final VM vm) {
 
-    SerializableRunnable ensureProxyCleanup = new SerializableRunnable("Ensure Proxy cleanup") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
-        final SystemManagementService service = (SystemManagementService) getManagementService();
+    SerializableRunnable ensureProxyCleanup =
+        new SerializableRunnable("Ensure Proxy cleanup") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            Set<DistributedMember> otherMemberSet =
+                cache.getDistributionManager().getOtherNormalDistributionManagerIds();
+            final SystemManagementService service =
+                (SystemManagementService) getManagementService();
 
-        for (final DistributedMember member : otherMemberSet) {
-          RegionMXBean bean = null;
-          try {
+            for (final DistributedMember member : otherMemberSet) {
+              RegionMXBean bean = null;
+              try {
 
-            Wait.waitForCriterion(new WaitCriterion() {
+                Wait.waitForCriterion(
+                    new WaitCriterion() {
 
-              LockServiceMXBean bean = null;
+                      LockServiceMXBean bean = null;
 
-              public String description() {
-                return "Waiting for the proxy to get deleted at managing node";
+                      public String description() {
+                        return "Waiting for the proxy to get deleted at managing node";
+                      }
+
+                      public boolean done() {
+                        ObjectName objectName =
+                            service.getRegionMBeanName(member, LOCK_SERVICE_NAME);
+                        bean = service.getMBeanProxy(objectName, LockServiceMXBean.class);
+                        boolean done = (bean == null);
+                        return done;
+                      }
+                    },
+                    MAX_WAIT,
+                    500,
+                    true);
+
+              } catch (Exception e) {
+                throw new AssertionError("could not remove proxies in required time", e);
               }
-
-              public boolean done() {
-                ObjectName objectName = service.getRegionMBeanName(member, LOCK_SERVICE_NAME);
-                bean = service.getMBeanProxy(objectName, LockServiceMXBean.class);
-                boolean done = (bean == null);
-                return done;
-              }
-
-            }, MAX_WAIT, 500, true);
-
-          } catch (Exception e) {
-            throw new AssertionError("could not remove proxies in required time", e);
-
+              assertNull(bean);
+            }
           }
-          assertNull(bean);
-
-        }
-
-      }
-    };
+        };
     vm.invoke(ensureProxyCleanup);
   }
 
   /**
    * Creates a grantor lock service
-   * 
+   *
    * @param vm
    */
   @SuppressWarnings("serial")
   protected void createGrantorLockService(final VM vm) {
-    SerializableRunnable createGrantorLockService = new SerializableRunnable("Create Grantor LockService") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        assertNull(DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME));
+    SerializableRunnable createGrantorLockService =
+        new SerializableRunnable("Create Grantor LockService") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            assertNull(DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME));
 
-        DLockService service = (DLockService) DistributedLockService.create(LOCK_SERVICE_NAME, cache.getDistributedSystem());
+            DLockService service =
+                (DLockService)
+                    DistributedLockService.create(LOCK_SERVICE_NAME, cache.getDistributedSystem());
 
-        assertSame(service, DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME));
+            assertSame(service, DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME));
 
-        InternalDistributedMember grantor = service.getLockGrantorId().getLockGrantorMember();
+            InternalDistributedMember grantor = service.getLockGrantorId().getLockGrantorMember();
 
-        assertNotNull(grantor);
+            assertNotNull(grantor);
 
-        LogWriterUtils.getLogWriter().info("In identifyLockGrantor - grantor is " + grantor);
+            LogWriterUtils.getLogWriter().info("In identifyLockGrantor - grantor is " + grantor);
 
-        ManagementService mgmtService = getManagementService();
+            ManagementService mgmtService = getManagementService();
 
-        LockServiceMXBean bean = mgmtService.getLocalLockServiceMBean(LOCK_SERVICE_NAME);
+            LockServiceMXBean bean = mgmtService.getLocalLockServiceMBean(LOCK_SERVICE_NAME);
 
-        assertNotNull(bean);
+            assertNotNull(bean);
 
-        assertTrue(bean.isDistributed());
+            assertTrue(bean.isDistributed());
 
-        assertEquals(bean.getName(), LOCK_SERVICE_NAME);
+            assertEquals(bean.getName(), LOCK_SERVICE_NAME);
 
-        assertTrue(bean.isLockGrantor());
+            assertTrue(bean.isLockGrantor());
 
-        assertEquals(cache.getDistributedSystem().getMemberId(), bean.fetchGrantorMember());
-
-      }
-    };
+            assertEquals(cache.getDistributedSystem().getMemberId(), bean.fetchGrantorMember());
+          }
+        };
     vm.invoke(createGrantorLockService);
   }
 
   /**
    * Creates a named lock service
+   *
    * @param vm
    */
   @SuppressWarnings("serial")
   protected void createLockService(final VM vm) {
-    SerializableRunnable createLockService = new SerializableRunnable("Create LockService") {
-      public void run() {
-        assertNull(DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME));
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        DistributedLockService service = DistributedLockService.create(LOCK_SERVICE_NAME, cache.getDistributedSystem());
+    SerializableRunnable createLockService =
+        new SerializableRunnable("Create LockService") {
+          public void run() {
+            assertNull(DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME));
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            DistributedLockService service =
+                DistributedLockService.create(LOCK_SERVICE_NAME, cache.getDistributedSystem());
 
-        assertSame(service, DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME));
+            assertSame(service, DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME));
 
-        ManagementService mgmtService = getManagementService();
+            ManagementService mgmtService = getManagementService();
 
-        LockServiceMXBean bean = mgmtService.getLocalLockServiceMBean(LOCK_SERVICE_NAME);
+            LockServiceMXBean bean = mgmtService.getLocalLockServiceMBean(LOCK_SERVICE_NAME);
 
-        assertNotNull(bean);
+            assertNotNull(bean);
 
-        assertTrue(bean.isDistributed());
+            assertTrue(bean.isDistributed());
 
-        assertFalse(bean.isLockGrantor());
-      }
-    };
+            assertFalse(bean.isLockGrantor());
+          }
+        };
     vm.invoke(createLockService);
   }
 
   /**
    * Closes a named lock service
+   *
    * @param vm
    */
   @SuppressWarnings("serial")
   protected void closeLockService(final VM vm) {
-    SerializableRunnable closeLockService = new SerializableRunnable("Close LockService") {
-      public void run() {
+    SerializableRunnable closeLockService =
+        new SerializableRunnable("Close LockService") {
+          public void run() {
 
-        DistributedLockService service = DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME);
+            DistributedLockService service =
+                DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME);
 
-        DistributedLockService.destroy(LOCK_SERVICE_NAME);
+            DistributedLockService.destroy(LOCK_SERVICE_NAME);
 
-        ManagementService mgmtService = getManagementService();
+            ManagementService mgmtService = getManagementService();
 
-        LockServiceMXBean bean = null;
-        try {
+            LockServiceMXBean bean = null;
+            try {
 
-          bean = mgmtService.getLocalLockServiceMBean(LOCK_SERVICE_NAME);
+              bean = mgmtService.getLocalLockServiceMBean(LOCK_SERVICE_NAME);
 
-        } catch (ManagementException mgs) {
+            } catch (ManagementException mgs) {
 
-        }
-        assertNull(bean);
-
-      }
-    };
+            }
+            assertNull(bean);
+          }
+        };
     vm.invoke(closeLockService);
   }
 
   /**
    * Lock data related verifications
+   *
    * @param vm
    */
   @SuppressWarnings("serial")
   protected void verifyLockData(final VM vm) {
-    SerializableRunnable verifyLockData = new SerializableRunnable("Verify LockService") {
-      public void run() {
+    SerializableRunnable verifyLockData =
+        new SerializableRunnable("Verify LockService") {
+          public void run() {
 
-        DistributedLockService service = DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME);
+            DistributedLockService service =
+                DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME);
 
-        final String LOCK_OBJECT = "lockObject_" + vm.getPid();
+            final String LOCK_OBJECT = "lockObject_" + vm.getPid();
 
-        Wait.waitForCriterion(new WaitCriterion() {
-          DistributedLockService service = null;
+            Wait.waitForCriterion(
+                new WaitCriterion() {
+                  DistributedLockService service = null;
 
-          public String description() {
-            return "Waiting for the lock service to be initialised";
+                  public String description() {
+                    return "Waiting for the lock service to be initialised";
+                  }
+
+                  public boolean done() {
+                    DistributedLockService service =
+                        DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME);
+                    boolean done = service != null;
+                    return done;
+                  }
+                },
+                MAX_WAIT,
+                500,
+                true);
+
+            service.lock(LOCK_OBJECT, 1000, -1);
+
+            ManagementService mgmtService = getManagementService();
+
+            LockServiceMXBean bean = null;
+            try {
+
+              bean = mgmtService.getLocalLockServiceMBean(LOCK_SERVICE_NAME);
+
+            } catch (ManagementException mgs) {
+
+            }
+            assertNotNull(bean);
+            String[] listHeldLock = bean.listHeldLocks();
+            assertEquals(listHeldLock.length, 1);
+            LogWriterUtils.getLogWriter().info("List Of Lock Object is  " + listHeldLock[0]);
+            Map<String, String> lockThreadMap = bean.listThreadsHoldingLock();
+            assertEquals(lockThreadMap.size(), 1);
+            LogWriterUtils.getLogWriter()
+                .info("List Of Lock Thread is  " + lockThreadMap.toString());
           }
-
-          public boolean done() {
-            DistributedLockService service = DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME);
-            boolean done = service != null;
-            return done;
-          }
-
-        }, MAX_WAIT, 500, true);
-
-        service.lock(LOCK_OBJECT, 1000, -1);
-
-        ManagementService mgmtService = getManagementService();
-
-        LockServiceMXBean bean = null;
-        try {
-
-          bean = mgmtService.getLocalLockServiceMBean(LOCK_SERVICE_NAME);
-
-        } catch (ManagementException mgs) {
-
-        }
-        assertNotNull(bean);
-        String[] listHeldLock = bean.listHeldLocks();
-        assertEquals(listHeldLock.length, 1);
-        LogWriterUtils.getLogWriter().info("List Of Lock Object is  " + listHeldLock[0]);
-        Map<String, String> lockThreadMap = bean.listThreadsHoldingLock();
-        assertEquals(lockThreadMap.size(), 1);
-        LogWriterUtils.getLogWriter().info("List Of Lock Thread is  " + lockThreadMap.toString());
-      }
-    };
+        };
     vm.invoke(verifyLockData);
   }
 
   /**
    * Verify lock data from remote Managing node
+   *
    * @param vm
    */
   @SuppressWarnings("serial")
   protected void verifyLockDataRemote(final VM vm) {
-    SerializableRunnable verifyLockDataRemote = new SerializableRunnable("Verify LockService Remote") {
-      public void run() {
+    SerializableRunnable verifyLockDataRemote =
+        new SerializableRunnable("Verify LockService Remote") {
+          public void run() {
 
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            Set<DistributedMember> otherMemberSet =
+                cache.getDistributionManager().getOtherNormalDistributionManagerIds();
 
-        for (DistributedMember member : otherMemberSet) {
-          LockServiceMXBean bean = null;
-          try {
-            bean = MBeanUtil.getLockServiceMbeanProxy(member, LOCK_SERVICE_NAME);
-          } catch (Exception e) {
-            InternalDistributedSystem.getLoggerI18n().fine("Undesired Result , LockServiceMBean Should not be null", e);
-
+            for (DistributedMember member : otherMemberSet) {
+              LockServiceMXBean bean = null;
+              try {
+                bean = MBeanUtil.getLockServiceMbeanProxy(member, LOCK_SERVICE_NAME);
+              } catch (Exception e) {
+                InternalDistributedSystem.getLoggerI18n()
+                    .fine("Undesired Result , LockServiceMBean Should not be null", e);
+              }
+              assertNotNull(bean);
+              String[] listHeldLock = bean.listHeldLocks();
+              assertEquals(listHeldLock.length, 1);
+              LogWriterUtils.getLogWriter().info("List Of Lock Object is  " + listHeldLock[0]);
+              Map<String, String> lockThreadMap = bean.listThreadsHoldingLock();
+              assertEquals(lockThreadMap.size(), 1);
+              LogWriterUtils.getLogWriter()
+                  .info("List Of Lock Thread is  " + lockThreadMap.toString());
+            }
           }
-          assertNotNull(bean);
-          String[] listHeldLock = bean.listHeldLocks();
-          assertEquals(listHeldLock.length, 1);
-          LogWriterUtils.getLogWriter().info("List Of Lock Object is  " + listHeldLock[0]);
-          Map<String, String> lockThreadMap = bean.listThreadsHoldingLock();
-          assertEquals(lockThreadMap.size(), 1);
-          LogWriterUtils.getLogWriter().info("List Of Lock Thread is  " + lockThreadMap.toString());
-        }
-
-      }
-    };
+        };
     vm.invoke(verifyLockDataRemote);
   }
 
   protected void checkNavigation(final VM vm, final DistributedMember lockServiceMember) {
-    SerializableRunnable checkNavigation = new SerializableRunnable("Check Navigation") {
-      public void run() {
+    SerializableRunnable checkNavigation =
+        new SerializableRunnable("Check Navigation") {
+          public void run() {
 
-        final ManagementService service = getManagementService();
+            final ManagementService service = getManagementService();
 
-        DistributedSystemMXBean disMBean = service.getDistributedSystemMXBean();
-        try {
-          ObjectName expected = MBeanJMXAdapter.getDistributedLockServiceName(LOCK_SERVICE_NAME);
-          ObjectName actual = disMBean.fetchDistributedLockServiceObjectName(LOCK_SERVICE_NAME);
-          assertEquals(expected, actual);
-        } catch (Exception e) {
-          throw new AssertionError("Lock Service Navigation Failed ", e);
-        }
+            DistributedSystemMXBean disMBean = service.getDistributedSystemMXBean();
+            try {
+              ObjectName expected =
+                  MBeanJMXAdapter.getDistributedLockServiceName(LOCK_SERVICE_NAME);
+              ObjectName actual = disMBean.fetchDistributedLockServiceObjectName(LOCK_SERVICE_NAME);
+              assertEquals(expected, actual);
+            } catch (Exception e) {
+              throw new AssertionError("Lock Service Navigation Failed ", e);
+            }
 
-        try {
-          ObjectName expected = MBeanJMXAdapter.getLockServiceMBeanName(lockServiceMember.getId(), LOCK_SERVICE_NAME);
-          ObjectName actual = disMBean.fetchLockServiceObjectName(lockServiceMember.getId(), LOCK_SERVICE_NAME);
-          assertEquals(expected, actual);
-        } catch (Exception e) {
-          throw new AssertionError("Lock Service Navigation Failed ", e);
-        }
-
-      }
-    };
+            try {
+              ObjectName expected =
+                  MBeanJMXAdapter.getLockServiceMBeanName(
+                      lockServiceMember.getId(), LOCK_SERVICE_NAME);
+              ObjectName actual =
+                  disMBean.fetchLockServiceObjectName(lockServiceMember.getId(), LOCK_SERVICE_NAME);
+              assertEquals(expected, actual);
+            } catch (Exception e) {
+              throw new AssertionError("Lock Service Navigation Failed ", e);
+            }
+          }
+        };
     vm.invoke(checkNavigation);
   }
 
   /**
    * Verify Aggregate MBean
+   *
    * @param vm
    */
   @SuppressWarnings("serial")
   protected void checkAggregate(final VM vm, final int expectedMembers) {
-    SerializableRunnable checkAggregate = new SerializableRunnable("Verify Aggregate MBean") {
-      public void run() {
+    SerializableRunnable checkAggregate =
+        new SerializableRunnable("Verify Aggregate MBean") {
+          public void run() {
 
-        final ManagementService service = getManagementService();
-        if (expectedMembers == 0) {
-          try {
-            Wait.waitForCriterion(new WaitCriterion() {
+            final ManagementService service = getManagementService();
+            if (expectedMembers == 0) {
+              try {
+                Wait.waitForCriterion(
+                    new WaitCriterion() {
 
-              DistributedLockServiceMXBean bean = null;
+                      DistributedLockServiceMXBean bean = null;
 
-              public String description() {
-                return "Waiting for the proxy to get deleted at managing node";
+                      public String description() {
+                        return "Waiting for the proxy to get deleted at managing node";
+                      }
+
+                      public boolean done() {
+                        bean = service.getDistributedLockServiceMXBean(LOCK_SERVICE_NAME);
+
+                        boolean done = (bean == null);
+                        return done;
+                      }
+                    },
+                    MAX_WAIT,
+                    500,
+                    true);
+
+              } catch (Exception e) {
+                throw new AssertionError("could not remove Aggregate Bean in required time", e);
               }
+              return;
+            }
 
-              public boolean done() {
-                bean = service.getDistributedLockServiceMXBean(LOCK_SERVICE_NAME);
-
-                boolean done = (bean == null);
-                return done;
-              }
-
-            }, MAX_WAIT, 500, true);
-
-          } catch (Exception e) {
-            throw new AssertionError("could not remove Aggregate Bean in required time", e);
-
+            DistributedLockServiceMXBean bean = null;
+            try {
+              bean = MBeanUtil.getDistributedLockMbean(LOCK_SERVICE_NAME, expectedMembers);
+            } catch (Exception e) {
+              InternalDistributedSystem.getLoggerI18n()
+                  .fine("Undesired Result , LockServiceMBean Should not be null", e);
+            }
+            assertNotNull(bean);
+            assertEquals(bean.getName(), LOCK_SERVICE_NAME);
           }
-          return;
-        }
-
-        DistributedLockServiceMXBean bean = null;
-        try {
-          bean = MBeanUtil.getDistributedLockMbean(LOCK_SERVICE_NAME, expectedMembers);
-        } catch (Exception e) {
-          InternalDistributedSystem.getLoggerI18n().fine("Undesired Result , LockServiceMBean Should not be null", e);
-
-        }
-        assertNotNull(bean);
-        assertEquals(bean.getName(), LOCK_SERVICE_NAME);
-
-      }
-    };
+        };
     vm.invoke(checkAggregate);
   }
 }

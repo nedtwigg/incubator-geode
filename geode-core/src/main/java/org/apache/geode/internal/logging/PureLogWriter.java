@@ -26,9 +26,9 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.i18n.StringId;
 
 /**
-  * Implementation of {@link org.apache.geode.i18n.LogWriterI18n}
-  * that will write to a local stream and only use pure java features.
-  */
+ * Implementation of {@link org.apache.geode.i18n.LogWriterI18n} that will write to a local stream
+ * and only use pure java features.
+ */
 public class PureLogWriter extends LogWriterImpl {
 
   /** The "name" of the connection associated with this log writer */
@@ -40,6 +40,7 @@ public class PureLogWriter extends LogWriterImpl {
   // Constructors
   /**
    * Creates a writer that logs to <code>System.out</code>.
+   *
    * @param level only messages greater than or equal to this value will be logged.
    * @throws IllegalArgumentException if level is not in legal range
    */
@@ -49,6 +50,7 @@ public class PureLogWriter extends LogWriterImpl {
 
   /**
    * Creates a writer that logs to <code>logWriter</code>.
+   *
    * @param level only messages greater than or equal to this value will be logged.
    * @param logWriter is the stream that message will be printed to.
    * @throws IllegalArgumentException if level is not in legal range
@@ -59,6 +61,7 @@ public class PureLogWriter extends LogWriterImpl {
 
   /**
    * Creates a writer that logs to <code>logWriter</code>.
+   *
    * @param level only messages greater than or equal to this value will be logged.
    * @param logWriter is the stream that message will be printed to.
    * @throws IllegalArgumentException if level is not in legal range
@@ -69,10 +72,10 @@ public class PureLogWriter extends LogWriterImpl {
 
   /**
    * Creates a writer that logs to <code>logWriter</code>.
+   *
    * @param level only messages greater than or equal to this value will be logged.
    * @param logWriter is the stream that message will be printed to.
-   * @param connectionName
-   *        The name of the connection associated with this log writer
+   * @param connectionName The name of the connection associated with this log writer
    * @throws IllegalArgumentException if level is not in legal range
    */
   public PureLogWriter(int level, PrintWriter logWriter, String connectionName) {
@@ -83,9 +86,7 @@ public class PureLogWriter extends LogWriterImpl {
   }
 
   // Special Instance Methods on this class only
-  /**
-   * Gets the writer's level.
-   */
+  /** Gets the writer's level. */
   @Override
   public int getLogWriterLevel() {
     return this.level;
@@ -93,6 +94,7 @@ public class PureLogWriter extends LogWriterImpl {
 
   /**
    * Sets the writer's level.
+   *
    * @throws IllegalArgumentException if level is not in legal range
    */
   public void setLevel(int newLevel) {
@@ -118,13 +120,10 @@ public class PureLogWriter extends LogWriterImpl {
 
   /**
    * Logs a message and an exception to the specified log destination.
-   * 
-   * @param msgLevel
-   *                a string representation of the level
-   * @param msg
-   *                the actual message to log
-   * @param ex
-   *                the actual Exception to log
+   *
+   * @param msgLevel a string representation of the level
+   * @param msg the actual message to log
+   * @param ex the actual Exception to log
    */
   @Override
   public void put(int msgLevel, String msg, Throwable ex) {
@@ -140,22 +139,37 @@ public class PureLogWriter extends LogWriterImpl {
       }
       exceptionText = sw.toString();
     }
-    put(msgLevel, new Date(), this.connectionName, getThreadName(), getThreadId(), msg, exceptionText);
+    put(
+        msgLevel,
+        new Date(),
+        this.connectionName,
+        getThreadName(),
+        getThreadId(),
+        msg,
+        exceptionText);
   }
 
   /**
-  * Logs a message and an exception to the specified log destination.
-  * @param msgLevel a string representation of the level
-  * @param msgId the actual message to log
-  * @param ex the actual Exception to log
-  */
+   * Logs a message and an exception to the specified log destination.
+   *
+   * @param msgLevel a string representation of the level
+   * @param msgId the actual message to log
+   * @param ex the actual Exception to log
+   */
   @Override
   public void put(int msgLevel, StringId msgId, Object[] params, Throwable ex) {
     String msg = msgId.toLocalizedString(params);
     put(msgLevel, msg, ex);
   }
 
-  protected String formatLogLine(int msgLevel, Date msgDate, @SuppressWarnings("hiding") String connectionName, String threadName, long tid, String msg, String exceptionText) {
+  protected String formatLogLine(
+      int msgLevel,
+      Date msgDate,
+      @SuppressWarnings("hiding") String connectionName,
+      String threadName,
+      long tid,
+      String msg,
+      String exceptionText) {
     java.io.StringWriter sw = new java.io.StringWriter();
     PrintWriter pw = new PrintWriter(sw);
 
@@ -184,7 +198,13 @@ public class PureLogWriter extends LogWriterImpl {
     return sw.toString();
   }
 
-  protected void printHeader(PrintWriter pw, int msgLevel, Date msgDate, String connectionName, String threadName, long tid) {
+  protected void printHeader(
+      PrintWriter pw,
+      int msgLevel,
+      Date msgDate,
+      String connectionName,
+      String threadName,
+      long tid) {
     pw.println();
     pw.print('[');
     pw.print(levelToString(msgLevel));
@@ -204,8 +224,16 @@ public class PureLogWriter extends LogWriterImpl {
     pw.print("] ");
   }
 
-  public String put(int msgLevel, Date msgDate, String connectionName, String threadName, long tid, String msg, String exceptionText) {
-    String result = formatLogLine(msgLevel, msgDate, connectionName, threadName, tid, msg, exceptionText);
+  public String put(
+      int msgLevel,
+      Date msgDate,
+      String connectionName,
+      String threadName,
+      long tid,
+      String msg,
+      String exceptionText) {
+    String result =
+        formatLogLine(msgLevel, msgDate, connectionName, threadName, tid, msg, exceptionText);
     writeFormattedMessage(result);
     return result;
   }
@@ -218,15 +246,14 @@ public class PureLogWriter extends LogWriterImpl {
     }
   }
 
-  /**
-   * Returns the number of bytes written to the current log file.
-   */
+  /** Returns the number of bytes written to the current log file. */
   public long getBytesLogged() {
     return this.bytesLogged;
   }
 
   /**
    * Sets the target that this logger will sends its output to.
+   *
    * @return the previous target.
    */
   public PrintWriter setTarget(PrintWriter logWriter) {
@@ -257,10 +284,7 @@ public class PureLogWriter extends LogWriterImpl {
     return this.closed;
   }
 
-  /**
-   * Returns the name of the connection on whose behalf this log
-   * writer logs.
-   */
+  /** Returns the name of the connection on whose behalf this log writer logs. */
   public String getConnectionName() {
     return this.connectionName;
   }

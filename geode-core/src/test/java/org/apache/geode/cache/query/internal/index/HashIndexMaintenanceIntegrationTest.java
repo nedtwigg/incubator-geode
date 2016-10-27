@@ -40,7 +40,9 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 public class HashIndexMaintenanceIntegrationTest extends AbstractIndexMaintenanceIntegrationTest {
 
   @Override
-  protected AbstractIndex createIndex(final QueryService qs, String name, String indexExpression, String regionPath) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
+  protected AbstractIndex createIndex(
+      final QueryService qs, String name, String indexExpression, String regionPath)
+      throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
     return (HashIndex) qs.createHashIndex(name, indexExpression, regionPath);
   }
 
@@ -52,11 +54,15 @@ public class HashIndexMaintenanceIntegrationTest extends AbstractIndexMaintenanc
     region.put("0", new Portfolio(0));
     region.invalidate("0");
     Index index = qs.createHashIndex("hash index index", "p.status", "/exampleRegion p");
-    SelectResults results = (SelectResults) qs.newQuery("Select * from /exampleRegion r where r.status='active'").execute();
+    SelectResults results =
+        (SelectResults)
+            qs.newQuery("Select * from /exampleRegion r where r.status='active'").execute();
     //the remove should have happened
     assertEquals(0, results.size());
 
-    results = (SelectResults) qs.newQuery("Select * from /exampleRegion r where r.status!='inactive'").execute();
+    results =
+        (SelectResults)
+            qs.newQuery("Select * from /exampleRegion r where r.status!='inactive'").execute();
     assertEquals(0, results.size());
 
     HashIndex cindex = (HashIndex) index;

@@ -43,12 +43,13 @@ public abstract class PushExecutor extends PushXExecutor implements Extendable {
 
     ByteArrayWrapper key = command.getKey();
 
-    Region<Integer, ByteArrayWrapper> keyRegion = getOrCreateRegion(context, key, RedisDataType.REDIS_LIST);
-    pushElements(key, commandElems, START_VALUES_INDEX, commandElems.size(), keyRegion, pushType(), context);
+    Region<Integer, ByteArrayWrapper> keyRegion =
+        getOrCreateRegion(context, key, RedisDataType.REDIS_LIST);
+    pushElements(
+        key, commandElems, START_VALUES_INDEX, commandElems.size(), keyRegion, pushType(), context);
     int listSize = keyRegion.size() - LIST_EMPTY_SIZE;
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), listSize));
   }
 
   protected abstract ListDirection pushType();
-
 }

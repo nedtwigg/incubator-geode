@@ -45,10 +45,8 @@ import org.apache.geode.internal.size.ReflectionSingleObjectSizer;
 import org.apache.geode.internal.size.WellKnownClassSizer;
 
 /**
- * Tests the basic functionality of the memory lru eviction controller
- * and its statistics.
- * 
- * 
+ * Tests the basic functionality of the memory lru eviction controller and its statistics.
+ *
  * @since GemFire 3.2
  */
 @Category(DistributedTest.class)
@@ -56,16 +54,12 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
 
   private static boolean usingMain = false;
 
-  /**
-   * Creates a new <code>MemLRUEvictionControllerDUnitTest</code>
-   */
+  /** Creates a new <code>MemLRUEvictionControllerDUnitTest</code> */
   public MemLRUEvictionControllerDUnitTest() {
     super();
   }
 
-  /**
-   * Returns the <code>LRUStatistics</code> for the given region
-   */
+  /** Returns the <code>LRUStatistics</code> for the given region */
   private LRUStatistics getLRUStats(Region region) {
     final LocalRegion l = (LocalRegion) region;
     return l.getEvictionController().getLRUHelper().getStats();
@@ -78,10 +72,7 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
 
   // ////// Test Methods
 
-  /**
-   * Carefully verifies that region operations effect the {@link LRUStatistics}
-   * as expected.
-   */
+  /** Carefully verifies that region operations effect the {@link LRUStatistics} as expected. */
   @Test
   public void testRegionOperations() throws CacheException {
 
@@ -106,15 +97,21 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
     assertNotNull(lruStats);
 
     String sampleKey = new String("10000");
-    int stringSize = SharedLibrary.getObjectHeaderSize() //String object
-        + (2 * 4) + SharedLibrary.getReferenceSize(); //2 ints and a reference on a string
+    int stringSize =
+        SharedLibrary.getObjectHeaderSize() //String object
+            + (2 * 4)
+            + SharedLibrary.getReferenceSize(); //2 ints and a reference on a string
     stringSize = (int) ReflectionSingleObjectSizer.roundUpSize(stringSize);
 
-    int charArraySize = sampleKey.length() * 2 + SharedLibrary.getObjectHeaderSize() //char array object
-        + 4; //length of char array
+    int charArraySize =
+        sampleKey.length() * 2
+            + SharedLibrary.getObjectHeaderSize() //char array object
+            + 4; //length of char array
     charArraySize = (int) ReflectionSingleObjectSizer.roundUpSize(charArraySize);
     assertEquals(stringSize, ReflectionSingleObjectSizer.sizeof(String.class));
-    assertEquals(ReflectionSingleObjectSizer.roundUpSize(SharedLibrary.getObjectHeaderSize() + 4), (new ReflectionSingleObjectSizer()).sizeof(new char[0]));
+    assertEquals(
+        ReflectionSingleObjectSizer.roundUpSize(SharedLibrary.getObjectHeaderSize() + 4),
+        (new ReflectionSingleObjectSizer()).sizeof(new char[0]));
     assertEquals(charArraySize, (new ReflectionSingleObjectSizer()).sizeof(new char[5]));
 
     int keySize = stringSize + charArraySize;
@@ -123,8 +120,10 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
     // now that keys are inlined the keySize is 0
     keySize = 0;
     byte[] sampleValue = new byte[1000];
-    int valueSize = sampleValue.length + SharedLibrary.getObjectHeaderSize() //byte array object;
-        + 4; //length of byte array
+    int valueSize =
+        sampleValue.length
+            + SharedLibrary.getObjectHeaderSize() //byte array object;
+            + 4; //length of byte array
     valueSize = (int) ReflectionSingleObjectSizer.roundUpSize(valueSize);
     int entrySize = keySize + valueSize + getEntryOverhead(region);
     assertEquals(valueSize, ObjectSizer.DEFAULT.sizeof(sampleValue));
@@ -146,8 +145,8 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Make sure that we only size a class the first time we 
-   * see the class instance.
+   * Make sure that we only size a class the first time we see the class instance.
+   *
    * @throws CacheException
    */
   @Test
@@ -188,9 +187,7 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
     }
   }
 
-  /**
-   * Prints out the number of bytes that a region entry occupies in the VM.
-   */
+  /** Prints out the number of bytes that a region entry occupies in the VM. */
   @Test
   public void testEntryOverHead() throws Exception {
     final String name = this.getUniqueName();
@@ -205,8 +202,9 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
     region.getCache().getDistributedSystem().getLogWriter().info(s);
   }
 
-  /** Class used in testCustomObjectSizer
-   * 
+  /**
+   * Class used in testCustomObjectSizer
+   *
    * @since GemFire 5.0
    */
   class CustomObjectSizer implements ObjectSizer {
@@ -229,9 +227,9 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Validate that a custom {@link ObjectSizer} is called, configured propertly,
-   * and actually limits the size of the <code>Region</code>.
-   * 
+   * Validate that a custom {@link ObjectSizer} is called, configured propertly, and actually limits
+   * the size of the <code>Region</code>.
+   *
    * @throws Exception
    */
   @Test
@@ -254,7 +252,8 @@ public class MemLRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
     assertTrue("ObjectSizer was not triggered", cs.wasCalled());
     long actualSize = getLRUStats(r).getCounter();
     int bytesPut = (entrySize * numEntries);
-    assertTrue("Expected bytes put: " + bytesPut + " is not < " + actualSize, actualSize < bytesPut);
+    assertTrue(
+        "Expected bytes put: " + bytesPut + " is not < " + actualSize, actualSize < bytesPut);
   }
 
   public static void main(String[] args) throws Exception {

@@ -42,8 +42,7 @@ import org.mockito.stubbing.Answer;
 
 public class IndexRepositorySpy extends IndexRepositoryFactory {
 
-  private Consumer<Object> beforeWrite = key -> {
-  };
+  private Consumer<Object> beforeWrite = key -> {};
 
   public static IndexRepositorySpy injectSpy() {
     IndexRepositorySpy factory = new IndexRepositorySpy();
@@ -55,19 +54,25 @@ public class IndexRepositorySpy extends IndexRepositoryFactory {
     PartitionedRepositoryManager.indexRepositoryFactory = new IndexRepositoryFactory();
   }
 
-  private IndexRepositorySpy() {
-  }
+  private IndexRepositorySpy() {}
 
   @Override
-  public IndexRepository createIndexRepository(final Integer bucketId, LuceneSerializer serializer, LuceneIndexImpl index, PartitionedRegion userRegion) throws IOException {
+  public IndexRepository createIndexRepository(
+      final Integer bucketId,
+      LuceneSerializer serializer,
+      LuceneIndexImpl index,
+      PartitionedRegion userRegion)
+      throws IOException {
     LuceneIndexForPartitionedRegion indexForPR = (LuceneIndexForPartitionedRegion) index;
-    final IndexRepository indexRepo = super.createIndexRepository(bucketId, serializer, index, userRegion);
+    final IndexRepository indexRepo =
+        super.createIndexRepository(bucketId, serializer, index, userRegion);
     final IndexRepository spy = Mockito.spy(indexRepo);
 
-    Answer invokeBeforeWrite = invocation -> {
-      beforeWrite.accept(invocation.getArgumentAt(0, Object.class));
-      return invocation.callRealMethod();
-    };
+    Answer invokeBeforeWrite =
+        invocation -> {
+          beforeWrite.accept(invocation.getArgumentAt(0, Object.class));
+          return invocation.callRealMethod();
+        };
 
     doAnswer(invokeBeforeWrite).when(spy).update(any(), any());
     doAnswer(invokeBeforeWrite).when(spy).create(any(), any());
@@ -77,18 +82,14 @@ public class IndexRepositorySpy extends IndexRepositoryFactory {
   }
 
   /**
-   * Add a callback that runs before a call to
-   * {@link IndexRepository#create(Object, Object)},
-   * {@link IndexRepository#update(Object, Object)} or
-   * {@link IndexRepository#delete(Object)}
+   * Add a callback that runs before a call to {@link IndexRepository#create(Object, Object)},
+   * {@link IndexRepository#update(Object, Object)} or {@link IndexRepository#delete(Object)}
    */
   public void beforeWriteIndexRepository(Consumer<Object> action) {
     this.beforeWrite = action;
   }
 
-  /**
-   * Return a consumer that will invoke the passed in consumer only once
-   */
+  /** Return a consumer that will invoke the passed in consumer only once */
   public static <T> Consumer<T> doOnce(Consumer<T> consumer) {
     return new Consumer<T>() {
       boolean done;
@@ -104,8 +105,8 @@ public class IndexRepositorySpy extends IndexRepositoryFactory {
   }
 
   /**
-   * Return a consumer that will invoke the passed in consumer only after
-   * it has been called exactly N times.
+   * Return a consumer that will invoke the passed in consumer only after it has been called exactly
+   * N times.
    */
   public static <T> Consumer<T> doAfterN(Consumer<T> consumer, int times) {
     return new Consumer<T>() {

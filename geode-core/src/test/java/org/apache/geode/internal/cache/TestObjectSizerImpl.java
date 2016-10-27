@@ -21,10 +21,8 @@ import java.io.Serializable;
 import org.apache.geode.cache.util.ObjectSizer;
 
 /**
- * Test object which implements ObjectSizer, used as Key/Value in put operation
- * as well as used as a Sizer for HeapLru testing.
- * 
- * 
+ * Test object which implements ObjectSizer, used as Key/Value in put operation as well as used as a
+ * Sizer for HeapLru testing.
  */
 public class TestObjectSizerImpl implements ObjectSizer, Serializable {
 
@@ -48,14 +46,16 @@ public class TestObjectSizerImpl implements ObjectSizer, Serializable {
     } else if (o instanceof TestNonSizerObject) {
       return ((TestNonSizerObject) o).getTestString().length();
     } else if (o instanceof CachedDeserializable) {
-      throw new IllegalStateException("ObjectSize should not be passed (see bug 40718) instances of CachedDeserializable: " + o);
-      //       if (((VMCachedDeserializable)o).getDeserializedCopy() instanceof TestObjectSizerImpl) { 
-      //         TestObjectSizerImpl obj = (TestObjectSizerImpl)((VMCachedDeserializable)o) 
-      //           .getDeserializedCopy(); 
-      //         return Sizeof.sizeof(obj.one) + Sizeof.sizeof(obj.two) 
-      //           + Sizeof.sizeof(obj.three); 
-      //       } 
-      //       else if (((VMCachedDeserializable)o).getDeserializedCopy() instanceof TestNonSizerObject) { 
+      throw new IllegalStateException(
+          "ObjectSize should not be passed (see bug 40718) instances of CachedDeserializable: "
+              + o);
+      //       if (((VMCachedDeserializable)o).getDeserializedCopy() instanceof TestObjectSizerImpl) {
+      //         TestObjectSizerImpl obj = (TestObjectSizerImpl)((VMCachedDeserializable)o)
+      //           .getDeserializedCopy();
+      //         return Sizeof.sizeof(obj.one) + Sizeof.sizeof(obj.two)
+      //           + Sizeof.sizeof(obj.three);
+      //       }
+      //       else if (((VMCachedDeserializable)o).getDeserializedCopy() instanceof TestNonSizerObject) {
 
       //      TestNonSizerObject testNonObjectSizerObject = (TestNonSizerObject)((VMCachedDeserializable)o)
       //          .getDeserializedCopy();
@@ -63,7 +63,5 @@ public class TestObjectSizerImpl implements ObjectSizer, Serializable {
     } else {
       return ObjectSizer.DEFAULT.sizeof(o);
     }
-
   }
-
 }

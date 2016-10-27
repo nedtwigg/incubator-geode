@@ -20,9 +20,10 @@ package org.apache.geode.cache.operations;
 import org.apache.geode.cache.InterestResultPolicy;
 
 /**
- * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#REGISTER_INTEREST} region operation for
- * the pre-operation case.
- * 
+ * Encapsulates a {@link
+ * org.apache.geode.cache.operations.OperationContext.OperationCode#REGISTER_INTEREST} region
+ * operation for the pre-operation case.
+ *
  * @since GemFire 5.5
  */
 public class RegisterInterestOperationContext extends InterestOperationContext {
@@ -32,24 +33,20 @@ public class RegisterInterestOperationContext extends InterestOperationContext {
 
   /**
    * Constructor for the register interest operation.
-   * 
-   * @param key
-   *                the key or list of keys being registered
-   * @param interestType
-   *                the <code>InterestType</code> of the register request
-   * @param policy
-   *                the <code>InterestResultPolicy</code> of the register
-   *                request
+   *
+   * @param key the key or list of keys being registered
+   * @param interestType the <code>InterestType</code> of the register request
+   * @param policy the <code>InterestResultPolicy</code> of the register request
    */
-  public RegisterInterestOperationContext(Object key, InterestType interestType, InterestResultPolicy policy) {
+  public RegisterInterestOperationContext(
+      Object key, InterestType interestType, InterestResultPolicy policy) {
     super(key, interestType);
     this.policy = policy;
   }
 
   /**
-   * Return the operation associated with the <code>OperationContext</code>
-   * object.
-   * 
+   * Return the operation associated with the <code>OperationContext</code> object.
+   *
    * @return <code>OperationCode.REGISTER_INTEREST</code>.
    */
   @Override
@@ -58,13 +55,11 @@ public class RegisterInterestOperationContext extends InterestOperationContext {
   }
 
   /**
-   * Get the <code>InterestResultPolicy</code> of this register/unregister
-   * operation.
-   * 
+   * Get the <code>InterestResultPolicy</code> of this register/unregister operation.
+   *
    * @return the <code>InterestResultPolicy</code> of this request.
    */
   public InterestResultPolicy getInterestResultPolicy() {
     return this.policy;
   }
-
 }

@@ -35,17 +35,18 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * Used to keep track of what interest a client has registered.
- * This code was extracted from the old ConnectionProxyImpl.
+ * Used to keep track of what interest a client has registered. This code was extracted from the old
+ * ConnectionProxyImpl.
+ *
  * @since GemFire 5.7
  */
 public class RegisterInterestTracker {
   private static final Logger logger = LogService.getLogger();
 
-  public final static int interestListIndex = 0;
-  public final static int durableInterestListIndex = 1;
-  public final static int interestListIndexForUpdatesAsInvalidates = 2;
-  public final static int durableInterestListIndexForUpdatesAsInvalidates = 3;
+  public static final int interestListIndex = 0;
+  public static final int durableInterestListIndex = 1;
+  public static final int interestListIndexForUpdatesAsInvalidates = 2;
+  public static final int durableInterestListIndexForUpdatesAsInvalidates = 3;
 
   private final FailoverInterestList[] fils = new FailoverInterestList[4];
 
@@ -102,13 +103,26 @@ public class RegisterInterestTracker {
     return result;
   }
 
-  public void addSingleInterest(LocalRegion r, Object key, int interestType, InterestResultPolicy pol, boolean isDurable, boolean receiveUpdatesAsInvalidates) {
-    RegionInterestEntry rie = getRegionInterests(r, interestType, false, isDurable, receiveUpdatesAsInvalidates);
+  public void addSingleInterest(
+      LocalRegion r,
+      Object key,
+      int interestType,
+      InterestResultPolicy pol,
+      boolean isDurable,
+      boolean receiveUpdatesAsInvalidates) {
+    RegionInterestEntry rie =
+        getRegionInterests(r, interestType, false, isDurable, receiveUpdatesAsInvalidates);
     rie.getInterests().put(key, pol);
   }
 
-  public boolean removeSingleInterest(LocalRegion r, Object key, int interestType, boolean isDurable, boolean receiveUpdatesAsInvalidates) {
-    RegionInterestEntry rie = getRegionInterests(r, interestType, true, isDurable, receiveUpdatesAsInvalidates);
+  public boolean removeSingleInterest(
+      LocalRegion r,
+      Object key,
+      int interestType,
+      boolean isDurable,
+      boolean receiveUpdatesAsInvalidates) {
+    RegionInterestEntry rie =
+        getRegionInterests(r, interestType, true, isDurable, receiveUpdatesAsInvalidates);
     if (rie == null) {
       return false;
     }
@@ -117,7 +131,11 @@ public class RegisterInterestTracker {
     }
     Object interest = rie.getInterests().remove(key);
     if (interest == null) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.RegisterInterestTracker_REMOVESINGLEINTEREST_KEY_0_NOT_REGISTERED_IN_THE_CLIENT, key));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .RegisterInterestTracker_REMOVESINGLEINTEREST_KEY_0_NOT_REGISTERED_IN_THE_CLIENT,
+              key));
       return false;
     } else {
       return true;
@@ -125,8 +143,14 @@ public class RegisterInterestTracker {
     //return rie.getInterests().remove(key) != null;
   }
 
-  public void addInterestList(LocalRegion r, List keys, InterestResultPolicy pol, boolean isDurable, boolean receiveUpdatesAsInvalidates) {
-    RegionInterestEntry rie = getRegionInterests(r, InterestType.KEY, false, isDurable, receiveUpdatesAsInvalidates);
+  public void addInterestList(
+      LocalRegion r,
+      List keys,
+      InterestResultPolicy pol,
+      boolean isDurable,
+      boolean receiveUpdatesAsInvalidates) {
+    RegionInterestEntry rie =
+        getRegionInterests(r, InterestType.KEY, false, isDurable, receiveUpdatesAsInvalidates);
     for (int i = 0; i < keys.size(); i++) {
       rie.getInterests().put(keys.get(i), pol);
     }
@@ -152,9 +176,7 @@ public class RegisterInterestTracker {
     return this.cqs;
   }
 
-  /**
-   * Unregisters everything registered on the given region name
-   */
+  /** Unregisters everything registered on the given region name */
   public void unregisterRegion(ServerRegionProxy srp, boolean keepalive) {
     removeAllInterests(srp, InterestType.KEY, false, keepalive, false);
     removeAllInterests(srp, InterestType.FILTER_CLASS, false, keepalive, false);
@@ -179,33 +201,48 @@ public class RegisterInterestTracker {
 
   /**
    * Remove all interests of a given type on the given proxy's region.
-   * @param interestType
-   *          the interest type
-   * @param durable
-   *          a boolean stating whether to remove durable or non-durable registrations
+   *
+   * @param interestType the interest type
+   * @param durable a boolean stating whether to remove durable or non-durable registrations
    */
-  private void removeAllInterests(ServerRegionProxy srp, int interestType, boolean durable, boolean keepAlive, boolean receiveUpdatesAsInvalidates) {
+  private void removeAllInterests(
+      ServerRegionProxy srp,
+      int interestType,
+      boolean durable,
+      boolean keepAlive,
+      boolean receiveUpdatesAsInvalidates) {
     String regName = srp.getRegionName();
-    ConcurrentMap allInterests = getRegionToInterestsMap(interestType, durable, receiveUpdatesAsInvalidates);
+    ConcurrentMap allInterests =
+        getRegionToInterestsMap(interestType, durable, receiveUpdatesAsInvalidates);
     if (allInterests.remove(regName) != null) {
       if (logger.isDebugEnabled()) {
-        logger.debug("removeAllInterests region={} type={}", regName, InterestType.getString(interestType));
+        logger.debug(
+            "removeAllInterests region={} type={}", regName, InterestType.getString(interestType));
       }
       try {
         // fix bug 35680 by using a UnregisterAllInterest token
         Object key = UnregisterAllInterest.singleton();
         // we have already cleaned up the tracker so send the op directly
-        UnregisterInterestOp.execute(srp.getPool(), regName, key, interestType, true/*isClosing*/, keepAlive);
+        UnregisterInterestOp.execute(
+            srp.getPool(), regName, key, interestType, true /*isClosing*/, keepAlive);
       } catch (Exception e) {
         if (!srp.getPool().getCancelCriterion().isCancelInProgress()) {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.RegisterInterestTracker_PROBLEM_REMOVING_ALL_INTEREST_ON_REGION_0_INTERESTTYPE_1_2, new Object[] { regName, InterestType.getString(interestType), e.getLocalizedMessage() }));
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .RegisterInterestTracker_PROBLEM_REMOVING_ALL_INTEREST_ON_REGION_0_INTERESTTYPE_1_2,
+                  new Object[] {
+                    regName, InterestType.getString(interestType), e.getLocalizedMessage()
+                  }));
         }
       }
     }
   }
 
-  public boolean removeInterestList(LocalRegion r, List keys, boolean isDurable, boolean receiveUpdatesAsInvalidates) {
-    RegionInterestEntry rie = getRegionInterests(r, InterestType.KEY, true, isDurable, receiveUpdatesAsInvalidates);
+  public boolean removeInterestList(
+      LocalRegion r, List keys, boolean isDurable, boolean receiveUpdatesAsInvalidates) {
+    RegionInterestEntry rie =
+        getRegionInterests(r, InterestType.KEY, true, isDurable, receiveUpdatesAsInvalidates);
     if (rie == null) {
       return false;
     }
@@ -219,62 +256,70 @@ public class RegisterInterestTracker {
       if (interest != null) {
         removeCount++;
       } else {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.RegisterInterestTracker_REMOVEINTERESTLIST_KEY_0_NOT_REGISTERED_IN_THE_CLIENT, key));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .RegisterInterestTracker_REMOVEINTERESTLIST_KEY_0_NOT_REGISTERED_IN_THE_CLIENT,
+                key));
       }
     }
     return removeCount != 0;
   }
 
   /**
-   * Return keys of interest for a given region. The keys in this Map are the
-   * full names of the regions. The values are instances of RegionInterestEntry.
+   * Return keys of interest for a given region. The keys in this Map are the full names of the
+   * regions. The values are instances of RegionInterestEntry.
    *
-   * @param interestType
-   *          the type to return
+   * @param interestType the type to return
    * @return the map
    */
-  public ConcurrentMap getRegionToInterestsMap(int interestType, boolean isDurable, boolean receiveUpdatesAsInvalidates) {
-    FailoverInterestList fil = this.fils[getInterestLookupIndex(isDurable, receiveUpdatesAsInvalidates)];
+  public ConcurrentMap getRegionToInterestsMap(
+      int interestType, boolean isDurable, boolean receiveUpdatesAsInvalidates) {
+    FailoverInterestList fil =
+        this.fils[getInterestLookupIndex(isDurable, receiveUpdatesAsInvalidates)];
 
     ConcurrentMap mapOfInterest = null;
 
     switch (interestType) {
-    case InterestType.KEY:
-      mapOfInterest = fil.keysOfInterest;
-      break;
-    case InterestType.REGULAR_EXPRESSION:
-      mapOfInterest = fil.regexOfInterest;
-      break;
-    case InterestType.FILTER_CLASS:
-      mapOfInterest = fil.filtersOfInterest;
-      break;
-    case InterestType.CQ:
-      mapOfInterest = fil.cqsOfInterest;
-      break;
-    case InterestType.OQL_QUERY:
-      mapOfInterest = fil.queriesOfInterest;
-      break;
-    default:
-      throw new InternalGemFireError("Unknown interestType");
+      case InterestType.KEY:
+        mapOfInterest = fil.keysOfInterest;
+        break;
+      case InterestType.REGULAR_EXPRESSION:
+        mapOfInterest = fil.regexOfInterest;
+        break;
+      case InterestType.FILTER_CLASS:
+        mapOfInterest = fil.filtersOfInterest;
+        break;
+      case InterestType.CQ:
+        mapOfInterest = fil.cqsOfInterest;
+        break;
+      case InterestType.OQL_QUERY:
+        mapOfInterest = fil.queriesOfInterest;
+        break;
+      default:
+        throw new InternalGemFireError("Unknown interestType");
     }
     return mapOfInterest;
   }
 
   /**
-   * Return the RegionInterestEntry for the given region. Create one if none
-   * exists and forRemoval is false.
+   * Return the RegionInterestEntry for the given region. Create one if none exists and forRemoval
+   * is false.
    *
-   * @param r
-   *          specified region
-   * @param interestType
-   *          desired interest type
-   * @param forRemoval
-   *          true if calls wants one for removal
+   * @param r specified region
+   * @param interestType desired interest type
+   * @param forRemoval true if calls wants one for removal
    * @return the entry or null if none exists and forRemoval is true.
    */
-  private RegionInterestEntry getRegionInterests(LocalRegion r, int interestType, boolean forRemoval, boolean isDurable, boolean receiveUpdatesAsInvalidates) {
+  private RegionInterestEntry getRegionInterests(
+      LocalRegion r,
+      int interestType,
+      boolean forRemoval,
+      boolean isDurable,
+      boolean receiveUpdatesAsInvalidates) {
     final String regionName = r.getFullPath();
-    ConcurrentMap mapOfInterest = getRegionToInterestsMap(interestType, isDurable, receiveUpdatesAsInvalidates);
+    ConcurrentMap mapOfInterest =
+        getRegionToInterestsMap(interestType, isDurable, receiveUpdatesAsInvalidates);
     RegionInterestEntry result = (RegionInterestEntry) mapOfInterest.get(regionName);
     if (result == null && !forRemoval) {
       RegionInterestEntry rie = new RegionInterestEntry(r);
@@ -286,77 +331,70 @@ public class RegisterInterestTracker {
     return result;
   }
 
-  private RegionInterestEntry readRegionInterests(String regionName, int interestType, boolean isDurable, boolean receiveUpdatesAsInvalidates) {
-    ConcurrentMap mapOfInterest = getRegionToInterestsMap(interestType, isDurable, receiveUpdatesAsInvalidates);
+  private RegionInterestEntry readRegionInterests(
+      String regionName, int interestType, boolean isDurable, boolean receiveUpdatesAsInvalidates) {
+    ConcurrentMap mapOfInterest =
+        getRegionToInterestsMap(interestType, isDurable, receiveUpdatesAsInvalidates);
     return (RegionInterestEntry) mapOfInterest.get(regionName);
   }
 
   /**
-   * A Holder object for client's register interest, this is required when 
-   * a client fails over to another server and does register interest based on 
-   * this Data structure 
-   * 
-   * @since GemFire 5.5
+   * A Holder object for client's register interest, this is required when a client fails over to
+   * another server and does register interest based on this Data structure
    *
+   * @since GemFire 5.5
    */
-  static protected class FailoverInterestList {
+  protected static class FailoverInterestList {
     /**
      * Record of enumerated keys of interest.
      *
-     * This list is maintained here in case an endpoint (server) bounces. In that
-     * case, a message will be sent to the endpoint as soon as it has restarted.
+     * <p>This list is maintained here in case an endpoint (server) bounces. In that case, a message
+     * will be sent to the endpoint as soon as it has restarted.
      *
-     * The keys in this Map are the full names of the regions. The values are
-     * instances of {@link RegionInterestEntry}.
+     * <p>The keys in this Map are the full names of the regions. The values are instances of {@link
+     * RegionInterestEntry}.
      */
     final ConcurrentMap keysOfInterest = new ConcurrentHashMap();
 
     /**
      * Record of regular expression keys of interest.
      *
-     * This list is maintained here in case an endpoint (server) bounces. In that
-     * case, a message will be sent to the endpoint as soon as it has restarted.
+     * <p>This list is maintained here in case an endpoint (server) bounces. In that case, a message
+     * will be sent to the endpoint as soon as it has restarted.
      *
-     * The keys in this Map are the full names of the regions. The values are
-     * instances of {@link RegionInterestEntry}.
+     * <p>The keys in this Map are the full names of the regions. The values are instances of {@link
+     * RegionInterestEntry}.
      */
     final ConcurrentMap regexOfInterest = new ConcurrentHashMap();
 
     /**
      * Record of filtered keys of interest.
      *
-     * This list is maintained here in case an endpoint (server) bounces. In that
-     * case, a message will be sent to the endpoint as soon as it has restarted.
+     * <p>This list is maintained here in case an endpoint (server) bounces. In that case, a message
+     * will be sent to the endpoint as soon as it has restarted.
      *
-     * The keys in this Map are the full names of the regions. The values are
-     * instances of {@link RegionInterestEntry}.
+     * <p>The keys in this Map are the full names of the regions. The values are instances of {@link
+     * RegionInterestEntry}.
      */
     final ConcurrentMap filtersOfInterest = new ConcurrentHashMap();
 
     /**
      * Record of QOL keys of interest.
      *
-     * This list is maintained here in case an endpoint (server) bounces. In that
-     * case, a message will be sent to the endpoint as soon as it has restarted.
+     * <p>This list is maintained here in case an endpoint (server) bounces. In that case, a message
+     * will be sent to the endpoint as soon as it has restarted.
      *
-     * The keys in this Map are the full names of the regions. The values are
-     * instances of {@link RegionInterestEntry}.
+     * <p>The keys in this Map are the full names of the regions. The values are instances of {@link
+     * RegionInterestEntry}.
      */
     final ConcurrentMap queriesOfInterest = new ConcurrentHashMap();
 
-    /**
-     * Record of registered CQs
-     *
-     */
+    /** Record of registered CQs */
     final ConcurrentMap cqsOfInterest = new ConcurrentHashMap();
   }
 
-  /**
-   * Description of the interests of a particular region.
-   *
-   *
-   */
-  static public class RegionInterestEntry {
+  /** Description of the interests of a particular region. */
+  public static class RegionInterestEntry {
     private final LocalRegion region;
 
     private final ConcurrentMap interests;

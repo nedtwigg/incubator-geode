@@ -55,9 +55,9 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Test to verify EventID generated from Cache Client is correctly passed on to
- * the cache server for create, update, remove and destroy operations.It also checks
- * that peer nodes also get the same EventID.
+ * Test to verify EventID generated from Cache Client is correctly passed on to the cache server for
+ * create, update, remove and destroy operations.It also checks that peer nodes also get the same
+ * EventID.
  */
 @Category(DistributedTest.class)
 public class EventIDVerificationDUnitTest extends JUnit4DistributedTestCase {
@@ -72,7 +72,8 @@ public class EventIDVerificationDUnitTest extends JUnit4DistributedTestCase {
 
   private static int PORT2;
 
-  private static final String REGION_NAME = EventIDVerificationDUnitTest.class.getSimpleName() + "_region";
+  private static final String REGION_NAME =
+      EventIDVerificationDUnitTest.class.getSimpleName() + "_region";
 
   protected static EventID eventId;
 
@@ -93,8 +94,10 @@ public class EventIDVerificationDUnitTest extends JUnit4DistributedTestCase {
     vm1 = host.getVM(1);
 
     //start servers first
-    PORT1 = ((Integer) vm0.invoke(() -> EventIDVerificationDUnitTest.createServerCache())).intValue();
-    PORT2 = ((Integer) vm1.invoke(() -> EventIDVerificationDUnitTest.createServerCache())).intValue();
+    PORT1 =
+        ((Integer) vm0.invoke(() -> EventIDVerificationDUnitTest.createServerCache())).intValue();
+    PORT2 =
+        ((Integer) vm1.invoke(() -> EventIDVerificationDUnitTest.createServerCache())).intValue();
 
     //vm2.invoke(EventIDVerificationDUnitTest.class, "createClientCache", new
     // Object[] { new Integer(PORT1),new Integer(PORT2)});
@@ -123,9 +126,8 @@ public class EventIDVerificationDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * Verify that EventId is prapogated to server in case of region destroy. It
-   * also checks that peer nodes also get the same EventID.
-   *
+   * Verify that EventId is prapogated to server in case of region destroy. It also checks that peer
+   * nodes also get the same EventID.
    */
   @Test
   public void testEventIDPrapogationOnServerDuringRegionDestroy() {
@@ -137,9 +139,8 @@ public class EventIDVerificationDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * Verify that EventId is prapogated to server in case of region clear. It
-   * also checks that peer nodes also get the same EventID.
-  
+   * Verify that EventId is prapogated to server in case of region clear. It also checks that peer
+   * nodes also get the same EventID.
    */
   @Test
   public void testEventIDPrapogationOnServerDuringRegionClear() {
@@ -170,73 +171,72 @@ public class EventIDVerificationDUnitTest extends JUnit4DistributedTestCase {
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setMirrorType(MirrorType.NONE);
 
-    ClientServerTestCase.configureConnectionPool(factory, host, new int[] { PORT1, PORT2 }, true, -1, 2, null, -1, -1, false, -2);
+    ClientServerTestCase.configureConnectionPool(
+        factory, host, new int[] {PORT1, PORT2}, true, -1, 2, null, -1, -1, false, -2);
 
-    CacheWriter writer = new CacheWriterAdapter() {
-      public void beforeCreate(EntryEvent event) {
-        EventID eventId = ((EntryEventImpl) event).getEventId();
-        vm0.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
-        vm1.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
-        try {
-          super.beforeCreate(event);
-        } catch (CacheWriterException e) {
-          e.printStackTrace();
-          fail("Test failed bcoz of exception =" + e);
-        }
-      }
+    CacheWriter writer =
+        new CacheWriterAdapter() {
+          public void beforeCreate(EntryEvent event) {
+            EventID eventId = ((EntryEventImpl) event).getEventId();
+            vm0.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
+            vm1.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
+            try {
+              super.beforeCreate(event);
+            } catch (CacheWriterException e) {
+              e.printStackTrace();
+              fail("Test failed bcoz of exception =" + e);
+            }
+          }
 
-      public void beforeUpdate(EntryEvent event) {
+          public void beforeUpdate(EntryEvent event) {
 
-        EventID eventId = ((EntryEventImpl) event).getEventId();
-        vm0.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
-        vm1.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
-        try {
-          super.beforeUpdate(event);
-        } catch (CacheWriterException e) {
-          e.printStackTrace();
-          fail("Test failed bcoz of exception =" + e);
-        }
+            EventID eventId = ((EntryEventImpl) event).getEventId();
+            vm0.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
+            vm1.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
+            try {
+              super.beforeUpdate(event);
+            } catch (CacheWriterException e) {
+              e.printStackTrace();
+              fail("Test failed bcoz of exception =" + e);
+            }
+          }
 
-      }
+          public void beforeDestroy(EntryEvent event) {
+            EventID eventId = ((EntryEventImpl) event).getEventId();
+            vm0.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
+            vm1.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
+            try {
+              super.beforeDestroy(event);
+            } catch (CacheWriterException e) {
+              e.printStackTrace();
+              fail("Test failed bcoz of exception =" + e);
+            }
+          }
 
-      public void beforeDestroy(EntryEvent event) {
-        EventID eventId = ((EntryEventImpl) event).getEventId();
-        vm0.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
-        vm1.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
-        try {
-          super.beforeDestroy(event);
-        } catch (CacheWriterException e) {
-          e.printStackTrace();
-          fail("Test failed bcoz of exception =" + e);
-        }
+          public void beforeRegionDestroy(RegionEvent event) {
+            EventID eventId = ((RegionEventImpl) event).getEventId();
+            vm0.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
+            vm1.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
+            try {
+              super.beforeRegionDestroy(event);
+            } catch (CacheWriterException e) {
+              e.printStackTrace();
+              fail("Test failed bcoz of exception =" + e);
+            }
+          }
 
-      }
-
-      public void beforeRegionDestroy(RegionEvent event) {
-        EventID eventId = ((RegionEventImpl) event).getEventId();
-        vm0.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
-        vm1.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
-        try {
-          super.beforeRegionDestroy(event);
-        } catch (CacheWriterException e) {
-          e.printStackTrace();
-          fail("Test failed bcoz of exception =" + e);
-        }
-
-      }
-
-      public void beforeRegionClear(RegionEvent event) {
-        EventID eventId = ((RegionEventImpl) event).getEventId();
-        vm0.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
-        vm1.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
-        try {
-          super.beforeRegionClear(event);
-        } catch (CacheWriterException e) {
-          e.printStackTrace();
-          fail("Test failed bcoz of exception =" + e);
-        }
-      }
-    };
+          public void beforeRegionClear(RegionEvent event) {
+            EventID eventId = ((RegionEventImpl) event).getEventId();
+            vm0.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
+            vm1.invoke(() -> EventIDVerificationDUnitTest.setEventIDData(eventId));
+            try {
+              super.beforeRegionClear(event);
+            } catch (CacheWriterException e) {
+              e.printStackTrace();
+              fail("Test failed bcoz of exception =" + e);
+            }
+          }
+        };
     factory.setCacheWriter(writer);
     /*
      * factory.setCacheListener(new CacheListenerAdapter() { public void
@@ -262,7 +262,6 @@ public class EventIDVerificationDUnitTest extends JUnit4DistributedTestCase {
 
   public static void setEventIDData(Object evID) {
     eventId = (EventID) evID;
-
   }
 
   public static Integer createServerCache() throws Exception {
@@ -271,57 +270,53 @@ public class EventIDVerificationDUnitTest extends JUnit4DistributedTestCase {
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
 
-    factory.setCacheListener(new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent event) {
+    factory.setCacheListener(
+        new CacheListenerAdapter() {
+          public void afterCreate(EntryEvent event) {
 
-        synchronized (EventIDVerificationDUnitTest.class) {
-          gotCallback = true;
-          testEventIDResult = ((EntryEventImpl) event).getEventId().equals(eventId);
-          EventIDVerificationDUnitTest.class.notify();
-        }
+            synchronized (EventIDVerificationDUnitTest.class) {
+              gotCallback = true;
+              testEventIDResult = ((EntryEventImpl) event).getEventId().equals(eventId);
+              EventIDVerificationDUnitTest.class.notify();
+            }
+          }
 
-      }
+          public void afterUpdate(EntryEvent event) {
 
-      public void afterUpdate(EntryEvent event) {
+            synchronized (EventIDVerificationDUnitTest.class) {
+              gotCallback = true;
+              testEventIDResult = ((EntryEventImpl) event).getEventId().equals(eventId);
+              EventIDVerificationDUnitTest.class.notify();
+            }
+          }
 
-        synchronized (EventIDVerificationDUnitTest.class) {
-          gotCallback = true;
-          testEventIDResult = ((EntryEventImpl) event).getEventId().equals(eventId);
-          EventIDVerificationDUnitTest.class.notify();
-        }
+          public void afterDestroy(EntryEvent event) {
 
-      }
+            synchronized (EventIDVerificationDUnitTest.class) {
+              gotCallback = true;
+              testEventIDResult = ((EntryEventImpl) event).getEventId().equals(eventId);
+              EventIDVerificationDUnitTest.class.notify();
+            }
+          }
 
-      public void afterDestroy(EntryEvent event) {
+          public void afterRegionDestroy(RegionEvent event) {
 
-        synchronized (EventIDVerificationDUnitTest.class) {
-          gotCallback = true;
-          testEventIDResult = ((EntryEventImpl) event).getEventId().equals(eventId);
-          EventIDVerificationDUnitTest.class.notify();
-        }
+            synchronized (EventIDVerificationDUnitTest.class) {
+              gotCallback = true;
+              testEventIDResult = ((RegionEventImpl) event).getEventId().equals(eventId);
+              EventIDVerificationDUnitTest.class.notify();
+            }
+          }
 
-      }
-
-      public void afterRegionDestroy(RegionEvent event) {
-
-        synchronized (EventIDVerificationDUnitTest.class) {
-          gotCallback = true;
-          testEventIDResult = ((RegionEventImpl) event).getEventId().equals(eventId);
-          EventIDVerificationDUnitTest.class.notify();
-        }
-
-      }
-
-      public void afterRegionClear(RegionEvent event) {
-        synchronized (EventIDVerificationDUnitTest.class) {
-          gotCallback = true;
-          //verifyEventIDsDuringRegionDestroy(event);
-          testEventIDResult = ((RegionEventImpl) event).getEventId().equals(eventId);
-          EventIDVerificationDUnitTest.class.notify();
-        }
-      }
-
-    });
+          public void afterRegionClear(RegionEvent event) {
+            synchronized (EventIDVerificationDUnitTest.class) {
+              gotCallback = true;
+              //verifyEventIDsDuringRegionDestroy(event);
+              testEventIDResult = ((RegionEventImpl) event).getEventId().equals(eventId);
+              EventIDVerificationDUnitTest.class.notify();
+            }
+          }
+        });
 
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
@@ -412,7 +407,6 @@ public class EventIDVerificationDUnitTest extends JUnit4DistributedTestCase {
           gotCallback = false;
           e.printStackTrace();
           return Boolean.FALSE;
-
         }
       }
       gotCallback = false;
@@ -420,7 +414,6 @@ public class EventIDVerificationDUnitTest extends JUnit4DistributedTestCase {
     boolean temp = testEventIDResult;
     testEventIDResult = false;
     return new Boolean(temp);
-
   }
 
   public static void verifyEventIDsDuringRegionDestroy(RegionEvent event) {

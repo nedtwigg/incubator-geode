@@ -29,7 +29,8 @@ import org.apache.geode.redis.internal.RegionProvider;
 
 public class DecrExecutor extends StringExecutor {
 
-  private final String ERROR_VALUE_NOT_USABLE = "The value at this key cannot be decremented numerically";
+  private final String ERROR_VALUE_NOT_USABLE =
+      "The value at this key cannot be decremented numerically";
 
   private final String ERROR_OVERFLOW = "This decrementation cannot be performed due to overflow";
 
@@ -75,7 +76,8 @@ public class DecrExecutor extends StringExecutor {
     try {
       value = Long.parseLong(stringValue);
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_VALUE_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_VALUE_NOT_USABLE));
       return;
     }
 
@@ -90,7 +92,5 @@ public class DecrExecutor extends StringExecutor {
 
     r.put(key, new ByteArrayWrapper(Coder.stringToBytes(stringValue)));
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), value));
-
   }
-
 }

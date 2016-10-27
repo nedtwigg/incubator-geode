@@ -32,9 +32,7 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.i18n.StringId;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * This class tests all basic i18n functionality.
- */
+/** This class tests all basic i18n functionality. */
 @Category(IntegrationTest.class)
 public class BasicI18nJUnitTest {
 
@@ -42,16 +40,21 @@ public class BasicI18nJUnitTest {
   //static final Class DEFAULT_RESOURCEBUNDLE = StringIdResourceBundle_ja.class;
   //static final Class JAPAN_RESOURCEBUNDLE = StringIdResourceBundle_ja.class;
 
-  private static final StringId messageId = (StringId) LocalizedStrings.TESTING_THIS_IS_A_TEST_MESSAGE;
+  private static final StringId messageId =
+      (StringId) LocalizedStrings.TESTING_THIS_IS_A_TEST_MESSAGE;
   private static final String englishMessage = "This is a test message.";
   private static final String japaneseMessage = "msgID " + messageId.id + ": " + "これはテストメッセージである。";
 
   private static final Integer messageArg = new Integer(1);
-  private static final StringId messageIdWithArg = (StringId) LocalizedStrings.TESTING_THIS_MESSAGE_HAS_0_MEMBERS;
+  private static final StringId messageIdWithArg =
+      (StringId) LocalizedStrings.TESTING_THIS_MESSAGE_HAS_0_MEMBERS;
   private static final String englishMessageWithArg = "Please ignore: This message has 1 members.";
-  private static final String japaneseMessageWithArg = "msgID " + messageIdWithArg.id + ": Please ignore: このメッセージに 1 メンバーがある。";
-  private static final String englishMessageWithArgMissing = "Please ignore: This message has {0} members.";
-  private static final String japaneseMessageWithArgMissing = "msgID " + messageIdWithArg.id + ": Please ignore: このメッセージに {0} メンバーがある。";
+  private static final String japaneseMessageWithArg =
+      "msgID " + messageIdWithArg.id + ": Please ignore: このメッセージに 1 メンバーがある。";
+  private static final String englishMessageWithArgMissing =
+      "Please ignore: This message has {0} members.";
+  private static final String japaneseMessageWithArgMissing =
+      "msgID " + messageIdWithArg.id + ": Please ignore: このメッセージに {0} メンバーがある。";
 
   @After
   public void tearDown() {
@@ -81,24 +84,19 @@ public class BasicI18nJUnitTest {
   }
 
   /**
-   * Tests {@link StringId#toLocalizedString()} and {@link StringId#toString()}
-   * Currently three languages are tested: English, French, and Japanese.
-   * French is tested under the assumption that it will never be implemented and
-   * thus tests an unimplemented language.
-   * Each Locale is tested for these things:
-   * 1) toString() no arguments
-   * 2) toLocalizedString() no arguments
-   * 3) toString(new Integer(1)) one argument
-   * 4) toLocalizedString(new Integer(1)) one argument
-   * 5) toString() wrong number or arguments, too many
-   * 6) toLocalizedString() wrong number or arguments, too many
-   * 7) toString() wrong number or arguments, too few
-   * 8) toLocalizedString() wrong number or arguments, too few
+   * Tests {@link StringId#toLocalizedString()} and {@link StringId#toString()} Currently three
+   * languages are tested: English, French, and Japanese. French is tested under the assumption that
+   * it will never be implemented and thus tests an unimplemented language. Each Locale is tested
+   * for these things: 1) toString() no arguments 2) toLocalizedString() no arguments 3)
+   * toString(new Integer(1)) one argument 4) toLocalizedString(new Integer(1)) one argument 5)
+   * toString() wrong number or arguments, too many 6) toLocalizedString() wrong number or
+   * arguments, too many 7) toString() wrong number or arguments, too few 8) toLocalizedString()
+   * wrong number or arguments, too few
    */
   @Test
   public void testToLocalizedString() {
     Object[] missingArgs = new Object[] {};
-    Object[] extraArgs = new Object[] { messageArg, "should not print" };
+    Object[] extraArgs = new Object[] {messageArg, "should not print"};
 
     assertEquals(messageId.toString(), englishMessage);
     assertEquals(messageId.toLocalizedString(), englishMessage);
@@ -110,10 +108,9 @@ public class BasicI18nJUnitTest {
     assertEquals(messageIdWithArg.toLocalizedString(missingArgs), englishMessageWithArgMissing);
 
     /**
-     * This is assuming that French isn't implemented and will still get the
-     * English resource bundle.  The second assert will fail if this isn't the
-     * case.
-     **/
+     * This is assuming that French isn't implemented and will still get the English resource
+     * bundle. The second assert will fail if this isn't the case.
+     */
     StringId.setLocale(Locale.FRANCE);
     assertTrue(Locale.FRANCE.equals(getCurrentLocale()));
     assertEquals(messageId.toString(), englishMessage);
@@ -127,8 +124,8 @@ public class BasicI18nJUnitTest {
     assertEquals(messageIdWithArg.toLocalizedString(missingArgs), englishMessageWithArgMissing);
 
     /**
-     * We no longer bundle the JAPAN localized strings with the product
-     * so the following now expects english msgs.
+     * We no longer bundle the JAPAN localized strings with the product so the following now expects
+     * english msgs.
      */
     StringId.setLocale(Locale.JAPAN);
     assertTrue(Locale.JAPAN.equals(getCurrentLocale()));
@@ -185,9 +182,8 @@ public class BasicI18nJUnitTest {
   }
 
   /**
-   * Use reflection to find all instances of StringId defined within
-   * the classes listed in StringIdDefiningClasses and verify
-   * there are not any duplicate indexes used.
+   * Use reflection to find all instances of StringId defined within the classes listed in
+   * StringIdDefiningClasses and verify there are not any duplicate indexes used.
    */
   @Test
   public void testVerifyStringIdsAreUnique() {
@@ -202,7 +198,12 @@ public class BasicI18nJUnitTest {
       //between String bundles to minimize compiler dependencies.
       if ((!isUnique) && ((StringId) instance).id >= 1024) {
         boolean status = duplicates.add(instance);
-        assertTrue("Failed to add " + instance + "to the list of" + " duplicates because of duplicate duplicates", status);
+        assertTrue(
+            "Failed to add "
+                + instance
+                + "to the list of"
+                + " duplicates because of duplicate duplicates",
+            status);
       }
     }
     if (!duplicates.isEmpty()) {
@@ -216,9 +217,8 @@ public class BasicI18nJUnitTest {
   }
 
   /**
-   * Verify the "Formated" form of the string matches the raw text form.
-   * This test is to catch issues like bug #40146
-   * This tests the English version in the US locale.
+   * Verify the "Formated" form of the string matches the raw text form. This test is to catch
+   * issues like bug #40146 This tests the English version in the US locale.
    */
   @Test
   public void testVerifyStringsAreProperlyEscaped_US() {
@@ -226,9 +226,8 @@ public class BasicI18nJUnitTest {
   }
 
   /**
-   * Verify the "Formated" form of the string matches the raw text form.
-   * This test is to catch issues like bug #40146
-   * This tests the English version in the UK locale.
+   * Verify the "Formated" form of the string matches the raw text form. This test is to catch
+   * issues like bug #40146 This tests the English version in the UK locale.
    */
   @Test
   public void testVerifyStringsAreProperlyEscaped_UK() {
@@ -236,9 +235,8 @@ public class BasicI18nJUnitTest {
   }
 
   /**
-   * Verify the "Formated" form of the string matches the raw text form.
-   * This test is to catch issues like bug #40146
-   * This tests the English version in the JAPAN locale.
+   * Verify the "Formated" form of the string matches the raw text form. This test is to catch
+   * issues like bug #40146 This tests the English version in the JAPAN locale.
    */
   @Test
   public void testVerifyStringsAreProperlyEscaped_JAPAN() {
@@ -247,6 +245,7 @@ public class BasicI18nJUnitTest {
 
   /**
    * Get all of the StringId instances via reflection.
+   *
    * @return a set of all StringId declarations within the product
    */
   private Set<StringId> getAllStringIds() {
@@ -265,7 +264,8 @@ public class BasicI18nJUnitTest {
       } catch (ClassNotFoundException cnfe) {
         throw new AssertionError(cnfe.toString(), cnfe);
       } catch (Exception e) {
-        String exMsg = "Reflection attempt failed while attempting to find all" + " StringId instances. ";
+        String exMsg =
+            "Reflection attempt failed while attempting to find all" + " StringId instances. ";
         throw new AssertionError(exMsg + e.toString(), e);
       }
     }
@@ -274,6 +274,7 @@ public class BasicI18nJUnitTest {
 
   /**
    * Lists all of the classes that define StringId instances
+   *
    * @return a set of all classes that contain StringId declarations
    */
   private Set<String> getStringIdDefiningClasses() {
@@ -286,8 +287,8 @@ public class BasicI18nJUnitTest {
   }
 
   /**
-   * Helper to access a private method via reflection, thus allowing
-   * us to not expose them to customers.
+   * Helper to access a private method via reflection, thus allowing us to not expose them to
+   * customers.
    */
   private Locale getCurrentLocale() {
     Class<?> c = StringId.class;
@@ -304,8 +305,8 @@ public class BasicI18nJUnitTest {
   }
 
   /**
-   *  Helper to access a private method via reflection, thus allowing
-   *  us to not expose them to customers.
+   * Helper to access a private method via reflection, thus allowing us to not expose them to
+   * customers.
    */
   private AbstractStringIdResourceBundle getActiveResourceBundle() {
     Class<?> c = StringId.class;
@@ -322,10 +323,8 @@ public class BasicI18nJUnitTest {
   }
 
   /**
-   * Check that the "raw" string matches the "formatted" string after taking
-   * into account known changes due to the fomatting process.
-   * For example:
-   * <code>
+   * Check that the "raw" string matches the "formatted" string after taking into account known
+   * changes due to the fomatting process. For example: <code>
    * "I''m using a contraction." should become "I'm using a contraction."
    * </code>
    */
@@ -353,7 +352,16 @@ public class BasicI18nJUnitTest {
         formatted = instance.toLocalizedString(identityArgs);
       } catch (IllegalArgumentException iae) {
         String testName = this.getClass().getName().replaceAll("\\.", "/") + ".class";
-        String exMsg = "Improper message id=" + ((StringId) instance).id + "\n" + "Usually this is caused by an unmatched or nested \"{\"\n" + "Examples:\t\"{0]\" or \"{ {0} }\"\n" + "This is just the first failure, it is in your interest" + " to rebuild and run just this one test.\n" + "build.sh run-java-tests -Djunit.testcase=" + testName;
+        String exMsg =
+            "Improper message id="
+                + ((StringId) instance).id
+                + "\n"
+                + "Usually this is caused by an unmatched or nested \"{\"\n"
+                + "Examples:\t\"{0]\" or \"{ {0} }\"\n"
+                + "This is just the first failure, it is in your interest"
+                + " to rebuild and run just this one test.\n"
+                + "build.sh run-java-tests -Djunit.testcase="
+                + testName;
         throw new AssertionError(exMsg, iae);
       }
       if (!altered.equals(formatted)) {
@@ -370,7 +378,12 @@ public class BasicI18nJUnitTest {
       err.append("alter the text in StringIdResouceBundle_{lang}.txt.\n");
       err.append("The following misquoted StringIds were found:");
       for (StringId i : misquoted) {
-        err.append("\n").append("StringId id=").append(((StringId) i).id).append(" : text=\"").append(i.getRawText()).append("\"");
+        err.append("\n")
+            .append("StringId id=")
+            .append(((StringId) i).id)
+            .append(" : text=\"")
+            .append(i.getRawText())
+            .append("\"");
       }
       fail(err.toString());
     }

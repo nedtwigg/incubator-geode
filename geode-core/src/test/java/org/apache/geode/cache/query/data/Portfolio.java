@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-/******
- * THIS FILE IS ENCODED IN UTF-8 IN ORDER TO TEST UNICODE IN FIELD NAMES.
- * THE ENCODING MUST BE SPECIFIED AS UTF-8 WHEN COMPILED
- *******/
-
+/**
+ * **** THIS FILE IS ENCODED IN UTF-8 IN ORDER TO TEST UNICODE IN FIELD NAMES. THE ENCODING MUST BE
+ * SPECIFIED AS UTF-8 WHEN COMPILED *****
+ */
 package org.apache.geode.cache.query.data;
 
 import java.io.DataInput;
@@ -55,7 +54,7 @@ public class Portfolio implements Serializable, DataSerializable {
   public HashMap collectionHolderMap = new HashMap();
   String type;
   public String status;
-  public String[] names = { "aaa", "bbb", "ccc", "ddd" };
+  public String[] names = {"aaa", "bbb", "ccc", "ddd"};
   public String unicodeṤtring;
   private final long longMinValue = Long.MIN_VALUE;
   private final float floatMinValue = Float.MIN_VALUE;
@@ -121,12 +120,13 @@ public class Portfolio implements Serializable, DataSerializable {
     return status.equals("active");
   }
 
-  public static String secIds[] = { "SUN", "IBM", "YHOO", "GOOG", "MSFT", "AOL", "APPL", "ORCL", "SAP", "DELL", "RHAT", "NOVL", "HP" };
+  public static String secIds[] = {
+    "SUN", "IBM", "YHOO", "GOOG", "MSFT", "AOL", "APPL", "ORCL", "SAP", "DELL", "RHAT", "NOVL", "HP"
+  };
 
   /* public no-arg constructor required for Deserializable */
   public Portfolio() {
     instanceCount.addAndGet(1);
-
   }
 
   public Portfolio(int i) {
@@ -146,8 +146,12 @@ public class Portfolio implements Serializable, DataSerializable {
     } else {
       position2 = null;
     }
-    positions.put(secIds[Position.cnt % secIds.length], new Position(secIds[Position.cnt % secIds.length], Position.cnt * 1000));
-    positions.put(secIds[Position.cnt % secIds.length], new Position(secIds[Position.cnt % secIds.length], Position.cnt * 1000));
+    positions.put(
+        secIds[Position.cnt % secIds.length],
+        new Position(secIds[Position.cnt % secIds.length], Position.cnt * 1000));
+    positions.put(
+        secIds[Position.cnt % secIds.length],
+        new Position(secIds[Position.cnt % secIds.length], Position.cnt * 1000));
     collectionHolderMap.put("0", new CollectionHolder());
     collectionHolderMap.put("1", new CollectionHolder());
     collectionHolderMap.put("2", new CollectionHolder());
@@ -185,7 +189,8 @@ public class Portfolio implements Serializable, DataSerializable {
   }
 
   public String toString() {
-    String out = "Portfolio [ID=" + ID + " status=" + status + " type=" + type + " pkid=" + pkid + "\n ";
+    String out =
+        "Portfolio [ID=" + ID + " status=" + status + " type=" + type + " pkid=" + pkid + "\n ";
     Iterator iter = positions.entrySet().iterator();
     while (iter.hasNext()) {
       Map.Entry entry = (Map.Entry) iter.next();
@@ -197,7 +202,7 @@ public class Portfolio implements Serializable, DataSerializable {
 
   /**
    * Getter for property type.S
-   * 
+   *
    * @return Value of property type.
    */
   public String getType() {
@@ -214,7 +219,7 @@ public class Portfolio implements Serializable, DataSerializable {
 
   public String funcReturnSecId(Object o) {
     return ((Position) o).getSecId();
-  }//added by vikramj
+  } //added by vikramj
 
   public long longFunction(long j) {
     return j;
@@ -256,7 +261,6 @@ public class Portfolio implements Serializable, DataSerializable {
       this.position3 = new Position[position3Size];
       for (int i = 0; i < position3Size; i++) {
         this.position3[i] = (Position) DataSerializer.readObject(in);
-
       }
     }
     this.indexKey = in.readInt();
@@ -297,5 +301,4 @@ public class Portfolio implements Serializable, DataSerializable {
   public static void resetInstanceCount() {
     instanceCount.set(0);
   }
-
 }

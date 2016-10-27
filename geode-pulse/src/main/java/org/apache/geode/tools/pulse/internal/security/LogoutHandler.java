@@ -28,17 +28,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
-/**
- * Handler is used to close jmx connection maintained at user-level
- *
- */
+/** Handler is used to close jmx connection maintained at user-level */
 public class LogoutHandler extends SimpleUrlLogoutSuccessHandler implements LogoutSuccessHandler {
 
   public LogoutHandler(String defaultTargetURL) {
     this.setDefaultTargetUrl(defaultTargetURL);
   }
 
-  public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+  public void onLogoutSuccess(
+      HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+      throws IOException, ServletException {
     PulseLogWriter LOGGER = PulseLogWriter.getLogger();
     LOGGER.fine("Invoked #LogoutHandler ...");
     if (Repository.get().isUseGemFireCredentials()) {
@@ -50,5 +49,4 @@ public class LogoutHandler extends SimpleUrlLogoutSuccessHandler implements Logo
     }
     super.onLogoutSuccess(request, response, authentication);
   }
-
 }

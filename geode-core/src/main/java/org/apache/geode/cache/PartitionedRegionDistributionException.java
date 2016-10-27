@@ -17,8 +17,8 @@
 package org.apache.geode.cache;
 
 /**
- * Indicates a failure to perform a distributed operation on a Partitioned Region 
- * after multiple attempts.
+ * Indicates a failure to perform a distributed operation on a Partitioned Region after multiple
+ * attempts.
  *
  * @since GemFire 5.1
  */

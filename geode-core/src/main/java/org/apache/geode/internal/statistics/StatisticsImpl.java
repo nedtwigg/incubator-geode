@@ -34,22 +34,17 @@ import org.apache.geode.internal.util.concurrent.CopyOnWriteHashMap;
 
 import org.apache.logging.log4j.Logger;
 
-// @todo darrel Add statistics instances to archive when they are created. 
+// @todo darrel Add statistics instances to archive when they are created.
 /**
- * An object that maintains the values of various application-defined
- * statistics.  The statistics themselves are described by an instance
- * of {@link StatisticsType}.
+ * An object that maintains the values of various application-defined statistics. The statistics
+ * themselves are described by an instance of {@link StatisticsType}.
  *
- * <P>
+ * <p>For optimal statistic access, each statistic may be referred to by its {@link #nameToId id} in
+ * the statistics object.
  *
- * For optimal statistic access, each statistic may be referred to by
- * its {@link #nameToId id} in the statistics object.
- *
- * <P>
+ * <p>
  *
  * @see <A href="package-summary.html#statistics">Package introduction</A>
- *
- *
  * @since GemFire 3.0
  */
 public abstract class StatisticsImpl implements Statistics {
@@ -74,48 +69,41 @@ public abstract class StatisticsImpl implements Statistics {
   /** Uniquely identifies this instance */
   private long uniqueId;
 
-  /**
-   * Suppliers of int sample values to be sampled every sample-interval
-   */
+  /** Suppliers of int sample values to be sampled every sample-interval */
   private final CopyOnWriteHashMap<Integer, IntSupplier> intSuppliers = new CopyOnWriteHashMap<>();
-  /**
-   * Suppliers of long sample values to be sampled every sample-interval
-   */
-  private final CopyOnWriteHashMap<Integer, LongSupplier> longSuppliers = new CopyOnWriteHashMap<>();
-  /**
-   * Suppliers of double sample values to be sampled every sample-interval
-   */
-  private final CopyOnWriteHashMap<Integer, DoubleSupplier> doubleSuppliers = new CopyOnWriteHashMap<>();
+  /** Suppliers of long sample values to be sampled every sample-interval */
+  private final CopyOnWriteHashMap<Integer, LongSupplier> longSuppliers =
+      new CopyOnWriteHashMap<>();
+  /** Suppliers of double sample values to be sampled every sample-interval */
+  private final CopyOnWriteHashMap<Integer, DoubleSupplier> doubleSuppliers =
+      new CopyOnWriteHashMap<>();
 
   /**
-   * Suppliers that have previously failed. Tracked to avoid logging many messages about
-   * a failing supplier
+   * Suppliers that have previously failed. Tracked to avoid logging many messages about a failing
+   * supplier
    */
   private final Set<Object> flakySuppliers = new HashSet<Object>();
 
   ///////////////////////  Constructors  ///////////////////////
 
-  /** factory method to create a class that implements Statistics
-   */
-  public static Statistics createAtomicNoOS(StatisticsType type, String textId, long numericId, long uniqueId, StatisticsManager mgr) {
+  /** factory method to create a class that implements Statistics */
+  public static Statistics createAtomicNoOS(
+      StatisticsType type, String textId, long numericId, long uniqueId, StatisticsManager mgr) {
     return Atomics.createAtomicStatistics(type, textId, numericId, uniqueId, mgr);
   }
 
   /**
    * Creates a new statistics instance of the given type and unique id
    *
-   * @param type
-   *        A description of the statistics
-   * @param textId
-   *        Text that helps identifies this instance
-   * @param numericId
-   *        A number that helps identify this instance
-   * @param uniqueId
-   *        A number that uniquely identifies this instance
-   * @param osStatFlags
-   *        Non-zero if stats require system calls to collect them; for internal use only
+   * @param type A description of the statistics
+   * @param textId Text that helps identifies this instance
+   * @param numericId A number that helps identify this instance
+   * @param uniqueId A number that uniquely identifies this instance
+   * @param osStatFlags Non-zero if stats require system calls to collect them; for internal use
+   *     only
    */
-  public StatisticsImpl(StatisticsType type, String textId, long numericId, long uniqueId, int osStatFlags) {
+  public StatisticsImpl(
+      StatisticsType type, String textId, long numericId, long uniqueId, int osStatFlags) {
     this.type = (StatisticsTypeImpl) type;
     this.textId = textId;
     this.numericId = numericId;
@@ -170,16 +158,12 @@ public abstract class StatisticsImpl implements Statistics {
     return this.numericId;
   }
 
-  /**
-   * Gets the unique id for this resource
-   */
+  /** Gets the unique id for this resource */
   public long getUniqueId() {
     return this.uniqueId;
   }
 
-  /**
-   * Sets a unique id for this resource.
-   */
+  /** Sets a unique id for this resource. */
   public void setUniqueId(long uid) {
     this.uniqueId = uid;
   }
@@ -201,8 +185,8 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   /**
-   * Sets the value of a statistic of type <code>int</code> at the
-   * given offset, but performs no type checking.
+   * Sets the value of a statistic of type <code>int</code> at the given offset, but performs no
+   * type checking.
    */
   protected abstract void _setInt(int offset, int value);
 
@@ -221,8 +205,8 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   /**
-   * Sets the value of a statistic of type <code>long</code> at the
-   * given offset, but performs no type checking.
+   * Sets the value of a statistic of type <code>long</code> at the given offset, but performs no
+   * type checking.
    */
   protected abstract void _setLong(int offset, long value);
 
@@ -241,8 +225,8 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   /**
-   * Sets the value of a statistic of type <code>double</code> at the
-   * given offset, but performs no type checking.
+   * Sets the value of a statistic of type <code>double</code> at the given offset, but performs no
+   * type checking.
    */
   protected abstract void _setDouble(int offset, double value);
 
@@ -265,8 +249,8 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   /**
-   * Returns the value of the statistic of type <code>int</code> at
-   * the given offset, but performs no type checking.
+   * Returns the value of the statistic of type <code>int</code> at the given offset, but performs
+   * no type checking.
    */
   protected abstract int _getInt(int offset);
 
@@ -287,8 +271,8 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   /**
-   * Returns the value of the statistic of type <code>long</code> at
-   * the given offset, but performs no type checking.
+   * Returns the value of the statistic of type <code>long</code> at the given offset, but performs
+   * no type checking.
    */
   protected abstract long _getLong(int offset);
 
@@ -309,8 +293,8 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   /**
-   * Returns the value of the statistic of type <code>double</code> at
-   * the given offset, but performs no type checking.
+   * Returns the value of the statistic of type <code>double</code> at the given offset, but
+   * performs no type checking.
    */
   protected abstract double _getDouble(int offset);
 
@@ -355,8 +339,8 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   /**
-   * Increments the value of the statistic of type <code>int</code> at
-   * the given offset by a given amount, but performs no type checking.
+   * Increments the value of the statistic of type <code>int</code> at the given offset by a given
+   * amount, but performs no type checking.
    */
   protected abstract void _incInt(int offset, int delta);
 
@@ -375,8 +359,8 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   /**
-   * Increments the value of the statistic of type <code>long</code> at
-   * the given offset by a given amount, but performs no type checking.
+   * Increments the value of the statistic of type <code>long</code> at the given offset by a given
+   * amount, but performs no type checking.
    */
   protected abstract void _incLong(int offset, long delta);
 
@@ -395,15 +379,15 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   /**
-   * Increments the value of the statistic of type <code>double</code> at
-   * the given offset by a given amount, but performs no type checking.
+   * Increments the value of the statistic of type <code>double</code> at the given offset by a
+   * given amount, but performs no type checking.
    */
   protected abstract void _incDouble(int offset, double delta);
 
   /**
-   * For internal use only.
-   * Tells the implementation to prepare the data in this instance
-   * for sampling.
+   * For internal use only. Tells the implementation to prepare the data in this instance for
+   * sampling.
+   *
    * @since GemFire 5.1
    */
   public void prepareForSample() {
@@ -411,11 +395,10 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   /**
-   * Invoke sample suppliers to retrieve the current value for
-   * the suppler controlled sets and update the stats to reflect
-   * the supplied values.
-   * @return the number of callback errors that occurred while
-   * sampling stats
+   * Invoke sample suppliers to retrieve the current value for the suppler controlled sets and
+   * update the stats to reflect the supplied values.
+   *
+   * @return the number of callback errors that occurred while sampling stats
    */
   public int invokeSuppliers() {
     int errors = 0;
@@ -453,9 +436,7 @@ public abstract class StatisticsImpl implements Statistics {
     }
   }
 
-  /**
-   * @return the number of statistics that are measured using supplier callbacks
-   */
+  /** @return the number of statistics that are measured using supplier callbacks */
   public int getSupplierCount() {
     return intSuppliers.size() + doubleSuppliers.size() + longSuppliers.size();
   }
@@ -474,7 +455,8 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   @Override
-  public IntSupplier setIntSupplier(final StatisticDescriptor descriptor, final IntSupplier supplier) {
+  public IntSupplier setIntSupplier(
+      final StatisticDescriptor descriptor, final IntSupplier supplier) {
     return setIntSupplier(getIntId(descriptor), supplier);
   }
 
@@ -492,7 +474,8 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   @Override
-  public LongSupplier setLongSupplier(final StatisticDescriptor descriptor, final LongSupplier supplier) {
+  public LongSupplier setLongSupplier(
+      final StatisticDescriptor descriptor, final LongSupplier supplier) {
     return setLongSupplier(getLongId(descriptor), supplier);
   }
 
@@ -510,7 +493,8 @@ public abstract class StatisticsImpl implements Statistics {
   }
 
   @Override
-  public DoubleSupplier setDoubleSupplier(final StatisticDescriptor descriptor, final DoubleSupplier supplier) {
+  public DoubleSupplier setDoubleSupplier(
+      final StatisticDescriptor descriptor, final DoubleSupplier supplier) {
     return setDoubleSupplier(getDoubleId(descriptor), supplier);
   }
 
@@ -531,48 +515,47 @@ public abstract class StatisticsImpl implements Statistics {
     return this.uniqueId == other.getUniqueId();
   }
 
-  private final static int getIntId(StatisticDescriptor descriptor) {
+  private static final int getIntId(StatisticDescriptor descriptor) {
     return ((StatisticDescriptorImpl) descriptor).checkInt();
   }
 
-  private final static int getLongId(StatisticDescriptor descriptor) {
+  private static final int getLongId(StatisticDescriptor descriptor) {
     return ((StatisticDescriptorImpl) descriptor).checkLong();
   }
 
-  private final static int getDoubleId(StatisticDescriptor descriptor) {
+  private static final int getDoubleId(StatisticDescriptor descriptor) {
     return ((StatisticDescriptorImpl) descriptor).checkDouble();
   }
 
-  /**
-   * Returns the value of the specified statistic descriptor.
-   */
+  /** Returns the value of the specified statistic descriptor. */
   private final Number _get(StatisticDescriptorImpl stat) {
     switch (stat.getTypeCode()) {
-    case StatisticDescriptorImpl.INT:
-      return Integer.valueOf(_getInt(stat.getId()));
-    case StatisticDescriptorImpl.LONG:
-      return Long.valueOf(_getLong(stat.getId()));
-    case StatisticDescriptorImpl.DOUBLE:
-      return Double.valueOf(_getDouble(stat.getId()));
-    default:
-      throw new RuntimeException(LocalizedStrings.StatisticsImpl_UNEXPECTED_STAT_DESCRIPTOR_TYPE_CODE_0.toLocalizedString(Byte.valueOf(stat.getTypeCode())));
+      case StatisticDescriptorImpl.INT:
+        return Integer.valueOf(_getInt(stat.getId()));
+      case StatisticDescriptorImpl.LONG:
+        return Long.valueOf(_getLong(stat.getId()));
+      case StatisticDescriptorImpl.DOUBLE:
+        return Double.valueOf(_getDouble(stat.getId()));
+      default:
+        throw new RuntimeException(
+            LocalizedStrings.StatisticsImpl_UNEXPECTED_STAT_DESCRIPTOR_TYPE_CODE_0
+                .toLocalizedString(Byte.valueOf(stat.getTypeCode())));
     }
   }
 
-  /**
-   * Returns the bits that represent the raw value of the
-   * specified statistic descriptor.
-   */
+  /** Returns the bits that represent the raw value of the specified statistic descriptor. */
   private final long _getRawBits(StatisticDescriptorImpl stat) {
     switch (stat.getTypeCode()) {
-    case StatisticDescriptorImpl.INT:
-      return _getInt(stat.getId());
-    case StatisticDescriptorImpl.LONG:
-      return _getLong(stat.getId());
-    case StatisticDescriptorImpl.DOUBLE:
-      return Double.doubleToRawLongBits(_getDouble(stat.getId()));
-    default:
-      throw new RuntimeException(LocalizedStrings.StatisticsImpl_UNEXPECTED_STAT_DESCRIPTOR_TYPE_CODE_0.toLocalizedString(Byte.valueOf(stat.getTypeCode())));
+      case StatisticDescriptorImpl.INT:
+        return _getInt(stat.getId());
+      case StatisticDescriptorImpl.LONG:
+        return _getLong(stat.getId());
+      case StatisticDescriptorImpl.DOUBLE:
+        return Double.doubleToRawLongBits(_getDouble(stat.getId()));
+      default:
+        throw new RuntimeException(
+            LocalizedStrings.StatisticsImpl_UNEXPECTED_STAT_DESCRIPTOR_TYPE_CODE_0
+                .toLocalizedString(Byte.valueOf(stat.getTypeCode())));
     }
   }
 

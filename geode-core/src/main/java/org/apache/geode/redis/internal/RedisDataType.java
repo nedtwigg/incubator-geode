@@ -20,24 +20,21 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.redis.GeodeRedisServer;
 
 /**
- * The RedisDataType enum contains the choices to which every {@link Region}
- * on the server must be. There is only one instance of {@link #REDIS_STRING}
- * and {@link #REDIS_PROTECTED} defined by {@link GeodeRedisServer#STRING_REGION} and
- * {@link GeodeRedisServer#REDIS_META_DATA_REGION} respectively.
- * <p>
- * The data types are:
- * <li>{@link RedisDataType#REDIS_STRING}</li>
- * <li>{@link RedisDataType#REDIS_HASH}</li>
- * <li>{@link RedisDataType#REDIS_LIST}</li>
- * <li>{@link RedisDataType#REDIS_SET}</li>
- * <li>{@link RedisDataType#REDIS_SORTEDSET}</li>
- * <li>{@link RedisDataType#REDIS_PROTECTED}</li>
+ * The RedisDataType enum contains the choices to which every {@link Region} on the server must be.
+ * There is only one instance of {@link #REDIS_STRING} and {@link #REDIS_PROTECTED} defined by
+ * {@link GeodeRedisServer#STRING_REGION} and {@link GeodeRedisServer#REDIS_META_DATA_REGION}
+ * respectively.
  *
+ * <p>The data types are:
+ * <li>{@link RedisDataType#REDIS_STRING}
+ * <li>{@link RedisDataType#REDIS_HASH}
+ * <li>{@link RedisDataType#REDIS_LIST}
+ * <li>{@link RedisDataType#REDIS_SET}
+ * <li>{@link RedisDataType#REDIS_SORTEDSET}
+ * <li>{@link RedisDataType#REDIS_PROTECTED}
  */
 public enum RedisDataType {
-  /**
-   * Strings Regions
-   */
+  /** Strings Regions */
   REDIS_STRING {
     @Override
     public String toString() {
@@ -45,9 +42,7 @@ public enum RedisDataType {
     }
   },
 
-  /**
-   * Hashes Regions
-   */
+  /** Hashes Regions */
   REDIS_HASH {
     @Override
     public String toString() {
@@ -55,9 +50,7 @@ public enum RedisDataType {
     }
   },
 
-  /**
-   * Lists Regions
-   */
+  /** Lists Regions */
   REDIS_LIST {
     @Override
     public String toString() {
@@ -65,9 +58,7 @@ public enum RedisDataType {
     }
   },
 
-  /**
-   * Sets Regions
-   */
+  /** Sets Regions */
   REDIS_SET {
     @Override
     public String toString() {
@@ -75,9 +66,7 @@ public enum RedisDataType {
     }
   },
 
-  /**
-   * SortedSets Regions
-   */
+  /** SortedSets Regions */
   REDIS_SORTEDSET {
     @Override
     public String toString() {
@@ -85,9 +74,7 @@ public enum RedisDataType {
     }
   },
 
-  /**
-   * HyperLogLog Regions
-   */
+  /** HyperLogLog Regions */
   REDIS_HLL {
     @Override
     public String toString() {
@@ -95,9 +82,7 @@ public enum RedisDataType {
     }
   },
 
-  /**
-   * Regions protected from overwrite or deletion
-   */
+  /** Regions protected from overwrite or deletion */
   REDIS_PROTECTED {
     @Override
     public String toString() {
@@ -105,14 +90,11 @@ public enum RedisDataType {
     }
   },
 
-  /**
-   * None
-   */
+  /** None */
   NONE {
     @Override
     public String toString() {
       return "none";
     }
   };
-
 };

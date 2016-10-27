@@ -25,17 +25,11 @@ import org.apache.geode.cache.DiskWriteAttributes;
 import org.apache.geode.cache.DiskWriteAttributesFactory;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Tests if DiskWriteAttributeFactory returns the correct DWA object with the
- * desired values
- */
+/** Tests if DiskWriteAttributeFactory returns the correct DWA object with the desired values */
 @Category(UnitTest.class)
 public class DiskWriteAttributesJUnitTest {
 
-  /**
-   * Test method for
-   * 'org.apache.geode.cache.DiskWriteAttributes.getDefaultInstance()'
-   */
+  /** Test method for 'org.apache.geode.cache.DiskWriteAttributes.getDefaultInstance()' */
   @Test
   public void testGetDefaultInstance() {
     DiskWriteAttributesFactory dwaf = new DiskWriteAttributesFactory();
@@ -44,10 +38,7 @@ public class DiskWriteAttributesJUnitTest {
     assertTrue(dwa.isRollOplogs());
   }
 
-  /**
-   * Test method for
-   * 'org.apache.geode.cache.DiskWriteAttributes.getDefaultSync()'
-   */
+  /** Test method for 'org.apache.geode.cache.DiskWriteAttributes.getDefaultSync()' */
   @Test
   public void testGetDefaultSync() {
     DiskWriteAttributesFactory dwaf = new DiskWriteAttributesFactory();
@@ -57,10 +48,7 @@ public class DiskWriteAttributesJUnitTest {
     assertTrue(dwa.isRollOplogs());
   }
 
-  /**
-   * Test method for
-   * 'org.apache.geode.cache.DiskWriteAttributes.getDefaultAsync()'
-   */
+  /** Test method for 'org.apache.geode.cache.DiskWriteAttributes.getDefaultAsync()' */
   @Test
   public void testGetDefaultAsync() {
     DiskWriteAttributesFactory dwaf = new DiskWriteAttributesFactory();
@@ -69,10 +57,7 @@ public class DiskWriteAttributesJUnitTest {
     assertTrue(dwa.isRollOplogs());
   }
 
-  /**
-   * Test method for
-   * 'org.apache.geode.cache.DiskWriteAttributes.getDefaultRollingSync()'
-   */
+  /** Test method for 'org.apache.geode.cache.DiskWriteAttributes.getDefaultRollingSync()' */
   @Test
   public void testGetDefaultRollingSync() {
     DiskWriteAttributesFactory dwaf = new DiskWriteAttributesFactory();
@@ -83,10 +68,7 @@ public class DiskWriteAttributesJUnitTest {
     assertTrue(dwa.isRollOplogs());
   }
 
-  /**
-   * Test method for
-   * 'org.apache.geode.cache.DiskWriteAttributes.getDefaultRollingAsync()'
-   */
+  /** Test method for 'org.apache.geode.cache.DiskWriteAttributes.getDefaultRollingAsync()' */
   @Test
   public void testGetDefaultRollingAsync() {
     DiskWriteAttributesFactory dwaf = new DiskWriteAttributesFactory();
@@ -95,10 +77,7 @@ public class DiskWriteAttributesJUnitTest {
     assertTrue(dwa.isRollOplogs());
   }
 
-  /**
-   * Test method for
-   * 'org.apache.geode.cache.DiskWriteAttributes.getDefaultNonRollingSync()'
-   */
+  /** Test method for 'org.apache.geode.cache.DiskWriteAttributes.getDefaultNonRollingSync()' */
   @Test
   public void testGetDefaultNonRollingSync() {
     DiskWriteAttributesFactory dwaf = new DiskWriteAttributesFactory();
@@ -109,10 +88,7 @@ public class DiskWriteAttributesJUnitTest {
     assertTrue(!dwa.isRollOplogs());
   }
 
-  /**
-   * Test method for
-   * 'org.apache.geode.cache.DiskWriteAttributes.getDefaultNonRollingAsync()'
-   */
+  /** Test method for 'org.apache.geode.cache.DiskWriteAttributes.getDefaultNonRollingAsync()' */
   @Test
   public void testGetDefaultNonRollingAsync() {
     DiskWriteAttributesFactory dwaf = new DiskWriteAttributesFactory();
@@ -123,8 +99,8 @@ public class DiskWriteAttributesJUnitTest {
   }
 
   /**
-   * Tests the behaviour of DiskWriteAttributesFactory & DiskWritesAttrbutes with
-   * various combinations of  time interval & buffer size.
+   * Tests the behaviour of DiskWriteAttributesFactory & DiskWritesAttrbutes with various
+   * combinations of time interval & buffer size.
    */
   @Test
   public void testDiskWriteAttributesCreation() {

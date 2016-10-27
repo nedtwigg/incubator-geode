@@ -37,9 +37,7 @@ import org.apache.geode.cache.query.QueryService;
 import org.apache.geode.cache.query.data.Portfolio;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class LogicalOperatorsJUnitTest {
 
@@ -57,9 +55,9 @@ public class LogicalOperatorsJUnitTest {
     CacheUtils.closeCache();
   }
 
-  Object validOperands[] = { Boolean.TRUE, Boolean.FALSE, null, QueryService.UNDEFINED };
+  Object validOperands[] = {Boolean.TRUE, Boolean.FALSE, null, QueryService.UNDEFINED};
 
-  Object invalidOperands[] = { new Integer(0), "a" };
+  Object invalidOperands[] = {new Integer(0), "a"};
 
   @Test
   public void testAND() throws Exception {
@@ -152,37 +150,32 @@ public class LogicalOperatorsJUnitTest {
         operand1 = operand2;
         operand2 = temp;
       }
-      if (operand1 == null)
-        return result.equals(QueryService.UNDEFINED);
+      if (operand1 == null) return result.equals(QueryService.UNDEFINED);
 
       if (operator.equalsIgnoreCase("AND")) {
 
-        if (operand1.equals(Boolean.FALSE))
-          return result.equals(Boolean.FALSE);
+        if (operand1.equals(Boolean.FALSE)) return result.equals(Boolean.FALSE);
 
-        if (operand2 != null && operand2.equals(Boolean.FALSE))
-          return result.equals(Boolean.FALSE);
+        if (operand2 != null && operand2.equals(Boolean.FALSE)) return result.equals(Boolean.FALSE);
 
         if (operand1 == QueryService.UNDEFINED || operand2 == QueryService.UNDEFINED)
           return result.equals(QueryService.UNDEFINED);
 
-        if (operand2 == null)
-          return result.equals(QueryService.UNDEFINED);
+        if (operand2 == null) return result.equals(QueryService.UNDEFINED);
 
         return result.equals(Boolean.TRUE);
 
       } else if (operator.equalsIgnoreCase("OR")) {
 
-        if (operand1.equals(Boolean.TRUE))
-          return result.equals(Boolean.TRUE);
+        if (operand1.equals(Boolean.TRUE)) return result.equals(Boolean.TRUE);
 
-        if (operand2 != null && operand2.equals(Boolean.TRUE))
-          return result.equals(Boolean.TRUE);
+        if (operand2 != null && operand2.equals(Boolean.TRUE)) return result.equals(Boolean.TRUE);
 
         if (operand1 == QueryService.UNDEFINED || operand2 == QueryService.UNDEFINED)
           return result == QueryService.UNDEFINED;
 
-        if (/*operand1 == null || not possible */ operand2 == null)
+        if (
+        /*operand1 == null || not possible */ operand2 == null)
           return result == QueryService.UNDEFINED;
 
         return result.equals(Boolean.FALSE);

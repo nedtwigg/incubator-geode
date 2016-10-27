@@ -35,14 +35,15 @@ import java.util.Arrays;
 import java.util.Set;
 
 /**
- * Abstract class that contains common code that all true implementations
- * of {@link CacheServer} can use.
+ * Abstract class that contains common code that all true implementations of {@link CacheServer} can
+ * use.
  *
  * @since GemFire 5.7
  */
 public abstract class AbstractCacheServer implements CacheServer {
 
-  public static final String TEST_OVERRIDE_DEFAULT_PORT_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "test.CacheServer.OVERRIDE_DEFAULT_PORT";
+  public static final String TEST_OVERRIDE_DEFAULT_PORT_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "test.CacheServer.OVERRIDE_DEFAULT_PORT";
 
   /** The cache that is served by this bridge server */
   protected final InternalCache cache;
@@ -59,34 +60,26 @@ public abstract class AbstractCacheServer implements CacheServer {
   /** Whether the bridge server notifies by subscription */
   protected boolean notifyBySubscription = true;
 
-  /**
-   * The buffer size in bytes of the socket for this 
-   * <code>BridgeServer</code>
-   */
+  /** The buffer size in bytes of the socket for this <code>BridgeServer</code> */
   protected int socketBufferSize;
 
-  /**
-   * The tcpNoDelay setting for outgoing sockets
-   */
+  /** The tcpNoDelay setting for outgoing sockets */
   protected boolean tcpNoDelay;
 
   /**
-   * The maximum amount of time between client pings. This value is used by
-   * the <code>ClientHealthMonitor</code> to determine the health of this
-   * <code>BridgeServer</code>'s clients.
+   * The maximum amount of time between client pings. This value is used by the <code>
+   * ClientHealthMonitor</code> to determine the health of this <code>BridgeServer</code>'s clients.
    */
   protected int maximumTimeBetweenPings;
 
   /** the maximum number of messages that can be enqueued in a client-queue. */
   protected int maximumMessageCount;
 
-  /**
-   * the time (in seconds) after which a message in the client queue will
-   * expire.
-   */
+  /** the time (in seconds) after which a message in the client queue will expire. */
   protected int messageTimeToLive;
   /**
    * The groups this server belongs to. Use <code>getGroups</code> to read.
+   *
    * @since GemFire 5.7
    */
   protected String[] groups;
@@ -95,37 +88,34 @@ public abstract class AbstractCacheServer implements CacheServer {
 
   /**
    * The ip address or host name that this server is to listen on.
+   *
    * @since GemFire 5.7
    */
   protected String bindAddress;
   /**
-   * The ip address or host name that will be given to clients so they can connect
-   * to this server
+   * The ip address or host name that will be given to clients so they can connect to this server
+   *
    * @since GemFire 5.7
    */
   protected String hostnameForClients;
 
-  /**
-   * How frequency to poll the load on this server.
-   */
+  /** How frequency to poll the load on this server. */
   protected long loadPollInterval;
 
   protected ClientSubscriptionConfig clientSubscriptionConfig;
 
   /**
-   * Listens to client membership events and notifies any admin 
-   * members as clients of this server leave/crash. 
+   * Listens to client membership events and notifies any admin members as clients of this server
+   * leave/crash.
    */
   protected final ClientMembershipListener listener;
 
   //////////////////////  Constructors  //////////////////////
 
   /**
-   * Creates a new <code>BridgeServer</code> with the default
-   * configuration.
+   * Creates a new <code>BridgeServer</code> with the default configuration.
    *
-   * @param cache
-   *        The cache being served
+   * @param cache The cache being served
    */
   public AbstractCacheServer(InternalCache cache) {
     this(cache, true);
@@ -152,66 +142,66 @@ public abstract class AbstractCacheServer implements CacheServer {
       this.listener = null;
       return;
     }
-    listener = new ClientMembershipListener() {
+    listener =
+        new ClientMembershipListener() {
 
-      @Override
-      public void memberJoined(ClientMembershipEvent event) {
-        if (event.isClient()) {
-          createAndSendMessage(event, ClientMembershipMessage.JOINED);
-        }
-      }
-
-      @Override
-      public void memberLeft(ClientMembershipEvent event) {
-        if (event.isClient()) {
-          createAndSendMessage(event, ClientMembershipMessage.LEFT);
-        }
-      }
-
-      @Override
-      public void memberCrashed(ClientMembershipEvent event) {
-        if (event.isClient()) {
-          createAndSendMessage(event, ClientMembershipMessage.CRASHED);
-        }
-      }
-
-      /**
-       * Method to create & send the ClientMembershipMessage to admin members.
-       * The message is sent only if there are any admin members in the
-       * distribution system.
-       * 
-       * @param event
-       *          describes a change in client membership
-       * @param type
-       *          type of event - one of ClientMembershipMessage.JOINED,
-       *          ClientMembershipMessage.LEFT, ClientMembershipMessage.CRASHED
-       */
-      private void createAndSendMessage(ClientMembershipEvent event, int type) {
-        InternalDistributedSystem ds = null;
-        Cache cacheInstance = AbstractCacheServer.this.cache;
-        if (cacheInstance != null && !(cacheInstance instanceof CacheCreation)) {
-          ds = (InternalDistributedSystem) cacheInstance.getDistributedSystem();
-        } else {
-          ds = InternalDistributedSystem.getAnyInstance();
-        }
-
-        //ds could be null
-        if (ds != null && ds.isConnected()) {
-          DM dm = ds.getDistributionManager();
-          Set adminMemberSet = dm.getAdminMemberSet();
-
-          /* check if there are any admin members at all */
-          if (!adminMemberSet.isEmpty()) {
-            DistributedMember member = event.getMember();
-
-            ClientMembershipMessage msg = new ClientMembershipMessage(event.getMemberId(), member == null ? null : member.getHost(), type);
-
-            msg.setRecipients(adminMemberSet);
-            dm.putOutgoing(msg);
+          @Override
+          public void memberJoined(ClientMembershipEvent event) {
+            if (event.isClient()) {
+              createAndSendMessage(event, ClientMembershipMessage.JOINED);
+            }
           }
-        }
-      }
-    };
+
+          @Override
+          public void memberLeft(ClientMembershipEvent event) {
+            if (event.isClient()) {
+              createAndSendMessage(event, ClientMembershipMessage.LEFT);
+            }
+          }
+
+          @Override
+          public void memberCrashed(ClientMembershipEvent event) {
+            if (event.isClient()) {
+              createAndSendMessage(event, ClientMembershipMessage.CRASHED);
+            }
+          }
+
+          /**
+           * Method to create & send the ClientMembershipMessage to admin members. The message is
+           * sent only if there are any admin members in the distribution system.
+           *
+           * @param event describes a change in client membership
+           * @param type type of event - one of ClientMembershipMessage.JOINED,
+           *     ClientMembershipMessage.LEFT, ClientMembershipMessage.CRASHED
+           */
+          private void createAndSendMessage(ClientMembershipEvent event, int type) {
+            InternalDistributedSystem ds = null;
+            Cache cacheInstance = AbstractCacheServer.this.cache;
+            if (cacheInstance != null && !(cacheInstance instanceof CacheCreation)) {
+              ds = (InternalDistributedSystem) cacheInstance.getDistributedSystem();
+            } else {
+              ds = InternalDistributedSystem.getAnyInstance();
+            }
+
+            //ds could be null
+            if (ds != null && ds.isConnected()) {
+              DM dm = ds.getDistributionManager();
+              Set adminMemberSet = dm.getAdminMemberSet();
+
+              /* check if there are any admin members at all */
+              if (!adminMemberSet.isEmpty()) {
+                DistributedMember member = event.getMember();
+
+                ClientMembershipMessage msg =
+                    new ClientMembershipMessage(
+                        event.getMemberId(), member == null ? null : member.getHost(), type);
+
+                msg.setRecipients(adminMemberSet);
+                dm.putOutgoing(msg);
+              }
+            }
+          }
+        };
 
     ClientMembership.registerClientMembershipListener(listener);
   }
@@ -364,10 +354,21 @@ public abstract class AbstractCacheServer implements CacheServer {
   }
 
   /**
-   * Returns whether or not this bridge server has the same
-   * configuration as another bridge server.
+   * Returns whether or not this bridge server has the same configuration as another bridge server.
    */
   public boolean sameAs(CacheServer other) {
-    return getPort() == other.getPort() && eq(getBindAddress(), other.getBindAddress()) && getSocketBufferSize() == other.getSocketBufferSize() && getMaximumTimeBetweenPings() == other.getMaximumTimeBetweenPings() && getNotifyBySubscription() == other.getNotifyBySubscription() && getMaxConnections() == other.getMaxConnections() && getMaxThreads() == other.getMaxThreads() && getMaximumMessageCount() == other.getMaximumMessageCount() && getMessageTimeToLive() == other.getMessageTimeToLive() && Arrays.equals(getGroups(), other.getGroups()) && getLoadProbe().equals(other.getLoadProbe()) && getLoadPollInterval() == other.getLoadPollInterval() && getTcpNoDelay() == other.getTcpNoDelay();
+    return getPort() == other.getPort()
+        && eq(getBindAddress(), other.getBindAddress())
+        && getSocketBufferSize() == other.getSocketBufferSize()
+        && getMaximumTimeBetweenPings() == other.getMaximumTimeBetweenPings()
+        && getNotifyBySubscription() == other.getNotifyBySubscription()
+        && getMaxConnections() == other.getMaxConnections()
+        && getMaxThreads() == other.getMaxThreads()
+        && getMaximumMessageCount() == other.getMaximumMessageCount()
+        && getMessageTimeToLive() == other.getMessageTimeToLive()
+        && Arrays.equals(getGroups(), other.getGroups())
+        && getLoadProbe().equals(other.getLoadProbe())
+        && getLoadPollInterval() == other.getLoadPollInterval()
+        && getTcpNoDelay() == other.getTcpNoDelay();
   }
 }

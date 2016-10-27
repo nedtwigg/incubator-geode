@@ -16,34 +16,26 @@
  */
 package org.apache.geode.internal.datasource;
 
-/**
- * This interface outlines the behavior of a Connection provider.
- * 
- */
+/** This interface outlines the behavior of a Connection provider. */
 public interface ConnectionProvider {
 
   /**
-   * Provides a PooledConnection from the connection pool. Default user and
-   * password are used.
-   * 
+   * Provides a PooledConnection from the connection pool. Default user and password are used.
+   *
    * @return a PooledConnection object to the user.
    */
   public Object borrowConnection() throws PoolException;
 
   /**
    * Returns a PooledConnection object to the pool.
-   * 
+   *
    * @param connectionObject to be returned to the pool
    */
   public void returnConnection(Object connectionObject);
 
-  /**
-   * Closes a PooledConnection object .
-   */
+  /** Closes a PooledConnection object . */
   public void returnAndExpireConnection(Object connectionObject);
 
-  /**
-   * Clean up the resources before restart of Cache
-   */
+  /** Clean up the resources before restart of Cache */
   public void clearUp();
 }

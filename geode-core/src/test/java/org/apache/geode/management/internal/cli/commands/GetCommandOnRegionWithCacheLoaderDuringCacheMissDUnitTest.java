@@ -47,8 +47,9 @@ import static org.apache.geode.test.dunit.LogWriterUtils.getLogWriter;
 import static org.apache.geode.test.dunit.Wait.waitForCriterion;
 
 /**
- * The GetCommandOnRegionWithCacheLoaderDuringCacheMissDUnitTest class is test suite of test cases testing the Gfsh
- * 'get' data command when a cache miss occurs on data in a Region with a CacheLoader defined.
+ * The GetCommandOnRegionWithCacheLoaderDuringCacheMissDUnitTest class is test suite of test cases
+ * testing the Gfsh 'get' data command when a cache miss occurs on data in a Region with a
+ * CacheLoader defined.
  *
  * @see org.apache.geode.management.internal.cli.commands.CliCommandTestBase
  * @see org.apache.geode.management.internal.cli.commands.DataCommands
@@ -65,8 +66,11 @@ public class GetCommandOnRegionWithCacheLoaderDuringCacheMissDUnitTest extends C
 
   @Override
   public final void postSetUpCliCommandTestBase() throws Exception {
-    Properties managerDistributedSystemProperties = createDistributedSystemProperties(GEMFIRE_MANAGER_NAME);
-    HeadlessGfsh gfsh = setUpJmxManagerOnVm0ThenConnect(managerDistributedSystemProperties); // vm 0 -- locator/manager
+    Properties managerDistributedSystemProperties =
+        createDistributedSystemProperties(GEMFIRE_MANAGER_NAME);
+    HeadlessGfsh gfsh =
+        setUpJmxManagerOnVm0ThenConnect(
+            managerDistributedSystemProperties); // vm 0 -- locator/manager
 
     assertNotNull(gfsh); // controller vm -- gfsh
     assertTrue(gfsh.isConnectedAndReady());
@@ -116,7 +120,9 @@ public class GetCommandOnRegionWithCacheLoaderDuringCacheMissDUnitTest extends C
   }
 
   private static String getRegionPath(final String regionName) {
-    return (regionName.startsWith(Region.SEPARATOR) ? regionName : String.format("%1$s%2$s", Region.SEPARATOR, regionName));
+    return (regionName.startsWith(Region.SEPARATOR)
+        ? regionName
+        : String.format("%1$s%2$s", Region.SEPARATOR, regionName));
   }
 
   private static String toString(final Result result) {
@@ -133,7 +139,8 @@ public class GetCommandOnRegionWithCacheLoaderDuringCacheMissDUnitTest extends C
   }
 
   private void setupGemFire() throws Exception {
-    initializePeer(createPeer(getHost(0).getVM(1), createDistributedSystemProperties(GEMFIRE_SERVER_NAME)));
+    initializePeer(
+        createPeer(getHost(0).getVM(1), createDistributedSystemProperties(GEMFIRE_SERVER_NAME)));
   }
 
   private Properties createDistributedSystemProperties(final String gemfireName) {
@@ -150,70 +157,89 @@ public class GetCommandOnRegionWithCacheLoaderDuringCacheMissDUnitTest extends C
   }
 
   private void initializePeer(final Peer peer) throws Exception {
-    peer.run(new SerializableRunnable(String.format("Initializes the '%1$s' with the '%2$s' Region having a CacheLoader.", GEMFIRE_SERVER_NAME, USERS_REGION_NAME)) {
-      @Override
-      public void run() {
-        // create the GemFire Distributed System with custom distribution configuration properties and settings
-        getSystem(peer.getConfiguration());
+    peer.run(
+        new SerializableRunnable(
+            String.format(
+                "Initializes the '%1$s' with the '%2$s' Region having a CacheLoader.",
+                GEMFIRE_SERVER_NAME, USERS_REGION_NAME)) {
+          @Override
+          public void run() {
+            // create the GemFire Distributed System with custom distribution configuration properties and settings
+            getSystem(peer.getConfiguration());
 
-        Cache cache = getCache();
-        RegionFactory<String, User> regionFactory = cache.createRegionFactory(RegionShortcut.REPLICATE);
+            Cache cache = getCache();
+            RegionFactory<String, User> regionFactory =
+                cache.createRegionFactory(RegionShortcut.REPLICATE);
 
-        regionFactory.setCacheLoader(new UserDataStoreCacheLoader());
-        regionFactory.setInitialCapacity(51);
-        regionFactory.setKeyConstraint(String.class);
-        regionFactory.setLoadFactor(0.75f);
-        regionFactory.setStatisticsEnabled(false);
-        regionFactory.setValueConstraint(User.class);
+            regionFactory.setCacheLoader(new UserDataStoreCacheLoader());
+            regionFactory.setInitialCapacity(51);
+            regionFactory.setKeyConstraint(String.class);
+            regionFactory.setLoadFactor(0.75f);
+            regionFactory.setStatisticsEnabled(false);
+            regionFactory.setValueConstraint(User.class);
 
-        Region<String, User> users = regionFactory.create(USERS_REGION_NAME);
+            Region<String, User> users = regionFactory.create(USERS_REGION_NAME);
 
-        assertNotNull(users);
-        assertEquals("Users", users.getName());
-        assertEquals("/Users", users.getFullPath());
-        assertTrue(users.isEmpty());
-        assertNull(users.put("jonbloom", new User("jonbloom")));
-        assertFalse(users.isEmpty());
-        assertEquals(1, users.size());
-        assertEquals(new User("jonbloom"), users.get("jonbloom"));
-      }
-    });
+            assertNotNull(users);
+            assertEquals("Users", users.getName());
+            assertEquals("/Users", users.getFullPath());
+            assertTrue(users.isEmpty());
+            assertNull(users.put("jonbloom", new User("jonbloom")));
+            assertFalse(users.isEmpty());
+            assertEquals(1, users.size());
+            assertEquals(new User("jonbloom"), users.get("jonbloom"));
+          }
+        });
   }
 
   private void verifyGemFireSetup(final Peer manager) throws Exception {
-    manager.run(new SerializableRunnable("Verifies the GemFire Cluster was properly configured and initialized!") {
-      @Override
-      public void run() {
-        final ManagementService managementService = ManagementService.getExistingManagementService(getCache());
-
-        WaitCriterion waitOnManagerCriterion = new WaitCriterion() {
+    manager.run(
+        new SerializableRunnable(
+            "Verifies the GemFire Cluster was properly configured and initialized!") {
           @Override
-          public boolean done() {
-            ManagerMXBean managerBean = managementService.getManagerMXBean();
-            DistributedRegionMXBean usersRegionBean = managementService.getDistributedRegionMXBean(getRegionPath(USERS_REGION_NAME));
+          public void run() {
+            final ManagementService managementService =
+                ManagementService.getExistingManagementService(getCache());
 
-            return !(managerBean == null || usersRegionBean == null);
+            WaitCriterion waitOnManagerCriterion =
+                new WaitCriterion() {
+                  @Override
+                  public boolean done() {
+                    ManagerMXBean managerBean = managementService.getManagerMXBean();
+                    DistributedRegionMXBean usersRegionBean =
+                        managementService.getDistributedRegionMXBean(
+                            getRegionPath(USERS_REGION_NAME));
+
+                    return !(managerBean == null || usersRegionBean == null);
+                  }
+
+                  @Override
+                  public String description() {
+                    return String.format(
+                        "Probing for the GemFire Manager '%1$s' and '%2$s' Region MXBeans...",
+                        manager.getName(), USERS_REGION_NAME);
+                  }
+                };
+
+            waitForCriterion(waitOnManagerCriterion, 30000, 2000, true);
           }
-
-          @Override
-          public String description() {
-            return String.format("Probing for the GemFire Manager '%1$s' and '%2$s' Region MXBeans...", manager.getName(), USERS_REGION_NAME);
-          }
-        };
-
-        waitForCriterion(waitOnManagerCriterion, 30000, 2000, true);
-      }
-    });
+        });
   }
 
   private void doHousekeeping() {
     runCommand(CliStrings.LIST_MEMBER);
 
-    runCommand(new CommandStringBuilder(CliStrings.DESCRIBE_MEMBER).addOption(CliStrings.DESCRIBE_MEMBER__IDENTIFIER, GEMFIRE_SERVER_NAME).toString());
+    runCommand(
+        new CommandStringBuilder(CliStrings.DESCRIBE_MEMBER)
+            .addOption(CliStrings.DESCRIBE_MEMBER__IDENTIFIER, GEMFIRE_SERVER_NAME)
+            .toString());
 
     runCommand(CliStrings.LIST_REGION);
 
-    runCommand(new CommandStringBuilder(CliStrings.DESCRIBE_REGION).addOption(CliStrings.DESCRIBE_REGION__NAME, USERS_REGION_NAME).toString());
+    runCommand(
+        new CommandStringBuilder(CliStrings.DESCRIBE_REGION)
+            .addOption(CliStrings.DESCRIBE_REGION__NAME, USERS_REGION_NAME)
+            .toString());
   }
 
   private void log(final Result result) {
@@ -238,10 +264,16 @@ public class GetCommandOnRegionWithCacheLoaderDuringCacheMissDUnitTest extends C
 
   private void assertResult(final boolean expectedResult, final CommandResult commandResult) {
     if (ResultData.TYPE_COMPOSITE.equals(commandResult.getType())) {
-      boolean actualResult = (Boolean) ((CompositeResultData) commandResult.getResultData()).retrieveSectionByIndex(0).retrieveObject("Result");
+      boolean actualResult =
+          (Boolean)
+              ((CompositeResultData) commandResult.getResultData())
+                  .retrieveSectionByIndex(0)
+                  .retrieveObject("Result");
       assertEquals(expectedResult, actualResult);
     } else {
-      fail(String.format("Expected composite result data; but was '%1$s'!%n", commandResult.getType()));
+      fail(
+          String.format(
+              "Expected composite result data; but was '%1$s'!%n", commandResult.getType()));
     }
   }
 
@@ -251,7 +283,8 @@ public class GetCommandOnRegionWithCacheLoaderDuringCacheMissDUnitTest extends C
     private final VM vm;
 
     public Peer(final VM vm, final Properties distributedSystemProperties) {
-      assert distributedSystemProperties != null : "The GemFire Distributed System configuration properties and settings cannot be null!";
+      assert distributedSystemProperties != null
+          : "The GemFire Distributed System configuration properties and settings cannot be null!";
       this.vm = vm;
       this.distributedSystemProperties = distributedSystemProperties;
     }

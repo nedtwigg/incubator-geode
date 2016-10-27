@@ -23,16 +23,10 @@ import org.apache.geode.cache.CacheListener;
 import org.apache.geode.cache.EntryEvent;
 import org.apache.geode.cache.RegionEvent;
 
-/**
- * This listener will be attached to each notification region
- * corresponding to a member 
- *
- */
+/** This listener will be attached to each notification region corresponding to a member */
 public class NotificationCacheListener implements CacheListener<NotificationKey, Notification> {
 
-  /**
-   * For the 
-   */
+  /** For the */
   private NotificationHubClient notifClient;
 
   private volatile boolean readyForEvents;
@@ -41,7 +35,6 @@ public class NotificationCacheListener implements CacheListener<NotificationKey,
 
     notifClient = new NotificationHubClient(proxyHelper);
     this.readyForEvents = false;
-
   }
 
   @Override
@@ -50,7 +43,6 @@ public class NotificationCacheListener implements CacheListener<NotificationKey,
       return;
     }
     notifClient.sendNotification(event);
-
   }
 
   @Override
@@ -101,7 +93,6 @@ public class NotificationCacheListener implements CacheListener<NotificationKey,
       return;
     }
     notifClient.sendNotification(event);
-
   }
 
   @Override
@@ -113,5 +104,4 @@ public class NotificationCacheListener implements CacheListener<NotificationKey,
   public void markReady() {
     readyForEvents = true;
   }
-
 }

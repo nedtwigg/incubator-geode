@@ -36,7 +36,6 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 /**
  * Contains simple tests for the {@link MemberHealthEvaluator}.
  *
- *
  * @since GemFire 3.5
  */
 @SuppressWarnings("deprecation")
@@ -44,8 +43,8 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 public class MemberHealthEvaluatorJUnitTest extends HealthEvaluatorTestCase {
 
   /**
-   * Tests that we are in {@link GemFireHealth#OKAY_HEALTH okay}
-   * health if the VM's process size is too big.
+   * Tests that we are in {@link GemFireHealth#OKAY_HEALTH okay} health if the VM's process size is
+   * too big.
    *
    * @see MemberHealthEvaluator#checkVMProcessSize
    */
@@ -71,14 +70,17 @@ public class MemberHealthEvaluatorJUnitTest extends HealthEvaluatorTestCase {
       GemFireHealthConfig config = new GemFireHealthConfigImpl(null);
       config.setMaxVMProcessSize(threshold);
 
-      MemberHealthEvaluator eval = new MemberHealthEvaluator(config, this.system.getDistributionManager());
+      MemberHealthEvaluator eval =
+          new MemberHealthEvaluator(config, this.system.getDistributionManager());
       eval.evaluate(status);
       assertTrue(status.isEmpty());
 
       status = new ArrayList();
       long processSize = stats.getProcessSize();
       threshold = processSize / 2;
-      assertTrue("Threshold (" + threshold + ") is > 0.  " + "Process size is " + processSize, threshold > 0);
+      assertTrue(
+          "Threshold (" + threshold + ") is > 0.  " + "Process size is " + processSize,
+          threshold > 0);
 
       config = new GemFireHealthConfigImpl(null);
       config.setMaxVMProcessSize(threshold);
@@ -87,7 +89,8 @@ public class MemberHealthEvaluatorJUnitTest extends HealthEvaluatorTestCase {
       eval.evaluate(status);
       assertEquals(1, status.size());
 
-      AbstractHealthEvaluator.HealthStatus ill = (AbstractHealthEvaluator.HealthStatus) status.get(0);
+      AbstractHealthEvaluator.HealthStatus ill =
+          (AbstractHealthEvaluator.HealthStatus) status.get(0);
       assertEquals(GemFireHealth.OKAY_HEALTH, ill.getHealthCode());
       assertTrue(ill.getDiagnosis().indexOf("The size of this VM") != -1);
     }

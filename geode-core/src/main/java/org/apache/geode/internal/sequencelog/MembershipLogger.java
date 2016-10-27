@@ -20,9 +20,7 @@ import java.util.regex.Pattern;
 
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
-/**
- *
- */
+/** */
 public class MembershipLogger {
 
   private static final SequenceLogger GRAPH_LOGGER = SequenceLoggerImpl.getInstance();
@@ -42,5 +40,4 @@ public class MembershipLogger {
   public static void logShutdown(InternalDistributedMember member) {
     GRAPH_LOGGER.logTransition(GraphType.MEMBER, "member", "stop", "destroyed", member, member);
   }
-
 }

@@ -48,9 +48,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
-/**
- *
- */
+/** */
 public class DiskInitFileParser {
   private static final Logger logger = LogService.getLogger();
 
@@ -82,366 +80,495 @@ public class DiskInitFileParser {
         logger.trace(LogMarker.PERSIST_RECOVERY, "DiskInitFile opcode={}", opCode);
       }
       switch (opCode) {
-      case DiskInitFile.IF_EOF_ID:
-        endOfFile = true;
-        gotEOF = true;
-        break;
-      case DiskInitFile.IFREC_INSTANTIATOR_ID: {
-        int id = dis.readInt();
-        String cn = readClassName(dis);
-        String icn = readClassName(dis);
-        readEndOfRecord(dis);
-        interpreter.cmnInstantiatorId(id, cn, icn);
-      }
-        break;
-      case DiskInitFile.IFREC_DATA_SERIALIZER_ID: {
-        Class<?> dsc = readClass(dis);
-        readEndOfRecord(dis);
-        interpreter.cmnDataSerializerId(dsc);
-      }
-        break;
-      case DiskInitFile.IFREC_ONLINE_MEMBER_ID: {
-        long drId = readDiskRegionID(dis);
-        PersistentMemberID pmid = readPMID(dis, gfversion);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_ONLINE_MEMBER_ID drId={} omid={}", drId, pmid);
-        }
-        interpreter.cmnOnlineMemberId(drId, pmid);
-      }
-        break;
-      case DiskInitFile.IFREC_OFFLINE_MEMBER_ID: {
-        long drId = readDiskRegionID(dis);
-        PersistentMemberID pmid = readPMID(dis, gfversion);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_OFFLINE_MEMBER_ID drId={} pmid={}", drId, pmid);
-        }
-        interpreter.cmnOfflineMemberId(drId, pmid);
-      }
-        break;
-      case DiskInitFile.IFREC_RM_MEMBER_ID: {
-        long drId = readDiskRegionID(dis);
-        PersistentMemberID pmid = readPMID(dis, gfversion);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_RM_MEMBER_ID drId={} pmid={}", drId, pmid);
-        }
-        interpreter.cmnRmMemberId(drId, pmid);
-      }
-        break;
-      case DiskInitFile.IFREC_MY_MEMBER_INITIALIZING_ID: {
-        long drId = readDiskRegionID(dis);
-        PersistentMemberID pmid = readPMID(dis, gfversion);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_MY_MEMBER_INITIALIZING_ID drId={} pmid={}", drId, pmid);
-        }
-        interpreter.cmnAddMyInitializingPMID(drId, pmid);
-      }
-        break;
-      case DiskInitFile.IFREC_MY_MEMBER_INITIALIZED_ID: {
-        long drId = readDiskRegionID(dis);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_MY_MEMBER_INITIALIZED_ID drId={}", drId);
-        }
-        interpreter.cmnMarkInitialized(drId);
-      }
-        break;
-      case DiskInitFile.IFREC_CREATE_REGION_ID: {
-        long drId = readDiskRegionID(dis);
-        String regName = dis.readUTF();
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_CREATE_REGION_ID drId= name={}", drId, regName);
-        }
-        interpreter.cmnCreateRegion(drId, regName);
-      }
-        break;
-      case DiskInitFile.IFREC_BEGIN_DESTROY_REGION_ID: {
-        long drId = readDiskRegionID(dis);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_BEGIN_DESTROY_REGION_ID drId={}", drId);
-        }
-        interpreter.cmnBeginDestroyRegion(drId);
-      }
-        break;
-      case DiskInitFile.IFREC_END_DESTROY_REGION_ID: {
-        long drId = readDiskRegionID(dis);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_END_DESTROY_REGION_ID drId={}", drId);
-        }
-        interpreter.cmnEndDestroyRegion(drId);
-      }
-        break;
-      case DiskInitFile.IFREC_BEGIN_PARTIAL_DESTROY_REGION_ID: {
-        long drId = readDiskRegionID(dis);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_BEGIN_PARTIAL_DESTROY_REGION_ID drId={}", drId);
-        }
-        interpreter.cmnBeginPartialDestroyRegion(drId);
-      }
-        break;
-      case DiskInitFile.IFREC_END_PARTIAL_DESTROY_REGION_ID: {
-        long drId = readDiskRegionID(dis);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_END_PARTIAL_DESTROY_REGION_ID drId={}", drId);
-        }
-        interpreter.cmnEndPartialDestroyRegion(drId);
-      }
-        break;
-      case DiskInitFile.IFREC_CLEAR_REGION_ID: {
-        long drId = readDiskRegionID(dis);
-        long clearOplogEntryId = dis.readLong();
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_CLEAR_REGION_ID drId={} oplogEntryId={}", drId, clearOplogEntryId);
-        }
-        interpreter.cmnClearRegion(drId, clearOplogEntryId);
-      }
-        break;
-      case DiskInitFile.IFREC_CLEAR_REGION_WITH_RVV_ID: {
-        long drId = readDiskRegionID(dis);
-        int size = dis.readInt();
-        ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> memberToVersion = new ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>>(size);
-        for (int i = 0; i < size; i++) {
-          DiskStoreID id = new DiskStoreID();
-          InternalDataSerializer.invokeFromData(id, dis);
-          RegionVersionHolder holder = new RegionVersionHolder(dis);
-          memberToVersion.put(id, holder);
-        }
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_CLEAR_REGION_WITH_RVV_ID drId={} memberToVersion={}", drId, memberToVersion);
-        }
-        interpreter.cmnClearRegion(drId, memberToVersion);
-      }
-        break;
-      case DiskInitFile.IFREC_CRF_CREATE: {
-        long oplogId = dis.readLong();
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_CRF_CREATE oplogId={}", oplogId);
-        }
-        interpreter.cmnCrfCreate(oplogId);
-      }
-        break;
-      case DiskInitFile.IFREC_DRF_CREATE: {
-        long oplogId = dis.readLong();
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_DRF_CREATE oplogId={}", oplogId);
-        }
-        interpreter.cmnDrfCreate(oplogId);
-      }
-        break;
-      case DiskInitFile.IFREC_KRF_CREATE: {
-        long oplogId = dis.readLong();
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_KRF_CREATE oplogId={}", oplogId);
-        }
-        interpreter.cmnKrfCreate(oplogId);
-      }
-        break;
-      case DiskInitFile.IFREC_CRF_DELETE: {
-        long oplogId = dis.readLong();
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_CRF_DELETE oplogId={}", oplogId);
-        }
-        interpreter.cmnCrfDelete(oplogId);
-      }
-        break;
-      case DiskInitFile.IFREC_DRF_DELETE: {
-        long oplogId = dis.readLong();
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_DRF_DELETE oplogId={}", oplogId);
-        }
-        interpreter.cmnDrfDelete(oplogId);
-      }
-        break;
-      case DiskInitFile.IFREC_REGION_CONFIG_ID: {
-        long drId = readDiskRegionID(dis);
-        byte lruAlgorithm = dis.readByte();
-        byte lruAction = dis.readByte();
-        int lruLimit = dis.readInt();
-        int concurrencyLevel = dis.readInt();
-        int initialCapacity = dis.readInt();
-        float loadFactor = dis.readFloat();
-        boolean statisticsEnabled = dis.readBoolean();
-        boolean isBucket = dis.readBoolean();
-        EnumSet<DiskRegionFlag> flags = EnumSet.noneOf(DiskRegionFlag.class);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REGION_CONFIG_ID drId={}", drId);
-        }
-        interpreter.cmnRegionConfig(drId, lruAlgorithm, lruAction, lruLimit, concurrencyLevel, initialCapacity, loadFactor, statisticsEnabled, isBucket, flags, ProxyBucketRegion.NO_FIXED_PARTITION_NAME, // fixes bug 43910
-            -1, null, false);
-      }
-        break;
-      case DiskInitFile.IFREC_REGION_CONFIG_ID_66: {
-        long drId = readDiskRegionID(dis);
-        byte lruAlgorithm = dis.readByte();
-        byte lruAction = dis.readByte();
-        int lruLimit = dis.readInt();
-        int concurrencyLevel = dis.readInt();
-        int initialCapacity = dis.readInt();
-        float loadFactor = dis.readFloat();
-        boolean statisticsEnabled = dis.readBoolean();
-        boolean isBucket = dis.readBoolean();
-        EnumSet<DiskRegionFlag> flags = EnumSet.noneOf(DiskRegionFlag.class);
-        String partitionName = dis.readUTF();
-        int startingBucketId = dis.readInt();
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REGION_CONFIG_ID drId={}", drId);
-        }
-        interpreter.cmnRegionConfig(drId, lruAlgorithm, lruAction, lruLimit, concurrencyLevel, initialCapacity, loadFactor, statisticsEnabled, isBucket, flags, partitionName, startingBucketId, null, false);
-      }
-        break;
-      case DiskInitFile.IFREC_REGION_CONFIG_ID_80: {
-        long drId = readDiskRegionID(dis);
-        byte lruAlgorithm = dis.readByte();
-        byte lruAction = dis.readByte();
-        int lruLimit = dis.readInt();
-        int concurrencyLevel = dis.readInt();
-        int initialCapacity = dis.readInt();
-        float loadFactor = dis.readFloat();
-        boolean statisticsEnabled = dis.readBoolean();
-        boolean isBucket = dis.readBoolean();
-        EnumSet<DiskRegionFlag> flags = EnumSet.noneOf(DiskRegionFlag.class);
-        String partitionName = dis.readUTF();
-        int startingBucketId = dis.readInt();
+        case DiskInitFile.IF_EOF_ID:
+          endOfFile = true;
+          gotEOF = true;
+          break;
+        case DiskInitFile.IFREC_INSTANTIATOR_ID:
+          {
+            int id = dis.readInt();
+            String cn = readClassName(dis);
+            String icn = readClassName(dis);
+            readEndOfRecord(dis);
+            interpreter.cmnInstantiatorId(id, cn, icn);
+          }
+          break;
+        case DiskInitFile.IFREC_DATA_SERIALIZER_ID:
+          {
+            Class<?> dsc = readClass(dis);
+            readEndOfRecord(dis);
+            interpreter.cmnDataSerializerId(dsc);
+          }
+          break;
+        case DiskInitFile.IFREC_ONLINE_MEMBER_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            PersistentMemberID pmid = readPMID(dis, gfversion);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY, "IFREC_ONLINE_MEMBER_ID drId={} omid={}", drId, pmid);
+            }
+            interpreter.cmnOnlineMemberId(drId, pmid);
+          }
+          break;
+        case DiskInitFile.IFREC_OFFLINE_MEMBER_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            PersistentMemberID pmid = readPMID(dis, gfversion);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY,
+                  "IFREC_OFFLINE_MEMBER_ID drId={} pmid={}",
+                  drId,
+                  pmid);
+            }
+            interpreter.cmnOfflineMemberId(drId, pmid);
+          }
+          break;
+        case DiskInitFile.IFREC_RM_MEMBER_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            PersistentMemberID pmid = readPMID(dis, gfversion);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY, "IFREC_RM_MEMBER_ID drId={} pmid={}", drId, pmid);
+            }
+            interpreter.cmnRmMemberId(drId, pmid);
+          }
+          break;
+        case DiskInitFile.IFREC_MY_MEMBER_INITIALIZING_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            PersistentMemberID pmid = readPMID(dis, gfversion);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY,
+                  "IFREC_MY_MEMBER_INITIALIZING_ID drId={} pmid={}",
+                  drId,
+                  pmid);
+            }
+            interpreter.cmnAddMyInitializingPMID(drId, pmid);
+          }
+          break;
+        case DiskInitFile.IFREC_MY_MEMBER_INITIALIZED_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY, "IFREC_MY_MEMBER_INITIALIZED_ID drId={}", drId);
+            }
+            interpreter.cmnMarkInitialized(drId);
+          }
+          break;
+        case DiskInitFile.IFREC_CREATE_REGION_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            String regName = dis.readUTF();
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY,
+                  "IFREC_CREATE_REGION_ID drId= name={}",
+                  drId,
+                  regName);
+            }
+            interpreter.cmnCreateRegion(drId, regName);
+          }
+          break;
+        case DiskInitFile.IFREC_BEGIN_DESTROY_REGION_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY, "IFREC_BEGIN_DESTROY_REGION_ID drId={}", drId);
+            }
+            interpreter.cmnBeginDestroyRegion(drId);
+          }
+          break;
+        case DiskInitFile.IFREC_END_DESTROY_REGION_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_END_DESTROY_REGION_ID drId={}", drId);
+            }
+            interpreter.cmnEndDestroyRegion(drId);
+          }
+          break;
+        case DiskInitFile.IFREC_BEGIN_PARTIAL_DESTROY_REGION_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY,
+                  "IFREC_BEGIN_PARTIAL_DESTROY_REGION_ID drId={}",
+                  drId);
+            }
+            interpreter.cmnBeginPartialDestroyRegion(drId);
+          }
+          break;
+        case DiskInitFile.IFREC_END_PARTIAL_DESTROY_REGION_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY, "IFREC_END_PARTIAL_DESTROY_REGION_ID drId={}", drId);
+            }
+            interpreter.cmnEndPartialDestroyRegion(drId);
+          }
+          break;
+        case DiskInitFile.IFREC_CLEAR_REGION_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            long clearOplogEntryId = dis.readLong();
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY,
+                  "IFREC_CLEAR_REGION_ID drId={} oplogEntryId={}",
+                  drId,
+                  clearOplogEntryId);
+            }
+            interpreter.cmnClearRegion(drId, clearOplogEntryId);
+          }
+          break;
+        case DiskInitFile.IFREC_CLEAR_REGION_WITH_RVV_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            int size = dis.readInt();
+            ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> memberToVersion =
+                new ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>>(size);
+            for (int i = 0; i < size; i++) {
+              DiskStoreID id = new DiskStoreID();
+              InternalDataSerializer.invokeFromData(id, dis);
+              RegionVersionHolder holder = new RegionVersionHolder(dis);
+              memberToVersion.put(id, holder);
+            }
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY,
+                  "IFREC_CLEAR_REGION_WITH_RVV_ID drId={} memberToVersion={}",
+                  drId,
+                  memberToVersion);
+            }
+            interpreter.cmnClearRegion(drId, memberToVersion);
+          }
+          break;
+        case DiskInitFile.IFREC_CRF_CREATE:
+          {
+            long oplogId = dis.readLong();
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_CRF_CREATE oplogId={}", oplogId);
+            }
+            interpreter.cmnCrfCreate(oplogId);
+          }
+          break;
+        case DiskInitFile.IFREC_DRF_CREATE:
+          {
+            long oplogId = dis.readLong();
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_DRF_CREATE oplogId={}", oplogId);
+            }
+            interpreter.cmnDrfCreate(oplogId);
+          }
+          break;
+        case DiskInitFile.IFREC_KRF_CREATE:
+          {
+            long oplogId = dis.readLong();
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_KRF_CREATE oplogId={}", oplogId);
+            }
+            interpreter.cmnKrfCreate(oplogId);
+          }
+          break;
+        case DiskInitFile.IFREC_CRF_DELETE:
+          {
+            long oplogId = dis.readLong();
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_CRF_DELETE oplogId={}", oplogId);
+            }
+            interpreter.cmnCrfDelete(oplogId);
+          }
+          break;
+        case DiskInitFile.IFREC_DRF_DELETE:
+          {
+            long oplogId = dis.readLong();
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_DRF_DELETE oplogId={}", oplogId);
+            }
+            interpreter.cmnDrfDelete(oplogId);
+          }
+          break;
+        case DiskInitFile.IFREC_REGION_CONFIG_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            byte lruAlgorithm = dis.readByte();
+            byte lruAction = dis.readByte();
+            int lruLimit = dis.readInt();
+            int concurrencyLevel = dis.readInt();
+            int initialCapacity = dis.readInt();
+            float loadFactor = dis.readFloat();
+            boolean statisticsEnabled = dis.readBoolean();
+            boolean isBucket = dis.readBoolean();
+            EnumSet<DiskRegionFlag> flags = EnumSet.noneOf(DiskRegionFlag.class);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REGION_CONFIG_ID drId={}", drId);
+            }
+            interpreter.cmnRegionConfig(
+                drId,
+                lruAlgorithm,
+                lruAction,
+                lruLimit,
+                concurrencyLevel,
+                initialCapacity,
+                loadFactor,
+                statisticsEnabled,
+                isBucket,
+                flags,
+                ProxyBucketRegion.NO_FIXED_PARTITION_NAME, // fixes bug 43910
+                -1,
+                null,
+                false);
+          }
+          break;
+        case DiskInitFile.IFREC_REGION_CONFIG_ID_66:
+          {
+            long drId = readDiskRegionID(dis);
+            byte lruAlgorithm = dis.readByte();
+            byte lruAction = dis.readByte();
+            int lruLimit = dis.readInt();
+            int concurrencyLevel = dis.readInt();
+            int initialCapacity = dis.readInt();
+            float loadFactor = dis.readFloat();
+            boolean statisticsEnabled = dis.readBoolean();
+            boolean isBucket = dis.readBoolean();
+            EnumSet<DiskRegionFlag> flags = EnumSet.noneOf(DiskRegionFlag.class);
+            String partitionName = dis.readUTF();
+            int startingBucketId = dis.readInt();
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REGION_CONFIG_ID drId={}", drId);
+            }
+            interpreter.cmnRegionConfig(
+                drId,
+                lruAlgorithm,
+                lruAction,
+                lruLimit,
+                concurrencyLevel,
+                initialCapacity,
+                loadFactor,
+                statisticsEnabled,
+                isBucket,
+                flags,
+                partitionName,
+                startingBucketId,
+                null,
+                false);
+          }
+          break;
+        case DiskInitFile.IFREC_REGION_CONFIG_ID_80:
+          {
+            long drId = readDiskRegionID(dis);
+            byte lruAlgorithm = dis.readByte();
+            byte lruAction = dis.readByte();
+            int lruLimit = dis.readInt();
+            int concurrencyLevel = dis.readInt();
+            int initialCapacity = dis.readInt();
+            float loadFactor = dis.readFloat();
+            boolean statisticsEnabled = dis.readBoolean();
+            boolean isBucket = dis.readBoolean();
+            EnumSet<DiskRegionFlag> flags = EnumSet.noneOf(DiskRegionFlag.class);
+            String partitionName = dis.readUTF();
+            int startingBucketId = dis.readInt();
 
-        String compressorClassName = dis.readUTF();
-        if ("".equals(compressorClassName)) {
-          compressorClassName = null;
-        }
-        if (dis.readBoolean()) {
-          flags.add(DiskRegionFlag.IS_WITH_VERSIONING);
-        }
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REGION_CONFIG_ID drId={}", drId);
-        }
-        interpreter.cmnRegionConfig(drId, lruAlgorithm, lruAction, lruLimit, concurrencyLevel, initialCapacity, loadFactor, statisticsEnabled, isBucket, flags, partitionName, startingBucketId, compressorClassName, false);
-      }
-        break;
-      case DiskInitFile.IFREC_REGION_CONFIG_ID_90: {
-        long drId = readDiskRegionID(dis);
-        byte lruAlgorithm = dis.readByte();
-        byte lruAction = dis.readByte();
-        int lruLimit = dis.readInt();
-        int concurrencyLevel = dis.readInt();
-        int initialCapacity = dis.readInt();
-        float loadFactor = dis.readFloat();
-        boolean statisticsEnabled = dis.readBoolean();
-        boolean isBucket = dis.readBoolean();
-        EnumSet<DiskRegionFlag> flags = EnumSet.noneOf(DiskRegionFlag.class);
-        String partitionName = dis.readUTF();
-        int startingBucketId = dis.readInt();
+            String compressorClassName = dis.readUTF();
+            if ("".equals(compressorClassName)) {
+              compressorClassName = null;
+            }
+            if (dis.readBoolean()) {
+              flags.add(DiskRegionFlag.IS_WITH_VERSIONING);
+            }
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REGION_CONFIG_ID drId={}", drId);
+            }
+            interpreter.cmnRegionConfig(
+                drId,
+                lruAlgorithm,
+                lruAction,
+                lruLimit,
+                concurrencyLevel,
+                initialCapacity,
+                loadFactor,
+                statisticsEnabled,
+                isBucket,
+                flags,
+                partitionName,
+                startingBucketId,
+                compressorClassName,
+                false);
+          }
+          break;
+        case DiskInitFile.IFREC_REGION_CONFIG_ID_90:
+          {
+            long drId = readDiskRegionID(dis);
+            byte lruAlgorithm = dis.readByte();
+            byte lruAction = dis.readByte();
+            int lruLimit = dis.readInt();
+            int concurrencyLevel = dis.readInt();
+            int initialCapacity = dis.readInt();
+            float loadFactor = dis.readFloat();
+            boolean statisticsEnabled = dis.readBoolean();
+            boolean isBucket = dis.readBoolean();
+            EnumSet<DiskRegionFlag> flags = EnumSet.noneOf(DiskRegionFlag.class);
+            String partitionName = dis.readUTF();
+            int startingBucketId = dis.readInt();
 
-        String compressorClassName = dis.readUTF();
-        if ("".equals(compressorClassName)) {
-          compressorClassName = null;
-        }
-        if (dis.readBoolean()) {
-          flags.add(DiskRegionFlag.IS_WITH_VERSIONING);
-        }
-        boolean offHeap = dis.readBoolean();
+            String compressorClassName = dis.readUTF();
+            if ("".equals(compressorClassName)) {
+              compressorClassName = null;
+            }
+            if (dis.readBoolean()) {
+              flags.add(DiskRegionFlag.IS_WITH_VERSIONING);
+            }
+            boolean offHeap = dis.readBoolean();
 
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REGION_CONFIG_ID drId={}", drId);
-        }
-        interpreter.cmnRegionConfig(drId, lruAlgorithm, lruAction, lruLimit, concurrencyLevel, initialCapacity, loadFactor, statisticsEnabled, isBucket, flags, partitionName, startingBucketId, compressorClassName, offHeap);
-      }
-        break;
-      case DiskInitFile.IFREC_OFFLINE_AND_EQUAL_MEMBER_ID: {
-        long drId = readDiskRegionID(dis);
-        PersistentMemberID pmid = readPMID(dis, gfversion);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_OFFLINE_AND_EQUAL_MEMBER_ID drId={} pmid={}", drId, pmid);
-        }
-        interpreter.cmdOfflineAndEqualMemberId(drId, pmid);
-      }
-        break;
-      case DiskInitFile.IFREC_DISKSTORE_ID: {
-        long leastSigBits = dis.readLong();
-        long mostSigBits = dis.readLong();
-        readEndOfRecord(dis);
-        result = new DiskStoreID(mostSigBits, leastSigBits);
-        interpreter.cmnDiskStoreID(result);
-      }
-        break;
-      case DiskInitFile.OPLOG_MAGIC_SEQ_ID:
-        readOplogMagicSeqRecord(dis, OPLOG_TYPE.IF);
-        break;
-      case DiskInitFile.IFREC_PR_CREATE: {
-        String name = dis.readUTF();
-        int numBuckets = dis.readInt();
-        String colocatedWith = dis.readUTF();
-        readEndOfRecord(dis);
-        PRPersistentConfig config = new PRPersistentConfig(numBuckets, colocatedWith);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_PR_CREATE name={}, config={}", name, config);
-        }
-        interpreter.cmnPRCreate(name, config);
-      }
-        break;
-      case DiskInitFile.IFREC_GEMFIRE_VERSION: {
-        short ver = Version.readOrdinal(dis);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_GEMFIRE_VERSION version={}", ver);
-        }
-        try {
-          gfversion = Version.fromOrdinal(ver, false);
-        } catch (UnsupportedVersionException e) {
-          throw new DiskAccessException(LocalizedStrings.Oplog_UNEXPECTED_PRODUCT_VERSION_0.toLocalizedString(ver), e, this.interpreter.getNameForError());
-        }
-        interpreter.cmnGemfireVersion(gfversion);
-        break;
-      }
-      case DiskInitFile.IFREC_PR_DESTROY: {
-        String name = dis.readUTF();
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_PR_DESTROY name={}", name);
-        }
-        interpreter.cmnPRDestroy(name);
-      }
-        break;
-      case DiskInitFile.IFREC_ADD_CANONICAL_MEMBER_ID: {
-        int id = dis.readInt();
-        Object object = DataSerializer.readObject(dis);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_ADD_CANONICAL_MEMBER_ID id={} name={}", id, object);
-        }
-        interpreter.cmnAddCanonicalMemberId(id, object);
-        break;
-      }
-      case DiskInitFile.IFREC_REVOKE_DISK_STORE_ID: {
-        PersistentMemberPattern pattern = new PersistentMemberPattern();
-        InternalDataSerializer.invokeFromData(pattern, dis);
-        readEndOfRecord(dis);
-        if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REVOKE_DISK_STORE_ID id={}" + pattern);
-        }
-        interpreter.cmnRevokeDiskStoreId(pattern);
-      }
-        break;
-      default:
-        throw new DiskAccessException(LocalizedStrings.DiskInitFile_UNKNOWN_OPCODE_0_FOUND.toLocalizedString(opCode), this.interpreter.getNameForError());
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_REGION_CONFIG_ID drId={}", drId);
+            }
+            interpreter.cmnRegionConfig(
+                drId,
+                lruAlgorithm,
+                lruAction,
+                lruLimit,
+                concurrencyLevel,
+                initialCapacity,
+                loadFactor,
+                statisticsEnabled,
+                isBucket,
+                flags,
+                partitionName,
+                startingBucketId,
+                compressorClassName,
+                offHeap);
+          }
+          break;
+        case DiskInitFile.IFREC_OFFLINE_AND_EQUAL_MEMBER_ID:
+          {
+            long drId = readDiskRegionID(dis);
+            PersistentMemberID pmid = readPMID(dis, gfversion);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY,
+                  "IFREC_OFFLINE_AND_EQUAL_MEMBER_ID drId={} pmid={}",
+                  drId,
+                  pmid);
+            }
+            interpreter.cmdOfflineAndEqualMemberId(drId, pmid);
+          }
+          break;
+        case DiskInitFile.IFREC_DISKSTORE_ID:
+          {
+            long leastSigBits = dis.readLong();
+            long mostSigBits = dis.readLong();
+            readEndOfRecord(dis);
+            result = new DiskStoreID(mostSigBits, leastSigBits);
+            interpreter.cmnDiskStoreID(result);
+          }
+          break;
+        case DiskInitFile.OPLOG_MAGIC_SEQ_ID:
+          readOplogMagicSeqRecord(dis, OPLOG_TYPE.IF);
+          break;
+        case DiskInitFile.IFREC_PR_CREATE:
+          {
+            String name = dis.readUTF();
+            int numBuckets = dis.readInt();
+            String colocatedWith = dis.readUTF();
+            readEndOfRecord(dis);
+            PRPersistentConfig config = new PRPersistentConfig(numBuckets, colocatedWith);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY, "IFREC_PR_CREATE name={}, config={}", name, config);
+            }
+            interpreter.cmnPRCreate(name, config);
+          }
+          break;
+        case DiskInitFile.IFREC_GEMFIRE_VERSION:
+          {
+            short ver = Version.readOrdinal(dis);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_GEMFIRE_VERSION version={}", ver);
+            }
+            try {
+              gfversion = Version.fromOrdinal(ver, false);
+            } catch (UnsupportedVersionException e) {
+              throw new DiskAccessException(
+                  LocalizedStrings.Oplog_UNEXPECTED_PRODUCT_VERSION_0.toLocalizedString(ver),
+                  e,
+                  this.interpreter.getNameForError());
+            }
+            interpreter.cmnGemfireVersion(gfversion);
+            break;
+          }
+        case DiskInitFile.IFREC_PR_DESTROY:
+          {
+            String name = dis.readUTF();
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(LogMarker.PERSIST_RECOVERY, "IFREC_PR_DESTROY name={}", name);
+            }
+            interpreter.cmnPRDestroy(name);
+          }
+          break;
+        case DiskInitFile.IFREC_ADD_CANONICAL_MEMBER_ID:
+          {
+            int id = dis.readInt();
+            Object object = DataSerializer.readObject(dis);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY,
+                  "IFREC_ADD_CANONICAL_MEMBER_ID id={} name={}",
+                  id,
+                  object);
+            }
+            interpreter.cmnAddCanonicalMemberId(id, object);
+            break;
+          }
+        case DiskInitFile.IFREC_REVOKE_DISK_STORE_ID:
+          {
+            PersistentMemberPattern pattern = new PersistentMemberPattern();
+            InternalDataSerializer.invokeFromData(pattern, dis);
+            readEndOfRecord(dis);
+            if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
+              logger.trace(
+                  LogMarker.PERSIST_RECOVERY, "IFREC_REVOKE_DISK_STORE_ID id={}" + pattern);
+            }
+            interpreter.cmnRevokeDiskStoreId(pattern);
+          }
+          break;
+        default:
+          throw new DiskAccessException(
+              LocalizedStrings.DiskInitFile_UNKNOWN_OPCODE_0_FOUND.toLocalizedString(opCode),
+              this.interpreter.getNameForError());
       }
       if (interpreter.isClosing()) {
         break;
@@ -456,9 +583,14 @@ public class DiskInitFileParser {
     for (int i = 0; i < OPLOG_TYPE.getLen(); i++) {
       if (seq[i] != type.getBytes()[i]) {
         if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-          logger.trace(LogMarker.PERSIST_RECOVERY, "oplog magic code mismatched at byte:{}, value:{}", (i + 1), seq[i]);
+          logger.trace(
+              LogMarker.PERSIST_RECOVERY,
+              "oplog magic code mismatched at byte:{}, value:{}",
+              (i + 1),
+              seq[i]);
         }
-        throw new DiskAccessException("Invalid oplog (" + type.name() + ") file provided.", interpreter.getNameForError());
+        throw new DiskAccessException(
+            "Invalid oplog (" + type.name() + ") file provided.", interpreter.getNameForError());
       }
     }
     if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
@@ -472,9 +604,8 @@ public class DiskInitFileParser {
   }
 
   /**
-   * Reads a class name from the given input stream, as written by writeClass,
-   * and loads the class.
-   * 
+   * Reads a class name from the given input stream, as written by writeClass, and loads the class.
+   *
    * @return null if class can not be loaded; otherwise loaded Class
    */
   private static Class<?> readClass(DataInput di) throws IOException {
@@ -492,8 +623,8 @@ public class DiskInitFileParser {
 
   /**
    * Reads a class name from the given input stream.
-   * 
-   * @return class name 
+   *
+   * @return class name
    */
   private static String readClassName(DataInput di) throws IOException {
     int len = di.readInt();
@@ -504,7 +635,8 @@ public class DiskInitFileParser {
 
   static long readDiskRegionID(CountingDataInputStream dis) throws IOException {
     int bytesToRead = dis.readUnsignedByte();
-    if (bytesToRead <= DiskStoreImpl.MAX_RESERVED_DRID && bytesToRead >= DiskStoreImpl.MIN_RESERVED_DRID) {
+    if (bytesToRead <= DiskStoreImpl.MAX_RESERVED_DRID
+        && bytesToRead >= DiskStoreImpl.MIN_RESERVED_DRID) {
       long result = dis.readByte(); // we want to sign extend this first byte
       bytesToRead--;
       while (bytesToRead > 0) {
@@ -527,19 +659,25 @@ public class DiskInitFileParser {
       } else {
         // Our implementation currently relies on all unwritten bytes having
         // a value of 0. So throw this exception if we find one we didn't expect.
-        throw new IllegalStateException("expected end of record (byte==" + DiskInitFile.END_OF_RECORD_ID + ") or zero but found " + b);
+        throw new IllegalStateException(
+            "expected end of record (byte=="
+                + DiskInitFile.END_OF_RECORD_ID
+                + ") or zero but found "
+                + b);
       }
     }
   }
 
-  private PersistentMemberID readPMID(CountingDataInputStream dis, Version gfversion) throws IOException, ClassNotFoundException {
+  private PersistentMemberID readPMID(CountingDataInputStream dis, Version gfversion)
+      throws IOException, ClassNotFoundException {
     int len = dis.readInt();
     byte[] buf = new byte[len];
     dis.readFully(buf);
     return bytesToPMID(buf, gfversion);
   }
 
-  private PersistentMemberID bytesToPMID(byte[] bytes, Version gfversion) throws IOException, ClassNotFoundException {
+  private PersistentMemberID bytesToPMID(byte[] bytes, Version gfversion)
+      throws IOException, ClassNotFoundException {
     ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
     DataInputStream dis = new DataInputStream(bais);
     PersistentMemberID result = new PersistentMemberID();
@@ -572,8 +710,14 @@ public class DiskInitFileParser {
     }
   }
 
-  private static DiskInitFileInterpreter createPrintingInterpreter(DiskInitFileInterpreter wrapped) {
-    DiskInitFileInterpreter interpreter = (DiskInitFileInterpreter) Proxy.newProxyInstance(DiskInitFileInterpreter.class.getClassLoader(), new Class[] { DiskInitFileInterpreter.class }, new PrintingInterpreter(wrapped));
+  private static DiskInitFileInterpreter createPrintingInterpreter(
+      DiskInitFileInterpreter wrapped) {
+    DiskInitFileInterpreter interpreter =
+        (DiskInitFileInterpreter)
+            Proxy.newProxyInstance(
+                DiskInitFileInterpreter.class.getClassLoader(),
+                new Class[] {DiskInitFileInterpreter.class},
+                new PrintingInterpreter(wrapped));
     return interpreter;
   }
 
@@ -612,7 +756,6 @@ public class DiskInitFileParser {
         return method.invoke(delegate, args);
       }
     }
-
   }
 
   public boolean gotEOF() {

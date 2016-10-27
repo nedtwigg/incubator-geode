@@ -51,8 +51,8 @@ import org.apache.geode.security.NotAuthorizedException;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({ "*.UnitTest" })
-@PrepareForTest({ CacheClientNotifier.class })
+@PowerMockIgnore({"*.UnitTest"})
+@PrepareForTest({CacheClientNotifier.class})
 @Category(UnitTest.class)
 public class UnregisterInterestTest {
   private static final String REGION_NAME = "region1";
@@ -60,49 +60,32 @@ public class UnregisterInterestTest {
   private static final Object CALLBACK_ARG = "arg";
   private static final byte[] BYTE_ARRAY = new byte[8];
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private AuthorizeRequest authzRequest;
-  @Mock
-  private LocalRegion region;
-  @Mock
-  private Cache cache;
-  @Mock
-  private CacheServerStats cacheServerStats;
-  @Mock
-  private Message replyMessage;
-  @Mock
-  private Message errorResponseMessage;
-  @Mock
-  private Part regionNamePart;
-  @Mock
-  private Part keyPart;
-  @Mock
-  private Part keepAlivePart;
-  @Mock
-  private Part isClosingPart;
-  @Mock
-  private Part interestTypePart;
-  @Mock
-  private Part valuePart;
-  @Mock
-  private AcceptorImpl acceptor;
-  @Mock
-  private UnregisterInterestOperationContext unregisterInterestOperationContext;
-  @InjectMocks
-  private UnregisterInterest unregisterInterest;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private ServerConnection serverConnection;
+  @Mock private AuthorizeRequest authzRequest;
+  @Mock private LocalRegion region;
+  @Mock private Cache cache;
+  @Mock private CacheServerStats cacheServerStats;
+  @Mock private Message replyMessage;
+  @Mock private Message errorResponseMessage;
+  @Mock private Part regionNamePart;
+  @Mock private Part keyPart;
+  @Mock private Part keepAlivePart;
+  @Mock private Part isClosingPart;
+  @Mock private Part interestTypePart;
+  @Mock private Part valuePart;
+  @Mock private AcceptorImpl acceptor;
+  @Mock private UnregisterInterestOperationContext unregisterInterestOperationContext;
+  @InjectMocks private UnregisterInterest unregisterInterest;
 
   @Before
   public void setUp() throws Exception {
     this.unregisterInterest = new UnregisterInterest();
     MockitoAnnotations.initMocks(this);
 
-    when(this.authzRequest.unregisterInterestAuthorize(eq(REGION_NAME), eq(KEY), eq(0))).thenReturn(this.unregisterInterestOperationContext);
+    when(this.authzRequest.unregisterInterestAuthorize(eq(REGION_NAME), eq(KEY), eq(0)))
+        .thenReturn(this.unregisterInterestOperationContext);
 
     when(this.cache.getRegion(isA(String.class))).thenReturn(this.region);
     when(this.cache.getCancelCriterion()).thenReturn(mock(CancelCriterion.class));
@@ -167,7 +150,9 @@ public class UnregisterInterestTest {
   public void integratedSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(true);
-    doThrow(new NotAuthorizedException("")).when(this.securityService).authorizeRegionRead(eq(REGION_NAME), eq(KEY));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.securityService)
+        .authorizeRegionRead(eq(REGION_NAME), eq(KEY));
 
     this.unregisterInterest.cmdExecute(this.message, this.serverConnection, 0);
 
@@ -190,12 +175,13 @@ public class UnregisterInterestTest {
   public void oldSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
-    doThrow(new NotAuthorizedException("")).when(this.authzRequest).getAuthorize(eq(REGION_NAME), eq(KEY), any());
+    doThrow(new NotAuthorizedException(""))
+        .when(this.authzRequest)
+        .getAuthorize(eq(REGION_NAME), eq(KEY), any());
 
     this.unregisterInterest.cmdExecute(this.message, this.serverConnection, 0);
 
     verify(this.authzRequest).unregisterInterestAuthorize(eq(REGION_NAME), eq(KEY), anyInt());
     verify(this.replyMessage).send(eq(this.serverConnection));
   }
-
 }

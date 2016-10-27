@@ -27,5 +27,4 @@ public class DBSizeExecutor extends AbstractExecutor {
     int size = context.getRegionProvider().getMetaSize();
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), size));
   }
-
 }

@@ -18,12 +18,13 @@
 package org.apache.geode.admin;
 
 /**
- * A <code>RuntimeAdminException</code> is thrown when a runtime errors occurs
- * during administration or monitoring of GemFire. 
+ * A <code>RuntimeAdminException</code> is thrown when a runtime errors occurs during administration
+ * or monitoring of GemFire.
  *
- * @since GemFire     3.5
- *
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @since GemFire 3.5
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public class RuntimeAdminException extends org.apache.geode.GemFireException {
 
@@ -44,5 +45,4 @@ public class RuntimeAdminException extends org.apache.geode.GemFireException {
   public RuntimeAdminException(Throwable cause) {
     super(cause);
   }
-
 }

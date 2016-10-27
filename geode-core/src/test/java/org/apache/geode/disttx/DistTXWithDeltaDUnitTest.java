@@ -38,5 +38,4 @@ public class DistTXWithDeltaDUnitTest extends TransactionsWithDeltaDUnitTest {
     props.setProperty(DISTRIBUTED_TRANSACTIONS, "true");
     return props;
   }
-
 }

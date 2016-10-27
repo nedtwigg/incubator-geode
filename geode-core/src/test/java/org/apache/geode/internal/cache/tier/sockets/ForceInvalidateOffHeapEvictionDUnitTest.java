@@ -29,6 +29,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
  * Runs force invalidate eviction tests with off-heap regions.
+ *
  * @since Geode 1.0
  */
 @Category(DistributedTest.class)
@@ -40,15 +41,16 @@ public class ForceInvalidateOffHeapEvictionDUnitTest extends ForceInvalidateEvic
 
   @Override
   public final void preTearDownAssertions() throws Exception {
-    SerializableRunnable checkOrphans = new SerializableRunnable() {
+    SerializableRunnable checkOrphans =
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        if (hasCache()) {
-          OffHeapTestUtil.checkOrphans();
-        }
-      }
-    };
+          @Override
+          public void run() {
+            if (hasCache()) {
+              OffHeapTestUtil.checkOrphans();
+            }
+          }
+        };
     Invoke.invokeInEveryVM(checkOrphans);
     checkOrphans.run();
   }

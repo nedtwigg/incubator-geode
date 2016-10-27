@@ -20,12 +20,13 @@ package org.apache.geode.admin;
 //import org.apache.geode.GemFireException;
 
 /**
- * Thrown when an administration operation that accesses information
- * in a remote system member is cancelled.  The cancelation may occur
- * because the system member has left the distributed system.
+ * Thrown when an administration operation that accesses information in a remote system member is
+ * cancelled. The cancelation may occur because the system member has left the distributed system.
  *
  * @since GemFire 3.5
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public class OperationCancelledException extends RuntimeAdminException {
   private static final long serialVersionUID = 5474068770227602546L;

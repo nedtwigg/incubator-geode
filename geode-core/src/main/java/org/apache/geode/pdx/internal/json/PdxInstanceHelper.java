@@ -37,7 +37,7 @@ public class PdxInstanceHelper {
   PdxInstanceHelper m_parent;
   PdxInstanceFactoryImpl m_pdxInstanceFactory;
   PdxInstance m_pdxInstance;
-  String m_PdxName;//when pdx is member, else null if part of lists
+  String m_PdxName; //when pdx is member, else null if part of lists
 
   public PdxInstanceHelper(String className, PdxInstanceHelper parent) {
     GemFireCacheImpl gci = (GemFireCacheImpl) CacheFactory.getAnyInstance();
@@ -46,7 +46,8 @@ public class PdxInstanceHelper {
     }
     m_PdxName = className;
     m_parent = parent;
-    m_pdxInstanceFactory = (PdxInstanceFactoryImpl) gci.createPdxInstanceFactory(JSONFormatter.JSON_CLASSNAME, false);
+    m_pdxInstanceFactory =
+        (PdxInstanceFactoryImpl) gci.createPdxInstanceFactory(JSONFormatter.JSON_CLASSNAME, false);
   }
 
   public PdxInstanceHelper getParent() {

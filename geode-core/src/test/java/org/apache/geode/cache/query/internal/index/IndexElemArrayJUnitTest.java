@@ -59,30 +59,37 @@ public class IndexElemArrayJUnitTest {
   }
 
   /**
-   * This tests concurrent modification of IndexElemArray and to make 
-   * sure elementData and size are updated atomically. Ticket# GEODE-106.   
+   * This tests concurrent modification of IndexElemArray and to make sure elementData and size are
+   * updated atomically. Ticket# GEODE-106.
    */
   @Test
   public void testFunctionalityUsingMultiThread() throws Exception {
     Collection<Callable> callables = new ConcurrentLinkedQueue<>();
-    IntStream.range(0, 1000).parallel().forEach(i -> {
-      callables.add(() -> {
-        if (i % 3 == 0) {
-          return add(Integer.valueOf(new Random().nextInt(4)));
-        } else if (i % 3 == 1) {
-          return remove(Integer.valueOf(new Random().nextInt(4)));
-        } else {
-          return iterateList();
-        }
-      });
-    });
+    IntStream.range(0, 1000)
+        .parallel()
+        .forEach(
+            i -> {
+              callables.add(
+                  () -> {
+                    if (i % 3 == 0) {
+                      return add(Integer.valueOf(new Random().nextInt(4)));
+                    } else if (i % 3 == 1) {
+                      return remove(Integer.valueOf(new Random().nextInt(4)));
+                    } else {
+                      return iterateList();
+                    }
+                  });
+            });
 
     Collection<Object> results = MultithreadedTester.runMultithreaded(callables);
-    results.forEach(result -> {
-      // There should not be any Exception here. 
-      // E.g. ArrayIndexOutOfBoundsException when multiple threads are acting.
-      assertTrue(result.getClass().getName() + " was not an expected result", result instanceof Integer);
-    });
+    results.forEach(
+        result -> {
+          // There should not be any Exception here.
+          // E.g. ArrayIndexOutOfBoundsException when multiple threads are acting.
+          assertTrue(
+              result.getClass().getName() + " was not an expected result",
+              result instanceof Integer);
+        });
   }
 
   private Integer add(Integer i) {
@@ -107,7 +114,13 @@ public class IndexElemArrayJUnitTest {
     Object objBefore = list.getElementData();
     insert(7);
     Object objAfter = list.getElementData();
-    assertSame("Before: " + Arrays.asList((Object[]) objBefore) + " After:" + Arrays.asList((Object[]) objAfter), objBefore, objAfter);
+    assertSame(
+        "Before: "
+            + Arrays.asList((Object[]) objBefore)
+            + " After:"
+            + Arrays.asList((Object[]) objAfter),
+        objBefore,
+        objAfter);
 
     assertEquals(7, list.size());
     for (int i = 0; i < 7; i++) {
@@ -115,7 +128,13 @@ public class IndexElemArrayJUnitTest {
     }
     list.add(8);
     objAfter = list.getElementData();
-    assertNotSame("Before: " + Arrays.asList((Object[]) objBefore) + " After:" + Arrays.asList((Object[]) objAfter), objBefore, objAfter);
+    assertNotSame(
+        "Before: "
+            + Arrays.asList((Object[]) objBefore)
+            + " After:"
+            + Arrays.asList((Object[]) objAfter),
+        objBefore,
+        objAfter);
 
     assertEquals(8, list.size());
     for (int i = 0; i < 8; i++) {
@@ -148,7 +167,7 @@ public class IndexElemArrayJUnitTest {
   private void remove() {
     list.remove(4);
     assertEquals(6, list.size());
-    int temp[] = { 1, 2, 3, 5, 6, 7 };
+    int temp[] = {1, 2, 3, 5, 6, 7};
     for (int i = 0; i < 6; i++) {
       assertEquals(temp[i], list.get(i));
     }
@@ -175,5 +194,4 @@ public class IndexElemArrayJUnitTest {
       // ok
     }
   }
-
 }

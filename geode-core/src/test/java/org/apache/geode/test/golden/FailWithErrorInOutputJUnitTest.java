@@ -23,9 +23,8 @@ import org.apache.geode.internal.logging.LogWriterImpl;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Verifies that test output containing an unexpected error message
- * will fail with that error message as the failure message.
- * 
+ * Verifies that test output containing an unexpected error message will fail with that error
+ * message as the failure message.
  */
 @Category(IntegrationTest.class)
 public class FailWithErrorInOutputJUnitTest extends FailWithProblemInOutputTestCase {

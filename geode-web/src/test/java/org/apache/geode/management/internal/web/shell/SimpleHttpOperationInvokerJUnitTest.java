@@ -37,9 +37,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 
 /**
- * The SimpleHttpOperationInvokerJUnitTest class is a test suite of test cases testing the contract and functionality of the
- * SimpleHttpOperationInvoker class.
- * <p/>
+ * The SimpleHttpOperationInvokerJUnitTest class is a test suite of test cases testing the contract
+ * and functionality of the SimpleHttpOperationInvoker class.
+ *
+ * <p>
+ *
  * @see org.apache.geode.management.internal.web.AbstractWebTestCase
  * @see org.apache.geode.management.internal.web.shell.SimpleHttpOperationInvoker
  * @see org.junit.Assert
@@ -69,7 +71,12 @@ public class SimpleHttpOperationInvokerJUnitTest extends AbstractWebTestCase {
   }
 
   private String getExpectedHttpRequestUrl(final CommandRequest command) {
-    return SimpleHttpOperationInvoker.REST_API_URL.concat(SimpleHttpOperationInvoker.REST_API_MANAGEMENT_COMMANDS_URI).concat("?").concat(SimpleHttpOperationInvoker.CMD_QUERY_PARAMETER).concat("=").concat(command.getInput());
+    return SimpleHttpOperationInvoker.REST_API_URL
+        .concat(SimpleHttpOperationInvoker.REST_API_MANAGEMENT_COMMANDS_URI)
+        .concat("?")
+        .concat(SimpleHttpOperationInvoker.CMD_QUERY_PARAMETER)
+        .concat("=")
+        .concat(command.getInput());
   }
 
   private SimpleHttpOperationInvoker getOperationInvoker() {
@@ -78,12 +85,15 @@ public class SimpleHttpOperationInvokerJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testCreateHttpRequest() throws Exception {
-    final CommandRequest command = createCommandRequest("save resource --path=/path/to/file --size=1024KB");
+    final CommandRequest command =
+        createCommandRequest("save resource --path=/path/to/file --size=1024KB");
 
     final ClientHttpRequest request = getOperationInvoker().createHttpRequest(command);
 
     assertNotNull(request);
-    assertEquals(SimpleHttpOperationInvoker.USER_AGENT_HTTP_REQUEST_HEADER_VALUE, request.getHeaderValue(HttpHeader.USER_AGENT.getName()));
+    assertEquals(
+        SimpleHttpOperationInvoker.USER_AGENT_HTTP_REQUEST_HEADER_VALUE,
+        request.getHeaderValue(HttpHeader.USER_AGENT.getName()));
 
     final Link requestLink = request.getLink();
 
@@ -108,57 +118,69 @@ public class SimpleHttpOperationInvokerJUnitTest extends AbstractWebTestCase {
   public void testGetHttpRequestUrl() throws Exception {
     final CommandRequest command = createCommandRequest("get resource --option=value");
 
-    assertEquals(getExpectedHttpRequestUrl(command), toString(getOperationInvoker().getHttpRequestUrl(command)));
+    assertEquals(
+        getExpectedHttpRequestUrl(command),
+        toString(getOperationInvoker().getHttpRequestUrl(command)));
   }
 
   @Test
   public void testProcessCommand() {
     final String expectedResult = "<resource>test</resource>"; // XML
 
-    final SimpleHttpOperationInvoker operationInvoker = new SimpleHttpOperationInvoker() {
-      @Override
-      public boolean isConnected() {
-        return true;
-      }
+    final SimpleHttpOperationInvoker operationInvoker =
+        new SimpleHttpOperationInvoker() {
+          @Override
+          public boolean isConnected() {
+            return true;
+          }
 
-      @Override
-      @SuppressWarnings("unchecked")
-      protected <T> ResponseEntity<T> send(final ClientHttpRequest request, final Class<T> responseType) {
-        return new ResponseEntity(expectedResult, HttpStatus.OK);
-      }
-    };
+          @Override
+          @SuppressWarnings("unchecked")
+          protected <T> ResponseEntity<T> send(
+              final ClientHttpRequest request, final Class<T> responseType) {
+            return new ResponseEntity(expectedResult, HttpStatus.OK);
+          }
+        };
 
-    final String actualResult = operationInvoker.processCommand(createCommandRequest("get resource --id=1"));
+    final String actualResult =
+        operationInvoker.processCommand(createCommandRequest("get resource --id=1"));
 
     assertEquals(expectedResult, actualResult);
   }
 
   @Test
   public void testProcessCommandHandlesResourceAccessException() {
-    final SimpleHttpOperationInvoker operationInvoker = new SimpleHttpOperationInvoker() {
-      private boolean connected = true;
+    final SimpleHttpOperationInvoker operationInvoker =
+        new SimpleHttpOperationInvoker() {
+          private boolean connected = true;
 
-      @Override
-      public boolean isConnected() {
-        return connected;
-      }
+          @Override
+          public boolean isConnected() {
+            return connected;
+          }
 
-      @Override
-      protected <T> ResponseEntity<T> send(final ClientHttpRequest request, final Class<T> responseType) {
-        throw new ResourceAccessException("test");
-      }
+          @Override
+          protected <T> ResponseEntity<T> send(
+              final ClientHttpRequest request, final Class<T> responseType) {
+            throw new ResourceAccessException("test");
+          }
 
-      @Override
-      public void stop() {
-        this.connected = false;
-      }
-    };
+          @Override
+          public void stop() {
+            this.connected = false;
+          }
+        };
 
     assertTrue(operationInvoker.isConnected());
 
-    final String expectedResult = String.format("The connection to the GemFire Manager's HTTP service @ %1$s failed with: %2$s. " + "Please try reconnecting or see the GemFire Manager's log file for further details.", operationInvoker.getBaseUrl(), "test");
+    final String expectedResult =
+        String.format(
+            "The connection to the GemFire Manager's HTTP service @ %1$s failed with: %2$s. "
+                + "Please try reconnecting or see the GemFire Manager's log file for further details.",
+            operationInvoker.getBaseUrl(), "test");
 
-    final String actualResult = operationInvoker.processCommand(createCommandRequest("get resource --id=1"));
+    final String actualResult =
+        operationInvoker.processCommand(createCommandRequest("get resource --id=1"));
 
     assertFalse(operationInvoker.isConnected());
     assertEquals(expectedResult, actualResult);
@@ -169,7 +191,9 @@ public class SimpleHttpOperationInvokerJUnitTest extends AbstractWebTestCase {
     try {
       getOperationInvoker().processCommand(createCommandRequest("get resource"));
     } catch (IllegalStateException e) {
-      assertEquals("Gfsh must be connected to the GemFire Manager in order to process commands remotely!", e.getMessage());
+      assertEquals(
+          "Gfsh must be connected to the GemFire Manager in order to process commands remotely!",
+          e.getMessage());
       throw e;
     }
   }
@@ -179,7 +203,7 @@ public class SimpleHttpOperationInvokerJUnitTest extends AbstractWebTestCase {
     private final String command;
 
     protected TestCommandRequest(final String command) {
-      super(Collections.<String, String> emptyMap());
+      super(Collections.<String, String>emptyMap());
       assert command != null : "The command cannot be null!";
       this.command = command;
     }
@@ -189,5 +213,4 @@ public class SimpleHttpOperationInvokerJUnitTest extends AbstractWebTestCase {
       return command;
     }
   }
-
 }

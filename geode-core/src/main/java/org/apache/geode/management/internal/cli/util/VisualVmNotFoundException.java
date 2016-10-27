@@ -20,17 +20,16 @@ package org.apache.geode.management.internal.cli.util;
 import org.apache.geode.GemFireException;
 
 /**
- * The VisualVmNotFoundException class is a GemFireException (RuntimeException) indicating that the JDK jvisualvm
- * tool could not be found on the system.
- * </p>
+ * The VisualVmNotFoundException class is a GemFireException (RuntimeException) indicating that the
+ * JDK jvisualvm tool could not be found on the system.
+ *
  * @see org.apache.geode.GemFireException
  * @since GemFire 7.0
  */
 @SuppressWarnings("unused")
 public class VisualVmNotFoundException extends GemFireException {
 
-  public VisualVmNotFoundException() {
-  }
+  public VisualVmNotFoundException() {}
 
   public VisualVmNotFoundException(final String message) {
     super(message);
@@ -43,5 +42,4 @@ public class VisualVmNotFoundException extends GemFireException {
   public VisualVmNotFoundException(final String message, final Throwable cause) {
     super(message, cause);
   }
-
 }

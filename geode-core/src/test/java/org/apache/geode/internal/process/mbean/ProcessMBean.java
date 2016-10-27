@@ -16,10 +16,7 @@
  */
 package org.apache.geode.internal.process.mbean;
 
-/**
- * Extracted from LocalProcessControllerDUnitTest.
- * 
- */
+/** Extracted from LocalProcessControllerDUnitTest. */
 public interface ProcessMBean {
   public int getPid();
 

@@ -41,8 +41,8 @@ import org.apache.geode.cache.Region;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * Tests the old disk apis to make sure they do the correct thing.
- * Once we drop these old deprecated disk apis then this unit test can be removed.
+ * Tests the old disk apis to make sure they do the correct thing. Once we drop these old deprecated
+ * disk apis then this unit test can be removed.
  */
 @Category(IntegrationTest.class)
 public class DiskOldAPIsJUnitTest {
@@ -72,9 +72,7 @@ public class DiskOldAPIsJUnitTest {
     DiskStoreImpl.SET_IGNORE_PREALLOCATE = false;
   }
 
-  /**
-   * Make sure that if diskWriteAttributes sets sync then it shows up in the new apis.
-   */
+  /** Make sure that if diskWriteAttributes sets sync then it shows up in the new apis. */
   @Test
   public void testSyncBit() throws Exception {
     doSyncBitTest(true);
@@ -153,7 +151,8 @@ public class DiskOldAPIsJUnitTest {
     dwaf.setSynchronous(true);
     af.setDiskWriteAttributes(dwaf.create());
     af.setDataPolicy(DataPolicy.PARTITION);
-    af.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
+    af.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
     r = cache.createRegion("r3", af.create());
     assertEquals(true, r.getAttributes().isDiskSynchronous());
     {
@@ -177,7 +176,8 @@ public class DiskOldAPIsJUnitTest {
     dwaf.setSynchronous(false);
     af.setDiskWriteAttributes(dwaf.create());
     af.setDataPolicy(DataPolicy.PARTITION);
-    af.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
+    af.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
     r = cache.createRegion("r3", af.create());
     assertEquals(false, r.getAttributes().isDiskSynchronous());
     {
@@ -200,9 +200,8 @@ public class DiskOldAPIsJUnitTest {
   }
 
   /**
-   * Make sure that if diskWriteAttributes are used that the diskStore that
-   * is created will use them.
-   * Note that the isSync bit is tested by another method.
+   * Make sure that if diskWriteAttributes are used that the diskStore that is created will use
+   * them. Note that the isSync bit is tested by another method.
    */
   @Test
   public void testDWA_1() throws Exception {
@@ -301,9 +300,7 @@ public class DiskOldAPIsJUnitTest {
     r.localDestroyRegion();
   }
 
-  /**
-   * Make sure the old diskDirs apis get mapped onto the diskStore.
-   */
+  /** Make sure the old diskDirs apis get mapped onto the diskStore. */
   @Test
   public void testDiskDirs() throws Exception {
     File f1 = new File("testDiskDir1");
@@ -312,7 +309,7 @@ public class DiskOldAPIsJUnitTest {
     f2.mkdir();
     try {
       AttributesFactory af = new AttributesFactory();
-      af.setDiskDirs(new File[] { f1, f2 });
+      af.setDiskDirs(new File[] {f1, f2});
       af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
       Region r = cache.createRegion("r", af.create());
       {
@@ -359,9 +356,7 @@ public class DiskOldAPIsJUnitTest {
     }
   }
 
-  /**
-   * Make sure the old diskDirs apis get mapped onto the diskStore.
-   */
+  /** Make sure the old diskDirs apis get mapped onto the diskStore. */
   @Test
   public void testDiskDirsAndSizes() throws Exception {
     File f1 = new File("testDiskDir1");
@@ -370,7 +365,7 @@ public class DiskOldAPIsJUnitTest {
     f2.mkdir();
     try {
       AttributesFactory af = new AttributesFactory();
-      af.setDiskDirsAndSizes(new File[] { f1, f2 }, new int[] { 1, 2 });
+      af.setDiskDirsAndSizes(new File[] {f1, f2}, new int[] {1, 2});
       af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
       Region r = cache.createRegion("r", af.create());
       {

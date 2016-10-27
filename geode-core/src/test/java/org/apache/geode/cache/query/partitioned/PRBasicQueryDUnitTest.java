@@ -43,20 +43,17 @@ import org.apache.geode.test.dunit.LogWriterUtils;
 import org.apache.geode.test.dunit.VM;
 
 /**
- * This tests creates partition regions with 1 Datastore & 1 Accessor node, 
- * firing a simple query and validating the ResultSet size and Contents. 
- * 
+ * This tests creates partition regions with 1 Datastore & 1 Accessor node, firing a simple query
+ * and validating the ResultSet size and Contents.
  */
 @Category(DistributedTest.class)
-public class PRBasicQueryDUnitTest extends PartitionedRegionDUnitTestCase
+public class PRBasicQueryDUnitTest extends PartitionedRegionDUnitTestCase {
 
-{
   /**
    * constructor
-   * 
+   *
    * @param name
    */
-
   public PRBasicQueryDUnitTest() {
     super();
   }
@@ -79,9 +76,9 @@ public class PRBasicQueryDUnitTest extends PartitionedRegionDUnitTestCase
 
   /**
    * A very basic dunit test that <br>
-   * 1. Creates a PR Accessor and Data Store with redundantCopies = 0.
-   * 2. Populates the region with test data.
-   * 3. Fires a query on accessor VM and verifies the result. 
+   * 1. Creates a PR Accessor and Data Store with redundantCopies = 0. 2. Populates the region with
+   * test data. 3. Fires a query on accessor VM and verifies the result.
+   *
    * @throws Exception
    */
   @Test
@@ -90,24 +87,38 @@ public class PRBasicQueryDUnitTest extends PartitionedRegionDUnitTestCase
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     setCacheInVMs(vm0, vm1);
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRBasicQuerying: Querying PR Test with DACK Started");
+    LogWriterUtils.getLogWriter()
+        .info("PRQBasicQueryDUnitTest#testPRBasicQuerying: Querying PR Test with DACK Started");
 
     // Creting PR's on the participating VM's
     // Creating Accessor node on the VM0.
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRBasicQuerying: Creating the Accessor node in the PR");
+    LogWriterUtils.getLogWriter()
+        .info("PRQBasicQueryDUnitTest#testPRBasicQuerying: Creating the Accessor node in the PR");
 
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRAccessorCreate(name, redundancy, PortfolioData.class));
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRAccessorCreate(
+            name, redundancy, PortfolioData.class));
     // Creating local region on vm0 to compare the results of query.
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForLocalRegionCreation(localName, PortfolioData.class));
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRBasicQuerying: Successfully created the Accessor node in the PR");
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForLocalRegionCreation(localName, PortfolioData.class));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQBasicQueryDUnitTest#testPRBasicQuerying: Successfully created the Accessor node in the PR");
 
     // Creating the Datastores Nodes in the VM1.
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest:testPRBasicQuerying ----- Creating the Datastore node in the PR");
-    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQBasicQueryDUnitTest:testPRBasicQuerying ----- Creating the Datastore node in the PR");
+    vm1.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
 
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRBasicQuerying: Successfully Created the Datastore node in the PR");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQBasicQueryDUnitTest#testPRBasicQuerying: Successfully Created the Datastore node in the PR");
 
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRBasicQuerying: Successfully Created PR's across all VM's");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQBasicQueryDUnitTest#testPRBasicQuerying: Successfully Created PR's across all VM's");
 
     // Generating portfolio object array to be populated across the PR's & Local
     // Regions
@@ -115,18 +126,22 @@ public class PRBasicQueryDUnitTest extends PartitionedRegionDUnitTestCase
     final PortfolioData[] portfolio = createPortfolioData(cnt, cntDest);
     // Putting the data into the PR's created
     vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(name, portfolio, cnt, cntDest));
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRDuplicatePuts(name, portfolio, cnt, cntDest));
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRDuplicatePuts(name, portfolio, cnt, cntDest));
 
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRBasicQuerying: Inserted Portfolio data across PR's");
+    LogWriterUtils.getLogWriter()
+        .info("PRQBasicQueryDUnitTest#testPRBasicQuerying: Inserted Portfolio data across PR's");
     vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(localName, portfolio, cnt, cntDest));
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRDuplicatePuts(localName, portfolio, cnt, cntDest));
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRDuplicatePuts(localName, portfolio, cnt, cntDest));
 
     // querying the VM for data and comparing the result with query result of
     // local region.
     // querying the VM for data
     vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRQueryAndCompareResults(name, localName));
 
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRBasicQuerying: Querying PR's Test ENDED");
+    LogWriterUtils.getLogWriter()
+        .info("PRQBasicQueryDUnitTest#testPRBasicQuerying: Querying PR's Test ENDED");
   }
 
   @Test
@@ -136,27 +151,40 @@ public class PRBasicQueryDUnitTest extends PartitionedRegionDUnitTestCase
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
     setCacheInVMs(vm0, vm1, vm2);
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRCountStarQuery: Querying PR Test with DACK Started");
+    LogWriterUtils.getLogWriter()
+        .info("PRQBasicQueryDUnitTest#testPRCountStarQuery: Querying PR Test with DACK Started");
 
     // Creting PR's on the participating VM's
     // Creating Accessor node on the VM0.
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRCountStarQuery: Creating the Accessor node in the PR");
+    LogWriterUtils.getLogWriter()
+        .info("PRQBasicQueryDUnitTest#testPRCountStarQuery: Creating the Accessor node in the PR");
 
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRAccessorCreate(name, redundancy, Portfolio.class));
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRAccessorCreate(name, redundancy, Portfolio.class));
     // Creating local region on vm0 to compare the results of query.
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForLocalRegionCreation(localName, Portfolio.class));
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRCountStarQuery: Successfully created the Accessor node in the PR");
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForLocalRegionCreation(localName, Portfolio.class));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQBasicQueryDUnitTest#testPRCountStarQuery: Successfully created the Accessor node in the PR");
 
     // Creating the Datastores Nodes in the VM1.
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest:testPRCountStarQuery ----- Creating the Datastore node in the PR");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQBasicQueryDUnitTest:testPRCountStarQuery ----- Creating the Datastore node in the PR");
     vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, Portfolio.class));
 
     vm2.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, Portfolio.class));
-    vm2.invoke(PRQHelp.getCacheSerializableRunnableForLocalRegionCreation(localName, Portfolio.class));
+    vm2.invoke(
+        PRQHelp.getCacheSerializableRunnableForLocalRegionCreation(localName, Portfolio.class));
 
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRCountStarQuery: Successfully Created the Datastore node in the PR");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQBasicQueryDUnitTest#testPRCountStarQuery: Successfully Created the Datastore node in the PR");
 
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRCountStarQuery: Successfully Created PR's across all VM's");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQBasicQueryDUnitTest#testPRCountStarQuery: Successfully Created PR's across all VM's");
 
     // Generating portfolio object array to be populated across the PR's & Local
     // Regions
@@ -164,13 +192,22 @@ public class PRBasicQueryDUnitTest extends PartitionedRegionDUnitTestCase
     final Portfolio[] portfolio = createPortfoliosAndPositions(cntDest + 100);
     // Putting the data into the PR's created
     vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(name, portfolio, cnt, cntDest + 100));
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRDuplicatePuts(name, portfolio, cnt, cntDest + 100));
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRDuplicatePuts(
+            name, portfolio, cnt, cntDest + 100));
 
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRCountStarQuery: Inserted Portfolio data across PR's");
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(localName, portfolio, cnt, cntDest + 100));
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRDuplicatePuts(localName, portfolio, cnt, cntDest + 100));
-    vm2.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(localName, portfolio, cnt, cntDest + 100));
-    vm2.invoke(PRQHelp.getCacheSerializableRunnableForPRDuplicatePuts(localName, portfolio, cnt, cntDest + 100));
+    LogWriterUtils.getLogWriter()
+        .info("PRQBasicQueryDUnitTest#testPRCountStarQuery: Inserted Portfolio data across PR's");
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRPuts(localName, portfolio, cnt, cntDest + 100));
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRDuplicatePuts(
+            localName, portfolio, cnt, cntDest + 100));
+    vm2.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRPuts(localName, portfolio, cnt, cntDest + 100));
+    vm2.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRDuplicatePuts(
+            localName, portfolio, cnt, cntDest + 100));
 
     // querying the VM for data and comparing the result with query result of
     // local region.
@@ -178,7 +215,8 @@ public class PRBasicQueryDUnitTest extends PartitionedRegionDUnitTestCase
     vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRCountStarQueries(name, localName));
     vm2.invoke(PRQHelp.getCacheSerializableRunnableForPRCountStarQueries(name, localName));
 
-    LogWriterUtils.getLogWriter().info("PRQBasicQueryDUnitTest#testPRCountStarQuery: Querying PR's Test ENDED");
+    LogWriterUtils.getLogWriter()
+        .info("PRQBasicQueryDUnitTest#testPRCountStarQuery: Querying PR's Test ENDED");
   }
 
   @Test
@@ -187,42 +225,51 @@ public class PRBasicQueryDUnitTest extends PartitionedRegionDUnitTestCase
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     setCacheInVMs(vm0, vm1);
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRAccessorCreate(name, redundancy, PortfolioData.class));
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRAccessorCreate(
+            name, redundancy, PortfolioData.class));
 
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForLocalRegionCreation(localName, PortfolioData.class));
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForLocalRegionCreation(localName, PortfolioData.class));
     vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, Portfolio.class));
 
-    vm1.invoke(new CacheSerializableRunnable("Adding portfolios") {
-      public void run2() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(name);
-        for (int j = 0; j < 100; j++)
-          region.put(new Integer(j), new Portfolio(j));
-      }
-    });
+    vm1.invoke(
+        new CacheSerializableRunnable("Adding portfolios") {
+          public void run2() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(name);
+            for (int j = 0; j < 100; j++) region.put(new Integer(j), new Portfolio(j));
+          }
+        });
 
-    vm1.invoke(new CacheSerializableRunnable("Running Query") {
-      public void run2() {
-        try {
-          QueryService qs = null;
-          qs = getCache().getQueryService();
+    vm1.invoke(
+        new CacheSerializableRunnable("Running Query") {
+          public void run2() {
+            try {
+              QueryService qs = null;
+              qs = getCache().getQueryService();
 
-          Index d = qs.createIndex("index", IndexType.FUNCTIONAL, "ID", "/" + name);
-          for (int i = 0; i < 100; i++) {
-            Query query = qs.newQuery("SELECT DISTINCT * FROM /" + name + " WHERE ID >= " + i + " ORDER BY ID asc LIMIT 1");
-            SelectResults results = (SelectResults) query.execute();
-            int expectedValue = i;
-            for (Object o : results) {
-              Portfolio p = (Portfolio) o;
-              assert (p.getID() == expectedValue++);
+              Index d = qs.createIndex("index", IndexType.FUNCTIONAL, "ID", "/" + name);
+              for (int i = 0; i < 100; i++) {
+                Query query =
+                    qs.newQuery(
+                        "SELECT DISTINCT * FROM /"
+                            + name
+                            + " WHERE ID >= "
+                            + i
+                            + " ORDER BY ID asc LIMIT 1");
+                SelectResults results = (SelectResults) query.execute();
+                int expectedValue = i;
+                for (Object o : results) {
+                  Portfolio p = (Portfolio) o;
+                  assert (p.getID() == expectedValue++);
+                }
+              }
+            } catch (Exception e) {
+              e.printStackTrace();
+              fail("exception:" + e);
             }
           }
-        } catch (Exception e) {
-          e.printStackTrace();
-          fail("exception:" + e);
-        }
-      }
-    });
+        });
   }
-
 }

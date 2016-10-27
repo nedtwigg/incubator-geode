@@ -32,12 +32,11 @@ import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.internal.cache.Node;
 
 /**
- * Versioned ArrayList which maintains the version everytime the list gets
- * modified. This is thread-safe in terms of add and remove operations and also
- * list is an unmodifiable list to avoid ConcurrentModificationException.
- * 
+ * Versioned ArrayList which maintains the version everytime the list gets modified. This is
+ * thread-safe in terms of add and remove operations and also list is an unmodifiable list to avoid
+ * ConcurrentModificationException.
+ *
  * @see java.util.ConcurrentModificationException
- * 
  */
 public class VersionedArrayList implements DataSerializable, Versionable, Iterable<Node> {
   private static final long serialVersionUID = -1455442285961593385L;
@@ -50,16 +49,14 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
 
   //  private List vhist = new ArrayList();  // DEBUG
 
-  /**
-   * Constructor for DataSerializable.
-   */
+  /** Constructor for DataSerializable. */
   public VersionedArrayList() {
     this.list = new ArrayList<Node>();
   }
 
   /**
    * Constructor.
-   * 
+   *
    * @param size
    */
   public VersionedArrayList(int size) {
@@ -73,11 +70,10 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
   }
 
   /**
-   * Adds obj to the list. Addition is done by making a copy of the existing
-   * list and then adding the obj to the new list and assigning the old list to
-   * the new unmodifiable list. This is to ensure that the iterator of the list
-   * doesn't get ConcurrentModificationException.
-   * 
+   * Adds obj to the list. Addition is done by making a copy of the existing list and then adding
+   * the obj to the new list and assigning the old list to the new unmodifiable list. This is to
+   * ensure that the iterator of the list doesn't get ConcurrentModificationException.
+   *
    * @see java.util.ConcurrentModificationException
    * @param obj
    */
@@ -91,13 +87,13 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
   }
 
   /**
-   * Removes obj from the list. Removal is done by making a copy of the existing
-   * list and then removing the obj from the new list.  If the object was removed, 
-   * the list is assigning to the new unmodifiable list. 
-   * This is to ensure that the iterator of the list doesn't get ConcurrentModificationException.
-   * @return true if the element was removed and the version was changed, otherwise version and list are left
-   * unmodified.
-   * 
+   * Removes obj from the list. Removal is done by making a copy of the existing list and then
+   * removing the obj from the new list. If the object was removed, the list is assigning to the new
+   * unmodifiable list. This is to ensure that the iterator of the list doesn't get
+   * ConcurrentModificationException.
+   *
+   * @return true if the element was removed and the version was changed, otherwise version and list
+   *     are left unmodified.
    * @see java.util.ConcurrentModificationException
    * @param obj the object to remove from the list
    */
@@ -114,7 +110,7 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
 
   /**
    * Returns the iterator.
-   * 
+   *
    * @return a list Iterator
    */
   public synchronized Iterator<Node> iterator() {
@@ -123,7 +119,7 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
 
   /**
    * Returns the size of the list.
-   * 
+   *
    * @return int
    */
   public synchronized int size() {
@@ -132,7 +128,7 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
 
   /**
    * Returns true if obj is present in the list otherwise false.
-   * 
+   *
    * @param obj
    * @return true if obj is present in the list
    */
@@ -146,7 +142,7 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
 
   /**
    * Returns Object at index i.
-   * 
+   *
    * @param i
    * @return Object
    */
@@ -160,7 +156,7 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
 
   /**
    * Returns the index of Object if present, else -1.
-   * 
+   *
    * @param obj
    * @return int
    */
@@ -174,7 +170,7 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
 
   /**
    * Returns a copy of the arraylist contained.
-   * 
+   *
    * @return ArrayList
    */
   public Set<Node> getListCopy() {
@@ -187,7 +183,7 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
 
   /**
    * Prints the version and elements of the list.
-   * 
+   *
    * @return String with version and elements of the list.
    */
   @Override
@@ -242,7 +238,7 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
 
     //    final ArrayList vh = new ArrayList();
     //    final int vhsize = in.readInt();
-    //    for (int k = 0; k < vhsize; k++) {      
+    //    for (int k = 0; k < vhsize; k++) {
     //      vh.add(in.readUTF());
     //    }
 
@@ -307,14 +303,14 @@ public class VersionedArrayList implements DataSerializable, Versionable, Iterab
     // DEBUG
     //    {
     //      StringWriter s = new StringWriter();
-    //      final String pre = 
-    //        "o=" + op + 
-    //        ":t=" + System.currentTimeMillis() + 
+    //      final String pre =
+    //        "o=" + op +
+    //        ":t=" + System.currentTimeMillis() +
     //        ":m=" + InternalDistributedSystem.getAnyInstance().getDistributedMember().toString() + ": ";
     //      s.write(pre);
     //      PrintWriter p = new PrintWriter(s);
     //      new Exception().fillInStackTrace().printStackTrace(p);
-    //      
+    //
     //      ArrayList newList = new ArrayList(this.vhist);
     //      newList.add(pre); // Capture what code added this version
     //      this.vhist = Collections.unmodifiableList(newList);

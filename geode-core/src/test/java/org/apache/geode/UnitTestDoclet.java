@@ -30,21 +30,15 @@ import perffmwk.Formatter;
 
 /**
  * This class is a Javadoc <A
- * href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/overview.html">doclet</A> 
- * that generates a text file that summarizes unit test classes and
- * methods. 
+ * href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/overview.html">doclet</A> that
+ * generates a text file that summarizes unit test classes and methods.
  *
  * @see com.sun.javadoc.Doclet
- *
- *
  * @since GemFire 3.0
  */
 public class UnitTestDoclet {
 
-  /**
-   * Returns the number of arguments for the given command option
-   * (include the option itself)
-   */
+  /** Returns the number of arguments for the given command option (include the option itself) */
   public static int optionLength(String option) {
     if (option.equals("-output")) {
       return 2;
@@ -81,9 +75,7 @@ public class UnitTestDoclet {
     return true;
   }
 
-  /**
-   * The entry point for the doclet
-   */
+  /** The entry point for the doclet */
   public static boolean start(RootDoc root) {
     String[][] options = root.options();
 
@@ -110,13 +102,15 @@ public class UnitTestDoclet {
       pw.println("");
 
       ClassDoc[] classes = root.classes();
-      Arrays.sort(classes, new Comparator() {
-        public int compare(Object o1, Object o2) {
-          ClassDoc c1 = (ClassDoc) o1;
-          ClassDoc c2 = (ClassDoc) o2;
-          return c1.qualifiedName().compareTo(c2.qualifiedName());
-        }
-      });
+      Arrays.sort(
+          classes,
+          new Comparator() {
+            public int compare(Object o1, Object o2) {
+              ClassDoc c1 = (ClassDoc) o1;
+              ClassDoc c2 = (ClassDoc) o2;
+              return c1.qualifiedName().compareTo(c2.qualifiedName());
+            }
+          });
       for (int i = 0; i < classes.length; i++) {
         ClassDoc c = classes[i];
         if (!c.isAbstract() && isUnitTest(c)) {
@@ -138,8 +132,8 @@ public class UnitTestDoclet {
   }
 
   /**
-   * Returns whether or not a class is a unit test.  That is, whether
-   * or not it is a subclass of {@link junit.framework.TestCase}.
+   * Returns whether or not a class is a unit test. That is, whether or not it is a subclass of
+   * {@link junit.framework.TestCase}.
    */
   private static boolean isUnitTest(ClassDoc c) {
     if (c == null) {
@@ -153,9 +147,7 @@ public class UnitTestDoclet {
     }
   }
 
-  /**
-   * Summarizes the test methods of the given class
-   */
+  /** Summarizes the test methods of the given class */
   public static void document(ClassDoc c, PrintWriter pw) throws IOException {
 
     pw.println(c.qualifiedName());
@@ -187,8 +179,8 @@ public class UnitTestDoclet {
   }
 
   /**
-   * Returns an array containing all of the "test" methods (including
-   * those that are inherited) for the given class.
+   * Returns an array containing all of the "test" methods (including those that are inherited) for
+   * the given class.
    */
   private static MethodDoc[] getTestMethods(ClassDoc c) {
     Set set = new TreeSet();
@@ -196,7 +188,9 @@ public class UnitTestDoclet {
       MethodDoc[] methods = c.methods();
       for (int i = 0; i < methods.length; i++) {
         MethodDoc method = methods[i];
-        if (method.isPublic() && method.parameters().length == 0 && method.name().startsWith("test")) {
+        if (method.isPublic()
+            && method.parameters().length == 0
+            && method.name().startsWith("test")) {
           set.add(method);
         }
       }
@@ -207,9 +201,7 @@ public class UnitTestDoclet {
     return (MethodDoc[]) set.toArray(new MethodDoc[0]);
   }
 
-  /**
-   * Indents a block of text a given amount.
-   */
+  /** Indents a block of text a given amount. */
   private static void indent(String text, final int indent, PrintWriter pw) {
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < indent; i++) {
@@ -251,5 +243,4 @@ public class UnitTestDoclet {
 
     pw.println("");
   }
-
 }

@@ -56,8 +56,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Class Cluster This class is the Data Model for the data used for the Pulse
- * Web UI.
+ * Class Cluster This class is the Data Model for the data used for the Pulse Web UI.
  *
  * @since GemFire version 7.0.Beta 2012-09-23
  */
@@ -110,13 +109,15 @@ public class Cluster extends Thread {
 
   private Set<String> deletedMembers = new HashSet<String>();
 
-  private Map<String, List<Cluster.Member>> physicalToMember = new HashMap<String, List<Cluster.Member>>();
+  private Map<String, List<Cluster.Member>> physicalToMember =
+      new HashMap<String, List<Cluster.Member>>();
 
   private Map<String, Cluster.Member> membersHMap = new HashMap<String, Cluster.Member>();
 
   private Set<String> deletedRegions = new HashSet<String>();
 
-  private Map<String, Cluster.Region> clusterRegionMap = new ConcurrentHashMap<String, Cluster.Region>();
+  private Map<String, Cluster.Region> clusterRegionMap =
+      new ConcurrentHashMap<String, Cluster.Region>();
   private List<Cluster.Alert> alertsList = new ArrayList<Cluster.Alert>();
 
   private CircularFifoBuffer totalBytesOnDiskTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
@@ -130,7 +131,8 @@ public class Cluster extends Thread {
   private long previousJVMPauseCount = 0L;
 
   private HashMap<String, Boolean> wanInformation = new HashMap<String, Boolean>();
-  private Map<String, Cluster.Statement> clusterStatementMap = new ConcurrentHashMap<String, Cluster.Statement>();
+  private Map<String, Cluster.Statement> clusterStatementMap =
+      new ConcurrentHashMap<String, Cluster.Statement>();
 
   public static final int CLUSTER_STAT_TOTAL_BYTES_ON_DISK = 0;
   public static final int CLUSTER_STAT_THROUGHPUT_WRITES = 1;
@@ -162,64 +164,60 @@ public class Cluster extends Thread {
 
     Object[] returnArray = null;
     switch (trendId) {
-    case CLUSTER_STAT_TOTAL_BYTES_ON_DISK:
-      synchronized (this.totalBytesOnDiskTrend) {
-        returnArray = this.totalBytesOnDiskTrend.toArray();
-      }
+      case CLUSTER_STAT_TOTAL_BYTES_ON_DISK:
+        synchronized (this.totalBytesOnDiskTrend) {
+          returnArray = this.totalBytesOnDiskTrend.toArray();
+        }
 
-      break;
+        break;
 
-    case CLUSTER_STAT_THROUGHPUT_READS:
-      synchronized (this.throughoutReadsTrend) {
-        returnArray = this.throughoutReadsTrend.toArray();
-      }
-      break;
+      case CLUSTER_STAT_THROUGHPUT_READS:
+        synchronized (this.throughoutReadsTrend) {
+          returnArray = this.throughoutReadsTrend.toArray();
+        }
+        break;
 
-    case CLUSTER_STAT_THROUGHPUT_WRITES:
-      synchronized (this.throughoutWritesTrend) {
-        returnArray = this.throughoutWritesTrend.toArray();
-      }
-      break;
+      case CLUSTER_STAT_THROUGHPUT_WRITES:
+        synchronized (this.throughoutWritesTrend) {
+          returnArray = this.throughoutWritesTrend.toArray();
+        }
+        break;
 
-    case CLUSTER_STAT_WRITES_PER_SECOND:
-      synchronized (this.writePerSecTrend) {
-        returnArray = this.writePerSecTrend.toArray();
-      }
-      break;
+      case CLUSTER_STAT_WRITES_PER_SECOND:
+        synchronized (this.writePerSecTrend) {
+          returnArray = this.writePerSecTrend.toArray();
+        }
+        break;
 
-    case CLUSTER_STAT_READ_PER_SECOND:
-      synchronized (this.readPerSecTrend) {
-        returnArray = this.readPerSecTrend.toArray();
-      }
-      break;
+      case CLUSTER_STAT_READ_PER_SECOND:
+        synchronized (this.readPerSecTrend) {
+          returnArray = this.readPerSecTrend.toArray();
+        }
+        break;
 
-    case CLUSTER_STAT_QUERIES_PER_SECOND:
-      synchronized (this.queriesPerSecTrend) {
-        returnArray = this.queriesPerSecTrend.toArray();
-      }
-      break;
+      case CLUSTER_STAT_QUERIES_PER_SECOND:
+        synchronized (this.queriesPerSecTrend) {
+          returnArray = this.queriesPerSecTrend.toArray();
+        }
+        break;
 
-    case CLUSTER_STAT_MEMORY_USAGE:
-      synchronized (this.memoryUsageTrend) {
-        returnArray = this.memoryUsageTrend.toArray();
-      }
-      break;
+      case CLUSTER_STAT_MEMORY_USAGE:
+        synchronized (this.memoryUsageTrend) {
+          returnArray = this.memoryUsageTrend.toArray();
+        }
+        break;
 
-    case CLUSTER_STAT_GARBAGE_COLLECTION:
-      synchronized (this.garbageCollectionTrend) {
-        returnArray = this.garbageCollectionTrend.toArray();
-      }
-      break;
+      case CLUSTER_STAT_GARBAGE_COLLECTION:
+        synchronized (this.garbageCollectionTrend) {
+          returnArray = this.garbageCollectionTrend.toArray();
+        }
+        break;
     }
 
     return returnArray;
   }
 
-  /**
-   * Member Inner Class
-   *
-   *
-   */
+  /** Member Inner Class */
   public static class Member {
 
     // start: fields defined in MBean
@@ -264,7 +262,8 @@ public class Cluster extends Thread {
     private CircularFifoBuffer cpuUsageSamples = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
     private CircularFifoBuffer heapUsageSamples = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
     private HashMap<String, Cluster.Region> memberRegions = new HashMap<String, Cluster.Region>();
-    private HashMap<String, Cluster.Client> memberClientsHMap = new HashMap<String, Cluster.Client>();
+    private HashMap<String, Cluster.Client> memberClientsHMap =
+        new HashMap<String, Cluster.Client>();
     private CircularFifoBuffer totalBytesOnDiskSamples = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
     private CircularFifoBuffer getsPerSecond = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
     private CircularFifoBuffer putsPerSecond = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
@@ -275,7 +274,8 @@ public class Cluster extends Thread {
 
     private Cluster.GatewayReceiver gatewayReceiver = null;
     private List<Cluster.GatewaySender> gatewaySenderList = new ArrayList<Cluster.GatewaySender>();
-    private List<Cluster.AsyncEventQueue> asyncEventQueueList = new ArrayList<Cluster.AsyncEventQueue>();
+    private List<Cluster.AsyncEventQueue> asyncEventQueueList =
+        new ArrayList<Cluster.AsyncEventQueue>();
     // end: fields defined in MBean
 
     public static final int MEMBER_STAT_GARBAGE_COLLECTION = 0;
@@ -327,48 +327,48 @@ public class Cluster extends Thread {
     public Object[] getMemberStatisticTrend(int trendId) {
       Object[] returnArray = null;
       switch (trendId) {
-      case MEMBER_STAT_GARBAGE_COLLECTION:
-        synchronized (this.garbageCollectionSamples) {
-          returnArray = this.garbageCollectionSamples.toArray();
-        }
+        case MEMBER_STAT_GARBAGE_COLLECTION:
+          synchronized (this.garbageCollectionSamples) {
+            returnArray = this.garbageCollectionSamples.toArray();
+          }
 
-        break;
+          break;
 
-      case MEMBER_STAT_HEAP_USAGE_SAMPLE:
-        synchronized (this.heapUsageSamples) {
-          returnArray = this.heapUsageSamples.toArray();
-        }
-        break;
+        case MEMBER_STAT_HEAP_USAGE_SAMPLE:
+          synchronized (this.heapUsageSamples) {
+            returnArray = this.heapUsageSamples.toArray();
+          }
+          break;
 
-      case MEMBER_STAT_CPU_USAGE_SAMPLE:
-        synchronized (this.cpuUsageSamples) {
-          returnArray = this.cpuUsageSamples.toArray();
-        }
-        break;
+        case MEMBER_STAT_CPU_USAGE_SAMPLE:
+          synchronized (this.cpuUsageSamples) {
+            returnArray = this.cpuUsageSamples.toArray();
+          }
+          break;
 
-      case MEMBER_STAT_GETS_PER_SECOND:
-        synchronized (this.getsPerSecond) {
-          returnArray = this.getsPerSecond.toArray();
-        }
-        break;
+        case MEMBER_STAT_GETS_PER_SECOND:
+          synchronized (this.getsPerSecond) {
+            returnArray = this.getsPerSecond.toArray();
+          }
+          break;
 
-      case MEMBER_STAT_PUTS_PER_SECOND:
-        synchronized (this.putsPerSecond) {
-          returnArray = this.putsPerSecond.toArray();
-        }
-        break;
+        case MEMBER_STAT_PUTS_PER_SECOND:
+          synchronized (this.putsPerSecond) {
+            returnArray = this.putsPerSecond.toArray();
+          }
+          break;
 
-      case MEMBER_STAT_THROUGHPUT_WRITES:
-        synchronized (this.throughputWritesTrend) {
-          returnArray = this.throughputWritesTrend.toArray();
-        }
-        break;
+        case MEMBER_STAT_THROUGHPUT_WRITES:
+          synchronized (this.throughputWritesTrend) {
+            returnArray = this.throughputWritesTrend.toArray();
+          }
+          break;
 
-      case MEMBER_STAT_THROUGHPUT_READS:
-        synchronized (this.throughputReadsTrend) {
-          returnArray = this.throughputReadsTrend.toArray();
-        }
-        break;
+        case MEMBER_STAT_THROUGHPUT_READS:
+          synchronized (this.throughputReadsTrend) {
+            returnArray = this.throughputReadsTrend.toArray();
+          }
+          break;
       }
 
       return returnArray;
@@ -437,8 +437,7 @@ public class Cluster extends Thread {
     public String getHostnameForClients() {
       if (StringUtils.isNotNullNotEmptyNotWhiteSpace(hostnameForClients))
         return this.hostnameForClients;
-      else if (StringUtils.isNotNullNotEmptyNotWhiteSpace(bindAddress))
-        return this.bindAddress;
+      else if (StringUtils.isNotNullNotEmptyNotWhiteSpace(bindAddress)) return this.bindAddress;
       return null;
     }
 
@@ -815,7 +814,6 @@ public class Cluster extends Thread {
           // Add client to clients list
           memberClientsHMap.put(clientId, client);
         }
-
       }
 
       // Remove unwanted entries from clients list
@@ -831,16 +829,10 @@ public class Cluster extends Thread {
 
       // update last update time
       Cluster.LAST_UPDATE_TIME = systemNanoTime;
-
     }
-
   }
 
-  /**
-   * Member Inner Class
-   *
-   *
-   */
+  /** Member Inner Class */
   public static class Statement {
 
     private String queryDefn;
@@ -865,318 +857,264 @@ public class Cluster extends Thread {
     private long qNRespDeSerTime;
 
     public static String[] getGridColumnNames() {
-      String[] colNames = new String[] { PulseConstants.MBEAN_COLNAME_QUERYDEFINITION, PulseConstants.MBEAN_COLNAME_NUMEXECUTION, PulseConstants.MBEAN_COLNAME_TOTALEXECUTIONTIME, PulseConstants.MBEAN_COLNAME_NUMEXECUTIONSINPROGRESS, PulseConstants.MBEAN_COLNAME_NUMTIMESCOMPILED, PulseConstants.MBEAN_COLNAME_NUMTIMESGLOBALINDEXLOOKUP, PulseConstants.MBEAN_COLNAME_NUMROWSMODIFIED, PulseConstants.MBEAN_COLNAME_PARSETIME, PulseConstants.MBEAN_COLNAME_BINDTIME, PulseConstants.MBEAN_COLNAME_OPTIMIZETIME, PulseConstants.MBEAN_COLNAME_ROUTINGINFOTIME, PulseConstants.MBEAN_COLNAME_GENERATETIME, PulseConstants.MBEAN_COLNAME_TOTALCOMPILATIONTIME, PulseConstants.MBEAN_COLNAME_EXECUTIONTIME, PulseConstants.MBEAN_COLNAME_PROJECTIONTIME, PulseConstants.MBEAN_COLNAME_ROWSMODIFICATIONTIME, PulseConstants.MBEAN_COLNAME_QNNUMROWSSEEN, PulseConstants.MBEAN_COLNAME_QNMSGSENDTIME, PulseConstants.MBEAN_COLNAME_QNMSGSERTIME, PulseConstants.MBEAN_COLNAME_QNRESPDESERTIME };
+      String[] colNames =
+          new String[] {
+            PulseConstants.MBEAN_COLNAME_QUERYDEFINITION,
+            PulseConstants.MBEAN_COLNAME_NUMEXECUTION,
+            PulseConstants.MBEAN_COLNAME_TOTALEXECUTIONTIME,
+            PulseConstants.MBEAN_COLNAME_NUMEXECUTIONSINPROGRESS,
+            PulseConstants.MBEAN_COLNAME_NUMTIMESCOMPILED,
+            PulseConstants.MBEAN_COLNAME_NUMTIMESGLOBALINDEXLOOKUP,
+            PulseConstants.MBEAN_COLNAME_NUMROWSMODIFIED,
+            PulseConstants.MBEAN_COLNAME_PARSETIME,
+            PulseConstants.MBEAN_COLNAME_BINDTIME,
+            PulseConstants.MBEAN_COLNAME_OPTIMIZETIME,
+            PulseConstants.MBEAN_COLNAME_ROUTINGINFOTIME,
+            PulseConstants.MBEAN_COLNAME_GENERATETIME,
+            PulseConstants.MBEAN_COLNAME_TOTALCOMPILATIONTIME,
+            PulseConstants.MBEAN_COLNAME_EXECUTIONTIME,
+            PulseConstants.MBEAN_COLNAME_PROJECTIONTIME,
+            PulseConstants.MBEAN_COLNAME_ROWSMODIFICATIONTIME,
+            PulseConstants.MBEAN_COLNAME_QNNUMROWSSEEN,
+            PulseConstants.MBEAN_COLNAME_QNMSGSENDTIME,
+            PulseConstants.MBEAN_COLNAME_QNMSGSERTIME,
+            PulseConstants.MBEAN_COLNAME_QNRESPDESERTIME
+          };
       return colNames;
     }
 
     public static String[] getGridColumnAttributes() {
-      String[] colAttributes = new String[] { PulseConstants.MBEAN_ATTRIBUTE_QUERYDEFINITION, PulseConstants.MBEAN_ATTRIBUTE_NUMEXECUTION, PulseConstants.MBEAN_ATTRIBUTE_TOTALEXECUTIONTIME, PulseConstants.MBEAN_ATTRIBUTE_NUMEXECUTIONSINPROGRESS, PulseConstants.MBEAN_ATTRIBUTE_NUMTIMESCOMPILED, PulseConstants.MBEAN_ATTRIBUTE_NUMTIMESGLOBALINDEXLOOKUP, PulseConstants.MBEAN_ATTRIBUTE_NUMROWSMODIFIED, PulseConstants.MBEAN_ATTRIBUTE_PARSETIME, PulseConstants.MBEAN_ATTRIBUTE_BINDTIME, PulseConstants.MBEAN_ATTRIBUTE_OPTIMIZETIME, PulseConstants.MBEAN_ATTRIBUTE_ROUTINGINFOTIME, PulseConstants.MBEAN_ATTRIBUTE_GENERATETIME, PulseConstants.MBEAN_ATTRIBUTE_TOTALCOMPILATIONTIME, PulseConstants.MBEAN_ATTRIBUTE_EXECUTIONTIME, PulseConstants.MBEAN_ATTRIBUTE_PROJECTIONTIME,
-
-          PulseConstants.MBEAN_ATTRIBUTE_ROWSMODIFICATIONTIME, PulseConstants.MBEAN_ATTRIBUTE_QNNUMROWSSEEN, PulseConstants.MBEAN_ATTRIBUTE_QNMSGSENDTIME, PulseConstants.MBEAN_ATTRIBUTE_QNMSGSERTIME, PulseConstants.MBEAN_ATTRIBUTE_QNRESPDESERTIME };
+      String[] colAttributes =
+          new String[] {
+            PulseConstants.MBEAN_ATTRIBUTE_QUERYDEFINITION,
+            PulseConstants.MBEAN_ATTRIBUTE_NUMEXECUTION,
+            PulseConstants.MBEAN_ATTRIBUTE_TOTALEXECUTIONTIME,
+            PulseConstants.MBEAN_ATTRIBUTE_NUMEXECUTIONSINPROGRESS,
+            PulseConstants.MBEAN_ATTRIBUTE_NUMTIMESCOMPILED,
+            PulseConstants.MBEAN_ATTRIBUTE_NUMTIMESGLOBALINDEXLOOKUP,
+            PulseConstants.MBEAN_ATTRIBUTE_NUMROWSMODIFIED,
+            PulseConstants.MBEAN_ATTRIBUTE_PARSETIME,
+            PulseConstants.MBEAN_ATTRIBUTE_BINDTIME,
+            PulseConstants.MBEAN_ATTRIBUTE_OPTIMIZETIME,
+            PulseConstants.MBEAN_ATTRIBUTE_ROUTINGINFOTIME,
+            PulseConstants.MBEAN_ATTRIBUTE_GENERATETIME,
+            PulseConstants.MBEAN_ATTRIBUTE_TOTALCOMPILATIONTIME,
+            PulseConstants.MBEAN_ATTRIBUTE_EXECUTIONTIME,
+            PulseConstants.MBEAN_ATTRIBUTE_PROJECTIONTIME,
+            PulseConstants.MBEAN_ATTRIBUTE_ROWSMODIFICATIONTIME,
+            PulseConstants.MBEAN_ATTRIBUTE_QNNUMROWSSEEN,
+            PulseConstants.MBEAN_ATTRIBUTE_QNMSGSENDTIME,
+            PulseConstants.MBEAN_ATTRIBUTE_QNMSGSERTIME,
+            PulseConstants.MBEAN_ATTRIBUTE_QNRESPDESERTIME
+          };
       return colAttributes;
     }
 
     public static int[] getGridColumnWidths() {
-      int[] colWidths = new int[] { 300, 150, 160, 180, 150, 200, 150, 130, 130, 160, 140, 180, 170, 160, 130, 190, 170, 170, 170, 200 };
+      int[] colWidths =
+          new int[] {
+            300, 150, 160, 180, 150, 200, 150, 130, 130, 160, 140, 180, 170, 160, 130, 190, 170,
+            170, 170, 200
+          };
       return colWidths;
     }
 
-    /**
-     * @return the numTimesCompiled
-     */
+    /** @return the numTimesCompiled */
     public String getQueryDefinition() {
       return queryDefn;
     }
 
-    /**
-     * @param queryDefn
-     *          the query to set
-     */
+    /** @param queryDefn the query to set */
     public void setQueryDefinition(String queryDefn) {
       this.queryDefn = queryDefn;
     }
 
-    /**
-     * @return the numTimesCompiled
-     */
+    /** @return the numTimesCompiled */
     public long getNumTimesCompiled() {
       return numTimesCompiled;
     }
 
-    /**
-     * @param numTimesCompiled
-     *          the numTimesCompiled to set
-     */
+    /** @param numTimesCompiled the numTimesCompiled to set */
     public void setNumTimesCompiled(long numTimesCompiled) {
       this.numTimesCompiled = numTimesCompiled;
     }
 
-    /**
-     * @return the numExecution
-     */
+    /** @return the numExecution */
     public long getNumExecution() {
       return numExecution;
     }
 
-    /**
-     * @param numExecution
-     *          the numExecution to set
-     */
+    /** @param numExecution the numExecution to set */
     public void setNumExecution(long numExecution) {
       this.numExecution = numExecution;
     }
 
-    /**
-     * @return the numExecutionsInProgress
-     */
+    /** @return the numExecutionsInProgress */
     public long getNumExecutionsInProgress() {
       return numExecutionsInProgress;
     }
 
-    /**
-     * @param numExecutionsInProgress
-     *          the numExecutionsInProgress to set
-     */
+    /** @param numExecutionsInProgress the numExecutionsInProgress to set */
     public void setNumExecutionsInProgress(long numExecutionsInProgress) {
       this.numExecutionsInProgress = numExecutionsInProgress;
     }
 
-    /**
-     * @return the numTimesGlobalIndexLookup
-     */
+    /** @return the numTimesGlobalIndexLookup */
     public long getNumTimesGlobalIndexLookup() {
       return numTimesGlobalIndexLookup;
     }
 
-    /**
-     * @param numTimesGlobalIndexLookup
-     *          the numTimesGlobalIndexLookup to set
-     */
+    /** @param numTimesGlobalIndexLookup the numTimesGlobalIndexLookup to set */
     public void setNumTimesGlobalIndexLookup(long numTimesGlobalIndexLookup) {
       this.numTimesGlobalIndexLookup = numTimesGlobalIndexLookup;
     }
 
-    /**
-     * @return the numRowsModified
-     */
+    /** @return the numRowsModified */
     public long getNumRowsModified() {
       return numRowsModified;
     }
 
-    /**
-     * @param numRowsModified
-     *          the numRowsModified to set
-     */
+    /** @param numRowsModified the numRowsModified to set */
     public void setNumRowsModified(long numRowsModified) {
       this.numRowsModified = numRowsModified;
     }
 
-    /**
-     * @return the parseTime
-     */
+    /** @return the parseTime */
     public long getParseTime() {
       return parseTime;
     }
 
-    /**
-     * @param parseTime
-     *          the parseTime to set
-     */
+    /** @param parseTime the parseTime to set */
     public void setParseTime(long parseTime) {
       this.parseTime = parseTime;
     }
 
-    /**
-     * @return the bindTime
-     */
+    /** @return the bindTime */
     public long getBindTime() {
       return bindTime;
     }
 
-    /**
-     * @param bindTime
-     *          the bindTime to set
-     */
+    /** @param bindTime the bindTime to set */
     public void setBindTime(long bindTime) {
       this.bindTime = bindTime;
     }
 
-    /**
-     * @return the optimizeTime
-     */
+    /** @return the optimizeTime */
     public long getOptimizeTime() {
       return optimizeTime;
     }
 
-    /**
-     * @param optimizeTime
-     *          the optimizeTime to set
-     */
+    /** @param optimizeTime the optimizeTime to set */
     public void setOptimizeTime(long optimizeTime) {
       this.optimizeTime = optimizeTime;
     }
 
-    /**
-     * @return the routingInfoTime
-     */
+    /** @return the routingInfoTime */
     public long getRoutingInfoTime() {
       return routingInfoTime;
     }
 
-    /**
-     * @param routingInfoTime
-     *          the routingInfoTime to set
-     */
+    /** @param routingInfoTime the routingInfoTime to set */
     public void setRoutingInfoTime(long routingInfoTime) {
       this.routingInfoTime = routingInfoTime;
     }
 
-    /**
-     * @return the generateTime
-     */
+    /** @return the generateTime */
     public long getGenerateTime() {
       return generateTime;
     }
 
-    /**
-     * @param generateTime
-     *          the generateTime to set
-     */
+    /** @param generateTime the generateTime to set */
     public void setGenerateTime(long generateTime) {
       this.generateTime = generateTime;
     }
 
-    /**
-     * @return the totalCompilationTime
-     */
+    /** @return the totalCompilationTime */
     public long getTotalCompilationTime() {
       return totalCompilationTime;
     }
 
-    /**
-     * @param totalCompilationTime
-     *          the totalCompilationTime to set
-     */
+    /** @param totalCompilationTime the totalCompilationTime to set */
     public void setTotalCompilationTime(long totalCompilationTime) {
       this.totalCompilationTime = totalCompilationTime;
     }
 
-    /**
-     * @return the executionTime
-     */
+    /** @return the executionTime */
     public long getExecutionTime() {
       return executionTime;
     }
 
-    /**
-     * @param executionTime
-     *          the executionTime to set
-     */
+    /** @param executionTime the executionTime to set */
     public void setExecutionTime(long executionTime) {
       this.executionTime = executionTime;
     }
 
-    /**
-     * @return the projectionTime
-     */
+    /** @return the projectionTime */
     public long getProjectionTime() {
       return projectionTime;
     }
 
-    /**
-     * @param projectionTime
-     *          the projectionTime to set
-     */
+    /** @param projectionTime the projectionTime to set */
     public void setProjectionTime(long projectionTime) {
       this.projectionTime = projectionTime;
     }
 
-    /**
-     * @return the totalExecutionTime
-     */
+    /** @return the totalExecutionTime */
     public long getTotalExecutionTime() {
       return totalExecutionTime;
     }
 
-    /**
-     * @param totalExecutionTime
-     *          the totalExecutionTime to set
-     */
+    /** @param totalExecutionTime the totalExecutionTime to set */
     public void setTotalExecutionTime(long totalExecutionTime) {
       this.totalExecutionTime = totalExecutionTime;
     }
 
-    /**
-     * @return the rowsModificationTime
-     */
+    /** @return the rowsModificationTime */
     public long getRowsModificationTime() {
       return rowsModificationTime;
     }
 
-    /**
-     * @param rowsModificationTime
-     *          the rowsModificationTime to set
-     */
+    /** @param rowsModificationTime the rowsModificationTime to set */
     public void setRowsModificationTime(long rowsModificationTime) {
       this.rowsModificationTime = rowsModificationTime;
     }
 
-    /**
-     * @return the qNNumRowsSeen
-     */
+    /** @return the qNNumRowsSeen */
     public long getqNNumRowsSeen() {
       return qNNumRowsSeen;
     }
 
-    /**
-     * @param qNNumRowsSeen
-     *          the qNNumRowsSeen to set
-     */
+    /** @param qNNumRowsSeen the qNNumRowsSeen to set */
     public void setqNNumRowsSeen(long qNNumRowsSeen) {
       this.qNNumRowsSeen = qNNumRowsSeen;
     }
 
-    /**
-     * @return the qNMsgSendTime
-     */
+    /** @return the qNMsgSendTime */
     public long getqNMsgSendTime() {
       return qNMsgSendTime;
     }
 
-    /**
-     * @param qNMsgSendTime
-     *          the qNMsgSendTime to set
-     */
+    /** @param qNMsgSendTime the qNMsgSendTime to set */
     public void setqNMsgSendTime(long qNMsgSendTime) {
       this.qNMsgSendTime = qNMsgSendTime;
     }
 
-    /**
-     * @return the qNMsgSerTime
-     */
+    /** @return the qNMsgSerTime */
     public long getqNMsgSerTime() {
       return qNMsgSerTime;
     }
 
-    /**
-     * @param qNMsgSerTime
-     *          the qNMsgSerTime to set
-     */
+    /** @param qNMsgSerTime the qNMsgSerTime to set */
     public void setqNMsgSerTime(long qNMsgSerTime) {
       this.qNMsgSerTime = qNMsgSerTime;
     }
 
-    /**
-     * @return the qNRespDeSerTime
-     */
+    /** @return the qNRespDeSerTime */
     public long getqNRespDeSerTime() {
       return qNRespDeSerTime;
     }
 
-    /**
-     * @param qNRespDeSerTime
-     *          the qNRespDeSerTime to set
-     */
+    /** @param qNRespDeSerTime the qNRespDeSerTime to set */
     public void setqNRespDeSerTime(long qNRespDeSerTime) {
       this.qNRespDeSerTime = qNRespDeSerTime;
     }
@@ -1204,156 +1142,112 @@ public class Cluster extends Thread {
     private CircularFifoBuffer diskReadsPerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
     private CircularFifoBuffer diskWritesPerSecTrend = new CircularFifoBuffer(MAX_SAMPLE_SIZE);
 
-    /**
-     * @return the entrySize
-     */
+    /** @return the entrySize */
     public long getEntrySize() {
       return entrySize;
     }
 
-    /**
-     * @param entrySize the entrySize to set
-     */
+    /** @param entrySize the entrySize to set */
     public void setEntrySize(long entrySize) {
       this.entrySize = entrySize;
     }
 
-    /**
-     * @return the entryCount
-     */
+    /** @return the entryCount */
     public long getEntryCount() {
       return entryCount;
     }
 
-    /**
-     * @param entryCount the entryCount to set
-     */
+    /** @param entryCount the entryCount to set */
     public void setEntryCount(long entryCount) {
       this.entryCount = entryCount;
     }
 
-    /**
-     * @return the putsRate
-     */
+    /** @return the putsRate */
     public double getPutsRate() {
       return putsRate;
     }
 
-    /**
-     * @param putsRate the putsRate to set
-     */
+    /** @param putsRate the putsRate to set */
     public void setPutsRate(double putsRate) {
       this.putsRate = putsRate;
     }
 
-    /**
-     * @return the getsRate
-     */
+    /** @return the getsRate */
     public double getGetsRate() {
       return getsRate;
     }
 
-    /**
-     * @param getsRate the getsRate to set
-     */
+    /** @param getsRate the getsRate to set */
     public void setGetsRate(double getsRate) {
       this.getsRate = getsRate;
     }
 
-    /**
-     * @return the diskGetsRate
-     */
+    /** @return the diskGetsRate */
     public double getDiskGetsRate() {
       return diskGetsRate;
     }
 
-    /**
-     * @param diskGetsRate the diskGetsRate to set
-     */
+    /** @param diskGetsRate the diskGetsRate to set */
     public void setDiskGetsRate(double diskGetsRate) {
       this.diskGetsRate = diskGetsRate;
     }
 
-    /**
-     * @return the diskPutsRate
-     */
+    /** @return the diskPutsRate */
     public double getDiskPutsRate() {
       return diskPutsRate;
     }
 
-    /**
-     * @param diskPutsRate the diskPutsRate to set
-     */
+    /** @param diskPutsRate the diskPutsRate to set */
     public void setDiskPutsRate(double diskPutsRate) {
       this.diskPutsRate = diskPutsRate;
     }
 
-    /**
-     * @return the local maximum memory
-     */
+    /** @return the local maximum memory */
     public int getLocalMaxMemory() {
       return this.localMaxMemory;
     }
 
-    /**
-     * @param localMaxMemory
-     */
+    /** @param localMaxMemory */
     public void setLocalMaxMemory(int localMaxMemory) {
       this.localMaxMemory = localMaxMemory;
     }
 
-    /**
-     * @return the getsPerSecTrend
-     */
+    /** @return the getsPerSecTrend */
     public CircularFifoBuffer getGetsPerSecTrend() {
       return getsPerSecTrend;
     }
 
-    /**
-     * @param getsPerSecTrend the getsPerSecTrend to set
-     */
+    /** @param getsPerSecTrend the getsPerSecTrend to set */
     public void setGetsPerSecTrend(CircularFifoBuffer getsPerSecTrend) {
       this.getsPerSecTrend = getsPerSecTrend;
     }
 
-    /**
-     * @return the putsPerSecTrend
-     */
+    /** @return the putsPerSecTrend */
     public CircularFifoBuffer getPutsPerSecTrend() {
       return putsPerSecTrend;
     }
 
-    /**
-     * @param putsPerSecTrend the putsPerSecTrend to set
-     */
+    /** @param putsPerSecTrend the putsPerSecTrend to set */
     public void setPutsPerSecTrend(CircularFifoBuffer putsPerSecTrend) {
       this.putsPerSecTrend = putsPerSecTrend;
     }
 
-    /**
-     * @return the diskReadsPerSecTrend
-     */
+    /** @return the diskReadsPerSecTrend */
     public CircularFifoBuffer getDiskReadsPerSecTrend() {
       return diskReadsPerSecTrend;
     }
 
-    /**
-     * @param diskReadsPerSecTrend the diskReadsPerSecTrend to set
-     */
+    /** @param diskReadsPerSecTrend the diskReadsPerSecTrend to set */
     public void setDiskReadsPerSecTrend(CircularFifoBuffer diskReadsPerSecTrend) {
       this.diskReadsPerSecTrend = diskReadsPerSecTrend;
     }
 
-    /**
-     * @return the diskWritesPerSecTrend
-     */
+    /** @return the diskWritesPerSecTrend */
     public CircularFifoBuffer getDiskWritesPerSecTrend() {
       return diskWritesPerSecTrend;
     }
 
-    /**
-     * @param diskWritesPerSecTrend the diskWritesPerSecTrend to set
-     */
+    /** @param diskWritesPerSecTrend the diskWritesPerSecTrend to set */
     public void setDiskWritesPerSecTrend(CircularFifoBuffer diskWritesPerSecTrend) {
       this.diskWritesPerSecTrend = diskWritesPerSecTrend;
     }
@@ -1362,68 +1256,56 @@ public class Cluster extends Thread {
 
       Object[] returnArray = null;
       switch (trendId) {
-      case REGION_ON_MEMBER_STAT_GETS_PER_SEC_TREND:
-        synchronized (this.getsPerSecTrend) {
-          returnArray = this.getsPerSecTrend.toArray();
-        }
-        break;
+        case REGION_ON_MEMBER_STAT_GETS_PER_SEC_TREND:
+          synchronized (this.getsPerSecTrend) {
+            returnArray = this.getsPerSecTrend.toArray();
+          }
+          break;
 
-      case REGION_ON_MEMBER_STAT_PUTS_PER_SEC_TREND:
-        synchronized (this.putsPerSecTrend) {
-          returnArray = this.putsPerSecTrend.toArray();
-        }
-        break;
+        case REGION_ON_MEMBER_STAT_PUTS_PER_SEC_TREND:
+          synchronized (this.putsPerSecTrend) {
+            returnArray = this.putsPerSecTrend.toArray();
+          }
+          break;
 
-      case REGION_ON_MEMBER_STAT_DISK_READS_PER_SEC_TREND:
-        synchronized (this.diskReadsPerSecTrend) {
-          returnArray = this.diskReadsPerSecTrend.toArray();
-        }
-        break;
+        case REGION_ON_MEMBER_STAT_DISK_READS_PER_SEC_TREND:
+          synchronized (this.diskReadsPerSecTrend) {
+            returnArray = this.diskReadsPerSecTrend.toArray();
+          }
+          break;
 
-      case REGION_ON_MEMBER_STAT_DISK_WRITES_PER_SEC_TREND:
-        synchronized (this.diskWritesPerSecTrend) {
-          returnArray = this.diskWritesPerSecTrend.toArray();
-        }
-        break;
+        case REGION_ON_MEMBER_STAT_DISK_WRITES_PER_SEC_TREND:
+          synchronized (this.diskWritesPerSecTrend) {
+            returnArray = this.diskWritesPerSecTrend.toArray();
+          }
+          break;
       }
 
       return returnArray;
     }
 
-    /**
-     * @return the regionFullPath
-     */
+    /** @return the regionFullPath */
     public String getRegionFullPath() {
       return regionFullPath;
     }
 
-    /**
-     * @param regionFullPath the regionFullPath to set
-     */
+    /** @param regionFullPath the regionFullPath to set */
     public void setRegionFullPath(String regionFullPath) {
       this.regionFullPath = regionFullPath;
     }
 
-    /**
-     * @return the memberName
-     */
+    /** @return the memberName */
     public String getMemberName() {
       return memberName;
     }
 
-    /**
-     * @param memberName the memberName to set
-     */
+    /** @param memberName the memberName to set */
     public void setMemberName(String memberName) {
       this.memberName = memberName;
     }
   }
 
-  /**
-   * Region Inner Class
-   *
-   *
-   */
+  /** Region Inner Class */
   public static class Region {
     // start: fields defined in MBean
     private String fullPath;
@@ -1465,29 +1347,29 @@ public class Cluster extends Thread {
 
       Object[] returnArray = null;
       switch (trendId) {
-      case REGION_STAT_GETS_PER_SEC_TREND:
-        synchronized (this.getsPerSecTrend) {
-          returnArray = this.getsPerSecTrend.toArray();
-        }
-        break;
+        case REGION_STAT_GETS_PER_SEC_TREND:
+          synchronized (this.getsPerSecTrend) {
+            returnArray = this.getsPerSecTrend.toArray();
+          }
+          break;
 
-      case REGION_STAT_PUTS_PER_SEC_TREND:
-        synchronized (this.putsPerSecTrend) {
-          returnArray = this.putsPerSecTrend.toArray();
-        }
-        break;
+        case REGION_STAT_PUTS_PER_SEC_TREND:
+          synchronized (this.putsPerSecTrend) {
+            returnArray = this.putsPerSecTrend.toArray();
+          }
+          break;
 
-      case REGION_STAT_DISK_READS_PER_SEC_TREND:
-        synchronized (this.diskReadsPerSecTrend) {
-          returnArray = this.diskReadsPerSecTrend.toArray();
-        }
-        break;
+        case REGION_STAT_DISK_READS_PER_SEC_TREND:
+          synchronized (this.diskReadsPerSecTrend) {
+            returnArray = this.diskReadsPerSecTrend.toArray();
+          }
+          break;
 
-      case REGION_STAT_DISK_WRITES_PER_SEC_TREND:
-        synchronized (this.diskWritesPerSecTrend) {
-          returnArray = this.diskWritesPerSecTrend.toArray();
-        }
-        break;
+        case REGION_STAT_DISK_WRITES_PER_SEC_TREND:
+          synchronized (this.diskWritesPerSecTrend) {
+            returnArray = this.diskWritesPerSecTrend.toArray();
+          }
+          break;
       }
 
       return returnArray;
@@ -1703,19 +1585,13 @@ public class Cluster extends Thread {
       return regionOnMembers;
     }
 
-    /**
-     * @param regionOnMembers the regionOnMembers to set
-     */
+    /** @param regionOnMembers the regionOnMembers to set */
     public void setRegionOnMembers(List<RegionOnMember> regionOnMembers) {
       this.regionOnMembers = regionOnMembers;
     }
   }
 
-  /**
-   * Alert Inner Class
-   *
-   *
-   */
+  /** Alert Inner Class */
   public static class Alert {
     public static final int SEVERE = 0;
     public static final int ERROR = 1;
@@ -1797,21 +1673,17 @@ public class Cluster extends Thread {
       return ALERT_ID_CTR.incrementAndGet();
     }
 
-    private static DateFormat df = new SimpleDateFormat(PulseConstants.PULSE_NOTIFICATION_ALERT_DATE_PATTERN);
+    private static DateFormat df =
+        new SimpleDateFormat(PulseConstants.PULSE_NOTIFICATION_ALERT_DATE_PATTERN);
 
     public static String formatToISOTimestamp(Date date) {
       TimeZone tz = TimeZone.getTimeZone("UTC");
       df.setTimeZone(tz);
       return df.format(date);
     }
-
   }
 
-  /**
-   * Client Inner Class
-   *
-   *
-   */
+  /** Client Inner Class */
   public static class Client {
 
     private String id;
@@ -1949,14 +1821,9 @@ public class Cluster extends Thread {
     public void setConnected(boolean isConnected) {
       this.isConnected = isConnected;
     }
-
   }
 
-  /**
-   * Gateway Receiver Inner Class
-   *
-   *
-   */
+  /** Gateway Receiver Inner Class */
   public static class GatewayReceiver {
 
     private int listeningPort;
@@ -2024,11 +1891,7 @@ public class Cluster extends Thread {
     }
   }
 
-  /**
-   * Gateway Sender Inner class
-   *
-   *
-   */
+  /** Gateway Sender Inner class */
   public static class GatewaySender {
 
     private double linkThroughput;
@@ -2106,40 +1969,28 @@ public class Cluster extends Thread {
       this.persistenceEnabled = persistenceEnabled;
     }
 
-    /**
-     * @return the remoteDSId
-     */
+    /** @return the remoteDSId */
     public int getRemoteDSId() {
       return remoteDSId;
     }
 
-    /**
-     * @param remoteDSId the remoteDSId to set
-     */
+    /** @param remoteDSId the remoteDSId to set */
     public void setRemoteDSId(int remoteDSId) {
       this.remoteDSId = remoteDSId;
     }
 
-    /**
-     * @return the eventsExceedingAlertThreshold
-     */
+    /** @return the eventsExceedingAlertThreshold */
     public int getEventsExceedingAlertThreshold() {
       return eventsExceedingAlertThreshold;
     }
 
-    /**
-     * @param eventsExceedingAlertThreshold the eventsExceedingAlertThreshold to set
-     */
+    /** @param eventsExceedingAlertThreshold the eventsExceedingAlertThreshold to set */
     public void setEventsExceedingAlertThreshold(int eventsExceedingAlertThreshold) {
       this.eventsExceedingAlertThreshold = eventsExceedingAlertThreshold;
     }
   }
 
-  /**
-   * Async Event Queue Inner class
-   *
-   *
-   */
+  /** Async Event Queue Inner class */
   public static class AsyncEventQueue {
 
     private String id;
@@ -2167,16 +2018,12 @@ public class Cluster extends Thread {
       this.primary = primary;
     }
 
-    /**
-     * @return the parallel
-     */
+    /** @return the parallel */
     public boolean isParallel() {
       return parallel;
     }
 
-    /**
-     * @param parallel the parallel to set
-     */
+    /** @param parallel the parallel to set */
     public void setParallel(boolean parallel) {
       this.parallel = parallel;
     }
@@ -2189,84 +2036,62 @@ public class Cluster extends Thread {
       this.batchSize = batchSize;
     }
 
-    /**
-     * @return the batchTimeInterval
-     */
+    /** @return the batchTimeInterval */
     public long getBatchTimeInterval() {
       return batchTimeInterval;
     }
 
-    /**
-     * @param batchTimeInterval the batchTimeInterval to set
-     */
+    /** @param batchTimeInterval the batchTimeInterval to set */
     public void setBatchTimeInterval(long batchTimeInterval) {
       this.batchTimeInterval = batchTimeInterval;
     }
 
-    /**
-     * @return the batchConflationEnabled
-     */
+    /** @return the batchConflationEnabled */
     public boolean isBatchConflationEnabled() {
       return batchConflationEnabled;
     }
 
-    /**
-     * @param batchConflationEnabled the batchConflationEnabled to set
-     */
+    /** @param batchConflationEnabled the batchConflationEnabled to set */
     public void setBatchConflationEnabled(boolean batchConflationEnabled) {
       this.batchConflationEnabled = batchConflationEnabled;
     }
 
-    /**
-     * @return the asyncEventListener
-     */
+    /** @return the asyncEventListener */
     public String getAsyncEventListener() {
       return asyncEventListener;
     }
 
-    /**
-     * @param asyncEventListener the asyncEventListener to set
-     */
+    /** @param asyncEventListener the asyncEventListener to set */
     public void setAsyncEventListener(String asyncEventListener) {
       this.asyncEventListener = asyncEventListener;
     }
 
-    /**
-     * @return the eventQueueSize
-     */
+    /** @return the eventQueueSize */
     public int getEventQueueSize() {
       return eventQueueSize;
     }
 
-    /**
-     * @param eventQueueSize the eventQueueSize to set
-     */
+    /** @param eventQueueSize the eventQueueSize to set */
     public void setEventQueueSize(int eventQueueSize) {
       this.eventQueueSize = eventQueueSize;
     }
   }
 
-  /**
-   * Default constructor only used for testing
-   */
-  public Cluster() {
-  }
+  /** Default constructor only used for testing */
+  public Cluster() {}
 
   /**
-   * This function is used for calling getUpdator function of ClusterDataFactory
-   * and starting the thread for updating the Cluster details.
+   * This function is used for calling getUpdator function of ClusterDataFactory and starting the
+   * thread for updating the Cluster details.
    *
-   * @param host
-   *          host name
-   * @param port
-   *          port
-   * @param userName
-   *          pulse user name
-   * @param userPassword
-   *          pulse user password
+   * @param host host name
+   * @param port port
+   * @param userName pulse user name
+   * @param userPassword pulse user password
    * @throws ConnectException
    */
-  public Cluster(String host, String port, String userName, String userPassword) throws ConnectException {
+  public Cluster(String host, String port, String userName, String userPassword)
+      throws ConnectException {
     this.serverName = host;
     this.port = port;
     this.jmxUserName = userName;
@@ -2276,9 +2101,7 @@ public class Cluster extends Thread {
     // start();
   }
 
-  /**
-   * thread run method for updating the cluster data
-   */
+  /** thread run method for updating the cluster data */
   @Override
   public void run() {
     while (!this.stopUpdates) {
@@ -2304,7 +2127,12 @@ public class Cluster extends Thread {
     }
 
     if (LOGGER.infoEnabled()) {
-      LOGGER.info(resourceBundle.getString("LOG_MSG_STOP_THREAD_UPDATES") + " :: " + this.serverName + ":" + this.port);
+      LOGGER.info(
+          resourceBundle.getString("LOG_MSG_STOP_THREAD_UPDATES")
+              + " :: "
+              + this.serverName
+              + ":"
+              + this.port);
     }
   }
 
@@ -2319,14 +2147,17 @@ public class Cluster extends Thread {
     // Connect if required or hold a connection. If unable to connect,
     // return false
     if (LOGGER.finerEnabled()) {
-      LOGGER.finer(resourceBundle.getString("LOG_MSG_CLUSTER_DATA_IS_UPDATING") + "::" + this.serverName + ":" + this.port);
+      LOGGER.finer(
+          resourceBundle.getString("LOG_MSG_CLUSTER_DATA_IS_UPDATING")
+              + "::"
+              + this.serverName
+              + ":"
+              + this.port);
     }
     return this.updater.updateData();
   }
 
-  /**
-   * for stopping the update thread
-   */
+  /** for stopping the update thread */
   public void stopThread() {
     this.stopUpdates = true;
 
@@ -2334,7 +2165,8 @@ public class Cluster extends Thread {
       join();
     } catch (InterruptedException e) {
       if (LOGGER.infoEnabled()) {
-        LOGGER.info("InterruptedException occured while stoping cluster thread : " + e.getMessage());
+        LOGGER.info(
+            "InterruptedException occured while stoping cluster thread : " + e.getMessage());
       }
     }
   }
@@ -2810,18 +2642,11 @@ public class Cluster extends Thread {
     }
   }
 
-  /**
-   * inner class for creating Mock Data
-   *
-   *
-   */
+  /** inner class for creating Mock Data */
   public class MockDataUpdater implements IClusterUpdater {
-    public MockDataUpdater() {
-    }
+    public MockDataUpdater() {}
 
-    /**
-     * function used for updating Cluster data for Mock
-     */
+    /** function used for updating Cluster data for Mock */
     @Override
     public boolean updateData() {
       setConnectedFlag(true);
@@ -2862,16 +2687,48 @@ public class Cluster extends Thread {
       // Create 3 members first time around
       if (membersHMap.size() == 0) {
 
-        membersHMap.put("pnq-visitor1", initializeMember("pnq-visitor1(Launcher_Manager-1099-13-40-24-5368)-24357", "pnq-visitor1", true, true, true, true));
+        membersHMap.put(
+            "pnq-visitor1",
+            initializeMember(
+                "pnq-visitor1(Launcher_Manager-1099-13-40-24-5368)-24357",
+                "pnq-visitor1",
+                true,
+                true,
+                true,
+                true));
 
         for (int i = 2; i <= 8; i++) {
           if ((i % 2) == 0) {
-            membersHMap.put("pnq-visitor" + i, initializeMember("pnq-visitor" + i + "(Launcher_Server-1099-13-40-24-5368)-24357", "pnq-visitor" + i, false, false, true, false));
+            membersHMap.put(
+                "pnq-visitor" + i,
+                initializeMember(
+                    "pnq-visitor" + i + "(Launcher_Server-1099-13-40-24-5368)-24357",
+                    "pnq-visitor" + i,
+                    false,
+                    false,
+                    true,
+                    false));
           } else {
             if ((i % 3) == 0) {
-              membersHMap.put("pnq-visitor" + i, initializeMember("pnq-visitor" + i + "(Launcher_Server-1099-13-40-24-5368)-24357", "pnq-visitor" + i, false, false, false, false));
+              membersHMap.put(
+                  "pnq-visitor" + i,
+                  initializeMember(
+                      "pnq-visitor" + i + "(Launcher_Server-1099-13-40-24-5368)-24357",
+                      "pnq-visitor" + i,
+                      false,
+                      false,
+                      false,
+                      false));
             } else {
-              membersHMap.put("pnq-visitor" + i, initializeMember("pnq-visitor" + i + "(Launcher_Server-1099-13-40-24-5368)-24357", "pnq-visitor" + i, false, true, true, true));
+              membersHMap.put(
+                  "pnq-visitor" + i,
+                  initializeMember(
+                      "pnq-visitor" + i + "(Launcher_Server-1099-13-40-24-5368)-24357",
+                      "pnq-visitor" + i,
+                      false,
+                      true,
+                      true,
+                      true));
             }
           }
         }
@@ -2914,9 +2771,10 @@ public class Cluster extends Thread {
               memberClientsHM.put(newClient.getId(), newClient);
             }
             membersHMap.get(memberSet.getKey()).updateMemberClientsHMap(memberClientsHM);
-            clientConnectionCount = clientConnectionCount + membersHMap.get(memberSet.getKey()).getMemberClientsHMap().size();
+            clientConnectionCount =
+                clientConnectionCount
+                    + membersHMap.get(memberSet.getKey()).getMemberClientsHMap().size();
           }
-
         }
       }
 
@@ -2948,7 +2806,6 @@ public class Cluster extends Thread {
           totalRegionCount = clusterRegionMap.values().size();
         }
         membersHMap.get(memberSet.getKey()).setMemberRegions(memberRegions);
-
       }
 
       wanInformation.clear();
@@ -2994,7 +2851,7 @@ public class Cluster extends Thread {
           updateClusterStatement(i);
         }
       } else if (clusterStatementMap.size() == 510) {
-        for (Iterator itSt = clusterStatementMap.values().iterator(); itSt.hasNext();) {
+        for (Iterator itSt = clusterStatementMap.values().iterator(); itSt.hasNext(); ) {
           Cluster.Statement statement = (Cluster.Statement) itSt.next();
           statement.setNumTimesCompiled((statement.getNumTimesCompiled() + 5));
           statement.setNumExecution((statement.getNumExecution() + 5));
@@ -3005,7 +2862,11 @@ public class Cluster extends Thread {
       } else if (clusterStatementMap.size() < 510) {
         Cluster.Statement statement = new Cluster.Statement();
         Random randomGenerator = new Random();
-        String statementDefinition = "select * from member where member_name = member-510" + " and lastUpdatedTime = '" + new Date().toString() + "'";
+        String statementDefinition =
+            "select * from member where member_name = member-510"
+                + " and lastUpdatedTime = '"
+                + new Date().toString()
+                + "'";
         Integer intVal = randomGenerator.nextInt(5);
         statement.setQueryDefinition(statementDefinition);
         statement.setNumTimesCompiled(intVal.longValue());
@@ -3037,7 +2898,12 @@ public class Cluster extends Thread {
 
       Cluster.Statement statement = new Cluster.Statement();
       Random randomGenerator = new Random();
-      String statementDefinition = "select * from member where member_name = member-" + iNum + " and lastUpdatedTime = '" + new Date().toString() + "'";
+      String statementDefinition =
+          "select * from member where member_name = member-"
+              + iNum
+              + " and lastUpdatedTime = '"
+              + new Date().toString()
+              + "'";
       Integer intVal = randomGenerator.nextInt(5);
       statement.setQueryDefinition(statementDefinition);
       statement.setNumTimesCompiled(intVal.longValue());
@@ -3096,7 +2962,8 @@ public class Cluster extends Thread {
       memberRegion.persistentEnabled = true;
       memberRegion.wanEnabled = count % 2 == 0;
       memberRegion.wanEnabled = true;
-      memberRegion.setSystemRegionEntryCount(Long.valueOf(String.valueOf(Math.abs(randomGenerator.nextInt(100)))));
+      memberRegion.setSystemRegionEntryCount(
+          Long.valueOf(String.valueOf(Math.abs(randomGenerator.nextInt(100)))));
       memberRegion.memberName.add(memName);
       memberRegion.memberCount = 1;
 
@@ -3147,7 +3014,13 @@ public class Cluster extends Thread {
       return memberClient;
     }
 
-    private Member initializeMember(String id, String name, boolean manager, boolean isCache, boolean isLocator, boolean isServer) {
+    private Member initializeMember(
+        String id,
+        String name,
+        boolean manager,
+        boolean isCache,
+        boolean isLocator,
+        boolean isServer) {
       Member m = new Member();
       m.gemfireVersion = "7.5";
       m.manager = manager;
@@ -3374,18 +3247,18 @@ public class Cluster extends Thread {
       alert.setTimestamp(new Date());
 
       switch (sev) {
-      case Alert.SEVERE:
-        alert.setDescription(PulseConstants.ALERT_DESC_SEVERE);
-        break;
-      case Alert.ERROR:
-        alert.setDescription(PulseConstants.ALERT_DESC_ERROR);
-        break;
-      case Alert.WARNING:
-        alert.setDescription(PulseConstants.ALERT_DESC_WARNING);
-        break;
-      case Alert.INFO:
-        alert.setDescription(PulseConstants.ALERT_DESC_INFO);
-        break;
+        case Alert.SEVERE:
+          alert.setDescription(PulseConstants.ALERT_DESC_SEVERE);
+          break;
+        case Alert.ERROR:
+          alert.setDescription(PulseConstants.ALERT_DESC_ERROR);
+          break;
+        case Alert.WARNING:
+          alert.setDescription(PulseConstants.ALERT_DESC_WARNING);
+          break;
+        case Alert.INFO:
+          alert.setDescription(PulseConstants.ALERT_DESC_INFO);
+          break;
       }
       return alert;
     }
@@ -3412,104 +3285,104 @@ public class Cluster extends Thread {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         switch (queryCounter++) {
-        case 1:
-          url = classLoader.getResource("testQueryResultClusterSmall.txt");
-          break;
+          case 1:
+            url = classLoader.getResource("testQueryResultClusterSmall.txt");
+            break;
 
-        case 2:
-          url = classLoader.getResource("testQueryResultSmall.txt");
-          break;
+          case 2:
+            url = classLoader.getResource("testQueryResultSmall.txt");
+            break;
 
-        case 3:
-          url = classLoader.getResource("testQueryResult.txt");
-          break;
+          case 3:
+            url = classLoader.getResource("testQueryResult.txt");
+            break;
 
-        case 4:
-          url = classLoader.getResource("testQueryResultWithStructSmall.txt");
-          break;
+          case 4:
+            url = classLoader.getResource("testQueryResultWithStructSmall.txt");
+            break;
 
-        case 5:
-          url = classLoader.getResource("testQueryResultClusterWithStruct.txt");
-          break;
+          case 5:
+            url = classLoader.getResource("testQueryResultClusterWithStruct.txt");
+            break;
 
-        case 6:
-          url = classLoader.getResource("testQueryResultHashMap.txt");
-          break;
+          case 6:
+            url = classLoader.getResource("testQueryResultHashMap.txt");
+            break;
 
-        case 7:
-          url = classLoader.getResource("testQueryResultHashMapSmall.txt");
-          break;
+          case 7:
+            url = classLoader.getResource("testQueryResultHashMapSmall.txt");
+            break;
 
-        case 8:
-          url = classLoader.getResource("testQueryResult1000.txt");
-          break;
+          case 8:
+            url = classLoader.getResource("testQueryResult1000.txt");
+            break;
 
-        case 9:
-          url = classLoader.getResource("testQueryResultArrayList.txt");
-          break;
+          case 9:
+            url = classLoader.getResource("testQueryResultArrayList.txt");
+            break;
 
-        case 10:
-          url = classLoader.getResource("testQueryResultArrayAndArrayList.txt");
-          break;
+          case 10:
+            url = classLoader.getResource("testQueryResultArrayAndArrayList.txt");
+            break;
 
-        case 11:
-          url = classLoader.getResource("testQueryResultArrayOfList.txt");
-          break;
+          case 11:
+            url = classLoader.getResource("testQueryResultArrayOfList.txt");
+            break;
 
-        case 12:
-          url = classLoader.getResource("test1.txt");
-          break;
+          case 12:
+            url = classLoader.getResource("test1.txt");
+            break;
 
-        case 13:
-          url = classLoader.getResource("test2.txt");
-          break;
+          case 13:
+            url = classLoader.getResource("test2.txt");
+            break;
 
-        case 14:
-          url = classLoader.getResource("test3.txt");
-          break;
+          case 14:
+            url = classLoader.getResource("test3.txt");
+            break;
 
-        case 15:
-          url = classLoader.getResource("test4.txt");
-          break;
+          case 15:
+            url = classLoader.getResource("test4.txt");
+            break;
 
-        case 16:
-          url = classLoader.getResource("test5.txt");
-          break;
+          case 16:
+            url = classLoader.getResource("test5.txt");
+            break;
 
-        case 17:
-          url = classLoader.getResource("test6.txt");
-          break;
+          case 17:
+            url = classLoader.getResource("test6.txt");
+            break;
 
-        case 18:
-          url = classLoader.getResource("test7.txt");
-          break;
+          case 18:
+            url = classLoader.getResource("test7.txt");
+            break;
 
-        case 19:
-          url = classLoader.getResource("test_pp.txt");
-          break;
+          case 19:
+            url = classLoader.getResource("test_pp.txt");
+            break;
 
-        case 20:
-          url = classLoader.getResource("testNullObjectsAtRootLevel1.txt");
-          break;
+          case 20:
+            url = classLoader.getResource("testNullObjectsAtRootLevel1.txt");
+            break;
 
-        case 21:
-          url = classLoader.getResource("testNullObjectsAtRootLevel2.txt");
-          break;
+          case 21:
+            url = classLoader.getResource("testNullObjectsAtRootLevel2.txt");
+            break;
 
-        case 22:
-          url = classLoader.getResource("NoDataFound1.txt");
-          break;
+          case 22:
+            url = classLoader.getResource("NoDataFound1.txt");
+            break;
 
-        case 23:
-          url = classLoader.getResource("NoDataFound2.txt");
-          break;
+          case 23:
+            url = classLoader.getResource("NoDataFound2.txt");
+            break;
 
-        case 24:
-          url = classLoader.getResource("NoDataFound3.txt");
-          break;
+          case 24:
+            url = classLoader.getResource("NoDataFound3.txt");
+            break;
 
-        default:
-          url = classLoader.getResource("message.txt");
+          default:
+            url = classLoader.getResource("message.txt");
         }
 
         File testQueryResultClusterSmall = new File(url.getPath());
@@ -3589,15 +3462,13 @@ public class Cluster extends Thread {
   public void addAlert(Alert alert) {
     synchronized (this.alertsList) {
       this.alertsList.add(alert);
-      if (this.alertsList.size() > Cluster.ALERTS_MAX_SIZE)
-        this.alertsList.remove(0);
+      if (this.alertsList.size() > Cluster.ALERTS_MAX_SIZE) this.alertsList.remove(0);
     }
   }
 
   /**
-   * Key should be memberId + memberName Where the ':' in member id and member
-   * names are replaced by '-'
-   *
+   * Key should be memberId + memberName Where the ':' in member id and member names are replaced by
+   * '-'
    *
    * @param memberKey
    * @return the Member for a given key
@@ -3646,19 +3517,14 @@ public class Cluster extends Thread {
     this.clusterStatementMap.put(name, stmt);
   }
 
-  /**
-   * This class is used for switching between production(JMX) and Mock Data
-   *
-   *
-   */
+  /** This class is used for switching between production(JMX) and Mock Data */
   public static class ClusterDataFactory {
     public static final int JMX = 0;
     public static final int MOCK = 1;
 
     public static int UPDATER_TYPE = JMX;
 
-    private ClusterDataFactory() {
-    }
+    private ClusterDataFactory() {}
 
     public static IClusterUpdater getUpdater(Cluster cluster, String serverName, String port) {
 
@@ -3699,6 +3565,5 @@ public class Cluster extends Thread {
         }
       }
     }
-
   }
 }

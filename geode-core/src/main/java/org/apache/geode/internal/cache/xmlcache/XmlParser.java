@@ -26,13 +26,11 @@ import org.apache.geode.LogWriter;
 import org.apache.geode.i18n.LogWriterI18n;
 
 /**
- * Interface for configuration XML parsers. Used by {@link CacheXmlParser} to
- * parse entities defined in the XML Namespace returned by
- * {@link #getNamspaceUri()} .
- * 
- * Loaded by {@link ServiceLoader} on {@link XmlParser} class. See file
- * <code>META-INF/services/org.apache.geode.internal.cache.xmlcache.XmlParser</code>
- * 
+ * Interface for configuration XML parsers. Used by {@link CacheXmlParser} to parse entities defined
+ * in the XML Namespace returned by {@link #getNamspaceUri()} .
+ *
+ * <p>Loaded by {@link ServiceLoader} on {@link XmlParser} class. See file <code>
+ * META-INF/services/org.apache.geode.internal.cache.xmlcache.XmlParser</code>
  *
  * @since GemFire 8.1
  */
@@ -40,7 +38,7 @@ public interface XmlParser extends ContentHandler {
 
   /**
    * Get XML Namespace this parser is responsible for.
-   * 
+   *
    * @return XML Namespace.
    * @since GemFire 8.1
    */
@@ -48,9 +46,8 @@ public interface XmlParser extends ContentHandler {
 
   /**
    * Sets the XML config stack on this parser.
-   * 
-   * @param stack
-   *          current XML config stack.
+   *
+   * @param stack current XML config stack.
    * @since GemFire 8.1
    */
   void setStack(Stack<Object> stack);

@@ -45,6 +45,7 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
   private static final int ENTRY_SIZE = 1024;
 
   private static final byte[] valueBytes = new byte[ENTRY_SIZE];
+
   static {
     Arrays.fill(valueBytes, (byte) 32);
   }
@@ -61,19 +62,17 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
     testId++;
   }
 
-  private final static int ITERATIONS = 4;
-  private final static long MAX_OPLOG_SIZE_IN_BYTES = 1024 * 16;
-  /**
-   * Need to limit he max open oplogs so that we don't run out of file descriptors
-   */
-  private final static int MAX_OPEN_OPLOGS = 400;
-  private final static long RECORDS_PER_OPLOG = MAX_OPLOG_SIZE_IN_BYTES / (ENTRY_SIZE + 24/*for key and record overhead*/);
-  /**
-   * Maximum number of ops a test can do w/o running out of file descriptors
-   * due to open oplogs
-   */
-  private final static long OPS_PER_TEST = RECORDS_PER_OPLOG * MAX_OPEN_OPLOGS;
-  private final static long OPS_PER_ITERATION = OPS_PER_TEST / ITERATIONS;
+  private static final int ITERATIONS = 4;
+  private static final long MAX_OPLOG_SIZE_IN_BYTES = 1024 * 16;
+  /** Need to limit he max open oplogs so that we don't run out of file descriptors */
+  private static final int MAX_OPEN_OPLOGS = 400;
+
+  private static final long RECORDS_PER_OPLOG =
+      MAX_OPLOG_SIZE_IN_BYTES / (ENTRY_SIZE + 24 /*for key and record overhead*/);
+  /** Maximum number of ops a test can do w/o running out of file descriptors due to open oplogs */
+  private static final long OPS_PER_TEST = RECORDS_PER_OPLOG * MAX_OPEN_OPLOGS;
+
+  private static final long OPS_PER_ITERATION = OPS_PER_TEST / ITERATIONS;
 
   @Test
   public void testRollingDisabledRecoverValuesFalsePersistOnly() throws Exception {
@@ -91,9 +90,15 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
         long t1 = System.currentTimeMillis();
         region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
         long t2 = System.currentTimeMillis();
-        System.out.println("Time taken to recover = " + (t2 - t1) + " for total number of entries= " + region.size() + " with recover values as false  and rolling disabled ");
+        System.out.println(
+            "Time taken to recover = "
+                + (t2 - t1)
+                + " for total number of entries= "
+                + region.size()
+                + " with recover values as false  and rolling disabled ");
         if ((t2 - t1) > 0) {
-          System.out.println("Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
+          System.out.println(
+              "Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
         }
         int startKey = this.processRegionData();
         assertEquals(previousRegionSize, region.size());
@@ -131,9 +136,15 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
         long t1 = System.currentTimeMillis();
         region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
         long t2 = System.currentTimeMillis();
-        System.out.println("Time taken to recover = " + (t2 - t1) + " for total number of entries= " + region.size() + " with recover values as false  and rolling disabled ");
+        System.out.println(
+            "Time taken to recover = "
+                + (t2 - t1)
+                + " for total number of entries= "
+                + region.size()
+                + " with recover values as false  and rolling disabled ");
         if ((t2 - t1) > 0) {
-          System.out.println("Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
+          System.out.println(
+              "Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
         }
         int startKey = this.processRegionData();
         assertEquals(previousRegionSize, region.size());
@@ -157,7 +168,8 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
 
   //////////////////////////////////////////////////////////////Set 1 Begin //////////////////
   @Test
-  public void testRollingEnabledRecoverValuesFalsePersistOnlyWithEarlyTerminationOfRoller() throws Exception {
+  public void testRollingEnabledRecoverValuesFalsePersistOnlyWithEarlyTerminationOfRoller()
+      throws Exception {
     System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "false");
     //     System.setProperty(DiskRegion.CHECK_ENTRY_BALANCE_PROPERTY_NAME, "true");
     try {
@@ -168,13 +180,16 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
   }
 
   @Test
-  public void testRollingEnabledRecoverValuesFalsePersistOnlyWithRollerTerminationComplete() throws Exception {
+  public void testRollingEnabledRecoverValuesFalsePersistOnlyWithRollerTerminationComplete()
+      throws Exception {
     try {
-      System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "true");
+      System.setProperty(
+          DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "true");
       //System.setProperty(DiskRegion.ASSERT_ON_RECOVERY_PROPERTY_NAME, "true");
       this.rollingEnabledRecoverValuesFalsePersistOnly();
     } finally {
-      System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "false");
+      System.setProperty(
+          DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "false");
       //System.setProperty(DiskRegion.ASSERT_ON_RECOVERY_PROPERTY_NAME, "false");
     }
   }
@@ -194,9 +209,15 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
         long t1 = System.currentTimeMillis();
         region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
         long t2 = System.currentTimeMillis();
-        System.out.println("Time taken to recover = " + (t2 - t1) + " for total number of entries= " + region.size() + " with recover values as false and rolling disabled ");
+        System.out.println(
+            "Time taken to recover = "
+                + (t2 - t1)
+                + " for total number of entries= "
+                + region.size()
+                + " with recover values as false and rolling disabled ");
         if ((t2 - t1) > 0) {
-          System.out.println("Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
+          System.out.println(
+              "Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
         }
         int startKey = this.processRegionData();
         assertEquals(previousRegionSize, region.size());
@@ -222,7 +243,8 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
 
   //////////////////////////////////////////////////////////////Set 2 Begin //////////////////
   @Test
-  public void testRollingEnabledRecoverValuesTruePersistOnlyWithEarlyTerminationOfRoller() throws Exception {
+  public void testRollingEnabledRecoverValuesTruePersistOnlyWithEarlyTerminationOfRoller()
+      throws Exception {
     System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "false");
     //     System.setProperty(DiskRegion.CHECK_ENTRY_BALANCE_PROPERTY_NAME, "true");
     try {
@@ -233,13 +255,16 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
   }
 
   @Test
-  public void testRollingEnabledRecoverValuesTruePersistOnlyWithRollerTerminationComplete() throws Exception {
+  public void testRollingEnabledRecoverValuesTruePersistOnlyWithRollerTerminationComplete()
+      throws Exception {
     try {
-      System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "true");
+      System.setProperty(
+          DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "true");
       //System.setProperty(DiskRegion.ASSERT_ON_RECOVERY_PROPERTY_NAME, "true");
       this.rollingEnabledRecoverValuesTruePersistOnly();
     } finally {
-      System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "false");
+      System.setProperty(
+          DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "false");
       //System.setProperty(DiskRegion.ASSERT_ON_RECOVERY_PROPERTY_NAME, "false");
     }
   }
@@ -259,9 +284,15 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
         long t1 = System.currentTimeMillis();
         region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
         long t2 = System.currentTimeMillis();
-        System.out.println("Time taken to recover = " + (t2 - t1) + " for total number of entries= " + region.size() + " with recover values as false  and rolling disabled ");
+        System.out.println(
+            "Time taken to recover = "
+                + (t2 - t1)
+                + " for total number of entries= "
+                + region.size()
+                + " with recover values as false  and rolling disabled ");
         if ((t2 - t1) > 0) {
-          System.out.println("Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
+          System.out.println(
+              "Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
         }
         int startKey = this.processRegionData();
         assertEquals(previousRegionSize, region.size());
@@ -302,9 +333,15 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
         long t1 = System.currentTimeMillis();
         region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
         long t2 = System.currentTimeMillis();
-        System.out.println("Time taken to recover = " + (t2 - t1) + " for total number of entries= " + region.size() + " with recover values as false  and rolling disabled ");
+        System.out.println(
+            "Time taken to recover = "
+                + (t2 - t1)
+                + " for total number of entries= "
+                + region.size()
+                + " with recover values as false  and rolling disabled ");
         if ((t2 - t1) > 0) {
-          System.out.println("Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
+          System.out.println(
+              "Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
         }
         int startKey = this.processRegionData();
         assertEquals(previousRegionSize, region.size());
@@ -343,9 +380,15 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
         long t1 = System.currentTimeMillis();
         region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
         long t2 = System.currentTimeMillis();
-        System.out.println("Time taken to recover = " + (t2 - t1) + " for total number of entries= " + region.size() + " with recover values as false  and rolling disabled ");
+        System.out.println(
+            "Time taken to recover = "
+                + (t2 - t1)
+                + " for total number of entries= "
+                + region.size()
+                + " with recover values as false  and rolling disabled ");
         if ((t2 - t1) > 0) {
-          System.out.println("Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
+          System.out.println(
+              "Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
         }
         int startKey = this.processRegionData();
         assertEquals(previousRegionSize, region.size());
@@ -369,7 +412,8 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
 
   ///////////////////////////////////////Set 3 Begin /////////////////
   @Test
-  public void testRollingEnabledRecoverValuesFalsePersistWithOverFlowWithEarlyTerminationOfRoller() throws Exception {
+  public void testRollingEnabledRecoverValuesFalsePersistWithOverFlowWithEarlyTerminationOfRoller()
+      throws Exception {
     System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "false");
     //     System.setProperty(DiskRegion.CHECK_ENTRY_BALANCE_PROPERTY_NAME, "true");
     try {
@@ -380,13 +424,16 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
   }
 
   @Test
-  public void testRollingEnabledRecoverValuesFalsePersistWithOverFlowWithRollerTerminatingAfterCompletion() throws Exception {
+  public void
+      testRollingEnabledRecoverValuesFalsePersistWithOverFlowWithRollerTerminatingAfterCompletion()
+          throws Exception {
     System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "true");
     //System.setProperty(DiskRegion.ASSERT_ON_RECOVERY_PROPERTY_NAME, "true");
     try {
       this.rollingEnabledRecoverValuesFalsePersistWithOverFlow();
     } finally {
-      System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "false");
+      System.setProperty(
+          DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "false");
       //System.setProperty(DiskRegion.ASSERT_ON_RECOVERY_PROPERTY_NAME, "false");
     }
   }
@@ -407,9 +454,15 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
         long t1 = System.currentTimeMillis();
         region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
         long t2 = System.currentTimeMillis();
-        System.out.println("Time taken to recover = " + (t2 - t1) + " for total number of entries= " + region.size() + " with recover values as false and rolling disabled.");
+        System.out.println(
+            "Time taken to recover = "
+                + (t2 - t1)
+                + " for total number of entries= "
+                + region.size()
+                + " with recover values as false and rolling disabled.");
         if ((t2 - t1) > 0) {
-          System.out.println("Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
+          System.out.println(
+              "Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
         }
         int startKey = this.processRegionData();
         assertEquals(previousRegionSize, region.size());
@@ -434,7 +487,8 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
 
   //////////////////////////////////////////Set 4 begin/////////////////
   @Test
-  public void testRollingEnabledRecoverValuesTruePersistWithOverFlowWithEarlyTerminationOfRoller() throws Exception {
+  public void testRollingEnabledRecoverValuesTruePersistWithOverFlowWithEarlyTerminationOfRoller()
+      throws Exception {
     System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "false");
     //     System.setProperty(DiskRegion.CHECK_ENTRY_BALANCE_PROPERTY_NAME, "true");
     try {
@@ -445,13 +499,16 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
   }
 
   @Test
-  public void testRollingEnabledRecoverValuesTruePersistWithOverFlowWithRollerTerminatingAfterCompletion() throws Exception {
+  public void
+      testRollingEnabledRecoverValuesTruePersistWithOverFlowWithRollerTerminatingAfterCompletion()
+          throws Exception {
     System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "true");
     //System.setProperty(DiskRegion.ASSERT_ON_RECOVERY_PROPERTY_NAME, "true");
     try {
       this.rollingEnabledRecoverValuesTruePersistWithOverFlow();
     } finally {
-      System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "false");
+      System.setProperty(
+          DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "false");
       //System.setProperty(DiskRegion.ASSERT_ON_RECOVERY_PROPERTY_NAME, "false");
     }
   }
@@ -472,9 +529,15 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
         long t1 = System.currentTimeMillis();
         region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
         long t2 = System.currentTimeMillis();
-        System.out.println("Time taken to recover = " + (t2 - t1) + " for total number of entries= " + region.size() + " with recover values as false  and rolling disabled ");
+        System.out.println(
+            "Time taken to recover = "
+                + (t2 - t1)
+                + " for total number of entries= "
+                + region.size()
+                + " with recover values as false  and rolling disabled ");
         if ((t2 - t1) > 0) {
-          System.out.println("Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
+          System.out.println(
+              "Recovery rate is= " + region.size() / (t2 - t1) + " per milliseconds");
         }
         int startKey = this.processRegionData();
         assertEquals(previousRegionSize, region.size());
@@ -506,7 +569,7 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
     diskProps.setRolling(false);
     int previousRegionSize = 0;
     HashMap<String, VersionTag> tagmapInCache = null;
-    final boolean[] run = new boolean[] { true };
+    final boolean[] run = new boolean[] {true};
     //Num time start / close cycles
     for (int i = 0; i < ITERATIONS; ++i) {
       region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
@@ -516,19 +579,20 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
       if (tagmapInCache != null) {
         compareVersionTags(tagmapInCache, tagmapFromRecover);
       }
-      Thread th = new Thread(new Runnable() {
-        public void run() {
-          while (run[0]) {
-            try {
-              Thread.sleep(1 * 1000);
-            } catch (InterruptedException ie) {
-              ie.printStackTrace();
-            }
-            ((LocalRegion) region).notifyToRoll();
-
-          }
-        }
-      });
+      Thread th =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  while (run[0]) {
+                    try {
+                      Thread.sleep(1 * 1000);
+                    } catch (InterruptedException ie) {
+                      ie.printStackTrace();
+                    }
+                    ((LocalRegion) region).notifyToRoll();
+                  }
+                }
+              });
       int thisRegionSize = startOperations(startKey, value);
       previousRegionSize = thisRegionSize;
       run[0] = false;
@@ -536,7 +600,6 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
       tagmapInCache = saveVersionTags((LocalRegion) region);
       region.close();
     }
-
   }
 
   public int processRegionData() throws Exception {
@@ -571,23 +634,21 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
       }
     }
     return ++startKey;
-
   }
 
   /**
-   * Disk region recovery test for Persist only with sync writes. Test has four
-   * steps : STEP 1: Create cache. Create Region. Put entries. Close cache. STEP
-   * 2: Create cache. Create Region with the same name as that of in STEP 1.
-   * Delete some entries. 3) Recreate the deleted entries Close the Cache * 3:
-   * Again Create cache. 4) check if the region creation is successful
-   * 
+   * Disk region recovery test for Persist only with sync writes. Test has four steps : STEP 1:
+   * Create cache. Create Region. Put entries. Close cache. STEP 2: Create cache. Create Region with
+   * the same name as that of in STEP 1. Delete some entries. 3) Recreate the deleted entries Close
+   * the Cache * 3: Again Create cache. 4) check if the region creation is successful
    */
   public int startOperations(final int startKey, final Object value) throws Exception {
 
     final int NUM_THREADS = 5;
     final long OPS_PER_THREAD = OPS_PER_ITERATION / NUM_THREADS;
     Thread operations[] = new Thread[NUM_THREADS];
-    System.out.println("Starting " + NUM_THREADS + " threads to do each do " + OPS_PER_THREAD + " operations");
+    System.out.println(
+        "Starting " + NUM_THREADS + " threads to do each do " + OPS_PER_THREAD + " operations");
     for (int i = 0; i < NUM_THREADS; ++i) {
       operations[i] = new Operation(i, region, value, startKey, OPS_PER_THREAD);
     }
@@ -645,43 +706,43 @@ public class DiskRandomOperationsAndRecoveryJUnitTest extends DiskRegionTestingB
       while (opCount < this.maxOpCount) {
         int optype = opRandom.nextInt(3);
         switch (optype) {
-        case 0:
-          this.rgn.create(testId + "_" + id + "_" + createKeyID, value);
-          opCount++;
-          ++createKeyID;
-          ++totalEntries;
-          break;
-        case 1: {
-          int key = keyRandom.nextInt(createKeyID);
-          try {
-            this.rgn.put(testId + "_" + id + "_" + key, value);
+          case 0:
+            this.rgn.create(testId + "_" + id + "_" + createKeyID, value);
             opCount++;
-          } catch (EntryNotFoundException enfe) {
+            ++createKeyID;
+            ++totalEntries;
+            break;
+          case 1:
+            {
+              int key = keyRandom.nextInt(createKeyID);
+              try {
+                this.rgn.put(testId + "_" + id + "_" + key, value);
+                opCount++;
+              } catch (EntryNotFoundException enfe) {
 
-          } catch (EntryDestroyedException ede) {
+              } catch (EntryDestroyedException ede) {
 
-          }
-        }
-          break;
-        case 2: {
-          int key = keyRandom.nextInt(createKeyID);
-          try {
-            this.rgn.destroy(testId + "_" + id + "_" + key);
-            // don't count these as ops; they are tiny
-            --totalEntries;
-          } catch (EntryNotFoundException enfe) {
+              }
+            }
+            break;
+          case 2:
+            {
+              int key = keyRandom.nextInt(createKeyID);
+              try {
+                this.rgn.destroy(testId + "_" + id + "_" + key);
+                // don't count these as ops; they are tiny
+                --totalEntries;
+              } catch (EntryNotFoundException enfe) {
 
-          } catch (EntryDestroyedException ede) {
+              } catch (EntryDestroyedException ede) {
 
-          }
-        }
-          break;
-        default:
-          throw new IllegalStateException();
-
+              }
+            }
+            break;
+          default:
+            throw new IllegalStateException();
         }
       }
     }
   }
-
 }

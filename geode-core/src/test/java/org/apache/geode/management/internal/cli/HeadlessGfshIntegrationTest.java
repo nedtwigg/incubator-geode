@@ -35,21 +35,18 @@ import static org.apache.geode.internal.AvailablePort.getRandomAvailablePort;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * TODO : Add more tests for error-catch, different type of results etc
- */
+/** TODO : Add more tests for error-catch, different type of results etc */
 @Category(IntegrationTest.class)
 public class HeadlessGfshIntegrationTest {
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
-  @SuppressWarnings({ "deprecation" })
+  @SuppressWarnings({"deprecation"})
   @Test
-  public void testHeadlessGfshTest() throws ClassNotFoundException, IOException, InterruptedException {
+  public void testHeadlessGfshTest()
+      throws ClassNotFoundException, IOException, InterruptedException {
     int port = getRandomAvailablePort(SOCKET);
 
     Properties properties = new Properties();
@@ -63,7 +60,9 @@ public class HeadlessGfshIntegrationTest {
     DistributedSystem ds = DistributedSystem.connect(properties);
     GemFireCacheImpl cache = (GemFireCacheImpl) CacheFactory.create(ds);
 
-    HeadlessGfsh gfsh = new HeadlessGfsh("Test", 25, this.temporaryFolder.newFolder("gfsh_files").getCanonicalPath());
+    HeadlessGfsh gfsh =
+        new HeadlessGfsh(
+            "Test", 25, this.temporaryFolder.newFolder("gfsh_files").getCanonicalPath());
     for (int i = 0; i < 5; i++) {
       gfsh.executeCommand("connect --jmx-manager=localhost[" + port + "]");
       Object result = gfsh.getResult();
@@ -87,5 +86,4 @@ public class HeadlessGfshIntegrationTest {
     cache.close();
     ds.disconnect();
   }
-
 }

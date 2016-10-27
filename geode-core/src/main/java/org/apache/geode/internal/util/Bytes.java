@@ -18,14 +18,11 @@ package org.apache.geode.internal.util;
 
 import java.nio.ByteBuffer;
 
-/**
- * Provides utilities for converting from byte[] to primitive values.
- * 
- */
+/** Provides utilities for converting from byte[] to primitive values. */
 public class Bytes {
   /**
    * Inserts the integer value into the array at the requested offset.
-   * 
+   *
    * @param val the value
    * @param buf the array
    * @param off the offset
@@ -41,7 +38,7 @@ public class Bytes {
 
   /**
    * Inserts the long value into the array at the requested offset.
-   * 
+   *
    * @param val the value
    * @param buf the array
    * @param off the offset
@@ -61,7 +58,7 @@ public class Bytes {
 
   /**
    * Extracts the protobuf varint from the buffer.
-   * 
+   *
    * @param buf the buffer
    * @return the varint
    */
@@ -72,20 +69,16 @@ public class Bytes {
     // unrolled! :-)
     b = buf.get();
     val = (b & 0x7f);
-    if ((b & 0x80) == 0)
-      return val;
+    if ((b & 0x80) == 0) return val;
     b = buf.get();
     val |= (b & 0x7f) << 7;
-    if ((b & 0x80) == 0)
-      return val;
+    if ((b & 0x80) == 0) return val;
     b = buf.get();
     val |= (b & 0x7f) << 14;
-    if ((b & 0x80) == 0)
-      return val;
+    if ((b & 0x80) == 0) return val;
     b = buf.get();
     val |= (b & 0x7f) << 21;
-    if ((b & 0x80) == 0)
-      return val;
+    if ((b & 0x80) == 0) return val;
     b = buf.get();
     val |= (b & 0x7f) << 28;
 
@@ -94,6 +87,7 @@ public class Bytes {
 
   /**
    * Extracts the protbuf varint from the array.
+   *
    * @param buf the array
    * @param off the offset
    * @return the varint
@@ -105,20 +99,16 @@ public class Bytes {
     // unrolled! :-)
     b = buf[off++];
     val = (b & 0x7f);
-    if ((b & 0x80) == 0)
-      return val;
+    if ((b & 0x80) == 0) return val;
     b = buf[off++];
     val |= (b & 0x7f) << 7;
-    if ((b & 0x80) == 0)
-      return val;
+    if ((b & 0x80) == 0) return val;
     b = buf[off++];
     val |= (b & 0x7f) << 14;
-    if ((b & 0x80) == 0)
-      return val;
+    if ((b & 0x80) == 0) return val;
     b = buf[off++];
     val |= (b & 0x7f) << 21;
-    if ((b & 0x80) == 0)
-      return val;
+    if ((b & 0x80) == 0) return val;
     b = buf[off++];
     val |= (b & 0x7f) << 28;
 
@@ -127,7 +117,7 @@ public class Bytes {
 
   /**
    * Inserts the protobuf varint into the buffer at the current position.
-   * 
+   *
    * @param val the value
    * @param buf the buffer
    * @return the buffer
@@ -148,7 +138,7 @@ public class Bytes {
 
   /**
    * Inserts the protobuf varint into the array at the requested offset.
-   * 
+   *
    * @param val the value
    * @param buf the array
    * @param off the offset
@@ -170,7 +160,7 @@ public class Bytes {
 
   /**
    * Returns the bytes required to store a protobuf varint.
-   * 
+   *
    * @param val the value
    * @return the varint size
    */
@@ -191,7 +181,7 @@ public class Bytes {
 
   /**
    * Creates a short value from two bytes.
-   * 
+   *
    * @param b0 the first byte
    * @param b1 the second byte
    * @return the value
@@ -202,7 +192,7 @@ public class Bytes {
 
   /**
    * Creates a char value from two bytes.
-   * 
+   *
    * @param b0 the first byte
    * @param b1 the second byte
    * @return the value
@@ -213,7 +203,7 @@ public class Bytes {
 
   /**
    * Creates an unsigned short from two bytes.
-   * 
+   *
    * @param b0 the first byte
    * @param b1 the second byte
    * @return the value
@@ -224,7 +214,7 @@ public class Bytes {
 
   /**
    * Creates an integer from four bytes.
-   * 
+   *
    * @param b0 the first byte
    * @param b1 the second byte
    * @param b2 the third byte
@@ -237,7 +227,7 @@ public class Bytes {
 
   /**
    * Creates a long from eight bytes.
-   * 
+   *
    * @param b0 the first byte
    * @param b1 the second byte
    * @param b2 the third byte
@@ -248,8 +238,16 @@ public class Bytes {
    * @param b7 the eighth byte
    * @return the value
    */
-  public static long toLong(byte b0, byte b1, byte b2, byte b3, byte b4, byte b5, byte b6, byte b7) {
-    return ((long) b0 << 56) | (((long) b1 & 0xff) << 48) | (((long) b2 & 0xff) << 40) | (((long) b3 & 0xff) << 32) | (((long) b4 & 0xff) << 24) | (((long) b5 & 0xff) << 16) | (((long) b6 & 0xff) << 8) | ((long) b7 & 0xff);
+  public static long toLong(
+      byte b0, byte b1, byte b2, byte b3, byte b4, byte b5, byte b6, byte b7) {
+    return ((long) b0 << 56)
+        | (((long) b1 & 0xff) << 48)
+        | (((long) b2 & 0xff) << 40)
+        | (((long) b3 & 0xff) << 32)
+        | (((long) b4 & 0xff) << 24)
+        | (((long) b5 & 0xff) << 16)
+        | (((long) b6 & 0xff) << 8)
+        | ((long) b7 & 0xff);
   }
 
   public static byte char0(char value) {

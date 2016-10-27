@@ -48,10 +48,9 @@ public class WANConfigurationJUnitTest {
   private Cache cache;
 
   /**
-   * Test to validate that the sender can not be started without configuring
-   * locator
-   * @throws IOException 
-   * 
+   * Test to validate that the sender can not be started without configuring locator
+   *
+   * @throws IOException
    * @throws IOException
    */
   @Test
@@ -64,16 +63,19 @@ public class WANConfigurationJUnitTest {
       sender1.start();
       fail("Expected IllegalStateException but not thrown");
     } catch (Exception e) {
-      if ((e instanceof IllegalStateException && e.getMessage().startsWith(LocalizedStrings.AbstractGatewaySender_LOCATOR_SHOULD_BE_CONFIGURED_BEFORE_STARTING_GATEWAY_SENDER.toLocalizedString()))) {
+      if ((e instanceof IllegalStateException
+          && e.getMessage()
+              .startsWith(
+                  LocalizedStrings
+                      .AbstractGatewaySender_LOCATOR_SHOULD_BE_CONFIGURED_BEFORE_STARTING_GATEWAY_SENDER
+                      .toLocalizedString()))) {
       } else {
         fail("Expected IllegalStateException but received :" + e);
       }
     }
   }
 
-  /**
-   * Test to validate that sender with same Id can not be added to cache.
-   */
+  /** Test to validate that sender with same Id can not be added to cache. */
   @Test
   public void test_SameGatewaySenderCreatedTwice() {
     cache = new CacheFactory().set(MCAST_PORT, "0").create();
@@ -85,7 +87,8 @@ public class WANConfigurationJUnitTest {
       fact.create("NYSender", 2);
       fail("Expected IllegalStateException but not thrown");
     } catch (Exception e) {
-      if (e instanceof IllegalStateException && e.getMessage().contains("A GatewaySender with id")) {
+      if (e instanceof IllegalStateException
+          && e.getMessage().contains("A GatewaySender with id")) {
 
       } else {
         fail("Expected IllegalStateException but received :" + e);
@@ -93,9 +96,7 @@ public class WANConfigurationJUnitTest {
     }
   }
 
-  /**
-   * Test to validate that same gatewaySender Id can not be added to the region attributes.
-   */
+  /** Test to validate that same gatewaySender Id can not be added to the region attributes. */
   @Test
   public void test_SameGatewaySenderIdAddedTwice() {
     try {
@@ -136,9 +137,8 @@ public class WANConfigurationJUnitTest {
   }
 
   /**
-   * Test to validate that distributed region can not have the gateway sender
-   * with parallel distribution policy
-   * 
+   * Test to validate that distributed region can not have the gateway sender with parallel
+   * distribution policy
    */
   @Ignore("Bug51491")
   @Test
@@ -191,9 +191,7 @@ public class WANConfigurationJUnitTest {
     }
   }
 
-  /**
-   * Test to validate the gateway receiver attributes are correctly set
-   */
+  /** Test to validate the gateway receiver attributes are correctly set */
   @Test
   public void test_ValidateGatewayReceiverAttributes() {
     cache = new CacheFactory().set(MCAST_PORT, "0").create();
@@ -227,8 +225,8 @@ public class WANConfigurationJUnitTest {
     assertEquals(receiver1.getBindAddress(), rec.getBindAddress());
     assertEquals(receiver1.getMaximumTimeBetweenPings(), rec.getMaximumTimeBetweenPings());
     assertEquals(receiver1.getSocketBufferSize(), rec.getSocketBufferSize());
-    assertEquals(receiver1.getGatewayTransportFilters().size(), rec.getGatewayTransportFilters().size());
-
+    assertEquals(
+        receiver1.getGatewayTransportFilters().size(), rec.getGatewayTransportFilters().size());
   }
 
   @Test
@@ -257,9 +255,7 @@ public class WANConfigurationJUnitTest {
     assertTrue(receiver1.isRunning());
   }
 
-  /**
-   * Test to validate that serial gateway sender attributes are correctly set
-   */
+  /** Test to validate that serial gateway sender attributes are correctly set */
   @Test
   public void test_ValidateSerialGatewaySenderAttributes() {
     cache = new CacheFactory().set(MCAST_PORT, "0").create();
@@ -283,7 +279,8 @@ public class WANConfigurationJUnitTest {
     AttributesFactory factory = new AttributesFactory();
     factory.addGatewaySenderId(sender1.getId());
     factory.setDataPolicy(DataPolicy.PARTITION);
-    Region region = cache.createRegionFactory(factory.create()).create("test_ValidateGatewaySenderAttributes");
+    Region region =
+        cache.createRegionFactory(factory.create()).create("test_ValidateGatewaySenderAttributes");
     Set<GatewaySender> senders = cache.getGatewaySenders();
     assertEquals(senders.size(), 1);
     GatewaySender gatewaySender = senders.iterator().next();
@@ -296,14 +293,14 @@ public class WANConfigurationJUnitTest {
     assertEquals(sender1.getDiskStoreName(), gatewaySender.getDiskStoreName());
     assertEquals(sender1.getMaximumQueueMemory(), gatewaySender.getMaximumQueueMemory());
     assertEquals(sender1.getAlertThreshold(), gatewaySender.getAlertThreshold());
-    assertEquals(sender1.getGatewayEventFilters().size(), gatewaySender.getGatewayEventFilters().size());
-    assertEquals(sender1.getGatewayTransportFilters().size(), gatewaySender.getGatewayTransportFilters().size());
-
+    assertEquals(
+        sender1.getGatewayEventFilters().size(), gatewaySender.getGatewayEventFilters().size());
+    assertEquals(
+        sender1.getGatewayTransportFilters().size(),
+        gatewaySender.getGatewayTransportFilters().size());
   }
 
-  /**
-   * Test to validate that parallel gateway sender attributes are correctly set
-   */
+  /** Test to validate that parallel gateway sender attributes are correctly set */
   @Test
   public void test_ValidateParallelGatewaySenderAttributes() {
     cache = new CacheFactory().set(MCAST_PORT, "0").create();
@@ -328,7 +325,8 @@ public class WANConfigurationJUnitTest {
     AttributesFactory factory = new AttributesFactory();
     factory.addGatewaySenderId(sender1.getId());
     factory.setDataPolicy(DataPolicy.PARTITION);
-    Region region = cache.createRegionFactory(factory.create()).create("test_ValidateGatewaySenderAttributes");
+    Region region =
+        cache.createRegionFactory(factory.create()).create("test_ValidateGatewaySenderAttributes");
     Set<GatewaySender> senders = cache.getGatewaySenders();
     assertEquals(1, senders.size());
     GatewaySender gatewaySender = senders.iterator().next();
@@ -341,22 +339,29 @@ public class WANConfigurationJUnitTest {
     assertEquals(sender1.getDiskStoreName(), gatewaySender.getDiskStoreName());
     assertEquals(sender1.getMaximumQueueMemory(), gatewaySender.getMaximumQueueMemory());
     assertEquals(sender1.getAlertThreshold(), gatewaySender.getAlertThreshold());
-    assertEquals(sender1.getGatewayEventFilters().size(), gatewaySender.getGatewayEventFilters().size());
-    assertEquals(sender1.getGatewayTransportFilters().size(), gatewaySender.getGatewayTransportFilters().size());
-
+    assertEquals(
+        sender1.getGatewayEventFilters().size(), gatewaySender.getGatewayEventFilters().size());
+    assertEquals(
+        sender1.getGatewayTransportFilters().size(),
+        gatewaySender.getGatewayTransportFilters().size());
   }
 
   @Test
   public void test_GatewaySenderWithGatewaySenderEventListener1() {
     cache = new CacheFactory().set(MCAST_PORT, "0").create();
-    InternalGatewaySenderFactory fact = (InternalGatewaySenderFactory) cache.createGatewaySenderFactory();
+    InternalGatewaySenderFactory fact =
+        (InternalGatewaySenderFactory) cache.createGatewaySenderFactory();
     AsyncEventListener listener = new MyGatewaySenderEventListener();
     ((InternalGatewaySenderFactory) fact).addAsyncEventListener(listener);
     try {
       fact.create("ln", 2);
-      fail("Expected GatewaySenderException. When a sender is added , remoteDSId should not be provided.");
+      fail(
+          "Expected GatewaySenderException. When a sender is added , remoteDSId should not be provided.");
     } catch (Exception e) {
-      if (e instanceof GatewaySenderException && e.getMessage().contains("cannot define a remote site because at least AsyncEventListener is already added.")) {
+      if (e instanceof GatewaySenderException
+          && e.getMessage()
+              .contains(
+                  "cannot define a remote site because at least AsyncEventListener is already added.")) {
 
       } else {
         fail("Expected GatewaySenderException but received :" + e);
@@ -403,12 +408,10 @@ public class WANConfigurationJUnitTest {
   }
 
   /**
-   * This test takes a minimum of 120s to execute. It is known to hang on Mac OS
-   * X Yosemite do to changes in the the message string checked in
-   * GatewayReceiverImpl around line 167. Expects
-   * "Cannot assign requested address" but gets
-   * "Can't assign requested address". Timeout after 150s to safeguard against
-   * hanging on other platforms that may differ.
+   * This test takes a minimum of 120s to execute. It is known to hang on Mac OS X Yosemite do to
+   * changes in the the message string checked in GatewayReceiverImpl around line 167. Expects
+   * "Cannot assign requested address" but gets "Can't assign requested address". Timeout after 150s
+   * to safeguard against hanging on other platforms that may differ.
    */
   @Test(timeout = 150000)
   public void test_ValidateGatewayReceiverAttributes_WrongBindAddress() {
@@ -534,7 +537,9 @@ public class WANConfigurationJUnitTest {
       GatewayReceiver receiver = fact.create();
       fail("wrong end port set in the GatewayReceiver");
     } catch (IllegalStateException expected) {
-      if (!expected.getMessage().contains("Please specify either start port a value which is less than end port.")) {
+      if (!expected
+          .getMessage()
+          .contains("Please specify either start port a value which is less than end port.")) {
         fail("Caught IllegalStateException");
         expected.printStackTrace();
       }

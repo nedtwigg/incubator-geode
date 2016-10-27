@@ -44,12 +44,7 @@ import org.apache.geode.SystemFailure;
 import org.apache.geode.test.dunit.ThreadUtils;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * This class tests the functionality of the (new multi-threaded)
- * {@link MergeLogFiles} utility.
- *
- *
- */
+/** This class tests the functionality of the (new multi-threaded) {@link MergeLogFiles} utility. */
 @Category(IntegrationTest.class)
 public class MergeLogFilesJUnitTest {
 
@@ -59,14 +54,13 @@ public class MergeLogFilesJUnitTest {
   protected int next = 0;
 
   /**
-   * A bunch of threads write a strictly increasing integer to log
-   * "files" stored in byte arrays.  The files are merged and the
-   * order is verified.
+   * A bunch of threads write a strictly increasing integer to log "files" stored in byte arrays.
+   * The files are merged and the order is verified.
    */
   @Test
   public void testMultipleThreads() throws InterruptedException, IOException {
 
-    // Spawn a bunch of threads that write to a log 
+    // Spawn a bunch of threads that write to a log
     WorkerGroup group = new WorkerGroup("Workers");
     List workers = new ArrayList();
     for (int i = 0; i < 10; i++) {
@@ -75,7 +69,7 @@ public class MergeLogFilesJUnitTest {
       worker.start();
     }
 
-    for (Iterator iter = workers.iterator(); iter.hasNext();) {
+    for (Iterator iter = workers.iterator(); iter.hasNext(); ) {
       Worker worker = (Worker) iter.next();
       ThreadUtils.join(worker, 120 * 1000);
     }
@@ -119,21 +113,18 @@ public class MergeLogFilesJUnitTest {
     assertEquals(999, lastValue);
   }
 
-  /**
-   * A <code>ThreadGroup</code> for workers
-   */
+  /** A <code>ThreadGroup</code> for workers */
   static class WorkerGroup extends ThreadGroup {
-    /** Did an uncaught exception occur in one of this group's
-     * threads? */
+    /** Did an uncaught exception occur in one of this group's threads? */
     private boolean exceptionOccurred;
 
-    /** A <code>StringBuffer</code> containing a description of the
-     * uncaught exceptions thrown by the worker threads. */
+    /**
+     * A <code>StringBuffer</code> containing a description of the uncaught exceptions thrown by the
+     * worker threads.
+     */
     private StringBuffer sb;
 
-    /**
-     * Creates a new <code>WorkerGroup</code> with the given name
-     */
+    /** Creates a new <code>WorkerGroup</code> with the given name */
     public WorkerGroup(String name) {
       super(name);
       sb = new StringBuffer();
@@ -154,17 +145,13 @@ public class MergeLogFilesJUnitTest {
       exceptionOccurred = true;
     }
 
-    /**
-     * Returns whether or not an uncaught exception occurred in one of
-     * the worker threads.
-     */
+    /** Returns whether or not an uncaught exception occurred in one of the worker threads. */
     public boolean exceptionOccurred() {
       return this.exceptionOccurred;
     }
 
     /**
-     * Returns a string describing the uncaught exception(s) that
-     * occurred in the worker threads.
+     * Returns a string describing the uncaught exception(s) that occurred in the worker threads.
      */
     public String getExceptionString() {
       return this.sb.toString();
@@ -172,9 +159,8 @@ public class MergeLogFilesJUnitTest {
   }
 
   /**
-   * Writes a strictly increasing number to a log "file" stored in a
-   * byte array.  Waits a random amount of time between writing
-   * entries. 
+   * Writes a strictly increasing number to a log "file" stored in a byte array. Waits a random
+   * amount of time between writing entries.
    */
   class Worker extends Thread {
     /** The input stream for reading from the log file */
@@ -183,9 +169,7 @@ public class MergeLogFilesJUnitTest {
     /** A random number generator */
     private Random random;
 
-    /**
-     * Creates a new <code>Worker</code> with the given name
-     */
+    /** Creates a new <code>Worker</code> with the given name */
     public Worker(String name, ThreadGroup group) {
       super(group, name);
       this.random = new Random();
@@ -193,7 +177,8 @@ public class MergeLogFilesJUnitTest {
 
     public void run() {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      LogWriter logger = new LocalLogWriter(InternalLogWriter.ALL_LEVEL, new PrintStream(baos, true));
+      LogWriter logger =
+          new LocalLogWriter(InternalLogWriter.ALL_LEVEL, new PrintStream(baos, true));
       for (int i = 0; i < 100; i++) {
         int n;
         synchronized (MergeLogFilesJUnitTest.this) {
@@ -229,14 +214,9 @@ public class MergeLogFilesJUnitTest {
       in = new ByteArrayInputStream(baos.toByteArray());
     }
 
-    /**
-     * Returns an <code>InputStream</code> for reading from the log
-     * that this worker wrote.
-     */
+    /** Returns an <code>InputStream</code> for reading from the log that this worker wrote. */
     public InputStream getInputStream() {
       return this.in;
     }
-
   }
-
 }

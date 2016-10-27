@@ -59,9 +59,7 @@ import org.apache.geode.test.dunit.LogWriterUtils;
 import org.apache.geode.test.dunit.VM;
 
 /**
- * Tests the basic functionality of the lru eviction 
- * controller and its statistics.
- *
+ * Tests the basic functionality of the lru eviction controller and its statistics.
  *
  * @since GemFire 3.2
  */
@@ -70,16 +68,12 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
 
   private static boolean usingMain = false;
 
-  /**
-   * Creates a new <code>LRUEvictionControllerDUnitTest</code>
-   */
+  /** Creates a new <code>LRUEvictionControllerDUnitTest</code> */
   public LRUEvictionControllerDUnitTest() {
     super();
   }
 
-  /**
-   * Returns the <code>LRUStatistics</code> for the given region
-   */
+  /** Returns the <code>LRUStatistics</code> for the given region */
   private LRUStatistics getLRUStats(Region region) {
     final LocalRegion l = (LocalRegion) region;
     return l.getEvictionController().getLRUHelper().getStats();
@@ -87,10 +81,7 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
 
   ////////  Test Methods
 
-  /**
-   * Carefully verifies that region operations effect the {@link
-   * LRUStatistics} as expected.
-   */
+  /** Carefully verifies that region operations effect the {@link LRUStatistics} as expected. */
   @Test
   public void testRegionOperations() throws CacheException {
 
@@ -129,13 +120,11 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
       assertEquals(10, lruStats.getCounter());
       assertEquals(i - 10, lruStats.getEvictions());
     }
-
   }
 
   /**
-   * Carefully verifies that region operations effect the {@link
-   * LRUStatistics} as expected in the presense of a {@link
-   * CacheLoader}.
+   * Carefully verifies that region operations effect the {@link LRUStatistics} as expected in the
+   * presense of a {@link CacheLoader}.
    */
   @Test
   public void testCacheLoader() throws CacheException {
@@ -146,15 +135,14 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(threshold));
-    factory.setCacheLoader(new CacheLoader() {
-      public Object load(LoaderHelper helper) throws CacheLoaderException {
-        return "LOADED VALUE";
-      }
+    factory.setCacheLoader(
+        new CacheLoader() {
+          public Object load(LoaderHelper helper) throws CacheLoaderException {
+            return "LOADED VALUE";
+          }
 
-      public void close() {
-      }
-
-    });
+          public void close() {}
+        });
 
     Region region;
     if (usingMain) {
@@ -185,12 +173,9 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
       assertEquals(10, lruStats.getCounter());
       assertEquals(i - 10, lruStats.getEvictions());
     }
-
   }
 
-  /**
-   * Tests an <code>LRUCapacityController</code> of size 1.
-   */
+  /** Tests an <code>LRUCapacityController</code> of size 1. */
   @Test
   public void testSizeOne() throws CacheException {
     int threshold = 1;
@@ -201,15 +186,14 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
     factory.setScope(Scope.LOCAL);
     factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(threshold));
 
-    factory.setCacheLoader(new CacheLoader() {
-      public Object load(LoaderHelper helper) throws CacheLoaderException {
-        return "LOADED VALUE";
-      }
+    factory.setCacheLoader(
+        new CacheLoader() {
+          public Object load(LoaderHelper helper) throws CacheLoaderException {
+            return "LOADED VALUE";
+          }
 
-      public void close() {
-      }
-
-    });
+          public void close() {}
+        });
 
     Region region;
     if (usingMain) {
@@ -251,11 +235,12 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests that a single set of eviction attributes can be used multiple times
-   * (and does the right thing).
+   * Tests that a single set of eviction attributes can be used multiple times (and does the right
+   * thing).
    */
   @Test
-  public void testMultipleUsesOfEvictionAttributes() throws CacheException, CloneNotSupportedException {
+  public void testMultipleUsesOfEvictionAttributes()
+      throws CacheException, CloneNotSupportedException {
 
     int threshold = 42;
 
@@ -271,8 +256,10 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
     factory = new AttributesFactory(ra);
     Region r3 = createRegion(name + 3, factory.create());
 
-    assertEquals(region.getAttributes().getEvictionAttributes(), r2.getAttributes().getEvictionAttributes());
-    assertEquals(r2.getAttributes().getEvictionAttributes(), r3.getAttributes().getEvictionAttributes());
+    assertEquals(
+        region.getAttributes().getEvictionAttributes(), r2.getAttributes().getEvictionAttributes());
+    assertEquals(
+        r2.getAttributes().getEvictionAttributes(), r3.getAttributes().getEvictionAttributes());
     {
       LocalRegion lRegion = (LocalRegion) region;
       LocalRegion lr2 = (LocalRegion) r2;
@@ -285,8 +272,8 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests that a Region with an LRU capacity controller can be
-   * accessed from inside a cache listener.
+   * Tests that a Region with an LRU capacity controller can be accessed from inside a cache
+   * listener.
    */
   @Test
   public void testBug31592() throws Exception {
@@ -305,21 +292,24 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
     region.put(key, value);
 
     final Throwable[] errors = new Throwable[1];
-    region.getAttributesMutator().addCacheListener(new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent event) {
-        try {
-          LogWriterUtils.getLogWriter().info("AFTER CREATE");
-          region.put(key, value2);
+    region
+        .getAttributesMutator()
+        .addCacheListener(
+            new CacheListenerAdapter() {
+              public void afterCreate(EntryEvent event) {
+                try {
+                  LogWriterUtils.getLogWriter().info("AFTER CREATE");
+                  region.put(key, value2);
 
-        } catch (VirtualMachineError e) {
-          SystemFailure.initiateFailure(e);
-          throw e;
-        } catch (Throwable ex) {
-          region.getCache().getLogger().severe("failed to access cache from listener", ex);
-          errors[0] = ex;
-        }
-      }
-    });
+                } catch (VirtualMachineError e) {
+                  SystemFailure.initiateFailure(e);
+                  throw e;
+                } catch (Throwable ex) {
+                  region.getCache().getLogger().severe("failed to access cache from listener", ex);
+                  errors[0] = ex;
+                }
+              }
+            });
     region.put(key2, value2);
 
     assertNull(errors[0]);
@@ -328,8 +318,8 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests that a capacity controller with LOCAL_DESTROY eviction action
-   * cannot be installed into a region
+   * Tests that a capacity controller with LOCAL_DESTROY eviction action cannot be installed into a
+   * region
    */
   @Test
   public void testCCMirrored() throws Exception {
@@ -347,9 +337,9 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Create two regions, one a "feed" that performs  transactions
-   * which are replicated to a region with an Entry LRU set to one
-   * Asserts that the LRU rules are observed
+   * Create two regions, one a "feed" that performs transactions which are replicated to a region
+   * with an Entry LRU set to one Asserts that the LRU rules are observed
+   *
    * @throws Exception
    */
   @Test
@@ -366,99 +356,113 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
     final int txBatchSize = 10;
     assertTrue(numEntries > txBatchSize); // need at least one batch
 
-    CacheSerializableRunnable createRegion = new CacheSerializableRunnable("Create Replicate Region") {
-      public void run2() throws CacheException {
-        AttributesFactory factory = new AttributesFactory();
-        factory.setOffHeap(isOffHeapEnabled());
-        factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(maxEntries, EvictionAction.OVERFLOW_TO_DISK));
-        factory.setDataPolicy(DataPolicy.REPLICATE);
+    CacheSerializableRunnable createRegion =
+        new CacheSerializableRunnable("Create Replicate Region") {
+          public void run2() throws CacheException {
+            AttributesFactory factory = new AttributesFactory();
+            factory.setOffHeap(isOffHeapEnabled());
+            factory.setEvictionAttributes(
+                EvictionAttributes.createLRUEntryAttributes(
+                    maxEntries, EvictionAction.OVERFLOW_TO_DISK));
+            factory.setDataPolicy(DataPolicy.REPLICATE);
 
-        File[] diskDirs = new File[1];
-        diskDirs[0] = new File("overflowDir/" + OSProcess.getId());
-        diskDirs[0].mkdirs();
-        factory.setDiskStoreName(getCache().createDiskStoreFactory().setDiskDirs(diskDirs).create("LRUEvictionControllerDUnitTest").getName());
-        factory.setDiskSynchronous(true);
+            File[] diskDirs = new File[1];
+            diskDirs[0] = new File("overflowDir/" + OSProcess.getId());
+            diskDirs[0].mkdirs();
+            factory.setDiskStoreName(
+                getCache()
+                    .createDiskStoreFactory()
+                    .setDiskDirs(diskDirs)
+                    .create("LRUEvictionControllerDUnitTest")
+                    .getName());
+            factory.setDiskSynchronous(true);
 
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        RegionAttributes a = factory.create();
-        createRegion(r1, a);
-        createRegion(r2, a);
-        createRegion(r3, a);
-      }
-    };
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            RegionAttributes a = factory.create();
+            createRegion(r1, a);
+            createRegion(r2, a);
+            createRegion(r3, a);
+          }
+        };
     feeder.invoke(createRegion);
     repl.invoke(createRegion);
 
-    feeder.invoke(new CacheSerializableRunnable("put " + numEntries + " entries and assert " + maxEntries + " max entries") {
-      public void run2() throws CacheException {
-        Cache c = getCache();
-        CacheTransactionManager txm = c.getCacheTransactionManager();
+    feeder.invoke(
+        new CacheSerializableRunnable(
+            "put " + numEntries + " entries and assert " + maxEntries + " max entries") {
+          public void run2() throws CacheException {
+            Cache c = getCache();
+            CacheTransactionManager txm = c.getCacheTransactionManager();
 
-        Region reg1 = getRootRegion().getSubregion(r1);
-        assertNotNull(reg1);
+            Region reg1 = getRootRegion().getSubregion(r1);
+            assertNotNull(reg1);
 
-        Region reg2 = getRootRegion().getSubregion(r2);
-        assertNotNull(reg2);
+            Region reg2 = getRootRegion().getSubregion(r2);
+            assertNotNull(reg2);
 
-        Region reg3 = getRootRegion().getSubregion(r3);
-        assertNotNull(reg3);
+            Region reg3 = getRootRegion().getSubregion(r3);
+            assertNotNull(reg3);
 
-        boolean startTx = false;
-        final Region[] r = { reg1, reg2, reg3 };
-        for (int i = 0; i < numEntries; i++) {
-          if (i % txBatchSize == 0) {
-            txm.begin();
-            startTx = true;
-          }
-          reg1.create("r1-key-" + i, "r1-value-" + i);
-          reg2.create("r2-key-" + i, "r2-value-" + i);
-          reg3.create("r3-key-" + i, "r3-value-" + i);
+            boolean startTx = false;
+            final Region[] r = {reg1, reg2, reg3};
+            for (int i = 0; i < numEntries; i++) {
+              if (i % txBatchSize == 0) {
+                txm.begin();
+                startTx = true;
+              }
+              reg1.create("r1-key-" + i, "r1-value-" + i);
+              reg2.create("r2-key-" + i, "r2-value-" + i);
+              reg3.create("r3-key-" + i, "r3-value-" + i);
 
-          if (i % txBatchSize == (txBatchSize - 1)) {
-            txm.commit();
-            try { // allow stats to get a sample in 
-              Thread.sleep(20);
-            } catch (InterruptedException ie) {
-              fail("interrupted");
+              if (i % txBatchSize == (txBatchSize - 1)) {
+                txm.commit();
+                try { // allow stats to get a sample in
+                  Thread.sleep(20);
+                } catch (InterruptedException ie) {
+                  fail("interrupted");
+                }
+                startTx = false;
+              }
             }
-            startTx = false;
+            if (startTx) {
+              txm.commit();
+            }
+
+            for (int i = 0; i < r.length; i++) {
+              assertEquals(numEntries, r[i].size());
+              {
+                LocalRegion lr = (LocalRegion) r[i];
+                assertEquals(
+                    maxEntries, lr.getEvictionController().getLRUHelper().getStats().getLimit());
+                assertEquals(
+                    maxEntries, lr.getEvictionController().getLRUHelper().getStats().getCounter());
+              }
+            }
           }
-        }
-        if (startTx) {
-          txm.commit();
-        }
+        });
 
-        for (int i = 0; i < r.length; i++) {
-          assertEquals(numEntries, r[i].size());
-          {
-            LocalRegion lr = (LocalRegion) r[i];
-            assertEquals(maxEntries, lr.getEvictionController().getLRUHelper().getStats().getLimit());
-            assertEquals(maxEntries, lr.getEvictionController().getLRUHelper().getStats().getCounter());
+    repl.invoke(
+        new CacheSerializableRunnable("Replicate asserts " + maxEntries + " max entries") {
+          public void run2() throws CacheException {
+            getCache();
+            Region reg1 = getRootRegion().getSubregion(r1);
+            Region reg2 = getRootRegion().getSubregion(r2);
+            Region reg3 = getRootRegion().getSubregion(r3);
+
+            final Region[] r = {reg1, reg2, reg3};
+            for (int i = 0; i < r.length; i++) {
+              assertNotNull(r[i]);
+              assertEquals(numEntries, r[i].size());
+              {
+                LocalRegion lr = (LocalRegion) r[i];
+                assertEquals(
+                    maxEntries, lr.getEvictionController().getLRUHelper().getStats().getLimit());
+                assertEquals(
+                    maxEntries, lr.getEvictionController().getLRUHelper().getStats().getCounter());
+              }
+            }
           }
-        }
-      }
-    });
-
-    repl.invoke(new CacheSerializableRunnable("Replicate asserts " + maxEntries + " max entries") {
-      public void run2() throws CacheException {
-        getCache();
-        Region reg1 = getRootRegion().getSubregion(r1);
-        Region reg2 = getRootRegion().getSubregion(r2);
-        Region reg3 = getRootRegion().getSubregion(r3);
-
-        final Region[] r = { reg1, reg2, reg3 };
-        for (int i = 0; i < r.length; i++) {
-          assertNotNull(r[i]);
-          assertEquals(numEntries, r[i].size());
-          {
-            LocalRegion lr = (LocalRegion) r[i];
-            assertEquals(maxEntries, lr.getEvictionController().getLRUHelper().getStats().getLimit());
-            assertEquals(maxEntries, lr.getEvictionController().getLRUHelper().getStats().getCounter());
-          }
-        }
-
-      }
-    });
+        });
   }
 
   protected boolean isOffHeapEnabled() {
@@ -477,5 +481,4 @@ public class LRUEvictionControllerDUnitTest extends JUnit4CacheTestCase {
     usingMain = true;
     (new LRUEvictionControllerDUnitTest()).testSizeOne();
   }
-
 }

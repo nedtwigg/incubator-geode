@@ -65,7 +65,7 @@ public class CqStateDUnitTest extends HelperTestCase {
     createReplicatedRegion(serverA, regionName, null);
 
     final String host0 = NetworkUtils.getServerHostName(serverA.getHost());
-    startClient(client, new VM[] { serverA, serverB }, ports, 1, getClientProperties());
+    startClient(client, new VM[] {serverA, serverB}, ports, 1, getClientProperties());
     createCQ(client, cqName, "select * from /" + regionName, null);
 
     //create the cacheserver but regions must be present first or else cq execute will fail with no region found
@@ -76,37 +76,47 @@ public class CqStateDUnitTest extends HelperTestCase {
     AsyncInvocation async = executeCQ(client, cqName);
     ThreadUtils.join(async, 10000);
 
-    Boolean clientRunning = (Boolean) client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        final CqQuery cq = getCache().getQueryService().getCq(cqName);
-        Wait.waitForCriterion(new WaitCriterion() {
-          @Override
-          public boolean done() {
-            return cq.getState().isRunning();
-          }
+    Boolean clientRunning =
+        (Boolean)
+            client.invoke(
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    final CqQuery cq = getCache().getQueryService().getCq(cqName);
+                    Wait.waitForCriterion(
+                        new WaitCriterion() {
+                          @Override
+                          public boolean done() {
+                            return cq.getState().isRunning();
+                          }
 
-          @Override
-          public String description() {
-            return "waiting for Cq to be in a running state: " + cq;
-          }
-        }, 30000, 1000, false);
-        return cq.getState().isRunning();
-      }
-    });
+                          @Override
+                          public String description() {
+                            return "waiting for Cq to be in a running state: " + cq;
+                          }
+                        },
+                        30000,
+                        1000,
+                        false);
+                    return cq.getState().isRunning();
+                  }
+                });
     assertTrue("Client was not running", clientRunning);
 
     //hope that server 2 comes up before num retries is exhausted by the execute cq command
     //hope that the redundancy satisfier sends message and is executed after execute cq has been executed
     //This is the only way bug 51222 would be noticed
     //verify that the cq on the server is still in RUNNING state;
-    Boolean isRunning = (Boolean) serverB.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CqQuery cq = getCache().getQueryService().getCqs()[0];
-        return cq.getState().isRunning();
-      }
-    });
+    Boolean isRunning =
+        (Boolean)
+            serverB.invoke(
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    CqQuery cq = getCache().getQueryService().getCqs()[0];
+                    return cq.getState().isRunning();
+                  }
+                });
 
     assertTrue("Cq was not running on server", isRunning);
   }
@@ -133,5 +143,4 @@ public class CqStateDUnitTest extends HelperTestCase {
     props.put("security-password", "root");
     return props;
   }
-
 }

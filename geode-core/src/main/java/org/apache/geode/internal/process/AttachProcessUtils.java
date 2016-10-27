@@ -22,13 +22,12 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 
 /**
  * Implementation of the {@link ProcessUtils} SPI that uses the JDK Attach API.
- * 
+ *
  * @since GemFire 8.0
  */
 final class AttachProcessUtils implements InternalProcessUtils {
 
-  AttachProcessUtils() {
-  }
+  AttachProcessUtils() {}
 
   @Override
   public boolean isProcessAlive(final int pid) {

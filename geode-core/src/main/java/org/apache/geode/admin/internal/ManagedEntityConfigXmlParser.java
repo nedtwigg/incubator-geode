@@ -28,8 +28,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Parses an XML file and configures a {@link DistributedSystemConfig}
- * from it.
+ * Parses an XML file and configures a {@link DistributedSystemConfig} from it.
  *
  * @since GemFire 4.0
  */
@@ -44,11 +43,9 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
   //////////////////////  Static Methods  //////////////////////
 
   /**
-   * Parses XML data and from it configures a
-   * <code>DistributedSystemConfig</code>.
+   * Parses XML data and from it configures a <code>DistributedSystemConfig</code>.
    *
-   * @throws AdminXmlException
-   *         If an error is encountered while parsing the XML
+   * @throws AdminXmlException If an error is encountered while parsing the XML
    */
   public static void parse(InputStream is, DistributedSystemConfig config) {
     ManagedEntityConfigXmlParser handler = new ManagedEntityConfigXmlParser();
@@ -78,22 +75,24 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
         }
       }
 
-      throw new AdminXmlException(LocalizedStrings.ManagedEntityConfigXmlParser_WHILE_PARSING_XML.toLocalizedString(), ex);
+      throw new AdminXmlException(
+          LocalizedStrings.ManagedEntityConfigXmlParser_WHILE_PARSING_XML.toLocalizedString(), ex);
     }
   }
 
   /**
    * Helper method for parsing an integer
    *
-   * @throws org.apache.geode.cache.CacheXmlException
-   *         If <code>s</code> is a malformed integer
+   * @throws org.apache.geode.cache.CacheXmlException If <code>s</code> is a malformed integer
    */
   private static int parseInt(String s) {
     try {
       return Integer.parseInt(s);
 
     } catch (NumberFormatException ex) {
-      throw new AdminXmlException(LocalizedStrings.ManagedEntityConfigXmlParser_MALFORMED_INTEGER_0.toLocalizedString(s), ex);
+      throw new AdminXmlException(
+          LocalizedStrings.ManagedEntityConfigXmlParser_MALFORMED_INTEGER_0.toLocalizedString(s),
+          ex);
     }
   }
 
@@ -103,7 +102,8 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
   //      generateMulticast();
   //    }
 
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
 
     if (qName.equals(DISTRIBUTED_SYSTEM)) {
       startDistributedSystem(atts);
@@ -154,7 +154,9 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
       startClassPath(atts);
 
     } else {
-      throw new AdminXmlException(LocalizedStrings.ManagedEntityConfigXmlParser_UNKNOWN_XML_ELEMENT_0.toLocalizedString(qName));
+      throw new AdminXmlException(
+          LocalizedStrings.ManagedEntityConfigXmlParser_UNKNOWN_XML_ELEMENT_0.toLocalizedString(
+              qName));
     }
   }
 
@@ -209,13 +211,15 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
       endClassPath();
 
     } else {
-      throw new AdminXmlException(LocalizedStrings.ManagedEntityConfigXmlParser_UNKNOWN_XML_ELEMENT_0.toLocalizedString(qName));
+      throw new AdminXmlException(
+          LocalizedStrings.ManagedEntityConfigXmlParser_UNKNOWN_XML_ELEMENT_0.toLocalizedString(
+              qName));
     }
   }
 
   /**
-   * When a <code>distributed-system</code> element is encountered, we
-   * push the <code>DistributedSystemConfig</code> on the stack.
+   * When a <code>distributed-system</code> element is encountered, we push the <code>
+   * DistributedSystemConfig</code> on the stack.
    */
   private void startDistributedSystem(Attributes atts) {
     Assert.assertTrue(stack.isEmpty());
@@ -233,17 +237,12 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
     stack.push(this.config);
   }
 
-  /**
-   * When a <code>distributed-system</code> element is finished
-   */
-  private void endDistributedSystem() {
-
-  }
+  /** When a <code>distributed-system</code> element is finished */
+  private void endDistributedSystem() {}
 
   /**
-   * When a <code>multicast</code> is first encountered, get the
-   * <code>DistributedSystemConfig</code> off of the top of the stack
-   * and set its multicast config appropriately.
+   * When a <code>multicast</code> is first encountered, get the <code>DistributedSystemConfig
+   * </code> off of the top of the stack and set its multicast config appropriately.
    */
   private void startMulticast(Attributes atts) {
     DistributedSystemConfig config = (DistributedSystemConfig) stack.peek();
@@ -257,24 +256,18 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
     }
   }
 
-  private void endMulticast() {
-
-  }
+  private void endMulticast() {}
 
   /**
-   * Starts a <code>remote-command</code> element.  The item on top of
-   * the stack may be a <code>DistributedSystemConfig</code> or it
-   * might be a <code>ManagedEntityConfig</code>.
+   * Starts a <code>remote-command</code> element. The item on top of the stack may be a <code>
+   * DistributedSystemConfig</code> or it might be a <code>ManagedEntityConfig</code>.
    */
-  private void startRemoteCommand(Attributes atts) {
-
-  }
+  private void startRemoteCommand(Attributes atts) {}
 
   /**
-   * Ends a <code>remote-command</code> element.  Pop the command off
-   * the top of the stack and set it on the
-   * <code>DistributedSystemConfig</code> or it might be a
-   * <code>ManagedEntityConfig</code> on top of the stack.
+   * Ends a <code>remote-command</code> element. Pop the command off the top of the stack and set it
+   * on the <code>DistributedSystemConfig</code> or it might be a <code>ManagedEntityConfig</code>
+   * on top of the stack.
    */
   private void endRemoteCommand() {
     String remoteCommand = popString();
@@ -293,13 +286,9 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
     }
   }
 
-  private void startLocators(Attributes atts) {
+  private void startLocators(Attributes atts) {}
 
-  }
-
-  private void endLocators() {
-
-  }
+  private void endLocators() {}
 
   private void startLocator(Attributes atts) {
     String port = atts.getValue(PORT);
@@ -319,23 +308,16 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
     Assert.assertTrue(o instanceof DistributionLocatorConfig);
   }
 
-  private void startHost(Attributes atts) {
+  private void startHost(Attributes atts) {}
 
-  }
-
-  /**
-   * We assume that there is a <code>ManagedEntityConfig</code> on top
-   * of the stack.
-   */
+  /** We assume that there is a <code>ManagedEntityConfig</code> on top of the stack. */
   private void endHost() {
     String host = popString();
     ManagedEntityConfig config = (ManagedEntityConfig) stack.peek();
     config.setHost(host);
   }
 
-  private void startWorkingDirectory(Attributes atts) {
-
-  }
+  private void startWorkingDirectory(Attributes atts) {}
 
   private void endWorkingDirectory() {
     String workingDirectory = popString();
@@ -343,9 +325,7 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
     config.setWorkingDirectory(workingDirectory);
   }
 
-  private void startProductDirectory(Attributes atts) {
-
-  }
+  private void startProductDirectory(Attributes atts) {}
 
   private void endProductDirectory() {
     String productDirectory = popString();
@@ -361,13 +341,9 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
     config.setSSLAuthenticationRequired(Boolean.valueOf(authenticationRequired).booleanValue());
   }
 
-  private void endSSL() {
+  private void endSSL() {}
 
-  }
-
-  private void startProtocols(Attributes atts) {
-
-  }
+  private void startProtocols(Attributes atts) {}
 
   private void endProtocols() {
     String protocols = popString();
@@ -375,9 +351,7 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
     config.setSSLProtocols(protocols);
   }
 
-  private void startCiphers(Attributes atts) {
-
-  }
+  private void startCiphers(Attributes atts) {}
 
   private void endCiphers() {
     String ciphers = popString();
@@ -385,9 +359,7 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
     config.setSSLCiphers(ciphers);
   }
 
-  private void startProperty(Attributes atts) {
-
-  }
+  private void startProperty(Attributes atts) {}
 
   private void endProperty() {
     String value = popString();
@@ -396,18 +368,14 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
     config.addSSLProperty(key, value);
   }
 
-  private void startKey(Attributes atts) {
-
-  }
+  private void startKey(Attributes atts) {}
 
   private void endKey() {
     String key = popString();
     stack.push(key);
   }
 
-  private void startValue(Attributes atts) {
-
-  }
+  private void startValue(Attributes atts) {}
 
   private void endValue() {
     String value = popString();
@@ -424,9 +392,7 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
     /* CacheServerConfig server = (CacheServerConfig) */ stack.pop();
   }
 
-  private void startClassPath(Attributes atts) {
-
-  }
+  private void startClassPath(Attributes atts) {}
 
   private void endClassPath() {
     String classpath = popString();
@@ -434,9 +400,7 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
     server.setClassPath(classpath);
   }
 
-  /**
-   * Pops a <code>String</code> off of the stack.
-   */
+  /** Pops a <code>String</code> off of the stack. */
   private String popString() {
     Object o = stack.pop();
 
@@ -450,10 +414,8 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
   }
 
   /**
-   * Long strings in XML files may generate multiple
-   * <code>characters</code> callbacks.  Coalesce multiple callbacks
-   * into one big string by using a <code>StringBuffer</code>.  See
-   * bug 32122.
+   * Long strings in XML files may generate multiple <code>characters</code> callbacks. Coalesce
+   * multiple callbacks into one big string by using a <code>StringBuffer</code>. See bug 32122.
    */
   public void characters(char[] ch, int start, int length) throws SAXException {
 
@@ -473,47 +435,36 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
 
   //////////  Inherited methods that don't do anything  //////////
 
-  public void setDocumentLocator(Locator locator) {
-  }
+  public void setDocumentLocator(Locator locator) {}
 
-  public void startDocument() throws SAXException {
-  }
+  public void startDocument() throws SAXException {}
 
-  public void endDocument() throws SAXException {
-  }
+  public void endDocument() throws SAXException {}
 
-  public void startPrefixMapping(String prefix, String uri) throws SAXException {
-  }
+  public void startPrefixMapping(String prefix, String uri) throws SAXException {}
 
-  public void endPrefixMapping(String prefix) throws SAXException {
-  }
+  public void endPrefixMapping(String prefix) throws SAXException {}
 
-  public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-  }
+  public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {}
 
-  public void processingInstruction(String target, String data) throws SAXException {
-  }
+  public void processingInstruction(String target, String data) throws SAXException {}
 
-  public void skippedEntity(String name) throws SAXException {
-  }
+  public void skippedEntity(String name) throws SAXException {}
 
   ///////////////////////  Inner Classes  ///////////////////////
 
   /**
-   * Class that delegates all of the methods of a {@link
-   * DefaultHandler} to a {@link ManagedEntityConfigXmlParser} that
-   * implements all of the methods of <code>DefaultHandler</code>, but
-   * <B>is not</B> a <code>DefaultHandler</code>.
+   * Class that delegates all of the methods of a {@link DefaultHandler} to a {@link
+   * ManagedEntityConfigXmlParser} that implements all of the methods of <code>DefaultHandler</code>
+   * , but <B>is not</B> a <code>DefaultHandler</code>.
    */
   static class DefaultHandlerDelegate extends DefaultHandler {
-    /** The <code>ManagedEntityConfigXmlParser</code> that does the
-     * real work */
+    /** The <code>ManagedEntityConfigXmlParser</code> that does the real work */
     private ManagedEntityConfigXmlParser handler;
 
     /**
-     * Creates a new <code>DefaultHandlerDelegate</code> that
-     * delegates to the given
-     * <code>ManagedEntityConfigXmlParser</code>.
+     * Creates a new <code>DefaultHandlerDelegate</code> that delegates to the given <code>
+     * ManagedEntityConfigXmlParser</code>.
      */
     public DefaultHandlerDelegate(ManagedEntityConfigXmlParser handler) {
       this.handler = handler;
@@ -550,7 +501,8 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes)
+        throws SAXException {
       handler.startElement(uri, localName, qName, attributes);
     }
 
@@ -594,5 +546,4 @@ public class ManagedEntityConfigXmlParser extends ManagedEntityConfigXml impleme
       handler.fatalError(e);
     }
   }
-
 }

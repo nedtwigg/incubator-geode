@@ -16,9 +16,7 @@
  */
 package org.apache.geode.internal.concurrent;
 
-/**
- * AL implementation for JDK 5.
- */
+/** AL implementation for JDK 5. */
 public final class AtomicLong5 extends java.util.concurrent.atomic.AtomicLong implements AL {
   private static final long serialVersionUID = -1915700199064062938L;
 
@@ -31,18 +29,16 @@ public final class AtomicLong5 extends java.util.concurrent.atomic.AtomicLong im
   }
 
   /**
-   * Use it only when threads are doing incremental updates. If updates are random 
-   * then this method may not be optimal.
+   * Use it only when threads are doing incremental updates. If updates are random then this method
+   * may not be optimal.
    */
   public boolean setIfGreater(long update) {
     while (true) {
       long cur = get();
 
       if (update > cur) {
-        if (compareAndSet(cur, update))
-          return true;
-      } else
-        return false;
+        if (compareAndSet(cur, update)) return true;
+      } else return false;
     }
   }
 }

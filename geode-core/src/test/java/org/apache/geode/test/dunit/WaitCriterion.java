@@ -17,16 +17,13 @@
 package org.apache.geode.test.dunit;
 
 /**
- * Defines an asynchronous criterion to wait for by invoking a method in 
- * {@link Wait}.
+ * Defines an asynchronous criterion to wait for by invoking a method in {@link Wait}.
  *
  * <p>Extracted from DistributedTestCase.
  *
- * <p>See javadocs on {@link Wait} for examples and guidelines for converting
- * to Awaitility.
+ * <p>See javadocs on {@link Wait} for examples and guidelines for converting to Awaitility.
  *
  * @deprecated Use {@link com.jayway.awaitility.Awaitility} instead.
- *
  * @see Wait
  * @see com.jayway.awaitility.Awaitility
  * @see com.jayway.awaitility.Duration
@@ -37,5 +34,4 @@ public interface WaitCriterion {
   public boolean done();
 
   public String description();
-
 }

@@ -38,9 +38,9 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 
 /**
- * Class DataBrowser This class contains Data browser functionalities for
- * managing queries and histories.
- * 
+ * Class DataBrowser This class contains Data browser functionalities for managing queries and
+ * histories.
+ *
  * @since GemFire version 7.5.Beta 2013-03-25
  */
 public class DataBrowser {
@@ -48,21 +48,21 @@ public class DataBrowser {
   private final PulseLogWriter LOGGER = PulseLogWriter.getLogger();
   private final ResourceBundle resourceBundle = Repository.get().getResourceBundle();
 
-  private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PulseConstants.PULSE_QUERY_HISTORY_DATE_PATTERN);
+  private SimpleDateFormat simpleDateFormat =
+      new SimpleDateFormat(PulseConstants.PULSE_QUERY_HISTORY_DATE_PATTERN);
 
   private final ObjectMapper mapper = new ObjectMapper();
 
   /**
    * addQueryInHistory method adds user's query into query history file
-   * 
-   * @param userId
-   *          Logged in User's Id
-   * @param queryText
-   *          Query text to execute
+   *
+   * @param userId Logged in User's Id
+   * @param queryText Query text to execute
    */
   public boolean addQueryInHistory(String queryText, String userId) {
     boolean operationStatus = false;
-    if (StringUtils.isNotNullNotEmptyNotWhiteSpace(queryText) && StringUtils.isNotNullNotEmptyNotWhiteSpace(userId)) {
+    if (StringUtils.isNotNullNotEmptyNotWhiteSpace(queryText)
+        && StringUtils.isNotNullNotEmptyNotWhiteSpace(userId)) {
 
       // Fetch all queries from query log file
       ObjectNode queries = fetchAllQueriesFromFile();
@@ -86,17 +86,16 @@ public class DataBrowser {
 
   /**
    * deleteQueryById method deletes query from query history file
-   * 
-   * @param userId
-   *          Logged in user's Unique Id
-   * @param queryId
-   *          Unique Id of Query to be deleted
+   *
+   * @param userId Logged in user's Unique Id
+   * @param queryId Unique Id of Query to be deleted
    * @return boolean
    */
   public boolean deleteQueryById(String userId, String queryId) {
 
     boolean operationStatus = false;
-    if (StringUtils.isNotNullNotEmptyNotWhiteSpace(queryId) && StringUtils.isNotNullNotEmptyNotWhiteSpace(userId)) {
+    if (StringUtils.isNotNullNotEmptyNotWhiteSpace(queryId)
+        && StringUtils.isNotNullNotEmptyNotWhiteSpace(userId)) {
 
       // Fetch all queries from query log file
       ObjectNode queries = fetchAllQueriesFromFile();
@@ -118,11 +117,9 @@ public class DataBrowser {
   }
 
   /**
-   * getQueryHistoryByUserId method reads and lists out the queries from history
-   * file
-   * 
-   * @param userId
-   *          Logged in User's Id
+   * getQueryHistoryByUserId method reads and lists out the queries from history file
+   *
+   * @param userId Logged in User's Id
    */
   public ArrayNode getQueryHistoryByUserId(String userId) {
 
@@ -154,7 +151,7 @@ public class DataBrowser {
 
   /**
    * generateQueryKey method fetches queries from query history file
-   * 
+   *
    * @return Properties A collection queries in form of key and values
    */
   private ObjectNode fetchAllQueriesFromFile() {
@@ -162,12 +159,16 @@ public class DataBrowser {
     JsonNode queriesJSON = mapper.createObjectNode();
 
     try {
-      inputStream = new FileInputStream(Repository.get().getPulseConfig().getQueryHistoryFileName());
+      inputStream =
+          new FileInputStream(Repository.get().getPulseConfig().getQueryHistoryFileName());
       String inputStreamString = new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
       queriesJSON = mapper.readTree(inputStreamString);
     } catch (FileNotFoundException e) {
       if (LOGGER.fineEnabled()) {
-        LOGGER.fine(resourceBundle.getString("LOG_MSG_DATA_BROWSER_QUERY_HISTORY_FILE_NOT_FOUND") + " : " + e.getMessage());
+        LOGGER.fine(
+            resourceBundle.getString("LOG_MSG_DATA_BROWSER_QUERY_HISTORY_FILE_NOT_FOUND")
+                + " : "
+                + e.getMessage());
       }
     } catch (Exception e) {
       if (LOGGER.infoEnabled()) {
@@ -191,7 +192,7 @@ public class DataBrowser {
 
   /**
    * generateQueryKey method stores queries in query history file.
-   * 
+   *
    * @return Boolean true is operation is successful, false otherwise
    */
   private boolean storeQueriesInFile(ObjectNode queries) {
@@ -217,7 +218,10 @@ public class DataBrowser {
     } catch (FileNotFoundException e) {
 
       if (LOGGER.fineEnabled()) {
-        LOGGER.fine(resourceBundle.getString("LOG_MSG_DATA_BROWSER_QUERY_HISTORY_FILE_NOT_FOUND") + " : " + e.getMessage());
+        LOGGER.fine(
+            resourceBundle.getString("LOG_MSG_DATA_BROWSER_QUERY_HISTORY_FILE_NOT_FOUND")
+                + " : "
+                + e.getMessage());
       }
     } catch (IOException e) {
       if (LOGGER.infoEnabled()) {
@@ -236,5 +240,4 @@ public class DataBrowser {
     }
     return operationStatus;
   }
-
 }

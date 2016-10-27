@@ -30,10 +30,7 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.cache.persistence.PersistentMemberPattern;
 import org.apache.geode.management.internal.configuration.domain.SharedConfigurationStatus;
 
-/*****
- * 
- *
- */
+/** *** */
 public class SharedConfigurationStatusResponse implements DataSerializable {
 
   private SharedConfigurationStatus status;
@@ -41,8 +38,7 @@ public class SharedConfigurationStatusResponse implements DataSerializable {
 
   private Set<PersistentMemberPattern> waitingLocatorsInfo;
 
-  public SharedConfigurationStatusResponse() {
-  }
+  public SharedConfigurationStatusResponse() {}
 
   public void setStatus(SharedConfigurationStatus status) {
     this.status = status;
@@ -71,5 +67,4 @@ public class SharedConfigurationStatusResponse implements DataSerializable {
     this.status = DataSerializer.readEnum(SharedConfigurationStatus.class, in);
     this.waitingLocatorsInfo = DataSerializer.readHashSet(in);
   }
-
 }

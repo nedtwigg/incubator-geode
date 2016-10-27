@@ -30,9 +30,9 @@ import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.management.internal.cli.domain.IndexDetails;
 
 /**
- * The ListIndexFunction class is a GemFire function used to collect all the index information on all Regions across
- * the entire GemFire Cache (distributed system).
- * </p>
+ * The ListIndexFunction class is a GemFire function used to collect all the index information on
+ * all Regions across the entire GemFire Cache (distributed system).
+ *
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.execute.Function
  * @see org.apache.geode.cache.execute.FunctionAdapter
@@ -68,5 +68,4 @@ public class ListIndexFunction extends FunctionAdapter implements InternalEntity
       context.getResultSender().sendException(e);
     }
   }
-
 }

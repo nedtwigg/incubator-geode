@@ -69,118 +69,145 @@ public class PdxRenameDUnitTest extends JUnit4CacheTestCase {
 
     final Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(LOCATORS, "localhost[" + locatorPorts[0] + "],localhost[" + locatorPorts[1] + "]");
+    props.setProperty(
+        LOCATORS, "localhost[" + locatorPorts[0] + "],localhost[" + locatorPorts[1] + "]");
     props.setProperty(ENABLE_CLUSTER_CONFIGURATION, "false");
 
     Host host = Host.getHost(0);
     VM vm1 = host.getVM(0);
     VM vm2 = host.getVM(1);
 
-    vm1.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        disconnectFromDS();
-        props.setProperty(START_LOCATOR, "localhost[" + locatorPorts[0] + "]");
-        final Cache cache = (new CacheFactory(props)).setPdxPersistent(true).setPdxDiskStore(DS_NAME).create();
-        DiskStoreFactory dsf = cache.createDiskStoreFactory();
-        dsf.setDiskDirs(new File[] { f });
-        dsf.create(DS_NAME);
-        RegionFactory<String, PdxValue> rf1 = cache.createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT);
-        rf1.setDiskStoreName(DS_NAME);
-        Region<String, PdxValue> region1 = rf1.create("region1");
-        region1.put("key1", new PdxValue(1));
-        return null;
-      }
-    });
-
-    vm2.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        disconnectFromDS();
-        props.setProperty(START_LOCATOR, "localhost[" + locatorPorts[1] + "]");
-        final Cache cache = (new CacheFactory(props)).setPdxReadSerialized(true).setPdxPersistent(true).setPdxDiskStore(DS_NAME2).create();
-        DiskStoreFactory dsf = cache.createDiskStoreFactory();
-        dsf.setDiskDirs(new File[] { f2 });
-        dsf.create(DS_NAME2);
-        RegionFactory rf1 = cache.createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT);
-        rf1.setDiskStoreName(DS_NAME2);
-        Region region1 = rf1.create("region1");
-        Object v = region1.get("key1");
-        assertNotNull(v);
-        cache.close();
-        return null;
-      }
-    });
-
-    vm1.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        Cache cache = CacheFactory.getAnyInstance();
-        if (cache != null && !cache.isClosed()) {
-          cache.close();
-        }
-        return null;
-      }
-    });
-
-    vm1.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        Collection<Object> renameResults = DiskStoreImpl.pdxRename(DS_NAME, new File[] { f }, "apache", "pivotal");
-        assertEquals(2, renameResults.size());
-
-        for (Object o : renameResults) {
-          if (o instanceof PdxType) {
-            PdxType t = (PdxType) o;
-            assertEquals("org.pivotal.geode.internal.PdxRenameDUnitTest$PdxValue", t.getClassName());
-          } else {
-            EnumInfo ei = (EnumInfo) o;
-            assertEquals("org.pivotal.geode.internal.PdxRenameDUnitTest$Day", ei.getClassName());
+    vm1.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            disconnectFromDS();
+            props.setProperty(START_LOCATOR, "localhost[" + locatorPorts[0] + "]");
+            final Cache cache =
+                (new CacheFactory(props)).setPdxPersistent(true).setPdxDiskStore(DS_NAME).create();
+            DiskStoreFactory dsf = cache.createDiskStoreFactory();
+            dsf.setDiskDirs(new File[] {f});
+            dsf.create(DS_NAME);
+            RegionFactory<String, PdxValue> rf1 =
+                cache.createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT);
+            rf1.setDiskStoreName(DS_NAME);
+            Region<String, PdxValue> region1 = rf1.create("region1");
+            region1.put("key1", new PdxValue(1));
+            return null;
           }
-        }
-        return null;
-      }
-    });
+        });
 
-    vm1.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        props.setProperty(START_LOCATOR, "localhost[" + locatorPorts[0] + "]");
-        final Cache cache = (new CacheFactory(props)).setPdxPersistent(true).setPdxDiskStore(DS_NAME).create();
-        DiskStoreFactory dsf = cache.createDiskStoreFactory();
-        dsf.setDiskDirs(new File[] { f });
-        dsf.create(DS_NAME);
-        RegionFactory<String, PdxValue> rf1 = cache.createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT);
-        rf1.setDiskStoreName(DS_NAME);
-        Region<String, PdxValue> region1 = rf1.create("region1");
-        return null;
-      }
-    });
+    vm2.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            disconnectFromDS();
+            props.setProperty(START_LOCATOR, "localhost[" + locatorPorts[1] + "]");
+            final Cache cache =
+                (new CacheFactory(props))
+                    .setPdxReadSerialized(true)
+                    .setPdxPersistent(true)
+                    .setPdxDiskStore(DS_NAME2)
+                    .create();
+            DiskStoreFactory dsf = cache.createDiskStoreFactory();
+            dsf.setDiskDirs(new File[] {f2});
+            dsf.create(DS_NAME2);
+            RegionFactory rf1 = cache.createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT);
+            rf1.setDiskStoreName(DS_NAME2);
+            Region region1 = rf1.create("region1");
+            Object v = region1.get("key1");
+            assertNotNull(v);
+            cache.close();
+            return null;
+          }
+        });
 
-    vm2.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        disconnectFromDS();
-        props.setProperty(START_LOCATOR, "localhost[" + locatorPorts[1] + "]");
-        final Cache cache = (new CacheFactory(props)).setPdxReadSerialized(true).setPdxPersistent(true).setPdxDiskStore(DS_NAME2).create();
+    vm1.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Cache cache = CacheFactory.getAnyInstance();
+            if (cache != null && !cache.isClosed()) {
+              cache.close();
+            }
+            return null;
+          }
+        });
 
-        DiskStoreFactory dsf = cache.createDiskStoreFactory();
-        dsf.setDiskDirs(new File[] { f2 });
-        dsf.create(DS_NAME2);
-        RegionFactory rf1 = cache.createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT);
-        rf1.setDiskStoreName(DS_NAME2);
-        Region region1 = rf1.create("region1");
-        PdxInstance v = (PdxInstance) region1.get("key1");
-        assertNotNull(v);
-        assertEquals("org.pivotal.geode.internal.PdxRenameDUnitTest$PdxValue", ((PdxInstanceImpl) v).getClassName());
-        cache.close();
-        return null;
-      }
-    });
+    vm1.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Collection<Object> renameResults =
+                DiskStoreImpl.pdxRename(DS_NAME, new File[] {f}, "apache", "pivotal");
+            assertEquals(2, renameResults.size());
 
-    vm1.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        Cache cache = CacheFactory.getAnyInstance();
-        if (cache != null && !cache.isClosed()) {
-          cache.close();
-        }
-        return null;
-      }
-    });
+            for (Object o : renameResults) {
+              if (o instanceof PdxType) {
+                PdxType t = (PdxType) o;
+                assertEquals(
+                    "org.pivotal.geode.internal.PdxRenameDUnitTest$PdxValue", t.getClassName());
+              } else {
+                EnumInfo ei = (EnumInfo) o;
+                assertEquals(
+                    "org.pivotal.geode.internal.PdxRenameDUnitTest$Day", ei.getClassName());
+              }
+            }
+            return null;
+          }
+        });
+
+    vm1.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            props.setProperty(START_LOCATOR, "localhost[" + locatorPorts[0] + "]");
+            final Cache cache =
+                (new CacheFactory(props)).setPdxPersistent(true).setPdxDiskStore(DS_NAME).create();
+            DiskStoreFactory dsf = cache.createDiskStoreFactory();
+            dsf.setDiskDirs(new File[] {f});
+            dsf.create(DS_NAME);
+            RegionFactory<String, PdxValue> rf1 =
+                cache.createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT);
+            rf1.setDiskStoreName(DS_NAME);
+            Region<String, PdxValue> region1 = rf1.create("region1");
+            return null;
+          }
+        });
+
+    vm2.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            disconnectFromDS();
+            props.setProperty(START_LOCATOR, "localhost[" + locatorPorts[1] + "]");
+            final Cache cache =
+                (new CacheFactory(props))
+                    .setPdxReadSerialized(true)
+                    .setPdxPersistent(true)
+                    .setPdxDiskStore(DS_NAME2)
+                    .create();
+
+            DiskStoreFactory dsf = cache.createDiskStoreFactory();
+            dsf.setDiskDirs(new File[] {f2});
+            dsf.create(DS_NAME2);
+            RegionFactory rf1 = cache.createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT);
+            rf1.setDiskStoreName(DS_NAME2);
+            Region region1 = rf1.create("region1");
+            PdxInstance v = (PdxInstance) region1.get("key1");
+            assertNotNull(v);
+            assertEquals(
+                "org.pivotal.geode.internal.PdxRenameDUnitTest$PdxValue",
+                ((PdxInstanceImpl) v).getClassName());
+            cache.close();
+            return null;
+          }
+        });
+
+    vm1.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Cache cache = CacheFactory.getAnyInstance();
+            if (cache != null && !cache.isClosed()) {
+              cache.close();
+            }
+            return null;
+          }
+        });
   }
 
   @Override
@@ -196,7 +223,13 @@ public class PdxRenameDUnitTest extends JUnit4CacheTestCase {
   }
 
   enum Day {
-    Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday;
+    Sunday,
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday;
   }
 
   class PdxValue implements PdxSerializable {

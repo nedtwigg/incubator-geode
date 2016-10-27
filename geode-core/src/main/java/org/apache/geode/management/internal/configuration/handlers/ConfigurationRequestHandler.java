@@ -29,10 +29,10 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.management.internal.configuration.messages.ConfigurationRequest;
 import org.apache.geode.management.internal.configuration.messages.ConfigurationResponse;
 
-/***
- * Handler for {@link ConfigurationRequest} request message.
- * Processes the {@link ConfigurationRequest}, sends the {@link ConfigurationResponse} containing the requested configuration.
- *
+/**
+ * * Handler for {@link ConfigurationRequest} request message. Processes the {@link
+ * ConfigurationRequest}, sends the {@link ConfigurationResponse} containing the requested
+ * configuration.
  */
 public class ConfigurationRequestHandler implements TcpHandler {
   private static final Logger logger = LogService.getLogger();
@@ -57,27 +57,22 @@ public class ConfigurationRequestHandler implements TcpHandler {
   }
 
   @Override
-  public void endRequest(Object request, long startTime) {
-  }
+  public void endRequest(Object request, long startTime) {}
 
   @Override
-  public void endResponse(Object request, long startTime) {
-  }
+  public void endResponse(Object request, long startTime) {}
 
   @Override
-  public void shutDown() {
-  }
+  public void shutDown() {}
 
   @Override
-  public void init(TcpServer tcpServer) {
-
-  }
+  public void init(TcpServer tcpServer) {}
 
   @Override
-  public void restarting(DistributedSystem system, GemFireCache cache, SharedConfiguration sharedConfig) {
+  public void restarting(
+      DistributedSystem system, GemFireCache cache, SharedConfiguration sharedConfig) {
     if (sharedConfig != null) {
       this.sharedConfig = sharedConfig;
     }
   }
-
 }

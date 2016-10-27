@@ -28,9 +28,7 @@ import org.apache.geode.internal.admin.StatAlert;
 import org.apache.geode.internal.admin.StatAlertDefinition;
 
 /**
- * Implementation of {@link StatAlertDefinition} This provides the definition
- * for single statistic
- * 
+ * Implementation of {@link StatAlertDefinition} This provides the definition for single statistic
  */
 public final class SingleAttrDefinitionImpl implements StatAlertDefinition {
   private static final long serialVersionUID = 3292417185742697896L;
@@ -41,12 +39,9 @@ public final class SingleAttrDefinitionImpl implements StatAlertDefinition {
 
   protected StatisticInfo statisticInfo;
 
-  public SingleAttrDefinitionImpl() {
-  }
+  public SingleAttrDefinitionImpl() {}
 
-  /**
-   * @param statisticInfo
-   */
+  /** @param statisticInfo */
   public SingleAttrDefinitionImpl(String name, StatisticInfo statisticInfo) {
     super();
     this.statisticInfo = statisticInfo;
@@ -66,14 +61,12 @@ public final class SingleAttrDefinitionImpl implements StatAlertDefinition {
   public boolean verify(StatisticsFactory factory) {
     boolean result = false;
 
-    if (name == null || name.length() == 0)
-      return false;
+    if (name == null || name.length() == 0) return false;
 
     if (statisticInfo != null) {
       Statistics[] temp = factory.findStatisticsByTextId(statisticInfo.getStatisticsTextId());
 
-      if (temp == null || temp.length == 0)
-        return false;
+      if (temp == null || temp.length == 0) return false;
 
       StatisticDescriptor[] temp1 = temp[0].getType().getStatistics();
       for (int i = 0; i < temp1.length; i++) {
@@ -111,7 +104,7 @@ public final class SingleAttrDefinitionImpl implements StatAlertDefinition {
 
   /**
    * This method returns the name of this stat alert definition.
-   * 
+   *
    * @return Name of the StatAlertDefinition
    */
   public String getName() {
@@ -120,9 +113,8 @@ public final class SingleAttrDefinitionImpl implements StatAlertDefinition {
 
   /**
    * This method sets the name of this stat alert definition.
-   * 
-   * @param name
-   *                name to be set for this StatAlertDefinition.
+   *
+   * @param name name to be set for this StatAlertDefinition.
    */
   public void setName(String name) {
     this.name = name;
@@ -130,21 +122,22 @@ public final class SingleAttrDefinitionImpl implements StatAlertDefinition {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.admin.StatAlertDefinition#getStatisticInfo()
    */
   public StatisticInfo[] getStatisticInfo() {
-    return new StatisticInfo[] { statisticInfo };
+    return new StatisticInfo[] {statisticInfo};
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.admin.StatAlertDefinition#setStatisticInfo(org.apache.geode.internal.admin.StatisticInfo[])
    */
   public void setStatisticInfo(StatisticInfo[] info) {
     if (info == null || info.length != 1)
-      throw new IllegalArgumentException("setStatisticInfo method requires 1 length array of StatisticInfo objects.");
+      throw new IllegalArgumentException(
+          "setStatisticInfo method requires 1 length array of StatisticInfo objects.");
 
     statisticInfo = info[0];
   }
@@ -161,7 +154,7 @@ public final class SingleAttrDefinitionImpl implements StatAlertDefinition {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.admin.StatAlertDefinition#evaluate(java.lang.Number[])
    */
   public boolean evaluate(Number[] params) {

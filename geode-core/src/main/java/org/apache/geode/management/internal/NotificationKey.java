@@ -19,10 +19,8 @@ package org.apache.geode.management.internal;
 import javax.management.ObjectName;
 
 /**
- * This class is used as a key for Notification region Only using ObjectName as
- * key will overwrite entries if put rate for notification is high.
- * 
- * 
+ * This class is used as a key for Notification region Only using ObjectName as key will overwrite
+ * entries if put rate for notification is high.
  */
 public class NotificationKey implements java.io.Serializable {
 
@@ -50,8 +48,8 @@ public class NotificationKey implements java.io.Serializable {
     }
     if (anObject instanceof NotificationKey) {
       NotificationKey anotherFedComp = (NotificationKey) anObject;
-      if (anotherFedComp.objectName.equals(this.objectName) && anotherFedComp.currentTime == this.currentTime)
-        return true;
+      if (anotherFedComp.objectName.equals(this.objectName)
+          && anotherFedComp.currentTime == this.currentTime) return true;
     }
 
     return false;
@@ -60,5 +58,4 @@ public class NotificationKey implements java.io.Serializable {
   public int hashCode() {
     return objectName.hashCode();
   }
-
 }

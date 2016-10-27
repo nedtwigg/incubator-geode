@@ -54,12 +54,12 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
  * A class to build a fake test configuration and launch some DUnit VMS.
- * 
- * For use within eclipse. This class completely skips hydra and just starts
- * some vms directly, creating a fake test configuration
- * 
- * Also, it's a good idea to set your working directory, because the test code
- * a lot of files that it leaves around.
+ *
+ * <p>For use within eclipse. This class completely skips hydra and just starts some vms directly,
+ * creating a fake test configuration
+ *
+ * <p>Also, it's a good idea to set your working directory, because the test code a lot of files
+ * that it leaves around.
  */
 public class DUnitLauncher {
 
@@ -83,15 +83,16 @@ public class DUnitLauncher {
   public static final boolean LOCATOR_LOG_TO_DISK = Boolean.getBoolean("locatorLogToDisk");
 
   static final String MASTER_PARAM = "DUNIT_MASTER";
-  public static final String RMI_PORT_PARAM = DistributionConfig.GEMFIRE_PREFIX + "DUnitLauncher.RMI_PORT";
+  public static final String RMI_PORT_PARAM =
+      DistributionConfig.GEMFIRE_PREFIX + "DUnitLauncher.RMI_PORT";
   static final String VM_NUM_PARAM = DistributionConfig.GEMFIRE_PREFIX + "DUnitLauncher.VM_NUM";
 
-  private static final String LAUNCHED_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "DUnitLauncher.LAUNCHED";
+  private static final String LAUNCHED_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "DUnitLauncher.LAUNCHED";
 
   private static Master master;
 
-  private DUnitLauncher() {
-  }
+  private DUnitLauncher() {}
 
   private static boolean isHydra() {
     try {
@@ -107,8 +108,7 @@ public class DUnitLauncher {
   }
 
   /**
-   * Launch DUnit. If the unit test was launched through
-   * the hydra framework, leave the test alone.
+   * Launch DUnit. If the unit test was launched through the hydra framework, leave the test alone.
    */
   public static void launchIfNeeded() {
     if (System.getProperties().contains(VM_NUM_PARAM)) {
@@ -125,9 +125,7 @@ public class DUnitLauncher {
     }
   }
 
-  /**
-   * Test it see if the eclise dunit environment is launched.
-   */
+  /** Test it see if the eclise dunit environment is launched. */
   public static boolean isLaunched() {
     return Boolean.getBoolean(LAUNCHED_PROPERTY);
   }
@@ -136,7 +134,9 @@ public class DUnitLauncher {
     return "localhost[" + locatorPort + "]";
   }
 
-  private static void launch() throws URISyntaxException, AlreadyBoundException, IOException, InterruptedException, NotBoundException {
+  private static void launch()
+      throws URISyntaxException, AlreadyBoundException, IOException, InterruptedException,
+          NotBoundException {
     DUNIT_SUSPECT_FILE = new File(SUSPECT_FILENAME);
     DUNIT_SUSPECT_FILE.delete();
     DUNIT_SUSPECT_FILE.deleteOnExit();
@@ -156,35 +156,37 @@ public class DUnitLauncher {
     // restrict membership ports to be outside of AvailablePort's range
     System.setProperty(DistributionConfig.RESTRICT_MEMBERSHIP_PORT_RANGE, "true");
 
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      public void run() {
-        //        System.out.println("shutting down DUnit JVMs");
-        //        for (int i=0; i<NUM_VMS; i++) {
-        //          try {
-        //            processManager.getStub(i).shutDownVM();
-        //          } catch (Exception e) {
-        //            System.out.println("exception shutting down vm_"+i+": " + e);
-        //          }
-        //        }
-        //        // TODO - hasLiveVMs always returns true
-        //        System.out.print("waiting for JVMs to exit");
-        //        long giveUp = System.currentTimeMillis() + 5000;
-        //        while (giveUp > System.currentTimeMillis()) {
-        //          if (!processManager.hasLiveVMs()) {
-        //            return;
-        //          }
-        //          System.out.print(".");
-        //          System.out.flush();
-        //          try {
-        //            Thread.sleep(1000);
-        //          } catch (InterruptedException e) {
-        //            break;
-        //          }
-        //        }
-        //        System.out.println("\nkilling any remaining JVMs");
-        processManager.killVMs();
-      }
-    });
+    Runtime.getRuntime()
+        .addShutdownHook(
+            new Thread() {
+              public void run() {
+                //        System.out.println("shutting down DUnit JVMs");
+                //        for (int i=0; i<NUM_VMS; i++) {
+                //          try {
+                //            processManager.getStub(i).shutDownVM();
+                //          } catch (Exception e) {
+                //            System.out.println("exception shutting down vm_"+i+": " + e);
+                //          }
+                //        }
+                //        // TODO - hasLiveVMs always returns true
+                //        System.out.print("waiting for JVMs to exit");
+                //        long giveUp = System.currentTimeMillis() + 5000;
+                //        while (giveUp > System.currentTimeMillis()) {
+                //          if (!processManager.hasLiveVMs()) {
+                //            return;
+                //          }
+                //          System.out.print(".");
+                //          System.out.flush();
+                //          try {
+                //            Thread.sleep(1000);
+                //          } catch (InterruptedException e) {
+                //            break;
+                //          }
+                //        }
+                //        System.out.println("\nkilling any remaining JVMs");
+                processManager.killVMs();
+              }
+            });
 
     //Create a VM for the locator
     processManager.launchVM(LOCATOR_VM_NUM);
@@ -209,9 +211,9 @@ public class DUnitLauncher {
     }
 
     //populate the Host class with our stubs. The tests use this host class
-    DUnitHost host = new DUnitHost(InetAddress.getLocalHost().getCanonicalHostName(), processManager);
+    DUnitHost host =
+        new DUnitHost(InetAddress.getLocalHost().getCanonicalHostName(), processManager);
     host.init(registry, NUM_VMS);
-
   }
 
   public static Properties getDistributedSystemProperties() {
@@ -225,56 +227,79 @@ public class DUnitLauncher {
   }
 
   /**
-   * Add an appender to Log4j which sends all INFO+ messages to a separate file
-   * which will be used later to scan for suspect strings.  The pattern of the
-   * messages conforms to the original log format so that hydra will be able
-   * to parse them.
+   * Add an appender to Log4j which sends all INFO+ messages to a separate file which will be used
+   * later to scan for suspect strings. The pattern of the messages conforms to the original log
+   * format so that hydra will be able to parse them.
    */
   private static void addSuspectFileAppender(final String workspaceDir) {
     final String suspectFilename = new File(workspaceDir, SUSPECT_FILENAME).getAbsolutePath();
 
-    final LoggerContext appenderContext = ((org.apache.logging.log4j.core.Logger) LogManager.getLogger(LogService.BASE_LOGGER_NAME)).getContext();
+    final LoggerContext appenderContext =
+        ((org.apache.logging.log4j.core.Logger) LogManager.getLogger(LogService.BASE_LOGGER_NAME))
+            .getContext();
 
-    final PatternLayout layout = PatternLayout.createLayout("[%level{lowerCase=true} %date{yyyy/MM/dd HH:mm:ss.SSS z} <%thread> tid=%tid] %message%n%throwable%n", null, null, null, Charset.defaultCharset(), true, false, "", "");
+    final PatternLayout layout =
+        PatternLayout.createLayout(
+            "[%level{lowerCase=true} %date{yyyy/MM/dd HH:mm:ss.SSS z} <%thread> tid=%tid] %message%n%throwable%n",
+            null, null, null, Charset.defaultCharset(), true, false, "", "");
 
-    final FileAppender fileAppender = FileAppender.createAppender(suspectFilename, "true", "false", DUnitLauncher.class.getName(), "true", "false", "false", "0", layout, null, null, null, appenderContext.getConfiguration());
+    final FileAppender fileAppender =
+        FileAppender.createAppender(
+            suspectFilename,
+            "true",
+            "false",
+            DUnitLauncher.class.getName(),
+            "true",
+            "false",
+            "false",
+            "0",
+            layout,
+            null,
+            null,
+            null,
+            appenderContext.getConfiguration());
     fileAppender.start();
 
-    LoggerConfig loggerConfig = appenderContext.getConfiguration().getLoggerConfig(LogService.BASE_LOGGER_NAME);
+    LoggerConfig loggerConfig =
+        appenderContext.getConfiguration().getLoggerConfig(LogService.BASE_LOGGER_NAME);
     loggerConfig.addAppender(fileAppender, Level.INFO, null);
   }
 
   private static int startLocator(Registry registry) throws IOException, NotBoundException {
     RemoteDUnitVMIF remote = (RemoteDUnitVMIF) registry.lookup("vm" + LOCATOR_VM_NUM);
-    final File locatorLogFile = LOCATOR_LOG_TO_DISK ? new File("locator-" + locatorPort + ".log") : new File("");
-    MethExecutorResult result = remote.executeMethodOnObject(new SerializableCallable() {
-      public Object call() throws IOException {
-        Properties p = getDistributedSystemProperties();
-        // I never want this locator to end up starting a jmx manager
-        // since it is part of the unit test framework
-        p.setProperty(JMX_MANAGER, "false");
-        //Disable the shared configuration on this locator.
-        //Shared configuration tests create their own locator
-        p.setProperty(ENABLE_CLUSTER_CONFIGURATION, "false");
-        //Tell the locator it's the first in the system for
-        //faster boot-up
-        System.setProperty(GMSJoinLeave.BYPASS_DISCOVERY_PROPERTY, "true");
-        // disable auto-reconnect - tests fly by so fast that it will never be
-        // able to do so successfully anyway
-        p.setProperty(DISABLE_AUTO_RECONNECT, "true");
+    final File locatorLogFile =
+        LOCATOR_LOG_TO_DISK ? new File("locator-" + locatorPort + ".log") : new File("");
+    MethExecutorResult result =
+        remote.executeMethodOnObject(
+            new SerializableCallable() {
+              public Object call() throws IOException {
+                Properties p = getDistributedSystemProperties();
+                // I never want this locator to end up starting a jmx manager
+                // since it is part of the unit test framework
+                p.setProperty(JMX_MANAGER, "false");
+                //Disable the shared configuration on this locator.
+                //Shared configuration tests create their own locator
+                p.setProperty(ENABLE_CLUSTER_CONFIGURATION, "false");
+                //Tell the locator it's the first in the system for
+                //faster boot-up
+                System.setProperty(GMSJoinLeave.BYPASS_DISCOVERY_PROPERTY, "true");
+                // disable auto-reconnect - tests fly by so fast that it will never be
+                // able to do so successfully anyway
+                p.setProperty(DISABLE_AUTO_RECONNECT, "true");
 
-        try {
-          Locator.startLocatorAndDS(0, locatorLogFile, p);
-          InternalLocator internalLocator = (InternalLocator) Locator.getLocator();
-          locatorPort = internalLocator.getPort();
-          internalLocator.resetInternalLocatorFileNamesWithCorrectPortNumber(locatorPort);
-        } finally {
-          System.getProperties().remove(GMSJoinLeave.BYPASS_DISCOVERY_PROPERTY);
-        }
+                try {
+                  Locator.startLocatorAndDS(0, locatorLogFile, p);
+                  InternalLocator internalLocator = (InternalLocator) Locator.getLocator();
+                  locatorPort = internalLocator.getPort();
+                  internalLocator.resetInternalLocatorFileNamesWithCorrectPortNumber(locatorPort);
+                } finally {
+                  System.getProperties().remove(GMSJoinLeave.BYPASS_DISCOVERY_PROPERTY);
+                }
 
-        return locatorPort;
-      }
-    }, "call");
+                return locatorPort;
+              }
+            },
+            "call");
     if (result.getException() != null) {
       RuntimeException ex = new RuntimeException("Failed to start locator", result.getException());
       ex.printStackTrace();
@@ -344,9 +369,15 @@ public class DUnitLauncher {
       }
 
       if (suspectStringBuilder.length() != 0) {
-        System.err.println("Suspicious strings were written to the log during this run.\n" + "Fix the strings or use IgnoredException.addIgnoredException to ignore.\n" + suspectStringBuilder);
+        System.err.println(
+            "Suspicious strings were written to the log during this run.\n"
+                + "Fix the strings or use IgnoredException.addIgnoredException to ignore.\n"
+                + suspectStringBuilder);
 
-        Assert.fail("Suspicious strings were written to the log during this run.\n" + "Fix the strings or use IgnoredException.addIgnoredException to ignore.\n" + suspectStringBuilder);
+        Assert.fail(
+            "Suspicious strings were written to the log during this run.\n"
+                + "Fix the strings or use IgnoredException.addIgnoredException to ignore.\n"
+                + suspectStringBuilder);
       }
     }
   }
@@ -405,7 +436,7 @@ public class DUnitLauncher {
   private static class DUnitHost extends Host {
     private static final long serialVersionUID = -8034165624503666383L;
 
-    private transient final VM debuggingVM;
+    private final transient VM debuggingVM;
 
     private transient ProcessManager processManager;
 
@@ -415,7 +446,8 @@ public class DUnitLauncher {
       this.processManager = processManager;
     }
 
-    public void init(Registry registry, int numVMs) throws AccessException, RemoteException, NotBoundException, InterruptedException {
+    public void init(Registry registry, int numVMs)
+        throws AccessException, RemoteException, NotBoundException, InterruptedException {
       for (int i = 0; i < numVMs; i++) {
         RemoteDUnitVMIF remote = processManager.getStub(i);
         addVM(i, remote);

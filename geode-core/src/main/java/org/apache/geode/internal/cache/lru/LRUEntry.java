@@ -19,13 +19,11 @@ package org.apache.geode.internal.cache.lru;
 import org.apache.geode.internal.cache.LocalRegion;
 import org.apache.geode.internal.cache.RegionEntry;
 
-/**
- * Represents an entry in an LRU map
- */
+/** Represents an entry in an LRU map */
 public interface LRUEntry extends LRUClockNode, RegionEntry {
   /**
-   * If the key is stored as an Object then returns that object;
-   * but if the key is stored as primitives then returns null.
+   * If the key is stored as an Object then returns that object; but if the key is stored as
+   * primitives then returns null.
    */
   public Object getKeyForSizing();
 

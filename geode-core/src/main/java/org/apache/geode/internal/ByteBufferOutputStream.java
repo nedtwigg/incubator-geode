@@ -19,13 +19,14 @@ package org.apache.geode.internal;
 import java.io.*;
 import java.nio.*;
 
-/** An OutputStream that wraps to a ByteBuffer
+/**
+ * An OutputStream that wraps to a ByteBuffer
+ *
  * @since GemFire 3.5
  */
-
 public class ByteBufferOutputStream extends OutputStream {
   private ByteBuffer buffer;
-  private final static int DEFAULT_SIZE = 1024;
+  private static final int DEFAULT_SIZE = 1024;
 
   public ByteBufferOutputStream() {
     this.buffer = ByteBuffer.allocate(DEFAULT_SIZE);
@@ -84,15 +85,16 @@ public class ByteBufferOutputStream extends OutputStream {
     buffer.clear();
   }
 
-  /** gets the content ByteBuffer, ready for reading.  The stream should
-      not be written to past this point until it has been reset. */
+  /**
+   * gets the content ByteBuffer, ready for reading. The stream should not be written to past this
+   * point until it has been reset.
+   */
   public final ByteBuffer getContentBuffer() {
     buffer.flip();
     return buffer;
   }
 
-  /** Gets a duplicate of the current content buffer.
-   */
+  /** Gets a duplicate of the current content buffer. */
   public final ByteBuffer getDuplicateBuffer() {
     return buffer.duplicate();
   }

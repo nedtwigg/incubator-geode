@@ -137,8 +137,7 @@ public class SetsJUnitTest {
     for (int j = 0; j < numSets; j++) {
       keys[j] = randString();
       Set<String> newSet = new HashSet<String>();
-      for (int i = 0; i < elements; i++)
-        newSet.add(randString());
+      for (int i = 0; i < elements; i++) newSet.add(randString());
       sets.add(newSet);
     }
 
@@ -149,8 +148,7 @@ public class SetsJUnitTest {
     }
 
     Set<String> result = sets.get(0);
-    for (int i = 1; i < numSets; i++)
-      result.removeAll(sets.get(i));
+    for (int i = 1; i < numSets; i++) result.removeAll(sets.get(i));
 
     assertEquals(result, jedis.sdiff(keys));
 
@@ -161,7 +159,6 @@ public class SetsJUnitTest {
     Set<String> destResult = jedis.smembers(destination);
 
     assertEquals(result, destResult);
-
   }
 
   @Test
@@ -173,8 +170,7 @@ public class SetsJUnitTest {
     for (int j = 0; j < numSets; j++) {
       keys[j] = randString();
       Set<String> newSet = new HashSet<String>();
-      for (int i = 0; i < elements; i++)
-        newSet.add(randString());
+      for (int i = 0; i < elements; i++) newSet.add(randString());
       sets.add(newSet);
     }
 
@@ -185,8 +181,7 @@ public class SetsJUnitTest {
     }
 
     Set<String> result = sets.get(0);
-    for (int i = 1; i < numSets; i++)
-      result.addAll(sets.get(i));
+    for (int i = 1; i < numSets; i++) result.addAll(sets.get(i));
 
     assertEquals(result, jedis.sunion(keys));
 
@@ -197,7 +192,6 @@ public class SetsJUnitTest {
     Set<String> destResult = jedis.smembers(destination);
 
     assertEquals(result, destResult);
-
   }
 
   @Test
@@ -209,8 +203,7 @@ public class SetsJUnitTest {
     for (int j = 0; j < numSets; j++) {
       keys[j] = randString();
       Set<String> newSet = new HashSet<String>();
-      for (int i = 0; i < elements; i++)
-        newSet.add(randString());
+      for (int i = 0; i < elements; i++) newSet.add(randString());
       sets.add(newSet);
     }
 
@@ -221,8 +214,7 @@ public class SetsJUnitTest {
     }
 
     Set<String> result = sets.get(0);
-    for (int i = 1; i < numSets; i++)
-      result.retainAll(sets.get(i));
+    for (int i = 1; i < numSets; i++) result.retainAll(sets.get(i));
 
     assertEquals(result, jedis.sinter(keys));
 
@@ -233,14 +225,12 @@ public class SetsJUnitTest {
     Set<String> destResult = jedis.smembers(destination);
 
     assertEquals(result, destResult);
-
   }
 
   private String randString() {
     int length = rand.nextInt(8) + 5;
     StringBuilder rString = new StringBuilder();
-    for (int i = 0; i < length; i++)
-      rString.append((char) (rand.nextInt(57) + 65));
+    for (int i = 0; i < length; i++) rString.append((char) (rand.nextInt(57) + 65));
     return rString.toString();
     //return Long.toHexString(Double.doubleToLongBits(Math.random()));
   }

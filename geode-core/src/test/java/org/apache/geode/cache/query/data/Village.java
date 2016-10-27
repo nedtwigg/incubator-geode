@@ -22,9 +22,7 @@
 
 package org.apache.geode.cache.query.data;
 
-/**
- *
- */
+/** */
 import java.io.*;
 
 public class Village implements Serializable {
@@ -35,13 +33,15 @@ public class Village implements Serializable {
   public Village(String name, int zip) {
     this.name = name;
     this.zip = zip;
-  }//end of constructor 1
+  } //end of constructor 1
 
   public Village(int i) {
-    String arr1[] = { "MAHARASHTRA_VILLAGE1", "PUNJAB_VILLAGE1", "KERALA_VILLAGE1", "GUJARAT_VILLAGE1" };
+    String arr1[] = {
+      "MAHARASHTRA_VILLAGE1", "PUNJAB_VILLAGE1", "KERALA_VILLAGE1", "GUJARAT_VILLAGE1"
+    };
     this.name = arr1[i % 4];
     this.zip = 425125 + i;
-  }//end of constructor 2
+  } //end of constructor 2
 
   ///////////////////////////////
 
@@ -52,4 +52,4 @@ public class Village implements Serializable {
   public int getZip() {
     return zip;
   }
-}//end of class
+} //end of class

@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal.index;
 
 import static org.junit.Assert.*;
@@ -84,8 +82,10 @@ public class AsynchIndexMaintenanceJUnitTest {
 
   @Test
   public void testIndexMaintenanceBasedOnThreshhold() throws Exception {
-    System.getProperties().put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceThreshold", "50");
-    System.getProperties().put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceInterval", "0");
+    System.getProperties()
+        .put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceThreshold", "50");
+    System.getProperties()
+        .put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceInterval", "0");
     final Index ri = qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "p.getID", "/portfolio p");
     for (int i = 0; i < 49; ++i) {
       region.put("" + (i + 1), new Portfolio(i + 1));
@@ -93,23 +93,27 @@ public class AsynchIndexMaintenanceJUnitTest {
     }
     //assertIndexDetailsEquals(0, getIndexSize(ri));
     region.put("50", new Portfolio(50));
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return (getIndexSize(ri) == 50);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return (getIndexSize(ri) == 50);
+          }
 
-      public String description() {
-        return "valueToEntriesMap never became 50";
-      }
-    };
+          public String description() {
+            return "valueToEntriesMap never became 50";
+          }
+        };
     Wait.waitForCriterion(ev, 3000, 200, true);
   }
 
   @Test
   public void testIndexMaintenanceBasedOnTimeInterval() throws Exception {
-    System.getProperties().put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceThreshold", "-1");
-    System.getProperties().put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceInterval", "10000");
-    final Index ri = (Index) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "p.getID", "/portfolio p");
+    System.getProperties()
+        .put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceThreshold", "-1");
+    System.getProperties()
+        .put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceInterval", "10000");
+    final Index ri =
+        (Index) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "p.getID", "/portfolio p");
 
     final int size = 5;
     for (int i = 0; i < size; ++i) {
@@ -119,30 +123,32 @@ public class AsynchIndexMaintenanceJUnitTest {
 
     //assertIndexDetailsEquals(0, getIndexSize(ri));
 
-    WaitCriterion evSize = new WaitCriterion() {
-      public boolean done() {
-        return (getIndexSize(ri) == size);
-      }
+    WaitCriterion evSize =
+        new WaitCriterion() {
+          public boolean done() {
+            return (getIndexSize(ri) == size);
+          }
 
-      public String description() {
-        return "valueToEntriesMap never became size :" + size;
-      }
-    };
+          public String description() {
+            return "valueToEntriesMap never became size :" + size;
+          }
+        };
 
     Wait.waitForCriterion(evSize, 17 * 1000, 200, true);
 
     // clear region.
     region.clear();
 
-    WaitCriterion evClear = new WaitCriterion() {
-      public boolean done() {
-        return (getIndexSize(ri) == 0);
-      }
+    WaitCriterion evClear =
+        new WaitCriterion() {
+          public boolean done() {
+            return (getIndexSize(ri) == 0);
+          }
 
-      public String description() {
-        return "valueToEntriesMap never became size :" + 0;
-      }
-    };
+          public String description() {
+            return "valueToEntriesMap never became size :" + 0;
+          }
+        };
     Wait.waitForCriterion(evClear, 17 * 1000, 200, true);
 
     // Add to region.
@@ -156,31 +162,38 @@ public class AsynchIndexMaintenanceJUnitTest {
 
   @Test
   public void testIndexMaintenanceBasedOnThresholdAsZero() throws Exception {
-    System.getProperties().put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceThreshold", "0");
-    System.getProperties().put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceInterval", "60000");
-    final Index ri = (Index) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "p.getID", "/portfolio p");
+    System.getProperties()
+        .put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceThreshold", "0");
+    System.getProperties()
+        .put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceInterval", "60000");
+    final Index ri =
+        (Index) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "p.getID", "/portfolio p");
     for (int i = 0; i < 3; ++i) {
       region.put("" + (i + 1), new Portfolio(i + 1));
       idSet.add((i + 1) + "");
     }
 
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return (getIndexSize(ri) == 3);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return (getIndexSize(ri) == 3);
+          }
 
-      public String description() {
-        return "valueToEntries map never became size 3";
-      }
-    };
+          public String description() {
+            return "valueToEntries map never became size 3";
+          }
+        };
     Wait.waitForCriterion(ev, 10 * 1000, 200, true);
   }
 
   @Test
   public void testNoIndexMaintenanceBasedOnNegativeThresholdAndZeroSleepTime() throws Exception {
-    System.getProperties().put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceThreshold", "-1");
-    System.getProperties().put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceInterval", "0");
-    Index ri = (Index) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "p.getID", "/portfolio p");
+    System.getProperties()
+        .put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceThreshold", "-1");
+    System.getProperties()
+        .put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceInterval", "0");
+    Index ri =
+        (Index) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "p.getID", "/portfolio p");
 
     int size = this.getIndexSize(ri);
 
@@ -193,8 +206,10 @@ public class AsynchIndexMaintenanceJUnitTest {
 
   @Test
   public void testConcurrentIndexMaintenanceForNoDeadlocks() throws Exception {
-    System.getProperties().put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceThreshold", "700");
-    System.getProperties().put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceInterval", "500");
+    System.getProperties()
+        .put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceThreshold", "700");
+    System.getProperties()
+        .put(DistributionConfig.GEMFIRE_PREFIX + "AsynchIndexMaintenanceInterval", "500");
     qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "p.getID", "/portfolio p");
     final int TOTAL_THREADS = 25;
     final int NUM_UPDATES = 25;
@@ -202,30 +217,32 @@ public class AsynchIndexMaintenanceJUnitTest {
     Thread threads[] = new Thread[TOTAL_THREADS];
     for (int i = 0; i < TOTAL_THREADS; ++i) {
       final int k = i;
-      threads[i] = new Thread(new Runnable() {
-        public void run() {
-          try {
-            barrier.await();
-            for (int i = 0; i < NUM_UPDATES; ++i) {
-              try {
-                region.put("" + (k + 1), new Portfolio(k + 1));
-                Thread.sleep(10);
-              } catch (IllegalStateException ie) {
-                // If Asynchronous index queue is full. Retry.
-                if (ie.getMessage().contains("Queue full")) {
-                  // retry
-                  i--;
-                  continue;
+      threads[i] =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  try {
+                    barrier.await();
+                    for (int i = 0; i < NUM_UPDATES; ++i) {
+                      try {
+                        region.put("" + (k + 1), new Portfolio(k + 1));
+                        Thread.sleep(10);
+                      } catch (IllegalStateException ie) {
+                        // If Asynchronous index queue is full. Retry.
+                        if (ie.getMessage().contains("Queue full")) {
+                          // retry
+                          i--;
+                          continue;
+                        }
+                        throw ie;
+                      }
+                    }
+                  } catch (Exception e) {
+                    CacheUtils.getLogger().error(e);
+                    exceptionOccured = true;
+                  }
                 }
-                throw ie;
-              }
-            }
-          } catch (Exception e) {
-            CacheUtils.getLogger().error(e);
-            exceptionOccured = true;
-          }
-        }
-      });
+              });
     }
     for (int i = 0; i < TOTAL_THREADS; ++i) {
       threads[i].start();
@@ -240,5 +257,4 @@ public class AsynchIndexMaintenanceJUnitTest {
     }
     assertFalse(exceptionOccured);
   }
-
 }

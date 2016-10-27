@@ -18,8 +18,8 @@
 package org.apache.geode.distributed.internal;
 
 /**
- * A SerialDistributionMessage is processed in the order
- * it is generated from a single thread's point of view.
+ * A SerialDistributionMessage is processed in the order it is generated from a single thread's
+ * point of view.
  */
 public abstract class SerialDistributionMessage extends DistributionMessage {
 
@@ -28,5 +28,4 @@ public abstract class SerialDistributionMessage extends DistributionMessage {
   public int getProcessorType() {
     return DistributionManager.SERIAL_EXECUTOR;
   }
-
 }

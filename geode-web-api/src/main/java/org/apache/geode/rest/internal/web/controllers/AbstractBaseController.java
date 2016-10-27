@@ -86,10 +86,10 @@ import org.apache.geode.rest.internal.web.util.NumberUtils;
 import org.apache.geode.rest.internal.web.util.ValidationUtils;
 
 /**
- * AbstractBaseController class contains common functionalities required for other controllers. 
+ * AbstractBaseController class contains common functionalities required for other controllers.
+ *
  * @since GemFire 8.0
  */
-
 @SuppressWarnings("unused")
 public abstract class AbstractBaseController {
 
@@ -105,8 +105,7 @@ public abstract class AbstractBaseController {
 
   //private Cache cache = GemFireCacheImpl.getExisting(null);
 
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
   @PostConstruct
   private void init() {
@@ -120,7 +119,11 @@ public abstract class AbstractBaseController {
   }
 
   protected URI toUri(final String... pathSegments) {
-    return ServletUriComponentsBuilder.fromCurrentContextPath().path(getRestApiVersion()).pathSegment(pathSegments).build().toUri();
+    return ServletUriComponentsBuilder.fromCurrentContextPath()
+        .path(getRestApiVersion())
+        .pathSegment(pathSegments)
+        .build()
+        .toUri();
   }
 
   protected abstract String getRestApiVersion();
@@ -145,7 +148,8 @@ public abstract class AbstractBaseController {
     try {
       return (StringUtils.hasText(json) ? JSONFormatter.fromJSON(json) : null);
     } catch (JSONFormatterException jpe) {
-      throw new MalformedJsonException("Json doc specified is either not supported or invalid!", jpe);
+      throw new MalformedJsonException(
+          "Json doc specified is either not supported or invalid!", jpe);
     }
   }
 
@@ -153,7 +157,8 @@ public abstract class AbstractBaseController {
     try {
       return (pdxObj != null ? JSONFormatter.toJSON(pdxObj) : null);
     } catch (JSONFormatterException jpe) {
-      throw new GemfireRestException("Requested data could not convert into REST format(JSON)!", jpe);
+      throw new GemfireRestException(
+          "Requested data could not convert into REST format(JSON)!", jpe);
     }
   }
 
@@ -189,7 +194,8 @@ public abstract class AbstractBaseController {
     }
   }
 
-  public ResponseEntity<String> processQueryResponse(Object queryResult, String queryId) throws JSONException {
+  public ResponseEntity<String> processQueryResponse(Object queryResult, String queryId)
+      throws JSONException {
     if (queryResult instanceof Collection<?>) {
       Collection<Object> result = (Collection<Object>) queryResult;
       String queryResultAsJson = JSONUtils.convertCollectionToJson(result);
@@ -198,7 +204,8 @@ public abstract class AbstractBaseController {
       headers.setLocation(toUri("queries", queryId));
       return new ResponseEntity<String>(queryResultAsJson, headers, HttpStatus.OK);
     } else {
-      throw new GemfireRestException("Server has encountered error while generating query result into restful format(JSON)!");
+      throw new GemfireRestException(
+          "Server has encountered error while generating query result into restful format(JSON)!");
     }
   }
 
@@ -227,62 +234,106 @@ public abstract class AbstractBaseController {
   /*
   protected PdxInstance convertJsonIntoPdxCollection(final String jsonArray) {
     JSONArray jsonArr = null;
-    
+
       PdxInstance pi = convert(jsonArray);
       System.out.println("Successfully converted into PdxInstance..!!");
       return pi;
-    
+
   }
   */
 
-  protected Object casValue(final String regionNamePath, final Object key, final Object oldValue, final Object newValue) {
+  protected Object casValue(
+      final String regionNamePath, final Object key, final Object oldValue, final Object newValue) {
     final Region<Object, Object> region = getRegion(regionNamePath);
     try {
       return (region.replace(key, oldValue, newValue) ? null : region.get(key));
     } catch (UnsupportedOperationException use) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not support the requested operation!", regionNamePath), use);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not support the requested operation!",
+              regionNamePath),
+          use);
     } catch (ClassCastException cce) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not allow to store specified key or value type in this region!", regionNamePath), cce);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not allow to store specified key or value type in this region!",
+              regionNamePath),
+          cce);
     } catch (NullPointerException npe) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not allow null keys or values!", regionNamePath), npe);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not allow null keys or values!", regionNamePath),
+          npe);
     } catch (IllegalArgumentException iae) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration prevents specified data from being stored in it!", regionNamePath), iae);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration prevents specified data from being stored in it!",
+              regionNamePath),
+          iae);
     } catch (LeaseExpiredException lee) {
-      throw new GemfireRestException("Server has encountered error while processing this request!", lee);
+      throw new GemfireRestException(
+          "Server has encountered error while processing this request!", lee);
     } catch (TimeoutException toe) {
-      throw new GemfireRestException("Server has encountered timeout error while processing this request!", toe);
+      throw new GemfireRestException(
+          "Server has encountered timeout error while processing this request!", toe);
     } catch (CacheWriterException cwe) {
-      throw new GemfireRestException("Server has encountered CacheWriter error while processing this request!", cwe);
+      throw new GemfireRestException(
+          "Server has encountered CacheWriter error while processing this request!", cwe);
     } catch (PartitionedRegionStorageException prse) {
-      throw new GemfireRestException("Requested operation could not be completed on a partitioned region!", prse);
+      throw new GemfireRestException(
+          "Requested operation could not be completed on a partitioned region!", prse);
     } catch (LowMemoryException lme) {
-      throw new GemfireRestException("Server has detected low memory while processing this request!", lme);
+      throw new GemfireRestException(
+          "Server has detected low memory while processing this request!", lme);
     }
   }
 
-  protected void replaceValue(final String regionNamePath, final Object key, final PdxInstance value) {
+  protected void replaceValue(
+      final String regionNamePath, final Object key, final PdxInstance value) {
     try {
       if (getRegion(regionNamePath).replace(key, value) == null) {
-        throw new ResourceNotFoundException(String.format("No resource at (%1$s) exists!", toUri(regionNamePath, String.valueOf(key))));
+        throw new ResourceNotFoundException(
+            String.format(
+                "No resource at (%1$s) exists!", toUri(regionNamePath, String.valueOf(key))));
       }
     } catch (UnsupportedOperationException use) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not support the requested operation!", regionNamePath), use);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not support the requested operation!",
+              regionNamePath),
+          use);
     } catch (ClassCastException cce) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not allow to store specified key or value type in this region!", regionNamePath), cce);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not allow to store specified key or value type in this region!",
+              regionNamePath),
+          cce);
     } catch (NullPointerException npe) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not allow null keys or values!", regionNamePath), npe);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not allow null keys or values!", regionNamePath),
+          npe);
     } catch (IllegalArgumentException iae) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration prevents specified data from being stored in it!", regionNamePath), iae);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration prevents specified data from being stored in it!",
+              regionNamePath),
+          iae);
     } catch (LeaseExpiredException lee) {
-      throw new GemfireRestException("Server has encountered error while processing this request!", lee);
+      throw new GemfireRestException(
+          "Server has encountered error while processing this request!", lee);
     } catch (TimeoutException toe) {
-      throw new GemfireRestException("Server has encountered timeout error while processing this request!", toe);
+      throw new GemfireRestException(
+          "Server has encountered timeout error while processing this request!", toe);
     } catch (CacheWriterException cwe) {
-      throw new GemfireRestException("Server has encountered CacheWriter error while processing this request!", cwe);
+      throw new GemfireRestException(
+          "Server has encountered CacheWriter error while processing this request!", cwe);
     } catch (PartitionedRegionStorageException prse) {
-      throw new GemfireRestException("Requested operation could not be completed on a partitioned region!", prse);
+      throw new GemfireRestException(
+          "Requested operation could not be completed on a partitioned region!", prse);
     } catch (LowMemoryException lme) {
-      throw new GemfireRestException("Server has detected low memory while processing this request!", lme);
+      throw new GemfireRestException(
+          "Server has detected low memory while processing this request!", lme);
     }
   }
 
@@ -290,26 +341,48 @@ public abstract class AbstractBaseController {
     //still do we need to worry for race condition..?
     try {
       if (getRegion(regionNamePath).replace(key, value) == null) {
-        throw new ResourceNotFoundException(String.format("No resource at (%1$s) exists!", toUri(regionNamePath, String.valueOf(key))));
+        throw new ResourceNotFoundException(
+            String.format(
+                "No resource at (%1$s) exists!", toUri(regionNamePath, String.valueOf(key))));
       }
     } catch (UnsupportedOperationException use) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not support the requested operation!", regionNamePath), use);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not support the requested operation!",
+              regionNamePath),
+          use);
     } catch (ClassCastException cce) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not allow to store specified key or value type in this region!", regionNamePath), cce);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not allow to store specified key or value type in this region!",
+              regionNamePath),
+          cce);
     } catch (NullPointerException npe) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not allow null keys or values!", regionNamePath), npe);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not allow null keys or values!", regionNamePath),
+          npe);
     } catch (IllegalArgumentException iae) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration prevents specified data from being stored in it!", regionNamePath), iae);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration prevents specified data from being stored in it!",
+              regionNamePath),
+          iae);
     } catch (LeaseExpiredException lee) {
-      throw new GemfireRestException("Server has encountered error while processing this request!", lee);
+      throw new GemfireRestException(
+          "Server has encountered error while processing this request!", lee);
     } catch (TimeoutException toe) {
-      throw new GemfireRestException("Server has encountered timeout error while processing this request!", toe);
+      throw new GemfireRestException(
+          "Server has encountered timeout error while processing this request!", toe);
     } catch (CacheWriterException cwe) {
-      throw new GemfireRestException("Server has encountered CacheWriter error while processing this request!", cwe);
+      throw new GemfireRestException(
+          "Server has encountered CacheWriter error while processing this request!", cwe);
     } catch (PartitionedRegionStorageException prse) {
-      throw new GemfireRestException("Requested operation could not be completed on a partitioned region!", prse);
+      throw new GemfireRestException(
+          "Requested operation could not be completed on a partitioned region!", prse);
     } catch (LowMemoryException lme) {
-      throw new GemfireRestException("Server has detected low memory while processing this request!", lme);
+      throw new GemfireRestException(
+          "Server has detected low memory while processing this request!", lme);
     }
   }
 
@@ -317,19 +390,31 @@ public abstract class AbstractBaseController {
     try {
       getRegion(regionNamePath).put(key, value);
     } catch (NullPointerException npe) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not allow null keys or values!", regionNamePath), npe);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not allow null keys or values!", regionNamePath),
+          npe);
     } catch (ClassCastException cce) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not allow to store specified key or value type in this region!", regionNamePath), cce);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not allow to store specified key or value type in this region!",
+              regionNamePath),
+          cce);
     } catch (LeaseExpiredException lee) {
-      throw new GemfireRestException("Server has encountered error while processing this request!", lee);
+      throw new GemfireRestException(
+          "Server has encountered error while processing this request!", lee);
     } catch (TimeoutException toe) {
-      throw new GemfireRestException("Server has encountered timeout error while processing this request!", toe);
+      throw new GemfireRestException(
+          "Server has encountered timeout error while processing this request!", toe);
     } catch (CacheWriterException cwe) {
-      throw new GemfireRestException("Server has encountered CacheWriter error while processing this request!", cwe);
+      throw new GemfireRestException(
+          "Server has encountered CacheWriter error while processing this request!", cwe);
     } catch (PartitionedRegionStorageException prse) {
-      throw new GemfireRestException("Requested operation could not be completed on a partitioned region!", prse);
+      throw new GemfireRestException(
+          "Requested operation could not be completed on a partitioned region!", prse);
     } catch (LowMemoryException lme) {
-      throw new GemfireRestException("Server has detected low memory while processing this request!", lme);
+      throw new GemfireRestException(
+          "Server has detected low memory while processing this request!", lme);
     }
   }
 
@@ -350,7 +435,9 @@ public abstract class AbstractBaseController {
   }
 
   protected Region<String, String> getQueryStore(final String namePath) {
-    return ValidationUtils.returnValueThrowOnNull(getCache().<String, String> getRegion(namePath), new GemfireRestException(String.format("Query store does not exist!", namePath)));
+    return ValidationUtils.returnValueThrowOnNull(
+        getCache().<String, String>getRegion(namePath),
+        new GemfireRestException(String.format("Query store does not exist!", namePath)));
   }
 
   protected String getQueryIdValue(final String regionNamePath, final String key) {
@@ -360,15 +447,19 @@ public abstract class AbstractBaseController {
     } catch (NullPointerException npe) {
       throw new GemfireRestException("NULL query ID or query string is not supported!", npe);
     } catch (IllegalArgumentException iae) {
-      throw new GemfireRestException("Server has not allowed to perform the requested operation!", iae);
+      throw new GemfireRestException(
+          "Server has not allowed to perform the requested operation!", iae);
     } catch (LeaseExpiredException lee) {
-      throw new GemfireRestException("Server has encountered error while processing this request!", lee);
+      throw new GemfireRestException(
+          "Server has encountered error while processing this request!", lee);
     } catch (TimeoutException te) {
-      throw new GemfireRestException("Server has encountered timeout error while processing this request!", te);
+      throw new GemfireRestException(
+          "Server has encountered timeout error while processing this request!", te);
     }
   }
 
-  protected void updateNamedQuery(final String regionNamePath, final String key, final String value) {
+  protected void updateNamedQuery(
+      final String regionNamePath, final String key, final String value) {
     try {
       getQueryStore(regionNamePath).put(key, value);
     } catch (NullPointerException npe) {
@@ -376,16 +467,20 @@ public abstract class AbstractBaseController {
     } catch (ClassCastException cce) {
       throw new GemfireRestException("specified queryId or query string is not supported!", cce);
     } catch (LeaseExpiredException lee) {
-      throw new GemfireRestException("Server has encountered error while processing this request!", lee);
+      throw new GemfireRestException(
+          "Server has encountered error while processing this request!", lee);
     } catch (TimeoutException toe) {
-      throw new GemfireRestException("Server has encountered timeout error while processing this request!", toe);
+      throw new GemfireRestException(
+          "Server has encountered timeout error while processing this request!", toe);
     } catch (LowMemoryException lme) {
-      throw new GemfireRestException("Server has detected low memory while processing this request!", lme);
+      throw new GemfireRestException(
+          "Server has detected low memory while processing this request!", lme);
     }
   }
 
   @SuppressWarnings("unchecked")
-  protected <T> T createNamedQuery(final String regionNamePath, final String key, final String value) {
+  protected <T> T createNamedQuery(
+      final String regionNamePath, final String key, final String value) {
     try {
       return (T) getQueryStore(regionNamePath).putIfAbsent(key, value);
     } catch (UnsupportedOperationException use) {
@@ -395,13 +490,17 @@ public abstract class AbstractBaseController {
     } catch (NullPointerException npe) {
       throw new GemfireRestException("NULL query ID or query string is not supported!", npe);
     } catch (IllegalArgumentException iae) {
-      throw new GemfireRestException("Configuration does not allow to perform the requested operation!", iae);
+      throw new GemfireRestException(
+          "Configuration does not allow to perform the requested operation!", iae);
     } catch (LeaseExpiredException lee) {
-      throw new GemfireRestException("Server has encountered error while processing this request!", lee);
+      throw new GemfireRestException(
+          "Server has encountered error while processing this request!", lee);
     } catch (TimeoutException toe) {
-      throw new GemfireRestException("Server has encountered timeout error while processing this request!", toe);
+      throw new GemfireRestException(
+          "Server has encountered timeout error while processing this request!", toe);
     } catch (LowMemoryException lme) {
-      throw new GemfireRestException("Server has detected low memory while processing this request!", lme);
+      throw new GemfireRestException(
+          "Server has detected low memory while processing this request!", lme);
     }
   }
 
@@ -437,23 +536,43 @@ public abstract class AbstractBaseController {
     try {
       return (T) getRegion(regionNamePath).putIfAbsent(key, value);
     } catch (UnsupportedOperationException use) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not support the requested operation!", regionNamePath), use);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not support the requested operation!",
+              regionNamePath),
+          use);
     } catch (ClassCastException cce) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not allow to store specified key or value type in this region!", regionNamePath), cce);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not allow to store specified key or value type in this region!",
+              regionNamePath),
+          cce);
     } catch (NullPointerException npe) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not allow null keys or values!", regionNamePath), npe);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not allow null keys or values!", regionNamePath),
+          npe);
     } catch (IllegalArgumentException iae) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration prevents specified data from being stored in it!", regionNamePath), iae);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration prevents specified data from being stored in it!",
+              regionNamePath),
+          iae);
     } catch (LeaseExpiredException lee) {
-      throw new GemfireRestException("Server has encountered error while processing this request!", lee);
+      throw new GemfireRestException(
+          "Server has encountered error while processing this request!", lee);
     } catch (TimeoutException toe) {
-      throw new GemfireRestException("Server has encountered timeout error while processing this request!", toe);
+      throw new GemfireRestException(
+          "Server has encountered timeout error while processing this request!", toe);
     } catch (CacheWriterException cwe) {
-      throw new GemfireRestException("Server has encountered CacheWriter error while processing this request!", cwe);
+      throw new GemfireRestException(
+          "Server has encountered CacheWriter error while processing this request!", cwe);
     } catch (PartitionedRegionStorageException prse) {
-      throw new GemfireRestException("Requested operation could not be completed on a partitioned region!", prse);
+      throw new GemfireRestException(
+          "Requested operation could not be completed on a partitioned region!", prse);
     } catch (LowMemoryException lme) {
-      throw new GemfireRestException("Server has detected low memory while processing this request!", lme);
+      throw new GemfireRestException(
+          "Server has detected low memory while processing this request!", lme);
     }
   }
 
@@ -515,12 +634,18 @@ public abstract class AbstractBaseController {
 
   @SuppressWarnings("unchecked")
   protected <T> Region<Object, T> getRegion(final String namePath) {
-    return (Region<Object, T>) ValidationUtils.returnValueThrowOnNull(getCache().getRegion(namePath), new RegionNotFoundException(String.format("The Region identified by name (%1$s) could not be found!", namePath)));
+    return (Region<Object, T>)
+        ValidationUtils.returnValueThrowOnNull(
+            getCache().getRegion(namePath),
+            new RegionNotFoundException(
+                String.format(
+                    "The Region identified by name (%1$s) could not be found!", namePath)));
   }
 
   protected void checkForKeyExist(String region, String key) {
     if (!getRegion(region).containsKey(key)) {
-      throw new ResourceNotFoundException(String.format("Key (%1$s) does not exist for region (%2$s) in cache!", key, region));
+      throw new ResourceNotFoundException(
+          String.format("Key (%1$s) does not exist for region (%2$s) in cache!", key, region));
     }
   }
 
@@ -536,7 +661,9 @@ public abstract class AbstractBaseController {
   }
 
   protected Object[] getKeys(final String regionNamePath, Object[] keys) {
-    return (!(keys == null || keys.length == 0) ? keys : getRegion(regionNamePath).keySet().toArray());
+    return (!(keys == null || keys.length == 0)
+        ? keys
+        : getRegion(regionNamePath).keySet().toArray());
   }
 
   protected <T> Map<Object, T> getValues(final String regionNamePath, Object... keys) {
@@ -545,7 +672,9 @@ public abstract class AbstractBaseController {
       final Map<Object, T> entries = region.getAll(Arrays.asList(getKeys(regionNamePath, keys)));
       return entries;
     } catch (SerializationException se) {
-      throw new DataTypeNotSupportedException("The resource identified could not convert into the supported content characteristics (JSON)!", se);
+      throw new DataTypeNotSupportedException(
+          "The resource identified could not convert into the supported content characteristics (JSON)!",
+          se);
     }
   }
 
@@ -553,7 +682,8 @@ public abstract class AbstractBaseController {
     return getValues(regionNamePath, (Object[]) keys);
   }
 
-  protected <T extends PdxInstance> Collection<T> getPdxValues(final String regionNamePath, final Object... keys) {
+  protected <T extends PdxInstance> Collection<T> getPdxValues(
+      final String regionNamePath, final Object... keys) {
     final Region<Object, T> region = getRegion(regionNamePath);
     final Map<Object, T> entries = region.getAll(Arrays.asList(getKeys(regionNamePath, keys)));
 
@@ -584,7 +714,9 @@ public abstract class AbstractBaseController {
   }
 
   private boolean isForm(final Map<Object, Object> rawDataBinding) {
-    return (!rawDataBinding.containsKey(TYPE_META_DATA_PROPERTY) && rawDataBinding.containsKey(OLD_META_DATA_PROPERTY) && rawDataBinding.containsKey(NEW_META_DATA_PROPERTY));
+    return (!rawDataBinding.containsKey(TYPE_META_DATA_PROPERTY)
+        && rawDataBinding.containsKey(OLD_META_DATA_PROPERTY)
+        && rawDataBinding.containsKey(NEW_META_DATA_PROPERTY));
   }
 
   @SuppressWarnings("unchecked")
@@ -593,27 +725,41 @@ public abstract class AbstractBaseController {
       final Map rawDataBinding = (Map) value;
 
       if (isForm(rawDataBinding)) {
-        rawDataBinding.put(OLD_META_DATA_PROPERTY, introspectAndConvert(rawDataBinding.get(OLD_META_DATA_PROPERTY)));
-        rawDataBinding.put(NEW_META_DATA_PROPERTY, introspectAndConvert(rawDataBinding.get(NEW_META_DATA_PROPERTY)));
+        rawDataBinding.put(
+            OLD_META_DATA_PROPERTY,
+            introspectAndConvert(rawDataBinding.get(OLD_META_DATA_PROPERTY)));
+        rawDataBinding.put(
+            NEW_META_DATA_PROPERTY,
+            introspectAndConvert(rawDataBinding.get(NEW_META_DATA_PROPERTY)));
 
         return (T) rawDataBinding;
       } else {
         final String typeValue = (String) rawDataBinding.get(TYPE_META_DATA_PROPERTY);
 
-        //Added for the primitive types put. Not supporting primitive types 
+        //Added for the primitive types put. Not supporting primitive types
         if (NumberUtils.isPrimitiveOrObject(typeValue.toString())) {
           final Object primitiveValue = rawDataBinding.get("@value");
           try {
             return (T) NumberUtils.convertToActualType(primitiveValue.toString(), typeValue);
           } catch (IllegalArgumentException e) {
-            throw new GemfireRestException("Server has encountered error (illegal or inappropriate arguments).", e);
+            throw new GemfireRestException(
+                "Server has encountered error (illegal or inappropriate arguments).", e);
           }
         } else {
 
-          Assert.state(typeValue != null, "The class type of the object to persist in GemFire must be specified in JSON content using the '@type' property!");
-          Assert.state(ClassUtils.isPresent(String.valueOf(typeValue), Thread.currentThread().getContextClassLoader()), String.format("Class (%1$s) could not be found!", typeValue));
+          Assert.state(
+              typeValue != null,
+              "The class type of the object to persist in GemFire must be specified in JSON content using the '@type' property!");
+          Assert.state(
+              ClassUtils.isPresent(
+                  String.valueOf(typeValue), Thread.currentThread().getContextClassLoader()),
+              String.format("Class (%1$s) could not be found!", typeValue));
 
-          return (T) objectMapper.convertValue(rawDataBinding, ClassUtils.resolveClassName(String.valueOf(typeValue), Thread.currentThread().getContextClassLoader()));
+          return (T)
+              objectMapper.convertValue(
+                  rawDataBinding,
+                  ClassUtils.resolveClassName(
+                      String.valueOf(typeValue), Thread.currentThread().getContextClassLoader()));
         }
       }
     }
@@ -628,7 +774,8 @@ public abstract class AbstractBaseController {
   protected String convertErrorAsJson(Throwable t) {
     StringWriter writer = new StringWriter();
     t.printStackTrace(new PrintWriter(writer));
-    return String.format("{\"message\" : \"%1$s\", \"stackTrace\" : \"%2$s\"}", t.getMessage(), writer.toString());
+    return String.format(
+        "{\"message\" : \"%1$s\", \"stackTrace\" : \"%2$s\"}", t.getMessage(), writer.toString());
   }
 
   protected Map<?, ?> convertJsonToMap(final String jsonString) {
@@ -636,12 +783,13 @@ public abstract class AbstractBaseController {
 
     //convert JSON string to Map
     try {
-      map = objectMapper.readValue(jsonString, new TypeReference<HashMap<String, String>>() {
-      });
+      map = objectMapper.readValue(jsonString, new TypeReference<HashMap<String, String>>() {});
     } catch (JsonParseException e) {
-      throw new MalformedJsonException("Bind params specified as JSON document in the request is incorrect!", e);
+      throw new MalformedJsonException(
+          "Bind params specified as JSON document in the request is incorrect!", e);
     } catch (JsonMappingException e) {
-      throw new MalformedJsonException("Server unable to process bind params specified as JSON document in the request!", e);
+      throw new MalformedJsonException(
+          "Server unable to process bind params specified as JSON document in the request!", e);
     } catch (IOException e) {
       throw new GemfireRestException("Server has encountered error while process this request!", e);
     }
@@ -663,16 +811,18 @@ public abstract class AbstractBaseController {
         }
         return args;
       } catch (JSONException je) {
-        throw new MalformedJsonException("Json document specified in request body is not valid!", je);
+        throw new MalformedJsonException(
+            "Json document specified in request body is not valid!", je);
       }
     } else if (JSONTypes.JSON_OBJECT.equals(jsonType)) {
-      return new Object[] { jsonToObject(arguments) };
+      return new Object[] {jsonToObject(arguments)};
     } else {
       throw new MalformedJsonException("Json document specified in request body is not valid!");
     }
   }
 
-  public ResponseEntity<String> updateSingleKey(final String region, final String key, final String json, final String opValue) {
+  public ResponseEntity<String> updateSingleKey(
+      final String region, final String key, final String json, final String opValue) {
 
     final JSONTypes jsonType = validateJsonAndFindType(json);
 
@@ -680,31 +830,33 @@ public abstract class AbstractBaseController {
     String existingValue = null;
 
     switch (op) {
-    case CAS:
-      PdxInstance existingPdxObj = casValue(region, key, json);
-      existingValue = convert(existingPdxObj);
-      break;
+      case CAS:
+        PdxInstance existingPdxObj = casValue(region, key, json);
+        existingValue = convert(existingPdxObj);
+        break;
 
-    case REPLACE:
-      replaceValue(region, key, convert(json));
-      break;
+      case REPLACE:
+        replaceValue(region, key, convert(json));
+        break;
 
-    case PUT:
-    default:
-      if (JSONTypes.JSON_ARRAY.equals(jsonType)) {
-        putValue(region, key, convertJsonArrayIntoPdxCollection(json));
-        //putValue(region, key, convertJsonIntoPdxCollection(json));
-      } else {
-        putValue(region, key, convert(json));
-      }
+      case PUT:
+      default:
+        if (JSONTypes.JSON_ARRAY.equals(jsonType)) {
+          putValue(region, key, convertJsonArrayIntoPdxCollection(json));
+          //putValue(region, key, convertJsonIntoPdxCollection(json));
+        } else {
+          putValue(region, key, convert(json));
+        }
     }
 
     final HttpHeaders headers = new HttpHeaders();
     headers.setLocation(toUri(region, key));
-    return new ResponseEntity<String>(existingValue, headers, (existingValue == null ? HttpStatus.OK : HttpStatus.CONFLICT));
+    return new ResponseEntity<String>(
+        existingValue, headers, (existingValue == null ? HttpStatus.OK : HttpStatus.CONFLICT));
   }
 
-  public ResponseEntity<String> updateMultipleKeys(final String region, final String[] keys, final String json) {
+  public ResponseEntity<String> updateMultipleKeys(
+      final String region, final String[] keys, final String json) {
 
     JSONArray jsonArr = null;
     try {
@@ -714,20 +866,26 @@ public abstract class AbstractBaseController {
     }
 
     if (jsonArr.length() != keys.length) {
-      throw new MalformedJsonException("Each key must have corresponding value (JSON document) specified in the request");
+      throw new MalformedJsonException(
+          "Each key must have corresponding value (JSON document) specified in the request");
     }
 
     Map<Object, PdxInstance> map = new HashMap<Object, PdxInstance>();
     for (int i = 0; i < keys.length; i++) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Updating (put) Json document ({}) having key ({}) in Region ({})", json, keys[i], region);
+        logger.debug(
+            "Updating (put) Json document ({}) having key ({}) in Region ({})",
+            json,
+            keys[i],
+            region);
       }
 
       try {
         PdxInstance pdxObj = convert(jsonArr.getJSONObject(i).toString());
         map.put(keys[i], pdxObj);
       } catch (JSONException e) {
-        throw new MalformedJsonException(String.format("JSON document at index (%1$s) in the request body is incorrect", i), e);
+        throw new MalformedJsonException(
+            String.format("JSON document at index (%1$s) in the request body is incorrect", i), e);
       }
     }
 
@@ -769,27 +927,40 @@ public abstract class AbstractBaseController {
       Object value = r.get(key);
       return (T) value;
     } catch (SerializationException se) {
-      throw new DataTypeNotSupportedException("The resource identified could not convert into the supported content characteristics (JSON)!", se);
+      throw new DataTypeNotSupportedException(
+          "The resource identified could not convert into the supported content characteristics (JSON)!",
+          se);
     } catch (NullPointerException npe) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not allow null keys!", regionNamePath), npe);
+      throw new GemfireRestException(
+          String.format("Resource (%1$s) configuration does not allow null keys!", regionNamePath),
+          npe);
     } catch (IllegalArgumentException iae) {
-      throw new GemfireRestException(String.format("Resource (%1$s) configuration does not allow requested operation on specified key!", regionNamePath), iae);
+      throw new GemfireRestException(
+          String.format(
+              "Resource (%1$s) configuration does not allow requested operation on specified key!",
+              regionNamePath),
+          iae);
     } catch (LeaseExpiredException lee) {
-      throw new GemfireRestException("Server has encountered error while processing this request!", lee);
+      throw new GemfireRestException(
+          "Server has encountered error while processing this request!", lee);
     } catch (TimeoutException te) {
-      throw new GemfireRestException("Server has encountered timeout error while processing this request!", te);
+      throw new GemfireRestException(
+          "Server has encountered timeout error while processing this request!", te);
     } catch (CacheLoaderException cle) {
-      throw new GemfireRestException("Server has encountered CacheLoader error while processing this request!", cle);
+      throw new GemfireRestException(
+          "Server has encountered CacheLoader error while processing this request!", cle);
     } catch (PartitionedRegionStorageException prse) {
-      throw new GemfireRestException("CacheLoader could not be invoked on partitioned region!", prse);
+      throw new GemfireRestException(
+          "CacheLoader could not be invoked on partitioned region!", prse);
     }
-
   }
 
   protected Set<DistributedMember> getMembers(final String... memberIdNames) {
 
-    ValidationUtils.returnValueThrowOnNull(memberIdNames, new GemfireRestException("No member found to run function"));
-    final Set<DistributedMember> targetedMembers = new HashSet<DistributedMember>(ArrayUtils.length(memberIdNames));
+    ValidationUtils.returnValueThrowOnNull(
+        memberIdNames, new GemfireRestException("No member found to run function"));
+    final Set<DistributedMember> targetedMembers =
+        new HashSet<DistributedMember>(ArrayUtils.length(memberIdNames));
     final List<String> memberIdNameList = Arrays.asList(memberIdNames);
     GemFireCacheImpl c = (GemFireCacheImpl) getCache();
     Set<DistributedMember> distMembers = c.getDistributedSystem().getAllOtherMembers();
@@ -797,7 +968,8 @@ public abstract class AbstractBaseController {
     //Add the local node to list
     distMembers.add(c.getDistributedSystem().getDistributedMember());
     for (DistributedMember member : distMembers) {
-      if (memberIdNameList.contains(member.getId()) || memberIdNameList.contains(member.getName())) {
+      if (memberIdNameList.contains(member.getId())
+          || memberIdNameList.contains(member.getName())) {
         targetedMembers.add(member);
       }
     }

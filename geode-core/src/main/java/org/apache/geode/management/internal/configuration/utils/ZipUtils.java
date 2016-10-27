@@ -32,10 +32,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-/****
- * Utilities class to zip/unzip folder
- *
- */
+/** ** Utilities class to zip/unzip folder */
 public class ZipUtils {
 
   public static void zip(String sourceFolderPath, String targetFilePath) throws Exception {

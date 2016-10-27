@@ -23,8 +23,7 @@ import org.xml.sax.EntityResolver;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * Unit test for {@link PivotalEntityResolver} and
- * {@link DefaultEntityResolver2}.
+ * Unit test for {@link PivotalEntityResolver} and {@link DefaultEntityResolver2}.
  *
  * @since GemFire 8.1
  */
@@ -49,5 +48,4 @@ public class PivotalEntityResolverJUnitTest extends AbstractEntityResolverTest {
   protected String getSystemId() {
     return systemId;
   }
-
 }

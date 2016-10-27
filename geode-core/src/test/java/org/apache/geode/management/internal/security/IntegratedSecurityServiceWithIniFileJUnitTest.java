@@ -33,10 +33,8 @@ import org.apache.geode.security.GemFireSecurityException;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-/**
- * Integration tests for {@link IntegratedSecurityService} using shiro.ini
- */
-@Category({ IntegrationTest.class, SecurityTest.class })
+/** Integration tests for {@link IntegratedSecurityService} using shiro.ini */
+@Category({IntegrationTest.class, SecurityTest.class})
 public class IntegratedSecurityServiceWithIniFileJUnitTest {
 
   protected static Properties props = new Properties();
@@ -142,6 +140,8 @@ public class IntegratedSecurityServiceWithIniFileJUnitTest {
   }
 
   private void assertNotAuthorized(ResourcePermission context) {
-    assertThatThrownBy(() -> this.securityService.authorize(context)).isInstanceOf(GemFireSecurityException.class).hasMessageContaining(context.toString());
+    assertThatThrownBy(() -> this.securityService.authorize(context))
+        .isInstanceOf(GemFireSecurityException.class)
+        .hasMessageContaining(context.toString());
   }
 }

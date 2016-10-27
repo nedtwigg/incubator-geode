@@ -38,33 +38,35 @@ public class LuceneQueriesClientDUnitTest extends LuceneQueriesBase {
   @Override
   public void postSetUp() throws Exception {
     super.postSetUp();
-    SerializableCallableIF<Integer> launchServer = () -> {
-      final Cache cache = getCache();
-      final CacheServer server = cache.addCacheServer();
-      server.setPort(0);
-      server.start();
-      return server.getPort();
-    };
+    SerializableCallableIF<Integer> launchServer =
+        () -> {
+          final Cache cache = getCache();
+          final CacheServer server = cache.addCacheServer();
+          server.setPort(0);
+          server.start();
+          return server.getPort();
+        };
     final int port1 = dataStore1.invoke(launchServer);
     final int port2 = dataStore2.invoke(launchServer);
 
-    accessor.invoke(() -> {
-      ClientCacheFactory clientCacheFactory = new ClientCacheFactory();
-      clientCacheFactory.addPoolServer("localhost", port1);
-      clientCacheFactory.addPoolServer("localhost", port2);
-      ClientCache clientCache = getClientCache(clientCacheFactory);
-      clientCache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create(REGION_NAME);
-    });
+    accessor.invoke(
+        () -> {
+          ClientCacheFactory clientCacheFactory = new ClientCacheFactory();
+          clientCacheFactory.addPoolServer("localhost", port1);
+          clientCacheFactory.addPoolServer("localhost", port2);
+          ClientCache clientCache = getClientCache(clientCacheFactory);
+          clientCache
+              .createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY)
+              .create(REGION_NAME);
+        });
   }
 
   @Override
-  protected void initAccessor(SerializableRunnableIF createIndex) throws Exception {
-  }
+  protected void initAccessor(SerializableRunnableIF createIndex) throws Exception {}
 
   @Override
   protected void initDataStore(SerializableRunnableIF createIndex) throws Exception {
     createIndex.run();
     getCache().createRegionFactory(RegionShortcut.PARTITION).create(REGION_NAME);
   }
-
 }

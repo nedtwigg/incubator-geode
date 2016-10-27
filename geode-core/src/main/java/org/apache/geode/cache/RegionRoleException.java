@@ -17,9 +17,8 @@
 package org.apache.geode.cache;
 
 /**
- * Indicates that a {@link Region} reliability failure has occurred.
- * Reliability for a <code>Region</code> is defined by its 
- * {@link MembershipAttributes}.
+ * Indicates that a {@link Region} reliability failure has occurred. Reliability for a <code>Region
+ * </code> is defined by its {@link MembershipAttributes}.
  *
  * @deprecated this feature is scheduled to be removed
  */
@@ -28,8 +27,9 @@ public abstract class RegionRoleException extends RoleException {
   /** The full path of the region affected by the reliability failure */
   private String regionFullPath;
 
-  /** 
+  /**
    * Constructs a <code>RegionRoleException</code> with a message.
+   *
    * @param s the String message
    * @param regionFullPath full path of region for which access was attempted
    */
@@ -38,9 +38,9 @@ public abstract class RegionRoleException extends RoleException {
     this.regionFullPath = regionFullPath;
   }
 
-  /** 
-   * Constructs a <code>RegionRoleException</code> with a message and
-   * a cause.
+  /**
+   * Constructs a <code>RegionRoleException</code> with a message and a cause.
+   *
    * @param s the String message
    * @param regionFullPath full path of region for which access was attempted
    * @param ex the Throwable cause
@@ -50,12 +50,12 @@ public abstract class RegionRoleException extends RoleException {
     this.regionFullPath = regionFullPath;
   }
 
-  /** 
+  /**
    * Returns the full path of the region for which access was attempted.
+   *
    * @return the full path of the region for which access was attempted
    */
   public String getRegionFullPath() {
     return this.regionFullPath;
   }
-
 }

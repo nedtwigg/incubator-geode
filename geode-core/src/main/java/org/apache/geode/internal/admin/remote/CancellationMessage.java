@@ -26,10 +26,7 @@ import java.io.*;
 import org.apache.geode.distributed.internal.membership.*;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * A message that is sent to a particular distribution manager to cancel an
- * admin request
- */
+/** A message that is sent to a particular distribution manager to cancel an admin request */
 public final class CancellationMessage extends PooledDistributionMessage {
   //instance variables
   private int msgToCancel;
@@ -64,6 +61,7 @@ public final class CancellationMessage extends PooledDistributionMessage {
 
   @Override
   public String toString() {
-    return LocalizedStrings.CancellationMessage_CANCELLATIONMESSAGE_FROM_0_FOR_MESSAGE_ID_1.toLocalizedString(new Object[] { this.getSender(), Integer.valueOf(msgToCancel) });
+    return LocalizedStrings.CancellationMessage_CANCELLATIONMESSAGE_FROM_0_FOR_MESSAGE_ID_1
+        .toLocalizedString(new Object[] {this.getSender(), Integer.valueOf(msgToCancel)});
   }
 }

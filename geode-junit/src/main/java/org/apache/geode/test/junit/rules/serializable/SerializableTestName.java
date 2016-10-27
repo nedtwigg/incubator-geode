@@ -27,8 +27,8 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
- * Serializable subclass of {@link org.junit.rules.TestName TestName}. All
- * instance variables of {@code TestName} are serialized by reflection.
+ * Serializable subclass of {@link org.junit.rules.TestName TestName}. All instance variables of
+ * {@code TestName} are serialized by reflection.
  */
 public class SerializableTestName extends TestName implements SerializableTestRule {
 
@@ -45,9 +45,7 @@ public class SerializableTestName extends TestName implements SerializableTestRu
     return new SerializationProxy(this);
   }
 
-  /**
-   * Serialization proxy for {@code SerializableTestName}.
-   */
+  /** Serialization proxy for {@code SerializableTestName}. */
   private static class SerializationProxy implements Serializable {
 
     private final String name;

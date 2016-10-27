@@ -20,9 +20,8 @@ package org.apache.geode.cache.query;
 import org.apache.geode.cache.CacheRuntimeException;
 
 /**
- * Thrown when the query execution takes more than the specified max time.
- * The Max query execution time is set using the system  variable 
- * gemfire.Cache.MAX_QUERY_EXECUTION_TIME. 
+ * Thrown when the query execution takes more than the specified max time. The Max query execution
+ * time is set using the system variable gemfire.Cache.MAX_QUERY_EXECUTION_TIME.
  *
  * @since GemFire 6.0
  */
@@ -31,11 +30,12 @@ public class QueryExecutionTimeoutException extends CacheRuntimeException {
   /**
    * Creates a new instance of <code>QueryExecutionTimeoutException</code> without detail message.
    */
-  public QueryExecutionTimeoutException() {
-  }
+  public QueryExecutionTimeoutException() {}
 
   /**
-   * Constructs an instance of <code>QueryExecutionTimeoutException</code> with the specified detail message.
+   * Constructs an instance of <code>QueryExecutionTimeoutException</code> with the specified detail
+   * message.
+   *
    * @param msg the detail message.
    */
   public QueryExecutionTimeoutException(String msg) {
@@ -43,8 +43,9 @@ public class QueryExecutionTimeoutException extends CacheRuntimeException {
   }
 
   /**
-   * Constructs an instance of <code>QueryExecutionTimeoutException</code> with the specified detail message
-   * and cause.
+   * Constructs an instance of <code>QueryExecutionTimeoutException</code> with the specified detail
+   * message and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */
@@ -54,6 +55,7 @@ public class QueryExecutionTimeoutException extends CacheRuntimeException {
 
   /**
    * Constructs an instance of <code>QueryExecutionTimeoutException</code> with the specified cause.
+   *
    * @param cause the causal Throwable
    */
   public QueryExecutionTimeoutException(Throwable cause) {

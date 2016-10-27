@@ -42,10 +42,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * Test to make sure that we can handle
- * a crash of the member directing bucket creation.
- */
+/** Test to make sure that we can handle a crash of the member directing bucket creation. */
 @Category(DistributedTest.class)
 public class Bug41733DUnitTest extends JUnit4CacheTestCase {
 
@@ -61,9 +58,9 @@ public class Bug41733DUnitTest extends JUnit4CacheTestCase {
     return result;
   }
 
-  /** 
-   * Test the we can handle a member departing after creating
-   * a bucket on the remote node but before we choose a primary
+  /**
+   * Test the we can handle a member departing after creating a bucket on the remote node but before
+   * we choose a primary
    */
   @Test
   public void testCrashAfterBucketCreation() throws Throwable {
@@ -71,21 +68,23 @@ public class Bug41733DUnitTest extends JUnit4CacheTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-    vm0.invoke(new SerializableRunnable("Install observer") {
+    vm0.invoke(
+        new SerializableRunnable("Install observer") {
 
-      public void run() {
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+          public void run() {
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
 
-          @Override
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof ManageBucketReplyMessage) {
-              disconnectFromDS();
-            }
+                  @Override
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof ManageBucketReplyMessage) {
+                      disconnectFromDS();
+                    }
+                  }
+                });
           }
         });
-
-      }
-    });
     createPR(vm0, 0);
 
     //Create a couple of buckets in VM0. This will make sure
@@ -110,9 +109,9 @@ public class Bug41733DUnitTest extends JUnit4CacheTestCase {
     putData(vm1, 3, 4, "a");
   }
 
-  /** 
-   * Test the we can handle a member departing while we are 
-   *  in the process of creating the bucket on the remote node.
+  /**
+   * Test the we can handle a member departing while we are in the process of creating the bucket on
+   * the remote node.
    */
   @Test
   public void testCrashDuringBucketCreation() throws Throwable {
@@ -120,22 +119,24 @@ public class Bug41733DUnitTest extends JUnit4CacheTestCase {
     final VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-    vm1.invoke(new SerializableRunnable("Install observer") {
+    vm1.invoke(
+        new SerializableRunnable("Install observer") {
 
-      public void run() {
+          public void run() {
 
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
 
-          @Override
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof ManageBucketMessage) {
-              vm0.invoke(() -> disconnectFromDS());
-            }
+                  @Override
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof ManageBucketMessage) {
+                      vm0.invoke(() -> disconnectFromDS());
+                    }
+                  }
+                });
           }
         });
-
-      }
-    });
     createPR(vm0, 0);
 
     //Create a couple of buckets in VM0. This will make sure
@@ -161,33 +162,34 @@ public class Bug41733DUnitTest extends JUnit4CacheTestCase {
   }
 
   private void createPR(VM vm0, final int redundancy) {
-    vm0.invoke(new SerializableRunnable("Create PR") {
+    vm0.invoke(
+        new SerializableRunnable("Create PR") {
 
-      public void run() {
-        Cache cache = getCache();
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(redundancy);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PARTITION);
-        cache.createRegion("region", af.create());
-      }
-
-    });
+          public void run() {
+            Cache cache = getCache();
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(redundancy);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PARTITION);
+            cache.createRegion("region", af.create());
+          }
+        });
   }
 
   protected void putData(VM vm, final int startKey, final int endKey, final String value) {
-    SerializableRunnable createData = new SerializableRunnable() {
+    SerializableRunnable createData =
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion("region");
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion("region");
 
-        for (int i = startKey; i < endKey; i++) {
-          region.put(i, value);
-        }
-      }
-    };
+            for (int i = startKey; i < endKey; i++) {
+              region.put(i, value);
+            }
+          }
+        };
     vm.invoke(createData);
   }
 
@@ -196,16 +198,16 @@ public class Bug41733DUnitTest extends JUnit4CacheTestCase {
   }
 
   protected Set<Integer> getBucketList(VM vm0, final String regionName) {
-    SerializableCallable getBuckets = new SerializableCallable("get buckets") {
+    SerializableCallable getBuckets =
+        new SerializableCallable("get buckets") {
 
-      public Object call() throws Exception {
-        Cache cache = getCache();
-        PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
-        return new TreeSet<Integer>(region.getDataStore().getAllLocalBucketIds());
-      }
-    };
+          public Object call() throws Exception {
+            Cache cache = getCache();
+            PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
+            return new TreeSet<Integer>(region.getDataStore().getAllLocalBucketIds());
+          }
+        };
 
     return (Set<Integer>) vm0.invoke(getBuckets);
   }
-
 }

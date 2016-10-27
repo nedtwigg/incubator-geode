@@ -29,12 +29,24 @@ public class CompositeTestMBean implements CompositeTestMXBean {
 
   @Override
   public CompositeStats getCompositeStats() {
-    return new CompositeStats(connectionStatsType, connectionsOpened, connectionsClosed, connectionsAttempted, connectionsFailed, connectionLifeTime);
+    return new CompositeStats(
+        connectionStatsType,
+        connectionsOpened,
+        connectionsClosed,
+        connectionsAttempted,
+        connectionsFailed,
+        connectionLifeTime);
   }
 
   @Override
   public CompositeStats listCompositeStats() {
-    return new CompositeStats(connectionStatsType, connectionsOpened, connectionsClosed, connectionsAttempted, connectionsFailed, connectionLifeTime);
+    return new CompositeStats(
+        connectionStatsType,
+        connectionsOpened,
+        connectionsClosed,
+        connectionsAttempted,
+        connectionsFailed,
+        connectionLifeTime);
   }
 
   @Override
@@ -49,7 +61,14 @@ public class CompositeTestMBean implements CompositeTestMXBean {
 
     CompositeStats[] arr = new CompositeStats[2];
     for (int i = 0; i < arr.length; i++) {
-      arr[i] = new CompositeStats("AX" + i, connectionsOpened, connectionsClosed, connectionsAttempted, connectionsFailed, connectionLifeTime);
+      arr[i] =
+          new CompositeStats(
+              "AX" + i,
+              connectionsOpened,
+              connectionsClosed,
+              connectionsAttempted,
+              connectionsFailed,
+              connectionLifeTime);
     }
     return arr;
   }

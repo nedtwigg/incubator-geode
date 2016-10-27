@@ -33,14 +33,13 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 
 /**
- * Same tests as that of {@link TXExpiryJUnitTest} after setting
- * "distributed-transactions" property to true
+ * Same tests as that of {@link TXExpiryJUnitTest} after setting "distributed-transactions" property
+ * to true
  */
-@Category({ IntegrationTest.class, DistributedTransactionsTest.class })
+@Category({IntegrationTest.class, DistributedTransactionsTest.class})
 public class DistTXExpiryJUnitTest extends TXExpiryJUnitTest {
 
-  public DistTXExpiryJUnitTest() {
-  }
+  public DistTXExpiryJUnitTest() {}
 
   @Override
   protected void createCache() throws CacheException {
@@ -53,5 +52,4 @@ public class DistTXExpiryJUnitTest extends TXExpiryJUnitTest {
     this.txMgr = this.cache.getCacheTransactionManager();
     assert (this.txMgr.isDistributed());
   }
-
 }

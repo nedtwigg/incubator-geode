@@ -37,18 +37,13 @@ public class SerialAsyncEventQueueCreation extends AbstractGatewaySender impleme
     super(cache, attrs);
   }
 
-  public void distribute(EnumListenerEvent operation, EntryEventImpl event, List<Integer> remoteDSIds) {
-
-  }
+  public void distribute(
+      EnumListenerEvent operation, EntryEventImpl event, List<Integer> remoteDSIds) {}
 
   @Override
-  public void start() {
+  public void start() {}
 
-  }
-
-  public void stop() {
-
-  }
+  public void stop() {}
 
   public void rebalance() {
     throw new UnsupportedOperationException();
@@ -109,5 +104,4 @@ public class SerialAsyncEventQueueCreation extends AbstractGatewaySender impleme
     // TODO Auto-generated method stub
 
   }
-
 }

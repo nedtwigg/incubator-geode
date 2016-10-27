@@ -37,9 +37,7 @@ import org.apache.geode.internal.admin.SSLConfig;
 import org.apache.geode.internal.lang.StringUtils;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * @since GemFire 8.1
- */
+/** @since GemFire 8.1 */
 @SuppressWarnings("unused")
 public class JettyHelper {
 
@@ -56,7 +54,8 @@ public class JettyHelper {
 
   private static int port = 0;
 
-  public static Server initJetty(final String bindAddress, final int port, SSLConfig sslConfig) throws Exception {
+  public static Server initJetty(final String bindAddress, final int port, SSLConfig sslConfig)
+      throws Exception {
 
     final Server jettyServer = new Server();
 
@@ -78,7 +77,8 @@ public class JettyHelper {
 
       sslContextFactory.setNeedClientAuth(sslConfig.isRequireAuth());
 
-      if (!StringUtils.isBlank(sslConfig.getCiphers()) && !"any".equalsIgnoreCase(sslConfig.getCiphers())) {
+      if (!StringUtils.isBlank(sslConfig.getCiphers())
+          && !"any".equalsIgnoreCase(sslConfig.getCiphers())) {
         //If use has mentioned "any" let the SSL layer decide on the ciphers
         sslContextFactory.setIncludeCipherSuites(SSLUtil.readArray(sslConfig.getCiphers()));
       }
@@ -91,7 +91,8 @@ public class JettyHelper {
       }
 
       if (StringUtils.isBlank(sslConfig.getKeystore())) {
-        throw new GemFireConfigException("Key store can't be empty if SSL is enabled for HttpService");
+        throw new GemFireConfigException(
+            "Key store can't be empty if SSL is enabled for HttpService");
       }
 
       sslContextFactory.setKeyStorePath(sslConfig.getKeystore());
@@ -115,7 +116,11 @@ public class JettyHelper {
       httpConfig.addCustomizer(new SecureRequestCustomizer());
 
       //Somehow With HTTP_2.0 Jetty throwing NPE. Need to investigate further whether all GemFire web application(Pulse, REST) can do with HTTP_1.1
-      connector = new ServerConnector(jettyServer, new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()), new HttpConnectionFactory(httpConfig));
+      connector =
+          new ServerConnector(
+              jettyServer,
+              new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
+              new HttpConnectionFactory(httpConfig));
 
       connector.setPort(port);
     } else {
@@ -124,7 +129,7 @@ public class JettyHelper {
       connector.setPort(port);
     }
 
-    jettyServer.setConnectors(new Connector[] { connector });
+    jettyServer.setConnectors(new Connector[] {connector});
 
     if (!StringUtils.isBlank(bindAddress)) {
       connector.setHost(bindAddress);
@@ -144,7 +149,8 @@ public class JettyHelper {
     return jetty;
   }
 
-  public static Server addWebApplication(final Server jetty, final String webAppContext, final String warFilePath) {
+  public static Server addWebApplication(
+      final Server jetty, final String webAppContext, final String warFilePath) {
     WebAppContext webapp = new WebAppContext();
     webapp.setContextPath(webAppContext);
     webapp.setWar(warFilePath);
@@ -162,7 +168,18 @@ public class JettyHelper {
 
   private static String getWebAppBaseDirectory(final String context) {
     String underscoredContext = context.replace("/", "_");
-    final String workingDirectory = USER_DIR.concat(FILE_PATH_SEPARATOR).concat("GemFire_" + USER_NAME).concat(FILE_PATH_SEPARATOR).concat("services").concat(FILE_PATH_SEPARATOR).concat("http").concat(FILE_PATH_SEPARATOR).concat((StringUtils.isBlank(bindAddress)) ? "0.0.0.0" : bindAddress).concat("_").concat(String.valueOf(port).concat(underscoredContext));
+    final String workingDirectory =
+        USER_DIR
+            .concat(FILE_PATH_SEPARATOR)
+            .concat("GemFire_" + USER_NAME)
+            .concat(FILE_PATH_SEPARATOR)
+            .concat("services")
+            .concat(FILE_PATH_SEPARATOR)
+            .concat("http")
+            .concat(FILE_PATH_SEPARATOR)
+            .concat((StringUtils.isBlank(bindAddress)) ? "0.0.0.0" : bindAddress)
+            .concat("_")
+            .concat(String.valueOf(port).concat(underscoredContext));
 
     return workingDirectory;
   }
@@ -170,7 +187,10 @@ public class JettyHelper {
   private static final CountDownLatch latch = new CountDownLatch(1);
 
   private static String normalizeWebAppArchivePath(final String webAppArchivePath) {
-    return (webAppArchivePath.startsWith(File.separator) ? new File(webAppArchivePath) : new File(".", webAppArchivePath)).getAbsolutePath();
+    return (webAppArchivePath.startsWith(File.separator)
+            ? new File(webAppArchivePath)
+            : new File(".", webAppArchivePath))
+        .getAbsolutePath();
   }
 
   private static String normalizeWebAppContext(final String webAppContext) {
@@ -187,14 +207,17 @@ public class JettyHelper {
         final String webAppContext = args[index];
         final String webAppArchivePath = args[index + 1];
 
-        JettyHelper.addWebApplication(jetty, normalizeWebAppContext(webAppContext), normalizeWebAppArchivePath(webAppArchivePath));
+        JettyHelper.addWebApplication(
+            jetty,
+            normalizeWebAppContext(webAppContext),
+            normalizeWebAppArchivePath(webAppArchivePath));
       }
 
       JettyHelper.startJetty(jetty);
       latch.await();
     } else {
-      System.out.printf("usage:%n>java org.apache.geode.management.internal.TomcatHelper <web-app-context> <war-file-path> [<web-app-context> <war-file-path>]*");
+      System.out.printf(
+          "usage:%n>java org.apache.geode.management.internal.TomcatHelper <web-app-context> <war-file-path> [<web-app-context> <war-file-path>]*");
     }
   }
-
 }

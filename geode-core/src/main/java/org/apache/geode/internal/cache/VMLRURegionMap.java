@@ -21,12 +21,10 @@ import org.apache.geode.internal.cache.lru.*;
 //import org.apache.geode.internal.util.Sizeof;
 
 /**
- * Internal implementation of {@link RegionMap} for regions stored
- * in normal VM memory that maintain an LRU.
+ * Internal implementation of {@link RegionMap} for regions stored in normal VM memory that maintain
+ * an LRU.
  *
  * @since GemFire 3.5.1
- *
- *
  */
 final class VMLRURegionMap extends AbstractLRURegionMap {
 
@@ -36,12 +34,9 @@ final class VMLRURegionMap extends AbstractLRURegionMap {
   }
 
   // LRU fields and accessors
-  /**
-   *  A tool from the eviction controller for sizing entries and
-   *  expressing limits.
-   */
+  /** A tool from the eviction controller for sizing entries and expressing limits. */
   private EnableLRU ccHelper;
-  /**  The list of nodes in LRU order */
+  /** The list of nodes in LRU order */
   private NewLRUClockHand lruList;
 
   @Override

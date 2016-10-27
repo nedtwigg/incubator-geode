@@ -31,8 +31,8 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular app vm on a distribution manager to
- * make an administration request about a particular region.
+ * A message that is sent to a particular app vm on a distribution manager to make an administration
+ * request about a particular region.
  */
 public abstract class RegionAdminRequest extends AdminRequest {
   // instance variables
@@ -46,14 +46,14 @@ public abstract class RegionAdminRequest extends AdminRequest {
     return this.regionName;
   }
 
-  /**
-   * @throws org.apache.geode.cache.CacheRuntimeException if no cache created
-   */
+  /** @throws org.apache.geode.cache.CacheRuntimeException if no cache created */
   protected Region getRegion(DistributedSystem sys) {
     Cache cache = CacheFactory.getInstance(sys);
     Region r = cache.getRegion(regionName);
     if (r == null) {
-      throw new RegionNotFoundException(LocalizedStrings.RegionAdminRequest_REGION_0_NOT_FOUND_IN_REMOTE_CACHE_1.toLocalizedString(new Object[] { regionName, cache.getName() }));
+      throw new RegionNotFoundException(
+          LocalizedStrings.RegionAdminRequest_REGION_0_NOT_FOUND_IN_REMOTE_CACHE_1
+              .toLocalizedString(new Object[] {regionName, cache.getName()}));
     }
     return r;
   }

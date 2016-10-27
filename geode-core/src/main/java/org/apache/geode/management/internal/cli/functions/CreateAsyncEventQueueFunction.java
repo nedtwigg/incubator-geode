@@ -17,9 +17,9 @@
 package org.apache.geode.management.internal.cli.functions;
 
 /**
- * Function used by the 'create async-event-queue' gfsh command to create an
- * asynchronous event queue on a member.
- * 
+ * Function used by the 'create async-event-queue' gfsh command to create an asynchronous event
+ * queue on a member.
+ *
  * @since GemFire 8.0
  */
 import java.util.HashMap;
@@ -74,20 +74,45 @@ public class CreateAsyncEventQueueFunction extends FunctionAdapter implements In
         memberId = member.getName();
       }
 
-      AsyncEventQueueFactory asyncEventQueueFactory = cache.createAsyncEventQueueFactory().setParallel(aeqArgs.isParallel()).setBatchConflationEnabled(aeqArgs.isEnableBatchConflation()).setBatchSize(aeqArgs.getBatchSize()).setBatchTimeInterval(aeqArgs.getBatchTimeInterval()).setPersistent(aeqArgs.isPersistent()).setDiskStoreName(aeqArgs.getDiskStoreName()).setDiskSynchronous(aeqArgs.isDiskSynchronous()).setForwardExpirationDestroy(aeqArgs.isForwardExpirationDestroy()).setMaximumQueueMemory(aeqArgs.getMaxQueueMemory()).setDispatcherThreads(aeqArgs.getDispatcherThreads()).setOrderPolicy(OrderPolicy.valueOf(aeqArgs.getOrderPolicy()));
+      AsyncEventQueueFactory asyncEventQueueFactory =
+          cache
+              .createAsyncEventQueueFactory()
+              .setParallel(aeqArgs.isParallel())
+              .setBatchConflationEnabled(aeqArgs.isEnableBatchConflation())
+              .setBatchSize(aeqArgs.getBatchSize())
+              .setBatchTimeInterval(aeqArgs.getBatchTimeInterval())
+              .setPersistent(aeqArgs.isPersistent())
+              .setDiskStoreName(aeqArgs.getDiskStoreName())
+              .setDiskSynchronous(aeqArgs.isDiskSynchronous())
+              .setForwardExpirationDestroy(aeqArgs.isForwardExpirationDestroy())
+              .setMaximumQueueMemory(aeqArgs.getMaxQueueMemory())
+              .setDispatcherThreads(aeqArgs.getDispatcherThreads())
+              .setOrderPolicy(OrderPolicy.valueOf(aeqArgs.getOrderPolicy()));
 
       String[] gatewayEventFilters = aeqArgs.getGatewayEventFilters();
       if (gatewayEventFilters != null) {
         for (String gatewayEventFilter : gatewayEventFilters) {
-          Class<?> gatewayEventFilterKlass = forName(gatewayEventFilter, CliStrings.CREATE_ASYNC_EVENT_QUEUE__GATEWAYEVENTFILTER);
-          asyncEventQueueFactory.addGatewayEventFilter((GatewayEventFilter) newInstance(gatewayEventFilterKlass, CliStrings.CREATE_ASYNC_EVENT_QUEUE__GATEWAYEVENTFILTER));
+          Class<?> gatewayEventFilterKlass =
+              forName(gatewayEventFilter, CliStrings.CREATE_ASYNC_EVENT_QUEUE__GATEWAYEVENTFILTER);
+          asyncEventQueueFactory.addGatewayEventFilter(
+              (GatewayEventFilter)
+                  newInstance(
+                      gatewayEventFilterKlass,
+                      CliStrings.CREATE_ASYNC_EVENT_QUEUE__GATEWAYEVENTFILTER));
         }
       }
 
       String gatewaySubstitutionFilter = aeqArgs.getGatewaySubstitutionFilter();
       if (gatewaySubstitutionFilter != null) {
-        Class<?> gatewayEventSubstitutionFilterKlass = forName(gatewaySubstitutionFilter, CliStrings.CREATE_ASYNC_EVENT_QUEUE__SUBSTITUTION_FILTER);
-        asyncEventQueueFactory.setGatewayEventSubstitutionListener((GatewayEventSubstitutionFilter<?, ?>) newInstance(gatewayEventSubstitutionFilterKlass, CliStrings.CREATE_ASYNC_EVENT_QUEUE__SUBSTITUTION_FILTER));
+        Class<?> gatewayEventSubstitutionFilterKlass =
+            forName(
+                gatewaySubstitutionFilter,
+                CliStrings.CREATE_ASYNC_EVENT_QUEUE__SUBSTITUTION_FILTER);
+        asyncEventQueueFactory.setGatewayEventSubstitutionListener(
+            (GatewayEventSubstitutionFilter<?, ?>)
+                newInstance(
+                    gatewayEventSubstitutionFilterKlass,
+                    CliStrings.CREATE_ASYNC_EVENT_QUEUE__SUBSTITUTION_FILTER));
       }
 
       String listenerClassName = aeqArgs.getListenerClassName();
@@ -98,7 +123,8 @@ public class CreateAsyncEventQueueFunction extends FunctionAdapter implements In
       Properties listenerProperties = aeqArgs.getListenerProperties();
       if (listenerProperties != null && !listenerProperties.isEmpty()) {
         if (!(listenerInstance instanceof Declarable)) {
-          throw new IllegalArgumentException("Listener properties were provided, but the listener specified does not implement Declarable.");
+          throw new IllegalArgumentException(
+              "Listener properties were provided, but the listener specified does not implement Declarable.");
         }
 
         ((Declarable) listenerInstance).init(listenerProperties);
@@ -108,9 +134,11 @@ public class CreateAsyncEventQueueFunction extends FunctionAdapter implements In
         cache.addDeclarableProperties(declarablesMap);
       }
 
-      asyncEventQueueFactory.create(aeqArgs.getAsyncEventQueueId(), (AsyncEventListener) listenerInstance);
+      asyncEventQueueFactory.create(
+          aeqArgs.getAsyncEventQueueId(), (AsyncEventListener) listenerInstance);
 
-      XmlEntity xmlEntity = new XmlEntity(CacheXml.ASYNC_EVENT_QUEUE, "id", aeqArgs.getAsyncEventQueueId());
+      XmlEntity xmlEntity =
+          new XmlEntity(CacheXml.ASYNC_EVENT_QUEUE, "id", aeqArgs.getAsyncEventQueueId());
       context.getResultSender().lastResult(new CliFunctionResult(memberId, xmlEntity, "Success"));
 
     } catch (CacheClosedException cce) {
@@ -135,9 +163,18 @@ public class CreateAsyncEventQueueFunction extends FunctionAdapter implements In
     try {
       return ClassPathLoader.getLatest().forName(className);
     } catch (ClassNotFoundException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__COULDNOT_FIND_CLASS_0_SPECIFIED_FOR_1, new Object[] { className, neededFor }), e);
+      throw new RuntimeException(
+          CliStrings.format(
+              CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__COULDNOT_FIND_CLASS_0_SPECIFIED_FOR_1,
+              new Object[] {className, neededFor}),
+          e);
     } catch (ClassCastException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__CLASS_0_SPECIFIED_FOR_1_IS_NOT_OF_EXPECTED_TYPE, new Object[] { className, neededFor }), e);
+      throw new RuntimeException(
+          CliStrings.format(
+              CliStrings
+                  .CREATE_ASYNC_EVENT_QUEUE__MSG__CLASS_0_SPECIFIED_FOR_1_IS_NOT_OF_EXPECTED_TYPE,
+              new Object[] {className, neededFor}),
+          e);
     }
   }
 
@@ -145,9 +182,18 @@ public class CreateAsyncEventQueueFunction extends FunctionAdapter implements In
     try {
       return klass.newInstance();
     } catch (InstantiationException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__COULDNOT_INSTANTIATE_CLASS_0_SPECIFIED_FOR_1, new Object[] { klass, neededFor }), e);
+      throw new RuntimeException(
+          CliStrings.format(
+              CliStrings
+                  .CREATE_ASYNC_EVENT_QUEUE__MSG__COULDNOT_INSTANTIATE_CLASS_0_SPECIFIED_FOR_1,
+              new Object[] {klass, neededFor}),
+          e);
     } catch (IllegalAccessException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__COULDNOT_ACCESS_CLASS_0_SPECIFIED_FOR_1, new Object[] { klass, neededFor }), e);
+      throw new RuntimeException(
+          CliStrings.format(
+              CliStrings.CREATE_ASYNC_EVENT_QUEUE__MSG__COULDNOT_ACCESS_CLASS_0_SPECIFIED_FOR_1,
+              new Object[] {klass, neededFor}),
+          e);
     }
   }
 

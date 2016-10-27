@@ -21,17 +21,16 @@ import java.io.PrintWriter;
 import java.text.*;
 
 /**
-  * Provides single point for all log messages to written to.
-  * Currently this class only supports static methods and always
-  * writes to stdout.
-  *
-  */
+ * Provides single point for all log messages to written to. Currently this class only supports
+ * static methods and always writes to stdout.
+ */
 public class Logger {
   private static final PrintWriter logWriter = new PrintWriter(System.out, true);
 
   // Set LOGWIDTH to maxint as a cheap way of turning off formatting
   private static final int LOGWIDTH = Integer.MAX_VALUE;
   private static final SimpleDateFormat timeFormatter;
+
   static {
     final String defaultFormatPattern = "MM/dd/yy HH:mm:ss.SSS z";
     final String resourceName = "org.apache.persistence.admin.LoggerResources";
@@ -43,10 +42,20 @@ public class Logger {
       try {
         formatPattern = messageRB.getString(keyName);
       } catch (MissingResourceException e) {
-        System.out.println("NOTICE: Logger using default timestamp format." + " Could not get resource key \"" + keyName + "\" because: " + e);
+        System.out.println(
+            "NOTICE: Logger using default timestamp format."
+                + " Could not get resource key \""
+                + keyName
+                + "\" because: "
+                + e);
       }
     } catch (MissingResourceException e) {
-      System.out.println("NOTICE: Logger using default timestamp format." + " Could not load resource bundle \"" + resourceName + "\" because: " + e);
+      System.out.println(
+          "NOTICE: Logger using default timestamp format."
+              + " Could not load resource bundle \""
+              + resourceName
+              + "\" because: "
+              + e);
     }
     if (formatPattern.length() == 0) {
       sdf = null;
@@ -54,7 +63,11 @@ public class Logger {
       try {
         sdf = new SimpleDateFormat(formatPattern);
       } catch (RuntimeException e) {
-        System.out.println("NOTICE: ignoring timestamp pattern \"" + formatPattern + "\" because: " + e.toString());
+        System.out.println(
+            "NOTICE: ignoring timestamp pattern \""
+                + formatPattern
+                + "\" because: "
+                + e.toString());
         System.out.println("  Using default pattern: \"" + defaultFormatPattern + "\".");
         formatPattern = defaultFormatPattern;
         sdf = new SimpleDateFormat(formatPattern);
@@ -63,7 +76,8 @@ public class Logger {
     timeFormatter = sdf;
   }
 
-  static private void formatText(PrintWriter writer, String target, int maxLength, int initialLength) {
+  private static void formatText(
+      PrintWriter writer, String target, int maxLength, int initialLength) {
     BreakIterator boundary = BreakIterator.getLineInstance();
     boundary.setText(target);
     int start = boundary.first();
@@ -117,18 +131,20 @@ public class Logger {
 
   /**
    * Gets a String representation of the current time.
+   *
    * @return a String representation of the current time.
    */
-  static public String getTimeStamp() {
+  public static String getTimeStamp() {
     return formatDate(new Date());
   }
 
   /**
    * Convert a Date to a timestamp String.
+   *
    * @param d a Date to format as a timestamp String.
    * @return a String representation of the current time.
    */
-  static public String formatDate(Date d) {
+  public static String formatDate(Date d) {
     if (timeFormatter == null) {
       try {
         // very simple format that shows millisecond resolution
@@ -157,55 +173,62 @@ public class Logger {
   }
 
   /**
-    * Logs a message to the static log destination.
-    * @param msg the actual message to log
-    */
-  static public void put(String msg) {
+   * Logs a message to the static log destination.
+   *
+   * @param msg the actual message to log
+   */
+  public static void put(String msg) {
     put(msg, (Throwable) null);
   }
 
   /**
-    * Logs a message to the specified log destination.
-    * @param log the <code>PrintWriter</code> that the message will be written to.
-    * @param msg the actual message to log
-    */
-  static public void put(PrintWriter log, String msg) {
+   * Logs a message to the specified log destination.
+   *
+   * @param log the <code>PrintWriter</code> that the message will be written to.
+   * @param msg the actual message to log
+   */
+  public static void put(PrintWriter log, String msg) {
     put(log, msg, (Throwable) null);
   }
 
   /**
-    * Logs an exception to the static log destination.
-    * @param exception the actual Exception to log
-    */
-  static public void put(Throwable exception) {
+   * Logs an exception to the static log destination.
+   *
+   * @param exception the actual Exception to log
+   */
+  public static void put(Throwable exception) {
     put((String) null, exception);
   }
 
   /**
-    * Logs an exception to the specified log destination.
-    * @param log the <code>PrintWriter</code> that the message will be written to.
-    * @param exception the actual Exception to log
-    */
-  static public void put(PrintWriter log, Throwable exception) {
+   * Logs an exception to the specified log destination.
+   *
+   * @param log the <code>PrintWriter</code> that the message will be written to.
+   * @param exception the actual Exception to log
+   */
+  public static void put(PrintWriter log, Throwable exception) {
     put(log, (String) null, exception);
   }
 
   /**
-    * Logs a message and an exception to the static log destination.
-    * @param msg the actual message to log
-    * @param exception the actual Exception to log
-    */
-  static public void put(String msg, Throwable exception) {
+   * Logs a message and an exception to the static log destination.
+   *
+   * @param msg the actual message to log
+   * @param exception the actual Exception to log
+   */
+  public static void put(String msg, Throwable exception) {
     put(logWriter, msg, exception);
   }
 
   /**
-    * Logs a message and an exception to the specified log destination.
-    * @param log the <code>PrintWriter</code> that the message will be written to. If null then the default stdout writer is used.
-    * @param msg the actual message to log
-    * @param exception the actual Exception to log
-    */
-  static public void put(PrintWriter log, String msg, Throwable exception) {
+   * Logs a message and an exception to the specified log destination.
+   *
+   * @param log the <code>PrintWriter</code> that the message will be written to. If null then the
+   *     default stdout writer is used.
+   * @param msg the actual message to log
+   * @param exception the actual Exception to log
+   */
+  public static void put(PrintWriter log, String msg, Throwable exception) {
     java.io.StringWriter sw = new java.io.StringWriter();
     String header;
     PrintWriter pw = new PrintWriter(sw);
@@ -241,8 +264,8 @@ public class Logger {
   }
 
   /**
-   * Formats a message.  Takes special care when invoking the
-   * toString() method of objects that might cause NPEs.
+   * Formats a message. Takes special care when invoking the toString() method of objects that might
+   * cause NPEs.
    */
   public static String format(String format, Object[] objs) {
     String[] strings = new String[objs.length];
@@ -263,5 +286,4 @@ public class Logger {
 
     return java.text.MessageFormat.format(format, (Object[]) strings);
   }
-
 }

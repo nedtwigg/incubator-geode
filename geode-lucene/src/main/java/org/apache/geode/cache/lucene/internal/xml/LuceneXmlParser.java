@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -41,7 +41,8 @@ public class LuceneXmlParser extends AbstractXmlParser {
   }
 
   @Override
-  public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String uri, String localName, String qName, Attributes atts)
+      throws SAXException {
 
     if (!NAMESPACE.equals(uri)) {
       return;
@@ -106,10 +107,13 @@ public class LuceneXmlParser extends AbstractXmlParser {
       Class c = InternalDataSerializer.getCachedClass(className);
       obj = c.newInstance();
     } catch (Exception ex) {
-      throw new CacheXmlException(LocalizedStrings.CacheXmlParser_WHILE_INSTANTIATING_A_0.toLocalizedString(className), ex);
+      throw new CacheXmlException(
+          LocalizedStrings.CacheXmlParser_WHILE_INSTANTIATING_A_0.toLocalizedString(className), ex);
     }
     if (!(obj instanceof Analyzer)) {
-      throw new CacheXmlException(LocalizedStrings.LuceneXmlParser_CLASS_0_IS_NOT_AN_INSTANCE_OF_ANALYZER.toLocalizedString(className));
+      throw new CacheXmlException(
+          LocalizedStrings.LuceneXmlParser_CLASS_0_IS_NOT_AN_INSTANCE_OF_ANALYZER.toLocalizedString(
+              className));
     }
     return (Analyzer) obj;
   }

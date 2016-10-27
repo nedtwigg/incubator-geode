@@ -26,7 +26,6 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
  * Checks that minimum system requirements are met.
- * 
  *
  * @since GemFire 8.1
  */
@@ -42,9 +41,8 @@ public final class MinimumSystemRequirements {
 
   /**
    * Asserts minimum system requirements, logs any violations and forces exit.
-   * 
+   *
    * @see #checkAndLog()
-   * 
    * @since GemFire 8.1
    */
   public static void assertLogAndExit() {
@@ -55,9 +53,8 @@ public final class MinimumSystemRequirements {
 
   /**
    * Checks minimum system requirements and logs any violations.
-   * 
+   *
    * @return true if minimum system requirements met, otherwise false.
-   * 
    * @since GemFire 8.1
    */
   public static boolean checkAndLog() {
@@ -74,9 +71,8 @@ public final class MinimumSystemRequirements {
 
   /**
    * Check Java version at least {@link #JAVA_VERSION}.
-   * 
+   *
    * @return true if minimum system requirements met, otherwise false.
-   * 
    * @since GemFire 8.1
    */
   private static boolean checkJavaVersion() {
@@ -84,8 +80,9 @@ public final class MinimumSystemRequirements {
       return true;
     }
 
-    logger.warn(LocalizedMessage.create(LocalizedStrings.MinimumSystemRequirements_JAVA_VERSION, JAVA_VERSION));
+    logger.warn(
+        LocalizedMessage.create(
+            LocalizedStrings.MinimumSystemRequirements_JAVA_VERSION, JAVA_VERSION));
     return false;
   }
-
 }

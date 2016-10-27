@@ -44,8 +44,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
 /**
- * IntegrationTests for AutoBalancer that include usage of Cache, StatSampler
- * and DistributedLockService.
+ * IntegrationTests for AutoBalancer that include usage of Cache, StatSampler and
+ * DistributedLockService.
  */
 @Category(IntegrationTest.class)
 public class AutoBalancerIntegrationJUnitTest {
@@ -72,7 +72,8 @@ public class AutoBalancerIntegrationJUnitTest {
 
     if (cache != null && !cache.isClosed()) {
       try {
-        final HostStatSampler statSampler = ((InternalDistributedSystem) cache.getDistributedSystem()).getStatSampler();
+        final HostStatSampler statSampler =
+            ((InternalDistributedSystem) cache.getDistributedSystem()).getStatSampler();
         cache.close();
         // wait for the stat sampler to stand down
         await().atMost(TIMEOUT_SECONDS, SECONDS).until(isAlive(statSampler), equalTo(false));
@@ -127,13 +128,15 @@ public class AutoBalancerIntegrationJUnitTest {
 
     final AtomicBoolean success = new AtomicBoolean(true);
 
-    Thread thread = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        CacheOperationFacade cacheFacade = new GeodeCacheFacade();
-        success.set(cacheFacade.acquireAutoBalanceLock());
-      }
-    });
+    Thread thread =
+        new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                CacheOperationFacade cacheFacade = new GeodeCacheFacade();
+                success.set(cacheFacade.acquireAutoBalanceLock());
+              }
+            });
     thread.start();
     thread.join();
 
@@ -142,15 +145,33 @@ public class AutoBalancerIntegrationJUnitTest {
 
   @Test
   public void testInitializerCacheXML() {
-    String configStr = "<cache xmlns=\"http://geode.apache.org/schema/cache\"                          " + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"                                      " + " xsi:schemaLocation=\"http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd\"" + " version=\"1.0\">                                                                             " + "   <initializer>                                                                              " + "     <class-name>org.apache.geode.cache.util.AutoBalancer</class-name>                    " + "     <parameter name=\"schedule\">                                                            " + "       <string>* * * * * ? </string>                                                          " + "     </parameter>                                                                             "
-        + "   </initializer>                                                                             " + " </cache>";
+    String configStr =
+        "<cache xmlns=\"http://geode.apache.org/schema/cache\"                          "
+            + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"                                      "
+            + " xsi:schemaLocation=\"http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd\""
+            + " version=\"1.0\">                                                                             "
+            + "   <initializer>                                                                              "
+            + "     <class-name>org.apache.geode.cache.util.AutoBalancer</class-name>                    "
+            + "     <parameter name=\"schedule\">                                                            "
+            + "       <string>* * * * * ? </string>                                                          "
+            + "     </parameter>                                                                             "
+            + "   </initializer>                                                                             "
+            + " </cache>";
 
     cache.loadCacheXml(new ByteArrayInputStream(configStr.getBytes()));
   }
 
   @Test(expected = GemFireConfigException.class)
   public void testInitFailOnMissingScheduleConf() {
-    String configStr = "<cache xmlns=\"http://geode.apache.org/schema/cache\"                          " + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"                                      " + " xsi:schemaLocation=\"http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd\"" + " version=\"1.0\">                                                                             " + "   <initializer>                                                                              " + "     <class-name>org.apache.geode.cache.util.AutoBalancer</class-name>                    " + "   </initializer>                                                                             " + " </cache>";
+    String configStr =
+        "<cache xmlns=\"http://geode.apache.org/schema/cache\"                          "
+            + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"                                      "
+            + " xsi:schemaLocation=\"http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd\""
+            + " version=\"1.0\">                                                                             "
+            + "   <initializer>                                                                              "
+            + "     <class-name>org.apache.geode.cache.util.AutoBalancer</class-name>                    "
+            + "   </initializer>                                                                             "
+            + " </cache>";
 
     cache.loadCacheXml(new ByteArrayInputStream(configStr.getBytes()));
   }
@@ -170,18 +191,20 @@ public class AutoBalancerIntegrationJUnitTest {
 
   private void acquireLockInDifferentThread(final int num) throws InterruptedException {
     final CountDownLatch latch = new CountDownLatch(num);
-    Thread thread = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        CacheOperationFacade cacheFacade = new GeodeCacheFacade();
-        for (int i = 0; i < num; i++) {
-          boolean result = cacheFacade.acquireAutoBalanceLock();
-          if (result) {
-            latch.countDown();
-          }
-        }
-      }
-    });
+    Thread thread =
+        new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                CacheOperationFacade cacheFacade = new GeodeCacheFacade();
+                for (int i = 0; i < num; i++) {
+                  boolean result = cacheFacade.acquireAutoBalanceLock();
+                  if (result) {
+                    latch.countDown();
+                  }
+                }
+              }
+            });
     thread.start();
     assertTrue(latch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS));
   }

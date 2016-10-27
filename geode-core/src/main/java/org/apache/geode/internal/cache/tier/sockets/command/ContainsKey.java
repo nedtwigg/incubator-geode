@@ -36,13 +36,14 @@ import org.apache.geode.security.NotAuthorizedException;
 
 public class ContainsKey extends BaseCommand {
 
-  private final static ContainsKey singleton = new ContainsKey();
+  private static final ContainsKey singleton = new ContainsKey();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private static void writeContainsKeyResponse(boolean containsKey, Message origMsg, ServerConnection servConn) throws IOException {
+  private static void writeContainsKeyResponse(
+      boolean containsKey, Message origMsg, ServerConnection servConn) throws IOException {
     Message responseMsg = servConn.getResponseMessage();
     responseMsg.setMessageType(MessageType.RESPONSE);
     responseMsg.setNumberOfParts(1);
@@ -78,19 +79,36 @@ public class ContainsKey extends BaseCommand {
       return;
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received containsKey request ({} bytes) from {} for region {} key {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), regionName, key);
+      logger.debug(
+          "{}: Received containsKey request ({} bytes) from {} for region {} key {}",
+          servConn.getName(),
+          msg.getPayloadLength(),
+          servConn.getSocketString(),
+          regionName,
+          key);
     }
 
     // Process the containsKey request
     if (key == null || regionName == null) {
       String errMessage = "";
       if (key == null) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.ContainsKey_0_THE_INPUT_KEY_FOR_THE_CONTAINSKEY_REQUEST_IS_NULL, servConn.getName()));
-        errMessage = LocalizedStrings.ContainsKey_THE_INPUT_KEY_FOR_THE_CONTAINSKEY_REQUEST_IS_NULL.toLocalizedString();
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.ContainsKey_0_THE_INPUT_KEY_FOR_THE_CONTAINSKEY_REQUEST_IS_NULL,
+                servConn.getName()));
+        errMessage =
+            LocalizedStrings.ContainsKey_THE_INPUT_KEY_FOR_THE_CONTAINSKEY_REQUEST_IS_NULL
+                .toLocalizedString();
       }
       if (regionName == null) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.ContainsKey_0_THE_INPUT_REGION_NAME_FOR_THE_CONTAINSKEY_REQUEST_IS_NULL, servConn.getName()));
-        errMessage = LocalizedStrings.ContainsKey_THE_INPUT_REGION_NAME_FOR_THE_CONTAINSKEY_REQUEST_IS_NULL.toLocalizedString();
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .ContainsKey_0_THE_INPUT_REGION_NAME_FOR_THE_CONTAINSKEY_REQUEST_IS_NULL,
+                servConn.getName()));
+        errMessage =
+            LocalizedStrings.ContainsKey_THE_INPUT_REGION_NAME_FOR_THE_CONTAINSKEY_REQUEST_IS_NULL
+                .toLocalizedString();
       }
       writeErrorResponse(msg, MessageType.CONTAINS_KEY_DATA_ERROR, errMessage, servConn);
       servConn.setAsTrue(RESPONDED);
@@ -99,7 +117,8 @@ public class ContainsKey extends BaseCommand {
 
     LocalRegion region = (LocalRegion) servConn.getCache().getRegion(regionName);
     if (region == null) {
-      String reason = LocalizedStrings.ContainsKey_WAS_NOT_FOUND_DURING_CONTAINSKEY_REQUEST.toLocalizedString();
+      String reason =
+          LocalizedStrings.ContainsKey_WAS_NOT_FOUND_DURING_CONTAINSKEY_REQUEST.toLocalizedString();
       writeRegionDestroyedEx(msg, regionName, reason, servConn);
       servConn.setAsTrue(RESPONDED);
       return;
@@ -135,9 +154,12 @@ public class ContainsKey extends BaseCommand {
     writeContainsKeyResponse(containsKey, msg, servConn);
     servConn.setAsTrue(RESPONDED);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Sent containsKey response for region {} key {}", servConn.getName(), regionName, key);
+      logger.debug(
+          "{}: Sent containsKey response for region {} key {}",
+          servConn.getName(),
+          regionName,
+          key);
     }
     stats.incWriteContainsKeyResponseTime(DistributionStats.getStatTime() - start);
   }
-
 }

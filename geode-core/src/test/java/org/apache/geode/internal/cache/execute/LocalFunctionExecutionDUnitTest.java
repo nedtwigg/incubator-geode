@@ -64,7 +64,8 @@ public class LocalFunctionExecutionDUnitTest extends JUnit4DistributedTestCase {
   @Test
   public void testLocalDataSetPR() {
     dataStore1.invoke(() -> LocalFunctionExecutionDUnitTest.createCacheInVm());
-    Object args[] = new Object[] { "testRegion", new Integer(1), new Integer(50), new Integer(10), null };
+    Object args[] =
+        new Object[] {"testRegion", new Integer(1), new Integer(50), new Integer(10), null};
     dataStore1.invoke(LocalFunctionExecutionDUnitTest.class, "createPR", args);
     dataStore1.invoke(() -> LocalFunctionExecutionDUnitTest.put());
     dataStore1.invoke(() -> LocalFunctionExecutionDUnitTest.executeFunction());
@@ -73,7 +74,7 @@ public class LocalFunctionExecutionDUnitTest extends JUnit4DistributedTestCase {
   @Test
   public void testLocalDataSetDR() {
     dataStore1.invoke(() -> LocalFunctionExecutionDUnitTest.createCacheInVm());
-    Object args[] = new Object[] { "testRegion", DataPolicy.REPLICATE };
+    Object args[] = new Object[] {"testRegion", DataPolicy.REPLICATE};
     dataStore1.invoke(LocalFunctionExecutionDUnitTest.class, "createDR", args);
     dataStore1.invoke(() -> LocalFunctionExecutionDUnitTest.put());
     dataStore1.invoke(() -> LocalFunctionExecutionDUnitTest.executeFunction());
@@ -103,17 +104,28 @@ public class LocalFunctionExecutionDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void createPR(String partitionedRegionName, Integer redundancy, Integer localMaxMemory, Integer totalNumBuckets, String colocatedWith) {
+  public static void createPR(
+      String partitionedRegionName,
+      Integer redundancy,
+      Integer localMaxMemory,
+      Integer totalNumBuckets,
+      String colocatedWith) {
 
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
-    PartitionAttributes prAttr = paf.setRedundantCopies(redundancy.intValue()).setLocalMaxMemory(localMaxMemory.intValue()).setTotalNumBuckets(totalNumBuckets.intValue()).setColocatedWith(colocatedWith).create();
+    PartitionAttributes prAttr =
+        paf.setRedundantCopies(redundancy.intValue())
+            .setLocalMaxMemory(localMaxMemory.intValue())
+            .setTotalNumBuckets(totalNumBuckets.intValue())
+            .setColocatedWith(colocatedWith)
+            .create();
     AttributesFactory attr = new AttributesFactory();
     attr.setPartitionAttributes(prAttr);
     assertNotNull(cache);
 
     region = cache.createRegion(partitionedRegionName, attr.create());
     assertNotNull(region);
-    LogWriterUtils.getLogWriter().info("Partitioned Region " + partitionedRegionName + " created Successfully :" + region);
+    LogWriterUtils.getLogWriter()
+        .info("Partitioned Region " + partitionedRegionName + " created Successfully :" + region);
   }
 
   public static void createDR(String distributedRegionName, DataPolicy dataPolicy) {
@@ -123,7 +135,8 @@ public class LocalFunctionExecutionDUnitTest extends JUnit4DistributedTestCase {
     assertNotNull(cache);
     region = cache.createRegion(distributedRegionName, attr.create());
     assertNotNull(region);
-    LogWriterUtils.getLogWriter().info("Distributed Region " + distributedRegionName + " created Successfully :" + region);
+    LogWriterUtils.getLogWriter()
+        .info("Distributed Region " + distributedRegionName + " created Successfully :" + region);
   }
 
   public static void put() {
@@ -136,7 +149,8 @@ public class LocalFunctionExecutionDUnitTest extends JUnit4DistributedTestCase {
     try {
       Function function1 = new TestFunction(true, TestFunction.TEST_FUNCTION_EXCEPTION);
       FunctionService.registerFunction(function1);
-      ResultCollector rc = FunctionService.onRegion(region).withArgs(Boolean.TRUE).execute(function1.getId());
+      ResultCollector rc =
+          FunctionService.onRegion(region).withArgs(Boolean.TRUE).execute(function1.getId());
       rc.getResult();
       Assert.fail("Exception should occur", new Exception("Test Failed"));
     } catch (Exception e) {
@@ -149,7 +163,10 @@ public class LocalFunctionExecutionDUnitTest extends JUnit4DistributedTestCase {
       Function function1 = new TestFunction(true, TestFunction.TEST_FUNCTION_EXCEPTION);
       FunctionService.registerFunction(function1);
       DistributedMember localmember = getSystemStatic().getDistributedMember();
-      ResultCollector rc = FunctionService.onMember(getSystemStatic(), localmember).withArgs(Boolean.TRUE).execute(function1.getId());
+      ResultCollector rc =
+          FunctionService.onMember(getSystemStatic(), localmember)
+              .withArgs(Boolean.TRUE)
+              .execute(function1.getId());
       rc.getResult();
       Assert.fail("Exception should occur", new Exception("Test Failed"));
     } catch (Exception e) {
@@ -164,13 +181,14 @@ public class LocalFunctionExecutionDUnitTest extends JUnit4DistributedTestCase {
       cache.close();
     }
     cache = null;
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        if (cache != null) {
-          cache.close();
-        }
-        cache = null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            if (cache != null) {
+              cache.close();
+            }
+            cache = null;
+          }
+        });
   }
 }

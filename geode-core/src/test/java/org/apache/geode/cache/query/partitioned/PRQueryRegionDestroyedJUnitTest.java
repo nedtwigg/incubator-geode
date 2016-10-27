@@ -38,23 +38,21 @@ import org.apache.geode.test.dunit.ThreadUtils;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Test verifies Region#query()for PartitionedRegion on a single VM with
- * Region#destroyRegion() being called on the same with some delay.
- * 
- * 
+ * Test verifies Region#query()for PartitionedRegion on a single VM with Region#destroyRegion()
+ * being called on the same with some delay.
  */
 @Category(IntegrationTest.class)
 public class PRQueryRegionDestroyedJUnitTest {
   // PR Region name
   static final String regionName = "portfolios";
 
-  // Local Region name 
+  // Local Region name
   static final String localRegionName = "localPortfolios";
 
   // redundancy level for PR
   static final int redundancy = 0;
 
-  // local max memory for PR  
+  // local max memory for PR
   static final String localMaxMemory = "100";
 
   LogWriter logger = null;
@@ -70,14 +68,12 @@ public class PRQueryRegionDestroyedJUnitTest {
   }
 
   /**
-   * Tests the execution of query on a PartitionedRegion created on a single
-   * data store. <br>
+   * Tests the execution of query on a PartitionedRegion created on a single data store. <br>
    * 1. Creates a PR with redundancy=0 on a single VM. <br>
    * 2. Puts some test Objects in cache.<br>
    * 3. Create a Thread and fire queries on the data and verifies the result.<br>
    * 4. Create another Thread and call Region#destroyRegion() on the PR region.<br>
-   * 
-   * 
+   *
    * @throws Exception
    */
   @Test
@@ -87,7 +83,8 @@ public class PRQueryRegionDestroyedJUnitTest {
 
     logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: creating PR Region ");
 
-    final Region region = PartitionedRegionTestHelper.createPartitionedRegion(regionName, localMaxMemory, redundancy);
+    final Region region =
+        PartitionedRegionTestHelper.createPartitionedRegion(regionName, localMaxMemory, redundancy);
 
     final Region localRegion = PartitionedRegionTestHelper.createLocalRegion(localRegionName);
 
@@ -99,107 +96,130 @@ public class PRQueryRegionDestroyedJUnitTest {
       for (int j = 0; j < dataSize; j++) {
         portfolios[j] = new PortfolioData(j);
       }
-      logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: populating PortfolioData into the PR Datastore  ");
+      logger.info(
+          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: populating PortfolioData into the PR Datastore  ");
 
       populateData(region, portfolios);
 
-      logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: populating PortfolioData into the PR Datastore  ");
+      logger.info(
+          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: populating PortfolioData into the PR Datastore  ");
 
       populateData(localRegion, portfolios);
-      final String[] queryString = { "ID = 0 OR ID = 1", "ID > 4 AND ID < 9", "ID = 5", "ID < 5 ", "ID <= 5" };
+      final String[] queryString = {
+        "ID = 0 OR ID = 1", "ID > 4 AND ID < 9", "ID = 5", "ID < 5 ", "ID <= 5"
+      };
 
-      logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Creating a Thread which will fire queries on the datastore");
+      logger.info(
+          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Creating a Thread which will fire queries on the datastore");
 
-      Thread t1 = new Thread(new Runnable() {
-        public void run() {
-          final String expectedRegionDestroyedException = RegionDestroyedException.class.getName();
+      Thread t1 =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  final String expectedRegionDestroyedException =
+                      RegionDestroyedException.class.getName();
 
-          logger.info("<ExpectedException action=add>" + expectedRegionDestroyedException + "</ExpectedException>");
+                  logger.info(
+                      "<ExpectedException action=add>"
+                          + expectedRegionDestroyedException
+                          + "</ExpectedException>");
 
-          for (int i = 0; i < queryString.length; i++) {
+                  for (int i = 0; i < queryString.length; i++) {
 
-            try {
+                    try {
 
-              SelectResults resSetPR = region.query(queryString[i]);
-              SelectResults resSetLocal = localRegion.query(queryString[i]);
-              String failureString = PartitionedRegionTestHelper.compareResultSets(resSetPR, resSetLocal);
-              Thread.sleep(delayQuery);
-              if (failureString != null) {
-                errorBuf.append(failureString);
-                throw (new Exception(failureString));
+                      SelectResults resSetPR = region.query(queryString[i]);
+                      SelectResults resSetLocal = localRegion.query(queryString[i]);
+                      String failureString =
+                          PartitionedRegionTestHelper.compareResultSets(resSetPR, resSetLocal);
+                      Thread.sleep(delayQuery);
+                      if (failureString != null) {
+                        errorBuf.append(failureString);
+                        throw (new Exception(failureString));
+                      }
 
-              }
+                    } catch (InterruptedException ie) {
+                      fail("interrupted");
+                    } catch (QueryInvocationTargetException qite) {
+                      logger.info(
+                          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: QueryInvocationTargetException as Expected "
+                              + qite);
 
-            } catch (InterruptedException ie) {
-              fail("interrupted");
-            }
+                    } catch (RegionDestroyedException rde) {
+                      logger.info(
+                          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: RegionDestroyedException as Expected "
+                              + rde);
 
-            catch (QueryInvocationTargetException qite) {
-              logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: QueryInvocationTargetException as Expected " + qite);
+                    } catch (RegionNotFoundException rnfe) {
+                      logger.info(
+                          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: RegionNotFoundException as Expected "
+                              + rnfe);
 
-            } catch (RegionDestroyedException rde) {
-              logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: RegionDestroyedException as Expected " + rde);
+                    } catch (Exception qe) {
+                      logger.info(
+                          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Unexpected Exception "
+                              + qe);
 
-            } catch (RegionNotFoundException rnfe) {
-              logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: RegionNotFoundException as Expected " + rnfe);
+                      encounteredException = true;
+                      StringWriter sw = new StringWriter();
+                      qe.printStackTrace(new PrintWriter(sw));
+                      errorBuf.append(sw);
+                    }
+                  }
+                  logger.info(
+                      "<ExpectedException action=remove>"
+                          + expectedRegionDestroyedException
+                          + "</ExpectedException>");
+                }
+              });
+      logger.info(
+          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Creating a Thread which will call Region.destroyRegion() on the datastore ");
 
-            }
+      Thread t2 =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  try {
+                    Thread.sleep(2500);
+                  } catch (InterruptedException ie) {
+                    logger.info(
+                        "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore:Thread Interrupted Exceptionduring region Destroy ");
+                    fail("interrupted");
+                  }
+                  region.destroyRegion();
+                }
+              });
 
-            catch (Exception qe) {
-              logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Unexpected Exception " + qe);
-
-              encounteredException = true;
-              StringWriter sw = new StringWriter();
-              qe.printStackTrace(new PrintWriter(sw));
-              errorBuf.append(sw);
-
-            }
-
-          }
-          logger.info("<ExpectedException action=remove>" + expectedRegionDestroyedException + "</ExpectedException>");
-
-        }
-      });
-      logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Creating a Thread which will call Region.destroyRegion() on the datastore ");
-
-      Thread t2 = new Thread(new Runnable() {
-        public void run() {
-          try {
-            Thread.sleep(2500);
-          } catch (InterruptedException ie) {
-            logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore:Thread Interrupted Exceptionduring region Destroy ");
-            fail("interrupted");
-          }
-          region.destroyRegion();
-        }
-
-      });
-
-      logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Initiating the  Threads");
+      logger.info(
+          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Initiating the  Threads");
 
       t1.start();
       t2.start();
 
-      logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Waiting for the Threads to join ");
+      logger.info(
+          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Waiting for the Threads to join ");
 
       ThreadUtils.join(t1, 30 * 1000);
       ThreadUtils.join(t2, 30 * 1000);
-      logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: checking for any Unexpected Exception's occured");
+      logger.info(
+          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: checking for any Unexpected Exception's occured");
 
-      assertFalse("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Exception occured in Query-thread", encounteredException);
+      assertFalse(
+          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Exception occured in Query-thread",
+          encounteredException);
     } catch (Exception e) {
       e.printStackTrace();
-      fail("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Test failed because of exception " + e);
-
+      fail(
+          "PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Test failed because of exception "
+              + e);
     }
 
     logger.info("PRQueryRegionDestroyedJUnitTest#testQueryOnSingleDataStore: Test Ended");
-
   }
 
   /**
    * Populates the region with the Objects stores in the data Object array.
-   * 
+   *
    * @param region
    * @param data
    */

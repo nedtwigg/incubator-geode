@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.util;
 
 import java.io.File;
@@ -29,21 +27,19 @@ import java.io.OutputStream;
 
 /**
  * Utility class for copying log files
- * 
+ *
  * @since GemFire 6.5
  */
 public class LogFileUtils {
 
-  /**
-   * The default buffer size to use.
-   */
+  /** The default buffer size to use. */
   private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
   /**
    * Copy a file preserving the date.
-   * 
-   * @param srcFile  the validated source file, must not be <code>null</code>
-   * @param destFile  the validated destination file, must not be <code>null</code>
+   *
+   * @param srcFile the validated source file, must not be <code>null</code>
+   * @param destFile the validated destination file, must not be <code>null</code>
    * @throws IOException if an error occurs
    */
   public static void copyFile(File srcFile, File destFile) throws IOException {
@@ -64,17 +60,17 @@ public class LogFileUtils {
     }
 
     if (srcFile.length() != destFile.length()) {
-      throw new IOException("Failed to copy full contents from '" + srcFile + "' to '" + destFile + "'");
+      throw new IOException(
+          "Failed to copy full contents from '" + srcFile + "' to '" + destFile + "'");
     }
     destFile.setLastModified(srcFile.lastModified());
   }
 
   /**
-   * Copy bytes from an <code>InputStream</code> to an
-   * <code>OutputStream</code>.
-   * 
-   * @param input  the <code>InputStream</code> to read from
-   * @param output  the <code>OutputStream</code> to write to
+   * Copy bytes from an <code>InputStream</code> to an <code>OutputStream</code>.
+   *
+   * @param input the <code>InputStream</code> to read from
+   * @param output the <code>OutputStream</code> to write to
    * @return the number of bytes copied
    * @throws NullPointerException if the input or output is null
    * @throws IOException if an I/O error occurs
@@ -96,7 +92,8 @@ public class LogFileUtils {
 
   /**
    * Close an <code>InputStream</code> ignoring exceptions.
-   * @param input  the InputStream to close, may be null or already closed
+   *
+   * @param input the InputStream to close, may be null or already closed
    */
   public static void close(InputStream input) {
     try {
@@ -110,7 +107,8 @@ public class LogFileUtils {
 
   /**
    * Close an <code>OutputStream</code> ignoring exceptions.
-   * @param output  the OutputStream to close, may be null or already closed
+   *
+   * @param output the OutputStream to close, may be null or already closed
    */
   public static void close(OutputStream output) {
     try {
@@ -124,6 +122,7 @@ public class LogFileUtils {
 
   /**
    * Delete a file ignoring exceptions.
+   *
    * @param file to delete, can be <code>null</code>
    */
   public static boolean delete(File file) {
@@ -168,5 +167,4 @@ public class LogFileUtils {
     }
     return renameOK;
   }
-
 }

@@ -19,10 +19,9 @@ package org.apache.geode.pdx.internal;
 import org.apache.geode.pdx.PdxSerializationException;
 
 /**
- * Used by {@link PdxInstanceImpl} as its input stream.
- * Fixed width fields on this implementation do not change the position
- * but instead use absolute positions.
- * 
+ * Used by {@link PdxInstanceImpl} as its input stream. Fixed width fields on this implementation do
+ * not change the position but instead use absolute positions.
+ *
  * @since GemFire 6.6.2
  */
 public class PdxInstanceInputStream extends PdxInputStream {

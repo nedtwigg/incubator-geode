@@ -59,35 +59,35 @@ public class MyTransactionFunction implements Function {
     Integer testOperation = (Integer) args.get(0);
     int op = testOperation.intValue();
     switch (op) {
-    case PRTransactionDUnitTest.VERIFY_TX:
-      verifyTransactionExecution(ctx);
-      ctx.getDataSet().getCache().getLogger().info("verifyTransactionExecution Passed");
-      break;
-    case PRTransactionDUnitTest.VERIFY_ROLLBACK:
-      verifyTransactionRollback(ctx);
-      ctx.getDataSet().getCache().getLogger().info("verifyTransactionRollback Passed");
-      break;
-    case PRTransactionDUnitTest.VERIFY_DESTROY:
-      verifyDestroyOperation(ctx);
-      ctx.getDataSet().getCache().getLogger().info("verifyDestroy Passed");
-      break;
-    case PRTransactionDUnitTest.VERIFY_INVALIDATE:
-      verifyInvalidateOperation(ctx);
-      ctx.getDataSet().getCache().getLogger().info("verifyInvalidate Passed");
-      break;
-    case PRTransactionDUnitTest.VERIFY_NON_COLOCATION:
-      verifyNonCoLocatedOpsRejection(ctx);
-      ctx.getDataSet().getCache().getLogger().info("verifyNonCoLocatedOpsRejection Passed");
-      break;
-    case PRTransactionDUnitTest.VERIFY_LISTENER_CALLBACK:
-      verifyListenerCallback(ctx);
-      break;
-    case PRTransactionDUnitTest.VERIFY_TXSTATE_CONFLICT:
-      verifyTxStateAndConflicts(ctx);
-      break;
-    case PRTransactionDUnitTest.VERIFY_REP_READ:
-      verifyRepeatableRead(ctx);
-      break;
+      case PRTransactionDUnitTest.VERIFY_TX:
+        verifyTransactionExecution(ctx);
+        ctx.getDataSet().getCache().getLogger().info("verifyTransactionExecution Passed");
+        break;
+      case PRTransactionDUnitTest.VERIFY_ROLLBACK:
+        verifyTransactionRollback(ctx);
+        ctx.getDataSet().getCache().getLogger().info("verifyTransactionRollback Passed");
+        break;
+      case PRTransactionDUnitTest.VERIFY_DESTROY:
+        verifyDestroyOperation(ctx);
+        ctx.getDataSet().getCache().getLogger().info("verifyDestroy Passed");
+        break;
+      case PRTransactionDUnitTest.VERIFY_INVALIDATE:
+        verifyInvalidateOperation(ctx);
+        ctx.getDataSet().getCache().getLogger().info("verifyInvalidate Passed");
+        break;
+      case PRTransactionDUnitTest.VERIFY_NON_COLOCATION:
+        verifyNonCoLocatedOpsRejection(ctx);
+        ctx.getDataSet().getCache().getLogger().info("verifyNonCoLocatedOpsRejection Passed");
+        break;
+      case PRTransactionDUnitTest.VERIFY_LISTENER_CALLBACK:
+        verifyListenerCallback(ctx);
+        break;
+      case PRTransactionDUnitTest.VERIFY_TXSTATE_CONFLICT:
+        verifyTxStateAndConflicts(ctx);
+        break;
+      case PRTransactionDUnitTest.VERIFY_REP_READ:
+        verifyRepeatableRead(ctx);
+        break;
     }
     context.getResultSender().lastResult(null);
   }
@@ -114,9 +114,12 @@ public class MyTransactionFunction implements Function {
     Assert.assertTrue(orderPR.containsValueForKey(orderId));
     mgr.commit();
     Customer commitedCust = (Customer) custPR.get(custId);
-    Assert.assertTrue(newCus.equals(commitedCust), "Expected Customer to be:" + newCus + " but was:" + commitedCust);
+    Assert.assertTrue(
+        newCus.equals(commitedCust),
+        "Expected Customer to be:" + newCus + " but was:" + commitedCust);
     Order commitedOrder = (Order) orderPR.get(orderId);
-    Assert.assertTrue(order.equals(commitedOrder), "Expected Order to be:" + order + " but was:" + commitedOrder);
+    Assert.assertTrue(
+        order.equals(commitedOrder), "Expected Order to be:" + order + " but was:" + commitedOrder);
     //put a never before put key
     OrderId newOrderId = new OrderId(4000, custId);
     Order newOrder = new Order("NewOrder");
@@ -125,7 +128,9 @@ public class MyTransactionFunction implements Function {
     orderPR.put(newOrderId, newOrder);
     mgr.commit();
     commitedOrder = (Order) orderPR.get(newOrderId);
-    Assert.assertTrue(newOrder.equals(commitedOrder), "Expected Order to be:" + order + " but was:" + commitedOrder);
+    Assert.assertTrue(
+        newOrder.equals(commitedOrder),
+        "Expected Order to be:" + order + " but was:" + commitedOrder);
   }
 
   private void verifyDestroyOperation(RegionFunctionContext ctx) {
@@ -146,14 +151,18 @@ public class MyTransactionFunction implements Function {
     orderPR.put(orderId, order);
     mgr.rollback();
     commitedCust = (Customer) custPR.get(custId);
-    Assert.assertTrue(oldCustomer.equals(commitedCust), "Expected customer to rollback to:" + oldCustomer + " but was:" + commitedCust);
+    Assert.assertTrue(
+        oldCustomer.equals(commitedCust),
+        "Expected customer to rollback to:" + oldCustomer + " but was:" + commitedCust);
     // test destroy rollback on unmodified entry
     mgr.begin();
     custPR.destroy(custId);
     orderPR.put(orderId, order);
     mgr.rollback();
     commitedCust = (Customer) custPR.get(custId);
-    Assert.assertTrue(oldCustomer.equals(commitedCust), "Expected customer to rollback to:" + oldCustomer + " but was:" + commitedCust);
+    Assert.assertTrue(
+        oldCustomer.equals(commitedCust),
+        "Expected customer to rollback to:" + oldCustomer + " but was:" + commitedCust);
     // test remote destroy
     boolean caughtEx = false;
     try {
@@ -173,10 +182,12 @@ public class MyTransactionFunction implements Function {
         caughtEx = true;
       } else if (e instanceof TransactionDataRebalancedException) {
         caughtEx = true;
-      } else if (e instanceof EntryNotFoundException && e.getMessage().matches("Entry not found for key.*1")) {
+      } else if (e instanceof EntryNotFoundException
+          && e.getMessage().matches("Entry not found for key.*1")) {
         caughtEx = true;
       } else {
-        throw new TestException("Expected to catch PR remote destroy exception, but caught:" + e.getMessage(), e);
+        throw new TestException(
+            "Expected to catch PR remote destroy exception, but caught:" + e.getMessage(), e);
       }
     }
     if (!caughtEx) {
@@ -190,7 +201,8 @@ public class MyTransactionFunction implements Function {
     commitedCust = (Customer) custPR.get(custId);
     Assert.assertTrue(commitedCust == null, "Expected Customer to be null but was:" + commitedCust);
     Order commitedOrder = (Order) orderPR.get(orderId);
-    Assert.assertTrue(order.equals(commitedOrder), "Expected Order to be:" + order + " but was:" + commitedOrder);
+    Assert.assertTrue(
+        order.equals(commitedOrder), "Expected Order to be:" + order + " but was:" + commitedOrder);
     //put the customer again for invalidate verification
     mgr.begin();
     custPR.putIfAbsent(custId, newCus);
@@ -246,14 +258,18 @@ public class MyTransactionFunction implements Function {
     orderPR.put(orderId, order);
     mgr.rollback();
     commitedCust = (Customer) custPR.get(custId);
-    Assert.assertTrue(oldCustomer.equals(commitedCust), "Expected customer to rollback to:" + oldCustomer + " but was:" + commitedCust);
+    Assert.assertTrue(
+        oldCustomer.equals(commitedCust),
+        "Expected customer to rollback to:" + oldCustomer + " but was:" + commitedCust);
     // test destroy rollback on unmodified entry
     mgr.begin();
     custPR.invalidate(custId);
     orderPR.put(orderId, order);
     mgr.rollback();
     commitedCust = (Customer) custPR.get(custId);
-    Assert.assertTrue(oldCustomer.equals(commitedCust), "Expected customer to rollback to:" + oldCustomer + " but was:" + commitedCust);
+    Assert.assertTrue(
+        oldCustomer.equals(commitedCust),
+        "Expected customer to rollback to:" + oldCustomer + " but was:" + commitedCust);
     // test remote destroy
     boolean caughtEx = false;
     try {
@@ -266,12 +282,15 @@ public class MyTransactionFunction implements Function {
       mgr.commit();
     } catch (Exception e) {
       mgr.rollback();
-      if ((e instanceof TransactionDataNotColocatedException) || (e instanceof TransactionDataRebalancedException)) {
+      if ((e instanceof TransactionDataNotColocatedException)
+          || (e instanceof TransactionDataRebalancedException)) {
         caughtEx = true;
-      } else if (e instanceof EntryNotFoundException && e.getMessage().matches("Entry not found for key.*1")) {
+      } else if (e instanceof EntryNotFoundException
+          && e.getMessage().matches("Entry not found for key.*1")) {
         caughtEx = true;
       } else {
-        throw new TestException("Expected to catch PR remote destroy exception, but caught:" + e.getMessage(), e);
+        throw new TestException(
+            "Expected to catch PR remote destroy exception, but caught:" + e.getMessage(), e);
       }
     }
     if (!caughtEx) {
@@ -285,7 +304,8 @@ public class MyTransactionFunction implements Function {
     commitedCust = (Customer) custPR.get(custId);
     Assert.assertTrue(commitedCust == null, "Expected Customer to be null but was:" + commitedCust);
     Order commitedOrder = (Order) orderPR.get(orderId);
-    Assert.assertTrue(order.equals(commitedOrder), "Expected Order to be:" + order + " but was:" + commitedOrder);
+    Assert.assertTrue(
+        order.equals(commitedOrder), "Expected Order to be:" + order + " but was:" + commitedOrder);
     //test destroy on new entry
     //TODO: This throws EntryNotFound
     /*OrderId newOrderId = new OrderId(5000,custId);
@@ -312,13 +332,19 @@ public class MyTransactionFunction implements Function {
     Customer txCust = (Customer) custPR.get(custId);
     orderPR.put(orderId, order);
     Order txOrder = (Order) orderPR.get(orderId);
-    Assert.assertTrue(newCus.equals(txCust), "Expected Customer to be:" + newCus + " but was:" + txCust);
-    Assert.assertTrue(txOrder.equals(order), "Expected Order to be:" + order + " but was:" + txOrder);
+    Assert.assertTrue(
+        newCus.equals(txCust), "Expected Customer to be:" + newCus + " but was:" + txCust);
+    Assert.assertTrue(
+        txOrder.equals(order), "Expected Order to be:" + order + " but was:" + txOrder);
     mgr.rollback();
     Customer commitedCust = (Customer) custPR.get(custId);
-    Assert.assertTrue(oldCustomer.equals(commitedCust), "Expected Customer to be:" + oldCustomer + " but was:" + commitedCust);
+    Assert.assertTrue(
+        oldCustomer.equals(commitedCust),
+        "Expected Customer to be:" + oldCustomer + " but was:" + commitedCust);
     Order commitedOrder = (Order) orderPR.get(orderId);
-    Assert.assertTrue(oldOrder.equals(commitedOrder), "Expected Order to be:" + oldOrder + " but was:" + commitedOrder);
+    Assert.assertTrue(
+        oldOrder.equals(commitedOrder),
+        "Expected Order to be:" + oldOrder + " but was:" + commitedOrder);
 
     mgr.begin();
     Assert.assertTrue(custPR.remove(custId, oldCustomer));
@@ -335,7 +361,6 @@ public class MyTransactionFunction implements Function {
     mgr.rollback();
     Assert.assertTrue(oldCustomer.equals(custPR.get(custId)));
     Assert.assertTrue(oldOrder.equals(orderPR.get(orderId)));
-
   }
 
   private void verifyNonCoLocatedOpsRejection(RegionFunctionContext ctx) {
@@ -362,12 +387,21 @@ public class MyTransactionFunction implements Function {
 
   private void verifyListenerCallback(RegionFunctionContext ctx) {
     verifyTransactionExecution(ctx);
-    TransactionListener2 listener = (TransactionListener2) ctx.getDataSet().getAttributes().getCacheListeners()[0];
-    Assert.assertTrue(listener.getNumberOfPutCallbacks() == 2, "Expected 2 put callback, but " + "got " + listener.getNumberOfPutCallbacks());
+    TransactionListener2 listener =
+        (TransactionListener2) ctx.getDataSet().getAttributes().getCacheListeners()[0];
+    Assert.assertTrue(
+        listener.getNumberOfPutCallbacks() == 2,
+        "Expected 2 put callback, but " + "got " + listener.getNumberOfPutCallbacks());
     verifyDestroyOperation(ctx);
-    Assert.assertTrue(listener.getNumberOfDestroyCallbacks() == 1, "Expected 1 destroy callbacks, but " + "got " + listener.getNumberOfDestroyCallbacks());
+    Assert.assertTrue(
+        listener.getNumberOfDestroyCallbacks() == 1,
+        "Expected 1 destroy callbacks, but " + "got " + listener.getNumberOfDestroyCallbacks());
     verifyInvalidateOperation(ctx);
-    Assert.assertTrue(listener.getNumberOfInvalidateCallbacks() == 1, "Expected 1 invalidate callbacks, but " + "got " + listener.getNumberOfInvalidateCallbacks());
+    Assert.assertTrue(
+        listener.getNumberOfInvalidateCallbacks() == 1,
+        "Expected 1 invalidate callbacks, but "
+            + "got "
+            + listener.getNumberOfInvalidateCallbacks());
   }
 
   private void verifyExecutionOnPrimary(RegionFunctionContext ctx) {
@@ -377,7 +411,12 @@ public class MyTransactionFunction implements Function {
     int bucketId = PartitionedRegionHelper.getHashKey(pr, null, custId, null, null);
     DistributedMember primary = pr.getRegionAdvisor().getPrimaryMemberForBucket(bucketId);
     DistributedMember me = pr.getCache().getDistributedSystem().getDistributedMember();
-    Assert.assertTrue(me.equals(primary), "Function should have been executed on primary:" + primary + " but was executed on member:" + me);
+    Assert.assertTrue(
+        me.equals(primary),
+        "Function should have been executed on primary:"
+            + primary
+            + " but was executed on member:"
+            + me);
   }
 
   private void verifyTxStateAndConflicts(RegionFunctionContext ctx) {
@@ -393,7 +432,9 @@ public class MyTransactionFunction implements Function {
     orderPR.put(vOrderId, vOrder);
     TXStateProxy txState = mImp.internalSuspend();
     Iterator it = txState.getRegions().iterator();
-    Assert.assertTrue(txState.getRegions().size() == 1, "Expected 1 region; " + "found:" + txState.getRegions().size());
+    Assert.assertTrue(
+        txState.getRegions().size() == 1,
+        "Expected 1 region; " + "found:" + txState.getRegions().size());
     LocalRegion lr = (LocalRegion) it.next();
     Assert.assertTrue(lr instanceof BucketRegion);
     TXRegionState txRegion = txState.readRegion(lr);
@@ -402,7 +443,7 @@ public class MyTransactionFunction implements Function {
     orderPR.put(vOrderId, new Order("foo"));
     txState = mImp.internalSuspend();
     //since both puts were on same key, verify that
-    //TxRegionState and TXEntryState are same 
+    //TxRegionState and TXEntryState are same
     LocalRegion lr1 = (LocalRegion) txState.getRegions().iterator().next();
     Assert.assertTrue(lr == lr1);
     TXRegionState txRegion1 = txState.readRegion(lr);

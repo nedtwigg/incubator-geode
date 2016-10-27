@@ -49,10 +49,7 @@ import org.apache.geode.cache.query.internal.QueryObserverAdapter;
 import org.apache.geode.cache.query.internal.QueryObserverHolder;
 import org.apache.geode.cache.query.types.ObjectType;
 
-/**
- * 
- * 
- */
+/** */
 public abstract class NonDistinctOrderByTestImplementation {
 
   @Before
@@ -67,18 +64,39 @@ public abstract class NonDistinctOrderByTestImplementation {
 
   public abstract Region createRegion(String regionName, Class valueConstraint);
 
-  public abstract Index createIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException;
+  public abstract Index createIndex(
+      String indexName, IndexType indexType, String indexedExpression, String fromClause)
+      throws IndexInvalidException, IndexNameConflictException, IndexExistsException,
+          RegionNotFoundException, UnsupportedOperationException;
 
-  public abstract Index createIndex(String indexName, String indexedExpression, String regionPath) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException;
+  public abstract Index createIndex(String indexName, String indexedExpression, String regionPath)
+      throws IndexInvalidException, IndexNameConflictException, IndexExistsException,
+          RegionNotFoundException, UnsupportedOperationException;
 
   public abstract boolean assertIndexUsedOnQueryNode();
 
   @Test
   public void testOrderByWithIndexResultDefaultProjection() throws Exception {
     String queries[] = {
-        // Test case No. IUMR021
-        "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID desc ", "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID asc ", "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc ", "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc ", "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc ", "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc", "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID asc ", "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID desc ", "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID desc limit 5", "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID asc limit 5", "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc limit 5 ", "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc limit 5", "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc limit 5",
-        "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc limit 5", "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID asc limit 10", "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID desc limit 10", "SELECT   *  FROM /portfolio1 pf1 where ID > 0 order by ID desc, pkid desc " };
+      // Test case No. IUMR021
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID desc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID asc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc",
+      "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID asc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID desc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID desc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID asc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc limit 5 ",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID asc limit 10",
+      "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID desc limit 10",
+      "SELECT   *  FROM /portfolio1 pf1 where ID > 0 order by ID desc, pkid desc "
+    };
 
     Object r[][] = new Object[queries.length][2];
     QueryService qs;
@@ -126,10 +144,15 @@ public abstract class NonDistinctOrderByTestImplementation {
         if (limitQuery) {
           limit = Integer.parseInt(queries[i].substring(indexLimit + 5).trim());
         }
-        assertTrue("Result size is " + rcw.size() + " and limit is " + limit, !limitQuery || rcw.size() <= limit);
+        assertTrue(
+            "Result size is " + rcw.size() + " and limit is " + limit,
+            !limitQuery || rcw.size() <= limit);
 
         if (!rcw.getCollectionType().isOrdered()) {
-          fail("The collection type=" + rcw.getCollectionType().getSimpleClassName() + "  is not ordered");
+          fail(
+              "The collection type="
+                  + rcw.getCollectionType().getSimpleClassName()
+                  + "  is not ordered");
         }
         if (assertIndexUsedOnQueryNode() && !observer.isIndexesUsed) {
           fail("Index is NOT uesd");
@@ -145,7 +168,11 @@ public abstract class NonDistinctOrderByTestImplementation {
 
         int indxs = observer.indexesUsed.size();
 
-        System.out.println("**************************************************Indexes Used :::::: " + indxs + " Index Name: " + observer.indexName);
+        System.out.println(
+            "**************************************************Indexes Used :::::: "
+                + indxs
+                + " Index Name: "
+                + observer.indexName);
 
       } catch (Exception e) {
         e.printStackTrace();
@@ -162,10 +189,23 @@ public abstract class NonDistinctOrderByTestImplementation {
   @Test
   public void testOrderByWithIndexResultWithProjection() throws Exception {
     String queries[] = {
-        // Test case No. IUMR021
-        "SELECT   shortID, description FROM /portfolio1 pf1 where ID > 10 order by shortID desc ", "SELECT   shortID, description FROM /portfolio1 pf1 where ID > 10 order by shortID asc ", "SELECT   shortID, description FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by shortID asc ", "SELECT   shortID, description FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by shortID desc ", "SELECT  shortID, description FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by shortID desc ", "SELECT  shortID, description FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by shortID asc", "SELECT  shortID, description FROM /portfolio1 pf1 where ID != 10 order by shortID asc ", "SELECT  shortID, description FROM /portfolio1 pf1 where ID != 10 order by shortID desc ", "SELECT  shortID, description FROM /portfolio1 pf1 where ID > 10 order by shortID desc limit 5", "SELECT  shortID, description FROM /portfolio1 pf1 where ID > 10 order by shortID asc limit 5",
-        "SELECT  shortID, description FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by shortID asc limit 5 ", "SELECT  shortID, description FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by shortID desc limit 5", "SELECT  shortID, description FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by shortID desc limit 5", "SELECT  shortID, description FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by shortID asc limit 5", "SELECT  shortID, description FROM /portfolio1 pf1 where ID != 10 order by shortID asc limit 10", "SELECT  shortID, description FROM /portfolio1 pf1 where ID != 10 order by shortID desc limit 10",
-
+      // Test case No. IUMR021
+      "SELECT   shortID, description FROM /portfolio1 pf1 where ID > 10 order by shortID desc ",
+      "SELECT   shortID, description FROM /portfolio1 pf1 where ID > 10 order by shortID asc ",
+      "SELECT   shortID, description FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by shortID asc ",
+      "SELECT   shortID, description FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by shortID desc ",
+      "SELECT  shortID, description FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by shortID desc ",
+      "SELECT  shortID, description FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by shortID asc",
+      "SELECT  shortID, description FROM /portfolio1 pf1 where ID != 10 order by shortID asc ",
+      "SELECT  shortID, description FROM /portfolio1 pf1 where ID != 10 order by shortID desc ",
+      "SELECT  shortID, description FROM /portfolio1 pf1 where ID > 10 order by shortID desc limit 5",
+      "SELECT  shortID, description FROM /portfolio1 pf1 where ID > 10 order by shortID asc limit 5",
+      "SELECT  shortID, description FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by shortID asc limit 5 ",
+      "SELECT  shortID, description FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by shortID desc limit 5",
+      "SELECT  shortID, description FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by shortID desc limit 5",
+      "SELECT  shortID, description FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by shortID asc limit 5",
+      "SELECT  shortID, description FROM /portfolio1 pf1 where ID != 10 order by shortID asc limit 10",
+      "SELECT  shortID, description FROM /portfolio1 pf1 where ID != 10 order by shortID desc limit 10",
     };
     Object r[][] = new Object[queries.length][2];
     QueryService qs;
@@ -216,7 +256,10 @@ public abstract class NonDistinctOrderByTestImplementation {
         assertTrue(!limitQuery || rcw.size() <= limit);
         // assertIndexDetailsEquals("Set",rcw.getCollectionType().getSimpleClassName());
         if (!rcw.getCollectionType().isOrdered()) {
-          fail("The collection type=" + rcw.getCollectionType().getSimpleClassName() + "  is not ordered");
+          fail(
+              "The collection type="
+                  + rcw.getCollectionType().getSimpleClassName()
+                  + "  is not ordered");
         }
 
         if (assertIndexUsedOnQueryNode() && !observer.isIndexesUsed) {
@@ -233,7 +276,11 @@ public abstract class NonDistinctOrderByTestImplementation {
 
         int indxs = observer.indexesUsed.size();
 
-        System.out.println("**************************************************Indexes Used :::::: " + indxs + " Index Name: " + observer.indexName);
+        System.out.println(
+            "**************************************************Indexes Used :::::: "
+                + indxs
+                + " Index Name: "
+                + observer.indexName);
 
       } catch (Exception e) {
         e.printStackTrace();
@@ -248,10 +295,23 @@ public abstract class NonDistinctOrderByTestImplementation {
   @Test
   public void testMultiColOrderByWithIndexResultDefaultProjection() throws Exception {
     String queries[] = {
-        // Test case No. IUMR021
-        "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid asc ", "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid desc ", "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid desc ", "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid asc", "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID asc, pkid asc ", "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid desc ", "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid asc limit 5", "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid desc limit 5", "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ",
-        "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc, pkid desc limit 5", "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5", "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5", "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID asc, pkid asc limit 10", "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid desc limit 10",
-
+      // Test case No. IUMR021
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid asc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid desc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid asc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc , pkid desc",
+      "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid desc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid asc",
+      "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID asc, pkid asc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid desc ",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid asc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid desc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ",
+      "SELECT   * FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc, pkid desc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID asc, pkid asc limit 10",
+      "SELECT   * FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid desc limit 10",
     };
     Object r[][] = new Object[queries.length][2];
     QueryService qs;
@@ -314,7 +374,11 @@ public abstract class NonDistinctOrderByTestImplementation {
 
         int indxs = observer.indexesUsed.size();
 
-        System.out.println("**************************************************Indexes Used :::::: " + indxs + " Index Name: " + observer.indexName);
+        System.out.println(
+            "**************************************************Indexes Used :::::: "
+                + indxs
+                + " Index Name: "
+                + observer.indexName);
 
       } catch (Exception e) {
         e.printStackTrace();
@@ -329,10 +393,23 @@ public abstract class NonDistinctOrderByTestImplementation {
   @Test
   public void testMultiColOrderByWithIndexResultWithProjection() throws Exception {
     String queries[] = {
-        // Test case No. IUMR021
-        "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc ", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc ", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid asc ", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid desc", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid asc ",
-        "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc limit 5", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc limit 5", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid desc limit 5 ", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc, pkid asc limit 5", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid desc limit 5", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid asc limit 5", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc limit 10", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid desc limit 10",
-
+      // Test case No. IUMR021
+      "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc ",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc ",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid asc ",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc , pkid desc",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid asc ",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid desc",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid asc ",
+      "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc limit 5",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc limit 5",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid desc limit 5 ",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc, pkid asc limit 5",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid desc limit 5",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid asc limit 5",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc limit 10",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid desc limit 10",
     };
     Object r[][] = new Object[queries.length][2];
     QueryService qs;
@@ -396,7 +473,11 @@ public abstract class NonDistinctOrderByTestImplementation {
 
         int indxs = observer.indexesUsed.size();
 
-        System.out.println("**************************************************Indexes Used :::::: " + indxs + " Index Name: " + observer.indexName);
+        System.out.println(
+            "**************************************************Indexes Used :::::: "
+                + indxs
+                + " Index Name: "
+                + observer.indexName);
 
       } catch (Exception e) {
         e.printStackTrace();
@@ -411,10 +492,23 @@ public abstract class NonDistinctOrderByTestImplementation {
   @Test
   public void testMultiColOrderByWithMultiIndexResultDefaultProjection() throws Exception {
     String queries[] = {
-        // Test case No. IUMR021
-        "SELECT   * FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ", "SELECT   * FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ", "SELECT   * FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT   * FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT   * FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ", "SELECT   * FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc", "SELECT   * FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc ", "SELECT   * FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ", "SELECT   * FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5",
-        "SELECT   * FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5", "SELECT   * FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ", "SELECT   * FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5", "SELECT   * FROM /portfolio1 pf1 where pkid > '0' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5", "SELECT   * FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5", "SELECT   * FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10", "SELECT   * FROM /portfolio1 pf1 where pkid > '9' and ID != 10 order by ID desc, pkid desc limit 10",
-
+      // Test case No. IUMR021
+      "SELECT   * FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ",
+      "SELECT   * FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ",
+      "SELECT   * FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ",
+      "SELECT   * FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc",
+      "SELECT   * FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ",
+      "SELECT   * FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc",
+      "SELECT   * FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc ",
+      "SELECT   * FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ",
+      "SELECT   * FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ",
+      "SELECT   * FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where pkid > '0' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5",
+      "SELECT   * FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10",
+      "SELECT   * FROM /portfolio1 pf1 where pkid > '9' and ID != 10 order by ID desc, pkid desc limit 10",
     };
     Object r[][] = new Object[queries.length][2];
     QueryService qs;
@@ -481,7 +575,11 @@ public abstract class NonDistinctOrderByTestImplementation {
 
         int indxs = observer.indexesUsed.size();
 
-        System.out.println("**************************************************Indexes Used :::::: " + indxs + " Index Name: " + observer.indexName);
+        System.out.println(
+            "**************************************************Indexes Used :::::: "
+                + indxs
+                + " Index Name: "
+                + observer.indexName);
 
       } catch (Exception e) {
         e.printStackTrace();
@@ -496,11 +594,23 @@ public abstract class NonDistinctOrderByTestImplementation {
   @Test
   public void testMultiColOrderByWithMultiIndexResultProjection() throws Exception {
     String queries[] = {
-        // Test case No. IUMR021
-        "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
-        "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '2' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5",
-        "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10", "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '9' and ID != 10 order by ID desc, pkid desc limit 10",
-
+      // Test case No. IUMR021
+      "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
+      "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '2' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5",
+      "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10",
+          "SELECT   ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '9' and ID != 10 order by ID desc, pkid desc limit 10",
     };
 
     Object r[][] = new Object[queries.length][2];
@@ -566,7 +676,11 @@ public abstract class NonDistinctOrderByTestImplementation {
 
         int indxs = observer.indexesUsed.size();
 
-        System.out.println("**************************************************Indexes Used :::::: " + indxs + " Index Name: " + observer.indexName);
+        System.out.println(
+            "**************************************************Indexes Used :::::: "
+                + indxs
+                + " Index Name: "
+                + observer.indexName);
 
       } catch (Exception e) {
         e.printStackTrace();
@@ -581,10 +695,23 @@ public abstract class NonDistinctOrderByTestImplementation {
   @Test
   public void testLimitNotAppliedIfOrderByNotUsingIndex() throws Exception {
     String queries[] = {
-        // Test case No. IUMR021
-        "SELECT    description, pkid FROM /portfolio1 pf1 where pkid = '12' and ID > 10  order by pkid asc ", "SELECT    description, pkid FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by  pkid desc ", "SELECT    description, pkid FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by  pkid asc ", "SELECT    description, pkid FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by  pkid desc", "SELECT    description, pkid FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by  pkid desc ", "SELECT    description, pkid FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by  pkid asc", "SELECT   description, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by  pkid asc ", "SELECT   description, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by  pkid desc ", "SELECT  description, pkid FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by  pkid asc limit 5",
-        "SELECT    description,  pkid FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by  pkid desc limit 5", "SELECT    description,  pkid FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by  pkid asc limit 5 ", "SELECT   description, pkid FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by  pkid desc limit 5", "SELECT    description,  pkid FROM /portfolio1 pf1 where pkid > '1' and ID >= 10 and ID <= 20 order by pkid asc limit 5", "SELECT   description,  pkid FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by pkid desc limit 5", "SELECT   description,  pkid FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by  pkid asc limit 10", "SELECT   description, createTime, pkid FROM /portfolio1 pf1 where pkid > '9' and ID != 10 order by  pkid desc limit 10",
-
+      // Test case No. IUMR021
+      "SELECT    description, pkid FROM /portfolio1 pf1 where pkid = '12' and ID > 10  order by pkid asc ",
+      "SELECT    description, pkid FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by  pkid desc ",
+      "SELECT    description, pkid FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by  pkid asc ",
+      "SELECT    description, pkid FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by  pkid desc",
+      "SELECT    description, pkid FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by  pkid desc ",
+      "SELECT    description, pkid FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by  pkid asc",
+      "SELECT   description, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by  pkid asc ",
+      "SELECT   description, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by  pkid desc ",
+      "SELECT  description, pkid FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by  pkid asc limit 5",
+      "SELECT    description,  pkid FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by  pkid desc limit 5",
+      "SELECT    description,  pkid FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by  pkid asc limit 5 ",
+      "SELECT   description, pkid FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by  pkid desc limit 5",
+      "SELECT    description,  pkid FROM /portfolio1 pf1 where pkid > '1' and ID >= 10 and ID <= 20 order by pkid asc limit 5",
+      "SELECT   description,  pkid FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by pkid desc limit 5",
+      "SELECT   description,  pkid FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by  pkid asc limit 10",
+      "SELECT   description, createTime, pkid FROM /portfolio1 pf1 where pkid > '9' and ID != 10 order by  pkid desc limit 10",
     };
 
     Object r[][] = new Object[queries.length][2];
@@ -650,7 +777,11 @@ public abstract class NonDistinctOrderByTestImplementation {
 
         int indxs = observer.indexesUsed.size();
 
-        System.out.println("**************************************************Indexes Used :::::: " + indxs + " Index Name: " + observer.indexName);
+        System.out.println(
+            "**************************************************Indexes Used :::::: "
+                + indxs
+                + " Index Name: "
+                + observer.indexName);
 
       } catch (Exception e) {
         e.printStackTrace();
@@ -668,38 +799,39 @@ public abstract class NonDistinctOrderByTestImplementation {
     // order by field
     // its null values are reported first and then the values in ascending
     // order.
-    String queries[] = { "SELECT   * FROM /portfolio1 pf1 order by pkid", // 0 null
-        // values are
-        // first in the
-        // order.
-        "SELECT   * FROM /portfolio1 pf1  order by pkid asc", // 1 same
-        // as
-        // above.
-        "SELECT   * FROM /portfolio1 order by pkid desc", // 2 null
-        // values are
-        // last in the
-        // order.
-        "SELECT   pkid FROM /portfolio1 pf1 order by pkid", // 3 null
-        // values
-        // are first
-        // in the
-        // order.
-        "SELECT   pkid FROM /portfolio1 pf1 where pkid != 'XXXX' order by pkid asc", // 4
-        "SELECT   pkid FROM /portfolio1 pf1 where pkid != 'XXXX' order by pkid desc", // 5
-        // null
-        // values
-        // are
-        // last
-        // in
-        // the
-        // order.
+    String queries[] = {
+      "SELECT   * FROM /portfolio1 pf1 order by pkid", // 0 null
+      // values are
+      // first in the
+      // order.
+      "SELECT   * FROM /portfolio1 pf1  order by pkid asc", // 1 same
+      // as
+      // above.
+      "SELECT   * FROM /portfolio1 order by pkid desc", // 2 null
+      // values are
+      // last in the
+      // order.
+      "SELECT   pkid FROM /portfolio1 pf1 order by pkid", // 3 null
+      // values
+      // are first
+      // in the
+      // order.
+      "SELECT   pkid FROM /portfolio1 pf1 where pkid != 'XXXX' order by pkid asc", // 4
+      "SELECT   pkid FROM /portfolio1 pf1 where pkid != 'XXXX' order by pkid desc", // 5
+      // null
+      // values
+      // are
+      // last
+      // in
+      // the
+      // order.
 
-        "SELECT   ID, pkid FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 6
-        "SELECT   ID, pkid FROM /portfolio1 pf1 where ID > 3 order by pkid", // 7
-        "SELECT   ID, pkid FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 8
-        "SELECT   ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid", // 9
-        "SELECT   ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid, ID asc", // 10
-        "SELECT   ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid, ID desc", // 11
+      "SELECT   ID, pkid FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 6
+      "SELECT   ID, pkid FROM /portfolio1 pf1 where ID > 3 order by pkid", // 7
+      "SELECT   ID, pkid FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 8
+      "SELECT   ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid", // 9
+      "SELECT   ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid, ID asc", // 10
+      "SELECT   ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid, ID desc", // 11
     };
 
     Object r[][] = new Object[queries.length][2];
@@ -987,47 +1119,48 @@ public abstract class NonDistinctOrderByTestImplementation {
     // order by field
     // its null values are reported first and then the values in ascending
     // order.
-    String queries[] = { "SELECT   * FROM /portfolio1 pf1 where ID > 0 order by pkid", // 0
-        // null
-        // values
-        // are
-        // first
-        // in
-        // the
-        // order.
-        "SELECT   * FROM /portfolio1 pf1 where ID > 0 order by pkid asc", // 1
-        // same
-        // as
-        // above.
-        "SELECT   * FROM /portfolio1 where ID > 0 order by pkid desc", // 2
-        // null
-        // values
-        // are
-        // last
-        // in
-        // the
-        // order.
-        "SELECT   pkid FROM /portfolio1 pf1 where ID > 0 order by pkid", // 3
-        // null
-        // values
-        // are
-        // first
-        // in
-        // the
-        // order.
-        "SELECT   pkid FROM /portfolio1 pf1 where ID > 0 order by pkid asc", // 4
-        "SELECT   pkid FROM /portfolio1 pf1 where ID > 0 order by pkid desc", // 5
-        // null
-        // values
-        // are
-        // last
-        // in
-        // the
-        // order.
-        "SELECT   ID, pkid FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 6
-        "SELECT   ID, pkid FROM /portfolio1 pf1 where ID > 3 order by pkid", // 7
-        "SELECT   ID, pkid FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 8
-        "SELECT   ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid", // 9
+    String queries[] = {
+      "SELECT   * FROM /portfolio1 pf1 where ID > 0 order by pkid", // 0
+      // null
+      // values
+      // are
+      // first
+      // in
+      // the
+      // order.
+      "SELECT   * FROM /portfolio1 pf1 where ID > 0 order by pkid asc", // 1
+      // same
+      // as
+      // above.
+      "SELECT   * FROM /portfolio1 where ID > 0 order by pkid desc", // 2
+      // null
+      // values
+      // are
+      // last
+      // in
+      // the
+      // order.
+      "SELECT   pkid FROM /portfolio1 pf1 where ID > 0 order by pkid", // 3
+      // null
+      // values
+      // are
+      // first
+      // in
+      // the
+      // order.
+      "SELECT   pkid FROM /portfolio1 pf1 where ID > 0 order by pkid asc", // 4
+      "SELECT   pkid FROM /portfolio1 pf1 where ID > 0 order by pkid desc", // 5
+      // null
+      // values
+      // are
+      // last
+      // in
+      // the
+      // order.
+      "SELECT   ID, pkid FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 6
+      "SELECT   ID, pkid FROM /portfolio1 pf1 where ID > 3 order by pkid", // 7
+      "SELECT   ID, pkid FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 8
+      "SELECT   ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid", // 9
     };
 
     Object r[][] = new Object[queries.length][2];
@@ -1275,17 +1408,17 @@ public abstract class NonDistinctOrderByTestImplementation {
       e.printStackTrace();
       fail(q.getQueryString());
     }
-
   }
 
   @Test
   public void testOrderByForUndefined() throws Exception {
-    String queries[] = { "SELECT  position1.secId FROM /test ORDER BY position1.secId", // 0
-        "SELECT  position1.secId FROM /test ORDER BY position1.secId desc", // 1
-        "SELECT  position1.secId FROM /test where ID > 0  ORDER BY position1.secId", // 2
-        "SELECT  position1.secId FROM /test where ID > 0  ORDER BY position1.secId desc", // 3
-        "SELECT  position1.secId, ID FROM /test ORDER BY position1.secId, ID", // 4
-        "SELECT  position1.secId, ID FROM /test ORDER BY position1.secId desc, ID",// 5
+    String queries[] = {
+      "SELECT  position1.secId FROM /test ORDER BY position1.secId", // 0
+      "SELECT  position1.secId FROM /test ORDER BY position1.secId desc", // 1
+      "SELECT  position1.secId FROM /test where ID > 0  ORDER BY position1.secId", // 2
+      "SELECT  position1.secId FROM /test where ID > 0  ORDER BY position1.secId desc", // 3
+      "SELECT  position1.secId, ID FROM /test ORDER BY position1.secId, ID", // 4
+      "SELECT  position1.secId, ID FROM /test ORDER BY position1.secId desc, ID", // 5
     };
     Region r1 = this.createRegion("test", Portfolio.class);
     for (int i = 0; i < 10; i++) {
@@ -1303,20 +1436,38 @@ public abstract class NonDistinctOrderByTestImplementation {
         sr[i][0] = (SelectResults) qs.newQuery(queries[i]).execute();
         srArr = sr[i][0].toArray();
         if (i == 0) {
-          assertEquals("First result should be undefined for query " + queries[i], QueryService.UNDEFINED, srArr[0]);
+          assertEquals(
+              "First result should be undefined for query " + queries[i],
+              QueryService.UNDEFINED,
+              srArr[0]);
         } else if (i == 1) {
-          assertEquals("Last result should be undefined for query " + queries[i], QueryService.UNDEFINED, srArr[srArr.length - 1]);
+          assertEquals(
+              "Last result should be undefined for query " + queries[i],
+              QueryService.UNDEFINED,
+              srArr[srArr.length - 1]);
         } else if (i == 2) {
-          assertEquals("First result should be undefined for query " + queries[i], QueryService.UNDEFINED, srArr[0]);
+          assertEquals(
+              "First result should be undefined for query " + queries[i],
+              QueryService.UNDEFINED,
+              srArr[0]);
         } else if (i == 3) {
-          assertEquals("Last result should be undefined for query " + queries[i], QueryService.UNDEFINED, srArr[srArr.length - 1]);
+          assertEquals(
+              "Last result should be undefined for query " + queries[i],
+              QueryService.UNDEFINED,
+              srArr[srArr.length - 1]);
         } else if (i == 4) {
           for (int j = 0; j < srArr.length / 2; j++) {
-            assertEquals("Undefined should  have been returned for query " + queries[i], QueryService.UNDEFINED, ((Struct) srArr[j]).getFieldValues()[0]);
+            assertEquals(
+                "Undefined should  have been returned for query " + queries[i],
+                QueryService.UNDEFINED,
+                ((Struct) srArr[j]).getFieldValues()[0]);
           }
         } else if (i == 5) {
           for (int j = srArr.length - 1; j > srArr.length / 2; j--) {
-            assertEquals("Undefined should  have been returned for query " + queries[i], QueryService.UNDEFINED, ((Struct) srArr[j]).getFieldValues()[0]);
+            assertEquals(
+                "Undefined should  have been returned for query " + queries[i],
+                QueryService.UNDEFINED,
+                ((Struct) srArr[j]).getFieldValues()[0]);
           }
         }
       } catch (Exception e) {
@@ -1332,20 +1483,38 @@ public abstract class NonDistinctOrderByTestImplementation {
         sr[i][1] = (SelectResults) qs.newQuery(queries[i]).execute();
         srArr = sr[i][1].toArray();
         if (i == 0) {
-          assertEquals("First result should be undefined for query " + queries[i], QueryService.UNDEFINED, srArr[0]);
+          assertEquals(
+              "First result should be undefined for query " + queries[i],
+              QueryService.UNDEFINED,
+              srArr[0]);
         } else if (i == 1) {
-          assertEquals("Last result should be undefined for query " + queries[i], QueryService.UNDEFINED, srArr[srArr.length - 1]);
+          assertEquals(
+              "Last result should be undefined for query " + queries[i],
+              QueryService.UNDEFINED,
+              srArr[srArr.length - 1]);
         } else if (i == 2) {
-          assertEquals("First result should be undefined for query " + queries[i], QueryService.UNDEFINED, srArr[0]);
+          assertEquals(
+              "First result should be undefined for query " + queries[i],
+              QueryService.UNDEFINED,
+              srArr[0]);
         } else if (i == 3) {
-          assertEquals("Last result should be undefined for query " + queries[i], QueryService.UNDEFINED, srArr[srArr.length - 1]);
+          assertEquals(
+              "Last result should be undefined for query " + queries[i],
+              QueryService.UNDEFINED,
+              srArr[srArr.length - 1]);
         } else if (i == 4) {
           for (int j = 0; j < srArr.length / 2; j++) {
-            assertEquals("Undefined should  have been returned for query " + queries[i], QueryService.UNDEFINED, ((Struct) srArr[j]).getFieldValues()[0]);
+            assertEquals(
+                "Undefined should  have been returned for query " + queries[i],
+                QueryService.UNDEFINED,
+                ((Struct) srArr[j]).getFieldValues()[0]);
           }
         } else if (i == 5) {
           for (int j = srArr.length - 1; j > srArr.length / 2; j--) {
-            assertEquals("Undefined should  have been returned for query " + queries[i], QueryService.UNDEFINED, ((Struct) srArr[j]).getFieldValues()[0]);
+            assertEquals(
+                "Undefined should  have been returned for query " + queries[i],
+                QueryService.UNDEFINED,
+                ((Struct) srArr[j]).getFieldValues()[0]);
           }
         }
       } catch (Exception e) {
@@ -1379,7 +1548,5 @@ public abstract class NonDistinctOrderByTestImplementation {
     public void limitAppliedAtIndexLevel(Index index, int limit, Collection indexResult) {
       this.limitAppliedAtIndex = true;
     }
-
   }
-
 }

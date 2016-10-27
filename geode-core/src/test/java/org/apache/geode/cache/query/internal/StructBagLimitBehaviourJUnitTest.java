@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal;
 
 import static org.junit.Assert.*;
@@ -33,15 +31,13 @@ import org.apache.geode.cache.query.types.ObjectType;
 import org.apache.geode.cache.query.types.StructType;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Test StructBag Limit behaviour
- */
+/** Test StructBag Limit behaviour */
 @Category(UnitTest.class)
 public class StructBagLimitBehaviourJUnitTest extends ResultsBagLimitBehaviourJUnitTest {
 
   public ResultsBag getBagObject(Class clazz) {
-    ObjectType[] types = new ObjectType[] { new ObjectTypeImpl(clazz), new ObjectTypeImpl(clazz) };
-    StructType type = new StructTypeImpl(new String[] { "field1", "field2" }, types);
+    ObjectType[] types = new ObjectType[] {new ObjectTypeImpl(clazz), new ObjectTypeImpl(clazz)};
+    StructType type = new StructTypeImpl(new String[] {"field1", "field2"}, types);
     return new StructBag(type, null);
   }
 
@@ -50,7 +46,7 @@ public class StructBagLimitBehaviourJUnitTest extends ResultsBagLimitBehaviourJU
     if (obj == null) {
       return new StructImpl(stype, null);
     } else {
-      return new StructImpl(stype, new Object[] { obj, obj });
+      return new StructImpl(stype, new Object[] {obj, obj});
     }
   }
 
@@ -122,5 +118,4 @@ public class StructBagLimitBehaviourJUnitTest extends ResultsBagLimitBehaviourJU
     }
     assertFalse(itr.hasNext());
   }
-
 }

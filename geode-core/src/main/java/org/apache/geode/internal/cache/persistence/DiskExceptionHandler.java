@@ -21,11 +21,10 @@ import org.apache.geode.internal.cache.DiskRegion;
 import org.apache.geode.internal.cache.LocalRegion;
 
 /**
- * An interface for handling exceptions that occur at the disk layer, used
- * by the {@link DiskRegion} class. The exception handler is expected to close
- * the region. This interface exists so that ProxyBucketRegions can handle
- * disk access exceptions by passing them on to the parent partition region.
- *
+ * An interface for handling exceptions that occur at the disk layer, used by the {@link DiskRegion}
+ * class. The exception handler is expected to close the region. This interface exists so that
+ * ProxyBucketRegions can handle disk access exceptions by passing them on to the parent partition
+ * region.
  */
 public interface DiskExceptionHandler {
 

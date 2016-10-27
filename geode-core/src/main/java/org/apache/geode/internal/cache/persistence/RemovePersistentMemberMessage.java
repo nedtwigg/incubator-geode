@@ -46,10 +46,9 @@ import org.apache.geode.internal.cache.PartitionedRegionHelper;
 import org.apache.geode.internal.cache.partitioned.Bucket;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- *
- */
-public class RemovePersistentMemberMessage extends HighPriorityDistributionMessage implements MessageWithReply {
+/** */
+public class RemovePersistentMemberMessage extends HighPriorityDistributionMessage
+    implements MessageWithReply {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -58,24 +57,34 @@ public class RemovePersistentMemberMessage extends HighPriorityDistributionMessa
   private int processorId;
   private PersistentMemberID initializingId;
 
-  public RemovePersistentMemberMessage() {
+  public RemovePersistentMemberMessage() {}
 
-  }
-
-  public RemovePersistentMemberMessage(String regionPath, PersistentMemberID id, PersistentMemberID initializingId, int processorId) {
+  public RemovePersistentMemberMessage(
+      String regionPath,
+      PersistentMemberID id,
+      PersistentMemberID initializingId,
+      int processorId) {
     this.regionPath = regionPath;
     this.id = id;
     this.initializingId = initializingId;
     this.processorId = processorId;
   }
 
-  public static void send(Set<InternalDistributedMember> members, DM dm, String regionPath, PersistentMemberID id, PersistentMemberID initializingId) throws ReplyException {
+  public static void send(
+      Set<InternalDistributedMember> members,
+      DM dm,
+      String regionPath,
+      PersistentMemberID id,
+      PersistentMemberID initializingId)
+      throws ReplyException {
     if (id == null && initializingId == null) {
       //no need to do anything
       return;
     }
     ReplyProcessor21 processor = new ReplyProcessor21(dm, members);
-    RemovePersistentMemberMessage msg = new RemovePersistentMemberMessage(regionPath, id, initializingId, processor.getProcessorId());
+    RemovePersistentMemberMessage msg =
+        new RemovePersistentMemberMessage(
+            regionPath, id, initializingId, processor.getProcessorId());
     msg.setRecipients(members);
     dm.putOutgoing(msg);
     processor.waitForRepliesUninterruptibly();
@@ -99,7 +108,9 @@ public class RemovePersistentMemberMessage extends HighPriorityDistributionMessa
       if (region instanceof DistributedRegion) {
         persistenceAdvisor = ((DistributedRegion) region).getPersistenceAdvisor();
       } else if (region == null) {
-        Bucket proxy = PartitionedRegionHelper.getProxyBucketRegion(GemFireCacheImpl.getInstance(), this.regionPath, false);
+        Bucket proxy =
+            PartitionedRegionHelper.getProxyBucketRegion(
+                GemFireCacheImpl.getInstance(), this.regionPath, false);
         if (proxy != null) {
           persistenceAdvisor = proxy.getPersistenceAdvisor();
         }

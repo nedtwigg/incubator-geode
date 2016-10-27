@@ -46,20 +46,22 @@ public class FilterProfileIntegrationJUnitTest {
       createLocalRegion();
       LocalRegion region = (LocalRegion) cache.getRegion(regionName);
       final FilterProfile filterProfile = new FilterProfile(region);
-      filterProfile.registerClientInterest("clientId", ".*", InterestType.REGULAR_EXPRESSION, false);
+      filterProfile.registerClientInterest(
+          "clientId", ".*", InterestType.REGULAR_EXPRESSION, false);
 
       final FilterProfileTestHook hook = new FilterProfileTestHook();
       FilterProfile.testHook = hook;
 
-      new Thread(new Runnable() {
-        public void run() {
-          while (hook.getCount() != 1) {
+      new Thread(
+              new Runnable() {
+                public void run() {
+                  while (hook.getCount() != 1) {}
 
-          }
-          filterProfile.unregisterClientInterest("clientId", ".*", InterestType.REGULAR_EXPRESSION);
-
-        }
-      }).start();
+                  filterProfile.unregisterClientInterest(
+                      "clientId", ".*", InterestType.REGULAR_EXPRESSION);
+                }
+              })
+          .start();
       filterProfile.hasAllKeysInterestFor("clientId");
     } finally {
       cache.getDistributedSystem().disconnect();
@@ -90,13 +92,9 @@ public class FilterProfileIntegrationJUnitTest {
     public void release() {
       latch.countDown();
     }
-
   };
 
-  /**
-   * Helper Methods
-   */
-
+  /** Helper Methods */
   private void createLocalRegion() throws ParseException {
     Cache cache = CacheUtils.getCache();
     AttributesFactory attributesFactory = new AttributesFactory();
@@ -104,5 +102,4 @@ public class FilterProfileIntegrationJUnitTest {
     RegionAttributes regionAttributes = attributesFactory.create();
     Region region = cache.createRegion(regionName, regionAttributes);
   }
-
 }

@@ -24,26 +24,20 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import java.io.*;
 //import java.util.*;
 
-/**
- * A message that is sent to a particular distribution manager to
- * get its current license info.
- */
+/** A message that is sent to a particular distribution manager to get its current license info. */
 public final class LicenseInfoRequest extends AdminRequest {
-  /**
-   * Returns a <code>LicenseInfoRequest</code>.
-   */
+  /** Returns a <code>LicenseInfoRequest</code>. */
   public static LicenseInfoRequest create() {
     LicenseInfoRequest m = new LicenseInfoRequest();
     return m;
   }
 
   public LicenseInfoRequest() {
-    friendlyName = LocalizedStrings.LicenseInfoRequest_FETCH_CURRENT_LICENSE_INFORMATION.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.LicenseInfoRequest_FETCH_CURRENT_LICENSE_INFORMATION.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return LicenseInfoResponse.create(dm, this.getSender());

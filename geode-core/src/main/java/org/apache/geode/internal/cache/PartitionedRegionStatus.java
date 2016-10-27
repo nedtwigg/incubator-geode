@@ -18,9 +18,8 @@
 package org.apache.geode.internal.cache;
 
 /**
- * Class <code>PartitionedRegionStatus</code> provides information about
- * <code>PartitionedRegion</code>s. This class is used by the monitoring tool.
- *
+ * Class <code>PartitionedRegionStatus</code> provides information about <code>PartitionedRegion
+ * </code>s. This class is used by the monitoring tool.
  *
  * @since GemFire 5.1
  */
@@ -71,7 +70,15 @@ public class PartitionedRegionStatus extends RegionStatus {
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("PartitionedRegionStatus[").append("numberOfEntries=").append(this.numberOfEntries).append("; numberOfLocalEntries=").append(this.numberOfLocalEntries).append("; heapSize=").append(this.heapSize).append("]");
+    buffer
+        .append("PartitionedRegionStatus[")
+        .append("numberOfEntries=")
+        .append(this.numberOfEntries)
+        .append("; numberOfLocalEntries=")
+        .append(this.numberOfLocalEntries)
+        .append("; heapSize=")
+        .append(this.heapSize)
+        .append("]");
     return buffer.toString();
   }
 }

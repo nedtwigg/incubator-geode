@@ -39,14 +39,12 @@ import org.apache.geode.internal.cache.snapshot.RegionSnapshotServiceImpl.Result
 import org.apache.geode.internal.cache.snapshot.SnapshotPacket.SnapshotRecord;
 
 /**
- * Gathers snapshot data from the server using a proxy function.  If PRSingleHop
- * is enabled, the proxy function will use a {@link LocalExporter} to forward results
- * directly back to the client.  This relies on TCP queuing to provide back pressure
- * on the senders.  If PRSingleHop is not enabled, the proxy function will use a
- * {@link WindowedExporter} to rate the data gathering prior to forwarding back
- * to the client.  The client uses a custom {@link ResultCollector} to write
+ * Gathers snapshot data from the server using a proxy function. If PRSingleHop is enabled, the
+ * proxy function will use a {@link LocalExporter} to forward results directly back to the client.
+ * This relies on TCP queuing to provide back pressure on the senders. If PRSingleHop is not
+ * enabled, the proxy function will use a {@link WindowedExporter} to rate the data gathering prior
+ * to forwarding back to the client. The client uses a custom {@link ResultCollector} to write
  * entries immediately into the snapshot file.
- * 
  *
  * @param <K> the key type
  * @param <V> the value type
@@ -59,16 +57,22 @@ public class ClientExporter<K, V> implements Exporter<K, V> {
   }
 
   @Override
-  public long export(Region<K, V> region, ExportSink sink, SnapshotOptions<K, V> options) throws IOException {
+  public long export(Region<K, V> region, ExportSink sink, SnapshotOptions<K, V> options)
+      throws IOException {
     try {
-      ClientArgs<K, V> args = new ClientArgs<K, V>(region.getFullPath(), pool.getPRSingleHopEnabled(), options);
+      ClientArgs<K, V> args =
+          new ClientArgs<K, V>(region.getFullPath(), pool.getPRSingleHopEnabled(), options);
       ClientExportCollector results = new ClientExportCollector(sink);
 
       // For single hop we rely on tcp queuing to throttle the export; otherwise
-      // we allow the WindowedExporter to provide back pressure. 
-      Execution exec = pool.getPRSingleHopEnabled() ? FunctionService.onRegion(region) : FunctionService.onServer(pool);
+      // we allow the WindowedExporter to provide back pressure.
+      Execution exec =
+          pool.getPRSingleHopEnabled()
+              ? FunctionService.onRegion(region)
+              : FunctionService.onServer(pool);
 
-      ResultCollector<?, ?> rc = exec.withArgs(args).withCollector(results).execute(new ProxyExportFunction<K, V>());
+      ResultCollector<?, ?> rc =
+          exec.withArgs(args).withCollector(results).execute(new ProxyExportFunction<K, V>());
 
       // Our custom result collector is writing the data, but this will
       // check for errors.
@@ -131,8 +135,12 @@ public class ClientExporter<K, V> implements Exporter<K, V> {
       ResultSender rs = context.getResultSender();
       ExportSink sink = new ResultSenderSink(rs);
 
-      Region<K, V> region = GemFireCacheImpl.getExisting("Exporting snapshot").getRegion(args.getRegion());
-      Exporter<K, V> exp = args.isPRSingleHop() ? new LocalExporter<K, V>() : RegionSnapshotServiceImpl.<K, V> createExporter(region, args.options);
+      Region<K, V> region =
+          GemFireCacheImpl.getExisting("Exporting snapshot").getRegion(args.getRegion());
+      Exporter<K, V> exp =
+          args.isPRSingleHop()
+              ? new LocalExporter<K, V>()
+              : RegionSnapshotServiceImpl.<K, V>createExporter(region, args.options);
 
       try {
         long count = exp.export(region, sink, args.getOptions());
@@ -160,9 +168,8 @@ public class ClientExporter<K, V> implements Exporter<K, V> {
   }
 
   /**
-   * Streams snapshot data into the supplied {@link ExportSink}.  Since
-   * {@link Execution#execute(Function)} is a blocking call on clients, we need 
-   * to write immediately.
+   * Streams snapshot data into the supplied {@link ExportSink}. Since {@link
+   * Execution#execute(Function)} is a blocking call on clients, we need to write immediately.
    */
   private static class ClientExportCollector implements ResultCollector<Object, Long> {
     /** the number of records written */
@@ -188,7 +195,8 @@ public class ClientExporter<K, V> implements Exporter<K, V> {
     }
 
     @Override
-    public Long getResult(long timeout, TimeUnit unit) throws FunctionException, InterruptedException {
+    public Long getResult(long timeout, TimeUnit unit)
+        throws FunctionException, InterruptedException {
       return getResult();
     }
 
@@ -210,11 +218,9 @@ public class ClientExporter<K, V> implements Exporter<K, V> {
     }
 
     @Override
-    public void endResults() {
-    }
+    public void endResults() {}
 
     @Override
-    public void clearResults() {
-    }
+    public void clearResults() {}
   }
 }

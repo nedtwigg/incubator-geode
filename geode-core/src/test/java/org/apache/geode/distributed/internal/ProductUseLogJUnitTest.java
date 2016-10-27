@@ -39,16 +39,16 @@ public class ProductUseLogJUnitTest {
   private File logFile;
   private ProductUseLog log;
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
     oldMax = ProductUseLog.MAX_PRODUCT_USE_FILE_SIZE;
-    logFile = temporaryFolder.newFile(getClass().getSimpleName() + "_" + testName.getMethodName() + ".log");
+    logFile =
+        temporaryFolder.newFile(
+            getClass().getSimpleName() + "_" + testName.getMethodName() + ".log");
   }
 
   @After
@@ -99,7 +99,13 @@ public class ProductUseLogJUnitTest {
     String logEntry = "log entry";
     for (long i = 0; i < ProductUseLog.MAX_PRODUCT_USE_FILE_SIZE; i++) {
       log.log(logEntry);
-      assertTrue("expected " + logFile.getPath() + " to remain under " + ProductUseLog.MAX_PRODUCT_USE_FILE_SIZE + " bytes in length", logFile.length() < ProductUseLog.MAX_PRODUCT_USE_FILE_SIZE);
+      assertTrue(
+          "expected "
+              + logFile.getPath()
+              + " to remain under "
+              + ProductUseLog.MAX_PRODUCT_USE_FILE_SIZE
+              + " bytes in length",
+          logFile.length() < ProductUseLog.MAX_PRODUCT_USE_FILE_SIZE);
     }
   }
 }

@@ -45,14 +45,12 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 // @todo probably should assert element type when elements added
 // @todo support generics when no longer support Java 1.4
 /**
- * Implementation of SelectResults that allows duplicates . The keys store the
- * elements of the collection and the the values store the number of occurrences
- * as an int.
- * 
+ * Implementation of SelectResults that allows duplicates . The keys store the elements of the
+ * collection and the the values store the number of occurrences as an int.
+ *
  * @see ResultsBag
  * @see StructBag
  * @see SortedResultsBag
- *
  * @since GemFire 8.1
  */
 public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<E> {
@@ -61,7 +59,6 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
   protected int size = 0;
 
   /** adds support for null elements */
-
   protected int numNulls = 0;
   // Asif: These fields are used for limiting the results based on the limit
   // clause in the query
@@ -69,42 +66,34 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
   boolean hasLimitIterator = false;
   final Object limitLock = new Object();
 
-  public Bag() {
-
-  }
+  public Bag() {}
 
   /**
-   * This constructor should only be used by the DataSerializer. Creates a
-   * ResultsBag with no fields.
+   * This constructor should only be used by the DataSerializer. Creates a ResultsBag with no
+   * fields.
    */
-  public Bag(boolean ignored) {
-  }
+  public Bag(boolean ignored) {}
 
   /**
-   * @param stats
-   *          the CachePerfStats to track hash collisions. Should be null unless
-   *          this is used as a query execution-time result set.
+   * @param stats the CachePerfStats to track hash collisions. Should be null unless this is used as
+   *     a query execution-time result set.
    */
-  public Bag(CachePerfStats stats) {
-
-  }
+  public Bag(CachePerfStats stats) {}
 
   /**
-   * @param stats
-   *          the CachePerfStats to track hash collisions. Should be null unless
-   *          this is used as a query execution-time result set.
+   * @param stats the CachePerfStats to track hash collisions. Should be null unless this is used as
+   *     a query execution-time result set.
    */
   Bag(Collection c, CachePerfStats stats) {
     this(stats);
-    for (Iterator itr = c.iterator(); itr.hasNext();) {
+    for (Iterator itr = c.iterator(); itr.hasNext(); ) {
       this.add(itr.next());
     }
   }
 
   /**
-   * @param stats
-   *          the CachePerfStats to track hash collisions. Should be null unless
-   *          this is used as a query execution-time result set.
+   * @param stats the CachePerfStats to track hash collisions. Should be null unless this is used as
+   *     a query execution-time result set.
    */
   Bag(SelectResults sr, CachePerfStats stats) {
     this((Collection) sr, stats);
@@ -113,9 +102,8 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
   }
 
   /**
-   * @param stats
-   *          the CachePerfStats to track hash collisions. Should be null unless
-   *          this is used as a query execution-time result set.
+   * @param stats the CachePerfStats to track hash collisions. Should be null unless this is used as
+   *     a query execution-time result set.
    */
   Bag(ObjectType elementType, CachePerfStats stats) {
     this(stats);
@@ -124,22 +112,22 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
 
   public void setElementType(ObjectType elementType) {
     if (elementType instanceof StructType)
-      throw new IllegalArgumentException(LocalizedStrings.ResultsBag_THIS_COLLECTION_DOES_NOT_SUPPORT_STRUCT_ELEMENTS.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.ResultsBag_THIS_COLLECTION_DOES_NOT_SUPPORT_STRUCT_ELEMENTS
+              .toLocalizedString());
     this.elementType = elementType;
   }
 
   // @todo Currently does an iteration, could make this more efficient
   // by providing a ListView
-  /**
-   * Returns this bag as a list.
-   */
+  /** Returns this bag as a list. */
   public List asList() {
     return new ArrayList(this);
   }
 
   /**
-   * Return an unmodifiable Set view of this bag. Does not require an iteration
-   * by using a lightweight wrapper.
+   * Return an unmodifiable Set view of this bag. Does not require an iteration by using a
+   * lightweight wrapper.
    */
   public Set asSet() {
     return new SetView();
@@ -157,7 +145,7 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
       // via the limit iterator
       int count = 0;
       boolean encounteredObject = false;
-      for (Iterator itr = this.iterator(); itr.hasNext();) {
+      for (Iterator itr = this.iterator(); itr.hasNext(); ) {
         Object v = itr.next();
         if (element == null ? v == null : element.equals(v)) {
           count++;
@@ -173,15 +161,15 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
         return this.numNulls;
       }
       return this.mapGet(element); // returns 0 if not
-                                   // found
+      // found
     }
   }
 
   protected abstract int mapGet(Object element);
 
   /**
-   * Return an iterator over the elements in this collection. Duplicates will
-   * show up the number of times it has occurrences.
+   * Return an iterator over the elements in this collection. Duplicates will show up the number of
+   * times it has occurrences.
    */
   @Override
   public Iterator iterator() {
@@ -220,13 +208,14 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
   @Override
   public boolean add(Object element) {
     if (this.limit > -1) {
-      throw new UnsupportedOperationException("Addition to the SelectResults not allowed as the query result is constrained by LIMIT");
+      throw new UnsupportedOperationException(
+          "Addition to the SelectResults not allowed as the query result is constrained by LIMIT");
     }
     if (element == null) {
       numNulls++;
     } else {
       int count = this.mapGet(element); // 0 if not
-                                        // found
+      // found
       this.mapPut(element, count + 1);
     }
     this.size++;
@@ -247,7 +236,7 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
       occurence = numNulls;
     } else {
       occurence = this.mapGet(element); // 0 if not
-                                        // found
+      // found
       this.mapPut(element, ++occurence);
     }
     this.size++;
@@ -285,7 +274,7 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
         }
       }
       int count = this.mapGet(element); // 0 if not
-                                        // found
+      // found
       if (count == 0) {
         return false;
       }
@@ -305,7 +294,7 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
   // not thread safe!
   @Override
   public void clear() {
-    this.mapClear();// this.map.clear();
+    this.mapClear(); // this.map.clear();
     this.numNulls = 0;
     this.size = 0;
     if (this.hasLimitIterator) {
@@ -324,9 +313,10 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
       return false;
     }
     Bag otherBag = (Bag) o;
-    return this.size == otherBag.size && this.elementType.equals(otherBag.elementType)
-
-        && this.getMap().equals(otherBag.getMap()) && this.numNulls == otherBag.numNulls;
+    return this.size == otherBag.size
+        && this.elementType.equals(otherBag.elementType)
+        && this.getMap().equals(otherBag.getMap())
+        && this.numNulls == otherBag.numNulls;
   }
 
   protected abstract Object getMap();
@@ -341,14 +331,14 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
 
   public boolean addAll(Collection coll) {
     if (this.limit > -1) {
-      throw new UnsupportedOperationException("Addition to the SelectResults not allowed as the query result is constrained by LIMIT");
+      throw new UnsupportedOperationException(
+          "Addition to the SelectResults not allowed as the query result is constrained by LIMIT");
     } else {
       return super.addAll(coll);
     }
   }
 
   /**
-   * 
    * @param out
    * @throws IOException
    */
@@ -357,7 +347,6 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
   }
 
   /**
-   * 
    * @param in
    * @throws IOException
    */
@@ -429,17 +418,20 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
       Object currentEntry = null;
 
       /**
-       * duplicates are numbered from 1 to n; 0 = no current, otherwise goes
-       * from 1 to dupLimit, indicating the last dup that was emitted by next()
+       * duplicates are numbered from 1 to n; 0 = no current, otherwise goes from 1 to dupLimit,
+       * indicating the last dup that was emitted by next()
        */
       int currentDup = 0;
+
       int dupLimit = 0;
 
       int nullDup = 0;
       int nullDupLimit = Bag.this.numNulls;
 
       public boolean hasNext() {
-        return this.mapIterator.hasNext() || this.currentDup < this.dupLimit || this.nullDup < this.nullDupLimit;
+        return this.mapIterator.hasNext()
+            || this.currentDup < this.dupLimit
+            || this.nullDup < this.nullDupLimit;
       }
 
       public Object next() {
@@ -459,7 +451,6 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
         } else {
           throw new NoSuchElementException();
         }
-
       }
 
       public void remove() {
@@ -472,14 +463,11 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
       Object currentEntry = null;
 
       /**
-       * duplicates are numbered from 1 to n; 0 = no current, otherwise goes
-       * from 1 to dupLimit, indicating the last dup that was emitted by next()
+       * duplicates are numbered from 1 to n; 0 = no current, otherwise goes from 1 to dupLimit,
+       * indicating the last dup that was emitted by next()
        */
       int currentDup = 0;
-      /**
-       * dupLimit is the total number of occurrences; start by emitting the
-       * nulls
-       */
+      /** dupLimit is the total number of occurrences; start by emitting the nulls */
       int dupLimit = Bag.this.numNulls;
 
       public boolean hasNext() {
@@ -504,7 +492,8 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
         checkModifiablity();
         if (this.currentDup == 0) {
           // next has not yet been called
-          throw new IllegalStateException(LocalizedStrings.ResultsBag_NEXT_MUST_BE_CALLED_BEFORE_REMOVE.toLocalizedString());
+          throw new IllegalStateException(
+              LocalizedStrings.ResultsBag_NEXT_MUST_BE_CALLED_BEFORE_REMOVE.toLocalizedString());
         }
 
         this.dupLimit--;
@@ -528,10 +517,10 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
   }
 
   /**
-   * package visibility so ResultsCollectionWrapper can reference it. This
-   * SetView is serialized as a special case by a ResultsCollectionWrapper.
-   * Keith: Refactored to add consideration for LIMIT, April 1, 2009
-   * 
+   * package visibility so ResultsCollectionWrapper can reference it. This SetView is serialized as
+   * a special case by a ResultsCollectionWrapper. Keith: Refactored to add consideration for LIMIT,
+   * April 1, 2009
+   *
    * @see ResultsCollectionWrapper#toData
    */
   class SetView extends AbstractSet {
@@ -594,6 +583,7 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
     public class SetViewIterator implements Iterator {
       /** need to emit a null value if true */
       boolean emitNull = Bag.this.numNulls > 0;
+
       final Iterator it = Bag.this.mapKeyIterator();
       boolean currentIsNull = false;
 
@@ -666,17 +656,13 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
     }
   }
 
-  /**
-   *
-   */
+  /** */
   protected class LimitBagIterator extends Bag.BagIterator {
-    final private int localLimit;
+    private final int localLimit;
 
     private int currPos = 0;
 
-    /**
-     * guarded by ResultsBag.this.limitLock object
-     */
+    /** guarded by ResultsBag.this.limitLock object */
     public LimitBagIterator() {
       localLimit = Bag.this.limit;
     }
@@ -693,7 +679,6 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
         ++currPos;
         return next;
       }
-
     }
 
     public void remove() {
@@ -707,5 +692,4 @@ public abstract class Bag<E> extends AbstractCollection<E> implements CqResults<
       }
     }
   }
-
 }

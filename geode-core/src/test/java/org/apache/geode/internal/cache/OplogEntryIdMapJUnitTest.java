@@ -24,9 +24,7 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.internal.cache.Oplog.OplogEntryIdMap;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Tests DiskStoreImpl.OplogEntryIdMap
- */
+/** Tests DiskStoreImpl.OplogEntryIdMap */
 @Category(UnitTest.class)
 public class OplogEntryIdMapJUnitTest {
 
@@ -83,7 +81,7 @@ public class OplogEntryIdMapJUnitTest {
     assertEquals(777777 + 1 + 777777 + 1 + 1, m.size());
 
     int count = 0;
-    for (OplogEntryIdMap.Iterator it = m.iterator(); it.hasNext();) {
+    for (OplogEntryIdMap.Iterator it = m.iterator(); it.hasNext(); ) {
       count++;
       it.advance();
       it.key();

@@ -28,9 +28,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-/**
- * Unit tests for {@link SerializableExternalResource}.
- */
+/** Unit tests for {@link SerializableExternalResource}. */
 @Category(UnitTest.class)
 public class SerializableExternalResourceTest {
 
@@ -49,7 +47,8 @@ public class SerializableExternalResourceTest {
   public void canBeSerialized() throws Throwable {
     FakeSerializableExternalResource instance = new FakeSerializableExternalResource().value(1);
 
-    FakeSerializableExternalResource cloned = (FakeSerializableExternalResource) SerializationUtils.clone(instance);
+    FakeSerializableExternalResource cloned =
+        (FakeSerializableExternalResource) SerializationUtils.clone(instance);
 
     assertThat(instance.value()).isEqualTo(1);
     assertThat(cloned.value()).isEqualTo(1);
@@ -60,9 +59,7 @@ public class SerializableExternalResourceTest {
     assertThat(cloned.value()).isEqualTo(1);
   }
 
-  /**
-   * Fake SerializableExternalResource with a simple int field.
-   */
+  /** Fake SerializableExternalResource with a simple int field. */
   private static class FakeSerializableExternalResource extends SerializableExternalResource {
 
     private int value = -1;

@@ -26,19 +26,17 @@ import java.io.*;
 //import java.util.*;
 import org.apache.geode.distributed.internal.membership.*;
 
-/**
- * Responds to {@link RegionAttributesResponse}.
- */
+/** Responds to {@link RegionAttributesResponse}. */
 public final class RegionAttributesResponse extends AdminResponse {
-  // instance variables 
+  // instance variables
   private RemoteRegionAttributes attributes;
 
   /**
-   * Returns a <code>RegionAttributesResponse</code> that will be returned to the
-   * specified recipient. The message will contains a copy of the local manager's
-   * system config.
+   * Returns a <code>RegionAttributesResponse</code> that will be returned to the specified
+   * recipient. The message will contains a copy of the local manager's system config.
    */
-  public static RegionAttributesResponse create(DistributionManager dm, InternalDistributedMember recipient, Region r) {
+  public static RegionAttributesResponse create(
+      DistributionManager dm, InternalDistributedMember recipient, Region r) {
     RegionAttributesResponse m = new RegionAttributesResponse();
     m.setRecipient(recipient);
     m.attributes = new RemoteRegionAttributes(r.getAttributes());

@@ -25,8 +25,5 @@ public class SizeTestUtil {
     return (int) (Math.ceil(size / 8.0) * 8);
   }
 
-  private SizeTestUtil() {
-
-  }
-
+  private SizeTestUtil() {}
 }

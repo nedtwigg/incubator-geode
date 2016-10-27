@@ -92,7 +92,8 @@ public class SSLCredentialGenerator extends CredentialGenerator {
       return props;
 
     } catch (IOException ex) {
-      throw new AuthenticationFailedException("SSL: Exception while opening the key store: " + ex.getMessage(), ex);
+      throw new AuthenticationFailedException(
+          "SSL: Exception while opening the key store: " + ex.getMessage(), ex);
     }
   }
 
@@ -108,7 +109,8 @@ public class SSLCredentialGenerator extends CredentialGenerator {
       return props;
 
     } catch (IOException ex) {
-      throw new AuthenticationFailedException("SSL: Exception while opening the key store: " + ex.getMessage(), ex);
+      throw new AuthenticationFailedException(
+          "SSL: Exception while opening the key store: " + ex.getMessage(), ex);
     }
   }
 

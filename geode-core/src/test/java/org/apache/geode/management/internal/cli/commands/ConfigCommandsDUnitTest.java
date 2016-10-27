@@ -142,7 +142,8 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
       assertEquals(true, resultStr.contains(ARCHIVE_FILE_SIZE_LIMIT));
       assertEquals(true, !resultStr.contains("copy-on-read"));
 
-      cmdResult = executeCommand(command + " --" + CliStrings.DESCRIBE_CONFIG__HIDE__DEFAULTS + "=false");
+      cmdResult =
+          executeCommand(command + " --" + CliStrings.DESCRIBE_CONFIG__HIDE__DEFAULTS + "=false");
       resultStr = commandResultToString(cmdResult);
 
       getLogWriter().info("#SB No hiding of defaults\n" + resultStr);
@@ -166,26 +167,32 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
     setUpJmxManagerOnVm0ThenConnect(localProps);
 
     // Create a cache in another VM (VM1)
-    Host.getHost(0).getVM(1).invoke(new SerializableRunnable() {
-      public void run() {
-        Properties localProps = new Properties();
-        localProps.setProperty(NAME, "VM1");
-        localProps.setProperty(GROUPS, "Group2");
-        getSystem(localProps);
-        getCache();
-      }
-    });
+    Host.getHost(0)
+        .getVM(1)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                Properties localProps = new Properties();
+                localProps.setProperty(NAME, "VM1");
+                localProps.setProperty(GROUPS, "Group2");
+                getSystem(localProps);
+                getCache();
+              }
+            });
 
     // Create a cache in a 3rd VM (VM2)
-    Host.getHost(0).getVM(2).invoke(new SerializableRunnable() {
-      public void run() {
-        Properties localProps = new Properties();
-        localProps.setProperty(NAME, "VM2");
-        localProps.setProperty(GROUPS, "Group2");
-        getSystem(localProps);
-        getCache();
-      }
-    });
+    Host.getHost(0)
+        .getVM(2)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                Properties localProps = new Properties();
+                localProps.setProperty(NAME, "VM2");
+                localProps.setProperty(GROUPS, "Group2");
+                getSystem(localProps);
+                getCache();
+              }
+            });
 
     // Create a cache in the local VM
     localProps = new Properties();
@@ -195,7 +202,8 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
 
     // Test export config for all members
     deleteTestFiles();
-    CommandResult cmdResult = executeCommand("export config --dir=" + this.temporaryFolder.getRoot().getAbsolutePath());
+    CommandResult cmdResult =
+        executeCommand("export config --dir=" + this.temporaryFolder.getRoot().getAbsolutePath());
     assertEquals(Result.Status.OK, cmdResult.getStatus());
 
     assertTrue(this.managerConfigFile + " should exist", this.managerConfigFile.exists());
@@ -209,7 +217,10 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
 
     // Test exporting member
     deleteTestFiles();
-    cmdResult = executeCommand("export config --member=Manager --dir=" + this.temporaryFolder.getRoot().getAbsolutePath());
+    cmdResult =
+        executeCommand(
+            "export config --member=Manager --dir="
+                + this.temporaryFolder.getRoot().getAbsolutePath());
     assertEquals(Result.Status.OK, cmdResult.getStatus());
 
     assertTrue(this.managerConfigFile + " should exist", this.managerConfigFile.exists());
@@ -219,7 +230,10 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
 
     // Test exporting group
     deleteTestFiles();
-    cmdResult = executeCommand("export config --group=Group2 --dir=" + this.temporaryFolder.getRoot().getAbsolutePath());
+    cmdResult =
+        executeCommand(
+            "export config --group=Group2 --dir="
+                + this.temporaryFolder.getRoot().getAbsolutePath());
     assertEquals(Result.Status.OK, cmdResult.getStatus());
 
     assertFalse(this.managerConfigFile + " should not exist", this.managerConfigFile.exists());
@@ -242,7 +256,10 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
     String configToMatch = stringWriter.toString();
 
     deleteTestFiles();
-    cmdResult = executeCommand("export config --member=Shell --dir=" + this.temporaryFolder.getRoot().getAbsolutePath());
+    cmdResult =
+        executeCommand(
+            "export config --member=Shell --dir="
+                + this.temporaryFolder.getRoot().getAbsolutePath());
     assertEquals(Result.Status.OK, cmdResult.getStatus());
 
     char[] fileContents = new char[configToMatch.length()];
@@ -295,7 +312,8 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
     assertEquals(10, config.getLogDiskSpaceLimit());
 
     CommandProcessor commandProcessor = new CommandProcessor();
-    Result result = commandProcessor.createCommandStatement("alter runtime", Collections.EMPTY_MAP).process();
+    Result result =
+        commandProcessor.createCommandStatement("alter runtime", Collections.EMPTY_MAP).process();
   }
 
   @Category(FlakyTest.class) // GEODE-1313
@@ -314,14 +332,17 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
     final GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
     final DistributionConfig config = cache.getSystem().getConfig();
 
-    Host.getHost(0).getVM(1).invoke(new SerializableRunnable() {
-      public void run() {
-        Properties localProps = new Properties();
-        localProps.setProperty(NAME, member1);
-        getSystem(localProps);
-        Cache cache = getCache();
-      }
-    });
+    Host.getHost(0)
+        .getVM(1)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                Properties localProps = new Properties();
+                localProps.setProperty(NAME, member1);
+                getSystem(localProps);
+                Cache cache = getCache();
+              }
+            });
 
     CommandStringBuilder csb = new CommandStringBuilder(CliStrings.ALTER_RUNTIME_CONFIG);
     CommandResult cmdResult = executeCommand(csb.getCommandString());
@@ -362,14 +383,17 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
     final GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
     final DistributionConfig config = cache.getSystem().getConfig();
 
-    Host.getHost(0).getVM(1).invoke(new SerializableRunnable() {
-      public void run() {
-        Properties localProps = new Properties();
-        localProps.setProperty(NAME, member1);
-        getSystem(localProps);
-        Cache cache = getCache();
-      }
-    });
+    Host.getHost(0)
+        .getVM(1)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                Properties localProps = new Properties();
+                localProps.setProperty(NAME, member1);
+                getSystem(localProps);
+                Cache cache = getCache();
+              }
+            });
 
     CommandStringBuilder csb = new CommandStringBuilder(CliStrings.ALTER_RUNTIME_CONFIG);
     csb.addOption(CliStrings.ALTER_RUNTIME_CONFIG__LOG__LEVEL, "info");
@@ -377,7 +401,8 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
     csb.addOption(CliStrings.ALTER_RUNTIME_CONFIG__ARCHIVE__DISK__SPACE__LIMIT, "32");
     csb.addOption(CliStrings.ALTER_RUNTIME_CONFIG__ARCHIVE__FILE__SIZE__LIMIT, "49");
     csb.addOption(CliStrings.ALTER_RUNTIME_CONFIG__STATISTIC__SAMPLE__RATE, "2000");
-    csb.addOption(CliStrings.ALTER_RUNTIME_CONFIG__STATISTIC__ARCHIVE__FILE, controllerStatFilePath);
+    csb.addOption(
+        CliStrings.ALTER_RUNTIME_CONFIG__STATISTIC__ARCHIVE__FILE, controllerStatFilePath);
     csb.addOption(CliStrings.ALTER_RUNTIME_CONFIG__STATISTIC__SAMPLING__ENABLED, "true");
     csb.addOption(CliStrings.ALTER_RUNTIME_CONFIG__LOG__DISK__SPACE__LIMIT, "10");
 
@@ -398,26 +423,27 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
     assertEquals(10, config.getLogDiskSpaceLimit());
 
     // Validate the changes in the vm1
-    Host.getHost(0).getVM(1).invoke(new SerializableRunnable() {
-      public void run() {
-        GemFireCacheImpl cacheVM1 = (GemFireCacheImpl) getCache();
-        DistributionConfig configVM1 = cacheVM1.getSystem().getConfig();
+    Host.getHost(0)
+        .getVM(1)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                GemFireCacheImpl cacheVM1 = (GemFireCacheImpl) getCache();
+                DistributionConfig configVM1 = cacheVM1.getSystem().getConfig();
 
-        assertEquals(LogWriterImpl.INFO_LEVEL, configVM1.getLogLevel());
-        assertEquals(50, configVM1.getLogFileSizeLimit());
-        assertEquals(49, configVM1.getArchiveFileSizeLimit());
-        assertEquals(32, configVM1.getArchiveDiskSpaceLimit());
-        assertEquals(2000, configVM1.getStatisticSampleRate());
-        assertEquals("stat.gfs", configVM1.getStatisticArchiveFile().getName());
-        assertEquals(true, configVM1.getStatisticSamplingEnabled());
-        assertEquals(10, configVM1.getLogDiskSpaceLimit());
-      }
-    });
+                assertEquals(LogWriterImpl.INFO_LEVEL, configVM1.getLogLevel());
+                assertEquals(50, configVM1.getLogFileSizeLimit());
+                assertEquals(49, configVM1.getArchiveFileSizeLimit());
+                assertEquals(32, configVM1.getArchiveDiskSpaceLimit());
+                assertEquals(2000, configVM1.getStatisticSampleRate());
+                assertEquals("stat.gfs", configVM1.getStatisticArchiveFile().getName());
+                assertEquals(true, configVM1.getStatisticSamplingEnabled());
+                assertEquals(10, configVM1.getLogDiskSpaceLimit());
+              }
+            });
   }
 
-  /**
-   * Asserts that altering the runtime config correctly updates the shared configuration.
-   */
+  /** Asserts that altering the runtime config correctly updates the shared configuration. */
   @Test
   public void testAlterUpdatesSharedConfig() throws Exception {
     final String groupName = getName();
@@ -426,38 +452,46 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
     final int locatorPort = getRandomAvailablePort(SOCKET);
     final String locatorDirectory = this.temporaryFolder.newFolder("Locator").getAbsolutePath();
 
-    Host.getHost(0).getVM(3).invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        final File locatorLogFile = new File(locatorDirectory, "locator-" + locatorPort + ".log");
+    Host.getHost(0)
+        .getVM(3)
+        .invoke(
+            new SerializableRunnable() {
+              @Override
+              public void run() {
+                final File locatorLogFile =
+                    new File(locatorDirectory, "locator-" + locatorPort + ".log");
 
-        final Properties locatorProps = new Properties();
-        locatorProps.setProperty(NAME, "Locator");
-        locatorProps.setProperty(MCAST_PORT, "0");
-        locatorProps.setProperty(ENABLE_CLUSTER_CONFIGURATION, "true");
-        locatorProps.setProperty(CLUSTER_CONFIGURATION_DIR, locatorDirectory);
+                final Properties locatorProps = new Properties();
+                locatorProps.setProperty(NAME, "Locator");
+                locatorProps.setProperty(MCAST_PORT, "0");
+                locatorProps.setProperty(ENABLE_CLUSTER_CONFIGURATION, "true");
+                locatorProps.setProperty(CLUSTER_CONFIGURATION_DIR, locatorDirectory);
 
-        try {
-          final InternalLocator locator = (InternalLocator) Locator.startLocatorAndDS(locatorPort, locatorLogFile, null, locatorProps);
+                try {
+                  final InternalLocator locator =
+                      (InternalLocator)
+                          Locator.startLocatorAndDS(
+                              locatorPort, locatorLogFile, null, locatorProps);
 
-          WaitCriterion wc = new WaitCriterion() {
-            @Override
-            public boolean done() {
-              return locator.isSharedConfigurationRunning();
-            }
+                  WaitCriterion wc =
+                      new WaitCriterion() {
+                        @Override
+                        public boolean done() {
+                          return locator.isSharedConfigurationRunning();
+                        }
 
-            @Override
-            public String description() {
-              return "Waiting for shared configuration to be started";
-            }
-          };
-          waitForCriterion(wc, 5000, 500, true);
+                        @Override
+                        public String description() {
+                          return "Waiting for shared configuration to be started";
+                        }
+                      };
+                  waitForCriterion(wc, 5000, 500, true);
 
-        } catch (IOException e) {
-          fail("Unable to create a locator with a shared configuration", e);
-        }
-      }
-    });
+                } catch (IOException e) {
+                  fail("Unable to create a locator with a shared configuration", e);
+                }
+              }
+            });
 
     // Start the default manager
     Properties managerProps = new Properties();
@@ -467,24 +501,26 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
 
     // Create a cache in VM 1
     VM vm = Host.getHost(0).getVM(1);
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Properties localProps = new Properties();
-        localProps.setProperty(MCAST_PORT, "0");
-        localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
-        localProps.setProperty(LOG_LEVEL, "error");
-        localProps.setProperty(GROUPS, groupName);
-        getSystem(localProps);
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Properties localProps = new Properties();
+            localProps.setProperty(MCAST_PORT, "0");
+            localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
+            localProps.setProperty(LOG_LEVEL, "error");
+            localProps.setProperty(GROUPS, groupName);
+            getSystem(localProps);
 
-        assertNotNull(getCache());
-        assertEquals("error", basicGetSystem().getConfig().getAttribute(LOG_LEVEL));
-        return null;
-      }
-    });
+            assertNotNull(getCache());
+            assertEquals("error", basicGetSystem().getConfig().getAttribute(LOG_LEVEL));
+            return null;
+          }
+        });
 
     // Test altering the runtime config
-    CommandStringBuilder commandStringBuilder = new CommandStringBuilder(CliStrings.ALTER_RUNTIME_CONFIG);
+    CommandStringBuilder commandStringBuilder =
+        new CommandStringBuilder(CliStrings.ALTER_RUNTIME_CONFIG);
     commandStringBuilder.addOption(CliStrings.ALTER_RUNTIME_CONFIG__GROUP, groupName);
     commandStringBuilder.addOption(CliStrings.ALTER_RUNTIME_CONFIG__LOG__LEVEL, "fine");
     CommandResult cmdResult = executeCommand(commandStringBuilder.toString());
@@ -492,21 +528,26 @@ public class ConfigCommandsDUnitTest extends CliCommandTestBase {
     assertEquals(Result.Status.OK, cmdResult.getStatus());
 
     // Make sure the shared config was updated
-    Host.getHost(0).getVM(3).invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        SharedConfiguration sharedConfig = ((InternalLocator) Locator.getLocator()).getSharedConfiguration();
-        Properties gemfireProperties = null;
+    Host.getHost(0)
+        .getVM(3)
+        .invoke(
+            new SerializableRunnable() {
+              @Override
+              public void run() {
+                SharedConfiguration sharedConfig =
+                    ((InternalLocator) Locator.getLocator()).getSharedConfiguration();
+                Properties gemfireProperties = null;
 
-        try {
-          gemfireProperties = sharedConfig.getConfiguration(groupName).getGemfireProperties();
-        } catch (Exception e) {
-          fail("Error occurred in cluster configuration service", e);
-        }
+                try {
+                  gemfireProperties =
+                      sharedConfig.getConfiguration(groupName).getGemfireProperties();
+                } catch (Exception e) {
+                  fail("Error occurred in cluster configuration service", e);
+                }
 
-        assertEquals("fine", gemfireProperties.get(LOG_LEVEL));
-      }
-    });
+                assertEquals("fine", gemfireProperties.get(LOG_LEVEL));
+              }
+            });
   }
 
   private final void deleteTestFiles() throws IOException {

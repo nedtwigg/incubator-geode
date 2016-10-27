@@ -33,9 +33,8 @@ import org.apache.geode.cache.query.internal.types.*;
 /**
  * Class Description
  *
- * @version     $Revision: 1.1 $
+ * @version $Revision: 1.1 $
  */
-
 public class PathUtils {
 
   public static String[] tokenizePath(String path) {
@@ -58,7 +57,8 @@ public class PathUtils {
     return buf.toString();
   }
 
-  public static Object evaluateAttribute(Object target, String attribute) throws NameNotFoundException, QueryInvocationTargetException {
+  public static Object evaluateAttribute(Object target, String attribute)
+      throws NameNotFoundException, QueryInvocationTargetException {
     if (target instanceof Struct) {
       Struct struct = (Struct) target;
       try {
@@ -70,7 +70,8 @@ public class PathUtils {
     try {
       return new AttributeDescriptor(attribute).read(target);
     } catch (NameNotFoundException nfe) {
-      if (DefaultQueryService.QUERY_HETEROGENEOUS_OBJECTS || DefaultQueryService.TEST_QUERY_HETEROGENEOUS_OBJECTS) {
+      if (DefaultQueryService.QUERY_HETEROGENEOUS_OBJECTS
+          || DefaultQueryService.TEST_QUERY_HETEROGENEOUS_OBJECTS) {
         return QueryService.UNDEFINED;
       } else {
         throw nfe;
@@ -81,7 +82,7 @@ public class PathUtils {
   /*
    * This was added as part of CQ performance changes.
    * The change is done to re-use the AttributeDescriptor object instead of creating
-   * it each time. 
+   * it each time.
    */
   /*
   public static Object evaluateAttribute(Object target, String attribute, AttributeDescriptor attributeDescriptor)
@@ -99,14 +100,13 @@ public class PathUtils {
   */
 
   /**
-   * @param pathArray the path starting with an attribute on
-   * the initial type.
-   * @return array of types starting with the initialType and
-   * ending with the type of the last attribute in the path.
+   * @param pathArray the path starting with an attribute on the initial type.
+   * @return array of types starting with the initialType and ending with the type of the last
+   *     attribute in the path.
    * @throws NameNotFoundException if could not find an attribute along path
-   *
    */
-  public static ObjectType[] calculateTypesAlongPath(ObjectType initialType, String[] pathArray) throws NameNotFoundException {
+  public static ObjectType[] calculateTypesAlongPath(ObjectType initialType, String[] pathArray)
+      throws NameNotFoundException {
     ObjectType[] types = new ObjectType[pathArray.length + 1];
     // initialClass goes in front
     types[0] = initialType;
@@ -114,15 +114,15 @@ public class PathUtils {
     for (int i = 1; i < types.length; i++) {
       ObjectType currentType = types[i - 1];
       Member member = new AttributeDescriptor(pathArray[i - 1]).getReadMember(currentType);
-      if (member instanceof Field)
-        types[i] = TypeUtils.getObjectType(((Field) member).getType());
+      if (member instanceof Field) types[i] = TypeUtils.getObjectType(((Field) member).getType());
       else if (member instanceof Method)
         types[i] = TypeUtils.getObjectType(((Method) member).getReturnType());
     }
     return types;
   }
 
-  public static ObjectType computeElementTypeOfExpression(ExecutionContext context, CompiledValue expr) throws AmbiguousNameException {
+  public static ObjectType computeElementTypeOfExpression(
+      ExecutionContext context, CompiledValue expr) throws AmbiguousNameException {
     try {
 
       ObjectType type = TypeUtils.OBJECT_TYPE;
@@ -140,7 +140,9 @@ public class PathUtils {
           exprSteps.add(0, operation.getMethodName() + "()");
           expr = operation.getReceiver(context);
           if (expr == null) {
-            expr = context.resolveImplicitOperationName(operation.getMethodName(), operation.getArguments().size(), true);
+            expr =
+                context.resolveImplicitOperationName(
+                    operation.getMethodName(), operation.getArguments().size(), true);
           }
         } else if (expr instanceof CompiledID) {
           expr = context.resolve(((CompiledID) expr).getId());
@@ -184,63 +186,63 @@ public class PathUtils {
   }
 
   /**
-   * Collects all the compiled values in the path , starting from the self at
-   * position 0 in the returned List
-   * 
+   * Collects all the compiled values in the path , starting from the self at position 0 in the
+   * returned List
+   *
    * @param expr
    * @return List of CompiledValues ( includes the RuntimeIterator)
    * @throws TypeMismatchException
    * @throws AmbiguousNameException
    */
-  public static List<CompiledValue> collectCompiledValuesInThePath(CompiledValue expr, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException {
+  public static List<CompiledValue> collectCompiledValuesInThePath(
+      CompiledValue expr, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException {
     boolean toContinue = true;
     List<CompiledValue> retList = new ArrayList<CompiledValue>();
 
     int exprType = expr.getType();
     while (toContinue) {
       switch (exprType) {
-      case OQLLexerTokenTypes.RegionPath:
-        retList.add(expr);
-        toContinue = false;
-        break;
-      case OQLLexerTokenTypes.METHOD_INV:
-        retList.add(expr);
-        CompiledOperation operation = (CompiledOperation) expr;
-        expr = operation.getReceiver(null/*
+        case OQLLexerTokenTypes.RegionPath:
+          retList.add(expr);
+          toContinue = false;
+          break;
+        case OQLLexerTokenTypes.METHOD_INV:
+          retList.add(expr);
+          CompiledOperation operation = (CompiledOperation) expr;
+          expr = operation.getReceiver(null /*
                                           * pass the ExecutionContext as null,
                                           * thus never implicitly resolving to
                                           * RuntimeIterator
                                           */);
-        if (expr == null) {
-          expr = operation;
+          if (expr == null) {
+            expr = operation;
+            toContinue = false;
+          }
+          break;
+        case CompiledValue.PATH:
+          retList.add(expr);
+          expr = ((CompiledPath) expr).getReceiver();
+          break;
+        case OQLLexerTokenTypes.ITERATOR_DEF:
+          retList.add(expr);
           toContinue = false;
-        }
-        break;
-      case CompiledValue.PATH:
-        retList.add(expr);
-        expr = ((CompiledPath) expr).getReceiver();
-        break;
-      case OQLLexerTokenTypes.ITERATOR_DEF:
-        retList.add(expr);
-        toContinue = false;
-        break;
-      case OQLLexerTokenTypes.TOK_LBRACK:
-        retList.add(expr);
-        expr = ((CompiledIndexOperation) expr).getReceiver();
-        break;
-      case OQLLexerTokenTypes.Identifier:
-        CompiledID cid = (CompiledID) expr;
-        expr = context.resolve(cid.getId());
-        break;
-      default:
-        toContinue = false;
-        break;
+          break;
+        case OQLLexerTokenTypes.TOK_LBRACK:
+          retList.add(expr);
+          expr = ((CompiledIndexOperation) expr).getReceiver();
+          break;
+        case OQLLexerTokenTypes.Identifier:
+          CompiledID cid = (CompiledID) expr;
+          expr = context.resolve(cid.getId());
+          break;
+        default:
+          toContinue = false;
+          break;
       }
 
-      if (toContinue)
-        exprType = expr.getType();
+      if (toContinue) exprType = expr.getType();
     }
     return retList;
   }
-
 }

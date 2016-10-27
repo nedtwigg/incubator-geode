@@ -55,12 +55,10 @@ import org.apache.geode.cache.query.types.ObjectType;
 import org.apache.geode.internal.cache.PartitionedRegion;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- *
- */
+/** */
 class FunctionalIndexCreationHelper extends IndexCreationHelper {
   private boolean isMapTypeIndex;
-  //If true means pattern is *, if false & still map type index that means 
+  //If true means pattern is *, if false & still map type index that means
   // more than 1 specific keys
   private boolean isAllKeys = false;
 
@@ -71,20 +69,18 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
   String[] multiIndexKeysPattern;
   Object[] mapKeys;
   /**
-   * Asif : The Iterators for index creation are different then those which are
-   * used for index updates as in case of Index creation the 0th iterator is
-   * modified such that it always represents collection of Region.Entry objects.
-   * As a result all the rest of iterators as well as indexed expression have to
-   * be modified to appropriately resolve the dependency on 0th iterator.The
-   * missing link indicates the dependency. The original 0th iterator is
-   * evaluated as additional projection attribute. These changes provide
-   * significant improvement in Index creation as compared to previous method.
-   * In this approach the IMQ acts on all the entries of the region while in
-   * previous , it iterated over the individual entry of the Region & applied
+   * Asif : The Iterators for index creation are different then those which are used for index
+   * updates as in case of Index creation the 0th iterator is modified such that it always
+   * represents collection of Region.Entry objects. As a result all the rest of iterators as well as
+   * indexed expression have to be modified to appropriately resolve the dependency on 0th
+   * iterator.The missing link indicates the dependency. The original 0th iterator is evaluated as
+   * additional projection attribute. These changes provide significant improvement in Index
+   * creation as compared to previous method. In this approach the IMQ acts on all the entries of
+   * the region while in previous , it iterated over the individual entry of the Region & applied
    * IMQ to it.
    */
-
   List indexInitIterators = null;
+
   CompiledValue missingLink = null;
   CompiledValue additionalProj = null;
   ObjectType addnlProjType = null;
@@ -95,7 +91,15 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
 
   //TODO: Asif Remove the fromClause being passed as parameter to the
   // constructor
-  FunctionalIndexCreationHelper(String fromClause, String indexedExpression, String projectionAttributes, String imports, Cache cache, ExecutionContext externalContext, IndexManager imgr) throws IndexInvalidException {
+  FunctionalIndexCreationHelper(
+      String fromClause,
+      String indexedExpression,
+      String projectionAttributes,
+      String imports,
+      Cache cache,
+      ExecutionContext externalContext,
+      IndexManager imgr)
+      throws IndexInvalidException {
     super(fromClause, projectionAttributes, cache);
     if (externalContext == null) {
       this.context = new ExecutionContext(null, cache);
@@ -109,7 +113,9 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
     prepareProjectionAttributes(projectionAttributes);
     Object data[] = modfiyIterDefToSuiteIMQ((CompiledIteratorDef) fromClauseIterators.get(0));
     if (data[0] == null || data[1] == null) {
-      throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_INVALID_FROM_CLAUSE_0.toLocalizedString(fromClause));
+      throw new IndexInvalidException(
+          LocalizedStrings.FunctionalIndexCreationHelper_INVALID_FROM_CLAUSE_0.toLocalizedString(
+              fromClause));
     }
     fromClauseIterators.remove(0);
     fromClauseIterators.add(0, data[1]);
@@ -153,7 +159,9 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
     List list = this.compiler.compileFromClause(fromClause);
 
     if (list == null) {
-      throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_INVALID_FROM_CLAUSE_0.toLocalizedString(fromClause));
+      throw new IndexInvalidException(
+          LocalizedStrings.FunctionalIndexCreationHelper_INVALID_FROM_CLAUSE_0.toLocalizedString(
+              fromClause));
     }
 
     boolean isFromClauseNull = true;
@@ -171,7 +179,10 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
         context.addToIndependentRuntimeItrMapForIndexCreation(iterDef);
         this.context.bindIterator(rIter);
         if (i != 0 && !iterDef.isDependentOnCurrentScope(this.context)) {
-          throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_INVALID_FROM_CLAUSE_0_SUBSEQUENT_ITERATOR_EXPRESSIONS_IN_FROM_CLAUSE_MUST_BE_DEPENDENT_ON_PREVIOUS_ITERATORS.toLocalizedString(fromClause));
+          throw new IndexInvalidException(
+              LocalizedStrings
+                  .FunctionalIndexCreationHelper_INVALID_FROM_CLAUSE_0_SUBSEQUENT_ITERATOR_EXPRESSIONS_IN_FROM_CLAUSE_MUST_BE_DEPENDENT_ON_PREVIOUS_ITERATORS
+                  .toLocalizedString(fromClause));
         }
         String definition = rIter.getDefinition();
         this.canonicalizedIteratorDefinitions[i] = definition;
@@ -182,14 +193,20 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
           //if (iterDef.getCollectionExpr() instanceof CompiledRegion || iterDef.getCollectionExpr() instanceof CompiledPath) {
           //  pr.getIndexManager().putCanonicalizedIteratorName(pr.getFullPath(), this.canonicalizedIteratorNames[i]);
           //} else {
-          this.canonicalizedIteratorNames[i] = pr.getIndexManager().putCanonicalizedIteratorNameIfAbsent(definition);
+          this.canonicalizedIteratorNames[i] =
+              pr.getIndexManager().putCanonicalizedIteratorNameIfAbsent(definition);
           //}
         } else {
-          this.canonicalizedIteratorNames[i] = imgr.putCanonicalizedIteratorNameIfAbsent(definition);
+          this.canonicalizedIteratorNames[i] =
+              imgr.putCanonicalizedIteratorNameIfAbsent(definition);
         }
 
         rIter.setIndexInternalID(this.canonicalizedIteratorNames[i]);
-        tempBuff.append(definition).append(' ').append(this.canonicalizedIteratorNames[i]).append(", ");
+        tempBuff
+            .append(definition)
+            .append(' ')
+            .append(this.canonicalizedIteratorNames[i])
+            .append(", ");
         isFromClauseNull = false;
         if (i == 0) {
           CompiledValue cv = iterDef.getCollectionExpr();
@@ -206,7 +223,9 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
             missingLink = new CompiledPath(new CompiledID(name), "value");
             //missingLinkPath = name + ".value";
             additionalProj = missingLink;
-          } else if (cv instanceof CompiledOperation || cv instanceof CompiledPath || cv instanceof CompiledIndexOperation) {
+          } else if (cv instanceof CompiledOperation
+              || cv instanceof CompiledPath
+              || cv instanceof CompiledIndexOperation) {
             CompiledValue prevCV = null;
             List reconstruct = new ArrayList();
             while (!(cv instanceof CompiledRegion)) {
@@ -222,7 +241,10 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
                 reconstruct.add(0, ((CompiledIndexOperation) cv).getExpression());
                 cv = ((CompiledIndexOperation) cv).getReceiver();
               } else {
-                throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSEFROM_CLAUSE_IS_NEITHER_A_COMPILEDPATH_NOR_COMPILEDOPERATION.toLocalizedString());
+                throw new IndexInvalidException(
+                    LocalizedStrings
+                        .FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSEFROM_CLAUSE_IS_NEITHER_A_COMPILEDPATH_NOR_COMPILEDOPERATION
+                        .toLocalizedString());
               }
               reconstruct.add(0, Integer.valueOf(prevCV.getType()));
             }
@@ -230,21 +252,34 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
             if (firstTokenType == CompiledValue.PATH) {
               //            CompiledPath cp = (CompiledPath) reconstruct.get(1);
               String tailID = (String) reconstruct.get(1);
-              if (tailID.equals("asList") || tailID.equals("asSet") || tailID.equals("values") || tailID.equals("toArray") || tailID.equals("getValues")) {
+              if (tailID.equals("asList")
+                  || tailID.equals("asSet")
+                  || tailID.equals("values")
+                  || tailID.equals("toArray")
+                  || tailID.equals("getValues")) {
                 missingLink = new CompiledPath(new CompiledID(name), "value");
                 //  missingLinkPath = name + ".value";
-              } else if (tailID.equals("keys") || tailID.equals("getKeys") || tailID.equals("keySet")) {
+              } else if (tailID.equals("keys")
+                  || tailID.equals("getKeys")
+                  || tailID.equals("keySet")) {
                 missingLink = new CompiledPath(new CompiledID(name), "key");
                 isFirstIteratorRegionKey = true;
                 //missingLinkPath = name + ".key";
-              } else if (tailID.equals("entries") || tailID.equals("getEntries") || tailID.equals("entrySet")) {
+              } else if (tailID.equals("entries")
+                  || tailID.equals("getEntries")
+                  || tailID.equals("entrySet")) {
                 isFirstIteratorRegionEntry = true;
               } else {
-                throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSEFROM_CLAUSE_DOES_NOT_EVALUATE_TO_VALID_COLLECTION.toLocalizedString());
+                throw new IndexInvalidException(
+                    LocalizedStrings
+                        .FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSEFROM_CLAUSE_DOES_NOT_EVALUATE_TO_VALID_COLLECTION
+                        .toLocalizedString());
               }
               remove(reconstruct, 2, 0);
-              int secondTokenType = (reconstruct.size() > 1) ? ((Integer) reconstruct.get(0)).intValue() : -1;
-              if (!isFirstIteratorRegionEntry && (secondTokenType == OQLLexerTokenTypes.TOK_LBRACK)) {
+              int secondTokenType =
+                  (reconstruct.size() > 1) ? ((Integer) reconstruct.get(0)).intValue() : -1;
+              if (!isFirstIteratorRegionEntry
+                  && (secondTokenType == OQLLexerTokenTypes.TOK_LBRACK)) {
                 //Asif: If the field just next to region , is values or
                 // getValues & next to it is
                 // CompiledIndexOpn, it indirectly means Map operation & we are
@@ -259,65 +294,122 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
                 //as IndexOpn on set is not defined.
                 if (tailID.equals("values") || tailID.equals("getValues")) {
                   boolean returnEntryForRegionCollection = true;
-                  additionalProj = new CompiledIndexOperation(new CompiledBindArgument(1), (CompiledValue) reconstruct.get(1), returnEntryForRegionCollection);
+                  additionalProj =
+                      new CompiledIndexOperation(
+                          new CompiledBindArgument(1),
+                          (CompiledValue) reconstruct.get(1),
+                          returnEntryForRegionCollection);
                   this.isFirstIteratorRegionEntry = true;
                 } else if (tailID.equals("toList") || tailID.equals("toArray")) {
                   //TODO:Asif . This needs to be supported
-                  throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSETOLIST_TOARRAY_NOT_SUPPORTED.toLocalizedString());
+                  throw new IndexInvalidException(
+                      LocalizedStrings
+                          .FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSETOLIST_TOARRAY_NOT_SUPPORTED
+                          .toLocalizedString());
                 } else {
-                  throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSETOLIST_TOARRAY_NOT_SUPPORTED.toLocalizedString());
+                  throw new IndexInvalidException(
+                      LocalizedStrings
+                          .FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSETOLIST_TOARRAY_NOT_SUPPORTED
+                          .toLocalizedString());
                 }
                 remove(reconstruct, 2, 0);
-              } else if (!isFirstIteratorRegionEntry && (secondTokenType == OQLLexerTokenTypes.METHOD_INV || secondTokenType == CompiledValue.PATH) && (tailID.equals("values") || tailID.equals("getValues") || tailID.equals("keySet") || tailID.equals("keys") || tailID.equals("getKeys"))) {
+              } else if (!isFirstIteratorRegionEntry
+                  && (secondTokenType == OQLLexerTokenTypes.METHOD_INV
+                      || secondTokenType == CompiledValue.PATH)
+                  && (tailID.equals("values")
+                      || tailID.equals("getValues")
+                      || tailID.equals("keySet")
+                      || tailID.equals("keys")
+                      || tailID.equals("getKeys"))) {
                 //Asif :Check if the second token name is toList or toArray or
                 // asSet.We need to remove those
                 String secTokName = (String) reconstruct.get(1);
-                if (secTokName.equals("asList") || secTokName.equals("asSet") || secTokName.equals("toArray")) {
-                  remove(reconstruct, ((secondTokenType == OQLLexerTokenTypes.METHOD_INV) ? 3 : 2), 0);
+                if (secTokName.equals("asList")
+                    || secTokName.equals("asSet")
+                    || secTokName.equals("toArray")) {
+                  remove(
+                      reconstruct, ((secondTokenType == OQLLexerTokenTypes.METHOD_INV) ? 3 : 2), 0);
                 }
               }
             } else if (firstTokenType == OQLLexerTokenTypes.TOK_LBRACK) {
               boolean returnEntryForRegionCollection = true;
-              additionalProj = new CompiledIndexOperation(new CompiledBindArgument(1), (CompiledValue) reconstruct.get(1), returnEntryForRegionCollection);
+              additionalProj =
+                  new CompiledIndexOperation(
+                      new CompiledBindArgument(1),
+                      (CompiledValue) reconstruct.get(1),
+                      returnEntryForRegionCollection);
               this.isFirstIteratorRegionEntry = true;
             } else if (firstTokenType == OQLLexerTokenTypes.METHOD_INV) {
               String methodName = (String) reconstruct.get(1);
-              if (methodName.equals("asList") || methodName.equals("asSet") || methodName.equals("values") || methodName.equals("toArray") || methodName.equals("getValues")) {
+              if (methodName.equals("asList")
+                  || methodName.equals("asSet")
+                  || methodName.equals("values")
+                  || methodName.equals("toArray")
+                  || methodName.equals("getValues")) {
                 missingLink = new CompiledPath(new CompiledID(name), "value");
                 //missingLinkPath = name + ".value";
-              } else if (methodName.equals("keys") || methodName.equals("getKeys") || methodName.equals("keySet")) {
+              } else if (methodName.equals("keys")
+                  || methodName.equals("getKeys")
+                  || methodName.equals("keySet")) {
                 missingLink = new CompiledPath(new CompiledID(name), "key");
                 isFirstIteratorRegionKey = true;
                 //missingLinkPath = name + ".key";
-              } else if (methodName.equals("entries") || methodName.equals("getEntries") || methodName.equals("entrySet")) {
+              } else if (methodName.equals("entries")
+                  || methodName.equals("getEntries")
+                  || methodName.equals("entrySet")) {
                 isFirstIteratorRegionEntry = true;
                 List args = (List) reconstruct.get(2);
                 if (args != null && args.size() == 1) {
                   Object obj = args.get(0);
                   if (obj instanceof CompiledBindArgument) {
-                    throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSEENTRIES_METHOD_CALLED_WITH_COMPILEDBINDARGUMENT.toLocalizedString());
+                    throw new IndexInvalidException(
+                        LocalizedStrings
+                            .FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSEENTRIES_METHOD_CALLED_WITH_COMPILEDBINDARGUMENT
+                            .toLocalizedString());
                   }
                 }
               }
               remove(reconstruct, 3, 0);
-              int secondTokenType = (reconstruct.size() > 1) ? ((Integer) reconstruct.get(0)).intValue() : -1;
-              if (!isFirstIteratorRegionEntry && (secondTokenType == OQLLexerTokenTypes.TOK_LBRACK)) {
+              int secondTokenType =
+                  (reconstruct.size() > 1) ? ((Integer) reconstruct.get(0)).intValue() : -1;
+              if (!isFirstIteratorRegionEntry
+                  && (secondTokenType == OQLLexerTokenTypes.TOK_LBRACK)) {
                 if (methodName.equals("values") || methodName.equals("getValues")) {
                   boolean returnEntryForRegionCollection = true;
-                  newCollExpr = new CompiledIndexOperation(new CompiledBindArgument(1), (CompiledValue) reconstruct.get(1), returnEntryForRegionCollection);
+                  newCollExpr =
+                      new CompiledIndexOperation(
+                          new CompiledBindArgument(1),
+                          (CompiledValue) reconstruct.get(1),
+                          returnEntryForRegionCollection);
                 } else if (methodName.equals("toList") || methodName.equals("toArray")) {
                   //TODO:Asif . This needs to be supported
-                  throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSETOLIST_TOARRAY_NOT_SUPPORTED_YET.toLocalizedString());
+                  throw new IndexInvalidException(
+                      LocalizedStrings
+                          .FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSETOLIST_TOARRAY_NOT_SUPPORTED_YET
+                          .toLocalizedString());
                 } else {
-                  throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSETOLIST_TOARRAY_NOT_SUPPORTED_YET.toLocalizedString());
+                  throw new IndexInvalidException(
+                      LocalizedStrings
+                          .FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSETOLIST_TOARRAY_NOT_SUPPORTED_YET
+                          .toLocalizedString());
                 }
                 remove(reconstruct, 2, 0);
-              } else if (!isFirstIteratorRegionEntry && (secondTokenType == OQLLexerTokenTypes.METHOD_INV || secondTokenType == CompiledValue.PATH) && (methodName.equals("values") || methodName.equals("getValues") || methodName.equals("keys") || methodName.equals("getKeys") || methodName.equals("keySet"))) {
+              } else if (!isFirstIteratorRegionEntry
+                  && (secondTokenType == OQLLexerTokenTypes.METHOD_INV
+                      || secondTokenType == CompiledValue.PATH)
+                  && (methodName.equals("values")
+                      || methodName.equals("getValues")
+                      || methodName.equals("keys")
+                      || methodName.equals("getKeys")
+                      || methodName.equals("keySet"))) {
                 //Asif :Check if the second token name is toList or toArray or
                 // asSet.We need to remove those
                 String secTokName = (String) reconstruct.get(1);
-                if (secTokName.equals("asList") || secTokName.equals("asSet") || secTokName.equals("toArray")) {
-                  remove(reconstruct, ((secondTokenType == OQLLexerTokenTypes.METHOD_INV) ? 3 : 2), 0);
+                if (secTokName.equals("asList")
+                    || secTokName.equals("asSet")
+                    || secTokName.equals("toArray")) {
+                  remove(
+                      reconstruct, ((secondTokenType == OQLLexerTokenTypes.METHOD_INV) ? 3 : 2), 0);
                 }
               }
             }
@@ -329,17 +421,27 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
                 if (obj instanceof Integer) {
                   int tokenType = ((Integer) obj).intValue();
                   if (tokenType == CompiledValue.PATH) {
-                    additionalProj = new CompiledPath(additionalProj, (String) reconstruct.get(++j));
+                    additionalProj =
+                        new CompiledPath(additionalProj, (String) reconstruct.get(++j));
                   } else if (tokenType == OQLLexerTokenTypes.TOK_LBRACK) {
-                    additionalProj = new CompiledIndexOperation(additionalProj, (CompiledValue) reconstruct.get(++j));
+                    additionalProj =
+                        new CompiledIndexOperation(
+                            additionalProj, (CompiledValue) reconstruct.get(++j));
                   } else if (tokenType == OQLLexerTokenTypes.METHOD_INV) {
-                    additionalProj = new CompiledOperation(additionalProj, (String) reconstruct.get(++j), (List) reconstruct.get(++j));
+                    additionalProj =
+                        new CompiledOperation(
+                            additionalProj,
+                            (String) reconstruct.get(++j),
+                            (List) reconstruct.get(++j));
                   }
                 }
               }
             }
           } else {
-            throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSEFROM_CLAUSE_IS_NEITHER_A_COMPILEDPATH_NOR_COMPILEDOPERATION.toLocalizedString());
+            throw new IndexInvalidException(
+                LocalizedStrings
+                    .FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSEFROM_CLAUSE_IS_NEITHER_A_COMPILEDPATH_NOR_COMPILEDOPERATION
+                    .toLocalizedString());
           }
           if (!this.isFirstIteratorRegionEntry) {
             newItr = new CompiledIteratorDef(name, null, newCollExpr);
@@ -349,18 +451,20 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
         } else if (!this.isFirstIteratorRegionEntry) {
           newItr = iterDef;
           if (rIter.getDefinition().indexOf(this.canonicalizedIteratorNames[0]) != -1) {
-            newItr = (CompiledIteratorDef) getModifiedDependentCompiledValue(context, i, iterDef, true);
+            newItr =
+                (CompiledIteratorDef) getModifiedDependentCompiledValue(context, i, iterDef, true);
           }
           this.indexInitIterators.add(newItr);
         }
       }
     } catch (Exception e) {
-      if (e instanceof IndexInvalidException)
-        throw (IndexInvalidException) e;
+      if (e instanceof IndexInvalidException) throw (IndexInvalidException) e;
       throw new IndexInvalidException(e);
     }
     if (isFromClauseNull)
-      throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_INVALID_FROM_CLAUSE_0.toLocalizedString(fromClause));
+      throw new IndexInvalidException(
+          LocalizedStrings.FunctionalIndexCreationHelper_INVALID_FROM_CLAUSE_0.toLocalizedString(
+              fromClause));
     this.fromClause = tempBuff.substring(0, tempBuff.length() - 2);
     this.fromClauseIterators = list;
   }
@@ -374,11 +478,19 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
     CompiledValue expr = this.compiler.compileQuery(indexedExpression);
     //List indexedExprs = this.compiler.compileProjectionAttributes(indexedExpression);
     if (expr == null) {
-      throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_INVALID_INDEXED_EXPRESSION_0.toLocalizedString(indexedExpression));
+      throw new IndexInvalidException(
+          LocalizedStrings.FunctionalIndexCreationHelper_INVALID_INDEXED_EXPRESSION_0
+              .toLocalizedString(indexedExpression));
     }
 
-    if (expr instanceof CompiledUndefined || expr instanceof CompiledLiteral || expr instanceof CompiledComparison || expr instanceof CompiledBindArgument || expr instanceof CompiledNegation)
-      throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_INVALID_INDEXED_EXPRESSION_0.toLocalizedString(indexedExpression));
+    if (expr instanceof CompiledUndefined
+        || expr instanceof CompiledLiteral
+        || expr instanceof CompiledComparison
+        || expr instanceof CompiledBindArgument
+        || expr instanceof CompiledNegation)
+      throw new IndexInvalidException(
+          LocalizedStrings.FunctionalIndexCreationHelper_INVALID_INDEXED_EXPRESSION_0
+              .toLocalizedString(indexedExpression));
     try {
       StringBuffer sb = new StringBuffer();
       if (expr instanceof MapIndexable) {
@@ -420,7 +532,6 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
           buff2.deleteCharAt(0);
           sb.append(buff2.toString());
           sb.append(']');
-
         }
       } else {
         expr.generateCanonicalizedExpression(sb, context);
@@ -430,25 +541,33 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
       this.indexedExpression = sb.toString();
       //      String tempStr = this.indexedExpression;
       modifiedIndexExpr = expr;
-      if (!this.isFirstIteratorRegionEntry && this.indexedExpression.indexOf(this.canonicalizedIteratorNames[0]) >= 0) {
+      if (!this.isFirstIteratorRegionEntry
+          && this.indexedExpression.indexOf(this.canonicalizedIteratorNames[0]) >= 0) {
         modifiedIndexExpr = getModifiedDependentCompiledValue(context, -1, expr, true);
       }
     } catch (Exception e) {
       //e.printStackTrace();
-      throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_INVALID_INDEXED_EXPRESSION_0.toLocalizedString(indexedExpression), e);
+      throw new IndexInvalidException(
+          LocalizedStrings.FunctionalIndexCreationHelper_INVALID_INDEXED_EXPRESSION_0
+              .toLocalizedString(indexedExpression),
+          e);
     }
     indexedExpr = expr;
   }
 
-  private void prepareProjectionAttributes(String projectionAttributes) throws IndexInvalidException {
+  private void prepareProjectionAttributes(String projectionAttributes)
+      throws IndexInvalidException {
     if (projectionAttributes != null && !projectionAttributes.equals("*")) {
-      throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_INVALID_PROJECTION_ATTRIBUTES_0.toLocalizedString(projectionAttributes));
+      throw new IndexInvalidException(
+          LocalizedStrings.FunctionalIndexCreationHelper_INVALID_PROJECTION_ATTRIBUTES_0
+              .toLocalizedString(projectionAttributes));
     }
     this.projectionAttributes = projectionAttributes;
   }
 
-  private Object[] modfiyIterDefToSuiteIMQ(CompiledIteratorDef iterDef) throws IndexInvalidException {
-    Object retValues[] = { null, null };
+  private Object[] modfiyIterDefToSuiteIMQ(CompiledIteratorDef iterDef)
+      throws IndexInvalidException {
+    Object retValues[] = {null, null};
     try {
       CompiledValue def = iterDef.getCollectionExpr();
       //System.out.println("def = "+def);
@@ -459,7 +578,9 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
         retValues[1] = newDef;
         return retValues;
       }
-      if (def instanceof CompiledPath || def instanceof CompiledOperation || def instanceof CompiledIndexOperation) {
+      if (def instanceof CompiledPath
+          || def instanceof CompiledOperation
+          || def instanceof CompiledIndexOperation) {
         CompiledValue cv = def;
         CompiledValue prevCV = null;
         List reconstruct = new ArrayList();
@@ -476,7 +597,10 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
             reconstruct.add(0, ((CompiledIndexOperation) cv).getExpression());
             cv = ((CompiledIndexOperation) cv).getReceiver();
           } else {
-            throw new IndexInvalidException(LocalizedStrings.FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSEFROM_CLAUSE_IS_NEITHER_A_COMPILEDPATH_NOR_COMPILEDOPERATION.toLocalizedString());
+            throw new IndexInvalidException(
+                LocalizedStrings
+                    .FunctionalIndexCreationHelper_FUNCTIONALINDEXCREATIONHELPERPREPAREFROMCLAUSEFROM_CLAUSE_IS_NEITHER_A_COMPILEDPATH_NOR_COMPILEDOPERATION
+                    .toLocalizedString());
           }
           reconstruct.add(0, Integer.valueOf(prevCV.getType()));
         }
@@ -492,7 +616,9 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
             } else if (tokenType == OQLLexerTokenTypes.TOK_LBRACK) {
               cv = new CompiledIndexOperation(cv, (CompiledValue) reconstruct.get(++j));
             } else if (tokenType == OQLLexerTokenTypes.METHOD_INV) {
-              cv = new CompiledOperation(cv, (String) reconstruct.get(++j), (List) reconstruct.get(++j));
+              cv =
+                  new CompiledOperation(
+                      cv, (String) reconstruct.get(++j), (List) reconstruct.get(++j));
             }
           }
         }
@@ -513,19 +639,25 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
    * way. Thus the dependent compiled value is prefixed with the missing link so
    * that it is derivable from the 0th iterator.
    */
-  private CompiledValue getModifiedDependentCompiledValue(ExecutionContext context, int currItrID, CompiledValue cv, boolean isDependent) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  private CompiledValue getModifiedDependentCompiledValue(
+      ExecutionContext context, int currItrID, CompiledValue cv, boolean isDependent)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     if (cv instanceof CompiledIteratorDef) {
       CompiledIteratorDef iterDef = (CompiledIteratorDef) cv;
       RuntimeIterator rItr = (RuntimeIterator) context.getCurrentIterators().get(currItrID);
       String canonFrmClause = rItr.getDefinition();
-      if (canonFrmClause.startsWith(this.canonicalizedIteratorNames[0]))
-        isDependent = true;
-      else
-        isDependent = false;
-      return new CompiledIteratorDef(iterDef.getName(), rItr.getElementType(), getModifiedDependentCompiledValue(context, currItrID, iterDef.getCollectionExpr(), isDependent));
+      if (canonFrmClause.startsWith(this.canonicalizedIteratorNames[0])) isDependent = true;
+      else isDependent = false;
+      return new CompiledIteratorDef(
+          iterDef.getName(),
+          rItr.getElementType(),
+          getModifiedDependentCompiledValue(
+              context, currItrID, iterDef.getCollectionExpr(), isDependent));
     } else if (cv instanceof CompiledPath) {
       CompiledPath path = (CompiledPath) cv;
-      return new CompiledPath(getModifiedDependentCompiledValue(context, currItrID, path.getReceiver(), isDependent), path.getTailID());
+      return new CompiledPath(
+          getModifiedDependentCompiledValue(context, currItrID, path.getReceiver(), isDependent),
+          path.getTailID());
     } else if (cv instanceof CompiledOperation) {
       CompiledOperation oper = (CompiledOperation) cv;
       List list = oper.getArguments();
@@ -549,7 +681,10 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
         }
         return new CompiledOperation(rec, oper.getMethodName(), newList);
       } else {
-        return new CompiledOperation(getModifiedDependentCompiledValue(context, currItrID, rec, isDependent), oper.getMethodName(), newList);
+        return new CompiledOperation(
+            getModifiedDependentCompiledValue(context, currItrID, rec, isDependent),
+            oper.getMethodName(),
+            newList);
       }
     } else if (cv instanceof CompiledFunction) {
       CompiledFunction cf = (CompiledFunction) cv;
@@ -594,7 +729,9 @@ class FunctionalIndexCreationHelper extends IndexCreationHelper {
       } else {
         cv1 = getModifiedDependentCompiledValue(context, currItrID, cv1, false);
       }
-      return new CompiledIndexOperation(getModifiedDependentCompiledValue(context, currItrID, co.getReceiver(), isDependent), cv1);
+      return new CompiledIndexOperation(
+          getModifiedDependentCompiledValue(context, currItrID, co.getReceiver(), isDependent),
+          cv1);
     } else {
       return cv;
     }

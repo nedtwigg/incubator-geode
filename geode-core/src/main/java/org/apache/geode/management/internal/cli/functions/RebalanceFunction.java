@@ -68,7 +68,25 @@ public class RebalanceFunction implements Function, InternalEntity {
       results = op.getResults();
       logger.info("Starting RebalanceFunction got results = {}", results);
       StringBuilder str1 = new StringBuilder();
-      str1.append(results.getTotalBucketCreateBytes() + "," + results.getTotalBucketCreateTime() + "," + results.getTotalBucketCreatesCompleted() + "," + results.getTotalBucketTransferBytes() + "," + results.getTotalBucketTransferTime() + "," + results.getTotalBucketTransfersCompleted() + "," + results.getTotalPrimaryTransferTime() + "," + results.getTotalPrimaryTransfersCompleted() + "," + results.getTotalTime() + ",");
+      str1.append(
+          results.getTotalBucketCreateBytes()
+              + ","
+              + results.getTotalBucketCreateTime()
+              + ","
+              + results.getTotalBucketCreatesCompleted()
+              + ","
+              + results.getTotalBucketTransferBytes()
+              + ","
+              + results.getTotalBucketTransferTime()
+              + ","
+              + results.getTotalBucketTransfersCompleted()
+              + ","
+              + results.getTotalPrimaryTransferTime()
+              + ","
+              + results.getTotalPrimaryTransfersCompleted()
+              + ","
+              + results.getTotalTime()
+              + ",");
 
       Set<PartitionRebalanceInfo> regns1 = results.getPartitionRebalanceDetails();
       Iterator it = regns1.iterator();
@@ -107,5 +125,4 @@ public class RebalanceFunction implements Function, InternalEntity {
   public boolean isHA() {
     return false;
   }
-
 }

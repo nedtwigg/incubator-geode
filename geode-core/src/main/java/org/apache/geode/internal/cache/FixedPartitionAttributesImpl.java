@@ -28,40 +28,27 @@ import java.io.IOException;
 
 /**
  * Internal implementation of {@link FixedPartitionAttributes}.
- * 
+ *
  * @since GemFire 6.6
  */
-
-public class FixedPartitionAttributesImpl extends FixedPartitionAttributes implements DataSerializable {
-  /**
-   * 
-   */
+public class FixedPartitionAttributesImpl extends FixedPartitionAttributes
+    implements DataSerializable {
+  /** */
   private static final long serialVersionUID = 7435010874879693776L;
 
-  /**
-   * name of the partition
-   */
+  /** name of the partition */
   private String partitionName;
 
-  /**
-   * represents primary status
-   */
+  /** represents primary status */
   private boolean isPrimary = false;
 
-  /**
-   * number of buckets allowed to create for this partition.
-   */
+  /** number of buckets allowed to create for this partition. */
   private int numBuckets = 1;
 
   private int startingBucketID = KeyInfo.UNKNOWN_BUCKET;
 
-  /**
-   * Constructs an instance of <code>FixedPartitionAttributes</code> with
-   * default settings.
-   */
-  public FixedPartitionAttributesImpl() {
-
-  }
+  /** Constructs an instance of <code>FixedPartitionAttributes</code> with default settings. */
+  public FixedPartitionAttributesImpl() {}
 
   public String getPartitionName() {
     return this.partitionName;
@@ -80,7 +67,6 @@ public class FixedPartitionAttributesImpl extends FixedPartitionAttributes imple
     this.isPrimary = in.readBoolean();
     this.numBuckets = in.readInt();
     this.startingBucketID = in.readInt();
-
   }
 
   public void toData(DataOutput out) throws IOException {
@@ -144,7 +130,13 @@ public class FixedPartitionAttributesImpl extends FixedPartitionAttributes imple
 
   public String toString() {
     StringBuffer s = new StringBuffer();
-    s.append("FixedPartitionAttributes@").append("[partitionName=").append(this.partitionName).append(";isPrimary=").append(this.isPrimary).append(";numBuckets=").append(this.numBuckets);
+    s.append("FixedPartitionAttributes@")
+        .append("[partitionName=")
+        .append(this.partitionName)
+        .append(";isPrimary=")
+        .append(this.isPrimary)
+        .append(";numBuckets=")
+        .append(this.numBuckets);
     if (Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "PRDebug")) {
       s.append(";startingBucketID= ").append(this.startingBucketID);
     }

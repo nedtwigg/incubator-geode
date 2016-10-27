@@ -28,29 +28,32 @@ import org.apache.geode.distributed.internal.WanLocatorDiscoverer;
 import org.apache.geode.internal.CopyOnWriteHashSet;
 import org.apache.geode.internal.admin.remote.DistributionLocatorId;
 
-/**
- * This is a helper class which helps to add the locator information to the allLocatorInfoMap.
- * 
- *
- */
+/** This is a helper class which helps to add the locator information to the allLocatorInfoMap. */
 public class LocatorHelper {
 
-  public final static Object locatorObject = new Object();
+  public static final Object locatorObject = new Object();
 
   /**
-   * 
-   * This methods add the given locator to allLocatorInfoMap.
-   * It also invokes a locatorlistener to inform other locators in allLocatorInfoMap about this newly added locator.
+   * This methods add the given locator to allLocatorInfoMap. It also invokes a locatorlistener to
+   * inform other locators in allLocatorInfoMap about this newly added locator.
+   *
    * @param distributedSystemId
    * @param locator
    * @param locatorListener
    * @param sourceLocator
    */
-  public static boolean addLocator(int distributedSystemId, DistributionLocatorId locator, LocatorMembershipListener locatorListener, DistributionLocatorId sourceLocator) {
-    ConcurrentHashMap<Integer, Set<DistributionLocatorId>> allLocatorsInfo = (ConcurrentHashMap<Integer, Set<DistributionLocatorId>>) locatorListener.getAllLocatorsInfo();
+  public static boolean addLocator(
+      int distributedSystemId,
+      DistributionLocatorId locator,
+      LocatorMembershipListener locatorListener,
+      DistributionLocatorId sourceLocator) {
+    ConcurrentHashMap<Integer, Set<DistributionLocatorId>> allLocatorsInfo =
+        (ConcurrentHashMap<Integer, Set<DistributionLocatorId>>)
+            locatorListener.getAllLocatorsInfo();
     Set<DistributionLocatorId> locatorsSet = new CopyOnWriteHashSet<DistributionLocatorId>();
     locatorsSet.add(locator);
-    Set<DistributionLocatorId> existingValue = allLocatorsInfo.putIfAbsent(distributedSystemId, locatorsSet);
+    Set<DistributionLocatorId> existingValue =
+        allLocatorsInfo.putIfAbsent(distributedSystemId, locatorsSet);
     if (existingValue != null) {
       if (!existingValue.contains(locator)) {
         existingValue.add(locator);
@@ -67,18 +70,22 @@ public class LocatorHelper {
   }
 
   /**
-   * This methods decides whether the given locator is server locator, if so
-   * then add this locator in allServerLocatorsInfo map.
-   * 
+   * This methods decides whether the given locator is server locator, if so then add this locator
+   * in allServerLocatorsInfo map.
+   *
    * @param distributedSystemId
    * @param locatorListener
    * @param locator
    */
-  private static void addServerLocator(Integer distributedSystemId, LocatorMembershipListener locatorListener, DistributionLocatorId locator) {
+  private static void addServerLocator(
+      Integer distributedSystemId,
+      LocatorMembershipListener locatorListener,
+      DistributionLocatorId locator) {
     if (!locator.isServerLocator()) {
       return;
     }
-    ConcurrentHashMap<Integer, Set<String>> allServerLocatorsInfo = (ConcurrentHashMap<Integer, Set<String>>) locatorListener.getAllServerLocatorsInfo();
+    ConcurrentHashMap<Integer, Set<String>> allServerLocatorsInfo =
+        (ConcurrentHashMap<Integer, Set<String>>) locatorListener.getAllServerLocatorsInfo();
 
     Set<String> locatorsSet = new CopyOnWriteHashSet<String>();
     locatorsSet.add(locator.toString());
@@ -92,16 +99,22 @@ public class LocatorHelper {
 
   /**
    * This method adds the map of locatorsinfo sent by other locator to this locator's allLocatorInfo
-   * 
+   *
    * @param locators
    * @param locatorListener
    */
-  public static boolean addExchangedLocators(Map<Integer, Set<DistributionLocatorId>> locators, LocatorMembershipListener locatorListener) {
+  public static boolean addExchangedLocators(
+      Map<Integer, Set<DistributionLocatorId>> locators,
+      LocatorMembershipListener locatorListener) {
 
-    ConcurrentHashMap<Integer, Set<DistributionLocatorId>> allLocators = (ConcurrentHashMap<Integer, Set<DistributionLocatorId>>) locatorListener.getAllLocatorsInfo();
+    ConcurrentHashMap<Integer, Set<DistributionLocatorId>> allLocators =
+        (ConcurrentHashMap<Integer, Set<DistributionLocatorId>>)
+            locatorListener.getAllLocatorsInfo();
     if (!allLocators.equals(locators)) {
       for (Map.Entry<Integer, Set<DistributionLocatorId>> entry : locators.entrySet()) {
-        Set<DistributionLocatorId> existingValue = allLocators.putIfAbsent(entry.getKey(), new CopyOnWriteHashSet<DistributionLocatorId>(entry.getValue()));
+        Set<DistributionLocatorId> existingValue =
+            allLocators.putIfAbsent(
+                entry.getKey(), new CopyOnWriteHashSet<DistributionLocatorId>(entry.getValue()));
 
         if (existingValue != null) {
           Set<DistributionLocatorId> localLocators = allLocators.get(entry.getKey());
@@ -125,5 +138,4 @@ public class LocatorHelper {
     }
     return false;
   }
-
 }

@@ -32,5 +32,4 @@ public class BounceResult {
   public RemoteDUnitVMIF getNewClient() {
     return newClient;
   }
-
 }

@@ -35,17 +35,16 @@ import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
 /**
  * Function to destroy {@link MockRegionExtension} on a {@link Region}.
- * 
+ *
  * <dl>
- * <dt>Arguments:</dt>
- * <dd>
- * <dl>
- * <dt>{@link String} regionName</dt>
- * <dd>Name of region on which to destroy {@link MockCacheExtension}.</dd>
+ *   <dt>Arguments:
+ *   <dd>
+ *       <dl>
+ *         <dt>{@link String} regionName
+ *         <dd>Name of region on which to destroy {@link MockCacheExtension}.
+ *       </dl>
+ *
  * </dl>
- * </dt>
- * </dl>
- * 
  *
  * @since GemFire 8.1
  */
@@ -75,10 +74,16 @@ public class DestroyMockRegionExtensionFunction extends FunctionAdapter {
     XmlEntity xmlEntity = new XmlEntity(CacheXml.REGION, "name", region.getName());
 
     final ResultSender<Object> resultSender = context.getResultSender();
-    final String memberNameOrId = CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
+    final String memberNameOrId =
+        CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
 
-    resultSender.lastResult(new CliFunctionResult(memberNameOrId, xmlEntity, CliStrings.format("Mock region extension \"{0}\" destroyed on \"{1}\"", new Object[] { region.getFullPath(), memberNameOrId })));
-
+    resultSender.lastResult(
+        new CliFunctionResult(
+            memberNameOrId,
+            xmlEntity,
+            CliStrings.format(
+                "Mock region extension \"{0}\" destroyed on \"{1}\"",
+                new Object[] {region.getFullPath(), memberNameOrId})));
   }
 
   @Override
@@ -92,6 +97,6 @@ public class DestroyMockRegionExtensionFunction extends FunctionAdapter {
    * @since GemFire 8.1
    */
   public static Object[] toArgs(final String regionName) {
-    return new Object[] { regionName };
+    return new Object[] {regionName};
   }
 }

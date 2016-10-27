@@ -40,25 +40,24 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-public class LinkedStructSet extends LinkedHashSet<Struct> implements SelectResults<Struct>, Ordered, DataSerializableFixedID {
+public class LinkedStructSet extends LinkedHashSet<Struct>
+    implements SelectResults<Struct>, Ordered, DataSerializableFixedID {
 
   private static final long serialVersionUID = -1687142950781718156L;
 
   protected StructTypeImpl structType;
 
-  /**
-   * Holds value of property modifiable.
-   */
+  /** Holds value of property modifiable. */
   private boolean modifiable = true;
 
   /** Creates a new instance of StructSet */
-  public LinkedStructSet() {
-  };
+  public LinkedStructSet() {};
 
   /** Creates a new instance of StructSet */
   public LinkedStructSet(StructTypeImpl structType) {
     if (structType == null) {
-      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_STRUCTTYPE_MUST_NOT_BE_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SortedStructSet_STRUCTTYPE_MUST_NOT_BE_NULL.toLocalizedString());
     }
     this.structType = structType;
   }
@@ -78,11 +77,14 @@ public class LinkedStructSet extends LinkedHashSet<Struct> implements SelectResu
   @Override
   public boolean add(Struct obj) {
     if (!(obj instanceof StructImpl)) {
-      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_THIS_SET_ONLY_ACCEPTS_STRUCTIMPL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SortedStructSet_THIS_SET_ONLY_ACCEPTS_STRUCTIMPL.toLocalizedString());
     }
     StructImpl s = (StructImpl) obj;
     if (!s.getStructType().equals(this.structType)) {
-      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_OBJ_DOES_NOT_HAVE_THE_SAME_STRUCTTYPE.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SortedStructSet_OBJ_DOES_NOT_HAVE_THE_SAME_STRUCTTYPE
+              .toLocalizedString());
     }
     // return addFieldValues(s.getFieldValues());
     return super.add(s);
@@ -90,10 +92,9 @@ public class LinkedStructSet extends LinkedHashSet<Struct> implements SelectResu
 
   /**
    * For internal use. Just add the Object[] values for a struct with same type
-   * 
-   * public boolean addFieldValues(Object[] fieldValues) { //return
-   * super.add(fieldValues); StructImpl s = new StructImpl(this.structType,
-   * fieldValues); return super.add(s); }
+   *
+   * <p>public boolean addFieldValues(Object[] fieldValues) { //return super.add(fieldValues);
+   * StructImpl s = new StructImpl(this.structType, fieldValues); return super.add(s); }
    */
 
   /** Does this set contain specified struct? */
@@ -111,10 +112,9 @@ public class LinkedStructSet extends LinkedHashSet<Struct> implements SelectResu
   }
 
   /**
-   * Does this set contain a Struct of the correct type with the specified
-   * values?
-   * 
-   * public boolean containsFieldValues(Object[] fieldValues) { return
+   * Does this set contain a Struct of the correct type with the specified values?
+   *
+   * <p>public boolean containsFieldValues(Object[] fieldValues) { return
    * super.contains(fieldValues); }
    */
 
@@ -134,8 +134,7 @@ public class LinkedStructSet extends LinkedHashSet<Struct> implements SelectResu
 
   /**
    * Remove the field values from a struct of the correct type public boolean
-   * removeFieldValues(Object[] fieldValues) { return super.remove(fieldValues);
-   * }
+   * removeFieldValues(Object[] fieldValues) { return super.remove(fieldValues); }
    */
 
   // downcast StructSets to call more efficient methods
@@ -237,7 +236,8 @@ public class LinkedStructSet extends LinkedHashSet<Struct> implements SelectResu
   // is overriding the element type in a set of structs
   public void setElementType(ObjectType elementType) {
     if (!(elementType instanceof StructTypeImpl)) {
-      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_ELEMENT_TYPE_MUST_BE_STRUCT.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SortedStructSet_ELEMENT_TYPE_MUST_BE_STRUCT.toLocalizedString());
     }
     this.structType = (StructTypeImpl) elementType;
   }
@@ -252,7 +252,7 @@ public class LinkedStructSet extends LinkedHashSet<Struct> implements SelectResu
 
   /**
    * Getter for property modifiable.
-   * 
+   *
    * @return Value of property modifiable.
    */
   public boolean isModifiable() {
@@ -265,9 +265,8 @@ public class LinkedStructSet extends LinkedHashSet<Struct> implements SelectResu
 
   /**
    * Setter for property modifiable.
-   * 
-   * @param modifiable
-   *          New value of property modifiable.
+   *
+   * @param modifiable New value of property modifiable.
    */
   public void setModifiable(boolean modifiable) {
     this.modifiable = modifiable;
@@ -283,17 +282,14 @@ public class LinkedStructSet extends LinkedHashSet<Struct> implements SelectResu
       Object o = i.next();
       buf.append(o == this ? "(this Collection)" : String.valueOf(o));
       hasNext = i.hasNext();
-      if (hasNext)
-        buf.append(",\n ");
+      if (hasNext) buf.append(",\n ");
     }
     buf.append("]");
     return buf.toString();
   }
 
-  /**
-   * Iterator wrapper to construct Structs on demand.
-   */
-  static private class StructIterator implements Iterator {
+  /** Iterator wrapper to construct Structs on demand. */
+  private static class StructIterator implements Iterator {
 
     private final Iterator itr;
 
@@ -334,7 +330,7 @@ public class LinkedStructSet extends LinkedHashSet<Struct> implements SelectResu
     out.writeBoolean(this.modifiable);
     out.writeInt(this.size());
     DataSerializer.writeObject(this.structType, out);
-    for (Iterator<Struct> i = this.iterator(); i.hasNext();) {
+    for (Iterator<Struct> i = this.iterator(); i.hasNext(); ) {
       Struct struct = i.next();
       DataSerializer.writeObject(struct.getFieldValues(), out);
     }
@@ -354,5 +350,4 @@ public class LinkedStructSet extends LinkedHashSet<Struct> implements SelectResu
   public boolean dataPreordered() {
     return true;
   }
-
 }

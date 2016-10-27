@@ -34,11 +34,10 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
 /**
- * Tests the functionality of the {@link CopyHelper#copy} method
- * and the builtin copy-on-get Cache functions.
+ * Tests the functionality of the {@link CopyHelper#copy} method and the builtin copy-on-get Cache
+ * functions.
  *
  * @since GemFire 4.0
- *
  */
 @Category(IntegrationTest.class)
 public class CopyJUnitTest {
@@ -57,40 +56,41 @@ public class CopyJUnitTest {
 
     AttributesFactory af = new AttributesFactory();
     af.setScope(Scope.LOCAL);
-    af.setCacheListener(new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent event) {
-        oldValue = event.getOldValue();
-        newValue = event.getNewValue();
-      }
+    af.setCacheListener(
+        new CacheListenerAdapter() {
+          public void afterCreate(EntryEvent event) {
+            oldValue = event.getOldValue();
+            newValue = event.getNewValue();
+          }
 
-      public void afterUpdate(EntryEvent event) {
-        oldValue = event.getOldValue();
-        newValue = event.getNewValue();
-      }
+          public void afterUpdate(EntryEvent event) {
+            oldValue = event.getOldValue();
+            newValue = event.getNewValue();
+          }
 
-      public void afterInvalidate(EntryEvent event) {
-        oldValue = event.getOldValue();
-        newValue = event.getNewValue();
-      }
+          public void afterInvalidate(EntryEvent event) {
+            oldValue = event.getOldValue();
+            newValue = event.getNewValue();
+          }
 
-      public void afterDestroy(EntryEvent event) {
-        oldValue = event.getOldValue();
-        newValue = event.getNewValue();
-      }
+          public void afterDestroy(EntryEvent event) {
+            oldValue = event.getOldValue();
+            newValue = event.getNewValue();
+          }
 
-      public void afterRegionInvalidate(RegionEvent event) {
-        // ignore
-      }
+          public void afterRegionInvalidate(RegionEvent event) {
+            // ignore
+          }
 
-      public void afterRegionDestroy(RegionEvent event) {
-        // ignore
-      }
+          public void afterRegionDestroy(RegionEvent event) {
+            // ignore
+          }
 
-      public void close() {
-        oldValue = null;
-        newValue = null;
-      }
-    });
+          public void close() {
+            oldValue = null;
+            newValue = null;
+          }
+        });
     this.region = this.cache.createRegion("CopyJUnitTest", af.create());
   }
 
@@ -136,7 +136,8 @@ public class CopyJUnitTest {
       Collection c = this.region.values();
       Object[] cArray = c.toArray();
       assertTrue("expected values().toArray() to return reference to v", cArray[0] == v);
-      assertTrue("expected values().iterator().next() to return reference to v", c.iterator().next() == v);
+      assertTrue(
+          "expected values().iterator().next() to return reference to v", c.iterator().next() == v);
     } finally {
       closeCache();
     }
@@ -160,15 +161,11 @@ public class CopyJUnitTest {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
       ModifiableInteger other = (ModifiableInteger) obj;
-      if (v != other.v)
-        return false;
+      if (v != other.v) return false;
       return true;
     }
   }
@@ -195,7 +192,8 @@ public class CopyJUnitTest {
       assertTrue("expected values().toArray() to return copy of v", cArray[0] != v);
       assertEquals(v, cArray[0]);
 
-      assertTrue("expected values().iterator().next() to return copy of v", c.iterator().next() != v);
+      assertTrue(
+          "expected values().iterator().next() to return copy of v", c.iterator().next() != v);
       assertEquals(v, c.iterator().next());
     } finally {
       closeCache();
@@ -229,7 +227,7 @@ public class CopyJUnitTest {
   @Test
   public void testPrimitiveArrays() {
     {
-      byte[] ba1 = new byte[] { 1, 2, 3 };
+      byte[] ba1 = new byte[] {1, 2, 3};
       byte[] ba2 = CopyHelper.copy(ba1);
       if (ba1 == ba2) {
         fail("expected new instance of primitive array");
@@ -239,7 +237,7 @@ public class CopyJUnitTest {
       }
     }
     {
-      boolean[] ba1 = new boolean[] { true, false, true };
+      boolean[] ba1 = new boolean[] {true, false, true};
       boolean[] ba2 = CopyHelper.copy(ba1);
       if (ba1 == ba2) {
         fail("expected new instance of primitive array");
@@ -249,7 +247,7 @@ public class CopyJUnitTest {
       }
     }
     {
-      char[] ba1 = new char[] { 1, 2, 3 };
+      char[] ba1 = new char[] {1, 2, 3};
       char[] ba2 = CopyHelper.copy(ba1);
       if (ba1 == ba2) {
         fail("expected new instance of primitive array");
@@ -259,7 +257,7 @@ public class CopyJUnitTest {
       }
     }
     {
-      short[] ba1 = new short[] { 1, 2, 3 };
+      short[] ba1 = new short[] {1, 2, 3};
       short[] ba2 = CopyHelper.copy(ba1);
       if (ba1 == ba2) {
         fail("expected new instance of primitive array");
@@ -269,7 +267,7 @@ public class CopyJUnitTest {
       }
     }
     {
-      int[] ba1 = new int[] { 1, 2, 3 };
+      int[] ba1 = new int[] {1, 2, 3};
       int[] ba2 = CopyHelper.copy(ba1);
       if (ba1 == ba2) {
         fail("expected new instance of primitive array");
@@ -279,7 +277,7 @@ public class CopyJUnitTest {
       }
     }
     {
-      long[] ba1 = new long[] { 1, 2, 3 };
+      long[] ba1 = new long[] {1, 2, 3};
       long[] ba2 = CopyHelper.copy(ba1);
       if (ba1 == ba2) {
         fail("expected new instance of primitive array");
@@ -289,7 +287,7 @@ public class CopyJUnitTest {
       }
     }
     {
-      float[] ba1 = new float[] { 1, 2, 3 };
+      float[] ba1 = new float[] {1, 2, 3};
       float[] ba2 = CopyHelper.copy(ba1);
       if (ba1 == ba2) {
         fail("expected new instance of primitive array");
@@ -299,7 +297,7 @@ public class CopyJUnitTest {
       }
     }
     {
-      double[] ba1 = new double[] { 1, 2, 3 };
+      double[] ba1 = new double[] {1, 2, 3};
       double[] ba2 = CopyHelper.copy(ba1);
       if (ba1 == ba2) {
         fail("expected new instance of primitive array");
@@ -312,7 +310,7 @@ public class CopyJUnitTest {
 
   @Test
   public void testObjectArray() {
-    Object[] oa1 = new Object[] { 1, 2, 3 };
+    Object[] oa1 = new Object[] {1, 2, 3};
     Object[] oa2 = CopyHelper.copy(oa1);
     if (oa1 == oa2) {
       fail("expected new instance of object array");
@@ -335,83 +333,84 @@ public class CopyJUnitTest {
     assertEquals(true, CopyHelper.isWellKnownImmutableInstance(new BigInteger("1234")));
     assertEquals(true, CopyHelper.isWellKnownImmutableInstance(new BigDecimal("123.4556")));
     assertEquals(true, CopyHelper.isWellKnownImmutableInstance(new UUID(1L, 2L)));
-    PdxInstance pi = new PdxInstance() {
-      public Object getObject() {
-        return null;
-      }
+    PdxInstance pi =
+        new PdxInstance() {
+          public Object getObject() {
+            return null;
+          }
 
-      public Object getObject(Object pdxObject) {
-        return null;
-      }
+          public Object getObject(Object pdxObject) {
+            return null;
+          }
 
-      public boolean hasField(String fieldName) {
-        return false;
-      }
+          public boolean hasField(String fieldName) {
+            return false;
+          }
 
-      public List<String> getFieldNames() {
-        return null;
-      }
+          public List<String> getFieldNames() {
+            return null;
+          }
 
-      public boolean isIdentityField(String fieldName) {
-        return false;
-      }
+          public boolean isIdentityField(String fieldName) {
+            return false;
+          }
 
-      public Object getField(String fieldName) {
-        return null;
-      }
+          public Object getField(String fieldName) {
+            return null;
+          }
 
-      public WritablePdxInstance createWriter() {
-        return null;
-      }
+          public WritablePdxInstance createWriter() {
+            return null;
+          }
 
-      public String getClassName() {
-        return null;
-      }
+          public String getClassName() {
+            return null;
+          }
 
-      public boolean isEnum() {
-        return false;
-      }
-    };
-    WritablePdxInstance wpi = new WritablePdxInstance() {
-      public Object getObject() {
-        return null;
-      }
+          public boolean isEnum() {
+            return false;
+          }
+        };
+    WritablePdxInstance wpi =
+        new WritablePdxInstance() {
+          public Object getObject() {
+            return null;
+          }
 
-      public Object getObject(Object pdxObject) {
-        return null;
-      }
+          public Object getObject(Object pdxObject) {
+            return null;
+          }
 
-      public boolean hasField(String fieldName) {
-        return false;
-      }
+          public boolean hasField(String fieldName) {
+            return false;
+          }
 
-      public List<String> getFieldNames() {
-        return null;
-      }
+          public List<String> getFieldNames() {
+            return null;
+          }
 
-      public boolean isIdentityField(String fieldName) {
-        return false;
-      }
+          public boolean isIdentityField(String fieldName) {
+            return false;
+          }
 
-      public Object getField(String fieldName) {
-        return null;
-      }
+          public Object getField(String fieldName) {
+            return null;
+          }
 
-      public WritablePdxInstance createWriter() {
-        return null;
-      }
+          public WritablePdxInstance createWriter() {
+            return null;
+          }
 
-      public void setField(String fieldName, Object value) {
-      }
+          public void setField(String fieldName, Object value) {}
 
-      public String getClassName() {
-        return null;
-      }
+          public String getClassName() {
+            return null;
+          }
 
-      public boolean isEnum() {
-        return false;
-      }
-    };
+          public boolean isEnum() {
+            return false;
+          }
+        };
     assertEquals(true, CopyHelper.isWellKnownImmutableInstance(pi));
     assertEquals(false, CopyHelper.isWellKnownImmutableInstance(wpi));
     assertEquals(false, CopyHelper.isWellKnownImmutableInstance(new Object()));
@@ -516,7 +515,10 @@ public class CopyJUnitTest {
   }
 
   static enum Season {
-    SPRING, SUMMER, FALL, WINTER
+    SPRING,
+    SUMMER,
+    FALL,
+    WINTER
   }
 
   static class NonSerializable {
@@ -539,20 +541,14 @@ public class CopyJUnitTest {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
       Complex1 other = (Complex1) obj;
       if (hashMap == null) {
-        if (other.hashMap != null)
-          return false;
-      } else if (!hashMap.equals(other.hashMap))
-        return false;
-      if (season != other.season)
-        return false;
+        if (other.hashMap != null) return false;
+      } else if (!hashMap.equals(other.hashMap)) return false;
+      if (season != other.season) return false;
       return true;
     }
   }
@@ -575,27 +571,18 @@ public class CopyJUnitTest {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
       Complex2 other = (Complex2) obj;
-      if (id != other.id)
-        return false;
+      if (id != other.id) return false;
       if (innerList == null) {
-        if (other.innerList != null)
-          return false;
-      } else if (!innerList.equals(other.innerList))
-        return false;
+        if (other.innerList != null) return false;
+      } else if (!innerList.equals(other.innerList)) return false;
       if (str == null) {
-        if (other.str != null)
-          return false;
-      } else if (!str.equals(other.str))
-        return false;
+        if (other.str != null) return false;
+      } else if (!str.equals(other.str)) return false;
       return true;
     }
   }
-
 }

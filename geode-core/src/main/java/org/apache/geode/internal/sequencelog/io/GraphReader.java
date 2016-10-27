@@ -26,15 +26,13 @@ import org.apache.geode.internal.Version;
 import org.apache.geode.internal.sequencelog.GraphType;
 import org.apache.geode.internal.sequencelog.model.GraphSet;
 
-/**
- *
- */
+/** */
 public class GraphReader {
 
   private File[] files;
 
   public GraphReader(File file) {
-    this(new File[] { file });
+    this(new File[] {file});
   }
 
   public GraphReader(File[] files) {
@@ -46,15 +44,19 @@ public class GraphReader {
   }
 
   public GraphSet readGraphs(boolean areGemfireLogs) throws IOException {
-    return readGraphs(new Filter() {
-      public boolean accept(GraphType graphType, String name, String edgeName, String source, String dest) {
-        return true;
-      }
+    return readGraphs(
+        new Filter() {
+          public boolean accept(
+              GraphType graphType, String name, String edgeName, String source, String dest) {
+            return true;
+          }
 
-      public boolean acceptPattern(GraphType graphType, Pattern pattern, String edgeName, String source, String dest) {
-        return true;
-      }
-    }, areGemfireLogs);
+          public boolean acceptPattern(
+              GraphType graphType, Pattern pattern, String edgeName, String source, String dest) {
+            return true;
+          }
+        },
+        areGemfireLogs);
   }
 
   public GraphSet readGraphs(Filter filter) throws IOException {

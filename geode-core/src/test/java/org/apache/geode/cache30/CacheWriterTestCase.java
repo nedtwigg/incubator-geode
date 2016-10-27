@@ -30,12 +30,10 @@ import org.apache.geode.cache.*;
 //import java.util.*;
 
 /**
- * An abstract class whose test methods test the functionality of
- * {@link CacheWriter}s that are invoked locally.
+ * An abstract class whose test methods test the functionality of {@link CacheWriter}s that are
+ * invoked locally.
  *
  * @see MultiVMRegionTestCase#testRemoteCacheWriter
- *
- *
  * @since GemFire 3.0
  */
 public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
@@ -47,8 +45,8 @@ public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
   ///////////////////////  Test Methods  ///////////////////////
 
   /**
-   * Tests that the <code>CacheWriter</code> is called before an entry
-   * is {@linkplain CacheWriter#beforeCreate created}.
+   * Tests that the <code>CacheWriter</code> is called before an entry is {@linkplain
+   * CacheWriter#beforeCreate created}.
    */
   @Test
   public void testCacheWriterBeforeCreate() throws CacheException {
@@ -58,34 +56,35 @@ public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
     final Object arg = "ARG";
     final String exception = "EXCEPTION";
 
-    TestCacheWriter writer = new TestCacheWriter() {
-      public void beforeCreate2(EntryEvent event) throws CacheWriterException {
+    TestCacheWriter writer =
+        new TestCacheWriter() {
+          public void beforeCreate2(EntryEvent event) throws CacheWriterException {
 
-        assertEquals(key, event.getKey());
-        assertEquals(value, event.getNewValue());
-        assertNull(event.getOldValue());
-        assertTrue(event.getOperation().isCreate());
-        assertFalse(event.getOperation().isLoad());
-        assertFalse(event.getOperation().isLocalLoad());
-        assertFalse(event.getOperation().isNetLoad());
-        assertFalse(event.getOperation().isNetSearch());
+            assertEquals(key, event.getKey());
+            assertEquals(value, event.getNewValue());
+            assertNull(event.getOldValue());
+            assertTrue(event.getOperation().isCreate());
+            assertFalse(event.getOperation().isLoad());
+            assertFalse(event.getOperation().isLocalLoad());
+            assertFalse(event.getOperation().isNetLoad());
+            assertFalse(event.getOperation().isNetSearch());
 
-        Object argument = event.getCallbackArgument();
-        if (argument != null) {
-          if (argument.equals(exception)) {
-            String s = "Test CacheWriterException";
-            throw new CacheWriterException(s);
+            Object argument = event.getCallbackArgument();
+            if (argument != null) {
+              if (argument.equals(exception)) {
+                String s = "Test CacheWriterException";
+                throw new CacheWriterException(s);
 
-          } else {
-            assertEquals(arg, argument);
+              } else {
+                assertEquals(arg, argument);
+              }
+            }
           }
-        }
-      }
 
-      public void beforeDestroy2(EntryEvent event) throws CacheWriterException {
-        // This method will get invoked when the region is populated
-      }
-    };
+          public void beforeDestroy2(EntryEvent event) throws CacheWriterException {
+            // This method will get invoked when the region is populated
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheWriter(writer);
@@ -128,12 +127,11 @@ public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
       // pass...
       assertTrue(writer.wasInvoked());
     }
-
   }
 
   /**
-   * Tests that the <code>CacheWriter</code> is called before an entry
-   * is {@linkplain CacheWriter#beforeUpdate updated}.
+   * Tests that the <code>CacheWriter</code> is called before an entry is {@linkplain
+   * CacheWriter#beforeUpdate updated}.
    */
   @Test
   public void testCacheWriterBeforeUpdate() throws CacheException {
@@ -144,38 +142,39 @@ public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
     final Object arg = "ARG";
     final String exception = "EXCEPTION";
 
-    TestCacheWriter writer = new TestCacheWriter() {
-      public void beforeCreate2(EntryEvent event) throws CacheWriterException {
-        // This method will get invoked when the region is populated
-      }
-
-      public void beforeDestroy2(EntryEvent event) throws CacheWriterException {
-        // This method will get invoked when the region is populated
-      }
-
-      public void beforeUpdate2(EntryEvent event) throws CacheWriterException {
-
-        assertEquals(key, event.getKey());
-        assertEquals(newValue, event.getNewValue());
-        assertEquals(oldValue, event.getOldValue());
-        assertTrue(event.getOperation().isUpdate());
-        assertFalse(event.getOperation().isLoad());
-        assertFalse(event.getOperation().isLocalLoad());
-        assertFalse(event.getOperation().isNetLoad());
-        assertFalse(event.getOperation().isNetSearch());
-
-        Object argument = event.getCallbackArgument();
-        if (argument != null) {
-          if (argument.equals(exception)) {
-            String s = "Test CacheWriterException";
-            throw new CacheWriterException(s);
-
-          } else {
-            assertEquals(arg, argument);
+    TestCacheWriter writer =
+        new TestCacheWriter() {
+          public void beforeCreate2(EntryEvent event) throws CacheWriterException {
+            // This method will get invoked when the region is populated
           }
-        }
-      }
-    };
+
+          public void beforeDestroy2(EntryEvent event) throws CacheWriterException {
+            // This method will get invoked when the region is populated
+          }
+
+          public void beforeUpdate2(EntryEvent event) throws CacheWriterException {
+
+            assertEquals(key, event.getKey());
+            assertEquals(newValue, event.getNewValue());
+            assertEquals(oldValue, event.getOldValue());
+            assertTrue(event.getOperation().isUpdate());
+            assertFalse(event.getOperation().isLoad());
+            assertFalse(event.getOperation().isLocalLoad());
+            assertFalse(event.getOperation().isNetLoad());
+            assertFalse(event.getOperation().isNetSearch());
+
+            Object argument = event.getCallbackArgument();
+            if (argument != null) {
+              if (argument.equals(exception)) {
+                String s = "Test CacheWriterException";
+                throw new CacheWriterException(s);
+
+              } else {
+                assertEquals(arg, argument);
+              }
+            }
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheWriter(writer);
@@ -232,12 +231,11 @@ public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
       // pass...
       assertTrue(writer.wasInvoked());
     }
-
   }
 
   /**
-   * Tests that the <code>CacheWriter</code> is called before an entry
-   * is {@linkplain CacheWriter#beforeDestroy destroyed}.
+   * Tests that the <code>CacheWriter</code> is called before an entry is {@linkplain
+   * CacheWriter#beforeDestroy destroyed}.
    */
   @Test
   public void testCacheWriterBeforeDestroy() throws CacheException {
@@ -247,34 +245,35 @@ public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
     final Object arg = "ARG";
     final String exception = "EXCEPTION";
 
-    TestCacheWriter writer = new TestCacheWriter() {
-      public void beforeCreate2(EntryEvent event) throws CacheWriterException {
-        // This method will get invoked when the region is populated
-      }
-
-      public void beforeDestroy2(EntryEvent event) throws CacheWriterException {
-
-        assertEquals(key, event.getKey());
-        assertEquals(value, event.getOldValue());
-        assertNull(event.getNewValue());
-        assertTrue(event.getOperation().isDestroy());
-        assertFalse(event.getOperation().isLoad());
-        assertFalse(event.getOperation().isLocalLoad());
-        assertFalse(event.getOperation().isNetLoad());
-        assertFalse(event.getOperation().isNetSearch());
-
-        Object argument = event.getCallbackArgument();
-        if (argument != null) {
-          if (argument.equals(exception)) {
-            String s = "Test CacheWriterException";
-            throw new CacheWriterException(s);
-
-          } else {
-            assertEquals(arg, argument);
+    TestCacheWriter writer =
+        new TestCacheWriter() {
+          public void beforeCreate2(EntryEvent event) throws CacheWriterException {
+            // This method will get invoked when the region is populated
           }
-        }
-      }
-    };
+
+          public void beforeDestroy2(EntryEvent event) throws CacheWriterException {
+
+            assertEquals(key, event.getKey());
+            assertEquals(value, event.getOldValue());
+            assertNull(event.getNewValue());
+            assertTrue(event.getOperation().isDestroy());
+            assertFalse(event.getOperation().isLoad());
+            assertFalse(event.getOperation().isLocalLoad());
+            assertFalse(event.getOperation().isNetLoad());
+            assertFalse(event.getOperation().isNetSearch());
+
+            Object argument = event.getCallbackArgument();
+            if (argument != null) {
+              if (argument.equals(exception)) {
+                String s = "Test CacheWriterException";
+                throw new CacheWriterException(s);
+
+              } else {
+                assertEquals(arg, argument);
+              }
+            }
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheWriter(writer);
@@ -303,9 +302,8 @@ public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
   }
 
   /**
-   * Tests that the <code>CacheWriter</code> is called before a region
-   * is destroyed.
-   * 
+   * Tests that the <code>CacheWriter</code> is called before a region is destroyed.
+   *
    * @see CacheWriter#beforeRegionDestroy
    * @see CacheWriter#close
    */
@@ -316,43 +314,44 @@ public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
     final Object arg = "ARG";
     final String exception = "EXCEPTION";
 
-    TestCacheWriter writer = new TestCacheWriter() {
-      private boolean closed = false;
-      private boolean destroyed = false;
+    TestCacheWriter writer =
+        new TestCacheWriter() {
+          private boolean closed = false;
+          private boolean destroyed = false;
 
-      public boolean wasInvoked() {
-        boolean value = closed && destroyed;
-        super.wasInvoked();
-        return value;
-      }
-
-      public void close2() {
-        this.closed = true;
-      }
-
-      public void beforeRegionDestroy2(RegionEvent event) throws CacheWriterException {
-
-        assertEquals(name, event.getRegion().getName());
-        // this should be a distributed destroy unless the region
-        // is local scope
-        assertTrue(event.getOperation().isRegionDestroy());
-        assertFalse(event.getOperation().isExpiration());
-        assertFalse(event.isOriginRemote());
-
-        Object argument = event.getCallbackArgument();
-        if (argument != null) {
-          if (argument.equals(exception)) {
-            String s = "Test CacheWriterException";
-            throw new CacheWriterException(s);
-
-          } else {
-            assertEquals(arg, argument);
+          public boolean wasInvoked() {
+            boolean value = closed && destroyed;
+            super.wasInvoked();
+            return value;
           }
-        }
 
-        this.destroyed = true;
-      }
-    };
+          public void close2() {
+            this.closed = true;
+          }
+
+          public void beforeRegionDestroy2(RegionEvent event) throws CacheWriterException {
+
+            assertEquals(name, event.getRegion().getName());
+            // this should be a distributed destroy unless the region
+            // is local scope
+            assertTrue(event.getOperation().isRegionDestroy());
+            assertFalse(event.getOperation().isExpiration());
+            assertFalse(event.isOriginRemote());
+
+            Object argument = event.getCallbackArgument();
+            if (argument != null) {
+              if (argument.equals(exception)) {
+                String s = "Test CacheWriterException";
+                throw new CacheWriterException(s);
+
+              } else {
+                assertEquals(arg, argument);
+              }
+            }
+
+            this.destroyed = true;
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheWriter(writer);
@@ -383,16 +382,15 @@ public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
   }
 
   /**
-   * Tests that a <code>CacheWriter</code> is <I>not</I> invoked on a
-   * {@linkplain Region#localDestroyRegion local destroy}.
+   * Tests that a <code>CacheWriter</code> is <I>not</I> invoked on a {@linkplain
+   * Region#localDestroyRegion local destroy}.
    */
   @Test
   public void testCacheWriterLocalDestroy() throws CacheException {
     final String name = this.getUniqueName();
 
     // If any of the writer's callback methods are invoked
-    TestCacheWriter writer = new TestCacheWriter() {
-    };
+    TestCacheWriter writer = new TestCacheWriter() {};
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheWriter(writer);
@@ -402,43 +400,43 @@ public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
   }
 
   /**
-   * Tests that a {@link CacheWriter} throwing a {@link
-   * CacheWriterException} aborts the operation.
+   * Tests that a {@link CacheWriter} throwing a {@link CacheWriterException} aborts the operation.
    */
   @Test
   public void testCacheWriterExceptionAborts() throws CacheException {
     final String name = this.getUniqueName();
     final String exception = "EXCEPTION";
 
-    TestCacheWriter writer = new TestCacheWriter() {
-      private void handleEvent(Object argument) throws CacheWriterException {
+    TestCacheWriter writer =
+        new TestCacheWriter() {
+          private void handleEvent(Object argument) throws CacheWriterException {
 
-        if (exception.equals(argument)) {
-          String s = "Test Exception";
-          throw new CacheWriterException(s);
-        }
-      }
+            if (exception.equals(argument)) {
+              String s = "Test Exception";
+              throw new CacheWriterException(s);
+            }
+          }
 
-      public void beforeCreate2(EntryEvent event) throws CacheWriterException {
+          public void beforeCreate2(EntryEvent event) throws CacheWriterException {
 
-        handleEvent(event.getCallbackArgument());
-      }
+            handleEvent(event.getCallbackArgument());
+          }
 
-      public void beforeUpdate2(EntryEvent event) throws CacheWriterException {
+          public void beforeUpdate2(EntryEvent event) throws CacheWriterException {
 
-        handleEvent(event.getCallbackArgument());
-      }
+            handleEvent(event.getCallbackArgument());
+          }
 
-      public void beforeDestroy2(EntryEvent event) throws CacheWriterException {
+          public void beforeDestroy2(EntryEvent event) throws CacheWriterException {
 
-        handleEvent(event.getCallbackArgument());
-      }
+            handleEvent(event.getCallbackArgument());
+          }
 
-      public void beforeRegionDestroy2(RegionEvent event) throws CacheWriterException {
+          public void beforeRegionDestroy2(RegionEvent event) throws CacheWriterException {
 
-        handleEvent(event.getCallbackArgument());
-      }
-    };
+            handleEvent(event.getCallbackArgument());
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheWriter(writer);
@@ -457,7 +455,9 @@ public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
     } catch (CacheWriterException ex) {
       assertNull(region.getEntry(name));
     } finally {
-      getCache().getLogger().info("<ExpectedException action=remove>" + p1 + "</ExpectedException>");
+      getCache()
+          .getLogger()
+          .info("<ExpectedException action=remove>" + p1 + "</ExpectedException>");
     }
 
     region.put(name, value);
@@ -490,5 +490,4 @@ public abstract class CacheWriterTestCase extends RegionAttributesTestCase {
       assertNotNull(region.getParentRegion().getSubregion(name));
     }
   }
-
 }

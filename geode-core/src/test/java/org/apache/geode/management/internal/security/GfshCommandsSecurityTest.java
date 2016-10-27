@@ -37,7 +37,7 @@ import org.apache.geode.management.internal.cli.result.ResultBuilder;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class GfshCommandsSecurityTest {
 
   protected static int[] ports = AvailablePortHelper.getRandomAvailableTCPPorts(2);
@@ -47,10 +47,13 @@ public class GfshCommandsSecurityTest {
   private HeadlessGfsh gfsh = null;
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxPort, httpPort, "org/apache/geode/management/internal/security/cacheServer.json");
+  public static JsonAuthorizationCacheStartRule serverRule =
+      new JsonAuthorizationCacheStartRule(
+          jmxPort, httpPort, "org/apache/geode/management/internal/security/cacheServer.json");
 
   @Rule
-  public GfshShellConnectionRule gfshConnection = new GfshShellConnectionRule(jmxPort, httpPort, false);
+  public GfshShellConnectionRule gfshConnection =
+      new GfshShellConnectionRule(jmxPort, httpPort, false);
 
   @Before
   public void before() {
@@ -124,7 +127,8 @@ public class GfshCommandsSecurityTest {
   }
 
   private void runCommandsWithAndWithout(String permission) throws Exception {
-    List<TestCommand> allPermitted = TestCommand.getPermittedCommands(new WildcardPermission(permission, true));
+    List<TestCommand> allPermitted =
+        TestCommand.getPermittedCommands(new WildcardPermission(permission, true));
     for (TestCommand permitted : allPermitted) {
       LogService.getLogger().info("Processing authorized command: " + permitted.getCommand());
 
@@ -133,7 +137,9 @@ public class GfshCommandsSecurityTest {
       assertNotNull(result);
 
       if (result.getResultData() instanceof ErrorResultData) {
-        assertNotEquals(ResultBuilder.ERRORCODE_UNAUTHORIZED, ((ErrorResultData) result.getResultData()).getErrorCode());
+        assertNotEquals(
+            ResultBuilder.ERRORCODE_UNAUTHORIZED,
+            ((ErrorResultData) result.getResultData()).getErrorCode());
       } else {
         assertEquals(Result.Status.OK, result.getStatus());
       }
@@ -143,8 +149,7 @@ public class GfshCommandsSecurityTest {
     others.removeAll(allPermitted);
     for (TestCommand other : others) {
       // skip no permission commands
-      if (other.getPermission() == null)
-        continue;
+      if (other.getPermission() == null) continue;
 
       LogService.getLogger().info("Processing unauthorized command: " + other.getCommand());
       gfsh.executeCommand(other.getCommand());
@@ -158,10 +163,13 @@ public class GfshCommandsSecurityTest {
         continue;
       }
 
-      assertEquals(ResultBuilder.ERRORCODE_UNAUTHORIZED, ((ErrorResultData) result.getResultData()).getErrorCode());
+      assertEquals(
+          ResultBuilder.ERRORCODE_UNAUTHORIZED,
+          ((ErrorResultData) result.getResultData()).getErrorCode());
       String resultMessage = result.getContent().toString();
       String permString = other.getPermission().toString();
-      assertTrue(resultMessage + " does not contain " + permString, resultMessage.contains(permString));
+      assertTrue(
+          resultMessage + " does not contain " + permString, resultMessage.contains(permString));
     }
   }
 
@@ -175,5 +183,4 @@ public class GfshCommandsSecurityTest {
     //gfsh.executeCommand("get --region=region1 --key=key1");
     gfsh.executeCommand("query --query=\"select * from /region1\"");
   }
-
 }

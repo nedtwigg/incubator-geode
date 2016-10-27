@@ -16,8 +16,8 @@
  */
 
 /**
- * Test class used to certify that a particular key has arrived in the cache
- * This class is a great way to reduce the liklihood of a race condition 
+ * Test class used to certify that a particular key has arrived in the cache This class is a great
+ * way to reduce the liklihood of a race condition
  */
 package org.apache.geode.cache30;
 
@@ -30,10 +30,10 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
 public class CertifiableTestCacheListener extends TestCacheListener implements Declarable2 {
-  final public Set destroys = Collections.synchronizedSet(new HashSet());
-  final public Set creates = Collections.synchronizedSet(new HashSet());
-  final public Set invalidates = Collections.synchronizedSet(new HashSet());
-  final public Set updates = Collections.synchronizedSet(new HashSet());
+  public final Set destroys = Collections.synchronizedSet(new HashSet());
+  public final Set creates = Collections.synchronizedSet(new HashSet());
+  public final Set invalidates = Collections.synchronizedSet(new HashSet());
+  public final Set updates = Collections.synchronizedSet(new HashSet());
 
   final LogWriter logger;
 
@@ -42,9 +42,8 @@ public class CertifiableTestCacheListener extends TestCacheListener implements D
   }
 
   /**
-   * Clears the state of the listener, for consistent behavior
-   * this should only be called when there is no activity on the
-   * Region
+   * Clears the state of the listener, for consistent behavior this should only be called when there
+   * is no activity on the Region
    */
   public void clearState() {
     this.destroys.clear();
@@ -79,63 +78,67 @@ public class CertifiableTestCacheListener extends TestCacheListener implements D
     this.updates.add(event.getKey());
   }
 
-  static private final String WAIT_PROPERTY = "CertifiableTestCacheListener.maxWaitTime";
-  static private final int WAIT_DEFAULT = 30000;
+  private static final String WAIT_PROPERTY = "CertifiableTestCacheListener.maxWaitTime";
+  private static final int WAIT_DEFAULT = 30000;
 
   public static final long MAX_TIME = Integer.getInteger(WAIT_PROPERTY, WAIT_DEFAULT).intValue();;
 
   public boolean waitForCreated(final Object key) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return CertifiableTestCacheListener.this.creates.contains(key);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return CertifiableTestCacheListener.this.creates.contains(key);
+          }
 
-      public String description() {
-        return "Waiting for key creation: " + key;
-      }
-    };
+          public String description() {
+            return "Waiting for key creation: " + key;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForDestroyed(final Object key) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return CertifiableTestCacheListener.this.destroys.contains(key);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return CertifiableTestCacheListener.this.destroys.contains(key);
+          }
 
-      public String description() {
-        return "Waiting for key destroy: " + key;
-      }
-    };
+          public String description() {
+            return "Waiting for key destroy: " + key;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForInvalidated(final Object key) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return CertifiableTestCacheListener.this.invalidates.contains(key);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return CertifiableTestCacheListener.this.invalidates.contains(key);
+          }
 
-      public String description() {
-        return "Waiting for key invalidate: " + key;
-      }
-    };
+          public String description() {
+            return "Waiting for key invalidate: " + key;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForUpdated(final Object key) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return CertifiableTestCacheListener.this.updates.contains(key);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return CertifiableTestCacheListener.this.updates.contains(key);
+          }
 
-      public String description() {
-        return "Waiting for key update: " + key;
-      }
-    };
+          public String description() {
+            return "Waiting for key update: " + key;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
@@ -144,6 +147,5 @@ public class CertifiableTestCacheListener extends TestCacheListener implements D
     return null;
   }
 
-  public void init(Properties props) {
-  }
+  public void init(Properties props) {}
 }

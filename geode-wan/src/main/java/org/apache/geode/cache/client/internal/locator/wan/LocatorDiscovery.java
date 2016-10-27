@@ -31,10 +31,9 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This class represent a runnable task which exchange the locator information
- * with local locators(within the site) as well as remote locators (across the
- * site)
- * 
+ * This class represent a runnable task which exchange the locator information with local
+ * locators(within the site) as well as remote locators (across the site)
+ *
  * @since GemFire 7.0
  */
 public class LocatorDiscovery {
@@ -51,13 +50,20 @@ public class LocatorDiscovery {
 
   TcpClient locatorClient;
 
-  public static final int WAN_LOCATOR_CONNECTION_RETRY_ATTEMPT = Integer.getInteger("WANLocator.CONNECTION_RETRY_ATTEMPT", 50000).intValue();
+  public static final int WAN_LOCATOR_CONNECTION_RETRY_ATTEMPT =
+      Integer.getInteger("WANLocator.CONNECTION_RETRY_ATTEMPT", 50000).intValue();
 
-  public static final int WAN_LOCATOR_CONNECTION_INTERVAL = Integer.getInteger("WANLocator.CONNECTION_INTERVAL", 10000).intValue();
+  public static final int WAN_LOCATOR_CONNECTION_INTERVAL =
+      Integer.getInteger("WANLocator.CONNECTION_INTERVAL", 10000).intValue();
 
-  public static final int WAN_LOCATOR_PING_INTERVAL = Integer.getInteger("WANLocator.PING_INTERVAL", 10000).intValue();
+  public static final int WAN_LOCATOR_PING_INTERVAL =
+      Integer.getInteger("WANLocator.PING_INTERVAL", 10000).intValue();
 
-  public LocatorDiscovery(WanLocatorDiscoverer discoverer, DistributionLocatorId locator, RemoteLocatorJoinRequest request, LocatorMembershipListener locatorListener) {
+  public LocatorDiscovery(
+      WanLocatorDiscoverer discoverer,
+      DistributionLocatorId locator,
+      RemoteLocatorJoinRequest request,
+      LocatorMembershipListener locatorListener) {
     this.discoverer = discoverer;
     this.locatorId = locator;
     this.request = request;
@@ -66,29 +72,33 @@ public class LocatorDiscovery {
   }
 
   /**
-   * When a batch fails, then this keeps the last time when a failure was logged
-   * . We don't want to swamp the logs in retries due to same batch failures.
+   * When a batch fails, then this keeps the last time when a failure was logged . We don't want to
+   * swamp the logs in retries due to same batch failures.
    */
-  private final ConcurrentHashMap<DistributionLocatorId, long[]> failureLogInterval = new ConcurrentHashMap<DistributionLocatorId, long[]>();
+  private final ConcurrentHashMap<DistributionLocatorId, long[]> failureLogInterval =
+      new ConcurrentHashMap<DistributionLocatorId, long[]>();
 
   /**
-   * The maximum size of {@link #failureLogInterval} beyond which it will start
-   * logging all failure instances. Hopefully this should never happen in
-   * practice.
+   * The maximum size of {@link #failureLogInterval} beyond which it will start logging all failure
+   * instances. Hopefully this should never happen in practice.
    */
-  private static final int FAILURE_MAP_MAXSIZE = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.FAILURE_MAP_MAXSIZE", 1000000);
+  private static final int FAILURE_MAP_MAXSIZE =
+      Integer.getInteger(
+          DistributionConfig.GEMFIRE_PREFIX + "GatewaySender.FAILURE_MAP_MAXSIZE", 1000000);
 
-  /**
-   * The maximum interval for logging failures of the same event in millis.
-   */
-  private static final int FAILURE_LOG_MAX_INTERVAL = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "LocatorDiscovery.FAILURE_LOG_MAX_INTERVAL", 300000);
+  /** The maximum interval for logging failures of the same event in millis. */
+  private static final int FAILURE_LOG_MAX_INTERVAL =
+      Integer.getInteger(
+          DistributionConfig.GEMFIRE_PREFIX + "LocatorDiscovery.FAILURE_LOG_MAX_INTERVAL", 300000);
 
   public final boolean skipFailureLogging(DistributionLocatorId locatorId) {
     boolean skipLogging = false;
     if (this.failureLogInterval.size() < FAILURE_MAP_MAXSIZE) {
       long[] logInterval = this.failureLogInterval.get(locatorId);
       if (logInterval == null) {
-        logInterval = this.failureLogInterval.putIfAbsent(locatorId, new long[] { System.currentTimeMillis(), 1000 });
+        logInterval =
+            this.failureLogInterval.putIfAbsent(
+                locatorId, new long[] {System.currentTimeMillis(), 1000});
       }
       if (logInterval != null) {
         long currentTime = System.currentTimeMillis();
@@ -125,20 +135,45 @@ public class LocatorDiscovery {
     int retryAttempt = 1;
     while (!getDiscoverer().isStopped()) {
       try {
-        RemoteLocatorJoinResponse response = (RemoteLocatorJoinResponse) locatorClient.requestToServer(locatorId.getHost(), locatorId.getPort(), request, WanLocatorDiscoverer.WAN_LOCATOR_CONNECTION_TIMEOUT);
+        RemoteLocatorJoinResponse response =
+            (RemoteLocatorJoinResponse)
+                locatorClient.requestToServer(
+                    locatorId.getHost(),
+                    locatorId.getPort(),
+                    request,
+                    WanLocatorDiscoverer.WAN_LOCATOR_CONNECTION_TIMEOUT);
         if (response != null) {
           LocatorHelper.addExchangedLocators(response.getLocators(), this.locatorListener);
-          logger.info(LocalizedMessage.create(LocalizedStrings.LOCATOR_DISCOVERY_TASK_EXCHANGED_LOCATOR_INFORMATION_0_WITH_1, new Object[] { request.getLocator(), locatorId, response.getLocators() }));
+          logger.info(
+              LocalizedMessage.create(
+                  LocalizedStrings.LOCATOR_DISCOVERY_TASK_EXCHANGED_LOCATOR_INFORMATION_0_WITH_1,
+                  new Object[] {request.getLocator(), locatorId, response.getLocators()}));
           break;
         }
       } catch (IOException ioe) {
         if (retryAttempt == WAN_LOCATOR_CONNECTION_RETRY_ATTEMPT) {
-          ConnectionException coe = new ConnectionException("Not able to connect to local locator after " + WAN_LOCATOR_CONNECTION_RETRY_ATTEMPT + " retry attempts", ioe);
-          logger.fatal(LocalizedMessage.create(LocalizedStrings.LOCATOR_DISCOVERY_TASK_COULD_NOT_EXCHANGE_LOCATOR_INFORMATION_0_WITH_1_AFTER_2, new Object[] { request.getLocator(), locatorId, retryAttempt }), coe);
+          ConnectionException coe =
+              new ConnectionException(
+                  "Not able to connect to local locator after "
+                      + WAN_LOCATOR_CONNECTION_RETRY_ATTEMPT
+                      + " retry attempts",
+                  ioe);
+          logger.fatal(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .LOCATOR_DISCOVERY_TASK_COULD_NOT_EXCHANGE_LOCATOR_INFORMATION_0_WITH_1_AFTER_2,
+                  new Object[] {request.getLocator(), locatorId, retryAttempt}),
+              coe);
           break;
         }
         if (skipFailureLogging(locatorId)) {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.LOCATOR_DISCOVERY_TASK_COULD_NOT_EXCHANGE_LOCATOR_INFORMATION_0_WITH_1_AFTER_2_RETRYING_IN_3_MS, new Object[] { request.getLocator(), locatorId, retryAttempt, WAN_LOCATOR_CONNECTION_INTERVAL }));
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .LOCATOR_DISCOVERY_TASK_COULD_NOT_EXCHANGE_LOCATOR_INFORMATION_0_WITH_1_AFTER_2_RETRYING_IN_3_MS,
+                  new Object[] {
+                    request.getLocator(), locatorId, retryAttempt, WAN_LOCATOR_CONNECTION_INTERVAL
+                  }));
         }
         try {
           Thread.sleep(WAN_LOCATOR_CONNECTION_INTERVAL);
@@ -148,7 +183,10 @@ public class LocatorDiscovery {
         retryAttempt++;
         continue;
       } catch (ClassNotFoundException classNotFoundException) {
-        logger.fatal(LocalizedMessage.create(LocalizedStrings.LOCATOR_DISCOVERY_TASK_ENCOUNTERED_UNEXPECTED_EXCEPTION), classNotFoundException);
+        logger.fatal(
+            LocalizedMessage.create(
+                LocalizedStrings.LOCATOR_DISCOVERY_TASK_ENCOUNTERED_UNEXPECTED_EXCEPTION),
+            classNotFoundException);
         break;
       }
     }
@@ -160,14 +198,29 @@ public class LocatorDiscovery {
     while (!getDiscoverer().isStopped()) {
       RemoteLocatorJoinResponse response;
       try {
-        response = (RemoteLocatorJoinResponse) locatorClient.requestToServer(remoteLocator.getHost(), remoteLocator.getPort(), request, WanLocatorDiscoverer.WAN_LOCATOR_CONNECTION_TIMEOUT);
+        response =
+            (RemoteLocatorJoinResponse)
+                locatorClient.requestToServer(
+                    remoteLocator.getHost(),
+                    remoteLocator.getPort(),
+                    request,
+                    WanLocatorDiscoverer.WAN_LOCATOR_CONNECTION_TIMEOUT);
         if (response != null) {
           LocatorHelper.addExchangedLocators(response.getLocators(), this.locatorListener);
-          logger.info(LocalizedMessage.create(LocalizedStrings.LOCATOR_DISCOVERY_TASK_EXCHANGED_LOCATOR_INFORMATION_0_WITH_1, new Object[] { request.getLocator(), locatorId, response.getLocators() }));
+          logger.info(
+              LocalizedMessage.create(
+                  LocalizedStrings.LOCATOR_DISCOVERY_TASK_EXCHANGED_LOCATOR_INFORMATION_0_WITH_1,
+                  new Object[] {request.getLocator(), locatorId, response.getLocators()}));
           RemoteLocatorPingRequest pingRequest = new RemoteLocatorPingRequest("");
           while (true) {
             Thread.sleep(WAN_LOCATOR_PING_INTERVAL);
-            RemoteLocatorPingResponse pingResponse = (RemoteLocatorPingResponse) locatorClient.requestToServer(remoteLocator.getHost(), remoteLocator.getPort(), pingRequest, WanLocatorDiscoverer.WAN_LOCATOR_CONNECTION_TIMEOUT);
+            RemoteLocatorPingResponse pingResponse =
+                (RemoteLocatorPingResponse)
+                    locatorClient.requestToServer(
+                        remoteLocator.getHost(),
+                        remoteLocator.getPort(),
+                        pingRequest,
+                        WanLocatorDiscoverer.WAN_LOCATOR_CONNECTION_TIMEOUT);
             if (pingResponse != null) {
               continue;
             }
@@ -176,11 +229,25 @@ public class LocatorDiscovery {
         }
       } catch (IOException ioe) {
         if (retryAttempt == WAN_LOCATOR_CONNECTION_RETRY_ATTEMPT) {
-          logger.fatal(LocalizedMessage.create(LocalizedStrings.LOCATOR_DISCOVERY_TASK_COULD_NOT_EXCHANGE_LOCATOR_INFORMATION_0_WITH_1_AFTER_2, new Object[] { request.getLocator(), remoteLocator, retryAttempt }), ioe);
+          logger.fatal(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .LOCATOR_DISCOVERY_TASK_COULD_NOT_EXCHANGE_LOCATOR_INFORMATION_0_WITH_1_AFTER_2,
+                  new Object[] {request.getLocator(), remoteLocator, retryAttempt}),
+              ioe);
           break;
         }
         if (skipFailureLogging(remoteLocator)) {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.LOCATOR_DISCOVERY_TASK_COULD_NOT_EXCHANGE_LOCATOR_INFORMATION_0_WITH_1_AFTER_2_RETRYING_IN_3_MS, new Object[] { request.getLocator(), remoteLocator, retryAttempt, WAN_LOCATOR_CONNECTION_INTERVAL }));
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .LOCATOR_DISCOVERY_TASK_COULD_NOT_EXCHANGE_LOCATOR_INFORMATION_0_WITH_1_AFTER_2_RETRYING_IN_3_MS,
+                  new Object[] {
+                    request.getLocator(),
+                    remoteLocator,
+                    retryAttempt,
+                    WAN_LOCATOR_CONNECTION_INTERVAL
+                  }));
         }
         try {
           Thread.sleep(WAN_LOCATOR_CONNECTION_INTERVAL);
@@ -190,12 +257,14 @@ public class LocatorDiscovery {
         retryAttempt++;
         continue;
       } catch (ClassNotFoundException classNotFoundException) {
-        logger.fatal(LocalizedMessage.create(LocalizedStrings.LOCATOR_DISCOVERY_TASK_ENCOUNTERED_UNEXPECTED_EXCEPTION), classNotFoundException);
+        logger.fatal(
+            LocalizedMessage.create(
+                LocalizedStrings.LOCATOR_DISCOVERY_TASK_ENCOUNTERED_UNEXPECTED_EXCEPTION),
+            classNotFoundException);
         break;
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       }
     }
   }
-
 }

@@ -31,10 +31,7 @@ import org.apache.geode.internal.cache.xmlcache.CacheCreation;
 import org.apache.geode.internal.cache.xmlcache.GatewayReceiverCreation;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class GatewayReceiverFactoryImpl implements GatewayReceiverFactory {
 
   private int startPort = GatewayReceiver.DEFAULT_START_PORT;
@@ -55,9 +52,7 @@ public class GatewayReceiverFactoryImpl implements GatewayReceiverFactory {
 
   private Cache cache;
 
-  public GatewayReceiverFactoryImpl() {
-
-  }
+  public GatewayReceiverFactoryImpl() {}
 
   public GatewayReceiverFactoryImpl(Cache cache) {
     this.cache = cache;
@@ -110,26 +105,50 @@ public class GatewayReceiverFactoryImpl implements GatewayReceiverFactory {
 
   public GatewayReceiver create() {
     if (this.startPort > this.endPort) {
-      throw new IllegalStateException("Please specify either start port a value which is less than end port.");
+      throw new IllegalStateException(
+          "Please specify either start port a value which is less than end port.");
     }
     GatewayReceiver recv = null;
     if (this.cache instanceof GemFireCacheImpl) {
-      recv = new GatewayReceiverImpl(this.cache, this.startPort, this.endPort, this.timeBetPings, this.socketBuffSize, this.bindAdd, this.filters, this.hostnameForSenders, this.manualStart);
+      recv =
+          new GatewayReceiverImpl(
+              this.cache,
+              this.startPort,
+              this.endPort,
+              this.timeBetPings,
+              this.socketBuffSize,
+              this.bindAdd,
+              this.filters,
+              this.hostnameForSenders,
+              this.manualStart);
       ((GemFireCacheImpl) cache).addGatewayReceiver(recv);
-      InternalDistributedSystem system = (InternalDistributedSystem) this.cache.getDistributedSystem();
+      InternalDistributedSystem system =
+          (InternalDistributedSystem) this.cache.getDistributedSystem();
       system.handleResourceEvent(ResourceEvent.GATEWAYRECEIVER_CREATE, recv);
       if (!this.manualStart) {
         try {
           recv.start();
         } catch (IOException ioe) {
-          throw new GatewayReceiverException(LocalizedStrings.GatewayReceiver_EXCEPTION_WHILE_STARTING_GATEWAY_RECEIVER.toLocalizedString(), ioe);
+          throw new GatewayReceiverException(
+              LocalizedStrings.GatewayReceiver_EXCEPTION_WHILE_STARTING_GATEWAY_RECEIVER
+                  .toLocalizedString(),
+              ioe);
         }
       }
     } else if (this.cache instanceof CacheCreation) {
-      recv = new GatewayReceiverCreation(this.cache, this.startPort, this.endPort, this.timeBetPings, this.socketBuffSize, this.bindAdd, this.filters, this.hostnameForSenders, this.manualStart);
+      recv =
+          new GatewayReceiverCreation(
+              this.cache,
+              this.startPort,
+              this.endPort,
+              this.timeBetPings,
+              this.socketBuffSize,
+              this.bindAdd,
+              this.filters,
+              this.hostnameForSenders,
+              this.manualStart);
       ((CacheCreation) cache).addGatewayReceiver(recv);
     }
     return recv;
   }
-
 }

@@ -29,11 +29,12 @@ public class CqServiceProvider {
 
   private static final CqServiceFactory factory;
   // System property to maintain the CQ event references for optimizing the updates.
-  // This will allows to run the CQ query only once during update events.   
-  public static boolean MAINTAIN_KEYS = Boolean.valueOf(System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "cq.MAINTAIN_KEYS", "true")).booleanValue();
-  /**
-   * A debug flag used for testing vMotion during CQ registration
-   */
+  // This will allows to run the CQ query only once during update events.
+  public static boolean MAINTAIN_KEYS =
+      Boolean.valueOf(
+              System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "cq.MAINTAIN_KEYS", "true"))
+          .booleanValue();
+  /** A debug flag used for testing vMotion during CQ registration */
   public static boolean VMOTION_DURING_CQ_REGISTRATION_FLAG = false;
 
   static {
@@ -62,10 +63,7 @@ public class CqServiceProvider {
     } else {
       return factory.readCqQuery(in);
     }
-
   }
 
-  private CqServiceProvider() {
-
-  }
+  private CqServiceProvider() {}
 }

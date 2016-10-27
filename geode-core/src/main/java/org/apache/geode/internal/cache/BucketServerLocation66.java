@@ -25,8 +25,7 @@ import org.apache.geode.distributed.internal.ServerLocation;
 
 /**
  * Represents the {@link ServerLocation} of a {@link BucketRegion}
- * 
- * 
+ *
  * @since GemFire 6.5
  */
 @SuppressWarnings("serial")
@@ -42,10 +41,10 @@ public class BucketServerLocation66 extends ServerLocation {
 
   private byte numServerGroups;
 
-  public BucketServerLocation66() {
-  }
+  public BucketServerLocation66() {}
 
-  public BucketServerLocation66(int bucketId, int port, String host, boolean isPrimary, byte version, String[] groups) {
+  public BucketServerLocation66(
+      int bucketId, int port, String host, boolean isPrimary, byte version, String[] groups) {
     super(host, port);
     this.bucketId = bucketId;
     this.isPrimary = isPrimary;
@@ -95,7 +94,17 @@ public class BucketServerLocation66 extends ServerLocation {
 
   @Override
   public String toString() {
-    return "BucketServerLocation{bucketId=" + bucketId + ",host=" + this.getHostName() + ",port=" + this.getPort() + ",isPrimary=" + isPrimary + ",version=" + this.version + "}";
+    return "BucketServerLocation{bucketId="
+        + bucketId
+        + ",host="
+        + this.getHostName()
+        + ",port="
+        + this.getPort()
+        + ",isPrimary="
+        + isPrimary
+        + ",version="
+        + this.version
+        + "}";
   }
 
   public int getBucketId() {

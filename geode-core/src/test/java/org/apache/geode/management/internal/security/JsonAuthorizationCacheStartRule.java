@@ -76,9 +76,7 @@ public class JsonAuthorizationCacheStartRule extends ExternalResource {
     return cache;
   }
 
-  /**
-   * Override to tear down your specific external resource.
-   */
+  /** Override to tear down your specific external resource. */
   protected void after() {
     cache.close();
     cache = null;

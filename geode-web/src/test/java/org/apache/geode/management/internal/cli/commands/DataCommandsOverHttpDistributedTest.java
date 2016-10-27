@@ -43,10 +43,12 @@ import org.junit.experimental.categories.Category;
 @SuppressWarnings("deprecated")
 public class DataCommandsOverHttpDistributedTest extends CliCommandTestBase {
 
-  private static final String REBALANCE_REGION_NAME = DataCommandsOverHttpDistributedTest.class.getSimpleName() + "Region";
+  private static final String REBALANCE_REGION_NAME =
+      DataCommandsOverHttpDistributedTest.class.getSimpleName() + "Region";
 
   @ClassRule
-  public static ProvideSystemProperty provideSystemProperty = new ProvideSystemProperty(CliCommandTestBase.USE_HTTP_SYSTEM_PROPERTY, "true");
+  public static ProvideSystemProperty provideSystemProperty =
+      new ProvideSystemProperty(CliCommandTestBase.USE_HTTP_SYSTEM_PROPERTY, "true");
 
   @Test
   public void testSimulateForEntireDSWithTimeout() {
@@ -72,78 +74,90 @@ public class DataCommandsOverHttpDistributedTest extends CliCommandTestBase {
     }
   }
 
-  SerializableRunnable checkRegionMBeans = new SerializableRunnable() {
-    @Override
-    public void run() {
-      final WaitCriterion waitForMaangerMBean = new WaitCriterion() {
+  SerializableRunnable checkRegionMBeans =
+      new SerializableRunnable() {
         @Override
-        public boolean done() {
-          final ManagementService service = ManagementService.getManagementService(getCache());
-          final DistributedRegionMXBean bean = service.getDistributedRegionMXBean(Region.SEPARATOR + REBALANCE_REGION_NAME);
-          if (bean == null) {
-            getLogWriter().info("Still probing for checkRegionMBeans ManagerMBean");
-            return false;
-          } else {
-            // verify that bean is proper before executing tests
-            if (bean.getMembers() != null && bean.getMembers().length > 1 && bean.getMemberCount() > 0 && service.getDistributedSystemMXBean().listRegions().length >= 2) {
-              return true;
-            } else {
-              return false;
-            }
-          }
-        }
+        public void run() {
+          final WaitCriterion waitForMaangerMBean =
+              new WaitCriterion() {
+                @Override
+                public boolean done() {
+                  final ManagementService service =
+                      ManagementService.getManagementService(getCache());
+                  final DistributedRegionMXBean bean =
+                      service.getDistributedRegionMXBean(Region.SEPARATOR + REBALANCE_REGION_NAME);
+                  if (bean == null) {
+                    getLogWriter().info("Still probing for checkRegionMBeans ManagerMBean");
+                    return false;
+                  } else {
+                    // verify that bean is proper before executing tests
+                    if (bean.getMembers() != null
+                        && bean.getMembers().length > 1
+                        && bean.getMemberCount() > 0
+                        && service.getDistributedSystemMXBean().listRegions().length >= 2) {
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  }
+                }
 
-        @Override
-        public String description() {
-          return "Probing for testRebalanceCommandForSimulateWithNoMember ManagerMBean";
+                @Override
+                public String description() {
+                  return "Probing for testRebalanceCommandForSimulateWithNoMember ManagerMBean";
+                }
+              };
+          waitForCriterion(waitForMaangerMBean, 2 * 60 * 1000, 2000, true);
+          DistributedRegionMXBean bean =
+              ManagementService.getManagementService(getCache())
+                  .getDistributedRegionMXBean("/" + REBALANCE_REGION_NAME);
+          assertNotNull(bean);
         }
       };
-      waitForCriterion(waitForMaangerMBean, 2 * 60 * 1000, 2000, true);
-      DistributedRegionMXBean bean = ManagementService.getManagementService(getCache()).getDistributedRegionMXBean("/" + REBALANCE_REGION_NAME);
-      assertNotNull(bean);
-    }
-  };
 
   void setupTestRebalanceForEntireDS() {
     final VM vm1 = Host.getHost(0).getVM(1);
     final VM vm2 = Host.getHost(0).getVM(2);
     setUpJmxManagerOnVm0ThenConnect(null);
 
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
 
-        // no need to close cache as it will be closed as part of teardown2
-        Cache cache = getCache();
+            // no need to close cache as it will be closed as part of teardown2
+            Cache cache = getCache();
 
-        RegionFactory<Integer, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-        Region region = dataRegionFactory.create(REBALANCE_REGION_NAME);
-        for (int i = 0; i < 10; i++) {
-          region.put("key" + (i + 200), "value" + (i + 200));
-        }
-        region = dataRegionFactory.create(REBALANCE_REGION_NAME + "Another1");
-        for (int i = 0; i < 100; i++) {
-          region.put("key" + (i + 200), "value" + (i + 200));
-        }
-      }
-    });
+            RegionFactory<Integer, Integer> dataRegionFactory =
+                cache.createRegionFactory(RegionShortcut.PARTITION);
+            Region region = dataRegionFactory.create(REBALANCE_REGION_NAME);
+            for (int i = 0; i < 10; i++) {
+              region.put("key" + (i + 200), "value" + (i + 200));
+            }
+            region = dataRegionFactory.create(REBALANCE_REGION_NAME + "Another1");
+            for (int i = 0; i < 100; i++) {
+              region.put("key" + (i + 200), "value" + (i + 200));
+            }
+          }
+        });
 
-    vm2.invoke(new SerializableRunnable() {
-      public void run() {
+    vm2.invoke(
+        new SerializableRunnable() {
+          public void run() {
 
-        // no need to close cache as it will be closed as part of teardown2
-        Cache cache = getCache();
+            // no need to close cache as it will be closed as part of teardown2
+            Cache cache = getCache();
 
-        RegionFactory<Integer, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-        Region region = dataRegionFactory.create(REBALANCE_REGION_NAME);
-        for (int i = 0; i < 100; i++) {
-          region.put("key" + (i + 400), "value" + (i + 400));
-        }
-        region = dataRegionFactory.create(REBALANCE_REGION_NAME + "Another2");
-        for (int i = 0; i < 10; i++) {
-          region.put("key" + (i + 200), "value" + (i + 200));
-        }
-      }
-    });
+            RegionFactory<Integer, Integer> dataRegionFactory =
+                cache.createRegionFactory(RegionShortcut.PARTITION);
+            Region region = dataRegionFactory.create(REBALANCE_REGION_NAME);
+            for (int i = 0; i < 100; i++) {
+              region.put("key" + (i + 400), "value" + (i + 400));
+            }
+            region = dataRegionFactory.create(REBALANCE_REGION_NAME + "Another2");
+            for (int i = 0; i < 10; i++) {
+              region.put("key" + (i + 200), "value" + (i + 200));
+            }
+          }
+        });
   }
-
 }

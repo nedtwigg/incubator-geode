@@ -30,15 +30,10 @@ import org.apache.geode.cache.Cache;
 import org.apache.geode.internal.jta.CacheUtils;
 
 /**
-*This is thread class
-*The objective of this thread class is to implement the inserts and commit
-*This thread will be called from TxnManagerMultiThreadDUnitTest.java
-*This is to test the concurrent execution of the run method and see if transaction manager handles it properly
-*
-*
-*
-*/
-
+ * This is thread class The objective of this thread class is to implement the inserts and commit
+ * This thread will be called from TxnManagerMultiThreadDUnitTest.java This is to test the
+ * concurrent execution of the run method and see if transaction manager handles it properly
+ */
 public class CommitThread implements Runnable {
 
   /////constructor/////
@@ -52,26 +47,26 @@ public class CommitThread implements Runnable {
     this.log = log;
     thd = new Thread(this, threadName);
     thd.start();
-  }//end of constuctor CommitThread
+  } //end of constuctor CommitThread
 
   /////synchronized method/////
   /*
-  *This is to make sure that key field in table is getting inserted with a unique value by every thread.
-  *
-  */
+   *This is to make sure that key field in table is getting inserted with a unique value by every thread.
+   *
+   */
 
   static int keyFld = 0;
 
-  synchronized public static int getUniqueKey() {
+  public static synchronized int getUniqueKey() {
     keyFld = keyFld + 5;
     return keyFld;
   }
 
   /*
-  *Following the the run method of this thread.
-  *This method is implemented to inserts the rows in the database and commit them
-  *
-  */
+   *Following the the run method of this thread.
+   *This method is implemented to inserts the rows in the database and commit them
+   *
+   */
 
   public void run() {
 
@@ -92,7 +87,7 @@ public class CommitThread implements Runnable {
     tblIDFld = 1;
     tblNameFld = "thdOneCommit";
 
-    //initialize cache and get user transaction                                                                                                                              
+    //initialize cache and get user transaction
     Context ctx = cache.getJNDIContext();
     UserTransaction ta = null;
     Connection xa_conn = null;
@@ -112,10 +107,10 @@ public class CommitThread implements Runnable {
       //Begin the user transaction
       ta.begin();
 
-      //Obtain XAPooledDataSource                                                                                                                              
+      //Obtain XAPooledDataSource
       DataSource da = (DataSource) ctx.lookup("java:/XAPooledDataSource");
 
-      //obtain connection from XAPooledDataSource                                                                                                                              
+      //obtain connection from XAPooledDataSource
       xa_conn = da.getConnection();
 
       Statement xa_stmt = xa_conn.createStatement();
@@ -128,13 +123,14 @@ public class CommitThread implements Runnable {
       //insert XA_INSERTS rows into timestamped table
       for (int i = 0; i < XA_INSERTS; i++) {
         tblIDFld = tblIDFld + uniqueKey + i;
-        sqlSTR = "insert into " + tblName + " values (" + tblIDFld + "," + "'" + tblNameFld + "'" + ")";
+        sqlSTR =
+            "insert into " + tblName + " values (" + tblIDFld + "," + "'" + tblNameFld + "'" + ")";
         //log.info("Thread= "+Thread.currentThread()+" ... sqlStr= "+ sqlSTR + "Before  update");
         xa_stmt.executeUpdate(sqlSTR);
         //log.info("Thread= "+Thread.currentThread()+" ... sqlStr= "+ sqlSTR + "after  update");
       }
 
-      //close the Simple and XA statements                                                                                                                              
+      //close the Simple and XA statements
       xa_stmt.close();
 
       //close the connections
@@ -163,6 +159,5 @@ public class CommitThread implements Runnable {
     }
 
     log.info(XA_INSERTS + ": Rows were inserted and committed successfully");
-  }//end of run method
-
+  } //end of run method
 }

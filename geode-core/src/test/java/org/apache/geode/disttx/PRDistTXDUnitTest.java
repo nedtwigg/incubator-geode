@@ -39,32 +39,25 @@ public class PRDistTXDUnitTest extends PRTransactionDUnitTest {
 
   @Ignore("[DISTTX] TODO test overridden and intentionally left blank as they fail.")
   @Test
-  public void testBasicPRTransactionRedundancy0() {
-  }
+  public void testBasicPRTransactionRedundancy0() {}
 
   @Ignore("[DISTTX] TODO test overridden and intentionally left blank as they fail.")
   @Test
-  public void testBasicPRTransactionRedundancy1() {
-  }
+  public void testBasicPRTransactionRedundancy1() {}
 
   @Ignore("[DISTTX] TODO test overridden and intentionally left blank as they fail.")
   @Test
-  public void testBasicPRTransactionRedundancy2() {
-  }
+  public void testBasicPRTransactionRedundancy2() {}
 
   @Ignore("[DISTTX] TODO test overridden and intentionally left blank as they fail.")
   @Test
-  public void testBasicPRTransactionNoDataRedundancy0() {
-  }
+  public void testBasicPRTransactionNoDataRedundancy0() {}
 
   @Ignore("[DISTTX] TODO test overridden and intentionally left blank as they fail.")
   @Test
-  public void testBasicPRTransactionNoDataRedundancy1() {
-  }
+  public void testBasicPRTransactionNoDataRedundancy1() {}
 
   @Ignore("[DISTTX] TODO test overridden and intentionally left blank as they fail.")
   @Test
-  public void testBasicPRTransactionNoDataRedundancy2() {
-  }
-
+  public void testBasicPRTransactionNoDataRedundancy2() {}
 }

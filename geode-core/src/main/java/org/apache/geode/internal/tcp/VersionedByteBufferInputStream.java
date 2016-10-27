@@ -23,22 +23,20 @@ import org.apache.geode.internal.Version;
 import org.apache.geode.internal.VersionedDataStream;
 
 /**
- * An extension to {@link ByteBufferInputStream} that implements
- * {@link VersionedDataStream} for a stream coming from a different product
- * version.
- * 
+ * An extension to {@link ByteBufferInputStream} that implements {@link VersionedDataStream} for a
+ * stream coming from a different product version.
+ *
  * @since GemFire 7.1
  */
-public class VersionedByteBufferInputStream extends ByteBufferInputStream implements VersionedDataStream {
+public class VersionedByteBufferInputStream extends ByteBufferInputStream
+    implements VersionedDataStream {
 
   private final Version version;
 
   /**
-   * Create a ByteBuffer input stream whose contents are null at given product
-   * {@link Version}.
-   * 
-   * @param version
-   *          the product version for which this stream was created
+   * Create a ByteBuffer input stream whose contents are null at given product {@link Version}.
+   *
+   * @param version the product version for which this stream was created
    */
   public VersionedByteBufferInputStream(Version version) {
     super();
@@ -46,30 +44,24 @@ public class VersionedByteBufferInputStream extends ByteBufferInputStream implem
   }
 
   /**
-   * Create a ByteBuffer input stream whose contents are the given
-   * {@link ByteBuffer} at given product {@link Version}.
-   * 
-   * @param buffer
-   *          the byte buffer to read
-   * @param version
-   *          the product version for which this stream was created
+   * Create a ByteBuffer input stream whose contents are the given {@link ByteBuffer} at given
+   * product {@link Version}.
+   *
+   * @param buffer the byte buffer to read
+   * @param version the product version for which this stream was created
    */
   public VersionedByteBufferInputStream(ByteBuffer buffer, Version version) {
     super(buffer);
     this.version = version;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public Version getVersion() {
     return this.version;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return super.toString() + " (" + this.version + ')';

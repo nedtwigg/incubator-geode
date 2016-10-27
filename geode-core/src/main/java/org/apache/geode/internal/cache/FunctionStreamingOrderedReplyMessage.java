@@ -24,14 +24,18 @@ import org.apache.geode.distributed.internal.ReplyException;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * 
- *
- */
+/** */
 public class FunctionStreamingOrderedReplyMessage extends FunctionStreamingReplyMessage {
   private static final Logger logger = LogService.getLogger();
 
-  public static void send(InternalDistributedMember recipient, int processorId, ReplyException exception, DM dm, Object result, int msgNum, boolean lastMsg) {
+  public static void send(
+      InternalDistributedMember recipient,
+      int processorId,
+      ReplyException exception,
+      DM dm,
+      Object result,
+      int msgNum,
+      boolean lastMsg) {
     FunctionStreamingOrderedReplyMessage m = new FunctionStreamingOrderedReplyMessage();
     m.processorId = processorId;
     if (exception != null) {
@@ -52,7 +56,7 @@ public class FunctionStreamingOrderedReplyMessage extends FunctionStreamingReply
     return FUNCTION_STREAMING_ORDERED_REPLY_MESSAGE;
   }
 
-  final public int getProcessorType() {
+  public final int getProcessorType() {
     return DistributionManager.SERIAL_EXECUTOR;
   }
 }

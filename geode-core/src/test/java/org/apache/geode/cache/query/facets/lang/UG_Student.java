@@ -23,10 +23,17 @@ public class UG_Student extends Student {
   private int _year;
   private int _satScore;
 
-  public UG_Student() {
-  }
+  public UG_Student() {}
 
-  public UG_Student(String ssn, String name, Date birthdate, Collection courses, float gpa, Department dept, int year, int satScore) {
+  public UG_Student(
+      String ssn,
+      String name,
+      Date birthdate,
+      Collection courses,
+      float gpa,
+      Department dept,
+      int year,
+      int satScore) {
     super(ssn, name, birthdate, courses, gpa, dept);
     _year = year;
     _satScore = satScore;

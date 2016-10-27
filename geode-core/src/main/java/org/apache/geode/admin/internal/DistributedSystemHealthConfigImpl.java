@@ -19,29 +19,26 @@ package org.apache.geode.admin.internal;
 import org.apache.geode.admin.*;
 
 /**
- * The implementation of <code>DistributedSystemHealthConfig</code>.
- * Note that because it never leaves the management VM, it is not
- * <code>Serializable</code> and is not part of the {@link
+ * The implementation of <code>DistributedSystemHealthConfig</code>. Note that because it never
+ * leaves the management VM, it is not <code>Serializable</code> and is not part of the {@link
  * GemFireHealthConfigImpl} class hierarchy.
- *
  *
  * @since GemFire 3.5
  */
 public class DistributedSystemHealthConfigImpl implements DistributedSystemHealthConfig {
 
-  /** The maximum number of application members that can
-   * unexceptedly leave a healthy the distributed system. */
+  /**
+   * The maximum number of application members that can unexceptedly leave a healthy the distributed
+   * system.
+   */
   private long maxDepartedApplications = DEFAULT_MAX_DEPARTED_APPLICATIONS;
 
   //////////////////////  Constructors  //////////////////////
 
   /**
-   * Creates a new <code>DistributedSystemHealthConfigImpl</code> with
-   * the default configuration.
+   * Creates a new <code>DistributedSystemHealthConfigImpl</code> with the default configuration.
    */
-  protected DistributedSystemHealthConfigImpl() {
-
-  }
+  protected DistributedSystemHealthConfigImpl() {}
 
   /////////////////////  Instance Methods  /////////////////////
 

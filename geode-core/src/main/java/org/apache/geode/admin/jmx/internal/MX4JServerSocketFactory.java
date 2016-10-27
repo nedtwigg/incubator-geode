@@ -31,24 +31,24 @@ import java.util.Properties;
 
 /**
  * Creates <code>ServerSockets</code> for JMX adaptors.
- * <p>
- * The interface {@link mx4j.tools.adaptor.AdaptorServerSocketFactory} is
- * implemented in order to support securing of {@link 
- * mx4j.tools.adaptor.http.HttpAdaptor}.
- * <p>
- * The interface {@link java.rmi.server.RMIServerSocketFactory} is implemented
- * to support the securing of {@link 
- * javax.management.remote.JMXConnectorServer}.  See {@link
- * javax.management.remote.rmi.RMIConnectorServer} for the actual subclass that
- * is used for the JMX RMI adaptor.
- * <p>
- * Complete info on JSSE, including debugging, can be found at
- * <a href="http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/JSSERefGuide.html">
+ *
+ * <p>The interface {@link mx4j.tools.adaptor.AdaptorServerSocketFactory} is implemented in order to
+ * support securing of {@link mx4j.tools.adaptor.http.HttpAdaptor}.
+ *
+ * <p>The interface {@link java.rmi.server.RMIServerSocketFactory} is implemented to support the
+ * securing of {@link javax.management.remote.JMXConnectorServer}. See {@link
+ * javax.management.remote.rmi.RMIConnectorServer} for the actual subclass that is used for the JMX
+ * RMI adaptor.
+ *
+ * <p>Complete info on JSSE, including debugging, can be found at <a
+ * href="http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/JSSERefGuide.html">
  * http://java.sun.com/j2se/1.4.2/docs/guide/security/jsse/JSSERefGuide.html</a>
  *
- * @since GemFire     3.5 (old name was SSLAdaptorServerSocketFactory)
+ * @since GemFire 3.5 (old name was SSLAdaptorServerSocketFactory)
  */
-public class MX4JServerSocketFactory implements mx4j.tools.adaptor.AdaptorServerSocketFactory, java.rmi.server.RMIServerSocketFactory {
+public class MX4JServerSocketFactory
+    implements mx4j.tools.adaptor.AdaptorServerSocketFactory,
+        java.rmi.server.RMIServerSocketFactory {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -60,47 +60,47 @@ public class MX4JServerSocketFactory implements mx4j.tools.adaptor.AdaptorServer
 
   /**
    * Constructs new instance of MX4JServerSocketFactory.
-   * 
-   * @param useSSL
-   *          true if ssl is to be enabled
-   * @param needClientAuth
-   *          true if client authentication is required
-   * @param protocols
-   *          space-delimited list of ssl protocols to use
-   * @param ciphers
-   *          space-delimited list of ssl ciphers to use
-   * @param gfsecurityProps
-   *          vendor properties passed in through gfsecurity.properties
+   *
+   * @param useSSL true if ssl is to be enabled
+   * @param needClientAuth true if client authentication is required
+   * @param protocols space-delimited list of ssl protocols to use
+   * @param ciphers space-delimited list of ssl ciphers to use
+   * @param gfsecurityProps vendor properties passed in through gfsecurity.properties
    */
-  public MX4JServerSocketFactory(boolean useSSL, boolean needClientAuth, String protocols, String ciphers, Properties gfsecurityProps) {
+  public MX4JServerSocketFactory(
+      boolean useSSL,
+      boolean needClientAuth,
+      String protocols,
+      String ciphers,
+      Properties gfsecurityProps) {
     if (protocols == null || protocols.length() == 0) {
       protocols = DistributionConfig.DEFAULT_SSL_PROTOCOLS;
     }
     if (ciphers == null || ciphers.length() == 0) {
       ciphers = DistributionConfig.DEFAULT_SSL_CIPHERS;
     }
-    this.socketCreator = SocketCreatorFactory.createNonDefaultInstance(useSSL, needClientAuth, protocols, ciphers, gfsecurityProps);
+    this.socketCreator =
+        SocketCreatorFactory.createNonDefaultInstance(
+            useSSL, needClientAuth, protocols, ciphers, gfsecurityProps);
   }
 
   /**
    * Constructs new instance of MX4JServerSocketFactory.
-   * 
-   * @param useSSL
-   *          true if ssl is to be enabled
-   * @param needClientAuth
-   *          true if client authentication is required
-   * @param protocols
-   *          space-delimited list of ssl protocols to use
-   * @param ciphers
-   *          space-delimited list of ssl ciphers to use
-   * @param bindAddress
-   *          host or address to bind to (bind-address)
-   * @param backlog
-   *          how many connections are queued
-   * @param gfsecurityProps
-   *          vendor properties passed in through gfsecurity.properties
+   *
+   * @param useSSL true if ssl is to be enabled
+   * @param needClientAuth true if client authentication is required
+   * @param protocols space-delimited list of ssl protocols to use
+   * @param ciphers space-delimited list of ssl ciphers to use
+   * @param bindAddress host or address to bind to (bind-address)
+   * @param backlog how many connections are queued
+   * @param gfsecurityProps vendor properties passed in through gfsecurity.properties
    */
-  public MX4JServerSocketFactory(boolean useSSL, boolean needClientAuth, String protocols, String ciphers, String bindAddress, // optional for RMI impl
+  public MX4JServerSocketFactory(
+      boolean useSSL,
+      boolean needClientAuth,
+      String protocols,
+      String ciphers,
+      String bindAddress, // optional for RMI impl
       int backlog, // optional for RMI impl
       Properties gfsecurityProps) {
     this(useSSL, needClientAuth, protocols, ciphers, gfsecurityProps);
@@ -112,12 +112,14 @@ public class MX4JServerSocketFactory implements mx4j.tools.adaptor.AdaptorServer
   //   mx4j.tools.adaptor.AdaptorServerSocketFactory impl...
   // -------------------------------------------------------------------------
 
-  public ServerSocket createServerSocket(int port, int backlog, String bindAddress) throws IOException {
+  public ServerSocket createServerSocket(int port, int backlog, String bindAddress)
+      throws IOException {
     if ("".equals(bindAddress)) {
       return socketCreator.createServerSocket(port, backlog);
 
     } else {
-      return socketCreator.createServerSocket(port, backlog, InetAddressUtil.toInetAddress(bindAddress));
+      return socketCreator.createServerSocket(
+          port, backlog, InetAddressUtil.toInetAddress(bindAddress));
     }
   }
 
@@ -130,13 +132,18 @@ public class MX4JServerSocketFactory implements mx4j.tools.adaptor.AdaptorServer
     if ("".equals(bindAddress)) {
       sock = socketCreator.createServerSocket(port, this.backlog);
     } else {
-      sock = socketCreator.createServerSocket(port, this.backlog, InetAddressUtil.toInetAddress(this.bindAddress));
+      sock =
+          socketCreator.createServerSocket(
+              port, this.backlog, InetAddressUtil.toInetAddress(this.bindAddress));
     }
 
     if (logger.isDebugEnabled()) {
-      logger.debug("MX4JServerSocketFactory RMIServerSocketFactory, INetAddress {}, LocalPort {}, LocalSocketAddress {}", sock.getInetAddress(), sock.getLocalPort(), sock.getLocalSocketAddress());
+      logger.debug(
+          "MX4JServerSocketFactory RMIServerSocketFactory, INetAddress {}, LocalPort {}, LocalSocketAddress {}",
+          sock.getInetAddress(),
+          sock.getLocalPort(),
+          sock.getLocalSocketAddress());
     }
     return sock;
   }
-
 }

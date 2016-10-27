@@ -23,7 +23,8 @@ public abstract class VersionedStatsLRURegionEntryHeap extends VersionedStatsLRU
     super(context, value);
   }
 
-  private static final VersionedStatsLRURegionEntryHeapFactory factory = new VersionedStatsLRURegionEntryHeapFactory();
+  private static final VersionedStatsLRURegionEntryHeapFactory factory =
+      new VersionedStatsLRURegionEntryHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;
@@ -43,9 +44,11 @@ public abstract class VersionedStatsLRURegionEntryHeap extends VersionedStatsLRU
           if (info != null) {
             final boolean byteEncoded = info;
             if (skey.length() <= InlineKeyHelper.getMaxInlineStringKey(1, byteEncoded)) {
-              return new VersionedStatsLRURegionEntryHeapStringKey1(context, skey, value, byteEncoded);
+              return new VersionedStatsLRURegionEntryHeapStringKey1(
+                  context, skey, value, byteEncoded);
             } else {
-              return new VersionedStatsLRURegionEntryHeapStringKey2(context, skey, value, byteEncoded);
+              return new VersionedStatsLRURegionEntryHeapStringKey2(
+                  context, skey, value, byteEncoded);
             }
           }
         } else if (keyClass == UUID.class) {

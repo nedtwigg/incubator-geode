@@ -23,13 +23,12 @@ import java.util.ResourceBundle;
 
 /**
  * Class PulseVersion
- * 
- * This class is for holding Pulse Applications Version's details (like version
- * details, build details, source details, etc) from properties file
- * 
+ *
+ * <p>This class is for holding Pulse Applications Version's details (like version details, build
+ * details, source details, etc) from properties file
+ *
  * @since GemFire version Helios
  */
-
 public class PulseVersion {
 
   private String pulseVersion;
@@ -94,8 +93,14 @@ public class PulseVersion {
 
   public String getPulseVersionLogMessage() {
     ResourceBundle resourceBundle = Repository.get().getResourceBundle();
-    String logMessage = resourceBundle.getString("LOG_MSG_PULSE_VERSION") + " " + this.getPulseVersion() + " " + this.getPulseBuildId() + " " + this.getPulseBuildDate();
+    String logMessage =
+        resourceBundle.getString("LOG_MSG_PULSE_VERSION")
+            + " "
+            + this.getPulseVersion()
+            + " "
+            + this.getPulseBuildId()
+            + " "
+            + this.getPulseBuildDate();
     return logMessage;
   }
-
 }

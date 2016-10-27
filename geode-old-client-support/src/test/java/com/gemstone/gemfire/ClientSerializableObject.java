@@ -21,8 +21,7 @@ public class ClientSerializableObject implements java.io.Serializable {
 
   private ClientSerializableObject subObject;
 
-  public ClientSerializableObject() {
-  }
+  public ClientSerializableObject() {}
 
   public void setSubObject(ClientSerializableObject object) {
     subObject = object;

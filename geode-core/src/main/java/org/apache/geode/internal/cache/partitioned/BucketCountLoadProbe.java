@@ -27,9 +27,7 @@ import org.apache.geode.internal.cache.PartitionedRegion;
 import org.apache.geode.internal.cache.PartitionedRegionDataStore;
 
 /**
- * A load probe which calculates the load of a pr using
- * the just the number of buckets on a member.
- * 
+ * A load probe which calculates the load of a pr using the just the number of buckets on a member.
  */
 public class BucketCountLoadProbe implements LoadProbe, DataSerializableFixedID {
   private static final long serialVersionUID = 7040814060882774875L;
@@ -54,11 +52,9 @@ public class BucketCountLoadProbe implements LoadProbe, DataSerializableFixedID 
     return prLoad;
   }
 
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-  }
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
-  public void toData(DataOutput out) throws IOException {
-  }
+  public void toData(DataOutput out) throws IOException {}
 
   public int getDSFID() {
     return BUCKET_COUNT_LOAD_PROBE;
@@ -68,5 +64,4 @@ public class BucketCountLoadProbe implements LoadProbe, DataSerializableFixedID 
   public Version[] getSerializationVersions() {
     return null;
   }
-
 }

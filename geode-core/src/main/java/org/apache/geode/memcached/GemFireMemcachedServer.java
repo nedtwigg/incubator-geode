@@ -41,92 +41,71 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.memcached.ConnectionHandler;
 
 /**
- * This is the Server that listens for incoming memcached client connections.
- * This server understands the memcached ASCII protocol
- * documented in
- * <a href="https://github.com/memcached/memcached/blob/master/doc/protocol.txt">memcached source control</a>
- * It then translates these commands to the corresponding
- * GemFire commands, and stores the data in GemFire in a {@link Region}
- * named "gemcached".
- * <p>
- * "gemcached" region is {@link RegionShortcut#PARTITION} by default,
- * though a cache.xml can be provided to override region attributes.
- * 
- * This class has a Main method that can be used to
- * start the server.
- * 
+ * This is the Server that listens for incoming memcached client connections. This server
+ * understands the memcached ASCII protocol documented in <a
+ * href="https://github.com/memcached/memcached/blob/master/doc/protocol.txt">memcached source
+ * control</a> It then translates these commands to the corresponding GemFire commands, and stores
+ * the data in GemFire in a {@link Region} named "gemcached".
  *
+ * <p>"gemcached" region is {@link RegionShortcut#PARTITION} by default, though a cache.xml can be
+ * provided to override region attributes.
+ *
+ * <p>This class has a Main method that can be used to start the server.
  */
 public class GemFireMemcachedServer {
 
-  /**
-   * The protocol used by GemFireMemcachedServer
-   */
+  /** The protocol used by GemFireMemcachedServer */
   public enum Protocol {
-    ASCII, BINARY
+    ASCII,
+    BINARY
   }
 
   private static LogWriter logger;
 
-  /**
-   * Name of the GemFire region in which data is stored, value id "gemcached"
-   */
+  /** Name of the GemFire region in which data is stored, value id "gemcached" */
   public static final String REGION_NAME = "gemcached";
 
-  /**
-   * version of gemcached server
-   */
+  /** version of gemcached server */
   public static final String version = "0.2";
 
-  /**
-   * the configured address to listen for client connections
-   */
+  /** the configured address to listen for client connections */
   private final String bindAddress;
 
-  /**
-   * the port to listen for client connections
-   */
+  /** the port to listen for client connections */
   private final int serverPort;
 
   private final int DEFAULT_PORT = 11212;
 
   /**
-   * the thread executor pool to handle requests from clients.
-   * We create one thread for each client.
+   * the thread executor pool to handle requests from clients. We create one thread for each client.
    */
-  private ExecutorService executor = Executors.newCachedThreadPool(new ThreadFactory() {
-    private final AtomicInteger counter = new AtomicInteger();
+  private ExecutorService executor =
+      Executors.newCachedThreadPool(
+          new ThreadFactory() {
+            private final AtomicInteger counter = new AtomicInteger();
 
-    @Override
-    public Thread newThread(Runnable r) {
-      Thread t = new Thread(r);
-      t.setName("Gemcached-" + counter.incrementAndGet());
-      t.setDaemon(true);
-      return t;
-    }
-  });
+            @Override
+            public Thread newThread(Runnable r) {
+              Thread t = new Thread(r);
+              t.setName("Gemcached-" + counter.incrementAndGet());
+              t.setDaemon(true);
+              return t;
+            }
+          });
 
-  /**
-   * GemFire cache where data will be stored
-   */
+  /** GemFire cache where data will be stored */
   private Cache cache;
 
-  /**
-   * thread that listens for client connections
-   */
+  /** thread that listens for client connections */
   private Thread acceptor;
 
-  /**
-   * The protocol that this server understands, ASCII by default
-   */
+  /** The protocol that this server understands, ASCII by default */
   private final Protocol protocol;
 
   /**
-   * Create an instance of the server. to start
-   * the server {@link #start()} must be called.
-   * 
-   * @param port the port on which the server listens
-   *        for new memcached client connections.
+   * Create an instance of the server. to start the server {@link #start()} must be called.
+   *
+   * @param port the port on which the server listens for new memcached client connections.
    */
   public GemFireMemcachedServer(int port) {
     this.bindAddress = "";
@@ -139,13 +118,11 @@ public class GemFireMemcachedServer {
   }
 
   /**
-   * Create an instance of the server. to start
-   * the server {@link #start()} must be called.
-   * 
-   * @param bindAddress the address on which the server listens
-   *        for new memcached client connections.
-   * @param port the port on which the server listens
-   *        for new memcached client connections.
+   * Create an instance of the server. to start the server {@link #start()} must be called.
+   *
+   * @param bindAddress the address on which the server listens for new memcached client
+   *     connections.
+   * @param port the port on which the server listens for new memcached client connections.
    * @param protocol the protocol that this server should understand
    * @see Protocol
    */
@@ -160,8 +137,7 @@ public class GemFireMemcachedServer {
   }
 
   /**
-   * Starts an embedded GemFire caching node, and then
-   * listens for new memcached client connections.
+   * Starts an embedded GemFire caching node, and then listens for new memcached client connections.
    */
   public void start() {
     startGemFire();
@@ -193,37 +169,46 @@ public class GemFireMemcachedServer {
       logger.fine("GemFireMemcachedServer configured socket buffer size:" + getSocketBufferSize());
     }
     final CountDownLatch latch = new CountDownLatch(1);
-    acceptor = new Thread(new Runnable() {
-      public void run() {
-        for (;;) {
-          Socket s = null;
-          try {
-            latch.countDown();
-            s = serverSocket.accept();
-            s.setKeepAlive(SocketCreator.ENABLE_TCP_KEEP_ALIVE);
-            handleNewClient(s);
-          } catch (ClosedByInterruptException e) {
-            try {
-              serverSocket.close();
-            } catch (IOException e1) {
-              e1.printStackTrace();
-            }
-            break;
-          } catch (IOException e) {
-            e.printStackTrace();
-            break;
-          }
-        }
-      }
-    }, "AcceptorThread");
+    acceptor =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                for (; ; ) {
+                  Socket s = null;
+                  try {
+                    latch.countDown();
+                    s = serverSocket.accept();
+                    s.setKeepAlive(SocketCreator.ENABLE_TCP_KEEP_ALIVE);
+                    handleNewClient(s);
+                  } catch (ClosedByInterruptException e) {
+                    try {
+                      serverSocket.close();
+                    } catch (IOException e1) {
+                      e1.printStackTrace();
+                    }
+                    break;
+                  } catch (IOException e) {
+                    e.printStackTrace();
+                    break;
+                  }
+                }
+              }
+            },
+            "AcceptorThread");
     acceptor.setDaemon(true);
     acceptor.start();
     latch.await();
-    logger.config("GemFireMemcachedServer server started on host:" + SocketCreator.getLocalHost() + " port: " + this.serverPort);
+    logger.config(
+        "GemFireMemcachedServer server started on host:"
+            + SocketCreator.getLocalHost()
+            + " port: "
+            + this.serverPort);
   }
 
   private InetAddress getBindAddress() throws UnknownHostException {
-    return this.bindAddress == null || this.bindAddress.isEmpty() ? SocketCreator.getLocalHost() : InetAddress.getByName(this.bindAddress);
+    return this.bindAddress == null || this.bindAddress.isEmpty()
+        ? SocketCreator.getLocalHost()
+        : InetAddress.getByName(this.bindAddress);
   }
 
   private int getSocketBufferSize() {
@@ -236,10 +221,7 @@ public class GemFireMemcachedServer {
     executor.execute(connHandler);
   }
 
-  /**
-   * shuts down this server and closes the embedded
-   * GemFire caching node
-   */
+  /** shuts down this server and closes the embedded GemFire caching node */
   public void shutdown() {
     if (acceptor != null) {
       this.acceptor.interrupt();
@@ -248,10 +230,7 @@ public class GemFireMemcachedServer {
     this.cache.close();
   }
 
-  /**
-   * 
-   * @param args
-   */
+  /** @param args */
   public static void main(String[] args) {
     int port = getPort(args);
     GemFireMemcachedServer server = new GemFireMemcachedServer(port);

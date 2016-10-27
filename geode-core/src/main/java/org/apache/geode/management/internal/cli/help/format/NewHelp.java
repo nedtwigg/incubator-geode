@@ -19,10 +19,7 @@ package org.apache.geode.management.internal.cli.help.format;
 import org.apache.geode.management.internal.cli.GfshParser;
 import org.apache.geode.management.internal.cli.shell.Gfsh;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class NewHelp {
   DataNode root;
 

@@ -32,7 +32,7 @@ import org.apache.geode.security.ResourcePermission;
 import org.apache.geode.test.junit.categories.SecurityTest;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-@Category({ UnitTest.class, SecurityTest.class })
+@Category({UnitTest.class, SecurityTest.class})
 public class SimpleSecurityManagerTest {
   private SimpleSecurityManager manager;
   private Properties credentials;
@@ -54,12 +54,14 @@ public class SimpleSecurityManagerTest {
   public void testAuthenticateFail() {
     credentials.put("security-username", "user1");
     credentials.put("security-password", "user2");
-    assertThatThrownBy(() -> manager.authenticate(credentials)).isInstanceOf(AuthenticationFailedException.class);
+    assertThatThrownBy(() -> manager.authenticate(credentials))
+        .isInstanceOf(AuthenticationFailedException.class);
   }
 
   @Test
   public void testAuthenticateFailNull() {
-    assertThatThrownBy(() -> manager.authenticate(credentials)).isInstanceOf(AuthenticationFailedException.class);
+    assertThatThrownBy(() -> manager.authenticate(credentials))
+        .isInstanceOf(AuthenticationFailedException.class);
   }
 
   @Test
@@ -76,5 +78,4 @@ public class SimpleSecurityManagerTest {
     assertTrue(manager.authorize("dataWriteRegionAKey1", permission));
     assertFalse(manager.authorize("dataRead", permission));
   }
-
 }

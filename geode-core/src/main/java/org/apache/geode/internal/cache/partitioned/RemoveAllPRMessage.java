@@ -89,11 +89,14 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
 
   private Integer bucketId;
 
-  /** An additional object providing context for the operation, e.g., for BridgeServer notification */
+  /**
+   * An additional object providing context for the operation, e.g., for BridgeServer notification
+   */
   ClientProxyMembershipID bridgeContext;
 
   /** true if no callbacks should be invoked */
   private boolean skipCallbacks;
+
   private Object callbackArg;
 
   protected static final short HAS_BRIDGE_CONTEXT = UNRESERVED_FLAGS_START;
@@ -104,21 +107,21 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
   /** whether direct-acknowledgement is desired */
   private transient boolean directAck = false;
 
-  /**
-   * state from operateOnRegion that must be preserved for transmission
-   * from the waiting pool
-   */
+  /** state from operateOnRegion that must be preserved for transmission from the waiting pool */
   transient boolean result = false;
 
   transient VersionedObjectList versions = null;
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public RemoveAllPRMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public RemoveAllPRMessage() {}
 
-  public RemoveAllPRMessage(int bucketId, int size, boolean notificationOnly, boolean posDup, boolean skipCallbacks, Object callbackArg) {
+  public RemoveAllPRMessage(
+      int bucketId,
+      int size,
+      boolean notificationOnly,
+      boolean posDup,
+      boolean skipCallbacks,
+      Object callbackArg) {
     this.bucketId = Integer.valueOf(bucketId);
     removeAllPRData = new RemoveAllEntryData[size];
     this.notificationOnly = notificationOnly;
@@ -132,7 +135,8 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
     this.removeAllPRData[this.removeAllPRDataSize++] = entry;
   }
 
-  public void initMessage(PartitionedRegion r, Set recipients, boolean notifyOnly, DirectReplyProcessor p) {
+  public void initMessage(
+      PartitionedRegion r, Set recipients, boolean notifyOnly, DirectReplyProcessor p) {
     setInternalDs(r.getSystem());
     setDirectAck(false);
     this.resetRecipients();
@@ -174,13 +178,15 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
 
   /**
    * Sends a PartitionedRegion RemoveAllPRMessage to the recipient
+   *
    * @param recipient the member to which the message is sent
-   * @param r  the PartitionedRegion for which the op was performed
-   * @return the processor used to await acknowledgement that the op was
-   *         sent, or null to indicate that no acknowledgement will be sent
+   * @param r the PartitionedRegion for which the op was performed
+   * @return the processor used to await acknowledgement that the op was sent, or null to indicate
+   *     that no acknowledgement will be sent
    * @throws ForceReattemptException if the peer is no longer available
    */
-  public PartitionResponse send(DistributedMember recipient, PartitionedRegion r) throws ForceReattemptException {
+  public PartitionResponse send(DistributedMember recipient, PartitionedRegion r)
+      throws ForceReattemptException {
     //Assert.assertTrue(recipient != null, "RemoveAllPRMessage NULL recipient");  recipient can be null for event notifications
     Set recipients = Collections.singleton(recipient);
     RemoveAllResponse p = new RemoveAllResponse(r.getSystem(), recipients);
@@ -278,10 +284,8 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
   @Override
   protected short computeCompressedShort(short s) {
     s = super.computeCompressedShort(s);
-    if (this.bridgeContext != null)
-      s |= HAS_BRIDGE_CONTEXT;
-    if (this.skipCallbacks)
-      s |= SKIP_CALLBACKS;
+    if (this.bridgeContext != null) s |= HAS_BRIDGE_CONTEXT;
+    if (this.skipCallbacks) s |= SKIP_CALLBACKS;
     return s;
   }
 
@@ -300,13 +304,14 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
   }
 
   /**
-   * This method is called upon receipt and make the desired changes to the
-   * PartitionedRegion Note: It is very important that this message does NOT
-   * cause any deadlocks as the sender will wait indefinitely for the
-   * acknowledgement
+   * This method is called upon receipt and make the desired changes to the PartitionedRegion Note:
+   * It is very important that this message does NOT cause any deadlocks as the sender will wait
+   * indefinitely for the acknowledgement
    */
   @Override
-  protected final boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime) throws EntryExistsException, ForceReattemptException, DataLocationException {
+  protected final boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion r, long startTime)
+      throws EntryExistsException, ForceReattemptException, DataLocationException {
     boolean sendReply = true;
 
     InternalDistributedMember eventSender = getSender();
@@ -332,7 +337,17 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
     }
 
     @Retained
-    EntryEventImpl ev = EntryEventImpl.create(r, removeAllPRData[0].getOp(), removeAllPRData[0].getKey(), null /*value*/, this.callbackArg, false /* originRemote */, getSender(), true/* generate Callbacks */, removeAllPRData[0].getEventID());
+    EntryEventImpl ev =
+        EntryEventImpl.create(
+            r,
+            removeAllPRData[0].getOp(),
+            removeAllPRData[0].getKey(),
+            null /*value*/,
+            this.callbackArg,
+            false /* originRemote */,
+            getSender(),
+            true /* generate Callbacks */,
+            removeAllPRData[0].getEventID());
     return ev;
   }
 
@@ -343,30 +358,32 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
   }
 
   /**
-   * This method is called by both operateOnPartitionedRegion() when processing a remote msg
-   * or by sendMsgByBucket() when processing a msg targeted to local Jvm. 
-   * PartitionedRegion Note: It is very important that this message does NOT
-   * cause any deadlocks as the sender will wait indefinitely for the
-   * acknowledgment
+   * This method is called by both operateOnPartitionedRegion() when processing a remote msg or by
+   * sendMsgByBucket() when processing a msg targeted to local Jvm. PartitionedRegion Note: It is
+   * very important that this message does NOT cause any deadlocks as the sender will wait
+   * indefinitely for the acknowledgment
+   *
    * @param r partitioned region
    * @param eventSender the endpoint server who received request from client
    * @param cacheWrite if true invoke cacheWriter before desrtoy
    * @return If succeeds, return true, otherwise, throw exception
    */
   @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "IMSE_DONT_CATCH_IMSE")
-  public final boolean doLocalRemoveAll(PartitionedRegion r, InternalDistributedMember eventSender, boolean cacheWrite) throws EntryExistsException, ForceReattemptException, DataLocationException {
+  public final boolean doLocalRemoveAll(
+      PartitionedRegion r, InternalDistributedMember eventSender, boolean cacheWrite)
+      throws EntryExistsException, ForceReattemptException, DataLocationException {
     boolean didRemove = false;
     long clientReadTimeOut = PoolFactory.DEFAULT_READ_TIMEOUT;
     if (r.hasServerProxy()) {
       clientReadTimeOut = r.getServerProxy().getPool().getReadTimeout();
       if (logger.isDebugEnabled()) {
-        logger.debug("RemoveAllPRMessage: doLocalRemoveAll: clientReadTimeOut is {}", clientReadTimeOut);
+        logger.debug(
+            "RemoveAllPRMessage: doLocalRemoveAll: clientReadTimeOut is {}", clientReadTimeOut);
       }
     }
 
     DistributedRemoveAllOperation op = null;
-    @Released
-    EntryEventImpl baseEvent = null;
+    @Released EntryEventImpl baseEvent = null;
     BucketRegion bucketRegion = null;
     PartitionedRegionDataStore ds = r.getDataStore();
     InternalDistributedMember myId = r.getDistributionManager().getDistributionManagerId();
@@ -376,10 +393,24 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
         // bucketRegion is not null only when !notificationOnly
         bucketRegion = ds.getInitializedBucketForId(null, bucketId);
 
-        this.versions = new VersionedObjectList(this.removeAllPRDataSize, true, bucketRegion.getAttributes().getConcurrencyChecksEnabled());
+        this.versions =
+            new VersionedObjectList(
+                this.removeAllPRDataSize,
+                true,
+                bucketRegion.getAttributes().getConcurrencyChecksEnabled());
 
         // create a base event and a DPAO for RemoveAllMessage distributed btw redundant buckets
-        baseEvent = EntryEventImpl.create(bucketRegion, Operation.REMOVEALL_DESTROY, null, null, this.callbackArg, true, eventSender, !skipCallbacks, true);
+        baseEvent =
+            EntryEventImpl.create(
+                bucketRegion,
+                Operation.REMOVEALL_DESTROY,
+                null,
+                null,
+                this.callbackArg,
+                true,
+                eventSender,
+                !skipCallbacks,
+                true);
         // set baseEventId to the first entry's event id. We need the thread id for DACE
         baseEvent.setEventId(removeAllPRData[0].getEventID());
         if (this.bridgeContext != null) {
@@ -387,7 +418,11 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
         }
         baseEvent.setPossibleDuplicate(this.posDup);
         if (logger.isDebugEnabled()) {
-          logger.debug("RemoveAllPRMessage.doLocalRemoveAll: eventSender is {}, baseEvent is {}, msg is {}", eventSender, baseEvent, this);
+          logger.debug(
+              "RemoveAllPRMessage.doLocalRemoveAll: eventSender is {}, baseEvent is {}, msg is {}",
+              eventSender,
+              baseEvent,
+              this);
         }
         op = new DistributedRemoveAllOperation(baseEvent, removeAllPRDataSize, false);
       }
@@ -411,7 +446,8 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
               // of the previous attempt
               for (int i = 0; i < removeAllPRDataSize; i++) {
                 if (removeAllPRData[i].versionTag == null) {
-                  removeAllPRData[i].versionTag = bucketRegion.findVersionTagForClientBulkOp(removeAllPRData[i].getEventID());
+                  removeAllPRData[i].versionTag =
+                      bucketRegion.findVersionTagForClientBulkOp(removeAllPRData[i].getEventID());
                   if (removeAllPRData[i].versionTag != null) {
                     removeAllPRData[i].versionTag.replaceNullIDs(bucketRegion.getVersionMember());
                   }
@@ -419,7 +455,8 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
               }
             }
             EventID eventID = removeAllPRData[0].getEventID();
-            ThreadIdentifier membershipID = new ThreadIdentifier(eventID.getMembershipID(), eventID.getThreadID());
+            ThreadIdentifier membershipID =
+                new ThreadIdentifier(eventID.getMembershipID(), eventID.getThreadID());
             bucketRegion.recordBulkOpStart(membershipID);
           }
           bucketRegion.waitUntilLocked(keys);
@@ -431,13 +468,23 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
             bucketRegion.doLockForPrimary(false);
             lockedForPrimary = true;
 
-            /* The real work to be synchronized, it will take long time. We don't 
+            /* The real work to be synchronized, it will take long time. We don't
              * worry about another thread to send any msg which has the same key
              * in this request, because these request will be blocked by foundKey
              */
             for (int i = 0; i < removeAllPRDataSize; i++) {
               @Released
-              EntryEventImpl ev = getEventFromEntry(r, myId, eventSender, i, removeAllPRData, notificationOnly, bridgeContext, posDup, skipCallbacks);
+              EntryEventImpl ev =
+                  getEventFromEntry(
+                      r,
+                      myId,
+                      eventSender,
+                      i,
+                      removeAllPRData,
+                      notificationOnly,
+                      bridgeContext,
+                      posDup,
+                      skipCallbacks);
               try {
                 key = ev.getKey();
 
@@ -450,25 +497,32 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
                   r.getDataView().destroyOnRemote(ev, cacheWrite, null);
                   didRemove = true;
                   if (logger.isDebugEnabled()) {
-                    logger.debug("RemoveAllPRMessage.doLocalRemoveAll:removeLocally success for " + ev);
+                    logger.debug(
+                        "RemoveAllPRMessage.doLocalRemoveAll:removeLocally success for " + ev);
                   }
                 } catch (EntryNotFoundException ignore) {
                   didRemove = true;
                   if (ev.getVersionTag() == null) {
                     if (logger.isDebugEnabled()) {
-                      logger.debug("doLocalRemoveAll:RemoveAll encoutered EntryNotFoundException: event={}", ev);
+                      logger.debug(
+                          "doLocalRemoveAll:RemoveAll encoutered EntryNotFoundException: event={}",
+                          ev);
                     }
                   }
                 } catch (ConcurrentCacheModificationException e) {
                   didRemove = true;
                   if (logger.isDebugEnabled()) {
-                    logger.debug("RemoveAllPRMessage.doLocalRemoveAll:removeLocally encountered concurrent cache modification for " + ev);
+                    logger.debug(
+                        "RemoveAllPRMessage.doLocalRemoveAll:removeLocally encountered concurrent cache modification for "
+                            + ev);
                   }
                 }
                 removeAllPRData[i].setTailKey(ev.getTailKey());
                 if (!didRemove) { // make sure the region hasn't gone away
                   r.checkReadiness();
-                  ForceReattemptException fre = new ForceReattemptException("unable to perform remove in RemoveAllPR, but operation should not fail");
+                  ForceReattemptException fre =
+                      new ForceReattemptException(
+                          "unable to perform remove in RemoveAllPR, but operation should not fail");
                   fre.setHash(ev.getKey().hashCode());
                   throw fre;
                 } else {
@@ -481,7 +535,8 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
             } // for
 
           } catch (IllegalMonitorStateException ex) {
-            ForceReattemptException fre = new ForceReattemptException("unable to get lock for primary, retrying... ");
+            ForceReattemptException fre =
+                new ForceReattemptException("unable to get lock for primary, retrying... ");
             throw fre;
           } catch (CacheWriterException cwe) {
             // encounter cacheWriter exception
@@ -502,7 +557,11 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
           if (partialKeys.hasFailure()) {
             partialKeys.addKeysAndVersions(this.versions);
             if (logger.isDebugEnabled()) {
-              logger.debug("RemoveAllPRMessage: partial keys applied, map to bucket {}'s keys:{}. Applied {}", bucketId, Arrays.toString(keys), succeeded);
+              logger.debug(
+                  "RemoveAllPRMessage: partial keys applied, map to bucket {}'s keys:{}. Applied {}",
+                  bucketId,
+                  Arrays.toString(keys),
+                  succeeded);
             }
             throw new PutAllPartialResultException(partialKeys);
           }
@@ -513,7 +572,17 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
         }
       } else {
         for (int i = 0; i < removeAllPRDataSize; i++) {
-          EntryEventImpl ev = getEventFromEntry(r, myId, eventSender, i, removeAllPRData, notificationOnly, bridgeContext, posDup, skipCallbacks);
+          EntryEventImpl ev =
+              getEventFromEntry(
+                  r,
+                  myId,
+                  eventSender,
+                  i,
+                  removeAllPRData,
+                  notificationOnly,
+                  bridgeContext,
+                  posDup,
+                  skipCallbacks);
           try {
             ev.setOriginRemote(true);
             if (this.callbackArg != null) {
@@ -526,10 +595,8 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
         }
       }
     } finally {
-      if (baseEvent != null)
-        baseEvent.release();
-      if (op != null)
-        op.freeOffHeapResources();
+      if (baseEvent != null) baseEvent.release();
+      if (op != null) op.freeOffHeapResources();
     }
 
     return true;
@@ -545,10 +612,29 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
   }
 
   @Retained
-  public static EntryEventImpl getEventFromEntry(LocalRegion r, InternalDistributedMember myId, InternalDistributedMember eventSender, int idx, DistributedRemoveAllOperation.RemoveAllEntryData[] data, boolean notificationOnly, ClientProxyMembershipID bridgeContext, boolean posDup, boolean skipCallbacks) {
+  public static EntryEventImpl getEventFromEntry(
+      LocalRegion r,
+      InternalDistributedMember myId,
+      InternalDistributedMember eventSender,
+      int idx,
+      DistributedRemoveAllOperation.RemoveAllEntryData[] data,
+      boolean notificationOnly,
+      ClientProxyMembershipID bridgeContext,
+      boolean posDup,
+      boolean skipCallbacks) {
     RemoveAllEntryData dataItem = data[idx];
     @Retained
-    EntryEventImpl ev = EntryEventImpl.create(r, dataItem.getOp(), dataItem.getKey(), null, null, false, eventSender, !skipCallbacks, dataItem.getEventID());
+    EntryEventImpl ev =
+        EntryEventImpl.create(
+            r,
+            dataItem.getOp(),
+            dataItem.getKey(),
+            null,
+            null,
+            false,
+            eventSender,
+            !skipCallbacks,
+            dataItem.getEventID());
     boolean evReturned = false;
     try {
 
@@ -586,7 +672,13 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
 
   // override reply message type from PartitionMessage
   @Override
-  protected void sendReply(InternalDistributedMember member, int procId, DM dm, ReplyException ex, PartitionedRegion pr, long startTime) {
+  protected void sendReply(
+      InternalDistributedMember member,
+      int procId,
+      DM dm,
+      ReplyException ex,
+      PartitionedRegion pr,
+      long startTime) {
     if (pr != null) {
       if (startTime > 0) {
         pr.getPrStats().endPartitionMessagesProcessing(startTime);
@@ -601,7 +693,10 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
   @Override
   protected final void appendFields(StringBuffer buff) {
     super.appendFields(buff);
-    buff.append("; removeAllPRDataSize=").append(removeAllPRDataSize).append("; bucketId=").append(bucketId);
+    buff.append("; removeAllPRDataSize=")
+        .append(removeAllPRDataSize)
+        .append("; bucketId=")
+        .append(bucketId);
     if (this.bridgeContext != null) {
       buff.append("; bridgeContext=").append(this.bridgeContext);
     }
@@ -609,7 +704,10 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
     buff.append("; directAck=").append(this.directAck);
 
     for (int i = 0; i < removeAllPRDataSize; i++) {
-      buff.append("; entry" + i + ":").append(removeAllPRData[i].getKey()).append(",").append(removeAllPRData[i].versionTag);
+      buff.append("; entry" + i + ":")
+          .append(removeAllPRData[i].getKey())
+          .append(",")
+          .append(removeAllPRData[i].versionTag);
     }
   }
 
@@ -633,6 +731,7 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
   public static final class RemoveAllReplyMessage extends ReplyMessage {
     /** Result of the RemoveAll operation */
     boolean result;
+
     VersionedObjectList versions;
 
     @Override
@@ -640,13 +739,11 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
       return true;
     }
 
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public RemoveAllReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public RemoveAllReplyMessage() {}
 
-    private RemoveAllReplyMessage(int processorId, boolean result, VersionedObjectList versions, ReplyException ex) {
+    private RemoveAllReplyMessage(
+        int processorId, boolean result, VersionedObjectList versions, ReplyException ex) {
       super();
       this.versions = versions;
       this.result = result;
@@ -655,7 +752,13 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient, int processorId, ReplySender dm, boolean result, VersionedObjectList versions, ReplyException ex) {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        ReplySender dm,
+        boolean result,
+        VersionedObjectList versions,
+        ReplyException ex) {
       Assert.assertTrue(recipient != null, "RemoveAllReplyMessage NULL reply message");
       RemoveAllReplyMessage m = new RemoveAllReplyMessage(processorId, result, versions, ex);
       m.setRecipient(recipient);
@@ -663,8 +766,8 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
     }
 
     /**
-     * Processes this message.  This method is invoked by the receiver
-     * of the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
      * @param dm the distribution manager that is processing the message.
      */
     @Override
@@ -711,14 +814,22 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("RemoveAllReplyMessage ").append("processorid=").append(this.processorId).append(" returning ").append(this.result).append(" exception=").append(getException()).append(" versions= ").append(this.versions);
+      sb.append("RemoveAllReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" returning ")
+          .append(this.result)
+          .append(" exception=")
+          .append(getException())
+          .append(" versions= ")
+          .append(this.versions);
       return sb.toString();
     }
-
   }
 
   /**
    * A processor to capture the value returned by {@link RemoveAllPRMessage}
+   *
    * @since GemFire 8.1
    */
   public static class RemoveAllResponse extends PartitionResponse {
@@ -768,5 +879,4 @@ public final class RemoveAllPRMessage extends PartitionMessageWithDirectReply {
       return "RemoveAllResult(" + this.returnValue + ", " + this.versions + ")";
     }
   }
-
 }

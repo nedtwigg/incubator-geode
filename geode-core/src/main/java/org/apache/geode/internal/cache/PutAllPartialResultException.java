@@ -23,12 +23,9 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * This exception is thrown if some sub-ops failed during a bulk operation.
- * Current bulk ops are putAll and removeAll.
- * Note: the name of this class is not changed to BulkOpPartialResultException
+ * This exception is thrown if some sub-ops failed during a bulk operation. Current bulk ops are
+ * putAll and removeAll. Note: the name of this class is not changed to BulkOpPartialResultException
  * to keep it compatible with old clients and old peers.
- *
- *
  *
  * @since GemFire 6.5
  */
@@ -48,9 +45,7 @@ public class PutAllPartialResultException extends GemFireException {
     result = new PutAllPartialResult(-1);
   }
 
-  /**
-   * consolidate exceptions
-   */
+  /** consolidate exceptions */
   public void consolidate(PutAllPartialResultException pre) {
     this.result.consolidate(pre.getResult());
   }
@@ -67,9 +62,7 @@ public class PutAllPartialResultException extends GemFireException {
     return this.result;
   }
 
-  /**
-   * Returns the key set in exception
-   */
+  /** Returns the key set in exception */
   public VersionedObjectList getSucceededKeysAndVersions() {
     return this.result.getSucceededKeysAndVersions();
   }
@@ -78,9 +71,7 @@ public class PutAllPartialResultException extends GemFireException {
     return this.result.getFailure();
   }
 
-  /**
-   * Returns there's failedKeys
-   */
+  /** Returns there's failedKeys */
   public boolean hasFailure() {
     return this.result.hasFailure();
   }
@@ -128,30 +119,25 @@ public class PutAllPartialResultException extends GemFireException {
       return this.firstCauseOfFailure;
     }
 
-    /**
-     * record all succeeded keys in a version list response
-     */
+    /** record all succeeded keys in a version list response */
     public void addKeysAndVersions(VersionedObjectList keysAndVersions) {
       synchronized (this) {
         this.succeededKeys.addAll(keysAndVersions);
       }
     }
 
-    /**
-     * record all succeeded keys when there are no version results 
-     */
+    /** record all succeeded keys when there are no version results */
     public void addKeys(Collection<?> keys) {
       synchronized (this) {
         if (this.succeededKeys.getVersionTags().size() > 0) {
-          throw new IllegalStateException("attempt to store versionless keys when there are already versioned results");
+          throw new IllegalStateException(
+              "attempt to store versionless keys when there are already versioned results");
         }
         this.succeededKeys.addAllKeys(keys);
       }
     }
 
-    /**
-     * increment failed key number
-     */
+    /** increment failed key number */
     public void saveFailedKey(Object key, Exception cause) {
       if (key == null) {
         return;
@@ -163,40 +149,43 @@ public class PutAllPartialResultException extends GemFireException {
       }
     }
 
-    /**
-     * Returns the key set in exception
-     */
+    /** Returns the key set in exception */
     public VersionedObjectList getSucceededKeysAndVersions() {
       return this.succeededKeys;
     }
 
-    /**
-     * Returns the first key that failed
-     */
+    /** Returns the first key that failed */
     public Object getFirstFailedKey() {
       return this.firstFailedKey;
     }
 
-    /**
-     * Returns there's failedKeys
-     */
+    /** Returns there's failedKeys */
     public boolean hasFailure() {
       return this.firstFailedKey != null;
     }
 
-    /**
-     * Returns there's saved succeed keys
-     */
+    /** Returns there's saved succeed keys */
     public boolean hasSucceededKeys() {
       return this.succeededKeys.size() > 0;
     }
 
     @Override
     public String toString() {
-      StringBuffer sb = new StringBuffer("Key " + firstFailedKey + " and possibly others failed the operation due to " + firstCauseOfFailure + "\n");
+      StringBuffer sb =
+          new StringBuffer(
+              "Key "
+                  + firstFailedKey
+                  + " and possibly others failed the operation due to "
+                  + firstCauseOfFailure
+                  + "\n");
       if (totalMapSize > 0) {
         int failedKeyNum = totalMapSize - this.succeededKeys.size();
-        sb.append("The bulk operation failed on " + failedKeyNum + " out of " + totalMapSize + " entries. ");
+        sb.append(
+            "The bulk operation failed on "
+                + failedKeyNum
+                + " out of "
+                + totalMapSize
+                + " entries. ");
       }
       return sb.toString();
     }

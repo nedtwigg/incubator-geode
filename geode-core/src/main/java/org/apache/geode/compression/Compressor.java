@@ -17,30 +17,23 @@
 
 package org.apache.geode.compression;
 
-/**
- * Interface for a compression codec.
- * 
- */
+/** Interface for a compression codec. */
 public interface Compressor {
 
   /**
    * Compresses the input byte array.
-   * 
+   *
    * @param input The data to be compressed.
-   * 
    * @return A compressed version of the input parameter.
-   * 
    * @throws CompressionException
    */
   public byte[] compress(byte[] input);
 
   /**
    * Decompresses a compressed byte array.
-   * 
+   *
    * @param input A compressed byte array.
-   * 
    * @return an uncompressed version of compressed input byte array data.
-   * 
    * @throws CompressionException
    */
   public byte[] decompress(byte[] input);

@@ -29,7 +29,5 @@ public class PdxGroupByReplicatedJUnitTest extends PdxGroupByTestImpl {
   public Region createRegion(String regionName, Class valueConstraint) {
     Region r1 = CacheUtils.createRegion(regionName, valueConstraint);
     return r1;
-
   }
-
 }

@@ -27,8 +27,8 @@ import org.apache.geode.internal.Version;
 
 /**
  * A Token representing null.
- * @since GemFire cedar
  *
+ * @since GemFire cedar
  */
 public class NullToken implements DataSerializableFixedID, Comparable {
 
@@ -60,13 +60,10 @@ public class NullToken implements DataSerializableFixedID, Comparable {
   }
 
   @Override
-  public void toData(DataOutput out) throws IOException {
-
-  }
+  public void toData(DataOutput out) throws IOException {}
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-  }
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
   @Override
   public Version[] getSerializationVersions() {

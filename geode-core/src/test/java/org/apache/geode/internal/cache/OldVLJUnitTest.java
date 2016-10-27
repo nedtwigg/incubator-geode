@@ -97,5 +97,4 @@ public class OldVLJUnitTest {
     InternalDataSerializer.writeVLOld(Long.MAX_VALUE, createDOS());
     assertEquals(Long.MAX_VALUE, InternalDataSerializer.readVLOld(createDIS()));
   }
-
 }

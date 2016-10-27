@@ -31,7 +31,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Query definition
-   * 
+   *
    * @return
    */
   public String getQueryDefinition() {
@@ -40,7 +40,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Number of times this statement is compiled (including re compilations)
-   * 
+   *
    * @return
    */
   @Override
@@ -50,7 +50,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Number of times this statement is executed
-   * 
+   *
    * @return
    */
   @Override
@@ -60,7 +60,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Statements that are actively being processed during the statistics snapshot
-   * 
+   *
    * @return
    */
   public long getNumExecutionsInProgress() {
@@ -69,7 +69,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Number of times global index lookup message exchanges occurred
-   * 
+   *
    * @return
    */
   public long getNumTimesGlobalIndexLookup() {
@@ -78,7 +78,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Number of rows modified by DML operation of insert/delete/update
-   * 
+   *
    * @return
    */
   public long getNumRowsModified() {
@@ -87,7 +87,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Time spent(in milliseconds) in parsing the query string
-   * 
+   *
    * @return
    */
   public long getParseTime() {
@@ -96,7 +96,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Time spent (in milliseconds) mapping this statement with database object's metadata (bind)
-   * 
+   *
    * @return
    */
   public long getBindTime() {
@@ -104,9 +104,8 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
   }
 
   /**
-   * Time spent (in milliseconds) determining the best execution path for this statement
-   * (optimize)
-   * 
+   * Time spent (in milliseconds) determining the best execution path for this statement (optimize)
+   *
    * @return
    */
   public long getOptimizeTime() {
@@ -116,7 +115,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
   /**
    * Time spent (in milliseconds) compiling details about routing information of query strings to
    * data node(s) (processQueryInfo)
-   * 
+   *
    * @return
    */
   public long getRoutingInfoTime() {
@@ -125,7 +124,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Time spent (in milliseconds) to generate query execution plan definition (activation class)
-   * 
+   *
    * @return
    */
   public long getGenerateTime() {
@@ -134,7 +133,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Total compilation time (in milliseconds) of the statement on this node (prepMinion)
-   * 
+   *
    * @return
    */
   public long getTotalCompilationTime() {
@@ -143,7 +142,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Time spent (in nanoseconds) in creation of all the layers of query processing (ac.execute)
-   * 
+   *
    * @return
    */
   public long getExecutionTime() {
@@ -152,7 +151,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Time to apply (in nanoseconds) the projection and additional filters. (projectrestrict)
-   * 
+   *
    * @return
    */
   public long getProjectionTime() {
@@ -162,7 +161,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
   /**
    * Total execution time (in nanoseconds) taken to process the statement on this node
    * (execute/open/next/close)
-   * 
+   *
    * @return
    */
   public long getTotalExecutionTime() {
@@ -171,7 +170,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Time taken (in nanoseconds) to modify rows by DML operation of insert/delete/update
-   * 
+   *
    * @return
    */
   public long getRowsModificationTime() {
@@ -180,7 +179,7 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Number of rows returned from remote nodes (ResultHolder/Get convertibles)
-   * 
+   *
    * @return
    */
   public long getQNNumRowsSeen() {
@@ -188,9 +187,9 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
   }
 
   /**
-   * TCP send time (in nanoseconds) of all the messages including serialization time and queue
-   * wait time
-   * 
+   * TCP send time (in nanoseconds) of all the messages including serialization time and queue wait
+   * time
+   *
    * @return
    */
   public long getQNMsgSendTime() {
@@ -199,18 +198,14 @@ public class AggregateStatement extends JMXBaseBean implements AggregateStatemen
 
   /**
    * Serialization time (in nanoseconds) for all the messages while sending to remote node(s)
-   * 
+   *
    * @return
    */
   public long getQNMsgSerTime() {
     return getLong("qnMsgSerTime");
   }
 
-  /**
-   * 
-   * 
-   * @return
-   */
+  /** @return */
   public long getQNRespDeSerTime() {
     return getLong("qnRespDeSerTime");
   }

@@ -26,17 +26,13 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * AlertLevel Tester.
- */
+/** AlertLevel Tester. */
 @Category(UnitTest.class)
 public class AlertLevelJUnitTest {
 
-  /**
-   * Method: equals(Object other)
-   */
-
+  /** Method: equals(Object other) */
   private AlertLevel alertLevel1 = AlertLevel.WARNING;
+
   private AlertLevel alertLevel2 = AlertLevel.ERROR;
   private AlertLevel alertLevel3 = AlertLevel.WARNING;
 
@@ -53,10 +49,9 @@ public class AlertLevelJUnitTest {
     AlertLevel level = constructor.newInstance(AlertLevel.ERROR.getSeverity(), "ERROR");
     assertEquals(level.getSeverity(), AlertLevel.ERROR.getSeverity());
 
-    AlertLevel level1 = constructor.newInstance(AlertLevel.ERROR.getSeverity(), new String("ERROR"));
+    AlertLevel level1 =
+        constructor.newInstance(AlertLevel.ERROR.getSeverity(), new String("ERROR"));
     assertEquals(level1.getName(), alertLevel2.getName());
     assertTrue(level1.equals(alertLevel2));
-
   }
-
 }

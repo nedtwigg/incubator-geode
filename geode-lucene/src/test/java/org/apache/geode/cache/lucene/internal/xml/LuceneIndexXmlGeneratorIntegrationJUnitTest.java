@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -49,9 +49,7 @@ public class LuceneIndexXmlGeneratorIntegrationJUnitTest {
     cache.close();
   }
 
-  /**
-   * Test of generating and reading cache configuration back in.
-   */
+  /** Test of generating and reading cache configuration back in. */
   @Test
   public void generateWithFields() {
     cache = new CacheFactory().set(MCAST_PORT, "0").create();
@@ -79,7 +77,6 @@ public class LuceneIndexXmlGeneratorIntegrationJUnitTest {
     LuceneIndex index = service2.getIndex("index", "region");
     assertNotNull(index);
 
-    assertArrayEquals(new String[] { "a", "b", "c" }, index.getFieldNames());
+    assertArrayEquals(new String[] {"a", "b", "c"}, index.getFieldNames());
   }
-
 }

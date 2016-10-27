@@ -33,20 +33,25 @@ public class RegionListenerJUnitTest {
   @Test
   public void test() {
     final AtomicBoolean afterCreateInvoked = new AtomicBoolean();
-    RegionListener listener = new RegionListener() {
+    RegionListener listener =
+        new RegionListener() {
 
-      @Override
-      public RegionAttributes beforeCreate(Region parent, String regionName, RegionAttributes attrs, InternalRegionArguments internalRegionArgs) {
-        AttributesFactory newAttrsFactory = new AttributesFactory(attrs);
-        newAttrsFactory.setDataPolicy(DataPolicy.EMPTY);
-        return newAttrsFactory.create();
-      }
+          @Override
+          public RegionAttributes beforeCreate(
+              Region parent,
+              String regionName,
+              RegionAttributes attrs,
+              InternalRegionArguments internalRegionArgs) {
+            AttributesFactory newAttrsFactory = new AttributesFactory(attrs);
+            newAttrsFactory.setDataPolicy(DataPolicy.EMPTY);
+            return newAttrsFactory.create();
+          }
 
-      @Override
-      public void afterCreate(Region region) {
-        afterCreateInvoked.set(true);
-      }
-    };
+          @Override
+          public void afterCreate(Region region) {
+            afterCreateInvoked.set(true);
+          }
+        };
 
     GemFireCacheImpl cache = (GemFireCacheImpl) new CacheFactory().set(MCAST_PORT, "0").create();
     cache.addRegionListener(listener);
@@ -54,5 +59,4 @@ public class RegionListenerJUnitTest {
     assertEquals(DataPolicy.EMPTY, region.getAttributes().getDataPolicy());
     assertTrue(afterCreateInvoked.get());
   }
-
 }

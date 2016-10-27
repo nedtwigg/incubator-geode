@@ -23,9 +23,8 @@ import org.apache.geode.internal.logging.LogWriterImpl;
 import org.apache.geode.internal.logging.LoggingThreadGroup;
 
 /**
- * Tests populating a region with data that is ever-increasing in
- * size.  It is used for testing the "Heap LRU" feature that helps
- * prevent out of memory errors.
+ * Tests populating a region with data that is ever-increasing in size. It is used for testing the
+ * "Heap LRU" feature that helps prevent out of memory errors.
  */
 public class TestHeapLRU {
 
@@ -34,33 +33,40 @@ public class TestHeapLRU {
     Cache cache = CacheFactory.create(system);
     AttributesFactory factory = new AttributesFactory();
 
-    factory.setEvictionAttributes(EvictionAttributes.createLRUHeapAttributes(null, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUHeapAttributes(null, EvictionAction.OVERFLOW_TO_DISK));
     factory.setDiskSynchronous(true);
-    factory.setDiskStoreName(cache.createDiskStoreFactory().setDiskDirs(new java.io.File[] { new java.io.File(System.getProperty("user.dir")) }).create("TestHeapLRU").getName());
+    factory.setDiskStoreName(
+        cache
+            .createDiskStoreFactory()
+            .setDiskDirs(new java.io.File[] {new java.io.File(System.getProperty("user.dir"))})
+            .create("TestHeapLRU")
+            .getName());
     Region region = cache.createRegion("TestDiskRegion", factory.create());
 
     ThreadGroup tg = LoggingThreadGroup.createThreadGroup("Annoying threads");
-    Thread thread = new Thread(tg, "Annoying thread") {
-      public void run() {
-        try {
-          while (true) {
-            System.out.println("Annoy...");
-            Object[] array = new Object[10 /* * 1024 */];
-            for (int i = 0; i < array.length; i++) {
-              array[i] = new byte[1024];
-              Thread.sleep(10);
+    Thread thread =
+        new Thread(tg, "Annoying thread") {
+          public void run() {
+            try {
+              while (true) {
+                System.out.println("Annoy...");
+                Object[] array = new Object[10 /* * 1024 */];
+                for (int i = 0; i < array.length; i++) {
+                  array[i] = new byte[1024];
+                  Thread.sleep(10);
+                }
+
+                System.out.println("SYSTEM GC");
+                System.gc();
+                Thread.sleep(1000);
+              }
+
+            } catch (InterruptedException ex) {
+              System.err.println("Interrupted"); // FIXME should throw
             }
-
-            System.out.println("SYSTEM GC");
-            System.gc();
-            Thread.sleep(1000);
           }
-
-        } catch (InterruptedException ex) {
-          System.err.println("Interrupted"); // FIXME should throw
-        }
-      }
-    };
+        };
     thread.setDaemon(true);
     //     thread.start();
 
@@ -80,5 +86,4 @@ public class TestHeapLRU {
       region.put(key, value);
     }
   }
-
 }

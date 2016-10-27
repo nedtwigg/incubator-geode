@@ -36,14 +36,13 @@ import org.apache.geode.internal.security.AuthorizeRequest;
 
 public class CloseCQ extends BaseCQCommand {
 
-  private final static CloseCQ singleton = new CloseCQ();
+  private static final CloseCQ singleton = new CloseCQ();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private CloseCQ() {
-  }
+  private CloseCQ() {}
 
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
@@ -61,12 +60,17 @@ public class CloseCQ extends BaseCQCommand {
     String cqName = msg.getPart(0).getString();
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received close CQ request from {} cqName: {}", servConn.getName(), servConn.getSocketString(), cqName);
+      logger.debug(
+          "{}: Received close CQ request from {} cqName: {}",
+          servConn.getName(),
+          servConn.getSocketString(),
+          cqName);
     }
 
     // Process the query request
     if (cqName == null) {
-      String err = LocalizedStrings.CloseCQ_THE_CQNAME_FOR_THE_CQ_CLOSE_REQUEST_IS_NULL.toLocalizedString();
+      String err =
+          LocalizedStrings.CloseCQ_THE_CQNAME_FOR_THE_CQ_CLOSE_REQUEST_IS_NULL.toLocalizedString();
       sendCqResponse(MessageType.CQDATAERROR_MSG_TYPE, err, msg.getTransactionId(), null, servConn);
       return;
     }
@@ -96,24 +100,28 @@ public class CloseCQ extends BaseCQCommand {
           cqRegionNames.add(((InternalCqQuery) cqQuery).getRegionName());
           authzRequest.closeCQAuthorize(cqName, queryStr, cqRegionNames);
         }
-
       }
       // String cqNameWithClientId = new String(cqName + "__" +
       // getMembershipID());
       cqService.closeCq(cqName, id);
-      if (cqQuery != null)
-        servConn.removeCq(cqName, cqQuery.isDurable());
+      if (cqQuery != null) servConn.removeCq(cqName, cqQuery.isDurable());
     } catch (CqException cqe) {
       sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, "", msg.getTransactionId(), cqe, servConn);
       return;
     } catch (Exception e) {
-      String err = LocalizedStrings.CloseCQ_EXCEPTION_WHILE_CLOSING_CQ_CQNAME_0.toLocalizedString(cqName);
+      String err =
+          LocalizedStrings.CloseCQ_EXCEPTION_WHILE_CLOSING_CQ_CQNAME_0.toLocalizedString(cqName);
       sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, err, msg.getTransactionId(), e, servConn);
       return;
     }
 
     // Send OK to client
-    sendCqResponse(MessageType.REPLY, LocalizedStrings.CloseCQ_CQ_CLOSED_SUCCESSFULLY.toLocalizedString(), msg.getTransactionId(), null, servConn);
+    sendCqResponse(
+        MessageType.REPLY,
+        LocalizedStrings.CloseCQ_CQ_CLOSED_SUCCESSFULLY.toLocalizedString(),
+        msg.getTransactionId(),
+        null,
+        servConn);
     servConn.setAsTrue(RESPONDED);
 
     {
@@ -122,5 +130,4 @@ public class CloseCQ extends BaseCQCommand {
       stats.incProcessCloseCqTime(start - oldStart);
     }
   }
-
 }

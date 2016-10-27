@@ -42,7 +42,11 @@ import com.gemstone.gemfire.OldClientSupportProvider;
 @SuppressWarnings("deprecation")
 public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
 
-  static private final List<String> allGeodeThrowableClasses = Arrays.asList(new String[] { "org.apache.geode.cache.execute.EmptyRegionFunctionException", });
+  private static final List<String> allGeodeThrowableClasses =
+      Arrays.asList(
+          new String[] {
+            "org.apache.geode.cache.execute.EmptyRegionFunctionException",
+          });
 
   private Cache myCache;
 
@@ -58,8 +62,8 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * This test can be vastly simplified if clients have the ability to translate org.apache.geode package
-   * prefixes to com.gemstone.gemfire.  In that case we will only need to test translation of
+   * This test can be vastly simplified if clients have the ability to translate org.apache.geode
+   * package prefixes to com.gemstone.gemfire. In that case we will only need to test translation of
    * EmtpyRegionFunctionException.
    */
   @Test
@@ -71,7 +75,8 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
         convertThrowableForOldClient(geodeClassName);
       } catch (Exception e) {
         System.out.println("-- failed");
-        Exception failure = new Exception("Failed processing " + geodeClassName + ": " + e.toString());
+        Exception failure =
+            new Exception("Failed processing " + geodeClassName + ": " + e.toString());
         failure.initCause(e);
         problems.add(failure);
       }
@@ -95,7 +100,13 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
     if (geodeObject instanceof Throwable) {
       Throwable geodeThrowable = (Throwable) instantiate(geodeClass);
       Throwable gemfireThrowable = oldClientSupport.getThrowable(geodeThrowable, oldClientVersion);
-      Assert.assertEquals("Failed to convert " + geodeClassName + ". Throwable class is " + gemfireThrowable.getClass().getName(), comGemstoneGemFire, gemfireThrowable.getClass().getName().substring(0, comGemstoneGemFireLength));
+      Assert.assertEquals(
+          "Failed to convert "
+              + geodeClassName
+              + ". Throwable class is "
+              + gemfireThrowable.getClass().getName(),
+          comGemstoneGemFire,
+          gemfireThrowable.getClass().getName().substring(0, comGemstoneGemFireLength));
     }
   }
 
@@ -120,15 +131,16 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * com.gemstone.gemfire objects received from a client should translate to
-   * org.apache.geode objects.  Here we perform a simple unit test on a
-   * com.gemstone.gemfire object to ensure that this is happening correctly
-   * for Java-serialized objects
+   * com.gemstone.gemfire objects received from a client should translate to org.apache.geode
+   * objects. Here we perform a simple unit test on a com.gemstone.gemfire object to ensure that
+   * this is happening correctly for Java-serialized objects
    */
   @Test
   public void oldClientObjectTranslatesToGeodeObject_javaSerialization() throws Exception {
-    com.gemstone.gemfire.ClientSerializableObject gemfireObject = new com.gemstone.gemfire.ClientSerializableObject();
-    com.gemstone.gemfire.ClientSerializableObject subObject = new com.gemstone.gemfire.ClientSerializableObject();
+    com.gemstone.gemfire.ClientSerializableObject gemfireObject =
+        new com.gemstone.gemfire.ClientSerializableObject();
+    com.gemstone.gemfire.ClientSerializableObject subObject =
+        new com.gemstone.gemfire.ClientSerializableObject();
     gemfireObject.setSubObject(subObject);
 
     ByteArrayOutputStream byteStream = new ByteArrayOutputStream(500);
@@ -140,20 +152,23 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
     ByteArrayDataInput byteDataInput = new ByteArrayDataInput();
     byteDataInput.initialize(serializedForm, Version.GFE_82);
     ClientSerializableObject result = DataSerializer.readObject(byteDataInput);
-    Assert.assertEquals("Expected an org.apache.geode exception but found " + result, result.getClass().getName().substring(0, "org.apache.geode".length()), "org.apache.geode");
+    Assert.assertEquals(
+        "Expected an org.apache.geode exception but found " + result,
+        result.getClass().getName().substring(0, "org.apache.geode".length()),
+        "org.apache.geode");
     ClientSerializableObject newSubObject = result.getSubObject();
     Assert.assertNotNull(newSubObject);
   }
 
   /**
-   * com.gemstone.gemfire objects received from a client should translate to
-   * org.apache.geode objects.  Here we perform a simple unit test on a
-   * com.gemstone.gemfire object to ensure that this is happening correctly
-   * for data-serialized objects
+   * com.gemstone.gemfire objects received from a client should translate to org.apache.geode
+   * objects. Here we perform a simple unit test on a com.gemstone.gemfire object to ensure that
+   * this is happening correctly for data-serialized objects
    */
   @Test
   public void oldClientObjectTranslatesToGeodeObject_dataSerialization() throws Exception {
-    com.gemstone.gemfire.ClientDataSerializableObject gemfireObject = new com.gemstone.gemfire.ClientDataSerializableObject();
+    com.gemstone.gemfire.ClientDataSerializableObject gemfireObject =
+        new com.gemstone.gemfire.ClientDataSerializableObject();
 
     ByteArrayOutputStream byteStream = new ByteArrayOutputStream(500);
     DataOutputStream dataOut = new DataOutputStream(byteStream);
@@ -165,18 +180,21 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
     ByteArrayDataInput byteDataInput = new ByteArrayDataInput();
     byteDataInput.initialize(serializedForm, Version.GFE_82);
     Object result = DataSerializer.readObject(byteDataInput);
-    Assert.assertEquals("Expected an org.apache.geode object but found " + result, result.getClass().getName().substring(0, "org.apache.geode".length()), "org.apache.geode");
+    Assert.assertEquals(
+        "Expected an org.apache.geode object but found " + result,
+        result.getClass().getName().substring(0, "org.apache.geode".length()),
+        "org.apache.geode");
   }
 
   /**
-   * com.gemstone.gemfire objects received from a client should translate to
-   * org.apache.geode objects.  Here we perform a simple unit test on a
-   * com.gemstone.gemfire object to ensure that this is happening correctly
-   * for PDX-serialized objects
+   * com.gemstone.gemfire objects received from a client should translate to org.apache.geode
+   * objects. Here we perform a simple unit test on a com.gemstone.gemfire object to ensure that
+   * this is happening correctly for PDX-serialized objects
    */
   @Test
   public void oldClientObjectTranslatesToGeodeObject_pdxSerialization() throws Exception {
-    com.gemstone.gemfire.ClientPDXSerializableObject gemfireObject = new com.gemstone.gemfire.ClientPDXSerializableObject();
+    com.gemstone.gemfire.ClientPDXSerializableObject gemfireObject =
+        new com.gemstone.gemfire.ClientPDXSerializableObject();
 
     ByteArrayOutputStream byteStream = new ByteArrayOutputStream(500);
     DataOutputStream dataOut = new DataOutputStream(byteStream);
@@ -188,6 +206,9 @@ public class OldClientSupportDUnitTest extends JUnit4CacheTestCase {
     ByteArrayDataInput byteDataInput = new ByteArrayDataInput();
     byteDataInput.initialize(serializedForm, Version.GFE_82);
     Object result = DataSerializer.readObject(byteDataInput);
-    Assert.assertEquals("Expected an org.apache.geode object but found " + result, result.getClass().getName().substring(0, "org.apache.geode".length()), "org.apache.geode");
+    Assert.assertEquals(
+        "Expected an org.apache.geode object but found " + result,
+        result.getClass().getName().substring(0, "org.apache.geode".length()),
+        "org.apache.geode");
   }
 }

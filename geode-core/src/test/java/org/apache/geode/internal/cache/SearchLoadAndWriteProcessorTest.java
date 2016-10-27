@@ -30,10 +30,8 @@ import org.apache.geode.test.junit.categories.UnitTest;
 public class SearchLoadAndWriteProcessorTest {
 
   /**
-   * This test verifies the fix for GEODE-1199.
-   * It verifies that when doNetWrite is called with an event
-   * that has a StoredObject value that it will have "release"
-   * called on it.
+   * This test verifies the fix for GEODE-1199. It verifies that when doNetWrite is called with an
+   * event that has a StoredObject value that it will have "release" called on it.
    */
   @Test
   public void verifyThatOffHeapReleaseIsCalledAfterNetWrite() {
@@ -50,7 +48,8 @@ public class SearchLoadAndWriteProcessorTest {
     KeyInfo keyInfo = new KeyInfo(key, value, cbArg);
     when(lr.getKeyInfo(any(), any(), any())).thenReturn(keyInfo);
     processor.region = lr;
-    EntryEventImpl event = EntryEventImpl.create(lr, Operation.REPLACE, key, value, cbArg, false, null);
+    EntryEventImpl event =
+        EntryEventImpl.create(lr, Operation.REPLACE, key, value, cbArg, false, null);
 
     try {
       // the test
@@ -64,5 +63,4 @@ public class SearchLoadAndWriteProcessorTest {
       processor.release();
     }
   }
-
 }

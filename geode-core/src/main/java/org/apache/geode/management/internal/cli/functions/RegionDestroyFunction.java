@@ -26,10 +26,7 @@ import org.apache.geode.internal.cache.xmlcache.CacheXml;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class RegionDestroyFunction implements Function, InternalEntity {
   private static final long serialVersionUID = 9172773671865750685L;
 
@@ -54,7 +51,8 @@ public class RegionDestroyFunction implements Function, InternalEntity {
           Cache cache = CacheFactory.getAnyInstance();
           Region<?, ?> region = cache.getRegion(regionPath);
           region.destroyRegion();
-          String regionName = regionPath.startsWith(Region.SEPARATOR) ? regionPath.substring(1) : regionPath;
+          String regionName =
+              regionPath.startsWith(Region.SEPARATOR) ? regionPath.substring(1) : regionPath;
           XmlEntity xmlEntity = new XmlEntity(CacheXml.REGION, "name", regionName);
           context.getResultSender().lastResult(new CliFunctionResult("", xmlEntity, regionPath));
         }
@@ -63,7 +61,16 @@ public class RegionDestroyFunction implements Function, InternalEntity {
     } catch (IllegalStateException e) {
       context.getResultSender().lastResult(new CliFunctionResult("", e, null));
     } catch (Exception ex) {
-      context.getResultSender().lastResult(new CliFunctionResult("", new RuntimeException(CliStrings.format(CliStrings.DESTROY_REGION__MSG__ERROR_WHILE_DESTROYING_REGION_0_REASON_1, new Object[] { regionPath, ex.getMessage() })), null));
+      context
+          .getResultSender()
+          .lastResult(
+              new CliFunctionResult(
+                  "",
+                  new RuntimeException(
+                      CliStrings.format(
+                          CliStrings.DESTROY_REGION__MSG__ERROR_WHILE_DESTROYING_REGION_0_REASON_1,
+                          new Object[] {regionPath, ex.getMessage()})),
+                  null));
     }
   }
 

@@ -27,9 +27,11 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The ClassUtilsJUnitTest class is a test suite with test cases to test the contract and functionality of the ClassUtils
- * class.
- * <p/>
+ * The ClassUtilsJUnitTest class is a test suite with test cases to test the contract and
+ * functionality of the ClassUtils class.
+ *
+ * <p>
+ *
  * @see org.apache.geode.internal.lang.ClassUtils
  * @see org.junit.Assert
  * @see org.junit.Test
@@ -40,7 +42,8 @@ public class ClassUtilsJUnitTest {
 
   @Test
   public void testForNameWithExistingClass() {
-    assertEquals(Object.class, ClassUtils.forName("java.lang.Object", new RuntimeException("unexpected")));
+    assertEquals(
+        Object.class, ClassUtils.forName("java.lang.Object", new RuntimeException("unexpected")));
   }
 
   @Test(expected = RuntimeException.class)
@@ -61,7 +64,8 @@ public class ClassUtilsJUnitTest {
   @Test(expected = IllegalArgumentException.class)
   public void testForNameWithEmptyClassName() {
     try {
-      ClassUtils.forName(StringUtils.EMPTY_STRING, new IllegalArgumentException("Empty Class Name!"));
+      ClassUtils.forName(
+          StringUtils.EMPTY_STRING, new IllegalArgumentException("Empty Class Name!"));
     } catch (IllegalArgumentException expected) {
       assertEquals("Empty Class Name!", expected.getMessage());
       throw expected;
@@ -145,7 +149,9 @@ public class ClassUtilsJUnitTest {
 
   @Test
   public void testIsNotInstanceOfWithMultipleTypes() {
-    assertTrue(ClassUtils.isNotInstanceOf("test", Boolean.class, Character.class, Integer.class, Double.class));
+    assertTrue(
+        ClassUtils.isNotInstanceOf(
+            "test", Boolean.class, Character.class, Integer.class, Double.class));
   }
 
   @Test
@@ -155,7 +161,8 @@ public class ClassUtilsJUnitTest {
 
   @Test
   public void testIsNotInstanceOfWithMultipleCompatibleTypes() {
-    assertFalse(ClassUtils.isNotInstanceOf(1, Double.class, Float.class, Integer.class, Long.class, Number.class));
+    assertFalse(
+        ClassUtils.isNotInstanceOf(
+            1, Double.class, Float.class, Integer.class, Long.class, Number.class));
   }
-
 }

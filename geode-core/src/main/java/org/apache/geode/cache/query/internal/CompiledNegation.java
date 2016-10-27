@@ -25,9 +25,8 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 /**
  * Class Description
  *
- * @version     $Revision: 1.1 $
+ * @version $Revision: 1.1 $
  */
-
 public class CompiledNegation extends AbstractCompiledValue {
   private CompiledValue _value;
 
@@ -44,28 +43,30 @@ public class CompiledNegation extends AbstractCompiledValue {
     return LITERAL_not;
   }
 
-  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     return negateObject(_value.evaluate(context));
   }
 
   @Override
-  public Set computeDependencies(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  public Set computeDependencies(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     return context.addDependencies(this, this._value.computeDependencies(context));
   }
 
   private Object negateObject(Object obj) throws TypeMismatchException {
-    if (obj instanceof Boolean)
-      return Boolean.valueOf(!((Boolean) obj).booleanValue());
-    if (obj == null || obj == QueryService.UNDEFINED)
-      return QueryService.UNDEFINED;
-    throw new TypeMismatchException(LocalizedStrings.CompiledNegation_0_CANNOT_BE_NEGATED.toLocalizedString(obj.getClass()));
+    if (obj instanceof Boolean) return Boolean.valueOf(!((Boolean) obj).booleanValue());
+    if (obj == null || obj == QueryService.UNDEFINED) return QueryService.UNDEFINED;
+    throw new TypeMismatchException(
+        LocalizedStrings.CompiledNegation_0_CANNOT_BE_NEGATED.toLocalizedString(obj.getClass()));
   }
 
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     clauseBuffer.insert(0, ')');
     _value.generateCanonicalizedExpression(clauseBuffer, context);
     clauseBuffer.insert(0, "NOT(");
   }
-
 }

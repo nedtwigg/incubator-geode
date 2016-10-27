@@ -28,6 +28,7 @@ import org.apache.geode.distributed.internal.membership.*;
 
 /**
  * The response to fetching the health diagnosis.
+ *
  * @since GemFire 3.5
  */
 public final class FetchHealthDiagnosisResponse extends AdminResponse {
@@ -35,10 +36,14 @@ public final class FetchHealthDiagnosisResponse extends AdminResponse {
   String[] diagnosis;
 
   /**
-   * Returns a <code>FetchHealthDiagnosisResponse</code> that will be returned to the
-   * specified recipient.
+   * Returns a <code>FetchHealthDiagnosisResponse</code> that will be returned to the specified
+   * recipient.
    */
-  public static FetchHealthDiagnosisResponse create(DistributionManager dm, InternalDistributedMember recipient, int id, GemFireHealth.Health healthCode) {
+  public static FetchHealthDiagnosisResponse create(
+      DistributionManager dm,
+      InternalDistributedMember recipient,
+      int id,
+      GemFireHealth.Health healthCode) {
     FetchHealthDiagnosisResponse m = new FetchHealthDiagnosisResponse();
     m.setRecipient(recipient);
     {

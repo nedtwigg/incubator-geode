@@ -24,31 +24,23 @@ import org.apache.geode.security.ResourcePermission;
 import org.apache.geode.security.SecurityManager;
 
 /**
- * This class provides a simple implementation of {@link SecurityManager} for
- * authentication and authorization solely based on the username and password provided.
+ * This class provides a simple implementation of {@link SecurityManager} for authentication and
+ * authorization solely based on the username and password provided.
  *
- * It is meant for demo purpose, not for production.
+ * <p>It is meant for demo purpose, not for production.
  *
- * Authentiation: All users whose password matches the username are authenticated.
- * e.g. username/password = test/test, user/user, admin/admin
+ * <p>Authentiation: All users whose password matches the username are authenticated. e.g.
+ * username/password = test/test, user/user, admin/admin
  *
- * Authorization: users whose username is a substring (case insensitive) of the permission
- * required are authorized.
- * e.g. username = data: is authorized for all data operations:
- *        data;
- *        data:manage
- *        data:read
- *        data:write
- *      username = dataWrite: is authorized for data writes on all regions:
- *        data:write
- *        data:write:regionA
- *      username = cluster: authorized for all cluster operations
- *      username = cluserRead: authorzed for all cluster read operations
+ * <p>Authorization: users whose username is a substring (case insensitive) of the permission
+ * required are authorized. e.g. username = data: is authorized for all data operations: data;
+ * data:manage data:read data:write username = dataWrite: is authorized for data writes on all
+ * regions: data:write data:write:regionA username = cluster: authorized for all cluster operations
+ * username = cluserRead: authorzed for all cluster read operations
  */
 public class SimpleSecurityManager implements SecurityManager {
   @Override
-  public void init(final Properties securityProps) {
-  }
+  public void init(final Properties securityProps) {}
 
   @Override
   public Object authenticate(final Properties credentials) throws AuthenticationFailedException {
@@ -68,6 +60,5 @@ public class SimpleSecurityManager implements SecurityManager {
   }
 
   @Override
-  public void close() {
-  }
+  public void close() {}
 }

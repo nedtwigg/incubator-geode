@@ -31,7 +31,8 @@ import org.apache.geode.internal.statistics.StatisticsTypeFactoryImpl;
 public class FileSystemStats {
   private static final StatisticsType statsType;
   private static final String statsTypeName = "FileSystemStats";
-  private static final String statsTypeDescription = "Statistics about in memory file system implementation";
+  private static final String statsTypeDescription =
+      "Statistics about in memory file system implementation";
 
   private final Statistics stats;
 
@@ -47,7 +48,22 @@ public class FileSystemStats {
 
   static {
     final StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
-    statsType = f.createType(statsTypeName, statsTypeDescription, new StatisticDescriptor[] { f.createLongCounter("readBytes", "Number of bytes written", "bytes"), f.createLongCounter("writtenBytes", "Number of bytes read", "bytes"), f.createIntCounter("fileCreates", "Number of files created", "files"), f.createIntCounter("temporaryFileCreates", "Number of temporary files created", "files"), f.createIntCounter("fileDeletes", "Number of files deleted", "files"), f.createIntCounter("fileRenames", "Number of files renamed", "files"), f.createIntGauge("files", "Number of files on this member", "files"), f.createIntGauge("chunks", "Number of file chunks on this member", "chunks"), f.createLongGauge("bytes", "Number of bytes on this member", "bytes"), });
+    statsType =
+        f.createType(
+            statsTypeName,
+            statsTypeDescription,
+            new StatisticDescriptor[] {
+              f.createLongCounter("readBytes", "Number of bytes written", "bytes"),
+              f.createLongCounter("writtenBytes", "Number of bytes read", "bytes"),
+              f.createIntCounter("fileCreates", "Number of files created", "files"),
+              f.createIntCounter(
+                  "temporaryFileCreates", "Number of temporary files created", "files"),
+              f.createIntCounter("fileDeletes", "Number of files deleted", "files"),
+              f.createIntCounter("fileRenames", "Number of files renamed", "files"),
+              f.createIntGauge("files", "Number of files on this member", "files"),
+              f.createIntGauge("chunks", "Number of file chunks on this member", "chunks"),
+              f.createLongGauge("bytes", "Number of bytes on this member", "bytes"),
+            });
 
     readBytesId = statsType.nameToId("readBytes");
     writtenBytesId = statsType.nameToId("writtenBytes");

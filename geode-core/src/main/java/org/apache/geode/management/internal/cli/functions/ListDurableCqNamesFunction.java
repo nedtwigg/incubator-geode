@@ -35,9 +35,9 @@ import org.apache.geode.management.internal.cli.domain.DurableCqNamesResult;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
 /**
- * The ListDurableCqs class is a GemFire function used to collect all the durable client names
- * on the server
- * </p>
+ * The ListDurableCqs class is a GemFire function used to collect all the durable client names on
+ * the server
+ *
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.execute.Function
  * @see org.apache.geode.cache.execute.FunctionAdapter
@@ -77,13 +77,16 @@ public class ListDurableCqNamesFunction extends FunctionAdapter implements Inter
             if (durableCqNames != null && !durableCqNames.isEmpty()) {
               result.setCqNamesList(new ArrayList<String>(durableCqNames));
             } else {
-              result.setErrorMessage(CliStrings.format(CliStrings.LIST_DURABLE_CQS__NO__CQS__FOR__CLIENT, durableClientId));
+              result.setErrorMessage(
+                  CliStrings.format(
+                      CliStrings.LIST_DURABLE_CQS__NO__CQS__FOR__CLIENT, durableClientId));
             }
           } else {
             result.setErrorMessage(CliStrings.LIST_DURABLE_CQS__NO__CQS__REGISTERED);
           }
         } else {
-          result.setErrorMessage(CliStrings.format(CliStrings.NO_CLIENT_FOUND_WITH_CLIENT_ID, durableClientId));
+          result.setErrorMessage(
+              CliStrings.format(CliStrings.NO_CLIENT_FOUND_WITH_CLIENT_ID, durableClientId));
         }
       } else {
         result.setErrorMessage(CliStrings.NO_CLIENT_FOUND);

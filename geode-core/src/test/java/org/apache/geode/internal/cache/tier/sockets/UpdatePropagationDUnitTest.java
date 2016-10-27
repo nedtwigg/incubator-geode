@@ -60,20 +60,13 @@ import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Start client 1
- * Start client 2
- * Start Server 1
- * Start Server 2
- * Register interest for client 1 on Server 1/2
- * Kill Server 1
- * Verify that interest fails over to Server 2
- * Restart Server 1
- * Do a put which goes against Server 1
- * Verify that Client 1 does not get the update
- * Verify that Client 2 does get the update
+ * Start client 1 Start client 2 Start Server 1 Start Server 2 Register interest for client 1 on
+ * Server 1/2 Kill Server 1 Verify that interest fails over to Server 2 Restart Server 1 Do a put
+ * which goes against Server 1 Verify that Client 1 does not get the update Verify that Client 2
+ * does get the update
  *
- * The key is to verify that the memberid being used by the client
- * to register with the server is the same across servers
+ * <p>The key is to verify that the memberid being used by the client to register with the server is
+ * the same across servers
  */
 @Category(DistributedTest.class)
 public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
@@ -108,16 +101,18 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
     PORT1 = server1.invoke(() -> createServerCache());
     PORT2 = server2.invoke(() -> createServerCache());
 
-    client1.invoke(() -> createClientCache(NetworkUtils.getServerHostName(server1.getHost()), PORT1, PORT2));
-    client2.invoke(() -> createClientCache(NetworkUtils.getServerHostName(server1.getHost()), PORT1, PORT2));
+    client1.invoke(
+        () -> createClientCache(NetworkUtils.getServerHostName(server1.getHost()), PORT1, PORT2));
+    client2.invoke(
+        () -> createClientCache(NetworkUtils.getServerHostName(server1.getHost()), PORT1, PORT2));
 
     IgnoredException.addIgnoredException("java.net.SocketException");
     IgnoredException.addIgnoredException("Unexpected IOException");
   }
 
   /**
-   * This tests whether the updates are received by other clients or not , if there are
-   * situation of Interest List fail over
+   * This tests whether the updates are received by other clients or not , if there are situation of
+   * Interest List fail over
    */
   @Test
   public void updatesAreProgegatedAfterFailover() {
@@ -130,35 +125,42 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
     server1.invoke(() -> killServer(new Integer(PORT1)));
     //Wait for 10 seconds to allow fail over. This would mean that Interstist has failed
     // over to Server2.
-    final CacheSerializableRunnable waitToDetectDeadServer = new CacheSerializableRunnable("Wait for server on port1 to be dead") {
-      public void run2() throws CacheException {
-        Region r = getCache().getRegion(REGION_NAME);
+    final CacheSerializableRunnable waitToDetectDeadServer =
+        new CacheSerializableRunnable("Wait for server on port1 to be dead") {
+          public void run2() throws CacheException {
+            Region r = getCache().getRegion(REGION_NAME);
 
-        String poolName = r.getAttributes().getPoolName();
-        final PoolImpl pool = (PoolImpl) PoolManager.find(poolName);
-        Awaitility.await().atMost(60, TimeUnit.SECONDS).until(() -> !hasEndPointWithPort(pool, PORT1));
-      }
-    };
+            String poolName = r.getAttributes().getPoolName();
+            final PoolImpl pool = (PoolImpl) PoolManager.find(poolName);
+            Awaitility.await()
+                .atMost(60, TimeUnit.SECONDS)
+                .until(() -> !hasEndPointWithPort(pool, PORT1));
+          }
+        };
     client1.invoke(waitToDetectDeadServer);
     client2.invoke(waitToDetectDeadServer);
 
     //Start Server1 again so that both clients1 & Client 2 will establish connection to server1 too.
     server1.invoke(() -> startServer(new Integer(PORT1)));
 
-    final CacheSerializableRunnable waitToDetectLiveServer = new CacheSerializableRunnable("Wait for servers to be alive") {
-      public void run2() throws CacheException {
-        Region r = getCache().getRegion(REGION_NAME);
-        String poolName = r.getAttributes().getPoolName();
-        final PoolImpl pool = (PoolImpl) PoolManager.find(poolName);
-        Awaitility.await().atMost(60, TimeUnit.SECONDS).until(() -> hasEndPointWithPort(pool, PORT1));
-      }
-    };
+    final CacheSerializableRunnable waitToDetectLiveServer =
+        new CacheSerializableRunnable("Wait for servers to be alive") {
+          public void run2() throws CacheException {
+            Region r = getCache().getRegion(REGION_NAME);
+            String poolName = r.getAttributes().getPoolName();
+            final PoolImpl pool = (PoolImpl) PoolManager.find(poolName);
+            Awaitility.await()
+                .atMost(60, TimeUnit.SECONDS)
+                .until(() -> hasEndPointWithPort(pool, PORT1));
+          }
+        };
     client1.invoke(waitToDetectLiveServer);
     client2.invoke(waitToDetectLiveServer);
 
     //Do a put on Server1 via Connection object from client1.
     // Client1 should not receive updated value while client2 should receive
-    client1.invoke(() -> acquireConnectionsAndPutonK1andK2(NetworkUtils.getServerHostName(client1.getHost())));
+    client1.invoke(
+        () -> acquireConnectionsAndPutonK1andK2(NetworkUtils.getServerHostName(client1.getHost())));
     //Check if both the puts ( on key1 & key2 ) have reached the servers
     server1.invoke(() -> verifyUpdates());
     server2.invoke(() -> verifyUpdates());
@@ -169,9 +171,7 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
     client1.invoke(() -> verifySenderUpdateCount());
   }
 
-  /**
-   * Check to see if a client is connected to an endpoint with a specific port
-   */
+  /** Check to see if a client is connected to an endpoint with a specific port */
   private boolean hasEndPointWithPort(final PoolImpl pool, final int port) {
     EndpointManager endpointManager = pool.getEndpointManager();
     final Set<ServerLocation> servers = endpointManager.getEndpointMap().keySet();
@@ -201,9 +201,7 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
     server1.start();
   }
 
-  /**
-   * Creates entries on the server
-   */
+  /** Creates entries on the server */
   private void createEntriesK1andK2() {
     Region r1 = getCache().getRegion(Region.SEPARATOR + REGION_NAME);
     assertNotNull(r1);
@@ -233,13 +231,23 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
       props.setProperty(MCAST_PORT, "0");
       props.setProperty(LOCATORS, "");
       ClientCacheFactory cf = new ClientCacheFactory();
-      cf.addPoolServer(host, PORT1).addPoolServer(host, PORT2).setPoolSubscriptionEnabled(true).setPoolSubscriptionRedundancy(-1).setPoolMinConnections(4).setPoolSocketBufferSize(1000).setPoolReadTimeout(2000).setPoolPingInterval(300);
+      cf.addPoolServer(host, PORT1)
+          .addPoolServer(host, PORT2)
+          .setPoolSubscriptionEnabled(true)
+          .setPoolSubscriptionRedundancy(-1)
+          .setPoolMinConnections(4)
+          .setPoolSocketBufferSize(1000)
+          .setPoolReadTimeout(2000)
+          .setPoolPingInterval(300);
       cache = getClientCache(cf);
     } finally {
       System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "PoolImpl.DISABLE_RANDOM", "false");
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
-    cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).addCacheListener(new EventTrackingCacheListener()).create(REGION_NAME);
+    cache
+        .createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY)
+        .addCacheListener(new EventTrackingCacheListener())
+        .create(REGION_NAME);
   }
 
   private Integer createServerCache() throws Exception {
@@ -273,27 +281,37 @@ public class UpdatePropagationDUnitTest extends JUnit4CacheTestCase {
 
   private void verifySenderUpdateCount() {
     Region r = getCache().getRegion(Region.SEPARATOR + REGION_NAME);
-    EventTrackingCacheListener listener = (EventTrackingCacheListener) r.getAttributes().getCacheListeners()[0];
+    EventTrackingCacheListener listener =
+        (EventTrackingCacheListener) r.getAttributes().getCacheListeners()[0];
 
     final List<EntryEvent> events = listener.receivedEvents;
 
     //We only expect to see 1 create and 1 update from the original put
-    assertEquals("Expected only 2 events for key1", 2, events.stream().filter(event -> event.getKey().equals("key1")).count());
-    assertEquals("Expected only 2 events for key2", 2, events.stream().filter(event -> event.getKey().equals("key2")).count());
+    assertEquals(
+        "Expected only 2 events for key1",
+        2,
+        events.stream().filter(event -> event.getKey().equals("key1")).count());
+    assertEquals(
+        "Expected only 2 events for key2",
+        2,
+        events.stream().filter(event -> event.getKey().equals("key2")).count());
   }
 
   private void verifyUpdates() {
-    Awaitility.await().atMost(60, TimeUnit.SECONDS).until(() -> {
-      Region r = getCache().getRegion(Region.SEPARATOR + REGION_NAME);
-      // verify updates
-      if (r.getAttributes().getPartitionAttributes() == null) {
-        assertEquals("server-value2", r.getEntry("key2").getValue());
-        assertEquals("server-value1", r.getEntry("key1").getValue());
-      } else {
-        assertEquals("server-value2", r.get("key2"));
-        assertEquals("server-value1", r.get("key1"));
-      }
-    });
+    Awaitility.await()
+        .atMost(60, TimeUnit.SECONDS)
+        .until(
+            () -> {
+              Region r = getCache().getRegion(Region.SEPARATOR + REGION_NAME);
+              // verify updates
+              if (r.getAttributes().getPartitionAttributes() == null) {
+                assertEquals("server-value2", r.getEntry("key2").getValue());
+                assertEquals("server-value1", r.getEntry("key1").getValue());
+              } else {
+                assertEquals("server-value2", r.get("key2"));
+                assertEquals("server-value1", r.get("key1"));
+              }
+            });
   }
 
   private static class EventTrackingCacheListener extends CacheListenerAdapter {

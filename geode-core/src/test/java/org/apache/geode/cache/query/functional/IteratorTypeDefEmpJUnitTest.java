@@ -20,7 +20,7 @@
  * Created on April 11, 2005, 11:56 AM
  */
 /*
- * 
+ *
  */
 package org.apache.geode.cache.query.functional;
 
@@ -68,7 +68,10 @@ public class IteratorTypeDefEmpJUnitTest {
 
   @Test
   public void testIteratorDef() throws Exception {
-    String queries[] = { "IMPORT org.apache.geode.cache.\"query\".data.Manager;" + "SELECT DISTINCT manager_id FROM (set<Manager>)/employees where empId > 0" };
+    String queries[] = {
+      "IMPORT org.apache.geode.cache.\"query\".data.Manager;"
+          + "SELECT DISTINCT manager_id FROM (set<Manager>)/employees where empId > 0"
+    };
     Query q = null;
     for (int i = 0; i < queries.length; i++) {
       try {

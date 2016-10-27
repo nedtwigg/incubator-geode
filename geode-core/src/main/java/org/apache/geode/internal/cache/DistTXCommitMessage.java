@@ -50,19 +50,17 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
-/**
- * 
- */
+/** */
 public class DistTXCommitMessage extends TXMessage {
 
   private static final Logger logger = LogService.getLogger();
   protected ArrayList<ArrayList<DistTxThinEntryState>> entryStateList = null;
 
   /** for deserialization */
-  public DistTXCommitMessage() {
-  }
+  public DistTXCommitMessage() {}
 
-  public DistTXCommitMessage(TXId txUniqId, InternalDistributedMember onBehalfOfClientMember, ReplyProcessor21 processor) {
+  public DistTXCommitMessage(
+      TXId txUniqId, InternalDistributedMember onBehalfOfClientMember, ReplyProcessor21 processor) {
     super(txUniqId.getUniqId(), onBehalfOfClientMember, processor);
   }
 
@@ -85,7 +83,8 @@ public class DistTXCommitMessage extends TXMessage {
       // do the actual commit, only if it was not done before
       if (txMgr.isHostedTxRecentlyCompleted(txId)) {
         if (logger.isDebugEnabled()) {
-          logger.debug("DistTXCommitMessage.operateOnTx: found a previously committed transaction:{}", txId);
+          logger.debug(
+              "DistTXCommitMessage.operateOnTx: found a previously committed transaction:{}", txId);
         }
         cmsg = txMgr.getRecentlyCompletedMessage(txId);
         if (txMgr.isExceptionToken(cmsg)) {
@@ -99,14 +98,21 @@ public class DistTXCommitMessage extends TXMessage {
           /*
            * [DISTTX] TODO See how other exceptions are caught and send on wire,
            * than throwing?
-           * 
+           *
            * This can be spared since it will be programming bug
            */
           if (!txStateProxy.isDistTx() || txStateProxy.isCreatedOnDistTxCoordinator()) {
-            throw new UnsupportedOperationInTransactionException(LocalizedStrings.DISTTX_TX_EXPECTED.toLocalizedString("DistTXStateProxyImplOnDatanode", txStateProxy.getClass().getSimpleName()));
+            throw new UnsupportedOperationInTransactionException(
+                LocalizedStrings.DISTTX_TX_EXPECTED.toLocalizedString(
+                    "DistTXStateProxyImplOnDatanode", txStateProxy.getClass().getSimpleName()));
           }
           if (logger.isDebugEnabled()) {
-            logger.debug("DistTXCommitMessage.operateOnTx Commiting {} " + " incoming entryEventList:{} coming from {} ", txId, DistTXStateProxyImplOnCoordinator.printEntryEventList(this.entryStateList), this.getSender().getId());
+            logger.debug(
+                "DistTXCommitMessage.operateOnTx Commiting {} "
+                    + " incoming entryEventList:{} coming from {} ",
+                txId,
+                DistTXStateProxyImplOnCoordinator.printEntryEventList(this.entryStateList),
+                this.getSender().getId());
           }
 
           // Set Member's ID to all entry states
@@ -117,7 +123,8 @@ public class DistTXCommitMessage extends TXMessage {
             }
           }
 
-          ((DistTXStateProxyImplOnDatanode) txStateProxy).populateDistTxEntryStates(this.entryStateList);
+          ((DistTXStateProxyImplOnDatanode) txStateProxy)
+              .populateDistTxEntryStates(this.entryStateList);
           txStateProxy.setCommitOnBehalfOfRemoteStub(true);
 
           txMgr.commit();
@@ -163,19 +170,14 @@ public class DistTXCommitMessage extends TXMessage {
   }
 
   /**
-   * This message is used for the reply to a Dist Tx Phase Two commit operation:
-   * a commit from a stub to the tx host. This is the reply to a
-   * {@link DistTXCommitMessage}.
-   * 
+   * This message is used for the reply to a Dist Tx Phase Two commit operation: a commit from a
+   * stub to the tx host. This is the reply to a {@link DistTXCommitMessage}.
    */
   public static final class DistTXCommitReplyMessage extends ReplyMessage {
     private transient TXCommitMessage commitMessage;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public DistTXCommitReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public DistTXCommitReplyMessage() {}
 
     public DistTXCommitReplyMessage(DataInput in) throws IOException, ClassNotFoundException {
       fromData(in);
@@ -193,21 +195,21 @@ public class DistTXCommitMessage extends TXMessage {
     }
 
     /**
-     * Return the value from the get operation, serialize it bytes as late as
-     * possible to avoid making un-neccesary byte[] copies. De-serialize those
-     * same bytes as late as possible to avoid using precious threads (aka P2P
-     * readers).
-     * 
-     * @param recipient
-     *          the origin VM that performed the get
-     * @param processorId
-     *          the processor on which the origin thread is waiting
-     * @param val
-     *          the raw value that will eventually be serialized
-     * @param replySender
-     *          distribution manager used to send the reply
+     * Return the value from the get operation, serialize it bytes as late as possible to avoid
+     * making un-neccesary byte[] copies. De-serialize those same bytes as late as possible to avoid
+     * using precious threads (aka P2P readers).
+     *
+     * @param recipient the origin VM that performed the get
+     * @param processorId the processor on which the origin thread is waiting
+     * @param val the raw value that will eventually be serialized
+     * @param replySender distribution manager used to send the reply
      */
-    public static void send(InternalDistributedMember recipient, int processorId, TXCommitMessage val, ReplySender replySender) throws RemoteOperationException {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        TXCommitMessage val,
+        ReplySender replySender)
+        throws RemoteOperationException {
       Assert.assertTrue(recipient != null, "DistTXCommitPhaseTwoReplyMessage NULL reply message");
       DistTXCommitReplyMessage m = new DistTXCommitReplyMessage(processorId, val);
       m.setRecipient(recipient);
@@ -215,17 +217,18 @@ public class DistTXCommitMessage extends TXMessage {
     }
 
     /**
-     * Processes this message. This method is invoked by the receiver of the
-     * message.
-     * 
-     * @param dm
-     *          the distribution manager that is processing the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
+     * @param dm the distribution manager that is processing the message.
      */
     @Override
     public void process(final DM dm, ReplyProcessor21 processor) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "DistTXCommitPhaseTwoReplyMessage process invoking reply processor with processorId:{}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "DistTXCommitPhaseTwoReplyMessage process invoking reply processor with processorId:{}",
+            this.processorId);
       }
 
       if (processor == null) {
@@ -257,7 +260,11 @@ public class DistTXCommitMessage extends TXMessage {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("DistTXCommitPhaseTwoReplyMessage ").append("processorid=").append(this.processorId).append(" reply to sender ").append(this.getSender());
+      sb.append("DistTXCommitPhaseTwoReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" reply to sender ")
+          .append(this.getSender());
       return sb.toString();
     }
 
@@ -268,23 +275,27 @@ public class DistTXCommitMessage extends TXMessage {
   }
 
   /**
-   * Reply processor which collects all CommitReplyExceptions for Dist Tx and emits
-   * a detailed failure exception if problems occur
-   * 
+   * Reply processor which collects all CommitReplyExceptions for Dist Tx and emits a detailed
+   * failure exception if problems occur
+   *
    * @see TXCommitMessage.CommitReplyProcessor
-   * 
-   * [DISTTX] TODO see if need ReliableReplyProcessor21? departed members?
+   *     <p>[DISTTX] TODO see if need ReliableReplyProcessor21? departed members?
    */
   public static final class DistTxCommitReplyProcessor extends ReplyProcessor21 {
     private HashMap<DistributedMember, DistTXCoordinatorInterface> msgMap;
     private Map<DistributedMember, TXCommitMessage> commitResponseMap;
     private transient TXId txIdent = null;
 
-    public DistTxCommitReplyProcessor(TXId txUniqId, DM dm, Set initMembers, HashMap<DistributedMember, DistTXCoordinatorInterface> msgMap) {
+    public DistTxCommitReplyProcessor(
+        TXId txUniqId,
+        DM dm,
+        Set initMembers,
+        HashMap<DistributedMember, DistTXCoordinatorInterface> msgMap) {
       super(dm, initMembers);
       this.msgMap = msgMap;
       // [DISTTX] TODO Do we need synchronised map?
-      this.commitResponseMap = Collections.synchronizedMap(new HashMap<DistributedMember, TXCommitMessage>());
+      this.commitResponseMap =
+          Collections.synchronizedMap(new HashMap<DistributedMember, TXCommitMessage>());
       this.txIdent = txUniqId;
     }
 
@@ -313,7 +324,8 @@ public class DistTXCommitMessage extends TXMessage {
             // Exception Container
             this.exception = new DistTxCommitExceptionCollectingException(txIdent);
           }
-          DistTxCommitExceptionCollectingException cce = (DistTxCommitExceptionCollectingException) this.exception;
+          DistTxCommitExceptionCollectingException cce =
+              (DistTxCommitExceptionCollectingException) this.exception;
           if (ex instanceof CommitReplyException) {
             CommitReplyException cre = (CommitReplyException) ex;
             cce.addExceptionsFromMember(msg.getSender(), cre.getExceptions());
@@ -331,7 +343,8 @@ public class DistTXCommitMessage extends TXMessage {
 
     public Set getCacheClosedMembers() {
       if (this.exception != null) {
-        DistTxCommitExceptionCollectingException cce = (DistTxCommitExceptionCollectingException) this.exception;
+        DistTxCommitExceptionCollectingException cce =
+            (DistTxCommitExceptionCollectingException) this.exception;
         return cce.getCacheClosedMembers();
       } else {
         return Collections.EMPTY_SET;
@@ -340,7 +353,8 @@ public class DistTXCommitMessage extends TXMessage {
 
     public Set getRegionDestroyedMembers(String regionFullPath) {
       if (this.exception != null) {
-        DistTxCommitExceptionCollectingException cce = (DistTxCommitExceptionCollectingException) this.exception;
+        DistTxCommitExceptionCollectingException cce =
+            (DistTxCommitExceptionCollectingException) this.exception;
         return cce.getRegionDestroyedMembers(regionFullPath);
       } else {
         return Collections.EMPTY_SET;
@@ -354,7 +368,7 @@ public class DistTXCommitMessage extends TXMessage {
 
   /**
    * An Exception that collects many remote CommitExceptions
-   * 
+   *
    * @see TXCommitMessage.CommitExceptionCollectingException
    */
   public static class DistTxCommitExceptionCollectingException extends ReplyException {
@@ -379,20 +393,24 @@ public class DistTXCommitMessage extends TXMessage {
     }
 
     /**
-     * Determine if the commit processing was incomplete, if so throw a detailed
-     * exception indicating the source of the problem
-     * 
+     * Determine if the commit processing was incomplete, if so throw a detailed exception
+     * indicating the source of the problem
+     *
      * @param msgMap
      */
-    public void handlePotentialCommitFailure(HashMap<DistributedMember, DistTXCoordinatorInterface> msgMap) {
+    public void handlePotentialCommitFailure(
+        HashMap<DistributedMember, DistTXCoordinatorInterface> msgMap) {
       if (fatalExceptions.size() > 0) {
-        StringBuffer errorMessage = new StringBuffer("Incomplete commit of transaction ").append(id).append(".  Caused by the following exceptions: ");
-        for (Iterator i = fatalExceptions.entrySet().iterator(); i.hasNext();) {
+        StringBuffer errorMessage =
+            new StringBuffer("Incomplete commit of transaction ")
+                .append(id)
+                .append(".  Caused by the following exceptions: ");
+        for (Iterator i = fatalExceptions.entrySet().iterator(); i.hasNext(); ) {
           Map.Entry me = (Map.Entry) i.next();
           DistributedMember mem = (DistributedMember) me.getKey();
           errorMessage.append(" From member: ").append(mem).append(" ");
           List exceptions = (List) me.getValue();
-          for (Iterator ei = exceptions.iterator(); ei.hasNext();) {
+          for (Iterator ei = exceptions.iterator(); ei.hasNext(); ) {
             Exception e = (Exception) ei.next();
             errorMessage.append(e);
             for (StackTraceElement ste : e.getStackTrace()) {
@@ -427,12 +445,12 @@ public class DistTXCommitMessage extends TXMessage {
 
     /**
      * Protected by (this)
-     * 
+     *
      * @param member
      * @param exceptions
      */
     public void addExceptionsFromMember(InternalDistributedMember member, Set exceptions) {
-      for (Iterator iter = exceptions.iterator(); iter.hasNext();) {
+      for (Iterator iter = exceptions.iterator(); iter.hasNext(); ) {
         Exception ex = (Exception) iter.next();
         if (ex instanceof CancelException) {
           cacheExceptions.add(member);

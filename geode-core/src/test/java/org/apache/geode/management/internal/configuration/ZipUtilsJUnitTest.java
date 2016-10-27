@@ -31,9 +31,7 @@ import org.junit.rules.TemporaryFolder;
 import org.apache.geode.management.internal.configuration.utils.ZipUtils;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * JUnit Test for {@link ZipUtils}
- */
+/** JUnit Test for {@link ZipUtils} */
 @Category(IntegrationTest.class)
 public class ZipUtilsJUnitTest {
 
@@ -48,8 +46,7 @@ public class ZipUtilsJUnitTest {
   private File sourceFolder;
   private File zipFolder;
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
   @Before
   public void setUp() throws Exception {
@@ -63,8 +60,12 @@ public class ZipUtilsJUnitTest {
 
     zipFolder = temporaryFolder.newFolder("zipFolder");
 
-    FileUtils.writeStringToFile(new File(FilenameUtils.concat(clusterFolder.getCanonicalPath(), clusterTextFileName)), clusterText);
-    FileUtils.writeStringToFile(new File(FilenameUtils.concat(groupFolder.getCanonicalPath(), groupTextFileName)), groupText);
+    FileUtils.writeStringToFile(
+        new File(FilenameUtils.concat(clusterFolder.getCanonicalPath(), clusterTextFileName)),
+        clusterText);
+    FileUtils.writeStringToFile(
+        new File(FilenameUtils.concat(groupFolder.getCanonicalPath(), groupTextFileName)),
+        groupText);
   }
 
   @Test
@@ -77,7 +78,10 @@ public class ZipUtilsJUnitTest {
     assertTrue(zipFile.exists());
     assertTrue(zipFile.isFile());
 
-    File destinationFolder = new File(FilenameUtils.concat(temporaryFolder.getRoot().getCanonicalPath(), destinationFolderName));
+    File destinationFolder =
+        new File(
+            FilenameUtils.concat(
+                temporaryFolder.getRoot().getCanonicalPath(), destinationFolderName));
     assertFalse(destinationFolder.exists());
     assertFalse(destinationFolder.isFile());
 
@@ -89,11 +93,19 @@ public class ZipUtilsJUnitTest {
     assertNotNull(destinationSubDirs);
     assertEquals(2, destinationSubDirs.length);
 
-    File destinationClusterTextFile = new File(FilenameUtils.concat(destinationFolder.getCanonicalPath(), clusterFolderName + File.separator + clusterTextFileName));
+    File destinationClusterTextFile =
+        new File(
+            FilenameUtils.concat(
+                destinationFolder.getCanonicalPath(),
+                clusterFolderName + File.separator + clusterTextFileName));
     assertTrue(destinationClusterTextFile.exists());
     assertTrue(destinationClusterTextFile.isFile());
 
-    File destinationGroupTextFile = new File(FilenameUtils.concat(destinationFolder.getCanonicalPath(), groupFolderName + File.separator + groupTextFileName));
+    File destinationGroupTextFile =
+        new File(
+            FilenameUtils.concat(
+                destinationFolder.getCanonicalPath(),
+                groupFolderName + File.separator + groupTextFileName));
     assertTrue(destinationGroupTextFile.exists());
     assertTrue(destinationGroupTextFile.isFile());
 

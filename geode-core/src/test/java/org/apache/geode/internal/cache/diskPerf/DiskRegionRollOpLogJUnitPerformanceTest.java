@@ -32,9 +32,9 @@ import org.apache.geode.internal.cache.DiskRegionTestingBase;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Consolidated Disk Region Perftest. Overflow, Persist, OverflowWithPersist
- * modes are tested for Sync, AsyncWithBuffer and AsyncWithoutBufer writes.
- * Roling oplog is set to true with maxOplogSize = 20 mb
+ * Consolidated Disk Region Perftest. Overflow, Persist, OverflowWithPersist modes are tested for
+ * Sync, AsyncWithBuffer and AsyncWithoutBufer writes. Roling oplog is set to true with maxOplogSize
+ * = 20 mb
  */
 @Category(IntegrationTest.class)
 public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBase {
@@ -48,9 +48,9 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
   private String stats_ForSameKeyputs = null;
 
   /**
-   * To run DiskRegionRollOpLogPerfJUnitTest to produce the Perf numbers set
-   * runPerfTest to true. Also ,one needs to set the VM heap size accordingly.
-   * (For example:Default setting in build.xml is <jvmarg value="-Xmx256M"/>
+   * To run DiskRegionRollOpLogPerfJUnitTest to produce the Perf numbers set runPerfTest to true.
+   * Also ,one needs to set the VM heap size accordingly. (For example:Default setting in build.xml
+   * is <jvmarg value="-Xmx256M"/>
    */
   private boolean runPerfTest = false;
 
@@ -190,7 +190,9 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out.println("OverflowASyncWITHOUTBufferRollOlg3 (with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :" + stats);
+      System.out.println(
+          "OverflowASyncWITHOUTBufferRollOlg3 (with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :"
+              + stats);
     }
     // Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -331,7 +333,9 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out.println("PersistASyncWITHOUTBufferRollOlg6(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :" + stats);
+      System.out.println(
+          "PersistASyncWITHOUTBufferRollOlg6(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :"
+              + stats);
     }
     // Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -427,7 +431,8 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out.println("PersistOverflowASyncWithBufferRollOlg8:: Stats for 1 kb writes :" + stats);
+      System.out.println(
+          "PersistOverflowASyncWithBufferRollOlg8:: Stats for 1 kb writes :" + stats);
     }
     //Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -476,7 +481,9 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
     if (runPerfTest) {
       populateData0to60k();
       populateData60kto100k();
-      System.out.println("Persist-OverflowASyncWITHOUTBufferRollOlg9(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :" + stats);
+      System.out.println(
+          "Persist-OverflowASyncWITHOUTBufferRollOlg9(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :"
+              + stats);
     }
     // Perf test for 1kb writes. Puting values on the same KEY
     /*
@@ -492,10 +499,9 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
   public static int ENTRY_SIZE = 1024;
 
   /**
-   * OP_COUNT can be increased/decrease as per the requirement. If required to
-   * be set as higher value such as 1000000, one needs to set the VM heap size
-   * accordingly. (For example:Default setting in build.xml is <jvmarg
-   * value="-Xmx256M"/>
+   * OP_COUNT can be increased/decrease as per the requirement. If required to be set as higher
+   * value such as 1000000, one needs to set the VM heap size accordingly. (For example:Default
+   * setting in build.xml is <jvmarg value="-Xmx256M"/>
    */
   public static int OP_COUNT = 1000;
 
@@ -564,4 +570,4 @@ public class DiskRegionRollOpLogJUnitPerformanceTest extends DiskRegionTestingBa
       }
     }
   }
-}// end of DiskRegionRollOpLogPerfJUnitTest
+} // end of DiskRegionRollOpLogPerfJUnitTest

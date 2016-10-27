@@ -69,30 +69,27 @@ import org.apache.geode.test.dunit.WaitCriterion;
 
 /**
  * Distributed System tests
- * 
- * a) For all the notifications 
- * 
- *  i) gemfire.distributedsystem.member.joined
- * 
- *  ii) gemfire.distributedsystem.member.left
- * 
- *  iii) gemfire.distributedsystem.member.suspect
- * 
- *  iv ) All notifications emitted by member mbeans
- * 
- *  vi) Alerts
- * 
- * b) Concurrently modify proxy list by removing member and accessing the
- * distributed system MBean
- * 
- * c) Aggregate Operations like shutDownAll
- * 
- * d) Member level operations like fetchJVMMetrics()
- * 
- * e ) Statistics
- * 
- * 
- * 
+ *
+ * <p>a) For all the notifications
+ *
+ * <p>i) gemfire.distributedsystem.member.joined
+ *
+ * <p>ii) gemfire.distributedsystem.member.left
+ *
+ * <p>iii) gemfire.distributedsystem.member.suspect
+ *
+ * <p>iv ) All notifications emitted by member mbeans
+ *
+ * <p>vi) Alerts
+ *
+ * <p>b) Concurrently modify proxy list by removing member and accessing the distributed system
+ * MBean
+ *
+ * <p>c) Aggregate Operations like shutDownAll
+ *
+ * <p>d) Member level operations like fetchJVMMetrics()
+ *
+ * <p>e ) Statistics
  */
 @Category(DistributedTest.class)
 public class DistributedSystemDUnitTest extends ManagementTestBase {
@@ -107,7 +104,8 @@ public class DistributedSystemDUnitTest extends ManagementTestBase {
 
   static List<Notification> notifList = new ArrayList<>();
 
-  static Map<ObjectName, NotificationListener> notificationListenerMap = new HashMap<ObjectName, NotificationListener>();
+  static Map<ObjectName, NotificationListener> notificationListenerMap =
+      new HashMap<ObjectName, NotificationListener>();
 
   static final String WARNING_LEVEL_MESSAGE = "Warninglevel Alert Message";
 
@@ -119,7 +117,7 @@ public class DistributedSystemDUnitTest extends ManagementTestBase {
 
   /**
    * Tests each and every operations that is defined on the MemberMXBean
-   * 
+   *
    * @throws Exception
    */
   @Test
@@ -139,12 +137,11 @@ public class DistributedSystemDUnitTest extends ManagementTestBase {
     }
 
     closeCache(managingNode);
-
   }
 
   /**
    * Tests each and every operations that is defined on the MemberMXBean
-   * 
+   *
    * @throws Exception
    */
   @Test
@@ -200,37 +197,41 @@ public class DistributedSystemDUnitTest extends ManagementTestBase {
   }
 
   @SuppressWarnings("serial")
-  public void ensureLoggerState(VM vm1, final DistributedMember member, final int alertLevel) throws Exception {
+  public void ensureLoggerState(VM vm1, final DistributedMember member, final int alertLevel)
+      throws Exception {
     {
-      vm1.invoke(new SerializableCallable("Ensure Logger State") {
+      vm1.invoke(
+          new SerializableCallable("Ensure Logger State") {
 
-        public Object call() throws Exception {
+            public Object call() throws Exception {
 
-          Wait.waitForCriterion(new WaitCriterion() {
-            public String description() {
-              return "Waiting for all alert Listener to register with managed node";
+              Wait.waitForCriterion(
+                  new WaitCriterion() {
+                    public String description() {
+                      return "Waiting for all alert Listener to register with managed node";
+                    }
+
+                    public boolean done() {
+
+                      if (AlertAppender.getInstance().hasAlertListener(member, alertLevel)) {
+                        return true;
+                      }
+                      return false;
+                    }
+                  },
+                  MAX_WAIT,
+                  500,
+                  true);
+
+              return null;
             }
-
-            public boolean done() {
-
-              if (AlertAppender.getInstance().hasAlertListener(member, alertLevel)) {
-                return true;
-              }
-              return false;
-            }
-
-          }, MAX_WAIT, 500, true);
-
-          return null;
-        }
-      });
-
+          });
     }
   }
 
   /**
    * Tests each and every operations that is defined on the MemberMXBean
-   * 
+   *
    * @throws Exception
    */
   @Test
@@ -280,204 +281,232 @@ public class DistributedSystemDUnitTest extends ManagementTestBase {
       }
     }
 
-    managingNode.invoke(new SerializableRunnable("Add Listener to MemberMXBean") {
+    managingNode.invoke(
+        new SerializableRunnable("Add Listener to MemberMXBean") {
 
-      public void run() {
-        Cache cache = getCache();
-        ManagementService service = getManagementService();
-        final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+          public void run() {
+            Cache cache = getCache();
+            ManagementService service = getManagementService();
+            final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
 
-        Wait.waitForCriterion(new WaitCriterion() {
-          public String description() {
-            return "Waiting for all members to send their initial Data";
-          }
+            Wait.waitForCriterion(
+                new WaitCriterion() {
+                  public String description() {
+                    return "Waiting for all members to send their initial Data";
+                  }
 
-          public boolean done() {
-            if (bean.listMemberObjectNames().length == 5) {// including locator 
-              return true;
-            } else {
-              return false;
+                  public boolean done() {
+                    if (bean.listMemberObjectNames().length == 5) { // including locator
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  }
+                },
+                MAX_WAIT,
+                500,
+                true);
+            for (ObjectName objectName : bean.listMemberObjectNames()) {
+              NotificationHubTestListener listener = new NotificationHubTestListener();
+              try {
+                mbeanServer.addNotificationListener(objectName, listener, null, null);
+                notificationListenerMap.put(objectName, listener);
+              } catch (InstanceNotFoundException e) {
+                LogWriterUtils.getLogWriter().error(e);
+              }
             }
           }
-        }, MAX_WAIT, 500, true);
-        for (ObjectName objectName : bean.listMemberObjectNames()) {
-          NotificationHubTestListener listener = new NotificationHubTestListener();
-          try {
-            mbeanServer.addNotificationListener(objectName, listener, null, null);
-            notificationListenerMap.put(objectName, listener);
-          } catch (InstanceNotFoundException e) {
-            LogWriterUtils.getLogWriter().error(e);
-          }
-        }
-      }
-    });
+        });
 
     // Check in all VMS
 
     for (VM vm : managedNodeList) {
-      vm.invoke(new SerializableRunnable("Check Hub Listener num count") {
+      vm.invoke(
+          new SerializableRunnable("Check Hub Listener num count") {
 
-        public void run() {
-          Cache cache = getCache();
-          SystemManagementService service = (SystemManagementService) getManagementService();
-          NotificationHub hub = service.getNotificationHub();
-          Map<ObjectName, NotificationHubListener> listenerObjectMap = hub.getListenerObjectMap();
-          assertEquals(1, listenerObjectMap.keySet().size());
-          ObjectName memberMBeanName = MBeanJMXAdapter.getMemberMBeanName(cache.getDistributedSystem().getDistributedMember());
+            public void run() {
+              Cache cache = getCache();
+              SystemManagementService service = (SystemManagementService) getManagementService();
+              NotificationHub hub = service.getNotificationHub();
+              Map<ObjectName, NotificationHubListener> listenerObjectMap =
+                  hub.getListenerObjectMap();
+              assertEquals(1, listenerObjectMap.keySet().size());
+              ObjectName memberMBeanName =
+                  MBeanJMXAdapter.getMemberMBeanName(
+                      cache.getDistributedSystem().getDistributedMember());
 
-          NotificationHubListener listener = listenerObjectMap.get(memberMBeanName);
+              NotificationHubListener listener = listenerObjectMap.get(memberMBeanName);
 
-          /*
-           * Counter of listener should be 2 . One for default Listener which is
-           * added for each member mbean by distributed system mbean One for the
-           * added listener in test
-           */
-          assertEquals(2, listener.getNumCounter());
+              /*
+               * Counter of listener should be 2 . One for default Listener which is
+               * added for each member mbean by distributed system mbean One for the
+               * added listener in test
+               */
+              assertEquals(2, listener.getNumCounter());
 
-          // Raise some notifications
+              // Raise some notifications
 
-          NotificationBroadcasterSupport memberLevelNotifEmitter = (MemberMBean) service.getMemberMXBean();
+              NotificationBroadcasterSupport memberLevelNotifEmitter =
+                  (MemberMBean) service.getMemberMXBean();
 
-          String memberSource = MBeanJMXAdapter.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
+              String memberSource =
+                  MBeanJMXAdapter.getMemberNameOrId(
+                      cache.getDistributedSystem().getDistributedMember());
 
-          // Only a dummy notification , no actual region is creates
-          Notification notification = new Notification(JMXNotificationType.REGION_CREATED, memberSource, SequenceNumber.next(), System.currentTimeMillis(), ManagementConstants.REGION_CREATED_PREFIX + "/test");
-          memberLevelNotifEmitter.sendNotification(notification);
-
-        }
-      });
+              // Only a dummy notification , no actual region is creates
+              Notification notification =
+                  new Notification(
+                      JMXNotificationType.REGION_CREATED,
+                      memberSource,
+                      SequenceNumber.next(),
+                      System.currentTimeMillis(),
+                      ManagementConstants.REGION_CREATED_PREFIX + "/test");
+              memberLevelNotifEmitter.sendNotification(notification);
+            }
+          });
     }
 
-    managingNode.invoke(new SerializableRunnable("Check notifications && Remove Listeners") {
+    managingNode.invoke(
+        new SerializableRunnable("Check notifications && Remove Listeners") {
 
-      public void run() {
+          public void run() {
 
-        Wait.waitForCriterion(new WaitCriterion() {
-          public String description() {
-            return "Waiting for all Notifications to reach the Managing Node";
-          }
+            Wait.waitForCriterion(
+                new WaitCriterion() {
+                  public String description() {
+                    return "Waiting for all Notifications to reach the Managing Node";
+                  }
 
-          public boolean done() {
-            if (notifList.size() == 3) {
-              return true;
-            } else {
-              return false;
+                  public boolean done() {
+                    if (notifList.size() == 3) {
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  }
+                },
+                MAX_WAIT,
+                500,
+                true);
+
+            notifList.clear();
+
+            Iterator<ObjectName> it = notificationListenerMap.keySet().iterator();
+            while (it.hasNext()) {
+              ObjectName objectName = it.next();
+              NotificationListener listener = notificationListenerMap.get(objectName);
+              try {
+                mbeanServer.removeNotificationListener(objectName, listener);
+              } catch (ListenerNotFoundException e) {
+                LogWriterUtils.getLogWriter().error(e);
+              } catch (InstanceNotFoundException e) {
+                LogWriterUtils.getLogWriter().error(e);
+              }
             }
           }
-        }, MAX_WAIT, 500, true);
-
-        notifList.clear();
-
-        Iterator<ObjectName> it = notificationListenerMap.keySet().iterator();
-        while (it.hasNext()) {
-          ObjectName objectName = it.next();
-          NotificationListener listener = notificationListenerMap.get(objectName);
-          try {
-            mbeanServer.removeNotificationListener(objectName, listener);
-          } catch (ListenerNotFoundException e) {
-            LogWriterUtils.getLogWriter().error(e);
-          } catch (InstanceNotFoundException e) {
-            LogWriterUtils.getLogWriter().error(e);
-          }
-        }
-
-      }
-    });
+        });
 
     // Check in all VMS again
 
     for (VM vm : managedNodeList) {
-      vm.invoke(new SerializableRunnable("Check Hub Listener num count Again") {
+      vm.invoke(
+          new SerializableRunnable("Check Hub Listener num count Again") {
 
-        public void run() {
-          Cache cache = getCache();
-          SystemManagementService service = (SystemManagementService) getManagementService();
-          NotificationHub hub = service.getNotificationHub();
-          Map<ObjectName, NotificationHubListener> listenerObjectMap = hub.getListenerObjectMap();
+            public void run() {
+              Cache cache = getCache();
+              SystemManagementService service = (SystemManagementService) getManagementService();
+              NotificationHub hub = service.getNotificationHub();
+              Map<ObjectName, NotificationHubListener> listenerObjectMap =
+                  hub.getListenerObjectMap();
 
-          assertEquals(1, listenerObjectMap.keySet().size());
+              assertEquals(1, listenerObjectMap.keySet().size());
 
-          ObjectName memberMBeanName = MBeanJMXAdapter.getMemberMBeanName(cache.getDistributedSystem().getDistributedMember());
+              ObjectName memberMBeanName =
+                  MBeanJMXAdapter.getMemberMBeanName(
+                      cache.getDistributedSystem().getDistributedMember());
 
-          NotificationHubListener listener = listenerObjectMap.get(memberMBeanName);
+              NotificationHubListener listener = listenerObjectMap.get(memberMBeanName);
 
-          /*
-           * Counter of listener should be 1 for the default Listener which is
-           * added for each member mbean by distributed system mbean.
-           */
-          assertEquals(1, listener.getNumCounter());
-
-        }
-      });
+              /*
+               * Counter of listener should be 1 for the default Listener which is
+               * added for each member mbean by distributed system mbean.
+               */
+              assertEquals(1, listener.getNumCounter());
+            }
+          });
     }
 
-    managingNode.invoke(new SerializableRunnable("Remove Listener from MemberMXBean") {
+    managingNode.invoke(
+        new SerializableRunnable("Remove Listener from MemberMXBean") {
 
-      public void run() {
-        Cache cache = getCache();
-        ManagementService service = getManagementService();
-        final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+          public void run() {
+            Cache cache = getCache();
+            ManagementService service = getManagementService();
+            final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
 
-        Wait.waitForCriterion(new WaitCriterion() {
-          public String description() {
-            return "Waiting for all members to send their initial Data";
-          }
+            Wait.waitForCriterion(
+                new WaitCriterion() {
+                  public String description() {
+                    return "Waiting for all members to send their initial Data";
+                  }
 
-          public boolean done() {
-            if (bean.listMemberObjectNames().length == 5) {// including locator 
-              return true;
-            } else {
-              return false;
+                  public boolean done() {
+                    if (bean.listMemberObjectNames().length == 5) { // including locator
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  }
+                },
+                MAX_WAIT,
+                500,
+                true);
+            for (ObjectName objectName : bean.listMemberObjectNames()) {
+              NotificationHubTestListener listener = new NotificationHubTestListener();
+              try {
+                mbeanServer.removeNotificationListener(objectName, listener);
+              } catch (InstanceNotFoundException e) {
+                LogWriterUtils.getLogWriter().error(e);
+              } catch (ListenerNotFoundException e) {
+                // TODO: apparently there is never a notification listener on any these mbeans at this point
+                // fix this test so it doesn't hit these unexpected exceptions -- getLogWriter().error(e);
+              }
             }
-
           }
-
-        }, MAX_WAIT, 500, true);
-        for (ObjectName objectName : bean.listMemberObjectNames()) {
-          NotificationHubTestListener listener = new NotificationHubTestListener();
-          try {
-            mbeanServer.removeNotificationListener(objectName, listener);
-          } catch (InstanceNotFoundException e) {
-            LogWriterUtils.getLogWriter().error(e);
-          } catch (ListenerNotFoundException e) {
-            // TODO: apparently there is never a notification listener on any these mbeans at this point 
-            // fix this test so it doesn't hit these unexpected exceptions -- getLogWriter().error(e);
-          }
-        }
-      }
-    });
+        });
 
     for (VM vm : managedNodeList) {
-      vm.invoke(new SerializableRunnable("Check Hub Listeners clean up") {
+      vm.invoke(
+          new SerializableRunnable("Check Hub Listeners clean up") {
 
-        public void run() {
-          Cache cache = getCache();
-          SystemManagementService service = (SystemManagementService) getManagementService();
-          NotificationHub hub = service.getNotificationHub();
-          hub.cleanUpListeners();
-          assertEquals(0, hub.getListenerObjectMap().size());
+            public void run() {
+              Cache cache = getCache();
+              SystemManagementService service = (SystemManagementService) getManagementService();
+              NotificationHub hub = service.getNotificationHub();
+              hub.cleanUpListeners();
+              assertEquals(0, hub.getListenerObjectMap().size());
 
-          Iterator<ObjectName> it = notificationListenerMap.keySet().iterator();
-          while (it.hasNext()) {
-            ObjectName objectName = it.next();
-            NotificationListener listener = notificationListenerMap.get(objectName);
-            try {
-              mbeanServer.removeNotificationListener(objectName, listener);
-              fail("Found Listeners inspite of clearing them");
-            } catch (ListenerNotFoundException e) {
-              // Expected Exception Do nothing
-            } catch (InstanceNotFoundException e) {
-              LogWriterUtils.getLogWriter().error(e);
+              Iterator<ObjectName> it = notificationListenerMap.keySet().iterator();
+              while (it.hasNext()) {
+                ObjectName objectName = it.next();
+                NotificationListener listener = notificationListenerMap.get(objectName);
+                try {
+                  mbeanServer.removeNotificationListener(objectName, listener);
+                  fail("Found Listeners inspite of clearing them");
+                } catch (ListenerNotFoundException e) {
+                  // Expected Exception Do nothing
+                } catch (InstanceNotFoundException e) {
+                  LogWriterUtils.getLogWriter().error(e);
+                }
+              }
             }
-          }
-        }
-      });
+          });
     }
   }
 
   /**
    * Tests each and every operations that is defined on the MemberMXBean
-   * 
+   *
    * @throws Exception
    */
   @Test
@@ -505,7 +534,6 @@ public class DistributedSystemDUnitTest extends ManagementTestBase {
 
       warnLevelAlert(vm);
       severeLevelAlert(vm);
-
     }
     checkAlertCount(managingNode, 3, 0);
     resetAlertCounts(managingNode);
@@ -537,275 +565,298 @@ public class DistributedSystemDUnitTest extends ManagementTestBase {
     }
 
     closeCache(managingNode);
-
   }
 
   @SuppressWarnings("serial")
-  public void checkAlertCount(VM vm1, final int expectedSevereAlertCount, final int expectedWarningAlertCount) throws Exception {
+  public void checkAlertCount(
+      VM vm1, final int expectedSevereAlertCount, final int expectedWarningAlertCount)
+      throws Exception {
     {
-      vm1.invoke(new SerializableCallable("Check Alert Count") {
+      vm1.invoke(
+          new SerializableCallable("Check Alert Count") {
 
-        public Object call() throws Exception {
-          final AlertNotifListener nt = AlertNotifListener.getInstance();
-          Wait.waitForCriterion(new WaitCriterion() {
-            public String description() {
-              return "Waiting for all alerts to reach the Managing Node";
+            public Object call() throws Exception {
+              final AlertNotifListener nt = AlertNotifListener.getInstance();
+              Wait.waitForCriterion(
+                  new WaitCriterion() {
+                    public String description() {
+                      return "Waiting for all alerts to reach the Managing Node";
+                    }
+
+                    public boolean done() {
+                      if (expectedSevereAlertCount == nt.getseverAlertCount()
+                          && expectedWarningAlertCount == nt.getWarnigAlertCount()) {
+                        return true;
+                      } else {
+                        return false;
+                      }
+                    }
+                  },
+                  MAX_WAIT,
+                  500,
+                  true);
+
+              return null;
             }
-
-            public boolean done() {
-              if (expectedSevereAlertCount == nt.getseverAlertCount() && expectedWarningAlertCount == nt.getWarnigAlertCount()) {
-                return true;
-              } else {
-                return false;
-              }
-
-            }
-
-          }, MAX_WAIT, 500, true);
-
-          return null;
-        }
-      });
-
+          });
     }
   }
 
   @SuppressWarnings("serial")
   public void setAlertLevel(VM vm1, final String alertLevel) throws Exception {
     {
-      vm1.invoke(new SerializableCallable("Set Alert level") {
+      vm1.invoke(
+          new SerializableCallable("Set Alert level") {
 
-        public Object call() throws Exception {
-          GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-          ManagementService service = getManagementService();
-          DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-          assertNotNull(bean);
-          bean.changeAlertLevel(alertLevel);
+            public Object call() throws Exception {
+              GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+              ManagementService service = getManagementService();
+              DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+              assertNotNull(bean);
+              bean.changeAlertLevel(alertLevel);
 
-          return null;
-        }
-      });
-
+              return null;
+            }
+          });
     }
   }
 
   @SuppressWarnings("serial")
   public void warnLevelAlert(VM vm1) throws Exception {
     {
-      vm1.invoke(new SerializableCallable("Warning level Alerts") {
+      vm1.invoke(
+          new SerializableCallable("Warning level Alerts") {
 
-        public Object call() throws Exception {
-          final IgnoredException warnEx = IgnoredException.addIgnoredException(WARNING_LEVEL_MESSAGE);
-          logger.warn(WARNING_LEVEL_MESSAGE);
-          warnEx.remove();
-          return null;
-        }
-      });
-
+            public Object call() throws Exception {
+              final IgnoredException warnEx =
+                  IgnoredException.addIgnoredException(WARNING_LEVEL_MESSAGE);
+              logger.warn(WARNING_LEVEL_MESSAGE);
+              warnEx.remove();
+              return null;
+            }
+          });
     }
   }
 
   @SuppressWarnings("serial")
   public void resetAlertCounts(VM vm1) throws Exception {
     {
-      vm1.invoke(new SerializableCallable("Reset Alert Count") {
+      vm1.invoke(
+          new SerializableCallable("Reset Alert Count") {
 
-        public Object call() throws Exception {
-          AlertNotifListener nt = AlertNotifListener.getInstance();
-          nt.resetCount();
-          return null;
-        }
-      });
-
+            public Object call() throws Exception {
+              AlertNotifListener nt = AlertNotifListener.getInstance();
+              nt.resetCount();
+              return null;
+            }
+          });
     }
   }
 
   @SuppressWarnings("serial")
   public void severeLevelAlert(VM vm1) throws Exception {
     {
-      vm1.invoke(new SerializableCallable("Severe Level Alert") {
+      vm1.invoke(
+          new SerializableCallable("Severe Level Alert") {
 
-        public Object call() throws Exception {
-          // add expected exception strings         
+            public Object call() throws Exception {
+              // add expected exception strings
 
-          final IgnoredException severeEx = IgnoredException.addIgnoredException(SEVERE_LEVEL_MESSAGE);
-          logger.fatal(SEVERE_LEVEL_MESSAGE);
-          severeEx.remove();
-          return null;
-        }
-      });
-
+              final IgnoredException severeEx =
+                  IgnoredException.addIgnoredException(SEVERE_LEVEL_MESSAGE);
+              logger.fatal(SEVERE_LEVEL_MESSAGE);
+              severeEx.remove();
+              return null;
+            }
+          });
     }
   }
 
   @SuppressWarnings("serial")
   public void addAlertListener(VM vm1) throws Exception {
     {
-      vm1.invoke(new SerializableCallable("Add Alert Listener") {
+      vm1.invoke(
+          new SerializableCallable("Add Alert Listener") {
 
-        public Object call() throws Exception {
-          GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-          ManagementService service = getManagementService();
-          DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-          AlertNotifListener nt = AlertNotifListener.getInstance();
-          nt.resetCount();
+            public Object call() throws Exception {
+              GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+              ManagementService service = getManagementService();
+              DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+              AlertNotifListener nt = AlertNotifListener.getInstance();
+              nt.resetCount();
 
-          NotificationFilter notificationFilter = new NotificationFilter() {
-            @Override
-            public boolean isNotificationEnabled(Notification notification) {
-              return notification.getType().equals(JMXNotificationType.SYSTEM_ALERT);
+              NotificationFilter notificationFilter =
+                  new NotificationFilter() {
+                    @Override
+                    public boolean isNotificationEnabled(Notification notification) {
+                      return notification.getType().equals(JMXNotificationType.SYSTEM_ALERT);
+                    }
+                  };
+
+              mbeanServer.addNotificationListener(
+                  MBeanJMXAdapter.getDistributedSystemName(), nt, notificationFilter, null);
+
+              return null;
             }
-
-          };
-
-          mbeanServer.addNotificationListener(MBeanJMXAdapter.getDistributedSystemName(), nt, notificationFilter, null);
-
-          return null;
-        }
-      });
-
+          });
     }
   }
 
   /**
    * Check aggregate related functions and attributes
+   *
    * @param vm1
    * @throws Exception
    */
   @SuppressWarnings("serial")
   public void checkAggregate(VM vm1) throws Exception {
     {
-      vm1.invoke(new SerializableCallable("Chech Aggregate Attributes") {
+      vm1.invoke(
+          new SerializableCallable("Chech Aggregate Attributes") {
 
-        public Object call() throws Exception {
-          GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            public Object call() throws Exception {
+              GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
 
-          ManagementService service = getManagementService();
+              ManagementService service = getManagementService();
 
-          final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-          assertNotNull(service.getDistributedSystemMXBean());
+              final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+              assertNotNull(service.getDistributedSystemMXBean());
 
-          Wait.waitForCriterion(new WaitCriterion() {
-            public String description() {
-              return "Waiting All members to intitialize DistributedSystemMBean expect 5 but found " + bean.getMemberCount();
-            }
+              Wait.waitForCriterion(
+                  new WaitCriterion() {
+                    public String description() {
+                      return "Waiting All members to intitialize DistributedSystemMBean expect 5 but found "
+                          + bean.getMemberCount();
+                    }
 
-            public boolean done() {
-              // including locator
-              if (bean.getMemberCount() == 5) {
-                return true;
-              } else {
-                return false;
+                    public boolean done() {
+                      // including locator
+                      if (bean.getMemberCount() == 5) {
+                        return true;
+                      } else {
+                        return false;
+                      }
+                    }
+                  },
+                  MAX_WAIT,
+                  500,
+                  true);
+
+              final Set<DistributedMember> otherMemberSet =
+                  cache.getDistributionManager().getOtherNormalDistributionManagerIds();
+              Iterator<DistributedMember> memberIt = otherMemberSet.iterator();
+              while (memberIt.hasNext()) {
+                DistributedMember member = memberIt.next();
+                LogWriterUtils.getLogWriter()
+                    .info(
+                        "JVM Metrics For Member "
+                            + member.getId()
+                            + ":"
+                            + bean.showJVMMetrics(member.getId()));
+                LogWriterUtils.getLogWriter()
+                    .info(
+                        "OS Metrics For Member "
+                            + member.getId()
+                            + ":"
+                            + bean.showOSMetrics(member.getId()));
               }
 
+              return null;
             }
-
-          }, MAX_WAIT, 500, true);
-
-          final Set<DistributedMember> otherMemberSet = cache.getDistributionManager().getOtherNormalDistributionManagerIds();
-          Iterator<DistributedMember> memberIt = otherMemberSet.iterator();
-          while (memberIt.hasNext()) {
-            DistributedMember member = memberIt.next();
-            LogWriterUtils.getLogWriter().info("JVM Metrics For Member " + member.getId() + ":" + bean.showJVMMetrics(member.getId()));
-            LogWriterUtils.getLogWriter().info("OS Metrics For Member " + member.getId() + ":" + bean.showOSMetrics(member.getId()));
-          }
-
-          return null;
-        }
-      });
-
+          });
     }
   }
 
   @SuppressWarnings("serial")
   public void addNotificationListener(VM vm1) throws Exception {
     {
-      vm1.invoke(new SerializableCallable("Add Notification Listener") {
+      vm1.invoke(
+          new SerializableCallable("Add Notification Listener") {
 
-        public Object call() throws Exception {
-          GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-          ManagementService service = getManagementService();
-          DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-          assertNotNull(bean);
-          TestDistributedSystemNotif nt = new TestDistributedSystemNotif();
-          mbeanServer.addNotificationListener(MBeanJMXAdapter.getDistributedSystemName(), nt, null, null);
+            public Object call() throws Exception {
+              GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+              ManagementService service = getManagementService();
+              DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+              assertNotNull(bean);
+              TestDistributedSystemNotif nt = new TestDistributedSystemNotif();
+              mbeanServer.addNotificationListener(
+                  MBeanJMXAdapter.getDistributedSystemName(), nt, null, null);
 
-          return null;
-        }
-      });
-
+              return null;
+            }
+          });
     }
   }
 
   @SuppressWarnings("serial")
   public void shutDownAll(VM vm1) throws Exception {
     {
-      vm1.invoke(new SerializableCallable("Shut Down All") {
+      vm1.invoke(
+          new SerializableCallable("Shut Down All") {
 
-        public Object call() throws Exception {
-          GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-          ManagementService service = getManagementService();
-          DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-          assertNotNull(service.getDistributedSystemMXBean());
-          bean.shutDownAllMembers();
-          Wait.pause(2000);
-          assertEquals(cache.getDistributedSystem().getAllOtherMembers().size(), 1);
-          return null;
-        }
-      });
-
+            public Object call() throws Exception {
+              GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+              ManagementService service = getManagementService();
+              DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+              assertNotNull(service.getDistributedSystemMXBean());
+              bean.shutDownAllMembers();
+              Wait.pause(2000);
+              assertEquals(cache.getDistributedSystem().getAllOtherMembers().size(), 1);
+              return null;
+            }
+          });
     }
   }
 
   @SuppressWarnings("serial")
   public void checkNavigationAPIs(VM vm1) throws Exception {
     {
-      vm1.invoke(new SerializableCallable("Check Navigation APIS") {
+      vm1.invoke(
+          new SerializableCallable("Check Navigation APIS") {
 
-        public Object call() throws Exception {
-          GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-          ManagementService service = getManagementService();
-          final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+            public Object call() throws Exception {
+              GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+              ManagementService service = getManagementService();
+              final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
 
-          assertNotNull(service.getDistributedSystemMXBean());
+              assertNotNull(service.getDistributedSystemMXBean());
 
-          waitForAllMembers(4);
+              waitForAllMembers(4);
 
-          for (int i = 0; i < bean.listMemberObjectNames().length; i++) {
-            LogWriterUtils.getLogWriter().info("ObjectNames Of the Mmeber" + bean.listMemberObjectNames()[i]);
-          }
+              for (int i = 0; i < bean.listMemberObjectNames().length; i++) {
+                LogWriterUtils.getLogWriter()
+                    .info("ObjectNames Of the Mmeber" + bean.listMemberObjectNames()[i]);
+              }
 
-          ObjectName thisMemberName = MBeanJMXAdapter.getMemberMBeanName(InternalDistributedSystem.getConnectedInstance().getDistributedMember().getId());
+              ObjectName thisMemberName =
+                  MBeanJMXAdapter.getMemberMBeanName(
+                      InternalDistributedSystem.getConnectedInstance()
+                          .getDistributedMember()
+                          .getId());
 
-          ObjectName memberName = bean.fetchMemberObjectName(InternalDistributedSystem.getConnectedInstance().getDistributedMember().getId());
-          assertEquals(thisMemberName, memberName);
+              ObjectName memberName =
+                  bean.fetchMemberObjectName(
+                      InternalDistributedSystem.getConnectedInstance()
+                          .getDistributedMember()
+                          .getId());
+              assertEquals(thisMemberName, memberName);
 
-          return null;
-        }
-      });
-
+              return null;
+            }
+          });
     }
   }
 
-  /**
-   * Notification handler
-   * 
-   * 
-   */
+  /** Notification handler */
   private static class TestDistributedSystemNotif implements NotificationListener {
 
     @Override
     public void handleNotification(Notification notification, Object handback) {
       assertNotNull(notification);
     }
-
   }
 
-  /**
-   * Notification handler
-   * 
-   * 
-   */
+  /** Notification handler */
   private static class AlertNotifListener implements NotificationListener {
 
     private static AlertNotifListener listener = new AlertNotifListener();
@@ -846,7 +897,5 @@ public class DistributedSystemDUnitTest extends ManagementTestBase {
     public int getseverAlertCount() {
       return severAlertCount;
     }
-
   }
-
 }

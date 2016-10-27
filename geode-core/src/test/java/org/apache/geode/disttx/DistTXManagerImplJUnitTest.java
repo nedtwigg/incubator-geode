@@ -33,10 +33,10 @@ import org.apache.geode.test.junit.categories.DistributedTransactionsTest;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Same tests as that of {@link TXManagerImplJUnitTest} after setting
- * "distributed-transactions" property to true
+ * Same tests as that of {@link TXManagerImplJUnitTest} after setting "distributed-transactions"
+ * property to true
  */
-@Category({ IntegrationTest.class, DistributedTransactionsTest.class })
+@Category({IntegrationTest.class, DistributedTransactionsTest.class})
 public class DistTXManagerImplJUnitTest extends TXManagerImplJUnitTest {
 
   @Override

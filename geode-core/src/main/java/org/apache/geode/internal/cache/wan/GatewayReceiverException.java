@@ -21,23 +21,19 @@ import org.apache.geode.cache.OperationAbortedException;
 
 /**
  * Exception observed during GatewayReceiver operations.
- * 
+ *
  * @since GemFire 8.1
  */
 public class GatewayReceiverException extends OperationAbortedException {
   private static final long serialVersionUID = 7079321411869820364L;
 
-  /**
-   * Constructor.
-   * Creates a new instance of <code>GatewayReceiverException</code>.
-   */
-  public GatewayReceiverException() {
-  }
+  /** Constructor. Creates a new instance of <code>GatewayReceiverException</code>. */
+  public GatewayReceiverException() {}
 
   /**
-   * Constructor.
-   * Creates an instance of <code>GatewayReceiverException</code> with the
-   * specified detail message.
+   * Constructor. Creates an instance of <code>GatewayReceiverException</code> with the specified
+   * detail message.
+   *
    * @param msg the detail message
    */
   public GatewayReceiverException(String msg) {
@@ -45,10 +41,9 @@ public class GatewayReceiverException extends OperationAbortedException {
   }
 
   /**
-   * Constructor.
-   * Creates an instance of <code>GatewayReceiverException</code> with the
-   * specified detail message
-   * and cause.
+   * Constructor. Creates an instance of <code>GatewayReceiverException</code> with the specified
+   * detail message and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */
@@ -57,9 +52,9 @@ public class GatewayReceiverException extends OperationAbortedException {
   }
 
   /**
-   * Constructor.
-   * Creates an instance of <code>GatewayReceiverException</code> with the
-   * specified cause.
+   * Constructor. Creates an instance of <code>GatewayReceiverException</code> with the specified
+   * cause.
+   *
    * @param cause the causal Throwable
    */
   public GatewayReceiverException(Throwable cause) {

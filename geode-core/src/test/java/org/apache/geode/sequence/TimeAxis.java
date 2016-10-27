@@ -23,11 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by IntelliJ IDEA.
- * User: dsmith
- * Date: Oct 29, 2010
- * Time: 5:24:54 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: dsmith Date: Oct 29, 2010 Time: 5:24:54 PM To change this
+ * template use File | Settings | File Templates.
  */
 public class TimeAxis extends JComponent {
   public static final int HORIZONTAL = 0;
@@ -107,12 +104,10 @@ public class TimeAxis extends JComponent {
       if (tickLength != 0) {
         if (orientation == HORIZONTAL) {
           g.drawLine(i, SIZE - 1, i, SIZE - tickLength - 1);
-          if (text != null)
-            g.drawString(text, i - 3, 21);
+          if (text != null) g.drawString(text, i - 3, 21);
         } else {
           g.drawLine(SIZE - 1, i, SIZE - tickLength - 1, i);
-          if (text != null)
-            g.drawString(text, 9, i + 3);
+          if (text != null) g.drawString(text, 9, i + 3);
         }
       }
     }

@@ -25,14 +25,13 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * get information on its current cache.
+ * A message that is sent to a particular distribution manager to get information on its current
+ * cache.
+ *
  * @since GemFire 3.5
  */
 public final class CacheInfoRequest extends AdminRequest {
-  /**
-   * Returns a <code>CacheInfoRequest</code>.
-   */
+  /** Returns a <code>CacheInfoRequest</code>. */
   public static CacheInfoRequest create() {
     CacheInfoRequest m = new CacheInfoRequest();
     return m;
@@ -42,9 +41,7 @@ public final class CacheInfoRequest extends AdminRequest {
     friendlyName = LocalizedStrings.CacheInfoRequest_FETCH_CACHE_UP_TIME.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return CacheInfoResponse.create(dm, this.getSender());

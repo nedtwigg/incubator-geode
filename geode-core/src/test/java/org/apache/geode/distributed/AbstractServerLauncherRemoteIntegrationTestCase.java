@@ -28,15 +28,15 @@ import java.util.concurrent.Callable;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-public abstract class AbstractServerLauncherRemoteIntegrationTestCase extends AbstractServerLauncherIntegrationTestCase {
+public abstract class AbstractServerLauncherRemoteIntegrationTestCase
+    extends AbstractServerLauncherIntegrationTestCase {
 
   protected volatile Process process;
   protected volatile ProcessStreamReader processOutReader;
   protected volatile ProcessStreamReader processErrReader;
 
   @Before
-  public final void setUpAbstractServerLauncherRemoteIntegrationTestCase() throws Exception {
-  }
+  public final void setUpAbstractServerLauncherRemoteIntegrationTestCase() throws Exception {}
 
   @After
   public final void tearDownAbstractServerLauncherRemoteIntegrationTestCase() throws Exception {
@@ -52,44 +52,46 @@ public abstract class AbstractServerLauncherRemoteIntegrationTestCase extends Ab
     }
   }
 
-  /**
-   * Override as needed.
-   */
+  /** Override as needed. */
   protected List<String> getJvmArguments() {
     final List<String> jvmArguments = new ArrayList<String>();
     jvmArguments.add("-D" + DistributionConfig.GEMFIRE_PREFIX + "log-level=config");
     return jvmArguments;
   }
 
-  /**
-   * Remove final if a test needs to override.
-   */
+  /** Remove final if a test needs to override. */
   protected final AbstractLauncher.Status getExpectedStopStatusForNotRunning() {
     return AbstractLauncher.Status.NOT_RESPONDING;
   }
 
   protected void waitForServerToStart() throws Exception {
-    assertEventuallyTrue("waiting for local Server to start: " + launcher.status(), new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        try {
-          assertNotNull(process);
-          try {
-            final int value = process.exitValue();
-            fail("Process has died with exit value " + value + " while waiting for it to start.");
-          } catch (IllegalThreadStateException e) {
-            // expected
+    assertEventuallyTrue(
+        "waiting for local Server to start: " + launcher.status(),
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            try {
+              assertNotNull(process);
+              try {
+                final int value = process.exitValue();
+                fail(
+                    "Process has died with exit value "
+                        + value
+                        + " while waiting for it to start.");
+              } catch (IllegalThreadStateException e) {
+                // expected
+              }
+              final ServerLauncher.ServerState serverState = launcher.status();
+              assertNotNull(serverState);
+              logger.info("serverState: " + serverState);
+              return AbstractLauncher.Status.ONLINE.equals(serverState.getStatus());
+            } catch (RuntimeException e) {
+              logger.error(e, e);
+              return false;
+            }
           }
-          final ServerLauncher.ServerState serverState = launcher.status();
-          assertNotNull(serverState);
-          logger.info("serverState: " + serverState);
-          return AbstractLauncher.Status.ONLINE.equals(serverState.getStatus());
-        } catch (RuntimeException e) {
-          logger.error(e, e);
-          return false;
-        }
-      }
-    }, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS);
+        },
+        TIMEOUT_MILLISECONDS,
+        INTERVAL_MILLISECONDS);
   }
-
 }

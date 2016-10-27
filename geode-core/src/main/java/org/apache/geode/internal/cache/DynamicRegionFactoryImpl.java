@@ -19,19 +19,20 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.cache.CacheException;
 import org.apache.geode.cache.DynamicRegionFactory;
 
-/** This class provides non-published methods that allow the cache
-    to initialize and close the factory.
-
-    @since GemFire 4.3
+/**
+ * This class provides non-published methods that allow the cache to initialize and close the
+ * factory.
+ *
+ * @since GemFire 4.3
  */
 public class DynamicRegionFactoryImpl extends DynamicRegionFactory {
-  /** create an instance of the factory.  This is normally only done
-      by DynamicRegionFactory's static initialization
+  /**
+   * create an instance of the factory. This is normally only done by DynamicRegionFactory's static
+   * initialization
    */
-  public DynamicRegionFactoryImpl() {
-  }
+  public DynamicRegionFactoryImpl() {}
 
-  /** close the factory.  Only do this if you're closing the cache, too */
+  /** close the factory. Only do this if you're closing the cache, too */
   public void close() {
     _close();
   }

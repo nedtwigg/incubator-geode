@@ -25,17 +25,12 @@ import org.apache.geode.cache.query.QueryService;
 import org.apache.geode.cache.query.TypeMismatchException;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * 
- */
+/** */
 public class CompiledUnaryMinus extends AbstractCompiledValue {
 
   private CompiledValue _value;
 
-  /**
-   * 
-   * @param value
-   */
+  /** @param value */
   public CompiledUnaryMinus(CompiledValue value) {
     _value = value;
   }
@@ -45,9 +40,7 @@ public class CompiledUnaryMinus extends AbstractCompiledValue {
     return Collections.singletonList(this._value);
   }
 
-  /**
-   * @return int
-   */
+  /** @return int */
   public int getType() {
     return LITERAL_sum;
   }
@@ -56,20 +49,20 @@ public class CompiledUnaryMinus extends AbstractCompiledValue {
    * @param context
    * @return Object
    */
-  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     return minus(_value.evaluate(context));
   }
 
-  /**
-   * 
-   */
+  /** */
   @Override
-  public Set computeDependencies(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  public Set computeDependencies(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     return context.addDependencies(this, this._value.computeDependencies(context));
   }
 
   /**
-   * 
    * @param obj
    * @return Object
    * @throws TypeMismatchException
@@ -77,21 +70,15 @@ public class CompiledUnaryMinus extends AbstractCompiledValue {
   private Object minus(Object obj) throws TypeMismatchException {
 
     if (obj instanceof Number) {
-      if (obj instanceof Integer)
-        return Integer.valueOf(((Integer) obj).intValue() * -1);
-      if (obj instanceof Long)
-        return Long.valueOf(((Long) obj).longValue() * -1);
-      if (obj instanceof Double)
-        return Double.valueOf(((Double) obj).doubleValue() * -1);
-      if (obj instanceof Float)
-        return Float.valueOf(((Float) obj).floatValue() * -1);
-      if (obj instanceof Byte)
-        return Byte.valueOf((byte) (((Byte) obj).byteValue() * -1));
-      if (obj instanceof Short)
-        return Short.valueOf((short) (((Short) obj).shortValue() * -1));
-    } else if (obj == null || obj == QueryService.UNDEFINED)
-      return QueryService.UNDEFINED;
-    throw new TypeMismatchException(LocalizedStrings.CompiledUnaryMinus_0_CANNOT_BE_UNARY_MINUS.toLocalizedString(obj.getClass()));
+      if (obj instanceof Integer) return Integer.valueOf(((Integer) obj).intValue() * -1);
+      if (obj instanceof Long) return Long.valueOf(((Long) obj).longValue() * -1);
+      if (obj instanceof Double) return Double.valueOf(((Double) obj).doubleValue() * -1);
+      if (obj instanceof Float) return Float.valueOf(((Float) obj).floatValue() * -1);
+      if (obj instanceof Byte) return Byte.valueOf((byte) (((Byte) obj).byteValue() * -1));
+      if (obj instanceof Short) return Short.valueOf((short) (((Short) obj).shortValue() * -1));
+    } else if (obj == null || obj == QueryService.UNDEFINED) return QueryService.UNDEFINED;
+    throw new TypeMismatchException(
+        LocalizedStrings.CompiledUnaryMinus_0_CANNOT_BE_UNARY_MINUS.toLocalizedString(
+            obj.getClass()));
   }
-
 }

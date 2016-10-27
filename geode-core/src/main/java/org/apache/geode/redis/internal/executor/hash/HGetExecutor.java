@@ -53,10 +53,8 @@ public class HGetExecutor extends HashExecutor {
     ByteArrayWrapper valueWrapper = keyRegion.get(field);
 
     if (valueWrapper != null) {
-      command.setResponse(Coder.getBulkStringResponse(context.getByteBufAllocator(), valueWrapper.toBytes()));
-    } else
-      command.setResponse(Coder.getNilResponse(context.getByteBufAllocator()));
-
+      command.setResponse(
+          Coder.getBulkStringResponse(context.getByteBufAllocator(), valueWrapper.toBytes()));
+    } else command.setResponse(Coder.getNilResponse(context.getByteBufAllocator()));
   }
-
 }

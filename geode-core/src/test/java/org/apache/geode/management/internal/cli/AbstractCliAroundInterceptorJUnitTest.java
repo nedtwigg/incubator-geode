@@ -25,25 +25,25 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.management.cli.Result;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * AbstractCliAroundInterceptor Tester.
- */
+/** AbstractCliAroundInterceptor Tester. */
 @Category(UnitTest.class)
 public class AbstractCliAroundInterceptorJUnitTest {
 
   @Test
   public void isNullOrEmpty() {
-    AbstractCliAroundInterceptor interceptor = new AbstractCliAroundInterceptor() {
-      @Override
-      public Result preExecution(final GfshParseResult parseResult) {
-        return null;
-      }
+    AbstractCliAroundInterceptor interceptor =
+        new AbstractCliAroundInterceptor() {
+          @Override
+          public Result preExecution(final GfshParseResult parseResult) {
+            return null;
+          }
 
-      @Override
-      public Result postExecution(final GfshParseResult parseResult, final Result commandResult) {
-        return null;
-      }
-    };
+          @Override
+          public Result postExecution(
+              final GfshParseResult parseResult, final Result commandResult) {
+            return null;
+          }
+        };
     String empty = "";
     @SuppressWarnings("RedundantStringConstructorCall")
     String otherEmpty = new String(empty); // create a new instance, not another reference

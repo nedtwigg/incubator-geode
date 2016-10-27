@@ -18,12 +18,7 @@
  */
 package org.apache.geode.tools.pulse.tests;
 
-/**
- * Region on member mbean
- *
- *
- *
- */
+/** Region on member mbean */
 public class RegionOnMember extends JMXBaseBean implements RegionOnMemberMBean {
   private String fullPath = null;
   private String member = null;

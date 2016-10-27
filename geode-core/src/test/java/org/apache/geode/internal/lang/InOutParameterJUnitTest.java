@@ -24,9 +24,11 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The InOutParameterJUnitTest class is a test suite with test cases to test the contract and functionality of the
- * InOutParameter class.
- * <p/>
+ * The InOutParameterJUnitTest class is a test suite with test cases to test the contract and
+ * functionality of the InOutParameter class.
+ *
+ * <p>
+ *
  * @see org.apache.geode.internal.lang.InOutParameter
  * @see org.junit.Test
  * @since GemFire 6.8
@@ -69,5 +71,4 @@ public class InOutParameterJUnitTest {
     assertEquals(String.valueOf(Math.PI), new InOutParameter<Object>(Math.PI).toString());
     assertEquals("true", new InOutParameter<Object>(Boolean.TRUE).toString());
   }
-
 }

@@ -27,10 +27,9 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.process.ControlFileWatchdog.ControlRequestHandler;
 
 /**
- * Exists inside a process launched by ServerLauncher or LocatorLauncher. 
- * Creates the PID file and ControlFileWatchdogs to monitor working directory
- * for creation of stop or status request files.
- * 
+ * Exists inside a process launched by ServerLauncher or LocatorLauncher. Creates the PID file and
+ * ControlFileWatchdogs to monitor working directory for creation of stop or status request files.
+ *
  * @since GemFire 8.0
  */
 public final class ControllableProcess {
@@ -42,7 +41,12 @@ public final class ControllableProcess {
   private final ControlFileWatchdog stopRequestFileWatchdog;
   private final ControlFileWatchdog statusRequestFileWatchdog;
 
-  public ControllableProcess(final ControlNotificationHandler handler, final File workingDir, final ProcessType processType, boolean force) throws FileAlreadyExistsException, IOException, PidUnavailableException {
+  public ControllableProcess(
+      final ControlNotificationHandler handler,
+      final File workingDir,
+      final ProcessType processType,
+      boolean force)
+      throws FileAlreadyExistsException, IOException, PidUnavailableException {
     this.workingDir = workingDir;
     this.pidFile = new File(this.workingDir, processType.getPidFileName());
 
@@ -50,44 +54,51 @@ public final class ControllableProcess {
 
     this.launcher = new LocalProcessLauncher(this.pidFile, force);
 
-    final ControlRequestHandler stopHandler = new ControlRequestHandler() {
-      @Override
-      public void handleRequest() {
-        handler.handleStop();
-      }
-    };
-    final ControlRequestHandler statusHandler = new ControlRequestHandler() {
-      @Override
-      public void handleRequest() throws IOException {
-        final ServiceState<?> state = handler.handleStatus();
-        final File statusFile = new File(workingDir, processType.getStatusFileName());
-        if (statusFile.exists()) {
-          statusFile.delete();
-        }
-        final File statusFileTmp = new File(workingDir, processType.getStatusFileName() + ".tmp");
-        if (statusFileTmp.exists()) {
-          statusFileTmp.delete();
-        }
-        boolean created = statusFileTmp.createNewFile();
-        assert created;
-        final FileWriter writer = new FileWriter(statusFileTmp);
-        writer.write(state.toJson());
-        writer.flush();
-        writer.close();
-        boolean renamed = statusFileTmp.renameTo(statusFile);
-        assert renamed;
-      }
-    };
+    final ControlRequestHandler stopHandler =
+        new ControlRequestHandler() {
+          @Override
+          public void handleRequest() {
+            handler.handleStop();
+          }
+        };
+    final ControlRequestHandler statusHandler =
+        new ControlRequestHandler() {
+          @Override
+          public void handleRequest() throws IOException {
+            final ServiceState<?> state = handler.handleStatus();
+            final File statusFile = new File(workingDir, processType.getStatusFileName());
+            if (statusFile.exists()) {
+              statusFile.delete();
+            }
+            final File statusFileTmp =
+                new File(workingDir, processType.getStatusFileName() + ".tmp");
+            if (statusFileTmp.exists()) {
+              statusFileTmp.delete();
+            }
+            boolean created = statusFileTmp.createNewFile();
+            assert created;
+            final FileWriter writer = new FileWriter(statusFileTmp);
+            writer.write(state.toJson());
+            writer.flush();
+            writer.close();
+            boolean renamed = statusFileTmp.renameTo(statusFile);
+            assert renamed;
+          }
+        };
 
-    this.stopRequestFileWatchdog = new ControlFileWatchdog(workingDir, processType.getStopRequestFileName(), stopHandler, false);
+    this.stopRequestFileWatchdog =
+        new ControlFileWatchdog(
+            workingDir, processType.getStopRequestFileName(), stopHandler, false);
     this.stopRequestFileWatchdog.start();
-    this.statusRequestFileWatchdog = new ControlFileWatchdog(workingDir, processType.getStatusRequestFileName(), statusHandler, false);
+    this.statusRequestFileWatchdog =
+        new ControlFileWatchdog(
+            workingDir, processType.getStatusRequestFileName(), statusHandler, false);
     this.statusRequestFileWatchdog.start();
   }
 
   /**
    * Returns the process id (PID).
-   * 
+   *
    * @return the process id (PID)
    */
   public int getPid() {
@@ -96,7 +107,7 @@ public final class ControllableProcess {
 
   /**
    * Returns the PID file.
-   * 
+   *
    * @return the PID file
    */
   public File getPidFile() {

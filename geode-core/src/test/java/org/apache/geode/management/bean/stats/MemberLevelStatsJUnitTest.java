@@ -43,12 +43,10 @@ import org.apache.geode.management.ManagementService;
 import org.apache.geode.management.internal.beans.MemberMBeanBridge;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- */
+/** */
 @Category(IntegrationTest.class)
 public class MemberLevelStatsJUnitTest extends MBeanStatsTestCase {
-  @Rule
-  public TestName name = new TestName();
+  @Rule public TestName name = new TestName();
 
   private MemberMBeanBridge bridge;
 
@@ -295,7 +293,6 @@ public class MemberLevelStatsJUnitTest extends MBeanStatsTestCase {
     sample();
     assertEquals(0, bridge.getReplyWaitsInProgress());
     assertEquals(1, bridge.getReplyWaitsCompleted());
-
   }
 
   @Test

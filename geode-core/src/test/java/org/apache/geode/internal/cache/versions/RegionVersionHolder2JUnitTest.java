@@ -171,5 +171,4 @@ public class RegionVersionHolder2JUnitTest {
     }
     return new RegionVersionHolder(0l);
   }
-
 }

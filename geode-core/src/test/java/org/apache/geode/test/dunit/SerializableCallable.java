@@ -20,9 +20,8 @@ import java.io.Serializable;
 import java.util.concurrent.Callable;
 
 /**
- * This interface provides both {@link Serializable} and {@link
- * Callable}.  It is often used in conjunction with {@link
- * VM#invoke(SerializableCallableIF)}.
+ * This interface provides both {@link Serializable} and {@link Callable}. It is often used in
+ * conjunction with {@link VM#invoke(SerializableCallableIF)}.
  *
  * <PRE>
  * public void testRepilcatedRegionPut() {
@@ -42,7 +41,6 @@ import java.util.concurrent.Callable;
  *   assertIndexDetailsEquals(value, vm1.invoke(putMethod));
  *  }
  * </PRE>
- * 
  */
 public abstract class SerializableCallable<T> implements SerializableCallableIF<T> {
 

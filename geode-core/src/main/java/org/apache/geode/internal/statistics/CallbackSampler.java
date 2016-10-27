@@ -35,21 +35,32 @@ public class CallbackSampler {
   private ScheduledExecutorService executor;
   private final StatSamplerStats statSamplerStats;
 
-  public CallbackSampler(final CancelCriterion cancelCriterion, final StatSamplerStats statSamplerStats) {
+  public CallbackSampler(
+      final CancelCriterion cancelCriterion, final StatSamplerStats statSamplerStats) {
     this.cancelCriterion = cancelCriterion;
     this.statSamplerStats = statSamplerStats;
   }
 
-  public void start(StatisticsManager statisticsManager, ThreadGroup threadGroup, int sampleInterval, TimeUnit timeUnit) {
-    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(runnable -> {
-      Thread thread = new Thread(threadGroup, runnable, "CallbackSampler");
-      thread.setDaemon(true);
-      return thread;
-    });
+  public void start(
+      StatisticsManager statisticsManager,
+      ThreadGroup threadGroup,
+      int sampleInterval,
+      TimeUnit timeUnit) {
+    ScheduledExecutorService executor =
+        Executors.newSingleThreadScheduledExecutor(
+            runnable -> {
+              Thread thread = new Thread(threadGroup, runnable, "CallbackSampler");
+              thread.setDaemon(true);
+              return thread;
+            });
     start(executor, statisticsManager, sampleInterval, timeUnit);
   }
 
-  void start(ScheduledExecutorService executor, StatisticsManager statisticsManager, int sampleInterval, TimeUnit timeUnit) {
+  void start(
+      ScheduledExecutorService executor,
+      StatisticsManager statisticsManager,
+      int sampleInterval,
+      TimeUnit timeUnit) {
     stop();
     this.statisticsManager = statisticsManager;
     this.executor = executor;
@@ -80,7 +91,6 @@ public class CallbackSampler {
       statSamplerStats.incSampleCallbackErrors(errors);
       statSamplerStats.setSampleCallbacks(suppliers);
     }
-
   }
 
   public void stop() {

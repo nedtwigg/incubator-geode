@@ -33,11 +33,12 @@ public class PersistentMembershipView implements DataSerializable {
   private Map<InternalDistributedMember, PersistentMemberID> onlineMembers;
   private Set<PersistentMemberPattern> revokedMembers;
 
-  public PersistentMembershipView() {
+  public PersistentMembershipView() {}
 
-  }
-
-  public PersistentMembershipView(Set<PersistentMemberID> offlineMembers, Map<InternalDistributedMember, PersistentMemberID> onlineMembers, Set<PersistentMemberPattern> revokedMembers) {
+  public PersistentMembershipView(
+      Set<PersistentMemberID> offlineMembers,
+      Map<InternalDistributedMember, PersistentMemberID> onlineMembers,
+      Set<PersistentMemberPattern> revokedMembers) {
     this.offlineMembers = offlineMembers;
     this.onlineMembers = onlineMembers;
     this.revokedMembers = revokedMembers;
@@ -84,7 +85,6 @@ public class PersistentMembershipView implements DataSerializable {
       InternalDataSerializer.invokeFromData(pattern, in);
       revokedMembers.add(pattern);
     }
-
   }
 
   public void toData(DataOutput out) throws IOException {
@@ -93,7 +93,8 @@ public class PersistentMembershipView implements DataSerializable {
       InternalDataSerializer.invokeToData(member, out);
     }
     out.writeInt(onlineMembers.size());
-    for (Map.Entry<InternalDistributedMember, PersistentMemberID> entry : onlineMembers.entrySet()) {
+    for (Map.Entry<InternalDistributedMember, PersistentMemberID> entry :
+        onlineMembers.entrySet()) {
       InternalDataSerializer.invokeToData(entry.getKey(), out);
       InternalDataSerializer.invokeToData(entry.getValue(), out);
     }
@@ -106,6 +107,12 @@ public class PersistentMembershipView implements DataSerializable {
 
   @Override
   public String toString() {
-    return "PersistentMembershipView[offline=" + offlineMembers + ",online=" + onlineMembers + ", revoked=" + revokedMembers + "]";
+    return "PersistentMembershipView[offline="
+        + offlineMembers
+        + ",online="
+        + onlineMembers
+        + ", revoked="
+        + revokedMembers
+        + "]";
   }
 }

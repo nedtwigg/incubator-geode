@@ -17,8 +17,7 @@
 package org.apache.geode.test.junit.categories;
 
 /**
- * JUnit Test Category that specifies a test executes within a container
- * environment such as an OSGi server.
+ * JUnit Test Category that specifies a test executes within a container environment such as an OSGi
+ * server.
  */
-public interface ContainerTest {
-}
+public interface ContainerTest {}

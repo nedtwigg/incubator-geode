@@ -17,11 +17,9 @@
 package com.examples;
 
 /**
- * A simple test object used by the 
- * org.apache.geode.internal.enhancer.serializer.SerializingStreamPerfTest 
- * (this test no longer exists?) 
- * that must be in a non-<code>org.apache</code> package.
- *
+ * A simple test object used by the
+ * org.apache.geode.internal.enhancer.serializer.SerializingStreamPerfTest (this test no longer
+ * exists?) that must be in a non-<code>org.apache</code> package.
  *
  * @since GemFire 3.5
  */
@@ -31,9 +29,7 @@ public class TestObject {
   private String stringField;
   private Object objectField;
 
-  /**
-   * Creates a new <code>TestObject</code>
-   */
+  /** Creates a new <code>TestObject</code> */
   public TestObject() {
     this.intField = 42;
     this.stringField = "123456789012345678901234567890";
@@ -42,11 +38,6 @@ public class TestObject {
 
   //////////////////////  Inner Classes  //////////////////////
 
-  /**
-   * A <code>Serializable</code> object that is serialized
-   */
-  public static class SerializableTestObject extends TestObject implements java.io.Serializable {
-
-  }
-
+  /** A <code>Serializable</code> object that is serialized */
+  public static class SerializableTestObject extends TestObject implements java.io.Serializable {}
 }

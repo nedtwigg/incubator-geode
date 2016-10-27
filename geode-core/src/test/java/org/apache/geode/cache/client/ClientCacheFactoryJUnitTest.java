@@ -58,6 +58,7 @@ import static org.junit.runners.MethodSorters.NAME_ASCENDING;
 
 /**
  * Unit test for the ClientCacheFactory class
+ *
  * @since GemFire 6.5
  */
 @FixMethodOrder(NAME_ASCENDING)
@@ -96,7 +97,10 @@ public class ClientCacheFactoryJUnitTest {
     Pool defPool = gfc.getDefaultPool();
     assertEquals("DEFAULT", defPool.getName());
     assertEquals(new ArrayList(), defPool.getLocators());
-    assertEquals(Collections.singletonList(new InetSocketAddress(InetAddress.getLocalHost(), CacheServer.DEFAULT_PORT)), defPool.getServers());
+    assertEquals(
+        Collections.singletonList(
+            new InetSocketAddress(InetAddress.getLocalHost(), CacheServer.DEFAULT_PORT)),
+        defPool.getServers());
 
     ClientCache cc2 = new ClientCacheFactory().create();
     if (cc2 != this.cc) {
@@ -120,7 +124,9 @@ public class ClientCacheFactoryJUnitTest {
   public void test001FindDefaultFromXML() throws Exception {
     this.tmpFile = File.createTempFile("ClientCacheFactoryJUnitTest", ".xml");
     this.tmpFile.deleteOnExit();
-    URL url = ClientCacheFactoryJUnitTest.class.getResource("ClientCacheFactoryJUnitTest_single_pool.xml");
+    URL url =
+        ClientCacheFactoryJUnitTest.class
+            .getResource("ClientCacheFactoryJUnitTest_single_pool.xml");
     ;
     FileUtil.copy(url, this.tmpFile);
     this.cc = new ClientCacheFactory().set(CACHE_XML_FILE, this.tmpFile.getAbsolutePath()).create();
@@ -132,18 +138,21 @@ public class ClientCacheFactoryJUnitTest {
     Pool defPool = gfc.getDefaultPool();
     assertEquals("my_pool_name", defPool.getName());
     assertEquals(new ArrayList(), defPool.getLocators());
-    assertEquals(Collections.singletonList(new InetSocketAddress("localhost", CacheServer.DEFAULT_PORT)), defPool.getServers());
+    assertEquals(
+        Collections.singletonList(new InetSocketAddress("localhost", CacheServer.DEFAULT_PORT)),
+        defPool.getServers());
   }
 
-  /**
-   * Make sure if we have a single pool that it will be used as the default
-   */
+  /** Make sure if we have a single pool that it will be used as the default */
   @Test
   public void test002DPsinglePool() throws Exception {
     Properties dsProps = new Properties();
     dsProps.setProperty(MCAST_PORT, "0");
     DistributedSystem ds = DistributedSystem.connect(dsProps);
-    Pool p = PoolManager.createFactory().addServer(InetAddress.getLocalHost().getHostName(), 7777).create("singlePool");
+    Pool p =
+        PoolManager.createFactory()
+            .addServer(InetAddress.getLocalHost().getHostName(), 7777)
+            .create("singlePool");
     this.cc = new ClientCacheFactory().create();
     GemFireCacheImpl gfc = (GemFireCacheImpl) this.cc;
     assertEquals(true, gfc.isClient());
@@ -164,26 +173,35 @@ public class ClientCacheFactoryJUnitTest {
       Properties suProps = new Properties();
       suProps.setProperty("user", "foo");
 
-      Pool pool = PoolManager.createFactory().addServer(InetAddress.getLocalHost().getHostName(), CacheServer.DEFAULT_PORT).setMultiuserAuthentication(true).create("pool1");
+      Pool pool =
+          PoolManager.createFactory()
+              .addServer(InetAddress.getLocalHost().getHostName(), CacheServer.DEFAULT_PORT)
+              .setMultiuserAuthentication(true)
+              .create("pool1");
       RegionService cc = this.cc.createAuthenticatedView(suProps, pool.getName());
       ProxyCache pc = (ProxyCache) cc;
       UserAttributes ua = pc.getUserAttributes();
       Pool proxyDefPool = ua.getPool();
-      assertEquals(Collections.singletonList(new InetSocketAddress(InetAddress.getLocalHost(), CacheServer.DEFAULT_PORT)), proxyDefPool.getServers());
+      assertEquals(
+          Collections.singletonList(
+              new InetSocketAddress(InetAddress.getLocalHost(), CacheServer.DEFAULT_PORT)),
+          proxyDefPool.getServers());
       assertEquals(true, proxyDefPool.getMultiuserAuthentication());
     }
   }
 
-  /**
-   * Make sure if we have more than one pool that we do not have a default
-   */
+  /** Make sure if we have more than one pool that we do not have a default */
   @Test
   public void test003DPmultiplePool() throws Exception {
     Properties dsProps = new Properties();
     dsProps.setProperty(MCAST_PORT, "0");
     DistributedSystem ds = DistributedSystem.connect(dsProps);
-    PoolManager.createFactory().addServer(InetAddress.getLocalHost().getHostName(), 7777).create("p7");
-    PoolManager.createFactory().addServer(InetAddress.getLocalHost().getHostName(), 6666).create("p6");
+    PoolManager.createFactory()
+        .addServer(InetAddress.getLocalHost().getHostName(), 7777)
+        .create("p7");
+    PoolManager.createFactory()
+        .addServer(InetAddress.getLocalHost().getHostName(), 6666)
+        .create("p6");
     this.cc = new ClientCacheFactory().create();
     GemFireCacheImpl gfc = (GemFireCacheImpl) this.cc;
     assertEquals(true, gfc.isClient());
@@ -203,12 +221,19 @@ public class ClientCacheFactoryJUnitTest {
     {
       Properties suProps = new Properties();
       suProps.setProperty("user", "foo");
-      Pool pool = PoolManager.createFactory().addServer(InetAddress.getLocalHost().getHostName(), CacheServer.DEFAULT_PORT).setMultiuserAuthentication(true).create("pool1");
+      Pool pool =
+          PoolManager.createFactory()
+              .addServer(InetAddress.getLocalHost().getHostName(), CacheServer.DEFAULT_PORT)
+              .setMultiuserAuthentication(true)
+              .create("pool1");
       RegionService cc = this.cc.createAuthenticatedView(suProps, pool.getName());
       ProxyCache pc = (ProxyCache) cc;
       UserAttributes ua = pc.getUserAttributes();
       Pool proxyDefPool = ua.getPool();
-      assertEquals(Collections.singletonList(new InetSocketAddress(InetAddress.getLocalHost(), CacheServer.DEFAULT_PORT)), proxyDefPool.getServers());
+      assertEquals(
+          Collections.singletonList(
+              new InetSocketAddress(InetAddress.getLocalHost(), CacheServer.DEFAULT_PORT)),
+          proxyDefPool.getServers());
       assertEquals(true, proxyDefPool.getMultiuserAuthentication());
     }
   }
@@ -228,7 +253,8 @@ public class ClientCacheFactoryJUnitTest {
   public void test005SecureUserDefaults() throws Exception {
     Properties suProps = new Properties();
     suProps.setProperty("user", "foo");
-    GemFireCacheImpl gfc = (GemFireCacheImpl) new ClientCacheFactory().setPoolMultiuserAuthentication(true).create();
+    GemFireCacheImpl gfc =
+        (GemFireCacheImpl) new ClientCacheFactory().setPoolMultiuserAuthentication(true).create();
     this.cc = gfc;
     RegionService cc1 = this.cc.createAuthenticatedView(suProps);
 
@@ -239,7 +265,10 @@ public class ClientCacheFactoryJUnitTest {
     Pool defPool = gfc.getDefaultPool();
     assertEquals("DEFAULT", defPool.getName());
     assertEquals(new ArrayList(), defPool.getLocators());
-    assertEquals(Collections.singletonList(new InetSocketAddress(InetAddress.getLocalHost(), CacheServer.DEFAULT_PORT)), defPool.getServers());
+    assertEquals(
+        Collections.singletonList(
+            new InetSocketAddress(InetAddress.getLocalHost(), CacheServer.DEFAULT_PORT)),
+        defPool.getServers());
     assertEquals(true, defPool.getMultiuserAuthentication());
 
     // make sure we can create another secure user cache
@@ -250,7 +279,10 @@ public class ClientCacheFactoryJUnitTest {
     defPool = gfc.getDefaultPool();
     assertEquals("DEFAULT", defPool.getName());
     assertEquals(new ArrayList(), defPool.getLocators());
-    assertEquals(Collections.singletonList(new InetSocketAddress(InetAddress.getLocalHost(), CacheServer.DEFAULT_PORT)), defPool.getServers());
+    assertEquals(
+        Collections.singletonList(
+            new InetSocketAddress(InetAddress.getLocalHost(), CacheServer.DEFAULT_PORT)),
+        defPool.getServers());
     assertEquals(true, defPool.getMultiuserAuthentication());
     if (cc1 == cc2) {
       fail("expected two different secure user caches");
@@ -259,7 +291,10 @@ public class ClientCacheFactoryJUnitTest {
 
   @Test
   public void test006NonDefaultPool() throws Exception {
-    this.cc = new ClientCacheFactory().addPoolServer(InetAddress.getLocalHost().getHostName(), 55555).create();
+    this.cc =
+        new ClientCacheFactory()
+            .addPoolServer(InetAddress.getLocalHost().getHostName(), 55555)
+            .create();
     GemFireCacheImpl gfc = (GemFireCacheImpl) this.cc;
     assertEquals(true, gfc.isClient());
     Properties dsProps = this.cc.getDistributedSystem().getProperties();
@@ -268,7 +303,9 @@ public class ClientCacheFactoryJUnitTest {
     Pool defPool = gfc.getDefaultPool();
     assertEquals("DEFAULT", defPool.getName());
     assertEquals(new ArrayList(), defPool.getLocators());
-    assertEquals(Collections.singletonList(new InetSocketAddress(InetAddress.getLocalHost(), 55555)), defPool.getServers());
+    assertEquals(
+        Collections.singletonList(new InetSocketAddress(InetAddress.getLocalHost(), 55555)),
+        defPool.getServers());
 
     ClientCache cc2 = new ClientCacheFactory().create();
     gfc = (GemFireCacheImpl) this.cc;
@@ -279,9 +316,13 @@ public class ClientCacheFactoryJUnitTest {
     defPool = gfc.getDefaultPool();
     assertEquals("DEFAULT", defPool.getName());
     assertEquals(new ArrayList(), defPool.getLocators());
-    assertEquals(Collections.singletonList(new InetSocketAddress(InetAddress.getLocalHost(), 55555)), defPool.getServers());
+    assertEquals(
+        Collections.singletonList(new InetSocketAddress(InetAddress.getLocalHost(), 55555)),
+        defPool.getServers());
     try {
-      new ClientCacheFactory().addPoolServer(InetAddress.getLocalHost().getHostName(), 44444).create();
+      new ClientCacheFactory()
+          .addPoolServer(InetAddress.getLocalHost().getHostName(), 44444)
+          .create();
       fail("expected create to fail");
     } catch (IllegalStateException expected) {
     }
@@ -299,7 +340,8 @@ public class ClientCacheFactoryJUnitTest {
     // version
     cc = new ClientCacheFactory().create();
     GemFireCacheImpl gfc = (GemFireCacheImpl) cc;
-    InternalDistributedMember memberID = (InternalDistributedMember) cc.getDistributedSystem().getDistributedMember();
+    InternalDistributedMember memberID =
+        (InternalDistributedMember) cc.getDistributedSystem().getDistributedMember();
     GMSMember gmsID = (GMSMember) memberID.getNetMember();
     memberID.setVersionObjectForTest(Version.GFE_82);
     assertEquals(Version.GFE_82, memberID.getVersionObject());
@@ -307,9 +349,11 @@ public class ClientCacheFactoryJUnitTest {
     HeapDataOutputStream out = new HeapDataOutputStream(Version.GFE_82);
     DataSerializer.writeObject(clientID, out);
 
-    DataInputStream in = new VersionedDataInputStream(new ByteArrayInputStream(out.toByteArray()), Version.CURRENT);
+    DataInputStream in =
+        new VersionedDataInputStream(new ByteArrayInputStream(out.toByteArray()), Version.CURRENT);
     ClientProxyMembershipID newID = DataSerializer.readObject(in);
-    InternalDistributedMember newMemberID = (InternalDistributedMember) newID.getDistributedMember();
+    InternalDistributedMember newMemberID =
+        (InternalDistributedMember) newID.getDistributedMember();
     assertEquals(Version.GFE_82, newMemberID.getVersionObject());
     assertEquals(Version.GFE_82, newID.getClientVersion());
     GMSMember newGmsID = (GMSMember) newMemberID.getNetMember();
@@ -330,6 +374,5 @@ public class ClientCacheFactoryJUnitTest {
     newGmsID = (GMSMember) newMemberID.getNetMember();
     assertEquals(gmsID.getUuidLSBs(), newGmsID.getUuidLSBs());
     assertEquals(gmsID.getUuidMSBs(), newGmsID.getUuidMSBs());
-
   }
 }

@@ -50,9 +50,9 @@ public class QueueStateImpl implements QueueState {
 
   /**
    * This will store the ThreadId to latest received sequence Id
-   * 
-   * Keys are instances of {@link ThreadIdentifier} Values are instances of
-   * {@link SequenceIdAndExpirationObject}
+   *
+   * <p>Keys are instances of {@link ThreadIdentifier} Values are instances of {@link
+   * SequenceIdAndExpirationObject}
    */
   protected final Map threadIdToSequenceId = new LinkedHashMap();
 
@@ -84,12 +84,12 @@ public class QueueStateImpl implements QueueState {
 
     Set rootRegions = cache.rootRegions();
 
-    for (Iterator iter1 = rootRegions.iterator(); iter1.hasNext();) {
+    for (Iterator iter1 = rootRegions.iterator(); iter1.hasNext(); ) {
       Region rootRegion = (Region) iter1.next();
       regions.add(rootRegion);
       try {
         Set subRegions = rootRegion.subregions(true); // throws RDE
-        for (Iterator iter2 = subRegions.iterator(); iter2.hasNext();) {
+        for (Iterator iter2 = subRegions.iterator(); iter2.hasNext(); ) {
           regions.add(iter2.next());
         }
       } catch (RegionDestroyedException e) {
@@ -97,10 +97,11 @@ public class QueueStateImpl implements QueueState {
       }
     }
 
-    for (Iterator iter = regions.iterator(); iter.hasNext();) {
+    for (Iterator iter = regions.iterator(); iter.hasNext(); ) {
       LocalRegion region = (LocalRegion) iter.next();
       try {
-        if (region.getAttributes().getPoolName() != null && region.getAttributes().getPoolName().equals(qManager.getPool().getName())) {
+        if (region.getAttributes().getPoolName() != null
+            && region.getAttributes().getPoolName().equals(qManager.getPool().getName())) {
           region.handleMarker(); // can this throw RDE??
         }
       } catch (RegionDestroyedException e) {
@@ -111,15 +112,15 @@ public class QueueStateImpl implements QueueState {
 
   public void incrementInvalidatedStats() {
     this.invalidateCount.incrementAndGet();
-
   }
 
   public int getInvalidateCount() {
     return this.invalidateCount.get();
   }
 
-  /** test hook - access to this map should be synchronized on the
-   * map to avoid concurrent modification exceptions
+  /**
+   * test hook - access to this map should be synchronized on the map to avoid concurrent
+   * modification exceptions
    */
   public Map getThreadIdToSequenceIdMap() {
     return this.threadIdToSequenceId;
@@ -139,12 +140,12 @@ public class QueueStateImpl implements QueueState {
     // check the tid:
     // 1) if duplicated, (both putall or non-putall): reject
     // 2) if not duplicate
-    //    2.1)if putAll, check via real thread id again, 
-    //        if duplicate, reject (because one non-putall operation with bigger 
-    //        seqno has happened) 
-    //        otherwise save the putAllSeqno for real thread id 
+    //    2.1)if putAll, check via real thread id again,
+    //        if duplicate, reject (because one non-putall operation with bigger
+    //        seqno has happened)
+    //        otherwise save the putAllSeqno for real thread id
     //        and save seqno for tid
-    //    2.2) if not putAll, 
+    //    2.2) if not putAll,
     //        check putAllSequenceId with real thread id
     //        if request's seqno is smaller, reject (because one putAll operation
     //         with bigger seqno has happened)
@@ -162,20 +163,30 @@ public class QueueStateImpl implements QueueState {
         // seo.getSequenceId()));
         return true;
       } else if (addToMap) {
-        ThreadIdentifier real_tid = new ThreadIdentifier(eid.getMembershipID(), ThreadIdentifier.getRealThreadIDIncludingWan(eid.getThreadID()));
+        ThreadIdentifier real_tid =
+            new ThreadIdentifier(
+                eid.getMembershipID(),
+                ThreadIdentifier.getRealThreadIDIncludingWan(eid.getThreadID()));
         if (ThreadIdentifier.isPutAllFakeThreadID(eid.getThreadID())) {
           // it's a putAll
           seo = (SequenceIdAndExpirationObject) this.threadIdToSequenceId.get(real_tid);
           if (seo != null && seo.getSequenceId() >= seqId) {
             if (logger.isDebugEnabled()) {
-              logger.debug("got a duplicate putAll entry with eventId {}. Other operation with same thread id and bigger seqno {} has happened. Ignoring the entry", eid, seo.getSequenceId());
+              logger.debug(
+                  "got a duplicate putAll entry with eventId {}. Other operation with same thread id and bigger seqno {} has happened. Ignoring the entry",
+                  eid,
+                  seo.getSequenceId());
             }
             seo.setAckSend(false); // bug #41289: send ack to servers that send old events
             return true;
           } else {
-            // save the seqno for real thread id into a putAllSequenceId 
+            // save the seqno for real thread id into a putAllSequenceId
             this.threadIdToSequenceId.remove(real_tid);
-            this.threadIdToSequenceId.put(real_tid, seo == null ? new SequenceIdAndExpirationObject(-1, seqId) : new SequenceIdAndExpirationObject(seo.getSequenceId(), seqId));
+            this.threadIdToSequenceId.put(
+                real_tid,
+                seo == null
+                    ? new SequenceIdAndExpirationObject(-1, seqId)
+                    : new SequenceIdAndExpirationObject(seo.getSequenceId(), seqId));
             // save seqno for tid
             // here tid!=real_tid, for fake tid, putAllSeqno should be 0
             this.threadIdToSequenceId.remove(tid);
@@ -189,14 +200,21 @@ public class QueueStateImpl implements QueueState {
           seo = (SequenceIdAndExpirationObject) this.threadIdToSequenceId.get(real_tid);
           if (seo != null && seo.getPutAllSequenceId() >= seqId) {
             if (logger.isDebugEnabled()) {
-              logger.debug("got a duplicate non-putAll entry with eventId {}. One putAll operation with same real thread id and bigger seqno {} has happened. Ignoring the entry", eid, seo.getPutAllSequenceId());
+              logger.debug(
+                  "got a duplicate non-putAll entry with eventId {}. One putAll operation with same real thread id and bigger seqno {} has happened. Ignoring the entry",
+                  eid,
+                  seo.getPutAllSequenceId());
             }
             seo.setAckSend(false); // bug #41289: send ack to servers that send old events
             return true;
           } else {
             // here tid==real_tid
             this.threadIdToSequenceId.remove(tid);
-            this.threadIdToSequenceId.put(tid, seo == null ? new SequenceIdAndExpirationObject(seqId, -1) : new SequenceIdAndExpirationObject(seqId, seo.getPutAllSequenceId()));
+            this.threadIdToSequenceId.put(
+                tid,
+                seo == null
+                    ? new SequenceIdAndExpirationObject(seqId, -1)
+                    : new SequenceIdAndExpirationObject(seqId, seo.getPutAllSequenceId()));
           }
         }
       }
@@ -205,30 +223,24 @@ public class QueueStateImpl implements QueueState {
   }
 
   public void start(ScheduledExecutorService timer, int interval) {
-    timer.scheduleWithFixedDelay(new ThreadIdToSequenceIdExpiryTask(), interval, interval, TimeUnit.MILLISECONDS);
+    timer.scheduleWithFixedDelay(
+        new ThreadIdToSequenceIdExpiryTask(), interval, interval, TimeUnit.MILLISECONDS);
   }
 
   /**
-   * 
    * Thread which will iterate over threadIdToSequenceId map
-   * 
-   * 1)It will send an ack primary server for all threadIds for which it has not
-   * send an ack. 2)It will expire the entries which have exceeded the specified
-   * expiry time and for which ack has been alerady sent.
-   * 
+   *
+   * <p>1)It will send an ack primary server for all threadIds for which it has not send an ack.
+   * 2)It will expire the entries which have exceeded the specified expiry time and for which ack
+   * has been alerady sent.
+   *
    * @since GemFire 5.1
-   * 
    */
-
   private class ThreadIdToSequenceIdExpiryTask extends PoolTask {
-    /**
-     * The expiry time of the entries in the map
-     */
+    /** The expiry time of the entries in the map */
     private final long expiryTime;
 
-    /**
-     * The peridic ack interval for client
-     */
+    /** The peridic ack interval for client */
     //     private final long ackTime;
     //       ackTime = QueueStateImpl.this.qManager.getPool().getQueueAckInterval();
 
@@ -237,10 +249,7 @@ public class QueueStateImpl implements QueueState {
     //      */
     //     private volatile boolean continueRunning = true;
 
-    /**
-     * constructs the Thread and initializes the expiry time
-     * 
-     */
+    /** constructs the Thread and initializes the expiry time */
     public ThreadIdToSequenceIdExpiryTask() {
       expiryTime = QueueStateImpl.this.qManager.getPool().getSubscriptionMessageTrackingTimeout();
     }
@@ -288,7 +297,9 @@ public class QueueStateImpl implements QueueState {
           entry = (Map.Entry) iterator.next();
           seo = (SequenceIdAndExpirationObject) entry.getValue();
           if ((currentTime - seo.getCreationTime() > this.expiryTime)) {
-            if (seo.getAckSend() || (qManager.getPool().getSubscriptionRedundancy() == 0 && !qManager.getPool().isDurableClient())) {
+            if (seo.getAckSend()
+                || (qManager.getPool().getSubscriptionRedundancy() == 0
+                    && !qManager.getPool().isDurableClient())) {
               iterator.remove();
             }
           } else {
@@ -299,8 +310,7 @@ public class QueueStateImpl implements QueueState {
     }
 
     /**
-     * Sends Periodic ack to the primary server for all threadIds for which it
-     * has not send an ack.
+     * Sends Periodic ack to the primary server for all threadIds for which it has not send an ack.
      */
     void sendPeriodicAck() {
       List events = new ArrayList();
@@ -321,7 +331,8 @@ public class QueueStateImpl implements QueueState {
 
       if (events.size() > 0) {
         try {
-          PrimaryAckOp.execute(qManager.getAllConnections().getPrimary(), qManager.getPool(), events);
+          PrimaryAckOp.execute(
+              qManager.getAllConnections().getPrimary(), qManager.getPool(), events);
           success = true;
         } catch (Exception ex) {
           if (logger.isDebugEnabled())
@@ -333,12 +344,15 @@ public class QueueStateImpl implements QueueState {
               EventID eid = (EventID) iter.next();
               ThreadIdentifier tid = new ThreadIdentifier(eid.getMembershipID(), eid.getThreadID());
               synchronized (threadIdToSequenceId) {
-                SequenceIdAndExpirationObject seo = (SequenceIdAndExpirationObject) threadIdToSequenceId.get(tid);
+                SequenceIdAndExpirationObject seo =
+                    (SequenceIdAndExpirationObject) threadIdToSequenceId.get(tid);
                 if (seo != null && seo.getAckSend()) {
                   seo = (SequenceIdAndExpirationObject) threadIdToSequenceId.remove(tid);
                   if (seo != null) {
                     // put back the old seqId with a new time stamp
-                    SequenceIdAndExpirationObject siaeo = new SequenceIdAndExpirationObject(seo.getSequenceId(), seo.getPutAllSequenceId());
+                    SequenceIdAndExpirationObject siaeo =
+                        new SequenceIdAndExpirationObject(
+                            seo.getSequenceId(), seo.getPutAllSequenceId());
                     threadIdToSequenceId.put(tid, siaeo);
                   }
                 } // if ends
@@ -347,15 +361,14 @@ public class QueueStateImpl implements QueueState {
           } // if(!success) ends
         } // finally ends
       } // if(events.size() > 0)ends
-    }// method ends
+    } // method ends
   }
 
   /**
-   * A class to store sequenceId and the creation time of the object to be used
-   * for expiring the entry
-   * 
+   * A class to store sequenceId and the creation time of the object to be used for expiring the
+   * entry
+   *
    * @since GemFire 5.1
-   * 
    */
   public static class SequenceIdAndExpirationObject {
     /** The sequence Id of the entry * */
@@ -374,38 +387,29 @@ public class QueueStateImpl implements QueueState {
       this.ackSend = false;
     }
 
-    /**
-     * @return Returns the creationTime.
-     */
+    /** @return Returns the creationTime. */
     public final long getCreationTime() {
       return creationTime;
     }
 
-    /**
-     * @return Returns the sequenceId.
-     */
+    /** @return Returns the sequenceId. */
     public final long getSequenceId() {
       return sequenceId;
     }
 
-    /**
-     * @return Returns the putAllSequenceId.
-     */
+    /** @return Returns the putAllSequenceId. */
     public final long getPutAllSequenceId() {
       return putAllSequenceId;
     }
 
-    /**
-     * 
-     * @return Returns the ackSend
-     */
+    /** @return Returns the ackSend */
     public boolean getAckSend() {
       return ackSend;
     }
 
     /**
      * Sets the ackSend
-     * 
+     *
      * @param ackSend
      */
     public void setAckSend(boolean ackSend) {
@@ -424,5 +428,4 @@ public class QueueStateImpl implements QueueState {
       return sb.toString();
     }
   }
-
 }

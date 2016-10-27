@@ -22,39 +22,35 @@ import java.io.*;
 /**
  * Enumerated type for region mirroring.
  *
- *
- *
  * @see AttributesFactory#setMirrorType
  * @see RegionAttributes#getMirrorType
- *
  * @deprecated as of GemFire 5.0, use {@link DataPolicy} instead.
- *
  * @since GemFire 3.0
  */
 @Deprecated
 public class MirrorType implements java.io.Serializable {
   private static final long serialVersionUID = -6632651349646672540L;
 
-  /** New entries created in other caches for this region are
-   * not automatically propagated to this region in this cache.
+  /**
+   * New entries created in other caches for this region are not automatically propagated to this
+   * region in this cache.
+   *
    * @deprecated as of GemFire 5.0, use {@link DataPolicy#NORMAL} instead.
    */
-  @Deprecated
-  public static final MirrorType NONE = new MirrorType("NONE", DataPolicy.NORMAL);
+  @Deprecated public static final MirrorType NONE = new MirrorType("NONE", DataPolicy.NORMAL);
 
   /**
-   * New entries created in other caches for this region are
-   * propagated to this region in this cache, but the value is not
-   * necessarily copied to this cache with the key.
+   * New entries created in other caches for this region are propagated to this region in this
+   * cache, but the value is not necessarily copied to this cache with the key.
+   *
    * @deprecated as of GemFire 5.0, use {@link DataPolicy#REPLICATE} instead.
    */
-  @Deprecated
-  public static final MirrorType KEYS = new MirrorType("KEYS", DataPolicy.REPLICATE);
+  @Deprecated public static final MirrorType KEYS = new MirrorType("KEYS", DataPolicy.REPLICATE);
 
   /**
-   * New entries created in other caches for this region
-   * are propagated to this region in this cache and the value
-   * is also copied to this cache.
+   * New entries created in other caches for this region are propagated to this region in this cache
+   * and the value is also copied to this cache.
+   *
    * @deprecated as of GemFire 5.0, use {@link DataPolicy#REPLICATE} instead.
    */
   @Deprecated
@@ -63,9 +59,7 @@ public class MirrorType implements java.io.Serializable {
   /** The name of this mirror type. */
   private final transient String name;
 
-  /**
-   * The data policy that corresponds to this mirror type.
-   */
+  /** The data policy that corresponds to this mirror type. */
   private final transient DataPolicy dataPolicy;
 
   // The 4 declarations below are necessary for serialization
@@ -74,7 +68,7 @@ public class MirrorType implements java.io.Serializable {
 
   private static int nextOrdinal = 0;
 
-  private static final MirrorType[] VALUES = { NONE, KEYS, KEYS_VALUES };
+  private static final MirrorType[] VALUES = {NONE, KEYS, KEYS_VALUES};
 
   private Object readResolve() throws ObjectStreamException {
     return VALUES[ordinal]; // Canonicalize
@@ -93,6 +87,7 @@ public class MirrorType implements java.io.Serializable {
 
   /**
    * Returns the {@link DataPolicy} that corresponds to this mirror type.
+   *
    * @since GemFire 5.0
    */
   public DataPolicy getDataPolicy() {
@@ -114,14 +109,18 @@ public class MirrorType implements java.io.Serializable {
     return this == NONE;
   }
 
-  /** Return whether this indicates a mirrored type.
+  /**
+   * Return whether this indicates a mirrored type.
+   *
    * @return true if <code>KEYS</code> or <code>KEYS_VALUES</code>
    */
   public boolean isMirrored() {
     return this != NONE;
   }
 
-  /** Returns a string representation for this mirror type.
+  /**
+   * Returns a string representation for this mirror type.
+   *
    * @return the name of this mirror type
    */
   @Override

@@ -18,11 +18,8 @@
 package org.apache.geode.cache;
 
 /**
- * Indicates that the requested region already exists when a region is
- * being created.
+ * Indicates that the requested region already exists when a region is being created.
  *
- *
- * 
  * @see Region#createSubregion
  * @see Cache#createRegion
  * @since GemFire 2.0
@@ -33,6 +30,7 @@ public class RegionExistsException extends CacheException {
 
   /**
    * Constructs an instance of <code>RegionExistsException</code> with the specified Region.
+   *
    * @param rgn the Region that exists
    */
   public RegionExistsException(Region rgn) {
@@ -43,6 +41,7 @@ public class RegionExistsException extends CacheException {
   /**
    * Constructs an instance of <code>RegionExistsException</code> with the specified detail message
    * and cause.
+   *
    * @param rgn the Region that exists
    * @param cause the causal Throwable
    */
@@ -53,9 +52,9 @@ public class RegionExistsException extends CacheException {
 
   /**
    * Return the Region that already exists which prevented region creation.
-   * @return the Region that already exists, or null if this exception has
-   * been serialized, in which {@link Throwable#getMessage } will return the
-   * pathFromRoot for the region that exists.
+   *
+   * @return the Region that already exists, or null if this exception has been serialized, in which
+   *     {@link Throwable#getMessage } will return the pathFromRoot for the region that exists.
    */
   public Region getRegion() {
     return this.region;

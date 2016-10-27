@@ -19,6 +19,4 @@
 
 package org.apache.geode.tools.pulse.testbed;
 
-public class GemfireTopology {
-
-}
+public class GemfireTopology {}

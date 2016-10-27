@@ -20,10 +20,9 @@ package org.apache.geode.internal.cache.partitioned;
 import org.apache.geode.internal.cache.DataLocationException;
 
 /**
- * An exception indicating that a PartitionedRegion was found to be Locally
- * Destroyed
- * @since GemFire 5.1
+ * An exception indicating that a PartitionedRegion was found to be Locally Destroyed
  *
+ * @since GemFire 5.1
  */
 public class PRLocallyDestroyedException extends DataLocationException {
   private static final long serialVersionUID = -1291911181409686840L;
@@ -36,5 +35,4 @@ public class PRLocallyDestroyedException extends DataLocationException {
   public PRLocallyDestroyedException(String message) {
     super(message);
   }
-
 }

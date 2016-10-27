@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/******
-* THIS FILE IS ENCODED IN UTF-8 IN ORDER TO TEST UNICODE IN FIELD NAMES.
-* THE ENCODING MUST BE SPECIFIED AS UTF-8 WHEN COMPILED
-*******/
+/**
+ * **** THIS FILE IS ENCODED IN UTF-8 IN ORDER TO TEST UNICODE IN FIELD NAMES. THE ENCODING MUST BE
+ * SPECIFIED AS UTF-8 WHEN COMPILED *****
+ */
 /*
  * QueryJUnitTest.java
  * JUnit based test
@@ -53,9 +53,7 @@ import org.apache.geode.cache.query.data.Portfolio;
 import org.apache.geode.cache.query.internal.DefaultQuery;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- */
+/** */
 @FixMethodOrder(NAME_ASCENDING)
 @Category(IntegrationTest.class)
 public class QueryJUnitTest {
@@ -127,8 +125,7 @@ public class QueryJUnitTest {
     CacheUtils.log("testIsCompiled");
     String queryStr = "SELECT DISTINCT * FROM /root";
     Query q = CacheUtils.getQueryService().newQuery(queryStr);
-    if (q.isCompiled())
-      fail("Query.isCompiled() returns true for non-compiled query");
+    if (q.isCompiled()) fail("Query.isCompiled() returns true for non-compiled query");
   }
 
   @Test
@@ -142,13 +139,15 @@ public class QueryJUnitTest {
     }
     try {
       Region region = CacheUtils.createRegion("Portfolios", Portfolio.class);
-      CacheUtils.getQueryService().createIndex("testIndex", IndexType.FUNCTIONAL, "status", "/Portfolios");
+      CacheUtils.getQueryService()
+          .createIndex("testIndex", IndexType.FUNCTIONAL, "status", "/Portfolios");
       for (int i = 0; i < 10000; i++) {
         region.put(i + "", new Portfolio(i));
       }
       q.execute();
       qst = q.getStatistics();
-      if (qst.getNumExecutions() != 1) { // || qst.getTotalExecutionTime()==0){  // bruce - time based CachePerfStats are disabled by default
+      if (qst.getNumExecutions()
+          != 1) { // || qst.getTotalExecutionTime()==0){  // bruce - time based CachePerfStats are disabled by default
         fail("QueryStatistics not updated.");
       }
 
@@ -165,21 +164,59 @@ public class QueryJUnitTest {
   @Test
   public void test006GetRegionsInQuery() {
 
-    String queryStrs[] = new String[] { "SELECT DISTINCT * FROM /Portfolios where status='active'", "/Portfolios", "/Portfolios.values", "/Portfolios.keys()", "/Portfolios.entries(false)", "null = null", "select distinct * from /Employees where not (select distinct * from collect).isEmpty", "select distinct * from $2 where salary > $1", "SELECT DISTINCT key: key, iD: entry.value.iD, secId: posnVal.secId  FROM /pos.entries entry, entry.value.positions.values posnVal  WHERE entry.value.\"type\" = 'type0' AND posnVal.secId = 'YHOO'", "SELECT DISTINCT * FROM (SELECT DISTINCT * FROM /Portfolios ptf, positions pos) WHERE pos.value.secId = 'IBM'", "SELECT DISTINCT * FROM /Portfolios WHERE NOT(SELECT DISTINCT * FROM positions.values p WHERE p.secId = 'IBM').isEmpty", "SELECT DISTINCT * FROM /Portfolios where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status", "Select distinct * from /Portfolios pf, /Portfolios2, /Portfolios3, /Data where pf.status='active'",
-        "select distinct * from /portfolios p, p.positions.values myPos, (select distinct * from /Employees x)  where myPos.secId = 'YHOO'", "select distinct * from /portfolios p, p.positions.values myPos, (select distinct * from /Employees x, /portfolios)  where myPos.secId = 'YHOO'", "select distinct * from /portfolios p, p.positions.values myPos, (select distinct * from /Employees x, /Portfolios)  where myPos.secId = 'YHOO'", "select distinct /Portfolios.size, key FROM /pos.entries", "select distinct /Portfolios2.size, key FROM /pos.entries WHERE (Select distinct * from /portfolios4, entries).size = 3",
+    String queryStrs[] =
+        new String[] {
+          "SELECT DISTINCT * FROM /Portfolios where status='active'",
+          "/Portfolios",
+          "/Portfolios.values",
+          "/Portfolios.keys()",
+          "/Portfolios.entries(false)",
+          "null = null",
+          "select distinct * from /Employees where not (select distinct * from collect).isEmpty",
+          "select distinct * from $2 where salary > $1",
+          "SELECT DISTINCT key: key, iD: entry.value.iD, secId: posnVal.secId  FROM /pos.entries entry, entry.value.positions.values posnVal  WHERE entry.value.\"type\" = 'type0' AND posnVal.secId = 'YHOO'",
+          "SELECT DISTINCT * FROM (SELECT DISTINCT * FROM /Portfolios ptf, positions pos) WHERE pos.value.secId = 'IBM'",
+          "SELECT DISTINCT * FROM /Portfolios WHERE NOT(SELECT DISTINCT * FROM positions.values p WHERE p.secId = 'IBM').isEmpty",
+          "SELECT DISTINCT * FROM /Portfolios where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status",
+          "Select distinct * from /Portfolios pf, /Portfolios2, /Portfolios3, /Data where pf.status='active'",
+          "select distinct * from /portfolios p, p.positions.values myPos, (select distinct * from /Employees x)  where myPos.secId = 'YHOO'",
+          "select distinct * from /portfolios p, p.positions.values myPos, (select distinct * from /Employees x, /portfolios)  where myPos.secId = 'YHOO'",
+          "select distinct * from /portfolios p, p.positions.values myPos, (select distinct * from /Employees x, /Portfolios)  where myPos.secId = 'YHOO'",
+          "select distinct /Portfolios.size, key FROM /pos.entries",
+          "select distinct /Portfolios2.size, key FROM /pos.entries WHERE (Select distinct * from /portfolios4, entries).size = 3",
+        };
+    String regions[][] =
+        new String[][] {
+          {"/Portfolios"},
+          {"/Portfolios"},
+          {"/Portfolios"},
+          {"/Portfolios"},
+          {"/Portfolios"},
+          {},
+          {"/Employees"},
+          {"/Portfolios"},
+          {"/pos"},
+          {"/Portfolios"},
+          {"/Portfolios"},
+          {"/Portfolios"},
+          {"/Portfolios", "/Portfolios2", "/Portfolios3", "/Data"},
+          {"/portfolios", "/Employees"},
+          {"/portfolios", "/Employees"},
+          {"/portfolios", "/Employees", "/Portfolios"},
+          {"/Portfolios", "/pos"},
+          {"/Portfolios2", "/pos", "/portfolios4"}
+        };
 
-    };
-    String regions[][] = new String[][] { { "/Portfolios" }, { "/Portfolios" }, { "/Portfolios" }, { "/Portfolios" }, { "/Portfolios" }, {}, { "/Employees" }, { "/Portfolios" }, { "/pos" }, { "/Portfolios" }, { "/Portfolios" }, { "/Portfolios" }, { "/Portfolios", "/Portfolios2", "/Portfolios3", "/Data" }, { "/portfolios", "/Employees" }, { "/portfolios", "/Employees" }, { "/portfolios", "/Employees", "/Portfolios" }, { "/Portfolios", "/pos" }, { "/Portfolios2", "/pos", "/portfolios4" }
-
-    };
-
-    Object[] params = new Object[] { "", CacheUtils.createRegion("Portfolios", Portfolio.class) };
+    Object[] params = new Object[] {"", CacheUtils.createRegion("Portfolios", Portfolio.class)};
     for (int i = 0; i < queryStrs.length; ++i) {
       Query q = CacheUtils.getQueryService().newQuery(queryStrs[i]);
 
       Set set = ((DefaultQuery) q).getRegionsInQuery(params);
       String qRegions[] = regions[i];
-      assertEquals("region names don't match in query #" + i + "(\"" + queryStrs[i] + "\"", new HashSet(Arrays.asList(qRegions)), set);
+      assertEquals(
+          "region names don't match in query #" + i + "(\"" + queryStrs[i] + "\"",
+          new HashSet(Arrays.asList(qRegions)),
+          set);
     }
     DefaultQuery q = (DefaultQuery) CacheUtils.getQueryService().newQuery(queryStrs[0]);
 
@@ -248,7 +285,10 @@ public class QueryJUnitTest {
     }
     assertEquals("Incorrect result size ", 5, sr.size());
 
-    queryStr = "select * from " + region.getFullPath() + " p, p.positions.values pos  where pos.secId = 'APPL' ";
+    queryStr =
+        "select * from "
+            + region.getFullPath()
+            + " p, p.positions.values pos  where pos.secId = 'APPL' ";
 
     q = CacheUtils.getQueryService().newQuery(queryStr);
     try {
@@ -271,17 +311,22 @@ public class QueryJUnitTest {
       ScopeThreadingTestHook scopeIDTestHook = new ScopeThreadingTestHook(3);
       DefaultQuery.testHook = scopeIDTestHook;
       QueryService qs = cache.getQueryService();
-      Query q = qs.newQuery("SELECT DISTINCT * FROM /keyzset.keySet key WHERE key.id > 0 AND key.id <= 0 ORDER BY key asc LIMIT $3");
-      Thread q1 = new Thread(new QueryRunnable(q, new Object[] { 10, 20, 10 }));
-      Thread q2 = new Thread(new QueryRunnable(q, new Object[] { 5, 10, 5 }));
-      Thread q3 = new Thread(new QueryRunnable(q, new Object[] { 2, 10, 8 }));
+      Query q =
+          qs.newQuery(
+              "SELECT DISTINCT * FROM /keyzset.keySet key WHERE key.id > 0 AND key.id <= 0 ORDER BY key asc LIMIT $3");
+      Thread q1 = new Thread(new QueryRunnable(q, new Object[] {10, 20, 10}));
+      Thread q2 = new Thread(new QueryRunnable(q, new Object[] {5, 10, 5}));
+      Thread q3 = new Thread(new QueryRunnable(q, new Object[] {2, 10, 8}));
       q1.start();
       q2.start();
       q3.start();
       q1.join();
       q2.join();
       q3.join();
-      assertEquals("Exceptions were thrown due to DefaultQuery not being thread-safe", true, scopeIDTestHook.isOk());
+      assertEquals(
+          "Exceptions were thrown due to DefaultQuery not being thread-safe",
+          true,
+          scopeIDTestHook.isOk());
     } finally {
       DefaultQuery.testHook = null;
     }

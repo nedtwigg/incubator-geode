@@ -32,12 +32,12 @@ import org.apache.geode.internal.statistics.SimpleStatSampler;
 import org.apache.geode.internal.statistics.StatisticsManager;
 
 /**
- * A standalone implementation of {@link StatisticsFactory}.
- * It can be used in contexts that do not have the GemFire product
- * or in vm's that do not have a distributed system nor a gemfire connection.
- *
+ * A standalone implementation of {@link StatisticsFactory}. It can be used in contexts that do not
+ * have the GemFire product or in vm's that do not have a distributed system nor a gemfire
+ * connection.
  */
-public class LocalStatisticsFactory extends AbstractStatisticsFactory implements StatisticsFactory, StatisticsManager {
+public class LocalStatisticsFactory extends AbstractStatisticsFactory
+    implements StatisticsFactory, StatisticsManager {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -52,7 +52,11 @@ public class LocalStatisticsFactory extends AbstractStatisticsFactory implements
     this.statsDisabled = Boolean.getBoolean(STATS_DISABLE_NAME_PROPERTY);
     if (statsDisabled) {
       this.sampler = null;
-      logger.info(LogMarker.STATISTICS, LocalizedMessage.create(LocalizedStrings.LocalStatisticsFactory_STATISTIC_COLLECTION_IS_DISABLED_USE_DSTATSDISABLEFALSE_TO_TURN_ON_STATISTICS));
+      logger.info(
+          LogMarker.STATISTICS,
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .LocalStatisticsFactory_STATISTIC_COLLECTION_IS_DISABLED_USE_DSTATSDISABLEFALSE_TO_TURN_ON_STATISTICS));
     } else if (stopper != null) {
       this.sampler = new SimpleStatSampler(stopper, this);
       this.sampler.start();
@@ -85,7 +89,8 @@ public class LocalStatisticsFactory extends AbstractStatisticsFactory implements
   }
 
   @Override
-  protected Statistics createOsStatistics(StatisticsType type, String textId, long numericId, int osStatFlags) {
+  protected Statistics createOsStatistics(
+      StatisticsType type, String textId, long numericId, int osStatFlags) {
     if (this.statsDisabled) {
       return new DummyStatisticsImpl(type, textId, numericId);
     }

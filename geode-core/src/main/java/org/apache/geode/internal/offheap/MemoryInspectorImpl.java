@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Implementation of MemoryInspector that provides for inspection of meta-data
- * for off-heap memory blocks
+ * Implementation of MemoryInspector that provides for inspection of meta-data for off-heap memory
+ * blocks
  */
 public class MemoryInspectorImpl implements MemoryInspector {
   /** The inspection snapshot for MemoryInspector */
@@ -51,7 +51,7 @@ public class MemoryInspectorImpl implements MemoryInspector {
   public synchronized List<MemoryBlock> getSnapshot() {
     List<MemoryBlock> value = this.memoryBlocks;
     if (value == null) {
-      return Collections.<MemoryBlock> emptyList();
+      return Collections.<MemoryBlock>emptyList();
     } else {
       return value;
     }
@@ -94,5 +94,4 @@ public class MemoryInspectorImpl implements MemoryInspector {
   private List<MemoryBlock> getOrderedBlocks() {
     return this.freeList.getOrderedBlocks();
   }
-
 }

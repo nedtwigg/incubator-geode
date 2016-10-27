@@ -25,9 +25,8 @@ import org.apache.geode.pdx.internal.PdxString;
 /**
  * Class Description
  *
- * @version     $Revision: 1.1 $
+ * @version $Revision: 1.1 $
  */
-
 public class CompiledLiteral extends AbstractCompiledValue {
   Object _obj;
   PdxString _pdxString;
@@ -40,13 +39,12 @@ public class CompiledLiteral extends AbstractCompiledValue {
     return LITERAL;
   }
 
-  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException {
+  public Object evaluate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException {
     return _obj;
   }
 
-  /**
-   * creates new PdxString from String and caches it
-   */
+  /** creates new PdxString from String and caches it */
   public PdxString getSavedPdxString() {
     if (_pdxString == null) {
       _pdxString = new PdxString((String) _obj);
@@ -55,7 +53,8 @@ public class CompiledLiteral extends AbstractCompiledValue {
   }
 
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException {
     if (_obj == null) {
       clauseBuffer.insert(0, "null");
     } else if (_obj instanceof String) {
@@ -65,10 +64,11 @@ public class CompiledLiteral extends AbstractCompiledValue {
     }
   }
 
-  public int getSizeEstimate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
-    //The literal could be true or false only in case of Filter 
+  public int getSizeEstimate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
+    //The literal could be true or false only in case of Filter
     // Evaluation. Either way it should be evaluated first, Right?
     return 0;
   }
-
 }

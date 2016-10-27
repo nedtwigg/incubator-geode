@@ -18,15 +18,15 @@ package org.apache.geode.pdx;
 
 public class SimpleClass implements PdxSerializable {
   public static enum SimpleEnum {
-    ONE, TWO
+    ONE,
+    TWO
   };
 
   private int myInt;
   private byte myByte;
   private SimpleEnum myEnum;
 
-  public SimpleClass() {
-  }
+  public SimpleClass() {}
 
   public SimpleClass(int intVal, byte byteVal) {
     this.myInt = intVal;
@@ -54,7 +54,14 @@ public class SimpleClass implements PdxSerializable {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + " [myInt=" + myInt + ", myByte=" + myByte + ", myEnum=" + myEnum + "]";
+    return getClass().getSimpleName()
+        + " [myInt="
+        + myInt
+        + ", myByte="
+        + myByte
+        + ", myEnum="
+        + myEnum
+        + "]";
   }
 
   @Override
@@ -69,19 +76,13 @@ public class SimpleClass implements PdxSerializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     SimpleClass other = (SimpleClass) obj;
-    if (myByte != other.myByte)
-      return false;
-    if (myEnum != other.myEnum)
-      return false;
-    if (myInt != other.myInt)
-      return false;
+    if (myByte != other.myByte) return false;
+    if (myEnum != other.myEnum) return false;
+    if (myInt != other.myInt) return false;
     return true;
   }
 }

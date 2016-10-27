@@ -28,7 +28,7 @@ import java.util.*;
 /**
  * View of a GemFire system member's cache.
  *
- * @since GemFire     3.5
+ * @since GemFire 3.5
  */
 public class SystemMemberCacheImpl implements SystemMemberCache {
   protected final GemFireVM vm;
@@ -43,15 +43,15 @@ public class SystemMemberCacheImpl implements SystemMemberCache {
     this.vm = vm;
     this.info = vm.getCacheInfo();
     if (this.info == null) {
-      throw new CacheDoesNotExistException(LocalizedStrings.SystemMemberCacheImpl_THE_VM_0_DOES_NOT_CURRENTLY_HAVE_A_CACHE.toLocalizedString(vm.getId()));
+      throw new CacheDoesNotExistException(
+          LocalizedStrings.SystemMemberCacheImpl_THE_VM_0_DOES_NOT_CURRENTLY_HAVE_A_CACHE
+              .toLocalizedString(vm.getId()));
     }
     initStats();
   }
 
   // attributes
-  /**
-   * The name of the cache.
-   */
+  /** The name of the cache. */
   public String getName() {
     String result = this.info.getName();
     if (result == null || result.length() == 0) {
@@ -60,9 +60,7 @@ public class SystemMemberCacheImpl implements SystemMemberCache {
     return result;
   }
 
-  /**
-   * Value that uniquely identifies an instance of a cache for a given member.
-   */
+  /** Value that uniquely identifies an instance of a cache for a given member. */
   public int getId() {
     return this.info.getId();
   }
@@ -149,7 +147,8 @@ public class SystemMemberCacheImpl implements SystemMemberCache {
     }
   }
 
-  public SystemMemberRegion createRegion(String name, RegionAttributes attrs) throws AdminException {
+  public SystemMemberRegion createRegion(String name, RegionAttributes attrs)
+      throws AdminException {
     Region r = this.vm.createVMRootRegion(this.info, name, attrs);
     if (r == null) {
       return null;
@@ -159,7 +158,8 @@ public class SystemMemberCacheImpl implements SystemMemberCache {
     }
   }
 
-  public SystemMemberRegion createVMRegion(String name, RegionAttributes attrs) throws AdminException {
+  public SystemMemberRegion createVMRegion(String name, RegionAttributes attrs)
+      throws AdminException {
     return createRegion(name, attrs);
   }
 
@@ -215,9 +215,8 @@ public class SystemMemberCacheImpl implements SystemMemberCache {
   }
 
   /**
-   * Returns the <code>CacheInfo</code> that describes this cache.
-   * Note that this operation does not {@link #refresh} the
-   * <code>CacheInfo</code>. 
+   * Returns the <code>CacheInfo</code> that describes this cache. Note that this operation does not
+   * {@link #refresh} the <code>CacheInfo</code>.
    */
   public CacheInfo getCacheInfo() {
     return this.info;
@@ -231,7 +230,8 @@ public class SystemMemberCacheImpl implements SystemMemberCache {
     return new StatisticImpl(stat);
   }
 
-  protected SystemMemberRegion createSystemMemberRegion(Region r) throws org.apache.geode.admin.AdminException {
+  protected SystemMemberRegion createSystemMemberRegion(Region r)
+      throws org.apache.geode.admin.AdminException {
     SystemMemberRegionImpl sysMemberRegion = new SystemMemberRegionImpl(this, r);
     sysMemberRegion.refresh();
     return sysMemberRegion;
@@ -274,10 +274,10 @@ public class SystemMemberCacheImpl implements SystemMemberCache {
   };
 
   /**
-   * Creates a new instance of <Code>SystemMemberBridgeServer</code>
-   * with the given configuration.
+   * Creates a new instance of <Code>SystemMemberBridgeServer</code> with the given configuration.
    */
-  protected SystemMemberBridgeServerImpl createSystemMemberBridgeServer(AdminBridgeServer bridge) throws AdminException {
+  protected SystemMemberBridgeServerImpl createSystemMemberBridgeServer(AdminBridgeServer bridge)
+      throws AdminException {
 
     return new SystemMemberBridgeServerImpl(this, bridge);
   }
@@ -288,7 +288,7 @@ public class SystemMemberCacheImpl implements SystemMemberCache {
 
   /**
    * Returns a string representation of the object.
-   * 
+   *
    * @return a string representation of the object
    */
   @Override

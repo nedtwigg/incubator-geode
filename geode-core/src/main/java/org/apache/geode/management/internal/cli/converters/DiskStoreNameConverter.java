@@ -31,11 +31,7 @@ import org.springframework.shell.core.Completion;
 import org.springframework.shell.core.Converter;
 import org.springframework.shell.core.MethodTarget;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class DiskStoreNameConverter implements Converter<String> {
 
   @Override
@@ -49,7 +45,12 @@ public class DiskStoreNameConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
     if (String.class.equals(targetType) && ConverterHint.DISKSTORE_ALL.equals(optionContext)) {
       Set<String> diskStoreNames = getDiskStoreNames();
 
@@ -71,7 +72,8 @@ public class DiskStoreNameConverter implements Converter<String> {
     SortedSet<String> diskStoreNames = new TreeSet<String>();
     Gfsh gfsh = Gfsh.getCurrentInstance();
     if (gfsh != null && gfsh.isConnectedAndReady()) { // gfsh exists & is not null
-      Map<String, String[]> diskStoreInfo = gfsh.getOperationInvoker().getDistributedSystemMXBean().listMemberDiskstore();
+      Map<String, String[]> diskStoreInfo =
+          gfsh.getOperationInvoker().getDistributedSystemMXBean().listMemberDiskstore();
       if (diskStoreInfo != null) {
         Set<Entry<String, String[]>> entries = diskStoreInfo.entrySet();
         for (Entry<String, String[]> entry : entries) {
@@ -85,5 +87,4 @@ public class DiskStoreNameConverter implements Converter<String> {
 
     return diskStoreNames;
   }
-
 }

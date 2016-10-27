@@ -36,7 +36,7 @@ import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class IntegratedSecurityPeerAuthDistributedTest extends JUnit4CacheTestCase {
 
   private static SpySecurityManager spySecurityManager;
@@ -57,44 +57,50 @@ public class IntegratedSecurityPeerAuthDistributedTest extends JUnit4CacheTestCa
     int locatorPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
     locators = NetworkUtils.getServerHostName(host) + "[" + locatorPort + "]";
 
-    locator.invoke(() -> {
-      spySecurityManager = new SpySecurityManager();
+    locator.invoke(
+        () -> {
+          spySecurityManager = new SpySecurityManager();
 
-      DistributedTestUtils.deleteLocatorStateFile(locatorPort);
+          DistributedTestUtils.deleteLocatorStateFile(locatorPort);
 
-      final Properties properties = createProperties(locators);
-      properties.setProperty(SampleSecurityManager.SECURITY_JSON, "org/apache/geode/security/peerAuth.json");
-      properties.setProperty(UserPasswordAuthInit.USER_NAME, "locator1");
-      properties.setProperty(UserPasswordAuthInit.PASSWORD, "1234567");
-      properties.setProperty(START_LOCATOR, locators);
+          final Properties properties = createProperties(locators);
+          properties.setProperty(
+              SampleSecurityManager.SECURITY_JSON, "org/apache/geode/security/peerAuth.json");
+          properties.setProperty(UserPasswordAuthInit.USER_NAME, "locator1");
+          properties.setProperty(UserPasswordAuthInit.PASSWORD, "1234567");
+          properties.setProperty(START_LOCATOR, locators);
 
-      getSystem(properties);
-      getCache();
-    });
+          getSystem(properties);
+          getCache();
+        });
 
-    server1.invoke(() -> {
-      spySecurityManager = new SpySecurityManager();
+    server1.invoke(
+        () -> {
+          spySecurityManager = new SpySecurityManager();
 
-      final Properties properties = createProperties(locators);
-      properties.setProperty(SampleSecurityManager.SECURITY_JSON, "org/apache/geode/security/peerAuth.json");
-      properties.setProperty(UserPasswordAuthInit.USER_NAME, "server1");
-      properties.setProperty(UserPasswordAuthInit.PASSWORD, "1234567");
+          final Properties properties = createProperties(locators);
+          properties.setProperty(
+              SampleSecurityManager.SECURITY_JSON, "org/apache/geode/security/peerAuth.json");
+          properties.setProperty(UserPasswordAuthInit.USER_NAME, "server1");
+          properties.setProperty(UserPasswordAuthInit.PASSWORD, "1234567");
 
-      getSystem(properties);
-      getCache();
-    });
+          getSystem(properties);
+          getCache();
+        });
 
-    server2.invoke(() -> {
-      spySecurityManager = new SpySecurityManager();
+    server2.invoke(
+        () -> {
+          spySecurityManager = new SpySecurityManager();
 
-      final Properties properties = createProperties(locators);
-      properties.setProperty(SampleSecurityManager.SECURITY_JSON, "org/apache/geode/security/peerAuth.json");
-      properties.setProperty(UserPasswordAuthInit.USER_NAME, "server2");
-      properties.setProperty(UserPasswordAuthInit.PASSWORD, "1234567");
+          final Properties properties = createProperties(locators);
+          properties.setProperty(
+              SampleSecurityManager.SECURITY_JSON, "org/apache/geode/security/peerAuth.json");
+          properties.setProperty(UserPasswordAuthInit.USER_NAME, "server2");
+          properties.setProperty(UserPasswordAuthInit.PASSWORD, "1234567");
 
-      getSystem(properties);
-      getCache();
-    });
+          getSystem(properties);
+          getCache();
+        });
   }
 
   @Test
@@ -102,20 +108,23 @@ public class IntegratedSecurityPeerAuthDistributedTest extends JUnit4CacheTestCa
     spySecurityManager = new SpySecurityManager();
 
     final Properties properties = createProperties(locators);
-    properties.setProperty(SampleSecurityManager.SECURITY_JSON, "org/apache/geode/security/peerAuth.json");
+    properties.setProperty(
+        SampleSecurityManager.SECURITY_JSON, "org/apache/geode/security/peerAuth.json");
     properties.setProperty(UserPasswordAuthInit.USER_NAME, "stranger");
     properties.setProperty(UserPasswordAuthInit.PASSWORD, "1234567");
 
-    assertThatThrownBy(() -> getSystem(properties)).isExactlyInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(() -> getSystem(properties))
+        .isExactlyInstanceOf(GemFireSecurityException.class);
   }
 
   @Override
   public void postTearDownCacheTestCase() throws Exception {
     closeAllCache();
     spySecurityManager = null;
-    invokeInEveryVM(() -> {
-      spySecurityManager = null;
-    });
+    invokeInEveryVM(
+        () -> {
+          spySecurityManager = null;
+        });
   }
 
   private static Properties createProperties(String locators) {
@@ -123,7 +132,8 @@ public class IntegratedSecurityPeerAuthDistributedTest extends JUnit4CacheTestCa
     allProperties.setProperty(LOCATORS, locators);
     allProperties.setProperty(MCAST_PORT, "0");
     allProperties.setProperty(SECURITY_MANAGER, SpySecurityManager.class.getName());
-    allProperties.setProperty(SECURITY_PEER_AUTH_INIT, UserPasswordAuthInit.class.getName() + ".create");
+    allProperties.setProperty(
+        SECURITY_PEER_AUTH_INIT, UserPasswordAuthInit.class.getName() + ".create");
     allProperties.setProperty(USE_CLUSTER_CONFIGURATION, "false");
     return allProperties;
   }

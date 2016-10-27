@@ -36,6 +36,7 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * Tests PoolManager
+ *
  * @since GemFire 5.7
  */
 @Category(IntegrationTest.class)

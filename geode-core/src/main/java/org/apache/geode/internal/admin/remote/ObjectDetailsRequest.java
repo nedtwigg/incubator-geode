@@ -25,8 +25,8 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular app vm to request the value, stats,
- * and attributes of a given region entry.
+ * A message that is sent to a particular app vm to request the value, stats, and attributes of a
+ * given region entry.
  */
 public final class ObjectDetailsRequest extends RegionAdminRequest implements Cancellable {
   // instance variables
@@ -35,9 +35,7 @@ public final class ObjectDetailsRequest extends RegionAdminRequest implements Ca
   private transient boolean cancelled;
   private ObjectDetailsResponse resp;
 
-  /**
-   * Returns a <code>ObjectValueRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>ObjectValueRequest</code> to be sent to the specified recipient. */
   public static ObjectDetailsRequest create(Object objName, int inspectionType) {
     ObjectDetailsRequest m = new ObjectDetailsRequest();
     m.objName = objName;
@@ -56,9 +54,7 @@ public final class ObjectDetailsRequest extends RegionAdminRequest implements Ca
     }
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     CancellationRegistry.getInstance().registerMessage(this);
@@ -94,6 +90,11 @@ public final class ObjectDetailsRequest extends RegionAdminRequest implements Ca
 
   @Override
   public String toString() {
-    return "ObjectDetailsRequest from " + getRecipient() + " region=" + getRegionName() + " object=" + this.objName;
+    return "ObjectDetailsRequest from "
+        + getRecipient()
+        + " region="
+        + getRegionName()
+        + " object="
+        + this.objName;
   }
 }

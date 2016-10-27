@@ -57,13 +57,12 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 
-/**
- * Test to verify Startup. and failover during startup.
- */
+/** Test to verify Startup. and failover during startup. */
 @Category(DistributedTest.class)
 public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
 
-  private static final String REGION_NAME = HAStartupAndFailoverDUnitTest.class.getSimpleName() + "_region";
+  private static final String REGION_NAME =
+      HAStartupAndFailoverDUnitTest.class.getSimpleName() + "_region";
 
   protected static Cache cache = null;
 
@@ -98,9 +97,7 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     CacheServerTestUtil.disableShufflingOfEndpoints();
   }
 
-  /**
-   * Stops primary server one by one to ensure new primary is selected
-   */
+  /** Stops primary server one by one to ensure new primary is selected */
   @Test
   public void testPrimaryFailover() throws Exception {
 
@@ -142,15 +139,12 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     server3.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsAlive());
   }
 
-  /**
-   * verify that when an exeption occurs during making primary ,
-   * new primary will be selected
-   *
-   */
+  /** verify that when an exeption occurs during making primary , new primary will be selected */
   @Test
   public void testExceptionWhileMakingPrimary() throws Exception {
 
-    createClientCacheWithIncorrectPrimary(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
+    createClientCacheWithIncorrectPrimary(
+        this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
     // failed primary due to incorect host name of the server
 
     // new primary
@@ -172,14 +166,14 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * verify that when an exeption occurs during making primary to two EPs ,
-   * new primary will be selected
-   *
+   * verify that when an exeption occurs during making primary to two EPs , new primary will be
+   * selected
    */
   @Test
   public void testTwoPrimaryFailedOneAfterTheAnother() throws Exception {
 
-    createClientCacheWithLargeRetryInterval(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
+    createClientCacheWithLargeRetryInterval(
+        this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
     // primary
     server1.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsAlive());
 
@@ -197,15 +191,13 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     //new primary
     server3.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsAlive());
     unSetClientServerObserver();
-
   }
 
-  /**
-   * verify that Primary Should Be Null And EPList Should Be Empty When All Servers Are Dead
-   */
+  /** verify that Primary Should Be Null And EPList Should Be Empty When All Servers Are Dead */
   @Category(FlakyTest.class) // GEODE-1045: random ports, time senstive, waitForCriterion
   @Test
-  public void testPrimaryShouldBeNullAndEPListShouldBeEmptyWhenAllServersAreDead() throws Exception {
+  public void testPrimaryShouldBeNullAndEPListShouldBeEmptyWhenAllServersAreDead()
+      throws Exception {
     createClientCache(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
     verifyPrimaryShouldNotBeNullAndEPListShouldNotBeEmpty();
     server1.invoke(() -> HAStartupAndFailoverDUnitTest.stopServer());
@@ -215,13 +207,11 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     verifyPrimaryShouldBeNullAndEPListShouldBeEmpty();
   }
 
-  /**
-   * Tests failover initialization by cacheClientUpdater Thread
-   * on failure in Primary Server
-   */
+  /** Tests failover initialization by cacheClientUpdater Thread on failure in Primary Server */
   @Test
   public void testCacheClientUpdatersInitiatesFailoverOnPrimaryFailure() throws Exception {
-    createClientCacheWithLargeRetryInterval(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
+    createClientCacheWithLargeRetryInterval(
+        this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
     server1.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsAlive());
     server2.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsNotAlive());
     server3.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsNotAlive());
@@ -233,13 +223,11 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     server2.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsAlive());
   }
 
-  /**
-   * Tests failover initialization by cacheClientUpdater
-   * Thread on failure on Secondary server
-   */
+  /** Tests failover initialization by cacheClientUpdater Thread on failure on Secondary server */
   @Test
   public void testCacheClientUpdaterInitiatesFailoverOnSecondaryFailure() throws Exception {
-    createClientCacheWithLargeRetryInterval(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
+    createClientCacheWithLargeRetryInterval(
+        this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
     server1.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsAlive());
     server2.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsNotAlive());
     server3.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsNotAlive());
@@ -247,17 +235,18 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     verifyDeadAndLiveServers(1, 2);
     server1.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsAlive());
     server3.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsNotAlive());
-
   }
 
   /**
-   * Tests failover initialization by cacheClientUpdater Thread failure on both
-   * Primary and Secondary server
+   * Tests failover initialization by cacheClientUpdater Thread failure on both Primary and
+   * Secondary server
    */
   @Test
-  public void testCacheClientUpdaterInitiatesFailoverOnBothPrimaryAndSecondaryFailure() throws Exception {
+  public void testCacheClientUpdaterInitiatesFailoverOnBothPrimaryAndSecondaryFailure()
+      throws Exception {
 
-    createClientCacheWithLargeRetryInterval(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
+    createClientCacheWithLargeRetryInterval(
+        this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
     server1.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsAlive());
     server2.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsNotAlive());
     server3.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsNotAlive());
@@ -265,14 +254,13 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     server2.invoke(() -> HAStartupAndFailoverDUnitTest.stopServer());
     verifyDeadAndLiveServers(2, 1);
     server3.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsAlive());
-
   }
 
-  /**
-   * Tests failover initialization by cacheClientUpdater Thread
-   */
+  /** Tests failover initialization by cacheClientUpdater Thread */
   @Test
-  public void testCacheClientUpdaterInitiatesFailoverOnBothPrimaryAndSecondaryFailureWithServerMonitors() throws Exception {
+  public void
+      testCacheClientUpdaterInitiatesFailoverOnBothPrimaryAndSecondaryFailureWithServerMonitors()
+          throws Exception {
 
     createClientCache(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
     server1.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsAlive());
@@ -284,16 +272,15 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     server3.invoke(() -> HAStartupAndFailoverDUnitTest.verifyDispatcherIsAlive());
   }
 
-  /**
-   * Tests failover initialization by cache operation Threads on secondary
-   */
+  /** Tests failover initialization by cache operation Threads on secondary */
   @Test
   public void testInitiateFailoverByCacheOperationThreads_Secondary() throws Exception {
     //Stop the 3rd server to guarantee the client put will go to the first server
     server3.invoke(() -> HAStartupAndFailoverDUnitTest.stopServer());
     // create a client with no client updater thread
     // so that only cache operation can detect a server failure and should initiate failover
-    createClientCacheWithLargeRetryIntervalAndWithoutCallbackConnection(this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
+    createClientCacheWithLargeRetryIntervalAndWithoutCallbackConnection(
+        this.getName(), NetworkUtils.getServerHostName(server1.getHost()));
     server2.invoke(() -> HAStartupAndFailoverDUnitTest.stopServer());
     put();
     verifyDeadAndLiveServers(1, 1);
@@ -310,20 +297,24 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void verifyDeadAndLiveServers(final int expectedDeadServers, final int expectedLiveServers) {
-    Awaitility.await().atMost(60, TimeUnit.SECONDS).until(() -> assertEquals(expectedLiveServers, pool.getConnectedServerCount()));
+  public static void verifyDeadAndLiveServers(
+      final int expectedDeadServers, final int expectedLiveServers) {
+    Awaitility.await()
+        .atMost(60, TimeUnit.SECONDS)
+        .until(() -> assertEquals(expectedLiveServers, pool.getConnectedServerCount()));
   }
 
   public static void setClientServerObserver() {
     PoolImpl.AFTER_PRIMARY_IDENTIFICATION_FROM_BACKUP_CALLBACK_FLAG = true;
-    ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-      public void afterPrimaryIdentificationFromBackup(ServerLocation primaryEndpoint) {
-        synchronized (HAStartupAndFailoverDUnitTest.class) {
-          HAStartupAndFailoverDUnitTest.identifiedPrimary = true;
-          HAStartupAndFailoverDUnitTest.class.notify();
-        }
-      }
-    });
+    ClientServerObserverHolder.setInstance(
+        new ClientServerObserverAdapter() {
+          public void afterPrimaryIdentificationFromBackup(ServerLocation primaryEndpoint) {
+            synchronized (HAStartupAndFailoverDUnitTest.class) {
+              HAStartupAndFailoverDUnitTest.identifiedPrimary = true;
+              HAStartupAndFailoverDUnitTest.class.notify();
+            }
+          }
+        });
   }
 
   public static void unSetClientServerObserver() {
@@ -332,7 +323,6 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
       HAStartupAndFailoverDUnitTest.identifiedPrimary = false;
       ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter());
     }
-
   }
 
   public static void stopServer() {
@@ -360,7 +350,9 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
   public static void verifyPrimaryShouldNotBeNullAndEPListShouldNotBeEmpty() {
     try {
       assertNotNull(" Primary endpoint should not be null", pool.getPrimaryName());
-      assertTrue("Endpoint List should not be Empty as all server are live", pool.getConnectedServerCount() > 0);
+      assertTrue(
+          "Endpoint List should not be Empty as all server are live",
+          pool.getConnectedServerCount() > 0);
     } catch (Exception e) {
       Assert.fail("failed while verifyPrimaryShouldNotBeNullAndEPListShouldNotBeEmpty()", e);
     }
@@ -369,7 +361,10 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
   public static void verifyPrimaryShouldBeNullAndEPListShouldBeEmpty() {
     try {
       assertNull("Primary endpoint should be null as all server are dead", pool.getPrimaryName());
-      assertEquals("Endpoint List should be Empty as all server are dead", 0, pool.getConnectedServerCount());
+      assertEquals(
+          "Endpoint List should be Empty as all server are dead",
+          0,
+          pool.getConnectedServerCount());
       fail("NoSubscriptionServersAvailableException is expected"); // TODO:KIRK: added this line
     } catch (NoSubscriptionServersAvailableException e) {
       // pass
@@ -403,27 +398,31 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
             fail("Test failed due to InterruptedException in waitForPrimaryIdentification()");
           }
           if (!identifiedPrimary) {
-            fail("timed out after waiting " + MAX_WAIT + " millisecs" + " for primary to be identified");
+            fail(
+                "timed out after waiting "
+                    + MAX_WAIT
+                    + " millisecs"
+                    + " for primary to be identified");
           }
         }
       }
     }
-
   }
 
   public static void verifyDispatcherIsAlive() {
     try {
-      WaitCriterion wc = new WaitCriterion() {
-        String excuse;
+      WaitCriterion wc =
+          new WaitCriterion() {
+            String excuse;
 
-        public boolean done() {
-          return cache.getCacheServers().size() == 1;
-        }
+            public boolean done() {
+              return cache.getCacheServers().size() == 1;
+            }
 
-        public String description() {
-          return excuse;
-        }
-      };
+            public String description() {
+              return excuse;
+            }
+          };
       Wait.waitForCriterion(wc, 60 * 1000, 1000, true);
 
       CacheServerImpl bs = (CacheServerImpl) cache.getCacheServers().iterator().next();
@@ -431,17 +430,18 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
       assertNotNull(bs.getAcceptor());
       assertNotNull(bs.getAcceptor().getCacheClientNotifier());
       final CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier();
-      wc = new WaitCriterion() {
-        String excuse;
+      wc =
+          new WaitCriterion() {
+            String excuse;
 
-        public boolean done() {
-          return ccn.getClientProxies().size() > 0;
-        }
+            public boolean done() {
+              return ccn.getClientProxies().size() > 0;
+            }
 
-        public String description() {
-          return excuse;
-        }
-      };
+            public String description() {
+              return excuse;
+            }
+          };
       Wait.waitForCriterion(wc, 60 * 1000, 1000, true);
 
       Collection<CacheClientProxy> proxies = ccn.getClientProxies();
@@ -449,17 +449,18 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
 
       if (iter_prox.hasNext()) {
         final CacheClientProxy proxy = iter_prox.next();
-        wc = new WaitCriterion() {
-          String excuse;
+        wc =
+            new WaitCriterion() {
+              String excuse;
 
-          public boolean done() {
-            return proxy._messageDispatcher.isAlive();
-          }
+              public boolean done() {
+                return proxy._messageDispatcher.isAlive();
+              }
 
-          public String description() {
-            return excuse;
-          }
-        };
+              public String description() {
+                return excuse;
+              }
+            };
         Wait.waitForCriterion(wc, 60 * 1000, 1000, true);
 
         // assertTrue("Dispatcher on primary should be alive",
@@ -476,17 +477,18 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
       Cache c = CacheFactory.getAnyInstance();
       // assertIndexDetailsEquals("More than one BridgeServer", 1,
       // c.getCacheServers().size());
-      WaitCriterion wc = new WaitCriterion() {
-        String excuse;
+      WaitCriterion wc =
+          new WaitCriterion() {
+            String excuse;
 
-        public boolean done() {
-          return cache.getCacheServers().size() == 1;
-        }
+            public boolean done() {
+              return cache.getCacheServers().size() == 1;
+            }
 
-        public String description() {
-          return excuse;
-        }
-      };
+            public String description() {
+              return excuse;
+            }
+          };
       Wait.waitForCriterion(wc, 60 * 1000, 1000, true);
 
       CacheServerImpl bs = (CacheServerImpl) c.getCacheServers().iterator().next();
@@ -494,23 +496,25 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
       assertNotNull(bs.getAcceptor());
       assertNotNull(bs.getAcceptor().getCacheClientNotifier());
       final CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier();
-      wc = new WaitCriterion() {
-        String excuse;
+      wc =
+          new WaitCriterion() {
+            String excuse;
 
-        public boolean done() {
-          return ccn.getClientProxies().size() > 0;
-        }
+            public boolean done() {
+              return ccn.getClientProxies().size() > 0;
+            }
 
-        public String description() {
-          return excuse;
-        }
-      };
+            public String description() {
+              return excuse;
+            }
+          };
       Wait.waitForCriterion(wc, 60 * 1000, 1000, true);
 
       Iterator iter_prox = ccn.getClientProxies().iterator();
       if (iter_prox.hasNext()) {
         CacheClientProxy proxy = (CacheClientProxy) iter_prox.next();
-        assertFalse("Dispatcher on secondary should not be alive", proxy._messageDispatcher.isAlive());
+        assertFalse(
+            "Dispatcher on secondary should not be alive", proxy._messageDispatcher.isAlive());
       }
     } catch (Exception ex) {
       fail("while setting verifyDispatcherIsNotAlive  " + ex);
@@ -531,9 +535,17 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new HAStartupAndFailoverDUnitTest().createCache(props);
-    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, PORT1.intValue()).addServer(host, PORT2.intValue()).addServer(host, PORT3.intValue()).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(10000)
-        // .setRetryInterval(2000)
-        .create("HAStartupAndFailoverDUnitTestPool");
+    PoolImpl p =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(host, PORT1.intValue())
+                .addServer(host, PORT2.intValue())
+                .addServer(host, PORT3.intValue())
+                .setSubscriptionEnabled(true)
+                .setSubscriptionRedundancy(-1)
+                .setReadTimeout(10000)
+                // .setRetryInterval(2000)
+                .create("HAStartupAndFailoverDUnitTestPool");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
@@ -545,17 +557,25 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     pool = p;
     conn = pool.acquireConnection();
     assertNotNull(conn);
-
   }
 
-  public static void createClientCacheWithLargeRetryInterval(String testName, String host) throws Exception {
+  public static void createClientCacheWithLargeRetryInterval(String testName, String host)
+      throws Exception {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new HAStartupAndFailoverDUnitTest().createCache(props);
-    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, PORT1.intValue()).addServer(host, PORT2.intValue()).addServer(host, PORT3.intValue()).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(10000)
-        // .setRetryInterval(2000000)
-        .create("HAStartupAndFailoverDUnitTestPool");
+    PoolImpl p =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(host, PORT1.intValue())
+                .addServer(host, PORT2.intValue())
+                .addServer(host, PORT3.intValue())
+                .setSubscriptionEnabled(true)
+                .setSubscriptionRedundancy(-1)
+                .setReadTimeout(10000)
+                // .setRetryInterval(2000000)
+                .create("HAStartupAndFailoverDUnitTestPool");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
@@ -567,10 +587,10 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     pool = p;
     conn = pool.acquireConnection();
     assertNotNull(conn);
-
   }
 
-  public static void createClientCacheWithLargeRetryIntervalAndWithoutCallbackConnection(String testName, String host) throws Exception {
+  public static void createClientCacheWithLargeRetryIntervalAndWithoutCallbackConnection(
+      String testName, String host) throws Exception {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
@@ -579,9 +599,15 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     CacheServerTestUtil.disableShufflingOfEndpoints();
     PoolImpl p;
     try {
-      p = (PoolImpl) PoolManager.createFactory().addServer(host, PORT1.intValue()).addServer(host, PORT2.intValue()).addServer(host, PORT3.intValue()).setPingInterval(500)
-          // .setRetryInterval(200000)
-          .create("HAStartupAndFailoverDUnitTestPool");
+      p =
+          (PoolImpl)
+              PoolManager.createFactory()
+                  .addServer(host, PORT1.intValue())
+                  .addServer(host, PORT2.intValue())
+                  .addServer(host, PORT3.intValue())
+                  .setPingInterval(500)
+                  // .setRetryInterval(200000)
+                  .create("HAStartupAndFailoverDUnitTestPool");
     } finally {
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
@@ -603,15 +629,24 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     assertTrue(conn.getEndpoint().getLocation().getPort() == PORT2);
   }
 
-  public static void createClientCacheWithIncorrectPrimary(String testName, String host) throws Exception {
+  public static void createClientCacheWithIncorrectPrimary(String testName, String host)
+      throws Exception {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new HAStartupAndFailoverDUnitTest().createCache(props);
     final int INCORRECT_PORT = 1;
-    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, INCORRECT_PORT).addServer(host, PORT2.intValue()).addServer(host, PORT3.intValue()).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(10000)
-        // .setRetryInterval(10000)
-        .create("HAStartupAndFailoverDUnitTestPool");
+    PoolImpl p =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(host, INCORRECT_PORT)
+                .addServer(host, PORT2.intValue())
+                .addServer(host, PORT3.intValue())
+                .setSubscriptionEnabled(true)
+                .setSubscriptionRedundancy(-1)
+                .setReadTimeout(10000)
+                // .setRetryInterval(10000)
+                .create("HAStartupAndFailoverDUnitTestPool");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
@@ -623,7 +658,6 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     pool = p;
     conn = pool.acquireConnection();
     assertNotNull(conn);
-
   }
 
   public static Integer createServerCache() throws Exception {
@@ -643,7 +677,6 @@ public class HAStartupAndFailoverDUnitTest extends JUnit4DistributedTestCase {
     server1.setMaximumTimeBetweenPings(180000);
     server1.start();
     return new Integer(server1.getPort());
-
   }
 
   @Override

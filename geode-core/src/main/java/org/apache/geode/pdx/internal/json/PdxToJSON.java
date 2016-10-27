@@ -40,7 +40,8 @@ import org.apache.geode.pdx.internal.EnumInfo.PdxInstanceEnumInfo;
  * This class converts a PdxInstance into a JSON document.
  */
 public class PdxToJSON {
-  public static boolean PDXTOJJSON_UNQUOTEFIELDNAMES = Boolean.getBoolean("pdxToJson.unQuoteFieldNames");
+  public static boolean PDXTOJJSON_UNQUOTEFIELDNAMES =
+      Boolean.getBoolean("pdxToJson.unQuoteFieldNames");
   private PdxInstance m_pdxInstance;
 
   public PdxToJSON(PdxInstance pdx) {
@@ -84,15 +85,15 @@ public class PdxToJSON {
     jg.enable(Feature.ESCAPE_NON_ASCII);
     jg.disable(Feature.AUTO_CLOSE_TARGET);
     jg.setPrettyPrinter(new DefaultPrettyPrinter());
-    if (PDXTOJJSON_UNQUOTEFIELDNAMES)
-      jg.disable(Feature.QUOTE_FIELD_NAMES);
+    if (PDXTOJJSON_UNQUOTEFIELDNAMES) jg.disable(Feature.QUOTE_FIELD_NAMES);
   }
 
   protected String convertPdxToJson(final PdxInstance pdxObj) {
     return (pdxObj != null ? JSONFormatter.toJSON(pdxObj) : null);
   }
 
-  private void writeValue(JsonGenerator jg, Object value, String pf) throws JsonGenerationException, IOException {
+  private void writeValue(JsonGenerator jg, Object value, String pf)
+      throws JsonGenerationException, IOException {
 
     if (value == null) {
       jg.writeNull();
@@ -140,12 +141,14 @@ public class PdxToJSON {
       } else if (value instanceof Map) {
         getJSONStringFromMap(jg, (Map) value, pf);
       } else {
-        throw new IllegalStateException("PdxInstance returns unknwon pdxfield " + pf + " for type " + value);
+        throw new IllegalStateException(
+            "PdxInstance returns unknwon pdxfield " + pf + " for type " + value);
       }
     }
   }
 
-  private void getJSONStringFromMap(JsonGenerator jg, Map map, String pf) throws JsonGenerationException, IOException {
+  private void getJSONStringFromMap(JsonGenerator jg, Map map, String pf)
+      throws JsonGenerationException, IOException {
 
     jg.writeStartObject();
 
@@ -160,7 +163,8 @@ public class PdxToJSON {
     jg.writeEndObject();
   }
 
-  private String getJSONString(JsonGenerator jg, PdxInstance pdxInstance) throws JsonGenerationException, IOException {
+  private String getJSONString(JsonGenerator jg, PdxInstance pdxInstance)
+      throws JsonGenerationException, IOException {
     jg.writeStartObject();
 
     List<String> pdxFields = pdxInstance.getFieldNames();
@@ -174,7 +178,8 @@ public class PdxToJSON {
     return null;
   }
 
-  private void getJSONStringFromArray(JsonGenerator jg, Object value, String pf) throws JsonGenerationException, IOException {
+  private void getJSONStringFromArray(JsonGenerator jg, Object value, String pf)
+      throws JsonGenerationException, IOException {
 
     if (value.getClass().getName().equals("[Z")) {
       JsonHelper.getJsonFromPrimitiveBoolArray(jg, (boolean[]) value, pf);
@@ -218,11 +223,13 @@ public class PdxToJSON {
       }
       jg.writeEndArray();
     } else {
-      throw new IllegalStateException("PdxInstance returns unknwon pdxfield " + pf + " for type " + value);
+      throw new IllegalStateException(
+          "PdxInstance returns unknwon pdxfield " + pf + " for type " + value);
     }
   }
 
-  private <T> void getJSONStringFromArray1(JsonGenerator jg, T[] array, String pf) throws JsonGenerationException, IOException {
+  private <T> void getJSONStringFromArray1(JsonGenerator jg, T[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
 
     for (T obj : array) {
@@ -231,7 +238,8 @@ public class PdxToJSON {
     jg.writeEndArray();
   }
 
-  private void getJSONStringFromCollection(JsonGenerator jg, Collection<?> coll, String pf) throws JsonGenerationException, IOException {
+  private void getJSONStringFromCollection(JsonGenerator jg, Collection<?> coll, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
 
     for (Object obj : coll) {

@@ -30,18 +30,16 @@ import org.apache.geode.internal.admin.StatAlertDefinition;
 
 /**
  * Notification to be sent to clients (e.g GFMon2.0 ). It incorporates
- * 
+ *
  * @see StatAlert raised and also Gemfire member id which raised the alert
- * 
- * 
  * @since GemFire 5.7
  */
-public class StatAlertNotification extends StatAlert implements Serializable, DataSerializable, DataSerializableFixedID {
+public class StatAlertNotification extends StatAlert
+    implements Serializable, DataSerializable, DataSerializableFixedID {
   private static final long serialVersionUID = -1634729103430107871L;
   private String memberId;
 
-  public StatAlertNotification() {
-  }
+  public StatAlertNotification() {}
 
   public StatAlertNotification(StatAlert statAlert, String memberId) {
     this.setDefinitionId(statAlert.getDefinitionId());
@@ -54,25 +52,17 @@ public class StatAlertNotification extends StatAlert implements Serializable, Da
     return DataSerializableFixedID.STAT_ALERT_NOTIFICATION;
   }
 
-  /**
-   * @return the memberId
-   */
+  /** @return the memberId */
   public String getMemberId() {
     return memberId;
   }
 
-  /**
-   * 
-   * @param id
-   *                of gemfire member which raised the alert
-   */
+  /** @param id of gemfire member which raised the alert */
   public void setMemberId(String id) {
     memberId = id;
   }
 
-  /**
-   * @return String representation of this object
-   */
+  /** @return String representation of this object */
   @Override
   public String toString() {
     StringBuffer buf = new StringBuffer();
@@ -85,16 +75,10 @@ public class StatAlertNotification extends StatAlert implements Serializable, Da
   }
 
   /**
-   * The notification is something like this
-   * "For Member ID: <ID>
-   * [
-   *  <StatName> = <Value>
-   *  .. 
-   * ]"
-   * @param defn
-   *                {@link StatAlertDefinition}
-   * @return String representation of this object based on
-   *         {@link StatAlertDefinition}
+   * The notification is something like this "For Member ID: <ID> [ <StatName> = <Value> .. ]"
+   *
+   * @param defn {@link StatAlertDefinition}
+   * @return String representation of this object based on {@link StatAlertDefinition}
    */
   public String toString(StatAlertDefinition defn) {
     StringBuffer buf = new StringBuffer();
@@ -119,7 +103,10 @@ public class StatAlertNotification extends StatAlert implements Serializable, Da
 
     int defId = getDefinitionId();
 
-    if (defId != -1 && defId == other.getDefinitionId() && memberId != null && memberId.equals(other.getMemberId())) {
+    if (defId != -1
+        && defId == other.getDefinitionId()
+        && memberId != null
+        && memberId.equals(other.getMemberId())) {
       return true;
     }
 

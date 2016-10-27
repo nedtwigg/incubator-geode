@@ -19,23 +19,20 @@ package org.apache.geode.cache.client;
 import org.apache.geode.GemFireException;
 
 /**
- * A generic exception indicating that a failure has happened while communicating
- * with a gemfire server. Subclasses of this exception provide more detail
- * on specific failures.
+ * A generic exception indicating that a failure has happened while communicating with a gemfire
+ * server. Subclasses of this exception provide more detail on specific failures.
+ *
  * @since GemFire 5.7
  */
 public class ServerConnectivityException extends GemFireException {
   private static final long serialVersionUID = -5205644901262051330L;
 
-  /**
-   * Create a new instance of ServerConnectivityException without a detail message or cause.
-   */
-  public ServerConnectivityException() {
-  }
+  /** Create a new instance of ServerConnectivityException without a detail message or cause. */
+  public ServerConnectivityException() {}
 
   /**
-   * 
    * Create a new instance of ServerConnectivityException with a detail message
+   *
    * @param message the detail message
    */
   public ServerConnectivityException(String message) {
@@ -44,6 +41,7 @@ public class ServerConnectivityException extends GemFireException {
 
   /**
    * Create a new instance of ServerConnectivityException with a detail message and cause
+   *
    * @param message the detail message
    * @param cause the cause
    */
@@ -53,10 +51,10 @@ public class ServerConnectivityException extends GemFireException {
 
   /**
    * Create a new instance of ServerConnectivityException with a cause
+   *
    * @param cause the cause
    */
   public ServerConnectivityException(Throwable cause) {
     super(cause);
   }
-
 }

@@ -21,11 +21,9 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
 /**
- * An abstract superclass of implementation of GemFire cache callbacks
- * that are used for testing.
+ * An abstract superclass of implementation of GemFire cache callbacks that are used for testing.
  *
  * @see #wasInvoked
- *
  * @since GemFire 3.0
  */
 public abstract class TestCacheCallback implements CacheCallback {
@@ -36,12 +34,11 @@ public abstract class TestCacheCallback implements CacheCallback {
   /** Was a callback event method invoked? */
   volatile boolean invoked = false;
 
-  volatile protected Throwable callbackError = null;
+  protected volatile Throwable callbackError = null;
 
   /**
-   * Returns whether or not one of this <code>CacheListener</code>
-   * methods was invoked.  Before returning, the <code>invoked</code>
-   * flag is cleared.
+   * Returns whether or not one of this <code>CacheListener</code> methods was invoked. Before
+   * returning, the <code>invoked</code> flag is cleared.
    */
   public boolean wasInvoked() {
     checkForError();
@@ -53,8 +50,8 @@ public abstract class TestCacheCallback implements CacheCallback {
   }
 
   /**
-   * Waits up to timeoutMs milliseconds for the listener to be invoked.
-   * Calls wasInvoked and returns its value
+   * Waits up to timeoutMs milliseconds for the listener to be invoked. Calls wasInvoked and returns
+   * its value
    */
   public boolean waitForInvocation(int timeoutMs) {
     return waitForInvocation(timeoutMs, 200);
@@ -62,15 +59,16 @@ public abstract class TestCacheCallback implements CacheCallback {
 
   public boolean waitForInvocation(int timeoutMs, long interval) {
     if (!this.invoked) {
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          return invoked;
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return invoked;
+            }
 
-        public String description() {
-          return "listener was never invoked";
-        }
-      };
+            public String description() {
+              return "listener was never invoked";
+            }
+          };
       Wait.waitForCriterion(ev, timeoutMs, interval, true);
     }
     return wasInvoked();
@@ -86,13 +84,8 @@ public abstract class TestCacheCallback implements CacheCallback {
     close2();
   }
 
-  /**
-   * This method will do nothing.  Note that it will not throw an
-   * exception. 
-   */
-  public void close2() {
-
-  }
+  /** This method will do nothing. Note that it will not throw an exception. */
+  public void close2() {}
 
   private void checkForError() {
     if (this.callbackError != null) {

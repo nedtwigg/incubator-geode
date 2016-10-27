@@ -28,10 +28,7 @@ import org.junit.experimental.categories.Category;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Test that DistributionConfigImpl handles SSL options correctly.
- * 
- */
+/** Test that DistributionConfigImpl handles SSL options correctly. */
 @Category(IntegrationTest.class)
 public class SSLConfigIntegrationJUnitTest {
 

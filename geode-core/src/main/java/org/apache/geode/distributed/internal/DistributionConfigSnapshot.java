@@ -22,15 +22,15 @@ import java.util.HashSet;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * Provides an implementation of the {@link DistributionConfig} interface
- * for a snapshot of running application's configuration. The snapshot can be taken,
- * given to others, modified, and then applied to a currently running application.
- * <p> Settors will fail if called on attributes that can not be modified
- * when a system is running. 
- * <p> Instances should be obtained by calling
- * {@link RuntimeDistributionConfigImpl#takeSnapshot}.
- * <p/>
- * Removed implementations of hashCode() and equals() that were throwing
+ * Provides an implementation of the {@link DistributionConfig} interface for a snapshot of running
+ * application's configuration. The snapshot can be taken, given to others, modified, and then
+ * applied to a currently running application.
+ *
+ * <p>Settors will fail if called on attributes that can not be modified when a system is running.
+ *
+ * <p>Instances should be obtained by calling {@link RuntimeDistributionConfigImpl#takeSnapshot}.
+ *
+ * <p>Removed implementations of hashCode() and equals() that were throwing
  * UnsupportedOperationException. See bug #50939 if you need to override those.
  */
 public final class DistributionConfigSnapshot extends DistributionConfigImpl {
@@ -40,6 +40,7 @@ public final class DistributionConfigSnapshot extends DistributionConfigImpl {
 
   /**
    * Constructs an internal system config given an existing one.
+   *
    * @param dc an existing system configuration.
    */
   public DistributionConfigSnapshot(DistributionConfig dc) {
@@ -55,7 +56,9 @@ public final class DistributionConfigSnapshot extends DistributionConfigImpl {
 
   @Override
   protected String _getUnmodifiableMsg(String attName) {
-    return LocalizedStrings.DistributionConfigSnapshot_THE_0_CONFIGURATION_ATTRIBUTE_CAN_NOT_BE_MODIFIED_WHILE_THE_SYSTEM_IS_RUNNING.toLocalizedString(attName);
+    return LocalizedStrings
+        .DistributionConfigSnapshot_THE_0_CONFIGURATION_ATTRIBUTE_CAN_NOT_BE_MODIFIED_WHILE_THE_SYSTEM_IS_RUNNING
+        .toLocalizedString(attName);
   }
 
   @Override

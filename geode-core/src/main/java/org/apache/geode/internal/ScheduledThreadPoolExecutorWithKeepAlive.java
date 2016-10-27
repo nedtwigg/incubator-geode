@@ -32,18 +32,17 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A ScheduledThreadPoolExecutor which allows threads to time out after the keep
- * alive time. With the normal ScheduledThreadPoolExecutor, there is no way to
- * configure it such that it only add threads as needed.
- * 
- * This executor is not very useful if you only want to have 1 thread. Use the
- * ScheduledThreadPoolExecutor in that case. This class with throw an exception
- * if you try to configure it with one thread.
- * 
- * 
+ * A ScheduledThreadPoolExecutor which allows threads to time out after the keep alive time. With
+ * the normal ScheduledThreadPoolExecutor, there is no way to configure it such that it only add
+ * threads as needed.
+ *
+ * <p>This executor is not very useful if you only want to have 1 thread. Use the
+ * ScheduledThreadPoolExecutor in that case. This class with throw an exception if you try to
+ * configure it with one thread.
  */
 @SuppressWarnings("synthetic-access")
-public class ScheduledThreadPoolExecutorWithKeepAlive extends ThreadPoolExecutor implements ScheduledExecutorService {
+public class ScheduledThreadPoolExecutorWithKeepAlive extends ThreadPoolExecutor
+    implements ScheduledExecutorService {
 
   private final ScheduledThreadPoolExecutor timer;
 
@@ -51,17 +50,25 @@ public class ScheduledThreadPoolExecutorWithKeepAlive extends ThreadPoolExecutor
    * @param corePoolSize
    * @param threadFactory
    */
-  public ScheduledThreadPoolExecutorWithKeepAlive(int corePoolSize, long keepAlive, TimeUnit timeUnit, ThreadFactory threadFactory) {
-    super(0, corePoolSize - 1, keepAlive, timeUnit, new SynchronousQueue(), threadFactory, new BlockCallerPolicy());
-    timer = new ScheduledThreadPoolExecutor(1, threadFactory) {
+  public ScheduledThreadPoolExecutorWithKeepAlive(
+      int corePoolSize, long keepAlive, TimeUnit timeUnit, ThreadFactory threadFactory) {
+    super(
+        0,
+        corePoolSize - 1,
+        keepAlive,
+        timeUnit,
+        new SynchronousQueue(),
+        threadFactory,
+        new BlockCallerPolicy());
+    timer =
+        new ScheduledThreadPoolExecutor(1, threadFactory) {
 
-      @Override
-      protected void terminated() {
-        super.terminated();
-        ScheduledThreadPoolExecutorWithKeepAlive.super.shutdown();
-      }
-
-    };
+          @Override
+          protected void terminated() {
+            super.terminated();
+            ScheduledThreadPoolExecutorWithKeepAlive.super.shutdown();
+          }
+        };
   }
 
   @Override
@@ -102,16 +109,20 @@ public class ScheduledThreadPoolExecutorWithKeepAlive extends ThreadPoolExecutor
     return future;
   }
 
-  public ScheduledFuture scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
+  public ScheduledFuture scheduleAtFixedRate(
+      Runnable command, long initialDelay, long period, TimeUnit unit) {
     DelegatingScheduledFuture future = new DelegatingScheduledFuture(command, null, true);
-    ScheduledFuture timerFuture = timer.scheduleAtFixedRate(new HandOffTask(future), initialDelay, period, unit);
+    ScheduledFuture timerFuture =
+        timer.scheduleAtFixedRate(new HandOffTask(future), initialDelay, period, unit);
     future.setDelegate(timerFuture);
     return future;
   }
 
-  public ScheduledFuture scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
+  public ScheduledFuture scheduleWithFixedDelay(
+      Runnable command, long initialDelay, long delay, TimeUnit unit) {
     DelegatingScheduledFuture future = new DelegatingScheduledFuture(command, null, true);
-    ScheduledFuture timerFuture = timer.scheduleWithFixedDelay(new HandOffTask(future), initialDelay, delay, unit);
+    ScheduledFuture timerFuture =
+        timer.scheduleWithFixedDelay(new HandOffTask(future), initialDelay, delay, unit);
     future.setDelegate(timerFuture);
     return future;
   }
@@ -124,15 +135,13 @@ public class ScheduledThreadPoolExecutorWithKeepAlive extends ThreadPoolExecutor
   }
 
   /**
-   * Shutdown the executor immediately, returning a list of tasks that haven't
-   * been run. Like ScheduledThreadPoolExecutor, this returns a list of
-   * RunnableScheduledFuture objects, instead of the actual tasks submitted.
-   * However, these Future objects are even less useful than the ones returned
-   * by ScheduledThreadPoolExecutor. In particular, they don't match the future
-   * returned by the {{@link #submit(Runnable)} method, and the run method won't
-   * do anything useful. This list should only be used as a count of the number
-   * of tasks that didn't execute.
-   * 
+   * Shutdown the executor immediately, returning a list of tasks that haven't been run. Like
+   * ScheduledThreadPoolExecutor, this returns a list of RunnableScheduledFuture objects, instead of
+   * the actual tasks submitted. However, these Future objects are even less useful than the ones
+   * returned by ScheduledThreadPoolExecutor. In particular, they don't match the future returned by
+   * the {{@link #submit(Runnable)} method, and the run method won't do anything useful. This list
+   * should only be used as a count of the number of tasks that didn't execute.
+   *
    * @see ScheduledThreadPoolExecutor#shutdownNow()
    */
   @Override
@@ -197,10 +206,8 @@ public class ScheduledThreadPoolExecutorWithKeepAlive extends ThreadPoolExecutor
   }
 
   /**
-   * A Runnable which we put in the timer which
-   * simply hands off the contain task for execution
-   * in the thread pool when the timer fires.
-   *
+   * A Runnable which we put in the timer which simply hands off the contain task for execution in
+   * the thread pool when the timer fires.
    */
   private class HandOffTask implements Runnable {
     private final Runnable task;
@@ -219,12 +226,12 @@ public class ScheduledThreadPoolExecutorWithKeepAlive extends ThreadPoolExecutor
   }
 
   /**
-   * The future returned by the schedule* methods on this class. This future
-   * will not return a value until the task has actually executed in the thread pool, 
-   * but it allows us to cancel associated timer task. 
-   *
+   * The future returned by the schedule* methods on this class. This future will not return a value
+   * until the task has actually executed in the thread pool, but it allows us to cancel associated
+   * timer task.
    */
-  private static class DelegatingScheduledFuture<V> extends FutureTask<V> implements ScheduledFuture<V> {
+  private static class DelegatingScheduledFuture<V> extends FutureTask<V>
+      implements ScheduledFuture<V> {
 
     private ScheduledFuture<V> delegate;
     private final boolean periodic;
@@ -285,8 +292,9 @@ public class ScheduledThreadPoolExecutorWithKeepAlive extends ThreadPoolExecutor
     }
   }
 
-  /** A RejectedExecutionHandler which causes the caller to block until
-   * there is space in the queue for the task.
+  /**
+   * A RejectedExecutionHandler which causes the caller to block until there is space in the queue
+   * for the task.
    */
   protected static class BlockCallerPolicy implements RejectedExecutionHandler {
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {

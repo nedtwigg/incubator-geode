@@ -31,7 +31,8 @@ public class SetBitExecutor extends StringExecutor {
 
   private final String ERROR_VALUE = "The value is out of range, must be 0 or 1";
 
-  private final String ERROR_ILLEGAL_OFFSET = "The offset is out of range, must be greater than or equal to 0  and at most 4294967295 (512MB)";
+  private final String ERROR_ILLEGAL_OFFSET =
+      "The offset is out of range, must be greater than or equal to 0  and at most 4294967295 (512MB)";
 
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
@@ -67,7 +68,8 @@ public class SetBitExecutor extends StringExecutor {
     }
 
     if (offset < 0 || offset > 4294967295L) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_ILLEGAL_OFFSET));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_ILLEGAL_OFFSET));
       return;
     }
 
@@ -76,8 +78,7 @@ public class SetBitExecutor extends StringExecutor {
 
     if (wrapper == null) {
       byte[] bytes = new byte[byteIndex + 1];
-      if (value == 1)
-        bytes[byteIndex] = (byte) (0x80 >> offset);
+      if (value == 1) bytes[byteIndex] = (byte) (0x80 >> offset);
       r.put(key, new ByteArrayWrapper(bytes));
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), 0));
     } else {
@@ -85,22 +86,25 @@ public class SetBitExecutor extends StringExecutor {
       byte[] bytes = wrapper.toBytes();
       if (byteIndex < bytes.length)
         returnBit = (bytes[byteIndex] & (0x80 >> offset)) >> (7 - offset);
-      else
-        returnBit = 0;
+      else returnBit = 0;
 
       if (byteIndex < bytes.length) {
-        bytes[byteIndex] = value == 1 ? (byte) (bytes[byteIndex] | (0x80 >> offset)) : (byte) (bytes[byteIndex] & ~(0x80 >> offset));
+        bytes[byteIndex] =
+            value == 1
+                ? (byte) (bytes[byteIndex] | (0x80 >> offset))
+                : (byte) (bytes[byteIndex] & ~(0x80 >> offset));
         r.put(key, new ByteArrayWrapper(bytes));
       } else {
         byte[] newBytes = new byte[byteIndex + 1];
         System.arraycopy(bytes, 0, newBytes, 0, bytes.length);
-        newBytes[byteIndex] = value == 1 ? (byte) (newBytes[byteIndex] | (0x80 >> offset)) : (byte) (newBytes[byteIndex] & ~(0x80 >> offset));
+        newBytes[byteIndex] =
+            value == 1
+                ? (byte) (newBytes[byteIndex] | (0x80 >> offset))
+                : (byte) (newBytes[byteIndex] & ~(0x80 >> offset));
         r.put(key, new ByteArrayWrapper(newBytes));
       }
 
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), returnBit));
     }
-
   }
-
 }

@@ -23,11 +23,7 @@ import org.apache.geode.internal.memcached.RequestReader;
 import org.apache.geode.memcached.GemFireMemcachedServer;
 import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 
-/**
- * Sends current version of gemcached server to the client
- * 
- *
- */
+/** Sends current version of gemcached server to the client */
 public class VersionCommand extends AbstractCommand {
 
   @Override
@@ -44,5 +40,4 @@ public class VersionCommand extends AbstractCommand {
     request.getRequest().position(HEADER_LENGTH);
     return response;
   }
-
 }

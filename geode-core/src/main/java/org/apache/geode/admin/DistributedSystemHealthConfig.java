@@ -17,58 +17,51 @@
 package org.apache.geode.admin;
 
 /**
- * Provides configuration information relating to the health of an
- * entire GemFire distributed system.
+ * Provides configuration information relating to the health of an entire GemFire distributed
+ * system.
  *
- * <P>
- *
- * If any of the following criteria is
- * true, then the distributed system is considered to be in
+ * <p>If any of the following criteria is true, then the distributed system is considered to be in
  * {@link GemFireHealth#OKAY_HEALTH OKAY_HEALTH}.
  *
  * <UL>
- *
  * </UL>
  *
- * If any of the following criteria is true, then the distributed
- * system is considered to be in {@link GemFireHealth#POOR_HEALTH
- * POOR_HEALTH}.
+ * If any of the following criteria is true, then the distributed system is considered to be in
+ * {@link GemFireHealth#POOR_HEALTH POOR_HEALTH}.
  *
  * <UL>
- *
- * <LI>Too many application members {@linkplain
- * #getMaxDepartedApplications unexpectedly leave} the distributed
- * system.</LI>
- *
- * <LI>Too many application members {@linkplain
- * #getMaxDepartedApplications unexpectedly leave} the distributed
- * system.</LI>
- *
+ *   <LI>Too many application members {@linkplain #getMaxDepartedApplications unexpectedly leave}
+ *       the distributed system.
+ *   <LI>Too many application members {@linkplain #getMaxDepartedApplications unexpectedly leave}
+ *       the distributed system.
  * </UL>
  *
- *
  * @since GemFire 3.5
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
- * */
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
+ */
 public interface DistributedSystemHealthConfig {
 
-  /** The default maximum number of application members that can
-   * unexceptedly leave a healthy the distributed system. */
+  /**
+   * The default maximum number of application members that can unexceptedly leave a healthy the
+   * distributed system.
+   */
   public static final long DEFAULT_MAX_DEPARTED_APPLICATIONS = 10;
 
   ///////////////////////  Instance Methods  ///////////////////////
 
   /**
-   * Returns the maximum number of application members that can
-   * unexceptedly leave a healthy the distributed system.
+   * Returns the maximum number of application members that can unexceptedly leave a healthy the
+   * distributed system.
    *
    * @see #DEFAULT_MAX_DEPARTED_APPLICATIONS
    */
   public long getMaxDepartedApplications();
 
   /**
-   * Sets the maximum number of application members that can
-   * unexceptedly leave a healthy the distributed system.
+   * Sets the maximum number of application members that can unexceptedly leave a healthy the
+   * distributed system.
    *
    * @see #getMaxDepartedApplications
    */

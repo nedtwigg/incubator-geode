@@ -37,12 +37,10 @@ import org.apache.geode.test.dunit.LogWriterUtils;
 import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
-/**
- * Tests the basic use cases for PR persistence.
- *
- */
+/** Tests the basic use cases for PR persistence. */
 @Category(DistributedTest.class)
-public class PersistentPartitionedRegionWithTransactionDUnitTest extends PersistentPartitionedRegionTestBase {
+public class PersistentPartitionedRegionWithTransactionDUnitTest
+    extends PersistentPartitionedRegionTestBase {
 
   private static final long MAX_WAIT = 0;
 
@@ -52,23 +50,25 @@ public class PersistentPartitionedRegionWithTransactionDUnitTest extends Persist
 
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = false;
-        System.setProperty(DiskStoreImpl.RECOVER_VALUES_SYNC_PROPERTY_NAME, "false");
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = false;
+            System.setProperty(DiskStoreImpl.RECOVER_VALUES_SYNC_PROPERTY_NAME, "false");
+          }
+        });
   }
 
   @Override
   protected final void postSetUpPersistentPartitionedRegionTestBase() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
 
-      public void run() {
-        TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = true;
-        System.setProperty(DiskStoreImpl.RECOVER_VALUES_SYNC_PROPERTY_NAME, "true");
-      }
-    });
+          public void run() {
+            TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = true;
+            System.setProperty(DiskStoreImpl.RECOVER_VALUES_SYNC_PROPERTY_NAME, "true");
+          }
+        });
   }
 
   @Test
@@ -113,77 +113,82 @@ public class PersistentPartitionedRegionWithTransactionDUnitTest extends Persist
     checkData(vm2, 0, numBuckets, "b");
   }
 
-  private void createDataWithRollback(VM vm, final int startKey, final int endKey, final String value) {
-    SerializableRunnable createData = new SerializableRunnable() {
+  private void createDataWithRollback(
+      VM vm, final int startKey, final int endKey, final String value) {
+    SerializableRunnable createData =
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
+          public void run() {
+            Cache cache = getCache();
 
-        CacheTransactionManager tx = cache.getCacheTransactionManager();
-        Region region = cache.getRegion(PR_REGION_NAME);
+            CacheTransactionManager tx = cache.getCacheTransactionManager();
+            Region region = cache.getRegion(PR_REGION_NAME);
 
-        for (int i = startKey; i < endKey; i++) {
-          tx.begin();
-          region.put(i, value);
-          region.destroy(i + 113, value);
-          region.invalidate(i + 113 * 2, value);
-          tx.rollback();
-        }
-      }
-    };
+            for (int i = startKey; i < endKey; i++) {
+              tx.begin();
+              region.put(i, value);
+              region.destroy(i + 113, value);
+              region.invalidate(i + 113 * 2, value);
+              tx.rollback();
+            }
+          }
+        };
     vm.invoke(createData);
-
   }
 
   @Override
-  protected void createData(VM vm, final int startKey, final int endKey, final String value, final String regionName) {
+  protected void createData(
+      VM vm, final int startKey, final int endKey, final String value, final String regionName) {
     LogWriterUtils.getLogWriter().info("creating runnable to create data for region " + regionName);
-    SerializableRunnable createData = new SerializableRunnable() {
+    SerializableRunnable createData =
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        LogWriterUtils.getLogWriter().info("getting region " + regionName);
-        Region region = cache.getRegion(regionName);
+          public void run() {
+            Cache cache = getCache();
+            LogWriterUtils.getLogWriter().info("getting region " + regionName);
+            Region region = cache.getRegion(regionName);
 
-        for (int i = startKey; i < endKey; i++) {
-          CacheTransactionManager tx = cache.getCacheTransactionManager();
-          tx.begin();
-          region.put(i, value);
-          region.put(i + 113, value);
-          region.put(i + 113 * 2, value);
-          tx.commit();
-        }
-        { // add a destroy to make sure bug 43063 is fixed
-          CacheTransactionManager tx = cache.getCacheTransactionManager();
-          tx.begin();
-          region.put(endKey + 113 * 3, value);
-          tx.commit();
-          tx.begin();
-          region.remove(endKey + 113 * 3);
-          tx.commit();
-        }
-      }
-    };
+            for (int i = startKey; i < endKey; i++) {
+              CacheTransactionManager tx = cache.getCacheTransactionManager();
+              tx.begin();
+              region.put(i, value);
+              region.put(i + 113, value);
+              region.put(i + 113 * 2, value);
+              tx.commit();
+            }
+            { // add a destroy to make sure bug 43063 is fixed
+              CacheTransactionManager tx = cache.getCacheTransactionManager();
+              tx.begin();
+              region.put(endKey + 113 * 3, value);
+              tx.commit();
+              tx.begin();
+              region.remove(endKey + 113 * 3);
+              tx.commit();
+            }
+          }
+        };
     vm.invoke(createData);
   }
 
   @Override
-  protected void checkData(VM vm0, final int startKey, final int endKey, final String value, final String regionName) {
-    SerializableRunnable checkData = new SerializableRunnable() {
+  protected void checkData(
+      VM vm0, final int startKey, final int endKey, final String value, final String regionName) {
+    SerializableRunnable checkData =
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        LogWriterUtils.getLogWriter().info("checking data in " + regionName);
-        Region region = cache.getRegion(regionName);
+          public void run() {
+            Cache cache = getCache();
+            LogWriterUtils.getLogWriter().info("checking data in " + regionName);
+            Region region = cache.getRegion(regionName);
 
-        for (int i = startKey; i < endKey; i++) {
-          assertEquals(value, region.get(i));
-          assertEquals(value, region.get(i + 113));
-          assertEquals(value, region.get(i + 113 * 2));
-        }
-        assertEquals(null, region.get(endKey + 113 * 3));
-      }
-    };
+            for (int i = startKey; i < endKey; i++) {
+              assertEquals(value, region.get(i));
+              assertEquals(value, region.get(i + 113));
+              assertEquals(value, region.get(i + 113 * 2));
+            }
+            assertEquals(null, region.get(endKey + 113 * 3));
+          }
+        };
 
     vm0.invoke(checkData);
   }

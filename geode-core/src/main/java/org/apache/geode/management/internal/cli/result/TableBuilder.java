@@ -17,46 +17,37 @@
 package org.apache.geode.management.internal.cli.result;
 
 /**
- * Helper class to build rows of columnized strings & build a table from those 
- * rows.
- * 
- * Sample usage:
- * 
- * <code>
+ * Helper class to build rows of columnized strings & build a table from those rows.
+ *
+ * <p>Sample usage: <code>
  *     public final Table createTable() {
  *       Table resultTable = TableBuilder.newTable();
  *       resultTable.setColumnSeparator(" | ");
- *            
+ *
  *       resultTable.newBlankRow();
  *       resultTable.newRow().newLeftCol("Displaying all fields for member: " + memberName);
  *       resultTable.newBlankRow();
  *       RowGroup rowGroup = resultTable.newRowGroup();
  *       rowGroup.newRow().newCenterCol("FIELD1").newCenterCol("FIELD2");
- *       rowGroup.newRowSeparator('-');    
+ *       rowGroup.newRowSeparator('-');
  *       for (int i = 0; i < counter; i++) {
  *         rowGroup.newRow().newLeftCol(myFirstField[i]).newLeftCol(mySecondField[i]);
- *       }        
+ *       }
  *       resultTable.newBlankRow();
- *     
+ *
  *       return resultTable;
  *     }
- * </code>
- * 
- * Will result in this:
- * 
- * <literal>
- *     
- *     Displaying all fields for member: Member1
- *     
- *         FIELD1     |     FIELD2
- *     -------------- | ---------------
- *     My First Field | My Second Field
- *     Another Fld1   | Another Fld2  
- *     Last Fld1      | Last Fld2
- *     
- * </literal>
- * 
- * 
+ * </code> Will result in this:
+ *
+ * <p><literal>
+ *
+ * <p>Displaying all fields for member: Member1
+ *
+ * <p>FIELD1 | FIELD2 -------------- | --------------- My First Field | My Second Field Another Fld1
+ * | Another Fld2 Last Fld1 | Last Fld2
+ *
+ * <p></literal>
+ *
  * @since GemFire 7.0
  */
 import java.util.ArrayList;
@@ -111,9 +102,7 @@ public class TableBuilder {
       return rowGroups.get(rowGroups.size() - 1);
     }
 
-    /**
-     * Computes total Max Row Length across table - for all row groups.
-     */
+    /** Computes total Max Row Length across table - for all row groups. */
     private int getMaxLength() {
       int rowGroupMaxTotalLength = 0;
       for (RowGroup rowGroup : this.rowGroups) {
@@ -168,10 +157,9 @@ public class TableBuilder {
   }
 
   /**
-   * A group of rows. Widths for all columns within a group will be the same and
-   * when built will automatically be set to the length of the longest value in
-   * the column.
-   * 
+   * A group of rows. Widths for all columns within a group will be the same and when built will
+   * automatically be set to the length of the longest value in the column.
+   *
    * @since GemFire 7.0
    */
   public static class RowGroup {
@@ -232,7 +220,9 @@ public class TableBuilder {
       }
 
       if (isTabularResult) {
-        localColSizes = TableBuilderHelper.recalculateColSizesForScreen(TableBuilderHelper.getScreenWidth(), localColSizes, getColumnSeparator());
+        localColSizes =
+            TableBuilderHelper.recalculateColSizesForScreen(
+                TableBuilderHelper.getScreenWidth(), localColSizes, getColumnSeparator());
       }
 
       return localColSizes;
@@ -292,7 +282,8 @@ public class TableBuilder {
       this.rowSeparator = null;
     }
 
-    private Row(final RowGroup rowGroup, final Character rowSeparator, final boolean isTablewideSeparator) {
+    private Row(
+        final RowGroup rowGroup, final Character rowSeparator, final boolean isTablewideSeparator) {
       this.rowGroup = rowGroup;
       this.rowSeparator = rowSeparator;
       this.isTablewideSeparator = isTablewideSeparator;
@@ -325,8 +316,7 @@ public class TableBuilder {
     }
 
     private int getMaxColLength(final int colNum) {
-      if (colNum >= this.columns.size())
-        return 0;
+      if (colNum >= this.columns.size()) return 0;
 
       return this.columns.get(colNum).getLength();
     }
@@ -370,7 +360,8 @@ public class TableBuilder {
         // saj hook
         for (int i = 0; i < this.columns.size(); i++) {
           boolean lastColumn = !(i < (this.columns.size() - 1));
-          stringBuffer.append(this.columns.get(i).buildColumn(this.rowGroup.getColSize(i), lastColumn));
+          stringBuffer.append(
+              this.columns.get(i).buildColumn(this.rowGroup.getColSize(i), lastColumn));
           if (!lastColumn) {
             stringBuffer.append(getColumnSeparator());
           }
@@ -387,7 +378,9 @@ public class TableBuilder {
   }
 
   private static enum Align {
-    LEFT, RIGHT, CENTER;
+    LEFT,
+    RIGHT,
+    CENTER;
   };
 
   private static class Column {
@@ -417,44 +410,41 @@ public class TableBuilder {
       if (this.stringValue.length() > colWidth) {
         StringBuffer stringBuffer = new StringBuffer();
         int endIndex = colWidth - 2;
-        if (endIndex < 0)
-          return "";
+        if (endIndex < 0) return "";
         return stringBuffer.append(stringValue.substring(0, endIndex)).append("..").toString();
       }
 
       int numSpaces = colWidth - this.stringValue.length();
-      if (trimIt)
-        numSpaces = 0;
+      if (trimIt) numSpaces = 0;
 
       StringBuffer stringBuffer = new StringBuffer();
 
       switch (align) {
-      case LEFT:
-        stringBuffer.append(stringValue);
-        for (int i = 0; i < numSpaces; i++) {
-          stringBuffer.append(" ");
-        }
-        break;
-      case RIGHT:
-        for (int i = 0; i < numSpaces; i++) {
-          stringBuffer.append(" ");
-        }
-        stringBuffer.append(stringValue);
-        break;
-      case CENTER:
-        int i = 0;
-        for (; i < numSpaces / 2; i++) {
-          stringBuffer.append(" ");
-        }
-        stringBuffer.append(stringValue);
-        for (; i < numSpaces; i++) {
-          stringBuffer.append(" ");
-        }
-        break;
+        case LEFT:
+          stringBuffer.append(stringValue);
+          for (int i = 0; i < numSpaces; i++) {
+            stringBuffer.append(" ");
+          }
+          break;
+        case RIGHT:
+          for (int i = 0; i < numSpaces; i++) {
+            stringBuffer.append(" ");
+          }
+          stringBuffer.append(stringValue);
+          break;
+        case CENTER:
+          int i = 0;
+          for (; i < numSpaces / 2; i++) {
+            stringBuffer.append(" ");
+          }
+          stringBuffer.append(stringValue);
+          for (; i < numSpaces; i++) {
+            stringBuffer.append(" ");
+          }
+          break;
       }
 
       return stringBuffer.toString();
-
     }
 
     private String buildColumn(int colWidth) {

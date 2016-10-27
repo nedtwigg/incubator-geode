@@ -26,15 +26,12 @@ import java.io.*;
 import java.util.*;
 
 /**
- * This class holds the metadata for a single object field in a value
- * stored in the cache.  They are built during construction of {@link
- * ObjectDetailsResponse} instances and returned to the console. This
- * class does not implement {@link
- * org.apache.geode.DataSerializable} since that
- * mechanism gets confused by the often cyclical refrences between
- * instances of this class.
+ * This class holds the metadata for a single object field in a value stored in the cache. They are
+ * built during construction of {@link ObjectDetailsResponse} instances and returned to the console.
+ * This class does not implement {@link org.apache.geode.DataSerializable} since that mechanism gets
+ * confused by the often cyclical refrences between instances of this class.
  */
-public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, DataSerializable */ {
+public class EntryValueNodeImpl implements EntryValueNode, Externalizable /*, DataSerializable */ {
 
   private Object primitiveVal;
   private String type;
@@ -56,7 +53,8 @@ public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, Dat
     return retVal;
   }
 
-  private static EntryValueNodeImpl createFromPrimitive(String fieldName, String type, Object primitiveWrapper) {
+  private static EntryValueNodeImpl createFromPrimitive(
+      String fieldName, String type, Object primitiveWrapper) {
     EntryValueNodeImpl node = new EntryValueNodeImpl();
     node.name = fieldName;
     node.type = type;
@@ -78,7 +76,8 @@ public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, Dat
     return node;
   }
 
-  private static EntryValueNodeImpl createFromArray(String fieldName, Object arrayObj, Class arrayClass) {
+  private static EntryValueNodeImpl createFromArray(
+      String fieldName, Object arrayObj, Class arrayClass) {
     EntryValueNodeImpl node = new EntryValueNodeImpl();
     Map map = (Map) recursionSet.get();
     map.put(arrayObj, node);
@@ -89,7 +88,7 @@ public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, Dat
     node.type = "array of " + elType;
     node.primitiveVal = arrayObj.toString();
     node.primitive = false;
-    //    if (arrayObj != null) (cannot be null) 
+    //    if (arrayObj != null) (cannot be null)
     {
       EntryValueNodeImpl[] children;
       if (arrayObj instanceof Object[]) {
@@ -164,7 +163,8 @@ public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, Dat
     return node;
   }
 
-  private static EntryValueNodeImpl createFromObject(String fieldName, Object obj, boolean logicalInspection) {
+  private static EntryValueNodeImpl createFromObject(
+      String fieldName, Object obj, boolean logicalInspection) {
     Map map = (Map) recursionSet.get();
     EntryValueNodeImpl stored = (EntryValueNodeImpl) map.get(obj);
     if (stored != null) {
@@ -210,14 +210,19 @@ public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, Dat
                 Object key = entry.getKey();
                 Object value = entry.getValue();
                 if (key != null) {
-                  elements.add(createFromObject("key->" + constructKeyDisplay(key), key, logicalInspection));
+                  elements.add(
+                      createFromObject("key->" + constructKeyDisplay(key), key, logicalInspection));
                 } else {
-                  elements.add(createFromNullField("key->" + constructKeyDisplay(key), Object.class));
+                  elements.add(
+                      createFromNullField("key->" + constructKeyDisplay(key), Object.class));
                 }
                 if (value != null) {
-                  elements.add(createFromObject("value->" + constructKeyDisplay(value), value, logicalInspection));
+                  elements.add(
+                      createFromObject(
+                          "value->" + constructKeyDisplay(value), value, logicalInspection));
                 } else {
-                  elements.add(createFromNullField("value->" + constructKeyDisplay(value), Object.class));
+                  elements.add(
+                      createFromNullField("value->" + constructKeyDisplay(value), Object.class));
                 }
               }
             }
@@ -227,7 +232,8 @@ public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, Dat
             while (it.hasNext()) {
               //               if (cancelled) { return; }
               Object element = it.next();
-              elements.add(createFromObject(constructKeyDisplay(element), element, logicalInspection));
+              elements.add(
+                  createFromObject(constructKeyDisplay(element), element, logicalInspection));
             }
           } else if (obj instanceof Collection) {
             Collection coll = (Collection) obj;
@@ -235,7 +241,8 @@ public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, Dat
             while (it.hasNext()) {
               //               if (cancelled) { return; }
               Object element = it.next();
-              elements.add(createFromObject(constructKeyDisplay(element), element, logicalInspection));
+              elements.add(
+                  createFromObject(constructKeyDisplay(element), element, logicalInspection));
             }
           }
         } catch (ConcurrentModificationException ex) {
@@ -256,7 +263,11 @@ public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, Dat
       try {
         AccessibleObject.setAccessible(fields, true);
       } catch (SecurityException se) {
-        throw new InternalGemFireException(LocalizedStrings.EntryValueNodeImpl_UNABLE_TO_SET_ACCESSIBILITY_OF_FIELD_OBJECTS_DURING_CACHE_VALUE_DISPLAY_CONSTRUCTION.toLocalizedString(), se);
+        throw new InternalGemFireException(
+            LocalizedStrings
+                .EntryValueNodeImpl_UNABLE_TO_SET_ACCESSIBILITY_OF_FIELD_OBJECTS_DURING_CACHE_VALUE_DISPLAY_CONSTRUCTION
+                .toLocalizedString(),
+            se);
       }
       List fieldList = new ArrayList();
       for (int i = 0; i < fields.length; i++) {
@@ -268,7 +279,10 @@ public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, Dat
         try {
           fieldVal = fields[i].get(obj);
         } catch (Exception e) {
-          throw new InternalGemFireException(LocalizedStrings.EntryValueNodeImpl_UNABLE_TO_BUILD_CACHE_VALUE_DISPLAY.toLocalizedString(), e);
+          throw new InternalGemFireException(
+              LocalizedStrings.EntryValueNodeImpl_UNABLE_TO_BUILD_CACHE_VALUE_DISPLAY
+                  .toLocalizedString(),
+              e);
         }
         String name = fields[i].getName();
         if (fieldVal == null) {
@@ -286,8 +300,10 @@ public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, Dat
   }
 
   private static boolean isWrapperOrString(Object test) {
-    return (test instanceof Number || test instanceof String || test instanceof Boolean || test instanceof Character);
-
+    return (test instanceof Number
+        || test instanceof String
+        || test instanceof Boolean
+        || test instanceof Character);
   }
 
   private static boolean hasLogicalView(Object obj) {
@@ -319,16 +335,11 @@ public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, Dat
   }
 
   public static String constructKeyDisplay(Object toDisplay) {
-    if (toDisplay == null)
-      return "null";
-    else if (toDisplay instanceof String)
-      return (String) toDisplay;
-    else if (toDisplay instanceof Number)
-      return toDisplay.toString();
-    else if (toDisplay instanceof Character)
-      return toDisplay.toString();
-    else if (toDisplay instanceof Boolean)
-      return toDisplay.toString();
+    if (toDisplay == null) return "null";
+    else if (toDisplay instanceof String) return (String) toDisplay;
+    else if (toDisplay instanceof Number) return toDisplay.toString();
+    else if (toDisplay instanceof Character) return toDisplay.toString();
+    else if (toDisplay instanceof Boolean) return toDisplay.toString();
     else {
       String className = toDisplay.getClass().getName();
       className = className.substring(className.lastIndexOf(".") + 1);
@@ -369,7 +380,7 @@ public class EntryValueNodeImpl implements EntryValueNode, Externalizable/*, Dat
   //     this.primitive = Helper.readObject(in);
   //     this.type = Helper.readString(in);
   //     this.name = Helper.readString(in);
-  //     this.fields = (EntryValueNodeImpl[])Helper.readObject(in);                               
+  //     this.fields = (EntryValueNodeImpl[])Helper.readObject(in);
   //   }
 
 }

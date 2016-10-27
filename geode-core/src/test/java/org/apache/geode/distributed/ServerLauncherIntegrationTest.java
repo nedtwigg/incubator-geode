@@ -41,7 +41,8 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * Integration tests for ServerLauncher class. These tests may require file system and/or network I/O.
+ * Integration tests for ServerLauncher class. These tests may require file system and/or network
+ * I/O.
  */
 @Category(IntegrationTest.class)
 public class ServerLauncherIntegrationTest {
@@ -49,11 +50,9 @@ public class ServerLauncherIntegrationTest {
   @Rule
   public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
-  @Rule
-  public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public final TestName testName = new TestName();
+  @Rule public final TestName testName = new TestName();
 
   @Test
   public void testBuildWithManyArguments() throws Exception {
@@ -61,7 +60,24 @@ public class ServerLauncherIntegrationTest {
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
     // when
-    ServerLauncher launcher = new Builder().setCommand(Command.STOP).setAssignBuckets(true).setForce(true).setMemberName("serverOne").setRebalance(true).setServerBindAddress(InetAddress.getLocalHost().getHostAddress()).setServerPort(11235).setWorkingDirectory(rootFolder).setCriticalHeapPercentage(90.0f).setEvictionHeapPercentage(75.0f).setMaxConnections(100).setMaxMessageCount(512).setMaxThreads(8).setMessageTimeToLive(120000).setSocketBufferSize(32768).build();
+    ServerLauncher launcher =
+        new Builder()
+            .setCommand(Command.STOP)
+            .setAssignBuckets(true)
+            .setForce(true)
+            .setMemberName("serverOne")
+            .setRebalance(true)
+            .setServerBindAddress(InetAddress.getLocalHost().getHostAddress())
+            .setServerPort(11235)
+            .setWorkingDirectory(rootFolder)
+            .setCriticalHeapPercentage(90.0f)
+            .setEvictionHeapPercentage(75.0f)
+            .setMaxConnections(100)
+            .setMaxMessageCount(512)
+            .setMaxThreads(8)
+            .setMessageTimeToLive(120000)
+            .setSocketBufferSize(32768)
+            .build();
 
     // then
     assertThat(launcher).isNotNull();
@@ -93,7 +109,25 @@ public class ServerLauncherIntegrationTest {
     Builder builder = new Builder();
 
     // when: parsing many arguments
-    builder.parseArguments("start", "serverOne", "--assign-buckets", "--disable-default-server", "--debug", "--force", "--rebalance", "--redirect-output", "--dir", rootFolder, "--pid", "1234", "--server-bind-address", InetAddress.getLocalHost().getHostAddress(), "--server-port", "11235", "--hostname-for-clients", "192.168.99.100");
+    builder.parseArguments(
+        "start",
+        "serverOne",
+        "--assign-buckets",
+        "--disable-default-server",
+        "--debug",
+        "--force",
+        "--rebalance",
+        "--redirect-output",
+        "--dir",
+        rootFolder,
+        "--pid",
+        "1234",
+        "--server-bind-address",
+        InetAddress.getLocalHost().getHostAddress(),
+        "--server-port",
+        "11235",
+        "--hostname-for-clients",
+        "192.168.99.100");
 
     // then: the getters should return properly parsed values
     assertThat(builder.getCommand()).isEqualTo(Command.START);
@@ -119,7 +153,20 @@ public class ServerLauncherIntegrationTest {
     Builder builder = new Builder();
 
     // when: parsing many arguments
-    builder.parseArguments("start", "serverOne", "--assign-buckets", "--disable-default-server", "--debug", "--force", "--rebalance", "--redirect-output", "--dir=" + rootFolder, "--pid=1234", "--server-bind-address=" + InetAddress.getLocalHost().getHostAddress(), "--server-port=11235", "--hostname-for-clients=192.168.99.100");
+    builder.parseArguments(
+        "start",
+        "serverOne",
+        "--assign-buckets",
+        "--disable-default-server",
+        "--debug",
+        "--force",
+        "--rebalance",
+        "--redirect-output",
+        "--dir=" + rootFolder,
+        "--pid=1234",
+        "--server-bind-address=" + InetAddress.getLocalHost().getHostAddress(),
+        "--server-port=11235",
+        "--hostname-for-clients=192.168.99.100");
 
     // then: the getters should return properly parsed values
     assertThat(builder.getCommand()).isEqualTo(Command.START);
@@ -143,7 +190,8 @@ public class ServerLauncherIntegrationTest {
     // given: gemfire.properties with a name
     Properties gemfireProperties = new Properties();
     gemfireProperties.setProperty(NAME, "server123");
-    useGemFirePropertiesFileInTemporaryFolder(DistributionConfig.GEMFIRE_PREFIX + "properties", gemfireProperties);
+    useGemFirePropertiesFileInTemporaryFolder(
+        DistributionConfig.GEMFIRE_PREFIX + "properties", gemfireProperties);
 
     // when: starting with null MemberName
     ServerLauncher launcher = new Builder().setCommand(Command.START).setMemberName(null).build();
@@ -157,13 +205,18 @@ public class ServerLauncherIntegrationTest {
   @Test
   public void testBuildWithNoMemberNameOnStart() throws Exception {
     // given: gemfire.properties with no name
-    useGemFirePropertiesFileInTemporaryFolder(DistributionConfig.GEMFIRE_PREFIX + "properties", new Properties());
+    useGemFirePropertiesFileInTemporaryFolder(
+        DistributionConfig.GEMFIRE_PREFIX + "properties", new Properties());
 
     // when: no MemberName is specified
     when(new Builder().setCommand(Command.START)).build();
 
     // then: throw IllegalStateException
-    then(caughtException()).isExactlyInstanceOf(IllegalStateException.class).hasMessage(LocalizedStrings.Launcher_Builder_MEMBER_NAME_VALIDATION_ERROR_MESSAGE.toLocalizedString("Server"));
+    then(caughtException())
+        .isExactlyInstanceOf(IllegalStateException.class)
+        .hasMessage(
+            LocalizedStrings.Launcher_Builder_MEMBER_NAME_VALIDATION_ERROR_MESSAGE
+                .toLocalizedString("Server"));
   }
 
   @Test
@@ -211,7 +264,11 @@ public class ServerLauncherIntegrationTest {
     when(new Builder()).setWorkingDirectory(tmpFile.getAbsolutePath());
 
     // then: throw IllegalArgumentException
-    then(caughtException()).hasMessage(LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_NOT_FOUND_ERROR_MESSAGE.toLocalizedString("Server")).hasCause(new FileNotFoundException(tmpFile.getAbsolutePath()));
+    then(caughtException())
+        .hasMessage(
+            LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_NOT_FOUND_ERROR_MESSAGE
+                .toLocalizedString("Server"))
+        .hasCause(new FileNotFoundException(tmpFile.getAbsolutePath()));
   }
 
   @Test
@@ -219,10 +276,18 @@ public class ServerLauncherIntegrationTest {
     // given: using ServerLauncher in-process
 
     // when: setting WorkingDirectory to non-current directory
-    when(new Builder().setCommand(Command.START).setMemberName("serverOne").setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())).build();
+    when(new Builder()
+            .setCommand(Command.START)
+            .setMemberName("serverOne")
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()))
+        .build();
 
     // then: throw IllegalStateException
-    then(caughtException()).isExactlyInstanceOf(IllegalStateException.class).hasMessage(LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_OPTION_NOT_VALID_ERROR_MESSAGE.toLocalizedString("Server"));
+    then(caughtException())
+        .isExactlyInstanceOf(IllegalStateException.class)
+        .hasMessage(
+            LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_OPTION_NOT_VALID_ERROR_MESSAGE
+                .toLocalizedString("Server"));
   }
 
   @Test
@@ -231,7 +296,11 @@ public class ServerLauncherIntegrationTest {
     when(new Builder()).setWorkingDirectory("/path/to/non_existing/directory");
 
     // then: throw IllegalArgumentException
-    then(caughtException()).hasMessage(LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_NOT_FOUND_ERROR_MESSAGE.toLocalizedString("Server")).hasCause(new FileNotFoundException("/path/to/non_existing/directory"));
+    then(caughtException())
+        .hasMessage(
+            LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_NOT_FOUND_ERROR_MESSAGE
+                .toLocalizedString("Server"))
+        .hasCause(new FileNotFoundException("/path/to/non_existing/directory"));
   }
 
   /**
@@ -240,9 +309,11 @@ public class ServerLauncherIntegrationTest {
    * <li>sets "gemfirePropertyFile" system property
    * <li>writes <code>gemfireProperties</code> to the file
    */
-  private void useGemFirePropertiesFileInTemporaryFolder(final String fileName, final Properties gemfireProperties) throws Exception {
+  private void useGemFirePropertiesFileInTemporaryFolder(
+      final String fileName, final Properties gemfireProperties) throws Exception {
     File propertiesFile = new File(this.temporaryFolder.getRoot().getCanonicalPath(), fileName);
-    System.setProperty(DistributedSystem.PROPERTIES_FILE_PROPERTY, propertiesFile.getCanonicalPath());
+    System.setProperty(
+        DistributedSystem.PROPERTIES_FILE_PROPERTY, propertiesFile.getCanonicalPath());
 
     gemfireProperties.store(new FileWriter(propertiesFile, false), this.testName.getMethodName());
     assertThat(propertiesFile.isFile()).isTrue();

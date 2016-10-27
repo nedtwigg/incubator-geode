@@ -22,63 +22,33 @@ import org.apache.geode.StatisticDescriptor;
 import org.apache.geode.Statistics;
 import org.apache.geode.StatisticsType;
 
-/**
- * Provides informations of the statistic
- * 
- * 
- */
+/** Provides informations of the statistic */
 public interface StatisticInfo extends DataSerializable {
 
-  /**
-   * @return name of statistics
-   */
+  /** @return name of statistics */
   public String getStatisticName();
 
-  /**
-   * 
-   * @param statisticName
-   *                Name of statistic
-   */
+  /** @param statisticName Name of statistic */
   public void setStatisticName(String statisticName);
 
-  /**
-   * 
-   * @return instance of statistic descriptor
-   */
+  /** @return instance of statistic descriptor */
   public StatisticDescriptor getStatisticDescriptor();
 
-  /**
-   * @return text id of the associated {@link Statistics}
-   */
+  /** @return text id of the associated {@link Statistics} */
   public String getStatisticsTextId();
 
-  /**
-   * @param statisticsTextId
-   *                Text id of the associated {@link Statistics}
-   */
+  /** @param statisticsTextId Text id of the associated {@link Statistics} */
   public void setStatisticsTextId(String statisticsTextId);
 
-  /**
-   * @return instance of associated {@link Statistics}
-   */
+  /** @return instance of associated {@link Statistics} */
   public Statistics getStatistics();
 
-  /**
-   * 
-   * @return associated {@link StatisticsType}
-   */
+  /** @return associated {@link StatisticsType} */
   public String getStatisticsTypeName();
 
-  /**
-   * 
-   * @param statisticsType
-   *                Associated {@link StatisticsType}
-   */
+  /** @param statisticsType Associated {@link StatisticsType} */
   public void setStatisticsTypeName(String statisticsType);
 
-  /**
-   * 
-   * @return value of statistic
-   */
+  /** @return value of statistic */
   public Number getValue();
 }

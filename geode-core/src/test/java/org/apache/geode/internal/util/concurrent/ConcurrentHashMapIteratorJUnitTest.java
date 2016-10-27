@@ -33,7 +33,7 @@ import org.apache.geode.distributed.DistributedSystem;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 @Category(IntegrationTest.class)
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ConcurrentHashMapIteratorJUnitTest {
 
   @Test
@@ -43,7 +43,8 @@ public class ConcurrentHashMapIteratorJUnitTest {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     DistributedSystem.connect(props);
-    java.util.concurrent.ConcurrentHashMap baselineMap = new java.util.concurrent.ConcurrentHashMap();
+    java.util.concurrent.ConcurrentHashMap baselineMap =
+        new java.util.concurrent.ConcurrentHashMap();
     CustomEntryConcurrentHashMap testMap = new CustomEntryConcurrentHashMap();
     Map initialSet;
 
@@ -68,11 +69,16 @@ public class ConcurrentHashMapIteratorJUnitTest {
     if (!found.containsAll(initialSet.values())) {
       HashSet missed = new HashSet(initialSet.values());
       missed.removeAll(found);
-      fail("On run " + i + " did not find these elements of the initial set using the iterator " + missed);
+      fail(
+          "On run "
+              + i
+              + " did not find these elements of the initial set using the iterator "
+              + missed);
     }
   }
 
-  private void createBaseline(ConcurrentMap baselineMap, ConcurrentMap testMap, int start, int end) {
+  private void createBaseline(
+      ConcurrentMap baselineMap, ConcurrentMap testMap, int start, int end) {
     for (int i = start; i < end; i++) {
       baselineMap.put(i, i);
       testMap.put(i, i);

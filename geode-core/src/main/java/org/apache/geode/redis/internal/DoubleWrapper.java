@@ -23,11 +23,7 @@ import java.io.IOException;
 import org.apache.geode.DataSerializable;
 import org.apache.geode.DataSerializer;
 
-/**
- * This is a wrapper class for doubles, similar to {@link ByteArrayWrapper}
- * 
- *
- */
+/** This is a wrapper class for doubles, similar to {@link ByteArrayWrapper} */
 public class DoubleWrapper implements DataSerializable, Comparable<Object> {
 
   private static final long serialVersionUID = 6946858357297398633L;
@@ -35,8 +31,7 @@ public class DoubleWrapper implements DataSerializable, Comparable<Object> {
   public Double score;
   private String toString;
 
-  public DoubleWrapper() {
-  }
+  public DoubleWrapper() {}
 
   public DoubleWrapper(Double dubs) {
     this.score = dubs;
@@ -59,21 +54,15 @@ public class DoubleWrapper implements DataSerializable, Comparable<Object> {
       other = ((DoubleWrapper) arg0).score;
     } else if (arg0 instanceof Double) {
       other = (Double) arg0;
-    } else
-      return 0;
+    } else return 0;
     Double diff = this.score - other;
-    if (diff > 0)
-      return 1;
-    else if (diff < 0)
-      return -1;
-    else
-      return 0;
+    if (diff > 0) return 1;
+    else if (diff < 0) return -1;
+    else return 0;
   }
 
   public String toString() {
-    if (this.toString == null)
-      this.toString = Coder.doubleToString(score);
+    if (this.toString == null) this.toString = Coder.doubleToString(score);
     return this.toString;
   }
-
 }

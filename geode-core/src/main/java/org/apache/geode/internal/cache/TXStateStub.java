@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * File comment
- */
+/** File comment */
 package org.apache.geode.internal.cache;
 
 import java.util.Collection;
@@ -46,10 +44,8 @@ import org.apache.geode.internal.cache.tx.TXRegionStub;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * TXStateStub lives on the accessor node when we are remoting
- * a transaction. It is a stub for {@link TXState}. 
- * 
- *
+ * TXStateStub lives on the accessor node when we are remoting a transaction. It is a stub for
+ * {@link TXState}.
  */
 public abstract class TXStateStub implements TXStateInterface {
   protected final DistributedMember target;
@@ -71,16 +67,18 @@ public abstract class TXStateStub implements TXStateInterface {
   }
 
   @Override
-  public void precommit() throws CommitConflictException, UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("precommit"));
+  public void precommit()
+      throws CommitConflictException, UnsupportedOperationInTransactionException {
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString(
+            "precommit"));
   }
 
-  /**
-   * Implemented in subclasses for Peer vs. Client
-   */
+  /** Implemented in subclasses for Peer vs. Client */
   public abstract void commit() throws CommitConflictException;
 
-  protected abstract void validateRegionCanJoinTransaction(LocalRegion region) throws TransactionException;
+  protected abstract void validateRegionCanJoinTransaction(LocalRegion region)
+      throws TransactionException;
 
   protected abstract TXRegionStub generateRegionStub(LocalRegion region);
 
@@ -90,7 +88,9 @@ public abstract class TXStateStub implements TXStateInterface {
 
   public void beforeCompletion() {
     // note that this class must do distribution as it is used as the stub class in some situations
-    ReliableReplyProcessor21 response = JtaBeforeCompletionMessage.send(proxy.getCache(), proxy.getTxId().getUniqId(), getOriginatingMember(), target);
+    ReliableReplyProcessor21 response =
+        JtaBeforeCompletionMessage.send(
+            proxy.getCache(), proxy.getTxId().getUniqId(), getOriginatingMember(), target);
     try {
       try {
         response.waitForReliableDelivery();
@@ -110,9 +110,9 @@ public abstract class TXStateStub implements TXStateInterface {
   }
 
   /**
-   * Get or create a TXRegionStub for the given region. 
-   * For regions that are new to the tx, we validate their eligibility.
-   * 
+   * Get or create a TXRegionStub for the given region. For regions that are new to the tx, we
+   * validate their eligibility.
+   *
    * @param region The region to involve in the tx.
    * @return existing or new stub for region
    */
@@ -132,16 +132,25 @@ public abstract class TXStateStub implements TXStateInterface {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append(this.getClass()).append("@").append(System.identityHashCode(this)).append(" target node: ").append(target);
+    builder
+        .append(this.getClass())
+        .append("@")
+        .append(System.identityHashCode(this))
+        .append(" target node: ")
+        .append(target);
     return builder.toString();
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#destroyExistingEntry(org.apache.geode.internal.cache.EntryEventImpl, boolean, java.lang.Object)
    */
-  public void destroyExistingEntry(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) throws EntryNotFoundException {
+  public void destroyExistingEntry(
+      EntryEventImpl event, boolean cacheWrite, Object expectedOldValue)
+      throws EntryNotFoundException {
     if (event.getOperation().isLocal()) {
-      throw new UnsupportedOperationInTransactionException(LocalizedStrings.TXStateStub_LOCAL_DESTROY_NOT_ALLOWED_IN_TRANSACTION.toLocalizedString());
+      throw new UnsupportedOperationInTransactionException(
+          LocalizedStrings.TXStateStub_LOCAL_DESTROY_NOT_ALLOWED_IN_TRANSACTION
+              .toLocalizedString());
     }
     TXRegionStub rs = getTXRegionStub(event.getRegion());
     rs.destroyExistingEntry(event, cacheWrite, expectedOldValue);
@@ -173,12 +182,27 @@ public abstract class TXStateStub implements TXStateInterface {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#getDeserializedValue(java.lang.Object, org.apache.geode.internal.cache.LocalRegion, boolean)
    */
-  public Object getDeserializedValue(KeyInfo keyInfo, LocalRegion localRegion, boolean updateStats, boolean disableCopyOnRead, boolean preferCD, EntryEventImpl clientEvent, boolean returnTombstones, boolean retainResult) {
+  public Object getDeserializedValue(
+      KeyInfo keyInfo,
+      LocalRegion localRegion,
+      boolean updateStats,
+      boolean disableCopyOnRead,
+      boolean preferCD,
+      EntryEventImpl clientEvent,
+      boolean returnTombstones,
+      boolean retainResult) {
     // We never have a local value if we are a stub...
     return null;
   }
 
-  public Object getDeserializedValue(KeyInfo keyInfo, LocalRegion localRegion, boolean updateStats, boolean disableCopyOnRead, boolean preferCD, EntryEventImpl clientEvent, boolean returnTombstones) {
+  public Object getDeserializedValue(
+      KeyInfo keyInfo,
+      LocalRegion localRegion,
+      boolean updateStats,
+      boolean disableCopyOnRead,
+      boolean preferCD,
+      EntryEventImpl clientEvent,
+      boolean returnTombstones) {
     // We never have a local value if we are a stub...
     return null;
   }
@@ -227,12 +251,15 @@ public abstract class TXStateStub implements TXStateInterface {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#invalidateExistingEntry(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean)
    */
-  public void invalidateExistingEntry(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {
+  public void invalidateExistingEntry(
+      EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {
     if (event.getOperation().isLocal()) {
-      throw new UnsupportedOperationInTransactionException(LocalizedStrings.TXStateStub_LOCAL_INVALIDATE_NOT_ALLOWED_IN_TRANSACTION.toLocalizedString());
+      throw new UnsupportedOperationInTransactionException(
+          LocalizedStrings.TXStateStub_LOCAL_INVALIDATE_NOT_ALLOWED_IN_TRANSACTION
+              .toLocalizedString());
     }
-    getTXRegionStub(event.getRegion()).invalidateExistingEntry(event, invokeCallbacks, forceNewEntry);
-
+    getTXRegionStub(event.getRegion())
+        .invalidateExistingEntry(event, invokeCallbacks, forceNewEntry);
   }
 
   /* (non-Javadoc)
@@ -292,14 +319,23 @@ public abstract class TXStateStub implements TXStateInterface {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#txPutEntry(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean, boolean)
    */
-  public boolean txPutEntry(EntryEventImpl event, boolean ifNew, boolean requireOldValue, boolean checkResources, Object expectedOldValue) {
+  public boolean txPutEntry(
+      EntryEventImpl event,
+      boolean ifNew,
+      boolean requireOldValue,
+      boolean checkResources,
+      Object expectedOldValue) {
     return false;
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.TXStateInterface#txReadEntry(java.lang.Object, org.apache.geode.internal.cache.LocalRegion, boolean)
    */
-  public TXEntryState txReadEntry(KeyInfo entryKey, LocalRegion localRegion, boolean rememberRead, boolean createTxEntryIfAbsent) {
+  public TXEntryState txReadEntry(
+      KeyInfo entryKey,
+      LocalRegion localRegion,
+      boolean rememberRead,
+      boolean createTxEntryIfAbsent) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -352,8 +388,20 @@ public abstract class TXStateStub implements TXStateInterface {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#findObject(org.apache.geode.internal.cache.LocalRegion, java.lang.Object, java.lang.Object, boolean, boolean, java.lang.Object)
    */
-  public Object findObject(KeyInfo keyInfo, LocalRegion r, boolean isCreate, boolean generateCallbacks, Object value, boolean disableCopyOnRead, boolean preferCD, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent, boolean returnTombstones) {
-    return getTXRegionStub(r).findObject(keyInfo, isCreate, generateCallbacks, value, preferCD, requestingClient, clientEvent);
+  public Object findObject(
+      KeyInfo keyInfo,
+      LocalRegion r,
+      boolean isCreate,
+      boolean generateCallbacks,
+      Object value,
+      boolean disableCopyOnRead,
+      boolean preferCD,
+      ClientProxyMembershipID requestingClient,
+      EntryEventImpl clientEvent,
+      boolean returnTombstones) {
+    return getTXRegionStub(r)
+        .findObject(
+            keyInfo, isCreate, generateCallbacks, value, preferCD, requestingClient, clientEvent);
   }
 
   /* (non-Javadoc)
@@ -367,14 +415,16 @@ public abstract class TXStateStub implements TXStateInterface {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getEntryForIterator(org.apache.geode.internal.cache.LocalRegion, java.lang.Object, boolean)
    */
-  public Object getEntryForIterator(KeyInfo keyInfo, LocalRegion currRgn, boolean rememberReads, boolean allowTombstones) {
+  public Object getEntryForIterator(
+      KeyInfo keyInfo, LocalRegion currRgn, boolean rememberReads, boolean allowTombstones) {
     return getTXRegionStub(currRgn).getEntryForIterator(keyInfo, allowTombstones);
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getKeyForIterator(java.lang.Object, org.apache.geode.internal.cache.LocalRegion, boolean)
    */
-  public Object getKeyForIterator(KeyInfo keyInfo, LocalRegion currRgn, boolean rememberReads, boolean allowTombstones) {
+  public Object getKeyForIterator(
+      KeyInfo keyInfo, LocalRegion currRgn, boolean rememberReads, boolean allowTombstones) {
     return keyInfo.getKey();
   }
 
@@ -396,22 +446,51 @@ public abstract class TXStateStub implements TXStateInterface {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#putEntry(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean, java.lang.Object, boolean, long, boolean)
    */
-  public boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) {
-    return getTXRegionStub(event.getRegion()).putEntry(event, ifNew, ifOld, expectedOldValue, requireOldValue, lastModified, overwriteDestroyed);
+  public boolean putEntry(
+      EntryEventImpl event,
+      boolean ifNew,
+      boolean ifOld,
+      Object expectedOldValue,
+      boolean requireOldValue,
+      long lastModified,
+      boolean overwriteDestroyed) {
+    return getTXRegionStub(event.getRegion())
+        .putEntry(
+            event,
+            ifNew,
+            ifOld,
+            expectedOldValue,
+            requireOldValue,
+            lastModified,
+            overwriteDestroyed);
   }
 
   /*
    * (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getSerializedValue(org.apache.geode.internal.cache.LocalRegion, java.lang.Object, java.lang.Object)
    */
-  public Object getSerializedValue(LocalRegion localRegion, KeyInfo key, boolean doNotLockEntry, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent, boolean returnTombstones) {
+  public Object getSerializedValue(
+      LocalRegion localRegion,
+      KeyInfo key,
+      boolean doNotLockEntry,
+      ClientProxyMembershipID requestingClient,
+      EntryEventImpl clientEvent,
+      boolean returnTombstones) {
     throw new UnsupportedOperationException();
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#putEntryOnRemote(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean, java.lang.Object, boolean, long, boolean)
    */
-  public boolean putEntryOnRemote(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) throws DataLocationException {
+  public boolean putEntryOnRemote(
+      EntryEventImpl event,
+      boolean ifNew,
+      boolean ifOld,
+      Object expectedOldValue,
+      boolean requireOldValue,
+      long lastModified,
+      boolean overwriteDestroyed)
+      throws DataLocationException {
     throw new IllegalStateException();
   }
 
@@ -422,28 +501,35 @@ public abstract class TXStateStub implements TXStateInterface {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#destroyOnRemote(java.lang.Integer, org.apache.geode.internal.cache.EntryEventImpl, java.lang.Object)
    */
-  public void destroyOnRemote(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) throws DataLocationException {
+  public void destroyOnRemote(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue)
+      throws DataLocationException {
     throw new IllegalStateException();
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#invalidateOnRemote(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean)
    */
-  public void invalidateOnRemote(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) throws DataLocationException {
+  public void invalidateOnRemote(
+      EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry)
+      throws DataLocationException {
     throw new IllegalStateException();
   }
 
   public void checkSupportsRegionDestroy() throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.TXState_REGION_DESTROY_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString());
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.TXState_REGION_DESTROY_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString());
   }
 
   public void checkSupportsRegionInvalidate() throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.TXState_REGION_INVALIDATE_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString());
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.TXState_REGION_INVALIDATE_NOT_SUPPORTED_IN_A_TRANSACTION
+            .toLocalizedString());
   }
 
   @Override
   public void checkSupportsRegionClear() throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.TXState_REGION_CLEAR_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString());
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.TXState_REGION_CLEAR_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString());
   }
 
   /* (non-Javadoc)
@@ -460,7 +546,8 @@ public abstract class TXStateStub implements TXStateInterface {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getEntryOnRemote(java.lang.Object, org.apache.geode.internal.cache.LocalRegion)
    */
-  public Entry getEntryOnRemote(KeyInfo key, LocalRegion localRegion, boolean allowTombstones) throws DataLocationException {
+  public Entry getEntryOnRemote(KeyInfo key, LocalRegion localRegion, boolean allowTombstones)
+      throws DataLocationException {
     throw new IllegalStateException();
   }
 
@@ -486,12 +573,14 @@ public abstract class TXStateStub implements TXStateInterface {
     return target;
   }
 
-  public void postPutAll(DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts, LocalRegion region) {
+  public void postPutAll(
+      DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts, LocalRegion region) {
     getTXRegionStub(region).postPutAll(putallOp, successfulPuts, region);
   }
 
   @Override
-  public void postRemoveAll(DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion region) {
+  public void postRemoveAll(
+      DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion region) {
     getTXRegionStub(region).postRemoveAll(op, successfulOps, region);
   }
 

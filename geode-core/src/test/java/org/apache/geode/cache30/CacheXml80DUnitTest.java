@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-/**
- * 
- */
+/** */
 package org.apache.geode.cache30;
 
 import static org.junit.Assert.*;
@@ -83,7 +81,8 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
 
     final Region regionAfter = c.getRegion(regionName);
     assertNotNull(regionAfter);
-    assertTrue(SnappyCompressor.getDefaultInstance().equals(regionAfter.getAttributes().getCompressor()));
+    assertTrue(
+        SnappyCompressor.getDefaultInstance().equals(regionAfter.getAttributes().getCompressor()));
     regionAfter.localDestroyRegion();
   }
 
@@ -147,33 +146,46 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
     // Validate to see, newly created indexes match the initial configuration
     for (Index index : indexes) {
       Index newIndex = qs.getIndex(r, index.getName());
-      assertEquals("Index from clause is not same for index " + index.getName(), newIndex.getFromClause(), index.getFromClause());
-      assertEquals("Index expression is not same for index " + index.getName(), newIndex.getIndexedExpression(), index.getIndexedExpression());
+      assertEquals(
+          "Index from clause is not same for index " + index.getName(),
+          newIndex.getFromClause(),
+          index.getFromClause());
+      assertEquals(
+          "Index expression is not same for index " + index.getName(),
+          newIndex.getIndexedExpression(),
+          index.getIndexedExpression());
     }
 
     QueryObserverImpl observer = new QueryObserverImpl();
     QueryObserverHolder.setInstance(observer);
-    SelectResults results = (SelectResults) qs.newQuery("select * from /replicated r where r.ID = 1").execute();
+    SelectResults results =
+        (SelectResults) qs.newQuery("select * from /replicated r where r.ID = 1").execute();
     assertEquals(1, results.size());
     assertTrue(checkIndexUsed(observer, "primaryKeyIndex"));
     observer.reset();
 
-    results = (SelectResults) qs.newQuery("select * from /replicated r where r.CR_ID = 1").execute();
+    results =
+        (SelectResults) qs.newQuery("select * from /replicated r where r.CR_ID = 1").execute();
     assertEquals(2, results.size());
     assertTrue(checkIndexUsed(observer, "crIndex"));
     observer.reset();
 
-    results = (SelectResults) qs.newQuery("select * from /replicated r where r.CR_ID_2 = 1").execute();
+    results =
+        (SelectResults) qs.newQuery("select * from /replicated r where r.CR_ID_2 = 1").execute();
     assertEquals(2, results.size());
     assertTrue(checkIndexUsed(observer, "crIndex2"));
     observer.reset();
 
-    results = (SelectResults) qs.newQuery("select * from /replicated r, r.positions.values rv where r.R_ID > 1").execute();
+    results =
+        (SelectResults)
+            qs.newQuery("select * from /replicated r, r.positions.values rv where r.R_ID > 1")
+                .execute();
     assertEquals(3, results.size());
     assertTrue(checkIndexUsed(observer, "rIndex"));
     observer.reset();
 
-    results = (SelectResults) qs.newQuery("select * from /replicated r where r.HASH_ID = 1").execute();
+    results =
+        (SelectResults) qs.newQuery("select * from /replicated r where r.HASH_ID = 1").execute();
     assertEquals(1, results.size());
     assertTrue(checkIndexUsed(observer, "hashIndex"));
     observer.reset();
@@ -238,7 +250,6 @@ public class CacheXml80DUnitTest extends CacheXml70DUnitTest {
     public void beforeIndexLookup(Index index, int oper, Object key) {
       indexName = index.getName();
       indexesUsed.add(index.getName());
-
     }
 
     public void afterIndexLookup(Collection results) {

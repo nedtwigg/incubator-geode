@@ -19,19 +19,15 @@ package org.apache.geode.security;
 import org.apache.geode.distributed.ConfigurationProperties;
 
 /**
- * This class defines all the static definitions for the {@link ConfigurationProperties#SSL_ENABLED_COMPONENTS}
- * <U>Since</U>: Geode 1.0
+ * This class defines all the static definitions for the {@link
+ * ConfigurationProperties#SSL_ENABLED_COMPONENTS} <U>Since</U>: Geode 1.0
  */
 public interface SecurableCommunicationChannels {
 
-  /**
-   * This determines that all components will be secured.
-   * <U>Since</U>: Geode 1.0
-   */
+  /** This determines that all components will be secured. <U>Since</U>: Geode 1.0 */
   String ALL = "all";
   /**
-   * This determines that the client-server communication will be secured.
-   * <U>Since</U>: Geode 1.0
+   * This determines that the client-server communication will be secured. <U>Since</U>: Geode 1.0
    */
   String SERVER = "server";
   /**
@@ -39,24 +35,14 @@ public interface SecurableCommunicationChannels {
    * <U>Since</U>: Geode 1.0
    */
   String CLUSTER = "cluster";
-  /**
-   * This determines that test jmx communication will be secured.
-   * <U>Since</U>: Geode 1.0
-   */
+  /** This determines that test jmx communication will be secured. <U>Since</U>: Geode 1.0 */
   String JMX = "jmx";
   /**
-   * This determines that the http service communication will be secured.
-   * <U>Since</U>: Geode 1.0
+   * This determines that the http service communication will be secured. <U>Since</U>: Geode 1.0
    */
   String WEB = "web";
-  /**
-   * This determines that the gateway communication will be secured.
-   * <U>Since</U>: Geode 1.0
-   */
+  /** This determines that the gateway communication will be secured. <U>Since</U>: Geode 1.0 */
   String GATEWAY = "gateway";
-  /**
-   * This determines that the locator communication will be secured.
-   * <U>Since</U>: Geode 1.0
-   */
+  /** This determines that the locator communication will be secured. <U>Since</U>: Geode 1.0 */
   String LOCATOR = "locator";
 }

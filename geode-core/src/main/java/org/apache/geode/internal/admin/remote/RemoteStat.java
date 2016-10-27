@@ -48,11 +48,8 @@ public class RemoteStat implements Stat, DataSerializable {
     this.value = rsrc.get(stat);
   }
 
-  /**
-   * Constructor for <code>DataSerializable</code>
-   */
-  public RemoteStat() {
-  }
+  /** Constructor for <code>DataSerializable</code> */
+  public RemoteStat() {}
 
   // Stat methods
 
@@ -90,7 +87,19 @@ public class RemoteStat implements Stat, DataSerializable {
 
   @Override
   public String toString() {
-    return "<STAT name=" + getName() + " type=" + getType() + " units=" + getUnits() + " isCounter=" + isCounter() + " value=" + getValue() + " desc=\"" + getDescription() + "\">";
+    return "<STAT name="
+        + getName()
+        + " type="
+        + getType()
+        + " units="
+        + getUnits()
+        + " isCounter="
+        + isCounter()
+        + " value="
+        + getValue()
+        + " desc=\""
+        + getDescription()
+        + "\">";
   }
 
   public void toData(DataOutput out) throws IOException {
@@ -113,5 +122,4 @@ public class RemoteStat implements Stat, DataSerializable {
     this.value = (Number) DataSerializer.readObject(in);
     this.isCounter = in.readBoolean();
   }
-
 }

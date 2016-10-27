@@ -34,9 +34,9 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.*;
 
 /**
- * This is a test verifies region is LIFO enabled by ENTRY COUNT verifies correct stats updating 
- * and faultin is not evicting another entry - not strict LIFO
- * 
+ * This is a test verifies region is LIFO enabled by ENTRY COUNT verifies correct stats updating and
+ * faultin is not evicting another entry - not strict LIFO
+ *
  * @since GemFire 5.7
  */
 @Category(IntegrationTest.class)
@@ -69,12 +69,11 @@ public class LIFOEvictionAlgoEnabledRegionJUnitTest {
     assertNotNull(rgn);
     rgn.localDestroyRegion();
     cache.close();
-
   }
 
   /**
    * Method for intializing the VM and create region with LIFO attached
-   * 
+   *
    * @throws Exception
    */
   private static void initializeVM() throws Exception {
@@ -92,8 +91,8 @@ public class LIFOEvictionAlgoEnabledRegionJUnitTest {
     File dir = new File("testingDirectoryDefault");
     dir.mkdir();
     dir.deleteOnExit();
-    File[] dirs = { dir };
-    dsf.setDiskDirsAndSizes(dirs, new int[] { Integer.MAX_VALUE });
+    File[] dirs = {dir};
+    dsf.setDiskDirsAndSizes(dirs, new int[] {Integer.MAX_VALUE});
 
     dsf.setAutoCompact(false);
     DiskStore ds = dsf.create(regionName);
@@ -103,18 +102,21 @@ public class LIFOEvictionAlgoEnabledRegionJUnitTest {
 
     /* setting LIFO related eviction attributes */
 
-    factory.setEvictionAttributes(EvictionAttributesImpl.createLIFOEntryAttributes(capacity, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributesImpl.createLIFOEntryAttributes(
+            capacity, EvictionAction.OVERFLOW_TO_DISK));
     RegionAttributes attr = factory.create();
 
     ((GemFireCacheImpl) cache).createRegion(regionName, attr);
     /*
      * NewLIFOClockHand extends NewLRUClockHand to hold on to the list reference
      */
-    lifoClockHand = ((VMLRURegionMap) ((LocalRegion) cache.getRegion(Region.SEPARATOR + regionName)).entries)._getLruList();
+    lifoClockHand =
+        ((VMLRURegionMap) ((LocalRegion) cache.getRegion(Region.SEPARATOR + regionName)).entries)
+            ._getLruList();
 
     /* storing stats reference */
     lifoStats = lifoClockHand.stats();
-
   }
 
   /**
@@ -124,8 +126,7 @@ public class LIFOEvictionAlgoEnabledRegionJUnitTest {
    * 3)perform get operation <br>
    * 4)Verify value retrieved <br>
    * 5)Verify count (entries present in memory) after put operations <br>
-   * 6)Verify count (entries present in memory) after get (performs faultin)
-   * operation <br>
+   * 6)Verify count (entries present in memory) after get (performs faultin) operation <br>
    * 7)Verify count (entries present in memory) after remove operation <br>
    */
   @Test
@@ -136,14 +137,17 @@ public class LIFOEvictionAlgoEnabledRegionJUnitTest {
       assertNotNull(rgn);
 
       // check for is LIFO Enable
-      assertTrue("Eviction Algorithm is not LIFO", (((EvictionAttributesImpl) rgn.getAttributes().getEvictionAttributes()).isLIFO()));
+      assertTrue(
+          "Eviction Algorithm is not LIFO",
+          (((EvictionAttributesImpl) rgn.getAttributes().getEvictionAttributes()).isLIFO()));
 
       // put four entries into the region
       for (int i = 0; i < 8; i++) {
         rgn.put(new Long(i), new Long(i));
       }
 
-      assertTrue("In Memory entry count not 5 ", new Long(5).equals(new Long(lifoStats.getCounter())));
+      assertTrue(
+          "In Memory entry count not 5 ", new Long(5).equals(new Long(lifoStats.getCounter())));
 
       // varifies evicted entry values are null in memory
       assertTrue("In memory ", rgn.entries.getEntry(new Long(5)).isValueNull());
@@ -174,7 +178,6 @@ public class LIFOEvictionAlgoEnabledRegionJUnitTest {
       ex.printStackTrace();
       fail("Test failed");
     }
-
   }
 
   /**
@@ -195,11 +198,11 @@ public class LIFOEvictionAlgoEnabledRegionJUnitTest {
       for (int i = 0; i < 8; i++) {
         rgn.put(new Long(i), new Long(i));
         if (i < capacity) {
-          // entries are in memory  
+          // entries are in memory
           assertNotNull("Entry is not in VM ", rgn.getValueInVM(new Long(i)));
         } else {
           /*assertTrue("LIFO Entry is not evicted", lifoClockHand.getLRUEntry()
-              .testEvicted());*/
+          .testEvicted());*/
           assertTrue("Entry is not null ", rgn.entries.getEntry(new Long(i)).isValueNull());
         }
       }
@@ -228,10 +231,14 @@ public class LIFOEvictionAlgoEnabledRegionJUnitTest {
         rgn.put(new Long(i), new Long(i));
       }
 
-      assertTrue("1)Total eviction count is not correct ", new Long(3).equals(new Long(lifoStats.getEvictions())));
+      assertTrue(
+          "1)Total eviction count is not correct ",
+          new Long(3).equals(new Long(lifoStats.getEvictions())));
       rgn.put(new Long(8), new Long(8));
       rgn.get(new Long(5));
-      assertTrue("2)Total eviction count is not correct ", new Long(4).equals(new Long(lifoStats.getEvictions())));
+      assertTrue(
+          "2)Total eviction count is not correct ",
+          new Long(4).equals(new Long(lifoStats.getEvictions())));
     } catch (Exception ex) {
       ex.printStackTrace();
       fail("Test failed");
@@ -258,11 +265,20 @@ public class LIFOEvictionAlgoEnabledRegionJUnitTest {
         rgn.put("key" + i, "value" + i);
       }
 
-      assertEquals("LRU eviction entry count and entries overflown to disk count from diskstats is not equal ", lifoStats.getEvictions(), diskRegionStats.getNumOverflowOnDisk());
+      assertEquals(
+          "LRU eviction entry count and entries overflown to disk count from diskstats is not equal ",
+          lifoStats.getEvictions(),
+          diskRegionStats.getNumOverflowOnDisk());
       assertNull("Entry value in VM is not null", rgn.getValueInVM("key6"));
       rgn.get("key6");
-      assertEquals("Not equal to number of entries present in VM : ", 6L, diskRegionStats.getNumEntriesInVM());
-      assertEquals("Not equal to number of entries present on disk : ", 2L, diskRegionStats.getNumOverflowOnDisk());
+      assertEquals(
+          "Not equal to number of entries present in VM : ",
+          6L,
+          diskRegionStats.getNumEntriesInVM());
+      assertEquals(
+          "Not equal to number of entries present on disk : ",
+          2L,
+          diskRegionStats.getNumOverflowOnDisk());
 
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -290,7 +306,7 @@ public class LIFOEvictionAlgoEnabledRegionJUnitTest {
         rgn.put(new Long(i), new Long(i));
       }
 
-      // assert for value should be Byte Array 
+      // assert for value should be Byte Array
       // here value is not delivered to client and should be get deserialized
       // value in region should be serialized form
       assertTrue("FaultIn Value in not a byte Array ", rgn.get(new Long(6)) instanceof byte[]);

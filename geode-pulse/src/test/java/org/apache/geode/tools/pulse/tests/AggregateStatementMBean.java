@@ -78,8 +78,7 @@ public interface AggregateStatementMBean {
   long getBindTime();
 
   /**
-   * Time spent (in milliseconds) determining the best execution path for this statement
-   * (optimize)
+   * Time spent (in milliseconds) determining the best execution path for this statement (optimize)
    *
    * @return
    */
@@ -144,8 +143,8 @@ public interface AggregateStatementMBean {
   long getQNNumRowsSeen();
 
   /**
-   * TCP send time (in nanoseconds) of all the messages including serialization time and queue
-   * wait time
+   * TCP send time (in nanoseconds) of all the messages including serialization time and queue wait
+   * time
    *
    * @return
    */
@@ -158,11 +157,6 @@ public interface AggregateStatementMBean {
    */
   long getQNMsgSerTime();
 
-  /**
-   *
-   *
-   * @return
-   */
+  /** @return */
   long getQNRespDeSerTime();
-
 }

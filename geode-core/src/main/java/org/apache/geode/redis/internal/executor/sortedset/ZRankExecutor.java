@@ -71,19 +71,21 @@ public class ZRankExecutor extends SortedSetExecutor implements Extendable {
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), rank));
   }
 
-  private int getRange(ExecutionHandlerContext context, ByteArrayWrapper key, ByteArrayWrapper member, DoubleWrapper valueWrapper) throws Exception {
+  private int getRange(
+      ExecutionHandlerContext context,
+      ByteArrayWrapper key,
+      ByteArrayWrapper member,
+      DoubleWrapper valueWrapper)
+      throws Exception {
     Query query;
-    if (isReverse())
-      query = getQuery(key, SortedSetQuery.ZREVRANK, context);
-    else
-      query = getQuery(key, SortedSetQuery.ZRANK, context);
+    if (isReverse()) query = getQuery(key, SortedSetQuery.ZREVRANK, context);
+    else query = getQuery(key, SortedSetQuery.ZRANK, context);
 
-    Object[] params = { valueWrapper.score, valueWrapper.score, member };
+    Object[] params = {valueWrapper.score, valueWrapper.score, member};
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
 
     return (Integer) results.asList().get(0);
-
   }
 
   protected boolean isReverse() {
@@ -94,5 +96,4 @@ public class ZRankExecutor extends SortedSetExecutor implements Extendable {
   public String getArgsError() {
     return ArityDef.ZRANK;
   }
-
 }

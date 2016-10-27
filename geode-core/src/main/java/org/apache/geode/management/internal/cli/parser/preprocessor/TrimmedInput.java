@@ -18,9 +18,8 @@ package org.apache.geode.management.internal.cli.parser.preprocessor;
 
 /**
  * Used for trimming input before Pre-processing
- * 
+ *
  * @since GemFire 7.0
- * 
  */
 public class TrimmedInput {
   private final int noOfSpacesRemoved;

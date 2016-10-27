@@ -57,10 +57,8 @@ public class PropFileHelper {
 
   public String readKey(String key) {
     String value = pr.getProperty(key);
-    if (value != null)
-      return value.trim();
-    else
-      return value;
+    if (value != null) return value.trim();
+    else return value;
   }
 
   public Map<String, String> readObject(String leadingkey) {
@@ -106,11 +104,9 @@ public class PropFileHelper {
       Map<String, String> topologyMap = helper.readObject(topology);
       System.out.println(topologyMap);
     }
-
   }
 
   public Properties getProperties() {
     return pr;
   }
-
 }

@@ -60,19 +60,20 @@ import org.apache.geode.test.dunit.VM;
 public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCase {
 
   /* SerializableRunnable object to create a PR */
-  CacheSerializableRunnable createPrRegionWithDS_DACK = new CacheSerializableRunnable("createPrRegionWithDS") {
+  CacheSerializableRunnable createPrRegionWithDS_DACK =
+      new CacheSerializableRunnable("createPrRegionWithDS") {
 
-    public void run2() throws CacheException {
-      Cache cache = getCache();
-      AttributesFactory attr = new AttributesFactory();
-      PartitionAttributesFactory paf = new PartitionAttributesFactory();
-      paf.setTotalNumBuckets(5);
-      PartitionAttributes prAttr = paf.create();
-      attr.setPartitionAttributes(prAttr);
-      RegionAttributes regionAttribs = attr.create();
-      cache.createRegion("PR1", regionAttribs);
-    }
-  };
+        public void run2() throws CacheException {
+          Cache cache = getCache();
+          AttributesFactory attr = new AttributesFactory();
+          PartitionAttributesFactory paf = new PartitionAttributesFactory();
+          paf.setTotalNumBuckets(5);
+          PartitionAttributes prAttr = paf.create();
+          attr.setPartitionAttributes(prAttr);
+          RegionAttributes regionAttribs = attr.create();
+          cache.createRegion("PR1", regionAttribs);
+        }
+      };
 
   public StreamingPartitionOperationManyDUnitTest() {
     super();
@@ -87,11 +88,12 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
     Host host = Host.getHost(0);
     for (int i = 0; i < 4; i++) {
       VM vm = host.getVM(i);
-      vm.invoke(new SerializableRunnable("connect to system") {
-        public void run() {
-          assertTrue(getSystem() != null);
-        }
-      });
+      vm.invoke(
+          new SerializableRunnable("connect to system") {
+            public void run() {
+              assertTrue(getSystem() != null);
+            }
+          });
       vm.invoke(createPrRegionWithDS_DACK);
     }
 
@@ -104,30 +106,36 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
     // by getting the list of other member ids and
     Set setOfIds = getSystem().getDistributionManager().getOtherNormalDistributionManagerIds();
     assertEquals(4, setOfIds.size());
-    TestStreamingPartitionOperationManyProviderNoExceptions streamOp = new TestStreamingPartitionOperationManyProviderNoExceptions(getSystem(), regionId);
+    TestStreamingPartitionOperationManyProviderNoExceptions streamOp =
+        new TestStreamingPartitionOperationManyProviderNoExceptions(getSystem(), regionId);
     streamOp.getPartitionedDataFrom(setOfIds);
-    assertTrue("data did not validate correctly: see log for severe message", streamOp.dataValidated);
-
+    assertTrue(
+        "data did not validate correctly: see log for severe message", streamOp.dataValidated);
   }
 
   // about 100 chunks worth of integers?
   protected static final int NUM_INTEGERS = 32 * 1024 /* default socket buffer size*/ * 100 / 4;
 
-  public static class TestStreamingPartitionOperationManyProviderNoExceptions extends StreamingPartitionOperation {
+  public static class TestStreamingPartitionOperationManyProviderNoExceptions
+      extends StreamingPartitionOperation {
     volatile boolean dataValidated = false;
     ConcurrentMap senderMap = new ConcurrentHashMap();
     ConcurrentMap senderNumChunksMap = new ConcurrentHashMap();
 
-    public TestStreamingPartitionOperationManyProviderNoExceptions(InternalDistributedSystem sys, int regionId) {
+    public TestStreamingPartitionOperationManyProviderNoExceptions(
+        InternalDistributedSystem sys, int regionId) {
       super(sys, regionId);
     }
 
     protected DistributionMessage createRequestMessage(Set recipients, ReplyProcessor21 processor) {
-      TestStreamingPartitionMessageManyProviderNoExceptions msg = new TestStreamingPartitionMessageManyProviderNoExceptions(recipients, this.regionId, processor);
+      TestStreamingPartitionMessageManyProviderNoExceptions msg =
+          new TestStreamingPartitionMessageManyProviderNoExceptions(
+              recipients, this.regionId, processor);
       return msg;
     }
 
-    protected synchronized boolean processData(List objects, InternalDistributedMember sender, int sequenceNum, boolean lastInSequence) {
+    protected synchronized boolean processData(
+        List objects, InternalDistributedMember sender, int sequenceNum, boolean lastInSequence) {
       LogWriter logger = this.sys.getLogWriter();
 
       int numChunks = -1;
@@ -148,7 +156,9 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
       }
 
       if (lastInSequence) {
-        prevValue = senderNumChunksMap.putIfAbsent(sender, new Integer(sequenceNum + 1)); // sequenceNum is 0-based
+        prevValue =
+            senderNumChunksMap.putIfAbsent(
+                sender, new Integer(sequenceNum + 1)); // sequenceNum is 0-based
         // assert that we haven't gotten a true for lastInSequence yet
         if (prevValue != null) {
           logger.severe("prevValue != null");
@@ -161,15 +171,18 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
       }
 
       // are we completely done with all senders ?
-      if (chunkMap.size() == numChunks && // done with this sender
+      if (chunkMap.size() == numChunks
+          && // done with this sender
           senderMap.size() == 4) { // we've heard from all 4 senders
         boolean completelyDone = true; // start with true assumption
-        for (Iterator itr = senderMap.entrySet().iterator(); itr.hasNext();) {
+        for (Iterator itr = senderMap.entrySet().iterator(); itr.hasNext(); ) {
           Map.Entry entry = (Map.Entry) itr.next();
           InternalDistributedMember senderV = (InternalDistributedMember) entry.getKey();
           ConcurrentMap chunkMapV = (ConcurrentMap) entry.getValue();
           Integer numChunksV = (Integer) senderNumChunksMap.get(senderV);
-          if (chunkMapV == null || numChunksV == null || chunkMapV.size() != numChunksV.intValue()) {
+          if (chunkMapV == null
+              || numChunksV == null
+              || chunkMapV.size() != numChunksV.intValue()) {
             completelyDone = false;
           }
         }
@@ -185,7 +198,7 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
       LogWriter logger = this.sys.getLogWriter();
       logger.info("Validating data...");
       try {
-        for (Iterator senderItr = this.senderMap.entrySet().iterator(); senderItr.hasNext();) {
+        for (Iterator senderItr = this.senderMap.entrySet().iterator(); senderItr.hasNext(); ) {
           Map.Entry entry = (Map.Entry) senderItr.next();
           ConcurrentMap chunkMap = (ConcurrentMap) entry.getValue();
           InternalDistributedMember sender = (InternalDistributedMember) entry.getKey();
@@ -194,7 +207,7 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
           int expectedInt = 0;
 
           // sort the input streams
-          for (Iterator itr = chunkMap.entrySet().iterator(); itr.hasNext();) {
+          for (Iterator itr = chunkMap.entrySet().iterator(); itr.hasNext(); ) {
             Map.Entry entry2 = (Map.Entry) itr.next();
             int seqNum = ((Integer) entry2.getKey()).intValue();
             objList = (List) entry2.getValue();
@@ -216,10 +229,18 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
             }
           }
           if (count != NUM_INTEGERS) {
-            logger.severe("found " + count + " integers from " + sender + " , expected " + NUM_INTEGERS);
+            logger.severe(
+                "found " + count + " integers from " + sender + " , expected " + NUM_INTEGERS);
             return;
           }
-          logger.info("Received " + count + " integers from " + sender + " in " + chunkMap.size() + " chunks");
+          logger.info(
+              "Received "
+                  + count
+                  + " integers from "
+                  + sender
+                  + " in "
+                  + chunkMap.size()
+                  + " chunks");
         }
       } catch (Exception e) {
         logger.severe("Validation exception", e);
@@ -229,7 +250,8 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
     }
   }
 
-  public static final class TestStreamingPartitionMessageManyProviderNoExceptions extends StreamingPartitionOperation.StreamingPartitionMessage {
+  public static final class TestStreamingPartitionMessageManyProviderNoExceptions
+      extends StreamingPartitionOperation.StreamingPartitionMessage {
     private int nextInt = -10;
     private int count = 0;
 
@@ -237,7 +259,8 @@ public class StreamingPartitionOperationManyDUnitTest extends JUnit4CacheTestCas
       super();
     }
 
-    public TestStreamingPartitionMessageManyProviderNoExceptions(Set recipients, int regionId, ReplyProcessor21 processor) {
+    public TestStreamingPartitionMessageManyProviderNoExceptions(
+        Set recipients, int regionId, ReplyProcessor21 processor) {
       super(recipients, regionId, processor);
     }
 

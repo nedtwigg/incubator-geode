@@ -40,12 +40,12 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
  * Integration tests for launching a Server in a forked process with custom logging configuration
  */
 @Category(IntegrationTest.class)
-public class ServerLauncherRemoteWithCustomLoggingIntegrationTest extends AbstractServerLauncherRemoteIntegrationTestCase {
+public class ServerLauncherRemoteWithCustomLoggingIntegrationTest
+    extends AbstractServerLauncherRemoteIntegrationTestCase {
 
   private File customConfigFile;
 
-  @Rule
-  public SystemOutRule systemOutRule = new SystemOutRule().enableLog();
+  @Rule public SystemOutRule systemOutRule = new SystemOutRule().enableLog();
 
   @Before
   public void setUpLocatorLauncherRemoteWithCustomLoggingIntegrationTest() throws Exception {
@@ -58,11 +58,16 @@ public class ServerLauncherRemoteWithCustomLoggingIntegrationTest extends Abstra
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
-    command.add("-D" + ConfigurationFactory.CONFIGURATION_FILE_PROPERTY + "=" + this.customConfigFile.getCanonicalPath());
+    command.add(
+        "-D"
+            + ConfigurationFactory.CONFIGURATION_FILE_PROPERTY
+            + "="
+            + this.customConfigFile.getCanonicalPath());
     command.add("-cp");
     command.add(System.getProperty("java.class.path"));
     command.add(ServerLauncher.class.getName());
@@ -72,11 +77,24 @@ public class ServerLauncherRemoteWithCustomLoggingIntegrationTest extends Abstra
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(new File(this.workingDirectory)).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(new ToSystemOut()).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(new ToSystemOut()).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .inputListener(new ToSystemOut())
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .inputListener(new ToSystemOut())
+            .build()
+            .start();
 
     int pid = 0;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -88,14 +106,17 @@ public class ServerLauncherRemoteWithCustomLoggingIntegrationTest extends Abstra
       assertTrue(ProcessUtils.isProcessAlive(pid));
 
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // check the status
       final ServerLauncher.ServerState serverState = this.launcher.status();
       assertNotNull(serverState);
       assertEquals(AbstractLauncher.Status.ONLINE, serverState.getStatus());
 
-      assertThat(systemOutRule.getLog()).contains("log4j.configurationFile = " + this.customConfigFile.getCanonicalPath());
+      assertThat(systemOutRule.getLog())
+          .contains("log4j.configurationFile = " + this.customConfigFile.getCanonicalPath());
       assertThat(systemOutRule.getLog()).contains(CONFIG_LAYOUT_PREFIX);
 
     } catch (Throwable e) {

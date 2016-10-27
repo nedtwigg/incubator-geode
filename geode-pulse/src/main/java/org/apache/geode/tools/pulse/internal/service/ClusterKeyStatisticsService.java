@@ -31,13 +31,12 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Class ClusterKeyStatisticsService
- * 
- * This class contains implementations of getting Cluster's current Reads,
- * Writes and queries details and their trends over the time.
- * 
+ *
+ * <p>This class contains implementations of getting Cluster's current Reads, Writes and queries
+ * details and their trends over the time.
+ *
  * @since GemFire version 7.5
  */
-
 @Component
 @Service("ClusterKeyStatistics")
 @Scope("singleton")
@@ -53,14 +52,19 @@ public class ClusterKeyStatisticsService implements PulseService {
     // json object to be sent as response
     ObjectNode responseJSON = mapper.createObjectNode();
 
-    responseJSON.put("writePerSecTrend", mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_WRITES_PER_SECOND)));
+    responseJSON.put(
+        "writePerSecTrend",
+        mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_WRITES_PER_SECOND)));
 
-    responseJSON.put("readPerSecTrend", mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_READ_PER_SECOND)));
+    responseJSON.put(
+        "readPerSecTrend",
+        mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_READ_PER_SECOND)));
 
-    responseJSON.put("queriesPerSecTrend", mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_QUERIES_PER_SECOND)));
+    responseJSON.put(
+        "queriesPerSecTrend",
+        mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_QUERIES_PER_SECOND)));
 
     // Send json response
     return responseJSON;
-
   }
 }

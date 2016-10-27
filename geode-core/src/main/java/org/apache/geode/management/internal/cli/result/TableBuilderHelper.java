@@ -23,11 +23,7 @@ import java.util.List;
 
 import org.apache.geode.management.internal.cli.shell.Gfsh;
 
-/**
- * Helps table builder for adjusting result width according to screen width 
- *
- */
-
+/** Helps table builder for adjusting result width according to screen width */
 public class TableBuilderHelper {
 
   private static final int SCREEN_WIDTH_MARGIN_BUFFER = 5;
@@ -46,7 +42,6 @@ public class TableBuilderHelper {
     public String toString() {
       return ("OI:" + originalIndex + "<" + length + ">\n");
     }
-
   }
 
   public static class TooManyColumnsException extends RuntimeException {
@@ -55,7 +50,8 @@ public class TableBuilderHelper {
     }
   }
 
-  public static int[] recalculateColSizesForScreen(int screenWidth, int[] colSizes, String colSeparators) {
+  public static int[] recalculateColSizesForScreen(
+      int screenWidth, int[] colSizes, String colSeparators) {
 
     if (shouldTrimColumns()) {
       int totalLength = 0;
@@ -124,7 +120,10 @@ public class TableBuilderHelper {
       index = 0;
       for (int colSize : finalColSizes) {
         if (colSize != colSizes[index] && colSize < 2)
-          throw new TooManyColumnsException("Computed ColSize=" + colSize + " Set RESULT_VIEWER to external. This uses the 'less' command (with horizontal scrolling) to see wider results");
+          throw new TooManyColumnsException(
+              "Computed ColSize="
+                  + colSize
+                  + " Set RESULT_VIEWER to external. This uses the 'less' command (with horizontal scrolling) to see wider results");
         totalLength += colSize;
         index++;
       }
@@ -139,31 +138,23 @@ public class TableBuilderHelper {
   public static int trimWidthForScreen(int maxColLength) {
     if (shouldTrimColumns()) {
       int screenWidth = getScreenWidth();
-      if (maxColLength > screenWidth)
-        return screenWidth;
-      else
-        return maxColLength;
-    } else
-      return maxColLength;
-
+      if (maxColLength > screenWidth) return screenWidth;
+      else return maxColLength;
+    } else return maxColLength;
   }
 
   public static int getScreenWidth() {
     Gfsh gfsh = Gfsh.getCurrentInstance();
-    if (gfsh == null)
-      return Gfsh.DEFAULT_WIDTH;
-    else
-      return gfsh.getTerminalWidth();
+    if (gfsh == null) return Gfsh.DEFAULT_WIDTH;
+    else return gfsh.getTerminalWidth();
   }
 
   public static boolean shouldTrimColumns() {
     Gfsh gfsh = Gfsh.getCurrentInstance();
-    if (gfsh == null)
-      return Boolean.getBoolean("GFSH.TRIMSCRWIDTH");
+    if (gfsh == null) return Boolean.getBoolean("GFSH.TRIMSCRWIDTH");
     else {
-      return Gfsh.DEFAULT_APP_RESULT_VIEWER.equals(gfsh.getEnvProperty(Gfsh.ENV_APP_RESULT_VIEWER)) && !Gfsh.isInfoResult();
+      return Gfsh.DEFAULT_APP_RESULT_VIEWER.equals(gfsh.getEnvProperty(Gfsh.ENV_APP_RESULT_VIEWER))
+          && !Gfsh.isInfoResult();
     }
-
   }
-
 }

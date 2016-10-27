@@ -20,38 +20,29 @@ import org.apache.geode.cache.DiskStore;
 
 /**
  * Composite data type used to distribute network related metrics for a member.
- * 
- * @since GemFire 7.0
  *
+ * @since GemFire 7.0
  */
 public class NetworkMetrics {
   private float bytesReceivedRate;
   private float bytesSentRate;
 
-  /**
-   * Returns the average number of bytes per second received.
-   */
+  /** Returns the average number of bytes per second received. */
   public float getBytesReceivedRate() {
     return bytesReceivedRate;
   }
 
-  /**
-   * Returns the average number of bytes per second sent.
-   */
+  /** Returns the average number of bytes per second sent. */
   public float getBytesSentRate() {
     return bytesSentRate;
   }
 
-  /**
-   * Sets the average number of bytes per second received.
-   */
+  /** Sets the average number of bytes per second received. */
   public void setBytesReceivedRate(float bytesReceivedRate) {
     this.bytesReceivedRate = bytesReceivedRate;
   }
 
-  /**
-   * Sets the average number of bytes per second sent.
-   */
+  /** Sets the average number of bytes per second sent. */
   public void setBytesSentRate(float bytesSentRate) {
     this.bytesSentRate = bytesSentRate;
   }

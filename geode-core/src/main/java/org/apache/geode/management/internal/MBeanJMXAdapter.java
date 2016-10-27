@@ -56,46 +56,34 @@ import org.apache.geode.management.ManagerMXBean;
 import org.apache.geode.management.MemberMXBean;
 import org.apache.geode.management.RegionMXBean;
 
-/**
- * Utility class to interact with the JMX server
- * 
- * 
- */
+/** Utility class to interact with the JMX server */
 public class MBeanJMXAdapter implements ManagementConstants {
 
   /** The <code>MBeanServer</code> for this application */
   public static MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
 
-  /**
-   * 
-   */
+  /** */
   private Map<ObjectName, Object> localGemFireMBean;
 
   private DistributedMember distMember;
 
-  /**
-   * log writer, or null if there is no distributed system available
-   */
+  /** log writer, or null if there is no distributed system available */
   //  private LogWriterI18n logger = InternalDistributedSystem.getLoggerI18n();
 
-  /**
-   * public constructor
-   */
-
+  /** public constructor */
   public MBeanJMXAdapter() {
     this.localGemFireMBean = new ConcurrentHashMap<ObjectName, Object>();
     this.distMember = InternalDistributedSystem.getConnectedInstance().getDistributedMember();
   }
 
   /**
-   * This method will register an MBean in GemFire domain. Even if the client
-   * provides a domain name it will be ignored and GemFire domain name will be
-   * used.
-   * 
-   * This method checks the local Filter for registering the MBean. If filtered
-   * the MBean wont be registered. Although the filter will remember the
-   * filtered MBean and register it once the filter is removed.
-   * 
+   * This method will register an MBean in GemFire domain. Even if the client provides a domain name
+   * it will be ignored and GemFire domain name will be used.
+   *
+   * <p>This method checks the local Filter for registering the MBean. If filtered the MBean wont be
+   * registered. Although the filter will remember the filtered MBean and register it once the
+   * filter is removed.
+   *
    * @param object
    * @param objectName
    * @return modifed ObjectName
@@ -107,7 +95,9 @@ public class MBeanJMXAdapter implements ManagementConstants {
         String member = getMemberNameOrId(distMember);
         String objectKeyProperty = objectName.getKeyPropertyListString();
 
-        newObjectName = ObjectName.getInstance(OBJECTNAME__PREFIX + objectKeyProperty + KEYVAL_SEPARATOR + "member=" + member);
+        newObjectName =
+            ObjectName.getInstance(
+                OBJECTNAME__PREFIX + objectKeyProperty + KEYVAL_SEPARATOR + "member=" + member);
       }
       mbeanServer.registerMBean(object, newObjectName);
       this.localGemFireMBean.put(newObjectName, object);
@@ -128,7 +118,7 @@ public class MBeanJMXAdapter implements ManagementConstants {
 
   /**
    * Checks whether an MBean implements notification support classes or not
-   * 
+   *
    * @param objectName
    * @return if this MBean can be a notification broadcaster
    */
@@ -160,14 +150,13 @@ public class MBeanJMXAdapter implements ManagementConstants {
   }
 
   /**
-   * This method will register an MBean in GemFire domain. Even if the client
-   * provides a domain name it will be ignored and GemFire domain name will be
-   * used.
-   * 
-   * This method checks the local Filter for registering the MBean. If filtered
-   * the MBean wont be registered. Although the filter will remember the
-   * filtered MBean and register it once the filter is removed.
-   * 
+   * This method will register an MBean in GemFire domain. Even if the client provides a domain name
+   * it will be ignored and GemFire domain name will be used.
+   *
+   * <p>This method checks the local Filter for registering the MBean. If filtered the MBean wont be
+   * registered. Although the filter will remember the filtered MBean and register it once the
+   * filter is removed.
+   *
    * @param object
    * @param objectName
    */
@@ -186,13 +175,11 @@ public class MBeanJMXAdapter implements ManagementConstants {
     } catch (NullPointerException e) {
       throw new ManagementException(e);
     }
-
   }
 
   /**
-   * 
    * This method will unregister the MBean from GemFire Domain
-   * 
+   *
    * @param objectName
    */
   public void unregisterMBean(ObjectName objectName) {
@@ -215,7 +202,6 @@ public class MBeanJMXAdapter implements ManagementConstants {
     } catch (MBeanRegistrationException e) {
       throw new ManagementException(e);
     }
-
   }
 
   public Object getMBeanObject(ObjectName objectName) {
@@ -224,7 +210,7 @@ public class MBeanJMXAdapter implements ManagementConstants {
 
   /**
    * Finds the MBean instance by {@link javax.management.ObjectName}
-   * 
+   *
    * @param objectName
    * @param interfaceClass
    * @return instance of MBean
@@ -243,11 +229,7 @@ public class MBeanJMXAdapter implements ManagementConstants {
     return localGemFireMBean.containsKey(objectName);
   }
 
-  /**
-   * Method to unregister all the local GemFire MBeans
-   * 
-   */
-
+  /** Method to unregister all the local GemFire MBeans */
   public void unregisterAll() {
     try {
       ObjectName name = new ObjectName(OBJECTNAME__PREFIX + "*");
@@ -261,7 +243,6 @@ public class MBeanJMXAdapter implements ManagementConstants {
     } catch (NullPointerException e) {
       throw new ManagementException(e);
     }
-
   }
 
   public void cleanJMXResource() {
@@ -275,9 +256,9 @@ public class MBeanJMXAdapter implements ManagementConstants {
   }
 
   /**
-   * This method returns the name that will be used for a DistributedMember when it is registered
-   * as a JMX bean.
-   * 
+   * This method returns the name that will be used for a DistributedMember when it is registered as
+   * a JMX bean.
+   *
    * @param member Member to find the name for
    * @return The name used to register this member as a JMX bean.
    */
@@ -289,22 +270,19 @@ public class MBeanJMXAdapter implements ManagementConstants {
   }
 
   /**
-   * Return a String that been modified to be compliant as a property of an
-   * ObjectName.
-   * <p>
-   * The property name of an ObjectName may not contain any of the following
-   * characters: <b><i>: , = * ?</i></b>
-   * <p>
-   * This method will replace the above non-compliant characters with a dash:
-   * <b><i>-</i></b>
-   * <p>
-   * If value is empty, this method will return the string "nothing".
-   * <p>
-   * Note: this is <code>public</code> because certain tests call this from
-   * outside of the package. 
-   * 
-   * @param value
-   *          the potentially non-compliant ObjectName property
+   * Return a String that been modified to be compliant as a property of an ObjectName.
+   *
+   * <p>The property name of an ObjectName may not contain any of the following characters: <b><i>:
+   * , = * ?</i></b>
+   *
+   * <p>This method will replace the above non-compliant characters with a dash: <b><i>-</i></b>
+   *
+   * <p>If value is empty, this method will return the string "nothing".
+   *
+   * <p>Note: this is <code>public</code> because certain tests call this from outside of the
+   * package.
+   *
+   * @param value the potentially non-compliant ObjectName property
    * @return the value modified to be compliant as an ObjectName property
    */
   public static String makeCompliantName(String value) {
@@ -361,30 +339,21 @@ public class MBeanJMXAdapter implements ManagementConstants {
     }
   }
 
-  /**
-   * 
-   */
-
+  /** */
   public static String makeCompliantRegionNameAppender(String value) {
 
     return value.replace("/", "-").replace(":", "");
-
   }
 
-  /**
-   * returns Member MBean if any
-   * 
-   */
+  /** returns Member MBean if any */
   public MemberMXBean getMemberMXBean() {
     ObjectName objName = getMemberMBeanName(distMember);
     return (MemberMXBean) localGemFireMBean.get(objName);
-
   }
 
   public RegionMXBean getLocalRegionMXBean(String regionPath) {
     ObjectName objName = getRegionMBeanName(distMember, regionPath);
     return (RegionMXBean) localGemFireMBean.get(objName);
-
   }
 
   public LockServiceMXBean getLocalLockServiceMXBean(String lockServiceName) {
@@ -395,13 +364,11 @@ public class MBeanJMXAdapter implements ManagementConstants {
   public DiskStoreMXBean getLocalDiskStoreMXBean(String disStoreName) {
     ObjectName objName = getDiskStoreMBeanName(distMember, disStoreName);
     return (DiskStoreMXBean) localGemFireMBean.get(objName);
-
   }
 
   public CacheServerMXBean getClientServiceMXBean(int serverPort) {
     ObjectName objName = getClientServiceMBeanName(serverPort, distMember);
     return (CacheServerMXBean) localGemFireMBean.get(objName);
-
   }
 
   public DistributedLockServiceMXBean getDistributedLockServiceMXBean(String lockServiceName) {
@@ -455,89 +422,143 @@ public class MBeanJMXAdapter implements ManagementConstants {
   }
 
   public static ObjectName getMemberMBeanName(DistributedMember member) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__MEMBER_MXBEAN, new Object[] { getMemberNameOrId(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__MEMBER_MXBEAN, new Object[] {getMemberNameOrId(member)})));
   }
 
   public static ObjectName getMemberMBeanName(String member) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__MEMBER_MXBEAN, new Object[] { makeCompliantName(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__MEMBER_MXBEAN, new Object[] {makeCompliantName(member)})));
   }
 
   public static ObjectName getRegionMBeanName(DistributedMember member, String regionPath) {
 
-    return getObjectName((MessageFormat.format(OBJECTNAME__REGION_MXBEAN, new Object[] { makeCompliantRegionPath(regionPath), getMemberNameOrId(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__REGION_MXBEAN,
+            new Object[] {makeCompliantRegionPath(regionPath), getMemberNameOrId(member)})));
   }
 
   public static ObjectName getRegionMBeanName(String member, String regionPath) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__REGION_MXBEAN, new Object[] { makeCompliantRegionPath(regionPath), makeCompliantName(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__REGION_MXBEAN,
+            new Object[] {makeCompliantRegionPath(regionPath), makeCompliantName(member)})));
   }
 
   public static ObjectName getRegionMBeanName(ObjectName memberMBeanName, String regionPath) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__REGION_MXBEAN, new Object[] { makeCompliantRegionPath(regionPath), memberMBeanName.getKeyProperty(ManagementConstants.OBJECTNAME_MEMBER_APPENDER) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__REGION_MXBEAN,
+            new Object[] {
+              makeCompliantRegionPath(regionPath),
+              memberMBeanName.getKeyProperty(ManagementConstants.OBJECTNAME_MEMBER_APPENDER)
+            })));
   }
 
   public static ObjectName getDiskStoreMBeanName(DistributedMember member, String diskName) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__DISKSTORE_MXBEAN, new Object[] { diskName, getMemberNameOrId(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__DISKSTORE_MXBEAN, new Object[] {diskName, getMemberNameOrId(member)})));
   }
 
   public static ObjectName getDiskStoreMBeanName(String member, String diskName) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__DISKSTORE_MXBEAN, new Object[] { diskName, makeCompliantName(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__DISKSTORE_MXBEAN, new Object[] {diskName, makeCompliantName(member)})));
   }
 
   public static ObjectName getClientServiceMBeanName(int serverPort, DistributedMember member) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__CLIENTSERVICE_MXBEAN, new Object[] { String.valueOf(serverPort), getMemberNameOrId(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__CLIENTSERVICE_MXBEAN,
+            new Object[] {String.valueOf(serverPort), getMemberNameOrId(member)})));
   }
 
   public static ObjectName getClientServiceMBeanName(int serverPort, String member) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__CLIENTSERVICE_MXBEAN, new Object[] { String.valueOf(serverPort), makeCompliantName(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__CLIENTSERVICE_MXBEAN,
+            new Object[] {String.valueOf(serverPort), makeCompliantName(member)})));
   }
 
-  public static ObjectName getLockServiceMBeanName(DistributedMember member, String lockServiceName) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__LOCKSERVICE_MXBEAN, new Object[] { lockServiceName, getMemberNameOrId(member) })));
+  public static ObjectName getLockServiceMBeanName(
+      DistributedMember member, String lockServiceName) {
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__LOCKSERVICE_MXBEAN,
+            new Object[] {lockServiceName, getMemberNameOrId(member)})));
   }
 
   public static ObjectName getLockServiceMBeanName(String member, String lockServiceName) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__LOCKSERVICE_MXBEAN, new Object[] { lockServiceName, makeCompliantName(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__LOCKSERVICE_MXBEAN,
+            new Object[] {lockServiceName, makeCompliantName(member)})));
   }
 
   public static ObjectName getGatewayReceiverMBeanName(DistributedMember member) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__GATEWAYRECEIVER_MXBEAN, new Object[] { getMemberNameOrId(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__GATEWAYRECEIVER_MXBEAN, new Object[] {getMemberNameOrId(member)})));
   }
 
   public static ObjectName getGatewayReceiverMBeanName(String member) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__GATEWAYRECEIVER_MXBEAN, new Object[] { makeCompliantName(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__GATEWAYRECEIVER_MXBEAN, new Object[] {makeCompliantName(member)})));
   }
 
   public static ObjectName getGatewaySenderMBeanName(DistributedMember member, String id) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__GATEWAYSENDER_MXBEAN, new Object[] { id, getMemberNameOrId(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__GATEWAYSENDER_MXBEAN, new Object[] {id, getMemberNameOrId(member)})));
   }
 
   public static ObjectName getGatewaySenderMBeanName(String member, String id) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__GATEWAYSENDER_MXBEAN, new Object[] { id, makeCompliantName(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__GATEWAYSENDER_MXBEAN, new Object[] {id, makeCompliantName(member)})));
   }
 
   public static ObjectName getAsycnEventQueueMBeanName(DistributedMember member, String queueId) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__ASYNCEVENTQUEUE_MXBEAN, new Object[] { queueId, getMemberNameOrId(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__ASYNCEVENTQUEUE_MXBEAN,
+            new Object[] {queueId, getMemberNameOrId(member)})));
   }
 
   public static ObjectName getAsycnEventQueueMBeanName(String member, String queueId) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__ASYNCEVENTQUEUE_MXBEAN, new Object[] { queueId, makeCompliantName(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__ASYNCEVENTQUEUE_MXBEAN,
+            new Object[] {queueId, makeCompliantName(member)})));
   }
 
   public static ObjectName getDistributedRegionMbeanName(String regionPath) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__DISTRIBUTEDREGION_MXBEAN, new Object[] { makeCompliantRegionPath(regionPath) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__DISTRIBUTEDREGION_MXBEAN,
+            new Object[] {makeCompliantRegionPath(regionPath)})));
   }
 
   /**
    * Without special character transformation
+   *
    * @param regionPath region path
    * @return ObjectName MBean name
    */
   public static ObjectName getDistributedRegionMbeanNameInternal(String regionPath) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__DISTRIBUTEDREGION_MXBEAN, new Object[] { regionPath })));
+    return getObjectName(
+        (MessageFormat.format(OBJECTNAME__DISTRIBUTEDREGION_MXBEAN, new Object[] {regionPath})));
   }
 
   public static ObjectName getDistributedLockServiceName(String lockService) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__DISTRIBUTEDLOCKSERVICE_MXBEAN, new Object[] { lockService })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__DISTRIBUTEDLOCKSERVICE_MXBEAN, new Object[] {lockService})));
   }
 
   public static ObjectName getDistributedSystemName() {
@@ -545,20 +566,29 @@ public class MBeanJMXAdapter implements ManagementConstants {
   }
 
   public static ObjectName getManagerName() {
-    String member = getMemberNameOrId(InternalDistributedSystem.getConnectedInstance().getDistributedMember());
-    return getObjectName((MessageFormat.format(OBJECTNAME__MANAGER_MXBEAN, new Object[] { member })));
+    String member =
+        getMemberNameOrId(InternalDistributedSystem.getConnectedInstance().getDistributedMember());
+    return getObjectName((MessageFormat.format(OBJECTNAME__MANAGER_MXBEAN, new Object[] {member})));
   }
 
   public static ObjectName getLocatorMBeanName(DistributedMember member) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__LOCATOR_MXBEAN, new Object[] { getMemberNameOrId(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__LOCATOR_MXBEAN, new Object[] {getMemberNameOrId(member)})));
   }
 
   public static ObjectName getLocatorMBeanName(String member) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__LOCATOR_MXBEAN, new Object[] { makeCompliantName(member) })));
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__LOCATOR_MXBEAN, new Object[] {makeCompliantName(member)})));
   }
 
-  public static ObjectName getCacheServiceMBeanName(DistributedMember member, String cacheServiceId) {
-    return getObjectName((MessageFormat.format(OBJECTNAME__CACHESERVICE_MXBEAN, new Object[] { cacheServiceId, getMemberNameOrId(member) })));
+  public static ObjectName getCacheServiceMBeanName(
+      DistributedMember member, String cacheServiceId) {
+    return getObjectName(
+        (MessageFormat.format(
+            OBJECTNAME__CACHESERVICE_MXBEAN,
+            new Object[] {cacheServiceId, getMemberNameOrId(member)})));
   }
 
   public Map<ObjectName, Object> getLocalGemFireMBean() {
@@ -574,7 +604,7 @@ public class MBeanJMXAdapter implements ManagementConstants {
     // Loner, but in that case no
     // federation as well
     sb.append(iMember.getPort());
-    return makeCompliantName(sb.toString().toLowerCase());// Lower case to
+    return makeCompliantName(sb.toString().toLowerCase()); // Lower case to
     // handle IPv6
   }
 
@@ -598,9 +628,7 @@ public class MBeanJMXAdapter implements ManagementConstants {
     }
 
     return true;
-
   }
 
   public static int VALUE_NOT_AVAILABLE = -1;
-
 }

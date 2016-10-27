@@ -22,9 +22,8 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Verifies that test output containing an unexpected WARN message
- * will fail with that WARN message as the failure message.
- * 
+ * Verifies that test output containing an unexpected WARN message will fail with that WARN message
+ * as the failure message.
  */
 @Category(IntegrationTest.class)
 public class FailWithLoggerWarnInOutputJUnitTest extends FailWithProblemInOutputTestCase {

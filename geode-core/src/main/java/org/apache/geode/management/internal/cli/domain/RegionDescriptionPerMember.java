@@ -27,9 +27,7 @@ import org.apache.geode.cache.Scope;
 
 public class RegionDescriptionPerMember implements Serializable {
 
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
 
   private int size = 0;
@@ -45,12 +43,14 @@ public class RegionDescriptionPerMember implements Serializable {
     this.name = region.getFullPath().substring(1);
 
     //For the replicated proxy
-    if ((this.regionAttributesInfo.getDataPolicy().equals(DataPolicy.EMPTY) && this.regionAttributesInfo.getScope().equals(Scope.DISTRIBUTED_ACK))) {
+    if ((this.regionAttributesInfo.getDataPolicy().equals(DataPolicy.EMPTY)
+        && this.regionAttributesInfo.getScope().equals(Scope.DISTRIBUTED_ACK))) {
       setAccessor(true);
     }
 
     //For the partitioned proxy
-    if (this.regionAttributesInfo.getPartitionAttributesInfo() != null && this.regionAttributesInfo.getPartitionAttributesInfo().getLocalMaxMemory() == 0) {
+    if (this.regionAttributesInfo.getPartitionAttributesInfo() != null
+        && this.regionAttributesInfo.getPartitionAttributesInfo().getLocalMaxMemory() == 0) {
       setAccessor(true);
     }
   }
@@ -59,14 +59,16 @@ public class RegionDescriptionPerMember implements Serializable {
     if (obj instanceof RegionDescriptionPerMember) {
       RegionDescriptionPerMember regionDesc = (RegionDescriptionPerMember) obj;
 
-      return this.name.equals(regionDesc.getName()) && this.getScope().equals(regionDesc.getScope()) && this.getDataPolicy().equals(regionDesc.getDataPolicy()) && this.isAccessor == regionDesc.isAccessor;
+      return this.name.equals(regionDesc.getName())
+          && this.getScope().equals(regionDesc.getScope())
+          && this.getDataPolicy().equals(regionDesc.getDataPolicy())
+          && this.isAccessor == regionDesc.isAccessor;
     }
     return true;
   }
 
   public int hashCode() {
     return 42; // any arbitrary constant will do
-
   }
 
   public String getHostingMember() {

@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.wan.parallel;
 
 import org.apache.geode.cache.CacheException;
@@ -39,18 +37,13 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.geode.internal.size.SingleObjectSizer;
 
 /**
- * Queue built on top of {@link ParallelGatewaySenderQueue} which allows
- * multiple dispatcher to register and do peek/remove from the 
- * underlying {@link ParallelGatewaySenderQueue} 
- * 
- * There is only one queue, but this class co-ordinates access
- * by multiple threads such that we get zero contention while peeking
- * or removing.
- * 
- * It implements RegionQueue so that AbstractGatewaySenderEventProcessor
- * can work on it.
- *   
+ * Queue built on top of {@link ParallelGatewaySenderQueue} which allows multiple dispatcher to
+ * register and do peek/remove from the underlying {@link ParallelGatewaySenderQueue}
  *
+ * <p>There is only one queue, but this class co-ordinates access by multiple threads such that we
+ * get zero contention while peeking or removing.
+ *
+ * <p>It implements RegionQueue so that AbstractGatewaySenderEventProcessor can work on it.
  */
 public class ConcurrentParallelGatewaySenderQueue implements RegionQueue {
 
@@ -58,7 +51,8 @@ public class ConcurrentParallelGatewaySenderQueue implements RegionQueue {
 
   private final ParallelGatewaySenderEventProcessor processors[];
 
-  public ConcurrentParallelGatewaySenderQueue(AbstractGatewaySender sender, ParallelGatewaySenderEventProcessor pro[]) {
+  public ConcurrentParallelGatewaySenderQueue(
+      AbstractGatewaySender sender, ParallelGatewaySenderEventProcessor pro[]) {
     this.sender = sender;
     this.processors = pro;
   }
@@ -152,7 +146,9 @@ public class ConcurrentParallelGatewaySenderQueue implements RegionQueue {
   public long estimateMemoryFootprint(SingleObjectSizer sizer) {
     long size = 0;
     for (int i = 0; i < processors.length; i++)
-      size += ((ParallelGatewaySenderQueue) this.processors[i].getQueue()).estimateMemoryFootprint(sizer);
+      size +=
+          ((ParallelGatewaySenderQueue) this.processors[i].getQueue())
+              .estimateMemoryFootprint(sizer);
     return size;
   }
 
@@ -224,6 +220,7 @@ public class ConcurrentParallelGatewaySenderQueue implements RegionQueue {
   }
 
   public long getNumEntriesOverflowOnDiskTestOnly() {
-    return ((ParallelGatewaySenderQueue) (processors[0].getQueue())).getNumEntriesOverflowOnDiskTestOnly();
+    return ((ParallelGatewaySenderQueue) (processors[0].getQueue()))
+        .getNumEntriesOverflowOnDiskTestOnly();
   }
 }

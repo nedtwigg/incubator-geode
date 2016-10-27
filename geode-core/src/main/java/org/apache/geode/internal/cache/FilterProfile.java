@@ -78,14 +78,12 @@ import org.apache.geode.internal.offheap.annotations.Unretained;
 import org.apache.geode.internal.util.concurrent.CopyOnWriteHashMap;
 
 /**
- * FilterProfile represents a distributed system member and is used for
- * two purposes: processing client-bound events, and providing information
- * for profile exchanges.
- * 
- * FilterProfiles represent client IDs, including durable Queue IDs, with
- * long integers.  This reduces the size of routing information when sent
- * over the network.
- * 
+ * FilterProfile represents a distributed system member and is used for two purposes: processing
+ * client-bound events, and providing information for profile exchanges.
+ *
+ * <p>FilterProfiles represent client IDs, including durable Queue IDs, with long integers. This
+ * reduces the size of routing information when sent over the network.
+ *
  * @since GemFire 6.5
  */
 public class FilterProfile implements DataSerializableFixedID {
@@ -93,14 +91,26 @@ public class FilterProfile implements DataSerializableFixedID {
 
   /** enumeration of distributed profile operations */
   static enum operationType {
-    REGISTER_KEY, REGISTER_KEYS, REGISTER_PATTERN, REGISTER_FILTER, UNREGISTER_KEY, UNREGISTER_KEYS, UNREGISTER_PATTERN, UNREGISTER_FILTER, CLEAR, HAS_CQ, REGISTER_CQ, CLOSE_CQ, STOP_CQ, SET_CQ_STATE
+    REGISTER_KEY,
+    REGISTER_KEYS,
+    REGISTER_PATTERN,
+    REGISTER_FILTER,
+    UNREGISTER_KEY,
+    UNREGISTER_KEYS,
+    UNREGISTER_PATTERN,
+    UNREGISTER_FILTER,
+    CLEAR,
+    HAS_CQ,
+    REGISTER_CQ,
+    CLOSE_CQ,
+    STOP_CQ,
+    SET_CQ_STATE
   }
 
-  /**
-   * these booleans tell whether the associated operationType pertains to CQs
-   * or not
-   */
-  static boolean[] isCQOperation = { false, false, false, false, false, false, false, false, false, true, true, true, true, true };
+  /** these booleans tell whether the associated operationType pertains to CQs or not */
+  static boolean[] isCQOperation = {
+    false, false, false, false, false, false, false, false, false, true, true, true, true, true
+  };
 
   /**
    * types of interest a client may have<br>
@@ -109,91 +119,78 @@ public class FilterProfile implements DataSerializableFixedID {
    * INVALIDATES - wants invalidations instead of updates
    */
   public static enum interestType {
-    NONE, UPDATES, INVALIDATES
+    NONE,
+    UPDATES,
+    INVALIDATES
   }
 
   /**
-   * The keys in which clients are interested. This is a map keyed on client id,
-   * with a HashSet of the interested keys as the values.
+   * The keys in which clients are interested. This is a map keyed on client id, with a HashSet of
+   * the interested keys as the values.
    */
   private final Map<Object, Set> keysOfInterest = new CopyOnWriteHashMap<>();
 
   private final Map<Object, Set> keysOfInterestInv = new CopyOnWriteHashMap<>();
 
   /**
-   * The patterns in which clients are interested. This is a map keyed on
-   * client id, with a HashMap (key name to compiled pattern) as the values.
+   * The patterns in which clients are interested. This is a map keyed on client id, with a HashMap
+   * (key name to compiled pattern) as the values.
    */
   private final Map<Object, Map<Object, Pattern>> patternsOfInterest = new CopyOnWriteHashMap<>();
 
-  private final Map<Object, Map<Object, Pattern>> patternsOfInterestInv = new CopyOnWriteHashMap<>();
+  private final Map<Object, Map<Object, Pattern>> patternsOfInterestInv =
+      new CopyOnWriteHashMap<>();
 
   /**
-   * The filtering classes in which clients are interested. This is a map
-   * keyed on client id, with a HashMap (key name to {@link InterestFilter})
-   * as the values.
+   * The filtering classes in which clients are interested. This is a map keyed on client id, with a
+   * HashMap (key name to {@link InterestFilter}) as the values.
    */
   private final Map<Object, Map> filtersOfInterest = new CopyOnWriteHashMap<>();
 
   private final Map<Object, Map> filtersOfInterestInv = new CopyOnWriteHashMap<>();
 
-  /**
-   * Set of clients that we have ALL_KEYS interest for and who want updates
-   */
+  /** Set of clients that we have ALL_KEYS interest for and who want updates */
   private final Set<Long> allKeyClients = new CopyOnWriteHashSet<>();
 
-  /**
-   * Set of clients that we have ALL_KEYS interest for and who want invalidations
-   */
+  /** Set of clients that we have ALL_KEYS interest for and who want invalidations */
   private final Set<Long> allKeyClientsInv = new CopyOnWriteHashSet<>();
 
-  /**
-   * The region associated with this profile
-   */
+  /** The region associated with this profile */
   transient LocalRegion region;
 
-  /**
-   * Whether this is a local profile or one that describes another process
-   */
+  /** Whether this is a local profile or one that describes another process */
   private transient boolean isLocalProfile;
 
   /** Currently installed CQ count on the region */
   AtomicInteger cqCount;
 
-  /** CQs that are registered on the remote node **/
+  /** CQs that are registered on the remote node * */
   private final Map cqs = new CopyOnWriteHashMap();
 
   /* the ID of the member that this profile describes */
   private DistributedMember memberID;
 
-  /**
-   * since client identifiers can be long, we use a mapping for on-wire
-   * operations
-   */
+  /** since client identifiers can be long, we use a mapping for on-wire operations */
   IDMap clientMap;
 
-  /**
-   * since CQ identifiers can be long, we use a mapping for on-wire operations
-   */
+  /** since CQ identifiers can be long, we use a mapping for on-wire operations */
   IDMap cqMap;
 
   private final Object interestListLock = new Object();
 
-  /**
-   * Queues the Filter Profile messages that are received during profile 
-   * exchange. 
-   */
-  private volatile Map<InternalDistributedMember, LinkedList<OperationMessage>> filterProfileMsgQueue = new HashMap<>();
+  /** Queues the Filter Profile messages that are received during profile exchange. */
+  private volatile Map<InternalDistributedMember, LinkedList<OperationMessage>>
+      filterProfileMsgQueue = new HashMap<>();
 
   public FilterProfile() {
     cqCount = new AtomicInteger();
   }
 
   /**
-   * used for instantiation of a profile associated with a region and
-   * not describing region filters in a different process.  Do not use
-   * this method when instantiating profiles to store in distribution
-   * advisor profiles.
+   * used for instantiation of a profile associated with a region and not describing region filters
+   * in a different process. Do not use this method when instantiating profiles to store in
+   * distribution advisor profiles.
+   *
    * @param r
    */
   public FilterProfile(LocalRegion r) {
@@ -231,48 +228,51 @@ public class FilterProfile implements DataSerializableFixedID {
   /**
    * Registers interest in the input region name and key
    *
-   * @param inputClientID 
-   *          The identity of the interested client
-   * @param interest
-   *          The key in which to register interest
+   * @param inputClientID The identity of the interested client
+   * @param interest The key in which to register interest
    * @param typeOfInterest the type of interest the client is registering
-   * @param updatesAsInvalidates
-   *          whether the client just wants invalidations
+   * @param updatesAsInvalidates whether the client just wants invalidations
    * @return a set of the keys that were registered, which may be null
    */
-  public Set registerClientInterest(Object inputClientID, Object interest, int typeOfInterest, boolean updatesAsInvalidates) {
+  public Set registerClientInterest(
+      Object inputClientID, Object interest, int typeOfInterest, boolean updatesAsInvalidates) {
     Set keysRegistered = new HashSet();
     operationType opType = null;
 
     Long clientID = getClientIDForMaps(inputClientID);
     synchronized (this.interestListLock) {
       switch (typeOfInterest) {
-      case InterestType.KEY:
-        opType = operationType.REGISTER_KEY;
-        Map<Object, Set> koi = updatesAsInvalidates ? getKeysOfInterestInv() : getKeysOfInterest();
-        registerKeyInMap(interest, keysRegistered, clientID, koi);
-        break;
-      case InterestType.REGULAR_EXPRESSION:
-        opType = operationType.REGISTER_PATTERN;
-        if (((String) interest).equals(".*")) {
-          Set akc = updatesAsInvalidates ? getAllKeyClientsInv() : getAllKeyClients();
-          if (akc.add(clientID)) {
-            keysRegistered.add(interest);
+        case InterestType.KEY:
+          opType = operationType.REGISTER_KEY;
+          Map<Object, Set> koi =
+              updatesAsInvalidates ? getKeysOfInterestInv() : getKeysOfInterest();
+          registerKeyInMap(interest, keysRegistered, clientID, koi);
+          break;
+        case InterestType.REGULAR_EXPRESSION:
+          opType = operationType.REGISTER_PATTERN;
+          if (((String) interest).equals(".*")) {
+            Set akc = updatesAsInvalidates ? getAllKeyClientsInv() : getAllKeyClients();
+            if (akc.add(clientID)) {
+              keysRegistered.add(interest);
+            }
+          } else {
+            Map<Object, Map<Object, Pattern>> pats =
+                updatesAsInvalidates ? getPatternsOfInterestInv() : getPatternsOfInterest();
+            registerPatternInMap(interest, keysRegistered, clientID, pats);
           }
-        } else {
-          Map<Object, Map<Object, Pattern>> pats = updatesAsInvalidates ? getPatternsOfInterestInv() : getPatternsOfInterest();
-          registerPatternInMap(interest, keysRegistered, clientID, pats);
-        }
-        break;
-      case InterestType.FILTER_CLASS: {
-        opType = operationType.REGISTER_FILTER;
-        Map<Object, Map> filts = updatesAsInvalidates ? getFiltersOfInterestInv() : getFiltersOfInterest();
-        registerFilterClassInMap(interest, clientID, filts);
-        break;
-      }
+          break;
+        case InterestType.FILTER_CLASS:
+          {
+            opType = operationType.REGISTER_FILTER;
+            Map<Object, Map> filts =
+                updatesAsInvalidates ? getFiltersOfInterestInv() : getFiltersOfInterest();
+            registerFilterClassInMap(interest, clientID, filts);
+            break;
+          }
 
-      default:
-        throw new InternalGemFireError(LocalizedStrings.CacheClientProxy_UNKNOWN_INTEREST_TYPE.toLocalizedString());
+        default:
+          throw new InternalGemFireError(
+              LocalizedStrings.CacheClientProxy_UNKNOWN_INTEREST_TYPE.toLocalizedString());
       } // switch
       if (this.isLocalProfile && opType != null) {
         sendProfileOperation(clientID, opType, interest, updatesAsInvalidates);
@@ -289,9 +289,15 @@ public class FilterProfile implements DataSerializableFixedID {
       filterClass = ClassLoadUtil.classFromName((String) interest);
       filter = (InterestFilter) filterClass.newInstance();
     } catch (ClassNotFoundException cnfe) {
-      throw new RuntimeException(LocalizedStrings.CacheClientProxy_CLASS_0_NOT_FOUND_IN_CLASSPATH.toLocalizedString(interest), cnfe);
+      throw new RuntimeException(
+          LocalizedStrings.CacheClientProxy_CLASS_0_NOT_FOUND_IN_CLASSPATH.toLocalizedString(
+              interest),
+          cnfe);
     } catch (Exception e) {
-      throw new RuntimeException(LocalizedStrings.CacheClientProxy_CLASS_0_COULD_NOT_BE_INSTANTIATED.toLocalizedString(interest), e);
+      throw new RuntimeException(
+          LocalizedStrings.CacheClientProxy_CLASS_0_COULD_NOT_BE_INSTANTIATED.toLocalizedString(
+              interest),
+          e);
     }
     Map interestMap = filts.get(clientID);
     if (interestMap == null) {
@@ -301,7 +307,8 @@ public class FilterProfile implements DataSerializableFixedID {
     interestMap.put(interest, filter);
   }
 
-  private void registerPatternInMap(Object interest, Set keysRegistered, Long clientID, Map<Object, Map<Object, Pattern>> pats) {
+  private void registerPatternInMap(
+      Object interest, Set keysRegistered, Long clientID, Map<Object, Map<Object, Pattern>> pats) {
     Pattern pattern = Pattern.compile((String) interest);
     Map<Object, Pattern> interestMap = pats.get(clientID);
     if (interestMap == null) {
@@ -310,12 +317,13 @@ public class FilterProfile implements DataSerializableFixedID {
     }
     Pattern oldPattern = interestMap.put(interest, pattern);
     if (oldPattern == null) {
-      // If the pattern didn't exist, add it to the set of keys to pass to any listeners. 
+      // If the pattern didn't exist, add it to the set of keys to pass to any listeners.
       keysRegistered.add(interest);
     }
   }
 
-  private void registerKeyInMap(Object interest, Set keysRegistered, Long clientID, Map<Object, Set> koi) {
+  private void registerKeyInMap(
+      Object interest, Set keysRegistered, Long clientID, Map<Object, Set> koi) {
     Set interestList = koi.get(clientID);
     if (interestList == null) {
       interestList = new CopyOnWriteHashSet();
@@ -328,10 +336,8 @@ public class FilterProfile implements DataSerializableFixedID {
   /**
    * Unregisters a client's interest
    *
-   * @param inputClientID
-   *          The identity of the client that is losing interest
-   * @param interest
-   *          The key in which to unregister interest
+   * @param inputClientID The identity of the client that is losing interest
+   * @param interest The key in which to unregister interest
    * @param interestType the type of uninterest
    * @return the keys unregistered, which may be null
    */
@@ -344,7 +350,9 @@ public class FilterProfile implements DataSerializableFixedID {
       clientID = cids.get(inputClientID);
       if (clientID == null) {
         if (logger.isDebugEnabled()) {
-          logger.debug("region profile unable to find '{}' for unregistration.  Probably means there is no durable queue.", inputClientID);
+          logger.debug(
+              "region profile unable to find '{}' for unregistration.  Probably means there is no durable queue.",
+              inputClientID);
         }
         return null;
       }
@@ -353,23 +361,27 @@ public class FilterProfile implements DataSerializableFixedID {
     operationType opType = null;
     synchronized (this.interestListLock) {
       switch (interestType) {
-      case InterestType.KEY: {
-        opType = operationType.UNREGISTER_KEY;
-        unregisterClientKeys(inputClientID, interest, clientID, keysUnregistered);
-        break;
-      }
-      case InterestType.REGULAR_EXPRESSION: {
-        opType = operationType.UNREGISTER_PATTERN;
-        unregisterClientPattern(interest, clientID, keysUnregistered);
-        break;
-      }
-      case InterestType.FILTER_CLASS: {
-        opType = operationType.UNREGISTER_FILTER;
-        unregisterClientFilterClass(interest, clientID);
-        break;
-      }
-      default:
-        throw new InternalGemFireError(LocalizedStrings.CacheClientProxy_BAD_INTEREST_TYPE.toLocalizedString());
+        case InterestType.KEY:
+          {
+            opType = operationType.UNREGISTER_KEY;
+            unregisterClientKeys(inputClientID, interest, clientID, keysUnregistered);
+            break;
+          }
+        case InterestType.REGULAR_EXPRESSION:
+          {
+            opType = operationType.UNREGISTER_PATTERN;
+            unregisterClientPattern(interest, clientID, keysUnregistered);
+            break;
+          }
+        case InterestType.FILTER_CLASS:
+          {
+            opType = operationType.UNREGISTER_FILTER;
+            unregisterClientFilterClass(interest, clientID);
+            break;
+          }
+        default:
+          throw new InternalGemFireError(
+              LocalizedStrings.CacheClientProxy_BAD_INTEREST_TYPE.toLocalizedString());
       }
       if (this.region != null && this.isLocalProfile) {
         sendProfileOperation(clientID, opType, interest, false);
@@ -424,7 +436,8 @@ public class FilterProfile implements DataSerializableFixedID {
     }
   }
 
-  private void unregisterPatternFromMap(Map<Object, Map<Object, Pattern>> map, Object interest, Long clientID, Set keysUnregistered) {
+  private void unregisterPatternFromMap(
+      Map<Object, Map<Object, Pattern>> map, Object interest, Long clientID, Set keysUnregistered) {
     Map interestMap = map.get(clientID);
     if (interestMap != null) {
       Object obj = interestMap.remove(interest);
@@ -455,7 +468,8 @@ public class FilterProfile implements DataSerializableFixedID {
     }
   }
 
-  private void unregisterClientKeys(Object inputClientID, Object interest, Long clientID, Set keysUnregistered) {
+  private void unregisterClientKeys(
+      Object inputClientID, Object interest, Long clientID, Set keysUnregistered) {
     if (interest == UnregisterAllInterest.singleton()) {
       clearInterestFor(inputClientID);
       return;
@@ -465,7 +479,8 @@ public class FilterProfile implements DataSerializableFixedID {
     return;
   }
 
-  private void unregisterKeyFromMap(Map<Object, Set> map, Object interest, Long clientID, Set keysUnregistered) {
+  private void unregisterKeyFromMap(
+      Map<Object, Set> map, Object interest, Long clientID, Set keysUnregistered) {
     Set interestList = map.get(clientID);
     if (interestList != null) {
       boolean removed = interestList.remove(interest);
@@ -482,12 +497,12 @@ public class FilterProfile implements DataSerializableFixedID {
    * Registers interest in a set of keys for a client
    *
    * @param inputClientID
-   * @param keys
-   *          The list of keys in which to register interest
+   * @param keys The list of keys in which to register interest
    * @param updatesAsInvalidates whether to send invalidations instead of updates
    * @return the registered keys
    */
-  public Set registerClientInterestList(Object inputClientID, List keys, boolean updatesAsInvalidates) {
+  public Set registerClientInterestList(
+      Object inputClientID, List keys, boolean updatesAsInvalidates) {
     Long clientID = getClientIDForMaps(inputClientID);
     Set keysRegistered = new HashSet(keys);
     synchronized (interestListLock) {
@@ -512,11 +527,8 @@ public class FilterProfile implements DataSerializableFixedID {
   /**
    * Unregisters interest in given keys for the given client
    *
-   * @param inputClientID
-   *          The fully-qualified name of the region in which to unregister
-   *          interest
-   * @param keys
-   *          The list of keys in which to unregister interest
+   * @param inputClientID The fully-qualified name of the region in which to unregister interest
+   * @param keys The list of keys in which to unregister interest
    * @return the unregistered keys
    */
   public Set unregisterClientInterestList(Object inputClientID, List keys) {
@@ -638,7 +650,14 @@ public class FilterProfile implements DataSerializableFixedID {
         return false;
       }
     }
-    return this.hasAllKeysInterestFor(clientID, true) || this.hasKeysOfInterestFor(clientID, true) || this.hasRegexInterestFor(clientID, true) || this.hasFilterInterestFor(clientID, true) || this.hasKeysOfInterestFor(clientID, false) || this.hasRegexInterestFor(clientID, false) || this.hasAllKeysInterestFor(clientID, false) || this.hasFilterInterestFor(clientID, false);
+    return this.hasAllKeysInterestFor(clientID, true)
+        || this.hasKeysOfInterestFor(clientID, true)
+        || this.hasRegexInterestFor(clientID, true)
+        || this.hasFilterInterestFor(clientID, true)
+        || this.hasKeysOfInterestFor(clientID, false)
+        || this.hasRegexInterestFor(clientID, false)
+        || this.hasAllKeysInterestFor(clientID, false)
+        || this.hasFilterInterestFor(clientID, false);
   }
 
   /*
@@ -648,7 +667,14 @@ public class FilterProfile implements DataSerializableFixedID {
    * patterns or filters of interest
    */
   public boolean hasInterest() {
-    return (!this.getAllKeyClients().isEmpty()) || (!this.getAllKeyClientsInv().isEmpty()) || (!this.getKeysOfInterest().isEmpty()) || (!this.getPatternsOfInterest().isEmpty()) || (!this.getFiltersOfInterest().isEmpty()) || (!this.getKeysOfInterestInv().isEmpty()) || (!this.getPatternsOfInterestInv().isEmpty()) || (!this.getFiltersOfInterestInv().isEmpty());
+    return (!this.getAllKeyClients().isEmpty())
+        || (!this.getAllKeyClientsInv().isEmpty())
+        || (!this.getKeysOfInterest().isEmpty())
+        || (!this.getPatternsOfInterest().isEmpty())
+        || (!this.getFiltersOfInterest().isEmpty())
+        || (!this.getKeysOfInterestInv().isEmpty())
+        || (!this.getPatternsOfInterestInv().isEmpty())
+        || (!this.getFiltersOfInterestInv().isEmpty());
   }
 
   /** removes all interest for the given identifier */
@@ -723,8 +749,8 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * Obtains the number of CQs registered on the region.
-   * Assumption: CQs are not duplicated among clients.
+   * Obtains the number of CQs registered on the region. Assumption: CQs are not duplicated among
+   * clients.
    *
    * @return int currently registered CQs of the region
    */
@@ -740,16 +766,12 @@ public class FilterProfile implements DataSerializableFixedID {
     this.cqCount.decrementAndGet();
   }
 
-  /**
-   * Returns the CQs registered on this region.
-   */
+  /** Returns the CQs registered on this region. */
   public Map getCqMap() {
     return this.cqs;
   }
 
-  /**
-   * does this profile contain any continuous queries?
-   */
+  /** does this profile contain any continuous queries? */
   public boolean hasCQs() {
     return this.cqCount.get() > 0;
   }
@@ -780,15 +802,16 @@ public class FilterProfile implements DataSerializableFixedID {
 
   public String generateCqName(String serverCqName) {
     // Set unique CQ Name with respect to the senders filterProfile.
-    // To avoid any conflict with the CQ names while maintained in 
+    // To avoid any conflict with the CQ names while maintained in
     // the CqService.
-    // The CQ will be identified in the remote node using its 
+    // The CQ will be identified in the remote node using its
     // serverCqName.
     return (serverCqName + this.hashCode());
   }
 
   /**
    * adds a new CQ to this profile during a delta operation or deserialization
+   *
    * @param serverCqName the query objects' name
    * @param ServerCQ the new query object
    * @param addToCqMap whether to add the query to this.cqs
@@ -805,7 +828,11 @@ public class FilterProfile implements DataSerializableFixedID {
     } catch (Exception ex) {
       // Change it to Info level.
       if (logger.isDebugEnabled()) {
-        logger.debug("Error while initializing the CQs with FilterProfile for CQ {}, Error : {}", serverCqName, ex.getMessage(), ex);
+        logger.debug(
+            "Error while initializing the CQs with FilterProfile for CQ {}, Error : {}",
+            serverCqName,
+            ex.getMessage(),
+            ex);
       }
     }
     if (logger.isDebugEnabled()) {
@@ -832,7 +859,12 @@ public class FilterProfile implements DataSerializableFixedID {
         cq.close(false);
       } catch (Exception ex) {
         if (logger.isDebugEnabled()) {
-          logger.debug("Unable to close the CQ with the filterProfile, on region {} for CQ {}, Error : {}", this.region.getFullPath(), serverCqName, ex.getMessage(), ex);
+          logger.debug(
+              "Unable to close the CQ with the filterProfile, on region {} for CQ {}, Error : {}",
+              this.region.getFullPath(),
+              serverCqName,
+              ex.getMessage(),
+              ex);
         }
       }
       this.cqs.remove(serverCqName);
@@ -855,7 +887,12 @@ public class FilterProfile implements DataSerializableFixedID {
         cq.stop();
       } catch (Exception ex) {
         if (logger.isDebugEnabled()) {
-          logger.debug("Unable to stop the CQ with the filterProfile, on region {} for CQ {}, Error : {}", this.region.getFullPath(), serverCqName, ex.getMessage(), ex);
+          logger.debug(
+              "Unable to stop the CQ with the filterProfile, on region {} for CQ {}, Error : {}",
+              this.region.getFullPath(),
+              serverCqName,
+              ex.getMessage(),
+              ex);
         }
       }
     }
@@ -900,10 +937,7 @@ public class FilterProfile implements DataSerializableFixedID {
     }
   }
 
-  /**
-   * this will be get called when we remove other server profile from
-   * region advisor.
-   */
+  /** this will be get called when we remove other server profile from region advisor. */
   void cleanUp() {
     Map tmpCq = this.cqs;
 
@@ -915,10 +949,9 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * Returns if old value is required for CQ processing or not.
-   * In order to reduce the query processing time CQ caches the 
-   * event keys its already seen, if the key is cached than the 
-   * old value is not required.
+   * Returns if old value is required for CQ processing or not. In order to reduce the query
+   * processing time CQ caches the event keys its already seen, if the key is cached than the old
+   * value is not required.
    */
   public boolean entryRequiresOldValue(Object key) {
     if (this.hasCQs()) {
@@ -936,7 +969,8 @@ public class FilterProfile implements DataSerializableFixedID {
     return false;
   }
 
-  private void sendProfileOperation(Long clientID, operationType opType, Object interest, boolean updatesAsInvalidates) {
+  private void sendProfileOperation(
+      Long clientID, operationType opType, Object interest, boolean updatesAsInvalidates) {
     if (this.region == null || !(this.region instanceof PartitionedRegion)) {
       return;
     }
@@ -950,7 +984,8 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   private void sendFilterProfileOperation(OperationMessage msg) {
-    Set recipients = ((CacheDistributionAdvisee) this.region).getDistributionAdvisor().adviseProfileUpdate();
+    Set recipients =
+        ((CacheDistributionAdvisee) this.region).getDistributionAdvisor().adviseProfileUpdate();
     msg.setRecipients(recipients);
     ReplyProcessor21 rp = new ReplyProcessor21(this.region.getDistributionManager(), recipients);
     msg.processorId = rp.getProcessorId();
@@ -985,7 +1020,7 @@ public class FilterProfile implements DataSerializableFixedID {
 
   static final Profile[] NO_PROFILES = new Profile[0];
   private final CacheProfile localProfile = new CacheProfile(this);
-  private final Profile[] localProfileArray = new Profile[] { localProfile };
+  private final Profile[] localProfileArray = new Profile[] {localProfile};
 
   /** compute local routing information */
   public FilterInfo getLocalFilterRouting(CacheEvent event) {
@@ -997,18 +1032,17 @@ public class FilterProfile implements DataSerializableFixedID {
     }
   }
 
-  /**
-   * @return the local CacheProfile for this FilterProfile's Region
-   */
+  /** @return the local CacheProfile for this FilterProfile's Region */
   public CacheProfile getLocalProfile() {
     return this.localProfile;
   }
 
-  /** 
-   * Compute the full routing information for the given set of peers.  This will
-   * not include local routing information from interest processing.  That
-   * is done by getFilterRoutingInfoPart2 */
-  public FilterRoutingInfo getFilterRoutingInfoPart1(CacheEvent event, Profile[] peerProfiles, Set cacheOpRecipients) {
+  /**
+   * Compute the full routing information for the given set of peers. This will not include local
+   * routing information from interest processing. That is done by getFilterRoutingInfoPart2
+   */
+  public FilterRoutingInfo getFilterRoutingInfoPart1(
+      CacheEvent event, Profile[] peerProfiles, Set cacheOpRecipients) {
     // early out if there are no cache servers in the system
     boolean anyServers = false;
     for (int i = 0; i < peerProfiles.length; i++) {
@@ -1028,7 +1062,8 @@ public class FilterProfile implements DataSerializableFixedID {
       frInfo = new FilterRoutingInfo();
       // bug #50809 - local routing for transactional ops must be done here
       // because the event isn't available later and we lose the old value for the entry
-      final boolean processLocalProfile = event.getOperation().isEntry() && ((EntryEventImpl) event).getTransactionId() != null;
+      final boolean processLocalProfile =
+          event.getOperation().isEntry() && ((EntryEventImpl) event).getTransactionId() != null;
       fillInCQRoutingInfo(event, processLocalProfile, peerProfiles, frInfo);
     }
 
@@ -1044,19 +1079,24 @@ public class FilterProfile implements DataSerializableFixedID {
 
   /**
    * get local routing information
+   *
    * @param part1Info routing information for peers, if any
    * @param event the event to process
    * @return routing information for clients connected to this server
    */
-  public FilterRoutingInfo getFilterRoutingInfoPart2(FilterRoutingInfo part1Info, CacheEvent event) {
+  public FilterRoutingInfo getFilterRoutingInfoPart2(
+      FilterRoutingInfo part1Info, CacheEvent event) {
     FilterRoutingInfo result = part1Info;
     if (localProfile.hasCacheServer) {
       // bug #45520 - CQ events arriving out of order causes result set
       // inconsistency, so don't compute routings for events in conflict
-      boolean isInConflict = event.getOperation().isEntry() && ((EntryEventImpl) event).isConcurrencyConflict();
+      boolean isInConflict =
+          event.getOperation().isEntry() && ((EntryEventImpl) event).isConcurrencyConflict();
       CqService cqService = getCqService(event.getRegion());
-      if (!isInConflict && cqService.isRunning() && this.region != null /*&& !(
-                                                                        this.region.isUsedForPartitionedRegionBucket() ||   // partitioned region CQ 
+      if (!isInConflict
+          && cqService.isRunning()
+          && this.region != null /*&& !(
+                                                                        this.region.isUsedForPartitionedRegionBucket() ||   // partitioned region CQ
                                                                         this.region instanceof PartitionedRegion)*/) { // processing is done in part 1
         if (result == null) {
           result = new FilterRoutingInfo();
@@ -1073,11 +1113,16 @@ public class FilterProfile implements DataSerializableFixedID {
 
   /**
    * get continuous query routing information
+   *
    * @param event the event to process
    * @param peerProfiles the profiles getting this event
    * @param frInfo the routing table to update
    */
-  private void fillInCQRoutingInfo(CacheEvent event, boolean processLocalProfile, Profile[] peerProfiles, FilterRoutingInfo frInfo) {
+  private void fillInCQRoutingInfo(
+      CacheEvent event,
+      boolean processLocalProfile,
+      Profile[] peerProfiles,
+      FilterRoutingInfo frInfo) {
     CqService cqService = getCqService(event.getRegion());
     if (cqService != null) {
       try {
@@ -1090,7 +1135,10 @@ public class FilterProfile implements DataSerializableFixedID {
         throw err;
       } catch (Throwable t) {
         SystemFailure.checkFailure();
-        logger.error(LocalizedMessage.create(LocalizedStrings.CacheClientNotifier_EXCEPTION_OCCURRED_WHILE_PROCESSING_CQS), t);
+        logger.error(
+            LocalizedMessage.create(
+                LocalizedStrings.CacheClientNotifier_EXCEPTION_OCCURRED_WHILE_PROCESSING_CQS),
+            t);
       }
     }
   }
@@ -1099,10 +1147,9 @@ public class FilterProfile implements DataSerializableFixedID {
     return ((InternalCache) region.getRegionService()).getCqService();
   }
 
-  /**
-   *  computes FilterRoutingInfo objects for each of the given events
-   */
-  public void getLocalFilterRoutingForPutAllOp(DistributedPutAllOperation dpao, DistributedPutAllOperation.PutAllEntryData[] putAllData) {
+  /** computes FilterRoutingInfo objects for each of the given events */
+  public void getLocalFilterRoutingForPutAllOp(
+      DistributedPutAllOperation dpao, DistributedPutAllOperation.PutAllEntryData[] putAllData) {
     final boolean isDebugEnabled = logger.isDebugEnabled();
 
     if (this.region != null && this.localProfile.hasCacheServer) {
@@ -1110,13 +1157,14 @@ public class FilterProfile implements DataSerializableFixedID {
       Set clients = null;
       int size = putAllData.length;
       CqService cqService = getCqService(dpao.getRegion());
-      boolean doCQs = cqService.isRunning() && this.region != null /*&& !(this.region.isUsedForPartitionedRegionBucket()
+      boolean doCQs =
+          cqService.isRunning()
+              && this.region != null /*&& !(this.region.isUsedForPartitionedRegionBucket()
                                                                    || (this.region instanceof PartitionedRegion))*/;
       for (int idx = 0; idx < size; idx++) {
         PutAllEntryData pEntry = putAllData[idx];
         if (pEntry != null) {
-          @Unretained
-          final EntryEventImpl ev = dpao.getEventForPosition(idx);
+          @Unretained final EntryEventImpl ev = dpao.getEventForPosition(idx);
           FilterRoutingInfo fri = pEntry.filterRouting;
           FilterInfo fi = null;
           if (fri != null) {
@@ -1132,11 +1180,29 @@ public class FilterProfile implements DataSerializableFixedID {
             fillInCQRoutingInfo(ev, true, NO_PROFILES, fri);
             fi = fri.getLocalFilterInfo();
           }
-          if (this.allKeyClientsInv != null || this.keysOfInterestInv != null || this.patternsOfInterestInv != null || this.filtersOfInterestInv != null) {
-            clientsInv = this.getInterestedClients(ev, this.allKeyClientsInv, this.keysOfInterestInv, this.patternsOfInterestInv, this.filtersOfInterestInv);
+          if (this.allKeyClientsInv != null
+              || this.keysOfInterestInv != null
+              || this.patternsOfInterestInv != null
+              || this.filtersOfInterestInv != null) {
+            clientsInv =
+                this.getInterestedClients(
+                    ev,
+                    this.allKeyClientsInv,
+                    this.keysOfInterestInv,
+                    this.patternsOfInterestInv,
+                    this.filtersOfInterestInv);
           }
-          if (this.allKeyClients != null || this.keysOfInterest != null || this.patternsOfInterest != null || this.filtersOfInterest != null) {
-            clients = this.getInterestedClients(ev, this.allKeyClients, this.keysOfInterest, this.patternsOfInterest, this.filtersOfInterest);
+          if (this.allKeyClients != null
+              || this.keysOfInterest != null
+              || this.patternsOfInterest != null
+              || this.filtersOfInterest != null) {
+            clients =
+                this.getInterestedClients(
+                    ev,
+                    this.allKeyClients,
+                    this.keysOfInterest,
+                    this.patternsOfInterest,
+                    this.filtersOfInterest);
           }
           if (clients != null || clientsInv != null) {
             if (fi == null) {
@@ -1152,10 +1218,9 @@ public class FilterProfile implements DataSerializableFixedID {
     }
   }
 
-  /**
-  *  computes FilterRoutingInfo objects for each of the given events
-  */
-  public void getLocalFilterRoutingForRemoveAllOp(DistributedRemoveAllOperation op, RemoveAllEntryData[] removeAllData) {
+  /** computes FilterRoutingInfo objects for each of the given events */
+  public void getLocalFilterRoutingForRemoveAllOp(
+      DistributedRemoveAllOperation op, RemoveAllEntryData[] removeAllData) {
     if (this.region != null && this.localProfile.hasCacheServer) {
       Set clientsInv = null;
       Set clients = null;
@@ -1165,8 +1230,7 @@ public class FilterProfile implements DataSerializableFixedID {
       for (int idx = 0; idx < size; idx++) {
         RemoveAllEntryData pEntry = removeAllData[idx];
         if (pEntry != null) {
-          @Unretained
-          final EntryEventImpl ev = op.getEventForPosition(idx);
+          @Unretained final EntryEventImpl ev = op.getEventForPosition(idx);
           FilterRoutingInfo fri = pEntry.filterRouting;
           FilterInfo fi = null;
           if (fri != null) {
@@ -1182,11 +1246,29 @@ public class FilterProfile implements DataSerializableFixedID {
             fillInCQRoutingInfo(ev, true, NO_PROFILES, fri);
             fi = fri.getLocalFilterInfo();
           }
-          if (this.allKeyClientsInv != null || this.keysOfInterestInv != null || this.patternsOfInterestInv != null || this.filtersOfInterestInv != null) {
-            clientsInv = this.getInterestedClients(ev, this.allKeyClientsInv, this.keysOfInterestInv, this.patternsOfInterestInv, this.filtersOfInterestInv);
+          if (this.allKeyClientsInv != null
+              || this.keysOfInterestInv != null
+              || this.patternsOfInterestInv != null
+              || this.filtersOfInterestInv != null) {
+            clientsInv =
+                this.getInterestedClients(
+                    ev,
+                    this.allKeyClientsInv,
+                    this.keysOfInterestInv,
+                    this.patternsOfInterestInv,
+                    this.filtersOfInterestInv);
           }
-          if (this.allKeyClients != null || this.keysOfInterest != null || this.patternsOfInterest != null || this.filtersOfInterest != null) {
-            clients = this.getInterestedClients(ev, this.allKeyClients, this.keysOfInterest, this.patternsOfInterest, this.filtersOfInterest);
+          if (this.allKeyClients != null
+              || this.keysOfInterest != null
+              || this.patternsOfInterest != null
+              || this.filtersOfInterest != null) {
+            clients =
+                this.getInterestedClients(
+                    ev,
+                    this.allKeyClients,
+                    this.keysOfInterest,
+                    this.patternsOfInterest,
+                    this.filtersOfInterest);
           }
           if (clients != null || clientsInv != null) {
             if (fi == null) {
@@ -1206,16 +1288,21 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * Fills in the routing information for clients that have registered
-   * interest in the given event.  The routing information is stored in
-   * the given FilterRoutingInfo object for use in message delivery.
+   * Fills in the routing information for clients that have registered interest in the given event.
+   * The routing information is stored in the given FilterRoutingInfo object for use in message
+   * delivery.
+   *
    * @param event the event being applied to the cache
    * @param profiles the profiles of members having the affected region
    * @param filterRoutingInfo the routing object that is modified by this method (may be null)
    * @param cacheOpRecipients members that will receive a CacheDistributionMessage for the event
    * @return the resulting FilterRoutingInfo
    */
-  public FilterRoutingInfo fillInInterestRoutingInfo(CacheEvent event, Profile[] profiles, FilterRoutingInfo filterRoutingInfo, Set cacheOpRecipients) {
+  public FilterRoutingInfo fillInInterestRoutingInfo(
+      CacheEvent event,
+      Profile[] profiles,
+      FilterRoutingInfo filterRoutingInfo,
+      Set cacheOpRecipients) {
 
     Set clientsInv = Collections.EMPTY_SET;
     Set clients = Collections.EMPTY_SET;
@@ -1250,20 +1337,38 @@ public class FilterProfile implements DataSerializableFixedID {
         // can be used to detect the change and the receiver can recompute
         // the routing.
         if (!pf.isLocalProfile() && cacheOpRecipients.contains(cf.getDistributedMember())) {
-          if (frInfo == null)
-            frInfo = new FilterRoutingInfo();
-          frInfo.addInterestedClients(cf.getDistributedMember(), Collections.EMPTY_SET, Collections.EMPTY_SET, false);
+          if (frInfo == null) frInfo = new FilterRoutingInfo();
+          frInfo.addInterestedClients(
+              cf.getDistributedMember(), Collections.EMPTY_SET, Collections.EMPTY_SET, false);
         }
         continue;
       }
 
       if (event.getOperation().isEntry()) {
         EntryEvent entryEvent = (EntryEvent) event;
-        if (pf.allKeyClientsInv != null || pf.keysOfInterestInv != null || pf.patternsOfInterestInv != null || pf.filtersOfInterestInv != null) {
-          clientsInv = pf.getInterestedClients(entryEvent, pf.allKeyClientsInv, pf.keysOfInterestInv, pf.patternsOfInterestInv, pf.filtersOfInterestInv);
+        if (pf.allKeyClientsInv != null
+            || pf.keysOfInterestInv != null
+            || pf.patternsOfInterestInv != null
+            || pf.filtersOfInterestInv != null) {
+          clientsInv =
+              pf.getInterestedClients(
+                  entryEvent,
+                  pf.allKeyClientsInv,
+                  pf.keysOfInterestInv,
+                  pf.patternsOfInterestInv,
+                  pf.filtersOfInterestInv);
         }
-        if (pf.allKeyClients != null || pf.keysOfInterest != null || pf.patternsOfInterest != null || pf.filtersOfInterest != null) {
-          clients = pf.getInterestedClients(entryEvent, pf.allKeyClients, pf.keysOfInterest, pf.patternsOfInterest, pf.filtersOfInterest);
+        if (pf.allKeyClients != null
+            || pf.keysOfInterest != null
+            || pf.patternsOfInterest != null
+            || pf.filtersOfInterest != null) {
+          clients =
+              pf.getInterestedClients(
+                  entryEvent,
+                  pf.allKeyClients,
+                  pf.keysOfInterest,
+                  pf.patternsOfInterest,
+                  pf.filtersOfInterest);
         }
       } else {
         if (event.getOperation().isRegionDestroy() || event.getOperation().isClear()) {
@@ -1276,20 +1381,26 @@ public class FilterProfile implements DataSerializableFixedID {
 
       if (pf.isLocalProfile) {
         if (logger.isDebugEnabled()) {
-          logger.debug("Setting local interested clients={} and clientsInv={}", clients, clientsInv);
+          logger.debug(
+              "Setting local interested clients={} and clientsInv={}", clients, clientsInv);
         }
-        if (frInfo == null)
-          frInfo = new FilterRoutingInfo();
+        if (frInfo == null) frInfo = new FilterRoutingInfo();
         frInfo.setLocalInterestedClients(clients, clientsInv);
       } else {
-        if (cacheOpRecipients.contains(cf.getDistributedMember()) || // always send a routing with CacheOperationMessages
-            (clients != null && !clients.isEmpty()) || (clientsInv != null && !clientsInv.isEmpty())) {
+        if (cacheOpRecipients.contains(cf.getDistributedMember())
+            || // always send a routing with CacheOperationMessages
+            (clients != null && !clients.isEmpty())
+            || (clientsInv != null && !clientsInv.isEmpty())) {
           if (logger.isDebugEnabled()) {
-            logger.debug("Adding interested clients={} and clientsIn={} to {}", clients, clientsInv, filterRoutingInfo);
+            logger.debug(
+                "Adding interested clients={} and clientsIn={} to {}",
+                clients,
+                clientsInv,
+                filterRoutingInfo);
           }
-          if (frInfo == null)
-            frInfo = new FilterRoutingInfo();
-          frInfo.addInterestedClients(cf.getDistributedMember(), clients, clientsInv, this.clientMap.hasLongID);
+          if (frInfo == null) frInfo = new FilterRoutingInfo();
+          frInfo.addInterestedClients(
+              cf.getDistributedMember(), clients, clientsInv, this.clientMap.hasLongID);
         }
       }
     }
@@ -1297,8 +1408,8 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * get the clients interested in the given event that are attached to this
-   * server.
+   * get the clients interested in the given event that are attached to this server.
+   *
    * @param event the entry event being applied to the cache
    * @param akc allKeyClients collection
    * @param koi keysOfInterest collection
@@ -1306,7 +1417,12 @@ public class FilterProfile implements DataSerializableFixedID {
    * @param foi filtersOfInterest collection
    * @return a set of the clients interested in the event
    */
-  private Set getInterestedClients(EntryEvent event, Set akc, Map<Object, Set> koi, Map<Object, Map<Object, Pattern>> pats, Map<Object, Map> foi) {
+  private Set getInterestedClients(
+      EntryEvent event,
+      Set akc,
+      Map<Object, Set> koi,
+      Map<Object, Map<Object, Pattern>> pats,
+      Map<Object, Map> foi) {
     Set result = null;
     if (akc != null) {
       result = new HashSet(akc);
@@ -1315,30 +1431,29 @@ public class FilterProfile implements DataSerializableFixedID {
       }
     }
     if (koi != null) {
-      for (Iterator it = koi.entrySet().iterator(); it.hasNext();) {
+      for (Iterator it = koi.entrySet().iterator(); it.hasNext(); ) {
         Map.Entry entry = (Map.Entry) it.next();
         Set keys = (Set) entry.getValue();
         if (keys.contains(event.getKey())) {
           Object clientID = entry.getKey();
-          if (result == null)
-            result = new HashSet();
+          if (result == null) result = new HashSet();
           result.add(clientID);
           if (logger.isDebugEnabled()) {
-            logger.debug("client {} matched for key list (size {})", clientID, koi.get(clientID).size());
+            logger.debug(
+                "client {} matched for key list (size {})", clientID, koi.get(clientID).size());
           }
         }
       }
     }
     if (pats != null && (event.getKey() instanceof String)) {
-      for (Iterator it = pats.entrySet().iterator(); it.hasNext();) {
+      for (Iterator it = pats.entrySet().iterator(); it.hasNext(); ) {
         Map.Entry entry = (Map.Entry) it.next();
         String stringKey = (String) event.getKey();
         Map<Object, Pattern> interestList = (Map<Object, Pattern>) entry.getValue();
         for (Pattern keyPattern : interestList.values()) {
           if (keyPattern.matcher(stringKey).matches()) {
             Object clientID = entry.getKey();
-            if (result == null)
-              result = new HashSet();
+            if (result == null) result = new HashSet();
             result.add(clientID);
             if (logger.isDebugEnabled()) {
               logger.debug("client {} matched for pattern ({})", clientID, pats.get(clientID));
@@ -1362,17 +1477,22 @@ public class FilterProfile implements DataSerializableFixedID {
       }
       InterestEvent iev = new InterestEvent(event.getKey(), value, !serialized);
       Operation op = event.getOperation();
-      for (Iterator it = foi.entrySet().iterator(); it.hasNext();) {
+      for (Iterator it = foi.entrySet().iterator(); it.hasNext(); ) {
         Map.Entry entry = (Map.Entry) it.next();
         Map<String, InterestFilter> interestList = (Map<String, InterestFilter>) entry.getValue();
         for (InterestFilter filter : interestList.values()) {
-          if ((op.isCreate() && filter.notifyOnCreate(iev)) || (op.isUpdate() && filter.notifyOnUpdate(iev)) || (op.isDestroy() && filter.notifyOnDestroy(iev)) || (op.isInvalidate() && filter.notifyOnInvalidate(iev))) {
+          if ((op.isCreate() && filter.notifyOnCreate(iev))
+              || (op.isUpdate() && filter.notifyOnUpdate(iev))
+              || (op.isDestroy() && filter.notifyOnDestroy(iev))
+              || (op.isInvalidate() && filter.notifyOnInvalidate(iev))) {
             Object clientID = entry.getKey();
-            if (result == null)
-              result = new HashSet();
+            if (result == null) result = new HashSet();
             result.add(clientID);
             if (logger.isDebugEnabled()) {
-              logger.debug("client {} matched for filter ({})", clientID, getFiltersOfInterest().get(clientID));
+              logger.debug(
+                  "client {} matched for filter ({})",
+                  clientID,
+                  getFiltersOfInterest().get(clientID));
             }
             break;
           }
@@ -1400,7 +1520,9 @@ public class FilterProfile implements DataSerializableFixedID {
     // Read CQ Info.
     int numCQs = InternalDataSerializer.readArrayLength(in);
     if (numCQs > 0) {
-      int oldLevel = LocalRegion.setThreadInitLevelRequirement(LocalRegion.ANY_INIT); // do this before CacheFactory.getInstance for bug 33471
+      int oldLevel =
+          LocalRegion.setThreadInitLevelRequirement(
+              LocalRegion.ANY_INIT); // do this before CacheFactory.getInstance for bug 33471
       try {
         for (int i = 0; i < numCQs; i++) {
           String serverCqName = DataSerializer.readString(in);
@@ -1412,7 +1534,6 @@ public class FilterProfile implements DataSerializableFixedID {
         LocalRegion.setThreadInitLevelRequirement(oldLevel);
       }
     }
-
   }
 
   public int getDSFID() {
@@ -1435,7 +1556,7 @@ public class FilterProfile implements DataSerializableFixedID {
     Map theCQs = this.cqs;
     int size = theCQs.size();
     InternalDataSerializer.writeArrayLength(size, out);
-    for (Iterator it = theCQs.entrySet().iterator(); it.hasNext();) {
+    for (Iterator it = theCQs.entrySet().iterator(); it.hasNext(); ) {
       Map.Entry entry = (Map.Entry) it.next();
       String name = (String) entry.getKey();
       ServerCQ cq = (ServerCQ) entry.getValue();
@@ -1444,44 +1565,32 @@ public class FilterProfile implements DataSerializableFixedID {
     }
   }
 
-  /**
-   * @return the keysOfInterest
-   */
+  /** @return the keysOfInterest */
   private Map<Object, Set> getKeysOfInterest() {
     return this.keysOfInterest;
   }
 
-  /**
-   * @return the keysOfInterestInv
-   */
+  /** @return the keysOfInterestInv */
   private Map<Object, Set> getKeysOfInterestInv() {
     return this.keysOfInterestInv;
   }
 
-  /**
-   * @return the patternsOfInterest
-   */
+  /** @return the patternsOfInterest */
   private Map<Object, Map<Object, Pattern>> getPatternsOfInterest() {
     return this.patternsOfInterest;
   }
 
-  /**
-   * @return the patternsOfInterestInv
-   */
+  /** @return the patternsOfInterestInv */
   private Map<Object, Map<Object, Pattern>> getPatternsOfInterestInv() {
     return this.patternsOfInterestInv;
   }
 
-  /**
-   * @return the filtersOfInterestInv
-   */
+  /** @return the filtersOfInterestInv */
   Map<Object, Map> getFiltersOfInterestInv() {
     return this.filtersOfInterestInv;
   }
 
-  /**
-   * @return the filtersOfInterest
-   */
+  /** @return the filtersOfInterest */
   private Map<Object, Map> getFiltersOfInterest() {
     return this.filtersOfInterest;
   }
@@ -1507,8 +1616,8 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * When clients are registered they are assigned a Long identifier.
-   * This method maps between the real client ID and its Long identifier.
+   * When clients are registered they are assigned a Long identifier. This method maps between the
+   * real client ID and its Long identifier.
    */
   private Long getClientIDForMaps(Object inputClientID) {
     Long clientID;
@@ -1523,16 +1632,21 @@ public class FilterProfile implements DataSerializableFixedID {
   @Override
   public String toString() {
     final boolean isDebugEnabled = logger.isTraceEnabled(LogMarker.BRIDGE_SERVER);
-    return "FilterProfile(id=" + (this.isLocalProfile ? "local" : this.memberID)
-    //    + ";  allKeys: " + this.allKeyClients
-    //    + ";  keys: " + this.keysOfInterest
-    //    + ";  patterns: " + this.patternsOfInterest
-    //    + ";  filters: " + this.filtersOfInterest
-    //    + ";  allKeysInv: " + this.allKeyClientsInv
-    //    + ";  keysInv: " + this.keysOfInterestInv
-    //    + ";  patternsInv: " + this.patternsOfInterestInv
-    //    + ";  filtersInv: " + this.filtersOfInterestInv
-        + ";  numCQs: " + ((this.cqCount == null) ? 0 : this.cqCount.get()) + (isDebugEnabled ? (";  " + getClientMappingString()) : "") + (isDebugEnabled ? (";  " + getCqMappingString()) : "") + ")";
+    return "FilterProfile(id="
+        + (this.isLocalProfile ? "local" : this.memberID)
+        //    + ";  allKeys: " + this.allKeyClients
+        //    + ";  keys: " + this.keysOfInterest
+        //    + ";  patterns: " + this.patternsOfInterest
+        //    + ";  filters: " + this.filtersOfInterest
+        //    + ";  allKeysInv: " + this.allKeyClientsInv
+        //    + ";  keysInv: " + this.keysOfInterestInv
+        //    + ";  patternsInv: " + this.patternsOfInterestInv
+        //    + ";  filtersInv: " + this.filtersOfInterestInv
+        + ";  numCQs: "
+        + ((this.cqCount == null) ? 0 : this.cqCount.get())
+        + (isDebugEnabled ? (";  " + getClientMappingString()) : "")
+        + (isDebugEnabled ? (";  " + getCqMappingString()) : "")
+        + ")";
   }
 
   /** for debugging we could sometimes use a dump of the Long->clientID table */
@@ -1584,8 +1698,9 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * given a collection of on-wire identifiers, this returns a set of
-   * the client/server identifiers for each client or durable queue
+   * given a collection of on-wire identifiers, this returns a set of the client/server identifiers
+   * for each client or durable queue
+   *
    * @param integerIDs the integer ids of the clients/queues
    * @return the translated identifiers
    */
@@ -1594,8 +1709,9 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * given a collection of on-wire identifiers, this returns a set of
-   * the CQ identifiers they correspond to
+   * given a collection of on-wire identifiers, this returns a set of the CQ identifiers they
+   * correspond to
+   *
    * @param integerIDs the integer ids of the clients/queues
    * @return the translated identifiers
    */
@@ -1605,6 +1721,7 @@ public class FilterProfile implements DataSerializableFixedID {
 
   /**
    * given an on-wire filter ID, find and return the corresponding cq name
+   *
    * @param integerID the on-wire ID
    * @return the translated id
    */
@@ -1612,9 +1729,7 @@ public class FilterProfile implements DataSerializableFixedID {
     return (String) cqMap.getRealID(integerID);
   }
 
-  /**
-   * ensure that the given query contains a filter routing ID
-   */
+  /** ensure that the given query contains a filter routing ID */
   private void ensureCqID(ServerCQ cq) {
     if (cq.getFilterID() == null) {
       // on-wire IDs are assigned in the VM where the CQ was registered
@@ -1623,16 +1738,15 @@ public class FilterProfile implements DataSerializableFixedID {
     }
   }
 
-  /**
-   * @return the isLocalProfile
-   */
+  /** @return the isLocalProfile */
   public boolean isLocalProfile() {
     return isLocalProfile;
   }
 
   /**
-   * Returns the filter profile messages received while members cache profile 
-   * exchange was in progress. 
+   * Returns the filter profile messages received while members cache profile exchange was in
+   * progress.
+   *
    * @param member whose messages are returned.
    * @return filter profile messages that are queued for the member.
    */
@@ -1646,8 +1760,9 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * Removes the filter profile messages from the queue that are received  
-   * while the members cache profile exchange was in progress. 
+   * Removes the filter profile messages from the queue that are received while the members cache
+   * profile exchange was in progress.
+   *
    * @param member whose messages are returned.
    * @return filter profile messages that are queued for the member.
    */
@@ -1662,6 +1777,7 @@ public class FilterProfile implements DataSerializableFixedID {
 
   /**
    * Adds the message to filter profile queue.
+   *
    * @param member
    * @param message
    */
@@ -1681,6 +1797,7 @@ public class FilterProfile implements DataSerializableFixedID {
 
   /**
    * Process the filter profile messages.
+   *
    * @param msgs
    */
   public void processQueuedFilterProfileMsgs(List msgs) {
@@ -1703,11 +1820,11 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * OperationMessage synchronously propagates a change in the profile to
-   * another member.  It is a serial message so that there is no chance
-   * of out-of-order execution.
+   * OperationMessage synchronously propagates a change in the profile to another member. It is a
+   * serial message so that there is no chance of out-of-order execution.
    */
-  public static class OperationMessage extends HighPriorityDistributionMessage implements MessageWithReply {
+  public static class OperationMessage extends HighPriorityDistributionMessage
+      implements MessageWithReply {
 
     public long profileVersion;
     boolean updatesAsInvalidates;
@@ -1732,16 +1849,19 @@ public class FilterProfile implements DataSerializableFixedID {
           }
           return;
         }
-        // we only need to record the delta if this is a partitioned region 
+        // we only need to record the delta if this is a partitioned region
         if (!(r instanceof PartitionedRegion)) {
           return;
         }
 
         CacheDistributionAdvisor cda = (CacheDistributionAdvisor) r.getDistributionAdvisor();
-        CacheDistributionAdvisor.CacheProfile cp = (CacheDistributionAdvisor.CacheProfile) cda.getProfile(getSender());
+        CacheDistributionAdvisor.CacheProfile cp =
+            (CacheDistributionAdvisor.CacheProfile) cda.getProfile(getSender());
         if (cp == null) { // PR accessors do not keep filter profiles around
           if (logger.isDebugEnabled()) {
-            logger.debug("No cache profile to update, adding filter profile message to queue. Message :{}", this);
+            logger.debug(
+                "No cache profile to update, adding filter profile message to queue. Message :{}",
+                this);
           }
           FilterProfile localFP = ((PartitionedRegion) r).getFilterProfile();
           localFP.addToFilterProfileQueue(getSender(), this);
@@ -1776,51 +1896,55 @@ public class FilterProfile implements DataSerializableFixedID {
 
     public void processRequest(FilterProfile fp) {
       switch (opType) {
-      case REGISTER_KEY:
-        fp.registerClientInterest(clientID, this.interest, InterestType.KEY, updatesAsInvalidates);
-        break;
-      case REGISTER_PATTERN:
-        fp.registerClientInterest(clientID, this.interest, InterestType.REGULAR_EXPRESSION, updatesAsInvalidates);
-        break;
-      case REGISTER_FILTER:
-        fp.registerClientInterest(clientID, this.interest, InterestType.FILTER_CLASS, updatesAsInvalidates);
-        break;
-      case REGISTER_KEYS:
-        fp.registerClientInterestList(clientID, (List) this.interest, updatesAsInvalidates);
-        break;
-      case UNREGISTER_KEY:
-        fp.unregisterClientInterest(clientID, this.interest, InterestType.KEY);
-        break;
-      case UNREGISTER_PATTERN:
-        fp.unregisterClientInterest(clientID, this.interest, InterestType.REGULAR_EXPRESSION);
-        break;
-      case UNREGISTER_FILTER:
-        fp.unregisterClientInterest(clientID, this.interest, InterestType.FILTER_CLASS);
-        break;
-      case UNREGISTER_KEYS:
-        fp.unregisterClientInterestList(clientID, (List) this.interest);
-        break;
-      case CLEAR:
-        fp.clearInterestFor(clientID);
-        break;
-      case HAS_CQ:
-        fp.cqCount.set(1);
-        break;
-      case REGISTER_CQ:
-        fp.processRegisterCq(this.serverCqName, this.cq, true);
-        break;
-      case CLOSE_CQ:
-        fp.processCloseCq(this.serverCqName);
-        break;
-      case STOP_CQ:
-        fp.processStopCq(this.serverCqName);
-        break;
-      case SET_CQ_STATE:
-        fp.processSetCqState(this.serverCqName, this.cq);
-        break;
+        case REGISTER_KEY:
+          fp.registerClientInterest(
+              clientID, this.interest, InterestType.KEY, updatesAsInvalidates);
+          break;
+        case REGISTER_PATTERN:
+          fp.registerClientInterest(
+              clientID, this.interest, InterestType.REGULAR_EXPRESSION, updatesAsInvalidates);
+          break;
+        case REGISTER_FILTER:
+          fp.registerClientInterest(
+              clientID, this.interest, InterestType.FILTER_CLASS, updatesAsInvalidates);
+          break;
+        case REGISTER_KEYS:
+          fp.registerClientInterestList(clientID, (List) this.interest, updatesAsInvalidates);
+          break;
+        case UNREGISTER_KEY:
+          fp.unregisterClientInterest(clientID, this.interest, InterestType.KEY);
+          break;
+        case UNREGISTER_PATTERN:
+          fp.unregisterClientInterest(clientID, this.interest, InterestType.REGULAR_EXPRESSION);
+          break;
+        case UNREGISTER_FILTER:
+          fp.unregisterClientInterest(clientID, this.interest, InterestType.FILTER_CLASS);
+          break;
+        case UNREGISTER_KEYS:
+          fp.unregisterClientInterestList(clientID, (List) this.interest);
+          break;
+        case CLEAR:
+          fp.clearInterestFor(clientID);
+          break;
+        case HAS_CQ:
+          fp.cqCount.set(1);
+          break;
+        case REGISTER_CQ:
+          fp.processRegisterCq(this.serverCqName, this.cq, true);
+          break;
+        case CLOSE_CQ:
+          fp.processCloseCq(this.serverCqName);
+          break;
+        case STOP_CQ:
+          fp.processStopCq(this.serverCqName);
+          break;
+        case SET_CQ_STATE:
+          fp.processSetCqState(this.serverCqName, this.cq);
+          break;
 
-      default:
-        throw new IllegalArgumentException("Unknown filter profile operation type in operation: " + this);
+        default:
+          throw new IllegalArgumentException(
+              "Unknown filter profile operation type in operation: " + this);
       }
     }
 
@@ -1892,7 +2016,19 @@ public class FilterProfile implements DataSerializableFixedID {
 
     @Override
     public String toString() {
-      return this.getShortClassName() + "(processorId=" + this.processorId + "; region=" + this.regionName + "; operation=" + this.opType + "; clientID=" + this.clientID + "; profileVersion=" + this.profileVersion + (isCqOp(this.opType) ? ("; CqName=" + this.serverCqName) : "") + ")";
+      return this.getShortClassName()
+          + "(processorId="
+          + this.processorId
+          + "; region="
+          + this.regionName
+          + "; operation="
+          + this.opType
+          + "; clientID="
+          + this.clientID
+          + "; profileVersion="
+          + this.profileVersion
+          + (isCqOp(this.opType) ? ("; CqName=" + this.serverCqName) : "")
+          + ")";
     }
   }
 
@@ -1922,7 +2058,12 @@ public class FilterProfile implements DataSerializableFixedID {
           }
         }
         if (logger.isTraceEnabled(LogMarker.BRIDGE_SERVER)) {
-          logger.trace(LogMarker.BRIDGE_SERVER, "Profile for {} mapped {} to {}", region.getFullPath(), realId, result);
+          logger.trace(
+              LogMarker.BRIDGE_SERVER,
+              "Profile for {} mapped {} to {}",
+              region.getFullPath(),
+              realId,
+              result);
         }
       }
       return result;
@@ -1934,8 +2075,9 @@ public class FilterProfile implements DataSerializableFixedID {
     }
 
     /**
-     * given a collection of on-wire identifiers, this returns a set of
-     * the real identifiers (e.g., client IDs or durable queue IDs)
+     * given a collection of on-wire identifiers, this returns a set of the real identifiers (e.g.,
+     * client IDs or durable queue IDs)
+     *
      * @param integerIDs the integer ids
      * @return the translated identifiers
      */
@@ -1954,20 +2096,18 @@ public class FilterProfile implements DataSerializableFixedID {
       return result;
     }
 
-    /**
-     * remove the mapping for the given internal ID
-     */
+    /** remove the mapping for the given internal ID */
     void removeIDMapping(Long mappedId) {
       Object clientId = this.wireIDs.remove(mappedId);
       if (clientId != null) {
         this.realIDs.remove(clientId);
       }
     }
-
   }
 
   /**
    * Returns true if the client is interested in all keys.
+   *
    * @param id client identifier.
    * @return true if client is interested in all keys.
    */
@@ -1979,8 +2119,9 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * Returns true if the client is interested in all keys, for which 
-   * updates are sent as invalidates.  
+   * Returns true if the client is interested in all keys, for which updates are sent as
+   * invalidates.
+   *
    * @param id client identifier
    * @return true if client is interested in all keys.
    */
@@ -1993,6 +2134,7 @@ public class FilterProfile implements DataSerializableFixedID {
 
   /**
    * Returns the set of client interested keys.
+   *
    * @param id client identifier
    * @return client interested keys.
    */
@@ -2008,8 +2150,8 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * Returns the set of client interested keys for which updates are sent
-   * as invalidates.  
+   * Returns the set of client interested keys for which updates are sent as invalidates.
+   *
    * @param id client identifier
    * @return client interested keys.
    */
@@ -2026,6 +2168,7 @@ public class FilterProfile implements DataSerializableFixedID {
 
   /**
    * Returns the set of client interested patterns.
+   *
    * @param id client identifier
    * @return client interested patterns.
    */
@@ -2045,8 +2188,8 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * Returns the set of client interested patterns for which updates are sent
-   * as invalidates.  
+   * Returns the set of client interested patterns for which updates are sent as invalidates.
+   *
    * @param id client identifier
    * @return client interested patterns.
    */
@@ -2067,6 +2210,7 @@ public class FilterProfile implements DataSerializableFixedID {
 
   /**
    * Returns the set of client interested filters.
+   *
    * @param id client identifier
    * @return client interested filters.
    */
@@ -2082,8 +2226,8 @@ public class FilterProfile implements DataSerializableFixedID {
   }
 
   /**
-   * Returns the set of client interested filters for which updates are sent
-   * as invalidates.  
+   * Returns the set of client interested filters for which updates are sent as invalidates.
+   *
    * @param id client identifier
    * @return client interested filters.
    */

@@ -38,11 +38,9 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * A class which monitors the load on a bridge server and 
- * periodically sends updates to the locator.
- * 
- * @since GemFire 5.7
+ * A class which monitors the load on a bridge server and periodically sends updates to the locator.
  *
+ * @since GemFire 5.7
  */
 public class LoadMonitor implements ConnectionListener {
   private static final Logger logger = LogService.getLogger();
@@ -55,7 +53,12 @@ public class LoadMonitor implements ConnectionListener {
   protected volatile ServerLoad lastLoad;
   protected CacheServerStats stats;
 
-  public LoadMonitor(ServerLoadProbe probe, int maxConnections, long pollInterval, int forceUpdateFrequency, CacheServerAdvisor advisor) {
+  public LoadMonitor(
+      ServerLoadProbe probe,
+      int maxConnections,
+      long pollInterval,
+      int forceUpdateFrequency,
+      CacheServerAdvisor advisor) {
     this.probe = probe;
     this.metrics = new ServerMetricsImpl(maxConnections);
     this.pollingThread = new PollingThread(pollInterval, forceUpdateFrequency);
@@ -64,8 +67,8 @@ public class LoadMonitor implements ConnectionListener {
   }
 
   /**
-   * Start the load monitor. Starts the background thread which
-   * polls the load monitor and sends updates about load.
+   * Start the load monitor. Starts the background thread which polls the load monitor and sends
+   * updates about load.
    */
   public void start(ServerLocation location, CacheServerStats cacheServerStats) {
     probe.open();
@@ -75,15 +78,15 @@ public class LoadMonitor implements ConnectionListener {
     this.stats.setLoad(lastLoad);
   }
 
-  /**
-   * Stops the load monitor
-   */
+  /** Stops the load monitor */
   public void stop() {
     this.pollingThread.close();
     try {
       this.pollingThread.join(5000);
     } catch (InterruptedException e) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.LoadMonitor_INTERRUPTED_WAITING_FOR_POLLING_THREAD_TO_FINISH));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.LoadMonitor_INTERRUPTED_WAITING_FOR_POLLING_THREAD_TO_FINISH));
       Thread.currentThread().interrupt();
     }
     probe.close();
@@ -113,8 +116,9 @@ public class LoadMonitor implements ConnectionListener {
   }
 
   /**
-   * Keeps track of the clients that have added a queue since the
-   * last load was sent to the server-locator.
+   * Keeps track of the clients that have added a queue since the last load was sent to the
+   * server-locator.
+   *
    * @since GemFire 5.7
    */
   protected final ArrayList clientIds = new ArrayList();
@@ -191,16 +195,20 @@ public class LoadMonitor implements ConnectionListener {
           // don't send a message if the load hasn't
           // changed, unless we have waited too long
           // since the last update.
-          if (!previousLoad.equals(load) || myClientIds != null || ++skippedLoadUpdates > forceUpdateFrequency) {
+          if (!previousLoad.equals(load)
+              || myClientIds != null
+              || ++skippedLoadUpdates > forceUpdateFrequency) {
             Set locators = advisor.adviseControllers();
 
             if (logger.isDebugEnabled()) {
-              logger.debug("Bridge Server Load Monitor Transmitting load {} to locators {}", load, locators);
+              logger.debug(
+                  "Bridge Server Load Monitor Transmitting load {} to locators {}", load, locators);
             }
 
             stats.setLoad(load);
             if (locators != null) {
-              CacheServerLoadMessage message = new CacheServerLoadMessage(load, location, myClientIds);
+              CacheServerLoadMessage message =
+                  new CacheServerLoadMessage(load, location, myClientIds);
               message.setRecipients(locators);
               MembershipManager mgr = advisor.getDistributionManager().getMembershipManager();
               if (mgr == null || !mgr.isBeingSick()) { // test hook
@@ -212,7 +220,10 @@ public class LoadMonitor implements ConnectionListener {
             skippedLoadUpdates = 0;
           } else {
             if (logger.isDebugEnabled()) {
-              logger.debug("Bridge Server Load Monitor Load {} hasn't changed, not transmitting. skippedLoadUpdates={}", load, skippedLoadUpdates);
+              logger.debug(
+                  "Bridge Server Load Monitor Load {} hasn't changed, not transmitting. skippedLoadUpdates={}",
+                  load,
+                  skippedLoadUpdates);
             }
           }
         } catch (InterruptedException e) {
@@ -224,7 +235,10 @@ public class LoadMonitor implements ConnectionListener {
           return;
         } catch (Throwable t) {
           SystemFailure.checkFailure();
-          logger.warn(LocalizedMessage.create(LocalizedStrings.LoadMonitor_CACHESERVER_LOAD_MONITOR_ERROR_IN_POLLING_THREAD), t);
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings.LoadMonitor_CACHESERVER_LOAD_MONITOR_ERROR_IN_POLLING_THREAD),
+              t);
         }
       } // while
     }

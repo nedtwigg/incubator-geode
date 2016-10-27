@@ -49,14 +49,10 @@ public class CompactRangeIndexIndexMapJUnitTest {
   }
 
   @Test
-  public void testCreateFromEntriesIndex() {
-
-  }
+  public void testCreateFromEntriesIndex() {}
 
   @Test
-  public void testCreateIndexAndPopulate() {
-
-  }
+  public void testCreateIndexAndPopulate() {}
 
   @Test
   public void testLDMIndexCreation() throws Exception {
@@ -78,10 +74,22 @@ public class CompactRangeIndexIndexMapJUnitTest {
   public void testSecondLevelEqualityQuery() throws Exception {
     boolean oldTestLDMValue = IndexManager.IS_TEST_LDM;
     boolean oldTestExpansionValue = IndexManager.IS_TEST_EXPANSION;
-    testIndexAndQuery("p.ID", "/portfolios p, p.positions.values ps", "Select * from /portfolios p where p.ID = 1");
-    testIndexAndQuery("p.ID", "/portfolios p, p.positions.values ps", "Select p.ID from /portfolios p where p.ID = 1");
-    testIndexAndQuery("p.ID", "/portfolios p, p.positions.values ps", "Select p from /portfolios p where p.ID > 3");
-    testIndexAndQuery("p.ID", "/portfolios p, p.positions.values ps", "Select ps from /portfolios p, p.positions.values ps where ps.secId = 'VMW'");
+    testIndexAndQuery(
+        "p.ID",
+        "/portfolios p, p.positions.values ps",
+        "Select * from /portfolios p where p.ID = 1");
+    testIndexAndQuery(
+        "p.ID",
+        "/portfolios p, p.positions.values ps",
+        "Select p.ID from /portfolios p where p.ID = 1");
+    testIndexAndQuery(
+        "p.ID",
+        "/portfolios p, p.positions.values ps",
+        "Select p from /portfolios p where p.ID > 3");
+    testIndexAndQuery(
+        "p.ID",
+        "/portfolios p, p.positions.values ps",
+        "Select ps from /portfolios p, p.positions.values ps where ps.secId = 'VMW'");
     IndexManager.IS_TEST_LDM = oldTestLDMValue;
     IndexManager.IS_TEST_EXPANSION = oldTestExpansionValue;
   }
@@ -90,14 +98,18 @@ public class CompactRangeIndexIndexMapJUnitTest {
   public void testMultipleSecondLevelMatches() throws Exception {
     boolean oldTestLDMValue = IndexManager.IS_TEST_LDM;
     boolean oldTestExpansionValue = IndexManager.IS_TEST_EXPANSION;
-    testIndexAndQuery("ps.secId", "/portfolios p, p.positions.values ps", "Select * from /portfolios p, p.positions.values ps where ps.secId = 'VMW'");
+    testIndexAndQuery(
+        "ps.secId",
+        "/portfolios p, p.positions.values ps",
+        "Select * from /portfolios p, p.positions.values ps where ps.secId = 'VMW'");
     IndexManager.IS_TEST_LDM = oldTestLDMValue;
     IndexManager.IS_TEST_EXPANSION = oldTestExpansionValue;
   }
 
   //executes queries against both no index and ldm index
   //compares size counts of both and compares results
-  private void testIndexAndQuery(String indexExpression, String regionPath, String queryString) throws Exception {
+  private void testIndexAndQuery(String indexExpression, String regionPath, String queryString)
+      throws Exception {
     Cache cache = CacheUtils.getCache();
     int numEntries = 20;
     QueryService queryService = cache.getQueryService();
@@ -132,8 +144,14 @@ public class CompactRangeIndexIndexMapJUnitTest {
     query = queryService.newQuery(queryString);
     SelectResults ldmResults = (SelectResults) query.execute();
 
-    assertEquals("Size for no index and index results should be equal", noIndexResults.size(), memResults.size());
-    assertEquals("Size for memory and ldm index results should be equal", memResults.size(), ldmResults.size());
+    assertEquals(
+        "Size for no index and index results should be equal",
+        noIndexResults.size(),
+        memResults.size());
+    assertEquals(
+        "Size for memory and ldm index results should be equal",
+        memResults.size(),
+        ldmResults.size());
     CacheUtils.log("Size is:" + memResults.size());
     //now check elements for both
     for (Object o : ldmResults) {
@@ -141,7 +159,6 @@ public class CompactRangeIndexIndexMapJUnitTest {
     }
     queryService.removeIndexes();
     region.destroyRegion();
-
   }
 
   //Should be changed to ldm region
@@ -173,5 +190,4 @@ public class CompactRangeIndexIndexMapJUnitTest {
       region.put("" + i, p);
     }
   }
-
 }

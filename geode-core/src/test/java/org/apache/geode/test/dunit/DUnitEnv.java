@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.test.dunit;
 
 import java.io.File;
@@ -26,14 +24,11 @@ import java.util.Properties;
 import org.apache.geode.test.dunit.standalone.BounceResult;
 
 /**
- * This class provides an abstraction over the environment
- * that is used to run dunit. This will delegate to the hydra
- * or to the standalone dunit launcher as needed.
- * 
- * Any dunit tests that rely on hydra configuration should go
- * through here, so that we can separate them out from depending on hydra
- * and run them on a different VM launching system.
- *   
+ * This class provides an abstraction over the environment that is used to run dunit. This will
+ * delegate to the hydra or to the standalone dunit launcher as needed.
+ *
+ * <p>Any dunit tests that rely on hydra configuration should go through here, so that we can
+ * separate them out from depending on hydra and run them on a different VM launching system.
  */
 public abstract class DUnitEnv {
 
@@ -73,5 +68,4 @@ public abstract class DUnitEnv {
   public abstract BounceResult bounce(int pid) throws RemoteException;
 
   public abstract File getWorkingDirectory(int pid);
-
 }

@@ -30,12 +30,7 @@ public class DatabaseLoader implements CacheLoader, Declarable {
     throw new UnsupportedOperationException("I do NOTHING");
   }
 
-  public void init(java.util.Properties props) {
+  public void init(java.util.Properties props) {}
 
-  }
-
-  public void close() {
-
-  }
-
+  public void close() {}
 }

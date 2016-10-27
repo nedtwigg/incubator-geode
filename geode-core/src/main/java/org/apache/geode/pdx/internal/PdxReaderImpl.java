@@ -41,20 +41,18 @@ import org.apache.geode.pdx.internal.AutoSerializableManager.AutoClassInfo;
 import org.apache.geode.pdx.internal.AutoSerializableManager.PdxFieldWrapper;
 
 /**
- * A new instance of this class is created each time we deserialize a pdx.
- * It is also used as the base class of our {@link PdxInstance} implementation.
- * It is serializable because PdxInstance is.
- * 
+ * A new instance of this class is created each time we deserialize a pdx. It is also used as the
+ * base class of our {@link PdxInstance} implementation. It is serializable because PdxInstance is.
+ *
  * @since GemFire 6.6
  * @see InternalDataSerializer#readPdxSerializable(java.io.DataInput)
  */
 public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
 
   private static final long serialVersionUID = -6094553093860427759L;
-  /**
-   * This is the type the blob we are reading was encoded with.
-   */
+  /** This is the type the blob we are reading was encoded with. */
   private final PdxType blobType;
+
   private final PdxInputStream dis;
   private transient PdxUnreadData readUnreadFieldsCalled;
 
@@ -99,9 +97,7 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
   public static final int MAX_UNSIGNED_BYTE = 255;
   public static final int MAX_UNSIGNED_SHORT = 65535;
 
-  /**
-   * @return size of each variable length field offset
-   */
+  /** @return size of each variable length field offset */
   private byte getSizeOfOffset() {
     int size = this.dis.size();
     if (size <= MAX_UNSIGNED_BYTE) {
@@ -122,7 +118,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return 0;
     }
     if (ft.getFieldType() != FieldType.CHAR) {
-      throw new PdxFieldTypeMismatchException("Expected char field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected char field but found field of type " + ft.getTypeIdString());
     }
     return readChar(ft);
   }
@@ -141,7 +138,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return false;
     }
     if (ft.getFieldType() != FieldType.BOOLEAN) {
-      throw new PdxFieldTypeMismatchException("Expected boolean field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected boolean field but found field of type " + ft.getTypeIdString());
     }
     return readBoolean(ft);
   }
@@ -160,7 +158,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return 0;
     }
     if (ft.getFieldType() != FieldType.BYTE) {
-      throw new PdxFieldTypeMismatchException("Expected byte field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected byte field but found field of type " + ft.getTypeIdString());
     }
     return readByte(ft);
   }
@@ -179,7 +178,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return 0;
     }
     if (ft.getFieldType() != FieldType.SHORT) {
-      throw new PdxFieldTypeMismatchException("Expected short field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected short field but found field of type " + ft.getTypeIdString());
     }
     return readShort(ft);
   }
@@ -198,7 +198,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return 0;
     }
     if (ft.getFieldType() != FieldType.INT) {
-      throw new PdxFieldTypeMismatchException("Expected int field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected int field but found field of type " + ft.getTypeIdString());
     }
     return readInt(ft);
   }
@@ -217,7 +218,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return 0;
     }
     if (ft.getFieldType() != FieldType.LONG) {
-      throw new PdxFieldTypeMismatchException("Expected long field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected long field but found field of type " + ft.getTypeIdString());
     }
     return readLong(ft);
   }
@@ -236,7 +238,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return 0;
     }
     if (ft.getFieldType() != FieldType.FLOAT) {
-      throw new PdxFieldTypeMismatchException("Expected float field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected float field but found field of type " + ft.getTypeIdString());
     }
     return readFloat(ft);
   }
@@ -255,7 +258,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return 0;
     }
     if (ft.getFieldType() != FieldType.DOUBLE) {
-      throw new PdxFieldTypeMismatchException("Expected double field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected double field but found field of type " + ft.getTypeIdString());
     }
     return readDouble(ft);
   }
@@ -274,7 +278,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.DATE) {
-      throw new PdxFieldTypeMismatchException("Expected Date field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected Date field but found field of type " + ft.getTypeIdString());
     }
     return readDate(ft);
   }
@@ -293,7 +298,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.STRING) {
-      throw new PdxFieldTypeMismatchException("Expected String field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected String field but found field of type " + ft.getTypeIdString());
     }
     return readString(ft);
   }
@@ -312,7 +318,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.OBJECT) {
-      throw new PdxFieldTypeMismatchException("Expected Object field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected Object field but found field of type " + ft.getTypeIdString());
     }
     return readObject(ft);
   }
@@ -334,7 +341,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.CHAR_ARRAY) {
-      throw new PdxFieldTypeMismatchException("Expected char[] field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected char[] field but found field of type " + ft.getTypeIdString());
     }
     return readCharArray(ft);
   }
@@ -353,7 +361,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.BOOLEAN_ARRAY) {
-      throw new PdxFieldTypeMismatchException("Expected boolean[] field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected boolean[] field but found field of type " + ft.getTypeIdString());
     }
     return readBooleanArray(ft);
   }
@@ -372,7 +381,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.BYTE_ARRAY) {
-      throw new PdxFieldTypeMismatchException("Expected byte[] field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected byte[] field but found field of type " + ft.getTypeIdString());
     }
     return readByteArray(ft);
   }
@@ -391,7 +401,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.SHORT_ARRAY) {
-      throw new PdxFieldTypeMismatchException("Expected short[] field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected short[] field but found field of type " + ft.getTypeIdString());
     }
     return readShortArray(ft);
   }
@@ -410,7 +421,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.INT_ARRAY) {
-      throw new PdxFieldTypeMismatchException("Expected int[] field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected int[] field but found field of type " + ft.getTypeIdString());
     }
     return readIntArray(ft);
   }
@@ -429,7 +441,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.LONG_ARRAY) {
-      throw new PdxFieldTypeMismatchException("Expected long[] field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected long[] field but found field of type " + ft.getTypeIdString());
     }
     return readLongArray(ft);
   }
@@ -448,7 +461,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.FLOAT_ARRAY) {
-      throw new PdxFieldTypeMismatchException("Expected float[] field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected float[] field but found field of type " + ft.getTypeIdString());
     }
     return readFloatArray(ft);
   }
@@ -467,7 +481,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.DOUBLE_ARRAY) {
-      throw new PdxFieldTypeMismatchException("Expected double[] field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected double[] field but found field of type " + ft.getTypeIdString());
     }
     return readDoubleArray(ft);
   }
@@ -486,7 +501,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.STRING_ARRAY) {
-      throw new PdxFieldTypeMismatchException("Expected String[] field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected String[] field but found field of type " + ft.getTypeIdString());
     }
     return readStringArray(ft);
   }
@@ -505,7 +521,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.OBJECT_ARRAY) {
-      throw new PdxFieldTypeMismatchException("Expected Object[] field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected Object[] field but found field of type " + ft.getTypeIdString());
     }
     return readObjectArray(ft);
   }
@@ -527,7 +544,8 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     if (ft.getFieldType() != FieldType.ARRAY_OF_BYTE_ARRAYS) {
-      throw new PdxFieldTypeMismatchException("Expected byte[][] field but found field of type " + ft.getTypeIdString());
+      throw new PdxFieldTypeMismatchException(
+          "Expected byte[][] field but found field of type " + ft.getTypeIdString());
     }
     return readArrayOfByteArrays(ft);
   }
@@ -541,9 +559,7 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
   }
 
   /**
-   * 
-   * @param idx
-   *          of the variable length field
+   * @param idx of the variable length field
    * @return the offset to the variable length field
    */
   private int getOffset(int idx) {
@@ -609,52 +625,52 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       return null;
     }
     switch (ft.getFieldType()) {
-    case CHAR:
-      return readChar(ft);
-    case BOOLEAN:
-      return readBoolean(ft);
-    case BYTE:
-      return readByte(ft);
-    case SHORT:
-      return readShort(ft);
-    case INT:
-      return readInt(ft);
-    case LONG:
-      return readLong(ft);
-    case FLOAT:
-      return readFloat(ft);
-    case DOUBLE:
-      return readDouble(ft);
-    case DATE:
-      return readDate(ft);
-    case STRING:
-      return readString(ft);
-    case OBJECT:
-      return readObject(ft);
-    case BOOLEAN_ARRAY:
-      return readBooleanArray(ft);
-    case CHAR_ARRAY:
-      return readCharArray(ft);
-    case BYTE_ARRAY:
-      return readByteArray(ft);
-    case SHORT_ARRAY:
-      return readShortArray(ft);
-    case INT_ARRAY:
-      return readIntArray(ft);
-    case LONG_ARRAY:
-      return readLongArray(ft);
-    case FLOAT_ARRAY:
-      return readFloatArray(ft);
-    case DOUBLE_ARRAY:
-      return readDoubleArray(ft);
-    case STRING_ARRAY:
-      return readStringArray(ft);
-    case OBJECT_ARRAY:
-      return readObjectArray(ft);
-    case ARRAY_OF_BYTE_ARRAYS:
-      return readArrayOfByteArrays(ft);
-    default:
-      throw new InternalGemFireException("Unhandled field type " + ft.getFieldType());
+      case CHAR:
+        return readChar(ft);
+      case BOOLEAN:
+        return readBoolean(ft);
+      case BYTE:
+        return readByte(ft);
+      case SHORT:
+        return readShort(ft);
+      case INT:
+        return readInt(ft);
+      case LONG:
+        return readLong(ft);
+      case FLOAT:
+        return readFloat(ft);
+      case DOUBLE:
+        return readDouble(ft);
+      case DATE:
+        return readDate(ft);
+      case STRING:
+        return readString(ft);
+      case OBJECT:
+        return readObject(ft);
+      case BOOLEAN_ARRAY:
+        return readBooleanArray(ft);
+      case CHAR_ARRAY:
+        return readCharArray(ft);
+      case BYTE_ARRAY:
+        return readByteArray(ft);
+      case SHORT_ARRAY:
+        return readShortArray(ft);
+      case INT_ARRAY:
+        return readIntArray(ft);
+      case LONG_ARRAY:
+        return readLongArray(ft);
+      case FLOAT_ARRAY:
+        return readFloatArray(ft);
+      case DOUBLE_ARRAY:
+        return readDoubleArray(ft);
+      case STRING_ARRAY:
+        return readStringArray(ft);
+      case OBJECT_ARRAY:
+        return readObjectArray(ft);
+      case ARRAY_OF_BYTE_ARRAYS:
+        return readArrayOfByteArrays(ft);
+      default:
+        throw new InternalGemFireException("Unhandled field type " + ft.getFieldType());
     }
   }
 
@@ -679,12 +695,15 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
     // only create a tracking one if we might need it
     UnreadPdxType unreadLocalPdxType = null;
     boolean needToTrackReads = TESTHOOK_TRACKREADS;
-    GemFireCacheImpl gfc = GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.");
+    GemFireCacheImpl gfc =
+        GemFireCacheImpl.getForPdx(
+            "PDX registry is unavailable because the Cache has been closed.");
     TypeRegistry tr = gfc.getPdxRegistry();
     if (!gfc.getPdxIgnoreUnreadFields()) {
       PdxType localPdxType = tr.getExistingTypeForClass(pdxClass);
       if (localPdxType != null) {
-        if (getPdxType().getTypeId() != localPdxType.getTypeId() && getPdxType().hasExtraFields(localPdxType)) {
+        if (getPdxType().getTypeId() != localPdxType.getTypeId()
+            && getPdxType().hasExtraFields(localPdxType)) {
           // we could calculate the extra fields here
           needToTrackReads = true;
         }
@@ -708,7 +727,11 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       try {
         result = pdxClass.newInstance();
       } catch (Exception e) {
-        PdxSerializationException ex = new PdxSerializationException(LocalizedStrings.DataSerializer_COULD_NOT_CREATE_AN_INSTANCE_OF_A_CLASS_0.toLocalizedString(pdxClassName), e);
+        PdxSerializationException ex =
+            new PdxSerializationException(
+                LocalizedStrings.DataSerializer_COULD_NOT_CREATE_AN_INSTANCE_OF_A_CLASS_0
+                    .toLocalizedString(pdxClassName),
+                e);
         throw ex;
       }
       ((PdxSerializable) result).fromData(pdxReader);
@@ -717,10 +740,13 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
       if (pdxSerializer != null) {
         result = pdxSerializer.fromData(pdxClass, pdxReader);
         if (result == null) {
-          throw new PdxSerializationException("Could not deserialize pdx because the pdx serializer's fromData returned false for a pdx of class " + pdxClassName);
+          throw new PdxSerializationException(
+              "Could not deserialize pdx because the pdx serializer's fromData returned false for a pdx of class "
+                  + pdxClassName);
         }
       } else {
-        throw new PdxSerializationException("Could not deserialize pdx because a PdxSerializer does not exist.");
+        throw new PdxSerializationException(
+            "Could not deserialize pdx because a PdxSerializer does not exist.");
       }
     }
     {
@@ -808,8 +834,9 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
   }
 
   /**
-   * Provides optimized deserialization when a blob exactly matches
-   * the fields of the target class when using {@link AutoSerializableManager}.
+   * Provides optimized deserialization when a blob exactly matches the fields of the target class
+   * when using {@link AutoSerializableManager}.
+   *
    * @param obj the target object we are deserializing into
    * @param ci the meta information generated by the auto serializer
    */
@@ -821,9 +848,7 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
     }
   }
 
-  /**
-   * Return a reader that can do ordered reading.
-   */
+  /** Return a reader that can do ordered reading. */
   private PdxReaderImpl prepForOrderedReading() {
     PdxReaderImpl result = this;
     if (this.dis instanceof PdxInstanceInputStream) {
@@ -838,7 +863,6 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
   }
 
   /**
-   * 
    * @param field
    * @return PdxString if field is a String otherwise invokes {@link #readField(String)}
    */
@@ -855,7 +879,6 @@ public class PdxReaderImpl implements InternalPdxReader, java.io.Serializable {
   }
 
   /**
-   * 
    * @param ft
    * @return returns {@link PdxString}
    */

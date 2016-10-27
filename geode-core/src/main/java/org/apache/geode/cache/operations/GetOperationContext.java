@@ -18,30 +18,27 @@
 package org.apache.geode.cache.operations;
 
 /**
- * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#GET} region operation having the key
- * object for the pre-operation case and both key, value objects for the
- * post-operation case.
- * 
+ * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#GET}
+ * region operation having the key object for the pre-operation case and both key, value objects for
+ * the post-operation case.
+ *
  * @since GemFire 5.5
  */
 public class GetOperationContext extends KeyValueOperationContext {
 
   /**
    * Constructor for the operation.
-   * 
-   * @param key
-   *                the key for this operation
-   * @param postOperation
-   *                true if the context is for the post-operation case
+   *
+   * @param key the key for this operation
+   * @param postOperation true if the context is for the post-operation case
    */
   public GetOperationContext(Object key, boolean postOperation) {
     super(key, null, false, postOperation);
   }
 
   /**
-   * Return the operation associated with the <code>OperationContext</code>
-   * object.
-   * 
+   * Return the operation associated with the <code>OperationContext</code> object.
+   *
    * @return <code>OperationCode.GET</code>.
    */
   @Override
@@ -49,9 +46,7 @@ public class GetOperationContext extends KeyValueOperationContext {
     return OperationCode.GET;
   }
 
-  /**
-   * Set the post-operation flag to true.
-   */
+  /** Set the post-operation flag to true. */
   @Override
   public void setPostOperation() {
     super.setPostOperation();
@@ -59,10 +54,9 @@ public class GetOperationContext extends KeyValueOperationContext {
 
   /**
    * Get the value of this get operation.
-   * 
-   * @return the result of get operation; null when the result is a serialized
-   *         value in which case user should invoke {@link #getSerializedValue()}
-   *         or {@link #getDeserializedValue()}.
+   *
+   * @return the result of get operation; null when the result is a serialized value in which case
+   *     user should invoke {@link #getSerializedValue()} or {@link #getDeserializedValue()}.
    */
   public Object getObject() {
     if (super.getSerializedValue() != null) {
@@ -74,16 +68,13 @@ public class GetOperationContext extends KeyValueOperationContext {
 
   /**
    * Set the result value of the object for this operation.
-   * 
-   * @param value
-   *                the result of this operation; can be a serialized byte array
-   *                or a deserialized object
-   * @param isObject
-   *                true when the value is an object (either serialized or
-   *                deserialized); false when it is a raw byte array
+   *
+   * @param value the result of this operation; can be a serialized byte array or a deserialized
+   *     object
+   * @param isObject true when the value is an object (either serialized or deserialized); false
+   *     when it is a raw byte array
    */
   public void setObject(Object value, boolean isObject) {
     super.setValue(value, isObject);
   }
-
 }

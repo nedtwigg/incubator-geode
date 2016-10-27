@@ -31,11 +31,14 @@ import org.apache.geode.test.junit.categories.UnitTest;
 public class DistributedRegionJUnitTest extends AbstractDistributedRegionJUnitTest {
 
   @Override
-  protected void setInternalRegionArguments(InternalRegionArguments ira) {
-  }
+  protected void setInternalRegionArguments(InternalRegionArguments ira) {}
 
   @Override
-  protected DistributedRegion createAndDefineRegion(boolean isConcurrencyChecksEnabled, RegionAttributes ra, InternalRegionArguments ira, GemFireCacheImpl cache) {
+  protected DistributedRegion createAndDefineRegion(
+      boolean isConcurrencyChecksEnabled,
+      RegionAttributes ra,
+      InternalRegionArguments ira,
+      GemFireCacheImpl cache) {
     DistributedRegion region = new DistributedRegion("testRegion", ra, null, cache, ira);
     if (isConcurrencyChecksEnabled) {
       region.enableConcurrencyChecks();
@@ -44,7 +47,9 @@ public class DistributedRegionJUnitTest extends AbstractDistributedRegionJUnitTe
     // since it is a real region object, we need to tell mockito to monitor it
     region = spy(region);
 
-    doNothing().when(region).distributeUpdate(any(), anyLong(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+    doNothing()
+        .when(region)
+        .distributeUpdate(any(), anyLong(), anyBoolean(), anyBoolean(), any(), anyBoolean());
     doNothing().when(region).distributeDestroy(any(), any());
     doNothing().when(region).distributeInvalidate(any());
     doNothing().when(region).distributeUpdateEntryVersion(any());
@@ -57,9 +62,11 @@ public class DistributedRegionJUnitTest extends AbstractDistributedRegionJUnitTe
     region.virtualPut(event, false, false, null, false, 12345L, false);
     // verify the result
     if (cnt > 0) {
-      verify(region, times(cnt)).distributeUpdate(eq(event), eq(12345L), anyBoolean(), anyBoolean(), any(), anyBoolean());
+      verify(region, times(cnt))
+          .distributeUpdate(eq(event), eq(12345L), anyBoolean(), anyBoolean(), any(), anyBoolean());
     } else {
-      verify(region, never()).distributeUpdate(eq(event), eq(12345L), anyBoolean(), anyBoolean(), any(), anyBoolean());
+      verify(region, never())
+          .distributeUpdate(eq(event), eq(12345L), anyBoolean(), anyBoolean(), any(), anyBoolean());
     }
   }
 
@@ -75,7 +82,8 @@ public class DistributedRegionJUnitTest extends AbstractDistributedRegionJUnitTe
   }
 
   @Override
-  protected void verifyDistributeInvalidate(DistributedRegion region, EntryEventImpl event, int cnt) {
+  protected void verifyDistributeInvalidate(
+      DistributedRegion region, EntryEventImpl event, int cnt) {
     region.basicInvalidate(event);
     // verify the result
     if (cnt > 0) {
@@ -86,7 +94,8 @@ public class DistributedRegionJUnitTest extends AbstractDistributedRegionJUnitTe
   }
 
   @Override
-  protected void verifyDistributeUpdateEntryVersion(DistributedRegion region, EntryEventImpl event, int cnt) {
+  protected void verifyDistributeUpdateEntryVersion(
+      DistributedRegion region, EntryEventImpl event, int cnt) {
     region.basicUpdateEntryVersion(event);
     // verify the result
     if (cnt > 0) {
@@ -95,5 +104,4 @@ public class DistributedRegionJUnitTest extends AbstractDistributedRegionJUnitTe
       verify(region, never()).distributeUpdateEntryVersion(eq(event));
     }
   }
-
 }

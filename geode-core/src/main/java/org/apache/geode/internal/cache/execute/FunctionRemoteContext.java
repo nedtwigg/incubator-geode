@@ -27,11 +27,7 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.execute.FunctionService;
 
-/**
- * FunctionContext for remote/target nodes
- * 
- *
- */
+/** FunctionContext for remote/target nodes */
 public class FunctionRemoteContext implements DataSerializable {
 
   private Set filter;
@@ -48,10 +44,15 @@ public class FunctionRemoteContext implements DataSerializable {
 
   private Function function;
 
-  public FunctionRemoteContext() {
-  }
+  public FunctionRemoteContext() {}
 
-  public FunctionRemoteContext(final Function function, Object object, Set filter, Set<Integer> bucketSet, boolean isReExecute, boolean isFnSerializationReqd) {
+  public FunctionRemoteContext(
+      final Function function,
+      Object object,
+      Set filter,
+      Set<Integer> bucketSet,
+      boolean isReExecute,
+      boolean isFnSerializationReqd) {
     this.function = function;
     this.args = object;
     this.filter = filter;

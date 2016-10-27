@@ -40,23 +40,21 @@ import org.apache.geode.internal.cache.LocalRegion;
 import org.apache.geode.internal.cache.PartitionedRegion;
 import org.apache.geode.internal.cache.ProxyBucketRegion;
 
-/**
- *
- */
+/** */
 public class MembershipFlushRequest extends PooledDistributionMessage implements MessageWithReply {
 
   private String regionPath;
   private int processorId;
 
-  public MembershipFlushRequest() {
-  }
+  public MembershipFlushRequest() {}
 
   public MembershipFlushRequest(String regionPath, int processorId) {
     this.regionPath = regionPath;
     this.processorId = processorId;
   }
 
-  public static void send(Set<InternalDistributedMember> recipients, DM dm, String regionPath) throws ReplyException {
+  public static void send(Set<InternalDistributedMember> recipients, DM dm, String regionPath)
+      throws ReplyException {
     ReplyProcessor21 processor = new ReplyProcessor21(dm, recipients);
     MembershipFlushRequest msg = new MembershipFlushRequest(regionPath, processor.getProcessorId());
     msg.setRecipients(recipients);

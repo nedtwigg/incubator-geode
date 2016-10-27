@@ -37,21 +37,26 @@ public class WanLocatorDiscovererImpl implements WanLocatorDiscoverer {
 
   private ExecutorService _executor;
 
-  public WanLocatorDiscovererImpl() {
-
-  }
+  public WanLocatorDiscovererImpl() {}
 
   @Override
-  public void discover(int port, DistributionConfigImpl config, LocatorMembershipListener locatorListener, final String hostnameForClients) {
-    final LoggingThreadGroup loggingThreadGroup = LoggingThreadGroup.createThreadGroup("WAN Locator Discovery Logger Group", logger);
+  public void discover(
+      int port,
+      DistributionConfigImpl config,
+      LocatorMembershipListener locatorListener,
+      final String hostnameForClients) {
+    final LoggingThreadGroup loggingThreadGroup =
+        LoggingThreadGroup.createThreadGroup("WAN Locator Discovery Logger Group", logger);
 
-    final ThreadFactory threadFactory = new ThreadFactory() {
-      public Thread newThread(final Runnable task) {
-        final Thread thread = new Thread(loggingThreadGroup, task, "WAN Locator Discovery Thread");
-        thread.setDaemon(true);
-        return thread;
-      }
-    };
+    final ThreadFactory threadFactory =
+        new ThreadFactory() {
+          public Thread newThread(final Runnable task) {
+            final Thread thread =
+                new Thread(loggingThreadGroup, task, "WAN Locator Discovery Thread");
+            thread.setDaemon(true);
+            return thread;
+          }
+        };
 
     this._executor = Executors.newCachedThreadPool(threadFactory);
     exchangeLocalLocators(port, config, locatorListener, hostnameForClients);
@@ -75,7 +80,11 @@ public class WanLocatorDiscovererImpl implements WanLocatorDiscoverer {
    * @param config
    * @param hostnameForClients
    */
-  private void exchangeLocalLocators(int port, DistributionConfigImpl config, LocatorMembershipListener locatorListener, final String hostnameForClients) {
+  private void exchangeLocalLocators(
+      int port,
+      DistributionConfigImpl config,
+      LocatorMembershipListener locatorListener,
+      final String hostnameForClients) {
     String localLocator = config.getStartLocator();
     DistributionLocatorId locatorId = null;
     if (localLocator.equals(DistributionConfig.DEFAULT_START_LOCATOR)) {
@@ -88,37 +97,47 @@ public class WanLocatorDiscovererImpl implements WanLocatorDiscoverer {
     RemoteLocatorJoinRequest request = buildRemoteDSJoinRequest(port, config, hostnameForClients);
     StringTokenizer locatorsOnThisVM = new StringTokenizer(config.getLocators(), ",");
     while (locatorsOnThisVM.hasMoreTokens()) {
-      DistributionLocatorId localLocatorId = new DistributionLocatorId(locatorsOnThisVM.nextToken());
+      DistributionLocatorId localLocatorId =
+          new DistributionLocatorId(locatorsOnThisVM.nextToken());
       if (!locatorId.equals(localLocatorId)) {
-        LocatorDiscovery localDiscovery = new LocatorDiscovery(this, localLocatorId, request, locatorListener);
-        LocatorDiscovery.LocalLocatorDiscovery localLocatorDiscovery = localDiscovery.new LocalLocatorDiscovery();
+        LocatorDiscovery localDiscovery =
+            new LocatorDiscovery(this, localLocatorId, request, locatorListener);
+        LocatorDiscovery.LocalLocatorDiscovery localLocatorDiscovery =
+            localDiscovery.new LocalLocatorDiscovery();
         this._executor.execute(localLocatorDiscovery);
       }
     }
   }
 
   /**
-   * For WAN 70 Exchange the locator information across the distributed systems
-   * (sites)
+   * For WAN 70 Exchange the locator information across the distributed systems (sites)
    *
    * @param config
    * @param hostnameForClients
    */
-  private void exchangeRemoteLocators(int port, DistributionConfigImpl config, LocatorMembershipListener locatorListener, final String hostnameForClients) {
+  private void exchangeRemoteLocators(
+      int port,
+      DistributionConfigImpl config,
+      LocatorMembershipListener locatorListener,
+      final String hostnameForClients) {
     RemoteLocatorJoinRequest request = buildRemoteDSJoinRequest(port, config, hostnameForClients);
     String remoteDistributedSystems = config.getRemoteLocators();
     if (remoteDistributedSystems.length() > 0) {
       StringTokenizer remoteLocators = new StringTokenizer(remoteDistributedSystems, ",");
       while (remoteLocators.hasMoreTokens()) {
-        DistributionLocatorId remoteLocatorId = new DistributionLocatorId(remoteLocators.nextToken());
-        LocatorDiscovery localDiscovery = new LocatorDiscovery(this, remoteLocatorId, request, locatorListener);
-        LocatorDiscovery.RemoteLocatorDiscovery remoteLocatorDiscovery = localDiscovery.new RemoteLocatorDiscovery();
+        DistributionLocatorId remoteLocatorId =
+            new DistributionLocatorId(remoteLocators.nextToken());
+        LocatorDiscovery localDiscovery =
+            new LocatorDiscovery(this, remoteLocatorId, request, locatorListener);
+        LocatorDiscovery.RemoteLocatorDiscovery remoteLocatorDiscovery =
+            localDiscovery.new RemoteLocatorDiscovery();
         this._executor.execute(remoteLocatorDiscovery);
       }
     }
   }
 
-  private RemoteLocatorJoinRequest buildRemoteDSJoinRequest(int port, DistributionConfigImpl config, final String hostnameForClients) {
+  private RemoteLocatorJoinRequest buildRemoteDSJoinRequest(
+      int port, DistributionConfigImpl config, final String hostnameForClients) {
     String localLocator = config.getStartLocator();
     DistributionLocatorId locatorId = null;
     if (localLocator.equals(DistributionConfig.DEFAULT_START_LOCATOR)) {
@@ -126,8 +145,8 @@ public class WanLocatorDiscovererImpl implements WanLocatorDiscoverer {
     } else {
       locatorId = new DistributionLocatorId(localLocator);
     }
-    RemoteLocatorJoinRequest request = new RemoteLocatorJoinRequest(config.getDistributedSystemId(), locatorId, "");
+    RemoteLocatorJoinRequest request =
+        new RemoteLocatorJoinRequest(config.getDistributedSystemId(), locatorId, "");
     return request;
   }
-
 }

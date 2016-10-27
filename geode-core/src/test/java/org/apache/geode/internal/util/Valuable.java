@@ -17,22 +17,16 @@
 package org.apache.geode.internal.util;
 
 /**
- * Classes that implement this interface have a <code>Object</code>
- * value associated with them.  This interface is not considered to be
- * a "user class".
+ * Classes that implement this interface have a <code>Object</code> value associated with them. This
+ * interface is not considered to be a "user class".
  *
  * @since GemFire 2.0.3
  */
 public interface Valuable {
 
-  /**
-   * Returns the value associated with this object
-   */
+  /** Returns the value associated with this object */
   public Object getValue();
 
-  /**
-   * Sets the value associated with this object
-   */
+  /** Sets the value associated with this object */
   public void setValue(Object value);
-
 }

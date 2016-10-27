@@ -31,8 +31,7 @@ public interface QueueState {
 
   public boolean verifyIfDuplicate(EventID eventId);
 
-  /** test hook
-   */
+  /** test hook */
   public java.util.Map getThreadIdToSequenceIdMap();
 
   public void start(ScheduledExecutorService timer, int interval);

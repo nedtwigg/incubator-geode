@@ -63,10 +63,10 @@ public class JMXMBeanDUnitTest extends DistributedTestCase {
   private static LocatorLauncher locatorLauncher;
 
   @Rule
-  public DistributedRestoreSystemProperties distributedRestoreSystemProperties = new DistributedRestoreSystemProperties();
+  public DistributedRestoreSystemProperties distributedRestoreSystemProperties =
+      new DistributedRestoreSystemProperties();
 
-  @Rule
-  public SerializableTemporaryFolder temporaryFolder = new SerializableTemporaryFolder();
+  @Rule public SerializableTemporaryFolder temporaryFolder = new SerializableTemporaryFolder();
 
   @Before
   public void before() {
@@ -82,98 +82,149 @@ public class JMXMBeanDUnitTest extends DistributedTestCase {
 
   @Test
   public void testJMXOverSSLWithoutJMXAlias() throws Exception {
-    Properties properties = configureLocatorProperties(new Properties(), jmxPort, serverHostName, true, false, true);
-    locator.invoke("Configure and start Locator", () -> {
-      System.setProperty("javax.ssl.debug", "true");
-      configureAndStartLocator(locatorPort, jmxPort, serverHostName, properties);
-    });
+    Properties properties =
+        configureLocatorProperties(new Properties(), jmxPort, serverHostName, true, false, true);
+    locator.invoke(
+        "Configure and start Locator",
+        () -> {
+          System.setProperty("javax.ssl.debug", "true");
+          configureAndStartLocator(locatorPort, jmxPort, serverHostName, properties);
+        });
 
-    jmxClient.invoke("Configure and start JMX Client", () -> {
-      System.setProperty("javax.ssl.debug", "true");
-      connectAndValidateAsJmxClient(jmxPort, serverHostName, true, true);
-    });
+    jmxClient.invoke(
+        "Configure and start JMX Client",
+        () -> {
+          System.setProperty("javax.ssl.debug", "true");
+          connectAndValidateAsJmxClient(jmxPort, serverHostName, true, true);
+        });
   }
 
   @Test
   public void testJMXOverSSLWithJMXAlias() throws Exception {
-    Properties properties = configureLocatorProperties(new Properties(), jmxPort, serverHostName, true, false, true);
-    locator.invoke("Configure and start Locator", () -> {
-      System.setProperty("javax.ssl.debug", "true");
-      configureAndStartLocator(locatorPort, jmxPort, serverHostName, properties);
-    });
+    Properties properties =
+        configureLocatorProperties(new Properties(), jmxPort, serverHostName, true, false, true);
+    locator.invoke(
+        "Configure and start Locator",
+        () -> {
+          System.setProperty("javax.ssl.debug", "true");
+          configureAndStartLocator(locatorPort, jmxPort, serverHostName, properties);
+        });
 
-    jmxClient.invoke("Configure and start JMX Client", () -> {
-      System.setProperty("javax.ssl.debug", "true");
-      connectAndValidateAsJmxClient(jmxPort, serverHostName, true, true);
-    });
+    jmxClient.invoke(
+        "Configure and start JMX Client",
+        () -> {
+          System.setProperty("javax.ssl.debug", "true");
+          connectAndValidateAsJmxClient(jmxPort, serverHostName, true, true);
+        });
   }
 
   @Test
   public void testJMXOverSSL() throws Exception {
-    Properties properties = configureLocatorProperties(new Properties(), jmxPort, serverHostName, true, false, true);
+    Properties properties =
+        configureLocatorProperties(new Properties(), jmxPort, serverHostName, true, false, true);
 
-    locator.invoke("Configure and start Locator", () -> {
-      System.setProperty("javax.ssl.debug", "true");
-      configureAndStartLocator(locatorPort, jmxPort, serverHostName, properties);
-    });
+    locator.invoke(
+        "Configure and start Locator",
+        () -> {
+          System.setProperty("javax.ssl.debug", "true");
+          configureAndStartLocator(locatorPort, jmxPort, serverHostName, properties);
+        });
 
-    jmxClient.invoke("Configure and start JMX Client", () -> {
-      System.setProperty("javax.ssl.debug", "true");
-      connectAndValidateAsJmxClient(jmxPort, serverHostName, true);
-    });
+    jmxClient.invoke(
+        "Configure and start JMX Client",
+        () -> {
+          System.setProperty("javax.ssl.debug", "true");
+          connectAndValidateAsJmxClient(jmxPort, serverHostName, true);
+        });
   }
 
   @Test
   @Category(FlakyTest.class)
   //  To be fixed in GEODE-1716
   public void testJMXOverLegacySSL() throws Exception {
-    Properties properties = configureLocatorProperties(new Properties(), jmxPort, serverHostName, true, true, false);
-    locator.invoke("Configure and start Locator", () -> {
-      System.setProperty("javax.ssl.debug", "true");
-      configureAndStartLocator(locatorPort, jmxPort, serverHostName, properties);
-    });
+    Properties properties =
+        configureLocatorProperties(new Properties(), jmxPort, serverHostName, true, true, false);
+    locator.invoke(
+        "Configure and start Locator",
+        () -> {
+          System.setProperty("javax.ssl.debug", "true");
+          configureAndStartLocator(locatorPort, jmxPort, serverHostName, properties);
+        });
 
-    jmxClient.invoke("Configure and start JMX Client", () -> {
-      System.setProperty("javax.ssl.debug", "true");
-      connectAndValidateAsJmxClient(jmxPort, serverHostName, true);
-    });
+    jmxClient.invoke(
+        "Configure and start JMX Client",
+        () -> {
+          System.setProperty("javax.ssl.debug", "true");
+          connectAndValidateAsJmxClient(jmxPort, serverHostName, true);
+        });
   }
 
   @Test
   public void testJMXOverNonSSL() throws Exception {
-    Properties properties = configureLocatorProperties(new Properties(), jmxPort, serverHostName, false, false, false);
-    locator.invoke("Configure and start Locator", () -> configureAndStartLocator(locatorPort, jmxPort, serverHostName, properties));
-    jmxClient.invoke("Configure and start JMX Client", () -> connectAndValidateAsJmxClient(jmxPort, serverHostName, false));
+    Properties properties =
+        configureLocatorProperties(new Properties(), jmxPort, serverHostName, false, false, false);
+    locator.invoke(
+        "Configure and start Locator",
+        () -> configureAndStartLocator(locatorPort, jmxPort, serverHostName, properties));
+    jmxClient.invoke(
+        "Configure and start JMX Client",
+        () -> connectAndValidateAsJmxClient(jmxPort, serverHostName, false));
   }
 
   @Test
   public void testJMXOverNonSSLWithClientUsingIncorrectPort() throws Exception {
-    Properties properties = configureLocatorProperties(new Properties(), jmxPort, serverHostName, false, false, false);
-    locator.invoke("Configure and start Locator", () -> configureAndStartLocator(locatorPort, jmxPort, serverHostName, properties));
+    Properties properties =
+        configureLocatorProperties(new Properties(), jmxPort, serverHostName, false, false, false);
+    locator.invoke(
+        "Configure and start Locator",
+        () -> configureAndStartLocator(locatorPort, jmxPort, serverHostName, properties));
 
-    assertThatThrownBy(() -> jmxClient.invoke("Configure and start JMX Client", () -> connectAndValidateAsJmxClient(9999, serverHostName, false))).hasCauseExactlyInstanceOf(IOException.class).hasRootCauseExactlyInstanceOf(java.net.ConnectException.class);
+    assertThatThrownBy(
+            () ->
+                jmxClient.invoke(
+                    "Configure and start JMX Client",
+                    () -> connectAndValidateAsJmxClient(9999, serverHostName, false)))
+        .hasCauseExactlyInstanceOf(IOException.class)
+        .hasRootCauseExactlyInstanceOf(java.net.ConnectException.class);
   }
 
-  private void connectAndValidateAsJmxClient(final int jmxPort, final String serverHostName, final boolean useSSL) throws Exception {
+  private void connectAndValidateAsJmxClient(
+      final int jmxPort, final String serverHostName, final boolean useSSL) throws Exception {
     connectAndValidateAsJmxClient(jmxPort, serverHostName, useSSL, false);
   }
 
-  private void connectAndValidateAsJmxClient(final int jmxPort, final String serverHostName, final boolean useSSL, final boolean useMulti) throws Exception {
+  private void connectAndValidateAsJmxClient(
+      final int jmxPort, final String serverHostName, final boolean useSSL, final boolean useMulti)
+      throws Exception {
     // JMX RMI
 
     Map<String, Object> environment = new HashMap();
 
     if (useSSL) {
-      System.setProperty("javax.net.ssl.keyStore", useMulti ? getMultiKeyKeystore() : getSimpleSingleKeyKeystore());
+      System.setProperty(
+          "javax.net.ssl.keyStore",
+          useMulti ? getMultiKeyKeystore() : getSimpleSingleKeyKeystore());
       System.setProperty("javax.net.ssl.keyStoreType", "JKS");
       System.setProperty("javax.net.ssl.keyStorePassword", "password");
-      System.setProperty("javax.net.ssl.trustStore", useMulti ? getMultiKeyTruststore() : getSimpleSingleKeyKeystore());
+      System.setProperty(
+          "javax.net.ssl.trustStore",
+          useMulti ? getMultiKeyTruststore() : getSimpleSingleKeyKeystore());
       System.setProperty("javax.net.ssl.trustStoreType", "JKS");
       System.setProperty("javax.net.ssl.trustStorePassword", "password");
       environment.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
     }
 
-    JMXServiceURL url = new JMXServiceURL("service:jmx:rmi://" + serverHostName + ":" + jmxPort + "/jndi/rmi://" + serverHostName + ":" + jmxPort + "/jmxrmi");
+    JMXServiceURL url =
+        new JMXServiceURL(
+            "service:jmx:rmi://"
+                + serverHostName
+                + ":"
+                + jmxPort
+                + "/jndi/rmi://"
+                + serverHostName
+                + ":"
+                + jmxPort
+                + "/jmxrmi");
     JMXConnector jmxConnector = JMXConnectorFactory.connect(url, environment);
 
     try {
@@ -182,7 +233,8 @@ public class JMXMBeanDUnitTest extends DistributedTestCase {
       ObjectName mbeanName = new ObjectName("GemFire:service=System,type=Distributed");
 
       //Get MBean proxy instance that will be used to make calls to registered MBean
-      DistributedSystemMXBean distributedSystemMXBean = JMX.newMBeanProxy(mbeanServerConnection, mbeanName, DistributedSystemMXBean.class, true);
+      DistributedSystemMXBean distributedSystemMXBean =
+          JMX.newMBeanProxy(mbeanServerConnection, mbeanName, DistributedSystemMXBean.class, true);
 
       assertEquals(1, distributedSystemMXBean.getMemberCount());
       assertEquals(1, distributedSystemMXBean.getLocatorCount());
@@ -192,11 +244,18 @@ public class JMXMBeanDUnitTest extends DistributedTestCase {
     }
   }
 
-  private void configureAndStartLocator(final int locatorPort, final int jmxPort, final String serverHostName, final Properties properties) throws IOException {
+  private void configureAndStartLocator(
+      final int locatorPort,
+      final int jmxPort,
+      final String serverHostName,
+      final Properties properties)
+      throws IOException {
     configureAndStartLocator(locatorPort, serverHostName, properties);
   }
 
-  private void configureAndStartLocator(final int locatorPort, final String serverHostName, final Properties properties) throws IOException {
+  private void configureAndStartLocator(
+      final int locatorPort, final String serverHostName, final Properties properties)
+      throws IOException {
     DistributedTestUtils.deleteLocatorStateFile();
 
     final String memberName = getUniqueName() + "-locator";
@@ -207,12 +266,19 @@ public class JMXMBeanDUnitTest extends DistributedTestCase {
     for (String propertyName : properties.stringPropertyNames()) {
       builder.set(propertyName, properties.getProperty(propertyName));
     }
-    locatorLauncher = builder.setBindAddress(serverHostName).setHostnameForClients(serverHostName).setMemberName(memberName).setPort(locatorPort).setWorkingDirectory(workingDirectory.getCanonicalPath()).build();
+    locatorLauncher =
+        builder
+            .setBindAddress(serverHostName)
+            .setHostnameForClients(serverHostName)
+            .setMemberName(memberName)
+            .setPort(locatorPort)
+            .setWorkingDirectory(workingDirectory.getCanonicalPath())
+            .build();
     locatorLauncher.start();
-
   }
 
-  private Properties configureJMXSSLProperties(final Properties properties, final boolean isLegacy, final boolean useMultiKey) {
+  private Properties configureJMXSSLProperties(
+      final Properties properties, final boolean isLegacy, final boolean useMultiKey) {
     if (isLegacy) {
       properties.setProperty(JMX_MANAGER_SSL_CIPHERS, "any");
       properties.setProperty(JMX_MANAGER_SSL_PROTOCOLS, "any");
@@ -229,7 +295,8 @@ public class JMXMBeanDUnitTest extends DistributedTestCase {
         properties.setProperty(SSL_TRUSTSTORE_PASSWORD, "password");
         properties.setProperty(SSL_KEYSTORE, getSimpleSingleKeyKeystore());
         properties.setProperty(SSL_TRUSTSTORE, getSimpleSingleKeyKeystore());
-        properties.setProperty(SSL_ENABLED_COMPONENTS, SecurableCommunicationChannel.JMX.getConstant());
+        properties.setProperty(
+            SSL_ENABLED_COMPONENTS, SecurableCommunicationChannel.JMX.getConstant());
 
         if (useMultiKey) {
           properties.setProperty(SSL_KEYSTORE, getMultiKeyKeystore());
@@ -253,7 +320,13 @@ public class JMXMBeanDUnitTest extends DistributedTestCase {
     return TestUtil.getResourcePath(getClass(), "/org/apache/geode/internal/net/multiKeyTrust.jks");
   }
 
-  private Properties configureLocatorProperties(final Properties properties, final int jmxPort, final String serverHostName, final boolean useSSL, final boolean useLegacySSL, final boolean useMultiKeyKeystore) {
+  private Properties configureLocatorProperties(
+      final Properties properties,
+      final int jmxPort,
+      final String serverHostName,
+      final boolean useSSL,
+      final boolean useLegacySSL,
+      final boolean useMultiKeyKeystore) {
     configureCommonProperties(properties);
     properties.setProperty(JMX_MANAGER, "true");
     properties.setProperty(JMX_MANAGER_START, "true");

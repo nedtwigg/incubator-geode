@@ -46,11 +46,9 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Unit tests for {@link XmlUtils#addNewNode(Document, XmlEntity)} and
- * {@link XmlUtils#deleteNode(Document, XmlEntity)}. Simulates the
- * {@link SharedConfiguration} method of extracting {@link XmlEntity} from the
- * new config and applying it to the current shared config.
- * 
+ * Unit tests for {@link XmlUtils#addNewNode(Document, XmlEntity)} and {@link
+ * XmlUtils#deleteNode(Document, XmlEntity)}. Simulates the {@link SharedConfiguration} method of
+ * extracting {@link XmlEntity} from the new config and applying it to the current shared config.
  *
  * @since GemFire 8.1
  */
@@ -58,7 +56,8 @@ import static org.junit.Assert.assertEquals;
 public class XmlUtilsAddNewNodeJUnitTest {
 
   private static final String TEST_PREFIX = "test";
-  private static final String TEST_NAMESPACE = "urn:java:org/apache/geode/management/internal/configuration/utils/XmlUtilsAddNewNodeJUnitTest";
+  private static final String TEST_NAMESPACE =
+      "urn:java:org/apache/geode/management/internal/configuration/utils/XmlUtilsAddNewNodeJUnitTest";
   private static final XPathContext xPathContext = new XPathContext();
 
   private static Cache cache;
@@ -74,7 +73,10 @@ public class XmlUtilsAddNewNodeJUnitTest {
 
   @Before
   public void before() throws SAXException, ParserConfigurationException, IOException {
-    config = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.xml")));
+    config =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.xml")));
   }
 
   @AfterClass
@@ -84,13 +86,12 @@ public class XmlUtilsAddNewNodeJUnitTest {
   }
 
   /**
-   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with
-   * {@link CacheXml} element with a <code>name</code> attribute,
-   * <code>region</code>. It should be added after other <code>region</code>
-   * elements.
-   * 
+   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with {@link CacheXml} element with a
+   * <code>name</code> attribute, <code>region</code>. It should be added after other <code>region
+   * </code> elements.
+   *
    * @throws Exception
-   * @throws XPathExpressionException 
+   * @throws XPathExpressionException
    * @since GemFire 8.1
    */
   @Test
@@ -99,13 +100,23 @@ public class XmlUtilsAddNewNodeJUnitTest {
     NodeList nodes = XmlUtils.query(config, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testAddNewNodeNewNamed.xml")));
+    final Document changes =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                this.getClass()
+                    .getResourceAsStream(
+                        "XmlUtilsAddNewNodeJUnitTest.testAddNewNodeNewNamed.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(1, nodes.getLength());
     Element element = (Element) nodes.item(0);
     assertEquals(CacheXml.GEODE_NAMESPACE, element.getNamespaceURI());
 
-    final XmlEntity xmlEntity = XmlEntity.builder().withType("region").withAttribute("name", "r3").withConfig(changes).build();
+    final XmlEntity xmlEntity =
+        XmlEntity.builder()
+            .withType("region")
+            .withAttribute("name", "r3")
+            .withConfig(changes)
+            .build();
     XmlUtils.addNewNode(config, xmlEntity);
 
     nodes = XmlUtils.query(config, xPath, xPathContext);
@@ -120,10 +131,7 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals("test:cache", childNodes.get(6).getNodeName());
   }
 
-  /**
-   * Return just the nodes from a nodelist that are of type
-   * element.
-   */
+  /** Return just the nodes from a nodelist that are of type element. */
   private List<Node> getElementNodes(NodeList nodes) {
     ArrayList<Node> result = new ArrayList<Node>();
     for (int i = 0; i < nodes.getLength(); i++) {
@@ -137,11 +145,10 @@ public class XmlUtilsAddNewNodeJUnitTest {
   }
 
   /**
-   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with
-   * {@link CacheXml} element that does not have a name or id attribute,
-   * <code>jndi-bindings</code>. It should be added between <code>pdx</code> and
-   * <code>region</code> elements.
-   * 
+   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with {@link CacheXml} element that does
+   * not have a name or id attribute, <code>jndi-bindings</code>. It should be added between <code>
+   * pdx</code> and <code>region</code> elements.
+   *
    * @throws Exception
    * @since GemFire 8.1
    */
@@ -151,13 +158,19 @@ public class XmlUtilsAddNewNodeJUnitTest {
     NodeList nodes = XmlUtils.query(config, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testAddNewNodeNewUnnamed.xml")));
+    final Document changes =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                this.getClass()
+                    .getResourceAsStream(
+                        "XmlUtilsAddNewNodeJUnitTest.testAddNewNodeNewUnnamed.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(1, nodes.getLength());
     Element element = (Element) nodes.item(0);
     assertEquals(CacheXml.GEODE_NAMESPACE, element.getNamespaceURI());
 
-    final XmlEntity xmlEntity = XmlEntity.builder().withType("jndi-bindings").withConfig(changes).build();
+    final XmlEntity xmlEntity =
+        XmlEntity.builder().withType("jndi-bindings").withConfig(changes).build();
     XmlUtils.addNewNode(config, xmlEntity);
 
     nodes = XmlUtils.query(config, xPath, xPathContext);
@@ -172,12 +185,11 @@ public class XmlUtilsAddNewNodeJUnitTest {
   }
 
   /**
-   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with an
-   * {@link Extension} that does not have a name or id attribute. It should be
-   * added to the end of the config xml. Attempts a name collision with
-   * test:region, it should not collide with the similarly named cache:region
+   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with an {@link Extension} that does not
+   * have a name or id attribute. It should be added to the end of the config xml. Attempts a name
+   * collision with test:region, it should not collide with the similarly named cache:region
    * element.
-   * 
+   *
    * @throws Exception
    * @since GemFire 8.1
    */
@@ -187,14 +199,24 @@ public class XmlUtilsAddNewNodeJUnitTest {
     NodeList nodes = XmlUtils.query(config, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testAddNewNodeNewUnnamedExtension.xml")));
+    final Document changes =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                this.getClass()
+                    .getResourceAsStream(
+                        "XmlUtilsAddNewNodeJUnitTest.testAddNewNodeNewUnnamedExtension.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(1, nodes.getLength());
     Element element = (Element) nodes.item(0);
     assertEquals(TEST_NAMESPACE, element.getNamespaceURI());
     assertEquals("test:region", element.getNodeName());
 
-    final XmlEntity xmlEntity = XmlEntity.builder().withType("region").withNamespace(TEST_PREFIX, TEST_NAMESPACE).withConfig(changes).build();
+    final XmlEntity xmlEntity =
+        XmlEntity.builder()
+            .withType("region")
+            .withNamespace(TEST_PREFIX, TEST_NAMESPACE)
+            .withConfig(changes)
+            .build();
     XmlUtils.addNewNode(config, xmlEntity);
 
     nodes = XmlUtils.query(config, xPath, xPathContext);
@@ -211,11 +233,10 @@ public class XmlUtilsAddNewNodeJUnitTest {
   }
 
   /**
-   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with
-   * {@link CacheXml} element with a <code>name</code> attribute,
-   * <code>region</code>. It should replace existing <code>region</code> element
-   * with same <code>name</code>.
-   * 
+   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with {@link CacheXml} element with a
+   * <code>name</code> attribute, <code>region</code>. It should replace existing <code>region
+   * </code> element with same <code>name</code>.
+   *
    * @throws Exception
    * @since GemFire 8.1
    */
@@ -228,14 +249,24 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals(1, getElementNodes(element.getChildNodes()).size());
     assertEquals(CacheXml.GEODE_NAMESPACE, element.getNamespaceURI());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testAddNewNodeReplaceNamed.xml")));
+    final Document changes =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                this.getClass()
+                    .getResourceAsStream(
+                        "XmlUtilsAddNewNodeJUnitTest.testAddNewNodeReplaceNamed.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(1, nodes.getLength());
     element = (Element) nodes.item(0);
     assertEquals(0, element.getChildNodes().getLength());
     assertEquals(CacheXml.GEODE_NAMESPACE, element.getNamespaceURI());
 
-    final XmlEntity xmlEntity = XmlEntity.builder().withType("region").withAttribute("name", "r1").withConfig(changes).build();
+    final XmlEntity xmlEntity =
+        XmlEntity.builder()
+            .withType("region")
+            .withAttribute("name", "r1")
+            .withConfig(changes)
+            .build();
     XmlUtils.addNewNode(config, xmlEntity);
 
     nodes = XmlUtils.query(config, xPath, xPathContext);
@@ -246,10 +277,9 @@ public class XmlUtilsAddNewNodeJUnitTest {
   }
 
   /**
-   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with
-   * {@link CacheXml} element that does not have a name or id attribute,
-   * <code>pdx</code>. It should replace <code>pdx</code> element.
-   * 
+   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with {@link CacheXml} element that does
+   * not have a name or id attribute, <code>pdx</code>. It should replace <code>pdx</code> element.
+   *
    * @throws Exception
    * @since GemFire 8.1
    */
@@ -262,7 +292,12 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals("foo", XmlUtils.getAttribute(element, "disk-store-name"));
     assertEquals(CacheXml.GEODE_NAMESPACE, element.getNamespaceURI());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testAddNewNodeReplaceUnnamed.xml")));
+    final Document changes =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                this.getClass()
+                    .getResourceAsStream(
+                        "XmlUtilsAddNewNodeJUnitTest.testAddNewNodeReplaceUnnamed.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(1, nodes.getLength());
     element = (Element) nodes.item(0);
@@ -280,11 +315,10 @@ public class XmlUtilsAddNewNodeJUnitTest {
   }
 
   /**
-   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with an
-   * {@link Extension} that does not have a name or id attribute,
-   * <code>test:cache</code>. It should replace the existing
-   * <code>test:cache</code> element.
-   * 
+   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with an {@link Extension} that does not
+   * have a name or id attribute, <code>test:cache</code>. It should replace the existing <code>
+   * test:cache</code> element.
+   *
    * @throws Exception
    * @since GemFire 8.1
    */
@@ -297,14 +331,24 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals("1", XmlUtils.getAttribute(element, "value"));
     assertEquals(TEST_NAMESPACE, element.getNamespaceURI());
 
-    final org.w3c.dom.Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testAddNewNodeReplaceUnnamedExtension.xml")));
+    final org.w3c.dom.Document changes =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                this.getClass()
+                    .getResourceAsStream(
+                        "XmlUtilsAddNewNodeJUnitTest.testAddNewNodeReplaceUnnamedExtension.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(1, nodes.getLength());
     element = (Element) nodes.item(0);
     assertEquals("2", XmlUtils.getAttribute(element, "value"));
     assertEquals(TEST_NAMESPACE, element.getNamespaceURI());
 
-    final XmlEntity xmlEntity = XmlEntity.builder().withType("cache").withNamespace(TEST_PREFIX, TEST_NAMESPACE).withConfig(changes).build();
+    final XmlEntity xmlEntity =
+        XmlEntity.builder()
+            .withType("cache")
+            .withNamespace(TEST_PREFIX, TEST_NAMESPACE)
+            .withConfig(changes)
+            .build();
     XmlUtils.addNewNode(config, xmlEntity);
 
     nodes = XmlUtils.query(config, xPath, xPathContext);
@@ -315,11 +359,10 @@ public class XmlUtilsAddNewNodeJUnitTest {
   }
 
   /**
-   * Tests {@link XmlUtils#deleteNode(Document, XmlEntity)} with
-   * {@link CacheXml} element with a <code>name</code> attribute,
-   * <code>region</code>. It should remove existing <code>region</code> element
-   * with same <code>name</code>.
-   * 
+   * Tests {@link XmlUtils#deleteNode(Document, XmlEntity)} with {@link CacheXml} element with a
+   * <code>name</code> attribute, <code>region</code>. It should remove existing <code>region</code>
+   * element with same <code>name</code>.
+   *
    * @throws Exception
    * @since GemFire 8.1
    */
@@ -332,11 +375,20 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals(1, getElementNodes(element.getChildNodes()).size());
     assertEquals(CacheXml.GEODE_NAMESPACE, element.getNamespaceURI());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testDeleteNodeNamed.xml")));
+    final Document changes =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                this.getClass()
+                    .getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testDeleteNodeNamed.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
 
-    final XmlEntity xmlEntity = XmlEntity.builder().withType("region").withAttribute("name", "r1").withConfig(changes).build();
+    final XmlEntity xmlEntity =
+        XmlEntity.builder()
+            .withType("region")
+            .withAttribute("name", "r1")
+            .withConfig(changes)
+            .build();
     XmlUtils.deleteNode(config, xmlEntity);
 
     nodes = XmlUtils.query(config, xPath, xPathContext);
@@ -344,10 +396,10 @@ public class XmlUtilsAddNewNodeJUnitTest {
   }
 
   /**
-   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with
-   * {@link CacheXml} element that does not have a name or id attribute,
-   * <code>pdx</code>. It should remove the existing <code>pdx</code> element.
-   * 
+   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with {@link CacheXml} element that does
+   * not have a name or id attribute, <code>pdx</code>. It should remove the existing <code>pdx
+   * </code> element.
+   *
    * @throws Exception
    * @since GemFire 8.1
    */
@@ -360,7 +412,11 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals("foo", XmlUtils.getAttribute(element, "disk-store-name"));
     assertEquals(CacheXml.GEODE_NAMESPACE, element.getNamespaceURI());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testDeleteNodeUnnamed.xml")));
+    final Document changes =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                this.getClass()
+                    .getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testDeleteNodeUnnamed.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
 
@@ -372,11 +428,10 @@ public class XmlUtilsAddNewNodeJUnitTest {
   }
 
   /**
-   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with an
-   * {@link Extension} that does not have a name or id attribute,
-   * <code>test:cache</code>. It should remove the existing
-   * <code>test:cache</code> element.
-   * 
+   * Tests {@link XmlUtils#addNewNode(Document, XmlEntity)} with an {@link Extension} that does not
+   * have a name or id attribute, <code>test:cache</code>. It should remove the existing <code>
+   * test:cache</code> element.
+   *
    * @throws Exception
    * @since GemFire 8.1
    */
@@ -389,15 +444,24 @@ public class XmlUtilsAddNewNodeJUnitTest {
     assertEquals("1", XmlUtils.getAttribute(element, "value"));
     assertEquals(TEST_NAMESPACE, element.getNamespaceURI());
 
-    final Document changes = XmlUtils.createDocumentFromReader(new InputStreamReader(this.getClass().getResourceAsStream("XmlUtilsAddNewNodeJUnitTest.testDeleteNodeUnnamedExtension.xml")));
+    final Document changes =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                this.getClass()
+                    .getResourceAsStream(
+                        "XmlUtilsAddNewNodeJUnitTest.testDeleteNodeUnnamedExtension.xml")));
     nodes = XmlUtils.query(changes, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
 
-    final XmlEntity xmlEntity = XmlEntity.builder().withType("cache").withNamespace(TEST_PREFIX, TEST_NAMESPACE).withConfig(changes).build();
+    final XmlEntity xmlEntity =
+        XmlEntity.builder()
+            .withType("cache")
+            .withNamespace(TEST_PREFIX, TEST_NAMESPACE)
+            .withConfig(changes)
+            .build();
     XmlUtils.deleteNode(config, xmlEntity);
 
     nodes = XmlUtils.query(config, xPath, xPathContext);
     assertEquals(0, nodes.getLength());
   }
-
 }

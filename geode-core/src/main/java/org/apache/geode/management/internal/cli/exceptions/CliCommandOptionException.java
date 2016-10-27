@@ -28,11 +28,13 @@ public class CliCommandOptionException extends CliCommandException {
     this(commandTarget, option, null, null);
   }
 
-  public CliCommandOptionException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet) {
+  public CliCommandOptionException(
+      final CommandTarget commandTarget, final Option option, final OptionSet optionSet) {
     this(commandTarget, option, optionSet, null);
   }
 
-  public CliCommandOptionException(final CommandTarget commandTarget, final Option option, final Throwable cause) {
+  public CliCommandOptionException(
+      final CommandTarget commandTarget, final Option option, final Throwable cause) {
     this(commandTarget, option, null, cause);
   }
 
@@ -40,14 +42,16 @@ public class CliCommandOptionException extends CliCommandException {
     this(null, null, null, cause);
   }
 
-  public CliCommandOptionException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet, final Throwable cause) {
+  public CliCommandOptionException(
+      final CommandTarget commandTarget,
+      final Option option,
+      final OptionSet optionSet,
+      final Throwable cause) {
     super(commandTarget, optionSet, cause);
     this.setOption(option);
   }
 
-  /**
-   * @return option for which the exception occurred
-   */
+  /** @return option for which the exception occurred */
   public Option getOption() {
     return option;
   }

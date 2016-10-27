@@ -96,7 +96,14 @@ public class ViewAckMessage extends HighPriorityDistributionMessage {
   @Override
   public String toString() {
     String s = getSender() == null ? getRecipientsDescription() : "" + getSender();
-    return "ViewAckMessage(" + s + "; " + this.viewId + "; preparing=" + preparing + "; altview=" + this.alternateView + ")";
+    return "ViewAckMessage("
+        + s
+        + "; "
+        + this.viewId
+        + "; preparing="
+        + preparing
+        + "; altview="
+        + this.alternateView
+        + ")";
   }
-
 }

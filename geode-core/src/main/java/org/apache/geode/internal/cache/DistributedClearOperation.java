@@ -33,13 +33,11 @@ import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 import org.apache.geode.internal.cache.versions.RegionVersionVector;
 import org.apache.geode.internal.cache.versions.VersionTag;
 
-/**
- * 
- * 
- */
+/** */
 public class DistributedClearOperation extends DistributedCacheOperation {
   public static enum OperationType {
-    OP_LOCK_FOR_CLEAR, OP_CLEAR,
+    OP_LOCK_FOR_CLEAR,
+    OP_CLEAR,
   }
 
   private RegionVersionVector rvv;
@@ -47,40 +45,63 @@ public class DistributedClearOperation extends DistributedCacheOperation {
   private Set<InternalDistributedMember> recipients;
   private VersionTag<?> operationTag;
 
-  /**
-   * A map of all the regions that are currently locked for a clear in this VM
-   */
-  private static final ConcurrentHashMap<LockKey, DistributedRegion> lockedRegions = new ConcurrentHashMap<LockKey, DistributedRegion>();
+  /** A map of all the regions that are currently locked for a clear in this VM */
+  private static final ConcurrentHashMap<LockKey, DistributedRegion> lockedRegions =
+      new ConcurrentHashMap<LockKey, DistributedRegion>();
 
-  public static void regionLocked(InternalDistributedMember locker, String regionPath, DistributedRegion region) {
+  public static void regionLocked(
+      InternalDistributedMember locker, String regionPath, DistributedRegion region) {
     lockedRegions.put(new LockKey(locker, regionPath), region);
   }
 
-  public static DistributedRegion regionUnlocked(InternalDistributedMember locker, String regionPath) {
+  public static DistributedRegion regionUnlocked(
+      InternalDistributedMember locker, String regionPath) {
     return lockedRegions.remove(new LockKey(locker, regionPath));
   }
 
-  /** distribute a clear() to other members 
-   **/
-  public static void clear(RegionEventImpl regionEvent, RegionVersionVector rvv, Set<InternalDistributedMember> recipients) {
-    new DistributedClearOperation(DistributedClearOperation.OperationType.OP_CLEAR, regionEvent, rvv, recipients).distribute();
+  /** distribute a clear() to other members */
+  public static void clear(
+      RegionEventImpl regionEvent,
+      RegionVersionVector rvv,
+      Set<InternalDistributedMember> recipients) {
+    new DistributedClearOperation(
+            DistributedClearOperation.OperationType.OP_CLEAR, regionEvent, rvv, recipients)
+        .distribute();
   }
 
-  /** obtain locks on version generation in other members have them do a state-flush back to this member 
-   * @param recipients */
-  public static void lockAndFlushToOthers(RegionEventImpl regionEvent, Set<InternalDistributedMember> recipients) {
-    DistributedClearOperation dco = new DistributedClearOperation(DistributedClearOperation.OperationType.OP_LOCK_FOR_CLEAR, regionEvent, null, recipients);
+  /**
+   * obtain locks on version generation in other members have them do a state-flush back to this
+   * member
+   *
+   * @param recipients
+   */
+  public static void lockAndFlushToOthers(
+      RegionEventImpl regionEvent, Set<InternalDistributedMember> recipients) {
+    DistributedClearOperation dco =
+        new DistributedClearOperation(
+            DistributedClearOperation.OperationType.OP_LOCK_FOR_CLEAR,
+            regionEvent,
+            null,
+            recipients);
     dco.distribute();
   }
 
   @Override
   public String toString() {
     String cname = getClass().getName().substring(getClass().getPackage().getName().length() + 1);
-    return cname + "(op=" + this.operation + ", tag=" + this.operationTag + "event=" + this.event + ")";
+    return cname
+        + "(op="
+        + this.operation
+        + ", tag="
+        + this.operationTag
+        + "event="
+        + this.event
+        + ")";
   }
 
   /** release locks in other members obtained for an RVV clear */
-  public static void releaseLocks(RegionEventImpl regionEvent, Set<InternalDistributedMember> recipients) {
+  public static void releaseLocks(
+      RegionEventImpl regionEvent, Set<InternalDistributedMember> recipients) {
     DistributedRegion region = (DistributedRegion) regionEvent.getRegion();
     ReleaseClearLockMessage.send(recipients, region.getDistributionManager(), region.getFullPath());
   }
@@ -96,9 +117,16 @@ public class DistributedClearOperation extends DistributedCacheOperation {
     return this.operation == OperationType.OP_CLEAR;
   }
 
-  /** Creates new instance of DistributedClearOperation 
-   * @param recipients */
-  private DistributedClearOperation(OperationType op, RegionEventImpl event, RegionVersionVector rvv, Set<InternalDistributedMember> recipients) {
+  /**
+   * Creates new instance of DistributedClearOperation
+   *
+   * @param recipients
+   */
+  private DistributedClearOperation(
+      OperationType op,
+      RegionEventImpl event,
+      RegionVersionVector rvv,
+      Set<InternalDistributedMember> recipients) {
     super(event);
     this.rvv = rvv;
     this.operation = op;
@@ -128,7 +156,8 @@ public class DistributedClearOperation extends DistributedCacheOperation {
     ClearRegionMessage mssg;
     if (this.event instanceof ClientRegionEventImpl) {
       mssg = new ClearRegionWithContextMessage();
-      ((ClearRegionWithContextMessage) mssg).context = ((ClientRegionEventImpl) this.event).getContext();
+      ((ClearRegionWithContextMessage) mssg).context =
+          ((ClientRegionEventImpl) this.event).getContext();
 
     } else {
       mssg = new ClearRegionMessage();
@@ -179,28 +208,31 @@ public class DistributedClearOperation extends DistributedCacheOperation {
     }
 
     protected RegionEventImpl createRegionEvent(DistributedRegion rgn) {
-      RegionEventImpl event = new RegionEventImpl(rgn, getOperation(), this.callbackArg, true /* originRemote */, getSender());
+      RegionEventImpl event =
+          new RegionEventImpl(
+              rgn, getOperation(), this.callbackArg, true /* originRemote */, getSender());
       event.setVersionTag(this.operationTag);
       return event;
     }
 
     @Override
-    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException {
+    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm)
+        throws EntryNotFoundException {
 
       DistributedRegion region = (DistributedRegion) event.getRegion();
       switch (this.clearOp) {
-      case OP_CLEAR:
-        region.clearRegionLocally((RegionEventImpl) event, false, this.rvv);
-        region.notifyBridgeClients((RegionEventImpl) event);
-        this.appliedOperation = true;
-        break;
-      case OP_LOCK_FOR_CLEAR:
-        if (region.getDataPolicy().withStorage()) {
-          DistributedClearOperation.regionLocked(this.getSender(), region.getFullPath(), region);
-          region.lockLocallyForClear(dm, this.getSender(), event);
-        }
-        this.appliedOperation = true;
-        break;
+        case OP_CLEAR:
+          region.clearRegionLocally((RegionEventImpl) event, false, this.rvv);
+          region.notifyBridgeClients((RegionEventImpl) event);
+          this.appliedOperation = true;
+          break;
+        case OP_LOCK_FOR_CLEAR:
+          if (region.getDataPolicy().withStorage()) {
+            DistributedClearOperation.regionLocked(this.getSender(), region.getFullPath(), region);
+            region.lockLocallyForClear(dm, this.getSender(), event);
+          }
+          this.appliedOperation = true;
+          break;
       }
       return true;
     }
@@ -235,7 +267,6 @@ public class DistributedClearOperation extends DistributedCacheOperation {
       buff.append("; tag=").append(this.operationTag);
       buff.append("; rvv=").append(this.rvv);
     }
-
   }
 
   public static final class ClearRegionWithContextMessage extends ClearRegionMessage {
@@ -243,9 +274,16 @@ public class DistributedClearOperation extends DistributedCacheOperation {
     protected RegionVersionVector rvv;
 
     @Override
-    final public RegionEventImpl createRegionEvent(DistributedRegion rgn) {
+    public final RegionEventImpl createRegionEvent(DistributedRegion rgn) {
 
-      ClientRegionEventImpl event = new ClientRegionEventImpl(rgn, getOperation(), this.callbackArg, true /* originRemote */, getSender(), (ClientProxyMembershipID) this.context);
+      ClientRegionEventImpl event =
+          new ClientRegionEventImpl(
+              rgn,
+              getOperation(),
+              this.callbackArg,
+              true /* originRemote */,
+              getSender(),
+              (ClientProxyMembershipID) this.context);
       return event;
     }
 
@@ -294,25 +332,17 @@ public class DistributedClearOperation extends DistributedCacheOperation {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
       LockKey other = (LockKey) obj;
       if (locker == null) {
-        if (other.locker != null)
-          return false;
-      } else if (!locker.equals(other.locker))
-        return false;
+        if (other.locker != null) return false;
+      } else if (!locker.equals(other.locker)) return false;
       if (regionPath == null) {
-        if (other.regionPath != null)
-          return false;
-      } else if (!regionPath.equals(other.regionPath))
-        return false;
+        if (other.regionPath != null) return false;
+      } else if (!regionPath.equals(other.regionPath)) return false;
       return true;
     }
-
   }
 }

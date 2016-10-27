@@ -27,31 +27,22 @@ import org.apache.geode.internal.cache.versions.VersionSource;
 import org.apache.geode.internal.cache.versions.VersionTag;
 
 /**
- * This class is used for sorting tombstones by region version number. Because
- * two tombstones with different members are not comparable, the iterator on
- * this class tries to return the tombstones in the order of the timestamps of the tombstones.
- * 
- * The class maintains a map, per member, of the tombstones sorted by the version
- * tag.
- * 
- * When removing entries, we pick from the sorted map that has the lowest timestamp.
- * 
- * This map is not threadsafe.
- * 
+ * This class is used for sorting tombstones by region version number. Because two tombstones with
+ * different members are not comparable, the iterator on this class tries to return the tombstones
+ * in the order of the timestamps of the tombstones.
  *
+ * <p>The class maintains a map, per member, of the tombstones sorted by the version tag.
+ *
+ * <p>When removing entries, we pick from the sorted map that has the lowest timestamp.
+ *
+ * <p>This map is not threadsafe.
  */
 public class OrderedTombstoneMap<T> {
 
-  /**
-   * A map of
-   * member id-> sort map of version tag-> region entry
-   * 
-   */
+  /** A map of member id-> sort map of version tag-> region entry */
   private Map<VersionSource, TreeMap<VersionTag, T>> tombstoneMap = new HashMap();
 
-  /**
-   * Add a new version tag to map
-   */
+  /** Add a new version tag to map */
   public void put(VersionTag tag, T entry) {
     //Add the version tag to the appropriate map
     VersionSource member = tag.getMemberID();
@@ -64,15 +55,13 @@ public class OrderedTombstoneMap<T> {
     Assert.assertTrue(oldValue == null);
   }
 
-  /**
-   * Remove a version tag from the map.
-   */
+  /** Remove a version tag from the map. */
   public Map.Entry<VersionTag, T> take() {
     if (tombstoneMap.isEmpty()) {
       //if there are no more entries, return null;
       return null;
     } else {
-      //Otherwise, look at all of the members and find the tag with the 
+      //Otherwise, look at all of the members and find the tag with the
       //lowest timestamp.
       long lowestTimestamp = Long.MAX_VALUE;
       TreeMap<VersionTag, T> lowestMap = null;
@@ -101,9 +90,7 @@ public class OrderedTombstoneMap<T> {
   }
 
   /**
-   * A comparator that sorts version tags based on the region version, and
-   * then on the timestamp.
-   *
+   * A comparator that sorts version tags based on the region version, and then on the timestamp.
    */
   public static class VersionTagComparator implements Comparator<VersionTag> {
 
@@ -115,6 +102,5 @@ public class OrderedTombstoneMap<T> {
       }
       return Long.signum(result);
     }
-
   }
 }

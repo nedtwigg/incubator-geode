@@ -21,8 +21,7 @@
  */
 package org.apache.geode.internal.datasource;
 
-/**
- */
+/** */
 public interface DataSourceResources {
 
   /** Creates a new instance of DataSourceResources */

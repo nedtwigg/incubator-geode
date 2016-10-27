@@ -25,6 +25,7 @@ import org.apache.geode.pdx.internal.AutoSerializableManager.AutoClassInfo;
 
 /**
  * Adds additional methods for reading pdx fields for internal use.
+ *
  * @since GemFire 6.6.2
  */
 public interface InternalPdxReader extends PdxReader {
@@ -121,5 +122,4 @@ public interface InternalPdxReader extends PdxReader {
   public PdxType getPdxType();
 
   public void orderedDeserialize(Object obj, AutoClassInfo ci);
-
 }

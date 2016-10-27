@@ -34,30 +34,34 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
-/**
- * A Log4j Appender which will copy all output to a LogWriter.
- * 
- */
+/** A Log4j Appender which will copy all output to a LogWriter. */
 public class LogWriterAppender extends AbstractAppender implements PropertyChangeListener {
   private static final org.apache.logging.log4j.Logger logger = LogService.getLogger();
 
   /** Is this thread in the process of appending? */
-  private static final ThreadLocal<Boolean> appending = new ThreadLocal<Boolean>() {
-    @Override
-    protected Boolean initialValue() {
-      return Boolean.FALSE;
-    }
-  };
+  private static final ThreadLocal<Boolean> appending =
+      new ThreadLocal<Boolean>() {
+        @Override
+        protected Boolean initialValue() {
+          return Boolean.FALSE;
+        }
+      };
 
   private final PureLogWriter logWriter;
-  private final FileOutputStream fos; // TODO:LOG:CLEANUP: why do we track this outside ManagerLogWriter? doesn't rolling invalidate it?
+  private final FileOutputStream
+      fos; // TODO:LOG:CLEANUP: why do we track this outside ManagerLogWriter? doesn't rolling invalidate it?
 
   private final AppenderContext[] appenderContexts;
   private final String appenderName;
   private final String logWriterLoggerName;
 
-  private LogWriterAppender(final AppenderContext[] appenderContexts, final String name, final PureLogWriter logWriter, final FileOutputStream fos) {
-    super(LogWriterAppender.class.getName() + "-" + name, null, PatternLayout.createDefaultLayout());
+  private LogWriterAppender(
+      final AppenderContext[] appenderContexts,
+      final String name,
+      final PureLogWriter logWriter,
+      final FileOutputStream fos) {
+    super(
+        LogWriterAppender.class.getName() + "-" + name, null, PatternLayout.createDefaultLayout());
     this.appenderContexts = appenderContexts;
     this.appenderName = LogWriterAppender.class.getName() + "-" + name;
     this.logWriterLoggerName = name;
@@ -67,10 +71,14 @@ public class LogWriterAppender extends AbstractAppender implements PropertyChang
 
   /**
    * Used by LogWriterAppenders and tests to create a new instance.
-   * 
+   *
    * @return The new instance.
    */
-  static final LogWriterAppender create(final AppenderContext[] contexts, final String name, final PureLogWriter logWriter, final FileOutputStream fos) {
+  static final LogWriterAppender create(
+      final AppenderContext[] contexts,
+      final String name,
+      final PureLogWriter logWriter,
+      final FileOutputStream fos) {
     LogWriterAppender appender = new LogWriterAppender(contexts, name, logWriter, fos);
     for (AppenderContext context : appender.appenderContexts) {
       context.getLoggerContext().addPropertyChangeListener(appender);
@@ -90,7 +98,10 @@ public class LogWriterAppender extends AbstractAppender implements PropertyChang
     }
     appending.set(Boolean.TRUE);
     try {
-      this.logWriter.put(LogWriterLogger.log4jLevelToLogWriterLevel(event.getLevel()), event.getMessage().getFormattedMessage(), event.getThrown());
+      this.logWriter.put(
+          LogWriterLogger.log4jLevelToLogWriterLevel(event.getLevel()),
+          event.getMessage().getFormattedMessage(),
+          event.getThrown());
     } finally {
       appending.set(Boolean.FALSE);
     }
@@ -99,7 +110,8 @@ public class LogWriterAppender extends AbstractAppender implements PropertyChang
   @Override
   public synchronized void propertyChange(final PropertyChangeEvent evt) {
     if (logger.isDebugEnabled()) {
-      logger.debug("Responding to a property change event. Property name is {}.", evt.getPropertyName());
+      logger.debug(
+          "Responding to a property change event. Property name is {}.", evt.getPropertyName());
     }
     if (evt.getPropertyName().equals(LoggerContext.PROPERTY_CONFIG)) {
       for (AppenderContext context : this.appenderContexts) {
@@ -111,19 +123,19 @@ public class LogWriterAppender extends AbstractAppender implements PropertyChang
     }
   }
 
-  /**
-   * Stop the appender and remove it from the Log4j configuration.
-   */
+  /** Stop the appender and remove it from the Log4j configuration. */
   protected void destroy() { // called 1st during disconnect
     // add stdout appender to MAIN_LOGGER_NAME only if isUsingGemFireDefaultConfig -- see #51819
-    if (LogService.MAIN_LOGGER_NAME.equals(this.logWriterLoggerName) && LogService.isUsingGemFireDefaultConfig()) {
+    if (LogService.MAIN_LOGGER_NAME.equals(this.logWriterLoggerName)
+        && LogService.isUsingGemFireDefaultConfig()) {
       LogService.restoreConsoleAppender();
     }
     for (AppenderContext context : this.appenderContexts) {
       context.getLoggerContext().removePropertyChangeListener(this);
       context.getLoggerConfig().removeAppender(appenderName);
     }
-    for (AppenderContext context : this.appenderContexts) { // do this second as log4j 2.6+ will re-add
+    for (AppenderContext context :
+        this.appenderContexts) { // do this second as log4j 2.6+ will re-add
       context.getLoggerContext().updateLoggers();
     }
     stop();
@@ -133,7 +145,7 @@ public class LogWriterAppender extends AbstractAppender implements PropertyChang
     }
   }
 
-  private void cleanUp() { // was closingLogFile() -- called from destroy() as the final step 
+  private void cleanUp() { // was closingLogFile() -- called from destroy() as the final step
     if (this.logWriter instanceof ManagerLogWriter) {
       ((ManagerLogWriter) this.logWriter).closingLogFile();
     }

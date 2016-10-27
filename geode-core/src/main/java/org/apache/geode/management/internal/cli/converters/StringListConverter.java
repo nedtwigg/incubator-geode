@@ -26,11 +26,7 @@ import org.springframework.shell.core.MethodTarget;
 import org.apache.geode.management.cli.ConverterHint;
 import org.apache.geode.management.internal.cli.MultipleValueAdapter;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class StringListConverter extends MultipleValueAdapter<List<String>> {
 
   @Override
@@ -42,15 +38,22 @@ public class StringListConverter extends MultipleValueAdapter<List<String>> {
   public List<String> convertFromText(String[] value, Class<?> targetType, String context) {
     List<String> list = null;
 
-    if (List.class.isAssignableFrom(targetType) && ConverterHint.STRING_LIST.equals(context) && value != null && value.length > 0) {
+    if (List.class.isAssignableFrom(targetType)
+        && ConverterHint.STRING_LIST.equals(context)
+        && value != null
+        && value.length > 0) {
       list = new ArrayList<String>(Arrays.asList(value));
     }
     return list;
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String[] existingData, String context, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String[] existingData,
+      String context,
+      MethodTarget target) {
     return List.class.isAssignableFrom(targetType) && ConverterHint.STRING_LIST.equals(context);
   }
-
 }

@@ -18,9 +18,7 @@ package org.apache.geode.management.internal.cli.help.format;
 
 import java.util.List;
 
-/**
- *
- */
+/** */
 public class DataNode {
   String data;
   List<DataNode> children;
@@ -46,5 +44,4 @@ public class DataNode {
       return false;
     }
   }
-
 }

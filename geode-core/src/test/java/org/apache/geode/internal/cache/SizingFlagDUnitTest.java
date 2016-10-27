@@ -62,22 +62,16 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
 /**
- * A test of the when we will use the object sizer to determine 
- * the actual size of objects wrapped in CacheDeserializables.
- * 
- * 
- * 
- * TODO - I was intending to add tests that have an
- * index and object sizer, but it appears we don't support
- * indexes on regions with overflow to disk.
+ * A test of the when we will use the object sizer to determine the actual size of objects wrapped
+ * in CacheDeserializables.
  *
+ * <p>TODO - I was intending to add tests that have an index and object sizer, but it appears we
+ * don't support indexes on regions with overflow to disk.
  */
 @Category(DistributedTest.class)
 public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
 
-  /**
-   * @param name
-   */
+  /** @param name */
   public SizingFlagDUnitTest() {
     super();
   }
@@ -280,7 +274,8 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     put(secondaryVm, 0, delta1);
   }
 
-  void doPRDeltaTestLRU(boolean shouldSizeChange, boolean heapLRU, boolean putOnPrimary, boolean wasDelta) {
+  void doPRDeltaTestLRU(
+      boolean shouldSizeChange, boolean heapLRU, boolean putOnPrimary, boolean wasDelta) {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
@@ -291,7 +286,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     if (heapLRU) {
       createPRHeapLRU(vm0);
       createPRHeapLRU(vm1);
-    } else {// memLRU
+    } else { // memLRU
       createPR(vm0, true);
       createPR(vm1, true);
     }
@@ -379,17 +374,18 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void addListener(VM vm) {
-    vm.invoke(new SerializableRunnable("Add listener") {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion("region");
-        try {
-          region.getAttributesMutator().addCacheListener(new TestCacheListener());
-        } catch (Exception e) {
-          Assert.fail("couldn't create index", e);
-        }
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable("Add listener") {
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion("region");
+            try {
+              region.getAttributesMutator().addCacheListener(new TestCacheListener());
+            } catch (Exception e) {
+              Assert.fail("couldn't create index", e);
+            }
+          }
+        });
   }
 
   private void doListenerTestRR(VM vm0, VM vm1) {
@@ -488,7 +484,9 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     assertValueType(vm1, "a", ValueType.CD_DESERIALIZED);
     long evictionSizeAfterGet = getSizeFromEvictionStats(vm1);
     assertEquals(1, getObjectSizerInvocations(vm1));
-    assertEquals(200000 + CachedDeserializableFactory.overhead() - vSize, evictionSizeAfterGet - finalEvictionSize1);
+    assertEquals(
+        200000 + CachedDeserializableFactory.overhead() - vSize,
+        evictionSizeAfterGet - finalEvictionSize1);
 
     //Do a put that will trigger an eviction if it is deserialized
     put(vm0, "b", new TestObject(100, 1000000));
@@ -542,7 +540,9 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     long prSizeAfterGet = getSizeFromPRStats(vm0);
     assertEquals(1, getObjectSizerInvocations(vm0));
     assertEquals(0, getObjectSizerInvocations(vm1));
-    assertEquals(200000 + CachedDeserializableFactory.overhead() - vSize, evictionSizeAfterGet - finalEvictionSize0);
+    assertEquals(
+        200000 + CachedDeserializableFactory.overhead() - vSize,
+        evictionSizeAfterGet - finalEvictionSize0);
     assertEquals(0, prSizeAfterGet - finalPRSize0);
 
     //Do a put that will trigger an eviction if it is deserialized
@@ -649,106 +649,121 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
    * @return
    */
   private long getSizeFromPRStats(VM vm0) {
-    return (Long) vm0.invoke(new SerializableCallable() {
+    return (Long)
+        vm0.invoke(
+            new SerializableCallable() {
 
-      public Object call() {
-        Cache cache = getCache();
-        LocalRegion region = (LocalRegion) cache.getRegion("region");
-        if (region instanceof PartitionedRegion) {
-          long total = 0;
-          PartitionedRegion pr = ((PartitionedRegion) region);
-          for (int i = 0; i < pr.getPartitionAttributes().getTotalNumBuckets(); i++) {
-            total += pr.getDataStore().getBucketSize(i);
-          }
-          return total;
-        } else {
-          return 0L;
-        }
-      }
-    });
+              public Object call() {
+                Cache cache = getCache();
+                LocalRegion region = (LocalRegion) cache.getRegion("region");
+                if (region instanceof PartitionedRegion) {
+                  long total = 0;
+                  PartitionedRegion pr = ((PartitionedRegion) region);
+                  for (int i = 0; i < pr.getPartitionAttributes().getTotalNumBuckets(); i++) {
+                    total += pr.getDataStore().getBucketSize(i);
+                  }
+                  return total;
+                } else {
+                  return 0L;
+                }
+              }
+            });
   }
 
   private long getSizeFromEvictionStats(VM vm0) {
-    return (Long) vm0.invoke(new SerializableCallable() {
+    return (Long)
+        vm0.invoke(
+            new SerializableCallable() {
 
-      public Object call() {
-        Cache cache = getCache();
-        LocalRegion region = (LocalRegion) cache.getRegion("region");
-        return getSizeFromEvictionStats(region);
-      }
-    });
+              public Object call() {
+                Cache cache = getCache();
+                LocalRegion region = (LocalRegion) cache.getRegion("region");
+                return getSizeFromEvictionStats(region);
+              }
+            });
   }
 
   private long getEvictions(VM vm0) {
-    return (Long) vm0.invoke(new SerializableCallable() {
+    return (Long)
+        vm0.invoke(
+            new SerializableCallable() {
 
-      public Object call() {
-        Cache cache = getCache();
-        LocalRegion region = (LocalRegion) cache.getRegion("region");
-        return getEvictions(region);
-      }
-    });
+              public Object call() {
+                Cache cache = getCache();
+                LocalRegion region = (LocalRegion) cache.getRegion("region");
+                return getEvictions(region);
+              }
+            });
   }
 
   private int getObjectSizerInvocations(VM vm0) {
-    return (Integer) vm0.invoke(new SerializableCallable() {
+    return (Integer)
+        vm0.invoke(
+            new SerializableCallable() {
 
-      public Object call() {
-        Cache cache = getCache();
-        LocalRegion region = (LocalRegion) cache.getRegion("region");
-        return getObjectSizerInvocations(region);
-      }
-    });
+              public Object call() {
+                Cache cache = getCache();
+                LocalRegion region = (LocalRegion) cache.getRegion("region");
+                return getObjectSizerInvocations(region);
+              }
+            });
   }
 
   private void assignPRBuckets(VM vm) {
-    vm.invoke(new SerializableRunnable("assignPRBuckets") {
-      public void run() {
-        Cache cache = getCache();
-        PartitionRegionHelper.assignBucketsToPartitions(cache.getRegion("region"));
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable("assignPRBuckets") {
+          public void run() {
+            Cache cache = getCache();
+            PartitionRegionHelper.assignBucketsToPartitions(cache.getRegion("region"));
+          }
+        });
   }
 
   private boolean prHostsBucketForKey(VM vm, final Object key) {
-    Boolean result = (Boolean) vm.invoke(new SerializableCallable("prHostsBucketForKey") {
-      public Object call() {
-        Cache cache = getCache();
-        DistributedMember myId = cache.getDistributedSystem().getDistributedMember();
-        Region region = cache.getRegion("region");
-        DistributedMember hostMember = PartitionRegionHelper.getPrimaryMemberForKey(region, key);
-        if (hostMember == null) {
-          throw new IllegalStateException("bucket for key " + key + " is not hosted!");
-        }
-        boolean res = Boolean.valueOf(myId.equals(hostMember));
-        //         cache.getLogger().info("DEBUG prHostsBucketForKey=" + res);
-        return res;
-      }
-    });
+    Boolean result =
+        (Boolean)
+            vm.invoke(
+                new SerializableCallable("prHostsBucketForKey") {
+                  public Object call() {
+                    Cache cache = getCache();
+                    DistributedMember myId = cache.getDistributedSystem().getDistributedMember();
+                    Region region = cache.getRegion("region");
+                    DistributedMember hostMember =
+                        PartitionRegionHelper.getPrimaryMemberForKey(region, key);
+                    if (hostMember == null) {
+                      throw new IllegalStateException("bucket for key " + key + " is not hosted!");
+                    }
+                    boolean res = Boolean.valueOf(myId.equals(hostMember));
+                    //         cache.getLogger().info("DEBUG prHostsBucketForKey=" + res);
+                    return res;
+                  }
+                });
     return result.booleanValue();
   }
 
   private void put(VM vm0, final Object key, final Object value) {
-    vm0.invoke(new SerializableRunnable("Put data") {
+    vm0.invoke(
+        new SerializableRunnable("Put data") {
 
-      public void run() {
-        Cache cache = getCache();
-        LocalRegion region = (LocalRegion) cache.getRegion("region");
-        //         cache.getLogger().info("DEBUG about to put(" + key + ", " + value + ")");
-        region.put(key, value);
-      }
-    });
+          public void run() {
+            Cache cache = getCache();
+            LocalRegion region = (LocalRegion) cache.getRegion("region");
+            //         cache.getLogger().info("DEBUG about to put(" + key + ", " + value + ")");
+            region.put(key, value);
+          }
+        });
   }
 
   private void get(VM vm0, final Object key, final Object value) {
-    vm0.invoke(new SerializableRunnable("Put data") {
+    vm0.invoke(
+        new SerializableRunnable("Put data") {
 
-      public void run() {
-        Cache cache = getCache();
-        LocalRegion region = (LocalRegion) cache.getRegion("region");
-        assertEquals(value, region.get(key));
-      }
-    });
+          public void run() {
+            Cache cache = getCache();
+            LocalRegion region = (LocalRegion) cache.getRegion("region");
+            assertEquals(value, region.get(key));
+          }
+        });
   }
 
   protected int getObjectSizerInvocations(LocalRegion region) {
@@ -769,124 +784,150 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void setDeltaRecalculatesSize(VM vm, final boolean shouldSizeChange) {
-    vm.invoke(new SerializableRunnable("setDeltaRecalculatesSize") {
-      public void run() {
-        GemFireCacheImpl.DELTAS_RECALCULATE_SIZE = shouldSizeChange;
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable("setDeltaRecalculatesSize") {
+          public void run() {
+            GemFireCacheImpl.DELTAS_RECALCULATE_SIZE = shouldSizeChange;
+          }
+        });
   }
 
   private void createRR(VM vm) {
-    vm.invoke(new SerializableRunnable("Create rr") {
-      public void run() {
-        Cache cache = getCache();
-        AttributesFactory<Integer, TestDelta> attr = new AttributesFactory<Integer, TestDelta>();
-        attr.setDiskSynchronous(true);
-        attr.setDataPolicy(DataPolicy.REPLICATE);
-        attr.setScope(Scope.DISTRIBUTED_ACK);
-        attr.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(1, new TestObjectSizer(), EvictionAction.OVERFLOW_TO_DISK));
-        attr.setDiskDirs(getMyDiskDirs());
-        Region region = cache.createRegion("region", attr.create());
-      }
-    });
-
+    vm.invoke(
+        new SerializableRunnable("Create rr") {
+          public void run() {
+            Cache cache = getCache();
+            AttributesFactory<Integer, TestDelta> attr =
+                new AttributesFactory<Integer, TestDelta>();
+            attr.setDiskSynchronous(true);
+            attr.setDataPolicy(DataPolicy.REPLICATE);
+            attr.setScope(Scope.DISTRIBUTED_ACK);
+            attr.setEvictionAttributes(
+                EvictionAttributes.createLRUMemoryAttributes(
+                    1, new TestObjectSizer(), EvictionAction.OVERFLOW_TO_DISK));
+            attr.setDiskDirs(getMyDiskDirs());
+            Region region = cache.createRegion("region", attr.create());
+          }
+        });
   }
 
   private void assertValueType(VM vm, final Object key, final ValueType expectedType) {
-    vm.invoke(new SerializableRunnable("Create rr") {
-      public void run() {
-        Cache cache = getCache();
-        LocalRegion region = (LocalRegion) cache.getRegion("region");
-        Object value = region.getValueInVM(key);
-        switch (expectedType) {
-        case RAW_VALUE:
-          assertTrue("Value was " + value + " type " + value.getClass(), !(value instanceof CachedDeserializable));
-          break;
-        case CD_SERIALIZED:
-          assertTrue("Value was " + value + " type " + value.getClass(), value instanceof CachedDeserializable);
-          assertTrue("Value not serialized", ((CachedDeserializable) value).getValue() instanceof byte[]);
-          break;
-        case CD_DESERIALIZED:
-          assertTrue("Value was " + value + " type " + value.getClass(), value instanceof CachedDeserializable);
-          assertTrue("Value was serialized", !(((CachedDeserializable) value).getValue() instanceof byte[]));
-          break;
-        case EVICTED:
-          assertEquals(null, value);
-          break;
-        }
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable("Create rr") {
+          public void run() {
+            Cache cache = getCache();
+            LocalRegion region = (LocalRegion) cache.getRegion("region");
+            Object value = region.getValueInVM(key);
+            switch (expectedType) {
+              case RAW_VALUE:
+                assertTrue(
+                    "Value was " + value + " type " + value.getClass(),
+                    !(value instanceof CachedDeserializable));
+                break;
+              case CD_SERIALIZED:
+                assertTrue(
+                    "Value was " + value + " type " + value.getClass(),
+                    value instanceof CachedDeserializable);
+                assertTrue(
+                    "Value not serialized",
+                    ((CachedDeserializable) value).getValue() instanceof byte[]);
+                break;
+              case CD_DESERIALIZED:
+                assertTrue(
+                    "Value was " + value + " type " + value.getClass(),
+                    value instanceof CachedDeserializable);
+                assertTrue(
+                    "Value was serialized",
+                    !(((CachedDeserializable) value).getValue() instanceof byte[]));
+                break;
+              case EVICTED:
+                assertEquals(null, value);
+                break;
+            }
+          }
+        });
   }
 
   private File[] getMyDiskDirs() {
     long random = new Random().nextLong();
     File file = new File(Long.toString(random));
     file.mkdirs();
-    return new File[] { file };
+    return new File[] {file};
   }
 
   private void createPR(VM vm, final boolean enableLRU) {
-    vm.invoke(new SerializableRunnable("Create pr") {
-      public void run() {
-        Cache cache = getCache();
-        AttributesFactory<Integer, TestDelta> attr = new AttributesFactory<Integer, TestDelta>();
-        attr.setDiskSynchronous(true);
-        PartitionAttributesFactory<Integer, TestDelta> paf = new PartitionAttributesFactory<Integer, TestDelta>();
-        paf.setRedundantCopies(1);
-        if (enableLRU) {
-          paf.setLocalMaxMemory(1); // memlru limit is 1 megabyte
-          attr.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(new TestObjectSizer(), EvictionAction.OVERFLOW_TO_DISK));
-          attr.setDiskDirs(getMyDiskDirs());
-        }
-        PartitionAttributes<Integer, TestDelta> prAttr = paf.create();
-        attr.setPartitionAttributes(prAttr);
-        attr.setDataPolicy(DataPolicy.PARTITION);
-        attr.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
-        Region<Integer, TestDelta> region = cache.createRegion("region", attr.create());
-      }
-    });
-
+    vm.invoke(
+        new SerializableRunnable("Create pr") {
+          public void run() {
+            Cache cache = getCache();
+            AttributesFactory<Integer, TestDelta> attr =
+                new AttributesFactory<Integer, TestDelta>();
+            attr.setDiskSynchronous(true);
+            PartitionAttributesFactory<Integer, TestDelta> paf =
+                new PartitionAttributesFactory<Integer, TestDelta>();
+            paf.setRedundantCopies(1);
+            if (enableLRU) {
+              paf.setLocalMaxMemory(1); // memlru limit is 1 megabyte
+              attr.setEvictionAttributes(
+                  EvictionAttributes.createLRUMemoryAttributes(
+                      new TestObjectSizer(), EvictionAction.OVERFLOW_TO_DISK));
+              attr.setDiskDirs(getMyDiskDirs());
+            }
+            PartitionAttributes<Integer, TestDelta> prAttr = paf.create();
+            attr.setPartitionAttributes(prAttr);
+            attr.setDataPolicy(DataPolicy.PARTITION);
+            attr.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
+            Region<Integer, TestDelta> region = cache.createRegion("region", attr.create());
+          }
+        });
   }
 
   private void createRRHeapLRU(VM vm) {
-    vm.invoke(new SerializableRunnable("Create rr") {
-      public void run() {
-        Cache cache = getCache();
-        ResourceManager manager = cache.getResourceManager();
-        manager.setCriticalHeapPercentage(95);
-        manager.setEvictionHeapPercentage(90);
-        AttributesFactory<Integer, TestDelta> attr = new AttributesFactory<Integer, TestDelta>();
-        attr.setEvictionAttributes(EvictionAttributes.createLRUHeapAttributes(new TestObjectSizer(), EvictionAction.OVERFLOW_TO_DISK));
-        attr.setDiskDirs(getMyDiskDirs());
-        attr.setDataPolicy(DataPolicy.REPLICATE);
-        attr.setScope(Scope.DISTRIBUTED_ACK);
-        attr.setDiskDirs(getMyDiskDirs());
-        Region region = cache.createRegion("region", attr.create());
-      }
-    });
-
+    vm.invoke(
+        new SerializableRunnable("Create rr") {
+          public void run() {
+            Cache cache = getCache();
+            ResourceManager manager = cache.getResourceManager();
+            manager.setCriticalHeapPercentage(95);
+            manager.setEvictionHeapPercentage(90);
+            AttributesFactory<Integer, TestDelta> attr =
+                new AttributesFactory<Integer, TestDelta>();
+            attr.setEvictionAttributes(
+                EvictionAttributes.createLRUHeapAttributes(
+                    new TestObjectSizer(), EvictionAction.OVERFLOW_TO_DISK));
+            attr.setDiskDirs(getMyDiskDirs());
+            attr.setDataPolicy(DataPolicy.REPLICATE);
+            attr.setScope(Scope.DISTRIBUTED_ACK);
+            attr.setDiskDirs(getMyDiskDirs());
+            Region region = cache.createRegion("region", attr.create());
+          }
+        });
   }
 
   private void createPRHeapLRU(VM vm) {
-    vm.invoke(new SerializableRunnable("Create pr") {
-      public void run() {
-        Cache cache = getCache();
-        ResourceManager manager = cache.getResourceManager();
-        manager.setCriticalHeapPercentage(95);
-        manager.setEvictionHeapPercentage(90);
+    vm.invoke(
+        new SerializableRunnable("Create pr") {
+          public void run() {
+            Cache cache = getCache();
+            ResourceManager manager = cache.getResourceManager();
+            manager.setCriticalHeapPercentage(95);
+            manager.setEvictionHeapPercentage(90);
 
-        AttributesFactory<Integer, TestDelta> attr = new AttributesFactory<Integer, TestDelta>();
-        PartitionAttributesFactory<Integer, TestDelta> paf = new PartitionAttributesFactory<Integer, TestDelta>();
-        paf.setRedundantCopies(1);
-        attr.setEvictionAttributes(EvictionAttributes.createLRUHeapAttributes(new TestObjectSizer(), EvictionAction.LOCAL_DESTROY));
-        PartitionAttributes<Integer, TestDelta> prAttr = paf.create();
-        attr.setPartitionAttributes(prAttr);
-        attr.setDataPolicy(DataPolicy.PARTITION);
-        attr.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
-        Region<Integer, TestDelta> region = cache.createRegion("region", attr.create());
-      }
-    });
-
+            AttributesFactory<Integer, TestDelta> attr =
+                new AttributesFactory<Integer, TestDelta>();
+            PartitionAttributesFactory<Integer, TestDelta> paf =
+                new PartitionAttributesFactory<Integer, TestDelta>();
+            paf.setRedundantCopies(1);
+            attr.setEvictionAttributes(
+                EvictionAttributes.createLRUHeapAttributes(
+                    new TestObjectSizer(), EvictionAction.LOCAL_DESTROY));
+            PartitionAttributes<Integer, TestDelta> prAttr = paf.create();
+            attr.setPartitionAttributes(prAttr);
+            attr.setDataPolicy(DataPolicy.PARTITION);
+            attr.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
+            Region<Integer, TestDelta> region = cache.createRegion("region", attr.create());
+          }
+        });
   }
 
   private static class TestObjectSizer implements ObjectSizer {
@@ -894,7 +935,8 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
 
     public int sizeof(Object o) {
       if (InternalDistributedSystem.getLoggerI18n().fineEnabled()) {
-        InternalDistributedSystem.getLoggerI18n().fine("TestObjectSizer invoked"/*, new Exception("stack trace")*/);
+        InternalDistributedSystem.getLoggerI18n()
+            .fine("TestObjectSizer invoked" /*, new Exception("stack trace")*/);
       }
       if (o instanceof TestObject) {
         //         org.apache.geode.internal.cache.GemFireCache.getInstance().getLogger().info("DEBUG TestObjectSizer: sizeof o=" + o, new RuntimeException("STACK"));
@@ -922,9 +964,7 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
   private static class TestKey implements DataSerializable {
     String value;
 
-    public TestKey() {
-
-    }
+    public TestKey() {}
 
     public TestKey(String value) {
       this.value = value;
@@ -948,30 +988,22 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (!(obj instanceof TestKey))
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (!(obj instanceof TestKey)) return false;
       TestKey other = (TestKey) obj;
       if (value == null) {
-        if (other.value != null)
-          return false;
-      } else if (!value.equals(other.value))
-        return false;
+        if (other.value != null) return false;
+      } else if (!value.equals(other.value)) return false;
       return true;
     }
-
   }
 
   private static class TestObject implements DataSerializable {
     public int sizeForSizer;
     public int sizeForSerialization;
 
-    public TestObject() {
-
-    }
+    public TestObject() {}
 
     public TestObject(int sizeForSerialization, int sizeForSizer) {
       super();
@@ -990,7 +1022,6 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
       out.writeInt(sizeForSizer);
       out.writeInt(sizeForSerialization);
       out.write(new byte[sizeForSerialization]);
-
     }
 
     @Override
@@ -1004,23 +1035,22 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (!(obj instanceof TestObject))
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (!(obj instanceof TestObject)) return false;
       TestObject other = (TestObject) obj;
-      if (sizeForSerialization != other.sizeForSerialization)
-        return false;
-      if (sizeForSizer != other.sizeForSizer)
-        return false;
+      if (sizeForSerialization != other.sizeForSerialization) return false;
+      if (sizeForSizer != other.sizeForSizer) return false;
       return true;
     }
 
     @Override
     public String toString() {
-      return "TestObject [sizeForSerialization=" + sizeForSerialization + ", sizeForSizer=" + sizeForSizer + "]";
+      return "TestObject [sizeForSerialization="
+          + sizeForSerialization
+          + ", sizeForSizer="
+          + sizeForSizer
+          + "]";
     }
   }
 
@@ -1030,20 +1060,29 @@ public class SizingFlagDUnitTest extends JUnit4CacheTestCase {
     public void afterCreate(EntryEvent event) {
       //Make sure we deserialize the new value
       event.getRegion().getCache().getLoggerI18n().fine("invoked afterCreate with " + event);
-      event.getRegion().getCache().getLoggerI18n().info(LocalizedStrings.DEBUG, "value is " + event.getNewValue());
+      event
+          .getRegion()
+          .getCache()
+          .getLoggerI18n()
+          .info(LocalizedStrings.DEBUG, "value is " + event.getNewValue());
     }
 
     @Override
     public void afterUpdate(EntryEvent event) {
       //Make sure we deserialize the new value
       event.getRegion().getCache().getLoggerI18n().fine("invoked afterUpdate with ");
-      event.getRegion().getCache().getLoggerI18n().info(LocalizedStrings.DEBUG, "value is " + event.getNewValue());
+      event
+          .getRegion()
+          .getCache()
+          .getLoggerI18n()
+          .info(LocalizedStrings.DEBUG, "value is " + event.getNewValue());
     }
-
   }
 
   enum ValueType {
-    RAW_VALUE, CD_SERIALIZED, CD_DESERIALIZED, EVICTED
+    RAW_VALUE,
+    CD_SERIALIZED,
+    CD_DESERIALIZED,
+    EVICTED
   }
-
 }

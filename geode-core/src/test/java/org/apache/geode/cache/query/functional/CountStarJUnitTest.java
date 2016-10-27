@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.functional;
 
 import static org.junit.Assert.*;
@@ -45,8 +43,8 @@ import org.apache.geode.distributed.internal.DistributionConfig;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * This test runs {Select COUNT(*) from /regionName [where clause]} queries
- * on different types of regions with and without multiple indexes.
+ * This test runs {Select COUNT(*) from /regionName [where clause]} queries on different types of
+ * regions with and without multiple indexes.
  */
 @Category(IntegrationTest.class)
 public class CountStarJUnitTest {
@@ -69,7 +67,28 @@ public class CountStarJUnitTest {
   private static HashMap<String, Integer> countStarQueries = new HashMap<String, Integer>();
 
   //EquiJoin Queries
-  private static String[] countStarQueriesWithEquiJoins = { "select COUNT(*) from /" + regionName + " p, /" + exampleRegionName + " e where p.ID = e.ID AND p.ID > 0", "select COUNT(*) from /" + regionName + " p, /" + exampleRegionName + " e where p.ID = e.ID AND p.ID > 20 AND e.ID > 40", "select COUNT(*) from /" + regionName + " p, /" + exampleRegionName + " e where p.ID = e.ID AND p.ID > 0 AND p.status = 'active'", "select COUNT(*) from /" + regionName + " p, /" + exampleRegionName + " e where p.ID = e.ID OR e.status = 'active' " };
+  private static String[] countStarQueriesWithEquiJoins = {
+    "select COUNT(*) from /"
+        + regionName
+        + " p, /"
+        + exampleRegionName
+        + " e where p.ID = e.ID AND p.ID > 0",
+    "select COUNT(*) from /"
+        + regionName
+        + " p, /"
+        + exampleRegionName
+        + " e where p.ID = e.ID AND p.ID > 20 AND e.ID > 40",
+    "select COUNT(*) from /"
+        + regionName
+        + " p, /"
+        + exampleRegionName
+        + " e where p.ID = e.ID AND p.ID > 0 AND p.status = 'active'",
+    "select COUNT(*) from /"
+        + regionName
+        + " p, /"
+        + exampleRegionName
+        + " e where p.ID = e.ID OR e.status = 'active' "
+  };
 
   //Queries with COUNT(*) to be executed with corresponding result count.
   static {
@@ -77,31 +96,66 @@ public class CountStarJUnitTest {
     countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0", 100);
     countStarQueries.put("select COUNT(*) from /" + regionName + " where ID < 0", 0);
     countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0 LIMIT 50", 50);
-    countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0 AND status='active'", 50);
-    countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0 OR status='active'", 100);
-    countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0 AND status LIKE 'act%'", 50);
-    countStarQueries.put("select COUNT(*) from /" + regionName + " where ID > 0 OR status LIKE 'ina%'", 100);
-    countStarQueries.put("select COUNT(*) from /" + regionName + " where ID IN SET(1, 2, 3, 4, 5)", 5);
+    countStarQueries.put(
+        "select COUNT(*) from /" + regionName + " where ID > 0 AND status='active'", 50);
+    countStarQueries.put(
+        "select COUNT(*) from /" + regionName + " where ID > 0 OR status='active'", 100);
+    countStarQueries.put(
+        "select COUNT(*) from /" + regionName + " where ID > 0 AND status LIKE 'act%'", 50);
+    countStarQueries.put(
+        "select COUNT(*) from /" + regionName + " where ID > 0 OR status LIKE 'ina%'", 100);
+    countStarQueries.put(
+        "select COUNT(*) from /" + regionName + " where ID IN SET(1, 2, 3, 4, 5)", 5);
     countStarQueries.put("select COUNT(*) from /" + regionName + " where NOT (ID > 5)", 5);
 
     //StructSet queries.
-    countStarQueries.put("select COUNT(*) from /" + regionName + " p, p.positions.values pos where p.ID > 0 AND pos.secId = 'IBM'", 15);
-    countStarQueries.put("select COUNT(*) from /" + regionName + " p, p.positions.values pos where p.ID > 0 AND pos.secId = 'IBM' LIMIT 5", 5);
-    countStarQueries.put("select DISTINCT COUNT(*) from /" + regionName + " p, p.positions.values pos where p.ID > 0 AND pos.secId = 'IBM' ORDER BY p.ID", 15);
-    countStarQueries.put("select COUNT(*) from /" + regionName + " p, p.positions.values pos where p.ID > 0 AND p.status = 'active' AND pos.secId = 'IBM'", 8);
+    countStarQueries.put(
+        "select COUNT(*) from /"
+            + regionName
+            + " p, p.positions.values pos where p.ID > 0 AND pos.secId = 'IBM'",
+        15);
+    countStarQueries.put(
+        "select COUNT(*) from /"
+            + regionName
+            + " p, p.positions.values pos where p.ID > 0 AND pos.secId = 'IBM' LIMIT 5",
+        5);
+    countStarQueries.put(
+        "select DISTINCT COUNT(*) from /"
+            + regionName
+            + " p, p.positions.values pos where p.ID > 0 AND pos.secId = 'IBM' ORDER BY p.ID",
+        15);
+    countStarQueries.put(
+        "select COUNT(*) from /"
+            + regionName
+            + " p, p.positions.values pos where p.ID > 0 AND p.status = 'active' AND pos.secId = 'IBM'",
+        8);
 
-    countStarQueries.put("select COUNT(*) from /" + regionName + " p, p.positions.values pos where p.ID > 0 AND p.status = 'active' OR pos.secId = 'IBM'", 107);
+    countStarQueries.put(
+        "select COUNT(*) from /"
+            + regionName
+            + " p, p.positions.values pos where p.ID > 0 AND p.status = 'active' OR pos.secId = 'IBM'",
+        107);
 
-    countStarQueries.put("select COUNT(*) from /" + regionName + " p, p.positions.values pos where p.ID > 0 OR p.status = 'active' OR pos.secId = 'IBM'", 200);
-    countStarQueries.put("select COUNT(*) from /" + regionName + " p, p.positions.values pos where p.ID > 0 OR p.status = 'active' OR pos.secId = 'IBM' LIMIT 150", 150);
-    countStarQueries.put("select DISTINCT COUNT(*) from /" + regionName + " p, p.positions.values pos where p.ID > 0 OR p.status = 'active' OR pos.secId = 'IBM' ORDER BY p.ID", 200);
+    countStarQueries.put(
+        "select COUNT(*) from /"
+            + regionName
+            + " p, p.positions.values pos where p.ID > 0 OR p.status = 'active' OR pos.secId = 'IBM'",
+        200);
+    countStarQueries.put(
+        "select COUNT(*) from /"
+            + regionName
+            + " p, p.positions.values pos where p.ID > 0 OR p.status = 'active' OR pos.secId = 'IBM' LIMIT 150",
+        150);
+    countStarQueries.put(
+        "select DISTINCT COUNT(*) from /"
+            + regionName
+            + " p, p.positions.values pos where p.ID > 0 OR p.status = 'active' OR pos.secId = 'IBM' ORDER BY p.ID",
+        200);
   }
 
   //Queries without indexes.
 
-  /**
-   * Test on Local Region data
-   */
+  /** Test on Local Region data */
   @Test
   public void testCountStartQueriesOnLocalRegion() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -129,13 +183,10 @@ public class CountStarJUnitTest {
       assertEquals("COUNT(*) query result is wrong for query: " + queryStr, result2.size(), count);
 
       assertEquals("Query: " + queryStr, countStarQueries.get(queryStr).intValue(), count);
-
     }
   }
 
-  /**
-   * Test on Replicated Region data
-   */
+  /** Test on Replicated Region data */
   @Test
   public void testCountStarQueriesOnReplicatedRegion() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -169,9 +220,7 @@ public class CountStarJUnitTest {
     cache.getRegion(regionName).destroyRegion();
   }
 
-  /**
-   * Test on Partitioned Region data
-   */
+  /** Test on Partitioned Region data */
   @Test
   public void testCountStarQueriesOnPartitionedRegion() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -217,9 +266,15 @@ public class CountStarJUnitTest {
     QueryService queryService = cache.getQueryService();
 
     //CReate Index on status and ID
-    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
-    queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/" + regionName + " p");
-    queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "pos.secId", "/" + regionName + " p, p.positions.values pos");
+    queryService.createIndex(
+        "sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
+    queryService.createIndex(
+        "sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/" + regionName + " p");
+    queryService.createIndex(
+        "sampleIndex-3",
+        IndexType.FUNCTIONAL,
+        "pos.secId",
+        "/" + regionName + " p, p.positions.values pos");
 
     Region region = cache.getRegion(regionName);
     //Verify Index Creation
@@ -262,9 +317,15 @@ public class CountStarJUnitTest {
 
     QueryService queryService = cache.getQueryService();
     //CReate Index on status and ID
-    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
-    queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/" + regionName + " p");
-    queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "pos.secId", "/" + regionName + " p, p.positions.values pos");
+    queryService.createIndex(
+        "sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
+    queryService.createIndex(
+        "sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/" + regionName + " p");
+    queryService.createIndex(
+        "sampleIndex-3",
+        IndexType.FUNCTIONAL,
+        "pos.secId",
+        "/" + regionName + " p, p.positions.values pos");
 
     Region region = cache.getRegion(regionName);
     //Verify Index Creation
@@ -308,7 +369,8 @@ public class CountStarJUnitTest {
     QueryService queryService = cache.getQueryService();
     //CReate Index on status and ID
 
-    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
+    queryService.createIndex(
+        "sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
     //queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/"+regionName+ " p");
     //queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "pos.secId", "/"+regionName+" p, p.positions.values pos");
 
@@ -378,10 +440,14 @@ public class CountStarJUnitTest {
     }
 
     //CReate Index on status and ID
-    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
-    queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/" + regionName + " p");
-    queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "e.ID", "/" + exampleRegionName + " e");
-    queryService.createIndex("sampleIndex-4", IndexType.FUNCTIONAL, "e.status", "/" + exampleRegionName + " e");
+    queryService.createIndex(
+        "sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
+    queryService.createIndex(
+        "sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/" + regionName + " p");
+    queryService.createIndex(
+        "sampleIndex-3", IndexType.FUNCTIONAL, "e.ID", "/" + exampleRegionName + " e");
+    queryService.createIndex(
+        "sampleIndex-4", IndexType.FUNCTIONAL, "e.status", "/" + exampleRegionName + " e");
 
     Region region = cache.getRegion(regionName);
     Region region2 = cache.getRegion(exampleRegionName);
@@ -405,7 +471,10 @@ public class CountStarJUnitTest {
       int count = ((Integer) result1.asList().get(0)).intValue();
 
       //Also verify with size of result2 to count
-      assertEquals("COUNT(*) query result is wrong for query with indexes: " + queryStr, result2.size(), count);
+      assertEquals(
+          "COUNT(*) query result is wrong for query with indexes: " + queryStr,
+          result2.size(),
+          count);
 
       //assertIndexDetailsEquals("Query: "+ queryStr, countStarQueries.get(queryStr).intValue(), count);
     }
@@ -422,12 +491,18 @@ public class CountStarJUnitTest {
     countStarQueriesWithParms.put("select COUNT(*) from " + collection, 100);
     countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0", 100);
     countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID < 0", 0);
-    countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0 LIMIT 50", 50);
-    countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0 AND status='active'", 50);
-    countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0 OR status='active'", 100);
-    countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0 AND status LIKE 'act%'", 50);
-    countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID > 0 OR status LIKE 'ina%'", 100);
-    countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where ID IN SET(1, 2, 3, 4, 5)", 5);
+    countStarQueriesWithParms.put(
+        "select COUNT(*) from " + collection + " where ID > 0 LIMIT 50", 50);
+    countStarQueriesWithParms.put(
+        "select COUNT(*) from " + collection + " where ID > 0 AND status='active'", 50);
+    countStarQueriesWithParms.put(
+        "select COUNT(*) from " + collection + " where ID > 0 OR status='active'", 100);
+    countStarQueriesWithParms.put(
+        "select COUNT(*) from " + collection + " where ID > 0 AND status LIKE 'act%'", 50);
+    countStarQueriesWithParms.put(
+        "select COUNT(*) from " + collection + " where ID > 0 OR status LIKE 'ina%'", 100);
+    countStarQueriesWithParms.put(
+        "select COUNT(*) from " + collection + " where ID IN SET(1, 2, 3, 4, 5)", 5);
     countStarQueriesWithParms.put("select COUNT(*) from " + collection + " where NOT (ID > 5)", 5);
 
     Cache cache = CacheUtils.getCache();
@@ -447,8 +522,8 @@ public class CountStarJUnitTest {
       query1 = queryService.newQuery(queryStr);
       query2 = queryService.newQuery(queryStr.replace("COUNT(*)", "*"));
 
-      SelectResults result1 = (SelectResults) query1.execute(new Object[] { portfolios });
-      SelectResults result2 = (SelectResults) query2.execute(new Object[] { portfolios });
+      SelectResults result1 = (SelectResults) query1.execute(new Object[] {portfolios});
+      SelectResults result2 = (SelectResults) query2.execute(new Object[] {portfolios});
       assertEquals(queryStr, 1, result1.size());
       assertTrue(result1.asList().get(0) instanceof Integer);
 
@@ -471,15 +546,26 @@ public class CountStarJUnitTest {
 
     HashMap<String, Integer> countStarDistinctQueries = new HashMap<String, Integer>();
     countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName, 100);
-    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0", 100);
-    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID < 0", 0);
-    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0 LIMIT 50", 50);
-    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0 AND status='active'", 50);
-    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0 OR status='active'", 100);
-    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0 AND status LIKE 'act%'", 50);
-    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID > 0 OR status LIKE 'ina%'", 100);
-    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where ID IN SET(1, 2, 3, 4, 5)", 5);
-    countStarDistinctQueries.put("select distinct COUNT(*) from /" + regionName + " where NOT (ID > 5)", 5);
+    countStarDistinctQueries.put(
+        "select distinct COUNT(*) from /" + regionName + " where ID > 0", 100);
+    countStarDistinctQueries.put(
+        "select distinct COUNT(*) from /" + regionName + " where ID < 0", 0);
+    countStarDistinctQueries.put(
+        "select distinct COUNT(*) from /" + regionName + " where ID > 0 LIMIT 50", 50);
+    countStarDistinctQueries.put(
+        "select distinct COUNT(*) from /" + regionName + " where ID > 0 AND status='active'", 50);
+    countStarDistinctQueries.put(
+        "select distinct COUNT(*) from /" + regionName + " where ID > 0 OR status='active'", 100);
+    countStarDistinctQueries.put(
+        "select distinct COUNT(*) from /" + regionName + " where ID > 0 AND status LIKE 'act%'",
+        50);
+    countStarDistinctQueries.put(
+        "select distinct COUNT(*) from /" + regionName + " where ID > 0 OR status LIKE 'ina%'",
+        100);
+    countStarDistinctQueries.put(
+        "select distinct COUNT(*) from /" + regionName + " where ID IN SET(1, 2, 3, 4, 5)", 5);
+    countStarDistinctQueries.put(
+        "select distinct COUNT(*) from /" + regionName + " where NOT (ID > 5)", 5);
 
     QueryService queryService = cache.getQueryService();
     //Run queries
@@ -515,9 +601,15 @@ public class CountStarJUnitTest {
     }
 
     //CReate Index on status and ID
-    queryService.createIndex("sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
-    queryService.createIndex("sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/" + regionName + " p");
-    queryService.createIndex("sampleIndex-3", IndexType.FUNCTIONAL, "pos.secId", "/" + regionName + " p, p.positions.values pos");
+    queryService.createIndex(
+        "sampleIndex-1", IndexType.FUNCTIONAL, "p.ID", "/" + regionName + " p");
+    queryService.createIndex(
+        "sampleIndex-2", IndexType.FUNCTIONAL, "p.status", "/" + regionName + " p");
+    queryService.createIndex(
+        "sampleIndex-3",
+        IndexType.FUNCTIONAL,
+        "pos.secId",
+        "/" + regionName + " p, p.positions.values pos");
 
     //Verify Index Creation
     assertNotNull(queryService.getIndex(region, "sampleIndex-1"));

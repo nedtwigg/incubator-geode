@@ -56,8 +56,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
   static TestTimer timer = new TestTimer();
 
   static void reallyAssert(boolean b) {
-    if (!b)
-      throw new Error("Failed Assertion");
+    if (!b) throw new Error("Failed Assertion");
   }
 
   @Test
@@ -78,27 +77,22 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
       }
     }
 
-    if (args.length > 1)
-      numTests = Integer.parseInt(args[1]);
+    if (args.length > 1) numTests = Integer.parseInt(args[1]);
 
-    if (args.length > 2)
-      size = Integer.parseInt(args[2]);
+    if (args.length > 2) size = Integer.parseInt(args[2]);
 
     boolean doSerializeTest = args.length > 3;
 
     System.out.println("Testing " + mapClass.getName() + " trials: " + numTests + " size: " + size);
 
     absentSize = 4;
-    while (absentSize <= size)
-      absentSize <<= 1;
+    while (absentSize <= size) absentSize <<= 1;
     absentMask = absentSize - 1;
     absent = new Integer[absentSize];
-    for (int i = 0; i < absentSize; ++i)
-      absent[i] = new Integer(2 * (i - 1) + 1);
+    for (int i = 0; i < absentSize; ++i) absent[i] = new Integer(2 * (i - 1) + 1);
 
     Integer[] key = new Integer[size];
-    for (int i = 0; i < size; ++i)
-      key[i] = new Integer(2 * i);
+    for (int i = 0; i < size; ++i) key[i] = new Integer(2 * i);
 
     for (int rep = 0; rep < numTests; ++rep) {
       shuffle(absent);
@@ -107,8 +101,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
 
     TestTimer.printStats();
 
-    if (doSerializeTest)
-      stest(newMap(mapClass), size);
+    if (doSerializeTest) stest(newMap(mapClass), size);
   }
 
   static Map newMap(Class cl) {
@@ -134,8 +127,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     timer.start(nm, n * iters);
     for (int j = 0; j < iters; ++j) {
       for (int i = 0; i < n; i++) {
-        if (s.get(key[i]) != null)
-          ++sum;
+        if (s.get(key[i]) != null) ++sum;
       }
     }
     timer.finish();
@@ -146,8 +138,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     int sum = 0;
     timer.start(nm, n);
     for (int i = 0; i < n; i++) {
-      if (s.remove(key[i]) != null)
-        ++sum;
+      if (s.remove(key[i]) != null) ++sum;
     }
     timer.finish();
     reallyAssert(sum == expect);
@@ -159,8 +150,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     for (int i = 0; i < n; i++) {
       Integer k = key[i];
       Integer v = absent[i & absentMask];
-      if (s.put(k, v) == null)
-        ++sum;
+      if (s.put(k, v) == null) ++sum;
     }
     timer.finish();
     reallyAssert(sum == expect);
@@ -170,8 +160,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     int sum = 0;
     timer.start(nm, n);
     for (int i = 0; i < n; i++) {
-      if (s.containsKey(key[i]))
-        ++sum;
+      if (s.containsKey(key[i])) ++sum;
     }
     timer.finish();
     reallyAssert(sum == expect);
@@ -181,8 +170,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     int sum = 0;
     timer.start(nm, n / 2);
     for (int i = n - 2; i >= 0; i -= 2) {
-      if (s.remove(key[i]) != null)
-        ++sum;
+      if (s.remove(key[i]) != null) ++sum;
     }
     timer.finish();
     reallyAssert(sum == expect);
@@ -192,10 +180,8 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     int sum = 0;
     timer.start(nm, n * 2);
     for (int i = 0; i < n; i++) {
-      if (s.get(k1[i]) != null)
-        ++sum;
-      if (s.get(k2[i & absentMask]) != null)
-        ++sum;
+      if (s.get(k1[i]) != null) ++sum;
+      if (s.get(k2[i & absentMask]) != null) ++sum;
     }
     timer.finish();
     reallyAssert(sum == n);
@@ -205,10 +191,8 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     int sum = 0;
     timer.start(nm, n * 2);
     for (int i = 0; i < n; i++) {
-      if (s.containsKey(k1[i]))
-        ++sum;
-      if (s.containsKey(k2[i & absentMask]))
-        ++sum;
+      if (s.containsKey(k1[i])) ++sum;
+      if (s.containsKey(k2[i & absentMask])) ++sum;
     }
     timer.finish();
     reallyAssert(sum == n);
@@ -218,8 +202,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     int sum = 0;
     timer.start(nm, n);
     for (int i = 0; i < n; i++) {
-      if (s.get(key[i]) != null)
-        ++sum;
+      if (s.get(key[i]) != null) ++sum;
     }
     timer.finish();
     reallyAssert(sum == expect);
@@ -230,9 +213,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     int iters = 20;
     timer.start("ContainsValue (/n)     ", iters * s.size());
     int step = absentSize / iters;
-    for (int i = 0; i < absentSize; i += step)
-      if (s.containsValue(absent[i]))
-        ++sum;
+    for (int i = 0; i < absentSize; i += step) if (s.containsValue(absent[i])) ++sum;
     timer.finish();
     reallyAssert(sum != 0);
   }
@@ -242,8 +223,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     Set ks = s.keySet();
     int sum = 0;
     for (int i = 0; i < size; i++) {
-      if (ks.contains(key[i]))
-        ++sum;
+      if (ks.contains(key[i])) ++sum;
     }
     timer.finish();
     reallyAssert(sum == size);
@@ -252,9 +232,8 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
   static void ittest1(Map s, int size) {
     int sum = 0;
     timer.start("Iter Key               ", size);
-    for (Iterator it = s.keySet().iterator(); it.hasNext();) {
-      if (it.next() != MISSING)
-        ++sum;
+    for (Iterator it = s.keySet().iterator(); it.hasNext(); ) {
+      if (it.next() != MISSING) ++sum;
     }
     timer.finish();
     reallyAssert(sum == size);
@@ -263,9 +242,8 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
   static void ittest2(Map s, int size) {
     int sum = 0;
     timer.start("Iter Value             ", size);
-    for (Iterator it = s.values().iterator(); it.hasNext();) {
-      if (it.next() != MISSING)
-        ++sum;
+    for (Iterator it = s.values().iterator(); it.hasNext(); ) {
+      if (it.next() != MISSING) ++sum;
     }
     timer.finish();
     reallyAssert(sum == size);
@@ -274,9 +252,8 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
   static void ittest3(Map s, int size) {
     int sum = 0;
     timer.start("Iter Entry             ", size);
-    for (Iterator it = s.entrySet().iterator(); it.hasNext();) {
-      if (it.next() != MISSING)
-        ++sum;
+    for (Iterator it = s.entrySet().iterator(); it.hasNext(); ) {
+      if (it.next() != MISSING) ++sum;
     }
     timer.finish();
     reallyAssert(sum == size);
@@ -295,8 +272,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
       k = (Integer) x.getKey();
       v = (Integer) x.getValue();
       seen.put(k, k);
-      if (v != MISSING)
-        ++sum;
+      if (v != MISSING) ++sum;
     }
     reallyAssert(s.containsKey(k));
     it.remove();
@@ -305,8 +281,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
       Map.Entry x = (Map.Entry) (it.next());
       Integer k2 = (Integer) x.getKey();
       seen.put(k2, k2);
-      if (k2 != MISSING)
-        ++sum;
+      if (k2 != MISSING) ++sum;
     }
 
     reallyAssert(s.size() == size - 1);
@@ -329,9 +304,8 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     int sum = 0;
 
     timer.start("Iter Enumeration Key   ", size);
-    for (Enumeration en = ht.keys(); en.hasMoreElements();) {
-      if (en.nextElement() != MISSING)
-        ++sum;
+    for (Enumeration en = ht.keys(); en.hasMoreElements(); ) {
+      if (en.nextElement() != MISSING) ++sum;
     }
     timer.finish();
     reallyAssert(sum == size);
@@ -340,9 +314,8 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
   static void entest2(Hashtable ht, int size) {
     int sum = 0;
     timer.start("Iter Enumeration Value ", size);
-    for (Enumeration en = ht.elements(); en.hasMoreElements();) {
-      if (en.nextElement() != MISSING)
-        ++sum;
+    for (Enumeration en = ht.elements(); en.hasMoreElements(); ) {
+      if (en.nextElement() != MISSING) ++sum;
     }
     timer.finish();
     reallyAssert(sum == size);
@@ -354,8 +327,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     timer.start("Iterf Enumeration Key  ", size);
     Enumeration en = ht.keys();
     for (int i = 0; i < size; ++i) {
-      if (en.nextElement() != MISSING)
-        ++sum;
+      if (en.nextElement() != MISSING) ++sum;
     }
     timer.finish();
     reallyAssert(sum == size);
@@ -366,8 +338,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     timer.start("Iterf Enumeration Value", size);
     Enumeration en = ht.elements();
     for (int i = 0; i < size; ++i) {
-      if (en.nextElement() != MISSING)
-        ++sum;
+      if (en.nextElement() != MISSING) ++sum;
     }
     timer.finish();
     reallyAssert(sum == size);
@@ -389,7 +360,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
 
   static void rtest(Map s, int size) {
     timer.start("Remove (iterator)      ", size);
-    for (Iterator it = s.keySet().iterator(); it.hasNext();) {
+    for (Iterator it = s.keySet().iterator(); it.hasNext(); ) {
       it.next();
       it.remove();
     }
@@ -398,7 +369,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
 
   static void rvtest(Map s, int size) {
     timer.start("Remove (iterator)      ", size);
-    for (Iterator it = s.values().iterator(); it.hasNext();) {
+    for (Iterator it = s.values().iterator(); it.hasNext(); ) {
       it.next();
       it.remove();
     }
@@ -435,10 +406,9 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     timer.start("Iter EntrySet contains ", size * 2);
     Set es2 = s2.entrySet();
     int sum = 0;
-    for (Iterator i1 = s.entrySet().iterator(); i1.hasNext();) {
+    for (Iterator i1 = s.entrySet().iterator(); i1.hasNext(); ) {
       Object entry = i1.next();
-      if (es2.contains(entry))
-        ++sum;
+      if (es2.contains(entry)) ++sum;
     }
     timer.finish();
     reallyAssert(sum == size);
@@ -462,12 +432,10 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     timer.start("Remove (iterator)      ", size * 2);
     Iterator s2i = s2.entrySet().iterator();
     Set es = s.entrySet();
-    while (s2i.hasNext())
-      reallyAssert(es.remove(s2i.next()));
+    while (s2i.hasNext()) reallyAssert(es.remove(s2i.next()));
     timer.finish();
 
-    if (!s.isEmpty())
-      System.out.println(s);
+    if (!s.isEmpty()) System.out.println(s);
     reallyAssert(s.isEmpty());
 
     timer.start("Clear                  ", size);
@@ -477,8 +445,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
   }
 
   static void stest(Map s, int size) throws Exception {
-    if (!(s instanceof Serializable))
-      return;
+    if (!(s instanceof Serializable)) return;
     System.out.print("Serialize              : ");
 
     for (int i = 0; i < size; i++) {
@@ -501,8 +468,7 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
 
     System.out.print(time + "ms");
 
-    if (s instanceof IdentityHashMap)
-      return;
+    if (s instanceof IdentityHashMap) return;
     reallyAssert(s.equals(m));
   }
 
@@ -542,15 +508,13 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     static final java.util.TreeMap accum = new java.util.TreeMap();
 
     static void printStats() {
-      for (Iterator it = accum.entrySet().iterator(); it.hasNext();) {
+      for (Iterator it = accum.entrySet().iterator(); it.hasNext(); ) {
         Map.Entry e = (Map.Entry) (it.next());
         Stats stats = ((Stats) (e.getValue()));
         long n = stats.number;
         double t;
-        if (n > 0)
-          t = stats.sum / n;
-        else
-          t = stats.least;
+        if (n > 0) t = stats.sum / n;
+        else t = stats.least;
         long nano = Math.round(1000000.0 * t);
         System.out.println(e.getKey() + ": " + nano);
       }
@@ -564,16 +528,11 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
     }
 
     String classify() {
-      if (name.startsWith("Get"))
-        return "Get                    ";
-      else if (name.startsWith("Put"))
-        return "Put                    ";
-      else if (name.startsWith("Remove"))
-        return "Remove                 ";
-      else if (name.startsWith("Iter"))
-        return "Iter                   ";
-      else
-        return null;
+      if (name.startsWith("Get")) return "Get                    ";
+      else if (name.startsWith("Put")) return "Put                    ";
+      else if (name.startsWith("Remove")) return "Remove                 ";
+      else if (name.startsWith("Iter")) return "Iter                   ";
+      else return null;
     }
 
     void finish() {
@@ -582,31 +541,25 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
       double timePerOp = (((double) time) / numOps) / 1000000;
 
       Object st = accum.get(name);
-      if (st == null)
-        accum.put(name, new Stats(timePerOp));
+      if (st == null) accum.put(name, new Stats(timePerOp));
       else {
         Stats stats = (Stats) st;
         stats.sum += timePerOp;
         stats.number++;
-        if (timePerOp < stats.least)
-          stats.least = timePerOp;
+        if (timePerOp < stats.least) stats.least = timePerOp;
       }
 
       if (cname != null) {
         st = accum.get(cname);
-        if (st == null)
-          accum.put(cname, new Stats(timePerOp));
+        if (st == null) accum.put(cname, new Stats(timePerOp));
         else {
           Stats stats = (Stats) st;
           stats.sum += timePerOp;
           stats.number++;
-          if (timePerOp < stats.least)
-            stats.least = timePerOp;
+          if (timePerOp < stats.least) stats.least = timePerOp;
         }
       }
-
     }
-
   }
 
   static class Stats {
@@ -630,5 +583,4 @@ public class IntMapCheckJUnitTest extends JSR166TestCase { // TODO: reformat
       keys[r] = t;
     }
   }
-
 }

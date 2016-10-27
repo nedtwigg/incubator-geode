@@ -65,19 +65,15 @@ import org.apache.geode.pdx.JSONFormatter;
 import org.apache.geode.pdx.PdxInitializationException;
 import org.apache.geode.pdx.PdxRegistryMismatchException;
 
-/**
- *
- */
+/** */
 public class PeerTypeRegistration implements TypeRegistration {
-  /**
-   * 
-   */
+  /** */
   private static final int MAX_TRANSACTION_FAILURES = 10;
+
   public static final String LOCK_SERVICE_NAME = "__PDX";
-  /**
-   * The region name. Public for tests only.
-   */
+  /** The region name. Public for tests only. */
   public static final String REGION_NAME = "PdxTypes";
+
   public static final String REGION_FULL_PATH = "/" + REGION_NAME;
 
   private int nextTypeId;
@@ -89,30 +85,32 @@ public class PeerTypeRegistration implements TypeRegistration {
   private GemFireCacheImpl cache;
 
   /**
-   * The region where the PDX metadata is stored.
-   * Because this region is transactional for our internal updates
-   * but we don't want to participate in the users transactions,
-   * all operations on this region must suspend any existing
-   * transactions with suspendTX/resumeTX. 
+   * The region where the PDX metadata is stored. Because this region is transactional for our
+   * internal updates but we don't want to participate in the users transactions, all operations on
+   * this region must suspend any existing transactions with suspendTX/resumeTX.
    */
-  private Region<Object/*Integer or EnumCode*/, Object/*PdxType or enum info*/> idToType;
+  private Region<Object /*Integer or EnumCode*/, Object /*PdxType or enum info*/> idToType;
 
-  /** This map serves two purposes. It lets us look
-   * up an id based on a type, if we previously found that type
-   * in the region. And, if a type is present in this map, that means
-   * we read the type while holding the dlock, which means the type
-   * was distributed to all members.
+  /**
+   * This map serves two purposes. It lets us look up an id based on a type, if we previously found
+   * that type in the region. And, if a type is present in this map, that means we read the type
+   * while holding the dlock, which means the type was distributed to all members.
    */
-  private Map<PdxType, Integer> typeToId = Collections.synchronizedMap(new HashMap<PdxType, Integer>());
-  private Map<EnumInfo, EnumId> enumToId = Collections.synchronizedMap(new HashMap<EnumInfo, EnumId>());
-  private final Map<String, Set<PdxType>> classToType = new CopyOnWriteHashMap<String, Set<PdxType>>();
+  private Map<PdxType, Integer> typeToId =
+      Collections.synchronizedMap(new HashMap<PdxType, Integer>());
+
+  private Map<EnumInfo, EnumId> enumToId =
+      Collections.synchronizedMap(new HashMap<EnumInfo, EnumId>());
+  private final Map<String, Set<PdxType>> classToType =
+      new CopyOnWriteHashMap<String, Set<PdxType>>();
 
   private volatile boolean typeRegistryInUse = false;
 
   public PeerTypeRegistration(GemFireCacheImpl cache) {
     this.cache = cache;
 
-    int distributedSystemId = cache.getDistributedSystem().getDistributionManager().getDistributedSystemId();
+    int distributedSystemId =
+        cache.getDistributedSystem().getDistributionManager().getDistributedSystemId();
     if (distributedSystemId == -1) {
       distributedSystemId = 0;
     }
@@ -122,12 +120,15 @@ public class PeerTypeRegistration implements TypeRegistration {
     this.maxEnumId = distributedSystemId << 24 | 0xFFFFFF;
   }
 
-  private Region<Object/*Integer or EnumCode*/, Object/*PdxType or enum info*/> getIdToType() {
+  private Region<Object /*Integer or EnumCode*/, Object /*PdxType or enum info*/> getIdToType() {
     if (this.idToType != null) {
       return this.idToType;
     } else {
       if (this.cache.getPdxPersistent() && this.cache.getCacheConfig().pdxDiskStoreUserSet) {
-        throw new PdxInitializationException("PDX registry could not be initialized because the disk store " + this.cache.getPdxDiskStore() + " was not created.");
+        throw new PdxInitializationException(
+            "PDX registry could not be initialized because the disk store "
+                + this.cache.getPdxDiskStore()
+                + " was not created.");
       } else {
         throw new PdxInitializationException("PDX registry was not initialized.");
       }
@@ -150,31 +151,39 @@ public class PeerTypeRegistration implements TypeRegistration {
 
     //Add a listener that makes sure that if anyone in the DS is using PDX
     //Our PDX configuration is valid for this member. This is important if
-    //we are the gateway, we need to validate that we have a distributed system 
+    //we are the gateway, we need to validate that we have a distributed system
     //id.
-    factory.addCacheListener(new CacheListenerAdapter<Object, Object>() {
-      @Override
-      public void afterCreate(EntryEvent<Object, Object> event) {
-        verifyConfiguration();
-        //update a local map with the pdxtypes registered 
-        Object value = event.getNewValue();
-        if (value instanceof PdxType) {
-          updateClassToTypeMap((PdxType) value);
-        }
-      }
-    });
+    factory.addCacheListener(
+        new CacheListenerAdapter<Object, Object>() {
+          @Override
+          public void afterCreate(EntryEvent<Object, Object> event) {
+            verifyConfiguration();
+            //update a local map with the pdxtypes registered
+            Object value = event.getNewValue();
+            if (value instanceof PdxType) {
+              updateClassToTypeMap((PdxType) value);
+            }
+          }
+        });
 
-    factory.setCacheWriter(new CacheWriterAdapter<Object, Object>() {
+    factory.setCacheWriter(
+        new CacheWriterAdapter<Object, Object>() {
 
-      @Override
-      public void beforeUpdate(EntryEvent<Object, Object> event) throws CacheWriterException {
-        if (!event.getOldValue().equals(event.getNewValue())) {
-          PdxRegistryMismatchException ex = new PdxRegistryMismatchException("Trying to add a PDXType with the same id as an existing PDX type. id=" + event.getKey() + ", existing pdx type " + event.getOldValue() + ", new type " + event.getNewValue());
-          throw new CacheWriterException(ex);
-        }
-      }
-
-    });
+          @Override
+          public void beforeUpdate(EntryEvent<Object, Object> event) throws CacheWriterException {
+            if (!event.getOldValue().equals(event.getNewValue())) {
+              PdxRegistryMismatchException ex =
+                  new PdxRegistryMismatchException(
+                      "Trying to add a PDXType with the same id as an existing PDX type. id="
+                          + event.getKey()
+                          + ", existing pdx type "
+                          + event.getOldValue()
+                          + ", new type "
+                          + event.getNewValue());
+              throw new CacheWriterException(ex);
+            }
+          }
+        });
 
     RegionAttributes<Object, Object> regionAttrs = factory.create();
 
@@ -208,7 +217,13 @@ public class PeerTypeRegistration implements TypeRegistration {
     synchronized (this.dlsLock) {
       if (this.dls == null) {
         try {
-          this.dls = DLockService.create(LOCK_SERVICE_NAME, this.cache.getDistributedSystem(), true /* distributed */, true /* destroyOnDisconnect */, true /* automateFreeResources */);
+          this.dls =
+              DLockService.create(
+                  LOCK_SERVICE_NAME,
+                  this.cache.getDistributedSystem(),
+                  true /* distributed */,
+                  true /* destroyOnDisconnect */,
+                  true /* automateFreeResources */);
         } catch (IllegalArgumentException e) {
           this.dls = DistributedLockService.getServiceNamed(LOCK_SERVICE_NAME);
           if (this.dls == null) {
@@ -230,7 +245,9 @@ public class PeerTypeRegistration implements TypeRegistration {
       do {
         this.nextTypeId++;
         if (this.nextTypeId == maxTypeId) {
-          throw new InternalGemFireError("Used up all of the PDX type ids for this distributed system. The maximum number of PDX types is " + maxTypeId);
+          throw new InternalGemFireError(
+              "Used up all of the PDX type ids for this distributed system. The maximum number of PDX types is "
+                  + maxTypeId);
         }
       } while (r.get(nextTypeId) != null);
 
@@ -249,7 +266,9 @@ public class PeerTypeRegistration implements TypeRegistration {
       do {
         this.nextEnumId++;
         if (this.nextEnumId == maxEnumId) {
-          throw new InternalGemFireError("Used up all of the PDX enum ids for this distributed system. The maximum number of PDX types is " + maxEnumId);
+          throw new InternalGemFireError(
+              "Used up all of the PDX enum ids for this distributed system. The maximum number of PDX types is "
+                  + maxEnumId);
         }
       } while (r.get(new EnumId(nextEnumId)) != null);
 
@@ -285,9 +304,7 @@ public class PeerTypeRegistration implements TypeRegistration {
     }
   }
 
-  /**
-   * For bug #43690 we cannot use shared sockets when doing pdx type registration
-   */
+  /** For bug #43690 we cannot use shared sockets when doing pdx type registration */
   private boolean useUDPMessagingIfNecessary() {
     boolean result = false;
     InternalDistributedSystem sys = cache.getDistributedSystem();
@@ -312,7 +329,7 @@ public class PeerTypeRegistration implements TypeRegistration {
 
   /**
    * Test hook that returns the most recently allocated type id
-   * 
+   *
    * @return the most recently allocated type id
    */
   public int getLastAllocatedTypeId() {
@@ -322,7 +339,7 @@ public class PeerTypeRegistration implements TypeRegistration {
 
   /**
    * Test hook that returns the most recently allocated enum id
-   * 
+   *
    * @return the most recently allocated enum id
    */
   public int getLastAllocatedEnumId() {
@@ -415,7 +432,6 @@ public class PeerTypeRegistration implements TypeRegistration {
     } finally {
       resumeTX(currentState);
     }
-
   }
 
   public void addRemoteType(int typeId, PdxType type) {
@@ -468,7 +484,8 @@ public class PeerTypeRegistration implements TypeRegistration {
 
   public void creatingPool() {
     if (typeRegistryInUse) {
-      throw new PdxInitializationException("The PDX metadata has already been created as a peer metadata region. Please create your pools first");
+      throw new PdxInitializationException(
+          "The PDX metadata has already been created as a peer metadata region. Please create your pools first");
     }
   }
 
@@ -481,7 +498,10 @@ public class PeerTypeRegistration implements TypeRegistration {
 
       for (Pool pool : PoolManager.getAll().values()) {
         if (!((PoolImpl) pool).isUsedByGateway()) {
-          throw new PdxInitializationException("The PDX metadata has already been " + "created as a peer metadata region. " + "Please use ClientCacheFactory to create clients.");
+          throw new PdxInitializationException(
+              "The PDX metadata has already been "
+                  + "created as a peer metadata region. "
+                  + "Please use ClientCacheFactory to create clients.");
         }
       }
 
@@ -500,11 +520,14 @@ public class PeerTypeRegistration implements TypeRegistration {
 
   private void checkAllowed(boolean hasGatewaySender, boolean hasDiskStore) {
     if (hasDiskStore && !cache.getPdxPersistent()) {
-      throw new PdxInitializationException("The PDX metadata must be persistent in a member that has persistent data. See CacheFactory.setPdxPersistent.");
+      throw new PdxInitializationException(
+          "The PDX metadata must be persistent in a member that has persistent data. See CacheFactory.setPdxPersistent.");
     }
-    int distributedSystemId = cache.getDistributedSystem().getDistributionManager().getDistributedSystemId();
+    int distributedSystemId =
+        cache.getDistributedSystem().getDistributionManager().getDistributedSystemId();
     if (hasGatewaySender && distributedSystemId == -1) {
-      throw new PdxInitializationException("When using PDX with a WAN gateway sender, you must set the distributed-system-id gemfire property for your distributed system. See the javadocs for DistributedSystem.");
+      throw new PdxInitializationException(
+          "When using PDX with a WAN gateway sender, you must set the distributed-system-id gemfire property for your distributed system. See the javadocs for DistributedSystem.");
     }
   }
 
@@ -686,14 +709,14 @@ public class PeerTypeRegistration implements TypeRegistration {
 
   /**
    * adds a PdxType for a field to a {@code className => Set<PdxType>} map
-   * 
+   *
    * @param type
    */
   private void updateClassToTypeMap(PdxType type) {
     if (type != null) {
       synchronized (this.classToType) {
         if (type.getClassName().equals(JSONFormatter.JSON_CLASSNAME))
-          return;//no need to include here
+          return; //no need to include here
         Set<PdxType> pdxTypeSet = this.classToType.get(type.getClassName());
         if (pdxTypeSet == null) {
           pdxTypeSet = new CopyOnWriteHashSet<PdxType>();

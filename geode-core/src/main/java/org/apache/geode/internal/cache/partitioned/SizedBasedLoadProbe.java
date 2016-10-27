@@ -28,15 +28,15 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * A load probe which calculates the load of a pr using
- * the size of the buckets in bytes.
- * 
+ * A load probe which calculates the load of a pr using the size of the buckets in bytes.
+ *
  * @since GemFire 6.0
  */
 public class SizedBasedLoadProbe implements LoadProbe, DataSerializableFixedID {
   private static final long serialVersionUID = 7040814060882774875L;
   //TODO rebalancing come up with a better threshold for minumum bucket size?
-  public static final int MIN_BUCKET_SIZE = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "MIN_BUCKET_SIZE", 1).intValue();
+  public static final int MIN_BUCKET_SIZE =
+      Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "MIN_BUCKET_SIZE", 1).intValue();
 
   public PRLoad getLoad(PartitionedRegion pr) {
     PartitionedRegionDataStore ds = pr.getDataStore();
@@ -62,11 +62,9 @@ public class SizedBasedLoadProbe implements LoadProbe, DataSerializableFixedID {
     return prLoad;
   }
 
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-  }
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
-  public void toData(DataOutput out) throws IOException {
-  }
+  public void toData(DataOutput out) throws IOException {}
 
   public int getDSFID() {
     return SIZED_BASED_LOAD_PROBE;
@@ -77,5 +75,4 @@ public class SizedBasedLoadProbe implements LoadProbe, DataSerializableFixedID {
     // TODO Auto-generated method stub
     return null;
   }
-
 }

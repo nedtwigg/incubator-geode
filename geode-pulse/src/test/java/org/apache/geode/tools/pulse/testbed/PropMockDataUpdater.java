@@ -77,10 +77,7 @@ public class PropMockDataUpdater implements IClusterUpdater {
     this.testbed = new TestBed(testbedFile, true);
   }
 
-  /**
-   * function used for updating Cluster data
-   * for Mock
-   */
+  /** function used for updating Cluster data for Mock */
   @Override
   public boolean updateData() {
     cluster.setConnectedFlag(true);
@@ -139,7 +136,8 @@ public class PropMockDataUpdater implements IClusterUpdater {
       for (Locator locator : testbed.getRootDs().getLocators()) {
         String id = "(Launcher_Locator-1099-13-40-24-5368)-" + locatorCount++;
         String name = locator.getName();
-        membersHMap.put(id + name, initializeMember(id, name, true, true, true, false, locator.getHost()));
+        membersHMap.put(
+            id + name, initializeMember(id, name, true, true, true, false, locator.getHost()));
       }
       cluster.setLocatorCount(testbed.getRootDs().getLocators().size());
 
@@ -147,7 +145,8 @@ public class PropMockDataUpdater implements IClusterUpdater {
       for (Server server : testbed.getRootDs().getServers()) {
         String id = "(Launcher_Server-1099-13-40-24-5368)-" + serverCount++;
         String name = server.getName();
-        membersHMap.put(id + name, initializeMember(id, name, false, true, false, true, server.getHost()));
+        membersHMap.put(
+            id + name, initializeMember(id, name, false, true, false, true, server.getHost()));
       }
       cluster.setServerCount(testbed.getRootDs().getServers().size());
 
@@ -155,7 +154,8 @@ public class PropMockDataUpdater implements IClusterUpdater {
       for (Peer peer : testbed.getRootDs().getPeers()) {
         String id = "(Launcher_Peer-1099-13-40-24-5368)-" + peerCount++;
         String name = peer.getName();
-        membersHMap.put(id + name, initializeMember(id, name, false, true, false, false, peer.getHost()));
+        membersHMap.put(
+            id + name, initializeMember(id, name, false, true, false, false, peer.getHost()));
       }
 
       for (Entry<String, Member> memberSet : membersHMap.entrySet()) {
@@ -166,12 +166,21 @@ public class PropMockDataUpdater implements IClusterUpdater {
 
         //Read from property file
         int randomInt = (randomGenerator.nextInt(5)) + 1;
-        List<org.apache.geode.tools.pulse.testbed.GemFireDistributedSystem.Region> thisMemberRegions = testbed.getRootDs().getRegions(memberSet.getValue().getName());
+        List<org.apache.geode.tools.pulse.testbed.GemFireDistributedSystem.Region>
+            thisMemberRegions = testbed.getRootDs().getRegions(memberSet.getValue().getName());
 
         int regionExists = 0;
         int index = 0;
-        for (org.apache.geode.tools.pulse.testbed.GemFireDistributedSystem.Region thisMemberRegion : thisMemberRegions) {
-          Region region = initMemberRegion(index++, thisMemberRegion.getName(), memberSet.getValue().getName(), thisMemberRegion.getEntryCount(), thisMemberRegion.getType(), thisMemberRegion.getMembers().size()); //read from property file
+        for (org.apache.geode.tools.pulse.testbed.GemFireDistributedSystem.Region thisMemberRegion :
+            thisMemberRegions) {
+          Region region =
+              initMemberRegion(
+                  index++,
+                  thisMemberRegion.getName(),
+                  memberSet.getValue().getName(),
+                  thisMemberRegion.getEntryCount(),
+                  thisMemberRegion.getType(),
+                  thisMemberRegion.getMembers().size()); //read from property file
           if (regionsList.size() > 0) {
             for (Region clusterRegion : regionsList) {
               if ((region.getName()).equals(clusterRegion.getName())) {
@@ -205,11 +214,12 @@ public class PropMockDataUpdater implements IClusterUpdater {
           }
           membersHMap.get(memberSet.getKey()).updateMemberClientsHMap(memberClientsHM);
           /*clientConnectionCount = clientConnectionCount
-              + membersHMap.get(memberSet.getKey()).getMemberClientsHMap().size();*/
-          long clientConnectionCount = cluster.getClientConnectionCount() + membersHMap.get(memberSet.getKey()).getMemberClientsHMap().size();
+          + membersHMap.get(memberSet.getKey()).getMemberClientsHMap().size();*/
+          long clientConnectionCount =
+              cluster.getClientConnectionCount()
+                  + membersHMap.get(memberSet.getKey()).getMemberClientsHMap().size();
           cluster.setClientConnectionCount(clientConnectionCount);
         }
-
       }
     }
     wanInformation.clear(); //read from property file
@@ -243,7 +253,8 @@ public class PropMockDataUpdater implements IClusterUpdater {
     return true;
   }
 
-  private Region initMemberRegion(int count, String regionName, String memName, int entryCount, String type, int memberCount) {
+  private Region initMemberRegion(
+      int count, String regionName, String memName, int entryCount, String type, int memberCount) {
     Region memberRegion = new Region();
     memberRegion.setName(regionName);
     memberRegion.setFullPath("/" + regionName);
@@ -255,10 +266,8 @@ public class PropMockDataUpdater implements IClusterUpdater {
     memberRegion.setScope("DISTRIBUTED_NO_ACK");
     memberRegion.setDiskSynchronous(true);
     memberRegion.setRegionType(type);
-    if (type.contains("PERSISTENT"))
-      memberRegion.setPersistentEnabled(true);
-    else
-      memberRegion.setPersistentEnabled(false);
+    if (type.contains("PERSISTENT")) memberRegion.setPersistentEnabled(true);
+    else memberRegion.setPersistentEnabled(false);
     if (count % 2 == 0) {
       memberRegion.setWanEnabled(true);
     } else {
@@ -266,7 +275,7 @@ public class PropMockDataUpdater implements IClusterUpdater {
     }
     memberRegion.setWanEnabled(true);
     /*memberRegion.setSystemRegionEntryCount(Long.valueOf(String.valueOf(Math
-        .abs(randomGenerator.nextInt(100)))));*/
+    .abs(randomGenerator.nextInt(100)))));*/
     memberRegion.getMemberName().add(memName);
     memberRegion.setMemberCount(memberCount);
     return memberRegion;
@@ -297,7 +306,14 @@ public class PropMockDataUpdater implements IClusterUpdater {
     return memberClient;
   }
 
-  private Member initializeMember(String id, String name, boolean manager, boolean isCache, boolean isLocator, boolean isServer, String host) {
+  private Member initializeMember(
+      String id,
+      String name,
+      boolean manager,
+      boolean isCache,
+      boolean isLocator,
+      boolean isServer,
+      String host) {
     Member m = new Member();
 
     m.setId(id);
@@ -328,8 +344,7 @@ public class PropMockDataUpdater implements IClusterUpdater {
 
     GatewayReceiver gatewayReceiver = m.getGatewayReceiver();
     String port = cluster.getPort();
-    if (port == null || "".equals(port))
-      port = "1099";
+    if (port == null || "".equals(port)) port = "1099";
     gatewayReceiver.setListeningPort(Integer.parseInt(port));
     gatewayReceiver.setLinkThroughput(Math.abs(r.nextInt(10)));
     gatewayReceiver.setAvgBatchProcessingTime((long) Math.abs(r.nextInt(10)));
@@ -382,20 +397,20 @@ public class PropMockDataUpdater implements IClusterUpdater {
   private String getHostName(long rndSeed) {
     Random rnd = new Random(rndSeed);
     String hName = null;
-  
+
     int index = Math.abs(rnd.nextInt(MAX_HOSTS));
-  
+
     ArrayList<String> hostNames = cluster.getHostNames();
-  
+
     if (hostNames.size() <= index) {
       hName = "host" + hostNames.size();
       hostNames.add(hName);
     } else {
       hName = hostNames.get(index);
     }
-  
+
     Map<String, ArrayList<Member>> physicalToMember = cluster.getPhysicalToMember();
-  
+
     ArrayList<Member> memberArrList = physicalToMember.get(hName);
     if (memberArrList != null) {
       if (memberArrList.size() > 4){
@@ -481,15 +496,15 @@ public class PropMockDataUpdater implements IClusterUpdater {
     alert.setTimestamp(new Date());
 
     switch (sev) {
-    case Alert.SEVERE:
-      alert.setDescription(PulseConstants.ALERT_DESC_SEVERE);
-      break;
-    case Alert.ERROR:
-      alert.setDescription(PulseConstants.ALERT_DESC_ERROR);
-      break;
-    case Alert.WARNING:
-      alert.setDescription(PulseConstants.ALERT_DESC_WARNING);
-      break;
+      case Alert.SEVERE:
+        alert.setDescription(PulseConstants.ALERT_DESC_SEVERE);
+        break;
+      case Alert.ERROR:
+        alert.setDescription(PulseConstants.ALERT_DESC_ERROR);
+        break;
+      case Alert.WARNING:
+        alert.setDescription(PulseConstants.ALERT_DESC_WARNING);
+        break;
     }
     return alert;
   }
@@ -499,5 +514,4 @@ public class PropMockDataUpdater implements IClusterUpdater {
     // TODO for Sushant/Sachin - Add implementation for MockUpdater for Automation
     return null;
   }
-
 }

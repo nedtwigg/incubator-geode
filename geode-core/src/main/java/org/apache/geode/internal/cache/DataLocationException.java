@@ -19,14 +19,14 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.GemFireCheckedException;
 
 /**
- * This exception is meant to represent the class of exceptions that occur
- * when our assumption about where the data lives is incorrect.
+ * This exception is meant to represent the class of exceptions that occur when our assumption about
+ * where the data lives is incorrect.
+ *
  * @see ForceReattemptException
  * @see PrimaryBucketException
  */
 public abstract class DataLocationException extends GemFireCheckedException {
-  public DataLocationException() {
-  }
+  public DataLocationException() {}
 
   public DataLocationException(String msg) {
     super(msg);

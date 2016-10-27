@@ -19,11 +19,10 @@ package org.apache.geode.test.dunit;
 import org.apache.geode.internal.util.DebuggerSupport;
 
 /**
- * <code>DebuggerUtils</code> provides static utility methods that facilitate
- * runtime debugging.
- * 
- * These methods can be used directly: <code>DebuggerUtils.attachDebugger(...)</code>, 
- * however, they are intended to be referenced through static import:
+ * <code>DebuggerUtils</code> provides static utility methods that facilitate runtime debugging.
+ *
+ * <p>These methods can be used directly: <code>DebuggerUtils.attachDebugger(...)</code>, however,
+ * they are intended to be referenced through static import:
  *
  * <pre>
  * import static org.apache.geode.test.dunit.DebuggerUtils.*;
@@ -32,21 +31,20 @@ import org.apache.geode.internal.util.DebuggerSupport;
  * </pre>
  *
  * Extracted from DistributedTestCase.
- * 
+ *
  * @see org.apache.geode.internal.util.DebuggerSupport
  */
 public class DebuggerUtils {
 
-  protected DebuggerUtils() {
-  }
+  protected DebuggerUtils() {}
 
   @SuppressWarnings("serial")
   public static void attachDebugger(final VM vm, final String message) {
-    vm.invoke(new SerializableRunnable(DebuggerSupport.class.getSimpleName() + " waitForJavaDebugger") {
-      public void run() {
-        DebuggerSupport.waitForJavaDebugger(message);
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable(DebuggerSupport.class.getSimpleName() + " waitForJavaDebugger") {
+          public void run() {
+            DebuggerSupport.waitForJavaDebugger(message);
+          }
+        });
   }
-
 }

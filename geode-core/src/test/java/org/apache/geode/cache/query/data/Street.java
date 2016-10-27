@@ -22,9 +22,7 @@
 
 package org.apache.geode.cache.query.data;
 
-/**
- *
- */
+/** */
 public class Street {
   public String street;
   public String lane;
@@ -34,5 +32,4 @@ public class Street {
     this.street = street;
     this.lane = lane;
   }
-
 }

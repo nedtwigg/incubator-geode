@@ -25,9 +25,9 @@ import org.apache.geode.pdx.ReflectionBasedAutoSerializer;
 import org.apache.geode.pdx.internal.AutoSerializableManager;
 
 /**
- * This is helper class used by CacheFactory to pass the cache configuration
- *  values to cache creation code.
- *  
+ * This is helper class used by CacheFactory to pass the cache configuration values to cache
+ * creation code.
+ *
  * @since GemFire 6.6
  */
 public class CacheConfig {
@@ -40,20 +40,17 @@ public class CacheConfig {
   public boolean pdxReadSerialized = DEFAULT_PDX_READ_SERIALIZED;
 
   /**
-   * cacheXMLDescription is used to reinitialize the cache after a reconnect.
-   * It overrides any cache.xml filename setting in distributed system properties.
+   * cacheXMLDescription is used to reinitialize the cache after a reconnect. It overrides any
+   * cache.xml filename setting in distributed system properties.
    */
   private String cacheXMLDescription = null;
 
-  /**
-   * list of cache servers to create after auto-reconnect if cluster configuration is being used
-   */
+  /** list of cache servers to create after auto-reconnect if cluster configuration is being used */
   private List<CacheServerCreation> cacheServerCreation;
 
   /**
-   * This indicates if the pdxReadSerialized value is set by user. This is used 
-   * during cache xml parsing. The value set by user api overrides the 
-   * value set in cache.xml value.
+   * This indicates if the pdxReadSerialized value is set by user. This is used during cache xml
+   * parsing. The value set by user api overrides the value set in cache.xml value.
    */
   public boolean pdxReadSerializedUserSet = false;
 
@@ -140,27 +137,42 @@ public class CacheConfig {
     // If they have not then we might use a cache.xml that will specify them.
     // Since we don't have the cache.xml info here we need to only complain
     // if we are sure that we will be incompatible with the existing cache.
-    if (this.pdxReadSerializedUserSet && this.pdxReadSerialized != cacheInstance.getPdxReadSerialized()) {
-      throw new IllegalStateException(LocalizedStrings.CacheFactory_0_EXISTING_CACHE_WITH_DIFFERENT_CACHE_CONFIG.toLocalizedString("pdxReadSerialized: " + cacheInstance.getPdxReadSerialized()));
+    if (this.pdxReadSerializedUserSet
+        && this.pdxReadSerialized != cacheInstance.getPdxReadSerialized()) {
+      throw new IllegalStateException(
+          LocalizedStrings.CacheFactory_0_EXISTING_CACHE_WITH_DIFFERENT_CACHE_CONFIG
+              .toLocalizedString("pdxReadSerialized: " + cacheInstance.getPdxReadSerialized()));
     }
     if (this.pdxDiskStoreUserSet && !equals(this.pdxDiskStore, cacheInstance.getPdxDiskStore())) {
-      throw new IllegalStateException(LocalizedStrings.CacheFactory_0_EXISTING_CACHE_WITH_DIFFERENT_CACHE_CONFIG.toLocalizedString("pdxDiskStore: " + cacheInstance.getPdxDiskStore()));
+      throw new IllegalStateException(
+          LocalizedStrings.CacheFactory_0_EXISTING_CACHE_WITH_DIFFERENT_CACHE_CONFIG
+              .toLocalizedString("pdxDiskStore: " + cacheInstance.getPdxDiskStore()));
     }
     if (this.pdxPersistentUserSet && this.pdxPersistent != cacheInstance.getPdxPersistent()) {
-      throw new IllegalStateException(LocalizedStrings.CacheFactory_0_EXISTING_CACHE_WITH_DIFFERENT_CACHE_CONFIG.toLocalizedString("pdxPersistent: " + cacheInstance.getPdxPersistent()));
+      throw new IllegalStateException(
+          LocalizedStrings.CacheFactory_0_EXISTING_CACHE_WITH_DIFFERENT_CACHE_CONFIG
+              .toLocalizedString("pdxPersistent: " + cacheInstance.getPdxPersistent()));
     }
-    if (this.pdxIgnoreUnreadFieldsUserSet && this.pdxIgnoreUnreadFields != cacheInstance.getPdxIgnoreUnreadFields()) {
-      throw new IllegalStateException(LocalizedStrings.CacheFactory_0_EXISTING_CACHE_WITH_DIFFERENT_CACHE_CONFIG.toLocalizedString("pdxIgnoreUnreadFields: " + cacheInstance.getPdxIgnoreUnreadFields()));
+    if (this.pdxIgnoreUnreadFieldsUserSet
+        && this.pdxIgnoreUnreadFields != cacheInstance.getPdxIgnoreUnreadFields()) {
+      throw new IllegalStateException(
+          LocalizedStrings.CacheFactory_0_EXISTING_CACHE_WITH_DIFFERENT_CACHE_CONFIG
+              .toLocalizedString(
+                  "pdxIgnoreUnreadFields: " + cacheInstance.getPdxIgnoreUnreadFields()));
     }
-    if (this.pdxSerializerUserSet && !samePdxSerializer(this.pdxSerializer, cacheInstance.getPdxSerializer())) {
-      throw new IllegalStateException(LocalizedStrings.CacheFactory_0_EXISTING_CACHE_WITH_DIFFERENT_CACHE_CONFIG.toLocalizedString("pdxSerializer: " + cacheInstance.getPdxSerializer()));
+    if (this.pdxSerializerUserSet
+        && !samePdxSerializer(this.pdxSerializer, cacheInstance.getPdxSerializer())) {
+      throw new IllegalStateException(
+          LocalizedStrings.CacheFactory_0_EXISTING_CACHE_WITH_DIFFERENT_CACHE_CONFIG
+              .toLocalizedString("pdxSerializer: " + cacheInstance.getPdxSerializer()));
     }
   }
 
   private boolean samePdxSerializer(PdxSerializer s1, PdxSerializer s2) {
     Object o1 = s1;
     Object o2 = s2;
-    if (s1 instanceof ReflectionBasedAutoSerializer && s2 instanceof ReflectionBasedAutoSerializer) {
+    if (s1 instanceof ReflectionBasedAutoSerializer
+        && s2 instanceof ReflectionBasedAutoSerializer) {
       // Fix for bug 44907.
       o1 = ((ReflectionBasedAutoSerializer) s1).getManager();
       o2 = ((ReflectionBasedAutoSerializer) s2).getManager();
@@ -200,5 +212,4 @@ public class CacheConfig {
       this.pdxIgnoreUnreadFieldsUserSet = cacheConfig.pdxIgnoreUnreadFieldsUserSet;
     }
   }
-
 }

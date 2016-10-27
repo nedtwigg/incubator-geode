@@ -19,25 +19,22 @@ package org.apache.geode.cache;
 
 import org.apache.geode.GemFireException;
 
-/** A generic runtime exception that indicates
- * a cache error has occurred. All the other runtime cache exceptions are the
- * subclass of this class. This class is abstract so only subclasses can be
+/**
+ * A generic runtime exception that indicates a cache error has occurred. All the other runtime
+ * cache exceptions are the subclass of this class. This class is abstract so only subclasses can be
  * instantiated
- *
  *
  * @since GemFire 3.0
  */
 public abstract class CacheRuntimeException extends GemFireException {
   public static final long serialVersionUID = 6750107573015376688L;
 
-  /**
-   * Creates a new instance of <code>CacheRuntimeException</code> without detail message.
-   */
-  public CacheRuntimeException() {
-  }
+  /** Creates a new instance of <code>CacheRuntimeException</code> without detail message. */
+  public CacheRuntimeException() {}
 
   /**
    * Constructs an instance of <code>CacheRuntimeException</code> with the specified detail message.
+   *
    * @param msg the detail message
    */
   public CacheRuntimeException(String msg) {
@@ -47,6 +44,7 @@ public abstract class CacheRuntimeException extends GemFireException {
   /**
    * Constructs an instance of <code>CacheRuntimeException</code> with the specified detail message
    * and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */
@@ -56,6 +54,7 @@ public abstract class CacheRuntimeException extends GemFireException {
 
   /**
    * Constructs an instance of <code>CacheRuntimeException</code> with the specified cause.
+   *
    * @param cause the causal Throwable
    */
   public CacheRuntimeException(Throwable cause) {

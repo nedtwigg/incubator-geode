@@ -83,9 +83,7 @@ import org.apache.geode.management.internal.cli.shell.Gfsh;
 import org.apache.geode.management.internal.cli.util.JsonUtil;
 import org.apache.geode.pdx.PdxInstance;
 
-/**
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class DataCommandFunction extends FunctionAdapter implements InternalEntity {
   private static final Logger logger = LogService.getLogger();
 
@@ -107,21 +105,17 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
   }
 
   @Override
-
   public boolean hasResult() {
     return true;
   }
 
   @Override
-
   public boolean isHA() {
     return false;
   }
 
   @Override
-  /**
-   * Read only function
-   */
+  /** Read only function */
   public boolean optimizeForWrite() {
     return optimizeForWrite;
   }
@@ -136,19 +130,15 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
       Cache cache = CacheFactory.getAnyInstance();
       DataCommandRequest request = (DataCommandRequest) functionContext.getArguments();
       if (logger.isDebugEnabled()) {
-        logger.debug("Executing function : \n{}\n on member {}", request, System.getProperty("memberName"));
+        logger.debug(
+            "Executing function : \n{}\n on member {}", request, System.getProperty("memberName"));
       }
       DataCommandResult result = null;
-      if (request.isGet())
-        result = get(request);
-      else if (request.isLocateEntry())
-        result = locateEntry(request);
-      else if (request.isPut())
-        result = put(request);
-      else if (request.isRemove())
-        result = remove(request);
-      else if (request.isSelect())
-        result = select(request);
+      if (request.isGet()) result = get(request);
+      else if (request.isLocateEntry()) result = locateEntry(request);
+      else if (request.isPut()) result = put(request);
+      else if (request.isRemove()) result = remove(request);
+      else if (request.isSelect()) result = select(request);
       if (logger.isDebugEnabled()) {
         logger.debug("Result is {}", result);
       }
@@ -203,9 +193,7 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
     return select(request.getPrincipal(), query);
   }
 
-  /**
-   * To catch trace output
-   */
+  /** To catch trace output */
   public static class WrappedIndexTrackingQueryObserver extends IndexTrackingQueryObserver {
 
     @Override
@@ -248,7 +236,7 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
         }
         if (results instanceof SelectResults) {
           SelectResults selectResults = (SelectResults) results;
-          for (Iterator iter = selectResults.iterator(); iter.hasNext();) {
+          for (Iterator iter = selectResults.iterator(); iter.hasNext(); ) {
             Object object = iter.next();
             // Post processing
             object = this.securityService.postProcess(principal, null, null, object, false);
@@ -258,7 +246,9 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
               GfJsonObject jsonStruct = getJSONForStruct(impl, nestedObjectCount);
               if (logger.isDebugEnabled())
                 logger.debug("SelectResults : Adding select json string : {}", jsonStruct);
-              list.add(new SelectResultRow(DataCommandResult.ROW_TYPE_STRUCT_RESULT, jsonStruct.toString()));
+              list.add(
+                  new SelectResultRow(
+                      DataCommandResult.ROW_TYPE_STRUCT_RESULT, jsonStruct.toString()));
             } else {
               if (JsonUtil.isPrimitiveOrWrapper(object.getClass())) {
                 if (logger.isDebugEnabled())
@@ -304,40 +294,45 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
             logger.debug("BeanResults : Adding bean json string : {}", jsonBean);
           list.add(new SelectResultRow(DataCommandResult.ROW_TYPE_BEAN, jsonBean.toString()));
         }
-        return DataCommandResult.createSelectResult(queryString, list, queryVerboseMsg, null, null, true);
+        return DataCommandResult.createSelectResult(
+            queryString, list, queryVerboseMsg, null, null, true);
 
       } catch (FunctionDomainException e) {
         logger.warn(e.getMessage(), e);
-        return DataCommandResult.createSelectResult(queryString, null, queryVerboseMsg, e, e.getMessage(), false);
+        return DataCommandResult.createSelectResult(
+            queryString, null, queryVerboseMsg, e, e.getMessage(), false);
       } catch (TypeMismatchException e) {
         logger.warn(e.getMessage(), e);
-        return DataCommandResult.createSelectResult(queryString, null, queryVerboseMsg, e, e.getMessage(), false);
+        return DataCommandResult.createSelectResult(
+            queryString, null, queryVerboseMsg, e, e.getMessage(), false);
       } catch (NameResolutionException e) {
         logger.warn(e.getMessage(), e);
-        return DataCommandResult.createSelectResult(queryString, null, queryVerboseMsg, e, e.getMessage(), false);
+        return DataCommandResult.createSelectResult(
+            queryString, null, queryVerboseMsg, e, e.getMessage(), false);
       } catch (QueryInvocationTargetException e) {
         logger.warn(e.getMessage(), e);
-        return DataCommandResult.createSelectResult(queryString, null, queryVerboseMsg, e, e.getMessage(), false);
+        return DataCommandResult.createSelectResult(
+            queryString, null, queryVerboseMsg, e, e.getMessage(), false);
       } catch (GfJsonException e) {
         logger.warn(e.getMessage(), e);
-        return DataCommandResult.createSelectResult(queryString, null, queryVerboseMsg, e, e.getMessage(), false);
+        return DataCommandResult.createSelectResult(
+            queryString, null, queryVerboseMsg, e, e.getMessage(), false);
       } finally {
         if (queryObserver != null) {
           QueryObserverHolder.reset();
         }
       }
     } else {
-      return DataCommandResult.createSelectInfoResult(null, null, -1, null, CliStrings.QUERY__MSG__QUERY_EMPTY, false);
+      return DataCommandResult.createSelectInfoResult(
+          null, null, -1, null, CliStrings.QUERY__MSG__QUERY_EMPTY, false);
     }
   }
 
   private String toJson(Object object) {
     if (object instanceof Undefined) {
       return "{\"Value\":\"UNDEFINED\"}";
-    } else if (object instanceof PdxInstance)
-      return pdxToJson((PdxInstance) object);
-    else
-      return JsonUtil.objectToJsonNestedChkCDep(object, NESTED_JSON_LENGTH);
+    } else if (object instanceof PdxInstance) return pdxToJson((PdxInstance) object);
+    else return JsonUtil.objectToJsonNestedChkCDep(object, NESTED_JSON_LENGTH);
   }
 
   private GfJsonObject getJSONForStruct(StructImpl impl, AtomicInteger ai) throws GfJsonException {
@@ -360,46 +355,56 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
     return jsonObject;
   }
 
-  @SuppressWarnings({ "rawtypes" })
-  public DataCommandResult remove(String key, String keyClass, String regionName, String removeAllKeys) {
+  @SuppressWarnings({"rawtypes"})
+  public DataCommandResult remove(
+      String key, String keyClass, String regionName, String removeAllKeys) {
 
     Cache cache = CacheFactory.getAnyInstance();
 
     if (regionName == null || regionName.isEmpty()) {
-      return DataCommandResult.createRemoveResult(key, null, null, CliStrings.REMOVE__MSG__REGIONNAME_EMPTY, false);
+      return DataCommandResult.createRemoveResult(
+          key, null, null, CliStrings.REMOVE__MSG__REGIONNAME_EMPTY, false);
     }
 
     boolean allKeysFlag = (removeAllKeys == null || removeAllKeys.isEmpty());
     if (allKeysFlag && (key == null || key.isEmpty())) {
-      return DataCommandResult.createRemoveResult(key, null, null, CliStrings.REMOVE__MSG__KEY_EMPTY, false);
+      return DataCommandResult.createRemoveResult(
+          key, null, null, CliStrings.REMOVE__MSG__KEY_EMPTY, false);
     }
 
     Region region = cache.getRegion(regionName);
     if (region == null) {
-      return DataCommandResult.createRemoveInfoResult(key, null, null, CliStrings.format(CliStrings.REMOVE__MSG__REGION_NOT_FOUND, regionName), false);
+      return DataCommandResult.createRemoveInfoResult(
+          key,
+          null,
+          null,
+          CliStrings.format(CliStrings.REMOVE__MSG__REGION_NOT_FOUND, regionName),
+          false);
     } else {
       if (removeAllKeys == null) {
         Object keyObject = null;
         try {
           keyObject = getClassObject(key, keyClass);
         } catch (ClassNotFoundException e) {
-          return DataCommandResult.createRemoveResult(key, null, null, "ClassNotFoundException " + keyClass, false);
+          return DataCommandResult.createRemoveResult(
+              key, null, null, "ClassNotFoundException " + keyClass, false);
         } catch (IllegalArgumentException e) {
-          return DataCommandResult.createRemoveResult(key, null, null, "Error in converting JSON " + e.getMessage(), false);
+          return DataCommandResult.createRemoveResult(
+              key, null, null, "Error in converting JSON " + e.getMessage(), false);
         }
 
         if (region.containsKey(keyObject)) {
           Object value = region.remove(keyObject);
-          if (logger.isDebugEnabled())
-            logger.debug("Removed key {} successfully", key);
+          if (logger.isDebugEnabled()) logger.debug("Removed key {} successfully", key);
           //return DataCommandResult.createRemoveResult(key, value, null, null);
           Object array[] = getJSONForNonPrimitiveObject(value);
-          DataCommandResult result = DataCommandResult.createRemoveResult(key, array[1], null, null, true);
-          if (array[0] != null)
-            result.setValueClass((String) array[0]);
+          DataCommandResult result =
+              DataCommandResult.createRemoveResult(key, array[1], null, null, true);
+          if (array[0] != null) result.setValueClass((String) array[0]);
           return result;
         } else {
-          return DataCommandResult.createRemoveInfoResult(key, null, null, CliStrings.REMOVE__MSG__KEY_NOT_FOUND_REGION, false);
+          return DataCommandResult.createRemoveInfoResult(
+              key, null, null, CliStrings.REMOVE__MSG__KEY_NOT_FOUND_REGION, false);
         }
       } else {
         DataPolicy policy = region.getAttributes().getDataPolicy();
@@ -407,41 +412,65 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
           region.clear();
           if (logger.isDebugEnabled())
             logger.debug("Cleared all keys in the region - {}", regionName);
-          return DataCommandResult.createRemoveInfoResult(key, null, null, CliStrings.format(CliStrings.REMOVE__MSG__CLEARED_ALL_CLEARS, regionName), true);
+          return DataCommandResult.createRemoveInfoResult(
+              key,
+              null,
+              null,
+              CliStrings.format(CliStrings.REMOVE__MSG__CLEARED_ALL_CLEARS, regionName),
+              true);
         } else {
-          return DataCommandResult.createRemoveInfoResult(key, null, null, CliStrings.REMOVE__MSG__CLEAREALL_NOT_SUPPORTED_FOR_PARTITIONREGION, false);
+          return DataCommandResult.createRemoveInfoResult(
+              key,
+              null,
+              null,
+              CliStrings.REMOVE__MSG__CLEAREALL_NOT_SUPPORTED_FOR_PARTITIONREGION,
+              false);
         }
       }
     }
   }
 
-  @SuppressWarnings({ "rawtypes" })
-  public DataCommandResult get(Object principal, String key, String keyClass, String valueClass, String regionName, Boolean loadOnCacheMiss) {
+  @SuppressWarnings({"rawtypes"})
+  public DataCommandResult get(
+      Object principal,
+      String key,
+      String keyClass,
+      String valueClass,
+      String regionName,
+      Boolean loadOnCacheMiss) {
 
     Cache cache = CacheFactory.getAnyInstance();
 
     if (regionName == null || regionName.isEmpty()) {
-      return DataCommandResult.createGetResult(key, null, null, CliStrings.GET__MSG__REGIONNAME_EMPTY, false);
+      return DataCommandResult.createGetResult(
+          key, null, null, CliStrings.GET__MSG__REGIONNAME_EMPTY, false);
     }
 
     if (key == null || key.isEmpty()) {
-      return DataCommandResult.createGetResult(key, null, null, CliStrings.GET__MSG__KEY_EMPTY, false);
+      return DataCommandResult.createGetResult(
+          key, null, null, CliStrings.GET__MSG__KEY_EMPTY, false);
     }
 
     Region region = cache.getRegion(regionName);
 
     if (region == null) {
-      if (logger.isDebugEnabled())
-        logger.debug("Region Not Found - {}", regionName);
-      return DataCommandResult.createGetResult(key, null, null, CliStrings.format(CliStrings.GET__MSG__REGION_NOT_FOUND, regionName), false);
+      if (logger.isDebugEnabled()) logger.debug("Region Not Found - {}", regionName);
+      return DataCommandResult.createGetResult(
+          key,
+          null,
+          null,
+          CliStrings.format(CliStrings.GET__MSG__REGION_NOT_FOUND, regionName),
+          false);
     } else {
       Object keyObject = null;
       try {
         keyObject = getClassObject(key, keyClass);
       } catch (ClassNotFoundException e) {
-        return DataCommandResult.createGetResult(key, null, null, "ClassNotFoundException " + keyClass, false);
+        return DataCommandResult.createGetResult(
+            key, null, null, "ClassNotFoundException " + keyClass, false);
       } catch (IllegalArgumentException e) {
-        return DataCommandResult.createGetResult(key, null, null, "Error in converting JSON " + e.getMessage(), false);
+        return DataCommandResult.createGetResult(
+            key, null, null, "Error in converting JSON " + e.getMessage(), false);
       }
 
       // TODO determine whether the following conditional logic (assigned to 'doGet') is safer or necessary
@@ -455,14 +484,13 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
         // deserialize it anymore to pass it to the postProcessor
         value = this.securityService.postProcess(principal, regionName, keyObject, value, false);
 
-        if (logger.isDebugEnabled())
-          logger.debug("Get for key {} value {}", key, value);
+        if (logger.isDebugEnabled()) logger.debug("Get for key {} value {}", key, value);
         //return DataCommandResult.createGetResult(key, value, null, null);
         Object array[] = getJSONForNonPrimitiveObject(value);
         if (value != null) {
-          DataCommandResult result = DataCommandResult.createGetResult(key, array[1], null, null, true);
-          if (array[0] != null)
-            result.setValueClass((String) array[0]);
+          DataCommandResult result =
+              DataCommandResult.createGetResult(key, array[1], null, null, true);
+          if (array[0] != null) result.setValueClass((String) array[0]);
           return result;
         } else {
           return DataCommandResult.createGetResult(key, array[1], null, null, false);
@@ -470,22 +498,26 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
       } else {
         if (logger.isDebugEnabled())
           logger.debug("Key is not present in the region {}", regionName);
-        return DataCommandResult.createGetInfoResult(key, null, null, CliStrings.GET__MSG__KEY_NOT_FOUND_REGION, false);
+        return DataCommandResult.createGetInfoResult(
+            key, null, null, CliStrings.GET__MSG__KEY_NOT_FOUND_REGION, false);
       }
     }
   }
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
-  public DataCommandResult locateEntry(String key, String keyClass, String valueClass, String regionPath, boolean recursive) {
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  public DataCommandResult locateEntry(
+      String key, String keyClass, String valueClass, String regionPath, boolean recursive) {
 
     Cache cache = CacheFactory.getAnyInstance();
 
     if (regionPath == null || regionPath.isEmpty()) {
-      return DataCommandResult.createLocateEntryResult(key, null, null, CliStrings.LOCATE_ENTRY__MSG__REGIONNAME_EMPTY, false);
+      return DataCommandResult.createLocateEntryResult(
+          key, null, null, CliStrings.LOCATE_ENTRY__MSG__REGIONNAME_EMPTY, false);
     }
 
     if (key == null || key.isEmpty()) {
-      return DataCommandResult.createLocateEntryResult(key, null, null, CliStrings.LOCATE_ENTRY__MSG__KEY_EMPTY, false);
+      return DataCommandResult.createLocateEntryResult(
+          key, null, null, CliStrings.LOCATE_ENTRY__MSG__KEY_EMPTY, false);
     }
 
     List<Region> listofRegionStartingwithRegionPath = new ArrayList<Region>();
@@ -501,18 +533,25 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
         }
       }
       if (listofRegionStartingwithRegionPath.size() == 0) {
-        if (logger.isDebugEnabled())
-          logger.debug("Region Not Found - {}", regionPath);
-        return DataCommandResult.createLocateEntryResult(key, null, null, CliStrings.format(CliStrings.REMOVE__MSG__REGION_NOT_FOUND, regionPath), false);
+        if (logger.isDebugEnabled()) logger.debug("Region Not Found - {}", regionPath);
+        return DataCommandResult.createLocateEntryResult(
+            key,
+            null,
+            null,
+            CliStrings.format(CliStrings.REMOVE__MSG__REGION_NOT_FOUND, regionPath),
+            false);
       }
     } else {
       Region region = cache.getRegion(regionPath);
       if (region == null) {
-        if (logger.isDebugEnabled())
-          logger.debug("Region Not Found - {}", regionPath);
-        return DataCommandResult.createLocateEntryResult(key, null, null, CliStrings.format(CliStrings.REMOVE__MSG__REGION_NOT_FOUND, regionPath), false);
-      } else
-        listofRegionStartingwithRegionPath.add(region);
+        if (logger.isDebugEnabled()) logger.debug("Region Not Found - {}", regionPath);
+        return DataCommandResult.createLocateEntryResult(
+            key,
+            null,
+            null,
+            CliStrings.format(CliStrings.REMOVE__MSG__REGION_NOT_FOUND, regionPath),
+            false);
+      } else listofRegionStartingwithRegionPath.add(region);
     }
 
     Object keyObject = null;
@@ -520,10 +559,12 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
       keyObject = getClassObject(key, keyClass);
     } catch (ClassNotFoundException e) {
       logger.fatal(e.getMessage(), e);
-      return DataCommandResult.createLocateEntryResult(key, null, null, "ClassNotFoundException " + keyClass, false);
+      return DataCommandResult.createLocateEntryResult(
+          key, null, null, "ClassNotFoundException " + keyClass, false);
     } catch (IllegalArgumentException e) {
       logger.fatal(e.getMessage(), e);
-      return DataCommandResult.createLocateEntryResult(key, null, null, "Error in converting JSON " + e.getMessage(), false);
+      return DataCommandResult.createLocateEntryResult(
+          key, null, null, "Error in converting JSON " + e.getMessage(), false);
     }
 
     Object value = null;
@@ -541,14 +582,23 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
         Region localRegion = PartitionRegionHelper.getLocalData((PartitionedRegion) region);
         value = localRegion.get(keyObject);
         if (value != null) {
-          DistributedMember primaryMember = PartitionRegionHelper.getPrimaryMemberForKey(region, keyObject);
+          DistributedMember primaryMember =
+              PartitionRegionHelper.getPrimaryMemberForKey(region, keyObject);
           int bucketId = pr.getKeyInfo(keyObject).getBucketId();
           boolean isPrimary = member == primaryMember;
-          keyInfo.addLocation(new Object[] { region.getFullPath(), true, getJSONForNonPrimitiveObject(value)[1], isPrimary, "" + bucketId });
+          keyInfo.addLocation(
+              new Object[] {
+                region.getFullPath(),
+                true,
+                getJSONForNonPrimitiveObject(value)[1],
+                isPrimary,
+                "" + bucketId
+              });
         } else {
           if (logger.isDebugEnabled())
             logger.debug("Key is not present in the region {}", regionPath);
-          return DataCommandResult.createLocateEntryInfoResult(key, null, null, CliStrings.LOCATE_ENTRY__MSG__KEY_NOT_FOUND_REGION, false);
+          return DataCommandResult.createLocateEntryInfoResult(
+              key, null, null, CliStrings.LOCATE_ENTRY__MSG__KEY_NOT_FOUND_REGION, false);
         }
       } else {
         if (region.containsKey(keyObject)) {
@@ -556,13 +606,15 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
           if (logger.isDebugEnabled())
             logger.debug("Get for key {} value {} in region {}", key, value, region.getFullPath());
           if (value != null)
-            keyInfo.addLocation(new Object[] { region.getFullPath(), true, getJSONForNonPrimitiveObject(value)[1], false, null });
-          else
-            keyInfo.addLocation(new Object[] { region.getFullPath(), false, null, false, null });
+            keyInfo.addLocation(
+                new Object[] {
+                  region.getFullPath(), true, getJSONForNonPrimitiveObject(value)[1], false, null
+                });
+          else keyInfo.addLocation(new Object[] {region.getFullPath(), false, null, false, null});
         } else {
           if (logger.isDebugEnabled())
             logger.debug("Key is not present in the region {}", regionPath);
-          keyInfo.addLocation(new Object[] { region.getFullPath(), false, null, false, null });
+          keyInfo.addLocation(new Object[] {region.getFullPath(), false, null, false, null});
         }
       }
     }
@@ -570,69 +622,82 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
     if (keyInfo.hasLocation()) {
       return DataCommandResult.createLocateEntryResult(key, keyInfo, null, null, true);
     } else {
-      return DataCommandResult.createLocateEntryInfoResult(key, null, null, CliStrings.LOCATE_ENTRY__MSG__KEY_NOT_FOUND_REGION, false);
+      return DataCommandResult.createLocateEntryInfoResult(
+          key, null, null, CliStrings.LOCATE_ENTRY__MSG__KEY_NOT_FOUND_REGION, false);
     }
-
   }
 
-  @SuppressWarnings({ "rawtypes" })
-  public DataCommandResult put(String key, String value, boolean putIfAbsent, String keyClass, String valueClass, String regionName) {
+  @SuppressWarnings({"rawtypes"})
+  public DataCommandResult put(
+      String key,
+      String value,
+      boolean putIfAbsent,
+      String keyClass,
+      String valueClass,
+      String regionName) {
 
     if (regionName == null || regionName.isEmpty()) {
-      return DataCommandResult.createPutResult(key, null, null, CliStrings.PUT__MSG__REGIONNAME_EMPTY, false);
+      return DataCommandResult.createPutResult(
+          key, null, null, CliStrings.PUT__MSG__REGIONNAME_EMPTY, false);
     }
 
     if (key == null || key.isEmpty()) {
-      return DataCommandResult.createPutResult(key, null, null, CliStrings.PUT__MSG__KEY_EMPTY, false);
+      return DataCommandResult.createPutResult(
+          key, null, null, CliStrings.PUT__MSG__KEY_EMPTY, false);
     }
 
     if (value == null || value.isEmpty()) {
-      return DataCommandResult.createPutResult(key, null, null, CliStrings.PUT__MSG__VALUE_EMPTY, false);
+      return DataCommandResult.createPutResult(
+          key, null, null, CliStrings.PUT__MSG__VALUE_EMPTY, false);
     }
 
     Cache cache = CacheFactory.getAnyInstance();
     Region region = cache.getRegion(regionName);
     if (region == null) {
-      return DataCommandResult.createPutResult(key, null, null, CliStrings.format(CliStrings.PUT__MSG__REGION_NOT_FOUND, regionName), false);
+      return DataCommandResult.createPutResult(
+          key,
+          null,
+          null,
+          CliStrings.format(CliStrings.PUT__MSG__REGION_NOT_FOUND, regionName),
+          false);
     } else {
       Object keyObject = null;
       Object valueObject = null;
       try {
         keyObject = getClassObject(key, keyClass);
       } catch (ClassNotFoundException e) {
-        return DataCommandResult.createPutResult(key, null, null, "ClassNotFoundException " + keyClass, false);
+        return DataCommandResult.createPutResult(
+            key, null, null, "ClassNotFoundException " + keyClass, false);
       } catch (IllegalArgumentException e) {
-        return DataCommandResult.createPutResult(key, null, null, "Error in converting JSON " + e.getMessage(), false);
+        return DataCommandResult.createPutResult(
+            key, null, null, "Error in converting JSON " + e.getMessage(), false);
       }
 
       try {
         valueObject = getClassObject(value, valueClass);
       } catch (ClassNotFoundException e) {
-        return DataCommandResult.createPutResult(key, null, null, "ClassNotFoundException " + valueClass, false);
+        return DataCommandResult.createPutResult(
+            key, null, null, "ClassNotFoundException " + valueClass, false);
       }
       Object returnValue;
-      if (putIfAbsent && region.containsKey(keyObject))
-        returnValue = region.get(keyObject);
-      else
-        returnValue = region.put(keyObject, valueObject);
+      if (putIfAbsent && region.containsKey(keyObject)) returnValue = region.get(keyObject);
+      else returnValue = region.put(keyObject, valueObject);
       Object array[] = getJSONForNonPrimitiveObject(returnValue);
       DataCommandResult result = DataCommandResult.createPutResult(key, array[1], null, null, true);
-      if (array[0] != null)
-        result.setValueClass((String) array[0]);
+      if (array[0] != null) result.setValueClass((String) array[0]);
       return result;
     }
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  private Object getClassObject(String string, String klassString) throws ClassNotFoundException, IllegalArgumentException {
-    if (klassString == null || klassString.isEmpty())
-      return string;
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  private Object getClassObject(String string, String klassString)
+      throws ClassNotFoundException, IllegalArgumentException {
+    if (klassString == null || klassString.isEmpty()) return string;
     else {
       Object o = null;
       Class klass = ClassPathLoader.getLatest().forName(klassString);
 
-      if (klass.equals(String.class))
-        return string;
+      if (klass.equals(String.class)) return string;
 
       if (JsonUtil.isPrimitiveOrWrapper(klass)) {
         try {
@@ -660,7 +725,8 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
           }
           return o;
         } catch (NumberFormatException e) {
-          throw new IllegalArgumentException("Failed to convert input key to " + klassString + " Msg : " + e.getMessage());
+          throw new IllegalArgumentException(
+              "Failed to convert input key to " + klassString + " Msg : " + e.getMessage());
         }
       }
 
@@ -673,7 +739,7 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
     }
   }
 
-  @SuppressWarnings({ "rawtypes" })
+  @SuppressWarnings({"rawtypes"})
   public static Object[] getJSONForNonPrimitiveObject(Object obj) {
     Object[] array = new Object[2];
     if (obj == null) {
@@ -759,14 +825,13 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
 
   //Copied from RegionUtil of old Gfsh
   /**
-   * Returns a sorted list of all region full paths found in the specified
-   * cache.
+   * Returns a sorted list of all region full paths found in the specified cache.
+   *
    * @param cache The cache to search.
    * @param recursive recursive search for sub-regions
-   * @return Returns a sorted list of all region paths defined in the 
-   *         distributed system.  
+   * @return Returns a sorted list of all region paths defined in the distributed system.
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public static List getAllRegionPaths(Cache cache, boolean recursive) {
     ArrayList list = new ArrayList();
     if (cache == null) {
@@ -784,7 +849,7 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
       list.add(regionPath);
       Set subregionSet = region.subregions(true);
       if (recursive) {
-        for (Iterator subIter = subregionSet.iterator(); subIter.hasNext();) {
+        for (Iterator subIter = subregionSet.iterator(); subIter.hasNext(); ) {
           list.add(((Region) subIter.next()).getFullPath());
         }
       }
@@ -807,7 +872,8 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
       GfJsonObject args = CLIMultiStepHelper.getStepArgs();
       int startCount = args.getInt(DataCommandResult.QUERY_PAGE_START);
       int endCount = args.getInt(DataCommandResult.QUERY_PAGE_END);
-      int rows = args.getInt(DataCommandResult.NUM_ROWS); //returns Zero if no rows added so it works.
+      int rows =
+          args.getInt(DataCommandResult.NUM_ROWS); //returns Zero if no rows added so it works.
       boolean flag = args.getBoolean(DataCommandResult.RESULT_FLAG);
       CommandResult commandResult = CLIMultiStepHelper.getDisplayResultFromArgs(args);
       Gfsh.println();
@@ -824,23 +890,33 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
               String step = Gfsh.getCurrentInstance().interact(message);
               if ("n".equals(step)) {
                 int nextStart = startCount + getPageSize();
-                return CLIMultiStepHelper.createBannerResult(new String[] { DataCommandResult.QUERY_PAGE_START, DataCommandResult.QUERY_PAGE_END, }, new Object[] { nextStart, (nextStart + getPageSize()) }, SELECT_STEP_MOVE);
+                return CLIMultiStepHelper.createBannerResult(
+                    new String[] {
+                      DataCommandResult.QUERY_PAGE_START, DataCommandResult.QUERY_PAGE_END,
+                    },
+                    new Object[] {nextStart, (nextStart + getPageSize())},
+                    SELECT_STEP_MOVE);
               } else if ("p".equals(step)) {
                 int nextStart = startCount - getPageSize();
-                if (nextStart < 0)
-                  nextStart = 0;
-                return CLIMultiStepHelper.createBannerResult(new String[] { DataCommandResult.QUERY_PAGE_START, DataCommandResult.QUERY_PAGE_END }, new Object[] { nextStart, (nextStart + getPageSize()) }, SELECT_STEP_MOVE);
+                if (nextStart < 0) nextStart = 0;
+                return CLIMultiStepHelper.createBannerResult(
+                    new String[] {
+                      DataCommandResult.QUERY_PAGE_START, DataCommandResult.QUERY_PAGE_END
+                    },
+                    new Object[] {nextStart, (nextStart + getPageSize())},
+                    SELECT_STEP_MOVE);
               } else if ("q".equals(step))
-                return CLIMultiStepHelper.createBannerResult(new String[] {}, new Object[] {}, SELECT_STEP_END);
-              else
-                Gfsh.println("Unknown option ");
+                return CLIMultiStepHelper.createBannerResult(
+                    new String[] {}, new Object[] {}, SELECT_STEP_END);
+              else Gfsh.println("Unknown option ");
             } catch (IOException e) {
               throw new RuntimeException(e);
             }
           }
         }
       }
-      return CLIMultiStepHelper.createBannerResult(new String[] {}, new Object[] {}, SELECT_STEP_END);
+      return CLIMultiStepHelper.createBannerResult(
+          new String[] {}, new Object[] {}, SELECT_STEP_END);
     }
   }
 
@@ -881,13 +957,12 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
       if (interactive) {
         endCount = getPageSize();
       } else {
-        if (result.getSelectResult() != null)
-          endCount = result.getSelectResult().size();
+        if (result.getSelectResult() != null) endCount = result.getSelectResult().size();
       }
-      if (interactive)
-        return result.pageResult(0, endCount, SELECT_STEP_DISPLAY);
+      if (interactive) return result.pageResult(0, endCount, SELECT_STEP_DISPLAY);
       else
-        return CLIMultiStepHelper.createBannerResult(new String[] {}, new Object[] {}, SELECT_STEP_END);
+        return CLIMultiStepHelper.createBannerResult(
+            new String[] {}, new Object[] {}, SELECT_STEP_END);
     }
 
     /*private int getLimit(CompiledValue compiledQuery) {
@@ -899,11 +974,13 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
       DataCommandResult dataResult = null;
 
       if (query == null || query.isEmpty()) {
-        dataResult = DataCommandResult.createSelectInfoResult(null, null, -1, null, CliStrings.QUERY__MSG__QUERY_EMPTY, false);
+        dataResult =
+            DataCommandResult.createSelectInfoResult(
+                null, null, -1, null, CliStrings.QUERY__MSG__QUERY_EMPTY, false);
         return dataResult;
       }
 
-      //String query = querySB.toString().trim();      
+      //String query = querySB.toString().trim();
       Object array[] = DataCommands.replaceGfshEnvVar(query, CommandExecutionContext.getShellEnv());
       query = (String) array[1];
       query = addLimit(query);
@@ -923,7 +1000,8 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
 
         regionsInQuery = Collections.unmodifiableSet(regions);
         if (regionsInQuery.size() > 0) {
-          Set<DistributedMember> members = DataCommands.getQueryRegionsAssociatedMembers(regionsInQuery, cache, false);
+          Set<DistributedMember> members =
+              DataCommands.getQueryRegionsAssociatedMembers(regionsInQuery, cache, false);
           if (members != null && members.size() > 0) {
             DataCommandFunction function = new DataCommandFunction();
             DataCommandRequest request = new DataCommandRequest();
@@ -937,20 +1015,44 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
             dataResult.setInputQuery(query);
             return (dataResult);
           } else {
-            return (dataResult = DataCommandResult.createSelectInfoResult(null, null, -1, null, CliStrings.format(CliStrings.QUERY__MSG__REGIONS_NOT_FOUND, regionsInQuery.toString()), false));
+            return (dataResult =
+                DataCommandResult.createSelectInfoResult(
+                    null,
+                    null,
+                    -1,
+                    null,
+                    CliStrings.format(
+                        CliStrings.QUERY__MSG__REGIONS_NOT_FOUND, regionsInQuery.toString()),
+                    false));
           }
         } else {
-          return (dataResult = DataCommandResult.createSelectInfoResult(null, null, -1, null, CliStrings.format(CliStrings.QUERY__MSG__INVALID_QUERY, "Region mentioned in query probably missing /"), false));
+          return (dataResult =
+              DataCommandResult.createSelectInfoResult(
+                  null,
+                  null,
+                  -1,
+                  null,
+                  CliStrings.format(
+                      CliStrings.QUERY__MSG__INVALID_QUERY,
+                      "Region mentioned in query probably missing /"),
+                  false));
         }
       } catch (QueryInvalidException qe) {
         logger.error("{} Failed Error {}", query, qe.getMessage(), qe);
-        return (dataResult = DataCommandResult.createSelectInfoResult(null, null, -1, null, CliStrings.format(CliStrings.QUERY__MSG__INVALID_QUERY, qe.getMessage()), false));
+        return (dataResult =
+            DataCommandResult.createSelectInfoResult(
+                null,
+                null,
+                -1,
+                null,
+                CliStrings.format(CliStrings.QUERY__MSG__INVALID_QUERY, qe.getMessage()),
+                false));
       }
     }
 
     private String addLimit(String query) {
-      if (StringUtils.containsIgnoreCase(query, " limit") || StringUtils.containsIgnoreCase(query, " count("))
-        return query;
+      if (StringUtils.containsIgnoreCase(query, " limit")
+          || StringUtils.containsIgnoreCase(query, " count(")) return query;
       return query + " limit " + getFetchSize();
     }
   };
@@ -969,8 +1071,7 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
       GfJsonObject args = CLIMultiStepHelper.getStepArgs();
       DataCommandResult dataResult = cachedResult;
       cachedResult = null;
-      if (interactive)
-        return CLIMultiStepHelper.createEmptyResult("END");
+      if (interactive) return CLIMultiStepHelper.createEmptyResult("END");
       else {
         CompositeResultData rd = dataResult.toSelectCommandResult();
         SectionResultData section = rd.addSection(CLIMultiStepHelper.STEP_SECTION);
@@ -990,13 +1091,10 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
     }
     if (session != null) {
       String size = session.get(Gfsh.ENV_APP_COLLECTION_LIMIT);
-      if (size == null || size.isEmpty())
-        pageSize = Gfsh.DEFAULT_APP_COLLECTION_LIMIT;
-      else
-        pageSize = Integer.parseInt(size);
+      if (size == null || size.isEmpty()) pageSize = Gfsh.DEFAULT_APP_COLLECTION_LIMIT;
+      else pageSize = Integer.parseInt(size);
     }
-    if (pageSize == -1)
-      pageSize = Gfsh.DEFAULT_APP_COLLECTION_LIMIT;
+    if (pageSize == -1) pageSize = Gfsh.DEFAULT_APP_COLLECTION_LIMIT;
     return pageSize;
   }
 
@@ -1023,7 +1121,7 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
       buf.append(")");
       if (usedIndexes.size() > 0) {
         buf.append(":");
-        for (Iterator itr = usedIndexes.entrySet().iterator(); itr.hasNext();) {
+        for (Iterator itr = usedIndexes.entrySet().iterator(); itr.hasNext(); ) {
           Map.Entry entry = (Map.Entry) itr.next();
           buf.append(entry.getKey().toString() + entry.getValue());
           if (itr.hasNext()) {
@@ -1033,14 +1131,19 @@ public class DataCommandFunction extends FunctionAdapter implements InternalEnti
       }
       usedIndexesString = buf.toString();
     } else if (DefaultQuery.QUERY_VERBOSE) {
-      usedIndexesString = " indexesUsed(NA due to other observer in the way: " + observer.getClass().getName() + ")";
+      usedIndexesString =
+          " indexesUsed(NA due to other observer in the way: "
+              + observer.getClass().getName()
+              + ")";
     }
 
     /*if (resultSize != -1){
       rowCountString = " rowCount = " + resultSize + ";";
     }*/
-    return "Query Executed" + (startTime > 0L ? " in " + time + " ms;" : ";") + (rowCountString != null ? rowCountString : "") + (usedIndexesString != null ? usedIndexesString : "")
-    /*+ " \"" + query + "\""*/;
+    return "Query Executed"
+        + (startTime > 0L ? " in " + time + " ms;" : ";")
+        + (rowCountString != null ? rowCountString : "")
+        + (usedIndexesString != null ? usedIndexesString : "")
+    /*+ " \"" + query + "\""*/ ;
   }
-
 }

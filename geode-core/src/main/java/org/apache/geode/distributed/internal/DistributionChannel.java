@@ -32,8 +32,7 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
  * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
+ * Window>Preferences>Java>Templates. To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
 public class DistributionChannel {
@@ -43,6 +42,7 @@ public class DistributionChannel {
 
   /**
    * Constructor DistributionChannel for JGroups.
+   *
    * @param channel jgroups channel
    */
   public DistributionChannel(MembershipManager channel) {
@@ -53,28 +53,31 @@ public class DistributionChannel {
     return membershipManager.getLocalMember();
   }
 
-  /**
-   * @return the MembershipManager
-   */
+  /** @return the MembershipManager */
   public MembershipManager getMembershipManager() {
     return membershipManager;
   }
 
   /**
-   * @return list of recipients who did not receive the message because
-   * they left the view (null if all received it or it was sent to
-   * {@link DistributionMessage#ALL_RECIPIENTS}).
-   * @throws NotSerializableException
-   *         If content cannot be serialized
+   * @return list of recipients who did not receive the message because they left the view (null if
+   *     all received it or it was sent to {@link DistributionMessage#ALL_RECIPIENTS}).
+   * @throws NotSerializableException If content cannot be serialized
    */
-  public Set send(InternalDistributedMember[] destinations, DistributionMessage content, DistributionManager dm, DistributionStats stats) throws NotSerializableException {
+  public Set send(
+      InternalDistributedMember[] destinations,
+      DistributionMessage content,
+      DistributionManager dm,
+      DistributionStats stats)
+      throws NotSerializableException {
     if (membershipManager == null) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.DistributionChannel_ATTEMPTING_A_SEND_TO_A_DISCONNECTED_DISTRIBUTIONMANAGER));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .DistributionChannel_ATTEMPTING_A_SEND_TO_A_DISCONNECTED_DISTRIBUTIONMANAGER));
       if (destinations.length == 1 && destinations[0] == DistributionMessage.ALL_RECIPIENTS)
         return null;
       HashSet result = new HashSet();
-      for (int i = 0; i < destinations.length; i++)
-        result.add(destinations[i]);
+      for (int i = 0; i < destinations.length; i++) result.add(destinations[i]);
       return result;
     }
     return membershipManager.send(destinations, content, stats);
@@ -86,7 +89,11 @@ public class DistributionChannel {
 
     long start = System.currentTimeMillis();
 
-    logger.debug("DistributionChannel disconnecting with " + membershipManager + "; duringStartup=" + duringStartup);
+    logger.debug(
+        "DistributionChannel disconnecting with "
+            + membershipManager
+            + "; duringStartup="
+            + duringStartup);
 
     if (membershipManager != null) {
       sb.append(membershipManager.getLocalMember());
@@ -112,29 +119,31 @@ public class DistributionChannel {
   }
 
   /**
-   * Returns the id of this distribution channel.  If this channel
-   * uses JavaGroups and the conduit to communicate with others, then
-   * the port of the JavaGroups channel's {@link InternalDistributedMember address} is
-   * returned.
+   * Returns the id of this distribution channel. If this channel uses JavaGroups and the conduit to
+   * communicate with others, then the port of the JavaGroups channel's {@link
+   * InternalDistributedMember address} is returned.
    *
    * @since GemFire 3.0
    */
   public long getId() {
     MembershipManager mgr = this.membershipManager;
     if (mgr == null) {
-      throw new DistributedSystemDisconnectedException(LocalizedStrings.DistributionChannel_I_NO_LONGER_HAVE_A_MEMBERSHIP_ID.toLocalizedString());
+      throw new DistributedSystemDisconnectedException(
+          LocalizedStrings.DistributionChannel_I_NO_LONGER_HAVE_A_MEMBERSHIP_ID
+              .toLocalizedString());
     }
     InternalDistributedMember moi = mgr.getLocalMember();
     if (moi == null) {
-      throw new DistributedSystemDisconnectedException(LocalizedStrings.DistributionChannel_I_NO_LONGER_HAVE_A_MEMBERSHIP_ID.toLocalizedString(), membershipManager.getShutdownCause());
+      throw new DistributedSystemDisconnectedException(
+          LocalizedStrings.DistributionChannel_I_NO_LONGER_HAVE_A_MEMBERSHIP_ID.toLocalizedString(),
+          membershipManager.getShutdownCause());
     }
     return moi.getPort();
   }
 
   public void setShutDown() {
     //    this.shuttingDown = shuttingDown;
-    if (membershipManager != null)
-      membershipManager.setShutdown();
+    if (membershipManager != null) membershipManager.setShutdown();
   }
 
   //   private void sendViaJGroups(Serializable[] destinations,Address source,Serializable content,

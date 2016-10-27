@@ -22,9 +22,7 @@ import org.apache.geode.cache.Cache;
 import org.apache.geode.internal.memcached.RequestReader;
 import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 
-/**
- * 
- */
+/** */
 public class NoOpCommand extends AbstractCommand {
 
   @Override
@@ -34,5 +32,4 @@ public class NoOpCommand extends AbstractCommand {
     ByteBuffer response = request.getResponse();
     return response;
   }
-
 }

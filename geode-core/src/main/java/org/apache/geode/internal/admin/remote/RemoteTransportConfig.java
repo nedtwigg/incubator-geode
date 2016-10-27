@@ -33,9 +33,7 @@ import org.apache.geode.internal.admin.TransportConfig;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.lang.StringUtils;
 
-/**
- * Tranport config for RemoteGfManagerAgent.
- */
+/** Tranport config for RemoteGfManagerAgent. */
 public class RemoteTransportConfig implements TransportConfig {
 
   private final boolean mcastEnabled;
@@ -56,10 +54,9 @@ public class RemoteTransportConfig implements TransportConfig {
   // -------------------------------------------------------------------------
 
   /**
-   * Creates a new <code>RemoteTransportConfig</code> from the
-   * configuration information in a <code>DistributionConfig</code>.
-   * We assume that <code>config</code> already been checked for
-   * errors.
+   * Creates a new <code>RemoteTransportConfig</code> from the configuration information in a <code>
+   * DistributionConfig</code>. We assume that <code>config</code> already been checked for errors.
+   *
    * @since GemFire 3.0
    */
   public RemoteTransportConfig(DistributionConfig config, int vmKind) {
@@ -80,7 +77,12 @@ public class RemoteTransportConfig implements TransportConfig {
     initialHosts = initialHosts.trim();
 
     if (config.getMcastPort() > 0) {
-      this.mcastId = new DistributionLocatorId(config.getMcastAddress(), config.getMcastPort(), config.getBindAddress(), this.sslConfig);
+      this.mcastId =
+          new DistributionLocatorId(
+              config.getMcastAddress(),
+              config.getMcastPort(),
+              config.getBindAddress(),
+              this.sslConfig);
       this.mcastEnabled = true;
     } else {
       this.mcastEnabled = false;
@@ -116,10 +118,18 @@ public class RemoteTransportConfig implements TransportConfig {
   }
 
   /**
-   * Constructs a transport config given a collection of {@link
-   * DistributionLocatorId} instances.
+   * Constructs a transport config given a collection of {@link DistributionLocatorId} instances.
    */
-  public RemoteTransportConfig(boolean isMcastEnabled, boolean isTcpDisabled, boolean isAutoReconnectDisabled, String bindAddress, SSLConfig sslConfig, Collection ids, String membershipPortRange, int tcpPort, int vmKind) {
+  public RemoteTransportConfig(
+      boolean isMcastEnabled,
+      boolean isTcpDisabled,
+      boolean isAutoReconnectDisabled,
+      String bindAddress,
+      SSLConfig sslConfig,
+      Collection ids,
+      String membershipPortRange,
+      int tcpPort,
+      int vmKind) {
     DistributionLocatorId mid = null;
 
     if (bindAddress == null) {
@@ -135,7 +145,9 @@ public class RemoteTransportConfig implements TransportConfig {
     this.disableAutoReconnect = isAutoReconnectDisabled;
     if (isMcastEnabled) {
       if (ids.size() < 1) {
-        throw new IllegalArgumentException(LocalizedStrings.RemoteTransportConfig_EXPECTED_AT_LEAST_ONE_HOSTPORT_ID.toLocalizedString());
+        throw new IllegalArgumentException(
+            LocalizedStrings.RemoteTransportConfig_EXPECTED_AT_LEAST_ONE_HOSTPORT_ID
+                .toLocalizedString());
       }
       Iterator it = ids.iterator();
       while (it.hasNext() && mid == null) {
@@ -172,16 +184,16 @@ public class RemoteTransportConfig implements TransportConfig {
   // -------------------------------------------------------------------------
 
   /**
-   * Returns the set of DistributionLocatorId instances that define this
-   * transport. The set is unmodifiable.
+   * Returns the set of DistributionLocatorId instances that define this transport. The set is
+   * unmodifiable.
    */
   public Set getIds() {
     return this.ids;
   }
 
   /**
-   * Returns true iff multicast is enabled in this transport.
-   * Multicast must be enabled in order to use multicast discovery.
+   * Returns true iff multicast is enabled in this transport. Multicast must be enabled in order to
+   * use multicast discovery.
    */
   public boolean isMcastEnabled() {
     return this.mcastEnabled;
@@ -232,9 +244,9 @@ public class RemoteTransportConfig implements TransportConfig {
   }
 
   /**
-   * Returns a <code>Properties</code> based on this config that is
-   * appropriate to use with {@link
+   * Returns a <code>Properties</code> based on this config that is appropriate to use with {@link
    * org.apache.geode.distributed.DistributedSystem#connect}.
+   *
    * @since GemFire 4.0
    */
   Properties toDSProperties() {
@@ -257,7 +269,7 @@ public class RemoteTransportConfig implements TransportConfig {
     }
     // Create locator string
     StringBuffer locators = new StringBuffer();
-    for (Iterator iter = this.ids.iterator(); iter.hasNext();) {
+    for (Iterator iter = this.ids.iterator(); iter.hasNext(); ) {
       DistributionLocatorId locator = (DistributionLocatorId) iter.next();
       if (!locator.isMcastId()) {
         String baddr = locator.getBindAddress();
@@ -310,9 +322,7 @@ public class RemoteTransportConfig implements TransportConfig {
     return result.toString();
   }
 
-  /**
-   * returns a locators string suitable for use in locators= in gemfire.properties
-   */
+  /** returns a locators string suitable for use in locators= in gemfire.properties */
   public String locatorsString() {
     return this.toString(true);
   }
@@ -339,5 +349,4 @@ public class RemoteTransportConfig implements TransportConfig {
   public int hashCode() {
     return this.ids.hashCode();
   }
-
 }

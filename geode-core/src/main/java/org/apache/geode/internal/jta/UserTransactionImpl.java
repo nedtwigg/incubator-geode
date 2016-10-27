@@ -17,13 +17,10 @@
 package org.apache.geode.internal.jta;
 
 /**
- * <p>
- * <code> UserTransactionImpl </code> is an implementation of UserTransaction
- * interface. It is hard-coded to <code> TransactionManagerImpl
+ * <code> UserTransactionImpl </code> is an implementation of UserTransaction interface. It is
+ * hard-coded to <code> TransactionManagerImpl
  * </code>.
- * </p>
- * 
- * 
+ *
  * @since GemFire 4.0
  */
 import java.io.Serializable;
@@ -36,35 +33,24 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 public class UserTransactionImpl implements UserTransaction, Serializable {
   private static final long serialVersionUID = 2994652455204901910L;
 
-  /**
-   * The TransactionManager which will manage this UserTransaction.
-   */
+  /** The TransactionManager which will manage this UserTransaction. */
   private TransactionManager tm = null;
 
-  /**
-   * Construct a UserTransactionImpl Object
-   */
+  /** Construct a UserTransactionImpl Object */
   public UserTransactionImpl() throws SystemException {
     tm = TransactionManagerImpl.getTransactionManager();
   }
 
-  /**
-   * has setTimeOutbeenCalled
-   */
+  /** has setTimeOutbeenCalled */
   // private boolean timeOutCalled = false;
-  /**
-   * timeOut which is stored in case timeOut is called before begin
-   */
+  /** timeOut which is stored in case timeOut is called before begin */
   private int storedTimeOut = TransactionManagerImpl.DEFAULT_TRANSACTION_TIMEOUT;
 
-  /**
-   * defaultTimeOut in seconds;
-   *  
-   */
+  /** defaultTimeOut in seconds; */
   //private int defaultTimeOut = 600;
   /**
    * Calls begin() of the transaction manager owning this user transaction
-   * 
+   *
    * @see javax.transaction.UserTransaction#begin()
    */
   public synchronized void begin() throws NotSupportedException, SystemException {
@@ -80,16 +66,18 @@ public class UserTransactionImpl implements UserTransaction, Serializable {
 
   /**
    * Calls commit() of the transaction manager owning this user transaction
-   * 
+   *
    * @see javax.transaction.UserTransaction#commit()
    */
-  public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException {
+  public void commit()
+      throws RollbackException, HeuristicMixedException, HeuristicRollbackException,
+          SecurityException, IllegalStateException, SystemException {
     tm.commit();
   }
 
   /**
    * Calls rollback() of the transaction manager owning this user transaction
-   * 
+   *
    * @see javax.transaction.UserTransaction#rollback()
    */
   public void rollback() throws IllegalStateException, SecurityException, SystemException {
@@ -97,9 +85,8 @@ public class UserTransactionImpl implements UserTransaction, Serializable {
   }
 
   /**
-   * Calls setRollbackOnly() of the transaction manager owning this user
-   * transaction
-   * 
+   * Calls setRollbackOnly() of the transaction manager owning this user transaction
+   *
    * @see javax.transaction.UserTransaction#setRollbackOnly()
    */
   public void setRollbackOnly() throws IllegalStateException, SystemException {
@@ -108,7 +95,7 @@ public class UserTransactionImpl implements UserTransaction, Serializable {
 
   /**
    * Calls getStatus() of the transaction manager owning this user transaction
-   * 
+   *
    * @see javax.transaction.UserTransaction#getStatus()
    */
   public int getStatus() throws SystemException {
@@ -116,17 +103,18 @@ public class UserTransactionImpl implements UserTransaction, Serializable {
   }
 
   /**
-   * Checks if transaction has begun. If yes, then call the
-   * tm.setTransactionTimeOut else stores and
-   * 
+   * Checks if transaction has begun. If yes, then call the tm.setTransactionTimeOut else stores and
+   *
    * @see javax.transaction.UserTransaction#setTransactionTimeout
    */
   public void setTransactionTimeout(int timeOut) throws SystemException {
     if (timeOut < 0) {
-      String exception = LocalizedStrings.UserTransactionImpl_USERTRANSACTIONIMPL_SETTRANSACTIONTIMEOUT_CANNOT_SET_A_NEGATIVE_TIME_OUT_FOR_TRANSACTIONS.toLocalizedString();
+      String exception =
+          LocalizedStrings
+              .UserTransactionImpl_USERTRANSACTIONIMPL_SETTRANSACTIONTIMEOUT_CANNOT_SET_A_NEGATIVE_TIME_OUT_FOR_TRANSACTIONS
+              .toLocalizedString();
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (writer.fineEnabled())
-        writer.fine(exception);
+      if (writer.fineEnabled()) writer.fine(exception);
       throw new SystemException(exception);
     } else if (timeOut == 0) {
       timeOut = TransactionManagerImpl.DEFAULT_TRANSACTION_TIMEOUT;

@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.geode.modules.session.catalina;
 
 import org.apache.geode.cache.GemFireCache;
@@ -47,7 +47,8 @@ public class ClientServerSessionCache extends AbstractSessionCache {
 
   private ClientCache cache;
 
-  protected static final String DEFAULT_REGION_ATTRIBUTES_ID = RegionShortcut.PARTITION_REDUNDANT.toString();
+  protected static final String DEFAULT_REGION_ATTRIBUTES_ID =
+      RegionShortcut.PARTITION_REDUNDANT.toString();
 
   protected static final boolean DEFAULT_ENABLE_LOCAL_CACHE = true;
 
@@ -100,7 +101,8 @@ public class ClientServerSessionCache extends AbstractSessionCache {
       // Execute the partitioned touch function on the primary server(s)
       Execution execution = FunctionService.onRegion(getSessionRegion()).withFilter(sessionIds);
       try {
-        ResultCollector collector = execution.execute(TouchPartitionedRegionEntriesFunction.ID, true, false, true);
+        ResultCollector collector =
+            execution.execute(TouchPartitionedRegionEntriesFunction.ID, true, false, true);
         collector.getResult();
       } catch (Exception e) {
         // If an exception occurs in the function, log it.
@@ -108,9 +110,12 @@ public class ClientServerSessionCache extends AbstractSessionCache {
       }
     } else {
       // Execute the member touch function on all the server(s)
-      Execution execution = FunctionService.onServers(getCache()).withArgs(new Object[] { this.sessionRegion.getFullPath(), sessionIds });
+      Execution execution =
+          FunctionService.onServers(getCache())
+              .withArgs(new Object[] {this.sessionRegion.getFullPath(), sessionIds});
       try {
-        ResultCollector collector = execution.execute(TouchReplicatedRegionEntriesFunction.ID, true, false, false);
+        ResultCollector collector =
+            execution.execute(TouchReplicatedRegionEntriesFunction.ID, true, false, false);
         collector.getResult();
       } catch (Exception e) {
         // If an exception occurs in the function, log it.
@@ -208,7 +213,11 @@ public class ClientServerSessionCache extends AbstractSessionCache {
     for (RegionStatus status : results) {
       if (status == RegionStatus.INVALID) {
         StringBuilder builder = new StringBuilder();
-        builder.append("An exception occurred on the server while attempting to create or validate region named ").append(getSessionManager().getRegionName()).append(". See the server log for additional details.");
+        builder
+            .append(
+                "An exception occurred on the server while attempting to create or validate region named ")
+            .append(getSessionManager().getRegionName())
+            .append(". See the server log for additional details.");
         throw new IllegalStateException(builder.toString());
       }
     }

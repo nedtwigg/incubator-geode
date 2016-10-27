@@ -22,15 +22,25 @@ import org.apache.geode.management.internal.cli.parser.OptionSet;
 
 public class CliCommandOptionValueConversionException extends CliCommandOptionValueException {
 
-  public CliCommandOptionValueConversionException(final CommandTarget commandTarget, final Option option, final String value) {
+  public CliCommandOptionValueConversionException(
+      final CommandTarget commandTarget, final Option option, final String value) {
     this(commandTarget, option, null, value, null);
   }
 
-  public CliCommandOptionValueConversionException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet, final String value) {
+  public CliCommandOptionValueConversionException(
+      final CommandTarget commandTarget,
+      final Option option,
+      final OptionSet optionSet,
+      final String value) {
     this(commandTarget, option, optionSet, value, null);
   }
 
-  public CliCommandOptionValueConversionException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet, final String value, final Throwable cause) {
+  public CliCommandOptionValueConversionException(
+      final CommandTarget commandTarget,
+      final Option option,
+      final OptionSet optionSet,
+      final String value,
+      final Throwable cause) {
     super(commandTarget, option, optionSet, value, null);
   }
 }

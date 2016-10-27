@@ -17,17 +17,15 @@
 package org.apache.geode.internal.statistics;
 
 /**
- * Descriptor containing all of the parameters required to construct a new
- * instance of a {@link StatArchiveWriter}.
- * This describes the statistics archive.
- * <p/>
- * This is a constructor parameter object for {@link 
- * StatArchiveWriter}.
- * <p/>
- * {@link StatArchiveDescriptor.Builder} is used for constructing instances
- * instead of a constructor with many similar parameters (ie, multiple Strings
- * which could easily be interposed with one another).
- * 
+ * Descriptor containing all of the parameters required to construct a new instance of a {@link
+ * StatArchiveWriter}. This describes the statistics archive.
+ *
+ * <p>This is a constructor parameter object for {@link StatArchiveWriter}.
+ *
+ * <p>{@link StatArchiveDescriptor.Builder} is used for constructing instances instead of a
+ * constructor with many similar parameters (ie, multiple Strings which could easily be interposed
+ * with one another).
+ *
  * @since GemFire 7.0
  */
 public class StatArchiveDescriptor {

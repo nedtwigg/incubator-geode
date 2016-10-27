@@ -38,32 +38,34 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
   }
 
   private void waitConnectedServers(final int expected) {
-    WaitCriterion wc = new WaitCriterion() {
-      public boolean done() {
-        return expected == pool.getConnectedServerCount();
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          public boolean done() {
+            return expected == pool.getConnectedServerCount();
+          }
 
-      public String description() {
-        return "Connected server count (" + pool.getConnectedServerCount() + ") never became " + expected;
-      }
-    };
+          public String description() {
+            return "Connected server count ("
+                + pool.getConnectedServerCount()
+                + ") never became "
+                + expected;
+          }
+        };
     Wait.waitForCriterion(wc, 2 * 60 * 1000, 1000, true);
   }
 
   /**
-   * Redundancy level specified & less than total Eps. If an EP dies & is part
-   * of the fail over list , then it should be removed from live server map &
-   * added to dead server map. A new EP should be picked from the live server
-   * map to compensate for the failure. The EP failed also happened to be a
-   * Primary EP so a new EP from fail over set should become the primary and
-   * make sure that CCP is created on the server with relevant interest
-   * registartion.
-   * Failure Detection by LSM
+   * Redundancy level specified & less than total Eps. If an EP dies & is part of the fail over list
+   * , then it should be removed from live server map & added to dead server map. A new EP should be
+   * picked from the live server map to compensate for the failure. The EP failed also happened to
+   * be a Primary EP so a new EP from fail over set should become the primary and make sure that CCP
+   * is created on the server with relevant interest registartion. Failure Detection by LSM
    */
   @Test
   public void testRedundancySpecifiedPrimaryEPFails() {
     try {
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1);
       waitConnectedServers(4);
       assertTrue(pool.getPrimaryName().equals(SERVER1));
       assertTrue(pool.getRedundantNames().contains(SERVER2));
@@ -83,26 +85,32 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       //assertIndexDetailsEquals(3, pool.getConnectedServerCount());
       //assertIndexDetailsEquals(1, proxy.getDeadServers().size());
     } catch (Exception ex) {
-      Assert.fail("test failed due to exception in test testRedundancySpecifiedPrimaryEPFails ", ex);
+      Assert.fail(
+          "test failed due to exception in test testRedundancySpecifiedPrimaryEPFails ", ex);
     }
   }
 
   /**
-   * Redundancy level specified & less than total Eps. If an EP dies & is part
-   * of the fail over list , then it should be removed from live server map &
-   * added to dead server map. A new EP should be picked from the live server
-   * map to compensate for the failure. The EP failed also happened to be a
-   * Primary EP so a new EP from fail over set should become the primary and
-   * make sure that CCP is created on the server with relevant interest
-   * registartion.
-   * Failure Detection by CCU
+   * Redundancy level specified & less than total Eps. If an EP dies & is part of the fail over list
+   * , then it should be removed from live server map & added to dead server map. A new EP should be
+   * picked from the live server map to compensate for the failure. The EP failed also happened to
+   * be a Primary EP so a new EP from fail over set should become the primary and make sure that CCP
+   * is created on the server with relevant interest registartion. Failure Detection by CCU
    */
   @Test
   public void testRedundancySpecifiedPrimaryEPFailsDetectionByCCU() {
     try {
 
       FailOverDetectionByCCU = true;
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1, 3000, 100);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)),
+          PORT1,
+          PORT2,
+          PORT3,
+          PORT4,
+          1,
+          3000,
+          100);
       waitConnectedServers(4);
       assertTrue(pool.getPrimaryName().equals(SERVER1));
       assertTrue(pool.getRedundantNames().contains(SERVER2));
@@ -121,7 +129,9 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       // assertIndexDetailsEquals(3, pool.getConnectedServerCount());
       //assertIndexDetailsEquals(1, proxy.getDeadServers().size());
     } catch (Exception ex) {
-      Assert.fail("test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByCCU ", ex);
+      Assert.fail(
+          "test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByCCU ",
+          ex);
     }
   }
 
@@ -138,7 +148,15 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
   @Test
   public void testRedundancySpecifiedPrimaryEPFailsDetectionByRegisterInterest() {
     try {
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1, 3000, 100);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)),
+          PORT1,
+          PORT2,
+          PORT3,
+          PORT4,
+          1,
+          3000,
+          100);
       waitConnectedServers(4);
       assertTrue(pool.getPrimaryName().equals(SERVER1));
       assertTrue(pool.getRedundantNames().contains(SERVER2));
@@ -159,7 +177,9 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       // assertIndexDetailsEquals(3, pool.getConnectedServerCount());
       //assertIndexDetailsEquals(1, proxy.getDeadServers().size());
     } catch (Exception ex) {
-      Assert.fail("test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByRegisterInterest ", ex);
+      Assert.fail(
+          "test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByRegisterInterest ",
+          ex);
     }
   }
 
@@ -176,7 +196,15 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
   @Test
   public void testRedundancySpecifiedPrimaryEPFailsDetectionByUnregisterInterest() {
     try {
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1, 3000, 100);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)),
+          PORT1,
+          PORT2,
+          PORT3,
+          PORT4,
+          1,
+          3000,
+          100);
       waitConnectedServers(4);
       assertTrue(pool.getPrimaryName().equals(SERVER1));
       assertTrue(pool.getRedundantNames().contains(SERVER2));
@@ -196,7 +224,9 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       // assertIndexDetailsEquals(3, pool.getConnectedServerCount());
       //assertIndexDetailsEquals(1, proxy.getDeadServers().size());
     } catch (Exception ex) {
-      Assert.fail("test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByUnregisterInterest ", ex);
+      Assert.fail(
+          "test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByUnregisterInterest ",
+          ex);
     }
   }
 
@@ -213,7 +243,15 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
   @Test
   public void testRedundancySpecifiedPrimaryEPFailsDetectionByPut() {
     try {
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1, 3000, 100);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)),
+          PORT1,
+          PORT2,
+          PORT3,
+          PORT4,
+          1,
+          3000,
+          100);
       waitConnectedServers(4);
       assertTrue(pool.getPrimaryName().equals(SERVER1));
       assertTrue(pool.getRedundantNames().contains(SERVER2));
@@ -233,7 +271,9 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       // assertIndexDetailsEquals(3, pool.getConnectedServerCount());
       //assertIndexDetailsEquals(1, proxy.getDeadServers().size());
     } catch (Exception ex) {
-      Assert.fail("test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByPut ", ex);
+      Assert.fail(
+          "test failed due to exception in test testRedundancySpecifiedPrimaryEPFailsDetectionByPut ",
+          ex);
     }
   }
 
@@ -246,7 +286,8 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
   @Test
   public void testRedundancySpecifiedPrimarySecondaryEPFails() {
     try {
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1);
       waitConnectedServers(4);
       assertEquals(1, pool.getRedundantNames().size());
       assertTrue(pool.getPrimaryName().equals(SERVER1));
@@ -266,23 +307,25 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       //assertTrue(pool.getRedundantNames().contains(SERVER3));
       server3.invoke(() -> RedundancyLevelTestBase.verifyInterestRegistration());
     } catch (Exception ex) {
-      Assert.fail("test failed due to exception in test testRedundancySpecifiedPrimarySecondaryEPFails ", ex);
+      Assert.fail(
+          "test failed due to exception in test testRedundancySpecifiedPrimarySecondaryEPFails ",
+          ex);
     }
   }
 
   /**
-   * There are 4 Eps in Live serevr Map with redundancy level as 2. Kill two Eps
-   * (excluding the primary). As a result live server map will contain 2 ,
-   * active list will contain two & dead server map will contain 2. Redundancy
-   * is unsatisfied by 1. Bring up one EP . The DSM should add the alive EP to
-   * the active end point & live server map with primary unchnaged. Also make
-   * sure that CCP is created on the server with relevant interest registartion.
-   * Bringing the 4th EP alive should simply add it to Live server map.
+   * There are 4 Eps in Live serevr Map with redundancy level as 2. Kill two Eps (excluding the
+   * primary). As a result live server map will contain 2 , active list will contain two & dead
+   * server map will contain 2. Redundancy is unsatisfied by 1. Bring up one EP . The DSM should add
+   * the alive EP to the active end point & live server map with primary unchnaged. Also make sure
+   * that CCP is created on the server with relevant interest registartion. Bringing the 4th EP
+   * alive should simply add it to Live server map.
    */
   @Test
   public void testRedundancySpecifiedEPFails() {
     try {
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 2);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 2);
       waitConnectedServers(4);
       assertEquals(2, pool.getRedundantNames().size());
       assertTrue(pool.getPrimaryName().equals(SERVER1));
@@ -326,9 +369,9 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
   }
 
   /**
-   * Redundancy level specified but not satisfied, new EP is added then it
-   * should be added in Live server map as well as failover set and make sure
-   * that CCP is created on the server with relevant interest registartion.
+   * Redundancy level specified but not satisfied, new EP is added then it should be added in Live
+   * server map as well as failover set and make sure that CCP is created on the server with
+   * relevant interest registartion.
    */
   @Test
   public void testRedundancyLevelSpecifiedButNotSatisfied() {
@@ -339,9 +382,10 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       // make sure that the client connects to only two servers and
       // redundancyLevel
       // unsatisfied with one
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 2);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 2);
       // let the client connect to servers
-      //pause(10000);      
+      //pause(10000);
       verifyLiveAndRedundantServers(2, 1);
       verifyOrderOfEndpoints();
       //assertIndexDetailsEquals(2, pool.getRedundantNames().size());
@@ -378,22 +422,21 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
     } catch (Exception ex) {
       Assert.fail("test failed due to exception in test noRedundancyLevelServerFail ", ex);
     }
-
   }
 
   /**
-   * Redundancy level specified and satisfied, new EP is added then it should be
-   * added only in Live server map and make sure that no CCP is created on the
-   * server.
+   * Redundancy level specified and satisfied, new EP is added then it should be added only in Live
+   * server map and make sure that no CCP is created on the server.
    */
   @Test
   public void testRedundancyLevelSpecifiedAndSatisfied() {
     try {
       // TODO: Yogesh
       server1.invoke(() -> RedundancyLevelTestBase.stopServer());
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 2);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 2);
       // let the client connect to servers
-      //pause(10000);      
+      //pause(10000);
       verifyLiveAndRedundantServers(3, 2);
       verifyOrderOfEndpoints();
       //assertIndexDetailsEquals(3, pool.getRedundantNames().size());
@@ -420,16 +463,22 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
   }
 
   /**
-   * Redundancy level not specified, new EP is added then it should be added in
-   * live server map as well as failover set and make sure that CCP is created
-   * on the server with relevant interest registartion.
+   * Redundancy level not specified, new EP is added then it should be added in live server map as
+   * well as failover set and make sure that CCP is created on the server with relevant interest
+   * registartion.
    */
   @Test
   public void testRedundancyLevelNotSpecified() {
     try {
       // TODO: Yogesh
       server2.invoke(() -> RedundancyLevelTestBase.stopServer());
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, -1/* not specified */);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)),
+          PORT1,
+          PORT2,
+          PORT3,
+          PORT4,
+          -1 /* not specified */);
       // let the client connect to servers
       //pause(10000);
       verifyLiveAndRedundantServers(3, 2);
@@ -461,13 +510,14 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
   }
 
   /**
-   * Redundancy level specified is more than the total EndPoints. In such situation there should
-   * not be any exception & all the EPs should has CacheClientProxy created.
+   * Redundancy level specified is more than the total EndPoints. In such situation there should not
+   * be any exception & all the EPs should has CacheClientProxy created.
    */
   @Test
   public void testRedundancySpecifiedMoreThanEPs() {
     try {
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 5);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 5);
       assertEquals(3, pool.getRedundantNames().size());
       server0.invoke(() -> RedundancyLevelTestBase.verifyCCP());
       server1.invoke(() -> RedundancyLevelTestBase.verifyCCP());
@@ -478,5 +528,4 @@ public class RedundancyLevelPart2DUnitTest extends RedundancyLevelTestBase {
       Assert.fail("test failed due to exception in test testRedundancySpecifiedMoreThanEPs ", ex);
     }
   }
-
 }

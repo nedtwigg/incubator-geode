@@ -18,8 +18,8 @@
 package org.apache.geode.internal.admin.remote;
 
 /**
- * This interface is implemented by AdminMessages that want
- * to check if they've been cancelled during their processing.
+ * This interface is implemented by AdminMessages that want to check if they've been cancelled
+ * during their processing.
  */
 public interface Cancellable {
   public void cancel();

@@ -37,28 +37,18 @@ public class SharedConfigurationStatusRequestHandler implements TcpHandler {
   }
 
   @Override
-  public void endRequest(Object request, long startTime) {
-
-  }
+  public void endRequest(Object request, long startTime) {}
 
   @Override
-  public void endResponse(Object request, long startTime) {
-
-  }
+  public void endResponse(Object request, long startTime) {}
 
   @Override
-  public void shutDown() {
-
-  }
+  public void shutDown() {}
 
   @Override
-  public void init(TcpServer tcpServer) {
-
-  }
+  public void init(TcpServer tcpServer) {}
 
   @Override
-  public void restarting(DistributedSystem system, GemFireCache cache, SharedConfiguration sharedConfig) {
-
-  }
-
+  public void restarting(
+      DistributedSystem system, GemFireCache cache, SharedConfiguration sharedConfig) {}
 }

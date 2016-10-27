@@ -46,20 +46,22 @@ public class DistributedRegionFunction extends FunctionAdapter {
       // do not close cache in retry
       if (!rcontext.isPossibleDuplicate()) {
         sys.disconnect();
-        throw new CacheClosedException("Throwing CacheClosedException " + "to simulate failover during function exception");
+        throw new CacheClosedException(
+            "Throwing CacheClosedException " + "to simulate failover during function exception");
       }
     } else {
-      WaitCriterion wc = new WaitCriterion() {
-        String excuse;
+      WaitCriterion wc =
+          new WaitCriterion() {
+            String excuse;
 
-        public boolean done() {
-          return false;
-        }
+            public boolean done() {
+              return false;
+            }
 
-        public String description() {
-          return excuse;
-        }
-      };
+            public String description() {
+              return excuse;
+            }
+          };
       Wait.waitForCriterion(wc, 12000, 500, false);
     }
     long endTime = System.currentTimeMillis();
@@ -68,7 +70,7 @@ public class DistributedRegionFunction extends FunctionAdapter {
     region.put("execKey-201", new Integer(201));
 
     if (rcontext.isPossibleDuplicate()) { // Below operation is done when the
-                                            // function is reexecuted
+      // function is reexecuted
       region.put("execKey-202", new Integer(202));
       region.put("execKey-203", new Integer(203));
     }

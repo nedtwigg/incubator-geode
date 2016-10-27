@@ -18,20 +18,17 @@ package org.apache.geode.internal.cache;
 
 import org.apache.geode.cache.CacheRuntimeException;
 
-/**
- * RuntimeException propagated to invoking code to signal problem with remote
- * operations.
- *
- */
+/** RuntimeException propagated to invoking code to signal problem with remote operations. */
 public class PartitionedRegionException extends CacheRuntimeException {
   private static final long serialVersionUID = 5113786059279106007L;
 
   /** Creates a new instance of ParititonedRegionException */
-  public PartitionedRegionException() {
-  }
+  public PartitionedRegionException() {}
 
-  /** Creates a new instance of PartitionedRegionException 
-   *@param msg 
+  /**
+   * Creates a new instance of PartitionedRegionException
+   *
+   * @param msg
    */
   public PartitionedRegionException(String msg) {
     super(msg);
@@ -39,9 +36,7 @@ public class PartitionedRegionException extends CacheRuntimeException {
 
   //////////////////////  Constructors  //////////////////////
 
-  /**
-   * Creates a new <code>PartitionedRegionException</code>.
-   */
+  /** Creates a new <code>PartitionedRegionException</code>. */
   public PartitionedRegionException(String message, Throwable cause) {
     super(message, cause);
   }

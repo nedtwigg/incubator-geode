@@ -69,7 +69,7 @@ public class EventTrackerDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests <code>EventTracker</code> is created and destroyed when a <code>Region</code> is created 
+   * Tests <code>EventTracker</code> is created and destroyed when a <code>Region</code> is created
    * and destroyed.
    */
   @Test
@@ -108,9 +108,7 @@ public class EventTrackerDUnitTest extends JUnit4CacheTestCase {
     assertEquals(EXPECTED_TRACKERS + 1, expiryTask.getNumberOfTrackers());
   }
 
-  /**
-   * Tests adding threads to an <code>EventTracker</code>.
-   */
+  /** Tests adding threads to an <code>EventTracker</code>. */
   @Test
   public void testEventTrackerAddThreadIdentifier() throws CacheException {
     Host host = Host.getHost(0);
@@ -119,69 +117,73 @@ public class EventTrackerDUnitTest extends JUnit4CacheTestCase {
     final String regionName = getName();
 
     // Create Region in the server and verify tracker is created
-    serverVM.invoke(new CacheSerializableRunnable("Create server") {
-      public void run2() throws CacheException {
-        // Create a distributed Region
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        LocalRegion region = (LocalRegion) createRegion(regionName, factory.create());
+    serverVM.invoke(
+        new CacheSerializableRunnable("Create server") {
+          public void run2() throws CacheException {
+            // Create a distributed Region
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            LocalRegion region = (LocalRegion) createRegion(regionName, factory.create());
 
-        // Verify an EventTracker is created
-        EventTracker eventTracker = region.getEventTracker();
-        assertNotNull(eventTracker);
-        try {
-          startCacheServer();
-        } catch (Exception ex) {
-          Assert.fail("While starting CacheServer", ex);
-        }
-      }
-    });
+            // Verify an EventTracker is created
+            EventTracker eventTracker = region.getEventTracker();
+            assertNotNull(eventTracker);
+            try {
+              startCacheServer();
+            } catch (Exception ex) {
+              Assert.fail("While starting CacheServer", ex);
+            }
+          }
+        });
 
     // Verify tracker in server contains no entries
-    serverVM.invoke(new CacheSerializableRunnable("Do puts") {
-      public void run2() throws CacheException {
-        LocalRegion region = (LocalRegion) getRootRegion().getSubregion(regionName);
-        Map eventState = region.getEventState();
-        assertEquals(0, eventState.size());
-      }
-    });
+    serverVM.invoke(
+        new CacheSerializableRunnable("Do puts") {
+          public void run2() throws CacheException {
+            LocalRegion region = (LocalRegion) getRootRegion().getSubregion(regionName);
+            Map eventState = region.getEventState();
+            assertEquals(0, eventState.size());
+          }
+        });
 
     // Create Create Region in the client
     final int port = serverVM.invoke(() -> EventTrackerDUnitTest.getCacheServerPort());
     final String hostName = NetworkUtils.getServerHostName(host);
-    clientVM.invoke(new CacheSerializableRunnable("Create client") {
-      public void run2() throws CacheException {
-        getCache();
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        ClientServerTestCase.configureConnectionPool(factory, hostName, port, -1, false, -1, -1, null);
-        createRegion(regionName, factory.create());
-      }
-    });
+    clientVM.invoke(
+        new CacheSerializableRunnable("Create client") {
+          public void run2() throws CacheException {
+            getCache();
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            ClientServerTestCase.configureConnectionPool(
+                factory, hostName, port, -1, false, -1, -1, null);
+            createRegion(regionName, factory.create());
+          }
+        });
 
     // Do puts in the client
-    clientVM.invoke(new CacheSerializableRunnable("Do puts") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(regionName);
-        for (int i = 0; i < 10; i++) {
-          region.put(i, i);
-        }
-      }
-    });
+    clientVM.invoke(
+        new CacheSerializableRunnable("Do puts") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(regionName);
+            for (int i = 0; i < 10; i++) {
+              region.put(i, i);
+            }
+          }
+        });
 
     // Verify tracker in server contains an entry for client thread
-    serverVM.invoke(new CacheSerializableRunnable("Do puts") {
-      public void run2() throws CacheException {
-        LocalRegion region = (LocalRegion) getRootRegion().getSubregion(regionName);
-        Map eventState = region.getEventState();
-        assertEquals(1, eventState.size());
-      }
-    });
+    serverVM.invoke(
+        new CacheSerializableRunnable("Do puts") {
+          public void run2() throws CacheException {
+            LocalRegion region = (LocalRegion) getRootRegion().getSubregion(regionName);
+            Map eventState = region.getEventState();
+            assertEquals(1, eventState.size());
+          }
+        });
   }
 
-  /**
-   * Tests adding events to and removing events from an <code>EventTracker</code>.
-   */
+  /** Tests adding events to and removing events from an <code>EventTracker</code>. */
   @Test
   public void testEventTrackerAddRemoveThreadIdentifier() throws CacheException {
     Host host = Host.getHost(0);
@@ -190,82 +192,87 @@ public class EventTrackerDUnitTest extends JUnit4CacheTestCase {
     final String regionName = getName();
 
     // Create Region in the server and verify tracker is created
-    serverVM.invoke(new CacheSerializableRunnable("Create server") {
-      public void run2() throws CacheException {
-        // Set the message tracking timeout
-        System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "messageTrackingTimeout", MESSAGE_TRACKING_TIMEOUT);
+    serverVM.invoke(
+        new CacheSerializableRunnable("Create server") {
+          public void run2() throws CacheException {
+            // Set the message tracking timeout
+            System.setProperty(
+                DistributionConfig.GEMFIRE_PREFIX + "messageTrackingTimeout",
+                MESSAGE_TRACKING_TIMEOUT);
 
-        // Create a distributed Region
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        LocalRegion region = (LocalRegion) createRegion(regionName, factory.create());
+            // Create a distributed Region
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            LocalRegion region = (LocalRegion) createRegion(regionName, factory.create());
 
-        // Verify an EventTracker is created
-        EventTracker eventTracker = region.getEventTracker();
-        assertNotNull(eventTracker);
-        try {
-          startCacheServer();
-        } catch (Exception ex) {
-          Assert.fail("While starting CacheServer", ex);
-        }
-      }
-    });
+            // Verify an EventTracker is created
+            EventTracker eventTracker = region.getEventTracker();
+            assertNotNull(eventTracker);
+            try {
+              startCacheServer();
+            } catch (Exception ex) {
+              Assert.fail("While starting CacheServer", ex);
+            }
+          }
+        });
 
     // Verify tracker in server contains no entries
-    serverVM.invoke(new CacheSerializableRunnable("Do puts") {
-      public void run2() throws CacheException {
-        LocalRegion region = (LocalRegion) getRootRegion().getSubregion(regionName);
-        Map eventState = region.getEventState();
-        assertEquals(0, eventState.size());
-      }
-    });
+    serverVM.invoke(
+        new CacheSerializableRunnable("Do puts") {
+          public void run2() throws CacheException {
+            LocalRegion region = (LocalRegion) getRootRegion().getSubregion(regionName);
+            Map eventState = region.getEventState();
+            assertEquals(0, eventState.size());
+          }
+        });
 
     // Create Create Region in the client
     final int port = serverVM.invoke(() -> EventTrackerDUnitTest.getCacheServerPort());
     final String hostName = NetworkUtils.getServerHostName(host);
-    clientVM.invoke(new CacheSerializableRunnable("Create client") {
-      public void run2() throws CacheException {
-        getCache();
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        ClientServerTestCase.configureConnectionPool(factory, hostName, port, -1, false, -1, -1, null);
-        createRegion(regionName, factory.create());
-      }
-    });
+    clientVM.invoke(
+        new CacheSerializableRunnable("Create client") {
+          public void run2() throws CacheException {
+            getCache();
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            ClientServerTestCase.configureConnectionPool(
+                factory, hostName, port, -1, false, -1, -1, null);
+            createRegion(regionName, factory.create());
+          }
+        });
 
     // Do puts in the client
-    clientVM.invoke(new CacheSerializableRunnable("Do puts") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(regionName);
-        for (int i = 0; i < 10; i++) {
-          region.put(i, i);
-        }
-      }
-    });
+    clientVM.invoke(
+        new CacheSerializableRunnable("Do puts") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(regionName);
+            for (int i = 0; i < 10; i++) {
+              region.put(i, i);
+            }
+          }
+        });
 
     // Verify tracker in server
-    serverVM.invoke(new CacheSerializableRunnable("Do puts") {
-      public void run2() throws CacheException {
-        // First verify it contains an entry
-        LocalRegion region = (LocalRegion) getRootRegion().getSubregion(regionName);
-        Map eventState = region.getEventState();
-        assertEquals(1, eventState.size());
+    serverVM.invoke(
+        new CacheSerializableRunnable("Do puts") {
+          public void run2() throws CacheException {
+            // First verify it contains an entry
+            LocalRegion region = (LocalRegion) getRootRegion().getSubregion(regionName);
+            Map eventState = region.getEventState();
+            assertEquals(1, eventState.size());
 
-        // Pause for the message tracking timeout
-        int waitTime = Integer.parseInt(MESSAGE_TRACKING_TIMEOUT) * 3;
-        Wait.pause(waitTime);
+            // Pause for the message tracking timeout
+            int waitTime = Integer.parseInt(MESSAGE_TRACKING_TIMEOUT) * 3;
+            Wait.pause(waitTime);
 
-        // Verify the server no longer contains an entry
-        eventState = region.getEventState();
-        assertEquals(0, eventState.size());
-      }
-    });
+            // Verify the server no longer contains an entry
+            eventState = region.getEventState();
+            assertEquals(0, eventState.size());
+          }
+        });
   }
 
-  /**
-   * Test to make sure we don't leak put all events in the event tracker
-   * after multiple putAlls
-   */
+  /** Test to make sure we don't leak put all events in the event tracker after multiple putAlls */
   @Test
   public void testPutAllHoldersInEventTracker() {
     Host host = Host.getHost(0);
@@ -273,28 +280,30 @@ public class EventTrackerDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
 
-    SerializableRunnable createRegion = new SerializableRunnable("createRegion") {
+    SerializableRunnable createRegion =
+        new SerializableRunnable("createRegion") {
 
-      public void run() {
-        Cache cache = getCache();
-        RegionFactory<Object, Object> rf = cache.createRegionFactory(RegionShortcut.PARTITION_REDUNDANT);
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setTotalNumBuckets(3);
-        rf.setPartitionAttributes(paf.create());
-        rf.setConcurrencyChecksEnabled(true);
-        rf.create("partitioned");
+          public void run() {
+            Cache cache = getCache();
+            RegionFactory<Object, Object> rf =
+                cache.createRegionFactory(RegionShortcut.PARTITION_REDUNDANT);
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            paf.setTotalNumBuckets(3);
+            rf.setPartitionAttributes(paf.create());
+            rf.setConcurrencyChecksEnabled(true);
+            rf.create("partitioned");
 
-        rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
-        rf.setConcurrencyChecksEnabled(true);
-        rf.create("replicate");
-        try {
-          startCacheServer();
-        } catch (Exception ex) {
-          Assert.fail("While starting CacheServer", ex);
-        }
-      }
-    };
+            rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
+            rf.setConcurrencyChecksEnabled(true);
+            rf.create("replicate");
+            try {
+              startCacheServer();
+            } catch (Exception ex) {
+              Assert.fail("While starting CacheServer", ex);
+            }
+          }
+        };
 
     vm0.invoke(createRegion);
     vm1.invoke(createRegion);
@@ -302,16 +311,18 @@ public class EventTrackerDUnitTest extends JUnit4CacheTestCase {
     // Create Create Region in the client
     final int port = vm0.invoke(() -> EventTrackerDUnitTest.getCacheServerPort());
     final String hostName = NetworkUtils.getServerHostName(host);
-    vm2.invoke(new CacheSerializableRunnable("Create client") {
-      public void run2() throws CacheException {
-        getCache();
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        ClientServerTestCase.configureConnectionPool(factory, hostName, port, -1, false, -1, -1, null);
-        createRootRegion("partitioned", factory.create());
-        createRootRegion("replicate", factory.create());
-      }
-    });
+    vm2.invoke(
+        new CacheSerializableRunnable("Create client") {
+          public void run2() throws CacheException {
+            getCache();
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            ClientServerTestCase.configureConnectionPool(
+                factory, hostName, port, -1, false, -1, -1, null);
+            createRootRegion("partitioned", factory.create());
+            createRootRegion("replicate", factory.create());
+          }
+        });
 
     doTwoPutAlls(vm2, "partitioned");
     doTwoPutAlls(vm2, "replicate");
@@ -330,64 +341,72 @@ public class EventTrackerDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void doTwoPutAlls(VM vm, final String regionName) {
-    SerializableRunnable createData = new SerializableRunnable("putAlls") {
+    SerializableRunnable createData =
+        new SerializableRunnable("putAlls") {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(regionName);
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(regionName);
 
-        Map putAllMap = new HashMap();
-        for (int i = 0; i < 9; i++) {
-          putAllMap.put(i, i);
-        }
-        region.putAll(putAllMap);
+            Map putAllMap = new HashMap();
+            for (int i = 0; i < 9; i++) {
+              putAllMap.put(i, i);
+            }
+            region.putAll(putAllMap);
 
-        putAllMap.clear();
-        for (int i = 10; i < 19; i++) {
-          putAllMap.put(i, i);
-        }
-        region.putAll(putAllMap);
-      }
-    };
+            putAllMap.clear();
+            for (int i = 10; i < 19; i++) {
+              putAllMap.put(i, i);
+            }
+            region.putAll(putAllMap);
+          }
+        };
 
     vm.invoke(createData);
   }
 
   private SerializableRunnable checkReplicateEventTracker(VM vm, final int expectedEntryCount) {
-    SerializableRunnable checkEventTracker = new SerializableRunnable("checkEventTracker") {
+    SerializableRunnable checkEventTracker =
+        new SerializableRunnable("checkEventTracker") {
 
-      public void run() {
-        Cache cache = getCache();
-        DistributedRegion region = (DistributedRegion) cache.getRegion("replicate");
-        checkEventTracker(region, expectedEntryCount);
-      }
-    };
+          public void run() {
+            Cache cache = getCache();
+            DistributedRegion region = (DistributedRegion) cache.getRegion("replicate");
+            checkEventTracker(region, expectedEntryCount);
+          }
+        };
     vm.invoke(checkEventTracker);
     return checkEventTracker;
   }
 
-  private SerializableRunnable checkBucketEventTracker(VM vm, final int bucketNumber, final int expectedEntryCount) {
-    SerializableRunnable checkEventTracker = new SerializableRunnable("checkEventTracker") {
+  private SerializableRunnable checkBucketEventTracker(
+      VM vm, final int bucketNumber, final int expectedEntryCount) {
+    SerializableRunnable checkEventTracker =
+        new SerializableRunnable("checkEventTracker") {
 
-      public void run() {
-        Cache cache = getCache();
-        PartitionedRegion region = (PartitionedRegion) cache.getRegion("partitioned");
-        BucketRegion br = region.getBucketRegion(bucketNumber);
+          public void run() {
+            Cache cache = getCache();
+            PartitionedRegion region = (PartitionedRegion) cache.getRegion("partitioned");
+            BucketRegion br = region.getBucketRegion(bucketNumber);
 
-        checkEventTracker(br, expectedEntryCount);
-      }
-    };
+            checkEventTracker(br, expectedEntryCount);
+          }
+        };
     vm.invoke(checkEventTracker);
     return checkEventTracker;
   }
 
   private void checkEventTracker(LocalRegion region, int numberOfEvents) {
     EventTracker tracker = region.getEventTracker();
-    ConcurrentMap<ThreadIdentifier, BulkOpHolder> memberToTags = tracker.getRecordedBulkOpVersionTags();
+    ConcurrentMap<ThreadIdentifier, BulkOpHolder> memberToTags =
+        tracker.getRecordedBulkOpVersionTags();
     assertEquals("memberToTags=" + memberToTags, 1, memberToTags.size());
     BulkOpHolder holder = memberToTags.values().iterator().next();
     //We expect the holder to retain only the last putAll that was performed.
-    assertEquals("entryToVersionTags=" + holder.entryVersionTags, numberOfEvents, holder.entryVersionTags.size());
+    assertEquals(
+        "entryToVersionTags=" + holder.entryVersionTags,
+        numberOfEvents,
+        holder.entryVersionTags.size());
   }
 
   protected void startCacheServer() throws IOException {

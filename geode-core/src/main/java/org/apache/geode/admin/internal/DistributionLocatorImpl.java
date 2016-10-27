@@ -37,37 +37,27 @@ import java.util.*;
 /**
  * Default administrative implementation of a DistributionLocator.
  *
- * @since GemFire     3.5
+ * @since GemFire 3.5
  */
 public class DistributionLocatorImpl implements DistributionLocator, InternalManagedEntity {
 
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * How many new <code>DistributionLocator</code>s have been created?
-   */
+  /** How many new <code>DistributionLocator</code>s have been created? */
   private static int newLocators = 0;
 
   ////////////////////  Instance Fields  ////////////////////
 
-  /**
-   * The configuration object for this locator
-   */
+  /** The configuration object for this locator */
   private final DistributionLocatorConfigImpl config;
 
-  /**
-   * The id of this distribution locator
-   */
+  /** The id of this distribution locator */
   private final String id;
 
-  /**
-   * Used to control the actual DistributionLocator service
-   */
+  /** Used to control the actual DistributionLocator service */
   private ManagedEntityController controller;
 
-  /**
-   * The system that this locator is a part of
-   */
+  /** The system that this locator is a part of */
   private AdminDistributedSystemImpl system;
 
   // -------------------------------------------------------------------------
@@ -75,10 +65,11 @@ public class DistributionLocatorImpl implements DistributionLocator, InternalMan
   // -------------------------------------------------------------------------
 
   /**
-   * Constructs new instance of <code>DistributionLocatorImpl</code>
-   * that is a member of the given distributed system.
+   * Constructs new instance of <code>DistributionLocatorImpl</code> that is a member of the given
+   * distributed system.
    */
-  public DistributionLocatorImpl(DistributionLocatorConfig config, AdminDistributedSystemImpl system) {
+  public DistributionLocatorImpl(
+      DistributionLocatorConfig config, AdminDistributedSystemImpl system) {
     this.config = (DistributionLocatorConfigImpl) config;
     this.config.validate();
     this.config.setManagedEntity(this);
@@ -115,28 +106,24 @@ public class DistributionLocatorImpl implements DistributionLocator, InternalMan
   }
 
   /**
-   * Unfortunately, it doesn't make much sense to maintain the state
-   * of a locator.  The admin API does not receive notification when
-   * the locator actually starts and stops.  If we try to guess, we'll
-   * just end up with race conditions galore.  So, we can't fix bug
-   * 32455 for locators.
+   * Unfortunately, it doesn't make much sense to maintain the state of a locator. The admin API
+   * does not receive notification when the locator actually starts and stops. If we try to guess,
+   * we'll just end up with race conditions galore. So, we can't fix bug 32455 for locators.
    */
   public int setState(int state) {
-    throw new UnsupportedOperationException(LocalizedStrings.DistributionLocatorImpl_CAN_NOT_SET_THE_STATE_OF_A_LOCATOR.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.DistributionLocatorImpl_CAN_NOT_SET_THE_STATE_OF_A_LOCATOR
+            .toLocalizedString());
   }
 
   // -------------------------------------------------------------------------
   //   Operations...
   // -------------------------------------------------------------------------
 
-  /**
-   * Polls to determine whether or not this managed entity has
-   * started.
-   */
+  /** Polls to determine whether or not this managed entity has started. */
   public boolean waitToStart(long timeout) throws InterruptedException {
 
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
 
     long start = System.currentTimeMillis();
     while (System.currentTimeMillis() - start < timeout) {
@@ -148,18 +135,15 @@ public class DistributionLocatorImpl implements DistributionLocator, InternalMan
       }
     }
 
-    logger.info(LocalizedMessage.create(LocalizedStrings.DistributionLocatorImpl_DONE_WAITING_FOR_LOCATOR));
+    logger.info(
+        LocalizedMessage.create(LocalizedStrings.DistributionLocatorImpl_DONE_WAITING_FOR_LOCATOR));
     return this.isRunning();
   }
 
-  /**
-   * Polls to determine whether or not this managed entity has
-   * stopped.
-   */
+  /** Polls to determine whether or not this managed entity has stopped. */
   public boolean waitToStop(long timeout) throws InterruptedException {
 
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
 
     long start = System.currentTimeMillis();
     while (System.currentTimeMillis() - start < timeout) {
@@ -190,8 +174,12 @@ public class DistributionLocatorImpl implements DistributionLocator, InternalMan
 
     boolean found = false;
     Map<InternalDistributedMember, Collection<String>> hostedLocators = dm.getAllHostedLocators();
-    for (Iterator<InternalDistributedMember> memberIter = hostedLocators.keySet().iterator(); memberIter.hasNext();) {
-      for (Iterator<String> locatorIter = hostedLocators.get(memberIter.next()).iterator(); locatorIter.hasNext();) {
+    for (Iterator<InternalDistributedMember> memberIter = hostedLocators.keySet().iterator();
+        memberIter.hasNext();
+        ) {
+      for (Iterator<String> locatorIter = hostedLocators.get(memberIter.next()).iterator();
+          locatorIter.hasNext();
+          ) {
         DistributionLocatorId locator = new DistributionLocatorId(locatorIter.next());
         found = found || locator.getHost().getHostAddress().equals(host);
         found = found || locator.getHost().getHostName().equals(host);
@@ -206,7 +194,10 @@ public class DistributionLocatorImpl implements DistributionLocator, InternalMan
             // try config host as if it is an IP address instead of host name
           }
         }
-        if (locator.getBindAddress() != null && !locator.getBindAddress().isEmpty() && bindAddress != null && !bindAddress.isEmpty()) {
+        if (locator.getBindAddress() != null
+            && !locator.getBindAddress().isEmpty()
+            && bindAddress != null
+            && !bindAddress.isEmpty()) {
           found = found && locator.getBindAddress().equals(bindAddress);
         }
         found = found && locator.getPort() == port;
@@ -323,5 +314,4 @@ public class DistributionLocatorImpl implements DistributionLocator, InternalMan
 
     return sb.toString().trim();
   }
-
 }

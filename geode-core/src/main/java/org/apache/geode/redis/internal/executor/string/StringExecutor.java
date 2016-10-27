@@ -29,17 +29,17 @@ public abstract class StringExecutor extends AbstractExecutor {
     if (oldVal == RedisDataType.REDIS_PROTECTED)
       throw new RedisDataTypeMismatchException("The key name \"" + key + "\" is protected");
     if (oldVal != null && oldVal != RedisDataType.REDIS_STRING)
-      throw new RedisDataTypeMismatchException("The key name \"" + key + "\" is already used by a " + oldVal.toString());
+      throw new RedisDataTypeMismatchException(
+          "The key name \"" + key + "\" is already used by a " + oldVal.toString());
   }
 
   protected void checkDataType(ByteArrayWrapper key, ExecutionHandlerContext context) {
     RedisDataType currentType = context.getRegionProvider().getRedisDataType(key);
-    if (currentType == null)
-      return;
+    if (currentType == null) return;
     if (currentType == RedisDataType.REDIS_PROTECTED)
       throw new RedisDataTypeMismatchException("The key name \"" + key + "\" is protected");
     if (currentType != RedisDataType.REDIS_STRING)
-      throw new RedisDataTypeMismatchException("The key name \"" + key + "\" is already used by a " + currentType.toString());
+      throw new RedisDataTypeMismatchException(
+          "The key name \"" + key + "\" is already used by a " + currentType.toString());
   }
-
 }

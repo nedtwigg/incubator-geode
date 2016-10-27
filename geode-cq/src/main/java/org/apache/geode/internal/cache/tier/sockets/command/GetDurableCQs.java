@@ -38,17 +38,17 @@ import org.apache.geode.internal.security.AuthorizeRequest;
 
 public class GetDurableCQs extends BaseCQCommand {
 
-  private final static GetDurableCQs singleton = new GetDurableCQs();
+  private static final GetDurableCQs singleton = new GetDurableCQs();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private GetDurableCQs() {
-  }
+  private GetDurableCQs() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, InterruptedException {
     AcceptorImpl acceptor = servConn.getAcceptor();
     CachedRegionHelper crHelper = servConn.getCachedRegionHelper();
     ClientProxyMembershipID id = servConn.getProxyID();
@@ -58,14 +58,19 @@ public class GetDurableCQs extends BaseCQCommand {
     servConn.setAsTrue(REQUIRES_CHUNKED_RESPONSE);
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received {} request from {}", servConn.getName(), MessageType.getString(msg.getMessageType()), servConn.getSocketString());
+      logger.debug(
+          "{}: Received {} request from {}",
+          servConn.getName(),
+          MessageType.getString(msg.getMessageType()),
+          servConn.getSocketString());
     }
 
     DefaultQueryService qService = null;
     CqService cqServiceForExec = null;
 
     try {
-      qService = (DefaultQueryService) ((GemFireCacheImpl) crHelper.getCache()).getLocalQueryService();
+      qService =
+          (DefaultQueryService) ((GemFireCacheImpl) crHelper.getCache()).getLocalQueryService();
 
       this.securityService.authorizeClusterRead();
 
@@ -85,11 +90,15 @@ public class GetDurableCQs extends BaseCQCommand {
 
       List durableCqList = new ArrayList(maximumChunkSize);
       final boolean isTraceEnabled = logger.isTraceEnabled();
-      for (Iterator it = durableCqs.iterator(); it.hasNext();) {
+      for (Iterator it = durableCqs.iterator(); it.hasNext(); ) {
         Object durableCqName = it.next();
         durableCqList.add(durableCqName);
         if (isTraceEnabled) {
-          logger.trace("{}: getDurableCqsResponse <{}>; list size was {}", servConn.getName(), durableCqName, durableCqList.size());
+          logger.trace(
+              "{}: getDurableCqsResponse <{}>; list size was {}",
+              servConn.getName(),
+              durableCqName,
+              durableCqList.size());
         }
         if (durableCqList.size() == maximumChunkSize) {
           // Send the chunk and clear the list
@@ -109,7 +118,8 @@ public class GetDurableCQs extends BaseCQCommand {
     }
   }
 
-  private void sendDurableCqsResponseChunk(List list, boolean lastChunk, ServerConnection servConn) throws IOException {
+  private void sendDurableCqsResponseChunk(List list, boolean lastChunk, ServerConnection servConn)
+      throws IOException {
     ChunkedMessage chunkedResponseMsg = servConn.getChunkedResponseMessage();
 
     chunkedResponseMsg.setNumberOfParts(1);
@@ -117,10 +127,13 @@ public class GetDurableCQs extends BaseCQCommand {
     chunkedResponseMsg.addObjPart(list, zipValues);
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Sending {} durableCQs response chunk{}", servConn.getName(), (lastChunk ? " last " : " "), (logger.isTraceEnabled() ? " keys=" + list + " chunk=<" + chunkedResponseMsg + ">" : ""));
+      logger.debug(
+          "{}: Sending {} durableCQs response chunk{}",
+          servConn.getName(),
+          (lastChunk ? " last " : " "),
+          (logger.isTraceEnabled() ? " keys=" + list + " chunk=<" + chunkedResponseMsg + ">" : ""));
     }
 
     chunkedResponseMsg.sendChunk(servConn);
   }
-
 }

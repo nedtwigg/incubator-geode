@@ -16,9 +16,7 @@
  */
 package org.apache.geode.management.model;
 
-/**
- * @rishim
- */
+/** @rishim */
 public class SubOrder extends Order {
   private static final long serialVersionUID = 2049641616996906291L;
 
@@ -26,5 +24,4 @@ public class SubOrder extends Order {
   public String getId() {
     return super.getId() + "1";
   }
-
 }

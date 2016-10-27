@@ -44,7 +44,8 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
 
   private final String ERROR_NOT_NUMERIC = "The index provided is not numeric";
 
-  private final String ERROR_ILLEGAL_SYNTAX = "The min and max strings must either start with a (, [ or be - or +";
+  private final String ERROR_ILLEGAL_SYNTAX =
+      "The min and max strings must either start with a (, [ or be - or +";
 
   private final String ERROR_LIMIT = "The offset and count cannot be negative";
 
@@ -53,7 +54,8 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
     List<byte[]> commandElems = command.getProcessedCommand();
 
     if (commandElems.size() < 4) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.ZRANGEBYLEX));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.ZRANGEBYLEX));
       return;
     }
 
@@ -74,7 +76,8 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
         offset = Coder.bytesToInt(offsetArray);
         limit = Coder.bytesToInt(limitArray);
       } catch (NumberFormatException e) {
-        command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_NUMERIC));
+        command.setResponse(
+            Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_NUMERIC));
         return;
       }
     }
@@ -85,7 +88,8 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
     }
 
     ByteArrayWrapper key = command.getKey();
-    Region<ByteArrayWrapper, DoubleWrapper> keyRegion = getOrCreateRegion(context, key, RedisDataType.REDIS_SORTEDSET);
+    Region<ByteArrayWrapper, DoubleWrapper> keyRegion =
+        getOrCreateRegion(context, key, RedisDataType.REDIS_SORTEDSET);
 
     if (keyRegion == null) {
       command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
@@ -106,7 +110,8 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
       startString = startString.substring(1);
       minInclusive = true;
     } else if (minArray[0] != Coder.HYPHEN_ID) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_ILLEGAL_SYNTAX));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_ILLEGAL_SYNTAX));
       return;
     }
 
@@ -117,34 +122,53 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
       stopString = stopString.substring(1);
       maxInclusive = true;
     } else if (maxArray[0] != Coder.PLUS_ID) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_ILLEGAL_SYNTAX));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_ILLEGAL_SYNTAX));
       return;
     }
     Collection<ByteArrayWrapper> list = null;
     if (!(existsLimit && limit == 0)) {
       try {
-        list = getRange(key, keyRegion, context, Coder.stringToByteArrayWrapper(startString), Coder.stringToByteArrayWrapper(stopString), minInclusive, maxInclusive, offset, limit);
+        list =
+            getRange(
+                key,
+                keyRegion,
+                context,
+                Coder.stringToByteArrayWrapper(startString),
+                Coder.stringToByteArrayWrapper(stopString),
+                minInclusive,
+                maxInclusive,
+                offset,
+                limit);
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
     }
     if (list == null)
       command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
-    else
-      command.setResponse(getCustomBulkStringArrayResponse(list, context));
+    else command.setResponse(getCustomBulkStringArrayResponse(list, context));
   }
 
-  private List<ByteArrayWrapper> getRange(ByteArrayWrapper key, Region<ByteArrayWrapper, DoubleWrapper> keyRegion, ExecutionHandlerContext context, ByteArrayWrapper start, ByteArrayWrapper stop, boolean startInclusive, boolean stopInclusive, int offset, int limit) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  private List<ByteArrayWrapper> getRange(
+      ByteArrayWrapper key,
+      Region<ByteArrayWrapper, DoubleWrapper> keyRegion,
+      ExecutionHandlerContext context,
+      ByteArrayWrapper start,
+      ByteArrayWrapper stop,
+      boolean startInclusive,
+      boolean stopInclusive,
+      int offset,
+      int limit)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     if (start.equals("-") && stop.equals("+")) {
       List<ByteArrayWrapper> l = new ArrayList<ByteArrayWrapper>(keyRegion.keySet());
       int size = l.size();
       Collections.sort(l);
-      if (limit == 0)
-        limit += size;
+      if (limit == 0) limit += size;
       l = l.subList(Math.min(size, offset), Math.min(offset + limit, size));
       return l;
-    } else if (start.equals("+") || stop.equals("-"))
-      return null;
+    } else if (start.equals("+") || stop.equals("-")) return null;
 
     Query query;
     Object[] params;
@@ -154,14 +178,14 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
       } else {
         query = getQuery(key, SortedSetQuery.ZRANGEBYLEXNINF, context);
       }
-      params = new Object[] { stop, INFINITY_LIMIT };
+      params = new Object[] {stop, INFINITY_LIMIT};
     } else if (stop.equals("+")) {
       if (startInclusive) {
         query = getQuery(key, SortedSetQuery.ZRANGEBYLEXPINFI, context);
       } else {
         query = getQuery(key, SortedSetQuery.ZRANGEBYLEXPINF, context);
       }
-      params = new Object[] { start, INFINITY_LIMIT };
+      params = new Object[] {start, INFINITY_LIMIT};
     } else {
       if (startInclusive) {
         if (stopInclusive) {
@@ -176,18 +200,18 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
           query = getQuery(key, SortedSetQuery.ZRANGEBYLEX, context);
         }
       }
-      params = new Object[] { start, stop, INFINITY_LIMIT };
+      params = new Object[] {start, stop, INFINITY_LIMIT};
     }
-    if (limit > 0)
-      params[params.length - 1] = (limit + offset);
-    SelectResults<ByteArrayWrapper> results = (SelectResults<ByteArrayWrapper>) query.execute(params);
+    if (limit > 0) params[params.length - 1] = (limit + offset);
+    SelectResults<ByteArrayWrapper> results =
+        (SelectResults<ByteArrayWrapper>) query.execute(params);
     List<ByteArrayWrapper> list = results.asList();
     int size = list.size();
     return list.subList(Math.min(size, offset), size);
-
   }
 
-  private final ByteBuf getCustomBulkStringArrayResponse(Collection<ByteArrayWrapper> items, ExecutionHandlerContext context) {
+  private final ByteBuf getCustomBulkStringArrayResponse(
+      Collection<ByteArrayWrapper> items, ExecutionHandlerContext context) {
     Iterator<ByteArrayWrapper> it = items.iterator();
     ByteBuf response = context.getByteBufAllocator().buffer();
     response.writeByte(Coder.ARRAY_ID);
@@ -206,5 +230,4 @@ public class ZRangeByLexExecutor extends SortedSetExecutor {
 
     return response;
   }
-
 }

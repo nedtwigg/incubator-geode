@@ -53,9 +53,7 @@ import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * Tests behaviour of transactions in client server model
- */
+/** Tests behaviour of transactions in client server model */
 @Category(DistributedTest.class)
 public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase {
 
@@ -109,14 +107,20 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test for update propagation to the clients when there is one server and two
-   * clients connected to the server.
+   * Test for update propagation to the clients when there is one server and two clients connected
+   * to the server.
    */
   @Test
   public void testOneServerToClientTransactionsPropagation() {
     Integer port1 = initServerCache(server1);
-    client1.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1));
-    client2.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1));
+    client1.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1));
+    client2.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1));
     Wait.pause(PAUSE);
 
     server1.invoke(resetFlags());
@@ -138,15 +142,21 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test for update propagation to the clients when there are  2 servers and two
-   * clients connected to both the servers.
+   * Test for update propagation to the clients when there are 2 servers and two clients connected
+   * to both the servers.
    */
   @Test
   public void testServerToClientTransactionsPropagation() {
     Integer port1 = initServerCache(server1);
     Integer port2 = initServerCache(server2);
-    client1.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
-    client2.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
+    client1.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
+    client2.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
     Wait.pause(PAUSE);
 
     server1.invoke(resetFlags());
@@ -171,15 +181,21 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test for update propagation to the clients when there are  2 servers and two
-   * clients connected to separate server.
+   * Test for update propagation to the clients when there are 2 servers and two clients connected
+   * to separate server.
    */
   @Test
   public void testServerToClientTransactionsPropagationWithOneClientConnectedToOneServer() {
     Integer port1 = initServerCache(server1);
     Integer port2 = initServerCache(server2);
-    client1.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1));
-    client2.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port2));
+    client1.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1));
+    client2.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port2));
     Wait.pause(PAUSE);
 
     server1.invoke(resetFlags());
@@ -204,14 +220,20 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test for invalidate propagation to the clients when there is one server and two
-   * clients connected to the server.
+   * Test for invalidate propagation to the clients when there is one server and two clients
+   * connected to the server.
    */
   @Test
   public void testInvalidatesOneServerToClientTransactionsPropagation() {
     Integer port1 = initServerCache(server1);
-    client1.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1));
-    client2.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1));
+    client1.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1));
+    client2.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1));
     Wait.pause(PAUSE);
 
     server1.invoke(resetFlags());
@@ -228,15 +250,21 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test for invalidate propagation to the clients when there are  2 servers and two
-   * clients connected to both servers.
+   * Test for invalidate propagation to the clients when there are 2 servers and two clients
+   * connected to both servers.
    */
   @Test
   public void testInvalidatesServerToClientTransactionsPropagation() {
     Integer port1 = initServerCache(server1);
     Integer port2 = initServerCache(server2);
-    client1.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
-    client2.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
+    client1.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
+    client2.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
     Wait.pause(PAUSE);
 
     server1.invoke(resetFlags());
@@ -255,15 +283,21 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test for invalidate propagation to the clients when there are  2 servers and two
-   * clients connected to separate servers.
+   * Test for invalidate propagation to the clients when there are 2 servers and two clients
+   * connected to separate servers.
    */
   @Test
   public void testInvalidatesServerToClientTransactionsPropagationWithOneConnection() {
     Integer port1 = initServerCache(server1);
     Integer port2 = initServerCache(server2);
-    client1.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1));
-    client2.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port2));
+    client1.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1));
+    client2.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port2));
     Wait.pause(PAUSE);
 
     server1.invoke(resetFlags());
@@ -282,14 +316,20 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test for destroy propagation to the clients when there is one server and two
-   * clients connected to the server.
+   * Test for destroy propagation to the clients when there is one server and two clients connected
+   * to the server.
    */
   @Test
   public void testDestroysOneServerToClientTransactionsPropagation() {
     Integer port1 = initServerCache(server1);
-    client1.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1));
-    client2.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1));
+    client1.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1));
+    client2.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1));
     Wait.pause(PAUSE);
 
     server1.invoke(resetFlags());
@@ -306,15 +346,21 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test for destroy propagation to the clients when there are  2 servers and two
-   * clients connected to both servers.
+   * Test for destroy propagation to the clients when there are 2 servers and two clients connected
+   * to both servers.
    */
   @Test
   public void testDestroysServerToClientTransactionsPropagation() {
     Integer port1 = initServerCache(server1);
     Integer port2 = initServerCache(server2);
-    client1.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
-    client2.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
+    client1.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
+    client2.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
     Wait.pause(PAUSE);
 
     server1.invoke(resetFlags());
@@ -333,15 +379,21 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test for destroy propagation to the clients when there are  2 servers and two
-   * clients connected to sepatate servers.
+   * Test for destroy propagation to the clients when there are 2 servers and two clients connected
+   * to sepatate servers.
    */
   @Test
   public void testDestroysServerToClientTransactionsPropagationWithOneConnection() {
     Integer port1 = initServerCache(server1);
     Integer port2 = initServerCache(server2);
-    client1.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1));
-    client2.invoke(() -> CacheServerTransactionsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port2));
+    client1.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1));
+    client2.invoke(
+        () ->
+            CacheServerTransactionsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port2));
     Wait.pause(PAUSE);
 
     server1.invoke(resetFlags());
@@ -360,9 +412,8 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Tests if client commits are propagated to servers or not
-   * Currently it is UnsupportedOperationException hence the test is commented 
-   *
+   * Tests if client commits are propagated to servers or not Currently it is
+   * UnsupportedOperationException hence the test is commented
    */
   @Ignore
   @Test
@@ -382,12 +433,13 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   }
 
   private CacheSerializableRunnable resetFlags() {
-    CacheSerializableRunnable resetFlags = new CacheSerializableRunnable("resetFlags") {
-      public void run2() throws CacheException {
-        destroyed = false;
-        invalidated = false;
-      }
-    };
+    CacheSerializableRunnable resetFlags =
+        new CacheSerializableRunnable("resetFlags") {
+          public void run2() throws CacheException {
+            destroyed = false;
+            invalidated = false;
+          }
+        };
     return resetFlags;
   }
 
@@ -411,28 +463,30 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
     assertNotNull(r1);
     try {
       LogWriterUtils.getLogWriter().info("vlaue for the key k1" + r1.getEntry(k1).getValue());
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          Thread.yield(); // TODO is this necessary?
-          return r1.getEntry(k1).getValue().equals(client_k1);
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              Thread.yield(); // TODO is this necessary?
+              return r1.getEntry(k1).getValue().equals(client_k1);
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 120 * 1000, 200, true);
 
-      ev = new WaitCriterion() {
-        public boolean done() {
-          Thread.yield(); // TODO is this necessary?
-          return r1.getEntry(k2).getValue().equals(client_k2);
-        }
+      ev =
+          new WaitCriterion() {
+            public boolean done() {
+              Thread.yield(); // TODO is this necessary?
+              return r1.getEntry(k2).getValue().equals(client_k2);
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 120 * 1000, 200, true);
     } catch (Exception e) {
       fail("Exception in trying to get due to " + e);
@@ -489,7 +543,8 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   public static void commitTransactionOnServer2() {
     try {
       cache.getCacheTransactionManager().commit();
-      fail("CommitConflictException is expected on server2 , as server1 has not commited the transaction yet");
+      fail(
+          "CommitConflictException is expected on server2 , as server1 has not commited the transaction yet");
     } catch (CommitConflictException cce) {
 
     }
@@ -511,28 +566,30 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
       // wait until
       // condition is
       // met
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          Thread.yield(); // TODO is this necessary?
-          return r1.getEntry(k1).getValue().equals(k1);
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              Thread.yield(); // TODO is this necessary?
+              return r1.getEntry(k1).getValue().equals(k1);
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 120 * 1000, 200, true);
 
-      ev = new WaitCriterion() {
-        public boolean done() {
-          Thread.yield(); // TODO is this necessary?
-          return r1.getEntry(k2).getValue().equals(k2);
-        }
+      ev =
+          new WaitCriterion() {
+            public boolean done() {
+              Thread.yield(); // TODO is this necessary?
+              return r1.getEntry(k2).getValue().equals(k2);
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 120 * 1000, 200, true);
     } catch (Exception e) {
       fail("Exception in trying to get due to " + e);
@@ -544,28 +601,35 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
     assertNotNull(r1);
 
     try {
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          Thread.yield(); // TODO is this necessary?
-          return r1.getEntry(k1).getValue().equals(server1_k1);
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              Thread.yield(); // TODO is this necessary?
+              return r1.getEntry(k1).getValue().equals(server1_k1);
+            }
 
-        public String description() {
-          return "Value for entry " + r1 + " never became " + server1_k1 + "; it is still " + r1.getEntry(k1).getValue();
-        }
-      };
+            public String description() {
+              return "Value for entry "
+                  + r1
+                  + " never became "
+                  + server1_k1
+                  + "; it is still "
+                  + r1.getEntry(k1).getValue();
+            }
+          };
       Wait.waitForCriterion(ev, 120 * 1000, 200, true);
 
-      ev = new WaitCriterion() {
-        public boolean done() {
-          Thread.yield(); // TODO is this necessary?
-          return r1.getEntry(k2).getValue().equals(server1_k2);
-        }
+      ev =
+          new WaitCriterion() {
+            public boolean done() {
+              Thread.yield(); // TODO is this necessary?
+              return r1.getEntry(k2).getValue().equals(server1_k2);
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 120 * 1000, 200, true);
     } catch (Exception e) {
       fail("Exception in trying to get due to " + e);
@@ -616,27 +680,32 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new CacheServerTransactionsDUnitTest().createCache(props);
-    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, port.intValue()).setSubscriptionEnabled(true)
-        // .setRetryInterval(2000)
-        .create("CacheServerTransctionDUnitTestPool2");
+    PoolImpl p =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(host, port.intValue())
+                .setSubscriptionEnabled(true)
+                // .setRetryInterval(2000)
+                .create("CacheServerTransctionDUnitTestPool2");
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     factory.setPoolName(p.getName());
-    factory.setCacheListener(new CacheListenerAdapter() {
-      public void afterDestroy(EntryEvent event) {
-        synchronized (CacheServerTransactionsDUnitTest.class) {
-          destroyed = true;
-          CacheServerTransactionsDUnitTest.class.notify();
-        }
-      }
+    factory.setCacheListener(
+        new CacheListenerAdapter() {
+          public void afterDestroy(EntryEvent event) {
+            synchronized (CacheServerTransactionsDUnitTest.class) {
+              destroyed = true;
+              CacheServerTransactionsDUnitTest.class.notify();
+            }
+          }
 
-      public void afterInvalidate(EntryEvent event) {
-        synchronized (CacheServerTransactionsDUnitTest.class) {
-          invalidated = true;
-          CacheServerTransactionsDUnitTest.class.notifyAll();
-        }
-      }
-    });
+          public void afterInvalidate(EntryEvent event) {
+            synchronized (CacheServerTransactionsDUnitTest.class) {
+              invalidated = true;
+              CacheServerTransactionsDUnitTest.class.notifyAll();
+            }
+          }
+        });
     Region region1 = cache.createRegion(REGION_NAME, factory.create());
     assertNotNull(region1);
     pool = p;
@@ -648,28 +717,34 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new CacheServerTransactionsDUnitTest().createCache(props);
-    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, port1.intValue()).addServer(host, port2.intValue()).setSubscriptionEnabled(true)
-        // .setRetryInterval(2000)
-        .create("CacheServerTransctionDUnitTestPool2");
+    PoolImpl p =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(host, port1.intValue())
+                .addServer(host, port2.intValue())
+                .setSubscriptionEnabled(true)
+                // .setRetryInterval(2000)
+                .create("CacheServerTransctionDUnitTestPool2");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     factory.setPoolName(p.getName());
-    factory.setCacheListener(new CacheListenerAdapter() {
-      public void afterDestroy(EntryEvent event) {
-        synchronized (CacheServerTransactionsDUnitTest.class) {
-          destroyed = true;
-          CacheServerTransactionsDUnitTest.class.notify();
-        }
-      }
+    factory.setCacheListener(
+        new CacheListenerAdapter() {
+          public void afterDestroy(EntryEvent event) {
+            synchronized (CacheServerTransactionsDUnitTest.class) {
+              destroyed = true;
+              CacheServerTransactionsDUnitTest.class.notify();
+            }
+          }
 
-      public void afterInvalidate(EntryEvent event) {
-        synchronized (CacheServerTransactionsDUnitTest.class) {
-          invalidated = true;
-          CacheServerTransactionsDUnitTest.class.notifyAll();
-        }
-      }
-    });
+          public void afterInvalidate(EntryEvent event) {
+            synchronized (CacheServerTransactionsDUnitTest.class) {
+              invalidated = true;
+              CacheServerTransactionsDUnitTest.class.notifyAll();
+            }
+          }
+        });
     Region region1 = cache.createRegion(REGION_NAME, factory.create());
     assertNotNull(region1);
     pool = p;
@@ -681,8 +756,9 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
   }
 
   private Integer initServerCache(VM server) {
-    Object[] args = new Object[] { new Integer(getMaxThreads()) };
-    return (Integer) server.invoke(CacheServerTransactionsDUnitTest.class, "createServerCache", args);
+    Object[] args = new Object[] {new Integer(getMaxThreads())};
+    return (Integer)
+        server.invoke(CacheServerTransactionsDUnitTest.class, "createServerCache", args);
   }
 
   public static Integer createServerCache(Integer maxThreads) throws Exception {
@@ -690,21 +766,22 @@ public class CacheServerTransactionsDUnitTest extends JUnit4DistributedTestCase 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
-    factory.setCacheListener(new CacheListenerAdapter() {
-      public void afterDestroy(EntryEvent event) {
-        synchronized (CacheServerTransactionsDUnitTest.class) {
-          destroyed = true;
-          CacheServerTransactionsDUnitTest.class.notify();
-        }
-      }
+    factory.setCacheListener(
+        new CacheListenerAdapter() {
+          public void afterDestroy(EntryEvent event) {
+            synchronized (CacheServerTransactionsDUnitTest.class) {
+              destroyed = true;
+              CacheServerTransactionsDUnitTest.class.notify();
+            }
+          }
 
-      public void afterInvalidate(EntryEvent event) {
-        synchronized (CacheServerTransactionsDUnitTest.class) {
-          invalidated = true;
-          CacheServerTransactionsDUnitTest.class.notifyAll();
-        }
-      }
-    });
+          public void afterInvalidate(EntryEvent event) {
+            synchronized (CacheServerTransactionsDUnitTest.class) {
+              invalidated = true;
+              CacheServerTransactionsDUnitTest.class.notifyAll();
+            }
+          }
+        });
     Region r1 = cache.createRegion(REGION_NAME, factory.create());
     assertNotNull(r1);
     CacheServer server1 = cache.addCacheServer();

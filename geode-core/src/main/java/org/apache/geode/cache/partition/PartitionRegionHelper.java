@@ -50,11 +50,11 @@ import org.apache.geode.internal.cache.partitioned.rebalance.PercentageMoveDirec
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * Utility methods for handling partitioned Regions, for example
- * during execution of {@link Function Functions} on a Partitioned
- * Region.
- * 
+ * Utility methods for handling partitioned Regions, for example during execution of {@link Function
+ * Functions} on a Partitioned Region.
+ *
  * <p>Example of a Function using utility methods:
+ *
  * <pre>
  *  public Serializable execute(FunctionContext context) {
  *     if (context instanceof RegionFunctionContext) {
@@ -69,21 +69,22 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  *  // ...
  * </pre>
  *
- * 
  * @since GemFire 6.0
  * @see FunctionService#onRegion(Region)
  */
 public final class PartitionRegionHelper {
-  private PartitionRegionHelper() {
-  }
+  private PartitionRegionHelper() {}
 
   /**
-   * Given a partitioned Region, return a map of {@linkplain PartitionAttributesFactory#setColocatedWith(String) colocated Regions}.
-   * Given a local data reference to a partitioned region, return a map of local
-   * {@linkplain PartitionAttributesFactory#setColocatedWith(String) colocated Regions}.
-   * If there are no colocated regions, return an empty map.
+   * Given a partitioned Region, return a map of {@linkplain
+   * PartitionAttributesFactory#setColocatedWith(String) colocated Regions}. Given a local data
+   * reference to a partitioned region, return a map of local {@linkplain
+   * PartitionAttributesFactory#setColocatedWith(String) colocated Regions}. If there are no
+   * colocated regions, return an empty map.
+   *
    * @param r a partitioned Region
-   * @throws IllegalStateException if the Region is not a {@linkplain DataPolicy#PARTITION partitioned Region}
+   * @throws IllegalStateException if the Region is not a {@linkplain DataPolicy#PARTITION
+   *     partitioned Region}
    * @return an unmodifiable map of {@linkplain Region#getFullPath() region name} to {@link Region}
    * @since GemFire 6.0
    */
@@ -104,31 +105,36 @@ public final class PartitionRegionHelper {
           ret = Collections.emptyMap();
         }
       } else {
-        ret = ColocationHelper.getColocatedLocalDataSetsForBuckets(lds.getProxy(), lds.getBucketSet());
+        ret =
+            ColocationHelper.getColocatedLocalDataSetsForBuckets(
+                lds.getProxy(), lds.getBucketSet());
       }
     } else {
-      throw new IllegalArgumentException(LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION.toLocalizedString(r.getFullPath()));
+      throw new IllegalArgumentException(
+          LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION.toLocalizedString(
+              r.getFullPath()));
     }
     return Collections.unmodifiableMap(ret);
   }
 
   /**
    * Test a Region to see if it is a partitioned Region
-   * 
+   *
    * @param r
    * @return true if it is a partitioned Region
    * @since GemFire 6.0
    */
   public static boolean isPartitionedRegion(final Region<?, ?> r) {
     if (r == null) {
-      throw new IllegalArgumentException(LocalizedStrings.PartitionRegionHelper_ARGUMENT_REGION_IS_NULL.toString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.PartitionRegionHelper_ARGUMENT_REGION_IS_NULL.toString());
     }
     return r instanceof PartitionedRegion ? true : false;
   }
 
   /**
    * Test a Region to see if it is a partitioned Region
-   * 
+   *
    * @param r
    * @throws IllegalStateException
    * @return PartitionedRegion if it is a partitioned Region
@@ -136,14 +142,16 @@ public final class PartitionRegionHelper {
    */
   private static PartitionedRegion isPartitionedCheck(final Region<?, ?> r) {
     if (!isPartitionedRegion(r)) {
-      throw new IllegalArgumentException(LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION.toLocalizedString(r.getFullPath()));
+      throw new IllegalArgumentException(
+          LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION.toLocalizedString(
+              r.getFullPath()));
     }
     return (PartitionedRegion) r;
   }
 
   /**
-   * Gathers a set of details about all partitioned regions in the local Cache.
-   * If there are no partitioned regions then an empty set will be returned.
+   * Gathers a set of details about all partitioned regions in the local Cache. If there are no
+   * partitioned regions then an empty set will be returned.
    *
    * @param cache the cache which has the regions
    * @return set of details about all locally defined partitioned regions
@@ -156,9 +164,9 @@ public final class PartitionRegionHelper {
   }
 
   /**
-   * Gathers details about the specified partitioned region. Returns null if
-   * the partitioned region is not locally defined.
-   * 
+   * Gathers details about the specified partitioned region. Returns null if the partitioned region
+   * is not locally defined.
+   *
    * @param region the region to get info about
    * @return details about the specified partitioned region
    * @since GemFire 6.0
@@ -167,22 +175,27 @@ public final class PartitionRegionHelper {
     try {
       PartitionedRegion pr = isPartitionedCheck(region);
       GemFireCacheImpl cache = (GemFireCacheImpl) region.getCache();
-      return pr.getRedundancyProvider().buildPartitionedRegionInfo(false, cache.getResourceManager().getLoadProbe()); // may return null
+      return pr.getRedundancyProvider()
+          .buildPartitionedRegionInfo(
+              false, cache.getResourceManager().getLoadProbe()); // may return null
     } catch (ClassCastException e) {
       // not a PR so return null
     }
     return null;
   }
 
-  private static void fillInPartitionedRegionInfo(GemFireCacheImpl cache, final Set prDetailsSet, final boolean internal) {
+  private static void fillInPartitionedRegionInfo(
+      GemFireCacheImpl cache, final Set prDetailsSet, final boolean internal) {
     // TODO: optimize by fetching all PR details from each member at once
     Set<PartitionedRegion> prSet = cache.getPartitionedRegions();
     if (prSet.isEmpty()) {
       return;
     }
-    for (Iterator<PartitionedRegion> iter = prSet.iterator(); iter.hasNext();) {
+    for (Iterator<PartitionedRegion> iter = prSet.iterator(); iter.hasNext(); ) {
       PartitionedRegion pr = iter.next();
-      PartitionRegionInfo prDetails = pr.getRedundancyProvider().buildPartitionedRegionInfo(internal, cache.getResourceManager().getLoadProbe());
+      PartitionRegionInfo prDetails =
+          pr.getRedundancyProvider()
+              .buildPartitionedRegionInfo(internal, cache.getResourceManager().getLoadProbe());
       if (prDetails != null) {
         prDetailsSet.add(prDetails);
       }
@@ -190,21 +203,17 @@ public final class PartitionRegionHelper {
   }
 
   /**
-   * Decide which partitions will host which buckets. Gemfire normally assigns
-   * buckets to partitions as needed when data is added to a partitioned region.
-   * This method provides way to assign all of the buckets without putting any
-   * data in partition region. This method should not be called until all of the
-   * partitions are running because it will divide the buckets between the
-   * running partitions. If the buckets are already assigned this method will
-   * have no effect.
-   * 
-   * This method will block until all buckets are assigned.
-   * 
-   * @param region
-   *          The region which should have it's buckets assigned.
-   * @throws IllegalStateException
-   *          if the provided region is something other than a
-   *         {@linkplain DataPolicy#PARTITION partitioned Region}
+   * Decide which partitions will host which buckets. Gemfire normally assigns buckets to partitions
+   * as needed when data is added to a partitioned region. This method provides way to assign all of
+   * the buckets without putting any data in partition region. This method should not be called
+   * until all of the partitions are running because it will divide the buckets between the running
+   * partitions. If the buckets are already assigned this method will have no effect.
+   *
+   * <p>This method will block until all buckets are assigned.
+   *
+   * @param region The region which should have it's buckets assigned.
+   * @throws IllegalStateException if the provided region is something other than a {@linkplain
+   *     DataPolicy#PARTITION partitioned Region}
    * @since GemFire 6.0
    */
   public static void assignBucketsToPartitions(Region<?, ?> region) {
@@ -227,7 +236,9 @@ public final class PartitionRegionHelper {
   private static int getNumberOfBuckets(PartitionedRegion pr) {
     if (pr.isFixedPartitionedRegion()) {
       int numBuckets = 0;
-      Set<FixedPartitionAttributesImpl> fpaSet = new HashSet<FixedPartitionAttributesImpl>(pr.getRegionAdvisor().adviseAllFixedPartitionAttributes());
+      Set<FixedPartitionAttributesImpl> fpaSet =
+          new HashSet<FixedPartitionAttributesImpl>(
+              pr.getRegionAdvisor().adviseAllFixedPartitionAttributes());
       if (pr.getFixedPartitionAttributesImpl() != null) {
         fpaSet.addAll(pr.getFixedPartitionAttributesImpl());
       }
@@ -240,14 +251,15 @@ public final class PartitionRegionHelper {
   }
 
   /**
-   * Get the current primary owner for a key.  Upon return there is no guarantee that
-   * primary owner remains the primary owner, or that the member is still alive.
-   * <p>This method is not a substitute for {@link Region#containsKey(Object)}.</p>
+   * Get the current primary owner for a key. Upon return there is no guarantee that primary owner
+   * remains the primary owner, or that the member is still alive.
+   *
+   * <p>This method is not a substitute for {@link Region#containsKey(Object)}.
+   *
    * @param r a PartitionedRegion
    * @param key the key to evaluate
-   * @throws IllegalStateException
-   *         if the provided region is something other than a
-   *        {@linkplain DataPolicy#PARTITION partitioned Region}
+   * @throws IllegalStateException if the provided region is something other than a {@linkplain
+   *     DataPolicy#PARTITION partitioned Region}
    * @return the primary member for the key, possibly null if a primary is not yet determined
    * @since GemFire 6.0
    */
@@ -258,26 +270,26 @@ public final class PartitionRegionHelper {
   }
 
   /**
-   * Get all potential redundant owners for a key.  If the key exists in the Region,
-   * upon return there is no guarantee that key has not been moved or that
-   * the members are still alive.
+   * Get all potential redundant owners for a key. If the key exists in the Region, upon return
+   * there is no guarantee that key has not been moved or that the members are still alive.
    *
-   * <p>This method is not a substitute for {@link Region#containsKey(Object)}.</p>
-   * <p> This method is equivalent to:
-   * <code>
+   * <p>This method is not a substitute for {@link Region#containsKey(Object)}.
+   *
+   * <p>This method is equivalent to: <code>
    *  DistributedMember primary = getPrimaryMemberForKey(r, key);
    *  Set<? extends DistributedMember> allMembers = getAllMembersForKey(r, key);
    *  allMembers.remove(primary);
-   * </code></p>
+   * </code>
+   *
    * @param r a PartitionedRegion
    * @param key the key to evaluate
-   * @throws IllegalStateException
-   *        if the provided region is something other than a
-   *        {@linkplain DataPolicy#PARTITION partitioned Region}
+   * @throws IllegalStateException if the provided region is something other than a {@linkplain
+   *     DataPolicy#PARTITION partitioned Region}
    * @return an unmodifiable set of members minus the primary
    * @since GemFire 6.0
    */
-  public static <K, V> Set<DistributedMember> getRedundantMembersForKey(final Region<K, V> r, final K key) {
+  public static <K, V> Set<DistributedMember> getRedundantMembersForKey(
+      final Region<K, V> r, final K key) {
     DistributedMember primary = getPrimaryMemberForKey(r, key);
     Set<? extends DistributedMember> owners = getAllForKey(r, key);
     if (primary != null) {
@@ -287,40 +299,42 @@ public final class PartitionRegionHelper {
   }
 
   /**
-   * Get all potential owners for a key.  If the key exists in the Region, upon return
-   * there is no guarantee that it has not moved nor does it guarantee all members are still
-   * alive.
+   * Get all potential owners for a key. If the key exists in the Region, upon return there is no
+   * guarantee that it has not moved nor does it guarantee all members are still alive.
+   *
    * <p>This method is not a substitute for {@link Region#containsKey(Object)}.
    *
    * @param r PartitionedRegion
    * @param key the key to evaluate
-   * @throws IllegalStateException
-   *         if the provided region is something other than a
-   *        {@linkplain DataPolicy#PARTITION partitioned Region}
+   * @throws IllegalStateException if the provided region is something other than a {@linkplain
+   *     DataPolicy#PARTITION partitioned Region}
    * @return an unmodifiable set of all members
    * @since GemFire 6.0
    */
-  public static <K, V> Set<DistributedMember> getAllMembersForKey(final Region<K, V> r, final K key) {
+  public static <K, V> Set<DistributedMember> getAllMembersForKey(
+      final Region<K, V> r, final K key) {
     return Collections.unmodifiableSet(getAllForKey(r, key));
   }
 
-  private static <K, V> Set<? extends DistributedMember> getAllForKey(final Region<K, V> r, final K key) {
+  private static <K, V> Set<? extends DistributedMember> getAllForKey(
+      final Region<K, V> r, final K key) {
     PartitionedRegion pr = isPartitionedCheck(r);
     int bucketId = PartitionedRegionHelper.getHashKey(pr, null, key, null, null);
     return pr.getRegionAdvisor().getBucketOwners(bucketId);
   }
 
   /**
-   * Given a RegionFunctionContext {@linkplain RegionFunctionContext#getDataSet()
-   * for a partitioned Region}, return a map of {@linkplain PartitionAttributesFactory#setColocatedWith(String) colocated Regions}
-   * with read access limited to the context of the function.
-   * <p>
-   * Writes using these Region have no constraints and behave the same as a partitioned Region.
-   * <p>
-   * If there are no colocated regions, return an empty map.
+   * Given a RegionFunctionContext {@linkplain RegionFunctionContext#getDataSet() for a partitioned
+   * Region}, return a map of {@linkplain PartitionAttributesFactory#setColocatedWith(String)
+   * colocated Regions} with read access limited to the context of the function.
+   *
+   * <p>Writes using these Region have no constraints and behave the same as a partitioned Region.
+   *
+   * <p>If there are no colocated regions, return an empty map.
    *
    * @param c the region function context
-   * @throws IllegalStateException if the Region is not a {@linkplain DataPolicy#PARTITION partitioned Region}
+   * @throws IllegalStateException if the Region is not a {@linkplain DataPolicy#PARTITION
+   *     partitioned Region}
    * @return an unmodifiable map of {@linkplain Region#getFullPath() region name} to {@link Region}
    * @since GemFire 6.0
    */
@@ -333,23 +347,18 @@ public final class PartitionRegionHelper {
   }
 
   /**
-   * Given a RegionFunctionContext
-   * {@linkplain RegionFunctionContext#getDataSet() for a partitioned Region},
-   * return a Region providing read access limited to the function context.<br>
-   * Returned Region provides only one copy of the data although
-   * {@link PartitionAttributes#getRedundantCopies() redundantCopies} configured
-   * is more than 0. If the invoking Function is configured to have
-   * {@link Function#optimizeForWrite() optimizeForWrite} as true,the returned
-   * Region will only contain primary copy of the data.
-   * <p>
-   * Writes using this Region have no constraints and behave the same as a
-   * partitioned Region.
-   * 
-   * @param c
-   *          a functions context
-   * @throws IllegalStateException
-   *           if {@link RegionFunctionContext#getDataSet()} returns something
-   *           other than a {@linkplain DataPolicy#PARTITION partitioned Region}
+   * Given a RegionFunctionContext {@linkplain RegionFunctionContext#getDataSet() for a partitioned
+   * Region}, return a Region providing read access limited to the function context.<br>
+   * Returned Region provides only one copy of the data although {@link
+   * PartitionAttributes#getRedundantCopies() redundantCopies} configured is more than 0. If the
+   * invoking Function is configured to have {@link Function#optimizeForWrite() optimizeForWrite} as
+   * true,the returned Region will only contain primary copy of the data.
+   *
+   * <p>Writes using this Region have no constraints and behave the same as a partitioned Region.
+   *
+   * @param c a functions context
+   * @throws IllegalStateException if {@link RegionFunctionContext#getDataSet()} returns something
+   *     other than a {@linkplain DataPolicy#PARTITION partitioned Region}
    * @return a Region for efficient reads
    * @since GemFire 6.0
    */
@@ -361,15 +370,12 @@ public final class PartitionRegionHelper {
   }
 
   /**
-   * Given a partitioned Region return a Region providing read access limited to
-   * the local heap, writes using this Region have no constraints and behave the
-   * same as a partitioned Region.<br>
-   * 
-   * @param r
-   *                a partitioned region
-   * @throws IllegalStateException
-   *                 if the provided region is something other than a
-   *                 {@linkplain DataPolicy#PARTITION partitioned Region}
+   * Given a partitioned Region return a Region providing read access limited to the local heap,
+   * writes using this Region have no constraints and behave the same as a partitioned Region.<br>
+   *
+   * @param r a partitioned region
+   * @throws IllegalStateException if the provided region is something other than a {@linkplain
+   *     DataPolicy#PARTITION partitioned Region}
    * @return a Region for efficient reads
    * @since GemFire 6.0
    */
@@ -386,20 +392,20 @@ public final class PartitionRegionHelper {
     } else if (r instanceof LocalDataSet) {
       return r;
     } else {
-      throw new IllegalArgumentException(LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION.toLocalizedString(r.getFullPath()));
+      throw new IllegalArgumentException(
+          LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION.toLocalizedString(
+              r.getFullPath()));
     }
   }
 
   /**
-   * Given a partitioned Region return a Region providing read access to primary
-   * copy of the data which is limited to the local heap, writes using this
-   * Region have no constraints and behave the same as a partitioned Region.<br>
-   * 
-   * @param r
-   *          a partitioned region
-   * @throws IllegalStateException
-   *           if the provided region is something other than a
-   *           {@linkplain DataPolicy#PARTITION partitioned Region}
+   * Given a partitioned Region return a Region providing read access to primary copy of the data
+   * which is limited to the local heap, writes using this Region have no constraints and behave the
+   * same as a partitioned Region.<br>
+   *
+   * @param r a partitioned region
+   * @throws IllegalStateException if the provided region is something other than a {@linkplain
+   *     DataPolicy#PARTITION partitioned Region}
    * @return a Region for efficient reads
    * @since GemFire 6.5
    */
@@ -416,101 +422,88 @@ public final class PartitionRegionHelper {
     } else if (r instanceof LocalDataSet) {
       return r;
     } else {
-      throw new IllegalArgumentException(LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION.toLocalizedString(r.getFullPath()));
+      throw new IllegalArgumentException(
+          LocalizedStrings.PartitionManager_REGION_0_IS_NOT_A_PARTITIONED_REGION.toLocalizedString(
+              r.getFullPath()));
     }
   }
 
   /**
-   * Moves the bucket which contains the given key from the source member to the
-   * destination member. The bucket will be fully transferred once this method
-   * is complete, if the method does not throw an exception.
-   * <p>
-   * All keys which exist in the same bucket will also be moved to the new node.
-   * <p>
-   * Any data in colocated regions that are colocated with this key will also be
-   * moved.
-   * <p>
-   * This method allows direct control of what data to move. To automatically
-   * balance buckets, see {@link ResourceManager#createRebalanceFactory()}
-   * 
-   * @param region
-   *          The region in which to move the bucket. Data in regions colocated
-   *          with this region will also be moved.
-   * @param source
-   *          A member that is currently hosting this bucket. The bucket is
-   *          moved off of this member.
-   * @param destination
-   *          A member that is not currently hosting this bucket, but has the
-   *          partitioned region defined. The bucket is moved to this member.
-   * @param key
-   *          A key which maps to the bucket to move. This key does not actually
-   *          need to exist in the region, but if using a
-   *          {@link PartitionResolver} the resolver should be able to get the
-   *          routing object from this key to determine the bucket to move.
-   * 
-   * @throws IllegalStateException
-   *           if the bucket is not present on the source, if the source or
-   *           destination are not valid members of the system, if the
-   *           destination already hosts a copy of the bucket, or if the bucket
-   *           does not exist.
-   * 
+   * Moves the bucket which contains the given key from the source member to the destination member.
+   * The bucket will be fully transferred once this method is complete, if the method does not throw
+   * an exception.
+   *
+   * <p>All keys which exist in the same bucket will also be moved to the new node.
+   *
+   * <p>Any data in colocated regions that are colocated with this key will also be moved.
+   *
+   * <p>This method allows direct control of what data to move. To automatically balance buckets,
+   * see {@link ResourceManager#createRebalanceFactory()}
+   *
+   * @param region The region in which to move the bucket. Data in regions colocated with this
+   *     region will also be moved.
+   * @param source A member that is currently hosting this bucket. The bucket is moved off of this
+   *     member.
+   * @param destination A member that is not currently hosting this bucket, but has the partitioned
+   *     region defined. The bucket is moved to this member.
+   * @param key A key which maps to the bucket to move. This key does not actually need to exist in
+   *     the region, but if using a {@link PartitionResolver} the resolver should be able to get the
+   *     routing object from this key to determine the bucket to move.
+   * @throws IllegalStateException if the bucket is not present on the source, if the source or
+   *     destination are not valid members of the system, if the destination already hosts a copy of
+   *     the bucket, or if the bucket does not exist.
    * @since GemFire 7.1
    */
-  public static <K> void moveBucketByKey(Region<K, ?> region, DistributedMember source, DistributedMember destination, K key) {
+  public static <K> void moveBucketByKey(
+      Region<K, ?> region, DistributedMember source, DistributedMember destination, K key) {
     PartitionedRegion pr = isPartitionedCheck(region);
     if (pr.isFixedPartitionedRegion()) {
       throw new IllegalStateException("Cannot move data in a fixed partitioned region");
     }
     int bucketId = pr.getKeyInfo(key).getBucketId();
-    ExplicitMoveDirector director = new ExplicitMoveDirector(key, bucketId, source, destination, region.getCache().getDistributedSystem());
-    PartitionedRegionRebalanceOp rebalance = new PartitionedRegionRebalanceOp(pr, false, director, true, true);
+    ExplicitMoveDirector director =
+        new ExplicitMoveDirector(
+            key, bucketId, source, destination, region.getCache().getDistributedSystem());
+    PartitionedRegionRebalanceOp rebalance =
+        new PartitionedRegionRebalanceOp(pr, false, director, true, true);
     rebalance.execute();
   }
 
   /**
-  * Moves data from the source member to the destination member, up to the
-  * given percentage of data (measured in bytes). The data will be fully
-  * transferred once this method is complete, if the method does not throw an
-  * exception. The percentage is a percentage of the amount of data in bytes on
-  * the source member for this region.
-  * <p>
-  * 
-  * If this region has colocated regions, the colocated data will also be
-  * moved. The total amount of data in all colocated regions will be taken into
-  * consideration when determining what percentage of data will be moved.
-  * <p>
-  * It may not be possible to move data to the destination member, if the
-  * destination member has no available space, no bucket smaller than the given
-  * percentage exists, or if moving data would violate redundancy constraints.
-  * If data cannot be moved, this method will return a RebalanceResult object
-  * with 0 total bucket transfers.
-  * <p>
-  * This method allows direct control of what data to move. To automatically
-  * balance buckets, see {@link ResourceManager#createRebalanceFactory()}
-  * 
-  * @param region
-  *          The region in which to move data. Data in regions colocated with
-  *          this region will also be moved.
-  * @param source
-  *          A member that is currently hosting data. The bucket is moved off
-  *          of this member.
-  * @param destination
-  *          A member that that has the partitioned region defined. Data is
-  *          moved to this member.
-  * @param percentage
-  *          the maximum amount of data to move, as a percentage from 0 to 100.
-  * 
-  * @throws IllegalStateException
-  *           if the source or destination are not valid members of the system.
-  * @throws IllegalArgumentException
-  *           if the percentage is not between 0 to 100.
-  * 
-  * @return A RebalanceResult object that contains information about what what
-  *         data was actually moved.
-  * 
-  * @since GemFire 7.1
-  */
-  public static RebalanceResults moveData(Region<?, ?> region, DistributedMember source, DistributedMember destination, float percentage) {
+   * Moves data from the source member to the destination member, up to the given percentage of data
+   * (measured in bytes). The data will be fully transferred once this method is complete, if the
+   * method does not throw an exception. The percentage is a percentage of the amount of data in
+   * bytes on the source member for this region.
+   *
+   * <p>If this region has colocated regions, the colocated data will also be moved. The total
+   * amount of data in all colocated regions will be taken into consideration when determining what
+   * percentage of data will be moved.
+   *
+   * <p>It may not be possible to move data to the destination member, if the destination member has
+   * no available space, no bucket smaller than the given percentage exists, or if moving data would
+   * violate redundancy constraints. If data cannot be moved, this method will return a
+   * RebalanceResult object with 0 total bucket transfers.
+   *
+   * <p>This method allows direct control of what data to move. To automatically balance buckets,
+   * see {@link ResourceManager#createRebalanceFactory()}
+   *
+   * @param region The region in which to move data. Data in regions colocated with this region will
+   *     also be moved.
+   * @param source A member that is currently hosting data. The bucket is moved off of this member.
+   * @param destination A member that that has the partitioned region defined. Data is moved to this
+   *     member.
+   * @param percentage the maximum amount of data to move, as a percentage from 0 to 100.
+   * @throws IllegalStateException if the source or destination are not valid members of the system.
+   * @throws IllegalArgumentException if the percentage is not between 0 to 100.
+   * @return A RebalanceResult object that contains information about what what data was actually
+   *     moved.
+   * @since GemFire 7.1
+   */
+  public static RebalanceResults moveData(
+      Region<?, ?> region,
+      DistributedMember source,
+      DistributedMember destination,
+      float percentage) {
     PartitionedRegion pr = isPartitionedCheck(region);
     if (pr.isFixedPartitionedRegion()) {
       throw new IllegalStateException("Cannot move data in a fixed partitioned region");
@@ -520,7 +513,8 @@ public final class PartitionRegionHelper {
     }
 
     PercentageMoveDirector director = new PercentageMoveDirector(source, destination, percentage);
-    PartitionedRegionRebalanceOp rebalance = new PartitionedRegionRebalanceOp(pr, false, director, true, true);
+    PartitionedRegionRebalanceOp rebalance =
+        new PartitionedRegionRebalanceOp(pr, false, director, true, true);
     Set<PartitionRebalanceInfo> results = rebalance.execute();
 
     RebalanceResultsImpl rebalanceResults = new RebalanceResultsImpl();
@@ -530,5 +524,4 @@ public final class PartitionRegionHelper {
 
     return rebalanceResults;
   }
-
 }

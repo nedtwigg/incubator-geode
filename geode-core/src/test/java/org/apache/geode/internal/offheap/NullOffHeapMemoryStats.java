@@ -18,27 +18,19 @@ package org.apache.geode.internal.offheap;
 
 import org.apache.geode.Statistics;
 
-/**
- * Null implementation of OffHeapMemoryStats for testing.
- *  
- */
+/** Null implementation of OffHeapMemoryStats for testing. */
 public class NullOffHeapMemoryStats implements OffHeapMemoryStats {
   private boolean isClosed;
 
-  public void incFreeMemory(long value) {
-  }
+  public void incFreeMemory(long value) {}
 
-  public void incMaxMemory(long value) {
-  }
+  public void incMaxMemory(long value) {}
 
-  public void incUsedMemory(long value) {
-  }
+  public void incUsedMemory(long value) {}
 
-  public void incSlabSize(long value) {
-  }
+  public void incSlabSize(long value) {}
 
-  public void incObjects(int value) {
-  }
+  public void incObjects(int value) {}
 
   public long getFreeMemory() {
     return 0;
@@ -61,8 +53,7 @@ public class NullOffHeapMemoryStats implements OffHeapMemoryStats {
   }
 
   @Override
-  public void incReads() {
-  }
+  public void incReads() {}
 
   @Override
   public long getReads() {
@@ -80,8 +71,7 @@ public class NullOffHeapMemoryStats implements OffHeapMemoryStats {
   }
 
   @Override
-  public void setFragments(long value) {
-  }
+  public void setFragments(long value) {}
 
   @Override
   public long getFragments() {
@@ -89,8 +79,7 @@ public class NullOffHeapMemoryStats implements OffHeapMemoryStats {
   }
 
   @Override
-  public void setLargestFragment(int value) {
-  }
+  public void setLargestFragment(int value) {}
 
   @Override
   public int getLargestFragment() {
@@ -103,12 +92,10 @@ public class NullOffHeapMemoryStats implements OffHeapMemoryStats {
   }
 
   @Override
-  public void endDefragmentation(long start) {
-  }
+  public void endDefragmentation(long start) {}
 
   @Override
-  public void setFragmentation(int value) {
-  }
+  public void setFragmentation(int value) {}
 
   @Override
   public int getFragmentation() {

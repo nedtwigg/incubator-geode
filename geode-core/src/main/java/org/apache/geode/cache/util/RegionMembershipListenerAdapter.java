@@ -22,23 +22,19 @@ import org.apache.geode.cache.RegionMembershipListener;
 import org.apache.geode.distributed.DistributedMember;
 
 /**
- * Utility class that implements all methods in <code>RegionMembershipListener</code>
- * with empty implementations. Applications can subclass this class and only
- * override the methods for the events of interest.
- * 
- * 
+ * Utility class that implements all methods in <code>RegionMembershipListener</code> with empty
+ * implementations. Applications can subclass this class and only override the methods for the
+ * events of interest.
+ *
  * @since GemFire 5.0
  */
-public abstract class RegionMembershipListenerAdapter<K, V> extends CacheListenerAdapter<K, V> implements RegionMembershipListener<K, V> {
-  public void initialMembers(Region<K, V> r, DistributedMember[] initialMembers) {
-  }
+public abstract class RegionMembershipListenerAdapter<K, V> extends CacheListenerAdapter<K, V>
+    implements RegionMembershipListener<K, V> {
+  public void initialMembers(Region<K, V> r, DistributedMember[] initialMembers) {}
 
-  public void afterRemoteRegionCreate(RegionEvent<K, V> event) {
-  }
+  public void afterRemoteRegionCreate(RegionEvent<K, V> event) {}
 
-  public void afterRemoteRegionDeparture(RegionEvent<K, V> event) {
-  }
+  public void afterRemoteRegionDeparture(RegionEvent<K, V> event) {}
 
-  public void afterRemoteRegionCrash(RegionEvent<K, V> event) {
-  }
+  public void afterRemoteRegionCrash(RegionEvent<K, V> event) {}
 }

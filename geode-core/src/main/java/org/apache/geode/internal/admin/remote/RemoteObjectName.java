@@ -26,8 +26,8 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * Used to name an object in a region. This class is needed so that the
- * console will not need to load the user defined classes.
+ * Used to name an object in a region. This class is needed so that the console will not need to
+ * load the user defined classes.
  */
 public class RemoteObjectName implements DataSerializable {
   private static final long serialVersionUID = 5076319310507575418L;
@@ -41,11 +41,8 @@ public class RemoteObjectName implements DataSerializable {
     hashCode = name.hashCode();
   }
 
-  /**
-   * This constructor is only for use by the DataSerializable mechanism
-   */
-  public RemoteObjectName() {
-  }
+  /** This constructor is only for use by the DataSerializable mechanism */
+  public RemoteObjectName() {}
 
   @Override
   public boolean equals(Object o) {
@@ -89,5 +86,4 @@ public class RemoteObjectName implements DataSerializable {
     this.value = DataSerializer.readString(in);
     this.hashCode = in.readInt();
   }
-
 }

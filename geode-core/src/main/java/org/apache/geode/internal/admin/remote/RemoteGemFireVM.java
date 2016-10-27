@@ -53,9 +53,8 @@ import org.apache.geode.internal.admin.StatResource;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * Provides access to a remote gemfire VM for purposes of gathering statistics
- * and other info specific to that VM.
- *
+ * Provides access to a remote gemfire VM for purposes of gathering statistics and other info
+ * specific to that VM.
  */
 public abstract class RemoteGemFireVM implements GemFireVM {
 
@@ -69,23 +68,24 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   private volatile File gemfireDir = null;
   private volatile Boolean isDedicatedCacheServer = null;
 
-  /** Keeps track of the <code>StatListener</code>s registered on
-   * statistics sampled in the remote VM.  key is listenerId; value is
-   * StatListener. */
+  /**
+   * Keeps track of the <code>StatListener</code>s registered on statistics sampled in the remote
+   * VM. key is listenerId; value is StatListener.
+   */
   protected ListenerIdMap statListeners = new ListenerIdMap();
+
   private final Object statListenersLock = new Object();
 
-  /** A thread that asynchronously dispatches callbacks to
-   * <code>StatListener</code>s. */
+  /** A thread that asynchronously dispatches callbacks to <code>StatListener</code>s. */
   protected final StatDispatcher dispatcher;
 
-  /** The classpath from which to load the classes of objects
-   * inspected from this remote VM. */
+  /** The classpath from which to load the classes of objects inspected from this remote VM. */
   protected volatile String inspectionClasspath;
 
-  /** Has the distributed system member represented by this
-   * <code>GemFireVM</code> become unreachable?  If so, we should not
-   * try to communicate with it. */
+  /**
+   * Has the distributed system member represented by this <code>GemFireVM</code> become
+   * unreachable? If so, we should not try to communicate with it.
+   */
   protected volatile boolean unreachable;
 
   /** How are objects in this remote VM inspected? */
@@ -98,21 +98,20 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   // constructors
 
   /**
-   * Creates a <code>RemoteApplicationVM</code> in a given distributed
-   * system (<code>agent</code>) with the given <code>id</code>.
-   * <p/>
-   * You MUST invoke {@link #startStatDispatcher()} immediately after
-   * constructing an instance.
+   * Creates a <code>RemoteApplicationVM</code> in a given distributed system (<code>agent</code>)
+   * with the given <code>id</code>.
    *
-   * @param alertLevel
-   *        The level of {@link Alert}s that this administration
-   *        console should receive from this member of the distributed
-   *        system. 
+   * <p>You MUST invoke {@link #startStatDispatcher()} immediately after constructing an instance.
+   *
+   * @param alertLevel The level of {@link Alert}s that this administration console should receive
+   *     from this member of the distributed system.
    */
   public RemoteGemFireVM(RemoteGfManagerAgent agent, InternalDistributedMember id, int alertLevel) {
     this.agent = agent;
     if (id == null) {
-      throw new NullPointerException(LocalizedStrings.RemoteGemFireVM_CANNOT_CREATE_A_REMOTEGEMFIREVM_WITH_A_NULL_ID.toLocalizedString());
+      throw new NullPointerException(
+          LocalizedStrings.RemoteGemFireVM_CANNOT_CREATE_A_REMOTEGEMFIREVM_WITH_A_NULL_ID
+              .toLocalizedString());
     }
     this.id = id;
     this.dispatcher = new StatDispatcher();
@@ -147,9 +146,7 @@ public abstract class RemoteGemFireVM implements GemFireVM {
 
   // GemFireVM methods
 
-  /**
-   * Returns the name of the remote system connection.
-   */
+  /** Returns the name of the remote system connection. */
   public String getName() {
     if (this.name == null) {
       initialize();
@@ -157,9 +154,7 @@ public abstract class RemoteGemFireVM implements GemFireVM {
     return name;
   }
 
-  /**
-   * Returns the host the manager is running on.
-   */
+  /** Returns the host the manager is running on. */
   public InetAddress getHost() {
     if (this.host == null) {
       initialize();
@@ -208,8 +203,7 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   /**
    * Retrieves all statistic resources from the remote vm.
    *
-   * @return    array of all statistic resources
-   *
+   * @return array of all statistic resources
    * @see FetchStatsRequest
    * @see FetchStatsResponse#getAllStats
    */
@@ -219,45 +213,43 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * Retrieves all statistic resources from the remote VM except for those
-   * involving SharedClass.
+   * Retrieves all statistic resources from the remote VM except for those involving SharedClass.
    *
-   * @return    array of non-SharedClass statistic resources
-   *
+   * @return array of non-SharedClass statistic resources
    * @see FetchStatsRequest
    * @see FetchStatsResponse#getStats
    */
   public StatResource[] getStats(String statisticsTypeName) {
-    FetchStatsResponse resp = (FetchStatsResponse) sendAndWait(FetchStatsRequest.create(statisticsTypeName));
+    FetchStatsResponse resp =
+        (FetchStatsResponse) sendAndWait(FetchStatsRequest.create(statisticsTypeName));
     return resp.getAllStats(this);
   }
 
   /**
-   * Returns information about distributed locks held by the remote
-   * VM. 
+   * Returns information about distributed locks held by the remote VM.
    *
    * @see FetchDistLockInfoRequest
    */
   public DLockInfo[] getDistributedLockInfo() {
-    FetchDistLockInfoResponse resp = (FetchDistLockInfoResponse) sendAndWait(FetchDistLockInfoRequest.create());
+    FetchDistLockInfoResponse resp =
+        (FetchDistLockInfoResponse) sendAndWait(FetchDistLockInfoRequest.create());
     return resp.getLockInfos();
   }
 
   /**
-   * Adds a <code>StatListener</code> that is notified when a
-   * statistic in a given statistics instance changes value.
+   * Adds a <code>StatListener</code> that is notified when a statistic in a given statistics
+   * instance changes value.
    *
-   * @param observer
-   *        The listener to be notified
-   * @param observedResource
-   *        The statistics instance to be observed
-   * @param observedStat
-   *        The statistic to be observed
-   *
+   * @param observer The listener to be notified
+   * @param observedResource The statistics instance to be observed
+   * @param observedStat The statistic to be observed
    * @see AddStatListenerRequest
    */
-  public void addStatListener(StatListener observer, StatResource observedResource, Stat observedStat) {
-    AddStatListenerResponse resp = (AddStatListenerResponse) sendAndWait(AddStatListenerRequest.create(observedResource, observedStat));
+  public void addStatListener(
+      StatListener observer, StatResource observedResource, Stat observedStat) {
+    AddStatListenerResponse resp =
+        (AddStatListenerResponse)
+            sendAndWait(AddStatListenerRequest.create(observedResource, observedStat));
     int listenerId = resp.getListenerId();
     synchronized (this.statListenersLock) {
       this.statListeners.put(listenerId, observer);
@@ -265,33 +257,25 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * Notes that several statistics values have been updated in the
-   * distributed system member modeled by this
-   * <code>RemoteGemFireVM</code> and invokes the {@link
-   * StatListener}s accordingly.  Note that the listener notification
-   * happens asynchronously.
+   * Notes that several statistics values have been updated in the distributed system member modeled
+   * by this <code>RemoteGemFireVM</code> and invokes the {@link StatListener}s accordingly. Note
+   * that the listener notification happens asynchronously.
    *
-   * @param timestamp
-   *        The time at which the statistics were sampled
-   * @param listenerIds
-   *        The <code>id</code>s of the <code>StatListener</code>s to
-   *        be notified.
-   * @param values
-   *        The new values of the statistics
+   * @param timestamp The time at which the statistics were sampled
+   * @param listenerIds The <code>id</code>s of the <code>StatListener</code>s to be notified.
+   * @param values The new values of the statistics
    */
   public void callStatListeners(long timestamp, int[] listenerIds, double[] values) {
     dispatcher.put(new DispatchArgs(timestamp, listenerIds, values));
   }
 
   /**
-   * Invokes the callback methods on a bunch of
-   * <code>StatListener</code>s in response to a statistics update
-   * message being received.  This method is invoked in its own thread.
+   * Invokes the callback methods on a bunch of <code>StatListener</code>s in response to a
+   * statistics update message being received. This method is invoked in its own thread.
    *
-   * for each listener in statListeners
-   *   call stat value changed if its id is in listenerIds
-   *   call stat value unchanged if its id is not in listenerIds
-   *   call cancelStatListener and statListeners.remove if its id is negative in listenerIds
+   * <p>for each listener in statListeners call stat value changed if its id is in listenerIds call
+   * stat value unchanged if its id is not in listenerIds call cancelStatListener and
+   * statListeners.remove if its id is negative in listenerIds
    *
    * @see #cancelStatListener
    */
@@ -321,7 +305,7 @@ public abstract class RemoteGemFireVM implements GemFireVM {
     }
 
     synchronized (this.statListenersLock) {
-      for (Iterator iter = listenersToRemove.iterator(); iter.hasNext();) {
+      for (Iterator iter = listenersToRemove.iterator(); iter.hasNext(); ) {
         int i = ((Integer) iter.next()).intValue();
         statListeners.remove(i);
         cancelStatListener(i);
@@ -330,17 +314,14 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * Sends a message to the remote VM letting it know that the
-   * listener with the given id no longer needs events set to it.
+   * Sends a message to the remote VM letting it know that the listener with the given id no longer
+   * needs events set to it.
    */
   private void cancelStatListener(int listenerId) {
     sendAndWait(CancelStatListenerRequest.create(listenerId));
   }
 
-  /**
-   * Removes a <code>StatListener</code> that receives updates from
-   * the remote member VM.
-   */
+  /** Removes a <code>StatListener</code> that receives updates from the remote member VM. */
   public void removeStatListener(StatListener observer) {
     int listenerId = -1;
     boolean foundIt = false;
@@ -365,12 +346,13 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   /**
    * Returns the configuration of the remote VM.
    *
-   * @see FetchSysCfgRequest 
+   * @see FetchSysCfgRequest
    */
   public void addHealthListener(HealthListener observer, GemFireHealthConfig cfg) {
     synchronized (this.healthLock) {
       this.healthListener = observer;
-      AddHealthListenerResponse response = (AddHealthListenerResponse) sendAndWait(AddHealthListenerRequest.create(cfg));
+      AddHealthListenerResponse response =
+          (AddHealthListenerResponse) sendAndWait(AddHealthListenerRequest.create(cfg));
       this.healthListenerId = response.getHealthListenerId();
     }
   }
@@ -396,7 +378,9 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   public String[] getHealthDiagnosis(GemFireHealth.Health healthCode) {
     synchronized (this.healthLock) {
       if (this.healthListenerId != 0) {
-        FetchHealthDiagnosisResponse response = (FetchHealthDiagnosisResponse) sendAndWait(FetchHealthDiagnosisRequest.create(this.healthListenerId, healthCode));
+        FetchHealthDiagnosisResponse response =
+            (FetchHealthDiagnosisResponse)
+                sendAndWait(FetchHealthDiagnosisRequest.create(this.healthListenerId, healthCode));
         return response.getDiagnosis();
       } else {
         return new String[] {};
@@ -404,9 +388,7 @@ public abstract class RemoteGemFireVM implements GemFireVM {
     }
   }
 
-  /**
-   * Called by HealthListenerMessage when the message is received.
-   */
+  /** Called by HealthListenerMessage when the message is received. */
   void callHealthListeners(int listenerId, GemFireHealth.Health newStatus) {
     HealthListener hl = null;
     synchronized (this.healthLock) {
@@ -429,21 +411,23 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * Returns the runtime {@link org.apache.geode.admin.GemFireMemberStatus} from the vm
-   * The idea is this snapshot is similar to stats that represent the current state of a 
-   * running VM. However, this is a bit higher level than a stat 
+   * Returns the runtime {@link org.apache.geode.admin.GemFireMemberStatus} from the vm The idea is
+   * this snapshot is similar to stats that represent the current state of a running VM. However,
+   * this is a bit higher level than a stat
    */
   public GemFireMemberStatus getSnapshot() {
-    RefreshMemberSnapshotResponse response = (RefreshMemberSnapshotResponse) sendAndWait(RefreshMemberSnapshotRequest.create());
+    RefreshMemberSnapshotResponse response =
+        (RefreshMemberSnapshotResponse) sendAndWait(RefreshMemberSnapshotRequest.create());
     return response.getSnapshot();
   }
 
   /**
-   * Returns the runtime {@link org.apache.geode.admin.RegionSubRegionSnapshot} from the vm
-   * The idea is this snapshot is quickly salvageable to present a cache's region's info 
+   * Returns the runtime {@link org.apache.geode.admin.RegionSubRegionSnapshot} from the vm The idea
+   * is this snapshot is quickly salvageable to present a cache's region's info
    */
   public RegionSubRegionSnapshot getRegionSnapshot() {
-    RegionSubRegionsSizeResponse response = (RegionSubRegionsSizeResponse) sendAndWait(RegionSubRegionSizeRequest.create());
+    RegionSubRegionsSizeResponse response =
+        (RegionSubRegionsSizeResponse) sendAndWait(RegionSubRegionSizeRequest.create());
     return response.getSnapshot();
   }
 
@@ -457,10 +441,7 @@ public abstract class RemoteGemFireVM implements GemFireVM {
     sendAndWait(StoreSysCfgRequest.create(cfg));
   }
 
-  /**
-   * Returns the agent for the distributed system to which this remote
-   * VM belongs.
-   */
+  /** Returns the agent for the distributed system to which this remote VM belongs. */
   public GfManagerAgent getManagerAgent() {
     return this.agent;
   }
@@ -477,9 +458,9 @@ public abstract class RemoteGemFireVM implements GemFireVM {
     String[] retVal = null;
     if (main != null) {
       if (child != null) {
-        retVal = new String[] { main, child };
+        retVal = new String[] {main, child};
       } else {
-        retVal = new String[] { main };
+        retVal = new String[] {main};
       }
     } else {
       retVal = new String[0];
@@ -493,10 +474,9 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * Returns information about the root <code>Region</code>s hosted in
-   * the remote VM.
+   * Returns information about the root <code>Region</code>s hosted in the remote VM.
    *
-   * @see RootRegionRequest 
+   * @see RootRegionRequest
    */
   public Region[] getRootRegions() {
     RootRegionResponse resp = (RootRegionResponse) sendAndWait(RootRegionRequest.create());
@@ -508,25 +488,37 @@ public abstract class RemoteGemFireVM implements GemFireVM {
     return resp.getRegion(this);
   }
 
-  public Region createVMRootRegion(CacheInfo c, String regionPath, RegionAttributes attrs) throws AdminException {
+  public Region createVMRootRegion(CacheInfo c, String regionPath, RegionAttributes attrs)
+      throws AdminException {
 
-    RegionResponse resp = (RegionResponse) sendAndWait(RegionRequest.createForCreateRoot(c, regionPath, attrs));
+    RegionResponse resp =
+        (RegionResponse) sendAndWait(RegionRequest.createForCreateRoot(c, regionPath, attrs));
 
     Exception ex = resp.getException();
     if (ex != null) {
-      throw new AdminException(LocalizedStrings.RemoteGemFireVM_AN_EXCEPTION_WAS_THROWN_WHILE_CREATING_VM_ROOT_REGION_0.toLocalizedString(regionPath), ex);
+      throw new AdminException(
+          LocalizedStrings.RemoteGemFireVM_AN_EXCEPTION_WAS_THROWN_WHILE_CREATING_VM_ROOT_REGION_0
+              .toLocalizedString(regionPath),
+          ex);
     } else {
       return resp.getRegion(this);
     }
   }
 
-  public Region createSubregion(CacheInfo c, String parentPath, String regionPath, RegionAttributes attrs) throws AdminException {
+  public Region createSubregion(
+      CacheInfo c, String parentPath, String regionPath, RegionAttributes attrs)
+      throws AdminException {
 
-    RegionResponse resp = (RegionResponse) sendAndWait(RegionRequest.createForCreateSubregion(c, parentPath, regionPath, attrs));
+    RegionResponse resp =
+        (RegionResponse)
+            sendAndWait(RegionRequest.createForCreateSubregion(c, parentPath, regionPath, attrs));
 
     Exception ex = resp.getException();
     if (ex != null) {
-      throw new AdminException(LocalizedStrings.RemoteGemFireVM_WHILE_CREATING_SUBREGION_0_OF_1.toLocalizedString(new Object[] { regionPath, parentPath }), ex);
+      throw new AdminException(
+          LocalizedStrings.RemoteGemFireVM_WHILE_CREATING_SUBREGION_0_OF_1.toLocalizedString(
+              new Object[] {regionPath, parentPath}),
+          ex);
     } else {
       return resp.getRegion(this);
     }
@@ -541,14 +533,10 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * Takes a snapshot of a <code>Region</code> hosted in the remote
-   * VM.
+   * Takes a snapshot of a <code>Region</code> hosted in the remote VM.
    *
-   * @param regionName
-   *        The name of the <Code>Region</code>
-   * @param snapshotId
-   *        The sequence number of the snapshot
-   *
+   * @param regionName The name of the <Code>Region</code>
+   * @param snapshotId The sequence number of the snapshot
    * @see AppCacheSnapshotMessage
    */
   public void takeRegionSnapshot(String regionName, int snapshotId) {
@@ -565,7 +553,9 @@ public abstract class RemoteGemFireVM implements GemFireVM {
 
   // additional instance methods
   RemoteStat[] getResourceStatsByID(long rsrcId) {
-    FetchResourceAttributesResponse response = (FetchResourceAttributesResponse) sendAndWait(FetchResourceAttributesRequest.create(rsrcId));
+    FetchResourceAttributesResponse response =
+        (FetchResourceAttributesResponse)
+            sendAndWait(FetchResourceAttributesRequest.create(rsrcId));
     return response.getStats();
   }
 
@@ -603,34 +593,38 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * Checks whether a durable-queue for a given client is present on the system
-   * member represented by this RemoteGemFireVM
-   * 
-   * @param durableClientId -
-   *                the 'durable-client-id' for the client
+   * Checks whether a durable-queue for a given client is present on the system member represented
+   * by this RemoteGemFireVM
+   *
+   * @param durableClientId - the 'durable-client-id' for the client
    * @return - true if the member contains a durable-queue for the given client
-   * 
    * @since GemFire 5.6
    */
   public boolean hasDurableClient(String durableClientId) {
-    DurableClientInfoResponse resp = (DurableClientInfoResponse) sendAndWait(DurableClientInfoRequest.create(durableClientId, DurableClientInfoRequest.HAS_DURABLE_CLIENT_REQUEST));
+    DurableClientInfoResponse resp =
+        (DurableClientInfoResponse)
+            sendAndWait(
+                DurableClientInfoRequest.create(
+                    durableClientId, DurableClientInfoRequest.HAS_DURABLE_CLIENT_REQUEST));
     boolean result = resp.getResultBoolean();
     return result;
   }
 
   /**
-   * Checks whether the system member represented by this RemoteGemFireVM is
-   * hosting a primary durable-queue for the client
-   * 
-   * @param durableClientId -
-   *                the 'durable-client-id' for the client
-   * @return - true if the member contains a primary durable-queue for the given
-   *         client
-   * 
+   * Checks whether the system member represented by this RemoteGemFireVM is hosting a primary
+   * durable-queue for the client
+   *
+   * @param durableClientId - the 'durable-client-id' for the client
+   * @return - true if the member contains a primary durable-queue for the given client
    * @since GemFire 5.6
    */
   public boolean isPrimaryForDurableClient(String durableClientId) {
-    DurableClientInfoResponse resp = (DurableClientInfoResponse) sendAndWait(DurableClientInfoRequest.create(durableClientId, DurableClientInfoRequest.IS_PRIMARY_FOR_DURABLE_CLIENT_REQUEST));
+    DurableClientInfoResponse resp =
+        (DurableClientInfoResponse)
+            sendAndWait(
+                DurableClientInfoRequest.create(
+                    durableClientId,
+                    DurableClientInfoRequest.IS_PRIMARY_FOR_DURABLE_CLIENT_REQUEST));
     boolean result = resp.getResultBoolean();
     return result;
   }
@@ -673,9 +667,11 @@ public abstract class RemoteGemFireVM implements GemFireVM {
     }
   }
 
-  public AdminBridgeServer startBridgeServer(CacheInfo cache, AdminBridgeServer bridge) throws AdminException {
+  public AdminBridgeServer startBridgeServer(CacheInfo cache, AdminBridgeServer bridge)
+      throws AdminException {
 
-    BridgeServerRequest request = BridgeServerRequest.createForStart(cache, (RemoteBridgeServer) bridge);
+    BridgeServerRequest request =
+        BridgeServerRequest.createForStart(cache, (RemoteBridgeServer) bridge);
     BridgeServerResponse response = (BridgeServerResponse) sendAndWait(request);
     if (response.getException() != null) {
       Exception ex = response.getException();
@@ -686,9 +682,11 @@ public abstract class RemoteGemFireVM implements GemFireVM {
     }
   }
 
-  public AdminBridgeServer stopBridgeServer(CacheInfo cache, AdminBridgeServer bridge) throws AdminException {
+  public AdminBridgeServer stopBridgeServer(CacheInfo cache, AdminBridgeServer bridge)
+      throws AdminException {
 
-    BridgeServerRequest request = BridgeServerRequest.createForStop(cache, (RemoteBridgeServer) bridge);
+    BridgeServerRequest request =
+        BridgeServerRequest.createForStop(cache, (RemoteBridgeServer) bridge);
     BridgeServerResponse response = (BridgeServerResponse) sendAndWait(request);
     if (response.getException() != null) {
       Exception ex = response.getException();
@@ -704,26 +702,22 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   static final int SEARCH_TIMEOUT_CODE = 3;
 
   /**
-   * Changes a Cache configuration value in a remote cache by sending
-   * the remote member a {@link CacheConfigRequest}.
+   * Changes a Cache configuration value in a remote cache by sending the remote member a {@link
+   * CacheConfigRequest}.
    *
-   * @param c
-   *        The remote cache to be changed
-   * @param opCode
-   *        The code of the operation to perform
-   * @param value
-   *        A value that is an argument to the operation
-   *
-   * @throws AdminException
-   *         If a problem is encountered in the remote VM while
-   *         changing the configuration.
+   * @param c The remote cache to be changed
+   * @param opCode The code of the operation to perform
+   * @param value A value that is an argument to the operation
+   * @throws AdminException If a problem is encountered in the remote VM while changing the
+   *     configuration.
    */
   private CacheInfo setCacheConfigValue(CacheInfo c, int opCode, int value) throws AdminException {
 
     if (c.isClosed()) {
       return c;
     }
-    CacheConfigResponse resp = (CacheConfigResponse) sendAndWait(CacheConfigRequest.create(c, opCode, value));
+    CacheConfigResponse resp =
+        (CacheConfigResponse) sendAndWait(CacheConfigRequest.create(c, opCode, value));
     if (resp.getException() != null) {
       Exception ex = resp.getException();
       throw new AdminException(ex.getMessage(), ex);
@@ -738,9 +732,8 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * Stops listening for statistics updates.  Invoked when this
-   * <code>GemFireVM</code> disconnects or when this member leaves the
-   * distributed system. 
+   * Stops listening for statistics updates. Invoked when this <code>GemFireVM</code> disconnects or
+   * when this member leaves the distributed system.
    */
   public void stopStatListening() {
     synchronized (this.statListenersLock) {
@@ -751,15 +744,11 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * Invoked by the {@link RemoteGfManagerAgent} when the member that
-   * this <code>GemFireVM</code> represents has left the distributed
-   * system. 
+   * Invoked by the {@link RemoteGfManagerAgent} when the member that this <code>GemFireVM</code>
+   * represents has left the distributed system.
    *
-   * @param alertListenerRegistered
-   *        Was there an alert listener registered for this
-   *        <code>GemFireVM</code>'s agent?  If so, the alert
-   *        listeners should be removed in the member VMs.
-   *
+   * @param alertListenerRegistered Was there an alert listener registered for this <code>GemFireVM
+   *     </code>'s agent? If so, the alert listeners should be removed in the member VMs.
    * @see AdminConsoleDisconnectMessage
    */
   public void disconnect(boolean alertListenerRegistered) {
@@ -785,10 +774,8 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   //inner classes
 
   /**
-   * A daemon thread that reads  
-   * org.apache.geode.internal.admin.remote.RemoteGemFireVM.DispatchArgs 
-   * off of a queue
-   * and delivers callbacks to the appropriate {@link 
+   * A daemon thread that reads org.apache.geode.internal.admin.remote.RemoteGemFireVM.DispatchArgs
+   * off of a queue and delivers callbacks to the appropriate {@link
    * org.apache.geode.internal.admin.StatListener}.
    */
   private class StatDispatcher extends Thread {
@@ -823,7 +810,7 @@ public abstract class RemoteGemFireVM implements GemFireVM {
     }
 
     protected void put(DispatchArgs args) {
-      for (;;) {
+      for (; ; ) {
         RemoteGemFireVM.this.agent.getDM().getCancelCriterion().checkCancelInProgress(null);
         boolean interrupted = Thread.interrupted();
         try {
@@ -840,10 +827,8 @@ public abstract class RemoteGemFireVM implements GemFireVM {
     }
   }
 
-  /**
-   * Encapsulates an update to several statistics
-   */
-  static private class DispatchArgs {
+  /** Encapsulates an update to several statistics */
+  private static class DispatchArgs {
     protected final long timestamp;
     protected final int[] listenerIds;
     protected final double[] values;
@@ -851,13 +836,10 @@ public abstract class RemoteGemFireVM implements GemFireVM {
     /**
      * Creates a new <code>DispatchArgs</code>
      *
-     * @param timestamp
-     *        The time at which the statistics were sampled
-     * @param listenerIds
-     *        The ids of the <code>StatListener</code>s on which
-     *        callbacks should be invoked.
-     * @param values
-     *        The new values of the statistics
+     * @param timestamp The time at which the statistics were sampled
+     * @param listenerIds The ids of the <code>StatListener</code>s on which callbacks should be
+     *     invoked.
+     * @param values The new values of the statistics
      */
     protected DispatchArgs(long timestamp, int[] listenerIds, double[] values) {
       this.timestamp = timestamp;
@@ -867,16 +849,19 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * Sends an AdminRequest to this dm (that is, to member of the
-   * distributed system represented by this
-   * <code>RemoteGemFireVM</code>) and waits for the AdminReponse.
+   * Sends an AdminRequest to this dm (that is, to member of the distributed system represented by
+   * this <code>RemoteGemFireVM</code>) and waits for the AdminReponse.
    */
   AdminResponse sendAndWait(AdminRequest msg) {
     if (unreachable) {
-      throw new OperationCancelledException(LocalizedStrings.RemoteGemFireVM_0_IS_UNREACHABLE_IT_HAS_EITHER_LEFT_OR_CRASHED.toLocalizedString(this.name));
+      throw new OperationCancelledException(
+          LocalizedStrings.RemoteGemFireVM_0_IS_UNREACHABLE_IT_HAS_EITHER_LEFT_OR_CRASHED
+              .toLocalizedString(this.name));
     }
     if (this.id == null) {
-      throw new NullPointerException(LocalizedStrings.RemoteGemFireVM_THE_ID_IF_THIS_REMOTEGEMFIREVM_IS_NULL.toLocalizedString());
+      throw new NullPointerException(
+          LocalizedStrings.RemoteGemFireVM_THE_ID_IF_THIS_REMOTEGEMFIREVM_IS_NULL
+              .toLocalizedString());
     }
     msg.setRecipient(this.id);
     msg.setModifiedClasspath(inspectionClasspath);
@@ -884,9 +869,8 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * Sends a message to this dm (that is, to member of the distributed
-   * system represented by this <code>RemoteGemFireVM</code>) and does
-   * not wait for a response
+   * Sends a message to this dm (that is, to member of the distributed system represented by this
+   * <code>RemoteGemFireVM</code>) and does not wait for a response
    */
   void sendAsync(DistributionMessage msg) {
     msg.setRecipient(id);
@@ -897,16 +881,16 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * This method should be used to set the Alerts Manager for the member agent. 
-   * Stat Alerts Aggregator would use this method to set stat Alerts Manager 
-   * with the available alert definitions and the refresh interval set for 
-   * each member joining the distributed system. 
-   * 
+   * This method should be used to set the Alerts Manager for the member agent. Stat Alerts
+   * Aggregator would use this method to set stat Alerts Manager with the available alert
+   * definitions and the refresh interval set for each member joining the distributed system.
+   *
    * @param alertDefs Stat Alert Definitions to set for the Alerts Manager
    * @param refreshInterval refresh interval to be used by the Alerts Manager
    * @param setRemotely whether to be set on remote VM
    */
-  public void setAlertsManager(StatAlertDefinition[] alertDefs, long refreshInterval, boolean setRemotely) {
+  public void setAlertsManager(
+      StatAlertDefinition[] alertDefs, long refreshInterval, boolean setRemotely) {
     if (setRemotely) {
       //TODO: is the check for valid AdminResponse required
       sendAsync(StatAlertsManagerAssignMessage.create(alertDefs, refreshInterval));
@@ -914,10 +898,9 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * This method would be used to set refresh interval for the GemFireVM. This 
-   * method would mostly be called on each member after initial set up whenever 
-   * the refresh interval is changed.
-   * 
+   * This method would be used to set refresh interval for the GemFireVM. This method would mostly
+   * be called on each member after initial set up whenever the refresh interval is changed.
+   *
    * @param refreshInterval refresh interval to set (in milliseconds)
    */
   public void setRefreshInterval(long refreshInterval) {
@@ -925,18 +908,17 @@ public abstract class RemoteGemFireVM implements GemFireVM {
   }
 
   /**
-   * This method would be used to set Sta Alert Definitions for the GemFireVM. 
-   * This method would mostly be called on each member after initial set up 
-   * whenever one or more Stat Alert Definitions get added/updated/removed.
-   * 
+   * This method would be used to set Sta Alert Definitions for the GemFireVM. This method would
+   * mostly be called on each member after initial set up whenever one or more Stat Alert
+   * Definitions get added/updated/removed.
+   *
    * @param alertDefs an array of StaAlertDefinition objects
-   * @param actionCode one of UpdateAlertDefinitionRequest.ADD_ALERT_DEFINITION, 
-   *                   UpdateAlertDefinitionRequestUPDATE_ALERT_DEFINITION, 
-   *                   UpdateAlertDefinitionRequest.REMOVE_ALERT_DEFINITION
+   * @param actionCode one of UpdateAlertDefinitionRequest.ADD_ALERT_DEFINITION,
+   *     UpdateAlertDefinitionRequestUPDATE_ALERT_DEFINITION,
+   *     UpdateAlertDefinitionRequest.REMOVE_ALERT_DEFINITION
    */
   public void updateAlertDefinitions(StatAlertDefinition[] alertDefs, int actionCode) {
     //TODO: is the check for valid AdminResponse required
     sendAsync(UpdateAlertDefinitionMessage.create(alertDefs, actionCode));
   }
-
 }

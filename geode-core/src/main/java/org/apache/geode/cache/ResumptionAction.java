@@ -22,11 +22,10 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Specifies how the region is affected by resumption of reliability when
- * one or more missing required roles return to the distributed membership.  
- * The <code>ResumptionAction</code> is specified when configuring a region's 
- * {@link org.apache.geode.cache.MembershipAttributes}.
- * 
+ * Specifies how the region is affected by resumption of reliability when one or more missing
+ * required roles return to the distributed membership. The <code>ResumptionAction</code> is
+ * specified when configuring a region's {@link org.apache.geode.cache.MembershipAttributes}.
+ *
  * @deprecated this API is scheduled to be removed
  */
 public class ResumptionAction implements java.io.Serializable {
@@ -35,12 +34,11 @@ public class ResumptionAction implements java.io.Serializable {
   /** No special action takes place when reliability resumes. */
   public static final ResumptionAction NONE = new ResumptionAction("NONE");
 
-  /** 
-   * Resumption of reliability causes the region to be cleared of all data 
-   * and {@link DataPolicy#withReplication replicated} regions will do a new
-   * getInitialImage operation to repopulate the region.  Any existing 
-   * references to this region become unusable in that any subsequent methods
-   * invoked on those references will throw a {@link 
+  /**
+   * Resumption of reliability causes the region to be cleared of all data and {@link
+   * DataPolicy#withReplication replicated} regions will do a new getInitialImage operation to
+   * repopulate the region. Any existing references to this region become unusable in that any
+   * subsequent methods invoked on those references will throw a {@link
    * RegionReinitializedException}.
    */
   public static final ResumptionAction REINITIALIZE = new ResumptionAction("REINITIALIZE");
@@ -54,7 +52,7 @@ public class ResumptionAction implements java.io.Serializable {
 
   private static byte nextOrdinal = 0;
 
-  private static final ResumptionAction[] PRIVATE_VALUES = { NONE, REINITIALIZE };
+  private static final ResumptionAction[] PRIVATE_VALUES = {NONE, REINITIALIZE};
 
   /** List of all ResumptionAction values */
   public static final List VALUES = Collections.unmodifiableList(Arrays.asList(PRIVATE_VALUES));
@@ -76,14 +74,17 @@ public class ResumptionAction implements java.io.Serializable {
   /** Return the ResumptionAction specified by name */
   public static ResumptionAction fromName(String name) {
     if (name == null || name.length() == 0) {
-      throw new IllegalArgumentException(LocalizedStrings.ResumptionAction_INVALID_RESUMPTIONACTION_NAME_0.toLocalizedString(name));
+      throw new IllegalArgumentException(
+          LocalizedStrings.ResumptionAction_INVALID_RESUMPTIONACTION_NAME_0.toLocalizedString(
+              name));
     }
     for (int i = 0; i < PRIVATE_VALUES.length; i++) {
       if (name.equals(PRIVATE_VALUES[i].name)) {
         return PRIVATE_VALUES[i];
       }
     }
-    throw new IllegalArgumentException(LocalizedStrings.ResumptionAction_INVALID_RESUMPTIONACTION_NAME_0.toLocalizedString(name));
+    throw new IllegalArgumentException(
+        LocalizedStrings.ResumptionAction_INVALID_RESUMPTIONACTION_NAME_0.toLocalizedString(name));
   }
 
   /** Returns true if this is <code>NONE</code>. */
@@ -96,13 +97,13 @@ public class ResumptionAction implements java.io.Serializable {
     return this == REINITIALIZE;
   }
 
-  /** 
+  /**
    * Returns a string representation for this resumption action.
+   *
    * @return the name of this resumption action
    */
   @Override
   public String toString() {
     return this.name;
   }
-
 }

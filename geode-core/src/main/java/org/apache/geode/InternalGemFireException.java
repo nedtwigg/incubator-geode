@@ -18,12 +18,8 @@
 package org.apache.geode;
 
 /**
- * An <code>InternalGemFireException</code> is thrown when
- * a low level, internal, operation fails due to no fault of
- * the user. The message often contains an operating system
- * error code.
- *
- *
+ * An <code>InternalGemFireException</code> is thrown when a low level, internal, operation fails
+ * due to no fault of the user. The message often contains an operating system error code.
  */
 public class InternalGemFireException extends GemFireException {
   private static final long serialVersionUID = -6912843691545178619L;
@@ -38,17 +34,12 @@ public class InternalGemFireException extends GemFireException {
     super(cause);
   }
 
-  /**
-   * Creates a new <code>InternalGemFireException</code>.
-   */
+  /** Creates a new <code>InternalGemFireException</code>. */
   public InternalGemFireException(String message) {
     super(message);
   }
 
-  /**
-   * Creates a new <code>InternalGemFireException</code> that was
-   * caused by a given exception
-   */
+  /** Creates a new <code>InternalGemFireException</code> that was caused by a given exception */
   public InternalGemFireException(String message, Throwable thr) {
     super(message, thr);
   }

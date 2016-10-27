@@ -20,19 +20,16 @@ import org.apache.geode.i18n.LogWriterI18n;
 import org.apache.geode.internal.logging.InternalLogWriter;
 import org.apache.geode.internal.logging.PureLogWriter;
 
-/**
- * Contains Utility functions for use by JTA
- * 
- */
+/** Contains Utility functions for use by JTA */
 public class TransactionUtils {
 
   private static LogWriterI18n dslogWriter = null;
   private static LogWriterI18n purelogWriter = null;
 
   /**
-   * Returns the logWriter associated with the existing DistributedSystem. If
-   * DS is null then the PureLogWriter is returned
-   * 
+   * Returns the logWriter associated with the existing DistributedSystem. If DS is null then the
+   * PureLogWriter is returned
+   *
    * @return LogWriterI18n
    */
   public static LogWriterI18n getLogWriterI18n() {
@@ -47,9 +44,9 @@ public class TransactionUtils {
   }
 
   /**
-   * To be used by mapTransaction method of JNDIInvoker to set the dsLogwriter
-   * before the binding of the datasources
-   * 
+   * To be used by mapTransaction method of JNDIInvoker to set the dsLogwriter before the binding of
+   * the datasources
+   *
    * @param logWriter
    */
   public static void setLogWriter(LogWriterI18n logWriter) {

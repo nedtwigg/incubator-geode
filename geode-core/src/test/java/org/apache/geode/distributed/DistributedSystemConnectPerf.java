@@ -22,8 +22,8 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * This program is used to measure the amount of time it takes to
- * connect and re-connect to a {@link DistributedSystem}.
+ * This program is used to measure the amount of time it takes to connect and re-connect to a {@link
+ * DistributedSystem}.
  */
 public class DistributedSystemConnectPerf {
 
@@ -38,7 +38,9 @@ public class DistributedSystemConnectPerf {
     err.println("Where options are:");
     err.println("  -wait time    Time (in milliseconds) connection " + "is open");
     err.println("");
-    err.println("This program measures the amount of time it takes " + "to connect/disconnect to a DistributedSystem");
+    err.println(
+        "This program measures the amount of time it takes "
+            + "to connect/disconnect to a DistributedSystem");
     err.println("");
 
     System.exit(1);
@@ -115,7 +117,6 @@ public class DistributedSystemConnectPerf {
       delta = System.currentTimeMillis() - start;
       totalDisconnect += delta;
       out.println("** Disconnected from DistributedSystem " + "(took " + delta + " ms)");
-
     }
 
     out.println("** Average connect time took: " + (totalConnect / iterations) + " ms");
@@ -123,5 +124,4 @@ public class DistributedSystemConnectPerf {
 
     System.exit(0);
   }
-
 }

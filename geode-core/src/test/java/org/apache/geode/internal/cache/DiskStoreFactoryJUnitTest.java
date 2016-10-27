@@ -40,9 +40,7 @@ import org.apache.geode.cache.RegionShortcut;
 import org.apache.geode.distributed.DistributedSystem;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Tests DiskStoreFactory
- */
+/** Tests DiskStoreFactory */
 @Category(IntegrationTest.class)
 public class DiskStoreFactoryJUnitTest {
 
@@ -76,10 +74,7 @@ public class DiskStoreFactoryJUnitTest {
     cache.close();
   }
 
-  /**
-   * Test method for
-   * 'org.apache.geode.cache.DiskWriteAttributes.getDefaultInstance()'
-   */
+  /** Test method for 'org.apache.geode.cache.DiskWriteAttributes.getDefaultInstance()' */
   @Test
   public void testGetDefaultInstance() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
@@ -96,10 +91,18 @@ public class DiskStoreFactoryJUnitTest {
     assertEquals(DiskStoreFactory.DEFAULT_WRITE_BUFFER_SIZE, ds.getWriteBufferSize());
     assertEquals(DiskStoreFactory.DEFAULT_QUEUE_SIZE, ds.getQueueSize());
     if (!Arrays.equals(DiskStoreFactory.DEFAULT_DISK_DIRS, ds.getDiskDirs())) {
-      fail("expected=" + Arrays.toString(DiskStoreFactory.DEFAULT_DISK_DIRS) + " had=" + Arrays.toString(ds.getDiskDirs()));
+      fail(
+          "expected="
+              + Arrays.toString(DiskStoreFactory.DEFAULT_DISK_DIRS)
+              + " had="
+              + Arrays.toString(ds.getDiskDirs()));
     }
     if (!Arrays.equals(DiskStoreFactory.DEFAULT_DISK_DIR_SIZES, ds.getDiskDirSizes())) {
-      fail("expected=" + Arrays.toString(DiskStoreFactory.DEFAULT_DISK_DIR_SIZES) + " had=" + Arrays.toString(ds.getDiskDirSizes()));
+      fail(
+          "expected="
+              + Arrays.toString(DiskStoreFactory.DEFAULT_DISK_DIR_SIZES)
+              + " had="
+              + Arrays.toString(ds.getDiskDirSizes()));
     }
   }
 
@@ -107,7 +110,15 @@ public class DiskStoreFactoryJUnitTest {
   public void testNonDefaults() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     String name = "testNonDefaults";
-    DiskStore ds = dsf.setAutoCompact(!DiskStoreFactory.DEFAULT_AUTO_COMPACT).setCompactionThreshold(DiskStoreFactory.DEFAULT_COMPACTION_THRESHOLD / 2).setAllowForceCompaction(!DiskStoreFactory.DEFAULT_ALLOW_FORCE_COMPACTION).setMaxOplogSize(DiskStoreFactory.DEFAULT_MAX_OPLOG_SIZE + 1).setTimeInterval(DiskStoreFactory.DEFAULT_TIME_INTERVAL + 1).setWriteBufferSize(DiskStoreFactory.DEFAULT_WRITE_BUFFER_SIZE + 1).setQueueSize(DiskStoreFactory.DEFAULT_QUEUE_SIZE + 1).create(name);
+    DiskStore ds =
+        dsf.setAutoCompact(!DiskStoreFactory.DEFAULT_AUTO_COMPACT)
+            .setCompactionThreshold(DiskStoreFactory.DEFAULT_COMPACTION_THRESHOLD / 2)
+            .setAllowForceCompaction(!DiskStoreFactory.DEFAULT_ALLOW_FORCE_COMPACTION)
+            .setMaxOplogSize(DiskStoreFactory.DEFAULT_MAX_OPLOG_SIZE + 1)
+            .setTimeInterval(DiskStoreFactory.DEFAULT_TIME_INTERVAL + 1)
+            .setWriteBufferSize(DiskStoreFactory.DEFAULT_WRITE_BUFFER_SIZE + 1)
+            .setQueueSize(DiskStoreFactory.DEFAULT_QUEUE_SIZE + 1)
+            .create(name);
     assertEquals(!DiskStoreFactory.DEFAULT_AUTO_COMPACT, ds.getAutoCompact());
     assertEquals(DiskStoreFactory.DEFAULT_COMPACTION_THRESHOLD / 2, ds.getCompactionThreshold());
     assertEquals(!DiskStoreFactory.DEFAULT_ALLOW_FORCE_COMPACTION, ds.getAllowForceCompaction());
@@ -235,7 +246,11 @@ public class DiskStoreFactoryJUnitTest {
     String name = "testDestroy";
     DiskStore ds = dsf.create(name);
 
-    Region region = cache.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT).setDiskStoreName("testDestroy").create("region");
+    Region region =
+        cache
+            .createRegionFactory(RegionShortcut.LOCAL_PERSISTENT)
+            .setDiskStoreName("testDestroy")
+            .create("region");
 
     try {
       ds.destroy();
@@ -256,7 +271,11 @@ public class DiskStoreFactoryJUnitTest {
     String name = "testDestroy";
     DiskStore ds = dsf.create(name);
 
-    Region region = cache.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT).setDiskStoreName("testDestroy").create("region");
+    Region region =
+        cache
+            .createRegionFactory(RegionShortcut.LOCAL_PERSISTENT)
+            .setDiskStoreName("testDestroy")
+            .create("region");
 
     region.close();
 
@@ -270,7 +289,11 @@ public class DiskStoreFactoryJUnitTest {
     String name = "testDestroy";
     DiskStore ds = dsf.create(name);
 
-    Region region = cache.createRegionFactory(RegionShortcut.LOCAL_OVERFLOW).setDiskStoreName("testDestroy").create("region");
+    Region region =
+        cache
+            .createRegionFactory(RegionShortcut.LOCAL_OVERFLOW)
+            .setDiskStoreName("testDestroy")
+            .create("region");
 
     try {
       ds.destroy();
@@ -326,14 +349,15 @@ public class DiskStoreFactoryJUnitTest {
     File[] dirs = diskStore.getDiskDirs();
 
     for (File dir : dirs) {
-      File[] files = dir.listFiles(new FilenameFilter() {
+      File[] files =
+          dir.listFiles(
+              new FilenameFilter() {
 
-        @Override
-        public boolean accept(File dir, String name) {
-          return name.startsWith("BACKUP" + diskStoreName);
-        }
-
-      });
+                @Override
+                public boolean accept(File dir, String name) {
+                  return name.startsWith("BACKUP" + diskStoreName);
+                }
+              });
       for (File file : files) {
         file.delete();
       }

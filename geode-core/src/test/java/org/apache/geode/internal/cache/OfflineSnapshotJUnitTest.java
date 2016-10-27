@@ -52,14 +52,17 @@ public class OfflineSnapshotJUnitTest {
     int rcount = 0;
     for (final RegionType rt : RegionType.persistentValues()) {
       for (final SerializationType st : SerializationType.offlineValues()) {
-        Region<Integer, MyObject> region = rgen.createRegion(cache, ds.getName(), rt, "test" + rcount++);
+        Region<Integer, MyObject> region =
+            rgen.createRegion(cache, ds.getName(), rt, "test" + rcount++);
         final Map<Integer, MyObject> expected = createExpected(st, 1000);
 
         region.putAll(expected);
         cache.close();
 
-        DiskStoreImpl.exportOfflineSnapshot(ds.getName(), new File[] { new File(".") }, new File("."));
-        SnapshotTestUtil.checkSnapshotEntries(new File("."), expected, ds.getName(), region.getName());
+        DiskStoreImpl.exportOfflineSnapshot(
+            ds.getName(), new File[] {new File(".")}, new File("."));
+        SnapshotTestUtil.checkSnapshotEntries(
+            new File("."), expected, ds.getName(), region.getName());
 
         reset();
       }
@@ -69,10 +72,12 @@ public class OfflineSnapshotJUnitTest {
   @Test
   public void testLargeFileExport() throws Exception {
     int count = 10000;
-    Region<Integer, MyObject> region = rgen.createRegion(cache, ds.getName(), RegionType.PARTITION_PERSISTENT, "test");
+    Region<Integer, MyObject> region =
+        rgen.createRegion(cache, ds.getName(), RegionType.PARTITION_PERSISTENT, "test");
 
     System.out.println("Creating entries...");
-    final Map<Integer, MyObject> expected = createExpected(SerializationType.DATA_SERIALIZABLE, count);
+    final Map<Integer, MyObject> expected =
+        createExpected(SerializationType.DATA_SERIALIZABLE, count);
 
     region.putAll(expected);
     cache.close();
@@ -80,13 +85,21 @@ public class OfflineSnapshotJUnitTest {
     System.out.println("Recovering entries...");
     for (int i = 0; i < 10; i++) {
       long start = System.currentTimeMillis();
-      DiskStoreImpl.exportOfflineSnapshot(ds.getName(), new File[] { new File(".") }, new File("."));
+      DiskStoreImpl.exportOfflineSnapshot(ds.getName(), new File[] {new File(".")}, new File("."));
 
       long elapsed = System.currentTimeMillis() - start;
       double rate = 1.0 * count / elapsed;
 
-      System.out.println("Created snapshot with " + count + " entries in " + elapsed + " ms (" + rate + " entries/ms)");
-      SnapshotTestUtil.checkSnapshotEntries(new File("."), expected, ds.getName(), region.getName());
+      System.out.println(
+          "Created snapshot with "
+              + count
+              + " entries in "
+              + elapsed
+              + " ms ("
+              + rate
+              + " entries/ms)");
+      SnapshotTestUtil.checkSnapshotEntries(
+          new File("."), expected, ds.getName(), region.getName());
     }
   }
 
@@ -100,12 +113,15 @@ public class OfflineSnapshotJUnitTest {
 
   @Before
   public void setUp() throws Exception {
-    for (File f : new File(".").listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(File dir, String name) {
-        return name.startsWith("BACKUP") || name.startsWith("snapshot-");
-      }
-    })) {
+    for (File f :
+        new File(".")
+            .listFiles(
+                new FilenameFilter() {
+                  @Override
+                  public boolean accept(File dir, String name) {
+                    return name.startsWith("BACKUP") || name.startsWith("snapshot-");
+                  }
+                })) {
       f.delete();
     }
 
@@ -121,7 +137,12 @@ public class OfflineSnapshotJUnitTest {
   }
 
   private void reset() {
-    CacheFactory cf = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "error").setPdxSerializer(new MyPdxSerializer()).setPdxPersistent(true);
+    CacheFactory cf =
+        new CacheFactory()
+            .set(MCAST_PORT, "0")
+            .set(LOG_LEVEL, "error")
+            .setPdxSerializer(new MyPdxSerializer())
+            .setPdxPersistent(true);
 
     cache = cf.create();
     ds = cache.createDiskStoreFactory().setMaxOplogSize(1).create("snapshotTest");

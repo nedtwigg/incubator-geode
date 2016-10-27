@@ -39,5 +39,4 @@ public class ParallelWANPropagationOffHeapDUnitTest extends ParallelWANPropagati
   public boolean isOffHeap() {
     return true;
   }
-
 }

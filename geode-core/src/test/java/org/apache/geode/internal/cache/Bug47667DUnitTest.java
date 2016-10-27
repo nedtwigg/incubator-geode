@@ -69,25 +69,45 @@ public class Bug47667DUnitTest extends LocatorTestBase {
     locator.invoke("Start Locator", () -> startLocator(locatorHost, locatorPort, ""));
 
     String locString = getLocatorString(host, locatorPort);
-    server1.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "R1" }, locString, new String[] { "R1" }));
-    server2.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "R2" }, locString, new String[] { "R2" }));
+    server1.invoke(
+        "Start BridgeServer",
+        () -> startBridgeServer(new String[] {"R1"}, locString, new String[] {"R1"}));
+    server2.invoke(
+        "Start BridgeServer",
+        () -> startBridgeServer(new String[] {"R2"}, locString, new String[] {"R2"}));
 
-    client.invoke("create region and insert data in transaction", () -> {
-      ClientCacheFactory ccf = new ClientCacheFactory();
-      ccf.addPoolLocator(locatorHost, locatorPort);
-      ClientCache cache = ccf.create();
-      PoolManager.createFactory().addLocator(locatorHost, locatorPort).setServerGroup("R1").create("R1");
-      PoolManager.createFactory().addLocator(locatorHost, locatorPort).setServerGroup("R2").create("R2");
-      Region region1 = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).setPoolName("R1").create("R1");
-      Region region2 = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).setPoolName("R2").create("R2");
-      CacheTransactionManager transactionManager = cache.getCacheTransactionManager();
-      transactionManager.begin();
-      region1.put(1, "value1");
-      transactionManager.commit();
-      transactionManager.begin();
-      region2.put(2, "value2");
-      transactionManager.commit();
-      return null;
-    });
+    client.invoke(
+        "create region and insert data in transaction",
+        () -> {
+          ClientCacheFactory ccf = new ClientCacheFactory();
+          ccf.addPoolLocator(locatorHost, locatorPort);
+          ClientCache cache = ccf.create();
+          PoolManager.createFactory()
+              .addLocator(locatorHost, locatorPort)
+              .setServerGroup("R1")
+              .create("R1");
+          PoolManager.createFactory()
+              .addLocator(locatorHost, locatorPort)
+              .setServerGroup("R2")
+              .create("R2");
+          Region region1 =
+              cache
+                  .createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY)
+                  .setPoolName("R1")
+                  .create("R1");
+          Region region2 =
+              cache
+                  .createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY)
+                  .setPoolName("R2")
+                  .create("R2");
+          CacheTransactionManager transactionManager = cache.getCacheTransactionManager();
+          transactionManager.begin();
+          region1.put(1, "value1");
+          transactionManager.commit();
+          transactionManager.begin();
+          region2.put(2, "value2");
+          transactionManager.commit();
+          return null;
+        });
   }
 }

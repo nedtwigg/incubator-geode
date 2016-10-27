@@ -20,15 +20,9 @@ import org.apache.geode.DataSerializable;
 import org.apache.geode.StatisticsFactory;
 import org.apache.geode.internal.admin.statalerts.StatisticInfo;
 
-/**
- * Base interface that supports a StatAlertDefinition
- * 
- */
+/** Base interface that supports a StatAlertDefinition */
 public interface StatAlertDefinition extends DataSerializable {
-  /**
-   * Get the unique ID for AlertDefinition, created using the hashCode of
-   * StringRepresentation
-   */
+  /** Get the unique ID for AlertDefinition, created using the hashCode of StringRepresentation */
   public int getId();
 
   public StatisticInfo[] getStatisticInfo();
@@ -38,41 +32,39 @@ public interface StatAlertDefinition extends DataSerializable {
   // public boolean isADecoratorOf(Constant decoType [Function,
   // SystemWideFunction, Gauge, Number]);
 
-  /**
-   * Evaluate using the passed params and not using the getValue
-   */
+  /** Evaluate using the passed params and not using the getValue */
   public boolean evaluate(Number[] params);
 
   /**
-   * Evaluate the said AlertDefinition. Value of Statistic would be gotten from
-   * StatisticInfo Objects
+   * Evaluate the said AlertDefinition. Value of Statistic would be gotten from StatisticInfo
+   * Objects
    */
   public boolean evaluate();
 
   /**
-   * Evaluate using the passed params and not using the getValue Return a
-   * StatAlert object if one is raised
+   * Evaluate using the passed params and not using the getValue Return a StatAlert object if one is
+   * raised
    */
   public StatAlert evaluateAndAlert(Number[] params);
 
   /**
-   * Evaluate the said AlertDefinition. Value of Statistic would be gotten from
-   * StatisticInfo Objects. Return a StatAlert object if one is raised
+   * Evaluate the said AlertDefinition. Value of Statistic would be gotten from StatisticInfo
+   * Objects. Return a StatAlert object if one is raised
    */
   public StatAlert evaluateAndAlert();
 
   /**
-   * Get the value of the Statistic this Definition object is created for
-   * Depending on the Decorator the value returned can be different
-   * 
+   * Get the value of the Statistic this Definition object is created for Depending on the Decorator
+   * the value returned can be different
+   *
    * @return Number[]
    */
   public Number[] getValue();
 
   /**
-   * Get the value of the Statistic this Definition object is created for
-   * Depending on the Decorator the value returned can be different
-   * 
+   * Get the value of the Statistic this Definition object is created for Depending on the Decorator
+   * the value returned can be different
+   *
    * @return Number[]
    */
   public Number[] getValue(Number[] vals);
@@ -87,16 +79,15 @@ public interface StatAlertDefinition extends DataSerializable {
 
   /**
    * This method returns the name of this stat alert definition.
-   * 
+   *
    * @return Name of the StatAlertDefinition
    */
   public String getName();
 
   /**
    * This method sets the name of this stat alert definition.
-   * 
-   * @param name
-   *                name to be set for this StatAlertDefinition.
+   *
+   * @param name name to be set for this StatAlertDefinition.
    */
   public void setName(String name);
 }

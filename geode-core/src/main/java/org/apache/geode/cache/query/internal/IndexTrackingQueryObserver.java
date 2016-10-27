@@ -55,7 +55,8 @@ public class IndexTrackingQueryObserver extends QueryObserverAdapter {
     String indexName;
     //Dont create new IndexInfo if one is already there in map for aggregation
     //of results later for whole partition region on this node.
-    if ((index instanceof MapRangeIndex || index instanceof CompactMapRangeIndex) && key instanceof Object[]) {
+    if ((index instanceof MapRangeIndex || index instanceof CompactMapRangeIndex)
+        && key instanceof Object[]) {
       indexName = index.getName() + "-" + ((Object[]) key)[1];
     } else {
       indexName = index.getName();
@@ -73,7 +74,13 @@ public class IndexTrackingQueryObserver extends QueryObserverAdapter {
     }
   }
 
-  public void beforeIndexLookup(Index index, int lowerBoundOperator, Object lowerBoundKey, int upperBoundOperator, Object upperBoundKey, Set NotEqualKeys) {
+  public void beforeIndexLookup(
+      Index index,
+      int lowerBoundOperator,
+      Object lowerBoundKey,
+      int upperBoundOperator,
+      Object upperBoundKey,
+      Set NotEqualKeys) {
     Map<String, IndexInfo> indexMap = (Map) this.indexInfo.get();
     if (indexMap == null) {
       indexMap = new HashMap<String, IndexInfo>();
@@ -95,9 +102,7 @@ public class IndexTrackingQueryObserver extends QueryObserverAdapter {
     }
   }
 
-  /**
-   * appends the size of the lookup to the last index name in the list
-   */
+  /** appends the size of the lookup to the last index name in the list */
   public void afterIndexLookup(Collection results) {
     if (results == null) {
       // according to javadocs in QueryObserver, can be null if there
@@ -111,7 +116,11 @@ public class IndexTrackingQueryObserver extends QueryObserverAdapter {
     if (lastIndexUsed.get() != null) {
       IndexInfo indexInfo = (IndexInfo) indexMap.get(((Index) this.lastIndexUsed.get()).getName());
       if (indexInfo != null) {
-        indexInfo.getResults().put(((Index) this.lastIndexUsed.get()).getRegion().getFullPath(), new Integer(results.size()));
+        indexInfo
+            .getResults()
+            .put(
+                ((Index) this.lastIndexUsed.get()).getRegion().getFullPath(),
+                new Integer(results.size()));
       }
     }
     this.lastIndexUsed.set(null);
@@ -121,8 +130,8 @@ public class IndexTrackingQueryObserver extends QueryObserverAdapter {
   }
 
   /**
-   * This should be called only when one query execution on one gemfire node is done.
-   * NOT for each buckets.
+   * This should be called only when one query execution on one gemfire node is done. NOT for each
+   * buckets.
    */
   public void reset() {
     if (th != null) {
@@ -148,9 +157,8 @@ public class IndexTrackingQueryObserver extends QueryObserverAdapter {
   }
 
   /**
-   * This class contains information related to buckets and results found in
-   * the index on those buckets.
-   *
+   * This class contains information related to buckets and results found in the index on those
+   * buckets.
    */
   public class IndexInfo {
     // A {RegionFullPath, results} map for an Index lookup on a Region.
@@ -161,8 +169,8 @@ public class IndexTrackingQueryObserver extends QueryObserverAdapter {
     }
 
     /**
-     * Adds a results map (mostly a bucket index lookup results)
-     * to the "this" IndexInfo.
+     * Adds a results map (mostly a bucket index lookup results) to the "this" IndexInfo.
+     *
      * @param rslts
      */
     public void addResults(Map rslts) {

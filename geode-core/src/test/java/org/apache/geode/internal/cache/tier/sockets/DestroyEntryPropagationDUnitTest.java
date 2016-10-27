@@ -60,14 +60,14 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 
-/**
- * Tests propagation of destroy entry operation across the vms
- */
+/** Tests propagation of destroy entry operation across the vms */
 @Category(DistributedTest.class)
 public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase {
 
-  private static final String REGION_NAME = DestroyEntryPropagationDUnitTest.class.getSimpleName() + "_region";
-  private static final String WAIT_PROPERTY = DestroyEntryPropagationDUnitTest.class.getSimpleName() + ".maxWaitTime";
+  private static final String REGION_NAME =
+      DestroyEntryPropagationDUnitTest.class.getSimpleName() + "_region";
+  private static final String WAIT_PROPERTY =
+      DestroyEntryPropagationDUnitTest.class.getSimpleName() + ".maxWaitTime";
   private static final int WAIT_DEFAULT = 120000;
 
   private static Cache cache;
@@ -97,11 +97,21 @@ public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase 
     //client 2 VM
     vm3 = host.getVM(3);
 
-    PORT1 = ((Integer) vm0.invoke(() -> DestroyEntryPropagationDUnitTest.createServerCache())).intValue();
-    PORT2 = ((Integer) vm1.invoke(() -> DestroyEntryPropagationDUnitTest.createServerCache())).intValue();
+    PORT1 =
+        ((Integer) vm0.invoke(() -> DestroyEntryPropagationDUnitTest.createServerCache()))
+            .intValue();
+    PORT2 =
+        ((Integer) vm1.invoke(() -> DestroyEntryPropagationDUnitTest.createServerCache()))
+            .intValue();
 
-    vm2.invoke(() -> DestroyEntryPropagationDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1), new Integer(PORT2)));
-    vm3.invoke(() -> DestroyEntryPropagationDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1), new Integer(PORT2)));
+    vm2.invoke(
+        () ->
+            DestroyEntryPropagationDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT1), new Integer(PORT2)));
+    vm3.invoke(
+        () ->
+            DestroyEntryPropagationDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT1), new Integer(PORT2)));
   }
 
   @Override
@@ -125,9 +135,7 @@ public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase 
     assertNotNull(cache);
   }
 
-  /**
-   * This tests whether the destroy are propagted or not according to interest registration.
-   */
+  /** This tests whether the destroy are propagted or not according to interest registration. */
   @Test
   public void testDestroyPropagation() {
     //First create entries on both servers via the two clients
@@ -151,10 +159,7 @@ public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase 
     vm3.invoke(() -> DestroyEntryPropagationDUnitTest.verifyOnlyRegisteredEntriesAreDestroyed());
   }
 
-  /**
-   * This tests whether the destroy happened directly on server are propagted or
-   * not.
-   */
+  /** This tests whether the destroy happened directly on server are propagted or not. */
   @Test
   public void testDestroyOnServerPropagation() {
     //First create entries on both servers via the two client
@@ -177,10 +182,12 @@ public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase 
   }
 
   /**
-   * This tests whether the destroy are received by the sender or not if there
-   * are situation of Interest List fail over
+   * This tests whether the destroy are received by the sender or not if there are situation of
+   * Interest List fail over
    */
-  @Category(FlakyTest.class) // GEODE-897: random port, time sensitive, waitForCriterion, 2 minute timeouts, eats exception (1 fixed)
+  @Category(
+      FlakyTest
+          .class) // GEODE-897: random port, time sensitive, waitForCriterion, 2 minute timeouts, eats exception (1 fixed)
   @Test
   public void testVerifyDestroyNotReceivedBySender() {
     final int maxWaitTime = Integer.getInteger(WAIT_PROPERTY, WAIT_DEFAULT).intValue();
@@ -193,59 +200,67 @@ public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase 
     vm0.invoke(() -> DestroyEntryPropagationDUnitTest.killServer(new Integer(PORT1)));
     //Wait for 10 seconds to allow fail over. This would mean that Interest
     // has failed over to Server2.
-    vm2.invoke(new CacheSerializableRunnable("Wait for server on port1 to be dead") {
-      public void run2() throws CacheException {
-        Region r = cache.getRegion(REGION_NAME);
+    vm2.invoke(
+        new CacheSerializableRunnable("Wait for server on port1 to be dead") {
+          public void run2() throws CacheException {
+            Region r = cache.getRegion(REGION_NAME);
 
-        try {
-          r.put("ping", "pong1"); // Used in the case where we don't have a LiveServerMonitorThread
-        } catch (CacheWriterException itsOK) {
-        }
-        try {
-          r.put("ping", "pong1"); // Used in the case where we don't have a LiveServerMonitorThread
-        } catch (CacheWriterException itsOK) {
-        }
+            try {
+              r.put(
+                  "ping",
+                  "pong1"); // Used in the case where we don't have a LiveServerMonitorThread
+            } catch (CacheWriterException itsOK) {
+            }
+            try {
+              r.put(
+                  "ping",
+                  "pong1"); // Used in the case where we don't have a LiveServerMonitorThread
+            } catch (CacheWriterException itsOK) {
+            }
 
-        String poolName = r.getAttributes().getPoolName();
-        assertNotNull(poolName);
-        final PoolImpl pool = (PoolImpl) PoolManager.find(poolName);
-        assertNotNull(pool);
-        WaitCriterion ev = new WaitCriterion() {
-          public boolean done() {
-            return pool.getConnectedServerCount() != 2;
+            String poolName = r.getAttributes().getPoolName();
+            assertNotNull(poolName);
+            final PoolImpl pool = (PoolImpl) PoolManager.find(poolName);
+            assertNotNull(pool);
+            WaitCriterion ev =
+                new WaitCriterion() {
+                  public boolean done() {
+                    return pool.getConnectedServerCount() != 2;
+                  }
+
+                  public String description() {
+                    return null;
+                  }
+                };
+            Wait.waitForCriterion(ev, maxWaitTime, 200, true);
           }
-
-          public String description() {
-            return null;
-          }
-        };
-        Wait.waitForCriterion(ev, maxWaitTime, 200, true);
-      }
-    });
+        });
 
     //Start Server1 again so that both clients1 & Client 2 will establish
     // connection to server1 too.
     vm0.invoke(() -> DestroyEntryPropagationDUnitTest.startServer(new Integer(PORT1)));
 
-    vm2.invoke(new CacheSerializableRunnable("Wait for server on port1 to spring to life") {
-      public void run2() throws CacheException {
-        Region r = cache.getRegion(REGION_NAME);
-        String poolName = r.getAttributes().getPoolName();
-        assertNotNull(poolName);
-        final PoolImpl pool = (PoolImpl) PoolManager.find(poolName);
-        assertNotNull(pool);
-        WaitCriterion ev = new WaitCriterion() {
-          public boolean done() {
-            return pool.getConnectedServerCount() == 2;
-          }
+    vm2.invoke(
+        new CacheSerializableRunnable("Wait for server on port1 to spring to life") {
+          public void run2() throws CacheException {
+            Region r = cache.getRegion(REGION_NAME);
+            String poolName = r.getAttributes().getPoolName();
+            assertNotNull(poolName);
+            final PoolImpl pool = (PoolImpl) PoolManager.find(poolName);
+            assertNotNull(pool);
+            WaitCriterion ev =
+                new WaitCriterion() {
+                  public boolean done() {
+                    return pool.getConnectedServerCount() == 2;
+                  }
 
-          public String description() {
-            return null;
+                  public String description() {
+                    return null;
+                  }
+                };
+            Wait.waitForCriterion(ev, maxWaitTime, 200, true);
           }
-        };
-        Wait.waitForCriterion(ev, maxWaitTime, 200, true);
-      }
-    });
+        });
 
     //Do a destroy on Server1 via Connection object from client1.
     // Client1 should not receive updated value while client2 should receive
@@ -276,8 +291,20 @@ public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase 
       assertNotNull(conn1);
       assertEquals(PORT2, conn1.getServer().getPort());
       ServerRegionProxy srp = new ServerRegionProxy(Region.SEPARATOR + REGION_NAME, pool);
-      srp.destroyOnForTestsOnly(conn1, "key1", null, Operation.DESTROY, new EventIDHolder(new EventID(new byte[] { 1 }, 100000, 1)), null);
-      srp.destroyOnForTestsOnly(conn1, "key2", null, Operation.DESTROY, new EventIDHolder(new EventID(new byte[] { 1 }, 100000, 2)), null);
+      srp.destroyOnForTestsOnly(
+          conn1,
+          "key1",
+          null,
+          Operation.DESTROY,
+          new EventIDHolder(new EventID(new byte[] {1}, 100000, 1)),
+          null);
+      srp.destroyOnForTestsOnly(
+          conn1,
+          "key2",
+          null,
+          Operation.DESTROY,
+          new EventIDHolder(new EventID(new byte[] {1}, 100000, 2)),
+          null);
     } catch (Exception ex) {
       throw new AssertionError("Failed while setting acquireConnectionsAndDestroyEntry  ", ex);
     }
@@ -286,10 +313,16 @@ public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase 
   private static void killServer(Integer port) {
     try {
       Iterator iter = cache.getCacheServers().iterator();
-      LogWriterUtils.getLogWriter().fine("Asif: servers running = " + cache.getCacheServers().size());
+      LogWriterUtils.getLogWriter()
+          .fine("Asif: servers running = " + cache.getCacheServers().size());
       if (iter.hasNext()) {
         CacheServer server = (CacheServer) iter.next();
-        LogWriterUtils.getLogWriter().fine("asif : server running on port=" + server.getPort() + " asked to kill serevre onport=" + port);
+        LogWriterUtils.getLogWriter()
+            .fine(
+                "asif : server running on port="
+                    + server.getPort()
+                    + " asked to kill serevre onport="
+                    + port);
         if (port.intValue() == server.getPort()) {
           server.stop();
         }
@@ -310,9 +343,7 @@ public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase 
     }
   }
 
-  /**
-   * Creates entries on the server
-   */
+  /** Creates entries on the server */
   private static void createEntriesK1andK2() {
     try {
       Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -330,9 +361,7 @@ public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase 
     }
   }
 
-  /**
-   * destroy entry
-   */
+  /** destroy entry */
   private static void destroyEntriesK1andK2() {
     try {
       Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -380,21 +409,24 @@ public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase 
   }
 
   private static void waitForDestroyEvent(Region r, final Object key) {
-    final CertifiableTestCacheListener ccl = (CertifiableTestCacheListener) r.getAttributes().getCacheListener();
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return ccl.destroys.contains(key);
-      }
+    final CertifiableTestCacheListener ccl =
+        (CertifiableTestCacheListener) r.getAttributes().getCacheListener();
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return ccl.destroys.contains(key);
+          }
 
-      public String description() {
-        return "waiting for destroy event for " + key;
-      }
-    };
+          public String description() {
+            return "waiting for destroy event for " + key;
+          }
+        };
     Wait.waitForCriterion(ev, 10 * 1000, 200, true);
     ccl.destroys.remove(key);
   }
 
-  private static void createClientCache(String host, Integer port1, Integer port2) throws Exception {
+  private static void createClientCache(String host, Integer port1, Integer port2)
+      throws Exception {
     int PORT1 = port1.intValue();
     int PORT2 = port2.intValue();
     Properties props = new Properties();
@@ -404,10 +436,18 @@ public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase 
     CacheServerTestUtil.disableShufflingOfEndpoints();
     Pool p;
     try {
-      p = PoolManager.createFactory().addServer(host, PORT1).addServer(host, PORT2).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(2000).setSocketBufferSize(1000).setMinConnections(4)
-          // .setRetryAttempts(2)
-          // .setRetryInterval(250)
-          .create("EntryPropagationDUnitTestPool");
+      p =
+          PoolManager.createFactory()
+              .addServer(host, PORT1)
+              .addServer(host, PORT2)
+              .setSubscriptionEnabled(true)
+              .setSubscriptionRedundancy(-1)
+              .setReadTimeout(2000)
+              .setSocketBufferSize(1000)
+              .setMinConnections(4)
+              // .setRetryAttempts(2)
+              // .setRetryInterval(250)
+              .create("EntryPropagationDUnitTestPool");
     } finally {
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
@@ -418,7 +458,6 @@ public class DestroyEntryPropagationDUnitTest extends JUnit4DistributedTestCase 
     factory.setCacheListener(new CertifiableTestCacheListener(LogWriterUtils.getLogWriter()));
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
-
   }
 
   private static Integer createServerCache() throws Exception {

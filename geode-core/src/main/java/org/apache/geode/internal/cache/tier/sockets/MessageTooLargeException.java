@@ -25,5 +25,4 @@ public class MessageTooLargeException extends IOException {
   public MessageTooLargeException(String message) {
     super(message);
   }
-
 }

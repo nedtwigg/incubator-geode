@@ -18,11 +18,9 @@ package org.apache.geode.management.internal.cli.domain;
 
 import java.io.Serializable;
 
-/***
- * Data class used to return the result of a function on a member. 
- * Typically to return the status of an action on a member.
- * Not suitable if you wish to return specific data from member
- *
+/**
+ * * Data class used to return the result of a function on a member. Typically to return the status
+ * of an action on a member. Not suitable if you wish to return specific data from member
  */
 public class MemberResult implements Serializable {
 

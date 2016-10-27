@@ -25,7 +25,7 @@ public class UnkownExecutor extends AbstractExecutor {
 
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
-    command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_UNKOWN_COMMAND));
+    command.setResponse(
+        Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_UNKOWN_COMMAND));
   }
-
 }

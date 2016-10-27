@@ -24,7 +24,14 @@ import org.apache.geode.pdx.internal.PdxString;
 
 public class PDXUtils {
 
-  public static Object convertPDX(Object obj, boolean isStruct, boolean getDomainObjectForPdx, boolean getDeserializedObject, boolean localResults, boolean[] objectChangedMarker, boolean isDistinct) {
+  public static Object convertPDX(
+      Object obj,
+      boolean isStruct,
+      boolean getDomainObjectForPdx,
+      boolean getDeserializedObject,
+      boolean localResults,
+      boolean[] objectChangedMarker,
+      boolean isDistinct) {
     objectChangedMarker[0] = false;
     if (isStruct) {
       StructImpl simpl = (StructImpl) obj;
@@ -37,8 +44,9 @@ public class PDXUtils {
             obj = simpl.getFieldValues();
           }
         } catch (Exception ex) {
-          throw new CacheException("Unable to retrieve domain object from PdxInstance while building the ResultSet. " + ex.getMessage()) {
-          };
+          throw new CacheException(
+              "Unable to retrieve domain object from PdxInstance while building the ResultSet. "
+                  + ex.getMessage()) {};
         }
       } else {
         Object[] values = simpl.getFieldValues();
@@ -66,8 +74,9 @@ public class PDXUtils {
             obj = ((PdxInstance) obj).getObject();
             objectChangedMarker[0] = true;
           } catch (Exception ex) {
-            throw new CacheException("Unable to retrieve domain object from PdxInstance while building the ResultSet. " + ex.getMessage()) {
-            };
+            throw new CacheException(
+                "Unable to retrieve domain object from PdxInstance while building the ResultSet. "
+                    + ex.getMessage()) {};
           }
         } else if (obj instanceof PdxString) {
           obj = ((PdxString) obj).toString();
@@ -81,7 +90,6 @@ public class PDXUtils {
         obj = ((VMCachedDeserializable) obj).getDeserializedForReading();
         objectChangedMarker[0] = true;
       }
-
     }
     return obj;
   }

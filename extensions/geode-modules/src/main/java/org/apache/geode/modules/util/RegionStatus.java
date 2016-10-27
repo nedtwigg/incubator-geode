@@ -17,5 +17,6 @@
 package org.apache.geode.modules.util;
 
 public enum RegionStatus {
-  VALID, INVALID
+  VALID,
+  INVALID
 }

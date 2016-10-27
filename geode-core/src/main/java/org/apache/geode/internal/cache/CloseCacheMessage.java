@@ -30,13 +30,11 @@ import org.apache.geode.distributed.internal.MessageWithReply;
 import org.apache.geode.distributed.internal.ReplyMessage;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- *
- *
- */
+/** */
 
 /** Creates a new instance of CloseCacheMessage */
-public final class CloseCacheMessage extends HighPriorityDistributionMessage implements MessageWithReply {
+public final class CloseCacheMessage extends HighPriorityDistributionMessage
+    implements MessageWithReply {
   private static final Logger logger = LogService.getLogger();
 
   private int processorId;
@@ -73,7 +71,8 @@ public final class CloseCacheMessage extends HighPriorityDistributionMessage imp
         // is still usable:
         SystemFailure.checkFailure();
         if (logger.isDebugEnabled()) {
-          logger.debug("Throwable caught while processing cache close message from:{}", getSender(), t);
+          logger.debug(
+              "Throwable caught while processing cache close message from:{}", getSender(), t);
         }
       }
     } finally {

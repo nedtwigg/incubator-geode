@@ -28,9 +28,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-/**
- * Unit tests for {@link SerializableTestWatcher}.
- */
+/** Unit tests for {@link SerializableTestWatcher}. */
 @Category(UnitTest.class)
 public class SerializableTestWatcherTest {
 
@@ -49,7 +47,8 @@ public class SerializableTestWatcherTest {
   public void canBeSerialized() throws Exception {
     FakeSerializableTestWatcher instance = new FakeSerializableTestWatcher().value(1);
 
-    FakeSerializableTestWatcher cloned = (FakeSerializableTestWatcher) SerializationUtils.clone(instance);
+    FakeSerializableTestWatcher cloned =
+        (FakeSerializableTestWatcher) SerializationUtils.clone(instance);
 
     assertThat(instance.value()).isEqualTo(1);
     assertThat(cloned.value()).isEqualTo(1);
@@ -60,9 +59,7 @@ public class SerializableTestWatcherTest {
     assertThat(cloned.value()).isEqualTo(1);
   }
 
-  /**
-   * Fake SerializableTestWatcher with a simple int field.
-   */
+  /** Fake SerializableTestWatcher with a simple int field. */
   private static class FakeSerializableTestWatcher extends SerializableTestWatcher {
 
     private int value = -1;

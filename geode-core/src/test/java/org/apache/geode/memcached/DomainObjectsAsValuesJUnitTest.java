@@ -59,8 +59,7 @@ public class DomainObjectsAsValuesJUnitTest {
     private String name;
     private String address;
 
-    public Customer() {
-    }
+    public Customer() {}
 
     public Customer(String name, String addr) {
       this.setName(name);
@@ -112,7 +111,8 @@ public class DomainObjectsAsValuesJUnitTest {
 
   @Test
   public void testGetPutDomainObject() throws Exception {
-    MemcachedClient client = new MemcachedClient(new InetSocketAddress(InetAddress.getLocalHost(), PORT));
+    MemcachedClient client =
+        new MemcachedClient(new InetSocketAddress(InetAddress.getLocalHost(), PORT));
     Customer c = new Customer("name0", "addr0");
     Customer c1 = new Customer("name1", "addr1");
     Future<Boolean> f = client.add("keyObj", 10, c);

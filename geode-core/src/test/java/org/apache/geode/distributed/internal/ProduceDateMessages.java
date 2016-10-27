@@ -22,13 +22,12 @@ import org.apache.geode.internal.Assert;
 import java.util.Date;
 import java.util.Properties;
 
-/**
- * A little program that periodically produces {@link DateMessage}s.
- */
+/** A little program that periodically produces {@link DateMessage}s. */
 public class ProduceDateMessages {
 
   public static void main(String[] args) throws InterruptedException {
-    InternalDistributedSystem system = (InternalDistributedSystem) DistributedSystem.connect(new Properties());
+    InternalDistributedSystem system =
+        (InternalDistributedSystem) DistributedSystem.connect(new Properties());
     DM dm = system.getDistributionManager();
     System.out.println("Got DM: " + dm);
 
@@ -48,5 +47,4 @@ public class ProduceDateMessages {
       Thread.sleep(1000);
     }
   }
-
 }

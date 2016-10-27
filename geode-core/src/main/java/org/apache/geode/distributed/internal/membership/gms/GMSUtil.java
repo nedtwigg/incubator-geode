@@ -45,7 +45,8 @@ public class GMSUtil {
     return parseLocators(locatorsString, addr);
   }
 
-  public static List<InetSocketAddress> parseLocators(String locatorsString, InetAddress bindAddress) {
+  public static List<InetSocketAddress> parseLocators(
+      String locatorsString, InetAddress bindAddress) {
     List<InetSocketAddress> result = new ArrayList<>(2);
     String host;
     int port;
@@ -76,7 +77,12 @@ public class GMSUtil {
 
         if (checkLoopback) {
           if (isLoopback && !isa.getAddress().isLoopbackAddress()) {
-            throw new GemFireConfigException("This process is attempting to join with a loopback address (" + bindAddress + ") using a locator that does not have a local address (" + isa + ").  On Unix this usually means that /etc/hosts is misconfigured.");
+            throw new GemFireConfigException(
+                "This process is attempting to join with a loopback address ("
+                    + bindAddress
+                    + ") using a locator that does not have a local address ("
+                    + isa
+                    + ").  On Unix this usually means that /etc/hosts is misconfigured.");
           }
         }
         result.add(isa);
@@ -89,10 +95,7 @@ public class GMSUtil {
     return result;
   }
 
-  /**
-   * replaces all occurrences of a given string in the properties argument with the
-   * given value
-   */
+  /** replaces all occurrences of a given string in the properties argument with the given value */
   public static String replaceStrings(String properties, String property, String value) {
     StringBuilder sb = new StringBuilder();
     int start = 0;
@@ -108,10 +111,7 @@ public class GMSUtil {
     return sb.toString();
   }
 
-  /**
-   * Formats the bytes in a buffer into hex octets, 50 per
-   * line
-   */
+  /** Formats the bytes in a buffer into hex octets, 50 per line */
   public static String formatBytes(byte[] buf, int startIndex, int length) {
     StringBuilder w = new StringBuilder(20000);
     int count = 0;
@@ -127,5 +127,4 @@ public class GMSUtil {
     }
     return w.toString();
   }
-
 }

@@ -31,13 +31,11 @@ import org.apache.geode.internal.offheap.AddressableMemoryManager;
 import org.apache.geode.internal.offheap.StoredObject;
 
 /**
- * Represents one unit of information (essentially a <code>byte</code>
- * array) in the wire protocol.  Each server connection runs in its
- * own thread to maximize concurrency and improve response times to
- * edge requests
+ * Represents one unit of information (essentially a <code>byte</code> array) in the wire protocol.
+ * Each server connection runs in its own thread to maximize concurrency and improve response times
+ * to edge requests
  *
  * @see Message
- *
  * @since GemFire 2.0.2
  */
 public class Part {
@@ -47,13 +45,15 @@ public class Part {
   private Version version;
   /**
    * Used to represent and empty byte array for bug 36279
+   *
    * @since GemFire 5.1
    */
   private static final byte EMPTY_BYTEARRAY_CODE = 2;
+
   private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
-  /** The payload of this part.
-   * Could be null, a byte[] or a HeapDataOutputStream on the send side.
+  /**
+   * The payload of this part. Could be null, a byte[] or a HeapDataOutputStream on the send side.
    * Could be null, or a byte[] on the receiver side.
    */
   private Object part;
@@ -148,8 +148,8 @@ public class Part {
   }
 
   /**
-   * Return the length of the part. The length is the number of bytes needed
-   * for its serialized form.
+   * Return the length of the part. The length is the number of bytes needed for its serialized
+   * form.
    */
   public int getLength() {
     if (this.part == null) {
@@ -178,14 +178,19 @@ public class Part {
       Assert.assertTrue(false, "expected int part to be of type BYTE, part = " + this.toString());
     }
     if (getLength() != 4) {
-      Assert.assertTrue(false, "expected int length to be 4 but it was " + getLength() + "; part = " + this.toString());
+      Assert.assertTrue(
+          false,
+          "expected int length to be 4 but it was " + getLength() + "; part = " + this.toString());
     }
     byte[] bytes = getSerializedForm();
     return decodeInt(bytes, 0);
   }
 
   public static int decodeInt(byte[] bytes, int offset) {
-    return (((bytes[offset + 0]) << 24) & 0xFF000000) | (((bytes[offset + 1]) << 16) & 0x00FF0000) | (((bytes[offset + 2]) << 8) & 0x0000FF00) | ((bytes[offset + 3]) & 0x000000FF);
+    return (((bytes[offset + 0]) << 24) & 0xFF000000)
+        | (((bytes[offset + 1]) << 16) & 0x00FF0000)
+        | (((bytes[offset + 2]) << 8) & 0x0000FF00)
+        | ((bytes[offset + 3]) & 0x000000FF);
   }
 
   private static final Map<Integer, byte[]> CACHED_INTS = new ConcurrentHashMap<Integer, byte[]>();
@@ -201,9 +206,7 @@ public class Part {
     this.part = bytes;
   }
 
-  /**
-   * @since GemFire 5.7
-   */
+  /** @since GemFire 5.7 */
   public static void encodeInt(int v, byte[] bytes) {
     encodeInt(v, bytes, 0);
   }
@@ -235,10 +238,19 @@ public class Part {
       Assert.assertTrue(false, "expected long part to be of type BYTE, part = " + this.toString());
     }
     if (getLength() != 8) {
-      Assert.assertTrue(false, "expected long length to be 8 but it was " + getLength() + "; part = " + this.toString());
+      Assert.assertTrue(
+          false,
+          "expected long length to be 8 but it was " + getLength() + "; part = " + this.toString());
     }
     byte[] bytes = getSerializedForm();
-    return ((((long) bytes[0]) << 56) & 0xFF00000000000000l) | ((((long) bytes[1]) << 48) & 0x00FF000000000000l) | ((((long) bytes[2]) << 40) & 0x0000FF0000000000l) | ((((long) bytes[3]) << 32) & 0x000000FF00000000l) | ((((long) bytes[4]) << 24) & 0x00000000FF000000l) | ((((long) bytes[5]) << 16) & 0x0000000000FF0000l) | ((((long) bytes[6]) << 8) & 0x000000000000FF00l) | (bytes[7] & 0x00000000000000FFl);
+    return ((((long) bytes[0]) << 56) & 0xFF00000000000000l)
+        | ((((long) bytes[1]) << 48) & 0x00FF000000000000l)
+        | ((((long) bytes[2]) << 40) & 0x0000FF0000000000l)
+        | ((((long) bytes[3]) << 32) & 0x000000FF00000000l)
+        | ((((long) bytes[4]) << 24) & 0x00000000FF000000l)
+        | ((((long) bytes[5]) << 16) & 0x0000000000FF0000l)
+        | ((((long) bytes[6]) << 8) & 0x000000000000FF00l)
+        | (bytes[7] & 0x00000000000000FFl);
   }
 
   public byte[] getSerializedForm() {
@@ -276,10 +288,10 @@ public class Part {
   }
 
   /**
-   * Write the contents of this part to the specified output stream.
-   * This is only called for parts that will not fit into the commBuffer
-   * so they need to be written directly to the stream.
-   * A stream is used because the client is configured for old IO (instead of nio).
+   * Write the contents of this part to the specified output stream. This is only called for parts
+   * that will not fit into the commBuffer so they need to be written directly to the stream. A
+   * stream is used because the client is configured for old IO (instead of nio).
+   *
    * @param buf the buffer to use if any data needs to be copied to one
    */
   public final void writeTo(OutputStream out, ByteBuffer buf) throws IOException {
@@ -313,9 +325,8 @@ public class Part {
   }
 
   /**
-   * Write the contents of this part to the specified byte buffer.
-   * Precondition: caller has already checked the length of this part
-   * and it will fit into "buf".
+   * Write the contents of this part to the specified byte buffer. Precondition: caller has already
+   * checked the length of this part and it will fit into "buf".
    */
   public final void writeTo(ByteBuffer buf) {
     if (getLength() > 0) {
@@ -344,11 +355,9 @@ public class Part {
   }
 
   /**
-   * Write the contents of this part to the specified socket channel
-   * using the specified byte buffer.
-   * This is only called for parts that will not fit into the commBuffer
-   * so they need to be written directly to the socket.
-   * Precondition: buf contains nothing that needs to be sent
+   * Write the contents of this part to the specified socket channel using the specified byte
+   * buffer. This is only called for parts that will not fit into the commBuffer so they need to be
+   * written directly to the socket. Precondition: buf contains nothing that needs to be sent
    */
   public final void writeTo(SocketChannel sc, ByteBuffer buf) throws IOException {
     if (getLength() > 0) {
@@ -411,16 +420,16 @@ public class Part {
     }
   }
 
-  static private String typeCodeToString(byte c) {
+  private static String typeCodeToString(byte c) {
     switch (c) {
-    case BYTE_CODE:
-      return "BYTE_CODE";
-    case OBJECT_CODE:
-      return "OBJECT_CODE";
-    case EMPTY_BYTEARRAY_CODE:
-      return "EMPTY_BYTEARRAY_CODE";
-    default:
-      return "unknown code " + c;
+      case BYTE_CODE:
+        return "BYTE_CODE";
+      case OBJECT_CODE:
+        return "OBJECT_CODE";
+      case EMPTY_BYTEARRAY_CODE:
+        return "EMPTY_BYTEARRAY_CODE";
+      default:
+        return "unknown code " + c;
     }
   }
 

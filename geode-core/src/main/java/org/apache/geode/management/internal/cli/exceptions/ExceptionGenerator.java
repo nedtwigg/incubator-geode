@@ -25,7 +25,7 @@ import org.apache.geode.management.internal.cli.parser.OptionSet;
 /**
  * Converts joptsimple exceptions into corresponding exceptions for cli
  *
- * TODO: delete this class
+ * <p>TODO: delete this class
  */
 public class ExceptionGenerator {
 
@@ -33,7 +33,10 @@ public class ExceptionGenerator {
     if (cause.getClass().getSimpleName().contains("MissingRequiredOptionException")) {
       return new CliCommandOptionMissingException(option, cause);
 
-    } else if (cause.getClass().getSimpleName().contains("OptionMissingRequiredArgumentException")) {
+    } else if (cause
+        .getClass()
+        .getSimpleName()
+        .contains("OptionMissingRequiredArgumentException")) {
       return new CliCommandOptionValueMissingException(option, cause);
 
     } else if (cause.getClass().getSimpleName().contains("UnrecognizedOptionException")) {

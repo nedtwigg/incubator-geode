@@ -21,9 +21,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Inserts quotes around the values of any option values that begin with hyphen.
- */
+/** Inserts quotes around the values of any option values that begin with hyphen. */
 public class HyphenFormatter {
 
   private static final String OPTION_PATTERN = "\\-\\-[a-zA-Z]+\\-?[a-zA-Z]*\\=";
@@ -35,9 +33,7 @@ public class HyphenFormatter {
 
   private StringBuilder formatted;
 
-  /**
-   * Returns command with quotes around the values of any option values that begin with hyphen.
-   */
+  /** Returns command with quotes around the values of any option values that begin with hyphen. */
   public String formatCommand(String command) {
     if (!containsOption(command)) {
       return command;
@@ -60,9 +56,7 @@ public class HyphenFormatter {
     return formatted.toString().trim();
   }
 
-  /**
-   * Returns true if command contains any options.
-   */
+  /** Returns true if command contains any options. */
   boolean containsOption(String cmd) {
     return Pattern.compile(OPTION_PATTERN).matcher(cmd).find();
   }

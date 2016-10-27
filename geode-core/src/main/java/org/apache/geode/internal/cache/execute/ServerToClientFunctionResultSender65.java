@@ -35,15 +35,16 @@ import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * 
- * @since GemFire 6.5
- *
- */
+/** @since GemFire 6.5 */
 public class ServerToClientFunctionResultSender65 extends ServerToClientFunctionResultSender {
   private static final Logger logger = LogService.getLogger();
 
-  public ServerToClientFunctionResultSender65(ChunkedMessage msg, int messageType, ServerConnection sc, Function function, ExecuteFunctionOperationContext authzContext) {
+  public ServerToClientFunctionResultSender65(
+      ChunkedMessage msg,
+      int messageType,
+      ServerConnection sc,
+      Function function,
+      ExecuteFunctionOperationContext authzContext) {
     super(msg, messageType, sc, function, authzContext);
   }
 
@@ -55,14 +56,18 @@ public class ServerToClientFunctionResultSender65 extends ServerToClientFunction
     this.lastResultReceived = true;
     if (!isOkayToSendResult()) {
       if (logger.isDebugEnabled()) {
-        logger.debug(" ServerToClientFunctionResultSender65 not sending lastResult {} as the server has shutdown", oneResult);
+        logger.debug(
+            " ServerToClientFunctionResultSender65 not sending lastResult {} as the server has shutdown",
+            oneResult);
       }
       return;
     }
     try {
       authorizeResult(oneResult);
       if (!this.fn.hasResult()) {
-        throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
+        throw new IllegalStateException(
+            LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+                "send"));
       }
 
       if (!headerSent) {
@@ -71,7 +76,8 @@ public class ServerToClientFunctionResultSender65 extends ServerToClientFunction
       if (logger.isDebugEnabled()) {
         logger.debug(" ServerToClientFunctionResultSender65 sending lastResult {}", oneResult);
       }
-      DistributedMember memberID = InternalDistributedSystem.getAnyInstance().getDistributionManager().getId();
+      DistributedMember memberID =
+          InternalDistributedSystem.getAnyInstance().getDistributionManager().getId();
       List<Object> result = new ArrayList<Object>();
       result.add(oneResult);
       result.add(memberID);
@@ -96,7 +102,10 @@ public class ServerToClientFunctionResultSender65 extends ServerToClientFunction
       FunctionStats.getFunctionStats(fn.getId()).incResultsReturned();
     } catch (IOException ex) {
       if (isOkayToSendResult()) {
-        throw new FunctionException(LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_LAST_CHUNK.toLocalizedString(), ex);
+        throw new FunctionException(
+            LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_LAST_CHUNK
+                .toLocalizedString(),
+            ex);
       }
     }
   }
@@ -106,7 +115,9 @@ public class ServerToClientFunctionResultSender65 extends ServerToClientFunction
     this.lastResultReceived = true;
     if (!isOkayToSendResult()) {
       if (logger.isDebugEnabled()) {
-        logger.debug(" ServerToClientFunctionResultSender65 not sending lastResult {} as the server has shutdown", oneResult);
+        logger.debug(
+            " ServerToClientFunctionResultSender65 not sending lastResult {} as the server has shutdown",
+            oneResult);
       }
       return;
     }
@@ -116,7 +127,9 @@ public class ServerToClientFunctionResultSender65 extends ServerToClientFunction
       }
       authorizeResult(oneResult);
       if (!this.fn.hasResult()) {
-        throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
+        throw new IllegalStateException(
+            LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+                "send"));
       }
 
       if (!headerSent) {
@@ -150,7 +163,10 @@ public class ServerToClientFunctionResultSender65 extends ServerToClientFunction
       FunctionStats.getFunctionStats(fn.getId()).incResultsReturned();
     } catch (IOException ex) {
       if (isOkayToSendResult()) {
-        throw new FunctionException(LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_LAST_CHUNK.toLocalizedString(), ex);
+        throw new FunctionException(
+            LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_LAST_CHUNK
+                .toLocalizedString(),
+            ex);
       }
     }
   }
@@ -159,14 +175,18 @@ public class ServerToClientFunctionResultSender65 extends ServerToClientFunction
   public synchronized void sendResult(Object oneResult) {
     if (!isOkayToSendResult()) {
       if (logger.isDebugEnabled()) {
-        logger.debug(" ServerToClientFunctionResultSender65 not sending result {}  as the server has shutdown", oneResult);
+        logger.debug(
+            " ServerToClientFunctionResultSender65 not sending result {}  as the server has shutdown",
+            oneResult);
       }
       return;
     }
     try {
       authorizeResult(oneResult);
       if (!this.fn.hasResult()) {
-        throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
+        throw new IllegalStateException(
+            LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+                "send"));
       }
       if (!headerSent) {
         sendHeader();
@@ -174,7 +194,8 @@ public class ServerToClientFunctionResultSender65 extends ServerToClientFunction
       if (logger.isDebugEnabled()) {
         logger.debug(" ServerToClientFunctionResultSender65 sending result {}", oneResult);
       }
-      DistributedMember memberID = InternalDistributedSystem.getAnyInstance().getDistributionManager().getId();
+      DistributedMember memberID =
+          InternalDistributedSystem.getAnyInstance().getDistributionManager().getId();
       List<Object> result = new ArrayList<Object>();
       result.add(oneResult);
       result.add(memberID);
@@ -185,7 +206,10 @@ public class ServerToClientFunctionResultSender65 extends ServerToClientFunction
       FunctionStats.getFunctionStats(fn.getId()).incResultsReturned();
     } catch (IOException ex) {
       if (isOkayToSendResult()) {
-        throw new FunctionException(LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_RESULT_CHUNK.toLocalizedString(), ex);
+        throw new FunctionException(
+            LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_RESULT_CHUNK
+                .toLocalizedString(),
+            ex);
       }
     }
   }
@@ -194,14 +218,18 @@ public class ServerToClientFunctionResultSender65 extends ServerToClientFunction
   public synchronized void sendResult(Object oneResult, DistributedMember memberID) {
     if (!isOkayToSendResult()) {
       if (logger.isDebugEnabled()) {
-        logger.debug(" ServerToClientFunctionResultSender65 not sending result {}  as the server has shutdown", oneResult);
+        logger.debug(
+            " ServerToClientFunctionResultSender65 not sending result {}  as the server has shutdown",
+            oneResult);
       }
       return;
     }
     try {
       authorizeResult(oneResult);
       if (!this.fn.hasResult()) {
-        throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
+        throw new IllegalStateException(
+            LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+                "send"));
       }
       if (!headerSent) {
         sendHeader();
@@ -220,23 +248,30 @@ public class ServerToClientFunctionResultSender65 extends ServerToClientFunction
       FunctionStats.getFunctionStats(fn.getId()).incResultsReturned();
     } catch (IOException ex) {
       if (isOkayToSendResult()) {
-        throw new FunctionException(LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_RESULT_CHUNK.toLocalizedString(), ex);
+        throw new FunctionException(
+            LocalizedStrings.ExecuteFunction_IOEXCEPTION_WHILE_SENDING_RESULT_CHUNK
+                .toLocalizedString(),
+            ex);
       }
     }
   }
 
   @Override
-  protected void writeFunctionExceptionResponse(ChunkedMessage message, String errormessage, Throwable e) throws IOException {
+  protected void writeFunctionExceptionResponse(
+      ChunkedMessage message, String errormessage, Throwable e) throws IOException {
     if (logger.isDebugEnabled()) {
-      logger.debug(" ServerToClientFunctionResultSender sending Function Error Response : {}", errormessage);
+      logger.debug(
+          " ServerToClientFunctionResultSender sending Function Error Response : {}", errormessage);
     }
     int numParts = 0;
     message.clear();
-    if (e instanceof FunctionException && e.getCause() instanceof InternalFunctionInvocationTargetException) {
+    if (e instanceof FunctionException
+        && e.getCause() instanceof InternalFunctionInvocationTargetException) {
       message.setNumberOfParts(3);
       message.addObjPart(e);
       message.addStringPart(BaseCommand.getExceptionTrace(e));
-      InternalFunctionInvocationTargetException fe = (InternalFunctionInvocationTargetException) e.getCause();
+      InternalFunctionInvocationTargetException fe =
+          (InternalFunctionInvocationTargetException) e.getCause();
       message.addObjPart(fe.getFailedNodeSet());
       numParts = 3;
     } else {
@@ -254,7 +289,7 @@ public class ServerToClientFunctionResultSender65 extends ServerToClientFunction
     }
     message.setServerConnection(this.sc);
     message.setLastChunkAndNumParts(true, numParts);
-    //message.setLastChunk(true);    
+    //message.setLastChunk(true);
     message.sendChunk(this.sc);
     this.sc.setAsTrue(Command.RESPONDED);
   }

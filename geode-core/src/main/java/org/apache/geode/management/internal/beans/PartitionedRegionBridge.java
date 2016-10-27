@@ -33,9 +33,7 @@ import org.apache.geode.management.internal.beans.stats.StatsKey;
 import org.apache.geode.management.internal.beans.stats.StatsLatency;
 import org.apache.geode.management.internal.beans.stats.StatsRate;
 
-/**
- * 
- */
+/** */
 public class PartitionedRegionBridge<K, V> extends RegionMBeanBridge<K, V> {
 
   private PartitionedRegionStats prStats;
@@ -90,9 +88,11 @@ public class PartitionedRegionBridge<K, V> extends RegionMBeanBridge<K, V> {
     this.configurePartitionRegionMetrics();
 
     this.configuredRedundancy = partAttrs.getRedundantCopies();
-    this.partitionAttributesData = RegionMBeanCompositeDataFactory.getPartitionAttributesData(partAttrs);
+    this.partitionAttributesData =
+        RegionMBeanCompositeDataFactory.getPartitionAttributesData(partAttrs);
     if (partAttrs.getFixedPartitionAttributes() != null) {
-      this.fixedPartitionAttributesTable = RegionMBeanCompositeDataFactory.getFixedPartitionAttributesData(partAttrs);
+      this.fixedPartitionAttributesTable =
+          RegionMBeanCompositeDataFactory.getFixedPartitionAttributesData(partAttrs);
     }
     parRegionMonitor.addStatisticsToMonitor(prStats.getStats());
   }
@@ -131,11 +131,18 @@ public class PartitionedRegionBridge<K, V> extends RegionMBeanBridge<K, V> {
 
     putLocalRate = new StatsRate(StatsKey.PUT_LOCAL, StatType.INT_TYPE, parRegionMonitor);
 
-    remotePutAvgLatency = new StatsAverageLatency(StatsKey.REMOTE_PUTS, StatType.INT_TYPE, StatsKey.REMOTE_PUT_TIME, parRegionMonitor);
+    remotePutAvgLatency =
+        new StatsAverageLatency(
+            StatsKey.REMOTE_PUTS, StatType.INT_TYPE, StatsKey.REMOTE_PUT_TIME, parRegionMonitor);
 
-    putRemoteLatency = new StatsLatency(StatsKey.REMOTE_PUTS, StatType.INT_TYPE, StatsKey.REMOTE_PUT_TIME, parRegionMonitor);
+    putRemoteLatency =
+        new StatsLatency(
+            StatsKey.REMOTE_PUTS, StatType.INT_TYPE, StatsKey.REMOTE_PUT_TIME, parRegionMonitor);
 
-    String[] writesRates = new String[] { StatsKey.PUTALL_COMPLETED, StatsKey.PUTS_COMPLETED, StatsKey.CREATES_COMPLETED };
+    String[] writesRates =
+        new String[] {
+          StatsKey.PUTALL_COMPLETED, StatsKey.PUTS_COMPLETED, StatsKey.CREATES_COMPLETED
+        };
     averageWritesRate = new StatsRate(writesRates, StatType.INT_TYPE, parRegionMonitor);
     averageReadsRate = new StatsRate(StatsKey.GETS_COMPLETED, StatType.INT_TYPE, parRegionMonitor);
   }
@@ -270,21 +277,21 @@ public class PartitionedRegionBridge<K, V> extends RegionMBeanBridge<K, V> {
   }
 
   /**
-   * partition region entry count is taken from all primary bucket entry count.
-   * Ideally it should come from stats. 
-   * to be done in 8.0
+   * partition region entry count is taken from all primary bucket entry count. Ideally it should
+   * come from stats. to be done in 8.0
+   *
    * @return long
    */
   @Override
   public long getEntryCount() {
     if (parRegion.isDataStore()) {
       int numLocalEntries = 0;
-      Set<BucketRegion> localPrimaryBucketRegions = parRegion.getDataStore().getAllLocalPrimaryBucketRegions();
+      Set<BucketRegion> localPrimaryBucketRegions =
+          parRegion.getDataStore().getAllLocalPrimaryBucketRegions();
       if (localPrimaryBucketRegions != null && localPrimaryBucketRegions.size() > 0) {
         for (BucketRegion br : localPrimaryBucketRegions) {
           // TODO soplog, fix this for griddb regions
           numLocalEntries += br.getRegionMap().sizeInVM() - br.getTombstoneCount();
-
         }
       }
       return numLocalEntries;

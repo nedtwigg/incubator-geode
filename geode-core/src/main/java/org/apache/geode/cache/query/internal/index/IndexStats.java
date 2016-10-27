@@ -22,9 +22,7 @@ import org.apache.geode.*;
 import org.apache.geode.internal.statistics.StatisticsTypeFactoryImpl;
 import org.apache.geode.internal.cache.CachePerfStats;
 
-/**
- * IndexStats tracks statistics about query index use.
- */
+/** IndexStats tracks statistics about query index use. */
 public class IndexStats {
 
   //////////////////  Static fields ///////////////////////////
@@ -57,7 +55,27 @@ public class IndexStats {
     final String numUsesDesc = "Number of times this index has been used while executing a query";
     final String updateTimeDesc = "Total time spent updating this index";
 
-    type = f.createType("IndexStats", "Statistics about a query index", new StatisticDescriptor[] { f.createLongGauge("numKeys", numKeysDesc, "keys"), f.createLongGauge("numValues", numValuesDesc, "values"), f.createLongCounter("numUpdates", numUpdatesDesc, "operations"), f.createLongCounter("numUses", numUsesDesc, "operations"), f.createLongCounter("updateTime", updateTimeDesc, "nanoseconds"), f.createLongCounter("useTime", "Total time spent using this index", "nanoseconds"), f.createIntGauge("updatesInProgress", "Current number of updates in progress.", "updates"), f.createIntGauge("usesInProgress", "Current number of uses in progress.", "uses"), f.createIntGauge("readLockCount", "Current number of read locks taken.", "uses"), f.createLongGauge("numMapIndexKeys", "Number of keys in this Map index", "keys"), f.createIntGauge("numBucketIndexes", "Number of bucket indexes in the partitioned region", "indexes"), });
+    type =
+        f.createType(
+            "IndexStats",
+            "Statistics about a query index",
+            new StatisticDescriptor[] {
+              f.createLongGauge("numKeys", numKeysDesc, "keys"),
+              f.createLongGauge("numValues", numValuesDesc, "values"),
+              f.createLongCounter("numUpdates", numUpdatesDesc, "operations"),
+              f.createLongCounter("numUses", numUsesDesc, "operations"),
+              f.createLongCounter("updateTime", updateTimeDesc, "nanoseconds"),
+              f.createLongCounter("useTime", "Total time spent using this index", "nanoseconds"),
+              f.createIntGauge(
+                  "updatesInProgress", "Current number of updates in progress.", "updates"),
+              f.createIntGauge("usesInProgress", "Current number of uses in progress.", "uses"),
+              f.createIntGauge("readLockCount", "Current number of read locks taken.", "uses"),
+              f.createLongGauge("numMapIndexKeys", "Number of keys in this Map index", "keys"),
+              f.createIntGauge(
+                  "numBucketIndexes",
+                  "Number of bucket indexes in the partitioned region",
+                  "indexes"),
+            });
 
     // Initialize id fields
     numKeysId = type.nameToId("numKeys");
@@ -76,8 +94,8 @@ public class IndexStats {
   ////////////////////////  Constructors  ////////////////////////
 
   /**
-   * Creates a new <code>CachePerfStats</code> and registers itself
-   * with the given statistics factory.
+   * Creates a new <code>CachePerfStats</code> and registers itself with the given statistics
+   * factory.
    */
   public IndexStats(StatisticsFactory factory, String indexName) {
     stats = factory.createAtomicStatistics(type, indexName);
@@ -181,10 +199,8 @@ public class IndexStats {
   ////// Special Instance Methods /////
 
   /**
-   * Closes these stats so that they can not longer be used.  The
-   * stats are closed when the {@linkplain
-   * org.apache.geode.internal.cache.GemFireCacheImpl#close cache} 
-   * is closed.
+   * Closes these stats so that they can not longer be used. The stats are closed when the
+   * {@linkplain org.apache.geode.internal.cache.GemFireCacheImpl#close cache} is closed.
    *
    * @since GemFire 3.5
    */
@@ -203,6 +219,7 @@ public class IndexStats {
 
   /**
    * Returns the Statistics instance that stores the cache perf stats.
+   *
    * @since GemFire 3.5
    */
   public Statistics getStats() {

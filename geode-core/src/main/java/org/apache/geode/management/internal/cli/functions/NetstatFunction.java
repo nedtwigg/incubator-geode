@@ -35,7 +35,7 @@ import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
 /**
  * Executes 'netstat' OS command & returns the result as compressed bytes.
- * 
+ *
  * @since GemFire 7.0
  */
 public class NetstatFunction implements Function, InternalEntity {
@@ -72,16 +72,33 @@ public class NetstatFunction implements Function, InternalEntity {
       String netstatOutput = executeCommand(lineSeparator, withlsof);
 
       StringBuilder netstatInfo = new StringBuilder();
-      addMemberHostHeader(netstatInfo, "{0}", host, lineSeparator); //{0} will be replaced on Manager
+      addMemberHostHeader(
+          netstatInfo, "{0}", host, lineSeparator); //{0} will be replaced on Manager
 
-      context.getResultSender().lastResult(new NetstatFunctionResult(host, netstatInfo.toString(), CliUtil.compressBytes(netstatOutput.getBytes())));
+      context
+          .getResultSender()
+          .lastResult(
+              new NetstatFunctionResult(
+                  host, netstatInfo.toString(), CliUtil.compressBytes(netstatOutput.getBytes())));
     }
   }
 
-  private static void addMemberHostHeader(final StringBuilder netstatInfo, final String id, final String host, final String lineSeparator) {
+  private static void addMemberHostHeader(
+      final StringBuilder netstatInfo,
+      final String id,
+      final String host,
+      final String lineSeparator) {
     StringBuilder memberPlatFormInfo = new StringBuilder();
-    String osInfo = System.getProperty(OS_NAME_PROP) + " " + System.getProperty(OS_VERSION_PROP) + " " + System.getProperty(OS_ARCH_PROP);
-    memberPlatFormInfo.append(CliStrings.format(CliStrings.NETSTAT__MSG__FOR_HOST_1_OS_2_MEMBER_0, new Object[] { id, host, osInfo, lineSeparator }));
+    String osInfo =
+        System.getProperty(OS_NAME_PROP)
+            + " "
+            + System.getProperty(OS_VERSION_PROP)
+            + " "
+            + System.getProperty(OS_ARCH_PROP);
+    memberPlatFormInfo.append(
+        CliStrings.format(
+            CliStrings.NETSTAT__MSG__FOR_HOST_1_OS_2_MEMBER_0,
+            new Object[] {id, host, osInfo, lineSeparator}));
 
     int nameIdLength = Math.max(Math.max(id.length(), host.length()), osInfo.length()) * 2;
 
@@ -91,7 +108,12 @@ public class NetstatFunction implements Function, InternalEntity {
       netstatInfoBottom.append("#");
     }
 
-    netstatInfo.append(lineSeparator).append(memberPlatFormInfo.toString()).append(lineSeparator).append(netstatInfoBottom.toString()).append(lineSeparator);
+    netstatInfo
+        .append(lineSeparator)
+        .append(memberPlatFormInfo.toString())
+        .append(lineSeparator)
+        .append(netstatInfoBottom.toString())
+        .append(lineSeparator);
   }
 
   private static void addNetstatDefaultOptions(final List<String> cmdOptionsList) {
@@ -131,16 +153,24 @@ public class NetstatFunction implements Function, InternalEntity {
       netstat.destroy();
     } catch (IOException e) {
       // Send error also, if any
-      netstatInfo.append(CliStrings.format(CliStrings.NETSTAT__MSG__COULD_NOT_EXECUTE_0_REASON_1, new Object[] { NETSTAT_COMMAND, e.getMessage() }));
+      netstatInfo.append(
+          CliStrings.format(
+              CliStrings.NETSTAT__MSG__COULD_NOT_EXECUTE_0_REASON_1,
+              new Object[] {NETSTAT_COMMAND, e.getMessage()}));
     } finally {
       netstatInfo.append(lineSeparator); //additional new line
     }
   }
 
-  private static void executeLsof(final StringBuilder existingNetstatInfo, final String lineSeparator) {
+  private static void executeLsof(
+      final StringBuilder existingNetstatInfo, final String lineSeparator) {
     String osName = System.getProperty(OS_NAME_PROP);
-    existingNetstatInfo.append("################ " + LSOF_COMMAND + " output ###################").append(lineSeparator);
-    if (OS_NAME_LINUX.equalsIgnoreCase(osName) || OS_NAME_MACOS.equalsIgnoreCase(osName) || OS_NAME_SOLARIS.equalsIgnoreCase(osName)) {
+    existingNetstatInfo
+        .append("################ " + LSOF_COMMAND + " output ###################")
+        .append(lineSeparator);
+    if (OS_NAME_LINUX.equalsIgnoreCase(osName)
+        || OS_NAME_MACOS.equalsIgnoreCase(osName)
+        || OS_NAME_SOLARIS.equalsIgnoreCase(osName)) {
       ProcessBuilder procBuilder = new ProcessBuilder(LSOF_COMMAND);
       try {
         Process lsof = procBuilder.start();
@@ -156,15 +186,23 @@ public class NetstatFunction implements Function, InternalEntity {
         // Send error also, if any
         String message = e.getMessage();
         if (message.contains("error=2, No such file or directory")) {
-          existingNetstatInfo.append(CliStrings.format(CliStrings.NETSTAT__MSG__COULD_NOT_EXECUTE_0_REASON_1, new Object[] { LSOF_COMMAND, CliStrings.NETSTAT__MSG__LSOF_NOT_IN_PATH }));
+          existingNetstatInfo.append(
+              CliStrings.format(
+                  CliStrings.NETSTAT__MSG__COULD_NOT_EXECUTE_0_REASON_1,
+                  new Object[] {LSOF_COMMAND, CliStrings.NETSTAT__MSG__LSOF_NOT_IN_PATH}));
         } else {
-          existingNetstatInfo.append(CliStrings.format(CliStrings.NETSTAT__MSG__COULD_NOT_EXECUTE_0_REASON_1, new Object[] { LSOF_COMMAND, e.getMessage() }));
+          existingNetstatInfo.append(
+              CliStrings.format(
+                  CliStrings.NETSTAT__MSG__COULD_NOT_EXECUTE_0_REASON_1,
+                  new Object[] {LSOF_COMMAND, e.getMessage()}));
         }
       } finally {
         existingNetstatInfo.append(lineSeparator); //additional new line
       }
     } else {
-      existingNetstatInfo.append(CliStrings.NETSTAT__MSG__NOT_AVAILABLE_FOR_WINDOWS).append(lineSeparator);
+      existingNetstatInfo
+          .append(CliStrings.NETSTAT__MSG__NOT_AVAILABLE_FOR_WINDOWS)
+          .append(lineSeparator);
     }
   }
 
@@ -206,16 +244,12 @@ public class NetstatFunction implements Function, InternalEntity {
       this.withlsof = withlsof;
     }
 
-    /**
-     * @return the lineSeparator
-     */
+    /** @return the lineSeparator */
     public String getLineSeparator() {
       return lineSeparator;
     }
 
-    /**
-     * @return the withlsof
-     */
+    /** @return the withlsof */
     public boolean isWithlsof() {
       return withlsof;
     }
@@ -228,29 +262,24 @@ public class NetstatFunction implements Function, InternalEntity {
     private final String headerInfo;
     private final DeflaterInflaterData compressedBytes;
 
-    public NetstatFunctionResult(String host, String headerInfo, DeflaterInflaterData compressedBytes) {
+    public NetstatFunctionResult(
+        String host, String headerInfo, DeflaterInflaterData compressedBytes) {
       this.host = host;
       this.headerInfo = headerInfo;
       this.compressedBytes = compressedBytes;
     }
 
-    /**
-     * @return the host
-     */
+    /** @return the host */
     public String getHost() {
       return host;
     }
 
-    /**
-     * @return the headerInfo
-     */
+    /** @return the headerInfo */
     public String getHeaderInfo() {
       return headerInfo;
     }
 
-    /**
-     * @return the compressedBytes
-     */
+    /** @return the compressedBytes */
     public DeflaterInflaterData getCompressedBytes() {
       return compressedBytes;
     }

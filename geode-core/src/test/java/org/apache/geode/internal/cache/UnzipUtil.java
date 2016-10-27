@@ -28,9 +28,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 /**
- * Utility methods for unzipping a file. Used for backwards compatibility
- * test for gateway queue to handle checked in test code.
- *
+ * Utility methods for unzipping a file. Used for backwards compatibility test for gateway queue to
+ * handle checked in test code.
  */
 public class UnzipUtil {
 
@@ -67,13 +66,10 @@ public class UnzipUtil {
     byte[] buffer = new byte[1024];
     int len;
 
-    while ((len = in.read(buffer)) >= 0)
-      out.write(buffer, 0, len);
+    while ((len = in.read(buffer)) >= 0) out.write(buffer, 0, len);
 
     out.close();
   }
 
-  private UnzipUtil() {
-
-  }
+  private UnzipUtil() {}
 }

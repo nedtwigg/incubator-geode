@@ -31,10 +31,7 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 
 // @todo davidw Use a SAX parser instead of DOM
-/**
- * This is an internal helper class for dealing with the
- * SessionFactory XML configuration files.
- */
+/** This is an internal helper class for dealing with the SessionFactory XML configuration files. */
 public class StatisticsTypeXml implements EntityResolver, ErrorHandler {
 
   /** The name of the DTD file */
@@ -46,14 +43,16 @@ public class StatisticsTypeXml implements EntityResolver, ErrorHandler {
   /////////////////////  Interface methods  ///////////////////////
 
   /**
-   * Given a publicId, attempts to resolve it to a DTD.  Returns an
-   * <code>InputSource</code> for the DTD.
+   * Given a publicId, attempts to resolve it to a DTD. Returns an <code>InputSource</code> for the
+   * DTD.
    */
   public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 
     // Figure out the location for the publicId.  Be tolerant of other
     // versions of the dtd
-    if (publicId.equals(StatisticsTypeXml.publicId) || systemId.equals(StatisticsTypeXml.systemId) || systemId.endsWith(DTD)) {
+    if (publicId.equals(StatisticsTypeXml.publicId)
+        || systemId.equals(StatisticsTypeXml.systemId)
+        || systemId.endsWith(DTD)) {
 
       // Public ID for system config DTD
       String location = "/org/apache/geode/" + DTD;
@@ -62,11 +61,13 @@ public class StatisticsTypeXml implements EntityResolver, ErrorHandler {
         return new InputSource(stream);
 
       } else {
-        throw new SAXNotRecognizedException(LocalizedStrings.StatisticsTypeXml_DTD_NOT_FOUND_0.toLocalizedString(location));
+        throw new SAXNotRecognizedException(
+            LocalizedStrings.StatisticsTypeXml_DTD_NOT_FOUND_0.toLocalizedString(location));
       }
 
     } else {
-      throw new SAXNotRecognizedException(LocalizedStrings.StatisticsTypeXml_INVALID_PUBLIC_ID_0.toLocalizedString(publicId));
+      throw new SAXNotRecognizedException(
+          LocalizedStrings.StatisticsTypeXml_INVALID_PUBLIC_ID_0.toLocalizedString(publicId));
     }
   }
 
@@ -77,18 +78,23 @@ public class StatisticsTypeXml implements EntityResolver, ErrorHandler {
   }
 
   public void error(SAXParseException exception) throws SAXException {
-    throw new GemFireConfigException(LocalizedStrings.StatisticsTypeXml_SAX_ERROR_WHILE_WORKING_WITH_XML.toLocalizedString(), exception);
+    throw new GemFireConfigException(
+        LocalizedStrings.StatisticsTypeXml_SAX_ERROR_WHILE_WORKING_WITH_XML.toLocalizedString(),
+        exception);
   }
 
   public void fatalError(SAXParseException exception) throws SAXException {
-    throw new GemFireConfigException(LocalizedStrings.StatisticsTypeXml_SAX_FATAL_ERROR_WHILE_WORKING_WITH_XML.toLocalizedString(), exception);
+    throw new GemFireConfigException(
+        LocalizedStrings.StatisticsTypeXml_SAX_FATAL_ERROR_WHILE_WORKING_WITH_XML
+            .toLocalizedString(),
+        exception);
   }
 
   //////////////////////  Parsing XML File  ////////////////////////
 
   /**
-   * Parses the contents of XML data and from it creates one or more
-   * <code>StatisticsType</code> instances.
+   * Parses the contents of XML data and from it creates one or more <code>StatisticsType</code>
+   * instances.
    */
   public StatisticsType[] read(Reader reader, StatisticsTypeFactory statFactory) {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -99,7 +105,8 @@ public class StatisticsTypeXml implements EntityResolver, ErrorHandler {
       parser = factory.newDocumentBuilder();
 
     } catch (ParserConfigurationException ex) {
-      throw new GemFireConfigException(LocalizedStrings.StatisticsTypeXml_FAILED_PARSING_XML.toLocalizedString(), ex);
+      throw new GemFireConfigException(
+          LocalizedStrings.StatisticsTypeXml_FAILED_PARSING_XML.toLocalizedString(), ex);
     }
 
     parser.setErrorHandler(this);
@@ -108,17 +115,23 @@ public class StatisticsTypeXml implements EntityResolver, ErrorHandler {
     try {
       doc = parser.parse(new InputSource(reader));
     } catch (SAXException se) {
-      throw new GemFireConfigException(LocalizedStrings.StatisticsTypeXml_FAILED_PARSING_XML.toLocalizedString(), se);
+      throw new GemFireConfigException(
+          LocalizedStrings.StatisticsTypeXml_FAILED_PARSING_XML.toLocalizedString(), se);
     } catch (IOException io) {
-      throw new GemFireConfigException(LocalizedStrings.StatisticsTypeXml_FAILED_READING_XML_DATA.toLocalizedString(), io);
+      throw new GemFireConfigException(
+          LocalizedStrings.StatisticsTypeXml_FAILED_READING_XML_DATA.toLocalizedString(), io);
     }
 
     if (doc == null) {
-      throw new GemFireConfigException(LocalizedStrings.StatisticsTypeXml_FAILED_READING_XML_DATA_NO_DOCUMENT.toLocalizedString());
+      throw new GemFireConfigException(
+          LocalizedStrings.StatisticsTypeXml_FAILED_READING_XML_DATA_NO_DOCUMENT
+              .toLocalizedString());
     }
     Element root = doc.getDocumentElement();
     if (root == null) {
-      throw new GemFireConfigException(LocalizedStrings.StatisticsTypeXml_FAILED_READING_XML_DATA_NO_ROOT_ELEMENT.toLocalizedString());
+      throw new GemFireConfigException(
+          LocalizedStrings.StatisticsTypeXml_FAILED_READING_XML_DATA_NO_ROOT_ELEMENT
+              .toLocalizedString());
     }
     return extractStatistics(root, statFactory);
   }
@@ -138,10 +151,7 @@ public class StatisticsTypeXml implements EntityResolver, ErrorHandler {
     return (StatisticsType[]) types.toArray(new StatisticsType[types.size()]);
   }
 
-  /**
-   * <!ELEMENT type (description?, (stat)+)>
-   * <!ATTLIST type  name CDATA #REQUIRED>
-   */
+  /** <!ELEMENT type (description?, (stat)+)> <!ATTLIST type name CDATA #REQUIRED> */
   private StatisticsType extractType(Element typeNode, StatisticsTypeFactory statFactory) {
     Assert.assertTrue(typeNode.getTagName().equals("type"));
     Assert.assertTrue(typeNode.hasAttribute("name"));
@@ -153,7 +163,8 @@ public class StatisticsTypeXml implements EntityResolver, ErrorHandler {
       Element statNode = (Element) statNodes.item(i);
       stats.add(extractStat(statNode, statFactory));
     }
-    StatisticDescriptor[] descriptors = (StatisticDescriptor[]) stats.toArray(new StatisticDescriptor[stats.size()]);
+    StatisticDescriptor[] descriptors =
+        (StatisticDescriptor[]) stats.toArray(new StatisticDescriptor[stats.size()]);
     String description = "";
     {
       NodeList descriptionNodes = typeNode.getElementsByTagName("description");
@@ -171,18 +182,13 @@ public class StatisticsTypeXml implements EntityResolver, ErrorHandler {
     return statFactory.createType(typeName, description, descriptors);
   }
 
-  private final static int INT_STORAGE = 0;
-  private final static int LONG_STORAGE = 1;
-  private final static int DOUBLE_STORAGE = 2;
+  private static final int INT_STORAGE = 0;
+  private static final int LONG_STORAGE = 1;
+  private static final int DOUBLE_STORAGE = 2;
 
   /**
-   * <!ELEMENT stat (description?, unit?)>
-   * <!ATTLIST stat
-   *   name CDATA #REQUIRED
-   *   counter (true | false) #IMPLIED
-   *   largerBetter (true | false) #IMPLIED
-   *   storage (int | long | double) #IMPLIED 
-   * >
+   * <!ELEMENT stat (description?, unit?)> <!ATTLIST stat name CDATA #REQUIRED counter (true |
+   * false) #IMPLIED largerBetter (true | false) #IMPLIED storage (int | long | double) #IMPLIED >
    */
   private StatisticDescriptor extractStat(Element statNode, StatisticsTypeFactory statFactory) {
     Assert.assertTrue(statNode.getTagName().equals("stat"));
@@ -236,40 +242,40 @@ public class StatisticsTypeXml implements EntityResolver, ErrorHandler {
     }
     if (isCounter) {
       switch (storage) {
-      case INT_STORAGE:
-        return statFactory.createIntCounter(statName, description, unit, largerBetter);
-      case LONG_STORAGE:
-        return statFactory.createLongCounter(statName, description, unit, largerBetter);
-      case DOUBLE_STORAGE:
-        return statFactory.createDoubleCounter(statName, description, unit, largerBetter);
-      default:
-        throw new RuntimeException(LocalizedStrings.StatisticsTypeXml_UNEXPECTED_STORAGE_TYPE_0.toLocalizedString(Integer.valueOf(storage)));
+        case INT_STORAGE:
+          return statFactory.createIntCounter(statName, description, unit, largerBetter);
+        case LONG_STORAGE:
+          return statFactory.createLongCounter(statName, description, unit, largerBetter);
+        case DOUBLE_STORAGE:
+          return statFactory.createDoubleCounter(statName, description, unit, largerBetter);
+        default:
+          throw new RuntimeException(
+              LocalizedStrings.StatisticsTypeXml_UNEXPECTED_STORAGE_TYPE_0.toLocalizedString(
+                  Integer.valueOf(storage)));
       }
     } else {
       switch (storage) {
-      case INT_STORAGE:
-        return statFactory.createIntGauge(statName, description, unit, largerBetter);
-      case LONG_STORAGE:
-        return statFactory.createLongGauge(statName, description, unit, largerBetter);
-      case DOUBLE_STORAGE:
-        return statFactory.createDoubleGauge(statName, description, unit, largerBetter);
-      default:
-        throw new RuntimeException(LocalizedStrings.StatisticsTypeXml_UNEXPECTED_STORAGE_TYPE_0.toLocalizedString(Integer.valueOf(storage)));
+        case INT_STORAGE:
+          return statFactory.createIntGauge(statName, description, unit, largerBetter);
+        case LONG_STORAGE:
+          return statFactory.createLongGauge(statName, description, unit, largerBetter);
+        case DOUBLE_STORAGE:
+          return statFactory.createDoubleGauge(statName, description, unit, largerBetter);
+        default:
+          throw new RuntimeException(
+              LocalizedStrings.StatisticsTypeXml_UNEXPECTED_STORAGE_TYPE_0.toLocalizedString(
+                  Integer.valueOf(storage)));
       }
     }
   }
 
-  /**
-   * <!ELEMENT description (#PCDATA)>
-   */
+  /** <!ELEMENT description (#PCDATA)> */
   private String extractDescription(Element descriptionNode) {
     Assert.assertTrue(descriptionNode.getTagName().equals("description"));
     return extractText(descriptionNode);
   }
 
-  /**
-   * <!ELEMENT unit (#PCDATA)>
-   */
+  /** <!ELEMENT unit (#PCDATA)> */
   private String extractUnit(Element unitNode) {
     Assert.assertTrue(unitNode.getTagName().equals("unit"));
     return extractText(unitNode);

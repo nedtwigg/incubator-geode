@@ -64,19 +64,20 @@ import org.apache.geode.test.dunit.VM;
 public class StreamingPartitionOperationOneDUnitTest extends JUnit4CacheTestCase {
 
   /* SerializableRunnable object to create PR */
-  CacheSerializableRunnable createPrRegionWithDS_DACK = new CacheSerializableRunnable("createPrRegionWithDS") {
+  CacheSerializableRunnable createPrRegionWithDS_DACK =
+      new CacheSerializableRunnable("createPrRegionWithDS") {
 
-    public void run2() throws CacheException {
-      Cache cache = getCache();
-      AttributesFactory attr = new AttributesFactory();
-      PartitionAttributesFactory paf = new PartitionAttributesFactory();
-      paf.setTotalNumBuckets(5);
-      PartitionAttributes prAttr = paf.create();
-      attr.setPartitionAttributes(prAttr);
-      RegionAttributes regionAttribs = attr.create();
-      cache.createRegion("PR1", regionAttribs);
-    }
-  };
+        public void run2() throws CacheException {
+          Cache cache = getCache();
+          AttributesFactory attr = new AttributesFactory();
+          PartitionAttributesFactory paf = new PartitionAttributesFactory();
+          paf.setTotalNumBuckets(5);
+          PartitionAttributes prAttr = paf.create();
+          attr.setPartitionAttributes(prAttr);
+          RegionAttributes regionAttribs = attr.create();
+          cache.createRegion("PR1", regionAttribs);
+        }
+      };
 
   class IDGetter implements Serializable {
     InternalDistributedMember getMemberId() {
@@ -98,7 +99,8 @@ public class StreamingPartitionOperationOneDUnitTest extends JUnit4CacheTestCase
     VM vm0 = host.getVM(0);
 
     // get the other member id that connected
-    InternalDistributedMember otherId = (InternalDistributedMember) vm0.invoke(new IDGetter(), "getMemberId");
+    InternalDistributedMember otherId =
+        (InternalDistributedMember) vm0.invoke(new IDGetter(), "getMemberId");
 
     vm0.invoke(createPrRegionWithDS_DACK);
 
@@ -109,7 +111,8 @@ public class StreamingPartitionOperationOneDUnitTest extends JUnit4CacheTestCase
 
     Set setOfIds = Collections.singleton(otherId);
 
-    TestStreamingPartitionOperationOneProviderNoExceptions streamOp = new TestStreamingPartitionOperationOneProviderNoExceptions(getSystem(), regionId);
+    TestStreamingPartitionOperationOneProviderNoExceptions streamOp =
+        new TestStreamingPartitionOperationOneProviderNoExceptions(getSystem(), regionId);
     try {
       streamOp.getPartitionedDataFrom(setOfIds);
     } catch (VirtualMachineError e) {
@@ -124,21 +127,26 @@ public class StreamingPartitionOperationOneDUnitTest extends JUnit4CacheTestCase
   // about 100 chunks worth of integers?
   protected static final int NUM_INTEGERS = 32 * 1024 /* default socket buffer size*/ * 100 / 4;
 
-  public static class TestStreamingPartitionOperationOneProviderNoExceptions extends StreamingPartitionOperation {
+  public static class TestStreamingPartitionOperationOneProviderNoExceptions
+      extends StreamingPartitionOperation {
     ConcurrentMap chunkMap = new ConcurrentHashMap();
     int numChunks = -1;
     volatile boolean dataValidated = false;
 
-    public TestStreamingPartitionOperationOneProviderNoExceptions(InternalDistributedSystem sys, int regionId) {
+    public TestStreamingPartitionOperationOneProviderNoExceptions(
+        InternalDistributedSystem sys, int regionId) {
       super(sys, regionId);
     }
 
     protected DistributionMessage createRequestMessage(Set recipients, ReplyProcessor21 processor) {
-      TestStreamingPartitionMessageOneProviderNoExceptions msg = new TestStreamingPartitionMessageOneProviderNoExceptions(recipients, this.regionId, processor);
+      TestStreamingPartitionMessageOneProviderNoExceptions msg =
+          new TestStreamingPartitionMessageOneProviderNoExceptions(
+              recipients, this.regionId, processor);
       return msg;
     }
 
-    protected synchronized boolean processData(List objects, InternalDistributedMember sender, int sequenceNum, boolean lastInSequence) {
+    protected synchronized boolean processData(
+        List objects, InternalDistributedMember sender, int sequenceNum, boolean lastInSequence) {
       LogWriter logger = this.sys.getLogWriter();
 
       // assert that we haven't gotten this sequence number yet
@@ -180,7 +188,7 @@ public class StreamingPartitionOperationOneDUnitTest extends JUnit4CacheTestCase
       LogWriter logger = this.sys.getLogWriter();
 
       // sort the input streams
-      for (Iterator itr = this.chunkMap.entrySet().iterator(); itr.hasNext();) {
+      for (Iterator itr = this.chunkMap.entrySet().iterator(); itr.hasNext(); ) {
         Map.Entry entry = (Map.Entry) itr.next();
         int seqNum = ((Integer) entry.getKey()).intValue();
         objList = (List) entry.getValue();
@@ -210,7 +218,8 @@ public class StreamingPartitionOperationOneDUnitTest extends JUnit4CacheTestCase
     }
   }
 
-  public static final class TestStreamingPartitionMessageOneProviderNoExceptions extends StreamingPartitionOperation.StreamingPartitionMessage {
+  public static final class TestStreamingPartitionMessageOneProviderNoExceptions
+      extends StreamingPartitionOperation.StreamingPartitionMessage {
     private int nextInt = -10;
     private int count = 0;
 
@@ -218,7 +227,8 @@ public class StreamingPartitionOperationOneDUnitTest extends JUnit4CacheTestCase
       super();
     }
 
-    public TestStreamingPartitionMessageOneProviderNoExceptions(Set recipients, int regionId, ReplyProcessor21 processor) {
+    public TestStreamingPartitionMessageOneProviderNoExceptions(
+        Set recipients, int regionId, ReplyProcessor21 processor) {
       super(recipients, regionId, processor);
     }
 

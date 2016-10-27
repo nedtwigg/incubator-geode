@@ -30,9 +30,7 @@ import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.internal.Version;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * @since GemFire 6.6.2
- */
+/** @since GemFire 6.6.2 */
 public class StartupResponseWithVersionMessage extends StartupResponseMessage {
   private static final Logger logger = LogService.getLogger();
 
@@ -42,11 +40,14 @@ public class StartupResponseWithVersionMessage extends StartupResponseMessage {
   private Collection<String> hostedLocators;
   private boolean isSharedConfigurationEnabled;
 
-  public StartupResponseWithVersionMessage() {
+  public StartupResponseWithVersionMessage() {}
 
-  }
-
-  StartupResponseWithVersionMessage(DistributionManager dm, int processorId, InternalDistributedMember recipient, String rejectionMessage, boolean responderIsAdmin) {
+  StartupResponseWithVersionMessage(
+      DistributionManager dm,
+      int processorId,
+      InternalDistributedMember recipient,
+      String rejectionMessage,
+      boolean responderIsAdmin) {
     super(dm, processorId, recipient, rejectionMessage, responderIsAdmin);
     version = GemFireVersion.getGemFireVersion();
     this.hostedLocators = InternalLocator.getLocatorStrings();
@@ -63,7 +64,9 @@ public class StartupResponseWithVersionMessage extends StartupResponseMessage {
       dm.addHostedLocators(getSender(), this.hostedLocators, this.isSharedConfigurationEnabled);
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("Received StartupResponseWithVersionMessage from a member with version: {}", this.version);
+      logger.debug(
+          "Received StartupResponseWithVersionMessage from a member with version: {}",
+          this.version);
     }
   }
 

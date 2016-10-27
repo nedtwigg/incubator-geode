@@ -20,11 +20,7 @@ import java.io.InvalidObjectException;
 
 import javax.management.openmbean.SimpleType;
 
-/**
- * Open type converter for Enums.
- * 
- * 
- */
+/** Open type converter for Enums. */
 public final class EnumConverter<T extends Enum<T>> extends OpenTypeConverter {
 
   EnumConverter(Class<T> enumClass) {

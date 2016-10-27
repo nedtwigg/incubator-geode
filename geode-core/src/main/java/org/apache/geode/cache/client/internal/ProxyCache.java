@@ -38,13 +38,13 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * A wrapper class over an actual Cache instance. This is used when the
- * multiuser-authentication attribute is set to true. Application must use
- * its {@link #getRegion(String)} API instead that of actual Cache instance for
- * getting a reference to Region instances, to perform operations on server.
- * 
- * TODO Avoid creating multiple instances of ProxyCache for a single user.
- * 
+ * A wrapper class over an actual Cache instance. This is used when the multiuser-authentication
+ * attribute is set to true. Application must use its {@link #getRegion(String)} API instead that of
+ * actual Cache instance for getting a reference to Region instances, to perform operations on
+ * server.
+ *
+ * <p>TODO Avoid creating multiple instances of ProxyCache for a single user.
+ *
  * @see ClientCache#createAuthenticatedView(Properties)
  * @see ProxyQueryService
  * @see ProxyRegion
@@ -80,9 +80,14 @@ public class ProxyCache implements RegionService {
       UserAttributes.userAttributes.set(this.userAttributes);
       Iterator<ServerLocation> iter = this.userAttributes.getServerToId().keySet().iterator();
       while (iter.hasNext()) {
-        ProxyCacheCloseOp.executeOn(iter.next(), (PoolImpl) this.userAttributes.getPool(), this.userAttributes.getCredentials(), keepAlive);
+        ProxyCacheCloseOp.executeOn(
+            iter.next(),
+            (PoolImpl) this.userAttributes.getPool(),
+            this.userAttributes.getCredentials(),
+            keepAlive);
       }
-      ArrayList<ProxyCache> proxyCache = ((PoolImpl) this.userAttributes.getPool()).getProxyCacheList();
+      ArrayList<ProxyCache> proxyCache =
+          ((PoolImpl) this.userAttributes.getPool()).getProxyCacheList();
       synchronized (proxyCache) {
         proxyCache.remove(this);
       }
@@ -106,7 +111,8 @@ public class ProxyCache implements RegionService {
   public QueryService getQueryService() {
     preOp();
     if (this.proxyQueryService == null) {
-      this.proxyQueryService = new ProxyQueryService(this, userAttributes.getPool().getQueryService());
+      this.proxyQueryService =
+          new ProxyQueryService(this, userAttributes.getPool().getQueryService());
     }
     return this.proxyQueryService;
   }
@@ -123,7 +129,8 @@ public class ProxyCache implements RegionService {
       return null;
     } else {
       if (!this.cache.getRegion(path).getAttributes().getDataPolicy().isEmpty()) {
-        throw new IllegalStateException("Region's data-policy must be EMPTY when multiuser-authentication is true");
+        throw new IllegalStateException(
+            "Region's data-policy must be EMPTY when multiuser-authentication is true");
       }
       return new ProxyRegion(this, this.cache.getRegion(path));
     }
@@ -157,7 +164,8 @@ public class ProxyCache implements RegionService {
   public Object getUserId(Object key) {
     preOp();
     if (!(key instanceof ServerLocation)) {
-      throw new IllegalArgumentException("Key must be of type ServerLocation, but is " + key.getClass());
+      throw new IllegalArgumentException(
+          "Key must be of type ServerLocation, but is " + key.getClass());
     }
     return this.userAttributes.getServerToId().get(key);
   }

@@ -24,10 +24,7 @@ import org.apache.geode.distributed.internal.SharedConfiguration;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.management.internal.configuration.domain.Configuration;
 
-/****
- * CacheListener on ConfigRegion to write the configuration changes to file-system.
- *
- */
+/** ** CacheListener on ConfigRegion to write the configuration changes to file-system. */
 public class ConfigurationChangeListener extends CacheListenerAdapter<String, Configuration> {
   private static final Logger logger = LogService.getLogger();
 
@@ -54,7 +51,10 @@ public class ConfigurationChangeListener extends CacheListenerAdapter<String, Co
     try {
       sharedConfig.writeConfig(newConfig);
     } catch (Exception e) {
-      logger.info("Exception occurred while writing the configuration changes to the filesystem: {}", e.getMessage(), e);
+      logger.info(
+          "Exception occurred while writing the configuration changes to the filesystem: {}",
+          e.getMessage(),
+          e);
     }
   }
 }

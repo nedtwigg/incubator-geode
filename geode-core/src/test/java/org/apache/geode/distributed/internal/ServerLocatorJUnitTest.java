@@ -31,11 +31,9 @@ import org.apache.geode.internal.logging.LocalLogWriter;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The ServerLocatorJUnitTest class is a test suite of test cases testing the contract and functionality of the
- * ServerLocator class.
- * </p>
- * TODO: write more unit tests for this class...
- * </p>
+ * The ServerLocatorJUnitTest class is a test suite of test cases testing the contract and
+ * functionality of the ServerLocator class. TODO: write more unit tests for this class...
+ *
  * @see org.apache.geode.distributed.internal.ServerLocator
  * @see org.junit.Assert
  * @see org.junit.Test
@@ -72,5 +70,4 @@ public class ServerLocatorJUnitTest {
       return new LocalLogWriter(InternalLogWriter.NONE_LEVEL);
     }
   }
-
 }

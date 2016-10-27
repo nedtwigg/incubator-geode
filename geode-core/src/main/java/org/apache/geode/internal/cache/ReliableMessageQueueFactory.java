@@ -17,16 +17,16 @@
 package org.apache.geode.internal.cache;
 
 /**
- * Represents a factory for instances of {@link ReliableMessageQueue}.
- * The Cache will have an instance of the factory that can be obtained
- * from {@link GemFireCacheImpl#getReliableMessageQueueFactory}.
- * 
+ * Represents a factory for instances of {@link ReliableMessageQueue}. The Cache will have an
+ * instance of the factory that can be obtained from {@link
+ * GemFireCacheImpl#getReliableMessageQueueFactory}.
+ *
  * @since GemFire 5.0
  */
 public interface ReliableMessageQueueFactory {
   /**
-   * Creates an instance of {@link ReliableMessageQueue} given the region
-   * that the queue will be on.
+   * Creates an instance of {@link ReliableMessageQueue} given the region that the queue will be on.
+   *
    * @param region the distributed region that the created queue will service.
    * @return the created queue
    */
@@ -34,10 +34,10 @@ public interface ReliableMessageQueueFactory {
 
   /**
    * Cleanly shutdown this factory flushing any persistent data to disk.
+   *
    * @param force true if close should always work
-   * @throws IllegalStateException if <code>force</code> is false and the factory
-   * is still in use. The factory is in use as long as a queue it produced remains
-   * unclosed.
+   * @throws IllegalStateException if <code>force</code> is false and the factory is still in use.
+   *     The factory is in use as long as a queue it produced remains unclosed.
    */
   public void close(boolean force);
 }

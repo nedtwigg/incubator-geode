@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -64,7 +64,8 @@ public class LuceneIndexForPartitionedRegion extends LuceneIndexImpl {
     //       3) Replicate to Replicate, Partition To Partition
     //       4) Offheap to Offheap
     if (!withStorage) {
-      throw new IllegalStateException("The data region to create lucene index should be with storage");
+      throw new IllegalStateException(
+          "The data region to create lucene index should be with storage");
     }
     if (withPersistence) {
       // TODO: add PartitionedRegionAttributes instead
@@ -77,13 +78,20 @@ public class LuceneIndexForPartitionedRegion extends LuceneIndexImpl {
     final String fileRegionName = createFileRegionName();
     PartitionAttributes partitionAttributes = dataRegion.getPartitionAttributes();
     if (!fileRegionExists(fileRegionName)) {
-      fileRegion = createFileRegion(regionShortCut, fileRegionName, partitionAttributes, regionAttributes);
+      fileRegion =
+          createFileRegion(regionShortCut, fileRegionName, partitionAttributes, regionAttributes);
     }
 
     // create PR chunkRegion, but not to create its buckets for now
     final String chunkRegionName = createChunkRegionName();
     if (!chunkRegionExists(chunkRegionName)) {
-      chunkRegion = createChunkRegion(regionShortCut, fileRegionName, partitionAttributes, chunkRegionName, regionAttributes);
+      chunkRegion =
+          createChunkRegion(
+              regionShortCut,
+              fileRegionName,
+              partitionAttributes,
+              chunkRegionName,
+              regionAttributes);
     }
     fileSystemStats.setFileSupplier(() -> (int) getFileRegion().getLocalSize());
     fileSystemStats.setChunkSupplier(() -> (int) getChunkRegion().getLocalSize());
@@ -107,11 +115,16 @@ public class LuceneIndexForPartitionedRegion extends LuceneIndexImpl {
   }
 
   boolean fileRegionExists(String fileRegionName) {
-    return cache.<String, File> getRegion(fileRegionName) != null;
+    return cache.<String, File>getRegion(fileRegionName) != null;
   }
 
-  Region createFileRegion(final RegionShortcut regionShortCut, final String fileRegionName, final PartitionAttributes partitionAttributes, final RegionAttributes regionAttributes) {
-    return createRegion(fileRegionName, regionShortCut, this.regionPath, partitionAttributes, regionAttributes);
+  Region createFileRegion(
+      final RegionShortcut regionShortCut,
+      final String fileRegionName,
+      final PartitionAttributes partitionAttributes,
+      final RegionAttributes regionAttributes) {
+    return createRegion(
+        fileRegionName, regionShortCut, this.regionPath, partitionAttributes, regionAttributes);
   }
 
   public String createFileRegionName() {
@@ -119,25 +132,39 @@ public class LuceneIndexForPartitionedRegion extends LuceneIndexImpl {
   }
 
   boolean chunkRegionExists(String chunkRegionName) {
-    return cache.<ChunkKey, byte[]> getRegion(chunkRegionName) != null;
+    return cache.<ChunkKey, byte[]>getRegion(chunkRegionName) != null;
   }
 
-  Region<ChunkKey, byte[]> createChunkRegion(final RegionShortcut regionShortCut, final String fileRegionName, final PartitionAttributes partitionAttributes, final String chunkRegionName, final RegionAttributes regionAttributes) {
-    return createRegion(chunkRegionName, regionShortCut, fileRegionName, partitionAttributes, regionAttributes);
+  Region<ChunkKey, byte[]> createChunkRegion(
+      final RegionShortcut regionShortCut,
+      final String fileRegionName,
+      final PartitionAttributes partitionAttributes,
+      final String chunkRegionName,
+      final RegionAttributes regionAttributes) {
+    return createRegion(
+        chunkRegionName, regionShortCut, fileRegionName, partitionAttributes, regionAttributes);
   }
 
   public String createChunkRegionName() {
     return LuceneServiceImpl.getUniqueIndexName(indexName, regionPath) + ".chunks";
   }
 
-  private PartitionAttributesFactory configureLuceneRegionAttributesFactory(PartitionAttributesFactory attributesFactory, PartitionAttributes<?, ?> dataRegionAttributes) {
+  private PartitionAttributesFactory configureLuceneRegionAttributesFactory(
+      PartitionAttributesFactory attributesFactory,
+      PartitionAttributes<?, ?> dataRegionAttributes) {
     attributesFactory.setTotalNumBuckets(dataRegionAttributes.getTotalNumBuckets());
     attributesFactory.setRedundantCopies(dataRegionAttributes.getRedundantCopies());
     return attributesFactory;
   }
 
-  protected <K, V> Region<K, V> createRegion(final String regionName, final RegionShortcut regionShortCut, final String colocatedWithRegionName, final PartitionAttributes partitionAttributes, final RegionAttributes regionAttributes) {
-    PartitionAttributesFactory partitionAttributesFactory = new PartitionAttributesFactory<String, File>();
+  protected <K, V> Region<K, V> createRegion(
+      final String regionName,
+      final RegionShortcut regionShortCut,
+      final String colocatedWithRegionName,
+      final PartitionAttributes partitionAttributes,
+      final RegionAttributes regionAttributes) {
+    PartitionAttributesFactory partitionAttributesFactory =
+        new PartitionAttributesFactory<String, File>();
     partitionAttributesFactory.setColocatedWith(colocatedWithRegionName);
     configureLuceneRegionAttributesFactory(partitionAttributesFactory, partitionAttributes);
 
@@ -158,7 +185,10 @@ public class LuceneIndexForPartitionedRegion extends LuceneIndexImpl {
 
   @Override
   public void dumpFiles(final String directory) {
-    ResultCollector results = FunctionService.onRegion(getDataRegion()).withArgs(new String[] { directory, indexName }).execute(DumpDirectoryFiles.ID);
+    ResultCollector results =
+        FunctionService.onRegion(getDataRegion())
+            .withArgs(new String[] {directory, indexName})
+            .execute(DumpDirectoryFiles.ID);
     results.getResult();
   }
 }

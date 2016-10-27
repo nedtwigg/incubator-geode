@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -46,8 +46,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 public class PageableLuceneQueryResultsImplJUnitTest {
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @Rule public ExpectedException thrown = ExpectedException.none();
 
   private List<EntryScore<String>> hits;
   private List<LuceneResultStruct> expected = new ArrayList<LuceneResultStruct>();
@@ -64,33 +63,37 @@ public class PageableLuceneQueryResultsImplJUnitTest {
 
     userRegion = Mockito.mock(Region.class);
 
-    Mockito.when(userRegion.getAll(Mockito.anyCollection())).thenAnswer(new Answer() {
+    Mockito.when(userRegion.getAll(Mockito.anyCollection()))
+        .thenAnswer(
+            new Answer() {
 
-      @Override
-      public Map answer(InvocationOnMock invocation) throws Throwable {
-        Collection<String> keys = invocation.getArgumentAt(0, Collection.class);
-        Map<String, String> results = new HashMap<String, String>();
-        for (String key : keys) {
-          results.put(key, key.replace("key_", "value_"));
-        }
+              @Override
+              public Map answer(InvocationOnMock invocation) throws Throwable {
+                Collection<String> keys = invocation.getArgumentAt(0, Collection.class);
+                Map<String, String> results = new HashMap<String, String>();
+                for (String key : keys) {
+                  results.put(key, key.replace("key_", "value_"));
+                }
 
-        return results;
-      }
-    });
+                return results;
+              }
+            });
   }
 
   @Test
   public void testMaxStore() {
     hits.set(5, new EntryScore<String>("key_5", 502));
 
-    PageableLuceneQueryResultsImpl<String, String> results = new PageableLuceneQueryResultsImpl<String, String>(hits, null, 5);
+    PageableLuceneQueryResultsImpl<String, String> results =
+        new PageableLuceneQueryResultsImpl<String, String>(hits, null, 5);
 
     assertEquals(502, results.getMaxScore(), 0.1f);
   }
 
   @Test
   public void testPagination() {
-    PageableLuceneQueryResultsImpl<String, String> results = new PageableLuceneQueryResultsImpl<String, String>(hits, userRegion, 10);
+    PageableLuceneQueryResultsImpl<String, String> results =
+        new PageableLuceneQueryResultsImpl<String, String>(hits, userRegion, 10);
 
     assertEquals(23, results.size());
 
@@ -114,7 +117,8 @@ public class PageableLuceneQueryResultsImplJUnitTest {
 
   @Test
   public void testNoPagination() {
-    PageableLuceneQueryResultsImpl<String, String> results = new PageableLuceneQueryResultsImpl<String, String>(hits, userRegion, 0);
+    PageableLuceneQueryResultsImpl<String, String> results =
+        new PageableLuceneQueryResultsImpl<String, String>(hits, userRegion, 0);
 
     assertEquals(23, results.size());
 
@@ -130,11 +134,11 @@ public class PageableLuceneQueryResultsImplJUnitTest {
 
   @Test
   public void shouldThrowNoSuchElementExceptionFromNextWithNoMorePages() {
-    PageableLuceneQueryResultsImpl<String, String> results = new PageableLuceneQueryResultsImpl<>(Collections.emptyList(), userRegion, 0);
+    PageableLuceneQueryResultsImpl<String, String> results =
+        new PageableLuceneQueryResultsImpl<>(Collections.emptyList(), userRegion, 0);
 
     assertFalse(results.hasNext());
     thrown.expect(NoSuchElementException.class);
     results.next();
   }
-
 }

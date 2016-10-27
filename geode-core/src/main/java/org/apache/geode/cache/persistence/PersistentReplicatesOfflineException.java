@@ -19,19 +19,18 @@ package org.apache.geode.cache.persistence;
 import org.apache.geode.GemFireException;
 
 /**
- * Thrown when a replicated region is configured for persistence
- * on some members but none of those members are currently online.
- * 
- * If you see this exception you should restart members that are
- * configured for hosting persistent replicates.
- * 
+ * Thrown when a replicated region is configured for persistence on some members but none of those
+ * members are currently online.
+ *
+ * <p>If you see this exception you should restart members that are configured for hosting
+ * persistent replicates.
+ *
  * @since GemFire 7.0
  */
 public class PersistentReplicatesOfflineException extends GemFireException {
   private static final long serialVersionUID = 6209644027346609970L;
 
-  public PersistentReplicatesOfflineException() {
-  }
+  public PersistentReplicatesOfflineException() {}
 
   public PersistentReplicatesOfflineException(String message) {
     super(message);

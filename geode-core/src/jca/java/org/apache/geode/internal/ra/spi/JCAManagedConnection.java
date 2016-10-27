@@ -42,13 +42,9 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.cache.TXManagerImpl;
 import org.apache.geode.internal.ra.GFConnectionImpl;
 
-/**
- * 
- *
- */
-public class JCAManagedConnection implements ManagedConnection
+/** */
+public class JCAManagedConnection implements ManagedConnection {
 
-{
   private final List<ConnectionEventListener> listeners;
 
   private volatile TXManagerImpl gfTxMgr;
@@ -66,18 +62,20 @@ public class JCAManagedConnection implements ManagedConnection
 
   private volatile JCALocalTransaction localTran;
 
-  private final static boolean DEBUG = false;
+  private static final boolean DEBUG = false;
 
   public JCAManagedConnection(JCAManagedConnectionFactory fact) {
     this.factory = fact;
-    this.listeners = Collections.<ConnectionEventListener> synchronizedList(new ArrayList<ConnectionEventListener>());
+    this.listeners =
+        Collections.<ConnectionEventListener>synchronizedList(
+            new ArrayList<ConnectionEventListener>());
     this.localTran = new JCALocalTransaction();
-    this.connections = Collections.<GFConnectionImpl> synchronizedSet(new HashSet<GFConnectionImpl>());
+    this.connections =
+        Collections.<GFConnectionImpl>synchronizedSet(new HashSet<GFConnectionImpl>());
   }
 
   public void addConnectionEventListener(ConnectionEventListener listener) {
     this.listeners.add(listener);
-
   }
 
   public void associateConnection(Object conn) throws ResourceException {
@@ -112,7 +110,6 @@ public class JCAManagedConnection implements ManagedConnection
         this.localTran = new JCALocalTransaction();
       }
     }
-
   }
 
   public void destroy() throws ResourceException {
@@ -203,7 +200,8 @@ public class JCAManagedConnection implements ManagedConnection
         logger.fine("JCAManagedConnection:getMetaData");
       }
     }
-    return new JCAManagedConnectionMetaData(this.factory.getProductName(), this.factory.getVersion(), this.factory.getUserName());
+    return new JCAManagedConnectionMetaData(
+        this.factory.getProductName(), this.factory.getVersion(), this.factory.getUserName());
   }
 
   public XAResource getXAResource() throws ResourceException {
@@ -212,7 +210,6 @@ public class JCAManagedConnection implements ManagedConnection
 
   public void removeConnectionEventListener(ConnectionEventListener arg0) {
     this.listeners.remove(arg0);
-
   }
 
   public void setLogWriter(PrintWriter logger) throws ResourceException {
@@ -230,7 +227,8 @@ public class JCAManagedConnection implements ManagedConnection
         conn.invalidate();
         synchronized (this.listeners) {
           Iterator<ConnectionEventListener> itr = this.listeners.iterator();
-          ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED, e);
+          ConnectionEvent ce =
+              new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED, e);
           ce.setConnectionHandle(conn);
           while (itr.hasNext()) {
             itr.next().connectionErrorOccurred(ce);
@@ -239,7 +237,6 @@ public class JCAManagedConnection implements ManagedConnection
         connsItr.remove();
       }
     }
-
   }
 
   public void onClose(GFConnectionImpl conn) throws ResourceException {
@@ -261,7 +258,5 @@ public class JCAManagedConnection implements ManagedConnection
         this.localTran = new JCALocalTransaction();
       }
     }
-
   }
-
 }

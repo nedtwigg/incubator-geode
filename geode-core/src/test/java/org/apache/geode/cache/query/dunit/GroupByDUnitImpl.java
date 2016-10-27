@@ -35,10 +35,7 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 
-/**
- * 
- *
- */
+/** */
 public abstract class GroupByDUnitImpl extends JUnit4CacheTestCase implements GroupByTestInterface {
 
   protected abstract GroupByTestInterface createTestInstance();
@@ -310,31 +307,33 @@ public abstract class GroupByDUnitImpl extends JUnit4CacheTestCase implements Gr
     this.closeCache(vm0, vm1, vm2, vm3);
   }
 
-  protected void createIndex(VM vm, final String indexName, final String indexedExpression, final String regionPath) {
-    vm.invoke(new SerializableRunnable("create index") {
-      public void run() {
-        try {
-          Cache cache = getCache();
-          cache.getQueryService().createIndex(indexName, indexedExpression, regionPath);
-        } catch (RegionNotFoundException e) {
-          fail(e.toString());
-        } catch (IndexExistsException e) {
-          fail(e.toString());
-        } catch (IndexNameConflictException e) {
-          fail(e.toString());
-        }
-      }
-    });
+  protected void createIndex(
+      VM vm, final String indexName, final String indexedExpression, final String regionPath) {
+    vm.invoke(
+        new SerializableRunnable("create index") {
+          public void run() {
+            try {
+              Cache cache = getCache();
+              cache.getQueryService().createIndex(indexName, indexedExpression, regionPath);
+            } catch (RegionNotFoundException e) {
+              fail(e.toString());
+            } catch (IndexExistsException e) {
+              fail(e.toString());
+            } catch (IndexNameConflictException e) {
+              fail(e.toString());
+            }
+          }
+        });
   }
 
   private void closeCache(VM... vms) {
     for (VM vm : vms) {
-      vm.invoke(new SerializableRunnable() {
-        public void run() {
-          getCache().close();
-        }
-      });
+      vm.invoke(
+          new SerializableRunnable() {
+            public void run() {
+              getCache().close();
+            }
+          });
     }
   }
-
 }

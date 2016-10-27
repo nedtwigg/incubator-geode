@@ -43,12 +43,41 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
  * A disk region that is created when doing offline validation.
+ *
  * @since GemFire prPersistSprint3
  */
 public class ValidatingDiskRegion extends DiskRegion implements DiskRecoveryStore {
   protected ValidatingDiskRegion(DiskStoreImpl ds, DiskRegionView drv) {
-    super(ds, drv.getName(), drv.isBucket(), true, false, true, new DiskRegionStats(ds.getCache().getDistributedSystem(), drv.getName()), new DummyCancelCriterion(), new DummyDiskExceptionHandler(), null, drv.getFlags(), drv.getPartitionName(), drv.getStartingBucketId(), drv.getCompressorClassName(), drv.getOffHeap());
-    setConfig(drv.getLruAlgorithm(), drv.getLruAction(), drv.getLruLimit(), drv.getConcurrencyLevel(), drv.getInitialCapacity(), drv.getLoadFactor(), drv.getStatisticsEnabled(), drv.isBucket(), drv.getFlags(), drv.getPartitionName(), drv.getStartingBucketId(), drv.getCompressorClassName(), drv.getOffHeap());
+    super(
+        ds,
+        drv.getName(),
+        drv.isBucket(),
+        true,
+        false,
+        true,
+        new DiskRegionStats(ds.getCache().getDistributedSystem(), drv.getName()),
+        new DummyCancelCriterion(),
+        new DummyDiskExceptionHandler(),
+        null,
+        drv.getFlags(),
+        drv.getPartitionName(),
+        drv.getStartingBucketId(),
+        drv.getCompressorClassName(),
+        drv.getOffHeap());
+    setConfig(
+        drv.getLruAlgorithm(),
+        drv.getLruAction(),
+        drv.getLruLimit(),
+        drv.getConcurrencyLevel(),
+        drv.getInitialCapacity(),
+        drv.getLoadFactor(),
+        drv.getStatisticsEnabled(),
+        drv.isBucket(),
+        drv.getFlags(),
+        drv.getPartitionName(),
+        drv.getStartingBucketId(),
+        drv.getCompressorClassName(),
+        drv.getOffHeap());
   }
 
   static ValidatingDiskRegion create(DiskStoreImpl dsi, DiskRegionView drv) {
@@ -72,7 +101,8 @@ public class ValidatingDiskRegion extends DiskRegion implements DiskRecoveryStor
   public DiskEntry initializeRecoveredEntry(Object key, DiskEntry.RecoveredEntry re) {
     ValidatingDiskEntry de = new ValidatingDiskEntry(key, re);
     if (this.map.putIfAbsent(key, de) != null) {
-      throw new InternalGemFireError(LocalizedStrings.LocalRegion_ENTRY_ALREADY_EXISTED_0.toLocalizedString(key));
+      throw new InternalGemFireError(
+          LocalizedStrings.LocalRegion_ENTRY_ALREADY_EXISTED_0.toLocalizedString(key));
     }
     return de;
   }
@@ -88,7 +118,8 @@ public class ValidatingDiskRegion extends DiskRegion implements DiskRecoveryStor
   }
 
   public void foreachRegionEntry(LocalRegion.RegionEntryCallback callback) {
-    throw new IllegalStateException("foreachRegionEntry should not be called when validating disk store");
+    throw new IllegalStateException(
+        "foreachRegionEntry should not be called when validating disk store");
   }
 
   public boolean lruLimitExceeded() {
@@ -96,11 +127,13 @@ public class ValidatingDiskRegion extends DiskRegion implements DiskRecoveryStor
   }
 
   public void copyRecoveredEntries(RegionMap rm) {
-    throw new IllegalStateException("copyRecoveredEntries should not be called on ValidatingDiskRegion");
+    throw new IllegalStateException(
+        "copyRecoveredEntries should not be called on ValidatingDiskRegion");
   }
 
   public void updateSizeOnFaultIn(Object key, int newSize, int bytesOnDisk) {
-    throw new IllegalStateException("updateSizeOnFaultIn should not be called on ValidatingDiskRegion");
+    throw new IllegalStateException(
+        "updateSizeOnFaultIn should not be called on ValidatingDiskRegion");
   }
 
   @Override
@@ -118,10 +151,12 @@ public class ValidatingDiskRegion extends DiskRegion implements DiskRecoveryStor
   }
 
   public void handleDiskAccessException(DiskAccessException dae) {
-    throw new IllegalStateException("handleDiskAccessException should not be called on ValidatingDiskRegion");
+    throw new IllegalStateException(
+        "handleDiskAccessException should not be called on ValidatingDiskRegion");
   }
 
-  public void initializeStats(long numEntriesInVM, long numOverflowOnDisk, long numOverflowBytesOnDisk) {
+  public void initializeStats(
+      long numEntriesInVM, long numOverflowOnDisk, long numOverflowBytesOnDisk) {
     throw new IllegalStateException("initializeStats should not be called on ValidatingDiskRegion");
   }
 
@@ -259,7 +294,8 @@ public class ValidatingDiskRegion extends DiskRegion implements DiskRecoveryStor
     }
 
     @Override
-    public VersionTag generateVersionTag(VersionSource member, boolean withDelta, LocalRegion region, EntryEventImpl event) {
+    public VersionTag generateVersionTag(
+        VersionSource member, boolean withDelta, LocalRegion region, EntryEventImpl event) {
       // TODO Auto-generated method stub
       return null;
     }
@@ -352,7 +388,8 @@ public class ValidatingDiskRegion extends DiskRegion implements DiskRecoveryStor
     }
 
     @Override
-    public void setValueWithTombstoneCheck(Object value, EntryEvent event) throws RegionClearedException {
+    public void setValueWithTombstoneCheck(Object value, EntryEvent event)
+        throws RegionClearedException {
       // TODO Auto-generated method stub
     }
 
@@ -381,19 +418,41 @@ public class ValidatingDiskRegion extends DiskRegion implements DiskRecoveryStor
     }
 
     @Override
-    public boolean initialImagePut(LocalRegion region, long lastModified, Object newValue, boolean wasRecovered, boolean acceptedVersionTag) throws RegionClearedException {
+    public boolean initialImagePut(
+        LocalRegion region,
+        long lastModified,
+        Object newValue,
+        boolean wasRecovered,
+        boolean acceptedVersionTag)
+        throws RegionClearedException {
       // TODO Auto-generated method stub
       return false;
     }
 
     @Override
-    public boolean initialImageInit(LocalRegion region, long lastModified, Object newValue, boolean create, boolean wasRecovered, boolean acceptedVersionTag) throws RegionClearedException {
+    public boolean initialImageInit(
+        LocalRegion region,
+        long lastModified,
+        Object newValue,
+        boolean create,
+        boolean wasRecovered,
+        boolean acceptedVersionTag)
+        throws RegionClearedException {
       // TODO Auto-generated method stub
       return false;
     }
 
     @Override
-    public boolean destroy(LocalRegion region, EntryEventImpl event, boolean inTokenMode, boolean cacheWrite, Object expectedOldValue, boolean forceDestroy, boolean removeRecoveredEntry) throws CacheWriterException, EntryNotFoundException, TimeoutException, RegionClearedException {
+    public boolean destroy(
+        LocalRegion region,
+        EntryEventImpl event,
+        boolean inTokenMode,
+        boolean cacheWrite,
+        Object expectedOldValue,
+        boolean forceDestroy,
+        boolean removeRecoveredEntry)
+        throws CacheWriterException, EntryNotFoundException, TimeoutException,
+            RegionClearedException {
       // TODO Auto-generated method stub
       return false;
     }
@@ -491,8 +550,8 @@ public class ValidatingDiskRegion extends DiskRegion implements DiskRecoveryStor
     }
 
     @Override
-    public void setValue(RegionEntryContext context, Object value, EntryEventImpl event) throws RegionClearedException {
-    }
+    public void setValue(RegionEntryContext context, Object value, EntryEventImpl event)
+        throws RegionClearedException {}
 
     @Override
     public boolean isInUseByTransaction() {
@@ -500,23 +559,20 @@ public class ValidatingDiskRegion extends DiskRegion implements DiskRecoveryStor
     }
 
     @Override
-    public void setInUseByTransaction(boolean v) {
-    }
+    public void setInUseByTransaction(boolean v) {}
 
     @Override
-    public void incRefCount() {
-    }
+    public void incRefCount() {}
 
     @Override
-    public void decRefCount(NewLRUClockHand lruList, LocalRegion lr) {
-    }
+    public void decRefCount(NewLRUClockHand lruList, LocalRegion lr) {}
 
     @Override
-    public void resetRefCount(NewLRUClockHand lruList) {
-    }
+    public void resetRefCount(NewLRUClockHand lruList) {}
 
     @Override
-    public Object prepareValueForCache(RegionEntryContext r, Object val, EntryEventImpl event, boolean isEntryUpdate) {
+    public Object prepareValueForCache(
+        RegionEntryContext r, Object val, EntryEventImpl event, boolean isEntryUpdate) {
       throw new IllegalStateException("Should never be called");
     }
   }
@@ -544,6 +600,5 @@ public class ValidatingDiskRegion extends DiskRegion implements DiskRecoveryStor
     public RuntimeException generateCancelledException(Throwable e) {
       return new RuntimeException(e);
     }
-
   }
 }

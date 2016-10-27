@@ -23,13 +23,7 @@ import java.util.regex.Pattern;
 
 import org.apache.geode.management.ManagementException;
 
-/**
- * This is a string pattern based Filter
- * with some limitations.
- * 
- *
- */
-
+/** This is a string pattern based Filter with some limitations. */
 public class StringBasedFilter {
 
   private FilterParam params;
@@ -37,9 +31,7 @@ public class StringBasedFilter {
   private List<Pattern> exclusionPatternList;
   private List<Pattern> inclusionPatternList;
 
-  /**
-   * 
-   */
+  /** */
   public StringBasedFilter(FilterParam params) {
     this.params = params;
     exclusionPatternList = new ArrayList<Pattern>();
@@ -47,13 +39,9 @@ public class StringBasedFilter {
 
     compileFilterList(params.getExclusionList(), exclusionPatternList);
     compileFilterList(params.getInclusionList(), inclusionPatternList);
-
   }
 
-  /**
-   * 
-   */
-
+  /** */
   public boolean isExcluded(String tokenToMatch) {
     if (params.isDefaultExcludeFilter()) {
       return false;
@@ -113,5 +101,4 @@ public class StringBasedFilter {
     }
     return value;
   }
-
 }

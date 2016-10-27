@@ -27,10 +27,12 @@ import java.net.InetAddress;
 public class ServiceConfig {
 
   /** stall time to wait for concurrent join/leave/remove requests to be received */
-  public static final long MEMBER_REQUEST_COLLECTION_INTERVAL = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "member-request-collection-interval", 300);
+  public static final long MEMBER_REQUEST_COLLECTION_INTERVAL =
+      Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "member-request-collection-interval", 300);
 
   /** various settings from Geode configuration */
   private final long joinTimeout;
+
   private final int[] membershipPortRange;
   private final int udpRecvBufferSize;
   private final int udpSendBufferSize;
@@ -88,7 +90,8 @@ public class ServiceConfig {
       String prop = dconfig.getSecurityPeerAuthInit();
       locatorsAreCoordinators = (prop != null && prop.length() > 0);
       if (!locatorsAreCoordinators) {
-        locatorsAreCoordinators = Boolean.getBoolean(InternalLocator.LOCATORS_PREFERRED_AS_COORDINATORS);
+        locatorsAreCoordinators =
+            Boolean.getBoolean(InternalLocator.LOCATORS_PREFERRED_AS_COORDINATORS);
       }
     }
     return locatorsAreCoordinators;
@@ -136,7 +139,7 @@ public class ServiceConfig {
     memberTimeout = theConfig.getMemberTimeout();
 
     // The default view-ack timeout in 7.0 is 12347 ms but is adjusted based on the member-timeout.
-    // We don't want a longer timeout than 12437 because new members will likely time out trying to 
+    // We don't want a longer timeout than 12437 because new members will likely time out trying to
     // connect because their join timeouts are set to expect a shorter period
     int ackCollectionTimeout = theConfig.getMemberTimeout() * 2 * 12437 / 10000;
     if (ackCollectionTimeout < 1500) {
@@ -144,18 +147,19 @@ public class ServiceConfig {
     } else if (ackCollectionTimeout > 12437) {
       ackCollectionTimeout = 12437;
     }
-    ackCollectionTimeout = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "VIEW_ACK_TIMEOUT", ackCollectionTimeout).intValue();
+    ackCollectionTimeout =
+        Integer.getInteger(
+                DistributionConfig.GEMFIRE_PREFIX + "VIEW_ACK_TIMEOUT", ackCollectionTimeout)
+            .intValue();
 
-    lossThreshold = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "network-partition-threshold", 51);
-    if (lossThreshold < 51)
-      lossThreshold = 51;
-    if (lossThreshold > 100)
-      lossThreshold = 100;
+    lossThreshold =
+        Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "network-partition-threshold", 51);
+    if (lossThreshold < 51) lossThreshold = 51;
+    if (lossThreshold > 100) lossThreshold = 100;
 
     memberWeight = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "member-weight", 0);
     locatorWaitTime = theConfig.getLocatorWaitTime();
 
     networkPartitionDetectionEnabled = theConfig.getEnableNetworkPartitionDetection();
   }
-
 }

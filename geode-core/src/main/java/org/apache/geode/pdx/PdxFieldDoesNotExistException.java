@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.pdx;
 
 import org.apache.geode.GemFireException;
 
 /**
- * Thrown when a PDX field does not exist and the current operation requires its existence.
- * PDX fields exist after they are written by one of the writeXXX methods on {@link PdxWriter}.
- * @since GemFire 6.6
+ * Thrown when a PDX field does not exist and the current operation requires its existence. PDX
+ * fields exist after they are written by one of the writeXXX methods on {@link PdxWriter}.
  *
+ * @since GemFire 6.6
  */
 public class PdxFieldDoesNotExistException extends GemFireException {
 
@@ -33,6 +31,7 @@ public class PdxFieldDoesNotExistException extends GemFireException {
 
   /**
    * Constructs a new exception with the given message
+   *
    * @param message the message of the new exception
    */
   public PdxFieldDoesNotExistException(String message) {

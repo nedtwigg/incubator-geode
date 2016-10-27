@@ -19,22 +19,20 @@ package org.apache.geode.cache.client;
 import org.apache.geode.distributed.internal.InternalDistributedSystem;
 
 /**
- * An exception indicating that a failure has happened on the server
- * while processing an operation that was sent to it by a client.
+ * An exception indicating that a failure has happened on the server while processing an operation
+ * that was sent to it by a client.
+ *
  * @since GemFire 5.7
  */
 public class ServerOperationException extends ServerConnectivityException {
   private static final long serialVersionUID = -3106323103325266219L;
 
-  /**
-   * Create a new instance of ServerOperationException without a detail message or cause.
-   */
-  public ServerOperationException() {
-  }
+  /** Create a new instance of ServerOperationException without a detail message or cause. */
+  public ServerOperationException() {}
 
   /**
-   * 
    * Create a new instance of ServerOperationException with a detail message
+   *
    * @param message the detail message
    */
   public ServerOperationException(String message) {
@@ -43,6 +41,7 @@ public class ServerOperationException extends ServerConnectivityException {
 
   /**
    * Create a new instance of ServerOperationException with a detail message and cause
+   *
    * @param message the detail message
    * @param cause the cause
    */
@@ -52,6 +51,7 @@ public class ServerOperationException extends ServerConnectivityException {
 
   /**
    * Create a new instance of ServerOperationException with a cause
+   *
    * @param cause the cause
    */
   public ServerOperationException(Throwable cause) {
@@ -81,5 +81,4 @@ public class ServerOperationException extends ServerConnectivityException {
       }
     }
   }
-
 }

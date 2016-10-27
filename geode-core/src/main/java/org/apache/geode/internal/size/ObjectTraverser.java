@@ -28,19 +28,23 @@ import java.util.Map;
 import org.apache.geode.internal.util.concurrent.CopyOnWriteWeakHashMap;
 
 public class ObjectTraverser {
-  private static final Map<Class, FieldSet> FIELD_CACHE = new CopyOnWriteWeakHashMap<Class, FieldSet>();
+  private static final Map<Class, FieldSet> FIELD_CACHE =
+      new CopyOnWriteWeakHashMap<Class, FieldSet>();
   private static final FieldSet NON_PRIMATIVE_ARRAY = new FieldSet(null, null);
 
   /**
    * Visit all objects reachable from a given root object, using a breadth first search. Using this
-   * method requires some heap space - probably between 8 - 30 bytes per reachable object. 
+   * method requires some heap space - probably between 8 - 30 bytes per reachable object.
+   *
    * @param root object to traverse from
    * @param visitor a visitor to visit each node
-   * @param includeStatics if true, the first time we see a new object type, we will visit all of the static fields.
+   * @param includeStatics if true, the first time we see a new object type, we will visit all of
+   *     the static fields.
    * @throws IllegalArgumentException
    * @throws IllegalAccessException
    */
-  public static void breadthFirstSearch(Object root, Visitor visitor, boolean includeStatics) throws IllegalArgumentException, IllegalAccessException {
+  public static void breadthFirstSearch(Object root, Visitor visitor, boolean includeStatics)
+      throws IllegalArgumentException, IllegalAccessException {
     VisitStack stack = new VisitStack(visitor, includeStatics);
 
     stack.add(null, root);
@@ -48,10 +52,10 @@ public class ObjectTraverser {
       Object next = stack.next();
       doSearch(next, stack);
     }
-
   }
 
-  private static void doSearch(Object root, VisitStack stack) throws IllegalArgumentException, IllegalAccessException {
+  private static void doSearch(Object root, VisitStack stack)
+      throws IllegalArgumentException, IllegalAccessException {
     Class clazz = root.getClass();
     boolean includeStatics = stack.shouldIncludeStatics(clazz);
     FieldSet set = FIELD_CACHE.get(clazz);
@@ -120,12 +124,15 @@ public class ObjectTraverser {
       clazz = clazz.getSuperclass();
     }
 
-    return new FieldSet(staticFields.toArray(new Field[staticFields.size()]), nonPrimativeFields.toArray(new Field[nonPrimativeFields.size()]));
+    return new FieldSet(
+        staticFields.toArray(new Field[staticFields.size()]),
+        nonPrimativeFields.toArray(new Field[nonPrimativeFields.size()]));
   }
 
   public interface Visitor {
     /**
      * Visit an object
+     *
      * @param parent the parent of the object
      * @param object the object we are visiting
      * @return true the search should continue on and visit the children of this object as well
@@ -176,9 +183,7 @@ public class ObjectTraverser {
     }
   }
 
-  private ObjectTraverser() {
-
-  }
+  private ObjectTraverser() {}
 
   private static class FieldSet {
     private final Field[] staticFields;
@@ -196,6 +201,5 @@ public class ObjectTraverser {
     public Field[] getNonPrimativeFields() {
       return nonPrimativeFields;
     }
-
   }
 }

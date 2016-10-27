@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-/**
- * File comment
- */
+/** File comment */
 package org.apache.geode.cache30;
 
 import org.junit.experimental.categories.Category;
@@ -42,11 +40,10 @@ import org.apache.geode.cache30.RegionMembershipListenerDUnitTest.MyRML;
 import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.test.dunit.VM;
 
-/**
- * @since GemFire 6.0
- */
+/** @since GemFire 6.0 */
 @Category(DistributedTest.class)
-public class PartitionedRegionMembershipListenerDUnitTest extends RegionMembershipListenerDUnitTest {
+public class PartitionedRegionMembershipListenerDUnitTest
+    extends RegionMembershipListenerDUnitTest {
 
   private transient MyRML myPRListener;
   private transient Region prr; // root region
@@ -61,7 +58,8 @@ public class PartitionedRegionMembershipListenerDUnitTest extends RegionMembersh
     if (cacheListeners != null) {
       af.initCacheListeners(cacheListeners);
     }
-    af.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(5).setRedundantCopies(0).create());
+    af.setPartitionAttributes(
+        new PartitionAttributesFactory().setTotalNumBuckets(5).setRedundantCopies(0).create());
     return af.create();
   }
 
@@ -85,8 +83,9 @@ public class PartitionedRegionMembershipListenerDUnitTest extends RegionMembersh
     int to = getOpTimeout();
     this.myPRListener = new MyRML(to);
     AttributesFactory af = new AttributesFactory();
-    af.initCacheListeners(new CacheListener[] { this.myPRListener });
-    af.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(5).setRedundantCopies(0).create());
+    af.initCacheListeners(new CacheListener[] {this.myPRListener});
+    af.setPartitionAttributes(
+        new PartitionAttributesFactory().setTotalNumBuckets(5).setRedundantCopies(0).create());
     this.prr = createRootRegion(rName + "-pr", af.create());
   }
 
@@ -95,13 +94,18 @@ public class PartitionedRegionMembershipListenerDUnitTest extends RegionMembersh
     // TODO Auto-generated method stub
     super.createRootOtherVm(rName);
     VM vm = getOtherVm();
-    vm.invoke(new CacheSerializableRunnable("create PR root") {
-      public void run2() throws CacheException {
-        AttributesFactory af = new AttributesFactory();
-        af.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(5).setRedundantCopies(0).create());
-        createRootRegion(rName + "-pr", af.create());
-      }
-    });
+    vm.invoke(
+        new CacheSerializableRunnable("create PR root") {
+          public void run2() throws CacheException {
+            AttributesFactory af = new AttributesFactory();
+            af.setPartitionAttributes(
+                new PartitionAttributesFactory()
+                    .setTotalNumBuckets(5)
+                    .setRedundantCopies(0)
+                    .create());
+            createRootRegion(rName + "-pr", af.create());
+          }
+        });
   }
 
   @Override
@@ -109,22 +113,24 @@ public class PartitionedRegionMembershipListenerDUnitTest extends RegionMembersh
     // TODO Auto-generated method stub
     super.destroyRootOtherVm(rName);
     VM vm = getOtherVm();
-    vm.invoke(new CacheSerializableRunnable("local destroy PR root") {
-      public void run2() throws CacheException {
-        getRootRegion(rName + "-pr").localDestroyRegion();
-      }
-    });
+    vm.invoke(
+        new CacheSerializableRunnable("local destroy PR root") {
+          public void run2() throws CacheException {
+            getRootRegion(rName + "-pr").localDestroyRegion();
+          }
+        });
   }
 
   @Override
   protected void closeRootOtherVm(final String rName) {
     super.closeRootOtherVm(rName);
     VM vm = getOtherVm();
-    vm.invoke(new CacheSerializableRunnable("close PR root") {
-      public void run2() throws CacheException {
-        getRootRegion(rName + "-pr").close();
-      }
-    });
+    vm.invoke(
+        new CacheSerializableRunnable("close PR root") {
+          public void run2() throws CacheException {
+            getRootRegion(rName + "-pr").close();
+          }
+        });
   }
 
   @Override
@@ -139,5 +145,4 @@ public class PartitionedRegionMembershipListenerDUnitTest extends RegionMembersh
     assertTrue(this.myPRListener.lastOpWasDeparture());
     assertEventStuff(this.myPRListener.getLastEvent(), this.otherId, this.prr);
   }
-
 }

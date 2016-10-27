@@ -37,17 +37,16 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
 /**
- * Tests querying of MemberMXBean which is used by MBeanProcessController to
- * control GemFire ControllableProcesses.
- * 
+ * Tests querying of MemberMXBean which is used by MBeanProcessController to control GemFire
+ * ControllableProcesses.
+ *
  * @since GemFire 8.0
  */
 @Category(IntegrationTest.class)
 public class LauncherMemberMXBeanIntegrationTest extends AbstractLauncherIntegrationTestCase {
 
   @Before
-  public final void setUpLauncherMemberMXBeanIntegrationTest() throws Exception {
-  }
+  public final void setUpLauncherMemberMXBeanIntegrationTest() throws Exception {}
 
   @After
   public final void tearDownLauncherMemberMXBeanIntegrationTest() throws Exception {
@@ -75,7 +74,9 @@ public class LauncherMemberMXBeanIntegrationTest extends AbstractLauncherIntegra
     assertEquals("mbeanNames=" + mbeanNames, 1, mbeanNames.size());
 
     final ObjectName objectName = mbeanNames.iterator().next();
-    final MemberMXBean mbean = MBeanServerInvocationHandler.newProxyInstance(mbeanServer, objectName, MemberMXBean.class, false);
+    final MemberMXBean mbean =
+        MBeanServerInvocationHandler.newProxyInstance(
+            mbeanServer, objectName, MemberMXBean.class, false);
 
     assertNotNull(mbean);
     assertEquals(ProcessUtils.identifyPid(), mbean.getProcessId());
@@ -93,7 +94,8 @@ public class LauncherMemberMXBeanIntegrationTest extends AbstractLauncherIntegra
 
     final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
     final ObjectName pattern = ObjectName.getInstance("GemFire:type=Member,*");
-    final QueryExp constraint = Query.eq(Query.attr("ProcessId"), Query.value(ProcessUtils.identifyPid()));
+    final QueryExp constraint =
+        Query.eq(Query.attr("ProcessId"), Query.value(ProcessUtils.identifyPid()));
 
     waitForMemberMXBean(mbeanServer, pattern);
 
@@ -102,7 +104,9 @@ public class LauncherMemberMXBeanIntegrationTest extends AbstractLauncherIntegra
     assertEquals(1, mbeanNames.size());
 
     final ObjectName objectName = mbeanNames.iterator().next();
-    final MemberMXBean mbean = MBeanServerInvocationHandler.newProxyInstance(mbeanServer, objectName, MemberMXBean.class, false);
+    final MemberMXBean mbean =
+        MBeanServerInvocationHandler.newProxyInstance(
+            mbeanServer, objectName, MemberMXBean.class, false);
 
     assertNotNull(mbean);
     assertEquals(ProcessUtils.identifyPid(), mbean.getProcessId());
@@ -129,19 +133,26 @@ public class LauncherMemberMXBeanIntegrationTest extends AbstractLauncherIntegra
     assertEquals(1, mbeanNames.size());
 
     final ObjectName objectName = mbeanNames.iterator().next();
-    final MemberMXBean mbean = MBeanServerInvocationHandler.newProxyInstance(mbeanServer, objectName, MemberMXBean.class, false);
+    final MemberMXBean mbean =
+        MBeanServerInvocationHandler.newProxyInstance(
+            mbeanServer, objectName, MemberMXBean.class, false);
 
     assertNotNull(mbean);
     assertEquals(getUniqueName(), mbean.getMember());
   }
 
-  private void waitForMemberMXBean(final MBeanServer mbeanServer, final ObjectName pattern) throws Exception {
-    assertEventuallyTrue("waiting for MemberMXBean to be registered", new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        Set<ObjectName> mbeanNames = mbeanServer.queryNames(pattern, null);
-        return !mbeanNames.isEmpty();
-      }
-    }, WAIT_FOR_MBEAN_TIMEOUT, INTERVAL_MILLISECONDS);
+  private void waitForMemberMXBean(final MBeanServer mbeanServer, final ObjectName pattern)
+      throws Exception {
+    assertEventuallyTrue(
+        "waiting for MemberMXBean to be registered",
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            Set<ObjectName> mbeanNames = mbeanServer.queryNames(pattern, null);
+            return !mbeanNames.isEmpty();
+          }
+        },
+        WAIT_FOR_MBEAN_TIMEOUT,
+        INTERVAL_MILLISECONDS);
   }
 }

@@ -32,14 +32,14 @@ public class CustomConfiguration {
   public static final String CONFIG_FILE_NAME = "log4j2-custom.xml";
   public static final String CONFIG_LAYOUT_PREFIX = "CUSTOM";
 
-  protected CustomConfiguration() {
-  }
+  protected CustomConfiguration() {}
 
   public static URL openConfigResource() {
     return new CustomConfiguration().getClass().getResource(CONFIG_FILE_NAME);
   }
 
-  public static File createConfigFileIn(final File targetFolder) throws IOException, URISyntaxException {
+  public static File createConfigFileIn(final File targetFolder)
+      throws IOException, URISyntaxException {
     URL resource = openConfigResource();
     File targetFile = new File(targetFolder, CONFIG_FILE_NAME);
     IOUtils.copy(resource.openStream(), new FileOutputStream(targetFile));
@@ -47,18 +47,35 @@ public class CustomConfiguration {
     return targetFile;
   }
 
-  private static final String DATE = "((?:19|20)\\\\d\\\\d)/(0?[1-9]|1[012])/([12][0-9]|3[01]|0?[1-9])";
+  private static final String DATE =
+      "((?:19|20)\\\\d\\\\d)/(0?[1-9]|1[012])/([12][0-9]|3[01]|0?[1-9])";
 
   private static final String TIME = "\\b(?<!')([xXzZ])(?!')\\b";
 
   public static String defineLogStatementRegex(final Level level, final String message) {
     // CUSTOM: level=%level time=%date{yyyy/MM/dd HH:mm:ss.SSS z} message=%message%nthrowable=%throwable%n
-    return CONFIG_LAYOUT_PREFIX + ": level=" + level.toString() + " time=" + ".*" + " message=" + message + "\nthrowable=\n";
+    return CONFIG_LAYOUT_PREFIX
+        + ": level="
+        + level.toString()
+        + " time="
+        + ".*"
+        + " message="
+        + message
+        + "\nthrowable=\n";
   }
 
-  public static String defineLogStatementRegex(final Level level, final String message, final String throwable) {
+  public static String defineLogStatementRegex(
+      final Level level, final String message, final String throwable) {
     // CUSTOM: level=%level time=%date{yyyy/MM/dd HH:mm:ss.SSS z} message=%message%nthrowable=%throwable%n
-    return CONFIG_LAYOUT_PREFIX + ": level=" + level.toString() + " time=" + ".*" + " message=" + message + "\nthrowable=" + throwable + "\n";
+    return CONFIG_LAYOUT_PREFIX
+        + ": level="
+        + level.toString()
+        + " time="
+        + ".*"
+        + " message="
+        + message
+        + "\nthrowable="
+        + throwable
+        + "\n";
   }
-
 }

@@ -67,70 +67,80 @@ public class MultiIndexCreationDUnitTest extends JUnit4CacheTestCase {
     final String name = "/" + regionName;
 
     // Start server1
-    AsyncInvocation a1 = server1.invokeAsync(new SerializableCallable("Create Server1") {
-      @Override
-      public Object call() throws Exception {
-        Region r = getCache().createRegionFactory(RegionShortcut.REPLICATE).create(regionName);
+    AsyncInvocation a1 =
+        server1.invokeAsync(
+            new SerializableCallable("Create Server1") {
+              @Override
+              public Object call() throws Exception {
+                Region r =
+                    getCache().createRegionFactory(RegionShortcut.REPLICATE).create(regionName);
 
-        for (int i = 0; i < numberOfEntries; i++) {
-          Portfolio p = new Portfolio(i);
-          r.put("key-" + i, p);
-        }
+                for (int i = 0; i < numberOfEntries; i++) {
+                  Portfolio p = new Portfolio(i);
+                  r.put("key-" + i, p);
+                }
 
-        IndexManager.testHook = new MultiIndexCreationTestHook();
+                IndexManager.testHook = new MultiIndexCreationTestHook();
 
-        QueryService qs = getCache().getQueryService();
-        qs.defineIndex("statusIndex", "status", r.getFullPath());
-        qs.defineIndex("IDIndex", "ID", r.getFullPath());
-        List<Index> indexes = qs.createDefinedIndexes();
+                QueryService qs = getCache().getQueryService();
+                qs.defineIndex("statusIndex", "status", r.getFullPath());
+                qs.defineIndex("IDIndex", "ID", r.getFullPath());
+                List<Index> indexes = qs.createDefinedIndexes();
 
-        assertEquals("Only 2 indexes should have been created. ", 2, indexes.size());
+                assertEquals("Only 2 indexes should have been created. ", 2, indexes.size());
 
-        return null;
-      }
-    });
+                return null;
+              }
+            });
 
-    final String[] queries = { "select * from " + name + " where status = 'active'", "select * from " + name + " where ID > 4" };
+    final String[] queries = {
+      "select * from " + name + " where status = 'active'",
+      "select * from " + name + " where ID > 4"
+    };
 
-    AsyncInvocation a2 = server1.invokeAsync(new SerializableCallable("Create Server1") {
-      @Override
-      public Object call() throws Exception {
-        long giveupTime = System.currentTimeMillis() + 60000;
-        while (!hooked && System.currentTimeMillis() < giveupTime) {
-          LogWriterUtils.getLogWriter().info("Query Waiting for index hook.");
-          Wait.pause(100);
-        }
-        assertTrue(hooked);
+    AsyncInvocation a2 =
+        server1.invokeAsync(
+            new SerializableCallable("Create Server1") {
+              @Override
+              public Object call() throws Exception {
+                long giveupTime = System.currentTimeMillis() + 60000;
+                while (!hooked && System.currentTimeMillis() < giveupTime) {
+                  LogWriterUtils.getLogWriter().info("Query Waiting for index hook.");
+                  Wait.pause(100);
+                }
+                assertTrue(hooked);
 
-        QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-          private boolean indexCalled = false;
+                QueryObserver old =
+                    QueryObserverHolder.setInstance(
+                        new QueryObserverAdapter() {
+                          private boolean indexCalled = false;
 
-          public void afterIndexLookup(Collection results) {
-            indexCalled = true;
-          }
+                          public void afterIndexLookup(Collection results) {
+                            indexCalled = true;
+                          }
 
-          public void endQuery() {
-            assertFalse("Index should not have been used. ", indexCalled);
-          }
+                          public void endQuery() {
+                            assertFalse("Index should not have been used. ", indexCalled);
+                          }
+                        });
 
-        });
+                SelectResults sr = null;
+                for (int i = 0; i < queries.length; i++) {
+                  try {
+                    sr =
+                        (SelectResults) getCache().getQueryService().newQuery(queries[i]).execute();
+                  } catch (Exception e) {
+                    fail("QueryExecution failed, " + e);
+                  }
+                  assertEquals(5, sr.size());
+                }
+                QueryObserverHolder.setInstance(old);
 
-        SelectResults sr = null;
-        for (int i = 0; i < queries.length; i++) {
-          try {
-            sr = (SelectResults) getCache().getQueryService().newQuery(queries[i]).execute();
-          } catch (Exception e) {
-            fail("QueryExecution failed, " + e);
-          }
-          assertEquals(5, sr.size());
-        }
-        QueryObserverHolder.setInstance(old);
+                hooked = false;
 
-        hooked = false;
-
-        return null;
-      }
-    });
+                return null;
+              }
+            });
 
     ThreadUtils.join(a1, 6000);
 
@@ -142,36 +152,38 @@ public class MultiIndexCreationDUnitTest extends JUnit4CacheTestCase {
       fail(a2.getException().getMessage());
     }
 
-    server1.invoke(new SerializableCallable("Create Server1") {
-      @Override
-      public Object call() throws Exception {
-        IndexManager.testHook = null;
-        QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-          private boolean indexCalled = false;
+    server1.invoke(
+        new SerializableCallable("Create Server1") {
+          @Override
+          public Object call() throws Exception {
+            IndexManager.testHook = null;
+            QueryObserver old =
+                QueryObserverHolder.setInstance(
+                    new QueryObserverAdapter() {
+                      private boolean indexCalled = false;
 
-          public void afterIndexLookup(Collection results) {
-            indexCalled = true;
+                      public void afterIndexLookup(Collection results) {
+                        indexCalled = true;
+                      }
+
+                      public void endQuery() {
+                        assertTrue("Index should have been used. ", indexCalled);
+                      }
+                    });
+
+            SelectResults sr = null;
+            for (int i = 0; i < queries.length; i++) {
+              try {
+                sr = (SelectResults) getCache().getQueryService().newQuery(queries[i]).execute();
+              } catch (Exception e) {
+                fail("QueryExecution failed, " + e);
+              }
+              assertEquals(5, sr.size());
+            }
+            QueryObserverHolder.setInstance(old);
+            return null;
           }
-
-          public void endQuery() {
-            assertTrue("Index should have been used. ", indexCalled);
-          }
-
         });
-
-        SelectResults sr = null;
-        for (int i = 0; i < queries.length; i++) {
-          try {
-            sr = (SelectResults) getCache().getQueryService().newQuery(queries[i]).execute();
-          } catch (Exception e) {
-            fail("QueryExecution failed, " + e);
-          }
-          assertEquals(5, sr.size());
-        }
-        QueryObserverHolder.setInstance(old);
-        return null;
-      }
-    });
   }
 
   @Override
@@ -192,7 +204,8 @@ public class MultiIndexCreationDUnitTest extends JUnit4CacheTestCase {
       long giveupTime = System.currentTimeMillis() + 60000;
       if (spot == 13) {
         hooked = true;
-        LogWriterUtils.getLogWriter().info("MultiIndexCreationTestHook is hooked in create defined indexes.");
+        LogWriterUtils.getLogWriter()
+            .info("MultiIndexCreationTestHook is hooked in create defined indexes.");
         while (hooked && System.currentTimeMillis() < giveupTime) {
           LogWriterUtils.getLogWriter().info("MultiIndexCreationTestHook waiting.");
           Wait.pause(100);

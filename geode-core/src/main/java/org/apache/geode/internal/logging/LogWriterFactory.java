@@ -28,10 +28,7 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 import org.apache.geode.internal.logging.log4j.LogWriterLogger;
 
-/**
- * Creates LogWriterLogger instances.
- * 
- */
+/** Creates LogWriterLogger instances. */
 public class LogWriterFactory {
 
   // LOG: RemoteGfManagerAgent and CacheCreation use this when there's no InternalDistributedSystem
@@ -40,19 +37,19 @@ public class LogWriterFactory {
   }
 
   /**
-   * Creates the log writer for a distributed system based on the system's
-   * parsed configuration. The initial banner and messages are also entered into
-   * the log by this method.
-   * @param isLoner
-   *                Whether the distributed system is a loner or not
-   * @param isSecure
-   *                Whether a logger for security related messages has to be
-   *                created
-   * @param config
-   *                The DistributionConfig for the target distributed system
+   * Creates the log writer for a distributed system based on the system's parsed configuration. The
+   * initial banner and messages are also entered into the log by this method.
+   *
+   * @param isLoner Whether the distributed system is a loner or not
+   * @param isSecure Whether a logger for security related messages has to be created
+   * @param config The DistributionConfig for the target distributed system
    * @param logConfig if true log the configuration
    */
-  public static InternalLogWriter createLogWriterLogger(final boolean isLoner, final boolean isSecure, final LogConfig config, final boolean logConfig) {
+  public static InternalLogWriter createLogWriterLogger(
+      final boolean isLoner,
+      final boolean isSecure,
+      final LogConfig config,
+      final boolean logConfig) {
 
     // if isSecurity then use "org.apache.geode.security" else use "org.apache.geode"
     String name = null;
@@ -63,7 +60,8 @@ public class LogWriterFactory {
     }
 
     // create the LogWriterLogger
-    final LogWriterLogger logger = LogService.createLogWriterLogger(name, config.getName(), isSecure);
+    final LogWriterLogger logger =
+        LogService.createLogWriterLogger(name, config.getName(), isSecure);
 
     if (isSecure) {
       logger.setLogWriterLevel(((DistributionConfig) config).getSecurityLogLevel());
@@ -84,7 +82,8 @@ public class LogWriterFactory {
 
     // log the banner
     if (!Boolean.getBoolean(InternalLocator.INHIBIT_DM_BANNER)) {
-      if (InternalDistributedSystem.getReconnectAttemptCounter() == 0 // avoid filling up logs during auto-reconnect
+      if (InternalDistributedSystem.getReconnectAttemptCounter()
+              == 0 // avoid filling up logs during auto-reconnect
           && !isSecure //&& !isLoner /* do this on a loner to fix bug 35602 */
       ) {
         // LOG:CONFIG:
@@ -98,7 +97,11 @@ public class LogWriterFactory {
     if (logConfig) {
       if (!isLoner) {
         // LOG:CONFIG: changed from config to info
-        logger.info(LogMarker.CONFIG, LocalizedMessage.create(LocalizedStrings.InternalDistributedSystem_STARTUP_CONFIGURATIONN_0, config.toLoggerString()));
+        logger.info(
+            LogMarker.CONFIG,
+            LocalizedMessage.create(
+                LocalizedStrings.InternalDistributedSystem_STARTUP_CONFIGURATIONN_0,
+                config.toLoggerString()));
       }
     }
 

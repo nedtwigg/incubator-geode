@@ -33,24 +33,25 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
  * Tests Global Region with OffHeap memory.
- * 
+ *
  * @since Geode 1.0
  */
 @Category(DistributedTest.class)
-@SuppressWarnings({ "deprecation", "serial", "rawtypes", "unchecked" })
+@SuppressWarnings({"deprecation", "serial", "rawtypes", "unchecked"})
 public class GlobalRegionOffHeapDUnitTest extends GlobalRegionDUnitTest {
 
   @Override
   public final void preTearDownAssertions() throws Exception {
-    SerializableRunnable checkOrphans = new SerializableRunnable() {
+    SerializableRunnable checkOrphans =
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        if (hasCache()) {
-          OffHeapTestUtil.checkOrphans();
-        }
-      }
-    };
+          @Override
+          public void run() {
+            if (hasCache()) {
+              OffHeapTestUtil.checkOrphans();
+            }
+          }
+        };
     Invoke.invokeInEveryVM(checkOrphans);
     checkOrphans.run();
   }

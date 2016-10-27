@@ -39,8 +39,8 @@ import org.apache.geode.internal.util.Versionable;
 import org.apache.geode.internal.util.VersionedArrayList;
 
 /**
- * Maintains configuration information for a PartitionedRegion. Instances are
- * stored in the allPartitionedRegion.
+ * Maintains configuration information for a PartitionedRegion. Instances are stored in the
+ * allPartitionedRegion.
  */
 public class PartitionRegionConfig extends ExternalizableDSFID implements Versionable {
 
@@ -54,20 +54,22 @@ public class PartitionRegionConfig extends ExternalizableDSFID implements Versio
   /** Nodes participating in this PartitionedRegion */
   private VersionedArrayList nodes = null;
 
-  /** Flag to indicate whether the PartitionedRegion's destruction responsibility is taken up by someone */
+  /**
+   * Flag to indicate whether the PartitionedRegion's destruction responsibility is taken up by
+   * someone
+   */
   private boolean isDestroying = false;
 
-  /** Flag to indicate whether this region has been created on all of the members that host the region
-   * that this region is colocated with. Once a region is in this state, new members will have to create
-   * this region before they can host any data for the colocated regions
+  /**
+   * Flag to indicate whether this region has been created on all of the members that host the
+   * region that this region is colocated with. Once a region is in this state, new members will
+   * have to create this region before they can host any data for the colocated regions
    */
   private boolean isColocationComplete;
 
   private volatile boolean firstDataStoreCreated = false;
 
-  /**
-   * The full path of the region. Used for resolving colocation chains.
-   */
+  /** The full path of the region. Used for resolving colocation chains. */
   private String fullPath = null;
 
   private String partitionResolver = null;
@@ -94,15 +96,10 @@ public class PartitionRegionConfig extends ExternalizableDSFID implements Versio
     return gatewaySenderIds;
   }
 
-  /**
-   * Default constructor for DataSerializer
-   */
-  public PartitionRegionConfig() {
-  }
+  /** Default constructor for DataSerializer */
+  public PartitionRegionConfig() {}
 
-  /**
-   * Constructor.
-   */
+  /** Constructor. */
   PartitionRegionConfig(int prId, String path, PartitionAttributes prAtt, Scope sc) {
     this.prId = prId;
     this.pAttrs = (PartitionAttributesImpl) prAtt;
@@ -126,10 +123,18 @@ public class PartitionRegionConfig extends ExternalizableDSFID implements Versio
     }
   }
 
-  /**
-   * Constructor.
-   */
-  PartitionRegionConfig(int prId, String path, PartitionAttributes prAtt, Scope sc, EvictionAttributes ea, final ExpirationAttributes regionIdleTimeout, final ExpirationAttributes regionTimeToLive, final ExpirationAttributes entryIdleTimeout, final ExpirationAttributes entryTimeToLive, Set<String> gatewaySenderIds) {
+  /** Constructor. */
+  PartitionRegionConfig(
+      int prId,
+      String path,
+      PartitionAttributes prAtt,
+      Scope sc,
+      EvictionAttributes ea,
+      final ExpirationAttributes regionIdleTimeout,
+      final ExpirationAttributes regionTimeToLive,
+      final ExpirationAttributes entryIdleTimeout,
+      final ExpirationAttributes entryTimeToLive,
+      Set<String> gatewaySenderIds) {
     this.prId = prId;
     this.pAttrs = (PartitionAttributesImpl) prAtt;
     this.scope = sc;
@@ -162,7 +167,8 @@ public class PartitionRegionConfig extends ExternalizableDSFID implements Versio
 
   /**
    * Returns a the list of nodes that participate in the PartitionedRegion
-   * @return a copy of the list of nodes that the caller is free to modify 
+   *
+   * @return a copy of the list of nodes that the caller is free to modify
    */
   Set<Node> getNodes() {
     if (this.nodes != null) {
@@ -173,6 +179,7 @@ public class PartitionRegionConfig extends ExternalizableDSFID implements Versio
 
   /**
    * Return a safe, light weight size of the nodes
+   *
    * @return number of VMs that participate in the PartitionedRegion
    */
   int getNumberOfNodes() {
@@ -184,8 +191,8 @@ public class PartitionRegionConfig extends ExternalizableDSFID implements Versio
   }
 
   /**
-   * Safely checks to see if the provided Node participates in the PartitionedRegion
-   * return true if the Node participates in the PartitionedRegion 
+   * Safely checks to see if the provided Node participates in the PartitionedRegion return true if
+   * the Node participates in the PartitionedRegion
    */
   boolean containsNode(Node check) {
     if (this.nodes != null) {
@@ -196,8 +203,8 @@ public class PartitionRegionConfig extends ExternalizableDSFID implements Versio
   }
 
   /**
-   * Safely checks to see if the provided Node participates in the PartitionedRegion
-   * return true if the Node participates in the PartitionedRegion 
+   * Safely checks to see if the provided Node participates in the PartitionedRegion return true if
+   * the Node participates in the PartitionedRegion
    */
   boolean containsMember(InternalDistributedMember memberId) {
     if (this.nodes != null) {
@@ -211,18 +218,14 @@ public class PartitionRegionConfig extends ExternalizableDSFID implements Versio
     return false;
   }
 
-  /**
-   * Adds a new node to this configuration
-   */
+  /** Adds a new node to this configuration */
   void addNode(Node newNode) {
     if (nodes != null) {
       nodes.add(newNode);
     }
   }
 
-  /**
-   * Removes a node from this configuration
-   */
+  /** Removes a node from this configuration */
   void removeNode(Node targetNode) {
     if (nodes != null) {
       nodes.remove(targetNode);
@@ -243,7 +246,34 @@ public class PartitionRegionConfig extends ExternalizableDSFID implements Versio
 
   @Override
   public String toString() {
-    String ret = "PartitionRegionConfig@" + System.identityHashCode(this) + ";prId=" + this.prId + ";scope=" + this.scope + ";partition attributes=" + this.pAttrs + ";partitionResolver=" + this.partitionResolver + ";colocatedWith=" + this.colocatedWith + ";eviction attributes=" + this.ea + ";regionIdleTimeout= " + this.regionIdleTimeout + ";regionTimeToLive= " + this.regionTimeToLive + ";entryIdleTimeout= " + this.entryIdleTimeout + ";entryTimeToLive= " + this.entryTimeToLive + "'elderFPAs=" + elderFPAs + "'gatewaySenderIds=" + gatewaySenderIds + ";nodes=";
+    String ret =
+        "PartitionRegionConfig@"
+            + System.identityHashCode(this)
+            + ";prId="
+            + this.prId
+            + ";scope="
+            + this.scope
+            + ";partition attributes="
+            + this.pAttrs
+            + ";partitionResolver="
+            + this.partitionResolver
+            + ";colocatedWith="
+            + this.colocatedWith
+            + ";eviction attributes="
+            + this.ea
+            + ";regionIdleTimeout= "
+            + this.regionIdleTimeout
+            + ";regionTimeToLive= "
+            + this.regionTimeToLive
+            + ";entryIdleTimeout= "
+            + this.entryIdleTimeout
+            + ";entryTimeToLive= "
+            + this.entryTimeToLive
+            + "'elderFPAs="
+            + elderFPAs
+            + "'gatewaySenderIds="
+            + gatewaySenderIds
+            + ";nodes=";
     if (this.nodes != null) {
       return ret + nodes;
     } else {
@@ -312,19 +342,19 @@ public class PartitionRegionConfig extends ExternalizableDSFID implements Versio
   }
 
   /**
-   * This method returns true is a node has taken a responsibility of destroying
-   * the PartitionedRegion globally
-   * 
-   * @return true, if a node has taken a responsibility of destroying the
-   *         PartitionedRegion globally else it returns false
+   * This method returns true is a node has taken a responsibility of destroying the
+   * PartitionedRegion globally
+   *
+   * @return true, if a node has taken a responsibility of destroying the PartitionedRegion globally
+   *     else it returns false
    */
   boolean getIsDestroying() {
     return isDestroying;
   }
 
   /**
-   * This method sets the isDestroying flag to true, to indicate that the PartitionedRegion's destruction responsibility is taken up by a node. 
-   *
+   * This method sets the isDestroying flag to true, to indicate that the PartitionedRegion's
+   * destruction responsibility is taken up by a node.
    */
   void setIsDestroying() {
     isDestroying = true;
@@ -411,12 +441,16 @@ public class PartitionRegionConfig extends ExternalizableDSFID implements Versio
   public boolean hasSameDataStoreMembers(PartitionRegionConfig prConfig) {
 
     for (Node node : getNodes()) {
-      if (!prConfig.containsMember(node.getMemberId()) && ((node.getPRType() == Node.ACCESSOR_DATASTORE) || (node.getPRType() == Node.FIXED_PR_DATASTORE))) {
+      if (!prConfig.containsMember(node.getMemberId())
+          && ((node.getPRType() == Node.ACCESSOR_DATASTORE)
+              || (node.getPRType() == Node.FIXED_PR_DATASTORE))) {
         return false;
       }
     }
     for (Node node : prConfig.getNodes()) {
-      if (!this.containsMember(node.getMemberId()) && ((node.getPRType() == Node.ACCESSOR_DATASTORE) || (node.getPRType() == Node.FIXED_PR_DATASTORE))) {
+      if (!this.containsMember(node.getMemberId())
+          && ((node.getPRType() == Node.ACCESSOR_DATASTORE)
+              || (node.getPRType() == Node.FIXED_PR_DATASTORE))) {
         return false;
       }
     }
@@ -433,6 +467,5 @@ public class PartitionRegionConfig extends ExternalizableDSFID implements Versio
   public void setDatastoreCreated(EvictionAttributes evictionAttributes) {
     this.firstDataStoreCreated = true;
     this.ea = evictionAttributes;
-
   }
 }

@@ -116,11 +116,13 @@ public class AsyncEventQueueImpl implements AsyncEventQueue {
 
   @Override
   public int size() {
-    AbstractGatewaySenderEventProcessor eventProcessor = ((AbstractGatewaySender) sender).getEventProcessor();
+    AbstractGatewaySenderEventProcessor eventProcessor =
+        ((AbstractGatewaySender) sender).getEventProcessor();
 
     int size = 0;
     if (eventProcessor instanceof ConcurrentSerialGatewaySenderEventProcessor) {
-      Set<RegionQueue> queues = ((ConcurrentSerialGatewaySenderEventProcessor) eventProcessor).getQueues();
+      Set<RegionQueue> queues =
+          ((ConcurrentSerialGatewaySenderEventProcessor) eventProcessor).getQueues();
       Iterator<RegionQueue> itr = queues.iterator();
       while (itr.hasNext()) {
         size = size + itr.next().size();

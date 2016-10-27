@@ -36,7 +36,9 @@ public final class FetchResourceAttributesRequest extends AdminRequest {
   }
 
   public FetchResourceAttributesRequest() {
-    friendlyName = LocalizedStrings.FetchResourceAttributesRequest_FETCH_STATISTICS_FOR_RESOURCE.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.FetchResourceAttributesRequest_FETCH_STATISTICS_FOR_RESOURCE
+            .toLocalizedString();
   }
 
   @Override
@@ -62,7 +64,7 @@ public final class FetchResourceAttributesRequest extends AdminRequest {
 
   @Override
   public String toString() {
-    return LocalizedStrings.FetchResourceAttributesRequest_FETCHRESOURCEATTRIBUTESREQUEST_FOR_0.toLocalizedString(this.getRecipient());
+    return LocalizedStrings.FetchResourceAttributesRequest_FETCHRESOURCEATTRIBUTESREQUEST_FOR_0
+        .toLocalizedString(this.getRecipient());
   }
-
 }

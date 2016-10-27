@@ -43,10 +43,7 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * 
- *
- */
+/** */
 @Category(DistributedTest.class)
 public class GroupByPartitionedQueryDUnitTest extends GroupByDUnitImpl {
 
@@ -58,42 +55,49 @@ public class GroupByPartitionedQueryDUnitTest extends GroupByDUnitImpl {
     final VM vm2 = host.getVM(2);
     final VM vm3 = host.getVM(3);
 
-    GroupByTestImpl test = new GroupByTestImpl() {
+    GroupByTestImpl test =
+        new GroupByTestImpl() {
 
-      @Override
-      public Region createRegion(String regionName, Class valueConstraint) {
-        // TODO Auto-generated method stub
-        Region rgn = createAccessor(regionName, valueConstraint);
-        createPR(vm1, regionName, valueConstraint);
-        createPR(vm2, regionName, valueConstraint);
-        createPR(vm3, regionName, valueConstraint);
-        return rgn;
-      }
-    };
+          @Override
+          public Region createRegion(String regionName, Class valueConstraint) {
+            // TODO Auto-generated method stub
+            Region rgn = createAccessor(regionName, valueConstraint);
+            createPR(vm1, regionName, valueConstraint);
+            createPR(vm2, regionName, valueConstraint);
+            createPR(vm3, regionName, valueConstraint);
+            return rgn;
+          }
+        };
     return test;
   }
 
   private void createBuckets(VM vm) {
-    vm.invoke(new SerializableRunnable("create accessor") {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion("region");
-        for (int i = 0; i < 10; i++) {
-          region.put(i, i);
-        }
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable("create accessor") {
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion("region");
+            for (int i = 0; i < 10; i++) {
+              region.put(i, i);
+            }
+          }
+        });
   }
 
   private void createPR(VM vm, final String regionName, final Class valueConstraint) {
-    vm.invoke(new SerializableRunnable("create data store") {
-      public void run() {
-        Cache cache = getCache();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setTotalNumBuckets(10);
-        cache.createRegionFactory(RegionShortcut.PARTITION).setValueConstraint(valueConstraint).setPartitionAttributes(paf.create()).create(regionName);
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable("create data store") {
+          public void run() {
+            Cache cache = getCache();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setTotalNumBuckets(10);
+            cache
+                .createRegionFactory(RegionShortcut.PARTITION)
+                .setValueConstraint(valueConstraint)
+                .setPartitionAttributes(paf.create())
+                .create(regionName);
+          }
+        });
   }
 
   private Region createAccessor(String regionName, Class valueConstraint) {
@@ -102,7 +106,10 @@ public class GroupByPartitionedQueryDUnitTest extends GroupByDUnitImpl {
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
     paf.setTotalNumBuckets(10);
     paf.setLocalMaxMemory(0);
-    return cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).setValueConstraint(valueConstraint).setPartitionAttributes(paf.create()).create(regionName);
+    return cache
+        .createRegionFactory(RegionShortcut.PARTITION_PROXY)
+        .setValueConstraint(valueConstraint)
+        .setPartitionAttributes(paf.create())
+        .create(regionName);
   }
-
 }

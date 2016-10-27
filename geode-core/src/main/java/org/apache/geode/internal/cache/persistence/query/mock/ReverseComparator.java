@@ -18,10 +18,7 @@ package org.apache.geode.internal.cache.persistence.query.mock;
 
 import java.util.Comparator;
 
-/**
- * A comparator which reverses the comparison order
- *
- */
+/** A comparator which reverses the comparison order */
 public class ReverseComparator implements Comparator<Comparable> {
   public final Comparator<Comparable> comparator;
 
@@ -33,5 +30,4 @@ public class ReverseComparator implements Comparator<Comparable> {
   public int compare(Comparable o1, Comparable o2) {
     return -comparator.compare(o1, o2);
   }
-
 }

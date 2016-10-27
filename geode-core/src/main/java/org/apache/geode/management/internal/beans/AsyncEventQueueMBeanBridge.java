@@ -23,10 +23,7 @@ import org.apache.geode.management.internal.ManagementStrings;
 import org.apache.geode.management.internal.beans.stats.MBeanStatsMonitor;
 import org.apache.geode.management.internal.beans.stats.StatsKey;
 
-/**
- * 
- * 
- */
+/** */
 public class AsyncEventQueueMBeanBridge {
 
   private AsyncEventQueueImpl queueImpl;
@@ -35,14 +32,16 @@ public class AsyncEventQueueMBeanBridge {
 
   public AsyncEventQueueMBeanBridge(AsyncEventQueue queue) {
     this.queueImpl = (AsyncEventQueueImpl) queue;
-    this.monitor = new MBeanStatsMonitor(ManagementStrings.ASYNC_EVENT_QUEUE_MONITOR.toLocalizedString());
+    this.monitor =
+        new MBeanStatsMonitor(ManagementStrings.ASYNC_EVENT_QUEUE_MONITOR.toLocalizedString());
 
     AsyncEventQueueStats stats = queueImpl.getStatistics();
     addAsyncEventQueueStats(stats);
   }
 
   public AsyncEventQueueMBeanBridge() {
-    this.monitor = new MBeanStatsMonitor(ManagementStrings.ASYNC_EVENT_QUEUE_MONITOR.toLocalizedString());
+    this.monitor =
+        new MBeanStatsMonitor(ManagementStrings.ASYNC_EVENT_QUEUE_MONITOR.toLocalizedString());
   }
 
   public void addAsyncEventQueueStats(AsyncEventQueueStats asyncEventQueueStats) {
@@ -112,5 +111,4 @@ public class AsyncEventQueueMBeanBridge {
       return 0;
     }
   }
-
 }

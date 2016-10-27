@@ -21,18 +21,16 @@ import org.apache.logging.log4j.Logger;
 import org.apache.geode.internal.offheap.FreeListManager.LongStack;
 
 /**
- * A "stack" of addresses of OffHeapStoredObject instances. The stored objects are not kept
- * in java object form but instead each one is just an off-heap address.
- * This class is used for each "tiny" free-list of the FreeListManager.
- * This class is thread safe.
+ * A "stack" of addresses of OffHeapStoredObject instances. The stored objects are not kept in java
+ * object form but instead each one is just an off-heap address. This class is used for each "tiny"
+ * free-list of the FreeListManager. This class is thread safe.
  */
 public class OffHeapStoredObjectAddressStack implements LongStack {
   // Ok to read without sync but must be synced on write
   private volatile long topAddr;
 
   public OffHeapStoredObjectAddressStack(long addr) {
-    if (addr != 0L)
-      MemoryAllocatorImpl.validateAddress(addr);
+    if (addr != 0L) MemoryAllocatorImpl.validateAddress(addr);
     this.topAddr = addr;
   }
 
@@ -65,17 +63,14 @@ public class OffHeapStoredObjectAddressStack implements LongStack {
     return result;
   }
 
-  /**
-   * Returns the address of the "top" item in this stack.
-   */
+  /** Returns the address of the "top" item in this stack. */
   public long getTopAddress() {
     return this.topAddr;
   }
 
   /**
-   * Removes all the addresses from this stack
-   * and returns the top address.
-   * The caller owns all the addresses after this call.
+   * Removes all the addresses from this stack and returns the top address. The caller owns all the
+   * addresses after this call.
    */
   public long clear() {
     long result;
@@ -143,9 +138,8 @@ public class OffHeapStoredObjectAddressStack implements LongStack {
   }
 
   /**
-   * This method allows tests to override it
-   * and do a concurrent modification to the stack.
-   * For production code it will be a noop.
+   * This method allows tests to override it and do a concurrent modification to the stack. For
+   * production code it will be a noop.
    */
   protected void testHookDoConcurrentModification() {
     // nothing needed in production code

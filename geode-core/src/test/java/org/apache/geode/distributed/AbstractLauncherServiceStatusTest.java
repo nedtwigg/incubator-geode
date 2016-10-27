@@ -39,7 +39,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
  * Tests marshaling of ServiceStatus to and from JSON.
- * 
+ *
  * @since GemFire 7.0
  */
 @Category(UnitTest.class)
@@ -96,7 +96,8 @@ public class AbstractLauncherServiceStatusTest {
     validateStatus(status, TestLauncher.TestState.fromJson(json));
   }
 
-  private void validateStatus(final TestLauncher.TestState expected, final TestLauncher.TestState actual) {
+  private void validateStatus(
+      final TestLauncher.TestState expected, final TestLauncher.TestState actual) {
     assertEquals(expected.getClasspath(), actual.getClasspath());
     assertEquals(expected.getGemFireVersion(), actual.getGemFireVersion());
     assertEquals(expected.getJavaVersion(), actual.getJavaVersion());
@@ -131,12 +132,26 @@ public class AbstractLauncherServiceStatusTest {
     }
 
     public TestState status() {
-      return new TestState(Status.ONLINE, null, System.currentTimeMillis(), getId(), pid, uptime, workingDirectory, jvmArguments, classpath, gemfireVersion, javaVersion, getLogFileName(), getBindAddressAsString(), getPortAsString(), name);
+      return new TestState(
+          Status.ONLINE,
+          null,
+          System.currentTimeMillis(),
+          getId(),
+          pid,
+          uptime,
+          workingDirectory,
+          jvmArguments,
+          classpath,
+          gemfireVersion,
+          javaVersion,
+          getLogFileName(),
+          getBindAddressAsString(),
+          getPortAsString(),
+          name);
     }
 
     @Override
-    public void run() {
-    }
+    public void run() {}
 
     public String getId() {
       return getServiceName() + "@" + getBindAddress() + "[" + getPort() + "]";
@@ -189,16 +204,63 @@ public class AbstractLauncherServiceStatusTest {
           final GfJsonObject gfJsonObject = new GfJsonObject(json);
 
           final Status status = Status.valueOfDescription(gfJsonObject.getString(JSON_STATUS));
-          final List<String> jvmArguments = Arrays.asList(GfJsonArray.toStringArray(gfJsonObject.getJSONArray(JSON_JVMARGUMENTS)));
+          final List<String> jvmArguments =
+              Arrays.asList(
+                  GfJsonArray.toStringArray(gfJsonObject.getJSONArray(JSON_JVMARGUMENTS)));
 
-          return new TestState(status, gfJsonObject.getString(JSON_STATUSMESSAGE), gfJsonObject.getLong(JSON_TIMESTAMP), gfJsonObject.getString(JSON_LOCATION), gfJsonObject.getInt(JSON_PID), gfJsonObject.getLong(JSON_UPTIME), gfJsonObject.getString(JSON_WORKINGDIRECTORY), jvmArguments, gfJsonObject.getString(JSON_CLASSPATH), gfJsonObject.getString(JSON_GEMFIREVERSION), gfJsonObject.getString(JSON_JAVAVERSION), gfJsonObject.getString(JSON_LOGFILE), gfJsonObject.getString(JSON_HOST), gfJsonObject.getString(JSON_PORT), gfJsonObject.getString(JSON_MEMBERNAME));
+          return new TestState(
+              status,
+              gfJsonObject.getString(JSON_STATUSMESSAGE),
+              gfJsonObject.getLong(JSON_TIMESTAMP),
+              gfJsonObject.getString(JSON_LOCATION),
+              gfJsonObject.getInt(JSON_PID),
+              gfJsonObject.getLong(JSON_UPTIME),
+              gfJsonObject.getString(JSON_WORKINGDIRECTORY),
+              jvmArguments,
+              gfJsonObject.getString(JSON_CLASSPATH),
+              gfJsonObject.getString(JSON_GEMFIREVERSION),
+              gfJsonObject.getString(JSON_JAVAVERSION),
+              gfJsonObject.getString(JSON_LOGFILE),
+              gfJsonObject.getString(JSON_HOST),
+              gfJsonObject.getString(JSON_PORT),
+              gfJsonObject.getString(JSON_MEMBERNAME));
         } catch (GfJsonException e) {
           throw new IllegalArgumentException("Unable to create TestState from JSON: " + json);
         }
       }
 
-      protected TestState(final Status status, final String statusMessage, final long timestamp, final String location, final Integer pid, final Long uptime, final String workingDirectory, final List<String> jvmArguments, final String classpath, final String gemfireVersion, final String javaVersion, final String logFile, final String host, final String port, final String name) {
-        super(status, statusMessage, timestamp, location, pid, uptime, workingDirectory, jvmArguments, classpath, gemfireVersion, javaVersion, logFile, host, port, name);
+      protected TestState(
+          final Status status,
+          final String statusMessage,
+          final long timestamp,
+          final String location,
+          final Integer pid,
+          final Long uptime,
+          final String workingDirectory,
+          final List<String> jvmArguments,
+          final String classpath,
+          final String gemfireVersion,
+          final String javaVersion,
+          final String logFile,
+          final String host,
+          final String port,
+          final String name) {
+        super(
+            status,
+            statusMessage,
+            timestamp,
+            location,
+            pid,
+            uptime,
+            workingDirectory,
+            jvmArguments,
+            classpath,
+            gemfireVersion,
+            javaVersion,
+            logFile,
+            host,
+            port,
+            name);
       }
 
       @Override
@@ -207,5 +269,4 @@ public class AbstractLauncherServiceStatusTest {
       }
     }
   }
-
 }

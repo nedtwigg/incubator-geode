@@ -39,7 +39,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
  * Unit tests for {@link SampleCollector}.
- *   
+ *
  * @since GemFire 7.0
  */
 @Category(UnitTest.class)
@@ -53,14 +53,18 @@ public class SampleCollectorTest {
     final long startTime = System.currentTimeMillis();
     this.manager = new TestStatisticsManager(1, getClass().getSimpleName(), startTime);
 
-    final StatArchiveHandlerConfig mockStatArchiveHandlerConfig = mock(StatArchiveHandlerConfig.class, getClass().getSimpleName() + "$" + StatArchiveHandlerConfig.class.getSimpleName());
+    final StatArchiveHandlerConfig mockStatArchiveHandlerConfig =
+        mock(
+            StatArchiveHandlerConfig.class,
+            getClass().getSimpleName() + "$" + StatArchiveHandlerConfig.class.getSimpleName());
     when(mockStatArchiveHandlerConfig.getArchiveFileName()).thenReturn(new File(""));
     when(mockStatArchiveHandlerConfig.getArchiveFileSizeLimit()).thenReturn(0L);
     when(mockStatArchiveHandlerConfig.getArchiveDiskSpaceLimit()).thenReturn(0L);
     when(mockStatArchiveHandlerConfig.getSystemId()).thenReturn(0L);
     when(mockStatArchiveHandlerConfig.getSystemStartTime()).thenReturn(startTime);
     when(mockStatArchiveHandlerConfig.getSystemDirectoryPath()).thenReturn("");
-    when(mockStatArchiveHandlerConfig.getProductDescription()).thenReturn(getClass().getSimpleName());
+    when(mockStatArchiveHandlerConfig.getProductDescription())
+        .thenReturn(getClass().getSimpleName());
 
     final StatisticsSampler sampler = new TestStatisticsSampler(manager);
     this.sampleCollector = new SampleCollector(sampler);
@@ -81,7 +85,10 @@ public class SampleCollectorTest {
     TestSampleHandler handler = new TestSampleHandler();
     this.sampleCollector.addSampleHandler(handler);
 
-    StatisticDescriptor[] statsST1 = new StatisticDescriptor[] { manager.createIntCounter("ST1_1_name", "ST1_1_desc", "ST1_1_units") };
+    StatisticDescriptor[] statsST1 =
+        new StatisticDescriptor[] {
+          manager.createIntCounter("ST1_1_name", "ST1_1_desc", "ST1_1_units")
+        };
     StatisticsType ST1 = manager.createType("ST1_name", "ST1_desc", statsST1);
     Statistics st1_1 = manager.createAtomicStatistics(ST1, "st1_1_text", 1);
 
@@ -108,7 +115,8 @@ public class SampleCollectorTest {
 
     // validate the allocatedResourceInstance notification
     assertTrue(notifications.get(1) instanceof ResourceInstanceInfo);
-    ResourceInstanceInfo allocatedResourceInstanceInfo = (ResourceInstanceInfo) notifications.get(1);
+    ResourceInstanceInfo allocatedResourceInstanceInfo =
+        (ResourceInstanceInfo) notifications.get(1);
     assertNotNull(allocatedResourceInstanceInfo);
     assertEquals("allocatedResourceInstance", allocatedResourceInstanceInfo.getName());
     ResourceInstance resourceInstance = allocatedResourceInstanceInfo.getResourceInstance();
@@ -135,12 +143,18 @@ public class SampleCollectorTest {
 
   @Test
   public void testAddHandlerAfterSamples() {
-    StatisticDescriptor[] statsST1 = new StatisticDescriptor[] { manager.createIntCounter("ST1_1_name", "ST1_1_desc", "ST1_1_units") };
+    StatisticDescriptor[] statsST1 =
+        new StatisticDescriptor[] {
+          manager.createIntCounter("ST1_1_name", "ST1_1_desc", "ST1_1_units")
+        };
     StatisticsType ST1 = manager.createType("ST1_name", "ST1_desc", statsST1);
     Statistics st1_1 = manager.createAtomicStatistics(ST1, "st1_1_text", 1);
     Statistics st1_2 = manager.createAtomicStatistics(ST1, "st1_2_text", 1);
 
-    StatisticDescriptor[] statsST2 = new StatisticDescriptor[] { manager.createIntCounter("ST2_1_name", "ST2_1_desc", "ST2_1_units") };
+    StatisticDescriptor[] statsST2 =
+        new StatisticDescriptor[] {
+          manager.createIntCounter("ST2_1_name", "ST2_1_desc", "ST2_1_units")
+        };
     StatisticsType ST2 = manager.createType("ST2_name", "ST2_desc", statsST2);
     Statistics st2_1 = manager.createAtomicStatistics(ST2, "st2_1_text", 1);
 
@@ -176,7 +190,8 @@ public class SampleCollectorTest {
     // validate the allocatedResourceType notification for ST1
     int notificationIdx = 0;
     assertTrue(notifications.get(notificationIdx) instanceof ResourceTypeInfo);
-    ResourceTypeInfo allocatedResourceTypeInfo = (ResourceTypeInfo) notifications.get(notificationIdx);
+    ResourceTypeInfo allocatedResourceTypeInfo =
+        (ResourceTypeInfo) notifications.get(notificationIdx);
     assertNotNull(allocatedResourceTypeInfo);
     assertEquals("allocatedResourceType", allocatedResourceTypeInfo.getName());
     ResourceType resourceType = allocatedResourceTypeInfo.getResourceType();
@@ -193,7 +208,8 @@ public class SampleCollectorTest {
     // validate the allocatedResourceInstance notification for st1_1
     notificationIdx++;
     assertTrue(notifications.get(notificationIdx) instanceof ResourceInstanceInfo);
-    ResourceInstanceInfo allocatedResourceInstanceInfo = (ResourceInstanceInfo) notifications.get(notificationIdx);
+    ResourceInstanceInfo allocatedResourceInstanceInfo =
+        (ResourceInstanceInfo) notifications.get(notificationIdx);
     assertNotNull(allocatedResourceInstanceInfo);
     assertEquals("allocatedResourceInstance", allocatedResourceInstanceInfo.getName());
     ResourceInstance resourceInstance = allocatedResourceInstanceInfo.getResourceInstance();
@@ -289,7 +305,8 @@ public class SampleCollectorTest {
     this.sampleCollector.close();
     try {
       /*StatMonitorHandler handler =*/ SampleCollector.getStatMonitorHandler();
-      fail("getStatMonitorHandler should throw IllegalStateException when SampleCollector is closed");
+      fail(
+          "getStatMonitorHandler should throw IllegalStateException when SampleCollector is closed");
     } catch (IllegalStateException expected) {
       // passed
     }
@@ -302,7 +319,8 @@ public class SampleCollectorTest {
     this.sampleCollector.close();
     try {
       handler = SampleCollector.getStatMonitorHandler();
-      fail("getStatMonitorHandler should throw IllegalStateException when SampleCollector is closed");
+      fail(
+          "getStatMonitorHandler should throw IllegalStateException when SampleCollector is closed");
     } catch (IllegalStateException expected) {
       // passed
     }

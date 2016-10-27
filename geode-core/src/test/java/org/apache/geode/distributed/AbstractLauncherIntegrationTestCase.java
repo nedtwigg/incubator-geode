@@ -43,9 +43,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @since GemFire 8.0
- */
+/** @since GemFire 8.0 */
 public abstract class AbstractLauncherIntegrationTestCase {
   protected static final Logger logger = LogService.getLogger();
 
@@ -56,9 +54,12 @@ public abstract class AbstractLauncherIntegrationTestCase {
   protected static final int WAIT_FOR_MBEAN_TIMEOUT = 10 * 1000; // 10s
   protected static final int INTERVAL_MILLISECONDS = 100;
 
-  private static final String EXPECTED_EXCEPTION_ADD = "<ExpectedException action=add>{}</ExpectedException>";
-  private static final String EXPECTED_EXCEPTION_REMOVE = "<ExpectedException action=remove>{}</ExpectedException>";
-  private static final String EXPECTED_EXCEPTION_MBEAN_NOT_REGISTERED = "MBean Not Registered In GemFire Domain";
+  private static final String EXPECTED_EXCEPTION_ADD =
+      "<ExpectedException action=add>{}</ExpectedException>";
+  private static final String EXPECTED_EXCEPTION_REMOVE =
+      "<ExpectedException action=remove>{}</ExpectedException>";
+  private static final String EXPECTED_EXCEPTION_MBEAN_NOT_REGISTERED =
+      "MBean Not Registered In GemFire Domain";
 
   protected volatile ServerSocket socket;
 
@@ -67,11 +68,9 @@ public abstract class AbstractLauncherIntegrationTestCase {
   protected volatile File statusRequestFile;
   protected volatile File statusFile;
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
-  @Rule
-  public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+  @Rule public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
   @Before
   public final void setUpAbstractLauncherIntegrationTestCase() throws Exception {
@@ -97,28 +96,36 @@ public abstract class AbstractLauncherIntegrationTestCase {
   }
 
   protected void delete(final File file) throws Exception {
-    assertEventuallyTrue("deleting " + file, new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        if (file == null) {
-          return true;
-        }
-        try {
-          FileUtil.delete(file);
-        } catch (IOException e) {
-        }
-        return !file.exists();
-      }
-    }, WAIT_FOR_FILE_DELETION_TIMEOUT, INTERVAL_MILLISECONDS);
+    assertEventuallyTrue(
+        "deleting " + file,
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            if (file == null) {
+              return true;
+            }
+            try {
+              FileUtil.delete(file);
+            } catch (IOException e) {
+            }
+            return !file.exists();
+          }
+        },
+        WAIT_FOR_FILE_DELETION_TIMEOUT,
+        INTERVAL_MILLISECONDS);
   }
 
   protected void waitForPidToStop(final int pid, boolean throwOnTimeout) throws Exception {
-    assertEventuallyFalse("Process never died", new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        return ProcessUtils.isProcessAlive(pid);
-      }
-    }, WAIT_FOR_PROCESS_TO_DIE_TIMEOUT, INTERVAL_MILLISECONDS);
+    assertEventuallyFalse(
+        "Process never died",
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            return ProcessUtils.isProcessAlive(pid);
+          }
+        },
+        WAIT_FOR_PROCESS_TO_DIE_TIMEOUT,
+        INTERVAL_MILLISECONDS);
   }
 
   protected void waitForPidToStop(final int pid) throws Exception {
@@ -129,12 +136,16 @@ public abstract class AbstractLauncherIntegrationTestCase {
     if (file == null) {
       return;
     }
-    assertEventuallyTrue("waiting for file " + file + " to delete", new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        return !file.exists();
-      }
-    }, WAIT_FOR_FILE_DELETION_TIMEOUT, INTERVAL_MILLISECONDS);
+    assertEventuallyTrue(
+        "waiting for file " + file + " to delete",
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            return !file.exists();
+          }
+        },
+        WAIT_FOR_FILE_DELETION_TIMEOUT,
+        INTERVAL_MILLISECONDS);
   }
 
   protected void waitForFileToDelete(final File file) throws Exception {
@@ -159,7 +170,8 @@ public abstract class AbstractLauncherIntegrationTestCase {
     };
   }
 
-  protected InputListener createCollectionListener(final String name, final String header, final List<String> lines) {
+  protected InputListener createCollectionListener(
+      final String name, final String header, final List<String> lines) {
     return new InputListener() {
       @Override
       public void notifyInputLine(String line) {
@@ -173,7 +185,8 @@ public abstract class AbstractLauncherIntegrationTestCase {
     };
   }
 
-  protected InputListener createExpectedListener(final String name, final String header, final String expected, final AtomicBoolean atomic) {
+  protected InputListener createExpectedListener(
+      final String name, final String header, final String expected, final AtomicBoolean atomic) {
     return new InputListener() {
       @Override
       public void notifyInputLine(String line) {
@@ -189,9 +202,11 @@ public abstract class AbstractLauncherIntegrationTestCase {
     };
   }
 
-  protected void writeGemfireProperties(final Properties gemfireProperties, final File gemfirePropertiesFile) throws IOException {
+  protected void writeGemfireProperties(
+      final Properties gemfireProperties, final File gemfirePropertiesFile) throws IOException {
     if (!gemfirePropertiesFile.exists()) {
-      gemfireProperties.store(new FileWriter(gemfirePropertiesFile), "Configuration settings for the GemFire Server");
+      gemfireProperties.store(
+          new FileWriter(gemfirePropertiesFile), "Configuration settings for the GemFire Server");
     }
   }
 
@@ -214,12 +229,16 @@ public abstract class AbstractLauncherIntegrationTestCase {
   }
 
   protected void waitForFileToExist(final File file, boolean throwOnTimeout) throws Exception {
-    assertEventuallyTrue("waiting for file " + file + " to exist", new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        return file.exists();
-      }
-    }, WAIT_FOR_FILE_CREATION_TIMEOUT, INTERVAL_MILLISECONDS);
+    assertEventuallyTrue(
+        "waiting for file " + file + " to exist",
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            return file.exists();
+          }
+        },
+        WAIT_FOR_FILE_CREATION_TIMEOUT,
+        INTERVAL_MILLISECONDS);
   }
 
   protected void waitForFileToExist(final File file) throws Exception {
@@ -230,17 +249,25 @@ public abstract class AbstractLauncherIntegrationTestCase {
     return getClass().getSimpleName() + "_" + testName.getMethodName();
   }
 
-  protected static void assertEventuallyTrue(final String message, final Callable<Boolean> callable, final int timeout, final int interval) throws Exception {
+  protected static void assertEventuallyTrue(
+      final String message, final Callable<Boolean> callable, final int timeout, final int interval)
+      throws Exception {
     boolean done = false;
-    for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < timeout; done = (callable.call())) {
+    for (StopWatch time = new StopWatch(true);
+        !done && time.elapsedTimeMillis() < timeout;
+        done = (callable.call())) {
       Thread.sleep(interval);
     }
     assertTrue(message, done);
   }
 
-  protected static void assertEventuallyFalse(final String message, final Callable<Boolean> callable, final int timeout, final int interval) throws Exception {
+  protected static void assertEventuallyFalse(
+      final String message, final Callable<Boolean> callable, final int timeout, final int interval)
+      throws Exception {
     boolean done = false;
-    for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < timeout; done = (!callable.call())) {
+    for (StopWatch time = new StopWatch(true);
+        !done && time.elapsedTimeMillis() < timeout;
+        done = (!callable.call())) {
       Thread.sleep(interval);
     }
     assertTrue(message, done);

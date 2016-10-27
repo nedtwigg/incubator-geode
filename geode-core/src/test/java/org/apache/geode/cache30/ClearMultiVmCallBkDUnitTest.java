@@ -113,20 +113,17 @@ public class ClearMultiVmCallBkDUnitTest extends JUnit4DistributedTestCase { // 
     for (int i = 1; i < 4; i++) {
       objArr[0] = "" + i;
       vm0.invoke(ClearMultiVmCallBkDUnitTest.class, "putMethod", objArr);
-
     }
     LogWriterUtils.getLogWriter().fine("Did all puts successfully");
 
     vm0.invoke(() -> ClearMultiVmCallBkDUnitTest.clearMethod());
     LogWriterUtils.getLogWriter().fine("Did clear successfully");
 
-    while (afterClear) {
-    }
+    while (afterClear) {}
 
     int Regsize = vm0.invoke(() -> ClearMultiVmCallBkDUnitTest.sizeMethod());
     assertEquals(1, Regsize);
-
-  }//end of test case1
+  } //end of test case1
 
   @Test
   public void testClearMultiVM() {
@@ -146,13 +143,11 @@ public class ClearMultiVmCallBkDUnitTest extends JUnit4DistributedTestCase { // 
     vm1.invoke(() -> ClearMultiVmCallBkDUnitTest.clearMethod());
     LogWriterUtils.getLogWriter().fine("Did clear successfully");
 
-    while (afterClear) {
-    }
+    while (afterClear) {}
 
     int Regsize = vm0.invoke(() -> ClearMultiVmCallBkDUnitTest.sizeMethod());
     assertEquals(1, Regsize);
-
-  }//end of test case2
+  } //end of test case2
 
   public static Object putMethod(Object ob) {
     Object obj = null;
@@ -223,4 +218,4 @@ public class ClearMultiVmCallBkDUnitTest extends JUnit4DistributedTestCase { // 
       }
     }
   }
-}//end of class
+} //end of class

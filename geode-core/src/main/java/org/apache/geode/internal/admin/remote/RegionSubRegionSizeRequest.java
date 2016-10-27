@@ -22,19 +22,13 @@ import java.io.IOException;
 
 import org.apache.geode.distributed.internal.DistributionManager;
 
-/**
- * Admin request to transfer region info for a member
- * 
- */
+/** Admin request to transfer region info for a member */
 public class RegionSubRegionSizeRequest extends AdminRequest implements Cancellable {
   public RegionSubRegionSizeRequest() {
     friendlyName = "Refresh the Member's Regions' Statuses";
   }
 
-  /**
-   * Returns a <code>RegionSubRegionSizeRequest</code> to be sent to the
-   * specified recipient.
-   */
+  /** Returns a <code>RegionSubRegionSizeRequest</code> to be sent to the specified recipient. */
   public static RegionSubRegionSizeRequest create() {
     RegionSubRegionSizeRequest m = new RegionSubRegionSizeRequest();
     return m;
@@ -72,16 +66,17 @@ public class RegionSubRegionSizeRequest extends AdminRequest implements Cancella
     super.fromData(in);
   }
 
-  /**
-   * Returns the DataSerializer fixed id for the class that implements this method.
-   */
+  /** Returns the DataSerializer fixed id for the class that implements this method. */
   public int getDSFID() {
     return REGION_SUB_SIZE_REQUEST;
   }
 
   @Override
   public String toString() {
-    return "RegionSubRegionSizeRequest sent to " + this.getRecipient() + " from " + this.getSender();
+    return "RegionSubRegionSizeRequest sent to "
+        + this.getRecipient()
+        + " from "
+        + this.getSender();
   }
 
   private transient boolean cancelled = false;

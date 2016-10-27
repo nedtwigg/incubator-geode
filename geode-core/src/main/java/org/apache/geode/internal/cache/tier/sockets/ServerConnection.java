@@ -73,9 +73,9 @@ import org.apache.geode.security.AuthenticationRequiredException;
 import org.apache.geode.security.GemFireSecurityException;
 
 /**
- * Provides an implementation for the server socket end of the hierarchical
- * cache connection. Each server connection runs in its own thread to maximize
- * concurrency and improve response times to edge requests
+ * Provides an implementation for the server socket end of the hierarchical cache connection. Each
+ * server connection runs in its own thread to maximize concurrency and improve response times to
+ * edge requests
  *
  * @since GemFire 2.0.2
  */
@@ -84,8 +84,8 @@ public class ServerConnection implements Runnable {
   private static final Logger logger = LogService.getLogger();
 
   /**
-   * This is a buffer that we add to client readTimeout value before we cleanup the connection. 
-   * This buffer time helps prevent EOF in the client instead of SocketTimeout
+   * This is a buffer that we add to client readTimeout value before we cleanup the connection. This
+   * buffer time helps prevent EOF in the client instead of SocketTimeout
    */
   private static final int TIMEOUT_BUFFER_FOR_CONNECTION_CLEANUP_MS = 5000;
 
@@ -93,13 +93,14 @@ public class ServerConnection implements Runnable {
 
   private SecurityService securityService = IntegratedSecurityService.getSecurityService();
 
-  final protected CacheServerStats stats;
+  protected final CacheServerStats stats;
 
   // private static boolean useDataStream =
   // System.getProperty("hct.useDataStream", "false").equals("true");
 
   // The key is the size of each ByteBuffer. The value is a queue of byte buffers all of that size.
-  private static final ConcurrentHashMap<Integer, LinkedBlockingQueue<ByteBuffer>> commBufferMap = new ConcurrentHashMap<>(4, 0.75f, 1);
+  private static final ConcurrentHashMap<Integer, LinkedBlockingQueue<ByteBuffer>> commBufferMap =
+      new ConcurrentHashMap<>(4, 0.75f, 1);
 
   public static ByteBuffer allocateCommBuffer(int size, Socket sock) {
     // I expect that size will almost always be the same value
@@ -166,19 +167,18 @@ public class ServerConnection implements Runnable {
 
   private final InternalLogWriter logWriter;
   private final InternalLogWriter securityLogWriter;
-  final private AcceptorImpl acceptor;
+  private final AcceptorImpl acceptor;
   private Thread owner;
 
-  /**
-   * Handshake reference uniquely identifying a client
-   */
+  /** Handshake reference uniquely identifying a client */
   private ClientHandShake handshake;
+
   private int handShakeTimeout;
   private final Object handShakeMonitor = new Object();
 
   /*
    *  This timeout is request specific which come with message itself
-   *  Otherwise, timeout which comes during handshake is used.  
+   *  Otherwise, timeout which comes during handshake is used.
    */
   private volatile int requestSpecificTimeout = -1;
 
@@ -186,45 +186,46 @@ public class ServerConnection implements Runnable {
   private int latestBatchIdReplied = -1;
 
   /*
-   * Uniquely identifying the client's Distributed System
+  * Uniquely identifying the client's Distributed System
+  *
+
+  private String membershipId;
+
+
+   * Uniquely identifying the client's ConnectionProxy object
    *
-  
-   private String membershipId;
-  
-  
-    * Uniquely identifying the client's ConnectionProxy object
-    *
-    *
-   private String proxyID ;
-   */
+   *
+  private String proxyID ;
+  */
   ClientProxyMembershipID proxyId;
 
   byte[] memberIdByteArray;
 
   /**
-   * Authorize client requests using this object. This is set when each
-   * operation on this connection is authorized in pre-operation phase.
+   * Authorize client requests using this object. This is set when each operation on this connection
+   * is authorized in pre-operation phase.
    */
   private AuthorizeRequest authzRequest;
 
   /**
-   * Authorize client requests using this object. This is set when each
-   * operation on this connection is authorized in post-operation phase.
+   * Authorize client requests using this object. This is set when each operation on this connection
+   * is authorized in post-operation phase.
    */
   private AuthorizeRequestPP postAuthzRequest;
 
   /**
-   * The communication mode for this <code>ServerConnection</code>.
-   * Valid types include 'client-server', 'gateway-gateway' and
-   * 'monitor-server'.
+   * The communication mode for this <code>ServerConnection</code>. Valid types include
+   * 'client-server', 'gateway-gateway' and 'monitor-server'.
    */
   private final byte communicationMode;
+
   private final String communicationModeStr;
 
   private long processingMessageStartTime = -1;
   private Object processingMessageLock = new Object();
 
-  private static ConcurrentHashMap<ClientProxyMembershipID, ClientUserAuths> proxyIdVsClientUserAuths = new ConcurrentHashMap<ClientProxyMembershipID, ClientUserAuths>();
+  private static ConcurrentHashMap<ClientProxyMembershipID, ClientUserAuths>
+      proxyIdVsClientUserAuths = new ConcurrentHashMap<ClientProxyMembershipID, ClientUserAuths>();
 
   private ClientUserAuths clientUserAuths;
 
@@ -238,25 +239,40 @@ public class ServerConnection implements Runnable {
 
   private Principal principal;
 
-  /**
-  * A debug flag used for testing Backward compatibility
-  */
+  /** A debug flag used for testing Backward compatibility */
   public static boolean TEST_VERSION_AFTER_HANDSHAKE_FLAG = false;
 
   public static short testVersionAfterHandshake = 4;
 
   /**
-   * Creates a new <code>ServerConnection</code> that processes messages
-   * received from an edge client over a given <code>Socket</code>.
+   * Creates a new <code>ServerConnection</code> that processes messages received from an edge
+   * client over a given <code>Socket</code>.
    */
-  public ServerConnection(Socket s, Cache c, CachedRegionHelper helper, CacheServerStats stats, int hsTimeout, int socketBufferSize, String communicationModeStr, byte communicationMode, Acceptor acceptor) {
+  public ServerConnection(
+      Socket s,
+      Cache c,
+      CachedRegionHelper helper,
+      CacheServerStats stats,
+      int hsTimeout,
+      int socketBufferSize,
+      String communicationModeStr,
+      byte communicationMode,
+      Acceptor acceptor) {
     StringBuffer buffer = new StringBuffer(100);
     if (((AcceptorImpl) acceptor).isGatewayReceiver()) {
       buffer.append("GatewayReceiver connection from [");
     } else {
       buffer.append("Server connection from [");
     }
-    buffer.append(communicationModeStr).append(" host address=").append(s.getInetAddress().getHostAddress()).append("; ").append(communicationModeStr).append(" port=").append(s.getPort()).append("]");
+    buffer
+        .append(communicationModeStr)
+        .append(" host address=")
+        .append(s.getInetAddress().getHostAddress())
+        .append("; ")
+        .append(communicationModeStr)
+        .append(" port=")
+        .append(s.getPort())
+        .append("]");
     this.name = buffer.toString();
 
     this.stats = stats;
@@ -281,7 +297,12 @@ public class ServerConnection implements Runnable {
       initStreams(s, socketBufferSize, stats);
 
       if (isDebugEnabled) {
-        logger.debug("{}: Accepted client connection from {}[client host name={}; client host address={}; client port={}]", getName(), s.getInetAddress().getCanonicalHostName(), s.getInetAddress().getHostAddress(), s.getPort());
+        logger.debug(
+            "{}: Accepted client connection from {}[client host name={}; client host address={}; client port={}]",
+            getName(),
+            s.getInetAddress().getCanonicalHostName(),
+            s.getInetAddress().getHostAddress(),
+            s.getPort());
       }
       this.handShakeTimeout = hsTimeout;
     } catch (Exception e) {
@@ -295,19 +316,20 @@ public class ServerConnection implements Runnable {
     return this.acceptor;
   }
 
-  static private final ThreadLocal<Byte> executeFunctionOnLocalNodeOnly = new ThreadLocal<Byte>() {
-    @Override
-    protected Byte initialValue() {
-      return 0x00;
-    }
-  };
+  private static final ThreadLocal<Byte> executeFunctionOnLocalNodeOnly =
+      new ThreadLocal<Byte>() {
+        @Override
+        protected Byte initialValue() {
+          return 0x00;
+        }
+      };
 
-  static public void executeFunctionOnLocalNodeOnly(Byte value) {
+  public static void executeFunctionOnLocalNodeOnly(Byte value) {
     byte b = value.byteValue();
     executeFunctionOnLocalNodeOnly.set(b);
   }
 
-  static public Byte isExecuteFunctionOnLocalNodeOnly() {
+  public static Byte isExecuteFunctionOnLocalNodeOnly() {
     return executeFunctionOnLocalNodeOnly.get();
   }
 
@@ -322,15 +344,24 @@ public class ServerConnection implements Runnable {
               return processHandShake();
             } catch (CancelException e) {
               if (!crHelper.isShutdown()) {
-                logger.warn(LocalizedMessage.create(LocalizedStrings.ServerConnection_0_UNEXPECTED_CANCELLATION, getName()), e);
+                logger.warn(
+                    LocalizedMessage.create(
+                        LocalizedStrings.ServerConnection_0_UNEXPECTED_CANCELLATION, getName()),
+                    e);
               }
               cleanup();
               return false;
             }
           } else {
             this.crHelper.checkCancelInProgress(null); // bug 37113?
-            logger.warn(LocalizedMessage.create(LocalizedStrings.ServerConnection_0_RECEIVED_UNKNOWN_HANDSHAKE_REPLY_CODE_1, new Object[] { this.name, new Byte(this.handshake.getCode()) }));
-            refuseHandshake(LocalizedStrings.ServerConnection_RECEIVED_UNKNOWN_HANDSHAKE_REPLY_CODE.toLocalizedString(), ServerHandShakeProcessor.REPLY_INVALID);
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings.ServerConnection_0_RECEIVED_UNKNOWN_HANDSHAKE_REPLY_CODE_1,
+                    new Object[] {this.name, new Byte(this.handshake.getCode())}));
+            refuseHandshake(
+                LocalizedStrings.ServerConnection_RECEIVED_UNKNOWN_HANDSHAKE_REPLY_CODE
+                    .toLocalizedString(),
+                ServerHandShakeProcessor.REPLY_INVALID);
             return false;
           }
         } else {
@@ -404,7 +435,8 @@ public class ServerConnection implements Runnable {
   }
 
   //hitesh:this is for backward compability
-  public long setUserAuthorizeAndPostAuthorizeRequest(AuthorizeRequest authzRequest, AuthorizeRequestPP postAuthzRequest) throws IOException {
+  public long setUserAuthorizeAndPostAuthorizeRequest(
+      AuthorizeRequest authzRequest, AuthorizeRequestPP postAuthzRequest) throws IOException {
     UserAuthAttributes userAuthAttr = new UserAuthAttributes(authzRequest, postAuthzRequest);
     if (this.clientUserAuths == null) {
       this.initializeClientUserAuths();
@@ -456,15 +488,18 @@ public class ServerConnection implements Runnable {
 
         if (this.proxyId.isDurable()) {
           if (isDebugEnabled) {
-            logger.debug("looking if the Proxy existed for this durable client or not :{}", this.proxyId);
+            logger.debug(
+                "looking if the Proxy existed for this durable client or not :{}", this.proxyId);
           }
-          CacheClientProxy proxy = getAcceptor().getCacheClientNotifier().getClientProxy(this.proxyId);
+          CacheClientProxy proxy =
+              getAcceptor().getCacheClientNotifier().getClientProxy(this.proxyId);
           if (proxy != null && proxy.waitRemoval()) {
             proxy = getAcceptor().getCacheClientNotifier().getClientProxy(this.proxyId);
           }
           if (proxy != null) {
             if (isDebugEnabled) {
-              logger.debug("Proxy existed for this durable client :{} and proxy : {}", this.proxyId, proxy);
+              logger.debug(
+                  "Proxy existed for this durable client :{} and proxy : {}", this.proxyId, proxy);
             }
             if (proxy.isPrimary()) {
               epType = (byte) 2;
@@ -480,9 +515,15 @@ public class ServerConnection implements Runnable {
             // the same id is not allowed. In this case, reject the client.
             if (proxy != null && !proxy.isPaused()) {
               // The handshake refusal message must be smaller than 127 bytes.
-              String handshakeRefusalMessage = LocalizedStrings.ServerConnection_DUPLICATE_DURABLE_CLIENTID_0.toLocalizedString(proxyId.getDurableId());
-              logger.warn(LocalizedMessage.create(LocalizedStrings.TWO_ARG_COLON, new Object[] { this.name, handshakeRefusalMessage }));
-              refuseHandshake(handshakeRefusalMessage, HandShake.REPLY_EXCEPTION_DUPLICATE_DURABLE_CLIENT);
+              String handshakeRefusalMessage =
+                  LocalizedStrings.ServerConnection_DUPLICATE_DURABLE_CLIENTID_0.toLocalizedString(
+                      proxyId.getDurableId());
+              logger.warn(
+                  LocalizedMessage.create(
+                      LocalizedStrings.TWO_ARG_COLON,
+                      new Object[] {this.name, handshakeRefusalMessage}));
+              refuseHandshake(
+                  handshakeRefusalMessage, HandShake.REPLY_EXCEPTION_DUPLICATE_DURABLE_CLIENT);
               return result;
             }
           }
@@ -521,7 +562,8 @@ public class ServerConnection implements Runnable {
           numRefs = new Counter();
           numRefs.incr();
           getCleanupProxyIdTable().put(this.proxyId, numRefs);
-          InternalDistributedMember idm = (InternalDistributedMember) this.proxyId.getDistributedMember();
+          InternalDistributedMember idm =
+              (InternalDistributedMember) this.proxyId.getDistributedMember();
         }
         this.incedCleanupProxyIdTableRef = true;
       }
@@ -540,18 +582,20 @@ public class ServerConnection implements Runnable {
         this.chmRegistered = true;
       }
       if (registerClient) {
-        //hitesh: it will add client 
+        //hitesh: it will add client
         chm.registerClient(this.proxyId);
       }
       //hitesh:it will add client connection in set
       chm.addConnection(this.proxyId, this);
       this.acceptor.getConnectionListener().connectionOpened(registerClient, communicationMode);
-      //Hitesh: add user creds in map for single user case. 
+      //Hitesh: add user creds in map for single user case.
     } // finally
   }
 
   private boolean isFiringMembershipEvents() {
-    return this.acceptor.isRunning() && !((GemFireCacheImpl) this.acceptor.getCachedRegionHelper().getCache()).isClosed() && !acceptor.getCachedRegionHelper().getCache().getCancelCriterion().isCancelInProgress();
+    return this.acceptor.isRunning()
+        && !((GemFireCacheImpl) this.acceptor.getCachedRegionHelper().getCache()).isClosed()
+        && !acceptor.getCachedRegionHelper().getCache().getCancelCriterion().isCancelInProgress();
   }
 
   protected void refuseHandshake(String msg, byte exception) {
@@ -566,10 +610,19 @@ public class ServerConnection implements Runnable {
 
   private boolean acceptHandShake(byte epType, int qSize) {
     try {
-      this.handshake.accept(theSocket.getOutputStream(), theSocket.getInputStream(), epType, qSize, this.communicationMode, this.principal);
+      this.handshake.accept(
+          theSocket.getOutputStream(),
+          theSocket.getInputStream(),
+          epType,
+          qSize,
+          this.communicationMode,
+          this.principal);
     } catch (IOException ioe) {
       if (!crHelper.isShutdown() && !isTerminated()) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.ServerConnection_0_HANDSHAKE_ACCEPT_FAILED_ON_SOCKET_1_2, new Object[] { this.name, this.theSocket, ioe }));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.ServerConnection_0_HANDSHAKE_ACCEPT_FAILED_ON_SOCKET_1_2,
+                new Object[] {this.name, this.theSocket, ioe}));
       }
       cleanup();
       return false;
@@ -600,7 +653,8 @@ public class ServerConnection implements Runnable {
 
         long uniqueId = aIds.getUniqueId();
 
-        CacheClientProxy proxy = getAcceptor().getCacheClientNotifier().getClientProxy(this.proxyId);
+        CacheClientProxy proxy =
+            getAcceptor().getCacheClientNotifier().getClientProxy(this.proxyId);
 
         if (proxy != null) {
           proxy.setCQVsUserAuth(cqName, uniqueId, isDurable);
@@ -658,9 +712,7 @@ public class ServerConnection implements Runnable {
   //    UserAuthAttributes uaa = new UserAuthAttributes(authzRequest, postAuthzRequest);
   //  }
 
-  /**
-   * Set to false once handshake has been done
-   */
+  /** Set to false once handshake has been done */
   private boolean doHandshake = true;
 
   private boolean clientDisconnectedCleanly = false;
@@ -674,11 +726,12 @@ public class ServerConnection implements Runnable {
       // can be used.
       initializeCommands();
       //its initialized in verifyClientConnection call
-      if (getCommunicationMode() != Acceptor.GATEWAY_TO_GATEWAY)
-        initializeClientUserAuths();
+      if (getCommunicationMode() != Acceptor.GATEWAY_TO_GATEWAY) initializeClientUserAuths();
     }
     if (TEST_VERSION_AFTER_HANDSHAKE_FLAG) {
-      Assert.assertTrue((this.handshake.getVersion().ordinal() == testVersionAfterHandshake), "Found different version after handshake");
+      Assert.assertTrue(
+          (this.handshake.getVersion().ordinal() == testVersionAfterHandshake),
+          "Found different version after handshake");
       TEST_VERSION_AFTER_HANDSHAKE_FLAG = false;
     }
   }
@@ -697,7 +750,11 @@ public class ServerConnection implements Runnable {
         // doesn't keep track of the threads that it launches.
         if (!this.processMessages || (crHelper.isShutdown())) {
           if (logger.isDebugEnabled()) {
-            logger.debug("{} ignoring message of type {} from client {} due to shutdown.", getName(), MessageType.getString(msg.getMessageType()), this.proxyId);
+            logger.debug(
+                "{} ignoring message of type {} from client {} due to shutdown.",
+                getName(),
+                MessageType.getString(msg.getMessageType()),
+                this.proxyId);
           }
           return;
         }
@@ -716,7 +773,11 @@ public class ServerConnection implements Runnable {
         }
 
         if (logger.isTraceEnabled()) {
-          logger.trace("{} received {} with txid {}", getName(), MessageType.getString(msg.getMessageType()), msg.getTransactionId());
+          logger.trace(
+              "{} received {} with txid {}",
+              getName(),
+              MessageType.getString(msg.getMessageType()),
+              msg.getTransactionId());
           if (msg.getTransactionId() < -1) { // TODO: why is this happening?
             msg.setTransactionId(-1);
           }
@@ -733,7 +794,9 @@ public class ServerConnection implements Runnable {
         }
 
         // if a subject exists for this uniqueId, binds the subject to this thread so that we can do authorization later
-        if (AcceptorImpl.isIntegratedSecurity() && !isInternalMessage() && this.communicationMode != Acceptor.GATEWAY_TO_GATEWAY) {
+        if (AcceptorImpl.isIntegratedSecurity()
+            && !isInternalMessage()
+            && this.communicationMode != Acceptor.GATEWAY_TO_GATEWAY) {
           long uniqueId = getUniqueId();
           Subject subject = this.clientUserAuths.getSubject(uniqueId);
           if (subject != null) {
@@ -752,7 +815,6 @@ public class ServerConnection implements Runnable {
         threadState.clear();
       }
     }
-
   }
 
   private final Object terminationLock = new Object();
@@ -818,7 +880,8 @@ public class ServerConnection implements Runnable {
             getCleanupProxyIdTable().remove(this.proxyId);
             //here we can remove entry multiuser map for client
             proxyIdVsClientUserAuths.remove(this.proxyId);
-            InternalDistributedMember idm = (InternalDistributedMember) this.proxyId.getDistributedMember();
+            InternalDistributedMember idm =
+                (InternalDistributedMember) this.proxyId.getDistributedMember();
           }
         }
       }
@@ -838,7 +901,6 @@ public class ServerConnection implements Runnable {
     }
 
     { // moved out of above if to fix bug 36751
-
       boolean needsUnregister = false;
       synchronized (this.chmLock) {
         if (this.chmRegistered) {
@@ -846,13 +908,15 @@ public class ServerConnection implements Runnable {
           this.chmRegistered = false;
         }
       }
-      if (unregisterClient)//last serverconnection call all close on auth objects
-        cleanClientAuths();
+      if (unregisterClient) //last serverconnection call all close on auth objects
+      cleanClientAuths();
       this.clientUserAuths = null;
       if (needsUnregister) {
         this.acceptor.getClientHealthMonitor().removeConnection(this.proxyId, this);
         if (unregisterClient) {
-          this.acceptor.getClientHealthMonitor().unregisterClient(this.proxyId, getAcceptor(), this.clientDisconnectedCleanly);
+          this.acceptor
+              .getClientHealthMonitor()
+              .unregisterClient(this.proxyId, getAcceptor(), this.clientDisconnectedCleanly);
         }
       }
     }
@@ -879,8 +943,7 @@ public class ServerConnection implements Runnable {
     ClientUserAuths cua = new ClientUserAuths(proxyId.hashCode());
     ClientUserAuths retCua = proxyIdVsClientUserAuths.putIfAbsent(proxyId, cua);
 
-    if (retCua == null)
-      return cua;
+    if (retCua == null) return cua;
     return retCua;
   }
 
@@ -916,8 +979,7 @@ public class ServerConnection implements Runnable {
         boolean removed = this.clientUserAuths.removeSubject(aIds.getUniqueId());
 
         // if not successfull, try the old way
-        if (!removed)
-          removed = this.clientUserAuths.removeUserId(aIds.getUniqueId(), keepalive);
+        if (!removed) removed = this.clientUserAuths.removeUserId(aIds.getUniqueId(), keepalive);
         return removed;
 
       } catch (NullPointerException npe) {
@@ -938,14 +1000,14 @@ public class ServerConnection implements Runnable {
       //need to decrpt bytes if its in DH mode
       //need to get properties of credentials(need to remove extra stuff if something is there from client)
       //need to generate unique-id for client
-      //need to send back in response with encrption 
+      //need to send back in response with encrption
       if (!AcceptorImpl.isAuthenticationRequired() && msg.isSecureMode()) {
         // TODO (ashetkar)
         /*
          * This means that client and server VMs have different security settings.
          * The server does not have any security settings specified while client
          * has.
-         * 
+         *
          * Here, should we just ignore this and send the dummy security part
          * (connectionId, userId) in the response (in this case, client needs to
          * know that it is not expected to read any security part in any of the
@@ -986,7 +1048,14 @@ public class ServerConnection implements Runnable {
       DistributedSystem system = this.getDistributedSystem();
       String methodName = system.getProperties().getProperty(SECURITY_CLIENT_AUTHENTICATOR);
 
-      Object principal = HandShake.verifyCredentials(methodName, credentials, system.getSecurityProperties(), (InternalLogWriter) system.getLogWriter(), (InternalLogWriter) system.getSecurityLogWriter(), this.proxyId.getDistributedMember());
+      Object principal =
+          HandShake.verifyCredentials(
+              methodName,
+              credentials,
+              system.getSecurityProperties(),
+              (InternalLogWriter) system.getLogWriter(),
+              (InternalLogWriter) system.getSecurityLogWriter(),
+              this.proxyId.getDistributedMember());
       if (principal instanceof Subject) {
         Subject subject = (Subject) principal;
         uniqueId = this.clientUserAuths.putSubject(subject);
@@ -1014,15 +1083,17 @@ public class ServerConnection implements Runnable {
       byte[] id = encryptId(this.connectionId, this);
       this.securePart.setPartState(id, false);
     } catch (Exception ex) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.ServerConnection_SERVER_FAILED_TO_ENCRYPT_DATA_0, ex));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.ServerConnection_SERVER_FAILED_TO_ENCRYPT_DATA_0, ex));
       throw new GemFireSecurityException("Server failed to encrypt response message.");
     }
   }
 
   /**
-   * MessageType of the messages (typically internal commands) which do not need
-   * to participate in security should be added in the following if block. 
-   * 
+   * MessageType of the messages (typically internal commands) which do not need to participate in
+   * security should be added in the following if block.
+   *
    * @return Part
    * @see AbstractOp#processSecureBytes(Connection, Message)
    * @see AbstractOp#needsUserId()
@@ -1032,20 +1103,51 @@ public class ServerConnection implements Runnable {
     // need to take care all message types here
     //    this.logger.fine("getSecurityPart() msgType = "
     //        + this.requestMsg.msgType);
-    if (AcceptorImpl.isAuthenticationRequired() && this.handshake.getVersion().compareTo(Version.GFE_65) >= 0 && (this.communicationMode != Acceptor.GATEWAY_TO_GATEWAY) && (!this.requestMsg.getAndResetIsMetaRegion()) && (!isInternalMessage())) {
+    if (AcceptorImpl.isAuthenticationRequired()
+        && this.handshake.getVersion().compareTo(Version.GFE_65) >= 0
+        && (this.communicationMode != Acceptor.GATEWAY_TO_GATEWAY)
+        && (!this.requestMsg.getAndResetIsMetaRegion())
+        && (!isInternalMessage())) {
       setSecurityPart();
       return this.securePart;
     } else {
       if (AcceptorImpl.isAuthenticationRequired() && logger.isDebugEnabled()) {
-        logger.debug("ServerConnection.updateAndGetSecurityPart() not adding security part for msg type {}", MessageType.getString(this.requestMsg.msgType));
+        logger.debug(
+            "ServerConnection.updateAndGetSecurityPart() not adding security part for msg type {}",
+            MessageType.getString(this.requestMsg.msgType));
       }
     }
     return null;
   }
 
   private boolean isInternalMessage() {
-    return (this.requestMsg.msgType == MessageType.CLIENT_READY || this.requestMsg.msgType == MessageType.CLOSE_CONNECTION || this.requestMsg.msgType == MessageType.GETCQSTATS_MSG_TYPE || this.requestMsg.msgType == MessageType.GET_CLIENT_PARTITION_ATTRIBUTES || this.requestMsg.msgType == MessageType.GET_CLIENT_PR_METADATA || this.requestMsg.msgType == MessageType.INVALID || this.requestMsg.msgType == MessageType.MAKE_PRIMARY || this.requestMsg.msgType == MessageType.MONITORCQ_MSG_TYPE || this.requestMsg.msgType == MessageType.PERIODIC_ACK || this.requestMsg.msgType == MessageType.PING || this.requestMsg.msgType == MessageType.REGISTER_DATASERIALIZERS || this.requestMsg.msgType == MessageType.REGISTER_INSTANTIATORS || this.requestMsg.msgType == MessageType.REQUEST_EVENT_VALUE || this.requestMsg.msgType == MessageType.ADD_PDX_TYPE || this.requestMsg.msgType == MessageType.GET_PDX_ID_FOR_TYPE || this.requestMsg.msgType == MessageType.GET_PDX_TYPE_BY_ID
-        || this.requestMsg.msgType == MessageType.SIZE || this.requestMsg.msgType == MessageType.TX_FAILOVER || this.requestMsg.msgType == MessageType.TX_SYNCHRONIZATION || this.requestMsg.msgType == MessageType.GET_FUNCTION_ATTRIBUTES || this.requestMsg.msgType == MessageType.ADD_PDX_ENUM || this.requestMsg.msgType == MessageType.GET_PDX_ID_FOR_ENUM || this.requestMsg.msgType == MessageType.GET_PDX_ENUM_BY_ID || this.requestMsg.msgType == MessageType.GET_PDX_TYPES || this.requestMsg.msgType == MessageType.GET_PDX_ENUMS || this.requestMsg.msgType == MessageType.COMMIT || this.requestMsg.msgType == MessageType.ROLLBACK);
+    return (this.requestMsg.msgType == MessageType.CLIENT_READY
+        || this.requestMsg.msgType == MessageType.CLOSE_CONNECTION
+        || this.requestMsg.msgType == MessageType.GETCQSTATS_MSG_TYPE
+        || this.requestMsg.msgType == MessageType.GET_CLIENT_PARTITION_ATTRIBUTES
+        || this.requestMsg.msgType == MessageType.GET_CLIENT_PR_METADATA
+        || this.requestMsg.msgType == MessageType.INVALID
+        || this.requestMsg.msgType == MessageType.MAKE_PRIMARY
+        || this.requestMsg.msgType == MessageType.MONITORCQ_MSG_TYPE
+        || this.requestMsg.msgType == MessageType.PERIODIC_ACK
+        || this.requestMsg.msgType == MessageType.PING
+        || this.requestMsg.msgType == MessageType.REGISTER_DATASERIALIZERS
+        || this.requestMsg.msgType == MessageType.REGISTER_INSTANTIATORS
+        || this.requestMsg.msgType == MessageType.REQUEST_EVENT_VALUE
+        || this.requestMsg.msgType == MessageType.ADD_PDX_TYPE
+        || this.requestMsg.msgType == MessageType.GET_PDX_ID_FOR_TYPE
+        || this.requestMsg.msgType == MessageType.GET_PDX_TYPE_BY_ID
+        || this.requestMsg.msgType == MessageType.SIZE
+        || this.requestMsg.msgType == MessageType.TX_FAILOVER
+        || this.requestMsg.msgType == MessageType.TX_SYNCHRONIZATION
+        || this.requestMsg.msgType == MessageType.GET_FUNCTION_ATTRIBUTES
+        || this.requestMsg.msgType == MessageType.ADD_PDX_ENUM
+        || this.requestMsg.msgType == MessageType.GET_PDX_ID_FOR_ENUM
+        || this.requestMsg.msgType == MessageType.GET_PDX_ENUM_BY_ID
+        || this.requestMsg.msgType == MessageType.GET_PDX_TYPES
+        || this.requestMsg.msgType == MessageType.GET_PDX_ENUMS
+        || this.requestMsg.msgType == MessageType.COMMIT
+        || this.requestMsg.msgType == MessageType.ROLLBACK);
   }
 
   public void run() {
@@ -1067,7 +1169,8 @@ public class ServerConnection implements Runnable {
       } catch (CancelException e) {
         // ok shutting down
       } catch (IOException ex) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.ServerConnection_0__UNEXPECTED_EXCEPTION, ex));
+        logger.warn(
+            LocalizedMessage.create(LocalizedStrings.ServerConnection_0__UNEXPECTED_EXCEPTION, ex));
       } finally {
         getAcceptor().releaseCommBuffer(Message.setTLCommBuffer(null));
         //        DistributedSystem.releaseThreadsSockets();
@@ -1107,13 +1210,11 @@ public class ServerConnection implements Runnable {
     }
   }
 
-  /**
-   * If registered with a selector then this will be the key we are registered with.
-   */
+  /** If registered with a selector then this will be the key we are registered with. */
   //private SelectionKey sKey = null;
   /**
-   * Register this connection with the given selector for read events.
-   * Note that switch the channel to non-blocking so it can be in a selector.
+   * Register this connection with the given selector for read events. Note that switch the channel
+   * to non-blocking so it can be in a selector.
    */
   public void registerWithSelector() throws IOException {
     //logger.info("DEBUG: registerWithSelector " + this);
@@ -1126,12 +1227,10 @@ public class ServerConnection implements Runnable {
   }
 
   public void registerWithSelector2(Selector s) throws IOException {
-    /*this.sKey = */getSelectableChannel().register(s, SelectionKey.OP_READ, this);
+    /*this.sKey = */ getSelectableChannel().register(s, SelectionKey.OP_READ, this);
   }
 
-  /**
-   * Switch this guy to blocking mode so we can use oldIO to read and write msgs.
-   */
+  /** Switch this guy to blocking mode so we can use oldIO to read and write msgs. */
   public void makeBlocking() throws IOException {
     //logger.info("DEBUG: makeBlocking " + this);
 
@@ -1148,10 +1247,7 @@ public class ServerConnection implements Runnable {
     forceClientCrashEvent = value;
   }
 
-  /**
-   *
-   * @return String representing the DistributedSystemMembership of the Client VM
-   */
+  /** @return String representing the DistributedSystemMembership of the Client VM */
   public String getMembershipID() {
     return this.proxyId.getDSMembership();
   }
@@ -1189,10 +1285,8 @@ public class ServerConnection implements Runnable {
   }
 
   int getClientReadTimeout() {
-    if (this.requestSpecificTimeout == -1)
-      return this.handshake.getClientReadTimeout();
-    else
-      return this.requestSpecificTimeout;
+    if (this.requestSpecificTimeout == -1) return this.handshake.getClientReadTimeout();
+    else return this.requestSpecificTimeout;
   }
 
   protected boolean isProcessingMessage() {
@@ -1245,8 +1339,8 @@ public class ServerConnection implements Runnable {
     int timeout = getClientReadTimeout();
     if (timeout > 0) { // 0 means no timeout
       timeout = timeout + TIMEOUT_BUFFER_FOR_CONNECTION_CLEANUP_MS;
-      /* This is a buffer that we add to client readTimeout value before we cleanup the connection. 
-      * This buffer time helps prevent EOF in the client instead of SocketTimeout */
+      /* This is a buffer that we add to client readTimeout value before we cleanup the connection.
+       * This buffer time helps prevent EOF in the client instead of SocketTimeout */
       synchronized (this.processingMessageLock) {
         // If a message is currently being processed and it has been
         // being processed for more than the client read timeout,
@@ -1261,10 +1355,17 @@ public class ServerConnection implements Runnable {
 
   public String getSocketString() {
     try {
-      StringBuffer buffer = new StringBuffer(50).append(theSocket.getInetAddress()).append(':').append(theSocket.getPort()).append(" timeout: ").append(theSocket.getSoTimeout());
+      StringBuffer buffer =
+          new StringBuffer(50)
+              .append(theSocket.getInetAddress())
+              .append(':')
+              .append(theSocket.getPort())
+              .append(" timeout: ")
+              .append(theSocket.getSoTimeout());
       return buffer.toString();
     } catch (Exception e) {
-      return LocalizedStrings.ServerConnection_ERROR_IN_GETSOCKETSTRING_0.toLocalizedString(e.getLocalizedMessage());
+      return LocalizedStrings.ServerConnection_ERROR_IN_GETSOCKETSTRING_0.toLocalizedString(
+          e.getLocalizedMessage());
     }
   }
 
@@ -1276,7 +1377,13 @@ public class ServerConnection implements Runnable {
     // not synchronized because it only has a single caller
     if (justProcessed - this.latestBatchIdReplied != 1) {
       this.stats.incOutOfOrderBatchIds();
-      logger.warn(LocalizedMessage.create(LocalizedStrings.ServerConnection_BATCH_IDS_ARE_OUT_OF_ORDER_SETTING_LATESTBATCHID_TO_0_IT_WAS_1, new Object[] { Integer.valueOf(justProcessed), Integer.valueOf(this.latestBatchIdReplied) }));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .ServerConnection_BATCH_IDS_ARE_OUT_OF_ORDER_SETTING_LATESTBATCHID_TO_0_IT_WAS_1,
+              new Object[] {
+                Integer.valueOf(justProcessed), Integer.valueOf(this.latestBatchIdReplied)
+              }));
     }
     this.latestBatchIdReplied = justProcessed;
   }
@@ -1358,8 +1465,10 @@ public class ServerConnection implements Runnable {
     if (isClosed()) {
       return false;
     }
-    if (this.communicationMode == Acceptor.CLIENT_TO_SERVER || this.communicationMode == Acceptor.GATEWAY_TO_GATEWAY || this.communicationMode == Acceptor.MONITOR_TO_SERVER
-    /*|| this.communicationMode == Acceptor.CLIENT_TO_SERVER_FOR_QUEUE*/) {
+    if (this.communicationMode == Acceptor.CLIENT_TO_SERVER
+        || this.communicationMode == Acceptor.GATEWAY_TO_GATEWAY
+        || this.communicationMode == Acceptor.MONITOR_TO_SERVER
+    /*|| this.communicationMode == Acceptor.CLIENT_TO_SERVER_FOR_QUEUE*/ ) {
       getAcceptor().decClientServerCnxCount();
     }
     try {
@@ -1373,7 +1482,10 @@ public class ServerConnection implements Runnable {
       }
     } catch (Exception ex) {
       if (securityLogWriter.warningEnabled()) {
-        securityLogWriter.warning(LocalizedStrings.ServerConnection_0_AN_EXCEPTION_WAS_THROWN_WHILE_CLOSING_CLIENT_AUTHORIZATION_CALLBACK_1, new Object[] { this.name, ex });
+        securityLogWriter.warning(
+            LocalizedStrings
+                .ServerConnection_0_AN_EXCEPTION_WAS_THROWN_WHILE_CLOSING_CLIENT_AUTHORIZATION_CALLBACK_1,
+            new Object[] {this.name, ex});
       }
     }
     try {
@@ -1383,7 +1495,10 @@ public class ServerConnection implements Runnable {
       }
     } catch (Exception ex) {
       if (securityLogWriter.warningEnabled()) {
-        securityLogWriter.warning(LocalizedStrings.ServerConnection_0_AN_EXCEPTION_WAS_THROWN_WHILE_CLOSING_CLIENT_POSTPROCESS_AUTHORIZATION_CALLBACK_1, new Object[] { this.name, ex });
+        securityLogWriter.warning(
+            LocalizedStrings
+                .ServerConnection_0_AN_EXCEPTION_WAS_THROWN_WHILE_CLOSING_CLIENT_POSTPROCESS_AUTHORIZATION_CALLBACK_1,
+            new Object[] {this.name, ex});
       }
     }
     getAcceptor().unregisterSC(this);
@@ -1404,16 +1519,14 @@ public class ServerConnection implements Runnable {
 
   /**
    * Just ensure that this class gets loaded.
-   * 
+   *
    * @see SystemFailure#loadEmergencyClasses()
    */
   public static void loadEmergencyClasses() {
     // nothing needed, just make sure this class gets loaded.
   }
 
-  /**
-   * @see SystemFailure#emergencyClose()
-   */
+  /** @see SystemFailure#emergencyClose() */
   public void emergencyClose() {
     this.terminated = true;
     Socket s = this.theSocket;
@@ -1436,65 +1549,47 @@ public class ServerConnection implements Runnable {
     return this.name;
   }
 
-  /**    
-   * @return The ClientProxyMembershipID associated with the ServerConnection
-   */
+  /** @return The ClientProxyMembershipID associated with the ServerConnection */
   public ClientProxyMembershipID getProxyID() {
     return this.proxyId;
   }
 
-  /**    
-   * @return The ClientProxyMembershipID associated with the ServerConnection
-   */
+  /** @return The ClientProxyMembershipID associated with the ServerConnection */
   public CachedRegionHelper getCachedRegionHelper() {
     return this.crHelper;
   }
 
-  /**    
-   * @return The CacheServerStats associated with the ServerConnection
-   */
+  /** @return The CacheServerStats associated with the ServerConnection */
   public CacheServerStats getCacheServerStats() {
     return this.stats;
   }
 
-  /**    
-   * @return The ReplyMessage associated with the ServerConnection
-   */
+  /** @return The ReplyMessage associated with the ServerConnection */
   public Message getReplyMessage() {
     return this.replyMsg;
   }
 
-  /**    
-   * @return The ChunkedResponseMessage associated with the ServerConnection
-   */
+  /** @return The ChunkedResponseMessage associated with the ServerConnection */
   public ChunkedMessage getChunkedResponseMessage() {
     return this.chunkedResponseMsg;
   }
 
-  /**    
-   * @return The ErrorResponseMessage associated with the ServerConnection
-   */
+  /** @return The ErrorResponseMessage associated with the ServerConnection */
   public Message getErrorResponseMessage() {
     return this.errorMsg;
   }
 
-  /**    
-   * @return The ResponseMessage associated with the ServerConnection
-   */
+  /** @return The ResponseMessage associated with the ServerConnection */
   public Message getResponseMessage() {
     return this.responseMsg;
   }
 
-  /**    
-   * @return The Request Message associated with the ServerConnection
-   */
+  /** @return The Request Message associated with the ServerConnection */
   public Message getRequestMessage() {
     return this.requestMsg;
   }
 
-  /**    
-   * @return The QueryResponseMessage associated with the ServerConnection
-   */
+  /** @return The QueryResponseMessage associated with the ServerConnection */
   public ChunkedMessage getQueryResponseMessage() {
     return this.queryResponseMsg;
   }
@@ -1511,7 +1606,7 @@ public class ServerConnection implements Runnable {
     return this.registerInterestResponseMsg;
   }
 
-  /* The four boolean fields and the String & Object field below are the transient data 
+  /* The four boolean fields and the String & Object field below are the transient data
    * We have made it fields just because we know that they will
    * be operated by a single thread only & hence in effect behave as
    * local variables.
@@ -1558,34 +1653,40 @@ public class ServerConnection implements Runnable {
 
   public void setAsTrue(int boolID) {
     switch (boolID) {
-    case Command.RESPONDED:
-      this.responded = true;
-      break;
-    case Command.REQUIRES_RESPONSE:
-      this.requiresResponse = true;
-      break;
-    case Command.REQUIRES_CHUNKED_RESPONSE:
-      this.requiresChunkedResponse = true;
-      break;
-    default:
-      throw new IllegalArgumentException(LocalizedStrings.ServerConnection_THE_ID_PASSED_IS_0_WHICH_DOES_NOT_CORRESPOND_WITH_ANY_TRANSIENT_DATA.toLocalizedString(Integer.valueOf(boolID)));
+      case Command.RESPONDED:
+        this.responded = true;
+        break;
+      case Command.REQUIRES_RESPONSE:
+        this.requiresResponse = true;
+        break;
+      case Command.REQUIRES_CHUNKED_RESPONSE:
+        this.requiresChunkedResponse = true;
+        break;
+      default:
+        throw new IllegalArgumentException(
+            LocalizedStrings
+                .ServerConnection_THE_ID_PASSED_IS_0_WHICH_DOES_NOT_CORRESPOND_WITH_ANY_TRANSIENT_DATA
+                .toLocalizedString(Integer.valueOf(boolID)));
     }
   }
 
   public boolean getTransientFlag(int boolID) {
     boolean retVal;
     switch (boolID) {
-    case Command.RESPONDED:
-      retVal = this.responded;
-      break;
-    case Command.REQUIRES_RESPONSE:
-      retVal = this.requiresResponse;
-      break;
-    case Command.REQUIRES_CHUNKED_RESPONSE:
-      retVal = this.requiresChunkedResponse;
-      break;
-    default:
-      throw new IllegalArgumentException(LocalizedStrings.ServerConnection_THE_ID_PASSED_IS_0_WHICH_DOES_NOT_CORRESPOND_WITH_ANY_TRANSIENT_DATA.toLocalizedString(Integer.valueOf(boolID)));
+      case Command.RESPONDED:
+        retVal = this.responded;
+        break;
+      case Command.REQUIRES_RESPONSE:
+        retVal = this.requiresResponse;
+        break;
+      case Command.REQUIRES_CHUNKED_RESPONSE:
+        retVal = this.requiresChunkedResponse;
+        break;
+      default:
+        throw new IllegalArgumentException(
+            LocalizedStrings
+                .ServerConnection_THE_ID_PASSED_IS_0_WHICH_DOES_NOT_CORRESPOND_WITH_ANY_TRANSIENT_DATA
+                .toLocalizedString(Integer.valueOf(boolID)));
     }
     return retVal;
   }
@@ -1617,7 +1718,7 @@ public class ServerConnection implements Runnable {
     public AuthIds(byte[] bytes) throws Exception {
       DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes));
       if (bytes.length == 8) {
-        //only connectionid        
+        //only connectionid
         connectionId = dis.readLong();
       } else if (bytes.length == 16) {
         //first connectionId and then uniqueID
@@ -1654,7 +1755,8 @@ public class ServerConnection implements Runnable {
   public long getUniqueId() {
     long uniqueId = 0;
 
-    if (this.handshake.getVersion().compareTo(Version.GFE_65) < 0 || this.communicationMode == Acceptor.GATEWAY_TO_GATEWAY) {
+    if (this.handshake.getVersion().compareTo(Version.GFE_65) < 0
+        || this.communicationMode == Acceptor.GATEWAY_TO_GATEWAY) {
       uniqueId = this.userAuthId;
     } else {
       try {
@@ -1667,18 +1769,21 @@ public class ServerConnection implements Runnable {
           AuthIds aIds = new AuthIds(secureBytes);
 
           if (this.connectionId != aIds.getConnectionId()) {
-            throw new AuthenticationRequiredException(LocalizedStrings.HandShake_NO_SECURITY_PROPERTIES_ARE_PROVIDED.toLocalizedString());
+            throw new AuthenticationRequiredException(
+                LocalizedStrings.HandShake_NO_SECURITY_PROPERTIES_ARE_PROVIDED.toLocalizedString());
           } else {
             uniqueId = aIds.getUniqueId();
           }
 
         } else {
-          throw new AuthenticationRequiredException(LocalizedStrings.HandShake_NO_SECURITY_PROPERTIES_ARE_PROVIDED.toLocalizedString());
+          throw new AuthenticationRequiredException(
+              LocalizedStrings.HandShake_NO_SECURITY_PROPERTIES_ARE_PROVIDED.toLocalizedString());
         }
       } catch (AuthenticationRequiredException are) {
         throw are;
       } catch (Exception ex) {
-        throw new AuthenticationRequiredException(LocalizedStrings.HandShake_NO_SECURITY_PROPERTIES_ARE_PROVIDED.toLocalizedString());
+        throw new AuthenticationRequiredException(
+            LocalizedStrings.HandShake_NO_SECURITY_PROPERTIES_ARE_PROVIDED.toLocalizedString());
       }
     }
     return uniqueId;
@@ -1689,11 +1794,9 @@ public class ServerConnection implements Runnable {
     //for backward client it will be store in member variable userAuthId
     //for other look "requestMsg" here and get unique-id from this to get the authzrequest
 
-    if (!AcceptorImpl.isAuthenticationRequired())
-      return null;
+    if (!AcceptorImpl.isAuthenticationRequired()) return null;
 
-    if (AcceptorImpl.isIntegratedSecurity())
-      return null;
+    if (AcceptorImpl.isIntegratedSecurity()) return null;
 
     long uniqueId = getUniqueId();
 
@@ -1713,17 +1816,18 @@ public class ServerConnection implements Runnable {
     }
     AuthorizeRequest authReq = uaa.getAuthzRequest();
     if (logger.isDebugEnabled()) {
-      logger.debug("getAuthzRequest() authrequest: {}", ((authReq == null) ? "NULL (only authentication is required)" : "not null"));
+      logger.debug(
+          "getAuthzRequest() authrequest: {}",
+          ((authReq == null) ? "NULL (only authentication is required)" : "not null"));
     }
     return authReq;
   }
 
-  public AuthorizeRequestPP getPostAuthzRequest() throws AuthenticationRequiredException, IOException {
-    if (!AcceptorImpl.isAuthenticationRequired())
-      return null;
+  public AuthorizeRequestPP getPostAuthzRequest()
+      throws AuthenticationRequiredException, IOException {
+    if (!AcceptorImpl.isAuthenticationRequired()) return null;
 
-    if (AcceptorImpl.isIntegratedSecurity())
-      return null;
+    if (AcceptorImpl.isIntegratedSecurity()) return null;
 
     //look client version and return authzrequest
     //for backward client it will be store in member variable userAuthId

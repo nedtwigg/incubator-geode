@@ -35,10 +35,8 @@ import org.junit.rules.TestName;
 import org.apache.geode.test.junit.categories.SecurityTest;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit tests for {@link NotAuthorizedException}.
- */
-@Category({ UnitTest.class, SecurityTest.class })
+/** Unit tests for {@link NotAuthorizedException}. */
+@Category({UnitTest.class, SecurityTest.class})
 public class NotAuthorizedExceptionTest {
 
   private String message;
@@ -51,8 +49,7 @@ public class NotAuthorizedExceptionTest {
   private Principal nonSerializablePrincipal;
   private SerializablePrincipal serializablePrincipal;
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
@@ -77,7 +74,8 @@ public class NotAuthorizedExceptionTest {
   private void assertPreconditions() {
     catchException(this).clone(this.nonSerializableNamingException);
     assertThat((Throwable) caughtException()).isNotNull();
-    assertThat((Throwable) caughtException().getCause()).isInstanceOf(NotSerializableException.class);
+    assertThat((Throwable) caughtException().getCause())
+        .isInstanceOf(NotSerializableException.class);
 
     catchException(this).clone(this.serializableNamingException);
     assertThat((Throwable) caughtException()).isNull();
@@ -120,7 +118,8 @@ public class NotAuthorizedExceptionTest {
 
   @Test
   public void serializesWithNonSerializablePrincipal() throws Exception {
-    NotAuthorizedException instance = new NotAuthorizedException(this.message, this.nonSerializablePrincipal);
+    NotAuthorizedException instance =
+        new NotAuthorizedException(this.message, this.nonSerializablePrincipal);
     assertThat(instance.getPrincipal()).isNotNull();
 
     NotAuthorizedException cloned = (NotAuthorizedException) SerializationUtils.clone(instance);
@@ -131,7 +130,8 @@ public class NotAuthorizedExceptionTest {
 
   @Test
   public void serializesWithSerializablePrincipal() throws Exception {
-    NotAuthorizedException instance = new NotAuthorizedException(this.message, this.serializablePrincipal);
+    NotAuthorizedException instance =
+        new NotAuthorizedException(this.message, this.serializablePrincipal);
 
     NotAuthorizedException cloned = (NotAuthorizedException) SerializationUtils.clone(instance);
 
@@ -153,15 +153,12 @@ public class NotAuthorizedExceptionTest {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o)
-        return true;
-      if (o == null || getClass() != o.getClass())
-        return false;
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
 
       SerializableObject that = (SerializableObject) o;
 
       return name != null ? name.equals(that.name) : that.name == null;
-
     }
 
     @Override
@@ -185,15 +182,12 @@ public class NotAuthorizedExceptionTest {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o)
-        return true;
-      if (o == null || getClass() != o.getClass())
-        return false;
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
 
       SerializablePrincipal that = (SerializablePrincipal) o;
 
       return name != null ? name.equals(that.name) : that.name == null;
-
     }
 
     @Override

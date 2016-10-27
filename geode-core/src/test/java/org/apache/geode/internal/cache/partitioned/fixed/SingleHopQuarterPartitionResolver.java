@@ -32,7 +32,8 @@ import org.apache.geode.cache.FixedPartitionResolver;
 import org.apache.geode.cache.PartitionAttributes;
 import org.apache.geode.internal.cache.xmlcache.Declarable2;
 
-public class SingleHopQuarterPartitionResolver implements FixedPartitionResolver, Declarable2, DataSerializable {
+public class SingleHopQuarterPartitionResolver
+    implements FixedPartitionResolver, Declarable2, DataSerializable {
   private Properties resolveProps;
   Object[][] months = new Object[12][12];
 
@@ -74,34 +75,33 @@ public class SingleHopQuarterPartitionResolver implements FixedPartitionResolver
     //      return month;
     //    }
     switch (month) {
-    case 0:
-      return "January";
-    case 1:
-      return "February";
-    case 2:
-      return "March";
-    case 3:
-      return "April";
-    case 4:
-      return "May";
-    case 5:
-      return "June";
-    case 6:
-      return "July";
-    case 7:
-      return "August";
-    case 8:
-      return "September";
-    case 9:
-      return "October";
-    case 10:
-      return "November";
-    case 11:
-      return "December";
-    default:
-      return null;
+      case 0:
+        return "January";
+      case 1:
+        return "February";
+      case 2:
+        return "March";
+      case 3:
+        return "April";
+      case 4:
+        return "May";
+      case 5:
+        return "June";
+      case 6:
+        return "July";
+      case 7:
+        return "August";
+      case 8:
+        return "September";
+      case 9:
+        return "October";
+      case 10:
+        return "November";
+      case 11:
+        return "December";
+      default:
+        return null;
     }
-
   }
 
   public void close() {
@@ -113,7 +113,8 @@ public class SingleHopQuarterPartitionResolver implements FixedPartitionResolver
     this.numBuckets = numBukcets;
   }
 
-  public int getNumBuckets(String partitionName, String regionName, PartitionAttributes partitionAttributes) {
+  public int getNumBuckets(
+      String partitionName, String regionName, PartitionAttributes partitionAttributes) {
     return this.numBuckets;
   }
 
@@ -137,7 +138,7 @@ public class SingleHopQuarterPartitionResolver implements FixedPartitionResolver
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.cache.xmlcache.Declarable2#getConfig()
    */
   public Properties getConfig() {
@@ -146,7 +147,7 @@ public class SingleHopQuarterPartitionResolver implements FixedPartitionResolver
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.cache.Declarable#init(java.util.Properties)
    */
   public void init(Properties props) {
@@ -162,5 +163,4 @@ public class SingleHopQuarterPartitionResolver implements FixedPartitionResolver
     DataSerializer.writeProperties(this.resolveProps, out);
     out.writeInt(this.numBuckets);
   }
-
 }

@@ -17,18 +17,17 @@
 package org.apache.geode.cache.query;
 
 /**
- * Thrown if an attribute or method name in a query can be resolved to
- * more than one object in scope or if there is more than one maximally specific
- * overridden method in a class.
+ * Thrown if an attribute or method name in a query can be resolved to more than one object in scope
+ * or if there is more than one maximally specific overridden method in a class.
  *
  * @since GemFire 4.0
  */
-
 public class AmbiguousNameException extends NameResolutionException {
   private static final long serialVersionUID = 5635771575414148564L;
 
   /**
    * Constructs instance of AmbiguousNameException with error message
+   *
    * @param msg the error message
    */
   public AmbiguousNameException(String msg) {
@@ -37,6 +36,7 @@ public class AmbiguousNameException extends NameResolutionException {
 
   /**
    * Constructs instance of AmbiguousNameException with error message and cause
+   *
    * @param msg the error message
    * @param cause a Throwable that is a cause of this exception
    */

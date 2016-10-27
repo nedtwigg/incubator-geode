@@ -27,9 +27,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Wrapper over JSONObject. 
- * 
- * 
+ * Wrapper over JSONObject.
+ *
  * @since GemFire 7.0
  */
 public class GfJsonObject {
@@ -95,13 +94,8 @@ public class GfJsonObject {
   }
 
   /**
-   * 
-   * @param source
-   *          A string beginning with { (left brace) and ending with } (right
-   *          brace).
-   * @throws GfJsonException
-   *           - If there is a syntax error in the source string or a duplicated
-   *           key.
+   * @param source A string beginning with { (left brace) and ending with } (right brace).
+   * @throws GfJsonException - If there is a syntax error in the source string or a duplicated key.
    */
   public GfJsonObject(String source) throws GfJsonException {
     try {
@@ -112,12 +106,10 @@ public class GfJsonObject {
   }
 
   /**
-   * 
    * @param key
    * @param value
    * @return this GfJsonObject
-   * @throws GfJsonException
-   *           If the key is null OR if the value is non-finite number
+   * @throws GfJsonException If the key is null OR if the value is non-finite number
    */
   public GfJsonObject accumulate(String key, Object value) throws GfJsonException {
     try {
@@ -149,13 +141,11 @@ public class GfJsonObject {
   }
 
   /**
-   * 
    * @param key
    * @param value
    * @return this GfJsonObject
-   * @throws GfJsonException
-   *           - If the key is null or if the current value associated with the
-   *           key is not a JSONArray.
+   * @throws GfJsonException - If the key is null or if the current value associated with the key is
+   *     not a JSONArray.
    */
   public GfJsonObject append(String key, Object value) throws GfJsonException {
     try {
@@ -203,11 +193,9 @@ public class GfJsonObject {
   }
 
   /**
-   * 
    * @param key
    * @return this GfJsonObject
-   * @throws GfJsonException
-   *           If there is a syntax error while preparing GfJsonArray.
+   * @throws GfJsonException If there is a syntax error while preparing GfJsonArray.
    */
   public GfJsonArray getJSONArray(String key) throws GfJsonException {
     JSONArray jsonArray = jsonObject.optJSONArray(key);
@@ -218,11 +206,8 @@ public class GfJsonObject {
   }
 
   /**
-   * 
-   * @return A GfJsonArray containing the key strings, or null if the internal
-   *         JSONObject is empty.
-   * @throws GfJsonException
-   *           If there is a syntax error while preparing GfJsonArray.
+   * @return A GfJsonArray containing the key strings, or null if the internal JSONObject is empty.
+   * @throws GfJsonException If there is a syntax error while preparing GfJsonArray.
    */
   public GfJsonArray names() throws GfJsonException {
     GfJsonArray gfJsonArray = new GfJsonArray();
@@ -235,12 +220,10 @@ public class GfJsonObject {
   }
 
   /**
-   * 
    * @param key
    * @param value
    * @return this GfJsonObject object
-   * @throws GfJsonException
-   *           If the value is non-finite number or if the key is null.
+   * @throws GfJsonException If the value is non-finite number or if the key is null.
    */
   public GfJsonObject put(String key, Object value) throws GfJsonException {
     try {
@@ -266,12 +249,10 @@ public class GfJsonObject {
   }
 
   /**
-   * 
    * @param key
    * @param value
    * @return this GfJsonObject
-   * @throws GfJsonException
-   *           if the key is a duplicate
+   * @throws GfJsonException if the key is a duplicate
    */
   public GfJsonObject putOnce(String key, Object value) throws GfJsonException {
     try {
@@ -283,12 +264,10 @@ public class GfJsonObject {
   }
 
   /**
-   * 
    * @param key
    * @param value
    * @return this GfJsonObject
-   * @throws GfJsonException
-   *           If the value is a non-finite number.
+   * @throws GfJsonException If the value is a non-finite number.
    */
   public GfJsonObject putOpt(String key, Object value) throws GfJsonException {
     try {
@@ -300,12 +279,10 @@ public class GfJsonObject {
   }
 
   /**
-   * 
    * @param key
    * @param value
    * @return this GfJsonObject
-   * @throws GfJsonException
-   *           If the value is a non-finite number.
+   * @throws GfJsonException If the value is a non-finite number.
    */
   public GfJsonObject put(String key, Collection<?> value) throws GfJsonException {
     try {
@@ -364,11 +341,9 @@ public class GfJsonObject {
   }
 
   /**
-   * 
    * @param indentFactor
    * @return this GfJsonObject
-   * @throws GfJsonException
-   *           If the object contains an invalid number.
+   * @throws GfJsonException If the object contains an invalid number.
    */
   public String toIndentedString(int indentFactor) throws GfJsonException {
     try {
@@ -400,5 +375,4 @@ public class GfJsonObject {
   public static boolean isJSONKind(Object object) {
     return object instanceof JSONObject;
   }
-
 }

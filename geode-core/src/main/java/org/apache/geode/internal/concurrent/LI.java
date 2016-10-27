@@ -19,11 +19,10 @@ package org.apache.geode.internal.concurrent;
 import java.io.Serializable;
 
 /**
- * These methods are the same as on the jdk 1.6
- * java.lang.management.LockInfo, but this class is serializable.
- * 
- * Retained for backwards compatibility reasons. 
- * 
+ * These methods are the same as on the jdk 1.6 java.lang.management.LockInfo, but this class is
+ * serializable.
+ *
+ * <p>Retained for backwards compatibility reasons.
  */
 public class LI implements Serializable {
 
@@ -52,7 +51,7 @@ public class LI implements Serializable {
     return identityHashCode;
   }
 
-  //This comes from monitor info. It will null if the lock is 
+  //This comes from monitor info. It will null if the lock is
   //not a monitor.
   public StackTraceElement getLockedStackFrame() {
     return lockedStackFrame;
@@ -69,20 +68,14 @@ public class LI implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (!(obj instanceof LI))
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (!(obj instanceof LI)) return false;
     LI other = (LI) obj;
     if (className == null) {
-      if (other.className != null)
-        return false;
-    } else if (!className.equals(other.className))
-      return false;
-    if (identityHashCode != other.identityHashCode)
-      return false;
+      if (other.className != null) return false;
+    } else if (!className.equals(other.className)) return false;
+    if (identityHashCode != other.identityHashCode) return false;
     return true;
   }
 

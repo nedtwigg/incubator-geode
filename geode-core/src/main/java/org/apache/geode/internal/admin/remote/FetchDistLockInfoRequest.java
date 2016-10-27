@@ -25,21 +25,18 @@ import java.io.*;
 //import java.util.*;
 
 public final class FetchDistLockInfoRequest extends AdminRequest {
-  /**
-   * Returns a <code>FetchDistLockInfoRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>FetchDistLockInfoRequest</code> to be sent to the specified recipient. */
   public static FetchDistLockInfoRequest create() {
     FetchDistLockInfoRequest m = new FetchDistLockInfoRequest();
     return m;
   }
 
   public FetchDistLockInfoRequest() {
-    friendlyName = LocalizedStrings.FetchDistLockInfoRequest_LIST_DISTRIBUTED_LOCKS.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.FetchDistLockInfoRequest_LIST_DISTRIBUTED_LOCKS.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return FetchDistLockInfoResponse.create(dm, this.getSender());
@@ -61,6 +58,7 @@ public final class FetchDistLockInfoRequest extends AdminRequest {
 
   @Override
   public String toString() {
-    return LocalizedStrings.FetchDistLockInfoRequest_FETCHDISTLOCKINFOREQUEST_FROM_0.toLocalizedString(this.getSender());
+    return LocalizedStrings.FetchDistLockInfoRequest_FETCHDISTLOCKINFOREQUEST_FROM_0
+        .toLocalizedString(this.getSender());
   }
 }

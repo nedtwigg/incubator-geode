@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-/**
- * 
- */
+/** */
 package org.apache.geode.cache30;
 
 import static org.junit.Assert.*;
@@ -96,22 +94,30 @@ public class CacheXml70DUnitTest extends CacheXml66DUnitTest {
 
     Region region = c.getRegion("replicated");
     assertNotNull(region);
-    assertTrue("expected concurrency checks to be enabled", region.getAttributes().getConcurrencyChecksEnabled());
+    assertTrue(
+        "expected concurrency checks to be enabled",
+        region.getAttributes().getConcurrencyChecksEnabled());
     region.localDestroyRegion();
 
     region = c.getRegion("partitioned");
     assertNotNull(region);
-    assertTrue("expected concurrency checks to be enabled", region.getAttributes().getConcurrencyChecksEnabled());
+    assertTrue(
+        "expected concurrency checks to be enabled",
+        region.getAttributes().getConcurrencyChecksEnabled());
     region.localDestroyRegion();
 
     region = c.getRegion("empty");
     assertNotNull(region);
-    assertTrue("expected concurrency checks to be enabled", region.getAttributes().getConcurrencyChecksEnabled());
+    assertTrue(
+        "expected concurrency checks to be enabled",
+        region.getAttributes().getConcurrencyChecksEnabled());
     region.localDestroyRegion();
 
     region = c.getRegion("normal");
     assertNotNull(region);
-    assertTrue("expected concurrency checks to be enabled", region.getAttributes().getConcurrencyChecksEnabled());
+    assertTrue(
+        "expected concurrency checks to be enabled",
+        region.getAttributes().getConcurrencyChecksEnabled());
     region.localDestroyRegion();
   }
 
@@ -154,7 +160,8 @@ public class CacheXml70DUnitTest extends CacheXml66DUnitTest {
     assertNotNull(c);
 
     Set<AsyncEventQueue> asyncEventQueuesOnCache = c.getAsyncEventQueues();
-    assertTrue("Size of asyncEventQueues should be greater than 0", asyncEventQueuesOnCache.size() > 0);
+    assertTrue(
+        "Size of asyncEventQueues should be greater than 0", asyncEventQueuesOnCache.size() > 0);
 
     for (AsyncEventQueue asyncEventQueueOnCache : asyncEventQueuesOnCache) {
       validateAsyncEventQueue(asyncEventQueue, asyncEventQueueOnCache);
@@ -188,16 +195,15 @@ public class CacheXml70DUnitTest extends CacheXml66DUnitTest {
     assertNotNull(c);
 
     Set<AsyncEventQueue> asyncEventQueuesOnCache = c.getAsyncEventQueues();
-    assertTrue("Size of asyncEventQueues should be greater than 0", asyncEventQueuesOnCache.size() > 0);
+    assertTrue(
+        "Size of asyncEventQueues should be greater than 0", asyncEventQueuesOnCache.size() > 0);
 
     for (AsyncEventQueue asyncEventQueueOnCache : asyncEventQueuesOnCache) {
       validateConcurrentAsyncEventQueue(asyncEventQueue, asyncEventQueueOnCache);
     }
   }
 
-  /**
-   * Added to test the scenario of defect #50600.
-   */
+  /** Added to test the scenario of defect #50600. */
   @Test
   public void testAsyncEventQueueWithGatewayEventFilter() {
     getSystem();
@@ -225,7 +231,8 @@ public class CacheXml70DUnitTest extends CacheXml66DUnitTest {
     assertNotNull(c);
 
     Set<AsyncEventQueue> asyncEventQueuesOnCache = c.getAsyncEventQueues();
-    assertTrue("Size of asyncEventQueues should be greater than 0", asyncEventQueuesOnCache.size() > 0);
+    assertTrue(
+        "Size of asyncEventQueues should be greater than 0", asyncEventQueuesOnCache.size() > 0);
 
     for (AsyncEventQueue asyncEventQueueOnCache : asyncEventQueuesOnCache) {
       CacheXml70DUnitTest.validateAsyncEventQueue(asyncEventQueue, asyncEventQueueOnCache);
@@ -238,50 +245,109 @@ public class CacheXml70DUnitTest extends CacheXml66DUnitTest {
       return true;
     }
 
-    public void close() {
-    }
+    public void close() {}
 
-    public void init(Properties properties) {
-    }
+    public void init(Properties properties) {}
   }
 
   public static class MyGatewayConflictResolver implements GatewayConflictResolver, Declarable {
 
-    public void onEvent(TimestampedEntryEvent event, GatewayConflictHelper helper) {
-    }
+    public void onEvent(TimestampedEntryEvent event, GatewayConflictHelper helper) {}
 
-    public void init(Properties p) {
-    }
+    public void init(Properties p) {}
   }
 
-  public static void validateAsyncEventQueue(AsyncEventQueue eventChannelFromXml, AsyncEventQueue channel) {
+  public static void validateAsyncEventQueue(
+      AsyncEventQueue eventChannelFromXml, AsyncEventQueue channel) {
     assertEquals("AsyncEventQueue id doesn't match", eventChannelFromXml.getId(), channel.getId());
-    assertEquals("AsyncEventQueue batchSize doesn't match", eventChannelFromXml.getBatchSize(), channel.getBatchSize());
-    assertEquals("AsyncEventQueue batchTimeInterval doesn't match", eventChannelFromXml.getBatchTimeInterval(), channel.getBatchTimeInterval());
-    assertEquals("AsyncEventQueue batchConflationEnabled doesn't match", eventChannelFromXml.isBatchConflationEnabled(), channel.isBatchConflationEnabled());
-    assertEquals("AsyncEventQueue persistent doesn't match", eventChannelFromXml.isPersistent(), channel.isPersistent());
-    assertEquals("AsyncEventQueue diskStoreName doesn't match", eventChannelFromXml.getDiskStoreName(), channel.getDiskStoreName());
-    assertEquals("AsyncEventQueue isDiskSynchronous doesn't match", eventChannelFromXml.isDiskSynchronous(), channel.isDiskSynchronous());
-    assertEquals("AsyncEventQueue maximumQueueMemory doesn't match", eventChannelFromXml.getMaximumQueueMemory(), channel.getMaximumQueueMemory());
-    assertEquals("AsyncEventQueue Parallel doesn't match", eventChannelFromXml.isParallel(), channel.isParallel());
-    assertEquals("AsyncEventQueue GatewayEventFilters doesn't match", eventChannelFromXml.getGatewayEventFilters().size(), channel.getGatewayEventFilters().size());
-    assertTrue("AsyncEventQueue should be instanceof Creation", eventChannelFromXml instanceof AsyncEventQueueCreation);
+    assertEquals(
+        "AsyncEventQueue batchSize doesn't match",
+        eventChannelFromXml.getBatchSize(),
+        channel.getBatchSize());
+    assertEquals(
+        "AsyncEventQueue batchTimeInterval doesn't match",
+        eventChannelFromXml.getBatchTimeInterval(),
+        channel.getBatchTimeInterval());
+    assertEquals(
+        "AsyncEventQueue batchConflationEnabled doesn't match",
+        eventChannelFromXml.isBatchConflationEnabled(),
+        channel.isBatchConflationEnabled());
+    assertEquals(
+        "AsyncEventQueue persistent doesn't match",
+        eventChannelFromXml.isPersistent(),
+        channel.isPersistent());
+    assertEquals(
+        "AsyncEventQueue diskStoreName doesn't match",
+        eventChannelFromXml.getDiskStoreName(),
+        channel.getDiskStoreName());
+    assertEquals(
+        "AsyncEventQueue isDiskSynchronous doesn't match",
+        eventChannelFromXml.isDiskSynchronous(),
+        channel.isDiskSynchronous());
+    assertEquals(
+        "AsyncEventQueue maximumQueueMemory doesn't match",
+        eventChannelFromXml.getMaximumQueueMemory(),
+        channel.getMaximumQueueMemory());
+    assertEquals(
+        "AsyncEventQueue Parallel doesn't match",
+        eventChannelFromXml.isParallel(),
+        channel.isParallel());
+    assertEquals(
+        "AsyncEventQueue GatewayEventFilters doesn't match",
+        eventChannelFromXml.getGatewayEventFilters().size(),
+        channel.getGatewayEventFilters().size());
+    assertTrue(
+        "AsyncEventQueue should be instanceof Creation",
+        eventChannelFromXml instanceof AsyncEventQueueCreation);
     assertTrue("AsyncEventQueue should be instanceof Impl", channel instanceof AsyncEventQueueImpl);
   }
 
-  private void validateConcurrentAsyncEventQueue(AsyncEventQueue eventChannelFromXml, AsyncEventQueue channel) {
+  private void validateConcurrentAsyncEventQueue(
+      AsyncEventQueue eventChannelFromXml, AsyncEventQueue channel) {
     assertEquals("AsyncEventQueue id doesn't match", eventChannelFromXml.getId(), channel.getId());
-    assertEquals("AsyncEventQueue batchSize doesn't match", eventChannelFromXml.getBatchSize(), channel.getBatchSize());
-    assertEquals("AsyncEventQueue batchTimeInterval doesn't match", eventChannelFromXml.getBatchTimeInterval(), channel.getBatchTimeInterval());
-    assertEquals("AsyncEventQueue batchConflationEnabled doesn't match", eventChannelFromXml.isBatchConflationEnabled(), channel.isBatchConflationEnabled());
-    assertEquals("AsyncEventQueue persistent doesn't match", eventChannelFromXml.isPersistent(), channel.isPersistent());
-    assertEquals("AsyncEventQueue diskStoreName doesn't match", eventChannelFromXml.getDiskStoreName(), channel.getDiskStoreName());
-    assertEquals("AsyncEventQueue isDiskSynchronous doesn't match", eventChannelFromXml.isDiskSynchronous(), channel.isDiskSynchronous());
-    assertEquals("AsyncEventQueue maximumQueueMemory doesn't match", eventChannelFromXml.getMaximumQueueMemory(), channel.getMaximumQueueMemory());
-    assertEquals("AsyncEventQueue Parallel doesn't match", eventChannelFromXml.isParallel(), channel.isParallel());
-    assertEquals("AsyncEventQueue dispatcherThreads doesn't match", eventChannelFromXml.getDispatcherThreads(), channel.getDispatcherThreads());
-    assertEquals("AsyncEventQueue orderPolicy doesn't match", eventChannelFromXml.getOrderPolicy(), channel.getOrderPolicy());
-    assertTrue("AsyncEventQueue should be instanceof Creation", eventChannelFromXml instanceof AsyncEventQueueCreation);
+    assertEquals(
+        "AsyncEventQueue batchSize doesn't match",
+        eventChannelFromXml.getBatchSize(),
+        channel.getBatchSize());
+    assertEquals(
+        "AsyncEventQueue batchTimeInterval doesn't match",
+        eventChannelFromXml.getBatchTimeInterval(),
+        channel.getBatchTimeInterval());
+    assertEquals(
+        "AsyncEventQueue batchConflationEnabled doesn't match",
+        eventChannelFromXml.isBatchConflationEnabled(),
+        channel.isBatchConflationEnabled());
+    assertEquals(
+        "AsyncEventQueue persistent doesn't match",
+        eventChannelFromXml.isPersistent(),
+        channel.isPersistent());
+    assertEquals(
+        "AsyncEventQueue diskStoreName doesn't match",
+        eventChannelFromXml.getDiskStoreName(),
+        channel.getDiskStoreName());
+    assertEquals(
+        "AsyncEventQueue isDiskSynchronous doesn't match",
+        eventChannelFromXml.isDiskSynchronous(),
+        channel.isDiskSynchronous());
+    assertEquals(
+        "AsyncEventQueue maximumQueueMemory doesn't match",
+        eventChannelFromXml.getMaximumQueueMemory(),
+        channel.getMaximumQueueMemory());
+    assertEquals(
+        "AsyncEventQueue Parallel doesn't match",
+        eventChannelFromXml.isParallel(),
+        channel.isParallel());
+    assertEquals(
+        "AsyncEventQueue dispatcherThreads doesn't match",
+        eventChannelFromXml.getDispatcherThreads(),
+        channel.getDispatcherThreads());
+    assertEquals(
+        "AsyncEventQueue orderPolicy doesn't match",
+        eventChannelFromXml.getOrderPolicy(),
+        channel.getOrderPolicy());
+    assertTrue(
+        "AsyncEventQueue should be instanceof Creation",
+        eventChannelFromXml instanceof AsyncEventQueueCreation);
     assertTrue("AsyncEventQueue should be instanceof Impl", channel instanceof AsyncEventQueueImpl);
   }
 
@@ -298,7 +364,8 @@ public class CacheXml70DUnitTest extends CacheXml66DUnitTest {
     assertNotNull(order);
 
     assertTrue(cust.getAttributes().getPartitionAttributes().getColocatedWith() == null);
-    assertTrue(order.getAttributes().getPartitionAttributes().getColocatedWith().equals("Customer"));
+    assertTrue(
+        order.getAttributes().getPartitionAttributes().getColocatedWith().equals("Customer"));
   }
 
   @Test

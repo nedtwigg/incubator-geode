@@ -17,13 +17,11 @@
 package org.apache.geode.cache;
 
 /**
- * Thrown when the transactional data host has shutdown or no longer has the data
- * being modified by the transaction.
- * This can be thrown while doing transactional operations or during commit.
+ * Thrown when the transactional data host has shutdown or no longer has the data being modified by
+ * the transaction. This can be thrown while doing transactional operations or during commit.
  *
- * <p>This exception only occurs when a transaction
- * is hosted on a member that is not
- * the initiator of the transaction.
+ * <p>This exception only occurs when a transaction is hosted on a member that is not the initiator
+ * of the transaction.
  *
  * @since GemFire 6.5
  */

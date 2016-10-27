@@ -26,10 +26,8 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 
 /**
- * A request from a client to locator asking for a server
- * to host a queue. If the durable client Id is specified, the locator
- * will attempt to discover a pre-existing queue.
- *
+ * A request from a client to locator asking for a server to host a queue. If the durable client Id
+ * is specified, the locator will attempt to discover a pre-existing queue.
  */
 public class QueueConnectionRequest extends ServerLocationRequest {
   private ClientProxyMembershipID proxyId;
@@ -41,7 +39,12 @@ public class QueueConnectionRequest extends ServerLocationRequest {
     super();
   }
 
-  public QueueConnectionRequest(ClientProxyMembershipID proxyId, int redundantCopies, Set excludedServers, String serverGroup, boolean findDurable) {
+  public QueueConnectionRequest(
+      ClientProxyMembershipID proxyId,
+      int redundantCopies,
+      Set excludedServers,
+      String serverGroup,
+      boolean findDurable) {
     super(serverGroup);
     this.proxyId = proxyId;
     this.excludedServers = excludedServers;
@@ -86,7 +89,17 @@ public class QueueConnectionRequest extends ServerLocationRequest {
 
   @Override
   public String toString() {
-    return "QueueConnectionRequest{group=" + getServerGroup() + ", excluded=" + getExcludedServers() + ", redundant= " + redundantCopies + ",findDurable=" + findDurable + ",proxyId=" + proxyId + "}";
+    return "QueueConnectionRequest{group="
+        + getServerGroup()
+        + ", excluded="
+        + getExcludedServers()
+        + ", redundant= "
+        + redundantCopies
+        + ",findDurable="
+        + findDurable
+        + ",proxyId="
+        + proxyId
+        + "}";
   }
 
   public int getDSFID() {

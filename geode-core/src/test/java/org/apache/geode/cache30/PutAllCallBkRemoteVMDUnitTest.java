@@ -19,7 +19,7 @@
  * PutAllCallBkRemoteVMDUnitTest.java
  *
  * Created on September 2, 2005, 2:49 PM
-*/
+ */
 package org.apache.geode.cache30;
 
 import static org.junit.Assert.*;
@@ -155,58 +155,63 @@ public class PutAllCallBkRemoteVMDUnitTest extends JUnit4DistributedTestCase {
 
     ////////////////testing create call backs//////////////
 
-    vm0.invoke(new CacheSerializableRunnable("put entries") {
-      public void run2() throws CacheException {
-        Map m = new HashMap();
-        paperRegion.put("callbackCame", "false");
-        try {
-          for (int i = 1; i < 21; i++) {
-            m.put(new Integer(i), java.lang.Integer.toString(i));
-          }
-          region.putAll(m);
+    vm0.invoke(
+        new CacheSerializableRunnable("put entries") {
+          public void run2() throws CacheException {
+            Map m = new HashMap();
+            paperRegion.put("callbackCame", "false");
+            try {
+              for (int i = 1; i < 21; i++) {
+                m.put(new Integer(i), java.lang.Integer.toString(i));
+              }
+              region.putAll(m);
 
-        } catch (Exception ex) {
-          throw new RuntimeException("exception putting entries", ex);
-        }
-        LogWriterUtils.getLogWriter().info("****************paperRegion.get(afterCreate)***************" + paperRegion.get("afterCreate"));
-
-        WaitCriterion ev = new WaitCriterion() {
-          public boolean done() {
-            int size = region.size();
-            if (size != ((Integer) paperRegion.get("afterCreate")).intValue() - 1) {
-              return false;
+            } catch (Exception ex) {
+              throw new RuntimeException("exception putting entries", ex);
             }
-            if (size != ((Integer) paperRegion.get("beforeCreate")).intValue() - 1) {
-              return false;
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "****************paperRegion.get(afterCreate)***************"
+                        + paperRegion.get("afterCreate"));
+
+            WaitCriterion ev =
+                new WaitCriterion() {
+                  public boolean done() {
+                    int size = region.size();
+                    if (size != ((Integer) paperRegion.get("afterCreate")).intValue() - 1) {
+                      return false;
+                    }
+                    if (size != ((Integer) paperRegion.get("beforeCreate")).intValue() - 1) {
+                      return false;
+                    }
+                    return true;
+                  }
+
+                  public String description() {
+                    return "Waiting for event";
+                  }
+                };
+            Wait.waitForCriterion(ev, 3000, 200, true);
+          }
+        });
+
+    vm1.invoke(
+        new CacheSerializableRunnable("validate callbacks") {
+          public void run2() throws CacheException {
+            if (!notified) {
+              try {
+                synchronized (PutAllCallBkRemoteVMDUnitTest.class) {
+                  this.wait();
+                }
+              } catch (Exception e) {
+
+              }
             }
-            return true;
-          }
-
-          public String description() {
-            return "Waiting for event";
-          }
-        };
-        Wait.waitForCriterion(ev, 3000, 200, true);
-      }
-    });
-
-    vm1.invoke(new CacheSerializableRunnable("validate callbacks") {
-      public void run2() throws CacheException {
-        if (!notified) {
-          try {
-            synchronized (PutAllCallBkRemoteVMDUnitTest.class) {
-              this.wait();
+            if (!paperRegion.get("callbackCame").equals("true")) {
+              fail("Failed in aftercreate call back :: PutAllCallBkRemoteVMDUnitTest ");
             }
-          } catch (Exception e) {
-
           }
-        }
-        if (!paperRegion.get("callbackCame").equals("true")) {
-          fail("Failed in aftercreate call back :: PutAllCallBkRemoteVMDUnitTest ");
-        }
-
-      }
-    });
+        });
 
     //to test afterUpdate
 
@@ -218,53 +223,53 @@ public class PutAllCallBkRemoteVMDUnitTest extends JUnit4DistributedTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-    vm0.invoke(new CacheSerializableRunnable("put and then update") {
-      public void run2() throws CacheException {
-        paperRegion.put("callbackCame", "false");
-        //to invoke afterUpdate we should make sure that entries are already present
-        for (int i = 0; i < 5; i++) {
-          region.put(new Integer(i), new String("region" + i));
-        }
-
-        Map m = new HashMap();
-        for (int i = 0; i < 5; i++) {
-          m.put(new Integer(i), new String("map" + i));
-        }
-
-        region.putAll(m);
-
-        //                 try{
-        //                     Thread.sleep(3000);
-        //                 }catch(InterruptedException ex){
-        //                     //
-        //                 }
-
-        assertEquals(region.size(), ((Integer) paperRegion.get("beforeUpdate")).intValue() - 1);
-        assertEquals(region.size(), ((Integer) paperRegion.get("afterUpdate")).intValue() - 1);
-      }
-    });
-
-    vm1.invoke(new CacheSerializableRunnable("validate callbacks") {
-      public void run2() throws CacheException {
-
-        if (!notified) {
-          try {
-            synchronized (PutAllCallBkRemoteVMDUnitTest.class) {
-              this.wait();
+    vm0.invoke(
+        new CacheSerializableRunnable("put and then update") {
+          public void run2() throws CacheException {
+            paperRegion.put("callbackCame", "false");
+            //to invoke afterUpdate we should make sure that entries are already present
+            for (int i = 0; i < 5; i++) {
+              region.put(new Integer(i), new String("region" + i));
             }
-          } catch (Exception e) {
 
+            Map m = new HashMap();
+            for (int i = 0; i < 5; i++) {
+              m.put(new Integer(i), new String("map" + i));
+            }
+
+            region.putAll(m);
+
+            //                 try{
+            //                     Thread.sleep(3000);
+            //                 }catch(InterruptedException ex){
+            //                     //
+            //                 }
+
+            assertEquals(region.size(), ((Integer) paperRegion.get("beforeUpdate")).intValue() - 1);
+            assertEquals(region.size(), ((Integer) paperRegion.get("afterUpdate")).intValue() - 1);
           }
-        }
+        });
 
-        if (!paperRegion.get("callbackCame").equals("true")) {
-          fail("Failed in afterUpdate call back :: PutAllCallBkRemoteVMDUnitTest");
-        }
+    vm1.invoke(
+        new CacheSerializableRunnable("validate callbacks") {
+          public void run2() throws CacheException {
 
-      }
-    });
+            if (!notified) {
+              try {
+                synchronized (PutAllCallBkRemoteVMDUnitTest.class) {
+                  this.wait();
+                }
+              } catch (Exception e) {
 
-  }//end of test case1
+              }
+            }
+
+            if (!paperRegion.get("callbackCame").equals("true")) {
+              fail("Failed in afterUpdate call back :: PutAllCallBkRemoteVMDUnitTest");
+            }
+          }
+        });
+  } //end of test case1
 
   public static Object putMethod(Object ob) {
     Object obj = null;
@@ -278,7 +283,7 @@ public class PutAllCallBkRemoteVMDUnitTest extends JUnit4DistributedTestCase {
       fail("Failed while region.put");
     }
     return obj;
-  }//end of putMethod
+  } //end of putMethod
 
   public static void putAllMethod() {
     Map m = new HashMap();
@@ -296,7 +301,7 @@ public class PutAllCallBkRemoteVMDUnitTest extends JUnit4DistributedTestCase {
       ex.printStackTrace();
       fail("Failed while region.putAll");
     }
-  }//end of putAllMethod
+  } //end of putAllMethod
 
   public static Object getMethod(Object ob) {
     Object obj = null;
@@ -330,8 +335,7 @@ public class PutAllCallBkRemoteVMDUnitTest extends JUnit4DistributedTestCase {
     public void afterCreate(EntryEvent event) {
       paperRegion.put("callbackCame", "true");
       Integer counter = (Integer) paperRegion.get("afterCreate");
-      if (counter == null)
-        counter = new Integer(1);
+      if (counter == null) counter = new Integer(1);
       paperRegion.put("afterCreate", new Integer(counter.intValue() + 1));
 
       LogWriterUtils.getLogWriter().info("In afterCreate" + putAllcounter);
@@ -347,14 +351,15 @@ public class PutAllCallBkRemoteVMDUnitTest extends JUnit4DistributedTestCase {
 
       }
       notified = true;
-      LogWriterUtils.getLogWriter().info("*******afterCreate***** Key :" + event.getKey() + " Value :" + event.getNewValue());
+      LogWriterUtils.getLogWriter()
+          .info(
+              "*******afterCreate***** Key :" + event.getKey() + " Value :" + event.getNewValue());
     }
 
     public void afterUpdate(EntryEvent event) {
       paperRegion.put("callbackCame", "true");
       Integer counter = (Integer) paperRegion.get("afterUpdate");
-      if (counter == null)
-        counter = new Integer(1);
+      if (counter == null) counter = new Integer(1);
       paperRegion.put("afterUpdate", new Integer(counter.intValue() + 1));
       LogWriterUtils.getLogWriter().info("In afterUpdate" + afterUpdateputAllcounter);
       if (afterUpdateputAllcounter == forUpdate) {
@@ -371,8 +376,9 @@ public class PutAllCallBkRemoteVMDUnitTest extends JUnit4DistributedTestCase {
 
       notified = true;
 
-      LogWriterUtils.getLogWriter().info("*******afterUpdate***** Key :" + event.getKey() + " Value :" + event.getNewValue());
-
+      LogWriterUtils.getLogWriter()
+          .info(
+              "*******afterUpdate***** Key :" + event.getKey() + " Value :" + event.getNewValue());
     }
   }
 
@@ -380,19 +386,17 @@ public class PutAllCallBkRemoteVMDUnitTest extends JUnit4DistributedTestCase {
     //    static class BeforeCreateCallback extends CapacityControllerAdapter {
     public void beforeCreate(EntryEvent event) {
       Integer counter = (Integer) paperRegion.get("beforeCreate");
-      if (counter == null)
-        counter = new Integer(1);
+      if (counter == null) counter = new Integer(1);
       paperRegion.put("beforeCreate", new Integer(counter.intValue() + 1));
       LogWriterUtils.getLogWriter().info("*******BeforeCreate***** event=" + event);
     }
 
     public void beforeUpdate(EntryEvent event) {
       Integer counter = (Integer) paperRegion.get("beforeUpdate");
-      if (counter == null)
-        counter = new Integer(1);
+      if (counter == null) counter = new Integer(1);
       paperRegion.put("beforeUpdate", new Integer(counter.intValue() + 1));
       LogWriterUtils.getLogWriter().info("In beforeUpdate" + beforeUpdateputAllcounter);
       LogWriterUtils.getLogWriter().info("*******BeforeUpdate***** event=" + event);
     }
   }
-}// end of test class
+} // end of test class

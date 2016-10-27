@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 /*
-  File: ConditionVariable.java
-  Originally written by Doug Lea and released into the public domain.
-  This may be used for any purposes whatsoever without acknowledgment.
-  Thanks for the assistance and support of Sun Microsystems Labs,
-  and everyone contributing, testing, and using this code.
-  History:
-  Date       Who                What
-  11Jun1998  dl               Create public version
- */
+ File: ConditionVariable.java
+ Originally written by Doug Lea and released into the public domain.
+ This may be used for any purposes whatsoever without acknowledgment.
+ Thanks for the assistance and support of Sun Microsystems Labs,
+ and everyone contributing, testing, and using this code.
+ History:
+ Date       Who                What
+ 11Jun1998  dl               Create public version
+*/
 
 package org.apache.geode.internal.util.concurrent;
 
@@ -37,14 +37,13 @@ import org.apache.geode.CancelCriterion;
 import org.apache.geode.internal.Assert;
 
 /**
- * This class is functionally equivalent to {@link java.util.concurrent.locks.Condition};
- * however it only implements the acquire(long) method.  Its purpose is to perform a
- * cancellation check
+ * This class is functionally equivalent to {@link java.util.concurrent.locks.Condition}; however it
+ * only implements the acquire(long) method. Its purpose is to perform a cancellation check
  */
 public class StoppableCondition implements java.io.Serializable {
   private static final long serialVersionUID = -7091681525970431937L;
 
-  /** The underlying condition **/
+  /** The underlying condition * */
   private final Condition condition;
 
   /** The cancellation object */
@@ -53,10 +52,10 @@ public class StoppableCondition implements java.io.Serializable {
   public static final long TIME_TO_WAIT = 15000;
 
   /**
-   * Create a new StoppableCondition based on given condition and
-   * cancellation criterion
+   * Create a new StoppableCondition based on given condition and cancellation criterion
+   *
    * @param c the underlying condition
-   **/
+   */
   StoppableCondition(Condition c, CancelCriterion stopper) {
     Assert.assertTrue(stopper != null);
     this.condition = c;

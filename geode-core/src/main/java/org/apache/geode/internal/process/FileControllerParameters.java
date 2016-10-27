@@ -21,9 +21,9 @@ import java.io.File;
 import org.apache.geode.internal.process.ProcessController.Arguments;
 
 /**
- * Defines {@link ProcessController} {@link Arguments} that must be implemented
- * to support the {@link FileProcessController}.
- *  
+ * Defines {@link ProcessController} {@link Arguments} that must be implemented to support the
+ * {@link FileProcessController}.
+ *
  * @since GemFire 8.0
  */
 interface FileControllerParameters extends Arguments {

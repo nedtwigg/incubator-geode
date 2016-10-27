@@ -21,10 +21,8 @@ import org.apache.geode.cache.EntryDestroyedException;
 import org.apache.geode.cache.Region;
 
 /**
- * Represents a destroyed entry that can be returned from an <code>Iterator</code>
- * instead of null.  All methods throw {@link EntryDestroyedException} except for
- * {@link #isDestroyed()}.
- * 
+ * Represents a destroyed entry that can be returned from an <code>Iterator</code> instead of null.
+ * All methods throw {@link EntryDestroyedException} except for {@link #isDestroyed()}.
  */
 public class DestroyedEntry implements Region.Entry<Object, Object> {
   private final String msg;

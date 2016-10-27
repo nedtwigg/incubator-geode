@@ -41,13 +41,28 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 /**
  * RegionJUnitTest.java
  *
- * Created on January 31, 2005, 3:54 PM
- * 
+ * <p>Created on January 31, 2005, 3:54 PM
  */
 @Category(IntegrationTest.class)
 public class RegionJUnitTest {
 
-  static String queries[] = { "status = 'active'", "status <> 'active'", "ID > 2", "ID < 1", "ID >= 2", "ID <= 1", "status = 'active' AND ID = 0", "status = 'active' AND ID = 1", "status = 'active' OR ID = 1", "isActive", "isActive()", "testMethod(true)", "NOT isActive", "P1.secId = 'SUN'", "status = 'active' AND ( ID = 1 OR P1.secId = 'SUN')", };
+  static String queries[] = {
+    "status = 'active'",
+    "status <> 'active'",
+    "ID > 2",
+    "ID < 1",
+    "ID >= 2",
+    "ID <= 1",
+    "status = 'active' AND ID = 0",
+    "status = 'active' AND ID = 1",
+    "status = 'active' OR ID = 1",
+    "isActive",
+    "isActive()",
+    "testMethod(true)",
+    "NOT isActive",
+    "P1.secId = 'SUN'",
+    "status = 'active' AND ( ID = 1 OR P1.secId = 'SUN')",
+  };
 
   Region region;
   QueryService qs;
@@ -75,19 +90,24 @@ public class RegionJUnitTest {
   @Test
   public void testParameterBinding() throws Exception {
     Query q = qs.newQuery("select distinct * from /pos where ID = $1");
-    Object[] params = new Object[] { new Integer(0) };//{"active"};
+    Object[] params = new Object[] {new Integer(0)}; //{"active"};
     Object r = q.execute(params);
     CacheUtils.getLogger().fine(Utils.printResult(r));
 
     q = qs.newQuery("select distinct * from $1 where status = $2 and ID = $3");
-    params = new Object[] { this.region, "active", new Integer(0) };
+    params = new Object[] {this.region, "active", new Integer(0)};
     r = q.execute(params);
     CacheUtils.getLogger().fine(Utils.printResult(r));
   }
 
   @Test
   public void testQRegionInterface() throws Exception {
-    String queries[] = { "select distinct * from /pos.keys where toString = '1'", "select distinct * from /pos.values where status = 'active'", "select distinct * from /pos.entries where key = '1'", "select distinct * from /pos.entries where value.status = 'active'" };
+    String queries[] = {
+      "select distinct * from /pos.keys where toString = '1'",
+      "select distinct * from /pos.values where status = 'active'",
+      "select distinct * from /pos.entries where key = '1'",
+      "select distinct * from /pos.entries where value.status = 'active'"
+    };
 
     for (int i = 0; i < queries.length; i++) {
       CacheUtils.log("Query = " + queries[i]);
@@ -138,7 +158,8 @@ public class RegionJUnitTest {
   @Test
   public void testRegionNames() {
 
-    String queryStrs[] = new String[] { "SELECT * FROM /pos", "SELECT * FROM /pos where status='active'" };
+    String queryStrs[] =
+        new String[] {"SELECT * FROM /pos", "SELECT * FROM /pos where status='active'"};
 
     CacheUtils.startCache();
     cache = CacheUtils.getCache();
@@ -181,5 +202,4 @@ public class RegionJUnitTest {
   public void tearDown() throws Exception {
     CacheUtils.closeCache();
   }
-
 }

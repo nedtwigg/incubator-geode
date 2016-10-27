@@ -22,9 +22,7 @@
 
 package org.apache.geode.internal.jta;
 
-/**
- *
- */
+/** */
 
 //import java.io.*;
 import java.util.*;
@@ -77,10 +75,9 @@ public class JTAUtils {
   }
 
   /**
-  * Calls the corresponding cache APIs to
-  * create a sub-region by name 'command'
-  * in the current region.
-  */
+   * Calls the corresponding cache APIs to create a sub-region by name 'command' in the current
+   * region.
+   */
   public void mkrgn(String command) throws Exception {
 
     try {
@@ -92,14 +89,12 @@ public class JTAUtils {
       //fail (" unable to make region..." + e.getMessage ());
       throw new Exception(" failed in mkrgn " + command);
     }
-
   }
 
   /**
-  * Checks whether a region passed in the param exists in the
-  * curr region or not. If doesnt exist then calls mkrgn() to create it.
-  * Finally makes data member currRegion point to that region.
-  */
+   * Checks whether a region passed in the param exists in the curr region or not. If doesnt exist
+   * then calls mkrgn() to create it. Finally makes data member currRegion point to that region.
+   */
   public void getRegionFromCache(String region) throws Exception {
     try {
       Region subr = this.currRegion.getSubregion(region);
@@ -117,13 +112,9 @@ public class JTAUtils {
       e.printStackTrace();
       throw new Exception(" failed in getRegionFromCache ");
     }
-
   }
 
-  /**
-  * Parses a <code>command</code> and places each of its tokens in a
-  * <code>List</code>.
-  */
+  /** Parses a <code>command</code> and places each of its tokens in a <code>List</code>. */
   public boolean parseCommand(String command, List list) {
     //    String strTemp = command;
     boolean done = false;
@@ -145,12 +136,11 @@ public class JTAUtils {
   }
 
   /**
-   * Gets the value of the key entry into the current region.
-   * Returns the value and prints the pair with help of printEntry() to stdout
-   * @see Region#put
-   * Modified to return string value
+   * Gets the value of the key entry into the current region. Returns the value and prints the pair
+   * with help of printEntry() to stdout
+   *
+   * @see Region#put Modified to return string value
    */
-
   public String get(String command) throws CacheException {
     String value = null;
 
@@ -167,10 +157,10 @@ public class JTAUtils {
   }
 
   /**
-  * Puts an entry into the current region
-  *
-  * @see Region#put
-  */
+   * Puts an entry into the current region
+   *
+   * @see Region#put
+   */
   public void put(String command, String val) throws Exception {
     try {
       LinkedList list = new LinkedList();
@@ -200,14 +190,12 @@ public class JTAUtils {
       //fail (" unable to put..." + e.getMessage ());
       throw new Exception("unable to put: " + e);
     }
-
   }
 
   /**
-  * Prints the key/value pair for an entry to stdout
-  * This method recognizes a subset of all possible object types.
-  * Modified to return the value string
-  */
+   * Prints the key/value pair for an entry to stdout This method recognizes a subset of all
+   * possible object types. Modified to return the value string
+   */
   public String printEntry(String key, Object valueBytes) {
     String value = null;
 
@@ -228,11 +216,9 @@ public class JTAUtils {
   }
 
   /**
-  * Returns a constant width space to stdout
-  * This method is used to print test pass/fail msg
-  * after a constant width from the test execution stage
-  */
-
+   * Returns a constant width space to stdout This method is used to print test pass/fail msg after
+   * a constant width from the test execution stage
+   */
   public static String repeatChar(char character, int repeatCount) {
 
     StringBuffer stringBuffer = new StringBuffer(repeatCount);
@@ -243,10 +229,9 @@ public class JTAUtils {
   }
 
   /**
-  * This method is used to parse the string with
-  * delimeter ':'returned by get().
-  * The delimeter is appended by printEntry().
-  */
+   * This method is used to parse the string with delimeter ':'returned by get(). The delimeter is
+   * appended by printEntry().
+   */
   public String parseGetValue(String str) {
 
     String returnVal = null;
@@ -263,9 +248,9 @@ public class JTAUtils {
   }
 
   /**
-  * This method is used to delete all rows from the timestamped
-  * table created by createTable() in CacheUtils class.
-  */
+   * This method is used to delete all rows from the timestamped table created by createTable() in
+   * CacheUtils class.
+   */
   public int deleteRows(String tableName) throws NamingException, SQLException {
 
     Context ctx = cache.getJNDIContext();
@@ -292,8 +277,8 @@ public class JTAUtils {
   }
 
   /**
-   * This method is used to return number rows from the timestamped
-   * table created by createTable() in CacheUtils class.
+   * This method is used to return number rows from the timestamped table created by createTable()
+   * in CacheUtils class.
    */
   public int getRows(String tableName) throws NamingException, SQLException {
 
@@ -317,11 +302,11 @@ public class JTAUtils {
   }
 
   /**
-   * This method is used to search for pattern which is the PK
-   * in the timestamped table
-   * created by createTable() in CacheUtils class.
+   * This method is used to search for pattern which is the PK in the timestamped table created by
+   * createTable() in CacheUtils class.
    */
-  public boolean checkTableAgainstData(String tableName, String pattern) throws NamingException, SQLException {
+  public boolean checkTableAgainstData(String tableName, String pattern)
+      throws NamingException, SQLException {
     Context ctx = cache.getJNDIContext();
     DataSource ds = (DataSource) ctx.lookup("java:/SimpleDataSource");
     boolean found = false;
@@ -339,12 +324,10 @@ public class JTAUtils {
       if (id_str.equals(pattern)) {
         found = true;
         break;
-      } else
-        continue;
+      } else continue;
     }
     rs.close();
     conn.close();
     return found;
   }
-
 } // end of class

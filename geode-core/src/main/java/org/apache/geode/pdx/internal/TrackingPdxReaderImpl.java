@@ -26,18 +26,16 @@ import org.apache.geode.pdx.internal.AutoSerializableManager.AutoClassInfo;
 import org.apache.geode.pdx.internal.AutoSerializableManager.PdxFieldWrapper;
 
 /**
- * Used to track what fields are actually read by the user's code.
- * We want to know what fields are not read so that we can preserve them.
- * 
+ * Used to track what fields are actually read by the user's code. We want to know what fields are
+ * not read so that we can preserve them.
+ *
  * @since GemFire 6.6
  */
 public class TrackingPdxReaderImpl implements InternalPdxReader {
 
-  /**
-   * The PdxReaderImpl that we wrap. Every method needs to be
-   * forwarded to this method.
-   */
+  /** The PdxReaderImpl that we wrap. Every method needs to be forwarded to this method. */
   private final PdxReaderImpl pdxReader;
+
   private final TypeRegistry tr;
   private final Class<?> pdxClass;
   private final ArrayList<String> readFields = new ArrayList<String>();
@@ -173,6 +171,7 @@ public class TrackingPdxReaderImpl implements InternalPdxReader {
 
   /**
    * Returns the indexes of the fields not read during deserialization.
+   *
    * @return the indexes of the unread fields
    */
   private int[] generateUnreadDataFieldIndexes() {
@@ -196,7 +195,8 @@ public class TrackingPdxReaderImpl implements InternalPdxReader {
   PdxUnreadData internalReadUnreadFields(PdxUnreadData ud) {
     int[] unreadIndexes = generateUnreadDataFieldIndexes();
     if (unreadIndexes.length > 0) {
-      UnreadPdxType unreadLocalPdxType = new UnreadPdxType(this.pdxReader.getPdxType(), unreadIndexes);
+      UnreadPdxType unreadLocalPdxType =
+          new UnreadPdxType(this.pdxReader.getPdxType(), unreadIndexes);
       this.tr.defineUnreadType(this.pdxClass, unreadLocalPdxType);
       ud.initialize(unreadLocalPdxType, this.pdxReader);
       return ud;

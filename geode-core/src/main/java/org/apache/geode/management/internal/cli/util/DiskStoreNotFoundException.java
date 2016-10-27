@@ -20,9 +20,9 @@ package org.apache.geode.management.internal.cli.util;
 import org.apache.geode.GemFireException;
 
 /**
- * The DiskStoreNotFoundException is a GemFireException class indicating that a disk store by name could not be found
- * on a member specified by name!
- * </p>
+ * The DiskStoreNotFoundException is a GemFireException class indicating that a disk store by name
+ * could not be found on a member specified by name!
+ *
  * @see org.apache.geode.GemFireException
  * @since GemFire 7.0
  */
@@ -30,8 +30,7 @@ import org.apache.geode.GemFireException;
 @SuppressWarnings("unused")
 public class DiskStoreNotFoundException extends GemFireException {
 
-  public DiskStoreNotFoundException() {
-  }
+  public DiskStoreNotFoundException() {}
 
   public DiskStoreNotFoundException(final String message) {
     super(message);
@@ -44,5 +43,4 @@ public class DiskStoreNotFoundException extends GemFireException {
   public DiskStoreNotFoundException(final String message, final Throwable cause) {
     super(message, cause);
   }
-
 }

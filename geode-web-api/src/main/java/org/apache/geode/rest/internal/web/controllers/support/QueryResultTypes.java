@@ -18,11 +18,15 @@
 package org.apache.geode.rest.internal.web.controllers.support;
 
 /**
- * The QueryResultTypes type describes possible query result types 
- * <p/>
+ * The QueryResultTypes type describes possible query result types
+ *
+ * <p>
+ *
  * @since GemFire 8.0
  */
-
 public enum QueryResultTypes {
-  OBJECT_COLLECTION, PDX_COLLECTION, STRUCT_COLLECTION, NESTED_COLLECTION
+  OBJECT_COLLECTION,
+  PDX_COLLECTION,
+  STRUCT_COLLECTION,
+  NESTED_COLLECTION
 }

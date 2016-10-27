@@ -32,7 +32,8 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.internal.Version;
 
-public class FindCoordinatorResponse extends HighPriorityDistributionMessage implements DataSerializableFixedID {
+public class FindCoordinatorResponse extends HighPriorityDistributionMessage
+    implements DataSerializableFixedID {
 
   private InternalDistributedMember coordinator;
   private InternalDistributedMember senderId;
@@ -47,7 +48,15 @@ public class FindCoordinatorResponse extends HighPriorityDistributionMessage imp
 
   private int requestId;
 
-  public FindCoordinatorResponse(InternalDistributedMember coordinator, InternalDistributedMember senderId, boolean fromView, NetView view, HashSet<InternalDistributedMember> registrants, boolean networkPartitionDectionEnabled, boolean usePreferredCoordinators, byte[] pk) {
+  public FindCoordinatorResponse(
+      InternalDistributedMember coordinator,
+      InternalDistributedMember senderId,
+      boolean fromView,
+      NetView view,
+      HashSet<InternalDistributedMember> registrants,
+      boolean networkPartitionDectionEnabled,
+      boolean usePreferredCoordinators,
+      byte[] pk) {
     this.coordinator = coordinator;
     this.senderId = senderId;
     this.fromView = fromView;
@@ -59,7 +68,11 @@ public class FindCoordinatorResponse extends HighPriorityDistributionMessage imp
     this.coordinatorPublicKey = pk;
   }
 
-  public FindCoordinatorResponse(InternalDistributedMember coordinator, InternalDistributedMember senderId, byte[] pk, int requestId) {
+  public FindCoordinatorResponse(
+      InternalDistributedMember coordinator,
+      InternalDistributedMember senderId,
+      byte[] pk,
+      int requestId) {
     this.coordinator = coordinator;
     this.senderId = senderId;
     this.isShortForm = true;
@@ -100,9 +113,8 @@ public class FindCoordinatorResponse extends HighPriorityDistributionMessage imp
   }
 
   /**
-   * When the response comes from a locator via TcpClient this
-   * will return the locators member ID.  If the locator hasn't
-   * yet joined this may be null.
+   * When the response comes from a locator via TcpClient this will return the locators member ID.
+   * If the locator hasn't yet joined this may be null.
    */
   public InternalDistributedMember getSenderId() {
     return senderId;
@@ -125,7 +137,21 @@ public class FindCoordinatorResponse extends HighPriorityDistributionMessage imp
     if (this.isShortForm) {
       return "FindCoordinatorResponse(coordinator=" + coordinator + ")";
     } else {
-      return "FindCoordinatorResponse(coordinator=" + coordinator + ", fromView=" + fromView + ", viewId=" + (view == null ? "nul" : view.getViewId()) + ", registrants=" + (registrants == null ? 0 : registrants.size()) + ", senderId=" + senderId + ", network partition detection enabled=" + this.networkPartitionDetectionEnabled + ", locators preferred as coordinators=" + this.usePreferredCoordinators + ")";
+      return "FindCoordinatorResponse(coordinator="
+          + coordinator
+          + ", fromView="
+          + fromView
+          + ", viewId="
+          + (view == null ? "nul" : view.getViewId())
+          + ", registrants="
+          + (registrants == null ? 0 : registrants.size())
+          + ", senderId="
+          + senderId
+          + ", network partition detection enabled="
+          + this.networkPartitionDetectionEnabled
+          + ", locators preferred as coordinators="
+          + this.usePreferredCoordinators
+          + ")";
     }
   }
 
@@ -176,47 +202,30 @@ public class FindCoordinatorResponse extends HighPriorityDistributionMessage imp
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     FindCoordinatorResponse other = (FindCoordinatorResponse) obj;
     if (coordinator == null) {
-      if (other.coordinator != null)
-        return false;
-    } else if (!coordinator.equals(other.coordinator))
-      return false;
-    if (!Arrays.equals(coordinatorPublicKey, other.coordinatorPublicKey))
-      return false;
-    if (fromView != other.fromView)
-      return false;
-    if (isShortForm != other.isShortForm)
-      return false;
-    if (networkPartitionDetectionEnabled != other.networkPartitionDetectionEnabled)
-      return false;
+      if (other.coordinator != null) return false;
+    } else if (!coordinator.equals(other.coordinator)) return false;
+    if (!Arrays.equals(coordinatorPublicKey, other.coordinatorPublicKey)) return false;
+    if (fromView != other.fromView) return false;
+    if (isShortForm != other.isShortForm) return false;
+    if (networkPartitionDetectionEnabled != other.networkPartitionDetectionEnabled) return false;
     if (registrants == null) {
-      if (other.registrants != null)
-        return false;
-    } else if (!registrants.equals(other.registrants))
-      return false;
+      if (other.registrants != null) return false;
+    } else if (!registrants.equals(other.registrants)) return false;
     //as we are not sending requestId as part of FinDCoordinator resposne
     /*if (requestId != other.requestId)
-      return false;*/
+    return false;*/
     if (senderId == null) {
-      if (other.senderId != null)
-        return false;
-    } else if (!senderId.equals(other.senderId))
-      return false;
-    if (usePreferredCoordinators != other.usePreferredCoordinators)
-      return false;
+      if (other.senderId != null) return false;
+    } else if (!senderId.equals(other.senderId)) return false;
+    if (usePreferredCoordinators != other.usePreferredCoordinators) return false;
     if (view == null) {
-      if (other.view != null)
-        return false;
-    } else if (!view.equals(other.view))
-      return false;
+      if (other.view != null) return false;
+    } else if (!view.equals(other.view)) return false;
     return true;
   }
-
 }

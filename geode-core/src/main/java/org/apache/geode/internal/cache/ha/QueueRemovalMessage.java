@@ -41,11 +41,9 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * This message is sent to all the nodes in the DistributedSystem. It contains
- * the list of messages that have been dispatched by this node. The messages are
- * received by other nodes and the processing is handed over to an executor
- * 
- *  
+ * This message is sent to all the nodes in the DistributedSystem. It contains the list of messages
+ * that have been dispatched by this node. The messages are received by other nodes and the
+ * processing is handed over to an executor
  */
 public final class QueueRemovalMessage extends PooledDistributionMessage {
   private static final Logger logger = LogService.getLogger();
@@ -55,9 +53,7 @@ public final class QueueRemovalMessage extends PooledDistributionMessage {
   //   */
   //  private static final Executor executor;
 
-  /**
-   * List of messages (String[] )
-   */
+  /** List of messages (String[] ) */
   private List messagesList;
 
   //  /**
@@ -68,17 +64,14 @@ public final class QueueRemovalMessage extends PooledDistributionMessage {
   //    executor = Executors.newCachedThreadPool();
   //  }
 
-  /**
-   * Constructor : Set the recipient list to ALL_RECIPIENTS
-   *  
-   */
+  /** Constructor : Set the recipient list to ALL_RECIPIENTS */
   public QueueRemovalMessage() {
     this.setRecipient(ALL_RECIPIENTS);
   }
 
   /**
    * Set the message list
-   * 
+   *
    * @param messages
    */
   public void setMessagesList(List messages) {
@@ -86,9 +79,9 @@ public final class QueueRemovalMessage extends PooledDistributionMessage {
   }
 
   /**
-   * Extracts the region from the message list and hands over the message
-   * removal task to the executor
-   * 
+   * Extracts the region from the message list and hands over the message removal task to the
+   * executor
+   *
    * @param dm
    */
   @Override
@@ -131,15 +124,27 @@ public final class QueueRemovalMessage extends PooledDistributionMessage {
               //  {
               try {
                 if (logger.isTraceEnabled()) {
-                  logger.trace("QueueRemovalMessage: removing dispatched events on queue {} for {}", regionName, id);
+                  logger.trace(
+                      "QueueRemovalMessage: removing dispatched events on queue {} for {}",
+                      regionName,
+                      id);
                 }
                 hrq.removeDispatchedEvents(id);
               } catch (RegionDestroyedException rde) {
-                logger.info(LocalizedMessage.create(LocalizedStrings.QueueRemovalMessage_QUEUE_FOUND_DESTROYED_WHILE_PROCESSING_THE_LAST_DISPTACHED_SEQUENCE_ID_FOR_A_HAREGIONQUEUES_DACE_THE_EVENT_ID_IS_0_FOR_HAREGION_WITH_NAME_1, new Object[] { id, regionName }));
+                logger.info(
+                    LocalizedMessage.create(
+                        LocalizedStrings
+                            .QueueRemovalMessage_QUEUE_FOUND_DESTROYED_WHILE_PROCESSING_THE_LAST_DISPTACHED_SEQUENCE_ID_FOR_A_HAREGIONQUEUES_DACE_THE_EVENT_ID_IS_0_FOR_HAREGION_WITH_NAME_1,
+                        new Object[] {id, regionName}));
               } catch (CancelException e) {
-                return; // cache or DS is closing  
+                return; // cache or DS is closing
               } catch (CacheException e) {
-                logger.error(LocalizedMessage.create(LocalizedStrings.QueueRemovalMessage_QUEUEREMOVALMESSAGEPROCESSEXCEPTION_IN_PROCESSING_THE_LAST_DISPTACHED_SEQUENCE_ID_FOR_A_HAREGIONQUEUES_DACE_THE_PROBLEM_IS_WITH_EVENT_ID__0_FOR_HAREGION_WITH_NAME_1, new Object[] { regionName, id }), e);
+                logger.error(
+                    LocalizedMessage.create(
+                        LocalizedStrings
+                            .QueueRemovalMessage_QUEUEREMOVALMESSAGEPROCESSEXCEPTION_IN_PROCESSING_THE_LAST_DISPTACHED_SEQUENCE_ID_FOR_A_HAREGIONQUEUES_DACE_THE_PROBLEM_IS_WITH_EVENT_ID__0_FOR_HAREGION_WITH_NAME_1,
+                        new Object[] {regionName, id}),
+                    e);
               } catch (InterruptedException ie) {
                 return; // interrupt occurs during shutdown.  this runs in an executor, so just stop processing
               }
@@ -161,9 +166,8 @@ public final class QueueRemovalMessage extends PooledDistributionMessage {
   @Override
   public void toData(DataOutput out) throws IOException {
     /**
-     * first write the total list size then in a loop write the region name,
-     * number of eventIds and the event ids
-     *  
+     * first write the total list size then in a loop write the region name, number of eventIds and
+     * the event ids
      */
     super.toData(out);
     //write the size of the data list
@@ -196,9 +200,8 @@ public final class QueueRemovalMessage extends PooledDistributionMessage {
   @Override
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     /**
-     * read the total list size, reconstruct the message list in a loop by reading
-     * the region name, number of eventIds and the event ids
-     *  
+     * read the total list size, reconstruct the message list in a loop by reading the region name,
+     * number of eventIds and the event ids
      */
     super.fromData(in);
     //read the size of the message
@@ -218,7 +221,7 @@ public final class QueueRemovalMessage extends PooledDistributionMessage {
       }
       // increment i by adding the total number of ids read and 1 for
       // the length of the message
-      // 
+      //
       i = i + eventIdSizeInt + 1;
     }
   }

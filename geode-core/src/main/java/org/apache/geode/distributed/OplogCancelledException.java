@@ -20,10 +20,9 @@ import org.apache.geode.CancelException;
 
 /**
  * Thrown when a GemFire operation log has been terminated.
- * 
+ *
  * @since GemFire 6.0
  */
-
 public class OplogCancelledException extends CancelException {
 
   private static final long serialVersionUID = 106566926222526806L;
@@ -43,5 +42,4 @@ public class OplogCancelledException extends CancelException {
   public OplogCancelledException(String s) {
     super(s);
   }
-
 }

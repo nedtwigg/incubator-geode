@@ -56,38 +56,27 @@ public class InvalidateTest {
   private static final byte[] EVENT = new byte[8];
   private static final Object CALLBACK_ARG = "arg";
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private AuthorizeRequest authzRequest;
-  @Mock
-  private Cache cache;
-  @Mock
-  private Message errorResponseMessage;
-  @Mock
-  private Part regionNamePart;
-  @Mock
-  private Part keyPart;
-  @Mock
-  private Part eventPart;
-  @Mock
-  private Part callbackArgPart;
-  @Mock
-  private Message responseMessage;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private ServerConnection serverConnection;
+  @Mock private AuthorizeRequest authzRequest;
+  @Mock private Cache cache;
+  @Mock private Message errorResponseMessage;
+  @Mock private Part regionNamePart;
+  @Mock private Part keyPart;
+  @Mock private Part eventPart;
+  @Mock private Part callbackArgPart;
+  @Mock private Message responseMessage;
 
-  @InjectMocks
-  private Invalidate invalidate;
+  @InjectMocks private Invalidate invalidate;
 
   @Before
   public void setUp() throws Exception {
     this.invalidate = new Invalidate();
     MockitoAnnotations.initMocks(this);
 
-    when(this.authzRequest.invalidateAuthorize(any(), any(), any())).thenReturn(mock(InvalidateOperationContext.class));
+    when(this.authzRequest.invalidateAuthorize(any(), any(), any()))
+        .thenReturn(mock(InvalidateOperationContext.class));
 
     when(this.cache.getRegion(isA(String.class))).thenReturn(mock(LocalRegion.class));
     when(this.cache.getCancelCriterion()).thenReturn(mock(CancelCriterion.class));
@@ -139,7 +128,9 @@ public class InvalidateTest {
   public void integratedSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(true);
-    doThrow(new NotAuthorizedException("")).when(this.securityService).authorizeRegionWrite(eq(REGION_NAME), eq(KEY_STRING));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.securityService)
+        .authorizeRegionWrite(eq(REGION_NAME), eq(KEY_STRING));
 
     this.invalidate.cmdExecute(this.message, this.serverConnection, 0);
 
@@ -154,7 +145,8 @@ public class InvalidateTest {
 
     this.invalidate.cmdExecute(this.message, this.serverConnection, 0);
 
-    verify(this.authzRequest).invalidateAuthorize(eq(REGION_NAME), eq(KEY_STRING), eq(CALLBACK_ARG));
+    verify(this.authzRequest)
+        .invalidateAuthorize(eq(REGION_NAME), eq(KEY_STRING), eq(CALLBACK_ARG));
     verify(this.responseMessage).send(this.serverConnection);
   }
 
@@ -162,16 +154,19 @@ public class InvalidateTest {
   public void oldSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
-    doThrow(new NotAuthorizedException("")).when(this.authzRequest).invalidateAuthorize(eq(REGION_NAME), eq(KEY_STRING), eq(CALLBACK_ARG));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.authzRequest)
+        .invalidateAuthorize(eq(REGION_NAME), eq(KEY_STRING), eq(CALLBACK_ARG));
 
     this.invalidate.cmdExecute(this.message, this.serverConnection, 0);
 
-    verify(this.authzRequest).invalidateAuthorize(eq(REGION_NAME), eq(KEY_STRING), eq(CALLBACK_ARG));
+    verify(this.authzRequest)
+        .invalidateAuthorize(eq(REGION_NAME), eq(KEY_STRING), eq(CALLBACK_ARG));
 
-    ArgumentCaptor<NotAuthorizedException> argument = ArgumentCaptor.forClass(NotAuthorizedException.class);
+    ArgumentCaptor<NotAuthorizedException> argument =
+        ArgumentCaptor.forClass(NotAuthorizedException.class);
     verify(this.errorResponseMessage).addObjPart(argument.capture());
     assertThat(argument.getValue()).isExactlyInstanceOf(NotAuthorizedException.class);
     verify(this.errorResponseMessage).send(this.serverConnection);
   }
-
 }

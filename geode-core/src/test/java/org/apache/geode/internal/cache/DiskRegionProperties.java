@@ -28,11 +28,9 @@ import java.io.File;
 import java.util.Arrays;
 
 /**
- * A properties object used to create persistent/overflow regions for
- * testing objects
- *  
- * @since GemFire 5.1
+ * A properties object used to create persistent/overflow regions for testing objects
  *
+ * @since GemFire 5.1
  */
 public class DiskRegionProperties {
 
@@ -54,8 +52,7 @@ public class DiskRegionProperties {
   private float loadFactor = 0.75f;
   private boolean statisticsEnabled = false;
 
-  public DiskRegionProperties() {
-  }
+  public DiskRegionProperties() {}
 
   public long getBytesThreshold() {
     return bytesThreshold;

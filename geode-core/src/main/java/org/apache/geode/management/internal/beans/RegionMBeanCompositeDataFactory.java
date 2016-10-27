@@ -34,11 +34,7 @@ import org.apache.geode.management.PartitionAttributesData;
 import org.apache.geode.management.RegionAttributesData;
 import org.apache.geode.management.internal.ManagementConstants;
 
-/**
- * Utility class to create CompositeDataTypes for RegionMXBean
- * 
- *
- */
+/** Utility class to create CompositeDataTypes for RegionMXBean */
 public class RegionMBeanCompositeDataFactory {
 
   public static EvictionAttributesData getEvictionAttributesData(RegionAttributes regAttrs) {
@@ -49,18 +45,19 @@ public class RegionMBeanCompositeDataFactory {
       algorithm = regAttrs.getEvictionAttributes().getAlgorithm().toString();
 
       if (algorithm.equals(EvictionAlgorithm.NONE.toString())) {
-        EvictionAttributesData evictionAttributesData = new EvictionAttributesData(algorithm, null, EvictionAlgorithm.NONE.toString());
+        EvictionAttributesData evictionAttributesData =
+            new EvictionAttributesData(algorithm, null, EvictionAlgorithm.NONE.toString());
         return evictionAttributesData;
       }
 
       if (!regAttrs.getEvictionAttributes().getAlgorithm().isLRUHeap()) {
         maximum = regAttrs.getEvictionAttributes().getMaximum();
       }
-
     }
 
     String action = regAttrs.getEvictionAttributes().getAction().toString();
-    EvictionAttributesData evictionAttributesData = new EvictionAttributesData(algorithm, maximum, action);
+    EvictionAttributesData evictionAttributesData =
+        new EvictionAttributesData(algorithm, maximum, action);
     return evictionAttributesData;
   }
 
@@ -75,10 +72,10 @@ public class RegionMBeanCompositeDataFactory {
 
     String resumptionAction = memAttrs.getResumptionAction().toString();
 
-    MembershipAttributesData membershipAttributesData = new MembershipAttributesData(requiredRoles, lossAction, resumptionAction);
+    MembershipAttributesData membershipAttributesData =
+        new MembershipAttributesData(requiredRoles, lossAction, resumptionAction);
 
     return membershipAttributesData;
-
   }
 
   public static PartitionAttributesData getPartitionAttributesData(PartitionAttributes partAttrs) {
@@ -100,23 +97,38 @@ public class RegionMBeanCompositeDataFactory {
     if (partAttrs.getPartitionListeners() != null) {
       partitionListeners = new String[partAttrs.getPartitionListeners().length];
       for (int i = 0; i < partAttrs.getPartitionListeners().length; i++) {
-        partitionListeners[i] = (partAttrs.getPartitionListeners())[i].getClass().getCanonicalName();
+        partitionListeners[i] =
+            (partAttrs.getPartitionListeners())[i].getClass().getCanonicalName();
       }
     }
 
-    PartitionAttributesData partitionAttributesData = new PartitionAttributesData(redundantCopies, totalMaxMemory, totalNumBuckets, localMaxMemory, colocatedWith, partitionResolver, recoveryDelay, startupRecoveryDelay, partitionListeners);
+    PartitionAttributesData partitionAttributesData =
+        new PartitionAttributesData(
+            redundantCopies,
+            totalMaxMemory,
+            totalNumBuckets,
+            localMaxMemory,
+            colocatedWith,
+            partitionResolver,
+            recoveryDelay,
+            startupRecoveryDelay,
+            partitionListeners);
 
     return partitionAttributesData;
   }
 
-  public static FixedPartitionAttributesData[] getFixedPartitionAttributesData(PartitionAttributes partAttrs) {
+  public static FixedPartitionAttributesData[] getFixedPartitionAttributesData(
+      PartitionAttributes partAttrs) {
 
-    FixedPartitionAttributesData[] fixedPartitionAttributesTable = new FixedPartitionAttributesData[partAttrs.getFixedPartitionAttributes().size()];
+    FixedPartitionAttributesData[] fixedPartitionAttributesTable =
+        new FixedPartitionAttributesData[partAttrs.getFixedPartitionAttributes().size()];
     Iterator<FixedPartitionAttributes> it = partAttrs.getFixedPartitionAttributes().iterator();
     int j = 0;
     while (it.hasNext()) {
       FixedPartitionAttributes fa = it.next();
-      FixedPartitionAttributesData data = new FixedPartitionAttributesData(fa.getPartitionName(), fa.isPrimary(), fa.getNumBuckets());
+      FixedPartitionAttributesData data =
+          new FixedPartitionAttributesData(
+              fa.getPartitionName(), fa.isPrimary(), fa.getNumBuckets());
       fixedPartitionAttributesTable[j] = data;
       j++;
     }
@@ -205,9 +217,39 @@ public class RegionMBeanCompositeDataFactory {
     boolean diskSynchronus = regAttrs.isDiskSynchronous();
     boolean offheap = regAttrs.getOffHeap();
 
-    RegionAttributesData regionAttributesData = new RegionAttributesData(cacheLoaderClassName, cacheWriteClassName, keyConstraintClassName, valueContstraintClassName, regionTimeToLive, regionIdleTimeout, entryTimeToLive, entryIdleTimeout, customEntryTimeToLive, customEntryIdleTimeout, ignoreJTA, dataPolicy, scope, initialCapacity, loadFactor, lockGrantor, multicastEnabled, concurrencyLevel, indexMaintenanceSynchronous, statisticsEnabled, subsciptionConflationEnabled, asyncConflationEnabled, poolName, isCloningEnabled, diskStoreName, interestPolicy, diskSynchronus, cacheListeners, compressorClassName, offheap);
+    RegionAttributesData regionAttributesData =
+        new RegionAttributesData(
+            cacheLoaderClassName,
+            cacheWriteClassName,
+            keyConstraintClassName,
+            valueContstraintClassName,
+            regionTimeToLive,
+            regionIdleTimeout,
+            entryTimeToLive,
+            entryIdleTimeout,
+            customEntryTimeToLive,
+            customEntryIdleTimeout,
+            ignoreJTA,
+            dataPolicy,
+            scope,
+            initialCapacity,
+            loadFactor,
+            lockGrantor,
+            multicastEnabled,
+            concurrencyLevel,
+            indexMaintenanceSynchronous,
+            statisticsEnabled,
+            subsciptionConflationEnabled,
+            asyncConflationEnabled,
+            poolName,
+            isCloningEnabled,
+            diskStoreName,
+            interestPolicy,
+            diskSynchronus,
+            cacheListeners,
+            compressorClassName,
+            offheap);
 
     return regionAttributesData;
   }
-
 }

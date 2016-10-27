@@ -16,8 +16,5 @@
  */
 package org.apache.geode.test.junit.categories;
 
-/**
- * JUnit Test Category that specifies a test involving security.
- */
-public interface SecurityTest {
-}
+/** JUnit Test Category that specifies a test involving security. */
+public interface SecurityTest {}

@@ -26,12 +26,12 @@ import javax.management.ObjectName;
 import javax.management.modelmbean.ModelMBean;
 
 /**
- * MBean representation of a {@link
- * org.apache.geode.admin.SystemMemberBridgeServer}. 
+ * MBean representation of a {@link org.apache.geode.admin.SystemMemberBridgeServer}.
  *
  * @since GemFire 4.0
  */
-public class SystemMemberBridgeServerJmxImpl extends SystemMemberBridgeServerImpl implements ManagedResource {
+public class SystemMemberBridgeServerJmxImpl extends SystemMemberBridgeServerImpl
+    implements ManagedResource {
 
   /** The object name of this managed resource */
   private ObjectName objectName;
@@ -45,10 +45,11 @@ public class SystemMemberBridgeServerJmxImpl extends SystemMemberBridgeServerImp
   //////////////////////  Constructors  //////////////////////
 
   /**
-   * Creates a new <code>SystemMemberBridgeServerJmxImpl</code> that
-   * serves the contents of the given cache.
+   * Creates a new <code>SystemMemberBridgeServerJmxImpl</code> that serves the contents of the
+   * given cache.
    */
-  SystemMemberBridgeServerJmxImpl(SystemMemberCacheImpl cache, AdminBridgeServer bridgeInfo) throws AdminException {
+  SystemMemberBridgeServerJmxImpl(SystemMemberCacheImpl cache, AdminBridgeServer bridgeInfo)
+      throws AdminException {
 
     super(cache, bridgeInfo);
     initializeMBean(cache);
@@ -56,13 +57,20 @@ public class SystemMemberBridgeServerJmxImpl extends SystemMemberBridgeServerImp
 
   //////////////////////  Instance Methods  //////////////////////
 
-  /** 
-   * Creates and registers the MBean to manage this resource
-   */
+  /** Creates and registers the MBean to manage this resource */
   private void initializeMBean(SystemMemberCacheImpl cache) throws AdminException {
 
     GemFireVM vm = cache.getVM();
-    this.mbeanName = new StringBuffer("GemFire.Cache:").append("name=").append(MBeanUtil.makeCompliantMBeanNameProperty(cache.getName())).append(",id=").append(this.getBridgeId()).append(",owner=").append(MBeanUtil.makeCompliantMBeanNameProperty(vm.getId().toString())).append(",type=CacheServer").toString();
+    this.mbeanName =
+        new StringBuffer("GemFire.Cache:")
+            .append("name=")
+            .append(MBeanUtil.makeCompliantMBeanNameProperty(cache.getName()))
+            .append(",id=")
+            .append(this.getBridgeId())
+            .append(",owner=")
+            .append(MBeanUtil.makeCompliantMBeanNameProperty(vm.getId().toString()))
+            .append(",type=CacheServer")
+            .toString();
 
     this.objectName = MBeanUtil.createMBean(this);
   }
@@ -87,18 +95,15 @@ public class SystemMemberBridgeServerJmxImpl extends SystemMemberBridgeServerImp
     return ManagedResourceType.SYSTEM_MEMBER_CACHE_SERVER;
   }
 
-  public void cleanupResource() {
-  }
+  public void cleanupResource() {}
 
   /**
-   * Checks equality of the given object with <code>this</code> based on the
-   * type (Class) and the MBean Name returned by <code>getMBeanName()</code>
-   * methods.
-   * 
-   * @param obj
-   *          object to check equality with
-   * @return true if the given object is if the same type and its MBean Name is
-   *         same as <code>this</code> object's MBean Name, false otherwise
+   * Checks equality of the given object with <code>this</code> based on the type (Class) and the
+   * MBean Name returned by <code>getMBeanName()</code> methods.
+   *
+   * @param obj object to check equality with
+   * @return true if the given object is if the same type and its MBean Name is same as <code>this
+   *     </code> object's MBean Name, false otherwise
    */
   @Override
   public boolean equals(Object obj) {
@@ -112,9 +117,8 @@ public class SystemMemberBridgeServerJmxImpl extends SystemMemberBridgeServerImp
   }
 
   /**
-   * Returns hash code for <code>this</code> object which is based on the MBean 
-   * Name generated. 
-   * 
+   * Returns hash code for <code>this</code> object which is based on the MBean Name generated.
+   *
    * @return hash code for <code>this</code> object
    */
   @Override

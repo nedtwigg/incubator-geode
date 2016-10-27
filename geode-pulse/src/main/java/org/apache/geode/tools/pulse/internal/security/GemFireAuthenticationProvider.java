@@ -31,16 +31,17 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
- * Spring security AuthenticationProvider for GemFire. It connects to gemfire manager using given credentials.
- * Successful connect is treated as successful authentication and web user is authenticated
+ * Spring security AuthenticationProvider for GemFire. It connects to gemfire manager using given
+ * credentials. Successful connect is treated as successful authentication and web user is
+ * authenticated
+ *
  * @since GemFire version 9.0
  */
 public class GemFireAuthenticationProvider implements AuthenticationProvider {
 
-  private final static PulseLogWriter LOGGER = PulseLogWriter.getLogger();
+  private static final PulseLogWriter LOGGER = PulseLogWriter.getLogger();
 
-  public GemFireAuthenticationProvider() {
-  }
+  public GemFireAuthenticationProvider() {}
 
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -48,8 +49,7 @@ public class GemFireAuthenticationProvider implements AuthenticationProvider {
     if (authentication instanceof GemFireAuthentication) {
       GemFireAuthentication gemAuth = (GemFireAuthentication) authentication;
       LOGGER.fine("GemAuthentication is connected? = " + gemAuth.getJmxc());
-      if (gemAuth.getJmxc() != null && gemAuth.isAuthenticated())
-        return gemAuth;
+      if (gemAuth.getJmxc() != null && gemAuth.isAuthenticated()) return gemAuth;
     }
 
     String name = authentication.getName();
@@ -60,7 +60,9 @@ public class GemFireAuthenticationProvider implements AuthenticationProvider {
       JMXConnector jmxc = Repository.get().getCluster(name, password).connectToGemFire();
       if (jmxc != null) {
         Collection<GrantedAuthority> list = GemFireAuthentication.populateAuthorities(jmxc);
-        GemFireAuthentication auth = new GemFireAuthentication(authentication.getPrincipal(), authentication.getCredentials(), list, jmxc);
+        GemFireAuthentication auth =
+            new GemFireAuthentication(
+                authentication.getPrincipal(), authentication.getCredentials(), list, jmxc);
         LOGGER.fine("For user " + name + " authList=" + list);
         return auth;
       } else {
@@ -75,5 +77,4 @@ public class GemFireAuthenticationProvider implements AuthenticationProvider {
   public boolean supports(Class<?> authentication) {
     return authentication.equals(UsernamePasswordAuthenticationToken.class);
   }
-
 }

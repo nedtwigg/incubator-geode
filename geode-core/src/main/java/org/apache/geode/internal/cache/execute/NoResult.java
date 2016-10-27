@@ -27,40 +27,44 @@ import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * A Special ResultCollector implementation. Functions having
- * {@link Function#hasResult()} false, this ResultCollector will be returned.
- * <br>
- * Calling getResult on this NoResult will throw
- * {@link FunctionException}
- * 
- * 
- * 
+ * A Special ResultCollector implementation. Functions having {@link Function#hasResult()} false,
+ * this ResultCollector will be returned. <br>
+ * Calling getResult on this NoResult will throw {@link FunctionException}
+ *
  * @since GemFire 5.8 Beta
- * 
  * @see Function#hasResult()
- * 
  */
 public final class NoResult implements ResultCollector, Serializable {
 
   private static final long serialVersionUID = -4901369422864228848L;
 
   public void addResult(DistributedMember memberID, Object resultOfSingleExecution) {
-    throw new UnsupportedOperationException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("add"));
+    throw new UnsupportedOperationException(
+        LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("add"));
   }
 
   public void endResults() {
-    throw new UnsupportedOperationException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("close"));
+    throw new UnsupportedOperationException(
+        LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+            "close"));
   }
 
   public Object getResult() throws FunctionException {
-    throw new FunctionException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("return any"));
+    throw new FunctionException(
+        LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+            "return any"));
   }
 
-  public Object getResult(long timeout, TimeUnit unit) throws FunctionException, InterruptedException {
-    throw new FunctionException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("return any"));
+  public Object getResult(long timeout, TimeUnit unit)
+      throws FunctionException, InterruptedException {
+    throw new FunctionException(
+        LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+            "return any"));
   }
 
   public void clearResults() {
-    throw new UnsupportedOperationException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("clear"));
+    throw new UnsupportedOperationException(
+        LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+            "clear"));
   }
 }

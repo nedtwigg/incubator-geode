@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.persistence;
 
 import java.io.DataInput;
@@ -32,9 +30,9 @@ import org.apache.geode.internal.cache.versions.VersionSource;
 /**
  * A Unique ID for a disk store
  *
- * TODO - RVV - this class is java serializable because apparently it is included in some
- * Exception that is serialized with java serialization back to a client as part
- * of a put all exception. See PutAllCSDUnitTest.testPartialKeyInPR. 
+ * <p>TODO - RVV - this class is java serializable because apparently it is included in some
+ * Exception that is serialized with java serialization back to a client as part of a put all
+ * exception. See PutAllCSDUnitTest.testPartialKeyInPR.
  */
 public class DiskStoreID implements VersionSource<DiskStoreID>, Serializable {
 
@@ -54,8 +52,7 @@ public class DiskStoreID implements VersionSource<DiskStoreID>, Serializable {
   }
 
   /** for deserialization */
-  public DiskStoreID() {
-  }
+  public DiskStoreID() {}
 
   @Override
   public void toData(DataOutput out) throws IOException {
@@ -121,17 +118,12 @@ public class DiskStoreID implements VersionSource<DiskStoreID>, Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     DiskStoreID other = (DiskStoreID) obj;
-    if (leastSig != other.leastSig)
-      return false;
-    if (mostSig != other.mostSig)
-      return false;
+    if (leastSig != other.leastSig) return false;
+    if (mostSig != other.mostSig) return false;
     return true;
   }
 
@@ -158,7 +150,7 @@ public class DiskStoreID implements VersionSource<DiskStoreID>, Serializable {
 
     int size = 0;
 
-    // two longs 
+    // two longs
     size += 16;
 
     return size;

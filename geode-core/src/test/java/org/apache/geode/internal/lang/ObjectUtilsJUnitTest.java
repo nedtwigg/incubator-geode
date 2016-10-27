@@ -24,9 +24,11 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The ObjectUtilsJUnitTest class is a test suite of test cases for testing the contract and functionality of the ObjectUtils
- * class.
- * <p/>
+ * The ObjectUtilsJUnitTest class is a test suite of test cases for testing the contract and
+ * functionality of the ObjectUtils class.
+ *
+ * <p>
+ *
  * @see org.apache.geode.internal.lang.ObjectUtils
  * @see org.junit.Assert
  * @see org.junit.Test
@@ -128,7 +130,7 @@ public class ObjectUtilsJUnitTest {
 
   @Test
   public void testGetArgumentsTypes() {
-    final Object[] arguments = { true, 'A', 0, Math.PI, "test" };
+    final Object[] arguments = {true, 'A', 0, Math.PI, "test"};
     final Class[] argumentTypes = ObjectUtils.getArgumentTypes(arguments);
 
     assertNotNull(argumentTypes);
@@ -159,7 +161,10 @@ public class ObjectUtilsJUnitTest {
   public void testInvokeWithParametersAndArguments() {
     final ValueHolder<Integer> value = new ValueHolder<Integer>(1);
 
-    assertEquals("1 is the loneliest number!", ObjectUtils.invoke(value, "transform", new Class[] { String.class }, " is the loneliest number!"));
+    assertEquals(
+        "1 is the loneliest number!",
+        ObjectUtils.invoke(
+            value, "transform", new Class[] {String.class}, " is the loneliest number!"));
   }
 
   private static final class ValueHolder<T> {
@@ -183,5 +188,4 @@ public class ObjectUtilsJUnitTest {
       return (String.valueOf(getValue()) + concatenationValue);
     }
   }
-
 }

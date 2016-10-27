@@ -21,10 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.i18n.StringId;
 
-/**
- * Extracted from LogWriterImpl and changed to static.
- * 
- */
+/** Extracted from LogWriterImpl and changed to static. */
 public class StartupStatus {
   private static final Logger logger = LogService.getLogger();
 
@@ -32,10 +29,9 @@ public class StartupStatus {
   private static StartupStatusListener listener;
 
   /**
-   * Writes both a message and exception to this writer.
-   * If a startup listener is registered,
-   * the message will be written to the listener as well
-   * to be reported to a user.
+   * Writes both a message and exception to this writer. If a startup listener is registered, the
+   * message will be written to the listener as well to be reported to a user.
+   *
    * @since GemFire 7.0
    */
   public static synchronized void startup(StringId msgID, Object[] params) {

@@ -41,17 +41,16 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 /**
- * @implNote This test class has been designed to test the query execution using the LocalDataSet.executeQuery
- * where one of the parameters passed is the bucket set to be used.
- * Different variation of hashset variables are passed to the function to check for errors.
+ * @implNote This test class has been designed to test the query execution using the
+ *     LocalDataSet.executeQuery where one of the parameters passed is the bucket set to be used.
+ *     Different variation of hashset variables are passed to the function to check for errors.
  */
 @Category(IntegrationTest.class)
 public class QueryWithBucketParameterIntegrationTest {
   DefaultQuery queryExecutor;
   LocalDataSet lds;
 
-  public QueryWithBucketParameterIntegrationTest() {
-  }
+  public QueryWithBucketParameterIntegrationTest() {}
 
   @Before
   public void setUp() throws Exception {
@@ -60,7 +59,8 @@ public class QueryWithBucketParameterIntegrationTest {
     int numValues = 80;
     CacheUtils.startCache();
     Cache cache = CacheUtils.getCache();
-    PartitionAttributesFactory pAFactory = getPartitionAttributesFactoryWithPartitionResolver(totalBuckets);
+    PartitionAttributesFactory pAFactory =
+        getPartitionAttributesFactoryWithPartitionResolver(totalBuckets);
     RegionFactory rf = cache.createRegionFactory(RegionShortcut.PARTITION);
     rf.setPartitionAttributes(pAFactory.create());
     PartitionedRegion pr1 = (PartitionedRegion) rf.create(regionName);
@@ -77,9 +77,13 @@ public class QueryWithBucketParameterIntegrationTest {
     CacheUtils.closeCache();
   }
 
-  private PartitionAttributesFactory getPartitionAttributesFactoryWithPartitionResolver(int totalBuckets) {
+  private PartitionAttributesFactory getPartitionAttributesFactoryWithPartitionResolver(
+      int totalBuckets) {
     PartitionAttributesFactory pAFactory = new PartitionAttributesFactory();
-    pAFactory.setRedundantCopies(1).setTotalNumBuckets(totalBuckets).setPartitionResolver(getPartitionResolver());
+    pAFactory
+        .setRedundantCopies(1)
+        .setTotalNumBuckets(totalBuckets)
+        .setPartitionResolver(getPartitionResolver());
     return pAFactory;
   }
 
@@ -93,21 +97,23 @@ public class QueryWithBucketParameterIntegrationTest {
         return (Serializable) opDetails.getKey();
       }
 
-      public void close() {
-      }
+      public void close() {}
     };
   }
 
   @Test
   public void testQueryExecuteWithEmptyBucketListExpectNoResults() throws Exception {
     SelectResults r = (SelectResults) lds.executeQuery(queryExecutor, null, new HashSet<Integer>());
-    assertTrue("Received: A non-empty result collection, expected : Empty result collection", r.isEmpty());
+    assertTrue(
+        "Received: A non-empty result collection, expected : Empty result collection", r.isEmpty());
   }
 
   @Test
   public void testQueryExecuteWithNullBucketListExpectNonEmptyResultSet() throws Exception {
     SelectResults r = (SelectResults) lds.executeQuery(queryExecutor, null, null);
-    assertFalse("Received: An empty result collection, expected : Non-empty result collection", r.isEmpty());
+    assertFalse(
+        "Received: An empty result collection, expected : Non-empty result collection",
+        r.isEmpty());
   }
 
   @Test
@@ -115,11 +121,14 @@ public class QueryWithBucketParameterIntegrationTest {
     int nTestBucketNumber = 15;
     Set<Integer> nonEmptySet = createAndPopulateSet(nTestBucketNumber);
     SelectResults r = (SelectResults) lds.executeQuery(queryExecutor, null, nonEmptySet);
-    assertFalse("Received: An empty result collection, expected : Non-empty result collection", r.isEmpty());
+    assertFalse(
+        "Received: An empty result collection, expected : Non-empty result collection",
+        r.isEmpty());
   }
 
   @Test(expected = QueryInvocationTargetException.class)
-  public void testQueryExecuteWithLargerBucketListThanExistingExpectQueryInvocationTargetException() throws Exception {
+  public void testQueryExecuteWithLargerBucketListThanExistingExpectQueryInvocationTargetException()
+      throws Exception {
     int nTestBucketNumber = 45;
     Set<Integer> overflowSet = createAndPopulateSet(nTestBucketNumber);
     SelectResults r = (SelectResults) lds.executeQuery(queryExecutor, null, overflowSet);

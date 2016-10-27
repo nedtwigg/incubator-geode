@@ -86,7 +86,8 @@ public class DurableClientCommandsDUnitTest extends CliCommandTestBase {
     resultAsString = commandResultToString(commandResult);
     writeToLog("Command Result :\n", resultAsString);
     assertTrue(Status.ERROR.equals(commandResult.getStatus()));
-    String errorMessage = CliStrings.format(CliStrings.LIST_DURABLE_CQS__NO__CQS__FOR__CLIENT, clientName);
+    String errorMessage =
+        CliStrings.format(CliStrings.LIST_DURABLE_CQS__NO__CQS__FOR__CLIENT, clientName);
     assertTrue(resultAsString.contains(errorMessage));
   }
 
@@ -106,7 +107,8 @@ public class DurableClientCommandsDUnitTest extends CliCommandTestBase {
       writeToLog("Command String : ", commandString);
       commandResult = executeCommand(commandString);
       resultAsString = commandResultToString(commandResult);
-    } while (resultAsString.contains("Cannot close a running durable client") && giveUpTime > System.currentTimeMillis());
+    } while (resultAsString.contains("Cannot close a running durable client")
+        && giveUpTime > System.currentTimeMillis());
     writeToLog("Command Result :\n", resultAsString);
     assertTrue(Status.OK.equals(commandResult.getStatus()));
 
@@ -147,7 +149,6 @@ public class DurableClientCommandsDUnitTest extends CliCommandTestBase {
     resultAsString = commandResultToString(commandResult);
     writeToLog("Command Result : ", resultAsString);
     assertTrue(Status.ERROR.equals(commandResult.getStatus()));
-
   }
 
   @Test
@@ -191,7 +192,9 @@ public class DurableClientCommandsDUnitTest extends CliCommandTestBase {
     resultAsString = commandResultToString(commandResult);
     writeToLog("Command Result :\n", resultAsString);
     assertTrue(Status.ERROR.equals(commandResult.getStatus()));
-    String errorMessage = CliStrings.format(CliStrings.COUNT_DURABLE_CQ_EVENTS__DURABLE_CQ_NOT_FOUND, clientName, cq1);
+    String errorMessage =
+        CliStrings.format(
+            CliStrings.COUNT_DURABLE_CQ_EVENTS__DURABLE_CQ_NOT_FOUND, clientName, cq1);
     assertTrue(resultAsString.contains(errorMessage));
 
     csb = new CommandStringBuilder(CliStrings.COUNT_DURABLE_CQ_EVENTS);
@@ -217,9 +220,12 @@ public class DurableClientCommandsDUnitTest extends CliCommandTestBase {
       writeToLog("Command String : ", commandString);
       commandResult = executeCommand(commandString);
       resultAsString = commandResultToString(commandResult);
-    } while (resultAsString.contains("Cannot close a running durable client") && giveUpTime > System.currentTimeMillis());
+    } while (resultAsString.contains("Cannot close a running durable client")
+        && giveUpTime > System.currentTimeMillis());
     writeToLog("Command Result :\n", resultAsString);
-    assertTrue("failed executing" + commandString + "; result = " + resultAsString, Status.OK.equals(commandResult.getStatus()));
+    assertTrue(
+        "failed executing" + commandString + "; result = " + resultAsString,
+        Status.OK.equals(commandResult.getStatus()));
 
     csb = new CommandStringBuilder(CliStrings.COUNT_DURABLE_CQ_EVENTS);
     csb.addOption(CliStrings.COUNT_DURABLE_CQ_EVENTS__DURABLE__CLIENT__ID, clientName);
@@ -229,7 +235,9 @@ public class DurableClientCommandsDUnitTest extends CliCommandTestBase {
     resultAsString = commandResultToString(commandResult);
     writeToLog("Command Result :\n", resultAsString);
     assertTrue(Status.ERROR.equals(commandResult.getStatus()));
-    assertTrue(resultAsString.contains(CliStrings.format(CliStrings.NO_CLIENT_FOUND_WITH_CLIENT_ID, clientName)));
+    assertTrue(
+        resultAsString.contains(
+            CliStrings.format(CliStrings.NO_CLIENT_FOUND_WITH_CLIENT_ID, clientName)));
   }
 
   private void writeToLog(String text, String resultAsString) {
@@ -249,144 +257,159 @@ public class DurableClientCommandsDUnitTest extends CliCommandTestBase {
   }
 
   /**
-   * Close the cq from the client-side 
+   * Close the cq from the client-side
+   *
    * @param cqName , Name of the cq which is to be close.
    */
   private void closeCq(final String cqName) {
     final VM vm2 = Host.getHost(0).getVM(2);
-    vm2.invoke(new SerializableCallable() {
-      public Object call() {
-        QueryService qs = getCache().getQueryService();
-        CqAttributesFactory cqAf = new CqAttributesFactory();
-        try {
-          qs.getCq(cqName).close();
+    vm2.invoke(
+        new SerializableCallable() {
+          public Object call() {
+            QueryService qs = getCache().getQueryService();
+            CqAttributesFactory cqAf = new CqAttributesFactory();
+            try {
+              qs.getCq(cqName).close();
 
-        } catch (CqException e) {
-          e.printStackTrace();
-          return false;
-        }
-        return true;
-      }
-    });
+            } catch (CqException e) {
+              e.printStackTrace();
+              return false;
+            }
+            return true;
+          }
+        });
   }
 
   private void setupCqs() {
     final VM vm2 = Host.getHost(0).getVM(2);
-    vm2.invoke(new SerializableCallable() {
-      public Object call() {
-        QueryService qs = getCache().getQueryService();
-        CqAttributesFactory cqAf = new CqAttributesFactory();
-        try {
-          qs.newCq(cq1, "select * from /" + regionName, cqAf.create(), true).execute();
-          qs.newCq(cq2, "select * from /" + regionName + " where id = 1", cqAf.create(), true).execute();
-          qs.newCq(cq3, "select * from /" + regionName + " where id > 2", cqAf.create(), true).execute();
-        } catch (CqException e) {
-          e.printStackTrace();
-          return false;
-        } catch (CqExistsException e) {
-          e.printStackTrace();
+    vm2.invoke(
+        new SerializableCallable() {
+          public Object call() {
+            QueryService qs = getCache().getQueryService();
+            CqAttributesFactory cqAf = new CqAttributesFactory();
+            try {
+              qs.newCq(cq1, "select * from /" + regionName, cqAf.create(), true).execute();
+              qs.newCq(cq2, "select * from /" + regionName + " where id = 1", cqAf.create(), true)
+                  .execute();
+              qs.newCq(cq3, "select * from /" + regionName + " where id > 2", cqAf.create(), true)
+                  .execute();
+            } catch (CqException e) {
+              e.printStackTrace();
+              return false;
+            } catch (CqExistsException e) {
+              e.printStackTrace();
 
-          return false;
-        } catch (RegionNotFoundException e) {
-          e.printStackTrace();
+              return false;
+            } catch (RegionNotFoundException e) {
+              e.printStackTrace();
 
-          return false;
-        }
-        return true;
-      }
-    });
+              return false;
+            }
+            return true;
+          }
+        });
   }
 
-  private int startCacheServer(VM server, final int port, final boolean createPR, final String regionName) throws Exception {
+  private int startCacheServer(
+      VM server, final int port, final boolean createPR, final String regionName) throws Exception {
 
-    Integer listeningPort = (Integer) server.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        getSystem(getServerProperties());
+    Integer listeningPort =
+        (Integer)
+            server.invoke(
+                new SerializableCallable() {
+                  public Object call() throws Exception {
+                    getSystem(getServerProperties());
 
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        AttributesFactory factory = new AttributesFactory();
-        if (createPR) {
-          PartitionAttributesFactory paf = new PartitionAttributesFactory();
-          paf.setRedundantCopies(1);
-          paf.setTotalNumBuckets(11);
-          factory.setPartitionAttributes(paf.create());
-        } else {
-          factory.setScope(Scope.DISTRIBUTED_ACK);
-          factory.setDataPolicy(DataPolicy.REPLICATE);
-        }
-        Region region = createRootRegion(regionName, factory.create());
-        if (createPR) {
-          assertTrue(region instanceof PartitionedRegion);
-        } else {
-          assertTrue(region instanceof DistributedRegion);
-        }
-        CacheServer cacheServer = getCache().addCacheServer();
-        cacheServer.setPort(port);
-        cacheServer.start();
+                    GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+                    AttributesFactory factory = new AttributesFactory();
+                    if (createPR) {
+                      PartitionAttributesFactory paf = new PartitionAttributesFactory();
+                      paf.setRedundantCopies(1);
+                      paf.setTotalNumBuckets(11);
+                      factory.setPartitionAttributes(paf.create());
+                    } else {
+                      factory.setScope(Scope.DISTRIBUTED_ACK);
+                      factory.setDataPolicy(DataPolicy.REPLICATE);
+                    }
+                    Region region = createRootRegion(regionName, factory.create());
+                    if (createPR) {
+                      assertTrue(region instanceof PartitionedRegion);
+                    } else {
+                      assertTrue(region instanceof DistributedRegion);
+                    }
+                    CacheServer cacheServer = getCache().addCacheServer();
+                    cacheServer.setPort(port);
+                    cacheServer.start();
 
-        return cacheServer.getPort();
-      }
-    });
+                    return cacheServer.getPort();
+                  }
+                });
 
     return listeningPort.intValue();
   }
 
-  private void startDurableClient(VM client, final VM server, final int port, final String durableClientId, final String durableClientTimeout) {
-    client.invoke(new CacheSerializableRunnable("Start client") {
-      public void run2() throws CacheException {
-        Properties props = getClientProps(durableClientId, durableClientTimeout);
-        getSystem(props);
+  private void startDurableClient(
+      VM client,
+      final VM server,
+      final int port,
+      final String durableClientId,
+      final String durableClientTimeout) {
+    client.invoke(
+        new CacheSerializableRunnable("Start client") {
+          public void run2() throws CacheException {
+            Properties props = getClientProps(durableClientId, durableClientTimeout);
+            getSystem(props);
 
-        final ClientCacheFactory ccf = new ClientCacheFactory(props);
-        ccf.addPoolServer(getServerHostName(server.getHost()), port);
-        ccf.setPoolSubscriptionEnabled(true);
+            final ClientCacheFactory ccf = new ClientCacheFactory(props);
+            ccf.addPoolServer(getServerHostName(server.getHost()), port);
+            ccf.setPoolSubscriptionEnabled(true);
 
-        ClientCache cache = (ClientCache) getClientCache(ccf);
-      }
-    });
+            ClientCache cache = (ClientCache) getClientCache(ccf);
+          }
+        });
   }
 
-  /**
-   * Does few puts on the region on the server
-   */
+  /** Does few puts on the region on the server */
   private void doPuts(final String regionName, VM server) {
-    server.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        Region region = cache.getRegion(regionName);
-        Portfolio p1 = new Portfolio();
-        p1.ID = 1;
-        p1.names = new String[] { "AAPL", "VMW" };
+    server.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+            Region region = cache.getRegion(regionName);
+            Portfolio p1 = new Portfolio();
+            p1.ID = 1;
+            p1.names = new String[] {"AAPL", "VMW"};
 
-        Portfolio p2 = new Portfolio();
-        p2.ID = 2;
-        p2.names = new String[] { "EMC", "IBM" };
+            Portfolio p2 = new Portfolio();
+            p2.ID = 2;
+            p2.names = new String[] {"EMC", "IBM"};
 
-        Portfolio p3 = new Portfolio();
-        p3.ID = 5;
-        p3.names = new String[] { "DOW", "TON" };
+            Portfolio p3 = new Portfolio();
+            p3.ID = 5;
+            p3.names = new String[] {"DOW", "TON"};
 
-        Portfolio p4 = new Portfolio();
-        p4.ID = 5;
-        p4.names = new String[] { "ABC", "EBAY" };
+            Portfolio p4 = new Portfolio();
+            p4.ID = 5;
+            p4.names = new String[] {"ABC", "EBAY"};
 
-        region.put("p1", p1);
-        region.put("p2", p2);
-        region.put("p3", p3);
-        region.put("p4", p4);
-        return null;
-      }
-    });
+            region.put("p1", p1);
+            region.put("p2", p2);
+            region.put("p3", p3);
+            region.put("p4", p4);
+            return null;
+          }
+        });
   }
 
   //Closes the durable-client from the client side.
   private void closeDurableClient() {
     final VM client = Host.getHost(0).getVM(2);
-    client.invoke(new CacheSerializableRunnable("Stop client") {
-      public void run2() throws CacheException {
-        ClientCacheFactory.getAnyInstance().close(true);
-      }
-    });
+    client.invoke(
+        new CacheSerializableRunnable("Stop client") {
+          public void run2() throws CacheException {
+            ClientCacheFactory.getAnyInstance().close(true);
+          }
+        });
   }
 
   protected Properties getClientProps(String durableClientId, String durableClientTimeout) {

@@ -80,7 +80,6 @@ import org.apache.geode.test.junit.runners.CategoryWithParameterizedRunnerFactor
  *
  * @since GemFire 8.0
  */
-
 @Category(DistributedTest.class)
 @RunWith(Parameterized.class)
 @Parameterized.UseParametersRunnerFactory(CategoryWithParameterizedRunnerFactory.class)
@@ -88,8 +87,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
   private static final long serialVersionUID = -254776154266339226L;
 
-  @Parameterized.Parameter
-  public String urlContext;
+  @Parameterized.Parameter public String urlContext;
 
   @Parameterized.Parameters
   public static Collection<String> data() {
@@ -102,29 +100,155 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
   //private static RestTemplate restTemplate;
 
-  private static final String findAllPeopleQuery = "/queries?id=findAllPeople&q=SELECT%20*%20FROM%20/People";
-  private static final String findPeopleByGenderQuery = "/queries?id=filterByGender&q=SELECT%20*%20from%20/People%20where%20gender=$1";
-  private static final String findPeopleByLastNameQuery = "/queries?id=filterByLastName&q=SELECT%20*%20from%20/People%20where%20lastName=$1";
+  private static final String findAllPeopleQuery =
+      "/queries?id=findAllPeople&q=SELECT%20*%20FROM%20/People";
+  private static final String findPeopleByGenderQuery =
+      "/queries?id=filterByGender&q=SELECT%20*%20from%20/People%20where%20gender=$1";
+  private static final String findPeopleByLastNameQuery =
+      "/queries?id=filterByLastName&q=SELECT%20*%20from%20/People%20where%20lastName=$1";
 
-  private static final String[] PARAM_QUERY_IDS_ARRAY = { "findAllPeople", "filterByGender", "filterByLastName" };
+  private static final String[] PARAM_QUERY_IDS_ARRAY = {
+    "findAllPeople", "filterByGender", "filterByLastName"
+  };
 
-  final static String QUERY_ARGS = "[" + "{" + "\"@type\": \"string\"," + "\"@value\": \"Patel\"" + "}" + "]";
+  static final String QUERY_ARGS =
+      "[" + "{" + "\"@type\": \"string\"," + "\"@value\": \"Patel\"" + "}" + "]";
 
-  final static String PERSON_AS_JSON_CAS = "{" + "\"@old\" :" + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 101," + " \"firstName\": \"Mithali\"," + " \"middleName\": \"Dorai\"," + " \"lastName\": \"Raj\"," + " \"birthDate\": \"12/04/1982\"," + "\"gender\": \"FEMALE\"" + "}," + "\"@new\" :" + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 1101," + " \"firstName\": \"Virat\"," + " \"middleName\": \"Premkumar\"," + " \"lastName\": \"Kohli\"," + " \"birthDate\": \"08/11/1988\"," + "\"gender\": \"MALE\"" + "}" + "}";
+  static final String PERSON_AS_JSON_CAS =
+      "{"
+          + "\"@old\" :"
+          + "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 101,"
+          + " \"firstName\": \"Mithali\","
+          + " \"middleName\": \"Dorai\","
+          + " \"lastName\": \"Raj\","
+          + " \"birthDate\": \"12/04/1982\","
+          + "\"gender\": \"FEMALE\""
+          + "},"
+          + "\"@new\" :"
+          + "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 1101,"
+          + " \"firstName\": \"Virat\","
+          + " \"middleName\": \"Premkumar\","
+          + " \"lastName\": \"Kohli\","
+          + " \"birthDate\": \"08/11/1988\","
+          + "\"gender\": \"MALE\""
+          + "}"
+          + "}";
 
-  final static String PERSON_AS_JSON_REPLACE = "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 501," + " \"firstName\": \"Barack\"," + " \"middleName\": \"Hussein\"," + " \"lastName\": \"Obama\"," + " \"birthDate\": \"04/08/1961\"," + "\"gender\": \"MALE\"" + "}";
+  static final String PERSON_AS_JSON_REPLACE =
+      "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 501,"
+          + " \"firstName\": \"Barack\","
+          + " \"middleName\": \"Hussein\","
+          + " \"lastName\": \"Obama\","
+          + " \"birthDate\": \"04/08/1961\","
+          + "\"gender\": \"MALE\""
+          + "}";
 
-  private static final String PERSON_LIST_AS_JSON = "[" + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 3," + " \"firstName\": \"Nishka3\"," + " \"middleName\": \"Nilkanth3\"," + " \"lastName\": \"Patel3\"," + " \"birthDate\": \"07/31/2009\"," + "\"gender\": \"FEMALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 4," + " \"firstName\": \"Tanay4\"," + " \"middleName\": \"kiran4\"," + " \"lastName\": \"Patel4\"," + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 5," + " \"firstName\": \"Nishka5\"," + " \"middleName\": \"Nilkanth5\"," + " \"lastName\": \"Patel5\"," + " \"birthDate\": \"31/09/2009\"," + "\"gender\": \"FEMALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 6," + " \"firstName\": \"Tanay6\","
-      + " \"middleName\": \"Kiran6\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 7," + " \"firstName\": \"Nishka7\"," + " \"middleName\": \"Nilkanth7\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"31/09/2009\"," + "\"gender\": \"FEMALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 8," + " \"firstName\": \"Tanay8\"," + " \"middleName\": \"kiran8\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 9," + " \"firstName\": \"Nishka9\"," + " \"middleName\": \"Nilkanth9\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"31/09/2009\"," + "\"gender\": \"FEMALE\"" + "}," + "{"
-      + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 10," + " \"firstName\": \"Tanay10\"," + " \"middleName\": \"kiran10\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 11," + " \"firstName\": \"Nishka11\"," + " \"middleName\": \"Nilkanth11\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"31/09/2009\"," + "\"gender\": \"FEMALE\"" + "}," + "{" + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\"," + "\"id\": 12," + " \"firstName\": \"Tanay12\"," + " \"middleName\": \"kiran12\"," + " \"lastName\": \"Patel\"," + " \"birthDate\": \"23/08/2012\"," + "\"gender\": \"MALE\"" + "}" + "]";
+  private static final String PERSON_LIST_AS_JSON =
+      "["
+          + "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 3,"
+          + " \"firstName\": \"Nishka3\","
+          + " \"middleName\": \"Nilkanth3\","
+          + " \"lastName\": \"Patel3\","
+          + " \"birthDate\": \"07/31/2009\","
+          + "\"gender\": \"FEMALE\""
+          + "},"
+          + "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 4,"
+          + " \"firstName\": \"Tanay4\","
+          + " \"middleName\": \"kiran4\","
+          + " \"lastName\": \"Patel4\","
+          + " \"birthDate\": \"23/08/2012\","
+          + "\"gender\": \"MALE\""
+          + "},"
+          + "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 5,"
+          + " \"firstName\": \"Nishka5\","
+          + " \"middleName\": \"Nilkanth5\","
+          + " \"lastName\": \"Patel5\","
+          + " \"birthDate\": \"31/09/2009\","
+          + "\"gender\": \"FEMALE\""
+          + "},"
+          + "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 6,"
+          + " \"firstName\": \"Tanay6\","
+          + " \"middleName\": \"Kiran6\","
+          + " \"lastName\": \"Patel\","
+          + " \"birthDate\": \"23/08/2012\","
+          + "\"gender\": \"MALE\""
+          + "},"
+          + "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 7,"
+          + " \"firstName\": \"Nishka7\","
+          + " \"middleName\": \"Nilkanth7\","
+          + " \"lastName\": \"Patel\","
+          + " \"birthDate\": \"31/09/2009\","
+          + "\"gender\": \"FEMALE\""
+          + "},"
+          + "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 8,"
+          + " \"firstName\": \"Tanay8\","
+          + " \"middleName\": \"kiran8\","
+          + " \"lastName\": \"Patel\","
+          + " \"birthDate\": \"23/08/2012\","
+          + "\"gender\": \"MALE\""
+          + "},"
+          + "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 9,"
+          + " \"firstName\": \"Nishka9\","
+          + " \"middleName\": \"Nilkanth9\","
+          + " \"lastName\": \"Patel\","
+          + " \"birthDate\": \"31/09/2009\","
+          + "\"gender\": \"FEMALE\""
+          + "},"
+          + "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 10,"
+          + " \"firstName\": \"Tanay10\","
+          + " \"middleName\": \"kiran10\","
+          + " \"lastName\": \"Patel\","
+          + " \"birthDate\": \"23/08/2012\","
+          + "\"gender\": \"MALE\""
+          + "},"
+          + "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 11,"
+          + " \"firstName\": \"Nishka11\","
+          + " \"middleName\": \"Nilkanth11\","
+          + " \"lastName\": \"Patel\","
+          + " \"birthDate\": \"31/09/2009\","
+          + "\"gender\": \"FEMALE\""
+          + "},"
+          + "{"
+          + "\"@type\": \"org.apache.geode.rest.internal.web.controllers.Person\","
+          + "\"id\": 12,"
+          + " \"firstName\": \"Tanay12\","
+          + " \"middleName\": \"kiran12\","
+          + " \"lastName\": \"Patel\","
+          + " \"birthDate\": \"23/08/2012\","
+          + "\"gender\": \"MALE\""
+          + "}"
+          + "]";
 
   public RestAPIsAndInterOpsDUnitTest() {
     super();
-    this.helper = new ManagementTestBase() {
-      {
-      }
-    };
-
+    this.helper =
+        new ManagementTestBase() {
+          {}
+        };
   }
 
   @Override
@@ -137,7 +261,12 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
     disconnectAllFromDS();
   }
 
-  public String startBridgeServerWithRestService(final String hostName, final String[] groups, final String locators, final String[] regions, final ServerLoadProbe probe) {
+  public String startBridgeServerWithRestService(
+      final String hostName,
+      final String[] groups,
+      final String locators,
+      final String[] regions,
+      final ServerLoadProbe probe) {
     final int serverPort = AvailablePortHelper.getRandomAvailableTCPPort();
 
     //create Cache of given VM and start HTTP service with REST APIs service
@@ -147,7 +276,13 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
   }
 
   @SuppressWarnings("deprecation")
-  protected int startBridgeServer(String hostName, int restServicerPort, final String[] groups, final String locators, final String[] regions, final ServerLoadProbe probe) {
+  protected int startBridgeServer(
+      String hostName,
+      int restServicerPort,
+      final String[] groups,
+      final String locators,
+      final String[] regions,
+      final ServerLoadProbe probe) {
 
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, String.valueOf(0));
@@ -187,11 +322,46 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
     Region<String, Object> region = cache.getRegion(PEOPLE_REGION_NAME);
 
     //put person object
-    final Person person1 = new Person(101L, "Mithali", "Dorai", "Raj", DateTimeUtils.createDate(1982, Calendar.DECEMBER, 4), Gender.FEMALE);
-    final Person person2 = new Person(102L, "Sachin", "Ramesh", "Tendulkar", DateTimeUtils.createDate(1975, Calendar.DECEMBER, 14), Gender.MALE);
-    final Person person3 = new Person(103L, "Saurabh", "Baburav", "Ganguly", DateTimeUtils.createDate(1972, Calendar.AUGUST, 29), Gender.MALE);
-    final Person person4 = new Person(104L, "Rahul", "subrymanyam", "Dravid", DateTimeUtils.createDate(1979, Calendar.MARCH, 17), Gender.MALE);
-    final Person person5 = new Person(105L, "Jhulan", "Chidambaram", "Goswami", DateTimeUtils.createDate(1983, Calendar.NOVEMBER, 25), Gender.FEMALE);
+    final Person person1 =
+        new Person(
+            101L,
+            "Mithali",
+            "Dorai",
+            "Raj",
+            DateTimeUtils.createDate(1982, Calendar.DECEMBER, 4),
+            Gender.FEMALE);
+    final Person person2 =
+        new Person(
+            102L,
+            "Sachin",
+            "Ramesh",
+            "Tendulkar",
+            DateTimeUtils.createDate(1975, Calendar.DECEMBER, 14),
+            Gender.MALE);
+    final Person person3 =
+        new Person(
+            103L,
+            "Saurabh",
+            "Baburav",
+            "Ganguly",
+            DateTimeUtils.createDate(1972, Calendar.AUGUST, 29),
+            Gender.MALE);
+    final Person person4 =
+        new Person(
+            104L,
+            "Rahul",
+            "subrymanyam",
+            "Dravid",
+            DateTimeUtils.createDate(1979, Calendar.MARCH, 17),
+            Gender.MALE);
+    final Person person5 =
+        new Person(
+            105L,
+            "Jhulan",
+            "Chidambaram",
+            "Goswami",
+            DateTimeUtils.createDate(1983, Calendar.NOVEMBER, 25),
+            Gender.FEMALE);
 
     region.put("1", person1);
     region.put("2", person2);
@@ -199,18 +369,95 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
     region.put("4", person4);
     region.put("5", person5);
 
-    final Person person6 = new Person(101L, "Rahul", "Rajiv", "Gndhi", DateTimeUtils.createDate(1970, Calendar.MAY, 14), Gender.MALE);
-    final Person person7 = new Person(102L, "Narendra", "Damodar", "Modi", DateTimeUtils.createDate(1945, Calendar.DECEMBER, 24), Gender.MALE);
-    final Person person8 = new Person(103L, "Atal", "Bihari", "Vajpayee", DateTimeUtils.createDate(1920, Calendar.AUGUST, 9), Gender.MALE);
-    final Person person9 = new Person(104L, "Soniya", "Rajiv", "Gandhi", DateTimeUtils.createDate(1929, Calendar.MARCH, 27), Gender.FEMALE);
-    final Person person10 = new Person(104L, "Priyanka", "Robert", "Gandhi", DateTimeUtils.createDate(1973, Calendar.APRIL, 15), Gender.FEMALE);
+    final Person person6 =
+        new Person(
+            101L,
+            "Rahul",
+            "Rajiv",
+            "Gndhi",
+            DateTimeUtils.createDate(1970, Calendar.MAY, 14),
+            Gender.MALE);
+    final Person person7 =
+        new Person(
+            102L,
+            "Narendra",
+            "Damodar",
+            "Modi",
+            DateTimeUtils.createDate(1945, Calendar.DECEMBER, 24),
+            Gender.MALE);
+    final Person person8 =
+        new Person(
+            103L,
+            "Atal",
+            "Bihari",
+            "Vajpayee",
+            DateTimeUtils.createDate(1920, Calendar.AUGUST, 9),
+            Gender.MALE);
+    final Person person9 =
+        new Person(
+            104L,
+            "Soniya",
+            "Rajiv",
+            "Gandhi",
+            DateTimeUtils.createDate(1929, Calendar.MARCH, 27),
+            Gender.FEMALE);
+    final Person person10 =
+        new Person(
+            104L,
+            "Priyanka",
+            "Robert",
+            "Gandhi",
+            DateTimeUtils.createDate(1973, Calendar.APRIL, 15),
+            Gender.FEMALE);
 
-    final Person person11 = new Person(104L, "Murali", "Manohar", "Joshi", DateTimeUtils.createDate(1923, Calendar.APRIL, 25), Gender.MALE);
-    final Person person12 = new Person(104L, "Lalkrishna", "Parmhansh", "Advani", DateTimeUtils.createDate(1910, Calendar.JANUARY, 01), Gender.MALE);
-    final Person person13 = new Person(104L, "Shushma", "kumari", "Swaraj", DateTimeUtils.createDate(1943, Calendar.AUGUST, 10), Gender.FEMALE);
-    final Person person14 = new Person(104L, "Arun", "raman", "jetly", DateTimeUtils.createDate(1942, Calendar.OCTOBER, 27), Gender.MALE);
-    final Person person15 = new Person(104L, "Amit", "kumar", "shah", DateTimeUtils.createDate(1958, Calendar.DECEMBER, 21), Gender.MALE);
-    final Person person16 = new Person(104L, "Shila", "kumari", "Dixit", DateTimeUtils.createDate(1927, Calendar.FEBRUARY, 15), Gender.FEMALE);
+    final Person person11 =
+        new Person(
+            104L,
+            "Murali",
+            "Manohar",
+            "Joshi",
+            DateTimeUtils.createDate(1923, Calendar.APRIL, 25),
+            Gender.MALE);
+    final Person person12 =
+        new Person(
+            104L,
+            "Lalkrishna",
+            "Parmhansh",
+            "Advani",
+            DateTimeUtils.createDate(1910, Calendar.JANUARY, 01),
+            Gender.MALE);
+    final Person person13 =
+        new Person(
+            104L,
+            "Shushma",
+            "kumari",
+            "Swaraj",
+            DateTimeUtils.createDate(1943, Calendar.AUGUST, 10),
+            Gender.FEMALE);
+    final Person person14 =
+        new Person(
+            104L,
+            "Arun",
+            "raman",
+            "jetly",
+            DateTimeUtils.createDate(1942, Calendar.OCTOBER, 27),
+            Gender.MALE);
+    final Person person15 =
+        new Person(
+            104L,
+            "Amit",
+            "kumar",
+            "shah",
+            DateTimeUtils.createDate(1958, Calendar.DECEMBER, 21),
+            Gender.MALE);
+    final Person person16 =
+        new Person(
+            104L,
+            "Shila",
+            "kumari",
+            "Dixit",
+            DateTimeUtils.createDate(1927, Calendar.FEBRUARY, 15),
+            Gender.FEMALE);
 
     Map<String, Object> userMap = new HashMap<String, Object>();
     userMap.put("6", person6);
@@ -227,9 +474,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
     region.putAll(userMap);
 
-    if (cache != null)
-      cache.getLogger().info("Gemfire Cache Client: Puts successfully done");
-
+    if (cache != null) cache.getLogger().info("Gemfire Cache Client: Puts successfully done");
   }
 
   public void doQueryOpsUsingRestApis(String restEndpoint) {
@@ -288,7 +533,10 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
         JSONObject jsonObject = new JSONObject(sb.toString());
         JSONArray jsonArray = jsonObject.getJSONArray("queries");
         for (int i = 0; i < jsonArray.length(); i++) {
-          assertTrue("PREPARE_PARAMETERIZED_QUERY: function IDs are not matched", Arrays.asList(PARAM_QUERY_IDS_ARRAY).contains(jsonArray.getJSONObject(i).getString("id")));
+          assertTrue(
+              "PREPARE_PARAMETERIZED_QUERY: function IDs are not matched",
+              Arrays.asList(PARAM_QUERY_IDS_ARRAY)
+                  .contains(jsonArray.getJSONObject(i).getString("id")));
         }
       }
 
@@ -317,7 +565,14 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
     Region<String, Object> region = cache.getRegion(PEOPLE_REGION_NAME);
 
     {
-      Person expectedPerson = new Person(3L, "Nishka3", "Nilkanth3", "Patel3", DateTimeUtils.createDate(2009, Calendar.JULY, 31), Gender.FEMALE);
+      Person expectedPerson =
+          new Person(
+              3L,
+              "Nishka3",
+              "Nilkanth3",
+              "Patel3",
+              DateTimeUtils.createDate(2009, Calendar.JULY, 31),
+              Gender.FEMALE);
       Object value = region.get("3");
       if (value instanceof PdxInstance) {
         PdxInstance pi3 = (PdxInstance) value;
@@ -329,7 +584,8 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
         assertEquals(actualPerson.getBirthDate(), expectedPerson.getBirthDate());
         assertEquals(actualPerson.getGender(), expectedPerson.getGender());
       } else if (value instanceof Person) {
-        fail("VerifyUpdatesInClientCache, Get on key 3, Expected to get value of type PdxInstance ");
+        fail(
+            "VerifyUpdatesInClientCache, Get on key 3, Expected to get value of type PdxInstance ");
       }
     }
 
@@ -337,7 +593,7 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
     // CAS functionality is not working in following test case
     // step-1: Java client, Region.put("K", A);
     //Step-2: Rest CAS request for key "K" with data "@old" = A. CAS is failing as existing PdxInstance in cache and
-    //        PdxInstance generated from JSON (CAS request) does not match as their value's type are getting changed 
+    //        PdxInstance generated from JSON (CAS request) does not match as their value's type are getting changed
     /*
     //verify update on key "1"
     {
@@ -354,7 +610,14 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
     //verify update on key "2"
     {
-      Person expectedPerson = new Person(501L, "Barack", "Hussein", "Obama", DateTimeUtils.createDate(1961, Calendar.APRIL, 8), Gender.MALE);
+      Person expectedPerson =
+          new Person(
+              501L,
+              "Barack",
+              "Hussein",
+              "Obama",
+              DateTimeUtils.createDate(1961, Calendar.APRIL, 8),
+              Gender.MALE);
       Object value = region.get("2");
       if (value instanceof PdxInstance) {
         PdxInstance pi3 = (PdxInstance) value;
@@ -366,7 +629,8 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
         assertEquals(actualPerson.getBirthDate(), expectedPerson.getBirthDate());
         assertEquals(actualPerson.getGender(), expectedPerson.getGender());
       } else {
-        fail("VerifyUpdatesInClientCache, Get on key 2, Expected to get value of type PdxInstance ");
+        fail(
+            "VerifyUpdatesInClientCache, Get on key 2, Expected to get value of type PdxInstance ");
       }
     }
 
@@ -384,13 +648,11 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
       obj = region.get("16");
       assertEquals(obj, null);
     }
-
   }
 
   public void doUpdatesUsingRestApis(String restEndpoint) {
     //UPdate keys using REST calls
     {
-
       try {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPut put = new HttpPut(restEndpoint + "/People/3,4,5,6,7,8,9,10,11,12");
@@ -432,15 +694,15 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
     //REST put?op=CAS for key 1
     /*
-    try {   
-    {  
+    try {
+    {
       HttpEntity<Object> entity = new HttpEntity<Object>(PERSON_AS_JSON_CAS, headers);
       ResponseEntity<String> result = RestTestUtils.getRestTemplate().exchange(
         restEndpoint + "/People/1?op=cas",
         HttpMethod.PUT, entity, String.class);
     }
     } catch (HttpClientErrorException e) {
-      
+
       fail("Caught HttpClientErrorException while doing put with op=cas");
     }catch (HttpServerErrorException se) {
       fail("Caught HttpServerErrorException while doing put with op=cas");
@@ -506,12 +768,11 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
       e.printStackTrace();
       fail(" Rest Request should not have thrown  JSONException!");
     }
-
   }
 
   public void doGetsUsingRestApis(String restEndpoint) {
 
-    //HttpHeaders headers = setAcceptAndContentTypeHeaders(); 
+    //HttpHeaders headers = setAcceptAndContentTypeHeaders();
     String currentOperation = null;
     JSONObject jObject;
     JSONArray jArray;
@@ -574,7 +835,6 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
       //3. Get all (getAll) entries in Region
       {
-
         HttpGet get = new HttpGet(restEndpoint + "/People");
         get.addHeader("Content-Type", "application/json");
         get.addHeader("Accept", "application/json");
@@ -632,7 +892,6 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
       //5. Get keys - List all keys in region
       {
-
         HttpGet get = new HttpGet(restEndpoint + "/People/keys");
         get.addHeader("Content-Type", "application/json");
         get.addHeader("Accept", "application/json");
@@ -661,7 +920,6 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
 
       //6. Get data for specific keys
       {
-
         HttpGet get = new HttpGet(restEndpoint + "/People/1,3,5,7,9,11");
         get.addHeader("Content-Type", "application/json");
         get.addHeader("Accept", "application/json");
@@ -696,9 +954,9 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
   public void createRegionInClientCache() {
     ClientCache cache = GemFireCacheImpl.getInstance();
     assertNotNull(cache);
-    ClientRegionFactory<String, Object> crf = cache.createClientRegionFactory(ClientRegionShortcut.PROXY);
+    ClientRegionFactory<String, Object> crf =
+        cache.createClientRegionFactory(ClientRegionShortcut.PROXY);
     Region<String, Object> region = crf.create(PEOPLE_REGION_NAME);
-
   }
 
   public void createRegion() {
@@ -714,7 +972,6 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
    *
    * @throws Exception
    */
-
   @Test
   public void testInterOpsWithReplicatedRegion() throws Exception {
 
@@ -733,11 +990,26 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
     String locators = locatorHostName + "[" + locatorPort + "]";
 
     // start manager (peer cache)
-    manager.invoke(() -> startManager(/* groups */null, locators, new String[] { REGION_NAME }, CacheServer.DEFAULT_LOAD_PROBE));
+    manager.invoke(
+        () ->
+            startManager(
+                /* groups */ null,
+                locators,
+                new String[] {REGION_NAME},
+                CacheServer.DEFAULT_LOAD_PROBE));
 
     //start startCacheServer With RestService enabled
     final String serverHostName = server.getHost().getHostName();
-    String restEndpoint = (String) server.invoke(() -> startBridgeServerWithRestService(serverHostName, null, locators, new String[] { REGION_NAME }, CacheServer.DEFAULT_LOAD_PROBE));
+    String restEndpoint =
+        (String)
+            server.invoke(
+                () ->
+                    startBridgeServerWithRestService(
+                        serverHostName,
+                        null,
+                        locators,
+                        new String[] {REGION_NAME},
+                        CacheServer.DEFAULT_LOAD_PROBE));
 
     // create a client cache
     client.invoke(() -> createClientCache(locatorHostName, locatorPort));
@@ -770,17 +1042,22 @@ public class RestAPIsAndInterOpsDUnitTest extends LocatorTestBase {
     helper.closeCache(manager);
     helper.closeCache(server);
     helper.closeCache(client);
-
   }
 
   private void createClientCache(final String host, final int port) throws Exception {
     // Connect using the GemFire locator and create a Caching_Proxy cache
-    ClientCache c = new ClientCacheFactory().setPdxReadSerialized(true).addPoolLocator(host, port).create();
+    ClientCache c =
+        new ClientCacheFactory().setPdxReadSerialized(true).addPoolLocator(host, port).create();
 
     c.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
   }
 
-  private int startManager(final String[] groups, final String locators, final String[] regions, final ServerLoadProbe probe) throws IOException {
+  private int startManager(
+      final String[] groups,
+      final String locators,
+      final String[] regions,
+      final ServerLoadProbe probe)
+      throws IOException {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, String.valueOf(0));
     props.setProperty(LOCATORS, locators);

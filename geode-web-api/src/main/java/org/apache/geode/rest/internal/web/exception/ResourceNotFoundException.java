@@ -19,14 +19,14 @@ package org.apache.geode.rest.internal.web.exception;
 
 /**
  * Indicates that resource (key, value etc) does not found while trying to do REST operation.
- * <p/>
+ *
+ * <p>
+ *
  * @since GemFire 8.0
  */
-
 public class ResourceNotFoundException extends RuntimeException {
 
-  public ResourceNotFoundException() {
-  }
+  public ResourceNotFoundException() {}
 
   public ResourceNotFoundException(final String message, final Throwable cause) {
     super(message, cause);
@@ -39,5 +39,4 @@ public class ResourceNotFoundException extends RuntimeException {
   public ResourceNotFoundException(Throwable cause) {
     super(cause);
   }
-
 }

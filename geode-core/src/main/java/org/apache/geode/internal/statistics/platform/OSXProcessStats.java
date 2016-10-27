@@ -24,30 +24,35 @@ import org.apache.geode.internal.statistics.LocalStatisticsImpl;
 import org.apache.geode.internal.statistics.StatisticsTypeFactoryImpl;
 
 /**
- * <P>This class provides the interface for statistics about a
- * Mac OS X operating system process that is using a GemFire system.
+ * This class provides the interface for statistics about a Mac OS X operating system process that
+ * is using a GemFire system.
  */
 public class OSXProcessStats {
   //  private final static int imageSizeINT = 0;
   //  private final static int rssSizeINT = 1;
 
-  private final static StatisticsType myType;
+  private static final StatisticsType myType;
 
   private static void checkOffset(String name, int offset) {
     int id = myType.nameToId(name);
-    Assert.assertTrue(offset == id, "Expected the offset for " + name + " to be " + offset + " but it was " + id);
+    Assert.assertTrue(
+        offset == id, "Expected the offset for " + name + " to be " + offset + " but it was " + id);
   }
 
   static {
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
-    myType = f.createType("OSXProcessStats", "Statistics on a OS X process.", new StatisticDescriptor[] { f.createIntGauge("dummyStat", "Placeholder", "megabytes")
-        //                              f.createIntGauge("imageSize",
-        //                                             "The size of the process's image in megabytes.",
-        //                                             "megabytes"),
-        //                            f.createIntGauge("rssSize",
-        //                                             "The size of the process's resident set size in megabytes.",
-        //                                             "megabytes"),
-    });
+    myType =
+        f.createType(
+            "OSXProcessStats",
+            "Statistics on a OS X process.",
+            new StatisticDescriptor[] {f.createIntGauge("dummyStat", "Placeholder", "megabytes")
+              //                              f.createIntGauge("imageSize",
+              //                                             "The size of the process's image in megabytes.",
+              //                                             "megabytes"),
+              //                            f.createIntGauge("rssSize",
+              //                                             "The size of the process's resident set size in megabytes.",
+              //                                             "megabytes"),
+            });
     //    checkOffset("imageSize", imageSizeINT);
     //    checkOffset("rssSize", rssSizeINT);
   }
@@ -61,12 +66,12 @@ public class OSXProcessStats {
   }
 
   /**
-   * Returns a <code>ProcessStats</code> that wraps OS X process
-   * <code>Statistics</code>. 
+   * Returns a <code>ProcessStats</code> that wraps OS X process <code>Statistics</code>.
    *
    * @since GemFire 3.5
    */
-  public static ProcessStats createProcessStats(final Statistics stats) { // TODO: was package-protected
+  public static ProcessStats createProcessStats(
+      final Statistics stats) { // TODO: was package-protected
     if (stats instanceof LocalStatisticsImpl) {
       HostStatHelper.refresh((LocalStatisticsImpl) stats);
     } // otherwise its a Dummy implementation so do nothing
@@ -78,5 +83,4 @@ public class OSXProcessStats {
       }
     };
   }
-
 }

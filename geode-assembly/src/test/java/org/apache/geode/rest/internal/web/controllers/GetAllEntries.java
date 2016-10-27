@@ -24,10 +24,11 @@ import org.apache.geode.cache.execute.FunctionContext;
 
 /**
  * The GetAllEntries is function that will return a map as a result of its execution.
- * <p/>
+ *
+ * <p>
+ *
  * @since GemFire 8.0
  */
-
 public class GetAllEntries implements Function {
 
   @Override
@@ -62,5 +63,4 @@ public class GetAllEntries implements Function {
   public boolean isHA() {
     return false;
   }
-
 }

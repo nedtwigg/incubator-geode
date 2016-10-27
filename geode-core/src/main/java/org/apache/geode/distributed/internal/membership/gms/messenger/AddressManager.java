@@ -32,13 +32,10 @@ import org.jgroups.util.Responses;
 import org.apache.geode.distributed.internal.membership.gms.Services;
 
 /**
- * JGroups will not send messages that have IpAddress destination addresses.
- * Instead it requires a "logical address" and requests physical addresses
- * from the Discovery protocol that is normally in a JGroups stack.  We don't have
- * one of these, so we need to maintain a mapping between logical and physical
- * addresses.
- * 
- *
+ * JGroups will not send messages that have IpAddress destination addresses. Instead it requires a
+ * "logical address" and requests physical addresses from the Discovery protocol that is normally in
+ * a JGroups stack. We don't have one of these, so we need to maintain a mapping between logical and
+ * physical addresses.
  */
 public class AddressManager extends Protocol {
 
@@ -53,24 +50,23 @@ public class AddressManager extends Protocol {
   public Object up(Event evt) {
 
     switch (evt.getType()) {
+      case Event.FIND_MBRS:
+        List<Address> missing = (List<Address>) evt.getArg();
 
-    case Event.FIND_MBRS:
-      List<Address> missing = (List<Address>) evt.getArg();
-
-      Responses responses = new Responses(false);
-      for (Address laddr : missing) {
-        try {
-          if (laddr instanceof JGAddress) {
-            PingData pd = new PingData(laddr, true, laddr.toString(), newIpAddress(laddr));
-            responses.addResponse(pd, false);
-            updateUDPCache(pd);
+        Responses responses = new Responses(false);
+        for (Address laddr : missing) {
+          try {
+            if (laddr instanceof JGAddress) {
+              PingData pd = new PingData(laddr, true, laddr.toString(), newIpAddress(laddr));
+              responses.addResponse(pd, false);
+              updateUDPCache(pd);
+            }
+          } catch (RuntimeException e) {
+            logger.warn("Unable to create PingData response", e);
+            throw e;
           }
-        } catch (RuntimeException e) {
-          logger.warn("Unable to create PingData response", e);
-          throw e;
         }
-      }
-      return responses;
+        return responses;
     }
     return up_prot.up(evt);
   }
@@ -81,8 +77,9 @@ public class AddressManager extends Protocol {
   }
 
   /**
-   * update the logical->physical address cache in UDP, which doesn't
-   * seem to be updated by UDP when processing responses from FIND_MBRS
+   * update the logical->physical address cache in UDP, which doesn't seem to be updated by UDP when
+   * processing responses from FIND_MBRS
+   *
    * @param pd
    */
   private void updateUDPCache(PingData pd) {
@@ -91,7 +88,7 @@ public class AddressManager extends Protocol {
     }
     if (setPingData != null) {
       try {
-        setPingData.invoke(transport, new Object[] { pd });
+        setPingData.invoke(transport, new Object[] {pd});
       } catch (InvocationTargetException | IllegalAccessException e) {
         if (!warningLogged) {
           log.warn("Unable to update JGroups address cache - this may affect performance", e);
@@ -101,13 +98,11 @@ public class AddressManager extends Protocol {
     }
   }
 
-  /**
-   * find and initialize the method used to update UDP's address cache
-   */
+  /** find and initialize the method used to update UDP's address cache */
   private void findPingDataMethod() {
     transport = (TP) getProtocolStack().getTransport();
     try {
-      setPingData = TP.class.getDeclaredMethod("setPingData", new Class<?>[] { PingData.class });
+      setPingData = TP.class.getDeclaredMethod("setPingData", new Class<?>[] {PingData.class});
       setPingData.setAccessible(true);
     } catch (NoSuchMethodException e) {
       if (!warningLogged) {
@@ -116,5 +111,4 @@ public class AddressManager extends Protocol {
       }
     }
   }
-
 }

@@ -70,15 +70,13 @@ public class NestedQueryJUnitTest {
   private String s1;
   private String s2;
 
-  @Rule
-  public ErrorCollector errorCollector = new ErrorCollector(); // used by testQueries
+  @Rule public ErrorCollector errorCollector = new ErrorCollector(); // used by testQueries
 
   @Before
   public void setUp() throws java.lang.Exception {
     CacheUtils.startCache();
     Region r = CacheUtils.createRegion("Portfolios", Portfolio.class);
-    for (int i = 0; i < 4; i++)
-      r.put(i + "", new Portfolio(i));
+    for (int i = 0; i < 4; i++) r.put(i + "", new Portfolio(i));
   }
 
   @After
@@ -93,27 +91,32 @@ public class NestedQueryJUnitTest {
     Query query;
     Object result;
     //Executes successfully
-    queryString = "SELECT DISTINCT * FROM /Portfolios WHERE NOT(SELECT DISTINCT * FROM positions.values p WHERE p.secId = 'IBM').isEmpty";
+    queryString =
+        "SELECT DISTINCT * FROM /Portfolios WHERE NOT(SELECT DISTINCT * FROM positions.values p WHERE p.secId = 'IBM').isEmpty";
     query = CacheUtils.getQueryService().newQuery(queryString);
     result = query.execute();
     CacheUtils.log(Utils.printResult(result));
     //Fails
-    queryString = "SELECT DISTINCT * FROM /Portfolios where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status";
+    queryString =
+        "SELECT DISTINCT * FROM /Portfolios where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status";
     query = CacheUtils.getQueryService().newQuery(queryString);
     result = query.execute();
     CacheUtils.log(Utils.printResult(result));
     //Executes successfully
-    queryString = "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where x.ID = p.ID).status";
+    queryString =
+        "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where x.ID = p.ID).status";
     query = CacheUtils.getQueryService().newQuery(queryString);
     result = query.execute();
     CacheUtils.log(Utils.printResult(result));
     //Fails
-    queryString = "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = x.ID).status";
+    queryString =
+        "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = x.ID).status";
     query = CacheUtils.getQueryService().newQuery(queryString);
     result = query.execute();
     CacheUtils.log(Utils.printResult(result));
 
-    queryString = "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status";
+    queryString =
+        "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status";
     query = CacheUtils.getQueryService().newQuery(queryString);
     result = query.execute();
     CacheUtils.log(Utils.printResult(result));
@@ -121,7 +124,15 @@ public class NestedQueryJUnitTest {
 
   @Test
   public void testQueries() throws Exception {
-    String queries[] = { "SELECT DISTINCT * FROM /Portfolios WHERE NOT(SELECT DISTINCT * FROM positions.values p WHERE p.secId = 'IBM').isEmpty", "SELECT DISTINCT * FROM /Portfolios where NOT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).isEmpty", "SELECT DISTINCT * FROM /Portfolios where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status", "SELECT DISTINCT * FROM /Portfolios where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status", "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where x.ID = p.ID).status", "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = x.ID).status", "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status" };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /Portfolios WHERE NOT(SELECT DISTINCT * FROM positions.values p WHERE p.secId = 'IBM').isEmpty",
+      "SELECT DISTINCT * FROM /Portfolios where NOT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).isEmpty",
+      "SELECT DISTINCT * FROM /Portfolios where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status",
+      "SELECT DISTINCT * FROM /Portfolios where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status",
+      "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where x.ID = p.ID).status",
+      "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = x.ID).status",
+      "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status"
+    };
     for (int i = 0; i < queries.length; i++) {
       try {
         Query query = CacheUtils.getQueryService().newQuery(queries[i]);
@@ -136,18 +147,19 @@ public class NestedQueryJUnitTest {
   public void testNestedQueriesEvaluation() throws Exception {
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /Portfolios where NOT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).isEmpty",
-        // NQIU 1: PASS       
-        // "SELECT DISTINCT * FROM /Portfolios where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where ID = 0).status",
-        // NQIU 2 : Failed: 16 May'05
-        "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = x.ID).status",
-        //NQIU 3:PASS
-        "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status",
-        //NQIU 4:PASS
-        "SELECT DISTINCT * FROM /Portfolios WHERE NOT(SELECT DISTINCT * FROM positions.values p WHERE p.secId = 'IBM').isEmpty",
-        // NQIU 5: PASS
-        "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where x.ID = p.ID).status",
-        // NQIU 6: PASS                
+    String queries[] = {
+      "SELECT DISTINCT * FROM /Portfolios where NOT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).isEmpty",
+      // NQIU 1: PASS
+      // "SELECT DISTINCT * FROM /Portfolios where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where ID = 0).status",
+      // NQIU 2 : Failed: 16 May'05
+      "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = x.ID).status",
+      //NQIU 3:PASS
+      "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where p.ID = 0).status",
+      //NQIU 4:PASS
+      "SELECT DISTINCT * FROM /Portfolios WHERE NOT(SELECT DISTINCT * FROM positions.values p WHERE p.secId = 'IBM').isEmpty",
+      // NQIU 5: PASS
+      "SELECT DISTINCT * FROM /Portfolios x where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p where x.ID = p.ID).status",
+      // NQIU 6: PASS
     };
     SelectResults r[][] = new SelectResults[queries.length][2];
 
@@ -179,8 +191,10 @@ public class NestedQueryJUnitTest {
 
     qs = CacheUtils.getQueryService();
     qs.createIndex("IDIndex", IndexType.FUNCTIONAL, "ID", "/Portfolios pf");
-    qs.createIndex("secIdIndex", IndexType.FUNCTIONAL, "b.secId", "/Portfolios pf, pf.positions.values b");
-    qs.createIndex("r1Index", IndexType.FUNCTIONAL, "secId", "/Portfolios.values['0'].positions.values");
+    qs.createIndex(
+        "secIdIndex", IndexType.FUNCTIONAL, "b.secId", "/Portfolios pf, pf.positions.values b");
+    qs.createIndex(
+        "r1Index", IndexType.FUNCTIONAL, "secId", "/Portfolios.values['0'].positions.values");
 
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -208,8 +222,11 @@ public class NestedQueryJUnitTest {
     }
     for (int j = 0; j <= 1; j++) {
       // Increase the value of j as you go on adding the Queries in queries[]
-      if (((r[j][0]).getCollectionType().getElementType()).equals((r[j][1]).getCollectionType().getElementType())) {
-        CacheUtils.log("Both Search Results are of the same Type i.e.--> " + (r[j][0]).getCollectionType().getElementType());
+      if (((r[j][0]).getCollectionType().getElementType())
+          .equals((r[j][1]).getCollectionType().getElementType())) {
+        CacheUtils.log(
+            "Both Search Results are of the same Type i.e.--> "
+                + (r[j][0]).getCollectionType().getElementType());
       } else {
         fail("FAILED:Search result Type is different in both the cases");
       }
@@ -235,10 +252,34 @@ public class NestedQueryJUnitTest {
     QueryService qs;
     qs = CacheUtils.getQueryService();
     String queries[] = {
-
-        "SELECT DISTINCT * FROM" + " (SELECT DISTINCT * FROM /Portfolios ptf, positions pos)" + " WHERE pos.value.secId = 'IBM'", "SELECT DISTINCT * FROM" + " (SELECT DISTINCT * FROM /Portfolios AS ptf, positions AS pos)" + " WHERE pos.value.secId = 'IBM'", "SELECT DISTINCT * FROM" + " (SELECT DISTINCT * FROM ptf IN /Portfolios, pos IN positions)" + " WHERE pos.value.secId = 'IBM'", "SELECT DISTINCT * FROM" + " (SELECT DISTINCT pos AS myPos FROM /Portfolios ptf, positions pos)" + " WHERE myPos.value.secId = 'IBM'", "SELECT DISTINCT * FROM" + " (SELECT DISTINCT * FROM /Portfolios ptf, positions pos) p" + " WHERE p.pos.value.secId = 'IBM'", "SELECT DISTINCT * FROM" + " (SELECT DISTINCT * FROM /Portfolios ptf, positions pos) p" + " WHERE pos.value.secId = 'IBM'", "SELECT DISTINCT * FROM" + " (SELECT DISTINCT * FROM /Portfolios, positions) p" + " WHERE p.positions.value.secId = 'IBM'",
-        "SELECT DISTINCT * FROM" + " (SELECT DISTINCT * FROM /Portfolios, positions)" + " WHERE positions.value.secId = 'IBM'", "SELECT DISTINCT * FROM" + " (SELECT DISTINCT * FROM /Portfolios ptf, positions pos) p" + " WHERE p.get('pos').value.secId = 'IBM'",
-        // NQIU 7: PASS
+      "SELECT DISTINCT * FROM"
+          + " (SELECT DISTINCT * FROM /Portfolios ptf, positions pos)"
+          + " WHERE pos.value.secId = 'IBM'",
+      "SELECT DISTINCT * FROM"
+          + " (SELECT DISTINCT * FROM /Portfolios AS ptf, positions AS pos)"
+          + " WHERE pos.value.secId = 'IBM'",
+      "SELECT DISTINCT * FROM"
+          + " (SELECT DISTINCT * FROM ptf IN /Portfolios, pos IN positions)"
+          + " WHERE pos.value.secId = 'IBM'",
+      "SELECT DISTINCT * FROM"
+          + " (SELECT DISTINCT pos AS myPos FROM /Portfolios ptf, positions pos)"
+          + " WHERE myPos.value.secId = 'IBM'",
+      "SELECT DISTINCT * FROM"
+          + " (SELECT DISTINCT * FROM /Portfolios ptf, positions pos) p"
+          + " WHERE p.pos.value.secId = 'IBM'",
+      "SELECT DISTINCT * FROM"
+          + " (SELECT DISTINCT * FROM /Portfolios ptf, positions pos) p"
+          + " WHERE pos.value.secId = 'IBM'",
+      "SELECT DISTINCT * FROM"
+          + " (SELECT DISTINCT * FROM /Portfolios, positions) p"
+          + " WHERE p.positions.value.secId = 'IBM'",
+      "SELECT DISTINCT * FROM"
+          + " (SELECT DISTINCT * FROM /Portfolios, positions)"
+          + " WHERE positions.value.secId = 'IBM'",
+      "SELECT DISTINCT * FROM"
+          + " (SELECT DISTINCT * FROM /Portfolios ptf, positions pos) p"
+          + " WHERE p.get('pos').value.secId = 'IBM'",
+      // NQIU 7: PASS
     };
     SelectResults r[][] = new SelectResults[queries.length][2];
 
@@ -270,7 +311,8 @@ public class NestedQueryJUnitTest {
     //  Create an Index on status and execute the same query again.
 
     qs = CacheUtils.getQueryService();
-    qs.createIndex("secIdIndex", IndexType.FUNCTIONAL, "b.secId", "/Portfolios pf, pf.positions.values b");
+    qs.createIndex(
+        "secIdIndex", IndexType.FUNCTIONAL, "b.secId", "/Portfolios pf, pf.positions.values b");
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
@@ -293,8 +335,11 @@ public class NestedQueryJUnitTest {
     }
     for (int j = 0; j < queries.length; j++) {
 
-      if (((r[j][0]).getCollectionType().getElementType()).equals((r[j][1]).getCollectionType().getElementType())) {
-        CacheUtils.log("Both Search Results are of the same Type i.e.--> " + (r[j][0]).getCollectionType().getElementType());
+      if (((r[j][0]).getCollectionType().getElementType())
+          .equals((r[j][1]).getCollectionType().getElementType())) {
+        CacheUtils.log(
+            "Both Search Results are of the same Type i.e.--> "
+                + (r[j][0]).getCollectionType().getElementType());
       } else {
         fail("FAILED:Search result Type is different in both the cases");
       }
@@ -316,11 +361,9 @@ public class NestedQueryJUnitTest {
           found = true;
         }
       }
-      if (!found)
-        pass = false;
+      if (!found) pass = false;
     }
-    if (!pass)
-      fail("Test failed");
+    if (!pass) fail("Test failed");
 
     CacheUtils.compareResultsOfWithAndWithoutIndex(r, this);
   }
@@ -339,9 +382,14 @@ public class NestedQueryJUnitTest {
 
     Index p1IdIndex = qs.createIndex("P1IDIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P");
     Index p2IdIndex = qs.createIndex("P2IDIndex", IndexType.FUNCTIONAL, "P2.ID", "/portfolios2 P2");
-    Index createTimeIndex = qs.createIndex("createTimeIndex", IndexType.FUNCTIONAL, "P.createTime", "/portfolios1 P");
+    Index createTimeIndex =
+        qs.createIndex("createTimeIndex", IndexType.FUNCTIONAL, "P.createTime", "/portfolios1 P");
 
-    SelectResults results = (SelectResults) qs.newQuery("SELECT P2.ID FROM /portfolios2 P2 where P2.ID in (SELECT P.ID from /portfolios1 P where P.createTime >= 500L and P.createTime < 1000L)").execute();
+    SelectResults results =
+        (SelectResults)
+            qs.newQuery(
+                    "SELECT P2.ID FROM /portfolios2 P2 where P2.ID in (SELECT P.ID from /portfolios1 P where P.createTime >= 500L and P.createTime < 1000L)")
+                .execute();
     for (Object o : results) {
       assertNotSame(o, QueryService.UNDEFINED);
     }
@@ -361,11 +409,14 @@ public class NestedQueryJUnitTest {
 
     Index p1IdIndex = qs.createIndex("P1IDIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P");
     Index p2IdIndex = qs.createIndex("P2IDIndex", IndexType.FUNCTIONAL, "P2.ID", "/portfolios2 P2");
-    Index createTimeIndex = qs.createIndex("createTimeIndex", IndexType.FUNCTIONAL, "P.createTime", "/portfolios1 P");
+    Index createTimeIndex =
+        qs.createIndex("createTimeIndex", IndexType.FUNCTIONAL, "P.createTime", "/portfolios1 P");
 
-    String rangeQueryString = "SELECT P.ID FROM /portfolios1 P WHERE P.createTime >= 500L AND P.createTime < 1000L";
+    String rangeQueryString =
+        "SELECT P.ID FROM /portfolios1 P WHERE P.createTime >= 500L AND P.createTime < 1000L";
     // Retrieve location ids that are within range
-    String multiInnerQueryString = "SELECT P FROM /portfolios1 P WHERE P.ID IN(SELECT P2.ID FROM /portfolios2 P2 where P2.ID in ($1)) and P.createTime >=500L and P.createTime < 1000L";
+    String multiInnerQueryString =
+        "SELECT P FROM /portfolios1 P WHERE P.ID IN(SELECT P2.ID FROM /portfolios2 P2 where P2.ID in ($1)) and P.createTime >=500L and P.createTime < 1000L";
 
     Query rangeQuery = qs.newQuery(rangeQueryString);
     SelectResults rangeResults = (SelectResults) rangeQuery.execute();
@@ -381,9 +432,9 @@ public class NestedQueryJUnitTest {
   }
 
   /**
-   * Tests a nested query with shorts converted to integer types in the result 
-   * set of the inner query.  The short field in the outer query should be 
-   * evaluated against the integer types and match.
+   * Tests a nested query with shorts converted to integer types in the result set of the inner
+   * query. The short field in the outer query should be evaluated against the integer types and
+   * match.
    */
   @Test
   public void testNestedQueryWithShortTypesFromInnerQuery() throws Exception {
@@ -397,12 +448,15 @@ public class NestedQueryJUnitTest {
       region1.put("" + i, p);
     }
 
-    helpTestIndexForQuery("<trace>SELECT * FROM /portfolios1 p where p.shortID in (SELECT p.shortID FROM /portfolios1 p WHERE p.shortID = 1)", "p.shortID", "/portfolios1 p");
+    helpTestIndexForQuery(
+        "<trace>SELECT * FROM /portfolios1 p where p.shortID in (SELECT p.shortID FROM /portfolios1 p WHERE p.shortID = 1)",
+        "p.shortID",
+        "/portfolios1 p");
   }
 
   /**
-   * Tests a nested query that has duplicate results in the inner query
-   * Results should not be duplicated in the final result set
+   * Tests a nested query that has duplicate results in the inner query Results should not be
+   * duplicated in the final result set
    */
   @Test
   public void testNestedQueryWithMultipleMatchingResultsWithIn() throws Exception {
@@ -416,13 +470,15 @@ public class NestedQueryJUnitTest {
       region1.put("" + i, p);
     }
 
-    helpTestIndexForQuery("<trace>SELECT * FROM /portfolios1 p where p.ID in (SELECT p.ID FROM /portfolios1 p WHERE p.ID = 1)", "p.ID", "/portfolios1 p");
+    helpTestIndexForQuery(
+        "<trace>SELECT * FROM /portfolios1 p where p.ID in (SELECT p.ID FROM /portfolios1 p WHERE p.ID = 1)",
+        "p.ID",
+        "/portfolios1 p");
   }
 
-  /**
-   * helper method to test against a compact range index
-   */
-  private void helpTestIndexForQuery(String query, String indexedExpression, String regionPath) throws Exception {
+  /** helper method to test against a compact range index */
+  private void helpTestIndexForQuery(String query, String indexedExpression, String regionPath)
+      throws Exception {
     QueryService qs = CacheUtils.getQueryService();
     QueryObserverImpl observer = new QueryObserverImpl();
     QueryObserverHolder.setInstance(observer);

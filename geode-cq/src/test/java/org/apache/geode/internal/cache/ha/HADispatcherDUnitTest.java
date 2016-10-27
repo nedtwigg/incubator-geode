@@ -54,19 +54,13 @@ import static org.apache.geode.test.dunit.NetworkUtils.getServerHostName;
 import static org.apache.geode.test.dunit.Wait.waitForCriterion;
 
 /**
- * This Dunit test is to verify that when the dispatcher of CS dispatches the
- * Event , the peer's HARegionQueue should get the events removed from the HA
- * RegionQueues assuming the QRM thread has acted upon by that time
- * This is done in the following steps
- * 1. start server1 and server2
- * 2. start client1 and client2
- * 3. perform put operation from client1
- * 4. check the entry in the regionque of client2 on server2.It should be present.
- * 5. Wait till client2 receives event
- * 6. Make sure that QRM is envoked
- * 7. Again the entry in the regionque of client2 on server2.It should not be present.
- * 8. close client1 and client2
- * 9. close server1 and server2
+ * This Dunit test is to verify that when the dispatcher of CS dispatches the Event , the peer's
+ * HARegionQueue should get the events removed from the HA RegionQueues assuming the QRM thread has
+ * acted upon by that time This is done in the following steps 1. start server1 and server2 2. start
+ * client1 and client2 3. perform put operation from client1 4. check the entry in the regionque of
+ * client2 on server2.It should be present. 5. Wait till client2 receives event 6. Make sure that
+ * QRM is envoked 7. Again the entry in the regionque of client2 on server2.It should not be
+ * present. 8. close client1 and client2 9. close server1 and server2
  */
 @Category(DistributedTest.class)
 public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
@@ -115,8 +109,14 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
 
     client1.invoke(() -> CacheServerTestUtil.disableShufflingOfEndpoints());
     client2.invoke(() -> CacheServerTestUtil.disableShufflingOfEndpoints());
-    client1.invoke(() -> createClientCache(serverHostName, new Integer(PORT1), new Integer(PORT2), new Boolean(false)));
-    client2.invoke(() -> createClientCache(serverHostName, new Integer(PORT1), new Integer(PORT2), new Boolean(true)));
+    client1.invoke(
+        () ->
+            createClientCache(
+                serverHostName, new Integer(PORT1), new Integer(PORT2), new Boolean(false)));
+    client2.invoke(
+        () ->
+            createClientCache(
+                serverHostName, new Integer(PORT1), new Integer(PORT2), new Boolean(true)));
   }
 
   @Override
@@ -148,8 +148,7 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * This is to test the serialization mechanism of ClientUpdateMessage.
-   * Added after CQ support.
+   * This is to test the serialization mechanism of ClientUpdateMessage. Added after CQ support.
    * This could be done in different way, by overflowing the HARegion queue.
    */
   @Test
@@ -202,74 +201,81 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
 
   private void clientPut(VM vm, final Object key, final Object value) {
     // performing put from the client1
-    vm.invoke(new CacheSerializableRunnable("putFromClient") {
-      @Override
-      public void run2() throws CacheException {
-        Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-        assertNotNull(region);
-        region.put(key, value);
-      }
-    });
+    vm.invoke(
+        new CacheSerializableRunnable("putFromClient") {
+          @Override
+          public void run2() throws CacheException {
+            Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+            assertNotNull(region);
+            region.put(key, value);
+          }
+        });
   }
 
   private void checkFromClient(VM vm) {
     // Waiting in the client till it receives the event for the key.
-    vm.invoke(new CacheSerializableRunnable("checkFromClient") {
-      @Override
-      public void run2() throws CacheException {
-        Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-        assertNotNull(region);
-        cache.getLogger().fine("starting the wait");
-        synchronized (dummyObj) {
-          while (waitFlag) {
-            try {
-              dummyObj.wait(30000);
-            } catch (InterruptedException e) {
-              fail("interrupted", e);
+    vm.invoke(
+        new CacheSerializableRunnable("checkFromClient") {
+          @Override
+          public void run2() throws CacheException {
+            Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+            assertNotNull(region);
+            cache.getLogger().fine("starting the wait");
+            synchronized (dummyObj) {
+              while (waitFlag) {
+                try {
+                  dummyObj.wait(30000);
+                } catch (InterruptedException e) {
+                  fail("interrupted", e);
+                }
+              }
             }
+            cache.getLogger().fine("wait over...waitFlag=" + waitFlag);
+            if (waitFlag) fail("test failed");
           }
-        }
-        cache.getLogger().fine("wait over...waitFlag=" + waitFlag);
-        if (waitFlag)
-          fail("test failed");
-      }
-    });
+        });
   }
 
   private void checkFromServer(VM vm, final Object key) {
-    vm.invoke(new CacheSerializableRunnable("checkFromServer") {
-      @Override
-      public void run2() throws CacheException {
-        Iterator iter = cache.getCacheServers().iterator();
-        CacheServerImpl server = (CacheServerImpl) iter.next();
-        Iterator iter_prox = server.getAcceptor().getCacheClientNotifier().getClientProxies().iterator();
-        isObjectPresent = false;
+    vm.invoke(
+        new CacheSerializableRunnable("checkFromServer") {
+          @Override
+          public void run2() throws CacheException {
+            Iterator iter = cache.getCacheServers().iterator();
+            CacheServerImpl server = (CacheServerImpl) iter.next();
+            Iterator iter_prox =
+                server.getAcceptor().getCacheClientNotifier().getClientProxies().iterator();
+            isObjectPresent = false;
 
-        while (iter_prox.hasNext()) {
-          final CacheClientProxy proxy = (CacheClientProxy) iter_prox.next();
-          HARegion region = (HARegion) proxy.getHARegion();
-          assertNotNull(region);
-          final HARegionQueue regionQueue = region.getOwner();
+            while (iter_prox.hasNext()) {
+              final CacheClientProxy proxy = (CacheClientProxy) iter_prox.next();
+              HARegion region = (HARegion) proxy.getHARegion();
+              assertNotNull(region);
+              final HARegionQueue regionQueue = region.getOwner();
 
-          WaitCriterion wc = new WaitCriterion() {
-            @Override
-            public boolean done() {
-              int sz = regionQueue.size();
-              cache.getLogger().fine("regionQueue.size()::" + sz);
-              return sz == 0 || !proxy.isConnected();
+              WaitCriterion wc =
+                  new WaitCriterion() {
+                    @Override
+                    public boolean done() {
+                      int sz = regionQueue.size();
+                      cache.getLogger().fine("regionQueue.size()::" + sz);
+                      return sz == 0 || !proxy.isConnected();
+                    }
+
+                    @Override
+                    public String description() {
+                      return "regionQueue not empty with size "
+                          + regionQueue.size()
+                          + " for proxy "
+                          + proxy;
+                    }
+                  };
+              waitForCriterion(wc, 60 * 1000, 1000, true);
+
+              cache.getLogger().fine("processed a proxy");
             }
-
-            @Override
-            public String description() {
-              return "regionQueue not empty with size " + regionQueue.size() + " for proxy " + proxy;
-            }
-          };
-          waitForCriterion(wc, 60 * 1000, 1000, true);
-
-          cache.getLogger().fine("processed a proxy");
-        }
-      }
-    });
+          }
+        });
   }
 
   private void createCache(Properties props) {
@@ -301,7 +307,9 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
     return new Integer(server.getPort());
   }
 
-  private void createClientCache(String hostName, Integer port1, Integer port2, Boolean isListenerPresent) throws CqException, CqExistsException, RegionNotFoundException {
+  private void createClientCache(
+      String hostName, Integer port1, Integer port2, Boolean isListenerPresent)
+      throws CqException, CqExistsException, RegionNotFoundException {
     int PORT1 = port1.intValue();
     int PORT2 = port2.intValue();
     Properties props = new Properties();
@@ -310,7 +318,8 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
     createCache(props);
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    ClientServerTestCase.configureConnectionPool(factory, hostName, new int[] { PORT1, PORT2 }, true, -1, 2, null);
+    ClientServerTestCase.configureConnectionPool(
+        factory, hostName, new int[] {PORT1, PORT2}, true, -1, 2, null);
     if (isListenerPresent.booleanValue() == true) {
       CacheListener clientListener = new HAClientListener();
       factory.setCacheListener(clientListener);
@@ -323,29 +332,32 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
     {
       LocalRegion lr = (LocalRegion) region;
       final PoolImpl pool = (PoolImpl) (lr.getServerProxy().getPool());
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          return pool.getPrimary() != null;
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return pool.getPrimary() != null;
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       waitForCriterion(ev, 30 * 1000, 200, true);
-      ev = new WaitCriterion() {
-        public boolean done() {
-          return pool.getRedundants().size() >= 1;
-        }
+      ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return pool.getRedundants().size() >= 1;
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       waitForCriterion(ev, 30 * 1000, 200, true);
 
       assertNotNull(pool.getPrimary());
-      assertTrue("backups=" + pool.getRedundants() + " expected=" + 1, pool.getRedundants().size() >= 1);
+      assertTrue(
+          "backups=" + pool.getRedundants() + " expected=" + 1, pool.getRedundants().size() >= 1);
       assertEquals(PORT1, pool.getPrimaryPort());
     }
 
@@ -366,7 +378,7 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
 
     // Create CQ Attributes.
     CqAttributesFactory cqf = new CqAttributesFactory();
-    CqListener[] cqListeners = { new CqQueryTestListener(getLogWriter()) };
+    CqListener[] cqListeners = {new CqQueryTestListener(getLogWriter())};
     cqf.initCqListeners(cqListeners);
     CqAttributes cqa = cqf.create();
 
@@ -378,10 +390,7 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
     cq1.execute();
   }
 
-  /**
-   * This is the client listener which notifies the waiting thread when it
-   * receives the event.
-   */
+  /** This is the client listener which notifies the waiting thread when it receives the event. */
   private static class HAClientListener extends CacheListenerAdapter implements Declarable {
 
     @Override
@@ -400,13 +409,10 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
     }
 
     @Override
-    public void init(Properties props) {
-    }
+    public void init(Properties props) {}
   }
 
-  /**
-   * This is the server listener which ensures that regionqueue is properly populated
-   */
+  /** This is the server listener which ensures that regionqueue is properly populated */
   private static class HAServerListener extends CacheListenerAdapter {
     @Override
     public void afterCreate(EntryEvent event) {
@@ -418,15 +424,19 @@ public class HADispatcherDUnitTest extends JUnit4DistributedTestCase {
       // The event not be there in the region first time; try couple of time.
       // This should have been replaced by listener on the HARegion and doing wait for event arrival in that.
       while (true) {
-        for (Iterator iter_prox = server.getAcceptor().getCacheClientNotifier().getClientProxies().iterator(); iter_prox.hasNext();) {
+        for (Iterator iter_prox =
+                server.getAcceptor().getCacheClientNotifier().getClientProxies().iterator();
+            iter_prox.hasNext();
+            ) {
           CacheClientProxy proxy = (CacheClientProxy) iter_prox.next();
           HARegion regionForQueue = (HARegion) proxy.getHARegion();
 
-          for (Iterator itr = regionForQueue.values().iterator(); itr.hasNext();) {
+          for (Iterator itr = regionForQueue.values().iterator(); itr.hasNext(); ) {
             Object obj = itr.next();
             if (obj instanceof HAEventWrapper) {
               Conflatable confObj = (Conflatable) obj;
-              if (KEY1.equals(confObj.getKeyToConflate()) || KEY2.equals(confObj.getKeyToConflate())) {
+              if (KEY1.equals(confObj.getKeyToConflate())
+                  || KEY2.equals(confObj.getKeyToConflate())) {
                 isObjectPresent = true;
               }
             }

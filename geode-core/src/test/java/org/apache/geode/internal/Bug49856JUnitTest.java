@@ -32,8 +32,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 @Category(IntegrationTest.class)
 public class Bug49856JUnitTest {
 
-  public Bug49856JUnitTest() {
-  }
+  public Bug49856JUnitTest() {}
 
   @Test
   public void testNoGFThreadsRunningPostCacheClose() throws Exception {
@@ -77,5 +76,4 @@ public class Bug49856JUnitTest {
       assertTrue(sb.toString(), !proctorRunning && !watchDogRunning);
     }
   }
-
 }

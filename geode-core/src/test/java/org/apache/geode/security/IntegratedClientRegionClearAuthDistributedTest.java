@@ -28,34 +28,46 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class IntegratedClientRegionClearAuthDistributedTest extends AbstractSecureServerDUnitTest {
 
   @Category(FlakyTest.class) // GEODE-1876
   @Test
   public void testRegionClear() throws InterruptedException {
     // Verify that an unauthorized user can't clear the region
-    SerializableRunnable clearUnauthorized = new SerializableRunnable() {
-      @Override
-      public void run() {
-        ClientCache cache = new ClientCacheFactory(createClientProperties("stranger", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    SerializableRunnable clearUnauthorized =
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            ClientCache cache =
+                new ClientCacheFactory(createClientProperties("stranger", "1234567"))
+                    .setPoolSubscriptionEnabled(true)
+                    .addPoolServer("localhost", serverPort)
+                    .create();
 
-        Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-        assertNotAuthorized(() -> region.clear(), "DATA:WRITE:AuthRegion");
-      }
-    };
+            Region region =
+                cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+            assertNotAuthorized(() -> region.clear(), "DATA:WRITE:AuthRegion");
+          }
+        };
     client1.invoke(clearUnauthorized);
 
     // Verify that an authorized user can clear the region
-    SerializableRunnable clearAuthorized = new SerializableRunnable() {
-      @Override
-      public void run() {
-        ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionUser", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    SerializableRunnable clearAuthorized =
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            ClientCache cache =
+                new ClientCacheFactory(createClientProperties("authRegionUser", "1234567"))
+                    .setPoolSubscriptionEnabled(true)
+                    .addPoolServer("localhost", serverPort)
+                    .create();
 
-        Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-        region.clear();
-      }
-    };
+            Region region =
+                cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+            region.clear();
+          }
+        };
     client2.invoke(clearAuthorized);
   }
 }

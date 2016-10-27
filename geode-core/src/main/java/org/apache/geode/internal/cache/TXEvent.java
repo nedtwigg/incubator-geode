@@ -21,11 +21,10 @@ import org.apache.geode.cache.*;
 import java.util.*;
 import org.apache.geode.internal.offheap.Releasable;
 
-/** <p>The internal implementation of the {@link TransactionEvent} interface
- * 
+/**
+ * The internal implementation of the {@link TransactionEvent} interface
  *
  * @since GemFire 4.0
- * 
  */
 public class TXEvent implements TransactionEvent, Releasable {
   private final TXStateInterface localTxState;
@@ -34,7 +33,7 @@ public class TXEvent implements TransactionEvent, Releasable {
   private List putEvents = null;
   private List invalidateEvents = null;
   private List destroyEvents = null;
-  final private Cache cache;
+  private final Cache cache;
 
   TXEvent(TXStateInterface localTxState, Cache cache) {
     this.localTxState = localTxState;
@@ -130,9 +129,8 @@ public class TXEvent implements TransactionEvent, Releasable {
   }
 
   /**
-   * Do all operations touch internal regions?
-   * Returns false if the transaction is empty
-   * or if any events touch non-internal regions.
+   * Do all operations touch internal regions? Returns false if the transaction is empty or if any
+   * events touch non-internal regions.
    */
   public boolean hasOnlyInternalEvents() {
     List<CacheEvent<?, ?>> txevents = getEvents();

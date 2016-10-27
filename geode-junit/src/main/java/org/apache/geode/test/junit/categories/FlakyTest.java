@@ -16,9 +16,5 @@
  */
 package org.apache.geode.test.junit.categories;
 
-/**
- * JUnit Test Category that specifies a flickering test that fails
- * intermittently.
- */
-public interface FlakyTest {
-}
+/** JUnit Test Category that specifies a flickering test that fails intermittently. */
+public interface FlakyTest {}

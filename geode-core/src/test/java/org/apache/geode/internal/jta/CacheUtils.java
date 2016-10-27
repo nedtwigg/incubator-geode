@@ -41,9 +41,7 @@ import java.util.Properties;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
-/**
- * 
- */
+/** */
 public class CacheUtils {
   public static DistributedSystem ds;
   static Cache cache;
@@ -121,7 +119,10 @@ public class CacheUtils {
 
     //String sql = "create table " + tableName + " (id number primary key, name varchar2(50))";
     //String sql = "create table " + tableName + " (id integer primary key, name varchar(50))";
-    String sql = "create table " + tableName + " (id integer NOT NULL, name varchar(50), CONSTRAINT the_key PRIMARY KEY(id))";
+    String sql =
+        "create table "
+            + tableName
+            + " (id integer NOT NULL, name varchar(50), CONSTRAINT the_key PRIMARY KEY(id))";
     System.out.println(sql);
     Connection conn = ds.getConnection();
     Statement sm = conn.createStatement();
@@ -200,8 +201,7 @@ public class CacheUtils {
   }
 
   public static QueryService getQueryService() {
-    if (cache.isClosed())
-      startCache();
+    if (cache.isClosed()) startCache();
     return cache.getQueryService();
   }
 
@@ -212,5 +212,4 @@ public class CacheUtils {
   public static void log(Object message) {
     System.out.println(message);
   }
-
 }

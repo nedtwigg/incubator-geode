@@ -18,15 +18,16 @@
 package org.apache.geode.cache.query;
 
 /**
- * Thrown if a CQ by this name already exists on this client 
+ * Thrown if a CQ by this name already exists on this client
+ *
  * @since GemFire 5.5
  */
-
 public class CqExistsException extends QueryException {
   private static final long serialVersionUID = -4805225282677926623L;
 
   /**
    * Constructor used by concrete subclasses
+   *
    * @param msg the error message
    * @param cause a Throwable cause of this exception
    */
@@ -36,6 +37,7 @@ public class CqExistsException extends QueryException {
 
   /**
    * Constructor used by concrete subclasses
+   *
    * @param msg the error message
    */
   public CqExistsException(String msg) {
@@ -44,6 +46,7 @@ public class CqExistsException extends QueryException {
 
   /**
    * Constructor used by concrete subclasses
+   *
    * @param cause a Throwable cause of this exception
    */
   public CqExistsException(Throwable cause) {

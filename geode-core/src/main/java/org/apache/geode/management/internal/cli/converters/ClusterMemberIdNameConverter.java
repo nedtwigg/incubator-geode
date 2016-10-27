@@ -28,11 +28,7 @@ import org.springframework.shell.core.Completion;
 import org.springframework.shell.core.Converter;
 import org.springframework.shell.core.MethodTarget;
 
-/**
- *
- *
- * @since GemFire 8.0
- */
+/** @since GemFire 8.0 */
 public class ClusterMemberIdNameConverter implements Converter<String> {
   @Override
   public boolean supports(Class<?> type, String optionContext) {
@@ -45,7 +41,12 @@ public class ClusterMemberIdNameConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
     if (String.class.equals(targetType) && ConverterHint.ALL_MEMBER_IDNAME.equals(optionContext)) {
       Set<String> memberIdAndNames = getMemberIdAndNames();
 
@@ -63,7 +64,8 @@ public class ClusterMemberIdNameConverter implements Converter<String> {
     final Gfsh gfsh = Gfsh.getCurrentInstance();
 
     if (gfsh != null && gfsh.isConnectedAndReady()) {
-      final String[] memberIds = gfsh.getOperationInvoker().getDistributedSystemMXBean().listMembers();
+      final String[] memberIds =
+          gfsh.getOperationInvoker().getDistributedSystemMXBean().listMembers();
 
       if (memberIds != null && memberIds.length != 0) {
         memberIdsAndNames.addAll(Arrays.asList(memberIds));
@@ -72,5 +74,4 @@ public class ClusterMemberIdNameConverter implements Converter<String> {
 
     return memberIdsAndNames;
   }
-
 }

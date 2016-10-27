@@ -45,7 +45,8 @@ public class IntegrationJUnitTest {
     CacheFactory cf = new CacheFactory(props);
     Cache cache = cf.create();
 
-    MemcachedClient client = new MemcachedClient(new InetSocketAddress(InetAddress.getLocalHost(), port));
+    MemcachedClient client =
+        new MemcachedClient(new InetSocketAddress(InetAddress.getLocalHost(), port));
     Future<Boolean> f = client.add("key", 10, "myStringValue");
     assertTrue(f.get());
     Future<Boolean> f1 = client.add("key1", 10, "myStringValue1");

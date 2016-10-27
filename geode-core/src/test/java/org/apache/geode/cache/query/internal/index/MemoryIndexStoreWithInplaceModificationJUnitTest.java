@@ -47,5 +47,4 @@ public class MemoryIndexStoreWithInplaceModificationJUnitTest extends MemoryInde
   public void resetInPlaceModification() {
     IndexManager.INPLACE_OBJECT_MODIFICATION_FOR_TEST = false;
   }
-
 }

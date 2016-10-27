@@ -24,8 +24,7 @@ import org.apache.geode.internal.Assert;
 public class ASTConstruction extends GemFireAST {
   private static final long serialVersionUID = 6647545354866647845L;
 
-  public ASTConstruction() {
-  }
+  public ASTConstruction() {}
 
   public ASTConstruction(Token t) {
     super(t);
@@ -39,5 +38,4 @@ public class ASTConstruction extends GemFireAST {
     // left argList on stack
     compiler.constructObject(ResultsSet.class);
   }
-
 }

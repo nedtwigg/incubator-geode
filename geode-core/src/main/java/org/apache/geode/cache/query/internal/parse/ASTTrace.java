@@ -14,18 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal.parse;
 
 import org.apache.geode.cache.query.internal.QCompiler;
 
-/**
- * 
- * @since GemFire 6.6.2
- *
- */
+/** @since GemFire 6.6.2 */
 public class ASTTrace extends GemFireAST {
 
   @Override

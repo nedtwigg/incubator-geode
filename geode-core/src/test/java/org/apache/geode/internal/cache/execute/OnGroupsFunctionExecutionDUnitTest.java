@@ -59,20 +59,21 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
 
   @Override
   public final void preTearDown() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Cache c = null;
-        try {
-          c = CacheFactory.getAnyInstance();
-          if (c != null) {
-            c.close();
+    Invoke.invokeInEveryVM(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Cache c = null;
+            try {
+              c = CacheFactory.getAnyInstance();
+              if (c != null) {
+                c.close();
+              }
+            } catch (CacheClosedException e) {
+            }
+            return null;
           }
-        } catch (CacheClosedException e) {
-        }
-        return null;
-      }
-    });
+        });
   }
 
   static class OnGroupsFunction extends FunctionAdapter {
@@ -102,101 +103,114 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     }
   }
 
-  private void initVM(VM vm, final String groups, final String regionName, final boolean startServer) {
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Properties props = new Properties();
-        props.put(GROUPS, groups);
-        if (regionName != null) {
-          Cache c = null;
-          try {
-            c = CacheFactory.getInstance(getSystem(props));
-            c.close();
-          } catch (CacheClosedException cce) {
+  private void initVM(
+      VM vm, final String groups, final String regionName, final boolean startServer) {
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Properties props = new Properties();
+            props.put(GROUPS, groups);
+            if (regionName != null) {
+              Cache c = null;
+              try {
+                c = CacheFactory.getInstance(getSystem(props));
+                c.close();
+              } catch (CacheClosedException cce) {
+              }
+              c = CacheFactory.create(getSystem(props));
+              c.createRegionFactory(RegionShortcut.PARTITION).create(regionName);
+              if (startServer) {
+                CacheServer s = c.addCacheServer();
+                s.setPort(AvailablePortHelper.getRandomAvailableTCPPort());
+                s.start();
+              }
+            } else {
+              getSystem(props);
+            }
+            return null;
           }
-          c = CacheFactory.create(getSystem(props));
-          c.createRegionFactory(RegionShortcut.PARTITION).create(regionName);
-          if (startServer) {
-            CacheServer s = c.addCacheServer();
-            s.setPort(AvailablePortHelper.getRandomAvailableTCPPort());
-            s.start();
-          }
-        } else {
-          getSystem(props);
-        }
-        return null;
-      }
-    });
+        });
   }
 
   private void registerFunction(VM vm) {
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        FunctionService.registerFunction(new OnGroupsFunction());
-        return null;
-      }
-    });
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            FunctionService.registerFunction(new OnGroupsFunction());
+            return null;
+          }
+        });
   }
 
   private void verifyAndResetInvocationCount(VM vm, final int count) {
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        OnGroupsFunction f = (OnGroupsFunction) FunctionService.getFunction(OnGroupsFunction.Id);
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            OnGroupsFunction f =
+                (OnGroupsFunction) FunctionService.getFunction(OnGroupsFunction.Id);
 
-        // assert succeeded, reset count
-        synchronized (OnGroupsFunction.class) {
-          assertEquals(count, f.invocationCount);
-          f.invocationCount = 0;
-        }
-        return null;
-      }
-    });
+            // assert succeeded, reset count
+            synchronized (OnGroupsFunction.class) {
+              assertEquals(count, f.invocationCount);
+              f.invocationCount = 0;
+            }
+            return null;
+          }
+        });
   }
 
   private int getAndResetInvocationCount(VM vm) {
-    return (Integer) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        OnGroupsFunction f = (OnGroupsFunction) FunctionService.getFunction(OnGroupsFunction.Id);
-        int count = 0;
-        synchronized (OnGroupsFunction.class) {
-          count = f.invocationCount;
-          f.invocationCount = 0;
-        }
-        return count;
-      }
-    });
+    return (Integer)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                OnGroupsFunction f =
+                    (OnGroupsFunction) FunctionService.getFunction(OnGroupsFunction.Id);
+                int count = 0;
+                synchronized (OnGroupsFunction.class) {
+                  count = f.invocationCount;
+                  f.invocationCount = 0;
+                }
+                return count;
+              }
+            });
   }
 
   private int getInvocationCount(VM vm) {
-    return (Integer) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        OnGroupsFunction f = (OnGroupsFunction) FunctionService.getFunction(OnGroupsFunction.Id);
-        int count = 0;
-        synchronized (OnGroupsFunction.class) {
-          count = f.invocationCount;
-        }
+    return (Integer)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                OnGroupsFunction f =
+                    (OnGroupsFunction) FunctionService.getFunction(OnGroupsFunction.Id);
+                int count = 0;
+                synchronized (OnGroupsFunction.class) {
+                  count = f.invocationCount;
+                }
 
-        return count;
-      }
-    });
+                return count;
+              }
+            });
   }
 
   private void resetInvocationCount(VM vm) {
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        OnGroupsFunction f = (OnGroupsFunction) FunctionService.getFunction(OnGroupsFunction.Id);
-        synchronized (OnGroupsFunction.class) {
-          f.invocationCount = 0;
-        }
-        return null;
-      }
-    });
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            OnGroupsFunction f =
+                (OnGroupsFunction) FunctionService.getFunction(OnGroupsFunction.Id);
+            synchronized (OnGroupsFunction.class) {
+              f.invocationCount = 0;
+            }
+            return null;
+          }
+        });
   }
 
   @Test
@@ -225,91 +239,95 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
       registerFunction(vm2);
     }
 
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        LogWriterUtils.getLogWriter().fine("SWAP:invoking on gm");
-        DistributedSystem ds = getSystem();
-        try {
-          FunctionService.onMember("no such group");
-          fail("expected exception not thrown");
-        } catch (FunctionException e) {
-        }
-        Execution e = FunctionService.onMembers("gm");
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("gm");
-        e = e.withArgs(args);
-        if (registerFunction) {
-          e.execute(OnGroupsFunction.Id).getResult();
-        } else {
-          e.execute(new OnGroupsFunction()).getResult();
-        }
-        return null;
-      }
-    });
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            LogWriterUtils.getLogWriter().fine("SWAP:invoking on gm");
+            DistributedSystem ds = getSystem();
+            try {
+              FunctionService.onMember("no such group");
+              fail("expected exception not thrown");
+            } catch (FunctionException e) {
+            }
+            Execution e = FunctionService.onMembers("gm");
+            ArrayList<String> args = new ArrayList<String>();
+            args.add("gm");
+            e = e.withArgs(args);
+            if (registerFunction) {
+              e.execute(OnGroupsFunction.Id).getResult();
+            } else {
+              e.execute(new OnGroupsFunction()).getResult();
+            }
+            return null;
+          }
+        });
     verifyAndResetInvocationCount(vm0, 1);
     verifyAndResetInvocationCount(vm1, 0);
     verifyAndResetInvocationCount(vm2, 0);
 
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        DistributedSystem ds = getSystem();
-        LogWriterUtils.getLogWriter().fine("SWAP:invoking on g0");
-        Execution e = FunctionService.onMembers("g0");
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("g0");
-        e = e.withArgs(args);
-        if (registerFunction) {
-          e.execute(OnGroupsFunction.Id).getResult();
-        } else {
-          e.execute(new OnGroupsFunction()).getResult();
-        }
-        return null;
-      }
-    });
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            DistributedSystem ds = getSystem();
+            LogWriterUtils.getLogWriter().fine("SWAP:invoking on g0");
+            Execution e = FunctionService.onMembers("g0");
+            ArrayList<String> args = new ArrayList<String>();
+            args.add("g0");
+            e = e.withArgs(args);
+            if (registerFunction) {
+              e.execute(OnGroupsFunction.Id).getResult();
+            } else {
+              e.execute(new OnGroupsFunction()).getResult();
+            }
+            return null;
+          }
+        });
     verifyAndResetInvocationCount(vm0, 1);
     verifyAndResetInvocationCount(vm1, 0);
     verifyAndResetInvocationCount(vm2, 1);
 
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        DistributedSystem ds = getSystem();
-        Execution e = FunctionService.onMembers("g1");
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("g1");
-        e = e.withArgs(args);
-        if (registerFunction) {
-          e.execute(OnGroupsFunction.Id).getResult();
-        } else {
-          e.execute(new OnGroupsFunction()).getResult();
-        }
-        return null;
-      }
-    });
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            DistributedSystem ds = getSystem();
+            Execution e = FunctionService.onMembers("g1");
+            ArrayList<String> args = new ArrayList<String>();
+            args.add("g1");
+            e = e.withArgs(args);
+            if (registerFunction) {
+              e.execute(OnGroupsFunction.Id).getResult();
+            } else {
+              e.execute(new OnGroupsFunction()).getResult();
+            }
+            return null;
+          }
+        });
     verifyAndResetInvocationCount(vm0, 0);
     verifyAndResetInvocationCount(vm1, 1);
     verifyAndResetInvocationCount(vm2, 1);
 
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        LogWriterUtils.getLogWriter().fine("SWAP:invoking on g0 g1");
-        InternalDistributedSystem ds = InternalDistributedSystem.getConnectedInstance();
-        Execution e = FunctionService.onMembers("g0", "g1");
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("g0");
-        args.add("g1");
-        e = e.withArgs(args);
-        if (registerFunction) {
-          e.execute(OnGroupsFunction.Id).getResult();
-        } else {
-          e.execute(new OnGroupsFunction()).getResult();
-        }
-        return null;
-      }
-    });
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            LogWriterUtils.getLogWriter().fine("SWAP:invoking on g0 g1");
+            InternalDistributedSystem ds = InternalDistributedSystem.getConnectedInstance();
+            Execution e = FunctionService.onMembers("g0", "g1");
+            ArrayList<String> args = new ArrayList<String>();
+            args.add("g0");
+            args.add("g1");
+            e = e.withArgs(args);
+            if (registerFunction) {
+              e.execute(OnGroupsFunction.Id).getResult();
+            } else {
+              e.execute(new OnGroupsFunction()).getResult();
+            }
+            return null;
+          }
+        });
     verifyAndResetInvocationCount(vm0, 1);
     verifyAndResetInvocationCount(vm1, 1);
     verifyAndResetInvocationCount(vm2, 1);
@@ -326,38 +344,40 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     initVM(vm1, "g1", null, false);
     initVM(vm2, "g0,g1", null, false);
 
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        DistributedSystem ds = getSystem();
-        try {
-          FunctionService.onMember("no such group");
-          fail("expected exception not thrown");
-        } catch (FunctionException e) {
-        }
-        try {
-          FunctionService.onMember();
-          fail("expected exception not thrown");
-        } catch (FunctionException e) {
-        }
-        FunctionService.onMember("g1").execute(new OnGroupsFunction()).getResult();
-        return null;
-      }
-    });
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            DistributedSystem ds = getSystem();
+            try {
+              FunctionService.onMember("no such group");
+              fail("expected exception not thrown");
+            } catch (FunctionException e) {
+            }
+            try {
+              FunctionService.onMember();
+              fail("expected exception not thrown");
+            } catch (FunctionException e) {
+            }
+            FunctionService.onMember("g1").execute(new OnGroupsFunction()).getResult();
+            return null;
+          }
+        });
     int c0 = getAndResetInvocationCount(vm0);
     int c1 = getAndResetInvocationCount(vm1);
     int c2 = getAndResetInvocationCount(vm2);
     assertEquals(1, c0 + c1 + c2);
 
     // test that function is invoked locally when this member belongs to group
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        DistributedSystem ds = getSystem();
-        FunctionService.onMember("g0").execute(new OnGroupsFunction()).getResult();
-        return null;
-      }
-    });
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            DistributedSystem ds = getSystem();
+            FunctionService.onMember("g0").execute(new OnGroupsFunction()).getResult();
+            return null;
+          }
+        });
     verifyAndResetInvocationCount(vm0, 1);
     verifyAndResetInvocationCount(vm1, 0);
     verifyAndResetInvocationCount(vm2, 0);
@@ -394,59 +414,67 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     initVM(vm1, "g1", regionName, false);
     initVM(vm2, "g0,g1", regionName, false);
 
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        DistributedSystem ds = getSystem();
-        Execution e = FunctionService.onMembers("mg");
-        ArrayList<Integer> l = (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
-        int sum = 0;
-        for (int i = 0; i < l.size(); i++) {
-          sum += l.get(i);
-        }
-        assertEquals(5, sum);
-        return null;
-      }
-    });
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            DistributedSystem ds = getSystem();
+            Execution e = FunctionService.onMembers("mg");
+            ArrayList<Integer> l =
+                (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
+            int sum = 0;
+            for (int i = 0; i < l.size(); i++) {
+              sum += l.get(i);
+            }
+            assertEquals(5, sum);
+            return null;
+          }
+        });
 
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        DistributedSystem ds = getSystem();
-        Execution e = FunctionService.onMembers("g0");
-        ArrayList<Integer> l = (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
-        int sum = 0;
-        for (int i = 0; i < l.size(); i++) {
-          sum += l.get(i);
-        }
-        assertEquals(10, sum);
-        return null;
-      }
-    });
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            DistributedSystem ds = getSystem();
+            Execution e = FunctionService.onMembers("g0");
+            ArrayList<Integer> l =
+                (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
+            int sum = 0;
+            for (int i = 0; i < l.size(); i++) {
+              sum += l.get(i);
+            }
+            assertEquals(10, sum);
+            return null;
+          }
+        });
 
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        DistributedSystem ds = getSystem();
-        Execution e = FunctionService.onMembers("g0", "g1");
-        ArrayList<Integer> l = (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
-        int sum = 0;
-        for (int i = 0; i < l.size(); i++) {
-          sum += l.get(i);
-        }
-        assertEquals(15, sum);
-        return null;
-      }
-    });
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            DistributedSystem ds = getSystem();
+            Execution e = FunctionService.onMembers("g0", "g1");
+            ArrayList<Integer> l =
+                (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
+            int sum = 0;
+            for (int i = 0; i < l.size(); i++) {
+              sum += l.get(i);
+            }
+            assertEquals(15, sum);
+            return null;
+          }
+        });
   }
 
   private int getLocatorPort(VM locator) {
-    return (Integer) locator.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        return Locator.getLocator().getPort();
-      }
-    });
+    return (Integer)
+        locator.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                return Locator.getLocator().getPort();
+              }
+            });
   }
 
   static class OnGroupsExceptionFunction extends FunctionAdapter {
@@ -502,43 +530,44 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     initVM(vm1, "g1", regionName, false);
     initVM(vm2, "g0,g1,g2", regionName, false);
 
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        DistributedSystem ds = getSystem();
-        Execution e = FunctionService.onMembers("mg");
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("runtime");
-        e = e.withArgs(args);
-        try {
-          e.execute(new OnGroupsExceptionFunction()).getResult();
-          fail("expected exception not thrown");
-        } catch (FunctionException ex) {
-          assertTrue(ex.getCause() instanceof NullPointerException);
-        }
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            DistributedSystem ds = getSystem();
+            Execution e = FunctionService.onMembers("mg");
+            ArrayList<String> args = new ArrayList<String>();
+            args.add("runtime");
+            e = e.withArgs(args);
+            try {
+              e.execute(new OnGroupsExceptionFunction()).getResult();
+              fail("expected exception not thrown");
+            } catch (FunctionException ex) {
+              assertTrue(ex.getCause() instanceof NullPointerException);
+            }
 
-        Execution e1 = FunctionService.onMembers("g1");
-        e1 = e1.withArgs(args);
-        try {
-          e1.execute(new OnGroupsExceptionFunction()).getResult();
-          fail("expected exception not thrown");
-        } catch (FunctionException ex) {
-          assertTrue(ex.getCause() instanceof NullPointerException);
-        }
+            Execution e1 = FunctionService.onMembers("g1");
+            e1 = e1.withArgs(args);
+            try {
+              e1.execute(new OnGroupsExceptionFunction()).getResult();
+              fail("expected exception not thrown");
+            } catch (FunctionException ex) {
+              assertTrue(ex.getCause() instanceof NullPointerException);
+            }
 
-        // fail on only one member
-        Execution e2 = FunctionService.onMembers("g1");
-        args.add("g2");
-        e2 = e2.withArgs(args);
-        try {
-          e2.execute(new OnGroupsExceptionFunction()).getResult();
-          fail("expected exception not thrown");
-        } catch (FunctionException ex) {
-          assertTrue(ex.getCause() instanceof NullPointerException);
-        }
-        return null;
-      }
-    });
+            // fail on only one member
+            Execution e2 = FunctionService.onMembers("g1");
+            args.add("g2");
+            e2 = e2.withArgs(args);
+            try {
+              e2.execute(new OnGroupsExceptionFunction()).getResult();
+              fail("expected exception not thrown");
+            } catch (FunctionException ex) {
+              assertTrue(ex.getCause() instanceof NullPointerException);
+            }
+            return null;
+          }
+        });
   }
 
   @Test
@@ -553,23 +582,24 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     initVM(vm1, "g1", regionName, false);
     initVM(vm2, "g0,g1,g2", regionName, false);
 
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        DistributedSystem ds = getSystem();
-        Execution e1 = FunctionService.onMembers("g1");
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("shutdown");
-        e1 = e1.withArgs(args);
-        try {
-          e1.execute(new OnGroupsExceptionFunction()).getResult();
-          fail("expected exception not thrown");
-        } catch (FunctionException ex) {
-          assertTrue(ex.getCause() instanceof FunctionInvocationTargetException);
-        }
-        return null;
-      }
-    });
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            DistributedSystem ds = getSystem();
+            Execution e1 = FunctionService.onMembers("g1");
+            ArrayList<String> args = new ArrayList<String>();
+            args.add("shutdown");
+            e1 = e1.withArgs(args);
+            try {
+              e1.execute(new OnGroupsExceptionFunction()).getResult();
+              fail("expected exception not thrown");
+            } catch (FunctionException ex) {
+              assertTrue(ex.getCause() instanceof FunctionInvocationTargetException);
+            }
+            return null;
+          }
+        });
   }
 
   @Test
@@ -584,24 +614,25 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     initVM(vm1, "g1", regionName, false);
     initVM(vm2, "g0,g1,g2", regionName, false);
 
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        DistributedSystem ds = getSystem();
-        Execution e1 = FunctionService.onMembers("g1");
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("shutdown");
-        args.add("g2");
-        e1 = e1.withArgs(args);
-        try {
-          e1.execute(new OnGroupsExceptionFunction()).getResult();
-          fail("expected exception not thrown");
-        } catch (FunctionException ex) {
-          assertTrue(ex.getCause() instanceof FunctionInvocationTargetException);
-        }
-        return null;
-      }
-    });
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            DistributedSystem ds = getSystem();
+            Execution e1 = FunctionService.onMembers("g1");
+            ArrayList<String> args = new ArrayList<String>();
+            args.add("shutdown");
+            args.add("g2");
+            e1 = e1.withArgs(args);
+            try {
+              e1.execute(new OnGroupsExceptionFunction()).getResult();
+              fail("expected exception not thrown");
+            } catch (FunctionException ex) {
+              assertTrue(ex.getCause() instanceof FunctionInvocationTargetException);
+            }
+            return null;
+          }
+        });
   }
 
   @Test
@@ -616,28 +647,29 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     initVM(vm1, "g1", regionName, false);
     initVM(vm2, "g0,g1,g2", regionName, false);
 
-    vm0.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        DistributedSystem ds = getSystem();
-        Execution e1 = FunctionService.onMembers("g1");
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("shutdown");
-        args.add("g2");
-        e1 = e1.withArgs(args);
-        ((AbstractExecution) e1).setIgnoreDepartedMembers(true);
-        ArrayList l = (ArrayList) e1.execute(new OnGroupsExceptionFunction()).getResult();
-        assertEquals(2, l.size());
-        if (l.get(0) instanceof FunctionInvocationTargetException) {
-          assertTrue((Boolean) l.get(1));
-        } else if (l.get(0) instanceof Boolean) {
-          assertTrue(l.get(1) instanceof FunctionInvocationTargetException);
-        } else {
-          fail("expected to find a Boolean or throwable at index 0");
-        }
-        return null;
-      }
-    });
+    vm0.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            DistributedSystem ds = getSystem();
+            Execution e1 = FunctionService.onMembers("g1");
+            ArrayList<String> args = new ArrayList<String>();
+            args.add("shutdown");
+            args.add("g2");
+            e1 = e1.withArgs(args);
+            ((AbstractExecution) e1).setIgnoreDepartedMembers(true);
+            ArrayList l = (ArrayList) e1.execute(new OnGroupsExceptionFunction()).getResult();
+            assertEquals(2, l.size());
+            if (l.get(0) instanceof FunctionInvocationTargetException) {
+              assertTrue((Boolean) l.get(1));
+            } else if (l.get(0) instanceof Boolean) {
+              assertTrue(l.get(1) instanceof FunctionInvocationTargetException);
+            } else {
+              fail("expected to find a Boolean or throwable at index 0");
+            }
+            return null;
+          }
+        });
   }
 
   @Test
@@ -682,84 +714,87 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     final int locatorPort = getLocatorPort(locator);
     final String hostName = host.getHostName();
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        try {
-          Cache c = CacheFactory.getAnyInstance();
-          c.close();
-        } catch (CacheClosedException cce) {
-        }
-        disconnectFromDS();
-        LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
-        ClientCacheFactory ccf = new ClientCacheFactory();
-        ccf.addPoolLocator(hostName, locatorPort);
-        ccf.setPoolServerGroup("mg");
-        ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-        ClientCache c = ccf.create();
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            try {
+              Cache c = CacheFactory.getAnyInstance();
+              c.close();
+            } catch (CacheClosedException cce) {
+            }
+            disconnectFromDS();
+            LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
+            ClientCacheFactory ccf = new ClientCacheFactory();
+            ccf.addPoolLocator(hostName, locatorPort);
+            ccf.setPoolServerGroup("mg");
+            ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
+            ClientCache c = ccf.create();
 
-        c.getLogger().info("SWAP:invoking function from client on g0");
-        Execution e = InternalFunctionService.onServers(c, "g0");
-        if (withArgs) {
-          ArrayList<String> args = new ArrayList<String>();
-          args.add("g0");
-          e = e.withArgs(args);
-        }
-        if (register) {
-          e.execute(OnGroupsFunction.Id).getResult();
-        } else {
-          e.execute(new OnGroupsFunction()).getResult();
-        }
-        return null;
-      }
-    });
+            c.getLogger().info("SWAP:invoking function from client on g0");
+            Execution e = InternalFunctionService.onServers(c, "g0");
+            if (withArgs) {
+              ArrayList<String> args = new ArrayList<String>();
+              args.add("g0");
+              e = e.withArgs(args);
+            }
+            if (register) {
+              e.execute(OnGroupsFunction.Id).getResult();
+            } else {
+              e.execute(new OnGroupsFunction()).getResult();
+            }
+            return null;
+          }
+        });
     verifyAndResetInvocationCount(server0, 1);
     verifyAndResetInvocationCount(server1, 0);
     verifyAndResetInvocationCount(server2, 1);
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        ClientCache c = ClientCacheFactory.getAnyInstance();
-        c.getLogger().fine("SWAP:invoking function from client on mg");
-        Execution e = InternalFunctionService.onServers(c, "mg");
-        if (withArgs) {
-          ArrayList<String> args = new ArrayList<String>();
-          args.add("mg");
-          e = e.withArgs(args);
-        }
-        if (register) {
-          e.execute(OnGroupsFunction.Id).getResult();
-        } else {
-          e.execute(new OnGroupsFunction()).getResult();
-        }
-        return null;
-      }
-    });
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            ClientCache c = ClientCacheFactory.getAnyInstance();
+            c.getLogger().fine("SWAP:invoking function from client on mg");
+            Execution e = InternalFunctionService.onServers(c, "mg");
+            if (withArgs) {
+              ArrayList<String> args = new ArrayList<String>();
+              args.add("mg");
+              e = e.withArgs(args);
+            }
+            if (register) {
+              e.execute(OnGroupsFunction.Id).getResult();
+            } else {
+              e.execute(new OnGroupsFunction()).getResult();
+            }
+            return null;
+          }
+        });
     verifyAndResetInvocationCount(server0, 1);
     verifyAndResetInvocationCount(server1, 0);
     verifyAndResetInvocationCount(server2, 0);
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        ClientCache c = ClientCacheFactory.getAnyInstance();
-        c.getLogger().fine("SWAP:invoking function from client on g0 g1");
-        Execution e = InternalFunctionService.onServers(c, "g0", "g1");
-        if (withArgs) {
-          ArrayList<String> args = new ArrayList<String>();
-          args.add("g0");
-          args.add("g1");
-          e = e.withArgs(args);
-        }
-        if (register) {
-          e.execute(OnGroupsFunction.Id).getResult();
-        } else {
-          e.execute(new OnGroupsFunction()).getResult();
-        }
-        return null;
-      }
-    });
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            ClientCache c = ClientCacheFactory.getAnyInstance();
+            c.getLogger().fine("SWAP:invoking function from client on g0 g1");
+            Execution e = InternalFunctionService.onServers(c, "g0", "g1");
+            if (withArgs) {
+              ArrayList<String> args = new ArrayList<String>();
+              args.add("g0");
+              args.add("g1");
+              e = e.withArgs(args);
+            }
+            if (register) {
+              e.execute(OnGroupsFunction.Id).getResult();
+            } else {
+              e.execute(new OnGroupsFunction()).getResult();
+            }
+            return null;
+          }
+        });
     verifyAndResetInvocationCount(server0, 1);
     verifyAndResetInvocationCount(server1, 1);
     verifyAndResetInvocationCount(server2, 1);
@@ -782,65 +817,71 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     final int locatorPort = getLocatorPort(locator);
     final String hostName = host.getHostName();
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        try {
-          Cache c = CacheFactory.getAnyInstance();
-          c.close();
-        } catch (CacheClosedException cce) {
-        }
-        disconnectFromDS();
-        LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
-        ClientCacheFactory ccf = new ClientCacheFactory();
-        ccf.addPoolLocator(hostName, locatorPort);
-        ccf.setPoolServerGroup("mg");
-        ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-        ClientCache c = ccf.create();
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            try {
+              Cache c = CacheFactory.getAnyInstance();
+              c.close();
+            } catch (CacheClosedException cce) {
+            }
+            disconnectFromDS();
+            LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
+            ClientCacheFactory ccf = new ClientCacheFactory();
+            ccf.addPoolLocator(hostName, locatorPort);
+            ccf.setPoolServerGroup("mg");
+            ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
+            ClientCache c = ccf.create();
 
-        c.getLogger().info("SWAP:invoking function from client on g0");
-        Execution e = InternalFunctionService.onServers(c, "g0");
-        ArrayList<Integer> l = (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
-        int sum = 0;
-        for (int i = 0; i < l.size(); i++) {
-          sum += l.get(i);
-        }
-        assertEquals(10, sum);
-        return null;
-      }
-    });
+            c.getLogger().info("SWAP:invoking function from client on g0");
+            Execution e = InternalFunctionService.onServers(c, "g0");
+            ArrayList<Integer> l =
+                (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
+            int sum = 0;
+            for (int i = 0; i < l.size(); i++) {
+              sum += l.get(i);
+            }
+            assertEquals(10, sum);
+            return null;
+          }
+        });
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        ClientCache c = ClientCacheFactory.getAnyInstance();
-        c.getLogger().fine("SWAP:invoking function from client on mg");
-        Execution e = InternalFunctionService.onServers(c, "mg");
-        ArrayList<Integer> l = (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
-        int sum = 0;
-        for (int i = 0; i < l.size(); i++) {
-          sum += l.get(i);
-        }
-        assertEquals(5, sum);
-        return null;
-      }
-    });
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            ClientCache c = ClientCacheFactory.getAnyInstance();
+            c.getLogger().fine("SWAP:invoking function from client on mg");
+            Execution e = InternalFunctionService.onServers(c, "mg");
+            ArrayList<Integer> l =
+                (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
+            int sum = 0;
+            for (int i = 0; i < l.size(); i++) {
+              sum += l.get(i);
+            }
+            assertEquals(5, sum);
+            return null;
+          }
+        });
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        ClientCache c = ClientCacheFactory.getAnyInstance();
-        c.getLogger().fine("SWAP:invoking function from client on g0 g1");
-        Execution e = InternalFunctionService.onServers(c, "g0", "g1");
-        ArrayList<Integer> l = (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
-        int sum = 0;
-        for (int i = 0; i < l.size(); i++) {
-          sum += l.get(i);
-        }
-        assertEquals(15, sum);
-        return null;
-      }
-    });
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            ClientCache c = ClientCacheFactory.getAnyInstance();
+            c.getLogger().fine("SWAP:invoking function from client on g0 g1");
+            Execution e = InternalFunctionService.onServers(c, "g0", "g1");
+            ArrayList<Integer> l =
+                (ArrayList<Integer>) e.execute(new OnGroupMultiResultFunction()).getResult();
+            int sum = 0;
+            for (int i = 0; i < l.size(); i++) {
+              sum += l.get(i);
+            }
+            assertEquals(15, sum);
+            return null;
+          }
+        });
   }
 
   @Test
@@ -860,63 +901,70 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     final int locatorPort = getLocatorPort(locator);
     final String hostName = host.getHostName();
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        try {
-          Cache c = CacheFactory.getAnyInstance();
-          c.close();
-        } catch (CacheClosedException cce) {
-        }
-        disconnectFromDS();
-        LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
-        ClientCacheFactory ccf = new ClientCacheFactory();
-        ccf.addPoolLocator(hostName, locatorPort);
-        ccf.setPoolServerGroup("mg");
-        ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-        ClientCache c = ccf.create();
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            try {
+              Cache c = CacheFactory.getAnyInstance();
+              c.close();
+            } catch (CacheClosedException cce) {
+            }
+            disconnectFromDS();
+            LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
+            ClientCacheFactory ccf = new ClientCacheFactory();
+            ccf.addPoolLocator(hostName, locatorPort);
+            ccf.setPoolServerGroup("mg");
+            ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
+            ClientCache c = ccf.create();
 
-        IgnoredException ex = IgnoredException.addIgnoredException("No member found");
-        try {
-          InternalFunctionService.onServer(c, "no such group").execute(new OnGroupsFunction()).getResult();
-          fail("expected exception not thrown");
-        } catch (FunctionException e) {
-        } finally {
-          ex.remove();
-        }
+            IgnoredException ex = IgnoredException.addIgnoredException("No member found");
+            try {
+              InternalFunctionService.onServer(c, "no such group")
+                  .execute(new OnGroupsFunction())
+                  .getResult();
+              fail("expected exception not thrown");
+            } catch (FunctionException e) {
+            } finally {
+              ex.remove();
+            }
 
-        InternalFunctionService.onServer(c, "g1").execute(new OnGroupsFunction()).getResult();
-        return null;
-      }
-    });
+            InternalFunctionService.onServer(c, "g1").execute(new OnGroupsFunction()).getResult();
+            return null;
+          }
+        });
     int c0 = getAndResetInvocationCount(server0);
     int c1 = getAndResetInvocationCount(server1);
     int c2 = getAndResetInvocationCount(server2);
     assertEquals(1, c0 + c1 + c2);
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        ClientCache c = ClientCacheFactory.getAnyInstance();
-        InternalFunctionService.onServer(c, "g0").execute(new OnGroupsFunction()).getResult();
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            ClientCache c = ClientCacheFactory.getAnyInstance();
+            InternalFunctionService.onServer(c, "g0").execute(new OnGroupsFunction()).getResult();
 
-        return null;
-      }
-    });
+            return null;
+          }
+        });
 
     verifyAndResetInvocationCount(server0, 1);
     verifyAndResetInvocationCount(server1, 0);
     verifyAndResetInvocationCount(server2, 0);
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        ClientCache c = ClientCacheFactory.getAnyInstance();
-        InternalFunctionService.onServer(c, "mg", "g1").execute(new OnGroupsFunction()).getResult();
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            ClientCache c = ClientCacheFactory.getAnyInstance();
+            InternalFunctionService.onServer(c, "mg", "g1")
+                .execute(new OnGroupsFunction())
+                .getResult();
 
-        return null;
-      }
-    });
+            return null;
+          }
+        });
 
     c0 = getAndResetInvocationCount(server0);
     c1 = getAndResetInvocationCount(server1);
@@ -941,65 +989,68 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     final int locatorPort = getLocatorPort(locator);
     final String hostName = host.getHostName();
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        try {
-          Cache c = CacheFactory.getAnyInstance();
-          c.close();
-        } catch (CacheClosedException cce) {
-        }
-        disconnectFromDS();
-        LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
-        ClientCacheFactory ccf = new ClientCacheFactory();
-        ccf.addPoolLocator(hostName, locatorPort);
-        ccf.setPoolServerGroup("mg");
-        ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-        ClientCache c = ccf.create();
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            try {
+              Cache c = CacheFactory.getAnyInstance();
+              c.close();
+            } catch (CacheClosedException cce) {
+            }
+            disconnectFromDS();
+            LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
+            ClientCacheFactory ccf = new ClientCacheFactory();
+            ccf.addPoolLocator(hostName, locatorPort);
+            ccf.setPoolServerGroup("mg");
+            ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
+            ClientCache c = ccf.create();
 
-        IgnoredException expected = IgnoredException.addIgnoredException("No member found");
-        try {
-          InternalFunctionService.onServers(c, "no such group").execute(new OnGroupsFunction()).getResult();
-          fail("expected exception not thrown");
-        } catch (FunctionException e) {
-        } finally {
-          expected.remove();
-        }
+            IgnoredException expected = IgnoredException.addIgnoredException("No member found");
+            try {
+              InternalFunctionService.onServers(c, "no such group")
+                  .execute(new OnGroupsFunction())
+                  .getResult();
+              fail("expected exception not thrown");
+            } catch (FunctionException e) {
+            } finally {
+              expected.remove();
+            }
 
-        IgnoredException.addIgnoredException("NullPointerException");
-        Execution e = InternalFunctionService.onServers(c, "mg");
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("runtime");
-        e = e.withArgs(args);
-        try {
-          e.execute(new OnGroupsExceptionFunction()).getResult();
-          fail("expected exception not thrown");
-        } catch (FunctionException ex) {
-          assertTrue(ex.getCause() instanceof NullPointerException);
-        }
+            IgnoredException.addIgnoredException("NullPointerException");
+            Execution e = InternalFunctionService.onServers(c, "mg");
+            ArrayList<String> args = new ArrayList<String>();
+            args.add("runtime");
+            e = e.withArgs(args);
+            try {
+              e.execute(new OnGroupsExceptionFunction()).getResult();
+              fail("expected exception not thrown");
+            } catch (FunctionException ex) {
+              assertTrue(ex.getCause() instanceof NullPointerException);
+            }
 
-        Execution e1 = InternalFunctionService.onServers(c, "g1");
-        e1 = e1.withArgs(args);
-        try {
-          e1.execute(new OnGroupsExceptionFunction()).getResult();
-          fail("expected exception not thrown");
-        } catch (FunctionException ex) {
-          assertTrue(ex.getCause() instanceof NullPointerException);
-        }
+            Execution e1 = InternalFunctionService.onServers(c, "g1");
+            e1 = e1.withArgs(args);
+            try {
+              e1.execute(new OnGroupsExceptionFunction()).getResult();
+              fail("expected exception not thrown");
+            } catch (FunctionException ex) {
+              assertTrue(ex.getCause() instanceof NullPointerException);
+            }
 
-        // only one member
-        Execution e2 = InternalFunctionService.onServers(c, "g1");
-        args.add("g2");
-        e2 = e2.withArgs(args);
-        try {
-          e2.execute(new OnGroupsExceptionFunction()).getResult();
-          fail("expected exception not thrown");
-        } catch (FunctionException ex) {
-          assertTrue(ex.getCause() instanceof NullPointerException);
-        }
-        return null;
-      }
-    });
+            // only one member
+            Execution e2 = InternalFunctionService.onServers(c, "g1");
+            args.add("g2");
+            e2 = e2.withArgs(args);
+            try {
+              e2.execute(new OnGroupsExceptionFunction()).getResult();
+              fail("expected exception not thrown");
+            } catch (FunctionException ex) {
+              assertTrue(ex.getCause() instanceof NullPointerException);
+            }
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1019,37 +1070,38 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     final int locatorPort = getLocatorPort(locator);
     final String hostName = host.getHostName();
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        try {
-          Cache c = CacheFactory.getAnyInstance();
-          c.close();
-        } catch (CacheClosedException cce) {
-        }
-        disconnectFromDS();
-        LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
-        ClientCacheFactory ccf = new ClientCacheFactory();
-        ccf.addPoolLocator(hostName, locatorPort);
-        ccf.setPoolServerGroup("mg");
-        ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-        ClientCache c = ccf.create();
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            try {
+              Cache c = CacheFactory.getAnyInstance();
+              c.close();
+            } catch (CacheClosedException cce) {
+            }
+            disconnectFromDS();
+            LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
+            ClientCacheFactory ccf = new ClientCacheFactory();
+            ccf.addPoolLocator(hostName, locatorPort);
+            ccf.setPoolServerGroup("mg");
+            ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
+            ClientCache c = ccf.create();
 
-        Execution e = InternalFunctionService.onServers(c, "g1");
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("disconnect");
-        e = e.withArgs(args);
+            Execution e = InternalFunctionService.onServers(c, "g1");
+            ArrayList<String> args = new ArrayList<String>();
+            args.add("disconnect");
+            e = e.withArgs(args);
 
-        IgnoredException.addIgnoredException("FunctionInvocationTargetException");
-        try {
-          e.execute(new OnGroupsExceptionFunction()).getResult();
-          fail("expected exception not thrown");
-        } catch (FunctionException ex) {
-          assertTrue(ex.getCause() instanceof FunctionInvocationTargetException);
-        }
-        return null;
-      }
-    });
+            IgnoredException.addIgnoredException("FunctionInvocationTargetException");
+            try {
+              e.execute(new OnGroupsExceptionFunction()).getResult();
+              fail("expected exception not thrown");
+            } catch (FunctionException ex) {
+              assertTrue(ex.getCause() instanceof FunctionInvocationTargetException);
+            }
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1069,37 +1121,38 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     final int locatorPort = getLocatorPort(locator);
     final String hostName = host.getHostName();
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        try {
-          Cache c = CacheFactory.getAnyInstance();
-          c.close();
-        } catch (CacheClosedException cce) {
-        }
-        disconnectFromDS();
-        LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
-        ClientCacheFactory ccf = new ClientCacheFactory();
-        ccf.addPoolLocator(hostName, locatorPort);
-        ccf.setPoolServerGroup("mg");
-        ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-        ClientCache c = ccf.create();
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            try {
+              Cache c = CacheFactory.getAnyInstance();
+              c.close();
+            } catch (CacheClosedException cce) {
+            }
+            disconnectFromDS();
+            LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
+            ClientCacheFactory ccf = new ClientCacheFactory();
+            ccf.addPoolLocator(hostName, locatorPort);
+            ccf.setPoolServerGroup("mg");
+            ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
+            ClientCache c = ccf.create();
 
-        Execution e = InternalFunctionService.onServers(c, "g1");
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("disconnect");
-        args.add("g2");
-        e = e.withArgs(args);
-        IgnoredException.addIgnoredException("FunctionInvocationTargetException");
-        try {
-          e.execute(new OnGroupsExceptionFunction()).getResult();
-          fail("expected exception not thrown");
-        } catch (FunctionException ex) {
-          assertTrue(ex.getCause() instanceof FunctionInvocationTargetException);
-        }
-        return null;
-      }
-    });
+            Execution e = InternalFunctionService.onServers(c, "g1");
+            ArrayList<String> args = new ArrayList<String>();
+            args.add("disconnect");
+            args.add("g2");
+            e = e.withArgs(args);
+            IgnoredException.addIgnoredException("FunctionInvocationTargetException");
+            try {
+              e.execute(new OnGroupsExceptionFunction()).getResult();
+              fail("expected exception not thrown");
+            } catch (FunctionException ex) {
+              assertTrue(ex.getCause() instanceof FunctionInvocationTargetException);
+            }
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1119,41 +1172,42 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     final int locatorPort = getLocatorPort(locator);
     final String hostName = host.getHostName();
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        try {
-          Cache c = CacheFactory.getAnyInstance();
-          c.close();
-        } catch (CacheClosedException cce) {
-        }
-        disconnectFromDS();
-        LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
-        ClientCacheFactory ccf = new ClientCacheFactory();
-        ccf.addPoolLocator(hostName, locatorPort);
-        ccf.setPoolServerGroup("mg");
-        ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-        ClientCache c = ccf.create();
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            try {
+              Cache c = CacheFactory.getAnyInstance();
+              c.close();
+            } catch (CacheClosedException cce) {
+            }
+            disconnectFromDS();
+            LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
+            ClientCacheFactory ccf = new ClientCacheFactory();
+            ccf.addPoolLocator(hostName, locatorPort);
+            ccf.setPoolServerGroup("mg");
+            ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
+            ClientCache c = ccf.create();
 
-        Execution e = InternalFunctionService.onServers(c, "g1");
-        ArrayList<String> args = new ArrayList<String>();
-        args.add("disconnect");
-        args.add("g2");
-        e = e.withArgs(args);
-        ((AbstractExecution) e).setIgnoreDepartedMembers(true);
-        ArrayList l = (ArrayList) e.execute(new OnGroupsExceptionFunction()).getResult();
-        LogWriterUtils.getLogWriter().info("SWAP:result:" + l);
-        assertEquals(2, l.size());
-        if (l.get(0) instanceof Throwable) {
-          assertTrue((Boolean) l.get(1));
-        } else if (l.get(0) instanceof Boolean) {
-          assertTrue(l.get(1) instanceof Throwable);
-        } else {
-          fail("expected to find a Boolean or throwable at index 0");
-        }
-        return null;
-      }
-    });
+            Execution e = InternalFunctionService.onServers(c, "g1");
+            ArrayList<String> args = new ArrayList<String>();
+            args.add("disconnect");
+            args.add("g2");
+            e = e.withArgs(args);
+            ((AbstractExecution) e).setIgnoreDepartedMembers(true);
+            ArrayList l = (ArrayList) e.execute(new OnGroupsExceptionFunction()).getResult();
+            LogWriterUtils.getLogWriter().info("SWAP:result:" + l);
+            assertEquals(2, l.size());
+            if (l.get(0) instanceof Throwable) {
+              assertTrue((Boolean) l.get(1));
+            } else if (l.get(0) instanceof Boolean) {
+              assertTrue(l.get(1) instanceof Throwable);
+            } else {
+              fail("expected to find a Boolean or throwable at index 0");
+            }
+            return null;
+          }
+        });
   }
 
   static class OnGroupsNoAckFunction extends OnGroupsFunction {
@@ -1188,73 +1242,77 @@ public class OnGroupsFunctionExecutionDUnitTest extends JUnit4DistributedTestCas
     final int locatorPort = getLocatorPort(locator);
     final String hostName = host.getHostName();
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        try {
-          Cache c = CacheFactory.getAnyInstance();
-          c.close();
-        } catch (CacheClosedException cce) {
-        }
-        disconnectFromDS();
-        LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
-        ClientCacheFactory ccf = new ClientCacheFactory();
-        ccf.addPoolLocator(hostName, locatorPort);
-        ccf.setPoolServerGroup("mg");
-        ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-        ClientCache c = ccf.create();
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            try {
+              Cache c = CacheFactory.getAnyInstance();
+              c.close();
+            } catch (CacheClosedException cce) {
+            }
+            disconnectFromDS();
+            LogWriterUtils.getLogWriter().fine("SWAP:creating client cache");
+            ClientCacheFactory ccf = new ClientCacheFactory();
+            ccf.addPoolLocator(hostName, locatorPort);
+            ccf.setPoolServerGroup("mg");
+            ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
+            ClientCache c = ccf.create();
 
-        c.getLogger().info("SWAP:invoking function from client on g0");
-        Execution e = InternalFunctionService.onServers(c, "g0");
-        e.execute(new OnGroupsNoAckFunction());
-        return null;
-      }
-    });
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        int c0 = getInvocationCount(server0);
-        int c1 = getInvocationCount(server1);
-        int c2 = getInvocationCount(server2);
-        return (c0 + c1 + c2) == 2;
-      }
+            c.getLogger().info("SWAP:invoking function from client on g0");
+            Execution e = InternalFunctionService.onServers(c, "g0");
+            e.execute(new OnGroupsNoAckFunction());
+            return null;
+          }
+        });
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            int c0 = getInvocationCount(server0);
+            int c1 = getInvocationCount(server1);
+            int c2 = getInvocationCount(server2);
+            return (c0 + c1 + c2) == 2;
+          }
 
-      @Override
-      public String description() {
-        return "OnGroupsNoAck invocation count mismatch";
-      }
-    };
+          @Override
+          public String description() {
+            return "OnGroupsNoAck invocation count mismatch";
+          }
+        };
     Wait.waitForCriterion(wc, 30000, 1000, true);
 
     resetInvocationCount(server0);
     resetInvocationCount(server1);
     resetInvocationCount(server2);
 
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        ClientCache c = ClientCacheFactory.getAnyInstance();
-        Execution e = InternalFunctionService.onServer(c, "g1");
-        e.execute(new OnGroupsNoAckFunction());
-        return null;
-      }
-    });
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            ClientCache c = ClientCacheFactory.getAnyInstance();
+            Execution e = InternalFunctionService.onServer(c, "g1");
+            e.execute(new OnGroupsNoAckFunction());
+            return null;
+          }
+        });
     // pause here to verify that we do not get more than 1 invocation
     Wait.pause(5000);
-    WaitCriterion wc2 = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        int c0 = getInvocationCount(server0);
-        int c1 = getInvocationCount(server1);
-        int c2 = getInvocationCount(server2);
-        return (c0 + c1 + c2) == 1;
-      }
+    WaitCriterion wc2 =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            int c0 = getInvocationCount(server0);
+            int c1 = getInvocationCount(server1);
+            int c2 = getInvocationCount(server2);
+            return (c0 + c1 + c2) == 1;
+          }
 
-      @Override
-      public String description() {
-        return "OnGroupsNoAck invocation count mismatch";
-      }
-    };
+          @Override
+          public String description() {
+            return "OnGroupsNoAck invocation count mismatch";
+          }
+        };
     Wait.waitForCriterion(wc2, 30000, 1000, true);
     resetInvocationCount(server0);
     resetInvocationCount(server1);

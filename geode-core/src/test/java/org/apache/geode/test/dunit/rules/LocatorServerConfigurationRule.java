@@ -67,12 +67,10 @@ public class LocatorServerConfigurationRule extends ExternalResource implements 
   }
 
   /**
-   * Returns getHost(0).getVM(0) as a locator instance with the given
-   * configuration properties.
+   * Returns getHost(0).getVM(0) as a locator instance with the given configuration properties.
+   *
    * @param locatorProperties
-   *
    * @return VM locator vm
-   *
    * @throws IOException
    */
   public VM getLocatorVM(Properties locatorProperties) throws IOException {
@@ -80,15 +78,20 @@ public class LocatorServerConfigurationRule extends ExternalResource implements 
       locatorProperties.setProperty(MCAST_PORT, "0");
     }
 
-    locatorPort = locator.invoke(() -> {
-      InternalLocator locator = (InternalLocator) Locator.startLocatorAndDS(0, null, locatorProperties);
-      locator.resetInternalLocatorFileNamesWithCorrectPortNumber(locatorPort);
+    locatorPort =
+        locator.invoke(
+            () -> {
+              InternalLocator locator =
+                  (InternalLocator) Locator.startLocatorAndDS(0, null, locatorProperties);
+              locator.resetInternalLocatorFileNamesWithCorrectPortNumber(locatorPort);
 
-      if (locator.getConfig().getEnableClusterConfiguration()) {
-        Awaitility.await().atMost(65, TimeUnit.SECONDS).until(() -> assertTrue(locator.isSharedConfigurationRunning()));
-      }
-      return locator.getPort();
-    });
+              if (locator.getConfig().getEnableClusterConfiguration()) {
+                Awaitility.await()
+                    .atMost(65, TimeUnit.SECONDS)
+                    .until(() -> assertTrue(locator.isSharedConfigurationRunning()));
+              }
+              return locator.getPort();
+            });
 
     this.locatorInitialized = true;
     return locator;
@@ -96,23 +99,27 @@ public class LocatorServerConfigurationRule extends ExternalResource implements 
 
   /**
    * Returns a node VM with given configuration properties.
+   *
    * @param index valid 1 to 3 (returns getHist(0).getVM(index)
    * @param properties
-   *
    * @return VM node vm
    */
   public VM getServerVM(int index, Properties properties) {
-    assertTrue("Locator not initialized. Initialize locator by calling getLocatorVM()", this.locatorInitialized);
+    assertTrue(
+        "Locator not initialized. Initialize locator by calling getLocatorVM()",
+        this.locatorInitialized);
     assertTrue("VM with index 0 is used for locator service.", (index != 0));
     VM nodeVM = getNodeVM(index);
-    nodeVM.invoke(() -> {
-      getSystem(properties);
-    });
+    nodeVM.invoke(
+        () -> {
+          getSystem(properties);
+        });
     return nodeVM;
   }
 
   /**
    * this will simply returns the node
+   *
    * @param index
    * @return
    */
@@ -143,5 +150,4 @@ public class LocatorServerConfigurationRule extends ExternalResource implements 
       return "localhost";
     }
   }
-
 }

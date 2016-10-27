@@ -37,9 +37,8 @@ import org.apache.geode.test.dunit.*;
 import org.apache.geode.test.junit.categories.*;
 
 /**
- * Tests cases that are particular for the auto connection source
- * - dynamically discovering servers, locators, handling
- * locator disappearance, etc.
+ * Tests cases that are particular for the auto connection source - dynamically discovering servers,
+ * locators, handling locator disappearance, etc.
  */
 @Category(DistributedTest.class)
 public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
@@ -71,7 +70,9 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
 
     vm1.invoke("Start BridgeServer", () -> startBridgeServer(null, locators));
 
-    vm2.invoke("StartBridgeClient", () -> startBridgeClient(null, NetworkUtils.getServerHostName(vm0.getHost()), locatorPort));
+    vm2.invoke(
+        "StartBridgeClient",
+        () -> startBridgeClient(null, NetworkUtils.getServerHostName(vm0.getHost()), locatorPort));
 
     putAndWaitForSuccess(vm2, REGION_NAME, "key", "value");
 
@@ -85,7 +86,13 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
     VM vm0 = host.getVM(0);
 
     try {
-      vm0.invoke("StartBridgeClient", () -> startBridgeClient(null, NetworkUtils.getServerHostName(vm0.getHost()), AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET)));
+      vm0.invoke(
+          "StartBridgeClient",
+          () ->
+              startBridgeClient(
+                  null,
+                  NetworkUtils.getServerHostName(vm0.getHost()),
+                  AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET)));
       putInVM(vm0, "key", "value");
       fail("Client cache should not have been able to start");
     } catch (Exception e) {
@@ -103,7 +110,10 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
     String hostName = NetworkUtils.getServerHostName(vm0.getHost());
     vm0.invoke("Start Locator", () -> startLocator(hostName, locatorPort, ""));
     try {
-      vm1.invoke("StartBridgeClient", () -> startBridgeClient(null, NetworkUtils.getServerHostName(vm0.getHost()), locatorPort));
+      vm1.invoke(
+          "StartBridgeClient",
+          () ->
+              startBridgeClient(null, NetworkUtils.getServerHostName(vm0.getHost()), locatorPort));
       putInVM(vm0, "key", "value");
       fail("Client cache should not have been able to start");
     } catch (Exception e) {
@@ -127,7 +137,9 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
 
     vm1.invoke("Start BridgeServer", () -> startBridgeServer(null, locators));
 
-    vm2.invoke("StartBridgeClient", () -> startBridgeClient(null, NetworkUtils.getServerHostName(vm0.getHost()), locatorPort));
+    vm2.invoke(
+        "StartBridgeClient",
+        () -> startBridgeClient(null, NetworkUtils.getServerHostName(vm0.getHost()), locatorPort));
 
     putAndWaitForSuccess(vm2, REGION_NAME, "key", "value");
 
@@ -155,11 +167,21 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
       final int locatorPort0 = ports[0];
       final int locatorPort1 = ports[1];
       final int locatorPort3 = ports[2];
-      String locators = getLocatorString(host, new int[] { locatorPort0, locatorPort1, locatorPort3 });
-      vm0.invoke("Start Locator", () -> startLocator(NetworkUtils.getServerHostName(vm0.getHost()), locatorPort0, locators));
-      vm1.invoke("Start Locator", () -> startLocator(NetworkUtils.getServerHostName(vm1.getHost()), locatorPort1, locators));
+      String locators =
+          getLocatorString(host, new int[] {locatorPort0, locatorPort1, locatorPort3});
+      vm0.invoke(
+          "Start Locator",
+          () ->
+              startLocator(NetworkUtils.getServerHostName(vm0.getHost()), locatorPort0, locators));
+      vm1.invoke(
+          "Start Locator",
+          () ->
+              startLocator(NetworkUtils.getServerHostName(vm1.getHost()), locatorPort1, locators));
 
-      vm2.invoke("StartBridgeClient", () -> startBridgeClient(null, NetworkUtils.getServerHostName(vm0.getHost()), locatorPort0));
+      vm2.invoke(
+          "StartBridgeClient",
+          () ->
+              startBridgeClient(null, NetworkUtils.getServerHostName(vm0.getHost()), locatorPort0));
 
       InetSocketAddress locatorToWaitFor = new InetSocketAddress(hostName, locatorPort1);
       waitForLocatorDiscovery(vm2, locatorToWaitFor);
@@ -170,7 +192,10 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
       putAndWaitForSuccess(vm2, REGION_NAME, "key", "value");
       Assert.assertEquals("value", getInVM(vm0, "key"));
 
-      vm3.invoke("Start Locator", () -> startLocator(NetworkUtils.getServerHostName(vm3.getHost()), locatorPort3, locators));
+      vm3.invoke(
+          "Start Locator",
+          () ->
+              startLocator(NetworkUtils.getServerHostName(vm3.getHost()), locatorPort3, locators));
       stopBridgeMemberVM(vm0);
       locatorToWaitFor = new InetSocketAddress(hostName, locatorPort3);
       waitForLocatorDiscovery(vm2, locatorToWaitFor);
@@ -180,7 +205,7 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
       Assert.assertEquals("value2", getInVM(vm1, "key2"));
     } catch (Exception ec) {
       if (ec.getCause() != null && (ec.getCause().getCause() instanceof BindException))
-        return;//BindException let it pass
+        return; //BindException let it pass
       throw ec;
     }
   }
@@ -197,9 +222,15 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
 
     String locators = NetworkUtils.getServerHostName(vm0.getHost()) + "[" + locatorPort + "]";
 
-    vm0.invoke("Start BridgeServer", () -> startBridgeServerWithEmbeddedLocator(null, locators, new String[] { REGION_NAME }, CacheServer.DEFAULT_LOAD_PROBE));
+    vm0.invoke(
+        "Start BridgeServer",
+        () ->
+            startBridgeServerWithEmbeddedLocator(
+                null, locators, new String[] {REGION_NAME}, CacheServer.DEFAULT_LOAD_PROBE));
 
-    vm2.invoke("StartBridgeClient", () -> startBridgeClient(null, NetworkUtils.getServerHostName(vm0.getHost()), locatorPort));
+    vm2.invoke(
+        "StartBridgeClient",
+        () -> startBridgeClient(null, NetworkUtils.getServerHostName(vm0.getHost()), locatorPort));
 
     putAndWaitForSuccess(vm2, REGION_NAME, "key", "value");
 
@@ -207,15 +238,23 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
   }
 
   private void waitForLocatorDiscovery(VM vm, final InetSocketAddress locatorToWaitFor) {
-    vm.invoke(new SerializableCallable() {
-      public Object call() throws InterruptedException {
-        MyLocatorCallback callback = (MyLocatorCallback) remoteObjects.get(CALLBACK_KEY);
+    vm.invoke(
+        new SerializableCallable() {
+          public Object call() throws InterruptedException {
+            MyLocatorCallback callback = (MyLocatorCallback) remoteObjects.get(CALLBACK_KEY);
 
-        boolean discovered = callback.waitForDiscovery(locatorToWaitFor, MAX_WAIT);
-        Assert.assertTrue("Waited " + MAX_WAIT + " for " + locatorToWaitFor + " to be discovered on client. List is now: " + callback.getDiscovered(), discovered);
-        return null;
-      }
-    });
+            boolean discovered = callback.waitForDiscovery(locatorToWaitFor, MAX_WAIT);
+            Assert.assertTrue(
+                "Waited "
+                    + MAX_WAIT
+                    + " for "
+                    + locatorToWaitFor
+                    + " to be discovered on client. List is now: "
+                    + callback.getDiscovered(),
+                discovered);
+            return null;
+          }
+        });
   }
 
   @Test
@@ -227,14 +266,31 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
     VM vm3 = host.getVM(3);
 
     int locatorPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
-    vm0.invoke("Start Locator", () -> startLocator(NetworkUtils.getServerHostName(vm0.getHost()), locatorPort, ""));
+    vm0.invoke(
+        "Start Locator",
+        () -> startLocator(NetworkUtils.getServerHostName(vm0.getHost()), locatorPort, ""));
 
     String locators = NetworkUtils.getServerHostName(vm0.getHost()) + "[" + locatorPort + "]";
 
-    vm1.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "group1", "group2" }, locators, new String[] { "A", "B" }));
-    vm2.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "group2", "group3" }, locators, new String[] { "B", "C" }));
+    vm1.invoke(
+        "Start BridgeServer",
+        () ->
+            startBridgeServer(
+                new String[] {"group1", "group2"}, locators, new String[] {"A", "B"}));
+    vm2.invoke(
+        "Start BridgeServer",
+        () ->
+            startBridgeServer(
+                new String[] {"group2", "group3"}, locators, new String[] {"B", "C"}));
 
-    vm3.invoke("StartBridgeClient", () -> startBridgeClient("group1", NetworkUtils.getServerHostName(vm0.getHost()), locatorPort, new String[] { "A", "B", "C" }));
+    vm3.invoke(
+        "StartBridgeClient",
+        () ->
+            startBridgeClient(
+                "group1",
+                NetworkUtils.getServerHostName(vm0.getHost()),
+                locatorPort,
+                new String[] {"A", "B", "C"}));
     putAndWaitForSuccess(vm3, "A", "key", "value");
     Assert.assertEquals("value", getInVM(vm1, "A", "key"));
     try {
@@ -245,7 +301,14 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
 
     stopBridgeMemberVM(vm3);
 
-    vm3.invoke("StartBridgeClient", () -> startBridgeClient("group3", NetworkUtils.getServerHostName(vm0.getHost()), locatorPort, new String[] { "A", "B", "C" }));
+    vm3.invoke(
+        "StartBridgeClient",
+        () ->
+            startBridgeClient(
+                "group3",
+                NetworkUtils.getServerHostName(vm0.getHost()),
+                locatorPort,
+                new String[] {"A", "B", "C"}));
     try {
       putInVM(vm3, "A", "key3", "value");
       fail("Should not have been able to find Region A on the server");
@@ -256,7 +319,14 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
 
     stopBridgeMemberVM(vm3);
 
-    vm3.invoke("StartBridgeClient", () -> startBridgeClient("group2", NetworkUtils.getServerHostName(vm0.getHost()), locatorPort, new String[] { "A", "B", "C" }));
+    vm3.invoke(
+        "StartBridgeClient",
+        () ->
+            startBridgeClient(
+                "group2",
+                NetworkUtils.getServerHostName(vm0.getHost()),
+                locatorPort,
+                new String[] {"A", "B", "C"}));
     putInVM(vm3, "B", "key5", "value");
     Assert.assertEquals("value", getInVM(vm1, "B", "key5"));
     Assert.assertEquals("value", getInVM(vm2, "B", "key5"));
@@ -264,7 +334,11 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
     stopBridgeMemberVM(vm1);
     putInVM(vm3, "B", "key6", "value");
     Assert.assertEquals("value", getInVM(vm2, "B", "key6"));
-    vm1.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "group1", "group2" }, locators, new String[] { "A", "B" }));
+    vm1.invoke(
+        "Start BridgeServer",
+        () ->
+            startBridgeServer(
+                new String[] {"group1", "group2"}, locators, new String[] {"A", "B"}));
     stopBridgeMemberVM(vm2);
 
     putInVM(vm3, "B", "key7", "value");
@@ -281,22 +355,35 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
 
     int locatorPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
 
-    vm0.invoke("Start Locator", () -> startLocator(NetworkUtils.getServerHostName(vm0.getHost()), locatorPort, ""));
+    vm0.invoke(
+        "Start Locator",
+        () -> startLocator(NetworkUtils.getServerHostName(vm0.getHost()), locatorPort, ""));
 
     final String locators = NetworkUtils.getServerHostName(vm0.getHost()) + "[" + locatorPort + "]";
 
-    final int serverPort1 = vm1.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "group1" }, locators));
-    final int serverPort2 = vm1.invoke("Start CacheServer", () -> addCacheServer(new String[] { "group2" }));
+    final int serverPort1 =
+        vm1.invoke(
+            "Start BridgeServer", () -> startBridgeServer(new String[] {"group1"}, locators));
+    final int serverPort2 =
+        vm1.invoke("Start CacheServer", () -> addCacheServer(new String[] {"group2"}));
 
-    vm2.invoke("StartBridgeClient", () -> startBridgeClient("group2", NetworkUtils.getServerHostName(vm0.getHost()), locatorPort));
+    vm2.invoke(
+        "StartBridgeClient",
+        () ->
+            startBridgeClient(
+                "group2", NetworkUtils.getServerHostName(vm0.getHost()), locatorPort));
 
-    checkEndpoints(vm2, new int[] { serverPort2 });
+    checkEndpoints(vm2, new int[] {serverPort2});
 
     stopBridgeMemberVM(vm2);
 
-    vm2.invoke("StartBridgeClient", () -> startBridgeClient("group1", NetworkUtils.getServerHostName(vm0.getHost()), locatorPort));
+    vm2.invoke(
+        "StartBridgeClient",
+        () ->
+            startBridgeClient(
+                "group1", NetworkUtils.getServerHostName(vm0.getHost()), locatorPort));
 
-    checkEndpoints(vm2, new int[] { serverPort1 });
+    checkEndpoints(vm2, new int[] {serverPort1});
   }
 
   @Test
@@ -307,22 +394,27 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
     VM bridge2VM = host.getVM(2);
     VM clientVM = host.getVM(3);
     int locatorPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
-    locatorVM.invoke("Start Locator", () -> startLocator(NetworkUtils.getServerHostName(locatorVM.getHost()), locatorPort, ""));
+    locatorVM.invoke(
+        "Start Locator",
+        () -> startLocator(NetworkUtils.getServerHostName(locatorVM.getHost()), locatorPort, ""));
 
     String locators = NetworkUtils.getServerHostName(locatorVM.getHost()) + "[" + locatorPort + "]";
 
     //start a bridge server with a listener
     addBridgeListener(bridge1VM);
-    int serverPort1 = bridge1VM.invoke("Start BridgeServer", () -> startBridgeServer(null, locators));
+    int serverPort1 =
+        bridge1VM.invoke("Start BridgeServer", () -> startBridgeServer(null, locators));
 
     //start a bridge client with a listener
     addBridgeListener(clientVM);
-    clientVM.invoke("StartBridgeClient", () -> {
-      String locatorHostName = NetworkUtils.getServerHostName(locatorVM.getHost());
-      startBridgeClient(null, locatorHostName, locatorPort);
-    });
+    clientVM.invoke(
+        "StartBridgeClient",
+        () -> {
+          String locatorHostName = NetworkUtils.getServerHostName(locatorVM.getHost());
+          startBridgeClient(null, locatorHostName, locatorPort);
+        });
     // wait for client to connect
-    checkEndpoints(clientVM, new int[] { serverPort1 });
+    checkEndpoints(clientVM, new int[] {serverPort1});
 
     //make sure the client and bridge server both noticed each other
     waitForJoin(bridge1VM);
@@ -339,12 +431,13 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
     Assert.assertEquals(1, clientListener.getJoins());
     resetBridgeListener(clientVM);
 
-    checkEndpoints(clientVM, new int[] { serverPort1 });
+    checkEndpoints(clientVM, new int[] {serverPort1});
 
     //start another bridge server and make sure it is detected by the client
-    int serverPort2 = bridge2VM.invoke("Start BridgeServer", () -> startBridgeServer(null, locators));
+    int serverPort2 =
+        bridge2VM.invoke("Start BridgeServer", () -> startBridgeServer(null, locators));
 
-    checkEndpoints(clientVM, new int[] { serverPort1, serverPort2 });
+    checkEndpoints(clientVM, new int[] {serverPort1, serverPort2});
     serverListener = getBridgeListener(bridge1VM);
     Assert.assertEquals(0, serverListener.getCrashes());
     Assert.assertEquals(0, serverListener.getDepartures());
@@ -360,7 +453,7 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
     //stop the second bridge server and make sure it is detected by the client
     stopBridgeMemberVM(bridge2VM);
 
-    checkEndpoints(clientVM, new int[] { serverPort1 });
+    checkEndpoints(clientVM, new int[] {serverPort1});
     serverListener = getBridgeListener(bridge1VM);
     Assert.assertEquals(0, serverListener.getCrashes());
     Assert.assertEquals(0, serverListener.getDepartures());
@@ -386,16 +479,19 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
   }
 
   protected Object getInVM(VM vm, final String regionName, final Serializable key) {
-    return vm.invoke(new SerializableCallable("Get in VM") {
-      public Object call() throws Exception {
-        Cache cache = (Cache) remoteObjects.get(CACHE_KEY);
-        Region region = cache.getRegion(regionName);
-        return region.get(key);
-      }
-    });
+    return vm.invoke(
+        new SerializableCallable("Get in VM") {
+          public Object call() throws Exception {
+            Cache cache = (Cache) remoteObjects.get(CACHE_KEY);
+            Region region = cache.getRegion(regionName);
+            return region.get(key);
+          }
+        });
   }
 
-  protected void putAndWaitForSuccess(VM vm, final String regionName, final Serializable key, final Serializable value) throws InterruptedException {
+  protected void putAndWaitForSuccess(
+      VM vm, final String regionName, final Serializable key, final Serializable value)
+      throws InterruptedException {
     long endTime = System.currentTimeMillis() + MAX_WAIT;
     long remaining = MAX_WAIT;
     int i = 0;
@@ -405,7 +501,8 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
         putInVM(vm, regionName, key, value);
         break;
       } catch (NoAvailableLocatorsException | org.apache.geode.test.dunit.RMIException e) {
-        if (!(e instanceof NoAvailableLocatorsException) && !(e.getCause() instanceof NoAvailableServersException)) {
+        if (!(e instanceof NoAvailableLocatorsException)
+            && !(e.getCause() instanceof NoAvailableServersException)) {
           throw e;
         }
         if (remaining <= 0) {
@@ -421,143 +518,152 @@ public class AutoConnectionSourceDUnitTest extends LocatorTestBase {
     putInVM(vm, REGION_NAME, key, value);
   }
 
-  protected void putInVM(VM vm, final String regionName, final Serializable key, final Serializable value) {
-    vm.invoke(new SerializableCallable("Put in VM") {
-      public Object call() throws Exception {
-        Cache cache = (Cache) remoteObjects.get(CACHE_KEY);
-        Region region = cache.getRegion(regionName);
-        return region.put(key, value);
-      }
-    });
+  protected void putInVM(
+      VM vm, final String regionName, final Serializable key, final Serializable value) {
+    vm.invoke(
+        new SerializableCallable("Put in VM") {
+          public Object call() throws Exception {
+            Cache cache = (Cache) remoteObjects.get(CACHE_KEY);
+            Region region = cache.getRegion(regionName);
+            return region.put(key, value);
+          }
+        });
   }
 
   /**
-   * Assert that there is one endpoint with the given host in port
-   * on the client vm.
+   * Assert that there is one endpoint with the given host in port on the client vm.
    *
-   * @param vm            - the vm the client is running in
+   * @param vm - the vm the client is running in
    * @param expectedPorts - The server ports we expect the client to be connected to.
    */
   protected void checkEndpoints(VM vm, final int[] expectedPorts) {
-    vm.invoke(new SerializableRunnable("Check endpoint") {
-      public void run() {
-        PoolImpl pool = (PoolImpl) PoolManager.find(POOL_NAME);
-        int retryCount = 50;
-        List/*<ServerLocation>*/ endpoints;
-        HashSet actualEndpointPorts;
-        HashSet expectedEndpointPorts = new HashSet();
-        for (int i = 0; i < expectedPorts.length; i++) {
-          expectedEndpointPorts.add(new Integer(expectedPorts[i]));
-        }
-        do {
-          endpoints = pool.getCurrentServers();
-          actualEndpointPorts = new HashSet();
-          for (Iterator itr = endpoints.iterator(); itr.hasNext();) {
-            ServerLocation sl = (ServerLocation) itr.next();
-            actualEndpointPorts.add(new Integer(sl.getPort()));
+    vm.invoke(
+        new SerializableRunnable("Check endpoint") {
+          public void run() {
+            PoolImpl pool = (PoolImpl) PoolManager.find(POOL_NAME);
+            int retryCount = 50;
+            List /*<ServerLocation>*/ endpoints;
+            HashSet actualEndpointPorts;
+            HashSet expectedEndpointPorts = new HashSet();
+            for (int i = 0; i < expectedPorts.length; i++) {
+              expectedEndpointPorts.add(new Integer(expectedPorts[i]));
+            }
+            do {
+              endpoints = pool.getCurrentServers();
+              actualEndpointPorts = new HashSet();
+              for (Iterator itr = endpoints.iterator(); itr.hasNext(); ) {
+                ServerLocation sl = (ServerLocation) itr.next();
+                actualEndpointPorts.add(new Integer(sl.getPort()));
+              }
+              if (expectedEndpointPorts.size() == actualEndpointPorts.size()) {
+                break;
+              }
+              Wait.pause(100);
+            } while (retryCount-- > 0);
+            Assert.assertEquals(expectedEndpointPorts, actualEndpointPorts);
           }
-          if (expectedEndpointPorts.size() == actualEndpointPorts.size()) {
-            break;
-          }
-          Wait.pause(100);
-        } while (retryCount-- > 0);
-        Assert.assertEquals(expectedEndpointPorts, actualEndpointPorts);
-      }
-    });
+        });
   }
 
   protected void addBridgeListener(VM vm) {
-    vm.invoke(new SerializableRunnable("Add membership listener") {
-      public void run() {
-        MyListener listener = new MyListener();
-        ClientMembership.registerClientMembershipListener(listener);
-        remoteObjects.put(BRIDGE_LISTENER, listener);
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable("Add membership listener") {
+          public void run() {
+            MyListener listener = new MyListener();
+            ClientMembership.registerClientMembershipListener(listener);
+            remoteObjects.put(BRIDGE_LISTENER, listener);
+          }
+        });
   }
 
   protected void resetBridgeListener(VM vm) {
-    vm.invoke(new SerializableRunnable("Reset membership listener") {
-      public void run() {
-        MyListener listener = (MyListener) remoteObjects.get(BRIDGE_LISTENER);
-        listener.reset();
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable("Reset membership listener") {
+          public void run() {
+            MyListener listener = (MyListener) remoteObjects.get(BRIDGE_LISTENER);
+            listener.reset();
+          }
+        });
   }
 
   private MyListener getBridgeListener(VM vm) {
-    return (MyListener) vm.invoke(new SerializableCallable("Get membership listener") {
-      public Object call() {
-        return remoteObjects.get(BRIDGE_LISTENER);
-      }
-    });
+    return (MyListener)
+        vm.invoke(
+            new SerializableCallable("Get membership listener") {
+              public Object call() {
+                return remoteObjects.get(BRIDGE_LISTENER);
+              }
+            });
   }
 
   private void waitForJoin(VM vm) {
-    vm.invoke(new SerializableRunnable("wait for join") {
-      public void run() {
-        MyListener listener = (MyListener) remoteObjects.get(BRIDGE_LISTENER);
-        synchronized (listener) {
-          long end = System.currentTimeMillis() + 10000;
-          while (listener.joins == 0) {
-            try {
-              long remaining = end - System.currentTimeMillis();
-              if (remaining <= 0) {
-                break;
+    vm.invoke(
+        new SerializableRunnable("wait for join") {
+          public void run() {
+            MyListener listener = (MyListener) remoteObjects.get(BRIDGE_LISTENER);
+            synchronized (listener) {
+              long end = System.currentTimeMillis() + 10000;
+              while (listener.joins == 0) {
+                try {
+                  long remaining = end - System.currentTimeMillis();
+                  if (remaining <= 0) {
+                    break;
+                  }
+                  listener.wait(remaining);
+                } catch (InterruptedException e) {
+                  fail("interrupted");
+                }
               }
-              listener.wait(remaining);
-            } catch (InterruptedException e) {
-              fail("interrupted");
+              GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
             }
           }
-          GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        }
-      }
-    });
+        });
   }
 
   private void waitForCrash(VM vm) {
-    vm.invoke(new SerializableRunnable("wait for crash") {
-      public void run() {
-        MyListener listener = (MyListener) remoteObjects.get(BRIDGE_LISTENER);
-        synchronized (listener) {
-          long end = System.currentTimeMillis() + 10000;
-          while (listener.crashes == 0) {
-            try {
-              long remaining = end - System.currentTimeMillis();
-              if (remaining <= 0) {
-                return;
+    vm.invoke(
+        new SerializableRunnable("wait for crash") {
+          public void run() {
+            MyListener listener = (MyListener) remoteObjects.get(BRIDGE_LISTENER);
+            synchronized (listener) {
+              long end = System.currentTimeMillis() + 10000;
+              while (listener.crashes == 0) {
+                try {
+                  long remaining = end - System.currentTimeMillis();
+                  if (remaining <= 0) {
+                    return;
+                  }
+                  listener.wait(remaining);
+                } catch (InterruptedException e) {
+                  fail("interrupted");
+                }
               }
-              listener.wait(remaining);
-            } catch (InterruptedException e) {
-              fail("interrupted");
             }
           }
-        }
-      }
-    });
+        });
   }
 
   private void waitForDeparture(VM vm) {
-    vm.invoke(new SerializableRunnable("wait for departure") {
-      public void run() {
-        MyListener listener = (MyListener) remoteObjects.get(BRIDGE_LISTENER);
-        synchronized (listener) {
-          long end = System.currentTimeMillis() + 10000;
-          while (listener.departures == 0) {
-            try {
-              long remaining = end - System.currentTimeMillis();
-              if (remaining < 0) {
-                break;
+    vm.invoke(
+        new SerializableRunnable("wait for departure") {
+          public void run() {
+            MyListener listener = (MyListener) remoteObjects.get(BRIDGE_LISTENER);
+            synchronized (listener) {
+              long end = System.currentTimeMillis() + 10000;
+              while (listener.departures == 0) {
+                try {
+                  long remaining = end - System.currentTimeMillis();
+                  if (remaining < 0) {
+                    break;
+                  }
+                  listener.wait(remaining);
+                } catch (InterruptedException e) {
+                  fail("interrupted");
+                }
               }
-              listener.wait(remaining);
-            } catch (InterruptedException e) {
-              fail("interrupted");
             }
           }
-        }
-      }
-    });
+        });
   }
 
   public static class MyListener extends ClientMembershipListenerAdapter implements Serializable {

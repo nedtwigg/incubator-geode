@@ -25,16 +25,15 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.HeapDataOutputStream;
 import org.apache.geode.internal.Version;
 
-/**
- *
- */
+/** */
 public class ObjectTraverserPerf {
 
   private static final int ITERATIONS = 1000;
   private static final int OBJECT_DEPTH = 1000;
   private static final boolean USE_SERIALIZATION = true;
 
-  public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException, IOException {
+  public static void main(String[] args)
+      throws IllegalArgumentException, IllegalAccessException, IOException {
     TestObject testObject = new TestObject(null);
 
     for (int i = 0; i < OBJECT_DEPTH; i++) {
@@ -52,7 +51,13 @@ public class ObjectTraverserPerf {
     }
     long end = System.nanoTime();
 
-    System.out.println("Sized object of depth " + OBJECT_DEPTH + " for " + ITERATIONS + " iterations elapsed(ns) :" + (end - start));
+    System.out.println(
+        "Sized object of depth "
+            + OBJECT_DEPTH
+            + " for "
+            + ITERATIONS
+            + " iterations elapsed(ns) :"
+            + (end - start));
   }
 
   private static void calcSize(TestObject testObject) throws IllegalAccessException, IOException {
@@ -78,7 +83,6 @@ public class ObjectTraverserPerf {
 
     public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       throw new UnsupportedOperationException("Don't need this method for the test");
-
     }
 
     public void toData(DataOutput out) throws IOException {
@@ -90,5 +94,4 @@ public class ObjectTraverserPerf {
       }
     }
   }
-
 }

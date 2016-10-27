@@ -48,8 +48,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Test to verify that client side region.close() should unregister the client with the server.
- * It also checks that client region queue also gets removed properly.
+ * Test to verify that client side region.close() should unregister the client with the server. It
+ * also checks that client region queue also gets removed properly.
  */
 @Category(DistributedTest.class)
 public class RegionCloseDUnitTest extends JUnit4DistributedTestCase {
@@ -80,7 +80,10 @@ public class RegionCloseDUnitTest extends JUnit4DistributedTestCase {
     client1 = host.getVM(1);
 
     PORT1 = ((Integer) server1.invoke(() -> RegionCloseDUnitTest.createServerCache())).intValue();
-    client1.invoke(() -> RegionCloseDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1)));
+    client1.invoke(
+        () ->
+            RegionCloseDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT1)));
   }
 
   private void createCache(Properties props) throws Exception {
@@ -106,10 +109,18 @@ public class RegionCloseDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new RegionCloseDUnitTest().createCache(props);
-    Pool p = PoolManager.createFactory().addServer(host, PORT1).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(2000).setThreadLocalConnections(true).setSocketBufferSize(1000).setMinConnections(2)
-        // .setRetryAttempts(2)
-        // .setRetryInterval(250)
-        .create("RegionCloseDUnitTestPool");
+    Pool p =
+        PoolManager.createFactory()
+            .addServer(host, PORT1)
+            .setSubscriptionEnabled(true)
+            .setSubscriptionRedundancy(-1)
+            .setReadTimeout(2000)
+            .setThreadLocalConnections(true)
+            .setSocketBufferSize(1000)
+            .setMinConnections(2)
+            // .setRetryAttempts(2)
+            // .setRetryInterval(250)
+            .create("RegionCloseDUnitTestPool");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -140,15 +151,16 @@ public class RegionCloseDUnitTest extends JUnit4DistributedTestCase {
     assertEquals("More than one CacheServer", 1, c.getCacheServers().size());
 
     final CacheServerImpl bs = (CacheServerImpl) c.getCacheServers().iterator().next();
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return bs.getAcceptor().getCacheClientNotifier().getClientProxies().size() == 1;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return bs.getAcceptor().getCacheClientNotifier().getClientProxies().size() == 1;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 15 * 1000, 200, true);
     assertEquals(1, bs.getAcceptor().getCacheClientNotifier().getClientProxies().size());
 
@@ -177,38 +189,41 @@ public class RegionCloseDUnitTest extends JUnit4DistributedTestCase {
 
   public static void VerifyClientProxyOnServerAfterClose() {
     final Cache c = CacheFactory.getAnyInstance();
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return c.getCacheServers().size() == 1;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return c.getCacheServers().size() == 1;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 40 * 1000, 200, true);
 
     final CacheServerImpl bs = (CacheServerImpl) c.getCacheServers().iterator().next();
-    ev = new WaitCriterion() {
-      public boolean done() {
-        return c.getRegion("/" + clientMembershipId) == null;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return c.getRegion("/" + clientMembershipId) == null;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 40 * 1000, 200, true);
 
-    ev = new WaitCriterion() {
-      public boolean done() {
-        return bs.getAcceptor().getCacheClientNotifier().getClientProxies().size() != 1;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return bs.getAcceptor().getCacheClientNotifier().getClientProxies().size() != 1;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 40 * 1000, 200, true);
     // assertNull(c.getRegion("/"+clientMembershipId));
     assertEquals(0, bs.getAcceptor().getCacheClientNotifier().getClientProxies().size());

@@ -25,12 +25,11 @@ import org.apache.geode.DataSerializable;
 import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.InternalDataSerializer;
 
-/** Immutable parameter object for accessing and setting the attributes associated with 
- * <code>timeToLive</code> and <code>idleTimeout</code>. If the expiration
- * action is not specified, it defaults to <code>ExpirationAction.INVALIDATE</code>.
- * If the timeout is not specified, it defaults to zero (which means to never timeout).
- *
- *
+/**
+ * Immutable parameter object for accessing and setting the attributes associated with <code>
+ * timeToLive</code> and <code>idleTimeout</code>. If the expiration action is not specified, it
+ * defaults to <code>ExpirationAction.INVALIDATE</code>. If the timeout is not specified, it
+ * defaults to zero (which means to never timeout).
  *
  * @see AttributesFactory
  * @see RegionAttributes
@@ -45,20 +44,22 @@ public class ExpirationAttributes implements DataSerializable {
   /** The number of seconds since this value or region was created before it expires. */
   private int timeout;
 
-  /** The action that should take place when this object or region expires.
-   */
+  /** The action that should take place when this object or region expires. */
   private ExpirationAction action;
 
-  /** Constructs a default <code>ExpirationAttributes</code>, which indicates no expiration
-   * will take place.
+  /**
+   * Constructs a default <code>ExpirationAttributes</code>, which indicates no expiration will take
+   * place.
    */
   public ExpirationAttributes() {
     this.timeout = 0;
     this.action = ExpirationAction.INVALIDATE;
   }
 
-  /** Constructs an <code>ExpirationAttributes</code> with the specified expiration time
-   * and the default expiration action <code>ExpirationAction.INVALIDATE</code>.
+  /**
+   * Constructs an <code>ExpirationAttributes</code> with the specified expiration time and the
+   * default expiration action <code>ExpirationAction.INVALIDATE</code>.
+   *
    * @param expirationTime The number of seconds before expiration
    * @throws IllegalArgumentException if expirationTime is nonpositive
    */
@@ -67,8 +68,10 @@ public class ExpirationAttributes implements DataSerializable {
     this.action = ExpirationAction.INVALIDATE;
   }
 
-  /** Constructs an <code>ExpirationAttributes</code> with the specified expiration time and
+  /**
+   * Constructs an <code>ExpirationAttributes</code> with the specified expiration time and
    * expiration action.
+   *
    * @param expirationTime The number of seconds for a value to live before it expires
    * @param expirationAction the action to take when the value expires
    * @throws IllegalArgumentException if expirationTime is nonpositive
@@ -78,17 +81,19 @@ public class ExpirationAttributes implements DataSerializable {
     this.action = expirationAction;
   }
 
-  /** Returns the number of seconds before a region or value expires.
+  /**
+   * Returns the number of seconds before a region or value expires.
    *
-   * @return the relative number of seconds before a region or value expires
-   * or zero if it will never expire
+   * @return the relative number of seconds before a region or value expires or zero if it will
+   *     never expire
    */
   public int getTimeout() {
     return this.timeout;
   }
 
-  /** Returns the action that should take place when this value or region expires.
-   * 
+  /**
+   * Returns the action that should take place when this value or region expires.
+   *
    * @return the action to take when expiring
    */
   public ExpirationAction getAction() {
@@ -109,8 +114,10 @@ public class ExpirationAttributes implements DataSerializable {
     return this.timeout ^ this.action.hashCode();
   }
 
-  /** Returns a string representation of this <code>ExpirationAttributes</code>. If the timeout
-   * is zero, returns <code>"NO EXPIRATION"</code>.
+  /**
+   * Returns a string representation of this <code>ExpirationAttributes</code>. If the timeout is
+   * zero, returns <code>"NO EXPIRATION"</code>.
+   *
    * @return the String representation of this expiration attribute
    */
   @Override
@@ -121,7 +128,8 @@ public class ExpirationAttributes implements DataSerializable {
     return "timeout: " + this.timeout + ";action: " + this.action;
   }
 
-  public static ExpirationAttributes createFromData(DataInput in) throws IOException, ClassNotFoundException {
+  public static ExpirationAttributes createFromData(DataInput in)
+      throws IOException, ClassNotFoundException {
     ExpirationAttributes result = new ExpirationAttributes();
     InternalDataSerializer.invokeFromData(result, in);
     return result;
@@ -130,7 +138,6 @@ public class ExpirationAttributes implements DataSerializable {
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.timeout = in.readInt();
     this.action = (ExpirationAction) DataSerializer.readObject(in);
-
   }
 
   public void toData(DataOutput out) throws IOException {

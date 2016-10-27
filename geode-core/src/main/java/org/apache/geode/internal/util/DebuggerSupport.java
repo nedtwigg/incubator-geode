@@ -22,29 +22,29 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
-/**
- *
- *
- */
+/** */
 public abstract class DebuggerSupport {
   private static final Logger logger = LogService.getLogger();
 
   /** Creates a new instance of DebuggerSupport */
-  private DebuggerSupport() {
-  }
+  private DebuggerSupport() {}
 
   /** Debugger support */
   public static void waitForJavaDebugger() {
     waitForJavaDebugger(null);
   }
 
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "IL_INFINITE_LOOP", justification = "Endless loop is for debugging purposes.")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "IL_INFINITE_LOOP",
+    justification = "Endless loop is for debugging purposes."
+  )
   public static void waitForJavaDebugger(String extraLogMsg) {
     boolean cont = false;
     String msg = ":";
-    if (extraLogMsg != null)
-      msg += extraLogMsg;
-    logger.fatal(LocalizedMessage.create(LocalizedStrings.DebuggerSupport_WAITING_FOR_DEBUGGER_TO_ATTACH_0, msg));
+    if (extraLogMsg != null) msg += extraLogMsg;
+    logger.fatal(
+        LocalizedMessage.create(
+            LocalizedStrings.DebuggerSupport_WAITING_FOR_DEBUGGER_TO_ATTACH_0, msg));
     boolean interrupted = false;
     while (!cont) { // set cont to true in debugger when ready to continue
       try {

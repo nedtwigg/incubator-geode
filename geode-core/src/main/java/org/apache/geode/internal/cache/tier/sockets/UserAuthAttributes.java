@@ -25,14 +25,14 @@ public class UserAuthAttributes {
   private AtomicInteger numberOfDurableCQ;
 
   /**
-   * Authorize client requests using this object. This is set when each
-   * operation on this connection is authorized in pre-operation phase.
+   * Authorize client requests using this object. This is set when each operation on this connection
+   * is authorized in pre-operation phase.
    */
   private AuthorizeRequest authzRequest;
 
   /**
-   * Authorize client requests using this object. This is set when each
-   * operation on this connection is authorized in post-operation phase.
+   * Authorize client requests using this object. This is set when each operation on this connection
+   * is authorized in post-operation phase.
    */
   private AuthorizeRequestPP postAuthzRequest;
 
@@ -72,7 +72,7 @@ public class UserAuthAttributes {
   /*protected void setAuthorizeRequest(AuthorizeRequest authzRequest) {
     this.authzRequest = authzRequest;
   }
-  
+
   protected void setPostAuthorizeRequest(AuthorizeRequestPP postAuthzRequest) {
     this.postAuthzRequest = postAuthzRequest;
   }*/

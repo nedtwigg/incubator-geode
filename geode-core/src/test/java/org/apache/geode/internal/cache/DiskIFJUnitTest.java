@@ -37,10 +37,7 @@ import org.apache.geode.internal.cache.persistence.PRPersistentConfig;
 import org.apache.geode.internal.cache.persistence.PersistentMemberID;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Tests DiskRegion's IF file.
- *
- */
+/** Tests DiskRegion's IF file. */
 @Category(IntegrationTest.class)
 public class DiskIFJUnitTest extends DiskRegionTestingBase {
   DiskRegionProperties diskProps = new DiskRegionProperties();
@@ -50,7 +47,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     diskProps.setPersistBackup(true);
     diskProps.setRegionName("testEmptyIF");
 
-    LocalRegion lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    LocalRegion lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     DiskRegion dr = lr.getDiskRegion();
     assertEquals(null, dr.getMyInitializingID());
     PersistentMemberID myId = dr.getMyPersistentID();
@@ -61,7 +60,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
 
     // do recovery
     close(lr);
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(null, dr.getMyInitializingID());
     assertEquals(myId, dr.getMyPersistentID());
@@ -78,7 +79,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
 
     // do recovery
     close(lr);
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(null, dr.getMyInitializingID());
     assertEquals(myId, dr.getMyPersistentID());
@@ -91,7 +94,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
   public void testMyPMID() throws Exception {
     diskProps.setPersistBackup(true);
     diskProps.setRegionName("testMyPMID");
-    LocalRegion lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    LocalRegion lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     DiskRegion dr = lr.getDiskRegion();
     PersistentMemberID myId = createNewPMID();
     assertEquals(null, dr.getMyInitializingID());
@@ -101,7 +106,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertEquals(oldId, dr.getMyPersistentID());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(myId, dr.getMyInitializingID());
     assertEquals(oldId, dr.getMyPersistentID());
@@ -111,7 +118,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertEquals(oldId, dr.getMyPersistentID());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(myId, dr.getMyInitializingID());
     assertEquals(oldId, dr.getMyPersistentID());
@@ -121,7 +130,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertEquals(myId, dr.getMyPersistentID());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(null, dr.getMyInitializingID());
     assertEquals(myId, dr.getMyPersistentID());
@@ -131,7 +142,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertEquals(myId, dr.getMyPersistentID());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(null, dr.getMyInitializingID());
     assertEquals(myId, dr.getMyPersistentID());
@@ -141,7 +154,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
   public void testMemberIdSets() throws Exception {
     diskProps.setPersistBackup(true);
     diskProps.setRegionName("testMemberIdSets");
-    LocalRegion lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    LocalRegion lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     DiskRegion dr = lr.getDiskRegion();
     PersistentMemberID myOnId = createNewPMID();
     PersistentMemberID myOnId2 = createNewPMID();
@@ -156,7 +171,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertEquals(Collections.singleton(myEqualsId), dr.getOfflineAndEqualMembers());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(TestUtils.asSet(myOnId, myOnId2), dr.getOnlineMembers());
     assertEquals(Collections.singleton(myOffId), dr.getOfflineMembers());
@@ -167,7 +184,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertEquals(Collections.singleton(myEqualsId), dr.getOfflineAndEqualMembers());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(TestUtils.asSet(myOnId, myOnId2), dr.getOnlineMembers());
     assertEquals(Collections.singleton(myOffId), dr.getOfflineMembers());
@@ -186,7 +205,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertEquals(expSet2, dr.getOfflineAndEqualMembers());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertTrue(dr.getOnlineMembers().isEmpty());
     assertEquals(expSet, dr.getOfflineMembers());
@@ -197,7 +218,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertEquals(expSet2, dr.getOfflineAndEqualMembers());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertTrue(dr.getOnlineMembers().isEmpty());
     assertEquals(expSet, dr.getOfflineMembers());
@@ -215,7 +238,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertEquals(expSet, dr.getOnlineMembers());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertTrue(dr.getOfflineMembers().isEmpty());
     assertEquals(expSet, dr.getOnlineMembers());
@@ -224,7 +249,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertEquals(expSet, dr.getOnlineMembers());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertTrue(dr.getOfflineMembers().isEmpty());
     assertEquals(expSet, dr.getOnlineMembers());
@@ -249,7 +276,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertTrue(dr.getOfflineAndEqualMembers().isEmpty());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertTrue(dr.getOnlineMembers().isEmpty());
     assertTrue(dr.getOfflineMembers().isEmpty());
@@ -260,7 +289,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertTrue(dr.getOfflineAndEqualMembers().isEmpty());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertTrue(dr.getOnlineMembers().isEmpty());
     assertTrue(dr.getOfflineMembers().isEmpty());
@@ -271,7 +302,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
   public void testAboutToDestroy() throws Exception {
     diskProps.setPersistBackup(true);
     diskProps.setRegionName("testAboutToDestroy");
-    LocalRegion lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    LocalRegion lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     DiskRegion dr = lr.getDiskRegion();
     PersistentMemberID myId = createNewPMID();
     PersistentMemberID myOnId = createNewPMID();
@@ -297,7 +330,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertEquals(true, dr.wasAboutToDestroy());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(Collections.singleton(myOnId), dr.getOnlineMembers());
     assertEquals(Collections.singleton(myOffId), dr.getOfflineMembers());
@@ -314,7 +349,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     close(lr);
 
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(Collections.singleton(myOnId), dr.getOnlineMembers());
     assertEquals(Collections.singleton(myOffId), dr.getOfflineMembers());
@@ -330,7 +367,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
 
     close(lr);
     //do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(Collections.emptySet(), dr.getOnlineMembers());
     assertEquals(Collections.emptySet(), dr.getOfflineMembers());
@@ -354,7 +393,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
   public void testAboutToPartialDestroy() throws Exception {
     diskProps.setPersistBackup(true);
     diskProps.setRegionName("testAboutToPartialDestroy");
-    LocalRegion lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    LocalRegion lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     DiskRegion dr = lr.getDiskRegion();
     PersistentMemberID myId = createNewPMID();
     PersistentMemberID myOnId = createNewPMID();
@@ -382,7 +423,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     assertEquals(true, dr.wasAboutToDestroyDataStorage());
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(Collections.singleton(myOnId), dr.getOnlineMembers());
     assertEquals(Collections.singleton(myOffId), dr.getOfflineMembers());
@@ -401,7 +444,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     close(lr);
 
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(Collections.singleton(myOnId), dr.getOnlineMembers());
     assertEquals(Collections.singleton(myOffId), dr.getOfflineMembers());
@@ -420,7 +465,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     close(lr);
 
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(Collections.singleton(myOnId), dr.getOnlineMembers());
     assertEquals(Collections.singleton(myOffId), dr.getOfflineMembers());
@@ -443,7 +490,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     close(lr);
 
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(Collections.singleton(myOnId), dr.getOnlineMembers());
     assertEquals(Collections.singleton(myOffId), dr.getOfflineMembers());
@@ -457,7 +506,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
   public void testRegionConfigDefaults() throws Exception {
     diskProps.setPersistBackup(true);
     diskProps.setRegionName("testRegionConfigDefaults");
-    LocalRegion lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    LocalRegion lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     DiskRegion dr = lr.getDiskRegion();
     assertEquals(false, dr.hasConfigChanged());
     assertEquals(0, dr.getLruAlgorithm());
@@ -471,7 +522,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
 
     close(lr);
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(false, dr.hasConfigChanged());
     assertEquals(0, dr.getLruAlgorithm());
@@ -496,7 +549,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     close(lr);
 
     // do recovery
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(false, dr.hasConfigChanged());
     assertEquals(0, dr.getLruAlgorithm());
@@ -518,7 +573,8 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     diskProps.setInitialCapacity(64);
     diskProps.setLoadFactor(0.31f);
     diskProps.setStatisticsEnabled(true);
-    LocalRegion lr = (LocalRegion) DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskProps);
+    LocalRegion lr =
+        (LocalRegion) DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskProps);
     DiskRegion dr = lr.getDiskRegion();
     assertEquals(false, dr.hasConfigChanged());
     assertEquals(1, dr.getLruAlgorithm());
@@ -577,7 +633,8 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     diskProps.setInitialCapacity(64);
     diskProps.setLoadFactor(0.31f);
     diskProps.setStatisticsEnabled(true);
-    LocalRegion lr = (LocalRegion) DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskProps);
+    LocalRegion lr =
+        (LocalRegion) DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskProps);
     DiskRegion dr = lr.getDiskRegion();
     assertEquals(false, dr.hasConfigChanged());
     assertEquals(1, dr.getLruAlgorithm());
@@ -618,8 +675,8 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Make sure if we have multiple init file with the same ds name that ds creation fails.
-   * See bug 41883.
+   * Make sure if we have multiple init file with the same ds name that ds creation fails. See bug
+   * 41883.
    */
   @Test
   public void testTwoIFFiles() throws Exception {
@@ -627,7 +684,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     diskProps.setRegionName("testTwoIFFiles");
     diskProps.setDiskDirs(dirs);
 
-    LocalRegion lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    LocalRegion lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     DiskRegion dr = lr.getDiskRegion();
     assertEquals(null, dr.getMyInitializingID());
     PersistentMemberID myId = dr.getMyPersistentID();
@@ -642,7 +701,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     File extraIF = new File(dirs[1], "BACKUPtestTwoIFFiles.if");
     extraIF.createNewFile();
     try {
-      lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+      lr =
+          (LocalRegion)
+              DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
       fail("expected IllegalStateException");
     } catch (IllegalStateException expected) {
     } finally {
@@ -650,17 +711,16 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * See if we can find the init file if it is not in the first directory.
-   * See bug 41883.
-   */
+  /** See if we can find the init file if it is not in the first directory. See bug 41883. */
   @Test
   public void testIFFIleInSecondDir() throws Exception {
     diskProps.setPersistBackup(true);
     diskProps.setRegionName("testIFFIleInSecondDir");
     diskProps.setDiskDirs(dirs);
 
-    LocalRegion lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    LocalRegion lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     DiskRegion dr = lr.getDiskRegion();
     assertEquals(null, dr.getMyInitializingID());
     PersistentMemberID myId = dr.getMyPersistentID();
@@ -678,7 +738,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     myDirs[1] = dirs[0];
     diskProps.setDiskDirs(myDirs);
     assertEquals(true, (new File(myDirs[1], "BACKUPtestIFFIleInSecondDir.if")).exists());
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     dr = lr.getDiskRegion();
     assertEquals(null, dr.getMyInitializingID());
     assertEquals(myId, dr.getMyPersistentID());
@@ -688,8 +750,8 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Make sure that disk store oplog files from another instance of a disk
-   * store are not allowed when loading the other disk store
+   * Make sure that disk store oplog files from another instance of a disk store are not allowed
+   * when loading the other disk store
    */
   @Test
   public void testTwoDiskStores() {
@@ -700,7 +762,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     myDirs[0] = dirs[0];
     diskProps.setDiskDirs(myDirs);
 
-    LocalRegion lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    LocalRegion lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     lr.put("key1", "value1");
     close(lr);
     assertEquals(true, (new File(dirs[0], "BACKUPtestTwoDiskStores.if")).exists());
@@ -712,7 +776,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     myDirs[0] = dirs[1];
     diskProps.setDiskDirs(myDirs);
 
-    lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+    lr =
+        (LocalRegion)
+            DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     lr.put("key2", "value2");
     close(lr);
     assertEquals(true, (new File(dirs[1], "BACKUPtestTwoDiskStores.if")).exists());
@@ -729,11 +795,16 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     myDirs[1] = dirs[1];
     diskProps.setDiskDirs(myDirs);
     try {
-      lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+      lr =
+          (LocalRegion)
+              DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
       fail("expected DiskAccessException");
     } catch (org.apache.geode.cache.DiskAccessException expected) {
       if (!expected.getMessage().contains("two different directories")) {
-        fail("did not expect: " + expected + ". It should have contained: \"two different directories\"");
+        fail(
+            "did not expect: "
+                + expected
+                + ". It should have contained: \"two different directories\"");
       }
     }
 
@@ -741,7 +812,9 @@ public class DiskIFJUnitTest extends DiskRegionTestingBase {
     (new File(dirs[0], "BACKUPtestTwoDiskStores_1.crf")).delete();
     (new File(dirs[0], "BACKUPtestTwoDiskStores_1.drf")).delete();
     try {
-      lr = (LocalRegion) DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
+      lr =
+          (LocalRegion)
+              DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
       fail("expected DiskAccessException");
     } catch (org.apache.geode.cache.DiskAccessException expected) {
       if (!expected.getMessage().contains("does not belong")) {

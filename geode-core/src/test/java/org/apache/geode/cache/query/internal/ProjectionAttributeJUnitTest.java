@@ -49,20 +49,32 @@ import org.apache.geode.cache.query.data.Restricted;
 import org.apache.geode.cache.query.types.StructType;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class ProjectionAttributeJUnitTest {
 
-  String queries[] = { "select distinct p from /pos p where p.ID > 0 ", //ResultSet
-      "select distinct p.status from /pos p where p.ID > 0 ", //ResultSet
-      "select distinct 'a' from /pos p ", //ResultSet
-      "select distinct 1 from /pos p ", //ResultSet
-      "select distinct p.status,p.ID from /pos p where p.ID > 0 ", "select distinct p,p.P1 from /pos p where p.ID > 0 ", "select distinct p,p.P1.SecId from /pos p where p.ID > 0 ", "select distinct portfolio: p ,p.P1.SecId from /pos p where p.ID > 0 ", "select distinct p.status as STATUS, SECID: p.P1.SecId, ID from /pos p where p.ID > 0 ", "select distinct p.status as STATUS, SECID: p.P1.SecId, ID from /pos p ", "select distinct 'a',1, p from /pos p ", };
+  String queries[] = {
+    "select distinct p from /pos p where p.ID > 0 ", //ResultSet
+    "select distinct p.status from /pos p where p.ID > 0 ", //ResultSet
+    "select distinct 'a' from /pos p ", //ResultSet
+    "select distinct 1 from /pos p ", //ResultSet
+    "select distinct p.status,p.ID from /pos p where p.ID > 0 ",
+    "select distinct p,p.P1 from /pos p where p.ID > 0 ",
+    "select distinct p,p.P1.SecId from /pos p where p.ID > 0 ",
+    "select distinct portfolio: p ,p.P1.SecId from /pos p where p.ID > 0 ",
+    "select distinct p.status as STATUS, SECID: p.P1.SecId, ID from /pos p where p.ID > 0 ",
+    "select distinct p.status as STATUS, SECID: p.P1.SecId, ID from /pos p ",
+    "select distinct 'a',1, p from /pos p ",
+  };
 
-  String miscQueries[] = { "select distinct * from null ", "select distinct 1 from null ", "select distinct 'a',1, p from null ", "select distinct * from UNDEFINED ", "select distinct 1 from UNDEFINED", "select distinct 'a',1, p from UNDEFINED", };
+  String miscQueries[] = {
+    "select distinct * from null ",
+    "select distinct 1 from null ",
+    "select distinct 'a',1, p from null ",
+    "select distinct * from UNDEFINED ",
+    "select distinct 1 from UNDEFINED",
+    "select distinct 'a',1, p from UNDEFINED",
+  };
 
   @Test
   public void testMisc() throws Exception {
@@ -78,15 +90,16 @@ public class ProjectionAttributeJUnitTest {
   }
 
   @Test
-  public void testProjectionAttributes() throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public void testProjectionAttributes()
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     QueryService qs = CacheUtils.getQueryService();
 
     for (int i = 0; i < queries.length; ++i) {
       String qStr = queries[i];
       Query q = qs.newQuery(qStr);
       SelectResults r = (SelectResults) q.execute();
-      if (i < 4 && r.getCollectionType().getElementType().isStructType())
-        fail(q.getQueryString());
+      if (i < 4 && r.getCollectionType().getElementType().isStructType()) fail(q.getQueryString());
 
       if (i > 3) {
         assertTrue(r.getCollectionType().getElementType().isStructType());
@@ -97,15 +110,13 @@ public class ProjectionAttributeJUnitTest {
     String qStr = "select distinct * from /pos p ";
     Query q = qs.newQuery(qStr);
     Object r = q.execute();
-    if (r instanceof StructSet)
-      fail(q.getQueryString());
+    if (r instanceof StructSet) fail(q.getQueryString());
   }
 
   private void checkNames(SelectResults results, String query) {
     int i1 = query.indexOf(" distinct ");
     int i2 = query.indexOf(" from ");
-    if (i1 < 0 || i2 < 0)
-      fail(query);
+    if (i1 < 0 || i2 < 0) fail(query);
     String projStr = query.substring(i1 + " distinct ".length(), i2);
     //CacheUtils.log("projStr = "+projStr);
     QCompiler compiler = new QCompiler();
@@ -116,18 +127,14 @@ public class ProjectionAttributeJUnitTest {
       String name = names[i];
       Object arr[] = (Object[]) projAttrs.get(i);
       String nameToMatch = "";
-      if (arr[0] != null)
-        nameToMatch = (String) arr[0];
+      if (arr[0] != null) nameToMatch = (String) arr[0];
       else {
-        if (arr[1] instanceof CompiledID)
-          nameToMatch = ((CompiledID) arr[1]).getId();
-        if (arr[1] instanceof CompiledPath)
-          nameToMatch = ((CompiledPath) arr[1]).getTailID();
+        if (arr[1] instanceof CompiledID) nameToMatch = ((CompiledID) arr[1]).getId();
+        if (arr[1] instanceof CompiledPath) nameToMatch = ((CompiledPath) arr[1]).getTailID();
         if (arr[1] instanceof CompiledLiteral)
           nameToMatch = (((CompiledLiteral) arr[1])._obj).toString();
       }
-      if (!nameToMatch.equals(name))
-        fail(query);
+      if (!nameToMatch.equals(name)) fail(query);
     }
   }
 
@@ -143,56 +150,134 @@ public class ProjectionAttributeJUnitTest {
       }
       QueryService qs = CacheUtils.getQueryService();
       //////////creating indexes on region Quotes1
-      qs.createIndex("Quotes1Region-quoteIdStrIndex", IndexType.PRIMARY_KEY, "q.quoteIdStr", "/Quotes1 q");
+      qs.createIndex(
+          "Quotes1Region-quoteIdStrIndex", IndexType.PRIMARY_KEY, "q.quoteIdStr", "/Quotes1 q");
 
       //qs.createIndex("Quotes1Region-cusipIndex1", IndexType.FUNCTIONAL, "q.cusip", "/Quotes1 q, q.restrict r");
-      qs.createIndex("Quotes1Region-quoteTypeIndex", IndexType.FUNCTIONAL, "q.quoteType", "/Quotes1 q, q.restrict r");
+      qs.createIndex(
+          "Quotes1Region-quoteTypeIndex",
+          IndexType.FUNCTIONAL,
+          "q.quoteType",
+          "/Quotes1 q, q.restrict r");
 
-      qs.createIndex("Quotes1Region-dealerPortfolioIndex", IndexType.FUNCTIONAL, "q.dealerPortfolio", "/Quotes1 q, q.restrict r");
+      qs.createIndex(
+          "Quotes1Region-dealerPortfolioIndex",
+          IndexType.FUNCTIONAL,
+          "q.dealerPortfolio",
+          "/Quotes1 q, q.restrict r");
 
-      qs.createIndex("Quotes1Region-channelNameIndex", IndexType.FUNCTIONAL, "q.channelName", "/Quotes1 q, q.restrict r");
+      qs.createIndex(
+          "Quotes1Region-channelNameIndex",
+          IndexType.FUNCTIONAL,
+          "q.channelName",
+          "/Quotes1 q, q.restrict r");
 
-      qs.createIndex("Quotes1Region-priceTypeIndex", IndexType.FUNCTIONAL, "q.priceType", "/Quotes1 q, q.restrict r");
+      qs.createIndex(
+          "Quotes1Region-priceTypeIndex",
+          IndexType.FUNCTIONAL,
+          "q.priceType",
+          "/Quotes1 q, q.restrict r");
 
-      qs.createIndex("Quotes1Region-lowerQtyIndex", IndexType.FUNCTIONAL, "q.lowerQty", "/Quotes1 q, q.restrict r");
-      qs.createIndex("Quotes1Region-upperQtyIndex", IndexType.FUNCTIONAL, "q.upperQty", "/Quotes1 q, q.restrict r");
-      qs.createIndex("Quotes1Restricted-quoteTypeIndex", IndexType.FUNCTIONAL, "r.quoteType", "/Quotes1 q, q.restrict r");
+      qs.createIndex(
+          "Quotes1Region-lowerQtyIndex",
+          IndexType.FUNCTIONAL,
+          "q.lowerQty",
+          "/Quotes1 q, q.restrict r");
+      qs.createIndex(
+          "Quotes1Region-upperQtyIndex",
+          IndexType.FUNCTIONAL,
+          "q.upperQty",
+          "/Quotes1 q, q.restrict r");
+      qs.createIndex(
+          "Quotes1Restricted-quoteTypeIndex",
+          IndexType.FUNCTIONAL,
+          "r.quoteType",
+          "/Quotes1 q, q.restrict r");
 
-      qs.createIndex("Quotes1Restricted-minQtyIndex", IndexType.FUNCTIONAL, "r.minQty", "/Quotes1 q, q.restrict r");
-      qs.createIndex("Quotes1Restricted-maxQtyIndex", IndexType.FUNCTIONAL, "r.maxQty", "/Quotes1 q, q.restrict r");
+      qs.createIndex(
+          "Quotes1Restricted-minQtyIndex",
+          IndexType.FUNCTIONAL,
+          "r.minQty",
+          "/Quotes1 q, q.restrict r");
+      qs.createIndex(
+          "Quotes1Restricted-maxQtyIndex",
+          IndexType.FUNCTIONAL,
+          "r.maxQty",
+          "/Quotes1 q, q.restrict r");
 
       //////////creating indexes on region Quotes2
-      qs.createIndex("Quotes2Region-quoteIdStrIndex", IndexType.PRIMARY_KEY, "q.quoteIdStr", "/Quotes2 q");
+      qs.createIndex(
+          "Quotes2Region-quoteIdStrIndex", IndexType.PRIMARY_KEY, "q.quoteIdStr", "/Quotes2 q");
 
       //qs.createIndex("Quotes1Region-cusipIndex2", IndexType.FUNCTIONAL, "q.cusip", "/Quotes2 q, q.restrict r");
-      qs.createIndex("Quotes2Region-quoteTypeIndex", IndexType.FUNCTIONAL, "q.quoteType", "/Quotes2 q, q.restrict r");
+      qs.createIndex(
+          "Quotes2Region-quoteTypeIndex",
+          IndexType.FUNCTIONAL,
+          "q.quoteType",
+          "/Quotes2 q, q.restrict r");
 
-      qs.createIndex("Quotes2Region-dealerPortfolioIndex", IndexType.FUNCTIONAL, "q.dealerPortfolio", "/Quotes2 q, q.restrict r");
+      qs.createIndex(
+          "Quotes2Region-dealerPortfolioIndex",
+          IndexType.FUNCTIONAL,
+          "q.dealerPortfolio",
+          "/Quotes2 q, q.restrict r");
 
-      qs.createIndex("Quotes2Region-channelNameIndex", IndexType.FUNCTIONAL, "q.channelName", "/Quotes2 q, q.restrict r");
+      qs.createIndex(
+          "Quotes2Region-channelNameIndex",
+          IndexType.FUNCTIONAL,
+          "q.channelName",
+          "/Quotes2 q, q.restrict r");
 
-      qs.createIndex("Quotes2Region-priceTypeIndex", IndexType.FUNCTIONAL, "q.priceType", "/Quotes2 q, q.restrict r");
+      qs.createIndex(
+          "Quotes2Region-priceTypeIndex",
+          IndexType.FUNCTIONAL,
+          "q.priceType",
+          "/Quotes2 q, q.restrict r");
 
-      qs.createIndex("Quotes2Region-lowerQtyIndex", IndexType.FUNCTIONAL, "q.lowerQty", "/Quotes2 q, q.restrict r");
-      qs.createIndex("Quotes2Region-upperQtyIndex", IndexType.FUNCTIONAL, "q.upperQty", "/Quotes2 q, q.restrict r");
-      qs.createIndex("Quotes2Restricted-quoteTypeIndex", IndexType.FUNCTIONAL, "r.quoteType", "/Quotes2 q, q.restrict r");
+      qs.createIndex(
+          "Quotes2Region-lowerQtyIndex",
+          IndexType.FUNCTIONAL,
+          "q.lowerQty",
+          "/Quotes2 q, q.restrict r");
+      qs.createIndex(
+          "Quotes2Region-upperQtyIndex",
+          IndexType.FUNCTIONAL,
+          "q.upperQty",
+          "/Quotes2 q, q.restrict r");
+      qs.createIndex(
+          "Quotes2Restricted-quoteTypeIndex",
+          IndexType.FUNCTIONAL,
+          "r.quoteType",
+          "/Quotes2 q, q.restrict r");
 
-      qs.createIndex("Quotes2Restricted-minQtyIndex", IndexType.FUNCTIONAL, "r.minQty", "/Quotes2 q, q.restrict r");
-      qs.createIndex("Quotes2Restricted-maxQtyIndex", IndexType.FUNCTIONAL, "r.maxQty", "/Quotes2 q, q.restrict r");
+      qs.createIndex(
+          "Quotes2Restricted-minQtyIndex",
+          IndexType.FUNCTIONAL,
+          "r.minQty",
+          "/Quotes2 q, q.restrict r");
+      qs.createIndex(
+          "Quotes2Restricted-maxQtyIndex",
+          IndexType.FUNCTIONAL,
+          "r.maxQty",
+          "/Quotes2 q, q.restrict r");
 
       //////////creating indexes on region Restricted1
       //qs.createIndex("RestrictedRegion-cusip", IndexType.FUNCTIONAL, "r.cusip", "/Restricted1 r");
 
-      qs.createIndex("RestrictedRegion-quoteTypeIndex", IndexType.FUNCTIONAL, "r.quoteType", "/Restricted1 r");
-      qs.createIndex("RestrictedRegion-minQtyIndex", IndexType.FUNCTIONAL, "r.minQty", "/Restricted1 r");
-      qs.createIndex("RestrictedRegion-maxQtyIndex-1", IndexType.FUNCTIONAL, "r.maxQty", "/Restricted1 r");
-      Query q = qs.newQuery("SELECT DISTINCT * FROM /Quotes1 q1, q1.restrict r1, /Quotes2 q2, q2.restrict r2, /Restricted1 r3 WHERE r1.quoteType = r2.quoteType AND r2.quoteType = r3.quoteType AND r3.maxQty > 1050");
+      qs.createIndex(
+          "RestrictedRegion-quoteTypeIndex", IndexType.FUNCTIONAL, "r.quoteType", "/Restricted1 r");
+      qs.createIndex(
+          "RestrictedRegion-minQtyIndex", IndexType.FUNCTIONAL, "r.minQty", "/Restricted1 r");
+      qs.createIndex(
+          "RestrictedRegion-maxQtyIndex-1", IndexType.FUNCTIONAL, "r.maxQty", "/Restricted1 r");
+      Query q =
+          qs.newQuery(
+              "SELECT DISTINCT * FROM /Quotes1 q1, q1.restrict r1, /Quotes2 q2, q2.restrict r2, /Restricted1 r3 WHERE r1.quoteType = r2.quoteType AND r2.quoteType = r3.quoteType AND r3.maxQty > 1050");
       q.execute();
     } catch (Exception e) {
       e.printStackTrace();
       fail("Test failed bcoz of exception " + e);
     }
-
   }
 
   @Test

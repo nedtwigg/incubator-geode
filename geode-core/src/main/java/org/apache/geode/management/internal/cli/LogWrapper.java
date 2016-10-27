@@ -36,16 +36,14 @@ import org.apache.geode.management.internal.cli.remote.CommandExecutionContext;
 import org.apache.geode.management.internal.cli.shell.GfshConfig;
 
 /**
- * NOTE: Should be used only in
- * 1. gfsh process
- * 2. on a Manager "if" log is required to be sent back to gfsh too. For
- *    logging only on manager use, cache.getLogger()
+ * NOTE: Should be used only in 1. gfsh process 2. on a Manager "if" log is required to be sent back
+ * to gfsh too. For logging only on manager use, cache.getLogger()
  *
  * @since GemFire 7.0
  */
 public class LogWrapper {
   private static Object INSTANCE_LOCK = new Object();
-  private volatile static LogWrapper INSTANCE = null;
+  private static volatile LogWrapper INSTANCE = null;
 
   private Logger logger;
 
@@ -57,12 +55,13 @@ public class LogWrapper {
       //TODO - Abhishek how to set different log levels for different handlers???
       logger.addHandler(cache.getLogger().getHandler());
       CommandResponseWriterHandler handler = new CommandResponseWriterHandler();
-      handler.setFilter(new Filter() {
-        @Override
-        public boolean isLoggable(LogRecord record) {
-          return record.getLevel().intValue() >= Level.FINE.intValue();
-        }
-      });
+      handler.setFilter(
+          new Filter() {
+            @Override
+            public boolean isLoggable(LogRecord record) {
+              return record.getLevel().intValue() >= Level.FINE.intValue();
+            }
+          });
       handler.setLevel(Level.FINE);
       logger.addHandler(handler);
     }
@@ -84,7 +83,12 @@ public class LogWrapper {
   public void configure(GfshConfig config) {
     if (config.isLoggingEnabled()) {
       try {
-        FileHandler fileHandler = new FileHandler(config.getLogFilePath(), config.getLogFileSizeLimit(), config.getLogFileCount(), true /*append*/);
+        FileHandler fileHandler =
+            new FileHandler(
+                config.getLogFilePath(),
+                config.getLogFileSizeLimit(),
+                config.getLogFileCount(),
+                true /*append*/);
         fileHandler.setFormatter(new GemFireFormatter());
         fileHandler.setLevel(config.getLogLevel());
         logger.addHandler(fileHandler);
@@ -97,12 +101,14 @@ public class LogWrapper {
     }
   }
 
-  private static void addDefaultConsoleHandler(Logger logger, String errorMessage, String logFilePath) {
+  private static void addDefaultConsoleHandler(
+      Logger logger, String errorMessage, String logFilePath) {
     ConsoleHandler consoleHandler = new ConsoleHandler();
     consoleHandler.setFormatter(new GemFireFormatter());
     logger.addHandler(consoleHandler);
 
-    System.err.println("ERROR: Could not log to file: " + logFilePath + ". Reason: " + errorMessage);
+    System.err.println(
+        "ERROR: Could not log to file: " + logFilePath + ". Reason: " + errorMessage);
     System.err.println("Logs will be written on Console.");
     try {
       Thread.sleep(3000); //sleep for 3 secs for the message to appear
@@ -110,9 +116,7 @@ public class LogWrapper {
     }
   }
 
-  /**
-   * Closes the current LogWrapper.
-   */
+  /** Closes the current LogWrapper. */
   public static void close() {
     synchronized (INSTANCE_LOCK) {
       if (INSTANCE != null) {
@@ -141,9 +145,8 @@ public class LogWrapper {
   }
 
   /**
-   * Make logger null when the singleton (which was referred by INSTANCE) gets
-   * garbage collected. Makes an attempt at removing associated {@link Handler}s
-   * of the {@link Logger}.
+   * Make logger null when the singleton (which was referred by INSTANCE) gets garbage collected.
+   * Makes an attempt at removing associated {@link Handler}s of the {@link Logger}.
    */
   protected void finalize() throws Throwable {
     cleanupLogger(this.logger);
@@ -166,8 +169,8 @@ public class LogWrapper {
     return logger.getLevel();
   }
 
-      //TODO - Abhishek - ideally shouldn't be exposed outside.
-      /*package*/ Logger getLogger() {
+  //TODO - Abhishek - ideally shouldn't be exposed outside.
+  /*package*/ Logger getLogger() {
     return logger;
   }
 
@@ -296,13 +299,10 @@ public class LogWrapper {
     }
   }
 
-  /**
-   *
-   * @since GemFire 7.0
-   */
+  /** @since GemFire 7.0 */
   // Formatter code "copied" from LogWriterImpl
   static class GemFireFormatter extends Formatter {
-    private final static String FORMAT = "yyyy/MM/dd HH:mm:ss.SSS z";
+    private static final String FORMAT = "yyyy/MM/dd HH:mm:ss.SSS z";
 
     private SimpleDateFormat sdf = new SimpleDateFormat(FORMAT);
 
@@ -337,7 +337,9 @@ public class LogWrapper {
           formatText(pw, msg, 40);
         } catch (RuntimeException e) {
           pw.println(msg);
-          pw.println(LocalizedStrings.GemFireFormatter_IGNORING_THE_FOLLOWING_EXCEPTION.toLocalizedString());
+          pw.println(
+              LocalizedStrings.GemFireFormatter_IGNORING_THE_FOLLOWING_EXCEPTION
+                  .toLocalizedString());
           e.printStackTrace(pw);
         }
       } else {
@@ -421,16 +423,15 @@ public class LogWrapper {
 
     @Override
     public void publish(LogRecord record) {
-      CommandResponseWriter responseWriter = CommandExecutionContext.getAndCreateIfAbsentCommandResponseWriter();
+      CommandResponseWriter responseWriter =
+          CommandExecutionContext.getAndCreateIfAbsentCommandResponseWriter();
       responseWriter.println(getFormatter().format(record));
     }
 
     @Override
-    public void flush() {
-    }
+    public void flush() {}
 
     @Override
-    public void close() throws SecurityException {
-    }
+    public void close() throws SecurityException {}
   }
 }

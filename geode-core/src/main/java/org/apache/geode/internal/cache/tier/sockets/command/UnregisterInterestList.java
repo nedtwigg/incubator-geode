@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import java.io.IOException;
@@ -38,17 +36,17 @@ import org.apache.geode.security.NotAuthorizedException;
 
 public class UnregisterInterestList extends BaseCommand {
 
-  private final static UnregisterInterestList singleton = new UnregisterInterestList();
+  private static final UnregisterInterestList singleton = new UnregisterInterestList();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private UnregisterInterestList() {
-  }
+  private UnregisterInterestList() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException {
     Part regionNamePart = null, keyPart = null, numberOfKeysPart = null;
     String regionName = null;
     Object key = null;
@@ -94,18 +92,31 @@ public class UnregisterInterestList extends BaseCommand {
       keys.add(key);
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received unregister interest request ({} bytes) from {} for the following {} keys in region {}: {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), numberOfKeys, regionName, keys);
+      logger.debug(
+          "{}: Received unregister interest request ({} bytes) from {} for the following {} keys in region {}: {}",
+          servConn.getName(),
+          msg.getPayloadLength(),
+          servConn.getSocketString(),
+          numberOfKeys,
+          regionName,
+          keys);
     }
 
     // Process the unregister interest request
     if (keys.isEmpty() || regionName == null) {
       StringId errMessage = null;
       if (keys.isEmpty() && regionName == null) {
-        errMessage = LocalizedStrings.UnRegisterInterestList_THE_INPUT_LIST_OF_KEYS_IS_EMPTY_AND_THE_INPUT_REGION_NAME_IS_NULL_FOR_THE_UNREGISTER_INTEREST_REQUEST;
+        errMessage =
+            LocalizedStrings
+                .UnRegisterInterestList_THE_INPUT_LIST_OF_KEYS_IS_EMPTY_AND_THE_INPUT_REGION_NAME_IS_NULL_FOR_THE_UNREGISTER_INTEREST_REQUEST;
       } else if (keys.isEmpty()) {
-        errMessage = LocalizedStrings.UnRegisterInterestList_THE_INPUT_LIST_OF_KEYS_FOR_THE_UNREGISTER_INTEREST_REQUEST_IS_EMPTY;
+        errMessage =
+            LocalizedStrings
+                .UnRegisterInterestList_THE_INPUT_LIST_OF_KEYS_FOR_THE_UNREGISTER_INTEREST_REQUEST_IS_EMPTY;
       } else if (regionName == null) {
-        errMessage = LocalizedStrings.UnRegisterInterest_THE_INPUT_REGION_NAME_FOR_THE_UNREGISTER_INTEREST_REQUEST_IS_NULL;
+        errMessage =
+            LocalizedStrings
+                .UnRegisterInterest_THE_INPUT_REGION_NAME_FOR_THE_UNREGISTER_INTEREST_REQUEST_IS_NULL;
       }
       String s = errMessage.toLocalizedString();
       logger.warn("{}: {}", servConn.getName(), s);
@@ -126,7 +137,8 @@ public class UnregisterInterestList extends BaseCommand {
     if (authzRequest != null) {
       if (!DynamicRegionFactory.regionIsDynamicRegionList(regionName)) {
         try {
-          UnregisterInterestOperationContext unregisterContext = authzRequest.unregisterInterestListAuthorize(regionName, keys);
+          UnregisterInterestOperationContext unregisterContext =
+              authzRequest.unregisterInterestListAuthorize(regionName, keys);
           keys = (List) unregisterContext.getKey();
         } catch (NotAuthorizedException ex) {
           writeException(msg, ex, false, servConn);
@@ -149,7 +161,11 @@ public class UnregisterInterestList extends BaseCommand {
      * MessageType.UNREGISTER_INTEREST_DATA_ERROR); responded = true; } else {
      */
     // Register interest
-    servConn.getAcceptor().getCacheClientNotifier().unregisterClientInterest(regionName, keys, isClosingList, servConn.getProxyID(), keepalive);
+    servConn
+        .getAcceptor()
+        .getCacheClientNotifier()
+        .unregisterClientInterest(
+            regionName, keys, isClosingList, servConn.getProxyID(), keepalive);
 
     // Update the statistics and write the reply
     // bserverStats.incLong(processDestroyTimeId,
@@ -159,7 +175,12 @@ public class UnregisterInterestList extends BaseCommand {
     writeReply(msg, servConn);
     servConn.setAsTrue(RESPONDED);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Sent unregister interest response for the following {} keys in region {}: {}", servConn.getName(), numberOfKeys, regionName, keys);
+      logger.debug(
+          "{}: Sent unregister interest response for the following {} keys in region {}: {}",
+          servConn.getName(),
+          numberOfKeys,
+          regionName,
+          keys);
     }
     // bserverStats.incLong(writeDestroyResponseTimeId,
     // DistributionStats.getStatTime() - start);
@@ -167,5 +188,4 @@ public class UnregisterInterestList extends BaseCommand {
     // }
 
   }
-
 }

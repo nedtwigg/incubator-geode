@@ -32,8 +32,7 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
-/**
- */
+/** */
 @Category(IntegrationTest.class)
 public class UserTransactionImplJUnitTest {
 
@@ -62,8 +61,7 @@ public class UserTransactionImplJUnitTest {
   }
 
   @After
-  public void tearDown() {
-  }
+  public void tearDown() {}
 
   @Test
   public void testBegin() throws Exception {

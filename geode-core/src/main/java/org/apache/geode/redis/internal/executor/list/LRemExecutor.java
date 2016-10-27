@@ -83,24 +83,25 @@ public class LRemExecutor extends ListExecutor {
     for (Struct entry : removeList) {
       Integer removeKey = (Integer) entry.getFieldValues()[0];
       Object oldVal = keyRegion.remove(removeKey);
-      if (oldVal != null)
-        numRemoved++;
+      if (oldVal != null) numRemoved++;
     }
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), numRemoved));
   }
 
-  private List<Struct> getRemoveList(ExecutionHandlerContext context, ByteArrayWrapper key, ByteArrayWrapper value, int count) throws Exception {
+  private List<Struct> getRemoveList(
+      ExecutionHandlerContext context, ByteArrayWrapper key, ByteArrayWrapper value, int count)
+      throws Exception {
     Object[] params;
     Query query;
     if (count > 0) {
       query = getQuery(key, ListQuery.LREMG, context);
-      params = new Object[] { value, Integer.valueOf(count) };
+      params = new Object[] {value, Integer.valueOf(count)};
     } else if (count < 0) {
       query = getQuery(key, ListQuery.LREML, context);
-      params = new Object[] { value, Integer.valueOf(-count) };
+      params = new Object[] {value, Integer.valueOf(-count)};
     } else {
       query = getQuery(key, ListQuery.LREME, context);
-      params = new Object[] { value };
+      params = new Object[] {value};
     }
 
     SelectResults<Struct> results = (SelectResults<Struct>) query.execute(params);

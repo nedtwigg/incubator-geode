@@ -22,9 +22,8 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Verifies that test output containing an unexpected FATAL message
- * will fail with that FATAL message as the failure message.
- * 
+ * Verifies that test output containing an unexpected FATAL message will fail with that FATAL
+ * message as the failure message.
  */
 @Category(IntegrationTest.class)
 public class FailWithLoggerFatalInOutputJUnitTest extends FailWithProblemInOutputTestCase {

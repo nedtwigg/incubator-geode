@@ -23,9 +23,7 @@ import org.apache.geode.internal.cache.PartitionedRegionStats;
 import org.apache.geode.internal.cache.PartitionedRegion.RecoveryLock;
 
 /**
- * A task for creating buckets in a child colocated region that
- * are present in the leader region.
- *
+ * A task for creating buckets in a child colocated region that are present in the leader region.
  */
 public final class CreateMissingBucketsTask extends RecoveryRunnable {
   public CreateMissingBucketsTask(PRHARedundancyProvider prhaRedundancyProvider) {
@@ -55,7 +53,8 @@ public final class CreateMissingBucketsTask extends RecoveryRunnable {
 
     for (int i = 0; i < region.getTotalNumberOfBuckets(); i++) {
 
-      if (parentRegion.getRegionAdvisor().getBucketAdvisor(i).getBucketRedundancy() != region.getRegionAdvisor().getBucketAdvisor(i).getBucketRedundancy()) {
+      if (parentRegion.getRegionAdvisor().getBucketAdvisor(i).getBucketRedundancy()
+          != region.getRegionAdvisor().getBucketAdvisor(i).getBucketRedundancy()) {
         /*if (leaderRegion.getRegionAdvisor().isStorageAssignedForBucket(i)) {*/
         final long startTime = PartitionedRegionStats.startTime();
         region.getRedundancyProvider().createBucketAtomically(i, 0, startTime, true, null);

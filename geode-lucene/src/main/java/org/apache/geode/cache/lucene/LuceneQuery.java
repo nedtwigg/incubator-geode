@@ -22,46 +22,30 @@ import java.util.List;
 import org.apache.geode.annotations.Experimental;
 
 /**
- * Provides wrapper object of Lucene's Query object and execute the search. 
- * <p>Instances of this interface are created using
- * {@link LuceneQueryFactory#create}.
- * 
+ * Provides wrapper object of Lucene's Query object and execute the search.
+ *
+ * <p>Instances of this interface are created using {@link LuceneQueryFactory#create}.
  */
 @Experimental
 public interface LuceneQuery<K, V> {
-  /**
-   * Execute search and return keys.
-   */
+  /** Execute search and return keys. */
   public Collection<K> findKeys() throws LuceneQueryException;
 
-  /**
-   * Execute search and return values.
-   */
+  /** Execute search and return values. */
   public Collection<V> findValues() throws LuceneQueryException;
 
-  /**
-   * Execute search and return list of LuceneResultStruct.
-   */
+  /** Execute search and return list of LuceneResultStruct. */
   public List<LuceneResultStruct<K, V>> findResults() throws LuceneQueryException;
 
-  /**
-   * Execute the search and get results. 
-   */
+  /** Execute the search and get results. */
   public PageableLuceneQueryResults<K, V> findPages() throws LuceneQueryException;
 
-  /**
-   * Get page size setting of current query. 
-   */
+  /** Get page size setting of current query. */
   public int getPageSize();
 
-  /**
-   * Get limit size setting of current query. 
-   */
+  /** Get limit size setting of current query. */
   public int getLimit();
 
-  /**
-   * Get projected fields setting of current query. 
-   */
+  /** Get projected fields setting of current query. */
   public String[] getProjectedFieldNames();
-
 }

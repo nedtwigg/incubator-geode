@@ -43,14 +43,12 @@ import org.apache.geode.internal.jta.TransactionUtils;
 import org.apache.geode.internal.jta.UserTransactionImpl;
 
 /**
- * Provides implementation of javax.naming.Context interface. A name in the
- * ContextImpl namespace is a sequence of one or more atomic names, relative to
- * a root initial context. When a name consist of more than one atomic names it
- * is a CompoundName where atomic names are separated with separator character -
- * '/' or '.'. It is possible to use both separator characters in the same name.
- * In such cases any occurrences of '.' are replaced with '/' before parsing.
- * This rule can be altered/modified by making changes in NameParserImpl class.
- * 
+ * Provides implementation of javax.naming.Context interface. A name in the ContextImpl namespace is
+ * a sequence of one or more atomic names, relative to a root initial context. When a name consist
+ * of more than one atomic names it is a CompoundName where atomic names are separated with
+ * separator character - '/' or '.'. It is possible to use both separator characters in the same
+ * name. In such cases any occurrences of '.' are replaced with '/' before parsing. This rule can be
+ * altered/modified by making changes in NameParserImpl class.
  */
 public class ContextImpl implements Context {
 
@@ -79,33 +77,30 @@ public class ContextImpl implements Context {
     this.isDestroyed = false;
   }
 
-  /**
-   * Default constructor
-   */
+  /** Default constructor */
   public ContextImpl() {
     // call the constructor with default setting
     this(null, ROOT_CONTEXT_NAME);
   }
 
-  /**
-   * Not implemented
-   *  
-   */
+  /** Not implemented */
   public Object addToEnvironment(String key, Object value) throws NamingException {
-    throw new NamingException(LocalizedStrings.ContextImpl_ADDTOENVIRONMENTSTRING_KEY_OBJECT_VALUE_IS_NOT_IMPLEMENTED.toLocalizedString());
+    throw new NamingException(
+        LocalizedStrings.ContextImpl_ADDTOENVIRONMENTSTRING_KEY_OBJECT_VALUE_IS_NOT_IMPLEMENTED
+            .toLocalizedString());
   }
 
   /**
-   * Binds object to a name in this context. Intermediate contexts that do not
-   * exist will be created.
-   * 
+   * Binds object to a name in this context. Intermediate contexts that do not exist will be
+   * created.
+   *
    * @param name Name of the object to bind
    * @param obj Object to bind. Can be null.
    * @throws NoPermissionException if this context has been destroyed.
-   * @throws InvalidNameException if name is empty or is CompositeName that
-   *           spans more than one naming system.
-   * @throws NotContextException if name has more than one atomic name and
-   *           intermediate atomic name is bound to object that is not context.
+   * @throws InvalidNameException if name is empty or is CompositeName that spans more than one
+   *     naming system.
+   * @throws NotContextException if name has more than one atomic name and intermediate atomic name
+   *     is bound to object that is not context.
    */
   public void bind(Name name, Object obj) throws NamingException {
     checkIsDestroyed();
@@ -116,29 +111,23 @@ public class ContextImpl implements Context {
 
   /**
    * Binds object to name in this context.
-   * 
+   *
    * @param name * name of the object to add
    * @param obj object to bind
    * @throws NamingException if naming error occurs
-   *  
    */
   public void bind(String name, Object obj) throws NamingException {
     bind(nameParser.parse(name), obj);
   }
 
-  /**
-   * Does nothing.
-   */
-  public void close() throws NamingException {
-  }
+  /** Does nothing. */
+  public void close() throws NamingException {}
 
   /**
    * Returns composition of prefix and name .
-   * 
+   *
    * @param name name relative to this context
-   * @param prefix name of this context Example: composeName("a","b") : b/a
-   *          composeName("a","") : a
-   *  
+   * @param prefix name of this context Example: composeName("a","b") : b/a composeName("a","") : a
    */
   public Name composeName(Name name, Name prefix) throws NamingException {
     checkIsDestroyed();
@@ -151,11 +140,9 @@ public class ContextImpl implements Context {
 
   /**
    * Returns composition of prefix and name .
-   * 
+   *
    * @param name name relative to this context
-   * @param prefix name of this context Example: composeName("a","b") : b/a
-   *          composeName("a","") : a
-   *  
+   * @param prefix name of this context Example: composeName("a","b") : b/a composeName("a","") : a
    */
   public String composeName(String name, String prefix) throws NamingException {
     checkIsDestroyed();
@@ -164,22 +151,22 @@ public class ContextImpl implements Context {
 
   /**
    * Creates subcontext with name, relative to this Context.
-   * 
+   *
    * @param name subcontext name.
    * @return new subcontext named name relative to this context.
    * @throws NoPermissionException if this context has been destroyed.
-   * @throws InvalidNameException if name is empty or is CompositeName that
-   *           spans more than one naming system.
+   * @throws InvalidNameException if name is empty or is CompositeName that spans more than one
+   *     naming system.
    * @throws NameAlreadyBoundException if name is already bound in this Context
-   * @throws NotContextException if any intermediate name from name is not bound
-   *           to instance of javax.naming.Context.
-   *  
+   * @throws NotContextException if any intermediate name from name is not bound to instance of
+   *     javax.naming.Context.
    */
   public Context createSubcontext(Name name) throws NamingException {
     checkIsDestroyed();
     Name parsedName = getParsedName(name);
     if (parsedName.size() == 0 || parsedName.get(0).length() == 0) {
-      throw new InvalidNameException(LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString());
+      throw new InvalidNameException(
+          LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString());
     }
     String subContextName = parsedName.get(0);
     Object boundObject = ctxMaps.get(parsedName.get(0));
@@ -190,7 +177,8 @@ public class ContextImpl implements Context {
         ctxMaps.put(subContextName, subContext);
         return subContext;
       } else {
-        throw new NameAlreadyBoundException(LocalizedStrings.ContextImpl_NAME_0_IS_ALREADY_BOUND.toLocalizedString(subContextName));
+        throw new NameAlreadyBoundException(
+            LocalizedStrings.ContextImpl_NAME_0_IS_ALREADY_BOUND.toLocalizedString(subContextName));
       }
     } else {
       if (boundObject instanceof Context) {
@@ -201,18 +189,19 @@ public class ContextImpl implements Context {
         // an exception will be thrown in that case.
         return ((Context) boundObject).createSubcontext(parsedName.getSuffix(1));
       } else {
-        throw new NotContextException(LocalizedStrings.ContextImpl_EXPECTED_CONTEXT_BUT_FOUND_0.toLocalizedString(boundObject));
+        throw new NotContextException(
+            LocalizedStrings.ContextImpl_EXPECTED_CONTEXT_BUT_FOUND_0.toLocalizedString(
+                boundObject));
       }
     }
   }
 
   /**
    * Creates subcontext with name, relative to this Context.
-   * 
+   *
    * @param name subcontext name
    * @return new subcontext named name relative to this context.
    * @throws NamingException if naming error occurs.
-   *  
    */
   public Context createSubcontext(String name) throws NamingException {
     return createSubcontext(nameParser.parse(name));
@@ -220,30 +209,30 @@ public class ContextImpl implements Context {
 
   /**
    * Destroys subcontext with name name. The subcontext must be empty otherwise
-   * ContextNotEmptyException is thrown. Once a context is destroyed, the
-   * instance should not be used.
-   * 
+   * ContextNotEmptyException is thrown. Once a context is destroyed, the instance should not be
+   * used.
+   *
    * @param name subcontext to destroy
    * @throws NoPermissionException if this context has been destroyed.
-   * @throws InvalidNameException if name is empty or is CompositeName that
-   *           spans more than one naming system.
+   * @throws InvalidNameException if name is empty or is CompositeName that spans more than one
+   *     naming system.
    * @throws ContextNotEmptyException if Context name is not empty.
-   * @throws NameNotFoundException if subcontext with name name can not be
-   *           found.
-   * @throws NotContextException if name is not bound to instance of
-   *           ContextImpl.
-   *  
+   * @throws NameNotFoundException if subcontext with name name can not be found.
+   * @throws NotContextException if name is not bound to instance of ContextImpl.
    */
   public void destroySubcontext(Name name) throws NamingException {
     checkIsDestroyed();
     Name parsedName = getParsedName(name);
     if (parsedName.size() == 0 || parsedName.get(0).length() == 0) {
-      throw new InvalidNameException(LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString());
+      throw new InvalidNameException(
+          LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString());
     }
     String subContextName = parsedName.get(0);
     Object boundObject = ctxMaps.get(subContextName);
     if (boundObject == null) {
-      throw new NameNotFoundException(LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND_IN_THE_CONTEXT.toLocalizedString(subContextName));
+      throw new NameNotFoundException(
+          LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND_IN_THE_CONTEXT.toLocalizedString(
+              subContextName));
     }
     if (!(boundObject instanceof ContextImpl)) {
       throw new NotContextException();
@@ -256,7 +245,8 @@ public class ContextImpl implements Context {
         ctxMaps.remove(subContextName);
         contextToDestroy.destroyInternal();
       } else {
-        throw new ContextNotEmptyException(LocalizedStrings.ContextImpl_CAN_NOT_DESTROY_NONEMPTY_CONTEXT.toLocalizedString());
+        throw new ContextNotEmptyException(
+            LocalizedStrings.ContextImpl_CAN_NOT_DESTROY_NONEMPTY_CONTEXT.toLocalizedString());
       }
     } else {
       // Let the subcontext destroy the context
@@ -266,7 +256,7 @@ public class ContextImpl implements Context {
 
   /**
    * Destroys subcontext with name name.
-   * 
+   *
    * @param name name of subcontext to destroy.
    * @throws NamingException if naming error occurs
    */
@@ -274,30 +264,25 @@ public class ContextImpl implements Context {
     destroySubcontext(nameParser.parse(name));
   }
 
-  /**
-   * Not implemented
-   *  
-   */
+  /** Not implemented */
   public Hashtable getEnvironment() throws NamingException {
-    throw new NamingException(LocalizedStrings.ContextImpl_GETENVIRONMENT_IS_NOT_IMPLEMENTED.toLocalizedString());
+    throw new NamingException(
+        LocalizedStrings.ContextImpl_GETENVIRONMENT_IS_NOT_IMPLEMENTED.toLocalizedString());
   }
 
-  /**
-   * Not implemented
-   *  
-   */
+  /** Not implemented */
   public String getNameInNamespace() throws NamingException {
-    throw new NamingException(LocalizedStrings.ContextImpl_GETNAMEINNAMESPACE_IS_NOT_IMPLEMENTED.toLocalizedString());
+    throw new NamingException(
+        LocalizedStrings.ContextImpl_GETNAMEINNAMESPACE_IS_NOT_IMPLEMENTED.toLocalizedString());
   }
 
   /**
    * Retrieves NameParser used to parse context with name name.
-   * 
+   *
    * @param name context name.
    * @return NameParser.
    * @throws NoPermissionException if this context has been destroyed.
    * @throws NamingException if any other naming error occurs.
-   *  
    */
   public NameParser getNameParser(Name name) throws NamingException {
     checkIsDestroyed();
@@ -306,12 +291,11 @@ public class ContextImpl implements Context {
 
   /**
    * Retrieves NameParser used to parse context with name name.
-   * 
+   *
    * @param name context name.
    * @return NameParser.
    * @throws NoPermissionException if this context has been destroyed.
    * @throws NamingException if any other naming error occurs.
-   *  
    */
   public NameParser getNameParser(String name) throws NamingException {
     checkIsDestroyed();
@@ -320,12 +304,11 @@ public class ContextImpl implements Context {
 
   /**
    * The same as listBindings(String).
-   * 
+   *
    * @param name name of Context, relative to this Context
-   * @return NamingEnumeration of all name-class pairs. Each element from the
-   *         enumeration is instance of NameClassPair
+   * @return NamingEnumeration of all name-class pairs. Each element from the enumeration is
+   *     instance of NameClassPair
    * @throws NamingException if naming error occurs
-   *  
    */
   public NamingEnumeration list(Name name) throws NamingException {
     return listBindings(name);
@@ -333,32 +316,28 @@ public class ContextImpl implements Context {
 
   /**
    * The same as listBindings(String).
-   * 
+   *
    * @param name name of Context, relative to this Context
-   * @return NamingEnumeration of all name-class pairs. Each element from the
-   *         enumeration is instance of NameClassPair
+   * @return NamingEnumeration of all name-class pairs. Each element from the enumeration is
+   *     instance of NameClassPair
    * @throws NamingException if naming error occurs
-   *  
    */
   public NamingEnumeration list(String name) throws NamingException {
     return list(nameParser.parse(name));
   }
 
   /**
-   * Lists all bindings for Context with name name. If name is empty then this
-   * Context is assumed.
-   * 
+   * Lists all bindings for Context with name name. If name is empty then this Context is assumed.
+   *
    * @param name name of Context, relative to this Context
-   * @return NamingEnumeration of all name-object pairs. Each element from the
-   *         enumeration is instance of Binding.
+   * @return NamingEnumeration of all name-object pairs. Each element from the enumeration is
+   *     instance of Binding.
    * @throws NoPermissionException if this context has been destroyed
-   * @throws InvalidNameException if name is CompositeName that spans more than
-   *           one naming system
+   * @throws InvalidNameException if name is CompositeName that spans more than one naming system
    * @throws NameNotFoundException if name can not be found
-   * @throws NotContextException component of name is not bound to instance of
-   *           ContextImpl, when name is not an atomic name
+   * @throws NotContextException component of name is not bound to instance of ContextImpl, when
+   *     name is not an atomic name
    * @throws NamingException if any other naming error occurs
-   *  
    */
   public NamingEnumeration listBindings(Name name) throws NamingException {
     checkIsDestroyed();
@@ -382,28 +361,28 @@ public class ContextImpl implements Context {
         return ((Context) subContext).list(nextLayer);
       }
       if (subContext == null && !ctxMaps.containsKey(parsedName.get(0))) {
-        throw new NameNotFoundException(LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(name));
+        throw new NameNotFoundException(
+            LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(name));
       } else {
-        throw new NotContextException(LocalizedStrings.ContextImpl_EXPECTED_CONTEXT_BUT_FOUND_0.toLocalizedString(subContext));
+        throw new NotContextException(
+            LocalizedStrings.ContextImpl_EXPECTED_CONTEXT_BUT_FOUND_0.toLocalizedString(
+                subContext));
       }
     }
   }
 
   /**
-   * Lists all bindings for Context with name name. If name is empty then this
-   * Context is assumed.
-   * 
+   * Lists all bindings for Context with name name. If name is empty then this Context is assumed.
+   *
    * @param name name of Context, relative to this Context
-   * @return NamingEnumeration of all name-object pairs. Each element from the
-   *         enumeration is instance of Binding.
+   * @return NamingEnumeration of all name-object pairs. Each element from the enumeration is
+   *     instance of Binding.
    * @throws NoPermissionException if this context has been destroyed
-   * @throws InvalidNameException if name is CompositeName that spans more than
-   *           one naming system
+   * @throws InvalidNameException if name is CompositeName that spans more than one naming system
    * @throws NameNotFoundException if name can not be found
-   * @throws NotContextException component of name is not bound to instance of
-   *           ContextImpl, when name is not an atomic name
+   * @throws NotContextException component of name is not bound to instance of ContextImpl, when
+   *     name is not an atomic name
    * @throws NamingException if any other naming error occurs
-   *  
    */
   public NamingEnumeration listBindings(String name) throws NamingException {
     return listBindings(nameParser.parse(name));
@@ -411,17 +390,15 @@ public class ContextImpl implements Context {
 
   /**
    * Looks up object with binding name name in this context.
-   * 
+   *
    * @param name name to look up
    * @return object reference bound to name name.
    * @throws NoPermissionException if this context has been destroyed.
-   * @throws InvalidNameException if name is CompositeName that spans more than
-   *           one naming system
+   * @throws InvalidNameException if name is CompositeName that spans more than one naming system
    * @throws NameNotFoundException if name can not be found.
-   * @throws NotContextException component of name is not bound to instance of
-   *           ContextImpl, when name is not atomic name.
+   * @throws NotContextException component of name is not bound to instance of ContextImpl, when
+   *     name is not atomic name.
    * @throws NamingException if any other naming error occurs
-   *  
    */
   public Object lookup(Name name) throws NamingException {
     checkIsDestroyed();
@@ -434,38 +411,47 @@ public class ContextImpl implements Context {
       }
       // if not found
       if (!ctxMaps.containsKey(nameComponent)) {
-        throw new NameNotFoundException(LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(name));
+        throw new NameNotFoundException(
+            LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(name));
       }
       // if this is a compound name
       else if (parsedName.size() > 1) {
         if (res instanceof ContextImpl) {
           res = ((ContextImpl) res).lookup(parsedName.getSuffix(1));
         } else {
-          throw new NotContextException(LocalizedStrings.ContextImpl_EXPECTED_CONTEXTIMPL_BUT_FOUND_0.toLocalizedString(res));
+          throw new NotContextException(
+              LocalizedStrings.ContextImpl_EXPECTED_CONTEXTIMPL_BUT_FOUND_0.toLocalizedString(res));
         }
       }
       return res;
     } catch (NameNotFoundException e) {
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
       if (writer.infoEnabled())
-        writer.info(LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_LOOKING_UP_0, name, e);
-      throw new NameNotFoundException(LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(new Object[] { name }));
+        writer.info(
+            LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_LOOKING_UP_0, name, e);
+      throw new NameNotFoundException(
+          LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(new Object[] {name}));
     } catch (SystemException se) {
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
       if (writer.severeEnabled())
-        writer.info(LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_CREATING_USERTRANSACTION_OBJECT, se);
-      throw new NameNotFoundException(LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_CREATING_USERTRANSACTION_OBJECT.toLocalizedString());
+        writer.info(
+            LocalizedStrings
+                .ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_CREATING_USERTRANSACTION_OBJECT,
+            se);
+      throw new NameNotFoundException(
+          LocalizedStrings
+              .ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_CREATING_USERTRANSACTION_OBJECT
+              .toLocalizedString());
     }
   }
 
   /**
-   * Looks up the object in this context. If the object is not found and the
-   * remote context was provided, calls the remote context to lookup the object.
-   * 
+   * Looks up the object in this context. If the object is not found and the remote context was
+   * provided, calls the remote context to lookup the object.
+   *
    * @param name object to search
    * @return object reference bound to name name.
    * @throws NamingException if naming error occurs.
-   *  
    */
   public Object lookup(String name) throws NamingException {
     checkIsDestroyed();
@@ -474,46 +460,43 @@ public class ContextImpl implements Context {
     } catch (NameNotFoundException e) {
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
       if (writer.infoEnabled())
-        writer.info(LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_LOOKING_UP_0, name, e);
-      throw new NameNotFoundException(LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(new Object[] { name }));
+        writer.info(
+            LocalizedStrings.ContextImpl_CONTEXTIMPL_LOOKUP_ERROR_WHILE_LOOKING_UP_0, name, e);
+      throw new NameNotFoundException(
+          LocalizedStrings.ContextImpl_NAME_0_NOT_FOUND.toLocalizedString(new Object[] {name}));
     }
   }
 
-  /**
-   * Not implemented
-   *  
-   */
+  /** Not implemented */
   public Object lookupLink(Name name) throws NamingException {
-    throw new NamingException(LocalizedStrings.ContextImpl_LOOKUPLINKNAME_NAME_IS_NOT_IMPLEMENTED.toLocalizedString());
+    throw new NamingException(
+        LocalizedStrings.ContextImpl_LOOKUPLINKNAME_NAME_IS_NOT_IMPLEMENTED.toLocalizedString());
   }
 
-  /**
-   * Not implemented
-   *  
-   */
+  /** Not implemented */
   public Object lookupLink(String name) throws NamingException {
-    throw new NamingException(LocalizedStrings.ContextImpl_LOOKUPLINKSTRING_NAME_IS_NOT_IMPLEMENTED.toLocalizedString());
+    throw new NamingException(
+        LocalizedStrings.ContextImpl_LOOKUPLINKSTRING_NAME_IS_NOT_IMPLEMENTED.toLocalizedString());
   }
 
   /**
-   * Rebinds object obj to name name . If there is existing binding it will be
-   * overwritten.
-   * 
+   * Rebinds object obj to name name . If there is existing binding it will be overwritten.
+   *
    * @param name name of the object to rebind.
    * @param obj object to add. Can be null.
    * @throws NoPermissionException if this context has been destroyed
-   * @throws InvalidNameException if name is empty or is CompositeName that
-   *           spans more than one naming system
-   * @throws NotContextException if name has more than one atomic name and
-   *           intermediate context is not found
+   * @throws InvalidNameException if name is empty or is CompositeName that spans more than one
+   *     naming system
+   * @throws NotContextException if name has more than one atomic name and intermediate context is
+   *     not found
    * @throws NamingException if any other naming error occurs
-   *  
    */
   public void rebind(Name name, Object obj) throws NamingException {
     checkIsDestroyed();
     Name parsedName = getParsedName(name);
     if (parsedName.size() == 0 || parsedName.get(0).length() == 0) {
-      throw new InvalidNameException(LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString());
+      throw new InvalidNameException(
+          LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString());
     }
     String nameToBind = parsedName.get(0);
     if (parsedName.size() == 1) {
@@ -531,72 +514,69 @@ public class ContextImpl implements Context {
           Context sub = createSubcontext(nameToBind);
           sub.bind(parsedName.getSuffix(1), obj);
         } else {
-          throw new NotContextException(LocalizedStrings.ContextImpl_EXPECTED_CONTEXT_BUT_FOUND_0.toLocalizedString(boundObject));
+          throw new NotContextException(
+              LocalizedStrings.ContextImpl_EXPECTED_CONTEXT_BUT_FOUND_0.toLocalizedString(
+                  boundObject));
         }
       }
     }
   }
 
   /**
-   * Rebinds object obj to String name. If there is existing binding it will be
-   * overwritten.
-   * 
+   * Rebinds object obj to String name. If there is existing binding it will be overwritten.
+   *
    * @param name name of the object to rebind.
    * @param obj object to add. Can be null.
    * @throws NoPermissionException if this context has been destroyed
-   * @throws InvalidNameException if name is empty or is CompositeName that
-   *           spans more than one naming system
-   * @throws NotContextException if name has more than one atomic name and
-   *           intermediate context is not found
+   * @throws InvalidNameException if name is empty or is CompositeName that spans more than one
+   *     naming system
+   * @throws NotContextException if name has more than one atomic name and intermediate context is
+   *     not found
    * @throws NamingException if any other naming error occurs
-   *  
    */
   public void rebind(String name, Object obj) throws NamingException {
     rebind(nameParser.parse(name), obj);
   }
 
-  /**
-   * Not implemented
-   *  
-   */
+  /** Not implemented */
   public Object removeFromEnvironment(String key) throws NamingException {
-    throw new NamingException(LocalizedStrings.ContextImpl_REMOVEFROMENVIRONMENTSTRING_KEY_IS_NOT_IMPLEMENTED.toLocalizedString());
+    throw new NamingException(
+        LocalizedStrings.ContextImpl_REMOVEFROMENVIRONMENTSTRING_KEY_IS_NOT_IMPLEMENTED
+            .toLocalizedString());
   }
 
-  /**
-   * Not implemented
-   *  
-   */
+  /** Not implemented */
   public void rename(Name name1, Name name2) throws NamingException {
-    throw new NamingException(LocalizedStrings.ContextImpl_RENAMENAME_NAME1_NAME_NAME2_IS_NOT_IMPLEMENTED.toLocalizedString());
+    throw new NamingException(
+        LocalizedStrings.ContextImpl_RENAMENAME_NAME1_NAME_NAME2_IS_NOT_IMPLEMENTED
+            .toLocalizedString());
   }
 
-  /**
-   * Not implemented
-   *  
-   */
+  /** Not implemented */
   public void rename(String name1, String name2) throws NamingException {
-    throw new NamingException(LocalizedStrings.ContextImpl_RENAMESTRING_NAME1_STRING_NAME2_IS_NOT_IMPLEMENTED.toLocalizedString());
+    throw new NamingException(
+        LocalizedStrings.ContextImpl_RENAMESTRING_NAME1_STRING_NAME2_IS_NOT_IMPLEMENTED
+            .toLocalizedString());
   }
 
   /**
    * Removes name and its associated object from the context.
-   * 
+   *
    * @param name name to remove
    * @throws NoPermissionException if this context has been destroyed.
-   * @throws InvalidNameException if name is empty or is CompositeName that
-   *           spans more than one naming system
+   * @throws InvalidNameException if name is empty or is CompositeName that spans more than one
+   *     naming system
    * @throws NameNotFoundException if intermediate context can not be found
-   * @throws NotContextException if name has more than one atomic name and
-   *           intermediate context is not found.
+   * @throws NotContextException if name has more than one atomic name and intermediate context is
+   *     not found.
    * @throws NamingException if any other naming exception occurs
-   *  
    */
   public void unbind(Name name) throws NamingException {
     checkIsDestroyed();
     Name parsedName = getParsedName(name);
     if (parsedName.size() == 0 || parsedName.get(0).length() == 0) {
-      throw new InvalidNameException(LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString());
+      throw new InvalidNameException(
+          LocalizedStrings.ContextImpl_NAME_CAN_NOT_BE_EMPTY.toLocalizedString());
     }
     String nameToRemove = parsedName.get(0);
     // scenerio unbind a
@@ -613,60 +593,59 @@ public class ContextImpl implements Context {
       } else {
         // 			if the name is not found then throw exception
         if (!ctxMaps.containsKey(nameToRemove)) {
-          throw new NameNotFoundException(LocalizedStrings.ContextImpl_CAN_NOT_FIND_0.toLocalizedString(name));
+          throw new NameNotFoundException(
+              LocalizedStrings.ContextImpl_CAN_NOT_FIND_0.toLocalizedString(name));
         }
-        throw new NotContextException(LocalizedStrings.ContextImpl_EXPECTED_CONTEXT_BUT_FOUND_0.toLocalizedString(boundObject));
+        throw new NotContextException(
+            LocalizedStrings.ContextImpl_EXPECTED_CONTEXT_BUT_FOUND_0.toLocalizedString(
+                boundObject));
       }
     }
   }
 
   /**
-   * 
    * Removes name and its associated object from the context.
-   * 
+   *
    * @param name name to remove
    * @throws NoPermissionException if this context has been destroyed.
-   * @throws InvalidNameException if name is empty or is CompositeName that
-   *           spans more than one naming system
+   * @throws InvalidNameException if name is empty or is CompositeName that spans more than one
+   *     naming system
    * @throws NameNotFoundException if intermediate context can not be found
-   * @throws NotContextException if name has more than one atomic name and
-   *           intermediate context is not found.
+   * @throws NotContextException if name has more than one atomic name and intermediate context is
+   *     not found.
    * @throws NamingException if any other naming exception occurs
-   *  
    */
   public void unbind(String name) throws NamingException {
     unbind(nameParser.parse(name));
   }
 
   /**
-   * Checks if this context has been destroyed. isDestroyed is set to true when
-   * a context is destroyed by calling destroySubcontext method.
-   * 
+   * Checks if this context has been destroyed. isDestroyed is set to true when a context is
+   * destroyed by calling destroySubcontext method.
+   *
    * @throws NoPermissionException if this context has been destroyed
    */
   private void checkIsDestroyed() throws NamingException {
     if (isDestroyed) {
-      throw new NoPermissionException(LocalizedStrings.ContextImpl_CAN_NOT_INVOKE_OPERATIONS_ON_DESTROYED_CONTEXT.toLocalizedString());
+      throw new NoPermissionException(
+          LocalizedStrings.ContextImpl_CAN_NOT_INVOKE_OPERATIONS_ON_DESTROYED_CONTEXT
+              .toLocalizedString());
     }
   }
 
-  /**
-   * Marks this context as destroyed. Method called only by destroySubcontext.
-   */
+  /** Marks this context as destroyed. Method called only by destroySubcontext. */
   private void destroyInternal() {
     isDestroyed = true;
   }
 
   /**
-   * Parses name which is CompositeName or CompoundName . If name is not
-   * CompositeName then it is assumed to be CompoundName. If the name contains
-   * leading and/or terminal empty components, they will not be included in the
-   * result.
-   * 
+   * Parses name which is CompositeName or CompoundName . If name is not CompositeName then it is
+   * assumed to be CompoundName. If the name contains leading and/or terminal empty components, they
+   * will not be included in the result.
+   *
    * @param name Name to parse.
    * @return parsed name as instance of CompoundName.
-   * @throws InvalidNameException if name is CompositeName and spans more than
-   *           one name space.
+   * @throws InvalidNameException if name is CompositeName and spans more than one name space.
    * @throws NamingException if any other naming exception occurs
    */
   private Name getParsedName(Name name) throws NamingException {
@@ -676,7 +655,9 @@ public class ContextImpl implements Context {
         // Return empty CompositeName
         result = nameParser.parse("");
       } else if (name.size() > 1) {
-        throw new InvalidNameException(LocalizedStrings.ContextImpl_MULTIPLE_NAME_SYSTEMS_ARE_NOT_SUPPORTED.toLocalizedString());
+        throw new InvalidNameException(
+            LocalizedStrings.ContextImpl_MULTIPLE_NAME_SYSTEMS_ARE_NOT_SUPPORTED
+                .toLocalizedString());
       }
       result = nameParser.parse(name.get(0));
     } else {
@@ -697,16 +678,18 @@ public class ContextImpl implements Context {
     // Skip first and last element, they are valid
     for (int i = 1; i < result.size() - 1; i++) {
       if (result.get(i).length() == 0) {
-        throw new InvalidNameException(LocalizedStrings.ContextImpl_EMPTY_INTERMEDIATE_COMPONENTS_ARE_NOT_SUPPORTED.toLocalizedString());
+        throw new InvalidNameException(
+            LocalizedStrings.ContextImpl_EMPTY_INTERMEDIATE_COMPONENTS_ARE_NOT_SUPPORTED
+                .toLocalizedString());
       }
     }
     return result;
   }
 
   /**
-   * Returns the compound string name of this context. Suppose a/b/c/d is the
-   * full name and this context is "c". It's compound string name is a/b/c
-   * 
+   * Returns the compound string name of this context. Suppose a/b/c/d is the full name and this
+   * context is "c". It's compound string name is a/b/c
+   *
    * @return compound string name of the context
    */
   String getCompoundStringName() throws NamingException {
@@ -743,7 +726,7 @@ public class ContextImpl implements Context {
     return getParentContext() == null;
   }
 
-  static private class NamingEnumerationImpl implements NamingEnumeration {
+  private static class NamingEnumerationImpl implements NamingEnumeration {
 
     private Vector elements;
     private int currentElement;

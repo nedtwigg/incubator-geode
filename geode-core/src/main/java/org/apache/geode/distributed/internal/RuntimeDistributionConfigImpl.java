@@ -28,28 +28,26 @@ import java.util.List;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * Provides an implementation of <code>DistributionConfig</code> that
- * is used at runtime by a {@link InternalDistributedSystem}. It allows
- * for dynamic reconfig of the app the owns it.
- * 
- * The attribute settor methods in this class all assume that they are
- * being called at runtime. If they are called from some other ConfigSource
- * then those calls should come through setAttributeObject and it will
- * set the attSourceMap to the correct source after these methods return.
+ * Provides an implementation of <code>DistributionConfig</code> that is used at runtime by a {@link
+ * InternalDistributedSystem}. It allows for dynamic reconfig of the app the owns it.
  *
+ * <p>The attribute settor methods in this class all assume that they are being called at runtime.
+ * If they are called from some other ConfigSource then those calls should come through
+ * setAttributeObject and it will set the attSourceMap to the correct source after these methods
+ * return.
  *
  * @since GemFire 3.0
  */
 public final class RuntimeDistributionConfigImpl extends DistributionConfigImpl {
 
   private static final long serialVersionUID = -805637520096606113L;
-  transient private final InternalDistributedSystem ds;
+  private final transient InternalDistributedSystem ds;
 
   //////////////////////  Constructors  //////////////////////
 
   /**
-   * Create a new <code>RuntimeDistributionConfigImpl</code> from the
-   * contents of another <code>DistributionConfig</code>.
+   * Create a new <code>RuntimeDistributionConfigImpl</code> from the contents of another <code>
+   * DistributionConfig</code>.
    */
   public RuntimeDistributionConfigImpl(InternalDistributedSystem ds) {
     super(ds.getOriginalConfig());
@@ -77,7 +75,14 @@ public final class RuntimeDistributionConfigImpl extends DistributionConfigImpl 
     value = (Integer) checkAttribute(STATISTIC_SAMPLE_RATE, value);
     if (value < DEFAULT_STATISTIC_SAMPLE_RATE) {
       // fix 48228
-      this.ds.getLogWriter().info("Setting statistic-sample-rate to " + DEFAULT_STATISTIC_SAMPLE_RATE + " instead of the requested " + value + " because VSD does not work with sub-second sampling.");
+      this.ds
+          .getLogWriter()
+          .info(
+              "Setting statistic-sample-rate to "
+                  + DEFAULT_STATISTIC_SAMPLE_RATE
+                  + " instead of the requested "
+                  + value
+                  + " because VSD does not work with sub-second sampling.");
       value = DEFAULT_STATISTIC_SAMPLE_RATE;
     }
     this.statisticSampleRate = value;
@@ -129,7 +134,18 @@ public final class RuntimeDistributionConfigImpl extends DistributionConfigImpl 
   }
 
   public List<String> getModifiableAttributes() {
-    String[] modifiables = { HTTP_SERVICE_PORT, JMX_MANAGER_HTTP_PORT, ARCHIVE_DISK_SPACE_LIMIT, ARCHIVE_FILE_SIZE_LIMIT, LOG_DISK_SPACE_LIMIT, LOG_FILE_SIZE_LIMIT, LOG_LEVEL, STATISTIC_ARCHIVE_FILE, STATISTIC_SAMPLE_RATE, STATISTIC_SAMPLING_ENABLED };
+    String[] modifiables = {
+      HTTP_SERVICE_PORT,
+      JMX_MANAGER_HTTP_PORT,
+      ARCHIVE_DISK_SPACE_LIMIT,
+      ARCHIVE_FILE_SIZE_LIMIT,
+      LOG_DISK_SPACE_LIMIT,
+      LOG_FILE_SIZE_LIMIT,
+      LOG_LEVEL,
+      STATISTIC_ARCHIVE_FILE,
+      STATISTIC_SAMPLE_RATE,
+      STATISTIC_SAMPLING_ENABLED
+    };
     return Arrays.asList(modifiables);
   };
 }

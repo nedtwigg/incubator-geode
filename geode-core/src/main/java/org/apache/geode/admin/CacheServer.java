@@ -17,8 +17,7 @@
 package org.apache.geode.admin;
 
 /**
- * A dedicated cache server VM that is managed by the administration
- * API.
+ * A dedicated cache server VM that is managed by the administration API.
  *
  * @since GemFire 4.0
  * @deprecated as of 5.7 use {@link CacheVm} instead.
@@ -27,6 +26,7 @@ package org.apache.geode.admin;
 public interface CacheServer extends SystemMember, ManagedEntity {
   /**
    * Returns the configuration of this cache vm
+   *
    * @deprecated as of 5.7 use {@link CacheVm#getVmConfig} instead.
    */
   @Deprecated
@@ -34,13 +34,10 @@ public interface CacheServer extends SystemMember, ManagedEntity {
 
   /**
    * Find whether this server is primary for given client (durableClientId)
-   * 
-   * @param durableClientId -
-   *                durable-id of the client
+   *
+   * @param durableClientId - durable-id of the client
    * @return true if the server is primary for given client
-   * 
    * @since GemFire 5.6
    */
   public boolean isPrimaryForDurableClient(String durableClientId);
-
 }

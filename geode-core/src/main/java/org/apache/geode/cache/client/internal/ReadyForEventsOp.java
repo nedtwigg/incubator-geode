@@ -20,16 +20,17 @@ import org.apache.geode.internal.cache.tier.MessageType;
 import org.apache.geode.internal.cache.tier.sockets.Message;
 
 /**
- * Tells the server we are ready to receive server-to-client events
- * from durable subscriptions.
+ * Tells the server we are ready to receive server-to-client events from durable subscriptions.
+ *
  * @since GemFire 5.7
  */
 public class ReadyForEventsOp {
   /**
-   * Tells the primary server we are ready to receive server-to-client events
-   * from durable subscriptions.
+   * Tells the primary server we are ready to receive server-to-client events from durable
+   * subscriptions.
+   *
    * @param pool the pool to use to communicate with the server.
-   * @param primary 
+   * @param primary
    */
   public static void execute(ExecutablePool pool, QueueConnectionImpl primary) {
     AbstractOp op = new ReadyForEventsOpImpl();
@@ -41,16 +42,13 @@ public class ReadyForEventsOp {
   }
 
   private static class ReadyForEventsOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public ReadyForEventsOpImpl() {
       super(MessageType.CLIENT_READY, 1);
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

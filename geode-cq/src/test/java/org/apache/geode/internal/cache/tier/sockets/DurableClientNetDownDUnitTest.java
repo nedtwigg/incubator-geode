@@ -21,9 +21,9 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Class <code>DurableClientCrashDUnitTest</code> tests durable client
- * functionality when clients are disconnected from servers.
- * 
+ * Class <code>DurableClientCrashDUnitTest</code> tests durable client functionality when clients
+ * are disconnected from servers.
+ *
  * @since GemFire 5.2
  */
 @Category(DistributedTest.class)
@@ -36,20 +36,16 @@ public class DurableClientNetDownDUnitTest extends DurableClientCrashDUnitTest {
   }
 
   @Override
-  public void setPrimaryRecoveryCheck() {
-  }
+  public void setPrimaryRecoveryCheck() {}
 
   @Override
-  public void checkPrimaryRecovery() {
-  }
+  public void checkPrimaryRecovery() {}
 
   @Override
-  public void configureClientStop1() {
-  }
+  public void configureClientStop1() {}
 
   @Override
-  public void configureClientStop2() {
-  }
+  public void configureClientStop2() {}
 
   @Override
   public void closeDurableClient() {
@@ -81,5 +77,4 @@ public class DurableClientNetDownDUnitTest extends DurableClientCrashDUnitTest {
   public void verifyListenerUpdates(int numEntries, int numEntriesBeforeDisconnect) {
     this.verifyListenerUpdatesEntries(numEntries, numEntriesBeforeDisconnect);
   }
-
 }

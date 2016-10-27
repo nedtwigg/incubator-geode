@@ -36,17 +36,13 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
  * Executes Function on Distributed Regions.
- * 
- * For DistributedRegions with DataPolicy.NORMAL, it throws
- * UnsupportedOperationException. <br>
- * For DistributedRegions with DataPolicy.EMPTY, execute the function on any
- * random member which has DataPolicy.REPLICATE <br>
- * For DistributedRegions with DataPolicy.REPLICATE, execute the function
- * locally.
- * 
- * 
+ *
+ * <p>For DistributedRegions with DataPolicy.NORMAL, it throws UnsupportedOperationException. <br>
+ * For DistributedRegions with DataPolicy.EMPTY, execute the function on any random member which has
+ * DataPolicy.REPLICATE <br>
+ * For DistributedRegions with DataPolicy.REPLICATE, execute the function locally.
+ *
  * @since GemFire 5.8 LA
- * 
  */
 public class DistributedRegionFunctionExecutor extends AbstractExecution {
 
@@ -56,7 +52,10 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
 
   public DistributedRegionFunctionExecutor(Region r) {
     if (r == null) {
-      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("region"));
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("region"));
     }
     this.region = (LocalRegion) r;
   }
@@ -71,7 +70,12 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
     this.sender = drfe.sender;
   }
 
-  public DistributedRegionFunctionExecutor(DistributedRegion region, Set filter2, Object args, MemberMappedArgument memberMappedArg, ServerToClientFunctionResultSender resultSender) {
+  public DistributedRegionFunctionExecutor(
+      DistributedRegion region,
+      Set filter2,
+      Object args,
+      MemberMappedArgument memberMappedArg,
+      ServerToClientFunctionResultSender resultSender) {
     if (args != null) {
       this.args = args;
     } else if (memberMappedArg != null) {
@@ -87,7 +91,9 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
     this.isClientServerMode = true;
   }
 
-  private DistributedRegionFunctionExecutor(DistributedRegionFunctionExecutor distributedRegionFunctionExecutor, MemberMappedArgument argument) {
+  private DistributedRegionFunctionExecutor(
+      DistributedRegionFunctionExecutor distributedRegionFunctionExecutor,
+      MemberMappedArgument argument) {
     super(distributedRegionFunctionExecutor);
 
     this.region = distributedRegionFunctionExecutor.getRegion();
@@ -97,10 +103,10 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
 
     this.memberMappedArg = argument;
     this.isMemberMappedArgument = true;
-
   }
 
-  private DistributedRegionFunctionExecutor(DistributedRegionFunctionExecutor distributedRegionFunctionExecutor, ResultCollector rs) {
+  private DistributedRegionFunctionExecutor(
+      DistributedRegionFunctionExecutor distributedRegionFunctionExecutor, ResultCollector rs) {
     super(distributedRegionFunctionExecutor);
 
     this.region = distributedRegionFunctionExecutor.getRegion();
@@ -111,7 +117,8 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
     this.rc = rs;
   }
 
-  private DistributedRegionFunctionExecutor(DistributedRegionFunctionExecutor distributedRegionFunctionExecutor, Object args) {
+  private DistributedRegionFunctionExecutor(
+      DistributedRegionFunctionExecutor distributedRegionFunctionExecutor, Object args) {
     super(distributedRegionFunctionExecutor);
 
     this.region = distributedRegionFunctionExecutor.getRegion();
@@ -122,7 +129,8 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
     this.args = args;
   }
 
-  private DistributedRegionFunctionExecutor(DistributedRegionFunctionExecutor distributedRegionFunctionExecutor, Set filter2) {
+  private DistributedRegionFunctionExecutor(
+      DistributedRegionFunctionExecutor distributedRegionFunctionExecutor, Set filter2) {
     super(distributedRegionFunctionExecutor);
 
     this.region = distributedRegionFunctionExecutor.getRegion();
@@ -132,7 +140,8 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
     this.filter.addAll(filter2);
   }
 
-  private DistributedRegionFunctionExecutor(DistributedRegionFunctionExecutor drfe, boolean isReExecute) {
+  private DistributedRegionFunctionExecutor(
+      DistributedRegionFunctionExecutor drfe, boolean isReExecute) {
     super(drfe);
     this.region = drfe.region;
     if (drfe.filter != null) {
@@ -145,35 +154,53 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
 
   public ResultCollector execute(final String functionName) {
     if (functionName == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString());
     }
     this.isFnSerializationReqd = false;
     Function functionObject = FunctionService.getFunction(functionName);
     if (functionObject == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_FUNCTION_NAMED_0_IS_NOT_REGISTERED.toLocalizedString(functionObject));
+      throw new FunctionException(
+          LocalizedStrings.ExecuteFunction_FUNCTION_NAMED_0_IS_NOT_REGISTERED.toLocalizedString(
+              functionObject));
     }
     if (region.getAttributes().getDataPolicy().isNormal()) {
-      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_CAN_NOT_EXECUTE_ON_NORMAL_REGION.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.ExecuteRegionFunction_CAN_NOT_EXECUTE_ON_NORMAL_REGION
+              .toLocalizedString());
     }
     return executeFunction(functionObject);
   }
 
   public ResultCollector execute(String functionName, boolean hasResult) throws FunctionException {
     if (functionName == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString());
     }
     Function functionObject = FunctionService.getFunction(functionName);
     if (functionObject == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_FUNCTION_NAMED_0_IS_NOT_REGISTERED.toLocalizedString(functionObject));
+      throw new FunctionException(
+          LocalizedStrings.ExecuteFunction_FUNCTION_NAMED_0_IS_NOT_REGISTERED.toLocalizedString(
+              functionObject));
     }
     if (region.getAttributes().getDataPolicy().isNormal()) {
-      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_CAN_NOT_EXECUTE_ON_NORMAL_REGION.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.ExecuteRegionFunction_CAN_NOT_EXECUTE_ON_NORMAL_REGION
+              .toLocalizedString());
     }
-    byte registeredFunctionState = AbstractExecution.getFunctionState(functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
+    byte registeredFunctionState =
+        AbstractExecution.getFunctionState(
+            functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
 
     byte functionState = AbstractExecution.getFunctionState(hasResult, hasResult, false);
     if (registeredFunctionState != functionState) {
-      throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER.toLocalizedString(functionName));
+      throw new FunctionException(
+          LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER
+              .toLocalizedString(functionName));
     }
 
     this.isFnSerializationReqd = false;
@@ -183,50 +210,77 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
     return executeFunction(functionObject);
   }
 
-  public ResultCollector execute(String functionName, boolean hasResult, boolean isHA) throws FunctionException {
+  public ResultCollector execute(String functionName, boolean hasResult, boolean isHA)
+      throws FunctionException {
     if (functionName == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString());
     }
     if (isHA && !hasResult) {
-      throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH.toLocalizedString());
     }
     Function functionObject = FunctionService.getFunction(functionName);
     if (functionObject == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_FUNCTION_NAMED_0_IS_NOT_REGISTERED.toLocalizedString(functionObject));
+      throw new FunctionException(
+          LocalizedStrings.ExecuteFunction_FUNCTION_NAMED_0_IS_NOT_REGISTERED.toLocalizedString(
+              functionObject));
     }
     if (region.getAttributes().getDataPolicy().isNormal()) {
-      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_CAN_NOT_EXECUTE_ON_NORMAL_REGION.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.ExecuteRegionFunction_CAN_NOT_EXECUTE_ON_NORMAL_REGION
+              .toLocalizedString());
     }
-    byte registeredFunctionState = AbstractExecution.getFunctionState(functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
+    byte registeredFunctionState =
+        AbstractExecution.getFunctionState(
+            functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
 
     byte functionState = AbstractExecution.getFunctionState(isHA, hasResult, false);
     if (registeredFunctionState != functionState) {
-      throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER.toLocalizedString(functionName));
+      throw new FunctionException(
+          LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER
+              .toLocalizedString(functionName));
     }
 
     this.isFnSerializationReqd = false;
     return executeFunction(functionObject);
   }
 
-  public ResultCollector execute(String functionName, boolean hasResult, boolean isHA, boolean isOptimizeForWrite) throws FunctionException {
+  public ResultCollector execute(
+      String functionName, boolean hasResult, boolean isHA, boolean isOptimizeForWrite)
+      throws FunctionException {
     if (functionName == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString());
     }
     if (isHA && !hasResult) {
-      throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH.toLocalizedString());
     }
     Function functionObject = FunctionService.getFunction(functionName);
     if (functionObject == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_FUNCTION_NAMED_0_IS_NOT_REGISTERED.toLocalizedString(functionObject));
+      throw new FunctionException(
+          LocalizedStrings.ExecuteFunction_FUNCTION_NAMED_0_IS_NOT_REGISTERED.toLocalizedString(
+              functionObject));
     }
     if (region.getAttributes().getDataPolicy().isNormal()) {
-      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_CAN_NOT_EXECUTE_ON_NORMAL_REGION.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.ExecuteRegionFunction_CAN_NOT_EXECUTE_ON_NORMAL_REGION
+              .toLocalizedString());
     }
-    byte registeredFunctionState = AbstractExecution.getFunctionState(functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
+    byte registeredFunctionState =
+        AbstractExecution.getFunctionState(
+            functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
 
     byte functionState = AbstractExecution.getFunctionState(isHA, hasResult, isOptimizeForWrite);
     if (registeredFunctionState != functionState) {
-      throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER.toLocalizedString(functionName));
+      throw new FunctionException(
+          LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER
+              .toLocalizedString(functionName));
     }
 
     this.isFnSerializationReqd = false;
@@ -236,17 +290,24 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
   @Override
   public ResultCollector execute(final Function function) {
     if (function == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("function instance"));
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("function instance"));
     }
     if (function.isHA() && !function.hasResult()) {
-      throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH.toLocalizedString());
     }
     if (region.getAttributes().getDataPolicy().isNormal()) {
-      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_CAN_NOT_EXECUTE_ON_NORMAL_REGION.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.ExecuteRegionFunction_CAN_NOT_EXECUTE_ON_NORMAL_REGION
+              .toLocalizedString());
     }
     String id = function.getId();
     if (id == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_FUNCTION_GET_ID_RETURNED_NULL.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.ExecuteFunction_THE_FUNCTION_GET_ID_RETURNED_NULL.toLocalizedString());
     }
     this.isFnSerializationReqd = true;
     return executeFunction(function);
@@ -257,7 +318,8 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
     if (function.hasResult()) { // have Results
       if (this.rc == null) { // Default Result Collector
         ResultCollector defaultCollector = new DefaultResultCollector();
-        return this.region.executeFunction(this, function, args, defaultCollector, this.filter, this.sender);
+        return this.region.executeFunction(
+            this, function, args, defaultCollector, this.filter, this.sender);
       } else { // Custome Result COllector
         return this.region.executeFunction(this, function, args, rc, this.filter, this.sender);
       }
@@ -269,7 +331,10 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
 
   public Execution withFilter(Set filter) {
     if (filter == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("filter"));
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("filter"));
     }
 
     return new DistributedRegionFunctionExecutor(this, filter);
@@ -278,7 +343,9 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
   @Override
   public InternalExecution withBucketFilter(Set<Integer> bucketIDs) {
     if (bucketIDs != null && !bucketIDs.isEmpty()) {
-      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_BUCKET_FILTER_ON_NON_PR.toLocalizedString(region.getName()));
+      throw new IllegalArgumentException(
+          LocalizedStrings.ExecuteRegionFunction_BUCKET_FILTER_ON_NON_PR.toLocalizedString(
+              region.getName()));
     }
     return this;
   }
@@ -293,21 +360,30 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
 
   public Execution withArgs(Object args) {
     if (args == null) {
-      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("Args"));
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("Args"));
     }
     return new DistributedRegionFunctionExecutor(this, args);
   }
 
   public Execution withCollector(ResultCollector rs) {
     if (rs == null) {
-      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("Result Collector"));
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("Result Collector"));
     }
     return new DistributedRegionFunctionExecutor(this, rs);
   }
 
   public InternalExecution withMemberMappedArgument(MemberMappedArgument argument) {
     if (argument == null) {
-      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("MemberMappedArgument"));
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("MemberMappedArgument"));
     }
     return new DistributedRegionFunctionExecutor(this, argument);
   }
@@ -337,7 +413,9 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
     GemFireCacheImpl cache = region.getGemFireCache();
     if (cache != null && cache.getTxManager().getTXState() != null) {
       if (targetMembers.size() > 1) {
-        throw new TransactionException(LocalizedStrings.PartitionedRegion_TX_FUNCTION_ON_MORE_THAN_ONE_NODE.toLocalizedString());
+        throw new TransactionException(
+            LocalizedStrings.PartitionedRegion_TX_FUNCTION_ON_MORE_THAN_ONE_NODE
+                .toLocalizedString());
       } else {
         assert targetMembers.size() == 1;
         DistributedMember funcTarget = (DistributedMember) targetMembers.iterator().next();
@@ -345,7 +423,9 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
         if (target == null) {
           cache.getTxManager().getTXState().setTarget(funcTarget);
         } else if (!target.equals(funcTarget)) {
-          throw new TransactionDataNotColocatedException(LocalizedStrings.PartitionedRegion_TX_FUNCTION_EXECUTION_NOT_COLOCATED_0_1.toLocalizedString(new Object[] { target, funcTarget }));
+          throw new TransactionDataNotColocatedException(
+              LocalizedStrings.PartitionedRegion_TX_FUNCTION_EXECUTION_NOT_COLOCATED_0_1
+                  .toLocalizedString(new Object[] {target, funcTarget}));
         }
       }
     }
@@ -354,10 +434,11 @@ public class DistributedRegionFunctionExecutor extends AbstractExecution {
         region.checkIfAboveThreshold(null);
       } catch (LowMemoryException e) {
         Set<DistributedMember> htrm = region.getMemoryThresholdReachedMembers();
-        throw new LowMemoryException(LocalizedStrings.ResourceManager_LOW_MEMORY_FOR_0_FUNCEXEC_MEMBERS_1.toLocalizedString(new Object[] { function.getId(), htrm }), htrm);
-
+        throw new LowMemoryException(
+            LocalizedStrings.ResourceManager_LOW_MEMORY_FOR_0_FUNCEXEC_MEMBERS_1.toLocalizedString(
+                new Object[] {function.getId(), htrm}),
+            htrm);
       }
     }
   }
-
 }

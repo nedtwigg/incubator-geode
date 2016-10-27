@@ -21,24 +21,20 @@ import java.nio.ByteBuffer;
 import org.apache.geode.cache.RegionEvent;
 
 /**
- * This class provides 'do-nothing' implementations of all of the methods of
- * interface CacheObserver. See the documentation for class CacheObserverHolder
- * for details. Also the callback is issed only if the boolean
- * ISSUE_CALLBACKS_TO_CACHE_OBSERVER present in
+ * This class provides 'do-nothing' implementations of all of the methods of interface
+ * CacheObserver. See the documentation for class CacheObserverHolder for details. Also the callback
+ * is issed only if the boolean ISSUE_CALLBACKS_TO_CACHE_OBSERVER present in
  * org.apache.geode.internal.cache.LocalRegion is made true
- * 
  */
 public class CacheObserverAdapter implements CacheObserver {
 
   /**
-   * Called just after the region is cleared & before Listener callback is
-   * issued. The call to this method is synchronous
-   * 
-   * @param event
-   *          RegionEvent object
+   * Called just after the region is cleared & before Listener callback is issued. The call to this
+   * method is synchronous
+   *
+   * @param event RegionEvent object
    */
-  public void afterRegionClear(RegionEvent event) {
-  }
+  public void afterRegionClear(RegionEvent event) {}
 
   public void beforeDiskClear() {
     // TODO Auto-generated method stub
@@ -48,11 +44,9 @@ public class CacheObserverAdapter implements CacheObserver {
     // TODO Auto-generated method stub
   }
 
-  public void beforeWritingBytes() {
-  }
+  public void beforeWritingBytes() {}
 
-  public void afterWritingBytes() {
-  }
+  public void afterWritingBytes() {}
 
   public void beforeGoingToCompact() {
     // TODO Auto-generated method stub
@@ -64,7 +58,7 @@ public class CacheObserverAdapter implements CacheObserver {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.cache.CacheObserver#afterConflation(java.nio.ByteBuffer,
    *      java.nio.ByteBuffer)
    */
@@ -88,9 +82,7 @@ public class CacheObserverAdapter implements CacheObserver {
     // TODO Auto-generated method stub
   }
 
-  public void afterKrfCreated() {
-
-  }
+  public void afterKrfCreated() {}
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.CacheObserver#beforeStoppingCompacter()
@@ -100,12 +92,9 @@ public class CacheObserverAdapter implements CacheObserver {
 
   }
 
-  public void afterStoppingCompactor() {
+  public void afterStoppingCompactor() {}
 
-  }
-
-  public void afterSignallingCompactor() {
-  }
+  public void afterSignallingCompactor() {}
 
   public void afterMarkingGIICompleted() {
     // TODO Auto-generated method stub
@@ -120,23 +109,16 @@ public class CacheObserverAdapter implements CacheObserver {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.CacheObserver#afterSwitchingWriteAndFlushMaps()
    */
-  public void afterSwitchingWriteAndFlushMaps() {
+  public void afterSwitchingWriteAndFlushMaps() {}
 
-  }
+  public void afterSettingDiskRef() {}
 
-  public void afterSettingDiskRef() {
-  }
+  public void beforeSettingDiskRef() {}
 
-  public void beforeSettingDiskRef() {
-  }
+  public void beforeDeletingCompactedOplog(Oplog compactedOplog) {}
 
-  public void beforeDeletingCompactedOplog(Oplog compactedOplog) {
-  }
-
-  public void beforeDeletingEmptyOplog(Oplog emptyOplog) {
-  }
+  public void beforeDeletingEmptyOplog(Oplog emptyOplog) {}
 
   @Override
-  public void beforeShutdownAll() {
-  }
+  public void beforeShutdownAll() {}
 }

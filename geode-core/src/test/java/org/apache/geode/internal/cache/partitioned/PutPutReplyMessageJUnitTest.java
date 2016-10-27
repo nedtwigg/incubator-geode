@@ -48,7 +48,8 @@ public class PutPutReplyMessageJUnitTest extends OldValueImporterTestBase {
   }
 
   @Override
-  protected void fromData(OldValueImporter ovi, byte[] bytes) throws IOException, ClassNotFoundException {
+  protected void fromData(OldValueImporter ovi, byte[] bytes)
+      throws IOException, ClassNotFoundException {
     ((PutReplyMessage) ovi).fromData(new DataInputStream(new ByteArrayInputStream(bytes)));
   }
 }

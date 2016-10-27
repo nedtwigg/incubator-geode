@@ -21,37 +21,33 @@ import org.apache.geode.admin.*;
 /**
  * The implementation of <code>CacheHealthConfig</code>
  *
- *
  * @since GemFire 3.5
  */
-public abstract class CacheHealthConfigImpl extends MemberHealthConfigImpl implements CacheHealthConfig {
+public abstract class CacheHealthConfigImpl extends MemberHealthConfigImpl
+    implements CacheHealthConfig {
 
-  /** The maximum number of milliseconds a
-   * <code>netSearch</code> operation can take before the cache member
-   * is considered to be unhealthy. */
+  /**
+   * The maximum number of milliseconds a <code>netSearch</code> operation can take before the cache
+   * member is considered to be unhealthy.
+   */
   private long maxNetSearchTime = DEFAULT_MAX_NET_SEARCH_TIME;
 
-  /** The maximum mumber of milliseconds a cache
-   * <code>load</code> operation can take before the cache member is
-   * considered to be unhealthy. */
+  /**
+   * The maximum mumber of milliseconds a cache <code>load</code> operation can take before the
+   * cache member is considered to be unhealthy.
+   */
   private long maxLoadTime = DEFAULT_MAX_LOAD_TIME;
 
   /** The minimum hit ratio of a healthy cache member. */
   private double minHitRatio = DEFAULT_MIN_HIT_RATIO;
 
-  /** The maximum number of entries in the event delivery queue
-   * of a healthy cache member. */
+  /** The maximum number of entries in the event delivery queue of a healthy cache member. */
   private long maxEventQueueSize = DEFAULT_MAX_EVENT_QUEUE_SIZE;
 
   ///////////////////////  Constructors  ///////////////////////
 
-  /**
-   * Creates a new <code>CacheHealthConfigImpl</code> with the default
-   * configuration.
-   */
-  CacheHealthConfigImpl() {
-
-  }
+  /** Creates a new <code>CacheHealthConfigImpl</code> with the default configuration. */
+  CacheHealthConfigImpl() {}
 
   //////////////////////  Instance Methods  /////////////////////
 
@@ -86,5 +82,4 @@ public abstract class CacheHealthConfigImpl extends MemberHealthConfigImpl imple
   public void setMaxEventQueueSize(long maxEventQueueSize) {
     this.maxEventQueueSize = maxEventQueueSize;
   }
-
 }

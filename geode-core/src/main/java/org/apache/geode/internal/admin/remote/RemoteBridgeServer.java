@@ -41,13 +41,13 @@ import org.apache.geode.internal.cache.CacheServerImpl;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * A remote (serializable) implementation of <code>BridgeServer</code>
- * that is passed between administration VMs and VMs that host caches
- * with bridge servers.
+ * A remote (serializable) implementation of <code>BridgeServer</code> that is passed between
+ * administration VMs and VMs that host caches with bridge servers.
  *
  * @since GemFire 4.0
  */
-public class RemoteBridgeServer extends AbstractCacheServer implements AdminBridgeServer, DataSerializable {
+public class RemoteBridgeServer extends AbstractCacheServer
+    implements AdminBridgeServer, DataSerializable {
 
   private static final long serialVersionUID = 8417391824652384959L;
 
@@ -65,9 +65,8 @@ public class RemoteBridgeServer extends AbstractCacheServer implements AdminBrid
   //////////////////////  Constructors  //////////////////////
 
   /**
-   * A "copy constructor" that creates a
-   * <code>RemoteBridgeServer</code> from the contents of the given
-   * <code>BridgeServerImpl</code>.
+   * A "copy constructor" that creates a <code>RemoteBridgeServer</code> from the contents of the
+   * given <code>BridgeServerImpl</code>.
    */
   RemoteBridgeServer(CacheServerImpl impl) {
     super(null);
@@ -112,9 +111,7 @@ public class RemoteBridgeServer extends AbstractCacheServer implements AdminBrid
     }
   }
 
-  /**
-   * Constructor for de-serialization
-   */
+  /** Constructor for de-serialization */
   public RemoteBridgeServer() {
     super(null);
   }
@@ -123,7 +120,9 @@ public class RemoteBridgeServer extends AbstractCacheServer implements AdminBrid
 
   @Override
   public void start() throws IOException {
-    throw new UnsupportedOperationException(LocalizedStrings.RemoteBridgeServer_A_REMOTE_BRIDGESERVER_CANNOT_BE_STARTED.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.RemoteBridgeServer_A_REMOTE_BRIDGESERVER_CANNOT_BE_STARTED
+            .toLocalizedString());
   }
 
   public boolean isRunning() {
@@ -131,16 +130,20 @@ public class RemoteBridgeServer extends AbstractCacheServer implements AdminBrid
   }
 
   public void stop() {
-    throw new UnsupportedOperationException(LocalizedStrings.RemoteBridgeServer_A_REMOTE_BRIDGESERVER_CANNOT_BE_STOPPED.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.RemoteBridgeServer_A_REMOTE_BRIDGESERVER_CANNOT_BE_STOPPED
+            .toLocalizedString());
   }
 
   /**
-   * Returns the cache that is served by this bridge server or
-   * <code>null</code> if this server is not running.
+   * Returns the cache that is served by this bridge server or <code>null</code> if this server is
+   * not running.
    */
   @Override
   public Cache getCache() {
-    throw new UnsupportedOperationException(LocalizedStrings.RemoteBridgeServer_CANNOT_GET_THE_CACHE_OF_A_REMOTE_BRIDGESERVER.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.RemoteBridgeServer_CANNOT_GET_THE_CACHE_OF_A_REMOTE_BRIDGESERVER
+            .toLocalizedString());
   }
 
   public ClientSession getClientSession(String durableClientId) {
@@ -154,7 +157,8 @@ public class RemoteBridgeServer extends AbstractCacheServer implements AdminBrid
   }
 
   public Set getAllClientSessions() {
-    String s = LocalizedStrings.RemoteBridgeServer_CANNOT_GET_ALL_CLIENT_SESSIONS.toLocalizedString();
+    String s =
+        LocalizedStrings.RemoteBridgeServer_CANNOT_GET_ALL_CLIENT_SESSIONS.toLocalizedString();
     throw new UnsupportedOperationException(s);
   }
 
@@ -238,45 +242,48 @@ public class RemoteBridgeServer extends AbstractCacheServer implements AdminBrid
   }
 
   /**
-   * Registers a new <code>InterestRegistrationListener</code> with the set of
-   * <code>InterestRegistrationListener</code>s.
-   * 
-   * @param listener
-   *                The <code>InterestRegistrationListener</code> to register
-   * 
+   * Registers a new <code>InterestRegistrationListener</code> with the set of <code>
+   * InterestRegistrationListener</code>s.
+   *
+   * @param listener The <code>InterestRegistrationListener</code> to register
    * @since GemFire 5.8Beta
    */
   public void registerInterestRegistrationListener(InterestRegistrationListener listener) {
-    final String s = LocalizedStrings.RemoteBridgeServer_INTERESTREGISTRATIONLISTENERS_CANNOT_BE_REGISTERED_ON_A_REMOTE_BRIDGESERVER.toLocalizedString();
+    final String s =
+        LocalizedStrings
+            .RemoteBridgeServer_INTERESTREGISTRATIONLISTENERS_CANNOT_BE_REGISTERED_ON_A_REMOTE_BRIDGESERVER
+            .toLocalizedString();
     throw new UnsupportedOperationException(s);
   }
 
   /**
-   * Unregisters an existing <code>InterestRegistrationListener</code> from
-   * the set of <code>InterestRegistrationListener</code>s.
-   * 
-   * @param listener
-   *                The <code>InterestRegistrationListener</code> to
-   *                unregister
-   * 
+   * Unregisters an existing <code>InterestRegistrationListener</code> from the set of <code>
+   * InterestRegistrationListener</code>s.
+   *
+   * @param listener The <code>InterestRegistrationListener</code> to unregister
    * @since GemFire 5.8Beta
    */
   public void unregisterInterestRegistrationListener(InterestRegistrationListener listener) {
-    final String s = LocalizedStrings.RemoteBridgeServer_INTERESTREGISTRATIONLISTENERS_CANNOT_BE_UNREGISTERED_FROM_A_REMOTE_BRIDGESERVER.toLocalizedString();
+    final String s =
+        LocalizedStrings
+            .RemoteBridgeServer_INTERESTREGISTRATIONLISTENERS_CANNOT_BE_UNREGISTERED_FROM_A_REMOTE_BRIDGESERVER
+            .toLocalizedString();
     throw new UnsupportedOperationException(s);
   }
 
   /**
-   * Returns a read-only set of <code>InterestRegistrationListener</code>s
-   * registered with this notifier.
-   * 
-   * @return a read-only set of <code>InterestRegistrationListener</code>s
-   *         registered with this notifier
-   * 
+   * Returns a read-only set of <code>InterestRegistrationListener</code>s registered with this
+   * notifier.
+   *
+   * @return a read-only set of <code>InterestRegistrationListener</code>s registered with this
+   *     notifier
    * @since GemFire 5.8Beta
    */
   public Set getInterestRegistrationListeners() {
-    final String s = LocalizedStrings.RemoteBridgeServer_INTERESTREGISTRATIONLISTENERS_CANNOT_BE_RETRIEVED_FROM_A_REMOTE_BRIDGESERVER.toLocalizedString();
+    final String s =
+        LocalizedStrings
+            .RemoteBridgeServer_INTERESTREGISTRATIONLISTENERS_CANNOT_BE_RETRIEVED_FROM_A_REMOTE_BRIDGESERVER
+            .toLocalizedString();
     throw new UnsupportedOperationException(s);
   }
 }

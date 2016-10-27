@@ -27,10 +27,7 @@ import org.springframework.shell.core.MethodTarget;
 
 import org.apache.geode.management.cli.ConverterHint;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class DirPathConverter implements Converter<String> {
   private final DirFilterImpl dirFilter = new DirFilterImpl();
 
@@ -47,8 +44,13 @@ public class DirPathConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
-    // prefix is needed while comparing Completion Candidates as potential matches 
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
+    // prefix is needed while comparing Completion Candidates as potential matches
     String prefixToUse = "";
     boolean prependAbsolute = true;
     File parentDir = null; // directory to be searched for file(s)
@@ -58,7 +60,7 @@ public class DirPathConverter implements Converter<String> {
       String[] completionValues = new String[0];
 
       if (ConverterHint.DIR_PATHSTRING.equals(optionContext)) {
-        // if existingData is empty, start from root 
+        // if existingData is empty, start from root
         if (existingData != null && existingData.trim().isEmpty()) {
           File[] listRoots = File.listRoots();
           completionValues = new String[listRoots.length];
@@ -103,7 +105,8 @@ public class DirPathConverter implements Converter<String> {
           }
         }
         // add File.separator in the end
-        if (!prefixToUse.endsWith(File.separator) && (prependAbsolute || existingData.startsWith("."))) {
+        if (!prefixToUse.endsWith(File.separator)
+            && (prependAbsolute || existingData.startsWith("."))) {
           prefixToUse += File.separator;
         }
         for (int i = 0; i < completionValues.length; i++) {
@@ -126,7 +129,9 @@ public class DirPathConverter implements Converter<String> {
 
     @Override
     public boolean accept(File dir, String name) {
-      return parentDirectory.equals(dir) && name.startsWith(userInput) && new File(dir, name).isDirectory();
+      return parentDirectory.equals(dir)
+          && name.startsWith(userInput)
+          && new File(dir, name).isDirectory();
     }
   }
 

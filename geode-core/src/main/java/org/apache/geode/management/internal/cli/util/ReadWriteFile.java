@@ -33,25 +33,26 @@ import org.apache.geode.cache.execute.FunctionException;
 import org.apache.geode.internal.logging.LogWriterImpl;
 import org.apache.geode.management.internal.cli.GfshParser;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class ReadWriteFile {
 
-  /**
-   * @param args
-   */
+  /** @param args */
   public static void main(String[] args) {
     if (args.length < 6 || args.length > 6) {
-      throw new IllegalArgumentException("Requires only 6  arguments : <logInputFileName> <logOutputFileName> <LogLevel> <UptoLogLevel> <StartTime> <EndTime>");
+      throw new IllegalArgumentException(
+          "Requires only 6  arguments : <logInputFileName> <logOutputFileName> <LogLevel> <UptoLogLevel> <StartTime> <EndTime>");
     }
     String result = readWriteFile(args[0], args[1], args[2], args[3], args[4], args[5]);
     System.out.println(result);
   }
 
-  public static String readWriteFile(String logFileName, String logToBeWritten, String logLevel, String onlyLogLevel, String startTime, String endTime) {
+  public static String readWriteFile(
+      String logFileName,
+      String logToBeWritten,
+      String logLevel,
+      String onlyLogLevel,
+      String startTime,
+      String endTime) {
     try {
       long lineCount = 0;
       BufferedReader input = null;
@@ -143,7 +144,12 @@ public class ReadWriteFile {
           Time longEnd = new Time(Long.valueOf(endTime));
           long userStartTime = longStart.getTime();
           long userEndTime = longEnd.getTime();
-          if ((fileStartTime.getTime() >= userStartTime && fileStartTime.getTime() <= userEndTime) || (fileEndTime.getTime() >= userStartTime && fileEndTime.getTime() <= userEndTime) || (fileStartTime.getTime() >= userStartTime && fileStartTime.getTime() <= userEndTime && fileEndTime.getTime() >= userStartTime && fileEndTime.getTime() <= userEndTime)) {
+          if ((fileStartTime.getTime() >= userStartTime && fileStartTime.getTime() <= userEndTime)
+              || (fileEndTime.getTime() >= userStartTime && fileEndTime.getTime() <= userEndTime)
+              || (fileStartTime.getTime() >= userStartTime
+                  && fileStartTime.getTime() <= userEndTime
+                  && fileEndTime.getTime() >= userStartTime
+                  && fileEndTime.getTime() <= userEndTime)) {
             // set this so that no need to check time range for each line
             timeRangeCheck = true;
           } else {
@@ -185,7 +191,8 @@ public class ReadWriteFile {
     }
   }
 
-  static boolean checkLogLevel(String line, String logLevel, List<String> logLevels, boolean foundLogLevelTag) {
+  static boolean checkLogLevel(
+      String line, String logLevel, List<String> logLevels, boolean foundLogLevelTag) {
     if (line == null) {
       return false;
     } else if (line != null && foundLogLevelTag == true) {
@@ -199,7 +206,8 @@ public class ReadWriteFile {
             int indexFrom = line.indexOf('[');
             int indexTo = line.indexOf(' ');
             if (indexFrom > -1 && indexTo > -1 && indexTo > indexFrom) {
-              boolean flag = line.substring(indexFrom + 1, indexTo).toLowerCase().contains(permittedLogLevel);
+              boolean flag =
+                  line.substring(indexFrom + 1, indexTo).toLowerCase().contains(permittedLogLevel);
               if (flag == true) {
                 return flag;
               }

@@ -44,53 +44,55 @@ public class DistributionAdvisorDUnitTest extends JUnit4DistributedTestCase {
   @Override
   public final void postSetUp() throws Exception {
     // connect to distributed system in every VM
-    Invoke.invokeInEveryVM(new SerializableRunnable("DistributionAdvisorDUnitTest: SetUp") {
-      public void run() {
-        getSystem();
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("DistributionAdvisorDUnitTest: SetUp") {
+          public void run() {
+            getSystem();
+          }
+        });
 
     // reinitialize the advisor
-    this.advisor = DistributionAdvisor.createDistributionAdvisor(new DistributionAdvisee() {
-      public DistributionAdvisee getParentAdvisee() {
-        return null;
-      }
+    this.advisor =
+        DistributionAdvisor.createDistributionAdvisor(
+            new DistributionAdvisee() {
+              public DistributionAdvisee getParentAdvisee() {
+                return null;
+              }
 
-      public InternalDistributedSystem getSystem() {
-        return DistributionAdvisorDUnitTest.this.getSystem();
-      }
+              public InternalDistributedSystem getSystem() {
+                return DistributionAdvisorDUnitTest.this.getSystem();
+              }
 
-      public String getName() {
-        return "DistributionAdvisorDUnitTest";
-      }
+              public String getName() {
+                return "DistributionAdvisorDUnitTest";
+              }
 
-      public String getFullPath() {
-        return getName();
-      }
+              public String getFullPath() {
+                return getName();
+              }
 
-      public DM getDistributionManager() {
-        return getSystem().getDistributionManager();
-      }
+              public DM getDistributionManager() {
+                return getSystem().getDistributionManager();
+              }
 
-      public DistributionAdvisor getDistributionAdvisor() {
-        return DistributionAdvisorDUnitTest.this.advisor;
-      }
+              public DistributionAdvisor getDistributionAdvisor() {
+                return DistributionAdvisorDUnitTest.this.advisor;
+              }
 
-      public DistributionAdvisor.Profile getProfile() {
-        return null;
-      }
+              public DistributionAdvisor.Profile getProfile() {
+                return null;
+              }
 
-      public void fillInProfile(DistributionAdvisor.Profile profile) {
-      }
+              public void fillInProfile(DistributionAdvisor.Profile profile) {}
 
-      public int getSerialNumber() {
-        return 0;
-      }
+              public int getSerialNumber() {
+                return 0;
+              }
 
-      public CancelCriterion getCancelCriterion() {
-        return DistributionAdvisorDUnitTest.this.getSystem().getCancelCriterion();
-      }
-    });
+              public CancelCriterion getCancelCriterion() {
+                return DistributionAdvisorDUnitTest.this.getSystem().getCancelCriterion();
+              }
+            });
     Set ids = getSystem().getDistributionManager().getOtherNormalDistributionManagerIds();
     assertEquals(VM.getVMCount(), ids.size());
     List profileList = new ArrayList();
@@ -104,7 +106,9 @@ public class DistributionAdvisorDUnitTest extends JUnit4DistributedTestCase {
       advisor.putProfile(profile);
       profileList.add(profile);
     }
-    this.profiles = (DistributionAdvisor.Profile[]) profileList.toArray(new DistributionAdvisor.Profile[profileList.size()]);
+    this.profiles =
+        (DistributionAdvisor.Profile[])
+            profileList.toArray(new DistributionAdvisor.Profile[profileList.size()]);
   }
 
   @Override

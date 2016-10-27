@@ -24,73 +24,56 @@ import org.apache.geode.cache.EvictionAttributes;
 import org.apache.geode.cache.Region;
 
 /**
- * Composite data type used to distribute the eviction attributes for
- * a {@link Region}.
- * 
+ * Composite data type used to distribute the eviction attributes for a {@link Region}.
+ *
  * @since GemFire 7.0
  */
-
 public class EvictionAttributesData {
 
-  /**
-   * Algorithm used for eviction
-   */
+  /** Algorithm used for eviction */
   private String algorithm;
 
-  /**
-   * Maximum entries in Region before eviction starts
-   */
+  /** Maximum entries in Region before eviction starts */
   private Integer maximum;
 
-  /**
-   * Action to be taken if entries reaches maximum value
-   */
+  /** Action to be taken if entries reaches maximum value */
   private String action;
 
   /**
-   * 
-   * This constructor is to be used by internal JMX framework only. User should
-   * not try to create an instance of this class.
+   * This constructor is to be used by internal JMX framework only. User should not try to create an
+   * instance of this class.
    */
-  @ConstructorProperties({ "algorithm", "maximum", "action"
-
-  })
+  @ConstructorProperties({"algorithm", "maximum", "action"})
   public EvictionAttributesData(String algorithm, Integer maximum, String action) {
     this.algorithm = algorithm;
     this.maximum = maximum;
     this.action = action;
   }
 
-  /**
-   * Returns the algorithm (policy) used to determine which entries will be
-   * evicted.
-   */
+  /** Returns the algorithm (policy) used to determine which entries will be evicted. */
   public String getAlgorithm() {
     return algorithm;
   }
 
   /**
-   * The unit of this value is determined by the definition of the {@link EvictionAlgorithm} set by one of the creation
-   * methods e.g. {@link EvictionAttributes#createLRUEntryAttributes()}
+   * The unit of this value is determined by the definition of the {@link EvictionAlgorithm} set by
+   * one of the creation methods e.g. {@link EvictionAttributes#createLRUEntryAttributes()}
    *
-   * For algorithm LRU HEAP null will be returned
-   * @return maximum value used by the {@link EvictionAlgorithm} which determines when the {@link EvictionAction} is
-   *         performed.
+   * <p>For algorithm LRU HEAP null will be returned
+   *
+   * @return maximum value used by the {@link EvictionAlgorithm} which determines when the {@link
+   *     EvictionAction} is performed.
    */
   public Integer getMaximum() {
     return maximum;
   }
 
-  /**
-   * Returns the action that will be taken on entries that are evicted.
-   */
+  /** Returns the action that will be taken on entries that are evicted. */
   public String getAction() {
     return action;
   }
 
-  /**
-   * String representation of EvictionAttributesData
-   */
+  /** String representation of EvictionAttributesData */
   @Override
   public String toString() {
 
@@ -107,5 +90,4 @@ public class EvictionAttributesData {
     buffer.append("]");
     return buffer.toString();
   }
-
 }

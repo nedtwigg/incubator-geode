@@ -21,22 +21,21 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * TODO: define another addStatistic for StatisticDescriptor which will enable 
- * static monitoring that will fire for all instances even ones that may not 
- * yet be created at the time this monitor is defined
- * 
+ * TODO: define another addStatistic for StatisticDescriptor which will enable static monitoring
+ * that will fire for all instances even ones that may not yet be created at the time this monitor
+ * is defined
+ *
  * @since GemFire 7.0
  */
 public abstract class StatisticsMonitor {
 
   private final Object mutex = new Object();
 
-  private volatile List<StatisticsListener> listeners = Collections.<StatisticsListener> emptyList();
+  private volatile List<StatisticsListener> listeners = Collections.<StatisticsListener>emptyList();
 
-  private volatile List<StatisticId> statisticIds = Collections.<StatisticId> emptyList();
+  private volatile List<StatisticId> statisticIds = Collections.<StatisticId>emptyList();
 
-  public StatisticsMonitor() {
-  }
+  public StatisticsMonitor() {}
 
   public StatisticsMonitor addStatistic(StatisticId statId) {
     if (statId == null) {
@@ -105,9 +104,9 @@ public abstract class StatisticsMonitor {
   }
 
   /**
-   * This method may be overridden but please ensure that you invoke 
-   * super.monitor(long, List) from this method in the subclass.
-   * 
+   * This method may be overridden but please ensure that you invoke super.monitor(long, List) from
+   * this method in the subclass.
+   *
    * @param millisTimeStamp the real time in millis of the sample
    * @param resourceInstances resources with one or more updated values
    */
@@ -115,7 +114,8 @@ public abstract class StatisticsMonitor {
     monitorStatisticIds(millisTimeStamp, resourceInstances);
   }
 
-  private final void monitorStatisticIds(long millisTimeStamp, List<ResourceInstance> resourceInstances) {
+  private final void monitorStatisticIds(
+      long millisTimeStamp, List<ResourceInstance> resourceInstances) {
     List<StatisticId> statisticIdsToMonitor = statisticIds;
     if (!statisticIdsToMonitor.isEmpty()) {
       // TODO:

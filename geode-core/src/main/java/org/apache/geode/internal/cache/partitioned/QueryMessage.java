@@ -74,13 +74,16 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
   private transient boolean isTraceInfoIteration = false;
   private transient boolean isStructType = false;
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public QueryMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public QueryMessage() {}
 
-  public QueryMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, DefaultQuery query, Object[] parameters, final List buckets) {
+  public QueryMessage(
+      InternalDistributedMember recipient,
+      int regionId,
+      ReplyProcessor21 processor,
+      DefaultQuery query,
+      Object[] parameters,
+      final List buckets) {
     super(recipient, regionId, processor);
     this.queryString = query.getQueryString();
     this.buckets = buckets;
@@ -89,19 +92,21 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
     this.traceOn = query.isTraced() || DefaultQuery.QUERY_VERBOSE;
   }
 
-  /**  Provide results to send back to requestor.
-    *  terminate by returning END_OF_STREAM token object
-    */
+  /**
+   * Provide results to send back to requestor. terminate by returning END_OF_STREAM token object
+   */
   @Override
-  protected Object getNextReplyObject(PartitionedRegion pr) throws CacheException, ForceReattemptException, InterruptedException {
+  protected Object getNextReplyObject(PartitionedRegion pr)
+      throws CacheException, ForceReattemptException, InterruptedException {
     final boolean isDebugEnabled = logger.isDebugEnabled();
 
     if (QueryMonitor.isLowMemory()) {
-      String reason = LocalizedStrings.QueryMonitor_LOW_MEMORY_CANCELED_QUERY.toLocalizedString(QueryMonitor.getMemoryUsedDuringLowMemory());
+      String reason =
+          LocalizedStrings.QueryMonitor_LOW_MEMORY_CANCELED_QUERY.toLocalizedString(
+              QueryMonitor.getMemoryUsedDuringLowMemory());
       throw new QueryExecutionLowMemoryException(reason);
     }
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
 
     while ((this.currentResultIterator == null || !this.currentResultIterator.hasNext())) {
       if (this.currentSelectResultIterator.hasNext()) {
@@ -121,7 +126,7 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
     Object data = this.currentResultIterator.next();
     boolean isPostGFE_8_1 = this.getSender().getVersionObject().compareTo(Version.GFE_81) > 0;
     //Asif: There is a bug in older versions of GFE such that the query node expects the structs to have
-    // type as ObjectTypes only & not specific types. So the new version needs to send the inaccurate 
+    // type as ObjectTypes only & not specific types. So the new version needs to send the inaccurate
     //struct type for backward compatibility.
     if (this.isStructType && !this.isTraceInfoIteration && isPostGFE_8_1) {
       return ((Struct) data).getFieldValues();
@@ -138,7 +143,9 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime) throws CacheException, QueryException, ForceReattemptException, InterruptedException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion r, long startTime)
+      throws CacheException, QueryException, ForceReattemptException, InterruptedException {
     //calculate trace start time if trace is on
     //this is because the start time is only set if enableClock stats is on
     //in this case we still want to see trace time even if clock is not enabled
@@ -148,10 +155,13 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
     }
     PRQueryTraceInfo queryTraceInfo = null;
     List queryTraceList = null;
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
     if (logger.isTraceEnabled(LogMarker.DM)) {
-      logger.trace(LogMarker.DM, "QueryMessage operateOnPartitionedRegion: {} buckets {}", r.getFullPath(), buckets);
+      logger.trace(
+          LogMarker.DM,
+          "QueryMessage operateOnPartitionedRegion: {} buckets {}",
+          r.getFullPath(),
+          buckets);
     }
 
     r.waitOnInitialization();
@@ -160,7 +170,9 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
 
     //if (ds != null) {
     if (QueryMonitor.isLowMemory()) {
-      String reason = LocalizedStrings.QueryMonitor_LOW_MEMORY_CANCELED_QUERY.toLocalizedString(QueryMonitor.getMemoryUsedDuringLowMemory());
+      String reason =
+          LocalizedStrings.QueryMonitor_LOW_MEMORY_CANCELED_QUERY.toLocalizedString(
+              QueryMonitor.getMemoryUsedDuringLowMemory());
       //throw query exception to piggyback on existing error handling as qp.executeQuery also throws the same error for low memory
       throw new QueryExecutionLowMemoryException(reason);
     }
@@ -181,7 +193,8 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
       if (logger.isDebugEnabled()) {
         logger.debug("Started executing query from remote node: {}", query.getQueryString());
       }
-      isQueryTraced = query.isTraced() && this.sender.getVersionObject().compareTo(Version.GFE_81) >= 0;
+      isQueryTraced =
+          query.isTraced() && this.sender.getVersionObject().compareTo(Version.GFE_81) >= 0;
       // Adds a query trace info object to the results list for remote queries
       if (isQueryTraced) {
         this.isTraceInfoIteration = true;
@@ -190,11 +203,10 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
         }
         queryTraceInfo = new PRQueryTraceInfo();
         queryTraceList = Collections.singletonList(queryTraceInfo);
-
       }
 
       this.isStructType = qp.executeQuery(this.resultCollector);
-      //Add the trace info list object after the NWayMergeResults is created so as to 
+      //Add the trace info list object after the NWayMergeResults is created so as to
       //exclude it from the sorted collection of NWayMergeResults
       if (isQueryTraced) {
         this.resultCollector.add(0, queryTraceList);
@@ -224,7 +236,7 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
           buf.append(" indexesUsed(").append(indexesUsed.size()).append(")");
           if (indexesUsed.size() > 0) {
             buf.append(":");
-            for (Iterator itr = indexesUsed.entrySet().iterator(); itr.hasNext();) {
+            for (Iterator itr = indexesUsed.entrySet().iterator(); itr.hasNext(); ) {
               Map.Entry entry = (Map.Entry) itr.next();
               buf.append(entry.getKey().toString() + entry.getValue());
               if (itr.hasNext()) {
@@ -239,7 +251,9 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
       // resultSize = this.resultCollector.size() - this.buckets.size(); //Minus
       // END_OF_BUCKET elements.
       if (QueryMonitor.isLowMemory()) {
-        String reason = LocalizedStrings.QueryMonitor_LOW_MEMORY_CANCELED_QUERY.toLocalizedString(QueryMonitor.getMemoryUsedDuringLowMemory());
+        String reason =
+            LocalizedStrings.QueryMonitor_LOW_MEMORY_CANCELED_QUERY.toLocalizedString(
+                QueryMonitor.getMemoryUsedDuringLowMemory());
         throw new QueryExecutionLowMemoryException(reason);
       }
       super.operateOnPartitionedRegion(dm, r, startTime);
@@ -272,11 +286,20 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
     return PR_QUERY_MESSAGE;
   }
 
-  /** send a reply message.  This is in a method so that subclasses can override the reply message type
-   *  @see PutMessage#sendReply
+  /**
+   * send a reply message. This is in a method so that subclasses can override the reply message
+   * type
+   *
+   * @see PutMessage#sendReply
    */
   @Override
-  protected void sendReply(InternalDistributedMember member, int procId, DM dm, ReplyException ex, PartitionedRegion pr, long startTime) {
+  protected void sendReply(
+      InternalDistributedMember member,
+      int procId,
+      DM dm,
+      ReplyException ex,
+      PartitionedRegion pr,
+      long startTime) {
     // if there was an exception, then throw out any data
     if (ex != null) {
       this.outStream = null;
@@ -288,7 +311,16 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
         pr.getPrStats().endPartitionMessagesProcessing(startTime);
       }
     }
-    StreamingReplyMessage.send(member, procId, ex, dm, this.outStream, this.numObjectsInChunk, this.replyMsgNum, this.replyLastMsg, this.isPdxSerialized);
+    StreamingReplyMessage.send(
+        member,
+        procId,
+        ex,
+        dm,
+        this.outStream,
+        this.numObjectsInChunk,
+        this.replyMsgNum,
+        this.replyLastMsg,
+        this.isPdxSerialized);
   }
 
   @Override
@@ -312,5 +344,4 @@ public final class QueryMessage extends StreamingPartitionOperation.StreamingPar
     DataSerializer.writeBoolean(true, out);
     DataSerializer.writeBoolean(this.traceOn, out);
   }
-
 }

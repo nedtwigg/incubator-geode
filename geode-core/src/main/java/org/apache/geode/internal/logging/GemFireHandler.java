@@ -25,15 +25,12 @@ import org.apache.geode.LogWriter;
 import org.apache.geode.internal.logging.log4j.LogWriterLogger;
 
 /**
- * Implementation of the standard JDK handler that publishes a log record
- * to a LogWriterImpl.
- * Note this handler ignores any installed handler.
+ * Implementation of the standard JDK handler that publishes a log record to a LogWriterImpl. Note
+ * this handler ignores any installed handler.
  */
 public final class GemFireHandler extends Handler {
 
-  /**
-   * Use the log writer to use some of its formatting code.
-   */
+  /** Use the log writer to use some of its formatting code. */
   private LogWriter logWriter;
 
   public GemFireHandler(LogWriter logWriter) {
@@ -54,7 +51,10 @@ public final class GemFireHandler extends Handler {
 
   private String getMessage(LogRecord record) {
     final StringBuilder b = new StringBuilder();
-    b.append('(').append("tid=" + record.getThreadID()).append(" msgId=" + record.getSequenceNumber()).append(") ");
+    b.append('(')
+        .append("tid=" + record.getThreadID())
+        .append(" msgId=" + record.getSequenceNumber())
+        .append(") ");
     if (record.getMessage() != null) {
       b.append(getFormatter().formatMessage(record));
     }
@@ -66,9 +66,11 @@ public final class GemFireHandler extends Handler {
     if (isLoggable(record)) {
       try {
         if (this.logWriter instanceof LogWriterLogger) {
-          ((LogWriterLogger) this.logWriter).log(record.getLevel().intValue(), getMessage(record), record.getThrown());
+          ((LogWriterLogger) this.logWriter)
+              .log(record.getLevel().intValue(), getMessage(record), record.getThrown());
         } else {
-          ((LogWriterImpl) this.logWriter).put(record.getLevel().intValue(), getMessage(record), record.getThrown());
+          ((LogWriterImpl) this.logWriter)
+              .put(record.getLevel().intValue(), getMessage(record), record.getThrown());
         }
       } catch (GemFireException ex) {
         reportError(null, ex, ErrorManager.WRITE_FAILURE);

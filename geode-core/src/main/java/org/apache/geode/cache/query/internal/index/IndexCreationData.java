@@ -17,7 +17,7 @@
 /*
  * Created on Apr 18, 2005
  *
- * 
+ *
  */
 package org.apache.geode.cache.query.internal.index;
 
@@ -31,9 +31,8 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
 /**
- * 
- * This class contains the information needed to create an index It will
- * contain the callback data between <index></index> invocation
+ * This class contains the information needed to create an index It will contain the callback data
+ * between <index></index> invocation
  */
 public class IndexCreationData implements DataSerializableFixedID {
 
@@ -45,9 +44,7 @@ public class IndexCreationData implements DataSerializableFixedID {
   private PartitionedIndex partitionedIndex = null;
   private boolean loadEntries = false;
 
-  public IndexCreationData() {
-
-  }
+  public IndexCreationData() {}
 
   public IndexCreationData(String name) {
     this.name = name;
@@ -68,7 +65,8 @@ public class IndexCreationData implements DataSerializableFixedID {
     this.importStr = importStr;
   }
 
-  public void setIndexData(IndexType type, String fromClause, String expression, String importStr, boolean loadEntries) {
+  public void setIndexData(
+      IndexType type, String fromClause, String expression, String importStr, boolean loadEntries) {
     this.indexType = type;
     this.fromClause = fromClause;
     this.expression = expression;
@@ -158,5 +156,4 @@ public class IndexCreationData implements DataSerializableFixedID {
       this.importStr = in.readUTF();
     }
   }
-
 }

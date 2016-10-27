@@ -40,19 +40,18 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 /**
  * Represents a request for (full) value of a given event from ha container
  * (client-messages-region).
- * 
+ *
  * @since GemFire 6.1
  */
 public class RequestEventValue extends BaseCommand {
 
-  private final static RequestEventValue singleton = new RequestEventValue();
+  private static final RequestEventValue singleton = new RequestEventValue();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private RequestEventValue() {
-  }
+  private RequestEventValue() {}
 
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
     Part eventIDPart = null, valuePart = null;
@@ -68,7 +67,11 @@ public class RequestEventValue extends BaseCommand {
     eventIDPart = msg.getPart(0);
 
     if (eventIDPart == null) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.RequestEventValue_0_THE_EVENT_ID_FOR_THE_GET_EVENT_VALUE_REQUEST_IS_NULL, servConn.getName()));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .RequestEventValue_0_THE_EVENT_ID_FOR_THE_GET_EVENT_VALUE_REQUEST_IS_NULL,
+              servConn.getName()));
       errMessage.append(" The event id for the get event value request is null.");
       writeErrorResponse(msg, MessageType.REQUESTDATAERROR, errMessage.toString(), servConn);
       servConn.setAsTrue(RESPONDED);
@@ -93,7 +96,11 @@ public class RequestEventValue extends BaseCommand {
         }
       }
       if (logger.isTraceEnabled()) {
-        logger.trace("{}: Received get event value request ({} bytes) from {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString());
+        logger.trace(
+            "{}: Received get event value request ({} bytes) from {}",
+            servConn.getName(),
+            msg.getPayloadLength(),
+            servConn.getSocketString());
       }
       CacheClientNotifier ccn = servConn.getAcceptor().getCacheClientNotifier();
       // Get the ha container.
@@ -108,7 +115,10 @@ public class RequestEventValue extends BaseCommand {
           Object data = haContainer.get(new HAEventWrapper(event));
 
           if (data == null) {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.RequestEventValue_UNABLE_TO_FIND_A_CLIENT_UPDATE_MESSAGE_FOR_0, event));
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings.RequestEventValue_UNABLE_TO_FIND_A_CLIENT_UPDATE_MESSAGE_FOR_0,
+                    event));
             String msgStr = "No value found for " + event + " in " + haContainer.getName();
             writeErrorResponse(msg, MessageType.REQUEST_EVENT_VALUE_ERROR, msgStr, servConn);
             servConn.setAsTrue(RESPONDED);
@@ -142,7 +152,11 @@ public class RequestEventValue extends BaseCommand {
         servConn.setAsTrue(RESPONDED);
         ccn.getClientProxy(servConn.getProxyID()).getStatistics().incDeltaFullMessagesSent();
         if (logger.isDebugEnabled()) {
-          logger.debug("{}: Wrote get event value response back to {} for ha container {}", servConn.getName(), servConn.getSocketString(), haContainer.getName());
+          logger.debug(
+              "{}: Wrote get event value response back to {} for ha container {}",
+              servConn.getName(),
+              servConn.getSocketString(),
+              haContainer.getName());
         }
       }
     }

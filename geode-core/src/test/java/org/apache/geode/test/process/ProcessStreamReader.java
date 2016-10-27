@@ -24,10 +24,8 @@ import java.util.List;
 import java.util.Queue;
 
 /**
- * Reads the output from a process stream and stores it for test validation. 
- * </p>
- * Extracted from ProcessWrapper.
- * 
+ * Reads the output from a process stream and stores it for test validation. Extracted from
+ * ProcessWrapper.
  */
 public class ProcessStreamReader extends Thread {
 
@@ -40,7 +38,11 @@ public class ProcessStreamReader extends Thread {
 
   public int linecount = 0;
 
-  public ProcessStreamReader(final String command, final InputStream stream, final Queue<String> lineBuffer, final List<String> allLines) {
+  public ProcessStreamReader(
+      final String command,
+      final InputStream stream,
+      final Queue<String> lineBuffer,
+      final List<String> allLines) {
     this.command = command;
     this.reader = new BufferedReader(new InputStreamReader(stream));
     this.lineBuffer = lineBuffer;

@@ -29,7 +29,7 @@ import org.apache.geode.distributed.internal.membership.MemberAttributes;
 import org.apache.geode.test.junit.categories.SecurityTest;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-@Category({ UnitTest.class, SecurityTest.class })
+@Category({UnitTest.class, SecurityTest.class})
 public class GMSMemberJUnitTest {
 
   @Test
@@ -64,91 +64,103 @@ public class GMSMemberJUnitTest {
 
   @Test
   public void testCompareToInetAddressIsLongerThan() {
-    GMSMember member1 = createGMSMember(new byte[] { 1, 1, 1, 1, 1 }, 1, 1, 1);
-    GMSMember member2 = createGMSMember(new byte[] { 1, 1, 1, 1 }, 1, 1, 1);
+    GMSMember member1 = createGMSMember(new byte[] {1, 1, 1, 1, 1}, 1, 1, 1);
+    GMSMember member2 = createGMSMember(new byte[] {1, 1, 1, 1}, 1, 1, 1);
     assertEquals(1, member1.compareTo(member2));
   }
 
   @Test
   public void testShallowMemberEquals() {
-    GMSMember member1 = createGMSMember(new byte[] { 1, 1, 1, 1, 1 }, 1, 1, 1);
-    GMSMember member2 = new GMSMember(member1.getInetAddress(), member1.getPort(), member1.getVersionOrdinal(), member1.getUuidMSBs(), member1.getUuidLSBs(), member1.getVmViewId());
+    GMSMember member1 = createGMSMember(new byte[] {1, 1, 1, 1, 1}, 1, 1, 1);
+    GMSMember member2 =
+        new GMSMember(
+            member1.getInetAddress(),
+            member1.getPort(),
+            member1.getVersionOrdinal(),
+            member1.getUuidMSBs(),
+            member1.getUuidLSBs(),
+            member1.getVmViewId());
     assertEquals(0, member1.compareTo(member2));
   }
 
   @Test
   public void testShallowMemberNotEquals() {
-    GMSMember member1 = createGMSMember(new byte[] { 1, 1, 1, 1, 1 }, 1, 1, 1);
-    GMSMember member2 = new GMSMember(member1.getInetAddress(), member1.getPort(), member1.getVersionOrdinal(), member1.getUuidMSBs(), member1.getUuidLSBs(), 100);
+    GMSMember member1 = createGMSMember(new byte[] {1, 1, 1, 1, 1}, 1, 1, 1);
+    GMSMember member2 =
+        new GMSMember(
+            member1.getInetAddress(),
+            member1.getPort(),
+            member1.getVersionOrdinal(),
+            member1.getUuidMSBs(),
+            member1.getUuidLSBs(),
+            100);
     assertEquals(false, member1.equals(member2));
   }
 
   @Test
   public void testCompareToInetAddressIsShorterThan() {
-    GMSMember member1 = createGMSMember(new byte[] { 1, 1, 1, 1 }, 1, 1, 1);
-    GMSMember member2 = createGMSMember(new byte[] { 1, 1, 1, 1, 1 }, 1, 1, 1);
+    GMSMember member1 = createGMSMember(new byte[] {1, 1, 1, 1}, 1, 1, 1);
+    GMSMember member2 = createGMSMember(new byte[] {1, 1, 1, 1, 1}, 1, 1, 1);
     assertEquals(-1, member1.compareTo(member2));
   }
 
   @Test
   public void testCompareToInetAddressIsGreater() {
-    GMSMember member1 = createGMSMember(new byte[] { 1, 2, 1, 1, 1 }, 1, 1, 1);
-    GMSMember member2 = createGMSMember(new byte[] { 1, 1, 1, 1, 1 }, 1, 1, 1);
+    GMSMember member1 = createGMSMember(new byte[] {1, 2, 1, 1, 1}, 1, 1, 1);
+    GMSMember member2 = createGMSMember(new byte[] {1, 1, 1, 1, 1}, 1, 1, 1);
     assertEquals(1, member1.compareTo(member2));
   }
 
   @Test
   public void testCompareToInetAddressIsLessThan() {
-    GMSMember member1 = createGMSMember(new byte[] { 1, 1, 1, 1, 1 }, 1, 1, 1);
-    GMSMember member2 = createGMSMember(new byte[] { 1, 2, 1, 1, 1 }, 1, 1, 1);
+    GMSMember member1 = createGMSMember(new byte[] {1, 1, 1, 1, 1}, 1, 1, 1);
+    GMSMember member2 = createGMSMember(new byte[] {1, 2, 1, 1, 1}, 1, 1, 1);
     assertEquals(-1, member1.compareTo(member2));
   }
 
   @Test
   public void testCompareToMyViewIdLarger() {
-    GMSMember member1 = createGMSMember(new byte[] { 1 }, 2, 1, 1);
-    GMSMember member2 = createGMSMember(new byte[] { 1 }, 1, 1, 1);
+    GMSMember member1 = createGMSMember(new byte[] {1}, 2, 1, 1);
+    GMSMember member2 = createGMSMember(new byte[] {1}, 1, 1, 1);
     assertEquals(1, member1.compareTo(member2));
   }
 
   @Test
   public void testCompareToTheirViewIdLarger() {
-    GMSMember member1 = createGMSMember(new byte[] { 1 }, 1, 1, 1);
-    GMSMember member2 = createGMSMember(new byte[] { 1 }, 2, 1, 1);
+    GMSMember member1 = createGMSMember(new byte[] {1}, 1, 1, 1);
+    GMSMember member2 = createGMSMember(new byte[] {1}, 2, 1, 1);
     assertEquals(-1, member1.compareTo(member2));
   }
 
   @Test
   public void testCompareToMyMSBLarger() {
-    GMSMember member1 = createGMSMember(new byte[] { 1 }, 1, 2, 1);
-    GMSMember member2 = createGMSMember(new byte[] { 1 }, 1, 1, 1);
+    GMSMember member1 = createGMSMember(new byte[] {1}, 1, 2, 1);
+    GMSMember member2 = createGMSMember(new byte[] {1}, 1, 1, 1);
     assertEquals(1, member1.compareTo(member2));
   }
 
   @Test
   public void testCompareToTheirMSBLarger() {
-    GMSMember member1 = createGMSMember(new byte[] { 1 }, 1, 1, 1);
-    GMSMember member2 = createGMSMember(new byte[] { 1 }, 1, 2, 1);
+    GMSMember member1 = createGMSMember(new byte[] {1}, 1, 1, 1);
+    GMSMember member2 = createGMSMember(new byte[] {1}, 1, 2, 1);
     assertEquals(-1, member1.compareTo(member2));
   }
 
   @Test
   public void testCompareToMyLSBLarger() {
-    GMSMember member1 = createGMSMember(new byte[] { 1 }, 1, 1, 2);
-    GMSMember member2 = createGMSMember(new byte[] { 1 }, 1, 1, 1);
+    GMSMember member1 = createGMSMember(new byte[] {1}, 1, 1, 2);
+    GMSMember member2 = createGMSMember(new byte[] {1}, 1, 1, 1);
     assertEquals(1, member1.compareTo(member2));
   }
 
   @Test
   public void testCompareToTheirLSBLarger() {
-    GMSMember member1 = createGMSMember(new byte[] { 1 }, 1, 1, 1);
-    GMSMember member2 = createGMSMember(new byte[] { 1 }, 1, 1, 2);
+    GMSMember member1 = createGMSMember(new byte[] {1}, 1, 1, 1);
+    GMSMember member2 = createGMSMember(new byte[] {1}, 1, 1, 2);
     assertEquals(-1, member1.compareTo(member2));
   }
 
-  /**
-   * Makes sure a NPE is not thrown
-   */
+  /** Makes sure a NPE is not thrown */
   @Test
   public void testNoNPEWhenSetAttributesWithNull() {
     GMSMember member = new GMSMember();

@@ -27,11 +27,7 @@ import org.apache.geode.management.internal.cli.json.GfJsonArray;
 import org.apache.geode.management.internal.cli.json.GfJsonException;
 import org.apache.geode.management.internal.cli.json.GfJsonObject;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class TabularResultData extends AbstractResultData {
   /*package*/ TabularResultData() {
     super();
@@ -59,9 +55,7 @@ public class TabularResultData extends AbstractResultData {
     return null;
   }
 
-  /**
-   * @return the gfJsonObject
-   */
+  /** @return the gfJsonObject */
   public GfJsonObject getGfJsonObject() {
     return gfJsonObject;
   }
@@ -72,22 +66,18 @@ public class TabularResultData extends AbstractResultData {
   }
 
   /**
-   * 
    * @param headerText
    * @return this TabularResultData
-   * @throws ResultDataException
-   *           If the value is non-finite number or if the key is null.
+   * @throws ResultDataException If the value is non-finite number or if the key is null.
    */
   public TabularResultData setHeader(String headerText) {
     return (TabularResultData) super.setHeader(headerText);
   }
 
   /**
-   * 
    * @param footerText
    * @return this TabularResultData
-   * @throws ResultDataException
-   *           If the value is non-finite number or if the key is null.
+   * @throws ResultDataException If the value is non-finite number or if the key is null.
    */
   public TabularResultData setFooter(String footerText) {
     return (TabularResultData) super.setFooter(footerText);
@@ -119,7 +109,7 @@ public class TabularResultData extends AbstractResultData {
 
       if (foundIndex != -1) {
         foundValues = new LinkedHashMap<String, String>();
-        for (Iterator<String> iterator = contentObject.keys(); iterator.hasNext();) {
+        for (Iterator<String> iterator = contentObject.keys(); iterator.hasNext(); ) {
           String storedColumnNames = (String) iterator.next();
           GfJsonArray storedColumnValues = contentObject.getJSONArray(storedColumnNames);
           foundValues.put(storedColumnNames, String.valueOf(storedColumnValues.get(foundIndex)));
@@ -131,7 +121,8 @@ public class TabularResultData extends AbstractResultData {
     return foundValues;
   }
 
-  public List<Map<String, String>> retrieveAllDataByValueInColumn(String columnName, String valueToSearch) {
+  public List<Map<String, String>> retrieveAllDataByValueInColumn(
+      String columnName, String valueToSearch) {
     List<Map<String, String>> foundValuesList = new ArrayList<Map<String, String>>();
     try {
       GfJsonArray jsonArray = contentObject.getJSONArray(columnName);
@@ -141,7 +132,7 @@ public class TabularResultData extends AbstractResultData {
         if (object != null && object.equals(valueToSearch)) {
           Map<String, String> foundValues = new LinkedHashMap<String, String>();
 
-          for (Iterator<String> iterator = contentObject.keys(); iterator.hasNext();) {
+          for (Iterator<String> iterator = contentObject.keys(); iterator.hasNext(); ) {
             String storedColumnNames = (String) iterator.next();
             GfJsonArray storedColumnValues = contentObject.getJSONArray(storedColumnNames);
             foundValues.put(storedColumnNames, String.valueOf(storedColumnValues.get(i)));

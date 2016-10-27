@@ -18,48 +18,39 @@
 package org.apache.geode.cache.util;
 
 /**
- * Abstract class for CqListener. 
- * Utility class that implements all methods in <code>CqListener</code>
- * with empty implementations. Applications can subclass this class and only
- * override the methods of interest.
+ * Abstract class for CqListener. Utility class that implements all methods in <code>CqListener
+ * </code> with empty implementations. Applications can subclass this class and only override the
+ * methods of interest.
  *
  * @since GemFire 5.1
  */
-
 import org.apache.geode.cache.query.CqListener;
 import org.apache.geode.cache.query.CqEvent;
 
 public abstract class CqListenerAdapter implements CqListener {
 
   /**
-   * An event occurred that modifies the results of the query.
-   * This event does not contain an error.
+   * An event occurred that modifies the results of the query. This event does not contain an error.
    */
-  public void onEvent(CqEvent aCqEvent) {
-  }
-
-  /** 
-   * An error occurred in the processing of a CQ.
-   * This event does contain an error. The newValue and oldValue in the
-   * event may or may not be available, and will be null if not available.
-   */
-  public void onError(CqEvent aCqEvent) {
-  }
+  public void onEvent(CqEvent aCqEvent) {}
 
   /**
-  * Called when the CQ is closed, the base region is destroyed, when
-  * the cache is closed, or when this listener is removed from a CqQuery
-  * using a <code>CqAttributesMutator</code>.
-  *
-  * <p>Implementations should cleanup any external
-  * resources such as database connections. Any runtime exceptions this method
-  * throws will be logged.
-  *
-  * <p>It is possible for this method to be called multiple times on a single
-  * callback instance, so implementations must be tolerant of this.
-  *
-  * @see org.apache.geode.cache.CacheCallback#close
-  */
-  public void close() {
-  }
+   * An error occurred in the processing of a CQ. This event does contain an error. The newValue and
+   * oldValue in the event may or may not be available, and will be null if not available.
+   */
+  public void onError(CqEvent aCqEvent) {}
+
+  /**
+   * Called when the CQ is closed, the base region is destroyed, when the cache is closed, or when
+   * this listener is removed from a CqQuery using a <code>CqAttributesMutator</code>.
+   *
+   * <p>Implementations should cleanup any external resources such as database connections. Any
+   * runtime exceptions this method throws will be logged.
+   *
+   * <p>It is possible for this method to be called multiple times on a single callback instance, so
+   * implementations must be tolerant of this.
+   *
+   * @see org.apache.geode.cache.CacheCallback#close
+   */
+  public void close() {}
 }

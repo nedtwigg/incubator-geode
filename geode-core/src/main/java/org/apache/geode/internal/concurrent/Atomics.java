@@ -28,16 +28,15 @@ import org.apache.geode.internal.stats50.Atomic50StatisticsImpl;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Atomics {
-  private Atomics() {
-  }
+  private Atomics() {}
 
-  /**
-   * Whether per-thread stats are used.  Striping is disabled for the
-   * IBM JVM due to bug 38226
-   */
-  private static final boolean STRIPED_STATS_DISABLED = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "STRIPED_STATS_DISABLED") || "IBM Corporation".equals(System.getProperty("java.vm.vendor", "unknown"));
+  /** Whether per-thread stats are used. Striping is disabled for the IBM JVM due to bug 38226 */
+  private static final boolean STRIPED_STATS_DISABLED =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "STRIPED_STATS_DISABLED")
+          || "IBM Corporation".equals(System.getProperty("java.vm.vendor", "unknown"));
 
-  public static Statistics createAtomicStatistics(StatisticsType type, String textId, long nId, long uId, StatisticsManager mgr) {
+  public static Statistics createAtomicStatistics(
+      StatisticsType type, String textId, long nId, long uId, StatisticsManager mgr) {
     Statistics result = null;
     if (((StatisticsTypeImpl) type).getDoubleStatCount() == 0 && !STRIPED_STATS_DISABLED) {
       result = new Atomic50StatisticsImpl(type, textId, nId, uId, mgr);
@@ -48,18 +47,16 @@ public class Atomics {
   }
 
   /**
-   * Use it only when threads are doing incremental updates. If updates are random 
-   * then this method may not be optimal.
+   * Use it only when threads are doing incremental updates. If updates are random then this method
+   * may not be optimal.
    */
   public static boolean setIfGreater(AtomicLong atom, long update) {
     while (true) {
       long cur = atom.get();
 
       if (update > cur) {
-        if (atom.compareAndSet(cur, update))
-          return true;
-      } else
-        return false;
+        if (atom.compareAndSet(cur, update)) return true;
+      } else return false;
     }
   }
 }

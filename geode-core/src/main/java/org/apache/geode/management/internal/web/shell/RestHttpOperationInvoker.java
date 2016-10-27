@@ -48,10 +48,10 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.util.UriTemplate;
 
 /**
- * The RestHttpOperationInvoker class is an implementation of the OperationInvoker interface that translates (adapts) 
- * GemFire shell command invocations into HTTP requests to a corresponding REST API call hosted by the GemFire Manager's
- * HTTP service using the Spring RestTemplate.
- * 
+ * The RestHttpOperationInvoker class is an implementation of the OperationInvoker interface that
+ * translates (adapts) GemFire shell command invocations into HTTP requests to a corresponding REST
+ * API call hosted by the GemFire Manager's HTTP service using the Spring RestTemplate.
+ *
  * @see org.apache.geode.internal.lang.Initable
  * @see org.apache.geode.management.internal.cli.shell.Gfsh
  * @see org.apache.geode.management.internal.cli.shell.OperationInvoker
@@ -76,60 +76,78 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
   private final LinkIndex linkIndex;
 
   /**
-   * Constructs an instance of the RestHttpOperationInvoker class initialized with the given link index containing links
-   * referencing all REST API web service endpoints.  This constructor should only be used for testing purposes.
-   * 
-   * @param linkIndex the LinkIndex containing Links to all REST API web service endpoints in GemFire's REST interface.
+   * Constructs an instance of the RestHttpOperationInvoker class initialized with the given link
+   * index containing links referencing all REST API web service endpoints. This constructor should
+   * only be used for testing purposes.
+   *
+   * @param linkIndex the LinkIndex containing Links to all REST API web service endpoints in
+   *     GemFire's REST interface.
    * @see org.apache.geode.management.internal.web.domain.LinkIndex
    */
   RestHttpOperationInvoker(final LinkIndex linkIndex) {
     super(REST_API_URL);
-    assertNotNull(linkIndex, "The Link Index resolving commands to REST API web service endpoints cannot be null!");
+    assertNotNull(
+        linkIndex,
+        "The Link Index resolving commands to REST API web service endpoints cannot be null!");
     this.linkIndex = linkIndex;
     this.httpOperationInvoker = new SimpleHttpOperationInvoker();
   }
 
   /**
-   * Constructs an instance of the RestHttpOperationInvoker class initialized with the given link index containing links
-   * referencing all REST API web service endpoints.  In addition, a reference to the instance of GemFire shell (Gfsh)
-   * using this RestHttpOperationInvoker to send command invocations to the GemFire Manager's HTTP service via HTTP
-   * for processing is required in order to interact with the shell and provide feedback to the user.
-   * 
-   * @param linkIndex the LinkIndex containing Links to all REST API web service endpoints in GemFire' REST interface.
-   * @param gfsh a reference to the instance of the GemFire shell using this OperationInvoker to process commands.
-   * @see #RestHttpOperationInvoker(org.apache.geode.management.internal.web.domain.LinkIndex, org.apache.geode.management.internal.cli.shell.Gfsh,  Map)
+   * Constructs an instance of the RestHttpOperationInvoker class initialized with the given link
+   * index containing links referencing all REST API web service endpoints. In addition, a reference
+   * to the instance of GemFire shell (Gfsh) using this RestHttpOperationInvoker to send command
+   * invocations to the GemFire Manager's HTTP service via HTTP for processing is required in order
+   * to interact with the shell and provide feedback to the user.
+   *
+   * @param linkIndex the LinkIndex containing Links to all REST API web service endpoints in
+   *     GemFire' REST interface.
+   * @param gfsh a reference to the instance of the GemFire shell using this OperationInvoker to
+   *     process commands.
+   * @see #RestHttpOperationInvoker(org.apache.geode.management.internal.web.domain.LinkIndex,
+   *     org.apache.geode.management.internal.cli.shell.Gfsh, Map)
    * @see org.apache.geode.management.internal.cli.shell.Gfsh
    * @see org.apache.geode.management.internal.web.domain.LinkIndex
    */
-  public RestHttpOperationInvoker(final LinkIndex linkIndex, final Gfsh gfsh, Map<String, String> securityProperties) {
+  public RestHttpOperationInvoker(
+      final LinkIndex linkIndex, final Gfsh gfsh, Map<String, String> securityProperties) {
     this(linkIndex, gfsh, CliStrings.CONNECT__DEFAULT_BASE_URL, securityProperties);
   }
 
   /**
-   * Constructs an instance of the RestHttpOperationInvoker class initialized with the given link index containing links
-   * referencing all REST API web service endpoints.  In addition, a reference to the instance of GemFire shell (Gfsh)
-   * using this RestHttpOperationInvoker to send command invocations to the GemFire Manager's HTTP service via HTTP
-   * for processing is required in order to interact with the shell and provide feedback to the user.  Finally, a URL
-   * to the HTTP service running in the GemFire Manager is specified as the base location for all HTTP requests.
-   * 
-   * @param linkIndex the LinkIndex containing Links to all REST API web service endpoints in GemFire's REST interface.
-   * @param gfsh a reference to the instance of the GemFire shell using this OperationInvoker to process commands.
-   * @param baseUrl the String specifying the base URL to the GemFire Manager's HTTP service, REST interface.
+   * Constructs an instance of the RestHttpOperationInvoker class initialized with the given link
+   * index containing links referencing all REST API web service endpoints. In addition, a reference
+   * to the instance of GemFire shell (Gfsh) using this RestHttpOperationInvoker to send command
+   * invocations to the GemFire Manager's HTTP service via HTTP for processing is required in order
+   * to interact with the shell and provide feedback to the user. Finally, a URL to the HTTP service
+   * running in the GemFire Manager is specified as the base location for all HTTP requests.
+   *
+   * @param linkIndex the LinkIndex containing Links to all REST API web service endpoints in
+   *     GemFire's REST interface.
+   * @param gfsh a reference to the instance of the GemFire shell using this OperationInvoker to
+   *     process commands.
+   * @param baseUrl the String specifying the base URL to the GemFire Manager's HTTP service, REST
+   *     interface.
    * @see org.apache.geode.management.internal.web.domain.LinkIndex
    * @see org.apache.geode.management.internal.cli.shell.Gfsh
    */
-  public RestHttpOperationInvoker(final LinkIndex linkIndex, final Gfsh gfsh, final String baseUrl, Map<String, String> securityProperties) {
+  public RestHttpOperationInvoker(
+      final LinkIndex linkIndex,
+      final Gfsh gfsh,
+      final String baseUrl,
+      Map<String, String> securityProperties) {
     super(gfsh, baseUrl, securityProperties);
-    assertNotNull(linkIndex, "The Link Index resolving commands to REST API web service endpoints cannot be null!");
+    assertNotNull(
+        linkIndex,
+        "The Link Index resolving commands to REST API web service endpoints cannot be null!");
     this.linkIndex = linkIndex;
     this.httpOperationInvoker = new SimpleHttpOperationInvoker(gfsh, baseUrl, securityProperties);
-
   }
 
   /**
-   * Initializes the RestHttpOperationInvokers scheduled and periodic monitoring task to assess the availibity of the
-   * targeted GemFire Manager's HTTP service.
-   * 
+   * Initializes the RestHttpOperationInvokers scheduled and periodic monitoring task to assess the
+   * availibity of the targeted GemFire Manager's HTTP service.
+   *
    * @see org.apache.geode.internal.lang.Initable#init()
    * @see org.springframework.http.client.ClientHttpRequest
    */
@@ -139,43 +157,66 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
 
     if (pingLink != null) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Scheduling periodic HTTP ping requests to monitor the availability of the GemFire Manager HTTP service @ ({})", getBaseUrl());
+        logger.debug(
+            "Scheduling periodic HTTP ping requests to monitor the availability of the GemFire Manager HTTP service @ ({})",
+            getBaseUrl());
       }
 
-      getExecutorService().scheduleAtFixedRate(new Runnable() {
-        public void run() {
-          try {
-            org.springframework.http.client.ClientHttpRequest httpRequest = getRestTemplate().getRequestFactory().createRequest(pingLink.getHref(), HttpMethod.HEAD);
+      getExecutorService()
+          .scheduleAtFixedRate(
+              new Runnable() {
+                public void run() {
+                  try {
+                    org.springframework.http.client.ClientHttpRequest httpRequest =
+                        getRestTemplate()
+                            .getRequestFactory()
+                            .createRequest(pingLink.getHref(), HttpMethod.HEAD);
 
-            httpRequest.getHeaders().set(HttpHeader.USER_AGENT.getName(), USER_AGENT_HTTP_REQUEST_HEADER_VALUE);
-            httpRequest.getHeaders().setAccept(getAcceptableMediaTypes());
-            httpRequest.getHeaders().setContentLength(0l);
+                    httpRequest
+                        .getHeaders()
+                        .set(HttpHeader.USER_AGENT.getName(), USER_AGENT_HTTP_REQUEST_HEADER_VALUE);
+                    httpRequest.getHeaders().setAccept(getAcceptableMediaTypes());
+                    httpRequest.getHeaders().setContentLength(0l);
 
-            if (securityProperties != null) {
-              Iterator<Entry<String, String>> it = securityProperties.entrySet().iterator();
-              while (it.hasNext()) {
-                Entry<String, String> entry = it.next();
-                httpRequest.getHeaders().add(entry.getKey(), entry.getValue());
-              }
-            }
+                    if (securityProperties != null) {
+                      Iterator<Entry<String, String>> it = securityProperties.entrySet().iterator();
+                      while (it.hasNext()) {
+                        Entry<String, String> entry = it.next();
+                        httpRequest.getHeaders().add(entry.getKey(), entry.getValue());
+                      }
+                    }
 
-            ClientHttpResponse httpResponse = httpRequest.execute();
+                    ClientHttpResponse httpResponse = httpRequest.execute();
 
-            if (HttpStatus.NOT_FOUND.equals(httpResponse.getStatusCode())) {
-              throw new IOException(String.format("The HTTP service at URL (%1$s) could not be found!", pingLink.getHref()));
-            } else if (!HttpStatus.OK.equals(httpResponse.getStatusCode())) {
-              printDebug("Received unexpected HTTP status code (%1$d - %2$s) for HTTP request (%3$s).", httpResponse.getRawStatusCode(), httpResponse.getStatusText(), pingLink.getHref());
-            }
-          } catch (IOException e) {
-            printDebug("An error occurred while connecting to the Manager's HTTP service: %1$s: ", e.getMessage());
-            getGfsh().notifyDisconnect(RestHttpOperationInvoker.this.toString());
-            stop();
-          }
-        }
-      }, DEFAULT_INITIAL_DELAY, DEFAULT_PERIOD, DEFAULT_TIME_UNIT);
+                    if (HttpStatus.NOT_FOUND.equals(httpResponse.getStatusCode())) {
+                      throw new IOException(
+                          String.format(
+                              "The HTTP service at URL (%1$s) could not be found!",
+                              pingLink.getHref()));
+                    } else if (!HttpStatus.OK.equals(httpResponse.getStatusCode())) {
+                      printDebug(
+                          "Received unexpected HTTP status code (%1$d - %2$s) for HTTP request (%3$s).",
+                          httpResponse.getRawStatusCode(),
+                          httpResponse.getStatusText(),
+                          pingLink.getHref());
+                    }
+                  } catch (IOException e) {
+                    printDebug(
+                        "An error occurred while connecting to the Manager's HTTP service: %1$s: ",
+                        e.getMessage());
+                    getGfsh().notifyDisconnect(RestHttpOperationInvoker.this.toString());
+                    stop();
+                  }
+                }
+              },
+              DEFAULT_INITIAL_DELAY,
+              DEFAULT_PERIOD,
+              DEFAULT_TIME_UNIT);
     } else {
       if (logger.isDebugEnabled()) {
-        logger.debug("The Link to the GemFire Manager web service endpoint @ ({}) to monitor availability was not found!", getBaseUrl());
+        logger.debug(
+            "The Link to the GemFire Manager web service endpoint @ ({}) to monitor availability was not found!",
+            getBaseUrl());
       }
     }
 
@@ -185,9 +226,9 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
   /**
    * Returns a reference to an implementation of HttpOperationInvoker used as the fallback by this
    * RestHttpOperationInvoker for processing commands via HTTP requests.
-   * 
-   * @return an instance of HttpOperationInvoker used by this RestHttpOperationInvoker as a fallback to process commands
-   * via HTTP requests.
+   *
+   * @return an instance of HttpOperationInvoker used by this RestHttpOperationInvoker as a fallback
+   *     to process commands via HTTP requests.
    * @see org.apache.geode.management.internal.web.shell.HttpOperationInvoker
    */
   protected HttpOperationInvoker getHttpOperationInvoker() {
@@ -195,9 +236,10 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
   }
 
   /**
-   * Returns the LinkIndex resolving Gfsh commands to GemFire REST API web service endpoints.  The corresponding
-   * web service endpoint is a URI/URL uniquely identifying the resource on which the command was invoked.
-   * 
+   * Returns the LinkIndex resolving Gfsh commands to GemFire REST API web service endpoints. The
+   * corresponding web service endpoint is a URI/URL uniquely identifying the resource on which the
+   * command was invoked.
+   *
    * @return the LinkIndex containing Links for all GemFire REST API web service endpoints.
    * @see org.apache.geode.management.internal.web.domain.LinkIndex
    */
@@ -206,14 +248,15 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
   }
 
   /**
-   * Creates an HTTP request from the specified command invocation encapsulated by the CommandRequest object.
-   * The CommandRequest identifies the resource targeted by the command invocation along with any parameters to be sent
-   * as part of the HTTP request.
-   * 
+   * Creates an HTTP request from the specified command invocation encapsulated by the
+   * CommandRequest object. The CommandRequest identifies the resource targeted by the command
+   * invocation along with any parameters to be sent as part of the HTTP request.
+   *
    * @param command the CommandRequest object encapsulating details of the command invocation.
-   * @return a client HTTP request detailing the operation to be performed on the remote resource targeted by the
-   * command invocation.
-   * @see AbstractHttpOperationInvoker#createHttpRequest(org.apache.geode.management.internal.web.domain.Link)
+   * @return a client HTTP request detailing the operation to be performed on the remote resource
+   *     targeted by the command invocation.
+   * @see
+   *     AbstractHttpOperationInvoker#createHttpRequest(org.apache.geode.management.internal.web.domain.Link)
    * @see org.apache.geode.management.internal.cli.CommandRequest
    * @see org.apache.geode.management.internal.web.http.ClientHttpRequest
    * @see org.apache.geode.management.internal.web.util.ConvertUtils#convert(byte[][])
@@ -233,23 +276,26 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
 
     for (Map.Entry<String, String> entry : environmentVariables.entrySet()) {
       if (EnvironmentVariableFilter.INSTANCE.accept(entry)) {
-        request.addParameterValues(ENVIRONMENT_VARIABLE_REQUEST_PARAMETER_PREFIX + entry.getKey(), entry.getValue());
+        request.addParameterValues(
+            ENVIRONMENT_VARIABLE_REQUEST_PARAMETER_PREFIX + entry.getKey(), entry.getValue());
       }
     }
 
     if (command.getFileData() != null) {
-      request.addParameterValues(RESOURCES_REQUEST_PARAMETER, (Object[]) ConvertUtils.convert(command.getFileData()));
+      request.addParameterValues(
+          RESOURCES_REQUEST_PARAMETER, (Object[]) ConvertUtils.convert(command.getFileData()));
     }
 
     return request;
   }
 
   /**
-   * Finds a Link from the Link Index containing the HTTP request URI to the web service endpoint for the relative
-   * operation on the resource.
-   * 
+   * Finds a Link from the Link Index containing the HTTP request URI to the web service endpoint
+   * for the relative operation on the resource.
+   *
    * @param relation a String describing the relative operation (state transition) on the resource.
-   * @return an instance of Link containing the HTTP request URI used to perform the intended operation on the resource.
+   * @return an instance of Link containing the HTTP request URI used to perform the intended
+   *     operation on the resource.
    * @see #getLinkIndex()
    * @see org.apache.geode.management.internal.web.domain.Link
    * @see org.apache.geode.management.internal.web.domain.LinkIndex#find(String)
@@ -260,13 +306,14 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
   }
 
   /**
-   * Finds a Link from the Link Index corresponding to the command invocation.  The CommandRequest indicates the
-   * intended function on the target resource so the proper Link based on it's relation (the state transition of the
-   * corresponding function), along with it's method of operation and corresponding REST API web service endpoint (URI),
-   * can be identified.
-   * 
+   * Finds a Link from the Link Index corresponding to the command invocation. The CommandRequest
+   * indicates the intended function on the target resource so the proper Link based on it's
+   * relation (the state transition of the corresponding function), along with it's method of
+   * operation and corresponding REST API web service endpoint (URI), can be identified.
+   *
    * @param command the CommandRequest object encapsulating the details of the command invocation.
-   * @return a Link referencing the correct REST API web service endpoint (URI) and method for the command invocation.
+   * @return a Link referencing the correct REST API web service endpoint (URI) and method for the
+   *     command invocation.
    * @see #getLinkIndex()
    * @see #resolveLink(org.apache.geode.management.internal.cli.CommandRequest, java.util.List)
    * @see org.apache.geode.management.internal.cli.CommandRequest
@@ -283,16 +330,17 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
     }
 
     if (linksFound.isEmpty()) {
-      throw new RestApiCallForCommandNotFoundException(String.format("No REST API call for command (%1$s) was found!", command.getInput()));
+      throw new RestApiCallForCommandNotFoundException(
+          String.format("No REST API call for command (%1$s) was found!", command.getInput()));
     }
 
     return (linksFound.size() > 1 ? resolveLink(command, linksFound) : linksFound.get(0));
   }
 
   /**
-   * Resolves one Link from a Collection of Links based on the command invocation matching multiple relations from
-   * the Link Index.
-   * 
+   * Resolves one Link from a Collection of Links based on the command invocation matching multiple
+   * relations from the Link Index.
+   *
    * @param command the CommandRequest object encapsulating details of the command invocation.
    * @param links a Collection of Links for the command matching the relation.
    * @return the resolved Link matching the command exactly as entered by the user.
@@ -305,14 +353,16 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
   protected Link resolveLink(final CommandRequest command, final List<Link> links) {
     // NOTE, Gfsh's ParseResult contains a Map entry for all command options whether or not the user set the option
     // with a value on the command-line, argh!
-    Map<String, String> commandParametersCopy = CollectionUtils.removeKeys(new HashMap<>(command.getParameters()), NoValueFilter.INSTANCE);
+    Map<String, String> commandParametersCopy =
+        CollectionUtils.removeKeys(new HashMap<>(command.getParameters()), NoValueFilter.INSTANCE);
 
     Link resolvedLink = null;
 
     int pathVariableCount = 0;
 
     for (Link link : links) {
-      final List<String> pathVariables = new UriTemplate(decode(link.getHref().toString())).getVariableNames();
+      final List<String> pathVariables =
+          new UriTemplate(decode(link.getHref().toString())).getVariableNames();
 
       // first, all path variables in the URL/URI template must be resolvable/expandable for this Link
       // to even be considered...
@@ -328,31 +378,38 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
     }
 
     if (resolvedLink == null) {
-      throw new RestApiCallForCommandNotFoundException(String.format("No REST API call for command (%1$s) was found!", command.getInput()));
+      throw new RestApiCallForCommandNotFoundException(
+          String.format("No REST API call for command (%1$s) was found!", command.getInput()));
     }
 
     return resolvedLink;
   }
 
   /**
-   * Processes the requested command.  Sends the command to the GemFire Manager for remote processing (execution).
-   * 
+   * Processes the requested command. Sends the command to the GemFire Manager for remote processing
+   * (execution).
+   *
    * @param command the command requested/entered by the user to be processed.
    * @return the result of the command execution.
    * @see #createHttpRequest(org.apache.geode.management.internal.cli.CommandRequest)
    * @see #handleResourceAccessException(org.springframework.web.client.ResourceAccessException)
    * @see #isConnected()
-   * @see #send(org.apache.geode.management.internal.web.http.ClientHttpRequest, Class, java.util.Map)
-   * @see #simpleProcessCommand(org.apache.geode.management.internal.cli.CommandRequest, RestApiCallForCommandNotFoundException)
+   * @see #send(org.apache.geode.management.internal.web.http.ClientHttpRequest, Class,
+   *     java.util.Map)
+   * @see #simpleProcessCommand(org.apache.geode.management.internal.cli.CommandRequest,
+   *     RestApiCallForCommandNotFoundException)
    * @see org.apache.geode.management.internal.cli.CommandRequest
    * @see org.springframework.http.ResponseEntity
    */
   @Override
   public String processCommand(final CommandRequest command) {
-    assertState(isConnected(), "Gfsh must be connected to the GemFire Manager in order to process commands remotely!");
+    assertState(
+        isConnected(),
+        "Gfsh must be connected to the GemFire Manager in order to process commands remotely!");
 
     try {
-      ResponseEntity<String> response = send(createHttpRequest(command), String.class, command.getParameters());
+      ResponseEntity<String> response =
+          send(createHttpRequest(command), String.class, command.getParameters());
 
       return response.getBody();
     } catch (RestApiCallForCommandNotFoundException e) {
@@ -363,20 +420,24 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
   }
 
   /**
-   * A method to process the command by sending an HTTP request to the simple URL/URI web service endpoint, where all
-   * details of the request and command invocation are encoded in the URL/URI.
-   * 
+   * A method to process the command by sending an HTTP request to the simple URL/URI web service
+   * endpoint, where all details of the request and command invocation are encoded in the URL/URI.
+   *
    * @param command the CommandRequest encapsulating the details of the command invocation.
-   * @param e the RestApiCallForCommandNotFoundException indicating the standard REST API web service endpoint
-   * could not be found.
+   * @param e the RestApiCallForCommandNotFoundException indicating the standard REST API web
+   *     service endpoint could not be found.
    * @return the result of the command execution.
    * @see #getHttpOperationInvoker()
-   * @see org.apache.geode.management.internal.web.shell.HttpOperationInvoker#processCommand(org.apache.geode.management.internal.cli.CommandRequest)
+   * @see
+   *     org.apache.geode.management.internal.web.shell.HttpOperationInvoker#processCommand(org.apache.geode.management.internal.cli.CommandRequest)
    * @see org.apache.geode.management.internal.cli.CommandRequest
    */
-  protected String simpleProcessCommand(final CommandRequest command, final RestApiCallForCommandNotFoundException e) {
+  protected String simpleProcessCommand(
+      final CommandRequest command, final RestApiCallForCommandNotFoundException e) {
     if (getHttpOperationInvoker() != null) {
-      printWarning("WARNING - No REST API web service endpoint (URI) exists for command (%1$s); using the non-RESTful, simple URI.", command.getName());
+      printWarning(
+          "WARNING - No REST API web service endpoint (URI) exists for command (%1$s); using the non-RESTful, simple URI.",
+          command.getName());
 
       return String.valueOf(getHttpOperationInvoker().processCommand(command));
     }
@@ -413,5 +474,4 @@ public class RestHttpOperationInvoker extends AbstractHttpOperationInvoker imple
       return (entry.getValue() != null);
     }
   }
-
 }

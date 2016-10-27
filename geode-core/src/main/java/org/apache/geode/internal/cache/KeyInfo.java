@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import static org.apache.geode.internal.offheap.annotations.OffHeapIdentifier.ENTRY_EVENT_NEW_VALUE;
@@ -26,9 +24,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.offheap.annotations.Retained;
 import org.apache.geode.internal.offheap.annotations.Unretained;
 
-/**
- *
- */
+/** */
 public class KeyInfo {
 
   // Rahul: This class should actually be renamed as RoutingInfo or BucketIdInfo
@@ -112,8 +108,11 @@ public class KeyInfo {
   /*
    * For Distributed Join Purpose
    */
-  public void setCheckPrimary(boolean checkPrimary) throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("setCheckPrimary"));
+  public void setCheckPrimary(boolean checkPrimary)
+      throws UnsupportedOperationInTransactionException {
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString(
+            "setCheckPrimary"));
   }
 
   public boolean isDistKeyInfo() {

@@ -59,7 +59,6 @@ import org.apache.geode.security.AuthenticationRequiredException;
  *
  * @since GemFire 5.7
  */
-
 public class ServerHandShakeProcessor {
   private static final Logger logger = LogService.getLogger();
 
@@ -71,7 +70,7 @@ public class ServerHandShakeProcessor {
 
   /**
    * Test hook for server version support
-   * 
+   *
    * @since GemFire 5.7
    */
   public static void setSeverVersionForTesting(short ver) {
@@ -105,7 +104,10 @@ public class ServerHandShakeProcessor {
       // Server logging
       logger.warn("{} {}", connection.getName(), e.getMessage(), e);
       // Client logging
-      connection.refuseHandshake(LocalizedStrings.ServerHandShakeProcessor_0_SERVERS_CURRENT_VERSION_IS_1.toLocalizedString(new Object[] { e.getMessage(), Acceptor.VERSION.toString() }), REPLY_REFUSED);
+      connection.refuseHandshake(
+          LocalizedStrings.ServerHandShakeProcessor_0_SERVERS_CURRENT_VERSION_IS_1
+              .toLocalizedString(new Object[] {e.getMessage(), Acceptor.VERSION.toString()}),
+          REPLY_REFUSED);
       connection.stats.incFailedConnectionAttempts();
       connection.cleanup();
       validHandShake = false;
@@ -113,14 +115,15 @@ public class ServerHandShakeProcessor {
 
     if (clientVersion != null) {
 
-      if (logger.isDebugEnabled())
-        logger.debug("Client version: {}", clientVersion);
+      if (logger.isDebugEnabled()) logger.debug("Client version: {}", clientVersion);
 
       // Read the appropriate handshake
       if (clientVersion.compareTo(Version.GFE_57) >= 0) {
         validHandShake = readGFEHandshake(connection, clientVersion);
       } else {
-        connection.refuseHandshake("Unsupported version " + clientVersion + "Server's current version " + Acceptor.VERSION, REPLY_REFUSED);
+        connection.refuseHandshake(
+            "Unsupported version " + clientVersion + "Server's current version " + Acceptor.VERSION,
+            REPLY_REFUSED);
       }
     }
 
@@ -129,12 +132,9 @@ public class ServerHandShakeProcessor {
 
   /**
    * Refuse a received handshake.
-   * 
-   * @param out
-   *                the Stream to the waiting greeter.
-   * @param message
-   *                providing details about the refusal reception, mainly for
-   *                client logging.
+   *
+   * @param out the Stream to the waiting greeter.
+   * @param message providing details about the refusal reception, mainly for client logging.
    * @throws IOException
    */
   public static void refuse(OutputStream out, String message) throws IOException {
@@ -143,14 +143,10 @@ public class ServerHandShakeProcessor {
 
   /**
    * Refuse a received handshake.
-   * 
-   * @param out
-   *                the Stream to the waiting greeter.
-   * @param message
-   *                providing details about the refusal reception, mainly for
-   *                client logging.
-   * @param exception
-   *                providing details about exception occurred.
+   *
+   * @param out the Stream to the waiting greeter.
+   * @param message providing details about the refusal reception, mainly for client logging.
+   * @param exception providing details about exception occurred.
    * @throws IOException
    */
   public static void refuse(OutputStream out, String message, byte exception) throws IOException {
@@ -186,7 +182,8 @@ public class ServerHandShakeProcessor {
 
   // Keep the writeServerMember/readServerMember compatible with C++ native
   // client
-  protected static void writeServerMember(DistributedMember member, DataOutputStream dos) throws IOException {
+  protected static void writeServerMember(DistributedMember member, DataOutputStream dos)
+      throws IOException {
 
     Version v = Version.CURRENT;
     if (dos instanceof VersionedDataStream) {
@@ -205,18 +202,25 @@ public class ServerHandShakeProcessor {
       Socket socket = connection.getSocket();
       DistributedSystem system = connection.getDistributedSystem();
       //hitesh:it will set credentials and principals
-      HandShake handshake = new HandShake(socket, handShakeTimeout, system, clientVersion, connection.getCommunicationMode());
+      HandShake handshake =
+          new HandShake(
+              socket, handShakeTimeout, system, clientVersion, connection.getCommunicationMode());
       connection.setHandshake(handshake);
       ClientProxyMembershipID proxyId = handshake.getMembership();
       connection.setProxyId(proxyId);
       //hitesh: it gets principals
       //Hitesh:for older version we should set this
-      if (clientVersion.compareTo(Version.GFE_65) < 0 || connection.getCommunicationMode() == Acceptor.GATEWAY_TO_GATEWAY) {
+      if (clientVersion.compareTo(Version.GFE_65) < 0
+          || connection.getCommunicationMode() == Acceptor.GATEWAY_TO_GATEWAY) {
         long uniqueId = setAuthAttributes(connection);
-        connection.setUserAuthId(uniqueId);//for older clients < 6.5
+        connection.setUserAuthId(uniqueId); //for older clients < 6.5
       }
     } catch (SocketTimeoutException timeout) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.ServerHandShakeProcessor_0_HANDSHAKE_REPLY_CODE_TIMEOUT_NOT_RECEIVED_WITH_IN_1_MS, new Object[] { connection.getName(), Integer.valueOf(handShakeTimeout) }));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .ServerHandShakeProcessor_0_HANDSHAKE_REPLY_CODE_TIMEOUT_NOT_RECEIVED_WITH_IN_1_MS,
+              new Object[] {connection.getName(), Integer.valueOf(handShakeTimeout)}));
       connection.stats.incFailedConnectionAttempts();
       connection.cleanup();
       return false;
@@ -234,7 +238,11 @@ public class ServerHandShakeProcessor {
       connection.cleanup();
       return false;
     } catch (IOException e) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.ServerHandShakeProcessor_0_RECEIVED_NO_HANDSHAKE_REPLY_CODE, connection.getName()), e);
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.ServerHandShakeProcessor_0_RECEIVED_NO_HANDSHAKE_REPLY_CODE,
+              connection.getName()),
+          e);
       connection.stats.incFailedConnectionAttempts();
       connection.cleanup();
       return false;
@@ -244,10 +252,12 @@ public class ServerHandShakeProcessor {
         exStr += " : " + noauth.getCause().getLocalizedMessage();
       }
       if (securityLogWriter.warningEnabled()) {
-        securityLogWriter.warning(LocalizedStrings.ONE_ARG, connection.getName() + ": Security exception: " + exStr);
+        securityLogWriter.warning(
+            LocalizedStrings.ONE_ARG, connection.getName() + ": Security exception: " + exStr);
       }
       connection.stats.incFailedConnectionAttempts();
-      connection.refuseHandshake(noauth.getMessage(), HandShake.REPLY_EXCEPTION_AUTHENTICATION_REQUIRED);
+      connection.refuseHandshake(
+          noauth.getMessage(), HandShake.REPLY_EXCEPTION_AUTHENTICATION_REQUIRED);
       connection.cleanup();
       return false;
     } catch (AuthenticationFailedException failed) {
@@ -256,10 +266,12 @@ public class ServerHandShakeProcessor {
         exStr += " : " + failed.getCause().getLocalizedMessage();
       }
       if (securityLogWriter.warningEnabled()) {
-        securityLogWriter.warning(LocalizedStrings.ONE_ARG, connection.getName() + ": Security exception: " + exStr);
+        securityLogWriter.warning(
+            LocalizedStrings.ONE_ARG, connection.getName() + ": Security exception: " + exStr);
       }
       connection.stats.incFailedConnectionAttempts();
-      connection.refuseHandshake(failed.getMessage(), HandShake.REPLY_EXCEPTION_AUTHENTICATION_FAILED);
+      connection.refuseHandshake(
+          failed.getMessage(), HandShake.REPLY_EXCEPTION_AUTHENTICATION_FAILED);
       connection.cleanup();
       return false;
     } catch (Exception ex) {
@@ -279,11 +291,12 @@ public class ServerHandShakeProcessor {
 
       long uniqueId;
       if (principal instanceof Subject) {
-        uniqueId = connection.getClientUserAuths(connection.getProxyID()).putSubject((Subject) principal);
+        uniqueId =
+            connection.getClientUserAuths(connection.getProxyID()).putSubject((Subject) principal);
       } else {
         //this sets principal in map as well....
         uniqueId = getUniqueId(connection, (Principal) principal);
-        connection.setPrincipal((Principal) principal);//TODO:hitesh is this require now ???
+        connection.setPrincipal((Principal) principal); //TODO:hitesh is this require now ???
       }
       return uniqueId;
     } catch (Exception ex) {
@@ -291,7 +304,8 @@ public class ServerHandShakeProcessor {
     }
   }
 
-  public static long getUniqueId(ServerConnection connection, Principal principal) throws Exception {
+  public static long getUniqueId(ServerConnection connection, Principal principal)
+      throws Exception {
     try {
       InternalLogWriter securityLogWriter = connection.getSecurityLogWriter();
       DistributedSystem system = connection.getDistributedSystem();
@@ -304,24 +318,42 @@ public class ServerHandShakeProcessor {
 
       if (authzFactoryName != null && authzFactoryName.length() > 0) {
         if (securityLogWriter.fineEnabled())
-          securityLogWriter.fine(connection.getName() + ": Setting pre-process authorization callback to: " + authzFactoryName);
+          securityLogWriter.fine(
+              connection.getName()
+                  + ": Setting pre-process authorization callback to: "
+                  + authzFactoryName);
         if (principal == null) {
           if (securityLogWriter.warningEnabled()) {
-            securityLogWriter.warning(LocalizedStrings.ServerHandShakeProcessor_0_AUTHORIZATION_ENABLED_BUT_AUTHENTICATION_CALLBACK_1_RETURNED_WITH_NULL_CREDENTIALS_FOR_PROXYID_2, new Object[] { connection.getName(), SECURITY_CLIENT_AUTHENTICATOR, connection.getProxyID() });
+            securityLogWriter.warning(
+                LocalizedStrings
+                    .ServerHandShakeProcessor_0_AUTHORIZATION_ENABLED_BUT_AUTHENTICATION_CALLBACK_1_RETURNED_WITH_NULL_CREDENTIALS_FOR_PROXYID_2,
+                new Object[] {
+                  connection.getName(), SECURITY_CLIENT_AUTHENTICATOR, connection.getProxyID()
+                });
           }
         }
-        authzRequest = new AuthorizeRequest(authzFactoryName, connection.getProxyID(), principal, connection.getCache());
+        authzRequest =
+            new AuthorizeRequest(
+                authzFactoryName, connection.getProxyID(), principal, connection.getCache());
         // connection.setAuthorizeRequest(authzRequest);
       }
       if (postAuthzFactoryName != null && postAuthzFactoryName.length() > 0) {
         if (securityLogWriter.fineEnabled())
-          securityLogWriter.fine(connection.getName() + ": Setting post-process authorization callback to: " + postAuthzFactoryName);
+          securityLogWriter.fine(
+              connection.getName()
+                  + ": Setting post-process authorization callback to: "
+                  + postAuthzFactoryName);
         if (principal == null) {
           if (securityLogWriter.warningEnabled()) {
-            securityLogWriter.warning(LocalizedStrings.ServerHandShakeProcessor_0_POSTPROCESS_AUTHORIZATION_ENABLED_BUT_NO_AUTHENTICATION_CALLBACK_2_IS_CONFIGURED, new Object[] { connection.getName(), SECURITY_CLIENT_AUTHENTICATOR });
+            securityLogWriter.warning(
+                LocalizedStrings
+                    .ServerHandShakeProcessor_0_POSTPROCESS_AUTHORIZATION_ENABLED_BUT_NO_AUTHENTICATION_CALLBACK_2_IS_CONFIGURED,
+                new Object[] {connection.getName(), SECURITY_CLIENT_AUTHENTICATOR});
           }
         }
-        postAuthzRequest = new AuthorizeRequestPP(postAuthzFactoryName, connection.getProxyID(), principal, connection.getCache());
+        postAuthzRequest =
+            new AuthorizeRequestPP(
+                postAuthzFactoryName, connection.getProxyID(), principal, connection.getCache());
         // connection.setPostAuthorizeRequest(postAuthzRequest);
       }
       return connection.setUserAuthorizeAndPostAuthorizeRequest(authzRequest, postAuthzRequest);
@@ -330,7 +362,8 @@ public class ServerHandShakeProcessor {
     }
   }
 
-  private static Version readClientVersion(ServerConnection connection) throws IOException, VersionException {
+  private static Version readClientVersion(ServerConnection connection)
+      throws IOException, VersionException {
 
     Socket socket = connection.getSocket();
     int timeout = connection.getHandShakeTimeout();
@@ -342,14 +375,18 @@ public class ServerHandShakeProcessor {
       InputStream is = socket.getInputStream();
       short clientVersionOrdinal = Version.readOrdinalFromInputStream(is);
       if (clientVersionOrdinal == -1) {
-        throw new EOFException(LocalizedStrings.ServerHandShakeProcessor_HANDSHAKEREADER_EOF_REACHED_BEFORE_CLIENT_VERSION_COULD_BE_READ.toLocalizedString());
+        throw new EOFException(
+            LocalizedStrings
+                .ServerHandShakeProcessor_HANDSHAKEREADER_EOF_REACHED_BEFORE_CLIENT_VERSION_COULD_BE_READ
+                .toLocalizedString());
       }
       Version clientVersion = null;
       try {
         clientVersion = Version.fromOrdinal(clientVersionOrdinal, true);
       } catch (UnsupportedVersionException uve) {
         // Allows higher version of wan site to connect to server
-        if (connection.getCommunicationMode() == Acceptor.GATEWAY_TO_GATEWAY && !(clientVersionOrdinal == Version.NOT_SUPPORTED_ORDINAL)) {
+        if (connection.getCommunicationMode() == Acceptor.GATEWAY_TO_GATEWAY
+            && !(clientVersionOrdinal == Version.NOT_SUPPORTED_ORDINAL)) {
           return Acceptor.VERSION;
         } else {
           SocketAddress sa = socket.getRemoteSocketAddress();
@@ -362,8 +399,9 @@ public class ServerHandShakeProcessor {
       }
 
       if (!clientVersion.compatibleWith(Acceptor.VERSION)) {
-        throw new IncompatibleVersionException(clientVersion, Acceptor.VERSION);//we can throw this to restrict
-      } // Backward Compatibilty Support to limited no of versions          
+        throw new IncompatibleVersionException(
+            clientVersion, Acceptor.VERSION); //we can throw this to restrict
+      } // Backward Compatibilty Support to limited no of versions
       return clientVersion;
     } finally {
       if (soTimeout != -1) {

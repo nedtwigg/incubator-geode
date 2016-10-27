@@ -48,10 +48,9 @@ import org.apache.geode.internal.cache.PartitionedRegionHelper;
 import org.apache.geode.internal.cache.partitioned.Bucket;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- *
- */
-public class PersistentStateQueryMessage extends HighPriorityDistributionMessage implements MessageWithReply {
+/** */
+public class PersistentStateQueryMessage extends HighPriorityDistributionMessage
+    implements MessageWithReply {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -60,20 +59,31 @@ public class PersistentStateQueryMessage extends HighPriorityDistributionMessage
   private int processorId;
   private PersistentMemberID initializingId;
 
-  public PersistentStateQueryMessage() {
+  public PersistentStateQueryMessage() {}
 
-  }
-
-  public PersistentStateQueryMessage(String regionPath, PersistentMemberID id, PersistentMemberID initializingId, int processorId) {
+  public PersistentStateQueryMessage(
+      String regionPath,
+      PersistentMemberID id,
+      PersistentMemberID initializingId,
+      int processorId) {
     this.regionPath = regionPath;
     this.id = id;
     this.initializingId = initializingId;
     this.processorId = processorId;
   }
 
-  public static PersistentStateQueryResults send(Set<InternalDistributedMember> members, DM dm, String regionPath, PersistentMemberID persistentId, PersistentMemberID initializingId) throws ReplyException {
-    PersistentStateQueryReplyProcessor processor = new PersistentStateQueryReplyProcessor(dm, members);
-    PersistentStateQueryMessage msg = new PersistentStateQueryMessage(regionPath, persistentId, initializingId, processor.getProcessorId());
+  public static PersistentStateQueryResults send(
+      Set<InternalDistributedMember> members,
+      DM dm,
+      String regionPath,
+      PersistentMemberID persistentId,
+      PersistentMemberID initializingId)
+      throws ReplyException {
+    PersistentStateQueryReplyProcessor processor =
+        new PersistentStateQueryReplyProcessor(dm, members);
+    PersistentStateQueryMessage msg =
+        new PersistentStateQueryMessage(
+            regionPath, persistentId, initializingId, processor.getProcessorId());
     msg.setRecipients(members);
 
     dm.putOutgoing(msg);
@@ -103,7 +113,9 @@ public class PersistentStateQueryMessage extends HighPriorityDistributionMessage
       if (region instanceof DistributedRegion) {
         persistenceAdvisor = ((DistributedRegion) region).getPersistenceAdvisor();
       } else if (region == null) {
-        Bucket proxy = PartitionedRegionHelper.getProxyBucketRegion(GemFireCacheImpl.getInstance(), this.regionPath, false);
+        Bucket proxy =
+            PartitionedRegionHelper.getProxyBucketRegion(
+                GemFireCacheImpl.getInstance(), this.regionPath, false);
         if (proxy != null) {
           persistenceAdvisor = proxy.getPersistenceAdvisor();
         }
@@ -135,7 +147,8 @@ public class PersistentStateQueryMessage extends HighPriorityDistributionMessage
       LocalRegion.setThreadInitLevelRequirement(oldLevel);
       ReplyMessage replyMsg;
       if (successfulReply) {
-        PersistentStateQueryReplyMessage persistentReplyMessage = new PersistentStateQueryReplyMessage();
+        PersistentStateQueryReplyMessage persistentReplyMessage =
+            new PersistentStateQueryReplyMessage();
         persistentReplyMessage.myId = myId;
         persistentReplyMessage.persistedStateOfPeer = state;
         persistentReplyMessage.myInitializingId = myInitializingId;
@@ -195,7 +208,13 @@ public class PersistentStateQueryMessage extends HighPriorityDistributionMessage
 
   @Override
   public String toString() {
-    return super.toString() + ",id=" + id + ",regionPath=" + regionPath + ",initializingId=" + initializingId;
+    return super.toString()
+        + ",id="
+        + id
+        + ",regionPath="
+        + regionPath
+        + ",initializingId="
+        + initializingId;
   }
 
   private static class PersistentStateQueryReplyProcessor extends ReplyProcessor21 {
@@ -209,7 +228,13 @@ public class PersistentStateQueryMessage extends HighPriorityDistributionMessage
     public void process(DistributionMessage msg) {
       if (msg instanceof PersistentStateQueryReplyMessage) {
         PersistentStateQueryReplyMessage reply = (PersistentStateQueryReplyMessage) msg;
-        results.addResult(reply.persistedStateOfPeer, reply.getSender(), reply.myId, reply.myInitializingId, reply.diskStoreId, reply.onlineMembers);
+        results.addResult(
+            reply.persistedStateOfPeer,
+            reply.getSender(),
+            reply.myId,
+            reply.myInitializingId,
+            reply.diskStoreId,
+            reply.onlineMembers);
       }
       super.process(msg);
     }
@@ -292,7 +317,13 @@ public class PersistentStateQueryMessage extends HighPriorityDistributionMessage
 
     @Override
     public String toString() {
-      return super.toString() + ",myId=" + myId + ",myInitializingId=" + myInitializingId + ",persistedStateOfPeer=" + persistedStateOfPeer;
+      return super.toString()
+          + ",myId="
+          + myId
+          + ",myInitializingId="
+          + myInitializingId
+          + ",persistedStateOfPeer="
+          + persistedStateOfPeer;
     }
   }
 }

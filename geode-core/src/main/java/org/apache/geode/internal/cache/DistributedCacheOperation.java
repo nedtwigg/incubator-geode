@@ -81,9 +81,7 @@ import org.apache.geode.internal.offheap.annotations.Released;
 import org.apache.geode.internal.offheap.annotations.Unretained;
 import org.apache.geode.internal.sequencelog.EntryLogger;
 
-/**
- * 
- */
+/** */
 public abstract class DistributedCacheOperation {
 
   private static final Logger logger = LogService.getLogger();
@@ -96,24 +94,30 @@ public abstract class DistributedCacheOperation {
   // constants used in subclasses and distribution messages
   // should use enum in source level 1.5+
   /**
-   * Deserialization policy: do not deserialize (for byte array, null or cases
-   * where the value should stay serialized)
-   * 
+   * Deserialization policy: do not deserialize (for byte array, null or cases where the value
+   * should stay serialized)
+   *
    * @since GemFire 5.7
    */
   public static final byte DESERIALIZATION_POLICY_NONE = (byte) 0;
 
   /**
    * Deserialization policy: deserialize lazily (for all other objects)
-   * 
+   *
    * @since GemFire 5.7
    */
   public static final byte DESERIALIZATION_POLICY_LAZY = (byte) 2;
 
   /**
-   * @param deserializationPolicy must be one of the following: DESERIALIZATION_POLICY_NONE, DESERIALIZATION_POLICY_LAZY.
+   * @param deserializationPolicy must be one of the following: DESERIALIZATION_POLICY_NONE,
+   *     DESERIALIZATION_POLICY_LAZY.
    */
-  public static void writeValue(final byte deserializationPolicy, final Object vObj, final byte[] vBytes, final DataOutput out) throws IOException {
+  public static void writeValue(
+      final byte deserializationPolicy,
+      final Object vObj,
+      final byte[] vBytes,
+      final DataOutput out)
+      throws IOException {
     if (vObj != null) {
       if (deserializationPolicy == DESERIALIZATION_POLICY_NONE) {
         // We only have NONE with a vObj when vObj is off-heap and not serialized.
@@ -133,18 +137,17 @@ public abstract class DistributedCacheOperation {
   public static final byte VALUE_IS_SERIALIZED_OBJECT = 1;
   public static final byte VALUE_IS_OBJECT = 2;
 
-  /**
-   * Given a VALUE_IS_* constant convert and return the corresponding DESERIALIZATION_POLICY_*.
-   */
+  /** Given a VALUE_IS_* constant convert and return the corresponding DESERIALIZATION_POLICY_*. */
   public static byte valueIsToDeserializationPolicy(boolean oldValueIsSerialized) {
-    if (!oldValueIsSerialized)
-      return DESERIALIZATION_POLICY_NONE;
+    if (!oldValueIsSerialized) return DESERIALIZATION_POLICY_NONE;
     return DESERIALIZATION_POLICY_LAZY;
   }
 
-  public final static byte DESERIALIZATION_POLICY_NUMBITS = DistributionMessage.getNumBits(DESERIALIZATION_POLICY_LAZY);
+  public static final byte DESERIALIZATION_POLICY_NUMBITS =
+      DistributionMessage.getNumBits(DESERIALIZATION_POLICY_LAZY);
 
-  public static final short DESERIALIZATION_POLICY_END = (short) (1 << DESERIALIZATION_POLICY_NUMBITS);
+  public static final short DESERIALIZATION_POLICY_END =
+      (short) (1 << DESERIALIZATION_POLICY_NUMBITS);
   public static final short DESERIALIZATION_POLICY_MASK = (short) (DESERIALIZATION_POLICY_END - 1);
 
   public static boolean testSendingOldValues;
@@ -161,12 +164,12 @@ public abstract class DistributedCacheOperation {
 
   public static String deserializationPolicyToString(byte policy) {
     switch (policy) {
-    case DESERIALIZATION_POLICY_NONE:
-      return "NONE";
-    case DESERIALIZATION_POLICY_LAZY:
-      return "LAZY";
-    default:
-      throw new AssertionError("unknown deserialization policy");
+      case DESERIALIZATION_POLICY_NONE:
+        return "NONE";
+      case DESERIALIZATION_POLICY_LAZY:
+        return "LAZY";
+      default:
+        throw new AssertionError("unknown deserialization policy");
     }
   }
 
@@ -176,10 +179,10 @@ public abstract class DistributedCacheOperation {
   }
 
   /**
-   * Return true if this operation needs to check for reliable delivery. Return
-   * false if not. Currently the only case it doesn't need to be is a
-   * DestroyRegionOperation doing a "local" destroy.
-   * 
+   * Return true if this operation needs to check for reliable delivery. Return false if not.
+   * Currently the only case it doesn't need to be is a DestroyRegionOperation doing a "local"
+   * destroy.
+   *
    * @since GemFire 5.0
    */
   boolean isOperationReliable() {
@@ -204,10 +207,7 @@ public abstract class DistributedCacheOperation {
     return true;
   }
 
-  /**
-   * returns true if multicast can be used for this operation. The default is
-   * true.
-   */
+  /** returns true if multicast can be used for this operation. The default is true. */
   public boolean supportsMulticast() {
     return true;
   }
@@ -218,19 +218,15 @@ public abstract class DistributedCacheOperation {
   }
 
   /**
-   * returns true if adjunct messaging (piggybacking) is allowed for this
-   * operation. Region-oriented operations typically do not allow adjunct
-   * messaging, while Entry-oriented operations do. The default implementation
-   * returns true.
+   * returns true if adjunct messaging (piggybacking) is allowed for this operation. Region-oriented
+   * operations typically do not allow adjunct messaging, while Entry-oriented operations do. The
+   * default implementation returns true.
    */
   protected boolean supportsAdjunctMessaging() {
     return true;
   }
 
-  /**
-   * returns true if this operation supports propagation of delta values instead
-   * of full changes
-   */
+  /** returns true if this operation supports propagation of delta values instead of full changes */
   protected boolean supportsDeltaPropagation() {
     return false;
   }
@@ -241,9 +237,8 @@ public abstract class DistributedCacheOperation {
   }
 
   /**
-   * Distribute a cache operation to other members of the distributed system.
-   * This method determines who the recipients are and handles careful delivery
-   * of the operation to those members.
+   * Distribute a cache operation to other members of the distributed system. This method determines
+   * who the recipients are and handles careful delivery of the operation to those members.
    */
   public void distribute() {
     DistributedRegion region = getRegion();
@@ -267,7 +262,8 @@ public abstract class DistributedCacheOperation {
       viewVersion = region.getDistributionAdvisor().startOperation();
     }
     if (logger.isTraceEnabled(LogMarker.STATE_FLUSH_OP)) {
-      logger.trace(LogMarker.STATE_FLUSH_OP, "dispatching operation in view version {}", viewVersion);
+      logger.trace(
+          LogMarker.STATE_FLUSH_OP, "dispatching operation in view version {}", viewVersion);
     }
 
     try {
@@ -315,14 +311,16 @@ public abstract class DistributedCacheOperation {
         if (testSendingOldValues) {
           needsOldValueInCacheOp = new HashSet(recipients);
         } else {
-          needsOldValueInCacheOp = region.getCacheDistributionAdvisor().adviseRequiresOldValueInCacheOp();
+          needsOldValueInCacheOp =
+              region.getCacheDistributionAdvisor().adviseRequiresOldValueInCacheOp();
         }
         recipients.removeAll(needsOldValueInCacheOp);
       }
 
       Set cachelessNodes = Collections.EMPTY_SET;
       Set adviseCacheServers = Collections.EMPTY_SET;
-      Set<InternalDistributedMember> cachelessNodesWithNoCacheServer = new HashSet<InternalDistributedMember>();
+      Set<InternalDistributedMember> cachelessNodesWithNoCacheServer =
+          new HashSet<InternalDistributedMember>();
       if (region.getDistributionConfig().getDeltaPropagation() && this.supportsDeltaPropagation()) {
         cachelessNodes = region.getCacheDistributionAdvisor().adviseEmptys();
         if (!cachelessNodes.isEmpty()) {
@@ -345,7 +343,10 @@ public abstract class DistributedCacheOperation {
         cachelessNodesWithNoCacheServer.removeAll(adviseCacheServers);
       }
 
-      if (recipients.isEmpty() && adjunctRecipients.isEmpty() && needsOldValueInCacheOp.isEmpty() && cachelessNodes.isEmpty()) {
+      if (recipients.isEmpty()
+          && adjunctRecipients.isEmpty()
+          && needsOldValueInCacheOp.isEmpty()
+          && cachelessNodes.isEmpty()) {
         if (region.isInternalRegion()) {
           if (mgr.getNormalDistributionManagerIds().size() > 1) {
             // suppress this msg if we are the only member.
@@ -371,7 +372,7 @@ public abstract class DistributedCacheOperation {
           region.handleReliableDistribution(msg, Collections.EMPTY_SET);
         }
 
-        /** compute local client routing before waiting for an ack only for a bucket*/
+        /** compute local client routing before waiting for an ack only for a bucket */
         if (region.isUsedForPartitionedRegionBucket()) {
           FilterInfo filterInfo = getLocalFilterRouting(filterRouting);
           this.event.setLocalFilterInfo(filterInfo);
@@ -379,7 +380,10 @@ public abstract class DistributedCacheOperation {
 
       } else {
         boolean directAck = false;
-        boolean useMulticast = region.getMulticastEnabled() && region.getSystem().getConfig().getMcastPort() != 0 && this.supportsMulticast();
+        boolean useMulticast =
+            region.getMulticastEnabled()
+                && region.getSystem().getConfig().getMcastPort() != 0
+                && this.supportsMulticast();
         ;
         boolean shouldAck = shouldAck();
 
@@ -396,19 +400,26 @@ public abstract class DistributedCacheOperation {
           RemoteOperationMessage rmsg = entryEvent.getRemoteOperationMessage();
           if (rmsg != null) {
             recipients.remove(rmsg.getSender());
-            useMulticast = false; // bug #45106: can't mcast or the sender of the one-hop op will get it
+            useMulticast =
+                false; // bug #45106: can't mcast or the sender of the one-hop op will get it
           }
         }
 
         if (logger.isDebugEnabled()) {
-          logger.debug("recipients for {}: {} with adjunct messages to: {}", this, recipients, adjunctRecipients);
+          logger.debug(
+              "recipients for {}: {} with adjunct messages to: {}",
+              this,
+              recipients,
+              adjunctRecipients);
         }
 
         if (shouldAck) {
           // adjunct messages are sent using the same reply processor, so
           // add them to the processor's membership set
           Collection waitForMembers = null;
-          if (recipients.size() > 0 && adjunctRecipients.size() == 0 && cachelessNodes.isEmpty()) { // the common case
+          if (recipients.size() > 0
+              && adjunctRecipients.size() == 0
+              && cachelessNodes.isEmpty()) { // the common case
             waitForMembers = recipients;
           } else if (!cachelessNodes.isEmpty()) {
             waitForMembers = new HashSet(recipients);
@@ -430,7 +441,8 @@ public abstract class DistributedCacheOperation {
             }
             if ((LOSS_SIMULATION_GENERATOR.nextInt(100) * 1.0 / 100.0) < LOSS_SIMULATION_RATIO) {
               if (logger.isDebugEnabled()) {
-                logger.debug("loss simulation is inhibiting message transmission to {}", recipients);
+                logger.debug(
+                    "loss simulation is inhibiting message transmission to {}", recipients);
               }
               waitForMembers.removeAll(recipients);
               recipients = Collections.EMPTY_SET;
@@ -438,7 +450,9 @@ public abstract class DistributedCacheOperation {
           }
           if (reliableOp) {
             this.departedMembers = new HashSet();
-            this.processor = new ReliableCacheReplyProcessor(region.getSystem(), waitForMembers, this.departedMembers);
+            this.processor =
+                new ReliableCacheReplyProcessor(
+                    region.getSystem(), waitForMembers, this.departedMembers);
           } else {
             this.processor = new CacheOperationReplyProcessor(region.getSystem(), waitForMembers);
           }
@@ -461,7 +475,9 @@ public abstract class DistributedCacheOperation {
           DistributedRegion r = getRegion();
           if (r.isUsedForPartitionedRegionBucket() && event.getOperation().isEntry()) {
             PartitionMessage pm = ((EntryEventImpl) event).getPartitionMessage();
-            if (pm != null && pm.getSender() != null && !pm.getSender().equals(r.getDistributionManager().getDistributionManagerId())) {
+            if (pm != null
+                && pm.getSender() != null
+                && !pm.getSender().equals(r.getDistributionManager().getDistributionManagerId())) {
               // PR message sent by another member
               ReplyProcessor21.setShortSevereAlertProcessing(true);
             }
@@ -471,7 +487,10 @@ public abstract class DistributedCacheOperation {
         msg.setMulticast(useMulticast);
         msg.directAck = directAck;
         if (region.isUsedForPartitionedRegionBucket()) {
-          if (!isPutAll && !isRemoveAll && filterRouting != null && filterRouting.hasMemberWithFilterInfo()) {
+          if (!isPutAll
+              && !isRemoveAll
+              && filterRouting != null
+              && filterRouting.hasMemberWithFilterInfo()) {
             if (logger.isDebugEnabled()) {
               logger.debug("Setting filter information for message to {}", filterRouting);
             }
@@ -484,7 +503,10 @@ public abstract class DistributedCacheOperation {
         initProcessor(processor, msg);
 
         if (region.cache.isClosed() && !canBeSentDuringShutdown()) {
-          throw region.cache.getCacheClosedException(LocalizedStrings.DistributedCacheOperation_THE_CACHE_HAS_BEEN_CLOSED.toLocalizedString(), null);
+          throw region.cache.getCacheClosedException(
+              LocalizedStrings.DistributedCacheOperation_THE_CACHE_HAS_BEEN_CLOSED
+                  .toLocalizedString(),
+              null);
         }
 
         msg.setRecipients(recipients);
@@ -546,7 +568,8 @@ public abstract class DistributedCacheOperation {
           logger.debug("Failed sending ({}) to {} while processing event:{}", msg, failures, event);
         }
 
-        Set<InternalDistributedMember> adjunctRecipientsWithNoCacheServer = new HashSet<InternalDistributedMember>();
+        Set<InternalDistributedMember> adjunctRecipientsWithNoCacheServer =
+            new HashSet<InternalDistributedMember>();
         // send partitioned region listener notification messages now
         if (!adjunctRecipients.isEmpty()) {
           if (cachelessNodes.size() > 0) {
@@ -560,21 +583,54 @@ public abstract class DistributedCacheOperation {
           }
 
           adjunctRecipientsWithNoCacheServer.addAll(adjunctRecipients);
-          adviseCacheServers = ((BucketRegion) region).getPartitionedRegion().getCacheDistributionAdvisor().adviseCacheServers();
+          adviseCacheServers =
+              ((BucketRegion) region)
+                  .getPartitionedRegion()
+                  .getCacheDistributionAdvisor()
+                  .adviseCacheServers();
           adjunctRecipientsWithNoCacheServer.removeAll(adviseCacheServers);
 
           if (isPutAll) {
-            ((BucketRegion) region).performPutAllAdjunctMessaging((DistributedPutAllOperation) this, recipients, adjunctRecipients, filterRouting, this.processor);
+            ((BucketRegion) region)
+                .performPutAllAdjunctMessaging(
+                    (DistributedPutAllOperation) this,
+                    recipients,
+                    adjunctRecipients,
+                    filterRouting,
+                    this.processor);
           } else if (isRemoveAll) {
-            ((BucketRegion) region).performRemoveAllAdjunctMessaging((DistributedRemoveAllOperation) this, recipients, adjunctRecipients, filterRouting, this.processor);
+            ((BucketRegion) region)
+                .performRemoveAllAdjunctMessaging(
+                    (DistributedRemoveAllOperation) this,
+                    recipients,
+                    adjunctRecipients,
+                    filterRouting,
+                    this.processor);
           } else {
-            boolean calculateDelta = adjunctRecipientsWithNoCacheServer.size() < adjunctRecipients.size();
+            boolean calculateDelta =
+                adjunctRecipientsWithNoCacheServer.size() < adjunctRecipients.size();
             adjunctRecipients.removeAll(adjunctRecipientsWithNoCacheServer);
             if (!adjunctRecipients.isEmpty()) {
-              ((BucketRegion) region).performAdjunctMessaging(getEvent(), recipients, adjunctRecipients, filterRouting, this.processor, calculateDelta, true);
+              ((BucketRegion) region)
+                  .performAdjunctMessaging(
+                      getEvent(),
+                      recipients,
+                      adjunctRecipients,
+                      filterRouting,
+                      this.processor,
+                      calculateDelta,
+                      true);
             }
             if (!adjunctRecipientsWithNoCacheServer.isEmpty()) {
-              ((BucketRegion) region).performAdjunctMessaging(getEvent(), recipients, adjunctRecipientsWithNoCacheServer, filterRouting, this.processor, calculateDelta, false);
+              ((BucketRegion) region)
+                  .performAdjunctMessaging(
+                      getEvent(),
+                      recipients,
+                      adjunctRecipientsWithNoCacheServer,
+                      filterRouting,
+                      this.processor,
+                      calculateDelta,
+                      false);
             }
           }
         }
@@ -584,7 +640,7 @@ public abstract class DistributedCacheOperation {
           viewVersion = -1;
         }
 
-        /** compute local client routing before waiting for an ack only for a bucket*/
+        /** compute local client routing before waiting for an ack only for a bucket */
         if (region.isUsedForPartitionedRegionBucket()) {
           FilterInfo filterInfo = getLocalFilterRouting(filterRouting);
           event.setLocalFilterInfo(filterInfo);
@@ -592,7 +648,8 @@ public abstract class DistributedCacheOperation {
 
         waitForAckIfNeeded(msg, persistentIds);
 
-        if (/* msg != null && */reliableOp) {
+        if (
+        /* msg != null && */ reliableOp) {
           Set successfulRecips = new HashSet(recipients);
           successfulRecips.addAll(cachelessNodes);
           successfulRecips.addAll(needsOldValueInCacheOp);
@@ -616,13 +673,20 @@ public abstract class DistributedCacheOperation {
       }
       throw e;
     } catch (RuntimeException e) {
-      logger.info(LocalizedMessage.create(LocalizedStrings.DistributedCacheOperation_EXCEPTION_OCCURRED_WHILE_PROCESSING__0, this), e);
+      logger.info(
+          LocalizedMessage.create(
+              LocalizedStrings.DistributedCacheOperation_EXCEPTION_OCCURRED_WHILE_PROCESSING__0,
+              this),
+          e);
       throw e;
     } finally {
       ReplyProcessor21.setShortSevereAlertProcessing(false);
       if (viewVersion != -1) {
         if (logger.isDebugEnabled()) {
-          logger.trace(LogMarker.STATE_FLUSH_OP, "done dispatching operation in view version {}", viewVersion);
+          logger.trace(
+              LogMarker.STATE_FLUSH_OP,
+              "done dispatching operation in view version {}",
+              viewVersion);
         }
         region.getDistributionAdvisor().endOperation(viewVersion);
       }
@@ -630,15 +694,13 @@ public abstract class DistributedCacheOperation {
   }
 
   /**
-   * Cleanup destroyed events in CQ result cache for remote CQs.
-   * While maintaining the CQ results key caching. the destroy event
-   * keys are marked as destroyed instead of removing them, this is
-   * to take care, arrival of duplicate events. The key marked as
-   * destroyed are  removed after the event is placed in clients 
-   * HAQueue or distributed to the peers.
+   * Cleanup destroyed events in CQ result cache for remote CQs. While maintaining the CQ results
+   * key caching. the destroy event keys are marked as destroyed instead of removing them, this is
+   * to take care, arrival of duplicate events. The key marked as destroyed are removed after the
+   * event is placed in clients HAQueue or distributed to the peers.
    *
-   * This is similar to CacheClientNotifier.removeDestroyTokensFromCqResultKeys()
-   * where the destroyed events for local CQs are handled.
+   * <p>This is similar to CacheClientNotifier.removeDestroyTokensFromCqResultKeys() where the
+   * destroyed events for local CQs are handled.
    */
   private void removeDestroyTokensFromCqResultKeys(FilterRoutingInfo filterRouting) {
     for (InternalDistributedMember m : filterRouting.getMembers()) {
@@ -647,9 +709,17 @@ public abstract class DistributedCacheOperation {
         continue;
       }
 
-      CacheProfile cf = (CacheProfile) ((BucketRegion) getRegion()).getPartitionedRegion().getCacheDistributionAdvisor().getProfile(m);
+      CacheProfile cf =
+          (CacheProfile)
+              ((BucketRegion) getRegion())
+                  .getPartitionedRegion()
+                  .getCacheDistributionAdvisor()
+                  .getProfile(m);
 
-      if (cf == null || cf.filterProfile == null || cf.filterProfile.isLocalProfile() || cf.filterProfile.getCqMap().isEmpty()) {
+      if (cf == null
+          || cf.filterProfile == null
+          || cf.filterProfile.isLocalProfile()
+          || cf.filterProfile.getCqMap().isEmpty()) {
         continue;
       }
 
@@ -660,7 +730,8 @@ public abstract class DistributedCacheOperation {
           Long cqID = e.getKey();
           // For the CQs satisfying the event with destroy CQEvent, remove
           // the entry form CQ cache.
-          if (cq.getFilterID() == cqID && (e.getValue().equals(Integer.valueOf(MessageType.LOCAL_DESTROY)))) {
+          if (cq.getFilterID() == cqID
+              && (e.getValue().equals(Integer.valueOf(MessageType.LOCAL_DESTROY)))) {
             cq.removeFromCqResultKeys(((EntryEventImpl) event).getKey(), true);
           }
         }
@@ -670,24 +741,21 @@ public abstract class DistributedCacheOperation {
 
   /**
    * Get the adjunct receivers for a partitioned region operation
-   * 
-   * @param br
-   *          the PR bucket
-   * @param cacheOpReceivers
-   *          the receivers of the CacheOperationMessage for this op
-   * @param twoMessages
-   *          PR members that are creating the bucket and need both cache op
-   *          and adjunct messages
-   * @param routing
-   *          client routing information
+   *
+   * @param br the PR bucket
+   * @param cacheOpReceivers the receivers of the CacheOperationMessage for this op
+   * @param twoMessages PR members that are creating the bucket and need both cache op and adjunct
+   *     messages
+   * @param routing client routing information
    */
-  Set getAdjunctReceivers(BucketRegion br, Set cacheOpReceivers, Set twoMessages, FilterRoutingInfo routing) {
+  Set getAdjunctReceivers(
+      BucketRegion br, Set cacheOpReceivers, Set twoMessages, FilterRoutingInfo routing) {
     return br.getAdjunctReceivers(this.getEvent(), cacheOpReceivers, twoMessages, routing);
   }
 
   /**
    * perform any operation-specific initialization on the given reply processor
-   * 
+   *
    * @param p
    * @param msg
    */
@@ -695,7 +763,8 @@ public abstract class DistributedCacheOperation {
     // nothing to do here - see UpdateMessage
   }
 
-  protected final void waitForAckIfNeeded(CacheOperationMessage msg, Map<InternalDistributedMember, PersistentMemberID> persistentIds) {
+  protected final void waitForAckIfNeeded(
+      CacheOperationMessage msg, Map<InternalDistributedMember, PersistentMemberID> persistentIds) {
     if (this.processor == null) {
       return;
     }
@@ -707,7 +776,10 @@ public abstract class DistributedCacheOperation {
         handleClosedMembers(closedMembers, persistentIds);
       } catch (ReplyException e) {
         if (this instanceof DestroyRegionOperation) {
-          logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributedCacheOperation_WAITFORACKIFNEEDED_EXCEPTION), e);
+          logger.fatal(
+              LocalizedMessage.create(
+                  LocalizedStrings.DistributedCacheOperation_WAITFORACKIFNEEDED_EXCEPTION),
+              e);
         }
         e.handleAsUnexpected();
       }
@@ -716,10 +788,10 @@ public abstract class DistributedCacheOperation {
     }
   }
 
-  /**
-   * @param closedMembers
-   */
-  private void handleClosedMembers(Set<InternalDistributedMember> closedMembers, Map<InternalDistributedMember, PersistentMemberID> persistentIds) {
+  /** @param closedMembers */
+  private void handleClosedMembers(
+      Set<InternalDistributedMember> closedMembers,
+      Map<InternalDistributedMember, PersistentMemberID> persistentIds) {
     if (persistentIds == null) {
       return;
     }
@@ -727,7 +799,7 @@ public abstract class DistributedCacheOperation {
     for (InternalDistributedMember member : closedMembers) {
       PersistentMemberID persistentId = persistentIds.get(member);
       if (persistentId != null) {
-        //Fix for bug 42142 - In order for recovery to work, 
+        //Fix for bug 42142 - In order for recovery to work,
         //we must either
         // 1) persistent the region operation successfully on the peer
         // 2) record that the peer is offline
@@ -816,7 +888,6 @@ public abstract class DistributedCacheOperation {
     msg.op = this.event.getOperation();
     msg.owner = this;
     msg.regionAllowsConflation = getRegion().getEnableAsyncConflation();
-
   }
 
   @Override
@@ -826,27 +897,28 @@ public abstract class DistributedCacheOperation {
   }
 
   /**
-   * Add an internal callback which is run before the CacheOperationMessage is
-   * distributed with dm.putOutgoing.
+   * Add an internal callback which is run before the CacheOperationMessage is distributed with
+   * dm.putOutgoing.
    */
   public static void setBeforePutOutgoing(Runnable beforePutOutgoing) {
     internalBeforePutOutgoing = beforePutOutgoing;
   }
 
-  public static abstract class CacheOperationMessage extends SerialDistributionMessage implements MessageWithReply, DirectReplyMessage, ReliableDistributionData, OldValueImporter {
+  public abstract static class CacheOperationMessage extends SerialDistributionMessage
+      implements MessageWithReply, DirectReplyMessage, ReliableDistributionData, OldValueImporter {
 
-    protected final static short POSSIBLE_DUPLICATE_MASK = POS_DUP;
-    protected final static short OLD_VALUE_MASK = DistributionMessage.UNRESERVED_FLAGS_START;
-    protected final static short DIRECT_ACK_MASK = (OLD_VALUE_MASK << 1);
-    protected final static short FILTER_INFO_MASK = (DIRECT_ACK_MASK << 1);
-    protected final static short CALLBACK_ARG_MASK = (FILTER_INFO_MASK << 1);
-    protected final static short DELTA_MASK = (CALLBACK_ARG_MASK << 1);
-    protected final static short NEEDS_ROUTING_MASK = (DELTA_MASK << 1);
-    protected final static short VERSION_TAG_MASK = (NEEDS_ROUTING_MASK << 1);
-    protected final static short PERSISTENT_TAG_MASK = (VERSION_TAG_MASK << 1);
-    protected final static short UNRESERVED_FLAGS_START = (PERSISTENT_TAG_MASK << 1);
+    protected static final short POSSIBLE_DUPLICATE_MASK = POS_DUP;
+    protected static final short OLD_VALUE_MASK = DistributionMessage.UNRESERVED_FLAGS_START;
+    protected static final short DIRECT_ACK_MASK = (OLD_VALUE_MASK << 1);
+    protected static final short FILTER_INFO_MASK = (DIRECT_ACK_MASK << 1);
+    protected static final short CALLBACK_ARG_MASK = (FILTER_INFO_MASK << 1);
+    protected static final short DELTA_MASK = (CALLBACK_ARG_MASK << 1);
+    protected static final short NEEDS_ROUTING_MASK = (DELTA_MASK << 1);
+    protected static final short VERSION_TAG_MASK = (NEEDS_ROUTING_MASK << 1);
+    protected static final short PERSISTENT_TAG_MASK = (VERSION_TAG_MASK << 1);
+    protected static final short UNRESERVED_FLAGS_START = (PERSISTENT_TAG_MASK << 1);
 
-    private final static int INHIBIT_NOTIFICATIONS_MASK = 0x400;
+    private static final int INHIBIT_NOTIFICATIONS_MASK = 0x400;
 
     public boolean needsRouting;
 
@@ -925,6 +997,7 @@ public abstract class DistributedCacheOperation {
 
     /**
      * process a reply
+     *
      * @param reply
      * @param processor
      * @return true if the reply-processor should continue to process this response
@@ -936,17 +1009,21 @@ public abstract class DistributedCacheOperation {
     }
 
     /**
-     * Add the cache event's old value to this message.  We must propagate
-     * the old value when the receiver is doing GII and has listeners (CQs)
-     * that require the old value.
+     * Add the cache event's old value to this message. We must propagate the old value when the
+     * receiver is doing GII and has listeners (CQs) that require the old value.
+     *
      * @since GemFire 5.5
      * @param event the entry event that contains the old value
      */
     public void appendOldValueToMessage(EntryEventImpl event) {
       {
-        @Unretained
-        Object val = event.getRawOldValue();
-        if (val == null || val == Token.NOT_AVAILABLE || val == Token.REMOVED_PHASE1 || val == Token.REMOVED_PHASE2 || val == Token.DESTROYED || val == Token.TOMBSTONE) {
+        @Unretained Object val = event.getRawOldValue();
+        if (val == null
+            || val == Token.NOT_AVAILABLE
+            || val == Token.REMOVED_PHASE1
+            || val == Token.REMOVED_PHASE2
+            || val == Token.DESTROYED
+            || val == Token.TOMBSTONE) {
           return;
         }
       }
@@ -954,14 +1031,14 @@ public abstract class DistributedCacheOperation {
     }
 
     /**
-     * Insert this message's oldValue into the given event.  This fixes
-     * bug 38382 by propagating old values with Entry level
-     * CacheOperationMessages during initial image transfer
+     * Insert this message's oldValue into the given event. This fixes bug 38382 by propagating old
+     * values with Entry level CacheOperationMessages during initial image transfer
+     *
      * @since GemFire 5.5
      */
     public void setOldValueInEvent(EntryEventImpl event) {
       CqService cqService = event.getRegion().getCache().getCqService();
-      if (cqService.isRunning()/* || event.getOperation().guaranteesOldValue()*/) {
+      if (cqService.isRunning() /* || event.getOperation().guaranteesOldValue()*/) {
         event.setOldValueForQueryProcessing();
         if (!event.hasOldValue() && this.hasOldValue) {
           if (this.oldValueIsSerialized) {
@@ -974,9 +1051,8 @@ public abstract class DistributedCacheOperation {
     }
 
     /**
-     * Sets a flag in the message indicating that this message contains delta
-     * bytes.
-     * 
+     * Sets a flag in the message indicating that this message contains delta bytes.
+     *
      * @since GemFire 6.1
      */
     protected void setHasDelta(boolean flag) {
@@ -991,9 +1067,7 @@ public abstract class DistributedCacheOperation {
       return this.filterRouting;
     }
 
-    /**
-     * @since GemFire 4.2.3
-     */
+    /** @since GemFire 4.2.3 */
     protected transient boolean regionAllowsConflation;
 
     public boolean possibleDuplicate;
@@ -1112,8 +1186,7 @@ public abstract class DistributedCacheOperation {
           return;
         }
 
-        @Released
-        InternalCacheEvent event = createEvent(rgn);
+        @Released InternalCacheEvent event = createEvent(rgn);
         try {
           boolean isEntry = event.getOperation().isEntry();
 
@@ -1125,7 +1198,8 @@ public abstract class DistributedCacheOperation {
             // events. This code path could be modified to pass the event to
             // listeners and bridges, but it should not apply the change to the
             // region
-            if (!rgn.isEventTrackerInitialized() && (rgn.getDataPolicy().withReplication() || rgn.getDataPolicy().withPreloaded())) {
+            if (!rgn.isEventTrackerInitialized()
+                && (rgn.getDataPolicy().withReplication() || rgn.getDataPolicy().withPreloaded())) {
               if (logger.isDebugEnabled()) {
                 logger.trace(LogMarker.DM_BRIDGE_SERVER, "Ignoring possible duplicate event");
               }
@@ -1186,25 +1260,38 @@ public abstract class DistributedCacheOperation {
           }
           sendReply(getSender(), processorId, rex, getReplySender(dm));
         } else if (thr != null) {
-          logger.error(LocalizedMessage.create(LocalizedStrings.DistributedCacheOperation_EXCEPTION_OCCURRED_WHILE_PROCESSING__0, this), thr);
+          logger.error(
+              LocalizedMessage.create(
+                  LocalizedStrings.DistributedCacheOperation_EXCEPTION_OCCURRED_WHILE_PROCESSING__0,
+                  this),
+              thr);
         }
       } // finally
     }
 
-    public void sendReply(InternalDistributedMember recipient, int pId, ReplyException rex, ReplySender dm) {
-      if (pId == 0 && (dm instanceof DM) && !this.directAck) {//Fix for #41871
-        // distributed-no-ack message.  Don't respond 
+    public void sendReply(
+        InternalDistributedMember recipient, int pId, ReplyException rex, ReplySender dm) {
+      if (pId == 0 && (dm instanceof DM) && !this.directAck) { //Fix for #41871
+        // distributed-no-ack message.  Don't respond
       } else {
         ReplyException exception = rex;
-        ReplyMessage.send(recipient, pId, exception, dm, !this.appliedOperation, this.closed, false, isInternal());
+        ReplyMessage.send(
+            recipient,
+            pId,
+            exception,
+            dm,
+            !this.appliedOperation,
+            this.closed,
+            false,
+            isInternal());
       }
     }
 
     /**
-     * Ensure that a version tag has been recorded in the region's version vector.
-     * This makes note that the event has been received and processed but probably
-     * didn't affect the cache's state or it would have been recorded earlier.
-     * 
+     * Ensure that a version tag has been recorded in the region's version vector. This makes note
+     * that the event has been received and processed but probably didn't affect the cache's state
+     * or it would have been recorded earlier.
+     *
      * @param tag the version information
      * @param r the affected region
      */
@@ -1218,7 +1305,8 @@ public abstract class DistributedCacheOperation {
               mbr = getSender();
             }
             if (logger.isTraceEnabled()) {
-              logger.trace("recording version tag in RVV in basicProcess since it wasn't done earlier");
+              logger.trace(
+                  "recording version tag in RVV in basicProcess since it wasn't done earlier");
             }
             v.recordVersion(mbr, tag);
           }
@@ -1227,10 +1315,10 @@ public abstract class DistributedCacheOperation {
     }
 
     /**
-     * When an event is discarded because of an attempt to overwrite a more
-     * recent change we still need to deliver that event to clients.  Clients
-     * can then perform their own concurrency checks on the event.
-     * 
+     * When an event is discarded because of an attempt to overwrite a more recent change we still
+     * need to deliver that event to clients. Clients can then perform their own concurrency checks
+     * on the event.
+     *
      * @param rgn
      * @param ev
      */
@@ -1248,9 +1336,11 @@ public abstract class DistributedCacheOperation {
     // return LocalRegion.getRegionFromPath(sys, path);
     // }
 
-    protected abstract InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException;
+    protected abstract InternalCacheEvent createEvent(DistributedRegion rgn)
+        throws EntryNotFoundException;
 
-    protected abstract boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException;
+    protected abstract boolean operateOnRegion(CacheEvent event, DistributionManager dm)
+        throws EntryNotFoundException;
 
     @Override
     public String toString() {
@@ -1446,7 +1536,8 @@ public abstract class DistributedCacheOperation {
 
     public List getOperations() {
       byte noDeserialize = DistributedCacheOperation.DESERIALIZATION_POLICY_NONE;
-      QueuedOperation qOp = new QueuedOperation(getOperation(), null, null, null, noDeserialize, this.callbackArg);
+      QueuedOperation qOp =
+          new QueuedOperation(getOperation(), null, null, null, noDeserialize, this.callbackArg);
       return Collections.singletonList(qOp);
     }
 
@@ -1500,13 +1591,14 @@ public abstract class DistributedCacheOperation {
   }
 
   /** Custom subclass that keeps all ReplyExceptions */
-  static private class ReliableCacheReplyProcessor extends CacheOperationReplyProcessor {
+  private static class ReliableCacheReplyProcessor extends CacheOperationReplyProcessor {
 
     private final Set failedMembers;
 
     private final DM dm;
 
-    public ReliableCacheReplyProcessor(InternalDistributedSystem system, Collection initMembers, Set departedMembers) {
+    public ReliableCacheReplyProcessor(
+        InternalDistributedSystem system, Collection initMembers, Set departedMembers) {
       super(system, initMembers);
       this.dm = system.getDistributionManager();
       this.failedMembers = departedMembers;
@@ -1540,7 +1632,8 @@ public abstract class DistributedCacheOperation {
   static class CacheOperationReplyProcessor extends DirectReplyProcessor {
     public CacheOperationMessage msg;
 
-    public CopyOnWriteHashSet<InternalDistributedMember> closedMembers = new CopyOnWriteHashSet<InternalDistributedMember>();
+    public CopyOnWriteHashSet<InternalDistributedMember> closedMembers =
+        new CopyOnWriteHashSet<InternalDistributedMember>();
 
     public CacheOperationReplyProcessor(InternalDistributedSystem system, Collection initMembers) {
       super(system, initMembers);
@@ -1563,7 +1656,5 @@ public abstract class DistributedCacheOperation {
 
       super.process(dmsg, warn);
     }
-
   }
-
 }

@@ -35,9 +35,9 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Class MemberClientsService
- * 
- * This class contains implementations of getting Memeber's Clients.
- * 
+ *
+ * <p>This class contains implementations of getting Memeber's Clients.
+ *
  * @since GemFire version 7.5
  */
 @Component
@@ -81,7 +81,8 @@ public class MemberClientsService implements PulseService {
         regionJSON.put("queueSize", memberClient.getQueueSize());
         regionJSON.put("clientCQCount", memberClient.getClientCQCount());
         regionJSON.put("isConnected", memberClient.isConnected() ? "Yes" : "No");
-        regionJSON.put("isSubscriptionEnabled", memberClient.isSubscriptionEnabled() ? "Yes" : "No");
+        regionJSON.put(
+            "isSubscriptionEnabled", memberClient.isSubscriptionEnabled() ? "Yes" : "No");
         regionJSON.put("uptime", TimeUtils.convertTimeSecondsToHMS(memberClient.getUptime()));
 
         regionJSON.put("cpuUsage", String.format("%.4f", memberClient.getCpuUsage()).toString());
@@ -96,6 +97,5 @@ public class MemberClientsService implements PulseService {
     }
     // Send json response
     return responseJSON;
-
   }
 }

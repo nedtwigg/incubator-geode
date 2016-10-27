@@ -58,8 +58,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * This is the DUnit Test to verify clear and DestroyRegion operation in
- * Client-Server Configuration.
+ * This is the DUnit Test to verify clear and DestroyRegion operation in Client-Server
+ * Configuration.
  */
 @Category(DistributedTest.class)
 public class ClearPropagationDUnitTest extends JUnit4DistributedTestCase {
@@ -106,11 +106,23 @@ public class ClearPropagationDUnitTest extends JUnit4DistributedTestCase {
     //client 2 VM
     client2 = host.getVM(3);
 
-    int PORT1 = ((Integer) server1.invoke(() -> ClearPropagationDUnitTest.createServerCache())).intValue();
-    int PORT2 = ((Integer) server2.invoke(() -> ClearPropagationDUnitTest.createServerCache())).intValue();
+    int PORT1 =
+        ((Integer) server1.invoke(() -> ClearPropagationDUnitTest.createServerCache())).intValue();
+    int PORT2 =
+        ((Integer) server2.invoke(() -> ClearPropagationDUnitTest.createServerCache())).intValue();
 
-    client1.invoke(() -> ClearPropagationDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT1), new Integer(PORT2)));
-    client2.invoke(() -> ClearPropagationDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), new Integer(PORT1), new Integer(PORT2)));
+    client1.invoke(
+        () ->
+            ClearPropagationDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()),
+                new Integer(PORT1),
+                new Integer(PORT2)));
+    client2.invoke(
+        () ->
+            ClearPropagationDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()),
+                new Integer(PORT1),
+                new Integer(PORT2)));
 
     CacheObserverHolder.setInstance(new CacheObserverAdapter());
   }
@@ -122,26 +134,20 @@ public class ClearPropagationDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * This is the DUnit Test to verify clear operation in Client-Server
-   * Configuration.
-   * Start client 1
-   * Start client 2
-   * Start Server 1
-   * Start Server 2
-   * Identify the server which is not primary and perform put and then clear
-   * operation from client1 against that server.
-   * Verify that Client 1 does not get the update Verify that Client 2 does get
-   * the update
-   *
+   * This is the DUnit Test to verify clear operation in Client-Server Configuration. Start client 1
+   * Start client 2 Start Server 1 Start Server 2 Identify the server which is not primary and
+   * perform put and then clear operation from client1 against that server. Verify that Client 1
+   * does not get the update Verify that Client 2 does get the update
    */
   @Test
   public void testVerifyClearNotReceivedBySenderReceivedByOthers() {
-    CacheSerializableRunnable resetFlags = new CacheSerializableRunnable("resetFlags") {
-      public void run2() throws CacheException {
-        gotClear = false;
-        gotDestroyed = false;
-      }
-    };
+    CacheSerializableRunnable resetFlags =
+        new CacheSerializableRunnable("resetFlags") {
+          public void run2() throws CacheException {
+            gotClear = false;
+            gotDestroyed = false;
+          }
+        };
     server1.invoke(resetFlags);
     server2.invoke(resetFlags);
     client1.invoke(resetFlags);
@@ -153,43 +159,39 @@ public class ClearPropagationDUnitTest extends JUnit4DistributedTestCase {
     client1.invoke(() -> ClearPropagationDUnitTest.registerKeysK1andK2());
     client2.invoke(() -> ClearPropagationDUnitTest.registerKeysK1andK2());
 
-    server1.invoke(checkSizeRegion(2, false/*Do not Block*/));
-    server2.invoke(checkSizeRegion(2, false/*Do not Block*/));
-    client1.invoke(checkSizeRegion(2, false/*Do not Block*/));
-    client2.invoke(checkSizeRegion(2, false/*Do not Block*/));
+    server1.invoke(checkSizeRegion(2, false /*Do not Block*/));
+    server2.invoke(checkSizeRegion(2, false /*Do not Block*/));
+    client1.invoke(checkSizeRegion(2, false /*Do not Block*/));
+    client2.invoke(checkSizeRegion(2, false /*Do not Block*/));
 
-    client1.invoke(() -> ClearPropagationDUnitTest.acquireConnectionsAndClear(NetworkUtils.getServerHostName(client1.getHost())));
+    client1.invoke(
+        () ->
+            ClearPropagationDUnitTest.acquireConnectionsAndClear(
+                NetworkUtils.getServerHostName(client1.getHost())));
 
-    client1.invoke(checkSizeRegion(2, false/*Do not Block*/));
+    client1.invoke(checkSizeRegion(2, false /*Do not Block*/));
     client2.invoke(checkSizeRegion(0, true /* block*/));
-    server1.invoke(checkSizeRegion(0, false/*Do not Block*/));
-    server2.invoke(checkSizeRegion(0, false/*Do not Block*/));
+    server1.invoke(checkSizeRegion(0, false /*Do not Block*/));
+    server2.invoke(checkSizeRegion(0, false /*Do not Block*/));
 
     client1.invoke(() -> ClearPropagationDUnitTest.verifyNoUpdates());
-
   }
 
   /**
-   * This is the DUnit Test to verify destroyRegion operation in Client-Server
-   * Configuration.
-   * Start client 1
-   * Start client 2
-   * Start Server 1
-   * Start Server 2
-   * Identify the server which is not primary and perform destroyRegion
-   * operation from client1 against that server.
-   * Verify that Client 1 does not get the update Verify that Client 2 does get
-   * the update
-   *
+   * This is the DUnit Test to verify destroyRegion operation in Client-Server Configuration. Start
+   * client 1 Start client 2 Start Server 1 Start Server 2 Identify the server which is not primary
+   * and perform destroyRegion operation from client1 against that server. Verify that Client 1 does
+   * not get the update Verify that Client 2 does get the update
    */
   @Test
   public void testEventIdGeneratedInDestroyRegionOperation() throws Exception {
-    CacheSerializableRunnable resetFlags = new CacheSerializableRunnable("resetFlags") {
-      public void run2() throws CacheException {
-        gotClear = false;
-        gotDestroyed = false;
-      }
-    };
+    CacheSerializableRunnable resetFlags =
+        new CacheSerializableRunnable("resetFlags") {
+          public void run2() throws CacheException {
+            gotClear = false;
+            gotDestroyed = false;
+          }
+        };
     server1.invoke(resetFlags);
     server2.invoke(resetFlags);
     client1.invoke(resetFlags);
@@ -200,72 +202,72 @@ public class ClearPropagationDUnitTest extends JUnit4DistributedTestCase {
     client1.invoke(() -> ClearPropagationDUnitTest.registerKeysK1andK2());
     client2.invoke(() -> ClearPropagationDUnitTest.registerKeysK1andK2());
 
-    server1.invoke(checkSizeRegion(2, false/*Do not Block*/));
-    server2.invoke(checkSizeRegion(2, false/*Do not Block*/));
-    client1.invoke(checkSizeRegion(2, false/*Do not Block*/));
-    client2.invoke(checkSizeRegion(2, false/*Do not Block*/));
+    server1.invoke(checkSizeRegion(2, false /*Do not Block*/));
+    server2.invoke(checkSizeRegion(2, false /*Do not Block*/));
+    client1.invoke(checkSizeRegion(2, false /*Do not Block*/));
+    client2.invoke(checkSizeRegion(2, false /*Do not Block*/));
 
-    client1.invoke(() -> ClearPropagationDUnitTest.acquireConnectionsAndDestroyRegion(NetworkUtils.getServerHostName(client1.getHost())));
+    client1.invoke(
+        () ->
+            ClearPropagationDUnitTest.acquireConnectionsAndDestroyRegion(
+                NetworkUtils.getServerHostName(client1.getHost())));
 
-    client1.invoke(checkSizeRegion(2, false/*Do not Block*/));
+    client1.invoke(checkSizeRegion(2, false /*Do not Block*/));
     client2.invoke(checkDestroyRegion(true /* block*/));
-    server1.invoke(checkDestroyRegion(false/*Do not Block*/));
-    server2.invoke(checkDestroyRegion(false/*Do not Block*/));
+    server1.invoke(checkDestroyRegion(false /*Do not Block*/));
+    server2.invoke(checkDestroyRegion(false /*Do not Block*/));
 
     client1.invoke(() -> ClearPropagationDUnitTest.verifyNoUpdates());
-
   }
 
   private CacheSerializableRunnable checkDestroyRegion(final boolean toBlock) {
-    CacheSerializableRunnable checkRegion = new CacheSerializableRunnable("checkDestroyRegion") {
-      public void run2() throws CacheException {
-        if (toBlock) {
-          synchronized (ClearPropagationDUnitTest.class) {
-            if (!gotDestroyed) {
-              try {
-                ClearPropagationDUnitTest.class.wait();
-              } catch (InterruptedException e) {
-                throw new CacheException(e) {
-
-                };
+    CacheSerializableRunnable checkRegion =
+        new CacheSerializableRunnable("checkDestroyRegion") {
+          public void run2() throws CacheException {
+            if (toBlock) {
+              synchronized (ClearPropagationDUnitTest.class) {
+                if (!gotDestroyed) {
+                  try {
+                    ClearPropagationDUnitTest.class.wait();
+                  } catch (InterruptedException e) {
+                    throw new CacheException(e) {};
+                  }
+                }
               }
             }
-          }
-        }
 
-        Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-        assertNull(region);
-      }
-    };
+            Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+            assertNull(region);
+          }
+        };
 
     return checkRegion;
   }
 
   private CacheSerializableRunnable checkSizeRegion(final int size, final boolean toBlock) {
 
-    CacheSerializableRunnable clearRegion = new CacheSerializableRunnable("checkSize") {
+    CacheSerializableRunnable clearRegion =
+        new CacheSerializableRunnable("checkSize") {
 
-      public void run2() throws CacheException {
-        Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-        assertNotNull(region);
-        LogWriterUtils.getLogWriter().info("Size of the region " + region.size());
+          public void run2() throws CacheException {
+            Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+            assertNotNull(region);
+            LogWriterUtils.getLogWriter().info("Size of the region " + region.size());
 
-        if (toBlock) {
-          synchronized (ClearPropagationDUnitTest.class) {
-            if (!gotClear) {
-              try {
-                ClearPropagationDUnitTest.class.wait();
-              } catch (InterruptedException e) {
-                throw new CacheException(e) {
-
-                };
+            if (toBlock) {
+              synchronized (ClearPropagationDUnitTest.class) {
+                if (!gotClear) {
+                  try {
+                    ClearPropagationDUnitTest.class.wait();
+                  } catch (InterruptedException e) {
+                    throw new CacheException(e) {};
+                  }
+                }
               }
             }
+            assertEquals(size, region.size());
           }
-        }
-        assertEquals(size, region.size());
-      }
-    };
+        };
     return clearRegion;
   }
 
@@ -281,7 +283,7 @@ public class ClearPropagationDUnitTest extends JUnit4DistributedTestCase {
       assertNotNull(conn1);
       assertEquals(PORT2, conn1.getServer().getPort());
       ServerRegionProxy srp = new ServerRegionProxy(Region.SEPARATOR + REGION_NAME, pool);
-      srp.clearOnForTestsOnly(conn1, new EventID(new byte[] { 1 }, 1, 1), null);
+      srp.clearOnForTestsOnly(conn1, new EventID(new byte[] {1}, 1, 1), null);
     } catch (Exception ex) {
       ex.printStackTrace();
       fail("while setting acquireConnections  " + ex);
@@ -300,17 +302,14 @@ public class ClearPropagationDUnitTest extends JUnit4DistributedTestCase {
       assertNotNull(conn1);
       assertEquals(PORT2, conn1.getServer().getPort());
       ServerRegionProxy srp = new ServerRegionProxy(Region.SEPARATOR + REGION_NAME, pool);
-      srp.destroyRegionOnForTestsOnly(conn1, new EventID(new byte[] { 1 }, 1, 1), null);
+      srp.destroyRegionOnForTestsOnly(conn1, new EventID(new byte[] {1}, 1, 1), null);
     } catch (Exception ex) {
       ex.printStackTrace();
       fail("while setting acquireConnections  " + ex);
     }
   }
 
-  /**
-   * Creates entries on the server
-   *
-   */
+  /** Creates entries on the server */
   public static void createEntriesK1andK2() {
     try {
       Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -338,32 +337,40 @@ public class ClearPropagationDUnitTest extends JUnit4DistributedTestCase {
     CacheServerTestUtil.disableShufflingOfEndpoints();
     Pool p;
     try {
-      p = PoolManager.createFactory().addServer(host, PORT1).addServer(host, PORT2).setSubscriptionEnabled(true).setReadTimeout(2000).setSocketBufferSize(1000).setMinConnections(4)
-          // .setRetryInterval(250)
-          // .setRetryAttempts(2)
-          .create("ClearPropagationDUnitTestPool");
+      p =
+          PoolManager.createFactory()
+              .addServer(host, PORT1)
+              .addServer(host, PORT2)
+              .setSubscriptionEnabled(true)
+              .setReadTimeout(2000)
+              .setSocketBufferSize(1000)
+              .setMinConnections(4)
+              // .setRetryInterval(250)
+              // .setRetryAttempts(2)
+              .create("ClearPropagationDUnitTestPool");
     } finally {
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setPoolName(p.getName());
-    factory.setCacheListener(new CacheListenerAdapter() {
-      public void afterRegionClear(RegionEvent re) {
+    factory.setCacheListener(
+        new CacheListenerAdapter() {
+          public void afterRegionClear(RegionEvent re) {
 
-        synchronized (ClearPropagationDUnitTest.class) {
-          gotClear = true;
-          ClearPropagationDUnitTest.class.notify();
-        }
-      }
+            synchronized (ClearPropagationDUnitTest.class) {
+              gotClear = true;
+              ClearPropagationDUnitTest.class.notify();
+            }
+          }
 
-      public void afterRegionDestroy(RegionEvent re) {
-        synchronized (ClearPropagationDUnitTest.class) {
-          gotDestroyed = true;
-          ClearPropagationDUnitTest.class.notify();
-        }
-      }
-    });
+          public void afterRegionDestroy(RegionEvent re) {
+            synchronized (ClearPropagationDUnitTest.class) {
+              gotDestroyed = true;
+              ClearPropagationDUnitTest.class.notify();
+            }
+          }
+        });
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
   }

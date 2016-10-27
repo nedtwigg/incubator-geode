@@ -34,16 +34,16 @@ import org.apache.geode.internal.cache.PartitionedRegion;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * A Partitioned Region specific message whose reply guarantees that all operations
- * have completed for a given Partitioned Region's bucket.   
- * 
- * <p>Currently this message does not support conserve-sockets=false, that is it
- * only flushes the shared communication channels.</p>
- * 
- * <p>This messages implementation is unique in that it uses another instance of itself
- * as the reply.  This was to leverage the fact that the message is a 
- * {@link org.apache.geode.distributed.internal.SerialDistributionMessage}.</p>
- * 
+ * A Partitioned Region specific message whose reply guarantees that all operations have completed
+ * for a given Partitioned Region's bucket.
+ *
+ * <p>Currently this message does not support conserve-sockets=false, that is it only flushes the
+ * shared communication channels.
+ *
+ * <p>This messages implementation is unique in that it uses another instance of itself as the
+ * reply. This was to leverage the fact that the message is a {@link
+ * org.apache.geode.distributed.internal.SerialDistributionMessage}.
+ *
  * @since GemFire 5.1
  */
 public final class FlushMessage extends SerialDistributionMessage implements MessageWithReply {
@@ -55,10 +55,10 @@ public final class FlushMessage extends SerialDistributionMessage implements Mes
   int bucketId;
   int processorId;
 
-  public FlushMessage() {
-  }
+  public FlushMessage() {}
 
-  private FlushMessage(int prId, int bucketId, int processorId, InternalDistributedMember recipient) {
+  private FlushMessage(
+      int prId, int bucketId, int processorId, InternalDistributedMember recipient) {
     this.prId = prId;
     this.bucketId = bucketId;
     this.processorId = processorId;
@@ -79,12 +79,15 @@ public final class FlushMessage extends SerialDistributionMessage implements Mes
         Assert.assertTrue(p.getRegionAdvisor().isPrimaryForBucket(this.bucketId));
       } catch (PRLocallyDestroyedException fre) {
         if (logger.isDebugEnabled()) {
-          logger.debug("Sending reply despite Region getting locally destroyed prId={}", this.prId, fre);
+          logger.debug(
+              "Sending reply despite Region getting locally destroyed prId={}", this.prId, fre);
         }
       } catch (CacheRuntimeException ce) {
-        logger.debug("Sending reply despite unavailable Partitioned Region using prId={}", this.prId, ce);
+        logger.debug(
+            "Sending reply despite unavailable Partitioned Region using prId={}", this.prId, ce);
       } finally {
-        dm.putOutgoing(new FlushMessage(this.prId, Integer.MIN_VALUE, getProcessorId(), getSender()));
+        dm.putOutgoing(
+            new FlushMessage(this.prId, Integer.MIN_VALUE, getProcessorId(), getSender()));
       }
     } else {
       if (logger.isDebugEnabled()) {
@@ -99,15 +102,18 @@ public final class FlushMessage extends SerialDistributionMessage implements Mes
   }
 
   /**
-   * Send this message to the bucket primary, after the {@link ReplyProcessor21#waitForRepliesUninterruptibly()} returns, all updates
-   * from the primary should be complete.  Use this from a host of a backup bucket (aka secondary) when the update
-   * operations originating from the primary {@link Scope#DISTRIBUTED_NO_ACK do not require an acknowldgement} 
+   * Send this message to the bucket primary, after the {@link
+   * ReplyProcessor21#waitForRepliesUninterruptibly()} returns, all updates from the primary should
+   * be complete. Use this from a host of a backup bucket (aka secondary) when the update operations
+   * originating from the primary {@link Scope#DISTRIBUTED_NO_ACK do not require an acknowldgement}
+   *
    * @param primary
    * @param p
    * @param bucketId
    * @return a processor on which to wait for the flush operation to complete
    */
-  public static ReplyProcessor21 send(InternalDistributedMember primary, PartitionedRegion p, int bucketId) {
+  public static ReplyProcessor21 send(
+      InternalDistributedMember primary, PartitionedRegion p, int bucketId) {
     ReplyProcessor21 reply = new ReplyProcessor21(p.getDistributionManager(), primary);
     FlushMessage fm = new FlushMessage(p.getPRId(), bucketId, reply.getProcessorId(), primary);
     p.getDistributionManager().putOutgoing(fm);
@@ -139,5 +145,4 @@ public final class FlushMessage extends SerialDistributionMessage implements Mes
     out.writeInt(this.bucketId);
     out.writeInt(this.processorId);
   }
-
 }

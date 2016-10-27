@@ -20,9 +20,7 @@ package org.apache.geode.test.dunit.internal;
 
 import java.util.Properties;
 
-/**
- * Defines the {@code DistributedTestCase} methods that can be overridden by its subclasses.
- */
+/** Defines the {@code DistributedTestCase} methods that can be overridden by its subclasses. */
 public interface DistributedTestFixture {
 
   /**
@@ -54,18 +52,16 @@ public interface DistributedTestFixture {
   public void postTearDown() throws Exception;
 
   /**
-   * {@code preTearDownAssertions()} is invoked before any tear down methods
-   * have been invoked. If this method throws anything, tear down methods will
-   * still be invoked.
+   * {@code preTearDownAssertions()} is invoked before any tear down methods have been invoked. If
+   * this method throws anything, tear down methods will still be invoked.
    *
    * <p>Override this as needed. Default implementation is empty.
    */
   public void preTearDownAssertions() throws Exception;
 
   /**
-   * {@code postTearDownAssertions()} is invoked after all tear down methods
-   * have completed. This method will not be invoked if
-   * {@code preTearDownAssertions()} throws.
+   * {@code postTearDownAssertions()} is invoked after all tear down methods have completed. This
+   * method will not be invoked if {@code preTearDownAssertions()} throws.
    *
    * <p>Override this as needed. Default implementation is empty.
    */
@@ -74,14 +70,11 @@ public interface DistributedTestFixture {
   /**
    * Returns the {@code Properties} used to define the {@code DistributedSystem}.
    *
-   * <p>Override this as needed. This method is called by various
-   * {@code getSystem} methods in {@code DistributedTestCase}.
+   * <p>Override this as needed. This method is called by various {@code getSystem} methods in
+   * {@code DistributedTestCase}.
    */
   public Properties getDistributedSystemProperties();
 
-  /**
-   * Returns the {@code name} of the test method being executed.
-   */
+  /** Returns the {@code name} of the test method being executed. */
   public String getName();
-
 }

@@ -33,16 +33,12 @@ import org.apache.geode.internal.cache.PartitionAttributesImpl;
 import org.apache.geode.management.internal.cli.util.RegionAttributesDefault;
 import org.apache.geode.management.internal.cli.util.RegionAttributesNames;
 
-/***
- * Data class containing the PartitionAttributes for a region on a certain member
- *
- */
+/** * Data class containing the PartitionAttributes for a region on a certain member */
 public class PartitionAttributesInfo implements Serializable {
 
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
+
   private int totalNumBuckets = 0;
   private int localMaxMemory = 0;
   private int redundantCopies = 0;
@@ -81,31 +77,40 @@ public class PartitionAttributesInfo implements Serializable {
 
     nonDefaultAttributes = new HashMap<String, String>();
     if (this.totalNumBuckets != RegionAttributesDefault.TOTAL_NUM_BUCKETS) {
-      nonDefaultAttributes.put(RegionAttributesNames.TOTAL_NUM_BUCKETS, Integer.toString(this.totalNumBuckets));
+      nonDefaultAttributes.put(
+          RegionAttributesNames.TOTAL_NUM_BUCKETS, Integer.toString(this.totalNumBuckets));
     }
 
-    if (this.localMaxMemory != ((PartitionAttributesImpl) partitionAttributes).getLocalMaxMemoryDefault()) {
-      nonDefaultAttributes.put(RegionAttributesNames.LOCAL_MAX_MEMORY, Integer.toString(this.localMaxMemory));
+    if (this.localMaxMemory
+        != ((PartitionAttributesImpl) partitionAttributes).getLocalMaxMemoryDefault()) {
+      nonDefaultAttributes.put(
+          RegionAttributesNames.LOCAL_MAX_MEMORY, Integer.toString(this.localMaxMemory));
     }
 
     if (this.redundantCopies != RegionAttributesDefault.REDUNDANT_COPIES) {
-      nonDefaultAttributes.put(RegionAttributesNames.REDUNDANT_COPIES, Integer.toString(this.redundantCopies));
+      nonDefaultAttributes.put(
+          RegionAttributesNames.REDUNDANT_COPIES, Integer.toString(this.redundantCopies));
     }
 
-    if (this.colocatedWith != null && !this.colocatedWith.equals(RegionAttributesDefault.COLOCATED_WITH)) {
+    if (this.colocatedWith != null
+        && !this.colocatedWith.equals(RegionAttributesDefault.COLOCATED_WITH)) {
       nonDefaultAttributes.put(RegionAttributesNames.COLOCATED_WITH, this.colocatedWith);
     }
 
     if (this.recoveryDelay != RegionAttributesDefault.RECOVERY_DELAY) {
-      nonDefaultAttributes.put(RegionAttributesNames.RECOVERY_DELAY, Long.toString(this.recoveryDelay));
+      nonDefaultAttributes.put(
+          RegionAttributesNames.RECOVERY_DELAY, Long.toString(this.recoveryDelay));
     }
 
     if (this.startupRecoveryDelay != RegionAttributesDefault.STARTUP_RECOVERY_DELAY) {
-      nonDefaultAttributes.put(RegionAttributesNames.STARTUP_RECOVERY_DELAY, Long.toString(this.startupRecoveryDelay));
+      nonDefaultAttributes.put(
+          RegionAttributesNames.STARTUP_RECOVERY_DELAY, Long.toString(this.startupRecoveryDelay));
     }
 
-    if (this.partitionResolverName != null && !this.partitionResolverName.equals(RegionAttributesDefault.PARTITION_RESOLVER)) {
-      nonDefaultAttributes.put(RegionAttributesNames.PARTITION_RESOLVER, this.partitionResolverName);
+    if (this.partitionResolverName != null
+        && !this.partitionResolverName.equals(RegionAttributesDefault.PARTITION_RESOLVER)) {
+      nonDefaultAttributes.put(
+          RegionAttributesNames.PARTITION_RESOLVER, this.partitionResolverName);
     }
   }
 
@@ -144,7 +149,15 @@ public class PartitionAttributesInfo implements Serializable {
   public boolean equals(Object obj) {
     if (obj instanceof PartitionAttributesInfo) {
       PartitionAttributesInfo paInfo = (PartitionAttributesInfo) obj;
-      return StringUtils.equals(this.getColocatedWith(), paInfo.getColocatedWith()) && this.getLocalMaxMemory() == paInfo.getLocalMaxMemory() && StringUtils.equals(this.getPartitionResolverName(), paInfo.getPartitionResolverName()) && this.getRecoveryDelay() == paInfo.getRecoveryDelay() && this.getRedundantCopies() == paInfo.getRedundantCopies() && this.getStartupRecoveryDelay() == paInfo.getStartupRecoveryDelay() && this.getTotalNumBuckets() == paInfo.getTotalNumBuckets() && this.getFixedPartitionAttributesInfo().equals(paInfo.getFixedPartitionAttributesInfo());
+      return StringUtils.equals(this.getColocatedWith(), paInfo.getColocatedWith())
+          && this.getLocalMaxMemory() == paInfo.getLocalMaxMemory()
+          && StringUtils.equals(this.getPartitionResolverName(), paInfo.getPartitionResolverName())
+          && this.getRecoveryDelay() == paInfo.getRecoveryDelay()
+          && this.getRedundantCopies() == paInfo.getRedundantCopies()
+          && this.getStartupRecoveryDelay() == paInfo.getStartupRecoveryDelay()
+          && this.getTotalNumBuckets() == paInfo.getTotalNumBuckets()
+          && this.getFixedPartitionAttributesInfo()
+              .equals(paInfo.getFixedPartitionAttributesInfo());
     } else {
       return false;
     }
@@ -152,7 +165,6 @@ public class PartitionAttributesInfo implements Serializable {
 
   public int hashCode() {
     return 42; // any arbitrary constant will do
-
   }
 
   public Map<String, String> getNonDefaultAttributes() {

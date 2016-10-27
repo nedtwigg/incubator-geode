@@ -27,8 +27,7 @@ public class ASTType extends GemFireAST {
   private ObjectType javaType = null;
   private String typeName = null; // to be resolved
 
-  public ASTType() {
-  }
+  public ASTType() {}
 
   public ASTType(Token t) {
     super(t);
@@ -60,5 +59,4 @@ public class ASTType extends GemFireAST {
 
     compiler.push(this.javaType);
   }
-
 }

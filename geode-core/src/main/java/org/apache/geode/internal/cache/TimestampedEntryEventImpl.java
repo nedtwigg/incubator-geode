@@ -19,10 +19,7 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.cache.util.TimestampedEntryEvent;
 import org.apache.geode.internal.offheap.annotations.Retained;
 
-/**
- * A subclass of EntryEventImpl used in WAN conflict resolution
- * 
- */
+/** A subclass of EntryEventImpl used in WAN conflict resolution */
 public class TimestampedEntryEventImpl extends EntryEventImpl implements TimestampedEntryEvent {
 
   private int newDSID;
@@ -31,7 +28,8 @@ public class TimestampedEntryEventImpl extends EntryEventImpl implements Timesta
   private long oldTimestamp;
 
   @Retained
-  public TimestampedEntryEventImpl(EntryEventImpl event, int newDSID, int oldDSID, long newTimestamp, long oldTimestamp) {
+  public TimestampedEntryEventImpl(
+      EntryEventImpl event, int newDSID, int oldDSID, long newTimestamp, long oldTimestamp) {
     super(event);
     this.newDSID = newDSID;
     this.oldDSID = oldDSID;
@@ -70,5 +68,4 @@ public class TimestampedEntryEventImpl extends EntryEventImpl implements Timesta
   public long getOldTimestamp() {
     return this.oldTimestamp;
   }
-
 }

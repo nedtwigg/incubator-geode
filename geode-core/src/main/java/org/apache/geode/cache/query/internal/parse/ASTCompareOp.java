@@ -23,8 +23,7 @@ import org.apache.geode.cache.query.internal.QCompiler;
 public class ASTCompareOp extends GemFireAST {
   private static final long serialVersionUID = 2764710765423856496L;
 
-  public ASTCompareOp() {
-  }
+  public ASTCompareOp() {}
 
   public ASTCompareOp(Token t) {
     super(t);

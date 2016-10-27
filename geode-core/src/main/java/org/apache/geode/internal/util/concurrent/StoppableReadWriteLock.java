@@ -19,9 +19,8 @@ package org.apache.geode.internal.util.concurrent;
 import org.apache.geode.CancelCriterion;
 
 /**
- * A non-reentrant ReadWriteLock that responds to Cancellation. The underlying lock
- * is {@link SemaphoreReadWriteLock}, which is a count based lock. 
- * 
+ * A non-reentrant ReadWriteLock that responds to Cancellation. The underlying lock is {@link
+ * SemaphoreReadWriteLock}, which is a count based lock.
  */
 public class StoppableReadWriteLock extends StoppableReentrantReadWriteLock {
 

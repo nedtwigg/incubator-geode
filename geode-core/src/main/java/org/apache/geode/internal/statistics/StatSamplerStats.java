@@ -18,32 +18,69 @@ package org.apache.geode.internal.statistics;
 
 import org.apache.geode.*;
 
-/**
- * Statistics related to the statistic sampler.
- */
+/** Statistics related to the statistic sampler. */
 public class StatSamplerStats {
-  public final static String SAMPLE_COUNT = "sampleCount"; // int
-  public final static String SAMPLE_TIME = "sampleTime"; // long
-  public final static String DELAY_DURATION = "delayDuration"; // int
-  public final static String STAT_RESOURCES = "statResources"; // int
-  public final static String JVM_PAUSES = "jvmPauses"; // int
-  public final static String SAMPLE_CALLBACKS = "sampleCallbacks"; // int
-  public final static String SAMPLE_CALLBACK_ERRORS = "sampleCallbackErrors"; // int
-  public final static String SAMPLE_CALLBACK_DURATION = "sampleCallbackDuration"; // long
+  public static final String SAMPLE_COUNT = "sampleCount"; // int
+  public static final String SAMPLE_TIME = "sampleTime"; // long
+  public static final String DELAY_DURATION = "delayDuration"; // int
+  public static final String STAT_RESOURCES = "statResources"; // int
+  public static final String JVM_PAUSES = "jvmPauses"; // int
+  public static final String SAMPLE_CALLBACKS = "sampleCallbacks"; // int
+  public static final String SAMPLE_CALLBACK_ERRORS = "sampleCallbackErrors"; // int
+  public static final String SAMPLE_CALLBACK_DURATION = "sampleCallbackDuration"; // long
 
-  private final static StatisticsType samplerType;
-  private final static int sampleCountId;
-  private final static int sampleTimeId;
-  private final static int delayDurationId;
-  private final static int statResourcesId;
-  private final static int jvmPausesId;
-  private final static int sampleCallbacksId;
-  private final static int sampleCallbackErrorsId;
-  private final static int sampleCallbackDurationId;
+  private static final StatisticsType samplerType;
+  private static final int sampleCountId;
+  private static final int sampleTimeId;
+  private static final int delayDurationId;
+  private static final int statResourcesId;
+  private static final int jvmPausesId;
+  private static final int sampleCallbacksId;
+  private static final int sampleCallbackErrorsId;
+  private static final int sampleCallbackDurationId;
+
   static {
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
-    samplerType = f.createType("StatSampler", "Stats on the statistic sampler.", new StatisticDescriptor[] { f.createIntCounter(SAMPLE_COUNT, "Total number of samples taken by this sampler.", "samples", false), f.createLongCounter(SAMPLE_TIME, "Total amount of time spent taking samples.", "milliseconds", false), f.createIntGauge(DELAY_DURATION, "Actual duration of sampling delay taken before taking this sample.", "milliseconds", false), f.createIntGauge(STAT_RESOURCES, "Current number of statistic resources being sampled by this sampler.", "resources", false), f.createIntCounter(JVM_PAUSES, "Total number of JVM pauses (which may or may not be full GC pauses) detected by this sampler. A JVM pause is defined as a system event which kept the statistics sampler thread from sampling for 3000 or more milliseconds. This threshold can be customized by setting the system property gemfire.statSamplerDelayThreshold (units are milliseconds).", "jvmPauses", false),
-        f.createIntGauge(SAMPLE_CALLBACKS, "Current number of statistics that are sampled using callbacks.", "resources", false), f.createIntCounter(SAMPLE_CALLBACK_ERRORS, "Total number of exceptions thrown by callbacks when performing sampling", "errors", false), f.createLongCounter(SAMPLE_CALLBACK_DURATION, "Total amount of time invoking sampling callbacks", "milliseconds", false), });
+    samplerType =
+        f.createType(
+            "StatSampler",
+            "Stats on the statistic sampler.",
+            new StatisticDescriptor[] {
+              f.createIntCounter(
+                  SAMPLE_COUNT, "Total number of samples taken by this sampler.", "samples", false),
+              f.createLongCounter(
+                  SAMPLE_TIME, "Total amount of time spent taking samples.", "milliseconds", false),
+              f.createIntGauge(
+                  DELAY_DURATION,
+                  "Actual duration of sampling delay taken before taking this sample.",
+                  "milliseconds",
+                  false),
+              f.createIntGauge(
+                  STAT_RESOURCES,
+                  "Current number of statistic resources being sampled by this sampler.",
+                  "resources",
+                  false),
+              f.createIntCounter(
+                  JVM_PAUSES,
+                  "Total number of JVM pauses (which may or may not be full GC pauses) detected by this sampler. A JVM pause is defined as a system event which kept the statistics sampler thread from sampling for 3000 or more milliseconds. This threshold can be customized by setting the system property gemfire.statSamplerDelayThreshold (units are milliseconds).",
+                  "jvmPauses",
+                  false),
+              f.createIntGauge(
+                  SAMPLE_CALLBACKS,
+                  "Current number of statistics that are sampled using callbacks.",
+                  "resources",
+                  false),
+              f.createIntCounter(
+                  SAMPLE_CALLBACK_ERRORS,
+                  "Total number of exceptions thrown by callbacks when performing sampling",
+                  "errors",
+                  false),
+              f.createLongCounter(
+                  SAMPLE_CALLBACK_DURATION,
+                  "Total amount of time invoking sampling callbacks",
+                  "milliseconds",
+                  false),
+            });
     sampleCountId = samplerType.nameToId(SAMPLE_COUNT);
     sampleTimeId = samplerType.nameToId(SAMPLE_TIME);
     delayDurationId = samplerType.nameToId(DELAY_DURATION);

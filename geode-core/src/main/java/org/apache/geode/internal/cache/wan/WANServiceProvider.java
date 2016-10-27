@@ -45,7 +45,6 @@ public class WANServiceProvider {
       throw new IllegalStateException("WAN service is not available.");
     }
     return factory.createGatewaySenderFactory(cache);
-
   }
 
   public static GatewayReceiverFactory createGatewayReceiverFactory(Cache cache) {
@@ -69,7 +68,5 @@ public class WANServiceProvider {
     return factory.createLocatorMembershipListener();
   }
 
-  private WANServiceProvider() {
-
-  }
+  private WANServiceProvider() {}
 }

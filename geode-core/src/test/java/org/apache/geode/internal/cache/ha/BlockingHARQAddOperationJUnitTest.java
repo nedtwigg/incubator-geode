@@ -36,46 +36,49 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Test runs all tests of HARQAddOperationJUnitTest using BlockingHARegionQueue
- * instead of HARegionQueue
- * 
- * 
+ * Test runs all tests of HARQAddOperationJUnitTest using BlockingHARegionQueue instead of
+ * HARegionQueue
  */
 @Category(IntegrationTest.class)
 public class BlockingHARQAddOperationJUnitTest extends HARQAddOperationJUnitTest {
 
   /**
    * Creates Blocking HA region-queue object
-   * 
+   *
    * @return Blocking HA region-queue object
    * @throws IOException
    * @throws ClassNotFoundException
    * @throws CacheException
    * @throws InterruptedException
    */
-  protected HARegionQueue createHARegionQueue(String name) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
-    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, HARegionQueue.BLOCKING_HA_QUEUE, false);
+  protected HARegionQueue createHARegionQueue(String name)
+      throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    HARegionQueue regionqueue =
+        HARegionQueue.getHARegionQueueInstance(name, cache, HARegionQueue.BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 
   /**
    * Creates Blocking HA region-queue object
-   * 
+   *
    * @return Blocking HA region-queue object
    * @throws IOException
    * @throws ClassNotFoundException
    * @throws CacheException
    * @throws InterruptedException
    */
-  protected HARegionQueue createHARegionQueue(String name, HARegionQueueAttributes attrs) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
-    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, attrs, HARegionQueue.BLOCKING_HA_QUEUE, false);
+  protected HARegionQueue createHARegionQueue(String name, HARegionQueueAttributes attrs)
+      throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    HARegionQueue regionqueue =
+        HARegionQueue.getHARegionQueueInstance(
+            name, cache, attrs, HARegionQueue.BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 
   /**
    * Tests the take() functionality of
    * <code>BlockingHARegionQueue<code> with conflation disabled.
-   * 
+   *
    * @throws Exception
    */
   @Test
@@ -89,9 +92,9 @@ public class BlockingHARQAddOperationJUnitTest extends HARQAddOperationJUnitTest
   /**
    * Tests the take() functionality of
    * <code>BlockingHARegionQueue<code> with conflation enabled.
-   * 
+   *
    * @throws Exception
-   * 
+   *
    */
   @Test
   public void testBlockingTakeConflationEnabled() throws Exception {
@@ -103,16 +106,13 @@ public class BlockingHARQAddOperationJUnitTest extends HARQAddOperationJUnitTest
 
   /**
    * This method performs the following steps :<br>
-   * 1)Create a blocking queue and start a thread which does take() on it.
-   * 2)Verify after significant time that the thread is still alive as it should
-   * be blocked on take() since there are no events in the queue.<br>
-   * 3)Do a put into the queue and verify that the take thread returns with the
-   * same object.
-   * 
-   * @param conflationEnabled -
-   *          whether conflation is enabled or not
+   * 1)Create a blocking queue and start a thread which does take() on it. 2)Verify after
+   * significant time that the thread is still alive as it should be blocked on take() since there
+   * are no events in the queue.<br>
+   * 3)Do a put into the queue and verify that the take thread returns with the same object.
+   *
+   * @param conflationEnabled - whether conflation is enabled or not
    * @throws Exception
-   * 
    */
   public void doBlockingTake(boolean conflationEnabled) throws Exception {
 
@@ -120,23 +120,24 @@ public class BlockingHARQAddOperationJUnitTest extends HARQAddOperationJUnitTest
     message = null;
     final HARegionQueue rq = createHARegionQueue("testBlockingTake");
     final List takenObjects = new ArrayList();
-    Thread takeThread = new Thread() {
-      public void run() {
-        try {
-          takenObjects.add(rq.take());
-        } catch (Exception e) {
-          testFailed = true;
-          message.append("Exception while performing take operation " + e.getStackTrace());
-        }
-      }
-    };
+    Thread takeThread =
+        new Thread() {
+          public void run() {
+            try {
+              takenObjects.add(rq.take());
+            } catch (Exception e) {
+              testFailed = true;
+              message.append("Exception while performing take operation " + e.getStackTrace());
+            }
+          }
+        };
 
     takeThread.start();
     Wait.pause(20 * 1000);
     if (!takeThread.isAlive()) {
       fail("take() thread died ");
     }
-    EventID id1 = new EventID(new byte[] { 1 }, 1, 1);
+    EventID id1 = new EventID(new byte[] {1}, 1, 1);
     ConflatableObject c1 = new ConflatableObject(KEY1, VALUE1, id1, conflationEnabled, "region1");
     rq.put(c1);
     ThreadUtils.join(takeThread, 20 * 1000);
@@ -145,21 +146,18 @@ public class BlockingHARQAddOperationJUnitTest extends HARQAddOperationJUnitTest
     assertNotNull(obj);
     assertEquals(id1, obj.getEventId());
 
-    if (testFailed)
-      fail("Test failed due to " + message);
+    if (testFailed) fail("Test failed due to " + message);
   }
 
   /**
    * This test performs the following steps :<br>
    * 1)Create a blocking queue.<br>
-   * 2) Start two threads which does take() on it and add the return object to a
-   * list.<br>
+   * 2) Start two threads which does take() on it and add the return object to a list.<br>
    * 3)Put two object into the queue. <br>
-   * 4)Verify both both take() threads return with an object by ensuring that
-   * the size of the list containing return objects is two.<br>
-   * 
+   * 4)Verify both both take() threads return with an object by ensuring that the size of the list
+   * containing return objects is two.<br>
+   *
    * @throws Exception
-   * 
    */
   @Test
   public void testConcurrentBlockingTake() throws Exception {
@@ -172,23 +170,24 @@ public class BlockingHARQAddOperationJUnitTest extends HARQAddOperationJUnitTest
     final int totalTakeThreads = 2;
     Thread[] takeThreads = new Thread[totalTakeThreads];
     for (int i = 0; i < totalTakeThreads; i++) {
-      takeThreads[i] = new Thread() {
-        public void run() {
-          try {
-            takenObjects.add(rq.take());
-          } catch (Exception e) {
-            testFailed = true;
-            message.append("Exception while performing take operation " + e.getStackTrace());
-          }
-        }
-      };
+      takeThreads[i] =
+          new Thread() {
+            public void run() {
+              try {
+                takenObjects.add(rq.take());
+              } catch (Exception e) {
+                testFailed = true;
+                message.append("Exception while performing take operation " + e.getStackTrace());
+              }
+            }
+          };
       takeThreads[i].start();
     }
 
     Conflatable c = null;
     EventID id = null;
     for (int i = 0; i < totalTakeThreads; i++) {
-      id = new EventID(new byte[] { 1 }, 1, i);
+      id = new EventID(new byte[] {1}, 1, i);
       c = new ConflatableObject("k" + i, "v" + i, id, true, "region1");
       rq.put(c);
     }
@@ -203,8 +202,7 @@ public class BlockingHARQAddOperationJUnitTest extends HARQAddOperationJUnitTest
       assertNotNull(c);
     }
 
-    if (testFailed)
-      fail("Test failed due to " + message);
+    if (testFailed) fail("Test failed due to " + message);
     this.logWriter.info("HARQAddOperationJUnitTest : testConcurrentBlockingTake END");
   }
 }

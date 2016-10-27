@@ -33,12 +33,14 @@ import org.apache.geode.internal.cache.tier.sockets.Part;
 
 /**
  * Retrieves all durable cqs for a client from a server
+ *
  * @since GemFire 7.0
  */
 public class GetDurableCQsOp {
   /**
-   * Retrieves all durable continuous queries on the server using 
-   * connections from the given pool to communicate with the server.
+   * Retrieves all durable continuous queries on the server using connections from the given pool to
+   * communicate with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    */
   public static List<String> execute(ExecutablePool pool) {
@@ -51,9 +53,7 @@ public class GetDurableCQsOp {
   }
 
   private static class GetDurableCQsOpImpl extends CreateCQOpImpl {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public GetDurableCQsOpImpl() {
       super(MessageType.GETDURABLECQS_MSG_TYPE, 1 /*numparts*/);
     }
@@ -119,7 +119,8 @@ public class GetDurableCQsOp {
           Part part = msg.getPart(0);
           throw new ServerOperationException(part.getString());
         } else {
-          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
+          throw new InternalGemFireError(
+              "Unexpected message type " + MessageType.getString(msgType));
         }
       }
 

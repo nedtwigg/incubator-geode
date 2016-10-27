@@ -34,5 +34,4 @@ public class SerialWANPropagationOffHeapDUnitTest extends SerialWANPropagationDU
   public boolean isOffHeap() {
     return true;
   }
-
 }

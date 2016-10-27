@@ -29,19 +29,16 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 /**
- * Distributed lock which is owned by a member rather than a single thread.
- * Any thread within the {@link 
- * org.apache.geode.distributed.DistributedMember} may unlock a held
- * <code>DistributedMemberLock</code>.
+ * Distributed lock which is owned by a member rather than a single thread. Any thread within the
+ * {@link org.apache.geode.distributed.DistributedMember} may unlock a held <code>
+ * DistributedMemberLock</code>.
  *
- * While this member holds the lock, another member will not be able to
- * acquire it. Any thread within this member may reenter or unlock the
- * lock.
- * 
- * Operations delegate to {@link 
- * org.apache.geode.distributed.DistributedLockService} and may throw
- * LockNotHeldException or LockServiceDestroyedException.
- * 
+ * <p>While this member holds the lock, another member will not be able to acquire it. Any thread
+ * within this member may reenter or unlock the lock.
+ *
+ * <p>Operations delegate to {@link org.apache.geode.distributed.DistributedLockService} and may
+ * throw LockNotHeldException or LockServiceDestroyedException.
+ *
  * @since GemFire 5.1
  */
 public final class DistributedMemberLock implements Lock {
@@ -49,10 +46,7 @@ public final class DistributedMemberLock implements Lock {
   /** Lock lease timeout value that never expires. */
   public static final long NON_EXPIRING_LEASE = -1;
 
-  /**
-   * Defines the behavior when attempting to reenter a held lock.
-   * 
-   */
+  /** Defines the behavior when attempting to reenter a held lock. */
   public enum LockReentryPolicy {
     /** Allows lock reentry */
     ALLOW,
@@ -63,19 +57,19 @@ public final class DistributedMemberLock implements Lock {
 
     /**
      * Returns true if lock reentry should be rejected.
-     * 
+     *
      * @param lock the lock that reentry is being attempted on
      * @return true if lock reentry should be rejected
      * @throws IllegalStateException if reentry policy is NONREENTRANT_ERROR
      */
     boolean preventReentry(DistributedMemberLock lock) {
       switch (this) {
-      case ALLOW:
-        return false; // allow
-      case THROW_ERROR:
-        throw new IllegalStateException("Attempted to reenter held lock " + lock);
-      case PREVENT_SILENTLY:
-        return true; // reject
+        case ALLOW:
+          return false; // allow
+        case THROW_ERROR:
+          throw new IllegalStateException("Attempted to reenter held lock " + lock);
+        case PREVENT_SILENTLY:
+          return true; // reject
       }
       throw new AssertionError("Unknown LockReentryPolicy: " + this);
     }
@@ -84,17 +78,17 @@ public final class DistributedMemberLock implements Lock {
     public String toString() {
       String myToString = "Unknown";
       switch (this) {
-      case ALLOW:
-        myToString = "ALLOW";
-        break;
-      case THROW_ERROR:
-        myToString = "THROW_ERROR";
-        break;
-      case PREVENT_SILENTLY:
-        myToString = "PREVENT_SILENTLY";
-        break;
-      default:
-        // leave as "Unknown"
+        case ALLOW:
+          myToString = "ALLOW";
+          break;
+        case THROW_ERROR:
+          myToString = "THROW_ERROR";
+          break;
+        case PREVENT_SILENTLY:
+          myToString = "PREVENT_SILENTLY";
+          break;
+        default:
+          // leave as "Unknown"
       }
       return myToString;
     }
@@ -106,7 +100,7 @@ public final class DistributedMemberLock implements Lock {
   /** The name of the key for this lock */
   final Serializable key;
 
-  /** The lease in milliseconds to hold the lock*/
+  /** The lease in milliseconds to hold the lock */
   final long leaseTimeout;
 
   /** Defines the behavior if lock reentry is attempted */
@@ -117,6 +111,7 @@ public final class DistributedMemberLock implements Lock {
 
   /**
    * Constructs a new <code>DistributedMemberLock</code>.
+   *
    * @param dls the instance of <code>DistributedLockService</code> to use
    * @param key name of the key for this lock
    * @throws NullPointerException if dls or key is null
@@ -127,14 +122,18 @@ public final class DistributedMemberLock implements Lock {
 
   /**
    * Constructs a new <code>DistributedMemberLock</code>.
+   *
    * @param dls the instance of <code>DistributedLockService</code> to use
    * @param key name of the key for this lock
-   * @param leaseTimeout number of milliseconds to hold a lock before 
-   * automatically releasing it
+   * @param leaseTimeout number of milliseconds to hold a lock before automatically releasing it
    * @param reentryPolicy defines behavior for lock reentry
    * @throws NullPointerException if dls or key is null
    */
-  public DistributedMemberLock(DistributedLockService dls, Serializable key, long leaseTimeout, LockReentryPolicy reentryPolicy) {
+  public DistributedMemberLock(
+      DistributedLockService dls,
+      Serializable key,
+      long leaseTimeout,
+      LockReentryPolicy reentryPolicy) {
     if (dls == null || key == null) {
       throw new NullPointerException();
     }
@@ -147,68 +146,75 @@ public final class DistributedMemberLock implements Lock {
   }
 
   public synchronized void lock() {
-    executeOperation(new Operation() {
-      public boolean operate() {
-        if (holdsLock() && reentryPolicy.preventReentry(DistributedMemberLock.this)) {
-          return true;
-        }
-        boolean locked = dls.lock(key, -1, leaseTimeout);
-        Assert.assertTrue(locked, "Failed to lock " + toString());
-        return locked;
-      }
-    });
+    executeOperation(
+        new Operation() {
+          public boolean operate() {
+            if (holdsLock() && reentryPolicy.preventReentry(DistributedMemberLock.this)) {
+              return true;
+            }
+            boolean locked = dls.lock(key, -1, leaseTimeout);
+            Assert.assertTrue(locked, "Failed to lock " + toString());
+            return locked;
+          }
+        });
   }
 
   public synchronized void lockInterruptibly() throws InterruptedException {
-    executeOperationInterruptibly(new Operation() {
-      public boolean operate() throws InterruptedException {
-        if (holdsLock() && reentryPolicy.preventReentry(DistributedMemberLock.this)) {
-          return true;
-        }
-        boolean locked = dls.lockInterruptibly(key, -1, leaseTimeout);
-        Assert.assertTrue(locked, "Failed to lockInterruptibly " + this);
-        return locked;
-      }
-    });
+    executeOperationInterruptibly(
+        new Operation() {
+          public boolean operate() throws InterruptedException {
+            if (holdsLock() && reentryPolicy.preventReentry(DistributedMemberLock.this)) {
+              return true;
+            }
+            boolean locked = dls.lockInterruptibly(key, -1, leaseTimeout);
+            Assert.assertTrue(locked, "Failed to lockInterruptibly " + this);
+            return locked;
+          }
+        });
   }
 
   public synchronized boolean tryLock() {
-    return executeOperation(new Operation() {
-      public boolean operate() {
-        if (holdsLock() && reentryPolicy.preventReentry(DistributedMemberLock.this)) {
-          return true;
-        }
-        return dls.lock(key, 0, leaseTimeout);
-      }
-    });
+    return executeOperation(
+        new Operation() {
+          public boolean operate() {
+            if (holdsLock() && reentryPolicy.preventReentry(DistributedMemberLock.this)) {
+              return true;
+            }
+            return dls.lock(key, 0, leaseTimeout);
+          }
+        });
   }
 
-  public synchronized boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
-    return executeOperationInterruptibly(new Operation() {
-      public boolean operate() throws InterruptedException {
-        if (holdsLock() && reentryPolicy.preventReentry(DistributedMemberLock.this)) {
-          return true;
-        }
-        return dls.lockInterruptibly(key, getLockTimeoutForLock(time, unit), leaseTimeout);
-      }
-    });
+  public synchronized boolean tryLock(final long time, final TimeUnit unit)
+      throws InterruptedException {
+    return executeOperationInterruptibly(
+        new Operation() {
+          public boolean operate() throws InterruptedException {
+            if (holdsLock() && reentryPolicy.preventReentry(DistributedMemberLock.this)) {
+              return true;
+            }
+            return dls.lockInterruptibly(key, getLockTimeoutForLock(time, unit), leaseTimeout);
+          }
+        });
   }
 
   public synchronized void unlock() {
-    executeOperation(new Operation() {
-      public boolean operate() {
-        dls.unlock(key);
-        return true;
-      }
-    });
+    executeOperation(
+        new Operation() {
+          public boolean operate() {
+            dls.unlock(key);
+            return true;
+          }
+        });
   }
 
   public synchronized boolean holdsLock() {
-    return executeOperation(new Operation() {
-      public boolean operate() {
-        return dls.isHeldByThreadId(key, threadState.threadId);
-      }
-    });
+    return executeOperation(
+        new Operation() {
+          public boolean operate() {
+            return dls.isHeldByThreadId(key, threadState.threadId);
+          }
+        });
   }
 
   private boolean executeOperationInterruptibly(Operation lockOp) throws InterruptedException {
@@ -216,7 +222,7 @@ public final class DistributedMemberLock implements Lock {
   }
 
   private boolean executeOperation(Operation lockOp) {
-    for (;;) {
+    for (; ; ) {
       this.dls.getCancelCriterion().checkCancelInProgress(null);
       boolean interrupted = Thread.interrupted();
       try {
@@ -232,7 +238,8 @@ public final class DistributedMemberLock implements Lock {
     } // for
   }
 
-  private boolean doExecuteOperation(Operation lockOp, boolean interruptible) throws InterruptedException {
+  private boolean doExecuteOperation(Operation lockOp, boolean interruptible)
+      throws InterruptedException {
 
     ThreadRequestState oldThreadState = (ThreadRequestState) this.dls.getThreadRequestState().get();
 
@@ -273,7 +280,7 @@ public final class DistributedMemberLock implements Lock {
   }
 
   public Condition newCondition() {
-    throw new UnsupportedOperationException(LocalizedStrings.DistributedMemberLock_NOT_IMPLEMENTED.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.DistributedMemberLock_NOT_IMPLEMENTED.toLocalizedString());
   }
-
 }

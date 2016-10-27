@@ -34,9 +34,7 @@ import org.apache.geode.cache.RegionFactory;
 import org.apache.geode.distributed.DistributedSystem;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Tests memory allocation operations on a PartitionedRegion on a single node.
- */
+/** Tests memory allocation operations on a PartitionedRegion on a single node. */
 @Category(IntegrationTest.class)
 public class PRDataStoreMemoryJUnitTest {
 
@@ -72,27 +70,31 @@ public class PRDataStoreMemoryJUnitTest {
 
   @Test
   public void testCurrentAllocatedMemory() throws Exception {
-    PartitionedRegion regionAck1 = (PartitionedRegion) defineRegionFactory().create("testCurrentAllocatedemory");
+    PartitionedRegion regionAck1 =
+        (PartitionedRegion) defineRegionFactory().create("testCurrentAllocatedemory");
 
     assertEquals(0, regionAck1.getDataStore().currentAllocatedMemory());
 
     Integer val1 = new Integer(16);
     regionAck1.put(new Integer(1), val1);
-    Object storedVal = regionAck1.getBucketRegion(new Integer(1)).getRegionEntry(new Integer(1))._getValue();
+    Object storedVal =
+        regionAck1.getBucketRegion(new Integer(1)).getRegionEntry(new Integer(1))._getValue();
     final int size1 = CachedDeserializableFactory.calcMemSize(storedVal);
     int size = size1;
     assertEquals(size, regionAck1.getDataStore().currentAllocatedMemory());
 
     byte[] val2 = new byte[1000];
     regionAck1.put(new Integer(2), val2);
-    storedVal = regionAck1.getBucketRegion(new Integer(2)).getRegionEntry(new Integer(2))._getValue();
+    storedVal =
+        regionAck1.getBucketRegion(new Integer(2)).getRegionEntry(new Integer(2))._getValue();
     final int size2 = CachedDeserializableFactory.calcMemSize(storedVal);
     size += size2;
     assertEquals(size, regionAck1.getDataStore().currentAllocatedMemory());
 
     String val3 = "0123456789";
     regionAck1.put(new Integer(3), val3);
-    storedVal = regionAck1.getBucketRegion(new Integer(3)).getRegionEntry(new Integer(3))._getValue();
+    storedVal =
+        regionAck1.getBucketRegion(new Integer(3)).getRegionEntry(new Integer(3))._getValue();
     final int size3 = CachedDeserializableFactory.calcMemSize(storedVal);
     size += size3;
     assertEquals(size, regionAck1.getDataStore().currentAllocatedMemory());
@@ -100,7 +102,15 @@ public class PRDataStoreMemoryJUnitTest {
     long beforeSize = regionAck1.getDataStore().currentAllocatedMemory();
     regionAck1.invalidate(new Integer(3));
     size -= size3;
-    assertEquals("beforeSize=" + beforeSize + " expectedSize=" + size + " afterSize=" + regionAck1.getDataStore().currentAllocatedMemory(), size, regionAck1.getDataStore().currentAllocatedMemory());
+    assertEquals(
+        "beforeSize="
+            + beforeSize
+            + " expectedSize="
+            + size
+            + " afterSize="
+            + regionAck1.getDataStore().currentAllocatedMemory(),
+        size,
+        regionAck1.getDataStore().currentAllocatedMemory());
     assertEquals(size, regionAck1.getDataStore().currentAllocatedMemory());
     regionAck1.destroy(new Integer(3));
     assertEquals(size, regionAck1.getDataStore().currentAllocatedMemory());
@@ -136,5 +146,4 @@ public class PRDataStoreMemoryJUnitTest {
 
     assertEquals(0, size);
   }
-
 }

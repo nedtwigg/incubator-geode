@@ -18,18 +18,19 @@ package org.apache.geode.internal.lang;
 
 /**
  * The ThrowableUtils class is an abstract utility class for working with {@code Throwable}s.
- * <p/>
+ *
+ * <p>
+ *
  * @see java.lang.Throwable
  */
 public abstract class ThrowableUtils {
 
   /**
-   * Get the root cause of a {@link Throwable}. Returns the specified
-   * {@code throwable} if its {@code getCause} returns null.
+   * Get the root cause of a {@link Throwable}. Returns the specified {@code throwable} if its
+   * {@code getCause} returns null.
    *
-   * @param  throwable the {@code Throwable} to get the root cause of.
+   * @param throwable the {@code Throwable} to get the root cause of.
    * @return the root cause of the specified {@code throwable}.
-   *
    * @throws NullPointerException if {@code throwable} is null
    */
   public static Throwable getRootCause(Throwable throwable) {
@@ -45,15 +46,12 @@ public abstract class ThrowableUtils {
   }
 
   /**
-   * Returns true if the {@link Throwable} or any of its causes as returned
-   * by {@code getCause()} are an instance of the specified subclass of
-   * {@code Throwable}.
+   * Returns true if the {@link Throwable} or any of its causes as returned by {@code getCause()}
+   * are an instance of the specified subclass of {@code Throwable}.
    *
-   * @param  throwable the {@code Throwable} to check the causes of.
-   * @param  causeClass the subclass of {@code Throwable} to check for.
-   * @return true if any cause of {@code throwable} is an instance of
-   *         {@code causeClass}.
-   *
+   * @param throwable the {@code Throwable} to check the causes of.
+   * @param causeClass the subclass of {@code Throwable} to check for.
+   * @return true if any cause of {@code throwable} is an instance of {@code causeClass}.
    * @throws NullPointerException if {@code throwable} is null
    */
   public static boolean hasCauseType(Throwable throwable, Class<? extends Throwable> causeClass) {
@@ -73,14 +71,12 @@ public abstract class ThrowableUtils {
   }
 
   /**
-   * Returns true if the {@link Throwable} or any of its causes contain the
-   * specified {@code message}.
+   * Returns true if the {@link Throwable} or any of its causes contain the specified {@code
+   * message}.
    *
-   * @param  throwable the {@code Throwable} to check the causes of.
-   * @param  message the {@code Throwable} message to check for.
-   * @return true if any cause of {@code throwable} contains the specified
-   *         {@code message}.
-   *
+   * @param throwable the {@code Throwable} to check the causes of.
+   * @param message the {@code Throwable} message to check for.
+   * @return true if any cause of {@code throwable} contains the specified {@code message}.
    * @throws NullPointerException if {@code throwable} is null
    */
   public static boolean hasCauseMessage(Throwable throwable, String message) {

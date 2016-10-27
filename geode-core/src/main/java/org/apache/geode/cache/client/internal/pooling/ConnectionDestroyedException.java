@@ -19,10 +19,8 @@ package org.apache.geode.cache.client.internal.pooling;
 import org.apache.geode.GemFireException;
 
 /**
- * Indicates that the current connection has already been destroyed.
- * This exception should not propagate all the way back to the 
- * user, but is a signal to retry an attempt.
- *
+ * Indicates that the current connection has already been destroyed. This exception should not
+ * propagate all the way back to the user, but is a signal to retry an attempt.
  */
 public class ConnectionDestroyedException extends GemFireException {
   private static final long serialVersionUID = -6918516787578041316L;
@@ -42,5 +40,4 @@ public class ConnectionDestroyedException extends GemFireException {
   public ConnectionDestroyedException(Throwable cause) {
     super(cause);
   }
-
 }

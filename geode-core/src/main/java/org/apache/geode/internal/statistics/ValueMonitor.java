@@ -27,35 +27,37 @@ import org.apache.geode.internal.CopyOnWriteHashSet;
 /**
  * Adds coarser-grained monitoring of entire Statistics instances.
  * <p/>
- * The following code is an example of how to find an existing Statistics 
- * instance and define a ValueMonitor listener for notifications of any stat 
+ * The following code is an example of how to find an existing Statistics
+ * instance and define a ValueMonitor listener for notifications of any stat
  * sample containing updates to any stats in the instance being monitored:
  * <pre>
-    StatisticsFactory factory = InternalDistributedSystem.getAnyInstance();
-    Statistics[] statistics = f.findStatisticsByTextId("statSampler");
-    if (statistics.length == 1) {
-      ValueMonitor monitor = new ValueMonitor().addStatistics(statistics[0]);
-        
-      monitor.addListener(new StatisticsListener() {
-        public void handleNotification(StatisticsNotification notify) {
-          System.out.println("One or more statSampler stats changed at " 
-              + notify.getTimeStamp());
-          for (StatisticId statId : notify) {
-            System.out.println("\t" 
-                + statId.getStatisticDescriptor().getName() 
-                + " = " + notify.getValue(statId));
-          }
-        }
-      };
-    }
- * 
+ * StatisticsFactory factory = InternalDistributedSystem.getAnyInstance();
+ * Statistics[] statistics = f.findStatisticsByTextId("statSampler");
+ * if (statistics.length == 1) {
+ * ValueMonitor monitor = new ValueMonitor().addStatistics(statistics[0]);
+ *
+ * monitor.addListener(new StatisticsListener() {
+ * public void handleNotification(StatisticsNotification notify) {
+ * System.out.println("One or more statSampler stats changed at "
+ * + notify.getTimeStamp());
+ * for (StatisticId statId : notify) {
+ * System.out.println("\t"
+ * + statId.getStatisticDescriptor().getName()
+ * + " = " + notify.getValue(statId));
+ * }
+ * }
+ * };
+ * }
+ *
  * @since GemFire 7.0
  * @see org.apache.geode.Statistics
  */
 public final class ValueMonitor extends StatisticsMonitor {
 
   public enum Type {
-    CHANGE, MATCH, DIFFER
+    CHANGE,
+    MATCH,
+    DIFFER
   }
 
   private final CopyOnWriteHashSet<Statistics> statistics = new CopyOnWriteHashSet<Statistics>();
@@ -115,7 +117,9 @@ public final class ValueMonitor extends StatisticsMonitor {
         }
       }
       if (!stats.isEmpty()) {
-        MapBasedStatisticsNotification notification = new MapBasedStatisticsNotification(millisTimeStamp, StatisticsNotification.Type.VALUE_CHANGED, stats);
+        MapBasedStatisticsNotification notification =
+            new MapBasedStatisticsNotification(
+                millisTimeStamp, StatisticsNotification.Type.VALUE_CHANGED, stats);
         notifyListeners(notification);
       }
     }

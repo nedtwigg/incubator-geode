@@ -46,7 +46,7 @@ public class PersistExecutor extends AbstractExecutor {
     if (canceled)
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), TIMEOUT_REMOVED));
     else
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), KEY_NOT_EXIST_OR_NO_TIMEOUT));
+      command.setResponse(
+          Coder.getIntegerResponse(context.getByteBufAllocator(), KEY_NOT_EXIST_OR_NO_TIMEOUT));
   }
-
 }

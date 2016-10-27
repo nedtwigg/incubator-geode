@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -114,7 +114,8 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
         }
       }
     } else {
-      throw new IllegalArgumentException("The AEQ does not exist for the index " + indexName + " region " + regionPath);
+      throw new IllegalArgumentException(
+          "The AEQ does not exist for the index " + indexName + " region " + regionPath);
     }
 
     return flushed;
@@ -151,7 +152,8 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
   }
 
   public void setFieldAnalyzers(Map<String, Analyzer> fieldAnalyzers) {
-    this.fieldAnalyzers = fieldAnalyzers == null ? null : Collections.unmodifiableMap(fieldAnalyzers);
+    this.fieldAnalyzers =
+        fieldAnalyzers == null ? null : Collections.unmodifiableMap(fieldAnalyzers);
   }
 
   public LuceneIndexStats getIndexStats() {
@@ -181,7 +183,8 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
   }
 
   private AsyncEventQueueFactoryImpl createAEQFactory(final Region dataRegion) {
-    AsyncEventQueueFactoryImpl factory = (AsyncEventQueueFactoryImpl) cache.createAsyncEventQueueFactory();
+    AsyncEventQueueFactoryImpl factory =
+        (AsyncEventQueueFactoryImpl) cache.createAsyncEventQueueFactory();
     if (dataRegion instanceof PartitionedRegion) {
       factory.setParallel(true); // parallel AEQ for PR
     } else {
@@ -206,10 +209,7 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
     return indexQueue;
   }
 
-  /**
-   * Register an extension with the region
-   * so that xml will be generated for this index.
-   */
+  /** Register an extension with the region so that xml will be generated for this index. */
   protected void addExtension(LocalRegion dataRegion) {
     LuceneIndexCreation creation = new LuceneIndexCreation();
     creation.setName(this.getName());
@@ -219,15 +219,24 @@ public abstract class LuceneIndexImpl implements InternalLuceneIndex {
     dataRegion.getExtensionPoint().addExtension(creation);
   }
 
-  protected <K, V> Region<K, V> createRegion(final String regionName, final RegionAttributes<K, V> attributes) {
+  protected <K, V> Region<K, V> createRegion(
+      final String regionName, final RegionAttributes<K, V> attributes) {
     // Create InternalRegionArguments to set isUsedForMetaRegion true to suppress xml generation (among other things)
-    InternalRegionArguments ira = new InternalRegionArguments().setDestroyLockFlag(true).setRecreateFlag(false).setSnapshotInputStream(null).setImageTarget(null).setIsUsedForMetaRegion(true);
+    InternalRegionArguments ira =
+        new InternalRegionArguments()
+            .setDestroyLockFlag(true)
+            .setRecreateFlag(false)
+            .setSnapshotInputStream(null)
+            .setImageTarget(null)
+            .setIsUsedForMetaRegion(true);
 
     // Create the region
     try {
       return ((GemFireCacheImpl) this.cache).createVMRegion(regionName, attributes, ira);
     } catch (Exception e) {
-      InternalGemFireError ige = new InternalGemFireError(LocalizedStrings.GemFireCache_UNEXPECTED_EXCEPTION.toLocalizedString());
+      InternalGemFireError ige =
+          new InternalGemFireError(
+              LocalizedStrings.GemFireCache_UNEXPECTED_EXCEPTION.toLocalizedString());
       ige.initCause(e);
       throw ige;
     }

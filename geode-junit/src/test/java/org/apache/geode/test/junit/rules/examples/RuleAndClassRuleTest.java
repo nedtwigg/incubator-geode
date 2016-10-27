@@ -29,9 +29,7 @@ import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runners.model.Statement;
 
-/**
- * Example usage of a rule as both a method {@literal @}Rule and a {@literal @}ClassRule.
- */
+/** Example usage of a rule as both a method {@literal @}Rule and a {@literal @}ClassRule. */
 @Category(UnitTest.class)
 public class RuleAndClassRuleTest {
 
@@ -68,8 +66,8 @@ public class RuleAndClassRuleTest {
   }
 
   /**
-   * Implementation of TestRule that records the callbacks invoked on it. Used
-   * by {@link UsingRuleAsRuleAndClassRule}.
+   * Implementation of TestRule that records the callbacks invoked on it. Used by {@link
+   * UsingRuleAsRuleAndClassRule}.
    */
   public static class SpyRule implements TestRule {
     boolean beforeClassInvoked = false;
@@ -132,17 +130,12 @@ public class RuleAndClassRuleTest {
     }
   }
 
-  /**
-   * Used by the tests in {@link RuleAndClassRuleTest}.
-   */
+  /** Used by the tests in {@link RuleAndClassRuleTest}. */
   public static class UsingRuleAsRuleAndClassRule {
-    @ClassRule
-    public static SpyRule staticRule = new SpyRule();
-    @Rule
-    public SpyRule rule = staticRule;
+    @ClassRule public static SpyRule staticRule = new SpyRule();
+    @Rule public SpyRule rule = staticRule;
 
     @Test
-    public void doTest() throws Exception {
-    }
+    public void doTest() throws Exception {}
   }
 }

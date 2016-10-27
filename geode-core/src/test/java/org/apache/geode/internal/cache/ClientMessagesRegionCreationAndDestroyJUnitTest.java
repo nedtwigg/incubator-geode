@@ -39,9 +39,9 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
 /**
- * Test to verify that each bridge sever creates its own client_messages_region
- * at its start and destroys it when it stops.
- * 
+ * Test to verify that each bridge sever creates its own client_messages_region at its start and
+ * destroys it when it stops.
+ *
  * @since GemFire 5.7
  */
 @Category(IntegrationTest.class)
@@ -49,7 +49,7 @@ public class ClientMessagesRegionCreationAndDestroyJUnitTest {
 
   /** The cache instance */
   private Cache cache = null;
-  // max number of bridge server can attached to the cache 
+  // max number of bridge server can attached to the cache
   private int brigeNum = 5;
   // stores corresponding names of client messages region created by bridge
   // server
@@ -57,9 +57,8 @@ public class ClientMessagesRegionCreationAndDestroyJUnitTest {
 
   /**
    * Create the cache in setup.
-   * 
-   * @throws Exception -
-   *           thrown if any exception occurs in setUp
+   *
+   * @throws Exception - thrown if any exception occurs in setUp
    */
   @Before
   public void setUp() throws Exception {
@@ -68,9 +67,9 @@ public class ClientMessagesRegionCreationAndDestroyJUnitTest {
 
   /**
    * Create and attach bridge server to cache
+   *
    * @throws IOException
    */
-
   private void attachBridgeServer() throws IOException {
     CacheServerImpl server = (CacheServerImpl) cache.addCacheServer();
     assertNotNull(server);
@@ -78,16 +77,25 @@ public class ClientMessagesRegionCreationAndDestroyJUnitTest {
     server.setPort(port);
     server.getClientSubscriptionConfig().setEvictionPolicy(HARegionQueue.HA_EVICTION_POLICY_ENTRY);
     server.start();
-    assertNotNull("client messages region is null ", server.getAcceptor().getCacheClientNotifier().getHaContainer());
+    assertNotNull(
+        "client messages region is null ",
+        server.getAcceptor().getCacheClientNotifier().getHaContainer());
     //  check for is LIFO Enable
-    String regionName = ((HAContainerWrapper) server.getAcceptor().getCacheClientNotifier().getHaContainer()).getName();
-    EvictionAttributesImpl ea = (EvictionAttributesImpl) cache.getRegion(Region.SEPARATOR + regionName).getAttributes().getEvictionAttributes();
+    String regionName =
+        ((HAContainerWrapper) server.getAcceptor().getCacheClientNotifier().getHaContainer())
+            .getName();
+    EvictionAttributesImpl ea =
+        (EvictionAttributesImpl)
+            cache.getRegion(Region.SEPARATOR + regionName).getAttributes().getEvictionAttributes();
     assertTrue("Eviction Algorithm is not LIFO", ea.isLIFO());
-    // The CacheClientNotifier is a singleton. 
+    // The CacheClientNotifier is a singleton.
     if (cache.getCacheServers().size() <= 1) {
-      assertTrue("client messages region name should not be present ", (regionNames).add(regionName));
+      assertTrue(
+          "client messages region name should not be present ", (regionNames).add(regionName));
     } else {
-      assertTrue("client messages region name should have been already present ", (regionNames).contains(regionName));
+      assertTrue(
+          "client messages region name should have been already present ",
+          (regionNames).contains(regionName));
     }
   }
 
@@ -106,9 +114,7 @@ public class ClientMessagesRegionCreationAndDestroyJUnitTest {
     dettachmentOfBridgeServer();
   }
 
-  /**
-   * Attach bridge server
-   */
+  /** Attach bridge server */
   private void attachmentOfBridgeServer() {
     if (cache.getCacheServers().size() < brigeNum) {
       try {
@@ -120,47 +126,45 @@ public class ClientMessagesRegionCreationAndDestroyJUnitTest {
     }
   }
 
-  /**
-   * Stop's all bridge servers attached
-   */
+  /** Stop's all bridge servers attached */
   private void dettachmentOfBridgeServer() {
     // detach all bridge server to test destroy of client_messages_region
-    for (Iterator itr = cache.getCacheServers().iterator(); itr.hasNext();) {
+    for (Iterator itr = cache.getCacheServers().iterator(); itr.hasNext(); ) {
       CacheServerImpl server = (CacheServerImpl) itr.next();
-      String rName = ((HAContainerWrapper) server.getAcceptor().getCacheClientNotifier().getHaContainer()).getName();
+      String rName =
+          ((HAContainerWrapper) server.getAcceptor().getCacheClientNotifier().getHaContainer())
+              .getName();
       assertNotNull("client messages region is null ", cache.getRegion(Region.SEPARATOR + rName));
       server.stop();
 
       if (!itr.hasNext()) {
-        assertNull("client messages region is not null ", cache.getRegion(Region.SEPARATOR + rName));
+        assertNull(
+            "client messages region is not null ", cache.getRegion(Region.SEPARATOR + rName));
       }
     }
   }
 
   /**
    * Close the cache in tear down *
-   * 
-   * @throws Exception -
-   *           thrown if any exception occurs in tearDown
+   *
+   * @throws Exception - thrown if any exception occurs in tearDown
    */
   @After
   public void tearDown() throws Exception {
-    // its stops all bridge serves associated with cache 
+    // its stops all bridge serves associated with cache
     // delete client_messages_region
     cache.close();
   }
 
   /**
    * Creates the cache instance for the test
-   * 
+   *
    * @return the cache instance
-   * @throws CacheException -
-   *           thrown if any exception occurs in cache creation
+   * @throws CacheException - thrown if any exception occurs in cache creation
    */
   private Cache createCache() throws CacheException {
     Properties p = new Properties();
     p.put(MCAST_PORT, "0");
     return CacheFactory.create(DistributedSystem.connect(p));
   }
-
 }

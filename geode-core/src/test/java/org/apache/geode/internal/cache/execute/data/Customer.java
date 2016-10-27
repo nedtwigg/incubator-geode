@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.execute.data;
 
 import org.apache.geode.DataSerializable;
@@ -32,9 +30,7 @@ public class Customer implements DataSerializable {
 
   String address;
 
-  public Customer() {
-
-  }
+  public Customer() {}
 
   public Customer(String name, String address) {
     this.name = name;
@@ -44,7 +40,6 @@ public class Customer implements DataSerializable {
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.name = DataSerializer.readString(in);
     this.address = DataSerializer.readString(in);
-
   }
 
   public void toData(DataOutput out) throws IOException {
@@ -59,11 +54,9 @@ public class Customer implements DataSerializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o)
-      return true;
+    if (this == o) return true;
 
-    if (!(o instanceof Customer))
-      return false;
+    if (!(o instanceof Customer)) return false;
 
     Customer cust = (Customer) o;
     return (cust.name.equals(name) && cust.address.equals(address));
@@ -73,5 +66,4 @@ public class Customer implements DataSerializable {
   public int hashCode() {
     return this.name.hashCode() + this.address.hashCode();
   }
-
 }

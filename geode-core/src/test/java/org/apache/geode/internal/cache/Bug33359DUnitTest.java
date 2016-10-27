@@ -132,22 +132,22 @@ public class Bug33359DUnitTest extends JUnit4DistributedTestCase { // TODO: refo
     VM vm0 = host.getVM(0);
     //        VM vm1 = host.getVM(1);
 
-    vm0.invoke(new CacheSerializableRunnable("put initial data") {
-      public void run2() throws CacheException {
-        for (int i = 0; i < 10; i++) {
-          region.put(new Integer(i), Integer.toString(i));
-        }
-        LogWriterUtils.getLogWriter().fine("Did all puts successfully");
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("put initial data") {
+          public void run2() throws CacheException {
+            for (int i = 0; i < 10; i++) {
+              region.put(new Integer(i), Integer.toString(i));
+            }
+            LogWriterUtils.getLogWriter().fine("Did all puts successfully");
+          }
+        });
 
-    vm0.invoke(new CacheSerializableRunnable("perform clear on region") {
-      public void run2() throws CacheException {
-        region.clear();
-        LogWriterUtils.getLogWriter().fine("region is cleared");
-      }
-    });
-
-  }//end of test case    
-
-}// end of test class
+    vm0.invoke(
+        new CacheSerializableRunnable("perform clear on region") {
+          public void run2() throws CacheException {
+            region.clear();
+            LogWriterUtils.getLogWriter().fine("region is cleared");
+          }
+        });
+  } //end of test case
+} // end of test class

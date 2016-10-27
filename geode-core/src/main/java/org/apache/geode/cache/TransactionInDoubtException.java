@@ -17,15 +17,15 @@
 package org.apache.geode.cache;
 
 /**
- * This Exception is thrown in presence of node failures, when GemFire cannot
- * know with certainty about the outcome of the transaction.
+ * This Exception is thrown in presence of node failures, when GemFire cannot know with certainty
+ * about the outcome of the transaction.
+ *
  * @since GemFire 6.5
  */
 public class TransactionInDoubtException extends TransactionException {
   private static final long serialVersionUID = 4895453685211922512L;
 
-  public TransactionInDoubtException() {
-  }
+  public TransactionInDoubtException() {}
 
   public TransactionInDoubtException(String message) {
     super(message);

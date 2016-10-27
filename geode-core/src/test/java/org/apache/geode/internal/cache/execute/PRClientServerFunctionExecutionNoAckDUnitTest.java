@@ -44,9 +44,7 @@ import org.apache.geode.test.dunit.LogWriterUtils;
 
 @Category(DistributedTest.class)
 public class PRClientServerFunctionExecutionNoAckDUnitTest extends PRClientServerTestBase {
-  /**
-   * 
-   */
+  /** */
   private static final String TEST_FUNCTION1 = TestFunction.TEST_FUNCTION1;
 
   Boolean isByName = null;
@@ -75,9 +73,17 @@ public class PRClientServerFunctionExecutionNoAckDUnitTest extends PRClientServe
 
     isByName = new Boolean(true);
     toRegister = new Boolean(true);
-    LogWriterUtils.getLogWriter().info("PRClientServerFunctionExecutionNoAckDUnitTest#testServerFunctionExecution_NoAck : Starting test");
-    client.invoke(() -> PRClientServerFunctionExecutionNoAckDUnitTest.serverExecution(isByName, functionNoAck, functionAck, toRegister));
-    client.invoke(() -> PRClientServerFunctionExecutionNoAckDUnitTest.allServerExecution(isByName, functionNoAck, toRegister));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRClientServerFunctionExecutionNoAckDUnitTest#testServerFunctionExecution_NoAck : Starting test");
+    client.invoke(
+        () ->
+            PRClientServerFunctionExecutionNoAckDUnitTest.serverExecution(
+                isByName, functionNoAck, functionAck, toRegister));
+    client.invoke(
+        () ->
+            PRClientServerFunctionExecutionNoAckDUnitTest.allServerExecution(
+                isByName, functionNoAck, toRegister));
   }
 
   @Test
@@ -90,17 +96,27 @@ public class PRClientServerFunctionExecutionNoAckDUnitTest extends PRClientServe
     registerFunctionAtServer(functionAck);
     toRegister = new Boolean(false);
     isByName = new Boolean(true);
-    LogWriterUtils.getLogWriter().info("PRClientServerFunctionExecutionNoAckDUnitTest#testServerFunctionExecution_NoAck : Starting test");
-    client.invoke(() -> PRClientServerFunctionExecutionNoAckDUnitTest.serverExecution(isByName, functionNoAck, functionAck, toRegister));
-    client.invoke(() -> PRClientServerFunctionExecutionNoAckDUnitTest.allServerExecution(isByName, functionNoAck, toRegister));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRClientServerFunctionExecutionNoAckDUnitTest#testServerFunctionExecution_NoAck : Starting test");
+    client.invoke(
+        () ->
+            PRClientServerFunctionExecutionNoAckDUnitTest.serverExecution(
+                isByName, functionNoAck, functionAck, toRegister));
+    client.invoke(
+        () ->
+            PRClientServerFunctionExecutionNoAckDUnitTest.allServerExecution(
+                isByName, functionNoAck, toRegister));
   }
 
   private void createScenario() {
-    LogWriterUtils.getLogWriter().info("PRClientServerFFunctionExecutionDUnitTest#createScenario : creating scenario");
+    LogWriterUtils.getLogWriter()
+        .info("PRClientServerFFunctionExecutionDUnitTest#createScenario : creating scenario");
     createClientServerScenarionWithoutRegion();
   }
 
-  public static void serverExecution(Boolean isByName, Function functionNoAck, Function functionAck, Boolean toRegister) {
+  public static void serverExecution(
+      Boolean isByName, Function functionNoAck, Function functionAck, Boolean toRegister) {
 
     DistributedSystem.setThreadsSocketPolicy(false);
     if (toRegister.booleanValue()) {
@@ -116,7 +132,12 @@ public class PRClientServerFunctionExecutionNoAckDUnitTest extends PRClientServe
       for (int i = 0; i < NUM_ITERATION; i++)
         execute(member, Boolean.TRUE, functionNoAck, isByName, toRegister);
       t.stop();
-      LogWriterUtils.getLogWriter().info("Time taken to execute boolean based" + NUM_ITERATION + "NoAck functions :" + t.getTimeInMs());
+      LogWriterUtils.getLogWriter()
+          .info(
+              "Time taken to execute boolean based"
+                  + NUM_ITERATION
+                  + "NoAck functions :"
+                  + t.getTimeInMs());
     } catch (Exception ex) {
       ex.printStackTrace();
       LogWriterUtils.getLogWriter().info("Exception : ", ex);
@@ -133,7 +154,12 @@ public class PRClientServerFunctionExecutionNoAckDUnitTest extends PRClientServe
       for (int i = 0; i < NUM_ITERATION; i++)
         execute(member, testKeysSet, functionNoAck, isByName, toRegister);
       t.stop();
-      LogWriterUtils.getLogWriter().info("Time taken to execute setbased" + NUM_ITERATION + "NoAck functions :" + t.getTimeInMs());
+      LogWriterUtils.getLogWriter()
+          .info(
+              "Time taken to execute setbased"
+                  + NUM_ITERATION
+                  + "NoAck functions :"
+                  + t.getTimeInMs());
     } catch (Exception ex) {
       ex.printStackTrace();
       LogWriterUtils.getLogWriter().info("Exception : ", ex);
@@ -154,7 +180,12 @@ public class PRClientServerFunctionExecutionNoAckDUnitTest extends PRClientServe
         timeinms += t.getTimeInMs();
         assertEquals(Boolean.TRUE, ((List) rc.getResult()).get(0));
       }
-      LogWriterUtils.getLogWriter().info("Time taken to execute boolean based" + NUM_ITERATION + "haveResults functions :" + timeinms);
+      LogWriterUtils.getLogWriter()
+          .info(
+              "Time taken to execute boolean based"
+                  + NUM_ITERATION
+                  + "haveResults functions :"
+                  + timeinms);
     } catch (Exception ex) {
       ex.printStackTrace();
       LogWriterUtils.getLogWriter().info("Exception : ", ex);
@@ -177,9 +208,13 @@ public class PRClientServerFunctionExecutionNoAckDUnitTest extends PRClientServe
         for (int j = 0; j < 20; j++) {
           assertEquals(true, ((List) (resultList).get(0)).contains("execKey-" + j));
         }
-
       }
-      LogWriterUtils.getLogWriter().info("Time taken to execute setbased" + NUM_ITERATION + "haveResults functions :" + timeinms);
+      LogWriterUtils.getLogWriter()
+          .info(
+              "Time taken to execute setbased"
+                  + NUM_ITERATION
+                  + "haveResults functions :"
+                  + timeinms);
     } catch (Exception ex) {
       ex.printStackTrace();
       LogWriterUtils.getLogWriter().info("Exception : ", ex);
@@ -219,18 +254,22 @@ public class PRClientServerFunctionExecutionNoAckDUnitTest extends PRClientServe
     }
   }
 
-  private static ResultCollector execute(Execution member, Serializable args, Function function, Boolean isByName, Boolean toRegister) throws Exception {
-    if (isByName.booleanValue()) {// by name
+  private static ResultCollector execute(
+      Execution member, Serializable args, Function function, Boolean isByName, Boolean toRegister)
+      throws Exception {
+    if (isByName.booleanValue()) { // by name
       if (toRegister.booleanValue()) {
         LogWriterUtils.getLogWriter().info("The function name to execute : " + function.getId());
         Execution me = member.withArgs(args);
         LogWriterUtils.getLogWriter().info("The args passed  : " + args);
         return me.execute(function.getId());
       } else {
-        LogWriterUtils.getLogWriter().info("The function name to execute : (without Register) " + function.getId());
+        LogWriterUtils.getLogWriter()
+            .info("The function name to execute : (without Register) " + function.getId());
         Execution me = member.withArgs(args);
         LogWriterUtils.getLogWriter().info("The args passed  : " + args);
-        return me.execute(function.getId(), function.hasResult(), function.isHA(), function.optimizeForWrite());
+        return me.execute(
+            function.getId(), function.hasResult(), function.isHA(), function.optimizeForWrite());
       }
     } else { // By Instance
       return member.withArgs(args).execute(function);

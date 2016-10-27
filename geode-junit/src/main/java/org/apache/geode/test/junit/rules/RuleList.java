@@ -42,11 +42,8 @@ public class RuleList implements TestRule {
 
   private final List<TestRule> rules = new ArrayList<>();
 
-  /**
-   * Creates an empty {@code RuleList}.
-   */
-  public RuleList() {
-  }
+  /** Creates an empty {@code RuleList}. */
+  public RuleList() {}
 
   /**
    * Creates a {@code RuleList} containing a single {@link TestRule}.
@@ -86,8 +83,7 @@ public class RuleList implements TestRule {
   }
 
   /**
-   * Returns a reference to the actual list of {@code TestRule}s. For use by
-   * subclasses and tests.
+   * Returns a reference to the actual list of {@code TestRule}s. For use by subclasses and tests.
    */
   protected List<TestRule> rules() {
     return this.rules;

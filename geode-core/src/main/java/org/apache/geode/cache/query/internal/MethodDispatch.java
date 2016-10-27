@@ -29,14 +29,14 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  *
  * @version $Revision: 1.1 $
  */
-
 public class MethodDispatch {
   private Class _targetClass;
   private String _methodName;
   private Class[] _argTypes;
   private Method _method; // remember the right method
 
-  public MethodDispatch(Class targetClass, String methodName, List argTypes) throws NameResolutionException {
+  public MethodDispatch(Class targetClass, String methodName, List argTypes)
+      throws NameResolutionException {
     _targetClass = targetClass;
     _methodName = methodName;
     _argTypes = (Class[]) argTypes.toArray(new Class[argTypes.size()]);
@@ -47,18 +47,22 @@ public class MethodDispatch {
     _method.setAccessible(true);
   }
 
-  public Object invoke(Object target, List args) throws NameNotFoundException, QueryInvocationTargetException {
+  public Object invoke(Object target, List args)
+      throws NameNotFoundException, QueryInvocationTargetException {
     Object[] argsArray = args.toArray();
 
     try {
       return _method.invoke(target, argsArray);
     } catch (IllegalAccessException e) {
-      throw new NameNotFoundException(LocalizedStrings.MethodDispatch_METHOD_0_IN_CLASS_1_IS_NOT_ACCESSIBLE_TO_THE_QUERY_PROCESSOR.toLocalizedString(new Object[] { _method.getName(), target.getClass().getName() }), e);
+      throw new NameNotFoundException(
+          LocalizedStrings
+              .MethodDispatch_METHOD_0_IN_CLASS_1_IS_NOT_ACCESSIBLE_TO_THE_QUERY_PROCESSOR
+              .toLocalizedString(new Object[] {_method.getName(), target.getClass().getName()}),
+          e);
     } catch (InvocationTargetException e) {
       // if targetException is Exception, wrap it, otherwise wrap the InvocationTargetException itself
       Throwable t = e.getTargetException();
-      if (t instanceof Exception)
-        throw new QueryInvocationTargetException(t);
+      if (t instanceof Exception) throw new QueryInvocationTargetException(t);
       throw new QueryInvocationTargetException(e);
     }
   }
@@ -79,7 +83,6 @@ public class MethodDispatch {
     } catch (NoSuchMethodException e) {
       resolveGeneral();
     }
-
   }
 
   private void resolveGeneral() throws NameResolutionException {
@@ -89,19 +92,20 @@ public class MethodDispatch {
     for (int i = 0; i < allMethods.length; i++) {
       Method meth = allMethods[i];
       /*if (Modifier.isStatic(meth.getModifiers()))
-        continue;*/
-      if (!meth.getName().equals(_methodName))
-        continue;
-      if (meth.getParameterTypes().length != _argTypes.length)
-        continue;
+      continue;*/
+      if (!meth.getName().equals(_methodName)) continue;
+      if (meth.getParameterTypes().length != _argTypes.length) continue;
       // are the args all convertible to the parameter types?
-      if (!TypeUtils.areTypesConvertible(_argTypes, meth.getParameterTypes()))
-        continue;
+      if (!TypeUtils.areTypesConvertible(_argTypes, meth.getParameterTypes())) continue;
       candidates.add(meth);
     }
 
     if (candidates.isEmpty()) {
-      throw new NameNotFoundException(LocalizedStrings.MethodDispatch_NO_APPLICABLE_AND_ACCESSIBLE_METHOD_NAMED_0_WAS_FOUND_IN_CLASS_1_FOR_THE_ARGUMENT_TYPES_2.toLocalizedString(new Object[] { _methodName, _targetClass.getName(), Arrays.asList(_argTypes) }));
+      throw new NameNotFoundException(
+          LocalizedStrings
+              .MethodDispatch_NO_APPLICABLE_AND_ACCESSIBLE_METHOD_NAMED_0_WAS_FOUND_IN_CLASS_1_FOR_THE_ARGUMENT_TYPES_2
+              .toLocalizedString(
+                  new Object[] {_methodName, _targetClass.getName(), Arrays.asList(_argTypes)}));
     }
 
     // now we have a list of accessible and applicable method,
@@ -122,31 +126,38 @@ public class MethodDispatch {
     // be not differentiation for those parameter types regarding specificity
 
     if (equalSpecificity(meth1, meth2, _argTypes))
-      throw new AmbiguousNameException(LocalizedStrings.MethodDispatch_TWO_OR_MORE_MAXIMALLY_SPECIFIC_METHODS_WERE_FOUND_FOR_THE_METHOD_NAMED_0_IN_CLASS_1_FOR_THE_ARGUMENT_TYPES_2.toLocalizedString(new Object[] { meth1.getName(), _targetClass.getName(), Arrays.asList(_argTypes) }));
+      throw new AmbiguousNameException(
+          LocalizedStrings
+              .MethodDispatch_TWO_OR_MORE_MAXIMALLY_SPECIFIC_METHODS_WERE_FOUND_FOR_THE_METHOD_NAMED_0_IN_CLASS_1_FOR_THE_ARGUMENT_TYPES_2
+              .toLocalizedString(
+                  new Object[] {
+                    meth1.getName(), _targetClass.getName(), Arrays.asList(_argTypes)
+                  }));
 
     _method = meth1;
   }
 
   private void sortByDecreasingSpecificity(List methods) {
-    Collections.sort(methods, new Comparator() {
-      public int compare(Object o1, Object o2) {
-        Method m1 = (Method) o1;
-        Method m2 = (Method) o2;
-        if (m1.equals(m2))
-          return 0;
+    Collections.sort(
+        methods,
+        new Comparator() {
+          public int compare(Object o1, Object o2) {
+            Method m1 = (Method) o1;
+            Method m2 = (Method) o2;
+            if (m1.equals(m2)) return 0;
 
-        boolean convertible1 = methodConvertible(m1, m2);
-        boolean convertible2 = methodConvertible(m2, m1);
-        // check to see if they are convertible both ways or neither way
-        if (convertible1 == convertible2)
-          return 0;
-        return convertible1 ? -1 : 1;
-      }
-    });
+            boolean convertible1 = methodConvertible(m1, m2);
+            boolean convertible2 = methodConvertible(m2, m1);
+            // check to see if they are convertible both ways or neither way
+            if (convertible1 == convertible2) return 0;
+            return convertible1 ? -1 : 1;
+          }
+        });
   }
 
   protected boolean methodConvertible(Method m1, Method m2) {
-    boolean declaringClassesConvertible = TypeUtils.isTypeConvertible(m1.getDeclaringClass(), m2.getDeclaringClass());
+    boolean declaringClassesConvertible =
+        TypeUtils.isTypeConvertible(m1.getDeclaringClass(), m2.getDeclaringClass());
 
     boolean paramsConvertible = true;
     Class[] p1 = m1.getParameterTypes();
@@ -163,8 +174,7 @@ public class MethodDispatch {
   private boolean equalSpecificity(Method m1, Method m2, Class[] argTypes) {
     // if the m1 is not convertible to m2, then definitely equal specificity,
     // since this would be ambiguous even in Java
-    if (!methodConvertible(m1, m2))
-      return true;
+    if (!methodConvertible(m1, m2)) return true;
 
     // if there is at least one param type that is more specific
     // ignoring parameters with a null argument, then
@@ -173,10 +183,11 @@ public class MethodDispatch {
     Class[] p1 = m1.getParameterTypes();
     Class[] p2 = m2.getParameterTypes();
     for (int i = 0; i < p1.length; i++) {
-      if (argTypes[i] != null && p1[i] != p2[i] && TypeUtils.isTypeConvertible(p1[i], p2[i])) // assumes m1 is <= m2 in specificity
-        return false;
+      if (argTypes[i] != null
+          && p1[i] != p2[i]
+          && TypeUtils.isTypeConvertible(p1[i], p2[i])) // assumes m1 is <= m2 in specificity
+      return false;
     }
     return true;
   }
-
 }

@@ -62,7 +62,8 @@ import org.apache.geode.test.junit.categories.FlakyTest;
  * admin} API.
  */
 @Category(DistributedTest.class)
-public class ConsoleDistributionManagerDUnitTest extends JUnit4CacheTestCase implements AlertListener {
+public class ConsoleDistributionManagerDUnitTest extends JUnit4CacheTestCase
+    implements AlertListener {
 
   protected GfManagerAgent agent = null;
   private static boolean firstTime = true;
@@ -94,23 +95,28 @@ public class ConsoleDistributionManagerDUnitTest extends JUnit4CacheTestCase imp
       {
         boolean created = !isConnectedToDS();
         InternalDistributedSystem ds = getSystem();
-        transport = new RemoteTransportConfig(ds.getConfig(), DistributionManager.ADMIN_ONLY_DM_TYPE);
+        transport =
+            new RemoteTransportConfig(ds.getConfig(), DistributionManager.ADMIN_ONLY_DM_TYPE);
         if (created) {
           disconnectFromDS();
         }
       }
       // create a GfManagerAgent in the master vm.
-      this.agent = GfManagerAgentFactory.getManagerAgent(new GfManagerAgentConfig(null, transport, LogWriterUtils.getLogWriter(), Alert.SEVERE, this, null));
+      this.agent =
+          GfManagerAgentFactory.getManagerAgent(
+              new GfManagerAgentConfig(
+                  null, transport, LogWriterUtils.getLogWriter(), Alert.SEVERE, this, null));
       if (!agent.isConnected()) {
-        WaitCriterion ev = new WaitCriterion() {
-          public boolean done() {
-            return agent.isConnected();
-          }
+        WaitCriterion ev =
+            new WaitCriterion() {
+              public boolean done() {
+                return agent.isConnected();
+              }
 
-          public String description() {
-            return null;
-          }
-        };
+              public String description() {
+                return null;
+              }
+            };
         Wait.waitForCriterion(ev, 60 * 1000, 200, true);
       }
       finishedSetup = true;
@@ -181,16 +187,17 @@ public class ConsoleDistributionManagerDUnitTest extends JUnit4CacheTestCase imp
   @Test
   public void testApplications() throws Exception {
     {
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          ApplicationVM[] apps = agent.listApplications();
-          return apps.length >= 4;
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              ApplicationVM[] apps = agent.listApplications();
+              return apps.length >= 4;
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 60 * 1000, 200, true);
     }
 
@@ -250,7 +257,13 @@ public class ConsoleDistributionManagerDUnitTest extends JUnit4CacheTestCase imp
 
       Region[] roots = apps[i].getRootRegions();
       if (roots.length == 0) {
-        LogWriterUtils.getLogWriter().info("DEBUG: testApplications: apps[" + i + "]=" + apps[i] + " did not have a root region");
+        LogWriterUtils.getLogWriter()
+            .info(
+                "DEBUG: testApplications: apps["
+                    + i
+                    + "]="
+                    + apps[i]
+                    + " did not have a root region");
       } else {
         Region root = roots[0];
         assertNotNull(root);
@@ -291,14 +304,16 @@ public class ConsoleDistributionManagerDUnitTest extends JUnit4CacheTestCase imp
         assertTrue(!node.isPrimitiveOrString());
         EntryValueNode[] fields = node.getChildren();
         assertNotNull(fields);
-        LogWriterUtils.getLogWriter().warning("The tests use StringBuffers for values which might be implmented differently in jdk 1.5");
+        LogWriterUtils.getLogWriter()
+            .warning(
+                "The tests use StringBuffers for values which might be implmented differently in jdk 1.5");
         // assertTrue(fields.length > 0);
 
         /// test destruction in the last valid app
         int lastIdx = apps.length - 1;
 
         /*if (i == lastIdx ||
-          (i == lastIdx-1 && apps[lastIdx].getId().equals(controllerId))) {*/
+        (i == lastIdx-1 && apps[lastIdx].getId().equals(controllerId))) {*/
 
         if (i == lastIdx) {
           //getLogWriter().info("DEBUG: starting region destroy from admin apis");
@@ -306,16 +321,17 @@ public class ConsoleDistributionManagerDUnitTest extends JUnit4CacheTestCase imp
           final Region r = (Region) subregions.iterator().next();
           final Region rr = root;
           r.destroyRegion();
-          WaitCriterion ev = new WaitCriterion() {
-            public boolean done() {
-              Set s = rr.subregions(false);
-              return s.size() == expectedSize;
-            }
+          WaitCriterion ev =
+              new WaitCriterion() {
+                public boolean done() {
+                  Set s = rr.subregions(false);
+                  return s.size() == expectedSize;
+                }
 
-            public String description() {
-              return "Waited 20 seconds for region " + r.getFullPath() + "to be destroyed.";
-            }
-          };
+                public String description() {
+                  return "Waited 20 seconds for region " + r.getFullPath() + "to be destroyed.";
+                }
+              };
           Wait.waitForCriterion(ev, 20 * 1000, 200, true);
         }
       }
@@ -328,20 +344,21 @@ public class ConsoleDistributionManagerDUnitTest extends JUnit4CacheTestCase imp
     fact.setScope(Scope.DISTRIBUTED_NO_ACK);
     final RegionAttributes rAttr = fact.create();
 
-    final SerializableRunnable populator = new SerializableRunnable() {
-      public void run() {
-        try {
-          createRegion("cdm-testSubRegion1", rAttr);
-          createRegion("cdm-testSubRegion2", rAttr);
-          createRegion("cdm-testSubRegion3", rAttr);
-          remoteCreateEntry("", "cacheObj1", null);
-          StringBuffer val = new StringBuffer("userDefValue1");
-          remoteCreateEntry("", "cacheObj2", val);
-        } catch (CacheException ce) {
-          fail("Exception while populating cache:\n" + ce);
-        }
-      }
-    };
+    final SerializableRunnable populator =
+        new SerializableRunnable() {
+          public void run() {
+            try {
+              createRegion("cdm-testSubRegion1", rAttr);
+              createRegion("cdm-testSubRegion2", rAttr);
+              createRegion("cdm-testSubRegion3", rAttr);
+              remoteCreateEntry("", "cacheObj1", null);
+              StringBuffer val = new StringBuffer("userDefValue1");
+              remoteCreateEntry("", "cacheObj2", val);
+            } catch (CacheException ce) {
+              fail("Exception while populating cache:\n" + ce);
+            }
+          }
+        };
 
     for (int h = 0; h < Host.getHostCount(); h++) {
       Host host = Host.getHost(h);
@@ -354,24 +371,33 @@ public class ConsoleDistributionManagerDUnitTest extends JUnit4CacheTestCase imp
   }
 
   /**
-   * Puts (or creates) a value in a region named <code>regionName</code>
-   * named <code>entryName</code>.
+   * Puts (or creates) a value in a region named <code>regionName</code> named <code>entryName
+   * </code>.
    */
-  protected void remoteCreateEntry(String regionName, String entryName, Object value) throws CacheException {
+  protected void remoteCreateEntry(String regionName, String entryName, Object value)
+      throws CacheException {
 
     Region root = getRootRegion();
     Region region = root.getSubregion(regionName);
     region.create(entryName, value);
 
-    LogWriterUtils.getLogWriter().info("Put value " + value + " in entry " + entryName + " in region '" + region.getFullPath() + "'");
-
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Put value "
+                + value
+                + " in entry "
+                + entryName
+                + " in region '"
+                + region.getFullPath()
+                + "'");
   }
 
   //  private long getConId(VM vm) {
   //      return vm.invoke(() -> this.remoteGetConId());
   //  }
   /**
-   * Accessed via reflection.  DO NOT REMOVE
+   * Accessed via reflection. DO NOT REMOVE
+   *
    * @return
    */
   protected static long remoteGetConId() {
@@ -383,7 +409,8 @@ public class ConsoleDistributionManagerDUnitTest extends JUnit4CacheTestCase imp
   }
 
   /**
-   * Accessed via reflection.  DO NOT REMOVE
+   * Accessed via reflection. DO NOT REMOVE
+   *
    * @param lockName
    * @return
    */
@@ -391,7 +418,8 @@ public class ConsoleDistributionManagerDUnitTest extends JUnit4CacheTestCase imp
     String serviceName = "cdmtest_service";
     DistributedLockService service = DistributedLockService.getServiceNamed(serviceName);
     if (service == null) {
-      service = DistributedLockService.create(serviceName, InternalDistributedSystem.getAnyInstance());
+      service =
+          DistributedLockService.create(serviceName, InternalDistributedSystem.getAnyInstance());
     }
     assertNotNull(service);
     try {
@@ -422,12 +450,11 @@ public class ConsoleDistributionManagerDUnitTest extends JUnit4CacheTestCase imp
 
   /**
    * INVOKED VIA REFLECTION
-   * 
+   *
    * @return
    */
   protected static InternalDistributedMember remoteGetJavaGroupsIdForVM() {
     InternalDistributedSystem sys = InternalDistributedSystem.getAnyInstance();
     return sys.getDistributionManager().getDistributionManagerId();
-
   }
 }

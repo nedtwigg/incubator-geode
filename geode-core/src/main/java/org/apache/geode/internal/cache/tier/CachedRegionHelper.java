@@ -66,11 +66,10 @@ public class CachedRegionHelper {
 
   /**
    * Just ensure that this class gets loaded.
-   * 
+   *
    * @see SystemFailure#loadEmergencyClasses()
    */
   public static void loadEmergencyClasses() {
-    // nothing needed, just make sure this class gets loaded  
+    // nothing needed, just make sure this class gets loaded
   }
-
 }

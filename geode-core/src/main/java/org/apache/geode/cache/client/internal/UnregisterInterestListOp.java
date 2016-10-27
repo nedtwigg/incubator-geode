@@ -24,19 +24,22 @@ import java.util.List;
 
 /**
  * Does a region unregisterInterestList on a server
+ *
  * @since GemFire 5.7
  */
 public class UnregisterInterestListOp {
   /**
-   * Does a region unregisterInterestList on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region unregisterInterestList on a server using connections from the given pool to
+   * communicate with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the unregisterInterestList on
    * @param keys list of keys we are interested in
    * @param isClosing true if this unregister is done by a close
    * @param keepAlive true if this unregister should not undo a durable registration
    */
-  public static void execute(ExecutablePool pool, String region, List keys, boolean isClosing, boolean keepAlive) {
+  public static void execute(
+      ExecutablePool pool, String region, List keys, boolean isClosing, boolean keepAlive) {
     AbstractOp op = new UnregisterInterestListOpImpl(region, keys, isClosing, keepAlive);
     pool.executeOnAllQueueServers(op);
   }
@@ -46,22 +49,21 @@ public class UnregisterInterestListOp {
   }
 
   private static class UnregisterInterestListOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
-    public UnregisterInterestListOpImpl(String region, List keys, boolean isClosing, boolean keepAlive) {
+    /** @throws org.apache.geode.SerializationException if serialization fails */
+    public UnregisterInterestListOpImpl(
+        String region, List keys, boolean isClosing, boolean keepAlive) {
       super(MessageType.UNREGISTER_INTEREST_LIST, 4 + keys.size());
       getMessage().addStringPart(region);
       {
         byte closingByte = (byte) (isClosing ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] { closingByte });
+        getMessage().addBytesPart(new byte[] {closingByte});
       }
       {
         byte keepAliveByte = (byte) (keepAlive ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] { keepAliveByte });
+        getMessage().addBytesPart(new byte[] {keepAliveByte});
       }
       getMessage().addIntPart(keys.size());
-      for (Iterator i = keys.iterator(); i.hasNext();) {
+      for (Iterator i = keys.iterator(); i.hasNext(); ) {
         getMessage().addStringOrObjPart(i.next());
       }
     }

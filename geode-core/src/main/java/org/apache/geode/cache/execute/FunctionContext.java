@@ -17,28 +17,23 @@
 package org.apache.geode.cache.execute;
 
 /**
- * Defines the execution context of a {@link Function}. It is required
- * by the {@link Function#execute(FunctionContext)} to execute a {@link Function}
- * on a particular member.
- * <p>
- * A context can be data dependent or data independent.
- * For data dependent functions refer to {@link RegionFunctionContext}
- * </p>
- * <p>This interface is implemented by GemFire. Instances of it will be passed
- * in to {@link Function#execute(FunctionContext)}.
- * 
+ * Defines the execution context of a {@link Function}. It is required by the {@link
+ * Function#execute(FunctionContext)} to execute a {@link Function} on a particular member.
+ *
+ * <p>A context can be data dependent or data independent. For data dependent functions refer to
+ * {@link RegionFunctionContext}
+ *
+ * <p>This interface is implemented by GemFire. Instances of it will be passed in to {@link
+ * Function#execute(FunctionContext)}.
  *
  * @since GemFire 6.0
- *
  * @see RegionFunctionContext
- *
  */
 public interface FunctionContext {
   /**
-   * Returns the arguments provided to this function execution. These are the
-   * arguments specified by the caller using
-   * {@link Execution#withArgs(Object)}
-   * 
+   * Returns the arguments provided to this function execution. These are the arguments specified by
+   * the caller using {@link Execution#withArgs(Object)}
+   *
    * @return the arguments or null if there are no arguments
    * @since GemFire 6.0
    */
@@ -46,7 +41,7 @@ public interface FunctionContext {
 
   /**
    * Returns the identifier of the function.
-   *  
+   *
    * @return a unique identifier
    * @see Function#getId()
    * @since GemFire 6.0
@@ -54,23 +49,20 @@ public interface FunctionContext {
   public String getFunctionId();
 
   /**
-   * Returns the ResultSender which is used to add the ability for an execute
-   * method to send a single result back, or break its result into multiple
-   * pieces and send each piece back to the calling thread's ResultCollector.
-   * 
+   * Returns the ResultSender which is used to add the ability for an execute method to send a
+   * single result back, or break its result into multiple pieces and send each piece back to the
+   * calling thread's ResultCollector.
+   *
    * @return ResultSender
    * @since GemFire 6.0
    */
-
   public <T> ResultSender<T> getResultSender();
 
   /**
-   * Returns a boolean to identify whether this is a re-execute. Returns true if
-   * it is a re-execute else returns false
-   * 
-   * @return a boolean (true) to identify whether it is a re-execute (else
-   *         false)
-   * 
+   * Returns a boolean to identify whether this is a re-execute. Returns true if it is a re-execute
+   * else returns false
+   *
+   * @return a boolean (true) to identify whether it is a re-execute (else false)
    * @since GemFire 6.5
    * @see Function#isHA()
    */

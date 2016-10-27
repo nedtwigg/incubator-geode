@@ -21,10 +21,7 @@ import org.apache.geode.management.internal.cli.json.GfJsonObject;
 import org.apache.geode.management.internal.cli.remote.CommandExecutionContext;
 import org.apache.geode.management.internal.cli.result.CommandResult;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class CommandResponseBuilder {
   // Command Response Constants
   private static final String NO_TOKEN_ACCESSOR = "__NULL__";
@@ -40,7 +37,8 @@ public class CommandResponseBuilder {
         content = new GfJsonObject();
       }
     }
-    return new CommandResponse(memberName, // sender
+    return new CommandResponse(
+        memberName, // sender
         getType(result), // contentType
         result.getStatus().getCode(), // status code
         "1/1", // page --- TODO - Abhishek - define a scrollable ResultData
@@ -49,7 +47,7 @@ public class CommandResponseBuilder {
         result.getHeader(), // header
         content, // content
         result.getFooter(), // footer
-        result.failedToPersist()); // failed to persist        
+        result.failedToPersist()); // failed to persist
   }
 
   // De-serializing to CommandResponse

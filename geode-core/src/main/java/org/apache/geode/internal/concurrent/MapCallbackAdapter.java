@@ -17,53 +17,36 @@
 
 package org.apache.geode.internal.concurrent;
 
-/**
- * Simple adapter class providing empty default implementations for
- * {@link MapCallback}.
- */
+/** Simple adapter class providing empty default implementations for {@link MapCallback}. */
 public class MapCallbackAdapter<K, V, C, P> implements MapCallback<K, V, C, P> {
 
-  /**
-   * @see MapCallback#newValue
-   */
+  /** @see MapCallback#newValue */
   @Override
   public V newValue(K key, C context, P createParams, MapResult result) {
     return null;
   }
 
-  /**
-   * @see MapCallback#updateValue
-   */
+  /** @see MapCallback#updateValue */
   @Override
   public V updateValue(K key, V oldValue, C context, P params) {
     return oldValue;
   }
 
-  /**
-   * @see MapCallback#afterUpdate
-   */
+  /** @see MapCallback#afterUpdate */
   @Override
-  public void afterUpdate(K key, K mapKey, V newValue, C context) {
-  }
+  public void afterUpdate(K key, K mapKey, V newValue, C context) {}
 
-  /**
-   * @see MapCallback#requiresUpdateValue
-   */
+  /** @see MapCallback#requiresUpdateValue */
   @Override
   public boolean requiresUpdateValue() {
     return false;
   }
 
-  /**
-   * @see MapCallback#oldValueRead
-   */
+  /** @see MapCallback#oldValueRead */
   @Override
-  public void oldValueRead(V oldValue) {
-  }
+  public void oldValueRead(V oldValue) {}
 
-  /**
-   * @see MapCallback#removeValue
-   */
+  /** @see MapCallback#removeValue */
   @Override
   public Object removeValue(Object key, Object value, V existingValue, C context, P removeParams) {
     if (value != null && (value == NO_OBJECT_TOKEN || value.equals(existingValue))) {
@@ -73,16 +56,11 @@ public class MapCallbackAdapter<K, V, C, P> implements MapCallback<K, V, C, P> {
     }
   }
 
-  /**
-   * @see MapCallback#postRemove
-   */
+  /** @see MapCallback#postRemove */
   @Override
-  public void postRemove(Object key, Object value, V existingValue, C context, P removeParams) {
-  }
+  public void postRemove(Object key, Object value, V existingValue, C context, P removeParams) {}
 
-  /**
-   * @see MapCallback#replaceValue
-   */
+  /** @see MapCallback#replaceValue */
   @Override
   public V replaceValue(K key, V oldValue, V existingValue, V newValue, C context, P params) {
     if (oldValue != null && oldValue.equals(existingValue)) {
@@ -92,40 +70,28 @@ public class MapCallbackAdapter<K, V, C, P> implements MapCallback<K, V, C, P> {
     }
   }
 
-  /**
-   * @see MapCallback#beforeReplace
-   */
+  /** @see MapCallback#beforeReplace */
   @Override
   public Object beforeReplace(K mapKey, V newValue, C context, P params) {
     return null;
   }
 
-  /**
-   * @see MapCallback#afterReplace
-   */
+  /** @see MapCallback#afterReplace */
   @Override
-  public void afterReplace(K mapKey, V newValue, Object beforeResult, C context, P params) {
-  }
+  public void afterReplace(K mapKey, V newValue, Object beforeResult, C context, P params) {}
 
-  /**
-   * @see MapCallback#onReplaceFailed
-   */
+  /** @see MapCallback#onReplaceFailed */
   @Override
-  public void onReplaceFailed(K mapKey, V newValue, Object beforeResult, C context, P params) {
-  }
+  public void onReplaceFailed(K mapKey, V newValue, Object beforeResult, C context, P params) {}
 
-  /**
-   * @see MapCallback#onOperationFailed
-   */
+  /** @see MapCallback#onOperationFailed */
   @Override
-  public V onOperationFailed(K key, Object oldValue, V updatedValue, V newValue, C context, P params) {
+  public V onOperationFailed(
+      K key, Object oldValue, V updatedValue, V newValue, C context, P params) {
     return null;
   }
 
-  /**
-   * @see MapCallback#onToArray       
-   */
+  /** @see MapCallback#onToArray */
   @Override
-  public void onToArray(C context) {
-  }
+  public void onToArray(C context) {}
 }

@@ -17,16 +17,15 @@
 package org.apache.geode.internal.cache;
 
 /**
- * Indicates that a Clear Operation happened while an entry operation
- * was in progress, which would result in the ongoing entry operation to abort
+ * Indicates that a Clear Operation happened while an entry operation was in progress, which would
+ * result in the ongoing entry operation to abort
+ *
  * @since GemFire 5.1
  */
 public class RegionClearedException extends Exception {
   private static final long serialVersionUID = 1266503771775907997L;
 
-  /**
-   * Constructs a new <code>RegionClearedException</code>.
-   */
+  /** Constructs a new <code>RegionClearedException</code>. */
   public RegionClearedException() {
     super();
   }
@@ -41,8 +40,7 @@ public class RegionClearedException extends Exception {
   }
 
   /**
-   * Constructs a new <code>RegionClearedException</code> with a message string
-   * and a cause.
+   * Constructs a new <code>RegionClearedException</code> with a message string and a cause.
    *
    * @param msg the message string
    * @param cause a causal Throwable

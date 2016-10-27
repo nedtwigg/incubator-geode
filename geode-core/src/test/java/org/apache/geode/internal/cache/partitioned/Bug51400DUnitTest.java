@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.partitioned;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
@@ -88,7 +86,8 @@ public class Bug51400DUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  public static Integer createServerCache(Integer mcastPort, Integer maxMessageCount) throws Exception {
+  public static Integer createServerCache(Integer mcastPort, Integer maxMessageCount)
+      throws Exception {
     Properties props = new Properties();
     props.setProperty(LOCATORS, "localhost[" + DistributedTestUtils.getDUnitLocatorPort() + "]");
 
@@ -111,7 +110,8 @@ public class Bug51400DUnitTest extends JUnit4DistributedTestCase {
     return server.getPort();
   }
 
-  public static void createClientCache(String hostName, Integer[] ports, Integer interval) throws Exception {
+  public static void createClientCache(String hostName, Integer[] ports, Integer interval)
+      throws Exception {
     Properties props = new Properties();
 
     DistributedSystem ds = new Bug51400DUnitTest().getSystem(props);
@@ -124,7 +124,8 @@ public class Bug51400DUnitTest extends JUnit4DistributedTestCase {
     }
     cache = (GemFireCacheImpl) ccf.create();
 
-    ClientRegionFactory<String, String> crf = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
+    ClientRegionFactory<String, String> crf =
+        cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
 
     Region<String, String> region = crf.create(REGION_NAME);
 
@@ -132,13 +133,23 @@ public class Bug51400DUnitTest extends JUnit4DistributedTestCase {
   }
 
   public static void verifyQueueSize(Boolean isPrimary, Integer numOfEvents) throws Exception {
-    CacheClientProxyStats stats = ((CacheClientProxy) CacheClientNotifier.getInstance().getClientProxies().toArray()[0]).getStatistics();
+    CacheClientProxyStats stats =
+        ((CacheClientProxy) CacheClientNotifier.getInstance().getClientProxies().toArray()[0])
+            .getStatistics();
 
     if (isPrimary) {
       numOfEvents = numOfEvents + 1; // marker
     }
     long qSize = stats.getMessageQueueSize();
-    assertEquals("Expected queue size: " + numOfEvents + " but actual size: " + qSize + " at " + (isPrimary ? "primary." : "secondary."), numOfEvents.intValue(), qSize);
+    assertEquals(
+        "Expected queue size: "
+            + numOfEvents
+            + " but actual size: "
+            + qSize
+            + " at "
+            + (isPrimary ? "primary." : "secondary."),
+        numOfEvents.intValue(),
+        qSize);
   }
 
   @Ignore("ticket51932")
@@ -152,7 +163,12 @@ public class Bug51400DUnitTest extends JUnit4DistributedTestCase {
     int port1 = 0;
     //    int port1 = (Integer) server0.invoke(() -> Bug51400DUnitTest.createServerCache( maxQSize));
 
-    client1.invoke(Bug51400DUnitTest.class, "createClientCache", new Object[] { NetworkUtils.getServerHostName(Host.getHost(0)), new Integer[] { port1 }, ackInterval });
+    client1.invoke(
+        Bug51400DUnitTest.class,
+        "createClientCache",
+        new Object[] {
+          NetworkUtils.getServerHostName(Host.getHost(0)), new Integer[] {port1}, ackInterval
+        });
 
     // Do puts from server as well as from client on the same key.
     AsyncInvocation ai1 = server0.invokeAsync(() -> Bug51400DUnitTest.updateKey(2 * maxQSize));
@@ -174,5 +190,4 @@ public class Bug51400DUnitTest extends JUnit4DistributedTestCase {
       fail("Failed in updateKey()" + e);
     }
   }
-
 }

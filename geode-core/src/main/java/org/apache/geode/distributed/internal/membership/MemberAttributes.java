@@ -23,14 +23,15 @@ import java.util.StringTokenizer;
 import org.apache.geode.distributed.DurableClientAttributes;
 
 /**
- * The attributes of a distributed member.  This is largely deprecated as
- * GMSMember holds all of this information.
+ * The attributes of a distributed member. This is largely deprecated as GMSMember holds all of this
+ * information.
  *
  * @since GemFire 5.0
  */
 public class MemberAttributes {
 
-  public static final MemberAttributes INVALID = new MemberAttributes(-1, -1, -1, -1, null, null, null);
+  public static final MemberAttributes INVALID =
+      new MemberAttributes(-1, -1, -1, -1, null, null, null);
 
   private int dcPort;
   private int vmPid;
@@ -40,8 +41,15 @@ public class MemberAttributes {
   private String[] groups;
   private DurableClientAttributes durableClientAttributes;
 
-  /** Constructs new MemberAttributes from parameters.  */
-  public MemberAttributes(int dcPort, int vmPid, int vmKind, int vmViewId, String p_name, String[] p_groups, DurableClientAttributes durableClientAttributes) {
+  /** Constructs new MemberAttributes from parameters. */
+  public MemberAttributes(
+      int dcPort,
+      int vmPid,
+      int vmKind,
+      int vmViewId,
+      String p_name,
+      String[] p_groups,
+      DurableClientAttributes durableClientAttributes) {
     String[] l_groups = p_groups;
     this.dcPort = dcPort;
     this.vmPid = vmPid;
@@ -110,9 +118,7 @@ public class MemberAttributes {
     }
   }
 
-  /**
-   * @return the membership view number in which this member was born
-   */
+  /** @return the membership view number in which this member was born */
   public int getVmViewId() {
     return this.vmViewId;
   }

@@ -21,19 +21,17 @@ import org.apache.geode.internal.cache.persistence.BytesAndBits;
 import org.apache.geode.internal.cache.persistence.DiskRegionView;
 
 /**
- * Contract that must be implemented by oplogs so that
- * they can be compacted.
- * 
- * 
+ * Contract that must be implemented by oplogs so that they can be compacted.
+ *
  * @since GemFire 6.5
  */
-
 public interface CompactableOplog {
   public void prepareForCompact();
 
   public int compact(OplogCompactor compactor);
 
-  public BytesAndBits getBytesAndBits(DiskRegionView dr, DiskId id, boolean faultIn, boolean bitOnly);
+  public BytesAndBits getBytesAndBits(
+      DiskRegionView dr, DiskId id, boolean faultIn, boolean bitOnly);
 
   public BytesAndBits getNoBuffer(DiskRegion dr, DiskId id);
 }

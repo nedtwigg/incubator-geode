@@ -42,8 +42,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Confirms the bug 37241 is fixed.
- * CleanupFailedInitialization on should also clean disk files created
+ * Confirms the bug 37241 is fixed. CleanupFailedInitialization on should also clean disk files
+ * created
  */
 @Category(DistributedTest.class)
 public class Bug37241DUnitTest extends JUnit4DistributedTestCase {
@@ -121,7 +121,8 @@ public class Bug37241DUnitTest extends JUnit4DistributedTestCase {
     dirs[0] = file1;
     dirs[1] = file2;
     factory.setDiskSynchronous(false);
-    factory.setDiskStoreName(cache.createDiskStoreFactory().setDiskDirs(dirs).create("Bug37241DUnitTest").getName());
+    factory.setDiskStoreName(
+        cache.createDiskStoreFactory().setDiskDirs(dirs).create("Bug37241DUnitTest").getName());
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
   }
@@ -140,17 +141,23 @@ public class Bug37241DUnitTest extends JUnit4DistributedTestCase {
     dirs[0] = file1;
     dirs[1] = file2;
     factory.setDiskSynchronous(false);
-    factory.setDiskStoreName(cache.createDiskStoreFactory().setDiskDirs(dirs).create("Bug37241DUnitTest").getName());
+    factory.setDiskStoreName(
+        cache.createDiskStoreFactory().setDiskDirs(dirs).create("Bug37241DUnitTest").getName());
 
     //added for not to log exepected IllegalStateExcepion.
-    LogWriterUtils.getLogWriter().info("<ExpectedException action=add>" + expectedReplyException + "</ExpectedException>");
-    LogWriterUtils.getLogWriter().info("<ExpectedException action=add>" + expectedException + "</ExpectedException>");
-    cache.getLogger().info("<ExpectedException action=add>" + expectedReplyException + "</ExpectedException>");
-    cache.getLogger().info("<ExpectedException action=add>" + expectedException + "</ExpectedException>");
+    LogWriterUtils.getLogWriter()
+        .info("<ExpectedException action=add>" + expectedReplyException + "</ExpectedException>");
+    LogWriterUtils.getLogWriter()
+        .info("<ExpectedException action=add>" + expectedException + "</ExpectedException>");
+    cache
+        .getLogger()
+        .info("<ExpectedException action=add>" + expectedReplyException + "</ExpectedException>");
+    cache
+        .getLogger()
+        .info("<ExpectedException action=add>" + expectedException + "</ExpectedException>");
 
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
-
   }
 
   public static void checkForCleanup() {
@@ -158,7 +165,9 @@ public class Bug37241DUnitTest extends JUnit4DistributedTestCase {
       Thread.sleep(200);
     } catch (InterruptedException ignore) {
     }
-    cache.getLogger().info("checkForCleanup=" + Arrays.asList(new File("server2_disk2").listFiles()));
+    cache
+        .getLogger()
+        .info("checkForCleanup=" + Arrays.asList(new File("server2_disk2").listFiles()));
     assertEquals(0, new File("server2_disk2").listFiles().length);
   }
 
@@ -168,11 +177,19 @@ public class Bug37241DUnitTest extends JUnit4DistributedTestCase {
 
   public static void ignoreExceptionInLogs() {
 
-    cache.getLogger().info("<ExpectedException action=remove>" + expectedException + "</ExpectedException>");
+    cache
+        .getLogger()
+        .info("<ExpectedException action=remove>" + expectedException + "</ExpectedException>");
 
-    cache.getLogger().info("<ExpectedException action=remove>" + expectedReplyException + "</ExpectedException>");
-    LogWriterUtils.getLogWriter().info("<ExpectedException action=remove>" + expectedException + "</ExpectedException>");
-    LogWriterUtils.getLogWriter().info("<ExpectedException action=remove>" + expectedReplyException + "</ExpectedException>");
+    cache
+        .getLogger()
+        .info(
+            "<ExpectedException action=remove>" + expectedReplyException + "</ExpectedException>");
+    LogWriterUtils.getLogWriter()
+        .info("<ExpectedException action=remove>" + expectedException + "</ExpectedException>");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "<ExpectedException action=remove>" + expectedReplyException + "</ExpectedException>");
   }
 
   public static void closeRegion() {

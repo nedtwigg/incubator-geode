@@ -57,14 +57,11 @@ public class StatSamplerIntegrationTest {
   private Map<String, String> statisticTypes;
   private Map<String, Map<String, Number>> allStatistics;
 
-  @Rule
-  public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+  @Rule public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() {
@@ -99,17 +96,35 @@ public class StatSamplerIntegrationTest {
     System.setProperty("stats.disk-space-limit", "0");
     System.setProperty("stats.sample-rate", "100");
 
-    final CancelCriterion stopper = new CancelCriterion() {
-      public String cancelInProgress() {
-        return null;
-      }
+    final CancelCriterion stopper =
+        new CancelCriterion() {
+          public String cancelInProgress() {
+            return null;
+          }
 
-      public RuntimeException generateCancelledException(Throwable e) {
-        return null;
-      }
-    };
+          public RuntimeException generateCancelledException(Throwable e) {
+            return null;
+          }
+        };
     final LocalStatisticsFactory factory = new LocalStatisticsFactory(stopper);
-    final StatisticDescriptor[] statsST1 = new StatisticDescriptor[] { factory.createDoubleCounter("double_counter_1", "d1", "u1"), factory.createDoubleCounter("double_counter_2", "d2", "u2", true), factory.createDoubleGauge("double_gauge_3", "d3", "u3"), factory.createDoubleGauge("double_gauge_4", "d4", "u4", false), factory.createIntCounter("int_counter_5", "d5", "u5"), factory.createIntCounter("int_counter_6", "d6", "u6", true), factory.createIntGauge("int_gauge_7", "d7", "u7"), factory.createIntGauge("int_gauge_8", "d8", "u8", false), factory.createLongCounter("long_counter_9", "d9", "u9"), factory.createLongCounter("long_counter_10", "d10", "u10", true), factory.createLongGauge("long_gauge_11", "d11", "u11"), factory.createLongGauge("long_gauge_12", "d12", "u12", false), factory.createLongGauge("sampled_long", "d13", "u13", false), factory.createIntGauge("sampled_int", "d14", "u14", false), factory.createDoubleGauge("sampled_double", "d15", "u15", false) };
+    final StatisticDescriptor[] statsST1 =
+        new StatisticDescriptor[] {
+          factory.createDoubleCounter("double_counter_1", "d1", "u1"),
+          factory.createDoubleCounter("double_counter_2", "d2", "u2", true),
+          factory.createDoubleGauge("double_gauge_3", "d3", "u3"),
+          factory.createDoubleGauge("double_gauge_4", "d4", "u4", false),
+          factory.createIntCounter("int_counter_5", "d5", "u5"),
+          factory.createIntCounter("int_counter_6", "d6", "u6", true),
+          factory.createIntGauge("int_gauge_7", "d7", "u7"),
+          factory.createIntGauge("int_gauge_8", "d8", "u8", false),
+          factory.createLongCounter("long_counter_9", "d9", "u9"),
+          factory.createLongCounter("long_counter_10", "d10", "u10", true),
+          factory.createLongGauge("long_gauge_11", "d11", "u11"),
+          factory.createLongGauge("long_gauge_12", "d12", "u12", false),
+          factory.createLongGauge("sampled_long", "d13", "u13", false),
+          factory.createIntGauge("sampled_int", "d14", "u14", false),
+          factory.createDoubleGauge("sampled_double", "d15", "u15", false)
+        };
     final StatisticsType ST1 = factory.createType("ST1", "ST1", statsST1);
     final Statistics st1_1 = factory.createAtomicStatistics(ST1, "st1_1", 1);
     st1_1.setIntSupplier("sampled_int", () -> 5);
@@ -119,7 +134,9 @@ public class StatSamplerIntegrationTest {
     st1_1.setDoubleSupplier("sampled_double", () -> 7.0);
     getOrCreateExpectedValueMap(st1_1).put("sampled_double", 7.0);
 
-    await("awaiting StatSampler readiness").atMost(30, SECONDS).until(() -> hasSamplerStatsInstances(factory));
+    await("awaiting StatSampler readiness")
+        .atMost(30, SECONDS)
+        .until(() -> hasSamplerStatsInstances(factory));
 
     Statistics[] samplerStatsInstances = factory.findStatisticsByTextId("statSampler");
     assertNotNull(samplerStatsInstances);
@@ -258,10 +275,10 @@ public class StatSamplerIntegrationTest {
 
     final File archiveFile = new File(System.getProperty("stats.archive-file"));
     assertTrue(archiveFile.exists());
-    final StatArchiveReader reader = new StatArchiveReader(new File[] { archiveFile }, null, false);
+    final StatArchiveReader reader = new StatArchiveReader(new File[] {archiveFile}, null, false);
 
     List resources = reader.getResourceInstList();
-    for (Iterator iter = resources.iterator(); iter.hasNext();) {
+    for (Iterator iter = resources.iterator(); iter.hasNext(); ) {
       StatArchiveReader.ResourceInst ri = (StatArchiveReader.ResourceInst) iter.next();
       String resourceName = ri.getName();
       assertNotNull(resourceName);
@@ -288,7 +305,11 @@ public class StatSamplerIntegrationTest {
 
         statValues[i].setFilter(StatValue.FILTER_NONE);
         //double[] rawSnapshots = statValues[i].getRawSnapshots();
-        assertEquals("Value " + i + " for " + statName + " is wrong: " + expectedStatValues, expectedStatValues.get(statName).doubleValue(), statValues[i].getSnapshotsMostRecent(), 0);
+        assertEquals(
+            "Value " + i + " for " + statName + " is wrong: " + expectedStatValues,
+            expectedStatValues.get(statName).doubleValue(),
+            statValues[i].getSnapshotsMostRecent(),
+            0);
       }
     }
   }
@@ -300,7 +321,9 @@ public class StatSamplerIntegrationTest {
 
   private void awaitStatSample(final Statistics samplerStats) throws InterruptedException {
     int startSampleCount = samplerStats.getInt("sampleCount");
-    await("awaiting stat sample").atMost(30, SECONDS).until(() -> samplerStats.getInt("sampleCount") > startSampleCount);
+    await("awaiting stat sample")
+        .atMost(30, SECONDS)
+        .until(() -> samplerStats.getInt("sampleCount") > startSampleCount);
   }
 
   private void incDouble(Statistics statistics, String stat, double value) {

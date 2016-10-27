@@ -21,9 +21,9 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
- * this class extends the capability of JUnit's ExternalResource in that
- * it provides a Description object in the before and after methods, so that
- * the implementation would have access to the annotation of the test methods
+ * this class extends the capability of JUnit's ExternalResource in that it provides a Description
+ * object in the before and after methods, so that the implementation would have access to the
+ * annotation of the test methods
  */
 public class DescribedExternalResource implements TestRule {
   public Statement apply(Statement base, Description description) {
@@ -53,9 +53,7 @@ public class DescribedExternalResource implements TestRule {
     // do nothing
   }
 
-  /**
-   * Override to tear down your specific external resource.
-   */
+  /** Override to tear down your specific external resource. */
   protected void after(Description description) throws Throwable {
     // do nothing
   }

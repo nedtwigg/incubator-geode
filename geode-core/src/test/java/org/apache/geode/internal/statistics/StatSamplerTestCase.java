@@ -34,7 +34,7 @@ import org.apache.geode.internal.util.StopWatch;
 
 /**
  * Integration TestCase for StatSampler.
- * 
+ *
  * @since GemFire 7.0
  */
 public abstract class StatSamplerTestCase {
@@ -54,7 +54,9 @@ public abstract class StatSamplerTestCase {
   protected static void waitForFileToExist(final File file, final long millis, final long sleep) {
     boolean done = false;
     try {
-      for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < millis; done = (file.exists())) {
+      for (StopWatch time = new StopWatch(true);
+          !done && time.elapsedTimeMillis() < millis;
+          done = (file.exists())) {
         Thread.sleep(sleep);
       }
     } catch (InterruptedException e) {
@@ -66,7 +68,9 @@ public abstract class StatSamplerTestCase {
   protected static void waitForFileToDelete(final File file, final long millis, final long sleep) {
     boolean done = false;
     try {
-      for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < millis; done = (!file.exists())) {
+      for (StopWatch time = new StopWatch(true);
+          !done && time.elapsedTimeMillis() < millis;
+          done = (!file.exists())) {
         Thread.sleep(sleep);
       }
     } catch (InterruptedException e) {
@@ -75,10 +79,17 @@ public abstract class StatSamplerTestCase {
     assertTrue("Waiting for file to be deleted: " + file, done);
   }
 
-  protected static void waitForExpectedStatValue(final Statistics statSamplerStats, final String statName, final int expectedStatValue, final long millis, final long sleep) {
+  protected static void waitForExpectedStatValue(
+      final Statistics statSamplerStats,
+      final String statName,
+      final int expectedStatValue,
+      final long millis,
+      final long sleep) {
     boolean done = false;
     try {
-      for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < millis; done = (statSamplerStats.getInt(statName) >= expectedStatValue)) {
+      for (StopWatch time = new StopWatch(true);
+          !done && time.elapsedTimeMillis() < millis;
+          done = (statSamplerStats.getInt(statName) >= expectedStatValue)) {
         Thread.sleep(sleep);
       }
     } catch (InterruptedException e) {
@@ -87,20 +98,29 @@ public abstract class StatSamplerTestCase {
     assertTrue("Waiting for " + statName + " >= " + expectedStatValue, done);
   }
 
-  protected static void waitForStatSample(final Statistics statSamplerStats, final int samples, final long millis, final long sleep) {
+  protected static void waitForStatSample(
+      final Statistics statSamplerStats, final int samples, final long millis, final long sleep) {
     waitForExpectedStatValue(statSamplerStats, "sampleCount", samples, millis, sleep);
   }
 
-  protected static void assertStatValueDoesNotChange(final Statistics statSamplerStats, final String statName, final int expectedStatValue, final long millis, final long sleep) {
+  protected static void assertStatValueDoesNotChange(
+      final Statistics statSamplerStats,
+      final String statName,
+      final int expectedStatValue,
+      final long millis,
+      final long sleep) {
     boolean done = false;
     try {
-      for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < millis; done = (statSamplerStats.getInt(statName) != expectedStatValue)) {
+      for (StopWatch time = new StopWatch(true);
+          !done && time.elapsedTimeMillis() < millis;
+          done = (statSamplerStats.getInt(statName) != expectedStatValue)) {
         Thread.sleep(sleep);
       }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
-    assertFalse("Waiting to assert that " + statName + " does not change from " + expectedStatValue, done);
+    assertFalse(
+        "Waiting to assert that " + statName + " does not change from " + expectedStatValue, done);
   }
 
   protected static class AllStatistics {
@@ -116,7 +136,8 @@ public abstract class StatSamplerTestCase {
     private Map<StatisticsType, Set<Statistics>> initAllStatistics() throws InterruptedException {
       assertTrue(this.statSampler.waitForInitialization(5000));
 
-      Map<StatisticsType, Set<Statistics>> statsTypeToStats = new HashMap<StatisticsType, Set<Statistics>>();
+      Map<StatisticsType, Set<Statistics>> statsTypeToStats =
+          new HashMap<StatisticsType, Set<Statistics>>();
       Statistics[] stats = this.statSampler.getStatistics();
       for (int i = 0; i < stats.length; i++) {
         StatisticsType statsType = stats[i].getType();
@@ -161,24 +182,27 @@ public abstract class StatSamplerTestCase {
     }
 
     /**
-     * Statistics[0]: typeName=StatSampler instanceName=statSampler
-     * Statistics[1]: typeName=VMStats instanceName=vmStats
-     * Statistics[2]: typeName=VMMemoryUsageStats instanceName=vmHeapMemoryStats
-     * Statistics[3]: typeName=VMMemoryUsageStats instanceName=vmNonHeapMemoryStats
-     * Statistics[4]: typeName=VMMemoryPoolStats instanceName=Code Cache-Non-heap memory
-     * Statistics[5]: typeName=VMMemoryPoolStats instanceName=PS Eden Space-Heap memory
-     * Statistics[6]: typeName=VMMemoryPoolStats instanceName=PS Survivor Space-Heap memory
-     * Statistics[7]: typeName=VMMemoryPoolStats instanceName=PS Old Gen-Heap memory
-     * Statistics[8]: typeName=VMMemoryPoolStats instanceName=PS Perm Gen-Non-heap memory
-     * Statistics[9]: typeName=VMGCStats instanceName=PS Scavenge
-     * Statistics[10]: typeName=VMGCStats instanceName=PS MarkSweep
-     * Statistics[11]: typeName=LinuxSystemStats instanceName=kuwait.gemstone.com
-     * Statistics[12]: typeName=LinuxProcessStats instanceName=javaApp0-proc
+     * Statistics[0]: typeName=StatSampler instanceName=statSampler Statistics[1]: typeName=VMStats
+     * instanceName=vmStats Statistics[2]: typeName=VMMemoryUsageStats
+     * instanceName=vmHeapMemoryStats Statistics[3]: typeName=VMMemoryUsageStats
+     * instanceName=vmNonHeapMemoryStats Statistics[4]: typeName=VMMemoryPoolStats instanceName=Code
+     * Cache-Non-heap memory Statistics[5]: typeName=VMMemoryPoolStats instanceName=PS Eden
+     * Space-Heap memory Statistics[6]: typeName=VMMemoryPoolStats instanceName=PS Survivor
+     * Space-Heap memory Statistics[7]: typeName=VMMemoryPoolStats instanceName=PS Old Gen-Heap
+     * memory Statistics[8]: typeName=VMMemoryPoolStats instanceName=PS Perm Gen-Non-heap memory
+     * Statistics[9]: typeName=VMGCStats instanceName=PS Scavenge Statistics[10]: typeName=VMGCStats
+     * instanceName=PS MarkSweep Statistics[11]: typeName=LinuxSystemStats
+     * instanceName=kuwait.gemstone.com Statistics[12]: typeName=LinuxProcessStats
+     * instanceName=javaApp0-proc
      */
     protected void dumpStatistics() throws InterruptedException {
       Statistics[] stats = this.statSampler.getStatistics();
       for (int i = 0; i < stats.length; i++) {
-        logger.info("Statistics[{}]: typeName={} instanceName={}", i, stats[i].getType().getName(), stats[i].getTextId());
+        logger.info(
+            "Statistics[{}]: typeName={} instanceName={}",
+            i,
+            stats[i].getType().getName(),
+            stats[i].getTextId());
       }
     }
   }

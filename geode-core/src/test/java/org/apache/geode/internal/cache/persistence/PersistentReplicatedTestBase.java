@@ -49,7 +49,8 @@ public abstract class PersistentReplicatedTestBase extends JUnit4CacheTestCase {
 
   @Override
   public final void postSetUp() throws Exception {
-    Invoke.invokeInEveryVM(PersistentReplicatedTestBase.class, "setRegionName", new Object[] { getUniqueName() });
+    Invoke.invokeInEveryVM(
+        PersistentReplicatedTestBase.class, "setRegionName", new Object[] {getUniqueName()});
     setRegionName(getUniqueName());
     diskDir = new File("diskDir-" + getName()).getAbsoluteFile();
     org.apache.geode.internal.FileUtil.delete(diskDir);
@@ -67,101 +68,107 @@ public abstract class PersistentReplicatedTestBase extends JUnit4CacheTestCase {
     postTearDownPersistentReplicatedTestBase();
   }
 
-  protected void postTearDownPersistentReplicatedTestBase() throws Exception {
-  }
+  protected void postTearDownPersistentReplicatedTestBase() throws Exception {}
 
   protected void waitForBlockedInitialization(VM vm) {
-    vm.invoke(new SerializableRunnable() {
+    vm.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        Wait.waitForCriterion(new WaitCriterion() {
+          public void run() {
+            Wait.waitForCriterion(
+                new WaitCriterion() {
 
-          public String description() {
-            return "Waiting for another persistent member to come online";
+                  public String description() {
+                    return "Waiting for another persistent member to come online";
+                  }
+
+                  public boolean done() {
+                    GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+                    PersistentMemberManager mm = cache.getPersistentMemberManager();
+                    Map<String, Set<PersistentMemberID>> regions = mm.getWaitingRegions();
+                    boolean done = !regions.isEmpty();
+                    return done;
+                  }
+                },
+                MAX_WAIT,
+                100,
+                true);
           }
-
-          public boolean done() {
-            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-            PersistentMemberManager mm = cache.getPersistentMemberManager();
-            Map<String, Set<PersistentMemberID>> regions = mm.getWaitingRegions();
-            boolean done = !regions.isEmpty();
-            return done;
-          }
-
-        }, MAX_WAIT, 100, true);
-
-      }
-
-    });
+        });
   }
 
   protected SerializableRunnable createPersistentRegionWithoutCompaction(final VM vm0) {
-    SerializableRunnable createRegion = new SerializableRunnable("Create persistent region") {
-      public void run() {
-        Cache cache = getCache();
-        DiskStoreFactory dsf = cache.createDiskStoreFactory();
-        File dir = getDiskDirForVM(vm0);
-        dir.mkdirs();
-        dsf.setDiskDirs(new File[] { dir });
-        dsf.setMaxOplogSize(1);
-        dsf.setAutoCompact(false);
-        dsf.setAllowForceCompaction(true);
-        dsf.setCompactionThreshold(20);
-        DiskStore ds = dsf.create(REGION_NAME);
-        RegionFactory rf = new RegionFactory();
-        rf.setDiskStoreName(ds.getName());
-        rf.setDiskSynchronous(true);
-        rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-        rf.setScope(Scope.DISTRIBUTED_ACK);
-        rf.create(REGION_NAME);
-      }
-    };
+    SerializableRunnable createRegion =
+        new SerializableRunnable("Create persistent region") {
+          public void run() {
+            Cache cache = getCache();
+            DiskStoreFactory dsf = cache.createDiskStoreFactory();
+            File dir = getDiskDirForVM(vm0);
+            dir.mkdirs();
+            dsf.setDiskDirs(new File[] {dir});
+            dsf.setMaxOplogSize(1);
+            dsf.setAutoCompact(false);
+            dsf.setAllowForceCompaction(true);
+            dsf.setCompactionThreshold(20);
+            DiskStore ds = dsf.create(REGION_NAME);
+            RegionFactory rf = new RegionFactory();
+            rf.setDiskStoreName(ds.getName());
+            rf.setDiskSynchronous(true);
+            rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+            rf.setScope(Scope.DISTRIBUTED_ACK);
+            rf.create(REGION_NAME);
+          }
+        };
     vm0.invoke(createRegion);
     return createRegion;
   }
 
   protected void closeRegion(final VM vm) {
-    SerializableRunnable closeRegion = new SerializableRunnable("Close persistent region") {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        region.close();
-      }
-    };
+    SerializableRunnable closeRegion =
+        new SerializableRunnable("Close persistent region") {
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(REGION_NAME);
+            region.close();
+          }
+        };
     vm.invoke(closeRegion);
   }
 
   protected void closeCache(final VM vm) {
-    SerializableRunnable closeCache = new SerializableRunnable("close cache") {
-      public void run() {
-        Cache cache = getCache();
-        cache.close();
-      }
-    };
+    SerializableRunnable closeCache =
+        new SerializableRunnable("close cache") {
+          public void run() {
+            Cache cache = getCache();
+            cache.close();
+          }
+        };
     vm.invoke(closeCache);
   }
 
   protected AsyncInvocation closeCacheAsync(VM vm0) {
-    SerializableRunnable close = new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
-        cache.close();
-      }
-    };
+    SerializableRunnable close =
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
+            cache.close();
+          }
+        };
 
     return vm0.invokeAsync(close);
   }
 
   protected void createNonPersistentRegion(VM vm) throws Exception {
-    SerializableRunnable createRegion = new SerializableRunnable("Create non persistent region") {
-      public void run() {
-        Cache cache = getCache();
-        RegionFactory rf = new RegionFactory();
-        rf.setDataPolicy(DataPolicy.REPLICATE);
-        rf.setScope(Scope.DISTRIBUTED_ACK);
-        rf.create(REGION_NAME);
-      }
-    };
+    SerializableRunnable createRegion =
+        new SerializableRunnable("Create non persistent region") {
+          public void run() {
+            Cache cache = getCache();
+            RegionFactory rf = new RegionFactory();
+            rf.setDataPolicy(DataPolicy.REPLICATE);
+            rf.setScope(Scope.DISTRIBUTED_ACK);
+            rf.create(REGION_NAME);
+          }
+        };
     vm.invoke(createRegion);
   }
 
@@ -190,23 +197,24 @@ public abstract class PersistentReplicatedTestBase extends JUnit4CacheTestCase {
   }
 
   protected AsyncInvocation createPersistentRegionAsync(final VM vm) {
-    SerializableRunnable createRegion = new SerializableRunnable("Create persistent region") {
-      public void run() {
-        Cache cache = getCache();
-        DiskStoreFactory dsf = cache.createDiskStoreFactory();
-        File dir = getDiskDirForVM(vm);
-        dir.mkdirs();
-        dsf.setDiskDirs(new File[] { dir });
-        dsf.setMaxOplogSize(1);
-        DiskStore ds = dsf.create(REGION_NAME);
-        RegionFactory rf = new RegionFactory();
-        rf.setDiskStoreName(ds.getName());
-        rf.setDiskSynchronous(true);
-        rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-        rf.setScope(Scope.DISTRIBUTED_ACK);
-        rf.create(REGION_NAME);
-      }
-    };
+    SerializableRunnable createRegion =
+        new SerializableRunnable("Create persistent region") {
+          public void run() {
+            Cache cache = getCache();
+            DiskStoreFactory dsf = cache.createDiskStoreFactory();
+            File dir = getDiskDirForVM(vm);
+            dir.mkdirs();
+            dsf.setDiskDirs(new File[] {dir});
+            dsf.setMaxOplogSize(1);
+            DiskStore ds = dsf.create(REGION_NAME);
+            RegionFactory rf = new RegionFactory();
+            rf.setDiskStoreName(ds.getName());
+            rf.setDiskSynchronous(true);
+            rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+            rf.setScope(Scope.DISTRIBUTED_ACK);
+            rf.create(REGION_NAME);
+          }
+        };
     return vm.invokeAsync(createRegion);
   }
 
@@ -230,5 +238,4 @@ public abstract class PersistentReplicatedTestBase extends JUnit4CacheTestCase {
       FileUtil.delete(backFile);
     }
   }
-
 }

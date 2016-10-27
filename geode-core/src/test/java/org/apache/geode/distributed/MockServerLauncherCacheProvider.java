@@ -36,5 +36,4 @@ public class MockServerLauncherCacheProvider implements ServerLauncherCacheProvi
   public Cache createCache(Properties gemfireProperties, ServerLauncher serverLauncher) {
     return cache;
   }
-
 }

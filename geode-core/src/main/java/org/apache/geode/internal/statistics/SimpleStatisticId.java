@@ -21,11 +21,11 @@ import org.apache.geode.Statistics;
 
 /**
  * Identifies a specific instance of a stat as defined by a StatisticDescriptor.
- * <p>
- * A StatisticsType contains any number of StatisticDescriptors. A 
- * StatisticsType may describe one or more Statistics instances, while a 
- * StatisticDescriptor may describe one or more StatisticId instances.
- * 
+ *
+ * <p>A StatisticsType contains any number of StatisticDescriptors. A StatisticsType may describe
+ * one or more Statistics instances, while a StatisticDescriptor may describe one or more
+ * StatisticId instances.
+ *
  * @since GemFire 7.0
  */
 public final class SimpleStatisticId implements StatisticId {
@@ -48,17 +48,13 @@ public final class SimpleStatisticId implements StatisticId {
     return this.statistics;
   }
 
-  /**
-   * Object equality must be based on instance identity.
-   */
+  /** Object equality must be based on instance identity. */
   @Override
   public final boolean equals(Object obj) {
     return super.equals(obj);
   }
 
-  /**
-   * Object equality must be based on instance identity.
-   */
+  /** Object equality must be based on instance identity. */
   @Override
   public final int hashCode() {
     return super.hashCode();

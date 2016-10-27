@@ -19,17 +19,19 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.cache.ExpirationAttributes;
 
 /**
- * Remembers the expiration attributes returned from
- * the customer's CustomExpiry callback, if any.
- * 
- * @since GemFire 8.0
+ * Remembers the expiration attributes returned from the customer's CustomExpiry callback, if any.
  *
+ * @since GemFire 8.0
  */
 public class CustomEntryExpiryTask extends EntryExpiryTask {
   private final ExpirationAttributes ttlAttr;
   private final ExpirationAttributes idleAttr;
 
-  public CustomEntryExpiryTask(LocalRegion region, RegionEntry re, ExpirationAttributes ttlAtts, ExpirationAttributes idleAtts) {
+  public CustomEntryExpiryTask(
+      LocalRegion region,
+      RegionEntry re,
+      ExpirationAttributes ttlAtts,
+      ExpirationAttributes idleAtts) {
     super(region, re);
     this.ttlAttr = ttlAtts;
     this.idleAttr = idleAtts;
@@ -44,5 +46,4 @@ public class CustomEntryExpiryTask extends EntryExpiryTask {
   protected ExpirationAttributes getIdleAttributes() {
     return this.idleAttr;
   }
-
 }

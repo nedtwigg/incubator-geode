@@ -39,20 +39,18 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 public class CacheXmlParserJUnitTest {
 
-  private static final String NAMESPACE_URI = "urn:java:org.apache.geode.internal.cache.xmlcache.MockXmlParser";
+  private static final String NAMESPACE_URI =
+      "urn:java:org.apache.geode.internal.cache.xmlcache.MockXmlParser";
 
   /**
    * Test {@link CacheXmlParser#getDelegate(String)}.
-   * 
-   * Asserts that a delegate is found and that the stack and logWriter are setup
-   * correctly.
-   * 
-   * Asserts that delegate is cached between calls and that the same instance is
-   * returned.
-   * 
-   * Asserts that null is returned when no {@link XmlParser} is registered for
-   * namespace.
-   * 
+   *
+   * <p>Asserts that a delegate is found and that the stack and logWriter are setup correctly.
+   *
+   * <p>Asserts that delegate is cached between calls and that the same instance is returned.
+   *
+   * <p>Asserts that null is returned when no {@link XmlParser} is registered for namespace.
+   *
    * @since GemFire 8.1
    */
   @Test
@@ -66,11 +64,19 @@ public class CacheXmlParserJUnitTest {
     assertNotNull("Delegate should be found in classpath.", delegate);
 
     assertSame("Should have same stack as cacheXmlParser.", cacheXmlParser.stack, delegate.stack);
-    assertSame("Should have same stack as cacheXmlParser.", cacheXmlParser.documentLocator, delegate.documentLocator);
+    assertSame(
+        "Should have same stack as cacheXmlParser.",
+        cacheXmlParser.documentLocator,
+        delegate.documentLocator);
 
     assertEquals("Should be exactly 1 delegate.", 1, cacheXmlParser.getDelegates().size());
-    assertNotNull("There should be an entry in delegates cache.", cacheXmlParser.getDelegates().get(NAMESPACE_URI));
-    assertSame("Cached delegate should match the one from get.", delegate, cacheXmlParser.getDelegates().get(NAMESPACE_URI));
+    assertNotNull(
+        "There should be an entry in delegates cache.",
+        cacheXmlParser.getDelegates().get(NAMESPACE_URI));
+    assertSame(
+        "Cached delegate should match the one from get.",
+        delegate,
+        cacheXmlParser.getDelegates().get(NAMESPACE_URI));
 
     final MockXmlParser delegate2 = (MockXmlParser) cacheXmlParser.getDelegate(NAMESPACE_URI);
     assertSame("Delegate should be the same between gets.", delegate, delegate2);
@@ -81,17 +87,23 @@ public class CacheXmlParserJUnitTest {
 
   /**
    * Test that {@link CacheXmlParser} falls back to DTD parsing when locale language is not English.
-   * 
+   *
    * @since Geode 1.0
    */
   @Test
   public void testDTDFallbackWithNonEnglishLocal() {
-    CacheXmlParser.parse(this.getClass().getResourceAsStream("CacheXmlParserJUnitTest.testDTDFallbackWithNonEnglishLocal.cache.xml"));
+    CacheXmlParser.parse(
+        this.getClass()
+            .getResourceAsStream(
+                "CacheXmlParserJUnitTest.testDTDFallbackWithNonEnglishLocal.cache.xml"));
 
     final Locale previousLocale = Locale.getDefault();
     try {
       Locale.setDefault(Locale.JAPAN);
-      CacheXmlParser.parse(this.getClass().getResourceAsStream("CacheXmlParserJUnitTest.testDTDFallbackWithNonEnglishLocal.cache.xml"));
+      CacheXmlParser.parse(
+          this.getClass()
+              .getResourceAsStream(
+                  "CacheXmlParserJUnitTest.testDTDFallbackWithNonEnglishLocal.cache.xml"));
     } finally {
       Locale.setDefault(previousLocale);
     }
@@ -99,7 +111,7 @@ public class CacheXmlParserJUnitTest {
 
   /**
    * Get access to {@link CacheXmlParser} protected methods and fields.
-   * 
+   *
    * @since GemFire 8.1
    */
   private static class TestCacheXmlParser extends CacheXmlParser {
@@ -134,7 +146,7 @@ public class CacheXmlParserJUnitTest {
 
     /**
      * Access to {@link CacheXmlParser} getDelegate(String) method.
-     * 
+     *
      * @since GemFire 8.1
      */
     public XmlParser getDelegate(final String namespaceUri) {
@@ -154,7 +166,8 @@ public class CacheXmlParserJUnitTest {
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes atts)
+        throws SAXException {
       throw new UnsupportedOperationException();
     }
 
@@ -162,7 +175,5 @@ public class CacheXmlParserJUnitTest {
     public void endElement(String uri, String localName, String qName) throws SAXException {
       throw new UnsupportedOperationException();
     }
-
   }
-
 }

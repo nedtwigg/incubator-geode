@@ -52,11 +52,10 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
  * Bug Test for bug#36457
- * 
- * Region destroy message from server to client results in client calling
- * unregister to server (an unnecessary callback). The unregister encounters an
- * error because the region has been destroyed on the server and hence falsely
- * marks the server dead.
+ *
+ * <p>Region destroy message from server to client results in client calling unregister to server
+ * (an unnecessary callback). The unregister encounters an error because the region has been
+ * destroyed on the server and hence falsely marks the server dead.
  */
 @Category(DistributedTest.class)
 public class Bug36457DUnitTest extends JUnit4DistributedTestCase {
@@ -103,9 +102,14 @@ public class Bug36457DUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new Bug36457DUnitTest().createCache(props);
-    Pool p = PoolManager.createFactory().addServer(host, port1.intValue()).addServer(host, port2.intValue()).setSubscriptionEnabled(true).setMinConnections(4)
-        // .setRetryInterval(2345671)
-        .create("Bug36457DUnitTestPool");
+    Pool p =
+        PoolManager.createFactory()
+            .addServer(host, port1.intValue())
+            .addServer(host, port2.intValue())
+            .setSubscriptionEnabled(true)
+            .setMinConnections(4)
+            // .setRetryInterval(2345671)
+            .create("Bug36457DUnitTestPool");
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setPoolName(p.getName());
@@ -118,7 +122,6 @@ public class Bug36457DUnitTest extends JUnit4DistributedTestCase {
     listOfKeys.add("key-4");
     listOfKeys.add("key-5");
     r.registerInterest(listOfKeys);
-
   }
 
   public static Integer createServerCache() throws Exception {
@@ -157,13 +160,20 @@ public class Bug36457DUnitTest extends JUnit4DistributedTestCase {
   public void testBug36457() {
     Integer port1 = ((Integer) server1.invoke(() -> Bug36457DUnitTest.createServerCache()));
     Integer port2 = ((Integer) server2.invoke(() -> Bug36457DUnitTest.createServerCache()));
-    client1.invoke(() -> Bug36457DUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
-    client2.invoke(() -> Bug36457DUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
+    client1.invoke(
+        () ->
+            Bug36457DUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
+    client2.invoke(
+        () ->
+            Bug36457DUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1, port2));
     //set a cllabck so that we come to know that whether a failover is called or not
     // if failover is called means this bug is present.
     client2.invoke(() -> Bug36457DUnitTest.setClientServerObserver());
     client1.invoke(() -> Bug36457DUnitTest.destroyRegion());
-    isFaileoverHappened = ((Boolean) client2.invoke(() -> Bug36457DUnitTest.isFaileoverHappened())).booleanValue();
+    isFaileoverHappened =
+        ((Boolean) client2.invoke(() -> Bug36457DUnitTest.isFaileoverHappened())).booleanValue();
     if (isFaileoverHappened) { //if failover is called means this bug is present, else fixed
       fail("Test failed because of unregistration failed due to region  is destroyed on server");
     }
@@ -175,12 +185,13 @@ public class Bug36457DUnitTest extends JUnit4DistributedTestCase {
 
   public static void setClientServerObserver() {
     PoolImpl.AFTER_PRIMARY_IDENTIFICATION_FROM_BACKUP_CALLBACK_FLAG = true;
-    ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-      public void afterPrimaryIdentificationFromBackup(ServerLocation primaryEndpoint) {
-        LogWriterUtils.getLogWriter().fine("TEST FAILED HERE YOGI ");
-        isFaileoverHappened = true;
-      }
-    });
+    ClientServerObserverHolder.setInstance(
+        new ClientServerObserverAdapter() {
+          public void afterPrimaryIdentificationFromBackup(ServerLocation primaryEndpoint) {
+            LogWriterUtils.getLogWriter().fine("TEST FAILED HERE YOGI ");
+            isFaileoverHappened = true;
+          }
+        });
   }
 
   public static void unSetClientServerObserver() {
@@ -196,5 +207,4 @@ public class Bug36457DUnitTest extends JUnit4DistributedTestCase {
       Assert.fail("failed while destroy region ", ex);
     }
   }
-
 }

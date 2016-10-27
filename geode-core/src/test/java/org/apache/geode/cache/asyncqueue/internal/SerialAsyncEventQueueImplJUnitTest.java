@@ -60,5 +60,4 @@ public class SerialAsyncEventQueueImplJUnitTest {
     assertEquals(0, queue.getStatistics().getEventQueueSize());
     assertEquals(0, queue.getStatistics().getTempEventQueueSize());
   }
-
 }

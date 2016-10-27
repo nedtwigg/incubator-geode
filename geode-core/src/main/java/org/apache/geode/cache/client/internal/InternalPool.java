@@ -24,11 +24,10 @@ import org.apache.geode.cache.client.Pool;
 import org.apache.geode.internal.cache.PoolStats;
 
 /**
- * The contract between a connection source and a connection pool.
- * Provides methods for the connection source to access the cache
- * and update the list of endpoints on the connection pool.
- * @since GemFire 5.7
+ * The contract between a connection source and a connection pool. Provides methods for the
+ * connection source to access the cache and update the list of endpoints on the connection pool.
  *
+ * @since GemFire 5.7
  */
 public interface InternalPool extends Pool, ExecutablePool {
   PoolStats getStats();

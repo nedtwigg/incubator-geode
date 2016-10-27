@@ -17,9 +17,8 @@
 package org.apache.geode.internal.datasource;
 
 /**
- * This class represents the config property for vendor specific data. This has
- * a name, value and type.
- * 
+ * This class represents the config property for vendor specific data. This has a name, value and
+ * type.
  */
 public class ConfigProperty {
 
@@ -29,8 +28,7 @@ public class ConfigProperty {
 
   // java.lang.String or Wrapper classes of Basic data types like int, double,
   // boolean etc.
-  public ConfigProperty() {
-  }
+  public ConfigProperty() {}
 
   public ConfigProperty(String name, String value, String type) {
     _name = name;

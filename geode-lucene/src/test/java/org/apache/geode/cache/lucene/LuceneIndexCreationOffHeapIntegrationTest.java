@@ -34,9 +34,7 @@ import static org.apache.geode.cache.lucene.test.LuceneTestUtilities.REGION_NAME
 import static org.apache.geode.cache.lucene.test.LuceneTestUtilities.createIndex;
 import static org.junit.Assert.assertEquals;
 
-/**
- * Tests of lucene index creation that use off heap memory
- */
+/** Tests of lucene index creation that use off heap memory */
 @Category(IntegrationTest.class)
 public class LuceneIndexCreationOffHeapIntegrationTest extends LuceneIntegrationTest {
 
@@ -58,9 +56,10 @@ public class LuceneIndexCreationOffHeapIntegrationTest extends LuceneIntegration
     createIndex(cache, "text");
     cache.createRegionFactory(RegionShortcut.PARTITION).setOffHeap(true).create(REGION_NAME);
 
-    verifyInternalRegions(region -> {
-      assertEquals(false, region.getOffHeap());
-    });
+    verifyInternalRegions(
+        region -> {
+          assertEquals(false, region.getOffHeap());
+        });
   }
 
   private void verifyInternalRegions(Consumer<LocalRegion> verify) {

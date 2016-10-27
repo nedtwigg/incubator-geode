@@ -20,6 +20,5 @@ import org.apache.geode.CancelException;
 
 public class LocatorCancelException extends CancelException {
 
-  public LocatorCancelException(final String s) {
-  }
+  public LocatorCancelException(final String s) {}
 }

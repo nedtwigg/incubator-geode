@@ -77,5 +77,4 @@ public class Car implements Serializable {
   public void setAttributeArray(String[] attributeArray) {
     this.attributeArray = attributeArray;
   }
-
 }

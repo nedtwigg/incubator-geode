@@ -20,10 +20,7 @@ package org.apache.geode.distributed.internal.locks;
 import java.util.*;
 import org.apache.geode.distributed.internal.membership.*;
 
-/**
- * Collection of distributed locks to be processed as a batch. 
- *
- */
+/** Collection of distributed locks to be processed as a batch. */
 public interface DLockBatch {
 
   /** Returns the originator (owner) of this batch of locks */
@@ -35,10 +32,10 @@ public interface DLockBatch {
   /** Returns the list of TXRegionLockRequest instances */
   public List getReqs();
 
-  /** 
+  /**
    * Specifies the lock grantor id that granted this lock batch.
+   *
    * @param lockGrantorId the lock grantor id that granted this lock batch
    */
   public void grantedBy(LockGrantorId lockGrantorId);
-
 }

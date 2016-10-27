@@ -103,9 +103,8 @@ public class MessageJUnitTest {
   }
 
   /**
-   * geode-1468: Message should clear the chunks in its Parts when
-   * performing cleanup.
-   * 
+   * geode-1468: Message should clear the chunks in its Parts when performing cleanup.
+   *
    * @throws Exception
    */
   @Test

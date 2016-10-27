@@ -28,11 +28,9 @@ import java.io.*;
 import java.util.*;
 import org.apache.geode.distributed.internal.membership.*;
 
-/**
- * A message that is sent to a particular console distribution manager
- * to notify it of an alert.
- */
-public final class AlertListenerMessage extends PooledDistributionMessage implements AdminMessageType {
+/** A message that is sent to a particular console distribution manager to notify it of an alert. */
+public final class AlertListenerMessage extends PooledDistributionMessage
+    implements AdminMessageType {
   //instance variables
   private int msgLevel;
   private Date msgDate;
@@ -42,7 +40,15 @@ public final class AlertListenerMessage extends PooledDistributionMessage implem
   private String msg;
   private String exceptionText;
 
-  public static AlertListenerMessage create(Object recipient, int msgLevel, Date msgDate, String connectionName, String threadName, long tid, String msg, String exceptionText) {
+  public static AlertListenerMessage create(
+      Object recipient,
+      int msgLevel,
+      Date msgDate,
+      String connectionName,
+      String threadName,
+      long tid,
+      String msg,
+      String exceptionText) {
     AlertListenerMessage m = new AlertListenerMessage();
     m.setRecipient((InternalDistributedMember) recipient);
     m.msgLevel = msgLevel;
@@ -72,19 +78,26 @@ public final class AlertListenerMessage extends PooledDistributionMessage implem
     RemoteGfManagerAgent agent = dm.getAgent();
     if (agent != null) {
       RemoteGemFireVM mgr = agent.getMemberById(this.getSender());
-      if (mgr == null)
-        return;
-      Alert alert = new RemoteAlert(mgr, msgLevel, msgDate, connectionName, threadName, tid, msg, exceptionText, getSender());
+      if (mgr == null) return;
+      Alert alert =
+          new RemoteAlert(
+              mgr,
+              msgLevel,
+              msgDate,
+              connectionName,
+              threadName,
+              tid,
+              msg,
+              exceptionText,
+              getSender());
       agent.callAlertListener(alert);
     } else {
-      /**
-       * Its assumed that its a managing node and it has to emit any alerts
-       * emitted to it.
-       */
-      AlertDetails alertDetail = new AlertDetails(msgLevel, msgDate, connectionName, threadName, tid, msg, exceptionText, getSender());
+      /** Its assumed that its a managing node and it has to emit any alerts emitted to it. */
+      AlertDetails alertDetail =
+          new AlertDetails(
+              msgLevel, msgDate, connectionName, threadName, tid, msg, exceptionText, getSender());
       dm.getSystem().handleResourceEvent(ResourceEvent.SYSTEM_ALERT, alertDetail);
     }
-
   }
 
   @Override
@@ -124,5 +137,4 @@ public final class AlertListenerMessage extends PooledDistributionMessage implem
   public String toString() {
     return "Alert \"" + this.msg + "\" level " + AlertLevel.forSeverity(this.msgLevel);
   }
-
 }

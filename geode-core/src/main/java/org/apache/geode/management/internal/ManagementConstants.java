@@ -22,10 +22,7 @@ import org.apache.geode.management.internal.beans.QueryDataFunction;
 import javax.management.ObjectName;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Management Related Constants are defined here
- *
- */
+/** Management Related Constants are defined here */
 public interface ManagementConstants {
 
   /* *********** Constant Strings used in Federation BEGIN ****************** */
@@ -66,7 +63,7 @@ public interface ManagementConstants {
 
   TimeUnit nanoSeconds = TimeUnit.NANOSECONDS;
 
-  /** Equivalent to SEVERE level **/
+  /** Equivalent to SEVERE level * */
   String DEFAULT_ALERT_LEVEL = "severe";
   /* ************ Constants for JMX/MBean Interface END ********************* */
 
@@ -74,67 +71,74 @@ public interface ManagementConstants {
   // 1. Basic elements
   public static final String OBJECTNAME__DEFAULTDOMAIN = "GemFire";
 
-  /**
-   * Key value separator for ObjectName
-   */
+  /** Key value separator for ObjectName */
   public static final String KEYVAL_SEPARATOR = ",";
 
-  /**
-   * Key value separator for ObjectName
-   */
+  /** Key value separator for ObjectName */
   public static final String DOMAIN_SEPARATOR = ":";
 
-  /**
-   * Prefix used for all the ObjectName Strings
-   */
+  /** Prefix used for all the ObjectName Strings */
   public static final String OBJECTNAME__PREFIX = OBJECTNAME__DEFAULTDOMAIN + DOMAIN_SEPARATOR;
 
   // 2. Actual ObjectNames and/or ObjectName structures
-  public static final String OBJECTNAME__DISTRIBUTEDSYSTEM_MXBEAN = OBJECTNAME__PREFIX + "service=System,type=Distributed";
+  public static final String OBJECTNAME__DISTRIBUTEDSYSTEM_MXBEAN =
+      OBJECTNAME__PREFIX + "service=System,type=Distributed";
 
-  public static final String OBJECTNAME__MEMBER_MXBEAN = OBJECTNAME__PREFIX + "type=Member,member={0}";
+  public static final String OBJECTNAME__MEMBER_MXBEAN =
+      OBJECTNAME__PREFIX + "type=Member,member={0}";
 
-  public static final String OBJECTNAME__MANAGER_MXBEAN = OBJECTNAME__PREFIX + "service=Manager,type=Member,member={0}";
+  public static final String OBJECTNAME__MANAGER_MXBEAN =
+      OBJECTNAME__PREFIX + "service=Manager,type=Member,member={0}";
 
-  public static final String OBJECTNAME__DISTRIBUTEDREGION_MXBEAN = OBJECTNAME__PREFIX + "service=Region,name={0},type=Distributed";
+  public static final String OBJECTNAME__DISTRIBUTEDREGION_MXBEAN =
+      OBJECTNAME__PREFIX + "service=Region,name={0},type=Distributed";
 
-  public static final String OBJECTNAME__REGION_MXBEAN = OBJECTNAME__PREFIX + "service=Region,name={0},type=Member,member={1}";
+  public static final String OBJECTNAME__REGION_MXBEAN =
+      OBJECTNAME__PREFIX + "service=Region,name={0},type=Member,member={1}";
 
-  public static final String OBJECTNAME__DISTRIBUTEDLOCKSERVICE_MXBEAN = OBJECTNAME__PREFIX + "service=LockService,name={0},type=Distributed";
+  public static final String OBJECTNAME__DISTRIBUTEDLOCKSERVICE_MXBEAN =
+      OBJECTNAME__PREFIX + "service=LockService,name={0},type=Distributed";
 
-  public static final String OBJECTNAME__LOCKSERVICE_MXBEAN = OBJECTNAME__PREFIX + "service=LockService,name={0},type=Member,member={1}";
+  public static final String OBJECTNAME__LOCKSERVICE_MXBEAN =
+      OBJECTNAME__PREFIX + "service=LockService,name={0},type=Member,member={1}";
 
-  public static final String OBJECTNAME__ASYNCEVENTQUEUE_MXBEAN = OBJECTNAME__PREFIX + "service=AsyncEventQueue,queue={0},type=Member,member={1}";
+  public static final String OBJECTNAME__ASYNCEVENTQUEUE_MXBEAN =
+      OBJECTNAME__PREFIX + "service=AsyncEventQueue,queue={0},type=Member,member={1}";
 
-  public static final String OBJECTNAME__GATEWAYSENDER_MXBEAN = OBJECTNAME__PREFIX + "service=GatewaySender,gatewaySender={0},type=Member,member={1}";
+  public static final String OBJECTNAME__GATEWAYSENDER_MXBEAN =
+      OBJECTNAME__PREFIX + "service=GatewaySender,gatewaySender={0},type=Member,member={1}";
 
-  public static final String OBJECTNAME__GATEWAYRECEIVER_MXBEAN = OBJECTNAME__PREFIX + "service=GatewayReceiver,type=Member,member={0}";
+  public static final String OBJECTNAME__GATEWAYRECEIVER_MXBEAN =
+      OBJECTNAME__PREFIX + "service=GatewayReceiver,type=Member,member={0}";
 
-  public static final String OBJECTNAME__CLIENTSERVICE_MXBEAN = OBJECTNAME__PREFIX + "service=CacheServer,port={0},type=Member,member={1}";
+  public static final String OBJECTNAME__CLIENTSERVICE_MXBEAN =
+      OBJECTNAME__PREFIX + "service=CacheServer,port={0},type=Member,member={1}";
 
-  public static final String OBJECTNAME__DISKSTORE_MXBEAN = OBJECTNAME__PREFIX + "service=DiskStore,name={0},type=Member,member={1}";
+  public static final String OBJECTNAME__DISKSTORE_MXBEAN =
+      OBJECTNAME__PREFIX + "service=DiskStore,name={0},type=Member,member={1}";
 
-  public static final String OBJECTNAME__LOCATOR_MXBEAN = OBJECTNAME__PREFIX + "service=Locator,type=Member,member={0}";
+  public static final String OBJECTNAME__LOCATOR_MXBEAN =
+      OBJECTNAME__PREFIX + "service=Locator,type=Member,member={0}";
 
-  public static final String OBJECTNAME__CACHESERVICE_MXBEAN = OBJECTNAME__PREFIX + "service=CacheService,name={0},type=Member,member={1}";
+  public static final String OBJECTNAME__CACHESERVICE_MXBEAN =
+      OBJECTNAME__PREFIX + "service=CacheService,name={0},type=Member,member={1}";
 
   public static final String AGGREGATE_MBEAN_PATTERN = OBJECTNAME__PREFIX + "*,type=Distributed";
-  // Object Name keys 
+  // Object Name keys
 
   public static final String OBJECTNAME_MEMBER_APPENDER = "member";
 
   public static final int MAX_SHOW_LOG_LINES = 100;
   public static final int DEFAULT_SHOW_LOG_LINES = 30;
 
-  public static final String GATEWAY_SENDER_PATTERN = OBJECTNAME__PREFIX + "service=GatewaySender,*";
+  public static final String GATEWAY_SENDER_PATTERN =
+      OBJECTNAME__PREFIX + "service=GatewaySender,*";
 
   public static final String NOTIFICATION_HUB_LISTENER = "GemFire:service=NotificationHubListener";
 
   public static final String LINUX_SYSTEM = "Linux";
 
-  /**
-   * Factor converting bytes to MB
-   */
+  /** Factor converting bytes to MB */
   public static final long MBFactor = 1024 * 1024;
 
   public static final String PULSE_URL = "http://{0}:{1}/pulse";
@@ -166,7 +170,8 @@ public interface ManagementConstants {
   public static final String GATEWAY_RECEIVER_STARTED_PREFIX = "GatewayReceiver Started in the VM ";
   public static final String GATEWAY_RECEIVER_STOPPED_PREFIX = "GatewayReceiver Stopped in the VM ";
 
-  public static final String ASYNC_EVENT_QUEUE_CREATED_PREFIX = "Async Event Queue is Created  in the VM ";
+  public static final String ASYNC_EVENT_QUEUE_CREATED_PREFIX =
+      "Async Event Queue is Created  in the VM ";
 
   public static final String CACHE_SERVICE_CREATED_PREFIX = "Cache Service Created With Name ";
 
@@ -178,5 +183,4 @@ public interface ManagementConstants {
   public static final String CLIENT_LEFT_PREFIX = "Client left with Id ";
 
   public static final String LOCATOR_STARTED_PREFIX = "Locator is Started in the VM ";
-
 }

@@ -24,17 +24,15 @@ import javax.management.modelmbean.*;
 //import org.apache.commons.modeler.ManagedBean;
 
 /**
- * The JMX "managed resource" that represents the configuration for
- * the health of a distributed system.  Basically, it provides the
- * behavior of <code>DistributedSystemHealthConfigImpl</code>, but
- * does some JMX stuff like registering beans with the agent.
+ * The JMX "managed resource" that represents the configuration for the health of a distributed
+ * system. Basically, it provides the behavior of <code>DistributedSystemHealthConfigImpl</code>,
+ * but does some JMX stuff like registering beans with the agent.
  *
  * @see GemFireHealthJmxImpl#createDistributedSystemHealthConfig
- *
- *
  * @since GemFire 3.5
  */
-public class DistributedSystemHealthConfigJmxImpl extends DistributedSystemHealthConfigImpl implements ManagedResource {
+public class DistributedSystemHealthConfigJmxImpl extends DistributedSystemHealthConfigImpl
+    implements ManagedResource {
 
   /** The <code>GemFireHealth</code> that we help configure */
   private GemFireHealth health;
@@ -51,23 +49,26 @@ public class DistributedSystemHealthConfigJmxImpl extends DistributedSystemHealt
   ///////////////////////  Constructors  ///////////////////////
 
   /**
-   * Creates a new <code>DistributedSystemHealthCOnfigJmxImpl</code>
-   * that configures the health of the distributed system monitored by
-   * <code>health</code>.
+   * Creates a new <code>DistributedSystemHealthCOnfigJmxImpl</code> that configures the health of
+   * the distributed system monitored by <code>health</code>.
    */
   DistributedSystemHealthConfigJmxImpl(GemFireHealthJmxImpl health) throws AdminException {
 
     super();
     this.health = health;
-    this.mbeanName = new StringBuffer().append(MBEAN_NAME_PREFIX).append("DistributedSystemHealthConfig,id=").append(MBeanUtil.makeCompliantMBeanNameProperty(health.getDistributedSystem().getId())).toString();
+    this.mbeanName =
+        new StringBuffer()
+            .append(MBEAN_NAME_PREFIX)
+            .append("DistributedSystemHealthConfig,id=")
+            .append(MBeanUtil.makeCompliantMBeanNameProperty(health.getDistributedSystem().getId()))
+            .toString();
     this.objectName = MBeanUtil.createMBean(this);
   }
 
   //////////////////////  Instance Methods  //////////////////////
 
   /**
-   * Applies the changes made to this config back to the health
-   * monitor.
+   * Applies the changes made to this config back to the health monitor.
    *
    * @see GemFireHealth#setDistributedSystemHealthConfig
    */
@@ -95,7 +96,5 @@ public class DistributedSystemHealthConfigJmxImpl extends DistributedSystemHealt
     return this.objectName;
   }
 
-  public void cleanupResource() {
-  }
-
+  public void cleanupResource() {}
 }

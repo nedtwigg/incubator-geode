@@ -95,5 +95,4 @@ public class FileSystemStatsJUnitTest {
     final int statId = type.nameToId(statName);
     verify(statistics).incLong(eq(statId), eq(value));
   }
-
 }

@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.geode.modules.util;
 
 import org.apache.geode.cache.AttributesFactory;
@@ -42,7 +42,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 
-@SuppressWarnings({ "deprecation", "unchecked" })
+@SuppressWarnings({"deprecation", "unchecked"})
 public class RegionHelper {
 
   public static final String NAME = "gemfire_modules";
@@ -67,7 +67,8 @@ public class RegionHelper {
 
     // Create region attributes creation on existing region attributes.
     // The RAC is created to execute the sameAs method.
-    RegionAttributesCreation existingRACreation = new RegionAttributesCreation(existingAttributes, false);
+    RegionAttributesCreation existingRACreation =
+        new RegionAttributesCreation(existingAttributes, false);
 
     // Create requested region attributes
     RegionAttributes requestedRegionAttributes = getRegionAttributes(cache, configuration);
@@ -76,11 +77,17 @@ public class RegionHelper {
     existingRACreation.sameAs(requestedRegionAttributes);
   }
 
-  public static RebalanceResults rebalanceRegion(Region region) throws CancellationException, InterruptedException {
+  public static RebalanceResults rebalanceRegion(Region region)
+      throws CancellationException, InterruptedException {
     String regionName = region.getName(); // FilterByName only looks at name and not full path
     if (!PartitionRegionHelper.isPartitionedRegion(region)) {
       StringBuilder builder = new StringBuilder();
-      builder.append("Region ").append(regionName).append(" is not partitioned. Instead, it is ").append(region.getAttributes().getDataPolicy()).append(". It can't be rebalanced.");
+      builder
+          .append("Region ")
+          .append(regionName)
+          .append(" is not partitioned. Instead, it is ")
+          .append(region.getAttributes().getDataPolicy())
+          .append(". It can't be rebalanced.");
       throw new IllegalArgumentException(builder.toString());
     }
 
@@ -96,7 +103,8 @@ public class RegionHelper {
     return rebalanceOperation.getResults();
   }
 
-  public static RebalanceResults rebalanceCache(GemFireCache cache) throws CancellationException, InterruptedException {
+  public static RebalanceResults rebalanceCache(GemFireCache cache)
+      throws CancellationException, InterruptedException {
     ResourceManager resourceManager = cache.getResourceManager();
     RebalanceFactory rebalanceFactory = resourceManager.createRebalanceFactory();
     RebalanceOperation rebalanceOperation = rebalanceFactory.start();
@@ -115,11 +123,14 @@ public class RegionHelper {
     }
   }
 
-  private static RegionAttributes getRegionAttributes(Cache cache, RegionConfiguration configuration) {
+  private static RegionAttributes getRegionAttributes(
+      Cache cache, RegionConfiguration configuration) {
     // Create the requested attributes
-    RegionAttributes baseRequestedAttributes = cache.getRegionAttributes(configuration.getRegionAttributesId());
+    RegionAttributes baseRequestedAttributes =
+        cache.getRegionAttributes(configuration.getRegionAttributesId());
     if (baseRequestedAttributes == null) {
-      throw new IllegalArgumentException("No region attributes named " + configuration.getRegionAttributesId() + " are defined.");
+      throw new IllegalArgumentException(
+          "No region attributes named " + configuration.getRegionAttributesId() + " are defined.");
     }
     AttributesFactory requestedFactory = new AttributesFactory(baseRequestedAttributes);
 
@@ -128,7 +139,8 @@ public class RegionHelper {
     if (maxInactiveInterval != RegionConfiguration.DEFAULT_MAX_INACTIVE_INTERVAL) {
       requestedFactory.setStatisticsEnabled(true);
       if (configuration.getCustomExpiry() == null) {
-        requestedFactory.setEntryIdleTimeout(new ExpirationAttributes(maxInactiveInterval, ExpirationAction.DESTROY));
+        requestedFactory.setEntryIdleTimeout(
+            new ExpirationAttributes(maxInactiveInterval, ExpirationAction.DESTROY));
       } else {
         requestedFactory.setCustomEntryIdleTimeout(configuration.getCustomExpiry());
       }
@@ -156,7 +168,8 @@ public class RegionHelper {
     // Add the cacheWriter if necessary
     if (configuration.getCacheWriterName() != null) {
       try {
-        CacheWriter writer = (CacheWriter) Class.forName(configuration.getCacheWriterName()).newInstance();
+        CacheWriter writer =
+            (CacheWriter) Class.forName(configuration.getCacheWriterName()).newInstance();
         requestedFactory.setCacheWriter(writer);
       } catch (InstantiationException e) {
         throw new RuntimeException("Could not set a cacheWriter for the region", e);
@@ -169,8 +182,7 @@ public class RegionHelper {
     return requestedFactory.create();
   }
 
-  private RegionHelper() {
-  }
+  private RegionHelper() {}
 
   public static String getRebalanceResultsMessage(RebalanceResults results) {
     StringBuilder builder = new StringBuilder();
@@ -179,28 +191,60 @@ public class RegionHelper {
       fillInRebalanceResultsSummary(builder, rebalanceInfo);
 
       // Log the 'Before' results
-      fillInRebalanceResultsMemberDetails(builder, rebalanceInfo.getPartitionMemberDetailsBefore(), "Before");
+      fillInRebalanceResultsMemberDetails(
+          builder, rebalanceInfo.getPartitionMemberDetailsBefore(), "Before");
 
       // Log the 'After' results
-      fillInRebalanceResultsMemberDetails(builder, rebalanceInfo.getPartitionMemberDetailsAfter(), "After");
+      fillInRebalanceResultsMemberDetails(
+          builder, rebalanceInfo.getPartitionMemberDetailsAfter(), "After");
     }
     return builder.toString();
   }
 
-  private static void fillInRebalanceResultsSummary(StringBuilder builder, PartitionRebalanceInfo rebalanceInfo) {
-    builder.append("\nRebalanced region ").append(rebalanceInfo.getRegionPath()).append(" in ").append(rebalanceInfo.getTime()).append(" ms")
-
-        .append("\nCreated ").append(rebalanceInfo.getBucketCreatesCompleted()).append(" buckets containing ").append(rebalanceInfo.getBucketCreateBytes()).append(" bytes in ").append(rebalanceInfo.getBucketCreateTime()).append(" ms")
-
-        .append("\nTransferred ").append(rebalanceInfo.getBucketTransfersCompleted()).append(" buckets containing ").append(rebalanceInfo.getBucketTransferBytes()).append(" bytes in ").append(rebalanceInfo.getBucketTransferTime()).append(" ms")
-
-        .append("\nTransferred ").append(rebalanceInfo.getPrimaryTransfersCompleted()).append(" primary buckets in ").append(rebalanceInfo.getPrimaryTransferTime()).append(" ms");
+  private static void fillInRebalanceResultsSummary(
+      StringBuilder builder, PartitionRebalanceInfo rebalanceInfo) {
+    builder
+        .append("\nRebalanced region ")
+        .append(rebalanceInfo.getRegionPath())
+        .append(" in ")
+        .append(rebalanceInfo.getTime())
+        .append(" ms")
+        .append("\nCreated ")
+        .append(rebalanceInfo.getBucketCreatesCompleted())
+        .append(" buckets containing ")
+        .append(rebalanceInfo.getBucketCreateBytes())
+        .append(" bytes in ")
+        .append(rebalanceInfo.getBucketCreateTime())
+        .append(" ms")
+        .append("\nTransferred ")
+        .append(rebalanceInfo.getBucketTransfersCompleted())
+        .append(" buckets containing ")
+        .append(rebalanceInfo.getBucketTransferBytes())
+        .append(" bytes in ")
+        .append(rebalanceInfo.getBucketTransferTime())
+        .append(" ms")
+        .append("\nTransferred ")
+        .append(rebalanceInfo.getPrimaryTransfersCompleted())
+        .append(" primary buckets in ")
+        .append(rebalanceInfo.getPrimaryTransferTime())
+        .append(" ms");
   }
 
-  private static void fillInRebalanceResultsMemberDetails(StringBuilder builder, Set<PartitionMemberInfo> memberInfoSet, String when) {
+  private static void fillInRebalanceResultsMemberDetails(
+      StringBuilder builder, Set<PartitionMemberInfo> memberInfoSet, String when) {
     builder.append("\nMember Info ").append(when).append(" Rebalance:\n");
     for (PartitionMemberInfo info : memberInfoSet) {
-      builder.append("\tdistributedMember=").append(info.getDistributedMember()).append(", configuredMaxMemory=").append(info.getConfiguredMaxMemory()).append(", size=").append(info.getSize()).append(", bucketCount=").append(info.getBucketCount()).append(", primaryCount=").append(info.getPrimaryCount());
+      builder
+          .append("\tdistributedMember=")
+          .append(info.getDistributedMember())
+          .append(", configuredMaxMemory=")
+          .append(info.getConfiguredMaxMemory())
+          .append(", size=")
+          .append(info.getSize())
+          .append(", bucketCount=")
+          .append(info.getBucketCount())
+          .append(", primaryCount=")
+          .append(info.getPrimaryCount());
     }
   }
 }

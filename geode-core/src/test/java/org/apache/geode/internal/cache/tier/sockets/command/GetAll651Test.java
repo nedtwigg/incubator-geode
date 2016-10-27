@@ -49,34 +49,26 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 public class GetAll651Test {
   private static final String REGION_NAME = "region1";
-  private static final Object[] KEYS = new Object[] { "key1", "key2", "key3" };
+  private static final Object[] KEYS = new Object[] {"key1", "key2", "key3"};
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private AuthorizeRequest authzRequest;
-  @Mock
-  private Cache cache;
-  @Mock
-  private Part regionNamePart;
-  @Mock
-  private Part keyPart;
-  @Mock
-  private ChunkedMessage chunkedResponseMessage;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private ServerConnection serverConnection;
+  @Mock private AuthorizeRequest authzRequest;
+  @Mock private Cache cache;
+  @Mock private Part regionNamePart;
+  @Mock private Part keyPart;
+  @Mock private ChunkedMessage chunkedResponseMessage;
 
-  @InjectMocks
-  private GetAll651 getAll651;
+  @InjectMocks private GetAll651 getAll651;
 
   @Before
   public void setUp() throws Exception {
     this.getAll651 = new GetAll651();
     MockitoAnnotations.initMocks(this);
 
-    when(this.authzRequest.getAuthorize(any(), any(), any())).thenReturn(mock(GetOperationContext.class));
+    when(this.authzRequest.getAuthorize(any(), any(), any()))
+        .thenReturn(mock(GetOperationContext.class));
 
     when(this.cache.getRegion(isA(String.class))).thenReturn(mock(LocalRegion.class));
     when(this.cache.getCancelCriterion()).thenReturn(mock(CancelCriterion.class));
@@ -131,7 +123,9 @@ public class GetAll651Test {
     when(this.securityService.isIntegratedSecurity()).thenReturn(true);
 
     for (Object key : KEYS) {
-      doThrow(new NotAuthorizedException("")).when(this.securityService).authorizeRegionRead(eq(REGION_NAME), eq(key.toString()));
+      doThrow(new NotAuthorizedException(""))
+          .when(this.securityService)
+          .authorizeRegionRead(eq(REGION_NAME), eq(key.toString()));
     }
 
     this.getAll651.cmdExecute(this.message, this.serverConnection, 0);
@@ -179,7 +173,9 @@ public class GetAll651Test {
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
 
     for (Object key : KEYS) {
-      doThrow(new NotAuthorizedException("")).when(this.authzRequest).getAuthorize(eq(REGION_NAME), eq(key.toString()), eq(null));
+      doThrow(new NotAuthorizedException(""))
+          .when(this.authzRequest)
+          .getAuthorize(eq(REGION_NAME), eq(key.toString()), eq(null));
     }
     this.getAll651.cmdExecute(this.message, this.serverConnection, 0);
 
@@ -196,5 +192,4 @@ public class GetAll651Test {
 
     verify(this.chunkedResponseMessage).sendChunk(eq(this.serverConnection));
   }
-
 }

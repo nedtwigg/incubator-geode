@@ -21,10 +21,7 @@ import org.apache.geode.internal.cache.wan.serial.SerialGatewaySenderQueue;
 import org.apache.geode.internal.offheap.annotations.Released;
 import org.apache.geode.internal.offheap.annotations.Retained;
 
-/**
- * 
- *
- */
+/** */
 public abstract class AbstractDiskRegionEntry extends AbstractRegionEntry implements DiskEntry {
   protected AbstractDiskRegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
@@ -36,13 +33,15 @@ public abstract class AbstractDiskRegionEntry extends AbstractRegionEntry implem
   }
 
   @Override
-  public void setValue(RegionEntryContext context, Object value, EntryEventImpl event) throws RegionClearedException {
+  public void setValue(RegionEntryContext context, Object value, EntryEventImpl event)
+      throws RegionClearedException {
     Helper.update(this, (LocalRegion) context, value, event);
     setRecentlyUsed(); // fix for bug #42284 - entry just put into the cache is evicted
   }
 
   /**
    * Sets the value with a {@link RegionEntryContext}.
+   *
    * @param context the value's context.
    * @param value an entry value.
    */
@@ -57,7 +56,8 @@ public abstract class AbstractDiskRegionEntry extends AbstractRegionEntry implem
 
   @Override
   public void handleValueOverflow(RegionEntryContext context) {
-    if (context instanceof BucketRegionQueue || context instanceof SerialGatewaySenderQueue.SerialGatewaySenderQueueMetaRegion) {
+    if (context instanceof BucketRegionQueue
+        || context instanceof SerialGatewaySenderQueue.SerialGatewaySenderQueueMetaRegion) {
       GatewaySenderEventImpl.release(this._getValue()); // OFFHEAP _getValue ok
     }
   }

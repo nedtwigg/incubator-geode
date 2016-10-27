@@ -28,17 +28,16 @@ import org.apache.geode.distributed.internal.PooledDistributionMessage;
 import org.apache.geode.internal.admin.StatAlert;
 
 /**
- * Distribution message to be sent to alert aggregator
- * {@link StatAlertsAggregator} It wraps alert objects{@link StatAlert}
- * 
+ * Distribution message to be sent to alert aggregator {@link StatAlertsAggregator} It wraps alert
+ * objects{@link StatAlert}
+ *
  * @since GemFire 5.7
  */
 public class AlertsNotificationMessage extends PooledDistributionMessage {
 
   private StatAlert[] _alerts;
 
-  public AlertsNotificationMessage() {
-  }
+  public AlertsNotificationMessage() {}
 
   @Override
   public void toData(DataOutput out) throws IOException {
@@ -52,9 +51,7 @@ public class AlertsNotificationMessage extends PooledDistributionMessage {
     this._alerts = (StatAlert[]) DataSerializer.readObjectArray(in);
   }
 
-  /**
-   * Returns the DataSerializer fixed id for the class that implements this method.
-   */
+  /** Returns the DataSerializer fixed id for the class that implements this method. */
   public int getDSFID() {
     return ALERTS_NOTIF_MESSAGE;
   }
@@ -74,18 +71,12 @@ public class AlertsNotificationMessage extends PooledDistributionMessage {
     }
   }
 
-  /**
-   * @return list of alerts raised by member vm
-   */
+  /** @return list of alerts raised by member vm */
   public StatAlert[] getAlerts() {
     return _alerts;
   }
 
-  /**
-   * 
-   * @param alerts
-   *                List of alerts raised by member vm
-   */
+  /** @param alerts List of alerts raised by member vm */
   public void setAlerts(StatAlert[] alerts) {
     _alerts = alerts;
   }

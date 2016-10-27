@@ -46,5 +46,4 @@ public class LineWrapUnitJUnitTest {
   private List<String> list(String... strings) {
     return Arrays.asList(strings);
   }
-
 }

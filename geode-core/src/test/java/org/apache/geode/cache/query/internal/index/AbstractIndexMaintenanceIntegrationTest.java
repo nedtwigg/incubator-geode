@@ -41,12 +41,16 @@ public abstract class AbstractIndexMaintenanceIntegrationTest {
   }
 
   @Test
-  public void whenRemovingRegionEntryFromIndexIfEntryDestroyedIsThrownCorrectlyRemoveFromIndexAndNotThrowException() throws Exception {
+  public void
+      whenRemovingRegionEntryFromIndexIfEntryDestroyedIsThrownCorrectlyRemoveFromIndexAndNotThrowException()
+          throws Exception {
     CacheUtils.startCache();
     Cache cache = CacheUtils.getCache();
-    LocalRegion region = (LocalRegion) cache.createRegionFactory(RegionShortcut.REPLICATE).create("portfolios");
+    LocalRegion region =
+        (LocalRegion) cache.createRegionFactory(RegionShortcut.REPLICATE).create("portfolios");
     QueryService qs = cache.getQueryService();
-    AbstractIndex statusIndex = createIndex(qs, "statusIndex", "value.status", "/portfolios.entrySet()");
+    AbstractIndex statusIndex =
+        createIndex(qs, "statusIndex", "value.status", "/portfolios.entrySet()");
 
     PortfolioPdx p = new PortfolioPdx(1);
     region.put("KEY-1", p);
@@ -56,5 +60,7 @@ public abstract class AbstractIndexMaintenanceIntegrationTest {
     statusIndex.removeIndexMapping(entry, IndexProtocol.OTHER_OP);
   }
 
-  protected abstract AbstractIndex createIndex(final QueryService qs, String name, String indexExpression, String regionPath) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException;
+  protected abstract AbstractIndex createIndex(
+      final QueryService qs, String name, String indexExpression, String regionPath)
+      throws IndexNameConflictException, IndexExistsException, RegionNotFoundException;
 }

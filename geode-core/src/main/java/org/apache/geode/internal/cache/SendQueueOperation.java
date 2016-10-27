@@ -28,7 +28,6 @@ import org.apache.geode.distributed.internal.*;
  * Sends a chunk of queued messages to everyone currently playing a role.
  *
  * @since GemFire 5.0
- *
  */
 public class SendQueueOperation {
   //private ReplyProcessor21 processor = null;
@@ -45,8 +44,8 @@ public class SendQueueOperation {
   }
 
   /**
-   * Returns true if distribution successful. Also modifies message list by
-   * removing messages sent to the required role.
+   * Returns true if distribution successful. Also modifies message list by removing messages sent
+   * to the required role.
    */
   boolean distribute() {
     CacheDistributionAdvisor advisor = this.r.getCacheDistributionAdvisor();
@@ -79,16 +78,12 @@ public class SendQueueOperation {
     return true;
   }
 
-  /**
-   * A batch of queued messages. Once they are processed on the other side
-   * an ack is sent.
-   */
-  public static final class SendQueueMessage extends SerialDistributionMessage implements MessageWithReply {
+  /** A batch of queued messages. Once they are processed on the other side an ack is sent. */
+  public static final class SendQueueMessage extends SerialDistributionMessage
+      implements MessageWithReply {
     private int processorId;
     private String regionPath;
-    /**
-     * List of QueuedOperation instances
-     */
+    /** List of QueuedOperation instances */
     private List ops;
 
     @Override

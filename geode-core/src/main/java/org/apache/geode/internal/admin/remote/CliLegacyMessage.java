@@ -24,13 +24,10 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * An extension of AdminRequest for messages that are used
- * as part of the new CLI. The new CLI expects errors to be logged on
- * the side where he message is processed, which none of the rest of
- * gemfire messages do. This is a extension of AdminRequest so that old
- * admin messages which are still used as part of the new CLI still log the
- * message.
- *
+ * An extension of AdminRequest for messages that are used as part of the new CLI. The new CLI
+ * expects errors to be logged on the side where he message is processed, which none of the rest of
+ * gemfire messages do. This is a extension of AdminRequest so that old admin messages which are
+ * still used as part of the new CLI still log the message.
  */
 public abstract class CliLegacyMessage extends AdminRequest {
   private static final Logger logger = LogService.getLogger();
@@ -41,16 +38,18 @@ public abstract class CliLegacyMessage extends AdminRequest {
     try {
       response = createResponse(dm);
     } catch (Exception ex) {
-      logger.error(LocalizedMessage.create(LocalizedStrings.CliLegacyMessage_ERROR, this.getClass()), ex);
+      logger.error(
+          LocalizedMessage.create(LocalizedStrings.CliLegacyMessage_ERROR, this.getClass()), ex);
       response = AdminFailureResponse.create(dm, this.getSender(), ex);
-
     }
     if (response != null) { //cancellations result in null response
       response.setMsgId(this.getMsgId());
       dm.putOutgoing(response);
     } else {
-      logger.info(LocalizedMessage.create(LocalizedStrings.AdminRequest_RESPONSE_TO__0__WAS_CANCELLED, this.getClass().getName()));
+      logger.info(
+          LocalizedMessage.create(
+              LocalizedStrings.AdminRequest_RESPONSE_TO__0__WAS_CANCELLED,
+              this.getClass().getName()));
     }
   }
-
 }

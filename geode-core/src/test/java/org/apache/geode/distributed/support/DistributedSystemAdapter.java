@@ -32,9 +32,11 @@ import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.distributed.DistributedSystem;
 
 /**
- * The DistributedSystemAdapter class is an adapter extending DistributedSystem to provide default behavior for the
- * abstract methods when testing.
- * <p/>
+ * The DistributedSystemAdapter class is an adapter extending DistributedSystem to provide default
+ * behavior for the abstract methods when testing.
+ *
+ * <p>
+ *
  * @see org.apache.geode.distributed.DistributedSystem
  * @since GemFire 8.0
  */
@@ -86,8 +88,7 @@ public abstract class DistributedSystemAdapter extends DistributedSystem {
   }
 
   @Override
-  public void stopReconnecting() {
-  }
+  public void stopReconnecting() {}
 
   @Override
   public DistributedSystem getReconnectedSystem() {
@@ -135,7 +136,8 @@ public abstract class DistributedSystemAdapter extends DistributedSystem {
   }
 
   @Override
-  public Statistics createStatistics(final StatisticsType type, final String textId, final long numericId) {
+  public Statistics createStatistics(
+      final StatisticsType type, final String textId, final long numericId) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
@@ -150,7 +152,8 @@ public abstract class DistributedSystemAdapter extends DistributedSystem {
   }
 
   @Override
-  public Statistics createAtomicStatistics(final StatisticsType type, final String textId, final long numericId) {
+  public Statistics createAtomicStatistics(
+      final StatisticsType type, final String textId, final long numericId) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
@@ -170,67 +173,80 @@ public abstract class DistributedSystemAdapter extends DistributedSystem {
   }
 
   @Override
-  public StatisticDescriptor createIntCounter(final String name, final String description, final String units) {
+  public StatisticDescriptor createIntCounter(
+      final String name, final String description, final String units) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
   @Override
-  public StatisticDescriptor createLongCounter(final String name, final String description, final String units) {
+  public StatisticDescriptor createLongCounter(
+      final String name, final String description, final String units) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
   @Override
-  public StatisticDescriptor createDoubleCounter(final String name, final String description, final String units) {
+  public StatisticDescriptor createDoubleCounter(
+      final String name, final String description, final String units) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
   @Override
-  public StatisticDescriptor createIntGauge(final String name, final String description, final String units) {
+  public StatisticDescriptor createIntGauge(
+      final String name, final String description, final String units) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
   @Override
-  public StatisticDescriptor createLongGauge(final String name, final String description, final String units) {
+  public StatisticDescriptor createLongGauge(
+      final String name, final String description, final String units) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
   @Override
-  public StatisticDescriptor createDoubleGauge(final String name, final String description, final String units) {
+  public StatisticDescriptor createDoubleGauge(
+      final String name, final String description, final String units) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
   @Override
-  public StatisticDescriptor createIntCounter(final String name, final String description, final String units, final boolean largerBetter) {
+  public StatisticDescriptor createIntCounter(
+      final String name, final String description, final String units, final boolean largerBetter) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
   @Override
-  public StatisticDescriptor createLongCounter(final String name, final String description, final String units, final boolean largerBetter) {
+  public StatisticDescriptor createLongCounter(
+      final String name, final String description, final String units, final boolean largerBetter) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
   @Override
-  public StatisticDescriptor createDoubleCounter(final String name, final String description, final String units, final boolean largerBetter) {
+  public StatisticDescriptor createDoubleCounter(
+      final String name, final String description, final String units, final boolean largerBetter) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
   @Override
-  public StatisticDescriptor createIntGauge(final String name, final String description, final String units, final boolean largerBetter) {
+  public StatisticDescriptor createIntGauge(
+      final String name, final String description, final String units, final boolean largerBetter) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
   @Override
-  public StatisticDescriptor createLongGauge(final String name, final String description, final String units, final boolean largerBetter) {
+  public StatisticDescriptor createLongGauge(
+      final String name, final String description, final String units, final boolean largerBetter) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
   @Override
-  public StatisticDescriptor createDoubleGauge(final String name, final String description, final String units, final boolean largerBetter) {
+  public StatisticDescriptor createDoubleGauge(
+      final String name, final String description, final String units, final boolean largerBetter) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
   @Override
-  public StatisticsType createType(final String name, final String description, final StatisticDescriptor[] stats) {
+  public StatisticsType createType(
+      final String name, final String description, final StatisticDescriptor[] stats) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
 
@@ -253,5 +269,4 @@ public abstract class DistributedSystemAdapter extends DistributedSystem {
   public DistributedMember findDistributedMember(String name) {
     throw new UnsupportedOperationException("Not Implemented!");
   }
-
 }

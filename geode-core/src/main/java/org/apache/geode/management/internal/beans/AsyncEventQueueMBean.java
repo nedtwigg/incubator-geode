@@ -21,12 +21,9 @@ import javax.management.NotificationBroadcasterSupport;
 import org.apache.geode.management.AsyncEventQueueMXBean;
 import org.apache.geode.management.internal.beans.stats.StatsKey;
 
-/**
- * Concrete implementation of AsyncEventQueueMXBean
- * 
- * 
- */
-public class AsyncEventQueueMBean extends NotificationBroadcasterSupport implements AsyncEventQueueMXBean {
+/** Concrete implementation of AsyncEventQueueMXBean */
+public class AsyncEventQueueMBean extends NotificationBroadcasterSupport
+    implements AsyncEventQueueMXBean {
 
   private AsyncEventQueueMBeanBridge bridge;
 
@@ -107,5 +104,4 @@ public class AsyncEventQueueMBean extends NotificationBroadcasterSupport impleme
   public int getEventQueueSize() {
     return bridge.getEventQueueSize();
   }
-
 }

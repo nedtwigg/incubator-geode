@@ -22,9 +22,7 @@ import java.util.Arrays;
 import org.apache.geode.DataSerializer;
 import org.apache.geode.cache.CacheClosedException;
 
-/**
- * Basic implementation of MemoryBlock for test validation only.
- */
+/** Basic implementation of MemoryBlock for test validation only. */
 public class MemoryBlockNode implements MemoryBlock {
   private final MemoryAllocatorImpl ma;
   private final MemoryBlock block;

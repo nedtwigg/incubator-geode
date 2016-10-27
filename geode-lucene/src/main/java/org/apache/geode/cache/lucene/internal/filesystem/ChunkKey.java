@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -27,34 +27,25 @@ import java.util.UUID;
 import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
-/**
- * The key for a single chunk on a file stored within a region.
- */
+/** The key for a single chunk on a file stored within a region. */
 public class ChunkKey implements DataSerializableFixedID {
   UUID fileId;
   int chunkId;
 
-  /**
-   * Constructor used for serialization only.
-   */
-  public ChunkKey() {
-  }
+  /** Constructor used for serialization only. */
+  public ChunkKey() {}
 
   ChunkKey(UUID fileName, int chunkId) {
     this.fileId = fileName;
     this.chunkId = chunkId;
   }
 
-  /**
-   * @return the fileName
-   */
+  /** @return the fileName */
   public UUID getFileId() {
     return fileId;
   }
 
-  /**
-   * @return the chunkId
-   */
+  /** @return the chunkId */
   public int getChunkId() {
     return chunkId;
   }
@@ -117,5 +108,4 @@ public class ChunkKey implements DataSerializableFixedID {
     long low = in.readLong();
     fileId = new UUID(high, low);
   }
-
 }

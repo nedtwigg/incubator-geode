@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal;
 
 import static org.junit.Assert.*;
@@ -46,7 +44,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       unordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), unordered, 15);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), unordered, 15);
     assertEquals(10, wrapper.size());
     assertFalse(wrapper.iterator() instanceof ResultsCollectionWrapper.LimitIterator);
     try {
@@ -91,7 +90,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       unordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), unordered, 15);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), unordered, 15);
     assertTrue(wrapper.contains(new Integer(10)));
     assertFalse(wrapper.contains(new Integer(11)));
     List ordered = new ArrayList();
@@ -111,7 +111,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       ordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
     assertFalse(wrapper.containsAll(ordered));
     List newList = new ArrayList();
     for (int i = 0; i < 5; ++i) {
@@ -126,7 +127,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       ordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 0);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 0);
     assertEquals(0, wrapper.size());
   }
 
@@ -136,7 +138,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       ordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
     assertFalse(wrapper.remove(new Integer(6)));
     assertTrue(wrapper.remove(new Integer(4)));
     assertEquals(4, wrapper.size());
@@ -154,7 +157,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       ordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
     assertFalse(wrapper.remove(new Integer(6)));
     assertTrue(wrapper.remove(new Integer(4)));
     assertEquals(4, wrapper.size());
@@ -186,7 +190,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       ordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
     List newList = new ArrayList();
     for (int i = 1; i < 6; ++i) {
       newList.add(new Integer(i));
@@ -213,7 +218,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       ordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
     Object[] toArray = wrapper.toArray();
     assertEquals(wrapper.size(), toArray.length);
     Iterator itr = wrapper.iterator();
@@ -229,7 +235,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       ordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
     Object[] toArray = new Object[5];
     wrapper.toArray(toArray);
     assertEquals(wrapper.size(), toArray.length);
@@ -246,7 +253,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       ordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
     List toList = wrapper.asList();
     List newList = new ArrayList();
     for (int i = 1; i < 6; ++i) {
@@ -275,7 +283,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       ordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
     Set toSet = wrapper.asSet();
     Set newSet = new TreeSet();
     for (int i = 1; i < 6; ++i) {
@@ -303,7 +312,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       ordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
     assertEquals(0, wrapper.occurrences(new Integer(6)));
     for (int i = 1; i < 6; ++i) {
       assertEquals(1, wrapper.occurrences(new Integer(i)));
@@ -325,7 +335,8 @@ public class ResultsCollectionWrapperLimitJUnitTest {
     for (int i = 1; i < 11; ++i) {
       ordered.add(new Integer(i));
     }
-    ResultsCollectionWrapper wrapper = new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
+    ResultsCollectionWrapper wrapper =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Object.class), ordered, 5);
     Iterator itr = wrapper.iterator();
     assertEquals(5, wrapper.size());
     while (itr.hasNext()) {
@@ -341,6 +352,5 @@ public class ResultsCollectionWrapperLimitJUnitTest {
       // Ok
     }
     assertTrue(wrapper.isEmpty());
-
   }
 }

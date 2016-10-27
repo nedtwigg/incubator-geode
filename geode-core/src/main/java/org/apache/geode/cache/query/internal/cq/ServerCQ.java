@@ -24,52 +24,49 @@ import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 
 public interface ServerCQ extends InternalCqQuery {
 
-  /**
-   * @return the filterID
-   */
+  /** @return the filterID */
   public abstract Long getFilterID();
 
-  /**
-   * @param filterID the filterID to set
-   */
+  /** @param filterID the filterID to set */
   public abstract void setFilterID(Long filterID);
 
   /**
    * Register the Query on server.
+   *
    * @param p_clientProxyId
    * @param p_ccn
    * @throws CqException
    */
-  public abstract void registerCq(ClientProxyMembershipID p_clientProxyId, CacheClientNotifier p_ccn, int p_cqState) throws CqException, RegionNotFoundException;
+  public abstract void registerCq(
+      ClientProxyMembershipID p_clientProxyId, CacheClientNotifier p_ccn, int p_cqState)
+      throws CqException, RegionNotFoundException;
 
   /**
    * Adds into the CQ Results key cache.
+   *
    * @param key
    */
   public abstract void addToCqResultKeys(Object key);
 
   /**
-   * Removes the key from CQ Results key cache. 
+   * Removes the key from CQ Results key cache.
+   *
    * @param key
-   * @param isTokenMode if true removes the key if its in destroy token mode
-   *          if false removes the key without any check.
+   * @param isTokenMode if true removes the key if its in destroy token mode if false removes the
+   *     key without any check.
    */
   public abstract void removeFromCqResultKeys(Object key, boolean isTokenMode);
 
-  /**
-   * Sets the CQ Results key cache state as initialized.
-   */
+  /** Sets the CQ Results key cache state as initialized. */
   public abstract void setCqResultsCacheInitialized();
 
-  /**
-   * Returns true if old value is required for query processing.
-   */
+  /** Returns true if old value is required for query processing. */
   public abstract boolean isOldValueRequiredForQueryProcessing(Object key);
 
   /**
-   * Closes the Query.
-   *        On Client side, sends the cq close request to server.
-   *        On Server side, takes care of repository cleanup.
+   * Closes the Query. On Client side, sends the cq close request to server. On Server side, takes
+   * care of repository cleanup.
+   *
    * @param sendRequestToServer true to send the request to server.
    * @throws CqException
    */

@@ -35,15 +35,15 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 @Ignore("Test is broken and was named Bug40255JUnitDisabledTest")
 public class Bug40255JUnitTest {
 
-  private static final String BUG_40255_XML = Bug40255JUnitTest.class.getResource("bug40255xmlparameterization.xml").getFile();
-  private static final String BUG_40255_PROPS = Bug40255JUnitTest.class.getResource("bug40255_gemfire.properties").getFile();
+  private static final String BUG_40255_XML =
+      Bug40255JUnitTest.class.getResource("bug40255xmlparameterization.xml").getFile();
+  private static final String BUG_40255_PROPS =
+      Bug40255JUnitTest.class.getResource("bug40255_gemfire.properties").getFile();
 
   private static final String ATTR_PROPERTY_STRING = "region.disk.store";
 
@@ -91,7 +91,9 @@ public class Bug40255JUnitTest {
     //Check if disk store got same name as passed in system properties in setup().
     assertEquals(attrs.getDiskStoreName(), System.getProperty(ATTR_PROPERTY_STRING));
     assertNotNull(exampleRegion.get(ELEMENT_PROPERTY_VALUE + CONCAT_ELEMENT_PROPERTY_VALUE));
-    assertEquals(exampleRegion.get(ELEMENT_PROPERTY_VALUE + CONCAT_ELEMENT_PROPERTY_VALUE), ELEMENT_KEY_VALUE);
+    assertEquals(
+        exampleRegion.get(ELEMENT_PROPERTY_VALUE + CONCAT_ELEMENT_PROPERTY_VALUE),
+        ELEMENT_KEY_VALUE);
     assertNotNull(exampleRegion.get(ELEMENT_PROPERTY_VALUE));
     assertEquals(exampleRegion.get(ELEMENT_PROPERTY_VALUE), CONCAT_ELEMENT_PROPERTY_VALUE);
   }
@@ -121,7 +123,9 @@ public class Bug40255JUnitTest {
     //Check if disk store got same name as passed in system properties in setup().
     assertEquals(attrs.getDiskStoreName(), System.getProperty(ATTR_PROPERTY_STRING));
     assertNotNull(exampleRegion.get(ELEMENT_PROPERTY_VALUE + CONCAT_ELEMENT_PROPERTY_VALUE));
-    assertEquals(exampleRegion.get(ELEMENT_PROPERTY_VALUE + CONCAT_ELEMENT_PROPERTY_VALUE), ELEMENT_KEY_VALUE);
+    assertEquals(
+        exampleRegion.get(ELEMENT_PROPERTY_VALUE + CONCAT_ELEMENT_PROPERTY_VALUE),
+        ELEMENT_KEY_VALUE);
   }
 
   @After
@@ -137,6 +141,5 @@ public class Bug40255JUnitTest {
   }
 
   @Before
-  public void setUp() throws Exception {
-  }
+  public void setUp() throws Exception {}
 }

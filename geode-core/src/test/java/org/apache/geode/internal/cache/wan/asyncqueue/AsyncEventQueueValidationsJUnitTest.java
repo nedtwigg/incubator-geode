@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
+/** */
 package org.apache.geode.internal.cache.wan.asyncqueue;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
@@ -70,7 +68,8 @@ public class AsyncEventQueueValidationsJUnitTest {
       fact.create("id", new org.apache.geode.internal.cache.wan.MyAsyncEventListener());
       fail("Expected AsyncEventQueueConfigurationException.");
     } catch (AsyncEventQueueConfigurationException e) {
-      assertTrue(e.getMessage().contains(" can not be created with dispatcher threads less than 1"));
+      assertTrue(
+          e.getMessage().contains(" can not be created with dispatcher threads less than 1"));
     }
   }
 
@@ -93,7 +92,9 @@ public class AsyncEventQueueValidationsJUnitTest {
   @Parameters(method = "getCacheXmlFileBaseNames")
   public void testAsyncEventQueueConfiguredFromXmlUsesFilter(String cacheXmlFileBaseName) {
     // Create cache with xml
-    String cacheXmlFileName = TestUtil.getResourcePath(getClass(), getClass().getSimpleName() + "." + cacheXmlFileBaseName + ".cache.xml");
+    String cacheXmlFileName =
+        TestUtil.getResourcePath(
+            getClass(), getClass().getSimpleName() + "." + cacheXmlFileBaseName + ".cache.xml");
     cache = new CacheFactory().set(MCAST_PORT, "0").set(CACHE_XML_FILE, cacheXmlFileName).create();
 
     // Get region and do puts
@@ -110,13 +111,17 @@ public class AsyncEventQueueValidationsJUnitTest {
     MyGatewayEventFilter filter = (MyGatewayEventFilter) filters.get(0);
 
     // Validate filter callbacks were invoked
-    Awaitility.waitAtMost(60, TimeUnit.SECONDS).until(() -> filter.getBeforeEnqueueInvocations() == numPuts);
-    Awaitility.waitAtMost(60, TimeUnit.SECONDS).until(() -> filter.getBeforeTransmitInvocations() == numPuts);
-    Awaitility.waitAtMost(60, TimeUnit.SECONDS).until(() -> filter.getAfterAcknowledgementInvocations() == numPuts);
+    Awaitility.waitAtMost(60, TimeUnit.SECONDS)
+        .until(() -> filter.getBeforeEnqueueInvocations() == numPuts);
+    Awaitility.waitAtMost(60, TimeUnit.SECONDS)
+        .until(() -> filter.getBeforeTransmitInvocations() == numPuts);
+    Awaitility.waitAtMost(60, TimeUnit.SECONDS)
+        .until(() -> filter.getAfterAcknowledgementInvocations() == numPuts);
   }
 
   private final Object[] getCacheXmlFileBaseNames() {
-    return $(new Object[] { "testSerialAsyncEventQueueConfiguredFromXmlUsesFilter" }, new Object[] { "testParallelAsyncEventQueueConfiguredFromXmlUsesFilter" });
+    return $(
+        new Object[] {"testSerialAsyncEventQueueConfiguredFromXmlUsesFilter"},
+        new Object[] {"testParallelAsyncEventQueueConfiguredFromXmlUsesFilter"});
   }
-
 }

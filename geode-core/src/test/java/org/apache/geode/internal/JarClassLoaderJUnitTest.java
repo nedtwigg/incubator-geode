@@ -53,9 +53,7 @@ import org.apache.geode.internal.cache.InternalCache;
 import org.apache.geode.internal.cache.execute.FunctionContextImpl;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * TODO: Need to fix this testDeclarableFunctionsWithParms and testClassOnClasspath on Windows:
- */
+/** TODO: Need to fix this testDeclarableFunctionsWithParms and testClassOnClasspath on Windows: */
 @Category(IntegrationTest.class)
 public class JarClassLoaderJUnitTest {
 
@@ -91,7 +89,9 @@ public class JarClassLoaderJUnitTest {
 
   @Test
   public void testValidJarContent() throws IOException {
-    assertTrue(JarClassLoader.isValidJarContent(this.classBuilder.createJarFromName("JarClassLoaderJUnitA")));
+    assertTrue(
+        JarClassLoader.isValidJarContent(
+            this.classBuilder.createJarFromName("JarClassLoaderJUnitA")));
   }
 
   @Test
@@ -106,7 +106,10 @@ public class JarClassLoaderJUnitTest {
     ClassPathLoader classPathLoader = ClassPathLoader.createWithDefaults(false);
 
     // Deploy the first JAR file and make sure the class is on the Classpath
-    byte[] jarBytes = this.classBuilder.createJarFromClassContent("com/jcljunit/JarClassLoaderJUnitA", "package com.jcljunit; public class JarClassLoaderJUnitA {}");
+    byte[] jarBytes =
+        this.classBuilder.createJarFromClassContent(
+            "com/jcljunit/JarClassLoaderJUnitA",
+            "package com.jcljunit; public class JarClassLoaderJUnitA {}");
     writeJarBytesToFile(jarFile1, jarBytes);
     JarClassLoader classLoader = new JarClassLoader(jarFile1, "JarClassLoaderJUnit.jar", jarBytes);
     classPathLoader = classPathLoader.addOrReplace(classLoader);
@@ -119,7 +122,10 @@ public class JarClassLoaderJUnitTest {
 
     // Update the JAR file and make sure the first class is no longer on the Classpath
     // and the second one is.
-    jarBytes = this.classBuilder.createJarFromClassContent("com/jcljunit/JarClassLoaderJUnitB", "package com.jcljunit; public class JarClassLoaderJUnitB {}");
+    jarBytes =
+        this.classBuilder.createJarFromClassContent(
+            "com/jcljunit/JarClassLoaderJUnitB",
+            "package com.jcljunit; public class JarClassLoaderJUnitB {}");
     writeJarBytesToFile(jarFile2, jarBytes);
     classLoader = new JarClassLoader(jarFile2, "JarClassLoaderJUnit.jar", jarBytes);
     classPathLoader = classPathLoader.addOrReplace(classLoader);
@@ -171,13 +177,15 @@ public class JarClassLoaderJUnitTest {
     stringBuffer.append("public class JarClassLoaderJUnitFunction implements Function {");
     stringBuffer.append("public void init(Properties props) {}");
     stringBuffer.append("public boolean hasResult() {return true;}");
-    stringBuffer.append("public void execute(FunctionContext context) {context.getResultSender().lastResult(\"GOODv1\");}");
+    stringBuffer.append(
+        "public void execute(FunctionContext context) {context.getResultSender().lastResult(\"GOODv1\");}");
     stringBuffer.append("public String getId() {return \"JarClassLoaderJUnitFunction\";}");
     stringBuffer.append("public boolean optimizeForWrite() {return false;}");
     stringBuffer.append("public boolean isHA() {return false;}}");
     String functionString = stringBuffer.toString();
 
-    byte[] jarBytes = this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
+    byte[] jarBytes =
+        this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
     writeJarBytesToFile(jarFile1, jarBytes);
     JarClassLoader classLoader = new JarClassLoader(jarFile1, "JarClassLoaderJUnit.jar", jarBytes);
     classPathLoader = classPathLoader.addOrReplace(classLoader);
@@ -192,7 +200,8 @@ public class JarClassLoaderJUnitTest {
 
     // Test updating the function with a new JAR file
     functionString = functionString.replace("v1", "v2");
-    jarBytes = this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
+    jarBytes =
+        this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
     writeJarBytesToFile(jarFile2, jarBytes);
     classLoader = new JarClassLoader(jarFile2, "JarClassLoaderJUnit.jar", jarBytes);
     classPathLoader = classPathLoader.addOrReplace(classLoader);
@@ -206,8 +215,11 @@ public class JarClassLoaderJUnitTest {
     assertEquals("GOODv2", (String) resultSender.getResults());
 
     // Test returning null for the Id
-    String functionNullIdString = functionString.replace("return \"JarClassLoaderJUnitFunction\"", "return null");
-    jarBytes = this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionNullIdString);
+    String functionNullIdString =
+        functionString.replace("return \"JarClassLoaderJUnitFunction\"", "return null");
+    jarBytes =
+        this.classBuilder.createJarFromClassContent(
+            "JarClassLoaderJUnitFunction", functionNullIdString);
     writeJarBytesToFile(jarFile1, jarBytes);
     classLoader = new JarClassLoader(jarFile1, "JarClassLoaderJUnit.jar", jarBytes);
     classPathLoader = classPathLoader.addOrReplace(classLoader);
@@ -219,9 +231,7 @@ public class JarClassLoaderJUnitTest {
     assertNull(FunctionService.getFunction("JarClassLoaderJUnitFunction"));
   }
 
-  /**
-   * Ensure that abstract functions aren't added to the Function Service.
-   */
+  /** Ensure that abstract functions aren't added to the Function Service. */
   @Test
   public void testAbstractFunction() throws IOException, ClassNotFoundException {
     final File jarFile1 = new File(JAR_PREFIX + "JarClassLoaderJUnit.jar#1");
@@ -238,9 +248,11 @@ public class JarClassLoaderJUnitTest {
     stringBuffer.append("public String getId() {return \"JarClassLoaderJUnitFunction\";}}");
     String functionString = stringBuffer.toString();
 
-    byte[] jarBytes = this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
+    byte[] jarBytes =
+        this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
     writeJarBytesToFile(jarFile1, jarBytes);
-    JarClassLoader classLoader = new JarClassLoader(jarFile1, "JarClassLoaderJUnitFunction.jar", jarBytes);
+    JarClassLoader classLoader =
+        new JarClassLoader(jarFile1, "JarClassLoaderJUnitFunction.jar", jarBytes);
     ClassPathLoader.getLatest().addOrReplaceAndSetLatest(classLoader);
     classLoader.loadClassesAndRegisterFunctions();
 
@@ -264,18 +276,23 @@ public class JarClassLoaderJUnitTest {
     stringBuffer.append("import org.apache.geode.cache.Declarable;");
     stringBuffer.append("import org.apache.geode.cache.execute.Function;");
     stringBuffer.append("import org.apache.geode.cache.execute.FunctionContext;");
-    stringBuffer.append("public class JarClassLoaderJUnitFunctionNoXml implements Function, Declarable {");
+    stringBuffer.append(
+        "public class JarClassLoaderJUnitFunctionNoXml implements Function, Declarable {");
     stringBuffer.append("public String getId() {return \"JarClassLoaderJUnitFunctionNoXml\";}");
     stringBuffer.append("public void init(Properties props) {}");
-    stringBuffer.append("public void execute(FunctionContext context) {context.getResultSender().lastResult(\"NOPARMSv1\");}");
+    stringBuffer.append(
+        "public void execute(FunctionContext context) {context.getResultSender().lastResult(\"NOPARMSv1\");}");
     stringBuffer.append("public boolean hasResult() {return true;}");
     stringBuffer.append("public boolean optimizeForWrite() {return false;}");
     stringBuffer.append("public boolean isHA() {return false;}}");
     String functionString = stringBuffer.toString();
 
-    byte[] jarBytes = this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunctionNoXml", functionString);
+    byte[] jarBytes =
+        this.classBuilder.createJarFromClassContent(
+            "JarClassLoaderJUnitFunctionNoXml", functionString);
     writeJarBytesToFile(jarFile1, jarBytes);
-    JarClassLoader classLoader = new JarClassLoader(jarFile1, "JarClassLoaderJUnitFunctionNoXml.jar", jarBytes);
+    JarClassLoader classLoader =
+        new JarClassLoader(jarFile1, "JarClassLoaderJUnitFunctionNoXml.jar", jarBytes);
     ClassPathLoader.getLatest().addOrReplaceAndSetLatest(classLoader);
     classLoader.loadClassesAndRegisterFunctions();
 
@@ -309,18 +326,22 @@ public class JarClassLoaderJUnitTest {
     stringBuffer.append("import org.apache.geode.cache.Declarable;");
     stringBuffer.append("import org.apache.geode.cache.execute.Function;");
     stringBuffer.append("import org.apache.geode.cache.execute.FunctionContext;");
-    stringBuffer.append("public class JarClassLoaderJUnitFunction implements Function, Declarable {");
+    stringBuffer.append(
+        "public class JarClassLoaderJUnitFunction implements Function, Declarable {");
     stringBuffer.append("public String getId() {return \"JarClassLoaderJUnitFunction\";}");
     stringBuffer.append("public void init(Properties props) {}");
-    stringBuffer.append("public void execute(FunctionContext context) {context.getResultSender().lastResult(\"NOPARMSv1\");}");
+    stringBuffer.append(
+        "public void execute(FunctionContext context) {context.getResultSender().lastResult(\"NOPARMSv1\");}");
     stringBuffer.append("public boolean hasResult() {return true;}");
     stringBuffer.append("public boolean optimizeForWrite() {return false;}");
     stringBuffer.append("public boolean isHA() {return false;}}");
     String functionString = stringBuffer.toString();
 
-    byte[] jarBytes = this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
+    byte[] jarBytes =
+        this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
     writeJarBytesToFile(jarFile1, jarBytes);
-    JarClassLoader classLoader = new JarClassLoader(jarFile1, "JarClassLoaderJUnitFunction.jar", jarBytes);
+    JarClassLoader classLoader =
+        new JarClassLoader(jarFile1, "JarClassLoaderJUnitFunction.jar", jarBytes);
     ClassPathLoader.getLatest().addOrReplaceAndSetLatest(classLoader);
     classLoader.loadClassesAndRegisterFunctions();
 
@@ -355,7 +376,8 @@ public class JarClassLoaderJUnitTest {
 
     // Update the second function (change the value returned from execute) by deploying a JAR file
     functionString = functionString.replace("v1", "v2");
-    jarBytes = this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
+    jarBytes =
+        this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
     writeJarBytesToFile(jarFile2, jarBytes);
 
     classLoader = new JarClassLoader(jarFile2, "JarClassLoaderJUnitFunction.jar", jarBytes);
@@ -385,19 +407,24 @@ public class JarClassLoaderJUnitTest {
     stringBuffer.append("import org.apache.geode.cache.Declarable;");
     stringBuffer.append("import org.apache.geode.cache.execute.Function;");
     stringBuffer.append("import org.apache.geode.cache.execute.FunctionContext;");
-    stringBuffer.append("public class JarClassLoaderJUnitFunction implements Function, Declarable {");
+    stringBuffer.append(
+        "public class JarClassLoaderJUnitFunction implements Function, Declarable {");
     stringBuffer.append("private Properties properties;");
-    stringBuffer.append("public String getId() {if(this.properties==null) {return \"JarClassLoaderJUnitFunction\";} else {return (String) this.properties.get(\"id\");}}");
+    stringBuffer.append(
+        "public String getId() {if(this.properties==null) {return \"JarClassLoaderJUnitFunction\";} else {return (String) this.properties.get(\"id\");}}");
     stringBuffer.append("public void init(Properties props) {properties = props;}");
-    stringBuffer.append("public void execute(FunctionContext context) {context.getResultSender().lastResult(properties.get(\"returnValue\") + \"v1\");}");
+    stringBuffer.append(
+        "public void execute(FunctionContext context) {context.getResultSender().lastResult(properties.get(\"returnValue\") + \"v1\");}");
     stringBuffer.append("public boolean hasResult() {return true;}");
     stringBuffer.append("public boolean optimizeForWrite() {return false;}");
     stringBuffer.append("public boolean isHA() {return false;}}");
     String functionString = stringBuffer.toString();
 
-    byte[] jarBytes = this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
+    byte[] jarBytes =
+        this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
     writeJarBytesToFile(jarFile1, jarBytes);
-    JarClassLoader classLoader = new JarClassLoader(jarFile1, "JarClassLoaderJUnitFunction.jar", jarBytes);
+    JarClassLoader classLoader =
+        new JarClassLoader(jarFile1, "JarClassLoaderJUnitFunction.jar", jarBytes);
     ClassPathLoader.getLatest().addOrReplaceAndSetLatest(classLoader);
     classLoader.loadClassesAndRegisterFunctions();
 
@@ -417,12 +444,14 @@ public class JarClassLoaderJUnitTest {
     stringBuffer.append("  <function-service>");
     stringBuffer.append("    <function>");
     stringBuffer.append("      <class-name>JarClassLoaderJUnitFunction</class-name>");
-    stringBuffer.append("      <parameter name=\"id\"><string>JarClassLoaderJUnitFunctionA</string></parameter>");
+    stringBuffer.append(
+        "      <parameter name=\"id\"><string>JarClassLoaderJUnitFunctionA</string></parameter>");
     stringBuffer.append("      <parameter name=\"returnValue\"><string>DOG</string></parameter>");
     stringBuffer.append("    </function>");
     stringBuffer.append("    <function>");
     stringBuffer.append("      <class-name>JarClassLoaderJUnitFunction</class-name>");
-    stringBuffer.append("      <parameter name=\"id\"><string>JarClassLoaderJUnitFunctionB</string></parameter>");
+    stringBuffer.append(
+        "      <parameter name=\"id\"><string>JarClassLoaderJUnitFunctionB</string></parameter>");
     stringBuffer.append("      <parameter name=\"returnValue\"><string>CAT</string></parameter>");
     stringBuffer.append("    </function>");
     stringBuffer.append(" </function-service>");
@@ -444,7 +473,8 @@ public class JarClassLoaderJUnitTest {
 
     // Update the first function (change the value returned from execute)
     functionString = functionString.replace("v1", "v2");
-    jarBytes = this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
+    jarBytes =
+        this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
     writeJarBytesToFile(jarFile2, jarBytes);
     classLoader = new JarClassLoader(jarFile2, "JarClassLoaderJUnitFunction.jar", jarBytes);
     ClassPathLoader.getLatest().addOrReplaceAndSetLatest(classLoader);
@@ -462,12 +492,16 @@ public class JarClassLoaderJUnitTest {
     assertEquals("CATv2", (String) resultSender.getResults());
 
     // Update cache xml to add a new function and replace an existing one
-    cacheXmlString = cacheXmlString.replace("JarClassLoaderJUnitFunctionA", "JarClassLoaderJUnitFunctionC").replace("CAT", "BIRD");
+    cacheXmlString =
+        cacheXmlString
+            .replace("JarClassLoaderJUnitFunctionA", "JarClassLoaderJUnitFunctionC")
+            .replace("CAT", "BIRD");
     this.cache.loadCacheXml(new ByteArrayInputStream(cacheXmlString.getBytes()));
 
     // Update the first function (change the value returned from execute)
     functionString = functionString.replace("v2", "v3");
-    jarBytes = this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
+    jarBytes =
+        this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitFunction", functionString);
     writeJarBytesToFile(jarFile1, jarBytes);
     classLoader = new JarClassLoader(jarFile1, "JarClassLoaderJUnitFunction.jar", jarBytes);
     ClassPathLoader.getLatest().addOrReplaceAndSetLatest(classLoader);
@@ -503,9 +537,12 @@ public class JarClassLoaderJUnitTest {
     stringBuffer.append("public String getValueParent() {");
     stringBuffer.append("return \"PARENT\";}}");
 
-    byte[] jarBytes = this.classBuilder.createJarFromClassContent("jcljunit/parent/JarClassLoaderJUnitParent", stringBuffer.toString());
+    byte[] jarBytes =
+        this.classBuilder.createJarFromClassContent(
+            "jcljunit/parent/JarClassLoaderJUnitParent", stringBuffer.toString());
     writeJarBytesToFile(parentJarFile, jarBytes);
-    JarClassLoader parentClassLoader = new JarClassLoader(parentJarFile, "JarClassLoaderJUnitParent.jar", jarBytes);
+    JarClassLoader parentClassLoader =
+        new JarClassLoader(parentJarFile, "JarClassLoaderJUnitParent.jar", jarBytes);
 
     stringBuffer = new StringBuffer();
     stringBuffer.append("package jcljunit.uses;");
@@ -513,9 +550,12 @@ public class JarClassLoaderJUnitTest {
     stringBuffer.append("public String getValueUses() {");
     stringBuffer.append("return \"USES\";}}");
 
-    jarBytes = this.classBuilder.createJarFromClassContent("jcljunit/uses/JarClassLoaderJUnitUses", stringBuffer.toString());
+    jarBytes =
+        this.classBuilder.createJarFromClassContent(
+            "jcljunit/uses/JarClassLoaderJUnitUses", stringBuffer.toString());
     writeJarBytesToFile(usesJarFile, jarBytes);
-    JarClassLoader usesClassLoader = new JarClassLoader(usesJarFile, "JarClassLoaderJUnitUses.jar", jarBytes);
+    JarClassLoader usesClassLoader =
+        new JarClassLoader(usesJarFile, "JarClassLoaderJUnitUses.jar", jarBytes);
 
     stringBuffer = new StringBuffer();
     stringBuffer.append("package jcljunit.function;");
@@ -523,10 +563,12 @@ public class JarClassLoaderJUnitTest {
     stringBuffer.append("import jcljunit.uses.JarClassLoaderJUnitUses;");
     stringBuffer.append("import org.apache.geode.cache.execute.Function;");
     stringBuffer.append("import org.apache.geode.cache.execute.FunctionContext;");
-    stringBuffer.append("public class JarClassLoaderJUnitFunction  extends JarClassLoaderJUnitParent implements Function {");
+    stringBuffer.append(
+        "public class JarClassLoaderJUnitFunction  extends JarClassLoaderJUnitParent implements Function {");
     stringBuffer.append("private JarClassLoaderJUnitUses uses = new JarClassLoaderJUnitUses();");
     stringBuffer.append("public boolean hasResult() {return true;}");
-    stringBuffer.append("public void execute(FunctionContext context) {context.getResultSender().lastResult(getValueParent() + \":\" + uses.getValueUses());}");
+    stringBuffer.append(
+        "public void execute(FunctionContext context) {context.getResultSender().lastResult(getValueParent() + \":\" + uses.getValueUses());}");
     stringBuffer.append("public String getId() {return \"JarClassLoaderJUnitFunction\";}");
     stringBuffer.append("public boolean optimizeForWrite() {return false;}");
     stringBuffer.append("public boolean isHA() {return false;}}");
@@ -534,9 +576,12 @@ public class JarClassLoaderJUnitTest {
     ClassBuilder functionClassBuilder = new ClassBuilder();
     functionClassBuilder.addToClassPath(parentJarFile.getAbsolutePath());
     functionClassBuilder.addToClassPath(usesJarFile.getAbsolutePath());
-    jarBytes = functionClassBuilder.createJarFromClassContent("jcljunit/function/JarClassLoaderJUnitFunction", stringBuffer.toString());
+    jarBytes =
+        functionClassBuilder.createJarFromClassContent(
+            "jcljunit/function/JarClassLoaderJUnitFunction", stringBuffer.toString());
     writeJarBytesToFile(functionJarFile, jarBytes);
-    JarClassLoader functionClassLoader = new JarClassLoader(functionJarFile, "JarClassLoaderJUnitFunction.jar", jarBytes);
+    JarClassLoader functionClassLoader =
+        new JarClassLoader(functionJarFile, "JarClassLoaderJUnitFunction.jar", jarBytes);
 
     ClassPathLoader.getLatest().addOrReplaceAndSetLatest(functionClassLoader);
     ClassPathLoader.getLatest().addOrReplaceAndSetLatest(parentClassLoader);
@@ -561,7 +606,8 @@ public class JarClassLoaderJUnitTest {
 
     byte[] jarBytes = this.classBuilder.createJarFromFileContent(fileName, fileContent);
     writeJarBytesToFile(jarFile1, jarBytes);
-    JarClassLoader classLoader = new JarClassLoader(jarFile1, "JarClassLoaderJUnitResource.jar", jarBytes);
+    JarClassLoader classLoader =
+        new JarClassLoader(jarFile1, "JarClassLoaderJUnitResource.jar", jarBytes);
     classPathLoader = classPathLoader.addOrReplace(classLoader);
     classLoader.loadClassesAndRegisterFunctions();
 
@@ -581,7 +627,10 @@ public class JarClassLoaderJUnitTest {
     ClassPathLoader classPathLoader = ClassPathLoader.createWithDefaults(false);
 
     // First use of the JAR file
-    byte[] jarBytes = this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitTestClass", "public class JarClassLoaderJUnitTestClass { public Integer getValue5() { return new Integer(5); } }");
+    byte[] jarBytes =
+        this.classBuilder.createJarFromClassContent(
+            "JarClassLoaderJUnitTestClass",
+            "public class JarClassLoaderJUnitTestClass { public Integer getValue5() { return new Integer(5); } }");
     writeJarBytesToFile(jarFile1, jarBytes);
     JarClassLoader classLoader = new JarClassLoader(jarFile1, "JarClassLoaderJUnit.jar", jarBytes);
     classPathLoader = classPathLoader.addOrReplace(classLoader);
@@ -608,7 +657,10 @@ public class JarClassLoaderJUnitTest {
 
     // Now create an updated JAR file and make sure that the method from the new
     // class is available.
-    jarBytes = this.classBuilder.createJarFromClassContent("JarClassLoaderJUnitTestClass", "public class JarClassLoaderJUnitTestClass { public Integer getValue10() { return new Integer(10); } }");
+    jarBytes =
+        this.classBuilder.createJarFromClassContent(
+            "JarClassLoaderJUnitTestClass",
+            "public class JarClassLoaderJUnitTestClass { public Integer getValue10() { return new Integer(10); } }");
     writeJarBytesToFile(jarFile2, jarBytes);
     classLoader = new JarClassLoader(jarFile2, "JarClassLoaderJUnit.jar", jarBytes);
     classPathLoader = classPathLoader.addOrReplace(classLoader);
@@ -645,12 +697,18 @@ public class JarClassLoaderJUnitTest {
     JarClassLoader classLoader = new JarClassLoader(jarFile1, "JarClassLoaderJUnitA.jar", jarBytes);
     ClassPathLoader.getLatest().addOrReplaceAndSetLatest(classLoader);
 
-    jarBytes = this.classBuilder.createJarFromClassContent("com/jcljunit/JarClassLoaderJUnitB", "package com.jcljunit; public class JarClassLoaderJUnitB {}");
+    jarBytes =
+        this.classBuilder.createJarFromClassContent(
+            "com/jcljunit/JarClassLoaderJUnitB",
+            "package com.jcljunit; public class JarClassLoaderJUnitB {}");
     writeJarBytesToFile(jarFile2, jarBytes);
     classLoader = new JarClassLoader(jarFile2, "JarClassLoaderJUnitB.jar", jarBytes);
     ClassPathLoader.getLatest().addOrReplaceAndSetLatest(classLoader);
 
-    String[] classNames = new String[] { "JarClassLoaderJUnitA", "com.jcljunit.JarClassLoaderJUnitB", "NON-EXISTENT CLASS" };
+    String[] classNames =
+        new String[] {
+          "JarClassLoaderJUnitA", "com.jcljunit.JarClassLoaderJUnitB", "NON-EXISTENT CLASS"
+        };
 
     // Spawn some threads which try to instantiate these classes
     final int threadCount = 10;
@@ -703,12 +761,14 @@ public class JarClassLoaderJUnitTest {
     File dirFile = new File(".");
 
     // Find all created JAR files
-    File[] oldJarFiles = dirFile.listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(final File file, final String name) {
-        return JarClassLoaderJUnitTest.this.pattern.matcher(name).matches();
-      }
-    });
+    File[] oldJarFiles =
+        dirFile.listFiles(
+            new FilenameFilter() {
+              @Override
+              public boolean accept(final File file, final String name) {
+                return JarClassLoaderJUnitTest.this.pattern.matcher(name).matches();
+              }
+            });
 
     // Now delete them
     if (oldJarFiles != null) {
@@ -744,8 +804,7 @@ public class JarClassLoaderJUnitTest {
   private static class TestResultSender implements ResultSender<Object> {
     private Object result;
 
-    public TestResultSender() {
-    }
+    public TestResultSender() {}
 
     protected Object getResults() {
       return this.result;
@@ -774,7 +833,8 @@ public class JarClassLoaderJUnitTest {
     private final int numLoops;
     private final String[] classNames;
 
-    ForNameExerciser(final CyclicBarrier cyclicBarrier, final int numLoops, final String[] classNames) {
+    ForNameExerciser(
+        final CyclicBarrier cyclicBarrier, final int numLoops, final String[] classNames) {
       this.cyclicBarrier = cyclicBarrier;
       this.numLoops = numLoops;
       this.classNames = classNames;

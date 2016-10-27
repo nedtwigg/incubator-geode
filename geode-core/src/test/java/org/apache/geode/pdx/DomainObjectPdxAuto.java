@@ -28,7 +28,13 @@ public class DomainObjectPdxAuto extends DomainObject {
   public Integer anInteger;
 
   public enum Day {
-    SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY
+    SUNDAY,
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY
   }
 
   public char aChar;
@@ -57,8 +63,7 @@ public class DomainObjectPdxAuto extends DomainObject {
   public Object[] anObjectArray;
   public byte[][] anArrayOfByteArray;
 
-  public DomainObjectPdxAuto() {
-  }
+  public DomainObjectPdxAuto() {}
 
   public DomainObjectPdxAuto(int size) {
     super(size);
@@ -102,88 +107,51 @@ public class DomainObjectPdxAuto extends DomainObject {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (!super.equals(obj))
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (!super.equals(obj)) return false;
+    if (getClass() != obj.getClass()) return false;
     DomainObjectPdxAuto other = (DomainObjectPdxAuto) obj;
-    if (aBoolean != other.aBoolean)
-      return false;
-    if (!Arrays.equals(aBooleanArray, other.aBooleanArray))
-      return false;
-    if (aByte != other.aByte)
-      return false;
-    if (!Arrays.equals(aByteArray, other.aByteArray))
-      return false;
-    if (aChar != other.aChar)
-      return false;
-    if (!Arrays.equals(aCharArray, other.aCharArray))
-      return false;
+    if (aBoolean != other.aBoolean) return false;
+    if (!Arrays.equals(aBooleanArray, other.aBooleanArray)) return false;
+    if (aByte != other.aByte) return false;
+    if (!Arrays.equals(aByteArray, other.aByteArray)) return false;
+    if (aChar != other.aChar) return false;
+    if (!Arrays.equals(aCharArray, other.aCharArray)) return false;
     if (aCollection == null) {
-      if (other.aCollection != null)
-        return false;
-    } else if (!aCollection.equals(other.aCollection))
-      return false;
+      if (other.aCollection != null) return false;
+    } else if (!aCollection.equals(other.aCollection)) return false;
     if (aDate == null) {
-      if (other.aDate != null)
-        return false;
-    } else if (!aDate.equals(other.aDate))
-      return false;
-    if (Double.doubleToLongBits(aDouble) != Double.doubleToLongBits(other.aDouble))
-      return false;
-    if (!Arrays.equals(aDoubleArray, other.aDoubleArray))
-      return false;
-    if (Float.floatToIntBits(aFloat) != Float.floatToIntBits(other.aFloat))
-      return false;
-    if (!Arrays.equals(aFloatArray, other.aFloatArray))
-      return false;
-    if (aLong != other.aLong)
-      return false;
-    if (!Arrays.equals(aLongArray, other.aLongArray))
-      return false;
+      if (other.aDate != null) return false;
+    } else if (!aDate.equals(other.aDate)) return false;
+    if (Double.doubleToLongBits(aDouble) != Double.doubleToLongBits(other.aDouble)) return false;
+    if (!Arrays.equals(aDoubleArray, other.aDoubleArray)) return false;
+    if (Float.floatToIntBits(aFloat) != Float.floatToIntBits(other.aFloat)) return false;
+    if (!Arrays.equals(aFloatArray, other.aFloatArray)) return false;
+    if (aLong != other.aLong) return false;
+    if (!Arrays.equals(aLongArray, other.aLongArray)) return false;
     if (aMap == null) {
-      if (other.aMap != null)
-        return false;
-    } else if (!aMap.equals(other.aMap))
-      return false;
-    if (aShort != other.aShort)
-      return false;
-    if (!Arrays.equals(aShortArray, other.aShortArray))
-      return false;
+      if (other.aMap != null) return false;
+    } else if (!aMap.equals(other.aMap)) return false;
+    if (aShort != other.aShort) return false;
+    if (!Arrays.equals(aShortArray, other.aShortArray)) return false;
     if (aString == null) {
-      if (other.aString != null)
-        return false;
-    } else if (!aString.equals(other.aString))
-      return false;
-    if (!Arrays.equals(aStringArray, other.aStringArray))
-      return false;
-    if (!Arrays.equals(anArrayOfByteArray, other.anArrayOfByteArray))
-      return false;
-    if (anEnum != other.anEnum)
-      return false;
-    if (anInt != other.anInt)
-      return false;
-    if (!Arrays.equals(anIntArray, other.anIntArray))
-      return false;
+      if (other.aString != null) return false;
+    } else if (!aString.equals(other.aString)) return false;
+    if (!Arrays.equals(aStringArray, other.aStringArray)) return false;
+    if (!Arrays.equals(anArrayOfByteArray, other.anArrayOfByteArray)) return false;
+    if (anEnum != other.anEnum) return false;
+    if (anInt != other.anInt) return false;
+    if (!Arrays.equals(anIntArray, other.anIntArray)) return false;
     if (anInteger == null) {
-      if (other.anInteger != null)
-        return false;
-    } else if (!anInteger.equals(other.anInteger))
-      return false;
+      if (other.anInteger != null) return false;
+    } else if (!anInteger.equals(other.anInteger)) return false;
     if (anObject == null) {
-      if (other.anObject != null)
-        return false;
-    } else if (!anObject.equals(other.anObject))
-      return false;
-    if (!Arrays.equals(anObjectArray, other.anObjectArray))
-      return false;
+      if (other.anObject != null) return false;
+    } else if (!anObject.equals(other.anObject)) return false;
+    if (!Arrays.equals(anObjectArray, other.anObjectArray)) return false;
     if (string_immediate == null) {
-      if (other.string_immediate != null)
-        return false;
-    } else if (!string_immediate.equals(other.string_immediate))
-      return false;
+      if (other.string_immediate != null) return false;
+    } else if (!string_immediate.equals(other.string_immediate)) return false;
     return true;
   }
 }

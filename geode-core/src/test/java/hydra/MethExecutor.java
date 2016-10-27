@@ -26,28 +26,27 @@ import java.util.ArrayList;
 import org.apache.geode.SystemFailure;
 
 /**
-* 
-* A class specialized for executing (via reflection) the receiver/selector
-* pairs found in TestTasks. 
-*
-*/
+ * A class specialized for executing (via reflection) the receiver/selector pairs found in
+ * TestTasks.
+ */
 public class MethExecutor {
 
   // @todo lises add static args method
 
   /**
-   * Helper method that searches a class (and its superclasses) for a
-   * method with the given name and parameter types.
+   * Helper method that searches a class (and its superclasses) for a method with the given name and
+   * parameter types.
    *
-   * @throws NoSuchMethodException
-   *         If the method cannot be found
+   * @throws NoSuchMethodException If the method cannot be found
    */
-  public static Method getMethod(Class c, String methodName, Class[] paramTypes) throws NoSuchMethodException {
+  public static Method getMethod(Class c, String methodName, Class[] paramTypes)
+      throws NoSuchMethodException {
 
     ArrayList matchingMethods = new ArrayList();
     for (Class q = c; q != null; q = q.getSuperclass()) {
       Method[] methods = q.getDeclaredMethods();
-      NEXT_METHOD: for (int i = 0; i < methods.length; i++) {
+      NEXT_METHOD:
+      for (int i = 0; i < methods.length; i++) {
         Method m = methods[i];
         if (!m.getName().equals(methodName)) {
           continue;
@@ -73,7 +72,15 @@ public class MethExecutor {
             Class paramType = paramTypes[j];
 
             if (argType.isPrimitive()) {
-              if ((argType.equals(boolean.class) && paramType.equals(Boolean.class)) || (argType.equals(short.class) && paramType.equals(Short.class)) || (argType.equals(int.class) && paramType.equals(Integer.class)) || (argType.equals(long.class) && paramType.equals(Long.class)) || (argType.equals(float.class) && paramType.equals(Float.class)) || (argType.equals(double.class) && paramType.equals(Double.class)) || (argType.equals(char.class) && paramType.equals(Character.class)) || (argType.equals(byte.class) && paramType.equals(Byte.class)) || false) {
+              if ((argType.equals(boolean.class) && paramType.equals(Boolean.class))
+                  || (argType.equals(short.class) && paramType.equals(Short.class))
+                  || (argType.equals(int.class) && paramType.equals(Integer.class))
+                  || (argType.equals(long.class) && paramType.equals(Long.class))
+                  || (argType.equals(float.class) && paramType.equals(Float.class))
+                  || (argType.equals(double.class) && paramType.equals(Double.class))
+                  || (argType.equals(char.class) && paramType.equals(Character.class))
+                  || (argType.equals(byte.class) && paramType.equals(Byte.class))
+                  || false) {
 
                 // This parameter is okay, try the next arg
                 continue;
@@ -131,24 +138,18 @@ public class MethExecutor {
       sb.append(c.getName());
       sb.append(" methods=" + matchingMethods);
       throw new NoSuchMethodException(sb.toString());
-    } else
-      return (Method) matchingMethods.get(0);
+    } else return (Method) matchingMethods.get(0);
   }
 
   /**
-  *
-  * Send the message "selector" to the class named "receiver".
-  * Return the result, including stack trace (if any).
-  *
-  */
+   * Send the message "selector" to the class named "receiver". Return the result, including stack
+   * trace (if any).
+   */
   public static MethExecutorResult execute(String receiver, String selector) {
     return execute(receiver, selector, null);
   }
 
-  /**
-   * Executes the given static method on the given class with the
-   * given arguments.
-   */
+  /** Executes the given static method on the given class with the given arguments. */
   public static MethExecutorResult execute(String receiver, String selector, Object[] args) {
     try {
       // get the class
@@ -200,19 +201,14 @@ public class MethExecutor {
   }
 
   /**
-  *
-  * Send the message "selector" to the object "target".
-  * Return the result, including stack trace (if any).
-  *
-  */
+   * Send the message "selector" to the object "target". Return the result, including stack trace
+   * (if any).
+   */
   public static MethExecutorResult executeObject(Object target, String selector) {
     return executeObject(target, selector, null);
   }
 
-  /**
-   * Executes the given instance method on the given object with the
-   * given arguments.
-   */
+  /** Executes the given instance method on the given object with the given arguments. */
   public static MethExecutorResult executeObject(Object target, String selector, Object[] args) {
     try {
       // get the class
@@ -261,11 +257,9 @@ public class MethExecutor {
   }
 
   /**
-  *
-  * Send the message "selector" to an instance of the class named "receiver".
-  * Return the result, including stack trace (if any).
-  *
-  */
+   * Send the message "selector" to an instance of the class named "receiver". Return the result,
+   * including stack trace (if any).
+   */
   public static MethExecutorResult executeInstance(String receiver, String selector) {
 
     try {
@@ -298,12 +292,11 @@ public class MethExecutor {
   }
 
   /**
-  *
-  * Send the message "selector" to an instance of the class named "receiver".
-  * Return the result, including stack trace (if any).
-  *
-  */
-  public static MethExecutorResult executeInstance(String receiver, String selector, Class[] types, Object[] args) {
+   * Send the message "selector" to an instance of the class named "receiver". Return the result,
+   * including stack trace (if any).
+   */
+  public static MethExecutorResult executeInstance(
+      String receiver, String selector, Class[] types, Object[] args) {
 
     try {
       // get the class
@@ -337,11 +330,7 @@ public class MethExecutor {
     }
   }
 
-  /** 
-  *
-  * A small program for testing this class.
-  *
-  */
+  /** A small program for testing this class. */
   public static String testMethod1() {
     return "The result is: " + System.currentTimeMillis();
   }

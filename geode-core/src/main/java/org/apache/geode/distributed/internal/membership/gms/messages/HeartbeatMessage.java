@@ -26,8 +26,8 @@ import org.apache.geode.internal.Version;
 
 public class HeartbeatMessage extends HighPriorityDistributionMessage {
   /**
-   * RequestId identifies the HeartbeatRequestMessage for which this is a response.
-   * If it is < 0 this is a periodic heartbeat message.
+   * RequestId identifies the HeartbeatRequestMessage for which this is a response. If it is < 0
+   * this is a periodic heartbeat message.
    */
   int requestId;
 
@@ -35,8 +35,7 @@ public class HeartbeatMessage extends HighPriorityDistributionMessage {
     requestId = id;
   }
 
-  public HeartbeatMessage() {
-  }
+  public HeartbeatMessage() {}
 
   public int getRequestId() {
     return requestId;

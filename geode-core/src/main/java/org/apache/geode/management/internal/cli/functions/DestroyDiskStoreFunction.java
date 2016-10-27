@@ -32,12 +32,10 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
 /**
- * Function used by the 'destroy disk-store' gfsh command to destroy a disk
- * store on each member.
- * 
+ * Function used by the 'destroy disk-store' gfsh command to destroy a disk store on each member.
+ *
  * @since GemFire 8.0
  */
-
 public class DestroyDiskStoreFunction extends FunctionAdapter implements InternalEntity {
   private static final Logger logger = LogService.getLogger();
 

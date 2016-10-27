@@ -18,11 +18,10 @@
 package org.apache.geode.internal.shared;
 
 /**
- * Encapsulates an error in invoking OS native calls. A counterpart of JNA's
- * <code>LastErrorException</code> so as to not expose the JNA
- * <code>LastErrorException</code> class, and also for ODBC/.NET drivers that
- * don't use JNA.
- * 
+ * Encapsulates an error in invoking OS native calls. A counterpart of JNA's <code>
+ * LastErrorException</code> so as to not expose the JNA <code>LastErrorException</code> class, and
+ * also for ODBC/.NET drivers that don't use JNA.
+ *
  * @since GemFire 8.0
  */
 public class NativeErrorException extends Exception {

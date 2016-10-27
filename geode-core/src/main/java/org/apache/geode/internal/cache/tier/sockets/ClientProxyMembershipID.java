@@ -34,13 +34,9 @@ import java.util.Arrays;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
-/**
- * This class represents a ConnectionProxy of the CacheClient
- * 
- * 
- *  
- */
-public final class ClientProxyMembershipID implements DataSerializableFixedID, Serializable, Externalizable {
+/** This class represents a ConnectionProxy of the CacheClient */
+public final class ClientProxyMembershipID
+    implements DataSerializableFixedID, Serializable, Externalizable {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -56,17 +52,14 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
 
   private static final int BYTES_32KB = 32768;
 
-  public volatile static DistributedSystem system = null;
+  public static volatile DistributedSystem system = null;
 
-  /**
-   * the membershpi id of the distributed system in this client (if running in a
-   * client)
-   */
+  /** the membershpi id of the distributed system in this client (if running in a client) */
   public static DistributedMember systemMemberId;
 
   //durable_synch_counter=1 is reserved for durable clients
   //so that when pools are being created and deleted the same client
-  //session is selected on the serverside by always using the 
+  //session is selected on the serverside by always using the
   //same uniqueID value which is set via the synch_counter
   private static final int durable_synch_counter = 1;
   private static int synch_counter = 0;
@@ -127,10 +120,7 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
     return Arrays.equals(this.identity, that.identity);
   }
 
-  /**
-   * Return true if "that" can be used in place of "this"
-   * when canonicalizing.
-   */
+  /** Return true if "that" can be used in place of "this" when canonicalizing. */
   private boolean isCanonicalEquals(ClientProxyMembershipID that) {
     if (this == that) {
       return true;
@@ -146,7 +136,9 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
       // Test whether:
       // - the durable ids are equal (if durable) or
       // - the identities are equal (if non-durable)
-      return isDurable() ? this.getDurableId().equals(that.getDurableId()) : Arrays.equals(this.identity, that.identity);
+      return isDurable()
+          ? this.getDurableId().equals(that.getDurableId())
+          : Arrays.equals(this.identity, that.identity);
     } else {
       return false;
     }
@@ -166,9 +158,12 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
     byte[] client_side_identity = null;
     if (sys == null) {
       // DistributedSystem is required now before handshaking -Kirk
-      throw new IllegalStateException(LocalizedStrings.ClientProxyMembershipID_ATTEMPTING_TO_HANDSHAKE_WITH_CACHESERVER_BEFORE_CREATING_DISTRIBUTEDSYSTEM_AND_CACHE.toLocalizedString());
+      throw new IllegalStateException(
+          LocalizedStrings
+              .ClientProxyMembershipID_ATTEMPTING_TO_HANDSHAKE_WITH_CACHESERVER_BEFORE_CREATING_DISTRIBUTEDSYSTEM_AND_CACHE
+              .toLocalizedString());
     }
-    //if (system != sys) 
+    //if (system != sys)
     {
       // DS already exists... make sure it's for current DS connection
       systemMemberId = sys.getDistributedMember();
@@ -177,13 +172,15 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
         DataSerializer.writeObject(systemMemberId, hdos);
         client_side_identity = hdos.toByteArray();
       } catch (IOException ioe) {
-        throw new InternalGemFireException(LocalizedStrings.ClientProxyMembershipID_UNABLE_TO_SERIALIZE_IDENTITY.toLocalizedString(), ioe);
+        throw new InternalGemFireException(
+            LocalizedStrings.ClientProxyMembershipID_UNABLE_TO_SERIALIZE_IDENTITY
+                .toLocalizedString(),
+            ioe);
       }
 
       system = sys;
     }
     return client_side_identity;
-
   }
 
   private ClientProxyMembershipID(int id, byte[] clientSideIdentity) {
@@ -198,8 +195,7 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
     this.memberId = systemMemberId;
   }
 
-  public ClientProxyMembershipID() {
-  }
+  public ClientProxyMembershipID() {}
 
   public ClientProxyMembershipID(DistributedMember member) {
     this.uniqueId = 1;
@@ -213,7 +209,8 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
 
   @Override
   public String toString() {
-    if (this.identity != null && ((InternalDistributedMember) getDistributedMember()).getPort() == 0) {
+    if (this.identity != null
+        && ((InternalDistributedMember) getDistributedMember()).getPort() == 0) {
       return this.toStringNoCache();
     }
     if (this._toString == null) {
@@ -222,12 +219,13 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
     return this._toString;
   }
 
-  /**
-   * returns a string representation of this identifier, ignoring the toString
-   * cache
-   */
+  /** returns a string representation of this identifier, ignoring the toString cache */
   public String toStringNoCache() {
-    StringBuffer sb = new StringBuffer("identity(").append(getDSMembership()).append(",connection=").append(uniqueId);
+    StringBuffer sb =
+        new StringBuffer("identity(")
+            .append(getDSMembership())
+            .append(",connection=")
+            .append(uniqueId);
     if (identity != null) {
       DurableClientAttributes dca = getDurableAttributes();
       if (dca.getId().length() > 0) {
@@ -239,7 +237,7 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
 
   /**
    * For Externalizable
-   * 
+   *
    * @see Externalizable
    */
   public void writeExternal(ObjectOutput out) throws IOException {
@@ -253,7 +251,6 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
     out.writeShort(this.identity.length);
     out.write(this.identity);
     out.writeInt(this.uniqueId);
-
   }
 
   /** returns the externalized size of this object */
@@ -263,19 +260,24 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
 
   /**
    * For Externalizable
-   * 
+   *
    * @see Externalizable
    */
   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
     int identityLength = in.readShort();
     if (identityLength > BYTES_32KB) {
-      throw new IOException(LocalizedStrings.ClientProxyMembershipID_HANDSHAKE_IDENTITY_LENGTH_IS_TOO_BIG.toLocalizedString());
+      throw new IOException(
+          LocalizedStrings.ClientProxyMembershipID_HANDSHAKE_IDENTITY_LENGTH_IS_TOO_BIG
+              .toLocalizedString());
     }
     this.identity = new byte[identityLength];
     read(in, this.identity);
     this.uniqueId = in.readInt();
     if (this.uniqueId == -1) {
-      throw new IOException(LocalizedStrings.ClientProxyMembershipID_UNEXPECTED_EOF_REACHED_UNIQUE_ID_COULD_NOT_BE_READ.toLocalizedString());
+      throw new IOException(
+          LocalizedStrings
+              .ClientProxyMembershipID_UNEXPECTED_EOF_REACHED_UNIQUE_ID_COULD_NOT_BE_READ
+              .toLocalizedString());
     }
     //    {toString(); this.transientPort = ((InternalDistributedMember)this.memberId).getPort();}
   }
@@ -288,7 +290,10 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
       // idBytes += dis.read(toFill, idBytes, (toFillLength - idBytes));
       int dataRead = dis.read(toFill, idBytes, (toFillLength - idBytes));
       if (dataRead == -1) {
-        throw new IOException(LocalizedStrings.ClientProxyMembershipID_UNEXPECTED_EOF_REACHED_DISTRIBUTED_MEMBERSHIPID_COULD_NOT_BE_READ.toLocalizedString());
+        throw new IOException(
+            LocalizedStrings
+                .ClientProxyMembershipID_UNEXPECTED_EOF_REACHED_DISTRIBUTED_MEMBERSHIPID_COULD_NOT_BE_READ
+                .toLocalizedString());
       }
       idBytes += dataRead;
     }
@@ -335,9 +340,8 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
   }
 
   /**
-   * this method uses CacheClientNotifier to try to obtain an ID that 
-   * is equal to this one.  This is used during deserialization to
-   * reduce storage overhead.
+   * this method uses CacheClientNotifier to try to obtain an ID that is equal to this one. This is
+   * used during deserialization to reduce storage overhead.
    */
   private ClientProxyMembershipID canonicalReference() {
     CacheClientNotifier ccn = CacheClientNotifier.getInstance();
@@ -353,10 +357,9 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
   }
 
   /**
-   * deserializes the membership id, if necessary, and returns it. All access to
-   * membershipId should be through this method
+   * deserializes the membership id, if necessary, and returns it. All access to membershipId should
+   * be through this method
    */
-
   public DistributedMember getDistributedMember() {
     if (memberId == null) {
       ByteArrayInputStream bais = new ByteArrayInputStream(identity);
@@ -364,7 +367,10 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
       try {
         memberId = (DistributedMember) DataSerializer.readObject(dis);
       } catch (Exception e) {
-        logger.error(LocalizedMessage.create(LocalizedStrings.ClientProxyMembershipID_UNABLE_TO_DESERIALIZE_MEMBERSHIP_ID), e);
+        logger.error(
+            LocalizedMessage.create(
+                LocalizedStrings.ClientProxyMembershipID_UNABLE_TO_DESERIALIZE_MEMBERSHIP_ID),
+            e);
       }
     }
     return memberId;
@@ -377,8 +383,8 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
 
   /**
    * Returns whether this <code>ClientProxyMembershipID</code> is durable.
+   *
    * @return whether this <code>ClientProxyMembershipID</code> is durable
-   * 
    * @since GemFire 5.5
    */
   public boolean isDurable() {
@@ -388,8 +394,8 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
 
   /**
    * Returns this <code>ClientProxyMembershipID</code>'s durable attributes.
+   *
    * @return this <code>ClientProxyMembershipID</code>'s durable attributes
-   * 
    * @since GemFire 5.5
    */
   protected DurableClientAttributes getDurableAttributes() {
@@ -398,8 +404,8 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
 
   /**
    * Returns this <code>ClientProxyMembershipID</code>'s durable id.
+   *
    * @return this <code>ClientProxyMembershipID</code>'s durable id
-   * 
    * @since GemFire 5.5
    */
   public String getDurableId() {
@@ -409,8 +415,8 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
 
   /**
    * Returns this <code>ClientProxyMembershipID</code>'s durable timeout.
+   *
    * @return this <code>ClientProxyMembershipID</code>'s durable timeout
-   * 
    * @since GemFire 5.5
    */
   protected int getDurableTimeout() {
@@ -418,9 +424,7 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
     return dca == null ? 0 : dca.getTimeout();
   }
 
-  /**
-   * Used to update the timeout when a durable client comes back to a server
-   */
+  /** Used to update the timeout when a durable client comes back to a server */
   public void updateDurableTimeout(int newValue) {
     DurableClientAttributes dca = getDurableAttributes();
     if (dca != null) {
@@ -428,10 +432,12 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
     }
   }
 
-  /**
-   * call this when the distributed system ID has been modified
-   */
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", justification = "Only applicable in client DS and in that case too multiple instances do not modify it at the same time.")
+  /** call this when the distributed system ID has been modified */
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
+    justification =
+        "Only applicable in client DS and in that case too multiple instances do not modify it at the same time."
+  )
   public void updateID(DistributedMember idm) {
     //    this.transientPort = ((InternalDistributedMember)this.memberId).getPort();
     //    if (this.transientPort == 0) {
@@ -457,15 +463,12 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
   }
 
   /**
-   * Return the name of the <code>HARegion</code> queueing this proxy's
-   * messages. This is name is generated based on whether or not this proxy id
-   * is durable. If this proxy id is durable, then the durable client id is
-   * used. If this proxy id is not durable, then the<code>DistributedMember</code>
-   * string is used.
-   * 
-   * @return the name of the <code>HARegion</code> queueing this proxy's
-   * messages.
-   * 
+   * Return the name of the <code>HARegion</code> queueing this proxy's messages. This is name is
+   * generated based on whether or not this proxy id is durable. If this proxy id is durable, then
+   * the durable client id is used. If this proxy id is not durable, then the<code>DistributedMember
+   * </code> string is used.
+   *
+   * @return the name of the <code>HARegion</code> queueing this proxy's messages.
    * @since GemFire 5.5
    */
   protected String getHARegionName() {
@@ -473,12 +476,9 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
   }
 
   /**
-   * Return the name of the region used for communicating interest changes
-   * between servers.
-   * 
-   * @return the name of the region used for communicating interest changes
-   * between servers
-   * 
+   * Return the name of the region used for communicating interest changes between servers.
+   *
+   * @return the name of the region used for communicating interest changes between servers
    * @since GemFire 5.6
    */
   protected String getInterestRegionName() {
@@ -490,15 +490,21 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
     if (id.indexOf('/') >= 0) {
       id = id.replace('/', ':');
     }
-    StringBuffer buffer = new StringBuffer().append("_gfe_").append(isDurable() ? "" : "non_").append("durable_client_").append("with_id_" + id).append("_").append(this.uniqueId);
+    StringBuffer buffer =
+        new StringBuffer()
+            .append("_gfe_")
+            .append(isDurable() ? "" : "non_")
+            .append("durable_client_")
+            .append("with_id_" + id)
+            .append("_")
+            .append(this.uniqueId);
     return buffer.toString();
   }
 
   /**
-   * Resets the unique id counter. This is done for durable clients that
-   * stops/starts its cache. When it restarts its cache, it needs to maintain
-   * the same unique id
-   * 
+   * Resets the unique id counter. This is done for durable clients that stops/starts its cache.
+   * When it restarts its cache, it needs to maintain the same unique id
+   *
    * @since GemFire 5.5
    */
   public static synchronized void resetUniqueIdCounter() {
@@ -510,12 +516,12 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
   }
 
   /**
-   * Used to represent a unique identity of this ClientProxyMembershipID.
-   * It does this by ignoring the durable id and only respecting the
-   * unique_id and identity.
-   * <p>
-   * This class is used to clean up resources associated with a particular
-   * client and thus does not want to limit itself to the durable id.
+   * Used to represent a unique identity of this ClientProxyMembershipID. It does this by ignoring
+   * the durable id and only respecting the unique_id and identity.
+   *
+   * <p>This class is used to clean up resources associated with a particular client and thus does
+   * not want to limit itself to the durable id.
+   *
    * @since GemFire 5.7
    */
   public class Identity {
@@ -547,13 +553,13 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
         return false;
       }
       ClientProxyMembershipID.Identity that = (ClientProxyMembershipID.Identity) obj;
-      return (getUniqueId() == that.getUniqueId() && Arrays.equals(getMemberIdBytes(), that.getMemberIdBytes()));
+      return (getUniqueId() == that.getUniqueId()
+          && Arrays.equals(getMemberIdBytes(), that.getMemberIdBytes()));
     }
 
     public ClientProxyMembershipID getClientProxyID() {
       return ClientProxyMembershipID.this;
     }
-
   }
 
   @Override
@@ -561,7 +567,8 @@ public final class ClientProxyMembershipID implements DataSerializableFixedID, S
     return null;
   }
 
-  public static ClientProxyMembershipID readCanonicalized(DataInput in) throws IOException, ClassNotFoundException {
+  public static ClientProxyMembershipID readCanonicalized(DataInput in)
+      throws IOException, ClassNotFoundException {
 
     ClientProxyMembershipID result = DataSerializer.readObject(in);
     // We can't canonicalize if we have no identity.

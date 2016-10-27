@@ -18,17 +18,12 @@ package org.apache.geode.internal;
 
 import java.nio.ByteBuffer;
 
-/**
- * Used by a couple of our classes to say they can have
- * a ByteBuffer written to them. 
- */
+/** Used by a couple of our classes to say they can have a ByteBuffer written to them. */
 public interface ByteBufferWriter {
   /**
-   * Writes bb.position()..bb.limit() bytes to this writer.
-   * Note that some implementations of this interface will
-   * keep a reference to bb so callers should expect to give
-   * up ownership of bb and should not modify it after calling
-   * this method.
+   * Writes bb.position()..bb.limit() bytes to this writer. Note that some implementations of this
+   * interface will keep a reference to bb so callers should expect to give up ownership of bb and
+   * should not modify it after calling this method.
    */
   public void write(ByteBuffer bb);
 }

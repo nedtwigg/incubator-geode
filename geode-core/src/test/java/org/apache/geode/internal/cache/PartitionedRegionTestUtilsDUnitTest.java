@@ -56,8 +56,8 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
   final int totalNumBuckets = 5;
 
   /**
-   * Test the {@link PartitionedRegion#getSomeKeys(java.util.Random)} method, making sure it 
-   * returns keys when there are keys and {@link java.util.Collections#EMPTY_SET} when there are none.
+   * Test the {@link PartitionedRegion#getSomeKeys(java.util.Random)} method, making sure it returns
+   * keys when there are keys and {@link java.util.Collections#EMPTY_SET} when there are none.
    */
   @Test
   public void testGetKeys() throws Exception {
@@ -67,77 +67,82 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
 
-    CacheSerializableRunnable create = new CacheSerializableRunnable("CreatePartitionedRegion") {
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(totalNumBuckets).create());
-        Region p = cache.createRegion(r, attr.create());
-        assertNotNull(p);
-        assertTrue(!p.isDestroyed());
-        assertNull(p.get("Key"));
-      }
-    };
+    CacheSerializableRunnable create =
+        new CacheSerializableRunnable("CreatePartitionedRegion") {
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(
+                new PartitionAttributesFactory().setTotalNumBuckets(totalNumBuckets).create());
+            Region p = cache.createRegion(r, attr.create());
+            assertNotNull(p);
+            assertTrue(!p.isDestroyed());
+            assertNull(p.get("Key"));
+          }
+        };
 
     vm0.invoke(create);
     vm1.invoke(create);
     vm2.invoke(create);
 
-    vm0.invoke(new CacheSerializableRunnable("GetSomeKeys") {
-      public void run2() throws CacheException {
-        PartitionedRegion pr = (PartitionedRegion) getCache().getRegion(r);
-        Random rand = new Random(123);
-        // Assert that its empty
-        for (int i = 0; i < 5; i++) {
-          LogWriterUtils.getLogWriter().info("Invocation " + i + " of getSomeKeys");
-          try {
-            Set s = null;
-            s = pr.getSomeKeys(rand);
-            assertNotNull(s);
-            assertTrue(s.isEmpty());
-          } catch (ClassNotFoundException cnfe) {
-            Assert.fail("GetSomeKeys failed with ClassNotFoundException", cnfe);
-          } catch (IOException ioe) {
-            Assert.fail("GetSomeKeys failed with IOException", ioe);
-          }
-        }
-
-        final int MAXKEYS = 50;
-        for (int i = 0; i < MAXKEYS; i++) {
-          pr.put("testKey" + i, new Integer(i));
-        }
-
-        // Assert not empty and has value in an accepable range
-        for (int i = 0; i < 5; i++) {
-          LogWriterUtils.getLogWriter().info("Invocation " + i + " of getSomeKeys");
-          try {
-            Set s = null;
-            s = pr.getSomeKeys(rand);
-            assertNotNull(s);
-            assertFalse(s.isEmpty());
-            Integer val;
-            LogWriterUtils.getLogWriter().info("Invocation " + i + " got " + s.size() + " keys");
-            for (Iterator it = s.iterator(); it.hasNext();) {
-              Object key = it.next();
-              LogWriterUtils.getLogWriter().info("Key: " + key);
-              val = (Integer) pr.get(key);
-              assertNotNull(val);
-              assertTrue(val.intValue() >= 0);
-              assertTrue(val.intValue() < MAXKEYS);
+    vm0.invoke(
+        new CacheSerializableRunnable("GetSomeKeys") {
+          public void run2() throws CacheException {
+            PartitionedRegion pr = (PartitionedRegion) getCache().getRegion(r);
+            Random rand = new Random(123);
+            // Assert that its empty
+            for (int i = 0; i < 5; i++) {
+              LogWriterUtils.getLogWriter().info("Invocation " + i + " of getSomeKeys");
+              try {
+                Set s = null;
+                s = pr.getSomeKeys(rand);
+                assertNotNull(s);
+                assertTrue(s.isEmpty());
+              } catch (ClassNotFoundException cnfe) {
+                Assert.fail("GetSomeKeys failed with ClassNotFoundException", cnfe);
+              } catch (IOException ioe) {
+                Assert.fail("GetSomeKeys failed with IOException", ioe);
+              }
             }
-          } catch (ClassNotFoundException cnfe) {
-            Assert.fail("GetSomeKeys failed with ClassNotFoundException", cnfe);
-          } catch (IOException ioe) {
-            Assert.fail("GetSomeKeys failed with IOException", ioe);
+
+            final int MAXKEYS = 50;
+            for (int i = 0; i < MAXKEYS; i++) {
+              pr.put("testKey" + i, new Integer(i));
+            }
+
+            // Assert not empty and has value in an accepable range
+            for (int i = 0; i < 5; i++) {
+              LogWriterUtils.getLogWriter().info("Invocation " + i + " of getSomeKeys");
+              try {
+                Set s = null;
+                s = pr.getSomeKeys(rand);
+                assertNotNull(s);
+                assertFalse(s.isEmpty());
+                Integer val;
+                LogWriterUtils.getLogWriter()
+                    .info("Invocation " + i + " got " + s.size() + " keys");
+                for (Iterator it = s.iterator(); it.hasNext(); ) {
+                  Object key = it.next();
+                  LogWriterUtils.getLogWriter().info("Key: " + key);
+                  val = (Integer) pr.get(key);
+                  assertNotNull(val);
+                  assertTrue(val.intValue() >= 0);
+                  assertTrue(val.intValue() < MAXKEYS);
+                }
+              } catch (ClassNotFoundException cnfe) {
+                Assert.fail("GetSomeKeys failed with ClassNotFoundException", cnfe);
+              } catch (IOException ioe) {
+                Assert.fail("GetSomeKeys failed with IOException", ioe);
+              }
+            }
           }
-        }
-      }
-    });
+        });
   }
 
   /**
-   * Test the test method PartitionedRegion.getAllNodes
-   * Verify that it returns nodes after a value has been placed into the PartitionedRegion.
+   * Test the test method PartitionedRegion.getAllNodes Verify that it returns nodes after a value
+   * has been placed into the PartitionedRegion.
+   *
    * @see PartitionedRegion#getAllNodes()
    */
   public static class TestGetNodesKey implements DataSerializable {
@@ -147,8 +152,7 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
       this.hc = hc;
     }
 
-    public TestGetNodesKey() {
-    };
+    public TestGetNodesKey() {};
 
     public int hashCode() {
       return this.hc;
@@ -171,74 +175,77 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
     VM vm1 = host.getVM(1);
     VM validator = host.getVM(2);
 
-    CacheSerializableRunnable createAndTest = new CacheSerializableRunnable("CreatePRAndTestGetAllNodes") {
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(totalNumBuckets).create());
-        PartitionedRegion p = (PartitionedRegion) cache.createRegion(r, attr.create());
-        assertNotNull(p);
-        assertTrue(!p.isDestroyed());
+    CacheSerializableRunnable createAndTest =
+        new CacheSerializableRunnable("CreatePRAndTestGetAllNodes") {
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(
+                new PartitionAttributesFactory().setTotalNumBuckets(totalNumBuckets).create());
+            PartitionedRegion p = (PartitionedRegion) cache.createRegion(r, attr.create());
+            assertNotNull(p);
+            assertTrue(!p.isDestroyed());
 
-        // For each invocation, create a key that has a sequential hashCode.
-        // Putting this key into the PR should force a new bucket allocation on 
-        // each new VM (assuming a mod on the hashCode), forcing the number of VMs to increase
-        // when we call getAllNodes each time this method is called.
-        Integer i = (Integer) p.get("Counter");
-        final Integer keyHash;
-        if (i == null) {
-          i = new Integer(0);
-        } else {
-          i = new Integer(i.intValue() + 1);
-        }
-        keyHash = i;
-        p.put("Counter", i);
-        p.put(new TestGetNodesKey(keyHash.intValue()), i);
-        Set allN = p.getAllNodes();
-        assertNotNull(allN);
-        assertTrue(!allN.isEmpty());
-      }
-    };
+            // For each invocation, create a key that has a sequential hashCode.
+            // Putting this key into the PR should force a new bucket allocation on
+            // each new VM (assuming a mod on the hashCode), forcing the number of VMs to increase
+            // when we call getAllNodes each time this method is called.
+            Integer i = (Integer) p.get("Counter");
+            final Integer keyHash;
+            if (i == null) {
+              i = new Integer(0);
+            } else {
+              i = new Integer(i.intValue() + 1);
+            }
+            keyHash = i;
+            p.put("Counter", i);
+            p.put(new TestGetNodesKey(keyHash.intValue()), i);
+            Set allN = p.getAllNodes();
+            assertNotNull(allN);
+            assertTrue(!allN.isEmpty());
+          }
+        };
 
     validator.invoke(createAndTest);
-    validator.invoke(new CacheSerializableRunnable("AssertGetNodesCreation1") {
-      public void run2() throws CacheException {
-        PartitionedRegion p = (PartitionedRegion) getCache().getRegion(r);
-        assertNotNull(p);
-        assertTrue(!p.isDestroyed());
-        Set allN = p.getAllNodes();
-        assertNotNull(allN);
-        assertEquals(1, allN.size());
-      }
-    });
+    validator.invoke(
+        new CacheSerializableRunnable("AssertGetNodesCreation1") {
+          public void run2() throws CacheException {
+            PartitionedRegion p = (PartitionedRegion) getCache().getRegion(r);
+            assertNotNull(p);
+            assertTrue(!p.isDestroyed());
+            Set allN = p.getAllNodes();
+            assertNotNull(allN);
+            assertEquals(1, allN.size());
+          }
+        });
     vm0.invoke(createAndTest);
-    validator.invoke(new CacheSerializableRunnable("AssertGetNodesCreation2") {
-      public void run2() throws CacheException {
-        PartitionedRegion p = (PartitionedRegion) getCache().getRegion(r);
-        assertNotNull(p);
-        assertTrue(!p.isDestroyed());
-        Set allN = p.getAllNodes();
-        assertNotNull(allN);
-        assertEquals(2, allN.size());
-      }
-    });
+    validator.invoke(
+        new CacheSerializableRunnable("AssertGetNodesCreation2") {
+          public void run2() throws CacheException {
+            PartitionedRegion p = (PartitionedRegion) getCache().getRegion(r);
+            assertNotNull(p);
+            assertTrue(!p.isDestroyed());
+            Set allN = p.getAllNodes();
+            assertNotNull(allN);
+            assertEquals(2, allN.size());
+          }
+        });
 
     vm1.invoke(createAndTest);
-    validator.invoke(new CacheSerializableRunnable("AssertGetNodesCreation3") {
-      public void run2() throws CacheException {
-        PartitionedRegion p = (PartitionedRegion) getCache().getRegion(r);
-        assertNotNull(p);
-        assertTrue(!p.isDestroyed());
-        Set allN = p.getAllNodes();
-        assertNotNull(allN);
-        assertEquals(3, allN.size());
-      }
-    });
+    validator.invoke(
+        new CacheSerializableRunnable("AssertGetNodesCreation3") {
+          public void run2() throws CacheException {
+            PartitionedRegion p = (PartitionedRegion) getCache().getRegion(r);
+            assertNotNull(p);
+            assertTrue(!p.isDestroyed());
+            Set allN = p.getAllNodes();
+            assertNotNull(allN);
+            assertEquals(3, allN.size());
+          }
+        });
   }
 
-  /** 
-   * Test the test utilities that allow investigation of a PartitionedRegion's local cache.
-   */
+  /** Test the test utilities that allow investigation of a PartitionedRegion's local cache. */
   @Test
   public void testLocalCacheOps() throws Exception {
     final String r = getUniqueName();
@@ -246,18 +253,23 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
     VM vm0 = host.getVM(0);
     VM vm2 = host.getVM(2);
 
-    vm0.invoke(new CacheSerializableRunnable("CreatePR") {
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(totalNumBuckets).setLocalMaxMemory(8).create());
+    vm0.invoke(
+        new CacheSerializableRunnable("CreatePR") {
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(
+                new PartitionAttributesFactory()
+                    .setTotalNumBuckets(totalNumBuckets)
+                    .setLocalMaxMemory(8)
+                    .create());
 
-        PartitionedRegion p = (PartitionedRegion) cache.createRegion(r, attr.create());
-        assertNotNull(p);
-      }
-    });
+            PartitionedRegion p = (PartitionedRegion) cache.createRegion(r, attr.create());
+            assertNotNull(p);
+          }
+        });
 
-    //  TODO enable this test when we have the LocalCache properly implemented -- mthomas 2/23/2006   
+    //  TODO enable this test when we have the LocalCache properly implemented -- mthomas 2/23/2006
     //    vm1.invoke(new CacheSerializableRunnable("CreatePRWithLocalCacheAndTestOps") {
     //      public void run2() throws CacheException
     //      {
@@ -272,7 +284,7 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
     //
     //        PartitionedRegion p = (PartitionedRegion) cache.createRegion(r, attr.create());
     //        assertNotNull(p);
-    //        
+    //
     //        final String key1 = "lcKey1"; final String val1 = "lcVal1";
     //        final String key2 = "lcKey2"; final String val2 = "lcVal2";
     //        // Test localCacheContainsKey
@@ -289,7 +301,7 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
     //        Set lset = p.localCacheKeySet();
     //        assertTrue(lset.contains(key1));
     //        assertFalse(lset.contains(key2));
-    //        
+    //
     //        // test localCacheGet
     //        assertIndexDetailsEquals(val1, p.localCacheGet(key1));
     //        assertNull(p.localCacheGet(key2));
@@ -300,49 +312,55 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
     //      }
     //    });
 
-    vm2.invoke(new CacheSerializableRunnable("CreatePRWithNoLocalCacheAndTestOps") {
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(totalNumBuckets).setLocalMaxMemory(0).create());
+    vm2.invoke(
+        new CacheSerializableRunnable("CreatePRWithNoLocalCacheAndTestOps") {
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(
+                new PartitionAttributesFactory()
+                    .setTotalNumBuckets(totalNumBuckets)
+                    .setLocalMaxMemory(0)
+                    .create());
 
-        PartitionedRegion p = (PartitionedRegion) cache.createRegion(r, attr.create());
-        assertNotNull(p);
+            PartitionedRegion p = (PartitionedRegion) cache.createRegion(r, attr.create());
+            assertNotNull(p);
 
-        final String key3 = "lcKey3";
-        final String val3 = "lcVal3";
-        final String key4 = "lcKey4";
-        final String val4 = "lcVal4";
+            final String key3 = "lcKey3";
+            final String val3 = "lcVal3";
+            final String key4 = "lcKey4";
+            final String val4 = "lcVal4";
 
-        // Test localCacheContainsKey
-        assertFalse(p.localCacheContainsKey(key3));
-        assertFalse(p.localCacheContainsKey(key4));
-        p.put(key3, val3);
-        assertFalse(p.localCacheContainsKey(key3));
-        assertFalse(p.localCacheContainsKey(key4));
-        assertEquals(val3, p.get(key3));
-        assertFalse(p.localCacheContainsKey(key3));
-        assertFalse(p.localCacheContainsKey(key4));
+            // Test localCacheContainsKey
+            assertFalse(p.localCacheContainsKey(key3));
+            assertFalse(p.localCacheContainsKey(key4));
+            p.put(key3, val3);
+            assertFalse(p.localCacheContainsKey(key3));
+            assertFalse(p.localCacheContainsKey(key4));
+            assertEquals(val3, p.get(key3));
+            assertFalse(p.localCacheContainsKey(key3));
+            assertFalse(p.localCacheContainsKey(key4));
 
-        // test localCacheKeySet
-        Set lset = p.localCacheKeySet();
-        assertFalse(lset.contains(key3));
-        assertFalse(lset.contains(key4));
+            // test localCacheKeySet
+            Set lset = p.localCacheKeySet();
+            assertFalse(lset.contains(key3));
+            assertFalse(lset.contains(key4));
 
-        // test localCacheGet
-        assertNull(val3, p.localCacheGet(key3));
-        assertNull(p.localCacheGet(key4));
-        p.put(key4, val4);
-        assertNull(p.localCacheGet(key4));
-        assertEquals(val4, p.get(key4));
-        assertNull(p.localCacheGet(key4));
-      }
-    });
+            // test localCacheGet
+            assertNull(val3, p.localCacheGet(key3));
+            assertNull(p.localCacheGet(key4));
+            p.put(key4, val4);
+            assertNull(p.localCacheGet(key4));
+            assertEquals(val4, p.get(key4));
+            assertNull(p.localCacheGet(key4));
+          }
+        });
   }
 
   /**
-   * Test the test method PartitionedRegion.getAllNodes
-   * Verify that it returns nodes after a value has been placed into the PartitionedRegion.
+   * Test the test method PartitionedRegion.getAllNodes Verify that it returns nodes after a value
+   * has been placed into the PartitionedRegion.
+   *
    * @see PartitionedRegion#getAllNodes()
    */
   @Test
@@ -352,15 +370,17 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
     VM vm2 = host.getVM(2);
     VM vm3 = host.getVM(3);
 
-    CacheSerializableRunnable create = new CacheSerializableRunnable("CreatePR") {
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(totalNumBuckets).create());
-        PartitionedRegion p = (PartitionedRegion) cache.createRegion(r, attr.create());
-        assertNotNull(p);
-      }
-    };
+    CacheSerializableRunnable create =
+        new CacheSerializableRunnable("CreatePR") {
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(
+                new PartitionAttributesFactory().setTotalNumBuckets(totalNumBuckets).create());
+            PartitionedRegion p = (PartitionedRegion) cache.createRegion(r, attr.create());
+            assertNotNull(p);
+          }
+        };
 
     vm2.invoke(create);
     vm3.invoke(create);
@@ -369,7 +389,11 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
     Cache cache = getCache();
     AttributesFactory attr = new AttributesFactory();
 
-    attr.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(totalNumBuckets).setLocalMaxMemory(0).create());
+    attr.setPartitionAttributes(
+        new PartitionAttributesFactory()
+            .setTotalNumBuckets(totalNumBuckets)
+            .setLocalMaxMemory(0)
+            .create());
     PartitionedRegion p = (PartitionedRegion) cache.createRegion(r, attr.create());
     assertNotNull(p);
     final int totalBucks = p.getTotalNumberOfBuckets();
@@ -427,7 +451,7 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
       // assertIndexDetailsEquals("Value for key: " + key + " val " + gottenVal + " wasn't expected " + val, val, gottenVal);
     }
 
-    // Assert that the proper number of keys are placed in each bucket 
+    // Assert that the proper number of keys are placed in each bucket
     for (int i = 1; i < totalBucks; i++) {
       s = p.getBucketKeys(i);
       assertEquals(s.size(), 1);
@@ -438,15 +462,15 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
   }
 
   /**
-   * Test the test method {@link PartitionedRegion#getBucketOwnersForValidation(int)}
-   * Verify that the information it discovers is the same as the local advisor.
+   * Test the test method {@link PartitionedRegion#getBucketOwnersForValidation(int)} Verify that
+   * the information it discovers is the same as the local advisor.
    */
   @Test
   public void testGetBucketOwners() throws Exception {
     final String rName0 = getUniqueName() + "-r0";
     final String rName1 = getUniqueName() + "-r1";
     final String rName2 = getUniqueName() + "-r2";
-    final String[] regions = { rName0, rName1, rName2 };
+    final String[] regions = {rName0, rName1, rName2};
     final int numBuckets = 3;
     final Host host = Host.getHost(0);
     final VM datastore1 = host.getVM(2);
@@ -454,108 +478,121 @@ public class PartitionedRegionTestUtilsDUnitTest extends PartitionedRegionDUnitT
     final VM datastore3 = host.getVM(0);
     final VM accessor = host.getVM(1);
 
-    final CacheSerializableRunnable create = new CacheSerializableRunnable("CreatePR") {
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory().setTotalNumBuckets(numBuckets);
+    final CacheSerializableRunnable create =
+        new CacheSerializableRunnable("CreatePR") {
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            AttributesFactory attr = new AttributesFactory();
+            PartitionAttributesFactory paf =
+                new PartitionAttributesFactory().setTotalNumBuckets(numBuckets);
 
-        for (int redundancy = 0; redundancy < regions.length; redundancy++) {
-          paf.setRedundantCopies(redundancy);
-          attr.setPartitionAttributes(paf.create());
-          PartitionedRegion p = (PartitionedRegion) cache.createRegion(regions[redundancy], attr.create());
-          assertNotNull(p);
-          assertEquals(0, p.size());
-        }
-      }
-    };
+            for (int redundancy = 0; redundancy < regions.length; redundancy++) {
+              paf.setRedundantCopies(redundancy);
+              attr.setPartitionAttributes(paf.create());
+              PartitionedRegion p =
+                  (PartitionedRegion) cache.createRegion(regions[redundancy], attr.create());
+              assertNotNull(p);
+              assertEquals(0, p.size());
+            }
+          }
+        };
 
     datastore1.invoke(create);
     datastore2.invoke(create);
     datastore3.invoke(create);
 
-    accessor.invoke(new CacheSerializableRunnable("CreateAccessorPR") {
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory().setTotalNumBuckets(numBuckets).setLocalMaxMemory(0);
+    accessor.invoke(
+        new CacheSerializableRunnable("CreateAccessorPR") {
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            AttributesFactory attr = new AttributesFactory();
+            PartitionAttributesFactory paf =
+                new PartitionAttributesFactory()
+                    .setTotalNumBuckets(numBuckets)
+                    .setLocalMaxMemory(0);
 
-        for (int redundancy = 0; redundancy < regions.length; redundancy++) {
-          paf.setRedundantCopies(redundancy);
-          attr.setPartitionAttributes(paf.create());
-          PartitionedRegion p = (PartitionedRegion) cache.createRegion(regions[redundancy], attr.create());
-          assertNotNull(p);
-          assertEquals(0, p.size());
-        }
-      }
-    });
-
-    final CacheSerializableRunnable noBucketOwners = new CacheSerializableRunnable("AssertNoBucketOwners") {
-      public void run2() throws CacheException {
-        String[] regions = { rName0, rName1, rName2 };
-        for (int rs = 0; rs < regions.length; rs++) {
-          PartitionedRegion p = (PartitionedRegion) getCache().getRegion(regions[rs]);
-          assertNotNull(p);
-          assertTrue(!p.isDestroyed());
-          assertEquals(numBuckets, p.getTotalNumberOfBuckets());
-          try {
-            for (int i = 0; i < p.getTotalNumberOfBuckets(); i++) {
-              assertEquals(0, p.getRegionAdvisor().getBucketOwners(i).size());
-              assertEquals(0, p.getBucketOwnersForValidation(i).size());
+            for (int redundancy = 0; redundancy < regions.length; redundancy++) {
+              paf.setRedundantCopies(redundancy);
+              attr.setPartitionAttributes(paf.create());
+              PartitionedRegion p =
+                  (PartitionedRegion) cache.createRegion(regions[redundancy], attr.create());
+              assertNotNull(p);
+              assertEquals(0, p.size());
             }
-          } catch (ForceReattemptException noGood) {
-            Assert.fail("Unexpected force retry", noGood);
           }
-        }
-      }
-    };
+        });
+
+    final CacheSerializableRunnable noBucketOwners =
+        new CacheSerializableRunnable("AssertNoBucketOwners") {
+          public void run2() throws CacheException {
+            String[] regions = {rName0, rName1, rName2};
+            for (int rs = 0; rs < regions.length; rs++) {
+              PartitionedRegion p = (PartitionedRegion) getCache().getRegion(regions[rs]);
+              assertNotNull(p);
+              assertTrue(!p.isDestroyed());
+              assertEquals(numBuckets, p.getTotalNumberOfBuckets());
+              try {
+                for (int i = 0; i < p.getTotalNumberOfBuckets(); i++) {
+                  assertEquals(0, p.getRegionAdvisor().getBucketOwners(i).size());
+                  assertEquals(0, p.getBucketOwnersForValidation(i).size());
+                }
+              } catch (ForceReattemptException noGood) {
+                Assert.fail("Unexpected force retry", noGood);
+              }
+            }
+          }
+        };
     datastore1.invoke(noBucketOwners);
     datastore2.invoke(noBucketOwners);
     datastore3.invoke(noBucketOwners);
     accessor.invoke(noBucketOwners);
 
-    accessor.invoke(new CacheSerializableRunnable("CreateOneBucket") {
-      public void run2() throws CacheException {
-        for (int rs = 0; rs < regions.length; rs++) {
-          PartitionedRegion p = (PartitionedRegion) getCache().getRegion(regions[rs]);
-          assertNotNull(p);
-          assertEquals(3, p.getTotalNumberOfBuckets());
-          // Create one bucket
-          p.put(new Integer(0), "zero");
-          assertEquals(1, p.getRegionAdvisor().getCreatedBucketsCount());
-        }
-      }
-    });
-
-    final CacheSerializableRunnable oneBucketOwner = new CacheSerializableRunnable("AssertSingleBucketPrimary") {
-      public void run2() throws CacheException {
-        for (int rs = 0; rs < regions.length; rs++) {
-          PartitionedRegion p = (PartitionedRegion) getCache().getRegion(regions[rs]);
-          try {
-            for (Iterator it = p.getRegionAdvisor().getBucketSet().iterator(); it.hasNext();) {
-              Integer bid = (Integer) it.next();
-              assertEquals(p.getRedundantCopies() + 1, p.getRegionAdvisor().getBucketOwners(bid.intValue()).size());
-              List prims = p.getBucketOwnersForValidation(bid.intValue());
-              assertEquals(p.getRedundantCopies() + 1, prims.size());
-              int primCount = 0;
-              for (Iterator lit = prims.iterator(); lit.hasNext();) {
-                Object[] memAndBoolean = (Object[]) lit.next();
-                assertEquals(3, memAndBoolean.length); // memberId, isPrimary and hostToken(new)
-                assertTrue(memAndBoolean[0] instanceof DistributedMember);
-                assertEquals(Boolean.class, memAndBoolean[1].getClass());
-                Boolean isPrimary = (Boolean) memAndBoolean[1];
-                if (isPrimary.booleanValue()) {
-                  primCount++;
-                }
-              }
-              assertEquals(1, primCount);
+    accessor.invoke(
+        new CacheSerializableRunnable("CreateOneBucket") {
+          public void run2() throws CacheException {
+            for (int rs = 0; rs < regions.length; rs++) {
+              PartitionedRegion p = (PartitionedRegion) getCache().getRegion(regions[rs]);
+              assertNotNull(p);
+              assertEquals(3, p.getTotalNumberOfBuckets());
+              // Create one bucket
+              p.put(new Integer(0), "zero");
+              assertEquals(1, p.getRegionAdvisor().getCreatedBucketsCount());
             }
-          } catch (ForceReattemptException noGood) {
-            Assert.fail("Unexpected force retry", noGood);
           }
-        }
-      }
-    };
+        });
+
+    final CacheSerializableRunnable oneBucketOwner =
+        new CacheSerializableRunnable("AssertSingleBucketPrimary") {
+          public void run2() throws CacheException {
+            for (int rs = 0; rs < regions.length; rs++) {
+              PartitionedRegion p = (PartitionedRegion) getCache().getRegion(regions[rs]);
+              try {
+                for (Iterator it = p.getRegionAdvisor().getBucketSet().iterator(); it.hasNext(); ) {
+                  Integer bid = (Integer) it.next();
+                  assertEquals(
+                      p.getRedundantCopies() + 1,
+                      p.getRegionAdvisor().getBucketOwners(bid.intValue()).size());
+                  List prims = p.getBucketOwnersForValidation(bid.intValue());
+                  assertEquals(p.getRedundantCopies() + 1, prims.size());
+                  int primCount = 0;
+                  for (Iterator lit = prims.iterator(); lit.hasNext(); ) {
+                    Object[] memAndBoolean = (Object[]) lit.next();
+                    assertEquals(3, memAndBoolean.length); // memberId, isPrimary and hostToken(new)
+                    assertTrue(memAndBoolean[0] instanceof DistributedMember);
+                    assertEquals(Boolean.class, memAndBoolean[1].getClass());
+                    Boolean isPrimary = (Boolean) memAndBoolean[1];
+                    if (isPrimary.booleanValue()) {
+                      primCount++;
+                    }
+                  }
+                  assertEquals(1, primCount);
+                }
+              } catch (ForceReattemptException noGood) {
+                Assert.fail("Unexpected force retry", noGood);
+              }
+            }
+          }
+        };
     accessor.invoke(oneBucketOwner);
     datastore1.invoke(oneBucketOwner);
     datastore2.invoke(oneBucketOwner);

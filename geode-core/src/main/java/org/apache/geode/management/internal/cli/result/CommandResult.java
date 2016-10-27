@@ -36,8 +36,8 @@ import org.apache.geode.management.internal.cli.result.TableBuilder.RowGroup;
 import org.apache.geode.management.internal.cli.result.TableBuilder.Table;
 
 /**
- * Wraps the Result of a command execution. 
- * 
+ * Wraps the Result of a command execution.
+ *
  * @since GemFire 7.0
  */
 //Should this have info about the command String??
@@ -110,8 +110,9 @@ public class CommandResult implements Result {
         }
       }
     } catch (GfJsonException e) {
-      resultLines.add("Error occurred while processing Command Result. Internal Error - Invalid Result.");
-      //TODO - Abhishek. Add stack trace when 'debug' is enabled. Log to LogWrapper always 
+      resultLines.add(
+          "Error occurred while processing Command Result. Internal Error - Invalid Result.");
+      //TODO - Abhishek. Add stack trace when 'debug' is enabled. Log to LogWrapper always
     } finally {
       isDataBuilt = true;
     }
@@ -152,7 +153,7 @@ public class CommandResult implements Result {
     }
   }
 
-      /*private*/ void buildObjectResultOutput() {
+  /*private*/ void buildObjectResultOutput() {
     try {
       Table resultTable = TableBuilder.newTable();
       resultTable.setColumnSeparator(" : ");
@@ -179,14 +180,16 @@ public class CommandResult implements Result {
       resultLines.addAll(resultTable.buildTableList());
 
     } catch (GfJsonException e) {
-      resultLines.add("Error occurred while processing Command Result. Internal Error - Invalid Result.");
+      resultLines.add(
+          "Error occurred while processing Command Result. Internal Error - Invalid Result.");
       //TODO - Abhishek. Add stack trace when 'debug' is enabled. Log to LogWrapper always
     } finally {
       isDataBuilt = true;
     }
   }
 
-  private void buildObjectSection(Table table, RowGroup parentRowGroup, GfJsonObject object, int depth) throws GfJsonException {
+  private void buildObjectSection(
+      Table table, RowGroup parentRowGroup, GfJsonObject object, int depth) throws GfJsonException {
     Iterator<String> keys = object.keys();
     RowGroup rowGroup = null;
     if (parentRowGroup != null) {
@@ -197,7 +200,8 @@ public class CommandResult implements Result {
     GfJsonArray nestedCollection = null;
     GfJsonObject nestedObject = null;
 
-    GfJsonObject fieldDisplayNames = object.getJSONObject(CliJsonSerializable.FIELDS_TO_DISPLAYNAME_MAPPING);
+    GfJsonObject fieldDisplayNames =
+        object.getJSONObject(CliJsonSerializable.FIELDS_TO_DISPLAYNAME_MAPPING);
 
     List<String> fieldsToSkipOnUI = null;
     if (object.has(CliJsonSerializable.FIELDS_TO_SKIP_ON_UI)) {
@@ -212,14 +216,15 @@ public class CommandResult implements Result {
     while (keys.hasNext()) {
       String key = keys.next();
 
-      if (CliJsonSerializable.FIELDS_TO_SKIP.contains(key) || (fieldsToSkipOnUI != null && fieldsToSkipOnUI.contains(key))) {
+      if (CliJsonSerializable.FIELDS_TO_SKIP.contains(key)
+          || (fieldsToSkipOnUI != null && fieldsToSkipOnUI.contains(key))) {
         continue;
       }
 
       try {
         nestedCollection = object.getJSONArray(key);
       } catch (GfJsonException e) {
-        /* next check if it's a nested object  */}
+        /* next check if it's a nested object  */ }
 
       Object field = null;
       if (nestedCollection == null) {
@@ -272,11 +277,14 @@ public class CommandResult implements Result {
           int numOfColumns = columnNames.size();
 
           if (headerRow.isEmpty()) {
-            GfJsonObject innerFieldDisplayNames = content.getJSONObject(CliJsonSerializable.FIELDS_TO_DISPLAYNAME_MAPPING);
+            GfJsonObject innerFieldDisplayNames =
+                content.getJSONObject(CliJsonSerializable.FIELDS_TO_DISPLAYNAME_MAPPING);
             for (int i = 0; i < numOfColumns; i++) {
 
               Object columnName = columnNames.get(i);
-              if (CliJsonSerializable.FIELDS_TO_SKIP.contains((String) columnName) || (tableFieldsToSkipOnUI != null && tableFieldsToSkipOnUI.contains(columnName))) {
+              if (CliJsonSerializable.FIELDS_TO_SKIP.contains((String) columnName)
+                  || (tableFieldsToSkipOnUI != null
+                      && tableFieldsToSkipOnUI.contains(columnName))) {
                 // skip file data if any //TODO - make response format better
                 continue;
               }
@@ -290,7 +298,8 @@ public class CommandResult implements Result {
           for (int i = 0; i < numOfColumns; i++) {
 
             Object columnName = columnNames.get(i);
-            if (CliJsonSerializable.FIELDS_TO_SKIP.contains((String) columnName) || (tableFieldsToSkipOnUI != null && tableFieldsToSkipOnUI.contains(columnName))) {
+            if (CliJsonSerializable.FIELDS_TO_SKIP.contains((String) columnName)
+                || (tableFieldsToSkipOnUI != null && tableFieldsToSkipOnUI.contains(columnName))) {
               // skip file data if any //TODO - make response format better
               continue;
             }
@@ -373,7 +382,7 @@ public class CommandResult implements Result {
     return isPrimitive;
   }
 
-      /*private*/ void buildComposite() {
+  /*private*/ void buildComposite() {
     try {
       GfJsonObject content = getContent();
       if (content != null) {
@@ -382,7 +391,7 @@ public class CommandResult implements Result {
 
         addHeaderInTable(resultTable, getGfJsonObject());
 
-        for (Iterator<String> it = content.keys(); it.hasNext();) {
+        for (Iterator<String> it = content.keys(); it.hasNext(); ) {
           String key = it.next();
           if (key.startsWith(CompositeResultData.SECTION_DATA_ACCESSOR)) {
             GfJsonObject subSection = content.getJSONObject(key);
@@ -397,14 +406,19 @@ public class CommandResult implements Result {
         resultLines.addAll(resultTable.buildTableList());
       }
     } catch (GfJsonException e) {
-      resultLines.add("Error occurred while processing Command Result. Internal Error - Invalid Result.");
-      LogWrapper.getInstance().info("Error occurred while processing Command Result. Internal Error - Invalid Result.", e);
+      resultLines.add(
+          "Error occurred while processing Command Result. Internal Error - Invalid Result.");
+      LogWrapper.getInstance()
+          .info(
+              "Error occurred while processing Command Result. Internal Error - Invalid Result.",
+              e);
     } finally {
       isDataBuilt = true;
     }
   }
 
-  private void buildSection(Table table, RowGroup parentRowGroup, GfJsonObject section, int depth) throws GfJsonException {
+  private void buildSection(Table table, RowGroup parentRowGroup, GfJsonObject section, int depth)
+      throws GfJsonException {
     Iterator<String> keys = section.keys();
     RowGroup rowGroup = null;
     if (parentRowGroup != null) {
@@ -517,10 +531,11 @@ public class CommandResult implements Result {
    * @return rows
    * @throws GfJsonException
    */
-  private Row[] buildRows(RowGroup rowGroup, Row[] dataRows, GfJsonArray accumulatedData) throws GfJsonException {
+  private Row[] buildRows(RowGroup rowGroup, Row[] dataRows, GfJsonArray accumulatedData)
+      throws GfJsonException {
     int size = accumulatedData.size();
 
-    // Initialize rows' array as required 
+    // Initialize rows' array as required
     if (dataRows == null) {
       dataRows = new Row[size];
 
@@ -561,7 +576,8 @@ public class CommandResult implements Result {
         GfJsonArray bytesArray = content.getJSONArray(CompositeResultData.BYTE_DATA_ACCESSOR);
         AbstractResultData.readFileDataAndDump(bytesArray, directory);
       } else {
-        throw new RuntimeException("No associated files to save .. "); // TODO Abhishek - add i18n string
+        throw new RuntimeException(
+            "No associated files to save .. "); // TODO Abhishek - add i18n string
       }
       numTimesSaved = numTimesSaved + 1;
     } catch (DataFormatException e) {
@@ -580,9 +596,8 @@ public class CommandResult implements Result {
   }
 
   /**
-   * @throws ArrayIndexOutOfBoundsException
-   *           if this method is called more number of times than the data items
-   *           it contains
+   * @throws ArrayIndexOutOfBoundsException if this method is called more number of times than the
+   *     data items it contains
    */
   @Override
   public String nextLine() {
@@ -636,12 +651,25 @@ public class CommandResult implements Result {
 
   public int hashCode() {
     return this.gfJsonObject.hashCode(); // any arbitrary constant will do
-
   }
 
   @Override
   public String toString() {
-    return "CommandResult [gfJsonObject=" + gfJsonObject + ", status=" + status + ", index=" + index + ", isDataBuilt=" + isDataBuilt + ", resultData=" + resultData + ", resultLines=" + resultLines + ", failedToPersist=" + failedToPersist + "]";
+    return "CommandResult [gfJsonObject="
+        + gfJsonObject
+        + ", status="
+        + status
+        + ", index="
+        + index
+        + ", isDataBuilt="
+        + isDataBuilt
+        + ", resultData="
+        + resultData
+        + ", resultLines="
+        + resultLines
+        + ", failedToPersist="
+        + failedToPersist
+        + "]";
   }
 
   @Override
@@ -653,5 +681,4 @@ public class CommandResult implements Result {
   public void setCommandPersisted(boolean commandPersisted) {
     this.failedToPersist = !commandPersisted;
   }
-
 }

@@ -63,8 +63,8 @@ public class BucketOperatorWrapperTest {
   private int bucketId = 1;
   private InternalDistributedMember sourceMember, targetMember;
 
-  private final static String PR_LEADER_REGION_NAME = "leadregion1";
-  private final static String PR_COLOCATED_REGION_NAME = "coloregion1";
+  private static final String PR_LEADER_REGION_NAME = "leadregion1";
+  private static final String PR_COLOCATED_REGION_NAME = "coloregion1";
 
   @Before
   public void setUp() throws UnknownHostException {
@@ -97,47 +97,67 @@ public class BucketOperatorWrapperTest {
   public void bucketWrapperShouldDelegateCreateBucketToEnclosedOperator() {
     Completion completionSentToWrapper = mock(Completion.class);
 
-    doNothing().when(delegate).createRedundantBucket(targetMember, bucketId, colocatedRegionBytes, completionSentToWrapper);
+    doNothing()
+        .when(delegate)
+        .createRedundantBucket(
+            targetMember, bucketId, colocatedRegionBytes, completionSentToWrapper);
 
-    wrapper.createRedundantBucket(targetMember, bucketId, colocatedRegionBytes, completionSentToWrapper);
+    wrapper.createRedundantBucket(
+        targetMember, bucketId, colocatedRegionBytes, completionSentToWrapper);
 
-    verify(delegate, times(1)).createRedundantBucket(eq(targetMember), eq(bucketId), eq(colocatedRegionBytes), any(Completion.class));
+    verify(delegate, times(1))
+        .createRedundantBucket(
+            eq(targetMember), eq(bucketId), eq(colocatedRegionBytes), any(Completion.class));
   }
 
   @Test
   public void bucketWrapperShouldRecordNumberOfBucketsCreatedIfCreateBucketSucceeds() {
-    doAnswer(new Answer<Object>() {
-      public Object answer(InvocationOnMock invocation) {
-        //3rd argument is Completion object sent to BucketOperatorImpl.createRedundantBucket
-        ((Completion) invocation.getArguments()[3]).onSuccess();
-        return null;
-      }
-    }).when(delegate).createRedundantBucket(eq(targetMember), eq(bucketId), eq(colocatedRegionBytes), any(Completion.class));
+    doAnswer(
+            new Answer<Object>() {
+              public Object answer(InvocationOnMock invocation) {
+                //3rd argument is Completion object sent to BucketOperatorImpl.createRedundantBucket
+                ((Completion) invocation.getArguments()[3]).onSuccess();
+                return null;
+              }
+            })
+        .when(delegate)
+        .createRedundantBucket(
+            eq(targetMember), eq(bucketId), eq(colocatedRegionBytes), any(Completion.class));
 
     Completion completionSentToWrapper = mock(Completion.class);
-    wrapper.createRedundantBucket(targetMember, bucketId, colocatedRegionBytes, completionSentToWrapper);
+    wrapper.createRedundantBucket(
+        targetMember, bucketId, colocatedRegionBytes, completionSentToWrapper);
 
     //verify create buckets is recorded
     for (PartitionRebalanceDetailsImpl details : rebalanceDetails) {
       if (details.getRegionPath().equalsIgnoreCase(PR_LEADER_REGION_NAME))
-        verify(details, times(1)).incCreates(eq(colocatedRegionBytes.get(PR_LEADER_REGION_NAME)), anyLong());
+        verify(details, times(1))
+            .incCreates(eq(colocatedRegionBytes.get(PR_LEADER_REGION_NAME)), anyLong());
       else if (details.getRegionPath().equals(PR_COLOCATED_REGION_NAME))
-        verify(details, times(1)).incTransfers(colocatedRegionBytes.get(PR_COLOCATED_REGION_NAME), 0); //elapsed is recorded only if its leader
+        verify(details, times(1))
+            .incTransfers(
+                colocatedRegionBytes.get(PR_COLOCATED_REGION_NAME),
+                0); //elapsed is recorded only if its leader
     }
   }
 
   @Test
   public void bucketWrapperShouldNotRecordNumberOfBucketsCreatedIfCreateBucketFails() {
-    doAnswer(new Answer<Object>() {
-      public Object answer(InvocationOnMock invocation) {
-        //3rd argument is Completion object sent to BucketOperatorImpl.createRedundantBucket
-        ((Completion) invocation.getArguments()[3]).onFailure();
-        return null;
-      }
-    }).when(delegate).createRedundantBucket(eq(targetMember), eq(bucketId), eq(colocatedRegionBytes), any(Completion.class));
+    doAnswer(
+            new Answer<Object>() {
+              public Object answer(InvocationOnMock invocation) {
+                //3rd argument is Completion object sent to BucketOperatorImpl.createRedundantBucket
+                ((Completion) invocation.getArguments()[3]).onFailure();
+                return null;
+              }
+            })
+        .when(delegate)
+        .createRedundantBucket(
+            eq(targetMember), eq(bucketId), eq(colocatedRegionBytes), any(Completion.class));
 
     Completion completionSentToWrapper = mock(Completion.class);
-    wrapper.createRedundantBucket(targetMember, bucketId, colocatedRegionBytes, completionSentToWrapper);
+    wrapper.createRedundantBucket(
+        targetMember, bucketId, colocatedRegionBytes, completionSentToWrapper);
 
     //verify create buckets is not recorded
     for (PartitionRebalanceDetailsImpl details : rebalanceDetails) {
@@ -147,16 +167,21 @@ public class BucketOperatorWrapperTest {
 
   @Test
   public void bucketWrapperShouldInvokeOnFailureWhenCreateBucketFails() {
-    doAnswer(new Answer<Object>() {
-      public Object answer(InvocationOnMock invocation) {
-        //3rd argument is Completion object sent to BucketOperatorImpl.createRedundantBucket
-        ((Completion) invocation.getArguments()[3]).onFailure();
-        return null;
-      }
-    }).when(delegate).createRedundantBucket(eq(targetMember), eq(bucketId), eq(colocatedRegionBytes), any(Completion.class));
+    doAnswer(
+            new Answer<Object>() {
+              public Object answer(InvocationOnMock invocation) {
+                //3rd argument is Completion object sent to BucketOperatorImpl.createRedundantBucket
+                ((Completion) invocation.getArguments()[3]).onFailure();
+                return null;
+              }
+            })
+        .when(delegate)
+        .createRedundantBucket(
+            eq(targetMember), eq(bucketId), eq(colocatedRegionBytes), any(Completion.class));
 
     Completion completionSentToWrapper = mock(Completion.class);
-    wrapper.createRedundantBucket(targetMember, bucketId, colocatedRegionBytes, completionSentToWrapper);
+    wrapper.createRedundantBucket(
+        targetMember, bucketId, colocatedRegionBytes, completionSentToWrapper);
 
     //verify onFailure is invoked
     verify(completionSentToWrapper, times(1)).onFailure();
@@ -164,28 +189,36 @@ public class BucketOperatorWrapperTest {
 
   @Test
   public void bucketWrapperShouldInvokeOnSuccessWhenCreateBucketSucceeds() {
-    doAnswer(new Answer<Object>() {
-      public Object answer(InvocationOnMock invocation) {
-        //3rd argument is Completion object sent to BucketOperatorImpl.createRedundantBucket
-        ((Completion) invocation.getArguments()[3]).onSuccess();
-        return null;
-      }
-    }).when(delegate).createRedundantBucket(eq(targetMember), eq(bucketId), eq(colocatedRegionBytes), any(Completion.class));
+    doAnswer(
+            new Answer<Object>() {
+              public Object answer(InvocationOnMock invocation) {
+                //3rd argument is Completion object sent to BucketOperatorImpl.createRedundantBucket
+                ((Completion) invocation.getArguments()[3]).onSuccess();
+                return null;
+              }
+            })
+        .when(delegate)
+        .createRedundantBucket(
+            eq(targetMember), eq(bucketId), eq(colocatedRegionBytes), any(Completion.class));
 
     Completion completionSentToWrapper = mock(Completion.class);
-    wrapper.createRedundantBucket(targetMember, bucketId, colocatedRegionBytes, completionSentToWrapper);
+    wrapper.createRedundantBucket(
+        targetMember, bucketId, colocatedRegionBytes, completionSentToWrapper);
 
     verify(completionSentToWrapper, times(1)).onSuccess();
   }
 
   @Test
   public void bucketWrapperShouldDelegateMoveBucketToEnclosedOperator() {
-    doReturn(true).when(delegate).moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
+    doReturn(true)
+        .when(delegate)
+        .moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
 
     wrapper.moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
 
     //verify the delegate is invoked
-    verify(delegate, times(1)).moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
+    verify(delegate, times(1))
+        .moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
 
     //verify we recorded necessary stats
     verify(stats, times(1)).startBucketTransfer(anyInt());
@@ -194,16 +227,22 @@ public class BucketOperatorWrapperTest {
 
   @Test
   public void bucketWrapperShouldRecordBytesTransferredPerRegionAfterMoveBucketIsSuccessful() {
-    doReturn(true).when(delegate).moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
+    doReturn(true)
+        .when(delegate)
+        .moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
 
     wrapper.moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
 
     //verify the details is updated with bytes transfered
     for (PartitionRebalanceDetailsImpl details : rebalanceDetails) {
       if (details.getRegionPath().equalsIgnoreCase(PR_LEADER_REGION_NAME))
-        verify(details, times(1)).incTransfers(eq(colocatedRegionBytes.get(PR_LEADER_REGION_NAME)), anyLong());
+        verify(details, times(1))
+            .incTransfers(eq(colocatedRegionBytes.get(PR_LEADER_REGION_NAME)), anyLong());
       else if (details.getRegionPath().equals(PR_COLOCATED_REGION_NAME))
-        verify(details, times(1)).incTransfers(colocatedRegionBytes.get(PR_COLOCATED_REGION_NAME), 0); //elapsed is recorded only if its leader
+        verify(details, times(1))
+            .incTransfers(
+                colocatedRegionBytes.get(PR_COLOCATED_REGION_NAME),
+                0); //elapsed is recorded only if its leader
     }
 
     //verify we recorded necessary stats
@@ -213,7 +252,9 @@ public class BucketOperatorWrapperTest {
 
   @Test
   public void bucketWrapperShouldDoNotRecordBytesTransferedIfMoveBucketFails() {
-    doReturn(false).when(delegate).moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
+    doReturn(false)
+        .when(delegate)
+        .moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
 
     wrapper.moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
 
@@ -248,9 +289,13 @@ public class BucketOperatorWrapperTest {
     //verify the details is updated with bytes transfered
     for (PartitionRebalanceDetailsImpl details : rebalanceDetails) {
       if (details.getRegionPath().equalsIgnoreCase(PR_LEADER_REGION_NAME))
-        verify(details, times(1)).incRemoves((eq(colocatedRegionBytes.get(PR_LEADER_REGION_NAME))), anyLong());
+        verify(details, times(1))
+            .incRemoves((eq(colocatedRegionBytes.get(PR_LEADER_REGION_NAME))), anyLong());
       else if (details.getRegionPath().equals(PR_COLOCATED_REGION_NAME))
-        verify(details, times(1)).incRemoves(colocatedRegionBytes.get(PR_COLOCATED_REGION_NAME), 0); //elapsed is recorded only if its leader
+        verify(details, times(1))
+            .incRemoves(
+                colocatedRegionBytes.get(PR_COLOCATED_REGION_NAME),
+                0); //elapsed is recorded only if its leader
     }
 
     //verify we recorded necessary stats

@@ -23,31 +23,22 @@ import org.apache.geode.cache.EntryEvent;
 import org.apache.geode.cache.RegionEvent;
 
 /**
- * Utility class that implements all methods in <code>CacheWriter</code>
- * with empty implementations. Applications can subclass this class and
- * only override the methods for the events of interest.
- *
+ * Utility class that implements all methods in <code>CacheWriter</code> with empty implementations.
+ * Applications can subclass this class and only override the methods for the events of interest.
  *
  * @since GemFire 3.0
  */
 public class CacheWriterAdapter<K, V> implements CacheWriter<K, V> {
 
-  public void beforeCreate(EntryEvent<K, V> event) throws CacheWriterException {
-  }
+  public void beforeCreate(EntryEvent<K, V> event) throws CacheWriterException {}
 
-  public void beforeDestroy(EntryEvent<K, V> event) throws CacheWriterException {
-  }
+  public void beforeDestroy(EntryEvent<K, V> event) throws CacheWriterException {}
 
-  public void beforeRegionDestroy(RegionEvent<K, V> event) throws CacheWriterException {
-  }
+  public void beforeRegionDestroy(RegionEvent<K, V> event) throws CacheWriterException {}
 
-  public void beforeRegionClear(RegionEvent<K, V> event) throws CacheWriterException {
-  }
+  public void beforeRegionClear(RegionEvent<K, V> event) throws CacheWriterException {}
 
-  public void beforeUpdate(EntryEvent<K, V> event) throws CacheWriterException {
-  }
+  public void beforeUpdate(EntryEvent<K, V> event) throws CacheWriterException {}
 
-  public void close() {
-  }
-
+  public void close() {}
 }

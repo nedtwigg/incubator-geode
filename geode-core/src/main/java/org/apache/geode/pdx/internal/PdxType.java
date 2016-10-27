@@ -54,13 +54,12 @@ public class PdxType implements DataSerializable {
   private boolean noDomainClass;
   /**
    * Will be set to true if any fields on this type have been deleted.
+   *
    * @since GemFire 8.1
    */
   private boolean hasDeletedField;
 
-  /**
-   * A count of the total number of variable length field offsets.
-   */
+  /** A count of the total number of variable length field offsets. */
   private int vlfCount;
 
   private final ArrayList<PdxField> fields = new ArrayList<PdxField>();
@@ -203,16 +202,15 @@ public class PdxType implements DataSerializable {
   }
 
   /**
-   * Return true if two pdx types have same class name and the same fields
-   * but, unlike equals, field order does not matter.
-   * Note a type that expects a domain class can be compatible with
-   * one that does not expect a domain class.
+   * Return true if two pdx types have same class name and the same fields but, unlike equals, field
+   * order does not matter. Note a type that expects a domain class can be compatible with one that
+   * does not expect a domain class.
+   *
    * @param other the other pdx type
    * @return true if two pdx types are compatible.
    */
   public boolean compatible(PdxType other) {
-    if (other == null)
-      return false;
+    if (other == null) return false;
     if (!getClassName().equals(other.getClassName())) {
       return false;
     }
@@ -235,7 +233,11 @@ public class PdxType implements DataSerializable {
     try {
       return InternalDataSerializer.getCachedClass(getClassName());
     } catch (Exception e) {
-      PdxSerializationException ex = new PdxSerializationException(LocalizedStrings.DataSerializer_COULD_NOT_CREATE_AN_INSTANCE_OF_A_CLASS_0.toLocalizedString(getClassName()), e);
+      PdxSerializationException ex =
+          new PdxSerializationException(
+              LocalizedStrings.DataSerializer_COULD_NOT_CREATE_AN_INSTANCE_OF_A_CLASS_0
+                  .toLocalizedString(getClassName()),
+              e);
       throw ex;
     }
   }
@@ -269,7 +271,8 @@ public class PdxType implements DataSerializable {
 
   public void addField(PdxField ft) {
     if (this.fieldsMap.put(ft.getFieldName(), ft) != null) {
-      throw new PdxFieldAlreadyExistsException("The field \"" + ft.getFieldName() + "\" already exists.");
+      throw new PdxFieldAlreadyExistsException(
+          "The field \"" + ft.getFieldName() + "\" already exists.");
     }
     this.fields.add(ft);
   }
@@ -383,7 +386,6 @@ public class PdxType implements DataSerializable {
   }
 
   /**
-   * 
    * @param readFields the fields that have been read
    * @return a List of fields that have not been read (may be empty).
    */
@@ -399,6 +401,7 @@ public class PdxType implements DataSerializable {
 
   /**
    * Return true if the this type has a field that the other type does not have.
+   *
    * @param other the type we are comparing to
    * @return true if the this type has a field that the other type does not have.
    */
@@ -455,10 +458,9 @@ public class PdxType implements DataSerializable {
     return Collections.unmodifiableList(result);
   }
 
-  /**
-   * Used to optimize auto deserialization
-   */
-  private transient final AtomicReference<AutoClassInfo> autoClassInfo = new AtomicReference<AutoClassInfo>();
+  /** Used to optimize auto deserialization */
+  private final transient AtomicReference<AutoClassInfo> autoClassInfo =
+      new AtomicReference<AutoClassInfo>();
 
   public void setAutoInfo(AutoClassInfo autoClassInfo) {
     this.autoClassInfo.set(autoClassInfo);

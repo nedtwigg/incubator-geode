@@ -79,13 +79,9 @@ public class DataSerializableJUnitTest implements Serializable {
   /** A <code>ByteArrayOutputStream</code> that data is serialized to */
   private transient ByteArrayOutputStream baos;
 
-  @Rule
-  public transient TestName testName = new TestName();
+  @Rule public transient TestName testName = new TestName();
 
-  /**
-   * Creates a new <code>ByteArrayOutputStream</code> for this test to
-   * work with.
-   */
+  /** Creates a new <code>ByteArrayOutputStream</code> for this test to work with. */
   @Before
   public void setUp() {
     this.baos = new ByteArrayOutputStream();
@@ -95,16 +91,12 @@ public class DataSerializableJUnitTest implements Serializable {
     this.baos = null;
   }
 
-  /**
-   * Returns a <code>DataOutput</code> to write to
-   */
+  /** Returns a <code>DataOutput</code> to write to */
   private DataOutputStream getDataOutput() {
     return new DataOutputStream(this.baos);
   }
 
-  /**
-   * Returns a <code>DataInput</code> to read from
-   */
+  /** Returns a <code>DataInput</code> to read from */
   private DataInput getDataInput() {
     // changed this to use ByteBufferInputStream to give us better
     // test coverage of this class.
@@ -119,18 +111,14 @@ public class DataSerializableJUnitTest implements Serializable {
     return new DataInputStream(bbis);
   }
 
-  /**
-   * Returns a random number generator
-   */
+  /** Returns a random number generator */
   private Random getRandom() {
     long seed = Long.getLong("SEED", System.currentTimeMillis()).longValue();
     System.out.println("SEED for " + this.testName.getMethodName() + ": " + seed);
     return new Random(seed);
   }
 
-  /**
-   * Tests data serializing a {@link Class}
-   */
+  /** Tests data serializing a {@link Class} */
   @Test
   public void testClass() throws Exception {
     Class c = this.getClass();
@@ -144,10 +132,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(c, c2);
   }
 
-  /**
-   * Tests data serializing a {@link Class} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a {@link Class} using {@link DataSerializer#writeObject}. */
   @Test
   public void testClassObject() throws Exception {
     Class c = this.getClass();
@@ -213,9 +198,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(o, o2);
   }
 
-  /**
-   * Tests data serializing a {@link Date}
-   */
+  /** Tests data serializing a {@link Date} */
   @Test
   public void testDate() throws Exception {
     Date date = new Date();
@@ -229,10 +212,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(date, date2);
   }
 
-  /**
-   * Tests data serializing a {@link Date} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a {@link Date} using {@link DataSerializer#writeObject}. */
   @Test
   public void testDateObject() throws Exception {
     Date date = new Date();
@@ -246,9 +226,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(date, date2);
   }
 
-  /**
-   * Tests data serializing a {@link File}
-   */
+  /** Tests data serializing a {@link File} */
   @Test
   public void testFile() throws Exception {
     File file = new File(System.getProperty("user.dir"));
@@ -262,10 +240,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(file, file2);
   }
 
-  /**
-   * Tests data serializing a {@link File} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a {@link File} using {@link DataSerializer#writeObject}. */
   @Test
   public void testFileObject() throws Exception {
     File file = new File(System.getProperty("user.dir"));
@@ -279,9 +254,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(file, file2);
   }
 
-  /**
-   * Tests data serializing a {@link InetAddress}
-   */
+  /** Tests data serializing a {@link InetAddress} */
   @Test
   public void testInetAddress() throws Exception {
     InetAddress address = InetAddress.getLocalHost();
@@ -295,10 +268,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(address, address2);
   }
 
-  /**
-   * Tests data serializing a {@link InetAddress} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a {@link InetAddress} using {@link DataSerializer#writeObject}. */
   @Test
   public void testInetAddressObject() throws Exception {
     InetAddress address = InetAddress.getLocalHost();
@@ -312,10 +282,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(address, address2);
   }
 
-  /**
-   * Tests data serializing <code>null</code> using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing <code>null</code> using {@link DataSerializer#writeObject}. */
   @Test
   public void testNullObject() throws Exception {
     Object value = null;
@@ -329,9 +296,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a non-<code>null</code> {@link String}
-   */
+  /** Tests data serializing a non-<code>null</code> {@link String} */
   @Test
   public void testString() throws Exception {
     String value = "Hello";
@@ -384,9 +349,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a non-<code>null</code> {@link String} longer than 64k.
-   */
+  /** Tests data serializing a non-<code>null</code> {@link String} longer than 64k. */
   @Test
   public void testBigUtfString() throws Exception {
     StringBuffer sb = new StringBuffer(100000);
@@ -411,9 +374,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a non-ascii {@link String}
-   */
+  /** Tests data serializing a non-ascii {@link String} */
   @Test
   public void testNonAsciiString() throws Exception {
     basicTestString("Hello1" + '\u0000');
@@ -431,21 +392,16 @@ public class DataSerializableJUnitTest implements Serializable {
     DataInput in = getDataInput();
     String value2 = DataSerializer.readString(in);
     assertEquals(value, value2);
-
   }
 
-  /**
-   * Tests data serializing a <code>null</code> {@link String}
-   */
+  /** Tests data serializing a <code>null</code> {@link String} */
   @Ignore("for unknown reason")
   @Test
   public void testNullString() throws Exception {
     basicTestString(null);
   }
 
-  /**
-   * Tests data serializing a {@link Boolean}
-   */
+  /** Tests data serializing a {@link Boolean} */
   @Test
   public void testBoolean() throws Exception {
     Boolean value = new Boolean(getRandom().nextInt() % 2 == 0);
@@ -459,10 +415,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Boolean} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a {@link Boolean} using {@link DataSerializer#writeObject}. */
   @Test
   public void testBooleanObject() throws Exception {
 
@@ -500,8 +453,7 @@ public class DataSerializableJUnitTest implements Serializable {
     private byte[] deserialized;
     private WOABA2 f = new WOABA2();
 
-    public WOABA() {
-    }
+    public WOABA() {}
 
     public void validate() throws Exception {
       ByteArrayInputStream bais = new ByteArrayInputStream(this.deserialized);
@@ -526,8 +478,7 @@ public class DataSerializableJUnitTest implements Serializable {
     private byte[] deserialized;
     private String f = "foobar";
 
-    public WOABA2() {
-    }
+    public WOABA2() {}
 
     public void toData(DataOutput out) throws IOException {
       DataSerializer.writeObjectAsByteArray(this.f, out);
@@ -538,9 +489,7 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a {@link Character}
-   */
+  /** Tests data serializing a {@link Character} */
   @Test
   public void testCharacter() throws Exception {
     char c = (char) ('A' + getRandom().nextInt('Z' - 'A'));
@@ -555,10 +504,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Character} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a {@link Character} using {@link DataSerializer#writeObject}. */
   @Test
   public void testCharacterObject() throws Exception {
     char c = (char) ('A' + getRandom().nextInt('Z' - 'A'));
@@ -573,9 +519,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Byte}
-   */
+  /** Tests data serializing a {@link Byte} */
   @Test
   public void testByte() throws Exception {
     Byte value = new Byte((byte) getRandom().nextInt());
@@ -589,10 +533,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Byte} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a {@link Byte} using {@link DataSerializer#writeObject}. */
   @Test
   public void testByteObject() throws Exception {
     Byte value = new Byte((byte) getRandom().nextInt());
@@ -606,9 +547,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Short}
-   */
+  /** Tests data serializing a {@link Short} */
   @Test
   public void testShort() throws IOException {
     Short value = new Short((short) getRandom().nextInt());
@@ -622,10 +561,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Short} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a {@link Short} using {@link DataSerializer#writeObject}. */
   @Test
   public void testShortObject() throws IOException, ClassNotFoundException {
 
@@ -640,9 +576,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Integer}
-   */
+  /** Tests data serializing a {@link Integer} */
   @Test
   public void testInteger() throws Exception {
     Integer value = new Integer(getRandom().nextInt());
@@ -656,10 +590,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Integer} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a {@link Integer} using {@link DataSerializer#writeObject}. */
   @Test
   public void testIntegerObject() throws Exception {
     Integer value = new Integer(getRandom().nextInt());
@@ -673,9 +604,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Long}
-   */
+  /** Tests data serializing a {@link Long} */
   @Test
   public void testLong() throws Exception {
     Long value = new Long(getRandom().nextLong());
@@ -689,10 +618,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Long} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a {@link Long} using {@link DataSerializer#writeObject}. */
   @Test
   public void testLongObject() throws Exception {
     Long value = new Long(getRandom().nextLong());
@@ -706,9 +632,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Float}
-   */
+  /** Tests data serializing a {@link Float} */
   @Test
   public void testFloat() throws Exception {
     Float value = new Float(getRandom().nextFloat());
@@ -722,10 +646,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Float} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a {@link Float} using {@link DataSerializer#writeObject}. */
   @Test
   public void testFloatObject() throws Exception {
     Float value = new Float(getRandom().nextFloat());
@@ -739,9 +660,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Double}
-   */
+  /** Tests data serializing a {@link Double} */
   @Test
   public void testDouble() throws Exception {
     Double value = new Double(getRandom().nextDouble());
@@ -755,10 +674,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a {@link Double} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a {@link Double} using {@link DataSerializer#writeObject}. */
   @Test
   public void testDoubleObject() throws Exception {
     Double value = new Double(getRandom().nextDouble());
@@ -772,12 +688,10 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(value, value2);
   }
 
-  /**
-   * Tests data serializing a <code>byte</code> array
-   */
+  /** Tests data serializing a <code>byte</code> array */
   @Test
   public void testByteArray() throws Exception {
-    byte[] array = new byte[] { (byte) 4, (byte) 5, (byte) 6 };
+    byte[] array = new byte[] {(byte) 4, (byte) 5, (byte) 6};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeByteArray(array, out);
@@ -786,7 +700,8 @@ public class DataSerializableJUnitTest implements Serializable {
 
     DataInput in = getDataInput();
     for (int idx = 0; idx < 2; idx++) {
-      byte[] array2 = (idx == 0) ? DataSerializer.readByteArray(in) : (byte[]) DataSerializer.readObject(in);
+      byte[] array2 =
+          (idx == 0) ? DataSerializer.readByteArray(in) : (byte[]) DataSerializer.readObject(in);
       assertEquals(array.length, array2.length);
       for (int i = 0; i < array.length; i++) {
         assertEquals(array[i], array2[i]);
@@ -794,13 +709,10 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a <code>byte</code> array using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a <code>byte</code> array using {@link DataSerializer#writeObject}. */
   @Test
   public void testByteArrayObject() throws Exception {
-    byte[] array = new byte[] { (byte) 4, (byte) 5, (byte) 6 };
+    byte[] array = new byte[] {(byte) 4, (byte) 5, (byte) 6};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeObject(array, out);
@@ -815,12 +727,10 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a <code>short</code> array
-   */
+  /** Tests data serializing a <code>short</code> array */
   @Test
   public void testShortArray() throws Exception {
-    short[] array = new short[] { (short) 4, (short) 5, (short) 6 };
+    short[] array = new short[] {(short) 4, (short) 5, (short) 6};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeShortArray(array, out);
@@ -835,13 +745,10 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a <code>short</code> array using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a <code>short</code> array using {@link DataSerializer#writeObject}. */
   @Test
   public void testShortArrayObject() throws Exception {
-    short[] array = new short[] { (short) 4, (short) 5, (short) 6 };
+    short[] array = new short[] {(short) 4, (short) 5, (short) 6};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeObject(array, out);
@@ -856,14 +763,17 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a <code>String</code> array
-   */
+  /** Tests data serializing a <code>String</code> array */
   @Test
   public void testStringArray() throws Exception {
     Random random = getRandom();
 
-    String[] array = new String[] { String.valueOf(random.nextLong()), String.valueOf(random.nextLong()), String.valueOf(random.nextLong()) };
+    String[] array =
+        new String[] {
+          String.valueOf(random.nextLong()),
+          String.valueOf(random.nextLong()),
+          String.valueOf(random.nextLong())
+        };
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeStringArray(array, out);
@@ -879,14 +789,15 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * Tests data serializing a <code>String</code> array that contains
-   * a <code>null</code> <code>String</code>.
+   * Tests data serializing a <code>String</code> array that contains a <code>null</code> <code>
+   * String</code>.
    */
   @Test
   public void testStringArrayWithNull() throws Exception {
     Random random = getRandom();
 
-    String[] array = new String[] { String.valueOf(random.nextLong()), null, String.valueOf(random.nextLong()) };
+    String[] array =
+        new String[] {String.valueOf(random.nextLong()), null, String.valueOf(random.nextLong())};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeStringArray(array, out);
@@ -902,14 +813,18 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * Tests data serializing a <code>String</code> array using {@link
-   * DataSerializer#writeObject}.
+   * Tests data serializing a <code>String</code> array using {@link DataSerializer#writeObject}.
    */
   @Test
   public void testStringArrayObject() throws Exception {
     Random random = getRandom();
 
-    String[] array = new String[] { String.valueOf(random.nextLong()), String.valueOf(random.nextLong()), String.valueOf(random.nextLong()) };
+    String[] array =
+        new String[] {
+          String.valueOf(random.nextLong()),
+          String.valueOf(random.nextLong()),
+          String.valueOf(random.nextLong())
+        };
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeObject(array, out);
@@ -924,12 +839,10 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a <code>int</code> array
-   */
+  /** Tests data serializing a <code>int</code> array */
   @Test
   public void testIntArray() throws Exception {
-    int[] array = new int[] { 4, 5, 6 };
+    int[] array = new int[] {4, 5, 6};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeIntArray(array, out);
@@ -944,13 +857,10 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a <code>int</code> array using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a <code>int</code> array using {@link DataSerializer#writeObject}. */
   @Test
   public void testIntArrayObject() throws Exception {
-    int[] array = new int[] { 4, 5, 6 };
+    int[] array = new int[] {4, 5, 6};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeObject(array, out);
@@ -965,12 +875,10 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a <code>long</code> array
-   */
+  /** Tests data serializing a <code>long</code> array */
   @Test
   public void testLongArray() throws Exception {
-    long[] array = new long[] { 4, 5, 6 };
+    long[] array = new long[] {4, 5, 6};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeLongArray(array, out);
@@ -985,13 +893,10 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a <code>long</code> array using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a <code>long</code> array using {@link DataSerializer#writeObject}. */
   @Test
   public void testLongArrayObject() throws Exception {
-    long[] array = new long[] { 4, 5, 6 };
+    long[] array = new long[] {4, 5, 6};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeObject(array, out);
@@ -1006,12 +911,10 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a <code>float</code> array
-   */
+  /** Tests data serializing a <code>float</code> array */
   @Test
   public void testFloatArray() throws Exception {
-    float[] array = new float[] { (float) 4.0, (float) 5.0, (float) 6.0 };
+    float[] array = new float[] {(float) 4.0, (float) 5.0, (float) 6.0};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeFloatArray(array, out);
@@ -1026,13 +929,10 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a <code>float</code> array using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a <code>float</code> array using {@link DataSerializer#writeObject}. */
   @Test
   public void testFloatArrayObject() throws Exception {
-    float[] array = new float[] { (float) 4.0, (float) 5.0, (float) 6.0 };
+    float[] array = new float[] {(float) 4.0, (float) 5.0, (float) 6.0};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeObject(array, out);
@@ -1047,12 +947,10 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a <code>double</code> array
-   */
+  /** Tests data serializing a <code>double</code> array */
   @Test
   public void testDoubleArray() throws Exception {
-    double[] array = new double[] { 4.0, 5.0, 6.0 };
+    double[] array = new double[] {4.0, 5.0, 6.0};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeDoubleArray(array, out);
@@ -1068,12 +966,11 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * Tests data serializing a <code>double</code> array using {@link
-   * DataSerializer#writeObject}.
+   * Tests data serializing a <code>double</code> array using {@link DataSerializer#writeObject}.
    */
   @Test
   public void testDoubleArrayObject() throws Exception {
-    double[] array = new double[] { 4.0, 5.0, 6.0 };
+    double[] array = new double[] {4.0, 5.0, 6.0};
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeObject(array, out);
@@ -1088,13 +985,14 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing a <code>Object</code> array
-   */
+  /** Tests data serializing a <code>Object</code> array */
   @Test
   public void testObjectArray() throws Exception {
     Random random = getRandom();
-    SerializableImpl[] array = new SerializableImpl[] { new SerializableImpl(random), new SerializableImpl(random), new SerializableImpl(random) };
+    SerializableImpl[] array =
+        new SerializableImpl[] {
+          new SerializableImpl(random), new SerializableImpl(random), new SerializableImpl(random)
+        };
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeObjectArray(array, out);
@@ -1110,13 +1008,15 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * Tests data serializing a <code>Object</code> array using {@link
-   * DataSerializer#writeObject}.
+   * Tests data serializing a <code>Object</code> array using {@link DataSerializer#writeObject}.
    */
   @Test
   public void testObjectArrayObject() throws Exception {
     Random random = getRandom();
-    SerializableImpl[] array = new SerializableImpl[] { new SerializableImpl(random), new SerializableImpl(random), new SerializableImpl(random) };
+    SerializableImpl[] array =
+        new SerializableImpl[] {
+          new SerializableImpl(random), new SerializableImpl(random), new SerializableImpl(random)
+        };
 
     DataOutputStream out = getDataOutput();
     DataSerializer.writeObject(array, out);
@@ -1132,8 +1032,8 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * Tests serializing an object that is {@link
-   * DataSerializableJUnitTest.SerializableImpl not specially cased}.
+   * Tests serializing an object that is {@link DataSerializableJUnitTest.SerializableImpl not
+   * specially cased}.
    */
   @Test
   public void testUnspecialObject() throws Exception {
@@ -1148,10 +1048,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(o, o2);
   }
 
-  /**
-   * Tests serializing an object that implements {@link
-   * DataSerializable}
-   */
+  /** Tests serializing an object that implements {@link DataSerializable} */
   @Test
   public void testDataSerializable() throws Exception {
     DataSerializable ds = new DataSerializableImpl(getRandom());
@@ -1166,10 +1063,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(ds, ds2);
   }
 
-  /**
-   * Tests serializing an object that implements {@link
-   * DataSerializable}
-   */
+  /** Tests serializing an object that implements {@link DataSerializable} */
   @Test
   public void testVersionedDataSerializable() throws Exception {
     VersionedDataSerializableImpl ds = new VersionedDataSerializableImpl(getRandom());
@@ -1181,16 +1075,15 @@ public class DataSerializableJUnitTest implements Serializable {
     ByteBuffer bb = ByteBuffer.wrap(this.baos.toByteArray());
     ByteBufferInputStream bbis = new ByteBufferInputStream(bb);
     VersionedDataInputStream vin = new VersionedDataInputStream(bbis, Version.GFE_70);
-    VersionedDataSerializableImpl ds2 = (VersionedDataSerializableImpl) DataSerializer.readObject(vin);
+    VersionedDataSerializableImpl ds2 =
+        (VersionedDataSerializableImpl) DataSerializer.readObject(vin);
 
     assertEquals(ds, ds2);
     assertTrue(ds.preMethodInvoked());
     assertTrue(ds2.preMethodInvoked());
   }
 
-  /**
-   * Tests writing a {@link org.apache.geode.DataSerializable.Replaceable} object
-   */
+  /** Tests writing a {@link org.apache.geode.DataSerializable.Replaceable} object */
   @Test
   public void testReplaceable() throws Exception {
     Object o = new ReplaceableImpl();
@@ -1204,9 +1097,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(new Integer(42), o2);
   }
 
-  /**
-   * Tests data serializing an {@link ArrayList}
-   */
+  /** Tests data serializing an {@link ArrayList} */
   @Test
   public void testArrayList() throws Exception {
     tryArrayList(-1);
@@ -1233,10 +1124,7 @@ public class DataSerializableJUnitTest implements Serializable {
     tearDown();
   }
 
-  /**
-   * Tests data serializing an {@link ArrayList} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing an {@link ArrayList} using {@link DataSerializer#writeObject}. */
   @Test
   public void testArrayListObject() throws Exception {
     Random random = getRandom();
@@ -1255,9 +1143,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(list, list2);
   }
 
-  /**
-   * Tests data serializing an {@link HashSet}
-   */
+  /** Tests data serializing an {@link HashSet} */
   @Test
   public void testHashSet() throws Exception {
     Random random = getRandom();
@@ -1276,10 +1162,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(set, set2);
   }
 
-  /**
-   * Tests data serializing an {@link HashSet} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing an {@link HashSet} using {@link DataSerializer#writeObject}. */
   @Test
   public void testHashSetObject() throws Exception {
     Random random = getRandom();
@@ -1298,9 +1181,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(set, set2);
   }
 
-  /**
-   * Tests data serializing an {@link TreeSet}
-   */
+  /** Tests data serializing an {@link TreeSet} */
   @Test
   public void testTreeSet() throws Exception {
     Random random = getRandom();
@@ -1323,9 +1204,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(set, set2);
   }
 
-  /**
-   * Tests data serializing an {@link TreeSet}
-   */
+  /** Tests data serializing an {@link TreeSet} */
   @Test
   public void testTreeSetWithComparator() throws Exception {
     Random random = getRandom();
@@ -1349,10 +1228,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(set.comparator(), set2.comparator());
   }
 
-  /**
-   * Tests data serializing an {@link TreeSet} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing an {@link TreeSet} using {@link DataSerializer#writeObject}. */
   @Test
   public void testTreeSetObject() throws Exception {
     Random random = getRandom();
@@ -1371,9 +1247,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(set, set2);
   }
 
-  /**
-   * Tests data serializing an {@link HashMap}
-   */
+  /** Tests data serializing an {@link HashMap} */
   @Test
   public void testHashMap() throws Exception {
     Random random = getRandom();
@@ -1394,10 +1268,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(map, map2);
   }
 
-  /**
-   * Tests data serializing an {@link HashMap} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing an {@link HashMap} using {@link DataSerializer#writeObject}. */
   @Test
   public void testHashMapObject() throws Exception {
     Random random = getRandom();
@@ -1418,9 +1289,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(map, map2);
   }
 
-  /**
-   * Tests data serializing an {@link TreeMap}
-   */
+  /** Tests data serializing an {@link TreeMap} */
   @Test
   public void testTreeMap() throws Exception {
     Random random = getRandom();
@@ -1445,9 +1314,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(map, map2);
   }
 
-  /**
-   * Tests data serializing an {@link TreeMap}
-   */
+  /** Tests data serializing an {@link TreeMap} */
   @Test
   public void testTreeMapWithComparator() throws Exception {
     Random random = getRandom();
@@ -1493,10 +1360,7 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests data serializing an {@link TreeMap} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing an {@link TreeMap} using {@link DataSerializer#writeObject}. */
   @Test
   public void testTreeMapObject() throws Exception {
     Random random = getRandom();
@@ -1517,9 +1381,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(map, map2);
   }
 
-  /**
-   * Tests data serializing an {@link LinkedHashSet}
-   */
+  /** Tests data serializing an {@link LinkedHashSet} */
   @Test
   public void testLinkedHashSet() throws Exception {
     Random random = getRandom();
@@ -1538,10 +1400,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(set, set2);
   }
 
-  /**
-   * Tests data serializing an {@link LinkedHashSet} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing an {@link LinkedHashSet} using {@link DataSerializer#writeObject}. */
   @Test
   public void testLinkedHashSetObject() throws Exception {
     Random random = getRandom();
@@ -1560,9 +1419,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(set, set2);
   }
 
-  /**
-   * Tests data serializing an {@link Hashtable}
-   */
+  /** Tests data serializing an {@link Hashtable} */
   @Test
   public void testHashtable() throws Exception {
     Random random = getRandom();
@@ -1583,10 +1440,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(map, map2);
   }
 
-  /**
-   * Tests data serializing an {@link Hashtable} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing an {@link Hashtable} using {@link DataSerializer#writeObject}. */
   @Test
   public void testHashtableObject() throws Exception {
     Random random = getRandom();
@@ -1607,9 +1461,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(map, map2);
   }
 
-  /**
-   * Tests data serializing an {@link IdentityHashMap}
-   */
+  /** Tests data serializing an {@link IdentityHashMap} */
   @Test
   public void testIdentityHashMap() throws Exception {
     Random random = getRandom();
@@ -1630,10 +1482,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(new HashMap(map), new HashMap(map2));
   }
 
-  /**
-   * Tests data serializing an {@link IdentityHashMap} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing an {@link IdentityHashMap} using {@link DataSerializer#writeObject}. */
   @Test
   public void testIdentityHashMapObject() throws Exception {
     Random random = getRandom();
@@ -1654,9 +1503,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(new HashMap(map), new HashMap(map2));
   }
 
-  /**
-   * Tests data serializing an {@link Vector}
-   */
+  /** Tests data serializing an {@link Vector} */
   @Test
   public void testVector() throws Exception {
     Random random = getRandom();
@@ -1675,10 +1522,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(list, list2);
   }
 
-  /**
-   * Tests data serializing an {@link Vector} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing an {@link Vector} using {@link DataSerializer#writeObject}. */
   @Test
   public void testVectorObject() throws Exception {
     Random random = getRandom();
@@ -1697,9 +1541,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(list, list2);
   }
 
-  /**
-   * Tests data serializing an {@link Stack}
-   */
+  /** Tests data serializing an {@link Stack} */
   @Test
   public void testStack() throws Exception {
     Random random = getRandom();
@@ -1718,10 +1560,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(list, list2);
   }
 
-  /**
-   * Tests data serializing an {@link Stack} using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing an {@link Stack} using {@link DataSerializer#writeObject}. */
   @Test
   public void testStackObject() throws Exception {
     Random random = getRandom();
@@ -1740,10 +1579,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(list, list2);
   }
 
-  /**
-   * Tests data serializing {@link TimeUnit}s using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing {@link TimeUnit}s using {@link DataSerializer#writeObject}. */
   @Test
   public void testTimeUnitObject() throws Exception {
     DataOutputStream out = getDataOutput();
@@ -1780,10 +1616,7 @@ public class DataSerializableJUnitTest implements Serializable {
     assertEquals(p2, DataSerializer.readProperties(in));
   }
 
-  /**
-   * Tests that registering a <code>Serializer</code> with id 0 throws
-   * an exception.
-   */
+  /** Tests that registering a <code>Serializer</code> with id 0 throws an exception. */
   @Test
   public void testSerializerZero() {
     try {
@@ -1801,21 +1634,17 @@ public class DataSerializableJUnitTest implements Serializable {
     }
 
     public Class[] getSupportedClasses() {
-      return new Class[] { this.getClass() };
+      return new Class[] {this.getClass()};
     }
   }
 
-  /**
-   * Tests that registering two <code>Serializer</code>s with the same
-   * id throws an exception.
-   */
+  /** Tests that registering two <code>Serializer</code>s with the same id throws an exception. */
   @Test
   public void testRegisterTwoSerializers() {
     byte id = (byte) 42;
     DataSerializer.register(DS42.class);
 
-    DataSerializer serializer2 = new DS42() {
-    };
+    DataSerializer serializer2 = new DS42() {};
     try {
       DataSerializer.register(serializer2.getClass());
       fail("Should have thrown an IllegalArgumentException");
@@ -1835,8 +1664,8 @@ public class DataSerializableJUnitTest implements Serializable {
   // removed for performance reasons.
 
   /**
-   * Tests that an <code>IOException</code> is thrown when the
-   * serializer for an object cannot be found.
+   * Tests that an <code>IOException</code> is thrown when the serializer for an object cannot be
+   * found.
    */
   @Test
   public void testNoDeSerializer() throws Exception {
@@ -1861,12 +1690,11 @@ public class DataSerializableJUnitTest implements Serializable {
     } finally {
       InternalDataSerializer.GetMarker.WAIT_MS = savVal;
     }
-
   }
 
   /**
-   * Tests that a late-registering <code>DataSerializable</code>
-   * indeed causes a waiting readObject() method to be notified.
+   * Tests that a late-registering <code>DataSerializable</code> indeed causes a waiting
+   * readObject() method to be notified.
    */
   @Test
   public void testLateDeSerializer() throws Exception {
@@ -1880,25 +1708,27 @@ public class DataSerializableJUnitTest implements Serializable {
     DataSerializer.writeObject(o, getDataOutput());
     InternalDataSerializer.unregister(id);
 
-    ThreadGroup group = new ThreadGroup("Group") {
-      public void uncaughtException(Thread t, Throwable e) {
-        if (e instanceof VirtualMachineError) {
-          SystemFailure.setFailure((VirtualMachineError) e); // don't throw
-        }
-        fail("Uncaught exception in thread " + t, e);
-      }
-    };
-    Thread thread = new Thread(group, "Registrar") {
-      public void run() {
-        try {
-          Thread.sleep(300);
-          DataSerializer.register(c, id);
+    ThreadGroup group =
+        new ThreadGroup("Group") {
+          public void uncaughtException(Thread t, Throwable e) {
+            if (e instanceof VirtualMachineError) {
+              SystemFailure.setFailure((VirtualMachineError) e); // don't throw
+            }
+            fail("Uncaught exception in thread " + t, e);
+          }
+        };
+    Thread thread =
+        new Thread(group, "Registrar") {
+          public void run() {
+            try {
+              Thread.sleep(300);
+              DataSerializer.register(c, id);
 
-        } catch (Exception ex) {
-          fail("Interrupted while registering", ex);
-        }
-      }
-    };
+            } catch (Exception ex) {
+              fail("Interrupted while registering", ex);
+            }
+          }
+        };
     thread.start();
 
     try {
@@ -1918,8 +1748,8 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * Tests that a late-registering <code>Instantiator</code>
-   * indeed causes a waiting readObject() method to be notified.
+   * Tests that a late-registering <code>Instantiator</code> indeed causes a waiting readObject()
+   * method to be notified.
    */
   @Test
   public void testLateInstantiator() throws Exception {
@@ -1927,36 +1757,39 @@ public class DataSerializableJUnitTest implements Serializable {
 
     final byte id = (byte) 100;
     final Class c = DataSerializableImpl.class;
-    final Instantiator inst = new Instantiator(c, id) {
-      public DataSerializable newInstance() {
-        return new DataSerializableImpl();
-      }
-    };
+    final Instantiator inst =
+        new Instantiator(c, id) {
+          public DataSerializable newInstance() {
+            return new DataSerializableImpl();
+          }
+        };
     Instantiator.register(inst);
 
     Object o = new DataSerializableImpl(random);
     DataSerializer.writeObject(o, getDataOutput());
     InternalInstantiator.unregister(c, id);
 
-    ThreadGroup group = new ThreadGroup("Group") {
-      public void uncaughtException(Thread t, Throwable e) {
-        if (e instanceof VirtualMachineError) {
-          SystemFailure.setFailure((VirtualMachineError) e); // don't throw
-        }
-        fail("Uncaught exception in thread " + t, e);
-      }
-    };
-    Thread thread = new Thread(group, "Registrar") {
-      public void run() {
-        try {
-          Thread.sleep(300);
-          Instantiator.register(inst);
+    ThreadGroup group =
+        new ThreadGroup("Group") {
+          public void uncaughtException(Thread t, Throwable e) {
+            if (e instanceof VirtualMachineError) {
+              SystemFailure.setFailure((VirtualMachineError) e); // don't throw
+            }
+            fail("Uncaught exception in thread " + t, e);
+          }
+        };
+    Thread thread =
+        new Thread(group, "Registrar") {
+          public void run() {
+            try {
+              Thread.sleep(300);
+              Instantiator.register(inst);
 
-        } catch (Exception ex) {
-          fail("Interrupted while registering", ex);
-        }
-      }
-    };
+            } catch (Exception ex) {
+              fail("Interrupted while registering", ex);
+            }
+          }
+        };
     thread.start();
 
     try {
@@ -1975,9 +1808,7 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests that a custom serializer is consulted
-   */
+  /** Tests that a custom serializer is consulted */
   @Test
   public void testCustomSerializer() throws Exception {
     Random random = new Random();
@@ -1998,8 +1829,8 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * Tests that the appropriate exceptions are thrown by {@link
-   * Instantiator#register} when given bad input.
+   * Tests that the appropriate exceptions are thrown by {@link Instantiator#register} when given
+   * bad input.
    */
   @Test
   public void testInstantiatorExceptions() {
@@ -2024,19 +1855,21 @@ public class DataSerializableJUnitTest implements Serializable {
       // pass...
     }
 
-    Instantiator.register(new Instantiator(DataSerializableImpl.class, (byte) 42) {
-      public DataSerializable newInstance() {
-        return null;
-      }
-    });
-    try {
-
-      try {
-        Instantiator.register(new Instantiator(DataSerializableImpl.class, (byte) 41) {
+    Instantiator.register(
+        new Instantiator(DataSerializableImpl.class, (byte) 42) {
           public DataSerializable newInstance() {
             return null;
           }
         });
+    try {
+
+      try {
+        Instantiator.register(
+            new Instantiator(DataSerializableImpl.class, (byte) 41) {
+              public DataSerializable newInstance() {
+                return null;
+              }
+            });
         fail("Should have thrown an IllegalStateException");
 
       } catch (IllegalStateException ex) {
@@ -2044,11 +1877,12 @@ public class DataSerializableJUnitTest implements Serializable {
       }
 
       try {
-        Instantiator.register(new Instantiator(DSIntWrapper.class, (byte) 42) {
-          public DataSerializable newInstance() {
-            return null;
-          }
-        });
+        Instantiator.register(
+            new Instantiator(DSIntWrapper.class, (byte) 42) {
+              public DataSerializable newInstance() {
+                return null;
+              }
+            });
         fail("Should have thrown an IllegalStateException");
 
       } catch (IllegalStateException ex) {
@@ -2060,19 +1894,17 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests that an <code>Instantiator</code> is invoked at the
-   * appropriate times.
-   */
+  /** Tests that an <code>Instantiator</code> is invoked at the appropriate times. */
   @Test
   public void testInstantiator() throws Exception {
-    final boolean[] wasInvoked = new boolean[] { false };
-    Instantiator.register(new Instantiator(DataSerializableImpl.class, (byte) 45) {
-      public DataSerializable newInstance() {
-        wasInvoked[0] = true;
-        return new DataSerializableImpl();
-      }
-    });
+    final boolean[] wasInvoked = new boolean[] {false};
+    Instantiator.register(
+        new Instantiator(DataSerializableImpl.class, (byte) 45) {
+          public DataSerializable newInstance() {
+            wasInvoked[0] = true;
+            return new DataSerializableImpl();
+          }
+        });
     try {
       byte id = (byte) 57;
       Class_testInstantiator.supClass = DataSerializableImpl.class;
@@ -2093,13 +1925,14 @@ public class DataSerializableJUnitTest implements Serializable {
 
   @Test
   public void testInstantiator2() throws Exception {
-    final boolean[] wasInvoked = new boolean[] { false };
-    Instantiator.register(new Instantiator(DataSerializableImpl.class, 20000) {
-      public DataSerializable newInstance() {
-        wasInvoked[0] = true;
-        return new DataSerializableImpl();
-      }
-    });
+    final boolean[] wasInvoked = new boolean[] {false};
+    Instantiator.register(
+        new Instantiator(DataSerializableImpl.class, 20000) {
+          public DataSerializable newInstance() {
+            wasInvoked[0] = true;
+            return new DataSerializableImpl();
+          }
+        });
     try {
       byte id = (byte) 57;
       Class_testInstantiator.supClass = DataSerializableImpl.class;
@@ -2120,13 +1953,14 @@ public class DataSerializableJUnitTest implements Serializable {
 
   @Test
   public void testInstantiator4() throws Exception {
-    final boolean[] wasInvoked = new boolean[] { false };
-    Instantiator.register(new Instantiator(DataSerializableImpl.class, 123456789) {
-      public DataSerializable newInstance() {
-        wasInvoked[0] = true;
-        return new DataSerializableImpl();
-      }
-    });
+    final boolean[] wasInvoked = new boolean[] {false};
+    Instantiator.register(
+        new Instantiator(DataSerializableImpl.class, 123456789) {
+          public DataSerializable newInstance() {
+            wasInvoked[0] = true;
+            return new DataSerializableImpl();
+          }
+        });
     try {
       byte id = (byte) 57;
       Class_testInstantiator.supClass = DataSerializableImpl.class;
@@ -2153,7 +1987,7 @@ public class DataSerializableJUnitTest implements Serializable {
     }
 
     public Class[] getSupportedClasses() {
-      return new Class[] { supClass };
+      return new Class[] {supClass};
     }
 
     public boolean toData(Object o, DataOutput out) throws IOException {
@@ -2164,19 +1998,17 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Tests that an <code>CanonicalInstantiator</code> is invoked at the
-   * appropriate times.
-   */
+  /** Tests that an <code>CanonicalInstantiator</code> is invoked at the appropriate times. */
   @Test
   public void testCanonicalInstantiator() throws Exception {
-    final boolean[] wasInvoked = new boolean[] { false };
-    Instantiator.register(new CanonicalInstantiator(CanonicalDataSerializableImpl.class, (byte) 45) {
-      public DataSerializable newInstance(DataInput di) throws IOException {
-        wasInvoked[0] = true;
-        return CanonicalDataSerializableImpl.create(di.readByte());
-      }
-    });
+    final boolean[] wasInvoked = new boolean[] {false};
+    Instantiator.register(
+        new CanonicalInstantiator(CanonicalDataSerializableImpl.class, (byte) 45) {
+          public DataSerializable newInstance(DataInput di) throws IOException {
+            wasInvoked[0] = true;
+            return CanonicalDataSerializableImpl.create(di.readByte());
+          }
+        });
     try {
       byte id = (byte) 57;
 
@@ -2197,8 +2029,7 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * Tests that only one serializer is invoked when a serializer
-   * specifies its supported classes.
+   * Tests that only one serializer is invoked when a serializer specifies its supported classes.
    * Alos tests UDDS1.
    */
   @Test
@@ -2225,9 +2056,7 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Make sure a user defined ds with an id of 2 bytes works.
-   */
+  /** Make sure a user defined ds with an id of 2 bytes works. */
   @Test
   public void testUDDS2() throws Exception {
     DataSerializer ds2 = DataSerializer.register(Class_testSupportedClasses3.class);
@@ -2248,9 +2077,7 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * Make sure a user defined ds with an id of42 bytes works.
-   */
+  /** Make sure a user defined ds with an id of42 bytes works. */
   @Test
   public void testUDDS4() throws Exception {
     DataSerializer ds2 = DataSerializer.register(Class_testSupportedClasses4.class);
@@ -2277,7 +2104,7 @@ public class DataSerializableJUnitTest implements Serializable {
     }
 
     public Class[] getSupportedClasses() {
-      return new Class[] { this.getClass() };
+      return new Class[] {this.getClass()};
     }
 
     public boolean toData(Object o, DataOutput out) throws IOException {
@@ -2369,11 +2196,11 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * Tests that data serializing a cyclical object graph results in an
-   * infinite loop ({@link StackOverflowError}).
+   * Tests that data serializing a cyclical object graph results in an infinite loop ({@link
+   * StackOverflowError}).
    *
-   * This test is disabled due a bug in JaCoCo 0.6.2 agent while
-   * handling stackoverflow exceptions during tests.
+   * <p>This test is disabled due a bug in JaCoCo 0.6.2 agent while handling stackoverflow
+   * exceptions during tests.
    */
   @Ignore("disabled due a bug in JaCoCo 0.6.2 agent while handling stackoverflow exceptions")
   @Test
@@ -2404,12 +2231,11 @@ public class DataSerializableJUnitTest implements Serializable {
     } finally {
       SystemFailureTestHook.setExpectedFailureClass(null);
     }
-
   }
 
   /**
-   * Tests that data serializing the same object through two different
-   * reference paths does not preserve referential integrity.
+   * Tests that data serializing the same object through two different reference paths does not
+   * preserve referential integrity.
    */
   @Test
   public void testReferentialIntegrity() throws Exception {
@@ -2442,26 +2268,25 @@ public class DataSerializableJUnitTest implements Serializable {
     assertNotSame(top2.next.next, top2.next2.next);
   }
 
-  /**
-   * Tests that <code>RegistrationListener</code>s are invoked at the
-   * proper times.
-   */
+  /** Tests that <code>RegistrationListener</code>s are invoked at the proper times. */
   @Test
   public void testRegistrationListeners() {
     final DataSerializer[] array = new DataSerializer[2];
 
-    TestRegistrationListener l1 = new TestRegistrationListener() {
-      @Override
-      public void newDataSerializer2(DataSerializer ds) {
-        array[0] = ds;
-      }
-    };
-    TestRegistrationListener l2 = new TestRegistrationListener() {
-      @Override
-      public void newDataSerializer2(DataSerializer ds) {
-        array[1] = ds;
-      }
-    };
+    TestRegistrationListener l1 =
+        new TestRegistrationListener() {
+          @Override
+          public void newDataSerializer2(DataSerializer ds) {
+            array[0] = ds;
+          }
+        };
+    TestRegistrationListener l2 =
+        new TestRegistrationListener() {
+          @Override
+          public void newDataSerializer2(DataSerializer ds) {
+            array[1] = ds;
+          }
+        };
 
     InternalDataSerializer.addRegistrationListener(l1);
     InternalDataSerializer.addRegistrationListener(l2);
@@ -2482,25 +2307,28 @@ public class DataSerializableJUnitTest implements Serializable {
 
     Class c = DataSerializableImpl.class;
     id = (byte) 100;
-    final Instantiator inst0 = new Instantiator(c, id) {
-      @Override
-      public DataSerializable newInstance() {
-        return new DataSerializableImpl();
-      }
-    };
+    final Instantiator inst0 =
+        new Instantiator(c, id) {
+          @Override
+          public DataSerializable newInstance() {
+            return new DataSerializableImpl();
+          }
+        };
 
-    TestRegistrationListener l3 = new TestRegistrationListener() {
-      @Override
-      public void newInstantiator2(Instantiator inst) {
-        assertEquals(inst0, inst);
-      }
-    };
-    TestRegistrationListener l4 = new TestRegistrationListener() {
-      @Override
-      public void newInstantiator2(Instantiator inst) {
-        assertEquals(inst0, inst);
-      }
-    };
+    TestRegistrationListener l3 =
+        new TestRegistrationListener() {
+          @Override
+          public void newInstantiator2(Instantiator inst) {
+            assertEquals(inst0, inst);
+          }
+        };
+    TestRegistrationListener l4 =
+        new TestRegistrationListener() {
+          @Override
+          public void newInstantiator2(Instantiator inst) {
+            assertEquals(inst0, inst);
+          }
+        };
 
     InternalDataSerializer.addRegistrationListener(l3);
     InternalDataSerializer.addRegistrationListener(l4);
@@ -2526,7 +2354,7 @@ public class DataSerializableJUnitTest implements Serializable {
 
     @Override
     public Class[] getSupportedClasses() {
-      return new Class[] { DS42.class };
+      return new Class[] {DS42.class};
     }
   }
 
@@ -2579,9 +2407,13 @@ public class DataSerializableJUnitTest implements Serializable {
       fail("expected IllegalStateException");
     } catch (IllegalArgumentException expected) {
       if (c.isArray()) {
-        assertTrue(expected.getMessage(), expected.getMessage().indexOf("an array class which is not allowed") != -1);
+        assertTrue(
+            expected.getMessage(),
+            expected.getMessage().indexOf("an array class which is not allowed") != -1);
       } else {
-        assertTrue(expected.getMessage(), expected.getMessage().indexOf("has built-in support for class " + c.getName()) != -1);
+        assertTrue(
+            expected.getMessage(),
+            expected.getMessage().indexOf("has built-in support for class " + c.getName()) != -1);
       }
     }
   }
@@ -2589,22 +2421,20 @@ public class DataSerializableJUnitTest implements Serializable {
   protected static Class illegalClass = null;
 
   private static class IllegalDS extends DataSerializerImpl {
-    public IllegalDS() {
-    }
+    public IllegalDS() {}
 
     public int getId() {
       return 337788;
     }
 
     public Class[] getSupportedClasses() {
-      return new Class[] { illegalClass };
+      return new Class[] {illegalClass};
     }
   }
 
   /**
-   * Data serializes and then data de-serializes the given object and
-   * asserts that the class of object the pre- and post- data
-   * serialized objects is the same.
+   * Data serializes and then data de-serializes the given object and asserts that the class of
+   * object the pre- and post- data serialized objects is the same.
    */
   private void checkClass(Object o) throws IOException, ClassNotFoundException {
 
@@ -2612,85 +2442,82 @@ public class DataSerializableJUnitTest implements Serializable {
     DataSerializer.writeObject(o, out);
     out.flush();
     DataInput in = getDataInput();
-    assertSame(o.getClass(), DataSerializer.<Object> readObject(in).getClass());
+    assertSame(o.getClass(), DataSerializer.<Object>readObject(in).getClass());
     this.baos = new ByteArrayOutputStream();
   }
 
   /**
-   * Tests that subclasses of well-known data serializer classes are
-   * not read back as instances of their superclass.  See bug 32391.
+   * Tests that subclasses of well-known data serializer classes are not read back as instances of
+   * their superclass. See bug 32391.
    *
    * @since GemFire 4.0
    */
   @Test
   public void testSubclasses() throws Exception {
     checkClass(new Date());
-    checkClass(new Date() {
-    });
+    checkClass(new Date() {});
 
     checkClass(new File(""));
-    checkClass(new File("") {
-    });
+    checkClass(new File("") {});
 
     checkClass(new ArrayList());
-    checkClass(new ArrayList() {
-    });
+    checkClass(new ArrayList() {});
 
     checkClass(new LinkedList());
-    checkClass(new LinkedList() {
-    });
+    checkClass(new LinkedList() {});
 
     checkClass(new HashSet());
-    checkClass(new HashSet() {
-    });
+    checkClass(new HashSet() {});
 
     checkClass(new HashMap());
-    checkClass(new HashMap() {
-    });
+    checkClass(new HashMap() {});
 
     checkClass(new Properties());
-    checkClass(new Properties() {
-    });
+    checkClass(new Properties() {});
 
     checkClass(new Hashtable());
-    checkClass(new Hashtable() {
-    });
+    checkClass(new Hashtable() {});
 
     checkClass(new Vector());
-    checkClass(new Vector() {
-    });
+    checkClass(new Vector() {});
 
     checkClass(new IdentityHashMap());
-    checkClass(new IdentityHashMap() {
-    });
+    checkClass(new IdentityHashMap() {});
 
     checkClass(new LinkedHashSet());
-    checkClass(new LinkedHashSet() {
-    });
+    checkClass(new LinkedHashSet() {});
 
     checkClass(new Stack());
-    checkClass(new Stack() {
-    });
+    checkClass(new Stack() {});
 
     checkClass(new TreeMap());
-    checkClass(new TreeMap() {
-    });
+    checkClass(new TreeMap() {});
 
     checkClass(new TreeSet());
-    checkClass(new TreeSet() {
-    });
+    checkClass(new TreeSet() {});
   }
 
   /**
-   * Test for {@link StatArchiveWriter#writeCompactValue} and
-   * {@link StatArchiveWriter#readCompactValue}. Also added test for
-   * ByteBufferInputStream#readUnsigned* methods (bug #41197).
+   * Test for {@link StatArchiveWriter#writeCompactValue} and {@link
+   * StatArchiveWriter#readCompactValue}. Also added test for ByteBufferInputStream#readUnsigned*
+   * methods (bug #41197).
    */
   @Test
   public void testStatArchiveCompactValueSerialization() throws Exception {
     // test all combos of valueToTest and + and -offsets
-    long[] valuesToTest = new long[] { 0, Byte.MAX_VALUE, Byte.MIN_VALUE, Short.MAX_VALUE, Short.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Long.MAX_VALUE, Long.MIN_VALUE };
-    int[] offsets = new int[] { 0, 1, 4, 9, 14, 15, 16, -1, -4, -9, -14, -15, -16 };
+    long[] valuesToTest =
+        new long[] {
+          0,
+          Byte.MAX_VALUE,
+          Byte.MIN_VALUE,
+          Short.MAX_VALUE,
+          Short.MIN_VALUE,
+          Integer.MAX_VALUE,
+          Integer.MIN_VALUE,
+          Long.MAX_VALUE,
+          Long.MIN_VALUE
+        };
+    int[] offsets = new int[] {0, 1, 4, 9, 14, 15, 16, -1, -4, -9, -14, -15, -16};
 
     // write all combos of longs to the outputstream
     HeapDataOutputStream hdos = new HeapDataOutputStream(Version.CURRENT);
@@ -2725,7 +2552,8 @@ public class DataSerializableJUnitTest implements Serializable {
     // now check ByteBufferInputStream#readUnsignedShort explicitly
     // readUnsignedByte is already tested in StatArchiveWriter.readCompactValue
     // above likely in a more thorough manner than a simple explicit test would
-    short[] shortValuesToTest = new short[] { 0, Byte.MAX_VALUE, Byte.MIN_VALUE, Short.MAX_VALUE, Short.MIN_VALUE };
+    short[] shortValuesToTest =
+        new short[] {0, Byte.MAX_VALUE, Byte.MIN_VALUE, Short.MAX_VALUE, Short.MIN_VALUE};
 
     ByteBufferOutputStream bos = new ByteBufferOutputStream();
     out = new DataOutputStream(bos);
@@ -2746,14 +2574,10 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * A <code>DataSerializer</code> that provides default
-   * implementations of its methods.
-   */
-  private static abstract class DataSerializerImpl extends DataSerializer {
+  /** A <code>DataSerializer</code> that provides default implementations of its methods. */
+  private abstract static class DataSerializerImpl extends DataSerializer {
 
-    public DataSerializerImpl() {
-    }
+    public DataSerializerImpl() {}
 
     public boolean toData(Object o, DataOutput out) throws IOException {
       fail("toData() should not be invoked");
@@ -2766,10 +2590,7 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * A class that implements {@link Serializable} and has fields of
-   * each type.
-   */
+  /** A class that implements {@link Serializable} and has fields of each type. */
   private static class SerializableImpl implements Serializable {
 
     protected byte byteField;
@@ -2795,10 +2616,7 @@ public class DataSerializableJUnitTest implements Serializable {
     protected int unsignedByteField;
     protected int unsignedShortField;
 
-    /**
-     * Creates a new <code>SerializableImpl</code> whose contents
-     * is randomly generated.
-     */
+    /** Creates a new <code>SerializableImpl</code> whose contents is randomly generated. */
     SerializableImpl(Random random) {
       this.byteField = (byte) random.nextInt();
       this.shortField = (short) random.nextInt();
@@ -2832,18 +2650,10 @@ public class DataSerializableJUnitTest implements Serializable {
       this.objectField = new SerializableImpl();
     }
 
-    /**
-     * Creates a new <code>SerializableImpl</code> whose contents
-     * is empty.
-     */
-    SerializableImpl() {
+    /** Creates a new <code>SerializableImpl</code> whose contents is empty. */
+    SerializableImpl() {}
 
-    }
-
-    /**
-     * Two <code>SerializableImpl</code>s are equal if their
-     * contents are equal.
-     */
+    /** Two <code>SerializableImpl</code>s are equal if their contents are equal. */
     @Override
     public boolean equals(Object o) {
       if (!(o instanceof SerializableImpl)) {
@@ -2851,7 +2661,27 @@ public class DataSerializableJUnitTest implements Serializable {
       }
 
       SerializableImpl other = (SerializableImpl) o;
-      return this.byteField == other.byteField && this.shortField == other.shortField && this.intField == other.intField && this.longField == other.longField && this.floatField == other.floatField && this.doubleField == other.doubleField && this.charField == other.charField && this.booleanField == other.booleanField && this.byteFieldPrim == other.byteFieldPrim && this.shortFieldPrim == other.shortFieldPrim && this.intFieldPrim == other.intFieldPrim && this.longFieldPrim == other.longFieldPrim && this.floatFieldPrim == other.floatFieldPrim && this.doubleFieldPrim == other.doubleFieldPrim && this.charFieldPrim == other.charFieldPrim && this.booleanFieldPrim == other.booleanFieldPrim && this.unsignedByteField == other.unsignedByteField && this.unsignedShortField == other.unsignedShortField && (this.stringField == null || this.stringField.equals(other.stringField)) && (this.objectField == null || this.objectField.equals(other.objectField)) && true;
+      return this.byteField == other.byteField
+          && this.shortField == other.shortField
+          && this.intField == other.intField
+          && this.longField == other.longField
+          && this.floatField == other.floatField
+          && this.doubleField == other.doubleField
+          && this.charField == other.charField
+          && this.booleanField == other.booleanField
+          && this.byteFieldPrim == other.byteFieldPrim
+          && this.shortFieldPrim == other.shortFieldPrim
+          && this.intFieldPrim == other.intFieldPrim
+          && this.longFieldPrim == other.longFieldPrim
+          && this.floatFieldPrim == other.floatFieldPrim
+          && this.doubleFieldPrim == other.doubleFieldPrim
+          && this.charFieldPrim == other.charFieldPrim
+          && this.booleanFieldPrim == other.booleanFieldPrim
+          && this.unsignedByteField == other.unsignedByteField
+          && this.unsignedShortField == other.unsignedShortField
+          && (this.stringField == null || this.stringField.equals(other.stringField))
+          && (this.objectField == null || this.objectField.equals(other.objectField))
+          && true;
     }
 
     @Override
@@ -2898,22 +2728,16 @@ public class DataSerializableJUnitTest implements Serializable {
   /**
    * A class that implements {@link DataSerializable}
    *
-   * Also used by DataTypeJUnitTest
+   * <p>Also used by DataTypeJUnitTest
    */
   public static class DataSerializableImpl extends SerializableImpl implements DataSerializable {
 
-    /**
-     * Creates a new <code>DataSerializableImpl</code> whose contents
-     * is randomly generated.
-     */
+    /** Creates a new <code>DataSerializableImpl</code> whose contents is randomly generated. */
     public DataSerializableImpl(Random random) {
       super(random);
     }
 
-    /**
-     * Creates a new <code>DataSerializableImpl</code> whose contents
-     * is empty.
-     */
+    /** Creates a new <code>DataSerializableImpl</code> whose contents is empty. */
     public DataSerializableImpl() {
       super();
     }
@@ -2972,20 +2796,19 @@ public class DataSerializableJUnitTest implements Serializable {
       this.stringField = DataSerializer.readString(in);
       this.objectField = DataSerializer.readObject(in);
     }
-
   }
 
-  private static class VersionedDataSerializableImpl extends DataSerializableImpl implements VersionedDataSerializable {
+  private static class VersionedDataSerializableImpl extends DataSerializableImpl
+      implements VersionedDataSerializable {
 
     @Override
     public Version[] getSerializationVersions() {
-      return new Version[] { Version.GFE_71 };
+      return new Version[] {Version.GFE_71};
     }
 
     transient boolean preMethodInvoked;
 
-    public VersionedDataSerializableImpl() {
-    }
+    public VersionedDataSerializableImpl() {}
 
     public VersionedDataSerializableImpl(Random random) {
       super(random);
@@ -3006,10 +2829,12 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  private static class CanonicalDataSerializableImpl extends SerializableImpl implements DataSerializable {
+  private static class CanonicalDataSerializableImpl extends SerializableImpl
+      implements DataSerializable {
 
     private static final byte SINGLETON_BYTE = 23;
-    private static final CanonicalDataSerializableImpl singleton = new CanonicalDataSerializableImpl(new Random());
+    private static final CanonicalDataSerializableImpl singleton =
+        new CanonicalDataSerializableImpl(new Random());
 
     public static CanonicalDataSerializableImpl create() {
       return singleton;
@@ -3021,8 +2846,8 @@ public class DataSerializableJUnitTest implements Serializable {
     }
 
     /**
-     * Creates a new <code>CanonicalDataSerializableImpl</code> whose contents
-     * is randomly generated.
+     * Creates a new <code>CanonicalDataSerializableImpl</code> whose contents is randomly
+     * generated.
      */
     private CanonicalDataSerializableImpl(Random random) {
       super(random);
@@ -3034,15 +2859,10 @@ public class DataSerializableJUnitTest implements Serializable {
     }
 
     @Override
-    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-    }
-
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
   }
 
-  /**
-   * A class that replaces itself with an <code>Integer</code> when
-   * written.
-   */
+  /** A class that replaces itself with an <code>Integer</code> when written. */
   private static class ReplaceableImpl implements DataSerializable.Replaceable {
 
     @Override
@@ -3052,8 +2872,8 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * A non-<code>DataSerializable</code> class whose instances are
-   * data serialized using a <code>Serializer</code>.
+   * A non-<code>DataSerializable</code> class whose instances are data serialized using a <code>
+   * Serializer</code>.
    *
    * @since GemFire 3.5
    */
@@ -3075,8 +2895,7 @@ public class DataSerializableJUnitTest implements Serializable {
       this.serValue = new SerializableImpl(random);
     }
 
-    protected NonDataSerializable() {
-    }
+    protected NonDataSerializable() {}
 
     public boolean equals(Object o) {
       if (!(o instanceof NonDataSerializable)) {
@@ -3084,19 +2903,26 @@ public class DataSerializableJUnitTest implements Serializable {
       }
 
       NonDataSerializable other = (NonDataSerializable) o;
-      return other.intValue == this.intValue && other.doubleValue == this.doubleValue && (other.stringValue != null && this.stringValue != null) && other.stringValue.equals(this.stringValue) && (other.dsValue != null && this.dsValue != null) && other.dsValue.equals(this.dsValue) && (other.serValue != null && this.serValue != null) && other.serValue.equals(this.serValue) && (other.objectValue != null && this.objectValue != null) && other.objectValue.equals(this.objectValue);
+      return other.intValue == this.intValue
+          && other.doubleValue == this.doubleValue
+          && (other.stringValue != null && this.stringValue != null)
+          && other.stringValue.equals(this.stringValue)
+          && (other.dsValue != null && this.dsValue != null)
+          && other.dsValue.equals(this.dsValue)
+          && (other.serValue != null && this.serValue != null)
+          && other.serValue.equals(this.serValue)
+          && (other.objectValue != null && this.objectValue != null)
+          && other.objectValue.equals(this.objectValue);
     }
 
     /**
-     * A <code>Serializer</code> that data serializes instances of
-     * <code>NonDataSerializable</code>.
+     * A <code>Serializer</code> that data serializes instances of <code>NonDataSerializable</code>.
      */
     public static class NonDSSerializer extends DataSerializer {
 
       private static final byte CLASS_ID = (byte) 100;
 
-      public NonDSSerializer() {
-      }
+      public NonDSSerializer() {}
 
       @Override
       public int getId() {
@@ -3105,7 +2931,7 @@ public class DataSerializableJUnitTest implements Serializable {
 
       @Override
       public Class[] getSupportedClasses() {
-        return new Class[] { NonDataSerializable.class };
+        return new Class[] {NonDataSerializable.class};
       }
 
       @Override
@@ -3147,9 +2973,7 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * A much more simple class to be data serialized
-   */
+  /** A much more simple class to be data serialized */
   private static class IntWrapper {
 
     public int intValue;
@@ -3176,9 +3000,7 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * A <code>DataSerializable</code> int wrapper
-   */
+  /** A <code>DataSerializable</code> int wrapper */
   private static class DSIntWrapper extends IntWrapper implements DataSerializable {
 
     public DSIntWrapper(Random random) {
@@ -3215,22 +3037,16 @@ public class DataSerializableJUnitTest implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
       SerializableIntWrapper other = (SerializableIntWrapper) obj;
-      if (data != other.data)
-        return false;
+      if (data != other.data) return false;
       return true;
     }
   }
 
-  /**
-   * A node in an object chain
-   */
+  /** A node in an object chain */
   private static class Link implements DataSerializable, Serializable {
 
     private int id;
@@ -3241,8 +3057,7 @@ public class DataSerializableJUnitTest implements Serializable {
       this.id = id;
     }
 
-    public Link() {
-    }
+    public Link() {}
 
     @Override
     public void toData(DataOutput out) throws IOException {
@@ -3259,10 +3074,9 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  /**
-   * A <code>RegistrationListener</code> used for testing
-   */
-  private static class TestRegistrationListener implements InternalDataSerializer.RegistrationListener {
+  /** A <code>RegistrationListener</code> used for testing */
+  private static class TestRegistrationListener
+      implements InternalDataSerializer.RegistrationListener {
 
     /** Was this listener invoked? */
     private boolean invoked = false;
@@ -3271,8 +3085,8 @@ public class DataSerializableJUnitTest implements Serializable {
     private Throwable callbackError = null;
 
     /**
-     * Returns wether or not one of this listener methods was invoked.
-     * Before returning, the <code>invoked</code> flag is cleared.
+     * Returns wether or not one of this listener methods was invoked. Before returning, the <code>
+     * invoked</code> flag is cleared.
      */
     public boolean wasInvoked() {
       checkForError();
@@ -3326,20 +3140,16 @@ public class DataSerializableJUnitTest implements Serializable {
       String s = "Unexpected callback invocation";
       throw new UnsupportedOperationException(s);
     }
-
   }
 
   // tests added to cover bug 41206
 
-  /**
-   * Tests data serializing a <code>byte[][]</code> using {@link
-   * DataSerializer#writeObject}.
-   */
+  /** Tests data serializing a <code>byte[][]</code> using {@link DataSerializer#writeObject}. */
   @Test
   public void testByteArrayArrayObject() throws Exception {
-    byte[] ar0 = new byte[] { (byte) 1, (byte) 2, (byte) 3 };
-    byte[] ar1 = new byte[] { (byte) 4, (byte) 5, (byte) 6 };
-    byte[] ar2 = new byte[] { (byte) 7, (byte) 8, (byte) 9 };
+    byte[] ar0 = new byte[] {(byte) 1, (byte) 2, (byte) 3};
+    byte[] ar1 = new byte[] {(byte) 4, (byte) 5, (byte) 6};
+    byte[] ar2 = new byte[] {(byte) 7, (byte) 8, (byte) 9};
     byte[][] array = new byte[3][];
     array[0] = ar0;
     array[1] = ar1;
@@ -3362,14 +3172,13 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * Tests data serializing a <code>byte[][]</code> using {@link
-   * DataSerializer#writeObjectArray}.
+   * Tests data serializing a <code>byte[][]</code> using {@link DataSerializer#writeObjectArray}.
    */
   @Test
   public void testByteArrayArray() throws Exception {
-    byte[] ar0 = new byte[] { (byte) 1, (byte) 2, (byte) 3 };
-    byte[] ar1 = new byte[] { (byte) 4, (byte) 5, (byte) 6 };
-    byte[] ar2 = new byte[] { (byte) 7, (byte) 8, (byte) 9 };
+    byte[] ar0 = new byte[] {(byte) 1, (byte) 2, (byte) 3};
+    byte[] ar1 = new byte[] {(byte) 4, (byte) 5, (byte) 6};
+    byte[] ar2 = new byte[] {(byte) 7, (byte) 8, (byte) 9};
     byte[][] array = new byte[3][];
     array[0] = ar0;
     array[1] = ar1;
@@ -3415,9 +3224,8 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * Tests data serializing a non-<code>null</code> String whose length
-   * is > 0xFFFF, but who's utf-8 encoded length is < 0xFFFF
-   * See bug 40932.
+   * Tests data serializing a non-<code>null</code> String whose length is > 0xFFFF, but who's utf-8
+   * encoded length is < 0xFFFF See bug 40932.
    */
   @Test
   public void testStringEncodingLengthCrossesBoundry() throws Exception {
@@ -3444,16 +3252,22 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   private enum DAY_OF_WEEK implements PdxSerializerObject {
-    MON, TUE, WED, THU, FRI, SAT, SUN
+    MON,
+    TUE,
+    WED,
+    THU,
+    FRI,
+    SAT,
+    SUN
   }
 
   private enum MONTH implements PdxSerializerObject {
-    JAN, FEB, MAR
+    JAN,
+    FEB,
+    MAR
   }
 
-  /**
-   * Tests Dataserializing an Enum
-   */
+  /** Tests Dataserializing an Enum */
   @Test
   public void testEnum() throws Exception {
     DAY_OF_WEEK e = DAY_OF_WEEK.SUN;
@@ -3512,10 +3326,9 @@ public class DataSerializableJUnitTest implements Serializable {
   }
 
   /**
-   * Usually the DataInput instance passed to DataSerializer.readObject is an instance of InputStream.
-   * Make sure that an object that uses standard java serialization can be written and read from a
-   * DataInput that is not an instance of InputStream.
-   * See bug 47249.
+   * Usually the DataInput instance passed to DataSerializer.readObject is an instance of
+   * InputStream. Make sure that an object that uses standard java serialization can be written and
+   * read from a DataInput that is not an instance of InputStream. See bug 47249.
    */
   @Test
   public void testOddDataInput() throws Exception {
@@ -3611,6 +3424,5 @@ public class DataSerializableJUnitTest implements Serializable {
     }
   }
 
-  private class Foo {
-  }
+  private class Foo {}
 }

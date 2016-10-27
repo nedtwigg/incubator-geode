@@ -70,23 +70,17 @@ public class CountedMapLoopsJUnitTest extends JSR166TestCase { // TODO: reformat
       } catch (ClassNotFoundException e) {
         throw new RuntimeException("Class " + args[0] + " not found.");
       }
-    } else
-      mapClass = MAP_CLASS;
+    } else mapClass = MAP_CLASS;
 
-    if (args.length > 1)
-      maxThreads = Integer.parseInt(args[1]);
+    if (args.length > 1) maxThreads = Integer.parseInt(args[1]);
 
-    if (args.length > 2)
-      nkeys = Integer.parseInt(args[2]);
+    if (args.length > 2) nkeys = Integer.parseInt(args[2]);
 
-    if (args.length > 3)
-      pinsert = Integer.parseInt(args[3]);
+    if (args.length > 3) pinsert = Integer.parseInt(args[3]);
 
-    if (args.length > 4)
-      premove = Integer.parseInt(args[4]);
+    if (args.length > 4) premove = Integer.parseInt(args[4]);
 
-    if (args.length > 5)
-      nops = Integer.parseInt(args[5]);
+    if (args.length > 5) nops = Integer.parseInt(args[5]);
 
     // normalize probabilities wrt random number generator
     removesPerMaxRandom = (int) (((double) premove / 100.0 * 0x7FFFFFFFL));
@@ -102,8 +96,7 @@ public class CountedMapLoopsJUnitTest extends JSR166TestCase { // TODO: reformat
 
     final LoopHelpers.SimpleRandom rng = new LoopHelpers.SimpleRandom();
     Integer[] key = new Integer[nkeys];
-    for (int i = 0; i < key.length; ++i)
-      key[i] = new Integer(rng.next());
+    for (int i = 0; i < key.length; ++i) key[i] = new Integer(rng.next());
 
     AtomicInteger counter;
     // warmup
@@ -115,8 +108,7 @@ public class CountedMapLoopsJUnitTest extends JSR166TestCase { // TODO: reformat
       CyclicBarrier barrier = new CyclicBarrier(1, timer);
       new Runner(map, key, barrier, counter).run();
       int size = map.size();
-      if (size != counter.get())
-        throw new Error();
+      if (size != counter.get()) throw new Error();
       map.clear();
       map = null;
       Thread.sleep(100);
@@ -124,14 +116,13 @@ public class CountedMapLoopsJUnitTest extends JSR166TestCase { // TODO: reformat
     System.gc();
 
     int k = 1;
-    for (int i = 1; i <= maxThreads;) {
+    for (int i = 1; i <= maxThreads; ) {
       System.out.print("Threads: " + i + "\t:");
       Map map = (Map) mapClass.newInstance();
       counter = new AtomicInteger(0);
       LoopHelpers.BarrierTimer timer = new LoopHelpers.BarrierTimer();
       CyclicBarrier barrier = new CyclicBarrier(i + 1, timer);
-      for (int t = 0; t < i; ++t)
-        pool.execute(new Runner(map, key, barrier, counter));
+      for (int t = 0; t < i; ++t) pool.execute(new Runner(map, key, barrier, counter));
       barrier.await();
       barrier.await();
       long time = timer.getTime();
@@ -140,8 +131,7 @@ public class CountedMapLoopsJUnitTest extends JSR166TestCase { // TODO: reformat
       double secs = (double) (time) / 1000000000.0;
       System.out.println("\t " + secs + "s run time");
       int size = map.size();
-      if (size != counter.get())
-        throw new Error();
+      if (size != counter.get()) throw new Error();
       map.clear();
       map = null;
       //            System.gc();
@@ -149,8 +139,7 @@ public class CountedMapLoopsJUnitTest extends JSR166TestCase { // TODO: reformat
       if (i == k) {
         k = i << 1;
         i = i + (i >>> 1);
-      } else
-        i = k;
+      } else i = k;
     }
     pool.shutdown();
   }
@@ -176,10 +165,8 @@ public class CountedMapLoopsJUnitTest extends JSR166TestCase { // TODO: reformat
       // random-walk around key positions,  bunching accesses
       int r = rng.next();
       position += (r & 7) - 3;
-      while (position >= key.length)
-        position -= key.length;
-      while (position < 0)
-        position += key.length;
+      while (position >= key.length) position -= key.length;
+      while (position < 0) position += key.length;
 
       Integer k = key[position];
       Integer x = (Integer) map.get(k);
@@ -196,8 +183,7 @@ public class CountedMapLoopsJUnitTest extends JSR166TestCase { // TODO: reformat
           }
         }
       } else if (r < insertsPerMaxRandom) {
-        if (map.put(k, k) == null)
-          counter.getAndIncrement();
+        if (map.put(k, k) == null) counter.getAndIncrement();
         return 2;
       }
 
@@ -210,8 +196,7 @@ public class CountedMapLoopsJUnitTest extends JSR166TestCase { // TODO: reformat
       try {
         barrier.await();
         int ops = nops;
-        while (ops > 0)
-          ops -= step();
+        while (ops > 0) ops -= step();
         barrier.await();
       } catch (Exception ex) {
         ex.printStackTrace();

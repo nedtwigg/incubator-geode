@@ -19,14 +19,15 @@ package org.apache.geode.rest.internal.web.exception;
 
 /**
  * Indicates that Region does not found while trying to do some REST operation on that region.
- * <p/>
+ *
+ * <p>
+ *
  * @since GemFire 8.0
  */
 @SuppressWarnings("unused")
 public class RegionNotFoundException extends ResourceNotFoundException {
 
-  public RegionNotFoundException() {
-  }
+  public RegionNotFoundException() {}
 
   public RegionNotFoundException(final String message) {
     super(message);
@@ -39,5 +40,4 @@ public class RegionNotFoundException extends ResourceNotFoundException {
   public RegionNotFoundException(final String message, final Throwable cause) {
     super(message, cause);
   }
-
 }

@@ -27,8 +27,8 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular app vm on a distribution manager to
- * make an administration request about a particular region. It does not return a response.
+ * A message that is sent to a particular app vm on a distribution manager to make an administration
+ * request about a particular region. It does not return a response.
  */
 public abstract class RegionAdminMessage extends PooledDistributionMessage {
   // instance variables
@@ -42,9 +42,7 @@ public abstract class RegionAdminMessage extends PooledDistributionMessage {
     return this.regionName;
   }
 
-  /**
-   * @throws org.apache.geode.cache.CacheRuntimeException if no cache created
-   */
+  /** @throws org.apache.geode.cache.CacheRuntimeException if no cache created */
   protected Region getRegion(DistributedSystem sys) {
     Cache cache = CacheFactory.getInstance(sys);
     return cache.getRegion(this.regionName);

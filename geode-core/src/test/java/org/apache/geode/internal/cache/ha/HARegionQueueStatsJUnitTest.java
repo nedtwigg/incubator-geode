@@ -31,12 +31,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * JUnit test for verifying the proper functioning of HARegionQueue related
- * statistics.
- * 
- * 
- */
+/** JUnit test for verifying the proper functioning of HARegionQueue related statistics. */
 @Category(IntegrationTest.class)
 public class HARegionQueueStatsJUnitTest {
 
@@ -44,11 +39,9 @@ public class HARegionQueueStatsJUnitTest {
   protected Cache cache = null;
 
   /**
-   * Create the cache in setup. Currently the HA related stats are active under
-   * fine logging only.
-   * 
-   * @throws Exception -
-   *           thrown if any exception occurs in setUp
+   * Create the cache in setup. Currently the HA related stats are active under fine logging only.
+   *
+   * @throws Exception - thrown if any exception occurs in setUp
    */
   @Before
   public void setUp() throws Exception {
@@ -57,9 +50,8 @@ public class HARegionQueueStatsJUnitTest {
 
   /**
    * Close the cache in tear down *
-   * 
-   * @throws Exception -
-   *           thrown if any exception occurs in tearDown
+   *
+   * @throws Exception - thrown if any exception occurs in tearDown
    */
   @After
   public void tearDown() throws Exception {
@@ -68,10 +60,9 @@ public class HARegionQueueStatsJUnitTest {
 
   /**
    * Creates the cache instance for the test
-   * 
+   *
    * @return the cache instance
-   * @throws CacheException -
-   *           thrown if any exception occurs in cache creation
+   * @throws CacheException - thrown if any exception occurs in cache creation
    */
   private Cache createCache() throws CacheException {
     return new CacheFactory().set(MCAST_PORT, "0").create();
@@ -79,38 +70,41 @@ public class HARegionQueueStatsJUnitTest {
 
   /**
    * Creates a HARegionQueue object.
-   * 
-   * @param name -
-   *          name of the underlying region for region-queue
+   *
+   * @param name - name of the underlying region for region-queue
    * @return the HARegionQueue instance
    * @throws IOException
    * @throws ClassNotFoundException
    * @throws CacheException
    * @throws InterruptedException
    */
-  protected HARegionQueue createHARegionQueue(String name) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
-    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, HARegionQueue.NON_BLOCKING_HA_QUEUE, false);
+  protected HARegionQueue createHARegionQueue(String name)
+      throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    HARegionQueue regionqueue =
+        HARegionQueue.getHARegionQueueInstance(
+            name, cache, HARegionQueue.NON_BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 
   /**
    * Creates a HARegionQueue object.
-   * 
-   * @param name -
-   *          name of the underlying region for region-queue
-   * @param attrs -
-   *          attributes for the HARegionQueue
+   *
+   * @param name - name of the underlying region for region-queue
+   * @param attrs - attributes for the HARegionQueue
    * @return the HARegionQueue instance
    * @throws IOException
    * @throws ClassNotFoundException
    * @throws CacheException
    * @throws InterruptedException
    */
-  protected HARegionQueue createHARegionQueue(String name, HARegionQueueAttributes attrs) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+  protected HARegionQueue createHARegionQueue(String name, HARegionQueueAttributes attrs)
+      throws IOException, ClassNotFoundException, CacheException, InterruptedException {
     AttributesFactory factory = new AttributesFactory();
     factory.setDataPolicy(DataPolicy.REPLICATE);
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, attrs, HARegionQueue.NON_BLOCKING_HA_QUEUE, false);
+    HARegionQueue regionqueue =
+        HARegionQueue.getHARegionQueueInstance(
+            name, cache, attrs, HARegionQueue.NON_BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 
@@ -121,9 +115,8 @@ public class HARegionQueueStatsJUnitTest {
    * 3)Verify that statistics object is not null<br>
    * 4)Verify that total events added matches the eventsEnqued stats<br>
    * 5)Verify that eventsConflated stats is zero.
-   * 
-   * @throws Exception -
-   *           thrown if any problem occurs in test execution
+   *
+   * @throws Exception - thrown if any problem occurs in test execution
    */
   @Test
   public void testPutStatsNoConflation() throws Exception {
@@ -133,14 +126,19 @@ public class HARegionQueueStatsJUnitTest {
 
     int totalEvents = 100;
     for (int i = 0; i < totalEvents; i++) {
-      cf = new ConflatableObject("key" + i, "value" + i, new EventID(new byte[] { 1 }, 1, i), false, "testing");
+      cf =
+          new ConflatableObject(
+              "key" + i, "value" + i, new EventID(new byte[] {1}, 1, i), false, "testing");
       rq.put(cf);
     }
 
     HARegionQueueStats stats = rq.getStatistics();
     assertNotNull("stats for HARegionQueue found null", stats);
 
-    assertEquals("eventsEnqued by stats not equal to the actual number of events added to the queue", totalEvents, stats.getEventsEnqued());
+    assertEquals(
+        "eventsEnqued by stats not equal to the actual number of events added to the queue",
+        totalEvents,
+        stats.getEventsEnqued());
 
     assertEquals("eventsConflated by stats not equal zero", 0, stats.getEventsConflated());
   }
@@ -152,9 +150,8 @@ public class HARegionQueueStatsJUnitTest {
    * 3)Verify that statistics object is not null<br>
    * 4)Verify that total events added matches the eventsEnqued stats<br>
    * 5)Verify that eventsConflated stats is total events added minus 1.
-   * 
-   * @throws Exception -
-   *           thrown if any problem occurs in test execution
+   *
+   * @throws Exception - thrown if any problem occurs in test execution
    */
   @Test
   public void testPutStatsConflationEnabled() throws Exception {
@@ -164,30 +161,34 @@ public class HARegionQueueStatsJUnitTest {
 
     int totalEvents = 100;
     for (int i = 0; i < totalEvents; i++) {
-      cf = new ConflatableObject("key", "value" + i, new EventID(new byte[] { 1 }, 1, i), true, "testing");
+      cf =
+          new ConflatableObject(
+              "key", "value" + i, new EventID(new byte[] {1}, 1, i), true, "testing");
       rq.put(cf);
     }
 
     HARegionQueueStats stats = rq.getStatistics();
     assertNotNull("stats for HARegionQueue found null", stats);
 
-    assertEquals("eventsEnqued by stats not equal to the actual number of events added to the queue", totalEvents, stats.getEventsEnqued());
+    assertEquals(
+        "eventsEnqued by stats not equal to the actual number of events added to the queue",
+        totalEvents,
+        stats.getEventsEnqued());
 
-    assertEquals("stats for eventsConflated mismatched", totalEvents - 1, stats.getEventsConflated());
+    assertEquals(
+        "stats for eventsConflated mismatched", totalEvents - 1, stats.getEventsConflated());
   }
 
   /**
    * This test does the following:<br>
    * 1)Create HARegionQueue with expiry time as 1 sec<br>
-   * 2)Add objects with unique eventids and conflation false and sleep for some
-   * time.<br>
+   * 2)Add objects with unique eventids and conflation false and sleep for some time.<br>
    * 3)Verify that statistics object is not null<br>
    * 4)Verify that total events added matches the eventsEnqued stats<br>
-   * 5)Verify that eventsExpired stats is same as total events added as all
-   * events should have expired by 1 sec.
-   * 
-   * @throws Exception -
-   *           thrown if any problem occurs in test execution
+   * 5)Verify that eventsExpired stats is same as total events added as all events should have
+   * expired by 1 sec.
+   *
+   * @throws Exception - thrown if any problem occurs in test execution
    */
   @Test
   public void testExpiryStats() throws Exception {
@@ -199,7 +200,9 @@ public class HARegionQueueStatsJUnitTest {
     Conflatable cf = null;
     int totalEvents = 100;
     for (int i = 0; i < totalEvents; i++) {
-      cf = new ConflatableObject("key" + i, "value" + i, new EventID(new byte[] { 1 }, 1, i), false, "testing");
+      cf =
+          new ConflatableObject(
+              "key" + i, "value" + i, new EventID(new byte[] {1}, 1, i), false, "testing");
       rq.put(cf);
     }
 
@@ -207,7 +210,10 @@ public class HARegionQueueStatsJUnitTest {
 
     HARegionQueueStats stats = rq.stats;
     assertNotNull("stats for HARegionQueue found null", stats);
-    assertEquals("eventsEnqued by stats not equal to the actual number of events added to the queue", totalEvents, stats.getEventsEnqued());
+    assertEquals(
+        "eventsEnqued by stats not equal to the actual number of events added to the queue",
+        totalEvents,
+        stats.getEventsEnqued());
     assertEquals("expiredEvents not updated", totalEvents, stats.getEventsExpired());
   }
 
@@ -218,11 +224,10 @@ public class HARegionQueueStatsJUnitTest {
    * 3)Do some random peek and peek-batch operations and then call remove()<br>
    * 4)Verify that statistics object is not null<br>
    * 5)Verify that total events added matches the eventsEnqued stats<br>
-   * 6)Verify that eventsRemoved stats is same as the maximum batch size peeked
-   * in above peek operations(step 3).
-   * 
-   * @throws Exception -
-   *           thrown if any problem occurs in test execution
+   * 6)Verify that eventsRemoved stats is same as the maximum batch size peeked in above peek
+   * operations(step 3).
+   *
+   * @throws Exception - thrown if any problem occurs in test execution
    */
   @Test
   public void testRemoveStats() throws Exception {
@@ -231,7 +236,9 @@ public class HARegionQueueStatsJUnitTest {
 
     int totalEvents = 100;
     for (int i = 0; i < totalEvents; i++) {
-      cf = new ConflatableObject("key" + i, "value" + i, new EventID(new byte[] { 1 }, 1, i), false, "testing");
+      cf =
+          new ConflatableObject(
+              "key" + i, "value" + i, new EventID(new byte[] {1}, 1, i), false, "testing");
       rq.put(cf);
     }
 
@@ -248,9 +255,13 @@ public class HARegionQueueStatsJUnitTest {
     HARegionQueueStats stats = rq.getStatistics();
     assertNotNull("stats for HARegionQueue found null", stats);
 
-    assertEquals("eventsEnqued by stats not equal to the actual number of events added to the queue", totalEvents, stats.getEventsEnqued());
+    assertEquals(
+        "eventsEnqued by stats not equal to the actual number of events added to the queue",
+        totalEvents,
+        stats.getEventsEnqued());
 
-    assertEquals("All the events peeked were not removed", maxPeekBatchSize, stats.getEventsRemoved());
+    assertEquals(
+        "All the events peeked were not removed", maxPeekBatchSize, stats.getEventsRemoved());
   }
 
   /**
@@ -260,11 +271,10 @@ public class HARegionQueueStatsJUnitTest {
    * 3)Do some take and take-batch operations.<br>
    * 4)Verify that statistics object is not null<br>
    * 5)Verify that total events added matches the eventsEnqued stats<br>
-   * 6)Verify that eventsTaken stats is same as the sum of events taken in batch
-   * and individually (Step 3)
-   * 
-   * @throws Exception -
-   *           thrown if any problem occurs in test execution
+   * 6)Verify that eventsTaken stats is same as the sum of events taken in batch and individually
+   * (Step 3)
+   *
+   * @throws Exception - thrown if any problem occurs in test execution
    */
   @Test
   public void testTakeStats() throws Exception {
@@ -273,7 +283,9 @@ public class HARegionQueueStatsJUnitTest {
 
     int totalEvents = 100;
     for (int i = 0; i < totalEvents; i++) {
-      cf = new ConflatableObject("key" + i, "value" + i, new EventID(new byte[] { 1 }, 1, i), false, "testing");
+      cf =
+          new ConflatableObject(
+              "key" + i, "value" + i, new EventID(new byte[] {1}, 1, i), false, "testing");
       rq.put(cf);
     }
 
@@ -287,25 +299,29 @@ public class HARegionQueueStatsJUnitTest {
     HARegionQueueStats stats = rq.getStatistics();
     assertNotNull("stats for HARegionQueue found null", stats);
 
-    assertEquals("eventsEnqued by stats not equal to the actual number of events added to the queue", totalEvents, stats.getEventsEnqued());
+    assertEquals(
+        "eventsEnqued by stats not equal to the actual number of events added to the queue",
+        totalEvents,
+        stats.getEventsEnqued());
 
-    assertEquals("eventsTaken stats not matching with actual events taken", (takeInBatch + takeOneByOne), stats.getEventsTaken());
+    assertEquals(
+        "eventsTaken stats not matching with actual events taken",
+        (takeInBatch + takeOneByOne),
+        stats.getEventsTaken());
   }
 
   /**
    * This test does the following:<br>
    * 1)Create HARegionQueue.<br>
    * 2)Add objects with unique eventids and conflation false<br>
-   * 3)Remove the events through QRM api (
-   * <code>removeDispatchedEvents(EventID id)</code>) with a certain
-   * lastDispatchedSeqId<br>
+   * 3)Remove the events through QRM api ( <code>removeDispatchedEvents(EventID id)</code>) with a
+   * certain lastDispatchedSeqId<br>
    * 4)Verify that statistics object is not null<br>
    * 5)Verify that total events added matches the eventsEnqued stats<br>
-   * 6)Verify that eventsRemovedByQrm stats is same as the number of events
-   * removed by QRM (upto the event having lastDispatchedSeqId, step 3).
-   * 
-   * @throws Exception -
-   *           thrown if any problem occurs in test execution
+   * 6)Verify that eventsRemovedByQrm stats is same as the number of events removed by QRM (upto the
+   * event having lastDispatchedSeqId, step 3).
+   *
+   * @throws Exception - thrown if any problem occurs in test execution
    */
   @Test
   public void testRemoveByQrmStats() throws Exception {
@@ -314,35 +330,40 @@ public class HARegionQueueStatsJUnitTest {
 
     int totalEvents = 100;
     for (int i = 0; i < totalEvents; i++) {
-      cf = new ConflatableObject("key" + i, "value" + i, new EventID(new byte[] { 1 }, 1, i), false, "testing");
+      cf =
+          new ConflatableObject(
+              "key" + i, "value" + i, new EventID(new byte[] {1}, 1, i), false, "testing");
       rq.put(cf);
     }
 
     // call for removal thru QRM api
     int lastDispatchedSqId = 20;
-    EventID id = new EventID(new byte[] { 1 }, 1, lastDispatchedSqId);
+    EventID id = new EventID(new byte[] {1}, 1, lastDispatchedSqId);
     rq.removeDispatchedEvents(id);
 
     HARegionQueueStats stats = rq.getStatistics();
     assertNotNull("stats for HARegionQueue found null", stats);
 
-    assertEquals("eventsEnqued by stats not equal to the actual number of events added to the queue", totalEvents, stats.getEventsEnqued());
-    assertEquals("eventsRemovedByQrm stats not updated properly", (lastDispatchedSqId + 1), stats.getEventsRemovedByQrm());
-
+    assertEquals(
+        "eventsEnqued by stats not equal to the actual number of events added to the queue",
+        totalEvents,
+        stats.getEventsEnqued());
+    assertEquals(
+        "eventsRemovedByQrm stats not updated properly",
+        (lastDispatchedSqId + 1),
+        stats.getEventsRemovedByQrm());
   }
 
   /**
    * This test does the following:<br>
    * 1)Create HARegionQueue.<br>
-   * 2)Add objects with unique eventids as well as ThreadIDs and conflation
-   * false<br>
+   * 2)Add objects with unique eventids as well as ThreadIDs and conflation false<br>
    * 3)Verify that statistics object is not null<br>
    * 4)Verify that total events added matches the eventsEnqued stats<br>
-   * 5)Verify that threadIdentifiers stats is same as the number of events added
-   * as all the events had different ThreadIdentifier objects.
-   * 
-   * @throws Exception -
-   *           thrown if any problem occurs in test execution
+   * 5)Verify that threadIdentifiers stats is same as the number of events added as all the events
+   * had different ThreadIdentifier objects.
+   *
+   * @throws Exception - thrown if any problem occurs in test execution
    */
   @Test
   public void testThreadIdentifierStats() throws Exception {
@@ -351,16 +372,23 @@ public class HARegionQueueStatsJUnitTest {
 
     int totalEvents = 100;
     for (int i = 0; i < totalEvents; i++) {
-      cf = new ConflatableObject("key" + i, "value" + i, new EventID(new byte[] { 1 }, i, i), false, "testing");
+      cf =
+          new ConflatableObject(
+              "key" + i, "value" + i, new EventID(new byte[] {1}, i, i), false, "testing");
       rq.put(cf);
     }
 
     HARegionQueueStats stats = rq.getStatistics();
     assertNotNull("stats for HARegionQueue found null", stats);
 
-    assertEquals("eventsEnqued by stats not equal to the actual number of events added to the queue", totalEvents, stats.getEventsEnqued());
-    assertEquals("threadIdentifiers stats not updated properly", totalEvents, stats.getThreadIdentiferCount());
-
+    assertEquals(
+        "eventsEnqued by stats not equal to the actual number of events added to the queue",
+        totalEvents,
+        stats.getEventsEnqued());
+    assertEquals(
+        "threadIdentifiers stats not updated properly",
+        totalEvents,
+        stats.getThreadIdentiferCount());
   }
 
   /**
@@ -371,12 +399,10 @@ public class HARegionQueueStatsJUnitTest {
    * 4)Call remove()<br>
    * 5)Verify that statistics object is not null<br>
    * 6)Verify that total events added matches the eventsEnqued stats<br>
-   * 7)Verify that numVoidRemovals stats is same as the total events added since
-   * all the peeked events were removed by take() call and remove() was a void
-   * operation.
-   * 
-   * @throws Exception -
-   *           thrown if any problem occurs in test execution
+   * 7)Verify that numVoidRemovals stats is same as the total events added since all the peeked
+   * events were removed by take() call and remove() was a void operation.
+   *
+   * @throws Exception - thrown if any problem occurs in test execution
    */
   @Test
   public void testVoidRemovalStats() throws Exception {
@@ -385,7 +411,9 @@ public class HARegionQueueStatsJUnitTest {
 
     int totalEvents = 100;
     for (int i = 0; i < totalEvents; i++) {
-      cf = new ConflatableObject("key" + i, "value" + i, new EventID(new byte[] { 1 }, 1, i), false, "testing");
+      cf =
+          new ConflatableObject(
+              "key" + i, "value" + i, new EventID(new byte[] {1}, 1, i), false, "testing");
       rq.put(cf);
     }
 
@@ -396,9 +424,15 @@ public class HARegionQueueStatsJUnitTest {
     HARegionQueueStats stats = rq.getStatistics();
     assertNotNull("stats for HARegionQueue found null", stats);
 
-    assertEquals("eventsEnqued by stats not equal to the actual number of events added to the queue", totalEvents, stats.getEventsEnqued());
+    assertEquals(
+        "eventsEnqued by stats not equal to the actual number of events added to the queue",
+        totalEvents,
+        stats.getEventsEnqued());
 
-    assertEquals("Number of void removals shud be equal to total peeked since all the events were removed by take() before remove()", totalEvents, stats.getNumVoidRemovals());
+    assertEquals(
+        "Number of void removals shud be equal to total peeked since all the events were removed by take() before remove()",
+        totalEvents,
+        stats.getNumVoidRemovals());
   }
 
   /**
@@ -406,11 +440,10 @@ public class HARegionQueueStatsJUnitTest {
    * 1)Create HARegionQueue.<br>
    * 2)Add objects with unique eventids and conflation false.<br>
    * 3)Add some objects with same eventids(sequence ids)- duplicate events.<br>
-   * 4)Verify that numSequenceViolated stats is same as number of duplicate
-   * events.<br>
-   * 5)Verify that eventsEnqued stats is same as the queue size ( i.e.
-   * eventsEnqued stats is not updated for duplicate events.)
-   * 
+   * 4)Verify that numSequenceViolated stats is same as number of duplicate events.<br>
+   * 5)Verify that eventsEnqued stats is same as the queue size ( i.e. eventsEnqued stats is not
+   * updated for duplicate events.)
+   *
    * @throws Exception
    */
   @Test
@@ -420,21 +453,30 @@ public class HARegionQueueStatsJUnitTest {
 
     int totalEvents = 10;
     for (int i = 0; i < totalEvents; i++) {
-      cf = new ConflatableObject("key" + i, "value" + i, new EventID(new byte[] { 1 }, 1, i), false, "testing");
+      cf =
+          new ConflatableObject(
+              "key" + i, "value" + i, new EventID(new byte[] {1}, 1, i), false, "testing");
       rq.put(cf);
     }
 
     int seqViolated = 3;
     for (int i = 0; i < seqViolated; i++) {
-      cf = new ConflatableObject("key" + i, "value" + i, new EventID(new byte[] { 1 }, 1, i), false, "testing");
+      cf =
+          new ConflatableObject(
+              "key" + i, "value" + i, new EventID(new byte[] {1}, 1, i), false, "testing");
       rq.put(cf);
     }
 
     HARegionQueueStats stats = rq.getStatistics();
     assertNotNull("stats for HARegionQueue found null", stats);
 
-    assertEquals("Number of sequence violated by stats not equal to the actual number", seqViolated, stats.getNumSequenceViolated());
-    assertEquals("Events corresponding to sequence violation not added to the queue but eventsEnqued stats updated for them.", rq.size(), stats.getEventsEnqued());
+    assertEquals(
+        "Number of sequence violated by stats not equal to the actual number",
+        seqViolated,
+        stats.getNumSequenceViolated());
+    assertEquals(
+        "Events corresponding to sequence violation not added to the queue but eventsEnqued stats updated for them.",
+        rq.size(),
+        stats.getEventsEnqued());
   }
-
 }

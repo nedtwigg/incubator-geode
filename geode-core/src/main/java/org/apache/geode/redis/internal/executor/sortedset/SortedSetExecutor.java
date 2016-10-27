@@ -26,16 +26,20 @@ import org.apache.geode.redis.internal.executor.AbstractExecutor;
 public abstract class SortedSetExecutor extends AbstractExecutor {
 
   @Override
-  protected Region<ByteArrayWrapper, DoubleWrapper> getOrCreateRegion(ExecutionHandlerContext context, ByteArrayWrapper key, RedisDataType type) {
+  protected Region<ByteArrayWrapper, DoubleWrapper> getOrCreateRegion(
+      ExecutionHandlerContext context, ByteArrayWrapper key, RedisDataType type) {
     @SuppressWarnings("unchecked")
-    Region<ByteArrayWrapper, DoubleWrapper> r = (Region<ByteArrayWrapper, DoubleWrapper>) context.getRegionProvider().getOrCreateRegion(key, type, context);
+    Region<ByteArrayWrapper, DoubleWrapper> r =
+        (Region<ByteArrayWrapper, DoubleWrapper>)
+            context.getRegionProvider().getOrCreateRegion(key, type, context);
     return r;
   }
 
-  protected Region<ByteArrayWrapper, DoubleWrapper> getRegion(ExecutionHandlerContext context, ByteArrayWrapper key) {
+  protected Region<ByteArrayWrapper, DoubleWrapper> getRegion(
+      ExecutionHandlerContext context, ByteArrayWrapper key) {
     @SuppressWarnings("unchecked")
-    Region<ByteArrayWrapper, DoubleWrapper> r = (Region<ByteArrayWrapper, DoubleWrapper>) context.getRegionProvider().getRegion(key);
+    Region<ByteArrayWrapper, DoubleWrapper> r =
+        (Region<ByteArrayWrapper, DoubleWrapper>) context.getRegionProvider().getRegion(key);
     return r;
   }
-
 }

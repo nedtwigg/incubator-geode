@@ -89,28 +89,35 @@ public class PartitionedRegionQueryEvaluatorTest {
     when(pr.getMyId()).thenReturn(localNode);
     when(pr.getDataStore()).thenReturn(dataStore);
     when(pr.getCache()).thenReturn(cache);
-
   }
 
   @Test
   public void testLocalQueryReturnsResultsToPartitionedQueryEvaluator() throws Exception {
     List resultsForMember1 = createResultObjects("1", "2", "3");
 
-    PartitionedQueryScenario scenario = new PartitionedQueryScenario(localNode, allNodes, noFailingMembers, createFakeBucketMap(), new ProcessDataFaker() {
-      public void processData(PartitionedRegionQueryEvaluator prqe) {
-        //this test won't have any remote nodes responding
-      }
+    PartitionedQueryScenario scenario =
+        new PartitionedQueryScenario(
+            localNode,
+            allNodes,
+            noFailingMembers,
+            createFakeBucketMap(),
+            new ProcessDataFaker() {
+              public void processData(PartitionedRegionQueryEvaluator prqe) {
+                //this test won't have any remote nodes responding
+              }
 
-      public void executeQueryLocally(Collection resultsCollector) {
-        resultsCollector.add(resultsForMember1);
-      }
-    });
+              public void executeQueryLocally(Collection resultsCollector) {
+                resultsCollector.add(resultsForMember1);
+              }
+            });
 
     Set allBucketsToQuery = scenario.getAllBucketsToQuery();
     Queue<PartitionedQueryScenario> scenarios = createScenariosQueue(scenario);
     dataStore.setScenarios(scenarios);
 
-    PartitionedRegionQueryEvaluator prqe = new ExtendedPartitionedRegionQueryEvaluator(system, pr, query, null, new LinkedResultSet(), allBucketsToQuery, scenarios);
+    PartitionedRegionQueryEvaluator prqe =
+        new ExtendedPartitionedRegionQueryEvaluator(
+            system, pr, query, null, new LinkedResultSet(), allBucketsToQuery, scenarios);
     Collection results = prqe.queryBuckets(null).asList();
     assertNotNull(results);
     assertEquals(resultsForMember1.size(), results.size());
@@ -123,21 +130,29 @@ public class PartitionedRegionQueryEvaluatorTest {
     List resultsForMember1 = createResultObjects("1", "2", "3");
     List resultsForMember2 = createResultObjects("4", "5", "6");
 
-    PartitionedQueryScenario scenario = new PartitionedQueryScenario(localNode, allNodes, noFailingMembers, createFakeBucketMap(), new ProcessDataFaker() {
-      public void processData(PartitionedRegionQueryEvaluator prqe) {
-        prqe.processData(resultsForMember2, remoteNodeA, 0, true);
-      }
+    PartitionedQueryScenario scenario =
+        new PartitionedQueryScenario(
+            localNode,
+            allNodes,
+            noFailingMembers,
+            createFakeBucketMap(),
+            new ProcessDataFaker() {
+              public void processData(PartitionedRegionQueryEvaluator prqe) {
+                prqe.processData(resultsForMember2, remoteNodeA, 0, true);
+              }
 
-      public void executeQueryLocally(Collection resultsCollector) {
-        resultsCollector.add(resultsForMember1);
-      }
-    });
+              public void executeQueryLocally(Collection resultsCollector) {
+                resultsCollector.add(resultsForMember1);
+              }
+            });
 
     Set allBucketsToQuery = scenario.getAllBucketsToQuery();
     Queue<PartitionedQueryScenario> scenarios = createScenariosQueue(scenario);
     dataStore.setScenarios(scenarios);
 
-    PartitionedRegionQueryEvaluator prqe = new ExtendedPartitionedRegionQueryEvaluator(system, pr, query, null, new LinkedResultSet(), allBucketsToQuery, scenarios);
+    PartitionedRegionQueryEvaluator prqe =
+        new ExtendedPartitionedRegionQueryEvaluator(
+            system, pr, query, null, new LinkedResultSet(), allBucketsToQuery, scenarios);
     Collection results = prqe.queryBuckets(null).asList();
     List expectedResults = new LinkedList();
     expectedResults.addAll(resultsForMember1);
@@ -149,37 +164,54 @@ public class PartitionedRegionQueryEvaluatorTest {
   }
 
   @Test
-  public void testFailingRemoteNodeAndRetryOnLocalNodeDoesNotSquashResultsOfOriginalQueryOnLocalNode() throws Exception {
+  public void
+      testFailingRemoteNodeAndRetryOnLocalNodeDoesNotSquashResultsOfOriginalQueryOnLocalNode()
+          throws Exception {
     List resultsForMember1 = createResultObjects("1", "2", "3");
     List resultsForMember2 = createResultObjects("A", "B", "C");
     List resultsForMember1ForRetry = createResultObjects("&", "$", "!");
 
     Set<InternalDistributedMember> failingMembers = new HashSet<>();
     failingMembers.add(remoteNodeB);
-    PartitionedQueryScenario allNodesUpAtBeginning = new PartitionedQueryScenario(localNode, allNodes, failingMembers, createFakeBucketMap(), new ProcessDataFaker() {
-      public void processData(PartitionedRegionQueryEvaluator prqe) {
-        prqe.processData(resultsForMember2, remoteNodeA, 0, true);
-      }
+    PartitionedQueryScenario allNodesUpAtBeginning =
+        new PartitionedQueryScenario(
+            localNode,
+            allNodes,
+            failingMembers,
+            createFakeBucketMap(),
+            new ProcessDataFaker() {
+              public void processData(PartitionedRegionQueryEvaluator prqe) {
+                prqe.processData(resultsForMember2, remoteNodeA, 0, true);
+              }
 
-      public void executeQueryLocally(Collection resultsCollector) {
-        resultsCollector.add(resultsForMember1);
-      }
-    });
+              public void executeQueryLocally(Collection resultsCollector) {
+                resultsCollector.add(resultsForMember1);
+              }
+            });
 
-    PartitionedQueryScenario afterFailureScenario = new PartitionedQueryScenario(localNode, allNodes, noFailingMembers, createFakeBucketMapFailedNodesToLocalMember(), new ProcessDataFaker() {
-      public void processData(PartitionedRegionQueryEvaluator prqe) {
-        //on retry we do not need to fake a retry on a remote node for this test
-      }
+    PartitionedQueryScenario afterFailureScenario =
+        new PartitionedQueryScenario(
+            localNode,
+            allNodes,
+            noFailingMembers,
+            createFakeBucketMapFailedNodesToLocalMember(),
+            new ProcessDataFaker() {
+              public void processData(PartitionedRegionQueryEvaluator prqe) {
+                //on retry we do not need to fake a retry on a remote node for this test
+              }
 
-      public void executeQueryLocally(Collection resultsCollector) {
-        resultsCollector.add(resultsForMember1);
-      }
-    });
+              public void executeQueryLocally(Collection resultsCollector) {
+                resultsCollector.add(resultsForMember1);
+              }
+            });
     Set allBucketsToQuery = allNodesUpAtBeginning.getAllBucketsToQuery();
-    Queue<PartitionedQueryScenario> scenarios = createScenariosQueue(allNodesUpAtBeginning, afterFailureScenario);
+    Queue<PartitionedQueryScenario> scenarios =
+        createScenariosQueue(allNodesUpAtBeginning, afterFailureScenario);
     dataStore.setScenarios(scenarios);
 
-    PartitionedRegionQueryEvaluator prqe = new ExtendedPartitionedRegionQueryEvaluator(system, pr, query, null, new LinkedResultSet(), allBucketsToQuery, scenarios);
+    PartitionedRegionQueryEvaluator prqe =
+        new ExtendedPartitionedRegionQueryEvaluator(
+            system, pr, query, null, new LinkedResultSet(), allBucketsToQuery, scenarios);
     Collection results = prqe.queryBuckets(null).asList();
 
     List expectedResults = new LinkedList();
@@ -190,7 +222,6 @@ public class PartitionedRegionQueryEvaluatorTest {
     assertEquals(expectedResults.size(), results.size());
     results.removeAll(expectedResults);
     assertTrue(results.isEmpty());
-
   }
 
   private Map<InternalDistributedMember, List<Integer>> createFakeBucketMap() {
@@ -202,7 +233,8 @@ public class PartitionedRegionQueryEvaluatorTest {
   }
 
   //fake bucket map to use after we fake a node failure
-  private Map<InternalDistributedMember, List<Integer>> createFakeBucketMapFailedNodesToLocalMember() {
+  private Map<InternalDistributedMember, List<Integer>>
+      createFakeBucketMapFailedNodesToLocalMember() {
     Map<InternalDistributedMember, List<Integer>> bucketToNodeMap = new HashMap<>();
     bucketToNodeMap.put(localNode, createBucketList(1, 2, 3, 7, 8, 9));
     bucketToNodeMap.put(remoteNodeA, createBucketList(4, 5, 6));
@@ -225,7 +257,8 @@ public class PartitionedRegionQueryEvaluatorTest {
     return results;
   }
 
-  private Queue<PartitionedQueryScenario> createScenariosQueue(PartitionedQueryScenario... scenarios) {
+  private Queue<PartitionedQueryScenario> createScenariosQueue(
+      PartitionedQueryScenario... scenarios) {
     Queue<PartitionedQueryScenario> queue = new LinkedList<>();
     for (PartitionedQueryScenario scenario : scenarios) {
       queue.add(scenario);
@@ -248,17 +281,26 @@ public class PartitionedRegionQueryEvaluatorTest {
     }
   }
 
-  private static class ExtendedPartitionedRegionQueryEvaluator extends PartitionedRegionQueryEvaluator {
+  private static class ExtendedPartitionedRegionQueryEvaluator
+      extends PartitionedRegionQueryEvaluator {
 
     Queue<PartitionedQueryScenario> scenarios;
 
     //pass through so we can fake out the executeQuery locally
     PRQueryProcessor extendedPRQueryProcessor;
 
-    public ExtendedPartitionedRegionQueryEvaluator(InternalDistributedSystem sys, PartitionedRegion pr, DefaultQuery query, Object[] parameters, SelectResults cumulativeResults, Set<Integer> bucketsToQuery, Queue<PartitionedQueryScenario> scenarios) {
+    public ExtendedPartitionedRegionQueryEvaluator(
+        InternalDistributedSystem sys,
+        PartitionedRegion pr,
+        DefaultQuery query,
+        Object[] parameters,
+        SelectResults cumulativeResults,
+        Set<Integer> bucketsToQuery,
+        Queue<PartitionedQueryScenario> scenarios) {
       super(sys, pr, query, parameters, cumulativeResults, bucketsToQuery);
       this.scenarios = scenarios;
-      extendedPRQueryProcessor = new ExtendedPRQueryProcessor(pr, query, null, new LinkedList(bucketsToQuery));
+      extendedPRQueryProcessor =
+          new ExtendedPRQueryProcessor(pr, query, null, new LinkedList(bucketsToQuery));
     }
 
     private PartitionedQueryScenario currentScenario() {
@@ -272,8 +314,10 @@ public class PartitionedRegionQueryEvaluatorTest {
     }
 
     @Override
-    protected StreamingQueryPartitionResponse createStreamingQueryPartitionResponse(InternalDistributedSystem system, HashMap<InternalDistributedMember, List<Integer>> n2b) {
-      StreamingQueryPartitionResponse response = new FakeNumFailStreamingQueryPartitionResponse(system, n2b, this, scenarios);
+    protected StreamingQueryPartitionResponse createStreamingQueryPartitionResponse(
+        InternalDistributedSystem system, HashMap<InternalDistributedMember, List<Integer>> n2b) {
+      StreamingQueryPartitionResponse response =
+          new FakeNumFailStreamingQueryPartitionResponse(system, n2b, this, scenarios);
       return response;
     }
 
@@ -300,11 +344,16 @@ public class PartitionedRegionQueryEvaluatorTest {
 
     private class ExtendedPRQueryProcessor extends PRQueryProcessor {
 
-      public ExtendedPRQueryProcessor(PartitionedRegion pr, DefaultQuery query, Object[] parameters, List buckets) {
+      public ExtendedPRQueryProcessor(
+          PartitionedRegion pr, DefaultQuery query, Object[] parameters, List buckets) {
         super(pr, query, parameters, buckets);
       }
 
-      public ExtendedPRQueryProcessor(PartitionedRegionDataStore prDS, DefaultQuery query, Object[] parameters, List<Integer> buckets) {
+      public ExtendedPRQueryProcessor(
+          PartitionedRegionDataStore prDS,
+          DefaultQuery query,
+          Object[] parameters,
+          List<Integer> buckets) {
         super(prDS, query, parameters, buckets);
       }
 
@@ -315,18 +364,24 @@ public class PartitionedRegionQueryEvaluatorTest {
       }
     }
 
-    private class FakeNumFailStreamingQueryPartitionResponse extends StreamingQueryPartitionResponse {
+    private class FakeNumFailStreamingQueryPartitionResponse
+        extends StreamingQueryPartitionResponse {
       private PartitionedRegionQueryEvaluator processor;
       Queue<PartitionedQueryScenario> scenarios;
 
-      public FakeNumFailStreamingQueryPartitionResponse(InternalDistributedSystem system, HashMap<InternalDistributedMember, List<Integer>> n2b, PartitionedRegionQueryEvaluator processor, Queue<PartitionedQueryScenario> scenarios) {
+      public FakeNumFailStreamingQueryPartitionResponse(
+          InternalDistributedSystem system,
+          HashMap<InternalDistributedMember, List<Integer>> n2b,
+          PartitionedRegionQueryEvaluator processor,
+          Queue<PartitionedQueryScenario> scenarios) {
         super(system, n2b.keySet());
         this.processor = processor;
         this.scenarios = scenarios;
       }
 
       @Override
-      public Set<InternalDistributedMember> waitForCacheOrQueryException() throws CacheException, QueryException {
+      public Set<InternalDistributedMember> waitForCacheOrQueryException()
+          throws CacheException, QueryException {
         currentScenario().processDataFaker.processData(processor);
         Set<InternalDistributedMember> returnValue = currentScenario().failingNodes;
         advanceTheScenario();
@@ -356,7 +411,12 @@ public class PartitionedRegionQueryEvaluatorTest {
     private ProcessDataFaker processDataFaker;
     private Map<InternalDistributedMember, List<Integer>> bucketMap;
 
-    public PartitionedQueryScenario(InternalDistributedMember localNode, ArrayList allNodes, Set<InternalDistributedMember> failingNodes, Map<InternalDistributedMember, List<Integer>> bucketMap, ProcessDataFaker processDataFaker) {
+    public PartitionedQueryScenario(
+        InternalDistributedMember localNode,
+        ArrayList allNodes,
+        Set<InternalDistributedMember> failingNodes,
+        Map<InternalDistributedMember, List<Integer>> bucketMap,
+        ProcessDataFaker processDataFaker) {
       this.localNode = localNode;
       this.allNodes = allNodes;
       this.failingNodes = failingNodes;
@@ -372,11 +432,15 @@ public class PartitionedRegionQueryEvaluatorTest {
 
     public Set<InternalDistributedMember> getBucketOwners(Integer bucketId) {
       Set<InternalDistributedMember> owners = new HashSet<>();
-      bucketMap.entrySet().stream().forEach(entrySet -> {
-        if (entrySet.getValue().contains(bucketId)) {
-          owners.add(entrySet.getKey());
-        }
-      });
+      bucketMap
+          .entrySet()
+          .stream()
+          .forEach(
+              entrySet -> {
+                if (entrySet.getValue().contains(bucketId)) {
+                  owners.add(entrySet.getKey());
+                }
+              });
       return owners;
     }
 
@@ -384,5 +448,4 @@ public class PartitionedRegionQueryEvaluatorTest {
       return getBucketOwners(bucketId).contains(localNode);
     }
   }
-
 }

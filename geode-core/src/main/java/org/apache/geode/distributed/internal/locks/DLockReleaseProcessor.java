@@ -39,10 +39,7 @@ import org.apache.geode.internal.Assert;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
-/**
- * Synchronously releases a lock.
- *
- */
+/** Synchronously releases a lock. */
 public class DLockReleaseProcessor extends ReplyProcessor21 {
   private static final Logger logger = LogService.getLogger();
 
@@ -50,14 +47,18 @@ public class DLockReleaseProcessor extends ReplyProcessor21 {
 
   protected Object objectName;
 
-  public DLockReleaseProcessor(DM dm, InternalDistributedMember member, String serviceName, Object objectName) {
+  public DLockReleaseProcessor(
+      DM dm, InternalDistributedMember member, String serviceName, Object objectName) {
     super(dm, member);
     this.objectName = objectName;
   }
 
-  /** Returns true if release was acknowledged by the grantor; false means
-   *  we targeted someone who is not the grantor */
-  protected boolean release(InternalDistributedMember grantor, String serviceName, boolean lockBatch, int lockId) {
+  /**
+   * Returns true if release was acknowledged by the grantor; false means we targeted someone who is
+   * not the grantor
+   */
+  protected boolean release(
+      InternalDistributedMember grantor, String serviceName, boolean lockBatch, int lockId) {
 
     DM dm = getDistributionManager();
     DLockReleaseMessage msg = new DLockReleaseMessage();
@@ -83,8 +84,7 @@ public class DLockReleaseProcessor extends ReplyProcessor21 {
       e.handleAsUnexpected();
     }
 
-    if (this.reply == null)
-      return false;
+    if (this.reply == null) return false;
     return this.reply.replyCode == DLockReleaseReplyMessage.OK;
   }
 
@@ -96,7 +96,9 @@ public class DLockReleaseProcessor extends ReplyProcessor21 {
   @Override
   public void process(DistributionMessage msg) {
     try {
-      Assert.assertTrue(msg instanceof DLockReleaseReplyMessage, "DLockReleaseProcessor is unable to process message of type " + msg.getClass());
+      Assert.assertTrue(
+          msg instanceof DLockReleaseReplyMessage,
+          "DLockReleaseProcessor is unable to process message of type " + msg.getClass());
 
       DLockReleaseReplyMessage myReply = (DLockReleaseReplyMessage) msg;
       final boolean isDebugEnabled_DLS = logger.isTraceEnabled(LogMarker.DLS);
@@ -108,11 +110,19 @@ public class DLockReleaseProcessor extends ReplyProcessor21 {
       if (isDebugEnabled_DLS) {
         // grantor acknowledged release of lock...
         if (myReply.replyCode == DLockReleaseReplyMessage.OK) {
-          logger.trace(LogMarker.DLS, "Successfully released {} in {}", this.objectName, myReply.serviceName);
+          logger.trace(
+              LogMarker.DLS,
+              "Successfully released {} in {}",
+              this.objectName,
+              myReply.serviceName);
         }
         // sender denies being the grantor...
         else if (myReply.replyCode == DLockReleaseReplyMessage.NOT_GRANTOR) {
-          logger.trace(LogMarker.DLS, "{} has responded DLockReleaseReplyMessage.NOT_GRANTOR for {}", myReply.getSender(), myReply.serviceName);
+          logger.trace(
+              LogMarker.DLS,
+              "{} has responded DLockReleaseReplyMessage.NOT_GRANTOR for {}",
+              myReply.getSender(),
+              myReply.serviceName);
         }
       }
     } finally {
@@ -126,7 +136,8 @@ public class DLockReleaseProcessor extends ReplyProcessor21 {
   // -------------------------------------------------------------------------
   //   DLockReleaseMessage
   // -------------------------------------------------------------------------
-  public static final class DLockReleaseMessage extends HighPriorityDistributionMessage implements MessageWithReply {
+  public static final class DLockReleaseMessage extends HighPriorityDistributionMessage
+      implements MessageWithReply {
     /** The name of the DistributedLockService */
     protected String serviceName;
 
@@ -146,17 +157,14 @@ public class DLockReleaseProcessor extends ReplyProcessor21 {
     protected DLockService svc;
     protected DLockGrantor grantor;
 
-    public DLockReleaseMessage() {
-    }
+    public DLockReleaseMessage() {}
 
     @Override
     public int getProcessorId() {
       return this.processorId;
     }
 
-    /**
-     * Processes this message - invoked on the node that is the lock grantor.
-     */
+    /** Processes this message - invoked on the node that is the lock grantor. */
     @Override
     protected void process(final DistributionManager dm) {
       boolean failed = true;
@@ -211,28 +219,30 @@ public class DLockReleaseProcessor extends ReplyProcessor21 {
       basicProcess(dm, true); // don't use executor
     }
 
-    /** 
-     * Execute basicProcess inside Pooled Executor because grantor may not 
-     * be initializing which will require us to wait.
-     * <p>
-     * this.svc and this.grantor must be set before calling this method.
+    /**
+     * Execute basicProcess inside Pooled Executor because grantor may not be initializing which
+     * will require us to wait.
+     *
+     * <p>this.svc and this.grantor must be set before calling this method.
      */
     private void executeBasicProcess(final DM dm) {
       final DLockReleaseMessage msg = this;
-      dm.getWaitingThreadPool().execute(new Runnable() {
-        public void run() {
-          if (logger.isTraceEnabled(LogMarker.DLS)) {
-            logger.trace(LogMarker.DLS, "[executeBasicProcess] waitForGrantor {}", msg);
-          }
-          basicProcess(dm, true);
-        }
-      });
+      dm.getWaitingThreadPool()
+          .execute(
+              new Runnable() {
+                public void run() {
+                  if (logger.isTraceEnabled(LogMarker.DLS)) {
+                    logger.trace(LogMarker.DLS, "[executeBasicProcess] waitForGrantor {}", msg);
+                  }
+                  basicProcess(dm, true);
+                }
+              });
     }
 
-    /** 
+    /**
      * Perform basic processing of this message.
-     * <p>
-     * this.svc and this.grantor must be set before calling this method.
+     *
+     * <p>this.svc and this.grantor must be set before calling this method.
      */
     protected void basicProcess(final DM dm, final boolean waitForGrantor) {
       final boolean isDebugEnabled_DLS = logger.isTraceEnabled(LogMarker.DLS);
@@ -242,8 +252,7 @@ public class DLockReleaseProcessor extends ReplyProcessor21 {
       int replyCode = DLockReleaseReplyMessage.NOT_GRANTOR;
       ReplyException replyException = null;
       try {
-        if (svc == null || svc.isDestroyed())
-          return;
+        if (svc == null || svc.isDestroyed()) return;
 
         if (waitForGrantor) {
           try {
@@ -321,7 +330,16 @@ public class DLockReleaseProcessor extends ReplyProcessor21 {
         } // grantor != null
         else {
           if (DLockGrantor.DEBUG_SUSPEND_LOCK && isDebugEnabled_DLS) {
-            logger.trace(LogMarker.DLS, "DLockReleaseMessage, omitted postRemoteRelease lock on " + objectName + "; grantor = " + grantor + ", lockBatch = " + lockBatch + ", replyMsg = " + replyMsg);
+            logger.trace(
+                LogMarker.DLS,
+                "DLockReleaseMessage, omitted postRemoteRelease lock on "
+                    + objectName
+                    + "; grantor = "
+                    + grantor
+                    + ", lockBatch = "
+                    + lockBatch
+                    + ", replyMsg = "
+                    + replyMsg);
           }
         }
       }
@@ -353,7 +371,17 @@ public class DLockReleaseProcessor extends ReplyProcessor21 {
 
     @Override
     public String toString() {
-      return new StringBuilder("DLockReleaseMessage for ").append(this.serviceName).append(", ").append(this.objectName).append("; processorId=").append(this.processorId).append("; lockBatch=").append(this.lockBatch).append("; lockId=").append(this.lockId).toString();
+      return new StringBuilder("DLockReleaseMessage for ")
+          .append(this.serviceName)
+          .append(", ")
+          .append(this.objectName)
+          .append("; processorId=")
+          .append(this.processorId)
+          .append("; lockBatch=")
+          .append(this.lockBatch)
+          .append("; lockId=")
+          .append(this.lockId)
+          .toString();
     }
   } // DLockReleaseMessage
 
@@ -368,7 +396,7 @@ public class DLockReleaseProcessor extends ReplyProcessor21 {
     /** Name of service to release the lock in; for toString only */
     protected String serviceName;
 
-    /** OK or NOT_GRANTOR for the service  */
+    /** OK or NOT_GRANTOR for the service */
     protected int replyCode = NOT_GRANTOR;
 
     @Override
@@ -398,15 +426,15 @@ public class DLockReleaseProcessor extends ReplyProcessor21 {
       buff.append(this.serviceName);
       buff.append("; replyCode=");
       switch (this.replyCode) {
-      case NOT_GRANTOR:
-        buff.append("NOT_GRANTOR");
-        break;
-      case OK:
-        buff.append("OK");
-        break;
-      default:
-        buff.append(String.valueOf(this.replyCode));
-        break;
+        case NOT_GRANTOR:
+          buff.append("NOT_GRANTOR");
+          break;
+        case OK:
+          buff.append("OK");
+          break;
+        default:
+          buff.append(String.valueOf(this.replyCode));
+          break;
       }
       buff.append("; sender=");
       buff.append(getSender());

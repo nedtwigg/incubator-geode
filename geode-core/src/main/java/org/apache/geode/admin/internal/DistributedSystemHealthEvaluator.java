@@ -28,43 +28,33 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Contains the logic for evaluating the health of an entire GemFire
- * distributed system according to the thresholds provided in a {@link
- * DistributedSystemHealthConfig}.
+ * Contains the logic for evaluating the health of an entire GemFire distributed system according to
+ * the thresholds provided in a {@link DistributedSystemHealthConfig}.
  *
- * <P>
- *
- * Note that unlike other evaluators, the
- * <code>DistributedSystemHealthEvaluator</code> resides in the
- * "administrator" VM and not in the member VMs.  This is because
- * there only needs to be one
- * <code>DistributedSystemHealthEvaluator</code> per distributed
- * system.
- *
+ * <p>Note that unlike other evaluators, the <code>DistributedSystemHealthEvaluator</code> resides
+ * in the "administrator" VM and not in the member VMs. This is because there only needs to be one
+ * <code>DistributedSystemHealthEvaluator</code> per distributed system.
  *
  * @since GemFire 3.5
- * */
-class DistributedSystemHealthEvaluator extends AbstractHealthEvaluator implements MembershipListener {
+ */
+class DistributedSystemHealthEvaluator extends AbstractHealthEvaluator
+    implements MembershipListener {
 
   /** The config from which we get the evaluation criteria */
   private DistributedSystemHealthConfig config;
 
-  /** The distribution manager with which this MembershipListener is
-   * registered */
+  /** The distribution manager with which this MembershipListener is registered */
   private DM dm;
 
   /** The description of the distributed system being evaluated */
   private String description;
 
-  /** The number of application members that have unexpectedly left
-   * since the previous evaluation */
+  /** The number of application members that have unexpectedly left since the previous evaluation */
   private int crashedApplications;
 
   ///////////////////////  Constructors  ///////////////////////
 
-  /**
-   * Creates a new <code>DistributedSystemHealthEvaluator</code>
-   */
+  /** Creates a new <code>DistributedSystemHealthEvaluator</code> */
   DistributedSystemHealthEvaluator(DistributedSystemHealthConfig config, DM dm) {
     super(null, dm);
 
@@ -108,18 +98,21 @@ class DistributedSystemHealthEvaluator extends AbstractHealthEvaluator implement
     return this.description;
   }
 
-  /**  
-   * Checks to make sure that the number of application members of
-   * the distributed system that have left unexpected since the last
-   * evaluation is less than the {@linkplain
-   * DistributedSystemHealthConfig#getMaxDepartedApplications
-   * threshold}.  If not, the status is "poor" health.
+  /**
+   * Checks to make sure that the number of application members of the distributed system that have
+   * left unexpected since the last evaluation is less than the {@linkplain
+   * DistributedSystemHealthConfig#getMaxDepartedApplications threshold}. If not, the status is
+   * "poor" health.
    */
   void checkDepartedApplications(List status) {
     synchronized (this) {
       long threshold = this.config.getMaxDepartedApplications();
       if (this.crashedApplications > threshold) {
-        String s = LocalizedStrings.DistributedSystemHealth_THE_NUMBER_OF_APPLICATIONS_THAT_HAVE_LEFT_THE_DISTRIBUTED_SYSTEM_0_EXCEEDS_THE_THRESHOLD_1.toLocalizedString(new Object[] { Long.valueOf(this.crashedApplications), Long.valueOf(threshold) });
+        String s =
+            LocalizedStrings
+                .DistributedSystemHealth_THE_NUMBER_OF_APPLICATIONS_THAT_HAVE_LEFT_THE_DISTRIBUTED_SYSTEM_0_EXCEEDS_THE_THRESHOLD_1
+                .toLocalizedString(
+                    new Object[] {Long.valueOf(this.crashedApplications), Long.valueOf(threshold)});
         status.add(poorHealth(s));
       }
       this.crashedApplications = 0;
@@ -136,33 +129,27 @@ class DistributedSystemHealthEvaluator extends AbstractHealthEvaluator implement
     this.dm.removeMembershipListener(this);
   }
 
-  public void memberJoined(InternalDistributedMember id) {
+  public void memberJoined(InternalDistributedMember id) {}
 
-  }
-
-  /**
-   * Keeps track of which members depart unexpectedly
-   */
+  /** Keeps track of which members depart unexpectedly */
   public void memberDeparted(InternalDistributedMember id, boolean crashed) {
-    if (!crashed)
-      return;
+    if (!crashed) return;
     synchronized (this) {
       int kind = id.getVmKind();
       switch (kind) {
-      case DistributionManager.LOCATOR_DM_TYPE:
-      case DistributionManager.NORMAL_DM_TYPE:
-        this.crashedApplications++;
-        break;
-      default:
-        break;
+        case DistributionManager.LOCATOR_DM_TYPE:
+        case DistributionManager.NORMAL_DM_TYPE:
+          this.crashedApplications++;
+          break;
+        default:
+          break;
       }
     } // synchronized
   }
 
-  public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
-  }
+  public void quorumLost(
+      Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {}
 
-  public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
-  }
-
+  public void memberSuspect(
+      InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {}
 }

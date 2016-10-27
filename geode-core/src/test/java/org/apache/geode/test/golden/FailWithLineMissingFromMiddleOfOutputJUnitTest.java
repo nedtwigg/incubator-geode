@@ -25,8 +25,8 @@ import org.apache.geode.test.process.ProcessWrapper;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Verifies that test output missing an expected line (at the middle 
- * of the golden file) will fail with that line as the failure message.
+ * Verifies that test output missing an expected line (at the middle of the golden file) will fail
+ * with that line as the failure message.
  */
 @Category(IntegrationTest.class)
 public class FailWithLineMissingFromMiddleOfOutputJUnitTest extends FailOutputTestCase {
@@ -43,7 +43,19 @@ public class FailWithLineMissingFromMiddleOfOutputJUnitTest extends FailOutputTe
 
   @Test
   public void testFailWithLineMissingFromEndOfOutput() throws Exception {
-    final String goldenString = "Begin " + name() + ".main" + "\n" + "Press Enter to continue." + "\n" + problem() + "\n" + "End " + name() + ".main" + "\n";
+    final String goldenString =
+        "Begin "
+            + name()
+            + ".main"
+            + "\n"
+            + "Press Enter to continue."
+            + "\n"
+            + problem()
+            + "\n"
+            + "End "
+            + name()
+            + ".main"
+            + "\n";
     debug(goldenString, "GOLDEN");
 
     final ProcessWrapper process = createProcessWrapper(new ProcessWrapper.Builder(), getClass());
@@ -57,7 +69,9 @@ public class FailWithLineMissingFromMiddleOfOutputJUnitTest extends FailOutputTe
       assertOutputMatchesGoldenFile(process.getOutput(), goldenString);
       fail("assertOutputMatchesGoldenFile should have failed due to " + problem());
     } catch (AssertionError expected) {
-      assertTrue("AssertionError message should contain \"" + problem() + "\"", expected.getMessage().contains(problem()));
+      assertTrue(
+          "AssertionError message should contain \"" + problem() + "\"",
+          expected.getMessage().contains(problem()));
     }
   }
 

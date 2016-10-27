@@ -62,10 +62,8 @@ public class MyGatewayEventFilter implements GatewayEventFilter, Declarable {
   }
 
   @Override
-  public void init(Properties props) {
-  }
+  public void init(Properties props) {}
 
   @Override
-  public void close() {
-  }
+  public void close() {}
 }

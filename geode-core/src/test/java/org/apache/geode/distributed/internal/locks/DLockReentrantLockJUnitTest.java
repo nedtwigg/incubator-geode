@@ -51,9 +51,7 @@ public class DLockReentrantLockJUnitTest {
     cache.close();
   }
 
-  /**
-   * Tests GEM-96/GEODE-678
-   */
+  /** Tests GEM-96/GEODE-678 */
   @Test
   public void testReentrantLock() throws Exception {
 

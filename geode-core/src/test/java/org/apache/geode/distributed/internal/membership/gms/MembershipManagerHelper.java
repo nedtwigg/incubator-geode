@@ -30,8 +30,8 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
 /**
- * This helper class provides access to membership manager information that
- * is not otherwise public
+ * This helper class provides access to membership manager information that is not otherwise public
+ *
  * @since GemFire 5.5
  */
 public class MembershipManagerHelper {
@@ -44,21 +44,20 @@ public class MembershipManagerHelper {
     return mgr;
   }
 
-  /** act sick.  don't accept new connections and don't process ordered
-   * messages.  Use beHealthyMember() to reverse the effects.<p>
-   * Note that part of beSickMember's processing is to interrupt and
-   * stop any reader threads.  A slow listener in a reader thread should
-   * eat this interrupt.
+  /**
+   * act sick. don't accept new connections and don't process ordered messages. Use
+   * beHealthyMember() to reverse the effects.
+   *
+   * <p>Note that part of beSickMember's processing is to interrupt and stop any reader threads. A
+   * slow listener in a reader thread should eat this interrupt.
+   *
    * @param sys
    */
   public static void beSickMember(DistributedSystem sys) {
     ((Manager) getMembershipManager(sys)).beSick();
   }
 
-  /**
-   * inhibit failure detection responses.  This can be used in conjunction
-   * with beSickMember
-   */
+  /** inhibit failure detection responses. This can be used in conjunction with beSickMember */
   public static void playDead(DistributedSystem sys) {
     try {
       ((Manager) getMembershipManager(sys)).playDead();
@@ -82,12 +81,16 @@ public class MembershipManagerHelper {
   }
 
   /** register a test hook with the manager */
-  public static void addTestHook(DistributedSystem sys, org.apache.geode.distributed.internal.membership.MembershipTestHook hook) {
+  public static void addTestHook(
+      DistributedSystem sys,
+      org.apache.geode.distributed.internal.membership.MembershipTestHook hook) {
     getMembershipManager(sys).registerTestHook(hook);
   }
 
   /** remove a registered test hook */
-  public static void removeTestHook(DistributedSystem sys, org.apache.geode.distributed.internal.membership.MembershipTestHook hook) {
+  public static void removeTestHook(
+      DistributedSystem sys,
+      org.apache.geode.distributed.internal.membership.MembershipTestHook hook) {
     getMembershipManager(sys).unregisterTestHook(hook);
   }
 
@@ -110,38 +113,40 @@ public class MembershipManagerHelper {
     return getMembershipManager(sys).isSurpriseMember(mbr);
   }
 
-  /**
-   * add a member id to the surprise members set, with the given millisecond
-   * clock birth time
-   */
-  public static void addSurpriseMember(DistributedSystem sys, DistributedMember mbr, long birthTime) {
+  /** add a member id to the surprise members set, with the given millisecond clock birth time */
+  public static void addSurpriseMember(
+      DistributedSystem sys, DistributedMember mbr, long birthTime) {
     ((Manager) getMembershipManager(sys)).addSurpriseMemberForTesting(mbr, birthTime);
   }
 
   /**
-   * inhibits/enables logging of forced-disconnect messages.
-   * For quorum-lost messages this adds expected-exception annotations
-   * before and after the messages to make them invisible to greplogs
+   * inhibits/enables logging of forced-disconnect messages. For quorum-lost messages this adds
+   * expected-exception annotations before and after the messages to make them invisible to greplogs
    */
   public static void inhibitForcedDisconnectLogging(boolean b) {
     GMSMembershipManager.inhibitForcedDisconnectLogging(b);
   }
 
   /**
-   * wait for a member to leave the view.  Throws an assertionerror
-   * if the timeout period elapses before the member leaves
+   * wait for a member to leave the view. Throws an assertionerror if the timeout period elapses
+   * before the member leaves
    */
-  public static void waitForMemberDeparture(final DistributedSystem sys, final DistributedMember member, final long timeout) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return !getMembershipManager(sys).getView().contains((InternalDistributedMember) member);
-      }
+  public static void waitForMemberDeparture(
+      final DistributedSystem sys, final DistributedMember member, final long timeout) {
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return !getMembershipManager(sys)
+                .getView()
+                .contains((InternalDistributedMember) member);
+          }
 
-      public String description() {
-        String assMsg = "Waited over " + timeout + " ms for " + member + " to depart, but it didn't";
-        return assMsg;
-      }
-    };
+          public String description() {
+            String assMsg =
+                "Waited over " + timeout + " ms for " + member + " to depart, but it didn't";
+            return assMsg;
+          }
+        };
     Wait.waitForCriterion(ev, timeout, 200, true);
   }
 
@@ -162,5 +167,4 @@ public class MembershipManagerHelper {
     }
     MembershipManagerHelper.inhibitForcedDisconnectLogging(false);
   }
-
 }

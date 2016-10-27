@@ -37,7 +37,8 @@ public class SIsMemberExecutor extends SetExecutor {
     List<byte[]> commandElems = command.getProcessedCommand();
 
     if (commandElems.size() < 3) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.SISMEMBER));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.SISMEMBER));
       return;
     }
 
@@ -46,7 +47,8 @@ public class SIsMemberExecutor extends SetExecutor {
 
     checkDataType(key, RedisDataType.REDIS_SET, context);
     @SuppressWarnings("unchecked")
-    Region<ByteArrayWrapper, Boolean> keyRegion = (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getRegion(key);
+    Region<ByteArrayWrapper, Boolean> keyRegion =
+        (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getRegion(key);
 
     if (keyRegion == null) {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_EXISTS));
@@ -55,8 +57,6 @@ public class SIsMemberExecutor extends SetExecutor {
 
     if (keyRegion.containsKey(member))
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), EXISTS));
-    else
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_EXISTS));
+    else command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_EXISTS));
   }
-
 }

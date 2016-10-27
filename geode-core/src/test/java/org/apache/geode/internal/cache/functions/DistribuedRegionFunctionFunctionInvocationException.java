@@ -38,7 +38,8 @@ public class DistribuedRegionFunctionFunctionInvocationException extends Functio
     if (retryCount != 0 && count >= retryCount) {
       context.getResultSender().lastResult(new Integer(5));
     } else {
-      throw new FunctionInvocationTargetException("I have been thrown from DistribuedRegionFunctionFunctionInvocationException");
+      throw new FunctionInvocationTargetException(
+          "I have been thrown from DistribuedRegionFunctionFunctionInvocationException");
     }
   }
 

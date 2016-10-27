@@ -40,18 +40,13 @@ import org.apache.geode.test.dunit.LogWriterUtils;
 import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
-/**
- * This test class checks around 89 attributes of Member MBeans
- *
- */
+/** This test class checks around 89 attributes of Member MBeans */
 @Category(DistributedTest.class)
 public class MemberMBeanAttributesDUnitTest extends ManagementTestBase {
 
   private static final long serialVersionUID = 1L;
 
-  /**
-   * Factor converting bytes to MB
-   */
+  /** Factor converting bytes to MB */
   private static final long MBFactor = 1024 * 1024;
 
   // This must be bigger than the dunit ack-wait-threshold for the revoke
@@ -66,12 +61,15 @@ public class MemberMBeanAttributesDUnitTest extends ManagementTestBase {
   }
 
   protected void sample(VM vm1) {
-    vm1.invoke(new SerializableRunnable("Create Cache") {
-      public void run() {
-        InternalDistributedSystem.getConnectedInstance().getStatSampler().getSampleCollector().sample(NanoTimer.getTime());
-      }
-
-    });
+    vm1.invoke(
+        new SerializableRunnable("Create Cache") {
+          public void run() {
+            InternalDistributedSystem.getConnectedInstance()
+                .getStatSampler()
+                .getSampleCollector()
+                .sample(NanoTimer.getTime());
+          }
+        });
   }
 
   @Test
@@ -79,18 +77,16 @@ public class MemberMBeanAttributesDUnitTest extends ManagementTestBase {
     initManagement(false);
     setupForReplicateRegonAttributes(managedNodeList.get(0), 1);
     setupForReplicateRegonAttributes(managedNodeList.get(1), 201);
-    sample(managedNodeList.get(1));// Sample now    
+    sample(managedNodeList.get(1)); // Sample now
     isReplicatedRegionAttrsOK(managedNodeList.get(1));
-
   }
 
   @Test
   public void testPRRegionAttributes() throws Exception {
     initManagement(false);
     setupForPartitionedRegonAttributes(managedNodeList.get(0), 1);
-    sample(managedNodeList.get(0));// Sample now    
+    sample(managedNodeList.get(0)); // Sample now
     isPartitionedRegionAttrsOK(managedNodeList.get(0));
-
   }
 
   @Test
@@ -107,159 +103,160 @@ public class MemberMBeanAttributesDUnitTest extends ManagementTestBase {
   }
 
   public void setupForReplicateRegonAttributes(VM vm1, final int offset) throws Exception {
-    vm1.invoke(new SerializableRunnable("Create Cache") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        RegionFactory rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
-        LogWriterUtils.getLogWriter().info("Creating Dist Region");
-        rf.create("testRegion1");
-        rf.create("testRegion2");
-        rf.create("testRegion3");
+    vm1.invoke(
+        new SerializableRunnable("Create Cache") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            RegionFactory rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
+            LogWriterUtils.getLogWriter().info("Creating Dist Region");
+            rf.create("testRegion1");
+            rf.create("testRegion2");
+            rf.create("testRegion3");
 
-        Region r1 = cache.getRegion("/testRegion1");
-        rf.createSubregion(r1, "testSubRegion1");
+            Region r1 = cache.getRegion("/testRegion1");
+            rf.createSubregion(r1, "testSubRegion1");
 
-        Region r2 = cache.getRegion("/testRegion2");
-        rf.createSubregion(r2, "testSubRegion2");
+            Region r2 = cache.getRegion("/testRegion2");
+            rf.createSubregion(r2, "testSubRegion2");
 
-        Region r3 = cache.getRegion("/testRegion3");
-        rf.createSubregion(r3, "testSubRegion3");
+            Region r3 = cache.getRegion("/testRegion3");
+            rf.createSubregion(r3, "testSubRegion3");
 
-        for (int i = offset; i < offset + 200; i++) {
-          r1.put(new Integer(i), new Integer(i));
-          r2.put(new Integer(i), new Integer(i));
-          r3.put(new Integer(i), new Integer(i));
-        }
-
-      }
-    });
-
+            for (int i = offset; i < offset + 200; i++) {
+              r1.put(new Integer(i), new Integer(i));
+              r2.put(new Integer(i), new Integer(i));
+              r3.put(new Integer(i), new Integer(i));
+            }
+          }
+        });
   }
 
   public void setupForPartitionedRegonAttributes(VM vm1, final int offset) throws Exception {
-    vm1.invoke(new SerializableRunnable("Create Cache") {
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        RegionFactory prRF = cache.createRegionFactory(RegionShortcut.PARTITION_REDUNDANT);
+    vm1.invoke(
+        new SerializableRunnable("Create Cache") {
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            RegionFactory prRF = cache.createRegionFactory(RegionShortcut.PARTITION_REDUNDANT);
 
-        prRF.create("testPRRegion1");
-        prRF.create("testPRRegion2");
-        prRF.create("testPRRegion3");
+            prRF.create("testPRRegion1");
+            prRF.create("testPRRegion2");
+            prRF.create("testPRRegion3");
 
-        Region pr1 = cache.getRegion("/testPRRegion1");
-        Region pr2 = cache.getRegion("/testPRRegion2");
-        Region pr3 = cache.getRegion("/testPRRegion3");
+            Region pr1 = cache.getRegion("/testPRRegion1");
+            Region pr2 = cache.getRegion("/testPRRegion2");
+            Region pr3 = cache.getRegion("/testPRRegion3");
 
-        for (int i = offset; i < offset + 200; i++) {
-          pr1.put(new Integer(i), new Integer(i));
-          pr2.put(new Integer(i), new Integer(i));
-          pr3.put(new Integer(i), new Integer(i));
-        }
-
-      }
-    });
-
+            for (int i = offset; i < offset + 200; i++) {
+              pr1.put(new Integer(i), new Integer(i));
+              pr2.put(new Integer(i), new Integer(i));
+              pr3.put(new Integer(i), new Integer(i));
+            }
+          }
+        });
   }
 
   /**
    * This will check all the attributes which does not depend on any distribution message.
+   *
    * @param vm1
    * @throws Exception
    */
   @SuppressWarnings("serial")
   public void isPartitionedRegionAttrsOK(VM vm1) throws Exception {
-    vm1.invoke(new SerializableRunnable("Create Cache") {
-      public void run() {
-        MemberMXBean bean = managementService.getMemberMXBean();
-        assertEquals(3, bean.getPartitionRegionCount());
-        assertEquals(339, bean.getTotalBucketCount());
-        assertEquals(339, bean.getTotalPrimaryBucketCount());
-
-      }
-    });
-
+    vm1.invoke(
+        new SerializableRunnable("Create Cache") {
+          public void run() {
+            MemberMXBean bean = managementService.getMemberMXBean();
+            assertEquals(3, bean.getPartitionRegionCount());
+            assertEquals(339, bean.getTotalBucketCount());
+            assertEquals(339, bean.getTotalPrimaryBucketCount());
+          }
+        });
   }
 
   /**
    * This will check all the attributes which does not depend on any distribution message.
+   *
    * @param vm1
    * @throws Exception
    */
   @SuppressWarnings("serial")
   public void isReplicatedRegionAttrsOK(VM vm1) throws Exception {
-    vm1.invoke(new SerializableRunnable("Create Cache") {
-      public void run() {
-        MemberMXBean bean = managementService.getMemberMXBean();
+    vm1.invoke(
+        new SerializableRunnable("Create Cache") {
+          public void run() {
+            MemberMXBean bean = managementService.getMemberMXBean();
 
-        assertEquals(6, bean.getTotalRegionCount());
-        assertEquals(1200, bean.getTotalRegionEntryCount());
+            assertEquals(6, bean.getTotalRegionCount());
+            assertEquals(1200, bean.getTotalRegionEntryCount());
 
-        assertEquals(3, bean.getRootRegionNames().length);
-        assertEquals(600, bean.getInitialImageKeysReceived());
-        assertEquals(6, bean.listRegions().length);
-      }
-    });
-
+            assertEquals(3, bean.getRootRegionNames().length);
+            assertEquals(600, bean.getInitialImageKeysReceived());
+            assertEquals(6, bean.listRegions().length);
+          }
+        });
   }
 
   /**
    * This will check all the attributes which does not depend on any distribution message.
+   *
    * @param vm1
    * @throws Exception
    */
   @SuppressWarnings("serial")
   public void isOSRelatedAttrsOK(VM vm1) throws Exception {
-    vm1.invoke(new SerializableRunnable("Create Cache") {
-      public void run() {
-        MemberMXBean bean = managementService.getMemberMXBean();
+    vm1.invoke(
+        new SerializableRunnable("Create Cache") {
+          public void run() {
+            MemberMXBean bean = managementService.getMemberMXBean();
 
-        try {
-          assertEquals(ProcessUtils.identifyPid(), bean.getProcessId());
-        } catch (PidUnavailableException e) {
-          e.printStackTrace();
-        }
-        assertEquals(ManagementFactory.getRuntimeMXBean().getClassPath(), bean.getClassPath());
+            try {
+              assertEquals(ProcessUtils.identifyPid(), bean.getProcessId());
+            } catch (PidUnavailableException e) {
+              e.printStackTrace();
+            }
+            assertEquals(ManagementFactory.getRuntimeMXBean().getClassPath(), bean.getClassPath());
 
-        assertTrue(bean.getCurrentTime() > 0);
-        // Sleep for one second
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        assertTrue(bean.getMemberUpTime() > 0);
-        assertTrue(bean.getCurrentHeapSize() > 10);
-        assertTrue(bean.getFreeHeapSize() > 0);
-        assertEquals(bean.getMaximumHeapSize(), ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() / MBFactor);
+            assertTrue(bean.getCurrentTime() > 0);
+            // Sleep for one second
+            try {
+              Thread.sleep(1000);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+            assertTrue(bean.getMemberUpTime() > 0);
+            assertTrue(bean.getCurrentHeapSize() > 10);
+            assertTrue(bean.getFreeHeapSize() > 0);
+            assertEquals(
+                bean.getMaximumHeapSize(),
+                ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() / MBFactor);
 
-        // @TODO  Need more definitive test case
-        assertTrue(bean.fetchJvmThreads().length > 0);
+            // @TODO  Need more definitive test case
+            assertTrue(bean.fetchJvmThreads().length > 0);
 
-        // @TODO  Need more definitive test case
-        //System.out.println(" CPU Usage is "+ bean.getCpuUsage());
-        //assertTrue(bean.getCpuUsage() > 0.0f);
+            // @TODO  Need more definitive test case
+            //System.out.println(" CPU Usage is "+ bean.getCpuUsage());
+            //assertTrue(bean.getCpuUsage() > 0.0f);
 
-        //bean.getFileDescriptorLimit() 
-      }
-    });
-
+            //bean.getFileDescriptorLimit()
+          }
+        });
   }
 
   @SuppressWarnings("serial")
   public void isConfigRelatedAttrsOK(VM vm1) throws Exception {
-    vm1.invoke(new SerializableRunnable("Create Cache") {
-      public void run() {
-        MemberMXBean bean = managementService.getMemberMXBean();
+    vm1.invoke(
+        new SerializableRunnable("Create Cache") {
+          public void run() {
+            MemberMXBean bean = managementService.getMemberMXBean();
 
-        assertFalse(bean.hasGatewayReceiver());
-        assertFalse(bean.hasGatewaySender());
-        assertFalse(bean.isLocator());
-        assertFalse(bean.isManager());
-        assertFalse(bean.isServer());
-        assertFalse(bean.isManagerCreated());
-
-      }
-    });
-
+            assertFalse(bean.hasGatewayReceiver());
+            assertFalse(bean.hasGatewaySender());
+            assertFalse(bean.isLocator());
+            assertFalse(bean.isManager());
+            assertFalse(bean.isServer());
+            assertFalse(bean.isManagerCreated());
+          }
+        });
   }
 }

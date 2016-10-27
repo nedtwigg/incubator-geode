@@ -37,5 +37,4 @@ public class ConcurrentAsyncEventQueueOffHeapDUnitTest extends ConcurrentAsyncEv
   public boolean isOffHeap() {
     return true;
   }
-
 }

@@ -25,23 +25,35 @@ import org.apache.geode.internal.statistics.StatisticsTypeFactoryImpl;
 import org.apache.geode.internal.statistics.platform.ProcessStats;
 
 /**
- * <P>This class provides the interface for statistics about a
- * Linux operating system process that is using a GemFire system.
+ * This class provides the interface for statistics about a Linux operating system process that is
+ * using a GemFire system.
  */
 public class LinuxProcessStats {
-  final static int imageSizeINT = 0;
-  final static int rssSizeINT = 1;
+  static final int imageSizeINT = 0;
+  static final int rssSizeINT = 1;
 
-  private final static StatisticsType myType;
+  private static final StatisticsType myType;
 
   private static void checkOffset(String name, int offset) {
     int id = myType.nameToId(name);
-    Assert.assertTrue(offset == id, "Expected the offset for " + name + " to be " + offset + " but it was " + id);
+    Assert.assertTrue(
+        offset == id, "Expected the offset for " + name + " to be " + offset + " but it was " + id);
   }
 
   static {
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
-    myType = f.createType("LinuxProcessStats", "Statistics on a Linux process.", new StatisticDescriptor[] { f.createIntGauge("imageSize", "The size of the process's image in megabytes.", "megabytes"), f.createIntGauge("rssSize", "The size of the process's resident set size in megabytes. (assumes PAGESIZE=4096, specify -Dgemfire.statistics.linux.pageSize=<pagesize> to adjust)", "megabytes"), });
+    myType =
+        f.createType(
+            "LinuxProcessStats",
+            "Statistics on a Linux process.",
+            new StatisticDescriptor[] {
+              f.createIntGauge(
+                  "imageSize", "The size of the process's image in megabytes.", "megabytes"),
+              f.createIntGauge(
+                  "rssSize",
+                  "The size of the process's resident set size in megabytes. (assumes PAGESIZE=4096, specify -Dgemfire.statistics.linux.pageSize=<pagesize> to adjust)",
+                  "megabytes"),
+            });
     checkOffset("imageSize", imageSizeINT);
     checkOffset("rssSize", rssSizeINT);
   }
@@ -55,12 +67,12 @@ public class LinuxProcessStats {
   }
 
   /**
-   * Returns a <code>ProcessStats</code> that wraps Linux process
-   * <code>Statistics</code>. 
+   * Returns a <code>ProcessStats</code> that wraps Linux process <code>Statistics</code>.
    *
    * @since GemFire 3.5
    */
-  public static ProcessStats createProcessStats(final Statistics stats) { // TODO: was package-protected
+  public static ProcessStats createProcessStats(
+      final Statistics stats) { // TODO: was package-protected
     if (stats instanceof LocalStatisticsImpl) {
       HostStatHelper.refresh((LocalStatisticsImpl) stats);
     } // otherwise its a Dummy implementation so do nothing
@@ -71,5 +83,4 @@ public class LinuxProcessStats {
       }
     };
   }
-
 }

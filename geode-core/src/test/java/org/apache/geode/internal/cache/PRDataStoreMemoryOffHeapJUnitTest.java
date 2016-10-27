@@ -26,7 +26,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
  * Tests PartitionedRegion DataStore currentAllocatedMemory operation.
- * 
+ *
  * @since Geode 1.0
  */
 @Category(IntegrationTest.class)
@@ -39,7 +39,7 @@ public class PRDataStoreMemoryOffHeapJUnitTest extends PRDataStoreMemoryJUnitTes
     return dsProps;
   }
 
-  @SuppressWarnings({ "rawtypes", "deprecation" })
+  @SuppressWarnings({"rawtypes", "deprecation"})
   @Override
   protected RegionFactory<?, ?> defineRegionFactory() {
     return new RegionFactory().setPartitionAttributes(definePartitionAttributes()).setOffHeap(true);

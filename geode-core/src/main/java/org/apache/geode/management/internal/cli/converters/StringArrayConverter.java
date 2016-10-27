@@ -24,12 +24,7 @@ import org.springframework.shell.core.MethodTarget;
 import org.apache.geode.management.cli.ConverterHint;
 import org.apache.geode.management.internal.cli.MultipleValueAdapter;
 
-/**
- *
- * @since GemFire 7.0
- * 
- * 
- */
+/** @since GemFire 7.0 */
 public class StringArrayConverter extends MultipleValueAdapter<String[]> {
 
   @Override
@@ -38,7 +33,12 @@ public class StringArrayConverter extends MultipleValueAdapter<String[]> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String[] existingData, String context, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String[] existingData,
+      String context,
+      MethodTarget target) {
     return false;
   }
 
@@ -50,5 +50,4 @@ public class StringArrayConverter extends MultipleValueAdapter<String[]> {
       return false;
     }
   }
-
 }

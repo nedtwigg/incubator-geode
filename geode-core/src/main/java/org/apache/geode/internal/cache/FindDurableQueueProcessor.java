@@ -44,8 +44,8 @@ import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * A processor for helping a locator find the durable queues for a given durable client id.
- * Asks each bridge server if they have the durable id and builds a list of matching servers.
+ * A processor for helping a locator find the durable queues for a given durable client id. Asks
+ * each bridge server if they have the durable id and builds a list of matching servers.
  *
  * @since GemFire 5.7
  */
@@ -57,7 +57,8 @@ public class FindDurableQueueProcessor extends ReplyProcessor21 {
   final ArrayList durableLocations = new ArrayList();
 
   // @todo gregp: add javadocs
-  public static ArrayList sendAndFind(ServerLocator locator, ClientProxyMembershipID proxyId, DM dm) {
+  public static ArrayList sendAndFind(
+      ServerLocator locator, ClientProxyMembershipID proxyId, DM dm) {
     Set members = ((ControllerAdvisor) locator.getDistributionAdvisor()).adviseBridgeServers();
     if (members.contains(dm.getId())) {
       // Don't send message to local server, see #50534.
@@ -79,7 +80,8 @@ public class FindDurableQueueProcessor extends ReplyProcessor21 {
     return locations;
   }
 
-  private static void findLocalDurableQueues(ClientProxyMembershipID proxyId, ArrayList<ServerLocation> matches) {
+  private static void findLocalDurableQueues(
+      ClientProxyMembershipID proxyId, ArrayList<ServerLocation> matches) {
     Cache c = GemFireCacheImpl.getInstance();
     if (c != null) {
       List l = c.getCacheServers();
@@ -111,19 +113,20 @@ public class FindDurableQueueProcessor extends ReplyProcessor21 {
     super.process(msg);
   }
 
-  /** Creates a new instance of FindDurableQueueProcessor
-   */
+  /** Creates a new instance of FindDurableQueueProcessor */
   private FindDurableQueueProcessor(DM dm, Set members) {
     super(dm, members);
   }
 
   ///////////////   Inner message classes  //////////////////
 
-  public static class FindDurableQueueMessage extends PooledDistributionMessage implements MessageWithReply {
+  public static class FindDurableQueueMessage extends PooledDistributionMessage
+      implements MessageWithReply {
     private int processorId;
     private ClientProxyMembershipID proxyId;
 
-    protected static void send(ClientProxyMembershipID proxyId, DM dm, Set members, ReplyProcessor21 proc) {
+    protected static void send(
+        ClientProxyMembershipID proxyId, DM dm, Set members, ReplyProcessor21 proc) {
       FindDurableQueueMessage msg = new FindDurableQueueMessage();
       msg.processorId = proc.getProcessorId();
       msg.proxyId = proxyId;
@@ -161,7 +164,6 @@ public class FindDurableQueueProcessor extends ReplyProcessor21 {
           dm.putOutgoing(reply);
         }
       }
-
     }
 
     public int getDSFID() {
@@ -191,7 +193,11 @@ public class FindDurableQueueProcessor extends ReplyProcessor21 {
     @Override
     public String toString() {
       StringBuffer buff = new StringBuffer();
-      buff.append("FindDurableQueueMessage (proxyId='").append(this.proxyId).append("' processorId=").append(this.processorId).append(")");
+      buff.append("FindDurableQueueMessage (proxyId='")
+          .append(this.proxyId)
+          .append("' processorId=")
+          .append(this.processorId)
+          .append(")");
       return buff.toString();
     }
   }
@@ -223,7 +229,11 @@ public class FindDurableQueueProcessor extends ReplyProcessor21 {
     @Override
     public String toString() {
       StringBuffer buff = new StringBuffer();
-      buff.append("FindDurableQueueReply (matches='").append(this.matches).append("' processorId=").append(this.processorId).append(")");
+      buff.append("FindDurableQueueReply (matches='")
+          .append(this.matches)
+          .append("' processorId=")
+          .append(this.processorId)
+          .append(")");
       return buff.toString();
     }
   }

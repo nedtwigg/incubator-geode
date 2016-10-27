@@ -23,9 +23,7 @@ import org.apache.geode.cache.Cache;
 import org.apache.geode.internal.util.CollectionUtils;
 
 /**
- * Simple implementation of {@link ExtensionPoint} for easy integration with
- * existing objects.
- * 
+ * Simple implementation of {@link ExtensionPoint} for easy integration with existing objects.
  *
  * @since GemFire 8.1
  */
@@ -34,22 +32,19 @@ public class SimpleExtensionPoint<T> implements ExtensionPoint<T> {
 
   protected final ArrayList<Extension<T>> extensions = new ArrayList<Extension<T>>();
 
-  protected final Iterable<Extension<T>> iterable = CollectionUtils.unmodifiableIterable(extensions);
+  protected final Iterable<Extension<T>> iterable =
+      CollectionUtils.unmodifiableIterable(extensions);
 
   protected final Extensible<T> extensible;
 
   protected final T target;
 
   /**
-   * Construct a new {@link SimpleExtensionPoint} around the given extensible
-   * target.
-   * 
-   * @param extensible
-   *          the {@link Extensible} object this extension point acts on.
-   * 
-   * @param target
-   *          the <code>T</code> instance being extended. Likely the same as
-   *          <code>exensible</code>.
+   * Construct a new {@link SimpleExtensionPoint} around the given extensible target.
+   *
+   * @param extensible the {@link Extensible} object this extension point acts on.
+   * @param target the <code>T</code> instance being extended. Likely the same as <code>exensible
+   *     </code>.
    * @since GemFire 8.1
    */
   public SimpleExtensionPoint(final Extensible<T> extensible, final T target) {

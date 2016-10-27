@@ -18,11 +18,12 @@ package org.apache.geode.internal.sequencelog;
 
 import java.util.EnumSet;
 
-/**
- *
- */
+/** */
 public enum GraphType {
-  REGION, KEY, MESSAGE, MEMBER;
+  REGION,
+  KEY,
+  MESSAGE,
+  MEMBER;
 
   public byte getId() {
     return (byte) this.ordinal();

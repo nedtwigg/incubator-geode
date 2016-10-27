@@ -41,10 +41,8 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VersionedStatsRegionEntryHeapIntKey extends VersionedStatsRegionEntryHeap {
   public VersionedStatsRegionEntryHeapIntKey(RegionEntryContext context, int key, Object value) {
@@ -57,9 +55,14 @@ public class VersionedStatsRegionEntryHeapIntKey extends VersionedStatsRegionEnt
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VersionedStatsRegionEntryHeapIntKey> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VersionedStatsRegionEntryHeapIntKey.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VersionedStatsRegionEntryHeapIntKey>
+      lastModifiedUpdater =
+          AtomicLongFieldUpdater.newUpdater(
+              VersionedStatsRegionEntryHeapIntKey.class, "lastModified");
   private volatile Object value;
 
   @Override
@@ -80,9 +83,7 @@ public class VersionedStatsRegionEntryHeapIntKey extends VersionedStatsRegionEnt
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -91,16 +92,12 @@ public class VersionedStatsRegionEntryHeapIntKey extends VersionedStatsRegionEnt
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -128,8 +125,14 @@ public class VersionedStatsRegionEntryHeapIntKey extends VersionedStatsRegionEnt
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VersionedStatsRegionEntryHeapIntKey> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VersionedStatsRegionEntryHeapIntKey.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VersionedStatsRegionEntryHeapIntKey> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VersionedStatsRegionEntryHeapIntKey.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VersionedStatsRegionEntryHeapIntKey>
+      hitCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VersionedStatsRegionEntryHeapIntKey.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VersionedStatsRegionEntryHeapIntKey>
+      missCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VersionedStatsRegionEntryHeapIntKey.class, "missCount");
 
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {
@@ -250,7 +253,14 @@ public class VersionedStatsRegionEntryHeapIntKey extends VersionedStatsRegionEnt
     return tag;
   }
 
-  public void processVersionTag(LocalRegion r, VersionTag tag, boolean isTombstoneFromGII, boolean hasDelta, VersionSource thisVM, InternalDistributedMember sender, boolean checkForConflicts) {
+  public void processVersionTag(
+      LocalRegion r,
+      VersionTag tag,
+      boolean isTombstoneFromGII,
+      boolean hasDelta,
+      VersionSource thisVM,
+      InternalDistributedMember sender,
+      boolean checkForConflicts) {
     basicProcessVersionTag(r, tag, isTombstoneFromGII, hasDelta, thisVM, sender, checkForConflicts);
   }
 
@@ -261,12 +271,12 @@ public class VersionedStatsRegionEntryHeapIntKey extends VersionedStatsRegionEnt
     super.processVersionTag(cacheEvent);
   }
 
-  /** get rvv internal high byte.  Used by region entries for transferring to storage */
+  /** get rvv internal high byte. Used by region entries for transferring to storage */
   public short getRegionVersionHighBytes() {
     return this.regionVersionHighBytes;
   }
 
-  /** get rvv internal low bytes.  Used by region entries for transferring to storage */
+  /** get rvv internal low bytes. Used by region entries for transferring to storage */
   public int getRegionVersionLowBytes() {
     return this.regionVersionLowBytes;
   }

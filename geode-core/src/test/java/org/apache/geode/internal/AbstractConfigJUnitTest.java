@@ -33,7 +33,8 @@ public class AbstractConfigJUnitTest {
   @Test
   public void testDisplayPropertyValue() throws Exception {
     AbstractConfigTestClass actc = new AbstractConfigTestClass();
-    Method method = actc.getClass().getSuperclass().getDeclaredMethod("okToDisplayPropertyValue", String.class);
+    Method method =
+        actc.getClass().getSuperclass().getDeclaredMethod("okToDisplayPropertyValue", String.class);
     method.setAccessible(true);
     assertFalse((Boolean) method.invoke(actc, "password"));
     assertFalse((Boolean) method.invoke(actc, CLUSTER_SSL_TRUSTSTORE_PASSWORD));
@@ -64,9 +65,7 @@ public class AbstractConfigJUnitTest {
     }
 
     @Override
-    public void setAttributeObject(String attName, Object attValue, ConfigSource source) {
-
-    }
+    public void setAttributeObject(String attName, Object attValue, ConfigSource source) {}
 
     @Override
     public boolean isAttributeModifiable(String attName) {

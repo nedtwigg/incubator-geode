@@ -27,12 +27,9 @@ import org.apache.geode.internal.Version;
 import org.apache.geode.internal.admin.StatAlert;
 import org.apache.geode.internal.admin.StatAlertDefinition;
 
-/**
- * Implementation of {@link StatAlertDefinition}, represents threshold as data
- * range
- * 
- */
-public final class GaugeThresholdDecoratorImpl extends BaseDecoratorImpl implements DataSerializableFixedID {
+/** Implementation of {@link StatAlertDefinition}, represents threshold as data range */
+public final class GaugeThresholdDecoratorImpl extends BaseDecoratorImpl
+    implements DataSerializableFixedID {
 
   private static final long serialVersionUID = -8555077820685711783L;
 
@@ -40,13 +37,11 @@ public final class GaugeThresholdDecoratorImpl extends BaseDecoratorImpl impleme
 
   protected Number upperLimit;
 
-  public GaugeThresholdDecoratorImpl() {
-  }
+  public GaugeThresholdDecoratorImpl() {}
 
-  /**
-   * @param definition
-   */
-  public GaugeThresholdDecoratorImpl(StatAlertDefinition definition, Number lowerLimit, Number upperLimit) {
+  /** @param definition */
+  public GaugeThresholdDecoratorImpl(
+      StatAlertDefinition definition, Number lowerLimit, Number upperLimit) {
     super(definition);
     this.lowerLimit = lowerLimit;
     this.upperLimit = upperLimit;
@@ -82,12 +77,11 @@ public final class GaugeThresholdDecoratorImpl extends BaseDecoratorImpl impleme
     return buffer.toString();
   }
 
-  /**
-   * This eval just applies to a single value or the 1st value in params
-   */
+  /** This eval just applies to a single value or the 1st value in params */
   @Override
   public boolean evaluate(Number[] params) {
-    return super.evaluate(params) && (isGreaterThan(params[0], upperLimit) || isLessThan(params[0], lowerLimit));
+    return super.evaluate(params)
+        && (isGreaterThan(params[0], upperLimit) || isLessThan(params[0], lowerLimit));
   }
 
   @Override

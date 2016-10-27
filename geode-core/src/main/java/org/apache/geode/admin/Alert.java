@@ -17,13 +17,14 @@
 package org.apache.geode.admin;
 
 /**
- * An administration alert that is issued by a member of a GemFire
- * distributed system.  It is similar to a {@linkplain
- * org.apache.geode.i18n.LogWriterI18n log message}.
+ * An administration alert that is issued by a member of a GemFire distributed system. It is similar
+ * to a {@linkplain org.apache.geode.i18n.LogWriterI18n log message}.
  *
- * @see       AlertListener
- * @since GemFire     3.5
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @see AlertListener
+ * @since GemFire 3.5
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public interface Alert {
 
@@ -31,15 +32,14 @@ public interface Alert {
   public AlertLevel getLevel();
 
   /**
-   * The member of the distributed system that issued the alert, or
-   * null if the issuer is no longer a member of the distributed system.
+   * The member of the distributed system that issued the alert, or null if the issuer is no longer
+   * a member of the distributed system.
    */
   public SystemMember getSystemMember();
 
-  /** 
-   * The name of the {@linkplain
-   * org.apache.geode.distributed.DistributedSystem#getName
-   * distributed system}) through which the alert was issued.
+  /**
+   * The name of the {@linkplain org.apache.geode.distributed.DistributedSystem#getName distributed
+   * system}) through which the alert was issued.
    */
   public String getConnectionName();
 
@@ -51,5 +51,4 @@ public interface Alert {
 
   /** The time at which the alert was issued */
   public java.util.Date getDate();
-
 }

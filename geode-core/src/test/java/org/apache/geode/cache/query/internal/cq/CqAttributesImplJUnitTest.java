@@ -40,6 +40,6 @@ public class CqAttributesImplJUnitTest {
     CqAttributesImpl attributes = new CqAttributesImpl();
     CqListener listener = mock(CqListener.class);
     attributes.addCqListener(listener);
-    assertArrayEquals(new CqListener[] { listener }, attributes.getCqListeners());
+    assertArrayEquals(new CqListener[] {listener}, attributes.getCqListeners());
   }
 }

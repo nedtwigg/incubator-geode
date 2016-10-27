@@ -24,25 +24,27 @@ import java.util.List;
 import java.util.concurrent.*;
 
 /**
- * A ThreadPoolExecutor with stat support.  This executor also has a
- * buffer that rejected executions spill over into.
- * 
- * This executor has also been modified to handle rejected execution in
- * one of three ways:
- *   If the executor is for function execution we ignore size caps on the thread pool<br>
- *   If the executor has a SynchronousQueue or SynchronousQueueNoSpin then
- *   rejected executions are run in the current thread.<br>
- *   Otherwise a thread is started in the pool that buffers the rejected
- *   tasks and puts them back into the executor.
- *   
+ * A ThreadPoolExecutor with stat support. This executor also has a buffer that rejected executions
+ * spill over into.
+ *
+ * <p>This executor has also been modified to handle rejected execution in one of three ways: If the
+ * executor is for function execution we ignore size caps on the thread pool<br>
+ * If the executor has a SynchronousQueue or SynchronousQueueNoSpin then rejected executions are run
+ * in the current thread.<br>
+ * Otherwise a thread is started in the pool that buffers the rejected tasks and puts them back into
+ * the executor.
  */
 public class FunctionExecutionPooledExecutor extends ThreadPoolExecutor {
   protected final PoolStatHelper stats;
 
-  /** 
-   * Create a new pool
-   **/
-  public FunctionExecutionPooledExecutor(BlockingQueue<Runnable> q, int maxPoolSize, PoolStatHelper stats, ThreadFactory tf, int msTimeout, RejectedExecutionHandler reh) {
+  /** Create a new pool */
+  public FunctionExecutionPooledExecutor(
+      BlockingQueue<Runnable> q,
+      int maxPoolSize,
+      PoolStatHelper stats,
+      ThreadFactory tf,
+      int msTimeout,
+      RejectedExecutionHandler reh) {
     super(getCorePoolSize(maxPoolSize), maxPoolSize, msTimeout, TimeUnit.MILLISECONDS, q, tf, reh);
     //     if (getCorePoolSize() != 0 && getCorePoolSize() == getMaximumPoolSize()) {
     //       allowCoreThreadTimeOut(true); // deadcoded for 1.5
@@ -51,14 +53,13 @@ public class FunctionExecutionPooledExecutor extends ThreadPoolExecutor {
   }
 
   /**
-   * Used to buffer up tasks that would be have been rejected.
-   * Only used (i.e. non-null) if constructor queue is not a SynchronousQueue.
+   * Used to buffer up tasks that would be have been rejected. Only used (i.e. non-null) if
+   * constructor queue is not a SynchronousQueue.
    */
   protected BlockingQueue<Runnable> bufferQueue;
   /**
-   * Used to consume items off the bufferQueue and put them into the pools
-   * synchronous queue.
-   * Only used (i.e. non-null) if constructor queue is not a SynchronousQueue.
+   * Used to consume items off the bufferQueue and put them into the pools synchronous queue. Only
+   * used (i.e. non-null) if constructor queue is not a SynchronousQueue.
    */
   Thread bufferConsumer;
 
@@ -70,20 +71,28 @@ public class FunctionExecutionPooledExecutor extends ThreadPoolExecutor {
     }
   }
 
-  private static RejectedExecutionHandler initREH(final BlockingQueue<Runnable> q, boolean forFnExec) {
+  private static RejectedExecutionHandler initREH(
+      final BlockingQueue<Runnable> q, boolean forFnExec) {
     if (forFnExec) {
       return new RejectedExecutionHandler() {
         public void rejectedExecution(final Runnable r, ThreadPoolExecutor executor) {
           if (executor.isShutdown()) {
-            throw new RejectedExecutionException(LocalizedStrings.PooledExecutorWithDMStats_EXECUTOR_HAS_BEEN_SHUTDOWN.toLocalizedString());
+            throw new RejectedExecutionException(
+                LocalizedStrings.PooledExecutorWithDMStats_EXECUTOR_HAS_BEEN_SHUTDOWN
+                    .toLocalizedString());
           } else {
             // System.out.println("Asif: Rejection called");
-            if (Thread.currentThread() == ((FunctionExecutionPooledExecutor) executor).bufferConsumer) {
-              Thread th = executor.getThreadFactory().newThread((new Runnable() {
-                public void run() {
-                  r.run();
-                }
-              }));
+            if (Thread.currentThread()
+                == ((FunctionExecutionPooledExecutor) executor).bufferConsumer) {
+              Thread th =
+                  executor
+                      .getThreadFactory()
+                      .newThread(
+                          (new Runnable() {
+                            public void run() {
+                              r.run();
+                            }
+                          }));
               th.start();
             } else {
               try {
@@ -107,38 +116,45 @@ public class FunctionExecutionPooledExecutor extends ThreadPoolExecutor {
         return new BufferHandler();
       }
     }
-
   }
 
-  public FunctionExecutionPooledExecutor(BlockingQueue<Runnable> q, int maxPoolSize, PoolStatHelper stats, ThreadFactory tf, int msTimeout, final boolean forFnExec) {
+  public FunctionExecutionPooledExecutor(
+      BlockingQueue<Runnable> q,
+      int maxPoolSize,
+      PoolStatHelper stats,
+      ThreadFactory tf,
+      int msTimeout,
+      final boolean forFnExec) {
     this(initQ(q), maxPoolSize, stats, tf, msTimeout, initREH(q, forFnExec));
-    final int retryFor = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "RETRY_INTERVAL", 5000).intValue();
+    final int retryFor =
+        Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "RETRY_INTERVAL", 5000).intValue();
     if (!(q instanceof SynchronousQueue)) {
       this.bufferQueue = q;
       // create a thread that takes from bufferQueue and puts into result
       final BlockingQueue<Runnable> takeQueue = q;
       final BlockingQueue<Runnable> putQueue = getQueue();
-      Runnable r = new Runnable() {
-        public void run() {
-          try {
-            for (;;) {
-              SystemFailure.checkFailure();
-              Runnable task = takeQueue.take();
-              if (forFnExec) {
-                if (!putQueue.offer(task, retryFor, TimeUnit.MILLISECONDS)) {
-                  submit(task);
+      Runnable r =
+          new Runnable() {
+            public void run() {
+              try {
+                for (; ; ) {
+                  SystemFailure.checkFailure();
+                  Runnable task = takeQueue.take();
+                  if (forFnExec) {
+                    if (!putQueue.offer(task, retryFor, TimeUnit.MILLISECONDS)) {
+                      submit(task);
+                    }
+                  } else {
+                    putQueue.put(task);
+                  }
                 }
-              } else {
-                putQueue.put(task);
+              } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                // this thread is being shutdown so just return;
+                return;
               }
             }
-          } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-            // this thread is being shutdown so just return;
-            return;
-          }
-        }
-      };
+          };
       this.bufferConsumer = tf.newThread(r);
       this.bufferConsumer.start();
     }
@@ -171,32 +187,47 @@ public class FunctionExecutionPooledExecutor extends ThreadPoolExecutor {
     return l;
   }
 
-  /**
-   * Sets timeout to IDLE_THREAD_TIMEOUT
-   */
-  public FunctionExecutionPooledExecutor(BlockingQueue<Runnable> q, int poolSize, PoolStatHelper stats, ThreadFactory tf) {
+  /** Sets timeout to IDLE_THREAD_TIMEOUT */
+  public FunctionExecutionPooledExecutor(
+      BlockingQueue<Runnable> q, int poolSize, PoolStatHelper stats, ThreadFactory tf) {
     /**
-     * How long an idle thread will wait, in milliseconds, before it is removed
-     * from its thread pool. Default is (30000 * 60) ms (30 minutes).
-     * It is not static so it can be set at runtime and pick up different values.
+     * How long an idle thread will wait, in milliseconds, before it is removed from its thread
+     * pool. Default is (30000 * 60) ms (30 minutes). It is not static so it can be set at runtime
+     * and pick up different values.
      */
-    this(q, poolSize, stats, tf, Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "IDLE_THREAD_TIMEOUT", 30000 * 60), false /* not for fn exec*/);
+    this(
+        q,
+        poolSize,
+        stats,
+        tf,
+        Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "IDLE_THREAD_TIMEOUT", 30000 * 60),
+        false /* not for fn exec*/);
   }
 
-  public FunctionExecutionPooledExecutor(BlockingQueue<Runnable> q, int poolSize, PoolStatHelper stats, ThreadFactory tf, boolean forFnExec) {
+  public FunctionExecutionPooledExecutor(
+      BlockingQueue<Runnable> q,
+      int poolSize,
+      PoolStatHelper stats,
+      ThreadFactory tf,
+      boolean forFnExec) {
     /**
-     * How long an idle thread will wait, in milliseconds, before it is removed
-     * from its thread pool. Default is (30000 * 60) ms (30 minutes).
-     * It is not static so it can be set at runtime and pick up different values.
+     * How long an idle thread will wait, in milliseconds, before it is removed from its thread
+     * pool. Default is (30000 * 60) ms (30 minutes). It is not static so it can be set at runtime
+     * and pick up different values.
      */
-    this(q, poolSize, stats, tf, Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "IDLE_THREAD_TIMEOUT", 30000 * 60), forFnExec);
+    this(
+        q,
+        poolSize,
+        stats,
+        tf,
+        Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "IDLE_THREAD_TIMEOUT", 30000 * 60),
+        forFnExec);
   }
 
-  /**
-   * Default timeout with no stats.
-   */
-  public FunctionExecutionPooledExecutor(BlockingQueue<Runnable> q, int poolSize, ThreadFactory tf) {
-    this(q, poolSize, null/*no stats*/, tf);
+  /** Default timeout with no stats. */
+  public FunctionExecutionPooledExecutor(
+      BlockingQueue<Runnable> q, int poolSize, ThreadFactory tf) {
+    this(q, poolSize, null /*no stats*/, tf);
   }
 
   @Override
@@ -229,19 +260,21 @@ public class FunctionExecutionPooledExecutor extends ThreadPoolExecutor {
     }
   }
 
-  /**
-   * This guy does a put which will just wait until the queue has room.
-   */
+  /** This guy does a put which will just wait until the queue has room. */
   public static class BlockHandler implements RejectedExecutionHandler {
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
       if (executor.isShutdown()) {
-        throw new RejectedExecutionException(LocalizedStrings.PooledExecutorWithDMStats_EXECUTOR_HAS_BEEN_SHUTDOWN.toLocalizedString());
+        throw new RejectedExecutionException(
+            LocalizedStrings.PooledExecutorWithDMStats_EXECUTOR_HAS_BEEN_SHUTDOWN
+                .toLocalizedString());
       } else {
         try {
           executor.getQueue().put(r);
         } catch (InterruptedException ie) {
           Thread.currentThread().interrupt();
-          RejectedExecutionException e = new RejectedExecutionException(LocalizedStrings.PooledExecutorWithDMStats_INTERRUPTED.toLocalizedString());
+          RejectedExecutionException e =
+              new RejectedExecutionException(
+                  LocalizedStrings.PooledExecutorWithDMStats_INTERRUPTED.toLocalizedString());
           e.initCause(ie);
           throw e;
         }
@@ -250,23 +283,25 @@ public class FunctionExecutionPooledExecutor extends ThreadPoolExecutor {
   }
 
   /**
-   * This guy fronts a synchronous queue, that is owned by the parent
-   * ThreadPoolExecutor, with a the client supplied BlockingQueue that
-   * supports storage (the buffer queue).
-   * A dedicated thread is used to consume off the buffer queue and put
-   * into the synchronous queue.
+   * This guy fronts a synchronous queue, that is owned by the parent ThreadPoolExecutor, with a the
+   * client supplied BlockingQueue that supports storage (the buffer queue). A dedicated thread is
+   * used to consume off the buffer queue and put into the synchronous queue.
    */
   public static class BufferHandler implements RejectedExecutionHandler {
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
       if (executor.isShutdown()) {
-        throw new RejectedExecutionException(LocalizedStrings.PooledExecutorWithDMStats_EXECUTOR_HAS_BEEN_SHUTDOWN.toLocalizedString());
+        throw new RejectedExecutionException(
+            LocalizedStrings.PooledExecutorWithDMStats_EXECUTOR_HAS_BEEN_SHUTDOWN
+                .toLocalizedString());
       } else {
         try {
           FunctionExecutionPooledExecutor pool = (FunctionExecutionPooledExecutor) executor;
           pool.bufferQueue.put(r);
         } catch (InterruptedException ie) {
           Thread.currentThread().interrupt();
-          RejectedExecutionException e = new RejectedExecutionException(LocalizedStrings.PooledExecutorWithDMStats_INTERRUPTED.toLocalizedString());
+          RejectedExecutionException e =
+              new RejectedExecutionException(
+                  LocalizedStrings.PooledExecutorWithDMStats_INTERRUPTED.toLocalizedString());
           e.initCause(ie);
           throw e;
         }

@@ -22,13 +22,14 @@ import org.apache.geode.pdx.internal.PdxType;
 
 /**
  * Add a PdxType to a server.
+ *
  * @since GemFire 6.6
  */
 public class AddPDXTypeOp {
   /**
-   * Register a bunch of instantiators on a server
-   * using connections from the given pool
-   * to communicate with the server.
+   * Register a bunch of instantiators on a server using connections from the given pool to
+   * communicate with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    */
   public static void execute(ExecutablePool pool, int id, PdxType type) {
@@ -41,9 +42,7 @@ public class AddPDXTypeOp {
   }
 
   private static class AddPDXTypeOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public AddPDXTypeOpImpl(int id, PdxType type) {
       super(MessageType.ADD_PDX_TYPE, 2);
       getMessage().addObjPart(type);
@@ -77,8 +76,7 @@ public class AddPDXTypeOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

@@ -26,9 +26,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 public class OperationJUnitTest {
 
-  /**
-   * Check CREATE Operation.
-   */
+  /** Check CREATE Operation. */
   @Test
   public void testCREATE() {
     Operation op = Operation.CREATE;
@@ -52,9 +50,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check PUTALL_CREATE Operation.
-   */
+  /** Check PUTALL_CREATE Operation. */
   @Test
   public void testPUTALL_CREATE() {
     Operation op = Operation.PUTALL_CREATE;
@@ -78,9 +74,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check SEARCH_CREATE Operation.
-   */
+  /** Check SEARCH_CREATE Operation. */
   @Test
   public void testSEARCH_CREATE() {
     Operation op = Operation.SEARCH_CREATE;
@@ -104,9 +98,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check LOCAL_LOAD_CREATE Operation.
-   */
+  /** Check LOCAL_LOAD_CREATE Operation. */
   @Test
   public void testLOCAL_LOAD_CREATE() {
     Operation op = Operation.LOCAL_LOAD_CREATE;
@@ -130,9 +122,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check NET_LOAD_CREATE Operation.
-   */
+  /** Check NET_LOAD_CREATE Operation. */
   @Test
   public void testNET_LOAD_CREATE() {
     Operation op = Operation.NET_LOAD_CREATE;
@@ -156,9 +146,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check UPDATE Operation.
-   */
+  /** Check UPDATE Operation. */
   @Test
   public void testUPDATE() {
     Operation op = Operation.UPDATE;
@@ -182,9 +170,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check PUTALL_UPDATE Operation.
-   */
+  /** Check PUTALL_UPDATE Operation. */
   @Test
   public void testPUTALL_UPDATE() {
     Operation op = Operation.PUTALL_UPDATE;
@@ -208,9 +194,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check SEARCH_UPDATE Operation.
-   */
+  /** Check SEARCH_UPDATE Operation. */
   @Test
   public void testSEARCH_UPDATE() {
     Operation op = Operation.SEARCH_UPDATE;
@@ -234,9 +218,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check LOCAL_LOAD_UPDATE Operation.
-   */
+  /** Check LOCAL_LOAD_UPDATE Operation. */
   @Test
   public void testLOCAL_LOAD_UPDATE() {
     Operation op = Operation.LOCAL_LOAD_UPDATE;
@@ -260,9 +242,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check NET_LOAD_UPDATE Operation.
-   */
+  /** Check NET_LOAD_UPDATE Operation. */
   @Test
   public void testNET_LOAD_UPDATE() {
     Operation op = Operation.NET_LOAD_UPDATE;
@@ -286,9 +266,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check INVALIDATE Operation.
-   */
+  /** Check INVALIDATE Operation. */
   @Test
   public void testINVALIDATE() {
     Operation op = Operation.INVALIDATE;
@@ -312,9 +290,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check LOCAL_INVALIDATE Operation.
-   */
+  /** Check LOCAL_INVALIDATE Operation. */
   @Test
   public void testLOCAL_INVALIDATE() {
     Operation op = Operation.LOCAL_INVALIDATE;
@@ -338,9 +314,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check DESTROY Operation.
-   */
+  /** Check DESTROY Operation. */
   @Test
   public void testDESTROY() {
     Operation op = Operation.DESTROY;
@@ -364,9 +338,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REMOVEALL Operation.
-   */
+  /** Check REMOVEALL Operation. */
   @Test
   public void testREMOVEALL() {
     Operation op = Operation.REMOVEALL_DESTROY;
@@ -391,9 +363,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check LOCAL_DESTROY Operation.
-   */
+  /** Check LOCAL_DESTROY Operation. */
   @Test
   public void testLOCAL_DESTROY() {
     Operation op = Operation.LOCAL_DESTROY;
@@ -417,9 +387,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check EVICT_DESTROY Operation.
-   */
+  /** Check EVICT_DESTROY Operation. */
   @Test
   public void testEVICT_DESTROY() {
     Operation op = Operation.EVICT_DESTROY;
@@ -443,9 +411,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_LOAD_SNAPSHOT Operation.
-   */
+  /** Check REGION_LOAD_SNAPSHOT Operation. */
   @Test
   public void testREGION_LOAD_SNAPSHOT() {
     Operation op = Operation.REGION_LOAD_SNAPSHOT;
@@ -469,9 +435,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_LOCAL_DESTROY Operation.
-   */
+  /** Check REGION_LOCAL_DESTROY Operation. */
   @Test
   public void testREGION_LOCAL_DESTROY() {
     Operation op = Operation.REGION_LOCAL_DESTROY;
@@ -495,9 +459,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_CREATE Operation.
-   */
+  /** Check REGION_CREATE Operation. */
   @Test
   public void testREGION_CREATE() {
     Operation op = Operation.REGION_CREATE;
@@ -521,9 +483,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_CLOSE Operation.
-   */
+  /** Check REGION_CLOSE Operation. */
   @Test
   public void testREGION_CLOSE() {
     Operation op = Operation.REGION_CLOSE;
@@ -547,9 +507,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_DESTROY Operation.
-   */
+  /** Check REGION_DESTROY Operation. */
   @Test
   public void testREGION_DESTROY() {
     Operation op = Operation.REGION_DESTROY;
@@ -573,9 +531,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check EXPIRE_DESTROY Operation.
-   */
+  /** Check EXPIRE_DESTROY Operation. */
   @Test
   public void testEXPIRE_DESTROY() {
     Operation op = Operation.EXPIRE_DESTROY;
@@ -599,9 +555,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check EXPIRE_LOCAL_DESTROY Operation.
-   */
+  /** Check EXPIRE_LOCAL_DESTROY Operation. */
   @Test
   public void testEXPIRE_LOCAL_DESTROY() {
     Operation op = Operation.EXPIRE_LOCAL_DESTROY;
@@ -625,9 +579,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check EXPIRE_INVALIDATE Operation.
-   */
+  /** Check EXPIRE_INVALIDATE Operation. */
   @Test
   public void testEXPIRE_INVALIDATE() {
     Operation op = Operation.EXPIRE_INVALIDATE;
@@ -651,9 +603,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check EXPIRE_LOCAL_INVALIDATE Operation.
-   */
+  /** Check EXPIRE_LOCAL_INVALIDATE Operation. */
   @Test
   public void testEXPIRE_LOCAL_INVALIDATE() {
     Operation op = Operation.EXPIRE_LOCAL_INVALIDATE;
@@ -677,9 +627,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_EXPIRE_DESTROY Operation.
-   */
+  /** Check REGION_EXPIRE_DESTROY Operation. */
   @Test
   public void testREGION_EXPIRE_DESTROY() {
     Operation op = Operation.REGION_EXPIRE_DESTROY;
@@ -703,9 +651,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_EXPIRE_LOCAL_DESTROY Operation.
-   */
+  /** Check REGION_EXPIRE_LOCAL_DESTROY Operation. */
   @Test
   public void testREGION_EXPIRE_LOCAL_DESTROY() {
     Operation op = Operation.REGION_EXPIRE_LOCAL_DESTROY;
@@ -729,9 +675,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_EXPIRE_INVALIDATE Operation.
-   */
+  /** Check REGION_EXPIRE_INVALIDATE Operation. */
   @Test
   public void testREGION_EXPIRE_INVALIDATE() {
     Operation op = Operation.REGION_EXPIRE_INVALIDATE;
@@ -755,9 +699,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_EXPIRE_LOCAL_INVALIDATE Operation.
-   */
+  /** Check REGION_EXPIRE_LOCAL_INVALIDATE Operation. */
   @Test
   public void testREGION_EXPIRE_LOCAL_INVALIDATE() {
     Operation op = Operation.REGION_EXPIRE_LOCAL_INVALIDATE;
@@ -781,9 +723,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_LOCAL_INVALIDATE Operation.
-   */
+  /** Check REGION_LOCAL_INVALIDATE Operation. */
   @Test
   public void testREGION_LOCAL_INVALIDATE() {
     Operation op = Operation.REGION_LOCAL_INVALIDATE;
@@ -807,9 +747,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_INVALIDATE Operation.
-   */
+  /** Check REGION_INVALIDATE Operation. */
   @Test
   public void testREGION_INVALIDATE() {
     Operation op = Operation.REGION_INVALIDATE;
@@ -833,9 +771,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_CLEAR Operation.
-   */
+  /** Check REGION_CLEAR Operation. */
   @Test
   public void testREGION_CLEAR() {
     Operation op = Operation.REGION_CLEAR;
@@ -859,9 +795,7 @@ public class OperationJUnitTest {
     assertTrue(op.isClear());
   }
 
-  /**
-   * Check REGION_LOCAL_CLEAR Operation.
-   */
+  /** Check REGION_LOCAL_CLEAR Operation. */
   @Test
   public void testREGION_LOCAL_CLEAR() {
     Operation op = Operation.REGION_LOCAL_CLEAR;
@@ -885,9 +819,7 @@ public class OperationJUnitTest {
     assertTrue(op.isClear());
   }
 
-  /**
-   * Check CACHE_CREATE Operation
-   */
+  /** Check CACHE_CREATE Operation */
   @Test
   public void testCACHE_CREATE() {
     Operation op = Operation.CACHE_CREATE;
@@ -911,9 +843,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check CACHE_CLOSE Operation.
-   */
+  /** Check CACHE_CLOSE Operation. */
   @Test
   public void testCACHE_CLOSE() {
     Operation op = Operation.CACHE_CLOSE;
@@ -937,9 +867,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check REGION_REINITIALIZE Operation.
-   */
+  /** Check REGION_REINITIALIZE Operation. */
   @Test
   public void testREGION_REINITIALIZE() {
     Operation op = Operation.REGION_REINITIALIZE;
@@ -963,9 +891,7 @@ public class OperationJUnitTest {
     assertFalse(op.isClear());
   }
 
-  /**
-   * Check UPDATE_VERSION Operation.
-   */
+  /** Check UPDATE_VERSION Operation. */
   @Test
   public void testUPDATE_VERSION() {
     Operation op = Operation.UPDATE_VERSION_STAMP;

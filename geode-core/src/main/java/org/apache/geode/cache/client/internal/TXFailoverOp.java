@@ -20,9 +20,9 @@ import org.apache.geode.internal.cache.tier.MessageType;
 import org.apache.geode.internal.cache.tier.sockets.Message;
 
 /**
- * Indicates to the server that a transaction is
- * failing over to this server. The server then
+ * Indicates to the server that a transaction is failing over to this server. The server then
  * performs the necessary bootstrapping for the tx.
+ *
  * @since GemFire 6.6
  */
 public class TXFailoverOp {
@@ -76,8 +76,7 @@ public class TXFailoverOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

@@ -60,7 +60,8 @@ public class RemoteOperationMessageTest {
   }
 
   @Test
-  public void messageWithNoTXPerformsOnRegion() throws InterruptedException, RemoteOperationException {
+  public void messageWithNoTXPerformsOnRegion()
+      throws InterruptedException, RemoteOperationException {
     when(txMgr.masqueradeAs(msg)).thenReturn(null);
     msg.process(dm);
 
@@ -68,7 +69,8 @@ public class RemoteOperationMessageTest {
   }
 
   @Test
-  public void messageForNotFinishedTXPerformsOnRegion() throws InterruptedException, RemoteOperationException {
+  public void messageForNotFinishedTXPerformsOnRegion()
+      throws InterruptedException, RemoteOperationException {
     when(txMgr.masqueradeAs(msg)).thenReturn(tx);
     when(tx.isInProgress()).thenReturn(true);
     msg.process(dm);
@@ -77,7 +79,8 @@ public class RemoteOperationMessageTest {
   }
 
   @Test
-  public void messageForFinishedTXDoesNotPerformOnRegion() throws InterruptedException, RemoteOperationException {
+  public void messageForFinishedTXDoesNotPerformOnRegion()
+      throws InterruptedException, RemoteOperationException {
     when(txMgr.masqueradeAs(msg)).thenReturn(tx);
     when(tx.isInProgress()).thenReturn(false);
     msg.process(dm);

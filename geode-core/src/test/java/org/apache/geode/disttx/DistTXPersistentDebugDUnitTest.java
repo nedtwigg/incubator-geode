@@ -41,26 +41,28 @@ public class DistTXPersistentDebugDUnitTest extends DistTXDebugDUnitTest {
 
   @Override
   public final void postSetUpDistTXDebugDUnitTest() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        //System.setProperty("gemfire.ALLOW_PERSISTENT_TRANSACTIONS", "true");
-        TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = true;
-        return null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            //System.setProperty("gemfire.ALLOW_PERSISTENT_TRANSACTIONS", "true");
+            TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = true;
+            return null;
+          }
+        });
   }
 
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        //System.setProperty("gemfire.ALLOW_PERSISTENT_TRANSACTIONS", "false");
-        TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = false;
-        return null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            //System.setProperty("gemfire.ALLOW_PERSISTENT_TRANSACTIONS", "false");
+            TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = false;
+            return null;
+          }
+        });
   }
 
   protected void createPesistentPR(Object[] attributes) {
@@ -74,10 +76,16 @@ public class DistTXPersistentDebugDUnitTest extends DistTXDebugDUnitTest {
 
   public static void createPersistentPR(String regionName) {
     assertNotNull(basicGetCache());
-    basicGetCache().createRegion(regionName, getPersistentPRAttributes(1, -1, basicGetCache(), 113, true));
+    basicGetCache()
+        .createRegion(regionName, getPersistentPRAttributes(1, -1, basicGetCache(), 113, true));
   }
 
-  protected static RegionAttributes getPersistentPRAttributes(final int redundancy, final int recoveryDelay, Cache cache, int numBuckets, boolean synchronous) {
+  protected static RegionAttributes getPersistentPRAttributes(
+      final int redundancy,
+      final int recoveryDelay,
+      Cache cache,
+      int numBuckets,
+      boolean synchronous) {
     DiskStore ds = cache.findDiskStore("disk");
     if (ds == null) {
       ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
@@ -100,32 +108,33 @@ public class DistTXPersistentDebugDUnitTest extends DistTXDebugDUnitTest {
   public void testBasicDistributedTX() throws Exception {
     createCacheInAllVms();
     final String regionName = "persistentCustomerPRRegion";
-    Object[] attrs = new Object[] { regionName };
+    Object[] attrs = new Object[] {regionName};
     createPesistentPR(attrs);
-    SerializableCallable TxOps = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = basicGetCache().getCacheTransactionManager();
-        mgr.setDistributed(true);
-        LogWriterUtils.getLogWriter().fine("SJ:TX BEGIN");
-        mgr.begin();
-        Region<CustId, Customer> prRegion = basicGetCache().getRegion(regionName);
+    SerializableCallable TxOps =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = basicGetCache().getCacheTransactionManager();
+            mgr.setDistributed(true);
+            LogWriterUtils.getLogWriter().fine("SJ:TX BEGIN");
+            mgr.begin();
+            Region<CustId, Customer> prRegion = basicGetCache().getRegion(regionName);
 
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        LogWriterUtils.getLogWriter().fine("SJ:TX PUT 1");
-        prRegion.put(custIdOne, customerOne);
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            LogWriterUtils.getLogWriter().fine("SJ:TX PUT 1");
+            prRegion.put(custIdOne, customerOne);
 
-        CustId custIdTwo = new CustId(2);
-        Customer customerTwo = new Customer("name2", "addr2");
-        LogWriterUtils.getLogWriter().fine("SJ:TX PUT 2");
-        prRegion.put(custIdTwo, customerTwo);
+            CustId custIdTwo = new CustId(2);
+            Customer customerTwo = new Customer("name2", "addr2");
+            LogWriterUtils.getLogWriter().fine("SJ:TX PUT 2");
+            prRegion.put(custIdTwo, customerTwo);
 
-        LogWriterUtils.getLogWriter().fine("SJ:TX COMMIT");
-        mgr.commit();
-        return null;
-      }
-    };
+            LogWriterUtils.getLogWriter().fine("SJ:TX COMMIT");
+            mgr.commit();
+            return null;
+          }
+        };
 
     dataStore2.invoke(TxOps);
   }

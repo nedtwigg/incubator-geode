@@ -34,26 +34,23 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * Admin response carrying region info for a member
- * 
- */
+/** Admin response carrying region info for a member */
 public class RegionSubRegionsSizeResponse extends AdminResponse implements Cancellable {
 
   private static final Logger logger = LogService.getLogger();
 
-  public RegionSubRegionsSizeResponse() {
-  }
+  public RegionSubRegionsSizeResponse() {}
 
   public RegionSubRegionSnapshot getSnapshot() {
     return this.snapshot;
   }
 
   /**
-   * Returns a <code>RegionSubRegionsSizeResponse</code> that will be returned to the
-   * specified recipient. The message will contains a copy of the region snapshot
+   * Returns a <code>RegionSubRegionsSizeResponse</code> that will be returned to the specified
+   * recipient. The message will contains a copy of the region snapshot
    */
-  public static RegionSubRegionsSizeResponse create(DistributionManager dm, InternalDistributedMember recipient) {
+  public static RegionSubRegionsSizeResponse create(
+      DistributionManager dm, InternalDistributedMember recipient) {
     RegionSubRegionsSizeResponse m = new RegionSubRegionsSizeResponse();
     m.setRecipient(recipient);
     m.snapshot = null;
@@ -63,17 +60,15 @@ public class RegionSubRegionsSizeResponse extends AdminResponse implements Cance
   }
 
   public void populateSnapshot(DistributionManager dm) {
-    if (cancelled)
-      return;
+    if (cancelled) return;
 
     DistributedSystem sys = dm.getSystem();
     GemFireCacheImpl cache = (GemFireCacheImpl) CacheFactory.getInstance(sys);
 
-    if (cancelled)
-      return;
+    if (cancelled) return;
 
     RegionSubRegionSnapshot root = new RegionSubRegionSnapshot();
-    /* This root exists only on admin side as a root of all root-region just to 
+    /* This root exists only on admin side as a root of all root-region just to
      * create a tree-like structure */
     root.setName("Root");
     root.setParent(null);
@@ -86,26 +81,21 @@ public class RegionSubRegionsSizeResponse extends AdminResponse implements Cance
   }
 
   /**
-   * Populates the collection of sub-region snapshots for the parentSnapShot
-   * with snapshots for the regions given.
-   * 
-   * @param parentSnapShot
-   *          RegionSubRegionSnapshot of a parent region
-   * @param regions
-   *          collection of sub-regions of the region represented by
-   *          parentSnapShot
-   * @param cache
-   *          cache instance is used for to get the LogWriter instance to log
-   *          exceptions if any
+   * Populates the collection of sub-region snapshots for the parentSnapShot with snapshots for the
+   * regions given.
+   *
+   * @param parentSnapShot RegionSubRegionSnapshot of a parent region
+   * @param regions collection of sub-regions of the region represented by parentSnapShot
+   * @param cache cache instance is used for to get the LogWriter instance to log exceptions if any
    */
   //Re-factored to fix #41060
-  void populateRegionSubRegions(RegionSubRegionSnapshot parentSnapShot, Set regions, GemFireCacheImpl cache) {
-    if (cancelled)
-      return;
+  void populateRegionSubRegions(
+      RegionSubRegionSnapshot parentSnapShot, Set regions, GemFireCacheImpl cache) {
+    if (cancelled) return;
 
     Region subRegion = null;
     RegionSubRegionSnapshot subRegionSnapShot = null;
-    for (Iterator iter = regions.iterator(); iter.hasNext();) {
+    for (Iterator iter = regions.iterator(); iter.hasNext(); ) {
       subRegion = (Region) iter.next();
 
       try {
@@ -115,7 +105,10 @@ public class RegionSubRegionsSizeResponse extends AdminResponse implements Cance
         Set subRegions = subRegion.subregions(false);
         populateRegionSubRegions(subRegionSnapShot, subRegions, cache);
       } catch (Exception e) {
-        logger.debug("Failed to create snapshot for region: {}. Continuing with next region.", subRegion.getFullPath(), e);
+        logger.debug(
+            "Failed to create snapshot for region: {}. Continuing with next region.",
+            subRegion.getFullPath(),
+            e);
       }
     }
   }
@@ -138,16 +131,17 @@ public class RegionSubRegionsSizeResponse extends AdminResponse implements Cance
     this.snapshot = (RegionSubRegionSnapshot) DataSerializer.readObject(in);
   }
 
-  /**
-   * Returns the DataSerializer fixed id for the class that implements this method.
-   */
+  /** Returns the DataSerializer fixed id for the class that implements this method. */
   public int getDSFID() {
     return REGION_SUB_SIZE_RESPONSE;
   }
 
   @Override
   public String toString() {
-    return "RegionSubRegionsSizeResponse [from=" + this.getRecipient() + " " + (snapshot == null ? "null" : snapshot.toString());
+    return "RegionSubRegionsSizeResponse [from="
+        + this.getRecipient()
+        + " "
+        + (snapshot == null ? "null" : snapshot.toString());
   }
 
   private RegionSubRegionSnapshot snapshot;

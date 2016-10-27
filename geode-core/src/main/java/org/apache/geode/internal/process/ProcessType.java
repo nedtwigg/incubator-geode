@@ -19,15 +19,17 @@ package org.apache.geode.internal.process;
 import org.apache.geode.distributed.internal.DistributionConfig;
 
 /**
- * Enumeration of GemFire {@link ControllableProcess} types and the file names
- * associated with controlling its lifecycle.
- * 
+ * Enumeration of GemFire {@link ControllableProcess} types and the file names associated with
+ * controlling its lifecycle.
+ *
  * @since GemFire 8.0
  */
 public enum ProcessType {
-  LOCATOR("LOCATOR", "vf.gf.locator"), SERVER("SERVER", "vf.gf.server");
+  LOCATOR("LOCATOR", "vf.gf.locator"),
+  SERVER("SERVER", "vf.gf.server");
 
-  public static final String TEST_PREFIX_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "test.ProcessType.TEST_PREFIX";
+  public static final String TEST_PREFIX_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "test.ProcessType.TEST_PREFIX";
 
   private static final String SUFFIX_PID = "pid";
   private static final String SUFFIX_STOP_REQUEST = "stop.cmd";
@@ -43,19 +45,35 @@ public enum ProcessType {
   }
 
   public String getPidFileName() {
-    return new StringBuilder(System.getProperty(TEST_PREFIX_PROPERTY, "")).append(this.fileName).append(".").append(SUFFIX_PID).toString();
+    return new StringBuilder(System.getProperty(TEST_PREFIX_PROPERTY, ""))
+        .append(this.fileName)
+        .append(".")
+        .append(SUFFIX_PID)
+        .toString();
   }
 
   public String getStopRequestFileName() {
-    return new StringBuilder(System.getProperty(TEST_PREFIX_PROPERTY, "")).append(this.fileName).append(".").append(SUFFIX_STOP_REQUEST).toString();
+    return new StringBuilder(System.getProperty(TEST_PREFIX_PROPERTY, ""))
+        .append(this.fileName)
+        .append(".")
+        .append(SUFFIX_STOP_REQUEST)
+        .toString();
   }
 
   public String getStatusRequestFileName() {
-    return new StringBuilder(System.getProperty(TEST_PREFIX_PROPERTY, "")).append(this.fileName).append(".").append(SUFFIX_STATUS_REQUEST).toString();
+    return new StringBuilder(System.getProperty(TEST_PREFIX_PROPERTY, ""))
+        .append(this.fileName)
+        .append(".")
+        .append(SUFFIX_STATUS_REQUEST)
+        .toString();
   }
 
   public String getStatusFileName() {
-    return new StringBuilder(System.getProperty(TEST_PREFIX_PROPERTY, "")).append(this.fileName).append(".").append(SUFFIX_STATUS).toString();
+    return new StringBuilder(System.getProperty(TEST_PREFIX_PROPERTY, ""))
+        .append(this.fileName)
+        .append(".")
+        .append(SUFFIX_STATUS)
+        .toString();
   }
 
   @Override

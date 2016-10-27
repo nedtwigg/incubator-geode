@@ -58,8 +58,7 @@ public class RebalanceResultsImpl implements RebalanceResults, Serializable {
     totalBucketTransfersCompleted += details.totalBucketTransfersCompleted;
     totalPrimaryTransferTime += details.totalPrimaryTransferTime;
     totalPrimaryTransfersCompleted += details.totalPrimaryTransfersCompleted;
-    if (details.totalTime > totalTime)
-      totalTime = details.totalTime;
+    if (details.totalTime > totalTime) totalTime = details.totalTime;
   }
 
   public Set<PartitionRebalanceInfo> getPartitionRebalanceDetails() {

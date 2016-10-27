@@ -39,12 +39,13 @@ import org.apache.geode.internal.cache.PartitionedRegion;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * A Partitioned Region meta-data update message.  This is used to send 
- * all local bucket's meta-data to other members with the same Partitioned Region.  
- * 
+ * A Partitioned Region meta-data update message. This is used to send all local bucket's meta-data
+ * to other members with the same Partitioned Region.
+ *
  * @since GemFire 6.6
  */
-public final class AllBucketProfilesUpdateMessage extends DistributionMessage implements MessageWithReply {
+public final class AllBucketProfilesUpdateMessage extends DistributionMessage
+    implements MessageWithReply {
   private static final Logger logger = LogService.getLogger();
 
   private static final long serialVersionUID = 1L;
@@ -52,15 +53,18 @@ public final class AllBucketProfilesUpdateMessage extends DistributionMessage im
   private int processorId = 0;
   private Map<Integer, BucketAdvisor.BucketProfile> profiles;
 
-  public AllBucketProfilesUpdateMessage() {
-  }
+  public AllBucketProfilesUpdateMessage() {}
 
   @Override
-  final public int getProcessorType() {
+  public final int getProcessorType() {
     return DistributionManager.WAITING_POOL_EXECUTOR;
   }
 
-  private AllBucketProfilesUpdateMessage(Set recipients, int partitionedRegionId, int processorId, Map<Integer, BucketAdvisor.BucketProfile> profiles) {
+  private AllBucketProfilesUpdateMessage(
+      Set recipients,
+      int partitionedRegionId,
+      int processorId,
+      Map<Integer, BucketAdvisor.BucketProfile> profiles) {
     setRecipients(recipients);
     this.processorId = processorId;
     this.prId = partitionedRegionId;
@@ -80,14 +84,11 @@ public final class AllBucketProfilesUpdateMessage extends DistributionMessage im
         pr.getRegionAdvisor().putBucketProfile(profile.getKey(), profile.getValue());
       }
     } catch (PRLocallyDestroyedException fre) {
-      if (logger.isDebugEnabled())
-        logger.debug("<region locally destroyed> ///{}", this);
+      if (logger.isDebugEnabled()) logger.debug("<region locally destroyed> ///{}", this);
     } catch (RegionDestroyedException e) {
-      if (logger.isDebugEnabled())
-        logger.debug("<region destroyed> ///{}", this);
+      if (logger.isDebugEnabled()) logger.debug("<region destroyed> ///{}", this);
     } catch (CancelException e) {
-      if (logger.isDebugEnabled())
-        logger.debug("<cache closed> ///{}", this);
+      if (logger.isDebugEnabled()) logger.debug("<cache closed> ///{}", this);
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
@@ -109,15 +110,21 @@ public final class AllBucketProfilesUpdateMessage extends DistributionMessage im
 
   /**
    * Send a profile update to a set of members.
+   *
    * @param recipients the set of members to be notified
    * @param dm the distribution manager used to send the message
-   * @param prId the unique partitioned region identifier 
+   * @param prId the unique partitioned region identifier
    * @param profiles bucked id to profile map
    * @param requireAck whether or not to expect a reply
-   * @return an instance of reply processor if requireAck is true on which the caller
-   * can wait until the event has finished. 
+   * @return an instance of reply processor if requireAck is true on which the caller can wait until
+   *     the event has finished.
    */
-  public static ReplyProcessor21 send(Set recipients, DM dm, int prId, Map<Integer, BucketAdvisor.BucketProfile> profiles, boolean requireAck) {
+  public static ReplyProcessor21 send(
+      Set recipients,
+      DM dm,
+      int prId,
+      Map<Integer, BucketAdvisor.BucketProfile> profiles,
+      boolean requireAck) {
     if (recipients.isEmpty()) {
       return null;
     }
@@ -127,7 +134,8 @@ public final class AllBucketProfilesUpdateMessage extends DistributionMessage im
       rp = new ReplyProcessor21(dm, recipients);
       procId = rp.getProcessorId();
     }
-    AllBucketProfilesUpdateMessage m = new AllBucketProfilesUpdateMessage(recipients, prId, procId, profiles);
+    AllBucketProfilesUpdateMessage m =
+        new AllBucketProfilesUpdateMessage(recipients, prId, procId, profiles);
     dm.putOutgoing(m);
     return rp;
   }
@@ -151,5 +159,4 @@ public final class AllBucketProfilesUpdateMessage extends DistributionMessage im
     out.writeInt(this.processorId);
     DataSerializer.writeObject(this.profiles, out);
   }
-
 }

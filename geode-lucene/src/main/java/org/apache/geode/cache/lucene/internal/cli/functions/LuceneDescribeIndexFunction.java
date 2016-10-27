@@ -35,8 +35,9 @@ import org.apache.geode.cache.lucene.internal.cli.LuceneIndexInfo;
 import org.apache.geode.internal.InternalEntity;
 
 /**
- * The LuceneDescribeIndexFunction class is a function used to collect the information on a particular lucene index.
- * </p>
+ * The LuceneDescribeIndexFunction class is a function used to collect the information on a
+ * particular lucene index.
+ *
  * @see Cache
  * @see org.apache.geode.cache.execute.Function
  * @see FunctionAdapter
@@ -63,7 +64,8 @@ public class LuceneDescribeIndexFunction extends FunctionAdapter implements Inte
     final LuceneIndexInfo indexInfo = (LuceneIndexInfo) context.getArguments();
     LuceneServiceImpl service = (LuceneServiceImpl) LuceneServiceProvider.get(cache);
     LuceneIndex index = service.getIndex(indexInfo.getIndexName(), indexInfo.getRegionPath());
-    LuceneIndexCreationProfile profile = service.getDefinedIndex(indexInfo.getIndexName(), indexInfo.getRegionPath());
+    LuceneIndexCreationProfile profile =
+        service.getDefinedIndex(indexInfo.getIndexName(), indexInfo.getRegionPath());
     if (index != null) {
       result = new LuceneIndexDetails((LuceneIndexImpl) index);
     } else if (profile != null) {

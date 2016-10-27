@@ -25,16 +25,14 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * get rid of a previously added statistic listener.
+ * A message that is sent to a particular distribution manager to get rid of a previously added
+ * statistic listener.
  */
 public final class CancelStatListenerRequest extends AdminRequest {
   // instance variables
   private int listenerId;
 
-  /**
-   * Returns a <code>CancelStatListenerRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>CancelStatListenerRequest</code> to be sent to the specified recipient. */
   public static CancelStatListenerRequest create(int listenerId) {
     CancelStatListenerRequest m = new CancelStatListenerRequest();
     m.listenerId = listenerId;
@@ -42,12 +40,12 @@ public final class CancelStatListenerRequest extends AdminRequest {
   }
 
   public CancelStatListenerRequest() {
-    friendlyName = LocalizedStrings.CancelStatListenerRequest_REMOVE_STATISTIC_RESOURCE_LISTENER.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.CancelStatListenerRequest_REMOVE_STATISTIC_RESOURCE_LISTENER
+            .toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return CancelStatListenerResponse.create(dm, this.getSender(), this.listenerId);
@@ -71,6 +69,7 @@ public final class CancelStatListenerRequest extends AdminRequest {
 
   @Override
   public String toString() {
-    return LocalizedStrings.CancelStatListenerRequest_CANCELSTATLISTENERREQUEST_FROM_0_FOR_1.toLocalizedString(new Object[] { this.getRecipient(), Integer.valueOf(this.listenerId) });
+    return LocalizedStrings.CancelStatListenerRequest_CANCELSTATLISTENERREQUEST_FROM_0_FOR_1
+        .toLocalizedString(new Object[] {this.getRecipient(), Integer.valueOf(this.listenerId)});
   }
 }

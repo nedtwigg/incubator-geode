@@ -57,54 +57,39 @@ import org.apache.geode.management.membership.MembershipEvent;
 import org.apache.geode.management.membership.MembershipListener;
 
 /**
- * This is the concrete implementation of ManagementService
- * which is the gateway to various JMX operations over a GemFire
- * System
- * 
+ * This is the concrete implementation of ManagementService which is the gateway to various JMX
+ * operations over a GemFire System
+ *
  * @since GemFire 7.0
  */
 public final class SystemManagementService extends BaseManagementService {
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * The concrete implementation of DistributedSystem that provides
-   * internal-only functionality.
-   */
-
+  /** The concrete implementation of DistributedSystem that provides internal-only functionality. */
   private InternalDistributedSystem system;
 
-  /**
-   * core component for distribution
-   */
-
+  /** core component for distribution */
   private LocalManager localManager;
 
   /**
-   * This is a notification hub to listen all the notifications emitted from all
-   * the MBeans in a peer cache./cache server
+   * This is a notification hub to listen all the notifications emitted from all the MBeans in a
+   * peer cache./cache server
    */
   private NotificationHub notificationHub;
 
-  /**
-   * Local Filter chain for local MBean filters
-   */
-
+  /** Local Filter chain for local MBean filters */
   private LocalFilterChain localFilterChain;
 
   /**
-   * whether the service is closed or not if cache is closed automatically this
-   * service will be closed
+   * whether the service is closed or not if cache is closed automatically this service will be
+   * closed
    */
   private volatile boolean closed = false;
 
-  /**
-   * has the management service has started yet
-   */
+  /** has the management service has started yet */
   private volatile boolean isStarted = false;
 
-  /**
-   * Adapter to interact with platform MBean server
-   */
+  /** Adapter to interact with platform MBean server */
   private MBeanJMXAdapter jmxAdapter;
 
   private Cache cache;
@@ -116,14 +101,14 @@ public final class SystemManagementService extends BaseManagementService {
   private ManagementResourceRepo repo;
 
   /**
-   * This membership listener will listen on membership events after the node
-   * has transformed into a Managing node.
+   * This membership listener will listen on membership events after the node has transformed into a
+   * Managing node.
    */
   private ManagementMembershipListener listener;
 
   /**
    * Proxy aggregator to create aggregate MBeans e.g. DistributedSystem and DistributedRegion
-   * GemFire comes with a default aggregator. 
+   * GemFire comes with a default aggregator.
    */
   private List<ProxyListener> proxyListeners;
 
@@ -140,7 +125,10 @@ public final class SystemManagementService extends BaseManagementService {
     // system which is disconnected.
     // Most likely scenario when this will happen is when a cache is closed and we are at this point.
     if (!system.isConnected()) {
-      throw new DistributedSystemDisconnectedException(LocalizedStrings.InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED.toLocalizedString());
+      throw new DistributedSystemDisconnectedException(
+          LocalizedStrings
+              .InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED
+              .toLocalizedString());
     }
     this.localFilterChain = new LocalFilterChain();
     this.jmxAdapter = new MBeanJMXAdapter();
@@ -158,11 +146,10 @@ public final class SystemManagementService extends BaseManagementService {
   }
 
   /**
-   * This method will initialize all the internal components for Management and
-   * Monitoring
-   * 
-   * It will a)start an JMX connectorServer b) create a notification hub
-   * c)register the ManagementFunction
+   * This method will initialize all the internal components for Management and Monitoring
+   *
+   * <p>It will a)start an JMX connectorServer b) create a notification hub c)register the
+   * ManagementFunction
    */
   private SystemManagementService init() {
 
@@ -181,12 +168,9 @@ public final class SystemManagementService extends BaseManagementService {
       logger.error(e.getMessage(), e);
       throw new ManagementException(e);
     }
-
   }
 
-  /**
-   *For internal Use only
-   */
+  /** For internal Use only */
   public LocalManager getLocalManager() {
     return localManager;
   }
@@ -222,13 +206,18 @@ public final class SystemManagementService extends BaseManagementService {
 
   private void verifyManagementService() {
     if (!isStarted) {
-      throw new ManagementException(ManagementStrings.Management_Service_MANAGEMENT_SERVICE_NOT_STARTED_YET.toLocalizedString());
+      throw new ManagementException(
+          ManagementStrings.Management_Service_MANAGEMENT_SERVICE_NOT_STARTED_YET
+              .toLocalizedString());
     }
     if (!system.isConnected()) {
-      throw new ManagementException(ManagementStrings.Management_Service_NOT_CONNECTED_TO_DISTRIBUTED_SYSTEM.toLocalizedString());
+      throw new ManagementException(
+          ManagementStrings.Management_Service_NOT_CONNECTED_TO_DISTRIBUTED_SYSTEM
+              .toLocalizedString());
     }
     if (closed) {
-      throw new ManagementException(ManagementStrings.Management_Service_MANAGEMENT_SERVICE_IS_CLOSED.toLocalizedString());
+      throw new ManagementException(
+          ManagementStrings.Management_Service_MANAGEMENT_SERVICE_IS_CLOSED.toLocalizedString());
     }
   }
 
@@ -246,7 +235,7 @@ public final class SystemManagementService extends BaseManagementService {
         system.getDistributionManager().removeMembershipListener(listener);
       }
       // Stop the Federating Manager first . It will ensure MBeans are not getting federated.
-      // while un-registering 
+      // while un-registering
       if (federatingManager != null && federatingManager.isRunning()) {
         federatingManager.stopManager();
       }
@@ -264,35 +253,40 @@ public final class SystemManagementService extends BaseManagementService {
       localManager = null;
       closed = true;
     }
-
   }
 
   @Override
-  public <T> void federate(ObjectName objectName, Class<T> interfaceClass, boolean notificationEmitter) {
+  public <T> void federate(
+      ObjectName objectName, Class<T> interfaceClass, boolean notificationEmitter) {
     verifyManagementService();
     if (!objectName.getDomain().equalsIgnoreCase(ManagementConstants.OBJECTNAME__DEFAULTDOMAIN)) {
-      throw new ManagementException(ManagementStrings.Management_Service_NOT_A_GEMFIRE_DOMAIN_MBEAN.toLocalizedString());
+      throw new ManagementException(
+          ManagementStrings.Management_Service_NOT_A_GEMFIRE_DOMAIN_MBEAN.toLocalizedString());
     }
 
     if (!jmxAdapter.isRegistered(objectName)) {
-      throw new ManagementException(ManagementStrings.Management_Service_MBEAN_NOT_REGISTERED_IN_GEMFIRE_DOMAIN.toLocalizedString());
+      throw new ManagementException(
+          ManagementStrings.Management_Service_MBEAN_NOT_REGISTERED_IN_GEMFIRE_DOMAIN
+              .toLocalizedString());
     }
     if (notificationEmitter && !jmxAdapter.hasNotificationSupport(objectName)) {
-      throw new ManagementException(ManagementStrings.Management_Service_MBEAN_DOES_NOT_HAVE_NOTIFICATION_SUPPORT.toLocalizedString());
+      throw new ManagementException(
+          ManagementStrings.Management_Service_MBEAN_DOES_NOT_HAVE_NOTIFICATION_SUPPORT
+              .toLocalizedString());
     }
 
     //All validation Passed. Now create the federation Component
     Object object = jmxAdapter.getMBeanObject(objectName);
-    FederationComponent fedComp = new FederationComponent(object, objectName, interfaceClass, notificationEmitter);
+    FederationComponent fedComp =
+        new FederationComponent(object, objectName, interfaceClass, notificationEmitter);
     if (ManagementAdapter.refreshOnInit.contains(interfaceClass)) {
-      fedComp.refreshObjectState(true);// Fixes 46387
+      fedComp.refreshObjectState(true); // Fixes 46387
     }
     localManager.markForFederation(objectName, fedComp);
 
     if (isManager()) {
       afterCreateProxy(objectName, interfaceClass, object, fedComp);
     }
-
   }
 
   @Override
@@ -372,7 +366,6 @@ public final class SystemManagementService extends BaseManagementService {
       }
       return federatingManager.findAllProxies(member);
     }
-
   }
 
   @Override
@@ -402,8 +395,9 @@ public final class SystemManagementService extends BaseManagementService {
     if (isManager()) {
       FederationComponent removedObj = localManager.getFedComponents().get(objectName);
       if (removedObj != null) { // only for MBeans local to Manager , not
-                                  // proxies
-        afterRemoveProxy(objectName, removedObj.getInterfaceClass(), removedObj.getMBeanObject(), removedObj);
+        // proxies
+        afterRemoveProxy(
+            objectName, removedObj.getInterfaceClass(), removedObj.getMBeanObject(), removedObj);
       }
     }
 
@@ -427,12 +421,14 @@ public final class SystemManagementService extends BaseManagementService {
   public void startManager() {
     if (!getGemFireCacheImpl().getSystem().getConfig().getJmxManager()) {
       // fix for 45900
-      throw new ManagementException("Could not start the manager because the gemfire property \"jmx-manager\" is false.");
+      throw new ManagementException(
+          "Could not start the manager because the gemfire property \"jmx-manager\" is false.");
     }
     synchronized (instances) {
       verifyManagementService();
       if (federatingManager != null && federatingManager.isRunning()) {
-        throw new AlreadyRunningException(ManagementStrings.Management_Service_MANAGER_ALREADY_RUNNING.toLocalizedString());
+        throw new AlreadyRunningException(
+            ManagementStrings.Management_Service_MANAGER_ALREADY_RUNNING.toLocalizedString());
       }
 
       boolean needsToBeStarted = false;
@@ -474,10 +470,7 @@ public final class SystemManagementService extends BaseManagementService {
     return (GemFireCacheImpl) this.cache;
   }
 
-  /**
-   * Creates a Manager instance in stopped state.
-   * 
-   */
+  /** Creates a Manager instance in stopped state. */
   public boolean createManager() {
     synchronized (instances) {
       if (federatingManager != null) {
@@ -491,9 +484,7 @@ public final class SystemManagementService extends BaseManagementService {
     }
   }
 
-  /**
-   * It will stop the federating Manager and restart the Local cache operation
-   */
+  /** It will stop the federating Manager and restart the Local cache operation */
   @Override
   public void stopManager() {
     synchronized (instances) {
@@ -631,28 +622,36 @@ public final class SystemManagementService extends BaseManagementService {
     return jmxAdapter.getLocatorMXBean();
   }
 
-  public boolean afterCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
+  public boolean afterCreateProxy(
+      ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
     for (ProxyListener listener : proxyListeners) {
       listener.afterCreateProxy(objectName, interfaceClass, proxyObject, newVal);
     }
     return true;
   }
 
-  public boolean afterPseudoCreateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
+  public boolean afterPseudoCreateProxy(
+      ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal) {
     for (ProxyListener listener : proxyListeners) {
       listener.afterPseudoCreateProxy(objectName, interfaceClass, proxyObject, newVal);
     }
     return true;
   }
 
-  public boolean afterRemoveProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent oldVal) {
+  public boolean afterRemoveProxy(
+      ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent oldVal) {
     for (ProxyListener listener : proxyListeners) {
       listener.afterRemoveProxy(objectName, interfaceClass, proxyObject, oldVal);
     }
     return true;
   }
 
-  public boolean afterUpdateProxy(ObjectName objectName, Class interfaceClass, Object proxyObject, FederationComponent newVal, FederationComponent oldVal) {
+  public boolean afterUpdateProxy(
+      ObjectName objectName,
+      Class interfaceClass,
+      Object proxyObject,
+      FederationComponent newVal,
+      FederationComponent oldVal) {
     for (ProxyListener listener : proxyListeners) {
       listener.afterUpdateProxy(objectName, interfaceClass, proxyObject, newVal, oldVal);
     }
@@ -692,13 +691,15 @@ public final class SystemManagementService extends BaseManagementService {
     }
   }
 
-  public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
+  public void memberSuspect(
+      InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
     for (ProxyListener listener : proxyListeners) {
       listener.memberSuspect(id, whoSuspected, reason);
     }
   }
 
-  public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
+  public void quorumLost(
+      Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
     for (ProxyListener listener : proxyListeners) {
       listener.quorumLost(failures, remaining);
     }
@@ -706,7 +707,8 @@ public final class SystemManagementService extends BaseManagementService {
 
   public class UniversalListenerContainer {
 
-    private List<MembershipListener> membershipListeners = new CopyOnWriteArrayList<MembershipListener>();
+    private List<MembershipListener> membershipListeners =
+        new CopyOnWriteArrayList<MembershipListener>();
 
     public void memberJoined(InternalDistributedMember id) {
       MembershipEvent event = createEvent(id);
@@ -714,9 +716,12 @@ public final class SystemManagementService extends BaseManagementService {
         try {
           listener.memberJoined(event);
         } catch (Exception e) {
-          logger.error("Could not invoke listener event memberJoined for listener[{}] due to ", listener.getClass(), e.getMessage(), e);
+          logger.error(
+              "Could not invoke listener event memberJoined for listener[{}] due to ",
+              listener.getClass(),
+              e.getMessage(),
+              e);
         }
-
       }
     }
 
@@ -727,7 +732,11 @@ public final class SystemManagementService extends BaseManagementService {
           try {
             listener.memberLeft(event);
           } catch (Exception e) {
-            logger.error("Could not invoke listener event memberLeft for listener[{}] due to ", listener.getClass(), e.getMessage(), e);
+            logger.error(
+                "Could not invoke listener event memberLeft for listener[{}] due to ",
+                listener.getClass(),
+                e.getMessage(),
+                e);
           }
         }
       } else {
@@ -735,7 +744,11 @@ public final class SystemManagementService extends BaseManagementService {
           try {
             listener.memberCrashed(event);
           } catch (Exception e) {
-            logger.error("Could not invoke listener event memberCrashed for listener[{}] due to ", listener.getClass(), e.getMessage(), e);
+            logger.error(
+                "Could not invoke listener event memberCrashed for listener[{}] due to ",
+                listener.getClass(),
+                e.getMessage(),
+                e);
           }
         }
       }
@@ -744,25 +757,26 @@ public final class SystemManagementService extends BaseManagementService {
     private MembershipEvent createEvent(InternalDistributedMember id) {
       final String memberId = id.getId();
       final DistributedMember member = id;
-      MembershipEvent event = new MembershipEvent() {
+      MembershipEvent event =
+          new MembershipEvent() {
 
-        @Override
-        public String getMemberId() {
-          return memberId;
-        }
+            @Override
+            public String getMemberId() {
+              return memberId;
+            }
 
-        @Override
-        public DistributedMember getDistributedMember() {
-          return member;
-        }
-      };
+            @Override
+            public DistributedMember getDistributedMember() {
+              return member;
+            }
+          };
 
       return event;
     }
 
     /**
-     * Registers a listener that receives call backs when a member joins or
-     * leaves the distributed system.
+     * Registers a listener that receives call backs when a member joins or leaves the distributed
+     * system.
      */
     public void addMembershipListener(MembershipListener listener) {
       membershipListeners.add(listener);
@@ -785,7 +799,6 @@ public final class SystemManagementService extends BaseManagementService {
   @Override
   public void addMembershipListener(MembershipListener listener) {
     universalListenerContainer.addMembershipListener(listener);
-
   }
 
   @Override

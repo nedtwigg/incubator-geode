@@ -27,8 +27,8 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * add a health listener.
+ * A message that is sent to a particular distribution manager to add a health listener.
+ *
  * @since GemFire 3.5
  */
 public final class AddHealthListenerRequest extends AdminRequest {
@@ -36,15 +36,14 @@ public final class AddHealthListenerRequest extends AdminRequest {
   private GemFireHealthConfig cfg;
 
   /**
-   * Returns a <code>AddHealthListenerRequest</code> to be sent to the
-   * specified recipient.
+   * Returns a <code>AddHealthListenerRequest</code> to be sent to the specified recipient.
    *
-   * @throws NullPointerException
-   *         If <code>cfg</code> is <code>null</code>
+   * @throws NullPointerException If <code>cfg</code> is <code>null</code>
    */
   public static AddHealthListenerRequest create(GemFireHealthConfig cfg) {
     if (cfg == null) {
-      throw new NullPointerException(LocalizedStrings.AddHealthListenerRequest_NULL_GEMFIREHEALTHCONFIG.toLocalizedString());
+      throw new NullPointerException(
+          LocalizedStrings.AddHealthListenerRequest_NULL_GEMFIREHEALTHCONFIG.toLocalizedString());
     }
 
     AddHealthListenerRequest m = new AddHealthListenerRequest();
@@ -53,12 +52,11 @@ public final class AddHealthListenerRequest extends AdminRequest {
   }
 
   public AddHealthListenerRequest() {
-    friendlyName = LocalizedStrings.AddHealthListenerRequest_ADD_HEALTH_LISTENER.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.AddHealthListenerRequest_ADD_HEALTH_LISTENER.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return AddHealthListenerResponse.create(dm, this.getSender(), this.cfg);

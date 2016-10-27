@@ -30,9 +30,7 @@ import org.apache.geode.test.dunit.Host;
 import org.apache.geode.test.dunit.NetworkUtils;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * Tests Redundancy Level Functionality
- */
+/** Tests Redundancy Level Functionality */
 @Category(DistributedTest.class)
 public class RedundancyLevelPart3DUnitTest extends RedundancyLevelTestBase {
 
@@ -42,16 +40,17 @@ public class RedundancyLevelPart3DUnitTest extends RedundancyLevelTestBase {
   }
 
   /**
-   * This tests failing of a primary server in a situation where teh rest of the server are all redundant.
-   * After every failure, the order, the dispatcher, the interest registration and the makePrimary calls
-   * are verified. The failure detection in these tests could be either through CCU or cache operation,
-   * whichever occurs first
+   * This tests failing of a primary server in a situation where teh rest of the server are all
+   * redundant. After every failure, the order, the dispatcher, the interest registration and the
+   * makePrimary calls are verified. The failure detection in these tests could be either through
+   * CCU or cache operation, whichever occurs first
    */
   @Test
   public void testRegisterInterestAndMakePrimaryWithFullRedundancy() {
     try {
       CacheServerTestUtil.disableShufflingOfEndpoints();
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 3);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 3);
       createEntriesK1andK2();
       registerK1AndK2();
       assertEquals(3, pool.getRedundantNames().size());
@@ -68,20 +67,20 @@ public class RedundancyLevelPart3DUnitTest extends RedundancyLevelTestBase {
       PoolImpl.BEFORE_RECOVER_INTEREST_CALLBACK_FLAG = true;
       registerInterestCalled = false;
       makePrimaryCalled = false;
-      ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-        public void beforeInterestRegistration() {
-          registerInterestCalled = true;
-        }
+      ClientServerObserverHolder.setInstance(
+          new ClientServerObserverAdapter() {
+            public void beforeInterestRegistration() {
+              registerInterestCalled = true;
+            }
 
-        public void beforeInterestRecovery() {
-          registerInterestCalled = true;
+            public void beforeInterestRecovery() {
+              registerInterestCalled = true;
+            }
 
-        }
-
-        public void beforePrimaryIdentificationFromBackup() {
-          makePrimaryCalled = true;
-        }
-      });
+            public void beforePrimaryIdentificationFromBackup() {
+              makePrimaryCalled = true;
+            }
+          });
       server0.invoke(() -> RedundancyLevelTestBase.stopServer());
       doPuts();
       server1.invoke(() -> RedundancyLevelTestBase.verifyDispatcherIsAlive());
@@ -89,10 +88,12 @@ public class RedundancyLevelPart3DUnitTest extends RedundancyLevelTestBase {
       server3.invoke(() -> RedundancyLevelTestBase.verifyDispatcherIsNotAlive());
       verifyLiveAndRedundantServers(3, 2);
       if (registerInterestCalled) {
-        fail("register interest should not have been called since we failed to a redundant server !");
+        fail(
+            "register interest should not have been called since we failed to a redundant server !");
       }
       if (!makePrimaryCalled) {
-        fail("make primary should have been called since primary did fail and a new primary was to be chosen ");
+        fail(
+            "make primary should have been called since primary did fail and a new primary was to be chosen ");
       }
       assertEquals(2, pool.getRedundantNames().size());
       makePrimaryCalled = false;
@@ -102,10 +103,12 @@ public class RedundancyLevelPart3DUnitTest extends RedundancyLevelTestBase {
       server3.invoke(() -> RedundancyLevelTestBase.verifyDispatcherIsNotAlive());
       verifyLiveAndRedundantServers(2, 1);
       if (registerInterestCalled) {
-        fail("register interest should not have been called since we failed to a redundant server !");
+        fail(
+            "register interest should not have been called since we failed to a redundant server !");
       }
       if (!makePrimaryCalled) {
-        fail("make primary should have been called since primary did fail and a new primary was to be chosen ");
+        fail(
+            "make primary should have been called since primary did fail and a new primary was to be chosen ");
       }
       assertEquals(1, pool.getRedundantNames().size());
       makePrimaryCalled = false;
@@ -114,10 +117,12 @@ public class RedundancyLevelPart3DUnitTest extends RedundancyLevelTestBase {
       server3.invoke(() -> RedundancyLevelTestBase.verifyDispatcherIsAlive());
       verifyLiveAndRedundantServers(1, 0);
       if (registerInterestCalled) {
-        fail("register interest should not have been called since we failed to a redundant server !");
+        fail(
+            "register interest should not have been called since we failed to a redundant server !");
       }
       if (!makePrimaryCalled) {
-        fail("make primary should have been called since primary did fail and a new primary was to be chosen ");
+        fail(
+            "make primary should have been called since primary did fail and a new primary was to be chosen ");
       }
       assertEquals(0, pool.getRedundantNames().size());
       server3.invoke(() -> RedundancyLevelTestBase.stopServer());
@@ -140,16 +145,17 @@ public class RedundancyLevelPart3DUnitTest extends RedundancyLevelTestBase {
   }
 
   /**
-   * This tests failing of a primary server in a situation where the rest of the server are all non redundant.
-   * After every failure, the order, the dispatcher, the interest registration and the makePrimary calls
-   * are verified. The failure detection in these tests could be either through CCU or cache operation,
-   * whichever occurs first
+   * This tests failing of a primary server in a situation where the rest of the server are all non
+   * redundant. After every failure, the order, the dispatcher, the interest registration and the
+   * makePrimary calls are verified. The failure detection in these tests could be either through
+   * CCU or cache operation, whichever occurs first
    */
   @Test
   public void testRegisterInterestAndMakePrimaryWithZeroRedundancy() {
     try {
       CacheServerTestUtil.disableShufflingOfEndpoints();
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 0);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 0);
       createEntriesK1andK2();
       registerK1AndK2();
       assertEquals(0, pool.getRedundantNames().size());
@@ -187,17 +193,18 @@ public class RedundancyLevelPart3DUnitTest extends RedundancyLevelTestBase {
   }
 
   /**
-   * This tests failing of a primary server in a situation where only one of the rest of teh servers is redundant.
-   * After every failure, the order, the dispatcher, the interest registration and the makePrimary calls
-   * are verified. The failure detection in these tests could be either through CCU or cache operation,
-   * whichever occurs first
+   * This tests failing of a primary server in a situation where only one of the rest of teh servers
+   * is redundant. After every failure, the order, the dispatcher, the interest registration and the
+   * makePrimary calls are verified. The failure detection in these tests could be either through
+   * CCU or cache operation, whichever occurs first
    */
   @Test
   public void testRegisterInterestAndMakePrimaryWithRedundancyOne() {
     try {
       //      long maxWaitTime = 60000;
       CacheServerTestUtil.disableShufflingOfEndpoints();
-      createClientCache(NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1);
+      createClientCache(
+          NetworkUtils.getServerHostName(Host.getHost(0)), PORT1, PORT2, PORT3, PORT4, 1);
       createEntriesK1andK2();
       registerK1AndK2();
       assertEquals(1, pool.getRedundantNames().size());
@@ -230,5 +237,4 @@ public class RedundancyLevelPart3DUnitTest extends RedundancyLevelTestBase {
       Assert.fail("test failed due to exception in test testRedundancySpecifiedMoreThanEPs ", ex);
     }
   }
-
 }

@@ -26,9 +26,7 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/** 
-* CacheServerLauncher Tester. 
-*/
+/** CacheServerLauncher Tester. */
 @Category(UnitTest.class)
 public class CacheServerLauncherJUnitTest {
 
@@ -46,7 +44,5 @@ public class CacheServerLauncherJUnitTest {
     assertTrue(CacheServerLauncher.safeEquals(null, null));
     assertFalse(CacheServerLauncher.safeEquals(null, string3));
     assertFalse(CacheServerLauncher.safeEquals(string1, null));
-
   }
-
 }

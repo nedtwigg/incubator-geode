@@ -59,7 +59,13 @@ public final class ContainsKeyValueMessage extends PartitionMessageWithDirectRep
     super();
   }
 
-  public ContainsKeyValueMessage(InternalDistributedMember recipient, int regionId, DirectReplyProcessor processor, Object key, Integer bucketId, boolean valueCheck) {
+  public ContainsKeyValueMessage(
+      InternalDistributedMember recipient,
+      int regionId,
+      DirectReplyProcessor processor,
+      Object key,
+      Integer bucketId,
+      boolean valueCheck) {
     super(recipient, regionId, processor);
     this.valueCheck = valueCheck;
     this.key = key;
@@ -67,37 +73,38 @@ public final class ContainsKeyValueMessage extends PartitionMessageWithDirectRep
   }
 
   /**
-   * Sends a PartitionedRegion message for either
-   * {@link org.apache.geode.cache.Region#containsKey(Object)}or
-   * {@link org.apache.geode.cache.Region#containsValueForKey(Object)}
-   * depending on the <code>valueCheck</code> argument
-   * 
-   * @param recipient
-   *          the member that the contains keys/value message is sent to
-   * @param r
-   *          the PartitionedRegion that contains the bucket
-   * @param key
-   *          the key to be queried
-   * @param bucketId
-   *          the identity of the bucket to be queried
-   * @param valueCheck
-   *          true if
-   *          {@link org.apache.geode.cache.Region#containsValueForKey(Object)}
-   *          is desired, false if
-   *          {@link org.apache.geode.cache.Region#containsKey(Object)}is
-   *          desired
+   * Sends a PartitionedRegion message for either {@link
+   * org.apache.geode.cache.Region#containsKey(Object)}or {@link
+   * org.apache.geode.cache.Region#containsValueForKey(Object)} depending on the <code>valueCheck
+   * </code> argument
+   *
+   * @param recipient the member that the contains keys/value message is sent to
+   * @param r the PartitionedRegion that contains the bucket
+   * @param key the key to be queried
+   * @param bucketId the identity of the bucket to be queried
+   * @param valueCheck true if {@link org.apache.geode.cache.Region#containsValueForKey(Object)} is
+   *     desired, false if {@link org.apache.geode.cache.Region#containsKey(Object)}is desired
    * @return the processor used to read the returned keys
    * @throws ForceReattemptException if the peer is no longer available
    */
-  public static ContainsKeyValueResponse send(InternalDistributedMember recipient, PartitionedRegion r, Object key, Integer bucketId, boolean valueCheck) throws ForceReattemptException {
+  public static ContainsKeyValueResponse send(
+      InternalDistributedMember recipient,
+      PartitionedRegion r,
+      Object key,
+      Integer bucketId,
+      boolean valueCheck)
+      throws ForceReattemptException {
     Assert.assertTrue(recipient != null, "PRDistribuedContainsKeyValueMessage NULL reply message");
 
-    ContainsKeyValueResponse p = new ContainsKeyValueResponse(r.getSystem(), Collections.singleton(recipient), key);
-    ContainsKeyValueMessage m = new ContainsKeyValueMessage(recipient, r.getPRId(), p, key, bucketId, valueCheck);
+    ContainsKeyValueResponse p =
+        new ContainsKeyValueResponse(r.getSystem(), Collections.singleton(recipient), key);
+    ContainsKeyValueMessage m =
+        new ContainsKeyValueMessage(recipient, r.getPRId(), p, key, bucketId, valueCheck);
 
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new ForceReattemptException(LocalizedStrings.ContainsKeyValueMessage_FAILED_SENDING_0.toLocalizedString(m));
+      throw new ForceReattemptException(
+          LocalizedStrings.ContainsKeyValueMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
     return p;
   }
@@ -109,7 +116,9 @@ public final class ContainsKeyValueMessage extends PartitionMessageWithDirectRep
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime) throws CacheException, ForceReattemptException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion r, long startTime)
+      throws CacheException, ForceReattemptException {
     PartitionedRegionDataStore ds = r.getDataStore();
     final boolean replyVal;
     if (ds != null) {
@@ -120,14 +129,26 @@ public final class ContainsKeyValueMessage extends PartitionMessageWithDirectRep
           replyVal = ds.containsKeyLocally(this.bucketId, this.key);
         }
       } catch (PRLocallyDestroyedException pde) {
-        throw new ForceReattemptException(LocalizedStrings.ContainsKeyValueMessage_ENOUNTERED_PRLOCALLYDESTROYEDEXCEPTION.toLocalizedString(), pde);
+        throw new ForceReattemptException(
+            LocalizedStrings.ContainsKeyValueMessage_ENOUNTERED_PRLOCALLYDESTROYEDEXCEPTION
+                .toLocalizedString(),
+            pde);
       }
 
       r.getPrStats().endPartitionMessagesProcessing(startTime);
-      ContainsKeyValueReplyMessage.send(getSender(), getProcessorId(), getReplySender(dm), replyVal);
+      ContainsKeyValueReplyMessage.send(
+          getSender(), getProcessorId(), getReplySender(dm), replyVal);
     } else {
-      logger.fatal(LocalizedMessage.create(LocalizedStrings.ContainsKeyValueMess_PARTITIONED_REGION_0_IS_NOT_CONFIGURED_TO_STORE_DATA, r.getFullPath()));
-      ForceReattemptException fre = new ForceReattemptException(LocalizedStrings.ContainsKeyValueMessage_PARTITIONED_REGION_0_ON_1_IS_NOT_CONFIGURED_TO_STORE_DATA.toLocalizedString(new Object[] { r.getFullPath(), dm.getId() }));
+      logger.fatal(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .ContainsKeyValueMess_PARTITIONED_REGION_0_IS_NOT_CONFIGURED_TO_STORE_DATA,
+              r.getFullPath()));
+      ForceReattemptException fre =
+          new ForceReattemptException(
+              LocalizedStrings
+                  .ContainsKeyValueMessage_PARTITIONED_REGION_0_ON_1_IS_NOT_CONFIGURED_TO_STORE_DATA
+                  .toLocalizedString(new Object[] {r.getFullPath(), dm.getId()}));
       fre.setHash(key.hashCode());
       throw fre;
     }
@@ -140,7 +161,12 @@ public final class ContainsKeyValueMessage extends PartitionMessageWithDirectRep
   @Override
   protected void appendFields(StringBuffer buff) {
     super.appendFields(buff);
-    buff.append("; valueCheck=").append(this.valueCheck).append("; key=").append(this.key).append("; bucketId=").append(this.bucketId);
+    buff.append("; valueCheck=")
+        .append(this.valueCheck)
+        .append("; key=")
+        .append(this.key)
+        .append("; bucketId=")
+        .append(this.bucketId);
   }
 
   public int getDSFID() {
@@ -168,11 +194,8 @@ public final class ContainsKeyValueMessage extends PartitionMessageWithDirectRep
     /** Propagated exception from remote node to operation initiator */
     private boolean containsKeyValue;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public ContainsKeyValueReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public ContainsKeyValueReplyMessage() {}
 
     private ContainsKeyValueReplyMessage(int processorId, boolean containsKeyValue) {
       this.processorId = processorId;
@@ -180,19 +203,22 @@ public final class ContainsKeyValueMessage extends PartitionMessageWithDirectRep
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient, int processorId, ReplySender replySender, boolean containsKeyValue) {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        ReplySender replySender,
+        boolean containsKeyValue) {
       Assert.assertTrue(recipient != null, "ContainsKeyValueReplyMessage NULL reply message");
-      ContainsKeyValueReplyMessage m = new ContainsKeyValueReplyMessage(processorId, containsKeyValue);
+      ContainsKeyValueReplyMessage m =
+          new ContainsKeyValueReplyMessage(processorId, containsKeyValue);
       m.setRecipient(recipient);
       replySender.putOutgoing(m);
     }
 
     /**
-     * Processes this message. This method is invoked by the receiver of the
-     * message.
-     * 
-     * @param dm
-     *          the distribution manager that is processing the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
+     * @param dm the distribution manager that is processing the message.
      */
     @Override
     public void process(final DM dm, ReplyProcessor21 processor) {
@@ -232,7 +258,11 @@ public final class ContainsKeyValueMessage extends PartitionMessageWithDirectRep
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("ContainsKeyValueReplyMessage ").append("processorid=").append(this.processorId).append(" returning ").append(doesItContainKeyValue());
+      sb.append("ContainsKeyValueReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" returning ")
+          .append(doesItContainKeyValue());
       return sb.toString();
     }
 
@@ -242,9 +272,9 @@ public final class ContainsKeyValueMessage extends PartitionMessageWithDirectRep
   }
 
   /**
-   * A processor to capture the value returned by {@link 
+   * A processor to capture the value returned by {@link
    * org.apache.geode.internal.cache.partitioned.ContainsKeyValueMessage.ContainsKeyValueReplyMessage}
-   * 
+   *
    * @since GemFire 5.0
    */
   public static class ContainsKeyValueResponse extends PartitionResponse {
@@ -265,7 +295,8 @@ public final class ContainsKeyValueMessage extends PartitionMessageWithDirectRep
           this.returnValue = reply.doesItContainKeyValue();
           this.returnValueReceived = true;
           if (logger.isTraceEnabled(LogMarker.DM)) {
-            logger.trace(LogMarker.DM, "ContainsKeyValueResponse return value is {}", this.returnValue);
+            logger.trace(
+                LogMarker.DM, "ContainsKeyValueResponse return value is {}", this.returnValue);
           }
         }
       } finally {
@@ -274,10 +305,10 @@ public final class ContainsKeyValueMessage extends PartitionMessageWithDirectRep
     }
 
     /**
-     * @return Set the keys associated with the bucketid of the
-     *         {@link ContainsKeyValueMessage}
+     * @return Set the keys associated with the bucketid of the {@link ContainsKeyValueMessage}
      * @throws ForceReattemptException if the peer is no longer available
-     * @throws PrimaryBucketException if the instance of the bucket that received this operation was not primary
+     * @throws PrimaryBucketException if the instance of the bucket that received this operation was
+     *     not primary
      */
     public boolean waitForContainsResult() throws PrimaryBucketException, ForceReattemptException {
       try {
@@ -289,14 +320,21 @@ public final class ContainsKeyValueMessage extends PartitionMessageWithDirectRep
         // Is this necessary?
         throw pbe;
       } catch (CacheException ce) {
-        logger.debug("ContainsKeyValueResponse got remote CacheException; forcing reattempt. {}", ce.getMessage(), ce);
-        throw new ForceReattemptException(LocalizedStrings.ContainsKeyValueMessage_CONTAINSKEYVALUERESPONSE_GOT_REMOTE_CACHEEXCEPTION_FORCING_REATTEMPT.toLocalizedString(), ce);
+        logger.debug(
+            "ContainsKeyValueResponse got remote CacheException; forcing reattempt. {}",
+            ce.getMessage(),
+            ce);
+        throw new ForceReattemptException(
+            LocalizedStrings
+                .ContainsKeyValueMessage_CONTAINSKEYVALUERESPONSE_GOT_REMOTE_CACHEEXCEPTION_FORCING_REATTEMPT
+                .toLocalizedString(),
+            ce);
       }
       if (!this.returnValueReceived) {
-        throw new ForceReattemptException(LocalizedStrings.ContainsKeyValueMessage_NO_RETURN_VALUE_RECEIVED.toLocalizedString());
+        throw new ForceReattemptException(
+            LocalizedStrings.ContainsKeyValueMessage_NO_RETURN_VALUE_RECEIVED.toLocalizedString());
       }
       return this.returnValue;
     }
   }
-
 }

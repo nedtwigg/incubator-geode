@@ -58,13 +58,15 @@ public class SnapshotPerformanceDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void execute(int iterations, int dataCount) throws Exception {
-    RegionType[] rts = new RegionType[] { RegionType.REPLICATE, RegionType.PARTITION };
-    SerializationType[] sts = new SerializationType[] { SerializationType.DATA_SERIALIZABLE, SerializationType.PDX };
+    RegionType[] rts = new RegionType[] {RegionType.REPLICATE, RegionType.PARTITION};
+    SerializationType[] sts =
+        new SerializationType[] {SerializationType.DATA_SERIALIZABLE, SerializationType.PDX};
     for (RegionType rt : rts) {
       for (SerializationType st : sts) {
         for (int i = 0; i < iterations; i++) {
           Region<Integer, MyObject> region = createRegion(rt, st);
-          LogWriterUtils.getLogWriter().info("SNP: Testing region " + region.getName() + ", iteration = " + i);
+          LogWriterUtils.getLogWriter()
+              .info("SNP: Testing region " + region.getName() + ", iteration = " + i);
 
           loadData(region, st, dataCount);
           doExport(region);
@@ -89,7 +91,8 @@ public class SnapshotPerformanceDUnitTest extends JUnit4CacheTestCase {
     double eps = 1000.0 * size / elapsed;
     double mbps = 1000.0 * bytes / elapsed / (1024 * 1024);
 
-    LogWriterUtils.getLogWriter().info("SNP: Exported " + size + " entries (" + bytes + " bytes) in " + elapsed + " ms");
+    LogWriterUtils.getLogWriter()
+        .info("SNP: Exported " + size + " entries (" + bytes + " bytes) in " + elapsed + " ms");
     LogWriterUtils.getLogWriter().info("SNP: Export entry rate: " + eps + " entries / sec");
     LogWriterUtils.getLogWriter().info("SNP: Export data rate: " + mbps + " MB / sec");
   }
@@ -107,7 +110,8 @@ public class SnapshotPerformanceDUnitTest extends JUnit4CacheTestCase {
     double eps = 1000.0 * size / elapsed;
     double mbps = 1000.0 * bytes / elapsed / (1024 * 1024);
 
-    LogWriterUtils.getLogWriter().info("SNP: Imported " + size + " entries (" + bytes + " bytes) in " + elapsed + " ms");
+    LogWriterUtils.getLogWriter()
+        .info("SNP: Imported " + size + " entries (" + bytes + " bytes) in " + elapsed + " ms");
     LogWriterUtils.getLogWriter().info("SNP: Import entry rate: " + eps + " entries / sec");
     LogWriterUtils.getLogWriter().info("SNP: Import data rate: " + mbps + " MB / sec");
   }
@@ -118,34 +122,37 @@ public class SnapshotPerformanceDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void createCache() throws Exception {
-    SerializableCallable setup = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
+    SerializableCallable setup =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
 
-        getCache(cf);
-        return null;
-      }
-    };
+            getCache(cf);
+            return null;
+          }
+        };
 
     SnapshotDUnitTest.forEachVm(setup, true);
   }
 
-  private Region<Integer, MyObject> createRegion(final RegionType rt, final SerializationType st) throws Exception {
+  private Region<Integer, MyObject> createRegion(final RegionType rt, final SerializationType st)
+      throws Exception {
     final String name = "snapshot-" + rt.name() + "-" + st.name();
     Region<Integer, MyObject> region = getCache().getRegion(name);
     if (region != null) {
       region.destroyRegion();
     }
 
-    SerializableCallable setup = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Cache cache = getCache();
-        new RegionGenerator().createRegion(cache, null, rt, name);
-        return null;
-      }
-    };
+    SerializableCallable setup =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Cache cache = getCache();
+            new RegionGenerator().createRegion(cache, null, rt, name);
+            return null;
+          }
+        };
 
     SnapshotDUnitTest.forEachVm(setup, true);
     return getCache().getRegion(name);
@@ -159,7 +166,12 @@ public class SnapshotPerformanceDUnitTest extends JUnit4CacheTestCase {
 
     long start = System.currentTimeMillis();
     for (int i = 0; i < count; i++) {
-      buffer.put(i, rgen.createData(st, i, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at sapien lectus. Nam ullamcorper blandit tempus. Morbi accumsan ornare erat eget lobortis. Mauris laoreet auctor purus et vehicula. Cras hendrerit consectetur odio, in placerat orci vehicula a. Ut laoreet consectetur quam, at pellentesque felis sollicitudin sed. Aliquam imperdiet, augue at vehicula placerat, quam mi feugiat mi, non semper elit diam vitae lectus. Fusce vestibulum erat vitae dui scelerisque aliquet. Nam magna sapien, scelerisque id tincidunt non, dapibus quis ipsum."));
+      buffer.put(
+          i,
+          rgen.createData(
+              st,
+              i,
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris at sapien lectus. Nam ullamcorper blandit tempus. Morbi accumsan ornare erat eget lobortis. Mauris laoreet auctor purus et vehicula. Cras hendrerit consectetur odio, in placerat orci vehicula a. Ut laoreet consectetur quam, at pellentesque felis sollicitudin sed. Aliquam imperdiet, augue at vehicula placerat, quam mi feugiat mi, non semper elit diam vitae lectus. Fusce vestibulum erat vitae dui scelerisque aliquet. Nam magna sapien, scelerisque id tincidunt non, dapibus quis ipsum."));
       if (buffer.size() == bufferSize) {
         region.putAll(buffer);
         buffer.clear();

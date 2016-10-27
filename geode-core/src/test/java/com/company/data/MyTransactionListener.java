@@ -25,19 +25,13 @@ import org.apache.geode.cache.*;
  */
 public class MyTransactionListener implements TransactionListener, Declarable {
 
-  public void afterCommit(TransactionEvent event) {
-  }
+  public void afterCommit(TransactionEvent event) {}
 
-  public void afterFailedCommit(TransactionEvent event) {
-  }
+  public void afterFailedCommit(TransactionEvent event) {}
 
-  public void afterRollback(TransactionEvent event) {
-  }
+  public void afterRollback(TransactionEvent event) {}
 
-  public void init(java.util.Properties props) {
-  }
+  public void init(java.util.Properties props) {}
 
-  public void close() {
-  }
-
+  public void close() {}
 }

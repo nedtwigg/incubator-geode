@@ -22,14 +22,11 @@ import antlr.*;
 import org.apache.geode.internal.Assert;
 import org.apache.geode.cache.query.internal.QCompiler;
 
-/**
- *
- */
+/** */
 public class ASTIteratorDef extends GemFireAST {
   private static final long serialVersionUID = -736956634497535951L;
 
-  public ASTIteratorDef() {
-  }
+  public ASTIteratorDef() {}
 
   public ASTIteratorDef(Token t) {
     super(t);
@@ -70,5 +67,4 @@ public class ASTIteratorDef extends GemFireAST {
 
     compiler.iteratorDef();
   }
-
 }

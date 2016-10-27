@@ -34,10 +34,17 @@ public class ObjectSizerJUnitTest {
     assertEquals(roundup(OBJECT_SIZE + 4), ObjectGraphSizer.size(new TestObject1()));
     assertEquals(roundup(OBJECT_SIZE + 4), ObjectGraphSizer.size(new TestObject2()));
     assertEquals(roundup(OBJECT_SIZE), ObjectGraphSizer.size(new TestObject3()));
-    assertEquals(roundup(OBJECT_SIZE * 2 + REFERENCE_SIZE), ObjectGraphSizer.size(new TestObject3(), true));
+    assertEquals(
+        roundup(OBJECT_SIZE * 2 + REFERENCE_SIZE), ObjectGraphSizer.size(new TestObject3(), true));
     assertEquals(roundup(OBJECT_SIZE + REFERENCE_SIZE), ObjectGraphSizer.size(new TestObject4()));
-    assertEquals(roundup(OBJECT_SIZE + REFERENCE_SIZE) + roundup(OBJECT_SIZE + 4), ObjectGraphSizer.size(new TestObject5()));
-    assertEquals(roundup(OBJECT_SIZE + REFERENCE_SIZE) + roundup(OBJECT_SIZE + REFERENCE_SIZE * 4 + 4) + roundup(OBJECT_SIZE + 4), ObjectGraphSizer.size(new TestObject6()));
+    assertEquals(
+        roundup(OBJECT_SIZE + REFERENCE_SIZE) + roundup(OBJECT_SIZE + 4),
+        ObjectGraphSizer.size(new TestObject5()));
+    assertEquals(
+        roundup(OBJECT_SIZE + REFERENCE_SIZE)
+            + roundup(OBJECT_SIZE + REFERENCE_SIZE * 4 + 4)
+            + roundup(OBJECT_SIZE + 4),
+        ObjectGraphSizer.size(new TestObject6()));
     assertEquals(roundup(OBJECT_SIZE + 7), ObjectGraphSizer.size(new TestObject7()));
   }
 

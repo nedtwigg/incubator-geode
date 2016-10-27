@@ -25,15 +25,13 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular app vm to request all the subregions
- * of a given parent region.
+ * A message that is sent to a particular app vm to request all the subregions of a given parent
+ * region.
  */
 public final class SubRegionRequest extends RegionAdminRequest {
   // instance variables
 
-  /**
-   * Returns a <code>SubRegionRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>SubRegionRequest</code> to be sent to the specified recipient. */
   public static SubRegionRequest create() {
     SubRegionRequest m = new SubRegionRequest();
     return m;
@@ -43,9 +41,7 @@ public final class SubRegionRequest extends RegionAdminRequest {
     friendlyName = LocalizedStrings.SubRegionRequest_LIST_SUBREGIONS.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return SubRegionResponse.create(dm, this.getSender(), this.getRegion(dm.getSystem()));

@@ -128,21 +128,21 @@ public class CacheXml80GatewayDUnitTest extends CacheXmlTestCase {
     assertNotNull(senderOnCache.getGatewayEventSubstitutionFilter());
   }
 
-  protected void validateGatewayReceiver(GatewayReceiver receiver1, GatewayReceiver gatewayReceiver) {
+  protected void validateGatewayReceiver(
+      GatewayReceiver receiver1, GatewayReceiver gatewayReceiver) {
     CacheXml70GatewayDUnitTest.validateGatewayReceiver(receiver1, gatewayReceiver);
     assertEquals(receiver1.isManualStart(), gatewayReceiver.isManualStart());
   }
 
-  public static class MyGatewayEventSubstitutionFilter implements GatewayEventSubstitutionFilter, Declarable {
+  public static class MyGatewayEventSubstitutionFilter
+      implements GatewayEventSubstitutionFilter, Declarable {
 
     public Object getSubstituteValue(EntryEvent event) {
       return event.getKey();
     }
 
-    public void close() {
-    }
+    public void close() {}
 
-    public void init(Properties properties) {
-    }
+    public void init(Properties properties) {}
   }
 }

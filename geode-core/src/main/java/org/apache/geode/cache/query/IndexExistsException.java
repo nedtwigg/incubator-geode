@@ -23,17 +23,17 @@
 package org.apache.geode.cache.query;
 
 /**
- * Thrown while creating the new index if there exists an Index with
- * the same definition as new index.
+ * Thrown while creating the new index if there exists an Index with the same definition as new
+ * index.
  *
  * @since GemFire 4.0
  */
-
 public class IndexExistsException extends QueryException {
   private static final long serialVersionUID = -168312863985932144L;
 
   /**
    * Constructs instance of IndexNameConflictException with error message
+   *
    * @param msg the error message
    */
   public IndexExistsException(String msg) {
@@ -42,6 +42,7 @@ public class IndexExistsException extends QueryException {
 
   /**
    * Constructs instance of IndexNameConflictException with error message and cause
+   *
    * @param msg the error message
    * @param cause a Throwable that is a cause of this exception
    */

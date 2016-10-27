@@ -18,12 +18,12 @@
 package org.apache.geode.internal.lang;
 
 /**
- * The Filter interface defines a contract for implementing objects that act as a filter to segregate other objects.
- * </p>
+ * The Filter interface defines a contract for implementing objects that act as a filter to
+ * segregate other objects.
+ *
  * @since GemFire 7.0
  */
 public interface Filter<T> {
 
   public boolean accept(T obj);
-
 }

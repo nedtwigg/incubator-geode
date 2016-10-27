@@ -104,8 +104,8 @@ public class IUMJUnitTest {
     }
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /pos,  positions.values where status='active'"
-        //TASK IUM4
+    String queries[] = {"SELECT DISTINCT * FROM /pos,  positions.values where status='active'"
+      //TASK IUM4
     };
     SelectResults r[][] = new SelectResults[queries.length][2];
     for (int i = 0; i < queries.length; i++) {
@@ -163,7 +163,7 @@ public class IUMJUnitTest {
     //        }else {
     //            fail("FAILED:Search result Type is different in both the cases");
     //        }
-    //        
+    //
   }
 
   @Test
@@ -175,8 +175,9 @@ public class IUMJUnitTest {
     }
     CacheUtils.getQueryService();
 
-    String queries[] = { "SELECT DISTINCT * from /portfolios pf , pf.positions.values pos where pos.getSecId = 'IBM' and status = 'inactive'"
-        //TASK IUM3
+    String queries[] = {
+      "SELECT DISTINCT * from /portfolios pf , pf.positions.values pos where pos.getSecId = 'IBM' and status = 'inactive'"
+      //TASK IUM3
     };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -216,7 +217,6 @@ public class IUMJUnitTest {
       if (((Portfolio) stc3.get(strg3[0])).isActive() != false)
         fail("FAILED:Portfolio in Search result is Active");
     }
-
   }
 
   class QueryObserverImpl extends QueryObserverAdapter {

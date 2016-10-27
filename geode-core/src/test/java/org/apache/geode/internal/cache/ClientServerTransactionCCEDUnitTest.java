@@ -38,9 +38,7 @@ import org.apache.geode.test.dunit.LogWriterUtils;
 import org.apache.geode.test.dunit.SerializableCallable;
 import org.apache.geode.test.dunit.VM;
 
-/**
- * test client initiated transactions with concurrency checks enabled.
- */
+/** test client initiated transactions with concurrency checks enabled. */
 @Category(DistributedTest.class)
 public class ClientServerTransactionCCEDUnitTest extends ClientServerTransactionDUnitTest {
 
@@ -51,9 +49,7 @@ public class ClientServerTransactionCCEDUnitTest extends ClientServerTransaction
     IgnoredException.addIgnoredException("Socket Closed");
   }
 
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = -6785438240204988439L;
 
   public ClientServerTransactionCCEDUnitTest() {
@@ -67,34 +63,38 @@ public class ClientServerTransactionCCEDUnitTest extends ClientServerTransaction
 
   @SuppressWarnings("unchecked")
   public Map<Object, VersionTag> getVersionTagsForRegion(VM vm, final String regionName) {
-    return (Map<Object, VersionTag>) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Map<Object, VersionTag> map = new HashMap<Object, VersionTag>();
-        LocalRegion r = (LocalRegion) getCache().getRegion(regionName);
-        Iterator<Object> it = null;
-        if (r instanceof PartitionedRegion) {
-          Region l = PartitionRegionHelper.getLocalPrimaryData(r);
-          it = l.keySet().iterator();
-        } else {
-          it = r.keySet().iterator();
-        }
-        while (it.hasNext()) {
-          Object key = it.next();
-          map.put(key, r.getRegionEntry(key).getVersionStamp().asVersionTag());
-        }
-        return map;
-      }
-    });
+    return (Map<Object, VersionTag>)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                Map<Object, VersionTag> map = new HashMap<Object, VersionTag>();
+                LocalRegion r = (LocalRegion) getCache().getRegion(regionName);
+                Iterator<Object> it = null;
+                if (r instanceof PartitionedRegion) {
+                  Region l = PartitionRegionHelper.getLocalPrimaryData(r);
+                  it = l.keySet().iterator();
+                } else {
+                  it = r.keySet().iterator();
+                }
+                while (it.hasNext()) {
+                  Object key = it.next();
+                  map.put(key, r.getRegionEntry(key).getVersionStamp().asVersionTag());
+                }
+                return map;
+              }
+            });
   }
 
   public InternalDistributedMember getMemberId(VM vm) {
-    return (InternalDistributedMember) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        return getCache().getDistributedSystem().getDistributedMember();
-      }
-    });
+    return (InternalDistributedMember)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                return getCache().getDistributedSystem().getDistributedMember();
+              }
+            });
   }
 
   public void verifyVersionTags(VM client, VM server1, VM server2, VM server3) {
@@ -105,7 +105,14 @@ public class ClientServerTransactionCCEDUnitTest extends ClientServerTransaction
     for (Object key : clientTags.keySet()) {
       VersionTag serverTag = serverTags.get(key);
       serverTag.setMemberID(serverId);
-      LogWriterUtils.getLogWriter().fine("SWAP:key:" + key + " clientVersion:" + clientTags.get(key) + " serverVersion:" + serverTag);
+      LogWriterUtils.getLogWriter()
+          .fine(
+              "SWAP:key:"
+                  + key
+                  + " clientVersion:"
+                  + clientTags.get(key)
+                  + " serverVersion:"
+                  + serverTag);
       assertEquals(clientTags.get(key), serverTags.get(key));
       serverTags.remove(key);
     }

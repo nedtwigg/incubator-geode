@@ -54,14 +54,15 @@ import static org.apache.geode.test.dunit.Invoke.invokeInEveryVM;
 import static org.apache.geode.test.dunit.LogWriterUtils.getLogWriter;
 
 /**
- * This DUnit tests uses same code as GemFireDeadlockDetectorDUnitTest and uses the command processor for executing the
- * "show deadlock" command
+ * This DUnit tests uses same code as GemFireDeadlockDetectorDUnitTest and uses the command
+ * processor for executing the "show deadlock" command
  */
 @Category(DistributedTest.class)
 public class ShowDeadlockDUnitTest extends JUnit4CacheTestCase {
 
   private static final long serialVersionUID = 1L;
-  private static final Set<Thread> stuckThreads = Collections.synchronizedSet(new HashSet<Thread>());
+  private static final Set<Thread> stuckThreads =
+      Collections.synchronizedSet(new HashSet<Thread>());
   private static final Map<String, String> EMPTY_ENV = Collections.emptyMap();
 
   @Override
@@ -73,15 +74,16 @@ public class ShowDeadlockDUnitTest extends JUnit4CacheTestCase {
 
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
-    invokeInEveryVM(new SerializableRunnable() {
-      private static final long serialVersionUID = 1L;
+    invokeInEveryVM(
+        new SerializableRunnable() {
+          private static final long serialVersionUID = 1L;
 
-      public void run() {
-        for (Thread thread : stuckThreads) {
-          thread.interrupt();
-        }
-      }
-    });
+          public void run() {
+            for (Thread thread : stuckThreads) {
+              thread.interrupt();
+            }
+          }
+        });
     CliUtil.isGfshVM = true;
   }
 
@@ -112,7 +114,8 @@ public class ShowDeadlockDUnitTest extends JUnit4CacheTestCase {
     getLogWriter().info("output = " + deadLockOutputFromCommand);
     assertEquals(true, result.hasIncomingFiles());
     assertEquals(true, result.getStatus().equals(Status.OK));
-    assertEquals(true, deadLockOutputFromCommand.startsWith(CliStrings.SHOW_DEADLOCK__NO__DEADLOCK));
+    assertEquals(
+        true, deadLockOutputFromCommand.startsWith(CliStrings.SHOW_DEADLOCK__NO__DEADLOCK));
     result.saveIncomingFiles(null);
     File file = new File(fileName);
     assertTrue(file.exists());
@@ -124,7 +127,8 @@ public class ShowDeadlockDUnitTest extends JUnit4CacheTestCase {
   private static final Lock lock = new ReentrantLock();
 
   @Test
-  public void testDistributedDeadlockWithFunction() throws InterruptedException, ClassNotFoundException, IOException {
+  public void testDistributedDeadlockWithFunction()
+      throws InterruptedException, ClassNotFoundException, IOException {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
@@ -147,12 +151,12 @@ public class ShowDeadlockDUnitTest extends JUnit4CacheTestCase {
     String deadLockOutputFromCommand = getResultAsString(result);
     getLogWriter().info("Deadlock = " + deadLockOutputFromCommand);
     result.saveIncomingFiles(null);
-    assertEquals(true, deadLockOutputFromCommand.startsWith(CliStrings.SHOW_DEADLOCK__DEADLOCK__DETECTED));
+    assertEquals(
+        true, deadLockOutputFromCommand.startsWith(CliStrings.SHOW_DEADLOCK__DEADLOCK__DETECTED));
     assertEquals(true, result.getStatus().equals(Status.OK));
     File file = new File(filename);
     assertTrue(file.exists());
     file.delete();
-
   }
 
   private void createCache(Properties props) {
@@ -172,57 +176,61 @@ public class ShowDeadlockDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void lockTheLocks(VM vm0, final InternalDistributedMember member) {
-    vm0.invokeAsync(new SerializableRunnable() {
+    vm0.invokeAsync(
+        new SerializableRunnable() {
 
-      private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-      public void run() {
-        lock.lock();
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e) {
-          fail("interrupted", e);
-        }
-        ResultCollector collector = FunctionService.onMember(basicGetSystem(), member).execute(new TestFunction());
-        //wait the function to lock the lock on member.
-        collector.getResult();
-        lock.unlock();
-      }
-    });
+          public void run() {
+            lock.lock();
+            try {
+              Thread.sleep(1000);
+            } catch (InterruptedException e) {
+              fail("interrupted", e);
+            }
+            ResultCollector collector =
+                FunctionService.onMember(basicGetSystem(), member).execute(new TestFunction());
+            //wait the function to lock the lock on member.
+            collector.getResult();
+            lock.unlock();
+          }
+        });
   }
 
   private void lockTheDLocks(VM vm, final String first, final String second) {
-    vm.invokeAsync(new SerializableRunnable() {
+    vm.invokeAsync(
+        new SerializableRunnable() {
 
-      private static final long serialVersionUID = 1L;
+          private static final long serialVersionUID = 1L;
 
-      public void run() {
-        getCache();
-        DistributedLockService dls = DistributedLockService.create("deadlock_test", getSystem());
-        dls.lock(first, 10 * 1000, -1);
+          public void run() {
+            getCache();
+            DistributedLockService dls =
+                DistributedLockService.create("deadlock_test", getSystem());
+            dls.lock(first, 10 * 1000, -1);
 
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        dls.lock(second, 10 * 1000, -1);
-      }
-    });
+            try {
+              Thread.sleep(1000);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+            dls.lock(second, 10 * 1000, -1);
+          }
+        });
   }
 
   private InternalDistributedMember createCache(VM vm) {
-    return (InternalDistributedMember) vm.invoke(new SerializableCallable() {
-      /**
-       *
-       */
-      private static final long serialVersionUID = 1L;
+    return (InternalDistributedMember)
+        vm.invoke(
+            new SerializableCallable() {
+              /** */
+              private static final long serialVersionUID = 1L;
 
-      public Object call() {
-        getCache();
-        return getSystem().getDistributedMember();
-      }
-    });
+              public Object call() {
+                getCache();
+                return getSystem().getDistributedMember();
+              }
+            });
   }
 
   private String getResultAsString(Result result) {

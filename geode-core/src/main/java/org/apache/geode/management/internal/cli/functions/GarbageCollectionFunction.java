@@ -26,13 +26,7 @@ import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.management.internal.cli.CliUtil;
 
-/**
- * 
- * Class for Garbage collection function
- * 
- *  
- * 
- */
+/** Class for Garbage collection function */
 public class GarbageCollectionFunction implements Function, InternalEntity {
   public static final String ID = GarbageCollectionFunction.class.getName();
 
@@ -57,11 +51,15 @@ public class GarbageCollectionFunction implements Function, InternalEntity {
       long megaBytes = 131072;
       resultMap = new HashMap<String, String>();
       resultMap.put("MemberId", member.getId());
-      resultMap.put("HeapSizeBeforeGC", String.valueOf((totalMemoryBeforeGC - freeMemoeryBeforeGC) / megaBytes));
-      resultMap.put("HeapSizeAfterGC", String.valueOf((totalMemoryAfterGC - freeMemoeryAfterGC) / megaBytes));
+      resultMap.put(
+          "HeapSizeBeforeGC",
+          String.valueOf((totalMemoryBeforeGC - freeMemoeryBeforeGC) / megaBytes));
+      resultMap.put(
+          "HeapSizeAfterGC", String.valueOf((totalMemoryAfterGC - freeMemoeryAfterGC) / megaBytes));
       resultMap.put("TimeSpentInGC", String.valueOf(timeAfterGC - timeBeforeGC));
     } catch (Exception ex) {
-      str1.append("Exception in GC:" + ex.getMessage() + CliUtil.stackTraceAsString((Throwable) ex));
+      str1.append(
+          "Exception in GC:" + ex.getMessage() + CliUtil.stackTraceAsString((Throwable) ex));
       context.getResultSender().lastResult(str1.toString());
     }
     context.getResultSender().lastResult(resultMap);

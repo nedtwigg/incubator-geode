@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -30,8 +30,8 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
 /**
- * An implementation of {@link IndexResultCollector} to collect {@link EntryScore}. It is expected that the results will
- * be ordered by score of the entry.
+ * An implementation of {@link IndexResultCollector} to collect {@link EntryScore}. It is expected
+ * that the results will be ordered by score of the entry.
  */
 public class TopEntriesCollector implements IndexResultCollector, DataSerializableFixedID {
   private String name;
@@ -71,9 +71,7 @@ public class TopEntriesCollector implements IndexResultCollector, DataSerializab
     return entries == null ? 0 : entries.size();
   }
 
-  /**
-   * @return The entries collected by this collector
-   */
+  /** @return The entries collected by this collector */
   public TopEntries getEntries() {
     return entries;
   }

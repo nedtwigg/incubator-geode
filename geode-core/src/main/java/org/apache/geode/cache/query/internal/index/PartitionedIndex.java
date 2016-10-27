@@ -47,37 +47,29 @@ import org.apache.geode.internal.cache.execute.BucketMovedException;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * This class implements a Partitioned index over a group of partitioned region
- * buckets.
- * 
+ * This class implements a Partitioned index over a group of partitioned region buckets.
+ *
  * @since GemFire 5.1
  */
-
 public class PartitionedIndex extends AbstractIndex {
 
-  /**
-   * Contains the reference for all the local indexed buckets.
-   */
-  private Map<Region, List<Index>> bucketIndexes = Collections.synchronizedMap(new HashMap<Region, List<Index>>());
+  /** Contains the reference for all the local indexed buckets. */
+  private Map<Region, List<Index>> bucketIndexes =
+      Collections.synchronizedMap(new HashMap<Region, List<Index>>());
 
   /**
    * Type on index represented by this partitioned index.
-   * 
+   *
    * @see IndexType#FUNCTIONAL
    * @see IndexType#PRIMARY_KEY
    * @see IndexType#HASH
    */
   private IndexType type;
 
-  /**
-   * Number of remote buckets indexed when creating an index on the partitioned 
-   * region instance.
-   */
+  /** Number of remote buckets indexed when creating an index on the partitioned region instance. */
   private int numRemoteBucektsIndexed;
 
-  /**
-   * String for imports if needed for index creations
-   */
+  /** String for imports if needed for index creations */
   private String imports;
 
   private HashSet mapIndexKeys = new HashSet();
@@ -86,25 +78,42 @@ public class PartitionedIndex extends AbstractIndex {
   private volatile boolean populateInProgress;
 
   /**
-   * Constructor for partitioned indexed. Creates the partitioned index on given
-   * a partitioned region. An index can be created programmatically or through 
-   * cache.xml during initialization.
+   * Constructor for partitioned indexed. Creates the partitioned index on given a partitioned
+   * region. An index can be created programmatically or through cache.xml during initialization.
    */
-  public PartitionedIndex(IndexType iType, String indexName, Region r, String indexedExpression, String fromClause, String imports) {
-    super(indexName, r, fromClause, indexedExpression, null, fromClause, indexedExpression, null, null);
+  public PartitionedIndex(
+      IndexType iType,
+      String indexName,
+      Region r,
+      String indexedExpression,
+      String fromClause,
+      String imports) {
+    super(
+        indexName,
+        r,
+        fromClause,
+        indexedExpression,
+        null,
+        fromClause,
+        indexedExpression,
+        null,
+        null);
     this.type = iType;
     this.imports = imports;
 
     if (iType == IndexType.HASH) {
       if (!getRegion().getAttributes().getIndexMaintenanceSynchronous()) {
-        throw new UnsupportedOperationException(LocalizedStrings.DefaultQueryService_HASH_INDEX_CREATION_IS_NOT_SUPPORTED_FOR_ASYNC_MAINTENANCE.toLocalizedString());
+        throw new UnsupportedOperationException(
+            LocalizedStrings
+                .DefaultQueryService_HASH_INDEX_CREATION_IS_NOT_SUPPORTED_FOR_ASYNC_MAINTENANCE
+                .toLocalizedString());
       }
     }
   }
 
   /**
-   * Adds an index on a bucket to the list of already indexed buckets in the 
-   * partitioned region.
+   * Adds an index on a bucket to the list of already indexed buckets in the partitioned region.
+   *
    * @param index bucket index to be added to the list.
    */
   public void addToBucketIndexes(Region r, Index index) {
@@ -132,7 +141,7 @@ public class PartitionedIndex extends AbstractIndex {
 
   /**
    * Returns the number of locally indexed buckets.
-   * 
+   *
    * @return int number of buckets.
    */
   public int getNumberOfIndexedBuckets() {
@@ -147,7 +156,7 @@ public class PartitionedIndex extends AbstractIndex {
 
   /**
    * Gets a collection of all the bucket indexes created so far.
-   * 
+   *
    * @return bucketIndexes collection of all the bucket indexes.
    */
   public List getBucketIndexes() {
@@ -171,10 +180,7 @@ public class PartitionedIndex extends AbstractIndex {
     }
   }
 
-  /**
-   * Returns one of the bucket index. 
-   * To get all bucket index use getBucketIndexes()
-   */
+  /** Returns one of the bucket index. To get all bucket index use getBucketIndexes() */
   public Index getBucketIndex() {
     Index index = null;
     synchronized (this.bucketIndexes) {
@@ -200,16 +206,16 @@ public class PartitionedIndex extends AbstractIndex {
 
   /**
    * Returns the type of index this partitioned index represents.
-   * @return  indexType type of partitioned index.
+   *
+   * @return indexType type of partitioned index.
    */
   public IndexType getType() {
     return type;
   }
 
-  /**
-   * Returns the index for the bucket.
-   */
-  static public AbstractIndex getBucketIndex(PartitionedRegion pr, String indexName, Integer bId) throws QueryInvocationTargetException {
+  /** Returns the index for the bucket. */
+  public static AbstractIndex getBucketIndex(PartitionedRegion pr, String indexName, Integer bId)
+      throws QueryInvocationTargetException {
     try {
       pr.checkReadiness();
     } catch (Exception ex) {
@@ -226,18 +232,22 @@ public class PartitionedIndex extends AbstractIndex {
       index = (AbstractIndex) (bukRegion.getIndexManager().getIndex(indexName));
     } else {
       if (pr.getCache().getLogger().fineEnabled()) {
-        pr.getCache().getLogger().fine("Index Manager not found for the bucket region " + bukRegion.getFullPath() + " unable to fetch the index " + indexName);
+        pr.getCache()
+            .getLogger()
+            .fine(
+                "Index Manager not found for the bucket region "
+                    + bukRegion.getFullPath()
+                    + " unable to fetch the index "
+                    + indexName);
       }
-      throw new QueryInvocationTargetException("Index Manager not found, " + " unable to fetch the index " + indexName);
+      throw new QueryInvocationTargetException(
+          "Index Manager not found, " + " unable to fetch the index " + indexName);
     }
 
     return index;
   }
 
-  /**
-   * Verify if the index is available of the buckets. If not create index
-   * on the bucket.
-   */
+  /** Verify if the index is available of the buckets. If not create index on the bucket. */
   public void verifyAndCreateMissingIndex(List buckets) throws QueryInvocationTargetException {
     PartitionedRegion pr = (PartitionedRegion) this.getRegion();
     PartitionedRegionDataStore prds = pr.getDataStore();
@@ -252,13 +262,29 @@ public class PartitionedIndex extends AbstractIndex {
       if (im != null && im.getIndex(indexName) == null) {
         try {
           if (pr.getCache().getLogger().fineEnabled()) {
-            pr.getCache().getLogger().fine("Verifying index presence on bucket region. " + " Found index " + this.indexName + " not present on the bucket region " + bukRegion.getFullPath() + ", index will be created on this region.");
+            pr.getCache()
+                .getLogger()
+                .fine(
+                    "Verifying index presence on bucket region. "
+                        + " Found index "
+                        + this.indexName
+                        + " not present on the bucket region "
+                        + bukRegion.getFullPath()
+                        + ", index will be created on this region.");
           }
 
           ExecutionContext externalContext = new ExecutionContext(null, bukRegion.getCache());
           externalContext.setBucketRegion(pr, bukRegion);
 
-          im.createIndex(this.indexName, this.type, this.originalIndexedExpression, this.fromClause, this.imports, externalContext, this, true);
+          im.createIndex(
+              this.indexName,
+              this.type,
+              this.originalIndexedExpression,
+              this.fromClause,
+              this.imports,
+              externalContext,
+              this,
+              true);
         } catch (IndexExistsException iee) {
           // Index exists.
         } catch (IndexNameConflictException ince) {
@@ -274,8 +300,8 @@ public class PartitionedIndex extends AbstractIndex {
   }
 
   /**
-   * Set the number of remotely indexed buckets when this partitioned index was 
-   * created.
+   * Set the number of remotely indexed buckets when this partitioned index was created.
+   *
    * @param remoteBucketsIndexed int representing number of remote buckets.
    */
   public void setRemoteBucketesIndexed(int remoteBucketsIndexed) {
@@ -284,6 +310,7 @@ public class PartitionedIndex extends AbstractIndex {
 
   /**
    * Returns the number of remotely indexed buckets by this partitioned index.
+   *
    * @return int number of remote indexed buckets.
    */
   public int getNumRemoteBucketsIndexed() {
@@ -292,6 +319,7 @@ public class PartitionedIndex extends AbstractIndex {
 
   /**
    * The Region this index is on.
+   *
    * @return the Region for this index
    */
   @Override
@@ -299,59 +327,54 @@ public class PartitionedIndex extends AbstractIndex {
     return super.getRegion();
   }
 
-  /**
-   * Not supported on partitioned index.
-   */
+  /** Not supported on partitioned index. */
   @Override
   void addMapping(RegionEntry entry) throws IMQException {
-    throw new RuntimeException(LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
+    throw new RuntimeException(
+        LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
   }
 
-  /**
-   * Not supported on partitioned index.
-   */
-
+  /** Not supported on partitioned index. */
   @Override
   public void initializeIndex(boolean loadEntries) throws IMQException {
-    throw new RuntimeException(LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
+    throw new RuntimeException(
+        LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
   }
 
-  /**
-   * Not supported on partitioned index.
-   */
-  void lockedQuery(Object key, int operator, Collection results, CompiledValue iterOps, RuntimeIterator indpndntItr, ExecutionContext context, List projAttrib, SelectResults intermediateResults, boolean isIntersection) {
-    throw new RuntimeException(LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
-
+  /** Not supported on partitioned index. */
+  void lockedQuery(
+      Object key,
+      int operator,
+      Collection results,
+      CompiledValue iterOps,
+      RuntimeIterator indpndntItr,
+      ExecutionContext context,
+      List projAttrib,
+      SelectResults intermediateResults,
+      boolean isIntersection) {
+    throw new RuntimeException(
+        LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
   }
 
-  /**
-   * Not supported on partitioned index.
-   */
+  /** Not supported on partitioned index. */
   @Override
   void recreateIndexData() throws IMQException {
-    throw new RuntimeException(LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
-
+    throw new RuntimeException(
+        LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
   }
 
-  /**
-   * Not supported on partitioned index.
-   */
+  /** Not supported on partitioned index. */
   void removeMapping(RegionEntry entry, int opCode) {
-    throw new RuntimeException(LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
-
+    throw new RuntimeException(
+        LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
   }
 
-  /**
-   * Returns false, clear is not supported on partitioned index.
-   */
-
+  /** Returns false, clear is not supported on partitioned index. */
   public boolean clear() throws QueryException {
     return false;
   }
 
-  /**
-   * Not supported on partitioned index.
-   */
+  /** Not supported on partitioned index. */
   /*
   public void destroy()
   {
@@ -359,23 +382,19 @@ public class PartitionedIndex extends AbstractIndex {
   }
   */
 
-  /**
-   * Not supported on partitioned index.
-   */
+  /** Not supported on partitioned index. */
   public IndexStatistics getStatistics() {
     return this.internalIndexStats;
   }
 
-  /**
-   * Returns string representing imports.
-   */
+  /** Returns string representing imports. */
   public String getImports() {
     return imports;
   }
 
   /**
    * String representing the state.
-   * 
+   *
    * @return string representing all the relevant information.
    */
   public String toString() {
@@ -392,8 +411,8 @@ public class PartitionedIndex extends AbstractIndex {
   }
 
   /**
-   * This will create extra {@link IndexStatistics} statistics for MapType
-   * PartitionedIndex.
+   * This will create extra {@link IndexStatistics} statistics for MapType PartitionedIndex.
+   *
    * @param indexName
    * @return new PartitionedIndexStatistics
    */
@@ -401,11 +420,7 @@ public class PartitionedIndex extends AbstractIndex {
     return new PartitionedIndexStatistics(indexName);
   }
 
-  /**
-   * Internal class for partitioned index statistics. Statistics are not
-   * supported right now.
-   * 
-   */
+  /** Internal class for partitioned index statistics. Statistics are not supported right now. */
   class PartitionedIndexStatistics extends InternalIndexStatistics {
     private IndexStats vsdStats;
 
@@ -413,9 +428,7 @@ public class PartitionedIndex extends AbstractIndex {
       this.vsdStats = new IndexStats(getRegion().getCache().getDistributedSystem(), indexName);
     }
 
-    /**
-     * Return the total number of times this index has been updated
-     */
+    /** Return the total number of times this index has been updated */
     public long getNumUpdates() {
       return this.vsdStats.getNumUpdates();
     }
@@ -472,47 +485,32 @@ public class PartitionedIndex extends AbstractIndex {
       this.vsdStats.incNumBucketIndexes(delta);
     }
 
-    /**
-     * Returns the number of keys in this index
-     * at the highest level
-     */
+    /** Returns the number of keys in this index at the highest level */
     public long getNumberOfMapIndexKeys() {
       return this.vsdStats.getNumberOfMapIndexKeys();
     }
 
-    /**
-     * Returns the total amount of time (in nanoseconds) spent updating this
-     * index.
-     */
+    /** Returns the total amount of time (in nanoseconds) spent updating this index. */
     public long getTotalUpdateTime() {
       return this.vsdStats.getTotalUpdateTime();
     }
 
-    /**
-     * Returns the total number of times this index has been accessed by a
-     * query.
-     */
+    /** Returns the total number of times this index has been accessed by a query. */
     public long getTotalUses() {
       return this.vsdStats.getTotalUses();
     }
 
-    /**
-     * Returns the number of keys in this index.
-     */
+    /** Returns the number of keys in this index. */
     public long getNumberOfKeys() {
       return this.vsdStats.getNumberOfKeys();
     }
 
-    /**
-     * Returns the number of values in this index.
-     */
+    /** Returns the number of values in this index. */
     public long getNumberOfValues() {
       return this.vsdStats.getNumberOfValues();
     }
 
-    /**
-     * Return the number of read locks taken on this index
-     */
+    /** Return the number of read locks taken on this index */
     public int getReadLockCount() {
       return this.vsdStats.getReadLockCount();
     }
@@ -547,34 +545,41 @@ public class PartitionedIndex extends AbstractIndex {
     throw new UnsupportedOperationException();
   }
 
-  /**
-   * Not supported on partitioned index.
-   */
+  /** Not supported on partitioned index. */
   @Override
-  void lockedQuery(Object lowerBoundKey, int lowerBoundOperator, Object upperBoundKey, int upperBoundOperator, Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException {
-    throw new RuntimeException(LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
-
+  void lockedQuery(
+      Object lowerBoundKey,
+      int lowerBoundOperator,
+      Object upperBoundKey,
+      int upperBoundOperator,
+      Collection results,
+      Set keysToRemove,
+      ExecutionContext context)
+      throws TypeMismatchException {
+    throw new RuntimeException(
+        LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
   }
 
   public int getSizeEstimate(Object key, int op, int matchLevel) {
     throw new UnsupportedOperationException("This method should not have been invoked");
   }
 
-  void lockedQuery(Object key, int operator, Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException {
+  void lockedQuery(
+      Object key, int operator, Collection results, Set keysToRemove, ExecutionContext context)
+      throws TypeMismatchException {
     throw new RuntimeException("Not supported on partitioned index");
-
   }
 
   @Override
   void addMapping(Object key, Object value, RegionEntry entry) throws IMQException {
-    throw new RuntimeException(LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
-
+    throw new RuntimeException(
+        LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
   }
 
   @Override
   void saveMapping(Object key, Object value, RegionEntry entry) throws IMQException {
-    throw new RuntimeException(LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
-
+    throw new RuntimeException(
+        LocalizedStrings.PartitionedIndex_NOT_SUPPORTED_ON_PARTITIONED_INDEX.toLocalizedString());
   }
 
   public void incNumMapKeysStats(Object mapKey) {
@@ -611,5 +616,4 @@ public class PartitionedIndex extends AbstractIndex {
   public void setPopulateInProgress(boolean populateInProgress) {
     this.populateInProgress = populateInProgress;
   }
-
 }

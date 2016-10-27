@@ -25,10 +25,9 @@ import org.apache.geode.cache.FixedPartitionAttributes;
 
 public class FixedPartitionAttributesInfo implements Serializable {
 
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
+
   private boolean isPrimary;
   private String partitionName;
   private int numBuckets;
@@ -42,7 +41,9 @@ public class FixedPartitionAttributesInfo implements Serializable {
   public boolean equals(Object obj) {
     if (obj instanceof FixedPartitionAttributesInfo) {
       FixedPartitionAttributesInfo fpaInfo = (FixedPartitionAttributesInfo) obj;
-      return this.numBuckets == fpaInfo.getNumBuckets() && StringUtils.equals(this.partitionName, fpaInfo.getPartitionName()) && this.isPrimary == fpaInfo.isPrimary();
+      return this.numBuckets == fpaInfo.getNumBuckets()
+          && StringUtils.equals(this.partitionName, fpaInfo.getPartitionName())
+          && this.isPrimary == fpaInfo.isPrimary();
 
     } else {
       return false;
@@ -51,7 +52,6 @@ public class FixedPartitionAttributesInfo implements Serializable {
 
   public int hashCode() {
     return 42; // any arbitrary constant will do
-
   }
 
   public int getNumBuckets() {
@@ -65,5 +65,4 @@ public class FixedPartitionAttributesInfo implements Serializable {
   public boolean isPrimary() {
     return this.isPrimary;
   }
-
 }

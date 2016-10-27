@@ -24,8 +24,8 @@ import org.apache.geode.management.ManagementException;
 import org.apache.geode.management.ManagementService;
 
 /**
- * Class to handle Region path. 
- * 
+ * Class to handle Region path.
+ *
  * @since GemFire 7.0
  */
 public class RegionPath {
@@ -58,9 +58,7 @@ public class RegionPath {
     return regionName;
   }
 
-  /**
-   * @return the regionPath
-   */
+  /** @return the regionPath */
   public String getRegionPath() {
     return regionPath;
   }
@@ -69,9 +67,7 @@ public class RegionPath {
     return regionParentPath;
   }
 
-  /**
-   * @return Parent RegionPath of this RegionPath. null if this is a root region
-   */
+  /** @return Parent RegionPath of this RegionPath. null if this is a root region */
   public RegionPath getParentRegionPath() {
     if (regionParentPath == null) {
       return null;
@@ -93,7 +89,9 @@ public class RegionPath {
     if (cache != null) {
       ManagementService managementService = ManagementService.getExistingManagementService(cache);
       if (managementService.isManager()) {
-        existsInCluster = managementService != null && managementService.getDistributedRegionMXBean(regionPath) != null;
+        existsInCluster =
+            managementService != null
+                && managementService.getDistributedRegionMXBean(regionPath) != null;
       } else {
         throw new ManagementException("Not a cache from Manager member.");
       }

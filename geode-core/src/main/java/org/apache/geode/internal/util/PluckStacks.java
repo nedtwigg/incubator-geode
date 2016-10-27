@@ -33,25 +33,18 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 /**
- * PluckStacks is a replacement for the old pluckstacks.pl Perl script
- * that we've used for years.  When run as a program it takes a list of
- * files that may contain thread dumps.  It scans those files, pulls out
- * the thread dumps, removes any well-known idle threads and prints the
- * rest to stdout.
- * 
- * 
- *
+ * PluckStacks is a replacement for the old pluckstacks.pl Perl script that we've used for years.
+ * When run as a program it takes a list of files that may contain thread dumps. It scans those
+ * files, pulls out the thread dumps, removes any well-known idle threads and prints the rest to
+ * stdout.
  */
-
 public class PluckStacks {
   static boolean DEBUG = Boolean.getBoolean("PluckStacks.DEBUG");
 
   // only print one stack dump from each file
   static final boolean ONE_STACK = Boolean.getBoolean("oneDump");
 
-  /**
-   * @param args names of files to scan for suspicious threads in thread-dumps
-   */
+  /** @param args names of files to scan for suspicious threads in thread-dumps */
   public static void main(String[] args) {
     PluckStacks ps = new PluckStacks();
     for (int i = 0; i < args.length; i++) {
@@ -65,7 +58,9 @@ public class PluckStacks {
 
     try {
       if (log.getName().endsWith(".gz")) {
-        reader = new LineNumberReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(log))));
+        reader =
+            new LineNumberReader(
+                new InputStreamReader(new GZIPInputStream(new FileInputStream(log))));
       } else {
         reader = new LineNumberReader(new FileReader(log));
       }
@@ -85,7 +80,12 @@ public class PluckStacks {
           int lineNumber = reader.getLineNumber();
           List<ThreadStack> stacks = getStacks(reader);
           if (stacks.size() > 0) {
-            buffer.append("[Stack #").append(stackNumber++).append(" from " + log + " line " + lineNumber + "]\n").append(line).append("\n");
+            buffer
+                .append("[Stack #")
+                .append(stackNumber++)
+                .append(" from " + log + " line " + lineNumber + "]\n")
+                .append(line)
+                .append("\n");
             for (ThreadStack stack : stacks) {
               stack.appendToBuffer(buffer);
               buffer.append("\n");
@@ -121,8 +121,7 @@ public class PluckStacks {
       String line = null;
       // find the start of the stack
       while ((line = reader.readLine()) != null) {
-        if (line.length() > 0 && line.charAt(0) == '"')
-          break;
+        if (line.length() > 0 && line.charAt(0) == '"') break;
         if (lastStack != null) {
           if (line.length() == 0 || line.charAt(0) == '\t') {
             lastStack.add(line);
@@ -161,7 +160,8 @@ public class PluckStacks {
       lastStack.addBreadcrumbs(breadcrumbs);
       if (DEBUG) {
         if (breadcrumbs.size() > 0) {
-          System.out.println("added " + breadcrumbs.size() + " breadcrumbs to " + lastStack.getThreadName());
+          System.out.println(
+              "added " + breadcrumbs.size() + " breadcrumbs to " + lastStack.getThreadName());
         }
         System.out.println("examining thread " + lastStack.getThreadName());
       }
@@ -177,20 +177,14 @@ public class PluckStacks {
     int stackSize = thread.size();
 
     // keep all hydra threads
-    if (threadName.startsWith("vm_"))
-      return false;
+    if (threadName.startsWith("vm_")) return false;
 
     // these are never interesting to me
-    if (threadName.startsWith("StatDispatcher"))
-      return true;
-    if (threadName.startsWith("State Logger Consumer Thread"))
-      return true;
-    if (threadName.contains("StatSampler"))
-      return true;
-    if (threadName.startsWith("IDLE p2pDestreamer"))
-      return true;
-    if (threadName.startsWith("Idle OplogCompactor"))
-      return true;
+    if (threadName.startsWith("StatDispatcher")) return true;
+    if (threadName.startsWith("State Logger Consumer Thread")) return true;
+    if (threadName.contains("StatSampler")) return true;
+    if (threadName.startsWith("IDLE p2pDestreamer")) return true;
+    if (threadName.startsWith("Idle OplogCompactor")) return true;
 
     //////////////     HIGH FREQUENCY STACKS  //////////////////////
 
@@ -231,7 +225,10 @@ public class PluckStacks {
       return (stackSize == 8 && thread.get(2).contains("SocketChannelImpl.accept"));
     }
     if (threadName.startsWith("P2P message reader")) {
-      return (stackSize <= 14 && (thread.getFirstFrame().contains("FileDispatcherImpl.read") || thread.getFirstFrame().contains("FileDispatcher.read") || thread.getFirstFrame().contains("SocketDispatcher.read")));
+      return (stackSize <= 14
+          && (thread.getFirstFrame().contains("FileDispatcherImpl.read")
+              || thread.getFirstFrame().contains("FileDispatcher.read")
+              || thread.getFirstFrame().contains("SocketDispatcher.read")));
     }
     if (threadName.startsWith("PartitionedRegion Message Processor")) {
       return isIdleExecutor(thread);
@@ -249,7 +246,8 @@ public class PluckStacks {
       return isIdleExecutor(thread);
     }
     if (threadName.startsWith("ServerConnection")) {
-      if (thread.getFirstFrame().contains("socketRead") && (stackSize > 6 && thread.get(6).contains("fetchHeader")))
+      if (thread.getFirstFrame().contains("socketRead")
+          && (stackSize > 6 && thread.get(6).contains("fetchHeader")))
         return true; // reading from a client
       return isIdleExecutor(thread);
     }
@@ -274,7 +272,11 @@ public class PluckStacks {
     // Now check the rest of the product threads in alphabetical order
 
     if (threadName.startsWith("Asynchronous disk writer")) {
-      return !thread.isRunnable() && stackSize <= 10 && (stackSize >= 7 && (thread.get(5).contains("waitUntilFlushIsReady") || thread.get(6).contains("waitUntilFlushIsReady")));
+      return !thread.isRunnable()
+          && stackSize <= 10
+          && (stackSize >= 7
+              && (thread.get(5).contains("waitUntilFlushIsReady")
+                  || thread.get(6).contains("waitUntilFlushIsReady")));
     }
     if (threadName.startsWith("BridgeServer-LoadPollingThread")) {
       return !thread.isRunnable() && stackSize == 5;
@@ -283,7 +285,8 @@ public class PluckStacks {
       return (thread.getFirstFrame().contains("socketAccept"));
     }
     if (threadName.startsWith("Client Message Dispatcher")) {
-      return (stackSize == 11 && thread.getFirstFrame().contains("socketWrite")) || (stackSize == 14 && thread.getFirstFrame().contains("Unsafe.park"));
+      return (stackSize == 11 && thread.getFirstFrame().contains("socketWrite"))
+          || (stackSize == 14 && thread.getFirstFrame().contains("Unsafe.park"));
     }
     if (threadName.equals("ClientHealthMonitor Thread")) {
       return !thread.isRunnable() && stackSize == 4;
@@ -295,7 +298,8 @@ public class PluckStacks {
       return !thread.isRunnable() && (stackSize == 9 && thread.get(6).contains("Queue.take"));
     }
     if (threadName.startsWith("Event Processor for GatewaySender")) {
-      return !thread.isRunnable() && thread.get(3).contains("ConcurrentParallelGatewaySenderQueue.peek");
+      return !thread.isRunnable()
+          && thread.get(3).contains("ConcurrentParallelGatewaySenderQueue.peek");
     }
     if (threadName.startsWith("GC Daemon")) {
       return !thread.isRunnable() && stackSize <= 6;
@@ -310,7 +314,8 @@ public class PluckStacks {
       return !thread.isRunnable();
     }
     if (threadName.startsWith("GlobalTXTimeoutMonitor")) {
-      return !thread.isRunnable() && (stackSize <= 8 && thread.getFirstFrame().contains("Object.wait"));
+      return !thread.isRunnable()
+          && (stackSize <= 8 && thread.getFirstFrame().contains("Object.wait"));
     }
     if (threadName.startsWith("JoinProcessor")) {
       return !thread.isRunnable() && stackSize <= 7;
@@ -334,7 +339,8 @@ public class PluckStacks {
       return (stackSize == 7 && thread.getFirstFrame().contains("accept0"));
     }
     if (threadName.startsWith("Queue Removal Thread")) {
-      return !thread.isRunnable() && (stackSize == 5 && thread.getFirstFrame().contains("Object.wait"));
+      return !thread.isRunnable()
+          && (stackSize == 5 && thread.getFirstFrame().contains("Object.wait"));
     }
     if (threadName.startsWith("ResourceManagerRecoveryThread")) {
       return isIdleExecutor(thread);
@@ -364,7 +370,8 @@ public class PluckStacks {
       return (stackSize > 8 && thread.get(7).contains("SynchronousQueue.take"));
     }
     if (threadName.startsWith("SystemFailure Proctor")) {
-      return !thread.isRunnable() && (stackSize == 6 && thread.getFirstFrame().contains("Thread.sleep"));
+      return !thread.isRunnable()
+          && (stackSize == 6 && thread.getFirstFrame().contains("Thread.sleep"));
     }
     if (threadName.startsWith("SystemFailure WatchDog")) {
       return (stackSize <= 8 && thread.getFirstFrame().contains("Object.wait"));
@@ -373,19 +380,16 @@ public class PluckStacks {
       return isIdleExecutor(thread);
     }
     if (threadName.startsWith("Timer-")) {
-      if (thread.isRunnable())
-        return true;
-      if ((stackSize <= 8) && thread.getFirstFrame().contains("Object.wait"))
-        return true;
+      if (thread.isRunnable()) return true;
+      if ((stackSize <= 8) && thread.getFirstFrame().contains("Object.wait")) return true;
     }
     if (threadName.startsWith("TimeScheduler.Thread")) {
-      return !thread.isRunnable() && (stackSize <= 8 && thread.getFirstFrame().contains("Object.wait"));
+      return !thread.isRunnable()
+          && (stackSize <= 8 && thread.getFirstFrame().contains("Object.wait"));
     }
     if (threadName.startsWith("vfabric-license-heartbeat")) {
-      if (thread.isRunnable())
-        return false;
-      if (stackSize == 6 && thread.getFirstFrame().contains("Thread.sleep"))
-        return true;
+      if (thread.isRunnable()) return false;
+      if (stackSize == 6 && thread.getFirstFrame().contains("Thread.sleep")) return true;
       return (stackSize <= 7 && thread.getFirstFrame().contains("Object.wait"));
     }
     if (threadName.equals("WAN Locator Discovery Thread")) {
@@ -395,19 +399,14 @@ public class PluckStacks {
   }
 
   boolean isIdleExecutor(ThreadStack thread) {
-    if (thread.isRunnable())
-      return false;
+    if (thread.isRunnable()) return false;
     int size = thread.size();
-    if (size > 8 && thread.get(7).contains("DMStats.take"))
-      return true;
-    if (size > 3 && thread.get(size - 3).contains("getTask"))
-      return true; // locator request thread
+    if (size > 8 && thread.get(7).contains("DMStats.take")) return true;
+    if (size > 3 && thread.get(size - 3).contains("getTask")) return true; // locator request thread
     if (size > 4 && thread.get(size - 4).contains("getTask"))
       return true; // most executors match this
-    if (size > 5 && thread.get(size - 5).contains("getTask"))
-      return true; // View Message Processor
-    if (size > 6 && thread.get(size - 6).contains("getTask"))
-      return true; // View Message Processor
+    if (size > 5 && thread.get(size - 5).contains("getTask")) return true; // View Message Processor
+    if (size > 6 && thread.get(size - 6).contains("getTask")) return true; // View Message Processor
     return false;
   }
 
@@ -418,7 +417,8 @@ public class PluckStacks {
     List<String> breadcrumbs;
 
     /** create a stack with the given initial lines, reading the rest from the Reader */
-    ThreadStack(String firstLine, String secondLine, String thirdLine, BufferedReader reader) throws IOException {
+    ThreadStack(String firstLine, String secondLine, String thirdLine, BufferedReader reader)
+        throws IOException {
       lines.add(firstLine);
       lines.add(secondLine);
       runnable = secondLine.contains("RUNNABLE");
@@ -494,7 +494,13 @@ public class PluckStacks {
 
     public void writeTo(Writer w) throws IOException {
       if (DEBUG) {
-        w.append("stack.name='" + getThreadName() + "' runnable=" + this.runnable + " lines=" + lines.size());
+        w.append(
+            "stack.name='"
+                + getThreadName()
+                + "' runnable="
+                + this.runnable
+                + " lines="
+                + lines.size());
         w.append("\n");
       }
       boolean first = true;
@@ -514,7 +520,15 @@ public class PluckStacks {
 
     public void appendToBuffer(StringBuffer buffer) {
       if (DEBUG)
-        buffer.append("stack.name='" + getThreadName() + "' runnable=" + this.runnable + " lines=" + lines.size()).append("\n");
+        buffer
+            .append(
+                "stack.name='"
+                    + getThreadName()
+                    + "' runnable="
+                    + this.runnable
+                    + " lines="
+                    + lines.size())
+            .append("\n");
       boolean first = true;
       for (String line : lines) {
         buffer.append(line).append("\n");
@@ -532,5 +546,4 @@ public class PluckStacks {
       return ((ThreadStack) other).getThreadName().compareTo(getThreadName());
     }
   }
-
 }

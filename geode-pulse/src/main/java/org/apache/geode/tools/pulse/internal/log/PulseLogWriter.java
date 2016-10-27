@@ -31,11 +31,10 @@ import org.apache.geode.tools.pulse.internal.data.Repository;
 
 /**
  * Class PulseLogWriter
- * 
- * PulseLogWriter is the implementation of LogWriter.
- * 
+ *
+ * <p>PulseLogWriter is the implementation of LogWriter.
+ *
  * @since GemFire 7.0.1
- * 
  */
 public class PulseLogWriter implements LogWriter {
 
@@ -62,7 +61,12 @@ public class PulseLogWriter implements LogWriter {
     try {
       // Get file handler to log messages into log file.
       if (fileHandler == null) {
-        fileHandler = new FileHandler(pulseConfig.getLogFileFullName(), pulseConfig.getLogFileSize(), pulseConfig.getLogFileCount(), pulseConfig.getLogAppend());
+        fileHandler =
+            new FileHandler(
+                pulseConfig.getLogFileFullName(),
+                pulseConfig.getLogFileSize(),
+                pulseConfig.getLogFileCount(),
+                pulseConfig.getLogAppend());
 
         // Log Message Formatter
         messageformatter = new MessageFormatter();
@@ -98,7 +102,10 @@ public class PulseLogWriter implements LogWriter {
       jsonErr.printStackTrace(prtWriter);
       this.fine("JSON Error Details : " + swBuffer.toString() + "\n");
 
-      this.fine("Erroneous Data : " + ((errorData != null) ? errorData.toString() : "Not Available for output") + "\n");
+      this.fine(
+          "Erroneous Data : "
+              + ((errorData != null) ? errorData.toString() : "Not Available for output")
+              + "\n");
     }
   }
 
@@ -135,23 +142,23 @@ public class PulseLogWriter implements LogWriter {
     // TODO Auto-generated method stub
     return false;
   }
-  
+
   @Override
   public void error(String msg, Throwable ex) {
     // TODO Auto-generated method stub
-  
+
   }
-  
+
   @Override
   public void error(String msg) {
     // TODO Auto-generated method stub
-  
+
   }
-  
+
   @Override
   public void error(Throwable ex) {
     // TODO Auto-generated method stub
-  
+
   }
   */
 
@@ -289,5 +296,4 @@ public class PulseLogWriter implements LogWriter {
   public void finest(Throwable ex) {
     logger.logp(Level.FINEST, "", "", "", ex);
   }
-
 }

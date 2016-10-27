@@ -41,7 +41,8 @@ public class AddXmlEntityFunction extends FunctionAdapter implements InternalEnt
         SharedConfiguration sharedConfig = locator.getSharedConfiguration();
         sharedConfig.addXmlEntity(xmlEntity, groups);
       } else {
-        configChangeResult.setErrorMessage("Shared Configuration has not been started in locator : " + locator);
+        configChangeResult.setErrorMessage(
+            "Shared Configuration has not been started in locator : " + locator);
       }
     } catch (Exception e) {
       configChangeResult.setException(e);
@@ -55,5 +56,4 @@ public class AddXmlEntityFunction extends FunctionAdapter implements InternalEnt
   public String getId() {
     return AddXmlEntityFunction.class.getName();
   }
-
 }

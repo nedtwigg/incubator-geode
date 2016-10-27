@@ -47,7 +47,9 @@ public class ListDeployedFunction implements Function, InternalEntity {
 
     try {
       Cache cache = CacheFactory.getAnyInstance();
-      final JarDeployer jarDeployer = new JarDeployer(((GemFireCacheImpl) cache).getDistributedSystem().getConfig().getDeployWorkingDir());
+      final JarDeployer jarDeployer =
+          new JarDeployer(
+              ((GemFireCacheImpl) cache).getDistributedSystem().getConfig().getDeployWorkingDir());
 
       DistributedMember member = cache.getDistributedSystem().getDistributedMember();
 

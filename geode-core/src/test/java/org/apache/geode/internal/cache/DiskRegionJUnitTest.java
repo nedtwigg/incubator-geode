@@ -50,8 +50,8 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
  * TODO: fails when running integrationTest from gradle command-line on Windows 7
- * 
- * JUnit tests covering some miscellaneous functionality of Disk Region.
+ *
+ * <p>JUnit tests covering some miscellaneous functionality of Disk Region.
  */
 @Category(IntegrationTest.class)
 public class DiskRegionJUnitTest extends DiskRegionTestingBase {
@@ -95,8 +95,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   private int counter = 0;
   private boolean hasBeenNotified = false;
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
   @Override
   protected final void postSetUp() throws Exception {
@@ -162,10 +161,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     region.destroyRegion();
   }
 
-  /**
-   * Tests if region overflows correctly and stats are create and updated
-   * correctly.
-   */
+  /** Tests if region overflows correctly and stats are create and updated correctly. */
   @Test
   public void testDiskRegionOverflow() throws Exception {
     DiskRegionProperties props = new DiskRegionProperties();
@@ -178,7 +174,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     assertNotNull(dr);
 
     DiskRegionStats diskStats = dr.getStats();
-    LRUStatistics lruStats = ((LocalRegion) region).getEvictionController().getLRUHelper().getStats();
+    LRUStatistics lruStats =
+        ((LocalRegion) region).getEvictionController().getLRUHelper().getStats();
     assertNotNull(diskStats);
     assertNotNull(lruStats);
 
@@ -231,10 +228,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * test method for putting different objects and validating that they have
-   * been correctly put
-   */
+  /** test method for putting different objects and validating that they have been correctly put */
   @Test
   public void testDifferentObjectTypePuts() throws Exception {
     DiskRegionProperties props = new DiskRegionProperties();
@@ -321,7 +315,6 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     public void run() {
       region.put(new Integer(1), new Integer(2));
     }
-
   }
 
   private class DoesGet implements Runnable {
@@ -401,7 +394,6 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       fail(" Test took too long in going to join, it should have exited before 100000 ms");
     }
     assertFalse(failureCause, testFailed);
-
   }
 
   @Test
@@ -414,43 +406,44 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     final Region region = DiskRegionHelperFactory.getSyncOverFlowOnlyRegion(cache, props);
 
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      @Override
-      public void beforeGoingToCompact() {
-        synchronized (region) {
-          region.notifyAll();
-          hasBeenNotified = true;
-        }
-      }
-    });
-
-    Runnable get = new Runnable() {
-      @Override
-      public void run() {
-        int localCounter = 0;
-        synchronized (region) {
-          localCounter = counter;
-          counter++;
-        }
-        int limit = ((localCounter * 1000) + 1000);
-        for (int i = localCounter * 1000; i < limit; i++) {
-          if (finished) {
-            return;
-          }
-          try {
-            Thread.sleep(10);
-            region.get(new Integer(i));
-          } catch (Exception e) {
-            if (finished) {
-              return;
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
+          @Override
+          public void beforeGoingToCompact() {
+            synchronized (region) {
+              region.notifyAll();
+              hasBeenNotified = true;
             }
-            failed = true;
-            throw new AssertionError("failed due to ", e);
           }
-        }
+        });
 
-      }
-    };
+    Runnable get =
+        new Runnable() {
+          @Override
+          public void run() {
+            int localCounter = 0;
+            synchronized (region) {
+              localCounter = counter;
+              counter++;
+            }
+            int limit = ((localCounter * 1000) + 1000);
+            for (int i = localCounter * 1000; i < limit; i++) {
+              if (finished) {
+                return;
+              }
+              try {
+                Thread.sleep(10);
+                region.get(new Integer(i));
+              } catch (Exception e) {
+                if (finished) {
+                  return;
+                }
+                failed = true;
+                throw new AssertionError("failed due to ", e);
+              }
+            }
+          }
+        };
 
     for (int i = 0; i < 8000; i++) {
       region.put(new Integer(i), new Integer(i));
@@ -488,12 +481,11 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
 
   /**
    * DiskDirectoriesJUnitTest:
-   * 
-   * This tests the potential deadlock situation if the region is created such
-   * that rolling is turned on but the Max directory space is less than or equal
-   * to the Max Oplog Size. In such situations , if during switch over , if the
-   * Oplog to be rolled is added after function call of obtaining nextDir , a
-   * dead lock occurs
+   *
+   * <p>This tests the potential deadlock situation if the region is created such that rolling is
+   * turned on but the Max directory space is less than or equal to the Max Oplog Size. In such
+   * situations , if during switch over , if the Oplog to be rolled is added after function call of
+   * obtaining nextDir , a dead lock occurs
    */
   @Test
   public void testSingleDirectoryNotHanging() throws Exception {
@@ -504,11 +496,12 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     dir.deleteOnExit();
     File[] dirs = new File[1];
     dirs[0] = dir;
-    int[] dirSizes = { 2048 };
+    int[] dirSizes = {2048};
     diskRegionProperties.setDiskDirsAndSizes(dirs, dirSizes);
     diskRegionProperties.setMaxOplogSize(2097152);
     diskRegionProperties.setRolling(true);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
 
     Puts puts = new Puts(region);
     puts.performPuts();
@@ -538,7 +531,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     diskRegionProperties.setDiskDirs(dirs);
     diskRegionProperties.setMaxOplogSize(512);
     diskRegionProperties.setRolling(true);
-    Region region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    Region region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
 
     Puts puts = new Puts(region);
     puts.performPuts();
@@ -560,22 +554,25 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * As we have relaxed the constraint of max dir size 
-   */
+  /** As we have relaxed the constraint of max dir size */
   @Test
   public void testOperationGreaterThanMaxDirSize() throws Exception {
     putsHaveStarted = false;
     DiskRegionProperties diskRegionProperties = new DiskRegionProperties();
     diskRegionProperties.setRegionName("IGNORE_EXCEPTION_testOperationGreaterThanMaxDirSize");
-    int[] dirSizes = { 1025, 1025, 1025, 1025 };
+    int[] dirSizes = {1025, 1025, 1025, 1025};
     diskRegionProperties.setDiskDirsAndSizes(dirs, dirSizes);
     diskRegionProperties.setMaxOplogSize(600);
     diskRegionProperties.setRolling(false);
-    Region region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    Region region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
     DiskStore ds = ((LocalRegion) region).getDiskStore();
     if (!Arrays.equals(dirSizes, ds.getDiskDirSizes())) {
-      fail("expected=" + Arrays.toString(dirSizes) + " actual=" + Arrays.toString(ds.getDiskDirSizes()));
+      fail(
+          "expected="
+              + Arrays.toString(dirSizes)
+              + " actual="
+              + Arrays.toString(ds.getDiskDirSizes()));
     }
 
     Puts puts = new Puts(region, 1026);
@@ -601,16 +598,16 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * When max-dir-size is exceeded and compaction is enabled we allow oplogs to
-   * keep getting created. Make sure that when they do they do not keep putting
-   * one op per oplog (which is caused by bug 42464).
+   * When max-dir-size is exceeded and compaction is enabled we allow oplogs to keep getting
+   * created. Make sure that when they do they do not keep putting one op per oplog (which is caused
+   * by bug 42464).
    */
   @Test
   public void testBug42464() throws Exception {
     putsHaveStarted = false;
     DiskRegionProperties diskRegionProperties = new DiskRegionProperties();
-    File[] myDirs = new File[] { dirs[0] };
-    int[] dirSizes = { 900 };
+    File[] myDirs = new File[] {dirs[0]};
+    int[] dirSizes = {900};
     diskRegionProperties.setDiskDirsAndSizes(myDirs, dirSizes);
     diskRegionProperties.setMaxOplogSize(500);
     diskRegionProperties.setRolling(true);
@@ -619,7 +616,11 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     DiskStore ds = ((LocalRegion) region).getDiskStore();
     DiskStoreImpl dsi = (DiskStoreImpl) ds;
     if (!Arrays.equals(dirSizes, ds.getDiskDirSizes())) {
-      fail("expected=" + Arrays.toString(dirSizes) + " actual=" + Arrays.toString(ds.getDiskDirSizes()));
+      fail(
+          "expected="
+              + Arrays.toString(dirSizes)
+              + " actual="
+              + Arrays.toString(ds.getDiskDirSizes()));
     }
     // One entry is kept in memory
     // since the crf max is 500 we should only be able to have 4 entries. The
@@ -721,12 +722,13 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     diskRegionProperties.setRegionName("IGNORE_EXCEPTION_testSingleDirectorySizeViolation");
     //setting to null will make only one directory
     File dir = temporaryFolder.newFolder("testSingleDirectoryNotHanging");
-    File[] dirs = new File[] { dir };
-    int[] dirSizes = { 2048 };
+    File[] dirs = new File[] {dir};
+    int[] dirSizes = {2048};
     diskRegionProperties.setDiskDirsAndSizes(dirs, dirSizes);
     diskRegionProperties.setMaxOplogSize(2097152);
     diskRegionProperties.setRolling(false);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
 
     Puts puts = new Puts(region);
     puts.performPuts();
@@ -748,9 +750,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     closeDown();
   }
 
-  /**
-   * DiskRegDiskAccessExceptionTest : Disk region test for DiskAccessException.
-   */
+  /** DiskRegDiskAccessExceptionTest : Disk region test for DiskAccessException. */
   @Test
   public void testDiskFullExcep() throws Exception {
     int[] diskDirSize1 = new int[4];
@@ -781,13 +781,15 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     }
 
     // we should have put 2 values in each dir so the next one should not fit
-    logWriter.info("<ExpectedException action=add>" + "DiskAccessException" + "</ExpectedException>");
+    logWriter.info(
+        "<ExpectedException action=add>" + "DiskAccessException" + "</ExpectedException>");
     try {
       region.put("FULL", value);
       fail("FAILED::DiskAccessException is expected here !!");
     } catch (DiskAccessException e) {
     } finally {
-      logWriter.info("<ExpectedException action=remove>" + "DiskAccessException" + "</ExpectedException>");
+      logWriter.info(
+          "<ExpectedException action=remove>" + "DiskAccessException" + "</ExpectedException>");
     }
 
     // if the exception occurred then the region should be closed already
@@ -795,9 +797,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     assertEquals(true, cache.isClosed());
   }
 
-  /**
-   * Make sure if compaction is enabled that we can exceed the disk dir limit
-   */
+  /** Make sure if compaction is enabled that we can exceed the disk dir limit */
   @Test
   public void testNoDiskFullExcep() throws Exception {
     int[] diskDirSize1 = new int[4];
@@ -844,9 +844,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     assertEquals(false, cache.isClosed());
   }
 
-  /**
-   * DiskRegDiskAccessExceptionTest : Disk region test for DiskAccessException.
-   */
+  /** DiskRegDiskAccessExceptionTest : Disk region test for DiskAccessException. */
   @Test
   public void testDiskFullExcepOverflowOnly() throws Exception {
     int[] diskDirSize1 = new int[4];
@@ -885,13 +883,15 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     }
 
     // we should have put 2 values in each dir so the next one should not fit
-    logWriter.info("<ExpectedException action=add>" + "DiskAccessException" + "</ExpectedException>");
+    logWriter.info(
+        "<ExpectedException action=add>" + "DiskAccessException" + "</ExpectedException>");
     try {
       region.put("FULL", value);
       fail("FAILED::DiskAccessException is expected here !!");
     } catch (DiskAccessException e) {
     } finally {
-      logWriter.info("<ExpectedException action=remove>" + "DiskAccessException" + "</ExpectedException>");
+      logWriter.info(
+          "<ExpectedException action=remove>" + "DiskAccessException" + "</ExpectedException>");
     }
 
     // if the exception occurred then the region should be closed already
@@ -899,9 +899,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     assertEquals(true, cache.isClosed());
   }
 
-  /**
-   * Make sure if compaction is enabled that we can exceed the disk dir limit
-   */
+  /** Make sure if compaction is enabled that we can exceed the disk dir limit */
   @Test
   public void testNoDiskFullExcepOverflowOnly() throws Exception {
     int[] diskDirSize1 = new int[4];
@@ -952,11 +950,12 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * DiskAccessException Test : Even if rolling doesn't free the space in stipulated
-   * time, the operation should not get stuck or see Exception
+   * DiskAccessException Test : Even if rolling doesn't free the space in stipulated time, the
+   * operation should not get stuck or see Exception
    */
   @Test
-  public void testSynchModeAllowOperationToProceedEvenIfDiskSpaceIsNotSufficient() throws Exception {
+  public void testSynchModeAllowOperationToProceedEvenIfDiskSpaceIsNotSufficient()
+      throws Exception {
     File[] dirs1 = null;
     File testingDirectory1 = new File("testingDirectory1");
     testingDirectory1.mkdir();
@@ -980,15 +979,15 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
 
     assertEquals(2048, diskSizes1[0]);
     this.exceptionOccured = false;
-    dskAccessExpHelperMethod(region, true/*synch mode*/);
+    dskAccessExpHelperMethod(region, true /*synch mode*/);
 
     // region.close(); // closes disk file which will flush all buffers
     closeDown();
-
-  }// end of testSyncPersistRegionDAExp
+  } // end of testSyncPersistRegionDAExp
 
   @Test
-  public void testAsynchModeAllowOperationToProceedEvenIfDiskSpaceIsNotSufficient() throws Exception {
+  public void testAsynchModeAllowOperationToProceedEvenIfDiskSpaceIsNotSufficient()
+      throws Exception {
     File[] dirs1 = null;
     File testingDirectory1 = new File("testingDirectory1");
     testingDirectory1.mkdir();
@@ -1013,76 +1012,93 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     assertEquals(diskDirSize1.length, 1);
     assertTrue("diskSizes != 2048 ", diskSizes1[0] == 2048);
     this.exceptionOccured = false;
-    this.dskAccessExpHelperMethod(region, false/* asynch mode*/);
+    this.dskAccessExpHelperMethod(region, false /* asynch mode*/);
 
     //region.close(); // closes disk file which will flush all buffers
     closeDown();
-  }// end of testAsyncPersistRegionDAExp
+  } // end of testAsyncPersistRegionDAExp
 
   private void dskAccessExpHelperMethod(final Region region, final boolean synchMode) {
 
-    Thread testThread = new Thread(new Runnable() {
-      public void run() {
+    Thread testThread =
+        new Thread(
+            new Runnable() {
+              public void run() {
 
-        LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-        final byte[] value = new byte[990];
-        Arrays.fill(value, (byte) 77);
-        try {
-          for (int i = 0; i < 2; i++) {
-            region.put("" + (synchMode ? 1 : i), value);
-          }
-        } catch (DiskAccessException e) {
-          logWriter.error("Exception occured but not expected", e);
-          testFailed = true;
-          failureCause = "FAILED::" + e.toString();
-          throw new AssertionError("FAILED::", e);
-        }
+                LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
+                final byte[] value = new byte[990];
+                Arrays.fill(value, (byte) 77);
+                try {
+                  for (int i = 0; i < 2; i++) {
+                    region.put("" + (synchMode ? 1 : i), value);
+                  }
+                } catch (DiskAccessException e) {
+                  logWriter.error("Exception occured but not expected", e);
+                  testFailed = true;
+                  failureCause = "FAILED::" + e.toString();
+                  throw new AssertionError("FAILED::", e);
+                }
 
-        final Thread t1 = Thread.currentThread();
+                final Thread t1 = Thread.currentThread();
 
-        CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-          public void beforeGoingToCompact() {
-            try {
-              ThreadUtils.join(t1, 60 * 1000);
-            } catch (Exception e) {
-              testFailed = true;
-              failureCause = "Test failed as the compactor thread not guaranteed to have not rolled the oplog";
-              throw new AssertionError("Test failed as the compactor thread not guaranteed to have not rolled the oplog", e);
-            }
-          }
+                CacheObserver old =
+                    CacheObserverHolder.setInstance(
+                        new CacheObserverAdapter() {
+                          public void beforeGoingToCompact() {
+                            try {
+                              ThreadUtils.join(t1, 60 * 1000);
+                            } catch (Exception e) {
+                              testFailed = true;
+                              failureCause =
+                                  "Test failed as the compactor thread not guaranteed to have not rolled the oplog";
+                              throw new AssertionError(
+                                  "Test failed as the compactor thread not guaranteed to have not rolled the oplog",
+                                  e);
+                            }
+                          }
+                        });
 
-        });
+                region.put("" + (synchMode ? 1 : 2), value);
+                long availSpace =
+                    ((LocalRegion) region).getDiskRegion().getDirectories()[0].getAvailableSpace();
+                //The available space must be less than the minimum required as compactor has yet not freed the space. Still the put operation must succeed.
+                logWriter.info(
+                    "Available disk space="
+                        + availSpace
+                        + " MINIMUM STIPULATED SPACE="
+                        + DiskStoreImpl.MINIMUM_DIR_SIZE);
+                exceptionOccured =
+                    false /*availSpace >= DiskStoreImpl.MINIMUM_DIR_SIZE*/; // @todo I see this test failing here but I don't know what it means. My availSpace is 1052
+                if (exceptionOccured) {
+                  fail(
+                      "FAILED::Available space should be less than Minimum Directory size("
+                          + DiskStoreImpl.MINIMUM_DIR_SIZE
+                          + ") as the operation would have violated the max directory size requirement availSpace="
+                          + availSpace);
+                } else {
+                  exceptionOccured =
+                      false /*availSpace >= 0*/; // @todo I see this test failing here but I don't know what it means. My availSpace is 1052
+                  if (exceptionOccured) {
+                    fail(
+                        "FAILED::Available space should be less than 0 as the operation would have violated the max directory size requirement availSpace="
+                            + availSpace);
+                  }
+                }
 
-        region.put("" + (synchMode ? 1 : 2), value);
-        long availSpace = ((LocalRegion) region).getDiskRegion().getDirectories()[0].getAvailableSpace();
-        //The available space must be less than the minimum required as compactor has yet not freed the space. Still the put operation must succeed.         
-        logWriter.info("Available disk space=" + availSpace + " MINIMUM STIPULATED SPACE=" + DiskStoreImpl.MINIMUM_DIR_SIZE);
-        exceptionOccured = false/*availSpace >= DiskStoreImpl.MINIMUM_DIR_SIZE*/; // @todo I see this test failing here but I don't know what it means. My availSpace is 1052
-        if (exceptionOccured) {
-          fail("FAILED::Available space should be less than Minimum Directory size(" + DiskStoreImpl.MINIMUM_DIR_SIZE + ") as the operation would have violated the max directory size requirement availSpace=" + availSpace);
-        } else {
-          exceptionOccured = false /*availSpace >= 0*/; // @todo I see this test failing here but I don't know what it means. My availSpace is 1052
-          if (exceptionOccured) {
-            fail("FAILED::Available space should be less than 0 as the operation would have violated the max directory size requirement availSpace=" + availSpace);
-          }
-        }
-
-        LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-        CacheObserverHolder.setInstance(old);
-      }
-    });
+                LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
+                CacheObserverHolder.setInstance(old);
+              }
+            });
     testThread.start();
     // region.clear();
     ThreadUtils.join(testThread, 40 * 1000);
     assertFalse(failureCause, testFailed);
-    assertFalse("Expected situation of max directory size violation happening and available space less than zero did not happen  ", exceptionOccured); // CC jade1d failure
-
+    assertFalse(
+        "Expected situation of max directory size violation happening and available space less than zero did not happen  ",
+        exceptionOccured); // CC jade1d failure
   }
 
-  /**
-   * DiskRegDiskAttributesTest: This test is for testing Disk attributes set
-   * programmatically
-   */
+  /** DiskRegDiskAttributesTest: This test is for testing Disk attributes set programmatically */
   @Test
   public void testDiskRegDWAttrbts() throws Exception {
     diskProps1.setDiskDirs(dirs);
@@ -1177,7 +1193,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     region12 = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, diskProps12);
     verify((LocalRegion) region12, diskProps12);
     destroyRegion(region12);
-  }// end of DiskRegDiskAttributesTest
+  } // end of DiskRegDiskAttributesTest
 
   private static void closeRegion(Region r) {
     LocalRegion lr = (LocalRegion) r;
@@ -1193,9 +1209,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     lr.getGemFireCache().removeDiskStore(lr.getDiskStore());
   }
 
-  /**
-   * DiskRegGetInvalidEntryTest: get invalid entry should return null.
-   */
+  /** DiskRegGetInvalidEntryTest: get invalid entry should return null. */
   @Test
   public void testDiskGetInvalidEntry() throws Exception {
     Object getInvalidEnt = "some val";
@@ -1228,18 +1242,15 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     } catch (Exception e) {
       logWriter.error("Exception occured but not expected", e);
       throw new AssertionError("Failed while getting invalid entry:", e);
-
     }
     assertTrue("get operation on invalid entry returned non null value", getInvalidEnt == null);
 
     region.close(); // closes disk file which will flush all buffers
-
-  }// end of DiskRegGetInvalidEntryTest
+  } // end of DiskRegGetInvalidEntryTest
 
   /**
-   * DiskRegionByteArrayJUnitTest: A byte array as a value put in local
-   * persistent region ,when retrieved from the disk should be correctly
-   * presented as a byte array
+   * DiskRegionByteArrayJUnitTest: A byte array as a value put in local persistent region ,when
+   * retrieved from the disk should be correctly presented as a byte array
    */
   @Test
   public void testDiskRegionByteArray() throws Exception {
@@ -1281,13 +1292,9 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     if (!result) {
       fail("The val obtained from disk is not euqal to the value put initially");
     }
+  } // end of DiskRegionByteArrayJUnitTest
 
-  }// end of DiskRegionByteArrayJUnitTest
-
-  /**
-   * DiskRegionFactoryJUnitTest: Test for verifying DiskRegion or
-   * SimpleDiskRegion.
-   */
+  /** DiskRegionFactoryJUnitTest: Test for verifying DiskRegion or SimpleDiskRegion. */
   @Test
   public void testInstanceOfDiskRegion() throws Exception {
     DiskRegionProperties diskProps = new DiskRegionProperties();
@@ -1308,8 +1315,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     File singleDisk1 = new File("singleDisk");
     singleDisk1.mkdir();
     singleDisk1.deleteOnExit();
-    File[] singleDirArray1 = { singleDisk1 };
-    int[] diskSizes1 = { 2048 };
+    File[] singleDirArray1 = {singleDisk1};
+    int[] diskSizes1 = {2048};
     diskProps.setMaxOplogSize(1024);
     diskProps.setDiskDirsAndSizes(singleDirArray1, diskSizes1);
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
@@ -1320,15 +1327,13 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     File singleDisk = new File("singleDisk");
     singleDisk.mkdir();
     singleDisk.deleteOnExit();
-    File[] singleDirArray = { singleDisk };
-    int[] diskSizes = { 1024 };
+    File[] singleDirArray = {singleDisk};
+    int[] diskSizes = {1024};
     diskProps.setMaxOplogSize(2048);
     diskProps.setDiskDirsAndSizes(singleDirArray, diskSizes);
   }
 
-  /**
-   * DiskRegionStatsJUnitTest :
-   */
+  /** DiskRegionStatsJUnitTest : */
   @Test
   public void testStats() throws Exception {
     final int overflowCapacity = 100;
@@ -1357,15 +1362,18 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
           fail(" number of entries is VM should be equal to overflow capacity");
         }
         if (!(stats.getNumOverflowOnDisk() - 1 == i - overflowCapacity)) {
-          fail(" number of entries on disk not corrected expected " + (i - overflowCapacity) + " but is " + stats.getNumOverflowOnDisk());
+          fail(
+              " number of entries on disk not corrected expected "
+                  + (i - overflowCapacity)
+                  + " but is "
+                  + stats.getNumOverflowOnDisk());
         }
       }
     }
-  }// end of testStats
+  } // end of testStats
 
   /**
-   * DiskRegOverflowOnlyNoFilesTest: Overflow only mode has no files of previous
-   * run, during startup
+   * DiskRegOverflowOnlyNoFilesTest: Overflow only mode has no files of previous run, during startup
    */
   @Test
   public void testOverflowOnlyNoFiles() throws Exception {
@@ -1410,7 +1418,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       }
       assertEquals(0, fileCount);
     }
-  }//end of testOverflowOnlyNoFiles
+  } //end of testOverflowOnlyNoFiles
 
   @Test
   public void testPersistNoFiles() throws Exception {
@@ -1458,16 +1466,16 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Test to verify that DiskAccessException is not thrown if rolling has been enabled. The
-   * test configurations will cause the disk to go full and wait for the compactor to release space. 
-   * A DiskAccessException should not be thrown by this test
+   * Test to verify that DiskAccessException is not thrown if rolling has been enabled. The test
+   * configurations will cause the disk to go full and wait for the compactor to release space. A
+   * DiskAccessException should not be thrown by this test
    */
   @Test
   public void testDiskAccessExceptionNotThrown() throws Exception {
     File diskDir = new File("dir");
     diskDir.mkdir();
     DiskRegionProperties diskRegionProperties = new DiskRegionProperties();
-    diskRegionProperties.setDiskDirsAndSizes(new File[] { diskDir }, new int[] { 10240 });
+    diskRegionProperties.setDiskDirsAndSizes(new File[] {diskDir}, new int[] {10240});
     diskRegionProperties.setMaxOplogSize(1024);
     diskRegionProperties.setRolling(true);
     diskRegionProperties.setSynchronous(true);
@@ -1479,9 +1487,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * If an entry which has just been written on the disk, sees clear just before
-   * updating the LRULiist, then that deleted entry should not go into the
-   * LRUList
+   * If an entry which has just been written on the disk, sees clear just before updating the
+   * LRULiist, then that deleted entry should not go into the LRUList
    */
   @Test
   public void testClearInteractionWithLRUList_Bug37605() throws Exception {
@@ -1492,17 +1499,22 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     props.setRegionName("IGNORE_EXCEPTION_testClearInteractionWithLRUList_Bug37605");
     final Region region = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, props);
 
-    final Thread th = new Thread(new Runnable() {
-      public void run() {
-        region.clear();
-      }
-    });
+    final Thread th =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                region.clear();
+              }
+            });
 
-    region.getAttributesMutator().setCacheListener(new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent event) {
-        th.start();
-      }
-    });
+    region
+        .getAttributesMutator()
+        .setCacheListener(
+            new CacheListenerAdapter() {
+              public void afterCreate(EntryEvent event) {
+                th.start();
+              }
+            });
 
     region.create("key1", "value1");
     try {
@@ -1517,15 +1529,16 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     NewLRUClockHand lruList = ((VMLRURegionMap) ((LocalRegion) region).entries)._getLruList();
     assertEquals(region.size(), 0);
     lruList.audit();
-    assertNull("The LRU List should have been empty instead it contained a cleared entry", lruList.getLRUEntry());
+    assertNull(
+        "The LRU List should have been empty instead it contained a cleared entry",
+        lruList.getLRUEntry());
   }
 
   /**
-   * As in the clear operation, previously the code was such that Htree Ref was
-   * first reset & then the underlying region map got cleared, it was possible
-   * for the create op to set the new Htree ref in thread local. Now if clear
-   * happened, the entry on which create op is going on was no longer valid, but
-   * we would not be able to detect the conflict. The fix was to first clear the
+   * As in the clear operation, previously the code was such that Htree Ref was first reset & then
+   * the underlying region map got cleared, it was possible for the create op to set the new Htree
+   * ref in thread local. Now if clear happened, the entry on which create op is going on was no
+   * longer valid, but we would not be able to detect the conflict. The fix was to first clear the
    * region map & then reset the Htree Ref.
    */
   @Test
@@ -1536,27 +1549,32 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     props.setDiskDirs(dirs);
     props.setPersistBackup(true);
     props.setRegionName("IGNORE_EXCEPTION_testClearInteractionWithCreateOperation_Bug37606");
-    final Region region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
+    final Region region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-    final Thread th = new Thread(new Runnable() {
-      public void run() {
-        region.create("key1", "value1");
-      }
-    });
-    CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      public void beforeDiskClear() {
-        th.start();
-        Wait.pause(7 * 1000);
-        System.out.println("FIXME: this thread does not terminate--EVER!");
-        //            try {
-        //              DistributedTestCase.join(th, 7 * 1000, null);
-        //            }
-        //            catch (Exception e) {
-        //              DiskRegionJUnitTest.this.exceptionOccured = true;
-        //              DiskRegionJUnitTest.this.failureCause = e.toString();
-        //            }
-      }
-    });
+    final Thread th =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                region.create("key1", "value1");
+              }
+            });
+    CacheObserver old =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
+              public void beforeDiskClear() {
+                th.start();
+                Wait.pause(7 * 1000);
+                System.out.println("FIXME: this thread does not terminate--EVER!");
+                //            try {
+                //              DistributedTestCase.join(th, 7 * 1000, null);
+                //            }
+                //            catch (Exception e) {
+                //              DiskRegionJUnitTest.this.exceptionOccured = true;
+                //              DiskRegionJUnitTest.this.failureCause = e.toString();
+                //            }
+              }
+            });
     try {
       region.clear();
       ThreadUtils.join(th, 30 * 1000);
@@ -1565,16 +1583,15 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       //the update
       assertEquals(1, region.size());
       region.close();
-      assertEquals(1, DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL).size());
+      assertEquals(
+          1, DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL).size());
     } finally {
       CacheObserverHolder.setInstance(old);
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
     }
   }
 
-  /**
-   * Similar test in case of 'update'
-   */
+  /** Similar test in case of 'update' */
   @Test
   public void testClearInteractionWithUpdateOperation_Bug37606() throws Exception {
     DiskRegionProperties props = new DiskRegionProperties();
@@ -1583,29 +1600,34 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     props.setDiskDirs(dirs);
     props.setPersistBackup(true);
     props.setRegionName("IGNORE_EXCEPTION_testClearInteractionWithUpdateOperation_Bug37606");
-    final Region region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
+    final Region region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
     region.create("key1", "value1");
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-    final Thread th = new Thread(new Runnable() {
-      public void run() {
-        region.put("key1", "value2");
-      }
-    });
-    CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      public void beforeDiskClear() {
-        LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-        th.start();
-        System.out.println("FIXME: this thread (2) does not terminate--EVER!");
-        Wait.pause(10 * 1000);
-        //            try {	
-        //              DistributedTestCase.join(th, 10 * 1000, null);
-        //            }
-        //            catch (Exception e) {
-        //              DiskRegionJUnitTest.this.exceptionOccured = true;
-        //              DiskRegionJUnitTest.this.failureCause = e.toString();
-        //            }
-      }
-    });
+    final Thread th =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                region.put("key1", "value2");
+              }
+            });
+    CacheObserver old =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
+              public void beforeDiskClear() {
+                LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
+                th.start();
+                System.out.println("FIXME: this thread (2) does not terminate--EVER!");
+                Wait.pause(10 * 1000);
+                //            try {
+                //              DistributedTestCase.join(th, 10 * 1000, null);
+                //            }
+                //            catch (Exception e) {
+                //              DiskRegionJUnitTest.this.exceptionOccured = true;
+                //              DiskRegionJUnitTest.this.failureCause = e.toString();
+                //            }
+              }
+            });
     try {
       region.clear();
       ThreadUtils.join(th, 30 * 1000);
@@ -1614,7 +1636,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       //the update
       assertEquals(1, region.size());
       region.close();
-      assertEquals(1, DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL).size());
+      assertEquals(
+          1, DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL).size());
     } finally {
       CacheObserverHolder.setInstance(old);
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
@@ -1622,8 +1645,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * If IOException occurs while updating an entry in a persist only synch mode,
-   * DiskAccessException should occur & region should be destroyed
+   * If IOException occurs while updating an entry in a persist only synch mode, DiskAccessException
+   * should occur & region should be destroyed
    */
   @Test
   public void testEntryUpdateInSynchPersistOnlyForIOExceptionCase() throws Exception {
@@ -1639,13 +1662,14 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * If IOException occurs while updating an entry in a persist overflow synch mode,
-   * we should get DiskAccessException & region be destroyed
+   * If IOException occurs while updating an entry in a persist overflow synch mode, we should get
+   * DiskAccessException & region be destroyed
    */
   @Test
   public void testEntryUpdateInSyncOverFlowPersistOnlyForIOExceptionCase() throws Exception {
     DiskRegionProperties props = new DiskRegionProperties();
-    props.setRegionName("IGNORE_EXCEPTION_testEntryUpdateInSyncOverFlowPersistOnlyForIOExceptionCase");
+    props.setRegionName(
+        "IGNORE_EXCEPTION_testEntryUpdateInSyncOverFlowPersistOnlyForIOExceptionCase");
     props.setOverflow(true);
     props.setRolling(false);
     props.setDiskDirs(dirs);
@@ -1655,16 +1679,17 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * If IOException occurs while updating an entry in a persist only synch mode,
-   *  DiskAccessException should occur & region should be destroyed
-   *  
+   * If IOException occurs while updating an entry in a persist only synch mode, DiskAccessException
+   * should occur & region should be destroyed
+   *
    * @throws Exception
    */
   private void entryUpdateInSynchPersistTypeForIOExceptionCase(Region region) throws Exception {
 
     region.create("key1", "value1");
     // Get the oplog handle & hence the underlying file & close it
-    UninterruptibleFileChannel oplogFileChannel = ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
+    UninterruptibleFileChannel oplogFileChannel =
+        ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
     oplogFileChannel.close();
     try {
       region.put("key1", "value2");
@@ -1701,7 +1726,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   @Test
   public void testEntryInvalidateInSynchPersistOverflowForIOExceptionCase() throws Exception {
     DiskRegionProperties props = new DiskRegionProperties();
-    props.setRegionName("IGNORE_EXCEPTION_testEntryInvalidateInSynchPersistOverflowForIOExceptionCase");
+    props.setRegionName(
+        "IGNORE_EXCEPTION_testEntryInvalidateInSynchPersistOverflowForIOExceptionCase");
 
     props.setOverflow(true);
     props.setRolling(false);
@@ -1714,13 +1740,14 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   /**
    * If IOException occurs while invalidating an entry in a persist only synch mode,
    * DiskAccessException should occur & region should be destroyed
-   * 
+   *
    * @throws Exception
    */
   private void entryInvalidateInSynchPersistTypeForIOExceptionCase(Region region) throws Exception {
     region.create("key1", "value1");
     // Get the oplog handle & hence the underlying file & close it
-    UninterruptibleFileChannel oplogFileChannel = ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
+    UninterruptibleFileChannel oplogFileChannel =
+        ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
     oplogFileChannel.close();
     try {
       region.invalidate("key1");
@@ -1735,8 +1762,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * If IOException occurs while creating an entry in a persist only synch mode,
-   * DiskAccessException should occur & region should be destroyed
+   * If IOException occurs while creating an entry in a persist only synch mode, DiskAccessException
+   * should occur & region should be destroyed
    */
   @Test
   public void testEntryCreateInSynchPersistOnlyForIOExceptionCase() throws Exception {
@@ -1767,16 +1794,16 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * 
-   * If IOException occurs while creating an entry in a persist only synch mode,
-   *  DiskAccessException should occur & region should be destroyed
-   * 
+   * If IOException occurs while creating an entry in a persist only synch mode, DiskAccessException
+   * should occur & region should be destroyed
+   *
    * @throws Exception
    */
   private void entryCreateInSynchPersistTypeForIOExceptionCase(Region region) throws Exception {
 
     // Get the oplog handle & hence the underlying file & close it
-    UninterruptibleFileChannel oplogFileChannel = ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
+    UninterruptibleFileChannel oplogFileChannel =
+        ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
     oplogFileChannel.close();
     try {
       region.create("key1", "value1");
@@ -1796,7 +1823,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   @Test
   public void testEntryDestructionInSynchPersistOnlyForIOExceptionCase() throws Exception {
     DiskRegionProperties props = new DiskRegionProperties();
-    props.setRegionName("IGNORE_EXCEPTION_testEntryDestructionInSynchPersistOnlyForIOExceptionCase");
+    props.setRegionName(
+        "IGNORE_EXCEPTION_testEntryDestructionInSynchPersistOnlyForIOExceptionCase");
     props.setOverflow(false);
     props.setRolling(false);
     props.setDiskDirs(dirs);
@@ -1812,7 +1840,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   @Test
   public void testEntryDestructionInSynchPersistOverflowForIOExceptionCase() throws Exception {
     DiskRegionProperties props = new DiskRegionProperties();
-    props.setRegionName("IGNORE_EXCEPTION_testEntryDestructionInSynchPersistOverflowForIOExceptionCase");
+    props.setRegionName(
+        "IGNORE_EXCEPTION_testEntryDestructionInSynchPersistOverflowForIOExceptionCase");
     props.setOverflow(true);
     props.setRolling(false);
     props.setDiskDirs(dirs);
@@ -1824,10 +1853,11 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   /**
    * If IOException occurs while destroying an entry in a persist only synch mode,
    * DiskAccessException should occur & region should be destroyed
-   * 
+   *
    * @throws Exception
    */
-  private void entryDestructionInSynchPersistTypeForIOExceptionCase(Region region) throws Exception {
+  private void entryDestructionInSynchPersistTypeForIOExceptionCase(Region region)
+      throws Exception {
 
     region.create("key1", "value1");
     // Get the oplog handle & hence the underlying file & close it
@@ -1904,8 +1934,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * A deletion of an entry in overflow only mode should not cause
-   * any eviction & hence no DiskAccessException 
+   * A deletion of an entry in overflow only mode should not cause any eviction & hence no
+   * DiskAccessException
    */
   @Test
   public void testEntryDeletionInSynchOverflowOnlyForIOExceptionCase() throws Exception {
@@ -1928,8 +1958,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * If IOException occurs while updating an entry in an  Asynch mode,
-   * DiskAccessException should occur & region should be destroyed
+   * If IOException occurs while updating an entry in an Asynch mode, DiskAccessException should
+   * occur & region should be destroyed
    */
   @Test
   public void testEntryUpdateInASynchPersistOnlyForIOExceptionCase() throws Exception {
@@ -1942,7 +1972,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     props.setPersistBackup(true);
     region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, props);
     // Get the oplog handle & hence the underlying file & close it
-    UninterruptibleFileChannel oplogFileChannel = ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
+    UninterruptibleFileChannel oplogFileChannel =
+        ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
     oplogFileChannel.close();
 
     region.create("key1", new byte[16]);
@@ -1955,17 +1986,21 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       fail("async flusher thread did not terminate");
     }
 
-    Wait.waitForCriterion(new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return cache.isClosed();
-      }
+    Wait.waitForCriterion(
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return cache.isClosed();
+          }
 
-      @Override
-      public String description() {
-        return "Waiting for region IGNORE_EXCEPTION_testEntryUpdateInASynchPersistOnlyForIOExceptionCase to be destroyed.";
-      }
-    }, 5000, 500, true);
+          @Override
+          public String description() {
+            return "Waiting for region IGNORE_EXCEPTION_testEntryUpdateInASynchPersistOnlyForIOExceptionCase to be destroyed.";
+          }
+        },
+        5000,
+        500,
+        true);
 
     ((LocalRegion) region).getDiskStore().waitForClose();
     assertTrue(cache.isClosed());
@@ -1973,14 +2008,14 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * If IOException occurs while updating an entry in an already initialized
-   * DiskRegion ,then the bridge servers should not be stopped , if any running as
-   * they are no clients connected to it.
+   * If IOException occurs while updating an entry in an already initialized DiskRegion ,then the
+   * bridge servers should not be stopped , if any running as they are no clients connected to it.
    */
   @Test
   public void testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase() throws Exception {
     DiskRegionProperties props = new DiskRegionProperties();
-    props.setRegionName("IGNORE_EXCEPTION_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase");
+    props.setRegionName(
+        "IGNORE_EXCEPTION_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase");
     props.setOverflow(true);
     props.setRolling(true);
     props.setDiskDirs(dirs);
@@ -1994,7 +2029,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     region.create("key1", new byte[16]);
     region.create("key2", new byte[16]);
     //      Get the oplog handle & hence the underlying file & close it
-    UninterruptibleFileChannel oplogFileChannel = ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
+    UninterruptibleFileChannel oplogFileChannel =
+        ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
     oplogFileChannel.close();
     try {
       region.put("key2", new byte[16]);
@@ -2025,37 +2061,40 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       for (int i = 0; i < 2; ++i) {
         region.put("" + i, "" + i);
       }
-      final Thread th = new Thread(new Runnable() {
-        public void run() {
-          region.close();
-        }
-      });
+      final Thread th =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  region.close();
+                }
+              });
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-      final boolean[] toWait = new boolean[] { true };
+      final boolean[] toWait = new boolean[] {true};
       // cause a switch
-      CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-        public void beforeGoingToCompact() {
-          // Spawn a thread which does region.close;
-          // Start the shutdown thread, do not allow the compactor to proceed
-          // till the roll flag
-          // is false in DiskRegion
-          th.start();
-          synchronized (region) {
-            toWait[0] = false;
-            region.notify();
-          }
-          // Lets wait for some time which will be enough to toggle glag.
-          // ideally we need visibility
-          // of roll flag from DiskRegion.OplogCompactor but want to
-          // avoid exposing it
-          try {
-            Thread.sleep(8000);
-          } catch (InterruptedException ie) {
-            ie.printStackTrace();
-          }
-
-        }
-      });
+      CacheObserver old =
+          CacheObserverHolder.setInstance(
+              new CacheObserverAdapter() {
+                public void beforeGoingToCompact() {
+                  // Spawn a thread which does region.close;
+                  // Start the shutdown thread, do not allow the compactor to proceed
+                  // till the roll flag
+                  // is false in DiskRegion
+                  th.start();
+                  synchronized (region) {
+                    toWait[0] = false;
+                    region.notify();
+                  }
+                  // Lets wait for some time which will be enough to toggle glag.
+                  // ideally we need visibility
+                  // of roll flag from DiskRegion.OplogCompactor but want to
+                  // avoid exposing it
+                  try {
+                    Thread.sleep(8000);
+                  } catch (InterruptedException ie) {
+                    ie.printStackTrace();
+                  }
+                }
+              });
       region.forceRolling();
       synchronized (region) {
         if (toWait[0]) {
@@ -2079,13 +2118,14 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * If IOException occurs while initializing a region 
-   * ,then the bridge servers should not be stopped 
+   * If IOException occurs while initializing a region ,then the bridge servers should not be
+   * stopped
    */
   @Test
   public void testBridgeServerRunningInSynchPersistOnlyForIOExceptionCase() throws Exception {
     DiskRegionProperties props = new DiskRegionProperties();
-    props.setRegionName("IGNORE_EXCEPTION_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase");
+    props.setRegionName(
+        "IGNORE_EXCEPTION_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase");
     props.setOverflow(true);
     props.setRolling(true);
     props.setDiskDirs(dirs);
@@ -2100,7 +2140,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     region.create("key1", new byte[16]);
     region.create("key2", new byte[16]);
     //Get the oplog file path
-    UninterruptibleFileChannel oplogFileChnl = ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
+    UninterruptibleFileChannel oplogFileChnl =
+        ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
     //corrupt the opfile
     oplogFileChnl.position(2);
     ByteBuffer bf = ByteBuffer.allocate(416);
@@ -2137,120 +2178,124 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       props.setMaxOplogSize(100);
       props.setPersistBackup(true);
       region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
-      final boolean[] foundException = new boolean[] { false, false };
-      final boolean[] closeThreadStarted = new boolean[] { false };
-      final boolean[] allowCompactorThread = new boolean[] { false };
+      final boolean[] foundException = new boolean[] {false, false};
+      final boolean[] closeThreadStarted = new boolean[] {false};
+      final boolean[] allowCompactorThread = new boolean[] {false};
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
 
-      final Thread th = new Thread(new Runnable() {
-        public void run() {
-          DiskStoreImpl dsi = ((LocalRegion) region).getDiskStore();
-          region.close();
-          dsi.close();
-        }
-      });
+      final Thread th =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  DiskStoreImpl dsi = ((LocalRegion) region).getDiskStore();
+                  region.close();
+                  dsi.close();
+                }
+              });
       final Object anotherLock = new Object();
       // cause a switch
-      CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-        int sizeBeforeRoll;
-        Map monitor;
-        final AtomicBoolean compactorSignalled = new AtomicBoolean();
-        final AtomicBoolean compactorCompleted = new AtomicBoolean();
+      CacheObserver old =
+          CacheObserverHolder.setInstance(
+              new CacheObserverAdapter() {
+                int sizeBeforeRoll;
+                Map monitor;
+                final AtomicBoolean compactorSignalled = new AtomicBoolean();
+                final AtomicBoolean compactorCompleted = new AtomicBoolean();
 
-        public void beforeGoingToCompact() {
-          logWriter.info("beforeGoingToCompact");
-          DiskRegion cdr = ((LocalRegion) region).getDiskRegion();
-          monitor = cdr.getOplogIdToOplog();
-          //wait for operations to get over
-          synchronized (anotherLock) {
-            try {
-              if (!allowCompactorThread[0]) {
-                anotherLock.wait(15000);
-                assertTrue(allowCompactorThread[0]);
-              }
-            } catch (Exception e) {
-              foundException[0] = true;
-              e.printStackTrace();
-            }
-          }
-          synchronized (monitor) {
-            sizeBeforeRoll = monitor.size();
-            assertTrue(sizeBeforeRoll > 0);
-          }
-          logWriter.info("beforeGoingToCompact sizeBeforeCompact=" + sizeBeforeRoll);
-          this.compactorSignalled.set(false);
-          this.compactorCompleted.set(false);
-          th.start();
-          synchronized (region) {
-            closeThreadStarted[0] = true;
-            region.notify();
-          }
-          // wait for th to call afterSignallingCompactor
-          synchronized (this.compactorSignalled) {
-            int waits = 0;
-            while (!this.compactorSignalled.get()) {
-              try {
-                this.compactorSignalled.wait(100);
-                waits++;
-                if (waits > 100) {
-                  foundException[0] = true;
-                  fail("took too long to call afterSignallingCompactor");
+                public void beforeGoingToCompact() {
+                  logWriter.info("beforeGoingToCompact");
+                  DiskRegion cdr = ((LocalRegion) region).getDiskRegion();
+                  monitor = cdr.getOplogIdToOplog();
+                  //wait for operations to get over
+                  synchronized (anotherLock) {
+                    try {
+                      if (!allowCompactorThread[0]) {
+                        anotherLock.wait(15000);
+                        assertTrue(allowCompactorThread[0]);
+                      }
+                    } catch (Exception e) {
+                      foundException[0] = true;
+                      e.printStackTrace();
+                    }
+                  }
+                  synchronized (monitor) {
+                    sizeBeforeRoll = monitor.size();
+                    assertTrue(sizeBeforeRoll > 0);
+                  }
+                  logWriter.info("beforeGoingToCompact sizeBeforeCompact=" + sizeBeforeRoll);
+                  this.compactorSignalled.set(false);
+                  this.compactorCompleted.set(false);
+                  th.start();
+                  synchronized (region) {
+                    closeThreadStarted[0] = true;
+                    region.notify();
+                  }
+                  // wait for th to call afterSignallingCompactor
+                  synchronized (this.compactorSignalled) {
+                    int waits = 0;
+                    while (!this.compactorSignalled.get()) {
+                      try {
+                        this.compactorSignalled.wait(100);
+                        waits++;
+                        if (waits > 100) {
+                          foundException[0] = true;
+                          fail("took too long to call afterSignallingCompactor");
+                        }
+                      } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        foundException[0] = true;
+                        break;
+                      }
+                    }
+                  }
                 }
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-                foundException[0] = true;
-                break;
-              }
-            }
-          }
-        }
 
-        public void afterSignallingCompactor() {
-          logWriter.info("afterSignallingCompactor");
-          synchronized (this.compactorSignalled) {
-            this.compactorSignalled.set(true);
-            this.compactorSignalled.notifyAll();
-          }
-        }
-
-        public void afterStoppingCompactor() {
-          // th is the thread that calls this in its region.close code.
-          logWriter.info("afterStoppingCompactor");
-          // wait until afterHavingCompacted is called
-          synchronized (this.compactorCompleted) {
-            int waits = 0;
-            while (!this.compactorCompleted.get()) {
-              try {
-                this.compactorCompleted.wait(100);
-                waits++;
-                if (waits > 100) {
-                  foundException[0] = true;
-                  fail("took too long to call afterHavingCompacted");
+                public void afterSignallingCompactor() {
+                  logWriter.info("afterSignallingCompactor");
+                  synchronized (this.compactorSignalled) {
+                    this.compactorSignalled.set(true);
+                    this.compactorSignalled.notifyAll();
+                  }
                 }
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-                foundException[0] = true;
-                break;
-              }
-            }
-          }
-        }
 
-        public void afterHavingCompacted() {
-          logWriter.info("afterHavingCompacted");
-          synchronized (this.compactorCompleted) {
-            this.compactorCompleted.set(true);
-            this.compactorCompleted.notifyAll();
-          }
-          synchronized (monitor) {
-            if (monitor.size() != sizeBeforeRoll) {
-              foundException[1] = true;
-              // we stopped early and didn't roll any
-              assertEquals(sizeBeforeRoll, monitor.size());
-            }
-          }
-        }
-      });
+                public void afterStoppingCompactor() {
+                  // th is the thread that calls this in its region.close code.
+                  logWriter.info("afterStoppingCompactor");
+                  // wait until afterHavingCompacted is called
+                  synchronized (this.compactorCompleted) {
+                    int waits = 0;
+                    while (!this.compactorCompleted.get()) {
+                      try {
+                        this.compactorCompleted.wait(100);
+                        waits++;
+                        if (waits > 100) {
+                          foundException[0] = true;
+                          fail("took too long to call afterHavingCompacted");
+                        }
+                      } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        foundException[0] = true;
+                        break;
+                      }
+                    }
+                  }
+                }
+
+                public void afterHavingCompacted() {
+                  logWriter.info("afterHavingCompacted");
+                  synchronized (this.compactorCompleted) {
+                    this.compactorCompleted.set(true);
+                    this.compactorCompleted.notifyAll();
+                  }
+                  synchronized (monitor) {
+                    if (monitor.size() != sizeBeforeRoll) {
+                      foundException[1] = true;
+                      // we stopped early and didn't roll any
+                      assertEquals(sizeBeforeRoll, monitor.size());
+                    }
+                  }
+                }
+              });
       //    create some string entries
       for (int i = 0; i < 100; ++i) {
         region.put("" + i, "" + i);
@@ -2281,7 +2326,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       // Create a region with rolling enabled.
       DiskRegionProperties props = new DiskRegionProperties();
       //       System.getProperties().setProperty(DiskRegion.CHECK_ENTRY_BALANCE_PROPERTY_NAME, "true");
-      props.setRegionName("IGNORE_EXCEPTION_testAssertionErrorIfDanglingModificationsAreNotBalancedByDanglingDeletes");
+      props.setRegionName(
+          "IGNORE_EXCEPTION_testAssertionErrorIfDanglingModificationsAreNotBalancedByDanglingDeletes");
       props.setRolling(false);
       props.setDiskDirs(dirs);
       props.setMaxOplogSize(100);
@@ -2291,14 +2337,16 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
 
       final Oplog[] switchedOplog = new Oplog[1];
-      CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-        public void beforeSwitchingOplog() {
-          DiskRegion dr = ((LocalRegion) region).getDiskRegion();
-          if (switchedOplog[0] == null) {
-            switchedOplog[0] = dr.testHook_getChild();
-          }
-        }
-      });
+      CacheObserver old =
+          CacheObserverHolder.setInstance(
+              new CacheObserverAdapter() {
+                public void beforeSwitchingOplog() {
+                  DiskRegion dr = ((LocalRegion) region).getDiskRegion();
+                  if (switchedOplog[0] == null) {
+                    switchedOplog[0] = dr.testHook_getChild();
+                  }
+                }
+              });
       //    create some string entries
       int i = 0;
       for (; i < 100; ++i) {
@@ -2315,7 +2363,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       DiskStoreImpl store = ((LocalRegion) region).getDiskStore();
       store.close();
       ((GemFireCacheImpl) cache).removeDiskStore(store);
-      logWriter.info("<ExpectedException action=add>" + "DiskAccessException" + "</ExpectedException>");
+      logWriter.info(
+          "<ExpectedException action=add>" + "DiskAccessException" + "</ExpectedException>");
       try {
         region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
         // Missing crf and drfs are now detected.
@@ -2323,7 +2372,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       } catch (IllegalStateException expected) {
         //Expected in recovery
       } finally {
-        logWriter.info("<ExpectedException action=remove>" + "DiskAccessException" + "</ExpectedException>");
+        logWriter.info(
+            "<ExpectedException action=remove>" + "DiskAccessException" + "</ExpectedException>");
       }
 
     } finally {
@@ -2337,7 +2387,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
   public void testNoTerminationOfCompactorTillRollingCompleted() throws Exception {
     try {
       // Create a region with rolling enabled.
-      System.getProperties().setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "true");
+      System.getProperties()
+          .setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "true");
       DiskRegionProperties props = new DiskRegionProperties();
       props.setRegionName("testNoTerminationOfCompactorTillRollingCompleted");
       props.setRolling(true);
@@ -2346,90 +2397,98 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       props.setMaxOplogSize(100);
       props.setPersistBackup(true);
       region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
-      final boolean[] foundException = new boolean[] { false, false };
-      final boolean[] closeThreadStarted = new boolean[] { false };
-      final boolean[] allowCompactorThread = new boolean[] { false };
+      final boolean[] foundException = new boolean[] {false, false};
+      final boolean[] closeThreadStarted = new boolean[] {false};
+      final boolean[] allowCompactorThread = new boolean[] {false};
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
 
-      final Thread th = new Thread(new Runnable() {
-        public void run() {
-          DiskStoreImpl dsi = ((LocalRegion) region).getDiskStore();
-          region.close();
-          dsi.close();
-        }
-      });
+      final Thread th =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  DiskStoreImpl dsi = ((LocalRegion) region).getDiskStore();
+                  region.close();
+                  dsi.close();
+                }
+              });
       final Object anotherLock = new Object();
       // cause a switch
-      CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-        int sizeBeforeRoll;
-        Map monitor;
-        final AtomicBoolean compactorSignalled = new AtomicBoolean();
+      CacheObserver old =
+          CacheObserverHolder.setInstance(
+              new CacheObserverAdapter() {
+                int sizeBeforeRoll;
+                Map monitor;
+                final AtomicBoolean compactorSignalled = new AtomicBoolean();
 
-        public void beforeGoingToCompact() {
+                public void beforeGoingToCompact() {
 
-          DiskRegion cdr = ((LocalRegion) region).getDiskRegion();
-          monitor = cdr.getOplogIdToOplog();
-          //wait for operations to get over
-          synchronized (anotherLock) {
-            try {
-              if (!allowCompactorThread[0]) {
-                anotherLock.wait(9000);
-                assertTrue(allowCompactorThread[0]);
-              }
-            } catch (Exception e) {
-              foundException[0] = true;
-              e.printStackTrace();
-            }
-          }
-          synchronized (monitor) {
-            sizeBeforeRoll = monitor.size();
-            assertTrue(sizeBeforeRoll > 0);
-          }
-          logWriter.info("beforeGoingToCompact sizeBeforeCompact=" + sizeBeforeRoll);
-          this.compactorSignalled.set(false);
-          th.start();
-          synchronized (region) {
-            closeThreadStarted[0] = true;
-            region.notify();
-          }
-          // wait for th to call afterSignallingCompactor
-          synchronized (this.compactorSignalled) {
-            int waits = 0;
-            while (!this.compactorSignalled.get()) {
-              try {
-                this.compactorSignalled.wait(100);
-                waits++;
-                if (waits > 100) {
-                  foundException[0] = true;
-                  fail("took too long to call afterSignallingCompactor");
+                  DiskRegion cdr = ((LocalRegion) region).getDiskRegion();
+                  monitor = cdr.getOplogIdToOplog();
+                  //wait for operations to get over
+                  synchronized (anotherLock) {
+                    try {
+                      if (!allowCompactorThread[0]) {
+                        anotherLock.wait(9000);
+                        assertTrue(allowCompactorThread[0]);
+                      }
+                    } catch (Exception e) {
+                      foundException[0] = true;
+                      e.printStackTrace();
+                    }
+                  }
+                  synchronized (monitor) {
+                    sizeBeforeRoll = monitor.size();
+                    assertTrue(sizeBeforeRoll > 0);
+                  }
+                  logWriter.info("beforeGoingToCompact sizeBeforeCompact=" + sizeBeforeRoll);
+                  this.compactorSignalled.set(false);
+                  th.start();
+                  synchronized (region) {
+                    closeThreadStarted[0] = true;
+                    region.notify();
+                  }
+                  // wait for th to call afterSignallingCompactor
+                  synchronized (this.compactorSignalled) {
+                    int waits = 0;
+                    while (!this.compactorSignalled.get()) {
+                      try {
+                        this.compactorSignalled.wait(100);
+                        waits++;
+                        if (waits > 100) {
+                          foundException[0] = true;
+                          fail("took too long to call afterSignallingCompactor");
+                        }
+                      } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        foundException[0] = true;
+                        break;
+                      }
+                    }
+                  }
                 }
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-                foundException[0] = true;
-                break;
-              }
-            }
-          }
-        }
 
-        public void afterSignallingCompactor() {
-          synchronized (this.compactorSignalled) {
-            this.compactorSignalled.set(true);
-            this.compactorSignalled.notifyAll();
-          }
-        }
+                public void afterSignallingCompactor() {
+                  synchronized (this.compactorSignalled) {
+                    this.compactorSignalled.set(true);
+                    this.compactorSignalled.notifyAll();
+                  }
+                }
 
-        public void afterHavingCompacted() {
-          synchronized (monitor) {
-            if (sizeBeforeRoll != monitor.size()) {
-              // expect it to be the same since we compact one and add one (to copy forward)
-              foundException[1] = true;
-              // we should have rolled at least one oplog
-              fail("expected sizeBeforeRoll " + sizeBeforeRoll + " to be equal to " + monitor.size());
-            }
-          }
-        }
-      });
+                public void afterHavingCompacted() {
+                  synchronized (monitor) {
+                    if (sizeBeforeRoll != monitor.size()) {
+                      // expect it to be the same since we compact one and add one (to copy forward)
+                      foundException[1] = true;
+                      // we should have rolled at least one oplog
+                      fail(
+                          "expected sizeBeforeRoll "
+                              + sizeBeforeRoll
+                              + " to be equal to "
+                              + monitor.size());
+                    }
+                  }
+                }
+              });
       //    create some string entries
       for (int i = 0; i < 100; ++i) {
         region.put("" + i, "" + i);
@@ -2451,7 +2510,8 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     } finally {
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
       CacheObserverHolder.setInstance(new CacheObserverAdapter());
-      System.getProperties().setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "");
+      System.getProperties()
+          .setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "");
     }
   }
 
@@ -2468,47 +2528,50 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       props.setMaxOplogSize(100);
       props.setPersistBackup(true);
       region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
-      final boolean[] foundException = new boolean[] { false };
-      final boolean[] regionDestroyed = new boolean[] { false };
-      final boolean[] allowCompactorThread = new boolean[] { false };
+      final boolean[] foundException = new boolean[] {false};
+      final boolean[] regionDestroyed = new boolean[] {false};
+      final boolean[] allowCompactorThread = new boolean[] {false};
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
 
       final Object anotherLock = new Object();
       // cause a switch
-      CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-        final AtomicBoolean compactorSignalled = new AtomicBoolean();
+      CacheObserver old =
+          CacheObserverHolder.setInstance(
+              new CacheObserverAdapter() {
+                final AtomicBoolean compactorSignalled = new AtomicBoolean();
 
-        public void beforeGoingToCompact() {
-          //wait for operations to get over
-          synchronized (anotherLock) {
-            try {
-              if (!allowCompactorThread[0]) {
-                anotherLock.wait();
-              }
-            } catch (Exception e) {
-              foundException[0] = true;
-              e.printStackTrace();
-            }
-          }
-          this.compactorSignalled.set(false);
-        }
+                public void beforeGoingToCompact() {
+                  //wait for operations to get over
+                  synchronized (anotherLock) {
+                    try {
+                      if (!allowCompactorThread[0]) {
+                        anotherLock.wait();
+                      }
+                    } catch (Exception e) {
+                      foundException[0] = true;
+                      e.printStackTrace();
+                    }
+                  }
+                  this.compactorSignalled.set(false);
+                }
 
-        @Override
-        public void beforeDeletingCompactedOplog(Oplog oplog) {
-          //destroy the oplog
-          //This will cause DiskAccessException where the compactor will 
-          // attempt to destroy the region.
-          throw new DiskAccessException("IGNORE_EXCEPTION_testCompactorClose GeneratedException", region);
-        }
+                @Override
+                public void beforeDeletingCompactedOplog(Oplog oplog) {
+                  //destroy the oplog
+                  //This will cause DiskAccessException where the compactor will
+                  // attempt to destroy the region.
+                  throw new DiskAccessException(
+                      "IGNORE_EXCEPTION_testCompactorClose GeneratedException", region);
+                }
 
-        @Override
-        public void afterStoppingCompactor() {
-          synchronized (region) {
-            regionDestroyed[0] = true;
-            region.notify();
-          }
-        }
-      });
+                @Override
+                public void afterStoppingCompactor() {
+                  synchronized (region) {
+                    regionDestroyed[0] = true;
+                    region.notify();
+                  }
+                }
+              });
       //    create some string entries
       for (int i = 0; i < 10; ++i) {
         region.put("" + i, new byte[10]);
@@ -2609,9 +2672,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     assertEquals(true, compacted);
   }
 
-  /**
-   * Confirm that forceCompaction waits for the compaction to finish
-   */
+  /** Confirm that forceCompaction waits for the compaction to finish */
   @Test
   public void testNonDefaultCompaction() throws Exception {
     DiskRegionProperties props = new DiskRegionProperties();
@@ -2639,9 +2700,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     assertEquals(true, compacted);
   }
 
-  /**
-   * Confirm that forceCompaction waits for the compaction to finish
-   */
+  /** Confirm that forceCompaction waits for the compaction to finish */
   @Test
   public void testForceCompactionIsSync() throws Exception {
     DiskRegionProperties props = new DiskRegionProperties();
@@ -2686,9 +2745,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     assertFalse(this.region.containsValueForKey("key1"));
   }
 
-  /**
-   * Make sure oplog created by recovery goes in the proper directory
-   */
+  /** Make sure oplog created by recovery goes in the proper directory */
   @Test
   public void testBug41822() throws Exception {
     DiskRegionProperties props = new DiskRegionProperties();
@@ -2699,31 +2756,41 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
     final byte[] payload = new byte[100];
     region.put("key0", payload);
-    assertEquals(dirs[0], ((LocalRegion) region).getDiskRegion().testHook_getChild().getDirectoryHolder().getDir());
+    assertEquals(
+        dirs[0],
+        ((LocalRegion) region).getDiskRegion().testHook_getChild().getDirectoryHolder().getDir());
     region.close();
     ((LocalRegion) region).getDiskStore().close();
     ((LocalRegion) region).getGemFireCache().removeDiskStore(((LocalRegion) region).getDiskStore());
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
     region.put("key1", payload);
-    assertEquals(dirs[1], ((LocalRegion) region).getDiskRegion().testHook_getChild().getDirectoryHolder().getDir());
+    assertEquals(
+        dirs[1],
+        ((LocalRegion) region).getDiskRegion().testHook_getChild().getDirectoryHolder().getDir());
     region.close();
     ((LocalRegion) region).getDiskStore().close();
     ((LocalRegion) region).getGemFireCache().removeDiskStore(((LocalRegion) region).getDiskStore());
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
     region.put("key2", payload);
-    assertEquals(dirs[2], ((LocalRegion) region).getDiskRegion().testHook_getChild().getDirectoryHolder().getDir());
+    assertEquals(
+        dirs[2],
+        ((LocalRegion) region).getDiskRegion().testHook_getChild().getDirectoryHolder().getDir());
     region.close();
     ((LocalRegion) region).getDiskStore().close();
     ((LocalRegion) region).getGemFireCache().removeDiskStore(((LocalRegion) region).getDiskStore());
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
     region.put("key3", payload);
-    assertEquals(dirs[3], ((LocalRegion) region).getDiskRegion().testHook_getChild().getDirectoryHolder().getDir());
+    assertEquals(
+        dirs[3],
+        ((LocalRegion) region).getDiskRegion().testHook_getChild().getDirectoryHolder().getDir());
     region.close();
     ((LocalRegion) region).getDiskStore().close();
     ((LocalRegion) region).getGemFireCache().removeDiskStore(((LocalRegion) region).getDiskStore());
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, props, Scope.LOCAL);
     region.put("key4", payload);
-    assertEquals(dirs[0], ((LocalRegion) region).getDiskRegion().testHook_getChild().getDirectoryHolder().getDir());
+    assertEquals(
+        dirs[0],
+        ((LocalRegion) region).getDiskRegion().testHook_getChild().getDirectoryHolder().getDir());
   }
 
   private class Bug41770CacheObserverAdapter extends CacheObserverAdapter {
@@ -2731,8 +2798,7 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
 
     public void afterWritingBytes() {
       region.getCache().getLogger().info("in afterWritingBytes didClear=" + didClear);
-      if (!didClear)
-        return;
+      if (!didClear) return;
       CacheObserverHolder.setInstance(new CacheObserverAdapter());
       // now that the flusher finished the async create of VALUE1
       // do another create
@@ -2793,5 +2859,4 @@ public class DiskRegionJUnitTest extends DiskRegionTestingBase {
       CacheObserverHolder.setInstance(new CacheObserverAdapter());
     }
   }
-
-}// end of DiskRegionJUnitTest
+} // end of DiskRegionJUnitTest

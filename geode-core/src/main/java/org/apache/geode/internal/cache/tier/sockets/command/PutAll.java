@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Author: Gester Zhou
- */
+/** Author: Gester Zhou */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import java.io.IOException;
@@ -51,17 +49,17 @@ import org.apache.geode.internal.security.AuthorizeRequest;
 
 public class PutAll extends BaseCommand {
 
-  private final static PutAll singleton = new PutAll();
+  private static final PutAll singleton = new PutAll();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private PutAll() {
-  }
+  private PutAll() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, InterruptedException {
     Part regionNamePart = null, numberOfKeysPart = null, keyPart = null, valuePart = null;
     String regionName = null;
     int numberOfKeys = 0;
@@ -87,7 +85,9 @@ public class PutAll extends BaseCommand {
       regionName = regionNamePart.getString();
 
       if (regionName == null) {
-        String putAllMsg = LocalizedStrings.PutAll_THE_INPUT_REGION_NAME_FOR_THE_PUTALL_REQUEST_IS_NULL.toLocalizedString();
+        String putAllMsg =
+            LocalizedStrings.PutAll_THE_INPUT_REGION_NAME_FOR_THE_PUTALL_REQUEST_IS_NULL
+                .toLocalizedString();
         logger.warn("{}: {}", servConn.getName(), putAllMsg);
         errMessage.append(putAllMsg);
         writeErrorResponse(msg, MessageType.PUT_DATA_ERROR, errMessage.toString(), servConn);
@@ -120,7 +120,9 @@ public class PutAll extends BaseCommand {
         keyPart = msg.getPart(3 + i * 2);
         key = keyPart.getStringOrObject();
         if (key == null) {
-          String putAllMsg = LocalizedStrings.PutAll_ONE_OF_THE_INPUT_KEYS_FOR_THE_PUTALL_REQUEST_IS_NULL.toLocalizedString();
+          String putAllMsg =
+              LocalizedStrings.PutAll_ONE_OF_THE_INPUT_KEYS_FOR_THE_PUTALL_REQUEST_IS_NULL
+                  .toLocalizedString();
           logger.warn("{}: {}", servConn.getName(), putAllMsg);
           errMessage.append(putAllMsg);
           writeErrorResponse(msg, MessageType.PUT_DATA_ERROR, errMessage.toString(), servConn);
@@ -130,7 +132,9 @@ public class PutAll extends BaseCommand {
 
         valuePart = msg.getPart(3 + i * 2 + 1);
         if (valuePart.isNull()) {
-          String putAllMsg = LocalizedStrings.PutAll_ONE_OF_THE_INPUT_VALUES_FOR_THE_PUTALL_REQUEST_IS_NULL.toLocalizedString();
+          String putAllMsg =
+              LocalizedStrings.PutAll_ONE_OF_THE_INPUT_VALUES_FOR_THE_PUTALL_REQUEST_IS_NULL
+                  .toLocalizedString();
           logger.warn("{}: {}", servConn.getName(), putAllMsg);
           errMessage.append(putAllMsg);
           writeErrorResponse(msg, MessageType.PUT_DATA_ERROR, errMessage.toString(), servConn);
@@ -150,7 +154,8 @@ public class PutAll extends BaseCommand {
         //      isObjectMap.put(key, new Boolean(isObject));
       } // for
 
-      if (msg.getNumberOfParts() == (3 + 2 * numberOfKeys + 1)) {//it means optional timeout has been added
+      if (msg.getNumberOfParts()
+          == (3 + 2 * numberOfKeys + 1)) { //it means optional timeout has been added
         int timeout = msg.getPart(3 + 2 * numberOfKeys).getInt();
         servConn.setRequestSpecificTimeout(timeout);
       }
@@ -162,7 +167,8 @@ public class PutAll extends BaseCommand {
         if (DynamicRegionFactory.regionIsDynamicRegionList(regionName)) {
           authzRequest.createRegionAuthorize(regionName);
         } else {
-          PutAllOperationContext putAllContext = authzRequest.putAllAuthorize(regionName, map, null);
+          PutAllOperationContext putAllContext =
+              authzRequest.putAllAuthorize(regionName, map, null);
           map = putAllContext.getMap();
           if (map instanceof UpdateOnlyMap) {
             map = ((UpdateOnlyMap) map).getInternalMap();
@@ -171,10 +177,21 @@ public class PutAll extends BaseCommand {
       }
 
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Received putAll request ({} bytes) from {} for region {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), regionName);
+        logger.debug(
+            "{}: Received putAll request ({} bytes) from {} for region {}",
+            servConn.getName(),
+            msg.getPayloadLength(),
+            servConn.getSocketString(),
+            regionName);
       }
 
-      region.basicBridgePutAll(map, Collections.<Object, VersionTag> emptyMap(), servConn.getProxyID(), eventId, false, null);
+      region.basicBridgePutAll(
+          map,
+          Collections.<Object, VersionTag>emptyMap(),
+          servConn.getProxyID(),
+          eventId,
+          false,
+          null);
 
       if (region instanceof PartitionedRegion) {
         PartitionedRegion pr = (PartitionedRegion) region;
@@ -203,7 +220,10 @@ public class PutAll extends BaseCommand {
       // If an exception occurs during the put, preserve the connection
       writeException(msg, ce, false, servConn);
       servConn.setAsTrue(RESPONDED);
-      logger.warn(LocalizedMessage.create(LocalizedStrings.Generic_0_UNEXPECTED_EXCEPTION, servConn.getName()), ce);
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.Generic_0_UNEXPECTED_EXCEPTION, servConn.getName()),
+          ce);
       return;
     } finally {
       long oldStart = start;
@@ -217,7 +237,11 @@ public class PutAll extends BaseCommand {
     }
     servConn.setAsTrue(RESPONDED);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Sent putAll response back to {} for region {}", servConn.getName(), servConn.getSocketString(), regionName);
+      logger.debug(
+          "{}: Sent putAll response back to {} for region {}",
+          servConn.getName(),
+          servConn.getSocketString(),
+          regionName);
     }
     stats.incWritePutAllResponseTime(DistributionStats.getStatTime() - start);
   }

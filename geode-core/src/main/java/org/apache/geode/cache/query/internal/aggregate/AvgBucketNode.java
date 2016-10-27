@@ -19,10 +19,8 @@ package org.apache.geode.cache.query.internal.aggregate;
 import org.apache.geode.cache.query.QueryService;
 
 /**
- * The aggregator for compuing average which is used on the bucket node for
- * partitioned region based queries.
- * 
- *
+ * The aggregator for compuing average which is used on the bucket node for partitioned region based
+ * queries.
  */
 public class AvgBucketNode extends Sum {
 
@@ -36,13 +34,9 @@ public class AvgBucketNode extends Sum {
     }
   }
 
-  /**
-   * Returns a two element array of the total number of values & the computed
-   * sum of the values.
-   */
+  /** Returns a two element array of the total number of values & the computed sum of the values. */
   @Override
   public Object terminate() {
-    return new Object[] { Integer.valueOf(count), super.terminate() };
+    return new Object[] {Integer.valueOf(count), super.terminate()};
   }
-
 }

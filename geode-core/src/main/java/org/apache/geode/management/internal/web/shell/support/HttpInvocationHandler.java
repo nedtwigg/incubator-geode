@@ -25,9 +25,11 @@ import javax.management.ObjectName;
 import org.apache.geode.management.internal.web.shell.HttpOperationInvoker;
 
 /**
- * The HttpInvocationHandler class is an implementation of InvocationHandler serving as a proxy that uses HTTP remoting
- * for the actual method invocation on the target resource.
- * <p/>
+ * The HttpInvocationHandler class is an implementation of InvocationHandler serving as a proxy that
+ * uses HTTP remoting for the actual method invocation on the target resource.
+ *
+ * <p>
+ *
  * @see java.lang.reflect.InvocationHandler
  * @see javax.management.ObjectName
  * @see org.apache.geode.management.internal.web.shell.HttpOperationInvoker
@@ -40,9 +42,11 @@ public class HttpInvocationHandler implements InvocationHandler {
 
   private final ObjectName objectName;
 
-  public HttpInvocationHandler(final HttpOperationInvoker operationInvoker, final ObjectName objectName) {
+  public HttpInvocationHandler(
+      final HttpOperationInvoker operationInvoker, final ObjectName objectName) {
     assert operationInvoker != null : "The HTTP-based OperationInvoker cannot be null!";
-    assert objectName != null : "The ObjectName of the resource on which the operation is invoked cannot be null!";
+    assert objectName != null
+        : "The ObjectName of the resource on which the operation is invoked cannot be null!";
     this.operationInvoker = operationInvoker;
     this.objectName = objectName;
   }
@@ -82,12 +86,13 @@ public class HttpInvocationHandler implements InvocationHandler {
   }
 
   @Override
-  public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+  public Object invoke(final Object proxy, final Method method, final Object[] args)
+      throws Throwable {
     if (isAttributeAccessor(method)) {
       return getOperationInvoker().getAttribute(getResourceName(), getAttributeName(method));
     } else {
-      return getOperationInvoker().invoke(getResourceName(), method.getName(), args, getSignature(method));
+      return getOperationInvoker()
+          .invoke(getResourceName(), method.getName(), args, getSignature(method));
     }
   }
-
 }

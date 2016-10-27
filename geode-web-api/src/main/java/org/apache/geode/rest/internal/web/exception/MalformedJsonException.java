@@ -21,15 +21,15 @@ import org.apache.geode.pdx.JSONFormatterException;
 
 /**
  * Indicates that incorrect JSON document encountered while processing it.
- * <p/>
+ *
+ * <p>
+ *
  * @since GemFire 8.0
  */
-
 @SuppressWarnings("unused")
 public class MalformedJsonException extends RuntimeException {
 
-  public MalformedJsonException() {
-  }
+  public MalformedJsonException() {}
 
   public MalformedJsonException(String message) {
     super(message);
@@ -46,5 +46,4 @@ public class MalformedJsonException extends RuntimeException {
   public MalformedJsonException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

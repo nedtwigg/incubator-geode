@@ -18,9 +18,8 @@ package org.apache.geode.management.internal.cli.parser;
 
 /**
  * Argument of a Command
- * 
- * @since GemFire 7.0
  *
+ * @since GemFire 7.0
  */
 public class Argument extends Parameter {
   private String argumentName;
@@ -66,7 +65,11 @@ public class Argument extends Parameter {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append(Argument.class.getSimpleName()).append("[name=" + argumentName).append(",help=" + help).append(",required" + required + "]");
+    builder
+        .append(Argument.class.getSimpleName())
+        .append("[name=" + argumentName)
+        .append(",help=" + help)
+        .append(",required" + required + "]");
     return builder.toString();
   }
 }

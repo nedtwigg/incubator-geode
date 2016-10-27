@@ -19,9 +19,7 @@ package com.examples;
 import java.util.*;
 
 /**
- * The super class of another class.  Neither is
- * <code>Serializable</code>. 
- *
+ * The super class of another class. Neither is <code>Serializable</code>.
  *
  * @since GemFire 3.5
  */
@@ -30,9 +28,7 @@ public class SuperClass {
   protected int intValue;
   protected HashMap map;
 
-  /**
-   * Creates a new <code>SuperClass</code>
-   */
+  /** Creates a new <code>SuperClass</code> */
   protected SuperClass() {
     this.intValue = 42;
     this.map = new HashMap();
@@ -47,9 +43,7 @@ public class SuperClass {
     protected Map anotherMap;
     protected long longValue;
 
-    /**
-     * Creates a new <code>SubClass</code>
-     */
+    /** Creates a new <code>SubClass</code> */
     public SubClass() {
       super();
 
@@ -83,7 +77,5 @@ public class SuperClass {
         return true;
       }
     }
-
   }
-
 }

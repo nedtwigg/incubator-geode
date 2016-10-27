@@ -24,15 +24,15 @@ import org.junit.Before;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractLocatorLauncherRemoteIntegrationTestCase extends AbstractLocatorLauncherIntegrationTestCase {
+public abstract class AbstractLocatorLauncherRemoteIntegrationTestCase
+    extends AbstractLocatorLauncherIntegrationTestCase {
 
   protected volatile Process process;
   protected volatile ProcessStreamReader processOutReader;
   protected volatile ProcessStreamReader processErrReader;
 
   @Before
-  public final void setUpAbstractLocatorLauncherRemoteIntegrationTestCase() throws Exception {
-  }
+  public final void setUpAbstractLocatorLauncherRemoteIntegrationTestCase() throws Exception {}
 
   @After
   public final void tearDownAbstractLocatorLauncherRemoteIntegrationTestCase() throws Exception {
@@ -48,20 +48,15 @@ public abstract class AbstractLocatorLauncherRemoteIntegrationTestCase extends A
     }
   }
 
-  /**
-   * Override as needed.
-   */
+  /** Override as needed. */
   protected List<String> getJvmArguments() {
     final List<String> jvmArguments = new ArrayList<String>();
     jvmArguments.add("-D" + DistributionConfig.GEMFIRE_PREFIX + "log-level=config");
     return jvmArguments;
   }
 
-  /**
-   * Remove final if a test needs to override.
-   */
+  /** Remove final if a test needs to override. */
   protected final AbstractLauncher.Status getExpectedStopStatusForNotRunning() {
     return AbstractLauncher.Status.NOT_RESPONDING;
   }
-
 }

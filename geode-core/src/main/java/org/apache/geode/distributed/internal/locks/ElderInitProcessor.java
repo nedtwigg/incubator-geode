@@ -45,8 +45,8 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * A processor for initializing the ElderState. This may involve sending
- * a message to every existing member to discover what services they have.
+ * A processor for initializing the ElderState. This may involve sending a message to every existing
+ * member to discover what services they have.
  *
  * @since GemFire 4.0
  */
@@ -59,8 +59,8 @@ public class ElderInitProcessor extends ReplyProcessor21 {
   ////////// Public static entry point /////////
 
   /**
-   * Initializes ElderState map by recovering all existing grantors
-   * and crashed grantors in the current ds.
+   * Initializes ElderState map by recovering all existing grantors and crashed grantors in the
+   * current ds.
    */
   static void init(DM dm, HashMap map) {
     HashSet crashedGrantors = new HashSet();
@@ -88,18 +88,20 @@ public class ElderInitProcessor extends ReplyProcessor21 {
   }
   ////////////  Instance methods //////////////
 
-  /** Creates a new instance of ElderInitProcessor
-   */
+  /** Creates a new instance of ElderInitProcessor */
   private ElderInitProcessor(DM dm, Set others, HashMap grantors, HashSet crashedGrantors) {
-    super(dm/*fix bug 33297*/, others);
+    super(dm /*fix bug 33297*/, others);
     this.grantors = grantors;
     this.crashedGrantors = crashedGrantors;
   }
 
-  /**
-   * Note the synchronization; we can only process one response at a time.
-   */
-  private synchronized void processData(ArrayList rmtGrantors, ArrayList rmtGrantorVersions, ArrayList rmtGrantorSerialNumbers, ArrayList rmtNonGrantors, InternalDistributedMember rmtId) {
+  /** Note the synchronization; we can only process one response at a time. */
+  private synchronized void processData(
+      ArrayList rmtGrantors,
+      ArrayList rmtGrantorVersions,
+      ArrayList rmtGrantorSerialNumbers,
+      ArrayList rmtNonGrantors,
+      InternalDistributedMember rmtId) {
     {
       Iterator iterGrantorServices = rmtGrantors.iterator();
       Iterator iterGrantorVersions = rmtGrantorVersions.iterator();
@@ -130,16 +132,23 @@ public class ElderInitProcessor extends ReplyProcessor21 {
   public void process(DistributionMessage msg) {
     if (msg instanceof ElderInitReplyMessage) {
       ElderInitReplyMessage eiMsg = (ElderInitReplyMessage) msg;
-      processData(eiMsg.getGrantors(), eiMsg.getGrantorVersions(), eiMsg.getGrantorSerialNumbers(), eiMsg.getNonGrantors(), eiMsg.getSender());
+      processData(
+          eiMsg.getGrantors(),
+          eiMsg.getGrantorVersions(),
+          eiMsg.getGrantorSerialNumbers(),
+          eiMsg.getNonGrantors(),
+          eiMsg.getSender());
     } else {
-      Assert.assertTrue(false, "Expected instance of ElderInitReplyMessage but got " + msg.getClass());
+      Assert.assertTrue(
+          false, "Expected instance of ElderInitReplyMessage but got " + msg.getClass());
     }
     super.process(msg);
   }
 
   ///////////////   Inner message classes  //////////////////
 
-  public static final class ElderInitMessage extends PooledDistributionMessage implements MessageWithReply {
+  public static final class ElderInitMessage extends PooledDistributionMessage
+      implements MessageWithReply {
     private int processorId;
 
     protected static void send(Set others, DM dm, ReplyProcessor21 proc) {
@@ -157,8 +166,14 @@ public class ElderInitProcessor extends ReplyProcessor21 {
       return this.processorId;
     }
 
-    private void reply(DM dm, ArrayList grantors, ArrayList grantorVersions, ArrayList grantorSerialNumbers, ArrayList nonGrantors) {
-      ElderInitReplyMessage.send(this, dm, grantors, grantorVersions, grantorSerialNumbers, nonGrantors);
+    private void reply(
+        DM dm,
+        ArrayList grantors,
+        ArrayList grantorVersions,
+        ArrayList grantorSerialNumbers,
+        ArrayList nonGrantors) {
+      ElderInitReplyMessage.send(
+          this, dm, grantors, grantorVersions, grantorSerialNumbers, nonGrantors);
     }
 
     @Override
@@ -172,13 +187,22 @@ public class ElderInitProcessor extends ReplyProcessor21 {
         DLockService.recoverRmtElder(grantors, grantorVersions, grantorSerialNumbers, nonGrantors);
         reply(dm, grantors, grantorVersions, grantorSerialNumbers, nonGrantors);
       } else if (dm.getOtherNormalDistributionManagerIds().isEmpty()) { // bug 38690
-                                                                          // Either we're alone (and received a message from an unknown member) 
-                                                                        // or else we haven't yet processed a view, In either case, we clearly 
-                                                                        // don't have any grantors, so we return empty lists.
-        logger.info(LogMarker.DLS, LocalizedMessage.create(LocalizedStrings.ElderInitProcessor__0_RETURNING_EMPTY_LISTS_BECAUSE_I_KNOW_OF_NO_OTHER_MEMBERS, this));
+        // Either we're alone (and received a message from an unknown member)
+        // or else we haven't yet processed a view, In either case, we clearly
+        // don't have any grantors, so we return empty lists.
+        logger.info(
+            LogMarker.DLS,
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .ElderInitProcessor__0_RETURNING_EMPTY_LISTS_BECAUSE_I_KNOW_OF_NO_OTHER_MEMBERS,
+                this));
         reply(dm, grantors, grantorVersions, grantorSerialNumbers, nonGrantors);
       } else { // TODO make this fine level?
-        logger.info(LogMarker.DLS, LocalizedMessage.create(LocalizedStrings.ElderInitProcessor_0_DISREGARDING_REQUEST_FROM_DEPARTED_MEMBER, this));
+        logger.info(
+            LogMarker.DLS,
+            LocalizedMessage.create(
+                LocalizedStrings.ElderInitProcessor_0_DISREGARDING_REQUEST_FROM_DEPARTED_MEMBER,
+                this));
       }
     }
 
@@ -212,7 +236,13 @@ public class ElderInitProcessor extends ReplyProcessor21 {
     private ArrayList grantorSerialNumbers; // grantor dls serial number ints
     private ArrayList nonGrantors; // svc names
 
-    public static void send(MessageWithReply reqMsg, DM dm, ArrayList grantors, ArrayList grantorVersions, ArrayList grantorSerialNumbers, ArrayList nonGrantors) {
+    public static void send(
+        MessageWithReply reqMsg,
+        DM dm,
+        ArrayList grantors,
+        ArrayList grantorVersions,
+        ArrayList grantorSerialNumbers,
+        ArrayList nonGrantors) {
       ElderInitReplyMessage m = new ElderInitReplyMessage();
       m.grantors = grantors;
       m.grantorVersions = grantorVersions;
@@ -265,7 +295,20 @@ public class ElderInitProcessor extends ReplyProcessor21 {
     @Override
     public String toString() {
       StringBuffer buff = new StringBuffer();
-      buff.append("ElderInitReplyMessage").append("; sender=").append(getSender()).append("; processorId=").append(super.processorId).append("; grantors=").append(this.grantors).append("; grantorVersions=").append(this.grantorVersions).append("; grantorSerialNumbers=").append(this.grantorSerialNumbers).append("; nonGrantors=").append(this.nonGrantors).append(")");
+      buff.append("ElderInitReplyMessage")
+          .append("; sender=")
+          .append(getSender())
+          .append("; processorId=")
+          .append(super.processorId)
+          .append("; grantors=")
+          .append(this.grantors)
+          .append("; grantorVersions=")
+          .append(this.grantorVersions)
+          .append("; grantorSerialNumbers=")
+          .append(this.grantorSerialNumbers)
+          .append("; nonGrantors=")
+          .append(this.nonGrantors)
+          .append(")");
       return buff.toString();
     }
   }

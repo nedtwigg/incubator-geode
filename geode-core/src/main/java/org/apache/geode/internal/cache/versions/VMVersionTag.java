@@ -25,10 +25,8 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.Version;
 
 /**
- * The version tag class for version tags for non-persistent regions. The
- * VersionSource held in these tags is an InternalDistributedMember.
- * 
- * 
+ * The version tag class for version tags for non-persistent regions. The VersionSource held in
+ * these tags is an InternalDistributedMember.
  */
 public class VMVersionTag extends VersionTag<InternalDistributedMember> {
 
@@ -39,7 +37,6 @@ public class VMVersionTag extends VersionTag<InternalDistributedMember> {
   @Override
   public void writeMember(InternalDistributedMember member, DataOutput out) throws IOException {
     member.writeEssentialData(out);
-
   }
 
   @Override
@@ -55,7 +52,8 @@ public class VMVersionTag extends VersionTag<InternalDistributedMember> {
   }
 
   @Override
-  public InternalDistributedMember readMember(DataInput in) throws IOException, ClassNotFoundException {
+  public InternalDistributedMember readMember(DataInput in)
+      throws IOException, ClassNotFoundException {
     return InternalDistributedMember.readEssentialData(in);
   }
 
@@ -68,5 +66,4 @@ public class VMVersionTag extends VersionTag<InternalDistributedMember> {
   public Version[] getSerializationVersions() {
     return null;
   }
-
 }

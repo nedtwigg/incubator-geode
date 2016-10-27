@@ -29,11 +29,9 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.cache.RegionShortcut;
 import org.apache.geode.cache.Scope;
 
-/***
- * Data class which contains description of a region and provides the aggregated
- * view of the region Used by describe region command
- * 
- * 
+/**
+ * * Data class which contains description of a region and provides the aggregated view of the
+ * region Used by describe region command
  */
 public class RegionDescription implements Serializable {
 
@@ -56,9 +54,7 @@ public class RegionDescription implements Serializable {
   private Scope scope;
   private DataPolicy dataPolicy;
 
-  public RegionDescription() {
-
-  }
+  public RegionDescription() {}
 
   public DataPolicy getDataPolicy() {
     return this.dataPolicy;
@@ -70,9 +66,8 @@ public class RegionDescription implements Serializable {
 
   /**
    * Adds the RegionDescription per member to the aggregated view
-   * 
+   *
    * @param regionDescPerMember
-   * 
    */
   public boolean add(RegionDescriptionPerMember regionDescPerMember) {
     boolean isAdded = false;
@@ -107,7 +102,10 @@ public class RegionDescription implements Serializable {
 
       isAdded = true;
     } else {
-      if (this.scope.equals(regionDescPerMember.getScope()) && this.name.equals(regionDescPerMember.getName()) && this.dataPolicy.equals(regionDescPerMember.getDataPolicy()) && this.isAccessor == regionDescPerMember.isAccessor()) {
+      if (this.scope.equals(regionDescPerMember.getScope())
+          && this.name.equals(regionDescPerMember.getName())
+          && this.dataPolicy.equals(regionDescPerMember.getDataPolicy())
+          && this.isAccessor == regionDescPerMember.isAccessor()) {
 
         regionDescPerMemberMap.put(regionDescPerMember.getHostingMember(), regionDescPerMember);
         findCommon(cndRegionAttributes, regionDescPerMember.getNonDefaultRegionAttributes());
@@ -155,14 +153,15 @@ public class RegionDescription implements Serializable {
     if (obj instanceof RegionDescription) {
       RegionDescription regionDesc = (RegionDescription) obj;
 
-      return this.getName().equals(regionDesc.getName()) && this.scope.equals(regionDesc.getScope()) && this.dataPolicy.equals(regionDesc.getDataPolicy());
+      return this.getName().equals(regionDesc.getName())
+          && this.scope.equals(regionDesc.getScope())
+          && this.dataPolicy.equals(regionDesc.getDataPolicy());
     }
     return true;
   }
 
   public int hashCode() {
     return 42; // any arbitrary constant will do
-
   }
 
   public Set<String> getHostingMembers() {
@@ -201,24 +200,27 @@ public class RegionDescription implements Serializable {
     return this.isAccessor;
   }
 
-  /***
-   * Get
+  /**
+   * * Get
+   *
    * @return Map containing attribute name and its associated value
    */
   public Map<String, String> getCndRegionAttributes() {
     return this.cndRegionAttributes;
   }
 
-  /***
-   * Gets the common non-default Eviction Attributes
+  /**
+   * * Gets the common non-default Eviction Attributes
+   *
    * @return Map containing attribute name and its associated value
    */
   public Map<String, String> getCndEvictionAttributes() {
     return this.cndEvictionAttributes;
   }
 
-  /***
-   * Gets the common non-default PartitionAttributes
+  /**
+   * * Gets the common non-default PartitionAttributes
+   *
    * @return Map containing attribute name and its associated value
    */
   public Map<String, String> getCndPartitionAttributes() {
@@ -234,5 +236,4 @@ public class RegionDescription implements Serializable {
 
     return sb.toString();
   }
-
 }

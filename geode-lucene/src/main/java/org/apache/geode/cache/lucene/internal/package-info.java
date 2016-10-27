@@ -16,8 +16,5 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/**
- * Internal lucene classes, not intended to be used directly.
- */
-
+/** Internal lucene classes, not intended to be used directly. */
 package org.apache.geode.cache.lucene.internal;

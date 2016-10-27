@@ -26,14 +26,10 @@ import org.apache.geode.internal.memcached.ResponseStatus;
 import org.apache.geode.internal.memcached.ValueWrapper;
 
 /**
- * general format of the command is:
- * <code>
+ * general format of the command is: <code>
  * &lt;command name&gt; &lt;key&gt; &lt;flags&gt; &lt;exptime&gt; &lt;bytes&gt; [noreply]\r\n
- * </code><br/>
- * 
+ * </code><br>
  * "set" means "store this data".
- * 
- *
  */
 public class SetCommand extends StorageCommand {
 
@@ -45,7 +41,8 @@ public class SetCommand extends StorageCommand {
   }
 
   @Override
-  public ByteBuffer processBinaryStorageCommand(Object key, byte[] value, long cas, int flags, Cache cache, RequestReader request) {
+  public ByteBuffer processBinaryStorageCommand(
+      Object key, byte[] value, long cas, int flags, Cache cache, RequestReader request) {
     ByteBuffer response = request.getResponse();
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     ValueWrapper val = ValueWrapper.getWrappedValue(value, flags);
@@ -78,11 +75,8 @@ public class SetCommand extends StorageCommand {
     return response;
   }
 
-  /**
-   * Overriden by SETQ
-   */
+  /** Overriden by SETQ */
   protected boolean isQuiet() {
     return false;
   }
-
 }

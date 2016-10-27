@@ -18,19 +18,15 @@
 package org.apache.geode;
 
 /**
- * A <code>GemFireIOException</code> is thrown when a 
- * GemFire operation failure is caused by an <code>IOException</code>.
- *
- *
+ * A <code>GemFireIOException</code> is thrown when a GemFire operation failure is caused by an
+ * <code>IOException</code>.
  */
 public class GemFireIOException extends GemFireException {
   private static final long serialVersionUID = 5694009444435264497L;
 
   //////////////////////  Constructors  //////////////////////
 
-  /**
-   * Creates a new <code>GemFireIOException</code>.
-   */
+  /** Creates a new <code>GemFireIOException</code>. */
   public GemFireIOException(String message, Throwable cause) {
     super(message, cause);
   }

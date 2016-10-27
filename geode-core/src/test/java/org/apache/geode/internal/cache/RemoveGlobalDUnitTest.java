@@ -106,132 +106,139 @@ public class RemoveGlobalDUnitTest extends JUnit4DistributedTestCase { // TODO: 
   @Test
   public void testRemoveGlobalSingleVM() throws Throwable {
 
-    SerializableRunnable createRegionWithWriter = new CacheSerializableRunnable("create region with cache writer") {
+    SerializableRunnable createRegionWithWriter =
+        new CacheSerializableRunnable("create region with cache writer") {
 
-      public void run2() throws CacheException {
-        cache.setLockTimeout(5);
-        CacheWriter cacheWriter = new CacheWriterCallBack();
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.GLOBAL);
-        factory.setCacheWriter(cacheWriter);
-        region = cache.createRegion("map", factory.create());
-      }
-    };
+          public void run2() throws CacheException {
+            cache.setLockTimeout(5);
+            CacheWriter cacheWriter = new CacheWriterCallBack();
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.GLOBAL);
+            factory.setCacheWriter(cacheWriter);
+            region = cache.createRegion("map", factory.create());
+          }
+        };
 
     vm0.invoke(createRegionWithWriter);
 
-    AsyncInvocation async = vm0.invokeAsync(new CacheSerializableRunnable("put object") {
-      public void run2() throws CacheException {
-        for (int i = 1; i < 5; i++) {
-          region.put(new Integer(i), java.lang.Integer.toString(i));
-        }
+    AsyncInvocation async =
+        vm0.invokeAsync(
+            new CacheSerializableRunnable("put object") {
+              public void run2() throws CacheException {
+                for (int i = 1; i < 5; i++) {
+                  region.put(new Integer(i), java.lang.Integer.toString(i));
+                }
 
-        region.remove(new Integer(2));
-      }
-    });
+                region.remove(new Integer(2));
+              }
+            });
 
-    vm0.invoke(new CacheSerializableRunnable("verify locking") {
-      public void run2() throws CacheException {
+    vm0.invoke(
+        new CacheSerializableRunnable("verify locking") {
+          public void run2() throws CacheException {
 
-        synchronized (RemoveGlobalDUnitTest.class) {
-          if (!lockedForRemove) {
+            synchronized (RemoveGlobalDUnitTest.class) {
+              if (!lockedForRemove) {
+                try {
+                  RemoveGlobalDUnitTest.class.wait();
+                } catch (Exception ex) {
+                  ex.printStackTrace();
+                }
+              }
+            }
             try {
-              RemoveGlobalDUnitTest.class.wait();
-            } catch (Exception ex) {
-              ex.printStackTrace();
+              //getLogWriter().fine("000000000000000");
+              region.put(new Integer(2), "newEntry");
+              fail("Should have thrown TimeoutException");
+            } catch (TimeoutException tme) {
+              //pass
             }
           }
-        }
-        try {
-          //getLogWriter().fine("000000000000000");
-          region.put(new Integer(2), "newEntry");
-          fail("Should have thrown TimeoutException");
-        } catch (TimeoutException tme) {
-          //pass
-        }
-      }
-    });
+        });
 
     ThreadUtils.join(async, 30 * 1000);
-    if (async.exceptionOccurred())
-      throw async.getException();
-
-  }//end of testRemoveGlobalSingleVM
+    if (async.exceptionOccurred()) throw async.getException();
+  } //end of testRemoveGlobalSingleVM
 
   @Test
   public void testRemoveGlobalMultiVM() throws Throwable {
     //Commented the Test.As it is failing @ line no 145 : AssertionError
 
-    SerializableRunnable createSimpleRegion = new CacheSerializableRunnable("create region with cache writer") {
-      public void run2() throws CacheException {
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.GLOBAL);
-        region = cache.createRegion("map", factory.create());
-      }
-    };
+    SerializableRunnable createSimpleRegion =
+        new CacheSerializableRunnable("create region with cache writer") {
+          public void run2() throws CacheException {
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.GLOBAL);
+            region = cache.createRegion("map", factory.create());
+          }
+        };
 
-    SerializableRunnable createRegionWithWriter = new CacheSerializableRunnable("create region with capacity controller") {
-      public void run2() throws CacheException {
-        CacheWriter cw = new CacheWriterCallBack();
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.GLOBAL);
-        factory.setCacheWriter(cw);
-        region = cache.createRegion("map", factory.create());
-      }
-    };
+    SerializableRunnable createRegionWithWriter =
+        new CacheSerializableRunnable("create region with capacity controller") {
+          public void run2() throws CacheException {
+            CacheWriter cw = new CacheWriterCallBack();
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.GLOBAL);
+            factory.setCacheWriter(cw);
+            region = cache.createRegion("map", factory.create());
+          }
+        };
 
     vm0.invoke(createSimpleRegion);
     vm1.invoke(createRegionWithWriter);
 
-    vm0.invoke(new CacheSerializableRunnable("put object") {
-      public void run2() throws CacheException {
-        for (int i = 1; i < 5; i++) {
-          region.put(new Integer(i), java.lang.Integer.toString(i));
-        }
-      }
-    });
-
-    vm1.invoke(new CacheSerializableRunnable("get object") {
-      public void run2() throws CacheException {
-        for (int i = 1; i < 5; i++) {
-          region.get(new Integer(i));
-        }
-      }
-    });
-
-    AsyncInvocation async = vm0.invokeAsync(new CacheSerializableRunnable("remove object") {
-      public void run2() throws CacheException {
-        region.remove(new Integer(2));
-      }
-    });
-
-    vm1.invoke(new CacheSerializableRunnable("verify locking") {
-      public void run2() throws CacheException {
-        cache.setLockTimeout(5);
-        synchronized (RemoveGlobalDUnitTest.class) {
-          if (!lockedForRemove) {
-            try {
-              RemoveGlobalDUnitTest.class.wait();
-            } catch (Exception ex) {
-              ex.printStackTrace();
+    vm0.invoke(
+        new CacheSerializableRunnable("put object") {
+          public void run2() throws CacheException {
+            for (int i = 1; i < 5; i++) {
+              region.put(new Integer(i), java.lang.Integer.toString(i));
             }
           }
-        }
-        try {
-          //getLogWriter().fine("11111111111111");
-          region.put(new Integer(2), "newEntry");
-          fail("Should have thrown TimeoutException");
-        } catch (TimeoutException tme) {
-          //pass
-        }
-      }
-    });
+        });
+
+    vm1.invoke(
+        new CacheSerializableRunnable("get object") {
+          public void run2() throws CacheException {
+            for (int i = 1; i < 5; i++) {
+              region.get(new Integer(i));
+            }
+          }
+        });
+
+    AsyncInvocation async =
+        vm0.invokeAsync(
+            new CacheSerializableRunnable("remove object") {
+              public void run2() throws CacheException {
+                region.remove(new Integer(2));
+              }
+            });
+
+    vm1.invoke(
+        new CacheSerializableRunnable("verify locking") {
+          public void run2() throws CacheException {
+            cache.setLockTimeout(5);
+            synchronized (RemoveGlobalDUnitTest.class) {
+              if (!lockedForRemove) {
+                try {
+                  RemoveGlobalDUnitTest.class.wait();
+                } catch (Exception ex) {
+                  ex.printStackTrace();
+                }
+              }
+            }
+            try {
+              //getLogWriter().fine("11111111111111");
+              region.put(new Integer(2), "newEntry");
+              fail("Should have thrown TimeoutException");
+            } catch (TimeoutException tme) {
+              //pass
+            }
+          }
+        });
 
     ThreadUtils.join(async, 30 * 1000);
-    if (async.exceptionOccurred())
-      throw async.getException();
-
-  }//end of testRemoveGlobalMultiVM
+    if (async.exceptionOccurred()) throw async.getException();
+  } //end of testRemoveGlobalMultiVM
 
   static class CacheWriterCallBack extends CacheWriterAdapter {
     public void beforeDestroy(EntryEvent event) {
@@ -247,6 +254,5 @@ public class RemoveGlobalDUnitTest extends JUnit4DistributedTestCase { // TODO: 
       }
       LogWriterUtils.getLogWriter().fine("quitingfromcachewriter");
     }
-  }///////////    
-
-}// end of class
+  } ///////////
+} // end of class

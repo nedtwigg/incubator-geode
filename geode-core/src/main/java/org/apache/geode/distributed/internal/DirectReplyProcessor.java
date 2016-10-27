@@ -23,16 +23,15 @@ import org.apache.geode.CancelCriterion;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
 /**
- * A reply processor optimized for direct ack responses (It skips synchronization,
- * doesn't register with the processor keeper, etc.)
- *
+ * A reply processor optimized for direct ack responses (It skips synchronization, doesn't register
+ * with the processor keeper, etc.)
  */
 public class DirectReplyProcessor extends ReplyProcessor21 {
 
   /**
-   * Creates a new <code>ReplyProcessor</code> that wants replies from
-   * a single member of a distributed system.
-   * 
+   * Creates a new <code>ReplyProcessor</code> that wants replies from a single member of a
+   * distributed system.
+   *
    * @param system the DistributedSystem connection
    * @param member the member this processor wants a reply from
    */
@@ -41,22 +40,25 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
   }
 
   /**
-   * Creates a new <code>ReplyProcessor</code> that wants replies from
-   * a single member of a distributed system.
-   * 
+   * Creates a new <code>ReplyProcessor</code> that wants replies from a single member of a
+   * distributed system.
+   *
    * @param system the DistributedSystem connection
    * @param member the member this processor wants a reply from
-   * @param cancelCriterion optional CancelCriterion to use; will use the 
-   *  DistributionManager if null
+   * @param cancelCriterion optional CancelCriterion to use; will use the DistributionManager if
+   *     null
    */
-  public DirectReplyProcessor(InternalDistributedSystem system, InternalDistributedMember member, CancelCriterion cancelCriterion) {
+  public DirectReplyProcessor(
+      InternalDistributedSystem system,
+      InternalDistributedMember member,
+      CancelCriterion cancelCriterion) {
     this(system, Collections.singleton(member), cancelCriterion);
   }
 
   /**
-   * Creates a new <code>ReplyProcessor</code> that wants replies from
-   * a single member of a distributed system.
-   * 
+   * Creates a new <code>ReplyProcessor</code> that wants replies from a single member of a
+   * distributed system.
+   *
    * @param dm the DistributionManager to use for messaging and membership
    * @param member the member this processor wants a reply from
    */
@@ -65,12 +67,10 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
   }
 
   /**
-   * Creates a new <code>ReplyProcessor</code> that wants replies from
-   * some number of members of a distributed system. Call this method
-   * with {@link DistributionManager#getDistributionManagerIds} if
-   * you want replies from all DMs including the one hosted in this
-   * VM.
-   * 
+   * Creates a new <code>ReplyProcessor</code> that wants replies from some number of members of a
+   * distributed system. Call this method with {@link DistributionManager#getDistributionManagerIds}
+   * if you want replies from all DMs including the one hosted in this VM.
+   *
    * @param dm the DistributionManager to use for messaging and membership
    * @param initMembers the Set of members this processor wants replies from
    */
@@ -79,12 +79,10 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
   }
 
   /**
-   * Creates a new <code>ReplyProcessor</code> that wants replies from
-   * some number of members of a distributed system. Call this method
-   * with {@link DistributionManager#getDistributionManagerIds} if
-   * you want replies from all DMs including the one hosted in this
-   * VM.
-   * 
+   * Creates a new <code>ReplyProcessor</code> that wants replies from some number of members of a
+   * distributed system. Call this method with {@link DistributionManager#getDistributionManagerIds}
+   * if you want replies from all DMs including the one hosted in this VM.
+   *
    * @param system the DistributedSystem connection
    * @param initMembers the Set of members this processor wants replies from
    */
@@ -93,18 +91,17 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
   }
 
   /**
-   * Creates a new <code>ReplyProcessor</code> that wants replies from
-   * some number of members of a distributed system. Call this method
-   * with {@link DistributionManager#getDistributionManagerIds} if
-   * you want replies from all DMs including the one hosted in this
-   * VM.
-   * 
+   * Creates a new <code>ReplyProcessor</code> that wants replies from some number of members of a
+   * distributed system. Call this method with {@link DistributionManager#getDistributionManagerIds}
+   * if you want replies from all DMs including the one hosted in this VM.
+   *
    * @param system the DistributedSystem connection
    * @param initMembers the Set of members this processor wants replies from
-   * @param cancelCriterion optional CancelCriterion to use; will use the 
-   * DistributedSystem's DistributionManager if null
+   * @param cancelCriterion optional CancelCriterion to use; will use the DistributedSystem's
+   *     DistributionManager if null
    */
-  public DirectReplyProcessor(InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion) {
+  public DirectReplyProcessor(
+      InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion) {
     this(system.getDistributionManager(), system, initMembers, cancelCriterion);
   }
 
@@ -114,7 +111,11 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
    * @param initMembers
    * @param cancelCriterion
    */
-  public DirectReplyProcessor(DM dm, InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion) {
+  public DirectReplyProcessor(
+      DM dm,
+      InternalDistributedSystem system,
+      Collection initMembers,
+      CancelCriterion cancelCriterion) {
     super(dm, system, initMembers, cancelCriterion, false);
   }
 
@@ -154,5 +155,4 @@ public class DirectReplyProcessor extends ReplyProcessor21 {
       super.checkIfDone();
     }
   }
-
 }

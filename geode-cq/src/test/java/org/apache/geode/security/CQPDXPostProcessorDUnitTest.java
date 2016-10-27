@@ -48,15 +48,15 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 import org.apache.geode.test.junit.runners.CategoryWithParameterizedRunnerFactory;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 @RunWith(Parameterized.class)
 @Parameterized.UseParametersRunnerFactory(CategoryWithParameterizedRunnerFactory.class)
 public class CQPDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
-  private static byte[] BYTES = { 1, 0 };
+  private static byte[] BYTES = {1, 0};
 
   @Parameterized.Parameters
   public static Collection<Object[]> parameters() {
-    Object[][] params = { { true }, { false } };
+    Object[][] params = {{true}, {false}};
     return Arrays.asList(params);
   }
 
@@ -70,46 +70,49 @@ public class CQPDXPostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
   @Test
   public void testCQ() {
     String query = "select * from /AuthRegion";
-    client1.invoke(() -> {
-      ClientCache cache = createClientCache("super-user", "1234567", serverPort);
-      Region region = cache.getRegion(REGION_NAME);
+    client1.invoke(
+        () -> {
+          ClientCache cache = createClientCache("super-user", "1234567", serverPort);
+          Region region = cache.getRegion(REGION_NAME);
 
-      Pool pool = PoolManager.find(region);
-      QueryService qs = pool.getQueryService();
+          Pool pool = PoolManager.find(region);
+          QueryService qs = pool.getQueryService();
 
-      CqAttributesFactory factory = new CqAttributesFactory();
+          CqAttributesFactory factory = new CqAttributesFactory();
 
-      factory.addCqListener(new CqListenerImpl() {
-        @Override
-        public void onEvent(final CqEvent aCqEvent) {
-          Object key = aCqEvent.getKey();
-          Object value = aCqEvent.getNewValue();
-          if (key.equals("key1")) {
-            assertTrue(value instanceof SimpleClass);
-          } else if (key.equals("key2")) {
-            assertTrue(Arrays.equals(BYTES, (byte[]) value));
-          }
-        }
-      });
+          factory.addCqListener(
+              new CqListenerImpl() {
+                @Override
+                public void onEvent(final CqEvent aCqEvent) {
+                  Object key = aCqEvent.getKey();
+                  Object value = aCqEvent.getNewValue();
+                  if (key.equals("key1")) {
+                    assertTrue(value instanceof SimpleClass);
+                  } else if (key.equals("key2")) {
+                    assertTrue(Arrays.equals(BYTES, (byte[]) value));
+                  }
+                }
+              });
 
-      CqAttributes cqa = factory.create();
+          CqAttributes cqa = factory.create();
 
-      // Create the CqQuery
-      CqQuery cq = qs.newCq("CQ1", query, cqa);
-      CqResults results = cq.executeWithInitialResults();
-    });
+          // Create the CqQuery
+          CqQuery cq = qs.newCq("CQ1", query, cqa);
+          CqResults results = cq.executeWithInitialResults();
+        });
 
-    client2.invoke(() -> {
-      ClientCache cache = createClientCache("authRegionUser", "1234567", serverPort);
-      Region region = cache.getRegion(REGION_NAME);
-      region.put("key1", new SimpleClass(1, (byte) 1));
-      region.put("key2", BYTES);
-    });
+    client2.invoke(
+        () -> {
+          ClientCache cache = createClientCache("authRegionUser", "1234567", serverPort);
+          Region region = cache.getRegion(REGION_NAME);
+          region.put("key1", new SimpleClass(1, (byte) 1));
+          region.put("key2", BYTES);
+        });
 
     // wait for events to fire
     Awaitility.await().atMost(1, TimeUnit.SECONDS);
-    PDXPostProcessor pp = (PDXPostProcessor) SecurityService.getSecurityService().getPostProcessor();
+    PDXPostProcessor pp =
+        (PDXPostProcessor) SecurityService.getSecurityService().getPostProcessor();
     assertEquals(pp.getCount(), 2);
   }
-
 }

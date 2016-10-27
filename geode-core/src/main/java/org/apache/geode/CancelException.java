@@ -14,30 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode;
 
 import org.apache.geode.cache.CacheRuntimeException;
 
 /**
- * Abstract root class of all GemFire exceptions representing system
- * cancellation
- * 
+ * Abstract root class of all GemFire exceptions representing system cancellation
+ *
  * @since GemFire 6.0
  */
 public abstract class CancelException extends CacheRuntimeException {
   public static final long serialVersionUID = 3215578659523282642L;
 
-  /**
-   * for serialization
-   */
-  public CancelException() {
-  }
+  /** for serialization */
+  public CancelException() {}
 
   /**
    * Create instance with given message
+   *
    * @param message the message
    */
   public CancelException(String message) {
@@ -46,6 +41,7 @@ public abstract class CancelException extends CacheRuntimeException {
 
   /**
    * Create instance with given message and cause
+   *
    * @param message the message
    * @param cause the cause
    */
@@ -55,10 +51,10 @@ public abstract class CancelException extends CacheRuntimeException {
 
   /**
    * Create instance with empty message and given cause
+   *
    * @param cause the cause
    */
   public CancelException(Throwable cause) {
     super(cause);
   }
-
 }

@@ -38,14 +38,14 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-public class LinkedResultSet extends java.util.LinkedHashSet implements Ordered, SelectResults, DataSerializableFixedID {
+public class LinkedResultSet extends java.util.LinkedHashSet
+    implements Ordered, SelectResults, DataSerializableFixedID {
 
   private static final long serialVersionUID = 5184711453750319225L;
 
   private ObjectType elementType;
 
-  public LinkedResultSet() {
-  }
+  public LinkedResultSet() {}
 
   LinkedResultSet(Collection c) {
     super(c);
@@ -74,7 +74,9 @@ public class LinkedResultSet extends java.util.LinkedHashSet implements Ordered,
 
   public void setElementType(ObjectType elementType) {
     if (elementType instanceof StructType)
-      throw new IllegalArgumentException(LocalizedStrings.SortedResultSet_THIS_COLLECTION_DOES_NOT_SUPPORT_STRUCT_ELEMENTS.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SortedResultSet_THIS_COLLECTION_DOES_NOT_SUPPORT_STRUCT_ELEMENTS
+              .toLocalizedString());
     this.elementType = elementType;
   }
 
@@ -110,7 +112,7 @@ public class LinkedResultSet extends java.util.LinkedHashSet implements Ordered,
     // how do we serialize the comparator?
     out.writeInt(this.size());
     DataSerializer.writeObject(this.elementType, out);
-    for (Iterator i = this.iterator(); i.hasNext();) {
+    for (Iterator i = this.iterator(); i.hasNext(); ) {
       DataSerializer.writeObject(i.next(), out);
     }
   }
@@ -134,5 +136,4 @@ public class LinkedResultSet extends java.util.LinkedHashSet implements Ordered,
   public boolean dataPreordered() {
     return true;
   }
-
 }

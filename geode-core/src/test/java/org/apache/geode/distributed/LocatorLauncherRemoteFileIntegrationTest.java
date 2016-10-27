@@ -40,10 +40,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 /**
- * Subclass of LocatorLauncherRemoteDUnitTest which forces the code to not find 
- * the Attach API which is in the JDK tools.jar.  As a result LocatorLauncher
- * ends up using the FileProcessController implementation.
- * 
+ * Subclass of LocatorLauncherRemoteDUnitTest which forces the code to not find the Attach API which
+ * is in the JDK tools.jar. As a result LocatorLauncher ends up using the FileProcessController
+ * implementation.
+ *
  * @since GemFire 8.0
  */
 @Category(IntegrationTest.class)
@@ -57,12 +57,9 @@ public class LocatorLauncherRemoteFileIntegrationTest extends LocatorLauncherRem
   }
 
   @After
-  public final void tearDownLocatorLauncherRemoteFileIntegrationTest() throws Exception {
-  }
+  public final void tearDownLocatorLauncherRemoteFileIntegrationTest() throws Exception {}
 
-  /**
-   * Override and assert Attach API is NOT found
-   */
+  /** Override and assert Attach API is NOT found */
   @Override
   @Test
   public void testIsAttachAPIFound() throws Exception {
@@ -70,16 +67,15 @@ public class LocatorLauncherRemoteFileIntegrationTest extends LocatorLauncherRem
     assertFalse(factory.isAttachAPIFound());
   }
 
-  /**
-   * Override because FileProcessController cannot request status with PID
-   */
+  /** Override because FileProcessController cannot request status with PID */
   @Override
   @Test
   public void testStatusUsingPid() throws Throwable {
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -92,18 +88,30 @@ public class LocatorLauncherRemoteFileIntegrationTest extends LocatorLauncherRem
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build()
+            .start();
 
     // wait for locator to start
     int pid = 0;
     LocatorLauncher pidLauncher = null;
-    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    final LocatorLauncher dirLauncher =
+        new LocatorLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForLocatorToStart(dirLauncher);
 
       // validate the pid file and its contents
-      final File pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
+      final File pidFile =
+          new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
       assertTrue(pidFile.exists());
       pid = readPid(pidFile);
       assertTrue(pid > 0);
@@ -111,7 +119,9 @@ public class LocatorLauncherRemoteFileIntegrationTest extends LocatorLauncherRem
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // use launcher with pid
       pidLauncher = new Builder().setPid(pid).build();
@@ -141,16 +151,15 @@ public class LocatorLauncherRemoteFileIntegrationTest extends LocatorLauncherRem
     }
   }
 
-  /**
-   * Override because FileProcessController cannot request stop with PID
-   */
+  /** Override because FileProcessController cannot request stop with PID */
   @Override
   @Test
   public void testStopUsingPid() throws Throwable {
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -163,14 +172,27 @@ public class LocatorLauncherRemoteFileIntegrationTest extends LocatorLauncherRem
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(createLoggingListener("sysout", getUniqueName() + "#sysout")).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(createLoggingListener("syserr", getUniqueName() + "#syserr")).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .inputListener(createLoggingListener("sysout", getUniqueName() + "#sysout"))
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .inputListener(createLoggingListener("syserr", getUniqueName() + "#syserr"))
+            .build()
+            .start();
 
     // wait for locator to start
     int pid = 0;
     File pidFile = null;
     LocatorLauncher pidLauncher = null;
-    final LocatorLauncher dirLauncher = new LocatorLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    final LocatorLauncher dirLauncher =
+        new LocatorLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForLocatorToStart(dirLauncher);
 
@@ -183,7 +205,9 @@ public class LocatorLauncherRemoteFileIntegrationTest extends LocatorLauncherRem
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // use launcher with pid
       pidLauncher = new Builder().setPid(pid).build();

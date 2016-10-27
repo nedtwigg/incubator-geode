@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -59,7 +59,8 @@ public class LuceneIndexXmlParserJUnitTest {
     RegionAttributesCreation rac = Mockito.mock(RegionAttributesCreation.class);
     Mockito.when(regionCreation.getFullPath()).thenReturn("/region");
     Mockito.when(regionCreation.getAttributes()).thenReturn(rac);
-    Mockito.when(regionCreation.getExtensionPoint()).thenReturn(new SimpleExtensionPoint(this.rc, this.rc));
+    Mockito.when(regionCreation.getExtensionPoint())
+        .thenReturn(new SimpleExtensionPoint(this.rc, this.rc));
     this.rc = regionCreation;
     this.stack = new Stack<Object>();
     stack.push(cache);
@@ -87,9 +88,10 @@ public class LuceneIndexXmlParserJUnitTest {
     this.parser.endElement(LuceneXmlConstants.NAMESPACE, LuceneXmlConstants.INDEX, null);
     assertEquals(this.rc, this.stack.peek());
 
-    LuceneIndexCreation index = (LuceneIndexCreation) this.rc.getExtensionPoint().getExtensions().iterator().next();
+    LuceneIndexCreation index =
+        (LuceneIndexCreation) this.rc.getExtensionPoint().getExtensions().iterator().next();
     assertEquals("index", index.getName());
-    assertArrayEquals(new String[] { "field1", "field2", "field3" }, index.getFieldNames());
+    assertArrayEquals(new String[] {"field1", "field2", "field3"}, index.getFieldNames());
 
     // Assert analyzers
     Map<String, Analyzer> fieldAnalyzers = index.getFieldAnalyzers();

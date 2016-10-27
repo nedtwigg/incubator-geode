@@ -20,9 +20,7 @@ import java.util.List;
 
 import org.apache.geode.Statistics;
 
-/**
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 @SuppressWarnings("unchecked")
 public class TestStatisticsSampler implements StatisticsSampler {
 

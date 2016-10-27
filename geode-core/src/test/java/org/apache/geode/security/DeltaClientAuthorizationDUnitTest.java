@@ -37,10 +37,8 @@ import org.apache.geode.security.generator.CredentialGenerator;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-/**
- * @since GemFire 6.1
- */
-@Category({ DistributedTest.class, SecurityTest.class })
+/** @since GemFire 6.1 */
+@Category({DistributedTest.class, SecurityTest.class})
 public final class DeltaClientAuthorizationDUnitTest extends ClientAuthorizationTestCase {
 
   private DeltaTestImpl[] deltas = new DeltaTestImpl[8];
@@ -73,13 +71,16 @@ public final class DeltaClientAuthorizationDUnitTest extends ClientAuthorization
     getLogWriter().info("testAllowPutsGets: Using accessor: " + accessor);
 
     // Start servers with all required properties
-    Properties serverProps = buildProperties(authenticator, accessor, false, extraAuthProps, extraAuthzProps);
+    Properties serverProps =
+        buildProperties(authenticator, accessor, false, extraAuthProps, extraAuthzProps);
 
     int port1 = createServer1(javaProps, serverProps);
     int port2 = createServer2(javaProps, serverProps);
 
     // Start client1 with valid CREATE credentials
-    Properties createCredentials = gen.getAllowedCredentials(new OperationCode[] { OperationCode.PUT }, new String[] { REGION_NAME }, 1);
+    Properties createCredentials =
+        gen.getAllowedCredentials(
+            new OperationCode[] {OperationCode.PUT}, new String[] {REGION_NAME}, 1);
     javaProps = cGen.getJavaProperties();
 
     getLogWriter().info("testAllowPutsGets: For first client credentials: " + createCredentials);
@@ -87,7 +88,9 @@ public final class DeltaClientAuthorizationDUnitTest extends ClientAuthorization
     createClient1(javaProps, authInit, port1, port2, createCredentials);
 
     // Start client2 with valid GET credentials
-    Properties getCredentials = gen.getAllowedCredentials(new OperationCode[] { OperationCode.GET }, new String[] { REGION_NAME }, 2);
+    Properties getCredentials =
+        gen.getAllowedCredentials(
+            new OperationCode[] {OperationCode.GET}, new String[] {REGION_NAME}, 2);
     javaProps = cGen.getJavaProperties();
 
     getLogWriter().info("testAllowPutsGets: For second client credentials: " + getCredentials);
@@ -104,12 +107,27 @@ public final class DeltaClientAuthorizationDUnitTest extends ClientAuthorization
     client2.invoke(() -> doGets(2, NO_EXCEPTION));
   }
 
-  private void createClient2(final Properties javaProps, final String authInit, final int port1, final int port2, final Properties getCredentials) {
-    client2.invoke(() -> createCacheClient(authInit, getCredentials, javaProps, port1, port2, 0, NO_EXCEPTION));
+  private void createClient2(
+      final Properties javaProps,
+      final String authInit,
+      final int port1,
+      final int port2,
+      final Properties getCredentials) {
+    client2.invoke(
+        () ->
+            createCacheClient(authInit, getCredentials, javaProps, port1, port2, 0, NO_EXCEPTION));
   }
 
-  private void createClient1(final Properties javaProps, final String authInit, final int port1, final int port2, final Properties createCredentials) {
-    client1.invoke(() -> createCacheClient(authInit, createCredentials, javaProps, port1, port2, 0, NO_EXCEPTION));
+  private void createClient1(
+      final Properties javaProps,
+      final String authInit,
+      final int port1,
+      final int port2,
+      final Properties createCredentials) {
+    client1.invoke(
+        () ->
+            createCacheClient(
+                authInit, createCredentials, javaProps, port1, port2, 0, NO_EXCEPTION));
   }
 
   private int createServer2(final Properties javaProps, final Properties serverProps) {
@@ -165,10 +183,10 @@ public final class DeltaClientAuthorizationDUnitTest extends ClientAuthorization
     deltas[7].setIntVar(5);
 
     deltas[2].resetDeltaStatus();
-    deltas[2].setByteArr(new byte[] { 1, 2, 3, 4, 5 });
-    deltas[3].setByteArr(new byte[] { 1, 2, 3, 4, 5 });
-    deltas[4].setByteArr(new byte[] { 1, 2, 3, 4, 5 });
-    deltas[5].setByteArr(new byte[] { 1, 2, 3, 4, 5 });
+    deltas[2].setByteArr(new byte[] {1, 2, 3, 4, 5});
+    deltas[3].setByteArr(new byte[] {1, 2, 3, 4, 5});
+    deltas[4].setByteArr(new byte[] {1, 2, 3, 4, 5});
+    deltas[5].setByteArr(new byte[] {1, 2, 3, 4, 5});
     //deltas[6].setByteArr(new byte[] { 1, 2, 3, 4, 5 });
     //deltas[7].setByteArr(new byte[] { 1, 2, 3, 4, 5 });
 
@@ -192,8 +210,8 @@ public final class DeltaClientAuthorizationDUnitTest extends ClientAuthorization
     deltas[7].setTestObj(new TestObject1("CHANGED", 100));
 
     deltas[6].resetDeltaStatus();
-    deltas[6].setByteArr(new byte[] { 1, 2, 3 });
-    deltas[7].setByteArr(new byte[] { 1, 2, 3 });
+    deltas[6].setByteArr(new byte[] {1, 2, 3});
+    deltas[7].setByteArr(new byte[] {1, 2, 3});
 
     deltas[7].resetDeltaStatus();
     deltas[7].setStr("delta string");

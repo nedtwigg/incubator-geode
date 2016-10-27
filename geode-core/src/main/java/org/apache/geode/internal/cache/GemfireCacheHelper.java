@@ -22,18 +22,19 @@ import java.util.concurrent.ThreadFactory;
 /*
  * Purpose of this class to create threadfactory and other helper classes for GemfireCache.
  * If we keep these classes as inner class of GemFireCache then some time it holds reference of static cache
- * Which can cause leak if app is just  starting and closing cache 
+ * Which can cause leak if app is just  starting and closing cache
  */
 public class GemfireCacheHelper {
 
   public static ThreadFactory CreateThreadFactory(final ThreadGroup tg, final String threadName) {
-    final ThreadFactory threadFactory = new ThreadFactory() {
-      public Thread newThread(Runnable command) {
-        Thread thread = new Thread(tg, command, threadName);
-        thread.setDaemon(true);
-        return thread;
-      }
-    };
+    final ThreadFactory threadFactory =
+        new ThreadFactory() {
+          public Thread newThread(Runnable command) {
+            Thread thread = new Thread(tg, command, threadName);
+            thread.setDaemon(true);
+            return thread;
+          }
+        };
     return threadFactory;
   }
 }

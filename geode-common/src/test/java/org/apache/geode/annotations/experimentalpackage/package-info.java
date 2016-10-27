@@ -15,9 +15,8 @@
  * limitations under the license.
  */
 /**
- * Used by <tt>ExperimentalJUnitTest</tt>. This is an <tt>Experimental</tt> 
- * package.
- * 
+ * Used by <tt>ExperimentalJUnitTest</tt>. This is an <tt>Experimental</tt> package.
+ *
  * @see org.apache.geode.annotations.ExperimentalJUnitTest
  */
 @Experimental("This is an experimental package")

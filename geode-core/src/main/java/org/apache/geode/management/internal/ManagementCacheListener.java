@@ -25,13 +25,10 @@ import org.apache.geode.cache.util.CacheListenerAdapter;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * This listener is attached to the Monitoring Region to receive any addition or
- * deletion of MBEans
- * 
- * It updates the last refreshed time of proxy once it gets the update request
- * from the Managed Node
- * 
- * 
+ * This listener is attached to the Monitoring Region to receive any addition or deletion of MBEans
+ *
+ * <p>It updates the last refreshed time of proxy once it gets the update request from the Managed
+ * Node
  */
 public class ManagementCacheListener extends CacheListenerAdapter<String, Object> {
 
@@ -56,13 +53,13 @@ public class ManagementCacheListener extends CacheListenerAdapter<String, Object
     try {
       objectName = ObjectName.getInstance(event.getKey());
       Object newObject = event.getNewValue();
-      proxyHelper.createProxy(event.getDistributedMember(), objectName, event.getRegion(), newObject);
+      proxyHelper.createProxy(
+          event.getDistributedMember(), objectName, event.getRegion(), newObject);
     } catch (Exception e) {
       if (logger.isDebugEnabled()) {
         logger.debug("Proxy Create failed for {} with exception {}", objectName, e.getMessage(), e);
       }
     }
-
   }
 
   @Override
@@ -75,10 +72,10 @@ public class ManagementCacheListener extends CacheListenerAdapter<String, Object
       proxyHelper.removeProxy(event.getDistributedMember(), objectName, oldObject);
     } catch (Exception e) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Proxy Destroy failed for {} with exception {}", objectName, e.getMessage(), e);
+        logger.debug(
+            "Proxy Destroy failed for {} with exception {}", objectName, e.getMessage(), e);
       }
     }
-
   }
 
   @Override
@@ -106,13 +103,10 @@ public class ManagementCacheListener extends CacheListenerAdapter<String, Object
       if (logger.isDebugEnabled()) {
         logger.debug("Proxy Update failed for {} with exception {}", objectName, e.getMessage(), e);
       }
-
     }
-
   }
 
   void markReady() {
     readyForEvents = true;
   }
-
 }

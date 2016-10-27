@@ -26,24 +26,33 @@ import org.apache.geode.cache.client.internal.PoolImpl;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
-public class IntegratedClientGetClientPartitionAttrCmdAuthDistributedTest extends AbstractSecureServerDUnitTest {
+@Category({DistributedTest.class, SecurityTest.class})
+public class IntegratedClientGetClientPartitionAttrCmdAuthDistributedTest
+    extends AbstractSecureServerDUnitTest {
 
   @Test
   @Ignore("This is not a supported client message")
   // this would fail sporatically because ServerConnection.isInternalMessage would return true for this message,
   // and it won't bind the correct subject on the executing thread.
   public void testGetClientPartitionAttrCmd() {
-    client1.invoke("logging in stranger", () -> {
-      ClientCache cache = createClientCache("stranger", "1234567", serverPort);
+    client1.invoke(
+        "logging in stranger",
+        () -> {
+          ClientCache cache = createClientCache("stranger", "1234567", serverPort);
 
-      assertNotAuthorized(() -> GetClientPartitionAttributesOp.execute((PoolImpl) cache.getDefaultPool(), REGION_NAME), "CLUSTER:READ");
-    });
+          assertNotAuthorized(
+              () ->
+                  GetClientPartitionAttributesOp.execute(
+                      (PoolImpl) cache.getDefaultPool(), REGION_NAME),
+              "CLUSTER:READ");
+        });
 
-    client2.invoke("logging in super-user with correct password", () -> {
-      ClientCache cache = createClientCache("super-user", "1234567", serverPort);
+    client2.invoke(
+        "logging in super-user with correct password",
+        () -> {
+          ClientCache cache = createClientCache("super-user", "1234567", serverPort);
 
-      GetClientPartitionAttributesOp.execute((PoolImpl) cache.getDefaultPool(), REGION_NAME);
-    });
+          GetClientPartitionAttributesOp.execute((PoolImpl) cache.getDefaultPool(), REGION_NAME);
+        });
   }
 }

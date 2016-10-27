@@ -34,11 +34,7 @@ import org.apache.geode.management.internal.cli.json.GfJsonException;
 import org.apache.geode.management.internal.cli.json.GfJsonObject;
 import org.apache.geode.management.internal.cli.shell.Gfsh;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public abstract class AbstractResultData implements ResultData {
   public static final String SECTION_DATA_ACCESSOR = "__sections__";
   public static final String TABLE_DATA_ACCESSOR = "__tables__";
@@ -73,9 +69,7 @@ public abstract class AbstractResultData implements ResultData {
     this.contentObject = gfJsonObject.getJSONObject(RESULT_CONTENT);
   }
 
-  /**
-   * @return the gfJsonObject
-   */
+  /** @return the gfJsonObject */
   public GfJsonObject getGfJsonObject() {
     return gfJsonObject;
   }
@@ -93,11 +87,9 @@ public abstract class AbstractResultData implements ResultData {
   }
 
   /**
-   * 
    * @param headerText
    * @return this ResultData
-   * @throws ResultDataException
-   *           If the value is non-finite number or if the key is null.
+   * @throws ResultDataException If the value is non-finite number or if the key is null.
    */
   public AbstractResultData setHeader(String headerText) {
     try {
@@ -110,11 +102,9 @@ public abstract class AbstractResultData implements ResultData {
   }
 
   /**
-   * 
    * @param footerText
    * @return this ResultData
-   * @throws ResultDataException
-   *           If the value is non-finite number or if the key is null.
+   * @throws ResultDataException If the value is non-finite number or if the key is null.
    */
   public AbstractResultData setFooter(String footerText) {
     try {
@@ -143,11 +133,14 @@ public abstract class AbstractResultData implements ResultData {
     return src;
   }
 
-  public ResultData addAsFile(String fileName, String fileContents, String message, boolean addTimeStampToName) {
-    return this.addAsFile(fileName, fileContents.getBytes(), FILE_TYPE_TEXT, message, addTimeStampToName);
+  public ResultData addAsFile(
+      String fileName, String fileContents, String message, boolean addTimeStampToName) {
+    return this.addAsFile(
+        fileName, fileContents.getBytes(), FILE_TYPE_TEXT, message, addTimeStampToName);
   }
 
-  public ResultData addAsFile(String fileName, byte[] data, int fileType, String message, boolean addTimeStampToName) {
+  public ResultData addAsFile(
+      String fileName, byte[] data, int fileType, String message, boolean addTimeStampToName) {
     byte[] bytes = data;
     if (addTimeStampToName) {
       fileName = addTimeStampBeforeLastDot(fileName);
@@ -155,8 +148,10 @@ public abstract class AbstractResultData implements ResultData {
     return addAsFile(fileName.getBytes(), bytes, fileType, message);
   }
 
-  public ResultData addByteDataFromFileFile(String filePath, int fileType, String message, boolean addTimeStampToName) throws FileNotFoundException, IOException {
-    byte[][] filesToBytes = CliUtil.filesToBytes(new String[] { filePath });
+  public ResultData addByteDataFromFileFile(
+      String filePath, int fileType, String message, boolean addTimeStampToName)
+      throws FileNotFoundException, IOException {
+    byte[][] filesToBytes = CliUtil.filesToBytes(new String[] {filePath});
 
     byte[] bytes = filesToBytes[0];
     if (addTimeStampToName) {
@@ -202,14 +197,19 @@ public abstract class AbstractResultData implements ResultData {
    * @param byteDataArray
    * @throws GfJsonException
    * @throws DataFormatException
-   * @throws IOException 
+   * @throws IOException
    */
-  public static void readFileDataAndDump(GfJsonArray byteDataArray, String directory) throws GfJsonException, DataFormatException, IOException {
+  public static void readFileDataAndDump(GfJsonArray byteDataArray, String directory)
+      throws GfJsonException, DataFormatException, IOException {
     boolean overwriteAllExisting = false;
     int length = byteDataArray.size();
-    String options = length > 1 ? "(y/N/a)" : "(y/N)"; //TODO - Abhishek Make this consistent - with AbstractCliAroundInterceptor.readYesNo() 
+    String options =
+        length > 1
+            ? "(y/N/a)"
+            : "(y/N)"; //TODO - Abhishek Make this consistent - with AbstractCliAroundInterceptor.readYesNo()
 
-    BYTEARRAY_LOOP: for (int i = 0; i < length; i++) {
+    BYTEARRAY_LOOP:
+    for (int i = 0; i < length; i++) {
       GfJsonObject object = byteDataArray.getJSONObject(i);
 
       int fileType = object.getInt(FILE_TYPE_FIELD);
@@ -261,7 +261,10 @@ public abstract class AbstractResultData implements ResultData {
       }
       File parentDirectory = fileToDumpData.getParentFile();
       if (fileToDumpData.exists()) {
-        String fileExistsMessage = CliStrings.format(CliStrings.ABSTRACTRESULTDATA__MSG__FILE_WITH_NAME_0_EXISTS_IN_1, new Object[] { fileName, fileToDumpData.getParent(), options });
+        String fileExistsMessage =
+            CliStrings.format(
+                CliStrings.ABSTRACTRESULTDATA__MSG__FILE_WITH_NAME_0_EXISTS_IN_1,
+                new Object[] {fileName, fileToDumpData.getParent(), options});
         if (isGfshVM) {
           Gfsh gfsh = Gfsh.getCurrentInstance();
           if (gfsh != null && !gfsh.isQuietMode() && !overwriteAllExisting) {
@@ -278,13 +281,25 @@ public abstract class AbstractResultData implements ResultData {
           throw new IOException(fileExistsMessage);
         }
       } else if (!parentDirectory.exists()) {
-        handleCondition(CliStrings.format(CliStrings.ABSTRACTRESULTDATA__MSG__PARENT_DIRECTORY_OF_0_DOES_NOT_EXIST, fileToDumpData.getAbsolutePath()), isGfshVM);
+        handleCondition(
+            CliStrings.format(
+                CliStrings.ABSTRACTRESULTDATA__MSG__PARENT_DIRECTORY_OF_0_DOES_NOT_EXIST,
+                fileToDumpData.getAbsolutePath()),
+            isGfshVM);
         return;
       } else if (!parentDirectory.canWrite()) {
-        handleCondition(CliStrings.format(CliStrings.ABSTRACTRESULTDATA__MSG__PARENT_DIRECTORY_OF_0_IS_NOT_WRITABLE, fileToDumpData.getAbsolutePath()), isGfshVM);
+        handleCondition(
+            CliStrings.format(
+                CliStrings.ABSTRACTRESULTDATA__MSG__PARENT_DIRECTORY_OF_0_IS_NOT_WRITABLE,
+                fileToDumpData.getAbsolutePath()),
+            isGfshVM);
         return;
       } else if (!parentDirectory.isDirectory()) {
-        handleCondition(CliStrings.format(CliStrings.ABSTRACTRESULTDATA__MSG__PARENT_OF_0_IS_NOT_DIRECTORY, fileToDumpData.getAbsolutePath()), isGfshVM);
+        handleCondition(
+            CliStrings.format(
+                CliStrings.ABSTRACTRESULTDATA__MSG__PARENT_OF_0_IS_NOT_DIRECTORY,
+                fileToDumpData.getAbsolutePath()),
+            isGfshVM);
         return;
       }
       if (fileType == FILE_TYPE_TEXT) {
@@ -303,7 +318,8 @@ public abstract class AbstractResultData implements ResultData {
       //      System.out.println("fileMessage :: "+fileMessage);
       if (fileMessage != null && !fileMessage.isEmpty()) {
         if (isGfshVM) {
-          Gfsh.println(MessageFormat.format(fileMessage, new Object[] { fileToDumpData.getAbsolutePath() }));
+          Gfsh.println(
+              MessageFormat.format(fileMessage, new Object[] {fileToDumpData.getAbsolutePath()}));
         }
       }
       //      System.out.println(new String(uncompressed));

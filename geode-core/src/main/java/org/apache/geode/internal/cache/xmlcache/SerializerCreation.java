@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.xmlcache;
 
 import org.apache.geode.DataSerializable;
@@ -32,9 +30,7 @@ import java.util.HashMap;
 
 import org.apache.logging.log4j.Logger;
 
-/**
- *
- */
+/** */
 public class SerializerCreation {
   private static final Logger logger = LogService.getLogger();
 
@@ -61,14 +57,17 @@ public class SerializerCreation {
       try {
         return (DataSerializable) m_class.newInstance();
       } catch (Exception ex) {
-        logger.error(LocalizedMessage.create(LocalizedStrings.SerializerCreation_A_0_INSTANTIATION_FAILED, new Object[] { m_class.getName() }), ex);
+        logger.error(
+            LocalizedMessage.create(
+                LocalizedStrings.SerializerCreation_A_0_INSTANTIATION_FAILED,
+                new Object[] {m_class.getName()}),
+            ex);
         return null;
       }
     }
   }
 
-  public SerializerCreation() {
-  }
+  public SerializerCreation() {}
 
   public void registerSerializer(Class c) {
     serializerReg.add(c);

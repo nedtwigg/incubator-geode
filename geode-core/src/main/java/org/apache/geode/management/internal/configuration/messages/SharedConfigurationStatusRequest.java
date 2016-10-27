@@ -22,22 +22,14 @@ import java.io.IOException;
 
 import org.apache.geode.DataSerializable;
 
-/****
- * 
- *
- */
+/** ** */
 public class SharedConfigurationStatusRequest implements DataSerializable {
 
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void toData(DataOutput out) throws IOException {
-
-  }
+  public void toData(DataOutput out) throws IOException {}
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-
-  }
-
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 }

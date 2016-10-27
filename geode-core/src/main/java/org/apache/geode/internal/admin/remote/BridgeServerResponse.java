@@ -27,9 +27,8 @@ import java.io.*;
 import java.util.*;
 
 /**
- * A message that is sent in response to a {@link
- * BridgeServerResponse}.  It perform an operation on a bridge server
- * and returns the result to the sender.
+ * A message that is sent in response to a {@link BridgeServerResponse}. It perform an operation on
+ * a bridge server and returns the result to the sender.
  *
  * @since GemFire 4.0
  */
@@ -43,10 +42,7 @@ public final class BridgeServerResponse extends AdminResponse {
 
   //////////////////////  Static Methods  //////////////////////
 
-  /**
-   * Creates a <code>BridgeServerResponse</code> in response to the
-   * given request.
-   */
+  /** Creates a <code>BridgeServerResponse</code> in response to the given request. */
   static BridgeServerResponse create(DistributionManager dm, BridgeServerRequest request) {
     BridgeServerResponse m = new BridgeServerResponse();
     m.setRecipient(request.getSender());
@@ -60,66 +56,69 @@ public final class BridgeServerResponse extends AdminResponse {
       } else {
         int operation = request.getOperation();
         switch (operation) {
-        case BridgeServerRequest.ADD_OPERATION: {
-          CacheServerImpl bridge = (CacheServerImpl) cache.addCacheServer();
-          m.bridgeInfo = new RemoteBridgeServer(bridge);
-          break;
-        }
-
-        case BridgeServerRequest.INFO_OPERATION: {
-          int id = request.getBridgeId();
-          // Note that since this is only an informational request
-          // it is not necessary to synchronize on allBridgeServersLock
-          for (Iterator iter = cache.getCacheServers().iterator(); iter.hasNext();) {
-            CacheServerImpl bridge = (CacheServerImpl) iter.next();
-            if (System.identityHashCode(bridge) == id) {
+          case BridgeServerRequest.ADD_OPERATION:
+            {
+              CacheServerImpl bridge = (CacheServerImpl) cache.addCacheServer();
               m.bridgeInfo = new RemoteBridgeServer(bridge);
               break;
-
-            } else {
-              m.bridgeInfo = null;
             }
-          }
-          break;
-        }
 
-        case BridgeServerRequest.START_OPERATION: {
-          RemoteBridgeServer config = request.getBridgeInfo();
-          for (Iterator iter = cache.getCacheServers().iterator(); iter.hasNext();) {
-            CacheServerImpl bridge = (CacheServerImpl) iter.next();
-            if (System.identityHashCode(bridge) == config.getId()) {
-              bridge.configureFrom(config);
-              bridge.start();
-              m.bridgeInfo = new RemoteBridgeServer(bridge);
+          case BridgeServerRequest.INFO_OPERATION:
+            {
+              int id = request.getBridgeId();
+              // Note that since this is only an informational request
+              // it is not necessary to synchronize on allBridgeServersLock
+              for (Iterator iter = cache.getCacheServers().iterator(); iter.hasNext(); ) {
+                CacheServerImpl bridge = (CacheServerImpl) iter.next();
+                if (System.identityHashCode(bridge) == id) {
+                  m.bridgeInfo = new RemoteBridgeServer(bridge);
+                  break;
+
+                } else {
+                  m.bridgeInfo = null;
+                }
+              }
               break;
-
-            } else {
-              m.bridgeInfo = null;
             }
-          }
-          break;
-        }
 
-        case BridgeServerRequest.STOP_OPERATION: {
-          RemoteBridgeServer config = request.getBridgeInfo();
-          for (Iterator iter = cache.getCacheServers().iterator(); iter.hasNext();) {
-            CacheServerImpl bridge = (CacheServerImpl) iter.next();
-            if (System.identityHashCode(bridge) == config.getId()) {
-              bridge.stop();
-              m.bridgeInfo = new RemoteBridgeServer(bridge);
+          case BridgeServerRequest.START_OPERATION:
+            {
+              RemoteBridgeServer config = request.getBridgeInfo();
+              for (Iterator iter = cache.getCacheServers().iterator(); iter.hasNext(); ) {
+                CacheServerImpl bridge = (CacheServerImpl) iter.next();
+                if (System.identityHashCode(bridge) == config.getId()) {
+                  bridge.configureFrom(config);
+                  bridge.start();
+                  m.bridgeInfo = new RemoteBridgeServer(bridge);
+                  break;
+
+                } else {
+                  m.bridgeInfo = null;
+                }
+              }
               break;
-
-            } else {
-              m.bridgeInfo = null;
             }
-          }
-          break;
-        }
 
-        default:
-          Assert.assertTrue(false, "Unknown bridge server operation: " + operation);
-        }
+          case BridgeServerRequest.STOP_OPERATION:
+            {
+              RemoteBridgeServer config = request.getBridgeInfo();
+              for (Iterator iter = cache.getCacheServers().iterator(); iter.hasNext(); ) {
+                CacheServerImpl bridge = (CacheServerImpl) iter.next();
+                if (System.identityHashCode(bridge) == config.getId()) {
+                  bridge.stop();
+                  m.bridgeInfo = new RemoteBridgeServer(bridge);
+                  break;
 
+                } else {
+                  m.bridgeInfo = null;
+                }
+              }
+              break;
+            }
+
+          default:
+            Assert.assertTrue(false, "Unknown bridge server operation: " + operation);
+        }
       }
 
     } catch (CancelException ex) {
@@ -134,17 +133,12 @@ public final class BridgeServerResponse extends AdminResponse {
 
   //////////////////////  Instance Methods  //////////////////////
 
-  /**
-   * Returns information about the bridge operated on
-   */
+  /** Returns information about the bridge operated on */
   public RemoteBridgeServer getBridgeInfo() {
     return this.bridgeInfo;
   }
 
-  /**
-   * Returns an exception that was thrown while processing the
-   * request.
-   */
+  /** Returns an exception that was thrown while processing the request. */
   public Exception getException() {
     return this.exception;
   }
@@ -166,5 +160,4 @@ public final class BridgeServerResponse extends AdminResponse {
     this.bridgeInfo = (RemoteBridgeServer) DataSerializer.readObject(in);
     this.exception = (Exception) DataSerializer.readObject(in);
   }
-
 }

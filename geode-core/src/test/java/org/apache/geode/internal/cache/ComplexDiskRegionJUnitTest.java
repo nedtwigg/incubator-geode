@@ -25,9 +25,7 @@ import org.apache.geode.StatisticsFactory;
 import org.apache.geode.cache.Scope;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Unit testing for ComplexDiskRegion API's
- */
+/** Unit testing for ComplexDiskRegion API's */
 @Category(IntegrationTest.class)
 public class ComplexDiskRegionJUnitTest extends DiskRegionTestingBase {
 
@@ -45,10 +43,9 @@ public class ComplexDiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Test method for
-   * 'org.apache.geode.internal.cache.ComplexDiskRegion.addToBeCompacted(Oplog)'
-   * 
-   * The test will test that an oplog is correctly being added to be rolled
+   * Test method for 'org.apache.geode.internal.cache.ComplexDiskRegion.addToBeCompacted(Oplog)'
+   *
+   * <p>The test will test that an oplog is correctly being added to be rolled
    */
   @Test
   public void testAddToBeCompacted() {
@@ -103,11 +100,10 @@ public class ComplexDiskRegionJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Test method for
-   * 'org.apache.geode.internal.cache.ComplexDiskRegion.removeFirstOplog(Oplog)'
-   * 
-   * The test verifies the FIFO property of the oplog set (first oplog to be added should be
-   * the firs to be rolled).
+   * Test method for 'org.apache.geode.internal.cache.ComplexDiskRegion.removeFirstOplog(Oplog)'
+   *
+   * <p>The test verifies the FIFO property of the oplog set (first oplog to be added should be the
+   * firs to be rolled).
    */
   @Test
   public void testRemoveFirstOplog() {
@@ -148,5 +144,4 @@ public class ComplexDiskRegionJUnitTest extends DiskRegionTestingBase {
     closeDown();
     deleteFiles();
   }
-
 }

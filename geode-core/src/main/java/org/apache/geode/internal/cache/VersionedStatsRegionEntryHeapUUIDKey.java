@@ -42,10 +42,8 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VersionedStatsRegionEntryHeapUUIDKey extends VersionedStatsRegionEntryHeap {
   public VersionedStatsRegionEntryHeapUUIDKey(RegionEntryContext context, UUID key, Object value) {
@@ -59,9 +57,14 @@ public class VersionedStatsRegionEntryHeapUUIDKey extends VersionedStatsRegionEn
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VersionedStatsRegionEntryHeapUUIDKey> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VersionedStatsRegionEntryHeapUUIDKey.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VersionedStatsRegionEntryHeapUUIDKey>
+      lastModifiedUpdater =
+          AtomicLongFieldUpdater.newUpdater(
+              VersionedStatsRegionEntryHeapUUIDKey.class, "lastModified");
   private volatile Object value;
 
   @Override
@@ -82,9 +85,7 @@ public class VersionedStatsRegionEntryHeapUUIDKey extends VersionedStatsRegionEn
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -93,16 +94,12 @@ public class VersionedStatsRegionEntryHeapUUIDKey extends VersionedStatsRegionEn
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -130,8 +127,14 @@ public class VersionedStatsRegionEntryHeapUUIDKey extends VersionedStatsRegionEn
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VersionedStatsRegionEntryHeapUUIDKey> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VersionedStatsRegionEntryHeapUUIDKey.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VersionedStatsRegionEntryHeapUUIDKey> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VersionedStatsRegionEntryHeapUUIDKey.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VersionedStatsRegionEntryHeapUUIDKey>
+      hitCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VersionedStatsRegionEntryHeapUUIDKey.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VersionedStatsRegionEntryHeapUUIDKey>
+      missCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VersionedStatsRegionEntryHeapUUIDKey.class, "missCount");
 
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {
@@ -252,7 +255,14 @@ public class VersionedStatsRegionEntryHeapUUIDKey extends VersionedStatsRegionEn
     return tag;
   }
 
-  public void processVersionTag(LocalRegion r, VersionTag tag, boolean isTombstoneFromGII, boolean hasDelta, VersionSource thisVM, InternalDistributedMember sender, boolean checkForConflicts) {
+  public void processVersionTag(
+      LocalRegion r,
+      VersionTag tag,
+      boolean isTombstoneFromGII,
+      boolean hasDelta,
+      VersionSource thisVM,
+      InternalDistributedMember sender,
+      boolean checkForConflicts) {
     basicProcessVersionTag(r, tag, isTombstoneFromGII, hasDelta, thisVM, sender, checkForConflicts);
   }
 
@@ -263,12 +273,12 @@ public class VersionedStatsRegionEntryHeapUUIDKey extends VersionedStatsRegionEn
     super.processVersionTag(cacheEvent);
   }
 
-  /** get rvv internal high byte.  Used by region entries for transferring to storage */
+  /** get rvv internal high byte. Used by region entries for transferring to storage */
   public short getRegionVersionHighBytes() {
     return this.regionVersionHighBytes;
   }
 
-  /** get rvv internal low bytes.  Used by region entries for transferring to storage */
+  /** get rvv internal low bytes. Used by region entries for transferring to storage */
   public int getRegionVersionLowBytes() {
     return this.regionVersionLowBytes;
   }
@@ -287,7 +297,8 @@ public class VersionedStatsRegionEntryHeapUUIDKey extends VersionedStatsRegionEn
   public boolean isKeyEqual(Object k) {
     if (k instanceof UUID) {
       UUID uuid = (UUID) k;
-      return uuid.getLeastSignificantBits() == this.keyLeastSigBits && uuid.getMostSignificantBits() == this.keyMostSigBits;
+      return uuid.getLeastSignificantBits() == this.keyLeastSigBits
+          && uuid.getMostSignificantBits() == this.keyMostSigBits;
     }
     return false;
   }

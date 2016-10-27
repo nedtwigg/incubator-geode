@@ -48,7 +48,11 @@ public class BucketRegionJUnitTest extends DistributedRegionJUnitTest {
   }
 
   @Override
-  protected DistributedRegion createAndDefineRegion(boolean isConcurrencyChecksEnabled, RegionAttributes ra, InternalRegionArguments ira, GemFireCacheImpl cache) {
+  protected DistributedRegion createAndDefineRegion(
+      boolean isConcurrencyChecksEnabled,
+      RegionAttributes ra,
+      InternalRegionArguments ira,
+      GemFireCacheImpl cache) {
     BucketRegion br = new BucketRegion("testRegion", ra, null, cache, ira);
 
     // since br is a real bucket region object, we need to tell mockito to monitor it
@@ -93,7 +97,8 @@ public class BucketRegionJUnitTest extends DistributedRegionJUnitTest {
   }
 
   @Override
-  protected void verifyDistributeInvalidate(DistributedRegion region, EntryEventImpl event, int cnt) {
+  protected void verifyDistributeInvalidate(
+      DistributedRegion region, EntryEventImpl event, int cnt) {
     assertTrue(region instanceof BucketRegion);
     BucketRegion br = (BucketRegion) region;
     br.basicInvalidate(event);
@@ -106,7 +111,8 @@ public class BucketRegionJUnitTest extends DistributedRegionJUnitTest {
   }
 
   @Override
-  protected void verifyDistributeUpdateEntryVersion(DistributedRegion region, EntryEventImpl event, int cnt) {
+  protected void verifyDistributeUpdateEntryVersion(
+      DistributedRegion region, EntryEventImpl event, int cnt) {
     assertTrue(region instanceof BucketRegion);
     BucketRegion br = (BucketRegion) region;
     br.basicUpdateEntryVersion(event);
@@ -117,5 +123,4 @@ public class BucketRegionJUnitTest extends DistributedRegionJUnitTest {
       verify(br, never()).distributeUpdateEntryVersionOperation(eq(event));
     }
   }
-
 }

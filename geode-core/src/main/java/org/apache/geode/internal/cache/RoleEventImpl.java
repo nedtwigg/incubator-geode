@@ -28,8 +28,8 @@ import org.apache.geode.distributed.Role;
 import org.apache.geode.distributed.internal.membership.InternalRole;
 
 /**
- * Implementation of a RoleEvent.  Super class is DataSerializable but
- * this class is probably never on the wire, however, it does support it.
+ * Implementation of a RoleEvent. Super class is DataSerializable but this class is probably never
+ * on the wire, however, it does support it.
  *
  * @since GemFire 5.0
  */
@@ -39,18 +39,21 @@ public final class RoleEventImpl extends RegionEventImpl implements RoleEvent, D
 
   private Set requiredRoles;
 
-  /**
-   * Zero-argument constructor required by DataSerializable.
-   */
-  public RoleEventImpl() {
-  }
+  /** Zero-argument constructor required by DataSerializable. */
+  public RoleEventImpl() {}
 
   /**
    * Constructs new RoleEventImpl.
    *
-   * @param requiredRoles set of required roles that are affected by this event 
+   * @param requiredRoles set of required roles that are affected by this event
    */
-  RoleEventImpl(Region region, Operation op, Object callbackArgument, boolean originRemote, DistributedMember distributedMember, Set requiredRoles) {
+  RoleEventImpl(
+      Region region,
+      Operation op,
+      Object callbackArgument,
+      boolean originRemote,
+      DistributedMember distributedMember,
+      Set requiredRoles) {
     super(region, op, callbackArgument, originRemote, distributedMember);
     this.requiredRoles = Collections.unmodifiableSet(requiredRoles);
   }
@@ -87,5 +90,4 @@ public final class RoleEventImpl extends RegionEventImpl implements RoleEvent, D
     }
     this.requiredRoles = Collections.unmodifiableSet(requiredRolesSet);
   }
-
 }

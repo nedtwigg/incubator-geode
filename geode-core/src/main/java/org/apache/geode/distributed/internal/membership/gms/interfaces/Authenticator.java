@@ -23,7 +23,8 @@ import org.apache.geode.security.AuthenticationFailedException;
 
 public interface Authenticator extends Service {
 
-  String authenticate(InternalDistributedMember m, Properties credentials) throws AuthenticationFailedException;
+  String authenticate(InternalDistributedMember m, Properties credentials)
+      throws AuthenticationFailedException;
 
   Properties getCredentials(InternalDistributedMember m);
 }

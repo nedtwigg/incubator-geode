@@ -49,10 +49,9 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * The Region Destroy Operation from Cache Client does not pass the Client side
- * Context object nor does the p2p messaging has provision of sending Context
- * object in the DestroyRegionMessage. This can cause sender to recieve it own
- * region destruction message.
+ * The Region Destroy Operation from Cache Client does not pass the Client side Context object nor
+ * does the p2p messaging has provision of sending Context object in the DestroyRegionMessage. This
+ * can cause sender to recieve it own region destruction message.
  */
 @Category(DistributedTest.class)
 public class Bug36269DUnitTest extends JUnit4DistributedTestCase {
@@ -89,9 +88,7 @@ public class Bug36269DUnitTest extends JUnit4DistributedTestCase {
     assertNotNull(cache);
   }
 
-  /**
-   * This tests whether the region destroy are not received by the sender
-   */
+  /** This tests whether the region destroy are not received by the sender */
   @Test
   public void testRegionDestroyNotReceivedBySender() throws Exception {
     createClientCache();
@@ -106,7 +103,7 @@ public class Bug36269DUnitTest extends JUnit4DistributedTestCase {
     try {
       Connection desCon = pool.acquireConnection(new ServerLocation(host, PORT2));
       ServerRegionProxy srp = new ServerRegionProxy(Region.SEPARATOR + REGION_NAME, pool);
-      srp.destroyRegionOnForTestsOnly(desCon, new EventID(new byte[] { 1 }, 1, 1), null);
+      srp.destroyRegionOnForTestsOnly(desCon, new EventID(new byte[] {1}, 1, 1), null);
     } catch (Exception ex) {
       Assert.fail("while setting acquireConnections", ex);
     }
@@ -121,10 +118,18 @@ public class Bug36269DUnitTest extends JUnit4DistributedTestCase {
     PoolImpl p;
     String host = NetworkUtils.getServerHostName(Host.getHost(0));
     try {
-      p = (PoolImpl) PoolManager.createFactory().addServer(host, PORT1).addServer(host, PORT2).setSubscriptionEnabled(true).setReadTimeout(2000).setSocketBufferSize(1000).setMinConnections(4)
-          // .setRetryAttempts(2)
-          // .setRetryInterval(250)
-          .create("Bug36269DUnitTestPool");
+      p =
+          (PoolImpl)
+              PoolManager.createFactory()
+                  .addServer(host, PORT1)
+                  .addServer(host, PORT2)
+                  .setSubscriptionEnabled(true)
+                  .setReadTimeout(2000)
+                  .setSocketBufferSize(1000)
+                  .setMinConnections(4)
+                  // .setRetryAttempts(2)
+                  // .setRetryInterval(250)
+                  .create("Bug36269DUnitTestPool");
     } finally {
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
@@ -162,15 +167,16 @@ public class Bug36269DUnitTest extends JUnit4DistributedTestCase {
 
   public static void verifyRegionDestroy() {
     try {
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          return cache.getRegion(Region.SEPARATOR + REGION_NAME) == null;
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return cache.getRegion(Region.SEPARATOR + REGION_NAME) == null;
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 40 * 1000, 200, true);
     } catch (Exception ex) {
       Assert.fail("failed while verifyRegionDestroy", ex);

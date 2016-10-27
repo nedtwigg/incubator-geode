@@ -48,48 +48,51 @@ import static org.apache.geode.distributed.internal.InternalDistributedSystem.ge
 
 /**
  * Provides an implementation for region snapshots.
- * 
  *
  * @param <K> the key type
  * @param <V> the value type
  */
 public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K, V> {
   // controls number of concurrent putAll ops during an import
-  private static final int IMPORT_CONCURRENCY = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "RegionSnapshotServiceImpl.IMPORT_CONCURRENCY", 10);
+  private static final int IMPORT_CONCURRENCY =
+      Integer.getInteger(
+          DistributionConfig.GEMFIRE_PREFIX + "RegionSnapshotServiceImpl.IMPORT_CONCURRENCY", 10);
 
   // controls the size (in bytes) of the r/w buffer during imoprt and export
-  static final int BUFFER_SIZE = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "RegionSnapshotServiceImpl.BUFFER_SIZE", 1024 * 1024);
+  static final int BUFFER_SIZE =
+      Integer.getInteger(
+          DistributionConfig.GEMFIRE_PREFIX + "RegionSnapshotServiceImpl.BUFFER_SIZE", 1024 * 1024);
 
-  static final SnapshotFileMapper LOCAL_MAPPER = new SnapshotFileMapper() {
-    private static final long serialVersionUID = 1L;
+  static final SnapshotFileMapper LOCAL_MAPPER =
+      new SnapshotFileMapper() {
+        private static final long serialVersionUID = 1L;
 
-    @Override
-    public File mapExportPath(DistributedMember member, File snapshot) {
-      return snapshot;
-    }
-
-    @Override
-    public File[] mapImportPath(DistributedMember member, File snapshot) {
-      if (!snapshot.isDirectory()) {
-        return new File[] { snapshot };
-      }
-
-      return snapshot.listFiles(new FileFilter() {
         @Override
-        public boolean accept(File pathname) {
-          return !pathname.isDirectory();
+        public File mapExportPath(DistributedMember member, File snapshot) {
+          return snapshot;
         }
-      });
-    }
-  };
 
-  /**
-   * Provides a destination for snapshot data during an export.
-   */
+        @Override
+        public File[] mapImportPath(DistributedMember member, File snapshot) {
+          if (!snapshot.isDirectory()) {
+            return new File[] {snapshot};
+          }
+
+          return snapshot.listFiles(
+              new FileFilter() {
+                @Override
+                public boolean accept(File pathname) {
+                  return !pathname.isDirectory();
+                }
+              });
+        }
+      };
+
+  /** Provides a destination for snapshot data during an export. */
   public interface ExportSink {
     /**
      * Writes snapshot data to the destination sink.
-     * 
+     *
      * @param records the snapshot records
      * @throws IOException error writing records
      */
@@ -98,21 +101,22 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
 
   /**
    * Provides a strategy for exporting a region.
-   *  
+   *
    * @param <K> the key type
    * @param <V> the value type
    */
   public interface Exporter<K, V> {
     /**
      * Exports the requested region.
-     * 
+     *
      * @param region the region to export
      * @param sink the sink for the snapshot data
      * @param options snapshot options
      * @return number of entries exported
      * @throws IOException error during export
      */
-    long export(Region<K, V> region, ExportSink sink, SnapshotOptions<K, V> options) throws IOException;
+    long export(Region<K, V> region, ExportSink sink, SnapshotOptions<K, V> options)
+        throws IOException;
   }
 
   /** the region */
@@ -133,14 +137,16 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
   }
 
   @Override
-  public void save(File snapshot, SnapshotFormat format, SnapshotOptions<K, V> options) throws IOException {
+  public void save(File snapshot, SnapshotFormat format, SnapshotOptions<K, V> options)
+      throws IOException {
     // we can't be in a transaction since that will inline the function execution
     if (region.getCache().getCacheTransactionManager().exists()) {
       throw new IllegalStateException("Unable to save snapshot during a transaction");
     }
 
     if (shouldRunInParallel(options)) {
-      snapshotInParallel(new ParallelArgs<K, V>(snapshot, format, options), new ParallelExportFunction<K, V>());
+      snapshotInParallel(
+          new ParallelArgs<K, V>(snapshot, format, options), new ParallelExportFunction<K, V>());
       return;
 
     } else {
@@ -149,15 +155,18 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
   }
 
   @Override
-  public void load(File snapshot, SnapshotFormat format) throws IOException, ClassNotFoundException {
+  public void load(File snapshot, SnapshotFormat format)
+      throws IOException, ClassNotFoundException {
     load(snapshot, format, createOptions());
   }
 
   @Override
-  public void load(File snapshot, SnapshotFormat format, SnapshotOptions<K, V> options) throws IOException, ClassNotFoundException {
+  public void load(File snapshot, SnapshotFormat format, SnapshotOptions<K, V> options)
+      throws IOException, ClassNotFoundException {
 
     if (shouldRunInParallel(options)) {
-      snapshotInParallel(new ParallelArgs<K, V>(snapshot, format, options), new ParallelImportFunction<K, V>());
+      snapshotInParallel(
+          new ParallelArgs<K, V>(snapshot, format, options), new ParallelImportFunction<K, V>());
       return;
 
     } else {
@@ -166,7 +175,9 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
   }
 
   private boolean shouldRunInParallel(SnapshotOptions<K, V> options) {
-    return ((SnapshotOptionsImpl<K, V>) options).isParallelMode() && region.getAttributes().getDataPolicy().withPartitioning() && !(region instanceof LocalDataSet);
+    return ((SnapshotOptionsImpl<K, V>) options).isParallelMode()
+        && region.getAttributes().getDataPolicy().withPartitioning()
+        && !(region instanceof LocalDataSet);
   }
 
   private void snapshotInParallel(ParallelArgs<K, V> args, Function fn) throws IOException {
@@ -186,7 +197,8 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
     }
   }
 
-  private void importOnMember(File snapshot, SnapshotFormat format, SnapshotOptions<K, V> options) throws IOException, ClassNotFoundException {
+  private void importOnMember(File snapshot, SnapshotFormat format, SnapshotOptions<K, V> options)
+      throws IOException, ClassNotFoundException {
     final LocalRegion local = getLocalRegion(region);
 
     if (getLoggerI18n().infoEnabled())
@@ -213,7 +225,7 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
         // Until we modify the semantics of put/putAll to allow null values we
         // have to subvert the API by using Token.INVALID.  Alternatively we could
         // invoke create/invalidate directly but that prevents us from using
-        // bulk operations.  The ugly type coercion below is necessary to allow 
+        // bulk operations.  The ugly type coercion below is necessary to allow
         // strong typing elsewhere.
         V val = (V) Token.INVALID;
         if (record.hasValue()) {
@@ -244,12 +256,17 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
             }
 
             final Map<K, V> copy = new HashMap<K, V>(buffer);
-            Future<?> f = GemFireCacheImpl.getExisting("Importing region from snapshot").getDistributionManager().getWaitingThreadPool().submit(new Runnable() {
-              @Override
-              public void run() {
-                local.basicImportPutAll(copy, true);
-              }
-            });
+            Future<?> f =
+                GemFireCacheImpl.getExisting("Importing region from snapshot")
+                    .getDistributionManager()
+                    .getWaitingThreadPool()
+                    .submit(
+                        new Runnable() {
+                          @Override
+                          public void run() {
+                            local.basicImportPutAll(copy, true);
+                          }
+                        });
 
             puts.addLast(f);
             buffer.clear();
@@ -269,7 +286,10 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
       }
 
       if (getLoggerI18n().infoEnabled()) {
-        getLoggerI18n().info(LocalizedStrings.Snapshot_IMPORT_END_0_1_2_3, new Object[] { count, bytes, region.getName(), snapshot });
+        getLoggerI18n()
+            .info(
+                LocalizedStrings.Snapshot_IMPORT_END_0_1_2_3,
+                new Object[] {count, bytes, region.getName(), snapshot});
       }
 
     } catch (InterruptedException e) {
@@ -291,7 +311,8 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
     }
   }
 
-  private void exportOnMember(File snapshot, SnapshotFormat format, SnapshotOptions<K, V> options) throws IOException {
+  private void exportOnMember(File snapshot, SnapshotFormat format, SnapshotOptions<K, V> options)
+      throws IOException {
     LocalRegion local = getLocalRegion(region);
     Exporter<K, V> exp = createExporter(region, options);
 
@@ -310,7 +331,10 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
       count = exp.export(region, sink, options);
 
       if (getLoggerI18n().infoEnabled()) {
-        getLoggerI18n().info(LocalizedStrings.Snapshot_EXPORT_END_0_1_2_3, new Object[] { count, sink.getBytesWritten(), region.getName(), snapshot });
+        getLoggerI18n()
+            .info(
+                LocalizedStrings.Snapshot_EXPORT_END_0_1_2_3,
+                new Object[] {count, sink.getBytesWritten(), region.getName(), snapshot});
       }
 
     } finally {
@@ -321,25 +345,26 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
 
   private boolean includeEntry(SnapshotOptions<K, V> options, final K key, final V val) {
     if (options.getFilter() != null) {
-      Entry<K, V> entry = new Entry<K, V>() {
-        @Override
-        public V setValue(V value) {
-          throw new UnsupportedOperationException();
-        }
+      Entry<K, V> entry =
+          new Entry<K, V>() {
+            @Override
+            public V setValue(V value) {
+              throw new UnsupportedOperationException();
+            }
 
-        @Override
-        public K getKey() {
-          return key;
-        }
+            @Override
+            public K getKey() {
+              return key;
+            }
 
-        @Override
-        public V getValue() {
-          if (val instanceof CachedDeserializable) {
-            return (V) ((CachedDeserializable) val).getDeserializedForReading();
-          }
-          return null;
-        }
-      };
+            @Override
+            public V getValue() {
+              if (val instanceof CachedDeserializable) {
+                return (V) ((CachedDeserializable) val).getDeserializedForReading();
+              }
+              return null;
+            }
+          };
 
       return options.getFilter().accept(entry);
     }
@@ -351,7 +376,12 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
     if (pool != null) {
       return new ClientExporter<K, V>(PoolManager.find(pool));
 
-    } else if (InternalDistributedSystem.getAnyInstance().isLoner() || region.getAttributes().getDataPolicy().equals(DataPolicy.NORMAL) || region.getAttributes().getDataPolicy().equals(DataPolicy.PRELOADED) || region instanceof LocalDataSet || (((SnapshotOptionsImpl<K, V>) options).isParallelMode() && region.getAttributes().getDataPolicy().withPartitioning())) {
+    } else if (InternalDistributedSystem.getAnyInstance().isLoner()
+        || region.getAttributes().getDataPolicy().equals(DataPolicy.NORMAL)
+        || region.getAttributes().getDataPolicy().equals(DataPolicy.PRELOADED)
+        || region instanceof LocalDataSet
+        || (((SnapshotOptionsImpl<K, V>) options).isParallelMode()
+            && region.getAttributes().getDataPolicy().withPartitioning())) {
 
       // Avoid function execution:
       //    for loner systems to avoid inlining fn execution
@@ -374,8 +404,8 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
   }
 
   /**
-   * Writes snapshot data to a {@link SnapshotWriter}.  Caller is responsible
-   * for invoking {@link SnapshotWriter#snapshotComplete()}.
+   * Writes snapshot data to a {@link SnapshotWriter}. Caller is responsible for invoking {@link
+   * SnapshotWriter#snapshotComplete()}.
    */
   static final class SnapshotWriterSink implements ExportSink {
     private final SnapshotWriter writer;
@@ -399,8 +429,8 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
   }
 
   /**
-   * Forwards snapshot data to a {@link ResultSender}.  Caller is responsible for
-   * invoking {@link ResultSender#lastResult(Object)}.
+   * Forwards snapshot data to a {@link ResultSender}. Caller is responsible for invoking {@link
+   * ResultSender#lastResult(Object)}.
    */
   static final class ResultSenderSink implements ExportSink {
     /** the fowarding destination */
@@ -459,10 +489,15 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
     @Override
     public void execute(FunctionContext context) {
       try {
-        Region<K, V> local = PartitionRegionHelper.getLocalDataForContext((RegionFunctionContext) context);
+        Region<K, V> local =
+            PartitionRegionHelper.getLocalDataForContext((RegionFunctionContext) context);
         ParallelArgs<K, V> args = (ParallelArgs<K, V>) context.getArguments();
 
-        File f = args.getOptions().getMapper().mapExportPath(local.getCache().getDistributedSystem().getDistributedMember(), args.getFile());
+        File f =
+            args.getOptions()
+                .getMapper()
+                .mapExportPath(
+                    local.getCache().getDistributedSystem().getDistributedMember(), args.getFile());
 
         if (f == null || f.isDirectory()) {
           throw new IOException(LocalizedStrings.Snapshot_INVALID_EXPORT_FILE.toLocalizedString(f));
@@ -501,15 +536,21 @@ public class RegionSnapshotServiceImpl<K, V> implements RegionSnapshotService<K,
     @Override
     public void execute(FunctionContext context) {
       try {
-        Region<K, V> local = PartitionRegionHelper.getLocalDataForContext((RegionFunctionContext) context);
+        Region<K, V> local =
+            PartitionRegionHelper.getLocalDataForContext((RegionFunctionContext) context);
         ParallelArgs<K, V> args = (ParallelArgs<K, V>) context.getArguments();
 
-        File[] files = args.getOptions().getMapper().mapImportPath(local.getCache().getDistributedSystem().getDistributedMember(), args.getFile());
+        File[] files =
+            args.getOptions()
+                .getMapper()
+                .mapImportPath(
+                    local.getCache().getDistributedSystem().getDistributedMember(), args.getFile());
 
         if (files != null) {
           for (File f : files) {
             if (f.isDirectory() || !f.exists()) {
-              throw new IOException(LocalizedStrings.Snapshot_INVALID_IMPORT_FILE.toLocalizedString(f));
+              throw new IOException(
+                  LocalizedStrings.Snapshot_INVALID_IMPORT_FILE.toLocalizedString(f));
             }
             local.getSnapshotService().load(f, args.getFormat(), args.getOptions());
           }

@@ -41,12 +41,11 @@ import java.util.Map;
 
 /**
  * Class ClusterRegionsService
- * 
- * This class contains implementations of getting Cluster's regions details
- * 
+ *
+ * <p>This class contains implementations of getting Cluster's regions details
+ *
  * @since GemFire version 7.5
  */
-
 @Component
 @Service("ClusterRegions")
 @Scope("singleton")
@@ -58,17 +57,18 @@ public class ClusterRegionsService implements PulseService {
   private final String ENTRY_SIZE = "entrySize";
 
   // Comparator based upon regions entry count
-  private static Comparator<Cluster.Region> regionEntryCountComparator = (r1, r2) -> {
-    long r1Cnt = r1.getSystemRegionEntryCount();
-    long r2Cnt = r2.getSystemRegionEntryCount();
-    if (r1Cnt < r2Cnt) {
-      return -1;
-    } else if (r1Cnt > r2Cnt) {
-      return 1;
-    } else {
-      return 0;
-    }
-  };
+  private static Comparator<Cluster.Region> regionEntryCountComparator =
+      (r1, r2) -> {
+        long r1Cnt = r1.getSystemRegionEntryCount();
+        long r2Cnt = r2.getSystemRegionEntryCount();
+        if (r1Cnt < r2Cnt) {
+          return -1;
+        } else if (r1Cnt > r2Cnt) {
+          return 1;
+        } else {
+          return 0;
+        }
+      };
 
   public ObjectNode execute(final HttpServletRequest request) throws Exception {
     // get cluster object
@@ -85,10 +85,9 @@ public class ClusterRegionsService implements PulseService {
   }
 
   /**
-   * This method is used to get various regions associated with the given
-   * cluster and create json for each region fields and returns Array List for
-   * all the regions associated with given cluster
-   * 
+   * This method is used to get various regions associated with the given cluster and create json
+   * for each region fields and returns Array List for all the regions associated with given cluster
+   *
    * @param cluster
    * @return JSONObject Array List
    */
@@ -163,7 +162,8 @@ public class ClusterRegionsService implements PulseService {
         regionJSON.put("compressionCodec", this.VALUE_NA);
       }
 
-      if (PulseConstants.PRODUCT_NAME_SQLFIRE.equalsIgnoreCase(PulseController.getPulseProductSupport())) {
+      if (PulseConstants.PRODUCT_NAME_SQLFIRE.equalsIgnoreCase(
+          PulseController.getPulseProductSupport())) {
         // Convert region path to dot separated region path
         regionJSON.put("regionPath", StringUtils.getTableNameFromRegionName(reg.getFullPath()));
         regionJSON.put("id", StringUtils.getTableNameFromRegionName(reg.getFullPath()));
@@ -172,10 +172,22 @@ public class ClusterRegionsService implements PulseService {
         regionJSON.put("id", reg.getFullPath());
       }
 
-      regionJSON.put("memoryReadsTrend", mapper.valueToTree(reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_GETS_PER_SEC_TREND)));
-      regionJSON.put("memoryWritesTrend", mapper.valueToTree(reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_PUTS_PER_SEC_TREND)));
-      regionJSON.put("diskReadsTrend", mapper.valueToTree(reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_DISK_READS_PER_SEC_TREND)));
-      regionJSON.put("diskWritesTrend", mapper.valueToTree(reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_DISK_WRITES_PER_SEC_TREND)));
+      regionJSON.put(
+          "memoryReadsTrend",
+          mapper.valueToTree(
+              reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_GETS_PER_SEC_TREND)));
+      regionJSON.put(
+          "memoryWritesTrend",
+          mapper.valueToTree(
+              reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_PUTS_PER_SEC_TREND)));
+      regionJSON.put(
+          "diskReadsTrend",
+          mapper.valueToTree(
+              reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_DISK_READS_PER_SEC_TREND)));
+      regionJSON.put(
+          "diskWritesTrend",
+          mapper.valueToTree(
+              reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_DISK_WRITES_PER_SEC_TREND)));
       regionJSON.put("emptyNodes", reg.getEmptyNode());
       Long entrySize = reg.getEntrySize();
       DecimalFormat form = new DecimalFormat(PulseConstants.DECIMAL_FORMAT_PATTERN_2);

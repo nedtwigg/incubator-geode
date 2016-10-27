@@ -80,40 +80,115 @@ public class AcceptorImplJUnitTest {
       int port2 = freeTCPPorts[1];
 
       try {
-        new AcceptorImpl(port1, null, false, CacheServer.DEFAULT_SOCKET_BUFFER_SIZE, CacheServer.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS, this.cache, AcceptorImpl.MINIMUM_MAX_CONNECTIONS - 1, CacheServer.DEFAULT_MAX_THREADS, CacheServer.DEFAULT_MAXIMUM_MESSAGE_COUNT, CacheServer.DEFAULT_MESSAGE_TIME_TO_LIVE, null, null, false, Collections.EMPTY_LIST, CacheServer.DEFAULT_TCP_NO_DELAY);
+        new AcceptorImpl(
+            port1,
+            null,
+            false,
+            CacheServer.DEFAULT_SOCKET_BUFFER_SIZE,
+            CacheServer.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS,
+            this.cache,
+            AcceptorImpl.MINIMUM_MAX_CONNECTIONS - 1,
+            CacheServer.DEFAULT_MAX_THREADS,
+            CacheServer.DEFAULT_MAXIMUM_MESSAGE_COUNT,
+            CacheServer.DEFAULT_MESSAGE_TIME_TO_LIVE,
+            null,
+            null,
+            false,
+            Collections.EMPTY_LIST,
+            CacheServer.DEFAULT_TCP_NO_DELAY);
         fail("Expected an IllegalArgumentExcption due to max conns < min pool size");
       } catch (IllegalArgumentException expected) {
       }
 
       try {
-        new AcceptorImpl(port2, null, false, CacheServer.DEFAULT_SOCKET_BUFFER_SIZE, CacheServer.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS, this.cache, 0, CacheServer.DEFAULT_MAX_THREADS, CacheServer.DEFAULT_MAXIMUM_MESSAGE_COUNT, CacheServer.DEFAULT_MESSAGE_TIME_TO_LIVE, null, null, false, Collections.EMPTY_LIST, CacheServer.DEFAULT_TCP_NO_DELAY);
+        new AcceptorImpl(
+            port2,
+            null,
+            false,
+            CacheServer.DEFAULT_SOCKET_BUFFER_SIZE,
+            CacheServer.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS,
+            this.cache,
+            0,
+            CacheServer.DEFAULT_MAX_THREADS,
+            CacheServer.DEFAULT_MAXIMUM_MESSAGE_COUNT,
+            CacheServer.DEFAULT_MESSAGE_TIME_TO_LIVE,
+            null,
+            null,
+            false,
+            Collections.EMPTY_LIST,
+            CacheServer.DEFAULT_TCP_NO_DELAY);
         fail("Expected an IllegalArgumentExcption due to max conns of zero");
       } catch (IllegalArgumentException expected) {
       }
 
       try {
-        a1 = new AcceptorImpl(port1, null, false, CacheServer.DEFAULT_SOCKET_BUFFER_SIZE, CacheServer.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS, this.cache, AcceptorImpl.MINIMUM_MAX_CONNECTIONS, CacheServer.DEFAULT_MAX_THREADS, CacheServer.DEFAULT_MAXIMUM_MESSAGE_COUNT, CacheServer.DEFAULT_MESSAGE_TIME_TO_LIVE, null, null, false, Collections.EMPTY_LIST, CacheServer.DEFAULT_TCP_NO_DELAY);
-        a2 = new AcceptorImpl(port1, null, false, CacheServer.DEFAULT_SOCKET_BUFFER_SIZE, CacheServer.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS, this.cache, AcceptorImpl.MINIMUM_MAX_CONNECTIONS, CacheServer.DEFAULT_MAX_THREADS, CacheServer.DEFAULT_MAXIMUM_MESSAGE_COUNT, CacheServer.DEFAULT_MESSAGE_TIME_TO_LIVE, null, null, false, Collections.EMPTY_LIST, CacheServer.DEFAULT_TCP_NO_DELAY);
+        a1 =
+            new AcceptorImpl(
+                port1,
+                null,
+                false,
+                CacheServer.DEFAULT_SOCKET_BUFFER_SIZE,
+                CacheServer.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS,
+                this.cache,
+                AcceptorImpl.MINIMUM_MAX_CONNECTIONS,
+                CacheServer.DEFAULT_MAX_THREADS,
+                CacheServer.DEFAULT_MAXIMUM_MESSAGE_COUNT,
+                CacheServer.DEFAULT_MESSAGE_TIME_TO_LIVE,
+                null,
+                null,
+                false,
+                Collections.EMPTY_LIST,
+                CacheServer.DEFAULT_TCP_NO_DELAY);
+        a2 =
+            new AcceptorImpl(
+                port1,
+                null,
+                false,
+                CacheServer.DEFAULT_SOCKET_BUFFER_SIZE,
+                CacheServer.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS,
+                this.cache,
+                AcceptorImpl.MINIMUM_MAX_CONNECTIONS,
+                CacheServer.DEFAULT_MAX_THREADS,
+                CacheServer.DEFAULT_MAXIMUM_MESSAGE_COUNT,
+                CacheServer.DEFAULT_MESSAGE_TIME_TO_LIVE,
+                null,
+                null,
+                false,
+                Collections.EMPTY_LIST,
+                CacheServer.DEFAULT_TCP_NO_DELAY);
         fail("Expecetd a BindException while attaching to the same port");
       } catch (BindException expected) {
       }
 
-      a3 = new AcceptorImpl(port2, null, false, CacheServer.DEFAULT_SOCKET_BUFFER_SIZE, CacheServer.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS, this.cache, AcceptorImpl.MINIMUM_MAX_CONNECTIONS, CacheServer.DEFAULT_MAX_THREADS, CacheServer.DEFAULT_MAXIMUM_MESSAGE_COUNT, CacheServer.DEFAULT_MESSAGE_TIME_TO_LIVE, null, null, false, Collections.EMPTY_LIST, CacheServer.DEFAULT_TCP_NO_DELAY);
+      a3 =
+          new AcceptorImpl(
+              port2,
+              null,
+              false,
+              CacheServer.DEFAULT_SOCKET_BUFFER_SIZE,
+              CacheServer.DEFAULT_MAXIMUM_TIME_BETWEEN_PINGS,
+              this.cache,
+              AcceptorImpl.MINIMUM_MAX_CONNECTIONS,
+              CacheServer.DEFAULT_MAX_THREADS,
+              CacheServer.DEFAULT_MAXIMUM_MESSAGE_COUNT,
+              CacheServer.DEFAULT_MESSAGE_TIME_TO_LIVE,
+              null,
+              null,
+              false,
+              Collections.EMPTY_LIST,
+              CacheServer.DEFAULT_TCP_NO_DELAY);
       assertEquals(port2, a3.getPort());
-      InternalDistributedSystem isystem = (InternalDistributedSystem) this.cache.getDistributedSystem();
+      InternalDistributedSystem isystem =
+          (InternalDistributedSystem) this.cache.getDistributedSystem();
       DistributionConfig config = isystem.getConfig();
       String bindAddress = config.getBindAddress();
       if (bindAddress == null || bindAddress.length() <= 0) {
         assertTrue(a3.getServerInetAddr().isAnyLocalAddress());
       }
     } finally {
-      if (a1 != null)
-        a1.close();
-      if (a2 != null)
-        a2.close();
-      if (a3 != null)
-        a3.close();
+      if (a1 != null) a1.close();
+      if (a2 != null) a2.close();
+      if (a3 != null) a3.close();
     }
   }
-
 }

@@ -38,7 +38,8 @@ public class CacheSnapshotJUnitTest extends SnapshotTestCase {
   public void testExportAndImport() throws Exception {
     for (final RegionType rt : RegionType.values()) {
       for (final SerializationType st : SerializationType.values()) {
-        Region<Integer, MyObject> region = rgen.createRegion(cache, ds.getName(), rt, "test-" + rt.name() + "-" + st.name());
+        Region<Integer, MyObject> region =
+            rgen.createRegion(cache, ds.getName(), rt, "test-" + rt.name() + "-" + st.name());
         region.putAll(createExpected(st));
       }
     }
@@ -64,7 +65,10 @@ public class CacheSnapshotJUnitTest extends SnapshotTestCase {
       for (final SerializationType st : SerializationType.values()) {
         Region<Integer, MyObject> region = cache.getRegion("test-" + rt.name() + "-" + st.name());
         for (Entry<Integer, MyObject> entry : createExpected(st).entrySet()) {
-          assertEquals("Comparison failure for " + rt.name() + "/" + st.name(), entry.getValue(), region.get(entry.getKey()));
+          assertEquals(
+              "Comparison failure for " + rt.name() + "/" + st.name(),
+              entry.getValue(),
+              region.get(entry.getKey()));
         }
       }
     }
@@ -74,24 +78,27 @@ public class CacheSnapshotJUnitTest extends SnapshotTestCase {
   public void testFilter() throws Exception {
     for (final RegionType rt : RegionType.values()) {
       for (final SerializationType st : SerializationType.values()) {
-        Region<Integer, MyObject> region = rgen.createRegion(cache, ds.getName(), rt, "test-" + rt.name() + "-" + st.name());
+        Region<Integer, MyObject> region =
+            rgen.createRegion(cache, ds.getName(), rt, "test-" + rt.name() + "-" + st.name());
         region.putAll(createExpected(st));
       }
     }
 
-    SnapshotFilter<Object, Object> even = new SnapshotFilter<Object, Object>() {
-      @Override
-      public boolean accept(Entry<Object, Object> entry) {
-        return ((Integer) entry.getKey()) % 2 == 0;
-      }
-    };
+    SnapshotFilter<Object, Object> even =
+        new SnapshotFilter<Object, Object>() {
+          @Override
+          public boolean accept(Entry<Object, Object> entry) {
+            return ((Integer) entry.getKey()) % 2 == 0;
+          }
+        };
 
-    SnapshotFilter<Object, Object> odd = new SnapshotFilter<Object, Object>() {
-      @Override
-      public boolean accept(Entry<Object, Object> entry) {
-        return ((Integer) entry.getKey()) % 2 == 1;
-      }
-    };
+    SnapshotFilter<Object, Object> odd =
+        new SnapshotFilter<Object, Object>() {
+          @Override
+          public boolean accept(Entry<Object, Object> entry) {
+            return ((Integer) entry.getKey()) % 2 == 1;
+          }
+        };
 
     // save even entries
     CacheSnapshotService css = cache.getSnapshotService();
@@ -107,12 +114,14 @@ public class CacheSnapshotJUnitTest extends SnapshotTestCase {
     }
 
     // load odd entries
-    File[] snapshots = snaps.listFiles(new FileFilter() {
-      @Override
-      public boolean accept(File pathname) {
-        return pathname.getName().startsWith("snapshot-");
-      }
-    });
+    File[] snapshots =
+        snaps.listFiles(
+            new FileFilter() {
+              @Override
+              public boolean accept(File pathname) {
+                return pathname.getName().startsWith("snapshot-");
+              }
+            });
 
     options = css.createOptions().setFilter(odd);
     css.load(snapshots, SnapshotFormat.GEMFIRE, options);

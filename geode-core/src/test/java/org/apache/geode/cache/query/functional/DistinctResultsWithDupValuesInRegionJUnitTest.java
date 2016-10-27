@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
+/** */
 package org.apache.geode.cache.query.functional;
 
 import org.apache.geode.cache.*;
@@ -36,17 +34,14 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class DistinctResultsWithDupValuesInRegionJUnitTest {
 
   private static String regionName = "test";
   private int numElem = 100;
 
-  public DistinctResultsWithDupValuesInRegionJUnitTest() {
-  }
+  public DistinctResultsWithDupValuesInRegionJUnitTest() {}
 
   @Before
   public void setUp() throws Exception {
@@ -59,13 +54,22 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
     CacheUtils.closeCache();
   }
 
-  private static String[] queries = new String[] { "select DISTINCT * from /test p, p.positions.values pos where p.ID> 0 OR p.status = 'active' OR pos.secId = 'IBM' order by p.ID", "select DISTINCT * from /test p, p.positions.values pos where p.ID> 0 OR p.status = 'active' OR pos.secId = 'IBM'", "select DISTINCT * from /test p, p.positions.values pos where p.ID> 0 OR p.status = 'active' order by p.ID", "select DISTINCT * from /test p, p.positions.values pos where p.ID> 0 order by p.ID", "select DISTINCT p.ID, p.status, pos.secId from /test p, p.positions.values pos where p.ID> 0 OR p.status = 'active' OR pos.secId = 'IBM' order by p.ID", "select DISTINCT p.ID, p.status, pos.secId, pos.secType from /test p, p.positions.values pos where p.ID> 0 OR p.status = 'active' OR pos.secId = 'IBM' order by p.ID", };
+  private static String[] queries =
+      new String[] {
+        "select DISTINCT * from /test p, p.positions.values pos where p.ID> 0 OR p.status = 'active' OR pos.secId = 'IBM' order by p.ID",
+        "select DISTINCT * from /test p, p.positions.values pos where p.ID> 0 OR p.status = 'active' OR pos.secId = 'IBM'",
+        "select DISTINCT * from /test p, p.positions.values pos where p.ID> 0 OR p.status = 'active' order by p.ID",
+        "select DISTINCT * from /test p, p.positions.values pos where p.ID> 0 order by p.ID",
+        "select DISTINCT p.ID, p.status, pos.secId from /test p, p.positions.values pos where p.ID> 0 OR p.status = 'active' OR pos.secId = 'IBM' order by p.ID",
+        "select DISTINCT p.ID, p.status, pos.secId, pos.secType from /test p, p.positions.values pos where p.ID> 0 OR p.status = 'active' OR pos.secId = 'IBM' order by p.ID",
+      };
 
-  private static String[] moreQueries = new String[] { "select DISTINCT p.ID, p.status from /test p, p.positions.values pos where p.ID> 0 OR p.status = 'active' order by p.ID", };
+  private static String[] moreQueries =
+      new String[] {
+        "select DISTINCT p.ID, p.status from /test p, p.positions.values pos where p.ID> 0 OR p.status = 'active' order by p.ID",
+      };
 
-  /**
-   * Test on Local Region data
-   */
+  /** Test on Local Region data */
   @Test
   public void testQueriesOnLocalRegion() {
     Cache cache = CacheUtils.getCache();
@@ -93,9 +97,7 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
     cache.getRegion(regionName).destroyRegion();
   }
 
-  /**
-   * Test on Replicated Region data
-   */
+  /** Test on Replicated Region data */
   @Test
   public void testQueriesOnReplicatedRegion() {
     Cache cache = CacheUtils.getCache();
@@ -124,9 +126,7 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
     cache.getRegion(regionName).destroyRegion();
   }
 
-  /**
-   * Test on Partitioned Region data
-   */
+  /** Test on Partitioned Region data */
   @Test
   public void testQueriesOnPartitionedRegion() {
     Cache cache = CacheUtils.getCache();
@@ -155,9 +155,7 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
     cache.getRegion(regionName).destroyRegion();
   }
 
-  /**
-   * Test on Replicated Region data
-   */
+  /** Test on Replicated Region data */
   @Test
   public void testQueriesOnReplicatedRegionWithSameProjAttr() {
     Cache cache = CacheUtils.getCache();
@@ -186,9 +184,7 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
     cache.getRegion(regionName).destroyRegion();
   }
 
-  /**
-   * Test on Partitioned Region data
-   */
+  /** Test on Partitioned Region data */
   @Test
   public void testQueriesOnPartitionedRegionWithSameProjAttr() {
     Cache cache = CacheUtils.getCache();
@@ -217,9 +213,7 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
     cache.getRegion(regionName).destroyRegion();
   }
 
-  /**
-   * Test on Replicated Region data
-   */
+  /** Test on Replicated Region data */
   @Test
   public void testQueriesOnReplicatedRegionWithNullProjAttr() {
     Cache cache = CacheUtils.getCache();
@@ -248,9 +242,7 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
     cache.getRegion(regionName).destroyRegion();
   }
 
-  /**
-   * Test on Partitioned Region data
-   */
+  /** Test on Partitioned Region data */
   @Test
   public void testQueriesOnPartitionedRegionWithNullProjAttr() {
     Cache cache = CacheUtils.getCache();
@@ -267,7 +259,10 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
 
         SelectResults result1 = (SelectResults) query1.execute();
         cache.getLogger().fine(result1.asList().toString());
-        assertEquals(queryStr, numElem + 5 /*Check createPartitionedRegionWithNullValues()*/, result1.size());
+        assertEquals(
+            queryStr,
+            numElem + 5 /*Check createPartitionedRegionWithNullValues()*/,
+            result1.size());
         verifyDistinctResults(result1);
       }
     } catch (Exception e) {
@@ -279,9 +274,7 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
     cache.getRegion(regionName).destroyRegion();
   }
 
-  /**
-   * Test on Local Region data
-   */
+  /** Test on Local Region data */
   @Test
   public void testQueriesOnLocalRegionWithIndex() {
     Cache cache = CacheUtils.getCache();
@@ -310,9 +303,7 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
     cache.getRegion(regionName).destroyRegion();
   }
 
-  /**
-   * Test on Replicated Region data
-   */
+  /** Test on Replicated Region data */
   @Test
   public void testQueriesOnReplicatedRegionWithIndex() {
     Cache cache = CacheUtils.getCache();
@@ -342,9 +333,7 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
     cache.getRegion(regionName).destroyRegion();
   }
 
-  /**
-   * Test on Partitioned Region data
-   */
+  /** Test on Partitioned Region data */
   @Test
   public void testQueriesOnPartitionedRegionWithIndex() {
     Cache cache = CacheUtils.getCache();
@@ -426,8 +415,7 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
     for (int i = 1; i <= numElem; i++) {
       Portfolio obj = new Portfolio(i);
       region.put(i, obj);
-      if (i % (numElem / 5) == 0)
-        obj.status = null;
+      if (i % (numElem / 5) == 0) obj.status = null;
       region.put(i + numElem, obj);
       CacheUtils.log(obj);
     }
@@ -444,8 +432,7 @@ public class DistinctResultsWithDupValuesInRegionJUnitTest {
     for (int i = 1; i <= numElem; i++) {
       Portfolio obj = new Portfolio(i);
       region.put(i, obj);
-      if (i % (numElem / 5) == 0)
-        obj.status = null;
+      if (i % (numElem / 5) == 0) obj.status = null;
       region.put(i + numElem, obj);
       CacheUtils.log(obj);
     }

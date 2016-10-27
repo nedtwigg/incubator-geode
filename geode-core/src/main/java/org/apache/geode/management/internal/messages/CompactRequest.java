@@ -45,10 +45,8 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * An instruction to all members with cache that they should 
- * compact their disk stores.
- * 
- * 
+ * An instruction to all members with cache that they should compact their disk stores.
+ *
  * @since GemFire 7.0
  */
 // NOTE: This is copied from org/apache/geode/internal/admin/remote/CompactRequest.java
@@ -59,7 +57,8 @@ public class CompactRequest extends AdminRequest {
   private String diskStoreName;
   private static String notExecutedMembers;
 
-  public static Map<DistributedMember, PersistentID> send(DM dm, String diskStoreName, Set<?> recipients) {
+  public static Map<DistributedMember, PersistentID> send(
+      DM dm, String diskStoreName, Set<?> recipients) {
     Map<DistributedMember, PersistentID> results = Collections.emptyMap();
 
     if (recipients != null && !recipients.isEmpty()) {
@@ -138,11 +137,17 @@ public class CompactRequest extends AdminRequest {
 
   @Override
   public String toString() {
-    return "Compact request sent to " + Arrays.toString(this.getRecipients()) + " from " + this.getSender() + " for " + this.diskStoreName;
+    return "Compact request sent to "
+        + Arrays.toString(this.getRecipients())
+        + " from "
+        + this.getSender()
+        + " for "
+        + this.diskStoreName;
   }
 
   private static class CompactReplyProcessor extends AdminMultipleReplyProcessor {
-    Map<DistributedMember, PersistentID> results = Collections.synchronizedMap(new HashMap<DistributedMember, PersistentID>());
+    Map<DistributedMember, PersistentID> results =
+        Collections.synchronizedMap(new HashMap<DistributedMember, PersistentID>());
 
     public CompactReplyProcessor(DM dm, Collection<?> initMembers) {
       super(dm, initMembers);

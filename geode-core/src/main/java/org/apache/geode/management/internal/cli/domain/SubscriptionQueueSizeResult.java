@@ -16,10 +16,7 @@
  */
 package org.apache.geode.management.internal.cli.domain;
 
-/***
- *Data class used for sending back subscription-queue-size for a client or a cq
- *
- */
+/** * Data class used for sending back subscription-queue-size for a client or a cq */
 public class SubscriptionQueueSizeResult extends MemberResult {
 
   private static final long serialVersionUID = 1L;
@@ -46,5 +43,4 @@ public class SubscriptionQueueSizeResult extends MemberResult {
     sb.append(this.subscriptionQueueSize);
     return sb.toString();
   }
-
 }

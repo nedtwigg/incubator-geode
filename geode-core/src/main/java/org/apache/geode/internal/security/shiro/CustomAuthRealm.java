@@ -39,8 +39,8 @@ public class CustomAuthRealm extends AuthorizingRealm {
   private SecurityManager securityManager = null;
 
   /**
-   * The caller must invoke {@link org.apache.geode.security.SecurityManager#init(Properties)}
-   * prior to instantiating CustomAuthRealm.
+   * The caller must invoke {@link org.apache.geode.security.SecurityManager#init(Properties)} prior
+   * to instantiating CustomAuthRealm.
    *
    * @param securityManager instance of SecurityManager which has already been initialized
    */
@@ -56,16 +56,17 @@ public class CustomAuthRealm extends AuthorizingRealm {
    * @param securityProperties the security properties to initialize SecurityManager with
    */
   public CustomAuthRealm(String authenticatorFactory, Properties securityProperties) {
-    this.securityManager = SecurityService.getObjectOfTypeFromClassName(authenticatorFactory, SecurityManager.class);
+    this.securityManager =
+        SecurityService.getObjectOfTypeFromClassName(authenticatorFactory, SecurityManager.class);
     this.securityManager.init(securityProperties);
   }
 
   @Override
-  protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+  protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)
+      throws AuthenticationException {
     GeodeAuthenticationToken authToken = (GeodeAuthenticationToken) token;
     Object principal = securityManager.authenticate(authToken.getProperties());
     return new SimpleAuthenticationInfo(principal, authToken.getCredentials(), REALM_NAME);
-
   }
 
   @Override
@@ -80,5 +81,4 @@ public class CustomAuthRealm extends AuthorizingRealm {
     Serializable principal = (Serializable) principals.getPrimaryPrincipal();
     return securityManager.authorize(principal, context);
   }
-
 }

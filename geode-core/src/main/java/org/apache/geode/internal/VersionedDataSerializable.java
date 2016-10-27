@@ -19,14 +19,9 @@ package org.apache.geode.internal;
 import org.apache.geode.DataSerializable;
 
 /**
- * An extension of DataSerializable that can support multiple serialized
- * forms for backward compatibility.  DataSerializer.writeObject/readObject
- * will invoke getDSFIDVersions() and for each version returned it will
- * use the corresponding toDataPreXXX/fromDataPreXXX methods when serializing
- * for a particular version of the product.
- * 
- *
+ * An extension of DataSerializable that can support multiple serialized forms for backward
+ * compatibility. DataSerializer.writeObject/readObject will invoke getDSFIDVersions() and for each
+ * version returned it will use the corresponding toDataPreXXX/fromDataPreXXX methods when
+ * serializing for a particular version of the product.
  */
-public interface VersionedDataSerializable extends DataSerializable, SerializationVersions {
-
-}
+public interface VersionedDataSerializable extends DataSerializable, SerializationVersions {}

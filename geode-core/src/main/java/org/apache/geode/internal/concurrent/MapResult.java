@@ -18,25 +18,21 @@
 package org.apache.geode.internal.concurrent;
 
 /**
- * Any additional result state needed to be passed to {@link MapCallback} which
- * returns values by reference.
- * 
+ * Any additional result state needed to be passed to {@link MapCallback} which returns values by
+ * reference.
+ *
  * @since GemFire Helios
  */
 public interface MapResult {
 
   /**
-   * Set whether the result of {@link MapCallback#newValue} created a new value
-   * or not. If not, then the result value of newValue is not inserted into the
-   * map though it is still returned by the create methods. Default for
-   * MapResult is assumed to be true if this method was not invoked by
+   * Set whether the result of {@link MapCallback#newValue} created a new value or not. If not, then
+   * the result value of newValue is not inserted into the map though it is still returned by the
+   * create methods. Default for MapResult is assumed to be true if this method was not invoked by
    * {@link MapCallback} explicitly.
    */
   public void setNewValueCreated(boolean created);
 
-  /**
-   * Result set by {@link #setNewValueCreated(boolean)}. Default is required to
-   * be true.
-   */
+  /** Result set by {@link #setNewValueCreated(boolean)}. Default is required to be true. */
   public boolean isNewValueCreated();
 }

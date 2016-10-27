@@ -45,17 +45,14 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * The DUnitTest checks whether the following Three counts are incremented
- * correctly or not:
- * 1) DurableReconnectionCount -> Incremented Each time 
- *      a Proxy present in server for a DurableClient
- * 2) QueueDroppedCount -> Incremented Each time 
- *      a queue for a durable client is dropped after durable Timeout
- * 3) EventsEnqueuedWhileClientAwayCount -> Incremented Each time
- *      an entry is made when client is away.
- *      
- * In the given test DurableClient comes up and goes down discreetly with
- * different DurableClientTimeouts so as to increment the counts
+ * The DUnitTest checks whether the following Three counts are incremented correctly or not: 1)
+ * DurableReconnectionCount -> Incremented Each time a Proxy present in server for a DurableClient
+ * 2) QueueDroppedCount -> Incremented Each time a queue for a durable client is dropped after
+ * durable Timeout 3) EventsEnqueuedWhileClientAwayCount -> Incremented Each time an entry is made
+ * when client is away.
+ *
+ * <p>In the given test DurableClient comes up and goes down discreetly with different
+ * DurableClientTimeouts so as to increment the counts
  */
 @Category(DistributedTest.class)
 public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
@@ -89,7 +86,11 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
   @Test
   public void testNonDurableClientStatistics() {
     // Step 1: Starting the servers
-    PORT1 = ((Integer) this.server1VM.invoke(() -> CacheServerTestUtil.createCacheServer(regionName, new Boolean(true)))).intValue();
+    PORT1 =
+        ((Integer)
+                this.server1VM.invoke(
+                    () -> CacheServerTestUtil.createCacheServer(regionName, new Boolean(true))))
+            .intValue();
     this.server1VM.invoke(() -> DurableClientStatsDUnitTest.checkStatistics());
     // Step 2: Bring Up the Client
     // Start a durable client that is not kept alive on the server when it
@@ -106,7 +107,8 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
     startRegisterAndCloseNonDurableClientCache(durableClientTimeout);
     Wait.pause(500);
 
-    this.server1VM.invoke(() -> DurableClientStatsDUnitTest.putValue(K1, "Value1")); //////// -> Enqueue Message1
+    this.server1VM.invoke(
+        () -> DurableClientStatsDUnitTest.putValue(K1, "Value1")); //////// -> Enqueue Message1
 
     Wait.pause(500);
     startAndCloseNonDurableClientCache(1); //////// -> Reconnection2
@@ -116,18 +118,26 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
     startRegisterAndCloseNonDurableClientCache(durableClientTimeout);
     Wait.pause(500);
 
-    this.server1VM.invoke(() -> DurableClientStatsDUnitTest.putValue(K1, "NewValue1")); //////// -> Enqueue Message2
+    this.server1VM.invoke(
+        () -> DurableClientStatsDUnitTest.putValue(K1, "NewValue1")); //////// -> Enqueue Message2
 
     startAndCloseNonDurableClientCache(durableClientTimeout); //////// -> Reconnection3
 
-    this.server1VM.invoke(() -> DurableClientStatsDUnitTest.checkStatisticsWithExpectedValues(new Integer(0), new Integer(0), new Integer(0)));
+    this.server1VM.invoke(
+        () ->
+            DurableClientStatsDUnitTest.checkStatisticsWithExpectedValues(
+                new Integer(0), new Integer(0), new Integer(0)));
   }
 
   @Test
   public void testDurableClientStatistics() {
 
     // Step 1: Starting the servers
-    PORT1 = ((Integer) this.server1VM.invoke(() -> CacheServerTestUtil.createCacheServer(regionName, new Boolean(true)))).intValue();
+    PORT1 =
+        ((Integer)
+                this.server1VM.invoke(
+                    () -> CacheServerTestUtil.createCacheServer(regionName, new Boolean(true))))
+            .intValue();
     this.server1VM.invoke(() -> DurableClientStatsDUnitTest.checkStatistics());
     // Step 2: Bring Up the Client
     // Start a durable client that is not kept alive on the server when it
@@ -144,7 +154,8 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
     startRegisterAndCloseDurableClientCache(durableClientTimeout);
     Wait.pause(500);
 
-    this.server1VM.invoke(() -> DurableClientStatsDUnitTest.putValue(K1, "Value1")); //////// -> Enqueue Message1
+    this.server1VM.invoke(
+        () -> DurableClientStatsDUnitTest.putValue(K1, "Value1")); //////// -> Enqueue Message1
 
     Wait.pause(500);
     startAndCloseDurableClientCache(1); //////// -> Reconnection2
@@ -154,27 +165,40 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
     startRegisterAndCloseDurableClientCache(durableClientTimeout);
     Wait.pause(500);
 
-    this.server1VM.invoke(() -> DurableClientStatsDUnitTest.putValue(K1, "NewValue1")); //////// -> Enqueue Message2
+    this.server1VM.invoke(
+        () -> DurableClientStatsDUnitTest.putValue(K1, "NewValue1")); //////// -> Enqueue Message2
 
     startAndCloseDurableClientCache(durableClientTimeout); //////// -> Reconnection3
 
-    this.server1VM.invoke(() -> DurableClientStatsDUnitTest.checkStatisticsWithExpectedValues(new Integer(3), new Integer(4), new Integer(2)));
+    this.server1VM.invoke(
+        () ->
+            DurableClientStatsDUnitTest.checkStatisticsWithExpectedValues(
+                new Integer(3), new Integer(4), new Integer(2)));
   }
 
   public void startRegisterAndCloseDurableClientCache(int durableClientTimeout) {
     final String durableClientId = getName() + "_client";
 
-    this.durableClientVM.invoke(() -> CacheServerTestUtil.createCacheClient(getClientPool(NetworkUtils.getServerHostName(durableClientVM.getHost()), PORT1, true, 0), regionName, getDurableClientDistributedSystemProperties(durableClientId, durableClientTimeout), Boolean.TRUE));
+    this.durableClientVM.invoke(
+        () ->
+            CacheServerTestUtil.createCacheClient(
+                getClientPool(
+                    NetworkUtils.getServerHostName(durableClientVM.getHost()), PORT1, true, 0),
+                regionName,
+                getDurableClientDistributedSystemProperties(durableClientId, durableClientTimeout),
+                Boolean.TRUE));
 
     // Send clientReady message
-    this.durableClientVM.invoke(new CacheSerializableRunnable("Send clientReady") {
-      @Override
-      public void run2() throws CacheException {
-        CacheServerTestUtil.getCache().readyForEvents();
-      }
-    });
+    this.durableClientVM.invoke(
+        new CacheSerializableRunnable("Send clientReady") {
+          @Override
+          public void run2() throws CacheException {
+            CacheServerTestUtil.getCache().readyForEvents();
+          }
+        });
 
-    this.durableClientVM.invoke(() -> DurableClientStatsDUnitTest.registerKey(K1, new Boolean(true)));
+    this.durableClientVM.invoke(
+        () -> DurableClientStatsDUnitTest.registerKey(K1, new Boolean(true)));
 
     this.durableClientVM.invoke(() -> DurableClientStatsDUnitTest.closeCache());
   }
@@ -182,7 +206,15 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
   public void startRegisterAndCloseNonDurableClientCache(int durableClientTimeout) {
     final String durableClientId = getName() + "_client";
 
-    this.durableClientVM.invoke(() -> CacheServerTestUtil.createCacheClient(getClientPool(NetworkUtils.getServerHostName(durableClientVM.getHost()), PORT1, true, 0), regionName, getNonDurableClientDistributedSystemProperties(durableClientId, durableClientTimeout), Boolean.TRUE));
+    this.durableClientVM.invoke(
+        () ->
+            CacheServerTestUtil.createCacheClient(
+                getClientPool(
+                    NetworkUtils.getServerHostName(durableClientVM.getHost()), PORT1, true, 0),
+                regionName,
+                getNonDurableClientDistributedSystemProperties(
+                    durableClientId, durableClientTimeout),
+                Boolean.TRUE));
 
     // Send clientReady message
     //    this.durableClientVM.invoke(new CacheSerializableRunnable(
@@ -192,7 +224,8 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
     //      }
     //    });
 
-    this.durableClientVM.invoke(() -> DurableClientStatsDUnitTest.registerKey(K1, new Boolean(false)));
+    this.durableClientVM.invoke(
+        () -> DurableClientStatsDUnitTest.registerKey(K1, new Boolean(false)));
 
     this.durableClientVM.invoke(() -> DurableClientStatsDUnitTest.closeCache());
   }
@@ -201,25 +234,40 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
 
     final String durableClientId = getName() + "_client";
 
-    this.durableClientVM.invoke(() -> CacheServerTestUtil.createCacheClient(getClientPool(NetworkUtils.getServerHostName(durableClientVM.getHost()), PORT1, true, 0), regionName, getDurableClientDistributedSystemProperties(durableClientId, durableClientTimeout), Boolean.TRUE));
+    this.durableClientVM.invoke(
+        () ->
+            CacheServerTestUtil.createCacheClient(
+                getClientPool(
+                    NetworkUtils.getServerHostName(durableClientVM.getHost()), PORT1, true, 0),
+                regionName,
+                getDurableClientDistributedSystemProperties(durableClientId, durableClientTimeout),
+                Boolean.TRUE));
 
     // Send clientReady message
-    this.durableClientVM.invoke(new CacheSerializableRunnable("Send clientReady") {
-      @Override
-      public void run2() throws CacheException {
-        CacheServerTestUtil.getCache().readyForEvents();
-      }
-    });
+    this.durableClientVM.invoke(
+        new CacheSerializableRunnable("Send clientReady") {
+          @Override
+          public void run2() throws CacheException {
+            CacheServerTestUtil.getCache().readyForEvents();
+          }
+        });
 
     this.durableClientVM.invoke(() -> DurableClientStatsDUnitTest.closeCache());
-
   }
 
   public void startAndCloseNonDurableClientCache(int durableClientTimeout) {
 
     final String durableClientId = getName() + "_client";
 
-    this.durableClientVM.invoke(() -> CacheServerTestUtil.createCacheClient(getClientPool(NetworkUtils.getServerHostName(durableClientVM.getHost()), PORT1, true, 0), regionName, getNonDurableClientDistributedSystemProperties(durableClientId, durableClientTimeout), Boolean.TRUE));
+    this.durableClientVM.invoke(
+        () ->
+            CacheServerTestUtil.createCacheClient(
+                getClientPool(
+                    NetworkUtils.getServerHostName(durableClientVM.getHost()), PORT1, true, 0),
+                regionName,
+                getNonDurableClientDistributedSystemProperties(
+                    durableClientId, durableClientTimeout),
+                Boolean.TRUE));
 
     // Send clientReady message
     //    this.durableClientVM.invoke(new CacheSerializableRunnable(
@@ -230,32 +278,48 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
     //    });
 
     this.durableClientVM.invoke(() -> DurableClientStatsDUnitTest.closeCache());
-
   }
 
   public static void checkStatistics() {
     try {
       Cache cache = CacheServerTestUtil.getCache();
       org.apache.geode.LogWriter logger = cache.getLogger();
-      CacheServerImpl currentServer = (CacheServerImpl) (new ArrayList(cache.getCacheServers()).get(0));
+      CacheServerImpl currentServer =
+          (CacheServerImpl) (new ArrayList(cache.getCacheServers()).get(0));
       AcceptorImpl ai = currentServer.getAcceptor();
       CacheClientNotifier notifier = ai.getCacheClientNotifier();
       CacheClientNotifierStats stats = notifier.getStats();
-      logger.info("Stats:" + "\nDurableReconnectionCount:" + stats.get_durableReconnectionCount() + "\nQueueDroppedCount" + stats.get_queueDroppedCount() + "\nEventsEnqueuedWhileClientAwayCount" + stats.get_eventEnqueuedWhileClientAwayCount());
+      logger.info(
+          "Stats:"
+              + "\nDurableReconnectionCount:"
+              + stats.get_durableReconnectionCount()
+              + "\nQueueDroppedCount"
+              + stats.get_queueDroppedCount()
+              + "\nEventsEnqueuedWhileClientAwayCount"
+              + stats.get_eventEnqueuedWhileClientAwayCount());
     } catch (Exception e) {
       fail("Exception thrown while executing checkStatistics()", e);
     }
   }
 
-  public static void checkStatisticsWithExpectedValues(int reconnectionCount, int queueDropCount, int enqueueCount) {
+  public static void checkStatisticsWithExpectedValues(
+      int reconnectionCount, int queueDropCount, int enqueueCount) {
     try {
       Cache cache = CacheServerTestUtil.getCache();
       org.apache.geode.LogWriter logger = cache.getLogger();
-      CacheServerImpl currentServer = (CacheServerImpl) (new ArrayList(cache.getCacheServers()).get(0));
+      CacheServerImpl currentServer =
+          (CacheServerImpl) (new ArrayList(cache.getCacheServers()).get(0));
       AcceptorImpl ai = currentServer.getAcceptor();
       CacheClientNotifier notifier = ai.getCacheClientNotifier();
       CacheClientNotifierStats stats = notifier.getStats();
-      logger.info("Stats:" + "\nDurableReconnectionCount:" + stats.get_durableReconnectionCount() + "\nQueueDroppedCount" + stats.get_queueDroppedCount() + "\nEventsEnqueuedWhileClientAwayCount" + stats.get_eventEnqueuedWhileClientAwayCount());
+      logger.info(
+          "Stats:"
+              + "\nDurableReconnectionCount:"
+              + stats.get_durableReconnectionCount()
+              + "\nQueueDroppedCount"
+              + stats.get_queueDroppedCount()
+              + "\nEventsEnqueuedWhileClientAwayCount"
+              + stats.get_eventEnqueuedWhileClientAwayCount());
       assertEquals(reconnectionCount, stats.get_durableReconnectionCount());
       assertEquals(queueDropCount, stats.get_queueDroppedCount());
       assertEquals(enqueueCount, stats.get_eventEnqueuedWhileClientAwayCount());
@@ -268,7 +332,12 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
     Cache cache = CacheServerTestUtil.getCache();
     if (cache != null && !cache.isClosed()) {
       // might fail in DataSerializerRecoveryListener.RecoveryTask in shutdown
-      cache.getLogger().info("<ExpectedException action=add>" + RejectedExecutionException.class.getName() + "</ExpectedException>");
+      cache
+          .getLogger()
+          .info(
+              "<ExpectedException action=add>"
+                  + RejectedExecutionException.class.getName()
+                  + "</ExpectedException>");
       cache.close(true);
       cache.getDistributedSystem().disconnect();
     }
@@ -277,7 +346,9 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
   private static void registerKey(String key, boolean isDurable) throws Exception {
     try {
       // Get the region
-      Region region = CacheServerTestUtil.getCache().getRegion(DurableClientStatsDUnitTest.class.getName() + "_region");
+      Region region =
+          CacheServerTestUtil.getCache()
+              .getRegion(DurableClientStatsDUnitTest.class.getName() + "_region");
       // Region region =
       // CacheServerTestUtil.getCache().getRegion(regionName);
       assertNotNull(region);
@@ -289,7 +360,9 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
 
   private static void putValue(String key, String value) {
     try {
-      Region r = CacheServerTestUtil.getCache().getRegion(DurableClientStatsDUnitTest.class.getName() + "_region");
+      Region r =
+          CacheServerTestUtil.getCache()
+              .getRegion(DurableClientStatsDUnitTest.class.getName() + "_region");
       // Region r = CacheServerTestUtil.getCache().getRegion(regionName);
       assertNotNull(r);
       if (r.getEntry(key) != null) {
@@ -303,13 +376,17 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  private Pool getClientPool(String host, int server1Port, boolean establishCallbackConnection, int redundancyLevel) {
+  private Pool getClientPool(
+      String host, int server1Port, boolean establishCallbackConnection, int redundancyLevel) {
     PoolFactory pf = PoolManager.createFactory();
-    pf.addServer(host, server1Port).setSubscriptionEnabled(establishCallbackConnection).setSubscriptionRedundancy(redundancyLevel);
+    pf.addServer(host, server1Port)
+        .setSubscriptionEnabled(establishCallbackConnection)
+        .setSubscriptionRedundancy(redundancyLevel);
     return ((PoolFactoryImpl) pf).getPoolAttributes();
   }
 
-  private Properties getDurableClientDistributedSystemProperties(String durableClientId, int durableClientTimeout) {
+  private Properties getDurableClientDistributedSystemProperties(
+      String durableClientId, int durableClientTimeout) {
     Properties properties = new Properties();
     properties.setProperty(MCAST_PORT, "0");
     properties.setProperty(LOCATORS, "");
@@ -318,7 +395,8 @@ public class DurableClientStatsDUnitTest extends JUnit4DistributedTestCase {
     return properties;
   }
 
-  private Properties getNonDurableClientDistributedSystemProperties(String durableClientId, int durableClientTimeout) {
+  private Properties getNonDurableClientDistributedSystemProperties(
+      String durableClientId, int durableClientTimeout) {
     Properties properties = new Properties();
     properties.setProperty(MCAST_PORT, "0");
     properties.setProperty(LOCATORS, "");

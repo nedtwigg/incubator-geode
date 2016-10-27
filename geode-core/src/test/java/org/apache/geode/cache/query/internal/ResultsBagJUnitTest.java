@@ -33,9 +33,7 @@ import org.apache.geode.internal.HeapDataOutputStream;
 import org.apache.geode.internal.Version;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Test ResultsBag, including null elements
- */
+/** Test ResultsBag, including null elements */
 @Category(UnitTest.class)
 public class ResultsBagJUnitTest {
 
@@ -69,7 +67,7 @@ public class ResultsBagJUnitTest {
     int numTwos = 0;
     Integer one = new Integer(1);
     Integer two = new Integer(2);
-    for (Iterator itr = bag.iterator(); itr.hasNext();) {
+    for (Iterator itr = bag.iterator(); itr.hasNext(); ) {
       Object n = itr.next();
       if (one.equals(n)) {
         numOnes++;
@@ -102,7 +100,8 @@ public class ResultsBagJUnitTest {
     assertTrue(set.contains(new Integer(4)));
     assertTrue(set.contains(null));
 
-    ResultsCollectionWrapper w = new ResultsCollectionWrapper(new ObjectTypeImpl(Integer.class), set);
+    ResultsCollectionWrapper w =
+        new ResultsCollectionWrapper(new ObjectTypeImpl(Integer.class), set);
 
     HeapDataOutputStream hdos = new HeapDataOutputStream(Version.CURRENT);
     DataSerializer.writeObject(w, hdos);
@@ -139,7 +138,7 @@ public class ResultsBagJUnitTest {
     int numTwos = 0;
     Integer one = new Integer(1);
     Integer two = new Integer(2);
-    for (Iterator itr = bag.iterator(); itr.hasNext();) {
+    for (Iterator itr = bag.iterator(); itr.hasNext(); ) {
       Object n = itr.next();
       if (one.equals(n)) {
         numOnes++;
@@ -178,7 +177,7 @@ public class ResultsBagJUnitTest {
     bag.add(new Integer(2));
     assertEquals(5, bag.size());
 
-    for (Iterator itr = bag.iterator(); itr.hasNext();) {
+    for (Iterator itr = bag.iterator(); itr.hasNext(); ) {
       Object n = itr.next();
       if (n == null) {
         itr.remove();

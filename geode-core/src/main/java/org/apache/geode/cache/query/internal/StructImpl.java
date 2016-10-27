@@ -31,6 +31,7 @@ import org.apache.geode.pdx.internal.PdxString;
 
 /**
  * Implementation of Struct
+ *
  * @since GemFire 4.0
  */
 public class StructImpl implements Struct, DataSerializableFixedID, Serializable {
@@ -41,13 +42,13 @@ public class StructImpl implements Struct, DataSerializableFixedID, Serializable
   private transient boolean hasPdx = false;
 
   /** no-arg constructor required for DataSerializable */
-  public StructImpl() {
-  };
+  public StructImpl() {};
 
   /** Creates a new instance of StructImpl */
   public StructImpl(StructTypeImpl type, Object[] values) {
     if (type == null) {
-      throw new IllegalArgumentException(LocalizedStrings.StructImpl_TYPE_MUST_NOT_BE_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.StructImpl_TYPE_MUST_NOT_BE_NULL.toLocalizedString());
     }
     this.type = type;
     this.values = values;
@@ -61,9 +62,7 @@ public class StructImpl implements Struct, DataSerializableFixedID, Serializable
     }
   }
 
-  /**
-   * @throws IllegalArgumentException if fieldName not found
-   */
+  /** @throws IllegalArgumentException if fieldName not found */
   public Object get(String fieldName) {
     return this.values[this.type.getFieldIndex(fieldName)];
   }
@@ -83,10 +82,7 @@ public class StructImpl implements Struct, DataSerializableFixedID, Serializable
     return this.values;
   }
 
-  /**
-   * Helper method, Returns field values, in case of PdxInstance 
-   * gets the domain objects.
-   */
+  /** Helper method, Returns field values, in case of PdxInstance gets the domain objects. */
   public Object[] getPdxFieldValues() {
     if (this.values == null) {
       return new Object[0];
@@ -115,15 +111,11 @@ public class StructImpl implements Struct, DataSerializableFixedID, Serializable
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof Struct))
-      return false;
+    if (!(obj instanceof Struct)) return false;
     Struct s = (Struct) obj;
-    if (!Arrays.equals(getFieldTypes(), s.getStructType().getFieldTypes()))
-      return false;
-    if (!Arrays.equals(getFieldNames(), s.getStructType().getFieldNames()))
-      return false;
-    if (!Arrays.equals(getFieldValues(), s.getFieldValues()))
-      return false;
+    if (!Arrays.equals(getFieldTypes(), s.getStructType().getFieldTypes())) return false;
+    if (!Arrays.equals(getFieldNames(), s.getStructType().getFieldNames())) return false;
+    if (!Arrays.equals(getFieldValues(), s.getFieldValues())) return false;
     return true;
   }
 
@@ -145,8 +137,7 @@ public class StructImpl implements Struct, DataSerializableFixedID, Serializable
     StringBuffer buf = new StringBuffer();
     buf.append("struct(");
     for (int i = 0; i < locValues.length; i++) {
-      if (i > 0)
-        buf.append(",");
+      if (i > 0) buf.append(",");
       buf.append(names[i]);
       buf.append(":");
       buf.append(locValues[i]);

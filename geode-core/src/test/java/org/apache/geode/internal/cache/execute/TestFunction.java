@@ -77,7 +77,11 @@ public class TestFunction extends FunctionAdapter {
   public void execute1(FunctionContext context) {
     DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
     LogWriter logger = ds.getLogWriter();
-    logger.info("Executing executeException in TestFunction on Member : " + ds.getDistributedMember() + "with Context : " + context);
+    logger.info(
+        "Executing executeException in TestFunction on Member : "
+            + ds.getDistributedMember()
+            + "with Context : "
+            + context);
     context.getResultSender().lastResult((Serializable) context.getArguments());
   }
 
@@ -123,7 +127,7 @@ public class TestFunction extends FunctionAdapter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.cache.xmlcache.Declarable2#getConfig()
    */
   public Properties getConfig() {
@@ -132,7 +136,7 @@ public class TestFunction extends FunctionAdapter {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.cache.Declarable#init(java.util.Properties)
    */
   public void init(Properties props) {

@@ -42,47 +42,30 @@ import org.apache.geode.management.internal.ManagementConstants;
 import org.apache.geode.management.internal.beans.stats.RegionClusterStatsMonitor;
 
 /**
- * Bridge to collect data from all the proxies from a named region.
- * MBeanAggregator will create this bridge and inject it into a
- * DistributedRegionMBean
- * 
- * 
+ * Bridge to collect data from all the proxies from a named region. MBeanAggregator will create this
+ * bridge and inject it into a DistributedRegionMBean
  */
 public class DistributedRegionBridge {
 
-  /**
-   * Map of RegionMXBean proxies
-   */
+  /** Map of RegionMXBean proxies */
   private Map<ObjectName, RegionMXBean> mapOfProxy;
 
-  /**
-   * set size of this proxy set
-   */
+  /** set size of this proxy set */
   private volatile int setSize;
 
-  /**
-   * Eviction attributes
-   */
+  /** Eviction attributes */
   private EvictionAttributesData evictionAttributesData;
 
-  /**
-   * Membership attributes
-   */
+  /** Membership attributes */
   private MembershipAttributesData membershipAttributesData;
 
-  /**
-   * Partition Attributes
-   */
+  /** Partition Attributes */
   private PartitionAttributesData partitionAttributesData;
 
-  /**
-   * Region Attributes
-   */
+  /** Region Attributes */
   private RegionAttributesData regionAttributesData;
 
-  /**
-   * Array of fixed partition attributes
-   */
+  /** Array of fixed partition attributes */
   private FixedPartitionAttributesData[] fixedPartitionAttributesTable;
 
   private RegionClusterStatsMonitor monitor;
@@ -91,28 +74,25 @@ public class DistributedRegionBridge {
 
   /**
    * Public constructor.
-   * 
-   * @param objectName
-   *          Name of the MBean
-   * @param proxy
-   *          reference to the actual proxy
+   *
+   * @param objectName Name of the MBean
+   * @param proxy reference to the actual proxy
    */
-  public DistributedRegionBridge(ObjectName objectName, RegionMXBean proxy, FederationComponent newState) {
+  public DistributedRegionBridge(
+      ObjectName objectName, RegionMXBean proxy, FederationComponent newState) {
     this.mapOfProxy = new ConcurrentHashMap<ObjectName, RegionMXBean>();
     this.monitor = new RegionClusterStatsMonitor();
     addProxyToMap(objectName, proxy, newState);
-
   }
 
   /**
    * Adds a proxy to the Proxy set
-   * 
-   * @param objectName
-   *          name of the MBean
-   * @param proxy
-   *          reference to the actual proxy
+   *
+   * @param objectName name of the MBean
+   * @param proxy reference to the actual proxy
    */
-  public void addProxyToMap(ObjectName objectName, RegionMXBean proxy, FederationComponent newState) {
+  public void addProxyToMap(
+      ObjectName objectName, RegionMXBean proxy, FederationComponent newState) {
     mapOfProxy.put(objectName, proxy);
     setSize = mapOfProxy.keySet().size();
     updateRegion(newState, null);
@@ -120,14 +100,13 @@ public class DistributedRegionBridge {
 
   /**
    * Removes proxy from the proxy set
-   * 
-   * @param objectName
-   *          name of the MBean
-   * @param proxy
-   *          reference to the actual proxy
+   *
+   * @param objectName name of the MBean
+   * @param proxy reference to the actual proxy
    * @return true if this DistributedRegion's proxy set is empty
    */
-  public boolean removeProxyFromMap(ObjectName objectName, RegionMXBean proxy, FederationComponent oldState) {
+  public boolean removeProxyFromMap(
+      ObjectName objectName, RegionMXBean proxy, FederationComponent oldState) {
     mapOfProxy.remove(objectName);
     setSize = mapOfProxy.keySet().size();
     if (setSize == 0) {
@@ -141,10 +120,7 @@ public class DistributedRegionBridge {
     monitor.aggregate(newState, oldState);
   }
 
-  /**
-   * 
-   * @return Eviction Attributes of the Region
-   */
+  /** @return Eviction Attributes of the Region */
   public EvictionAttributesData getEvictionAttributes() {
 
     if (this.evictionAttributesData == null) {
@@ -159,18 +135,13 @@ public class DistributedRegionBridge {
           if (evictionAttributesData != null) {
             break;
           }
-
         }
       }
     }
     return evictionAttributesData;
   }
 
-  /**
-   * 
-   * @return fixed partition attributes of a partition region if its fixed
-   *         partitioned
-   */
+  /** @return fixed partition attributes of a partition region if its fixed partitioned */
   public FixedPartitionAttributesData[] getFixedPartitionAttributesData() {
 
     if (this.fixedPartitionAttributesTable == null) {
@@ -191,17 +162,12 @@ public class DistributedRegionBridge {
     return fixedPartitionAttributesTable;
   }
 
-  /**
-   * 
-   * @return number of members where this region is present
-   */
+  /** @return number of members where this region is present */
   public int getMemberCount() {
     return setSize;
   }
 
-  /**
-   * @return set of member ids on which this region is present.
-   */
+  /** @return set of member ids on which this region is present. */
   public String[] getMembers() {
     Iterator<ObjectName> it = mapOfProxy.keySet().iterator();
     if (it != null) {
@@ -217,10 +183,7 @@ public class DistributedRegionBridge {
     return ManagementConstants.NO_DATA_STRING;
   }
 
-  /**
-   * 
-   * @return membership attributes
-   */
+  /** @return membership attributes */
   public MembershipAttributesData getMembershipAttributes() {
     if (this.membershipAttributesData == null) {
       Iterator<RegionMXBean> it = mapOfProxy.values().iterator();
@@ -234,36 +197,28 @@ public class DistributedRegionBridge {
           if (membershipAttributesData != null) {
             break;
           }
-
         }
       }
     }
     return membershipAttributesData;
   }
 
-  /**
-   * 
-   * @return name of the Region
-   */
+  /** @return name of the Region */
   public String getName() {
     return monitor.getName();
   }
 
-  /**
-   * 
-   * @return parent region name
-   */
+  /** @return parent region name */
   public String getParentRegion() {
     return monitor.getParentRegion();
   }
 
   /**
-   * Lists the sub regions of the GemFire {@link Region} represented by this
-   * {@link DistributedRegionMXBean}. If <code>recursive</code> is
-   * <code>true</code>, will return sub-regions by traversing recursively.
-   * 
-   * @param recursive
-   *          if <code>true</code>, recursively traverses to find sub regions.
+   * Lists the sub regions of the GemFire {@link Region} represented by this {@link
+   * DistributedRegionMXBean}. If <code>recursive</code> is <code>true</code>, will return
+   * sub-regions by traversing recursively.
+   *
+   * @param recursive if <code>true</code>, recursively traverses to find sub regions.
    * @return String array of sub region paths
    */
   public String[] listSubRegionPaths(boolean recursive) {
@@ -275,7 +230,8 @@ public class DistributedRegionBridge {
       SortedSet<String> subRegionPaths = new TreeSet<String>();
       for (RegionMXBean regionMXBean : proxies) {
         String[] listSubRegionPaths = regionMXBean.listSubregionPaths(recursive);
-        subRegionPaths.addAll(Arrays.asList(listSubRegionPaths)); // Little cosly, but how can it be avoided?
+        subRegionPaths.addAll(
+            Arrays.asList(listSubRegionPaths)); // Little cosly, but how can it be avoided?
       }
 
       subRegionPathsArr = subRegionPaths.toArray(subRegionPathsArr);
@@ -284,10 +240,7 @@ public class DistributedRegionBridge {
     return subRegionPathsArr;
   }
 
-  /**
-   * 
-   * @return partitioned attributes
-   */
+  /** @return partitioned attributes */
   public PartitionAttributesData getPartitionAttributes() {
 
     if (this.partitionAttributesData == null) {
@@ -302,7 +255,6 @@ public class DistributedRegionBridge {
           if (partitionAttributesData != null) {
             break;
           }
-
         }
       }
     }
@@ -311,7 +263,7 @@ public class DistributedRegionBridge {
 
   /**
    * Region attributes
-   * 
+   *
    * @return region attributes
    */
   public RegionAttributesData getRegionAttributes() {
@@ -327,90 +279,58 @@ public class DistributedRegionBridge {
           if (regionAttributesData != null) {
             break;
           }
-
         }
       }
     }
     return regionAttributesData;
   }
 
-  /**
-   * 
-   * @return type of the region
-   */
+  /** @return type of the region */
   public String getRegionType() {
     return monitor.getRegionType();
   }
 
-  /**
-   * 
-   * @return full path of the region
-   */
+  /** @return full path of the region */
   public String getFullPath() {
     return monitor.getFullPath();
   }
 
-  /**
-   * 
-   * @return Avg Latency of cache listener call
-   */
+  /** @return Avg Latency of cache listener call */
   public long getCacheListenerCallsAvgLatency() {
     return MetricsCalculator.getAverage(monitor.getCacheListenerCallsAvgLatency(), setSize);
-
   }
 
-  /**
-   * 
-   * @return Avg Latency of cache writer call
-   */
+  /** @return Avg Latency of cache writer call */
   public long getCacheWriterCallsAvgLatency() {
     return MetricsCalculator.getAverage(monitor.getCacheWriterCallsAvgLatency(), setSize);
   }
 
-  /**
-   * 
-   * @return creates per second for the Regions
-   */
+  /** @return creates per second for the Regions */
   public float getCreatesRate() {
     return monitor.getCreatesRate();
   }
 
-  /**
-   * 
-   * @return destroy per second for the Regions
-   */
+  /** @return destroy per second for the Regions */
   public float getDestroyRate() {
     return monitor.getDestroyRate();
   }
 
-  /**
-   * 
-   * @return disk reads rate across disks belonging to Region
-   */
+  /** @return disk reads rate across disks belonging to Region */
   public float getDiskReadsRate() {
     return monitor.getDiskReadsRate();
   }
 
-  /**
-   * 
-   * @return disk writes rate across region
-   */
+  /** @return disk writes rate across region */
   public float getDiskWritesRate() {
     return monitor.getDiskWritesRate();
   }
 
-  /**
-   * 
-   * @return gets per second for the Regions
-   */
+  /** @return gets per second for the Regions */
   public float getGetsRate() {
     return monitor.getGetsRate();
   }
 
-  /**
-   * 
-   * @return total hit count
-   */
+  /** @return total hit count */
   public long getHitCount() {
     if (isPartionedRegion()) {
       return ManagementConstants.NOT_AVAILABLE_LONG;
@@ -418,10 +338,7 @@ public class DistributedRegionBridge {
     return monitor.getHitCount();
   }
 
-  /**
-   * 
-   * @return hit to miss ratio
-   */
+  /** @return hit to miss ratio */
   public float getHitRatio() {
     if (isPartionedRegion()) {
       return ManagementConstants.NOT_AVAILABLE_FLOAT;
@@ -429,22 +346,15 @@ public class DistributedRegionBridge {
     return monitor.getHitRatio();
   }
 
-  /**
-   * 
-   * @return returns the last time the region was accessed
-   */
+  /** @return returns the last time the region was accessed */
   public long getLastAccessedTime() {
     if (isPartionedRegion()) {
       return ManagementConstants.NOT_AVAILABLE_LONG;
     }
     return monitor.getLastAccessedTime();
-
   }
 
-  /**
-   * 
-   * @return last update time of the region
-   */
+  /** @return last update time of the region */
   public long getLastModifiedTime() {
     if (isPartionedRegion()) {
       return ManagementConstants.NOT_AVAILABLE_LONG;
@@ -453,26 +363,19 @@ public class DistributedRegionBridge {
   }
 
   /**
-   * 
-   * @return entries destroyed rate in the region through both destroy cache
-   *         operations and eviction.
+   * @return entries destroyed rate in the region through both destroy cache operations and
+   *     eviction.
    */
   public float getLruDestroyRate() {
     return monitor.getLruDestroyRate();
   }
 
-  /**
-   * 
-   * @return entry evictions rate triggered by LRU.
-   */
+  /** @return entry evictions rate triggered by LRU. */
   public float getLruEvictionRate() {
     return monitor.getLruEvictionRate();
   }
 
-  /**
-   * 
-   * @return number of times cache missed on the local region
-   */
+  /** @return number of times cache missed on the local region */
   public long getMissCount() {
     if (isPartionedRegion()) {
       return ManagementConstants.NOT_AVAILABLE_LONG;
@@ -480,96 +383,66 @@ public class DistributedRegionBridge {
     return monitor.getMissCount();
   }
 
-  /**
-   * 
-   * @return putAll per second for the Regions
-   */
+  /** @return putAll per second for the Regions */
   public float getPutAllRate() {
     return monitor.getPutAllRate();
   }
 
-  /**
-   * 
-   * @return Partition Region local put rate
-   */
+  /** @return Partition Region local put rate */
   public float getPutLocalRate() {
     return monitor.getPutLocalRate();
   }
 
-  /**
-   * 
-   * @return Average Latency for remote put
-   */
+  /** @return Average Latency for remote put */
   public long getPutRemoteAvgLatency() {
     return MetricsCalculator.getAverage(monitor.getPutRemoteAvgLatency(), setSize);
   }
 
-  /**
-   * 
-   * @return Latency for last remote put
-   */
+  /** @return Latency for last remote put */
   public long getPutRemoteLatency() {
     return MetricsCalculator.getAverage(monitor.getPutRemoteLatency(), setSize);
   }
 
-  /**
-   * 
-   * @return Partition Region remote put rate
-   */
+  /** @return Partition Region remote put rate */
   public float getPutRemoteRate() {
     return monitor.getPutRemoteRate();
   }
 
-  /**
-   * 
-   * @return puts per second for the Regions
-   */
+  /** @return puts per second for the Regions */
   public float getPutsRate() {
     return monitor.getPutsRate();
   }
 
-  /**
-   * 
-   * @return number of entries
-   */
+  /** @return number of entries */
   public long getSystemRegionEntryCount() {
     if (isPartionedRegion()) {
       return monitor.getSystemRegionEntryCount();
     }
     return monitor.getEntryCount();
-
   }
 
-  /**
-   * 
-   * @return The current number of backups in progress on this disk store
-   */
+  /** @return The current number of backups in progress on this disk store */
   public long getTotalDiskWritesProgress() {
     return monitor.getTotalDiskWritesProgress();
   }
 
-  /**
-   * 
-   * @return consolidated count of bytes on each disk of the region
-   */
+  /** @return consolidated count of bytes on each disk of the region */
   public long getTotalBytesOnDisk() {
     return monitor.getTotalBytesOnDisk();
   }
 
   /**
-   * 
-   * @return The current number of entries whose value resides in the VM. The
-   *         value may also have been written to disk.
+   * @return The current number of entries whose value resides in the VM. The value may also have
+   *     been written to disk.
    */
   public long getTotalDiskEntriesInVM() {
     return monitor.getTotalDiskEntriesInVM();
   }
 
   /**
-   * 
-   * @return The current number of entries whose value is on disk and is not in
-   *         memory. This is true of overflowed entries. It is also true of
-   *         recovered entries that have not yet been faulted in.
+   * @return The current number of entries whose value is on disk and is not in memory. This is true
+   *     of overflowed entries. It is also true of recovered entries that have not yet been faulted
+   *     in.
    */
   public long getTotalEntriesOnlyOnDisk() {
     return monitor.getTotalEntriesOnlyOnDisk();

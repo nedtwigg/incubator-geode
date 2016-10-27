@@ -74,16 +74,15 @@ import org.apache.geode.pdx.internal.PdxString;
 
 //@todo Extend to support the keys or entries of a region.
 /**
- * A CompactRangeIndex is a range index that has simple data structures to
- * minimize its footprint, at the expense of doing extra work at index
- * maintenance. It is selected as the index implementation when the indexed
- * expression is a path expression and the from clause has only one iterator.
- * This implies there is only one value in the index for each region entry.
- * 
- * This index does not support the storage of projection attributes.
- * 
- * Currently this implementation only supports an index on a region path.
- * 
+ * A CompactRangeIndex is a range index that has simple data structures to minimize its footprint,
+ * at the expense of doing extra work at index maintenance. It is selected as the index
+ * implementation when the indexed expression is a path expression and the from clause has only one
+ * iterator. This implies there is only one value in the index for each region entry.
+ *
+ * <p>This index does not support the storage of projection attributes.
+ *
+ * <p>Currently this implementation only supports an index on a region path.
+ *
  * @since GemFire 6.0
  */
 public class CompactRangeIndex extends AbstractIndex {
@@ -96,10 +95,31 @@ public class CompactRangeIndex extends AbstractIndex {
 
   static boolean TEST_ALWAYS_UPDATE_IN_PROGRESS = false;
 
-  public CompactRangeIndex(String indexName, Region region, String fromClause, String indexedExpression, String projectionAttributes, String origFromClause, String origIndexExpr, String[] definitions, IndexStatistics stats) {
-    super(indexName, region, fromClause, indexedExpression, projectionAttributes, origFromClause, origIndexExpr, definitions, stats);
+  public CompactRangeIndex(
+      String indexName,
+      Region region,
+      String fromClause,
+      String indexedExpression,
+      String projectionAttributes,
+      String origFromClause,
+      String origIndexExpr,
+      String[] definitions,
+      IndexStatistics stats) {
+    super(
+        indexName,
+        region,
+        fromClause,
+        indexedExpression,
+        projectionAttributes,
+        origFromClause,
+        origIndexExpr,
+        definitions,
+        stats);
     if (IndexManager.IS_TEST_LDM) {
-      indexStore = new MapIndexStore(((LocalRegion) region).getIndexMap(indexName, indexedExpression, origFromClause), region);
+      indexStore =
+          new MapIndexStore(
+              ((LocalRegion) region).getIndexMap(indexName, indexedExpression, origFromClause),
+              region);
     } else {
       indexStore = new MemoryIndexStore(region, internalIndexStats);
     }
@@ -111,7 +131,7 @@ public class CompactRangeIndex extends AbstractIndex {
 
   /**
    * Get the index type
-   * 
+   *
    * @return the type of index
    */
   public IndexType getType() {
@@ -137,10 +157,7 @@ public class CompactRangeIndex extends AbstractIndex {
     this.internalIndexStats.incNumUpdates();
   }
 
-  /**
-   * @param opCode
-   *          one of OTHER_OP, BEFORE_UPDATE_OP, AFTER_UPDATE_OP.
-   */
+  /** @param opCode one of OTHER_OP, BEFORE_UPDATE_OP, AFTER_UPDATE_OP. */
   void removeMapping(RegionEntry entry, int opCode) throws IMQException {
     if (opCode == BEFORE_UPDATE_OP) {
       // Either take key from reverse map OR evaluate it using IMQEvaluator.
@@ -171,7 +188,9 @@ public class CompactRangeIndex extends AbstractIndex {
     return indexStore.clear();
   }
 
-  public List queryEquijoinCondition(IndexProtocol indx, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+  public List queryEquijoinCondition(IndexProtocol indx, ExecutionContext context)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
     // get a read lock when doing a lookup
     long start = updateIndexUseStats();
     ((AbstractIndex) indx).updateIndexUseStats();
@@ -193,12 +212,14 @@ public class CompactRangeIndex extends AbstractIndex {
       Object innerKey = null;
       // boolean incrementOuter = true;
       boolean incrementInner = true;
-      outer: while (outer.hasNext()) {
+      outer:
+      while (outer.hasNext()) {
         // if (incrementOuter) {
         outerEntry = outer.next();
         // }
         outerKey = outerEntry.getDeserializedKey();
-        inner: while (!incrementInner || inner.hasNext()) {
+        inner:
+        while (!incrementInner || inner.hasNext()) {
           if (incrementInner) {
             innerEntry = inner.next();
             if (innerEntry instanceof IndexStoreEntry) {
@@ -259,14 +280,13 @@ public class CompactRangeIndex extends AbstractIndex {
   }
 
   /**
-   * This evaluates the left and right side of a EQUI-JOIN where condition for
-   * which this Index was used. Like, if condition is "p.ID = e.ID",
-   * {@link IndexInfo} will contain Left as p.ID, Right as e.ID and operator as
-   * TOK_EQ. This method will evaluate p.ID OR e.ID based on if it is inner or
-   * outer RegionEntry, and verify the p.ID = e.ID.
-   * 
-   * This method is called only for Memory indexstore
-   * 
+   * This evaluates the left and right side of a EQUI-JOIN where condition for which this Index was
+   * used. Like, if condition is "p.ID = e.ID", {@link IndexInfo} will contain Left as p.ID, Right
+   * as e.ID and operator as TOK_EQ. This method will evaluate p.ID OR e.ID based on if it is inner
+   * or outer RegionEntry, and verify the p.ID = e.ID.
+   *
+   * <p>This method is called only for Memory indexstore
+   *
    * @param entry
    * @param context
    * @param indexInfo
@@ -277,7 +297,10 @@ public class CompactRangeIndex extends AbstractIndex {
    * @throws NameResolutionException
    * @throws QueryInvocationTargetException
    */
-  protected boolean verifyInnerAndOuterEntryValues(IndexStoreEntry entry, ExecutionContext context, IndexInfo indexInfo, Object keyVal) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  protected boolean verifyInnerAndOuterEntryValues(
+      IndexStoreEntry entry, ExecutionContext context, IndexInfo indexInfo, Object keyVal)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     // Verify index key in value only for memory index store
     CompactRangeIndex index = (CompactRangeIndex) indexInfo._getIndex();
     RuntimeIterator runtimeItr = index.getRuntimeIteratorForThisIndex(context, indexInfo);
@@ -287,7 +310,8 @@ public class CompactRangeIndex extends AbstractIndex {
     return evaluateEntry(indexInfo, context, keyVal);
   }
 
-  public int getSizeEstimate(Object key, int operator, int matchLevel) throws TypeMismatchException {
+  public int getSizeEstimate(Object key, int operator, int matchLevel)
+      throws TypeMismatchException {
     // Get approx size;
     int size = 0;
     if (key == null) {
@@ -296,38 +320,105 @@ public class CompactRangeIndex extends AbstractIndex {
     long start = updateIndexUseStats(false);
     try {
       switch (operator) {
-      case OQLLexerTokenTypes.TOK_EQ: {
-        key = TypeUtils.indexKeyFor(key);
-        key = getPdxStringForIndexedPdxKeys(key);
-        size = indexStore.size(key);
-        break;
-      }
-      case OQLLexerTokenTypes.TOK_NE_ALT:
-      case OQLLexerTokenTypes.TOK_NE:
-        size = this.region.size();
-        key = TypeUtils.indexKeyFor(key);
-        key = getPdxStringForIndexedPdxKeys(key);
-        size -= indexStore.size(key);
-        break;
-      case OQLLexerTokenTypes.TOK_LE:
-      case OQLLexerTokenTypes.TOK_LT:
-        if (matchLevel <= 0 && (key instanceof Number)) {
-
-          int totalSize = indexStore.size();
-          if (CompactRangeIndex.testHook != null) {
-            CompactRangeIndex.testHook.hook(1);
+        case OQLLexerTokenTypes.TOK_EQ:
+          {
+            key = TypeUtils.indexKeyFor(key);
+            key = getPdxStringForIndexedPdxKeys(key);
+            size = indexStore.size(key);
+            break;
           }
-          if (totalSize > 1) {
-            Number keyAsNum = (Number) key;
-            int x = 0;
-            IndexStoreEntry firstEntry = null;
-            CloseableIterator<IndexStoreEntry> iter1 = null;
-            CloseableIterator<IndexStoreEntry> iter2 = null;
+        case OQLLexerTokenTypes.TOK_NE_ALT:
+        case OQLLexerTokenTypes.TOK_NE:
+          size = this.region.size();
+          key = TypeUtils.indexKeyFor(key);
+          key = getPdxStringForIndexedPdxKeys(key);
+          size -= indexStore.size(key);
+          break;
+        case OQLLexerTokenTypes.TOK_LE:
+        case OQLLexerTokenTypes.TOK_LT:
+          if (matchLevel <= 0 && (key instanceof Number)) {
 
-            try {
-              iter1 = indexStore.iterator(null);
-              if (iter1.hasNext()) {
-                firstEntry = iter1.next();
+            int totalSize = indexStore.size();
+            if (CompactRangeIndex.testHook != null) {
+              CompactRangeIndex.testHook.hook(1);
+            }
+            if (totalSize > 1) {
+              Number keyAsNum = (Number) key;
+              int x = 0;
+              IndexStoreEntry firstEntry = null;
+              CloseableIterator<IndexStoreEntry> iter1 = null;
+              CloseableIterator<IndexStoreEntry> iter2 = null;
+
+              try {
+                iter1 = indexStore.iterator(null);
+                if (iter1.hasNext()) {
+                  firstEntry = iter1.next();
+
+                  IndexStoreEntry lastEntry = null;
+
+                  iter2 = indexStore.descendingIterator(null);
+                  if (iter2.hasNext()) {
+                    lastEntry = iter2.next();
+                  }
+
+                  if (firstEntry != null && lastEntry != null) {
+                    Number first = (Number) firstEntry.getDeserializedKey();
+                    Number last = (Number) lastEntry.getDeserializedKey();
+                    if (first.doubleValue() != last.doubleValue()) {
+                      // Shobhit: Now without ReadLoack on index we can end up with 0
+                      // in denominator if the numbers are floating-point and
+                      // truncated with conversion to long, and the first and last
+                      // truncate to the same long, so safest calculation is to
+                      // convert to doubles.
+                      x =
+                          (int)
+                              (((keyAsNum.doubleValue() - first.doubleValue()) * totalSize)
+                                  / (last.doubleValue() - first.doubleValue()));
+                    }
+                  }
+
+                  if (x < 0) {
+                    x = 0;
+                  }
+                  size = x;
+                }
+              } finally {
+                if (iter1 != null) {
+                  iter1.close();
+                }
+                if (iter2 != null) {
+                  iter1.close();
+                }
+              }
+
+            } else {
+              // not attempting to differentiate between LT & LE
+              size = indexStore.size(key) > 0 ? 1 : 0;
+            }
+          } else {
+            size = Integer.MAX_VALUE;
+          }
+          break;
+
+        case OQLLexerTokenTypes.TOK_GE:
+        case OQLLexerTokenTypes.TOK_GT:
+          if (matchLevel <= 0 && (key instanceof Number)) {
+            int totalSize = indexStore.size();
+            if (CompactRangeIndex.testHook != null) {
+              CompactRangeIndex.testHook.hook(2);
+            }
+            if (totalSize > 1) {
+              Number keyAsNum = (Number) key;
+              int x = 0;
+              IndexStoreEntry firstEntry = null;
+              CloseableIterator<IndexStoreEntry> iter1 = null;
+              CloseableIterator<IndexStoreEntry> iter2 = null;
+
+              try {
+                iter1 = indexStore.iterator(null);
+                if (iter1.hasNext()) {
+                  firstEntry = iter1.next();
+                }
 
                 IndexStoreEntry lastEntry = null;
 
@@ -345,89 +436,29 @@ public class CompactRangeIndex extends AbstractIndex {
                     // truncated with conversion to long, and the first and last
                     // truncate to the same long, so safest calculation is to
                     // convert to doubles.
-                    x = (int) (((keyAsNum.doubleValue() - first.doubleValue()) * totalSize) / (last.doubleValue() - first.doubleValue()));
+                    x =
+                        (int)
+                            (((last.doubleValue() - keyAsNum.doubleValue()) * totalSize)
+                                / (last.doubleValue() - first.doubleValue()));
                   }
                 }
-
                 if (x < 0) {
                   x = 0;
                 }
                 size = x;
-              }
-            } finally {
-              if (iter1 != null) {
-                iter1.close();
-              }
-              if (iter2 != null) {
-                iter1.close();
-              }
-            }
-
-          } else {
-            // not attempting to differentiate between LT & LE
-            size = indexStore.size(key) > 0 ? 1 : 0;
-          }
-        } else {
-          size = Integer.MAX_VALUE;
-        }
-        break;
-
-      case OQLLexerTokenTypes.TOK_GE:
-      case OQLLexerTokenTypes.TOK_GT:
-        if (matchLevel <= 0 && (key instanceof Number)) {
-          int totalSize = indexStore.size();
-          if (CompactRangeIndex.testHook != null) {
-            CompactRangeIndex.testHook.hook(2);
-          }
-          if (totalSize > 1) {
-            Number keyAsNum = (Number) key;
-            int x = 0;
-            IndexStoreEntry firstEntry = null;
-            CloseableIterator<IndexStoreEntry> iter1 = null;
-            CloseableIterator<IndexStoreEntry> iter2 = null;
-
-            try {
-              iter1 = indexStore.iterator(null);
-              if (iter1.hasNext()) {
-                firstEntry = iter1.next();
-              }
-
-              IndexStoreEntry lastEntry = null;
-
-              iter2 = indexStore.descendingIterator(null);
-              if (iter2.hasNext()) {
-                lastEntry = iter2.next();
-              }
-
-              if (firstEntry != null && lastEntry != null) {
-                Number first = (Number) firstEntry.getDeserializedKey();
-                Number last = (Number) lastEntry.getDeserializedKey();
-                if (first.doubleValue() != last.doubleValue()) {
-                  // Shobhit: Now without ReadLoack on index we can end up with 0
-                  // in denominator if the numbers are floating-point and
-                  // truncated with conversion to long, and the first and last
-                  // truncate to the same long, so safest calculation is to
-                  // convert to doubles.
-                  x = (int) (((last.doubleValue() - keyAsNum.doubleValue()) * totalSize) / (last.doubleValue() - first.doubleValue()));
+              } finally {
+                if (iter1 != null) {
+                  iter1.close();
                 }
               }
-              if (x < 0) {
-                x = 0;
-              }
-              size = x;
-            } finally {
-              if (iter1 != null) {
-                iter1.close();
-              }
+            } else {
+              // not attempting to differentiate between GT & GE
+              size = indexStore.size(key) > 0 ? 1 : 0;
             }
           } else {
-            // not attempting to differentiate between GT & GE
-            size = indexStore.size(key) > 0 ? 1 : 0;
+            size = Integer.MAX_VALUE;
           }
-        } else {
-          size = Integer.MAX_VALUE;
-        }
-        break;
+          break;
       }
     } finally {
       updateIndexUseEndStats(start, false);
@@ -436,7 +467,19 @@ public class CompactRangeIndex extends AbstractIndex {
   }
 
   /** Method called while appropriate lock held on index */
-  private void lockedQueryPrivate(Object key, int operator, Collection results, CompiledValue iterOps, RuntimeIterator runtimeItr, ExecutionContext context, Set keysToRemove, List projAttrib, SelectResults intermediateResults, boolean isIntersection) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+  private void lockedQueryPrivate(
+      Object key,
+      int operator,
+      Collection results,
+      CompiledValue iterOps,
+      RuntimeIterator runtimeItr,
+      ExecutionContext context,
+      Set keysToRemove,
+      List projAttrib,
+      SelectResults intermediateResults,
+      boolean isIntersection)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
     if (keysToRemove == null) {
       keysToRemove = new HashSet(0);
     }
@@ -463,11 +506,33 @@ public class CompactRangeIndex extends AbstractIndex {
       return;
     }
     key = getPdxStringForIndexedPdxKeys(key);
-    evaluate(key, operator, results, iterOps, runtimeItr, context, keysToRemove, projAttrib, intermediateResults, isIntersection, limit, applyOrderBy, orderByAttrs);
+    evaluate(
+        key,
+        operator,
+        results,
+        iterOps,
+        runtimeItr,
+        context,
+        keysToRemove,
+        projAttrib,
+        intermediateResults,
+        isIntersection,
+        limit,
+        applyOrderBy,
+        orderByAttrs);
   }
 
   /** Method called while appropriate lock held on index */
-  void lockedQuery(Object lowerBoundKey, int lowerBoundOperator, Object upperBoundKey, int upperBoundOperator, Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+  void lockedQuery(
+      Object lowerBoundKey,
+      int lowerBoundOperator,
+      Object upperBoundKey,
+      int upperBoundOperator,
+      Collection results,
+      Set keysToRemove,
+      ExecutionContext context)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
     lowerBoundKey = TypeUtils.indexKeyFor(lowerBoundKey);
     upperBoundKey = TypeUtils.indexKeyFor(upperBoundKey);
     boolean lowerBoundInclusive = lowerBoundOperator == OQLLexerTokenTypes.TOK_GE;
@@ -502,11 +567,36 @@ public class CompactRangeIndex extends AbstractIndex {
     CloseableIterator<IndexStoreEntry> iterator = null;
     try {
       if (asc) {
-        iterator = indexStore.iterator(lowerBoundKey, lowerBoundInclusive, upperBoundKey, upperBoundInclusive, keysToRemove);
+        iterator =
+            indexStore.iterator(
+                lowerBoundKey,
+                lowerBoundInclusive,
+                upperBoundKey,
+                upperBoundInclusive,
+                keysToRemove);
       } else {
-        iterator = indexStore.descendingIterator(lowerBoundKey, lowerBoundInclusive, upperBoundKey, upperBoundInclusive, keysToRemove);
+        iterator =
+            indexStore.descendingIterator(
+                lowerBoundKey,
+                lowerBoundInclusive,
+                upperBoundKey,
+                upperBoundInclusive,
+                keysToRemove);
       }
-      addToResultsFromEntries(lowerBoundKey, upperBoundKey, lowerBoundOperator, upperBoundOperator, iterator, results, null, null, context, null, null, true, multiColOrderBy ? -1 : limit);
+      addToResultsFromEntries(
+          lowerBoundKey,
+          upperBoundKey,
+          lowerBoundOperator,
+          upperBoundOperator,
+          iterator,
+          results,
+          null,
+          null,
+          context,
+          null,
+          null,
+          true,
+          multiColOrderBy ? -1 : limit);
     } finally {
       if (iterator != null) {
         iterator.close();
@@ -514,7 +604,22 @@ public class CompactRangeIndex extends AbstractIndex {
     }
   }
 
-  private void evaluate(Object key, int operator, Collection results, CompiledValue iterOps, RuntimeIterator runtimeItr, ExecutionContext context, Set keysToRemove, List projAttrib, SelectResults intermediateResults, boolean isIntersection, int limit, boolean applyOrderBy, List orderByAttribs) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+  private void evaluate(
+      Object key,
+      int operator,
+      Collection results,
+      CompiledValue iterOps,
+      RuntimeIterator runtimeItr,
+      ExecutionContext context,
+      Set keysToRemove,
+      List projAttrib,
+      SelectResults intermediateResults,
+      boolean isIntersection,
+      int limit,
+      boolean applyOrderBy,
+      List orderByAttribs)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
     boolean multiColOrderBy = false;
     if (keysToRemove == null) {
       keysToRemove = new HashSet(0);
@@ -532,77 +637,171 @@ public class CompactRangeIndex extends AbstractIndex {
     CloseableIterator<IndexStoreEntry> iterator = null;
     try {
       switch (operator) {
-      case OQLLexerTokenTypes.TOK_EQ:
-        assert keysToRemove.isEmpty();
-        iterator = indexStore.get(key);
-        addToResultsFromEntries(key, operator, iterator, results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit);
-        break;
-      case OQLLexerTokenTypes.TOK_LT: {
-        if (asc) {
-          iterator = indexStore.iterator(null, true, key, false, keysToRemove);
-        } else {
-          iterator = indexStore.descendingIterator(null, true, key, false, keysToRemove);
-        }
-        addToResultsFromEntries(key, operator, iterator, results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit);
-      }
-        break;
-      case OQLLexerTokenTypes.TOK_LE: {
-        if (asc) {
-          iterator = indexStore.iterator(null, true, key, true, keysToRemove);
-        } else {
-          iterator = indexStore.descendingIterator(null, true, key, true, keysToRemove);
-        }
+        case OQLLexerTokenTypes.TOK_EQ:
+          assert keysToRemove.isEmpty();
+          iterator = indexStore.get(key);
+          addToResultsFromEntries(
+              key,
+              operator,
+              iterator,
+              results,
+              iterOps,
+              runtimeItr,
+              context,
+              projAttrib,
+              intermediateResults,
+              isIntersection,
+              multiColOrderBy ? -1 : limit);
+          break;
+        case OQLLexerTokenTypes.TOK_LT:
+          {
+            if (asc) {
+              iterator = indexStore.iterator(null, true, key, false, keysToRemove);
+            } else {
+              iterator = indexStore.descendingIterator(null, true, key, false, keysToRemove);
+            }
+            addToResultsFromEntries(
+                key,
+                operator,
+                iterator,
+                results,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                multiColOrderBy ? -1 : limit);
+          }
+          break;
+        case OQLLexerTokenTypes.TOK_LE:
+          {
+            if (asc) {
+              iterator = indexStore.iterator(null, true, key, true, keysToRemove);
+            } else {
+              iterator = indexStore.descendingIterator(null, true, key, true, keysToRemove);
+            }
 
-        addToResultsFromEntries(key, operator, iterator, results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit);
-      }
-        break;
-      case OQLLexerTokenTypes.TOK_GT: {
-        if (asc) {
-          iterator = indexStore.iterator(key, false, keysToRemove);
-        } else {
-          iterator = indexStore.descendingIterator(key, false, keysToRemove);
-        }
-        addToResultsFromEntries(key, operator, iterator, results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit);
-      }
-        break;
-      case OQLLexerTokenTypes.TOK_GE: {
-        if (asc) {
-          iterator = indexStore.iterator(key, true, keysToRemove);
-        } else {
-          iterator = indexStore.descendingIterator(key, true, keysToRemove);
-        }
+            addToResultsFromEntries(
+                key,
+                operator,
+                iterator,
+                results,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                multiColOrderBy ? -1 : limit);
+          }
+          break;
+        case OQLLexerTokenTypes.TOK_GT:
+          {
+            if (asc) {
+              iterator = indexStore.iterator(key, false, keysToRemove);
+            } else {
+              iterator = indexStore.descendingIterator(key, false, keysToRemove);
+            }
+            addToResultsFromEntries(
+                key,
+                operator,
+                iterator,
+                results,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                multiColOrderBy ? -1 : limit);
+          }
+          break;
+        case OQLLexerTokenTypes.TOK_GE:
+          {
+            if (asc) {
+              iterator = indexStore.iterator(key, true, keysToRemove);
+            } else {
+              iterator = indexStore.descendingIterator(key, true, keysToRemove);
+            }
 
-        addToResultsFromEntries(key, operator, iterator, results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit);
-      }
-        break;
-      case OQLLexerTokenTypes.TOK_NE_ALT:
-      case OQLLexerTokenTypes.TOK_NE: {
-        keysToRemove.add(key);
-        if (asc) {
-          iterator = indexStore.iterator(keysToRemove);
-        } else {
-          iterator = indexStore.descendingIterator(keysToRemove);
-        }
-        addToResultsFromEntries(key, operator, iterator, results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit);
-        //If the key is not null, then add the nulls to the results as this is a not equals query
-        if (!IndexManager.NULL.equals(key)) {
-          //we pass in the operator TOK_EQ because we want to add results where the key is equal to NULL
-          addToResultsFromEntries(IndexManager.NULL, OQLLexerTokenTypes.TOK_EQ, indexStore.get(IndexManager.NULL), results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit);
-        }
-        //If the key is not undefined, then add the undefineds to the results as this is a not equals query
-        if (!QueryService.UNDEFINED.equals(key)) {
-          //we pass in the operator TOK_EQ because we want to add results where the key is equal to UNDEFINED
-          addToResultsFromEntries(QueryService.UNDEFINED, OQLLexerTokenTypes.TOK_EQ, indexStore.get(QueryService.UNDEFINED), results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit);
-        }
-      }
-        break;
-      default:
-        throw new AssertionError("Operator = " + operator);
+            addToResultsFromEntries(
+                key,
+                operator,
+                iterator,
+                results,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                multiColOrderBy ? -1 : limit);
+          }
+          break;
+        case OQLLexerTokenTypes.TOK_NE_ALT:
+        case OQLLexerTokenTypes.TOK_NE:
+          {
+            keysToRemove.add(key);
+            if (asc) {
+              iterator = indexStore.iterator(keysToRemove);
+            } else {
+              iterator = indexStore.descendingIterator(keysToRemove);
+            }
+            addToResultsFromEntries(
+                key,
+                operator,
+                iterator,
+                results,
+                iterOps,
+                runtimeItr,
+                context,
+                projAttrib,
+                intermediateResults,
+                isIntersection,
+                multiColOrderBy ? -1 : limit);
+            //If the key is not null, then add the nulls to the results as this is a not equals query
+            if (!IndexManager.NULL.equals(key)) {
+              //we pass in the operator TOK_EQ because we want to add results where the key is equal to NULL
+              addToResultsFromEntries(
+                  IndexManager.NULL,
+                  OQLLexerTokenTypes.TOK_EQ,
+                  indexStore.get(IndexManager.NULL),
+                  results,
+                  iterOps,
+                  runtimeItr,
+                  context,
+                  projAttrib,
+                  intermediateResults,
+                  isIntersection,
+                  multiColOrderBy ? -1 : limit);
+            }
+            //If the key is not undefined, then add the undefineds to the results as this is a not equals query
+            if (!QueryService.UNDEFINED.equals(key)) {
+              //we pass in the operator TOK_EQ because we want to add results where the key is equal to UNDEFINED
+              addToResultsFromEntries(
+                  QueryService.UNDEFINED,
+                  OQLLexerTokenTypes.TOK_EQ,
+                  indexStore.get(QueryService.UNDEFINED),
+                  results,
+                  iterOps,
+                  runtimeItr,
+                  context,
+                  projAttrib,
+                  intermediateResults,
+                  isIntersection,
+                  multiColOrderBy ? -1 : limit);
+            }
+          }
+          break;
+        default:
+          throw new AssertionError("Operator = " + operator);
       } // end switch
     } catch (ClassCastException ex) {
       if (operator == OQLLexerTokenTypes.TOK_EQ) { // result is empty set
         return;
-      } else if (operator == OQLLexerTokenTypes.TOK_NE || operator == OQLLexerTokenTypes.TOK_NE_ALT) { // put all in result
+      } else if (operator == OQLLexerTokenTypes.TOK_NE
+          || operator == OQLLexerTokenTypes.TOK_NE_ALT) { // put all in result
         keysToRemove.add(key);
         try {
           if (asc) {
@@ -610,7 +809,18 @@ public class CompactRangeIndex extends AbstractIndex {
           } else {
             iterator = indexStore.descendingIterator(keysToRemove);
           }
-          addToResultsFromEntries(key, OQLLexerTokenTypes.TOK_NE, iterator, results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, multiColOrderBy ? -1 : limit);
+          addToResultsFromEntries(
+              key,
+              OQLLexerTokenTypes.TOK_NE,
+              iterator,
+              results,
+              iterOps,
+              runtimeItr,
+              context,
+              projAttrib,
+              intermediateResults,
+              isIntersection,
+              multiColOrderBy ? -1 : limit);
         } finally {
           if (iterator != null) {
             iterator.close();
@@ -634,7 +844,7 @@ public class CompactRangeIndex extends AbstractIndex {
   //Only used by CompactMapRangeIndex.  This is due to the way the index initialization happens
   //first we use the IMQEvaluator for CompactMapRangeIndex
   //Each index in CMRI is a CRI that has the CRI.IMQ and not AbstractIndex.IMQ
-  //So instead we create create the evaluator 
+  //So instead we create create the evaluator
   //because we are not doing index init as usual (each value is just put directly?)
   //we must set the result type to match
   void instantiateEvaluator(IndexCreationHelper ich, ObjectType objectType) {
@@ -647,22 +857,63 @@ public class CompactRangeIndex extends AbstractIndex {
   }
 
   /*
-   * 
+   *
    * @param lowerBoundKey the index key to match on
    * @param lowerBoundOperator the operator to use to determine a match
    */
-  private void addToResultsFromEntries(Object lowerBoundKey, int lowerBoundOperator, CloseableIterator<IndexStoreEntry> entriesIter, Collection result, CompiledValue iterOps, RuntimeIterator runtimeItr, ExecutionContext context, List projAttrib, SelectResults intermediateResults, boolean isIntersection, int limit) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
-    addToResultsFromEntries(lowerBoundKey, null, lowerBoundOperator, -1, entriesIter, result, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection, limit);
+  private void addToResultsFromEntries(
+      Object lowerBoundKey,
+      int lowerBoundOperator,
+      CloseableIterator<IndexStoreEntry> entriesIter,
+      Collection result,
+      CompiledValue iterOps,
+      RuntimeIterator runtimeItr,
+      ExecutionContext context,
+      List projAttrib,
+      SelectResults intermediateResults,
+      boolean isIntersection,
+      int limit)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
+    addToResultsFromEntries(
+        lowerBoundKey,
+        null,
+        lowerBoundOperator,
+        -1,
+        entriesIter,
+        result,
+        iterOps,
+        runtimeItr,
+        context,
+        projAttrib,
+        intermediateResults,
+        isIntersection,
+        limit);
   }
 
   /*
-   * 
+   *
    * @param lowerBoundKey the index key to match on for a lower bound on a ranged query, otherwise the key to match on
    * @param upperBoundKey the index key to match on for an upper bound on a ranged query, otherwise null
    * @param lowerBoundOperator the operator to use to determine a match against the lower bound
    * @param upperBoundOperator the operator to use to determine a match against the upper bound
    */
-  private void addToResultsFromEntries(Object lowerBoundKey, Object upperBoundKey, int lowerBoundOperator, int upperBoundOperator, CloseableIterator<IndexStoreEntry> entriesIter, Collection result, CompiledValue iterOps, RuntimeIterator runtimeItr, ExecutionContext context, List projAttrib, SelectResults intermediateResults, boolean isIntersection, int limit) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  private void addToResultsFromEntries(
+      Object lowerBoundKey,
+      Object upperBoundKey,
+      int lowerBoundOperator,
+      int upperBoundOperator,
+      CloseableIterator<IndexStoreEntry> entriesIter,
+      Collection result,
+      CompiledValue iterOps,
+      RuntimeIterator runtimeItr,
+      ExecutionContext context,
+      List projAttrib,
+      SelectResults intermediateResults,
+      boolean isIntersection,
+      int limit)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
 
     QueryObserver observer = QueryObserverHolder.getInstance();
     boolean limitApplied = false;
@@ -686,7 +937,10 @@ public class CompactRangeIndex extends AbstractIndex {
         QueryMonitor.isQueryExecutionCanceled();
         if (IndexManager.testHook != null) {
           if (this.region.getCache().getLogger().fineEnabled()) {
-            this.region.getCache().getLogger().fine("IndexManager TestHook is set in addToResultsFromEntries.");
+            this.region
+                .getCache()
+                .getLogger()
+                .fine("IndexManager TestHook is set in addToResultsFromEntries.");
           }
           IndexManager.testHook.hook(11);
         }
@@ -750,7 +1004,14 @@ public class CompactRangeIndex extends AbstractIndex {
           // }
           // }
           //
-          List expandedResults = expandValue(context, lowerBoundKey, upperBoundKey, lowerBoundOperator, upperBoundOperator, value);
+          List expandedResults =
+              expandValue(
+                  context,
+                  lowerBoundKey,
+                  upperBoundKey,
+                  lowerBoundOperator,
+                  upperBoundOperator,
+                  value);
           Iterator iterator = ((Collection) expandedResults).iterator();
           while (iterator.hasNext()) {
             value = iterator.next();
@@ -779,7 +1040,8 @@ public class CompactRangeIndex extends AbstractIndex {
                 if (context != null && context.isCqQueryContext()) {
                   result.add(new CqEntry(indexEntry.getDeserializedRegionKey(), value));
                 } else {
-                  applyProjection(projAttrib, context, result, value, intermediateResults, isIntersection);
+                  applyProjection(
+                      projAttrib, context, result, value, intermediateResults, isIntersection);
                 }
                 if (verifyLimit(result, limit, context)) {
                   observer.limitAppliedAtIndexLevel(this, limit, result);
@@ -797,7 +1059,8 @@ public class CompactRangeIndex extends AbstractIndex {
                 runtimeItr = getRuntimeIteratorForThisIndex(context, indexInfo);
                 if (runtimeItr == null) {
                   // could not match index with iterator
-                  throw new QueryInvocationTargetException("Query alias's must be used consistently");
+                  throw new QueryInvocationTargetException(
+                      "Query alias's must be used consistently");
                 }
               }
               runtimeItr.setCurrent(value);
@@ -818,7 +1081,8 @@ public class CompactRangeIndex extends AbstractIndex {
                 if (IndexManager.testHook != null) {
                   IndexManager.testHook.hook(200);
                 }
-                applyProjection(projAttrib, context, result, value, intermediateResults, isIntersection);
+                applyProjection(
+                    projAttrib, context, result, value, intermediateResults, isIntersection);
               }
               if (verifyLimit(result, limit, context)) {
                 observer.limitAppliedAtIndexLevel(this, limit, result);
@@ -835,38 +1099,49 @@ public class CompactRangeIndex extends AbstractIndex {
     }
   }
 
-  public List expandValue(ExecutionContext context, Object lowerBoundKey, Object upperBoundKey, int lowerBoundOperator, int upperBoundOperator, Object value) {
+  public List expandValue(
+      ExecutionContext context,
+      Object lowerBoundKey,
+      Object upperBoundKey,
+      int lowerBoundOperator,
+      int upperBoundOperator,
+      Object value) {
     try {
       List expandedResults = new ArrayList();
-      this.evaluator.expansion(expandedResults, lowerBoundKey, upperBoundKey, lowerBoundOperator, upperBoundOperator, value);
+      this.evaluator.expansion(
+          expandedResults,
+          lowerBoundKey,
+          upperBoundKey,
+          lowerBoundOperator,
+          upperBoundOperator,
+          value);
       return expandedResults;
     } catch (IMQException e) {
       e.printStackTrace();
-      throw new CacheException(e) {
-      };
+      throw new CacheException(e) {};
     }
   }
 
   /**
-   * This evaluates the left and right side of a where condition for which this
-   * Index was used. Like, if condition is "ID > 1", {@link IndexInfo} will
-   * contain Left as ID, Right as '1' and operator as TOK_GT. This method will
-   * evaluate ID from region entry value and verify the ID > 1.
-   * 
-   * Note: IndexInfo is created for each query separately based on the condition
-   * being evaluated using the Index.
-   * 
+   * This evaluates the left and right side of a where condition for which this Index was used.
+   * Like, if condition is "ID > 1", {@link IndexInfo} will contain Left as ID, Right as '1' and
+   * operator as TOK_GT. This method will evaluate ID from region entry value and verify the ID > 1.
+   *
+   * <p>Note: IndexInfo is created for each query separately based on the condition being evaluated
+   * using the Index.
+   *
    * @param indexInfo
    * @param context
    * @param keyVal
-   * @return true if RegionEntry value satisfies the where condition (contained
-   *         in IndexInfo).
+   * @return true if RegionEntry value satisfies the where condition (contained in IndexInfo).
    * @throws FunctionDomainException
    * @throws TypeMismatchException
    * @throws NameResolutionException
    * @throws QueryInvocationTargetException
    */
-  protected boolean evaluateEntry(IndexInfo indexInfo, ExecutionContext context, Object keyVal) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  protected boolean evaluateEntry(IndexInfo indexInfo, ExecutionContext context, Object keyVal)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     CompiledValue path = ((IndexInfo) indexInfo)._path();
     Object left = path.evaluate(context);
     CompiledValue key = ((IndexInfo) indexInfo)._key();
@@ -884,7 +1159,9 @@ public class CompactRangeIndex extends AbstractIndex {
     if (key != null) {
       right = key.evaluate(context);
       //This next check is for map queries with In Clause, in those cases the reevaluation creates a tuple.  In other cases it does not
-      if (null != right && indexInfo._getIndex() instanceof CompactMapRangeIndex && right instanceof Object[]) {
+      if (null != right
+          && indexInfo._getIndex() instanceof CompactMapRangeIndex
+          && right instanceof Object[]) {
         right = ((Object[]) right)[0];
       }
     } else {
@@ -898,15 +1175,15 @@ public class CompactRangeIndex extends AbstractIndex {
       if (left instanceof PdxString) {
         if (right instanceof String) {
           switch (key.getType()) {
-          case CompiledValue.LITERAL:
-            right = ((CompiledLiteral) key).getSavedPdxString();
-            break;
-          case OQLLexerTokenTypes.QUERY_PARAM:
-            right = ((CompiledBindArgument) key).getSavedPdxString(context);
-            break;
-          case CompiledValue.FUNCTION:
-          case CompiledValue.PATH:
-            right = new PdxString((String) right);
+            case CompiledValue.LITERAL:
+              right = ((CompiledLiteral) key).getSavedPdxString();
+              break;
+            case OQLLexerTokenTypes.QUERY_PARAM:
+              right = ((CompiledBindArgument) key).getSavedPdxString(context);
+              break;
+            case CompiledValue.FUNCTION:
+            case CompiledValue.PATH:
+              right = new PdxString((String) right);
           }
         }
       }
@@ -958,9 +1235,7 @@ public class CompactRangeIndex extends AbstractIndex {
       this.vsdStats = new IndexStats(getRegion().getCache().getDistributedSystem(), indexName);
     }
 
-    /**
-     * Return the total number of times this index has been updated
-     */
+    /** Return the total number of times this index has been updated */
     public long getNumUpdates() {
       return this.vsdStats.getNumUpdates();
     }
@@ -1009,46 +1284,32 @@ public class CompactRangeIndex extends AbstractIndex {
       this.vsdStats.incReadLockCount(delta);
     }
 
-    /**
-     * Returns the total amount of time (in nanoseconds) spent updating this
-     * index.
-     */
+    /** Returns the total amount of time (in nanoseconds) spent updating this index. */
     public long getTotalUpdateTime() {
       return this.vsdStats.getTotalUpdateTime();
     }
 
-    /**
-     * Returns the total number of times this index has been accessed by a
-     * query.
-     */
+    /** Returns the total number of times this index has been accessed by a query. */
     public long getTotalUses() {
       return this.vsdStats.getTotalUses();
     }
 
-    /**
-     * Returns the number of keys in this index.
-     */
+    /** Returns the number of keys in this index. */
     public long getNumberOfKeys() {
       return this.vsdStats.getNumberOfKeys();
     }
 
-    /**
-     * Returns the number of values in this index.
-     */
+    /** Returns the number of values in this index. */
     public long getNumberOfValues() {
       return this.vsdStats.getNumberOfValues();
     }
 
-    /**
-     * Return the number of values for the specified key in this index.
-     */
+    /** Return the number of values for the specified key in this index. */
     public long getNumberOfValues(Object key) {
       return indexStore.size(key);
     }
 
-    /**
-     * Return the number of read locks taken on this index
-     */
+    /** Return the number of read locks taken on this index */
     public int getReadLockCount() {
       return this.vsdStats.getReadLockCount();
     }
@@ -1068,14 +1329,12 @@ public class CompactRangeIndex extends AbstractIndex {
     }
   }
 
-  /**
-   * 
-   */
+  /** */
   class IMQEvaluator implements IndexedExpressionEvaluator {
     private Cache cache;
     private List fromIterators = null;
     private CompiledValue indexedExpr = null;
-    final private String[] canonicalIterNames;
+    private final String[] canonicalIterNames;
     private ObjectType indexResultSetType = null;
     private Region rgn = null;
     private Map dependencyGraph = null;
@@ -1126,7 +1385,7 @@ public class CompactRangeIndex extends AbstractIndex {
       // Asif : The modified iterators for optmizing Index cxreation
       isFirstItrOnEntry = ((FunctionalIndexCreationHelper) helper).isFirstIteratorRegionEntry;
       additionalProj = ((FunctionalIndexCreationHelper) helper).additionalProj;
-      Object params1[] = { new QRegion(rgn, false) };
+      Object params1[] = {new QRegion(rgn, false)};
       initContext = new ExecutionContext(params1, cache);
       if (isFirstItrOnEntry) {
         this.indexInitIterators = this.fromIterators;
@@ -1162,7 +1421,14 @@ public class CompactRangeIndex extends AbstractIndex {
       return CompactRangeIndex.this.getCanonicalizedFromClause();
     }
 
-    public void expansion(List expandedResults, Object lowerBoundKey, Object upperBoundKey, int lowerBoundOperator, int upperBoundOperator, Object value) throws IMQException {
+    public void expansion(
+        List expandedResults,
+        Object lowerBoundKey,
+        Object upperBoundKey,
+        int lowerBoundOperator,
+        int upperBoundOperator,
+        Object value)
+        throws IMQException {
       try {
         ExecutionContext expansionContext = createExecutionContext(value);
         List iterators = expansionContext.getCurrentIterators();
@@ -1170,43 +1436,82 @@ public class CompactRangeIndex extends AbstractIndex {
         iter.setCurrent(value);
 
         //first iter level is region entries, we can ignore as we already broke it down in the index
-        doNestedExpansion(1, expansionContext, expandedResults, lowerBoundKey, upperBoundKey, lowerBoundOperator, upperBoundOperator, value);
+        doNestedExpansion(
+            1,
+            expansionContext,
+            expandedResults,
+            lowerBoundKey,
+            upperBoundKey,
+            lowerBoundOperator,
+            upperBoundOperator,
+            value);
       } catch (Exception e) {
-        throw new IMQException(e) {
-        };
+        throw new IMQException(e) {};
       }
     }
 
-    private void doNestedExpansion(int level, ExecutionContext expansionContext, List expandedResults, Object lowerBoundKey, Object upperBoundKey, int lowerBoundOperator, int upperBoundOperator, Object value) throws TypeMismatchException, AmbiguousNameException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException, IMQException {
+    private void doNestedExpansion(
+        int level,
+        ExecutionContext expansionContext,
+        List expandedResults,
+        Object lowerBoundKey,
+        Object upperBoundKey,
+        int lowerBoundOperator,
+        int upperBoundOperator,
+        Object value)
+        throws TypeMismatchException, AmbiguousNameException, FunctionDomainException,
+            NameResolutionException, QueryInvocationTargetException, IMQException {
       List iterList = expansionContext.getCurrentIterators();
       int iteratorSize = iterList.size();
       if (level == iteratorSize) {
-        expand(expansionContext, expandedResults, lowerBoundKey, upperBoundKey, lowerBoundOperator, upperBoundOperator, value);
+        expand(
+            expansionContext,
+            expandedResults,
+            lowerBoundKey,
+            upperBoundKey,
+            lowerBoundOperator,
+            upperBoundOperator,
+            value);
       } else {
         RuntimeIterator rIter = (RuntimeIterator) iterList.get(level);
         Collection c = rIter.evaluateCollection(expansionContext);
-        if (c == null)
-          return;
+        if (c == null) return;
         Iterator cIter = c.iterator();
         while (cIter.hasNext()) {
           rIter.setCurrent(cIter.next());
-          doNestedExpansion(level + 1, expansionContext, expandedResults, lowerBoundKey, upperBoundKey, lowerBoundOperator, upperBoundOperator, value);
+          doNestedExpansion(
+              level + 1,
+              expansionContext,
+              expandedResults,
+              lowerBoundKey,
+              upperBoundKey,
+              lowerBoundOperator,
+              upperBoundOperator,
+              value);
         }
       }
     }
 
     /**
-     * 
      * @param expansionContext
      * @param expandedResults
      * @param lowerBoundKey
-     * @param upperBoundKey if null, we do not do an upperbound check (may need to change this if we ever use null in a range query)
+     * @param upperBoundKey if null, we do not do an upperbound check (may need to change this if we
+     *     ever use null in a range query)
      * @param lowerBoundOperator
      * @param upperBoundOperator
      * @param value
      * @throws IMQException
      */
-    public void expand(ExecutionContext expansionContext, List expandedResults, Object lowerBoundKey, Object upperBoundKey, int lowerBoundOperator, int upperBoundOperator, Object value) throws IMQException {
+    public void expand(
+        ExecutionContext expansionContext,
+        List expandedResults,
+        Object lowerBoundKey,
+        Object upperBoundKey,
+        int lowerBoundOperator,
+        int upperBoundOperator,
+        Object value)
+        throws IMQException {
       try {
         RuntimeIterator runtimeItr = getRuntimeIteratorForThisIndex(expansionContext);
         if (runtimeItr != null) {
@@ -1269,7 +1574,10 @@ public class CompactRangeIndex extends AbstractIndex {
               RuntimeIterator iter = (RuntimeIterator) currentRuntimeIters.get(i);
               tuple[i] = iter.evaluate(expansionContext);
             }
-            Support.Assert(this.indexResultSetType instanceof StructTypeImpl, "The Index ResultType should have been an instance of StructTypeImpl rather than ObjectTypeImpl. The indxeResultType is " + this.indexResultSetType);
+            Support.Assert(
+                this.indexResultSetType instanceof StructTypeImpl,
+                "The Index ResultType should have been an instance of StructTypeImpl rather than ObjectTypeImpl. The indxeResultType is "
+                    + this.indexResultSetType);
           }
           indxResultSet = new StructImpl((StructTypeImpl) this.indexResultSetType, tuple);
         }
@@ -1282,8 +1590,9 @@ public class CompactRangeIndex extends AbstractIndex {
 
     private ExecutionContext createExecutionContext(Object value) {
       DummyQRegion dQRegion = new DummyQRegion(rgn);
-      dQRegion.setEntry(VMThinRegionEntryHeap.getEntryFactory().createEntry((RegionEntryContext) rgn, 0, value));
-      Object params[] = { dQRegion };
+      dQRegion.setEntry(
+          VMThinRegionEntryHeap.getEntryFactory().createEntry((RegionEntryContext) rgn, 0, value));
+      Object params[] = {dQRegion};
       ExecutionContext context = new ExecutionContext(params, this.cache);
       context.newScope(IndexCreationHelper.INDEX_QUERY_SCOPE_ID);
       try {
@@ -1304,7 +1613,9 @@ public class CompactRangeIndex extends AbstractIndex {
           dependencyGraph = context.getDependencyGraph();
         }
 
-        Support.Assert(this.indexResultSetType != null, "IMQEvaluator::evaluate:The StrcutType should have been initialized during index creation");
+        Support.Assert(
+            this.indexResultSetType != null,
+            "IMQEvaluator::evaluate:The StrcutType should have been initialized during index creation");
       } catch (Exception e) {
         e.printStackTrace(System.out);
         throw new Error("Unable to reevaluate, this should not happen");
@@ -1314,15 +1625,12 @@ public class CompactRangeIndex extends AbstractIndex {
       return context;
     }
 
-    /**
-     * @param add
-     *          true if adding to index, false if removing
-     */
+    /** @param add true if adding to index, false if removing */
     public void evaluate(RegionEntry target, boolean add) throws IMQException {
       assert !target.isInvalid() : "value in RegionEntry should not be INVALID";
       DummyQRegion dQRegion = new DummyQRegion(rgn);
       dQRegion.setEntry(target);
-      Object params[] = { dQRegion };
+      Object params[] = {dQRegion};
       ExecutionContext context = new ExecutionContext(params, this.cache);
       context.newScope(IndexCreationHelper.INDEX_QUERY_SCOPE_ID);
       try {
@@ -1347,7 +1655,9 @@ public class CompactRangeIndex extends AbstractIndex {
           dependencyGraph = context.getDependencyGraph();
         }
 
-        Support.Assert(this.indexResultSetType != null, "IMQEvaluator::evaluate:The StrcutType should have been initialized during index creation");
+        Support.Assert(
+            this.indexResultSetType != null,
+            "IMQEvaluator::evaluate:The StrcutType should have been initialized during index creation");
 
         doNestedIterations(0, add, context);
 
@@ -1368,10 +1678,7 @@ public class CompactRangeIndex extends AbstractIndex {
       }
     }
 
-    /**
-     * Asif : This function is used for creating Index data at the start
-     * 
-     */
+    /** Asif : This function is used for creating Index data at the start */
     public void initializeIndex(boolean loadEntries) throws IMQException {
       this.initEntriesUpdated = 0;
       try {
@@ -1409,7 +1716,9 @@ public class CompactRangeIndex extends AbstractIndex {
       }
     }
 
-    private void doNestedIterationsForIndexInit(int level, List runtimeIterators) throws TypeMismatchException, AmbiguousNameException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException, IMQException {
+    private void doNestedIterationsForIndexInit(int level, List runtimeIterators)
+        throws TypeMismatchException, AmbiguousNameException, FunctionDomainException,
+            NameResolutionException, QueryInvocationTargetException, IMQException {
       if (level == 1) {
         ++this.initEntriesUpdated;
       }
@@ -1418,8 +1727,7 @@ public class CompactRangeIndex extends AbstractIndex {
       } else {
         RuntimeIterator rIter = (RuntimeIterator) runtimeIterators.get(level);
         Collection c = rIter.evaluateCollection(this.initContext);
-        if (c == null)
-          return;
+        if (c == null) return;
         Iterator cIter = c.iterator();
         while (cIter.hasNext()) {
           rIter.setCurrent(cIter.next());
@@ -1440,18 +1748,24 @@ public class CompactRangeIndex extends AbstractIndex {
      * evaluating the additional projection attribute. If the boolean
      * isFirstItrOnEntry is tru e& additional projection attribute is null, then
      * teh 0th iterator itself will evaluate to Region.Entry Object.
-     * 
+     *
      * The 2nd element of Object Array contains the Struct object ( tuple)
      * created. If the boolean isFirstItrOnEntry is false, then the first
      * attribute of the Struct object is obtained by evaluating the additional
      * projection attribute.
      */
-    private void applyProjectionForIndexInit(List currentRuntimeIters) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException, IMQException {
+    private void applyProjectionForIndexInit(List currentRuntimeIters)
+        throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+            QueryInvocationTargetException, IMQException {
       if (QueryMonitor.isLowMemory()) {
-        throw new IMQException(LocalizedStrings.IndexCreationMsg_CANCELED_DUE_TO_LOW_MEMORY.toLocalizedString());
+        throw new IMQException(
+            LocalizedStrings.IndexCreationMsg_CANCELED_DUE_TO_LOW_MEMORY.toLocalizedString());
       }
 
-      Object indexKey = this.isFirstItrOnEntry ? this.indexedExpr.evaluate(this.initContext) : modifiedIndexExpr.evaluate(this.initContext);
+      Object indexKey =
+          this.isFirstItrOnEntry
+              ? this.indexedExpr.evaluate(this.initContext)
+              : modifiedIndexExpr.evaluate(this.initContext);
 
       if (indexKey == null) {
         indexKey = IndexManager.NULL;
@@ -1466,18 +1780,21 @@ public class CompactRangeIndex extends AbstractIndex {
       if (this.isFirstItrOnEntry && this.additionalProj != null) {
         temp = (LocalRegion.NonTXEntry) additionalProj.evaluate(this.initContext);
       } else {
-        temp = (LocalRegion.NonTXEntry) (((RuntimeIterator) currentRuntimeIters.get(0)).evaluate(this.initContext));
+        temp =
+            (LocalRegion.NonTXEntry)
+                (((RuntimeIterator) currentRuntimeIters.get(0)).evaluate(this.initContext));
       }
       RegionEntry re = temp.getRegionEntry();
       indexStore.addMapping(indexKey, re);
     }
 
     /**
-     * @param add
-     *          true if adding to index, false if removing
+     * @param add true if adding to index, false if removing
      * @param context
      */
-    private void doNestedIterations(int level, boolean add, ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException, IMQException {
+    private void doNestedIterations(int level, boolean add, ExecutionContext context)
+        throws TypeMismatchException, AmbiguousNameException, FunctionDomainException,
+            NameResolutionException, QueryInvocationTargetException, IMQException {
       List iterList = context.getCurrentIterators();
       if (level == this.iteratorSize) {
         applyProjection(add, context);
@@ -1485,8 +1802,7 @@ public class CompactRangeIndex extends AbstractIndex {
         RuntimeIterator rIter = (RuntimeIterator) iterList.get(level);
         // System.out.println("Level = "+level+" Iter = "+rIter.getDef());
         Collection c = rIter.evaluateCollection(context);
-        if (c == null)
-          return;
+        if (c == null) return;
         Iterator cIter = c.iterator();
         while (cIter.hasNext()) {
           rIter.setCurrent(cIter.next());
@@ -1496,11 +1812,12 @@ public class CompactRangeIndex extends AbstractIndex {
     }
 
     /**
-     * @param add
-     *          true if adding, false if removing from index
+     * @param add true if adding, false if removing from index
      * @param context
      */
-    private void applyProjection(boolean add, ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException, IMQException {
+    private void applyProjection(boolean add, ExecutionContext context)
+        throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+            QueryInvocationTargetException, IMQException {
       Object indexKey = indexedExpr.evaluate(context);
       if (indexKey == null) {
         indexKey = IndexManager.NULL;
@@ -1586,12 +1903,37 @@ public class CompactRangeIndex extends AbstractIndex {
     }
   }
 
-  void lockedQuery(Object key, int operator, Collection results, CompiledValue iterOps, RuntimeIterator indpndntItr, ExecutionContext context, List projAttrib, SelectResults intermediateResults, boolean isIntersection) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
-    this.lockedQueryPrivate(key, operator, results, iterOps, indpndntItr, context, null, projAttrib, intermediateResults, isIntersection);
+  void lockedQuery(
+      Object key,
+      int operator,
+      Collection results,
+      CompiledValue iterOps,
+      RuntimeIterator indpndntItr,
+      ExecutionContext context,
+      List projAttrib,
+      SelectResults intermediateResults,
+      boolean isIntersection)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
+    this.lockedQueryPrivate(
+        key,
+        operator,
+        results,
+        iterOps,
+        indpndntItr,
+        context,
+        null,
+        projAttrib,
+        intermediateResults,
+        isIntersection);
   }
 
-  void lockedQuery(Object key, int operator, Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
-    this.lockedQueryPrivate(key, operator, results, null, null, context, keysToRemove, null, null, true);
+  void lockedQuery(
+      Object key, int operator, Collection results, Set keysToRemove, ExecutionContext context)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
+    this.lockedQueryPrivate(
+        key, operator, results, null, null, context, keysToRemove, null, null, true);
   }
 
   @Override
@@ -1618,9 +1960,7 @@ public class CompactRangeIndex extends AbstractIndex {
     throw new UnsupportedOperationException("valuesToEntriesMap should not be accessed directly");
   }
 
-  public void addSavedMappings(RegionEntry entry) {
-
-  }
+  public void addSavedMappings(RegionEntry entry) {}
 
   private class OldKeyValuePair {
     private Object oldKey;

@@ -41,10 +41,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.LOCATORS;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
-/**
- * Basic integration tests for validating the off-heap implementation. 
- * 
- */
+/** Basic integration tests for validating the off-heap implementation. */
 @Category(IntegrationTest.class)
 public class OffHeapValidationJUnitTest {
 
@@ -111,8 +108,17 @@ public class OffHeapValidationJUnitTest {
     }
 
     // create off-heap region
-    Region<Object, Object> region = this.cache.createRegionFactory(getRegionShortcut()).setOffHeap(true).create(getRegionName());
-    Region<Object, Object> compressedRegion = this.cache.createRegionFactory(getRegionShortcut()).setOffHeap(true).setCompressor(SnappyCompressor.getDefaultInstance()).create(getRegionName() + "Compressed");
+    Region<Object, Object> region =
+        this.cache
+            .createRegionFactory(getRegionShortcut())
+            .setOffHeap(true)
+            .create(getRegionName());
+    Region<Object, Object> compressedRegion =
+        this.cache
+            .createRegionFactory(getRegionShortcut())
+            .setOffHeap(true)
+            .setCompressor(SnappyCompressor.getDefaultInstance())
+            .create(getRegionName() + "Compressed");
 
     // perform some ops
     List<ExpectedValues> expected = new ArrayList<ExpectedValues>();
@@ -164,12 +170,14 @@ public class OffHeapValidationJUnitTest {
       //System.out.println(((MemoryAllocatorImpl)inspector).getSnapshot());
 
       // sort the ExpectedValues into the same order as the MemberBlocks from inspector
-      Collections.sort(expected, new Comparator<ExpectedValues>() {
-        @Override
-        public int compare(ExpectedValues o1, ExpectedValues o2) {
-          return Long.valueOf(o1.memoryAddress).compareTo(o2.memoryAddress);
-        }
-      });
+      Collections.sort(
+          expected,
+          new Comparator<ExpectedValues>() {
+            @Override
+            public int compare(ExpectedValues o1, ExpectedValues o2) {
+              return Long.valueOf(o1.memoryAddress).compareTo(o2.memoryAddress);
+            }
+          });
 
       int i = 0;
       MemoryBlock block = firstBlock.getNextBlock();
@@ -190,8 +198,17 @@ public class OffHeapValidationJUnitTest {
           assertTrue(obj instanceof String);
           assertEquals("this is a string", (String) obj);
         }
-        if ((values.dataType.contains("byte [") && values.dataType.lastIndexOf('[') == values.dataType.indexOf('[')) || values.dataType.startsWith("compressed")) {
-          assertTrue("for dataType=" + values.dataType + " expected " + Arrays.toString((byte[]) values.dataValue) + " but was " + Arrays.toString((byte[]) block.getDataValue()), Arrays.equals((byte[]) values.dataValue, (byte[]) block.getDataValue()));
+        if ((values.dataType.contains("byte [")
+                && values.dataType.lastIndexOf('[') == values.dataType.indexOf('['))
+            || values.dataType.startsWith("compressed")) {
+          assertTrue(
+              "for dataType="
+                  + values.dataType
+                  + " expected "
+                  + Arrays.toString((byte[]) values.dataValue)
+                  + " but was "
+                  + Arrays.toString((byte[]) block.getDataValue()),
+              Arrays.equals((byte[]) values.dataValue, (byte[]) block.getDataValue()));
         } else if (values.dataType.contains("[")) {
           // TODO: multiple dimension arrays or non-byte arrays
         } else if (values.dataValue instanceof Collection) {
@@ -220,8 +237,9 @@ public class OffHeapValidationJUnitTest {
   }
 
   /**
-   * Returns -1 if c1 is missing an element in c2, 1 if c2 is missing an element
-   * in c1, or 0 is they contain the exact same elements.
+   * Returns -1 if c1 is missing an element in c2, 1 if c2 is missing an element in c1, or 0 is they
+   * contain the exact same elements.
+   *
    * @throws NullPointerException if either c1 or c2 is null
    */
   private static int joint(Collection<?> c1, Collection<?> c2) {
@@ -245,8 +263,9 @@ public class OffHeapValidationJUnitTest {
   }
 
   /**
-   * Returns -1 if m1 is missing a key in m2, 1 if m2 is missing a key
-   * in m1, or 0 is they contain the exact same keys.
+   * Returns -1 if m1 is missing a key in m2, 1 if m2 is missing a key in m1, or 0 is they contain
+   * the exact same keys.
+   *
    * @throws NullPointerException if either c1 or c2 is null
    */
   private static int joint(Map<?, ?> m1, Map<?, ?> m2) {
@@ -281,10 +300,21 @@ public class OffHeapValidationJUnitTest {
     String key = "keyString";
     String value = "this is a string";
     region.put(key, value);
-    expected.add(new ExpectedValues(value, value.length() * 2, "java.lang.String", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value,
+            value.length() * 2,
+            "java.lang.String",
+            -1,
+            getMemoryAddress(region, key),
+            1,
+            0,
+            false,
+            true));
   }
 
-  private void putCompressedString(Region<Object, Object> region, List<ExpectedValues> expected) throws IOException {
+  private void putCompressedString(Region<Object, Object> region, List<ExpectedValues> expected)
+      throws IOException {
     String key = "keyString";
     String value = "this is a string";
     region.put(key, value);
@@ -292,57 +322,90 @@ public class OffHeapValidationJUnitTest {
     DataSerializer.writeObject(value, hdos);
     byte[] uncompressedBytes = hdos.toByteArray();
     byte[] expectedValue = SnappyCompressor.getDefaultInstance().compress(uncompressedBytes);
-    expected.add(new ExpectedValues(expectedValue, 32, "compressed object of size " + expectedValue.length, -1, getMemoryAddress(region, key), 1, 0, true, true));
+    expected.add(
+        new ExpectedValues(
+            expectedValue,
+            32,
+            "compressed object of size " + expectedValue.length,
+            -1,
+            getMemoryAddress(region, key),
+            1,
+            0,
+            true,
+            true));
   }
 
   private void putDate(Region<Object, Object> region, List<ExpectedValues> expected) {
     String key = "keyDate";
     Date value = new Date();
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 24, "java.util.Date", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 24, "java.util.Date", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putByteArray(Region<Object, Object> region, List<ExpectedValues> expected) {
     String key = "keyByteArray";
     byte[] value = new byte[10];
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 24, "byte[10]", -1, getMemoryAddress(region, key), 1, 0, false, false));
+    expected.add(
+        new ExpectedValues(
+            value, 24, "byte[10]", -1, getMemoryAddress(region, key), 1, 0, false, false));
   }
 
-  private void putCompressedByteArray(Region<Object, Object> region, List<ExpectedValues> expected) throws IOException {
+  private void putCompressedByteArray(Region<Object, Object> region, List<ExpectedValues> expected)
+      throws IOException {
     String key = "keyByteArray";
     byte[] value = new byte[10];
     region.put(key, value);
     byte[] expectedValue = SnappyCompressor.getDefaultInstance().compress(value);
-    expected.add(new ExpectedValues(expectedValue, 24, "compressed byte[" + expectedValue.length + "]", -1, getMemoryAddress(region, key), 1, 0, true, false));
+    expected.add(
+        new ExpectedValues(
+            expectedValue,
+            24,
+            "compressed byte[" + expectedValue.length + "]",
+            -1,
+            getMemoryAddress(region, key),
+            1,
+            0,
+            true,
+            false));
   }
 
   private void putByteArrayArray(Region<Object, Object> region, List<ExpectedValues> expected) {
     String key = "keyByteArrayArray";
     byte[][] value = new byte[10][10];
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 120, "byte[][]", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 120, "byte[][]", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putShortArray(Region<Object, Object> region, List<ExpectedValues> expected) {
     String key = "keyShortArray(";
     short[] value = new short[10];
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 32, "short[]", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 32, "short[]", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putStringArray(Region<Object, Object> region, List<ExpectedValues> expected) {
     String key = "keyStringArray";
     String[] value = new String[10];
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 24, "java.lang.String[]", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 24, "java.lang.String[]", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putObjectArray(Region<Object, Object> region, List<ExpectedValues> expected) {
     String key = "keyObjectArray";
     Object[] value = new Object[10];
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 40, "java.lang.Object[]", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 40, "java.lang.Object[]", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putArrayList(Region<Object, Object> region, List<ExpectedValues> expected) {
@@ -351,7 +414,17 @@ public class OffHeapValidationJUnitTest {
     value.add("string 1");
     value.add("string 2");
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 32, "java.util.ArrayList", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value,
+            32,
+            "java.util.ArrayList",
+            -1,
+            getMemoryAddress(region, key),
+            1,
+            0,
+            false,
+            true));
   }
 
   private void putLinkedList(Region<Object, Object> region, List<ExpectedValues> expected) {
@@ -360,7 +433,17 @@ public class OffHeapValidationJUnitTest {
     value.add("string 1");
     value.add("string 2");
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 32, "java.util.LinkedList", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value,
+            32,
+            "java.util.LinkedList",
+            -1,
+            getMemoryAddress(region, key),
+            1,
+            0,
+            false,
+            true));
   }
 
   private void putHashSet(Region<Object, Object> region, List<ExpectedValues> expected) {
@@ -369,7 +452,9 @@ public class OffHeapValidationJUnitTest {
     value.add("string 1");
     value.add("string 2");
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 32, "java.util.HashSet", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 32, "java.util.HashSet", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putLinkedHashSet(Region<Object, Object> region, List<ExpectedValues> expected) {
@@ -378,7 +463,17 @@ public class OffHeapValidationJUnitTest {
     value.add("string 1");
     value.add("string 2");
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 32, "java.util.LinkedHashSet", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value,
+            32,
+            "java.util.LinkedHashSet",
+            -1,
+            getMemoryAddress(region, key),
+            1,
+            0,
+            false,
+            true));
   }
 
   private void putHashMap(Region<Object, Object> region, List<ExpectedValues> expected) {
@@ -387,7 +482,9 @@ public class OffHeapValidationJUnitTest {
     value.put("1", "string 1");
     value.put("2", "string 2");
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 40, "java.util.HashMap", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 40, "java.util.HashMap", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putIdentityHashMap(Region<Object, Object> region, List<ExpectedValues> expected) {
@@ -396,7 +493,17 @@ public class OffHeapValidationJUnitTest {
     value.put("1", "string 1");
     value.put("2", "string 2");
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 40, "java.util.IdentityHashMap", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value,
+            40,
+            "java.util.IdentityHashMap",
+            -1,
+            getMemoryAddress(region, key),
+            1,
+            0,
+            false,
+            true));
   }
 
   private void putHashtable(Region<Object, Object> region, List<ExpectedValues> expected) {
@@ -405,7 +512,17 @@ public class OffHeapValidationJUnitTest {
     value.put("1", "string 1");
     value.put("2", "string 2");
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 40, "java.util.Hashtable", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value,
+            40,
+            "java.util.Hashtable",
+            -1,
+            getMemoryAddress(region, key),
+            1,
+            0,
+            false,
+            true));
   }
 
   private void putProperties(Region<Object, Object> region, List<ExpectedValues> expected) {
@@ -414,7 +531,17 @@ public class OffHeapValidationJUnitTest {
     value.put("1", "string 1");
     value.put("2", "string 2");
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 40, "java.util.Properties", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value,
+            40,
+            "java.util.Properties",
+            -1,
+            getMemoryAddress(region, key),
+            1,
+            0,
+            false,
+            true));
   }
 
   private void putVector(Region<Object, Object> region, List<ExpectedValues> expected) {
@@ -423,7 +550,9 @@ public class OffHeapValidationJUnitTest {
     value.add("string 1");
     value.add("string 2");
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 32, "java.util.Vector", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 32, "java.util.Vector", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putStack(Region<Object, Object> region, List<ExpectedValues> expected) {
@@ -432,7 +561,9 @@ public class OffHeapValidationJUnitTest {
     value.add("string 1");
     value.add("string 2");
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 32, "java.util.Stack", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 32, "java.util.Stack", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putTreeMap(Region<Object, Object> region, List<ExpectedValues> expected) {
@@ -441,7 +572,9 @@ public class OffHeapValidationJUnitTest {
     value.put("1", "string 1");
     value.put("2", "string 2");
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 48, "java.util.TreeMap", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 48, "java.util.TreeMap", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putTreeSet(Region<Object, Object> region, List<ExpectedValues> expected) {
@@ -450,35 +583,53 @@ public class OffHeapValidationJUnitTest {
     value.add("string 1");
     value.add("string 2");
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 40, "java.util.TreeSet", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 40, "java.util.TreeSet", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putClass(Region<Object, Object> region, List<ExpectedValues> expected) {
     String key = "keyClass";
     Class<String> value = String.class;
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 32, "java.lang.Class", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 32, "java.lang.Class", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putUUID(Region<Object, Object> region, List<ExpectedValues> expected) {
     String key = "keyUUID";
     UUID value = UUID.randomUUID();
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 32, "java.util.UUID", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 32, "java.util.UUID", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putTimestamp(Region<Object, Object> region, List<ExpectedValues> expected) {
     String key = "keyTimestamp";
     Timestamp value = new Timestamp(System.currentTimeMillis());
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 24, "java.sql.Timestamp", -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value, 24, "java.sql.Timestamp", -1, getMemoryAddress(region, key), 1, 0, false, true));
   }
 
   private void putSerializableClass(Region<Object, Object> region, List<ExpectedValues> expected) {
     String key = "keySerializableClass";
     SerializableClass value = new SerializableClass();
     region.put(key, value);
-    expected.add(new ExpectedValues(value, 112, "java.io.Serializable:" + SerializableClass.class.getName(), -1, getMemoryAddress(region, key), 1, 0, false, true));
+    expected.add(
+        new ExpectedValues(
+            value,
+            112,
+            "java.io.Serializable:" + SerializableClass.class.getName(),
+            -1,
+            getMemoryAddress(region, key),
+            1,
+            0,
+            false,
+            true));
   }
 
   static class ExpectedValues {
@@ -492,7 +643,16 @@ public class OffHeapValidationJUnitTest {
     final boolean isCompressed;
     final boolean isSerialized;
 
-    ExpectedValues(Object dataValue, int blockSize, String dataType, int freeListId, long memoryAddress, int refCount, int slabId, boolean isCompressed, boolean isSerialized) {
+    ExpectedValues(
+        Object dataValue,
+        int blockSize,
+        String dataType,
+        int freeListId,
+        long memoryAddress,
+        int refCount,
+        int slabId,
+        boolean isCompressed,
+        boolean isSerialized) {
       this.dataValue = dataValue;
       this.blockSize = blockSize;
       this.dataType = dataType;

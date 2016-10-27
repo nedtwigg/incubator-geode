@@ -23,22 +23,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-/* [ NOTE: 
- * This class supposed to be removed, if required, after discussing with 
+/* [ NOTE:
+ * This class supposed to be removed, if required, after discussing with
  * VMware team ]
  */
 /**
- * Class IPAddressUtil This is utility class for checking whether ip address is
- * versions i.e. IPv4 or IPv6 address
- * 
- * 
+ * Class IPAddressUtil This is utility class for checking whether ip address is versions i.e. IPv4
+ * or IPv6 address
+ *
  * @since GemFire version 7.0.1
  */
 public class IPAddressUtil {
 
   private static Pattern VALID_IPV4_PATTERN = null;
   private static Pattern VALID_IPV6_PATTERN = null;
-  private static final String ipv4Pattern = "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
+  private static final String ipv4Pattern =
+      "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
   private static final String ipv6Pattern = "([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}";
 
   static {

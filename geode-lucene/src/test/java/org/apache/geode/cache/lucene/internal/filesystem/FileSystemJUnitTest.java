@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -60,8 +60,7 @@ public class FileSystemJUnitTest {
   private ConcurrentHashMap<String, File> fileRegion;
   private ConcurrentHashMap<ChunkKey, byte[]> chunkRegion;
 
-  @Rule
-  public DiskDirRule dirRule = new DiskDirRule();
+  @Rule public DiskDirRule dirRule = new DiskDirRule();
   private FileSystemStats fileSystemStats;
 
   @Before
@@ -72,9 +71,7 @@ public class FileSystemJUnitTest {
     system = new FileSystem(fileRegion, chunkRegion, fileSystemStats);
   }
 
-  /**
-   * A test of reading and writing to a file.
-   */
+  /** A test of reading and writing to a file. */
   @Test
   public void testReadWriteBytes() throws Exception {
     long start = System.currentTimeMillis();
@@ -145,9 +142,8 @@ public class FileSystemJUnitTest {
   }
 
   /**
-   * A test of cloning a a FileInputStream. The
-   * clone should start from where the original was positioned,
-   * but they should not hurt each other.
+   * A test of cloning a a FileInputStream. The clone should start from where the original was
+   * positioned, but they should not hurt each other.
    */
   @Test
   public void testCloneReader() throws Exception {
@@ -181,9 +177,7 @@ public class FileSystemJUnitTest {
     assertArrayEquals(data, results2);
   }
 
-  /**
-   * A test that skip can jump to the correct position in the stream
-   */
+  /** A test that skip can jump to the correct position in the stream */
   @Test
   public void testSeek() throws Exception {
     File file = system.createFile("testFile1");
@@ -241,9 +235,7 @@ public class FileSystemJUnitTest {
     assertEquals(expectedBytes[i], result);
   }
 
-  /**
-   * Test basic file operations - rename, delete, listFiles.
-   */
+  /** Test basic file operations - rename, delete, listFiles. */
   @Test
   public void testFileOperations() throws Exception {
     String name1 = "testFile1";
@@ -293,17 +285,13 @@ public class FileSystemJUnitTest {
     assertContents(file1Data, file2);
   }
 
-  /**
-   * Test what happens if you have an unclosed stream and you create a new file.
-   */
+  /** Test what happens if you have an unclosed stream and you create a new file. */
   @Test
   public void testUnclosedStreamSmallFile() throws Exception {
     doUnclosedStream(SMALL_CHUNK);
   }
 
-  /**
-   * Test what happens if you have an unclosed stream and you create a new file.
-   */
+  /** Test what happens if you have an unclosed stream and you create a new file. */
   @Test
   public void testUnclosedStreamLargeFile() throws Exception {
     doUnclosedStream(LARGE_CHUNK);
@@ -340,10 +328,8 @@ public class FileSystemJUnitTest {
   }
 
   /**
-   * Test what happens a file rename is aborted in the middle
-   * due to the a cache closed exception. The next member
-   * that uses those files should be able to clean up after
-   * the partial rename.
+   * Test what happens a file rename is aborted in the middle due to the a cache closed exception.
+   * The next member that uses those files should be able to clean up after the partial rename.
    */
   @Test
   public void testPartialRename() throws Exception {
@@ -352,8 +338,10 @@ public class FileSystemJUnitTest {
     //Create a couple of mock regions where we count the operations
     //that happen to them. We will then use this to abort the rename
     //in the middle.
-    ConcurrentHashMap<String, File> spyFileRegion = mock(ConcurrentHashMap.class, new SpyWrapper(countOperations, fileRegion));
-    ConcurrentHashMap<ChunkKey, byte[]> spyChunkRegion = mock(ConcurrentHashMap.class, new SpyWrapper(countOperations, chunkRegion));
+    ConcurrentHashMap<String, File> spyFileRegion =
+        mock(ConcurrentHashMap.class, new SpyWrapper(countOperations, fileRegion));
+    ConcurrentHashMap<ChunkKey, byte[]> spyChunkRegion =
+        mock(ConcurrentHashMap.class, new SpyWrapper(countOperations, chunkRegion));
 
     system = new FileSystem(spyFileRegion, spyChunkRegion, fileSystemStats);
 
@@ -374,13 +362,15 @@ public class FileSystemJUnitTest {
 
     assertTrue(2 <= countOperations.count);
 
-    countOperations.after((int) Math.ceil(countOperations.count / 2.0), new Runnable() {
+    countOperations.after(
+        (int) Math.ceil(countOperations.count / 2.0),
+        new Runnable() {
 
-      @Override
-      public void run() {
-        throw new CacheClosedException();
-      }
-    });
+          @Override
+          public void run() {
+            throw new CacheClosedException();
+          }
+        });
     countOperations.reset();
 
     String name3 = "file3";
@@ -407,10 +397,8 @@ public class FileSystemJUnitTest {
   }
 
   /**
-   * Test what happens a file delete is aborted in the middle
-   * due to the a cache closed exception. The next member
-   * that uses those files should be able to clean up after
-   * the partial rename.
+   * Test what happens a file delete is aborted in the middle due to the a cache closed exception.
+   * The next member that uses those files should be able to clean up after the partial rename.
    */
   @Test
   public void testPartialDelete() throws Exception {
@@ -419,8 +407,10 @@ public class FileSystemJUnitTest {
     //Create a couple of mock regions where we count the operations
     //that happen to them. We will then use this to abort the rename
     //in the middle.
-    ConcurrentHashMap<String, File> spyFileRegion = mock(ConcurrentHashMap.class, new SpyWrapper(countOperations, fileRegion));
-    ConcurrentHashMap<ChunkKey, byte[]> spyChunkRegion = mock(ConcurrentHashMap.class, new SpyWrapper(countOperations, chunkRegion));
+    ConcurrentHashMap<String, File> spyFileRegion =
+        mock(ConcurrentHashMap.class, new SpyWrapper(countOperations, fileRegion));
+    ConcurrentHashMap<ChunkKey, byte[]> spyChunkRegion =
+        mock(ConcurrentHashMap.class, new SpyWrapper(countOperations, chunkRegion));
 
     system = new FileSystem(spyFileRegion, spyChunkRegion, fileSystemStats);
 
@@ -444,13 +434,15 @@ public class FileSystemJUnitTest {
 
     assertTrue(2 <= countOperations.count);
 
-    countOperations.after(countOperations.count / 2, new Runnable() {
+    countOperations.after(
+        countOperations.count / 2,
+        new Runnable() {
 
-      @Override
-      public void run() {
-        throw new CacheClosedException();
-      }
-    });
+          @Override
+          public void run() {
+            throw new CacheClosedException();
+          }
+        });
     countOperations.reset();
 
     try {
@@ -486,7 +478,7 @@ public class FileSystemJUnitTest {
     system.export(dirRule.get());
     String[] foundFiles = parentDir.list();
     Arrays.sort(foundFiles);
-    assertArrayEquals(new String[] { "testFile1", "testFile2" }, foundFiles);
+    assertArrayEquals(new String[] {"testFile1", "testFile2"}, foundFiles);
 
     assertExportedFileContents(file1Data, new java.io.File(parentDir, "testFile1"));
     assertExportedFileContents(file2Data, new java.io.File(parentDir, "testFile2"));
@@ -539,7 +531,8 @@ public class FileSystemJUnitTest {
     assertEquals(bytes.length, actualByteCount);
   }
 
-  private void assertExportedFileContents(final byte[] expected, final java.io.File exportedFile) throws IOException {
+  private void assertExportedFileContents(final byte[] expected, final java.io.File exportedFile)
+      throws IOException {
     byte[] actual = Files.readAllBytes(exportedFile.toPath());
     assertArrayEquals(expected, actual);
   }
@@ -586,14 +579,12 @@ public class FileSystemJUnitTest {
   }
 
   /**
-   * A wrapper around an object that will also invoke
-   * a callback before applying an operation. 
+   * A wrapper around an object that will also invoke a callback before applying an operation.
    *
-   * This is essentially like Mockito.spy(), except that it
-   * allows the implementation of a default answer for all operations.
-   * 
-   * To use, do this
-   * Mockito.mock(Interface, new SpyWrapper(Answer, o)
+   * <p>This is essentially like Mockito.spy(), except that it allows the implementation of a
+   * default answer for all operations.
+   *
+   * <p>To use, do this Mockito.mock(Interface, new SpyWrapper(Answer, o)
    */
   private static final class SpyWrapper implements Answer<Object> {
     private final CountOperations countOperations;
@@ -633,8 +624,6 @@ public class FileSystemJUnitTest {
     public void after(int i, Runnable runnable) {
       limit = i;
       limitAction = runnable;
-
     }
   }
-
 }

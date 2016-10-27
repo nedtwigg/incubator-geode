@@ -39,23 +39,20 @@ import org.apache.geode.test.dunit.ThreadUtils;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * This is a multi threaded tests. This test creates two regions. Region1 which
- * is persistent and Region2 which is not. There will be four sets of threads.
- * One set doing put, second one doing gets ,third one doing destroy(key) and
- * the fourth one doing force rolling.
- * 
- * The put are done for Integer Key objects which are random generated and whose
- * values are between 0-9 and the Integer value objects whose value can be
- * between -99 to 99.
- * 
- * Since the keys are only 0-9, this will ensure a high level of concurrency on
- * the same thread since there are more than 10 threads acting at the same time.
- * 
- * After all the operations are done, the two regions are checked for equality.
- * After that the persistent region is closed and recreated so that it can
- * recover the old values and again the two regions are checked for equality.
- *  * This test is run for all modes persist, persist+overflow, overflow only in
- * syn and async mode.
+ * This is a multi threaded tests. This test creates two regions. Region1 which is persistent and
+ * Region2 which is not. There will be four sets of threads. One set doing put, second one doing
+ * gets ,third one doing destroy(key) and the fourth one doing force rolling.
+ *
+ * <p>The put are done for Integer Key objects which are random generated and whose values are
+ * between 0-9 and the Integer value objects whose value can be between -99 to 99.
+ *
+ * <p>Since the keys are only 0-9, this will ensure a high level of concurrency on the same thread
+ * since there are more than 10 threads acting at the same time.
+ *
+ * <p>After all the operations are done, the two regions are checked for equality. After that the
+ * persistent region is closed and recreated so that it can recover the old values and again the two
+ * regions are checked for equality. * This test is run for all modes persist, persist+overflow,
+ * overflow only in syn and async mode.
  */
 @Category(IntegrationTest.class)
 public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
@@ -70,9 +67,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
 
   protected int numberOfForceRollThreads = 3;
 
-  /**
-   * ms to run concurrent ops for before signalling them to stop
-   */
+  /** ms to run concurrent ops for before signalling them to stop */
   protected int TIME_TO_RUN = 1000;
 
   private boolean exceptionOccuredInPuts = false;
@@ -168,7 +163,6 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     region2 = concurrencyTest(region1);
     region1 = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, p);
     validate(region1, region2);
-
   }
 
   @Test
@@ -258,7 +252,6 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     region2 = concurrencyTest(region1);
     region1 = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, p);
     validate(region1, region2);
-
   }
 
   @Test
@@ -294,8 +287,8 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Tests the bug where a get operation on an evicted entry fails to get value
-   * as the oplog is deleted by the roller, but the entry was not rolled.
+   * Tests the bug where a get operation on an evicted entry fails to get value as the oplog is
+   * deleted by the roller, but the entry was not rolled.
    */
   @Test
   public void testBug35048() {
@@ -336,7 +329,8 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
         region.get("" + 1);
       } catch (Exception e) {
         logWriter.severe("Exception occured  ", e);
-        fail("Failed to retrieve value from disk as the Oplog has been rolled but entry still references the Oplog.");
+        fail(
+            "Failed to retrieve value from disk as the Oplog has been rolled but entry still references the Oplog.");
       }
 
     } catch (Exception e) {
@@ -364,35 +358,38 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     for (int j = 1; j < 101; ++j) {
       region.put("" + j, val);
     }
-    Thread t1 = new Thread(new Runnable() {
-      public void run() {
-        for (int i = 0; i < 100; ++i) {
-          region.forceRolling();
+    Thread t1 =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                for (int i = 0; i < 100; ++i) {
+                  region.forceRolling();
 
-          try {
-            Thread.sleep(TIME_TO_RUN / 100);
-          } catch (InterruptedException e) {
-            fail("interrupted");
-          }
-        }
-      }
-    });
-    Thread t2 = new Thread(new Runnable() {
+                  try {
+                    Thread.sleep(TIME_TO_RUN / 100);
+                  } catch (InterruptedException e) {
+                    fail("interrupted");
+                  }
+                }
+              }
+            });
+    Thread t2 =
+        new Thread(
+            new Runnable() {
 
-      public void run() {
-        try {
-          for (int i = 0; i < 100; ++i) {
-            for (int j = 1; j < 101; ++j) {
-              region.get("" + j);
-
-            }
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
-          failure = true;
-        }
-      }
-    });
+              public void run() {
+                try {
+                  for (int i = 0; i < 100; ++i) {
+                    for (int j = 1; j < 101; ++j) {
+                      region.get("" + j);
+                    }
+                  }
+                } catch (Exception e) {
+                  e.printStackTrace();
+                  failure = true;
+                }
+              }
+            });
     t1.start();
     t2.start();
     ThreadUtils.join(t1, 30 * 1000);
@@ -423,9 +420,16 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
       for (int i = 0; i < 10; i++) {
         map.put(Integer.valueOf(i), new ReentrantLock());
       }
-      region2 = cache.createVMRegion("testRegion2", new AttributesFactory().createRegionAttributes());
+      region2 =
+          cache.createVMRegion("testRegion2", new AttributesFactory().createRegionAttributes());
     }
-    this.startLine = new CyclicBarrier(numberOfPutsThreads + numberOfGetsThreads + numberOfDestroysThreads + numberOfClearThreads + numberOfForceRollThreads);
+    this.startLine =
+        new CyclicBarrier(
+            numberOfPutsThreads
+                + numberOfGetsThreads
+                + numberOfDestroysThreads
+                + numberOfClearThreads
+                + numberOfForceRollThreads);
     DoesPuts doesPuts = new DoesPuts();
     DoesGets doesGets = new DoesGets();
     DoesDestroy doesDestroy = new DoesDestroy();
@@ -513,7 +517,13 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
           fail(" region1 does not contain Key " + key + " but was expected to be there");
         }
         if (!(((LocalRegion) r1).getValueOnDisk(key).equals(value))) {
-          fail(" value for key " + key + " is " + ((LocalRegion) r1).getValueOnDisk(key) + " which is not consistent, it is supposed to be " + value);
+          fail(
+              " value for key "
+                  + key
+                  + " is "
+                  + ((LocalRegion) r1).getValueOnDisk(key)
+                  + " which is not consistent, it is supposed to be "
+                  + value);
         }
       }
     }
@@ -542,8 +552,7 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
   }
 
   void validate(Region r1, Region r2) {
-    if (!this.validate)
-      return;
+    if (!this.validate) return;
 
     Collection entrySet = r2.entrySet();
     Iterator iterator = entrySet.iterator();
@@ -557,7 +566,13 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
         fail(" region1 does not contain Key " + key + " but was expected to be there");
       }
       if (!(r1.get(key).equals(value))) {
-        fail(" value for key " + key + " is " + r1.get(key) + " which is not consistent, it is supposed to be " + value);
+        fail(
+            " value for key "
+                + key
+                + " is "
+                + r1.get(key)
+                + " which is not consistent, it is supposed to be "
+                + value);
       }
     }
     assertEquals(r2.size(), r1.size());
@@ -671,7 +686,11 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
 
         if ((exceptionOccured1 != null) ^ (exceptionOccured2 != null)) {
           exceptionOccuredInDestroys = true;
-          logWriter.severe("Exception occured in destroy ex1=" + exceptionOccured1 + " ex2=" + exceptionOccured2);
+          logWriter.severe(
+              "Exception occured in destroy ex1="
+                  + exceptionOccured1
+                  + " ex2="
+                  + exceptionOccured2);
           fail("Exception occured in destroy");
         }
       }
@@ -702,13 +721,12 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Bug Test for bug # 35139. This bug was occuring because a clear & region
-   * destroy operation occured near concurrently. The region destroy operation
-   * notified the roller thread to stop & then it joined with the roller . But
-   * by that time clear operation created a new instance of roller thread (
-   * because a clear operation stop/starts the roller) & the destroy operation
-   * actually joined with the new thread ( different from the one on which
-   * notification was issued to exit).
+   * Bug Test for bug # 35139. This bug was occuring because a clear & region destroy operation
+   * occured near concurrently. The region destroy operation notified the roller thread to stop &
+   * then it joined with the roller . But by that time clear operation created a new instance of
+   * roller thread ( because a clear operation stop/starts the roller) & the destroy operation
+   * actually joined with the new thread ( different from the one on which notification was issued
+   * to exit).
    */
   @Test
   public void testConcurrentClearAndRegionDestroyBug() {
@@ -723,29 +741,30 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
     region.put("key1", val);
     DiskStoreImpl dimpl = ((LocalRegion) region).getDiskStore();
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-    final Thread th = new Thread(new Runnable() {
+    final Thread th =
+        new Thread(
+            new Runnable() {
 
-      public void run() {
-        region.destroyRegion();
-      }
-    });
+              public void run() {
+                region.destroyRegion();
+              }
+            });
 
     DiskStoreImpl.DEBUG_DELAY_JOINING_WITH_COMPACTOR = 8000;
-    CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      boolean skip = false;
+    CacheObserver old =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
+              boolean skip = false;
 
-      public void beforeStoppingCompactor() {
-        if (!skip) {
-          skip = true;
-          th.setPriority(9);
-          th.start();
-          Thread.yield();
-        }
-      }
-
-    }
-
-    );
+              public void beforeStoppingCompactor() {
+                if (!skip) {
+                  skip = true;
+                  th.setPriority(9);
+                  th.start();
+                  Thread.yield();
+                }
+              }
+            });
 
     region.clear();
     ThreadUtils.join(th, 20 * 1000);
@@ -763,7 +782,6 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
         put();
       }
     }
-
   }
 
   @SuppressWarnings("synthetic-access")
@@ -775,7 +793,6 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
         get();
       }
     }
-
   }
 
   @SuppressWarnings("synthetic-access")
@@ -787,7 +804,6 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
         destroy();
       }
     }
-
   }
 
   @SuppressWarnings("synthetic-access")
@@ -829,7 +845,5 @@ public class ConcurrentRegionOperationsJUnitTest extends DiskRegionTestingBase {
         throw new AssertionError(" Exception occured here", e);
       }
     }
-
   }
-
 }

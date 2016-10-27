@@ -79,12 +79,15 @@ public class ConnectDisconnectDUnitTest extends JUnit4CacheTestCase {
     final String locators_string = locators;
     for (int i = 0; i < ports.length; i++) {
       final int port = ports[i];
-      Host.getHost(0).getVM(i).invoke(new SerializableRunnable("set locator port") {
-        public void run() {
-          LOCATOR_PORT = port;
-          LOCATORS_STRING = locators_string;
-        }
-      });
+      Host.getHost(0)
+          .getVM(i)
+          .invoke(
+              new SerializableRunnable("set locator port") {
+                public void run() {
+                  LOCATOR_PORT = port;
+                  LOCATORS_STRING = locators_string;
+                }
+              });
     }
     locatorPorts = ports;
   }
@@ -97,9 +100,10 @@ public class ConnectDisconnectDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * This test creates 4 vms and starts a cache in each VM. If that doesn't hang, it destroys the DS in all
-   * vms and recreates the cache.
-   * @throws Throwable 
+   * This test creates 4 vms and starts a cache in each VM. If that doesn't hang, it destroys the DS
+   * in all vms and recreates the cache.
+   *
+   * @throws Throwable
    */
   public void runOnce() throws Throwable {
 
@@ -117,24 +121,27 @@ public class ConnectDisconnectDUnitTest extends JUnit4CacheTestCase {
 
     AsyncInvocation[] asyncs = new AsyncInvocation[numVMs];
     for (int i = 0; i < numVMs; i++) {
-      asyncs[i] = vms[i].invokeAsync(new SerializableRunnable("Create a cache") {
-        @Override
-        public void run() {
-          //          try {
-          //            JGroupMembershipManager.setDebugJGroups(true);
-          getCache();
-          //          } finally {
-          //            JGroupMembershipManager.setDebugJGroups(false);
-          //          }
-        }
-      });
+      asyncs[i] =
+          vms[i]
+              .invokeAsync(
+                  new SerializableRunnable("Create a cache") {
+                    @Override
+                    public void run() {
+                      //          try {
+                      //            JGroupMembershipManager.setDebugJGroups(true);
+                      getCache();
+                      //          } finally {
+                      //            JGroupMembershipManager.setDebugJGroups(false);
+                      //          }
+                    }
+                  });
     }
 
     for (int i = 0; i < numVMs; i++) {
       asyncs[i].getResult();
       //      try {
       //        asyncs[i].getResult(30 * 1000);
-      //      } catch(TimeoutException e) { 
+      //      } catch(TimeoutException e) {
       //        getLogWriter().severe("DAN DEBUG - we have a hang");
       //        dumpAllStacks();
       //        fail("DAN - WE HIT THE ISSUE",e);
@@ -156,5 +163,4 @@ public class ConnectDisconnectDUnitTest extends JUnit4CacheTestCase {
     }
     return props;
   }
-
 }

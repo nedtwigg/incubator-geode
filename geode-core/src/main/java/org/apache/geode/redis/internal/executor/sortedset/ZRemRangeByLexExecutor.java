@@ -36,14 +36,16 @@ public class ZRemRangeByLexExecutor extends SortedSetExecutor {
 
   private final int ERROR_NOT_EXISTS = 0;
 
-  private final String ERROR_ILLEGAL_SYNTAX = "The min and max strings must either start with a (, [ or be - or +";
+  private final String ERROR_ILLEGAL_SYNTAX =
+      "The min and max strings must either start with a (, [ or be - or +";
 
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
     List<byte[]> commandElems = command.getProcessedCommand();
 
     if (commandElems.size() < 4) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.ZREMRANGEBYLEX));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.ZREMRANGEBYLEX));
       return;
     }
 
@@ -53,7 +55,8 @@ public class ZRemRangeByLexExecutor extends SortedSetExecutor {
     Region<ByteArrayWrapper, DoubleWrapper> keyRegion = getRegion(context, key);
 
     if (keyRegion == null) {
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), ERROR_NOT_EXISTS));
+      command.setResponse(
+          Coder.getIntegerResponse(context.getByteBufAllocator(), ERROR_NOT_EXISTS));
       return;
     }
 
@@ -72,7 +75,8 @@ public class ZRemRangeByLexExecutor extends SortedSetExecutor {
       startString = startString.substring(1);
       minInclusive = true;
     } else if (minArray[0] != Coder.HYPHEN_ID) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_ILLEGAL_SYNTAX));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_ILLEGAL_SYNTAX));
       return;
     }
 
@@ -83,13 +87,22 @@ public class ZRemRangeByLexExecutor extends SortedSetExecutor {
       stopString = stopString.substring(1);
       maxInclusive = true;
     } else if (maxArray[0] != Coder.PLUS_ID) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_ILLEGAL_SYNTAX));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_ILLEGAL_SYNTAX));
       return;
     }
 
     Collection<ByteArrayWrapper> removeList;
     try {
-      removeList = getRange(key, keyRegion, context, Coder.stringToByteArrayWrapper(startString), Coder.stringToByteArrayWrapper(stopString), minInclusive, maxInclusive);
+      removeList =
+          getRange(
+              key,
+              keyRegion,
+              context,
+              Coder.stringToByteArrayWrapper(startString),
+              Coder.stringToByteArrayWrapper(stopString),
+              minInclusive,
+              maxInclusive);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -98,18 +111,24 @@ public class ZRemRangeByLexExecutor extends SortedSetExecutor {
 
     for (ByteArrayWrapper entry : removeList) {
       Object oldVal = keyRegion.remove(entry);
-      if (oldVal != null)
-        numRemoved++;
+      if (oldVal != null) numRemoved++;
     }
 
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), numRemoved));
   }
 
-  private Collection<ByteArrayWrapper> getRange(ByteArrayWrapper key, Region<ByteArrayWrapper, DoubleWrapper> keyRegion, ExecutionHandlerContext context, ByteArrayWrapper start, ByteArrayWrapper stop, boolean startInclusive, boolean stopInclusive) throws Exception {
+  private Collection<ByteArrayWrapper> getRange(
+      ByteArrayWrapper key,
+      Region<ByteArrayWrapper, DoubleWrapper> keyRegion,
+      ExecutionHandlerContext context,
+      ByteArrayWrapper start,
+      ByteArrayWrapper stop,
+      boolean startInclusive,
+      boolean stopInclusive)
+      throws Exception {
     if (start.equals("-") && stop.equals("+"))
       return new ArrayList<ByteArrayWrapper>(keyRegion.keySet());
-    else if (start.equals("+") || stop.equals("-"))
-      return null;
+    else if (start.equals("+") || stop.equals("-")) return null;
 
     Query query;
     Object[] params;
@@ -119,14 +138,14 @@ public class ZRemRangeByLexExecutor extends SortedSetExecutor {
       } else {
         query = getQuery(key, SortedSetQuery.ZRANGEBYLEXNINF, context);
       }
-      params = new Object[] { stop, INFINITY_LIMIT };
+      params = new Object[] {stop, INFINITY_LIMIT};
     } else if (stop.equals("+")) {
       if (startInclusive) {
         query = getQuery(key, SortedSetQuery.ZRANGEBYLEXPINFI, context);
       } else {
         query = getQuery(key, SortedSetQuery.ZRANGEBYLEXPINF, context);
       }
-      params = new Object[] { start, INFINITY_LIMIT };
+      params = new Object[] {start, INFINITY_LIMIT};
     } else {
       if (startInclusive) {
         if (stopInclusive) {
@@ -141,13 +160,13 @@ public class ZRemRangeByLexExecutor extends SortedSetExecutor {
           query = getQuery(key, SortedSetQuery.ZRANGEBYLEX, context);
         }
       }
-      params = new Object[] { start, stop, INFINITY_LIMIT };
+      params = new Object[] {start, stop, INFINITY_LIMIT};
     }
 
     @SuppressWarnings("unchecked")
-    SelectResults<ByteArrayWrapper> results = (SelectResults<ByteArrayWrapper>) query.execute(params);
+    SelectResults<ByteArrayWrapper> results =
+        (SelectResults<ByteArrayWrapper>) query.execute(params);
 
     return results.asList();
   }
-
 }

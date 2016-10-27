@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -39,14 +39,12 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 public class LuceneIndexXmlGeneratorJUnitTest {
 
-  /**
-   * Test of generating and reading cache configuration back in.
-   */
+  /** Test of generating and reading cache configuration back in. */
   @Test
   public void generateWithFields() throws Exception {
     LuceneIndex index = mock(LuceneIndex.class);
     when(index.getName()).thenReturn("index");
-    String[] fields = new String[] { "field1", "field2" };
+    String[] fields = new String[] {"field1", "field2"};
     when(index.getFieldNames()).thenReturn(fields);
 
     LuceneIndexXmlGenerator generator = new LuceneIndexXmlGenerator(index);
@@ -61,7 +59,8 @@ public class LuceneIndexXmlGeneratorJUnitTest {
     assertEquals("index", value.getValue(LuceneXmlConstants.NAME));
 
     captor = ArgumentCaptor.forClass(Attributes.class);
-    verify(handler, times(2)).startElement(eq(""), eq("field"), eq("lucene:field"), captor.capture());
+    verify(handler, times(2))
+        .startElement(eq(""), eq("field"), eq("lucene:field"), captor.capture());
     Set<String> foundFields = new HashSet<String>();
     for (Attributes fieldAttr : captor.getAllValues()) {
       foundFields.add(fieldAttr.getValue(LuceneXmlConstants.NAME));
@@ -73,5 +72,4 @@ public class LuceneIndexXmlGeneratorJUnitTest {
     verify(handler, times(2)).endElement(eq(""), eq("field"), eq("lucene:field"));
     verify(handler).endElement(eq(""), eq("index"), eq("lucene:index"));
   }
-
 }

@@ -52,26 +52,19 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("*.UnitTest")
-@PrepareForTest({ CacheFactory.class })
+@PrepareForTest({CacheFactory.class})
 public class GetRegionsFunctionJUnitTest {
 
   TestResultSender testResultSender = new TestResultSender();
   Set<Region<?, ?>> regions = new HashSet<>();
   Set<Region<?, ?>> subregions = new HashSet<>();
-  @Mock
-  private RegionAttributes regionAttributes;
-  @Mock
-  private AuthorizeRequest authzRequest;
-  @Mock
-  private LocalRegion region;
-  @Mock
-  private GemFireCacheImpl cache;
-  @Mock
-  private InternalResourceManager internalResourceManager;
-  @Mock
-  private FunctionContext functionContext;
-  @InjectMocks
-  private GetRegionsFunction getRegionsFunction;
+  @Mock private RegionAttributes regionAttributes;
+  @Mock private AuthorizeRequest authzRequest;
+  @Mock private LocalRegion region;
+  @Mock private GemFireCacheImpl cache;
+  @Mock private InternalResourceManager internalResourceManager;
+  @Mock private FunctionContext functionContext;
+  @InjectMocks private GetRegionsFunction getRegionsFunction;
 
   @Before
   public void before() throws Exception {
@@ -111,17 +104,14 @@ public class GetRegionsFunctionJUnitTest {
   private static class TestResultSender implements ResultSender {
 
     @Override
-    public void lastResult(final Object lastResult) {
-    }
+    public void lastResult(final Object lastResult) {}
 
     @Override
-    public void sendResult(final Object oneResult) {
-    }
+    public void sendResult(final Object oneResult) {}
 
     @Override
     public void sendException(final Throwable t) {
       throw new RuntimeException(t);
     }
   }
-
 }

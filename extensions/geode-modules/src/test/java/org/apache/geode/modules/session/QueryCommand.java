@@ -16,11 +16,8 @@
  */
 package org.apache.geode.modules.session;
 
-/**
- * Basic commands to pass to our test servlet
- */
+/** Basic commands to pass to our test servlet */
 public enum QueryCommand {
-
   SET,
 
   GET,
@@ -30,5 +27,4 @@ public enum QueryCommand {
   CALLBACK,
 
   UNKNOWN;
-
 }

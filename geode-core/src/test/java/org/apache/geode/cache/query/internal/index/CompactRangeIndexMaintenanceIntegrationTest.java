@@ -50,10 +50,13 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 @Category(IntegrationTest.class)
-public class CompactRangeIndexMaintenanceIntegrationTest extends AbstractIndexMaintenanceIntegrationTest {
+public class CompactRangeIndexMaintenanceIntegrationTest
+    extends AbstractIndexMaintenanceIntegrationTest {
 
   @Override
-  protected AbstractIndex createIndex(final QueryService qs, String name, String indexExpression, String regionPath) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
+  protected AbstractIndex createIndex(
+      final QueryService qs, String name, String indexExpression, String regionPath)
+      throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
     return (CompactRangeIndex) qs.createIndex(name, indexExpression, regionPath);
   }
 }

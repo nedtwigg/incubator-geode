@@ -45,10 +45,9 @@ import org.apache.geode.management.internal.beans.stats.StatsKey;
 import org.apache.geode.management.internal.beans.stats.StatsRate;
 
 /**
- * This class acts as a bridge between a Region and RegionMBean This also
- * listens for statistics changes and update its value accordingly
- * 
- * 
+ * This class acts as a bridge between a Region and RegionMBean This also listens for statistics
+ * changes and update its value accordingly
+ *
  * @param <K>
  * @param <V>
  */
@@ -119,7 +118,6 @@ public class RegionMBeanBridge<K, V> {
         }
 
         bridge.addDiskRegionBridge(diskRegionBridge);
-
       }
 
       return bridge;
@@ -130,7 +128,8 @@ public class RegionMBeanBridge<K, V> {
       LocalRegion localRegion = ((LocalRegion) region);
       DiskStoreImpl dsi = localRegion.getDiskStore();
       if (dsi != null) {
-        DiskRegionBridge diskRegionBridge = new DiskRegionBridge(localRegion.getDiskRegion().getStats());
+        DiskRegionBridge diskRegionBridge =
+            new DiskRegionBridge(localRegion.getDiskRegion().getStats());
         bridge.addDiskRegionBridge(diskRegionBridge);
 
         for (DirectoryHolder dh : dsi.getDirectoryHolders()) {
@@ -138,7 +137,6 @@ public class RegionMBeanBridge<K, V> {
         }
       }
       return bridge;
-
     }
   }
 
@@ -153,10 +151,13 @@ public class RegionMBeanBridge<K, V> {
     this.isStatisticsEnabled = regAttrs.getStatisticsEnabled();
 
     this.regionAttributesData = RegionMBeanCompositeDataFactory.getRegionAttributesData(regAttrs);
-    this.membershipAttributesData = RegionMBeanCompositeDataFactory.getMembershipAttributesData(regAttrs);
-    this.evictionAttributesData = RegionMBeanCompositeDataFactory.getEvictionAttributesData(regAttrs);
+    this.membershipAttributesData =
+        RegionMBeanCompositeDataFactory.getMembershipAttributesData(regAttrs);
+    this.evictionAttributesData =
+        RegionMBeanCompositeDataFactory.getEvictionAttributesData(regAttrs);
 
-    this.regionMonitor = new MBeanStatsMonitor(ManagementStrings.REGION_MONITOR.toLocalizedString());
+    this.regionMonitor =
+        new MBeanStatsMonitor(ManagementStrings.REGION_MONITOR.toLocalizedString());
 
     configureRegionMetrics();
 
@@ -176,7 +177,6 @@ public class RegionMBeanBridge<K, V> {
         if (ea != null && ea.getAlgorithm().isLRUMemory()) {
           this.lruMemoryStats = stats;
         }
-
       }
     }
 
@@ -228,20 +228,20 @@ public class RegionMBeanBridge<K, V> {
     return subregionPaths.toArray(new String[subregionPaths.size()]);
   }
 
-  /** Statistic related Methods **/
+  /** Statistic related Methods * */
 
   // Dummy constructor for testing purpose only
   public RegionMBeanBridge(CachePerfStats cachePerfStats) {
     this.regionStats = cachePerfStats;
 
-    this.regionMonitor = new MBeanStatsMonitor(ManagementStrings.REGION_MONITOR.toLocalizedString());
+    this.regionMonitor =
+        new MBeanStatsMonitor(ManagementStrings.REGION_MONITOR.toLocalizedString());
     regionMonitor.addStatisticsToMonitor(cachePerfStats.getStats());
     configureRegionMetrics();
   }
 
   // Dummy constructor for testing purpose only
-  public RegionMBeanBridge() {
-  }
+  public RegionMBeanBridge() {}
 
   public void stopMonitor() {
     regionMonitor.stopListener();
@@ -261,18 +261,27 @@ public class RegionMBeanBridge<K, V> {
 
     createsRate = new StatsRate(StatsKey.CREATES, StatType.INT_TYPE, regionMonitor);
 
-    listenerCallsAvgLatency = new StatsAverageLatency(StatsKey.CACHE_LISTENER_CALLS_COMPLETED, StatType.INT_TYPE, StatsKey.CACHE_LISTENR_CALL_TIME, regionMonitor);
+    listenerCallsAvgLatency =
+        new StatsAverageLatency(
+            StatsKey.CACHE_LISTENER_CALLS_COMPLETED,
+            StatType.INT_TYPE,
+            StatsKey.CACHE_LISTENR_CALL_TIME,
+            regionMonitor);
 
-    writerCallsAvgLatency = new StatsAverageLatency(StatsKey.CACHE_WRITER_CALLS_COMPLETED, StatType.INT_TYPE, StatsKey.CACHE_WRITER_CALL_TIME, regionMonitor);
+    writerCallsAvgLatency =
+        new StatsAverageLatency(
+            StatsKey.CACHE_WRITER_CALLS_COMPLETED,
+            StatType.INT_TYPE,
+            StatsKey.CACHE_WRITER_CALL_TIME,
+            regionMonitor);
 
     lruDestroyRate = new StatsRate(StatsKey.LRU_DESTROYS, StatType.LONG_TYPE, regionMonitor);
 
     lruEvictionRate = new StatsRate(StatsKey.LRU_EVICTIONS, StatType.LONG_TYPE, regionMonitor);
 
-    String[] writesRates = new String[] { StatsKey.PUT_ALLS, StatsKey.PUTS, StatsKey.CREATES };
+    String[] writesRates = new String[] {StatsKey.PUT_ALLS, StatsKey.PUTS, StatsKey.CREATES};
     averageWritesRate = new StatsRate(writesRates, StatType.INT_TYPE, regionMonitor);
     averageReadsRate = new StatsRate(StatsKey.GETS, StatType.INT_TYPE, regionMonitor);
-
   }
 
   private Number getRegionStatistic(String statName) {
@@ -320,7 +329,6 @@ public class RegionMBeanBridge<K, V> {
       return region.getStatistics().getHitCount();
     }
     return ManagementConstants.NOT_AVAILABLE_LONG;
-
   }
 
   public float getHitRatio() {
@@ -388,7 +396,7 @@ public class RegionMBeanBridge<K, V> {
 
   /**
    * Only applicable for PRs
-   * 
+   *
    * @return float
    */
   public float getPutLocalRate() {
@@ -397,7 +405,7 @@ public class RegionMBeanBridge<K, V> {
 
   /**
    * Only applicable for PRs
-   * 
+   *
    * @return float
    */
   public float getPutRemoteRate() {
@@ -406,7 +414,7 @@ public class RegionMBeanBridge<K, V> {
 
   /**
    * Only applicable for PRs
-   * 
+   *
    * @return long
    */
   public long getPutRemoteAvgLatency() {
@@ -415,7 +423,7 @@ public class RegionMBeanBridge<K, V> {
 
   /**
    * Only applicable for PRs
-   * 
+   *
    * @return long
    */
   public long getPutRemoteLatency() {
@@ -424,7 +432,7 @@ public class RegionMBeanBridge<K, V> {
 
   /**
    * Only applicable for PRs
-   * 
+   *
    * @return int
    */
   public int getActualRedundancy() {
@@ -433,7 +441,7 @@ public class RegionMBeanBridge<K, V> {
 
   /**
    * Only applicable for PRs
-   * 
+   *
    * @return int
    */
   public int getAvgBucketSize() {
@@ -442,7 +450,7 @@ public class RegionMBeanBridge<K, V> {
 
   /**
    * Only applicable for PRs
-   * 
+   *
    * @return int
    */
   public int getBucketCount() {
@@ -455,7 +463,7 @@ public class RegionMBeanBridge<K, V> {
 
   /**
    * Only applicable for PRs
-   * 
+   *
    * @return int
    */
   public int getNumBucketsWithoutRedundancy() {
@@ -464,7 +472,7 @@ public class RegionMBeanBridge<K, V> {
 
   /**
    * Only applicable for PRs
-   * 
+   *
    * @return int
    */
   public int getPrimaryBucketCount() {
@@ -473,7 +481,7 @@ public class RegionMBeanBridge<K, V> {
 
   /**
    * Only applicable for PRs
-   * 
+   *
    * @return int
    */
   public int getTotalBucketSize() {
@@ -482,7 +490,7 @@ public class RegionMBeanBridge<K, V> {
 
   /**
    * Only applicable for PRs
-   * 
+   *
    * @return list of fixed PR attributes
    */
   public FixedPartitionAttributesData[] listFixedPartitionAttributes() {
@@ -491,7 +499,7 @@ public class RegionMBeanBridge<K, V> {
 
   /**
    * Only applicable for PRs
-   * 
+   *
    * @return list of PR attributes
    */
   public PartitionAttributesData listPartitionAttributes() {

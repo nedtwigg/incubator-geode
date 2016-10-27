@@ -35,8 +35,7 @@ public class RestServersResultCollector<String, Object> implements ResultCollect
     }
   }
 
-  public void endResults() {
-  }
+  public void endResults() {}
 
   public Object getResult() throws FunctionException {
     return (Object) resultList;
@@ -49,5 +48,4 @@ public class RestServersResultCollector<String, Object> implements ResultCollect
   public void clearResults() {
     resultList.clear();
   }
-
 }

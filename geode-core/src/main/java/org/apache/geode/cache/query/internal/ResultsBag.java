@@ -39,17 +39,16 @@ public class ResultsBag extends Bag implements DataSerializableFixedID {
   }
 
   /**
-   * This constructor should only be used by the DataSerializer. Creates a
-   * ResultsBag with no fields.
+   * This constructor should only be used by the DataSerializer. Creates a ResultsBag with no
+   * fields.
    */
   public ResultsBag(boolean ignored) {
     super(ignored);
   }
 
   /**
-   * @param stats
-   *          the CachePerfStats to track hash collisions. Should be null unless
-   *          this is used as a query execution-time result set.
+   * @param stats the CachePerfStats to track hash collisions. Should be null unless this is used as
+   *     a query execution-time result set.
    */
   public ResultsBag(CachePerfStats stats) {
     super(stats);
@@ -62,28 +61,26 @@ public class ResultsBag extends Bag implements DataSerializableFixedID {
   }
 
   /**
-   * @param stats
-   *          the CachePerfStats to track hash collisions. Should be null unless
-   *          this is used as a query execution-time result set.
+   * @param stats the CachePerfStats to track hash collisions. Should be null unless this is used as
+   *     a query execution-time result set.
    */
   ResultsBag(Collection c, CachePerfStats stats) {
     this(stats);
-    for (Iterator itr = c.iterator(); itr.hasNext();) {
+    for (Iterator itr = c.iterator(); itr.hasNext(); ) {
       this.add(itr.next());
     }
   }
 
   protected ResultsBag(Collection c, HashingStrategy strategy, CachePerfStats stats) {
     this(strategy, stats);
-    for (Iterator itr = c.iterator(); itr.hasNext();) {
+    for (Iterator itr = c.iterator(); itr.hasNext(); ) {
       this.add(itr.next());
     }
   }
 
   /**
-   * @param stats
-   *          the CachePerfStats to track hash collisions. Should be null unless
-   *          this is used as a query execution-time result set.
+   * @param stats the CachePerfStats to track hash collisions. Should be null unless this is used as
+   *     a query execution-time result set.
    */
   ResultsBag(SelectResults sr, CachePerfStats stats) {
     this((Collection) sr, stats);
@@ -92,9 +89,8 @@ public class ResultsBag extends Bag implements DataSerializableFixedID {
   }
 
   /**
-   * @param stats
-   *          the CachePerfStats to track hash collisions. Should be null unless
-   *          this is used as a query execution-time result set.
+   * @param stats the CachePerfStats to track hash collisions. Should be null unless this is used as
+   *     a query execution-time result set.
    */
   ResultsBag(ObjectType elementType, CachePerfStats stats) {
     this(stats);
@@ -102,9 +98,8 @@ public class ResultsBag extends Bag implements DataSerializableFixedID {
   }
 
   /**
-   * @param stats
-   *          the CachePerfStats to track hash collisions. Should be null unless
-   *          this is used as a query execution-time result set.
+   * @param stats the CachePerfStats to track hash collisions. Should be null unless this is used as
+   *     a query execution-time result set.
    */
   ResultsBag(ObjectType elementType, int initialCapacity, CachePerfStats stats) {
     this(initialCapacity, stats);
@@ -112,15 +107,15 @@ public class ResultsBag extends Bag implements DataSerializableFixedID {
   }
 
   /**
-   * @param stats
-   *          the CachePerfStats to track hash collisions. Should be null unless
-   *          this is used as a query execution-time result set.
+   * @param stats the CachePerfStats to track hash collisions. Should be null unless this is used as
+   *     a query execution-time result set.
    */
   ResultsBag(int initialCapacity, float loadFactor, CachePerfStats stats) {
     this.map = new ObjectIntHashMap(initialCapacity, loadFactor);
   }
 
-  protected ResultsBag(int initialCapacity, float loadFactor, HashingStrategy strategy, CachePerfStats stats) {
+  protected ResultsBag(
+      int initialCapacity, float loadFactor, HashingStrategy strategy, CachePerfStats stats) {
     super(stats);
     this.map = new ObjectIntHashMap(initialCapacity, loadFactor, strategy);
   }
@@ -128,13 +123,11 @@ public class ResultsBag extends Bag implements DataSerializableFixedID {
   ResultsBag(int initialCapacity, CachePerfStats stats) {
     super(stats);
     this.map = new ObjectIntHashMap(initialCapacity);
-
   }
 
   protected ResultsBag(int initialCapacity, HashingStrategy strategy, CachePerfStats stats) {
     super(stats);
     this.map = new ObjectIntHashMap(initialCapacity, strategy);
-
   }
 
   protected ObjectIntHashMap createMapForFromData() {
@@ -172,7 +165,7 @@ public class ResultsBag extends Bag implements DataSerializableFixedID {
     // it
     // out.writeInt(this.limit);
     int numLeft = this.size() - this.numNulls;
-    for (Iterator<Entry> itr = this.map.entrySet().iterator(); itr.hasNext() && numLeft > 0;) {
+    for (Iterator<Entry> itr = this.map.entrySet().iterator(); itr.hasNext() && numLeft > 0; ) {
       Entry entry = itr.next();
       Object key = entry.getKey();
       DataSerializer.writeObject(key, out);
@@ -185,8 +178,7 @@ public class ResultsBag extends Bag implements DataSerializableFixedID {
     }
   }
 
-  /**
-   */
+  /** */
   void createIntHashMap() {
     this.map = new ObjectIntHashMap(this.size - this.numNulls);
   }
@@ -214,7 +206,6 @@ public class ResultsBag extends Bag implements DataSerializableFixedID {
   @Override
   protected void mapPut(Object element, int count) {
     this.map.put(element, count);
-
   }
 
   @Override
@@ -230,7 +221,6 @@ public class ResultsBag extends Bag implements DataSerializableFixedID {
   @Override
   protected void mapClear() {
     this.map.clear();
-
   }
 
   @Override

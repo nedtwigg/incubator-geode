@@ -25,20 +25,20 @@ import org.apache.geode.compression.Compressor;
 import org.apache.geode.compression.SnappyCompressor;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Tests the Snappy {@link Compressor}.
- */
+/** Tests the Snappy {@link Compressor}. */
 @Category(IntegrationTest.class)
 public class SnappyCompressorJUnitTest {
 
   /**
-   * Tests {@link Compressor#compress(byte[])} and {@link Compressor#decompress(byte[])} using the Snappy compressor.
+   * Tests {@link Compressor#compress(byte[])} and {@link Compressor#decompress(byte[])} using the
+   * Snappy compressor.
    */
   @Test
   public void testCompressByteArray() throws Exception {
     String compressMe = "Hello, how are you?";
     byte[] compressMeData = new SnappyCompressor().compress(compressMe.getBytes());
-    String uncompressedMe = new String(SnappyCompressor.getDefaultInstance().decompress(compressMeData));
+    String uncompressedMe =
+        new String(SnappyCompressor.getDefaultInstance().decompress(compressMeData));
 
     assertEquals(compressMe, uncompressedMe);
   }

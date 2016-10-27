@@ -57,9 +57,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * Tests client server FORCE_INVALIDATE
- */
+/** Tests client server FORCE_INVALIDATE */
 @Category(DistributedTest.class)
 public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
 
@@ -91,12 +89,14 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void testForceInvalidateOnCachingProxyWithConcurrencyChecksOnlyOnServer() throws Exception {
+  public void testForceInvalidateOnCachingProxyWithConcurrencyChecksOnlyOnServer()
+      throws Exception {
     dotestForceInvalidate(true, false, false, true);
   }
 
   @Test
-  public void testForceInvalidateOnCachingProxyWithConcurrencyChecksOnlyOnClient() throws Exception {
+  public void testForceInvalidateOnCachingProxyWithConcurrencyChecksOnlyOnClient()
+      throws Exception {
     dotestForceInvalidate(false, true, false, true);
   }
 
@@ -116,7 +116,8 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
   }
 
   @Test
-  public void testForceInvalidateOnCachingProxyWithConcurrencyChecksServerReplicated() throws Exception {
+  public void testForceInvalidateOnCachingProxyWithConcurrencyChecksServerReplicated()
+      throws Exception {
     dotestForceInvalidate(true, true, false, false);
   }
 
@@ -126,16 +127,13 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * 1. create an entry
-   * 2. Install a observer to pause sending subscription events to the client
-   * 3. invalidate the entry from the server (it will be done on server but pause
-   *    prevents it from being sent to the client).
-   * 4. verify that afterInvalidate was invoked on the server.
-   * 5. change the same entry (do a put). Both the client and server now have the
-   *    latest version which is this update.
-   * 6. unpause the observer so that it now sends invalidate event to client.
-   *    It will arrive late and not be done because of concurrency checks.
-   * 7. verify that afterInvalidate was invoked on the client.
+   * 1. create an entry 2. Install a observer to pause sending subscription events to the client 3.
+   * invalidate the entry from the server (it will be done on server but pause prevents it from
+   * being sent to the client). 4. verify that afterInvalidate was invoked on the server. 5. change
+   * the same entry (do a put). Both the client and server now have the latest version which is this
+   * update. 6. unpause the observer so that it now sends invalidate event to client. It will arrive
+   * late and not be done because of concurrency checks. 7. verify that afterInvalidate was invoked
+   * on the client.
    */
   @Test
   public void testInvalidateLosingOnConcurrencyChecks() throws Exception {
@@ -193,7 +191,11 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void waitForClientInvalidate() {
-    with().pollInterval(10, TimeUnit.MILLISECONDS).await().atMost(20, TimeUnit.SECONDS).until(() -> hasClientListenerAfterInvalidateBeenInvoked());
+    with()
+        .pollInterval(10, TimeUnit.MILLISECONDS)
+        .await()
+        .atMost(20, TimeUnit.SECONDS)
+        .until(() -> hasClientListenerAfterInvalidateBeenInvoked());
   }
 
   static class DelaySendingEvent extends ClientServerObserverAdapter {
@@ -212,12 +214,17 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * 1. Invalidate a non-existent entry from the server.
-   * 2. Validate that the servers see after invalidate.
-   * 3. Validate that the subscribed client invokes after invalidate.
+   * 1. Invalidate a non-existent entry from the server. 2. Validate that the servers see after
+   * invalidate. 3. Validate that the subscribed client invokes after invalidate.
    */
-  private void dotestForceInvalidate(boolean concurrencyChecksOnServer, boolean concurrencyChecksOnClient, boolean clientEmpty, boolean serverPartitioned) throws Exception {
-    setupServerAndClientVMs(concurrencyChecksOnServer, concurrencyChecksOnClient, clientEmpty, serverPartitioned);
+  private void dotestForceInvalidate(
+      boolean concurrencyChecksOnServer,
+      boolean concurrencyChecksOnClient,
+      boolean clientEmpty,
+      boolean serverPartitioned)
+      throws Exception {
+    setupServerAndClientVMs(
+        concurrencyChecksOnServer, concurrencyChecksOnClient, clientEmpty, serverPartitioned);
 
     server2.invoke(() -> createOnServer("key", "value"));
     region1.registerInterest("ALL_KEYS", InterestResultPolicy.NONE, false, false);
@@ -227,7 +234,12 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
     waitForClientInvalidate();
   }
 
-  private void setupServerAndClientVMs(boolean concurrencyChecksOnServer, boolean concurrencyChecksOnClient, boolean clientEmpty, boolean serverPartitioned) throws Exception {
+  private void setupServerAndClientVMs(
+      boolean concurrencyChecksOnServer,
+      boolean concurrencyChecksOnClient,
+      boolean clientEmpty,
+      boolean serverPartitioned)
+      throws Exception {
     int port1 = initServerCache(server1, concurrencyChecksOnServer, serverPartitioned); // vm0
     int port2 = initServerCache(server2, concurrencyChecksOnServer, serverPartitioned); // vm1
     String serverName = NetworkUtils.getServerHostName(Host.getHost(0));
@@ -236,7 +248,8 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void validateServerListenerInvoked() {
-    boolean listenerInvoked = server1.invoke(() -> validateOnServer()) || server2.invoke(() -> validateOnServer());
+    boolean listenerInvoked =
+        server1.invoke(() -> validateOnServer()) || server2.invoke(() -> validateOnServer());
     assertTrue(listenerInvoked);
   }
 
@@ -268,14 +281,19 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
     return false;
   }
 
-  private static Integer createServerCache(Boolean concurrencyChecksEnabled, Boolean partitioned, Integer maxThreads) throws Exception {
+  private static Integer createServerCache(
+      Boolean concurrencyChecksEnabled, Boolean partitioned, Integer maxThreads) throws Exception {
     AbstractRegionMap.FORCE_INVALIDATE_EVENT = true;
     Properties props = new Properties();
     Cache cache = new ClientServerForceInvalidateDUnitTest().createCacheV(props);
     RegionFactory<String, String> factory = cache.createRegionFactory();
     if (partitioned) {
       factory.setDataPolicy(DataPolicy.PARTITION);
-      factory.setPartitionAttributes(new PartitionAttributesFactory<String, String>().setRedundantCopies(0).setTotalNumBuckets(251).create());
+      factory.setPartitionAttributes(
+          new PartitionAttributesFactory<String, String>()
+              .setRedundantCopies(0)
+              .setTotalNumBuckets(251)
+              .create());
     } else {
       factory.setDataPolicy(DataPolicy.REPLICATE);
     }
@@ -292,16 +310,29 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
     server.start();
     logger.info("Started server on port " + server.getPort());
     return new Integer(server.getPort());
-
   }
 
-  public static void createClientCache(String h, int port1, int port2, boolean empty, boolean concurrenctChecksEnabled) throws Exception {
+  public static void createClientCache(
+      String h, int port1, int port2, boolean empty, boolean concurrenctChecksEnabled)
+      throws Exception {
     AbstractRegionMap.FORCE_INVALIDATE_EVENT = true;
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     Cache cache = new ClientServerForceInvalidateDUnitTest().createCacheV(props);
-    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(h, port1).addServer(h, port2).setSubscriptionEnabled(true).setThreadLocalConnections(true).setReadTimeout(1000).setSocketBufferSize(32768).setMinConnections(3).setSubscriptionRedundancy(-1).setPingInterval(2000).create("ClientServerForceInvalidateDUnitTestPool");
+    PoolImpl p =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(h, port1)
+                .addServer(h, port2)
+                .setSubscriptionEnabled(true)
+                .setThreadLocalConnections(true)
+                .setReadTimeout(1000)
+                .setSocketBufferSize(32768)
+                .setMinConnections(3)
+                .setSubscriptionRedundancy(-1)
+                .setPingInterval(2000)
+                .create("ClientServerForceInvalidateDUnitTestPool");
 
     RegionFactory<String, String> factory = cache.createRegionFactory();
     if (empty) {
@@ -316,7 +347,12 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
     region1.registerInterest("ALL_KEYS", InterestResultPolicy.NONE, false, false);
     region1.getAttributesMutator().addCacheListener(new ClientListener());
     assertNotNull(region1);
-    with().pollDelay(1, TimeUnit.MILLISECONDS).pollInterval(1, TimeUnit.SECONDS).await().atMost(60, TimeUnit.SECONDS).until(() -> poolReady(p));
+    with()
+        .pollDelay(1, TimeUnit.MILLISECONDS)
+        .pollInterval(1, TimeUnit.SECONDS)
+        .await()
+        .atMost(60, TimeUnit.SECONDS)
+        .until(() -> poolReady(p));
   }
 
   private static boolean poolReady(final PoolImpl pool) {
@@ -350,13 +386,25 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
     @Override
     public void afterCreate(EntryEvent<String, String> event) {
       super.afterCreate(event);
-      logger.info("afterCreate: {" + event.getOldValue() + " -> " + event.getNewValue() + "} at=" + System.currentTimeMillis());
+      logger.info(
+          "afterCreate: {"
+              + event.getOldValue()
+              + " -> "
+              + event.getNewValue()
+              + "} at="
+              + System.currentTimeMillis());
     }
 
     @Override
     public void afterUpdate(EntryEvent<String, String> event) {
       super.afterUpdate(event);
-      logger.info("afterUpdate: {" + event.getOldValue() + " -> " + event.getNewValue() + "} at=" + System.currentTimeMillis());
+      logger.info(
+          "afterUpdate: {"
+              + event.getOldValue()
+              + " -> "
+              + event.getNewValue()
+              + "} at="
+              + System.currentTimeMillis());
     }
 
     @Override
@@ -367,7 +415,14 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
       if (!event.isOriginRemote()) {
         prefix = "    ";
       }
-      logger.info(prefix + "afterInvalidate: {" + event.getOldValue() + " -> " + event.getNewValue() + "} at=" + System.currentTimeMillis());
+      logger.info(
+          prefix
+              + "afterInvalidate: {"
+              + event.getOldValue()
+              + " -> "
+              + event.getNewValue()
+              + "} at="
+              + System.currentTimeMillis());
     }
   }
 
@@ -377,20 +432,38 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
     @Override
     public void afterCreate(EntryEvent<String, String> event) {
       super.afterCreate(event);
-      logger.info("afterCreate: {" + event.getOldValue() + " -> " + event.getNewValue() + "} at=" + System.currentTimeMillis());
+      logger.info(
+          "afterCreate: {"
+              + event.getOldValue()
+              + " -> "
+              + event.getNewValue()
+              + "} at="
+              + System.currentTimeMillis());
     }
 
     @Override
     public void afterUpdate(EntryEvent<String, String> event) {
       super.afterUpdate(event);
-      logger.info("afterUpdate: {" + event.getOldValue() + " -> " + event.getNewValue() + "} at=" + System.currentTimeMillis());
+      logger.info(
+          "afterUpdate: {"
+              + event.getOldValue()
+              + " -> "
+              + event.getNewValue()
+              + "} at="
+              + System.currentTimeMillis());
     }
 
     @Override
     public void afterInvalidate(EntryEvent<String, String> event) {
       super.afterInvalidate(event);
       afterInvalidateInvoked = true;
-      logger.info("afterInvalidate: {" + event.getOldValue() + " -> " + event.getNewValue() + "} at=" + System.currentTimeMillis());
+      logger.info(
+          "afterInvalidate: {"
+              + event.getOldValue()
+              + " -> "
+              + event.getNewValue()
+              + "} at="
+              + System.currentTimeMillis());
     }
   }
 
@@ -412,5 +485,4 @@ public class ClientServerForceInvalidateDUnitTest extends JUnit4CacheTestCase {
       cache.getDistributedSystem().disconnect();
     }
   }
-
 }

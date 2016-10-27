@@ -24,34 +24,27 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * <p>A map where keys are compared using identity comparison (like
- * IdentityHashMap) but where the presence of an object as a key in
- * the map does not prevent it being garbage collected (like
- * WeakHashMap).  This class does not implement the Map interface
- * because it is difficult to ensure correct semantics for iterators
- * over the entrySet().</p>
+ * A map where keys are compared using identity comparison (like IdentityHashMap) but where the
+ * presence of an object as a key in the map does not prevent it being garbage collected (like
+ * WeakHashMap). This class does not implement the Map interface because it is difficult to ensure
+ * correct semantics for iterators over the entrySet().
  *
- * <p>Because we do not implement Map, we do not copy the questionable
- * interface where you can call get(k) or remove(k) for any type of k,
- * which of course can only have an effect if k is of type K.</p>
+ * <p>Because we do not implement Map, we do not copy the questionable interface where you can call
+ * get(k) or remove(k) for any type of k, which of course can only have an effect if k is of type K.
  *
- * <p>This map does not support null keys.</p>
- * <p>
- * The approach
- * is to wrap each key in a WeakReference and use the wrapped value as
- * a key in an ordinary HashMap.  The WeakReference has to be a
- * subclass IdentityWeakReference (IWR) where two IWRs are equal if
- * they refer to the same object.  This enables us to find the entry
- * again.
- * 
- * <p>
- * Note: this code came from the jdk from the package: com.sun.jmx.mbeanserver.
- * I modified it to use a ConcurrentMap.
+ * <p>This map does not support null keys.
+ *
+ * <p>The approach is to wrap each key in a WeakReference and use the wrapped value as a key in an
+ * ordinary HashMap. The WeakReference has to be a subclass IdentityWeakReference (IWR) where two
+ * IWRs are equal if they refer to the same object. This enables us to find the entry again.
+ *
+ * <p>Note: this code came from the jdk from the package: com.sun.jmx.mbeanserver. I modified it to
+ * use a ConcurrentMap.
+ *
  * @since GemFire 6.6
  */
 class WeakConcurrentIdentityHashMap<K, V> {
-  private WeakConcurrentIdentityHashMap() {
-  }
+  private WeakConcurrentIdentityHashMap() {}
 
   static <K, V> WeakConcurrentIdentityHashMap<K, V> make() {
     return new WeakConcurrentIdentityHashMap<K, V>();
@@ -65,8 +58,7 @@ class WeakConcurrentIdentityHashMap<K, V> {
 
   public V put(K key, V value) {
     expunge();
-    if (key == null)
-      throw new IllegalArgumentException("Null key");
+    if (key == null) throw new IllegalArgumentException("Null key");
     WeakReference<K> keyref = makeReference(key, refQueue);
     return map.put(keyref, value);
   }
@@ -79,8 +71,7 @@ class WeakConcurrentIdentityHashMap<K, V> {
 
   private void expunge() {
     Reference<? extends K> ref;
-    while ((ref = refQueue.poll()) != null)
-      map.remove(ref);
+    while ((ref = refQueue.poll()) != null) map.remove(ref);
   }
 
   private WeakReference<K> makeReference(K referent) {
@@ -97,12 +88,10 @@ class WeakConcurrentIdentityHashMap<K, V> {
   }
 
   /**
-   * WeakReference where equals and hashCode are based on the
-   * referent.  More precisely, two objects are equal if they are
-   * identical or if they both have the same non-null referent.  The
-   * hashCode is the value the original referent had.  Even if the
-   * referent is cleared, the hashCode remains.  Thus, objects of
-   * this class can be used as keys in hash-based maps and sets.
+   * WeakReference where equals and hashCode are based on the referent. More precisely, two objects
+   * are equal if they are identical or if they both have the same non-null referent. The hashCode
+   * is the value the original referent had. Even if the referent is cleared, the hashCode remains.
+   * Thus, objects of this class can be used as keys in hash-based maps and sets.
    */
   private static class IdentityWeakReference<T> extends WeakReference<T> {
     IdentityWeakReference(T o) {
@@ -115,10 +104,8 @@ class WeakConcurrentIdentityHashMap<K, V> {
     }
 
     public boolean equals(Object o) {
-      if (this == o)
-        return true;
-      if (!(o instanceof IdentityWeakReference))
-        return false;
+      if (this == o) return true;
+      if (!(o instanceof IdentityWeakReference)) return false;
       IdentityWeakReference wr = (IdentityWeakReference) o;
       Object got = get();
       return (got != null && got == wr.get());

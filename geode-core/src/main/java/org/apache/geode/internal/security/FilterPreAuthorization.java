@@ -42,10 +42,9 @@ import org.apache.geode.security.AccessControl;
 import org.apache.geode.security.NotAuthorizedException;
 
 /**
- * An authorization implementation for testing that changes a string value in
- * pre-operation phase to add an integer denoting which <code>Principal</code>s
- * would be allowed to get that object.
- * 
+ * An authorization implementation for testing that changes a string value in pre-operation phase to
+ * add an integer denoting which <code>Principal</code>s would be allowed to get that object.
+ *
  * @since GemFire 5.5
  */
 public class FilterPreAuthorization implements AccessControl {
@@ -53,12 +52,14 @@ public class FilterPreAuthorization implements AccessControl {
   private LogWriterI18n logger;
 
   static {
-    Instantiator.register(new Instantiator(ObjectWithAuthz.class, ObjectWithAuthz.CLASSID) {
-      @Override
-      public DataSerializable newInstance() {
-        return new ObjectWithAuthz();
-      }
-    }, false);
+    Instantiator.register(
+        new Instantiator(ObjectWithAuthz.class, ObjectWithAuthz.CLASSID) {
+          @Override
+          public DataSerializable newInstance() {
+            return new ObjectWithAuthz();
+          }
+        },
+        false);
   }
 
   public FilterPreAuthorization() {
@@ -71,7 +72,8 @@ public class FilterPreAuthorization implements AccessControl {
     return new FilterPreAuthorization();
   }
 
-  public void init(Principal principal, DistributedMember remoteMember, Cache cache) throws NotAuthorizedException {
+  public void init(Principal principal, DistributedMember remoteMember, Cache cache)
+      throws NotAuthorizedException {
 
     this.logger = cache.getSecurityLoggerI18n();
   }
@@ -116,7 +118,10 @@ public class FilterPreAuthorization implements AccessControl {
       }
       createContext.setSerializedValue(hos.toByteArray(), true);
       if (this.logger.fineEnabled())
-        this.logger.fine("FilterPreAuthorization: added authorization " + "info for key: " + createContext.getKey());
+        this.logger.fine(
+            "FilterPreAuthorization: added authorization "
+                + "info for key: "
+                + createContext.getKey());
     } else if (opCode.isPutAll()) {
       PutAllOperationContext createContext = (PutAllOperationContext) context;
       Map map = createContext.getMap();
@@ -137,14 +142,13 @@ public class FilterPreAuthorization implements AccessControl {
         ObjectWithAuthz authzObj = new ObjectWithAuthz(value, authCode);
         mapEntry.setValue(authzObj);
         if (this.logger.fineEnabled())
-          this.logger.fine("FilterPreAuthorization: putAll: added authorization " + "info for key: " + currkey);
+          this.logger.fine(
+              "FilterPreAuthorization: putAll: added authorization " + "info for key: " + currkey);
       }
       // Now each of the map's values have become ObjectWithAuthz
     }
     return true;
   }
 
-  public void close() {
-  }
-
+  public void close() {}
 }

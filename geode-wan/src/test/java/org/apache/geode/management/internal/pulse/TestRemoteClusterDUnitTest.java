@@ -52,12 +52,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
-/**
- * This is for testing remote Cluster
- * 
- * 
- */
-
+/** This is for testing remote Cluster */
 @Category(DistributedTest.class)
 public class TestRemoteClusterDUnitTest extends ManagementTestBase {
 
@@ -81,21 +76,30 @@ public class TestRemoteClusterDUnitTest extends ManagementTestBase {
 
     int punePort = (Integer) puneLocator.invoke(() -> TestRemoteClusterDUnitTest.getLocatorPort());
 
-    Integer nyPort = (Integer) nyLocator.invoke(() -> WANTestBase.createFirstRemoteLocator(12, punePort));
+    Integer nyPort =
+        (Integer) nyLocator.invoke(() -> WANTestBase.createFirstRemoteLocator(12, punePort));
 
     puneSender.invoke(() -> WANTestBase.createCache(punePort));
     managing.invoke(() -> WANTestBase.createManagementCache(punePort));
     startManagingNode(managing);
 
-    puneSender.invoke(() -> WANTestBase.createSender("pn", 12, true, 100, 300, false, false, null, true));
-    managing.invoke(() -> WANTestBase.createSender("pn", 12, true, 100, 300, false, false, null, true));
+    puneSender.invoke(
+        () -> WANTestBase.createSender("pn", 12, true, 100, 300, false, false, null, true));
+    managing.invoke(
+        () -> WANTestBase.createSender("pn", 12, true, 100, 300, false, false, null, true));
 
-    puneSender.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "pn", 1, 100, false));
-    managing.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "pn", 1, 100, false));
+    puneSender.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "pn", 1, 100, false));
+    managing.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "pn", 1, 100, false));
 
     WANTestBase.createCacheInVMs(nyPort, nyReceiver);
     nyReceiver.invoke(() -> WANTestBase.createReceiver());
-    nyReceiver.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, false));
+    nyReceiver.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, false));
 
     WANTestBase.startSenderInVMs("pn", puneSender, managing);
 
@@ -111,10 +115,10 @@ public class TestRemoteClusterDUnitTest extends ManagementTestBase {
     stopGatewaySender(puneSender);
     startGatewaySender(puneSender);
 
-    DistributedMember puneMember = (DistributedMember) puneSender.invoke(() -> TestRemoteClusterDUnitTest.getMember());
+    DistributedMember puneMember =
+        (DistributedMember) puneSender.invoke(() -> TestRemoteClusterDUnitTest.getMember());
 
     checkRemoteClusterStatus(managing, puneMember);
-
   }
 
   private static int getLocatorPort() {
@@ -127,128 +131,131 @@ public class TestRemoteClusterDUnitTest extends ManagementTestBase {
 
   /**
    * Checks Proxy GatewaySender
-   * 
-   * @param vm
-   *          reference to VM
+   *
+   * @param vm reference to VM
    */
   @SuppressWarnings("serial")
   protected void checkRemoteClusterStatus(final VM vm, final DistributedMember senderMember) {
-    SerializableRunnable checkProxySender = new SerializableRunnable("DS Map Size") {
-      public void run() {
-        Cache cache = GemFireCacheImpl.getInstance();
-        final WaitCriterion waitCriteria2 = new WaitCriterion() {
-          @Override
-          public boolean done() {
+    SerializableRunnable checkProxySender =
+        new SerializableRunnable("DS Map Size") {
+          public void run() {
             Cache cache = GemFireCacheImpl.getInstance();
-            final ManagementService service = ManagementService.getManagementService(cache);
-            final DistributedSystemMXBean dsBean = service.getDistributedSystemMXBean();
-            if (dsBean != null) {
-              return true;
-            }
-            return false;
-          }
+            final WaitCriterion waitCriteria2 =
+                new WaitCriterion() {
+                  @Override
+                  public boolean done() {
+                    Cache cache = GemFireCacheImpl.getInstance();
+                    final ManagementService service = ManagementService.getManagementService(cache);
+                    final DistributedSystemMXBean dsBean = service.getDistributedSystemMXBean();
+                    if (dsBean != null) {
+                      return true;
+                    }
+                    return false;
+                  }
 
-          @Override
-          public String description() {
-            return "wait for getDistributedSystemMXBean to complete and get results";
+                  @Override
+                  public String description() {
+                    return "wait for getDistributedSystemMXBean to complete and get results";
+                  }
+                };
+            Wait.waitForCriterion(waitCriteria2, 2 * 60 * 1000, 5000, true);
+            ManagementService service = ManagementService.getManagementService(cache);
+            final DistributedSystemMXBean dsBean = service.getDistributedSystemMXBean();
+            assertNotNull(dsBean);
+            Map<String, Boolean> dsMap = dsBean.viewRemoteClusterStatus();
+            LogWriterUtils.getLogWriter().info("Ds Map is: " + dsMap.size());
+            assertNotNull(dsMap);
+            assertEquals(true, dsMap.size() > 0 ? true : false);
           }
         };
-        Wait.waitForCriterion(waitCriteria2, 2 * 60 * 1000, 5000, true);
-        ManagementService service = ManagementService.getManagementService(cache);
-        final DistributedSystemMXBean dsBean = service.getDistributedSystemMXBean();
-        assertNotNull(dsBean);
-        Map<String, Boolean> dsMap = dsBean.viewRemoteClusterStatus();
-        LogWriterUtils.getLogWriter().info("Ds Map is: " + dsMap.size());
-        assertNotNull(dsMap);
-        assertEquals(true, dsMap.size() > 0 ? true : false);
-      }
-    };
     vm.invoke(checkProxySender);
   }
 
   /**
    * stops a gateway sender
-   * 
-   * @param vm
-   *          reference to VM
+   *
+   * @param vm reference to VM
    */
   @SuppressWarnings("serial")
   protected void stopGatewaySender(final VM vm) {
-    SerializableRunnable stopGatewaySender = new SerializableRunnable("Stop Gateway Sender") {
-      public void run() {
-        Cache cache = GemFireCacheImpl.getInstance();
-        ManagementService service = ManagementService.getManagementService(cache);
-        GatewaySenderMXBean bean = service.getLocalGatewaySenderMXBean("pn");
-        assertNotNull(bean);
-        bean.stop();
-        assertFalse(bean.isRunning());
-      }
-    };
+    SerializableRunnable stopGatewaySender =
+        new SerializableRunnable("Stop Gateway Sender") {
+          public void run() {
+            Cache cache = GemFireCacheImpl.getInstance();
+            ManagementService service = ManagementService.getManagementService(cache);
+            GatewaySenderMXBean bean = service.getLocalGatewaySenderMXBean("pn");
+            assertNotNull(bean);
+            bean.stop();
+            assertFalse(bean.isRunning());
+          }
+        };
     vm.invoke(stopGatewaySender);
   }
 
   /**
    * start a gateway sender
-   * 
-   * @param vm
-   *          reference to VM
+   *
+   * @param vm reference to VM
    */
   @SuppressWarnings("serial")
   protected void startGatewaySender(final VM vm) {
-    SerializableRunnable stopGatewaySender = new SerializableRunnable("Start Gateway Sender") {
-      public void run() {
-        Cache cache = GemFireCacheImpl.getInstance();
-        ManagementService service = ManagementService.getManagementService(cache);
-        GatewaySenderMXBean bean = service.getLocalGatewaySenderMXBean("pn");
-        assertNotNull(bean);
-        bean.start();
-        assertTrue(bean.isRunning());
-      }
-    };
+    SerializableRunnable stopGatewaySender =
+        new SerializableRunnable("Start Gateway Sender") {
+          public void run() {
+            Cache cache = GemFireCacheImpl.getInstance();
+            ManagementService service = ManagementService.getManagementService(cache);
+            GatewaySenderMXBean bean = service.getLocalGatewaySenderMXBean("pn");
+            assertNotNull(bean);
+            bean.start();
+            assertTrue(bean.isRunning());
+          }
+        };
     vm.invoke(stopGatewaySender);
   }
 
   /**
    * Checks whether a GatewayReceiverMBean is created or not
-   * 
-   * @param vm
-   *          reference to VM
+   *
+   * @param vm reference to VM
    */
   @SuppressWarnings("serial")
   protected void checkReceiverMBean(final VM vm) {
-    SerializableRunnable checkMBean = new SerializableRunnable("Check Receiver MBean") {
-      public void run() {
-        Cache cache = GemFireCacheImpl.getInstance();
-        ManagementService service = ManagementService.getManagementService(cache);
-        GatewayReceiverMXBean bean = service.getLocalGatewayReceiverMXBean();
-        assertNotNull(bean);
-      }
-    };
+    SerializableRunnable checkMBean =
+        new SerializableRunnable("Check Receiver MBean") {
+          public void run() {
+            Cache cache = GemFireCacheImpl.getInstance();
+            ManagementService service = ManagementService.getManagementService(cache);
+            GatewayReceiverMXBean bean = service.getLocalGatewayReceiverMXBean();
+            assertNotNull(bean);
+          }
+        };
     vm.invoke(checkMBean);
   }
 
   /**
    * Checks whether a GatewayReceiverMBean is created or not
-   * 
+   *
    * @param vm reference to VM
    */
   @SuppressWarnings("serial")
   protected void checkSenderMBean(final VM vm, final String regionPath) {
-    SerializableRunnable checkMBean = new SerializableRunnable("Check Sender MBean") {
-      public void run() {
-        Cache cache = GemFireCacheImpl.getInstance();
-        ManagementService service = ManagementService.getManagementService(cache);
+    SerializableRunnable checkMBean =
+        new SerializableRunnable("Check Sender MBean") {
+          public void run() {
+            Cache cache = GemFireCacheImpl.getInstance();
+            ManagementService service = ManagementService.getManagementService(cache);
 
-        GatewaySenderMXBean bean = service.getLocalGatewaySenderMXBean("pn");
-        assertNotNull(bean);
-        assertTrue(bean.isConnected());
+            GatewaySenderMXBean bean = service.getLocalGatewaySenderMXBean("pn");
+            assertNotNull(bean);
+            assertTrue(bean.isConnected());
 
-        ObjectName regionBeanName = service.getRegionMBeanName(cache.getDistributedSystem().getDistributedMember(), "/" + regionPath);
-        RegionMXBean rBean = service.getMBeanInstance(regionBeanName, RegionMXBean.class);
-        assertTrue(rBean.isGatewayEnabled());
-
-      }
-    };
+            ObjectName regionBeanName =
+                service.getRegionMBeanName(
+                    cache.getDistributedSystem().getDistributedMember(), "/" + regionPath);
+            RegionMXBean rBean = service.getMBeanInstance(regionBeanName, RegionMXBean.class);
+            assertTrue(rBean.isGatewayEnabled());
+          }
+        };
     vm.invoke(checkMBean);
   }
 }

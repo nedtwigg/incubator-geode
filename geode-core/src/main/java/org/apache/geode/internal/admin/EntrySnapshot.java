@@ -17,13 +17,9 @@
 
 package org.apache.geode.internal.admin;
 
-/**
- * A snapshot of a <code>Region</code> entry.
- */
+/** A snapshot of a <code>Region</code> entry. */
 public interface EntrySnapshot extends CacheSnapshot {
 
-  /**
-   * Returns the value of the <code>Region</code> entry
-   */
+  /** Returns the value of the <code>Region</code> entry */
   public Object getValue();
 }

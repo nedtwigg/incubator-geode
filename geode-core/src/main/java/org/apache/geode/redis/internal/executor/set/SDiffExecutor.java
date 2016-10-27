@@ -30,11 +30,10 @@ public class SDiffExecutor extends SetOpExecutor {
   }
 
   @Override
-  protected Set<ByteArrayWrapper> setOp(Set<ByteArrayWrapper> firstSet, List<Set<ByteArrayWrapper>> setList) {
-    if (firstSet == null)
-      return null;
-    for (Set<ByteArrayWrapper> set : setList)
-      firstSet.removeAll(set);
+  protected Set<ByteArrayWrapper> setOp(
+      Set<ByteArrayWrapper> firstSet, List<Set<ByteArrayWrapper>> setList) {
+    if (firstSet == null) return null;
+    for (Set<ByteArrayWrapper> set : setList) firstSet.removeAll(set);
     return firstSet;
   }
 
@@ -42,5 +41,4 @@ public class SDiffExecutor extends SetOpExecutor {
   public String getArgsError() {
     return ArityDef.SDIFF;
   }
-
 }

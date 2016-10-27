@@ -49,12 +49,11 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * This test checks Expiration of events in the regionqueue.
- * 1. It creates regionqueue on 4 vms
- * 2. It puts ConflatableObject in each regionque
- * 3. Checks size of the regionqueue. Size of the regionqueue should be greater than 0.
- * 4. Waits for the period which is slightly greater than expiration period.
- * 5. Checks size of the regionqueue. Size of the regionqueue should be equal to 0.
+ * This test checks Expiration of events in the regionqueue. 1. It creates regionqueue on 4 vms 2.
+ * It puts ConflatableObject in each regionque 3. Checks size of the regionqueue. Size of the
+ * regionqueue should be greater than 0. 4. Waits for the period which is slightly greater than
+ * expiration period. 5. Checks size of the regionqueue. Size of the regionqueue should be equal to
+ * 0.
  */
 @Category(DistributedTest.class)
 public class HAExpiryDUnitTest extends JUnit4DistributedTestCase {
@@ -81,9 +80,7 @@ public class HAExpiryDUnitTest extends JUnit4DistributedTestCase {
     super();
   }
 
-  /**
-   * This function creates regionqueue on 4 VMs
-   */
+  /** This function creates regionqueue on 4 VMs */
   @Override
   public final void postSetUp() throws Exception {
     final Host host = Host.getHost(0);
@@ -104,11 +101,12 @@ public class HAExpiryDUnitTest extends JUnit4DistributedTestCase {
     vm2.invoke(() -> HAExpiryDUnitTest.closeCache());
     vm3.invoke(() -> HAExpiryDUnitTest.closeCache());
     cache = null;
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        cache = null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            cache = null;
+          }
+        });
   }
 
   @Test
@@ -118,13 +116,14 @@ public class HAExpiryDUnitTest extends JUnit4DistributedTestCase {
     vm2.invoke(() -> HAExpiryDUnitTest.createRegionQueue(new Boolean(false)));
     vm3.invoke(() -> HAExpiryDUnitTest.createRegionQueue(new Boolean(false)));
 
-    vm0.invoke(new CacheSerializableRunnable("putFromVm") {
+    vm0.invoke(
+        new CacheSerializableRunnable("putFromVm") {
 
-      public void run2() throws CacheException {
-        Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-        region.put("KEY1", "VALUE1");
-      }
-    });
+          public void run2() throws CacheException {
+            Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+            region.put("KEY1", "VALUE1");
+          }
+        });
 
     vm0.invoke(() -> HAExpiryDUnitTest.checkSizeBeforeExpiration());
     vm1.invoke(() -> HAExpiryDUnitTest.checkSizeBeforeExpiration());
@@ -146,13 +145,14 @@ public class HAExpiryDUnitTest extends JUnit4DistributedTestCase {
     vm2.invoke(() -> HAExpiryDUnitTest.createRegionQueue(new Boolean(true)));
     vm3.invoke(() -> HAExpiryDUnitTest.createRegionQueue(new Boolean(true)));
 
-    vm0.invoke(new CacheSerializableRunnable("putFromVm") {
+    vm0.invoke(
+        new CacheSerializableRunnable("putFromVm") {
 
-      public void run2() throws CacheException {
-        Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-        region.put("KEY1", "VALUE1");
-      }
-    });
+          public void run2() throws CacheException {
+            Region region = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+            region.put("KEY1", "VALUE1");
+          }
+        });
 
     vm0.invoke(() -> HAExpiryDUnitTest.checkSizeBeforeExpiration());
     vm1.invoke(() -> HAExpiryDUnitTest.checkSizeBeforeExpiration());
@@ -167,28 +167,30 @@ public class HAExpiryDUnitTest extends JUnit4DistributedTestCase {
     vm1.invoke(() -> HAExpiryDUnitTest.checkSizeBeforeExpiration());
     vm2.invoke(() -> HAExpiryDUnitTest.checkSizeBeforeExpiration());
     vm3.invoke(() -> HAExpiryDUnitTest.checkSizeBeforeExpiration());
-
   }
 
   /**
-   * This function checks the regionqueue size before expiration. size should be >
-   * 0.
+   * This function checks the regionqueue size before expiration. size should be > 0.
+   *
    * @throws Exception
    */
   public static void checkSizeBeforeExpiration() throws Exception {
-    HARegion regionForQueue = (HARegion) cache.getRegion(Region.SEPARATOR + HARegionQueue.createRegionName(regionQueueName));
+    HARegion regionForQueue =
+        (HARegion)
+            cache.getRegion(Region.SEPARATOR + HARegionQueue.createRegionName(regionQueueName));
     final HARegionQueue regionqueue = regionForQueue.getOwner();
     regionQueueSize = regionqueue.size();
     cache.getLogger().info("Size of the regionqueue before expiration is " + regionQueueSize);
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return regionqueue.size() >= 1;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return regionqueue.size() >= 1;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
     /*
      * if (regionqueue.size() < 1) fail("RegionQueue size canot be less than 1
@@ -197,25 +199,27 @@ public class HAExpiryDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * This function checks the regionqueue size After expiration. size should be =
-   * 0.
-   * 
+   * This function checks the regionqueue size After expiration. size should be = 0.
+   *
    * @throws Exception
    */
   public static void checkSizeAfterExpiration() throws Exception {
 
-    HARegion regionForQueue = (HARegion) cache.getRegion(Region.SEPARATOR + HARegionQueue.createRegionName(regionQueueName));
+    HARegion regionForQueue =
+        (HARegion)
+            cache.getRegion(Region.SEPARATOR + HARegionQueue.createRegionName(regionQueueName));
     final HARegionQueue regionqueue = regionForQueue.getOwner();
     cache.getLogger().info("Size of the regionqueue After expiration is " + regionqueue.size());
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return regionqueue.size() <= regionQueueSize;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return regionqueue.size() <= regionQueueSize;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
 
     /*
@@ -238,7 +242,13 @@ public class HAExpiryDUnitTest extends JUnit4DistributedTestCase {
     HARegionQueueAttributes hattr = new HARegionQueueAttributes();
     // setting expiry time for the regionqueue.
     hattr.setExpiryTime(4);
-    RegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(regionQueueName, cache, hattr, HARegionQueue.NON_BLOCKING_HA_QUEUE, isDurable.booleanValue());
+    RegionQueue regionqueue =
+        HARegionQueue.getHARegionQueueInstance(
+            regionQueueName,
+            cache,
+            hattr,
+            HARegionQueue.NON_BLOCKING_HA_QUEUE,
+            isDurable.booleanValue());
     assertNotNull(regionqueue);
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -247,7 +257,6 @@ public class HAExpiryDUnitTest extends JUnit4DistributedTestCase {
     factory.setCacheListener(serverListener);
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
-
   }
 
   public static void closeCache() {
@@ -258,17 +267,24 @@ public class HAExpiryDUnitTest extends JUnit4DistributedTestCase {
   }
 }
 
-/**
- * This listener performs the put of Conflatable object in the regionqueue.
- */
-
+/** This listener performs the put of Conflatable object in the regionqueue. */
 class vmListener extends CacheListenerAdapter {
   public void afterCreate(EntryEvent event) {
     Cache cache = event.getRegion().getCache();
-    HARegion regionForQueue = (HARegion) cache.getRegion(Region.SEPARATOR + HARegionQueue.createRegionName(HAExpiryDUnitTest.regionQueueName));
+    HARegion regionForQueue =
+        (HARegion)
+            cache.getRegion(
+                Region.SEPARATOR
+                    + HARegionQueue.createRegionName(HAExpiryDUnitTest.regionQueueName));
     HARegionQueue regionqueue = regionForQueue.getOwner();
     try {
-      regionqueue.put(new ConflatableObject(event.getKey(), event.getNewValue(), new EventID(new byte[] { 1 }, 1, 1), false, "region1"));
+      regionqueue.put(
+          new ConflatableObject(
+              event.getKey(),
+              event.getNewValue(),
+              new EventID(new byte[] {1}, 1, 1),
+              false,
+              "region1"));
     } catch (Exception e) {
       e.printStackTrace();
     }

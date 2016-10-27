@@ -27,7 +27,7 @@ import org.apache.geode.internal.logging.LogService;
 
 /**
  * Reads the output stream of a Process.
- * 
+ *
  * @since GemFire 7.0
  */
 public abstract class ProcessStreamReader implements Runnable {
@@ -43,17 +43,18 @@ public abstract class ProcessStreamReader implements Runnable {
     this.process = builder.process;
     this.inputStream = builder.inputStream;
     if (builder.inputListener == null) {
-      this.inputListener = new InputListener() {
-        @Override
-        public void notifyInputLine(String line) {
-          // do nothing
-        }
+      this.inputListener =
+          new InputListener() {
+            @Override
+            public void notifyInputLine(String line) {
+              // do nothing
+            }
 
-        @Override
-        public String toString() {
-          return "NullInputListener";
-        }
-      };
+            @Override
+            public String toString() {
+              return "NullInputListener";
+            }
+          };
     } else {
       this.inputListener = builder.inputListener;
     }
@@ -123,18 +124,20 @@ public abstract class ProcessStreamReader implements Runnable {
   }
 
   public ProcessStreamReader stopAsync(final long delayMillis) {
-    Runnable delayedStop = new Runnable() {
-      @Override
-      public void run() {
-        try {
-          Thread.sleep(delayMillis);
-        } catch (InterruptedException e) {
-        } finally {
-          stop();
-        }
-      }
-    };
-    String threadName = getClass().getSimpleName() + " stopAfterDelay Thread @" + Integer.toHexString(hashCode());
+    Runnable delayedStop =
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              Thread.sleep(delayMillis);
+            } catch (InterruptedException e) {
+            } finally {
+              stop();
+            }
+          }
+        };
+    String threadName =
+        getClass().getSimpleName() + " stopAfterDelay Thread @" + Integer.toHexString(hashCode());
     Thread thread = new Thread(delayedStop, threadName);
     thread.setDaemon(true);
     thread.start();
@@ -184,7 +187,8 @@ public abstract class ProcessStreamReader implements Runnable {
   public String toString() {
     final StringBuilder sb = new StringBuilder(getClass().getSimpleName());
     sb.append(" Thread").append(" #").append(System.identityHashCode(this));
-    sb.append(" alive=").append(isRunning()); //this.thread == null ? false : this.thread.isAlive());
+    sb.append(" alive=")
+        .append(isRunning()); //this.thread == null ? false : this.thread.isAlive());
     sb.append(" listener=").append(this.inputListener);
     return sb.toString();
   }
@@ -193,21 +197,20 @@ public abstract class ProcessStreamReader implements Runnable {
     return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode());
   }
 
-  /**
-   * Defines the callback for  lines of output found in the stream.
-   */
+  /** Defines the callback for lines of output found in the stream. */
   public static interface InputListener {
     public void notifyInputLine(String line);
   }
 
   /** Default ReadingMode is BLOCKING */
   public static enum ReadingMode {
-    BLOCKING, NON_BLOCKING;
+    BLOCKING,
+    NON_BLOCKING;
   }
 
   /**
    * Builds a ProcessStreamReader.
-   * 
+   *
    * @since GemFire 8.2
    */
   public static class Builder {
@@ -255,10 +258,10 @@ public abstract class ProcessStreamReader implements Runnable {
         throw new IllegalArgumentException("continueReadingMillis must zero or positive");
       }
       switch (this.readingMode) {
-      case NON_BLOCKING:
-        return new NonBlockingProcessStreamReader(this);
-      default:
-        return new BlockingProcessStreamReader(this);
+        case NON_BLOCKING:
+          return new NonBlockingProcessStreamReader(this);
+        default:
+          return new BlockingProcessStreamReader(this);
       }
     }
   }

@@ -37,9 +37,7 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.security.AuthenticationFailedException;
 import org.apache.geode.security.Authenticator;
 
-/**
- * An implementation of {@link Authenticator} that uses PKCS.
- */
+/** An implementation of {@link Authenticator} that uses PKCS. */
 public class PKCSAuthenticator implements Authenticator {
 
   private static final Logger logger = LogService.getLogger();
@@ -59,13 +57,20 @@ public class PKCSAuthenticator implements Authenticator {
   }
 
   @Override
-  public void init(final Properties securityProperties, final LogWriter systemLogWriter, final LogWriter securityLogWriter) throws AuthenticationFailedException {
+  public void init(
+      final Properties securityProperties,
+      final LogWriter systemLogWriter,
+      final LogWriter securityLogWriter)
+      throws AuthenticationFailedException {
     this.systemLogWriter = systemLogWriter;
     this.securityLogWriter = securityLogWriter;
 
     this.pubKeyFilePath = securityProperties.getProperty(PUBLIC_KEY_FILE);
     if (this.pubKeyFilePath == null) {
-      throw new AuthenticationFailedException("PKCSAuthenticator: property " + PUBLIC_KEY_FILE + " not specified as the public key file.");
+      throw new AuthenticationFailedException(
+          "PKCSAuthenticator: property "
+              + PUBLIC_KEY_FILE
+              + " not specified as the public key file.");
     }
 
     this.pubKeyPass = securityProperties.getProperty(PUBLIC_KEYSTORE_PASSWORD);
@@ -75,7 +80,8 @@ public class PKCSAuthenticator implements Authenticator {
   }
 
   @Override
-  public Principal authenticate(final Properties credentials, final DistributedMember member) throws AuthenticationFailedException {
+  public Principal authenticate(final Properties credentials, final DistributedMember member)
+      throws AuthenticationFailedException {
     final String alias = (String) credentials.get(PKCSAuthInit.KEYSTORE_ALIAS);
     if (alias == null || alias.length() <= 0) {
       throw new AuthenticationFailedException("No alias received");
@@ -89,7 +95,8 @@ public class PKCSAuthenticator implements Authenticator {
 
       final byte[] signatureBytes = (byte[]) credentials.get(PKCSAuthInit.SIGNATURE_DATA);
       if (signatureBytes == null) {
-        throw newException("signature data property [" + PKCSAuthInit.SIGNATURE_DATA + "] not provided");
+        throw newException(
+            "signature data property [" + PKCSAuthInit.SIGNATURE_DATA + "] not provided");
       }
 
       final Signature sig = Signature.getInstance(cert.getSigAlgName());
@@ -108,8 +115,7 @@ public class PKCSAuthenticator implements Authenticator {
   }
 
   @Override
-  public void close() {
-  }
+  public void close() {}
 
   private void populateMap() {
     try {
@@ -123,7 +129,7 @@ public class PKCSAuthenticator implements Authenticator {
         keyStoreFile.close();
       }
 
-      for (Enumeration e = keyStore.aliases(); e.hasMoreElements();) {
+      for (Enumeration e = keyStore.aliases(); e.hasMoreElements(); ) {
         final Object alias = e.nextElement();
         final Certificate cert = keyStore.getCertificate((String) alias);
         if (cert instanceof X509Certificate) {
@@ -132,12 +138,14 @@ public class PKCSAuthenticator implements Authenticator {
       }
 
     } catch (Exception e) {
-      throw new AuthenticationFailedException("Exception while getting public keys: " + e.getMessage(), e);
+      throw new AuthenticationFailedException(
+          "Exception while getting public keys: " + e.getMessage(), e);
     }
   }
 
   private AuthenticationFailedException newException(final String message, final Exception cause) {
-    final String fullMessage = "PKCSAuthenticator: Authentication of client failed due to: " + message;
+    final String fullMessage =
+        "PKCSAuthenticator: Authentication of client failed due to: " + message;
     if (cause != null) {
       return new AuthenticationFailedException(fullMessage, cause);
     } else {
@@ -149,7 +157,8 @@ public class PKCSAuthenticator implements Authenticator {
     return newException(message, null);
   }
 
-  private X509Certificate getCertificate(final String alias) throws NoSuchAlgorithmException, InvalidKeySpecException {
+  private X509Certificate getCertificate(final String alias)
+      throws NoSuchAlgorithmException, InvalidKeySpecException {
     if (this.aliasCertificateMap.containsKey(alias)) {
       return (X509Certificate) this.aliasCertificateMap.get(alias);
     }

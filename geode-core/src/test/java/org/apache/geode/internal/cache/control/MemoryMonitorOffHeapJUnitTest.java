@@ -35,8 +35,7 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.*;
 
-/**
- */
+/** */
 @Category(IntegrationTest.class)
 public class MemoryMonitorOffHeapJUnitTest {
   private static final Logger logger = LogService.getLogger();
@@ -67,12 +66,20 @@ public class MemoryMonitorOffHeapJUnitTest {
     }
   }
 
-  final static String expectedEx = LocalizedStrings.MemoryMonitor_MEMBER_ABOVE_CRITICAL_THRESHOLD.getRawText().replaceAll("\\{[0-9]+\\}", ".*?");
-  public static final String addExpectedAbove = "<ExpectedException action=add>" + expectedEx + "</ExpectedException>";
-  public static final String removeExpectedAbove = "<ExpectedException action=remove>" + expectedEx + "</ExpectedException>";
-  final static String expectedBelow = LocalizedStrings.MemoryMonitor_MEMBER_BELOW_CRITICAL_THRESHOLD.getRawText().replaceAll("\\{[0-9]+\\}", ".*?");
-  public final static String addExpectedBelow = "<ExpectedException action=add>" + expectedBelow + "</ExpectedException>";
-  public final static String removeExpectedBelow = "<ExpectedException action=remove>" + expectedBelow + "</ExpectedException>";
+  static final String expectedEx =
+      LocalizedStrings.MemoryMonitor_MEMBER_ABOVE_CRITICAL_THRESHOLD.getRawText()
+          .replaceAll("\\{[0-9]+\\}", ".*?");
+  public static final String addExpectedAbove =
+      "<ExpectedException action=add>" + expectedEx + "</ExpectedException>";
+  public static final String removeExpectedAbove =
+      "<ExpectedException action=remove>" + expectedEx + "</ExpectedException>";
+  static final String expectedBelow =
+      LocalizedStrings.MemoryMonitor_MEMBER_BELOW_CRITICAL_THRESHOLD.getRawText()
+          .replaceAll("\\{[0-9]+\\}", ".*?");
+  public static final String addExpectedBelow =
+      "<ExpectedException action=add>" + expectedBelow + "</ExpectedException>";
+  public static final String removeExpectedBelow =
+      "<ExpectedException action=remove>" + expectedBelow + "</ExpectedException>";
 
   @Test
   public void testGeneratingEvents() throws Exception {
@@ -91,7 +98,9 @@ public class MemoryMonitorOffHeapJUnitTest {
       ResourceListener listener = new TestMemoryThresholdListener();
       internalManager.addResourceListener(ResourceType.OFFHEAP_MEMORY, listener);
     }
-    assertEquals(10 + SYSTEM_LISTENERS, internalManager.getResourceListeners(ResourceType.OFFHEAP_MEMORY).size());
+    assertEquals(
+        10 + SYSTEM_LISTENERS,
+        internalManager.getResourceListeners(ResourceType.OFFHEAP_MEMORY).size());
 
     // Start at normal
     setThenTestListenersAndStats(400000, 0, 0, 0, 0, 0, 0, 0);
@@ -136,7 +145,15 @@ public class MemoryMonitorOffHeapJUnitTest {
     setThenTestListenersAndStats(503315, 1, 1, 1, 1, 3, 1, 5);
   }
 
-  private void setThenTestListenersAndStats(final long memUsed, final int evictionStop, final int evictionStart, final int safe, final int critical, final int evictionEvents, final int criticalEvents, final int normalEvents) {
+  private void setThenTestListenersAndStats(
+      final long memUsed,
+      final int evictionStop,
+      final int evictionStart,
+      final int safe,
+      final int critical,
+      final int evictionEvents,
+      final int criticalEvents,
+      final int normalEvents) {
     this.cache.getResourceManager().getOffHeapMonitor().updateStateAndSendEvent(memUsed);
     ResourceManagerStats stats = this.cache.getResourceManager().getStats();
 
@@ -145,10 +162,13 @@ public class MemoryMonitorOffHeapJUnitTest {
     assertEquals(critical, stats.getOffHeapCriticalEvents());
     assertEquals(safe, stats.getOffHeapSafeEvents());
 
-    for (ResourceListener listener : this.cache.getResourceManager().getResourceListeners(ResourceType.OFFHEAP_MEMORY)) {
+    for (ResourceListener listener :
+        this.cache.getResourceManager().getResourceListeners(ResourceType.OFFHEAP_MEMORY)) {
       if (listener instanceof TestMemoryThresholdListener) {
-        assertEquals(evictionEvents, ((TestMemoryThresholdListener) listener).getEvictionThresholdCalls());
-        assertEquals(criticalEvents, ((TestMemoryThresholdListener) listener).getCriticalThresholdCalls());
+        assertEquals(
+            evictionEvents, ((TestMemoryThresholdListener) listener).getEvictionThresholdCalls());
+        assertEquals(
+            criticalEvents, ((TestMemoryThresholdListener) listener).getCriticalThresholdCalls());
         assertEquals(normalEvents, ((TestMemoryThresholdListener) listener).getNormalCalls());
       }
     }

@@ -29,9 +29,7 @@ import java.util.Properties;
 
 //import java.net.*;
 
-/**
- * A message that is sent in response to a {@link LicenseInfoRequest}.
- */
+/** A message that is sent in response to a {@link LicenseInfoRequest}. */
 public final class LicenseInfoResponse extends AdminResponse {
   private static final Logger logger = LogService.getLogger();
 
@@ -39,10 +37,10 @@ public final class LicenseInfoResponse extends AdminResponse {
   private Properties p;
 
   /**
-   * Returns a <code>LicenseInfoResponse</code> that will be returned to the
-   * specified recipient.
+   * Returns a <code>LicenseInfoResponse</code> that will be returned to the specified recipient.
    */
-  public static LicenseInfoResponse create(DistributionManager dm, InternalDistributedMember recipient) {
+  public static LicenseInfoResponse create(
+      DistributionManager dm, InternalDistributedMember recipient) {
     LicenseInfoResponse m = new LicenseInfoResponse();
     m.setRecipient(recipient);
     m.p = new Properties();

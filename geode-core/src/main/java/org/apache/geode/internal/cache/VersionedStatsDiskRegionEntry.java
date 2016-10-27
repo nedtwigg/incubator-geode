@@ -18,10 +18,9 @@ package org.apache.geode.internal.cache;
 
 import org.apache.geode.internal.cache.versions.VersionStamp;
 
-/**
- *
- */
-public abstract class VersionedStatsDiskRegionEntry extends VMStatsDiskRegionEntry implements VersionStamp {
+/** */
+public abstract class VersionedStatsDiskRegionEntry extends VMStatsDiskRegionEntry
+    implements VersionStamp {
 
   protected VersionedStatsDiskRegionEntry(RegionEntryContext context, Object value) {
     super(context, value);

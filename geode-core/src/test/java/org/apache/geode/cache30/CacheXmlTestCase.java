@@ -59,8 +59,7 @@ public class CacheXmlTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * The version of GemFire tested by this class.  This method should
-   * be overridden by subclasses.
+   * The version of GemFire tested by this class. This method should be overridden by subclasses.
    *
    * @see CacheXml#VERSION_3_0
    */
@@ -72,16 +71,12 @@ public class CacheXmlTestCase extends JUnit4CacheTestCase {
     return false;
   }
 
-  /**
-   * Sets the file used by this test to initialize the cache
-   */
+  /** Sets the file used by this test to initialize the cache */
   protected void setXmlFile(File xmlFile) {
     this.xmlFile = xmlFile;
   }
 
-  /**
-   * Finds an XML file with the given name.  Looks in $JTESTS.
-   */
+  /** Finds an XML file with the given name. Looks in $JTESTS. */
   protected File findFile(String fileName) {
     String path = TestUtil.getResourcePath(getClass(), fileName);
     return new File(path);
@@ -103,10 +98,9 @@ public class CacheXmlTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Uses the {@link CacheXmlGenerator} to generate an XML file from
-   * the given {@link CacheCreation}.  It then creates a {@link Cache}
-   * from the XML and asserts that it is the same as the cache
-   * described in the <code>CacheCreation</code>.
+   * Uses the {@link CacheXmlGenerator} to generate an XML file from the given {@link
+   * CacheCreation}. It then creates a {@link Cache} from the XML and asserts that it is the same as
+   * the cache described in the <code>CacheCreation</code>.
    */
   protected void testXml(CacheCreation creation) {
     testXml(creation, true);

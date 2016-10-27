@@ -20,10 +20,7 @@ import javax.management.JMException;
 
 import org.apache.geode.management.ManagerMXBean;
 
-/**
- * 
- *
- */
+/** */
 public class ManagerMBean implements ManagerMXBean {
 
   private ManagerMBeanBridge bridge;
@@ -66,5 +63,4 @@ public class ManagerMBean implements ManagerMXBean {
   public void setStatusMessage(String message) {
     bridge.setStatusMessage(message);
   }
-
 }

@@ -36,55 +36,52 @@ public class CqServiceStatisticsImpl implements CqServiceStatistics {
 
   /**
    * Constructor for CqStatisticsImpl
-   * @param cqs - CqService 
+   *
+   * @param cqs - CqService
    */
   public CqServiceStatisticsImpl(CqServiceImpl cqs) {
     cqService = cqs;
   }
 
-  /**
-   * Returns the number of CQs currently executing
-   */
+  /** Returns the number of CQs currently executing */
   public long numCqsActive() {
     return this.cqService.getCqServiceVsdStats().getNumCqsActive();
   }
 
   /**
    * Returns number of CQs created.
+   *
    * @return long number of cqs created.
    */
   public long numCqsCreated() {
     return this.cqService.getCqServiceVsdStats().getNumCqsCreated();
   }
 
-  /**
-   * Returns number of Cqs that are closed.
-   */
+  /** Returns number of Cqs that are closed. */
   public long numCqsClosed() {
     return this.cqService.getCqServiceVsdStats().getNumCqsClosed();
   }
 
-  /**
-   * Returns number of Cqs that are stopped.
-   */
+  /** Returns number of Cqs that are stopped. */
   public long numCqsStopped() {
     return this.cqService.getCqServiceVsdStats().getNumCqsStopped();
   }
 
-  /**
-   * Returns number of CQs created from the client.
-   */
+  /** Returns number of CQs created from the client. */
   public long numCqsOnClient() {
     return this.cqService.getCqServiceVsdStats().getNumCqsOnClient();
   }
 
   /**
    * Returns the number of CQs (active + suspended) on the given region.
+   *
    * @param regionName
    */
   public long numCqsOnRegion(String regionName) {
 
-    DefaultQueryService queryService = (DefaultQueryService) ((GemFireCacheImpl) CacheFactory.getAnyInstance()).getLocalQueryService();
+    DefaultQueryService queryService =
+        (DefaultQueryService)
+            ((GemFireCacheImpl) CacheFactory.getAnyInstance()).getLocalQueryService();
     try {
       CqQuery[] cqs = queryService.getCqs(regionName);
 

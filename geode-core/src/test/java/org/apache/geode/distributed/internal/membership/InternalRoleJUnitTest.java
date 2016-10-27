@@ -25,9 +25,7 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/** 
-* InternalRole Tester. 
-*/
+/** InternalRole Tester. */
 @Category(UnitTest.class)
 public class InternalRoleJUnitTest {
 
@@ -39,7 +37,5 @@ public class InternalRoleJUnitTest {
 
     assertEquals(role1, role2);
     assertEquals(role1, role3);
-
   }
-
 }

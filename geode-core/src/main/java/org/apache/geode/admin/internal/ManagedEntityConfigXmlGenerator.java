@@ -21,7 +21,7 @@ import org.apache.geode.internal.Assert;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 import javax.xml.transform.*;
-//import javax.xml.transform.dom.DOMSource; 
+//import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import org.xml.sax.*;
@@ -31,9 +31,8 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Generates XML data that represents the managed entities in an
- * <code>AdminDistributedSystem</code>.  This class is used mainly for
- * testing.
+ * Generates XML data that represents the managed entities in an <code>AdminDistributedSystem</code>
+ * . This class is used mainly for testing.
  *
  * @since GemFire 4.0
  */
@@ -44,8 +43,7 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
 
   /////////////////////////  Instance Fields  ////////////////////////
 
-  /** The <code>AdminDistributedSystem</code> for which we are
-   * generating XML */
+  /** The <code>AdminDistributedSystem</code> for which we are generating XML */
   private AdminDistributedSystem system;
 
   /** The content handler to which SAX events are generated */
@@ -54,8 +52,8 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
   /////////////////////////  Static Methods  ////////////////////////
 
   /**
-   * Generates an XML representation of all of the managed entities in
-   * the given <code>AdminDistributedSystem</code>.
+   * Generates an XML representation of all of the managed entities in the given <code>
+   * AdminDistributedSystem</code>.
    */
   public static void generate(AdminDistributedSystem system, PrintWriter pw) {
     (new ManagedEntityConfigXmlGenerator(system)).generate(pw);
@@ -63,19 +61,14 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
 
   /////////////////////////  Constructors  //////////////////////////
 
-  /**
-   * Creates a new generator for the given
-   * <code>AdminDistributedSystem</code>. 
-   */
+  /** Creates a new generator for the given <code>AdminDistributedSystem</code>. */
   private ManagedEntityConfigXmlGenerator(AdminDistributedSystem system) {
     this.system = system;
   }
 
   ///////////////////////  Instance Methods  ///////////////////////
 
-  /**
-   * Generates XML and writes it to the given <code>PrintWriter</code>
-   */
+  /** Generates XML and writes it to the given <code>PrintWriter</code> */
   private void generate(PrintWriter pw) {
     // Use JAXP's transformation API to turn SAX events into pretty
     // XML text
@@ -94,16 +87,18 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
       pw.flush();
 
     } catch (Exception ex) {
-      RuntimeException ex2 = new RuntimeException(LocalizedStrings.ManagedEntityConfigXmlGenerator_EXCEPTION_THROWN_WHILE_GENERATING_XML.toLocalizedString());
+      RuntimeException ex2 =
+          new RuntimeException(
+              LocalizedStrings.ManagedEntityConfigXmlGenerator_EXCEPTION_THROWN_WHILE_GENERATING_XML
+                  .toLocalizedString());
       ex2.initCause(ex);
       throw ex2;
     }
   }
 
   /**
-   * Called by the transformer to parse the "input source".  We ignore
-   * the input source and, instead, generate SAX events to the {@link
-   * #setContentHandler ContentHandler}.
+   * Called by the transformer to parse the "input source". We ignore the input source and, instead,
+   * generate SAX events to the {@link #setContentHandler ContentHandler}.
    */
   public void parse(InputSource input) throws SAXException {
     Assert.assertTrue(this.handler != null);
@@ -124,16 +119,18 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
       generateCacheServers();
 
     } catch (AdminException ex) {
-      throw new SAXException(LocalizedStrings.ManagedEntityConfigXmlGenerator_AN_ADMINEXCEPTION_WAS_THROWN_WHILE_GENERATING_XML.toLocalizedString(), ex);
+      throw new SAXException(
+          LocalizedStrings
+              .ManagedEntityConfigXmlGenerator_AN_ADMINEXCEPTION_WAS_THROWN_WHILE_GENERATING_XML
+              .toLocalizedString(),
+          ex);
     }
 
     handler.endElement("", DISTRIBUTED_SYSTEM, DISTRIBUTED_SYSTEM);
     handler.endDocument();
   }
 
-  /**
-   * Generates XML for the remote command
-   */
+  /** Generates XML for the remote command */
   private void generateRemoteCommand() throws SAXException {
     String remoteCommand = this.system.getRemoteCommand();
 
@@ -144,9 +141,7 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
     handler.endElement("", REMOTE_COMMAND, REMOTE_COMMAND);
   }
 
-  /**
-   * Generates XML for locators in the distributed system
-   */
+  /** Generates XML for locators in the distributed system */
   private void generateDiscovery() throws SAXException {
     handler.startElement("", LOCATORS, LOCATORS, EMPTY);
 
@@ -155,9 +150,7 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
     handler.endElement("", LOCATORS, LOCATORS);
   }
 
-  /**
-   * Generates XML for the distributed system's locators
-   */
+  /** Generates XML for the distributed system's locators */
   private void generateLocators() throws SAXException {
     DistributionLocator[] locators = this.system.getDistributionLocators();
     for (int i = 0; i < locators.length; i++) {
@@ -165,9 +158,7 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
     }
   }
 
-  /**
-   * Generates XML for a locator
-   */
+  /** Generates XML for a locator */
   private void generateLocator(DistributionLocatorConfig config) throws SAXException {
 
     AttributesImpl atts = new AttributesImpl();
@@ -180,9 +171,7 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
     handler.endElement("", LOCATOR, LOCATOR);
   }
 
-  /**
-   * Generates XML for attributes common to all managed entities.
-   */
+  /** Generates XML for attributes common to all managed entities. */
   private void generateEntityConfig(ManagedEntityConfig config) throws SAXException {
 
     String host = config.getHost();
@@ -214,10 +203,7 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
     }
   }
 
-  /**
-   * Generates XML for the SSL configuration of the distributed
-   * system.
-   */
+  /** Generates XML for the SSL configuration of the distributed system. */
   private void generateSSL() throws SAXException {
     DistributedSystemConfig config = this.system.getConfig();
 
@@ -227,7 +213,8 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
     }
 
     AttributesImpl atts = new AttributesImpl();
-    atts.addAttribute("", "", AUTHENTICATION_REQUIRED, "", String.valueOf(config.isSSLAuthenticationRequired()));
+    atts.addAttribute(
+        "", "", AUTHENTICATION_REQUIRED, "", String.valueOf(config.isSSLAuthenticationRequired()));
 
     handler.startElement("", SSL, SSL, atts);
 
@@ -246,7 +233,7 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
     }
 
     Properties sslProps = config.getSSLProperties();
-    for (Iterator iter = sslProps.entrySet().iterator(); iter.hasNext();) {
+    for (Iterator iter = sslProps.entrySet().iterator(); iter.hasNext(); ) {
       Map.Entry entry = (Map.Entry) iter.next();
       String key = (String) entry.getKey();
       String value = (String) entry.getValue();
@@ -267,10 +254,7 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
     handler.endElement("", SSL, SSL);
   }
 
-  /**
-   * Generates an XML representation of the
-   * <code>CacheServer</code>s in the distributed system.
-   */
+  /** Generates an XML representation of the <code>CacheServer</code>s in the distributed system. */
   private void generateCacheServers() throws SAXException, AdminException {
 
     CacheServer[] servers = this.system.getCacheServers();
@@ -279,10 +263,7 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
     }
   }
 
-  /**
-   * Generates an XML representation of a
-   * <code>CacheServerConfig</code>.
-   */
+  /** Generates an XML representation of a <code>CacheServerConfig</code>. */
   private void generateCacheServer(CacheServerConfig config) throws SAXException {
 
     handler.startElement("", CACHE_SERVER, CACHE_SERVER, EMPTY);
@@ -299,9 +280,7 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
     handler.endElement("", CACHE_SERVER, CACHE_SERVER);
   }
 
-  /**
-   * Keep track of the content handler for use during {@link #parse(String)}.
-   */
+  /** Keep track of the content handler for use during {@link #parse(String)}. */
   public void setContentHandler(ContentHandler handler) {
     this.handler = handler;
   }
@@ -316,45 +295,36 @@ public class ManagedEntityConfigXmlGenerator extends ManagedEntityConfigXml impl
 
   //////////  Inherited methods that don't do anything  //////////
 
-  public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+  public boolean getFeature(String name)
+      throws SAXNotRecognizedException, SAXNotSupportedException {
     return false;
   }
 
-  public void setFeature(String name, boolean value) throws SAXNotRecognizedException, SAXNotSupportedException {
+  public void setFeature(String name, boolean value)
+      throws SAXNotRecognizedException, SAXNotSupportedException {}
 
-  }
-
-  public Object getProperty(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+  public Object getProperty(String name)
+      throws SAXNotRecognizedException, SAXNotSupportedException {
 
     return null;
   }
 
-  public void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException {
+  public void setProperty(String name, Object value)
+      throws SAXNotRecognizedException, SAXNotSupportedException {}
 
-  }
-
-  public void setEntityResolver(EntityResolver resolver) {
-
-  }
+  public void setEntityResolver(EntityResolver resolver) {}
 
   public EntityResolver getEntityResolver() {
     return this;
   }
 
-  public void setDTDHandler(DTDHandler handler) {
-
-  }
+  public void setDTDHandler(DTDHandler handler) {}
 
   public DTDHandler getDTDHandler() {
     return null;
   }
 
-  public void setErrorHandler(ErrorHandler handler) {
+  public void setErrorHandler(ErrorHandler handler) {}
 
-  }
-
-  public void parse(String systemId) throws IOException, SAXException {
-
-  }
-
+  public void parse(String systemId) throws IOException, SAXException {}
 }

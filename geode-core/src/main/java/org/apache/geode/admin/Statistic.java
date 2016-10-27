@@ -20,16 +20,17 @@ package org.apache.geode.admin;
 /**
  * Interface to represent a single statistic of a <code>StatisticResource</code>
  *
- * @since GemFire     3.5
- *
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @since GemFire 3.5
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public interface Statistic extends java.io.Serializable {
 
   /**
    * Gets the identifying name of this statistic.
    *
-   * @return the identifying name of this statistic 
+   * @return the identifying name of this statistic
    */
   public String getName();
 
@@ -48,8 +49,7 @@ public interface Statistic extends java.io.Serializable {
   public String getUnits();
 
   /**
-   * Returns true if this statistic represents a numeric value which always 
-   * increases.
+   * Returns true if this statistic represents a numeric value which always increases.
    *
    * @return true if this statistic represents a value which always increases
    */

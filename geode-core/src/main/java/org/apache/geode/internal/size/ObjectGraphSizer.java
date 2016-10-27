@@ -28,15 +28,18 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class ObjectGraphSizer {
-  private static final String SIZE_OF_CLASS_NAME = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "ObjectSizer.SIZE_OF_CLASS", ReflectionSingleObjectSizer.class.getName());
+  private static final String SIZE_OF_CLASS_NAME =
+      System.getProperty(
+          DistributionConfig.GEMFIRE_PREFIX + "ObjectSizer.SIZE_OF_CLASS",
+          ReflectionSingleObjectSizer.class.getName());
   static final SingleObjectSizer SIZE_OF_UTIL;
-  private static ObjectFilter NULL_FILTER = new ObjectFilter() {
-    @Override
-    public boolean accept(Object parent, Object object) {
-      return true;
-    }
-
-  };
+  private static ObjectFilter NULL_FILTER =
+      new ObjectFilter() {
+        @Override
+        public boolean accept(Object parent, Object object) {
+          return true;
+        }
+      };
 
   static {
     Class sizeOfClass;
@@ -49,13 +52,12 @@ public class ObjectGraphSizer {
   }
 
   /**
-   * Find the size of an object and all objects reachable from it using breadth
-   * first search. This is equivalent to calling
-   * 
+   * Find the size of an object and all objects reachable from it using breadth first search. This
+   * is equivalent to calling
+   *
    * <pre>
    * size(root, false);
    * </pre>
-   * 
    */
   // TODO
   // - native byte buffers
@@ -65,53 +67,49 @@ public class ObjectGraphSizer {
   }
 
   /**
-   * Find the size of an object and all objects reachable from it using breadth
-   * first search. This is equivalent to calling set(root, filter,
-   * includeStatics) where the filter will accept all objects.
-   * 
+   * Find the size of an object and all objects reachable from it using breadth first search. This
+   * is equivalent to calling set(root, filter, includeStatics) where the filter will accept all
+   * objects.
    */
-  public static long size(Object root, boolean includeStatics) throws IllegalArgumentException, IllegalAccessException {
+  public static long size(Object root, boolean includeStatics)
+      throws IllegalArgumentException, IllegalAccessException {
     return size(root, NULL_FILTER, includeStatics);
   }
 
   /**
-   * Find the size of an object and all objects reachable from it using breadth
-   * first search. This method will include objects reachable from static
-   * fields. Using this method requires some heap space - probably between 8 -
-   * 30 bytes per reachable object.
-   * 
-   * Objects reachable only through weak or soft references will not be
-   * considered part of the total size.
-   * 
-   * @param root
-   *                the object to size
-   * @param filter
-   *                that can exclude objects from being counted in the results.
-   *                If an object is not accepted, it's size will not be included
-   *                and it's children will not be visited unless they are
-   *                reachable by some other path.
-   * @param includeStatics
-   *                if set to true, static members of a class will be traversed
-   *                the first time that a class is encountered.
-   * 
+   * Find the size of an object and all objects reachable from it using breadth first search. This
+   * method will include objects reachable from static fields. Using this method requires some heap
+   * space - probably between 8 - 30 bytes per reachable object.
+   *
+   * <p>Objects reachable only through weak or soft references will not be considered part of the
+   * total size.
+   *
+   * @param root the object to size
+   * @param filter that can exclude objects from being counted in the results. If an object is not
+   *     accepted, it's size will not be included and it's children will not be visited unless they
+   *     are reachable by some other path.
+   * @param includeStatics if set to true, static members of a class will be traversed the first
+   *     time that a class is encountered.
    */
-  public static long size(Object root, ObjectFilter filter, boolean includeStatics) throws IllegalArgumentException, IllegalAccessException {
+  public static long size(Object root, ObjectFilter filter, boolean includeStatics)
+      throws IllegalArgumentException, IllegalAccessException {
     SizeVisitor visitor = new SizeVisitor(filter);
     ObjectTraverser.breadthFirstSearch(root, visitor, includeStatics);
 
     return visitor.getTotalSize();
   }
 
-  public static String histogram(Object root, boolean includeStatics) throws IllegalArgumentException, IllegalAccessException {
+  public static String histogram(Object root, boolean includeStatics)
+      throws IllegalArgumentException, IllegalAccessException {
     return histogram(root, NULL_FILTER, includeStatics);
   }
 
-  public static String histogram(Object root, ObjectFilter filter, boolean includeStatics) throws IllegalArgumentException, IllegalAccessException {
+  public static String histogram(Object root, ObjectFilter filter, boolean includeStatics)
+      throws IllegalArgumentException, IllegalAccessException {
     HistogramVistor visitor = new HistogramVistor(filter);
     ObjectTraverser.breadthFirstSearch(root, visitor, includeStatics);
 
     return visitor.dump();
-
   }
 
   private static class HistogramVistor implements ObjectTraverser.Visitor {
@@ -233,7 +231,5 @@ public class ObjectGraphSizer {
     boolean accept(Object parent, Object object);
   }
 
-  private ObjectGraphSizer() {
-  }
-
+  private ObjectGraphSizer() {}
 }

@@ -25,18 +25,13 @@ import org.apache.geode.cache.persistence.PersistentID;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.internal.admin.remote.AdminResponse;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 //NOTE: This is copied from org/apache/geode/internal/admin/remote/CompactResponse.java
 //and modified as per requirements. (original-author Dan Smith)
 public class CompactResponse extends AdminResponse {
   private PersistentID persistentId;
 
-  public CompactResponse() {
-  }
+  public CompactResponse() {}
 
   public CompactResponse(InternalDistributedMember sender, PersistentID persistentId) {
     this.setRecipient(sender);

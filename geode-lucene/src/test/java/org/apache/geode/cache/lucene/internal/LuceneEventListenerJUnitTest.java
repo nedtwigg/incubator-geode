@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -42,10 +42,7 @@ import org.apache.geode.internal.cache.BucketNotFoundException;
 import org.apache.geode.test.junit.categories.UnitTest;
 import org.apache.logging.log4j.Logger;
 
-/**
- * Unit test that async event listener dispatched the events
- * to the appropriate repository.
- */
+/** Unit test that async event listener dispatched the events to the appropriate repository. */
 @Category(UnitTest.class)
 public class LuceneEventListenerJUnitTest {
 
@@ -77,18 +74,18 @@ public class LuceneEventListenerJUnitTest {
       Mockito.when(event.getCallbackArgument()).thenReturn(callback);
 
       switch (i % 3) {
-      case 0:
-        Mockito.when(event.getOperation()).thenReturn(Operation.CREATE);
-        Mockito.when(event.getDeserializedValue()).thenReturn(i);
-        break;
-      case 1:
-        Mockito.when(event.getOperation()).thenReturn(Operation.UPDATE);
-        Mockito.when(event.getDeserializedValue()).thenReturn(i);
-        break;
-      case 2:
-        Mockito.when(event.getOperation()).thenReturn(Operation.DESTROY);
-        Mockito.when(event.getDeserializedValue()).thenThrow(new AssertionError());
-        break;
+        case 0:
+          Mockito.when(event.getOperation()).thenReturn(Operation.CREATE);
+          Mockito.when(event.getDeserializedValue()).thenReturn(i);
+          break;
+        case 1:
+          Mockito.when(event.getOperation()).thenReturn(Operation.UPDATE);
+          Mockito.when(event.getDeserializedValue()).thenReturn(i);
+          break;
+        case 2:
+          Mockito.when(event.getOperation()).thenReturn(Operation.DESTROY);
+          Mockito.when(event.getDeserializedValue()).thenThrow(new AssertionError());
+          break;
       }
 
       events.add(event);
@@ -105,15 +102,17 @@ public class LuceneEventListenerJUnitTest {
   }
 
   @Test
-  public void shouldHandleBucketNotFoundExceptionWithoutLoggingError() throws BucketNotFoundException {
+  public void shouldHandleBucketNotFoundExceptionWithoutLoggingError()
+      throws BucketNotFoundException {
     RepositoryManager manager = Mockito.mock(RepositoryManager.class);
     Logger log = Mockito.mock(Logger.class);
-    Mockito.when(manager.getRepository(any(), any(), any())).thenThrow(BucketNotFoundException.class);
+    Mockito.when(manager.getRepository(any(), any(), any()))
+        .thenThrow(BucketNotFoundException.class);
 
     LuceneEventListener listener = new LuceneEventListener(manager);
     listener.logger = log;
     AsyncEvent event = Mockito.mock(AsyncEvent.class);
-    boolean result = listener.processEvents(Arrays.asList(new AsyncEvent[] { event }));
+    boolean result = listener.processEvents(Arrays.asList(new AsyncEvent[] {event}));
     assertFalse(result);
     verify(log, never()).error(anyString(), any(Exception.class));
   }

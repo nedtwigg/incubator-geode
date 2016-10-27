@@ -29,13 +29,15 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Compares the output results of {@link StatArchiveWithConsecutiveResourceInstGenerator} against the saved stat
- * archive file in src/test/resources that is used by {@link StatArchiveWithConsecutiveResourceInstIntegrationTest}.
+ * Compares the output results of {@link StatArchiveWithConsecutiveResourceInstGenerator} against
+ * the saved stat archive file in src/test/resources that is used by {@link
+ * StatArchiveWithConsecutiveResourceInstIntegrationTest}.
  *
  * @since Geode 1.0
  */
 @Category(IntegrationTest.class)
-public class StatArchiveWithConsecutiveResourceInstGeneratorTest extends StatArchiveWithConsecutiveResourceInstGenerator {
+public class StatArchiveWithConsecutiveResourceInstGeneratorTest
+    extends StatArchiveWithConsecutiveResourceInstGenerator {
 
   private File expectedStatArchiveFile;
 
@@ -51,5 +53,4 @@ public class StatArchiveWithConsecutiveResourceInstGeneratorTest extends StatArc
   protected void validateArchiveFile() throws IOException {
     compareStatArchiveFiles(this.expectedStatArchiveFile, new File(this.archiveFileName));
   }
-
 }

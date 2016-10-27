@@ -24,56 +24,46 @@ import org.apache.geode.internal.cache.DiskRegion;
 import org.apache.geode.internal.cache.persistence.PersistenceAdvisor;
 import org.apache.geode.internal.cache.PartitionedRegion;
 
-/**
- * Represents a storage or meta-data container for a 
- * <code>PartitionedRegion</code>.
- */
+/** Represents a storage or meta-data container for a <code>PartitionedRegion</code>. */
 public interface Bucket extends CacheDistributionAdvisee {
 
-  /**
-   * Returns the distribution and metadata <code>BucketAdvisor</code> for this
-   * bucket.
-   */
+  /** Returns the distribution and metadata <code>BucketAdvisor</code> for this bucket. */
   public BucketAdvisor getBucketAdvisor();
 
-  /** 
-   * Returns the serial number which identifies the static order in which this 
-   * bucket was created in relation to other regions or other instances of 
-   * this bucket during the life of this JVM.
+  /**
+   * Returns the serial number which identifies the static order in which this bucket was created in
+   * relation to other regions or other instances of this bucket during the life of this JVM.
    */
   public int getSerialNumber();
 
-  /**
-   * Returns true if this member is the primary for this bucket.
-   */
+  /** Returns true if this member is the primary for this bucket. */
   public boolean isPrimary();
 
   /**
-   * Returns true if this bucket is currently backed by a {@link 
+   * Returns true if this bucket is currently backed by a {@link
    * org.apache.geode.internal.cache.BucketRegion}.
    */
   public boolean isHosting();
 
   /**
-   * Returns the bucket id used to uniquely identify the bucket in its
-   * partitioned region
+   * Returns the bucket id used to uniquely identify the bucket in its partitioned region
+   *
    * @return the unique identity of the bucket
    */
   public int getId();
 
   /**
-   * Report members that are currently hosting the bucket 
-   * @return set of members 
+   * Report members that are currently hosting the bucket
+   *
+   * @return set of members
    * @since GemFire 5.9
    */
-  public Set/*InternalDistributedMembers*/ getBucketOwners();
+  public Set /*InternalDistributedMembers*/ getBucketOwners();
 
   public PersistenceAdvisor getPersistenceAdvisor();
 
   public DiskRegion getDiskRegion();
 
-  /**
-   * Returns the parent {@link PartitionedRegion} of this bucket.
-   */
+  /** Returns the parent {@link PartitionedRegion} of this bucket. */
   public PartitionedRegion getPartitionedRegion();
 }

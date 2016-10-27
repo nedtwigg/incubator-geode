@@ -44,9 +44,10 @@ import org.apache.geode.management.internal.cli.util.MemberNotFoundException;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The AbstractCommandsSupportJUnitTest class is a test suite of test cases testing the contract and functionality
- * of the AbstractCommandsSupport class for implementing GemFire shell (Gfsh) commands.
- * </p>
+ * The AbstractCommandsSupportJUnitTest class is a test suite of test cases testing the contract and
+ * functionality of the AbstractCommandsSupport class for implementing GemFire shell (Gfsh)
+ * commands.
+ *
  * @see org.apache.geode.management.internal.cli.commands.AbstractCommandsSupport
  * @see org.jmock.Expectations
  * @see org.jmock.Mockery
@@ -77,16 +78,18 @@ public class AbstractCommandsSupportJUnitTest {
   }
 
   private DistributedMember createMockMember(final String memberId, final String memberName) {
-    final DistributedMember mockMember = mockContext.mock(DistributedMember.class, "DistributedMember " + memberId);
+    final DistributedMember mockMember =
+        mockContext.mock(DistributedMember.class, "DistributedMember " + memberId);
 
-    mockContext.checking(new Expectations() {
-      {
-        allowing(mockMember).getName();
-        will(returnValue(memberName));
-        allowing(mockMember).getId();
-        will(returnValue(memberId));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            allowing(mockMember).getName();
+            will(returnValue(memberName));
+            allowing(mockMember).getId();
+            will(returnValue(memberId));
+          }
+        });
 
     return mockMember;
   }
@@ -139,31 +142,40 @@ public class AbstractCommandsSupportJUnitTest {
   @Test
   public void testConvertDefaultValue() {
     assertNull(AbstractCommandsSupport.convertDefaultValue(null, StringUtils.EMPTY_STRING));
-    assertEquals(StringUtils.EMPTY_STRING, AbstractCommandsSupport.convertDefaultValue(StringUtils.EMPTY_STRING, "test"));
-    assertEquals(StringUtils.SPACE, AbstractCommandsSupport.convertDefaultValue(StringUtils.SPACE, "testing"));
-    assertEquals("tested", AbstractCommandsSupport.convertDefaultValue(CliMetaData.ANNOTATION_DEFAULT_VALUE, "tested"));
+    assertEquals(
+        StringUtils.EMPTY_STRING,
+        AbstractCommandsSupport.convertDefaultValue(StringUtils.EMPTY_STRING, "test"));
+    assertEquals(
+        StringUtils.SPACE,
+        AbstractCommandsSupport.convertDefaultValue(StringUtils.SPACE, "testing"));
+    assertEquals(
+        "tested",
+        AbstractCommandsSupport.convertDefaultValue(
+            CliMetaData.ANNOTATION_DEFAULT_VALUE, "tested"));
   }
 
   @Test
   public void testGetMemberWithMatchingMemberId() {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    final DistributedSystem mockDistributedSystem = mockContext.mock(DistributedSystem.class, "DistributedSystem");
+    final DistributedSystem mockDistributedSystem =
+        mockContext.mock(DistributedSystem.class, "DistributedSystem");
 
     final DistributedMember mockMemberSelf = createMockMember("S", "Self");
     final DistributedMember mockMemberOne = createMockMember("1", "One");
     final DistributedMember mockMemberTwo = createMockMember("2", "Two");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getMembers();
-        will(returnValue(CollectionUtils.asSet(mockMemberOne, mockMemberTwo)));
-        oneOf(mockCache).getDistributedSystem();
-        will(returnValue(mockDistributedSystem));
-        oneOf(mockDistributedSystem).getDistributedMember();
-        will(returnValue(mockMemberSelf));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getMembers();
+            will(returnValue(CollectionUtils.asSet(mockMemberOne, mockMemberTwo)));
+            oneOf(mockCache).getDistributedSystem();
+            will(returnValue(mockDistributedSystem));
+            oneOf(mockDistributedSystem).getDistributedMember();
+            will(returnValue(mockMemberSelf));
+          }
+        });
 
     final AbstractCommandsSupport commands = createAbstractCommandsSupport(mockCache);
 
@@ -174,22 +186,24 @@ public class AbstractCommandsSupportJUnitTest {
   public void testGetMemberWithMatchingMemberName() {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    final DistributedSystem mockDistributedSystem = mockContext.mock(DistributedSystem.class, "DistributedSystem");
+    final DistributedSystem mockDistributedSystem =
+        mockContext.mock(DistributedSystem.class, "DistributedSystem");
 
     final DistributedMember mockMemberSelf = createMockMember("S", "Self");
     final DistributedMember mockMemberOne = createMockMember("1", "One");
     final DistributedMember mockMemberTwo = createMockMember("2", "Two");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getMembers();
-        will(returnValue(CollectionUtils.asSet(mockMemberOne, mockMemberTwo)));
-        oneOf(mockCache).getDistributedSystem();
-        will(returnValue(mockDistributedSystem));
-        oneOf(mockDistributedSystem).getDistributedMember();
-        will(returnValue(mockMemberSelf));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getMembers();
+            will(returnValue(CollectionUtils.asSet(mockMemberOne, mockMemberTwo)));
+            oneOf(mockCache).getDistributedSystem();
+            will(returnValue(mockDistributedSystem));
+            oneOf(mockDistributedSystem).getDistributedMember();
+            will(returnValue(mockMemberSelf));
+          }
+        });
 
     final AbstractCommandsSupport commands = createAbstractCommandsSupport(mockCache);
 
@@ -200,22 +214,24 @@ public class AbstractCommandsSupportJUnitTest {
   public void testGetMemberWithMatchingMemberNameCaseInsensitive() {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    final DistributedSystem mockDistributedSystem = mockContext.mock(DistributedSystem.class, "DistributedSystem");
+    final DistributedSystem mockDistributedSystem =
+        mockContext.mock(DistributedSystem.class, "DistributedSystem");
 
     final DistributedMember mockMemberSelf = createMockMember("S", "Self");
     final DistributedMember mockMemberOne = createMockMember("1", "One");
     final DistributedMember mockMemberTwo = createMockMember("2", "Two");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getMembers();
-        will(returnValue(CollectionUtils.asSet(mockMemberOne, mockMemberTwo)));
-        oneOf(mockCache).getDistributedSystem();
-        will(returnValue(mockDistributedSystem));
-        oneOf(mockDistributedSystem).getDistributedMember();
-        will(returnValue(mockMemberSelf));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getMembers();
+            will(returnValue(CollectionUtils.asSet(mockMemberOne, mockMemberTwo)));
+            oneOf(mockCache).getDistributedSystem();
+            will(returnValue(mockDistributedSystem));
+            oneOf(mockDistributedSystem).getDistributedMember();
+            will(returnValue(mockMemberSelf));
+          }
+        });
 
     final AbstractCommandsSupport commands = createAbstractCommandsSupport(mockCache);
 
@@ -226,29 +242,33 @@ public class AbstractCommandsSupportJUnitTest {
   public void testGetMemberThrowsMemberNotFoundException() {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    final DistributedSystem mockDistributedSystem = mockContext.mock(DistributedSystem.class, "DistributedSystem");
+    final DistributedSystem mockDistributedSystem =
+        mockContext.mock(DistributedSystem.class, "DistributedSystem");
 
     final DistributedMember mockMemberSelf = createMockMember("S", "Self");
     final DistributedMember mockMemberOne = createMockMember("1", "One");
     final DistributedMember mockMemberTwo = createMockMember("2", "Two");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getMembers();
-        will(returnValue(CollectionUtils.asSet(mockMemberOne, mockMemberTwo)));
-        oneOf(mockCache).getDistributedSystem();
-        will(returnValue(mockDistributedSystem));
-        oneOf(mockDistributedSystem).getDistributedMember();
-        will(returnValue(mockMemberSelf));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getMembers();
+            will(returnValue(CollectionUtils.asSet(mockMemberOne, mockMemberTwo)));
+            oneOf(mockCache).getDistributedSystem();
+            will(returnValue(mockDistributedSystem));
+            oneOf(mockDistributedSystem).getDistributedMember();
+            will(returnValue(mockMemberSelf));
+          }
+        });
 
     final AbstractCommandsSupport commands = createAbstractCommandsSupport(mockCache);
 
     try {
       commands.getMember(mockCache, "zero");
     } catch (MemberNotFoundException expected) {
-      assertEquals(CliStrings.format(CliStrings.MEMBER_NOT_FOUND_ERROR_MESSAGE, "zero"), expected.getMessage());
+      assertEquals(
+          CliStrings.format(CliStrings.MEMBER_NOT_FOUND_ERROR_MESSAGE, "zero"),
+          expected.getMessage());
       throw expected;
     }
   }
@@ -257,26 +277,29 @@ public class AbstractCommandsSupportJUnitTest {
   public void testGetMembers() {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    final DistributedSystem mockDistributedSystem = mockContext.mock(DistributedSystem.class, "DistributedSystem");
+    final DistributedSystem mockDistributedSystem =
+        mockContext.mock(DistributedSystem.class, "DistributedSystem");
 
     final DistributedMember mockMemberSelf = createMockMember("S", "Self");
     final DistributedMember mockMemberOne = createMockMember("1", "One");
     final DistributedMember mockMemberTwo = createMockMember("2", "Two");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getMembers();
-        will(returnValue(CollectionUtils.asSet(mockMemberOne, mockMemberTwo)));
-        oneOf(mockCache).getDistributedSystem();
-        will(returnValue(mockDistributedSystem));
-        oneOf(mockDistributedSystem).getDistributedMember();
-        will(returnValue(mockMemberSelf));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getMembers();
+            will(returnValue(CollectionUtils.asSet(mockMemberOne, mockMemberTwo)));
+            oneOf(mockCache).getDistributedSystem();
+            will(returnValue(mockDistributedSystem));
+            oneOf(mockDistributedSystem).getDistributedMember();
+            will(returnValue(mockMemberSelf));
+          }
+        });
 
     final AbstractCommandsSupport commands = createAbstractCommandsSupport(mockCache);
 
-    final Set<DistributedMember> expectedMembers = CollectionUtils.asSet(mockMemberOne, mockMemberTwo, mockMemberSelf);
+    final Set<DistributedMember> expectedMembers =
+        CollectionUtils.asSet(mockMemberOne, mockMemberTwo, mockMemberSelf);
     final Set<DistributedMember> actualMembers = commands.getMembers(mockCache);
 
     assertNotNull(actualMembers);
@@ -288,19 +311,21 @@ public class AbstractCommandsSupportJUnitTest {
   public void testGetMembersContainsOnlySelf() {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    final DistributedSystem mockDistributedSystem = mockContext.mock(DistributedSystem.class, "DistributedSystem");
+    final DistributedSystem mockDistributedSystem =
+        mockContext.mock(DistributedSystem.class, "DistributedSystem");
     final DistributedMember mockMemberSelf = createMockMember("S", "Self");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getMembers();
-        will(returnValue(Collections.emptySet()));
-        oneOf(mockCache).getDistributedSystem();
-        will(returnValue(mockDistributedSystem));
-        oneOf(mockDistributedSystem).getDistributedMember();
-        will(returnValue(mockMemberSelf));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getMembers();
+            will(returnValue(Collections.emptySet()));
+            oneOf(mockCache).getDistributedSystem();
+            will(returnValue(mockDistributedSystem));
+            oneOf(mockDistributedSystem).getDistributedMember();
+            will(returnValue(mockMemberSelf));
+          }
+        });
 
     final AbstractCommandsSupport commands = createAbstractCommandsSupport(mockCache);
 
@@ -317,18 +342,20 @@ public class AbstractCommandsSupportJUnitTest {
     try {
       final Function mockFunction = mockContext.mock(Function.class, "Function");
 
-      mockContext.checking(new Expectations() {
-        {
-          exactly(3).of(mockFunction).getId();
-          will(returnValue("testRegister"));
-          oneOf(mockFunction).isHA();
-          will(returnValue(true));
-          oneOf(mockFunction).hasResult();
-          will(returnValue(true));
-        }
-      });
+      mockContext.checking(
+          new Expectations() {
+            {
+              exactly(3).of(mockFunction).getId();
+              will(returnValue("testRegister"));
+              oneOf(mockFunction).isHA();
+              will(returnValue(true));
+              oneOf(mockFunction).hasResult();
+              will(returnValue(true));
+            }
+          });
 
-      final AbstractCommandsSupport commands = createAbstractCommandsSupport(mockContext.mock(Cache.class));
+      final AbstractCommandsSupport commands =
+          createAbstractCommandsSupport(mockContext.mock(Cache.class));
 
       assertFalse(FunctionService.isRegistered("testRegister"));
       assertSame(mockFunction, commands.register(mockFunction));
@@ -342,20 +369,23 @@ public class AbstractCommandsSupportJUnitTest {
   public void testRegisteredAlready() {
     try {
       final Function registeredFunction = mockContext.mock(Function.class, "Registered Function");
-      final Function unregisteredFunction = mockContext.mock(Function.class, "Unregistered Function");
+      final Function unregisteredFunction =
+          mockContext.mock(Function.class, "Unregistered Function");
 
-      mockContext.checking(new Expectations() {
-        {
-          exactly(2).of(registeredFunction).getId();
-          will(returnValue("testRegisteredAlready"));
-          oneOf(registeredFunction).isHA();
-          will(returnValue(false));
-          exactly(2).of(unregisteredFunction).getId();
-          will(returnValue("testRegisteredAlready"));
-        }
-      });
+      mockContext.checking(
+          new Expectations() {
+            {
+              exactly(2).of(registeredFunction).getId();
+              will(returnValue("testRegisteredAlready"));
+              oneOf(registeredFunction).isHA();
+              will(returnValue(false));
+              exactly(2).of(unregisteredFunction).getId();
+              will(returnValue("testRegisteredAlready"));
+            }
+          });
 
-      final AbstractCommandsSupport commands = createAbstractCommandsSupport(mockContext.mock(Cache.class));
+      final AbstractCommandsSupport commands =
+          createAbstractCommandsSupport(mockContext.mock(Cache.class));
 
       FunctionService.registerFunction(registeredFunction);
 
@@ -411,5 +441,4 @@ public class AbstractCommandsSupportJUnitTest {
       return this.cache;
     }
   }
-
 }

@@ -23,12 +23,7 @@ import java.net.InetAddress;
 
 import org.apache.geode.internal.Version;
 
-/**
- * This is the SPI for the basic element of membership provided in the
- * GemFire system.
- * 
- *
- */
+/** This is the SPI for the basic element of membership provided in the GemFire system. */
 public interface NetMember extends Comparable<NetMember> {
 
   public void setAttributes(MemberAttributes args);
@@ -47,6 +42,7 @@ public interface NetMember extends Comparable<NetMember> {
 
   /**
    * return a flag stating whether the member has network partition detection enabled
+   *
    * @since GemFire 5.6
    */
   public boolean isNetworkPartitionDetectionEnabled();
@@ -55,14 +51,15 @@ public interface NetMember extends Comparable<NetMember> {
 
   /**
    * return a flag stating whether the member can be the membership coordinator
+   *
    * @since GemFire 5.6
    */
   public boolean preferredForCoordinator();
 
   /**
-   * Set whether this member ID is preferred for coordinator.  This
-   * is mostly useful for unit tests because it does not distribute
-   * this status to other members in the distributed system. 
+   * Set whether this member ID is preferred for coordinator. This is mostly useful for unit tests
+   * because it does not distribute this status to other members in the distributed system.
+   *
    * @param preferred
    */
   public void setPreferredForCoordinator(boolean preferred);
@@ -76,5 +73,4 @@ public interface NetMember extends Comparable<NetMember> {
 
   /** read identity information not known by DistributedMember instances */
   public void readAdditionalData(DataInput in) throws ClassNotFoundException, IOException;
-
 }

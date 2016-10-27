@@ -23,10 +23,17 @@ public class G_Student extends Student {
   private String _thesis;
   private Faculty _advisor;
 
-  public G_Student() {
-  }
+  public G_Student() {}
 
-  public G_Student(String ssn, String name, Date birthdate, Collection courses, float gpa, Department dept, String thesis, Faculty advisor) {
+  public G_Student(
+      String ssn,
+      String name,
+      Date birthdate,
+      Collection courses,
+      float gpa,
+      Department dept,
+      String thesis,
+      Faculty advisor) {
     super(ssn, name, birthdate, courses, gpa, dept);
     _thesis = thesis;
     _advisor = advisor;

@@ -18,11 +18,7 @@ package org.apache.geode.cache.query.internal.aggregate;
 
 import org.apache.geode.cache.query.QueryService;
 
-/**
- * Computes the non distinct average for replicated region based queries
- * 
- *
- */
+/** Computes the non distinct average for replicated region based queries */
 public class Avg extends Sum {
   private int num = 0;
 
@@ -35,9 +31,7 @@ public class Avg extends Sum {
   }
 
   @Override
-  public void init() {
-
-  }
+  public void init() {}
 
   @Override
   public Object terminate() {
@@ -45,5 +39,4 @@ public class Avg extends Sum {
     double result = sum / num;
     return downCast(result);
   }
-
 }

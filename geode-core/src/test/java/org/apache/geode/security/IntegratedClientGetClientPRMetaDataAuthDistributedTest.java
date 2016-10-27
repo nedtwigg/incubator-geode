@@ -30,30 +30,47 @@ import org.apache.geode.internal.cache.LocalRegion;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
-public class IntegratedClientGetClientPRMetaDataAuthDistributedTest extends AbstractSecureServerDUnitTest {
+@Category({DistributedTest.class, SecurityTest.class})
+public class IntegratedClientGetClientPRMetaDataAuthDistributedTest
+    extends AbstractSecureServerDUnitTest {
 
   @Test
   @Ignore("This is not a supported client message")
   // this would fail sporadically because ServerConnection.isInternalMessage would return true for this message,
   // and it won't bind the correct subject on the executing thread.
   public void testGetClientPartitionAttrCmd() {
-    client1.invoke("logging in stranger", () -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("stranger", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    client1.invoke(
+        "logging in stranger",
+        () -> {
+          ClientCache cache =
+              new ClientCacheFactory(createClientProperties("stranger", "1234567"))
+                  .setPoolSubscriptionEnabled(true)
+                  .addPoolServer("localhost", serverPort)
+                  .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+          Region region =
+              cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
 
-      ClientMetadataService service = ((GemFireCacheImpl) cache).getClientMetadataService();
-      assertNotAuthorized(() -> service.getClientPRMetadata((LocalRegion) cache.getRegion(region.getName())), "CLUSTER:READ");
-    });
+          ClientMetadataService service = ((GemFireCacheImpl) cache).getClientMetadataService();
+          assertNotAuthorized(
+              () -> service.getClientPRMetadata((LocalRegion) cache.getRegion(region.getName())),
+              "CLUSTER:READ");
+        });
 
-    client2.invoke("logging in super-user", () -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    client2.invoke(
+        "logging in super-user",
+        () -> {
+          ClientCache cache =
+              new ClientCacheFactory(createClientProperties("super-user", "1234567"))
+                  .setPoolSubscriptionEnabled(true)
+                  .addPoolServer("localhost", serverPort)
+                  .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+          Region region =
+              cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
 
-      ClientMetadataService service = ((GemFireCacheImpl) cache).getClientMetadataService();
-      service.getClientPRMetadata((LocalRegion) cache.getRegion(region.getName()));
-    });
+          ClientMetadataService service = ((GemFireCacheImpl) cache).getClientMetadataService();
+          service.getClientPRMetadata((LocalRegion) cache.getRegion(region.getName()));
+        });
   }
 }

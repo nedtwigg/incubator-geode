@@ -25,14 +25,12 @@ import org.apache.geode.internal.Version;
 import org.apache.geode.internal.cache.persistence.DiskStoreID;
 
 /**
- * The version tag class for version tags for persistent regions. The VersionSource
- * held in these tags is a disk store id.
- *
+ * The version tag class for version tags for persistent regions. The VersionSource held in these
+ * tags is a disk store id.
  */
 public class DiskVersionTag extends VersionTag<DiskStoreID> {
 
-  public DiskVersionTag() {
-  }
+  public DiskVersionTag() {}
 
   @Override
   public void setMemberID(DiskStoreID memberID) {
@@ -41,8 +39,8 @@ public class DiskVersionTag extends VersionTag<DiskStoreID> {
   }
 
   /**
-   * For a persistent version tag, the member id should not be null, because
-   * we can't fill the member id in later. 
+   * For a persistent version tag, the member id should not be null, because we can't fill the
+   * member id in later.
    */
   @Override
   public void replaceNullIDs(VersionSource memberID) {
@@ -62,7 +60,6 @@ public class DiskVersionTag extends VersionTag<DiskStoreID> {
   public void writeMember(DiskStoreID member, DataOutput out) throws IOException {
     out.writeLong(member.getMostSignificantBits());
     out.writeLong(member.getLeastSignificantBits());
-
   }
 
   @Override
@@ -78,5 +75,4 @@ public class DiskVersionTag extends VersionTag<DiskStoreID> {
     // TODO Auto-generated method stub
     return null;
   }
-
 }

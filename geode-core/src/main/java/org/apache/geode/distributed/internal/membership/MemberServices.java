@@ -27,16 +27,16 @@ import java.net.InetAddress;
 
 /**
  * This is the SPI for a provider of membership services.
- * 
+ *
  * @see org.apache.geode.distributed.internal.membership.NetMember
  */
 public interface MemberServices {
 
   /**
    * Return a new NetMember, possibly for a different host
-   * 
-   * @param i the name of the host for the specified NetMember, the current host (hopefully)
-   * if there are any problems.
+   *
+   * @param i the name of the host for the specified NetMember, the current host (hopefully) if
+   *     there are any problems.
    * @param port the membership port
    * @param splitBrainEnabled whether the member has this feature enabled
    * @param canBeCoordinator whether the member can be membership coordinator
@@ -44,20 +44,26 @@ public interface MemberServices {
    * @param version TODO
    * @return the new NetMember
    */
-  public abstract NetMember newNetMember(InetAddress i, int port, boolean splitBrainEnabled, boolean canBeCoordinator, MemberAttributes payload, short version);
+  public abstract NetMember newNetMember(
+      InetAddress i,
+      int port,
+      boolean splitBrainEnabled,
+      boolean canBeCoordinator,
+      MemberAttributes payload,
+      short version);
 
   /**
    * Return a new NetMember representing current host
+   *
    * @param i an InetAddress referring to the current host
    * @param port the membership port being used
-   * 
    * @return the new NetMember
    */
   public abstract NetMember newNetMember(InetAddress i, int port);
 
   /**
    * Return a new NetMember representing current host
-   * 
+   *
    * @param s a String referring to the current host
    * @param p the membership port being used
    * @return the new member
@@ -65,18 +71,30 @@ public interface MemberServices {
   public abstract NetMember newNetMember(String s, int p);
 
   /**
-  * Create a new MembershipManager
-  * @param listener the listener to notify for callbacks
-  * @param transport holds configuration information that can be used by the manager to configure itself
-  * @param stats a gemfire statistics collection object for communications stats
-  * 
-  * @return a MembershipManager
-  */
-  public abstract MembershipManager newMembershipManager(DistributedMembershipListener listener, DistributionConfig config, RemoteTransportConfig transport, DMStats stats);
+   * Create a new MembershipManager
+   *
+   * @param listener the listener to notify for callbacks
+   * @param transport holds configuration information that can be used by the manager to configure
+   *     itself
+   * @param stats a gemfire statistics collection object for communications stats
+   * @return a MembershipManager
+   */
+  public abstract MembershipManager newMembershipManager(
+      DistributedMembershipListener listener,
+      DistributionConfig config,
+      RemoteTransportConfig transport,
+      DMStats stats);
 
   /**
-   * currently this is a test method but it ought to be used by InternalLocator
-   * to create the peer location TcpHandler
+   * currently this is a test method but it ought to be used by InternalLocator to create the peer
+   * location TcpHandler
    */
-  public abstract NetLocator newLocatorHandler(InetAddress bindAddress, File stateFile, String locatorString, boolean usePreferredCoordinators, boolean networkPartitionDetectionEnabled, LocatorStats stats, String securityUDPDHAlgo);
+  public abstract NetLocator newLocatorHandler(
+      InetAddress bindAddress,
+      File stateFile,
+      String locatorString,
+      boolean usePreferredCoordinators,
+      boolean networkPartitionDetectionEnabled,
+      LocatorStats stats,
+      String securityUDPDHAlgo);
 }

@@ -27,9 +27,7 @@ public interface CqServiceFactory {
 
   public void initialize();
 
-  /**
-   * Create a new CqService for the given cache
-   */
+  /** Create a new CqService for the given cache */
   public CqService create(GemFireCacheImpl cache);
 
   public ServerCQ readCqQuery(DataInput in) throws ClassNotFoundException, IOException;

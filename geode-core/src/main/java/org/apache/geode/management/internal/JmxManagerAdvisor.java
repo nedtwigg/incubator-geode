@@ -41,17 +41,15 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class JmxManagerAdvisor extends DistributionAdvisor {
 
   private static final Logger logger = LogService.getLogger();
 
   private JmxManagerAdvisor(DistributionAdvisee advisee) {
     super(advisee);
-    JmxManagerProfile p = new JmxManagerProfile(getDistributionManager().getId(), incrementAndGetVersion());
+    JmxManagerProfile p =
+        new JmxManagerProfile(getDistributionManager().getId(), incrementAndGetVersion());
     advisee.fillInProfile(p);
     ((JmxManagerAdvisee) advisee).initProfile(p);
   }
@@ -70,7 +68,8 @@ public class JmxManagerAdvisor extends DistributionAdvisor {
   public void broadcastChange() {
     try {
       Set<InternalDistributedMember> recips = adviseGeneric(); // for now just tell everyone
-      JmxManagerProfile p = new JmxManagerProfile(getDistributionManager().getId(), incrementAndGetVersion());
+      JmxManagerProfile p =
+          new JmxManagerProfile(getDistributionManager().getId(), incrementAndGetVersion());
       getAdvisee().fillInProfile(p);
       JmxManagerProfileMessage.send(getAdvisee().getSystem().getDistributionManager(), recips, p);
     } catch (CancelException ignore) {
@@ -79,24 +78,26 @@ public class JmxManagerAdvisor extends DistributionAdvisor {
 
   @SuppressWarnings("unchecked")
   public List<JmxManagerProfile> adviseAlreadyManaging() {
-    return fetchProfiles(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof JmxManagerProfile;
-        JmxManagerProfile jmxProfile = (JmxManagerProfile) profile;
-        return jmxProfile.isJmxManagerRunning();
-      }
-    });
+    return fetchProfiles(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof JmxManagerProfile;
+            JmxManagerProfile jmxProfile = (JmxManagerProfile) profile;
+            return jmxProfile.isJmxManagerRunning();
+          }
+        });
   }
 
   @SuppressWarnings("unchecked")
   public List<JmxManagerProfile> adviseWillingToManage() {
-    return fetchProfiles(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof JmxManagerProfile;
-        JmxManagerProfile jmxProfile = (JmxManagerProfile) profile;
-        return jmxProfile.isJmxManager();
-      }
-    });
+    return fetchProfiles(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof JmxManagerProfile;
+            JmxManagerProfile jmxProfile = (JmxManagerProfile) profile;
+            return jmxProfile.isJmxManager();
+          }
+        });
   }
 
   @Override
@@ -105,11 +106,8 @@ public class JmxManagerAdvisor extends DistributionAdvisor {
   }
 
   @Override
-  /**
-   * Overridden to also include our profile.
-   * If our profile is included it will always be first.
-   */
-  protected List/*<Profile>*/ fetchProfiles(Filter f) {
+  /** Overridden to also include our profile. If our profile is included it will always be first. */
+  protected List /*<Profile>*/ fetchProfiles(Filter f) {
     initializationGate();
     List result = null;
     {
@@ -140,18 +138,13 @@ public class JmxManagerAdvisor extends DistributionAdvisor {
     return result;
   }
 
-  /**
-   * Message used to push event updates to remote VMs
-   */
+  /** Message used to push event updates to remote VMs */
   public static class JmxManagerProfileMessage extends HighPriorityDistributionMessage {
     private volatile JmxManagerProfile profile;
     private volatile int processorId;
 
-    /**
-     * Default constructor used for de-serialization (used during receipt)
-     */
-    public JmxManagerProfileMessage() {
-    }
+    /** Default constructor used for de-serialization (used during receipt) */
+    public JmxManagerProfileMessage() {}
 
     @Override
     public boolean sendViaUDP() {
@@ -160,10 +153,12 @@ public class JmxManagerAdvisor extends DistributionAdvisor {
 
     /**
      * Constructor used to send
+     *
      * @param recips
      * @param p
      */
-    private JmxManagerProfileMessage(final Set<InternalDistributedMember> recips, final JmxManagerProfile p) {
+    private JmxManagerProfileMessage(
+        final Set<InternalDistributedMember> recips, final JmxManagerProfile p) {
       setRecipients(recips);
       this.processorId = 0;
       this.profile = p;
@@ -209,7 +204,11 @@ public class JmxManagerAdvisor extends DistributionAdvisor {
       } finally {
         if (thr != null) {
           dm.getCancelCriterion().checkCancelInProgress(null);
-          logger.info(LocalizedMessage.create(LocalizedStrings.ResourceAdvisor_MEMBER_CAUGHT_EXCEPTION_PROCESSING_PROFILE, new Object[] { p, toString() }, thr));
+          logger.info(
+              LocalizedMessage.create(
+                  LocalizedStrings.ResourceAdvisor_MEMBER_CAUGHT_EXCEPTION_PROCESSING_PROFILE,
+                  new Object[] {p, toString()},
+                  thr));
         }
       }
     }
@@ -237,10 +236,12 @@ public class JmxManagerAdvisor extends DistributionAdvisor {
 
     /**
      * Send profile to the provided members
+     *
      * @param recips The recipients of the message
      * @throws ReplyException
      */
-    public static void send(final DM dm, Set<InternalDistributedMember> recips, JmxManagerProfile profile) {
+    public static void send(
+        final DM dm, Set<InternalDistributedMember> recips, JmxManagerProfile profile) {
       JmxManagerProfileMessage r = new JmxManagerProfileMessage(recips, profile);
       dm.putOutgoing(r);
     }
@@ -253,7 +254,11 @@ public class JmxManagerAdvisor extends DistributionAdvisor {
     @Override
     public String toString() {
       StringBuilder sb = new StringBuilder();
-      sb.append(getShortClassName()).append(" (processorId=").append(this.processorId).append("; profile=").append(this.profile);
+      sb.append(getShortClassName())
+          .append(" (processorId=")
+          .append(this.processorId)
+          .append("; profile=")
+          .append(this.profile);
       sb.append(")");
       return sb.toString();
     }
@@ -268,8 +273,7 @@ public class JmxManagerAdvisor extends DistributionAdvisor {
     private boolean started;
 
     // Constructor for de-serialization
-    public JmxManagerProfile() {
-    }
+    public JmxManagerProfile() {}
 
     public boolean isJmxManager() {
       return this.jmxManager;
@@ -279,7 +283,8 @@ public class JmxManagerAdvisor extends DistributionAdvisor {
       return this.started;
     }
 
-    public void setInfo(boolean jmxManager2, String host2, int port2, boolean ssl2, boolean started2) {
+    public void setInfo(
+        boolean jmxManager2, String host2, int port2, boolean ssl2, boolean started2) {
       this.jmxManager = jmxManager2;
       this.host = host2;
       this.port = port2;
@@ -326,10 +331,19 @@ public class JmxManagerAdvisor extends DistributionAdvisor {
     }
 
     @Override
-    public void processIncoming(DistributionManager dm, String adviseePath, boolean removeProfile, boolean exchangeProfiles, final List<Profile> replyProfiles) {
+    public void processIncoming(
+        DistributionManager dm,
+        String adviseePath,
+        boolean removeProfile,
+        boolean exchangeProfiles,
+        final List<Profile> replyProfiles) {
       final GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
       if (cache != null && !cache.isClosed()) {
-        handleDistributionAdvisee(cache.getJmxManagerAdvisor().getAdvisee(), removeProfile, exchangeProfiles, replyProfiles);
+        handleDistributionAdvisee(
+            cache.getJmxManagerAdvisor().getAdvisee(),
+            removeProfile,
+            exchangeProfiles,
+            replyProfiles);
       }
     }
 
@@ -370,5 +384,4 @@ public class JmxManagerAdvisor extends DistributionAdvisor {
       return JMX_MANAGER_PROFILE;
     }
   }
-
 }

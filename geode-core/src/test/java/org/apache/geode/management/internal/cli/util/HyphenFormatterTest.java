@@ -75,25 +75,30 @@ public class HyphenFormatterTest {
 
   @Test
   public void valueWithHyphenWithoutQuotesFails() {
-    String cmd = "rebalance --exclude-region=/GemfireDataCommandsDUnitTestRegion2 --simulate=true --time-out=-1";
+    String cmd =
+        "rebalance --exclude-region=/GemfireDataCommandsDUnitTestRegion2 --simulate=true --time-out=-1";
     String formattedCmd = this.formatter.formatCommand(cmd);
 
-    String expected = "rebalance --exclude-region=/GemfireDataCommandsDUnitTestRegion2 --simulate=true --time-out=\"-1\"";
+    String expected =
+        "rebalance --exclude-region=/GemfireDataCommandsDUnitTestRegion2 --simulate=true --time-out=\"-1\"";
     assertThat(formattedCmd).isEqualTo(expected);
   }
 
   @Test
   public void valueWithHyphenWithoutQuotes() {
-    String cmd = "rebalance --exclude-region=/GemfireDataCommandsDUnitTestRegion2 --simulate=true --time-out=-1";
+    String cmd =
+        "rebalance --exclude-region=/GemfireDataCommandsDUnitTestRegion2 --simulate=true --time-out=-1";
     String formattedCmd = this.formatter.formatCommand(cmd);
 
-    String expected = "rebalance --exclude-region=/GemfireDataCommandsDUnitTestRegion2 --simulate=true --time-out=\"-1\"";
+    String expected =
+        "rebalance --exclude-region=/GemfireDataCommandsDUnitTestRegion2 --simulate=true --time-out=\"-1\"";
     assertThat(formattedCmd).isEqualTo(expected);
   }
 
   @Test
   public void nullShouldThrowNullPointerException() {
-    assertThatThrownBy(() -> this.formatter.formatCommand(null)).isExactlyInstanceOf(NullPointerException.class);
+    assertThatThrownBy(() -> this.formatter.formatCommand(null))
+        .isExactlyInstanceOf(NullPointerException.class);
   }
 
   @Test
@@ -115,7 +120,8 @@ public class HyphenFormatterTest {
     String cmd = "start locator --name=loc1 --J=-Dfoo=bar --J=-Dbar=foo --group=locators";
     String formattedCmd = this.formatter.formatCommand(cmd);
 
-    String expected = "start locator --name=loc1 --J=\"-Dfoo=bar\" --J=\"-Dbar=foo\" --group=locators";
+    String expected =
+        "start locator --name=loc1 --J=\"-Dfoo=bar\" --J=\"-Dbar=foo\" --group=locators";
     assertThat(formattedCmd).isEqualTo(expected);
   }
 
@@ -124,7 +130,8 @@ public class HyphenFormatterTest {
     String cmd = "start locator --name=loc1 --J=-Dfoo=bar --group=locators --J=-Dbar=foo";
     String formattedCmd = this.formatter.formatCommand(cmd);
 
-    String expected = "start locator --name=loc1 --J=\"-Dfoo=bar\" --group=locators --J=\"-Dbar=foo\"";
+    String expected =
+        "start locator --name=loc1 --J=\"-Dfoo=bar\" --group=locators --J=\"-Dbar=foo\"";
     assertThat(formattedCmd).isEqualTo(expected);
   }
 
@@ -184,18 +191,21 @@ public class HyphenFormatterTest {
 
   @Test
   public void valueContainingMultipleJWithSpaces() {
-    String cmd = "start locator --name=loc1 --J=-Dfoo=this is a phrase             --J=\"-Dfoo=a short sentence\"";
+    String cmd =
+        "start locator --name=loc1 --J=-Dfoo=this is a phrase             --J=\"-Dfoo=a short sentence\"";
     String formattedCmd = this.formatter.formatCommand(cmd);
-    String expected = "start locator --name=loc1 --J=\"-Dfoo=this is a phrase\" --J=\"-Dfoo=a short sentence\"";
+    String expected =
+        "start locator --name=loc1 --J=\"-Dfoo=this is a phrase\" --J=\"-Dfoo=a short sentence\"";
     assertThat(formattedCmd).as(cmd).isEqualTo(expected);
   }
 
   @Test
   public void valueContainingMultipleJWithSpaces2() {
-    String cmd = "start locator --name=loc1 --J=\"-Dfoo=this is a phrase            \" --J=\"-Dfoo=a short sentence\"";
+    String cmd =
+        "start locator --name=loc1 --J=\"-Dfoo=this is a phrase            \" --J=\"-Dfoo=a short sentence\"";
     String formattedCmd = this.formatter.formatCommand(cmd);
-    String expected = "start locator --name=loc1 --J=\"-Dfoo=this is a phrase            \" --J=\"-Dfoo=a short sentence\"";
+    String expected =
+        "start locator --name=loc1 --J=\"-Dfoo=this is a phrase            \" --J=\"-Dfoo=a short sentence\"";
     assertThat(formattedCmd).as(cmd).isEqualTo(expected);
   }
-
 }

@@ -19,46 +19,36 @@ package org.apache.geode.management;
 import java.beans.ConstructorProperties;
 
 /**
- * Composite data type used to distribute the results of a disk backup
- * operation.
- * 
+ * Composite data type used to distribute the results of a disk backup operation.
+ *
  * @since GemFire 7.0
  */
 public class DiskBackupResult {
 
-  /**
-   * Returns the name of the directory
-   */
+  /** Returns the name of the directory */
   private String diskDirectory;
 
-  /**
-   * whether the bacup operation was successful or not
-   */
+  /** whether the bacup operation was successful or not */
   private boolean offilne;
 
   /**
-   * This constructor is to be used by internal JMX framework only. User
-   * should not try to create an instance of this class.
+   * This constructor is to be used by internal JMX framework only. User should not try to create an
+   * instance of this class.
    */
-  @ConstructorProperties({ "diskDirectory", "offilne"
-
-  })
+  @ConstructorProperties({"diskDirectory", "offilne"})
   public DiskBackupResult(String diskDirectory, boolean offline) {
     this.diskDirectory = diskDirectory;
     this.offilne = offline;
   }
 
-  /**
-   * Returns the name of the directory where the files for this backup
-   * were written.
-   */
+  /** Returns the name of the directory where the files for this backup were written. */
   public String getDiskDirectory() {
     return diskDirectory;
   }
 
   /**
    * Returns whether the backup was successful.
-   * 
+   *
    * @return True if the backup was successful, false otherwise.
    */
   public boolean isOffilne() {

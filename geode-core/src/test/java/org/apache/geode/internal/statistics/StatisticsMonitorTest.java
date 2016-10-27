@@ -32,7 +32,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
  * Unit tests for the StatisticsMonitor class. No disk IO.
- *   
+ *
  * @since GemFire 7.0
  */
 @Category(UnitTest.class)
@@ -46,14 +46,18 @@ public class StatisticsMonitorTest {
     final long startTime = System.currentTimeMillis();
     this.manager = new TestStatisticsManager(1, getClass().getSimpleName(), startTime);
 
-    final StatArchiveHandlerConfig mockStatArchiveHandlerConfig = mock(StatArchiveHandlerConfig.class, getClass().getSimpleName() + "$" + StatArchiveHandlerConfig.class.getSimpleName());
+    final StatArchiveHandlerConfig mockStatArchiveHandlerConfig =
+        mock(
+            StatArchiveHandlerConfig.class,
+            getClass().getSimpleName() + "$" + StatArchiveHandlerConfig.class.getSimpleName());
     when(mockStatArchiveHandlerConfig.getArchiveFileName()).thenReturn(new File(""));
     when(mockStatArchiveHandlerConfig.getArchiveFileSizeLimit()).thenReturn(0L);
     when(mockStatArchiveHandlerConfig.getArchiveDiskSpaceLimit()).thenReturn(0L);
     when(mockStatArchiveHandlerConfig.getSystemId()).thenReturn(0L);
     when(mockStatArchiveHandlerConfig.getSystemStartTime()).thenReturn(0L);
     when(mockStatArchiveHandlerConfig.getSystemDirectoryPath()).thenReturn("");
-    when(mockStatArchiveHandlerConfig.getProductDescription()).thenReturn(getClass().getSimpleName());
+    when(mockStatArchiveHandlerConfig.getProductDescription())
+        .thenReturn(getClass().getSimpleName());
 
     StatisticsSampler sampler = new TestStatisticsSampler(manager);
     this.sampleCollector = new SampleCollector(sampler);
@@ -73,11 +77,11 @@ public class StatisticsMonitorTest {
   public void testAddListener() {
     TestStatisticsMonitor monitor = new TestStatisticsMonitor();
     assertTrue(monitor.getStatisticsListenersSnapshot().isEmpty());
-    StatisticsListener listener = new StatisticsListener() {
-      @Override
-      public void handleNotification(StatisticsNotification notification) {
-      }
-    };
+    StatisticsListener listener =
+        new StatisticsListener() {
+          @Override
+          public void handleNotification(StatisticsNotification notification) {}
+        };
 
     assertNull(this.sampleCollector.getStatMonitorHandlerSnapshot());
 
@@ -88,18 +92,19 @@ public class StatisticsMonitorTest {
     assertEquals(1, monitor.getStatisticsListenersSnapshot().size());
 
     assertNotNull(this.sampleCollector.getStatMonitorHandlerSnapshot());
-    assertFalse(this.sampleCollector.getStatMonitorHandlerSnapshot().getMonitorsSnapshot().isEmpty());
+    assertFalse(
+        this.sampleCollector.getStatMonitorHandlerSnapshot().getMonitorsSnapshot().isEmpty());
   }
 
   @Test
   public void testAddExistingListener() {
     TestStatisticsMonitor monitor = new TestStatisticsMonitor();
     assertTrue(monitor.getStatisticsListenersSnapshot().isEmpty());
-    StatisticsListener listener = new StatisticsListener() {
-      @Override
-      public void handleNotification(StatisticsNotification notification) {
-      }
-    };
+    StatisticsListener listener =
+        new StatisticsListener() {
+          @Override
+          public void handleNotification(StatisticsNotification notification) {}
+        };
 
     monitor.addListener(listener);
     assertFalse(monitor.getStatisticsListenersSnapshot().isEmpty());
@@ -116,11 +121,11 @@ public class StatisticsMonitorTest {
   public void testRemoveListener() {
     TestStatisticsMonitor monitor = new TestStatisticsMonitor();
     assertTrue(monitor.getStatisticsListenersSnapshot().isEmpty());
-    StatisticsListener listener = new StatisticsListener() {
-      @Override
-      public void handleNotification(StatisticsNotification notification) {
-      }
-    };
+    StatisticsListener listener =
+        new StatisticsListener() {
+          @Override
+          public void handleNotification(StatisticsNotification notification) {}
+        };
 
     assertNull(this.sampleCollector.getStatMonitorHandlerSnapshot());
 
@@ -130,25 +135,27 @@ public class StatisticsMonitorTest {
     assertEquals(1, monitor.getStatisticsListenersSnapshot().size());
 
     assertNotNull(this.sampleCollector.getStatMonitorHandlerSnapshot());
-    assertFalse(this.sampleCollector.getStatMonitorHandlerSnapshot().getMonitorsSnapshot().isEmpty());
+    assertFalse(
+        this.sampleCollector.getStatMonitorHandlerSnapshot().getMonitorsSnapshot().isEmpty());
 
     monitor.removeListener(listener);
     assertTrue(monitor.getStatisticsListenersSnapshot().isEmpty());
     assertFalse(monitor.getStatisticsListenersSnapshot().contains(listener));
 
     assertNotNull(this.sampleCollector.getStatMonitorHandlerSnapshot());
-    assertTrue(this.sampleCollector.getStatMonitorHandlerSnapshot().getMonitorsSnapshot().isEmpty());
+    assertTrue(
+        this.sampleCollector.getStatMonitorHandlerSnapshot().getMonitorsSnapshot().isEmpty());
   }
 
   @Test
   public void testRemoveMissingListener() {
     TestStatisticsMonitor monitor = new TestStatisticsMonitor();
     assertTrue(monitor.getStatisticsListenersSnapshot().isEmpty());
-    StatisticsListener listener = new StatisticsListener() {
-      @Override
-      public void handleNotification(StatisticsNotification notification) {
-      }
-    };
+    StatisticsListener listener =
+        new StatisticsListener() {
+          @Override
+          public void handleNotification(StatisticsNotification notification) {}
+        };
 
     assertTrue(monitor.getStatisticsListenersSnapshot().isEmpty());
     assertFalse(monitor.getStatisticsListenersSnapshot().contains(listener));
@@ -164,9 +171,7 @@ public class StatisticsMonitorTest {
   // TODO: test monitor and/or monitorStatisticIds
   // TODO: test notifyListeners
 
-  /**
-   * @since GemFire 7.0
-   */
+  /** @since GemFire 7.0 */
   static class TestStatisticsMonitor extends StatisticsMonitor {
     private volatile long timeStamp;
     private volatile List<ResourceInstance> resourceInstances;

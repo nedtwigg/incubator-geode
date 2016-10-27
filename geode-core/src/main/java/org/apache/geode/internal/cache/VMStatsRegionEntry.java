@@ -18,13 +18,10 @@
 package org.apache.geode.internal.cache;
 
 /**
- * Implementation class of RegionEntry interface.
- * VM -> entries stored in VM memory
- * Stats -> extra statistics
+ * Implementation class of RegionEntry interface. VM -> entries stored in VM memory Stats -> extra
+ * statistics
  *
  * @since GemFire 3.5.1
- *
- *
  */
 public abstract class VMStatsRegionEntry extends AbstractRegionEntry {
   protected VMStatsRegionEntry(RegionEntryContext context, Object value) {

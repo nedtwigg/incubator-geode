@@ -18,14 +18,10 @@
 package org.apache.geode.internal.cache;
 
 /**
- * Implementation class of RegionEntry interface.
- * VM -> entries stored in VM memory
- * Stats -> extra statistics
- * Disk -> entries can be on disk 
+ * Implementation class of RegionEntry interface. VM -> entries stored in VM memory Stats -> extra
+ * statistics Disk -> entries can be on disk
  *
  * @since GemFire 3.5.1
- *
- *
  */
 public abstract class VMStatsDiskRegionEntry extends AbstractOplogDiskRegionEntry {
   protected VMStatsDiskRegionEntry(RegionEntryContext context, Object value) {

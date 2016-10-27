@@ -19,32 +19,29 @@ package org.apache.geode.management.internal.configuration.utils;
 
 import javax.xml.XMLConstants;
 
-/**
- *
- * @since GemFire 8.1
- */
+/** @since GemFire 8.1 */
 public final class XmlConstants {
 
   /**
    * Standard prefix for {@link XMLConstants#W3C_XML_SCHEMA_INSTANCE_NS_URI}
    * (http://www.w3.org/2001/XMLSchema-instance) namespace.
-   * 
+   *
    * @since GemFire 8.1
    */
   public static final String W3C_XML_SCHEMA_INSTANCE_PREFIX = "xsi";
 
   /**
-   * Schema location attribute local name, "schemaLocation", in
-   * {@link XMLConstants#W3C_XML_SCHEMA_INSTANCE_NS_URI}
-   * (http://www.w3.org/2001/XMLSchema-instance) namespace.
-   * 
+   * Schema location attribute local name, "schemaLocation", in {@link
+   * XMLConstants#W3C_XML_SCHEMA_INSTANCE_NS_URI} (http://www.w3.org/2001/XMLSchema-instance)
+   * namespace.
+   *
    * @since GemFire 8.1
    */
   public static final String W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION = "schemaLocation";
 
   /**
    * Default prefix. Effectively no prefix.
-   * 
+   *
    * @since GemFire 8.1
    */
   public static final String DEFAULT_PREFIX = "";

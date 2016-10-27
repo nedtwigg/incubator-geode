@@ -30,15 +30,11 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 import org.apache.geode.internal.admin.remote.DistributionLocatorId;
 
-/**
- * List of remote locators as a response
- * 
- * 
- * 
- */
+/** List of remote locators as a response */
 public class RemoteLocatorJoinResponse implements DataSerializableFixedID {
 
-  private HashMap<Integer, Set<DistributionLocatorId>> locators = new HashMap<Integer, Set<DistributionLocatorId>>();
+  private HashMap<Integer, Set<DistributionLocatorId>> locators =
+      new HashMap<Integer, Set<DistributionLocatorId>>();
 
   /** Used by DataSerializer */
   public RemoteLocatorJoinResponse() {
@@ -49,13 +45,13 @@ public class RemoteLocatorJoinResponse implements DataSerializableFixedID {
     super();
     this.locators = new HashMap<Integer, Set<DistributionLocatorId>>();
     for (Map.Entry<Integer, Set<DistributionLocatorId>> entry : locators.entrySet()) {
-      this.locators.put(entry.getKey(), new CopyOnWriteHashSet<DistributionLocatorId>(entry.getValue()));
+      this.locators.put(
+          entry.getKey(), new CopyOnWriteHashSet<DistributionLocatorId>(entry.getValue()));
     }
   }
 
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.locators = DataSerializer.readHashMap(in);
-
   }
 
   public void toData(DataOutput out) throws IOException {
@@ -79,5 +75,4 @@ public class RemoteLocatorJoinResponse implements DataSerializableFixedID {
   public Version[] getSerializationVersions() {
     return null;
   }
-
 }

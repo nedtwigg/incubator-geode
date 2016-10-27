@@ -29,18 +29,13 @@ import org.apache.geode.cache.client.internal.PoolImpl.PoolTask;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * Responsible for pinging live
- * servers to make sure they
- * are still alive.
- *
- */
+/** Responsible for pinging live servers to make sure they are still alive. */
 public class LiveServerPinger extends EndpointListenerAdapter {
   private static final Logger logger = LogService.getLogger();
 
   private static final long NANOS_PER_MS = 1000000L;
 
-  private final ConcurrentMap/*<Endpoint,Future>*/ taskFutures = new ConcurrentHashMap();
+  private final ConcurrentMap /*<Endpoint,Future>*/ taskFutures = new ConcurrentHashMap();
   protected final InternalPool pool;
   protected final long pingIntervalNanos;
 
@@ -62,7 +57,13 @@ public class LiveServerPinger extends EndpointListenerAdapter {
   @Override
   public void endpointNowInUse(Endpoint endpoint) {
     try {
-      Future future = pool.getBackgroundProcessor().scheduleWithFixedDelay(new PingTask(endpoint), pingIntervalNanos, pingIntervalNanos, TimeUnit.NANOSECONDS);
+      Future future =
+          pool.getBackgroundProcessor()
+              .scheduleWithFixedDelay(
+                  new PingTask(endpoint),
+                  pingIntervalNanos,
+                  pingIntervalNanos,
+                  TimeUnit.NANOSECONDS);
       taskFutures.put(endpoint, future);
     } catch (RejectedExecutionException e) {
       if (!pool.getCancelCriterion().isCancelInProgress()) {
@@ -93,7 +94,10 @@ public class LiveServerPinger extends EndpointListenerAdapter {
           PingOp.execute(pool, endpoint.getLocation());
         } catch (Exception e) {
           if (logger.isDebugEnabled()) {
-            logger.debug("Error occured while pinging server: {} - {}", endpoint.getLocation(), e.getMessage());
+            logger.debug(
+                "Error occured while pinging server: {} - {}",
+                endpoint.getLocation(),
+                e.getMessage());
           }
           GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
           if (cache != null) {
@@ -110,5 +114,4 @@ public class LiveServerPinger extends EndpointListenerAdapter {
       }
     }
   }
-
 }

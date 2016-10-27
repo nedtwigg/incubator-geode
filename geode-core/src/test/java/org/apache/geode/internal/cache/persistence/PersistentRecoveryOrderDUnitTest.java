@@ -90,23 +90,22 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 
 /**
- * This is a test of how persistent distributed
- * regions recover. This test makes sure that when
- * multiple VMs are persisting the same region, they recover
- * with the latest data during recovery.
+ * This is a test of how persistent distributed regions recover. This test makes sure that when
+ * multiple VMs are persisting the same region, they recover with the latest data during recovery.
  */
 @Category(DistributedTest.class)
 public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBase {
 
   public static void resetAckWaitThreshold() {
     if (SAVED_ACK_WAIT_THRESHOLD != null) {
-      System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "ack_wait_threshold", SAVED_ACK_WAIT_THRESHOLD);
+      System.setProperty(
+          DistributionConfig.GEMFIRE_PREFIX + "ack_wait_threshold", SAVED_ACK_WAIT_THRESHOLD);
     }
   }
 
   /**
-   * Tests to make sure that a persistent region will wait
-   * for any members that were online when is crashed before starting up.
+   * Tests to make sure that a persistent region will wait for any members that were online when is
+   * crashed before starting up.
    */
   @Test
   public void testWaitForLatestMember() throws Exception {
@@ -156,8 +155,8 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   /**
-   * Tests to make sure that we stop waiting for a member
-   * that we revoke.
+   * Tests to make sure that we stop waiting for a member that we revoke.
+   *
    * @throws Exception
    */
   @Test
@@ -174,15 +173,16 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
     putAnEntry(vm0);
 
-    vm0.invoke(new SerializableRunnable("Check for waiting regions") {
+    vm0.invoke(
+        new SerializableRunnable("Check for waiting regions") {
 
-      public void run() {
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        PersistentMemberManager mm = cache.getPersistentMemberManager();
-        Map<String, Set<PersistentMemberID>> waitingRegions = mm.getWaitingRegions();
-        assertEquals(0, waitingRegions.size());
-      }
-    });
+          public void run() {
+            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+            PersistentMemberManager mm = cache.getPersistentMemberManager();
+            Map<String, Set<PersistentMemberID>> waitingRegions = mm.getWaitingRegions();
+            assertEquals(0, waitingRegions.size());
+          }
+        });
 
     LogWriterUtils.getLogWriter().info("closing region in vm0");
     closeRegion(vm0);
@@ -200,30 +200,31 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
     assertTrue(future.isAlive());
 
-    vm2.invoke(new SerializableRunnable("Revoke the member") {
+    vm2.invoke(
+        new SerializableRunnable("Revoke the member") {
 
-      public void run() {
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        DistributedSystemConfig config;
-        AdminDistributedSystem adminDS = null;
-        try {
-          config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
-          adminDS = AdminDistributedSystemFactory.getDistributedSystem(config);
-          adminDS.connect();
-          Set<PersistentID> missingIds = adminDS.getMissingPersistentMembers();
-          LogWriterUtils.getLogWriter().info("waiting members=" + missingIds);
-          assertEquals(1, missingIds.size());
-          PersistentID missingMember = missingIds.iterator().next();
-          adminDS.revokePersistentMember(missingMember.getUUID());
-        } catch (AdminException e) {
-          throw new RuntimeException(e);
-        } finally {
-          if (adminDS != null) {
-            adminDS.disconnect();
+          public void run() {
+            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+            DistributedSystemConfig config;
+            AdminDistributedSystem adminDS = null;
+            try {
+              config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
+              adminDS = AdminDistributedSystemFactory.getDistributedSystem(config);
+              adminDS.connect();
+              Set<PersistentID> missingIds = adminDS.getMissingPersistentMembers();
+              LogWriterUtils.getLogWriter().info("waiting members=" + missingIds);
+              assertEquals(1, missingIds.size());
+              PersistentID missingMember = missingIds.iterator().next();
+              adminDS.revokePersistentMember(missingMember.getUUID());
+            } catch (AdminException e) {
+              throw new RuntimeException(e);
+            } finally {
+              if (adminDS != null) {
+                adminDS.disconnect();
+              }
+            }
           }
-        }
-      }
-    });
+        });
 
     future.join(MAX_WAIT);
     if (future.isAlive()) {
@@ -238,20 +239,23 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
     //Check to make sure we recovered the old
     //value of the entry.
-    SerializableRunnable checkForEntry = new SerializableRunnable("check for the entry") {
+    SerializableRunnable checkForEntry =
+        new SerializableRunnable("check for the entry") {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        assertEquals("B", region.get("A"));
-      }
-    };
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(REGION_NAME);
+            assertEquals("B", region.get("A"));
+          }
+        };
     vm0.invoke(checkForEntry);
 
     //Now, we should not be able to create a region
     //in vm1, because the this member was revoked
     LogWriterUtils.getLogWriter().info("Creating region in VM1");
-    IgnoredException e = IgnoredException.addIgnoredException(RevokedPersistentDataException.class.getSimpleName(), vm1);
+    IgnoredException e =
+        IgnoredException.addIgnoredException(
+            RevokedPersistentDataException.class.getSimpleName(), vm1);
     try {
       createPersistentRegion(vm1);
       fail("We should have received a split distributed system exception");
@@ -287,8 +291,9 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   /**
-   * Tests to make sure that we can revoke a member
-   * before initialization, and that member will stay revoked
+   * Tests to make sure that we can revoke a member before initialization, and that member will stay
+   * revoked
+   *
    * @throws Exception
    */
   @Test
@@ -305,15 +310,16 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
     putAnEntry(vm0);
 
-    vm0.invoke(new SerializableRunnable("Check for waiting regions") {
+    vm0.invoke(
+        new SerializableRunnable("Check for waiting regions") {
 
-      public void run() {
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        PersistentMemberManager mm = cache.getPersistentMemberManager();
-        Map<String, Set<PersistentMemberID>> waitingRegions = mm.getWaitingRegions();
-        assertEquals(0, waitingRegions.size());
-      }
-    });
+          public void run() {
+            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+            PersistentMemberManager mm = cache.getPersistentMemberManager();
+            Map<String, Set<PersistentMemberID>> waitingRegions = mm.getWaitingRegions();
+            assertEquals(0, waitingRegions.size());
+          }
+        });
 
     LogWriterUtils.getLogWriter().info("closing region in vm0");
     closeRegion(vm0);
@@ -324,26 +330,28 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     closeRegion(vm1);
 
     final File dirToRevoke = getDiskDirForVM(vm1);
-    vm2.invoke(new SerializableRunnable("Revoke the member") {
+    vm2.invoke(
+        new SerializableRunnable("Revoke the member") {
 
-      public void run() {
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        DistributedSystemConfig config;
-        AdminDistributedSystem adminDS = null;
-        try {
-          config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
-          adminDS = AdminDistributedSystemFactory.getDistributedSystem(config);
-          adminDS.connect();
-          adminDS.revokePersistentMember(InetAddress.getLocalHost(), dirToRevoke.getCanonicalPath());
-        } catch (Exception e) {
-          Assert.fail("Unexpected exception", e);
-        } finally {
-          if (adminDS != null) {
-            adminDS.disconnect();
+          public void run() {
+            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+            DistributedSystemConfig config;
+            AdminDistributedSystem adminDS = null;
+            try {
+              config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
+              adminDS = AdminDistributedSystemFactory.getDistributedSystem(config);
+              adminDS.connect();
+              adminDS.revokePersistentMember(
+                  InetAddress.getLocalHost(), dirToRevoke.getCanonicalPath());
+            } catch (Exception e) {
+              Assert.fail("Unexpected exception", e);
+            } finally {
+              if (adminDS != null) {
+                adminDS.disconnect();
+              }
+            }
           }
-        }
-      }
-    });
+        });
 
     //This shouldn't wait, because we revoked the member
     LogWriterUtils.getLogWriter().info("Creating region in VM0");
@@ -353,20 +361,23 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
     //Check to make sure we recovered the old
     //value of the entry.
-    SerializableRunnable checkForEntry = new SerializableRunnable("check for the entry") {
+    SerializableRunnable checkForEntry =
+        new SerializableRunnable("check for the entry") {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        assertEquals("B", region.get("A"));
-      }
-    };
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(REGION_NAME);
+            assertEquals("B", region.get("A"));
+          }
+        };
     vm0.invoke(checkForEntry);
 
     //Now, we should not be able to create a region
     //in vm1, because the this member was revoked
     LogWriterUtils.getLogWriter().info("Creating region in VM1");
-    IgnoredException e = IgnoredException.addIgnoredException(RevokedPersistentDataException.class.getSimpleName(), vm1);
+    IgnoredException e =
+        IgnoredException.addIgnoredException(
+            RevokedPersistentDataException.class.getSimpleName(), vm1);
     try {
       createPersistentRegion(vm1);
       fail("We should have received a split distributed system exception");
@@ -382,6 +393,7 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
   /**
    * Test which members show up in the list of members we're waiting on.
+   *
    * @throws Exception
    */
   @Test
@@ -400,15 +412,16 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
     putAnEntry(vm0);
 
-    vm0.invoke(new SerializableRunnable("Check for waiting regions") {
+    vm0.invoke(
+        new SerializableRunnable("Check for waiting regions") {
 
-      public void run() {
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        PersistentMemberManager mm = cache.getPersistentMemberManager();
-        Map<String, Set<PersistentMemberID>> waitingRegions = mm.getWaitingRegions();
-        assertEquals(0, waitingRegions.size());
-      }
-    });
+          public void run() {
+            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+            PersistentMemberManager mm = cache.getPersistentMemberManager();
+            Map<String, Set<PersistentMemberID>> waitingRegions = mm.getWaitingRegions();
+            assertEquals(0, waitingRegions.size());
+          }
+        });
 
     LogWriterUtils.getLogWriter().info("closing region in vm0");
     closeRegion(vm0);
@@ -435,94 +448,101 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     waitForBlockedInitialization(vm1);
     assertTrue(future1.isAlive());
 
-    vm3.invoke(new SerializableRunnable("check waiting members") {
+    vm3.invoke(
+        new SerializableRunnable("check waiting members") {
 
-      public void run() {
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        DistributedSystemConfig config;
-        AdminDistributedSystem adminDS = null;
-        try {
-          config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
-          adminDS = AdminDistributedSystemFactory.getDistributedSystem(config);
-          adminDS.connect();
-          Set<PersistentID> missingIds = adminDS.getMissingPersistentMembers();
-          LogWriterUtils.getLogWriter().info("waiting members=" + missingIds);
-          assertEquals(1, missingIds.size());
-        } catch (AdminException e) {
-          throw new RuntimeException(e);
-        } finally {
-          if (adminDS != null) {
-            adminDS.disconnect();
+          public void run() {
+            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+            DistributedSystemConfig config;
+            AdminDistributedSystem adminDS = null;
+            try {
+              config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
+              adminDS = AdminDistributedSystemFactory.getDistributedSystem(config);
+              adminDS.connect();
+              Set<PersistentID> missingIds = adminDS.getMissingPersistentMembers();
+              LogWriterUtils.getLogWriter().info("waiting members=" + missingIds);
+              assertEquals(1, missingIds.size());
+            } catch (AdminException e) {
+              throw new RuntimeException(e);
+            } finally {
+              if (adminDS != null) {
+                adminDS.disconnect();
+              }
+            }
           }
-        }
-      }
-    });
+        });
 
-    vm1.invoke(new SerializableRunnable("close cache") {
+    vm1.invoke(
+        new SerializableRunnable("close cache") {
 
-      public void run() {
-        getCache().close();
-      }
-    });
+          public void run() {
+            getCache().close();
+          }
+        });
 
-    Wait.waitForCriterion(new WaitCriterion() {
+    Wait.waitForCriterion(
+        new WaitCriterion() {
 
-      public boolean done() {
-        return !future1.isAlive();
-      }
+          public boolean done() {
+            return !future1.isAlive();
+          }
 
-      public String description() {
-        return "Waiting for blocked initialization to terminate because the cache was closed.";
-      }
-    }, 30000, 500, true);
+          public String description() {
+            return "Waiting for blocked initialization to terminate because the cache was closed.";
+          }
+        },
+        30000,
+        500,
+        true);
 
     //Now we should be missing 2 members
-    vm3.invoke(new SerializableRunnable("check waiting members again") {
+    vm3.invoke(
+        new SerializableRunnable("check waiting members again") {
 
-      public void run() {
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        DistributedSystemConfig config;
-        AdminDistributedSystem adminDS = null;
-        try {
-          config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
-          adminDS = AdminDistributedSystemFactory.getDistributedSystem(config);
-          adminDS.connect();
-          final AdminDistributedSystem connectedDS = adminDS;
-          Wait.waitForCriterion(new WaitCriterion() {
+          public void run() {
+            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+            DistributedSystemConfig config;
+            AdminDistributedSystem adminDS = null;
+            try {
+              config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
+              adminDS = AdminDistributedSystemFactory.getDistributedSystem(config);
+              adminDS.connect();
+              final AdminDistributedSystem connectedDS = adminDS;
+              Wait.waitForCriterion(
+                  new WaitCriterion() {
 
-            public String description() {
-              return "Waiting for waiting members to have 2 members";
-            }
+                    public String description() {
+                      return "Waiting for waiting members to have 2 members";
+                    }
 
-            public boolean done() {
-              Set<PersistentID> missingIds;
-              try {
-                missingIds = connectedDS.getMissingPersistentMembers();
-              } catch (AdminException e) {
-                throw new RuntimeException(e);
+                    public boolean done() {
+                      Set<PersistentID> missingIds;
+                      try {
+                        missingIds = connectedDS.getMissingPersistentMembers();
+                      } catch (AdminException e) {
+                        throw new RuntimeException(e);
+                      }
+                      return 2 == missingIds.size();
+                    }
+                  },
+                  MAX_WAIT,
+                  500,
+                  true);
+
+            } catch (AdminException e) {
+              throw new RuntimeException(e);
+            } finally {
+              if (adminDS != null) {
+                adminDS.disconnect();
               }
-              return 2 == missingIds.size();
             }
-
-          }, MAX_WAIT, 500, true);
-
-        } catch (AdminException e) {
-          throw new RuntimeException(e);
-        } finally {
-          if (adminDS != null) {
-            adminDS.disconnect();
           }
-        }
-      }
-    });
+        });
   }
 
   /**
-   * Use Case
-   * AB are alive
-   * A crashes.
-   * B crashes.
-   * B starts up. It should not wait for A.
+   * Use Case AB are alive A crashes. B crashes. B starts up. It should not wait for A.
+   *
    * @throws Exception
    */
   @Test
@@ -551,9 +571,9 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   /**
-   * Tests that if two members crash simultaneously, they
-   * negotiate which member should initialize with what is
-   * on disk and which member should copy data from that member.
+   * Tests that if two members crash simultaneously, they negotiate which member should initialize
+   * with what is on disk and which member should copy data from that member.
+   *
    * @throws Exception
    */
   @Test
@@ -602,16 +622,9 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   /**
-   * Tests that persistent members pass along the list
-   * of crashed members to later persistent members.
-   * Eg.
-   * AB are running
-   * A crashes
-   * C is tarted
-   * B crashes
-   * C crashes
-   * AC are started, they should figure out who
-   * has the latest data, without needing B. 
+   * Tests that persistent members pass along the list of crashed members to later persistent
+   * members. Eg. AB are running A crashes C is tarted B crashes C crashes AC are started, they
+   * should figure out who has the latest data, without needing B.
    */
   @Test
   public void testTransmitCrashedMembers() throws Exception {
@@ -652,10 +665,7 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     checkForEntry(vm2);
   }
 
-  /**
-   * Tests that a persistent region cannot recover from 
-   * a non persistent region.
-   */
+  /** Tests that a persistent region cannot recover from a non persistent region. */
   @Test
   public void testRecoverFromNonPeristentRegion() throws Exception {
     Host host = Host.getHost(0);
@@ -695,27 +705,29 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     VM vm1 = host.getVM(1);
 
     //Add a hook which will disconnect the DS before sending a prepare message
-    vm1.invoke(new SerializableRunnable() {
+    vm1.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
+          public void run() {
 
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
 
-          @Override
-          public void beforeSendMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof PrepareNewPersistentMemberMessage) {
-              DistributionMessageObserver.setInstance(null);
-              getSystem().disconnect();
-            }
-          }
+                  @Override
+                  public void beforeSendMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof PrepareNewPersistentMemberMessage) {
+                      DistributionMessageObserver.setInstance(null);
+                      getSystem().disconnect();
+                    }
+                  }
 
-          @Override
-          public void afterProcessMessage(DistributionManager dm, DistributionMessage message) {
-
+                  @Override
+                  public void afterProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {}
+                });
           }
         });
-      }
-    });
     createPersistentRegion(vm0);
 
     putAnEntry(vm0);
@@ -742,21 +754,24 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
     checkForEntry(vm1);
 
-    vm0.invoke(new SerializableRunnable("check for offline members") {
-      public void run() {
-        Cache cache = getCache();
-        DistributedRegion region = (DistributedRegion) cache.getRegion(REGION_NAME);
-        PersistentMembershipView view = region.getPersistenceAdvisor().getMembershipView();
-        DiskRegion dr = region.getDiskRegion();
+    vm0.invoke(
+        new SerializableRunnable("check for offline members") {
+          public void run() {
+            Cache cache = getCache();
+            DistributedRegion region = (DistributedRegion) cache.getRegion(REGION_NAME);
+            PersistentMembershipView view = region.getPersistenceAdvisor().getMembershipView();
+            DiskRegion dr = region.getDiskRegion();
 
-        assertEquals(Collections.emptySet(), dr.getOfflineMembers());
-        assertEquals(1, dr.getOnlineMembers().size());
-      }
-    });
+            assertEquals(Collections.emptySet(), dr.getOfflineMembers());
+            assertEquals(1, dr.getOnlineMembers().size());
+          }
+        });
   }
 
-  HashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> getAllMemberToVersion(RegionVersionVector rvv) {
-    HashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> allMemberToVersion = new HashMap(rvv.getMemberToVersion());
+  HashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> getAllMemberToVersion(
+      RegionVersionVector rvv) {
+    HashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> allMemberToVersion =
+        new HashMap(rvv.getMemberToVersion());
     RegionVersionHolder localHolder = rvv.getLocalExceptions().clone();
     localHolder.setVersion(rvv.getCurrentVersion());
     allMemberToVersion.put((DiskStoreID) rvv.getOwnerId(), localHolder);
@@ -764,57 +779,61 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   protected Object getEntry(VM vm, final String key) {
-    SerializableCallable getEntry = new SerializableCallable("get entry") {
+    SerializableCallable getEntry =
+        new SerializableCallable("get entry") {
 
-      public Object call() throws Exception {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        return region.get(key);
-      }
-    };
+          public Object call() throws Exception {
+            Cache cache = getCache();
+            Region region = cache.getRegion(REGION_NAME);
+            return region.get(key);
+          }
+        };
 
     return (vm.invoke(getEntry));
   }
 
   protected RegionVersionVector getRVV(VM vm) throws IOException, ClassNotFoundException {
-    SerializableCallable createData = new SerializableCallable("getRVV") {
+    SerializableCallable createData =
+        new SerializableCallable("getRVV") {
 
-      public Object call() throws Exception {
-        Cache cache = getCache();
-        LocalRegion region = (LocalRegion) cache.getRegion(REGION_NAME);
-        RegionVersionVector rvv = region.getVersionVector();
-        rvv = rvv.getCloneForTransmission();
-        HeapDataOutputStream hdos = new HeapDataOutputStream(Version.CURRENT);
+          public Object call() throws Exception {
+            Cache cache = getCache();
+            LocalRegion region = (LocalRegion) cache.getRegion(REGION_NAME);
+            RegionVersionVector rvv = region.getVersionVector();
+            rvv = rvv.getCloneForTransmission();
+            HeapDataOutputStream hdos = new HeapDataOutputStream(Version.CURRENT);
 
-        //Using gemfire serialization because 
-        //RegionVersionVector is not java serializable
-        DataSerializer.writeObject(rvv, hdos);
-        return hdos.toByteArray();
-      }
-    };
+            //Using gemfire serialization because
+            //RegionVersionVector is not java serializable
+            DataSerializer.writeObject(rvv, hdos);
+            return hdos.toByteArray();
+          }
+        };
     byte[] result = (byte[]) vm.invoke(createData);
     ByteArrayInputStream bais = new ByteArrayInputStream(result);
     return DataSerializer.readObject(new DataInputStream(bais));
   }
 
-  protected AsyncInvocation createPersistentRegionAsync(final VM vm, final boolean diskSynchronous) {
-    SerializableRunnable createRegion = new SerializableRunnable("Create persistent region") {
-      public void run() {
-        Cache cache = getCache();
-        DiskStoreFactory dsf = cache.createDiskStoreFactory();
-        File dir = getDiskDirForVM(vm);
-        dir.mkdirs();
-        dsf.setDiskDirs(new File[] { dir });
-        dsf.setMaxOplogSize(1);
-        DiskStore ds = dsf.create(REGION_NAME);
-        RegionFactory rf = new RegionFactory();
-        rf.setDiskStoreName(ds.getName());
-        rf.setDiskSynchronous(diskSynchronous);
-        rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-        rf.setScope(Scope.DISTRIBUTED_ACK);
-        rf.create(REGION_NAME);
-      }
-    };
+  protected AsyncInvocation createPersistentRegionAsync(
+      final VM vm, final boolean diskSynchronous) {
+    SerializableRunnable createRegion =
+        new SerializableRunnable("Create persistent region") {
+          public void run() {
+            Cache cache = getCache();
+            DiskStoreFactory dsf = cache.createDiskStoreFactory();
+            File dir = getDiskDirForVM(vm);
+            dir.mkdirs();
+            dsf.setDiskDirs(new File[] {dir});
+            dsf.setMaxOplogSize(1);
+            DiskStore ds = dsf.create(REGION_NAME);
+            RegionFactory rf = new RegionFactory();
+            rf.setDiskStoreName(ds.getName());
+            rf.setDiskSynchronous(diskSynchronous);
+            rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+            rf.setScope(Scope.DISTRIBUTED_ACK);
+            rf.create(REGION_NAME);
+          }
+        };
     return vm.invokeAsync(createRegion);
   }
 
@@ -829,12 +848,10 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   /**
-   * vm0 and vm1 are peers, each holds a DR. 
-   * They do put to the same key for different value at the same time. 
-   * Use DistributionMessageObserver.beforeSendMessage to hold on the 
-   * distribution message. One of the member will persist the conflict version
-   * tag, while another member will persist both of the 2 operations.
-   * Overall, their RVV should match after the operations.  
+   * vm0 and vm1 are peers, each holds a DR. They do put to the same key for different value at the
+   * same time. Use DistributionMessageObserver.beforeSendMessage to hold on the distribution
+   * message. One of the member will persist the conflict version tag, while another member will
+   * persist both of the 2 operations. Overall, their RVV should match after the operations.
    */
   public void doTestPersistConflictOperations(boolean diskSync) throws Exception {
     Host host = Host.getHost(0);
@@ -842,34 +859,42 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     VM vm1 = host.getVM(1);
 
     //Add a hook which will disconnect the DS before sending a prepare message
-    SerializableRunnable addObserver = new SerializableRunnable() {
-      public void run() {
-        // System.setProperty("disk.TRACE_WRITES", "true");
-        // System.setProperty("disk.TRACE_RECOVERY", "true");
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+    SerializableRunnable addObserver =
+        new SerializableRunnable() {
+          public void run() {
+            // System.setProperty("disk.TRACE_WRITES", "true");
+            // System.setProperty("disk.TRACE_RECOVERY", "true");
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
 
-          @Override
-          public void beforeSendMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof AbstractUpdateMessage) {
-              try {
-                Thread.sleep(2000);
-                getCache().getLogger().info("testPersistConflictOperations, beforeSendMessage");
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-              }
-            }
-          }
+                  @Override
+                  public void beforeSendMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof AbstractUpdateMessage) {
+                      try {
+                        Thread.sleep(2000);
+                        getCache()
+                            .getLogger()
+                            .info("testPersistConflictOperations, beforeSendMessage");
+                      } catch (InterruptedException e) {
+                        e.printStackTrace();
+                      }
+                    }
+                  }
 
-          @Override
-          public void afterProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof AbstractUpdateMessage) {
-              getCache().getLogger().info("testPersistConflictOperations, beforeSendMessage");
-              DistributionMessageObserver.setInstance(null);
-            }
+                  @Override
+                  public void afterProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof AbstractUpdateMessage) {
+                      getCache()
+                          .getLogger()
+                          .info("testPersistConflictOperations, beforeSendMessage");
+                      DistributionMessageObserver.setInstance(null);
+                    }
+                  }
+                });
           }
-        });
-      }
-    };
+        };
     vm0.invoke(addObserver);
     vm1.invoke(addObserver);
 
@@ -880,20 +905,24 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     //    createPersistentRegion(vm0);
     //    createPersistentRegion(vm1);
 
-    AsyncInvocation ins0 = vm0.invokeAsync(new SerializableRunnable("change the entry") {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        region.put("A", "vm0");
-      }
-    });
-    AsyncInvocation ins1 = vm1.invokeAsync(new SerializableRunnable("change the entry") {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        region.put("A", "vm1");
-      }
-    });
+    AsyncInvocation ins0 =
+        vm0.invokeAsync(
+            new SerializableRunnable("change the entry") {
+              public void run() {
+                Cache cache = getCache();
+                Region region = cache.getRegion(REGION_NAME);
+                region.put("A", "vm0");
+              }
+            });
+    AsyncInvocation ins1 =
+        vm1.invokeAsync(
+            new SerializableRunnable("change the entry") {
+              public void run() {
+                Cache cache = getCache();
+                Region region = cache.getRegion(REGION_NAME);
+                region.put("A", "vm1");
+              }
+            });
     ins0.join(MAX_WAIT);
     ins1.join(MAX_WAIT);
 
@@ -926,24 +955,28 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     vm0.invoke(addObserver);
     vm1.invoke(addObserver);
 
-    ins0 = vm0.invokeAsync(new SerializableRunnable("change the entry at vm0") {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        for (int i = 0; i < 1000; i++) {
-          region.put("A", "vm0-" + i);
-        }
-      }
-    });
-    ins1 = vm1.invokeAsync(new SerializableRunnable("change the entry at vm1") {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        for (int i = 0; i < 1000; i++) {
-          region.put("A", "vm1-" + i);
-        }
-      }
-    });
+    ins0 =
+        vm0.invokeAsync(
+            new SerializableRunnable("change the entry at vm0") {
+              public void run() {
+                Cache cache = getCache();
+                Region region = cache.getRegion(REGION_NAME);
+                for (int i = 0; i < 1000; i++) {
+                  region.put("A", "vm0-" + i);
+                }
+              }
+            });
+    ins1 =
+        vm1.invokeAsync(
+            new SerializableRunnable("change the entry at vm1") {
+              public void run() {
+                Cache cache = getCache();
+                Region region = cache.getRegion(REGION_NAME);
+                for (int i = 0; i < 1000; i++) {
+                  region.put("A", "vm1-" + i);
+                }
+              }
+            });
     ins0.join(MAX_WAIT);
     ins1.join(MAX_WAIT);
 
@@ -980,9 +1013,9 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   /**
-   * Tests that even non persistent regions can transmit the list
-   * of crashed members to other persistent regions, So that the persistent
-   * regions can negotiate who has the latest data during recovery.
+   * Tests that even non persistent regions can transmit the list of crashed members to other
+   * persistent regions, So that the persistent regions can negotiate who has the latest data during
+   * recovery.
    */
   @Test
   public void testTransmitCrashedMembersWithNonPeristentRegion() throws Exception {
@@ -1047,7 +1080,9 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     //so it will start up.
     createPersistentRegion(vm0);
 
-    IgnoredException e = IgnoredException.addIgnoredException(ConflictingPersistentDataException.class.getSimpleName(), vm1);
+    IgnoredException e =
+        IgnoredException.addIgnoredException(
+            ConflictingPersistentDataException.class.getSimpleName(), vm1);
     try {
       //VM1 should not start up, because we should detect that vm1
       //was never in the same distributed system as vm0
@@ -1065,9 +1100,8 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   private static final AtomicBoolean sawRequestImageMessage = new AtomicBoolean(false);
 
   /**
-   * Test to make sure that if if a member crashes
-   * while a GII is in progress, we wait
-   * for the member to come back for starting.
+   * Test to make sure that if if a member crashes while a GII is in progress, we wait for the
+   * member to come back for starting.
    */
   @Test
   public void testCrashDuringGII() throws Exception {
@@ -1100,47 +1134,50 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
     //Add a hook which will disconnect from the distributed
     //system when the initial image message shows up.
-    vm1.invoke(new SerializableRunnable() {
+    vm1.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        sawRequestImageMessage.set(false);
+          public void run() {
+            sawRequestImageMessage.set(false);
 
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
 
-          @Override
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof RequestImageMessage) {
-              DistributionMessageObserver.setInstance(null);
-              disconnectFromDS();
-              synchronized (sawRequestImageMessage) {
-                sawRequestImageMessage.set(true);
-                sawRequestImageMessage.notifyAll();
-              }
-            }
-          }
+                  @Override
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof RequestImageMessage) {
+                      DistributionMessageObserver.setInstance(null);
+                      disconnectFromDS();
+                      synchronized (sawRequestImageMessage) {
+                        sawRequestImageMessage.set(true);
+                        sawRequestImageMessage.notifyAll();
+                      }
+                    }
+                  }
 
-          @Override
-          public void afterProcessMessage(DistributionManager dm, DistributionMessage message) {
-
+                  @Override
+                  public void afterProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {}
+                });
           }
         });
-      }
-    });
 
     createPersistentRegion(vm1);
 
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
-        synchronized (sawRequestImageMessage) {
-          try {
-            while (!sawRequestImageMessage.get()) {
-              sawRequestImageMessage.wait();
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            synchronized (sawRequestImageMessage) {
+              try {
+                while (!sawRequestImageMessage.get()) {
+                  sawRequestImageMessage.wait();
+                }
+              } catch (InterruptedException ex) {
+              }
             }
-          } catch (InterruptedException ex) {
           }
-        }
-      }
-    });
+        });
 
     waitForBlockedInitialization(vm0);
 
@@ -1167,8 +1204,8 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   /**
-   * Test to make sure we don't leak any persistent ids if a member does GII
-   * while a distributed destroy is in progress
+   * Test to make sure we don't leak any persistent ids if a member does GII while a distributed
+   * destroy is in progress
    */
   @Test
   public void testGIIDuringDestroy() throws Exception {
@@ -1182,86 +1219,95 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
     //Add a hook which will disconnect from the distributed
     //system when the initial image message shows up.
-    vm1.invoke(new SerializableRunnable() {
+    vm1.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
+          public void run() {
 
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
 
-          @Override
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof DestroyRegionMessage) {
-              createPersistentRegionAsync(vm2);
-              try {
-                Thread.sleep(10000);
-              } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-              } finally {
-                DistributionMessageObserver.setInstance(null);
-              }
-            }
-          }
+                  @Override
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof DestroyRegionMessage) {
+                      createPersistentRegionAsync(vm2);
+                      try {
+                        Thread.sleep(10000);
+                      } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                      } finally {
+                        DistributionMessageObserver.setInstance(null);
+                      }
+                    }
+                  }
 
-          @Override
-          public void afterProcessMessage(DistributionManager dm, DistributionMessage message) {
+                  @Override
+                  public void afterProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {}
 
-          }
-
-          @Override
-          public void beforeSendMessage(DistributionManager dm, DistributionMessage msg) {
+                  @Override
+                  public void beforeSendMessage(DistributionManager dm, DistributionMessage msg) {}
+                });
           }
         });
-      }
-    });
 
     createPersistentRegion(vm1);
 
-    vm0.invoke(new SerializableRunnable("Destroy region") {
+    vm0.invoke(
+        new SerializableRunnable("Destroy region") {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        region.destroyRegion();
-      }
-    });
-
-    vm1.invoke(new SerializableRunnable("check destroyed") {
-
-      public void run() {
-        Cache cache = getCache();
-        assertNull(cache.getRegion(REGION_NAME));
-      }
-    });
-
-    vm2.invoke(new SerializableRunnable("Wait for region creation") {
-
-      public void run() {
-        final Cache cache = getCache();
-        Wait.waitForCriterion(new WaitCriterion() {
-
-          public String description() {
-            return "Waiting for creation of region " + REGION_NAME;
-          }
-
-          public boolean done() {
+          public void run() {
+            Cache cache = getCache();
             Region region = cache.getRegion(REGION_NAME);
-            return region != null;
+            region.destroyRegion();
           }
+        });
 
-        }, MAX_WAIT, 100, true);
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable("check destroyed") {
 
-    vm2.invoke(new SerializableRunnable("Check offline members") {
+          public void run() {
+            Cache cache = getCache();
+            assertNull(cache.getRegion(REGION_NAME));
+          }
+        });
 
-      public void run() {
-        final Cache cache = getCache();
-        DistributedRegion region = (DistributedRegion) cache.getRegion(REGION_NAME);
-        PersistenceAdvisor persistAdvisor = region.getPersistenceAdvisor();
-        assertEquals(Collections.emptySet(), persistAdvisor.getMembershipView().getOfflineMembers());
-      }
-    });
+    vm2.invoke(
+        new SerializableRunnable("Wait for region creation") {
+
+          public void run() {
+            final Cache cache = getCache();
+            Wait.waitForCriterion(
+                new WaitCriterion() {
+
+                  public String description() {
+                    return "Waiting for creation of region " + REGION_NAME;
+                  }
+
+                  public boolean done() {
+                    Region region = cache.getRegion(REGION_NAME);
+                    return region != null;
+                  }
+                },
+                MAX_WAIT,
+                100,
+                true);
+          }
+        });
+
+    vm2.invoke(
+        new SerializableRunnable("Check offline members") {
+
+          public void run() {
+            final Cache cache = getCache();
+            DistributedRegion region = (DistributedRegion) cache.getRegion(REGION_NAME);
+            PersistenceAdvisor persistAdvisor = region.getPersistenceAdvisor();
+            assertEquals(
+                Collections.emptySet(), persistAdvisor.getMembershipView().getOfflineMembers());
+          }
+        });
   }
 
   @Category(FlakyTest.class) // GEODE-1703: fails assertion: Region not created within30000
@@ -1273,27 +1319,29 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
     //Add a hook which will disconnect from the distributed
     //system when the initial image message shows up.
-    vm0.invoke(new SerializableRunnable() {
+    vm0.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
+          public void run() {
 
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
 
-          @Override
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof PrepareNewPersistentMemberMessage) {
-              DistributionMessageObserver.setInstance(null);
-              disconnectFromDS();
-            }
-          }
+                  @Override
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof PrepareNewPersistentMemberMessage) {
+                      DistributionMessageObserver.setInstance(null);
+                      disconnectFromDS();
+                    }
+                  }
 
-          @Override
-          public void afterProcessMessage(DistributionManager dm, DistributionMessage message) {
-
+                  @Override
+                  public void afterProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {}
+                });
           }
         });
-      }
-    });
     createPersistentRegion(vm0);
 
     putAnEntry(vm0);
@@ -1341,7 +1389,8 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
     createNonPersistentRegion(vm0);
 
-    IgnoredException e = IgnoredException.addIgnoredException(IllegalStateException.class.getSimpleName(), vm1);
+    IgnoredException e =
+        IgnoredException.addIgnoredException(IllegalStateException.class.getSimpleName(), vm1);
     try {
       createPersistentRegion(vm1);
       fail("Should have received an IllegalState exception");
@@ -1369,38 +1418,46 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     VM vm1 = host.getVM(1);
 
     //Add a hook which will perform some updates while the region is initializing
-    vm0.invoke(new SerializableRunnable() {
+    vm0.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
+          public void run() {
 
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
 
-          @Override
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof RequestImageMessage) {
-              Cache cache = getCache();
-              Region region = cache.getRegion(REGION_NAME);
-              if (region == null) {
-                LogWriterUtils.getLogWriter().severe("removing listener for PersistentRecoveryOrderDUnitTest because region was not found: " + REGION_NAME);
-                Object old = DistributionMessageObserver.setInstance(null);
-                if (old != this) {
-                  LogWriterUtils.getLogWriter().severe("removed listener was not the invoked listener", new Exception("stack trace"));
-                }
-                return;
-              }
-              region.put("A", "B");
-              region.destroy("A");
-              region.put("A", "C");
-            }
-          }
+                  @Override
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof RequestImageMessage) {
+                      Cache cache = getCache();
+                      Region region = cache.getRegion(REGION_NAME);
+                      if (region == null) {
+                        LogWriterUtils.getLogWriter()
+                            .severe(
+                                "removing listener for PersistentRecoveryOrderDUnitTest because region was not found: "
+                                    + REGION_NAME);
+                        Object old = DistributionMessageObserver.setInstance(null);
+                        if (old != this) {
+                          LogWriterUtils.getLogWriter()
+                              .severe(
+                                  "removed listener was not the invoked listener",
+                                  new Exception("stack trace"));
+                        }
+                        return;
+                      }
+                      region.put("A", "B");
+                      region.destroy("A");
+                      region.put("A", "C");
+                    }
+                  }
 
-          @Override
-          public void afterProcessMessage(DistributionManager dm, DistributionMessage message) {
-
+                  @Override
+                  public void afterProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {}
+                });
           }
         });
-      }
-    });
     createPersistentRegion(vm0);
 
     createPersistentRegion(vm1);
@@ -1418,8 +1475,8 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   /**
-   * Tests to make sure that we stop waiting for a member
-   * that we revoke.
+   * Tests to make sure that we stop waiting for a member that we revoke.
+   *
    * @throws Exception
    */
   @Test
@@ -1432,22 +1489,23 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     createPersistentRegionWithoutCompaction(vm0);
     createPersistentRegionWithoutCompaction(vm1);
 
-    vm1.invoke(new SerializableRunnable("Create some data") {
+    vm1.invoke(
+        new SerializableRunnable("Create some data") {
 
-      public void run() {
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        for (int i = 0; i < 1024; i++) {
-          region.put(i, new byte[1024]);
-        }
+          public void run() {
+            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+            Region region = cache.getRegion(REGION_NAME);
+            for (int i = 0; i < 1024; i++) {
+              region.put(i, new byte[1024]);
+            }
 
-        for (int i = 2; i < 1024; i++) {
-          assertTrue(region.destroy(i) != null);
-        }
-        DiskStore store = cache.findDiskStore(REGION_NAME);
-        store.forceRoll();
-      }
-    });
+            for (int i = 2; i < 1024; i++) {
+              assertTrue(region.destroy(i) != null);
+            }
+            DiskStore store = cache.findDiskStore(REGION_NAME);
+            store.forceRoll();
+          }
+        });
     //    vm1.invoke(new SerializableRunnable("compact") {
     //      public void run() {
     //        Cache cache = getCache();
@@ -1463,38 +1521,40 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     //        assertTrue(ds.forceCompaction());
     //      }
     //    });
-    vm2.invoke(new SerializableRunnable("Compact") {
+    vm2.invoke(
+        new SerializableRunnable("Compact") {
 
-      public void run() {
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        DistributedSystemConfig config;
-        AdminDistributedSystem adminDS = null;
-        try {
-          config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
-          adminDS = AdminDistributedSystemFactory.getDistributedSystem(config);
-          adminDS.connect();
-          Map<DistributedMember, Set<PersistentID>> missingIds = adminDS.compactAllDiskStores();
-          assertEquals(2, missingIds.size());
-          for (Set<PersistentID> value : missingIds.values()) {
-            assertEquals(1, value.size());
+          public void run() {
+            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+            DistributedSystemConfig config;
+            AdminDistributedSystem adminDS = null;
+            try {
+              config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
+              adminDS = AdminDistributedSystemFactory.getDistributedSystem(config);
+              adminDS.connect();
+              Map<DistributedMember, Set<PersistentID>> missingIds = adminDS.compactAllDiskStores();
+              assertEquals(2, missingIds.size());
+              for (Set<PersistentID> value : missingIds.values()) {
+                assertEquals(1, value.size());
+              }
+            } catch (AdminException e) {
+              throw new RuntimeException(e);
+            } finally {
+              if (adminDS != null) {
+                adminDS.disconnect();
+              }
+            }
           }
-        } catch (AdminException e) {
-          throw new RuntimeException(e);
-        } finally {
-          if (adminDS != null) {
-            adminDS.disconnect();
-          }
-        }
-      }
-    });
+        });
 
-    SerializableRunnable compactVM = new SerializableRunnable("compact") {
-      public void run() {
-        Cache cache = getCache();
-        DiskStore ds = cache.findDiskStore(REGION_NAME);
-        assertFalse(ds.forceCompaction());
-      }
-    };
+    SerializableRunnable compactVM =
+        new SerializableRunnable("compact") {
+          public void run() {
+            Cache cache = getCache();
+            DiskStore ds = cache.findDiskStore(REGION_NAME);
+            assertFalse(ds.forceCompaction());
+          }
+        };
 
     vm0.invoke(compactVM);
     vm1.invoke(compactVM);
@@ -1510,47 +1570,49 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     createPersistentRegion(vm1);
 
     //Try to make sure there are some operations in flight while closing the cache
-    SerializableCallable createData0 = new SerializableCallable() {
+    SerializableCallable createData0 =
+        new SerializableCallable() {
 
-      public Object call() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
+          public Object call() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(REGION_NAME);
 
-        int i = 0;
-        while (true) {
-          try {
-            region.put(0, i);
-            i++;
-          } catch (RegionDestroyedException e) {
-            break;
-          } catch (CacheClosedException e) {
-            break;
+            int i = 0;
+            while (true) {
+              try {
+                region.put(0, i);
+                i++;
+              } catch (RegionDestroyedException e) {
+                break;
+              } catch (CacheClosedException e) {
+                break;
+              }
+            }
+            return i - 1;
           }
-        }
-        return i - 1;
-      }
-    };
+        };
 
-    SerializableCallable createData1 = new SerializableCallable() {
+    SerializableCallable createData1 =
+        new SerializableCallable() {
 
-      public Object call() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
+          public Object call() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(REGION_NAME);
 
-        int i = 0;
-        while (true) {
-          try {
-            region.put(1, i);
-            i++;
-          } catch (RegionDestroyedException e) {
-            break;
-          } catch (CacheClosedException e) {
-            break;
+            int i = 0;
+            while (true) {
+              try {
+                region.put(1, i);
+                i++;
+              } catch (RegionDestroyedException e) {
+                break;
+              } catch (CacheClosedException e) {
+                break;
+              }
+            }
+            return i - 1;
           }
-        }
-        return i - 1;
-      }
-    };
+        };
 
     AsyncInvocation asyncCreate0 = vm0.invokeAsync(createData0);
     AsyncInvocation asyncCreate1 = vm1.invokeAsync(createData1);
@@ -1566,7 +1628,8 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
 
     Integer lastSuccessfulInt0 = (Integer) asyncCreate0.getResult();
     Integer lastSuccessfulInt1 = (Integer) asyncCreate1.getResult();
-    System.err.println("Cache was closed on 0->" + lastSuccessfulInt0 + ",1->" + lastSuccessfulInt1);
+    System.err.println(
+        "Cache was closed on 0->" + lastSuccessfulInt0 + ",1->" + lastSuccessfulInt1);
 
     AsyncInvocation create1 = createPersistentRegionAsync(vm0);
     AsyncInvocation create2 = createPersistentRegionAsync(vm1);
@@ -1608,7 +1671,13 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     Integer lastSuccessfulInt0 = (Integer) asyncCreate0.getResult();
     Integer lastSuccessfulInt1 = (Integer) asyncCreate1.getResult();
     Integer lastSuccessfulInt2 = (Integer) asyncCreate2.getResult();
-    System.err.println("Cache was closed on 0->" + lastSuccessfulInt0 + ",1->" + lastSuccessfulInt1 + ",2->" + lastSuccessfulInt2);
+    System.err.println(
+        "Cache was closed on 0->"
+            + lastSuccessfulInt0
+            + ",1->"
+            + lastSuccessfulInt1
+            + ",2->"
+            + lastSuccessfulInt2);
 
     AsyncInvocation create0 = createInternalPersistentRegionAsync(vm0);
     AsyncInvocation create1 = createInternalPersistentRegionAsync(vm1);
@@ -1624,45 +1693,46 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   public AsyncInvocation createDataAsyncTX(VM vm1, final int member) {
-    SerializableCallable createData1 = new SerializableCallable() {
+    SerializableCallable createData1 =
+        new SerializableCallable() {
 
-      public Object call() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
+          public Object call() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(REGION_NAME);
 
-        int i = 0;
-        TXManagerImpl txManager = (TXManagerImpl) cache.getCacheTransactionManager();
-        while (true) {
-          try {
-            txManager.begin();
-            region.put(member, i);
-            txManager.commit();
-            i++;
-          } catch (RegionDestroyedException e) {
-            break;
-          } catch (CacheClosedException e) {
-            break;
-          } catch (IllegalArgumentException e) {
-            if (!e.getMessage().contains("Invalid txLockId")) {
-              throw e;
+            int i = 0;
+            TXManagerImpl txManager = (TXManagerImpl) cache.getCacheTransactionManager();
+            while (true) {
+              try {
+                txManager.begin();
+                region.put(member, i);
+                txManager.commit();
+                i++;
+              } catch (RegionDestroyedException e) {
+                break;
+              } catch (CacheClosedException e) {
+                break;
+              } catch (IllegalArgumentException e) {
+                if (!e.getMessage().contains("Invalid txLockId")) {
+                  throw e;
+                }
+                break;
+              } catch (LockServiceDestroyedException e) {
+                break;
+              }
             }
-            break;
-          } catch (LockServiceDestroyedException e) {
-            break;
+            return i - 1;
           }
-        }
-        return i - 1;
-      }
-    };
+        };
     AsyncInvocation asyncCreate1 = vm1.invokeAsync(createData1);
     return asyncCreate1;
   }
 
   /**
-   * Tests to make sure that after we get a conflicting
-   * persistent data exception, we can still recover.
-   * 
-   * This is bug XX.
+   * Tests to make sure that after we get a conflicting persistent data exception, we can still
+   * recover.
+   *
+   * <p>This is bug XX.
    */
   @Test
   public void testRecoverAfterConflict() throws Exception {
@@ -1681,7 +1751,8 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
     putAnEntry(vm1);
 
     LogWriterUtils.getLogWriter().info("Creating region in VM0");
-    IgnoredException ex = IgnoredException.addIgnoredException("ConflictingPersistentDataException", vm0);
+    IgnoredException ex =
+        IgnoredException.addIgnoredException("ConflictingPersistentDataException", vm0);
     try {
       //this should cause a conflict
       createPersistentRegion(vm0);
@@ -1719,31 +1790,35 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   private void checkConcurrentCloseValue(VM vm0, VM vm1, final int key, int lastSuccessfulInt) {
-    SerializableCallable getValue = new SerializableCallable() {
+    SerializableCallable getValue =
+        new SerializableCallable() {
 
-      public Object call() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        int value = (Integer) region.get(key);
-        return value;
-      }
-    };
+          public Object call() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(REGION_NAME);
+            int value = (Integer) region.get(key);
+            return value;
+          }
+        };
 
     int vm1Value = (Integer) vm0.invoke(getValue);
     int vm2Value = (Integer) vm1.invoke(getValue);
     assertEquals(vm1Value, vm2Value);
-    assertTrue("value = " + vm1Value + ", lastSuccessfulInt=" + lastSuccessfulInt, vm1Value == lastSuccessfulInt || vm1Value == lastSuccessfulInt + 1);
+    assertTrue(
+        "value = " + vm1Value + ", lastSuccessfulInt=" + lastSuccessfulInt,
+        vm1Value == lastSuccessfulInt || vm1Value == lastSuccessfulInt + 1);
   }
 
   private void checkForEntry(VM vm) {
-    SerializableRunnable checkForEntry = new SerializableRunnable("check for the entry") {
+    SerializableRunnable checkForEntry =
+        new SerializableRunnable("check for the entry") {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        assertEquals("C", region.get("A"));
-      }
-    };
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(REGION_NAME);
+            assertEquals("C", region.get("A"));
+          }
+        };
     vm.invoke(checkForEntry);
   }
 
@@ -1752,25 +1827,27 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   protected void updateTheEntry(VM vm1, final String value) {
-    vm1.invoke(new SerializableRunnable("change the entry") {
+    vm1.invoke(
+        new SerializableRunnable("change the entry") {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        region.put("A", value);
-      }
-    });
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(REGION_NAME);
+            region.put("A", value);
+          }
+        });
   }
 
   protected void putAnEntry(VM vm0) {
-    vm0.invoke(new SerializableRunnable("Put an entry") {
+    vm0.invoke(
+        new SerializableRunnable("Put an entry") {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(REGION_NAME);
-        region.put("A", "B");
-      }
-    });
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(REGION_NAME);
+            region.put("A", "B");
+          }
+        });
   }
 
   @Override
@@ -1788,51 +1865,52 @@ public class PersistentRecoveryOrderDUnitTest extends PersistentReplicatedTestBa
   }
 
   private void checkForRecoveryStat(VM vm, final boolean localRecovery) {
-    vm.invoke(new SerializableRunnable("check disk region stat") {
+    vm.invoke(
+        new SerializableRunnable("check disk region stat") {
 
-      public void run() {
-        Cache cache = getCache();
-        DistributedRegion region = (DistributedRegion) cache.getRegion(REGION_NAME);
-        DiskRegionStats stats = region.getDiskRegion().getStats();
-        if (localRecovery) {
-          assertEquals(1, stats.getLocalInitializations());
-          assertEquals(0, stats.getRemoteInitializations());
-        } else {
-          assertEquals(0, stats.getLocalInitializations());
-          assertEquals(1, stats.getRemoteInitializations());
-        }
-
-      }
-    });
+          public void run() {
+            Cache cache = getCache();
+            DistributedRegion region = (DistributedRegion) cache.getRegion(REGION_NAME);
+            DiskRegionStats stats = region.getDiskRegion().getStats();
+            if (localRecovery) {
+              assertEquals(1, stats.getLocalInitializations());
+              assertEquals(0, stats.getRemoteInitializations());
+            } else {
+              assertEquals(0, stats.getLocalInitializations());
+              assertEquals(1, stats.getRemoteInitializations());
+            }
+          }
+        });
   }
 
   protected AsyncInvocation createInternalPersistentRegionAsync(final VM vm) {
-    SerializableRunnable createRegion = new SerializableRunnable("Create persistent region") {
-      public void run() {
-        Cache cache = getCache();
-        DiskStoreFactory dsf = cache.createDiskStoreFactory();
-        File dir = getDiskDirForVM(vm);
-        dir.mkdirs();
-        dsf.setDiskDirs(new File[] { dir });
-        dsf.setMaxOplogSize(1);
-        DiskStore ds = dsf.create(REGION_NAME);
-        InternalRegionArguments internalArgs = new InternalRegionArguments();
-        internalArgs.setIsUsedForMetaRegion(true);
-        internalArgs.setMetaRegionWithTransactions(true);
-        AttributesFactory rf = new AttributesFactory();
-        rf.setDiskStoreName(ds.getName());
-        rf.setDiskSynchronous(true);
-        rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-        rf.setScope(Scope.DISTRIBUTED_ACK);
-        try {
-          ((GemFireCacheImpl) cache).createVMRegion(REGION_NAME, rf.create(), internalArgs);
-        } catch (ClassNotFoundException e) {
-          Assert.fail("error", e);
-        } catch (IOException e) {
-          Assert.fail("error", e);
-        }
-      }
-    };
+    SerializableRunnable createRegion =
+        new SerializableRunnable("Create persistent region") {
+          public void run() {
+            Cache cache = getCache();
+            DiskStoreFactory dsf = cache.createDiskStoreFactory();
+            File dir = getDiskDirForVM(vm);
+            dir.mkdirs();
+            dsf.setDiskDirs(new File[] {dir});
+            dsf.setMaxOplogSize(1);
+            DiskStore ds = dsf.create(REGION_NAME);
+            InternalRegionArguments internalArgs = new InternalRegionArguments();
+            internalArgs.setIsUsedForMetaRegion(true);
+            internalArgs.setMetaRegionWithTransactions(true);
+            AttributesFactory rf = new AttributesFactory();
+            rf.setDiskStoreName(ds.getName());
+            rf.setDiskSynchronous(true);
+            rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+            rf.setScope(Scope.DISTRIBUTED_ACK);
+            try {
+              ((GemFireCacheImpl) cache).createVMRegion(REGION_NAME, rf.create(), internalArgs);
+            } catch (ClassNotFoundException e) {
+              Assert.fail("error", e);
+            } catch (IOException e) {
+              Assert.fail("error", e);
+            }
+          }
+        };
     return vm.invokeAsync(createRegion);
   }
 }

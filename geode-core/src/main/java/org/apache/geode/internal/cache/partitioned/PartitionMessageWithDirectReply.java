@@ -30,18 +30,17 @@ import org.apache.geode.internal.cache.FilterRoutingInfo;
 import org.apache.geode.internal.cache.PartitionedRegion;
 
 /**
- * Used for partitioned region messages which support direct ack responses.
- * Direct ack should be used for message with a response from a single member,
- * or responses which are small.
- * 
- * Messages that extend this class *must* reply using the ReplySender returned
- * by {@link DistributionMessage#getReplySender(org.apache.geode.distributed.internal.DM)}
- * 
- * Additionally, if the ReplyProcessor used for this message extends PartitionResponse, it should
- * pass false for the register parameter of the PartitionResponse.
+ * Used for partitioned region messages which support direct ack responses. Direct ack should be
+ * used for message with a response from a single member, or responses which are small.
  *
+ * <p>Messages that extend this class *must* reply using the ReplySender returned by {@link
+ * DistributionMessage#getReplySender(org.apache.geode.distributed.internal.DM)}
+ *
+ * <p>Additionally, if the ReplyProcessor used for this message extends PartitionResponse, it should
+ * pass false for the register parameter of the PartitionResponse.
  */
-public abstract class PartitionMessageWithDirectReply extends PartitionMessage implements DirectReplyMessage {
+public abstract class PartitionMessageWithDirectReply extends PartitionMessage
+    implements DirectReplyMessage {
 
   protected DirectReplyProcessor processor;
 
@@ -51,27 +50,31 @@ public abstract class PartitionMessageWithDirectReply extends PartitionMessage i
     super();
   }
 
-  public PartitionMessageWithDirectReply(Collection<InternalDistributedMember> recipients, int regionId, DirectReplyProcessor processor) {
+  public PartitionMessageWithDirectReply(
+      Collection<InternalDistributedMember> recipients,
+      int regionId,
+      DirectReplyProcessor processor) {
     super(recipients, regionId, processor);
     this.processor = processor;
     this.posDup = false;
   }
 
-  public PartitionMessageWithDirectReply(Set recipients, int regionId, DirectReplyProcessor processor, EntryEventImpl event) {
+  public PartitionMessageWithDirectReply(
+      Set recipients, int regionId, DirectReplyProcessor processor, EntryEventImpl event) {
     super(recipients, regionId, processor);
     this.processor = processor;
     this.posDup = event.isPossibleDuplicate();
   }
 
-  public PartitionMessageWithDirectReply(InternalDistributedMember recipient, int regionId, DirectReplyProcessor processor) {
+  public PartitionMessageWithDirectReply(
+      InternalDistributedMember recipient, int regionId, DirectReplyProcessor processor) {
     super(recipient, regionId, processor);
     this.processor = processor;
   }
 
-  /**
-   * @param original
-   */
-  public PartitionMessageWithDirectReply(PartitionMessageWithDirectReply original, EntryEventImpl event) {
+  /** @param original */
+  public PartitionMessageWithDirectReply(
+      PartitionMessageWithDirectReply original, EntryEventImpl event) {
     super(original);
     this.processor = original.processor;
     if (event != null) {
@@ -94,9 +97,16 @@ public abstract class PartitionMessageWithDirectReply extends PartitionMessage i
   }
 
   @Override
-  public Set relayToListeners(Set cacheOpRecipients, Set adjunctRecipients, FilterRoutingInfo filterRoutingInfo, EntryEventImpl event, PartitionedRegion r, DirectReplyProcessor p) {
+  public Set relayToListeners(
+      Set cacheOpRecipients,
+      Set adjunctRecipients,
+      FilterRoutingInfo filterRoutingInfo,
+      EntryEventImpl event,
+      PartitionedRegion r,
+      DirectReplyProcessor p) {
     this.processor = p;
-    return super.relayToListeners(cacheOpRecipients, adjunctRecipients, filterRoutingInfo, event, r, p);
+    return super.relayToListeners(
+        cacheOpRecipients, adjunctRecipients, filterRoutingInfo, event, r, p);
   }
 
   @Override

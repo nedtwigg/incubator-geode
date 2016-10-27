@@ -25,22 +25,27 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * Creates ManagedEntityController for administration (starting, stopping, etc.) 
- * of GemFire {@link ManagedEntity}s.
- * 
+ * Creates ManagedEntityController for administration (starting, stopping, etc.) of GemFire {@link
+ * ManagedEntity}s.
  */
 public class ManagedEntityControllerFactory {
 
   private static final Logger logger = LogService.getLogger();
 
-  private static final String ENABLED_MANAGED_ENTITY_CONTROLLER_CLASS_NAME = "org.apache.geode.admin.internal.EnabledManagedEntityController";
+  private static final String ENABLED_MANAGED_ENTITY_CONTROLLER_CLASS_NAME =
+      "org.apache.geode.admin.internal.EnabledManagedEntityController";
 
-  static ManagedEntityController createManagedEntityController(final AdminDistributedSystem system) {
+  static ManagedEntityController createManagedEntityController(
+      final AdminDistributedSystem system) {
     if (isEnabledManagedEntityController()) {
-      logger.info(LogMarker.CONFIG, "Local and remote OS command invocations are enabled for the Admin API.");
+      logger.info(
+          LogMarker.CONFIG,
+          "Local and remote OS command invocations are enabled for the Admin API.");
       return createEnabledManagedEntityController(system);
     } else {
-      logger.info(LogMarker.CONFIG, "Local and remote OS command invocations are disabled for the Admin API.");
+      logger.info(
+          LogMarker.CONFIG,
+          "Local and remote OS command invocations are disabled for the Admin API.");
       return new DisabledManagedEntityController();
     }
   }
@@ -54,7 +59,8 @@ public class ManagedEntityControllerFactory {
     }
   }
 
-  private static ManagedEntityController createEnabledManagedEntityController(final AdminDistributedSystem system) {
+  private static ManagedEntityController createEnabledManagedEntityController(
+      final AdminDistributedSystem system) {
     return new EnabledManagedEntityController(system);
   }
 }

@@ -23,12 +23,10 @@ import org.apache.geode.internal.cache.EntryEventImpl;
 
 /**
  * Compare the serialized form of two objects.
- * 
- * Note that this does not do lexigraphic order, or really
- * any useful order. It's only guaranteed to return 0
- * if the bytes are equal, and satisfy all the transitivity
- * and communitivity properties of compare.
  *
+ * <p>Note that this does not do lexigraphic order, or really any useful order. It's only guaranteed
+ * to return 0 if the bytes are equal, and satisfy all the transitivity and communitivity properties
+ * of compare.
  */
 public class ByteComparator implements Comparator<Object> {
 
@@ -81,5 +79,4 @@ public class ByteComparator implements Comparator<Object> {
       return EntryEventImpl.serialize(o);
     }
   }
-
 }

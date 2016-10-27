@@ -31,16 +31,17 @@ import java.io.IOException;
 
 /**
  * Produces instances that implement CachedDeserializable.
- * @since GemFire 5.0.2
  *
+ * @since GemFire 5.0.2
  */
 public class CachedDeserializableFactory {
-  public static boolean PREFER_DESERIALIZED = !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "PREFER_SERIALIZED");
-  public static boolean STORE_ALL_VALUE_FORMS = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "STORE_ALL_VALUE_FORMS");
+  public static boolean PREFER_DESERIALIZED =
+      !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "PREFER_SERIALIZED");
+  public static boolean STORE_ALL_VALUE_FORMS =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "STORE_ALL_VALUE_FORMS");
 
   /**
-   * Creates and returns an instance of CachedDeserializable that contains the
-   * specified byte array.
+   * Creates and returns an instance of CachedDeserializable that contains the specified byte array.
    */
   public static CachedDeserializable create(byte[] v) {
     if (STORE_ALL_VALUE_FORMS) {
@@ -65,8 +66,8 @@ public class CachedDeserializableFactory {
   }
 
   /**
-   * Creates and returns an instance of CachedDeserializable that contains the
-   * specified object (that is not a byte[]).
+   * Creates and returns an instance of CachedDeserializable that contains the specified object
+   * (that is not a byte[]).
    */
   public static CachedDeserializable create(Object object, int serializedSize) {
     if (STORE_ALL_VALUE_FORMS) {
@@ -91,9 +92,7 @@ public class CachedDeserializableFactory {
     return false;
   }
 
-  /**
-   * Wrap cd in a new CachedDeserializable.
-   */
+  /** Wrap cd in a new CachedDeserializable. */
   public static CachedDeserializable create(CachedDeserializable cd) {
     if (STORE_ALL_VALUE_FORMS) {
       // storeAll cds are immutable just return it w/o wrapping
@@ -110,9 +109,7 @@ public class CachedDeserializableFactory {
     }
   }
 
-  /**
-   * Return the heap overhead in bytes for each CachedDeserializable instance.
-   */
+  /** Return the heap overhead in bytes for each CachedDeserializable instance. */
   public static int overhead() {
     // TODO: revisit this code. If we move to per-region cds then this can no longer be static.
     // TODO: This method also does not work well with the way off heap is determined using the cache.
@@ -125,13 +122,9 @@ public class CachedDeserializableFactory {
     } else {
       return PreferBytesCachedDeserializable.MEM_OVERHEAD;
     }
-
   }
 
-  /**
-   * Return the number of bytes the specified byte array will consume
-   * of heap memory.
-   */
+  /** Return the number of bytes the specified byte array will consume of heap memory. */
   public static int getByteSize(byte[] serializedValue) {
     // add 4 for the length field of the byte[]
     return serializedValue.length + Sizeable.PER_OBJECT_OVERHEAD + 4;
@@ -151,9 +144,8 @@ public class CachedDeserializableFactory {
   }
 
   /**
-   * Return an estimate of the amount of heap memory used for the object.
-   * If it is not a byte[] then account for CachedDeserializable overhead.
-   * when it is wrapped by a CachedDeserializable.
+   * Return an estimate of the amount of heap memory used for the object. If it is not a byte[] then
+   * account for CachedDeserializable overhead. when it is wrapped by a CachedDeserializable.
    */
   public static int calcMemSize(Object o) {
     return calcMemSize(o, null, true);
@@ -163,10 +155,9 @@ public class CachedDeserializableFactory {
     return calcMemSize(o, os, addOverhead, true);
   }
 
-  /**
-   * If not calcSerializedSize then return -1 if we can't figure out the mem size.
-   */
-  public static int calcMemSize(Object o, ObjectSizer os, boolean addOverhead, boolean calcSerializedSize) {
+  /** If not calcSerializedSize then return -1 if we can't figure out the mem size. */
+  public static int calcMemSize(
+      Object o, ObjectSizer os, boolean addOverhead, boolean calcSerializedSize) {
     int result;
     if (o instanceof byte[]) {
       // does not need to be wrapped so overhead never added
@@ -177,12 +168,14 @@ public class CachedDeserializableFactory {
       result = 0;
       addOverhead = false;
     } else if (o instanceof String) {
-      result = (((String) o).length() * 2) + 4 // for the length of the char[]
-          + (Sizeable.PER_OBJECT_OVERHEAD * 2) // for String obj and Char[] obj
-          + 4 // for obj ref to char[] on String; note should be 8 on 64-bit vm
-          + 4 // for offset int field on String
-          + 4 // for count int field on String
-          + 4 // for hash int field on String
+      result =
+          (((String) o).length() * 2)
+              + 4 // for the length of the char[]
+              + (Sizeable.PER_OBJECT_OVERHEAD * 2) // for String obj and Char[] obj
+              + 4 // for obj ref to char[] on String; note should be 8 on 64-bit vm
+              + 4 // for offset int field on String
+              + 4 // for count int field on String
+              + 4 // for hash int field on String
       ;
     } else if (o instanceof byte[][]) {
       result = getArrayOfBytesSize((byte[][]) o, true);
@@ -202,7 +195,10 @@ public class CachedDeserializableFactory {
         DataSerializer.writeObject(o, dos);
         result += dos.size();
       } catch (IOException ex) {
-        RuntimeException ex2 = new IllegalArgumentException(LocalizedStrings.CachedDeserializableFactory_COULD_NOT_CALCULATE_SIZE_OF_OBJECT.toLocalizedString());
+        RuntimeException ex2 =
+            new IllegalArgumentException(
+                LocalizedStrings.CachedDeserializableFactory_COULD_NOT_CALCULATE_SIZE_OF_OBJECT
+                    .toLocalizedString());
         ex2.initCause(ex);
         throw ex2;
       }
@@ -219,9 +215,9 @@ public class CachedDeserializableFactory {
   }
 
   /**
-   * Return an estimate of the number of bytes this object will consume
-   * when serialized. This is the number of bytes that will be written
-   * on the wire including the 4 bytes needed to encode the length.
+   * Return an estimate of the number of bytes this object will consume when serialized. This is the
+   * number of bytes that will be written on the wire including the 4 bytes needed to encode the
+   * length.
    */
   public static int calcSerializedSize(Object o) {
     int result;
@@ -242,7 +238,10 @@ public class CachedDeserializableFactory {
         DataSerializer.writeObject(o, dos);
         result += dos.size();
       } catch (IOException ex) {
-        RuntimeException ex2 = new IllegalArgumentException(LocalizedStrings.CachedDeserializableFactory_COULD_NOT_CALCULATE_SIZE_OF_OBJECT.toLocalizedString());
+        RuntimeException ex2 =
+            new IllegalArgumentException(
+                LocalizedStrings.CachedDeserializableFactory_COULD_NOT_CALCULATE_SIZE_OF_OBJECT
+                    .toLocalizedString());
         ex2.initCause(ex);
         throw ex2;
       }
@@ -252,8 +251,8 @@ public class CachedDeserializableFactory {
   }
 
   /**
-   * Return how much memory this object will consume
-   * if it is in serialized form
+   * Return how much memory this object will consume if it is in serialized form
+   *
    * @since GemFire 6.1.2.9
    */
   public static int calcSerializedMemSize(Object o) {

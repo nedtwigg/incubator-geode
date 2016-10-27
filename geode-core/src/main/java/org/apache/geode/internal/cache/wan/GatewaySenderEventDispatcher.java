@@ -18,10 +18,7 @@ package org.apache.geode.internal.cache.wan;
 
 import java.util.List;
 
-/**
- * @since GemFire 7.0
- *
- */
+/** @since GemFire 7.0 */
 public interface GatewaySenderEventDispatcher {
 
   public boolean dispatchBatch(List events, boolean isRetry);

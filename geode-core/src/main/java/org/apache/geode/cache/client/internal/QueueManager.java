@@ -22,10 +22,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.internal.logging.InternalLogWriter;
 
-/**
- * @since GemFire 5.7
- * 
- */
+/** @since GemFire 5.7 */
 public interface QueueManager {
 
   public QueueConnections getAllConnectionsNoWait();
@@ -39,7 +36,7 @@ public interface QueueManager {
   public static interface QueueConnections {
     Connection getPrimary();
 
-    List/*<Connection>*/ getBackups();
+    List /*<Connection>*/ getBackups();
 
     QueueConnectionImpl getConnection(Endpoint endpoint);
   }

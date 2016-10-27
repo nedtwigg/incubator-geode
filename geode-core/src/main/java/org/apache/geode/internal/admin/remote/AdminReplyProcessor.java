@@ -20,18 +20,13 @@ import org.apache.geode.distributed.internal.*;
 import org.apache.geode.distributed.internal.membership.*;
 
 /**
- * A <code>ReplyProcessor</code> that is used by an {@link
- * AdminRequest} to wait for an {@link AdminResponse}.  If 
- * {@link org.apache.geode.distributed.internal.ReplyProcessor21#waitForReplies()} 
- * returns saying that we didn't time out and there
- * is no response, it means that the member for which we were awaiting
- * a response has left the distributed system.  This helps us fix bug
- * 31562.
+ * A <code>ReplyProcessor</code> that is used by an {@link AdminRequest} to wait for an {@link
+ * AdminResponse}. If {@link
+ * org.apache.geode.distributed.internal.ReplyProcessor21#waitForReplies()} returns saying that we
+ * didn't time out and there is no response, it means that the member for which we were awaiting a
+ * response has left the distributed system. This helps us fix bug 31562.
  *
- * <P>
- *
- * An <code>AdminReplyProcessor</code> can be {@linkplain #cancel
- * cancelled}.  
+ * <p>An <code>AdminReplyProcessor</code> can be {@linkplain #cancel cancelled}.
  *
  * @since GemFire 4.0
  */
@@ -40,8 +35,10 @@ class AdminReplyProcessor extends ReplyProcessor21 {
   /** The response to the <code>AdminRequest</code>. */
   private volatile AdminResponse response;
 
-  /** The thread that is waiting for replies.  We need this thread so
-   * that we can interrupt it when this processor is cancelled. */
+  /**
+   * The thread that is waiting for replies. We need this thread so that we can interrupt it when
+   * this processor is cancelled.
+   */
   private volatile Thread thread;
 
   /** Has this reply processor been cancelled? */
@@ -53,9 +50,8 @@ class AdminReplyProcessor extends ReplyProcessor21 {
   //////////////////////  Constructors  //////////////////////
 
   /**
-   * Creates a new <code>AdminReplyProcessor</code> that waits for a
-   * reply from the given member of the distributed system.  Note that
-   * <code>AdminRequest</code>s are only sent to one member of the
+   * Creates a new <code>AdminReplyProcessor</code> that waits for a reply from the given member of
+   * the distributed system. Note that <code>AdminRequest</code>s are only sent to one member of the
    * distributed system.
    */
   AdminReplyProcessor(InternalDistributedSystem system, InternalDistributedMember member) {
@@ -66,9 +62,7 @@ class AdminReplyProcessor extends ReplyProcessor21 {
 
   //////////////////////  Instance Methods  //////////////////////
 
-  /**
-   * Keep track of the <code>AdminResponse</code> we received.
-   */
+  /** Keep track of the <code>AdminResponse</code> we received. */
   @Override
   public void process(DistributionMessage message) {
     try {
@@ -80,8 +74,8 @@ class AdminReplyProcessor extends ReplyProcessor21 {
   }
 
   /**
-   * Since we can't override <code>waitForReplies</code>, we have to
-   * get the thread that is waiting in <code>preWait</code>.
+   * Since we can't override <code>waitForReplies</code>, we have to get the thread that is waiting
+   * in <code>preWait</code>.
    */
   @Override
   protected void preWait() {
@@ -90,8 +84,8 @@ class AdminReplyProcessor extends ReplyProcessor21 {
   }
 
   /**
-   * "Cancels" this reply processor by instructing the thread that is
-   * waiting for replies that it shouldn't wait any more.
+   * "Cancels" this reply processor by instructing the thread that is waiting for replies that it
+   * shouldn't wait any more.
    */
   public void cancel() {
     this.isCancelled = true;
@@ -101,19 +95,16 @@ class AdminReplyProcessor extends ReplyProcessor21 {
   }
 
   /**
-   * If we are interrupted after we are cancelled, return
-   * <code>true</code> indicating that there is a "response".  That
-   * way, we won't complain about timing out.  However, the response
-   * is still <code>null</code>.
+   * If we are interrupted after we are cancelled, return <code>true</code> indicating that there is
+   * a "response". That way, we won't complain about timing out. However, the response is still
+   * <code>null</code>.
    *
-   * <P>
-   *
-   * Otherwise, re-throw the <code>InterruptedException</code>.
+   * <p>Otherwise, re-throw the <code>InterruptedException</code>.
    */
-  protected boolean handleInterruption(InterruptedException ie, long msecsRemaining) throws InterruptedException, ReplyException {
+  protected boolean handleInterruption(InterruptedException ie, long msecsRemaining)
+      throws InterruptedException, ReplyException {
 
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
     if (this.isCancelled) {
       return true;
 
@@ -123,23 +114,17 @@ class AdminReplyProcessor extends ReplyProcessor21 {
   }
 
   /**
-   * Returns the response that this processor has been waiting for.
-   * If this method returns <code>null</code> and
-   * <code>waitForReplies</code> return <code>true</code>, it means
-   * that the request was cancelled.  If this method returns
-   * <code>null</code> and <code>waitForReplies</code> return
-   * <code>false</code>, it means that <code>waitForReplies</code>
-   * timed out.
+   * Returns the response that this processor has been waiting for. If this method returns <code>
+   * null</code> and <code>waitForReplies</code> return <code>true</code>, it means that the request
+   * was cancelled. If this method returns <code>null</code> and <code>waitForReplies</code> return
+   * <code>false</code>, it means that <code>waitForReplies</code> timed out.
    */
   public AdminResponse getResponse() {
     return this.response;
   }
 
-  /**
-   * Returns the member who we are waiting to send us a response.
-   */
+  /** Returns the member who we are waiting to send us a response. */
   public InternalDistributedMember getResponder() {
     return this.responder;
   }
-
 }

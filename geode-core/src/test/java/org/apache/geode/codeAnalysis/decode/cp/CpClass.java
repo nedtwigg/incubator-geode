@@ -29,12 +29,11 @@ public class CpClass extends Cp {
   }
 
   /**
-   * find and form the class name - remembering that '[' chars may come before
-   * the class name to denote arrays of the given class.  Max of 255 array specs
+   * find and form the class name - remembering that '[' chars may come before the class name to
+   * denote arrays of the given class. Max of 255 array specs
    */
   public String className(CompiledClass info) {
-    if (name == null)
-      name = decodeNameRef(info);
+    if (name == null) name = decodeNameRef(info);
     return name;
   }
 

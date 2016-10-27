@@ -41,14 +41,14 @@ import static org.apache.geode.distributed.ConfigurationProperties.LOCATORS;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class ConnectionPoolImplJUnitTest {
 
-  private static final String expectedRedundantErrorMsg = "Could not find any server to create redundant client queue on.";
-  private static final String expectedPrimaryErrorMsg = "Could not find any server to create primary client queue on.";
+  private static final String expectedRedundantErrorMsg =
+      "Could not find any server to create redundant client queue on.";
+  private static final String expectedPrimaryErrorMsg =
+      "Could not find any server to create primary client queue on.";
 
   private Cache cache;
   private int port;
@@ -71,17 +71,20 @@ public class ConnectionPoolImplJUnitTest {
   }
 
   private void setQueueError() {
-    final String addExpectedPEM = "<ExpectedException action=add>" + expectedPrimaryErrorMsg + "</ExpectedException>";
-    final String addExpectedREM = "<ExpectedException action=add>" + expectedRedundantErrorMsg + "</ExpectedException>";
+    final String addExpectedPEM =
+        "<ExpectedException action=add>" + expectedPrimaryErrorMsg + "</ExpectedException>";
+    final String addExpectedREM =
+        "<ExpectedException action=add>" + expectedRedundantErrorMsg + "</ExpectedException>";
 
     cache.getLogger().info(addExpectedPEM);
     cache.getLogger().info(addExpectedREM);
-
   }
 
   private void unsetQueueError() {
-    final String removeExpectedPEM = "<ExpectedException action=remove>" + expectedPrimaryErrorMsg + "</ExpectedException>";
-    final String removeExpectedREM = "<ExpectedException action=remove>" + expectedRedundantErrorMsg + "</ExpectedException>";
+    final String removeExpectedPEM =
+        "<ExpectedException action=remove>" + expectedPrimaryErrorMsg + "</ExpectedException>";
+    final String removeExpectedREM =
+        "<ExpectedException action=remove>" + expectedRedundantErrorMsg + "</ExpectedException>";
 
     cache.getLogger().info(removeExpectedPEM);
     cache.getLogger().info(removeExpectedREM);
@@ -107,7 +110,9 @@ public class ConnectionPoolImplJUnitTest {
     assertEquals(PoolFactory.DEFAULT_THREAD_LOCAL_CONNECTIONS, pool.getThreadLocalConnections());
     assertEquals(PoolFactory.DEFAULT_SUBSCRIPTION_ENABLED, pool.getSubscriptionEnabled());
     assertEquals(PoolFactory.DEFAULT_SUBSCRIPTION_REDUNDANCY, pool.getSubscriptionRedundancy());
-    assertEquals(PoolFactory.DEFAULT_SUBSCRIPTION_MESSAGE_TRACKING_TIMEOUT, pool.getSubscriptionMessageTrackingTimeout());
+    assertEquals(
+        PoolFactory.DEFAULT_SUBSCRIPTION_MESSAGE_TRACKING_TIMEOUT,
+        pool.getSubscriptionMessageTrackingTimeout());
     assertEquals(PoolFactory.DEFAULT_SUBSCRIPTION_ACK_INTERVAL, pool.getSubscriptionAckInterval());
     assertEquals(PoolFactory.DEFAULT_SERVER_GROUP, pool.getServerGroup());
     // check non default
@@ -119,7 +124,6 @@ public class ConnectionPoolImplJUnitTest {
       assertEquals(port, addr.getPort());
       assertEquals("localhost", addr.getHostName());
     }
-
   }
 
   @Test
@@ -177,41 +181,44 @@ public class ConnectionPoolImplJUnitTest {
     ServerLocation location1 = new ServerLocation("localhost", port1);
     ServerLocation location2 = new ServerLocation("localhost", port2);
 
-    Op testOp = new Op() {
-      int attempts = 0;
+    Op testOp =
+        new Op() {
+          int attempts = 0;
 
-      public Object attempt(Connection cnx) throws Exception {
-        if (attempts == 0) {
-          attempts++;
-          throw new SocketTimeoutException();
-        } else {
-          return cnx.getServer();
-        }
+          public Object attempt(Connection cnx) throws Exception {
+            if (attempts == 0) {
+              attempts++;
+              throw new SocketTimeoutException();
+            } else {
+              return cnx.getServer();
+            }
+          }
 
-      }
-
-      @Override
-      public boolean useThreadLocalConnection() {
-        return true;
-      }
-    };
+          @Override
+          public boolean useThreadLocalConnection() {
+            return true;
+          }
+        };
 
     //TODO - set retry attempts, and throw in some assertions
     //about how many times we retry
 
     ServerLocation usedServer = (ServerLocation) pool.execute(testOp);
-    assertTrue("expected " + location1 + " or " + location2 + ", got " + usedServer, location1.equals(usedServer) || location2.equals(usedServer));
+    assertTrue(
+        "expected " + location1 + " or " + location2 + ", got " + usedServer,
+        location1.equals(usedServer) || location2.equals(usedServer));
 
-    testOp = new Op() {
-      public Object attempt(Connection cnx) throws Exception {
-        throw new SocketTimeoutException();
-      }
+    testOp =
+        new Op() {
+          public Object attempt(Connection cnx) throws Exception {
+            throw new SocketTimeoutException();
+          }
 
-      @Override
-      public boolean useThreadLocalConnection() {
-        return true;
-      }
-    };
+          @Override
+          public boolean useThreadLocalConnection() {
+            return true;
+          }
+        };
 
     try {
       usedServer = (ServerLocation) pool.execute(testOp);
@@ -237,19 +244,19 @@ public class ConnectionPoolImplJUnitTest {
 
     ServerLocation location1 = new ServerLocation("localhost", port1);
 
-    Op testOp = new Op() {
-      public Object attempt(Connection cnx) throws Exception {
-        return cnx.getServer();
-      }
+    Op testOp =
+        new Op() {
+          public Object attempt(Connection cnx) throws Exception {
+            return cnx.getServer();
+          }
 
-      @Override
-      public boolean useThreadLocalConnection() {
-        return true;
-      }
-    };
+          @Override
+          public boolean useThreadLocalConnection() {
+            return true;
+          }
+        };
 
     assertEquals(location1, pool.executeOnPrimary(testOp));
     assertEquals(location1, pool.executeOnQueuesAndReturnPrimaryResult(testOp));
   }
-
 }

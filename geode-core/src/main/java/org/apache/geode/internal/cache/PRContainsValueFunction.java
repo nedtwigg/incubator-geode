@@ -24,9 +24,7 @@ import org.apache.geode.cache.execute.FunctionContext;
 import org.apache.geode.cache.execute.RegionFunctionContext;
 import org.apache.geode.internal.InternalEntity;
 
-/**
- *
- */
+/** */
 public class PRContainsValueFunction extends FunctionAdapter implements InternalEntity {
 
   @Override

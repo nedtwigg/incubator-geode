@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -83,7 +83,7 @@ public class PartitionedRepositoryManagerJUnitTest {
     userDataStore = Mockito.mock(PartitionedRegionDataStore.class);
     when(userRegion.getDataStore()).thenReturn(userDataStore);
     when(cache.getRegion("/testRegion")).thenReturn(userRegion);
-    serializer = new HeterogeneousLuceneSerializer(new String[] { "a", "b" });
+    serializer = new HeterogeneousLuceneSerializer(new String[] {"a", "b"});
 
     createIndexAndRepoManager();
   }
@@ -100,7 +100,8 @@ public class PartitionedRepositoryManagerJUnitTest {
     indexForPR = Mockito.mock(LuceneIndexForPartitionedRegion.class);
     when(((LuceneIndexForPartitionedRegion) indexForPR).getFileRegion()).thenReturn(fileRegion);
     when(((LuceneIndexForPartitionedRegion) indexForPR).getChunkRegion()).thenReturn(chunkRegion);
-    when(((LuceneIndexForPartitionedRegion) indexForPR).getFileSystemStats()).thenReturn(fileSystemStats);
+    when(((LuceneIndexForPartitionedRegion) indexForPR).getFileSystemStats())
+        .thenReturn(fileSystemStats);
     when(indexForPR.getIndexStats()).thenReturn(indexStats);
     when(indexForPR.getAnalyzer()).thenReturn(new StandardAnalyzer());
     when(indexForPR.getCache()).thenReturn(cache);
@@ -113,9 +114,12 @@ public class PartitionedRepositoryManagerJUnitTest {
     setUpMockBucket(0);
     setUpMockBucket(1);
 
-    IndexRepositoryImpl repo0 = (IndexRepositoryImpl) repoManager.getRepository(userRegion, 0, null);
-    IndexRepositoryImpl repo1 = (IndexRepositoryImpl) repoManager.getRepository(userRegion, 1, null);
-    IndexRepositoryImpl repo113 = (IndexRepositoryImpl) repoManager.getRepository(userRegion, 113, null);
+    IndexRepositoryImpl repo0 =
+        (IndexRepositoryImpl) repoManager.getRepository(userRegion, 0, null);
+    IndexRepositoryImpl repo1 =
+        (IndexRepositoryImpl) repoManager.getRepository(userRegion, 1, null);
+    IndexRepositoryImpl repo113 =
+        (IndexRepositoryImpl) repoManager.getRepository(userRegion, 113, null);
 
     assertNotNull(repo0);
     assertNotNull(repo1);
@@ -127,14 +131,14 @@ public class PartitionedRepositoryManagerJUnitTest {
     checkRepository(repo1, 1);
   }
 
-  /**
-   * Test what happens when a bucket is destroyed.
-   */
+  /** Test what happens when a bucket is destroyed. */
   @Test
-  public void destroyBucketShouldCreateNewIndexRepository() throws BucketNotFoundException, IOException {
+  public void destroyBucketShouldCreateNewIndexRepository()
+      throws BucketNotFoundException, IOException {
     setUpMockBucket(0);
 
-    IndexRepositoryImpl repo0 = (IndexRepositoryImpl) repoManager.getRepository(userRegion, 0, null);
+    IndexRepositoryImpl repo0 =
+        (IndexRepositoryImpl) repoManager.getRepository(userRegion, 0, null);
 
     assertNotNull(repo0);
     checkRepository(repo0, 0);
@@ -147,16 +151,15 @@ public class PartitionedRepositoryManagerJUnitTest {
     when(dataBucket0.isDestroyed()).thenReturn(true);
     setUpMockBucket(0);
 
-    IndexRepositoryImpl newRepo0 = (IndexRepositoryImpl) repoManager.getRepository(userRegion, 0, null);
+    IndexRepositoryImpl newRepo0 =
+        (IndexRepositoryImpl) repoManager.getRepository(userRegion, 0, null);
     assertNotEquals(repo0, newRepo0);
     checkRepository(newRepo0, 0);
     assertTrue(repo0.isClosed());
     assertFalse(repo0.getWriter().isOpen());
   }
 
-  /**
-   * Test that we get the expected exception when a user bucket is missing
-   */
+  /** Test that we get the expected exception when a user bucket is missing */
   @Test(expected = BucketNotFoundException.class)
   public void getMissingBucketByKey() throws BucketNotFoundException {
     repoManager.getRepository(userRegion, 0, null);
@@ -168,13 +171,15 @@ public class PartitionedRepositoryManagerJUnitTest {
 
     when(fileDataStore.getLocalBucketById(eq(0))).thenReturn(null);
 
-    when(fileRegion.getOrCreateNodeForBucketWrite(eq(0), (RetryTimeKeeper) any())).then(new Answer() {
-      @Override
-      public Object answer(InvocationOnMock invocation) throws Throwable {
-        when(fileDataStore.getLocalBucketById(eq(0))).thenReturn(fileBuckets.get(0));
-        return null;
-      }
-    });
+    when(fileRegion.getOrCreateNodeForBucketWrite(eq(0), (RetryTimeKeeper) any()))
+        .then(
+            new Answer() {
+              @Override
+              public Object answer(InvocationOnMock invocation) throws Throwable {
+                when(fileDataStore.getLocalBucketById(eq(0))).thenReturn(fileBuckets.get(0));
+                return null;
+              }
+            });
 
     assertNotNull(repoManager.getRepository(userRegion, 0, null));
   }
@@ -202,9 +207,7 @@ public class PartitionedRepositoryManagerJUnitTest {
     checkRepository(repo1, 1);
   }
 
-  /**
-   * Test that we get the expected exception when a user bucket is missing
-   */
+  /** Test that we get the expected exception when a user bucket is missing */
   @Test(expected = BucketNotFoundException.class)
   public void getMissingBucketByRegion() throws BucketNotFoundException {
     setUpMockBucket(0);

@@ -114,7 +114,7 @@ public class PutAllDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: re
 
   @Test
   public void testputAllRemoteVM() {
-    // Test PASS. 
+    // Test PASS.
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
@@ -127,16 +127,16 @@ public class PutAllDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: re
     vm0.invoke(() -> PutAllDAckDUnitTest.putAllMethod());
     flag = vm1.invoke(() -> PutAllDAckDUnitTest.getFlagVM1());
 
-    vm1.invoke(new CacheSerializableRunnable("temp1") {
-      public void run2() throws CacheException {
-        if (flag) {
+    vm1.invoke(
+        new CacheSerializableRunnable("temp1") {
+          public void run2() throws CacheException {
+            if (flag) {
 
-          assertEquals(region.size(), beforeCreateputAllcounter);
-        }
-      }
-    });
-
-  }//end of test case1
+              assertEquals(region.size(), beforeCreateputAllcounter);
+            }
+          }
+        });
+  } //end of test case1
 
   public static Object putMethod(Object ob) {
     Object obj = null;
@@ -149,7 +149,7 @@ public class PutAllDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: re
       Assert.fail("Failed while region.put", ex);
     }
     return obj;
-  }//end of putMethod
+  } //end of putMethod
 
   public static void putAllMethod() {
     Map m = new HashMap();
@@ -166,7 +166,7 @@ public class PutAllDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: re
     } catch (Exception ex) {
       Assert.fail("Failed while region.putAll", ex);
     }
-  }//end of putAllMethod
+  } //end of putAllMethod
 
   public static Object getMethod(Object ob) {
     Object obj = null;
@@ -223,5 +223,4 @@ public class PutAllDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: re
   public static boolean getFlagVM1() {
     return beforeCreate;
   }
-
-}// end of class
+} // end of class

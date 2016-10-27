@@ -21,14 +21,10 @@ import java.util.Properties;
 import org.apache.geode.cache.Cache;
 
 /**
- * ServerLauncherCacheProvider is an extension point for overriding
- * the behavior of a server started with {@link ServerLauncher} or
- * the gfsh start server command. 
- * 
- * 
+ * ServerLauncherCacheProvider is an extension point for overriding the behavior of a server started
+ * with {@link ServerLauncher} or the gfsh start server command.
  */
 public interface ServerLauncherCacheProvider {
 
   Cache createCache(Properties gemfireProperties, ServerLauncher serverLauncher);
-
 }

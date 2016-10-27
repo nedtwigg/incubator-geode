@@ -23,27 +23,25 @@ import java.util.*;
 
 /**
  * Implementation of {@link ReliableMessageQueueFactory}
- * 
+ *
  * @since GemFire 5.0
  */
 public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFactory {
   private boolean closed;
 
-  /**
-   * Create a factory given its persistence attributes.
-   */
+  /** Create a factory given its persistence attributes. */
   public ReliableMessageQueueFactoryImpl() {
     this.closed = false;
   }
 
-  /**
-   * Contains all the unclosed queues that have been created by this factory.
-   */
+  /** Contains all the unclosed queues that have been created by this factory. */
   private final ArrayList queues = new ArrayList();
 
   public ReliableMessageQueue create(DistributedRegion region) {
     if (this.closed) {
-      throw new IllegalStateException(LocalizedStrings.ReliableMessageQueueFactoryImpl_RELIABLE_MESSAGE_QUEUE_IS_CLOSED.toLocalizedString());
+      throw new IllegalStateException(
+          LocalizedStrings.ReliableMessageQueueFactoryImpl_RELIABLE_MESSAGE_QUEUE_IS_CLOSED
+              .toLocalizedString());
     }
     synchronized (this.queues) {
       Queue q = new Queue(region);
@@ -57,21 +55,20 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
     if (!force) {
       synchronized (this.queues) {
         if (!this.queues.isEmpty()) {
-          throw new IllegalStateException(LocalizedStrings.ReliableMessageQueueFactoryImpl_REGIONS_WITH_MESSAGE_QUEUING_ALREADY_EXIST.toLocalizedString());
+          throw new IllegalStateException(
+              LocalizedStrings
+                  .ReliableMessageQueueFactoryImpl_REGIONS_WITH_MESSAGE_QUEUING_ALREADY_EXIST
+                  .toLocalizedString());
         }
       }
     }
     this.closed = true;
   }
 
-  /**
-   * Maps DistributedRegion keys to QueuedRegionData values
-   */
+  /** Maps DistributedRegion keys to QueuedRegionData values */
   private final IdentityHashMap regionMap = new IdentityHashMap(128);
 
-  /**
-   * Adds data in the specified region to be sent to the specified roles
-   */
+  /** Adds data in the specified region to be sent to the specified roles */
   protected void add(DistributedRegion r, ReliableDistributionData data, Set roles) {
     QueuedRegionData qrd = null;
     synchronized (this.regionMap) {
@@ -97,22 +94,21 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
     return qrd.roleReady(r, role);
   }
 
-  /**
-   * Initializes data queuing for the given region
-   */
+  /** Initializes data queuing for the given region */
   protected void init(DistributedRegion r) {
     QueuedRegionData qrd = new QueuedRegionData();
     synchronized (this.regionMap) {
       Object old = this.regionMap.put(r, qrd);
       if (old != null) {
-        throw new IllegalStateException(LocalizedStrings.ReliableMessageQueueFactoryImpl_UNEXPECTED_QUEUEDREGIONDATA_0_FOR_REGION_1.toLocalizedString(new Object[] { old, r }));
+        throw new IllegalStateException(
+            LocalizedStrings
+                .ReliableMessageQueueFactoryImpl_UNEXPECTED_QUEUEDREGIONDATA_0_FOR_REGION_1
+                .toLocalizedString(new Object[] {old, r}));
       }
     }
   }
 
-  /**
-   * Removes any data queued for the given region
-   */
+  /** Removes any data queued for the given region */
   protected void destroy(DistributedRegion r) {
     QueuedRegionData qrd = null;
     synchronized (this.regionMap) {
@@ -123,9 +119,7 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
     }
   }
 
-  /**
-   * Removes a previously created queue from this factory.
-   */
+  /** Removes a previously created queue from this factory. */
   protected void removeQueue(Queue q) {
     synchronized (this.queues) {
       this.queues.remove(q);
@@ -134,6 +128,7 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
 
   /**
    * Implements ReliableMessageQueue.
+   *
    * @since GemFire 5.0
    */
   public class Queue implements ReliableMessageQueue {
@@ -169,18 +164,12 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
     }
   }
 
-  /**
-   * Used to organize all the queued data for a region.
-   */
-  static protected class QueuedRegionData {
-    /**
-     * Maps Role keys to lists of ReliableDistributionData
-     */
+  /** Used to organize all the queued data for a region. */
+  protected static class QueuedRegionData {
+    /** Maps Role keys to lists of ReliableDistributionData */
     private final HashMap roleMap = new HashMap();
 
-    /**
-     * Adds data in the specified region to be sent to the specified roles
-     */
+    /** Adds data in the specified region to be sent to the specified roles */
     protected void add(DistributedRegion r, ReliableDistributionData data, Set roles) {
       synchronized (this) {
         Iterator it = roles.iterator();
@@ -232,9 +221,7 @@ public class ReliableMessageQueueFactoryImpl implements ReliableMessageQueueFact
       return true;
     }
 
-    /**
-     * Blows away all the data in this object.
-     */
+    /** Blows away all the data in this object. */
     public void destroy(DistributedRegion r) {
       // @todo darrel: nothing needs doing until we use disk
     }

@@ -43,15 +43,18 @@ public class TinyMemoryBlockJUnitTest {
   private OffHeapMemoryStats stats;
   private Slab[] slabs;
 
-  @Rule
-  public ExpectedException expectedException = ExpectedException.none();
+  @Rule public ExpectedException expectedException = ExpectedException.none();
 
-  @Rule
-  public JUnitSoftAssertions softly = new JUnitSoftAssertions();
+  @Rule public JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
   @Before
   public void setUp() throws Exception {
-    slabs = new Slab[] { new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE), new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE), new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE) };
+    slabs =
+        new Slab[] {
+          new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE),
+          new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE),
+          new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE)
+        };
     ooohml = mock(OutOfOffHeapMemoryListener.class);
     stats = mock(OffHeapMemoryStats.class);
     ma = (MemoryAllocatorImpl) MemoryAllocatorImpl.createForUnitTest(ooohml, stats, slabs);
@@ -76,7 +79,8 @@ public class TinyMemoryBlockJUnitTest {
 
     boolean isSerialized = true;
 
-    StoredObject createdObject = createChunk(valueInSerializedByteArray, isSerialized, isCompressed);
+    StoredObject createdObject =
+        createChunk(valueInSerializedByteArray, isSerialized, isCompressed);
     return createdObject;
   }
 
@@ -118,7 +122,10 @@ public class TinyMemoryBlockJUnitTest {
 
   @Test
   public void getBlockSizeReturnsReturnsSizeOfUnderlyingChunk() {
-    MemoryBlock mb = new TestableFreeListManager.TinyMemoryBlock(new OffHeapStoredObject(slabs[0].getMemoryAddress(), slabs[0].getSize()).getAddress(), 0);
+    MemoryBlock mb =
+        new TestableFreeListManager.TinyMemoryBlock(
+            new OffHeapStoredObject(slabs[0].getMemoryAddress(), slabs[0].getSize()).getAddress(),
+            0);
     softly.assertThat(mb.getBlockSize()).isEqualTo(slabs[0].getSize());
   }
 
@@ -126,7 +133,10 @@ public class TinyMemoryBlockJUnitTest {
   public void getNextBlockThrowsUnsupportedOperationException() {
     expectedException.expect(UnsupportedOperationException.class);
 
-    MemoryBlock mb = new TestableFreeListManager.TinyMemoryBlock(new OffHeapStoredObject(slabs[0].getMemoryAddress(), slabs[0].getSize()).getAddress(), 0);
+    MemoryBlock mb =
+        new TestableFreeListManager.TinyMemoryBlock(
+            new OffHeapStoredObject(slabs[0].getMemoryAddress(), slabs[0].getSize()).getAddress(),
+            0);
     mb.getNextBlock();
     fail("getNextBlock failed to throw UnsupportedOperationException");
   }
@@ -135,23 +145,38 @@ public class TinyMemoryBlockJUnitTest {
   public void getSlabIdThrowsUnsupportedOperationException() {
     expectedException.expect(UnsupportedOperationException.class);
 
-    MemoryBlock mb = new TestableFreeListManager.TinyMemoryBlock(new OffHeapStoredObject(slabs[0].getMemoryAddress(), slabs[0].getSize()).getAddress(), 0);
+    MemoryBlock mb =
+        new TestableFreeListManager.TinyMemoryBlock(
+            new OffHeapStoredObject(slabs[0].getMemoryAddress(), slabs[0].getSize()).getAddress(),
+            0);
     mb.getSlabId();
     fail("getSlabId failed to throw UnsupportedOperationException");
   }
 
   @Test
   public void getFreeListIdReturnsIdBlockWasConstructedWith() {
-    MemoryBlock mb0 = new TestableFreeListManager.TinyMemoryBlock(new OffHeapStoredObject(slabs[0].getMemoryAddress(), slabs[0].getSize()).getAddress(), 0);
-    MemoryBlock mb1 = new TestableFreeListManager.TinyMemoryBlock(new OffHeapStoredObject(slabs[1].getMemoryAddress(), slabs[1].getSize()).getAddress(), 1);
+    MemoryBlock mb0 =
+        new TestableFreeListManager.TinyMemoryBlock(
+            new OffHeapStoredObject(slabs[0].getMemoryAddress(), slabs[0].getSize()).getAddress(),
+            0);
+    MemoryBlock mb1 =
+        new TestableFreeListManager.TinyMemoryBlock(
+            new OffHeapStoredObject(slabs[1].getMemoryAddress(), slabs[1].getSize()).getAddress(),
+            1);
     softly.assertThat(mb0.getFreeListId()).isEqualTo(0);
     softly.assertThat(mb1.getFreeListId()).isEqualTo(1);
   }
 
   @Test
   public void getRefCountReturnsZero() {
-    MemoryBlock mb0 = new TestableFreeListManager.TinyMemoryBlock(new OffHeapStoredObject(slabs[0].getMemoryAddress(), slabs[0].getSize()).getAddress(), 0);
-    MemoryBlock mb1 = new TestableFreeListManager.TinyMemoryBlock(new OffHeapStoredObject(slabs[1].getMemoryAddress(), slabs[1].getSize()).getAddress(), 1);
+    MemoryBlock mb0 =
+        new TestableFreeListManager.TinyMemoryBlock(
+            new OffHeapStoredObject(slabs[0].getMemoryAddress(), slabs[0].getSize()).getAddress(),
+            0);
+    MemoryBlock mb1 =
+        new TestableFreeListManager.TinyMemoryBlock(
+            new OffHeapStoredObject(slabs[1].getMemoryAddress(), slabs[1].getSize()).getAddress(),
+            1);
     softly.assertThat(mb0.getRefCount()).isEqualTo(0);
     softly.assertThat(mb1.getRefCount()).isEqualTo(0);
   }
@@ -162,7 +187,8 @@ public class TinyMemoryBlockJUnitTest {
     boolean compressed = false;
 
     StoredObject storedObject0 = createValueAsSerializedStoredObject(obj, compressed);
-    MemoryBlock mb = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject0).getAddress(), 0);
+    MemoryBlock mb =
+        new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject0).getAddress(), 0);
     softly.assertThat(mb.getDataType()).isEqualTo("N/A");
   }
 
@@ -172,7 +198,8 @@ public class TinyMemoryBlockJUnitTest {
     boolean compressed = false;
 
     StoredObject storedObject0 = createValueAsSerializedStoredObject(obj, compressed);
-    MemoryBlock mb = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject0).getAddress(), 0);
+    MemoryBlock mb =
+        new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject0).getAddress(), 0);
     softly.assertThat(mb.getDataValue()).isNull();
   }
 
@@ -183,8 +210,10 @@ public class TinyMemoryBlockJUnitTest {
 
     StoredObject storedObject0 = createValueAsSerializedStoredObject(obj, compressed);
     StoredObject storedObject1 = createValueAsUnserializedStoredObject(obj, compressed);
-    MemoryBlock mb0 = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject0).getAddress(), 0);
-    MemoryBlock mb1 = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject1).getAddress(), 0);
+    MemoryBlock mb0 =
+        new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject0).getAddress(), 0);
+    MemoryBlock mb1 =
+        new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject1).getAddress(), 0);
     softly.assertThat(mb0.isSerialized()).isFalse();
     softly.assertThat(mb1.isSerialized()).isFalse();
   }
@@ -195,8 +224,10 @@ public class TinyMemoryBlockJUnitTest {
     boolean compressed = false;
     StoredObject storedObject0 = createValueAsUnserializedStoredObject(obj, compressed);
     StoredObject storedObject1 = createValueAsUnserializedStoredObject(obj, compressed = true);
-    MemoryBlock mb0 = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject0).getAddress(), 0);
-    MemoryBlock mb1 = new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject1).getAddress(), 0);
+    MemoryBlock mb0 =
+        new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject0).getAddress(), 0);
+    MemoryBlock mb1 =
+        new TestableFreeListManager.TinyMemoryBlock(((MemoryBlock) storedObject1).getAddress(), 0);
     softly.assertThat(mb0.isCompressed()).isFalse();
     softly.assertThat(mb1.isCompressed()).isFalse();
   }
@@ -219,7 +250,10 @@ public class TinyMemoryBlockJUnitTest {
   @Test
   public void hashCodeReturnsHashOfUnderlyingMemory() {
     MemoryBlock mb = new TestableFreeListManager.TinyMemoryBlock(slabs[0].getMemoryAddress(), 0);
-    softly.assertThat(mb.hashCode()).isEqualTo(new OffHeapStoredObject(slabs[0].getMemoryAddress(), slabs[0].getSize()).hashCode());
+    softly
+        .assertThat(mb.hashCode())
+        .isEqualTo(
+            new OffHeapStoredObject(slabs[0].getMemoryAddress(), slabs[0].getSize()).hashCode());
   }
 
   private static class TestableFreeListManager extends FreeListManager {
@@ -227,5 +261,4 @@ public class TinyMemoryBlockJUnitTest {
       super(ma, slabs);
     }
   }
-
 }

@@ -20,10 +20,7 @@ package org.apache.geode.internal;
 import org.apache.geode.GemFireCheckedException;
 
 /**
- * Thrown if statistics are requested when statistics are disabled on the
- * region.
- *
- *
+ * Thrown if statistics are requested when statistics are disabled on the region.
  *
  * @see org.apache.geode.cache.AttributesFactory#setStatisticsEnabled(boolean)
  * @see org.apache.geode.cache.RegionAttributes#getStatisticsEnabled
@@ -34,14 +31,13 @@ import org.apache.geode.GemFireCheckedException;
 public class InternalStatisticsDisabledException extends GemFireCheckedException {
   private static final long serialVersionUID = 4146181546364258311L;
 
-  /**
-   * Creates a new instance of <code>StatisticsDisabledException</code> without detail message.
-   */
-  public InternalStatisticsDisabledException() {
-  }
+  /** Creates a new instance of <code>StatisticsDisabledException</code> without detail message. */
+  public InternalStatisticsDisabledException() {}
 
   /**
-   * Constructs an instance of <code>StatisticsDisabledException</code> with the specified detail message.
+   * Constructs an instance of <code>StatisticsDisabledException</code> with the specified detail
+   * message.
+   *
    * @param msg the detail message
    */
   public InternalStatisticsDisabledException(String msg) {
@@ -49,8 +45,9 @@ public class InternalStatisticsDisabledException extends GemFireCheckedException
   }
 
   /**
-   * Constructs an instance of <code>StatisticsDisabledException</code> with the specified detail message
-   * and cause.
+   * Constructs an instance of <code>StatisticsDisabledException</code> with the specified detail
+   * message and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */
@@ -60,6 +57,7 @@ public class InternalStatisticsDisabledException extends GemFireCheckedException
 
   /**
    * Constructs an instance of <code>StatisticsDisabledException</code> with the specified cause.
+   *
    * @param cause the causal Throwable
    */
   public InternalStatisticsDisabledException(Throwable cause) {

@@ -17,10 +17,8 @@
 package org.apache.geode.internal.cache.partitioned.rebalance;
 
 /**
- * A base class for rebalance directors that provides some
- * default implementations of methods on rebalance director.
- * 
- *
+ * A base class for rebalance directors that provides some default implementations of methods on
+ * rebalance director.
  */
 public abstract class RebalanceDirectorAdapter implements RebalanceDirector {
 
@@ -32,6 +30,5 @@ public abstract class RebalanceDirectorAdapter implements RebalanceDirector {
   @Override
   public void initialize(PartitionedRegionLoadModel model) {
     membershipChanged(model);
-
   }
 }

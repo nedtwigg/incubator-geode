@@ -38,10 +38,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 public class SimpleExtensionPointJUnitTest {
 
-  /**
-   * Test method for
-   * {@link SimpleExtensionPoint#SimpleExtensionPoint(Extensible, Object)} .
-   */
+  /** Test method for {@link SimpleExtensionPoint#SimpleExtensionPoint(Extensible, Object)} . */
   @Test
   public void testSimpleExtensionPoint() {
     final MockImpl m = new MockImpl();
@@ -50,9 +47,7 @@ public class SimpleExtensionPointJUnitTest {
     assertNotNull(m.extensionPoint.iterable);
   }
 
-  /**
-   * Test method for {@link SimpleExtensionPoint#getExtensions()} .
-   */
+  /** Test method for {@link SimpleExtensionPoint#getExtensions()} . */
   @Test
   public void testGetExtensions() {
     final MockImpl m = new MockImpl();
@@ -74,9 +69,7 @@ public class SimpleExtensionPointJUnitTest {
     }
   }
 
-  /**
-   * Test method for {@link SimpleExtensionPoint#addExtension(Extension)} .
-   */
+  /** Test method for {@link SimpleExtensionPoint#addExtension(Extension)} . */
   @Test
   public void testAddExtension() {
     final MockImpl m = new MockImpl();
@@ -102,9 +95,7 @@ public class SimpleExtensionPointJUnitTest {
     }
   }
 
-  /**
-   * Test method for {@link SimpleExtensionPoint#removeExtension(Extension)} .
-   */
+  /** Test method for {@link SimpleExtensionPoint#removeExtension(Extension)} . */
   @Test
   public void testRemoveExtension() {
     final MockImpl m = new MockImpl();
@@ -132,7 +123,8 @@ public class SimpleExtensionPointJUnitTest {
     assertEquals(0, m.extensionPoint.extensions.size());
 
     // extensions should be empty
-    final Iterable<Extension<MockInterface>> extensionsRemoved = m.getExtensionPoint().getExtensions();
+    final Iterable<Extension<MockInterface>> extensionsRemoved =
+        m.getExtensionPoint().getExtensions();
     try {
       extensionsRemoved.iterator().next();
       fail("Expected NoSuchElementException");
@@ -141,9 +133,7 @@ public class SimpleExtensionPointJUnitTest {
     }
   }
 
-  /**
-   * Test method for {@link SimpleExtensionPoint#getTarget()} .
-   */
+  /** Test method for {@link SimpleExtensionPoint#getTarget()} . */
   @Test
   public void testGetTarget() {
     final MockImpl m = new MockImpl();
@@ -152,19 +142,18 @@ public class SimpleExtensionPointJUnitTest {
     assertSame(m, a);
   }
 
-  /**
-   * Test method for {@link SimpleExtensionPoint#fireCreate(Extensible)} .
-   */
+  /** Test method for {@link SimpleExtensionPoint#fireCreate(Extensible)} . */
   @Test
   public void testFireCreate() {
     final MockImpl m = new MockImpl();
     final AtomicInteger counter = new AtomicInteger(0);
-    final MockExtension extension = new MockExtension() {
-      @Override
-      public void onCreate(Extensible<MockInterface> source, Extensible<MockInterface> target) {
-        counter.incrementAndGet();
-      }
-    };
+    final MockExtension extension =
+        new MockExtension() {
+          @Override
+          public void onCreate(Extensible<MockInterface> source, Extensible<MockInterface> target) {
+            counter.incrementAndGet();
+          }
+        };
 
     counter.set(0);
     m.getExtensionPoint().addExtension(extension);
@@ -179,20 +168,19 @@ public class SimpleExtensionPointJUnitTest {
     assertEquals(0, counter.get());
   }
 
-  /**
-   * Test method for {@link SimpleExtensionPoint#beforeCreate(Cache)} .
-   */
+  /** Test method for {@link SimpleExtensionPoint#beforeCreate(Cache)} . */
   @Test
   public void testBeforeCreate() {
     final MockImpl m = new MockImpl();
     final Cache c = Fakes.cache();
     final AtomicInteger counter = new AtomicInteger(0);
-    final MockExtension extension = new MockExtension() {
-      @Override
-      public void beforeCreate(Extensible<MockInterface> source, Cache cache) {
-        counter.incrementAndGet();
-      }
-    };
+    final MockExtension extension =
+        new MockExtension() {
+          @Override
+          public void beforeCreate(Extensible<MockInterface> source, Cache cache) {
+            counter.incrementAndGet();
+          }
+        };
 
     counter.set(0);
     m.getExtensionPoint().addExtension(extension);
@@ -213,7 +201,8 @@ public class SimpleExtensionPointJUnitTest {
 
   private static class MockImpl implements MockInterface, Extensible<MockInterface> {
 
-    private SimpleExtensionPoint<MockInterface> extensionPoint = new SimpleExtensionPoint<SimpleExtensionPointJUnitTest.MockInterface>(this, this);
+    private SimpleExtensionPoint<MockInterface> extensionPoint =
+        new SimpleExtensionPoint<SimpleExtensionPointJUnitTest.MockInterface>(this, this);
 
     @Override
     public ExtensionPoint<MockInterface> getExtensionPoint() {
@@ -221,9 +210,7 @@ public class SimpleExtensionPointJUnitTest {
     }
 
     @Override
-    public void method1() {
-    }
-
+    public void method1() {}
   }
 
   private static class MockExtension implements Extension<MockInterface> {

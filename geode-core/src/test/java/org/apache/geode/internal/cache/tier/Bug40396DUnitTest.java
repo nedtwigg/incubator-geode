@@ -44,6 +44,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
  * Test delta propagation for faulty delta implementation
+ *
  * @since GemFire 6.1
  */
 @Category(DistributedTest.class)
@@ -93,20 +94,36 @@ public class Bug40396DUnitTest extends JUnit4DistributedTestCase {
     server.setNotifyBySubscription(true);
     server.start();
     return new Integer(server.getPort());
-
   }
 
   public static void addExceptions() throws Exception {
     if (cache != null && !cache.isClosed()) {
-      cache.getLogger().info("<ExpectedException action=add>" + "java.io.EOFException" + "</ExpectedException>");
-      cache.getLogger().info("<ExpectedException action=add>" + "java.lang.ArrayIndexOutOfBoundsException" + "</ExpectedException>");
+      cache
+          .getLogger()
+          .info("<ExpectedException action=add>" + "java.io.EOFException" + "</ExpectedException>");
+      cache
+          .getLogger()
+          .info(
+              "<ExpectedException action=add>"
+                  + "java.lang.ArrayIndexOutOfBoundsException"
+                  + "</ExpectedException>");
     }
   }
 
   public static void removeExceptions() {
     if (cache != null && !cache.isClosed()) {
-      cache.getLogger().info("<ExpectedException action=remove>" + "java.io.EOFException" + "</ExpectedException>");
-      cache.getLogger().info("<ExpectedException action=remove>" + "java.lang.ArrayIndexOutOfBoundsException" + "</ExpectedException>");
+      cache
+          .getLogger()
+          .info(
+              "<ExpectedException action=remove>"
+                  + "java.io.EOFException"
+                  + "</ExpectedException>");
+      cache
+          .getLogger()
+          .info(
+              "<ExpectedException action=remove>"
+                  + "java.lang.ArrayIndexOutOfBoundsException"
+                  + "</ExpectedException>");
     }
   }
 
@@ -133,14 +150,14 @@ public class Bug40396DUnitTest extends JUnit4DistributedTestCase {
         DeltaEOFException obj = new DeltaEOFException();
         for (int i = 0; i < PUT_COUNT; i++) {
           obj.setIntVal(i);
-          obj.setBigObj(new byte[] { (byte) (i + 3), (byte) (i + 3) });
+          obj.setBigObj(new byte[] {(byte) (i + 3), (byte) (i + 3)});
           reg.put("key", obj);
         }
       } else if (type.equals(ARRAY_INDEX_OUT_BOUND_EX)) {
         FaultyDelta obj = new FaultyDelta();
         for (int i = 0; i < PUT_COUNT; i++) {
           obj.setIntVal(i);
-          obj.setBigObj(new byte[] { (byte) (i + 3), (byte) (i + 3) });
+          obj.setBigObj(new byte[] {(byte) (i + 3), (byte) (i + 3)});
           reg.put("key", obj);
         }
       }
@@ -152,15 +169,16 @@ public class Bug40396DUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * This test does the following 1)send faulty implementation (Reading more in
-   * fromDelta then what sent by toDelta) of delta raises EOF exception<br>
+   * This test does the following 1)send faulty implementation (Reading more in fromDelta then what
+   * sent by toDelta) of delta raises EOF exception<br>
    */
   @Test
   public void testForFaultyDeltaImplementationForEOFEX() {
     boolean matched = false;
     ((Integer) server.invoke(() -> Bug40396DUnitTest.createServerCache())).intValue();
     ((Integer) server2.invoke(() -> Bug40396DUnitTest.createServerCache())).intValue();
-    Exception xp = (Exception) server.invoke(() -> Bug40396DUnitTest.putDelta(REGION_NAME, END_OF_FILE_EX));
+    Exception xp =
+        (Exception) server.invoke(() -> Bug40396DUnitTest.putDelta(REGION_NAME, END_OF_FILE_EX));
     StackTraceElement[] st = xp.getCause().getStackTrace();
     matched = getMatched(st);
 
@@ -170,25 +188,24 @@ public class Bug40396DUnitTest extends JUnit4DistributedTestCase {
   private boolean getMatched(StackTraceElement[] ste) {
     boolean mched = false;
     for (int i = 0; i < ste.length; i++) {
-      if (mched)
-        break;
-      if (ste[i].toString().indexOf("fromDelta") != -1)
-        mched = true;
+      if (mched) break;
+      if (ste[i].toString().indexOf("fromDelta") != -1) mched = true;
     }
     return mched;
   }
 
   /**
-   * This test does the following 1)send faulty implementation when reading
-   * incorrect order from toDelta, raises delta raises array index out of bound
-   * exception<br>
+   * This test does the following 1)send faulty implementation when reading incorrect order from
+   * toDelta, raises delta raises array index out of bound exception<br>
    */
   @Test
   public void testForFaultyDeltaImplementationForAIOBEX() {
     boolean matched = false;
     ((Integer) server.invoke(() -> Bug40396DUnitTest.createServerCache())).intValue();
     ((Integer) server2.invoke(() -> Bug40396DUnitTest.createServerCache())).intValue();
-    Exception xp = (Exception) server.invoke(() -> Bug40396DUnitTest.putDelta(REGION_NAME, ARRAY_INDEX_OUT_BOUND_EX));
+    Exception xp =
+        (Exception)
+            server.invoke(() -> Bug40396DUnitTest.putDelta(REGION_NAME, ARRAY_INDEX_OUT_BOUND_EX));
 
     StackTraceElement[] st = xp.getStackTrace();
     matched = getMatched(st);
@@ -203,10 +220,11 @@ public class Bug40396DUnitTest extends JUnit4DistributedTestCase {
     server.invoke(() -> Bug40396DUnitTest.closeCache());
     server2.invoke(() -> Bug40396DUnitTest.closeCache());
     cache = null;
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        cache = null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            cache = null;
+          }
+        });
   }
 }

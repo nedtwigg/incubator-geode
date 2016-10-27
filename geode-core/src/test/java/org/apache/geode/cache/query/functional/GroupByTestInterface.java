@@ -55,5 +55,4 @@ public interface GroupByTestInterface {
   public void testDistinctCountWithoutGroupBy() throws Exception;
 
   public void testLimitWithGroupBy() throws Exception;
-
 }

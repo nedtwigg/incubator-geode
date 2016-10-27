@@ -26,20 +26,18 @@ import java.io.*;
 import java.util.*;
 import org.apache.geode.distributed.internal.membership.*;
 
-/**
- * Responds to {@link SubRegionResponse}.
- */
+/** Responds to {@link SubRegionResponse}. */
 public final class SubRegionResponse extends AdminResponse {
   // instance variables
   String[] subRegionNames;
   String[] userAttributes;
 
   /**
-   * Returns a <code>SubRegionResponse</code> that will be returned to the
-   * specified recipient. The message will contains a copy of the local manager's
-   * system config.
+   * Returns a <code>SubRegionResponse</code> that will be returned to the specified recipient. The
+   * message will contains a copy of the local manager's system config.
    */
-  public static SubRegionResponse create(DistributionManager dm, InternalDistributedMember recipient, Region r) {
+  public static SubRegionResponse create(
+      DistributionManager dm, InternalDistributedMember recipient, Region r) {
     SubRegionResponse m = new SubRegionResponse();
     m.setRecipient(recipient);
 
@@ -51,7 +49,9 @@ public final class SubRegionResponse extends AdminResponse {
     while (it.hasNext()) {
       Region reg = (Region) it.next();
       subNames.add(reg.getName());
-      userAttrs.add(CacheDisplay.getCachedObjectDisplay(reg.getUserAttribute(), GemFireVM.LIGHTWEIGHT_CACHE_VALUE));
+      userAttrs.add(
+          CacheDisplay.getCachedObjectDisplay(
+              reg.getUserAttribute(), GemFireVM.LIGHTWEIGHT_CACHE_VALUE));
     }
 
     String[] temp = new String[0];

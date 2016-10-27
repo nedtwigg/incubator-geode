@@ -22,9 +22,7 @@
 
 package org.apache.geode.cache.query.data;
 
-/**
- *
- */
+/** */
 import java.io.Serializable;
 
 public class Restricted implements Serializable {
@@ -39,7 +37,9 @@ public class Restricted implements Serializable {
   /** Creates a new instance of Restricted */
   public Restricted(int i) {
     cusip = 1000000000 - i;
-    String[] arr1 = { "moving", "binding", "non binding", "not to exceed", "storage", "auto transport", "mortgage" };
+    String[] arr1 = {
+      "moving", "binding", "non binding", "not to exceed", "storage", "auto transport", "mortgage"
+    };
     quoteType = arr1[i % 7];
     uniqueQuoteType = "quoteType" + Integer.toString(i);
     price = (i / 10) * 8;
@@ -50,7 +50,7 @@ public class Restricted implements Serializable {
     } else {
       incQty = ((maxQty - minQty) / 12) * (i % 12);
     }
-  }//end of constructor
+  } //end of constructor
 
   public int getCusip() {
     return cusip;
@@ -75,4 +75,4 @@ public class Restricted implements Serializable {
   public double getPrice() {
     return price;
   }
-}//end of Restricted
+} //end of Restricted

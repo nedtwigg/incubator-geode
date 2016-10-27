@@ -23,8 +23,7 @@ import org.apache.geode.cache.query.internal.QCompiler;
 public class ASTProjection extends GemFireAST {
   private static final long serialVersionUID = -1464858491766486290L;
 
-  public ASTProjection() {
-  }
+  public ASTProjection() {}
 
   public ASTProjection(Token t) {
     super(t);
@@ -41,5 +40,4 @@ public class ASTProjection extends GemFireAST {
     }
     compiler.projection();
   }
-
 }

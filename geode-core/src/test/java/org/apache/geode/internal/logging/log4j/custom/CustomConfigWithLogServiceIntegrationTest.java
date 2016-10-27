@@ -39,9 +39,7 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.Configurator;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Integration tests with custom log4j2 configuration.
- */
+/** Integration tests with custom log4j2 configuration. */
 @Category(IntegrationTest.class)
 public class CustomConfigWithLogServiceIntegrationTest {
 
@@ -50,28 +48,29 @@ public class CustomConfigWithLogServiceIntegrationTest {
 
   private File customConfigFile;
 
-  @Rule
-  public SystemErrRule systemErrRule = new SystemErrRule().enableLog();
+  @Rule public SystemErrRule systemErrRule = new SystemErrRule().enableLog();
 
-  @Rule
-  public SystemOutRule systemOutRule = new SystemOutRule().enableLog();
+  @Rule public SystemOutRule systemOutRule = new SystemOutRule().enableLog();
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
   @Before
   public void setUp() throws Exception {
     Configurator.shutdown();
     BasicAppender.clearInstance();
 
-    this.beforeConfigFileProp = System.getProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
+    this.beforeConfigFileProp =
+        System.getProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
     this.beforeLevel = StatusLogger.getLogger().getLevel();
 
     this.customConfigFile = createConfigFileIn(this.temporaryFolder.getRoot());
 
-    System.setProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, this.customConfigFile.getAbsolutePath());
+    System.setProperty(
+        ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, this.customConfigFile.getAbsolutePath());
     LogService.reconfigure();
-    assertThat(LogService.isUsingGemFireDefaultConfig()).as(LogService.getConfigInformation()).isFalse();
+    assertThat(LogService.isUsingGemFireDefaultConfig())
+        .as(LogService.getConfigInformation())
+        .isFalse();
   }
 
   @After
@@ -80,12 +79,15 @@ public class CustomConfigWithLogServiceIntegrationTest {
 
     System.clearProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
     if (this.beforeConfigFileProp != null) {
-      System.setProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, this.beforeConfigFileProp);
+      System.setProperty(
+          ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, this.beforeConfigFileProp);
     }
     StatusLogger.getLogger().setLevel(this.beforeLevel);
 
     LogService.reconfigure();
-    assertThat(LogService.isUsingGemFireDefaultConfig()).as(LogService.getConfigInformation()).isTrue();
+    assertThat(LogService.isUsingGemFireDefaultConfig())
+        .as(LogService.getConfigInformation())
+        .isTrue();
 
     BasicAppender.clearInstance();
 
@@ -115,5 +117,4 @@ public class CustomConfigWithLogServiceIntegrationTest {
     assertThat(systemOutRule.getLog()).contains(CONFIG_LAYOUT_PREFIX);
     assertThat(systemOutRule.getLog()).matches(defineLogStatementRegex(logLevel, logMessage));
   }
-
 }

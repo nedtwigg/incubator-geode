@@ -30,11 +30,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.apache.geode.tools.pulse.internal.log.PulseLogWriter;
 
-/**
- * For handling IO exception in our controllers
- * 
- * 
- */
+/** For handling IO exception in our controllers */
 @ControllerAdvice
 public class ExceptionHandlingAdvice {
 

@@ -33,8 +33,8 @@ import org.apache.geode.internal.cache.DiskRegionTestingBase;
 import org.apache.geode.test.junit.categories.PerformanceTest;
 
 /**
- * Consolidated Disk Region Perftest. Overflow, Persist, OverflowWithPersist
- * modes are tested for Sync, AsyncWithBuffer and AsyncWithoutBufer writes.
+ * Consolidated Disk Region Perftest. Overflow, Persist, OverflowWithPersist modes are tested for
+ * Sync, AsyncWithBuffer and AsyncWithoutBufer writes.
  */
 @Category(PerformanceTest.class)
 @Ignore("Tests have no assertions")
@@ -93,7 +93,6 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     // stats_ForSameKeyputs);
     //  Deleting all the files and logs created during the test...
     deleteFiles();
-
   } //end of testOverflowSync1
 
   @Test
@@ -134,7 +133,6 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     // stats_ForSameKeyputs);
     //  Deleting all the files and logs created during the test...
     deleteFiles();
-
   } //end of testOverflowASyncWithBuffer2
 
   @Test
@@ -169,14 +167,15 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     }
     //Perf test for 1kb writes
     populateData();
-    System.out.println("OverflowASyncWITHOUTBuffer3 (with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :" + stats);
+    System.out.println(
+        "OverflowASyncWITHOUTBuffer3 (with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :"
+            + stats);
     // Perf test for 1kb writes. Puting values on the same KEY
     // populateDataPutOnSameKey();
     // System.out.println("OverflowASyncWITHOUTBuffer3:: Stats for 1 kb writes
     // :"+ stats_ForSameKeyputs);
     //  Deleting all the files and logs created during the test...
     deleteFiles();
-
   } //end of testOverflowASyncWithoutBuffer3
 
   @Test
@@ -292,14 +291,16 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     }
     //Perf test for 1kb writes
     populateData();
-    System.out.println("PersistASyncWITHOUTBuffer6(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :" + stats);
+    System.out.println(
+        "PersistASyncWITHOUTBuffer6(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :"
+            + stats);
     // Perf test for 1kb writes. Puting values on the same KEY
     //  populateDataPutOnSameKey();
     // System.out.println("OverflowASyncWITHOUTBuffer6:: Stats for 1 kb writes
     // :"+ stats_ForSameKeyputs);
     //  Deleting all the files and logs created during the test...
     deleteFiles();
-    //closeDown();    
+    //closeDown();
 
   } //end of testPersistASyncWithoutBuffer
 
@@ -419,7 +420,9 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     }
     //Perf test for 1kb writes
     populateData();
-    System.out.println("Persist-OverflowASyncWITHOUTBuffer9(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :" + stats);
+    System.out.println(
+        "Persist-OverflowASyncWITHOUTBuffer9(with DiskWriteAttributes Time-out of 1 Second):: Stats for 1 kb writes :"
+            + stats);
     // Perf test for 1kb writes. Puting values on the same KEY
     //populateDataPutOnSameKey();
     //System.out.println("Persist-OverflowASyncWITHOUTBuffer9:: Stats for 1 kb
@@ -433,10 +436,9 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
   public static int ENTRY_SIZE = 1024;
 
   /**
-   *  OP_COUNT can be increased/decrease as per the requirement.
-   * If required to be set as higher value such as 1000000
-   * one needs to set the VM heap size accordingly.
-   * (For example:Default setting in build.xml is <jvmarg value="-Xmx256M"/>
+   * OP_COUNT can be increased/decrease as per the requirement. If required to be set as higher
+   * value such as 1000000 one needs to set the VM heap size accordingly. (For example:Default
+   * setting in build.xml is <jvmarg value="-Xmx256M"/>
    */
   public static int OP_COUNT = 100;
 
@@ -457,7 +459,7 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
     System.out.println(" done with putting");
     //  validate put operation
     validatePut(region);
-    region.destroyRegion();// closes disk file which will flush all buffers
+    region.destroyRegion(); // closes disk file which will flush all buffers
     float et = endTime - startTime;
     float etSecs = et / 1000f;
     float opPerSec = etSecs == 0 ? 0 : (OP_COUNT / (et / 1000f));
@@ -498,5 +500,4 @@ public class DiskRegionPerfJUnitPerformanceTest extends DiskRegionTestingBase {
       }
     }
   }
-
-}// end of DiskRegionPerfJUnitTest
+} // end of DiskRegionPerfJUnitTest

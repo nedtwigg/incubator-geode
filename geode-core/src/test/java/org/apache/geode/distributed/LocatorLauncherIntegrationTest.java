@@ -41,20 +41,16 @@ import static org.assertj.core.api.BDDAssertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
-/**
- * Integration tests for LocatorLauncher. These tests require file system I/O.
- */
+/** Integration tests for LocatorLauncher. These tests require file system I/O. */
 @Category(IntegrationTest.class)
 public class LocatorLauncherIntegrationTest {
 
   @Rule
   public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
-  @Rule
-  public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public final TestName testName = new TestName();
+  @Rule public final TestName testName = new TestName();
 
   @Test
   public void testBuilderParseArgumentsWithValuesSeparatedWithCommas() throws Exception {
@@ -63,7 +59,22 @@ public class LocatorLauncherIntegrationTest {
     Builder builder = new Builder();
 
     // when: parsing many arguments
-    builder.parseArguments("start", "memberOne", "--bind-address", InetAddress.getLocalHost().getHostAddress(), "--dir", expectedWorkingDirectory, "--hostname-for-clients", "Tucows", "--pid", "1234", "--port", "11235", "--redirect-output", "--force", "--debug");
+    builder.parseArguments(
+        "start",
+        "memberOne",
+        "--bind-address",
+        InetAddress.getLocalHost().getHostAddress(),
+        "--dir",
+        expectedWorkingDirectory,
+        "--hostname-for-clients",
+        "Tucows",
+        "--pid",
+        "1234",
+        "--port",
+        "11235",
+        "--redirect-output",
+        "--force",
+        "--debug");
 
     // then: the getters should return properly parsed values
     assertThat(builder.getCommand()).isEqualTo(Command.START);
@@ -84,7 +95,8 @@ public class LocatorLauncherIntegrationTest {
     Builder builder = new Builder();
 
     // when: parsing arguments with values separated by equals
-    builder.parseArguments("start", "--dir=" + expectedWorkingDirectory, "--port=" + "12345", "memberOne");
+    builder.parseArguments(
+        "start", "--dir=" + expectedWorkingDirectory, "--port=" + "12345", "memberOne");
 
     // then: the getters should return properly parsed values
     assertThat(builder.getCommand()).isEqualTo(Command.START);
@@ -104,7 +116,8 @@ public class LocatorLauncherIntegrationTest {
     // given: gemfire.properties with a name
     Properties gemfireProperties = new Properties();
     gemfireProperties.setProperty(NAME, "locator123");
-    useGemFirePropertiesFileInTemporaryFolder(DistributionConfig.GEMFIRE_PREFIX + "properties", gemfireProperties);
+    useGemFirePropertiesFileInTemporaryFolder(
+        DistributionConfig.GEMFIRE_PREFIX + "properties", gemfireProperties);
 
     // when: starting with null MemberName
     LocatorLauncher launcher = new Builder().setCommand(Command.START).setMemberName(null).build();
@@ -118,13 +131,18 @@ public class LocatorLauncherIntegrationTest {
   @Test
   public void testBuildWithNoMemberNameOnStart() throws Exception {
     // given: gemfire.properties with no name
-    useGemFirePropertiesFileInTemporaryFolder(DistributionConfig.GEMFIRE_PREFIX + "properties", new Properties());
+    useGemFirePropertiesFileInTemporaryFolder(
+        DistributionConfig.GEMFIRE_PREFIX + "properties", new Properties());
 
     // when: no MemberName is specified
     when(new Builder().setCommand(Command.START)).build();
 
     // then: throw IllegalStateException
-    then(caughtException()).isExactlyInstanceOf(IllegalStateException.class).hasMessage(LocalizedStrings.Launcher_Builder_MEMBER_NAME_VALIDATION_ERROR_MESSAGE.toLocalizedString("Locator"));
+    then(caughtException())
+        .isExactlyInstanceOf(IllegalStateException.class)
+        .hasMessage(
+            LocalizedStrings.Launcher_Builder_MEMBER_NAME_VALIDATION_ERROR_MESSAGE
+                .toLocalizedString("Locator"));
   }
 
   @Test
@@ -172,7 +190,12 @@ public class LocatorLauncherIntegrationTest {
     when(new Builder()).setWorkingDirectory(tmpFile.getCanonicalPath());
 
     // then: throw IllegalArgumentException
-    then(caughtException()).isExactlyInstanceOf(IllegalArgumentException.class).hasMessage(LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_NOT_FOUND_ERROR_MESSAGE.toLocalizedString("Locator")).hasCause(new FileNotFoundException(tmpFile.getCanonicalPath()));
+    then(caughtException())
+        .isExactlyInstanceOf(IllegalArgumentException.class)
+        .hasMessage(
+            LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_NOT_FOUND_ERROR_MESSAGE
+                .toLocalizedString("Locator"))
+        .hasCause(new FileNotFoundException(tmpFile.getCanonicalPath()));
   }
 
   @Test
@@ -180,10 +203,18 @@ public class LocatorLauncherIntegrationTest {
     // given: using LocatorLauncher in-process
 
     // when: setting WorkingDirectory to non-current directory
-    when(new Builder().setCommand(Command.START).setMemberName("memberOne").setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())).build();
+    when(new Builder()
+            .setCommand(Command.START)
+            .setMemberName("memberOne")
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()))
+        .build();
 
     // then: throw IllegalStateException
-    then(caughtException()).isExactlyInstanceOf(IllegalStateException.class).hasMessage(LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_OPTION_NOT_VALID_ERROR_MESSAGE.toLocalizedString("Locator"));
+    then(caughtException())
+        .isExactlyInstanceOf(IllegalStateException.class)
+        .hasMessage(
+            LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_OPTION_NOT_VALID_ERROR_MESSAGE
+                .toLocalizedString("Locator"));
   }
 
   @Test
@@ -192,20 +223,28 @@ public class LocatorLauncherIntegrationTest {
     when(new Builder()).setWorkingDirectory("/path/to/non_existing/directory");
 
     // then: throw IllegalArgumentException
-    then(caughtException()).isExactlyInstanceOf(IllegalArgumentException.class).hasMessage(LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_NOT_FOUND_ERROR_MESSAGE.toLocalizedString("Locator")).hasCause(new FileNotFoundException("/path/to/non_existing/directory"));
+    then(caughtException())
+        .isExactlyInstanceOf(IllegalArgumentException.class)
+        .hasMessage(
+            LocalizedStrings.Launcher_Builder_WORKING_DIRECTORY_NOT_FOUND_ERROR_MESSAGE
+                .toLocalizedString("Locator"))
+        .hasCause(new FileNotFoundException("/path/to/non_existing/directory"));
   }
 
   /**
    * Creates a gemfire properties file in temporaryFolder:
+   *
    * <ol>
-   * <li>creates <code>fileName</code> in <code>temporaryFolder</code></li>
-   * <li>sets "gemfirePropertyFile" system property</li>
-   * <li>writes <code>gemfireProperties</code> to the file</li>
+   *   <li>creates <code>fileName</code> in <code>temporaryFolder</code>
+   *   <li>sets "gemfirePropertyFile" system property
+   *   <li>writes <code>gemfireProperties</code> to the file
    * </ol>
    */
-  private void useGemFirePropertiesFileInTemporaryFolder(final String fileName, final Properties gemfireProperties) throws Exception {
+  private void useGemFirePropertiesFileInTemporaryFolder(
+      final String fileName, final Properties gemfireProperties) throws Exception {
     File propertiesFile = new File(this.temporaryFolder.getRoot().getCanonicalPath(), fileName);
-    System.setProperty(DistributedSystem.PROPERTIES_FILE_PROPERTY, propertiesFile.getCanonicalPath());
+    System.setProperty(
+        DistributedSystem.PROPERTIES_FILE_PROPERTY, propertiesFile.getCanonicalPath());
 
     gemfireProperties.store(new FileWriter(propertiesFile, false), this.testName.getMethodName());
     assertThat(propertiesFile.isFile()).isTrue();

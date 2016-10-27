@@ -20,52 +20,38 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- *
- */
+/** */
 public class Order implements Serializable {
   private static final long serialVersionUID = 2049641616996906290L;
   private String id;
   private Collection<Item> items;
 
-  /**
-   * @return the id
-   */
+  /** @return the id */
   public String getId() {
     return id;
   }
 
-  /**
-   * @param id the id to set
-   */
+  /** @param id the id to set */
   public void setId(String id) {
     this.id = id;
   }
 
-  /**
-   * @return the items
-   */
+  /** @return the items */
   public Collection<Item> getItems() {
     return items;
   }
 
-  /**
-   * @param items the items to set
-   */
+  /** @param items the items to set */
   public void setItems(Collection<Item> items) {
     this.items = items;
   }
 
-  /**
-   * @param item
-   */
+  /** @param item */
   public void addItem(Item item) {
     this.items.add(item);
   }
 
-  /**
-   * 
-   */
+  /** */
   public Order() {
     this.items = new ArrayList<Item>();
   }

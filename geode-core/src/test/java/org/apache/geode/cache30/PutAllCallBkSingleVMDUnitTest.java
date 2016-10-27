@@ -130,54 +130,54 @@ public class PutAllCallBkSingleVMDUnitTest extends JUnit4DistributedTestCase {
     for (int i = 0; i < 5; i++) {
       objArr[0] = "" + i;
       vm0.invoke(PutAllCallBkSingleVMDUnitTest.class, "putMethod", objArr);
-
     }
 
     vm0.invoke(() -> PutAllCallBkSingleVMDUnitTest.putAllMethod());
 
-    vm0.invoke(new CacheSerializableRunnable("temp1") {
-      public void run2() throws CacheException {
-        if (!afterCreate) {
-          fail("FAILED in aftercreate call back");
-        }
-        assertEquals(region.size(), putAllcounter);
-        assertEquals(region.size(), beforeCreateputAllcounter);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("temp1") {
+          public void run2() throws CacheException {
+            if (!afterCreate) {
+              fail("FAILED in aftercreate call back");
+            }
+            assertEquals(region.size(), putAllcounter);
+            assertEquals(region.size(), beforeCreateputAllcounter);
+          }
+        });
 
-    vm0.invoke(new CacheSerializableRunnable("abc") {
-      public void run2() throws CacheException {
-        CacheListener bListener = new AfterUpdateCallback();
-        CacheWriter bWriter = new BeforeUpdateCallback();
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        factory.setCacheWriter(bWriter);
-        factory.setCacheListener(bListener);
-        RegionAttributes attr = factory.create();
-        Region tempRegion = cache.createRegion("temp", attr);
+    vm0.invoke(
+        new CacheSerializableRunnable("abc") {
+          public void run2() throws CacheException {
+            CacheListener bListener = new AfterUpdateCallback();
+            CacheWriter bWriter = new BeforeUpdateCallback();
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            factory.setCacheWriter(bWriter);
+            factory.setCacheListener(bListener);
+            RegionAttributes attr = factory.create();
+            Region tempRegion = cache.createRegion("temp", attr);
 
-        //to invoke afterUpdate we should make sure that entries are already present
-        for (int i = 0; i < 5; i++) {
-          tempRegion.put(new Integer(i), new String("region" + i));
-        }
+            //to invoke afterUpdate we should make sure that entries are already present
+            for (int i = 0; i < 5; i++) {
+              tempRegion.put(new Integer(i), new String("region" + i));
+            }
 
-        Map m = new HashMap();
-        for (int i = 0; i < 5; i++) {
-          m.put(new Integer(i), new String("map" + i));
-        }
+            Map m = new HashMap();
+            for (int i = 0; i < 5; i++) {
+              m.put(new Integer(i), new String("map" + i));
+            }
 
-        tempRegion.putAll(m, "putAllAfterUpdateCallback");
+            tempRegion.putAll(m, "putAllAfterUpdateCallback");
 
-        //now, verifying callbacks
-        if (!afterUpdate) {
-          fail("FAILED in afterupdate call back");
-        }
-        assertEquals(tempRegion.size(), afterUpdateputAllcounter);
-        assertEquals(tempRegion.size(), beforeUpdateputAllcounter);
-      }
-    });
-
-  }//end of test case1
+            //now, verifying callbacks
+            if (!afterUpdate) {
+              fail("FAILED in afterupdate call back");
+            }
+            assertEquals(tempRegion.size(), afterUpdateputAllcounter);
+            assertEquals(tempRegion.size(), beforeUpdateputAllcounter);
+          }
+        });
+  } //end of test case1
 
   public static Object putMethod(Object ob) {
     Object obj = null;
@@ -190,7 +190,7 @@ public class PutAllCallBkSingleVMDUnitTest extends JUnit4DistributedTestCase {
       Assert.fail("Failed while region.put", ex);
     }
     return obj;
-  }//end of putMethod
+  } //end of putMethod
 
   public static void putAllMethod() {
     Map m = new HashMap();
@@ -208,7 +208,7 @@ public class PutAllCallBkSingleVMDUnitTest extends JUnit4DistributedTestCase {
       ex.printStackTrace();
       fail("Failed while region.putAll");
     }
-  }//end of putAllMethod
+  } //end of putAllMethod
 
   public static void putAllAfterUpdate() {
     Map m = new HashMap();
@@ -223,7 +223,7 @@ public class PutAllCallBkSingleVMDUnitTest extends JUnit4DistributedTestCase {
       ex.printStackTrace();
       fail("Failed while region.putAll");
     }
-  }//end of putAllAfterUpdate
+  } //end of putAllAfterUpdate
 
   public static Object getMethod(Object ob) {
     Object obj = null;
@@ -318,5 +318,4 @@ public class PutAllCallBkSingleVMDUnitTest extends JUnit4DistributedTestCase {
       }
     }
   }
-
-}//end of class
+} //end of class

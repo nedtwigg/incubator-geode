@@ -32,11 +32,12 @@ import org.apache.geode.cache.query.SelectResults;
 import org.apache.geode.cache.query.TypeMismatchException;
 
 /**
-* The GetDeliveredOrders class is a gemfire function that gives details about delivered orders.
-* <p/>
-* @since GemFire 8.0
-*/
-
+ * The GetDeliveredOrders class is a gemfire function that gives details about delivered orders.
+ *
+ * <p>
+ *
+ * @since GemFire 8.0
+ */
 public class GetDeliveredOrders implements Function {
   public void execute(FunctionContext context) {
 
@@ -49,7 +50,8 @@ public class GetDeliveredOrders implements Function {
       context.getResultSender().lastResult(vals);
     }
 
-    String oql = "SELECT o.purchaseOrderNo, o.deliveryDate  FROM /orders o WHERE o.deliveryDate != NULL";
+    String oql =
+        "SELECT o.purchaseOrderNo, o.deliveryDate  FROM /orders o WHERE o.deliveryDate != NULL";
     final Query query = c.getQueryService().newQuery(oql);
 
     SelectResults result = null;
@@ -63,20 +65,31 @@ public class GetDeliveredOrders implements Function {
         }
     } catch (FunctionDomainException e) {
       if (c != null)
-        c.getLogger().info("Caught FunctionDomainException while executing function GetDeliveredOrders: " + e.getMessage());
+        c.getLogger()
+            .info(
+                "Caught FunctionDomainException while executing function GetDeliveredOrders: "
+                    + e.getMessage());
 
     } catch (TypeMismatchException e) {
       if (c != null)
-        c.getLogger().info("Caught TypeMismatchException while executing function GetDeliveredOrders: " + e.getMessage());
+        c.getLogger()
+            .info(
+                "Caught TypeMismatchException while executing function GetDeliveredOrders: "
+                    + e.getMessage());
 
     } catch (NameResolutionException e) {
       if (c != null)
-        c.getLogger().info("Caught NameResolutionException while executing function GetDeliveredOrders: " + e.getMessage());
+        c.getLogger()
+            .info(
+                "Caught NameResolutionException while executing function GetDeliveredOrders: "
+                    + e.getMessage());
 
     } catch (QueryInvocationTargetException e) {
       if (c != null)
-        c.getLogger().info("Caught QueryInvocationTargetException while executing function GetDeliveredOrders: " + e.getMessage());
-
+        c.getLogger()
+            .info(
+                "Caught QueryInvocationTargetException while executing function GetDeliveredOrders: "
+                    + e.getMessage());
     }
 
     context.getResultSender().lastResult(vals);
@@ -100,5 +113,4 @@ public class GetDeliveredOrders implements Function {
   public boolean isHA() {
     return false;
   }
-
 }

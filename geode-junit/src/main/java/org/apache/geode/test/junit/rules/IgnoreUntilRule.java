@@ -39,7 +39,7 @@ import org.apache.geode.test.junit.support.IgnoreConditionEvaluationException;
  * @see org.apache.geode.test.junit.IgnoreUntil
  * @see org.apache.geode.test.junit.IgnoreCondition
  */
-@SuppressWarnings({ "serial", "unused" })
+@SuppressWarnings({"serial", "unused"})
 public class IgnoreUntilRule implements TestRule, Serializable {
 
   protected static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
@@ -72,7 +72,8 @@ public class IgnoreUntilRule implements TestRule, Serializable {
         ignoreTest = evaluate(testCaseAnnotation, description);
         message = testCaseAnnotation.value();
       } else if (description.getTestClass().isAnnotationPresent(IgnoreUntil.class)) {
-        IgnoreUntil testClassAnnotation = description.getTestClass().getAnnotation(IgnoreUntil.class);
+        IgnoreUntil testClassAnnotation =
+            description.getTestClass().getAnnotation(IgnoreUntil.class);
 
         ignoreTest = evaluate(testClassAnnotation, description);
         message = testClassAnnotation.value();
@@ -96,14 +97,18 @@ public class IgnoreUntilRule implements TestRule, Serializable {
   }
 
   protected boolean evaluate(IgnoreUntil conditionalIgnoreAnnotation, Description description) {
-    return (evaluateCondition(conditionalIgnoreAnnotation.condition(), description) || evaluateUntil(conditionalIgnoreAnnotation.until()));
+    return (evaluateCondition(conditionalIgnoreAnnotation.condition(), description)
+        || evaluateUntil(conditionalIgnoreAnnotation.until()));
   }
 
-  protected boolean evaluateCondition(Class<? extends IgnoreCondition> ignoreConditionType, Description description) {
+  protected boolean evaluateCondition(
+      Class<? extends IgnoreCondition> ignoreConditionType, Description description) {
     try {
       return ignoreConditionType.newInstance().evaluate(description);
     } catch (Exception e) {
-      throw new IgnoreConditionEvaluationException(String.format("failed to evaluate IgnoreCondition: %1$s", ignoreConditionType.getName()), e);
+      throw new IgnoreConditionEvaluationException(
+          String.format("failed to evaluate IgnoreCondition: %1$s", ignoreConditionType.getName()),
+          e);
     }
   }
 
@@ -114,5 +119,4 @@ public class IgnoreUntilRule implements TestRule, Serializable {
       return false;
     }
   }
-
 }

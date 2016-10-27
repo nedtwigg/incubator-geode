@@ -52,9 +52,6 @@ public class SetNXExecutor extends StringExecutor {
 
     if (oldValue != null)
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_SET));
-    else
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), SET));
-
+    else command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), SET));
   }
-
 }

@@ -36,17 +36,15 @@ public class PdxField implements DataSerializable, Comparable<PdxField> {
   private int varLenFieldSeqId;
   private FieldType type;
   /**
-   * If >= 0 then it is relative to the first byte of field data.
-   * Otherwise it is relative to the base determined by
-   * vlfOffsetIndex.
+   * If >= 0 then it is relative to the first byte of field data. Otherwise it is relative to the
+   * base determined by vlfOffsetIndex.
    */
   private int relativeOffset;
 
   /**
-   * if >= 0 then it is the index of the vlfOffsets that
-   * this field should use as its base to find its data.
-   * If < 0 then it should be -1 which means the base
-   * is the first byte after the last byte of field data.
+   * if >= 0 then it is the index of the vlfOffsets that this field should use as its base to find
+   * its data. If < 0 then it should be -1 which means the base is the first byte after the last
+   * byte of field data.
    */
   private int vlfOffsetIndex;
 
@@ -54,12 +52,12 @@ public class PdxField implements DataSerializable, Comparable<PdxField> {
 
   /**
    * Set to true by the pdx delete-field gfsh command
+   *
    * @since GemFire 8.1
    */
   private boolean deleted;
 
-  public PdxField() {
-  }
+  public PdxField() {}
 
   public PdxField(String fieldName, int index, int varId, FieldType type, boolean identityField) {
     this.fieldName = fieldName;
@@ -70,8 +68,8 @@ public class PdxField implements DataSerializable, Comparable<PdxField> {
   }
 
   /**
-   * Used by {@link PdxInstanceImpl#equals(Object)} to act as if it has
-   * a field whose value is always the default.
+   * Used by {@link PdxInstanceImpl#equals(Object)} to act as if it has a field whose value is
+   * always the default.
    */
   protected PdxField(PdxField other) {
     this.fieldName = other.fieldName;
@@ -214,7 +212,9 @@ public class PdxField implements DataSerializable, Comparable<PdxField> {
       return false;
     }
 
-    if (otherVFT.fieldName.equals(this.fieldName) && this.isDeleted() == otherVFT.isDeleted() && this.type.equals(otherVFT.type)) {
+    if (otherVFT.fieldName.equals(this.fieldName)
+        && this.isDeleted() == otherVFT.isDeleted()
+        && this.type.equals(otherVFT.type)) {
       return true;
     }
     return false;
@@ -222,7 +222,18 @@ public class PdxField implements DataSerializable, Comparable<PdxField> {
 
   @Override
   public String toString() {
-    return this.fieldName + ":" + this.type + (isDeleted() ? ":DELETED" : "") + (isIdentityField() ? ":identity" : "") + ":" + this.fieldIndex + ((this.varLenFieldSeqId > 0) ? (":" + this.varLenFieldSeqId) : "") + ":idx0(relativeOffset)=" + this.relativeOffset + ":idx1(vlfOffsetIndex)=" + this.vlfOffsetIndex;
+    return this.fieldName
+        + ":"
+        + this.type
+        + (isDeleted() ? ":DELETED" : "")
+        + (isIdentityField() ? ":identity" : "")
+        + ":"
+        + this.fieldIndex
+        + ((this.varLenFieldSeqId > 0) ? (":" + this.varLenFieldSeqId) : "")
+        + ":idx0(relativeOffset)="
+        + this.relativeOffset
+        + ":idx1(vlfOffsetIndex)="
+        + this.vlfOffsetIndex;
   }
 
   public String getTypeIdString() {

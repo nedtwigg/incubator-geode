@@ -18,10 +18,7 @@ package org.apache.geode.test.golden;
 
 import java.util.regex.Pattern;
 
-/**
- * Compares test output to golden text file using regex pattern matching
- * 
- */
+/** Compares test output to golden text file using regex pattern matching */
 public class RegexGoldenComparator extends GoldenComparator {
 
   protected RegexGoldenComparator(final String[] expectedProblemLines) {
@@ -30,7 +27,8 @@ public class RegexGoldenComparator extends GoldenComparator {
 
   @Override
   protected boolean compareLines(final String actualLine, final String goldenLine) {
-    debug("RegexGoldenComparator:compareLines comparing \" + actualLine + \" to \" + goldenLine + \"");
+    debug(
+        "RegexGoldenComparator:compareLines comparing \" + actualLine + \" to \" + goldenLine + \"");
     return Pattern.compile(goldenLine).matcher(actualLine).matches();
   }
 }

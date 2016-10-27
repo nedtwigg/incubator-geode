@@ -21,7 +21,6 @@ import org.apache.geode.internal.cache.xmlcache.XmlGenerator;
 
 /**
  * Base class for Mock Extension XML Generators.
- * 
  *
  * @since GemFire 8.1
  */
@@ -36,5 +35,4 @@ public abstract class AbstractMockExtensionXmlGenerator<T> implements XmlGenerat
   public String getNamspaceUri() {
     return MockExtensionXmlParser.NAMESPACE;
   }
-
 }

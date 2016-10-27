@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import java.io.DataInput;
@@ -50,17 +48,19 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
   private VersionTag versionTag;
 
   /**
-   * Create one of these in the local case so that we have a snapshot of the state
-   * and can allow the bucket to move out from under us.
+   * Create one of these in the local case so that we have a snapshot of the state and can allow the
+   * bucket to move out from under us.
    */
   public NonLocalRegionEntry(RegionEntry re, LocalRegion br, boolean allowTombstones) {
     this.key = re.getKey();
-    if (allowTombstones && re.isTombstone()) { // client get() operations need to see tombstone values
+    if (allowTombstones
+        && re.isTombstone()) { // client get() operations need to see tombstone values
       this.value = Token.TOMBSTONE;
     } else {
       this.value = re.getValue(br); // OFFHEAP: copy into heap cd
     }
-    Assert.assertTrue(this.value != Token.NOT_AVAILABLE, "getEntry did not fault value in from disk");
+    Assert.assertTrue(
+        this.value != Token.NOT_AVAILABLE, "getEntry did not fault value in from disk");
     this.lastModified = re.getLastModified();
     this.isRemoved = re.isRemoved();
     VersionStamp stamp = re.getVersionStamp();
@@ -70,20 +70,21 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
   }
 
   /**
-   * Create one of these in the local case so that we have a snapshot of the state
-   * and can allow the bucket to move out from under us.
+   * Create one of these in the local case so that we have a snapshot of the state and can allow the
+   * bucket to move out from under us.
    */
   public NonLocalRegionEntry(LocalRegion br, Object key, Object value) {
     this.key = key;
     this.value = value;
-    Assert.assertTrue(this.value != Token.NOT_AVAILABLE, "getEntry did not fault value in from disk");
+    Assert.assertTrue(
+        this.value != Token.NOT_AVAILABLE, "getEntry did not fault value in from disk");
     //    this.lastModified = re.getLastModified();
     //    this.isRemoved = re.isRemoved();
   }
 
   /**
-   * Create one of these in the local case so that we have a snapshot of the state
-   * and can allow the bucket to move out from under us.
+   * Create one of these in the local case so that we have a snapshot of the state and can allow the
+   * bucket to move out from under us.
    */
   public NonLocalRegionEntry(Region.Entry re, LocalRegion br) {
     this.key = re.getKey();
@@ -95,8 +96,9 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
       // will not modify its state.
       this.value = CachedDeserializableFactory.create((CachedDeserializable) this.value);
     }
-    Assert.assertTrue(this.value != Token.NOT_AVAILABLE, "getEntry did not fault value in from disk");
-    this.lastModified = 0l;//re.getStatistics().getLastModifiedTime();
+    Assert.assertTrue(
+        this.value != Token.NOT_AVAILABLE, "getEntry did not fault value in from disk");
+    this.lastModified = 0l; //re.getStatistics().getLastModifiedTime();
     this.isRemoved = Token.isRemoved(value);
     if (re instanceof EntrySnapshot) {
       this.versionTag = ((EntrySnapshot) re).getVersionTag();
@@ -107,7 +109,12 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
 
   @Override
   public String toString() {
-    return "NonLocalRegionEntry(" + this.key + "; value=" + this.value + "; version=" + this.versionTag;
+    return "NonLocalRegionEntry("
+        + this.key
+        + "; value="
+        + this.value
+        + "; version="
+        + this.versionTag;
   }
 
   public void makeTombstone(LocalRegion r, VersionTag isOperationRemote) {
@@ -182,12 +189,17 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
     return false;
   }
 
-  public boolean fillInValue(LocalRegion r, InitialImageOperation.Entry entry, ByteArrayDataInput in, DM mgr) {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+  public boolean fillInValue(
+      LocalRegion r, InitialImageOperation.Entry entry, ByteArrayDataInput in, DM mgr) {
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   public boolean isOverflowedToDisk(LocalRegion r, DistributedRegion.DiskPosition dp) {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   public Object getKey() {
@@ -210,11 +222,15 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
 
   // now for the fun part
   public void updateStatsForPut(long lastModifiedTime) {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   public void setRecentlyUsed() {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   public void updateStatsForGet(boolean hit, long time) throws StatisticsDisabledException {
@@ -222,43 +238,60 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
   }
 
   public void txDidDestroy(long currTime) {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   public void resetCounts() throws StatisticsDisabledException {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   public void removePhase1(LocalRegion r, boolean isClear) {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   public void removePhase2() {
-    throw new UnsupportedOperationException("Not appropriate for PartitionedRegion.NonLocalRegionEntry");
+    throw new UnsupportedOperationException(
+        "Not appropriate for PartitionedRegion.NonLocalRegionEntry");
   }
 
   public void setValue(RegionEntryContext context, Object value) {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
   public Object _getValue() {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
   public Token getValueAsToken() {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
   public Object _getValueRetain(RegionEntryContext context, boolean decompress) {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
   public Object getTransformedValue() {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   public final Object getValueInVM(RegionEntryContext context) {
@@ -266,43 +299,78 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
   }
 
   public Object getValueOnDisk(LocalRegion r) throws EntryNotFoundException {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
-  public boolean initialImagePut(LocalRegion region, long lastModified1, Object newValue, boolean wasRecovered, boolean versionTagAccepted) {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+  public boolean initialImagePut(
+      LocalRegion region,
+      long lastModified1,
+      Object newValue,
+      boolean wasRecovered,
+      boolean versionTagAccepted) {
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
-  public boolean initialImageInit(LocalRegion region, long lastModified1, Object newValue, boolean create, boolean wasRecovered, boolean versionTagAccepted) {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+  public boolean initialImageInit(
+      LocalRegion region,
+      long lastModified1,
+      Object newValue,
+      boolean create,
+      boolean wasRecovered,
+      boolean versionTagAccepted) {
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
-  public boolean destroy(LocalRegion region, EntryEventImpl event, boolean inTokenMode, boolean cacheWrite, Object expectedOldValue, boolean forceDestroy, boolean removeRecoveredEntry) throws CacheWriterException, EntryNotFoundException, TimeoutException {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+  public boolean destroy(
+      LocalRegion region,
+      EntryEventImpl event,
+      boolean inTokenMode,
+      boolean cacheWrite,
+      Object expectedOldValue,
+      boolean forceDestroy,
+      boolean removeRecoveredEntry)
+      throws CacheWriterException, EntryNotFoundException, TimeoutException {
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   public boolean getValueWasResultOfSearch() {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   public void setValueResultOfSearch(boolean v) {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.cache.RegionEntry#getValueOnDiskOrBuffer(org.apache.geode.internal.cache.LocalRegion)
    */
   public Object getValueOnDiskOrBuffer(LocalRegion r) throws EntryNotFoundException {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.RegionEntry#getSerializedValueOnDisk(org.apache.geode.internal.cache.LocalRegion)
    */
   public Object getSerializedValueOnDisk(LocalRegion localRegion) {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   public boolean hasStats() {
@@ -327,14 +395,19 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.RegionEntry#generateVersionTag(org.apache.geode.distributed.DistributedMember, boolean)
    */
-  public VersionTag generateVersionTag(VersionSource member, boolean withDelta, LocalRegion region, EntryEventImpl event) {
+  public VersionTag generateVersionTag(
+      VersionSource member, boolean withDelta, LocalRegion region, EntryEventImpl event) {
     throw new UnsupportedOperationException(); // no text needed - not a customer visible method
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.RegionEntry#concurrencyCheck(org.apache.geode.internal.cache.LocalRegion, org.apache.geode.internal.cache.versions.VersionTag, org.apache.geode.distributed.internal.membership.InternalDistributedMember, org.apache.geode.distributed.internal.membership.InternalDistributedMember)
    */
-  public void processVersionTag(LocalRegion r, VersionTag tag, InternalDistributedMember thisVM, InternalDistributedMember sender) {
+  public void processVersionTag(
+      LocalRegion r,
+      VersionTag tag,
+      InternalDistributedMember thisVM,
+      InternalDistributedMember sender) {
     throw new UnsupportedOperationException();
   }
 
@@ -403,7 +476,14 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.versions.VersionStamp#processVersionTag(org.apache.geode.internal.cache.LocalRegion, org.apache.geode.internal.cache.versions.VersionTag, boolean, org.apache.geode.distributed.internal.membership.InternalDistributedMember, org.apache.geode.distributed.internal.membership.InternalDistributedMember)
    */
-  public void processVersionTag(LocalRegion r, VersionTag tag, boolean isTombstoneFromGII, boolean hasDelta, VersionSource thisVM, InternalDistributedMember sender, boolean checkForConflicts) {
+  public void processVersionTag(
+      LocalRegion r,
+      VersionTag tag,
+      boolean isTombstoneFromGII,
+      boolean hasDelta,
+      VersionSource thisVM,
+      InternalDistributedMember sender,
+      boolean checkForConflicts) {
     throw new UnsupportedOperationException();
   }
 
@@ -415,24 +495,28 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
     return this.versionTag != null ? this.versionTag.getVersionTimeStamp() : 0;
   }
 
-  /** get rvv internal high byte.  Used by region entries for transferring to storage */
+  /** get rvv internal high byte. Used by region entries for transferring to storage */
   public short getRegionVersionHighBytes() {
     return this.versionTag != null ? this.versionTag.getRegionVersionHighBytes() : 0;
   }
 
-  /** get rvv internal low bytes.  Used by region entries for transferring to storage */
+  /** get rvv internal low bytes. Used by region entries for transferring to storage */
   public int getRegionVersionLowBytes() {
     return this.versionTag != null ? this.versionTag.getRegionVersionLowBytes() : 0;
   }
 
   @Override
   public boolean isUpdateInProgress() {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
   public void setUpdateInProgress(boolean underUpdate) {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
@@ -442,32 +526,44 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
 
   @Override
   public boolean isInvalid() {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
   public boolean isDestroyed() {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
   public void setValueToNull() {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
   public boolean isInvalidOrRemoved() {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
   public boolean isDestroyedOrRemoved() {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
   public boolean isDestroyedOrRemovedButNotTombstone() {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
@@ -477,8 +573,11 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
   }
 
   @Override
-  public void setValueWithTombstoneCheck(Object value, EntryEvent event) throws RegionClearedException {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+  public void setValueWithTombstoneCheck(Object value, EntryEvent event)
+      throws RegionClearedException {
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
@@ -494,8 +593,11 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
   }
 
   @Override
-  public void setValue(RegionEntryContext context, Object value, EntryEventImpl event) throws RegionClearedException {
-    throw new UnsupportedOperationException(LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY.toLocalizedString());
+  public void setValue(RegionEntryContext context, Object value, EntryEventImpl event)
+      throws RegionClearedException {
+    throw new UnsupportedOperationException(
+        LocalizedStrings.PartitionedRegion_NOT_APPROPRIATE_FOR_PARTITIONEDREGIONNONLOCALREGIONENTRY
+            .toLocalizedString());
   }
 
   @Override
@@ -504,20 +606,16 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
   }
 
   @Override
-  public void setInUseByTransaction(boolean v) {
-  }
+  public void setInUseByTransaction(boolean v) {}
 
   @Override
-  public void incRefCount() {
-  }
+  public void incRefCount() {}
 
   @Override
-  public void decRefCount(NewLRUClockHand lruList, LocalRegion lr) {
-  }
+  public void decRefCount(NewLRUClockHand lruList, LocalRegion lr) {}
 
   @Override
-  public void resetRefCount(NewLRUClockHand lruList) {
-  }
+  public void resetRefCount(NewLRUClockHand lruList) {}
 
   @Override
   public Object prepareValueForCache(RegionEntryContext r, Object val, boolean isEntryUpdate) {
@@ -525,7 +623,8 @@ public class NonLocalRegionEntry implements RegionEntry, VersionStamp {
   }
 
   @Override
-  public Object prepareValueForCache(RegionEntryContext r, Object val, EntryEventImpl event, boolean isEntryUpdate) {
+  public Object prepareValueForCache(
+      RegionEntryContext r, Object val, EntryEventImpl event, boolean isEntryUpdate) {
     throw new IllegalStateException("Should never be called");
   }
 }

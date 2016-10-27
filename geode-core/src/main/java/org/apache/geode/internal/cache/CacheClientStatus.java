@@ -22,9 +22,8 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Class <code>CacheClientStatus</code> provides status about a client
- * from the server's perspective. This class is used by the monitoring tool.
- *
+ * Class <code>CacheClientStatus</code> provides status about a client from the server's
+ * perspective. This class is used by the monitoring tool.
  *
  * @since GemFire 4.3
  */
@@ -82,7 +81,19 @@ public class CacheClientStatus implements Serializable {
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("CacheClientStatus[").append("id=").append(this._id).append("; memberId=").append(this._memberId).append("; numberOfConnections=").append(this._numberOfConnections).append("; socketAddresses=").append(this._socketAddresses).append("; socketPorts=").append(this._socketPorts).append("]");
+    buffer
+        .append("CacheClientStatus[")
+        .append("id=")
+        .append(this._id)
+        .append("; memberId=")
+        .append(this._memberId)
+        .append("; numberOfConnections=")
+        .append(this._numberOfConnections)
+        .append("; socketAddresses=")
+        .append(this._socketAddresses)
+        .append("; socketPorts=")
+        .append(this._socketPorts)
+        .append("]");
     return buffer.toString();
   }
 }

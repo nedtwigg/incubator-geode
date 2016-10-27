@@ -35,11 +35,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
-/**
- * This is for testing server count details from MBean
- * 
- */
-
+/** This is for testing server count details from MBean */
 @Category(DistributedTest.class)
 public class TestServerDUnitTest extends ManagementTestBase {
 
@@ -51,30 +47,30 @@ public class TestServerDUnitTest extends ManagementTestBase {
 
   public static int getNumOfServersFromMBean() {
 
-    final WaitCriterion waitCriteria = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        final ManagementService service = getManagementService();
-        final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-        if (bean != null) {
-          if (bean.listCacheServers().length > 0) {
-            return true;
+    final WaitCriterion waitCriteria =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            final ManagementService service = getManagementService();
+            final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+            if (bean != null) {
+              if (bean.listCacheServers().length > 0) {
+                return true;
+              }
+            }
+            return false;
           }
-        }
-        return false;
-      }
 
-      @Override
-      public String description() {
-        return "wait for getDistributedSystemMXBean to complete and get results";
-      }
-    };
+          @Override
+          public String description() {
+            return "wait for getDistributedSystemMXBean to complete and get results";
+          }
+        };
 
     Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
     final DistributedSystemMXBean bean = getManagementService().getDistributedSystemMXBean();
     assertNotNull(bean);
     return bean.listCacheServers().length;
-
   }
 
   protected CqQueryDUnitTest cqDUnitTest = new CqQueryDUnitTest();
@@ -85,18 +81,15 @@ public class TestServerDUnitTest extends ManagementTestBase {
     VM server = managedNodeList.get(1);
     int serverPort = AvailablePortHelper.getRandomAvailableTCPPort();
     cqDUnitTest.createServer(server, serverPort);
-    int serverCount = ((Number) managingNode.invoke(() -> TestServerDUnitTest.getNumOfServersFromMBean())).intValue();
+    int serverCount =
+        ((Number) managingNode.invoke(() -> TestServerDUnitTest.getNumOfServersFromMBean()))
+            .intValue();
     LogWriterUtils.getLogWriter().info("TestServerDUnitTest serverCount =" + serverCount);
     cqDUnitTest.closeServer(server);
     assertEquals(1, serverCount);
   }
 
-  public void verifyStatistics() {
+  public void verifyStatistics() {}
 
-  }
-
-  public void invokeOperations() {
-
-  }
-
+  public void invokeOperations() {}
 }

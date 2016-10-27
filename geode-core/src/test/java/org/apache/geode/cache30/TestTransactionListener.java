@@ -20,15 +20,14 @@ import org.apache.geode.SystemFailure;
 import org.apache.geode.cache.*;
 
 /**
- * A <code>TransactionListener</code> used in testing.  Its callback methods
- * are implemented to throw {@link UnsupportedOperationException}
- * unless the user overrides the "2" methods.
+ * A <code>TransactionListener</code> used in testing. Its callback methods are implemented to throw
+ * {@link UnsupportedOperationException} unless the user overrides the "2" methods.
  *
  * @see #wasInvoked
- *
  * @since GemFire 4.0
  */
-public abstract class TestTransactionListener extends TestCacheCallback implements TransactionListener {
+public abstract class TestTransactionListener extends TestCacheCallback
+    implements TransactionListener {
 
   public final void afterCommit(TransactionEvent event) {
     this.invoked = true;
@@ -80,5 +79,4 @@ public abstract class TestTransactionListener extends TestCacheCallback implemen
     String s = "Unexpected callback invocation";
     throw new UnsupportedOperationException(s);
   }
-
 }

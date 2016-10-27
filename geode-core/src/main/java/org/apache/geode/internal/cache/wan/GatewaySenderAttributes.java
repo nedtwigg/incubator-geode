@@ -199,5 +199,4 @@ public class GatewaySenderAttributes {
   public boolean isForwardExpirationDestroy() {
     return this.forwardExpirationDestroy;
   }
-
 }

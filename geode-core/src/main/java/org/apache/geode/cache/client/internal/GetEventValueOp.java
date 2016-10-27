@@ -24,14 +24,15 @@ import org.apache.geode.internal.cache.tier.sockets.Message;
 import org.apache.geode.internal.cache.tier.sockets.Part;
 
 /**
- * Gets (full) value (unlike GetOp, which may get either a full value or a delta
- * depending upon delta flag) of a given event from the ha container on server.
- * 
+ * Gets (full) value (unlike GetOp, which may get either a full value or a delta depending upon
+ * delta flag) of a given event from the ha container on server.
+ *
  * @since GemFire 6.1
  */
 public class GetEventValueOp {
   /**
    * Does a get on the primary server using connections from the given pool
+   *
    * @param pool the pool to use to communicate with the server.
    * @param event the eventid to do the get on
    * @param callbackArg an optional callback arg to pass to any cache callbacks
@@ -47,9 +48,7 @@ public class GetEventValueOp {
   }
 
   static class GetEventValueOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public GetEventValueOpImpl(EventID event, Object callbackArg) {
       super(MessageType.REQUEST_EVENT_VALUE, callbackArg != null ? 2 : 1);
       getMessage().addObjPart(event);
@@ -59,8 +58,7 @@ public class GetEventValueOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {
@@ -92,7 +90,8 @@ public class GetEventValueOp {
         } else if (isErrorResponse(msgType)) {
           throw new ServerOperationException(part.getString());
         } else {
-          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
+          throw new InternalGemFireError(
+              "Unexpected message type " + MessageType.getString(msgType));
         }
       }
     }

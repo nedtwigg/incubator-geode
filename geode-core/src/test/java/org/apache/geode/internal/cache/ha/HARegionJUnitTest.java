@@ -50,72 +50,63 @@ import org.apache.geode.internal.cache.HARegion;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Test verifies the properties of a HARegion which allows localPuts and
- * localDestroys on a MirroredRegion
+ * Test verifies the properties of a HARegion which allows localPuts and localDestroys on a
+ * MirroredRegion
  */
 @Category(IntegrationTest.class)
 public class HARegionJUnitTest {
 
-  /**
-   * cache
-   */
+  /** cache */
   private Cache cache = null;
 
-  /**
-   * create the cache
-   */
+  /** create the cache */
   @Before
   public void setUp() throws Exception {
     cache = createCache();
   }
 
-  /**
-   * close the cache in tear down
-   */
+  /** close the cache in tear down */
   @After
   public void tearDown() throws Exception {
     cache.close();
   }
 
-  /**
-   * create the cache
-   */
-  private Cache createCache() throws TimeoutException, CacheWriterException, GatewayException, CacheExistsException, RegionExistsException {
+  /** create the cache */
+  private Cache createCache()
+      throws TimeoutException, CacheWriterException, GatewayException, CacheExistsException,
+          RegionExistsException {
     return new CacheFactory().set(MCAST_PORT, "0").create();
   }
 
-  /**
-   * create the HARegion
-   */
-  private Region createHARegion() throws TimeoutException, CacheWriterException, GatewayException, CacheExistsException, RegionExistsException, IOException, ClassNotFoundException {
+  /** create the HARegion */
+  private Region createHARegion()
+      throws TimeoutException, CacheWriterException, GatewayException, CacheExistsException,
+          RegionExistsException, IOException, ClassNotFoundException {
     AttributesFactory factory = new AttributesFactory();
     factory.setDataPolicy(DataPolicy.REPLICATE);
     factory.setScope(Scope.DISTRIBUTED_ACK);
     ExpirationAttributes ea = new ExpirationAttributes(2000, ExpirationAction.LOCAL_INVALIDATE);
     factory.setStatisticsEnabled(true);
     ;
-    factory.setCacheListener(new CacheListenerAdapter() {
-      @Override
-      public void afterInvalidate(EntryEvent event) {
-      }
-    });
+    factory.setCacheListener(
+        new CacheListenerAdapter() {
+          @Override
+          public void afterInvalidate(EntryEvent event) {}
+        });
     RegionAttributes ra = factory.create();
-    Region region = HARegion.getInstance("HARegionJUnitTest_region", (GemFireCacheImpl) cache, null, ra);
+    Region region =
+        HARegion.getInstance("HARegionJUnitTest_region", (GemFireCacheImpl) cache, null, ra);
     region.getAttributesMutator().setEntryTimeToLive(ea);
     return region;
   }
 
-  /**
-   * test no exception being thrown while creating an HARegion
-   */
+  /** test no exception being thrown while creating an HARegion */
   @Test
   public void testRegionCreation() throws Exception {
     createHARegion();
   }
 
-  /**
-   * test no exception being thrown while put is being done on an HARegion
-   */
+  /** test no exception being thrown while put is being done on an HARegion */
   @Test
   public void testPut() throws Exception {
     Region region = createHARegion();
@@ -123,9 +114,7 @@ public class HARegionJUnitTest {
     assertEquals(region.get("key1"), "value1");
   }
 
-  /**
-   * test no exception being thrown while doing a localDestroy on a HARegion
-   */
+  /** test no exception being thrown while doing a localDestroy on a HARegion */
   @Test
   public void testLocalDestroy() throws Exception {
     Region region = createHARegion();
@@ -134,20 +123,22 @@ public class HARegionJUnitTest {
     assertEquals(region.get("key1"), null);
   }
 
-  /**
-   * Test to verify event id exists when evict destroy happens.
-   */
+  /** Test to verify event id exists when evict destroy happens. */
   @Test
   public void testEventIdSetForEvictDestroy() throws Exception {
     AttributesFactory factory = new AttributesFactory();
 
-    factory.setCacheListener(new CacheListenerAdapter() {
-      public void afterDestroy(EntryEvent event) {
-        assertTrue("eventId has not been set for " + event, ((EntryEventImpl) event).getEventId() != null);
-      }
-    });
+    factory.setCacheListener(
+        new CacheListenerAdapter() {
+          public void afterDestroy(EntryEvent event) {
+            assertTrue(
+                "eventId has not been set for " + event,
+                ((EntryEventImpl) event).getEventId() != null);
+          }
+        });
 
-    EvictionAttributes evAttr = EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.LOCAL_DESTROY);
+    EvictionAttributes evAttr =
+        EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.LOCAL_DESTROY);
     factory.setEvictionAttributes(evAttr);
 
     RegionAttributes attrs = factory.createRegionAttributes();

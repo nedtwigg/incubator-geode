@@ -19,12 +19,7 @@ package org.apache.geode.cache.query.internal.aggregate;
 import org.apache.geode.cache.query.Aggregator;
 import org.apache.geode.cache.query.QueryService;
 
-/**
- * Computes the Max or Min
- * 
- *
- */
-
+/** Computes the Max or Min */
 public class MaxMin implements Aggregator {
   private final boolean findMax;
   private Comparable currentOptima;
@@ -50,7 +45,6 @@ public class MaxMin implements Aggregator {
         currentOptima = compare > 0 ? comparable : currentOptima;
       }
     }
-
   }
 
   @Override
@@ -63,5 +57,4 @@ public class MaxMin implements Aggregator {
   public Object terminate() {
     return currentOptima;
   }
-
 }

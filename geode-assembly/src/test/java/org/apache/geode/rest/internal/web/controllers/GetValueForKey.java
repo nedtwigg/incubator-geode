@@ -51,7 +51,6 @@ public class GetValueForKey implements Function {
     } catch (CacheClosedException e) {
       context.getResultSender().lastResult("Error: CacheClosedException");
     }
-
   }
 
   @Override

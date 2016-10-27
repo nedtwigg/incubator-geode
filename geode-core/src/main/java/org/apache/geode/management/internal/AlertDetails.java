@@ -40,7 +40,15 @@ public class AlertDetails {
 
   private InternalDistributedMember sender;
 
-  public AlertDetails(int alertLevel, Date msgDate, String connectionName, String threadName, long tid, String msg, String exceptionText, InternalDistributedMember sender) {
+  public AlertDetails(
+      int alertLevel,
+      Date msgDate,
+      String connectionName,
+      String threadName,
+      long tid,
+      String msg,
+      String exceptionText,
+      InternalDistributedMember sender) {
 
     this.alertLevel = alertLevel;
     this.connectionName = connectionName;
@@ -106,8 +114,8 @@ public class AlertDetails {
   }
 
   /**
-   * Returns the sender of this message. Note that this value is not set until
-   * this message is received by a distribution manager.
+   * Returns the sender of this message. Note that this value is not set until this message is
+   * received by a distribution manager.
    */
   public InternalDistributedMember getSender() {
     return this.sender;
@@ -139,9 +147,8 @@ public class AlertDetails {
 
   /**
    * Converts the int alert level to a string representation.
-   * 
-   * @param intLevel
-   *          int alert level to convert
+   *
+   * @param intLevel int alert level to convert
    * @return A string representation of the alert level
    */
   public static final String getAlertLevelAsString(final int intLevel) {

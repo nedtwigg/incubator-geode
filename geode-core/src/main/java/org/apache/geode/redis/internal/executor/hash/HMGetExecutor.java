@@ -45,7 +45,8 @@ public class HMGetExecutor extends HashExecutor {
     checkDataType(key, RedisDataType.REDIS_HASH, context);
 
     if (keyRegion == null) {
-      command.setResponse(Coder.getArrayOfNils(context.getByteBufAllocator(), commandElems.size() - 2));
+      command.setResponse(
+          Coder.getArrayOfNils(context.getByteBufAllocator(), commandElems.size() - 2));
       return;
     }
 
@@ -63,10 +64,8 @@ public class HMGetExecutor extends HashExecutor {
     /*
      * This is done to preserve order in the output
      */
-    for (ByteArrayWrapper field : fields)
-      values.add(results.get(field));
+    for (ByteArrayWrapper field : fields) values.add(results.get(field));
 
     command.setResponse(Coder.getBulkStringArrayResponse(context.getByteBufAllocator(), values));
-
   }
 }

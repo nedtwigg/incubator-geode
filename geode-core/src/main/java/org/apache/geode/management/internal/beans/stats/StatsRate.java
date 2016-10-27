@@ -18,10 +18,7 @@ package org.apache.geode.management.internal.beans.stats;
 
 import org.apache.geode.management.internal.beans.MetricsCalculator;
 
-/**
- * 
- *
- */
+/** */
 public class StatsRate {
 
   private long prevLongCounter = 0;
@@ -35,7 +32,7 @@ public class StatsRate {
   private StatType type;
 
   public StatsRate(String statsKey, StatType type, MBeanStatsMonitor monitor) {
-    this.statsKeys = new String[] { statsKey };
+    this.statsKeys = new String[] {statsKey};
     this.monitor = monitor;
     this.type = type;
   }
@@ -54,18 +51,18 @@ public class StatsRate {
   public float getRate(long pollTime) {
     float rate = 0;
     switch (type) {
-    case INT_TYPE:
-      int currentIntCounter = getCurrentIntCounter();
-      rate = currentIntCounter - prevIntCounter;
-      prevIntCounter = currentIntCounter;
-      return rate;
-    case LONG_TYPE:
-      long currentLongCounter = getCurrentLongCounter();
-      rate = currentLongCounter - prevLongCounter;
-      prevLongCounter = currentLongCounter;
-      return rate;
-    default:
-      return rate;
+      case INT_TYPE:
+        int currentIntCounter = getCurrentIntCounter();
+        rate = currentIntCounter - prevIntCounter;
+        prevIntCounter = currentIntCounter;
+        return rate;
+      case LONG_TYPE:
+        long currentLongCounter = getCurrentLongCounter();
+        rate = currentLongCounter - prevLongCounter;
+        prevLongCounter = currentLongCounter;
+        return rate;
+      default:
+        return rate;
     }
   }
 
@@ -85,5 +82,4 @@ public class StatsRate {
 
     return currentCounter;
   }
-
 }

@@ -22,11 +22,8 @@ import java.nio.channels.SocketChannel;
 import java.util.List;
 
 /**
- * The command class is used in holding a received Redis command. Each sent 
- * command resides in an instance of this class. This class is designed to be
- * used strictly by getter and setter methods.
- * 
- *
+ * The command class is used in holding a received Redis command. Each sent command resides in an
+ * instance of this class. This class is designed to be used strictly by getter and setter methods.
  */
 public class Command {
 
@@ -37,14 +34,15 @@ public class Command {
   private ByteArrayWrapper bytes;
 
   /**
-   * Constructor for {@link Command}. Must initialize Command with a {@link SocketChannel}
-   * and a {@link List} of command elements
-   * 
+   * Constructor for {@link Command}. Must initialize Command with a {@link SocketChannel} and a
+   * {@link List} of command elements
+   *
    * @param commandElems List of elements in command
    */
   public Command(List<byte[]> commandElems) {
     if (commandElems == null || commandElems.isEmpty())
-      throw new IllegalArgumentException("List of command elements cannot be empty -> List:" + commandElems);
+      throw new IllegalArgumentException(
+          "List of command elements cannot be empty -> List:" + commandElems);
     this.commandElems = commandElems;
     this.response = null;
 
@@ -58,12 +56,11 @@ public class Command {
       type = RedisCommandType.UNKNOWN;
     }
     this.commandType = type;
-
   }
 
   /**
    * Used to get the command element list
-   * 
+   *
    * @return List of command elements in form of {@link List}
    */
   public List<byte[]> getProcessedCommand() {
@@ -72,7 +69,7 @@ public class Command {
 
   /**
    * Getter method for the command type
-   * 
+   *
    * @return The command type
    */
   public RedisCommandType getCommandType() {
@@ -81,7 +78,7 @@ public class Command {
 
   /**
    * Getter method to get the response to be sent
-   * 
+   *
    * @return The response
    */
   public ByteBuf getResponse() {
@@ -90,7 +87,7 @@ public class Command {
 
   /**
    * Setter method to set the response to be sent
-   * 
+   *
    * @param response The response to be sent
    */
   public void setResponse(ByteBuf response) {
@@ -98,43 +95,35 @@ public class Command {
   }
 
   public boolean hasError() {
-    if (response == null)
-      return false;
+    if (response == null) return false;
 
-    if (response.getByte(0) == Coder.ERROR_ID)
-      return true;
+    if (response.getByte(0) == Coder.ERROR_ID) return true;
 
     return false;
   }
 
   /**
-   * Convenience method to get a String representation of the key
-   * in a Redis command, always at the second position in the sent
-   * command array
-   * 
-   * @return Returns the second element in the parsed command
-   * list, which is always the key for commands indicating
-   * a key
+   * Convenience method to get a String representation of the key in a Redis command, always at the
+   * second position in the sent command array
+   *
+   * @return Returns the second element in the parsed command list, which is always the key for
+   *     commands indicating a key
    */
   public String getStringKey() {
     if (this.commandElems.size() > 1) {
       if (this.bytes == null) {
         this.bytes = new ByteArrayWrapper(this.commandElems.get(1));
         this.key = this.bytes.toString();
-      } else if (this.key == null)
-        this.key = this.bytes.toString();
+      } else if (this.key == null) this.key = this.bytes.toString();
       return this.key;
-    } else
-      return null;
+    } else return null;
   }
 
   public ByteArrayWrapper getKey() {
     if (this.commandElems.size() > 1) {
-      if (this.bytes == null)
-        this.bytes = new ByteArrayWrapper(this.commandElems.get(1));
+      if (this.bytes == null) this.bytes = new ByteArrayWrapper(this.commandElems.get(1));
       return this.bytes;
-    } else
-      return null;
+    } else return null;
   }
 
   @Override

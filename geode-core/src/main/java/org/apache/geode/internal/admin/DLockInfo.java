@@ -21,9 +21,7 @@ import java.io.Serializable;
 import java.util.Date;
 import org.apache.geode.distributed.internal.membership.*;
 
-/**
- * Represents display information about a single distributed lock
- */
+/** Represents display information about a single distributed lock */
 public interface DLockInfo extends Serializable {
   public String getService();
 

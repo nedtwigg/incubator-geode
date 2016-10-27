@@ -69,12 +69,13 @@ import static org.apache.geode.internal.cache.DistributedCacheOperation.VALUE_IS
 import static org.apache.geode.internal.cache.DistributedCacheOperation.VALUE_IS_OBJECT;
 
 /**
- * A Replicate Region update message.  Meant to be sent only to
- * the peer who hosts transactional data.
+ * A Replicate Region update message. Meant to be sent only to the peer who hosts transactional
+ * data.
  *
  * @since GemFire 6.5
  */
-public final class RemotePutMessage extends RemoteOperationMessageWithDirectReply implements NewValueImporter, OldValueImporter {
+public final class RemotePutMessage extends RemoteOperationMessageWithDirectReply
+    implements NewValueImporter, OldValueImporter {
   private static final Logger logger = LogService.getLogger();
 
   private static final short FLAG_IFNEW = 0x1;
@@ -103,8 +104,7 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
 
   private byte[] oldValBytes;
 
-  /** Used on sender side only to defer serialization until toData is called.
-   */
+  /** Used on sender side only to defer serialization until toData is called. */
   @Unretained(ENTRY_EVENT_NEW_VALUE)
   private transient Object valObj;
 
@@ -120,51 +120,44 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
   /** The operation performed on the sender */
   private Operation op;
 
-  /** An additional object providing context for the operation, e.g., for BridgeServer notification */
+  /**
+   * An additional object providing context for the operation, e.g., for BridgeServer notification
+   */
   ClientProxyMembershipID bridgeContext;
 
   /** event identifier */
   EventID eventId;
 
   /**
-   * for relayed messages, this is the sender of the original message.  It should be used in constructing events
-   * for listener notification.
+   * for relayed messages, this is the sender of the original message. It should be used in
+   * constructing events for listener notification.
    */
   InternalDistributedMember originalSender;
 
   /**
-   * Indicates if and when the new value should be deserialized on the
-   * the receiver. Distinguishes between a non-byte[] value that was
-   * serialized (DESERIALIZATION_POLICY_LAZY) and a
-   * byte[] array value that didn't need to be serialized
-   * (DESERIALIZATION_POLICY_NONE). While this seems like an extra data, it
-   * isn't, because serializing a byte[] causes the type (a byte)
-   * to be written in the stream, AND what's better is
-   * that handling this distinction at this level reduces processing for values
-   * that are byte[].
+   * Indicates if and when the new value should be deserialized on the the receiver. Distinguishes
+   * between a non-byte[] value that was serialized (DESERIALIZATION_POLICY_LAZY) and a byte[] array
+   * value that didn't need to be serialized (DESERIALIZATION_POLICY_NONE). While this seems like an
+   * extra data, it isn't, because serializing a byte[] causes the type (a byte) to be written in
+   * the stream, AND what's better is that handling this distinction at this level reduces
+   * processing for values that are byte[].
    */
   protected byte deserializationPolicy = DistributedCacheOperation.DESERIALIZATION_POLICY_NONE;
 
   protected boolean oldValueIsSerialized = false;
 
-  /**
-   * whether it's okay to create a new key
-   */
+  /** whether it's okay to create a new key */
   private boolean ifNew;
 
-  /**
-   * whether it's okay to update an existing key
-   */
+  /** whether it's okay to update an existing key */
   private boolean ifOld;
 
-  /**
-   * Whether an old value is required in the response
-   */
+  /** Whether an old value is required in the response */
   private boolean requireOldValue;
 
   /**
-   * For put to happen, the old value must be equal to this
-   * expectedOldValue.
+   * For put to happen, the old value must be equal to this expectedOldValue.
+   *
    * @see PartitionedRegion#replace(Object, Object, Object)
    */
   private Object expectedOldValue;
@@ -173,24 +166,21 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
 
   private transient InternalDistributedSystem internalDs;
 
-  /**
-   * state from operateOnRegion that must be preserved for transmission
-   * from the waiting pool
-   */
+  /** state from operateOnRegion that must be preserved for transmission from the waiting pool */
   transient boolean result = false;
 
   private boolean hasOldValue = false;
 
-  /** whether value has delta **/
+  /** whether value has delta * */
   private boolean hasDelta = false;
 
-  /** whether new value is formed by applying delta **/
+  /** whether new value is formed by applying delta * */
   private transient boolean applyDeltaBytes = false;
 
-  /** delta bytes read in fromData that will be used in operate()*/
+  /** delta bytes read in fromData that will be used in operate() */
   private transient byte[] deltaBytes;
 
-  /** whether to send delta or full value **/
+  /** whether to send delta or full value * */
   private transient boolean sendDelta = false;
 
   private EntryEventImpl event = null;
@@ -211,18 +201,28 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
   protected static final short HAS_EXPECTED_OLD_VAL = (CACHE_WRITE << 1);
 
   // below flags go into deserializationPolicy
-  protected static final int HAS_BRIDGE_CONTEXT = getNextByteMask(DistributedCacheOperation.DESERIALIZATION_POLICY_END);
+  protected static final int HAS_BRIDGE_CONTEXT =
+      getNextByteMask(DistributedCacheOperation.DESERIALIZATION_POLICY_END);
   protected static final int HAS_ORIGINAL_SENDER = getNextByteMask(HAS_BRIDGE_CONTEXT);
   protected static final int HAS_VERSION_TAG = getNextByteMask(HAS_ORIGINAL_SENDER);
   protected static final int HAS_CALLBACKARG = getNextByteMask(HAS_VERSION_TAG);
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer}requirements
-   */
-  public RemotePutMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer}requirements */
+  public RemotePutMessage() {}
 
-  private RemotePutMessage(Set recipients, String regionPath, DirectReplyProcessor processor, EntryEventImpl event, final long lastModified, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, boolean useOriginRemote, int processorType, boolean possibleDuplicate) {
+  private RemotePutMessage(
+      Set recipients,
+      String regionPath,
+      DirectReplyProcessor processor,
+      EntryEventImpl event,
+      final long lastModified,
+      boolean ifNew,
+      boolean ifOld,
+      Object expectedOldValue,
+      boolean requireOldValue,
+      boolean useOriginRemote,
+      int processorType,
+      boolean possibleDuplicate) {
     super(recipients, regionPath, processor);
     this.processor = processor;
     this.requireOldValue = requireOldValue;
@@ -240,7 +240,8 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
       event.exportNewValue(this);
     } else {
       // assert that if !event.hasNewValue, then deserialization policy is NONE
-      assert this.deserializationPolicy == DistributedCacheOperation.DESERIALIZATION_POLICY_NONE : this.deserializationPolicy;
+      assert this.deserializationPolicy == DistributedCacheOperation.DESERIALIZATION_POLICY_NONE
+          : this.deserializationPolicy;
     }
 
     // added for cqs on Bridge Servers. rdubey
@@ -264,9 +265,9 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
   }
 
   /**
-   * this is similar to send() but it selects an initialized replicate
-   * that is used to proxy the message
-   * 
+   * this is similar to send() but it selects an initialized replicate that is used to proxy the
+   * message
+   *
    * @param event represents the current operation
    * @param lastModified lastModified time
    * @param ifNew whether a new entry can be created
@@ -276,10 +277,20 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
    * @param onlyPersistent send message to persistent members only
    * @return whether the message was successfully distributed to another member
    */
-  public static boolean distribute(EntryEventImpl event, long lastModified, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, boolean onlyPersistent) {
+  public static boolean distribute(
+      EntryEventImpl event,
+      long lastModified,
+      boolean ifNew,
+      boolean ifOld,
+      Object expectedOldValue,
+      boolean requireOldValue,
+      boolean onlyPersistent) {
     boolean successful = false;
     DistributedRegion r = (DistributedRegion) event.getRegion();
-    Collection replicates = onlyPersistent ? r.getCacheDistributionAdvisor().adviseInitializedPersistentMembers().keySet() : r.getCacheDistributionAdvisor().adviseInitializedReplicates();
+    Collection replicates =
+        onlyPersistent
+            ? r.getCacheDistributionAdvisor().adviseInitializedPersistentMembers().keySet()
+            : r.getCacheDistributionAdvisor().adviseInitializedReplicates();
     if (replicates.isEmpty()) {
       return false;
     }
@@ -292,19 +303,34 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     if (logger.isDebugEnabled()) {
       logger.debug("performing remote put messaging for {}", event);
     }
-    for (Iterator<InternalDistributedMember> it = replicates.iterator(); it.hasNext();) {
+    for (Iterator<InternalDistributedMember> it = replicates.iterator(); it.hasNext(); ) {
       InternalDistributedMember replicate = it.next();
       try {
         attempts++;
         final boolean posDup = (attempts > 1);
-        RemotePutResponse response = send(replicate, event.getRegion(), event, lastModified, ifNew, ifOld, expectedOldValue, requireOldValue, false, DistributionManager.SERIAL_EXECUTOR, posDup);
+        RemotePutResponse response =
+            send(
+                replicate,
+                event.getRegion(),
+                event,
+                lastModified,
+                ifNew,
+                ifOld,
+                expectedOldValue,
+                requireOldValue,
+                false,
+                DistributionManager.SERIAL_EXECUTOR,
+                posDup);
         PutResult result = response.waitForResult();
-        event.setOldValue(result.oldValue, true/*force*/);
+        event.setOldValue(result.oldValue, true /*force*/);
         event.setOperation(result.op);
         if (result.versionTag != null) {
           event.setVersionTag(result.versionTag);
           if (event.getRegion().getVersionVector() != null) {
-            event.getRegion().getVersionVector().recordVersion(result.versionTag.getMemberID(), result.versionTag);
+            event
+                .getRegion()
+                .getVersionVector()
+                .recordVersion(result.versionTag.getMemberID(), result.versionTag);
           }
         }
         event.setInhibitDistribution(true);
@@ -324,7 +350,10 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
 
       } catch (RemoteOperationException e) {
         if (logger.isTraceEnabled(LogMarker.DM)) {
-          logger.trace(LogMarker.DM, "RemotePutMessage caught an unexpected exception during distribution", e);
+          logger.trace(
+              LogMarker.DM,
+              "RemotePutMessage caught an unexpected exception during distribution",
+              e);
         }
       }
     }
@@ -344,45 +373,92 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
   }
 
   /**
-   * Sends a ReplicateRegion
-   * {@link org.apache.geode.cache.Region#put(Object, Object)} message to
+   * Sends a ReplicateRegion {@link org.apache.geode.cache.Region#put(Object, Object)} message to
    * the recipient
+   *
    * @param recipient the member to which the put message is sent
-   * @param r  the PartitionedRegion for which the put was performed
+   * @param r the PartitionedRegion for which the put was performed
    * @param event the event prompting this message
    * @param ifNew whether a new entry must be created
    * @param ifOld whether an old entry must be updated (no creates)
-   * @return the processor used to await acknowledgement that the update was
-   *         sent, or null to indicate that no acknowledgement will be sent
+   * @return the processor used to await acknowledgement that the update was sent, or null to
+   *     indicate that no acknowledgement will be sent
    * @throws RemoteOperationException if the peer is no longer available
    */
-  public static RemotePutResponse txSend(DistributedMember recipient, LocalRegion r, EntryEventImpl event, final long lastModified, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue) throws RemoteOperationException {
-    return send(recipient, r, event, lastModified, ifNew, ifOld, expectedOldValue, requireOldValue, true, DistributionManager.PARTITIONED_REGION_EXECUTOR, false);
+  public static RemotePutResponse txSend(
+      DistributedMember recipient,
+      LocalRegion r,
+      EntryEventImpl event,
+      final long lastModified,
+      boolean ifNew,
+      boolean ifOld,
+      Object expectedOldValue,
+      boolean requireOldValue)
+      throws RemoteOperationException {
+    return send(
+        recipient,
+        r,
+        event,
+        lastModified,
+        ifNew,
+        ifOld,
+        expectedOldValue,
+        requireOldValue,
+        true,
+        DistributionManager.PARTITIONED_REGION_EXECUTOR,
+        false);
   }
 
   /**
-   * Sends a ReplicateRegion
-   * {@link org.apache.geode.cache.Region#put(Object, Object)} message to
+   * Sends a ReplicateRegion {@link org.apache.geode.cache.Region#put(Object, Object)} message to
    * the recipient
+   *
    * @param recipient the member to which the put message is sent
-   * @param r  the PartitionedRegion for which the put was performed
+   * @param r the PartitionedRegion for which the put was performed
    * @param event the event prompting this message
    * @param ifNew whether a new entry must be created
    * @param ifOld whether an old entry must be updated (no creates)
    * @param useOriginRemote whether the receiver should consider the event local or remote
-   * @param processorType the type of executor to use (e.g., DistributionManager.PARTITIONED_REGION_EXECUTOR)
+   * @param processorType the type of executor to use (e.g.,
+   *     DistributionManager.PARTITIONED_REGION_EXECUTOR)
    * @param possibleDuplicate TODO
-   * @return the processor used to await acknowledgement that the update was
-   *         sent, or null to indicate that no acknowledgement will be sent
+   * @return the processor used to await acknowledgement that the update was sent, or null to
+   *     indicate that no acknowledgement will be sent
    * @throws RemoteOperationException if the peer is no longer available
    */
-  public static RemotePutResponse send(DistributedMember recipient, LocalRegion r, EntryEventImpl event, final long lastModified, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, boolean useOriginRemote, int processorType, boolean possibleDuplicate) throws RemoteOperationException {
+  public static RemotePutResponse send(
+      DistributedMember recipient,
+      LocalRegion r,
+      EntryEventImpl event,
+      final long lastModified,
+      boolean ifNew,
+      boolean ifOld,
+      Object expectedOldValue,
+      boolean requireOldValue,
+      boolean useOriginRemote,
+      int processorType,
+      boolean possibleDuplicate)
+      throws RemoteOperationException {
     //Assert.assertTrue(recipient != null, "RemotePutMessage NULL recipient");  recipient can be null for event notifications
     Set recipients = Collections.singleton(recipient);
 
-    RemotePutResponse processor = new RemotePutResponse(r.getSystem(), recipients, event.getKey(), false);
+    RemotePutResponse processor =
+        new RemotePutResponse(r.getSystem(), recipients, event.getKey(), false);
 
-    RemotePutMessage m = new RemotePutMessage(recipients, r.getFullPath(), processor, event, lastModified, ifNew, ifOld, expectedOldValue, requireOldValue, useOriginRemote, processorType, possibleDuplicate);
+    RemotePutMessage m =
+        new RemotePutMessage(
+            recipients,
+            r.getFullPath(),
+            processor,
+            event,
+            lastModified,
+            ifNew,
+            ifOld,
+            expectedOldValue,
+            requireOldValue,
+            useOriginRemote,
+            processorType,
+            possibleDuplicate);
     m.setInternalDs(r.getSystem());
     m.setSendDelta(true);
     m.setTransactionDistributed(r.getCache().getTxManager().isDistributed());
@@ -391,7 +467,8 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
 
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new RemoteOperationException(LocalizedStrings.RemotePutMessage_FAILED_SENDING_0.toLocalizedString(m));
+      throw new RemoteOperationException(
+          LocalizedStrings.RemotePutMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
     return processor;
   }
@@ -460,9 +537,7 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     this.cacheOpRecipients = cacheOpRecipients;
   }
 
-  /**
-   * sets the instance variable hasOldValue to the giving boolean value.
-   */
+  /** sets the instance variable hasOldValue to the giving boolean value. */
   @Override
   public void setHasOldValue(final boolean value) {
     this.hasOldValue = value;
@@ -478,7 +553,8 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     setKey(DataSerializer.readObject(in));
 
     final int extraFlags = in.readUnsignedByte();
-    this.deserializationPolicy = (byte) (extraFlags & DistributedCacheOperation.DESERIALIZATION_POLICY_MASK);
+    this.deserializationPolicy =
+        (byte) (extraFlags & DistributedCacheOperation.DESERIALIZATION_POLICY_MASK);
     this.cbArg = DataSerializer.readObject(in);
     this.lastModified = in.readLong();
     this.op = Operation.fromOrdinal(in.readByte());
@@ -536,12 +612,9 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     DataSerializer.writeObject(getKey(), out);
 
     int extraFlags = this.deserializationPolicy;
-    if (this.bridgeContext != null)
-      extraFlags |= HAS_BRIDGE_CONTEXT;
-    if (this.originalSender != null)
-      extraFlags |= HAS_ORIGINAL_SENDER;
-    if (this.versionTag != null)
-      extraFlags |= HAS_VERSION_TAG;
+    if (this.bridgeContext != null) extraFlags |= HAS_BRIDGE_CONTEXT;
+    if (this.originalSender != null) extraFlags |= HAS_ORIGINAL_SENDER;
+    if (this.versionTag != null) extraFlags |= HAS_VERSION_TAG;
     out.writeByte(extraFlags);
 
     DataSerializer.writeObject(getCallbackArg(), out);
@@ -564,7 +637,8 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
       byte policy = DistributedCacheOperation.valueIsToDeserializationPolicy(oldValueIsSerialized);
       DistributedCacheOperation.writeValue(policy, getOldValObj(), getOldValueBytes(), out);
     }
-    DistributedCacheOperation.writeValue(this.deserializationPolicy, this.valObj, getValBytes(), out);
+    DistributedCacheOperation.writeValue(
+        this.deserializationPolicy, this.valObj, getValBytes(), out);
     if (this.event.getDeltaBytes() != null) {
       DataSerializer.writeByteArray(this.event.getDeltaBytes(), out);
     }
@@ -576,36 +650,28 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
   @Override
   protected short computeCompressedShort() {
     short s = super.computeCompressedShort();
-    if (this.ifNew)
-      s |= IF_NEW;
-    if (this.ifOld)
-      s |= IF_OLD;
-    if (this.requireOldValue)
-      s |= REQUIRED_OLD_VAL;
-    if (this.hasOldValue)
-      s |= HAS_OLD_VAL;
-    if (this.event.getDeltaBytes() != null)
-      s |= HAS_DELTA_BYTES;
-    if (this.expectedOldValue != null)
-      s |= HAS_EXPECTED_OLD_VAL;
-    if (this.useOriginRemote)
-      s |= USE_ORIGIN_REMOTE;
-    if (this.possibleDuplicate)
-      s |= POS_DUP;
+    if (this.ifNew) s |= IF_NEW;
+    if (this.ifOld) s |= IF_OLD;
+    if (this.requireOldValue) s |= REQUIRED_OLD_VAL;
+    if (this.hasOldValue) s |= HAS_OLD_VAL;
+    if (this.event.getDeltaBytes() != null) s |= HAS_DELTA_BYTES;
+    if (this.expectedOldValue != null) s |= HAS_EXPECTED_OLD_VAL;
+    if (this.useOriginRemote) s |= USE_ORIGIN_REMOTE;
+    if (this.possibleDuplicate) s |= POS_DUP;
     return s;
   }
 
   /**
-   * This method is called upon receipt and make the desired changes to the
-   * Replicate Region. Note: It is very important that this message does NOT
-   * cause any deadlocks as the sender will wait indefinitely for the
-   * acknowledgement
+   * This method is called upon receipt and make the desired changes to the Replicate Region. Note:
+   * It is very important that this message does NOT cause any deadlocks as the sender will wait
+   * indefinitely for the acknowledgement
    */
   @Override
-  protected final boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime) throws EntryExistsException, RemoteOperationException {
-    this.setInternalDs(r.getSystem());// set the internal DS. Required to
-                                      // checked DS level delta-enabled property
-                                      // while sending delta
+  protected final boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime)
+      throws EntryExistsException, RemoteOperationException {
+    this.setInternalDs(r.getSystem()); // set the internal DS. Required to
+    // checked DS level delta-enabled property
+    // while sending delta
     boolean sendReply = true;
 
     InternalDistributedMember eventSender = originalSender;
@@ -613,9 +679,17 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
       eventSender = getSender();
     }
     @Released
-    EntryEventImpl eei = EntryEventImpl.create(r, getOperation(), getKey(), null, /*newValue*/
-        getCallbackArg(), useOriginRemote, /*originRemote - false to force distribution in buckets*/
-        eventSender, true/*generateCallbacks*/, false/*initializeId*/);
+    EntryEventImpl eei =
+        EntryEventImpl.create(
+            r,
+            getOperation(),
+            getKey(),
+            null, /*newValue*/
+            getCallbackArg(),
+            useOriginRemote, /*originRemote - false to force distribution in buckets*/
+            eventSender,
+            true /*generateCallbacks*/,
+            false /*initializeId*/);
     this.event = eei;
     try {
       if (this.versionTag != null) {
@@ -646,14 +720,14 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
         event.setDeltaBytes(this.deltaBytes);
       } else {
         switch (this.deserializationPolicy) {
-        case DistributedCacheOperation.DESERIALIZATION_POLICY_LAZY:
-          event.setSerializedNewValue(getValBytes());
-          break;
-        case DistributedCacheOperation.DESERIALIZATION_POLICY_NONE:
-          event.setNewValue(getValBytes());
-          break;
-        default:
-          throw new AssertionError("unknown deserialization policy: " + deserializationPolicy);
+          case DistributedCacheOperation.DESERIALIZATION_POLICY_LAZY:
+            event.setSerializedNewValue(getValBytes());
+            break;
+          case DistributedCacheOperation.DESERIALIZATION_POLICY_NONE:
+            event.setNewValue(getValBytes());
+            break;
+          default:
+            throw new AssertionError("unknown deserialization policy: " + deserializationPolicy);
         }
       }
 
@@ -661,13 +735,26 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
         // the event must show it's true origin for cachewriter invocation
         //        event.setOriginRemote(true);
         //        this.op = r.doCacheWriteBeforePut(event, ifNew);  // TODO fix this for bug 37072
-        result = r.getDataView().putEntry(event, this.ifNew, this.ifOld, this.expectedOldValue, this.requireOldValue, this.lastModified, true);
+        result =
+            r.getDataView()
+                .putEntry(
+                    event,
+                    this.ifNew,
+                    this.ifOld,
+                    this.expectedOldValue,
+                    this.requireOldValue,
+                    this.lastModified,
+                    true);
 
         if (!this.result) { // make sure the region hasn't gone away
           r.checkReadiness();
           if (!this.ifNew && !this.ifOld) {
             // no reason to be throwing an exception, so let's retry
-            RemoteOperationException fre = new RemoteOperationException(LocalizedStrings.RemotePutMessage_UNABLE_TO_PERFORM_PUT_BUT_OPERATION_SHOULD_NOT_FAIL_0.toLocalizedString());
+            RemoteOperationException fre =
+                new RemoteOperationException(
+                    LocalizedStrings
+                        .RemotePutMessage_UNABLE_TO_PERFORM_PUT_BUT_OPERATION_SHOULD_NOT_FAIL_0
+                        .toLocalizedString());
             fre.setHash(key.hashCode());
             sendReply(getSender(), getProcessorId(), dm, new ReplyException(fre), r, startTime);
           }
@@ -691,7 +778,14 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     }
   }
 
-  protected void sendReply(InternalDistributedMember member, int procId, DM dm, ReplyException ex, LocalRegion pr, long startTime, EntryEventImpl event) {
+  protected void sendReply(
+      InternalDistributedMember member,
+      int procId,
+      DM dm,
+      ReplyException ex,
+      LocalRegion pr,
+      long startTime,
+      EntryEventImpl event) {
     Collection distributedTo = null;
     if (this.processorId != 0) {
       // if the sender is waiting for responses from the cache-op message
@@ -699,13 +793,21 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
       // membership view than this VM
       distributedTo = this.cacheOpRecipients;
     }
-    PutReplyMessage.send(member, procId, getReplySender(dm), result, getOperation(), ex, this, event);
+    PutReplyMessage.send(
+        member, procId, getReplySender(dm), result, getOperation(), ex, this, event);
   }
 
   // override reply message type from PartitionMessage
   @Override
-  protected void sendReply(InternalDistributedMember member, int procId, DM dm, ReplyException ex, LocalRegion pr, long startTime) {
-    PutReplyMessage.send(member, procId, getReplySender(dm), result, getOperation(), ex, this, null);
+  protected void sendReply(
+      InternalDistributedMember member,
+      int procId,
+      DM dm,
+      ReplyException ex,
+      LocalRegion pr,
+      long startTime) {
+    PutReplyMessage.send(
+        member, procId, getReplySender(dm), result, getOperation(), ex, this, null);
   }
 
   @Override
@@ -724,7 +826,12 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     if (this.eventId != null) {
       buff.append("; eventId=").append(this.eventId);
     }
-    buff.append("; ifOld=").append(this.ifOld).append("; ifNew=").append(this.ifNew).append("; op=").append(this.getOperation());
+    buff.append("; ifOld=")
+        .append(this.ifOld)
+        .append("; ifNew=")
+        .append(this.ifNew)
+        .append("; op=")
+        .append(this.getOperation());
     buff.append("; hadOldValue=").append(this.hasOldValue);
     if (this.hasOldValue) {
       byte[] ov = getOldValueBytes();
@@ -733,7 +840,8 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
       }
     }
     buff.append("; deserializationPolicy=");
-    buff.append(DistributedCacheOperation.deserializationPolicyToString(this.deserializationPolicy));
+    buff.append(
+        DistributedCacheOperation.deserializationPolicyToString(this.deserializationPolicy));
     buff.append("; hasDelta=");
     buff.append(this.hasDelta);
     buff.append("; sendDelta=");
@@ -763,23 +871,18 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     Operation op;
 
     /**
-     * Set to true by the import methods if the oldValue
-     * is already serialized. In that case toData
-     * should just copy the bytes to the stream.
-     * In either case fromData just calls readObject.
+     * Set to true by the import methods if the oldValue is already serialized. In that case toData
+     * should just copy the bytes to the stream. In either case fromData just calls readObject.
      */
     private transient boolean oldValueIsSerialized;
 
     /**
-     * Old value in serialized form: either a byte[] or CachedDeserializable,
-     * or null if not set.
+     * Old value in serialized form: either a byte[] or CachedDeserializable, or null if not set.
      */
     @Unretained(ENTRY_EVENT_OLD_VALUE)
     private Object oldValue;
 
-    /**
-     * version tag for concurrency control
-     */
+    /** version tag for concurrency control */
     VersionTag versionTag;
 
     @Override
@@ -787,14 +890,17 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
       return true;
     }
 
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public PutReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public PutReplyMessage() {}
 
     // unit tests may call this constructor
-    PutReplyMessage(int processorId, boolean result, Operation op, ReplyException ex, Object oldValue, VersionTag versionTag) {
+    PutReplyMessage(
+        int processorId,
+        boolean result,
+        Operation op,
+        ReplyException ex,
+        Object oldValue,
+        VersionTag versionTag) {
       super();
       this.op = op;
       this.result = result;
@@ -805,9 +911,19 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient, int processorId, ReplySender dm, boolean result, Operation op, ReplyException ex, RemotePutMessage sourceMessage, EntryEventImpl event) {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        ReplySender dm,
+        boolean result,
+        Operation op,
+        ReplyException ex,
+        RemotePutMessage sourceMessage,
+        EntryEventImpl event) {
       Assert.assertTrue(recipient != null, "PutReplyMessage NULL recipient");
-      PutReplyMessage m = new PutReplyMessage(processorId, result, op, ex, null, event != null ? event.getVersionTag() : null);
+      PutReplyMessage m =
+          new PutReplyMessage(
+              processorId, result, op, ex, null, event != null ? event.getVersionTag() : null);
 
       if (sourceMessage.requireOldValue && event != null) {
         event.exportOldValue(m);
@@ -818,8 +934,8 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     }
 
     /**
-     * Processes this message.  This method is invoked by the receiver
-     * of the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
      * @param dm the distribution manager that is processing the message.
      */
     @Override
@@ -849,11 +965,11 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
       dm.getStats().incReplyMessageTime(NanoTimer.getTime() - startTime);
     }
 
-    /** Return oldValue as a byte[] or as a CachedDeserializable.
-     * This method used to deserialize a CachedDeserializable but that is too soon.
-     * This method is called during message processing. The deserialization needs
-     * to be deferred until we get back to the application thread which happens
-     * for this oldValue when they call EntryEventImpl.getOldValue.
+    /**
+     * Return oldValue as a byte[] or as a CachedDeserializable. This method used to deserialize a
+     * CachedDeserializable but that is too soon. This method is called during message processing.
+     * The deserialization needs to be deferred until we get back to the application thread which
+     * happens for this oldValue when they call EntryEventImpl.getOldValue.
      */
     public Object getOldValue() {
       // oldValue field is in serialized form, either a CachedDeserializable,
@@ -879,7 +995,8 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
       }
     }
 
-    public static void oldValueToData(DataOutput out, Object ov, boolean ovIsSerialized) throws IOException {
+    public static void oldValueToData(DataOutput out, Object ov, boolean ovIsSerialized)
+        throws IOException {
       if (ovIsSerialized && ov != null) {
         byte[] oldValueBytes;
         if (ov instanceof byte[]) {
@@ -898,19 +1015,15 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
       } else {
         DataSerializer.writeObject(ov, out);
       }
-
     }
 
     @Override
     public void toData(DataOutput out) throws IOException {
       super.toData(out);
       byte flags = 0;
-      if (this.result)
-        flags |= FLAG_RESULT;
-      if (this.versionTag != null)
-        flags |= FLAG_HASVERSION;
-      if (this.versionTag instanceof DiskVersionTag)
-        flags |= FLAG_PERSISTENT;
+      if (this.result) flags |= FLAG_RESULT;
+      if (this.versionTag != null) flags |= FLAG_HASVERSION;
+      if (this.versionTag instanceof DiskVersionTag) flags |= FLAG_PERSISTENT;
       out.writeByte(flags);
       out.writeByte(this.op.ordinal);
       oldValueToData(out, getOldValue(), this.oldValueIsSerialized);
@@ -922,7 +1035,15 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("PutReplyMessage ").append("processorid=").append(this.processorId).append(" returning ").append(this.result).append(" op=").append(op).append(" exception=").append(getException());
+      sb.append("PutReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" returning ")
+          .append(this.result)
+          .append(" op=")
+          .append(op)
+          .append(" exception=")
+          .append(getException());
       if (this.versionTag != null) {
         sb.append(" version=").append(this.versionTag);
       }
@@ -945,7 +1066,8 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     }
 
     @Override
-    public void importOldObject(@Unretained(ENTRY_EVENT_OLD_VALUE) Object ov, boolean isSerialized) {
+    public void importOldObject(
+        @Unretained(ENTRY_EVENT_OLD_VALUE) Object ov, boolean isSerialized) {
       this.oldValueIsSerialized = isSerialized;
       this.oldValue = ov;
     }
@@ -958,6 +1080,7 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
 
   /**
    * A processor to capture the value returned by {@link RemotePutMessage}
+   *
    * @since GemFire 5.1
    */
   public static class RemotePutResponse extends RemoteOperationResponse {
@@ -968,7 +1091,8 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     private RemotePutMessage putMessage;
     private VersionTag versionTag;
 
-    public RemotePutResponse(InternalDistributedSystem ds, Collection recipients, Object key, boolean register) {
+    public RemotePutResponse(
+        InternalDistributedSystem ds, Collection recipients, Object key, boolean register) {
       super(ds, recipients, register);
       this.key = key;
     }
@@ -1001,11 +1125,11 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
         throw e;
       }
       if (this.op == null) {
-        throw new RemoteOperationException(LocalizedStrings.RemotePutMessage_DID_NOT_RECEIVE_A_VALID_REPLY.toLocalizedString());
+        throw new RemoteOperationException(
+            LocalizedStrings.RemotePutMessage_DID_NOT_RECEIVE_A_VALID_REPLY.toLocalizedString());
       }
       return new PutResult(this.returnValue, this.op, this.oldValue, this.versionTag);
     }
-
   }
 
   public static class PutResult {
@@ -1020,7 +1144,8 @@ public final class RemotePutMessage extends RemoteOperationMessageWithDirectRepl
     /** the concurrency control version tag */
     public VersionTag versionTag;
 
-    public PutResult(boolean flag, Operation actualOperation, Object oldValue, VersionTag versionTag) {
+    public PutResult(
+        boolean flag, Operation actualOperation, Object oldValue, VersionTag versionTag) {
       this.returnValue = flag;
       this.op = actualOperation;
       this.oldValue = oldValue;

@@ -58,9 +58,7 @@ import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.junit.categories.FlakyTest;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Testing Oplog API's
- */
+/** Testing Oplog API's */
 @Category(IntegrationTest.class)
 public class OplogJUnitTest extends DiskRegionTestingBase {
 
@@ -74,7 +72,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
 
   static final int OP_DEL = 3;
 
-  protected volatile static Random random = new Random();
+  protected static volatile Random random = new Random();
 
   protected long expectedOplogSize = Oplog.OPLOG_NEW_ENTRY_BASE_REC_SIZE;
 
@@ -90,7 +88,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
 
   protected boolean flushOccuredAtleastOnce = false;
 
-  volatile protected boolean assertDone = false;
+  protected volatile boolean assertDone = false;
 
   boolean failure = false;
 
@@ -122,9 +120,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     DiskStoreImpl.SET_IGNORE_PREALLOCATE = false;
   }
 
-  /**
-   * Test method for 'org.apache.geode.internal.cache.Oplog.isBackup()'
-   */
+  /** Test method for 'org.apache.geode.internal.cache.Oplog.isBackup()' */
   @Test
   public void testIsBackup() {
 
@@ -205,9 +201,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
 
   // @todo port testBufferOperations
   /**
-   * Asif: Tests the correct behaviour of attributes like byte-threshhold,
-   * asynch thread wait time,etc.
-   * 'org.apache.geode.internal.cache.Oplog.bufferOperations()'
+   * Asif: Tests the correct behaviour of attributes like byte-threshhold, asynch thread wait
+   * time,etc. 'org.apache.geode.internal.cache.Oplog.bufferOperations()'
    */
   //   @Test
   // public void testBufferOperations()
@@ -293,9 +288,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   //     closeDown();
   //   }
 
-  /**
-   * Test method for 'org.apache.geode.internal.cache.Oplog.clear(File)'
-   */
+  /** Test method for 'org.apache.geode.internal.cache.Oplog.clear(File)' */
   @Test
   public void testClear() {
     region = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskProps);
@@ -323,9 +316,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     closeDown();
   }
 
-  /**
-   * Test method for 'org.apache.geode.internal.cache.Oplog.close()'
-   */
+  /** Test method for 'org.apache.geode.internal.cache.Oplog.close()' */
   @Test
   public void testClose() {
     {
@@ -339,7 +330,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       //checkIfContainsFile(".lk");
 
       StatisticsFactory factory = region.getCache().getDistributedSystem();
-      Oplog newOplog = new Oplog(id, dr.getOplogSet(), new DirectoryHolder(factory, dirs[0], 1000, 0));
+      Oplog newOplog =
+          new Oplog(id, dr.getOplogSet(), new DirectoryHolder(factory, dirs[0], 1000, 0));
       dr.getOplogSet().setChild(newOplog);
       closeDown();
     }
@@ -363,11 +355,11 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       // lk should still exist since it locks DiskStore not just one oplog
       //checkIfContainsFile(".lk");
       StatisticsFactory factory = region.getCache().getDistributedSystem();
-      Oplog newOplog = new Oplog(id, dr.getOplogSet(), new DirectoryHolder(factory, dirs[0], 1000, 2));
+      Oplog newOplog =
+          new Oplog(id, dr.getOplogSet(), new DirectoryHolder(factory, dirs[0], 1000, 2));
       dr.setChild(newOplog);
       closeDown();
     }
-
   }
 
   @Override
@@ -394,9 +386,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * Test method for 'org.apache.geode.internal.cache.Oplog.destroy()'
-   */
+  /** Test method for 'org.apache.geode.internal.cache.Oplog.destroy()' */
   @Test
   public void testDestroy() {
     region = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskProps);
@@ -440,12 +430,9 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     assertTrue(" failed in get PersistOnly ", region.get(new Integer(0)) == null);
     closeDown();
-
   }
 
-  /**
-   * Test method for 'org.apache.geode.internal.cache.Oplog.remove(long)'
-   */
+  /** Test method for 'org.apache.geode.internal.cache.Oplog.remove(long)' */
   @Test
   public void testRemove() {
     region = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskProps);
@@ -471,14 +458,12 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     region.close();
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     closeDown();
-
   }
 
   // @todo: port testByteBufferCreationForCreateModifyAndDeleteOperation
   /**
-   * This tests the final ByteBuffer object that gets created for synch/Asynch
-   * operation for a create / modify & Delete operation
-   *
+   * This tests the final ByteBuffer object that gets created for synch/Asynch operation for a
+   * create / modify & Delete operation
    */
   //   @Test
   //  public void testByteBufferCreationForCreateModifyAndDeleteOperation()
@@ -563,10 +548,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
 
   //   }
 
-  /**
-   * Tests whether the data is written in the right format on the disk
-   *
-   */
+  /** Tests whether the data is written in the right format on the disk */
   @Test
   public void testFaultInOfValuesFromDisk() {
     try {
@@ -596,7 +578,10 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
           fail("Test for fault in from disk failed");
         }
       }
-      val = (byte[]) DiskStoreImpl.convertBytesAndBitsIntoObject(dr.getBytesAndBitsWithoutLock(entry.getDiskId(), true, false));
+      val =
+          (byte[])
+              DiskStoreImpl.convertBytesAndBitsIntoObject(
+                  dr.getBytesAndBitsWithoutLock(entry.getDiskId(), true, false));
       for (int i = 0; i < 10; ++i) {
         if (val[i] != (byte) i) {
           fail("Test for fault in from disk failed");
@@ -613,11 +598,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   // @todo port testAsynchWriterTerminationOnSwitch
-  /**
-   * Tests the termination of asynch writer for an Oplog after the switch has
-   * been made
-   *
-   */
+  /** Tests the termination of asynch writer for an Oplog after the switch has been made */
   //   @Test
   //  public void testAsynchWriterTerminationOnSwitch()
   //   {
@@ -667,11 +648,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   //     closeDown();
   //   }
 
-  /**
-   * Tests the original ByteBufferPool gets transferred to the new Oplog for
-   * synch mode
-   *
-   */
+  /** Tests the original ByteBufferPool gets transferred to the new Oplog for synch mode */
   @Test
   public void testByteBufferPoolTransferForSynchMode() {
     diskProps.setMaxOplogSize(1024);
@@ -707,18 +684,15 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     assertEquals(oldWriteBuf, switched.getWriteBuf());
     assertEquals(null, old.getWriteBuf());
     closeDown();
-
   }
 
   // @todo port this test if needed. ByteBufferPool code is going to change
   /**
-   * Tests the ByteBufferPool usage during asynch mode operation & ensuring that
-   * GetOperation does not get corrupted data due to returing of ByetBuffer to
-   * the pool. There are 5 pre created pools in Oplog . Each pool has size of 1.
-   * Out of 5 pools , only one pool is used by the test. Thus there are 4
-   * bytebuffers which will always be free. Thus if the asynch writer had
-   * initially 8 byte buffers only 4 will be released
-   *
+   * Tests the ByteBufferPool usage during asynch mode operation & ensuring that GetOperation does
+   * not get corrupted data due to returing of ByetBuffer to the pool. There are 5 pre created pools
+   * in Oplog . Each pool has size of 1. Out of 5 pools , only one pool is used by the test. Thus
+   * there are 4 bytebuffers which will always be free. Thus if the asynch writer had initially 8
+   * byte buffers only 4 will be released
    */
   //   @Test
   //  public void testByteBufferPoolUsageForAsynchMode()
@@ -1063,24 +1037,24 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
 
   //   }
 
-  static int evaluateSizeOfOperationForPersist(Object key, byte[] val, DiskId id, int OperationType) {
+  static int evaluateSizeOfOperationForPersist(
+      Object key, byte[] val, DiskId id, int OperationType) {
     int size = 1;
     long opKey = id.getKeyId();
     switch (OperationType) {
-    case OP_CREATE:
-      size += 4 + EntryEventImpl.serialize(key).length + 1 + 4 + val.length;
-      break;
+      case OP_CREATE:
+        size += 4 + EntryEventImpl.serialize(key).length + 1 + 4 + val.length;
+        break;
 
-    case OP_MODIFY:
-      // @todo how do a know if the key needed to be serialized?
-      size += 1 + 4 + val.length + Oplog.bytesNeeded(Oplog.abs(opKey));
-      break;
-    case OP_DEL:
-      size += Oplog.bytesNeeded(Oplog.abs(opKey));
-      break;
+      case OP_MODIFY:
+        // @todo how do a know if the key needed to be serialized?
+        size += 1 + 4 + val.length + Oplog.bytesNeeded(Oplog.abs(opKey));
+        break;
+      case OP_DEL:
+        size += Oplog.bytesNeeded(Oplog.abs(opKey));
+        break;
     }
     return size;
-
   }
 
   // give the new oplog record format it is too hard for the test to calculate
@@ -1569,11 +1543,9 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   //   }
 
   /**
-   * Tests the bug which arises in case of asynch mode during oplog switching
-   * caused by conflation of create/destroy operation.The bug occurs if a create
-   * operation is followed by destroy but before destroy proceeds some other
-   * operation causes oplog switching
-   *
+   * Tests the bug which arises in case of asynch mode during oplog switching caused by conflation
+   * of create/destroy operation.The bug occurs if a create operation is followed by destroy but
+   * before destroy proceeds some other operation causes oplog switching
    */
   @Test
   public void testBug34615() {
@@ -1588,32 +1560,33 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     final byte[] val = new byte[50];
     region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskProps);
-    final CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      @Override
-      public void afterConflation(ByteBuffer orig, ByteBuffer conflated) {
-        Thread th = new Thread(new Runnable() {
-          public void run() {
-            region.put("2", new byte[75]);
-          }
-        });
-        assertNull(conflated);
-        th.start();
-        ThreadUtils.join(th, 30 * 1000);
-        LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-
-      }
-    });
+    final CacheObserver old =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
+              @Override
+              public void afterConflation(ByteBuffer orig, ByteBuffer conflated) {
+                Thread th =
+                    new Thread(
+                        new Runnable() {
+                          public void run() {
+                            region.put("2", new byte[75]);
+                          }
+                        });
+                assertNull(conflated);
+                th.start();
+                ThreadUtils.join(th, 30 * 1000);
+                LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
+              }
+            });
 
     region.put("1", val);
     region.remove("1");
     assertFalse(failureCause, testFailed);
     CacheObserverHolder.setInstance(old);
     closeDown();
-
   }
 
-  /**
-   */
+  /** */
   @Test
   public void testConflation() throws Exception {
 
@@ -1696,10 +1669,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * This tests the retrieval of empty byte array when present in asynch buffers
-   *
-   */
+  /** This tests the retrieval of empty byte array when present in asynch buffers */
   @Test
   public void testGetEmptyByteArrayInAsynchBuffer() {
     final int MAX_OPLOG_SIZE = 1000;
@@ -1724,10 +1694,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     closeDown();
   }
 
-  /**
-   * This tests the retrieval of empty byte array in synch mode
-   *
-   */
+  /** This tests the retrieval of empty byte array in synch mode */
   @Test
   public void testGetEmptyByteArrayInSynchMode() {
     final int MAX_OPLOG_SIZE = 1000;
@@ -1753,12 +1720,10 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * This tests the bug which caused the oplogRoller to attempt to roll a
-   * removed entry whose value is Token.Removed This bug can occur if a remove
-   * operation causes oplog switching & hence roller thread gets notified, & the
-   * roller thread obtains the iterator of the concurrent region map before the
-   * remove
-   *
+   * This tests the bug which caused the oplogRoller to attempt to roll a removed entry whose value
+   * is Token.Removed This bug can occur if a remove operation causes oplog switching & hence roller
+   * thread gets notified, & the roller thread obtains the iterator of the concurrent region map
+   * before the remove
    */
   @Test
   public void testBug34702() {
@@ -1775,36 +1740,38 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     region.put("key1", val);
     region.put("key2", val);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-    final CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    final CacheObserver old =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
 
-      @Override
-      public void afterSettingOplogOffSet(long offset) {
-        ((LocalRegion) region).getDiskRegion().forceRolling();
-        // Let the operation thread yield to the Roller so that
-        // it is able to obtain the iterator of the concurrrent region map
-        // & thus get the reference to the entry which will contain
-        // value as Token.Removed as the entry though removed from
-        // concurrent
-        // map still will be available to the roller
-        Thread.yield();
-        // Sleep for some time
-        try {
-          Thread.sleep(5000);
-        } catch (InterruptedException e) {
-          testFailed = true;
-          failureCause = "No guarantee that test is succesful";
-          fail("No guarantee that test is succesful");
-        }
-      }
+              @Override
+              public void afterSettingOplogOffSet(long offset) {
+                ((LocalRegion) region).getDiskRegion().forceRolling();
+                // Let the operation thread yield to the Roller so that
+                // it is able to obtain the iterator of the concurrrent region map
+                // & thus get the reference to the entry which will contain
+                // value as Token.Removed as the entry though removed from
+                // concurrent
+                // map still will be available to the roller
+                Thread.yield();
+                // Sleep for some time
+                try {
+                  Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                  testFailed = true;
+                  failureCause = "No guarantee that test is succesful";
+                  fail("No guarantee that test is succesful");
+                }
+              }
 
-      @Override
-      public void afterHavingCompacted() {
-        proceed = true;
-        synchronized (OplogJUnitTest.this) {
-          OplogJUnitTest.this.notify();
-        }
-      }
-    });
+              @Override
+              public void afterHavingCompacted() {
+                proceed = true;
+                synchronized (OplogJUnitTest.this) {
+                  OplogJUnitTest.this.notify();
+                }
+              }
+            });
     try {
       region.destroy("key1");
       region.destroy("key2");
@@ -1835,18 +1802,15 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       fail("Test failed as afterHavingCompacted callabck not issued even after sufficient wait");
     }
     closeDown();
-
   }
 
   /**
-   * tests a potential deadlock situation if the operation causing a swithcing
-   * of Oplog is waiting for roller to free space. The problem can arise if the
-   * operation causing Oplog switching is going on an Entry , which already has
-   * its oplog ID referring to the Oplog being switched. In such case, when the
-   * roller will try to roll the entries referencing the current oplog , it will
-   * not be able to acquire the lock on the entry as the switching thread has
-   * already taken a lock on it.
-   *
+   * tests a potential deadlock situation if the operation causing a swithcing of Oplog is waiting
+   * for roller to free space. The problem can arise if the operation causing Oplog switching is
+   * going on an Entry , which already has its oplog ID referring to the Oplog being switched. In
+   * such case, when the roller will try to roll the entries referencing the current oplog , it will
+   * not be able to acquire the lock on the entry as the switching thread has already taken a lock
+   * on it.
    */
   @Test
   public void testRollingDeadlockSituation() {
@@ -1856,7 +1820,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     diskProps.setRolling(true);
     diskProps.setSynchronous(true);
     diskProps.setOverflow(false);
-    diskProps.setDiskDirsAndSizes(new File[] { dirs[0] }, new int[] { 1400 });
+    diskProps.setDiskDirsAndSizes(new File[] {dirs[0]}, new int[] {1400});
     final byte[] val = new byte[500];
     proceed = false;
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
@@ -1866,31 +1830,37 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       region.put("key1", val);
     } catch (DiskAccessException dae) {
       logWriter.error("Exception occured", dae);
-      fail("Test failed as DiskAccessException was encountered where as the operation should ideally have proceeded without issue . exception = " + dae);
+      fail(
+          "Test failed as DiskAccessException was encountered where as the operation should ideally have proceeded without issue . exception = "
+              + dae);
     }
   }
 
   /**
-   * This tests whether an empty byte array is correctly writtem to the disk as
-   * a zero value length operation & hence the 4 bytes field for recording the
-   * value length is absent & also since the value length is zero no byte for it
-   * should also get added. Similary during recover from HTree as well as Oplog ,
-   * the empty byte array should be read correctly
-   *
+   * This tests whether an empty byte array is correctly writtem to the disk as a zero value length
+   * operation & hence the 4 bytes field for recording the value length is absent & also since the
+   * value length is zero no byte for it should also get added. Similary during recover from HTree
+   * as well as Oplog , the empty byte array should be read correctly
    */
   @Test
   public void testEmptyByteArrayPutAndRecovery() {
-    CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      @Override
-      public void afterConflation(ByteBuffer origBB, ByteBuffer conflatedBB) {
-        if ((2 + 4 + 1 + EntryEventImpl.serialize("key1").length) != origBB.capacity()) {
-          failureCause = "For a backup region, addition of an empty array should result in an offset of 6 bytes where as actual offset is =" + origBB.capacity();
-          testFailed = true;
-        }
-        Assert.assertTrue("For a backup region, addition of an empty array should result in an offset of 6 bytes where as actual offset is =" + origBB.capacity(), (2 + 4 + 1 + EntryEventImpl.serialize("key1").length) == origBB.capacity());
-
-      }
-    });
+    CacheObserver old =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
+              @Override
+              public void afterConflation(ByteBuffer origBB, ByteBuffer conflatedBB) {
+                if ((2 + 4 + 1 + EntryEventImpl.serialize("key1").length) != origBB.capacity()) {
+                  failureCause =
+                      "For a backup region, addition of an empty array should result in an offset of 6 bytes where as actual offset is ="
+                          + origBB.capacity();
+                  testFailed = true;
+                }
+                Assert.assertTrue(
+                    "For a backup region, addition of an empty array should result in an offset of 6 bytes where as actual offset is ="
+                        + origBB.capacity(),
+                    (2 + 4 + 1 + EntryEventImpl.serialize("key1").length) == origBB.capacity());
+              }
+            });
     try {
       final int MAX_OPLOG_SIZE = 2000;
       diskProps.setMaxOplogSize(MAX_OPLOG_SIZE);
@@ -1898,7 +1868,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       // diskProps.setRolling(true);
       diskProps.setSynchronous(true);
       diskProps.setOverflow(false);
-      diskProps.setDiskDirsAndSizes(new File[] { dirs[0] }, new int[] { 1400 });
+      diskProps.setDiskDirsAndSizes(new File[] {dirs[0]}, new int[] {1400});
       final byte[] val = new byte[0];
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
 
@@ -1908,34 +1878,36 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       region.close();
       region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
       byte[] _val = (byte[]) region.get("key1");
-      assertTrue("value of key1 after restarting the region is not an empty byte array. This may indicate problem in reading from Oplog", _val.length == 0);
+      assertTrue(
+          "value of key1 after restarting the region is not an empty byte array. This may indicate problem in reading from Oplog",
+          _val.length == 0);
       if (this.logWriter.infoEnabled()) {
-        this.logWriter.info("After first region close & opening again no problems encountered & hence Oplog has been read successfully.");
-        this.logWriter.info("Closing the region again without any operation done, would indicate that next time data will be loaded from HTree .");
+        this.logWriter.info(
+            "After first region close & opening again no problems encountered & hence Oplog has been read successfully.");
+        this.logWriter.info(
+            "Closing the region again without any operation done, would indicate that next time data will be loaded from HTree .");
       }
       region.close();
       region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
       _val = (byte[]) region.get("key1");
-      assertTrue("value of key1 after restarting the region is not an empty byte array. This may indicate problem in reading from HTRee", _val.length == 0);
+      assertTrue(
+          "value of key1 after restarting the region is not an empty byte array. This may indicate problem in reading from HTRee",
+          _val.length == 0);
       assertFalse(failureCause, testFailed);
       // region.close();
 
     } finally {
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
       CacheObserverHolder.setInstance(old);
-
     }
   }
 
   /**
-   * This is used to test bug 35012 where a remove operation on a key gets
-   * unrecorded due to switching of Oplog if it happens just after the remove
-   * operation has destroyed the in memory entry & is about to acquire the
-   * readlock in DiskRegion to record the same. If the Oplog has switched during
-   * that duration , the bug would appear
-   *
+   * This is used to test bug 35012 where a remove operation on a key gets unrecorded due to
+   * switching of Oplog if it happens just after the remove operation has destroyed the in memory
+   * entry & is about to acquire the readlock in DiskRegion to record the same. If the Oplog has
+   * switched during that duration , the bug would appear
    */
-
   @Test
   public void testBug35012() {
     final int MAX_OPLOG_SIZE = 500;
@@ -1952,11 +1924,13 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       region.put("key1", val);
       region.put("key2", val);
       region.put("key3", val);
-      final Thread th = new Thread(new Runnable() {
-        public void run() {
-          region.remove("key1");
-        }
-      });
+      final Thread th =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  region.remove("key1");
+                }
+              });
       // main thread acquires the write lock
       ((LocalRegion) region).getDiskRegion().acquireWriteLock();
       try {
@@ -1976,15 +1950,12 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       fail("The test could not be completed because of exception .Exception=" + e);
     }
     closeDown();
-
   }
 
   /**
-   * Tests the various configurable parameters used by the ByteBufferPool . The
-   * behaviour of parameters is based on the mode of DiskRegion ( synch or
-   * asynch) . Pls refer to the class documentation ( Oplog.ByteBufferPool) for
-   * the exact behaviour of the class
-   *
+   * Tests the various configurable parameters used by the ByteBufferPool . The behaviour of
+   * parameters is based on the mode of DiskRegion ( synch or asynch) . Pls refer to the class
+   * documentation ( Oplog.ByteBufferPool) for the exact behaviour of the class
    */
   //   @Test
   //  public void testByteBufferPoolParameters()
@@ -2091,10 +2062,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   //   }
 
   /**
-   * Tests the ByteBuffer Pool operations for release of ByteBuffers in case the
-   * objects being put vary in size & hence use ByteBuffer Pools present at
-   * different indexes
-   *
+   * Tests the ByteBuffer Pool operations for release of ByteBuffers in case the objects being put
+   * vary in size & hence use ByteBuffer Pools present at different indexes
    */
   //   @Test
   //  public void testByteBufferPoolReleaseBugTest()
@@ -2115,9 +2084,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   //   }
 
   /**
-   * Tests if buffer size & time are not set , the asynch writer gets awakened
-   * on time basis of default 1 second
-   *
+   * Tests if buffer size & time are not set , the asynch writer gets awakened on time basis of
+   * default 1 second
    */
   @Test
   public void testAsynchWriterAttribBehaviour1() {
@@ -2126,7 +2094,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     File dir = new File("testingDirectoryDefault");
     dir.mkdir();
     dir.deleteOnExit();
-    File[] dirs = { dir };
+    File[] dirs = {dir};
     dsf.setDiskDirs(dirs);
     AttributesFactory factory = new AttributesFactory();
     final long t1 = System.currentTimeMillis();
@@ -2140,25 +2108,24 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     } catch (Exception e1) {
       logWriter.error("Test failed due to exception", e1);
       fail("Test failed due to exception " + e1);
-
     }
 
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-    CacheObserver old = CacheObserverHolder.setInstance(
+    CacheObserver old =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
+              private long t2;
 
-        new CacheObserverAdapter() {
-          private long t2;
-
-          @Override
-          public void goingToFlush() {
-            t2 = System.currentTimeMillis();
-            delta = t2 - t1;
-            LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-            synchronized (OplogJUnitTest.this) {
-              OplogJUnitTest.this.notify();
-            }
-          }
-        });
+              @Override
+              public void goingToFlush() {
+                t2 = System.currentTimeMillis();
+                delta = t2 - t1;
+                LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
+                synchronized (OplogJUnitTest.this) {
+                  OplogJUnitTest.this.notify();
+                }
+              }
+            });
 
     region.put("key1", "111111111111");
     synchronized (this) {
@@ -2168,7 +2135,6 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
         } catch (InterruptedException e) {
           logWriter.error("Test failed due to exception", e);
           fail("Test failed due to exception " + e);
-
         }
         assertFalse(LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER);
       }
@@ -2180,8 +2146,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Tests if buffer size is set but time is not set , the asynch writer gets
-   * awakened on buffer size basis
+   * Tests if buffer size is set but time is not set , the asynch writer gets awakened on buffer
+   * size basis
    */
   @Ignore("TODO:DARREL_DISABLE: test is disabled")
   @Test
@@ -2192,7 +2158,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     File dir = new File("testingDirectoryDefault");
     dir.mkdir();
     dir.deleteOnExit();
-    File[] dirs = { dir };
+    File[] dirs = {dir};
     dsf.setDiskDirs(dirs);
     AttributesFactory factory = new AttributesFactory();
     DiskStore ds = dsf.create("test");
@@ -2205,22 +2171,21 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     } catch (Exception e1) {
       logWriter.error("Test failed due to exception", e1);
       fail("Test failed due to exception " + e1);
-
     }
 
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-    CacheObserver old = CacheObserverHolder.setInstance(
+    CacheObserver old =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
 
-        new CacheObserverAdapter() {
-
-          @Override
-          public void goingToFlush() {
-            synchronized (OplogJUnitTest.this) {
-              LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-              OplogJUnitTest.this.notify();
-            }
-          }
-        });
+              @Override
+              public void goingToFlush() {
+                synchronized (OplogJUnitTest.this) {
+                  LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
+                  OplogJUnitTest.this.notify();
+                }
+              }
+            });
 
     region.put("key1", new byte[25]);
     try {
@@ -2247,9 +2212,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Tests if buffer size & time interval are explicitly set to zero then the
-   * flush will occur due to asynchForceFlush or due to switching of Oplog
-   *
+   * Tests if buffer size & time interval are explicitly set to zero then the flush will occur due
+   * to asynchForceFlush or due to switching of Oplog
    */
   @Test
   public void testAsynchWriterAttribBehaviour3() {
@@ -2260,7 +2224,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     File dir = new File("testingDirectoryDefault");
     dir.mkdir();
     dir.deleteOnExit();
-    File[] dirs = { dir };
+    File[] dirs = {dir};
     dsf.setDiskDirs(dirs);
     AttributesFactory factory = new AttributesFactory();
     DiskStore ds = dsf.create("test");
@@ -2273,22 +2237,21 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     } catch (Exception e1) {
       logWriter.error("Test failed due to exception", e1);
       fail("Test failed due to exception " + e1);
-
     }
 
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-    CacheObserver old = CacheObserverHolder.setInstance(
+    CacheObserver old =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
 
-        new CacheObserverAdapter() {
-
-          @Override
-          public void goingToFlush() {
-            LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-            synchronized (OplogJUnitTest.this) {
-              OplogJUnitTest.this.notify();
-            }
-          }
-        });
+              @Override
+              public void goingToFlush() {
+                LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
+                synchronized (OplogJUnitTest.this) {
+                  OplogJUnitTest.this.notify();
+                }
+              }
+            });
     try {
       region.put("key1", new byte[100]);
       region.put("key2", new byte[100]);
@@ -2318,10 +2281,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Tests if the preblowing of a file with size greater than the disk space
-   * available so that preblowing results in IOException , is able to recover
-   * without problem
-   *
+   * Tests if the preblowing of a file with size greater than the disk space available so that
+   * preblowing results in IOException , is able to recover without problem
    */
   //Now we preallocate spaces for if files and also crfs and drfs. So the below test is not valid
   // any more. See revision: r42359 and r42320. So disabling this test.
@@ -2334,8 +2295,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     File dir = new File("testingDirectoryDefault");
     dir.mkdir();
     dir.deleteOnExit();
-    File[] dirs = { dir };
-    int size[] = new int[] { Integer.MAX_VALUE };
+    File[] dirs = {dir};
+    int size[] = new int[] {Integer.MAX_VALUE};
     dsf.setDiskDirsAndSizes(dirs, size);
     AttributesFactory factory = new AttributesFactory();
     logWriter.info("<ExpectedException action=add>" + "Could not pregrow" + "</ExpectedException>");
@@ -2350,7 +2311,6 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       } catch (Exception e1) {
         logWriter.error("Test failed due to exception", e1);
         fail("Test failed due to exception " + e1);
-
       }
       region.put("key1", new byte[900]);
       byte[] val = null;
@@ -2363,15 +2323,13 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       }
       assertTrue(val.length == 900);
     } finally {
-      logWriter.info("<ExpectedException action=remove>" + "Could not pregrow" + "</ExpectedException>");
+      logWriter.info(
+          "<ExpectedException action=remove>" + "Could not pregrow" + "</ExpectedException>");
     }
     closeDown();
   }
 
-  /**
-   * Tests if the byte buffer pool in asynch mode tries to contain the pool size
-   *
-   */
+  /** Tests if the byte buffer pool in asynch mode tries to contain the pool size */
   @Test
   public void testByteBufferPoolContainment() {
 
@@ -2386,22 +2344,22 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     final byte[] val = new byte[1000];
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
 
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      @Override
-      public void goingToFlush() { // Delay flushing
+          @Override
+          public void goingToFlush() { // Delay flushing
 
-        assertEquals(10, region.size());
-        for (int i = 10; i < 20; ++i) {
-          region.put("" + i, val);
-        }
-        synchronized (OplogJUnitTest.this) {
-          OplogJUnitTest.this.notify();
-          LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-        }
-
-      }
-    });
+            assertEquals(10, region.size());
+            for (int i = 10; i < 20; ++i) {
+              region.put("" + i, val);
+            }
+            synchronized (OplogJUnitTest.this) {
+              OplogJUnitTest.this.notify();
+              LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
+            }
+          }
+        });
     for (int i = 0; i < 10; ++i) {
       region.put("" + i, val);
     }
@@ -2504,9 +2462,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   //     closeDown();
   //   }
 
-  /**
-   * tests async stats are correctly updated
-   */
+  /** tests async stats are correctly updated */
   @Test
   public void testAsyncStats() throws InterruptedException {
     diskProps.setBytesThreshold(101);
@@ -2516,24 +2472,45 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
 
     assertEquals(0, dss.getQueueSize());
     put100Int();
-    Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS).timeout(10, TimeUnit.SECONDS).until(() -> assertEquals(100, dss.getQueueSize()));
+    Awaitility.await()
+        .pollInterval(10, TimeUnit.MILLISECONDS)
+        .pollDelay(10, TimeUnit.MILLISECONDS)
+        .timeout(10, TimeUnit.SECONDS)
+        .until(() -> assertEquals(100, dss.getQueueSize()));
 
     assertEquals(0, dss.getFlushes());
     region.writeToDisk();
-    Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS).timeout(10, TimeUnit.SECONDS).until(() -> assertEquals(0, dss.getQueueSize()));
-    Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS).timeout(10, TimeUnit.SECONDS).until(() -> assertEquals(100, dss.getFlushes()));
+    Awaitility.await()
+        .pollInterval(10, TimeUnit.MILLISECONDS)
+        .pollDelay(10, TimeUnit.MILLISECONDS)
+        .timeout(10, TimeUnit.SECONDS)
+        .until(() -> assertEquals(0, dss.getQueueSize()));
+    Awaitility.await()
+        .pollInterval(10, TimeUnit.MILLISECONDS)
+        .pollDelay(10, TimeUnit.MILLISECONDS)
+        .timeout(10, TimeUnit.SECONDS)
+        .until(() -> assertEquals(100, dss.getFlushes()));
     put100Int();
-    Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS).timeout(10, TimeUnit.SECONDS).until(() -> assertEquals(100, dss.getQueueSize()));
+    Awaitility.await()
+        .pollInterval(10, TimeUnit.MILLISECONDS)
+        .pollDelay(10, TimeUnit.MILLISECONDS)
+        .timeout(10, TimeUnit.SECONDS)
+        .until(() -> assertEquals(100, dss.getQueueSize()));
     region.writeToDisk();
-    Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS).timeout(10, TimeUnit.SECONDS).until(() -> assertEquals(0, dss.getQueueSize()));
-    Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS).timeout(10, TimeUnit.SECONDS).until(() -> assertEquals(200, dss.getFlushes()));
+    Awaitility.await()
+        .pollInterval(10, TimeUnit.MILLISECONDS)
+        .pollDelay(10, TimeUnit.MILLISECONDS)
+        .timeout(10, TimeUnit.SECONDS)
+        .until(() -> assertEquals(0, dss.getQueueSize()));
+    Awaitility.await()
+        .pollInterval(10, TimeUnit.MILLISECONDS)
+        .pollDelay(10, TimeUnit.MILLISECONDS)
+        .timeout(10, TimeUnit.SECONDS)
+        .until(() -> assertEquals(200, dss.getFlushes()));
     closeDown();
   }
 
-  /**
-   * Tests delayed creation of DiskID in overflow only mode
-   *
-   */
+  /** Tests delayed creation of DiskID in overflow only mode */
   @Test
   public void testDelayedDiskIdCreationInOverflowOnlyMode() {
     diskProps.setPersistBackup(true);
@@ -2557,10 +2534,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     assertNull(entry.getDiskId());
   }
 
-  /**
-   * Tests immediate creation of DiskID in overflow With Persistence mode
-   *
-   */
+  /** Tests immediate creation of DiskID in overflow With Persistence mode */
   @Test
   public void testImmediateDiskIdCreationInOverflowWithPersistMode() {
     diskProps.setPersistBackup(true);
@@ -2585,9 +2559,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * An entry which is evicted to disk will have the flag already written to
-   * disk, appropriately set
-   *
+   * An entry which is evicted to disk will have the flag already written to disk, appropriately set
    */
   @Test
   public void testEntryAlreadyWrittenIsCorrectlyUnmarkedForOverflowOnly() throws Exception {
@@ -2649,9 +2621,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * An persistent or overflow with persistence entry which is evicted to disk,
-   * will have the flag already written to disk, appropriately set
-   *
+   * An persistent or overflow with persistence entry which is evicted to disk, will have the flag
+   * already written to disk, appropriately set
    */
   @Test
   public void testEntryAlreadyWrittenIsCorrectlyUnmarkedForOverflowWithPersistence() {
@@ -2675,9 +2646,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Tests the various DiskEntry.Helper APIs for correctness as there is now
-   * delayed creation of DiskId and accessing OplogkeyId will throw
-   * UnsupportedException
+   * Tests the various DiskEntry.Helper APIs for correctness as there is now delayed creation of
+   * DiskId and accessing OplogkeyId will throw UnsupportedException
    */
   @Test
   public void testHelperAPIsForOverflowOnlyRegion() {
@@ -2724,9 +2694,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Tests the various DiskEntry.Helper APIs for correctness as there is now
-   * delayed creation of DiskId and accessing OplogkeyId will throw
-   * UnsupportedException
+   * Tests the various DiskEntry.Helper APIs for correctness as there is now delayed creation of
+   * DiskId and accessing OplogkeyId will throw UnsupportedException
    */
   @Test
   public void testHelperAPIsForOverflowWithPersistenceRegion() {
@@ -2734,9 +2703,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Tests the various DiskEntry.Helper APIs for correctness as there is now
-   * delayed creation of DiskId and accessing OplogkeyId will throw
-   * UnsupportedException
+   * Tests the various DiskEntry.Helper APIs for correctness as there is now delayed creation of
+   * DiskId and accessing OplogkeyId will throw UnsupportedException
    */
   @Test
   public void testHelperAPIsForPersistenceRegion() {
@@ -2744,9 +2712,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Tests the various DiskEntry.Helper APIs for correctness as there is now
-   * delayed creation of DiskId and accessing OplogkeyId will throw
-   * UnsupportedException
+   * Tests the various DiskEntry.Helper APIs for correctness as there is now delayed creation of
+   * DiskId and accessing OplogkeyId will throw UnsupportedException
    */
   private void helperAPIsForPersistenceWithOrWithoutOverflowRegion(boolean overflow) {
     diskProps.setPersistBackup(true);
@@ -2804,18 +2771,16 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     assertNotNull(DiskEntry.Helper.getValueOnDiskOrBuffer(entry3, dr, (LocalRegion) region));
     assertNotNull(DiskEntry.Helper.getValueOnDiskOrBuffer(entry2, dr, (LocalRegion) region));
     assertNotNull(DiskEntry.Helper.getValueOnDiskOrBuffer(entry1, dr, (LocalRegion) region));
-
   }
 
   // @todo this test is failing for some reason. Does it need to be fixed?
   /**
-   * Bug test to reproduce the bug 37261. The scenario which this test depicts
-   * is not actually the cause of Bug 37261. This test validates the case where
-   * a synch persist only entry1 is created in Oplog1. A put operation on entry2
-   * causes the switch , but before Oplog1 is rolled , the entry1 is modified so
-   * that it references Oplog2. Thus in effect roller will skip rolling entry1
-   * when rolling Oplog1.Now entry1 is deleted in Oplog2 and then a rolling
-   * happens. There should not be any error
+   * Bug test to reproduce the bug 37261. The scenario which this test depicts is not actually the
+   * cause of Bug 37261. This test validates the case where a synch persist only entry1 is created
+   * in Oplog1. A put operation on entry2 causes the switch , but before Oplog1 is rolled , the
+   * entry1 is modified so that it references Oplog2. Thus in effect roller will skip rolling entry1
+   * when rolling Oplog1.Now entry1 is deleted in Oplog2 and then a rolling happens. There should
+   * not be any error
    */
   //   @Test
   //  public void testBug37261_1()
@@ -2912,13 +2877,11 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   //   }
 
   /**
-   * Tests the condition when a 'put' is in progress and concurrent 'clear' and
-   * 'put'(on the same key) occur. Thus if after Htree  ref was set (in
-   * 'put'), the region got cleared (and same key re-'put'),
-   * the entry will get recorded in the new Oplog without a corresponding
-   * create ( because the Oplogs containing create have already been deleted
-   * due to the clear operation). This put should not proceed. Also, Region
-   * creation after closing should not give an exception.
+   * Tests the condition when a 'put' is in progress and concurrent 'clear' and 'put'(on the same
+   * key) occur. Thus if after Htree ref was set (in 'put'), the region got cleared (and same key
+   * re-'put'), the entry will get recorded in the new Oplog without a corresponding create (
+   * because the Oplogs containing create have already been deleted due to the clear operation).
+   * This put should not proceed. Also, Region creation after closing should not give an exception.
    */
   @Test
   public void testPutClearPut() {
@@ -2930,24 +2893,29 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       diskProps.setSynchronous(true);
       this.proceed = false;
       region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
-      final Thread clearOp = new Thread(new Runnable() {
-        public void run() {
-          try {
-            LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-            region.clear();
-            region.put("key1", "value3");
-          } catch (Exception e) {
-            testFailed = true;
-            failureCause = "Encountered Exception=" + e;
-          }
-        }
-      });
-      region.getAttributesMutator().setCacheWriter(new CacheWriterAdapter() {
-        @Override
-        public void beforeUpdate(EntryEvent event) throws CacheWriterException {
-          clearOp.start();
-        }
-      });
+      final Thread clearOp =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  try {
+                    LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
+                    region.clear();
+                    region.put("key1", "value3");
+                  } catch (Exception e) {
+                    testFailed = true;
+                    failureCause = "Encountered Exception=" + e;
+                  }
+                }
+              });
+      region
+          .getAttributesMutator()
+          .setCacheWriter(
+              new CacheWriterAdapter() {
+                @Override
+                public void beforeUpdate(EntryEvent event) throws CacheWriterException {
+                  clearOp.start();
+                }
+              });
       try {
         ThreadUtils.join(clearOp, 30 * 1000);
       } catch (Exception e) {
@@ -2975,16 +2943,11 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Tests the condition when a 'put' on an alreay created entry
-   *  and concurrent 'clear' are happening.
-   *  Thus if after HTree ref was set (in
-   * 'put'), the region got cleared (and same key re-'put'),
-   * the entry will actually become a create in the VM
-   * The new Oplog should record it as a create even though the
-   * Htree ref in ThreadLocal will not match with the
-   * current Htree Ref. But the operation is valid & should get recorded
-   * in Oplog
-   *
+   * Tests the condition when a 'put' on an alreay created entry and concurrent 'clear' are
+   * happening. Thus if after HTree ref was set (in 'put'), the region got cleared (and same key
+   * re-'put'), the entry will actually become a create in the VM The new Oplog should record it as
+   * a create even though the Htree ref in ThreadLocal will not match with the current Htree Ref.
+   * But the operation is valid & should get recorded in Oplog
    */
   @Test
   public void testPutClearCreate() {
@@ -3000,25 +2963,28 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
 
       region.create("key1", "value1");
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-      CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-        @Override
-        public void afterSettingDiskRef() {
-          Thread clearTh = new Thread(new Runnable() {
-            public void run() {
-              region.clear();
+      CacheObserverHolder.setInstance(
+          new CacheObserverAdapter() {
+            @Override
+            public void afterSettingDiskRef() {
+              Thread clearTh =
+                  new Thread(
+                      new Runnable() {
+                        public void run() {
+                          region.clear();
+                        }
+                      });
+              clearTh.start();
+              try {
+                ThreadUtils.join(clearTh, 120 * 1000);
+                failure = clearTh.isAlive();
+                failureCause = "Clear Thread still running !";
+              } catch (Exception e) {
+                failure = true;
+                failureCause = e.toString();
+              }
             }
           });
-          clearTh.start();
-          try {
-            ThreadUtils.join(clearTh, 120 * 1000);
-            failure = clearTh.isAlive();
-            failureCause = "Clear Thread still running !";
-          } catch (Exception e) {
-            failure = true;
-            failureCause = e.toString();
-          }
-        }
-      });
       region.put("key1", "value2");
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
       assertFalse(failureCause, failure);
@@ -3040,8 +3006,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Tests if 'destroy' transaction is working correctly
-   * for sync-overflow-only disk region entry
+   * Tests if 'destroy' transaction is working correctly for sync-overflow-only disk region entry
    */
   @Test
   public void testOverFlowOnlySyncDestroyTx() {
@@ -3056,7 +3021,9 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       cache.getCacheTransactionManager().begin();
       region.destroy("key");
       cache.getCacheTransactionManager().commit();
-      assertNull("The deleted entry should have been null", ((LocalRegion) region).entries.getEntry("key"));
+      assertNull(
+          "The deleted entry should have been null",
+          ((LocalRegion) region).entries.getEntry("key"));
     } catch (CommitConflictException e) {
       testFailed = true;
       fail("CommitConflitException encountered");
@@ -3067,9 +3034,9 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Test to force a recovery to follow the path of switchOutFilesForRecovery
-   * and ensuring that IOExceptions do not come as a result. This is also a bug test for
-   * bug 37682
+   * Test to force a recovery to follow the path of switchOutFilesForRecovery and ensuring that
+   * IOExceptions do not come as a result. This is also a bug test for bug 37682
+   *
    * @throws Exception
    */
   @Test
@@ -3091,49 +3058,52 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       //NewLBHTreeDiskRegion.setJdbmexceptionOccuredToTrueForTesting = false;
     }
     if (sizeOfRegion != region.size()) {
-      fail(" Expected region size to be " + sizeOfRegion + " after recovery but it is " + region.size());
+      fail(
+          " Expected region size to be "
+              + sizeOfRegion
+              + " after recovery but it is "
+              + region.size());
     }
   }
 
-  /**
-   * tests directory stats are correctly updated in case of single directory
-   * (for bug 37531)
-   */
+  /** tests directory stats are correctly updated in case of single directory (for bug 37531) */
   @Test
   public void testPersist1DirStats() {
     final AtomicBoolean freezeRoller = new AtomicBoolean();
-    CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      private volatile boolean didBeforeCall = false;
+    CacheObserver old =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
+              private volatile boolean didBeforeCall = false;
 
-      @Override
-      public void beforeGoingToCompact() {
-        this.didBeforeCall = true;
-        synchronized (freezeRoller) {
-          if (!assertDone) {
-            try {
-              // Here, we are not allowing the Roller thread to roll the old oplog into htree
-              while (!freezeRoller.get()) {
-                freezeRoller.wait();
+              @Override
+              public void beforeGoingToCompact() {
+                this.didBeforeCall = true;
+                synchronized (freezeRoller) {
+                  if (!assertDone) {
+                    try {
+                      // Here, we are not allowing the Roller thread to roll the old oplog into htree
+                      while (!freezeRoller.get()) {
+                        freezeRoller.wait();
+                      }
+                      freezeRoller.set(false);
+                    } catch (InterruptedException e) {
+                      fail("interrupted");
+                    }
+                  }
+                }
               }
-              freezeRoller.set(false);
-            } catch (InterruptedException e) {
-              fail("interrupted");
-            }
-          }
-        }
-      }
 
-      @Override
-      public void afterHavingCompacted() {
-        if (this.didBeforeCall) {
-          this.didBeforeCall = false;
-          LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-          //assertTrue("Assert failure for DSpaceUsage in afterHavingCompacted ", diskSpaceUsageStats() == calculatedDiskSpaceUsageStats());
-          // what is the point of this assert?
-          checkDiskStats();
-        }
-      }
-    });
+              @Override
+              public void afterHavingCompacted() {
+                if (this.didBeforeCall) {
+                  this.didBeforeCall = false;
+                  LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
+                  //assertTrue("Assert failure for DSpaceUsage in afterHavingCompacted ", diskSpaceUsageStats() == calculatedDiskSpaceUsageStats());
+                  // what is the point of this assert?
+                  checkDiskStats();
+                }
+              }
+            });
     try {
       final int MAX_OPLOG_SIZE = 500;
       diskProps.setMaxOplogSize(MAX_OPLOG_SIZE);
@@ -3141,7 +3111,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       diskProps.setRolling(true);
       diskProps.setSynchronous(true);
       diskProps.setOverflow(false);
-      diskProps.setDiskDirsAndSizes(new File[] { dirs[0] }, new int[] { 4000 });
+      diskProps.setDiskDirsAndSizes(new File[] {dirs[0]}, new int[] {4000});
       final byte[] val = new byte[200];
       region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
@@ -3204,11 +3174,10 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * Tests reduction in size of disk stats 
-   * when the oplog is rolled.
-   */
-  @Category(FlakyTest.class) // GEODE-527: jvm sizing sensitive, non-thread-safe test hooks, time sensitive
+  /** Tests reduction in size of disk stats when the oplog is rolled. */
+  @Category(
+      FlakyTest
+          .class) // GEODE-527: jvm sizing sensitive, non-thread-safe test hooks, time sensitive
   @Test
   public void testStatsSizeReductionOnRolling() throws Exception {
     final int MAX_OPLOG_SIZE = 500 * 2;
@@ -3218,72 +3187,98 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     diskProps.setCompactionThreshold(100);
     diskProps.setSynchronous(true);
     diskProps.setOverflow(false);
-    diskProps.setDiskDirsAndSizes(new File[] { dirs[0] }, new int[] { 4000 });
+    diskProps.setDiskDirsAndSizes(new File[] {dirs[0]}, new int[] {4000});
     final byte[] val = new byte[333];
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     final DiskRegion dr = ((LocalRegion) region).getDiskRegion();
     final Object lock = new Object();
-    final boolean[] exceptionOccured = new boolean[] { true };
-    final boolean[] okToExit = new boolean[] { false };
-    final boolean[] switchExpected = new boolean[] { false };
+    final boolean[] exceptionOccured = new boolean[] {true};
+    final boolean[] okToExit = new boolean[] {false};
+    final boolean[] switchExpected = new boolean[] {false};
 
     // calculate sizes
-    final int extra_byte_num_per_entry = InternalDataSerializer.calculateBytesForTSandDSID(getDSID((LocalRegion) region));
-    final int key3_size = DiskOfflineCompactionJUnitTest.getSize4Create(extra_byte_num_per_entry, "key3", val);
-    final int tombstone_key1 = DiskOfflineCompactionJUnitTest.getSize4TombstoneWithKey(extra_byte_num_per_entry, "key1");
-    final int tombstone_key2 = DiskOfflineCompactionJUnitTest.getSize4TombstoneWithKey(extra_byte_num_per_entry, "key2");
+    final int extra_byte_num_per_entry =
+        InternalDataSerializer.calculateBytesForTSandDSID(getDSID((LocalRegion) region));
+    final int key3_size =
+        DiskOfflineCompactionJUnitTest.getSize4Create(extra_byte_num_per_entry, "key3", val);
+    final int tombstone_key1 =
+        DiskOfflineCompactionJUnitTest.getSize4TombstoneWithKey(extra_byte_num_per_entry, "key1");
+    final int tombstone_key2 =
+        DiskOfflineCompactionJUnitTest.getSize4TombstoneWithKey(extra_byte_num_per_entry, "key2");
 
     // TODO: move static methods from DiskOfflineCompactionJUnitTest to shared util class
 
-    CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      private long before = -1;
-      private DirectoryHolder dh = null;
-      private long oplogsSize = 0;
+    CacheObserver old =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
+              private long before = -1;
+              private DirectoryHolder dh = null;
+              private long oplogsSize = 0;
 
-      @Override
-      public void beforeSwitchingOplog() {
-        cache.getLogger().info("beforeSwitchingOplog");
-        if (!switchExpected[0]) {
-          fail("unexpected oplog switch");
-        }
-        if (before == -1) {
-          // only want to call this once; before the 1st oplog destroy
-          this.dh = dr.getNextDir();
-          this.before = this.dh.getDirStatsDiskSpaceUsage();
-        }
-      }
+              @Override
+              public void beforeSwitchingOplog() {
+                cache.getLogger().info("beforeSwitchingOplog");
+                if (!switchExpected[0]) {
+                  fail("unexpected oplog switch");
+                }
+                if (before == -1) {
+                  // only want to call this once; before the 1st oplog destroy
+                  this.dh = dr.getNextDir();
+                  this.before = this.dh.getDirStatsDiskSpaceUsage();
+                }
+              }
 
-      @Override
-      public void beforeDeletingCompactedOplog(Oplog oplog) {
-        cache.getLogger().info("beforeDeletingCompactedOplog");
-        oplogsSize += oplog.getOplogSize();
-      }
+              @Override
+              public void beforeDeletingCompactedOplog(Oplog oplog) {
+                cache.getLogger().info("beforeDeletingCompactedOplog");
+                oplogsSize += oplog.getOplogSize();
+              }
 
-      @Override
-      public void afterHavingCompacted() {
-        cache.getLogger().info("afterHavingCompacted");
-        if (before > -1) {
-          synchronized (lock) {
-            okToExit[0] = true;
-            long after = this.dh.getDirStatsDiskSpaceUsage();
-            // after compaction, in _2.crf, key3 is an create-entry, 
-            // key1 and key2 are tombstones. 
-            // _2.drf contained a rvvgc with drMap.size()==1
-            int expected_drf_size = Oplog.OPLOG_DISK_STORE_REC_SIZE + Oplog.OPLOG_MAGIC_SEQ_REC_SIZE + Oplog.OPLOG_GEMFIRE_VERSION_REC_SIZE + DiskOfflineCompactionJUnitTest.getRVVSize(1, new int[] { 0 }, true);
-            int expected_crf_size = Oplog.OPLOG_DISK_STORE_REC_SIZE + Oplog.OPLOG_MAGIC_SEQ_REC_SIZE + Oplog.OPLOG_GEMFIRE_VERSION_REC_SIZE + DiskOfflineCompactionJUnitTest.getRVVSize(1, new int[] { 1 }, false) + Oplog.OPLOG_NEW_ENTRY_BASE_REC_SIZE + key3_size + tombstone_key1 + tombstone_key2;
-            int oplog_2_size = expected_drf_size + expected_crf_size;
-            if (after != oplog_2_size) {
-              cache.getLogger().info("test failed before=" + before + " after=" + after + " oplogsSize=" + oplogsSize);
-              exceptionOccured[0] = true;
-            } else {
-              exceptionOccured[0] = false;
-            }
-            LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-            lock.notify();
-          }
-        }
-      }
-    });
+              @Override
+              public void afterHavingCompacted() {
+                cache.getLogger().info("afterHavingCompacted");
+                if (before > -1) {
+                  synchronized (lock) {
+                    okToExit[0] = true;
+                    long after = this.dh.getDirStatsDiskSpaceUsage();
+                    // after compaction, in _2.crf, key3 is an create-entry,
+                    // key1 and key2 are tombstones.
+                    // _2.drf contained a rvvgc with drMap.size()==1
+                    int expected_drf_size =
+                        Oplog.OPLOG_DISK_STORE_REC_SIZE
+                            + Oplog.OPLOG_MAGIC_SEQ_REC_SIZE
+                            + Oplog.OPLOG_GEMFIRE_VERSION_REC_SIZE
+                            + DiskOfflineCompactionJUnitTest.getRVVSize(1, new int[] {0}, true);
+                    int expected_crf_size =
+                        Oplog.OPLOG_DISK_STORE_REC_SIZE
+                            + Oplog.OPLOG_MAGIC_SEQ_REC_SIZE
+                            + Oplog.OPLOG_GEMFIRE_VERSION_REC_SIZE
+                            + DiskOfflineCompactionJUnitTest.getRVVSize(1, new int[] {1}, false)
+                            + Oplog.OPLOG_NEW_ENTRY_BASE_REC_SIZE
+                            + key3_size
+                            + tombstone_key1
+                            + tombstone_key2;
+                    int oplog_2_size = expected_drf_size + expected_crf_size;
+                    if (after != oplog_2_size) {
+                      cache
+                          .getLogger()
+                          .info(
+                              "test failed before="
+                                  + before
+                                  + " after="
+                                  + after
+                                  + " oplogsSize="
+                                  + oplogsSize);
+                      exceptionOccured[0] = true;
+                    } else {
+                      exceptionOccured[0] = false;
+                    }
+                    LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
+                    lock.notify();
+                  }
+                }
+              }
+            });
     try {
 
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
@@ -3325,9 +3320,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   // @todo this test is broken; size1 can keep changing since the roller will
   // keep copying forward forever. Need to change it so copy forward oplogs
   // will not be compacted so that size1 reaches a steady state
-  /**
-   * Tests stats verification with rolling enabled
-   */
+  /** Tests stats verification with rolling enabled */
   //   @Test
   //  public void testSizeStatsAfterRecreationWithRollingEnabled() throws Exception
   //   {
@@ -3342,14 +3335,14 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   //     final byte[] val = new byte[200];
   //     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache,
   //       diskProps);
-  //     final DiskRegion dr = ((LocalRegion)region).getDiskRegion(); 
+  //     final DiskRegion dr = ((LocalRegion)region).getDiskRegion();
   //     final Object lock = new Object();
   //     final boolean [] exceptionOccured = new boolean[] {true};
-  //     final boolean [] okToExit = new boolean[] {false}; 
+  //     final boolean [] okToExit = new boolean[] {false};
 
   //     CacheObserver old = CacheObserverHolder
   //           .setInstance(new CacheObserverAdapter() {
-  //               private long before = -1;             
+  //               private long before = -1;
   //               public void beforeDeletingCompactedOplog(Oplog rolledOplog)
   //               {
   //                 if (before == -1) {
@@ -3359,10 +3352,10 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   //               }
   //               public void afterHavingCompacted() {
   //                 if(before > -1) {
-  //                   synchronized(lock) {            
+  //                   synchronized(lock) {
   //                     okToExit[0] = true;
   //                     long after = dr.getNextDir().getDirStatsDiskSpaceUsage();;
-  //                     exceptionOccured[0] = false;            
+  //                     exceptionOccured[0] = false;
   //                     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
   //                     lock.notify();
   //                   }
@@ -3372,8 +3365,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   //     try {
 
   //       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-  //       region.put("key1", val);     
-  //       region.put("key2", val);      
+  //       region.put("key1", val);
+  //       region.put("key2", val);
   //       // This put will cause a switch as max-oplog size (500) will be exceeded (600)
   //       region.put("key3", val);
   //       synchronized(lock) {
@@ -3392,7 +3385,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   //         cache.getLogger().info(" dir=" + dh.getDir()
   //                                + " size1=" + dh.getDirStatsDiskSpaceUsage());
   //         size1 += dh.getDirStatsDiskSpaceUsage();
-  //       }     
+  //       }
   //       System.out.println("Size before closing= "+ size1);
   //       region.close();
   //       diskProps.setRolling(false);
@@ -3412,7 +3405,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   //     }
   //     finally {
   //       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-  //       CacheObserverHolder.setInstance(old);      
+  //       CacheObserverHolder.setInstance(old);
   //     }
   //   }
 
@@ -3420,10 +3413,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   // it ALWAYS does vrecman writes and a commit. Look at saveInstantiators
   // and saveDataSerializers to see these commit calls.
   // These calls can cause the size of the files to change.
-  /**
-   * Tests if without rolling the region size before close is same as after 
-   * recreation
-   */
+  /** Tests if without rolling the region size before close is same as after recreation */
   @Test
   public void testSizeStatsAfterRecreation() throws Exception {
     final int MAX_OPLOG_SIZE = 500;
@@ -3432,7 +3422,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     diskProps.setRolling(false);
     diskProps.setSynchronous(true);
     diskProps.setOverflow(false);
-    diskProps.setDiskDirsAndSizes(new File[] { dirs[0], dirs[1] }, new int[] { 4000, 4000 });
+    diskProps.setDiskDirsAndSizes(new File[] {dirs[0], dirs[1]}, new int[] {4000, 4000});
     final byte[] val = new byte[200];
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     DiskRegion dr = ((LocalRegion) region).getDiskRegion();
@@ -3470,7 +3460,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     diskProps.setRolling(true);
     diskProps.setSynchronous(true);
     diskProps.setOverflow(false);
-    diskProps.setDiskDirsAndSizes(new File[] { dirs[0] }, new int[] { 40000 });
+    diskProps.setDiskDirsAndSizes(new File[] {dirs[0]}, new int[] {40000});
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
 
     try {
@@ -3557,7 +3547,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     diskProps.setRolling(true);
     diskProps.setSynchronous(true);
     diskProps.setOverflow(false);
-    diskProps.setDiskDirsAndSizes(new File[] { dirs[0] }, new int[] { 4000 });
+    diskProps.setDiskDirsAndSizes(new File[] {dirs[0]}, new int[] {4000});
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
 
     // 3 types of oplog files will be verified
@@ -3581,11 +3571,17 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
 
   private void verifyOplogHeader(File dir, String... oplogTypes) throws IOException {
 
-    Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> {
-      List<String> types = new ArrayList<>(Arrays.asList(oplogTypes));
-      Arrays.stream(dir.listFiles()).map(File::getName).map(f -> f.substring(f.indexOf("."))).forEach(types::remove);
-      return types.isEmpty();
-    });
+    Awaitility.await()
+        .atMost(5, TimeUnit.SECONDS)
+        .until(
+            () -> {
+              List<String> types = new ArrayList<>(Arrays.asList(oplogTypes));
+              Arrays.stream(dir.listFiles())
+                  .map(File::getName)
+                  .map(f -> f.substring(f.indexOf(".")))
+                  .forEach(types::remove);
+              return types.isEmpty();
+            });
 
     File[] files = dir.listFiles();
     HashSet<String> verified = new HashSet<String>();
@@ -3621,17 +3617,15 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
       fis.close();
 
       System.out.println("Verifying: " + file);
-      assertEquals("expected a read to return 8 but it returned " + count + " for file " + file, 8, count);
+      assertEquals(
+          "expected a read to return 8 but it returned " + count + " for file " + file, 8, count);
       assertTrue(Arrays.equals(expect, buf));
     }
 
     assertEquals(oplogTypes.length, verified.size());
   }
 
-  /**
-   * Tests if without rolling the region size before close is same as after 
-   * recreation
-   */
+  /** Tests if without rolling the region size before close is same as after recreation */
   @Test
   public void testSizeStatsAfterRecreationInAsynchMode() throws Exception {
     final int MAX_OPLOG_SIZE = 1000;
@@ -3641,7 +3635,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     diskProps.setSynchronous(false);
     diskProps.setBytesThreshold(800);
     diskProps.setOverflow(false);
-    diskProps.setDiskDirsAndSizes(new File[] { dirs[0], dirs[1] }, new int[] { 4000, 4000 });
+    diskProps.setDiskDirsAndSizes(new File[] {dirs[0], dirs[1]}, new int[] {4000, 4000});
     final byte[] val = new byte[25];
     region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskProps);
     DiskRegion dr = ((LocalRegion) region).getDiskRegion();
@@ -3684,7 +3678,7 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
     diskProps.setBytesThreshold(800);
     diskProps.setTimeInterval(Long.MAX_VALUE);
     diskProps.setOverflow(false);
-    diskProps.setDiskDirsAndSizes(new File[] { dirs[0] }, new int[] { 4000 });
+    diskProps.setDiskDirsAndSizes(new File[] {dirs[0]}, new int[] {4000});
     final byte[] val = new byte[25];
     region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskProps);
     DiskRegion dr = ((LocalRegion) region).getDiskRegion();
@@ -3751,7 +3745,8 @@ public class OplogJUnitTest extends DiskRegionTestingBase {
   private long oplogSize() {
     long size = ((LocalRegion) region).getDiskRegion().getDiskStore().undeletedOplogSize.get();
     //     cache.getLogger().info("undeletedOplogSize=" + size);
-    Oplog[] opArray = ((LocalRegion) region).getDiskRegion().getDiskStore().persistentOplogs.getAllOplogs();
+    Oplog[] opArray =
+        ((LocalRegion) region).getDiskRegion().getDiskStore().persistentOplogs.getAllOplogs();
     if ((opArray != null) && (opArray.length != 0)) {
       for (int j = 0; j < opArray.length; ++j) {
         size += opArray[j].getOplogSize();

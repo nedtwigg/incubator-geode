@@ -43,9 +43,8 @@ import org.apache.geode.test.junit.categories.UnitTest;
 public class SortLogFileJUnitTest {
 
   /**
-   * Generates a "log file" whose entry timestamps are in a random
-   * order.  Then it sorts the log file and asserts that the entries
-   * are sorted order.
+   * Generates a "log file" whose entry timestamps are in a random order. Then it sorts the log file
+   * and asserts that the entries are sorted order.
    */
   @Test
   public void testRandomLog() throws Exception {
@@ -77,32 +76,28 @@ public class SortLogFileJUnitTest {
       LogFileParser.LogEntry entry = parser.getNextEntry();
       String timestamp = entry.getTimestamp();
       if (prevTimestamp != null) {
-        assertTrue("Prev: " + prevTimestamp + ", current: " + timestamp, prevTimestamp.compareTo(timestamp) <= 0);
+        assertTrue(
+            "Prev: " + prevTimestamp + ", current: " + timestamp,
+            prevTimestamp.compareTo(timestamp) <= 0);
       }
       prevTimestamp = entry.getTimestamp();
     }
   }
 
-  /**
-   * A <code>LogWriter</code> that generates random time stamps.
-   */
+  /** A <code>LogWriter</code> that generates random time stamps. */
   private static class RandomLogWriter extends LocalLogWriter {
 
     /** Used to generate a random date */
     private Random random = new Random();
 
     /**
-     * Creates a new <code>RandomLogWriter</code> that logs to the
-     * given <code>PrintWriter</code>.
+     * Creates a new <code>RandomLogWriter</code> that logs to the given <code>PrintWriter</code>.
      */
     public RandomLogWriter(PrintWriter pw) {
       super(ALL_LEVEL, pw);
     }
 
-    /**
-     * Ignores <code>date</code> and returns the timestamp for a
-     * random date.
-     */
+    /** Ignores <code>date</code> and returns the timestamp for a random date. */
     @Override
     protected String formatDate(Date date) {
       long time = date.getTime() + (random.nextInt(100000) * 1000);

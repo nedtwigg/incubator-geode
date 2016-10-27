@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -87,65 +87,85 @@ public class LuceneFunctionJUnitTest {
   public void testRepoQueryAndMerge() throws Exception {
     when(mockContext.getDataSet()).thenReturn(mockRegion);
     when(mockContext.getArguments()).thenReturn(searchArgs);
-    when(mockContext.<TopEntriesCollector> getResultSender()).thenReturn(mockResultSender);
+    when(mockContext.<TopEntriesCollector>getResultSender()).thenReturn(mockResultSender);
     when(mockRepoManager.getRepositories(eq(mockContext))).thenReturn(repos);
-    doAnswer(invocation -> {
-      IndexResultCollector collector = invocation.getArgumentAt(2, IndexResultCollector.class);
-      collector.collect(r1_1.getKey(), r1_1.getScore());
-      collector.collect(r1_2.getKey(), r1_2.getScore());
-      collector.collect(r1_3.getKey(), r1_3.getScore());
-      return null;
-    }).when(mockRepository1).query(eq(query), eq(LuceneQueryFactory.DEFAULT_LIMIT), any(IndexResultCollector.class));
+    doAnswer(
+            invocation -> {
+              IndexResultCollector collector =
+                  invocation.getArgumentAt(2, IndexResultCollector.class);
+              collector.collect(r1_1.getKey(), r1_1.getScore());
+              collector.collect(r1_2.getKey(), r1_2.getScore());
+              collector.collect(r1_3.getKey(), r1_3.getScore());
+              return null;
+            })
+        .when(mockRepository1)
+        .query(eq(query), eq(LuceneQueryFactory.DEFAULT_LIMIT), any(IndexResultCollector.class));
 
-    doAnswer(invocation -> {
-      IndexResultCollector collector = invocation.getArgumentAt(2, IndexResultCollector.class);
-      collector.collect(r2_1.getKey(), r2_1.getScore());
-      collector.collect(r2_2.getKey(), r2_2.getScore());
-      return null;
-    }).when(mockRepository2).query(eq(query), eq(LuceneQueryFactory.DEFAULT_LIMIT), any(IndexResultCollector.class));
+    doAnswer(
+            invocation -> {
+              IndexResultCollector collector =
+                  invocation.getArgumentAt(2, IndexResultCollector.class);
+              collector.collect(r2_1.getKey(), r2_1.getScore());
+              collector.collect(r2_2.getKey(), r2_2.getScore());
+              return null;
+            })
+        .when(mockRepository2)
+        .query(eq(query), eq(LuceneQueryFactory.DEFAULT_LIMIT), any(IndexResultCollector.class));
 
     LuceneFunction function = new LuceneFunction();
 
     function.execute(mockContext);
 
-    ArgumentCaptor<TopEntriesCollector> resultCaptor = ArgumentCaptor.forClass(TopEntriesCollector.class);
+    ArgumentCaptor<TopEntriesCollector> resultCaptor =
+        ArgumentCaptor.forClass(TopEntriesCollector.class);
     verify(mockResultSender).lastResult(resultCaptor.capture());
     TopEntriesCollector result = resultCaptor.getValue();
 
     List<EntryScore> hits = result.getEntries().getHits();
     assertEquals(5, hits.size());
-    TopEntriesJUnitTest.verifyResultOrder(result.getEntries().getHits(), r1_1, r2_1, r1_2, r2_2, r1_3);
+    TopEntriesJUnitTest.verifyResultOrder(
+        result.getEntries().getHits(), r1_1, r2_1, r1_2, r2_2, r1_3);
   }
 
   @Test
   public void testResultLimitClause() throws Exception {
 
-    searchArgs = new LuceneFunctionContext<IndexResultCollector>(queryProvider, "indexName", null, 3);
+    searchArgs =
+        new LuceneFunctionContext<IndexResultCollector>(queryProvider, "indexName", null, 3);
     when(mockContext.getDataSet()).thenReturn(mockRegion);
     when(mockContext.getArguments()).thenReturn(searchArgs);
-    when(mockContext.<TopEntriesCollector> getResultSender()).thenReturn(mockResultSender);
+    when(mockContext.<TopEntriesCollector>getResultSender()).thenReturn(mockResultSender);
     when(mockRepoManager.getRepositories(eq(mockContext))).thenReturn(repos);
 
-    doAnswer(invocation -> {
-      IndexResultCollector collector = invocation.getArgumentAt(2, IndexResultCollector.class);
-      collector.collect(r1_1.getKey(), r1_1.getScore());
-      collector.collect(r1_2.getKey(), r1_2.getScore());
-      collector.collect(r1_3.getKey(), r1_3.getScore());
-      return null;
-    }).when(mockRepository1).query(eq(query), eq(3), any(IndexResultCollector.class));
+    doAnswer(
+            invocation -> {
+              IndexResultCollector collector =
+                  invocation.getArgumentAt(2, IndexResultCollector.class);
+              collector.collect(r1_1.getKey(), r1_1.getScore());
+              collector.collect(r1_2.getKey(), r1_2.getScore());
+              collector.collect(r1_3.getKey(), r1_3.getScore());
+              return null;
+            })
+        .when(mockRepository1)
+        .query(eq(query), eq(3), any(IndexResultCollector.class));
 
-    doAnswer(invocation -> {
-      IndexResultCollector collector = invocation.getArgumentAt(2, IndexResultCollector.class);
-      collector.collect(r2_1.getKey(), r2_1.getScore());
-      collector.collect(r2_2.getKey(), r2_2.getScore());
-      return null;
-    }).when(mockRepository2).query(eq(query), eq(3), any(IndexResultCollector.class));
+    doAnswer(
+            invocation -> {
+              IndexResultCollector collector =
+                  invocation.getArgumentAt(2, IndexResultCollector.class);
+              collector.collect(r2_1.getKey(), r2_1.getScore());
+              collector.collect(r2_2.getKey(), r2_2.getScore());
+              return null;
+            })
+        .when(mockRepository2)
+        .query(eq(query), eq(3), any(IndexResultCollector.class));
 
     LuceneFunction function = new LuceneFunction();
 
     function.execute(mockContext);
 
-    ArgumentCaptor<TopEntriesCollector> resultCaptor = ArgumentCaptor.forClass(TopEntriesCollector.class);
+    ArgumentCaptor<TopEntriesCollector> resultCaptor =
+        ArgumentCaptor.forClass(TopEntriesCollector.class);
     verify(mockResultSender).lastResult(resultCaptor.capture());
     TopEntriesCollector result = resultCaptor.getValue();
 
@@ -157,26 +177,33 @@ public class LuceneFunctionJUnitTest {
   @Test
   public void injectCustomCollectorManager() throws Exception {
     final CollectorManager mockManager = mock(CollectorManager.class);
-    searchArgs = new LuceneFunctionContext<IndexResultCollector>(queryProvider, "indexName", mockManager);
+    searchArgs =
+        new LuceneFunctionContext<IndexResultCollector>(queryProvider, "indexName", mockManager);
     when(mockContext.getDataSet()).thenReturn(mockRegion);
     when(mockContext.getArguments()).thenReturn(searchArgs);
-    when(mockContext.<TopEntriesCollector> getResultSender()).thenReturn(mockResultSender);
+    when(mockContext.<TopEntriesCollector>getResultSender()).thenReturn(mockResultSender);
     repos.remove(0);
     when(mockRepoManager.getRepositories(eq(mockContext))).thenReturn(repos);
     when(mockManager.newCollector(eq("repo2"))).thenReturn(mockCollector);
-    when(mockManager.reduce(any(Collection.class))).thenAnswer(invocation -> {
-      Collection<IndexResultCollector> collectors = invocation.getArgumentAt(0, Collection.class);
-      assertEquals(1, collectors.size());
-      assertEquals(mockCollector, collectors.iterator().next());
-      return new TopEntriesCollector(null);
+    when(mockManager.reduce(any(Collection.class)))
+        .thenAnswer(
+            invocation -> {
+              Collection<IndexResultCollector> collectors =
+                  invocation.getArgumentAt(0, Collection.class);
+              assertEquals(1, collectors.size());
+              assertEquals(mockCollector, collectors.iterator().next());
+              return new TopEntriesCollector(null);
+            });
 
-    });
-
-    doAnswer(invocation -> {
-      IndexResultCollector collector = invocation.getArgumentAt(2, IndexResultCollector.class);
-      collector.collect(r2_1.getKey(), r2_1.getScore());
-      return null;
-    }).when(mockRepository2).query(eq(query), eq(LuceneQueryFactory.DEFAULT_LIMIT), any(IndexResultCollector.class));
+    doAnswer(
+            invocation -> {
+              IndexResultCollector collector =
+                  invocation.getArgumentAt(2, IndexResultCollector.class);
+              collector.collect(r2_1.getKey(), r2_1.getScore());
+              return null;
+            })
+        .when(mockRepository2)
+        .query(eq(query), eq(LuceneQueryFactory.DEFAULT_LIMIT), any(IndexResultCollector.class));
 
     LuceneFunction function = new LuceneFunction();
 
@@ -190,9 +217,11 @@ public class LuceneFunctionJUnitTest {
   public void testIndexRepoQueryFails() throws Exception {
     when(mockContext.getDataSet()).thenReturn(mockRegion);
     when(mockContext.getArguments()).thenReturn(searchArgs);
-    when(mockContext.<TopEntriesCollector> getResultSender()).thenReturn(mockResultSender);
+    when(mockContext.<TopEntriesCollector>getResultSender()).thenReturn(mockResultSender);
     when(mockRepoManager.getRepositories(eq(mockContext))).thenReturn(repos);
-    doThrow(IOException.class).when(mockRepository1).query(eq(query), eq(LuceneQueryFactory.DEFAULT_LIMIT), any(IndexResultCollector.class));
+    doThrow(IOException.class)
+        .when(mockRepository1)
+        .query(eq(query), eq(LuceneQueryFactory.DEFAULT_LIMIT), any(IndexResultCollector.class));
 
     LuceneFunction function = new LuceneFunction();
 
@@ -203,8 +232,9 @@ public class LuceneFunctionJUnitTest {
   public void testBucketNotFound() throws Exception {
     when(mockContext.getDataSet()).thenReturn(mockRegion);
     when(mockContext.getArguments()).thenReturn(searchArgs);
-    when(mockContext.<TopEntriesCollector> getResultSender()).thenReturn(mockResultSender);
-    when(mockRepoManager.getRepositories(eq(mockContext))).thenThrow(new BucketNotFoundException(""));
+    when(mockContext.<TopEntriesCollector>getResultSender()).thenReturn(mockResultSender);
+    when(mockRepoManager.getRepositories(eq(mockContext)))
+        .thenThrow(new BucketNotFoundException(""));
     LuceneFunction function = new LuceneFunction();
 
     function.execute(mockContext);
@@ -215,11 +245,12 @@ public class LuceneFunctionJUnitTest {
   @Test(expected = FunctionException.class)
   public void testReduceError() throws Exception {
     final CollectorManager mockManager = mock(CollectorManager.class);
-    searchArgs = new LuceneFunctionContext<IndexResultCollector>(queryProvider, "indexName", mockManager);
+    searchArgs =
+        new LuceneFunctionContext<IndexResultCollector>(queryProvider, "indexName", mockManager);
 
     when(mockContext.getDataSet()).thenReturn(mockRegion);
     when(mockContext.getArguments()).thenReturn(searchArgs);
-    when(mockContext.<TopEntriesCollector> getResultSender()).thenReturn(mockResultSender);
+    when(mockContext.<TopEntriesCollector>getResultSender()).thenReturn(mockResultSender);
     repos.remove(1);
     when(mockRepoManager.getRepositories(eq(mockContext))).thenReturn(repos);
     when(mockManager.newCollector(eq("repo1"))).thenReturn(mockCollector);
@@ -236,7 +267,7 @@ public class LuceneFunctionJUnitTest {
     searchArgs = new LuceneFunctionContext<IndexResultCollector>(queryProvider, "indexName");
     when(mockContext.getDataSet()).thenReturn(mockRegion);
     when(mockContext.getArguments()).thenReturn(searchArgs);
-    when(mockContext.<TopEntriesCollector> getResultSender()).thenReturn(mockResultSender);
+    when(mockContext.<TopEntriesCollector>getResultSender()).thenReturn(mockResultSender);
     when(queryProvider.getQuery(eq(mockIndex))).thenThrow(LuceneQueryException.class);
     LuceneFunction function = new LuceneFunction();
 
@@ -278,7 +309,7 @@ public class LuceneFunctionJUnitTest {
     when(mockCache.getService(any())).thenReturn(mockService);
     when(mockService.getIndex(eq("indexName"), eq(regionPath))).thenReturn(mockIndex);
     when(mockIndex.getRepositoryManager()).thenReturn(mockRepoManager);
-    when(mockIndex.getFieldNames()).thenReturn(new String[] { "gemfire" });
+    when(mockIndex.getFieldNames()).thenReturn(new String[] {"gemfire"});
 
     query = queryProvider.getQuery(mockIndex);
   }

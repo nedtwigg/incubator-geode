@@ -26,14 +26,12 @@ public class Course {
   private String _courseNum;
   private Department _dept;
 
-  public Course() {
-  }
+  public Course() {}
 
   public Course(String title, String courseNum, Department department) {
     _title = title;
     _courseNum = courseNum;
     _dept = department;
-
   }
 
   public String toString() {
@@ -68,5 +66,4 @@ public class Course {
   public void setDepartment(Department dept) {
     _dept = dept;
   }
-
 }

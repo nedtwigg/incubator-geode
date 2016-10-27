@@ -42,9 +42,8 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * A processor for telling the grantor that a lock service participant has
- * shutdown. The grantor should release all locks which are currently held
- * by the calling member.
+ * A processor for telling the grantor that a lock service participant has shutdown. The grantor
+ * should release all locks which are currently held by the calling member.
  *
  * @since GemFire 4.0
  */
@@ -56,13 +55,11 @@ public class NonGrantorDestroyedProcessor extends ReplyProcessor21 {
   ////////// Public static entry point /////////
 
   /**
-   * 
-   * Send a message to grantor telling him that we've shutdown the named lock 
-   * service for this member.
-   * <p>
-   * Caller should loop, getting the grantor, calling <code>send</code>, and 
-   * checking <code>informedGrantor()</code> until the grantor has acknowledged
-   * being informed.
+   * Send a message to grantor telling him that we've shutdown the named lock service for this
+   * member.
+   *
+   * <p>Caller should loop, getting the grantor, calling <code>send</code>, and checking <code>
+   * informedGrantor()</code> until the grantor has acknowledged being informed.
    */
   static boolean send(String serviceName, LockGrantorId theLockGrantorId, DM dm) {
     InternalDistributedMember recipient = theLockGrantorId.getLockGrantorMember();
@@ -86,7 +83,9 @@ public class NonGrantorDestroyedProcessor extends ReplyProcessor21 {
   @Override
   public void process(DistributionMessage msg) {
     try {
-      Assert.assertTrue(msg instanceof NonGrantorDestroyedReplyMessage, "NonGrantorDestroyedProcessor is unable to process message of type " + msg.getClass());
+      Assert.assertTrue(
+          msg instanceof NonGrantorDestroyedReplyMessage,
+          "NonGrantorDestroyedProcessor is unable to process message of type " + msg.getClass());
 
       this.reply = (NonGrantorDestroyedReplyMessage) msg;
     } finally {
@@ -106,14 +105,16 @@ public class NonGrantorDestroyedProcessor extends ReplyProcessor21 {
 
   ///////////////   Inner message classes  //////////////////
 
-  public static final class NonGrantorDestroyedMessage extends PooledDistributionMessage implements MessageWithReply {
+  public static final class NonGrantorDestroyedMessage extends PooledDistributionMessage
+      implements MessageWithReply {
 
     private int processorId;
 
     /** The name of the DistributedLockService */
     private String serviceName;
 
-    protected static void send(String serviceName, InternalDistributedMember grantor, DM dm, ReplyProcessor21 proc) {
+    protected static void send(
+        String serviceName, InternalDistributedMember grantor, DM dm, ReplyProcessor21 proc) {
       Assert.assertTrue(grantor != null, "Cannot send NonGrantorDestroyedMessage to null grantor");
 
       NonGrantorDestroyedMessage msg = new NonGrantorDestroyedMessage();
@@ -147,7 +148,7 @@ public class NonGrantorDestroyedProcessor extends ReplyProcessor21 {
       basicProcess(dm);
     }
 
-    /** Process locally without using messaging  */
+    /** Process locally without using messaging */
     protected void processLocally(final DM dm) {
       basicProcess(dm);
     }
@@ -170,15 +171,24 @@ public class NonGrantorDestroyedProcessor extends ReplyProcessor21 {
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         if (logger.isTraceEnabled(LogMarker.DLS)) {
-          logger.trace(LogMarker.DLS, "Processing of NonGrantorDestroyedMessage resulted in InterruptedException", e);
+          logger.trace(
+              LogMarker.DLS,
+              "Processing of NonGrantorDestroyedMessage resulted in InterruptedException",
+              e);
         }
       } catch (LockServiceDestroyedException e) {
         if (logger.isTraceEnabled(LogMarker.DLS)) {
-          logger.trace(LogMarker.DLS, "Processing of NonGrantorDestroyedMessage resulted in LockServiceDestroyedException", e);
+          logger.trace(
+              LogMarker.DLS,
+              "Processing of NonGrantorDestroyedMessage resulted in LockServiceDestroyedException",
+              e);
         }
       } catch (LockGrantorDestroyedException e) {
         if (logger.isTraceEnabled(LogMarker.DLS)) {
-          logger.trace(LogMarker.DLS, "Processing of NonGrantorDestroyedMessage resulted in LockGrantorDestroyedException", e);
+          logger.trace(
+              LogMarker.DLS,
+              "Processing of NonGrantorDestroyedMessage resulted in LockGrantorDestroyedException",
+              e);
         }
       } finally {
         if (!replied) {
@@ -208,7 +218,11 @@ public class NonGrantorDestroyedProcessor extends ReplyProcessor21 {
     @Override
     public String toString() {
       StringBuffer buff = new StringBuffer();
-      buff.append("NonGrantorDestroyedMessage (serviceName='").append(this.serviceName).append("' processorId=").append(this.processorId).append(")");
+      buff.append("NonGrantorDestroyedMessage (serviceName='")
+          .append(this.serviceName)
+          .append("' processorId=")
+          .append(this.processorId)
+          .append(")");
       return buff.toString();
     }
   }
@@ -241,15 +255,15 @@ public class NonGrantorDestroyedProcessor extends ReplyProcessor21 {
     public static String replyCodeToString(int replyCode) {
       String s = null;
       switch (replyCode) {
-      case OK:
-        s = "OK";
-        break;
-      case NOT_GRANTOR:
-        s = "NOT_GRANTOR";
-        break;
-      default:
-        s = "UNKNOWN:" + String.valueOf(replyCode);
-        break;
+        case OK:
+          s = "OK";
+          break;
+        case NOT_GRANTOR:
+          s = "NOT_GRANTOR";
+          break;
+        default:
+          s = "UNKNOWN:" + String.valueOf(replyCode);
+          break;
       }
       return s;
     }
@@ -274,7 +288,14 @@ public class NonGrantorDestroyedProcessor extends ReplyProcessor21 {
     @Override
     public String toString() {
       StringBuffer buff = new StringBuffer();
-      buff.append("NonGrantorDestroyedReplyMessage").append("; sender=").append(getSender()).append("; processorId=").append(super.processorId).append("; replyCode=").append(replyCodeToString(this.replyCode)).append(")");
+      buff.append("NonGrantorDestroyedReplyMessage")
+          .append("; sender=")
+          .append(getSender())
+          .append("; processorId=")
+          .append(super.processorId)
+          .append("; replyCode=")
+          .append(replyCodeToString(this.replyCode))
+          .append(")");
       return buff.toString();
     }
   }

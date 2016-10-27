@@ -43,8 +43,8 @@ import org.apache.geode.internal.statistics.StatArchiveReader.ResourceInst;
 import org.apache.geode.internal.statistics.StatArchiveReader.StatValue;
 
 /**
- * Generates the stat archive file that is committed under src/test/resources
- * for {@link StatArchiveWithConsecutiveResourceInstIntegrationTest} to load.
+ * Generates the stat archive file that is committed under src/test/resources for {@link
+ * StatArchiveWithConsecutiveResourceInstIntegrationTest} to load.
  *
  * <p>The generated gfs file is used to confirm GEODE-1782 and its fix.
  *
@@ -57,7 +57,8 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
   protected static final String STATS_TYPE_NAME = "TestStats";
   protected static final String STATS_SPEC_STRING = ":" + STATS_TYPE_NAME;
 
-  protected static final String TEST_NAME = StatArchiveWithConsecutiveResourceInstIntegrationTest.class.getSimpleName();
+  protected static final String TEST_NAME =
+      StatArchiveWithConsecutiveResourceInstIntegrationTest.class.getSimpleName();
   protected static final String ARCHIVE_FILE_NAME = TEST_NAME + ".gfs";
 
   private File dir;
@@ -70,21 +71,27 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
   private SampleCollector sampleCollector;
   private StatArchiveWriter writer;
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUpGenerator() throws Exception {
     this.statisticTypes = new HashMap<>();
     this.allStatistics = new HashMap<>();
     this.dir = this.temporaryFolder.getRoot();
-    this.archiveFileName = new File(this.dir.getAbsolutePath(), ARCHIVE_FILE_NAME).getAbsolutePath();
+    this.archiveFileName =
+        new File(this.dir.getAbsolutePath(), ARCHIVE_FILE_NAME).getAbsolutePath();
 
     this.manager = new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
-    StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS - 2000).setSystemDirectoryPath(TEST_NAME).setProductDescription(TEST_NAME).build();
+    StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS - 2000)
+            .setSystemDirectoryPath(TEST_NAME)
+            .setProductDescription(TEST_NAME)
+            .build();
     this.writer = new TestStatArchiveWriter(archiveDescriptor);
     this.sampler = new TestStatisticsSampler(manager);
     this.sampleCollector = new SampleCollector(sampler);
@@ -103,7 +110,8 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
 
     // 1) create statistics
 
-    StatisticsType type = createStatisticsType(STATS_TYPE_NAME, "description of " + STATS_TYPE_NAME);
+    StatisticsType type =
+        createStatisticsType(STATS_TYPE_NAME, "description of " + STATS_TYPE_NAME);
     Statistics statistics1 = createStatistics(type, STATS_TYPE_NAME + "1", 1);
 
     // 2) sample changing stat
@@ -139,11 +147,11 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
 
     // validate content of stat archive file using StatArchiveReader
 
-    StatArchiveReader reader = new StatArchiveReader(new File[] { actual }, null, false);
+    StatArchiveReader reader = new StatArchiveReader(new File[] {actual}, null, false);
 
     // compare all resourceInst values against what was printed above
 
-    for (final Iterator iter = reader.getResourceInstList().iterator(); iter.hasNext();) {
+    for (final Iterator iter = reader.getResourceInstList().iterator(); iter.hasNext(); ) {
       StatArchiveReader.ResourceInst ri = (StatArchiveReader.ResourceInst) iter.next();
       String resourceName = ri.getName();
       assertNotNull(resourceName);
@@ -165,7 +173,11 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
 
         statValues[i].setFilter(StatValue.FILTER_NONE);
         double[] rawSnapshots = statValues[i].getRawSnapshots();
-        assertEquals("Value " + i + " for " + statName + " is wrong: " + expectedStatValues, expectedStatValues.get(statName).doubleValue(), statValues[i].getSnapshotsMostRecent(), 0.01);
+        assertEquals(
+            "Value " + i + " for " + statName + " is wrong: " + expectedStatValues,
+            expectedStatValues.get(statName).doubleValue(),
+            statValues[i].getSnapshotsMostRecent(),
+            0.01);
       }
     }
 
@@ -185,15 +197,21 @@ public class StatArchiveWithConsecutiveResourceInstGenerator {
   }
 
   private String getUniqueName() {
-    return StatArchiveWithConsecutiveResourceInstGenerator.class + "_" + this.testName.getMethodName();
+    return StatArchiveWithConsecutiveResourceInstGenerator.class
+        + "_"
+        + this.testName.getMethodName();
   }
 
   private StatisticsType createStatisticsType(final String name, final String description) {
-    StatisticDescriptor[] descriptors = new StatisticDescriptor[] { manager.createIntCounter("stat", "description of stat", "units"), };
+    StatisticDescriptor[] descriptors =
+        new StatisticDescriptor[] {
+          manager.createIntCounter("stat", "description of stat", "units"),
+        };
     return manager.createType(name, description, descriptors);
   }
 
-  private Statistics createStatistics(final StatisticsType type, final String textId, final long numericId) {
+  private Statistics createStatistics(
+      final StatisticsType type, final String textId, final long numericId) {
     return manager.createAtomicStatistics(type, textId, 1);
   }
 

@@ -26,29 +26,30 @@ import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 import org.apache.geode.internal.cache.versions.VersionTag;
 
 /**
- * getEntry(key) operation performed on server.
- * Extends Request, and overrides getValueAndIsObject() in Request
- * so as to not invoke loader.
+ * getEntry(key) operation performed on server. Extends Request, and overrides getValueAndIsObject()
+ * in Request so as to not invoke loader.
+ *
  * @since GemFire 6.6
  */
 public class GetEntry70 extends Get70 {
 
-  private final static GetEntry70 singleton = new GetEntry70();
+  private static final GetEntry70 singleton = new GetEntry70();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  protected GetEntry70() {
-  }
+  protected GetEntry70() {}
 
   @Override
-  protected Get70.Entry getEntry(Region region, Object key, Object callbackArg, ServerConnection servConn) {
+  protected Get70.Entry getEntry(
+      Region region, Object key, Object callbackArg, ServerConnection servConn) {
     return getValueAndIsObject(region, key, callbackArg, servConn);
   }
 
   @Override
-  public Get70.Entry getValueAndIsObject(Region region, Object key, Object callbackArg, ServerConnection servConn) {
+  public Get70.Entry getValueAndIsObject(
+      Region region, Object key, Object callbackArg, ServerConnection servConn) {
     LocalRegion lregion = (LocalRegion) region;
     Object data = null;
     Region.Entry entry = region.getEntry(key);

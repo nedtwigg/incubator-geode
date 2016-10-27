@@ -67,16 +67,13 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
-/**
- * 
- *
- */
+/** */
 public class LocalDataSet implements Region, QueryExecutor {
 
   private static final Logger logger = LogService.getLogger();
 
-  final private PartitionedRegion proxy;
-  final private Set<Integer> buckets;
+  private final PartitionedRegion proxy;
+  private final Set<Integer> buckets;
   private InternalRegionFunctionContext rfContext;
 
   public LocalDataSet(PartitionedRegion pr, Set<Integer> buckets) {
@@ -121,9 +118,7 @@ public class LocalDataSet implements Region, QueryExecutor {
     return new LocalEntriesSet(IteratorType.KEYS);
   }
 
-  /**
-   * This instance method was added so that unit tests could mock it
-   */
+  /** This instance method was added so that unit tests could mock it */
   int getHashKey(Operation op, Object key, Object value, Object callbackArg) {
     return PartitionedRegionHelper.getHashKey(this.proxy, op, key, value, callbackArg);
   }
@@ -142,34 +137,45 @@ public class LocalDataSet implements Region, QueryExecutor {
     this.rfContext = fContext;
   }
 
-  public SelectResults query(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public SelectResults query(String queryPredicate)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     QueryService qs = getCache().getLocalQueryService();
-    DefaultQuery query = (DefaultQuery) qs.newQuery("select * from " + getFullPath() + " this where " + queryPredicate);
+    DefaultQuery query =
+        (DefaultQuery)
+            qs.newQuery("select * from " + getFullPath() + " this where " + queryPredicate);
     Object[] params = null;
     return (SelectResults) this.executeQuery(query, params, getBucketSet());
   }
 
-  public Object selectValue(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object selectValue(String queryPredicate)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     SelectResults result = query(queryPredicate);
     if (result.isEmpty()) {
       return null;
     }
     if (result.size() > 1) {
-      throw new FunctionDomainException(LocalizedStrings.AbstractRegion_SELECTVALUE_EXPECTS_RESULTS_OF_SIZE_1_BUT_FOUND_RESULTS_OF_SIZE_0.toLocalizedString(Integer.valueOf(result.size())));
+      throw new FunctionDomainException(
+          LocalizedStrings
+              .AbstractRegion_SELECTVALUE_EXPECTS_RESULTS_OF_SIZE_1_BUT_FOUND_RESULTS_OF_SIZE_0
+              .toLocalizedString(Integer.valueOf(result.size())));
     }
     return result.iterator().next();
   }
 
   /**
-   * Asif: This method should not be used for multiple partitioned regions based join queries
-   * We do not support equijoin queries on PartitionedRegions unless they are colocated
-   * and the the colocated columns ACTUALLY EXIST IN WHERE CLAUSE  , AND  IN CASE OF
-   * MULTI COLUMN PARTITIONING , SHOULD HAVE AND CLAUSE.
-   * 
-   *  If not , this method will return wrong results.   We DO NOT DETECT COLOCATION
-   *  CRITERIA IN THE MULTI REGION PR BASED QUERIES. 
+   * Asif: This method should not be used for multiple partitioned regions based join queries We do
+   * not support equijoin queries on PartitionedRegions unless they are colocated and the the
+   * colocated columns ACTUALLY EXIST IN WHERE CLAUSE , AND IN CASE OF MULTI COLUMN PARTITIONING ,
+   * SHOULD HAVE AND CLAUSE.
+   *
+   * <p>If not , this method will return wrong results. We DO NOT DETECT COLOCATION CRITERIA IN THE
+   * MULTI REGION PR BASED QUERIES.
    */
-  public Object executeQuery(DefaultQuery query, Object[] parameters, Set buckets) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object executeQuery(DefaultQuery query, Object[] parameters, Set buckets)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     long startTime = 0L;
     Object result = null;
     boolean traceOn = DefaultQuery.QUERY_VERBOSE || query.isTraced();
@@ -217,23 +223,28 @@ public class LocalDataSet implements Region, QueryExecutor {
     throw new UnsupportedOperationException();
   }
 
-  public void create(Object key, Object value) throws TimeoutException, EntryExistsException, CacheWriterException {
+  public void create(Object key, Object value)
+      throws TimeoutException, EntryExistsException, CacheWriterException {
     create(key, value, null);
   }
 
-  public void create(Object key, Object value, Object callbackArgument) throws TimeoutException, EntryExistsException, CacheWriterException {
+  public void create(Object key, Object value, Object callbackArgument)
+      throws TimeoutException, EntryExistsException, CacheWriterException {
     this.proxy.create(key, value, callbackArgument);
   }
 
-  public Region createSubregion(String subregionName, RegionAttributes regionAttributes) throws RegionExistsException, TimeoutException {
+  public Region createSubregion(String subregionName, RegionAttributes regionAttributes)
+      throws RegionExistsException, TimeoutException {
     throw new UnsupportedOperationException();
   }
 
-  public Object destroy(Object key) throws TimeoutException, EntryNotFoundException, CacheWriterException {
+  public Object destroy(Object key)
+      throws TimeoutException, EntryNotFoundException, CacheWriterException {
     return destroy(key, null);
   }
 
-  public Object destroy(Object key, Object callbackArgument) throws TimeoutException, EntryNotFoundException, CacheWriterException {
+  public Object destroy(Object key, Object callbackArgument)
+      throws TimeoutException, EntryNotFoundException, CacheWriterException {
     return this.proxy.destroy(key, callbackArgument);
   }
 
@@ -245,7 +256,9 @@ public class LocalDataSet implements Region, QueryExecutor {
     this.proxy.destroyRegion(callbackArgument);
   }
 
-  public boolean existsValue(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public boolean existsValue(String queryPredicate)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     return this.proxy.existsValue(queryPredicate);
   }
 
@@ -305,7 +318,8 @@ public class LocalDataSet implements Region, QueryExecutor {
     invalidate(key, null);
   }
 
-  public void invalidate(Object key, Object callbackArgument) throws TimeoutException, EntryNotFoundException {
+  public void invalidate(Object key, Object callbackArgument)
+      throws TimeoutException, EntryNotFoundException {
     this.proxy.invalidate(key, callbackArgument);
   }
 
@@ -365,11 +379,13 @@ public class LocalDataSet implements Region, QueryExecutor {
     throw new UnsupportedOperationException();
   }
 
-  public void registerInterest(Object key, InterestResultPolicy policy) throws CacheWriterException {
+  public void registerInterest(Object key, InterestResultPolicy policy)
+      throws CacheWriterException {
     throw new UnsupportedOperationException();
   }
 
-  public void registerInterest(Object key, InterestResultPolicy policy, boolean isDurable) throws CacheWriterException {
+  public void registerInterest(Object key, InterestResultPolicy policy, boolean isDurable)
+      throws CacheWriterException {
     throw new UnsupportedOperationException();
   }
 
@@ -381,11 +397,13 @@ public class LocalDataSet implements Region, QueryExecutor {
     throw new UnsupportedOperationException();
   }
 
-  public void registerInterestRegex(String regex, InterestResultPolicy policy) throws CacheWriterException {
+  public void registerInterestRegex(String regex, InterestResultPolicy policy)
+      throws CacheWriterException {
     throw new UnsupportedOperationException();
   }
 
-  public void registerInterestRegex(String regex, InterestResultPolicy policy, boolean isDurable) throws CacheWriterException {
+  public void registerInterestRegex(String regex, InterestResultPolicy policy, boolean isDurable)
+      throws CacheWriterException {
     throw new UnsupportedOperationException();
   }
 
@@ -393,7 +411,8 @@ public class LocalDataSet implements Region, QueryExecutor {
     return this.proxy.keySetOnServer();
   }
 
-  public void loadSnapshot(InputStream inputStream) throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException {
+  public void loadSnapshot(InputStream inputStream)
+      throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException {
     throw new UnsupportedOperationException();
   }
 
@@ -403,12 +422,17 @@ public class LocalDataSet implements Region, QueryExecutor {
 
   public Map getAll(Collection keys, Object callback) {
     HashMap result = new HashMap();
-    for (Iterator i = keys.iterator(); i.hasNext();) {
+    for (Iterator i = keys.iterator(); i.hasNext(); ) {
       Object key = i.next();
       try {
         result.put(key, get(key, callback));
       } catch (Exception e) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.LocalRegion_THE_FOLLOWING_EXCEPTION_OCCURRED_ATTEMPTING_TO_GET_KEY_0, key), e);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .LocalRegion_THE_FOLLOWING_EXCEPTION_OCCURRED_ATTEMPTING_TO_GET_KEY_0,
+                key),
+            e);
       }
     }
     return result;
@@ -456,7 +480,8 @@ public class LocalDataSet implements Region, QueryExecutor {
     return put(key, value, null);
   }
 
-  public Object put(Object key, Object value, Object callbackArgument) throws TimeoutException, CacheWriterException {
+  public Object put(Object key, Object value, Object callbackArgument)
+      throws TimeoutException, CacheWriterException {
     return this.proxy.put(key, value, callbackArgument);
   }
 
@@ -505,7 +530,8 @@ public class LocalDataSet implements Region, QueryExecutor {
     return get(key, null);
   }
 
-  public Object get(Object key, Object aCallbackArgument) throws TimeoutException, CacheLoaderException {
+  public Object get(Object key, Object aCallbackArgument)
+      throws TimeoutException, CacheLoaderException {
     if (isInDataSet(key, aCallbackArgument)) {
       return this.proxy.get(key, aCallbackArgument);
     } else {
@@ -523,27 +549,28 @@ public class LocalDataSet implements Region, QueryExecutor {
     return sb.append(']').toString();
   }
 
-  public void saveSnapshot(OutputStream outputStream) throws IOException {
+  public void saveSnapshot(OutputStream outputStream) throws IOException {}
+
+  public void registerInterest(Object key, boolean isDurable, boolean receiveValues)
+      throws CacheWriterException {
+    throw new UnsupportedOperationException();
   }
 
-  public void registerInterest(Object key, boolean isDurable, boolean receiveValues) throws CacheWriterException {
+  public void registerInterest(
+      Object key, InterestResultPolicy policy, boolean isDurable, boolean receiveValues)
+      throws CacheWriterException {
     throw new UnsupportedOperationException();
-
   }
 
-  public void registerInterest(Object key, InterestResultPolicy policy, boolean isDurable, boolean receiveValues) throws CacheWriterException {
+  public void registerInterestRegex(String regex, boolean isDurable, boolean receiveValues)
+      throws CacheWriterException {
     throw new UnsupportedOperationException();
-
   }
 
-  public void registerInterestRegex(String regex, boolean isDurable, boolean receiveValues) throws CacheWriterException {
+  public void registerInterestRegex(
+      String regex, InterestResultPolicy policy, boolean isDurable, boolean receiveValues)
+      throws CacheWriterException {
     throw new UnsupportedOperationException();
-
-  }
-
-  public void registerInterestRegex(String regex, InterestResultPolicy policy, boolean isDurable, boolean receiveValues) throws CacheWriterException {
-    throw new UnsupportedOperationException();
-
   }
 
   /* (non-Javadoc)
@@ -629,15 +656,17 @@ public class LocalDataSet implements Region, QueryExecutor {
         // Check if PR is destroyed.
         proxy.checkReadiness();
         try {
-          for (;;) { // Loop till we get valid value
-            while (curBucketIter == null || !(hasNext = curBucketIter.hasNext())) { // Loop all the buckets.
+          for (; ; ) { // Loop till we get valid value
+            while (curBucketIter == null
+                || !(hasNext = curBucketIter.hasNext())) { // Loop all the buckets.
               if (index >= localBucketsSize) {
                 return null;
               }
               curBucketId = localBuckets.get(index++);
               BucketRegion br = proxy.getDataStore().getLocalBucketById(curBucketId);
               if (br == null) {
-                throw new BucketMovedException("The Bucket region with id " + curBucketId + " is moved/destroyed.");
+                throw new BucketMovedException(
+                    "The Bucket region with id " + curBucketId + " is moved/destroyed.");
               }
               br.waitForData();
               curBucketIter = br.entrySet().iterator();
@@ -674,15 +703,17 @@ public class LocalDataSet implements Region, QueryExecutor {
             return next;
           }
         } catch (RegionDestroyedException rde) {
-          throw new BucketMovedException("The Bucket region with id " + curBucketId + " is moved/destroyed.");
+          throw new BucketMovedException(
+              "The Bucket region with id " + curBucketId + " is moved/destroyed.");
         }
       }
 
       @Override
       public void remove() {
-        throw new UnsupportedOperationException(LocalizedStrings.LocalRegion_THIS_ITERATOR_DOES_NOT_SUPPORT_MODIFICATION.toLocalizedString());
+        throw new UnsupportedOperationException(
+            LocalizedStrings.LocalRegion_THIS_ITERATOR_DOES_NOT_SUPPORT_MODIFICATION
+                .toLocalizedString());
       }
-
     }
 
     @Override
@@ -694,7 +725,6 @@ public class LocalDataSet implements Region, QueryExecutor {
       }
       return size;
     }
-
   }
 
   @Override
@@ -706,5 +736,4 @@ public class LocalDataSet implements Region, QueryExecutor {
   public void removeAll(Collection keys, Object aCallbackArgument) {
     this.proxy.removeAll(keys, aCallbackArgument);
   }
-
 }

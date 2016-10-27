@@ -34,9 +34,8 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.net.SocketCreator;
 
 /**
- * This class provides build and version information about GemFire.
- * It gathers this information from the resource property file
- * for this class.
+ * This class provides build and version information about GemFire. It gathers this information from
+ * the resource property file for this class.
  */
 public class GemFireVersion {
   private static String RESOURCE_NAME = "GemFireVersion.properties";
@@ -44,12 +43,12 @@ public class GemFireVersion {
   /** The singleton instance */
   private static VersionDescription description;
 
-  private GemFireVersion() {
-  }
+  private GemFireVersion() {}
 
   private static synchronized VersionDescription getDescription() {
     if (description == null) {
-      String name = GemFireVersion.class.getPackage().getName().replace('.', '/') + "/" + RESOURCE_NAME;
+      String name =
+          GemFireVersion.class.getPackage().getName().replace('.', '/') + "/" + RESOURCE_NAME;
       description = new VersionDescription(name);
     }
     return description;
@@ -123,7 +122,8 @@ public class GemFireVersion {
     }
     // fix for bug 33274 - null CodeSource from protection domain in Sybase
     URL csLoc = null;
-    StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path"), File.pathSeparator);
+    StringTokenizer tokenizer =
+        new StringTokenizer(System.getProperty("java.class.path"), File.pathSeparator);
     while (tokenizer.hasMoreTokens()) {
       String jar = tokenizer.nextToken();
       if (jar.indexOf(getGemFireJarFileName()) != -1) {
@@ -191,7 +191,11 @@ public class GemFireVersion {
     public VersionDescription(String name) {
       InputStream is = ClassPathLoader.getLatest().getResourceAsStream(getClass(), name);
       if (is == null) {
-        error = Optional.of(LocalizedStrings.GemFireVersion_COULD_NOT_FIND_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_0.toLocalizedString(name));
+        error =
+            Optional.of(
+                LocalizedStrings
+                    .GemFireVersion_COULD_NOT_FIND_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_0
+                    .toLocalizedString(name));
         description = null;
         return;
       }
@@ -200,7 +204,11 @@ public class GemFireVersion {
       try {
         description.load(is);
       } catch (Exception ex) {
-        error = Optional.of(LocalizedStrings.GemFireVersion_COULD_NOT_READ_PROPERTIES_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_0_BECAUSE_1.toLocalizedString(new Object[] { name, ex }));
+        error =
+            Optional.of(
+                LocalizedStrings
+                    .GemFireVersion_COULD_NOT_READ_PROPERTIES_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_0_BECAUSE_1
+                    .toLocalizedString(new Object[] {name, ex}));
         return;
       }
 
@@ -229,9 +237,20 @@ public class GemFireVersion {
       printHostInfo(pw);
     }
 
-    private void printHostInfo(PrintWriter pw) throws InternalGemFireError, Error, VirtualMachineError {
+    private void printHostInfo(PrintWriter pw)
+        throws InternalGemFireError, Error, VirtualMachineError {
       try {
-        StringBuffer sb = new StringBuffer(SocketCreator.getLocalHost().toString()).append(", ").append(Runtime.getRuntime().availableProcessors()).append(" cpu(s), ").append(System.getProperty("os.arch")).append(' ').append(System.getProperty("os.name")).append(' ').append(System.getProperty("os.version")).append(' ');
+        StringBuffer sb =
+            new StringBuffer(SocketCreator.getLocalHost().toString())
+                .append(", ")
+                .append(Runtime.getRuntime().availableProcessors())
+                .append(" cpu(s), ")
+                .append(System.getProperty("os.arch"))
+                .append(' ')
+                .append(System.getProperty("os.name"))
+                .append(' ')
+                .append(System.getProperty("os.version"))
+                .append(' ');
         pw.println(LocalizedStrings.GemFireVersion_RUNNING_ON_0.toLocalizedString(sb.toString()));
       } catch (VirtualMachineError err) {
         SystemFailure.initiateFailure(err);
@@ -250,39 +269,66 @@ public class GemFireVersion {
 
     private Optional<String> validate(Properties props) {
       if (props.get(PRODUCT_NAME) == null) {
-        return Optional.of(LocalizedStrings.GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1.toLocalizedString(new Object[] { PRODUCT_NAME, RESOURCE_NAME }));
+        return Optional.of(
+            LocalizedStrings
+                .GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1
+                .toLocalizedString(new Object[] {PRODUCT_NAME, RESOURCE_NAME}));
       }
 
       if (props.get(GEMFIRE_VERSION) == null) {
-        return Optional.of(LocalizedStrings.GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1.toLocalizedString(new Object[] { GEMFIRE_VERSION, RESOURCE_NAME }));
+        return Optional.of(
+            LocalizedStrings
+                .GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1
+                .toLocalizedString(new Object[] {GEMFIRE_VERSION, RESOURCE_NAME}));
       }
 
       if (props.get(SOURCE_DATE) == null) {
-        return Optional.of(LocalizedStrings.GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1.toLocalizedString(new Object[] { SOURCE_DATE, RESOURCE_NAME }));
+        return Optional.of(
+            LocalizedStrings
+                .GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1
+                .toLocalizedString(new Object[] {SOURCE_DATE, RESOURCE_NAME}));
       }
 
       if (props.get(SOURCE_REVISION) == null) {
-        return Optional.of(LocalizedStrings.GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1.toLocalizedString(new Object[] { SOURCE_REVISION, RESOURCE_NAME }));
+        return Optional.of(
+            LocalizedStrings
+                .GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1
+                .toLocalizedString(new Object[] {SOURCE_REVISION, RESOURCE_NAME}));
       }
 
       if (props.get(SOURCE_REPOSITORY) == null) {
-        return Optional.of(LocalizedStrings.GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1.toLocalizedString(new Object[] { SOURCE_REPOSITORY, RESOURCE_NAME }));
+        return Optional.of(
+            LocalizedStrings
+                .GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1
+                .toLocalizedString(new Object[] {SOURCE_REPOSITORY, RESOURCE_NAME}));
       }
 
       if (props.get(BUILD_DATE) == null) {
-        return Optional.of(LocalizedStrings.GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1.toLocalizedString(new Object[] { BUILD_DATE, RESOURCE_NAME }));
+        return Optional.of(
+            LocalizedStrings
+                .GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1
+                .toLocalizedString(new Object[] {BUILD_DATE, RESOURCE_NAME}));
       }
 
       if (props.get(BUILD_ID) == null) {
-        return Optional.of(LocalizedStrings.GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1.toLocalizedString(new Object[] { BUILD_ID, RESOURCE_NAME }));
+        return Optional.of(
+            LocalizedStrings
+                .GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1
+                .toLocalizedString(new Object[] {BUILD_ID, RESOURCE_NAME}));
       }
 
       if (props.get(BUILD_PLATFORM) == null) {
-        return Optional.of(LocalizedStrings.GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1.toLocalizedString(new Object[] { BUILD_PLATFORM, RESOURCE_NAME }));
+        return Optional.of(
+            LocalizedStrings
+                .GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1
+                .toLocalizedString(new Object[] {BUILD_PLATFORM, RESOURCE_NAME}));
       }
 
       if (props.get(BUILD_JAVA_VERSION) == null) {
-        return Optional.of(LocalizedStrings.GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1.toLocalizedString(new Object[] { BUILD_JAVA_VERSION, RESOURCE_NAME }));
+        return Optional.of(
+            LocalizedStrings
+                .GemFireVersion_MISSING_PROPERTY_0_FROM_RESOURCE_COM_GEMSTONE_GEMFIRE_INTERNAL_1
+                .toLocalizedString(new Object[] {BUILD_JAVA_VERSION, RESOURCE_NAME}));
       }
       return Optional.empty();
     }

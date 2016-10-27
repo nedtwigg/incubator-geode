@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.apache.geode.modules.session.installer;
 
@@ -39,24 +39,36 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-/**
- *
- */
+/** */
 public class Installer {
 
-  private static final String GEMFIRE_FILTER_CLASS = "org.apache.geode.modules.session.filter.SessionCachingFilter";
+  private static final String GEMFIRE_FILTER_CLASS =
+      "org.apache.geode.modules.session.filter.SessionCachingFilter";
 
-  private static final String GEMFIRE_LISTENER_CLASS = "org.apache.geode.modules.session.filter.SessionListener";
+  private static final String GEMFIRE_LISTENER_CLASS =
+      "org.apache.geode.modules.session.filter.SessionListener";
 
   private ArgumentValues argValues;
 
-  private static final Argument ARG_HELP = new Argument("-h", false).setDescription("Displays this help message.");
+  private static final Argument ARG_HELP =
+      new Argument("-h", false).setDescription("Displays this help message.");
 
-  private static Argument ARG_GEMFIRE_PARAMETERS = new Argument("-p", false, "param=value").setDescription("Specific parameter for inclusion into the " + "session filter definition as a regular " + "init-param. Can be given multiple times.");
+  private static Argument ARG_GEMFIRE_PARAMETERS =
+      new Argument("-p", false, "param=value")
+          .setDescription(
+              "Specific parameter for inclusion into the "
+                  + "session filter definition as a regular "
+                  + "init-param. Can be given multiple times.");
 
-  private static Argument ARG_CACHE_TYPE = new Argument("-t", false, "cache-type").setDescription("Type of cache. Must be one of 'peer-to-peer' or " + "'client-server'. Default is peer-to-peer.").setDefaults("peer-to-peer");
+  private static Argument ARG_CACHE_TYPE =
+      new Argument("-t", false, "cache-type")
+          .setDescription(
+              "Type of cache. Must be one of 'peer-to-peer' or "
+                  + "'client-server'. Default is peer-to-peer.")
+          .setDefaults("peer-to-peer");
 
-  private static Argument ARG_WEB_XML_FILE = new Argument("-w", true, "web.xml file").setDescription("The web.xml file to be modified.");
+  private static Argument ARG_WEB_XML_FILE =
+      new Argument("-w", true, "web.xml file").setDescription("The web.xml file to be modified.");
 
   /**
    * Class main method
@@ -83,13 +95,14 @@ public class Installer {
       processor.addArgument(ARG_CACHE_TYPE);
       processor.addArgument(ARG_WEB_XML_FILE);
 
-      processor.setUnknownArgumentHandler(new UnknownArgumentHandler() {
-        @Override
-        public void handleUnknownArgument(final String form, final String[] params) {
-          log("Unknown argument being ignored: " + form + " (" + params.length + " params)");
-          log("Use '-h' argument to display usage");
-        }
-      });
+      processor.setUnknownArgumentHandler(
+          new UnknownArgumentHandler() {
+            @Override
+            public void handleUnknownArgument(final String form, final String[] params) {
+              log("Unknown argument being ignored: " + form + " (" + params.length + " params)");
+              log("Use '-h' argument to display usage");
+            }
+          });
       argValues = processor.process(args);
 
       if (argValues.isDefined(ARG_HELP)) {
@@ -109,7 +122,6 @@ public class Installer {
       log(error.toString());
       System.exit(2);
     }
-
   }
 
   /**
@@ -220,24 +232,23 @@ public class Installer {
         index = i;
       }
     }
-    if (index == -1)
-      return null;
+    if (index == -1) return null;
     if (nodelist.getLength() > (index + 1)) {
       return nodelist.item(index + 1);
     }
     return null;
   }
 
-  private Node append(final Document doc, final Node parent, final String element, final String value) {
+  private Node append(
+      final Document doc, final Node parent, final String element, final String value) {
     final Element child = doc.createElement(element);
-    if (value != null)
-      child.setTextContent(value);
+    if (value != null) child.setTextContent(value);
     parent.appendChild(child);
     return child;
   }
 
   private void streamXML(final Document doc, final OutputStream out) {
-    try {// Use a Transformer for output
+    try { // Use a Transformer for output
       final TransformerFactory tFactory = TransformerFactory.newInstance();
       final Transformer transformer = tFactory.newTransformer();
       if (doc.getDoctype() != null) {
@@ -255,5 +266,4 @@ public class Installer {
       e.printStackTrace();
     }
   }
-
 }

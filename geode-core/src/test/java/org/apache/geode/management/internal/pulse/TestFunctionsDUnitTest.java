@@ -39,11 +39,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
-/**
- * This is for testing running functions
- * 
- * 
- */
+/** This is for testing running functions */
 @Category(DistributedTest.class)
 public class TestFunctionsDUnitTest extends ManagementTestBase {
 
@@ -55,26 +51,27 @@ public class TestFunctionsDUnitTest extends ManagementTestBase {
 
   public static Integer getNumOfRunningFunction() {
 
-    final WaitCriterion waitCriteria = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        final ManagementService service = getManagementService();
-        final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-        if (bean != null) {
-          if (bean.getNumRunningFunctions() > 0) {
-            return true;
-          } else {
+    final WaitCriterion waitCriteria =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            final ManagementService service = getManagementService();
+            final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+            if (bean != null) {
+              if (bean.getNumRunningFunctions() > 0) {
+                return true;
+              } else {
+                return false;
+              }
+            }
             return false;
           }
-        }
-        return false;
-      }
 
-      @Override
-      public String description() {
-        return "wait for getNumOfRunningFunction to complete and get results";
-      }
-    };
+          @Override
+          public String description() {
+            return "wait for getNumOfRunningFunction to complete and get results";
+          }
+        };
 
     Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
     final DistributedSystemMXBean bean = getManagementService().getDistributedSystemMXBean();
@@ -86,27 +83,27 @@ public class TestFunctionsDUnitTest extends ManagementTestBase {
   public void testNumOfRunningFunctions() throws Exception {
     initManagement(false);
     VM client = managedNodeList.get(2);
-    client.invokeAsync(new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
-        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_RUNNING_FOR_LONG_TIME);
-        Execution execution = FunctionService.onMember(cache.getDistributedSystem().getDistributedMember());
-        for (int i = 0; i < 100; i++) {
-          execution.execute(function);
-        }
-      }
-    });
-    Integer numOfRunningFunctions = (Integer) managingNode.invoke(() -> TestFunctionsDUnitTest.getNumOfRunningFunction());
-    LogWriterUtils.getLogWriter().info("TestNumOfFunctions numOfRunningFunctions= " + numOfRunningFunctions);
+    client.invokeAsync(
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
+            Function function =
+                new TestFunction(true, TestFunction.TEST_FUNCTION_RUNNING_FOR_LONG_TIME);
+            Execution execution =
+                FunctionService.onMember(cache.getDistributedSystem().getDistributedMember());
+            for (int i = 0; i < 100; i++) {
+              execution.execute(function);
+            }
+          }
+        });
+    Integer numOfRunningFunctions =
+        (Integer) managingNode.invoke(() -> TestFunctionsDUnitTest.getNumOfRunningFunction());
+    LogWriterUtils.getLogWriter()
+        .info("TestNumOfFunctions numOfRunningFunctions= " + numOfRunningFunctions);
     assertTrue(numOfRunningFunctions > 0 ? true : false);
   }
 
-  public void verifyStatistics() {
+  public void verifyStatistics() {}
 
-  }
-
-  public void invokeOperations() {
-
-  }
-
+  public void invokeOperations() {}
 }

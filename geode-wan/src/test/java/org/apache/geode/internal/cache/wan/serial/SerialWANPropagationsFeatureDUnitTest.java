@@ -50,17 +50,23 @@ public class SerialWANPropagationsFeatureDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 10, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 10, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
     vm2.invoke(() -> addListenerToSleepAfterCreateEvent(1000, getTestMethodName() + "_RR"));
     vm3.invoke(() -> addListenerToSleepAfterCreateEvent(1000, getTestMethodName() + "_RR"));
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doHeavyPuts(getTestMethodName() + "_RR", 15));
 
@@ -82,21 +88,26 @@ public class SerialWANPropagationsFeatureDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, true, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, true, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
 
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 1000));
     vm3.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 1000));
-
   }
 
   @Test
@@ -113,15 +124,21 @@ public class SerialWANPropagationsFeatureDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 1000, true, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 1000, true, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
 
@@ -143,15 +160,21 @@ public class SerialWANPropagationsFeatureDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doMultiThreadedPuts(getTestMethodName() + "_RR", 1000));
 
@@ -170,18 +193,30 @@ public class SerialWANPropagationsFeatureDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, new MyGatewayEventFilter(), true));
-    vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, new MyGatewayEventFilter(), true));
+    vm4.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, false, 100, 10, false, false, new MyGatewayEventFilter(), true));
+    vm5.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, false, 100, 10, false, false, new MyGatewayEventFilter(), true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName(), 1000));
 
@@ -199,8 +234,14 @@ public class SerialWANPropagationsFeatureDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, new MyGatewayEventFilter(), true));
-    vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, new MyGatewayEventFilter(), true));
+    vm4.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, false, 100, 10, false, false, new MyGatewayEventFilter(), true));
+    vm5.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, false, 100, 10, false, false, new MyGatewayEventFilter(), true));
 
     vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName(), null, isOffHeap()));
     vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName(), null, isOffHeap()));
@@ -227,8 +268,14 @@ public class SerialWANPropagationsFeatureDUnitTest extends WANTestBase {
     createReceiverInVMs(vm6, vm7);
 
     createCacheInVMs(lnPort, vm2, vm3, vm4, vm5);
-    vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, new MyGatewayEventFilter_AfterAck(), true));
-    vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, new MyGatewayEventFilter_AfterAck(), true));
+    vm4.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, false, 100, 10, false, false, new MyGatewayEventFilter_AfterAck(), true));
+    vm5.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, false, 100, 10, false, false, new MyGatewayEventFilter_AfterAck(), true));
 
     vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName(), null, isOffHeap()));
     vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName(), null, isOffHeap()));

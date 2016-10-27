@@ -39,11 +39,12 @@ public class GetOperationContextImplJUnitTest {
   @Test
   public void testGetSerializedValue() throws IOException {
     {
-      byte[] byteArrayValue = new byte[] { 1, 2, 3, 4 };
+      byte[] byteArrayValue = new byte[] {1, 2, 3, 4};
       GetOperationContextImpl poc = new GetOperationContextImpl("key", true);
       poc.setObject(byteArrayValue, false);
       Assert.assertFalse(poc.isObject());
-      Assert.assertNull("value is an actual byte array which is not a serialized blob", poc.getSerializedValue());
+      Assert.assertNull(
+          "value is an actual byte array which is not a serialized blob", poc.getSerializedValue());
     }
 
     {
@@ -57,7 +58,8 @@ public class GetOperationContextImplJUnitTest {
       GetOperationContextImpl poc = new GetOperationContextImpl("key", true);
       poc.setObject("value", true);
       Assert.assertTrue(poc.isObject());
-      Assert.assertNull("value is a String which is not a serialized blob", poc.getSerializedValue());
+      Assert.assertNull(
+          "value is a String which is not a serialized blob", poc.getSerializedValue());
     }
 
     {
@@ -74,7 +76,12 @@ public class GetOperationContextImplJUnitTest {
 
     {
       // create a loner cache so that pdx serialization will work
-      Cache c = (new CacheFactory()).set(LOCATORS, "").set(MCAST_PORT, "0").setPdxReadSerialized(true).create();
+      Cache c =
+          (new CacheFactory())
+              .set(LOCATORS, "")
+              .set(MCAST_PORT, "0")
+              .setPdxReadSerialized(true)
+              .create();
       try {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
@@ -94,7 +101,7 @@ public class GetOperationContextImplJUnitTest {
   @Test
   public void testGetDeserializedValue() throws IOException {
     {
-      byte[] byteArrayValue = new byte[] { 1, 2, 3, 4 };
+      byte[] byteArrayValue = new byte[] {1, 2, 3, 4};
       GetOperationContextImpl poc = new GetOperationContextImpl("key", true);
       poc.setObject(byteArrayValue, false);
       Assert.assertFalse(poc.isObject());
@@ -129,7 +136,12 @@ public class GetOperationContextImplJUnitTest {
 
     {
       // create a loner cache so that pdx serialization will work
-      Cache c = (new CacheFactory()).set(LOCATORS, "").set(MCAST_PORT, "0").setPdxReadSerialized(true).create();
+      Cache c =
+          (new CacheFactory())
+              .set(LOCATORS, "")
+              .set(MCAST_PORT, "0")
+              .setPdxReadSerialized(true)
+              .create();
       try {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
@@ -150,7 +162,7 @@ public class GetOperationContextImplJUnitTest {
   @Test
   public void testGetValue() throws IOException {
     {
-      byte[] byteArrayValue = new byte[] { 1, 2, 3, 4 };
+      byte[] byteArrayValue = new byte[] {1, 2, 3, 4};
       GetOperationContextImpl poc = new GetOperationContextImpl("key", true);
       poc.setObject(byteArrayValue, false);
       Assert.assertFalse(poc.isObject());
@@ -185,7 +197,12 @@ public class GetOperationContextImplJUnitTest {
 
     {
       // create a loner cache so that pdx serialization will work
-      Cache c = (new CacheFactory()).set(LOCATORS, "").set(MCAST_PORT, "0").setPdxReadSerialized(true).create();
+      Cache c =
+          (new CacheFactory())
+              .set(LOCATORS, "")
+              .set(MCAST_PORT, "0")
+              .setPdxReadSerialized(true)
+              .create();
       try {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
@@ -205,7 +222,7 @@ public class GetOperationContextImplJUnitTest {
   @Test
   public void testGetObject() throws IOException {
     {
-      byte[] byteArrayValue = new byte[] { 1, 2, 3, 4 };
+      byte[] byteArrayValue = new byte[] {1, 2, 3, 4};
       GetOperationContextImpl poc = new GetOperationContextImpl("key", true);
       poc.setObject(byteArrayValue, false);
       Assert.assertFalse(poc.isObject());
@@ -240,7 +257,12 @@ public class GetOperationContextImplJUnitTest {
 
     {
       // create a loner cache so that pdx serialization will work
-      Cache c = (new CacheFactory()).set(LOCATORS, "").set(MCAST_PORT, "0").setPdxReadSerialized(true).create();
+      Cache c =
+          (new CacheFactory())
+              .set(LOCATORS, "")
+              .set(MCAST_PORT, "0")
+              .setPdxReadSerialized(true)
+              .create();
       try {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);

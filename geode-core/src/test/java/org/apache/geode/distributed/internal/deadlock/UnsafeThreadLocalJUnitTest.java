@@ -44,27 +44,26 @@ public class UnsafeThreadLocalJUnitTest {
     sleep = false;
   }
 
-  /**
-   * Test that we can get the value of a thread local from another thread.
-   */
+  /** Test that we can get the value of a thread local from another thread. */
   @Test
   public void test() throws InterruptedException {
     final UnsafeThreadLocal<String> unsafeThreadLocal = new UnsafeThreadLocal<String>();
     final CountDownLatch localSet = new CountDownLatch(1);
 
-    Thread test = new Thread() {
-      public void run() {
-        unsafeThreadLocal.set("hello");
-        localSet.countDown();
-        try {
-          while (sleep) {
-            Thread.sleep(INTERVAL);
+    Thread test =
+        new Thread() {
+          public void run() {
+            unsafeThreadLocal.set("hello");
+            localSet.countDown();
+            try {
+              while (sleep) {
+                Thread.sleep(INTERVAL);
+              }
+            } catch (InterruptedException e) {
+              throw new AssertionError(e);
+            }
           }
-        } catch (InterruptedException e) {
-          throw new AssertionError(e);
-        }
-      }
-    };
+        };
 
     test.setDaemon(true);
     test.start();

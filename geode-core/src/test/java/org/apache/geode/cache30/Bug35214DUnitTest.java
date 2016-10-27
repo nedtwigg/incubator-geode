@@ -57,7 +57,7 @@ public class Bug35214DUnitTest extends JUnit4CacheTestCase {
 
   protected volatile int expirationCount = 0;
 
-  private final static int ENTRY_COUNT = 100;
+  private static final int ENTRY_COUNT = 100;
 
   protected static volatile boolean callbackFailure;
 
@@ -72,64 +72,73 @@ public class Bug35214DUnitTest extends JUnit4CacheTestCase {
 
   private void initOtherVm() {
     VM vm = getOtherVm();
-    vm.invoke(new CacheSerializableRunnable("init") {
-      public void run2() throws CacheException {
-        getCache();
-        AttributesFactory af = new AttributesFactory();
-        af.setScope(Scope.DISTRIBUTED_ACK);
-        Region r1 = createRootRegion("r1", af.create());
-        for (int i = 1; i <= ENTRY_COUNT; i++) {
-          r1.put("key" + i, "value" + i);
-        }
-      }
-    });
+    vm.invoke(
+        new CacheSerializableRunnable("init") {
+          public void run2() throws CacheException {
+            getCache();
+            AttributesFactory af = new AttributesFactory();
+            af.setScope(Scope.DISTRIBUTED_ACK);
+            Region r1 = createRootRegion("r1", af.create());
+            for (int i = 1; i <= ENTRY_COUNT; i++) {
+              r1.put("key" + i, "value" + i);
+            }
+          }
+        });
   }
 
   private AsyncInvocation updateOtherVm() throws Throwable {
     VM vm = getOtherVm();
-    AsyncInvocation otherUpdater = vm.invokeAsync(new CacheSerializableRunnable("update") {
-      public void run2() throws CacheException {
-        Region r1 = getRootRegion("r1");
-        // let the main guys gii get started; we want to do updates
-        // during his gii
-        {
-          // wait for profile of getInitialImage cache to show up
-          org.apache.geode.internal.cache.CacheDistributionAdvisor adv = ((org.apache.geode.internal.cache.DistributedRegion) r1).getCacheDistributionAdvisor();
-          int numProfiles;
-          int expectedProfiles = 1;
-          for (;;) {
-            numProfiles = adv.adviseInitialImage(null).getReplicates().size();
-            if (numProfiles < expectedProfiles) {
-              //            getLogWriter().info("PROFILE CHECK: Found " + numProfiles +
-              //              " getInitialImage Profiles (waiting for " + expectedProfiles + ")");
-              //pause(5);
-            } else {
-              LogWriterUtils.getLogWriter().info("PROFILE CHECK: Found " + numProfiles + " getInitialImage Profiles (OK)");
-              break;
-            }
-          }
-        }
-        // start doing updates of the keys to see if we can get deadlocked
-        int updateCount = 1;
-        do {
-          for (int i = 1; i <= ENTRY_COUNT; i++) {
-            String key = "key" + i;
-            if (r1.containsKey(key)) {
-              r1.destroy(key);
-            } else {
-              r1.put(key, "value" + i + "uc" + updateCount);
-            }
-          }
-        } while (updateCount++ < 20);
-        // do one more loop with no destroys
-        for (int i = 1; i <= ENTRY_COUNT; i++) {
-          String key = "key" + i;
-          if (!r1.containsKey(key)) {
-            r1.put(key, "value" + i + "uc" + updateCount);
-          }
-        }
-      }
-    });
+    AsyncInvocation otherUpdater =
+        vm.invokeAsync(
+            new CacheSerializableRunnable("update") {
+              public void run2() throws CacheException {
+                Region r1 = getRootRegion("r1");
+                // let the main guys gii get started; we want to do updates
+                // during his gii
+                {
+                  // wait for profile of getInitialImage cache to show up
+                  org.apache.geode.internal.cache.CacheDistributionAdvisor adv =
+                      ((org.apache.geode.internal.cache.DistributedRegion) r1)
+                          .getCacheDistributionAdvisor();
+                  int numProfiles;
+                  int expectedProfiles = 1;
+                  for (; ; ) {
+                    numProfiles = adv.adviseInitialImage(null).getReplicates().size();
+                    if (numProfiles < expectedProfiles) {
+                      //            getLogWriter().info("PROFILE CHECK: Found " + numProfiles +
+                      //              " getInitialImage Profiles (waiting for " + expectedProfiles + ")");
+                      //pause(5);
+                    } else {
+                      LogWriterUtils.getLogWriter()
+                          .info(
+                              "PROFILE CHECK: Found "
+                                  + numProfiles
+                                  + " getInitialImage Profiles (OK)");
+                      break;
+                    }
+                  }
+                }
+                // start doing updates of the keys to see if we can get deadlocked
+                int updateCount = 1;
+                do {
+                  for (int i = 1; i <= ENTRY_COUNT; i++) {
+                    String key = "key" + i;
+                    if (r1.containsKey(key)) {
+                      r1.destroy(key);
+                    } else {
+                      r1.put(key, "value" + i + "uc" + updateCount);
+                    }
+                  }
+                } while (updateCount++ < 20);
+                // do one more loop with no destroys
+                for (int i = 1; i <= ENTRY_COUNT; i++) {
+                  String key = "key" + i;
+                  if (!r1.containsKey(key)) {
+                    r1.put(key, "value" + i + "uc" + updateCount);
+                  }
+                }
+              }
+            });
 
     // FIXME this thread does not terminate
     //    DistributedTestCase.join(otherUpdater, 5 * 60 * 1000, getLogWriter());
@@ -145,16 +154,13 @@ public class Bug35214DUnitTest extends JUnit4CacheTestCase {
   protected boolean afterRegionCreateSeen = false;
 
   protected static void callbackAssertTrue(String msg, boolean cond) {
-    if (cond)
-      return;
+    if (cond) return;
     callbackFailure = true;
     // Throws ignored error, but...
     assertTrue(msg, cond);
   }
 
-  /**
-   * make sure entries do not expire during a GII
-   */
+  /** make sure entries do not expire during a GII */
   @Test
   public void testNoEntryExpireDuringGII() throws Exception {
     initOtherVm();
@@ -177,31 +183,33 @@ public class Bug35214DUnitTest extends JUnit4CacheTestCase {
       af.setScope(Scope.DISTRIBUTED_ACK);
       af.setStatisticsEnabled(true);
       af.setEntryIdleTimeout(new ExpirationAttributes(1, ExpirationAction.INVALIDATE));
-      CacheListener cl1 = new CacheListenerAdapter() {
-        public void afterRegionCreate(RegionEvent re) {
-          afterRegionCreateSeen = true;
-        }
+      CacheListener cl1 =
+          new CacheListenerAdapter() {
+            public void afterRegionCreate(RegionEvent re) {
+              afterRegionCreateSeen = true;
+            }
 
-        public void afterInvalidate(EntryEvent e) {
-          callbackAssertTrue("afterregionCreate not seen", afterRegionCreateSeen);
-          // make sure region is initialized
-          callbackAssertTrue("not initialized", ((LocalRegion) e.getRegion()).isInitialized());
-          expirationCount++;
-          org.apache.geode.internal.cache.InitialImageOperation.slowImageProcessing = 0;
-        }
-      };
+            public void afterInvalidate(EntryEvent e) {
+              callbackAssertTrue("afterregionCreate not seen", afterRegionCreateSeen);
+              // make sure region is initialized
+              callbackAssertTrue("not initialized", ((LocalRegion) e.getRegion()).isInitialized());
+              expirationCount++;
+              org.apache.geode.internal.cache.InitialImageOperation.slowImageProcessing = 0;
+            }
+          };
       af.addCacheListener(cl1);
       final Region r1 = createRootRegion("r1", af.create());
       ThreadUtils.join(updater, 60 * 1000);
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          return r1.values().size() == 0;
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return r1.values().size() == 0;
+            }
 
-        public String description() {
-          return "region never became empty";
-        }
-      };
+            public String description() {
+              return "region never became empty";
+            }
+          };
       Wait.waitForCriterion(ev, 2 * 1000, 200, true);
       {
         assertEquals(0, r1.values().size());

@@ -31,10 +31,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
-/**
- * 
- *
- */
+/** */
 public final class MemberFunctionResultSender implements InternalResultSender {
 
   private static final Logger logger = LogService.getLogger();
@@ -59,8 +56,8 @@ public final class MemberFunctionResultSender implements InternalResultSender {
   private ServerToClientFunctionResultSender serverSender;
 
   /**
-   * Have to combine next two construcotr in one and make a new class which will 
-   * send Results back.
+   * Have to combine next two construcotr in one and make a new class which will send Results back.
+   *
    * @param msg
    * @param dm
    */
@@ -68,17 +65,21 @@ public final class MemberFunctionResultSender implements InternalResultSender {
     this.msg = msg;
     this.dm = dm;
     this.function = function;
-
   }
 
   /**
-   * Have to combine next two construcotr in one and make a new class which will
-   * send Results back.
-   * 
+   * Have to combine next two construcotr in one and make a new class which will send Results back.
+   *
    * @param dm
    * @param rc
    */
-  public MemberFunctionResultSender(DM dm, ResultCollector rc, Function function, boolean onlyLocal, boolean onlyRemote, ServerToClientFunctionResultSender sender) {
+  public MemberFunctionResultSender(
+      DM dm,
+      ResultCollector rc,
+      Function function,
+      boolean onlyLocal,
+      boolean onlyRemote,
+      ServerToClientFunctionResultSender sender) {
     this.dm = dm;
     this.rc = rc;
     this.function = function;
@@ -89,7 +90,9 @@ public final class MemberFunctionResultSender implements InternalResultSender {
 
   public void lastResult(Object oneResult) {
     if (!this.function.hasResult()) {
-      throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
+      throw new IllegalStateException(
+          LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+              "send"));
     }
     if (this.serverSender != null) { // client-server
       if (this.localLastResultRecieved) {
@@ -122,7 +125,7 @@ public final class MemberFunctionResultSender implements InternalResultSender {
           this.rc.endResults();
           this.localLastResultRecieved = true;
         } else {
-          //call a synchronized method as local node is also waiting to send lastResult 
+          //call a synchronized method as local node is also waiting to send lastResult
           lastResult(oneResult, rc, false, true, this.dm.getDistributionManagerId());
         }
         FunctionStats.getFunctionStats(function.getId(), this.dm.getSystem()).incResultsReceived();
@@ -131,14 +134,18 @@ public final class MemberFunctionResultSender implements InternalResultSender {
     FunctionStats.getFunctionStats(function.getId(), this.dm.getSystem()).incResultsReturned();
   }
 
-  private synchronized void lastResult(Object oneResult, ResultCollector collector, boolean lastRemoteResult, boolean lastLocalResult, DistributedMember memberID) {
+  private synchronized void lastResult(
+      Object oneResult,
+      ResultCollector collector,
+      boolean lastRemoteResult,
+      boolean lastLocalResult,
+      DistributedMember memberID) {
 
     if (lastRemoteResult) {
       this.completelyDoneFromRemote = true;
     }
     if (lastLocalResult) {
       this.localLastResultRecieved = true;
-
     }
     if (this.serverSender != null) { // Client-Server
       if (this.completelyDoneFromRemote && this.localLastResultRecieved) {
@@ -157,7 +164,8 @@ public final class MemberFunctionResultSender implements InternalResultSender {
     }
   }
 
-  public void lastResult(Object oneResult, boolean completelyDone, ResultCollector reply, DistributedMember memberID) {
+  public void lastResult(
+      Object oneResult, boolean completelyDone, ResultCollector reply, DistributedMember memberID) {
     if (this.serverSender != null) { // Client-Server
       if (completelyDone) {
         if (onlyRemote) {
@@ -175,7 +183,7 @@ public final class MemberFunctionResultSender implements InternalResultSender {
           reply.addResult(memberID, oneResult);
           reply.endResults();
         } else {
-          //call a synchronized method as local node is also waiting to send lastResult 
+          //call a synchronized method as local node is also waiting to send lastResult
           lastResult(oneResult, reply, true, false, memberID);
         }
       } else {
@@ -188,11 +196,14 @@ public final class MemberFunctionResultSender implements InternalResultSender {
 
   public void sendResult(Object oneResult) {
     if (!this.function.hasResult()) {
-      throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
+      throw new IllegalStateException(
+          LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+              "send"));
     }
     if (this.serverSender != null) { // Client-Server
       if (logger.isDebugEnabled()) {
-        logger.debug("MemberFunctionResultSender sending result from local node to client {}", oneResult);
+        logger.debug(
+            "MemberFunctionResultSender sending result from local node to client {}", oneResult);
       }
       this.serverSender.sendResult(oneResult);
     } else { // P2P
@@ -224,7 +235,11 @@ public final class MemberFunctionResultSender implements InternalResultSender {
   public void setException(Throwable exception) {
     ((LocalResultCollector) this.rc).setException(exception);
     //this.lastResult(exception);
-    logger.info(LocalizedMessage.create(LocalizedStrings.MemberResultSender_UNEXPECTED_EXCEPTION_DURING_FUNCTION_EXECUTION_ON_LOCAL_NODE), exception);
+    logger.info(
+        LocalizedMessage.create(
+            LocalizedStrings
+                .MemberResultSender_UNEXPECTED_EXCEPTION_DURING_FUNCTION_EXECUTION_ON_LOCAL_NODE),
+        exception);
     this.rc.endResults();
     this.localLastResultRecieved = true;
   }

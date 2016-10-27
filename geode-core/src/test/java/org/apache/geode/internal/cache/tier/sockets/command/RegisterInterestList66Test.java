@@ -51,46 +51,32 @@ public class RegisterInterestList66Test {
   private static final String REGION_NAME = "region1";
   private static final String KEY = "key1";
   private static final byte[] DURABLE = new byte[8];
-  private static final byte[] DATA_POLICY = new byte[] { 0x01, 0x01 };
+  private static final byte[] DATA_POLICY = new byte[] {0x01, 0x01};
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private AuthorizeRequest authzRequest;
-  @Mock
-  private Cache cache;
-  @Mock
-  private Part regionNamePart;
-  @Mock
-  private Part interestTypePart;
-  @Mock
-  private Part durablePart;
-  @Mock
-  private Part keyPart;
-  @Mock
-  private Part numberOfKeysPart;
-  @Mock
-  private Part notifyPart;
-  @Mock
-  private Part regionDataPolicyPart;
-  @Mock
-  private RegisterInterestOperationContext registerInterestOperationContext;
-  @Mock
-  private ChunkedMessage chunkedResponseMessage;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private ServerConnection serverConnection;
+  @Mock private AuthorizeRequest authzRequest;
+  @Mock private Cache cache;
+  @Mock private Part regionNamePart;
+  @Mock private Part interestTypePart;
+  @Mock private Part durablePart;
+  @Mock private Part keyPart;
+  @Mock private Part numberOfKeysPart;
+  @Mock private Part notifyPart;
+  @Mock private Part regionDataPolicyPart;
+  @Mock private RegisterInterestOperationContext registerInterestOperationContext;
+  @Mock private ChunkedMessage chunkedResponseMessage;
 
-  @InjectMocks
-  private RegisterInterestList66 registerInterestList66;
+  @InjectMocks private RegisterInterestList66 registerInterestList66;
 
   @Before
   public void setUp() throws Exception {
     this.registerInterestList66 = new RegisterInterestList66();
     MockitoAnnotations.initMocks(this);
 
-    when(this.authzRequest.registerInterestListAuthorize(eq(REGION_NAME), any(), any())).thenReturn(this.registerInterestOperationContext);
+    when(this.authzRequest.registerInterestListAuthorize(eq(REGION_NAME), any(), any()))
+        .thenReturn(this.registerInterestOperationContext);
 
     when(this.cache.getRegion(isA(String.class))).thenReturn(mock(LocalRegion.class));
     when(this.cache.getCancelCriterion()).thenReturn(mock(CancelCriterion.class));
@@ -151,7 +137,9 @@ public class RegisterInterestList66Test {
   public void integratedSecurityShouldThrowIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(true);
-    doThrow(new NotAuthorizedException("")).when(this.securityService).authorizeRegionRead(eq(REGION_NAME));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.securityService)
+        .authorizeRegionRead(eq(REGION_NAME));
 
     this.registerInterestList66.cmdExecute(this.message, this.serverConnection, 0);
 
@@ -175,13 +163,16 @@ public class RegisterInterestList66Test {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
 
-    doThrow(new NotAuthorizedException("")).when(this.authzRequest).registerInterestListAuthorize(eq(REGION_NAME), any(), any());
+    doThrow(new NotAuthorizedException(""))
+        .when(this.authzRequest)
+        .registerInterestListAuthorize(eq(REGION_NAME), any(), any());
 
     this.registerInterestList66.cmdExecute(this.message, this.serverConnection, 0);
 
     verify(this.authzRequest).registerInterestListAuthorize(eq(REGION_NAME), any(), any());
 
-    ArgumentCaptor<NotAuthorizedException> argument = ArgumentCaptor.forClass(NotAuthorizedException.class);
+    ArgumentCaptor<NotAuthorizedException> argument =
+        ArgumentCaptor.forClass(NotAuthorizedException.class);
     verify(this.chunkedResponseMessage).addObjPart(argument.capture());
 
     assertThat(argument.getValue()).isExactlyInstanceOf(NotAuthorizedException.class);

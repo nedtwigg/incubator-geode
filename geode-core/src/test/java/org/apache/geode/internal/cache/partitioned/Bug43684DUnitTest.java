@@ -49,8 +49,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * TODO This doesn't really test the optimised RI behaviour but only that RI
- * works. But there must be other tests doing the same.
+ * TODO This doesn't really test the optimised RI behaviour but only that RI works. But there must
+ * be other tests doing the same.
  */
 @Category(DistributedTest.class)
 @SuppressWarnings("serial")
@@ -215,8 +215,12 @@ public class Bug43684DUnitTest extends JUnit4DistributedTestCase {
   }
 
   @SuppressWarnings("rawtypes")
-  private void doRegisterInterest(Object keys, String regEx, Integer numOfPuts, Boolean isReplicated, Boolean isPrimaryEmpty) throws Exception {
-    int port1 = (Integer) server1.invoke(() -> Bug43684DUnitTest.createServerCache(isReplicated, isPrimaryEmpty));
+  private void doRegisterInterest(
+      Object keys, String regEx, Integer numOfPuts, Boolean isReplicated, Boolean isPrimaryEmpty)
+      throws Exception {
+    int port1 =
+        (Integer)
+            server1.invoke(() -> Bug43684DUnitTest.createServerCache(isReplicated, isPrimaryEmpty));
     server2.invoke(() -> Bug43684DUnitTest.createServerCache(isReplicated, false));
     server3.invoke(() -> Bug43684DUnitTest.createServerCache(isReplicated, false));
 
@@ -227,13 +231,19 @@ public class Bug43684DUnitTest extends JUnit4DistributedTestCase {
     client1.invoke(() -> Bug43684DUnitTest.registerInterest(keys, regEx));
 
     server1.invoke(() -> Bug43684DUnitTest.closeCache());
-    int size = keys != null ? (keys instanceof List ? ((List) keys).size() : 1) : regEx == null ? numOfPuts : regexNum;
+    int size =
+        keys != null
+            ? (keys instanceof List ? ((List) keys).size() : 1)
+            : regEx == null ? numOfPuts : regexNum;
     client1.invoke(() -> Bug43684DUnitTest.verifyResponse(size));
   }
 
   @SuppressWarnings("rawtypes")
-  private void doRegisterInterest2(Object keys, Boolean isReplicated, Boolean isPrimaryEmpty) throws Exception {
-    int port1 = (Integer) server1.invoke(() -> Bug43684DUnitTest.createServerCache(isReplicated, isPrimaryEmpty));
+  private void doRegisterInterest2(Object keys, Boolean isReplicated, Boolean isPrimaryEmpty)
+      throws Exception {
+    int port1 =
+        (Integer)
+            server1.invoke(() -> Bug43684DUnitTest.createServerCache(isReplicated, isPrimaryEmpty));
     server2.invoke(() -> Bug43684DUnitTest.createServerCache(isReplicated, false));
     server3.invoke(() -> Bug43684DUnitTest.createServerCache(isReplicated, false));
 
@@ -250,7 +260,8 @@ public class Bug43684DUnitTest extends JUnit4DistributedTestCase {
   }
 
   @SuppressWarnings("rawtypes")
-  public static Integer createServerCache(Boolean isReplicated, Boolean isPrimaryEmpty) throws Exception {
+  public static Integer createServerCache(Boolean isReplicated, Boolean isPrimaryEmpty)
+      throws Exception {
     disconnectFromDS();
     Properties props = new Properties();
     props.setProperty(LOCATORS, "localhost[" + DistributedTestUtils.getDUnitLocatorPort() + "]");
@@ -261,12 +272,15 @@ public class Bug43684DUnitTest extends JUnit4DistributedTestCase {
 
     RegionFactory rf;
     if (isReplicated) {
-      RegionShortcut rs = isPrimaryEmpty ? RegionShortcut.REPLICATE_PROXY : RegionShortcut.REPLICATE;
+      RegionShortcut rs =
+          isPrimaryEmpty ? RegionShortcut.REPLICATE_PROXY : RegionShortcut.REPLICATE;
       rf = cache.createRegionFactory(rs);
     } else {
-      RegionShortcut rs = isPrimaryEmpty ? RegionShortcut.PARTITION_PROXY : RegionShortcut.PARTITION;
+      RegionShortcut rs =
+          isPrimaryEmpty ? RegionShortcut.PARTITION_PROXY : RegionShortcut.PARTITION;
       rf = cache.createRegionFactory(rs);
-      rf.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(numBuckets).create());
+      rf.setPartitionAttributes(
+          new PartitionAttributesFactory().setTotalNumBuckets(numBuckets).create());
     }
     rf.create(REGION_NAME);
     CacheServerImpl server = (CacheServerImpl) cache.addCacheServer();
@@ -275,7 +289,7 @@ public class Bug43684DUnitTest extends JUnit4DistributedTestCase {
     return server.getPort();
   }
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public static void createClientCache(Host host, Integer port) {
     disconnectFromDS();
     Properties props = new Properties();
@@ -288,7 +302,7 @@ public class Bug43684DUnitTest extends JUnit4DistributedTestCase {
     crf.create(REGION_NAME);
   }
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public static void registerInterest(Object keys, String regEx) {
     Region region = cache.getRegion(REGION_NAME);
     if (keys == null && regEx == null) {
@@ -301,7 +315,7 @@ public class Bug43684DUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public static void doPuts(Integer num, String regex, int regexNum) throws Exception {
     Region r = cache.getRegion(REGION_NAME);
     for (int i = 0; i < num; i++) {
@@ -314,7 +328,7 @@ public class Bug43684DUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public static void doOps() throws Exception {
     Region r = cache.getRegion(REGION_NAME);
     for (int i = 0; i < 14; i++) {

@@ -85,13 +85,17 @@ public class WANLocatorServerDUnitTest extends WANTestBase {
     vm5.invoke(() -> WANLocatorServerDUnitTest.tryNewConnection());
   }
 
-  public static void createLocator(Integer port1, Integer port2, Integer port3, Integer startingPort) {
+  public static void createLocator(
+      Integer port1, Integer port2, Integer port3, Integer startingPort) {
     WANTestBase test = new WANTestBase(getTestMethodName());
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + 1);
-    props.setProperty(LOCATORS, "localhost[" + port1 + "],localhost[" + port2 + "],localhost[" + port3 + "]");
-    props.setProperty(START_LOCATOR, "localhost[" + startingPort + "],server=true,peer=true,hostname-for-clients=localhost");
+    props.setProperty(
+        LOCATORS, "localhost[" + port1 + "],localhost[" + port2 + "],localhost[" + port3 + "]");
+    props.setProperty(
+        START_LOCATOR,
+        "localhost[" + startingPort + "],server=true,peer=true,hostname-for-clients=localhost");
     test.getSystem(props);
   }
 
@@ -99,7 +103,8 @@ public class WANLocatorServerDUnitTest extends WANTestBase {
     WANTestBase test = new WANTestBase(getTestMethodName());
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(LOCATORS, "localhost[" + port1 + "],localhost[" + port2 + "],localhost[" + port3 + "]");
+    props.setProperty(
+        LOCATORS, "localhost[" + port1 + "],localhost[" + port2 + "],localhost[" + port3 + "]");
 
     InternalDistributedSystem ds = test.getSystem(props);
     cache = CacheFactory.create(ds);
@@ -120,7 +125,8 @@ public class WANLocatorServerDUnitTest extends WANTestBase {
     WANTestBase test = new WANTestBase(getTestMethodName());
     Properties props = test.getDistributedSystemProperties();
     props.setProperty(MCAST_PORT, "0");
-    props.setProperty(LOCATORS, "localhost[" + port1 + "],localhost[" + port2 + "],localhost[" + port3 + "]");
+    props.setProperty(
+        LOCATORS, "localhost[" + port1 + "],localhost[" + port2 + "],localhost[" + port3 + "]");
 
     InternalDistributedSystem ds = test.getSystem(props);
     cache = CacheFactory.create(ds);
@@ -132,7 +138,8 @@ public class WANLocatorServerDUnitTest extends WANTestBase {
     } catch (IOException e) {
       fail("Test " + test.getName() + " failed to start CacheServer on port " + port, e);
     }
-    LogWriterUtils.getLogWriter().info("Server Started on port : " + port + " : server : " + server);
+    LogWriterUtils.getLogWriter()
+        .info("Server Started on port : " + port + " : server : " + server);
   }
 
   public static void disconnect() {
@@ -168,6 +175,5 @@ public class WANLocatorServerDUnitTest extends WANTestBase {
     } catch (Exception e) {
       Assert.fail("No Exception expected", e);
     }
-
   }
 }

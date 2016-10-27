@@ -34,10 +34,9 @@ import org.jgroups.stack.Protocol;
 import org.jgroups.util.UUID;
 
 /**
- * InterceptUDP replaces the regular UDP JGroups messaging protocol
- * for unit testing.  It does not create a datagram socket
- * and is only set up to record message counts and respond
- * to Unicast to keep it from retransmitting
+ * InterceptUDP replaces the regular UDP JGroups messaging protocol for unit testing. It does not
+ * create a datagram socket and is only set up to record message counts and respond to Unicast to
+ * keep it from retransmitting
  */
 public class InterceptUDP extends Protocol {
 
@@ -74,12 +73,12 @@ public class InterceptUDP extends Protocol {
   @Override
   public Object down(Event evt) {
     switch (evt.getType()) {
-    case Event.MSG:
-      handleMessage((Message) evt.getArg());
-      return null;
-    case Event.SET_LOCAL_ADDRESS:
-      uuid = (UUID) evt.getArg();
-      break;
+      case Event.MSG:
+        handleMessage((Message) evt.getArg());
+        return null;
+      case Event.SET_LOCAL_ADDRESS:
+        uuid = (UUID) evt.getArg();
+        break;
     }
     return down_prot.down(evt);
   }
@@ -96,12 +95,15 @@ public class InterceptUDP extends Protocol {
       if (o != null) {
         UNICAST3.Header hdr = (UNICAST3.Header) o;
         switch (hdr.type()) {
-        case UNICAST3.Header.DATA:
-          unicastSentDataMessages++;
-          Message response = new Message(uuid, msg.getDest(), null);
-          response.putHeader(unicastHeaderId, UNICAST3.Header.createAckHeader(hdr.seqno(), hdr.connId(), System.currentTimeMillis()));
-          up_prot.up(new Event(Event.MSG, response));
-          break;
+          case UNICAST3.Header.DATA:
+            unicastSentDataMessages++;
+            Message response = new Message(uuid, msg.getDest(), null);
+            response.putHeader(
+                unicastHeaderId,
+                UNICAST3.Header.createAckHeader(
+                    hdr.seqno(), hdr.connId(), System.currentTimeMillis()));
+            up_prot.up(new Event(Event.MSG, response));
+            break;
         }
       }
     }

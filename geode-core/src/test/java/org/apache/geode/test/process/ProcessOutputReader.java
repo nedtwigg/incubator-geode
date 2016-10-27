@@ -19,11 +19,8 @@ package org.apache.geode.test.process;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Starts the stdout and stderr reader threads for a running process. Provides
- * a mechanism to waitFor the process to terminate.
- * </p>
- * Extracted from ProcessWrapper.
- * 
+ * Starts the stdout and stderr reader threads for a running process. Provides a mechanism to
+ * waitFor the process to terminate. Extracted from ProcessWrapper.
  */
 public class ProcessOutputReader {
 
@@ -33,7 +30,8 @@ public class ProcessOutputReader {
   private final ProcessStreamReader stdout;
   private final ProcessStreamReader stderr;
 
-  public ProcessOutputReader(final Process process, final ProcessStreamReader stdout, final ProcessStreamReader stderr) {
+  public ProcessOutputReader(
+      final Process process, final ProcessStreamReader stdout, final ProcessStreamReader stderr) {
     this.process = process;
     this.stdout = stdout;
     this.stderr = stderr;
@@ -67,7 +65,8 @@ public class ProcessOutputReader {
     return waitForProcess(nanosRemaining, unit);
   }
 
-  private boolean waitForProcess(final long timeout, final TimeUnit unit) throws InterruptedException {
+  private boolean waitForProcess(final long timeout, final TimeUnit unit)
+      throws InterruptedException {
     long startTime = System.nanoTime();
     long nanosRemaining = unit.toNanos(timeout);
 

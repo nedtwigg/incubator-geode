@@ -56,14 +56,14 @@ import org.apache.geode.internal.logging.LogService;
 /**
  * Class Description
  *
- * @version     $Revision: 1.1 $s
+ * @version $Revision: 1.1 $s
  */
 public class QCompiler implements OQLLexerTokenTypes {
   private static final Logger logger = LogService.getLogger();
 
   private Stack stack = new Stack();
   private Map imports = new HashMap();
-  final private boolean isForIndexCompilation;
+  private final boolean isForIndexCompilation;
   private boolean traceOn;
 
   public QCompiler() {
@@ -86,8 +86,12 @@ public class QCompiler implements OQLLexerTokenTypes {
       parser.queryProgram();
       GemFireAST n = (GemFireAST) parser.getAST();
       n.compile(this);
-    } catch (Exception ex) { // This is to make sure that we are wrapping any antlr exception with GemFire Exception. 
-      throw new QueryInvalidException(LocalizedStrings.QCompiler_SYNTAX_ERROR_IN_QUERY_0.toLocalizedString(ex.getMessage()), ex);
+    } catch (
+        Exception
+            ex) { // This is to make sure that we are wrapping any antlr exception with GemFire Exception.
+      throw new QueryInvalidException(
+          LocalizedStrings.QCompiler_SYNTAX_ERROR_IN_QUERY_0.toLocalizedString(ex.getMessage()),
+          ex);
     }
     Assert.assertTrue(stackSize() == 1, "stack size = " + stackSize());
     return (CompiledValue) pop();
@@ -104,8 +108,12 @@ public class QCompiler implements OQLLexerTokenTypes {
       parser.loneFromClause();
       GemFireAST n = (GemFireAST) parser.getAST();
       n.compile(this);
-    } catch (Exception ex) { // This is to make sure that we are wrapping any antlr exception with GemFire Exception. 
-      throw new QueryInvalidException(LocalizedStrings.QCompiler_SYNTAX_ERROR_IN_QUERY_0.toLocalizedString(ex.getMessage()), ex);
+    } catch (
+        Exception
+            ex) { // This is to make sure that we are wrapping any antlr exception with GemFire Exception.
+      throw new QueryInvalidException(
+          LocalizedStrings.QCompiler_SYNTAX_ERROR_IN_QUERY_0.toLocalizedString(ex.getMessage()),
+          ex);
     }
     Assert.assertTrue(stackSize() == 1, "stack size = " + stackSize());
     return (List) pop();
@@ -126,15 +134,20 @@ public class QCompiler implements OQLLexerTokenTypes {
         return null;
       }
       n.compile(this);
-    } catch (Exception ex) { // This is to make sure that we are wrapping any antlr exception with GemFire Exception. 
-      throw new QueryInvalidException(LocalizedStrings.QCompiler_SYNTAX_ERROR_IN_QUERY_0.toLocalizedString(ex.getMessage()), ex);
+    } catch (
+        Exception
+            ex) { // This is to make sure that we are wrapping any antlr exception with GemFire Exception.
+      throw new QueryInvalidException(
+          LocalizedStrings.QCompiler_SYNTAX_ERROR_IN_QUERY_0.toLocalizedString(ex.getMessage()),
+          ex);
     }
     Assert.assertTrue(stackSize() == 1, "stack size = " + stackSize() + ";stack=" + this.stack);
     return (List) pop();
   }
 
   /**
-   * Yogesh: compiles order by clause and push into the stack  
+   * Yogesh: compiles order by clause and push into the stack
+   *
    * @param numOfChildren
    */
   public void compileOrederByClause(int numOfChildren) {
@@ -157,25 +170,25 @@ public class QCompiler implements OQLLexerTokenTypes {
 
   /**
    * Yogesh: compiles sort criteria present in order by clause and push into the stack
+   *
    * @param sortCriterion
    */
   public void compileSortCriteria(String sortCriterion) {
 
     CompiledValue obj = (CompiledValue) this.stack.pop();
     boolean criterion = false;
-    if (sortCriterion.equals("desc"))
-      criterion = true;
+    if (sortCriterion.equals("desc")) criterion = true;
     CompiledSortCriterion csc = new CompiledSortCriterion(criterion, obj);
     push(csc);
-
   }
 
   public void compileLimit(String limitNum) {
     push(Integer.valueOf(limitNum));
   }
 
-  /** Processes import statements only. This compiler instance remembers the imports
-   *  and can be used to compile other strings with this context info
+  /**
+   * Processes import statements only. This compiler instance remembers the imports and can be used
+   * to compile other strings with this context info
    */
   public void compileImports(String imports) {
     try {
@@ -187,8 +200,12 @@ public class QCompiler implements OQLLexerTokenTypes {
       parser.loneImports();
       GemFireAST n = (GemFireAST) parser.getAST();
       n.compile(this);
-    } catch (Exception ex) { // This is to make sure that we are wrapping any antlr exception with GemFire Exception. 
-      throw new QueryInvalidException(LocalizedStrings.QCompiler_SYNTAX_ERROR_IN_QUERY_0.toLocalizedString(ex.getMessage()), ex);
+    } catch (
+        Exception
+            ex) { // This is to make sure that we are wrapping any antlr exception with GemFire Exception.
+      throw new QueryInvalidException(
+          LocalizedStrings.QCompiler_SYNTAX_ERROR_IN_QUERY_0.toLocalizedString(ex.getMessage()),
+          ex);
     }
     Assert.assertTrue(stackSize() == 0, "stack size = " + stackSize() + ";stack=" + this.stack);
   }
@@ -202,7 +219,8 @@ public class QCompiler implements OQLLexerTokenTypes {
     } else {
       limit = (CompiledBindArgument) limitObject;
     }
-    List<CompiledSortCriterion> orderByAttrs = (List<CompiledSortCriterion>) queryComponents.remove(OQLLexerTokenTypes.LITERAL_order);
+    List<CompiledSortCriterion> orderByAttrs =
+        (List<CompiledSortCriterion>) queryComponents.remove(OQLLexerTokenTypes.LITERAL_order);
 
     List iterators = (List) queryComponents.remove(OQLLexerTokenTypes.LITERAL_from);
     List projAttrs = (List) queryComponents.remove(OQLLexerTokenTypes.PROJECTION_ATTRS);
@@ -213,7 +231,7 @@ public class QCompiler implements OQLLexerTokenTypes {
     }
     // "COUNT" or null
     /*String aggrExpr = (String) queryComponents
-        .remove(OQLLexerTokenTypes.LITERAL_count);*/
+    .remove(OQLLexerTokenTypes.LITERAL_count);*/
 
     // "DISTINCT" or null
     String distinct = (String) queryComponents.remove(OQLLexerTokenTypes.LITERAL_distinct);
@@ -223,7 +241,8 @@ public class QCompiler implements OQLLexerTokenTypes {
       hints = (List<String>) hintObject;
     }
 
-    List<CompiledValue> groupByClause = (List<CompiledValue>) queryComponents.remove(OQLLexerTokenTypes.LITERAL_group);
+    List<CompiledValue> groupByClause =
+        (List<CompiledValue>) queryComponents.remove(OQLLexerTokenTypes.LITERAL_group);
 
     // whatever remains , treat it as where
     // whereClause
@@ -234,17 +253,35 @@ public class QCompiler implements OQLLexerTokenTypes {
     } else if (queryComponents.size() > 1) {
       throw new QueryInvalidException("Unexpected/unsupported query clauses found");
     }
-    LinkedHashMap<Integer, CompiledAggregateFunction> aggMap = identifyAggregateExpressions(projAttrs);
+    LinkedHashMap<Integer, CompiledAggregateFunction> aggMap =
+        identifyAggregateExpressions(projAttrs);
     boolean isCountOnly = checkForCountOnly(aggMap, projAttrs, groupByClause);
     if (isCountOnly) {
       projAttrs = null;
     }
-    CompiledSelect select = createSelect(distinct != null, isCountOnly, where, iterators, projAttrs, orderByAttrs, limit, hints, groupByClause, aggMap);
+    CompiledSelect select =
+        createSelect(
+            distinct != null,
+            isCountOnly,
+            where,
+            iterators,
+            projAttrs,
+            orderByAttrs,
+            limit,
+            hints,
+            groupByClause,
+            aggMap);
     push(select);
   }
 
-  private boolean checkForCountOnly(Map<Integer, CompiledAggregateFunction> aggregateMap, List projAttribs, List<CompiledValue> groupBy) {
-    if (aggregateMap != null && aggregateMap.size() == 1 && projAttribs.size() == 1 && groupBy == null) {
+  private boolean checkForCountOnly(
+      Map<Integer, CompiledAggregateFunction> aggregateMap,
+      List projAttribs,
+      List<CompiledValue> groupBy) {
+    if (aggregateMap != null
+        && aggregateMap.size() == 1
+        && projAttribs.size() == 1
+        && groupBy == null) {
       for (Map.Entry<Integer, CompiledAggregateFunction> entry : aggregateMap.entrySet()) {
         CompiledAggregateFunction caf = entry.getValue();
         if (caf.getFunctionType() == OQLLexerTokenTypes.COUNT && caf.getParameter() == null) {
@@ -255,17 +292,50 @@ public class QCompiler implements OQLLexerTokenTypes {
     return false;
   }
 
-  private CompiledSelect createSelect(boolean isDistinct, boolean isCountOnly, CompiledValue where, List iterators, List projAttrs, List<CompiledSortCriterion> orderByAttrs, CompiledValue limit, List<String> hints, List<CompiledValue> groupByClause, LinkedHashMap<Integer, CompiledAggregateFunction> aggMap) {
-    if (isCountOnly || (groupByClause == null && aggMap == null) || (aggMap == null && orderByAttrs == null)) {
-      return new CompiledSelect(isDistinct, isCountOnly, where, iterators, projAttrs, orderByAttrs, limit, hints, groupByClause);
+  private CompiledSelect createSelect(
+      boolean isDistinct,
+      boolean isCountOnly,
+      CompiledValue where,
+      List iterators,
+      List projAttrs,
+      List<CompiledSortCriterion> orderByAttrs,
+      CompiledValue limit,
+      List<String> hints,
+      List<CompiledValue> groupByClause,
+      LinkedHashMap<Integer, CompiledAggregateFunction> aggMap) {
+    if (isCountOnly
+        || (groupByClause == null && aggMap == null)
+        || (aggMap == null && orderByAttrs == null)) {
+      return new CompiledSelect(
+          isDistinct,
+          isCountOnly,
+          where,
+          iterators,
+          projAttrs,
+          orderByAttrs,
+          limit,
+          hints,
+          groupByClause);
     } else {
-      return new CompiledGroupBySelect(isDistinct, isCountOnly, where, iterators, projAttrs, orderByAttrs, limit, hints, groupByClause, aggMap);
+      return new CompiledGroupBySelect(
+          isDistinct,
+          isCountOnly,
+          where,
+          iterators,
+          projAttrs,
+          orderByAttrs,
+          limit,
+          hints,
+          groupByClause,
+          aggMap);
     }
   }
 
-  private LinkedHashMap<Integer, CompiledAggregateFunction> identifyAggregateExpressions(List projAttribs) {
+  private LinkedHashMap<Integer, CompiledAggregateFunction> identifyAggregateExpressions(
+      List projAttribs) {
     if (projAttribs != null) {
-      LinkedHashMap<Integer, CompiledAggregateFunction> mapping = new LinkedHashMap<Integer, CompiledAggregateFunction>();
+      LinkedHashMap<Integer, CompiledAggregateFunction> mapping =
+          new LinkedHashMap<Integer, CompiledAggregateFunction>();
       int index = 0;
       for (Object o : projAttribs) {
         CompiledValue proj = (CompiledValue) ((Object[]) o)[1];
@@ -278,7 +348,6 @@ public class QCompiler implements OQLLexerTokenTypes {
     } else {
       return null;
     }
-
   }
 
   public void projection() {
@@ -286,7 +355,7 @@ public class QCompiler implements OQLLexerTokenTypes {
     // push an Object[2] on the stack. First element is id, second is CompiledValue
     CompiledID id = (CompiledID) pop();
     CompiledValue expr = (CompiledValue) pop();
-    push(new Object[] { id == null ? null : id.getId(), expr });
+    push(new Object[] {id == null ? null : id.getId(), expr});
   }
 
   public void aggregateFunction(CompiledValue expr, int aggFuncType, boolean distinctOnly) {
@@ -296,7 +365,7 @@ public class QCompiler implements OQLLexerTokenTypes {
   public void iteratorDef() {
     // find type id  and colln on the stack
 
-    ObjectType type = assembleType(); // can be null    
+    ObjectType type = assembleType(); // can be null
     CompiledID id = (CompiledID) TypeUtils.checkCast(pop(), CompiledID.class); // can be null
     CompiledValue colln = (CompiledValue) TypeUtils.checkCast(pop(), CompiledValue.class);
 
@@ -356,7 +425,7 @@ public class QCompiler implements OQLLexerTokenTypes {
   }
 
   public void pushNull() // used as a placeholder for a missing clause
-  {
+       {
     push(null);
   }
 
@@ -386,13 +455,16 @@ public class QCompiler implements OQLLexerTokenTypes {
     if (indexParams != null) {
       final List indexList = (List) TypeUtils.checkCast(indexParams, List.class);
       if (!isForIndexCompilation && indexList.size() != 1) {
-        throw new UnsupportedOperationException(LocalizedStrings.QCompiler_ONLY_ONE_INDEX_EXPRESSION_SUPPORTED.toLocalizedString());
+        throw new UnsupportedOperationException(
+            LocalizedStrings.QCompiler_ONLY_ONE_INDEX_EXPRESSION_SUPPORTED.toLocalizedString());
       }
       if (indexList.size() == 1) {
         indexExpr = (CompiledValue) TypeUtils.checkCast(indexList.get(0), CompiledValue.class);
 
         if (indexExpr.getType() == TOK_COLON) {
-          throw new UnsupportedOperationException(LocalizedStrings.QCompiler_RANGES_NOT_SUPPORTED_IN_INDEX_OPERATORS.toLocalizedString());
+          throw new UnsupportedOperationException(
+              LocalizedStrings.QCompiler_RANGES_NOT_SUPPORTED_IN_INDEX_OPERATORS
+                  .toLocalizedString());
         }
         indexExpr = (CompiledValue) TypeUtils.checkCast(indexList.get(0), CompiledValue.class);
         push(new CompiledIndexOperation(rcvr, indexExpr));
@@ -404,36 +476,34 @@ public class QCompiler implements OQLLexerTokenTypes {
       }
     } else {
       if (!this.isForIndexCompilation) {
-        throw new QueryInvalidException(LocalizedStrings.QCompiler_SYNTAX_ERROR_IN_QUERY_0.toLocalizedString("* use incorrect"));
+        throw new QueryInvalidException(
+            LocalizedStrings.QCompiler_SYNTAX_ERROR_IN_QUERY_0.toLocalizedString(
+                "* use incorrect"));
       }
       push(new CompiledIndexOperation(rcvr, indexExpr));
     }
-
   }
 
   /**
-   * Creates appropriate CompiledValue for the like predicate based on the
-   * sargability of the String or otherwise. It also works on the last character
-   * to see if the sargable like predicate results in a CompiledJunction or a
-   * Comparison. Currently we are supporting only the '%' terminated "like"
-   * predicate.
-   * 
-   * @param var
-   *                The CompiledValue representing the variable
-   * @param patternOrBindParam
-   *                The CompiledLiteral reprsenting the pattern of the like
-   *                predicate
-   * @return CompiledValue representing the "like" predicate
+   * Creates appropriate CompiledValue for the like predicate based on the sargability of the String
+   * or otherwise. It also works on the last character to see if the sargable like predicate results
+   * in a CompiledJunction or a Comparison. Currently we are supporting only the '%' terminated
+   * "like" predicate.
    *
+   * @param var The CompiledValue representing the variable
+   * @param patternOrBindParam The CompiledLiteral reprsenting the pattern of the like predicate
+   * @return CompiledValue representing the "like" predicate
    */
-  CompiledValue createCompiledValueForLikePredicate(CompiledValue var, CompiledValue patternOrBindParam) {
+  CompiledValue createCompiledValueForLikePredicate(
+      CompiledValue var, CompiledValue patternOrBindParam) {
     if (!(patternOrBindParam.getType() == CompiledBindArgument.QUERY_PARAM)) {
       CompiledLiteral pattern = (CompiledLiteral) patternOrBindParam;
       if (pattern._obj == null) {
-        throw new UnsupportedOperationException("Null values are not supported with LIKE predicate.");
+        throw new UnsupportedOperationException(
+            "Null values are not supported with LIKE predicate.");
       }
     }
-    // From 6.6 Like is enhanced to support special character (% and _) at any 
+    // From 6.6 Like is enhanced to support special character (% and _) at any
     // position of the string.
     return new CompiledLike(var, patternOrBindParam);
   }
@@ -466,38 +536,37 @@ public class QCompiler implements OQLLexerTokenTypes {
     for (int i = 0; i < numTerms; i++) {
       CompiledValue operand = (CompiledValue) pop();
       // flatten if we can
-      if (operand instanceof CompiledJunction && ((CompiledJunction) operand).getOperator() == operator) {
+      if (operand instanceof CompiledJunction
+          && ((CompiledJunction) operand).getOperator() == operator) {
         CompiledJunction junction = (CompiledJunction) operand;
         List jOperands = junction.getOperands();
-        for (int j = 0; j < jOperands.size(); j++)
-          operands.add(jOperands.get(j));
-      } else
-        operands.add(operand);
+        for (int j = 0; j < jOperands.size(); j++) operands.add(jOperands.get(j));
+      } else operands.add(operand);
     }
 
-    push(new CompiledJunction((CompiledValue[]) operands.toArray(new CompiledValue[operands.size()]), operator));
+    push(
+        new CompiledJunction(
+            (CompiledValue[]) operands.toArray(new CompiledValue[operands.size()]), operator));
   }
 
   public void not() {
     Object obj = this.stack.peek();
     Assert.assertTrue(obj instanceof CompiledValue);
 
-    if (obj instanceof Negatable)
-      ((Negatable) obj).negate();
-    else
-      push(new CompiledNegation((CompiledValue) pop()));
+    if (obj instanceof Negatable) ((Negatable) obj).negate();
+    else push(new CompiledNegation((CompiledValue) pop()));
   }
 
   public void unaryMinus() {
     Object obj = this.stack.peek();
     Assert.assertTrue(obj instanceof CompiledValue);
     push(new CompiledUnaryMinus((CompiledValue) pop()));
-
   }
 
   public void typecast() {
     // pop expr and type, apply type, then push result
-    AbstractCompiledValue cmpVal = (AbstractCompiledValue) TypeUtils.checkCast(pop(), AbstractCompiledValue.class);
+    AbstractCompiledValue cmpVal =
+        (AbstractCompiledValue) TypeUtils.checkCast(pop(), AbstractCompiledValue.class);
     ObjectType objType = assembleType();
     cmpVal.setTypecast(objType);
     push(cmpVal);
@@ -590,14 +659,14 @@ public class QCompiler implements OQLLexerTokenTypes {
     if (this.imports != null) {
       as = (String) this.imports.get(typeName);
     }
-    if (as != null)
-      typeName = as;
+    if (as != null) typeName = as;
 
     Class resultClass;
     try {
       resultClass = InternalDataSerializer.getCachedClass(typeName);
     } catch (ClassNotFoundException e) {
-      throw new QueryInvalidException(LocalizedStrings.QCompiler_TYPE_NOT_FOUND_0.toLocalizedString(typeName), e);
+      throw new QueryInvalidException(
+          LocalizedStrings.QCompiler_TYPE_NOT_FOUND_0.toLocalizedString(typeName), e);
     }
     if (logger.isTraceEnabled()) {
       logger.trace("QCompiler.resolveType= {}", resultClass.getName());
@@ -626,7 +695,9 @@ public class QCompiler implements OQLLexerTokenTypes {
       return (List<CompiledValue>) indexList;
     }
 
-    public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+    public Object evaluate(ExecutionContext context)
+        throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+            QueryInvocationTargetException {
       throw new UnsupportedOperationException("Method execution not expected");
     }
 
@@ -634,5 +705,4 @@ public class QCompiler implements OQLLexerTokenTypes {
       throw new UnsupportedOperationException("Method execution not expected");
     }
   }
-
 }

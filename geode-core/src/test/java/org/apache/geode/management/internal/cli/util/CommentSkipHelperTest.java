@@ -36,7 +36,8 @@ public class CommentSkipHelperTest {
 
   @Test
   public void nullShouldThrowNullPointerException() {
-    assertThatThrownBy(() -> this.commentSkipHelper.skipComments(null)).isExactlyInstanceOf(NullPointerException.class);
+    assertThatThrownBy(() -> this.commentSkipHelper.skipComments(null))
+        .isExactlyInstanceOf(NullPointerException.class);
   }
 
   @Test
@@ -53,7 +54,8 @@ public class CommentSkipHelperTest {
   @Test
   public void stringWithSlashAsterCommentShouldRemoveComment() {
     String command = "start locator /* starting locator */ --name=loc1";
-    assertThat(this.commentSkipHelper.skipComments(command)).isEqualTo("start locator  --name=loc1");
+    assertThat(this.commentSkipHelper.skipComments(command))
+        .isEqualTo("start locator  --name=loc1");
   }
 
   @Test
@@ -77,25 +79,28 @@ public class CommentSkipHelperTest {
   @Test
   public void stringWithMultiLineCommentShouldRemoveComment() {
     String command = "start locator /*\n some \n comment \n */ --name=loc1";
-    assertThat(this.commentSkipHelper.skipComments(command)).isEqualTo("start locator  --name=loc1");
+    assertThat(this.commentSkipHelper.skipComments(command))
+        .isEqualTo("start locator  --name=loc1");
   }
 
   @Test
   public void stringWithCommentAtEndShouldRemoveComment() {
     String command = "start locator --name=loc1 /* comment at end */";
-    assertThat(this.commentSkipHelper.skipComments(command)).isEqualTo("start locator --name=loc1 ");
+    assertThat(this.commentSkipHelper.skipComments(command))
+        .isEqualTo("start locator --name=loc1 ");
   }
 
   @Test
   public void stringWithCommentAtBeginningShouldRemoveComment() {
     String command = "/* comment at begin */ start locator --name=loc1";
-    assertThat(this.commentSkipHelper.skipComments(command)).isEqualTo(" start locator --name=loc1");
+    assertThat(this.commentSkipHelper.skipComments(command))
+        .isEqualTo(" start locator --name=loc1");
   }
 
   @Test
   public void stringWithInsideOutCommentShouldMisbehave() { // TODO: possible bug
     String command = "*/ this is a comment /* start locator --name=loc1";
-    assertThat(this.commentSkipHelper.skipComments(command)).isEqualTo("*/ this is a comment  this is a comment /* start locator --name=loc1");
+    assertThat(this.commentSkipHelper.skipComments(command))
+        .isEqualTo("*/ this is a comment  this is a comment /* start locator --name=loc1");
   }
-
 }

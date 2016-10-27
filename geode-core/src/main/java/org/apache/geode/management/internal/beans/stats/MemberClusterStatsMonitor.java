@@ -24,10 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.geode.management.internal.FederationComponent;
 
-/**
- *
- *
- */
+/** */
 public class MemberClusterStatsMonitor {
 
   private static final String SYSTEM_DISK_STORE_COUNT = "DiskStores";
@@ -163,34 +160,31 @@ public class MemberClusterStatsMonitor {
       if (oldState.getValue(SYSTEM_DISK_STORE_COUNT) != null) {
         String[] diskStores = (String[]) oldState.getValue(SYSTEM_DISK_STORE_COUNT);
         if (diskStores != null) {
-          systemDiskStoreCount.addAndGet(-diskStores.length);// Used Atomic
-                                                             // Integer to avoid
-                                                             // race condition
-                                                             // between
-                                                             // different
-                                                             // members
+          systemDiskStoreCount.addAndGet(-diskStores.length); // Used Atomic
+          // Integer to avoid
+          // race condition
+          // between
+          // different
+          // members
 
         }
-
       }
-
     }
     if (newState != null) {
       if (newState.getValue(SYSTEM_DISK_STORE_COUNT) != null) {
         String[] diskStores = (String[]) newState.getValue(SYSTEM_DISK_STORE_COUNT);
         if (diskStores != null) {
-          systemDiskStoreCount.addAndGet(diskStores.length);// Used Atomic
-                                                            // Integer to
-                                                            // avoid race
-                                                            // condition
-                                                            // between
-                                                            // different
-                                                            // members
+          systemDiskStoreCount.addAndGet(diskStores.length); // Used Atomic
+          // Integer to
+          // avoid race
+          // condition
+          // between
+          // different
+          // members
 
         }
       }
     }
-
   }
 
   public int getNumRunningFunctions() {

@@ -60,9 +60,7 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
 
   private static Cache cache;
 
-  /**
-   * @param name
-   */
+  /** @param name */
   public PartitionedRegionLoaderWriterDUnitTest() {
     super();
   }
@@ -72,7 +70,8 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
     host = Host.getHost(0);
     accessor = host.getVM(0);
     datastore1 = host.getVM(1);
-    accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 0));
+    accessor.invoke(
+        () -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 0));
     datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, null, 10));
   }
 
@@ -82,7 +81,8 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
     accessor = host.getVM(1);
     datastore1 = host.getVM(2);
     accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, null, 0));
-    datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, new CacheWriter2(), 10));
+    datastore1.invoke(
+        () -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, new CacheWriter2(), 10));
   }
 
   @Test
@@ -90,7 +90,8 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
     host = Host.getHost(0);
     accessor = host.getVM(1);
     datastore1 = host.getVM(2);
-    datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, new CacheWriter2(), 10));
+    datastore1.invoke(
+        () -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, new CacheWriter2(), 10));
     accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, null, 0));
   }
 
@@ -100,9 +101,13 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
     accessor = host.getVM(1);
     datastore1 = host.getVM(2);
     datastore2 = host.getVM(3);
-    accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 0));
+    accessor.invoke(
+        () -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 0));
     datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, null, 10));
-    datastore2.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegionWithPossibleFail(new CacheLoader2(), null, 10));
+    datastore2.invoke(
+        () ->
+            PartitionedRegionLoaderWriterDUnitTest.createRegionWithPossibleFail(
+                new CacheLoader2(), null, 10));
   }
 
   @Test
@@ -112,8 +117,12 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
     datastore1 = host.getVM(2);
     datastore2 = host.getVM(3);
     datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, null, 10));
-    accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 0));
-    datastore2.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegionWithPossibleFail(new CacheLoader2(), null, 10));
+    accessor.invoke(
+        () -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 0));
+    datastore2.invoke(
+        () ->
+            PartitionedRegionLoaderWriterDUnitTest.createRegionWithPossibleFail(
+                new CacheLoader2(), null, 10));
   }
 
   @Test
@@ -122,9 +131,12 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
     accessor = host.getVM(1);
     datastore1 = host.getVM(2);
     datastore2 = host.getVM(3);
-    datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 10));
-    datastore2.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 10));
-    accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 0));
+    datastore1.invoke(
+        () -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 10));
+    datastore2.invoke(
+        () -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 10));
+    accessor.invoke(
+        () -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 0));
   }
 
   @Test
@@ -133,13 +145,15 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
     accessor = host.getVM(1);
     datastore1 = host.getVM(2);
     datastore2 = host.getVM(3);
-    datastore1.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 10));
-    datastore2.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 10));
+    datastore1.invoke(
+        () -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 10));
+    datastore2.invoke(
+        () -> PartitionedRegionLoaderWriterDUnitTest.createRegion(new CacheLoader2(), null, 10));
     accessor.invoke(() -> PartitionedRegionLoaderWriterDUnitTest.createRegion(null, null, 0));
-
   }
 
-  public static void createRegion(CacheLoader cacheLoader, CacheWriter cacheWriter, Integer localMaxMemory) {
+  public static void createRegion(
+      CacheLoader cacheLoader, CacheWriter cacheWriter, Integer localMaxMemory) {
     try {
       new PartitionedRegionLoaderWriterDUnitTest().createCache(new Properties());
       AttributesFactory factory = new AttributesFactory();
@@ -156,11 +170,18 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
     }
   }
 
-  public static void createRegionWithPossibleFail(CacheLoader cacheLoader, CacheWriter cacheWriter, Integer localMaxMemory) {
-    final PartitionedRegionLoaderWriterDUnitTest test = new PartitionedRegionLoaderWriterDUnitTest();
+  public static void createRegionWithPossibleFail(
+      CacheLoader cacheLoader, CacheWriter cacheWriter, Integer localMaxMemory) {
+    final PartitionedRegionLoaderWriterDUnitTest test =
+        new PartitionedRegionLoaderWriterDUnitTest();
     test.createCache(new Properties());
     // add expected exception
-    test.cache.getLogger().info("<ExpectedException action=add>" + IllegalStateException.class.getName() + "</ExpectedException>");
+    test.cache
+        .getLogger()
+        .info(
+            "<ExpectedException action=add>"
+                + IllegalStateException.class.getName()
+                + "</ExpectedException>");
     try {
       AttributesFactory factory = new AttributesFactory();
       factory.setCacheLoader(cacheLoader);
@@ -175,7 +196,12 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
     } catch (IllegalStateException e) {
       assertTrue(e.getMessage().startsWith("Incompatible"));
     }
-    test.cache.getLogger().info("<ExpectedException action=remove>" + IllegalStateException.class.getName() + "</ExpectedException>");
+    test.cache
+        .getLogger()
+        .info(
+            "<ExpectedException action=remove>"
+                + IllegalStateException.class.getName()
+                + "</ExpectedException>");
   }
 
   private void createCache(Properties props) {
@@ -193,22 +219,17 @@ public class PartitionedRegionLoaderWriterDUnitTest extends JUnit4CacheTestCase 
 
   static class CacheLoader2 implements CacheLoader, Serializable {
 
-    public CacheLoader2() {
-
-    }
+    public CacheLoader2() {}
 
     public Object load(LoaderHelper helper) throws CacheLoaderException {
 
       return null;
     }
 
-    public void close() {
-
-    }
+    public void close() {}
   }
 
   static class CacheWriter2 extends CacheWriterAdapter implements Serializable {
-    public CacheWriter2() {
-    }
+    public CacheWriter2() {}
   }
 }

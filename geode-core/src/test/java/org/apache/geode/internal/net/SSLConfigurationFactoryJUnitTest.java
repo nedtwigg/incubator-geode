@@ -45,8 +45,13 @@ public class SSLConfigurationFactoryJUnitTest {
     Properties properties = new Properties();
     DistributionConfigImpl distributionConfig = new DistributionConfigImpl(properties);
     SSLConfigurationFactory.setDistributionConfig(distributionConfig);
-    for (SecurableCommunicationChannel securableComponent : SecurableCommunicationChannel.values()) {
-      assertSSLConfig(properties, SSLConfigurationFactory.getSSLConfigForComponent(securableComponent), securableComponent, distributionConfig);
+    for (SecurableCommunicationChannel securableComponent :
+        SecurableCommunicationChannel.values()) {
+      assertSSLConfig(
+          properties,
+          SSLConfigurationFactory.getSSLConfigForComponent(securableComponent),
+          securableComponent,
+          distributionConfig);
     }
   }
 
@@ -64,8 +69,13 @@ public class SSLConfigurationFactoryJUnitTest {
     properties.setProperty(SSL_PROTOCOLS, "Protocol1,Protocol2");
     DistributionConfigImpl distributionConfig = new DistributionConfigImpl(properties);
     SSLConfigurationFactory.setDistributionConfig(distributionConfig);
-    for (SecurableCommunicationChannel securableComponent : SecurableCommunicationChannel.values()) {
-      assertSSLConfig(properties, SSLConfigurationFactory.getSSLConfigForComponent(securableComponent), securableComponent, distributionConfig);
+    for (SecurableCommunicationChannel securableComponent :
+        SecurableCommunicationChannel.values()) {
+      assertSSLConfig(
+          properties,
+          SSLConfigurationFactory.getSSLConfigForComponent(securableComponent),
+          securableComponent,
+          distributionConfig);
     }
   }
 
@@ -83,8 +93,13 @@ public class SSLConfigurationFactoryJUnitTest {
     properties.setProperty(SSL_PROTOCOLS, "any");
     DistributionConfigImpl distributionConfig = new DistributionConfigImpl(properties);
     SSLConfigurationFactory.setDistributionConfig(distributionConfig);
-    for (SecurableCommunicationChannel securableCommunicationChannel : SecurableCommunicationChannel.values()) {
-      assertSSLConfig(properties, SSLConfigurationFactory.getSSLConfigForComponent(securableCommunicationChannel), securableCommunicationChannel, distributionConfig);
+    for (SecurableCommunicationChannel securableCommunicationChannel :
+        SecurableCommunicationChannel.values()) {
+      assertSSLConfig(
+          properties,
+          SSLConfigurationFactory.getSSLConfigForComponent(securableCommunicationChannel),
+          securableCommunicationChannel,
+          distributionConfig);
     }
   }
 
@@ -102,8 +117,13 @@ public class SSLConfigurationFactoryJUnitTest {
     properties.setProperty(SSL_PROTOCOLS, "any");
     DistributionConfigImpl distributionConfig = new DistributionConfigImpl(properties);
     SSLConfigurationFactory.setDistributionConfig(distributionConfig);
-    for (SecurableCommunicationChannel securableCommunicationChannel : SecurableCommunicationChannel.values()) {
-      assertSSLConfig(properties, SSLConfigurationFactory.getSSLConfigForComponent(securableCommunicationChannel), securableCommunicationChannel, distributionConfig);
+    for (SecurableCommunicationChannel securableCommunicationChannel :
+        SecurableCommunicationChannel.values()) {
+      assertSSLConfig(
+          properties,
+          SSLConfigurationFactory.getSSLConfigForComponent(securableCommunicationChannel),
+          securableCommunicationChannel,
+          distributionConfig);
     }
   }
 
@@ -121,8 +141,13 @@ public class SSLConfigurationFactoryJUnitTest {
     properties.setProperty(SSL_PROTOCOLS, "any");
     DistributionConfigImpl distributionConfig = new DistributionConfigImpl(properties);
     SSLConfigurationFactory.setDistributionConfig(distributionConfig);
-    for (SecurableCommunicationChannel securableCommunicationChannel : SecurableCommunicationChannel.values()) {
-      assertSSLConfig(properties, SSLConfigurationFactory.getSSLConfigForComponent(securableCommunicationChannel), securableCommunicationChannel, distributionConfig);
+    for (SecurableCommunicationChannel securableCommunicationChannel :
+        SecurableCommunicationChannel.values()) {
+      assertSSLConfig(
+          properties,
+          SSLConfigurationFactory.getSSLConfigForComponent(securableCommunicationChannel),
+          securableCommunicationChannel,
+          distributionConfig);
     }
   }
 
@@ -141,8 +166,13 @@ public class SSLConfigurationFactoryJUnitTest {
     properties.setProperty(SSL_PROTOCOLS, "any");
     DistributionConfigImpl distributionConfig = new DistributionConfigImpl(properties);
     SSLConfigurationFactory.setDistributionConfig(distributionConfig);
-    for (SecurableCommunicationChannel securableCommunicationChannel : SecurableCommunicationChannel.values()) {
-      assertSSLConfig(properties, SSLConfigurationFactory.getSSLConfigForComponent(securableCommunicationChannel), securableCommunicationChannel, distributionConfig);
+    for (SecurableCommunicationChannel securableCommunicationChannel :
+        SecurableCommunicationChannel.values()) {
+      assertSSLConfig(
+          properties,
+          SSLConfigurationFactory.getSSLConfigForComponent(securableCommunicationChannel),
+          securableCommunicationChannel,
+          distributionConfig);
     }
   }
 
@@ -162,67 +192,96 @@ public class SSLConfigurationFactoryJUnitTest {
     properties.setProperty(SSL_PROTOCOLS, "any");
     DistributionConfigImpl distributionConfig = new DistributionConfigImpl(properties);
     SSLConfigurationFactory.setDistributionConfig(distributionConfig);
-    for (SecurableCommunicationChannel securableCommunicationChannel : SecurableCommunicationChannel.values()) {
-      assertSSLConfig(properties, SSLConfigurationFactory.getSSLConfigForComponent(securableCommunicationChannel), securableCommunicationChannel, distributionConfig);
+    for (SecurableCommunicationChannel securableCommunicationChannel :
+        SecurableCommunicationChannel.values()) {
+      assertSSLConfig(
+          properties,
+          SSLConfigurationFactory.getSSLConfigForComponent(securableCommunicationChannel),
+          securableCommunicationChannel,
+          distributionConfig);
     }
   }
 
-  private void assertSSLConfig(final Properties properties, final SSLConfig sslConfig, final SecurableCommunicationChannel expectedSecurableComponent, final DistributionConfigImpl distributionConfig) {
-    assertEquals(isSSLComponentEnabled(expectedSecurableComponent, distributionConfig.getSecurableCommunicationChannels()), sslConfig.isEnabled());
+  private void assertSSLConfig(
+      final Properties properties,
+      final SSLConfig sslConfig,
+      final SecurableCommunicationChannel expectedSecurableComponent,
+      final DistributionConfigImpl distributionConfig) {
+    assertEquals(
+        isSSLComponentEnabled(
+            expectedSecurableComponent, distributionConfig.getSecurableCommunicationChannels()),
+        sslConfig.isEnabled());
     if (sslConfig.isEnabled()) {
       assertEquals(properties.getProperty(SSL_KEYSTORE), sslConfig.getKeystore());
       assertEquals(properties.getProperty(SSL_KEYSTORE_PASSWORD), sslConfig.getKeystorePassword());
       assertEquals(properties.getProperty(SSL_KEYSTORE_TYPE), sslConfig.getKeystoreType());
       assertEquals(properties.getProperty(SSL_TRUSTSTORE), sslConfig.getTruststore());
-      assertEquals(properties.getProperty(SSL_TRUSTSTORE_PASSWORD), sslConfig.getTruststorePassword());
+      assertEquals(
+          properties.getProperty(SSL_TRUSTSTORE_PASSWORD), sslConfig.getTruststorePassword());
       assertEquals(properties.getProperty(SSL_CIPHERS).replace(",", " "), sslConfig.getCiphers());
-      assertEquals(properties.getProperty(SSL_PROTOCOLS).replace(",", " "), sslConfig.getProtocols());
+      assertEquals(
+          properties.getProperty(SSL_PROTOCOLS).replace(",", " "), sslConfig.getProtocols());
       assertEquals(getCorrectAlias(expectedSecurableComponent, properties), sslConfig.getAlias());
-      assertEquals(requiresAuthentication(properties, expectedSecurableComponent), sslConfig.isRequireAuth());
+      assertEquals(
+          requiresAuthentication(properties, expectedSecurableComponent),
+          sslConfig.isRequireAuth());
       assertEquals(expectedSecurableComponent, sslConfig.getSecuredCommunicationChannel());
     }
   }
 
-  private boolean requiresAuthentication(final Properties properties, final SecurableCommunicationChannel expectedSecurableComponent) {
-    boolean defaultAuthentication = expectedSecurableComponent.equals(SecurableCommunicationChannel.WEB) ? DistributionConfig.DEFAULT_SSL_WEB_SERVICE_REQUIRE_AUTHENTICATION : DistributionConfig.DEFAULT_SSL_REQUIRE_AUTHENTICATION;
-    String httpRequiresAuthentication = properties.getProperty(SSL_WEB_SERVICE_REQUIRE_AUTHENTICATION);
+  private boolean requiresAuthentication(
+      final Properties properties, final SecurableCommunicationChannel expectedSecurableComponent) {
+    boolean defaultAuthentication =
+        expectedSecurableComponent.equals(SecurableCommunicationChannel.WEB)
+            ? DistributionConfig.DEFAULT_SSL_WEB_SERVICE_REQUIRE_AUTHENTICATION
+            : DistributionConfig.DEFAULT_SSL_REQUIRE_AUTHENTICATION;
+    String httpRequiresAuthentication =
+        properties.getProperty(SSL_WEB_SERVICE_REQUIRE_AUTHENTICATION);
 
-    return httpRequiresAuthentication == null ? defaultAuthentication : Boolean.parseBoolean(httpRequiresAuthentication);
+    return httpRequiresAuthentication == null
+        ? defaultAuthentication
+        : Boolean.parseBoolean(httpRequiresAuthentication);
   }
 
-  private String getCorrectAlias(final SecurableCommunicationChannel expectedSecurableComponent, final Properties properties) {
+  private String getCorrectAlias(
+      final SecurableCommunicationChannel expectedSecurableComponent, final Properties properties) {
     switch (expectedSecurableComponent) {
-    case ALL:
-      return properties.getProperty(SSL_DEFAULT_ALIAS);
-    case CLUSTER:
-      return getAliasForComponent(properties, SSL_CLUSTER_ALIAS);
-    case GATEWAY:
-      return getAliasForComponent(properties, SSL_GATEWAY_ALIAS);
-    case WEB:
-      return getAliasForComponent(properties, SSL_WEB_ALIAS);
-    case JMX:
-      return getAliasForComponent(properties, SSL_JMX_ALIAS);
-    case LOCATOR:
-      return getAliasForComponent(properties, SSL_LOCATOR_ALIAS);
-    case SERVER:
-      return getAliasForComponent(properties, SSL_SERVER_ALIAS);
-    default:
-      return properties.getProperty(SSL_DEFAULT_ALIAS);
+      case ALL:
+        return properties.getProperty(SSL_DEFAULT_ALIAS);
+      case CLUSTER:
+        return getAliasForComponent(properties, SSL_CLUSTER_ALIAS);
+      case GATEWAY:
+        return getAliasForComponent(properties, SSL_GATEWAY_ALIAS);
+      case WEB:
+        return getAliasForComponent(properties, SSL_WEB_ALIAS);
+      case JMX:
+        return getAliasForComponent(properties, SSL_JMX_ALIAS);
+      case LOCATOR:
+        return getAliasForComponent(properties, SSL_LOCATOR_ALIAS);
+      case SERVER:
+        return getAliasForComponent(properties, SSL_SERVER_ALIAS);
+      default:
+        return properties.getProperty(SSL_DEFAULT_ALIAS);
     }
   }
 
-  private String getAliasForComponent(final Properties properties, final String componentAliasProperty) {
+  private String getAliasForComponent(
+      final Properties properties, final String componentAliasProperty) {
     String aliasProperty = properties.getProperty(componentAliasProperty);
-    return !StringUtils.isEmpty(aliasProperty) ? aliasProperty : properties.getProperty(SSL_DEFAULT_ALIAS);
+    return !StringUtils.isEmpty(aliasProperty)
+        ? aliasProperty
+        : properties.getProperty(SSL_DEFAULT_ALIAS);
   }
 
-  private boolean isSSLComponentEnabled(final SecurableCommunicationChannel expectedSecurableComponent, final SecurableCommunicationChannel[] securableComponents) {
+  private boolean isSSLComponentEnabled(
+      final SecurableCommunicationChannel expectedSecurableComponent,
+      final SecurableCommunicationChannel[] securableComponents) {
     for (SecurableCommunicationChannel securableCommunicationChannel : securableComponents) {
-      if (SecurableCommunicationChannel.ALL.equals(securableCommunicationChannel) || securableCommunicationChannel.equals(expectedSecurableComponent)) {
+      if (SecurableCommunicationChannel.ALL.equals(securableCommunicationChannel)
+          || securableCommunicationChannel.equals(expectedSecurableComponent)) {
         return true;
       }
     }
     return false;
   }
-
 }

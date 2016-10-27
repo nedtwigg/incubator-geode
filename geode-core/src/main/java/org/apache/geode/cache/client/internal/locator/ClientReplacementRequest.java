@@ -26,18 +26,16 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.InternalDataSerializer;
 
 /**
- * A request from a client to the locator asking for a
- * server to connect to for client to server traffic.
- *
+ * A request from a client to the locator asking for a server to connect to for client to server
+ * traffic.
  */
 public class ClientReplacementRequest extends ClientConnectionRequest {
   private ServerLocation currentServer;
 
-  public ClientReplacementRequest() {
+  public ClientReplacementRequest() {}
 
-  }
-
-  public ClientReplacementRequest(ServerLocation currentServer, Set/*<ServerLocation>*/ excludedServers, String serverGroup) {
+  public ClientReplacementRequest(
+      ServerLocation currentServer, Set /*<ServerLocation>*/ excludedServers, String serverGroup) {
     super(excludedServers, serverGroup);
     this.currentServer = currentServer;
   }
@@ -61,7 +59,13 @@ public class ClientReplacementRequest extends ClientConnectionRequest {
 
   @Override
   public String toString() {
-    return "ClientReplacementRequest{group=" + getServerGroup() + ", excluded=" + getExcludedServers() + ", currentServer=" + getCurrentServer() + "}";
+    return "ClientReplacementRequest{group="
+        + getServerGroup()
+        + ", excluded="
+        + getExcludedServers()
+        + ", currentServer="
+        + getCurrentServer()
+        + "}";
   }
 
   @Override

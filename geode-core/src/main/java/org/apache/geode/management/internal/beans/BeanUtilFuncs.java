@@ -35,13 +35,12 @@ import org.apache.geode.distributed.internal.DistributionConfig;
 import org.apache.geode.management.GemFireProperties;
 import org.apache.geode.management.internal.cli.CliUtil;
 
-/**
- * Various Utility Functions to be used by MBeans
- */
+/** Various Utility Functions to be used by MBeans */
 public class BeanUtilFuncs {
 
   /**
    * returns the tail of the log file
+   *
    * @param logFile
    * @return tail of the log file
    * @throws IOException
@@ -182,7 +181,8 @@ public class BeanUtilFuncs {
     gemFirePropertyData.setClusterSSLEnabled(config.getClusterSSLEnabled());
     gemFirePropertyData.setClusterSSLCiphers(config.getClusterSSLCiphers());
     gemFirePropertyData.setClusterSSLProtocols(config.getClusterSSLProtocols());
-    gemFirePropertyData.setClusterSSLRequireAuthentication(config.getClusterSSLRequireAuthentication());
+    gemFirePropertyData.setClusterSSLRequireAuthentication(
+        config.getClusterSSLRequireAuthentication());
     gemFirePropertyData.setClusterSSLKeyStore(config.getClusterSSLKeyStore());
     gemFirePropertyData.setClusterSSLKeyStoreType(config.getClusterSSLKeyStoreType());
     gemFirePropertyData.setClusterSSLKeyStorePassword(config.getClusterSSLKeyStorePassword());
@@ -192,7 +192,8 @@ public class BeanUtilFuncs {
     gemFirePropertyData.setServerSSLEnabled(config.getServerSSLEnabled());
     gemFirePropertyData.setServerSSLCiphers(config.getServerSSLCiphers());
     gemFirePropertyData.setServerSSLProtocols(config.getServerSSLProtocols());
-    gemFirePropertyData.setServerSSLRequireAuthentication(config.getServerSSLRequireAuthentication());
+    gemFirePropertyData.setServerSSLRequireAuthentication(
+        config.getServerSSLRequireAuthentication());
     gemFirePropertyData.setServerSSLKeyStore(config.getServerSSLKeyStore());
     gemFirePropertyData.setServerSSLKeyStoreType(config.getServerSSLKeyStoreType());
     gemFirePropertyData.setServerSSLKeyStorePassword(config.getServerSSLKeyStorePassword());
@@ -202,7 +203,8 @@ public class BeanUtilFuncs {
     gemFirePropertyData.setGatewaySSLEnabled(config.getGatewaySSLEnabled());
     gemFirePropertyData.setGatewaySSLCiphers(config.getGatewaySSLCiphers());
     gemFirePropertyData.setGatewaySSLProtocols(config.getGatewaySSLProtocols());
-    gemFirePropertyData.setGatewaySSLRequireAuthentication(config.getGatewaySSLRequireAuthentication());
+    gemFirePropertyData.setGatewaySSLRequireAuthentication(
+        config.getGatewaySSLRequireAuthentication());
     gemFirePropertyData.setGatewaySSLKeyStore(config.getGatewaySSLKeyStore());
     gemFirePropertyData.setGatewaySSLKeyStoreType(config.getGatewaySSLKeyStoreType());
     gemFirePropertyData.setGatewaySSLKeyStorePassword(config.getGatewaySSLKeyStorePassword());
@@ -212,22 +214,27 @@ public class BeanUtilFuncs {
     gemFirePropertyData.setJmxManagerSSLEnabled(config.getJmxManagerSSLEnabled());
     gemFirePropertyData.setJmxManagerSSLCiphers(config.getJmxManagerSSLCiphers());
     gemFirePropertyData.setJmxManagerSSLProtocols(config.getJmxManagerSSLProtocols());
-    gemFirePropertyData.setJmxManagerSSLRequireAuthentication(config.getJmxManagerSSLRequireAuthentication());
+    gemFirePropertyData.setJmxManagerSSLRequireAuthentication(
+        config.getJmxManagerSSLRequireAuthentication());
     gemFirePropertyData.setJmxManagerSSLKeyStore(config.getJmxManagerSSLKeyStore());
     gemFirePropertyData.setJmxManagerSSLKeyStoreType(config.getJmxManagerSSLKeyStoreType());
     gemFirePropertyData.setJmxManagerSSLKeyStorePassword(config.getJmxManagerSSLKeyStorePassword());
     gemFirePropertyData.setJmxManagerSSLTrustStore(config.getJmxManagerSSLTrustStore());
-    gemFirePropertyData.setJmxManagerSSLTrustStorePassword(config.getJmxManagerSSLTrustStorePassword());
+    gemFirePropertyData.setJmxManagerSSLTrustStorePassword(
+        config.getJmxManagerSSLTrustStorePassword());
 
     gemFirePropertyData.setHttpServiceSSLEnabled(config.getHttpServiceSSLEnabled());
     gemFirePropertyData.setHttpServiceSSLCiphers(config.getHttpServiceSSLCiphers());
     gemFirePropertyData.setHttpServiceSSLProtocols(config.getHttpServiceSSLProtocols());
-    gemFirePropertyData.setHttpServiceSSLRequireAuthentication(config.getHttpServiceSSLRequireAuthentication());
+    gemFirePropertyData.setHttpServiceSSLRequireAuthentication(
+        config.getHttpServiceSSLRequireAuthentication());
     gemFirePropertyData.setHttpServiceSSLKeyStore(config.getHttpServiceSSLKeyStore());
     gemFirePropertyData.setHttpServiceSSLKeyStoreType(config.getHttpServiceSSLKeyStoreType());
-    gemFirePropertyData.setHttpServiceSSLKeyStorePassword(config.getHttpServiceSSLKeyStorePassword());
+    gemFirePropertyData.setHttpServiceSSLKeyStorePassword(
+        config.getHttpServiceSSLKeyStorePassword());
     gemFirePropertyData.setHttpServiceSSLTrustStore(config.getHttpServiceSSLTrustStore());
-    gemFirePropertyData.setHttpServiceSSLTrustStorePassword(config.getHttpServiceSSLTrustStorePassword());
+    gemFirePropertyData.setHttpServiceSSLTrustStorePassword(
+        config.getHttpServiceSSLTrustStorePassword());
 
     gemFirePropertyData.setSocketLeaseTime(config.getSocketLeaseTime());
 
@@ -236,7 +243,8 @@ public class BeanUtilFuncs {
     gemFirePropertyData.setMcastRecvBufferSize(config.getMcastRecvBufferSize());
 
     gemFirePropertyData.setMcastByteAllowance(config.getMcastFlowControl().getByteAllowance());
-    gemFirePropertyData.setMcastRechargeThreshold(config.getMcastFlowControl().getRechargeThreshold());
+    gemFirePropertyData.setMcastRechargeThreshold(
+        config.getMcastFlowControl().getRechargeThreshold());
     gemFirePropertyData.setMcastRechargeBlockMs(config.getMcastFlowControl().getRechargeBlockMs());
     gemFirePropertyData.setUdpFragmentSize(config.getUdpFragmentSize());
 
@@ -245,7 +253,8 @@ public class BeanUtilFuncs {
 
     gemFirePropertyData.setEnableTimeStatistics(config.getEnableTimeStatistics());
 
-    gemFirePropertyData.setEnableNetworkPartitionDetection(config.getEnableNetworkPartitionDetection());
+    gemFirePropertyData.setEnableNetworkPartitionDetection(
+        config.getEnableNetworkPartitionDetection());
 
     gemFirePropertyData.setMemberTimeout(config.getMemberTimeout());
     gemFirePropertyData.setMembershipPortRange(config.getMembershipPortRange());
@@ -300,8 +309,10 @@ public class BeanUtilFuncs {
     gemFirePropertyData.setStartDevRestApi(config.getStartDevRestApi());
 
     gemFirePropertyData.setSSLCiphers(config.getSSLCiphers());
-    gemFirePropertyData.setSecurableCommunicationChannel(config.getSecurableCommunicationChannels());
-    gemFirePropertyData.setSSLWebServiceRequireAuthentication(config.getSSLWebRequireAuthentication());
+    gemFirePropertyData.setSecurableCommunicationChannel(
+        config.getSecurableCommunicationChannels());
+    gemFirePropertyData.setSSLWebServiceRequireAuthentication(
+        config.getSSLWebRequireAuthentication());
     gemFirePropertyData.setSSLKeyStore(config.getSSLKeyStore());
     gemFirePropertyData.setSSLKeyStoreType(config.getSSLKeyStoreType());
     gemFirePropertyData.setSSLKeyStorePassword(config.getSSLKeyStorePassword());
@@ -317,12 +328,12 @@ public class BeanUtilFuncs {
     gemFirePropertyData.setSSLDefaultAlias(config.getSSLDefaultAlias());
 
     return gemFirePropertyData;
-
   }
 
   /**
-   * Compresses a given String. It is encoded using ISO-8859-1, So any
-   * decompression of the compressed string should also use ISO-8859-1
+   * Compresses a given String. It is encoded using ISO-8859-1, So any decompression of the
+   * compressed string should also use ISO-8859-1
+   *
    * @param str String to be compressed.
    * @return compressed bytes
    * @throws IOException
@@ -357,5 +368,4 @@ public class BeanUtilFuncs {
     }
     return outStr;
   }
-
 }

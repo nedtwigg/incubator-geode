@@ -17,9 +17,9 @@
 package org.apache.geode.management.internal.cli.domain;
 
 /**
- * Used to transfer information about an AsyncEventQueue from a function
- * being executed on a server back to the manager that invoked the function.
- * 
+ * Used to transfer information about an AsyncEventQueue from a function being executed on a server
+ * back to the manager that invoked the function.
+ *
  * @since GemFire 8.0
  */
 import java.io.Serializable;
@@ -35,7 +35,14 @@ public class AsyncEventQueueDetails implements Serializable {
   private final String listener;
   private final Properties listenerProperties;
 
-  public AsyncEventQueueDetails(final String id, final int batchSize, final boolean persistent, final String diskStoreName, final int maxQueueMemory, final String listener, final Properties listenerProperties) {
+  public AsyncEventQueueDetails(
+      final String id,
+      final int batchSize,
+      final boolean persistent,
+      final String diskStoreName,
+      final int maxQueueMemory,
+      final String listener,
+      final Properties listenerProperties) {
     this.id = id;
     this.batchSize = batchSize;
     this.persistent = persistent;

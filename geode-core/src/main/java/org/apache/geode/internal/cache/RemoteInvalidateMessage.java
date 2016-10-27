@@ -60,21 +60,34 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
 
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * Empty constructor to satisfy {@link org.apache.geode.DataSerializer}
-   * requirements
-   */
-  public RemoteInvalidateMessage() {
-  }
+  /** Empty constructor to satisfy {@link org.apache.geode.DataSerializer} requirements */
+  public RemoteInvalidateMessage() {}
 
-  private RemoteInvalidateMessage(Set recipients, String regionPath, DirectReplyProcessor processor, EntryEventImpl event, boolean useOriginRemote, boolean possibleDuplicate) {
-    super(recipients, regionPath, processor, event, null, DistributionManager.PARTITIONED_REGION_EXECUTOR, useOriginRemote, possibleDuplicate);
+  private RemoteInvalidateMessage(
+      Set recipients,
+      String regionPath,
+      DirectReplyProcessor processor,
+      EntryEventImpl event,
+      boolean useOriginRemote,
+      boolean possibleDuplicate) {
+    super(
+        recipients,
+        regionPath,
+        processor,
+        event,
+        null,
+        DistributionManager.PARTITIONED_REGION_EXECUTOR,
+        useOriginRemote,
+        possibleDuplicate);
   }
 
   public static boolean distribute(EntryEventImpl event, boolean onlyPersistent) {
     boolean successful = false;
     DistributedRegion r = (DistributedRegion) event.getRegion();
-    Collection replicates = onlyPersistent ? r.getCacheDistributionAdvisor().adviseInitializedPersistentMembers().keySet() : r.getCacheDistributionAdvisor().adviseInitializedReplicates();
+    Collection replicates =
+        onlyPersistent
+            ? r.getCacheDistributionAdvisor().adviseInitializedPersistentMembers().keySet()
+            : r.getCacheDistributionAdvisor().adviseInitializedReplicates();
     if (replicates.isEmpty()) {
       return false;
     }
@@ -84,18 +97,28 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
       replicates = l;
     }
     int attempts = 0;
-    for (Iterator<InternalDistributedMember> it = replicates.iterator(); it.hasNext();) {
+    for (Iterator<InternalDistributedMember> it = replicates.iterator(); it.hasNext(); ) {
       InternalDistributedMember replicate = it.next();
       try {
         attempts++;
         final boolean posDup = (attempts > 1);
-        InvalidateResponse processor = send(replicate, event.getRegion(), event, DistributionManager.SERIAL_EXECUTOR, false, posDup);
+        InvalidateResponse processor =
+            send(
+                replicate,
+                event.getRegion(),
+                event,
+                DistributionManager.SERIAL_EXECUTOR,
+                false,
+                posDup);
         processor.waitForCacheException();
         VersionTag versionTag = processor.getVersionTag();
         if (versionTag != null) {
           event.setVersionTag(versionTag);
           if (event.getRegion().getVersionVector() != null) {
-            event.getRegion().getVersionVector().recordVersion(versionTag.getMemberID(), versionTag);
+            event
+                .getRegion()
+                .getVersionVector()
+                .recordVersion(versionTag.getMemberID(), versionTag);
           }
         }
         event.setInhibitDistribution(true);
@@ -118,7 +141,10 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
 
       } catch (RemoteOperationException e) {
         if (logger.isTraceEnabled(LogMarker.DM)) {
-          logger.trace(LogMarker.DM, "RemoteDestroyMessage caught an unexpected exception during distribution", e);
+          logger.trace(
+              LogMarker.DM,
+              "RemoteDestroyMessage caught an unexpected exception during distribution",
+              e);
         }
       }
     }
@@ -126,42 +152,50 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
   }
 
   /**
-   * Sends a transactional RemoteInvalidateMessage
-   * {@link org.apache.geode.cache.Region#invalidate(Object)}message to the
-   * recipient
-   * 
+   * Sends a transactional RemoteInvalidateMessage {@link
+   * org.apache.geode.cache.Region#invalidate(Object)}message to the recipient
+   *
    * @param recipient the recipient of the message
-   * @param r
-   *          the ReplicateRegion for which the invalidate was performed
+   * @param r the ReplicateRegion for which the invalidate was performed
    * @param event the event causing this message
    * @param processorType the type of executor to use
    * @param useOriginRemote whether the receiver should use originRemote=true in its event
-   * @return the InvalidateResponse processor used to await the potential
-   *         {@link org.apache.geode.cache.CacheException}
+   * @return the InvalidateResponse processor used to await the potential {@link
+   *     org.apache.geode.cache.CacheException}
    */
-  public static InvalidateResponse send(DistributedMember recipient, LocalRegion r, EntryEventImpl event, int processorType, boolean useOriginRemote, boolean possibleDuplicate) throws RemoteOperationException {
+  public static InvalidateResponse send(
+      DistributedMember recipient,
+      LocalRegion r,
+      EntryEventImpl event,
+      int processorType,
+      boolean useOriginRemote,
+      boolean possibleDuplicate)
+      throws RemoteOperationException {
     //Assert.assertTrue(recipient != null, "RemoteInvalidateMessage NULL recipient");  recipient may be null for remote notifications
     Set recipients = Collections.singleton(recipient);
     InvalidateResponse p = new InvalidateResponse(r.getSystem(), recipients, event.getKey());
-    RemoteInvalidateMessage m = new RemoteInvalidateMessage(recipients, r.getFullPath(), p, event, useOriginRemote, possibleDuplicate);
+    RemoteInvalidateMessage m =
+        new RemoteInvalidateMessage(
+            recipients, r.getFullPath(), p, event, useOriginRemote, possibleDuplicate);
     m.setTransactionDistributed(r.getCache().getTxManager().isDistributed());
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new RemoteOperationException(LocalizedStrings.InvalidateMessage_FAILED_SENDING_0.toLocalizedString(m));
+      throw new RemoteOperationException(
+          LocalizedStrings.InvalidateMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
     return p;
   }
 
   /**
-   * This method is called upon receipt and make the desired changes to the
-   * PartitionedRegion Note: It is very important that this message does NOT
-   * cause any deadlocks as the sender will wait indefinitely for the
-   * acknowledgement
-   * 
+   * This method is called upon receipt and make the desired changes to the PartitionedRegion Note:
+   * It is very important that this message does NOT cause any deadlocks as the sender will wait
+   * indefinitely for the acknowledgement
+   *
    * @throws EntryExistsException
    */
   @Override
-  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime) throws EntryExistsException, RemoteOperationException {
+  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime)
+      throws EntryExistsException, RemoteOperationException {
 
     InternalDistributedMember eventSender = originalSender;
     if (eventSender == null) {
@@ -169,8 +203,17 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
     }
     final Object key = getKey();
     @Released
-    final EntryEventImpl event = EntryEventImpl.create(r, getOperation(), key, null, /*newValue*/
-        getCallbackArg(), this.useOriginRemote/*originRemote - false to force distribution in buckets*/, eventSender, true/*generateCallbacks*/, false/*initializeId*/);
+    final EntryEventImpl event =
+        EntryEventImpl.create(
+            r,
+            getOperation(),
+            key,
+            null, /*newValue*/
+            getCallbackArg(),
+            this.useOriginRemote /*originRemote - false to force distribution in buckets*/,
+            eventSender,
+            true /*generateCallbacks*/,
+            false /*initializeId*/);
     try {
       if (this.bridgeContext != null) {
         event.setContext(this.bridgeContext);
@@ -204,7 +247,14 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
         if (logger.isTraceEnabled(LogMarker.DM)) {
           logger.trace(LogMarker.DM, "remoteInvalidated key: {}", key);
         }
-        sendReply(getSender(), this.processorId, dm, /*ex*/null, event.getRegion(), event.getVersionTag(), startTime);
+        sendReply(
+            getSender(),
+            this.processorId,
+            dm, /*ex*/
+            null,
+            event.getRegion(),
+            event.getVersionTag(),
+            startTime);
         sendReply = false;
       } catch (EntryNotFoundException eee) {
         //        failed = true;
@@ -231,13 +281,26 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
 
   // override reply message type from PartitionMessage
   @Override
-  protected void sendReply(InternalDistributedMember member, int procId, DM dm, ReplyException ex, LocalRegion r, long startTime) {
+  protected void sendReply(
+      InternalDistributedMember member,
+      int procId,
+      DM dm,
+      ReplyException ex,
+      LocalRegion r,
+      long startTime) {
     sendReply(member, procId, dm, ex, r, null, startTime);
   }
 
-  protected void sendReply(InternalDistributedMember member, int procId, DM dm, ReplyException ex, LocalRegion r, VersionTag versionTag, long startTime) {
+  protected void sendReply(
+      InternalDistributedMember member,
+      int procId,
+      DM dm,
+      ReplyException ex,
+      LocalRegion r,
+      VersionTag versionTag,
+      long startTime) {
     /*if (pr != null && startTime > 0) {
-      pr.getPrStats().endPartitionMessagesProcessing(startTime); 
+      pr.getPrStats().endPartitionMessagesProcessing(startTime);
     }*/
     InvalidateReplyMessage.send(member, procId, getReplySender(dm), versionTag, ex);
   }
@@ -253,11 +316,8 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
     private static final byte HAS_VERSION = 0x01;
     private static final byte PERSISTENT = 0x02;
 
-    /**
-     * DSFIDFactory constructor
-     */
-    public InvalidateReplyMessage() {
-    }
+    /** DSFIDFactory constructor */
+    public InvalidateReplyMessage() {}
 
     private InvalidateReplyMessage(int processorId, VersionTag versionTag, ReplyException ex) {
       super();
@@ -267,7 +327,12 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient, int processorId, ReplySender replySender, VersionTag versionTag, ReplyException ex) {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        ReplySender replySender,
+        VersionTag versionTag,
+        ReplyException ex) {
       Assert.assertTrue(recipient != null, "InvalidateReplyMessage NULL reply message");
       InvalidateReplyMessage m = new InvalidateReplyMessage(processorId, versionTag, ex);
       m.setRecipient(recipient);
@@ -275,15 +340,18 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
     }
 
     /**
-     * Processes this message.  This method is invoked by the receiver
-     * of the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
      * @param dm the distribution manager that is processing the message.
      */
     @Override
     public void process(final DM dm, final ReplyProcessor21 rp) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "InvalidateReplyMessage process invoking reply processor with processorId:{}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "InvalidateReplyMessage process invoking reply processor with processorId:{}",
+            this.processorId);
       }
 
       if (rp == null) {
@@ -343,17 +411,21 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("InvalidateReplyMessage ").append("processorid=").append(this.processorId).append(" exception=").append(getException());
+      sb.append("InvalidateReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" exception=")
+          .append(getException());
       if (this.versionTag != null) {
         sb.append("version=").append(this.versionTag);
       }
       return sb.toString();
     }
-
   }
 
   /**
    * A processor to capture the value returned by {@link RemoteInvalidateMessage}
+   *
    * @since GemFire 6.5
    */
   public static class InvalidateResponse extends RemoteOperationResponse {
@@ -371,9 +443,7 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
       this.versionTag = versionTag;
     }
 
-    /**
-     * @throws CacheException if the peer generates an error
-     */
+    /** @throws CacheException if the peer generates an error */
     public void waitForResult() throws CacheException, RemoteOperationException {
       try {
         waitForCacheException();
@@ -382,7 +452,8 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
         throw e;
       }
       if (!this.returnValueReceived) {
-        throw new RemoteOperationException(LocalizedStrings.InvalidateMessage_NO_RESPONSE_CODE_RECEIVED.toLocalizedString());
+        throw new RemoteOperationException(
+            LocalizedStrings.InvalidateMessage_NO_RESPONSE_CODE_RECEIVED.toLocalizedString());
       }
       return;
     }
@@ -391,5 +462,4 @@ public final class RemoteInvalidateMessage extends RemoteDestroyMessage {
       return this.versionTag;
     }
   }
-
 }

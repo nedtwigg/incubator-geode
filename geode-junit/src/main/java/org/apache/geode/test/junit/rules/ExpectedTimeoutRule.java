@@ -26,14 +26,10 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-/**
- * Expect an Exception within a specified timeout.
- */
+/** Expect an Exception within a specified timeout. */
 public class ExpectedTimeoutRule implements TestRule {
 
-  /**
-   * @return a Rule that expects no timeout (identical to behavior without this Rule)
-   */
+  /** @return a Rule that expects no timeout (identical to behavior without this Rule) */
   public static ExpectedTimeoutRule none() {
     return new ExpectedTimeoutRule();
   }
@@ -63,16 +59,14 @@ public class ExpectedTimeoutRule implements TestRule {
     return this;
   }
 
-  /**
-   * Adds {@code matcher} to the list of requirements for any thrown exception.
-   */
+  /** Adds {@code matcher} to the list of requirements for any thrown exception. */
   public void expect(final Matcher<?> matcher) {
     this.delegate.expect(matcher);
   }
 
   /**
-   * Adds to the list of requirements for any thrown exception that it should
-   * be an instance of {@code type}.
+   * Adds to the list of requirements for any thrown exception that it should be an instance of
+   * {@code type}.
    */
   public void expect(final Class<? extends Throwable> type) {
     this.delegate.expect(type);
@@ -80,39 +74,32 @@ public class ExpectedTimeoutRule implements TestRule {
   }
 
   /**
-   * Adds to the list of requirements for any thrown exception that it should
-   * <em>contain</em> string {@code substring}
+   * Adds to the list of requirements for any thrown exception that it should <em>contain</em>
+   * string {@code substring}
    */
   public void expectMessage(final String substring) {
     this.delegate.expectMessage(substring);
   }
 
   /**
-   * Adds {@code matcher} to the list of requirements for the message returned
-   * from any thrown exception.
+   * Adds {@code matcher} to the list of requirements for the message returned from any thrown
+   * exception.
    */
   public void expectMessage(final Matcher<String> matcher) {
     this.delegate.expectMessage(matcher);
   }
 
-  /**
-   * Adds {@code matcher} to the list of requirements for the cause of
-   * any thrown exception.
-   */
+  /** Adds {@code matcher} to the list of requirements for the cause of any thrown exception. */
   public void expectCause(final Matcher<? extends Throwable> expectedCause) {
     this.delegate.expectCause(expectedCause);
   }
 
-  /**
-   * Returns true if a timeout is expected.
-   */
+  /** Returns true if a timeout is expected. */
   protected boolean expectsTimeout() {
     return this.minDuration > 0 || this.maxDuration > 0;
   }
 
-  /**
-   * Returns true if a Throwable is expected.
-   */
+  /** Returns true if a Throwable is expected. */
   protected boolean expectsThrowable() {
     return this.expectsThrowable;
   }
@@ -125,7 +112,9 @@ public class ExpectedTimeoutRule implements TestRule {
 
   private void handleTime(final Long duration) {
     if (expectsTimeout()) {
-      assertThat(this.timeUnit.convert(duration, TimeUnit.NANOSECONDS), new TimeMatcher(this.timeUnit, this.minDuration, this.maxDuration));
+      assertThat(
+          this.timeUnit.convert(duration, TimeUnit.NANOSECONDS),
+          new TimeMatcher(this.timeUnit, this.minDuration, this.maxDuration));
     }
   }
 
@@ -148,7 +137,13 @@ public class ExpectedTimeoutRule implements TestRule {
 
     @Override
     public void describeTo(final org.hamcrest.Description description) {
-      description.appendText("expects duration to be greater than or equal to ").appendValue(this.minDuration).appendText(" and less than or equal to ").appendValue(this.maxDuration).appendText(" ").appendValue(this.timeUnit);
+      description
+          .appendText("expects duration to be greater than or equal to ")
+          .appendValue(this.minDuration)
+          .appendText(" and less than or equal to ")
+          .appendValue(this.maxDuration)
+          .appendText(" ")
+          .appendValue(this.timeUnit);
     }
   }
 

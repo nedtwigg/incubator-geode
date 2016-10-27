@@ -52,19 +52,16 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.internal.security.AuthorizeRequest;
 
-/**
- * @since GemFire 6.5
- */
+/** @since GemFire 6.5 */
 public class ExecuteFunction65 extends BaseCommand {
 
-  private final static ExecuteFunction65 singleton = new ExecuteFunction65();
+  private static final ExecuteFunction65 singleton = new ExecuteFunction65();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  ExecuteFunction65() {
-  }
+  ExecuteFunction65() {}
 
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
@@ -102,7 +99,11 @@ public class ExecuteFunction65 extends BaseCommand {
         memberMappedArg = (MemberMappedArgument) part.getObject();
       }
     } catch (ClassNotFoundException exception) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.ExecuteFunction_EXCEPTION_ON_SERVER_WHILE_EXECUTIONG_FUNCTION_0, function), exception);
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.ExecuteFunction_EXCEPTION_ON_SERVER_WHILE_EXECUTIONG_FUNCTION_0,
+              function),
+          exception);
       if (hasResult == 1) {
         writeChunkedException(msg, exception, false, servConn);
         servConn.setAsTrue(RESPONDED);
@@ -110,7 +111,10 @@ public class ExecuteFunction65 extends BaseCommand {
       }
     }
     if (function == null) {
-      final String message = LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString();
+      final String message =
+          LocalizedStrings
+              .ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString();
       logger.warn("{}: {}", servConn.getName(), message);
       sendError(hasResult, msg, message, servConn);
       return;
@@ -122,17 +126,28 @@ public class ExecuteFunction65 extends BaseCommand {
       if (function instanceof String) {
         functionObject = FunctionService.getFunction((String) function);
         if (functionObject == null) {
-          final String message = LocalizedStrings.ExecuteFunction_FUNCTION_NAMED_0_IS_NOT_REGISTERED.toLocalizedString(function);
+          final String message =
+              LocalizedStrings.ExecuteFunction_FUNCTION_NAMED_0_IS_NOT_REGISTERED.toLocalizedString(
+                  function);
           logger.warn("{}: {}", servConn.getName(), message);
           sendError(hasResult, msg, message, servConn);
           return;
         } else {
-          byte functionStateOnServerSide = AbstractExecution.getFunctionState(functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
+          byte functionStateOnServerSide =
+              AbstractExecution.getFunctionState(
+                  functionObject.isHA(),
+                  functionObject.hasResult(),
+                  functionObject.optimizeForWrite());
           if (logger.isDebugEnabled()) {
-            logger.debug("Function State on server side: {} on client: {}", functionStateOnServerSide, functionState);
+            logger.debug(
+                "Function State on server side: {} on client: {}",
+                functionStateOnServerSide,
+                functionState);
           }
           if (functionStateOnServerSide != functionState) {
-            String message = LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER.toLocalizedString(function);
+            String message =
+                LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER
+                    .toLocalizedString(function);
             logger.warn("{}: {}", servConn.getName(), message);
             sendError(hasResult, msg, message, servConn);
             return;
@@ -150,17 +165,28 @@ public class ExecuteFunction65 extends BaseCommand {
       AuthorizeRequest authzRequest = servConn.getAuthzRequest();
       ExecuteFunctionOperationContext executeContext = null;
       if (authzRequest != null) {
-        executeContext = authzRequest.executeFunctionAuthorize(functionObject.getId(), null, null, args, functionObject.optimizeForWrite());
+        executeContext =
+            authzRequest.executeFunctionAuthorize(
+                functionObject.getId(), null, null, args, functionObject.optimizeForWrite());
       }
       ChunkedMessage m = servConn.getFunctionResponseMessage();
       m.setTransactionId(msg.getTransactionId());
-      ResultSender resultSender = new ServerToClientFunctionResultSender65(m, MessageType.EXECUTE_FUNCTION_RESULT, servConn, functionObject, executeContext);
+      ResultSender resultSender =
+          new ServerToClientFunctionResultSender65(
+              m, MessageType.EXECUTE_FUNCTION_RESULT, servConn, functionObject, executeContext);
 
-      InternalDistributedMember localVM = (InternalDistributedMember) servConn.getCache().getDistributedSystem().getDistributedMember();
+      InternalDistributedMember localVM =
+          (InternalDistributedMember)
+              servConn.getCache().getDistributedSystem().getDistributedMember();
       FunctionContext context = null;
 
       if (memberMappedArg != null) {
-        context = new FunctionContextImpl(functionObject.getId(), memberMappedArg.getArgumentsForMember(localVM.getId()), resultSender, isReexecute);
+        context =
+            new FunctionContextImpl(
+                functionObject.getId(),
+                memberMappedArg.getArgumentsForMember(localVM.getId()),
+                resultSender,
+                isReexecute);
       } else {
         context = new FunctionContextImpl(functionObject.getId(), args, resultSender, isReexecute);
       }
@@ -174,17 +200,28 @@ public class ExecuteFunction65 extends BaseCommand {
           logger.debug("Executing Function on Server: {} with context: {}", servConn, context);
         }
         GemFireCacheImpl cache = (GemFireCacheImpl) servConn.getCache();
-        HeapMemoryMonitor hmm = ((InternalResourceManager) cache.getResourceManager()).getHeapMonitor();
-        if (functionObject.optimizeForWrite() && cache != null && hmm.getState().isCritical() && !MemoryThresholds.isLowMemoryExceptionDisabled()) {
+        HeapMemoryMonitor hmm =
+            ((InternalResourceManager) cache.getResourceManager()).getHeapMonitor();
+        if (functionObject.optimizeForWrite()
+            && cache != null
+            && hmm.getState().isCritical()
+            && !MemoryThresholds.isLowMemoryExceptionDisabled()) {
           Set<DistributedMember> sm = Collections.singleton((DistributedMember) cache.getMyId());
-          Exception e = new LowMemoryException(LocalizedStrings.ResourceManager_LOW_MEMORY_FOR_0_FUNCEXEC_MEMBERS_1.toLocalizedString(new Object[] { functionObject.getId(), sm }), sm);
+          Exception e =
+              new LowMemoryException(
+                  LocalizedStrings.ResourceManager_LOW_MEMORY_FOR_0_FUNCEXEC_MEMBERS_1
+                      .toLocalizedString(new Object[] {functionObject.getId(), sm}),
+                  sm);
 
           sendException(hasResult, msg, e.getMessage(), servConn, e);
           return;
         }
         functionObject.execute(context);
-        if (!((ServerToClientFunctionResultSender65) resultSender).isLastResultReceived() && functionObject.hasResult()) {
-          throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_FUNCTION_0_DID_NOT_SENT_LAST_RESULT.toString(functionObject.getId()));
+        if (!((ServerToClientFunctionResultSender65) resultSender).isLastResultReceived()
+            && functionObject.hasResult()) {
+          throw new FunctionException(
+              LocalizedStrings.ExecuteFunction_THE_FUNCTION_0_DID_NOT_SENT_LAST_RESULT.toString(
+                  functionObject.getId()));
         }
         stats.endFunctionExecution(startExecution, functionObject.hasResult());
       } catch (FunctionException functionException) {
@@ -198,8 +235,13 @@ public class ExecuteFunction65 extends BaseCommand {
         handShake.setClientReadTimeout(earlierClientReadTimeout);
       }
     } catch (IOException ioException) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.ExecuteFunction_EXCEPTION_ON_SERVER_WHILE_EXECUTIONG_FUNCTION_0, function), ioException);
-      String message = LocalizedStrings.ExecuteFunction_SERVER_COULD_NOT_SEND_THE_REPLY.toLocalizedString();
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.ExecuteFunction_EXCEPTION_ON_SERVER_WHILE_EXECUTIONG_FUNCTION_0,
+              function),
+          ioException);
+      String message =
+          LocalizedStrings.ExecuteFunction_SERVER_COULD_NOT_SEND_THE_REPLY.toLocalizedString();
       sendException(hasResult, msg, message, servConn, ioException);
     } catch (InternalFunctionInvocationTargetException internalfunctionException) {
       // Fix for #44709: User should not be aware of
@@ -211,29 +253,39 @@ public class ExecuteFunction65 extends BaseCommand {
       // it is HA, function will be reexecuted on right node
       // 2> in case of HA member departed
       if (logger.isDebugEnabled()) {
-        logger.debug(LocalizedMessage.create(LocalizedStrings.ExecuteFunction_EXCEPTION_ON_SERVER_WHILE_EXECUTIONG_FUNCTION_0, new Object[] { function }), internalfunctionException);
+        logger.debug(
+            LocalizedMessage.create(
+                LocalizedStrings.ExecuteFunction_EXCEPTION_ON_SERVER_WHILE_EXECUTIONG_FUNCTION_0,
+                new Object[] {function}),
+            internalfunctionException);
       }
       final String message = internalfunctionException.getMessage();
       sendException(hasResult, msg, message, servConn, internalfunctionException);
     } catch (Exception e) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.ExecuteFunction_EXCEPTION_ON_SERVER_WHILE_EXECUTIONG_FUNCTION_0, function), e);
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.ExecuteFunction_EXCEPTION_ON_SERVER_WHILE_EXECUTIONG_FUNCTION_0,
+              function),
+          e);
       final String message = e.getMessage();
       sendException(hasResult, msg, message, servConn, e);
     }
   }
 
-  private void sendException(byte hasResult, Message msg, String message, ServerConnection servConn, Throwable e) throws IOException {
+  private void sendException(
+      byte hasResult, Message msg, String message, ServerConnection servConn, Throwable e)
+      throws IOException {
     if (hasResult == 1) {
       writeFunctionResponseException(msg, MessageType.EXCEPTION, message, servConn, e);
       servConn.setAsTrue(RESPONDED);
     }
   }
 
-  private void sendError(byte hasResult, Message msg, String message, ServerConnection servConn) throws IOException {
+  private void sendError(byte hasResult, Message msg, String message, ServerConnection servConn)
+      throws IOException {
     if (hasResult == 1) {
       writeFunctionResponseError(msg, MessageType.EXECUTE_FUNCTION_ERROR, message, servConn);
       servConn.setAsTrue(RESPONDED);
     }
   }
-
 }

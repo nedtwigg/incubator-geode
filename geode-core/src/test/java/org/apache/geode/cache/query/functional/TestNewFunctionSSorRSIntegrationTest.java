@@ -43,9 +43,7 @@ import org.apache.geode.cache.query.internal.QueryObserverAdapter;
 import org.apache.geode.cache.query.internal.QueryObserverHolder;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * TODO: does this test provide any valuable coverage?
- */
+/** TODO: does this test provide any valuable coverage? */
 @Category(IntegrationTest.class)
 public class TestNewFunctionSSorRSIntegrationTest {
 
@@ -71,8 +69,9 @@ public class TestNewFunctionSSorRSIntegrationTest {
     QueryService qs;
     qs = CacheUtils.getQueryService();
 
-    String queries[] = { "SELECT DISTINCT * from /portfolios pf , pf.positions.values pos where status = 'inactive'", "select distinct * from /portfolios where ID > 1 ",
-
+    String queries[] = {
+      "SELECT DISTINCT * from /portfolios pf , pf.positions.values pos where status = 'inactive'",
+      "select distinct * from /portfolios where ID > 1 ",
     };
 
     for (int i = 0; i < queries.length; i++) {
@@ -122,5 +121,4 @@ public class TestNewFunctionSSorRSIntegrationTest {
       }
     }
   }
-
 }

@@ -32,9 +32,7 @@ import org.apache.geode.internal.cache.LocalRegion;
 import org.apache.geode.internal.cache.TXStateProxy;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * 
- */
+/** */
 public class DistClientTXStateStub extends ClientTXStateStub implements DistTXCoordinatorInterface {
 
   /**
@@ -42,54 +40,86 @@ public class DistClientTXStateStub extends ClientTXStateStub implements DistTXCo
    * @param target
    * @param firstRegion
    */
-  public DistClientTXStateStub(TXStateProxy stateProxy, DistributedMember target, LocalRegion firstRegion) {
+  public DistClientTXStateStub(
+      TXStateProxy stateProxy, DistributedMember target, LocalRegion firstRegion) {
     super(stateProxy, target, firstRegion);
     // TODO Auto-generated constructor stub
   }
 
   @Override
   public boolean getPreCommitResponse() throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("getPreCommitResponse"));
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString(
+            "getPreCommitResponse"));
   }
 
   @Override
   public boolean getRollbackResponse() throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_ROLLBACK_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("getRollbackResponse"));
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.Dist_TX_ROLLBACK_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString(
+            "getRollbackResponse"));
   }
 
   @Override
-  public ArrayList<DistTxEntryEvent> getPrimaryTransactionalOperations() throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("getPrimaryTransactionalOperations"));
+  public ArrayList<DistTxEntryEvent> getPrimaryTransactionalOperations()
+      throws UnsupportedOperationInTransactionException {
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString(
+            "getPrimaryTransactionalOperations"));
   }
 
   @Override
-  public void addSecondaryTransactionalOperations(DistTxEntryEvent dtop) throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("addSecondaryTransactionalOperations"));
+  public void addSecondaryTransactionalOperations(DistTxEntryEvent dtop)
+      throws UnsupportedOperationInTransactionException {
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString(
+            "addSecondaryTransactionalOperations"));
   }
 
   @Override
-  public void setPrecommitMessage(DistTXPrecommitMessage precommitMsg, DM dm) throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("setPrecommitMessage"));
+  public void setPrecommitMessage(DistTXPrecommitMessage precommitMsg, DM dm)
+      throws UnsupportedOperationInTransactionException {
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString(
+            "setPrecommitMessage"));
   }
 
   @Override
-  public void setCommitMessage(DistTXCommitMessage commitMsg, DM dm) throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("setCommitMessage"));
+  public void setCommitMessage(DistTXCommitMessage commitMsg, DM dm)
+      throws UnsupportedOperationInTransactionException {
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString(
+            "setCommitMessage"));
   }
 
   @Override
-  public void setRollbackMessage(DistTXRollbackMessage rollbackMsg, DM dm) throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_ROLLBACK_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("setRollbackMessage"));
+  public void setRollbackMessage(DistTXRollbackMessage rollbackMsg, DM dm)
+      throws UnsupportedOperationInTransactionException {
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.Dist_TX_ROLLBACK_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString(
+            "setRollbackMessage"));
   }
 
   @Override
-  public void gatherAffectedRegions(HashSet<LocalRegion> regionSet, boolean includePrimaryRegions, boolean includeRedundantRegions) throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("gatherAffectedRegions"));
+  public void gatherAffectedRegions(
+      HashSet<LocalRegion> regionSet,
+      boolean includePrimaryRegions,
+      boolean includeRedundantRegions)
+      throws UnsupportedOperationInTransactionException {
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString(
+            "gatherAffectedRegions"));
   }
 
   @Override
-  public void gatherAffectedRegionsName(TreeSet<String> sortedRegionName, boolean includePrimaryRegions, boolean includeRedundantRegions) throws UnsupportedOperationInTransactionException {
-    throw new UnsupportedOperationInTransactionException(LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString("gatherAffectedRegions"));
+  public void gatherAffectedRegionsName(
+      TreeSet<String> sortedRegionName,
+      boolean includePrimaryRegions,
+      boolean includeRedundantRegions)
+      throws UnsupportedOperationInTransactionException {
+    throw new UnsupportedOperationInTransactionException(
+        LocalizedStrings.Dist_TX_PRECOMMIT_NOT_SUPPORTED_IN_A_TRANSACTION.toLocalizedString(
+            "gatherAffectedRegions"));
   }
 
   @Override

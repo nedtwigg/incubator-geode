@@ -50,15 +50,13 @@ import static org.apache.geode.distributed.ConfigurationProperties.LOCATORS;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
-/**
- *
- * Tests the functionality of operations of AbstractConnectionProxy & its
- * derived classes.
- */
+/** Tests the functionality of operations of AbstractConnectionProxy & its derived classes. */
 @Category(IntegrationTest.class)
 public class ConnectionProxyJUnitTest {
-  private static final String expectedRedundantErrorMsg = "Could not find any server to create redundant client queue on.";
-  private static final String expectedPrimaryErrorMsg = "Could not find any server to create primary client queue on.";
+  private static final String expectedRedundantErrorMsg =
+      "Could not find any server to create redundant client queue on.";
+  private static final String expectedPrimaryErrorMsg =
+      "Could not find any server to create primary client queue on.";
 
   DistributedSystem system;
 
@@ -76,8 +74,10 @@ public class ConnectionProxyJUnitTest {
     p.setProperty(LOCATORS, "");
     this.system = DistributedSystem.connect(p);
     this.cache = CacheFactory.create(system);
-    final String addExpectedPEM = "<ExpectedException action=add>" + expectedPrimaryErrorMsg + "</ExpectedException>";
-    final String addExpectedREM = "<ExpectedException action=add>" + expectedRedundantErrorMsg + "</ExpectedException>";
+    final String addExpectedPEM =
+        "<ExpectedException action=add>" + expectedPrimaryErrorMsg + "</ExpectedException>";
+    final String addExpectedREM =
+        "<ExpectedException action=add>" + expectedRedundantErrorMsg + "</ExpectedException>";
     system.getLogWriter().info(addExpectedPEM);
     system.getLogWriter().info(addExpectedREM);
   }
@@ -86,28 +86,28 @@ public class ConnectionProxyJUnitTest {
   public void tearDown() throws Exception {
     this.cache.close();
 
-    final String removeExpectedPEM = "<ExpectedException action=remove>" + expectedPrimaryErrorMsg + "</ExpectedException>";
-    final String removeExpectedREM = "<ExpectedException action=remove>" + expectedRedundantErrorMsg + "</ExpectedException>";
+    final String removeExpectedPEM =
+        "<ExpectedException action=remove>" + expectedPrimaryErrorMsg + "</ExpectedException>";
+    final String removeExpectedREM =
+        "<ExpectedException action=remove>" + expectedRedundantErrorMsg + "</ExpectedException>";
 
     system.getLogWriter().info(removeExpectedPEM);
     system.getLogWriter().info(removeExpectedREM);
 
     this.system.disconnect();
-    if (proxy != null)
-      proxy.destroy();
+    if (proxy != null) proxy.destroy();
   }
 
   /**
-   * This test verifies the behaviour of client request when the listener on the
-   * server sits forever. This is done in following steps:<br>
+   * This test verifies the behaviour of client request when the listener on the server sits
+   * forever. This is done in following steps:<br>
    * 1)create server<br>
-   * 2)initialize proxy object and create region for client having a
-   * CacheListener and make afterCreate in the listener to wait infinitely<br>
+   * 2)initialize proxy object and create region for client having a CacheListener and make
+   * afterCreate in the listener to wait infinitely<br>
    * 3)perform a PUT on client by acquiring Connection through proxy<br>
    * 4)Verify that exception occurs due to infinite wait in the listener<br>
-   * 5)Verify that above exception occurs sometime after the readTimeout
-   * configured for the client <br>
-   *
+   * 5)Verify that above exception occurs sometime after the readTimeout configured for the client
+   * <br>
    */
   @Ignore
   @Test
@@ -135,17 +135,18 @@ public class ConnectionProxyJUnitTest {
 
       AttributesFactory factory = new AttributesFactory();
       factory.setScope(Scope.DISTRIBUTED_ACK);
-      factory.setCacheListener(new CacheListenerAdapter() {
-        public void afterCreate(EntryEvent event) {
-          synchronized (ConnectionProxyJUnitTest.this) {
-            try {
-              ConnectionProxyJUnitTest.this.wait();
-            } catch (InterruptedException e) {
-              fail("interrupted");
+      factory.setCacheListener(
+          new CacheListenerAdapter() {
+            public void afterCreate(EntryEvent event) {
+              synchronized (ConnectionProxyJUnitTest.this) {
+                try {
+                  ConnectionProxyJUnitTest.this.wait();
+                } catch (InterruptedException e) {
+                  fail("interrupted");
+                }
+              }
             }
-          }
-        }
-      });
+          });
       RegionAttributes attrs = factory.create();
       testRegion = cache.createRegion("testregion", attrs);
 
@@ -159,7 +160,7 @@ public class ConnectionProxyJUnitTest {
       t1 = System.currentTimeMillis();
       EntryEventImpl event = new EntryEventImpl((Object) null);
       try {
-        event.setEventId(new EventID(new byte[] { 1 }, 1, 1));
+        event.setEventId(new EventID(new byte[] {1}, 1, 1));
         PutOp.execute(conn, proxy, testRegion.getFullPath(), "key1", "val1", event, null, false);
       } finally {
         event.release();
@@ -176,15 +177,14 @@ public class ConnectionProxyJUnitTest {
   }
 
   /**
-   * Tests the DeadServerMonitor when identifying an 
-   * Endpoint as alive , does not create a persistent Ping connection
-   * ( i.e sends a CLOSE protocol , if the number of connections is zero.
+   * Tests the DeadServerMonitor when identifying an Endpoint as alive , does not create a
+   * persistent Ping connection ( i.e sends a CLOSE protocol , if the number of connections is zero.
    */
   @Test
   public void testDeadServerMonitorPingNature1() {
     int port3 = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
 
-    //    final int maxWaitTime = 10000;    
+    //    final int maxWaitTime = 10000;
     try {
       PoolFactory pf = PoolManager.createFactory();
       pf.addServer("localhost", port3);
@@ -227,15 +227,16 @@ public class ConnectionProxyJUnitTest {
         e.printStackTrace();
         fail("Failed to create server");
       }
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          return proxy.getConnectedServerCount() == 1;
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return proxy.getConnectedServerCount() == 1;
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 90 * 1000, 200, true);
     } finally {
       if (server != null) {
@@ -245,16 +246,14 @@ public class ConnectionProxyJUnitTest {
   }
 
   /**
-   * Tests the DeadServerMonitor when identifying an 
-   * Endpoint as alive , does creates a persistent Ping connection
-   * ( i.e sends a PING protocol , if the number of connections is more than 
-   * zero.
+   * Tests the DeadServerMonitor when identifying an Endpoint as alive , does creates a persistent
+   * Ping connection ( i.e sends a PING protocol , if the number of connections is more than zero.
    */
   @Test
   public void testDeadServerMonitorPingNature2() {
     int port3 = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
 
-    //    final int maxWaitTime = 10000;    
+    //    final int maxWaitTime = 10000;
     try {
       PoolFactory pf = PoolManager.createFactory();
       pf.addServer("localhost", port3);
@@ -286,15 +285,16 @@ public class ConnectionProxyJUnitTest {
         e.printStackTrace();
         fail("Failed to create server");
       }
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          return proxy.getConnectedServerCount() == 1;
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return proxy.getConnectedServerCount() == 1;
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 90 * 1000, 200, true);
     } finally {
       if (server != null) {
@@ -415,15 +415,16 @@ public class ConnectionProxyJUnitTest {
           fail(" eid should not be duplicate as it is a new entry");
         }
 
-        WaitCriterion ev = new WaitCriterion() {
-          public boolean done() {
-            return proxy.verifyIfDuplicate(eid);
-          }
+        WaitCriterion ev =
+            new WaitCriterion() {
+              public boolean done() {
+                return proxy.verifyIfDuplicate(eid);
+              }
 
-          public String description() {
-            return null;
-          }
-        };
+              public String description() {
+                return null;
+              }
+            };
         Wait.waitForCriterion(ev, 20 * 1000, 200, true);
       } catch (Exception ex) {
         ex.printStackTrace();
@@ -471,7 +472,8 @@ public class ConnectionProxyJUnitTest {
 
         for (int i = 0; i < EVENT_ID_COUNT; i++) {
           if (proxy.verifyIfDuplicate(eid[i])) {
-            fail(" eid can not be found to be  duplicate since the entry should have expired! " + i);
+            fail(
+                " eid can not be found to be  duplicate since the entry should have expired! " + i);
           }
         }
       } catch (Exception ex) {
@@ -669,26 +671,34 @@ public class ConnectionProxyJUnitTest {
           fail(" eid should not be duplicate as it is a new entry");
         }
 
-        seo = (SequenceIdAndExpirationObject) proxy.getThreadIdToSequenceIdMap().get(new ThreadIdentifier(new byte[0], 1));
+        seo =
+            (SequenceIdAndExpirationObject)
+                proxy.getThreadIdToSequenceIdMap().get(new ThreadIdentifier(new byte[0], 1));
         assertFalse(seo.getAckSend());
 
-        //   should send the ack to server     
-        seo = (SequenceIdAndExpirationObject) proxy.getThreadIdToSequenceIdMap().get(new ThreadIdentifier(new byte[0], 1));
+        //   should send the ack to server
+        seo =
+            (SequenceIdAndExpirationObject)
+                proxy.getThreadIdToSequenceIdMap().get(new ThreadIdentifier(new byte[0], 1));
         verifyAckSend(60 * 1000, true);
 
-        //   New update on same threadId   
+        //   New update on same threadId
         eid = new EventID(new byte[0], 1, 2);
         if (proxy.verifyIfDuplicate(eid)) {
           fail(" eid should not be duplicate as it is a new entry");
         }
-        seo = (SequenceIdAndExpirationObject) proxy.getThreadIdToSequenceIdMap().get(new ThreadIdentifier(new byte[0], 1));
+        seo =
+            (SequenceIdAndExpirationObject)
+                proxy.getThreadIdToSequenceIdMap().get(new ThreadIdentifier(new byte[0], 1));
         assertFalse(seo.getAckSend());
 
-        //   should send another ack to server    
-        seo = (SequenceIdAndExpirationObject) proxy.getThreadIdToSequenceIdMap().get(new ThreadIdentifier(new byte[0], 1));
+        //   should send another ack to server
+        seo =
+            (SequenceIdAndExpirationObject)
+                proxy.getThreadIdToSequenceIdMap().get(new ThreadIdentifier(new byte[0], 1));
         verifyAckSend(6000, true);
 
-        // should expire with the this mentioned. 
+        // should expire with the this mentioned.
         verifyExpiry(15 * 1000);
       } catch (Exception ex) {
         ex.printStackTrace();
@@ -732,18 +742,20 @@ public class ConnectionProxyJUnitTest {
           fail(" eid should not be duplicate as it is a new entry");
         }
 
-        seo = (SequenceIdAndExpirationObject) proxy.getThreadIdToSequenceIdMap().get(new ThreadIdentifier(new byte[0], 1));
+        seo =
+            (SequenceIdAndExpirationObject)
+                proxy.getThreadIdToSequenceIdMap().get(new ThreadIdentifier(new byte[0], 1));
         assertFalse(seo.getAckSend());
 
         //  should not send an ack as redundancy level = 0;
-        seo = (SequenceIdAndExpirationObject) proxy.getThreadIdToSequenceIdMap().get(new ThreadIdentifier(new byte[0], 1));
+        seo =
+            (SequenceIdAndExpirationObject)
+                proxy.getThreadIdToSequenceIdMap().get(new ThreadIdentifier(new byte[0], 1));
         verifyAckSend(30 * 1000, false);
 
-        // should expire without sending an ack as redundancy level = 0.       
+        // should expire without sending an ack as redundancy level = 0.
         verifyExpiry(90 * 1000);
-      }
-
-      catch (Exception ex) {
+      } catch (Exception ex) {
         ex.printStackTrace();
         fail("Test testPeriodicAckSendByClient Failed");
       }
@@ -755,29 +767,30 @@ public class ConnectionProxyJUnitTest {
   }
 
   private void verifyAckSend(long timeToWait, final boolean expectedAckSend) {
-    WaitCriterion wc = new WaitCriterion() {
-      public boolean done() {
-        return expectedAckSend == seo.getAckSend();
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          public boolean done() {
+            return expectedAckSend == seo.getAckSend();
+          }
 
-      public String description() {
-        return "ack flag never became " + expectedAckSend;
-      }
-    };
+          public String description() {
+            return "ack flag never became " + expectedAckSend;
+          }
+        };
     Wait.waitForCriterion(wc, timeToWait, 1000, true);
   }
 
   private void verifyExpiry(long timeToWait) {
-    WaitCriterion wc = new WaitCriterion() {
-      public boolean done() {
-        return 0 == proxy.getThreadIdToSequenceIdMap().size();
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          public boolean done() {
+            return 0 == proxy.getThreadIdToSequenceIdMap().size();
+          }
 
-      public String description() {
-        return "Entry never expired";
-      }
-    };
+          public String description() {
+            return "Entry never expired";
+          }
+        };
     Wait.waitForCriterion(wc, timeToWait * 2, 200, true);
   }
-
 }

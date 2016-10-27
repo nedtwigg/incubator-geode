@@ -45,10 +45,10 @@ public class AsyncEventQueueCreation implements AsyncEventQueue {
   private OrderPolicy orderPolicy = OrderPolicy.KEY;
   private boolean forwardExpirationDestroy = false;
 
-  public AsyncEventQueueCreation() {
-  }
+  public AsyncEventQueueCreation() {}
 
-  public AsyncEventQueueCreation(String id, GatewaySenderAttributes senderAttrs, AsyncEventListener eventListener) {
+  public AsyncEventQueueCreation(
+      String id, GatewaySenderAttributes senderAttrs, AsyncEventListener eventListener) {
     this.id = id;
     this.batchSize = senderAttrs.batchSize;
     this.batchTimeInterval = senderAttrs.batchTimeInterval;
@@ -196,20 +196,15 @@ public class AsyncEventQueueCreation implements AsyncEventQueue {
     return 0;
   }
 
-  public void start() {
-  };
+  public void start() {};
 
-  public void stop() {
-  };
+  public void stop() {};
 
-  public void destroy() {
-  };
+  public void destroy() {};
 
-  public void pause() {
-  };
+  public void pause() {};
 
-  public void resume() {
-  }
+  public void resume() {}
 
   public boolean isParallel() {
     return this.isParallel;

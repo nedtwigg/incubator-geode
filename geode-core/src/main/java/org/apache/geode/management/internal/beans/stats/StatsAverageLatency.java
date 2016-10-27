@@ -18,10 +18,7 @@ package org.apache.geode.management.internal.beans.stats;
 
 import org.apache.geode.management.internal.beans.MetricsCalculator;
 
-/**
- * 
- *
- */
+/** */
 public class StatsAverageLatency {
 
   private String numberKey;
@@ -30,7 +27,8 @@ public class StatsAverageLatency {
 
   private MBeanStatsMonitor monitor;
 
-  public StatsAverageLatency(String numberKey, StatType numKeyType, String timeKey, MBeanStatsMonitor monitor) {
+  public StatsAverageLatency(
+      String numberKey, StatType numKeyType, String timeKey, MBeanStatsMonitor monitor) {
     this.numberKey = numberKey;
     this.numKeyType = numKeyType;
     this.timeKey = timeKey;
@@ -47,7 +45,5 @@ public class StatsAverageLatency {
       long timeCounter = monitor.getStatistic(timeKey).longValue();
       return MetricsCalculator.getAverageLatency(numberCounter, timeCounter);
     }
-
   }
-
 }

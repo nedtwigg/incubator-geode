@@ -44,10 +44,9 @@ import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Bug40299 DUNIT Test: The Clear operation during a NetSearchMessage.doGet() in progress can 
- * cause DiskAccessException by accessing cleared oplogs and
- * eventually destroy region.
- * The Test verifies that fix prevents this.
+ * Bug40299 DUNIT Test: The Clear operation during a NetSearchMessage.doGet() in progress can cause
+ * DiskAccessException by accessing cleared oplogs and eventually destroy region. The Test verifies
+ * that fix prevents this.
  */
 @Category(DistributedTest.class)
 public class Bug40299DUnitTest extends JUnit4CacheTestCase {
@@ -75,117 +74,126 @@ public class Bug40299DUnitTest extends JUnit4CacheTestCase {
 
   /**
    * This method is used to create Cache in VM0
-   * 
+   *
    * @return CacheSerializableRunnable
    */
-
   private CacheSerializableRunnable createCacheForVM0() {
-    SerializableRunnable createCache = new CacheSerializableRunnable("createCache") {
-      public void run2() {
-        try {
+    SerializableRunnable createCache =
+        new CacheSerializableRunnable("createCache") {
+          public void run2() {
+            try {
 
-          distributedSystem = (new Bug40299DUnitTest()).getSystem(props);
-          assertTrue(distributedSystem != null);
-          cache = CacheFactory.create(distributedSystem);
-          assertTrue(cache != null);
-          AttributesFactory factory = new AttributesFactory();
-          factory.setScope(Scope.DISTRIBUTED_ACK);
-          File dir = new File("testingDirectoryDefault");
-          dir.mkdir();
-          dir.deleteOnExit();
-          File[] dirs = { dir };
-          factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-          factory.setDiskSynchronous(false);
-          factory.setDiskStoreName(cache.createDiskStoreFactory().setDiskDirsAndSizes(dirs, new int[] { Integer.MAX_VALUE }).setQueueSize(1).setMaxOplogSize(60) // does the test want 60 bytes or 60M?
-              .setAutoCompact(false).setTimeInterval(1000).create("Bug40299DUnitTest").getName());
-          factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(2, EvictionAction.OVERFLOW_TO_DISK));
-          RegionAttributes attr = factory.create();
-          cache.createRegion(regionName, attr);
-        } catch (Exception ex) {
-          ex.printStackTrace();
-          fail("Error Creating cache / region ");
-        }
-      }
-    };
+              distributedSystem = (new Bug40299DUnitTest()).getSystem(props);
+              assertTrue(distributedSystem != null);
+              cache = CacheFactory.create(distributedSystem);
+              assertTrue(cache != null);
+              AttributesFactory factory = new AttributesFactory();
+              factory.setScope(Scope.DISTRIBUTED_ACK);
+              File dir = new File("testingDirectoryDefault");
+              dir.mkdir();
+              dir.deleteOnExit();
+              File[] dirs = {dir};
+              factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+              factory.setDiskSynchronous(false);
+              factory.setDiskStoreName(
+                  cache
+                      .createDiskStoreFactory()
+                      .setDiskDirsAndSizes(dirs, new int[] {Integer.MAX_VALUE})
+                      .setQueueSize(1)
+                      .setMaxOplogSize(60) // does the test want 60 bytes or 60M?
+                      .setAutoCompact(false)
+                      .setTimeInterval(1000)
+                      .create("Bug40299DUnitTest")
+                      .getName());
+              factory.setEvictionAttributes(
+                  EvictionAttributes.createLRUEntryAttributes(2, EvictionAction.OVERFLOW_TO_DISK));
+              RegionAttributes attr = factory.create();
+              cache.createRegion(regionName, attr);
+            } catch (Exception ex) {
+              ex.printStackTrace();
+              fail("Error Creating cache / region ");
+            }
+          }
+        };
     return (CacheSerializableRunnable) createCache;
   }
 
   /**
    * This method puts in 7 in the Region
-   * 
+   *
    * @return CacheSerializableRunnable
    */
   private CacheSerializableRunnable putSomeEntries() {
-    SerializableRunnable puts = new CacheSerializableRunnable("putSomeEntries") {
-      public void run2() {
-        assertTrue("Cache is found as null ", cache != null);
-        Region rgn = cache.getRegion(regionName);
-        for (int i = 0; i < 7; i++) {
-          rgn.put("key" + i, new Long(i));
-        }
-      }
-    };
+    SerializableRunnable puts =
+        new CacheSerializableRunnable("putSomeEntries") {
+          public void run2() {
+            assertTrue("Cache is found as null ", cache != null);
+            Region rgn = cache.getRegion(regionName);
+            for (int i = 0; i < 7; i++) {
+              rgn.put("key" + i, new Long(i));
+            }
+          }
+        };
     return (CacheSerializableRunnable) puts;
   }
 
   /**
    * This method does concurrent NetSearch.doGet with clear in the Region
-   * 
+   *
    * @return CacheSerializableRunnable
    */
   private CacheSerializableRunnable concurrentNetSearchGetAndClear() {
-    SerializableRunnable getAndClear = new CacheSerializableRunnable("concurrentNetSearchGetAndClear") {
-      public void run2() {
-        assertTrue("Cache is found as null ", cache != null);
-        Region rgn = cache.getRegion(regionName);
-        assertTrue("Region size expected to be 7 but is " + rgn.size(), rgn.size() == 7);
+    SerializableRunnable getAndClear =
+        new CacheSerializableRunnable("concurrentNetSearchGetAndClear") {
+          public void run2() {
+            assertTrue("Cache is found as null ", cache != null);
+            Region rgn = cache.getRegion(regionName);
+            assertTrue("Region size expected to be 7 but is " + rgn.size(), rgn.size() == 7);
 
-        Thread getThread1 = null;
-        LocalRegion lr = (LocalRegion) rgn;
-        lr.getDiskRegion().acquireWriteLock();
-        // got writeLock from diskregion
-        try {
-          getThread1 = new Thread(new getThread((LocalRegion) rgn));
+            Thread getThread1 = null;
+            LocalRegion lr = (LocalRegion) rgn;
+            lr.getDiskRegion().acquireWriteLock();
+            // got writeLock from diskregion
+            try {
+              getThread1 = new Thread(new getThread((LocalRegion) rgn));
 
-          // start getThread
-          getThread1.start();
+              // start getThread
+              getThread1.start();
 
-          // sleep for a while to allow getThread to wait for readLock.
-          Thread.sleep(1000);
+              // sleep for a while to allow getThread to wait for readLock.
+              Thread.sleep(1000);
 
-          //This test appears to be testing a problem with the non-RVV
-          //based clear. So we'll use that functionality here.
-          //Region.clear uses an RVV, and will deadlock if called while
-          //the write lock is held.
-          RegionEventImpl regionEvent = new RegionEventImpl(lr, Operation.REGION_CLEAR, null, false, lr.getMyId(), lr.generateEventID());
-          // clearRegion to remove entry that getThread has reference of
-          lr.cmnClearRegion(regionEvent, true, false);
-        } catch (InterruptedException e) {
-          if (cache.getLogger().fineEnabled()) {
-            cache.getLogger().fine("InterruptedException in run of localClearThread");
+              //This test appears to be testing a problem with the non-RVV
+              //based clear. So we'll use that functionality here.
+              //Region.clear uses an RVV, and will deadlock if called while
+              //the write lock is held.
+              RegionEventImpl regionEvent =
+                  new RegionEventImpl(
+                      lr, Operation.REGION_CLEAR, null, false, lr.getMyId(), lr.generateEventID());
+              // clearRegion to remove entry that getThread has reference of
+              lr.cmnClearRegion(regionEvent, true, false);
+            } catch (InterruptedException e) {
+              if (cache.getLogger().fineEnabled()) {
+                cache.getLogger().fine("InterruptedException in run of localClearThread");
+              }
+            } finally {
+              ((LocalRegion) rgn).getDiskRegion().releaseWriteLock();
+            }
+            // allow getThread to join to set getAfterClearSuccessful
+            try {
+              getThread1.join();
+            } catch (InterruptedException ie) {
+              if (cache.getLogger().fineEnabled()) {
+                cache.getLogger().fine("InterruptedException in join of getThread");
+              }
+            }
           }
-        } finally {
-          ((LocalRegion) rgn).getDiskRegion().releaseWriteLock();
-        }
-        // allow getThread to join to set getAfterClearSuccessful
-        try {
-          getThread1.join();
-        } catch (InterruptedException ie) {
-          if (cache.getLogger().fineEnabled()) {
-            cache.getLogger().fine("InterruptedException in join of getThread");
-          }
-        }
-      }
-    };
+        };
 
     return (CacheSerializableRunnable) getAndClear;
   }
 
-  /**
-   * 
-   * getThread
-   * 
-   */
+  /** getThread */
   protected class getThread implements Runnable {
     LocalRegion region = null;
 
@@ -204,53 +212,53 @@ public class Bug40299DUnitTest extends JUnit4CacheTestCase {
 
   /**
    * This method verifies that region is not destroyed
-   * 
+   *
    * @return CacheSerializableRunnable
    */
   private CacheSerializableRunnable verifyRegionNotDestroyed() {
-    SerializableRunnable verifyR = new CacheSerializableRunnable("verifyRegionNotDestroyed") {
-      public void run2() {
-        assertTrue("Cache is found as null ", cache != null);
-        Region region = cache.getRegion(regionName);
-        assertTrue("Region was destroyed", region != null);
-      }
-    };
+    SerializableRunnable verifyR =
+        new CacheSerializableRunnable("verifyRegionNotDestroyed") {
+          public void run2() {
+            assertTrue("Cache is found as null ", cache != null);
+            Region region = cache.getRegion(regionName);
+            assertTrue("Region was destroyed", region != null);
+          }
+        };
     return (CacheSerializableRunnable) verifyR;
   }
 
   /**
    * This method destroys the Region
-   * 
+   *
    * @return CacheSerializableRunnable
    */
   private CacheSerializableRunnable destroyRegion() {
-    SerializableRunnable destroyR = new CacheSerializableRunnable("destroyRegion") {
-      public void run2() {
-        try {
-          assertTrue("Cache is found as null ", cache != null);
+    SerializableRunnable destroyR =
+        new CacheSerializableRunnable("destroyRegion") {
+          public void run2() {
+            try {
+              assertTrue("Cache is found as null ", cache != null);
 
-          Region rgn = cache.getRegion(regionName);
-          rgn.localDestroyRegion();
-          cache.close();
-        } catch (Exception ex) {
+              Region rgn = cache.getRegion(regionName);
+              rgn.localDestroyRegion();
+              cache.close();
+            } catch (Exception ex) {
 
-        }
-      }
-    };
+            }
+          }
+        };
     return (CacheSerializableRunnable) destroyR;
   }
 
   /**
-   * The Clear operation during a NetSearchMessage.doGet() in progress can 
-   * cause DiskAccessException by accessing cleared oplogs and eventually
-   * destroy region.
-   * The Test verifies that fix prevents this.
+   * The Clear operation during a NetSearchMessage.doGet() in progress can cause DiskAccessException
+   * by accessing cleared oplogs and eventually destroy region. The Test verifies that fix prevents
+   * this.
    */
-
   @Test
   public void testQueryGetWithClear() {
     IgnoredException.addIgnoredException("Entry has been cleared and is not present on disk");
-    // create region in VM0 
+    // create region in VM0
     vm0.invoke(createCacheForVM0());
     // Do puts to region.
     vm0.invoke(putSomeEntries());

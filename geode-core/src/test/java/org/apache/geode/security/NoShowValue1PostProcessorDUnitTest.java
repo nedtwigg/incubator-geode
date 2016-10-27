@@ -33,7 +33,7 @@ import org.apache.geode.cache.query.SelectResults;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class NoShowValue1PostProcessorDUnitTest extends AbstractSecureServerDUnitTest {
 
   public NoShowValue1PostProcessorDUnitTest() {
@@ -46,41 +46,41 @@ public class NoShowValue1PostProcessorDUnitTest extends AbstractSecureServerDUni
     keys.add("key1");
     keys.add("key2");
 
-    client1.invoke(() -> {
-      ClientCache cache = createClientCache("super-user", "1234567", serverPort);
-      Region region = cache.getRegion(REGION_NAME);
+    client1.invoke(
+        () -> {
+          ClientCache cache = createClientCache("super-user", "1234567", serverPort);
+          Region region = cache.getRegion(REGION_NAME);
 
-      // post process for get
-      assertEquals("value3", region.get("key3"));
+          // post process for get
+          assertEquals("value3", region.get("key3"));
 
-      assertNull(region.get("key1"));
+          assertNull(region.get("key1"));
 
-      // post processs for getAll
-      Map values = region.getAll(keys);
-      assertEquals(2, values.size());
-      assertEquals("value2", values.get("key2"));
-      assertNull(values.get("key1"));
+          // post processs for getAll
+          Map values = region.getAll(keys);
+          assertEquals(2, values.size());
+          assertEquals("value2", values.get("key2"));
+          assertNull(values.get("key1"));
 
-      // post process for query
-      String query = "select * from /AuthRegion";
-      SelectResults result = region.query(query);
-      System.out.println("query result: " + result);
-      assertEquals(5, result.size());
-      assertTrue(result.contains("value0"));
-      assertFalse(result.contains("value1"));
-      assertTrue(result.contains("value2"));
-      assertTrue(result.contains("value3"));
-      assertTrue(result.contains("value4"));
+          // post process for query
+          String query = "select * from /AuthRegion";
+          SelectResults result = region.query(query);
+          System.out.println("query result: " + result);
+          assertEquals(5, result.size());
+          assertTrue(result.contains("value0"));
+          assertFalse(result.contains("value1"));
+          assertTrue(result.contains("value2"));
+          assertTrue(result.contains("value3"));
+          assertTrue(result.contains("value4"));
 
-      Pool pool = PoolManager.find(region);
-      result = (SelectResults) pool.getQueryService().newQuery(query).execute();
-      System.out.println("query result: " + result);
-      assertTrue(result.contains("value0"));
-      assertFalse(result.contains("value1"));
-      assertTrue(result.contains("value2"));
-      assertTrue(result.contains("value3"));
-      assertTrue(result.contains("value4"));
-    });
+          Pool pool = PoolManager.find(region);
+          result = (SelectResults) pool.getQueryService().newQuery(query).execute();
+          System.out.println("query result: " + result);
+          assertTrue(result.contains("value0"));
+          assertFalse(result.contains("value1"));
+          assertTrue(result.contains("value2"));
+          assertTrue(result.contains("value3"));
+          assertTrue(result.contains("value4"));
+        });
   }
-
 }

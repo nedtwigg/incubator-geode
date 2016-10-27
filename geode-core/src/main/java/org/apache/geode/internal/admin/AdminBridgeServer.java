@@ -19,14 +19,11 @@ package org.apache.geode.internal.admin;
 import org.apache.geode.cache.server.CacheServer;
 
 /**
- * A representation of <code>CacheServer</code> that is used for
- * administration. 
+ * A representation of <code>CacheServer</code> that is used for administration.
  *
  * @since GemFire 4.0
  */
 public interface AdminBridgeServer extends CacheServer {
-  /**
-   * Returns the VM-unique id of this cache server
-   */
+  /** Returns the VM-unique id of this cache server */
   public int getId();
 }

@@ -41,13 +41,11 @@ public class SortedResultMapImpl implements ResultMap {
   @Override
   public void put(Object key, Object value) {
     map.put(toDeserializable(key), toDeserializable(value));
-
   }
 
   @Override
   public void remove(Object key) {
     map.remove(key);
-
   }
 
   @Override
@@ -65,7 +63,8 @@ public class SortedResultMapImpl implements ResultMap {
   }
 
   @Override
-  public CloseableIterator<Entry> iterator(Object start, boolean startInclusive, Object end, boolean endInclusive) {
+  public CloseableIterator<Entry> iterator(
+      Object start, boolean startInclusive, Object end, boolean endInclusive) {
     return new IterImpl(map.subMap(start, startInclusive, end, endInclusive).entrySet().iterator());
   }
 
@@ -82,7 +81,8 @@ public class SortedResultMapImpl implements ResultMap {
   }
 
   @Override
-  public CloseableIterator<CachedDeserializable> keyIterator(Object start, boolean startInclusive, Object end, boolean endInclusive) {
+  public CloseableIterator<CachedDeserializable> keyIterator(
+      Object start, boolean startInclusive, Object end, boolean endInclusive) {
     return new ItrAdapter(map.subMap(start, startInclusive, end, endInclusive).keySet().iterator());
   }
 
@@ -100,7 +100,8 @@ public class SortedResultMapImpl implements ResultMap {
     return new ItrAdapter(map.values().iterator());
   }
 
-  public CloseableIterator<CachedDeserializable> valueIterator(Object start, boolean startInclusive) {
+  public CloseableIterator<CachedDeserializable> valueIterator(
+      Object start, boolean startInclusive) {
     return new ItrAdapter(map.tailMap(start, startInclusive).values().iterator());
   }
 
@@ -128,7 +129,6 @@ public class SortedResultMapImpl implements ResultMap {
     public CachedDeserializable getValue() {
       return value;
     }
-
   }
 
   private CachedDeserializable toDeserializable(Object value) {
@@ -155,13 +155,13 @@ public class SortedResultMapImpl implements ResultMap {
     @Override
     public Entry next() {
       java.util.Map.Entry<Object, Object> next = iterator.next();
-      return new EntryImpl((CachedDeserializable) next.getKey(), (CachedDeserializable) next.getValue());
+      return new EntryImpl(
+          (CachedDeserializable) next.getKey(), (CachedDeserializable) next.getValue());
     }
 
     @Override
     public void remove() {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
@@ -169,11 +169,9 @@ public class SortedResultMapImpl implements ResultMap {
       //do nothing
 
     }
-
   }
 
   public boolean containsKey(Object e) {
     return map.containsKey(e);
   }
-
 }

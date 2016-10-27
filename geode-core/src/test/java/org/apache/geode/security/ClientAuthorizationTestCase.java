@@ -69,8 +69,8 @@ import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 
 /**
- * Base class for tests for authorization from client to server. It contains
- * utility functions for the authorization tests from client to server.
+ * Base class for tests for authorization from client to server. It contains utility functions for
+ * the authorization tests from client to server.
  *
  * @since GemFire 5.5
  */
@@ -86,13 +86,24 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
   protected static final String regionName = REGION_NAME; // TODO: remove
   protected static final String SUBREGION_NAME = "AuthSubregion";
 
-  private static final String[] serverIgnoredExceptions = { "Connection refused", AuthenticationRequiredException.class.getName(), AuthenticationFailedException.class.getName(), NotAuthorizedException.class.getName(), GemFireSecurityException.class.getName(), RegionDestroyedException.class.getName(), ClassNotFoundException.class.getName() };
+  private static final String[] serverIgnoredExceptions = {
+    "Connection refused",
+    AuthenticationRequiredException.class.getName(),
+    AuthenticationFailedException.class.getName(),
+    NotAuthorizedException.class.getName(),
+    GemFireSecurityException.class.getName(),
+    RegionDestroyedException.class.getName(),
+    ClassNotFoundException.class.getName()
+  };
 
-  private static final String[] clientIgnoredExceptions = { AuthenticationFailedException.class.getName(), NotAuthorizedException.class.getName(), RegionDestroyedException.class.getName() };
+  private static final String[] clientIgnoredExceptions = {
+    AuthenticationFailedException.class.getName(),
+    NotAuthorizedException.class.getName(),
+    RegionDestroyedException.class.getName()
+  };
 
   @Override
-  public final void preSetUp() throws Exception {
-  }
+  public final void preSetUp() throws Exception {}
 
   @Override
   public final void postSetUp() throws Exception {
@@ -139,11 +150,9 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
     return new String[] {};
   }
 
-  protected void preSetUpClientAuthorizationTestBase() throws Exception {
-  }
+  protected void preSetUpClientAuthorizationTestBase() throws Exception {}
 
-  protected void postSetUpClientAuthorizationTestBase() throws Exception {
-  }
+  protected void postSetUpClientAuthorizationTestBase() throws Exception {}
 
   @Override
   public final void preTearDown() throws Exception {
@@ -153,8 +162,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
   }
 
   @Override
-  public final void postTearDown() throws Exception {
-  }
+  public final void postTearDown() throws Exception {}
 
   private final void tearDownClientAuthorizationTestBase() throws Exception {
     // close the clients first
@@ -165,13 +173,16 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
     server2.invoke(() -> closeCache());
   }
 
-  protected void preTearDownClientAuthorizationTestBase() throws Exception {
-  }
+  protected void preTearDownClientAuthorizationTestBase() throws Exception {}
 
-  protected void postTearDownClientAuthorizationTestBase() throws Exception {
-  }
+  protected void postTearDownClientAuthorizationTestBase() throws Exception {}
 
-  protected static Properties buildProperties(final String authenticator, final String accessor, final boolean isAccessorPP, final Properties extraAuthProps, final Properties extraAuthzProps) {
+  protected static Properties buildProperties(
+      final String authenticator,
+      final String accessor,
+      final boolean isAccessorPP,
+      final Properties extraAuthProps,
+      final Properties extraAuthzProps) {
     Properties authProps = new Properties();
     if (authenticator != null) {
       authProps.setProperty(SECURITY_CLIENT_AUTHENTICATOR, authenticator);
@@ -183,21 +194,28 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
         authProps.setProperty(SECURITY_CLIENT_ACCESSOR, accessor);
       }
     }
-    return concatProperties(new Properties[] { authProps, extraAuthProps, extraAuthzProps });
+    return concatProperties(new Properties[] {authProps, extraAuthProps, extraAuthzProps});
   }
 
-  protected static Integer createCacheServer(int locatorPort, final Properties authProps, final Properties javaProps) {
+  protected static Integer createCacheServer(
+      int locatorPort, final Properties authProps, final Properties javaProps) {
     if (locatorPort == 0) {
       locatorPort = getRandomAvailablePort(SOCKET);
     }
-    return SecurityTestUtils.createCacheServer(authProps, javaProps, locatorPort, null, 0, true, NO_EXCEPTION);
+    return SecurityTestUtils.createCacheServer(
+        authProps, javaProps, locatorPort, null, 0, true, NO_EXCEPTION);
   }
 
-  protected static int createCacheServer(int locatorPort, final int serverPort, final Properties authProps, final Properties javaProps) {
+  protected static int createCacheServer(
+      int locatorPort,
+      final int serverPort,
+      final Properties authProps,
+      final Properties javaProps) {
     if (locatorPort == 0) {
       locatorPort = getRandomAvailablePort(SOCKET);
     }
-    return SecurityTestUtils.createCacheServer(authProps, javaProps, locatorPort, null, serverPort, true, NO_EXCEPTION);
+    return SecurityTestUtils.createCacheServer(
+        authProps, javaProps, locatorPort, null, serverPort, true, NO_EXCEPTION);
   }
 
   protected static Region getRegion() {
@@ -228,7 +246,9 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
     return str;
   }
 
-  protected static void doOp(OperationCode op, final int[] indices, final int flagsI, final int expectedResult) throws InterruptedException {
+  protected static void doOp(
+      OperationCode op, final int[] indices, final int flagsI, final int expectedResult)
+      throws InterruptedException {
     boolean operationOmitted = false;
     final int flags = flagsI;
     Region region = getRegion();
@@ -284,7 +304,15 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
     }
 
     final int numOps = indices.length;
-    System.out.println("Got doOp for op: " + op.toString() + ", numOps: " + numOps + ", indices: " + indicesToString(indices) + ", expect: " + expectedResult);
+    System.out.println(
+        "Got doOp for op: "
+            + op.toString()
+            + ", numOps: "
+            + numOps
+            + ", indices: "
+            + indicesToString(indices)
+            + ", expect: "
+            + expectedResult);
     boolean exceptionOccured = false;
     boolean breakLoop = false;
 
@@ -317,8 +345,10 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
 
               // local invalidate some KEYS to force fetch of those KEYS from server
               if ((flags & OpFlags.CHECK_NOKEY) > 0) {
-                AbstractRegionEntry entry = (AbstractRegionEntry) ((LocalRegion) region).getRegionEntry(searchKey);
-                System.out.println("" + keyNum + ": key is " + searchKey + " and entry is " + entry);
+                AbstractRegionEntry entry =
+                    (AbstractRegionEntry) ((LocalRegion) region).getRegionEntry(searchKey);
+                System.out.println(
+                    "" + keyNum + ": key is " + searchKey + " and entry is " + entry);
                 assertFalse(region.containsKey(searchKey));
               } else {
                 if (keyNumIndex % 2 == 1) {
@@ -346,20 +376,23 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
           }
 
           if ((flags & OpFlags.LOCAL_OP) > 0) {
-            Callable<Boolean> condition = new Callable<Boolean>() {
-              private Region region;
+            Callable<Boolean> condition =
+                new Callable<Boolean>() {
+                  private Region region;
 
-              @Override
-              public Boolean call() throws Exception {
-                Object value = getLocalValue(region, key);
-                return (flags & OpFlags.CHECK_FAIL) > 0 ? !expectedVal.equals(value) : expectedVal.equals(value);
-              }
+                  @Override
+                  public Boolean call() throws Exception {
+                    Object value = getLocalValue(region, key);
+                    return (flags & OpFlags.CHECK_FAIL) > 0
+                        ? !expectedVal.equals(value)
+                        : expectedVal.equals(value);
+                  }
 
-              public Callable<Boolean> init(Region region) {
-                this.region = region;
-                return this;
-              }
-            }.init(region);
+                  public Callable<Boolean> init(Region region) {
+                    this.region = region;
+                    return this;
+                  }
+                }.init(region);
             waitForCondition(condition);
 
             value = getLocalValue(region, key);
@@ -380,7 +413,9 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
             if ((flags & OpFlags.CHECK_NOKEY) > 0) {
               assertFalse(region.containsKey(key));
             } else {
-              assertTrue(region.containsKey(key) || ((LocalRegion) region).getRegionEntry(key).isTombstone());
+              assertTrue(
+                  region.containsKey(key)
+                      || ((LocalRegion) region).getRegionEntry(key).isTombstone());
               region.localInvalidate(key);
             }
             value = region.get(key);
@@ -527,7 +562,8 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
 
         } else if (op.isQuery()) {
           breakLoop = true;
-          SelectResults queryResults = region.query("SELECT DISTINCT * FROM " + region.getFullPath());
+          SelectResults queryResults =
+              region.query("SELECT DISTINCT * FROM " + region.getFullPath());
           assertNotNull(queryResults);
           Set queryResultSet = queryResults.asSet();
           if ((flags & OpFlags.CHECK_FAIL) == 0) {
@@ -555,22 +591,24 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
 
           if ((flags & OpFlags.LOCAL_OP) > 0) {
             // Interpret this as testing results using CqListener
-            final AuthzCqListener listener = (AuthzCqListener) cqQuery.getCqAttributes().getCqListener();
-            WaitCriterion ev = new WaitCriterion() {
-              @Override
-              public boolean done() {
-                if ((flags & OpFlags.CHECK_FAIL) > 0) {
-                  return 0 == listener.getNumUpdates();
-                } else {
-                  return numOps == listener.getNumUpdates();
-                }
-              }
+            final AuthzCqListener listener =
+                (AuthzCqListener) cqQuery.getCqAttributes().getCqListener();
+            WaitCriterion ev =
+                new WaitCriterion() {
+                  @Override
+                  public boolean done() {
+                    if ((flags & OpFlags.CHECK_FAIL) > 0) {
+                      return 0 == listener.getNumUpdates();
+                    } else {
+                      return numOps == listener.getNumUpdates();
+                    }
+                  }
 
-              @Override
-              public String description() {
-                return null;
-              }
-            };
+                  @Override
+                  public String description() {
+                    return null;
+                  }
+                };
             waitForCriterion(ev, 3 * 1000, 200, true);
 
             if ((flags & OpFlags.CHECK_FAIL) > 0) {
@@ -650,7 +688,8 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
                 DynamicRegionFactory.get().destroyDynamicRegion(region.getFullPath());
               } catch (RegionDestroyedException ex) {
                 // harmless to ignore this
-                System.out.println("doOp: sub-region " + region.getFullPath() + " already destroyed");
+                System.out.println(
+                    "doOp: sub-region " + region.getFullPath() + " already destroyed");
                 operationOmitted = true;
               }
             } else {
@@ -664,30 +703,62 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
 
         if (expectedResult != NO_EXCEPTION) {
           if (!operationOmitted && !op.isUnregisterInterest()) {
-            fail("Expected an exception while performing operation op =" + op + "flags = " + OpFlags.description(flags));
+            fail(
+                "Expected an exception while performing operation op ="
+                    + op
+                    + "flags = "
+                    + OpFlags.description(flags));
           }
         }
 
       } catch (Exception ex) {
         exceptionOccured = true;
-        if ((ex instanceof ServerConnectivityException || ex instanceof QueryInvocationTargetException || ex instanceof CqException) && (expectedResult == NOTAUTHZ_EXCEPTION) && (ex.getCause() instanceof NotAuthorizedException)) {
-          System.out.println("doOp: Got expected NotAuthorizedException when doing operation [" + op + "] with flags " + OpFlags.description(flags) + ": " + ex.getCause());
+        if ((ex instanceof ServerConnectivityException
+                || ex instanceof QueryInvocationTargetException
+                || ex instanceof CqException)
+            && (expectedResult == NOTAUTHZ_EXCEPTION)
+            && (ex.getCause() instanceof NotAuthorizedException)) {
+          System.out.println(
+              "doOp: Got expected NotAuthorizedException when doing operation ["
+                  + op
+                  + "] with flags "
+                  + OpFlags.description(flags)
+                  + ": "
+                  + ex.getCause());
           continue;
         } else if (expectedResult == OTHER_EXCEPTION) {
           System.out.println("doOp: Got expected exception when doing operation: " + ex.toString());
           continue;
         } else {
-          fail("doOp: Got unexpected exception when doing operation. Policy = " + policy + " flags = " + OpFlags.description(flags), ex);
+          fail(
+              "doOp: Got unexpected exception when doing operation. Policy = "
+                  + policy
+                  + " flags = "
+                  + OpFlags.description(flags),
+              ex);
         }
       }
     }
     if (!exceptionOccured && !operationOmitted && expectedResult != NO_EXCEPTION) {
-      fail("Expected an exception while performing operation: " + op + " flags = " + OpFlags.description(flags));
+      fail(
+          "Expected an exception while performing operation: "
+              + op
+              + " flags = "
+              + OpFlags.description(flags));
     }
   }
 
-  protected void executeOpBlock(final List<OperationWithAction> opBlock, final int port1, final int port2, final String authInit, final Properties extraAuthProps, final Properties extraAuthzProps, final TestCredentialGenerator credentialGenerator, final Random random) throws InterruptedException {
-    for (Iterator<OperationWithAction> opIter = opBlock.iterator(); opIter.hasNext();) {
+  protected void executeOpBlock(
+      final List<OperationWithAction> opBlock,
+      final int port1,
+      final int port2,
+      final String authInit,
+      final Properties extraAuthProps,
+      final Properties extraAuthzProps,
+      final TestCredentialGenerator credentialGenerator,
+      final Random random)
+      throws InterruptedException {
+    for (Iterator<OperationWithAction> opIter = opBlock.iterator(); opIter.hasNext(); ) {
       // Start client with valid credentials as specified in OperationWithAction
       OperationWithAction currentOp = opIter.next();
       OperationCode opCode = currentOp.getOperationCode();
@@ -697,21 +768,25 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
       boolean useThisVM = false;
 
       switch (clientNum) {
-      case 1:
-        clientVM = client1;
-        break;
-      case 2:
-        clientVM = client2;
-        break;
-      case 3:
-        useThisVM = true;
-        break;
-      default:
-        fail("executeOpBlock: Unknown client number " + clientNum);
-        break;
+        case 1:
+          clientVM = client1;
+          break;
+        case 2:
+          clientVM = client2;
+          break;
+        case 3:
+          useThisVM = true;
+          break;
+        default:
+          fail("executeOpBlock: Unknown client number " + clientNum);
+          break;
       }
 
-      System.out.println("executeOpBlock: performing operation number [" + currentOp.getOpNum() + "]: " + currentOp);
+      System.out.println(
+          "executeOpBlock: performing operation number ["
+              + currentOp.getOpNum()
+              + "]: "
+              + currentOp);
       if ((opFlags & OpFlags.USE_OLDCONN) == 0) {
         Properties opCredentials;
         int newRnd = random.nextInt(100) + 1;
@@ -727,22 +802,55 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
         final Properties javaProps = cGen == null ? null : cGen.getJavaProperties();
 
         if ((opFlags & OpFlags.CHECK_NOTAUTHZ) > 0 || (opFlags & OpFlags.USE_NOTAUTHZ) > 0) {
-          opCredentials = credentialGenerator.getDisallowedCredentials(new OperationCode[] { authOpCode }, new String[] { currentRegionName }, indices, newRnd);
+          opCredentials =
+              credentialGenerator.getDisallowedCredentials(
+                  new OperationCode[] {authOpCode},
+                  new String[] {currentRegionName},
+                  indices,
+                  newRnd);
           credentialsTypeStr = " unauthorized " + authOpCode;
         } else {
-          opCredentials = credentialGenerator.getAllowedCredentials(new OperationCode[] { opCode, authOpCode }, new String[] { currentRegionName }, indices, newRnd);
+          opCredentials =
+              credentialGenerator.getAllowedCredentials(
+                  new OperationCode[] {opCode, authOpCode},
+                  new String[] {currentRegionName},
+                  indices,
+                  newRnd);
           credentialsTypeStr = " authorized " + authOpCode;
         }
 
-        Properties clientProps = concatProperties(new Properties[] { opCredentials, extraAuthProps, extraAuthzProps });
+        Properties clientProps =
+            concatProperties(new Properties[] {opCredentials, extraAuthProps, extraAuthzProps});
         // Start the client with valid credentials but allowed or disallowed to perform an operation
-        System.out.println("executeOpBlock: For client" + clientNum + credentialsTypeStr + " credentials: " + opCredentials);
+        System.out.println(
+            "executeOpBlock: For client"
+                + clientNum
+                + credentialsTypeStr
+                + " credentials: "
+                + opCredentials);
         boolean setupDynamicRegionFactory = (opFlags & OpFlags.ENABLE_DRF) > 0;
 
         if (useThisVM) {
-          SecurityTestUtils.createCacheClientWithDynamicRegion(authInit, clientProps, javaProps, new int[] { port1, port2 }, 0, setupDynamicRegionFactory, NO_EXCEPTION);
+          SecurityTestUtils.createCacheClientWithDynamicRegion(
+              authInit,
+              clientProps,
+              javaProps,
+              new int[] {port1, port2},
+              0,
+              setupDynamicRegionFactory,
+              NO_EXCEPTION);
         } else {
-          clientVM.invoke("SecurityTestUtils.createCacheClientWithDynamicRegion", () -> SecurityTestUtils.createCacheClientWithDynamicRegion(authInit, clientProps, javaProps, new int[] { port1, port2 }, 0, setupDynamicRegionFactory, NO_EXCEPTION));
+          clientVM.invoke(
+              "SecurityTestUtils.createCacheClientWithDynamicRegion",
+              () ->
+                  SecurityTestUtils.createCacheClientWithDynamicRegion(
+                      authInit,
+                      clientProps,
+                      javaProps,
+                      new int[] {port1, port2},
+                      0,
+                      setupDynamicRegionFactory,
+                      NO_EXCEPTION));
         }
       }
 
@@ -760,7 +868,11 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
         doOp(opCode, currentOp.getIndices(), new Integer(opFlags), new Integer(expectedResult));
       } else {
         int[] indices = currentOp.getIndices();
-        clientVM.invoke("ClientAuthorizationTestCase.doOp", () -> ClientAuthorizationTestCase.doOp(opCode, indices, new Integer(opFlags), new Integer(expectedResult)));
+        clientVM.invoke(
+            "ClientAuthorizationTestCase.doOp",
+            () ->
+                ClientAuthorizationTestCase.doOp(
+                    opCode, indices, new Integer(opFlags), new Integer(expectedResult)));
       }
     }
   }
@@ -794,7 +906,8 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
     return generators;
   }
 
-  protected void runOpsWithFailOver(final OperationWithAction[] opCodes, final String testName) throws InterruptedException {
+  protected void runOpsWithFailOver(final OperationWithAction[] opCodes, final String testName)
+      throws InterruptedException {
     AuthzCredentialGenerator gen = getXmlAuthzGenerator();
     CredentialGenerator cGen = gen.getCredentialGenerator();
     Properties extraAuthProps = cGen.getSystemProperties();
@@ -810,10 +923,12 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
     System.out.println(testName + ": Using accessor: " + accessor);
 
     // Start servers with all required properties
-    Properties serverProps = buildProperties(authenticator, accessor, false, extraAuthProps, extraAuthzProps);
+    Properties serverProps =
+        buildProperties(authenticator, accessor, false, extraAuthProps, extraAuthzProps);
 
     // Get ports for the servers
-    List<Keeper> randomAvailableTCPPortKeepers = AvailablePortHelper.getRandomAvailableTCPPortKeepers(4);
+    List<Keeper> randomAvailableTCPPortKeepers =
+        AvailablePortHelper.getRandomAvailableTCPPortKeepers(4);
     Keeper locator1PortKeeper = randomAvailableTCPPortKeepers.get(0);
     Keeper locator2PortKeeper = randomAvailableTCPPortKeepers.get(1);
     Keeper port1Keeper = randomAvailableTCPPortKeepers.get(2);
@@ -831,27 +946,38 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
       // Start client with valid credentials as specified in OperationWithAction
       OperationWithAction currentOp = opCodes[opNum];
 
-      if (currentOp.equals(OperationWithAction.OPBLOCK_END) || currentOp.equals(OperationWithAction.OPBLOCK_NO_FAILOVER)) {
+      if (currentOp.equals(OperationWithAction.OPBLOCK_END)
+          || currentOp.equals(OperationWithAction.OPBLOCK_NO_FAILOVER)) {
         // End of current operation block; execute all the operations on the servers with/without failover
         if (opBlock.size() > 0) {
           locator1PortKeeper.release();
           port1Keeper.release();
 
           // Start the first server and execute the operation block
-          server1.invoke("createCacheServer", () -> ClientAuthorizationTestCase.createCacheServer(locator1Port, port1, serverProps, javaProps));
+          server1.invoke(
+              "createCacheServer",
+              () ->
+                  ClientAuthorizationTestCase.createCacheServer(
+                      locator1Port, port1, serverProps, javaProps));
           server2.invoke("closeCache", () -> closeCache());
 
-          executeOpBlock(opBlock, port1, port2, authInit, extraAuthProps, extraAuthzProps, tgen, rnd);
+          executeOpBlock(
+              opBlock, port1, port2, authInit, extraAuthProps, extraAuthzProps, tgen, rnd);
 
           if (!currentOp.equals(OperationWithAction.OPBLOCK_NO_FAILOVER)) {
             // Failover to the second server and run the block again
             locator2PortKeeper.release();
             port2Keeper.release();
 
-            server2.invoke("createCacheServer", () -> ClientAuthorizationTestCase.createCacheServer(locator2Port, port2, serverProps, javaProps));
+            server2.invoke(
+                "createCacheServer",
+                () ->
+                    ClientAuthorizationTestCase.createCacheServer(
+                        locator2Port, port2, serverProps, javaProps));
             server1.invoke("closeCache", () -> closeCache());
 
-            executeOpBlock(opBlock, port1, port2, authInit, extraAuthProps, extraAuthzProps, tgen, rnd);
+            executeOpBlock(
+                opBlock, port1, port2, authInit, extraAuthProps, extraAuthzProps, tgen, rnd);
           }
           opBlock.clear();
         }
@@ -864,9 +990,8 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
   }
 
   /**
-   * Implements the {@link CqListener} interface and counts the number of
-   * different operations and also queues up the received updates to precise
-   * checking of each update.
+   * Implements the {@link CqListener} interface and counts the number of different operations and
+   * also queues up the received updates to precise checking of each update.
    *
    * @since GemFire 5.5
    */
@@ -938,7 +1063,7 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
         int index = indices[indexIndex];
         boolean foundKey = false;
 
-        for (Iterator<CqEvent> eventIter = this.eventList.iterator(); eventIter.hasNext();) {
+        for (Iterator<CqEvent> eventIter = this.eventList.iterator(); eventIter.hasNext(); ) {
           CqEvent event = (CqEvent) eventIter.next();
           if (KEYS[index].equals(event.getKey())) {
             assertEquals(vals[index], event.getNewValue());
@@ -953,104 +1078,71 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
   }
 
   /**
-   * This class specifies flags that can be used to alter the behaviour of
-   * operations being performed by the <code>doOp</code> function.
+   * This class specifies flags that can be used to alter the behaviour of operations being
+   * performed by the <code>doOp</code> function.
    *
    * @since GemFire 5.5
    */
   protected static class OpFlags {
 
-    /**
-     * Default behaviour.
-     */
+    /** Default behaviour. */
     public static final int NONE = 0x0;
 
-    /**
-     * Check that the operation should fail.
-     */
+    /** Check that the operation should fail. */
     public static final int CHECK_FAIL = 0x1;
 
-    /**
-     * Check that the operation should throw <code>NotAuthorizedException</code>.
-     */
+    /** Check that the operation should throw <code>NotAuthorizedException</code>. */
     public static final int CHECK_NOTAUTHZ = 0x2;
 
-    /**
-     * Check that the region should not be available.
-     */
+    /** Check that the region should not be available. */
     public static final int CHECK_NOREGION = 0x4;
 
     /**
-     * Check that the operation should throw an exception other than the
-     * <code>NotAuthorizedException</code>.
+     * Check that the operation should throw an exception other than the <code>
+     * NotAuthorizedException</code>.
      */
     public static final int CHECK_EXCEPTION = 0x8;
 
-    /**
-     * Check for nvalues[] instead of values[].
-     */
+    /** Check for nvalues[] instead of values[]. */
     public static final int USE_NEWVAL = 0x10;
 
-    /**
-     * Register all KEYS. For GET operations indicates using getAll().
-     */
+    /** Register all KEYS. For GET operations indicates using getAll(). */
     public static final int USE_ALL_KEYS = 0x20;
 
-    /**
-     * Register a regular expression.
-     */
+    /** Register a regular expression. */
     public static final int USE_REGEX = 0x40;
 
-    /**
-     * Register a list of KEYS.
-     */
+    /** Register a list of KEYS. */
     public static final int USE_LIST = 0x80;
 
-    /**
-     * Perform the local version of the operation.
-     */
+    /** Perform the local version of the operation. */
     public static final int LOCAL_OP = 0x100;
 
-    /**
-     * Check that the key for the operation should not be present.
-     */
+    /** Check that the key for the operation should not be present. */
     public static final int CHECK_NOKEY = 0x200;
 
-    /**
-     * Use the sub-region for performing the operation.
-     */
+    /** Use the sub-region for performing the operation. */
     public static final int USE_SUBREGION = 0x400;
 
-    /**
-     * Do not try to create the sub-region.
-     */
+    /** Do not try to create the sub-region. */
     public static final int NO_CREATE_SUBREGION = 0x800;
 
-    /**
-     * Do not re-connect using new credentials rather use the previous
-     * connection.
-     */
+    /** Do not re-connect using new credentials rather use the previous connection. */
     public static final int USE_OLDCONN = 0x1000;
 
     /**
-     * Do the connection with unauthorized credentials but do not check that the
-     * operation throws <code>NotAuthorizedException</code>.
+     * Do the connection with unauthorized credentials but do not check that the operation throws
+     * <code>NotAuthorizedException</code>.
      */
     public static final int USE_NOTAUTHZ = 0x2000;
 
-    /**
-     * Enable {@link DynamicRegionFactory} on the client.
-     */
+    /** Enable {@link DynamicRegionFactory} on the client. */
     public static final int ENABLE_DRF = 0x4000;
 
-    /**
-     * Use the {@link InterestResultPolicy#NONE} for register interest.
-     */
+    /** Use the {@link InterestResultPolicy#NONE} for register interest. */
     public static final int REGISTER_POLICY_NONE = 0x8000;
 
-    /**
-     * Use the {@link LocalRegion#getEntry} under transaction.
-     */
+    /** Use the {@link LocalRegion#getEntry} under transaction. */
     public static final int USE_GET_ENTRY_IN_TX = 0x10000;
 
     public static String description(int f) {
@@ -1110,52 +1202,38 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
   }
 
   /**
-   * This class encapsulates an {@link OperationCode} with associated flags, the
-   * client to perform the operation, and the number of operations to perform.
+   * This class encapsulates an {@link OperationCode} with associated flags, the client to perform
+   * the operation, and the number of operations to perform.
    *
    * @since GemFire 5.5
    */
   protected static class OperationWithAction {
 
-    /**
-     * The operation to be performed.
-     */
+    /** The operation to be performed. */
     private OperationCode opCode;
 
     /**
-     * The operation for which authorized or unauthorized credentials have to be
-     * generated. This is the same as {@link #opCode} when not specified.
+     * The operation for which authorized or unauthorized credentials have to be generated. This is
+     * the same as {@link #opCode} when not specified.
      */
     private OperationCode authzOpCode;
 
-    /**
-     * The client number on which the operation has to be performed.
-     */
+    /** The client number on which the operation has to be performed. */
     private int clientNum;
 
-    /**
-     * Bitwise or'd {@link OpFlags} integer to change/specify the behaviour of the operations.
-     */
+    /** Bitwise or'd {@link OpFlags} integer to change/specify the behaviour of the operations. */
     private int flags;
 
-    /**
-     * Indices of the KEYS array to be used for operations.
-     */
+    /** Indices of the KEYS array to be used for operations. */
     private int[] indices;
 
-    /**
-     * An index for the operation used for logging.
-     */
+    /** An index for the operation used for logging. */
     private int opNum;
 
-    /**
-     * Indicates end of an operation block which can be used for testing with failover
-     */
+    /** Indicates end of an operation block which can be used for testing with failover */
     public static final OperationWithAction OPBLOCK_END = new OperationWithAction(null, 4);
 
-    /**
-     * Indicates end of an operation block which should not be used for testing with failover
-     */
+    /** Indicates end of an operation block which should not be used for testing with failover */
     public static final OperationWithAction OPBLOCK_NO_FAILOVER = new OperationWithAction(null, 5);
 
     private void setIndices(int numOps) {
@@ -1183,7 +1261,8 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
       this.opNum = 0;
     }
 
-    public OperationWithAction(final OperationCode opCode, final int clientNum, final int flags, final int numOps) {
+    public OperationWithAction(
+        final OperationCode opCode, final int clientNum, final int flags, final int numOps) {
       this.opCode = opCode;
       this.authzOpCode = opCode;
       this.clientNum = clientNum;
@@ -1192,7 +1271,12 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
       this.opNum = 0;
     }
 
-    public OperationWithAction(final OperationCode opCode, final OperationCode deniedOpCode, final int clientNum, final int flags, final int numOps) {
+    public OperationWithAction(
+        final OperationCode opCode,
+        final OperationCode deniedOpCode,
+        final int clientNum,
+        final int flags,
+        final int numOps) {
       this.opCode = opCode;
       this.authzOpCode = deniedOpCode;
       this.clientNum = clientNum;
@@ -1201,7 +1285,8 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
       this.opNum = 0;
     }
 
-    public OperationWithAction(final OperationCode opCode, final int clientNum, final int flags, final int[] indices) {
+    public OperationWithAction(
+        final OperationCode opCode, final int clientNum, final int flags, final int[] indices) {
       this.opCode = opCode;
       this.authzOpCode = opCode;
       this.clientNum = clientNum;
@@ -1210,7 +1295,12 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
       this.opNum = 0;
     }
 
-    public OperationWithAction(final OperationCode opCode, final OperationCode deniedOpCode, final int clientNum, final int flags, final int[] indices) {
+    public OperationWithAction(
+        final OperationCode opCode,
+        final OperationCode deniedOpCode,
+        final int clientNum,
+        final int flags,
+        final int[] indices) {
       this.opCode = opCode;
       this.authzOpCode = deniedOpCode;
       this.clientNum = clientNum;
@@ -1249,40 +1339,50 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
 
     @Override
     public String toString() {
-      return "opCode:" + this.opCode + ",authOpCode:" + this.authzOpCode + ",clientNum:" + this.clientNum + ",flags:" + this.flags + ",numOps:" + this.indices.length + ",indices:" + indicesToString(this.indices);
+      return "opCode:"
+          + this.opCode
+          + ",authOpCode:"
+          + this.authzOpCode
+          + ",clientNum:"
+          + this.clientNum
+          + ",flags:"
+          + this.flags
+          + ",numOps:"
+          + this.indices.length
+          + ",indices:"
+          + indicesToString(this.indices);
     }
   }
 
   /**
-   * Simple interface to generate credentials with authorization based on key
-   * indices also. This is utilized by the post-operation authorization tests
-   * where authorization is based on key indices.
+   * Simple interface to generate credentials with authorization based on key indices also. This is
+   * utilized by the post-operation authorization tests where authorization is based on key indices.
    *
    * @since GemFire 5.5
    */
   protected interface TestCredentialGenerator {
 
     /**
-     * Get allowed credentials for the given set of operations in the given
-     * regions and indices of KEYS in the <code>KEYS</code> array
+     * Get allowed credentials for the given set of operations in the given regions and indices of
+     * KEYS in the <code>KEYS</code> array
      */
-    public Properties getAllowedCredentials(OperationCode[] opCodes, String[] regionNames, int[] keyIndices, int num);
+    public Properties getAllowedCredentials(
+        OperationCode[] opCodes, String[] regionNames, int[] keyIndices, int num);
 
     /**
-     * Get disallowed credentials for the given set of operations in the given
-     * regions and indices of KEYS in the <code>KEYS</code> array
+     * Get disallowed credentials for the given set of operations in the given regions and indices
+     * of KEYS in the <code>KEYS</code> array
      */
-    public Properties getDisallowedCredentials(OperationCode[] opCodes, String[] regionNames, int[] keyIndices, int num);
+    public Properties getDisallowedCredentials(
+        OperationCode[] opCodes, String[] regionNames, int[] keyIndices, int num);
 
-    /**
-     * Get the {@link CredentialGenerator} if any.
-     */
+    /** Get the {@link CredentialGenerator} if any. */
     public CredentialGenerator getCredentialGenerator();
   }
 
   /**
-   * Contains a {@link AuthzCredentialGenerator} and implements the
-   * {@link TestCredentialGenerator} interface.
+   * Contains a {@link AuthzCredentialGenerator} and implements the {@link TestCredentialGenerator}
+   * interface.
    *
    * @since GemFire 5.5
    */
@@ -1294,11 +1394,19 @@ public abstract class ClientAuthorizationTestCase extends JUnit4DistributedTestC
       this.authzGen = authzGen;
     }
 
-    public Properties getAllowedCredentials(final OperationCode[] opCodes, final String[] regionNames, final int[] keyIndices, final int num) {
+    public Properties getAllowedCredentials(
+        final OperationCode[] opCodes,
+        final String[] regionNames,
+        final int[] keyIndices,
+        final int num) {
       return this.authzGen.getAllowedCredentials(opCodes, regionNames, num);
     }
 
-    public Properties getDisallowedCredentials(final OperationCode[] opCodes, final String[] regionNames, final int[] keyIndices, final int num) {
+    public Properties getDisallowedCredentials(
+        final OperationCode[] opCodes,
+        final String[] regionNames,
+        final int[] keyIndices,
+        final int num) {
       return this.authzGen.getDisallowedCredentials(opCodes, regionNames, num);
     }
 

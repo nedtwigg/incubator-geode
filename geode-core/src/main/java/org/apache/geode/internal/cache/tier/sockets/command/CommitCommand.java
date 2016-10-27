@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import org.apache.geode.cache.CommitConflictException;
@@ -37,27 +35,26 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import java.io.IOException;
 
 /**
- * This is the base command which read the parts for the
- * MessageType.COMMIT.<br>
- * 
+ * This is the base command which read the parts for the MessageType.COMMIT.<br>
+ *
  * @since GemFire 6.6
  */
 public class CommitCommand extends BaseCommand {
 
-  private final static CommitCommand singleton = new CommitCommand();
+  private static final CommitCommand singleton = new CommitCommand();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private CommitCommand() {
-  }
+  private CommitCommand() {}
 
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     TXManagerImpl txMgr = (TXManagerImpl) servConn.getCache().getCacheTransactionManager();
-    InternalDistributedMember client = (InternalDistributedMember) servConn.getProxyID().getDistributedMember();
+    InternalDistributedMember client =
+        (InternalDistributedMember) servConn.getProxyID().getDistributedMember();
     int uniqId = msg.getTransactionId();
     TXId txId = new TXId(client, uniqId);
     TXCommitMessage commitMsg = null;
@@ -107,7 +104,8 @@ public class CommitCommand extends BaseCommand {
     }
   }
 
-  protected static void writeCommitResponse(TXCommitMessage response, Message origMsg, ServerConnection servConn) throws IOException {
+  protected static void writeCommitResponse(
+      TXCommitMessage response, Message origMsg, ServerConnection servConn) throws IOException {
     Message responseMsg = servConn.getResponseMessage();
     responseMsg.setMessageType(MessageType.RESPONSE);
     responseMsg.setTransactionId(origMsg.getTransactionId());
@@ -118,15 +116,19 @@ public class CommitCommand extends BaseCommand {
     responseMsg.addObjPart(response, zipValues);
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     if (logger.isDebugEnabled()) {
-      logger.debug("TX: sending a nonNull response for transaction: {}", new TXId((InternalDistributedMember) servConn.getProxyID().getDistributedMember(), origMsg.getTransactionId()));
+      logger.debug(
+          "TX: sending a nonNull response for transaction: {}",
+          new TXId(
+              (InternalDistributedMember) servConn.getProxyID().getDistributedMember(),
+              origMsg.getTransactionId()));
     }
     responseMsg.send(servConn);
     origMsg.clearParts();
   }
 
-  private void sendException(Message msg, ServerConnection servConn, Throwable e) throws IOException {
+  private void sendException(Message msg, ServerConnection servConn, Throwable e)
+      throws IOException {
     writeException(msg, MessageType.EXCEPTION, e, false, servConn);
     servConn.setAsTrue(RESPONDED);
   }
-
 }

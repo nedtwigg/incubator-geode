@@ -62,8 +62,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Client is connected to S1 which has a slow dispatcher. Puts are made on S1.  Then S2 is started
- * and made available for the client. After that , S1 's  server is stopped. The client fails over to
+ * Client is connected to S1 which has a slow dispatcher. Puts are made on S1. Then S2 is started
+ * and made available for the client. After that , S1 's server is stopped. The client fails over to
  * S2. The client should receive all the puts . These puts have arrived on S2 via GII of HARegion.
  */
 @Category(DistributedTest.class)
@@ -98,7 +98,10 @@ public class HAGIIDUnitTest extends JUnit4DistributedTestCase {
 
     PORT2 = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
     //Start the client
-    client0.invoke(() -> HAGIIDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1), new Integer(PORT2)));
+    client0.invoke(
+        () ->
+            HAGIIDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT1), new Integer(PORT2)));
   }
 
   @Test
@@ -110,7 +113,7 @@ public class HAGIIDUnitTest extends JUnit4DistributedTestCase {
     server0.invoke(() -> HAGIIDUnitTest.tombstonegc());
 
     client0.invoke(() -> HAGIIDUnitTest.verifyEntries());
-    server1.invoke(HAGIIDUnitTest.class, "createServer2Cache", new Object[] { new Integer(PORT2) });
+    server1.invoke(HAGIIDUnitTest.class, "createServer2Cache", new Object[] {new Integer(PORT2)});
     Wait.pause(6000);
     server0.invoke(() -> HAGIIDUnitTest.stopServer());
     //pause(10000);
@@ -134,7 +137,8 @@ public class HAGIIDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(LOCATORS, "");
     new HAGIIDUnitTest().createCache(props);
     AttributesFactory factory = new AttributesFactory();
-    ClientServerTestCase.configureConnectionPool(factory, host, new int[] { PORT1, PORT2 }, true, -1, 2, null, 1000, -1, false, -1);
+    ClientServerTestCase.configureConnectionPool(
+        factory, host, new int[] {PORT1, PORT2}, true, -1, 2, null, 1000, -1, false, -1);
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.addCacheListener(HAGIIDUnitTest.checker);
     RegionAttributes attrs = factory.create();
@@ -220,7 +224,7 @@ public class HAGIIDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /** queue a tombstone GC message for the client.  See bug #46832 */
+  /** queue a tombstone GC message for the client. See bug #46832 */
   public static void tombstonegc() throws Exception {
     LocalRegion r = (LocalRegion) cache.getRegion("/" + REGION_NAME);
     assertNotNull(r);
@@ -234,7 +238,8 @@ public class HAGIIDUnitTest extends JUnit4DistributedTestCase {
     regionEvent.setLocalFilterInfo(clientRouting);
 
     Map<VersionSource, Long> map = Collections.emptyMap();
-    ClientTombstoneMessage message = ClientTombstoneMessage.gc(r, map, new EventID(r.getCache().getDistributedSystem()));
+    ClientTombstoneMessage message =
+        ClientTombstoneMessage.gc(r, map, new EventID(r.getCache().getDistributedSystem()));
     CacheClientNotifier.notifyClients(regionEvent, message);
   }
 
@@ -245,43 +250,46 @@ public class HAGIIDUnitTest extends JUnit4DistributedTestCase {
       // wait until we
       // have a dead
       // server
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          return r.getEntry("key-1").getValue().equals("key-1");
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return r.getEntry("key-1").getValue().equals("key-1");
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       // assertIndexDetailsEquals( "key-1",r.getEntry("key-1").getValue());
       // wait until we
       // have a dead
       // server
-      ev = new WaitCriterion() {
-        public boolean done() {
-          return r.getEntry("key-2").getValue().equals("key-2");
-        }
+      ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return r.getEntry("key-2").getValue().equals("key-2");
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 60 * 1000, 200, true);
       // assertIndexDetailsEquals( "key-2",r.getEntry("key-2").getValue());
 
       // wait until we
       // have a dead
       // server
-      ev = new WaitCriterion() {
-        public boolean done() {
-          return r.getEntry("key-3").getValue().equals("key-3");
-        }
+      ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return r.getEntry("key-3").getValue().equals("key-3");
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 60 * 1000, 200, true);
       // assertIndexDetailsEquals( "key-3",r.getEntry("key-3").getValue());
     } catch (Exception ex) {
@@ -292,37 +300,40 @@ public class HAGIIDUnitTest extends JUnit4DistributedTestCase {
   public static void verifyEntriesAfterGiiViaListener() {
 
     // Check whether just the 3 expected updates arrive.
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return HAGIIDUnitTest.checker.gotFirst();
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return HAGIIDUnitTest.checker.gotFirst();
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 90 * 1000, 200, true);
 
-    ev = new WaitCriterion() {
-      public boolean done() {
-        return HAGIIDUnitTest.checker.gotSecond();
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return HAGIIDUnitTest.checker.gotSecond();
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
 
-    ev = new WaitCriterion() {
-      public boolean done() {
-        return HAGIIDUnitTest.checker.gotThird();
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return HAGIIDUnitTest.checker.gotThird();
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
 
     assertEquals(3, HAGIIDUnitTest.checker.getUpdates());
@@ -335,44 +346,47 @@ public class HAGIIDUnitTest extends JUnit4DistributedTestCase {
       // wait until
       // we have a
       // dead server
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          return r.getEntry("key-1").getValue().equals("value-1");
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return r.getEntry("key-1").getValue().equals("value-1");
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 60 * 1000, 200, true);
 
       // wait until
       // we have a
       // dead server
-      ev = new WaitCriterion() {
-        public boolean done() {
-          return r.getEntry("key-2").getValue().equals("value-2");
-        }
+      ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return r.getEntry("key-2").getValue().equals("value-2");
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 60 * 1000, 200, true);
       // assertIndexDetailsEquals( "key-2",r.getEntry("key-2").getValue());
 
       // wait until
       // we have a
       // dead server
-      ev = new WaitCriterion() {
-        public boolean done() {
-          return r.getEntry("key-3").getValue().equals("value-3");
-        }
+      ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return r.getEntry("key-3").getValue().equals("value-3");
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 60 * 1000, 200, true);
 
       /*

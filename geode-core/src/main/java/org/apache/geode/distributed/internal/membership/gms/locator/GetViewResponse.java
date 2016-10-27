@@ -60,5 +60,4 @@ public class GetViewResponse implements DataSerializableFixedID {
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     view = DataSerializer.readObject(in);
   }
-
 }

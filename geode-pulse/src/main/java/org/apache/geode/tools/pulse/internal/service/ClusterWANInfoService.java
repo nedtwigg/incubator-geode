@@ -33,10 +33,9 @@ import java.util.Map;
 
 /**
  * Class ClusterWANInfoService
- * 
- * This class contains implementations of getting Cluster's WAN Informations
- * (connected clusters)
- * 
+ *
+ * <p>This class contains implementations of getting Cluster's WAN Informations (connected clusters)
+ *
  * @since GemFire version 7.5
  */
 @Component
@@ -70,5 +69,4 @@ public class ClusterWANInfoService implements PulseService {
     // Send json response
     return responseJSON;
   }
-
 }

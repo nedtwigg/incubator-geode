@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -35,12 +35,13 @@ import org.apache.lucene.store.AlreadyClosedException;
 import java.io.IOException;
 import java.util.function.IntSupplier;
 
-/**
- * A repository that writes to a single lucene index writer
- */
+/** A repository that writes to a single lucene index writer */
 public class IndexRepositoryImpl implements IndexRepository {
 
-  private static final boolean APPLY_ALL_DELETES = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "IndexRepository.APPLY_ALL_DELETES", "true").equalsIgnoreCase("true");
+  private static final boolean APPLY_ALL_DELETES =
+      System.getProperty(
+              DistributionConfig.GEMFIRE_PREFIX + "IndexRepository.APPLY_ALL_DELETES", "true")
+          .equalsIgnoreCase("true");
 
   private final IndexWriter writer;
   private final LuceneSerializer serializer;
@@ -52,7 +53,13 @@ public class IndexRepositoryImpl implements IndexRepository {
 
   private static final Logger logger = LogService.getLogger();
 
-  public IndexRepositoryImpl(Region<?, ?> region, IndexWriter writer, LuceneSerializer serializer, LuceneIndexStats stats, Region<?, ?> userRegion) throws IOException {
+  public IndexRepositoryImpl(
+      Region<?, ?> region,
+      IndexWriter writer,
+      LuceneSerializer serializer,
+      LuceneIndexStats stats,
+      Region<?, ?> userRegion)
+      throws IOException {
     this.region = region;
     this.userRegion = userRegion;
     this.writer = writer;

@@ -41,11 +41,9 @@ import org.apache.geode.internal.cache.partitioned.PartitionMessage;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * 
- *
- */
-public abstract class TXMessage extends SerialDistributionMessage implements MessageWithReply, TransactionMessage {
+/** */
+public abstract class TXMessage extends SerialDistributionMessage
+    implements MessageWithReply, TransactionMessage {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -53,10 +51,10 @@ public abstract class TXMessage extends SerialDistributionMessage implements Mes
   private int txUniqId;
   private InternalDistributedMember txMemberId = null;
 
-  public TXMessage() {
-  }
+  public TXMessage() {}
 
-  public TXMessage(int txUniqueId, InternalDistributedMember onBehalfOfMember, ReplyProcessor21 processor) {
+  public TXMessage(
+      int txUniqueId, InternalDistributedMember onBehalfOfMember, ReplyProcessor21 processor) {
     this.txUniqId = txUniqueId;
     this.txMemberId = onBehalfOfMember;
     this.processorId = processor == null ? 0 : processor.getProcessorId();
@@ -76,7 +74,10 @@ public abstract class TXMessage extends SerialDistributionMessage implements Mes
       }
       GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
       if (checkCacheClosing(cache) || checkDSClosing(cache.getDistributedSystem())) {
-        thr = new CacheClosedException(LocalizedStrings.PartitionMessage_REMOTE_CACHE_IS_CLOSED_0.toLocalizedString(dm.getId()));
+        thr =
+            new CacheClosedException(
+                LocalizedStrings.PartitionMessage_REMOTE_CACHE_IS_CLOSED_0.toLocalizedString(
+                    dm.getId()));
         return;
       }
       TXManagerImpl txMgr = cache.getTXMgr();
@@ -97,7 +98,11 @@ public abstract class TXMessage extends SerialDistributionMessage implements Mes
         logger.debug("shutdown caught, abandoning message: " + se);
       }
     } catch (RegionDestroyedException rde) {
-      thr = new ForceReattemptException(LocalizedStrings.PartitionMessage_REGION_IS_DESTROYED_IN_0.toLocalizedString(dm.getDistributionManagerId()), rde);
+      thr =
+          new ForceReattemptException(
+              LocalizedStrings.PartitionMessage_REGION_IS_DESTROYED_IN_0.toLocalizedString(
+                  dm.getDistributionManagerId()),
+              rde);
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
       // If this ever returns, rethrow the error.  We're poisoned
@@ -133,7 +138,11 @@ public abstract class TXMessage extends SerialDistributionMessage implements Mes
     return cache == null || cache.isClosed();
   }
 
-  private void sendReply(InternalDistributedMember recipient, int processorId2, DistributionManager dm, ReplyException rex) {
+  private void sendReply(
+      InternalDistributedMember recipient,
+      int processorId2,
+      DistributionManager dm,
+      ReplyException rex) {
     ReplyMessage.send(recipient, processorId2, rex, getReplySender(dm));
   }
 
@@ -141,23 +150,34 @@ public abstract class TXMessage extends SerialDistributionMessage implements Mes
   public String toString() {
     StringBuffer buff = new StringBuffer();
     String className = getClass().getName();
-    //    className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo> more generic version 
-    buff.append(className.substring(className.indexOf(PartitionMessage.PN_TOKEN) + PartitionMessage.PN_TOKEN.length())); // partition.<foo>
-    buff.append("(txId=").append(this.txUniqId).append("; txMbr=").append(this.txMemberId).append("; sender=").append(getSender()).append("; processorId=").append(this.processorId);
+    //    className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo> more generic version
+    buff.append(
+        className.substring(
+            className.indexOf(PartitionMessage.PN_TOKEN)
+                + PartitionMessage.PN_TOKEN.length())); // partition.<foo>
+    buff.append("(txId=")
+        .append(this.txUniqId)
+        .append("; txMbr=")
+        .append(this.txMemberId)
+        .append("; sender=")
+        .append(getSender())
+        .append("; processorId=")
+        .append(this.processorId);
     appendFields(buff);
     buff.append(")");
     return buff.toString();
   }
 
-  public void appendFields(StringBuffer buff) {
-  }
+  public void appendFields(StringBuffer buff) {}
 
   /**
    * Transaction operations override this method to do actual work
+   *
    * @param txId The transaction Id to operate on
    * @return true if {@link TXMessage} should send a reply false otherwise
    */
-  protected abstract boolean operateOnTx(TXId txId, DistributionManager dm) throws RemoteOperationException;
+  protected abstract boolean operateOnTx(TXId txId, DistributionManager dm)
+      throws RemoteOperationException;
 
   public int getTXUniqId() {
     return this.txUniqId;
@@ -204,5 +224,4 @@ public abstract class TXMessage extends SerialDistributionMessage implements Mes
   public boolean isTransactionDistributed() {
     return false;
   }
-
 }

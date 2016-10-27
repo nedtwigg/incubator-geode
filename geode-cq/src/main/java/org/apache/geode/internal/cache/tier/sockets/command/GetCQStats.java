@@ -29,14 +29,13 @@ import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 
 public class GetCQStats extends BaseCQCommand {
 
-  private final static GetCQStats singleton = new GetCQStats();
+  private static final GetCQStats singleton = new GetCQStats();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private GetCQStats() {
-  }
+  private GetCQStats() {}
 
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
@@ -49,14 +48,21 @@ public class GetCQStats extends BaseCQCommand {
 
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
-      logger.debug("{}: Received close all client CQs request from {}", servConn.getName(), servConn.getSocketString());
+      logger.debug(
+          "{}: Received close all client CQs request from {}",
+          servConn.getName(),
+          servConn.getSocketString());
     }
 
     // Retrieve the data from the message parts
     String cqName = msg.getPart(0).getString();
 
     if (isDebugEnabled) {
-      logger.debug("{}: Received close CQ request from {} cqName: {}", servConn.getName(), servConn.getSocketString(), cqName);
+      logger.debug(
+          "{}: Received close CQ request from {} cqName: {}",
+          servConn.getName(),
+          servConn.getSocketString(),
+          cqName);
     }
 
     // Process the query request
@@ -79,7 +85,8 @@ public class GetCQStats extends BaseCQCommand {
       return;
     }
     // Send OK to client
-    sendCqResponse(MessageType.REPLY, "cq stats sent successfully.", msg.getTransactionId(), null, servConn);
+    sendCqResponse(
+        MessageType.REPLY, "cq stats sent successfully.", msg.getTransactionId(), null, servConn);
     servConn.setAsTrue(RESPONDED);
 
     {
@@ -88,5 +95,4 @@ public class GetCQStats extends BaseCQCommand {
       stats.incProcessGetCqStatsTime(start - oldStart);
     }
   }
-
 }

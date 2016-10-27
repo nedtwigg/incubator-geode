@@ -36,34 +36,28 @@ import org.apache.geode.internal.cache.TXId;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * This function can be used by GemFire clients and peers to rollback an existing
- * transaction. A {@link TransactionId} corresponding to the transaction to be
- * rolledback must be provided as an argument while invoking this function.<br />
- * 
- * This function should execute only on one server. If the transaction is not
- * hosted on the server where the function is invoked then this function decides
- * to invoke a {@link NestedTransactionFunction} which executes on the member where
- * transaction is hosted.<br />
- * 
- * This function returns a single Boolean as result, whose value is <code>Boolean.TRUE</code>
- * if the transaction rolled back successfully otherwise the return value is
- * <code>Boolean.FALSE</code>.<br />
- * 
- * To execute this function, it is recommended to use the {@link Execution} obtained by
- * using TransactionFunctionService. <br />
- * 
+ * This function can be used by GemFire clients and peers to rollback an existing transaction. A
+ * {@link TransactionId} corresponding to the transaction to be rolledback must be provided as an
+ * argument while invoking this function.<br>
+ * This function should execute only on one server. If the transaction is not hosted on the server
+ * where the function is invoked then this function decides to invoke a {@link
+ * NestedTransactionFunction} which executes on the member where transaction is hosted.<br>
+ * This function returns a single Boolean as result, whose value is <code>Boolean.TRUE</code> if the
+ * transaction rolled back successfully otherwise the return value is <code>Boolean.FALSE</code>.
+ * <br>
+ * To execute this function, it is recommended to use the {@link Execution} obtained by using
+ * TransactionFunctionService. <br>
  * To summarize, this function should be used as follows:
- * 
+ *
  * <pre>
  * Execution exe = TransactionFunctionService.onTransaction(txId);
  * List l = (List) exe.execute(rollbackFunction).getResult();
  * Boolean result = (Boolean) l.get(0);
  * </pre>
- * 
- * This function is <b>not</b> registered on the cache servers by default, and
- * it is the user's responsibility to register this function. see
- * {@link FunctionService#registerFunction(Function)}
- * 
+ *
+ * This function is <b>not</b> registered on the cache servers by default, and it is the user's
+ * responsibility to register this function. see {@link FunctionService#registerFunction(Function)}
+ *
  * @since GemFire 6.6.1
  */
 public class RollbackFunction implements Function {
@@ -81,7 +75,8 @@ public class RollbackFunction implements Function {
     try {
       txId = (TXId) context.getArguments();
     } catch (ClassCastException e) {
-      logger.info("RollbackFunction should be invoked with a TransactionId as an argument i.e. withArgs(txId).execute(function)");
+      logger.info(
+          "RollbackFunction should be invoked with a TransactionId as an argument i.e. withArgs(txId).execute(function)");
       throw e;
     }
     DistributedMember member = txId.getMemberId();
@@ -105,7 +100,10 @@ public class RollbackFunction implements Function {
       args.add(NestedTransactionFunction.ROLLBACK);
       Execution ex = FunctionService.onMember(cache.getDistributedSystem(), member).withArgs(args);
       if (isDebugEnabled) {
-        logger.debug("RollbackFunction: for transaction: {} executing NestedTransactionFunction on member: {}", txId, member);
+        logger.debug(
+            "RollbackFunction: for transaction: {} executing NestedTransactionFunction on member: {}",
+            txId,
+            member);
       }
       try {
         List list = (List) ex.execute(new NestedTransactionFunction()).getResult();
@@ -132,5 +130,4 @@ public class RollbackFunction implements Function {
     //GEM-207
     return true;
   }
-
 }

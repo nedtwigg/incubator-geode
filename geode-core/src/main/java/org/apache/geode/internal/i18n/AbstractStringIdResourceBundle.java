@@ -31,25 +31,23 @@ import java.util.Locale;
 
 /**
  * Baseclass for all {@link StringId} based ResourceBundles
- * @see java.util.ResourceBundle 
  *
+ * @see java.util.ResourceBundle
  * @since GemFire 5.7
  */
 public class AbstractStringIdResourceBundle {
   private Int2ObjectOpenHashMap data;
 
-  /** 
-   * The {@link java.util.ResourceBundle} that implements the message lookup
-   * English has a special implementation for speed.
+  /**
+   * The {@link java.util.ResourceBundle} that implements the message lookup English has a special
+   * implementation for speed.
    */
   private static AbstractStringIdResourceBundle messageBundle;
 
   /**
-   * Init method to populate the TIntObjectHashMap for Non-english locales
-   * <code>data = new TIntObjectHashMap();</code>
-   *
-   * The default bundle, English, will be
-   * <code>data = null</code>
+   * Init method to populate the TIntObjectHashMap for Non-english locales <code>
+   * data = new TIntObjectHashMap();</code> The default bundle, English, will be <code>data = null
+   * </code>
    */
   private void initData(String baseName, Locale l) {
     StringBuffer sb = new StringBuffer(baseName);
@@ -61,12 +59,14 @@ public class AbstractStringIdResourceBundle {
       is = ClassPathLoader.getLatest().getResourceAsStream(getClass(), resource);
     } catch (SecurityException se) {
       //We do not have a logger yet
-      System.err.println("A SecurityException occurred while attempting to load the resource bundle, defaulting to English." + se.toString());
+      System.err.println(
+          "A SecurityException occurred while attempting to load the resource bundle, defaulting to English."
+              + se.toString());
       se.printStackTrace();
       System.err.flush();
     }
     if (is == null) {
-      //No matching data file for the requested langauge, 
+      //No matching data file for the requested langauge,
       //defaulting to English
       data = null;
     } else {
@@ -116,18 +116,15 @@ public class AbstractStringIdResourceBundle {
   }
 
   private AbstractStringIdResourceBundle() {
-    //Intentionally blank  
+    //Intentionally blank
   }
 
   /**
-   * @param key
-   *        StringId passed to {@link #getString java.util.ResourceBundle} 
-   *        for translation.
+   * @param key StringId passed to {@link #getString java.util.ResourceBundle} for translation.
    * @return a String translated to the current {@link java.util.Locale}
    */
   public String getString(StringId key) {
-    if (usingRawMode())
-      return key.getRawText();
+    if (usingRawMode()) return key.getRawText();
     String txt = (String) data.get(((StringId) key).id);
     if (txt != null) {
       return txt;
@@ -135,12 +132,9 @@ public class AbstractStringIdResourceBundle {
       //found an untranslated message, use the English as a fall back
       return key.getRawText();
     }
-
   }
 
-  /**
-   * Returns true if this resource bundle will always return english strings.
-   */
+  /** Returns true if this resource bundle will always return english strings. */
   public boolean usingRawMode() {
     return this.data == null;
   }
@@ -151,5 +145,4 @@ public class AbstractStringIdResourceBundle {
     messageBundle = newMessageBundle;
     return messageBundle;
   }
-
 }

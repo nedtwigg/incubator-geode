@@ -60,9 +60,7 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
   protected transient volatile boolean failTestWaitForRequiredRoles = false;
   protected transient Set rolesTestWaitForRequiredRoles = new HashSet();
 
-  /**
-   * Tests that RequiredRoles detects missing roles.
-   */
+  /** Tests that RequiredRoles detects missing roles. */
   @Test
   public void testRequiredRolesInLoss() throws Exception {
     String name = this.getUniqueName();
@@ -72,7 +70,7 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
     final String roleD = name + "-D";
 
     // assign names to 4 vms...
-    final String[] requiredRoles = { roleA, roleC, roleD };
+    final String[] requiredRoles = {roleA, roleC, roleD};
     Set requiredRolesSet = new HashSet();
     for (int i = 0; i < requiredRoles.length; i++) {
       requiredRolesSet.add(InternalRole.getRole(requiredRoles[i]));
@@ -85,7 +83,8 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
     getSystem(config);
 
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra =
+        new MembershipAttributes(requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
 
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
@@ -113,15 +112,13 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
     assertEquals(true, missingRoles.containsAll(requiredRolesSet));
 
     // assert isPresent is false on each missing role...
-    for (Iterator iter = missingRoles.iterator(); iter.hasNext();) {
+    for (Iterator iter = missingRoles.iterator(); iter.hasNext(); ) {
       Role role = (Role) iter.next();
       assertEquals(false, role.isPresent());
     }
   }
 
-  /**
-   * Tests RequiredRoles.waitForRequiredRoles().
-   */
+  /** Tests RequiredRoles.waitForRequiredRoles(). */
   @Test
   public void testWaitForRequiredRoles() throws Exception {
     final String name = this.getUniqueName();
@@ -135,18 +132,21 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
     final String roleD = name + "-D";
 
     // assign names to 4 vms...
-    final String[] requiredRoles = { roleA, roleC, roleD };
-    final String[] rolesProp = { "", roleA, roleA, roleC + "," + roleD };
-    final String[][] vmRoles = new String[][] { {}, { roleA }, { roleA }, { roleC, roleD } };
+    final String[] requiredRoles = {roleA, roleC, roleD};
+    final String[] rolesProp = {"", roleA, roleA, roleC + "," + roleD};
+    final String[][] vmRoles = new String[][] {{}, {roleA}, {roleA}, {roleC, roleD}};
     for (int i = 0; i < vmRoles.length; i++) {
       final int vm = i;
-      Host.getHost(0).getVM(vm).invoke(new SerializableRunnable() {
-        public void run() {
-          Properties config = new Properties();
-          config.setProperty(ROLES, rolesProp[vm]);
-          getSystem(config);
-        }
-      });
+      Host.getHost(0)
+          .getVM(vm)
+          .invoke(
+              new SerializableRunnable() {
+                public void run() {
+                  Properties config = new Properties();
+                  config.setProperty(ROLES, rolesProp[vm]);
+                  getSystem(config);
+                }
+              });
     }
 
     // connect controller to system...
@@ -155,7 +155,8 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
     getSystem(config);
 
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra =
+        new MembershipAttributes(requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
 
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
@@ -171,44 +172,47 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
     assertMissingRoles(name, requiredRoles);
 
     // create thread to call waitForRequiredRoles
-    Runnable runWaitForRequiredRoles = new Runnable() {
-      public void run() {
-        startTestWaitForRequiredRoles = true;
-        try {
-          rolesTestWaitForRequiredRoles = RequiredRoles.waitForRequiredRoles(region, -1);
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-          failTestWaitForRequiredRoles = true;
-        }
-        finishTestWaitForRequiredRoles = true;
-      }
-    };
+    Runnable runWaitForRequiredRoles =
+        new Runnable() {
+          public void run() {
+            startTestWaitForRequiredRoles = true;
+            try {
+              rolesTestWaitForRequiredRoles = RequiredRoles.waitForRequiredRoles(region, -1);
+            } catch (InterruptedException e) {
+              Thread.currentThread().interrupt();
+              failTestWaitForRequiredRoles = true;
+            }
+            finishTestWaitForRequiredRoles = true;
+          }
+        };
 
     // assert thread is waiting
     Thread threadA = new Thread(group, runWaitForRequiredRoles);
     threadA.start();
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return RequiredRolesDUnitTest.this.startTestWaitForRequiredRoles;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return RequiredRolesDUnitTest.this.startTestWaitForRequiredRoles;
+          }
 
-      public String description() {
-        return "waiting for test start";
-      }
-    };
+          public String description() {
+            return "waiting for test start";
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
     assertTrue(this.startTestWaitForRequiredRoles);
     assertFalse(this.finishTestWaitForRequiredRoles);
 
     // create region in vms and assert impact on threadA
-    SerializableRunnable create = new CacheSerializableRunnable("Create Region") {
-      public void run2() throws CacheException {
-        AttributesFactory fac = new AttributesFactory();
-        fac.setScope(Scope.DISTRIBUTED_ACK);
-        RegionAttributes attr = fac.create();
-        createRootRegion(name, attr);
-      }
-    };
+    SerializableRunnable create =
+        new CacheSerializableRunnable("Create Region") {
+          public void run2() throws CacheException {
+            AttributesFactory fac = new AttributesFactory();
+            fac.setScope(Scope.DISTRIBUTED_ACK);
+            RegionAttributes attr = fac.create();
+            createRootRegion(name, attr);
+          }
+        };
 
     // create region in vm0... no gain for no role
     Host.getHost(0).getVM(vm0).invoke(create);
@@ -229,12 +233,13 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
     assertTrue(this.rolesTestWaitForRequiredRoles.isEmpty());
 
     // assert loss is fired...
-    SerializableRunnable destroy = new CacheSerializableRunnable("Destroy Region") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion(name);
-        region.localDestroyRegion();
-      }
-    };
+    SerializableRunnable destroy =
+        new CacheSerializableRunnable("Destroy Region") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion(name);
+            region.localDestroyRegion();
+          }
+        };
 
     // destroy region in vm0... no loss of any role
     Host.getHost(0).getVM(vm0).invoke(destroy);
@@ -272,15 +277,16 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
     threadA.start();
 
     // assert thread is waiting
-    ev = new WaitCriterion() {
-      public boolean done() {
-        return RequiredRolesDUnitTest.this.startTestWaitForRequiredRoles;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return RequiredRolesDUnitTest.this.startTestWaitForRequiredRoles;
+          }
 
-      public String description() {
-        return "waiting for test start";
-      }
-    };
+          public String description() {
+            return "waiting for test start";
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
     assertTrue(this.startTestWaitForRequiredRoles);
     assertFalse(this.finishTestWaitForRequiredRoles);
@@ -297,9 +303,7 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
     assertFalse(failTestWaitForRequiredRoles);
   }
 
-  /**
-   * Tests RequiredRoles.isRoleInRegionMembership().
-   */
+  /** Tests RequiredRoles.isRoleInRegionMembership(). */
   @Test
   public void testIsRoleInRegionMembership() throws Exception {
     final String name = this.getUniqueName();
@@ -313,18 +317,21 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
     final String roleD = name + "-D";
 
     // assign names to 4 vms...
-    final String[] requiredRoles = { roleA, roleC, roleD };
-    final String[] rolesProp = { "", roleA, roleA, roleC + "," + roleD };
-    final String[][] vmRoles = new String[][] { {}, { roleA }, { roleA }, { roleC, roleD } };
+    final String[] requiredRoles = {roleA, roleC, roleD};
+    final String[] rolesProp = {"", roleA, roleA, roleC + "," + roleD};
+    final String[][] vmRoles = new String[][] {{}, {roleA}, {roleA}, {roleC, roleD}};
     for (int i = 0; i < vmRoles.length; i++) {
       final int vm = i;
-      Host.getHost(0).getVM(vm).invoke(new SerializableRunnable() {
-        public void run() {
-          Properties config = new Properties();
-          config.setProperty(ROLES, rolesProp[vm]);
-          getSystem(config);
-        }
-      });
+      Host.getHost(0)
+          .getVM(vm)
+          .invoke(
+              new SerializableRunnable() {
+                public void run() {
+                  Properties config = new Properties();
+                  config.setProperty(ROLES, rolesProp[vm]);
+                  getSystem(config);
+                }
+              });
     }
 
     // connect controller to system...
@@ -333,7 +340,8 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
     getSystem(config);
 
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra =
+        new MembershipAttributes(requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
 
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
@@ -346,24 +354,26 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
     waitForMemberTimeout();
 
     // assert each role is missing
-    final Set requiredRolesSet = region.getAttributes().getMembershipAttributes().getRequiredRoles();
-    for (Iterator iter = requiredRolesSet.iterator(); iter.hasNext();) {
+    final Set requiredRolesSet =
+        region.getAttributes().getMembershipAttributes().getRequiredRoles();
+    for (Iterator iter = requiredRolesSet.iterator(); iter.hasNext(); ) {
       Role role = (Role) iter.next();
       assertFalse(RequiredRoles.isRoleInRegionMembership(region, role));
     }
 
-    SerializableRunnable create = new CacheSerializableRunnable("Create Region") {
-      public void run2() throws CacheException {
-        AttributesFactory fac = new AttributesFactory();
-        fac.setScope(Scope.DISTRIBUTED_ACK);
-        RegionAttributes attr = fac.create();
-        createRootRegion(name, attr);
-      }
-    };
+    SerializableRunnable create =
+        new CacheSerializableRunnable("Create Region") {
+          public void run2() throws CacheException {
+            AttributesFactory fac = new AttributesFactory();
+            fac.setScope(Scope.DISTRIBUTED_ACK);
+            RegionAttributes attr = fac.create();
+            createRootRegion(name, attr);
+          }
+        };
 
     // create region in vm0... no gain for no role
     Host.getHost(0).getVM(vm0).invoke(create);
-    for (Iterator iter = requiredRolesSet.iterator(); iter.hasNext();) {
+    for (Iterator iter = requiredRolesSet.iterator(); iter.hasNext(); ) {
       Role role = (Role) iter.next();
       assertFalse(RequiredRoles.isRoleInRegionMembership(region, role));
     }
@@ -389,23 +399,24 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
       assertTrue(RequiredRoles.isRoleInRegionMembership(region, role));
     }
 
-    SerializableRunnable destroy = new CacheSerializableRunnable("Destroy Region") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion(name);
-        region.localDestroyRegion();
-      }
-    };
+    SerializableRunnable destroy =
+        new CacheSerializableRunnable("Destroy Region") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion(name);
+            region.localDestroyRegion();
+          }
+        };
 
     // destroy region in vm0... no loss of any role
     Host.getHost(0).getVM(vm0).invoke(destroy);
-    for (Iterator iter = requiredRolesSet.iterator(); iter.hasNext();) {
+    for (Iterator iter = requiredRolesSet.iterator(); iter.hasNext(); ) {
       Role role = (Role) iter.next();
       assertTrue(RequiredRoles.isRoleInRegionMembership(region, role));
     }
 
     // destroy region in vm1... nothing happens in 1st removal of redundant role
     Host.getHost(0).getVM(vm1).invoke(destroy);
-    for (Iterator iter = requiredRolesSet.iterator(); iter.hasNext();) {
+    for (Iterator iter = requiredRolesSet.iterator(); iter.hasNext(); ) {
       Role role = (Role) iter.next();
       assertTrue(RequiredRoles.isRoleInRegionMembership(region, role));
     }
@@ -419,20 +430,21 @@ public class RequiredRolesDUnitTest extends ReliabilityTestCase {
 
     // destroy region in vm3... two more roles are in loss
     Host.getHost(0).getVM(vm3).invoke(destroy);
-    for (Iterator iter = requiredRolesSet.iterator(); iter.hasNext();) {
+    for (Iterator iter = requiredRolesSet.iterator(); iter.hasNext(); ) {
       Role role = (Role) iter.next();
       assertFalse(RequiredRoles.isRoleInRegionMembership(region, role));
     }
   }
 
-  private transient final ThreadGroup group = new ThreadGroup("RequiredRolesDUnitTest Threads") {
-    public void uncaughtException(Thread t, Throwable e) {
-      if (e instanceof VirtualMachineError) {
-        SystemFailure.setFailure((VirtualMachineError) e); // don't throw
-      }
-      String s = "Uncaught exception in thread " + t;
-      LogWriterUtils.getLogWriter().error(s, e);
-      fail(s);
-    }
-  };
+  private final transient ThreadGroup group =
+      new ThreadGroup("RequiredRolesDUnitTest Threads") {
+        public void uncaughtException(Thread t, Throwable e) {
+          if (e instanceof VirtualMachineError) {
+            SystemFailure.setFailure((VirtualMachineError) e); // don't throw
+          }
+          String s = "Uncaught exception in thread " + t;
+          LogWriterUtils.getLogWriter().error(s, e);
+          fail(s);
+        }
+      };
 }

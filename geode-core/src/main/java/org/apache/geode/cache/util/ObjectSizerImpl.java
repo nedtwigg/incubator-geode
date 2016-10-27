@@ -17,12 +17,10 @@
 package org.apache.geode.cache.util;
 
 /**
- * This class provides an implementation of the ObjectSizer interface. This
- * uses a helper class to provide the size of an object. The implementation uses
- * reflection to compute object size. This is to be used for testing purposes only
- * This implementation is slow and may cause throughput numbers to drop if used on
- * complex objects.
- *
+ * This class provides an implementation of the ObjectSizer interface. This uses a helper class to
+ * provide the size of an object. The implementation uses reflection to compute object size. This is
+ * to be used for testing purposes only This implementation is slow and may cause throughput numbers
+ * to drop if used on complex objects.
  *
  * @deprecated use {@link ObjectSizer#DEFAULT} instead.
  */

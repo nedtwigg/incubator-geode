@@ -32,9 +32,7 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.cache.partition.PartitionListener;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit test suite for PartitionAttributesImpl.
- */
+/** Unit test suite for PartitionAttributesImpl. */
 @Category(UnitTest.class)
 public class PartitionAttributesImplJUnitTest {
 
@@ -81,21 +79,21 @@ public class PartitionAttributesImplJUnitTest {
     this.localMaxMemory = 123;
     this.offHeap = false;
 
-    this.partitionResolver = new PartitionResolver<Object, Object>() {
-      @Override
-      public void close() {
-      }
+    this.partitionResolver =
+        new PartitionResolver<Object, Object>() {
+          @Override
+          public void close() {}
 
-      @Override
-      public Object getRoutingObject(EntryOperation opDetails) {
-        return "partitionResolver_getRoutingObject";
-      }
+          @Override
+          public Object getRoutingObject(EntryOperation opDetails) {
+            return "partitionResolver_getRoutingObject";
+          }
 
-      @Override
-      public String getName() {
-        return "partitionResolver_getName";
-      }
-    };
+          @Override
+          public String getName() {
+            return "partitionResolver_getName";
+          }
+        };
 
     this.recoveryDelay = 234;
     this.redundancy = 345;
@@ -106,23 +104,20 @@ public class PartitionAttributesImplJUnitTest {
     this.newTestAvailableOffHeapMemory = 789;
     this.greaterLocalMaxMemory = 890;
 
-    this.partitionListener = new PartitionListener() {
-      @Override
-      public void afterPrimary(int bucketId) {
-      }
+    this.partitionListener =
+        new PartitionListener() {
+          @Override
+          public void afterPrimary(int bucketId) {}
 
-      @Override
-      public void afterRegionCreate(Region<?, ?> region) {
-      }
+          @Override
+          public void afterRegionCreate(Region<?, ?> region) {}
 
-      @Override
-      public void afterBucketRemoved(int bucketId, Iterable<?> keys) {
-      }
+          @Override
+          public void afterBucketRemoved(int bucketId, Iterable<?> keys) {}
 
-      @Override
-      public void afterBucketCreated(int bucketId, Iterable<?> keys) {
-      }
-    };
+          @Override
+          public void afterBucketCreated(int bucketId, Iterable<?> keys) {}
+        };
   }
 
   @Test
@@ -270,13 +265,15 @@ public class PartitionAttributesImplJUnitTest {
     assertNotNull(instance.getGlobalProperties());
     assertTrue(instance.getGlobalProperties().isEmpty());
     assertEquals(props, instance.getGlobalProperties());
-    assertEquals(PartitionAttributesFactory.GLOBAL_MAX_MEMORY_DEFAULT, instance.getTotalMaxMemory());
+    assertEquals(
+        PartitionAttributesFactory.GLOBAL_MAX_MEMORY_DEFAULT, instance.getTotalMaxMemory());
   }
 
   @Test
   public void testGetLocalMaxMemoryDefault() {
     PartitionAttributesImpl instance = new PartitionAttributesImpl();
-    assertEquals(PartitionAttributesFactory.LOCAL_MAX_MEMORY_DEFAULT, instance.getLocalMaxMemoryDefault());
+    assertEquals(
+        PartitionAttributesFactory.LOCAL_MAX_MEMORY_DEFAULT, instance.getLocalMaxMemoryDefault());
   }
 
   @Test
@@ -426,21 +423,15 @@ public class PartitionAttributesImplJUnitTest {
 
   @Test
   @Ignore
-  public void testAddFixedPartitionAttributes() {
-
-  }
+  public void testAddFixedPartitionAttributes() {}
 
   @Test
   @Ignore
-  public void testAddPartitionListener() {
-
-  }
+  public void testAddPartitionListener() {}
 
   @Test
   @Ignore
-  public void testAddPartitionListeners() {
-
-  }
+  public void testAddPartitionListeners() {}
 
   @Test
   public void testEqualsAndHashCodeForEqualInstances() {

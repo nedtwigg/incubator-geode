@@ -29,9 +29,9 @@ import org.apache.geode.internal.util.IOUtils;
 import org.apache.geode.internal.util.StopWatch;
 
 /**
- * File wrapper that adds support for reading process id (pid) from a pid file
- * written to disk by GemFire processes.
- * 
+ * File wrapper that adds support for reading process id (pid) from a pid file written to disk by
+ * GemFire processes.
+ *
  * @since GemFire 8.2
  */
 public class PidFile {
@@ -42,9 +42,8 @@ public class PidFile {
 
   /**
    * Constructs a PidFile for reading pid stored in a file.
-   * 
+   *
    * @param file the file containing the pid of the process
-   * 
    * @throws FileNotFoundException if the specified file name is not found within the directory
    */
   public PidFile(final File file) throws FileNotFoundException {
@@ -60,31 +59,31 @@ public class PidFile {
 
   /**
    * Constructs a PidFile for reading pid stored in a file.
-   * 
+   *
    * @param directory directory containing a file of name pidFileName
    * @param filename name of the file containing the pid of the process to stop
-   * 
    * @throws FileNotFoundException if the specified file name is not found within the directory
    * @throws IllegalStateException if dir is not an existing directory
    */
   public PidFile(final File directory, final String filename) throws FileNotFoundException {
     if (!directory.isDirectory() && directory.exists()) {
-      throw new IllegalArgumentException("Argument '" + directory + "' must be an existing directory!");
+      throw new IllegalArgumentException(
+          "Argument '" + directory + "' must be an existing directory!");
     }
 
     final File file = new File(directory, filename);
     if (!file.exists() || file.isDirectory()) {
-      throw new FileNotFoundException("Unable to find PID file '" + filename + "' in directory " + directory);
+      throw new FileNotFoundException(
+          "Unable to find PID file '" + filename + "' in directory " + directory);
     }
 
     this.pidFile = file;
   }
 
   /**
-   * Reads in the pid from the specified file. 
-   * 
+   * Reads in the pid from the specified file.
+   *
    * @return the process id (pid) contained within the pidFile
-   * 
    * @throws IllegalArgumentException if the pid in the pidFile is not a positive integer
    * @throws IOException if unable to read from the specified file
    */
@@ -99,12 +98,14 @@ public class PidFile {
       final int pid = Integer.parseInt(pidValue);
 
       if (pid < 1) {
-        throw new IllegalArgumentException("Invalid pid '" + pid + "' found in " + this.pidFile.getCanonicalPath());
+        throw new IllegalArgumentException(
+            "Invalid pid '" + pid + "' found in " + this.pidFile.getCanonicalPath());
       }
 
       return pid;
     } catch (NumberFormatException e) {
-      throw new IllegalArgumentException("Invalid pid '" + pidValue + "' found in " + this.pidFile.getCanonicalPath());
+      throw new IllegalArgumentException(
+          "Invalid pid '" + pidValue + "' found in " + this.pidFile.getCanonicalPath());
     } finally {
       IOUtils.close(fileReader);
     }
@@ -112,18 +113,17 @@ public class PidFile {
 
   /**
    * Reads in the pid from the specified file, retrying until the specified timeout.
-   * 
+   *
    * @param timeout the maximum time to spend trying to read the pidFile
    * @param unit the unit of timeout
-   * 
    * @return the process id (pid) contained within the pidFile
-   * 
    * @throws IllegalArgumentException if the pid in the pidFile is not a positive integer
    * @throws IOException if unable to read from the specified file
    * @throws InterruptedException if interrupted
    * @throws TimeoutException if operation times out
    */
-  public int readPid(final long timeout, final TimeUnit unit) throws IOException, InterruptedException, TimeoutException {
+  public int readPid(final long timeout, final TimeUnit unit)
+      throws IOException, InterruptedException, TimeoutException {
     IllegalArgumentException iae = null;
     IOException ioe = null;
     int pid = 0;

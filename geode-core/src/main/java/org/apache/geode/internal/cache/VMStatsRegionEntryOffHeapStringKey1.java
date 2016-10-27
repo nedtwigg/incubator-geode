@@ -40,13 +40,12 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VMStatsRegionEntryOffHeapStringKey1 extends VMStatsRegionEntryOffHeap {
-  public VMStatsRegionEntryOffHeapStringKey1(RegionEntryContext context, String key, @Retained Object value, boolean byteEncode) {
+  public VMStatsRegionEntryOffHeapStringKey1(
+      RegionEntryContext context, String key, @Retained Object value, boolean byteEncode) {
     super(context, value);
     // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
     // caller has already confirmed that key.length <= MAX_INLINE_STRING_KEY
@@ -72,9 +71,14 @@ public class VMStatsRegionEntryOffHeapStringKey1 extends VMStatsRegionEntryOffHe
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VMStatsRegionEntryOffHeapStringKey1> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapStringKey1.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VMStatsRegionEntryOffHeapStringKey1>
+      lastModifiedUpdater =
+          AtomicLongFieldUpdater.newUpdater(
+              VMStatsRegionEntryOffHeapStringKey1.class, "lastModified");
   /**
    * All access done using ohAddrUpdater so it is used even though the compiler can not tell it is.
    */
@@ -83,14 +87,15 @@ public class VMStatsRegionEntryOffHeapStringKey1 extends VMStatsRegionEntryOffHe
   @Released
   private volatile long ohAddress;
   /**
-   * I needed to add this because I wanted clear to call setValue which normally can only be called while the re is synced.
-   * But if I sync in that code it causes a lock ordering deadlock with the disk regions because they also get a rw lock in clear.
-   * Some hardware platforms do not support CAS on a long. If gemfire is run on one of those the AtomicLongFieldUpdater does a sync
-   * on the re and we will once again be deadlocked.
-   * I don't know if we support any of the hardware platforms that do not have a 64bit CAS. If we do then we can expect deadlocks
-   * on disk regions.
+   * I needed to add this because I wanted clear to call setValue which normally can only be called
+   * while the re is synced. But if I sync in that code it causes a lock ordering deadlock with the
+   * disk regions because they also get a rw lock in clear. Some hardware platforms do not support
+   * CAS on a long. If gemfire is run on one of those the AtomicLongFieldUpdater does a sync on the
+   * re and we will once again be deadlocked. I don't know if we support any of the hardware
+   * platforms that do not have a 64bit CAS. If we do then we can expect deadlocks on disk regions.
    */
-  private final static AtomicLongFieldUpdater<VMStatsRegionEntryOffHeapStringKey1> ohAddrUpdater = AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapStringKey1.class, "ohAddress");
+  private static final AtomicLongFieldUpdater<VMStatsRegionEntryOffHeapStringKey1> ohAddrUpdater =
+      AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapStringKey1.class, "ohAddress");
 
   @Override
   public Token getValueAsToken() {
@@ -147,9 +152,7 @@ public class VMStatsRegionEntryOffHeapStringKey1 extends VMStatsRegionEntryOffHe
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -158,16 +161,12 @@ public class VMStatsRegionEntryOffHeapStringKey1 extends VMStatsRegionEntryOffHe
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -195,8 +194,14 @@ public class VMStatsRegionEntryOffHeapStringKey1 extends VMStatsRegionEntryOffHe
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryOffHeapStringKey1> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapStringKey1.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryOffHeapStringKey1> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapStringKey1.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryOffHeapStringKey1>
+      hitCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VMStatsRegionEntryOffHeapStringKey1.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryOffHeapStringKey1>
+      missCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VMStatsRegionEntryOffHeapStringKey1.class, "missCount");
 
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {

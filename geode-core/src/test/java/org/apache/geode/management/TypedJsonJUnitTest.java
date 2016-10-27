@@ -42,7 +42,10 @@ import static org.junit.Assert.fail;
 public class TypedJsonJUnitTest {
 
   public enum Currency {
-    PENNY, NICKLE, DIME, QUARTER
+    PENNY,
+    NICKLE,
+    DIME,
+    QUARTER
   };
 
   private static final String RESULT = "result";
@@ -57,7 +60,6 @@ public class TypedJsonJUnitTest {
     } catch (GfJsonException e) {
       fail("Result could not be found");
     }
-
   }
 
   @Test
@@ -81,7 +83,6 @@ public class TypedJsonJUnitTest {
     }
     TypedJson tjson = new TypedJson(RESULT, arr);
     checkResult(tjson);
-
   }
 
   @Test
@@ -102,7 +103,6 @@ public class TypedJsonJUnitTest {
     checkResult(tjson);
     TypedJson enumObj = new TypedJson(RESULT, Currency.DIME);
     checkResult(enumObj);
-
   }
 
   @Test
@@ -114,7 +114,6 @@ public class TypedJsonJUnitTest {
     ls.add(Currency.NICKLE);
     TypedJson tjson = new TypedJson(RESULT, ls);
     System.out.println(tjson);
-
   }
 
   @Test
@@ -126,7 +125,6 @@ public class TypedJsonJUnitTest {
     testMap.put("4", "FOUR");
     TypedJson tjson = new TypedJson(RESULT, testMap);
     System.out.println(tjson);
-
   }
 
   @Test
@@ -134,7 +132,6 @@ public class TypedJsonJUnitTest {
     java.math.BigDecimal dc = new java.math.BigDecimal(20);
     TypedJson tjson = new TypedJson(RESULT, dc);
     System.out.println(tjson);
-
   }
 
   @Test
@@ -142,7 +139,6 @@ public class TypedJsonJUnitTest {
     Portfolio p = new Portfolio(2);
     TypedJson tjson = new TypedJson(RESULT, p);
     System.out.println(tjson);
-
   }
 
   @Test
@@ -169,7 +165,6 @@ public class TypedJsonJUnitTest {
     TypedJson tJsonObj = new TypedJson(RESULT, pi);
     System.out.println(tJsonObj);
     cache.close();
-
   }
 
   @Test
@@ -192,7 +187,6 @@ public class TypedJsonJUnitTest {
     TypedJson tJsonObj = new TypedJson(RESULT, cont);
     System.out.println(tJsonObj);
     cache.close();
-
   }
 
   @Test
@@ -208,7 +202,6 @@ public class TypedJsonJUnitTest {
     System.out.println("Size Of port " + ObjectSizer.REFLECTION_SIZE.sizeof(p));
     TypedJson t1 = new TypedJson(RESULT, p);
     System.out.println("Size Of json " + ObjectSizer.REFLECTION_SIZE.sizeof(t1));
-
   }
 
   @Test
@@ -219,10 +212,8 @@ public class TypedJsonJUnitTest {
     System.out.println(t1);
     for (int i = 0; i < 2; i++) {
       t1.add(RESULT, p[i]);
-
     }
     System.out.println(t1);
-
   }
 
   private static class EnumContainer {
@@ -240,7 +231,6 @@ public class TypedJsonJUnitTest {
     public void setCurr(Currency curr) {
       this.curr = curr;
     }
-
   }
 
   private static class PDXContainer {
@@ -276,5 +266,4 @@ public class TypedJsonJUnitTest {
     }
     return portfolios;
   }
-
 }

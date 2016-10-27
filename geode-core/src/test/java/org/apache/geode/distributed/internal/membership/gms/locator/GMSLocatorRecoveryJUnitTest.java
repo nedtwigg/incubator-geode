@@ -67,7 +67,8 @@ public class GMSLocatorRecoveryJUnitTest {
     }
   }
 
-  private void populateStateFile(File file, int fileStamp, int ordinal, Object object) throws Exception {
+  private void populateStateFile(File file, int fileStamp, int ordinal, Object object)
+      throws Exception {
     try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
       oos.writeInt(fileStamp);
       oos.writeInt(ordinal);
@@ -135,7 +136,20 @@ public class GMSLocatorRecoveryJUnitTest {
       // this locator will hook itself up with the first MembershipManager
       // to be created
       //      l = Locator.startLocator(port, new File(""), localHost);
-      l = InternalLocator.startLocator(port, new File(""), null, null, null, localHost, false, new Properties(), true, false, null, false);
+      l =
+          InternalLocator.startLocator(
+              port,
+              new File(""),
+              null,
+              null,
+              null,
+              localHost,
+              false,
+              new Properties(),
+              true,
+              false,
+              null,
+              false);
 
       // create configuration objects
       Properties nonDefault = new Properties();
@@ -146,7 +160,8 @@ public class GMSLocatorRecoveryJUnitTest {
       nonDefault.put(LOCATORS, localHost.getHostAddress() + '[' + port + ']');
       nonDefault.put(BIND_ADDRESS, localHost.getHostAddress());
       DistributionConfigImpl config = new DistributionConfigImpl(nonDefault);
-      RemoteTransportConfig transport = new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
+      RemoteTransportConfig transport =
+          new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
 
       // start the first membership manager
       DistributedMembershipListener listener1 = mock(DistributedMembershipListener.class);
@@ -156,10 +171,20 @@ public class GMSLocatorRecoveryJUnitTest {
       // hook up the locator to the membership manager
       ((InternalLocator) l).getLocatorHandler().setMembershipManager(m1);
 
-      GMSLocator l2 = new GMSLocator(SocketCreator.getLocalHost(), new File("l2.dat"), m1.getLocalMember().getHost() + "[" + port + "]", true, true, new LocatorStats(), "");
+      GMSLocator l2 =
+          new GMSLocator(
+              SocketCreator.getLocalHost(),
+              new File("l2.dat"),
+              m1.getLocalMember().getHost() + "[" + port + "]",
+              true,
+              true,
+              new LocatorStats(),
+              "");
       l2.init(null);
 
-      assertTrue("expected view to contain " + m1.getLocalMember() + ": " + l2.getMembers(), l2.getMembers().contains(m1.getLocalMember()));
+      assertTrue(
+          "expected view to contain " + m1.getLocalMember() + ": " + l2.getMembers(),
+          l2.getMembers().contains(m1.getLocalMember()));
     } finally {
       if (m1 != null) {
         m1.shutdown();

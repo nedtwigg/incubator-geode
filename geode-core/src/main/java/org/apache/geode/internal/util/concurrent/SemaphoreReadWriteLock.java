@@ -23,9 +23,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
 /**
- * This ReadWriteLock is useful when different threads need to lock
- * and unlock the read lock. This is <b>NOT</b> a reentrant lock.
- * 
+ * This ReadWriteLock is useful when different threads need to lock and unlock the read lock. This
+ * is <b>NOT</b> a reentrant lock.
  */
 public class SemaphoreReadWriteLock implements ReadWriteLock {
 
@@ -63,7 +62,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
     public void lock() {
       boolean interrupted = false;
       try {
-        for (;;) {
+        for (; ; ) {
           try {
             lockInterruptibly();
             break;
@@ -72,8 +71,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
           }
         }
       } finally {
-        if (interrupted)
-          Thread.currentThread().interrupt();
+        if (interrupted) Thread.currentThread().interrupt();
       }
     }
 
@@ -95,7 +93,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
     public boolean tryLock() {
       boolean interrupted = false;
       try {
-        for (;;) {
+        for (; ; ) {
           try {
             return tryLock(0, TimeUnit.MILLISECONDS);
           } catch (InterruptedException e) {
@@ -103,8 +101,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
           }
         }
       } finally {
-        if (interrupted)
-          Thread.currentThread().interrupt();
+        if (interrupted) Thread.currentThread().interrupt();
       }
     }
 
@@ -132,7 +129,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
 
     @Override
     public void unlock() {
-      for (;;) {
+      for (; ; ) {
         boolean interrupted = false;
         try {
           readerSemaphore.acquire();
@@ -140,8 +137,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
           interrupted = true;
           continue;
         } finally {
-          if (interrupted)
-            Thread.currentThread().interrupt();
+          if (interrupted) Thread.currentThread().interrupt();
         }
         numReaders--;
         // The unlock method is forgiving
@@ -174,7 +170,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
     public void lock() {
       boolean interrupted = false;
       try {
-        for (;;) {
+        for (; ; ) {
           try {
             lockInterruptibly();
             break;
@@ -183,8 +179,7 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
           }
         }
       } finally {
-        if (interrupted)
-          Thread.currentThread().interrupt();
+        if (interrupted) Thread.currentThread().interrupt();
       }
     }
 
@@ -212,6 +207,5 @@ public class SemaphoreReadWriteLock implements ReadWriteLock {
     public Condition newCondition() {
       throw new UnsupportedOperationException();
     }
-
   }
 }

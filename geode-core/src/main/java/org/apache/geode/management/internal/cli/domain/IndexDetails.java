@@ -27,7 +27,7 @@ import org.apache.geode.internal.lang.StringUtils;
 
 /**
  * The IndexDetails class encapsulates information for an Index on a Region in the GemFire Cache.
- * </p>
+ *
  * @see org.apache.geode.cache.query.Index
  * @see org.apache.geode.cache.query.IndexStatistics
  * @see org.apache.geode.cache.query.IndexType
@@ -51,17 +51,21 @@ public class IndexDetails implements Comparable<IndexDetails>, Serializable {
   private final String memberId;
   private final String regionPath;
 
-  protected static void assertValidArgument(final boolean valid, final String message, final Object... args) {
+  protected static void assertValidArgument(
+      final boolean valid, final String message, final Object... args) {
     if (!valid) {
       throw new IllegalArgumentException(String.format(message, args));
     }
   }
 
   protected static <T extends Comparable<T>> int compare(final T obj1, final T obj2) {
-    return (obj1 == null && obj2 == null ? 0 : (obj1 == null ? 1 : (obj2 == null ? -1 : obj1.compareTo(obj2))));
+    return (obj1 == null && obj2 == null
+        ? 0
+        : (obj1 == null ? 1 : (obj2 == null ? -1 : obj1.compareTo(obj2))));
   }
 
-  protected static IndexStatisticsDetails createIndexStatisticsDetails(final IndexStatistics indexStatistics) {
+  protected static IndexStatisticsDetails createIndexStatisticsDetails(
+      final IndexStatistics indexStatistics) {
     final IndexStatisticsDetails indexStatisticsDetails = new IndexStatisticsDetails();
 
     indexStatisticsDetails.setNumberOfKeys(indexStatistics.getNumberOfKeys());
@@ -89,9 +93,18 @@ public class IndexDetails implements Comparable<IndexDetails>, Serializable {
   }
 
   public IndexDetails(final String memberId, final String regionPath, final String indexName) {
-    assertValidArgument(!StringUtils.isBlank(memberId), "The member having a region with an index must be specified!");
-    assertValidArgument(!StringUtils.isBlank(regionPath), "The region in member (%1$s) with an index must be specified!", memberId);
-    assertValidArgument(!StringUtils.isBlank(indexName), "The name of the index on region (%1$s) of member (%2$s) must be specified!", regionPath, memberId);
+    assertValidArgument(
+        !StringUtils.isBlank(memberId),
+        "The member having a region with an index must be specified!");
+    assertValidArgument(
+        !StringUtils.isBlank(regionPath),
+        "The region in member (%1$s) with an index must be specified!",
+        memberId);
+    assertValidArgument(
+        !StringUtils.isBlank(indexName),
+        "The name of the index on region (%1$s) of member (%2$s) must be specified!",
+        regionPath,
+        memberId);
     this.memberId = memberId;
     this.regionPath = regionPath;
     this.indexName = indexName;
@@ -171,9 +184,17 @@ public class IndexDetails implements Comparable<IndexDetails>, Serializable {
 
   public int compareTo(final IndexDetails indexDetails) {
     int comparisonValue = compare(getMemberName(), indexDetails.getMemberName());
-    comparisonValue = (comparisonValue != 0 ? comparisonValue : compare(getMemberId(), indexDetails.getMemberId()));
-    comparisonValue = (comparisonValue != 0 ? comparisonValue : compare(getRegionPath(), indexDetails.getRegionPath()));
-    return (comparisonValue != 0 ? comparisonValue : compare(getIndexName(), indexDetails.getIndexName()));
+    comparisonValue =
+        (comparisonValue != 0
+            ? comparisonValue
+            : compare(getMemberId(), indexDetails.getMemberId()));
+    comparisonValue =
+        (comparisonValue != 0
+            ? comparisonValue
+            : compare(getRegionPath(), indexDetails.getRegionPath()));
+    return (comparisonValue != 0
+        ? comparisonValue
+        : compare(getIndexName(), indexDetails.getIndexName()));
   }
 
   @Override
@@ -188,7 +209,9 @@ public class IndexDetails implements Comparable<IndexDetails>, Serializable {
 
     final IndexDetails that = (IndexDetails) obj;
 
-    return ObjectUtils.equals(getMemberId(), that.getMemberId()) && ObjectUtils.equals(getRegionPath(), that.getRegionPath()) && ObjectUtils.equals(getIndexName(), that.getIndexName());
+    return ObjectUtils.equals(getMemberId(), that.getMemberId())
+        && ObjectUtils.equals(getRegionPath(), that.getRegionPath())
+        && ObjectUtils.equals(getIndexName(), that.getIndexName());
   }
 
   @Override
@@ -282,7 +305,9 @@ public class IndexDetails implements Comparable<IndexDetails>, Serializable {
   }
 
   public static enum IndexType {
-    FUNCTIONAL("RANGE"), HASH("HASH"), PRIMARY_KEY("KEY");
+    FUNCTIONAL("RANGE"),
+    HASH("HASH"),
+    PRIMARY_KEY("KEY");
 
     private final String description;
 
@@ -296,7 +321,9 @@ public class IndexDetails implements Comparable<IndexDetails>, Serializable {
     }
 
     IndexType(final String description) {
-      assertValidArgument(!StringUtils.isBlank(description), "The description for the IndexType must be specified!");
+      assertValidArgument(
+          !StringUtils.isBlank(description),
+          "The description for the IndexType must be specified!");
       this.description = description;
     }
 
@@ -306,13 +333,13 @@ public class IndexDetails implements Comparable<IndexDetails>, Serializable {
 
     public org.apache.geode.cache.query.IndexType getType() {
       switch (this) {
-      case HASH:
-        return null;
-      case PRIMARY_KEY:
-        return org.apache.geode.cache.query.IndexType.PRIMARY_KEY;
-      case FUNCTIONAL:
-      default:
-        return org.apache.geode.cache.query.IndexType.FUNCTIONAL;
+        case HASH:
+          return null;
+        case PRIMARY_KEY:
+          return org.apache.geode.cache.query.IndexType.PRIMARY_KEY;
+        case FUNCTIONAL:
+        default:
+          return org.apache.geode.cache.query.IndexType.FUNCTIONAL;
       }
     }
 
@@ -321,5 +348,4 @@ public class IndexDetails implements Comparable<IndexDetails>, Serializable {
       return getDescription();
     }
   }
-
 }

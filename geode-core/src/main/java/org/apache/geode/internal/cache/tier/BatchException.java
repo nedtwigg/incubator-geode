@@ -22,7 +22,6 @@ import org.apache.geode.GemFireCheckedException;
 /**
  * An exception thrown during batch processing.
  *
- *
  * @since GemFire 4.2
  */
 // Note that since this class is inside of an internal package,
@@ -32,16 +31,13 @@ public class BatchException extends GemFireCheckedException {
 
   protected int _index;
 
-  /**
-   * Required for serialization
-   */
-  public BatchException() {
-  }
+  /** Required for serialization */
+  public BatchException() {}
 
   /**
-   * Constructor.
-   * Creates an instance of <code>RegionQueueException</code> with the
-   * specified detail message.
+   * Constructor. Creates an instance of <code>RegionQueueException</code> with the specified detail
+   * message.
+   *
    * @param msg the detail message
    * @param index the index in the batch list where the exception occurred
    */
@@ -51,9 +47,8 @@ public class BatchException extends GemFireCheckedException {
   }
 
   /**
-   * Constructor.
-   * Creates an instance of <code>RegionQueueException</code> with the
-   * specified cause.
+   * Constructor. Creates an instance of <code>RegionQueueException</code> with the specified cause.
+   *
    * @param cause the causal Throwable
    * @param index the index in the batch list where the exception occurred
    */
@@ -64,6 +59,7 @@ public class BatchException extends GemFireCheckedException {
 
   /**
    * Answers the index in the batch where the exception occurred
+   *
    * @return the index in the batch where the exception occurred
    */
   public int getIndex() {

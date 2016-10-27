@@ -26,9 +26,7 @@ import org.apache.geode.cache.CacheLoaderException;
 import org.apache.geode.cache.LoaderHelper;
 import org.apache.geode.cache.Declarable;
 
-/**
- * This class is cacheLoader for the partition region
- */
+/** This class is cacheLoader for the partition region */
 public class PartitionedRegionCacheLoaderForSubRegion implements CacheLoader, Declarable {
 
   @Override
@@ -39,7 +37,12 @@ public class PartitionedRegionCacheLoaderForSubRegion implements CacheLoader, De
     if (pr.getAttributes().getPartitionAttributes().getRedundantCopies() != 1)
       fail("Redundancy of the partition region is not 1");
 
-    assertEquals(pr.getAttributes().getPartitionAttributes().getGlobalProperties().getProperty(PartitionAttributesFactory.GLOBAL_MAX_BUCKETS_PROPERTY), "11");
+    assertEquals(
+        pr.getAttributes()
+            .getPartitionAttributes()
+            .getGlobalProperties()
+            .getProperty(PartitionAttributesFactory.GLOBAL_MAX_BUCKETS_PROPERTY),
+        "11");
     assertEquals(pr.getAttributes().getPartitionAttributes().getLocalMaxMemory(), 200);
     /*
      * Returning the same key. This is to check CaccheLoader is invoked or
@@ -49,11 +52,8 @@ public class PartitionedRegionCacheLoaderForSubRegion implements CacheLoader, De
   }
 
   @Override
-  public void close() {
-  }
+  public void close() {}
 
   @Override
-  public void init(Properties props) {
-  }
-
+  public void init(Properties props) {}
 }

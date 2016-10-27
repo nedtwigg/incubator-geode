@@ -36,11 +36,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
-/**
- * This is for testing continuous query.
- * 
- */
-
+/** This is for testing continuous query. */
 @Category(DistributedTest.class)
 public class TestCQDUnitTest extends ManagementTestBase {
 
@@ -56,24 +52,25 @@ public class TestCQDUnitTest extends ManagementTestBase {
 
   public static long getNumOfCQ() {
 
-    final WaitCriterion waitCriteria = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        final ManagementService service = getManagementService();
-        final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-        if (bean != null) {
-          if (bean.getActiveCQCount() > 0) {
-            return true;
+    final WaitCriterion waitCriteria =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            final ManagementService service = getManagementService();
+            final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+            if (bean != null) {
+              if (bean.getActiveCQCount() > 0) {
+                return true;
+              }
+            }
+            return false;
           }
-        }
-        return false;
-      }
 
-      @Override
-      public String description() {
-        return "wait for getNumOfCQ to complete and get results";
-      }
-    };
+          @Override
+          public String description() {
+            return "wait for getNumOfCQ to complete and get results";
+          }
+        };
     Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
     final DistributedSystemMXBean bean = getManagementService().getDistributedSystemMXBean();
     assertNotNull(bean);
@@ -107,9 +104,29 @@ public class TestCQDUnitTest extends ManagementTestBase {
     cqDUnitTest.waitForCreated(client, queryName, CqQueryDUnitTest.KEY + size);
     cqDUnitTest.waitForCreated(client, queryName2, CqQueryDUnitTest.KEY + size);
 
-    cqDUnitTest.validateCQ(client, queryName, /* resultSize: */CqQueryDUnitTest.noTest, /* creates: */size, /* updates: */0, /* deletes; */0, /* queryInserts: */size, /* queryUpdates: */0, /* queryDeletes: */0, /* totalEvents: */size);
+    cqDUnitTest.validateCQ(
+        client,
+        queryName, /* resultSize: */
+        CqQueryDUnitTest.noTest, /* creates: */
+        size, /* updates: */
+        0, /* deletes; */
+        0, /* queryInserts: */
+        size, /* queryUpdates: */
+        0, /* queryDeletes: */
+        0, /* totalEvents: */
+        size);
 
-    cqDUnitTest.validateCQ(client, queryName2, /* resultSize: */CqQueryDUnitTest.noTest, /* creates: */size, /* updates: */0, /* deletes; */0, /* queryInserts: */size, /* queryUpdates: */0, /* queryDeletes: */0, /* totalEvents: */size);
+    cqDUnitTest.validateCQ(
+        client,
+        queryName2, /* resultSize: */
+        CqQueryDUnitTest.noTest, /* creates: */
+        size, /* updates: */
+        0, /* deletes; */
+        0, /* queryInserts: */
+        size, /* queryUpdates: */
+        0, /* queryDeletes: */
+        0, /* totalEvents: */
+        size);
 
     long numOfCQ = ((Number) managingNode.invoke(() -> TestCQDUnitTest.getNumOfCQ())).intValue();
 
@@ -121,12 +138,7 @@ public class TestCQDUnitTest extends ManagementTestBase {
     assertTrue(numOfCQ > 0 ? true : false);
   }
 
-  public void verifyStatistics() {
+  public void verifyStatistics() {}
 
-  }
-
-  public void invokeOperations() {
-
-  }
-
+  public void invokeOperations() {}
 }

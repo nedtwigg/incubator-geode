@@ -28,8 +28,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.cache.*;
 
 /**
- * Tests region reliability defined by MembershipAttributes using 
- * GLOBAL scope.
+ * Tests region reliability defined by MembershipAttributes using GLOBAL scope.
  *
  * @since GemFire 5.0
  */
@@ -43,5 +42,4 @@ public class RegionReliabilityGlobalDUnitTest extends RegionReliabilityTestCase 
   protected Scope getRegionScope() {
     return Scope.GLOBAL;
   }
-
 }

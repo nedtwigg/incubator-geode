@@ -49,7 +49,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 /**
  * IUM6Bug32345ReJUnitTest.java
  *
- * Created on May 5, 2005, 10:32 AM
+ * <p>Created on May 5, 2005, 10:32 AM
  */
 @Category(IntegrationTest.class)
 public class IUM6Bug32345ReJUnitTest {
@@ -96,7 +96,9 @@ public class IUM6Bug32345ReJUnitTest {
     }
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.status='active' and pos.secId= 'IBM' and ID = 0" };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.status='active' and pos.secId= 'IBM' and ID = 0"
+    };
     SelectResults sr[][] = new SelectResults[queries.length][2];
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -121,7 +123,6 @@ public class IUM6Bug32345ReJUnitTest {
           valPf1 = stc1.get(strg1[0]);
           valPos1 = stc1.get(strg1[1]);
           isActive1 = ((Portfolio) stc1.get(strg1[0])).isActive();
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -132,11 +133,14 @@ public class IUM6Bug32345ReJUnitTest {
     //  Create an Index on status and execute the same query again.
 
     qs = CacheUtils.getQueryService();
-    qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "pf.status", "/pos pf, pf.positions.values pos");
+    qs.createIndex(
+        "statusIndex", IndexType.FUNCTIONAL, "pf.status", "/pos pf, pf.positions.values pos");
     //Retesting BUG # 32345
     //Index index2 = (Index)qs.createIndex("secIdIndex", IndexType.FUNCTIONAL,"pos.secId","/pos pf, pf.positions.values pos");
     qs.createIndex("IDIndex", IndexType.FUNCTIONAL, "pf.ID", "/pos pf, pf.positions.values pos");
-    String queries2[] = { "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.status='active' and pos.secId= 'IBM' and ID = 0" };
+    String queries2[] = {
+      "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.status='active' and pos.secId= 'IBM' and ID = 0"
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
@@ -155,7 +159,7 @@ public class IUM6Bug32345ReJUnitTest {
         //         CacheUtils.log(resType2);
         strg2 = resType2.getFieldNames();
         //         CacheUtils.log(strg2[0]);
-        //         CacheUtils.log(strg2[1]);         
+        //         CacheUtils.log(strg2[1]);
 
         set2 = ((sr[i][1]).asSet());
         Iterator iter = set2.iterator();
@@ -179,7 +183,8 @@ public class IUM6Bug32345ReJUnitTest {
       fail("FAILED:Search result Type is different in both the cases");
     }
     if (resSize1 == resSize2 || resSize1 != 0) {
-      CacheUtils.log("Both Search Results are Non-zero and are of Same Size i.e.  Size= " + resSize1);
+      CacheUtils.log(
+          "Both Search Results are Non-zero and are of Same Size i.e.  Size= " + resSize1);
     } else {
       fail("FAILED:Search result Type is different in both the cases");
     }
@@ -189,12 +194,15 @@ public class IUM6Bug32345ReJUnitTest {
       Struct stc2 = (Struct) itert2.next();
       Struct stc1 = (Struct) itert1.next();
       if (stc2.get(strg2[0]) != stc1.get(strg1[0]))
-        fail("FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
+        fail(
+            "FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
       if (stc2.get(strg2[1]) != stc1.get(strg1[1]))
         fail("FAILED: In both the cases Positions are different");
-      if (!StringUtils.equals(((Position) stc2.get(strg2[1])).secId, ((Position) stc1.get(strg1[1])).secId))
+      if (!StringUtils.equals(
+          ((Position) stc2.get(strg2[1])).secId, ((Position) stc1.get(strg1[1])).secId))
         fail("FAILED: In both the cases Positions secIds are different");
-      if (((Portfolio) stc2.get(strg2[0])).isActive() != ((Portfolio) stc1.get(strg1[0])).isActive())
+      if (((Portfolio) stc2.get(strg2[0])).isActive()
+          != ((Portfolio) stc1.get(strg1[0])).isActive())
         fail("FAILED: Status of the Portfolios found are different");
       if (((Portfolio) stc2.get(strg2[0])).getID() != ((Portfolio) stc1.get(strg1[0])).getID())
         fail("FAILED: IDs of the Portfolios found are different");

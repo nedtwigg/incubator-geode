@@ -20,8 +20,8 @@ import org.apache.geode.InternalGemFireException;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * This class is a factory that creates instances
- * of {@link DistributionMessage}.
+ * This class is a factory that creates instances of {@link DistributionMessage}.
+ *
  * @deprecated use a constructor instead
  */
 @Deprecated
@@ -29,9 +29,7 @@ public class MessageFactory {
 
   //////////////////////  Static Methods  //////////////////////
 
-  /**
-   * Returns a message of the given type.
-   */
+  /** Returns a message of the given type. */
   public static DistributionMessage getMessage(Class messageType) {
 
     //    DistributionMessage message;
@@ -39,7 +37,9 @@ public class MessageFactory {
     try {
       Object o = messageType.newInstance();
       if (!(o instanceof DistributionMessage)) {
-        throw new InternalGemFireException(LocalizedStrings.MessageFactory_CLASS_0_IS_NOT_A_DISTRIBUTIONMESSAGE.toLocalizedString(messageType.getName()));
+        throw new InternalGemFireException(
+            LocalizedStrings.MessageFactory_CLASS_0_IS_NOT_A_DISTRIBUTIONMESSAGE.toLocalizedString(
+                messageType.getName()));
 
       } else {
         // no need for further processing on the new message, so return it
@@ -47,10 +47,17 @@ public class MessageFactory {
       }
 
     } catch (InstantiationException ex) {
-      throw new InternalGemFireException(LocalizedStrings.MessageFactory_AN_INSTANTIATIONEXCEPTION_WAS_THROWN_WHILE_INSTANTIATING_A_0.toLocalizedString(messageType.getName()), ex);
+      throw new InternalGemFireException(
+          LocalizedStrings
+              .MessageFactory_AN_INSTANTIATIONEXCEPTION_WAS_THROWN_WHILE_INSTANTIATING_A_0
+              .toLocalizedString(messageType.getName()),
+          ex);
 
     } catch (IllegalAccessException ex) {
-      throw new InternalGemFireException(LocalizedStrings.MessageFactory_COULD_NOT_ACCESS_ZEROARG_CONSTRUCTOR_OF_0.toLocalizedString(messageType.getName()), ex);
+      throw new InternalGemFireException(
+          LocalizedStrings.MessageFactory_COULD_NOT_ACCESS_ZEROARG_CONSTRUCTOR_OF_0
+              .toLocalizedString(messageType.getName()),
+          ex);
     }
   }
 }

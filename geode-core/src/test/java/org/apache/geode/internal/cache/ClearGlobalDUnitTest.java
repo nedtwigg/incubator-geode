@@ -16,7 +16,7 @@
  */
 /*
  * ClearGlobalDUnitTest.java
- * 
+ *
  * Created on September 13, 2005, 1:47 PM
  */
 
@@ -46,8 +46,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * For the Global region subsequent puts should be blocked until the clear
- * operation is completely done
+ * For the Global region subsequent puts should be blocked until the clear operation is completely
+ * done
  */
 @Category(DistributedTest.class)
 public class ClearGlobalDUnitTest extends JUnit4DistributedTestCase {
@@ -112,8 +112,7 @@ public class ClearGlobalDUnitTest extends JUnit4DistributedTestCase {
     }
     server1.invoke(() -> ClearGlobalDUnitTest.clearMethod());
     checkTestResults();
-
-  }// end of test case
+  } // end of test case
 
   public static void createCacheServer1() throws Exception {
     ds = (new ClearGlobalDUnitTest()).getSystem(props);
@@ -122,7 +121,6 @@ public class ClearGlobalDUnitTest extends JUnit4DistributedTestCase {
     factory.setScope(Scope.GLOBAL);
     RegionAttributes attr = factory.create();
     region = cache.createRegion(REGION_NAME, attr);
-
   } //end of create cache for VM0
 
   public static void createCacheServer2() throws Exception {
@@ -137,7 +135,6 @@ public class ClearGlobalDUnitTest extends JUnit4DistributedTestCase {
     RegionAttributes attr = factory.create();
     region = cache.createRegion(REGION_NAME, attr);
     cache.setLockTimeout(3);
-
   } //end of create cache for VM1
 
   public static void putMethod(Object ob) throws Exception {
@@ -178,9 +175,8 @@ public class ClearGlobalDUnitTest extends JUnit4DistributedTestCase {
         testComplete = true;
         lock.notify();
       }
-
     }
-  }//end of CacheObserverImpl
+  } //end of CacheObserverImpl
 
   static class PutThread extends Thread {
     public void run() {
@@ -195,5 +191,5 @@ public class ClearGlobalDUnitTest extends JUnit4DistributedTestCase {
         exceptionMsg.append(" Exception occurred while region.put(key,value)");
       }
     }
-  }//end of PutThread
-}// End of class
+  } //end of PutThread
+} // End of class

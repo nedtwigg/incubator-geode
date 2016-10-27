@@ -24,10 +24,7 @@ import org.apache.geode.internal.memcached.Command;
 import org.apache.geode.internal.memcached.RequestReader;
 import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 
-/**
- * Does not send a response on a cache miss.
- * 
- */
+/** Does not send a response on a cache miss. */
 public class GetQCommand extends GetCommand {
 
   @Override

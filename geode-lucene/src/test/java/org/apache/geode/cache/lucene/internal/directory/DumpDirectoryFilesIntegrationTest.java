@@ -43,8 +43,7 @@ import org.junit.experimental.categories.Category;
 
 @Category(IntegrationTest.class)
 public class DumpDirectoryFilesIntegrationTest extends LuceneIntegrationTest {
-  @Rule
-  public DiskDirRule diskDirRule = new DiskDirRule();
+  @Rule public DiskDirRule diskDirRule = new DiskDirRule();
 
   @Test
   public void shouldDumpReadableLuceneIndexFile() throws Exception {
@@ -56,7 +55,8 @@ public class DumpDirectoryFilesIntegrationTest extends LuceneIntegrationTest {
     region.put(2 * 113, new TestObject("title 3", "hello world"));
     region.put(3 * 113, new TestObject("hello world", "hello world"));
 
-    InternalLuceneIndex index = (InternalLuceneIndex) luceneService.getIndex(INDEX_NAME, REGION_NAME);
+    InternalLuceneIndex index =
+        (InternalLuceneIndex) luceneService.getIndex(INDEX_NAME, REGION_NAME);
 
     index.waitUntilFlushed(60000);
 
@@ -72,5 +72,4 @@ public class DumpDirectoryFilesIntegrationTest extends LuceneIntegrationTest {
     final TopDocs results = searcher.search(new MatchAllDocsQuery(), 1000);
     assertEquals(4, results.totalHits);
   }
-
 }

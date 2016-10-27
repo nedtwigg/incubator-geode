@@ -22,9 +22,7 @@
 
 package org.apache.geode.cache.query.data;
 
-/**
- *
- */
+/** */
 import java.io.Serializable;
 
 public class Numbers implements Serializable {
@@ -47,5 +45,4 @@ public class Numbers implements Serializable {
     range = (id - id1);
     l = id * 100000000;
   }
-
 }

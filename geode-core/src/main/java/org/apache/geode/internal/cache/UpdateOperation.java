@@ -51,10 +51,7 @@ import org.apache.geode.internal.util.BlobHelper;
 import org.apache.geode.internal.util.Breadcrumbs;
 import static org.apache.geode.internal.offheap.annotations.OffHeapIdentifier.ENTRY_EVENT_NEW_VALUE;
 
-/**
- * Handles distribution messaging for updating an entry in a region.
- *
- */
+/** Handles distribution messaging for updating an entry in a region. */
 public class UpdateOperation extends AbstractUpdateOperation {
   private static final Logger logger = LogService.getLogger();
 
@@ -112,10 +109,7 @@ public class UpdateOperation extends AbstractUpdateOperation {
 
   public static class UpdateMessage extends AbstractUpdateMessage implements NewValueImporter {
 
-    /**
-     * Indicates if and when the new value should be deserialized on the the
-     * receiver
-     */
+    /** Indicates if and when the new value should be deserialized on the the receiver */
     protected byte deserializationPolicy;
 
     protected EntryEventImpl event = null;
@@ -139,12 +133,9 @@ public class UpdateOperation extends AbstractUpdateOperation {
 
     private Long tailKey = 0L;
 
-    public UpdateMessage() {
-    }
+    public UpdateMessage() {}
 
-    /**  
-     * copy constructor
-     */
+    /** copy constructor */
     public UpdateMessage(UpdateMessage upMsg) {
       this.appliedOperation = upMsg.appliedOperation;
       this.callbackArg = upMsg.callbackArg;
@@ -232,31 +223,34 @@ public class UpdateOperation extends AbstractUpdateOperation {
           final UpdateMessage updateMsg;
           final DM dm = this.event.getRegion().getDistributionManager();
           if (this instanceof UpdateWithContextMessage) {
-            updateMsg = new UpdateOperation.UpdateWithContextMessage((UpdateWithContextMessage) this);
+            updateMsg =
+                new UpdateOperation.UpdateWithContextMessage((UpdateWithContextMessage) this);
           } else {
             updateMsg = new UpdateOperation.UpdateMessage((UpdateMessage) this);
           }
-          Runnable sendMessage = new Runnable() {
-            public void run() {
-              synchronized (updateMsg) { // prevent concurrent update of
-                // recipient list
-                updateMsg.resetRecipients();
-                updateMsg.setRecipient(replyMessage.getSender());
-                updateMsg.setSendDelta(false);
-                updateMsg.setSendDeltaWithFullValue(false);
-                if (logger.isDebugEnabled()) {
-                  logger.debug("Sending full object ({}) to {}", updateMsg, replyMessage.getSender());
+          Runnable sendMessage =
+              new Runnable() {
+                public void run() {
+                  synchronized (updateMsg) { // prevent concurrent update of
+                    // recipient list
+                    updateMsg.resetRecipients();
+                    updateMsg.setRecipient(replyMessage.getSender());
+                    updateMsg.setSendDelta(false);
+                    updateMsg.setSendDeltaWithFullValue(false);
+                    if (logger.isDebugEnabled()) {
+                      logger.debug(
+                          "Sending full object ({}) to {}", updateMsg, replyMessage.getSender());
+                    }
+                    dm.putOutgoing(updateMsg);
+                  }
+                  updateMsg.event.getRegion().getCachePerfStats().incDeltaFullValuesSent();
                 }
-                dm.putOutgoing(updateMsg);
-              }
-              updateMsg.event.getRegion().getCachePerfStats().incDeltaFullValuesSent();
-            }
 
-            @Override
-            public String toString() {
-              return "Sending full object {" + updateMsg.toString() + "}";
-            }
-          };
+                @Override
+                public String toString() {
+                  return "Sending full object {" + updateMsg.toString() + "}";
+                }
+              };
 
           if (processor.isExpectingDirectReply()) {
             sendMessage.run();
@@ -270,10 +264,11 @@ public class UpdateOperation extends AbstractUpdateOperation {
     }
 
     /**
-     * Utility to set the new value in the EntryEventImpl based on the given
-     * deserialization value; also called from QueuedOperation
+     * Utility to set the new value in the EntryEventImpl based on the given deserialization value;
+     * also called from QueuedOperation
      */
-    static void setNewValueInEvent(byte[] newValue, Object newValueObj, EntryEventImpl event, byte deserializationPolicy) {
+    static void setNewValueInEvent(
+        byte[] newValue, Object newValueObj, EntryEventImpl event, byte deserializationPolicy) {
       if (newValue == null) {
         // in an UpdateMessage this results from a create(key, null) call,
         // set local invalid flag in event if this is a normal region. Otherwise
@@ -287,14 +282,16 @@ public class UpdateOperation extends AbstractUpdateOperation {
       }
 
       switch (deserializationPolicy) {
-      case DESERIALIZATION_POLICY_LAZY:
-        event.setSerializedNewValue(newValue);
-        break;
-      case DESERIALIZATION_POLICY_NONE:
-        event.setNewValue(newValue);
-        break;
-      default:
-        throw new InternalGemFireError(LocalizedStrings.UpdateOperation_UNKNOWN_DESERIALIZATION_POLICY_0.toLocalizedString(Byte.valueOf(deserializationPolicy)));
+        case DESERIALIZATION_POLICY_LAZY:
+          event.setSerializedNewValue(newValue);
+          break;
+        case DESERIALIZATION_POLICY_NONE:
+          event.setNewValue(newValue);
+          break;
+        default:
+          throw new InternalGemFireError(
+              LocalizedStrings.UpdateOperation_UNKNOWN_DESERIALIZATION_POLICY_0.toLocalizedString(
+                  Byte.valueOf(deserializationPolicy)));
       }
     }
 
@@ -303,8 +300,16 @@ public class UpdateOperation extends AbstractUpdateOperation {
       Object argNewValue = null;
       final boolean originRemote = true, generateCallbacks = true;
       @Retained
-      EntryEventImpl result = EntryEventImpl.create(rgn, getOperation(), this.key, argNewValue, // oldValue,
-          this.callbackArg, originRemote, getSender(), generateCallbacks);
+      EntryEventImpl result =
+          EntryEventImpl.create(
+              rgn,
+              getOperation(),
+              this.key,
+              argNewValue, // oldValue,
+              this.callbackArg,
+              originRemote,
+              getSender(),
+              generateCallbacks);
       setOldValueInEvent(result);
       result.setTailKey(this.tailKey);
       if (this.versionTag != null) {
@@ -385,9 +390,10 @@ public class UpdateOperation extends AbstractUpdateOperation {
       super.toData(out);
 
       byte extraFlags = this.deserializationPolicy;
-      if (this.eventId != null)
-        extraFlags |= HAS_EVENTID;
-      if (this.deserializationPolicy != DistributedCacheOperation.DESERIALIZATION_POLICY_NONE && this.sendDeltaWithFullValue && this.event.getDeltaBytes() != null) {
+      if (this.eventId != null) extraFlags |= HAS_EVENTID;
+      if (this.deserializationPolicy != DistributedCacheOperation.DESERIALIZATION_POLICY_NONE
+          && this.sendDeltaWithFullValue
+          && this.event.getDeltaBytes() != null) {
         extraFlags |= HAS_DELTA_WITH_FULL_VALUE;
       }
       out.writeByte(extraFlags);
@@ -414,7 +420,8 @@ public class UpdateOperation extends AbstractUpdateOperation {
         DataSerializer.writeByteArray(this.event.getDeltaBytes(), out);
         this.event.getRegion().getCachePerfStats().incDeltasSent();
       } else {
-        DistributedCacheOperation.writeValue(this.deserializationPolicy, this.newValueObj, this.newValue, out);
+        DistributedCacheOperation.writeValue(
+            this.deserializationPolicy, this.newValueObj, this.newValue, out);
         if ((extraFlags & HAS_DELTA_WITH_FULL_VALUE) != 0) {
           DataSerializer.writeByteArray(this.event.getDeltaBytes(), out);
         }
@@ -428,13 +435,20 @@ public class UpdateOperation extends AbstractUpdateOperation {
 
     private void setDeltaFlag(DistributedRegion region) {
       try {
-        if (region != null && region.getSystem().getConfig().getDeltaPropagation() && this.sendDelta && !region.scope.isDistributedNoAck() && this.event.getDeltaBytes() != null) {
+        if (region != null
+            && region.getSystem().getConfig().getDeltaPropagation()
+            && this.sendDelta
+            && !region.scope.isDistributedNoAck()
+            && this.event.getDeltaBytes() != null) {
           setHasDelta(true);
           return;
         }
         setHasDelta(false);
       } catch (RuntimeException re) {
-        throw new InvalidDeltaException(LocalizedStrings.DistributionManager_CAUGHT_EXCEPTION_WHILE_SENDING_DELTA.toLocalizedString(), re);
+        throw new InvalidDeltaException(
+            LocalizedStrings.DistributionManager_CAUGHT_EXCEPTION_WHILE_SENDING_DELTA
+                .toLocalizedString(),
+            re);
       }
     }
 
@@ -447,7 +461,14 @@ public class UpdateOperation extends AbstractUpdateOperation {
       } else {
         valueBytes = this.newValue;
       }
-      return Collections.singletonList(new QueuedOperation(getOperation(), this.key, valueBytes, valueObj, this.deserializationPolicy, this.callbackArg));
+      return Collections.singletonList(
+          new QueuedOperation(
+              getOperation(),
+              this.key,
+              valueBytes,
+              valueObj,
+              this.deserializationPolicy,
+              this.callbackArg));
     }
 
     public boolean hasBridgeContext() {
@@ -479,7 +500,8 @@ public class UpdateOperation extends AbstractUpdateOperation {
     }
 
     @Override
-    public void importNewObject(@Unretained(ENTRY_EVENT_NEW_VALUE) Object nv, boolean isSerialized) {
+    public void importNewObject(
+        @Unretained(ENTRY_EVENT_NEW_VALUE) Object nv, boolean isSerialized) {
       if (nv == null) {
         this.deserializationPolicy = DESERIALIZATION_POLICY_NONE;
         this.newValue = null;
@@ -506,14 +528,23 @@ public class UpdateOperation extends AbstractUpdateOperation {
 
     @Override
     @Retained
-    final public EntryEventImpl createEntryEvent(DistributedRegion rgn) {
+    public final EntryEventImpl createEntryEvent(DistributedRegion rgn) {
       // Object oldValue = null;
       final Object argNewValue = null;
       // boolean localLoad = false, netLoad = false, netSearch = false,
       // distributed = true;
       final boolean originRemote = true, generateCallbacks = true;
       @Retained
-      EntryEventImpl ev = EntryEventImpl.create(rgn, getOperation(), this.key, argNewValue, this.callbackArg, originRemote, getSender(), generateCallbacks);
+      EntryEventImpl ev =
+          EntryEventImpl.create(
+              rgn,
+              getOperation(),
+              this.key,
+              argNewValue,
+              this.callbackArg,
+              originRemote,
+              getSender(),
+              generateCallbacks);
       ev.setContext(this.clientID);
       setOldValueInEvent(ev);
       return ev;
@@ -521,8 +552,7 @@ public class UpdateOperation extends AbstractUpdateOperation {
       // distributed, this.isExpiration, originRemote, this.context);
     }
 
-    public UpdateWithContextMessage() {
-    }
+    public UpdateWithContextMessage() {}
 
     public UpdateWithContextMessage(UpdateWithContextMessage msg) {
       super(msg);
@@ -552,5 +582,4 @@ public class UpdateOperation extends AbstractUpdateOperation {
       DataSerializer.writeObject(this.clientID, out);
     }
   }
-
 }

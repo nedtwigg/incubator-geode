@@ -16,11 +16,7 @@
  */
 package org.apache.geode.management.internal.cli.util;
 
-/***
- * Contains the names for the region attributes
- * used by describe region command
- *
- */
+/** * Contains the names for the region attributes used by describe region command */
 public class RegionAttributesNames {
 
   public static final String CONCURRENCY_LEVEL = "concurrency-level";

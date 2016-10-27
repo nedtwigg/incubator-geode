@@ -24,19 +24,13 @@ import org.apache.geode.cache.EntryEvent;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * This class actually distribute the notification with the help of the actual
- * broadcaster proxy.
- * 
- * 
+ * This class actually distribute the notification with the help of the actual broadcaster proxy.
  */
-
 public class NotificationHubClient {
 
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * proxy factory
-   */
+  /** proxy factory */
   private MBeanProxyFactory proxyFactory;
 
   protected NotificationHubClient(MBeanProxyFactory proxyFactory) {
@@ -44,11 +38,10 @@ public class NotificationHubClient {
   }
 
   /**
-   * send the notification to actual client
-   * on the Managing node VM
-   * 
-   * it does not throw any exception. it will capture all
-   * exception and log a warning
+   * send the notification to actual client on the Managing node VM
+   *
+   * <p>it does not throw any exception. it will capture all exception and log a warning
+   *
    * @param event
    */
   public void sendNotification(EntryEvent<NotificationKey, Notification> event) {
@@ -56,7 +49,9 @@ public class NotificationHubClient {
     NotificationBroadCasterProxy notifBroadCaster;
     try {
 
-      notifBroadCaster = proxyFactory.findProxy(event.getKey().getObjectName(), NotificationBroadCasterProxy.class);
+      notifBroadCaster =
+          proxyFactory.findProxy(
+              event.getKey().getObjectName(), NotificationBroadCasterProxy.class);
       // Will return null if the Bean is filtered out.
       if (notifBroadCaster != null) {
         notifBroadCaster.sendNotification(event.getNewValue());
@@ -68,7 +63,5 @@ public class NotificationHubClient {
       }
       logger.warn(e.getMessage(), e);
     }
-
   }
-
 }

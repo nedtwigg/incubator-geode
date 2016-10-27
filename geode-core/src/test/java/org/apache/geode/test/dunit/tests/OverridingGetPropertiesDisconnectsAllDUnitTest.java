@@ -29,8 +29,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Verifies that overriding {@code getDistributedSystemProperties} results
- * in {@code disconnectAllFromDS} during tear down.
+ * Verifies that overriding {@code getDistributedSystemProperties} results in {@code
+ * disconnectAllFromDS} during tear down.
  */
 @Category(DistributedTest.class)
 public class OverridingGetPropertiesDisconnectsAllDUnitTest extends JUnit4DistributedTestCase {

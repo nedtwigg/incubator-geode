@@ -49,11 +49,11 @@ public class ObjectPartListJUnitTest {
 
     //THIS TEST FAILS! ObjectPartArrayList doesn't
     //preserve all its state when it is serialized (it loses track of type information
-    //for values of type BYTES by writing the type info as OBJECT). However, 
+    //for values of type BYTES by writing the type info as OBJECT). However,
     //we'll have to leave it to avoid breaking old clients.
     //create another copy, just to double check
     //    newList = CopyHelper.copy(newList);
-    //    
+    //
     //    checkObjectValues(newList);
 
   }
@@ -92,7 +92,8 @@ public class ObjectPartListJUnitTest {
     checkSerializedValues(newList);
   }
 
-  private void checkSerializedValues(ObjectPartList newList) throws IOException, ClassNotFoundException {
+  private void checkSerializedValues(ObjectPartList newList)
+      throws IOException, ClassNotFoundException {
     assertEquals(5, newList.size());
     assertNull(newList.getKeysForTest());
     List values = newList.getObjects();

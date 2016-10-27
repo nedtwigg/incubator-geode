@@ -16,8 +16,5 @@
  */
 package org.apache.geode.test.junit.categories;
 
-/**
- * JUnit Test Category that specifies a test that involves Wan feature.
- */
-public interface WanTest {
-}
+/** JUnit Test Category that specifies a test that involves Wan feature. */
+public interface WanTest {}

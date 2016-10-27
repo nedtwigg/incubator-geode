@@ -46,7 +46,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 @Category(UnitTest.class)
-
 public class LuceneDescribeIndexFunctionJUnitTest {
 
   @Test
@@ -67,7 +66,8 @@ public class LuceneDescribeIndexFunctionJUnitTest {
     when(service.getIndex(indexInfo.getIndexName(), indexInfo.getRegionPath())).thenReturn(index1);
 
     function.execute(context);
-    ArgumentCaptor<LuceneIndexDetails> resultCaptor = ArgumentCaptor.forClass(LuceneIndexDetails.class);
+    ArgumentCaptor<LuceneIndexDetails> resultCaptor =
+        ArgumentCaptor.forClass(LuceneIndexDetails.class);
     verify(resultSender).lastResult(resultCaptor.capture());
     LuceneIndexDetails result = resultCaptor.getValue();
     LuceneIndexDetails expected = new LuceneIndexDetails(index1);
@@ -87,7 +87,7 @@ public class LuceneDescribeIndexFunctionJUnitTest {
   }
 
   private LuceneIndexImpl getMockLuceneIndex(final String indexName) {
-    String[] searchableFields = { "field1", "field2" };
+    String[] searchableFields = {"field1", "field2"};
     Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
     fieldAnalyzers.put("field1", new StandardAnalyzer());
     fieldAnalyzers.put("field2", new KeywordAnalyzer());
@@ -99,5 +99,4 @@ public class LuceneDescribeIndexFunctionJUnitTest {
     when(index.getFieldAnalyzers()).thenReturn(fieldAnalyzers);
     return index;
   }
-
 }

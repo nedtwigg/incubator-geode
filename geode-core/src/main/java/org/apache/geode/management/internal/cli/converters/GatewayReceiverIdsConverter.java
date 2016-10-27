@@ -42,8 +42,14 @@ public class GatewayReceiverIdsConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
-    if (String.class.equals(targetType) && ConverterHint.GATEWAY_RECEIVER_ID.equals(optionContext)) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
+    if (String.class.equals(targetType)
+        && ConverterHint.GATEWAY_RECEIVER_ID.equals(optionContext)) {
       Set<String> gatewaySenderIds = getGatewayRecieverIds();
 
       for (String gatewaySenderId : gatewaySenderIds) {
@@ -59,11 +65,17 @@ public class GatewayReceiverIdsConverter implements Converter<String> {
 
     Gfsh gfsh = Gfsh.getCurrentInstance();
     if (gfsh != null && gfsh.isConnectedAndReady()) {
-      final String[] gatewaySenderIdArray = (String[]) gfsh.getOperationInvoker().invoke(ManagementConstants.OBJECTNAME__DISTRIBUTEDSYSTEM_MXBEAN, "listGatewayReceivers", new Object[0], new String[0]);
+      final String[] gatewaySenderIdArray =
+          (String[])
+              gfsh.getOperationInvoker()
+                  .invoke(
+                      ManagementConstants.OBJECTNAME__DISTRIBUTEDSYSTEM_MXBEAN,
+                      "listGatewayReceivers",
+                      new Object[0],
+                      new String[0]);
       gatewayRecieverIds = new TreeSet<String>(Arrays.asList(gatewaySenderIdArray));
     }
 
     return gatewayRecieverIds;
   }
-
 }

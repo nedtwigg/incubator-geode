@@ -29,5 +29,4 @@ public class LPushXExecutor extends PushXExecutor {
   public String getArgsError() {
     return ArityDef.LPUSHX;
   }
-
 }

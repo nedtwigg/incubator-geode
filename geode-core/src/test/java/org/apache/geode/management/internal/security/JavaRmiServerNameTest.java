@@ -51,5 +51,4 @@ public class JavaRmiServerNameTest {
     new CacheFactory(properties).create();
     assertEquals(JMX_HOST, System.getProperty("java.rmi.server.hostname"));
   }
-
 }

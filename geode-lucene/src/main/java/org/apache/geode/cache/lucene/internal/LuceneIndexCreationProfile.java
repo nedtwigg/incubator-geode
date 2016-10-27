@@ -42,10 +42,14 @@ public class LuceneIndexCreationProfile implements CacheServiceProfile, DataSeri
   private String regionPath;
 
   /* Used by DataSerializer */
-  public LuceneIndexCreationProfile() {
-  }
+  public LuceneIndexCreationProfile() {}
 
-  public LuceneIndexCreationProfile(String indexName, String regionPath, String[] fieldNames, Analyzer analyzer, Map<String, Analyzer> fieldAnalyzers) {
+  public LuceneIndexCreationProfile(
+      String indexName,
+      String regionPath,
+      String[] fieldNames,
+      Analyzer analyzer,
+      Map<String, Analyzer> fieldAnalyzers) {
     this.indexName = indexName;
     this.regionPath = regionPath;
     this.fieldNames = fieldNames;
@@ -73,7 +77,11 @@ public class LuceneIndexCreationProfile implements CacheServiceProfile, DataSeri
     this.fieldAnalyzers = new HashMap<>();
     for (String field : fieldNames) {
       if (fieldAnalyzers != null && !fieldAnalyzers.isEmpty()) {
-        this.fieldAnalyzers.put(field, fieldAnalyzers.get(field) == null ? StandardAnalyzer.class.getSimpleName() : fieldAnalyzers.get(field).getClass().getSimpleName());
+        this.fieldAnalyzers.put(
+            field,
+            fieldAnalyzers.get(field) == null
+                ? StandardAnalyzer.class.getSimpleName()
+                : fieldAnalyzers.get(field).getClass().getSimpleName());
       } else {
         this.fieldAnalyzers.put(field, StandardAnalyzer.class.getSimpleName());
       }
@@ -94,7 +102,13 @@ public class LuceneIndexCreationProfile implements CacheServiceProfile, DataSeri
     } else {
       // Verify fields are the same
       if (!Arrays.equals(remoteProfile.getFieldNames(), getFieldNames())) {
-        return LocalizedStrings.LuceneService_CANNOT_CREATE_INDEX_0_ON_REGION_1_WITH_FIELDS_2_BECAUSE_ANOTHER_MEMBER_DEFINES_THE_SAME_INDEX_WITH_FIELDS_3.toString(getIndexName(), regionPath, Arrays.toString(getFieldNames()), Arrays.toString(remoteProfile.getFieldNames()));
+        return LocalizedStrings
+            .LuceneService_CANNOT_CREATE_INDEX_0_ON_REGION_1_WITH_FIELDS_2_BECAUSE_ANOTHER_MEMBER_DEFINES_THE_SAME_INDEX_WITH_FIELDS_3
+            .toString(
+                getIndexName(),
+                regionPath,
+                Arrays.toString(getFieldNames()),
+                Arrays.toString(remoteProfile.getFieldNames()));
       }
 
       // Verify the analyzer class is the same
@@ -112,12 +126,28 @@ public class LuceneIndexCreationProfile implements CacheServiceProfile, DataSeri
       // Note: This is currently destructive to the input field analyzers map which should be ok since its a transient object.
       if (!getFieldAnalyzers().equals(remoteProfile.getFieldAnalyzers())) {
         if (getFieldAnalyzers().size() != remoteProfile.getFieldAnalyzers().size()) {
-          return LocalizedStrings.LuceneService_CANNOT_CREATE_INDEX_0_ON_REGION_1_WITH_FIELDS_2_BECAUSE_ANOTHER_MEMBER_DEFINES_THE_SAME_INDEX_WITH_FIELDS_3.toString(getIndexName(), regionPath, Arrays.toString(getFieldAnalyzers().keySet().toArray()), Arrays.toString(remoteProfile.getFieldAnalyzers().keySet().toArray()));
+          return LocalizedStrings
+              .LuceneService_CANNOT_CREATE_INDEX_0_ON_REGION_1_WITH_FIELDS_2_BECAUSE_ANOTHER_MEMBER_DEFINES_THE_SAME_INDEX_WITH_FIELDS_3
+              .toString(
+                  getIndexName(),
+                  regionPath,
+                  Arrays.toString(getFieldAnalyzers().keySet().toArray()),
+                  Arrays.toString(remoteProfile.getFieldAnalyzers().keySet().toArray()));
         }
         // now the 2 maps should have the same size
         for (String field : getFieldAnalyzers().keySet()) {
-          if (!remoteProfile.getFieldAnalyzers().get(field).equals(getFieldAnalyzers().get(field))) {
-            return LocalizedStrings.LuceneService_CANNOT_CREATE_INDEX_0_ON_REGION_1_WITH_ANALYZER_2_ON_FIELD_3_BECAUSE_ANOTHER_MEMBER_DEFINES_THE_SAME_INDEX_WITH_ANALYZER_4_ON_THAT_FIELD.toString(getIndexName(), regionPath, getFieldAnalyzers().get(field), field, remoteProfile.getFieldAnalyzers().get(field));
+          if (!remoteProfile
+              .getFieldAnalyzers()
+              .get(field)
+              .equals(getFieldAnalyzers().get(field))) {
+            return LocalizedStrings
+                .LuceneService_CANNOT_CREATE_INDEX_0_ON_REGION_1_WITH_ANALYZER_2_ON_FIELD_3_BECAUSE_ANOTHER_MEMBER_DEFINES_THE_SAME_INDEX_WITH_ANALYZER_4_ON_THAT_FIELD
+                .toString(
+                    getIndexName(),
+                    regionPath,
+                    getFieldAnalyzers().get(field),
+                    field,
+                    remoteProfile.getFieldAnalyzers().get(field));
           }
         }
       }
@@ -144,7 +174,19 @@ public class LuceneIndexCreationProfile implements CacheServiceProfile, DataSeri
   }
 
   public String toString() {
-    return new StringBuilder().append(getClass().getSimpleName()).append("[").append("indexName=").append(this.indexName).append("; fieldNames=").append(Arrays.toString(this.fieldNames)).append("; analyzerClass=").append(this.analyzerClass).append("; fieldAnalyzers=").append(this.fieldAnalyzers).append("]").toString();
+    return new StringBuilder()
+        .append(getClass().getSimpleName())
+        .append("[")
+        .append("indexName=")
+        .append(this.indexName)
+        .append("; fieldNames=")
+        .append(Arrays.toString(this.fieldNames))
+        .append("; analyzerClass=")
+        .append(this.analyzerClass)
+        .append("; fieldAnalyzers=")
+        .append(this.fieldAnalyzers)
+        .append("]")
+        .toString();
   }
 
   public String getRegionPath() {

@@ -28,10 +28,14 @@ public class NestedPdx implements PdxSerializable {
   private String myString2;
   private float myFloat;
 
-  public NestedPdx() {
-  }
+  public NestedPdx() {}
 
-  public NestedPdx(String str1, long myLong, HashMap<String, PdxSerializable> myMap, String str2, float myFloat) {
+  public NestedPdx(
+      String str1,
+      long myLong,
+      HashMap<String, PdxSerializable> myMap,
+      String str2,
+      float myFloat) {
     this.myString1 = str1;
     this.myLong = myLong;
     this.myHashMap = myMap;
@@ -53,32 +57,21 @@ public class NestedPdx implements PdxSerializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     NestedPdx other = (NestedPdx) obj;
-    if (Float.floatToIntBits(myFloat) != Float.floatToIntBits(other.myFloat))
-      return false;
+    if (Float.floatToIntBits(myFloat) != Float.floatToIntBits(other.myFloat)) return false;
     if (myHashMap == null) {
-      if (other.myHashMap != null)
-        return false;
-    } else if (!myHashMap.equals(other.myHashMap))
-      return false;
-    if (myLong != other.myLong)
-      return false;
+      if (other.myHashMap != null) return false;
+    } else if (!myHashMap.equals(other.myHashMap)) return false;
+    if (myLong != other.myLong) return false;
     if (myString1 == null) {
-      if (other.myString1 != null)
-        return false;
-    } else if (!myString1.equals(other.myString1))
-      return false;
+      if (other.myString1 != null) return false;
+    } else if (!myString1.equals(other.myString1)) return false;
     if (myString2 == null) {
-      if (other.myString2 != null)
-        return false;
-    } else if (!myString2.equals(other.myString2))
-      return false;
+      if (other.myString2 != null) return false;
+    } else if (!myString2.equals(other.myString2)) return false;
     return true;
   }
 
@@ -103,6 +96,16 @@ public class NestedPdx implements PdxSerializable {
 
   @Override
   public String toString() {
-    return "NestedPdx [myString1=" + myString1 + ", myLong=" + myLong + ", myHashMap=" + myHashMap + ", myString2=" + myString2 + ", myFloat=" + myFloat + "]";
+    return "NestedPdx [myString1="
+        + myString1
+        + ", myLong="
+        + myLong
+        + ", myHashMap="
+        + myHashMap
+        + ", myString2="
+        + myString2
+        + ", myFloat="
+        + myFloat
+        + "]";
   }
 }

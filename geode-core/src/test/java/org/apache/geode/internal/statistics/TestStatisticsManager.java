@@ -20,17 +20,17 @@ import org.apache.geode.Statistics;
 import org.apache.geode.StatisticsType;
 import org.apache.geode.internal.statistics.platform.OsStatisticsFactory;
 
-/**
- * @since GemFire 7.0
- */
-public class TestStatisticsManager extends AbstractStatisticsFactory implements StatisticsManager, OsStatisticsFactory {
+/** @since GemFire 7.0 */
+public class TestStatisticsManager extends AbstractStatisticsFactory
+    implements StatisticsManager, OsStatisticsFactory {
 
   public TestStatisticsManager(final long id, final String name, final long startTime) {
     super(id, name, startTime);
   }
 
   @Override
-  public Statistics createOsStatistics(final StatisticsType type, final String textId, final long numericId, final int osStatFlags) {
+  public Statistics createOsStatistics(
+      final StatisticsType type, final String textId, final long numericId, final int osStatFlags) {
     return null;
   }
 }

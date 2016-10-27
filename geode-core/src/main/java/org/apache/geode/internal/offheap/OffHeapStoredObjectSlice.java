@@ -17,8 +17,8 @@
 package org.apache.geode.internal.offheap;
 
 /**
- * Represents a slice of an OffHeapStoredObject.
- * A slice is a subsequence of the bytes stored in an OffHeapStoredObject.
+ * Represents a slice of an OffHeapStoredObject. A slice is a subsequence of the bytes stored in an
+ * OffHeapStoredObject.
  */
 public class OffHeapStoredObjectSlice extends OffHeapStoredObject {
   private final int offset;

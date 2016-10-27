@@ -18,40 +18,31 @@ package org.apache.geode.internal.cache.wan;
 
 import org.apache.geode.cache.OperationAbortedException;
 
-/**
- * Exception to inform user that AsyncEventQueue is wrongly configured.
- *  
- *
- */
+/** Exception to inform user that AsyncEventQueue is wrongly configured. */
 public class AsyncEventQueueConfigurationException extends OperationAbortedException {
 
   private static final long serialVersionUID = 1L;
 
-  /**
-   * Constructor.
-   * Creates a new instance of <code>AsyncEventQueueConfigurationException</code>.
-   */
+  /** Constructor. Creates a new instance of <code>AsyncEventQueueConfigurationException</code>. */
   public AsyncEventQueueConfigurationException() {
     super();
   }
 
   /**
-   * Constructor.
-   * Creates an instance of <code>AsyncEventQueueConfigurationException</code> with the
-   * specified detail message
-   * and cause.
+   * Constructor. Creates an instance of <code>AsyncEventQueueConfigurationException</code> with the
+   * specified detail message and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */
-
   public AsyncEventQueueConfigurationException(String msg, Throwable cause) {
     super(msg, cause);
   }
 
   /**
-   * Constructor.
-   * Creates an instance of <code>GatewaySenderException</code> with the
-   * specified detail message.
+   * Constructor. Creates an instance of <code>GatewaySenderException</code> with the specified
+   * detail message.
+   *
    * @param msg the detail message
    */
   public AsyncEventQueueConfigurationException(String msg) {
@@ -59,13 +50,12 @@ public class AsyncEventQueueConfigurationException extends OperationAbortedExcep
   }
 
   /**
-   * Constructor.
-   * Creates an instance of <code>AsyncEventQueueConfigurationException</code> with the
+   * Constructor. Creates an instance of <code>AsyncEventQueueConfigurationException</code> with the
    * specified cause.
+   *
    * @param cause the causal Throwable
    */
   public AsyncEventQueueConfigurationException(Throwable cause) {
     super(cause);
   }
-
 }

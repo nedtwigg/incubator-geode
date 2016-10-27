@@ -16,10 +16,7 @@
  */
 package org.apache.geode.management;
 
-/**
- * Interface for A simple MBean to test various aspects of federation
- *
- */
+/** Interface for A simple MBean to test various aspects of federation */
 public interface CustomMXBean {
 
   public long getSystemTime();
@@ -33,5 +30,4 @@ public interface CustomMXBean {
   public String fetchName();
 
   public void writeName(String staticField);
-
 }

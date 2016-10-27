@@ -23,7 +23,8 @@ public abstract class VMThinDiskRegionEntryHeap extends VMThinDiskRegionEntry {
     super(context, value);
   }
 
-  private static final VMThinDiskRegionEntryHeapFactory factory = new VMThinDiskRegionEntryHeapFactory();
+  private static final VMThinDiskRegionEntryHeapFactory factory =
+      new VMThinDiskRegionEntryHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;

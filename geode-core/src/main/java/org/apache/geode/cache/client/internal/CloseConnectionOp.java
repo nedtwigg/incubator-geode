@@ -23,11 +23,13 @@ import org.apache.geode.internal.cache.tier.sockets.Message;
 
 /**
  * Tell a server that a connection is being closed
+ *
  * @since GemFire 5.7
  */
 public class CloseConnectionOp {
   /**
    * Tell a server that a connection is being closed
+   *
    * @param con the connection that is being closed
    * @param keepAlive whether to keep the proxy alive on the server
    */
@@ -45,17 +47,14 @@ public class CloseConnectionOp {
   }
 
   private static class CloseConnectionOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public CloseConnectionOpImpl(boolean keepAlive) {
       super(MessageType.CLOSE_CONNECTION, 1);
-      getMessage().addRawPart(new byte[] { (byte) (keepAlive ? 1 : 0) }, false);
+      getMessage().addRawPart(new byte[] {(byte) (keepAlive ? 1 : 0)}, false);
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

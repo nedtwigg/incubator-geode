@@ -21,29 +21,17 @@ import java.util.Set;
 import org.apache.geode.internal.cache.LocalRegion;
 
 /**
- * This class provides 'do-nothing' implementations of all of the methods of
- * interface VMotionObserver.
+ * This class provides 'do-nothing' implementations of all of the methods of interface
+ * VMotionObserver.
  */
-
 public class VMotionObserverAdapter implements VMotionObserver {
 
-  /**
-   * This callback is called just before CQ registration on the server
-   */
+  /** This callback is called just before CQ registration on the server */
+  public void vMotionBeforeCQRegistration() {}
 
-  public void vMotionBeforeCQRegistration() {
-  }
+  /** This callback is called just before register Interset on the server */
+  public void vMotionBeforeRegisterInterest() {}
 
-  /**
-   * This callback is called just before register Interset on the server
-   */
-
-  public void vMotionBeforeRegisterInterest() {
-  }
-
-  /**
-   * This callback is called before a request for GII is sent.
-   */
-  public void vMotionDuringGII(Set recipientSet, LocalRegion region) {
-  }
+  /** This callback is called before a request for GII is sent. */
+  public void vMotionDuringGII(Set recipientSet, LocalRegion region) {}
 }

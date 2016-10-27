@@ -25,26 +25,23 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * get its current version info.
+ * A message that is sent to a particular distribution manager to get its current version info.
+ *
  * @since GemFire 3.5
  */
 public final class VersionInfoRequest extends AdminRequest {
-  /**
-   * Returns a <code>VersionInfoRequest</code>.
-   */
+  /** Returns a <code>VersionInfoRequest</code>. */
   public static VersionInfoRequest create() {
     VersionInfoRequest m = new VersionInfoRequest();
     return m;
   }
 
   public VersionInfoRequest() {
-    friendlyName = LocalizedStrings.VersionInfoRequest_FETCH_CURRENT_VERSION_INFORMATION.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.VersionInfoRequest_FETCH_CURRENT_VERSION_INFORMATION.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return VersionInfoResponse.create(dm, this.getSender());

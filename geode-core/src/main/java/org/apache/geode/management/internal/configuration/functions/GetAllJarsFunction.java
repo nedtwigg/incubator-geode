@@ -33,8 +33,7 @@ public class GetAllJarsFunction extends FunctionAdapter implements InternalEntit
 
   private static final long serialVersionUID = 1L;
 
-  public GetAllJarsFunction() {
-  }
+  public GetAllJarsFunction() {}
 
   @Override
   public void execute(FunctionContext context) {
@@ -62,5 +61,4 @@ public class GetAllJarsFunction extends FunctionAdapter implements InternalEntit
   public String getId() {
     return GetAllJarsFunction.class.getName();
   }
-
 }

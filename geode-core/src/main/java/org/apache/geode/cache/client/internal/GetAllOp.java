@@ -39,6 +39,7 @@ import org.apache.geode.internal.logging.LogService;
 
 /**
  * Does a region getAll on a server
+ *
  * @since GemFire 5.7
  */
 public class GetAllOp {
@@ -46,20 +47,23 @@ public class GetAllOp {
   private static final Logger logger = LogService.getLogger();
 
   /**
-   * Does a region getAll on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region getAll on a server using connections from the given pool to communicate with the
+   * server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the getAll on
    * @param keys list of keys to get
    * @return the map of values found by the getAll if any
    */
-  public static VersionedObjectList execute(ExecutablePool pool, String region, List keys, Object callback) {
+  public static VersionedObjectList execute(
+      ExecutablePool pool, String region, List keys, Object callback) {
     AbstractOp op = new GetAllOpImpl(region, keys, callback);
     op.initMessagePart();
     return ((VersionedObjectList) pool.execute(op)).setKeys(keys);
   }
 
-  public static VersionedObjectList execute(ExecutablePool pool, Region region, List keys, int retryAttempts, Object callback) {
+  public static VersionedObjectList execute(
+      ExecutablePool pool, Region region, List keys, int retryAttempts, Object callback) {
     AbstractOp op = new GetAllOpImpl(region.getFullPath(), keys, callback);
     ClientMetadataService cms = ((LocalRegion) region).getCache().getClientMetadataService();
 
@@ -72,8 +76,11 @@ public class GetAllOp {
       VersionedObjectList result = null;
       ServerConnectivityException se = null;
       List retryList = new ArrayList();
-      List callableTasks = constructGetAllTasks(region.getFullPath(), serverToFilterMap, (PoolImpl) pool, callback);
-      Map<ServerLocation, Object> results = SingleHopClientExecutor.submitGetAll(serverToFilterMap, callableTasks, cms, (LocalRegion) region);
+      List callableTasks =
+          constructGetAllTasks(region.getFullPath(), serverToFilterMap, (PoolImpl) pool, callback);
+      Map<ServerLocation, Object> results =
+          SingleHopClientExecutor.submitGetAll(
+              serverToFilterMap, callableTasks, cms, (LocalRegion) region);
       for (ServerLocation server : results.keySet()) {
         Object serverResult = results.get(server);
         if (serverResult instanceof ServerConnectivityException) {
@@ -92,7 +99,8 @@ public class GetAllOp {
         if (retryAttempts == 0) {
           throw se;
         } else {
-          VersionedObjectList retryResult = GetAllOp.execute(pool, region.getFullPath(), retryList, callback);
+          VersionedObjectList retryResult =
+              GetAllOp.execute(pool, region.getFullPath(), retryList, callback);
           if (result == null) {
             result = retryResult;
           } else {
@@ -109,7 +117,11 @@ public class GetAllOp {
     // no instances allowed
   }
 
-  static List constructGetAllTasks(String region, final Map<ServerLocation, HashSet> serverToFilterMap, final PoolImpl pool, final Object callback) {
+  static List constructGetAllTasks(
+      String region,
+      final Map<ServerLocation, HashSet> serverToFilterMap,
+      final PoolImpl pool,
+      final Object callback) {
     final List<SingleHopOperationCallable> tasks = new ArrayList<SingleHopOperationCallable>();
     ArrayList<ServerLocation> servers = new ArrayList<ServerLocation>(serverToFilterMap.keySet());
 
@@ -120,7 +132,12 @@ public class GetAllOp {
       Set filterSet = serverToFilterMap.get(server);
       AbstractOp getAllOp = new GetAllOpImpl(region, new ArrayList(filterSet), callback);
 
-      SingleHopOperationCallable task = new SingleHopOperationCallable(new ServerLocation(server.getHostName(), server.getPort()), pool, getAllOp, UserAttributes.userAttributes.get());
+      SingleHopOperationCallable task =
+          new SingleHopOperationCallable(
+              new ServerLocation(server.getHostName(), server.getPort()),
+              pool,
+              getAllOp,
+              UserAttributes.userAttributes.get());
       tasks.add(task);
     }
     return tasks;
@@ -131,9 +148,7 @@ public class GetAllOp {
     private List keyList;
     private final Object callback;
 
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public GetAllOpImpl(String region, List keys, Object callback) {
       super(callback != null ? MessageType.GET_ALL_WITH_CALLBACK : MessageType.GET_ALL_70, 3);
       this.keyList = keys;
@@ -172,24 +187,27 @@ public class GetAllOp {
     protected Object processResponse(Message msg, final Connection con) throws Exception {
       final VersionedObjectList result = new VersionedObjectList(false);
       final Exception[] exceptionRef = new Exception[1];
-      processChunkedResponse((ChunkedMessage) msg, "getAll", new ChunkHandler() {
-        public void handle(ChunkedMessage cm) throws Exception {
-          Part part = cm.getPart(0);
-          try {
-            Object o = part.getObject();
-            if (o instanceof Throwable) {
-              String s = "While performing a remote getAll";
-              exceptionRef[0] = new ServerOperationException(s, (Throwable) o);
-            } else {
-              VersionedObjectList chunk = (VersionedObjectList) o;
-              chunk.replaceNullIDs(con.getEndpoint().getMemberId());
-              result.addAll(chunk);
+      processChunkedResponse(
+          (ChunkedMessage) msg,
+          "getAll",
+          new ChunkHandler() {
+            public void handle(ChunkedMessage cm) throws Exception {
+              Part part = cm.getPart(0);
+              try {
+                Object o = part.getObject();
+                if (o instanceof Throwable) {
+                  String s = "While performing a remote getAll";
+                  exceptionRef[0] = new ServerOperationException(s, (Throwable) o);
+                } else {
+                  VersionedObjectList chunk = (VersionedObjectList) o;
+                  chunk.replaceNullIDs(con.getEndpoint().getMemberId());
+                  result.addAll(chunk);
+                }
+              } catch (Exception e) {
+                exceptionRef[0] = new ServerOperationException("Unable to deserialize value", e);
+              }
             }
-          } catch (Exception e) {
-            exceptionRef[0] = new ServerOperationException("Unable to deserialize value", e);
-          }
-        }
-      });
+          });
       if (exceptionRef[0] != null) {
         throw exceptionRef[0];
       } else {

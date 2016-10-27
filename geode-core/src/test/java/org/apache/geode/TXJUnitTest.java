@@ -43,13 +43,11 @@ import static org.junit.Assert.*;
  * Tests basic transaction functionality
  *
  * @since GemFire 4.0
- *
  */
 @Category(IntegrationTest.class)
 public class TXJUnitTest {
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   private int cbCount;
   private TransactionEvent te;
@@ -78,9 +76,7 @@ public class TXJUnitTest {
     this.listenerClose = 0;
   }
 
-  /**
-   * 
-   */
+  /** */
   protected void createRegion() throws Exception {
     AttributesFactory af = new AttributesFactory();
     af.setScope(Scope.DISTRIBUTED_NO_ACK);
@@ -365,27 +361,27 @@ public class TXJUnitTest {
     Region reg1 = this.region;
     Region reg2 = this.cache.createRegion(getUniqueName(), af.create());
 
-    this.txMgr.setListener(new TransactionListener() {
-      public void afterCommit(TransactionEvent event) {
-        listenerAfterCommit = 1;
-        te = event;
-      }
+    this.txMgr.setListener(
+        new TransactionListener() {
+          public void afterCommit(TransactionEvent event) {
+            listenerAfterCommit = 1;
+            te = event;
+          }
 
-      public void afterFailedCommit(TransactionEvent event) {
-        listenerAfterFailedCommit = 1;
-        te = event;
-      }
+          public void afterFailedCommit(TransactionEvent event) {
+            listenerAfterFailedCommit = 1;
+            te = event;
+          }
 
-      public void afterRollback(TransactionEvent event) {
-        listenerAfterRollback = 1;
-        te = event;
-      }
+          public void afterRollback(TransactionEvent event) {
+            listenerAfterRollback = 1;
+            te = event;
+          }
 
-      public void close() {
-        listenerClose = 1;
-      }
-
-    });
+          public void close() {
+            listenerClose = 1;
+          }
+        });
 
     // see if commits work
     txCommitChanges = stats.getTxCommitChanges();
@@ -446,27 +442,27 @@ public class TXJUnitTest {
     TransactionId myTxId;
     Region reg1 = this.region;
 
-    this.txMgr.setListener(new TransactionListener() {
-      public void afterCommit(TransactionEvent event) {
-        listenerAfterCommit = 1;
-        te = event;
-      }
+    this.txMgr.setListener(
+        new TransactionListener() {
+          public void afterCommit(TransactionEvent event) {
+            listenerAfterCommit = 1;
+            te = event;
+          }
 
-      public void afterFailedCommit(TransactionEvent event) {
-        listenerAfterFailedCommit = 1;
-        te = event;
-      }
+          public void afterFailedCommit(TransactionEvent event) {
+            listenerAfterFailedCommit = 1;
+            te = event;
+          }
 
-      public void afterRollback(TransactionEvent event) {
-        listenerAfterRollback = 1;
-        te = event;
-      }
+          public void afterRollback(TransactionEvent event) {
+            listenerAfterRollback = 1;
+            te = event;
+          }
 
-      public void close() {
-        listenerClose = 1;
-      }
-
-    });
+          public void close() {
+            listenerClose = 1;
+          }
+        });
 
     // make sure each operation has the correct transaction event
     // check create
@@ -645,8 +641,7 @@ public class TXJUnitTest {
         assertEquals(true, ev.isCallbackArgumentAvailable());
         assertTrue(!ev.isOriginRemote());
         assertTrue(!ev.isExpiration());
-        if (!isPR())
-          assertTrue(!ev.isDistributed());
+        if (!isPR()) assertTrue(!ev.isDistributed());
       }
     }
     reg1.localDestroy("key1");
@@ -720,8 +715,7 @@ public class TXJUnitTest {
         assertEquals(true, ev.isCallbackArgumentAvailable());
         assertTrue(!ev.isOriginRemote());
         assertTrue(!ev.isExpiration());
-        if (!isPR())
-          assertTrue(!ev.isDistributed());
+        if (!isPR()) assertTrue(!ev.isDistributed());
       }
     }
     reg1.localDestroy("key1");
@@ -863,7 +857,9 @@ public class TXJUnitTest {
       int cnt;
       while (assertItr.hasNext()) {
         assertType = (String) assertItr.next();
-        assertTrue("CountingCallBackValidator reassert, did not have an associated count", assertItr.hasNext());
+        assertTrue(
+            "CountingCallBackValidator reassert, did not have an associated count",
+            assertItr.hasNext());
         count = (Integer) assertItr.next();
         cnt = count.intValue();
         if (assertType.equals(createWriterAssert)) {
@@ -924,136 +920,141 @@ public class TXJUnitTest {
     TransactionId myTxId;
     Region reg1 = this.region;
 
-    this.txMgr.setListener(new TransactionListener() {
-      public void afterCommit(TransactionEvent event) {
-        listenerAfterCommit = 1;
-        te = event;
-      }
+    this.txMgr.setListener(
+        new TransactionListener() {
+          public void afterCommit(TransactionEvent event) {
+            listenerAfterCommit = 1;
+            te = event;
+          }
 
-      public void afterFailedCommit(TransactionEvent event) {
-        listenerAfterFailedCommit = 1;
-        te = event;
-      }
+          public void afterFailedCommit(TransactionEvent event) {
+            listenerAfterFailedCommit = 1;
+            te = event;
+          }
 
-      public void afterRollback(TransactionEvent event) {
-        listenerAfterRollback = 1;
-        te = event;
-      }
+          public void afterRollback(TransactionEvent event) {
+            listenerAfterRollback = 1;
+            te = event;
+          }
 
-      public void close() {
-        listenerClose = 1;
-      }
-
-    });
+          public void close() {
+            listenerClose = 1;
+          }
+        });
     AttributesMutator mutator = this.region.getAttributesMutator();
-    CountingCacheListener cntListener = new CountingCacheListener() {
-      volatile int aCreateCalls, aUpdateCalls, aInvalidateCalls, aDestroyCalls, aLocalDestroyCalls;
+    CountingCacheListener cntListener =
+        new CountingCacheListener() {
+          volatile int
+              aCreateCalls,
+              aUpdateCalls,
+              aInvalidateCalls,
+              aDestroyCalls,
+              aLocalDestroyCalls;
 
-      public void close() {
-      }
+          public void close() {}
 
-      public void reset() {
-        this.aCreateCalls = this.aUpdateCalls = this.aInvalidateCalls = this.aDestroyCalls = this.aLocalDestroyCalls = 0;
-      }
+          public void reset() {
+            this.aCreateCalls =
+                this.aUpdateCalls =
+                    this.aInvalidateCalls = this.aDestroyCalls = this.aLocalDestroyCalls = 0;
+          }
 
-      public void afterCreate(EntryEvent e) {
-        ++this.aCreateCalls;
-      }
+          public void afterCreate(EntryEvent e) {
+            ++this.aCreateCalls;
+          }
 
-      public void afterUpdate(EntryEvent e) {
-        ++this.aUpdateCalls;
-      }
+          public void afterUpdate(EntryEvent e) {
+            ++this.aUpdateCalls;
+          }
 
-      public void afterInvalidate(EntryEvent e) {
-        ++this.aInvalidateCalls;
-      }
+          public void afterInvalidate(EntryEvent e) {
+            ++this.aInvalidateCalls;
+          }
 
-      public void afterDestroy(EntryEvent e) {
-        if (e.isDistributed()) {
-          ++this.aDestroyCalls;
-        } else {
-          ++this.aLocalDestroyCalls;
-        }
-      }
+          public void afterDestroy(EntryEvent e) {
+            if (e.isDistributed()) {
+              ++this.aDestroyCalls;
+            } else {
+              ++this.aLocalDestroyCalls;
+            }
+          }
 
-      public void afterRegionInvalidate(RegionEvent e) {
-        fail("Unexpected afterRegionInvalidate in testTxAlgebra");
-      }
+          public void afterRegionInvalidate(RegionEvent e) {
+            fail("Unexpected afterRegionInvalidate in testTxAlgebra");
+          }
 
-      public void afterRegionDestroy(RegionEvent e) {
-        if (!e.getOperation().isClose()) {
-          fail("Unexpected afterRegionDestroy in testTxAlgebra");
-        }
-      }
+          public void afterRegionDestroy(RegionEvent e) {
+            if (!e.getOperation().isClose()) {
+              fail("Unexpected afterRegionDestroy in testTxAlgebra");
+            }
+          }
 
-      public void afterRegionClear(RegionEvent event) {
-      }
+          public void afterRegionClear(RegionEvent event) {}
 
-      public void afterRegionCreate(RegionEvent event) {
-      }
+          public void afterRegionCreate(RegionEvent event) {}
 
-      public void afterRegionLive(RegionEvent event) {
-      }
+          public void afterRegionLive(RegionEvent event) {}
 
-      public int getAfterCreateCalls() {
-        return this.aCreateCalls;
-      }
+          public int getAfterCreateCalls() {
+            return this.aCreateCalls;
+          }
 
-      public int getAfterUpdateCalls() {
-        return this.aUpdateCalls;
-      }
+          public int getAfterUpdateCalls() {
+            return this.aUpdateCalls;
+          }
 
-      public int getAfterInvalidateCalls() {
-        return this.aInvalidateCalls;
-      }
+          public int getAfterInvalidateCalls() {
+            return this.aInvalidateCalls;
+          }
 
-      public int getAfterDestroyCalls(boolean fetchLocal) {
-        return fetchLocal ? this.aLocalDestroyCalls : this.aDestroyCalls;
-      }
-    };
+          public int getAfterDestroyCalls(boolean fetchLocal) {
+            return fetchLocal ? this.aLocalDestroyCalls : this.aDestroyCalls;
+          }
+        };
     mutator.setCacheListener(cntListener);
-    CountingCacheWriter cntWriter = new CountingCacheWriter() {
-      int bCreateCalls, bUpdateCalls, bDestroyCalls, bLocalDestroyCalls;
+    CountingCacheWriter cntWriter =
+        new CountingCacheWriter() {
+          int bCreateCalls, bUpdateCalls, bDestroyCalls, bLocalDestroyCalls;
 
-      public void close() {
-      }
+          public void close() {}
 
-      public void reset() {
-        this.bCreateCalls = this.bUpdateCalls = this.bDestroyCalls = this.bLocalDestroyCalls = 0;
-      }
+          public void reset() {
+            this.bCreateCalls =
+                this.bUpdateCalls = this.bDestroyCalls = this.bLocalDestroyCalls = 0;
+          }
 
-      public void beforeCreate(EntryEvent e) {
-        ++this.bCreateCalls;
-      }
+          public void beforeCreate(EntryEvent e) {
+            ++this.bCreateCalls;
+          }
 
-      public void beforeUpdate(EntryEvent e) {
-        ++this.bUpdateCalls;
-      }
+          public void beforeUpdate(EntryEvent e) {
+            ++this.bUpdateCalls;
+          }
 
-      public void beforeDestroy(EntryEvent e) {
-        ++this.bDestroyCalls;
-      }
+          public void beforeDestroy(EntryEvent e) {
+            ++this.bDestroyCalls;
+          }
 
-      public void beforeRegionDestroy(RegionEvent e) {
-        fail("Unexpected beforeRegionDestroy in testTxAlgebra");
-      }
+          public void beforeRegionDestroy(RegionEvent e) {
+            fail("Unexpected beforeRegionDestroy in testTxAlgebra");
+          }
 
-      public void beforeRegionClear(RegionEvent e) {
-        fail("Unexpected beforeRegionClear in testTxAlgebra");
-      }
+          public void beforeRegionClear(RegionEvent e) {
+            fail("Unexpected beforeRegionClear in testTxAlgebra");
+          }
 
-      public int getBeforeCreateCalls() {
-        return this.bCreateCalls;
-      }
+          public int getBeforeCreateCalls() {
+            return this.bCreateCalls;
+          }
 
-      public int getBeforeUpdateCalls() {
-        return this.bUpdateCalls;
-      }
+          public int getBeforeUpdateCalls() {
+            return this.bUpdateCalls;
+          }
 
-      public int getBeforeDestroyCalls(boolean fetchLocal) {
-        return fetchLocal ? this.bLocalDestroyCalls : this.bDestroyCalls;
-      }
-    };
+          public int getBeforeDestroyCalls(boolean fetchLocal) {
+            return fetchLocal ? this.bLocalDestroyCalls : this.bDestroyCalls;
+          }
+        };
     mutator.setCacheWriter(cntWriter);
 
     CountingCallBackValidator callbackVal = new CountingCallBackValidator(cntListener, cntWriter);
@@ -2788,7 +2789,6 @@ public class TXJUnitTest {
     assertEquals("value1", this.region.get("key1"));
     assertEquals("value2", this.region.get("key2"));
     assertEquals(txRollbackChanges, stats.getTxRollbackChanges());
-
   }
 
   private void doNonTxDestroyRegionOp(CachePerfStats stats) throws Exception {
@@ -2902,27 +2902,28 @@ public class TXJUnitTest {
   @Test
   public void testListener() {
     assertTrue(this.txMgr.getListener() == null);
-    TransactionListener oldListener = this.txMgr.setListener(new TransactionListener() {
-      public void afterCommit(TransactionEvent event) {
-        listenerAfterCommit = 1;
-        te = event;
-      }
+    TransactionListener oldListener =
+        this.txMgr.setListener(
+            new TransactionListener() {
+              public void afterCommit(TransactionEvent event) {
+                listenerAfterCommit = 1;
+                te = event;
+              }
 
-      public void afterFailedCommit(TransactionEvent event) {
-        listenerAfterFailedCommit = 1;
-        te = event;
-      }
+              public void afterFailedCommit(TransactionEvent event) {
+                listenerAfterFailedCommit = 1;
+                te = event;
+              }
 
-      public void afterRollback(TransactionEvent event) {
-        listenerAfterRollback = 1;
-        te = event;
-      }
+              public void afterRollback(TransactionEvent event) {
+                listenerAfterRollback = 1;
+                te = event;
+              }
 
-      public void close() {
-        listenerClose = 1;
-      }
-
-    });
+              public void close() {
+                listenerClose = 1;
+              }
+            });
     assertTrue(oldListener == null);
     this.txMgr.begin();
     TransactionId myTxId = this.txMgr.getTransactionId();
@@ -2953,25 +2954,27 @@ public class TXJUnitTest {
     assertEquals(myTxId, this.te.getTransactionId());
 
     assertEquals(0, this.listenerClose);
-    oldListener = this.txMgr.setListener(new TransactionListener() {
-      public void afterCommit(TransactionEvent event) {
-        listenerAfterCommit = 2;
-        te = event;
-      }
+    oldListener =
+        this.txMgr.setListener(
+            new TransactionListener() {
+              public void afterCommit(TransactionEvent event) {
+                listenerAfterCommit = 2;
+                te = event;
+              }
 
-      public void afterFailedCommit(TransactionEvent event) {
-        listenerAfterFailedCommit = 2;
-      }
+              public void afterFailedCommit(TransactionEvent event) {
+                listenerAfterFailedCommit = 2;
+              }
 
-      public void afterRollback(TransactionEvent event) {
-        listenerAfterRollback = 2;
-        te = event;
-      }
+              public void afterRollback(TransactionEvent event) {
+                listenerAfterRollback = 2;
+                te = event;
+              }
 
-      public void close() {
-        listenerClose = 2;
-      }
-    });
+              public void close() {
+                listenerClose = 2;
+              }
+            });
     assertEquals(1, this.listenerClose);
 
     this.txMgr.begin();
@@ -2994,60 +2997,62 @@ public class TXJUnitTest {
   public void testNoCallbacksOnRollback() throws CacheException {
     // install listeners
     AttributesMutator mutator = this.region.getAttributesMutator();
-    mutator.setCacheListener(new CacheListenerAdapter() {
-      public void close() {
-        cbCount++;
-      }
+    mutator.setCacheListener(
+        new CacheListenerAdapter() {
+          public void close() {
+            cbCount++;
+          }
 
-      public void afterCreate(EntryEvent event) {
-        cbCount++;
-      }
+          public void afterCreate(EntryEvent event) {
+            cbCount++;
+          }
 
-      public void afterUpdate(EntryEvent event) {
-        cbCount++;
-      }
+          public void afterUpdate(EntryEvent event) {
+            cbCount++;
+          }
 
-      public void afterInvalidate(EntryEvent event) {
-        cbCount++;
-      }
+          public void afterInvalidate(EntryEvent event) {
+            cbCount++;
+          }
 
-      public void afterDestroy(EntryEvent event) {
-        cbCount++;
-      }
+          public void afterDestroy(EntryEvent event) {
+            cbCount++;
+          }
 
-      public void afterRegionInvalidate(RegionEvent event) {
-        cbCount++;
-      }
+          public void afterRegionInvalidate(RegionEvent event) {
+            cbCount++;
+          }
 
-      public void afterRegionDestroy(RegionEvent event) {
-        cbCount++;
-      }
-    });
-    mutator.setCacheWriter(new CacheWriter() {
-      public void close() {
-        cbCount++;
-      }
+          public void afterRegionDestroy(RegionEvent event) {
+            cbCount++;
+          }
+        });
+    mutator.setCacheWriter(
+        new CacheWriter() {
+          public void close() {
+            cbCount++;
+          }
 
-      public void beforeUpdate(EntryEvent event) throws CacheWriterException {
-        cbCount++;
-      }
+          public void beforeUpdate(EntryEvent event) throws CacheWriterException {
+            cbCount++;
+          }
 
-      public void beforeCreate(EntryEvent event) throws CacheWriterException {
-        cbCount++;
-      }
+          public void beforeCreate(EntryEvent event) throws CacheWriterException {
+            cbCount++;
+          }
 
-      public void beforeDestroy(EntryEvent event) throws CacheWriterException {
-        cbCount++;
-      }
+          public void beforeDestroy(EntryEvent event) throws CacheWriterException {
+            cbCount++;
+          }
 
-      public void beforeRegionDestroy(RegionEvent event) throws CacheWriterException {
-        cbCount++;
-      }
+          public void beforeRegionDestroy(RegionEvent event) throws CacheWriterException {
+            cbCount++;
+          }
 
-      public void beforeRegionClear(RegionEvent event) throws CacheWriterException {
-        cbCount++;
-      }
-    });
+          public void beforeRegionClear(RegionEvent event) throws CacheWriterException {
+            cbCount++;
+          }
+        });
 
     this.txMgr.begin();
     this.region.create("key1", "value1");
@@ -3099,10 +3104,10 @@ public class TXJUnitTest {
     this.region.localDestroy("key1");
   }
 
-  // 
+  //
   // TXCallBackValidator is a container for holding state for validating Cache
   // callbacks
-  // 
+  //
   private class TXCallBackValidator {
     boolean passedValidation;
     boolean suspendValidation;
@@ -3121,7 +3126,7 @@ public class TXJUnitTest {
     boolean isInvalidate;
     Object callBackArg;
 
-    // EntryEvent, CallCount validator for 
+    // EntryEvent, CallCount validator for
     // callbacks (CacheWriter, CacheListener
     boolean validate(EntryEvent event, int cnt) {
       if (this.isSuspendValidation()) {
@@ -3324,227 +3329,223 @@ public class TXJUnitTest {
     TXCallBackValidator cbv = new TXCallBackValidator();
 
     // Cache Listener
-    ValidatableCacheListener vCl = new ValidatableCacheListener() {
-      TXCallBackValidator v;
-      int callCount;
-      int prevCallCount;
-      EntryEvent lastEvent;
+    ValidatableCacheListener vCl =
+        new ValidatableCacheListener() {
+          TXCallBackValidator v;
+          int callCount;
+          int prevCallCount;
+          EntryEvent lastEvent;
 
-      public void validate() {
-        this.v.validate(this.lastEvent, this.callCount);
-      }
+          public void validate() {
+            this.v.validate(this.lastEvent, this.callCount);
+          }
 
-      public void validate(EntryEvent event) {
-        this.v.validate(event, ++this.callCount);
-      }
+          public void validate(EntryEvent event) {
+            this.v.validate(event, ++this.callCount);
+          }
 
-      public void setValidator(TXCallBackValidator v) {
-        this.v = v;
-      }
+          public void setValidator(TXCallBackValidator v) {
+            this.v = v;
+          }
 
-      public void close() {
-      }
+          public void close() {}
 
-      public void afterCreate(EntryEvent event) {
-        lastEvent = event;
-        if (this.v.isSuspendValidation()) {
-          return;
-        }
-        this.validate(event);
-        this.v.setPassedValidation(false);
-        assertTrue("IsCreate Assertion!", this.v.isCreate());
-        assertTrue(event.getRegion().containsKey(this.v.getKey()));
-        assertTrue(event.getRegion().containsValueForKey(this.v.getKey()));
-        assertNotNull(event.getRegion().getEntry(event.getKey()).getValue());
-        this.v.setPassedValidation(true);
-      }
+          public void afterCreate(EntryEvent event) {
+            lastEvent = event;
+            if (this.v.isSuspendValidation()) {
+              return;
+            }
+            this.validate(event);
+            this.v.setPassedValidation(false);
+            assertTrue("IsCreate Assertion!", this.v.isCreate());
+            assertTrue(event.getRegion().containsKey(this.v.getKey()));
+            assertTrue(event.getRegion().containsValueForKey(this.v.getKey()));
+            assertNotNull(event.getRegion().getEntry(event.getKey()).getValue());
+            this.v.setPassedValidation(true);
+          }
 
-      public void afterUpdate(EntryEvent event) {
-        lastEvent = event;
-        if (this.v.isSuspendValidation()) {
-          return;
-        }
-        validate(event);
-        this.v.setPassedValidation(false);
-        assertTrue("IsUpdate Assertion!", this.v.isUpdate());
-        assertTrue(event.getRegion().containsKey(this.v.getKey()));
-        assertTrue(event.getRegion().containsValueForKey(this.v.getKey()));
-        assertNotNull(event.getRegion().getEntry(event.getKey()).getValue());
-        this.v.setPassedValidation(true);
-      }
+          public void afterUpdate(EntryEvent event) {
+            lastEvent = event;
+            if (this.v.isSuspendValidation()) {
+              return;
+            }
+            validate(event);
+            this.v.setPassedValidation(false);
+            assertTrue("IsUpdate Assertion!", this.v.isUpdate());
+            assertTrue(event.getRegion().containsKey(this.v.getKey()));
+            assertTrue(event.getRegion().containsValueForKey(this.v.getKey()));
+            assertNotNull(event.getRegion().getEntry(event.getKey()).getValue());
+            this.v.setPassedValidation(true);
+          }
 
-      public void afterInvalidate(EntryEvent event) {
-        lastEvent = event;
-        if (this.v.isSuspendValidation()) {
-          return;
-        }
-        validate(event);
-        this.v.setPassedValidation(false);
-        assertTrue("IsInvaldiate Assertion!", this.v.isInvalidate());
-        assertTrue(event.getRegion().containsKey(this.v.getKey()));
-        assertTrue(!event.getRegion().containsValueForKey(this.v.getKey()));
-        assertNull(event.getRegion().getEntry(event.getKey()).getValue());
-        this.v.setPassedValidation(true);
-      }
+          public void afterInvalidate(EntryEvent event) {
+            lastEvent = event;
+            if (this.v.isSuspendValidation()) {
+              return;
+            }
+            validate(event);
+            this.v.setPassedValidation(false);
+            assertTrue("IsInvaldiate Assertion!", this.v.isInvalidate());
+            assertTrue(event.getRegion().containsKey(this.v.getKey()));
+            assertTrue(!event.getRegion().containsValueForKey(this.v.getKey()));
+            assertNull(event.getRegion().getEntry(event.getKey()).getValue());
+            this.v.setPassedValidation(true);
+          }
 
-      public void afterDestroy(EntryEvent event) {
-        lastEvent = event;
-        if (this.v.isSuspendValidation()) {
-          return;
-        }
-        validate(event);
-        this.v.setPassedValidation(false);
-        assertTrue("IsDestroy Assertion!", this.v.isDestroy());
-        assertTrue(!event.getRegion().containsKey(this.v.getKey()));
-        assertTrue(!event.getRegion().containsValueForKey(this.v.getKey()));
-        assertNull(event.getRegion().getEntry(event.getKey()));
-        this.v.setPassedValidation(true);
-      }
+          public void afterDestroy(EntryEvent event) {
+            lastEvent = event;
+            if (this.v.isSuspendValidation()) {
+              return;
+            }
+            validate(event);
+            this.v.setPassedValidation(false);
+            assertTrue("IsDestroy Assertion!", this.v.isDestroy());
+            assertTrue(!event.getRegion().containsKey(this.v.getKey()));
+            assertTrue(!event.getRegion().containsValueForKey(this.v.getKey()));
+            assertNull(event.getRegion().getEntry(event.getKey()));
+            this.v.setPassedValidation(true);
+          }
 
-      public void afterRegionInvalidate(RegionEvent event) {
-        fail("Unexpected invokation of afterRegionInvalidate");
-      }
+          public void afterRegionInvalidate(RegionEvent event) {
+            fail("Unexpected invokation of afterRegionInvalidate");
+          }
 
-      public void afterRegionDestroy(RegionEvent event) {
-        if (!event.getOperation().isClose()) {
-          fail("Unexpected invokation of afterRegionDestroy");
-        }
-      }
+          public void afterRegionDestroy(RegionEvent event) {
+            if (!event.getOperation().isClose()) {
+              fail("Unexpected invokation of afterRegionDestroy");
+            }
+          }
 
-      public void afterRegionClear(RegionEvent event) {
+          public void afterRegionClear(RegionEvent event) {}
 
-      }
+          public void afterRegionCreate(RegionEvent event) {}
 
-      public void afterRegionCreate(RegionEvent event) {
-      }
+          public void afterRegionLive(RegionEvent event) {}
 
-      public void afterRegionLive(RegionEvent event) {
-      }
+          public void reset() {
+            lastEvent = null;
+            prevCallCount = callCount;
+          }
 
-      public void reset() {
-        lastEvent = null;
-        prevCallCount = callCount;
-      }
+          public void validateNoEvents() {
+            assertNull("Did not expect listener callback", lastEvent);
+            assertEquals(prevCallCount, callCount);
+          }
 
-      public void validateNoEvents() {
-        assertNull("Did not expect listener callback", lastEvent);
-        assertEquals(prevCallCount, callCount);
-      }
+          public void setExpectedCount(int count) {
+            callCount = count;
+          }
 
-      public void setExpectedCount(int count) {
-        callCount = count;
-      }
-
-      public int getCallCount() {
-        return callCount;
-      }
-    };
+          public int getCallCount() {
+            return callCount;
+          }
+        };
 
     vCl.setValidator(cbv);
     mutator.setCacheListener(vCl);
 
     // CacheWriter
-    ValidatableCacheWriter vCw = new ValidatableCacheWriter() {
-      TXCallBackValidator v;
-      int callCount;
-      int prevCallCount;
-      EntryEvent lastEvent;
+    ValidatableCacheWriter vCw =
+        new ValidatableCacheWriter() {
+          TXCallBackValidator v;
+          int callCount;
+          int prevCallCount;
+          EntryEvent lastEvent;
 
-      public int getCallCount() {
-        return this.callCount;
-      }
+          public int getCallCount() {
+            return this.callCount;
+          }
 
-      public void localDestroyMakeup(int count) {
-        this.callCount += count;
-      }
+          public void localDestroyMakeup(int count) {
+            this.callCount += count;
+          }
 
-      public void validate() {
-        this.v.validate(this.lastEvent, this.callCount);
-      }
+          public void validate() {
+            this.v.validate(this.lastEvent, this.callCount);
+          }
 
-      public void validate(EntryEvent event) {
-        this.v.validate(event, ++this.callCount);
-      }
+          public void validate(EntryEvent event) {
+            this.v.validate(event, ++this.callCount);
+          }
 
-      public void setValidator(TXCallBackValidator v) {
-        this.v = v;
-      }
+          public void setValidator(TXCallBackValidator v) {
+            this.v = v;
+          }
 
-      public void close() {
-      }
+          public void close() {}
 
-      public void beforeCreate(EntryEvent event) {
-        lastEvent = event;
-        if (this.v.isSuspendValidation()) {
-          return;
-        }
-        validate(event);
-        this.v.setPassedValidation(false);
-        assertTrue("IsCreate Assertion!", this.v.isCreate());
-        assertTrue(!event.getRegion().containsKey(this.v.getKey()));
-        assertTrue(!event.getRegion().containsValueForKey(this.v.getKey()));
-        assertNull(event.getRegion().getEntry(event.getKey()));
-        this.v.setPassedValidation(true);
-      }
+          public void beforeCreate(EntryEvent event) {
+            lastEvent = event;
+            if (this.v.isSuspendValidation()) {
+              return;
+            }
+            validate(event);
+            this.v.setPassedValidation(false);
+            assertTrue("IsCreate Assertion!", this.v.isCreate());
+            assertTrue(!event.getRegion().containsKey(this.v.getKey()));
+            assertTrue(!event.getRegion().containsValueForKey(this.v.getKey()));
+            assertNull(event.getRegion().getEntry(event.getKey()));
+            this.v.setPassedValidation(true);
+          }
 
-      public void beforeUpdate(EntryEvent event) {
-        lastEvent = event;
-        if (this.v.isSuspendValidation()) {
-          return;
-        }
-        validate(event);
-        this.v.setPassedValidation(false);
-        assertTrue("IsUpdate Assertion!", this.v.isUpdate());
-        assertTrue(event.getRegion().containsKey(this.v.getKey()));
-        // Can not assert the following line, as the value being update may be invalide
-        // assertTrue(event.getRegion().containsValueForKey(this.v.getKey()));
-        this.v.setPassedValidation(true);
-      }
+          public void beforeUpdate(EntryEvent event) {
+            lastEvent = event;
+            if (this.v.isSuspendValidation()) {
+              return;
+            }
+            validate(event);
+            this.v.setPassedValidation(false);
+            assertTrue("IsUpdate Assertion!", this.v.isUpdate());
+            assertTrue(event.getRegion().containsKey(this.v.getKey()));
+            // Can not assert the following line, as the value being update may be invalide
+            // assertTrue(event.getRegion().containsValueForKey(this.v.getKey()));
+            this.v.setPassedValidation(true);
+          }
 
-      public void beforeDestroy(EntryEvent event) {
-        lastEvent = event;
-        if (this.v.isSuspendValidation()) {
-          return;
-        }
-        validate(event);
-        this.v.setPassedValidation(false);
-        assertTrue("IsDestroy Assertion!", this.v.isDestroy());
-        assertTrue(event.getRegion().containsKey(this.v.getKey()));
-        this.v.setPassedValidation(true);
-      }
+          public void beforeDestroy(EntryEvent event) {
+            lastEvent = event;
+            if (this.v.isSuspendValidation()) {
+              return;
+            }
+            validate(event);
+            this.v.setPassedValidation(false);
+            assertTrue("IsDestroy Assertion!", this.v.isDestroy());
+            assertTrue(event.getRegion().containsKey(this.v.getKey()));
+            this.v.setPassedValidation(true);
+          }
 
-      public void beforeRegionDestroy(RegionEvent event) {
-        fail("Unexpected invocation of beforeRegionDestroy");
-      }
+          public void beforeRegionDestroy(RegionEvent event) {
+            fail("Unexpected invocation of beforeRegionDestroy");
+          }
 
-      public void beforeRegionClear(RegionEvent event) {
-        fail("Unexpected invocation of beforeRegionClear");
-      }
+          public void beforeRegionClear(RegionEvent event) {
+            fail("Unexpected invocation of beforeRegionClear");
+          }
 
-      public void reset() {
-        lastEvent = null;
-        prevCallCount = callCount;
-      }
+          public void reset() {
+            lastEvent = null;
+            prevCallCount = callCount;
+          }
 
-      public void validateNoEvents() {
-        assertNull("Did not expect a writer event", lastEvent);
-        assertEquals(prevCallCount, callCount);
-      }
-    };
+          public void validateNoEvents() {
+            assertNull("Did not expect a writer event", lastEvent);
+            assertEquals(prevCallCount, callCount);
+          }
+        };
     vCw.setValidator(cbv);
     mutator.setCacheWriter(vCw);
 
-    // Cache Loader 
-    mutator.setCacheLoader(new CacheLoader() {
-      int count = 0;
+    // Cache Loader
+    mutator.setCacheLoader(
+        new CacheLoader() {
+          int count = 0;
 
-      public Object load(LoaderHelper helper) throws CacheLoaderException {
-        return new Integer(count++);
-      }
+          public Object load(LoaderHelper helper) throws CacheLoaderException {
+            return new Integer(count++);
+          }
 
-      public void close() {
-      }
-    });
+          public void close() {}
+        });
 
     // Use this to track the number of callout method invocations
     int appCallCount = 1;
@@ -3609,7 +3610,7 @@ public class TXJUnitTest {
     cbv.setIsLoad(false);
     cbv.setIsCreate(false);
     cbv.setIsUpdate(true);
-    // Test non-transactional put expecting afterUpdate call due to 
+    // Test non-transactional put expecting afterUpdate call due to
     // previous Entry
     cbv.setTXId(txMgr.getTransactionId());
     cbv.setExpectedCount(appCallCount++);
@@ -3640,8 +3641,7 @@ public class TXJUnitTest {
     cbv.setTXId(txMgr.getTransactionId());
     cbv.setExpectedCount(appCallCount++);
     this.region.localDestroy(key1, callBackArg);
-    if (!isPR())
-      vCw.localDestroyMakeup(1); // Account for cacheWriter not begin called
+    if (!isPR()) vCw.localDestroyMakeup(1); // Account for cacheWriter not begin called
     assertTrue("Non-TX LocalDestroy Validation Assertion", cbv.passedValidation());
     cbv.suspendValidation(true);
     this.region.create(key1, value1);
@@ -3652,8 +3652,7 @@ public class TXJUnitTest {
     cbv.setTXId(txMgr.getTransactionId());
     cbv.setExpectedCount(appCallCount++);
     this.region.localDestroy(key1, callBackArg);
-    if (!isPR())
-      vCw.localDestroyMakeup(1); // Account for cacheWriter not begin called
+    if (!isPR()) vCw.localDestroyMakeup(1); // Account for cacheWriter not begin called
     this.txMgr.commit();
     assertTrue("TX LocalDestroy Validation Assertion", cbv.passedValidation());
 
@@ -3931,7 +3930,11 @@ public class TXJUnitTest {
         fail();
       } catch (IllegalStateException expected) {
         TransactionId txid = this.txMgr.getTransactionId();
-        assertEquals(LocalizedStrings.LocalRegion_NON_TRANSACTIONAL_REGION_COLLECTION_IS_BEING_USED_IN_A_TRANSACTION.toLocalizedString(txid), expected.getMessage());
+        assertEquals(
+            LocalizedStrings
+                .LocalRegion_NON_TRANSACTIONAL_REGION_COLLECTION_IS_BEING_USED_IN_A_TRANSACTION
+                .toLocalizedString(txid),
+            expected.getMessage());
       }
       assertEquals(1, txKeys.size());
       try {
@@ -3939,7 +3942,11 @@ public class TXJUnitTest {
         fail();
       } catch (IllegalStateException expected) {
         TransactionId txid = this.txMgr.getTransactionId();
-        assertEquals(LocalizedStrings.LocalRegion_NON_TRANSACTIONAL_REGION_COLLECTION_IS_BEING_USED_IN_A_TRANSACTION.toLocalizedString(txid), expected.getMessage());
+        assertEquals(
+            LocalizedStrings
+                .LocalRegion_NON_TRANSACTIONAL_REGION_COLLECTION_IS_BEING_USED_IN_A_TRANSACTION
+                .toLocalizedString(txid),
+            expected.getMessage());
       }
       assertEquals(1, txValues.size());
       assertTrue(txKeys.contains("key1"));
@@ -4046,7 +4053,11 @@ public class TXJUnitTest {
         fail();
       } catch (IllegalStateException expected) {
         TransactionId txid = this.txMgr.getTransactionId();
-        assertEquals(LocalizedStrings.LocalRegion_NON_TRANSACTIONAL_REGION_COLLECTION_IS_BEING_USED_IN_A_TRANSACTION.toLocalizedString(txid), expected.getMessage());
+        assertEquals(
+            LocalizedStrings
+                .LocalRegion_NON_TRANSACTIONAL_REGION_COLLECTION_IS_BEING_USED_IN_A_TRANSACTION
+                .toLocalizedString(txid),
+            expected.getMessage());
       }
       assertEquals(1, txEntries.size());
       assertTrue(txEntries.contains(reg1.getEntry("key1")));
@@ -4092,7 +4103,11 @@ public class TXJUnitTest {
         nonTxValues.iterator().hasNext();
       } catch (IllegalStateException expected) {
         TransactionId txid = this.txMgr.getTransactionId();
-        assertEquals(LocalizedStrings.LocalRegion_NON_TRANSACTIONAL_REGION_COLLECTION_IS_BEING_USED_IN_A_TRANSACTION.toLocalizedString(txid), expected.getMessage());
+        assertEquals(
+            LocalizedStrings
+                .LocalRegion_NON_TRANSACTIONAL_REGION_COLLECTION_IS_BEING_USED_IN_A_TRANSACTION
+                .toLocalizedString(txid),
+            expected.getMessage());
       }
 
       reg1.localInvalidate("key1");
@@ -4102,9 +4117,7 @@ public class TXJUnitTest {
     }
   }
 
-  /**
-   * @param reg1
-   */
+  /** @param reg1 */
   protected void checkSubRegionCollecection(Region reg1) {
     AttributesFactory af = new AttributesFactory();
     af.setScope(Scope.DISTRIBUTED_NO_ACK);
@@ -4312,19 +4325,18 @@ public class TXJUnitTest {
   public void testLoader() throws CacheException {
     LocalRegion reg1 = (LocalRegion) this.region;
     AttributesMutator mutator = reg1.getAttributesMutator();
-    mutator.setCacheLoader(new CacheLoader() {
-      int count = 0;
+    mutator.setCacheLoader(
+        new CacheLoader() {
+          int count = 0;
 
-      public Object load(LoaderHelper helper) throws CacheLoaderException {
-        count++;
-        return "LV " + count;
-      }
+          public Object load(LoaderHelper helper) throws CacheLoaderException {
+            count++;
+            return "LV " + count;
+          }
 
-      public void close() {
-      }
-    });
-    if (isPR())
-      ((PartitionedRegion) reg1).setHaveCacheLoader();
+          public void close() {}
+        });
+    if (isPR()) ((PartitionedRegion) reg1).setHaveCacheLoader();
     assertTrue(!reg1.containsKey("key1"));
     assertEquals("LV 1", reg1.get("key1"));
     assertTrue(reg1.containsKey("key1"));
@@ -4679,14 +4691,25 @@ public class TXJUnitTest {
       void assertValid() {
         assertEquals(this.txRollbacks, this.stats.getTxRollbacks());
         assertEquals(this.txRollbackChanges, this.stats.getTxRollbackChanges());
-        if (Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "cache.enable-time-statistics")) {
+        if (Boolean.getBoolean(
+            DistributionConfig.GEMFIRE_PREFIX + "cache.enable-time-statistics")) {
           assertTrue(this.txRollbackTime <= this.stats.getTxRollbackTime());
           // assertTrue(this.txRollbackLifeTime+((SLEEP_MS-10)*1000000) <= this.stats.getTxRollbackLifeTime());
-          assertTrue("RollbackLifeTime " + this.txRollbackLifeTime + " is not <= " + this.stats.getTxRollbackLifeTime(), this.txRollbackLifeTime <= this.stats.getTxRollbackLifeTime());
+          assertTrue(
+              "RollbackLifeTime "
+                  + this.txRollbackLifeTime
+                  + " is not <= "
+                  + this.stats.getTxRollbackLifeTime(),
+              this.txRollbackLifeTime <= this.stats.getTxRollbackLifeTime());
           assertTrue(this.txCommitTime <= this.stats.getTxCommitTime());
           assertTrue(this.txSuccessLifeTime <= this.stats.getTxSuccessLifeTime());
           assertTrue(this.txFailureTime <= this.stats.getTxFailureTime());
-          assertTrue("FailedLifeTime " + this.txFailedLifeTime + " is not <= " + this.stats.getTxFailedLifeTime(), this.txFailedLifeTime <= this.stats.getTxFailedLifeTime());
+          assertTrue(
+              "FailedLifeTime "
+                  + this.txFailedLifeTime
+                  + " is not <= "
+                  + this.stats.getTxFailedLifeTime(),
+              this.txFailedLifeTime <= this.stats.getTxFailedLifeTime());
         }
 
         assertEquals(this.txCommits, this.stats.getTxCommits());
@@ -4721,14 +4744,29 @@ public class TXJUnitTest {
       final long statsRollbackLifeTime = stats.getTxRollbackLifeTime();
       testRollbackLifeTime += beforeRollback - afterBegin;
       // bruce - time based stats are disabled by default
-      String p = (String) cache.getDistributedSystem().getProperties().get(DistributionConfig.GEMFIRE_PREFIX + "enable-time-statistics");
+      String p =
+          (String)
+              cache
+                  .getDistributedSystem()
+                  .getProperties()
+                  .get(DistributionConfig.GEMFIRE_PREFIX + "enable-time-statistics");
       if (p != null && Boolean.getBoolean(p)) {
-        assertTrue("Local RollbackLifeTime assertion:  " + testRollbackLifeTime + " is not <= " + statsRollbackLifeTime, testRollbackLifeTime <= statsRollbackLifeTime);
+        assertTrue(
+            "Local RollbackLifeTime assertion:  "
+                + testRollbackLifeTime
+                + " is not <= "
+                + statsRollbackLifeTime,
+            testRollbackLifeTime <= statsRollbackLifeTime);
       }
       testTotalTx += afterRollback - beforeBegin;
       final long totalTXMinusRollback = testTotalTx - stats.getTxRollbackTime();
       if (Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "cache.enable-time-statistics")) {
-        assertTrue("Total Tx Minus Rollback assertion:  " + totalTXMinusRollback + " is not >= " + statsRollbackLifeTime, totalTXMinusRollback >= statsRollbackLifeTime);
+        assertTrue(
+            "Total Tx Minus Rollback assertion:  "
+                + totalTXMinusRollback
+                + " is not >= "
+                + statsRollbackLifeTime,
+            totalTXMinusRollback >= statsRollbackLifeTime);
       }
       statsVal.assertValid();
     }
@@ -4981,7 +5019,6 @@ public class TXJUnitTest {
     assertTrue(this.txMgr.exists());
     assertEquals(origId, this.txMgr.getTransactionId());
     this.txMgr.rollback();
-
   }
 
   @Test
@@ -5559,9 +5596,7 @@ public class TXJUnitTest {
 
   }
 
-  /**
-   * @param txMgrImpl
-   */
+  /** @param txMgrImpl */
   protected void checkUserAttributeConflict(final CacheTransactionManager txMgrImpl) {
     { // now check entry user attribute conflict checking
       this.region.put("key1", "value0");
@@ -5625,17 +5660,18 @@ public class TXJUnitTest {
   @Test
   public void testNoopInvalidates() throws CacheException {
     final CachePerfStats stats = this.cache.getCachePerfStats();
-    TransactionListener tl = new TransactionListenerAdapter() {
-      @Override
-      public void afterRollback(TransactionEvent event) {
-        te = event;
-      }
-    };
+    TransactionListener tl =
+        new TransactionListenerAdapter() {
+          @Override
+          public void afterRollback(TransactionEvent event) {
+            te = event;
+          }
+        };
     this.txMgr.addListener(tl);
     // Make sure invalidates done on invalid entries are noops
 
     { // distributed invalidate
-        // first make sure invalidate is counted as a change
+      // first make sure invalidate is counted as a change
       int txRollbackChanges = stats.getTxRollbackChanges();
       this.region.create("key1", "value1");
       this.txMgr.begin();
@@ -5694,7 +5730,7 @@ public class TXJUnitTest {
     }
 
     { // local invalidate
-        // first make sure invalidate is counted as a change
+      // first make sure invalidate is counted as a change
       int txRollbackChanges = stats.getTxRollbackChanges();
       this.region.create("key1", "value1");
       this.txMgr.begin();
@@ -5726,7 +5762,7 @@ public class TXJUnitTest {
     }
   }
 
-  final static void clearRegion(Region r) throws TimeoutException {
+  static final void clearRegion(Region r) throws TimeoutException {
     Iterator kI = r.keySet().iterator();
     try {
       while (kI.hasNext()) {
@@ -5737,35 +5773,35 @@ public class TXJUnitTest {
     }
   }
 
-  final static int LRUENTRY_NULL = 0;
-  final static int LRUENTRY_STRING = 1;
-  final static int LRUENTRY_INTEGER = 2;
-  final static int LRUENTRY_LONG = 3;
-  final static int LRUENTRY_DOUBLE = 4;
+  static final int LRUENTRY_NULL = 0;
+  static final int LRUENTRY_STRING = 1;
+  static final int LRUENTRY_INTEGER = 2;
+  static final int LRUENTRY_LONG = 3;
+  static final int LRUENTRY_DOUBLE = 4;
 
-  final static void assertLRUEntries(Set entries, int size, String keyPrefix, int instanceId) {
+  static final void assertLRUEntries(Set entries, int size, String keyPrefix, int instanceId) {
     assertEquals(size, entries.size());
     Iterator entItr = entries.iterator();
     while (entItr.hasNext()) {
       Region.Entry re = (Region.Entry) entItr.next();
       switch (instanceId) {
-      case LRUENTRY_NULL:
-        assertNull(re.getValue());
-        break;
-      case LRUENTRY_STRING:
-        assertTrue(re.getValue() instanceof String);
-        break;
-      case LRUENTRY_INTEGER:
-        assertTrue(re.getValue() instanceof Integer);
-        break;
-      case LRUENTRY_LONG:
-        assertTrue(re.getValue() instanceof Long);
-        break;
-      case LRUENTRY_DOUBLE:
-        assertTrue(re.getValue() instanceof Double);
-        break;
-      default:
-        fail("Unknown instance type in assertLRUEntries: " + instanceId);
+        case LRUENTRY_NULL:
+          assertNull(re.getValue());
+          break;
+        case LRUENTRY_STRING:
+          assertTrue(re.getValue() instanceof String);
+          break;
+        case LRUENTRY_INTEGER:
+          assertTrue(re.getValue() instanceof Integer);
+          break;
+        case LRUENTRY_LONG:
+          assertTrue(re.getValue() instanceof Long);
+          break;
+        case LRUENTRY_DOUBLE:
+          assertTrue(re.getValue() instanceof Double);
+          break;
+        default:
+          fail("Unknown instance type in assertLRUEntries: " + instanceId);
       }
       String reKey = (String) re.getKey();
       assertTrue("expected " + reKey + " to start with " + keyPrefix, reKey.startsWith(keyPrefix));
@@ -5776,7 +5812,8 @@ public class TXJUnitTest {
   public void testEviction() throws CacheException {
     final int lruSize = 8;
     AttributesFactory af = new AttributesFactory();
-    af.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(lruSize, EvictionAction.LOCAL_DESTROY));
+    af.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(lruSize, EvictionAction.LOCAL_DESTROY));
     af.setScope(Scope.LOCAL);
     Region lruRegion = this.cache.createRegion(getUniqueName(), af.create());
 
@@ -5837,15 +5874,15 @@ public class TXJUnitTest {
     // full+2, all committed entries have TX refs using a loader
     {
       AttributesMutator mutator = lruRegion.getAttributesMutator();
-      mutator.setCacheLoader(new CacheLoader() {
-        //          int count = 0;
-        public Object load(LoaderHelper helper) throws CacheLoaderException {
-          return "value" + helper.getArgument();
-        }
+      mutator.setCacheLoader(
+          new CacheLoader() {
+            //          int count = 0;
+            public Object load(LoaderHelper helper) throws CacheLoaderException {
+              return "value" + helper.getArgument();
+            }
 
-        public void close() {
-        }
-      });
+            public void close() {}
+          });
       final TXManagerImpl txMgrImpl = (TXManagerImpl) this.txMgr;
       TXStateProxy tx;
       numToPut = lruSize + 2;
@@ -6043,29 +6080,33 @@ public class TXJUnitTest {
   }
 
   @Test
-  public void testJTASynchronization() throws CacheException, javax.transaction.NotSupportedException, javax.transaction.RollbackException, javax.transaction.SystemException, javax.transaction.HeuristicMixedException, javax.transaction.HeuristicRollbackException {
+  public void testJTASynchronization()
+      throws CacheException, javax.transaction.NotSupportedException,
+          javax.transaction.RollbackException, javax.transaction.SystemException,
+          javax.transaction.HeuristicMixedException, javax.transaction.HeuristicRollbackException {
 
     javax.transaction.TransactionManager jtaTxMgr = this.cache.getJTATransactionManager();
-    TransactionListener tl = new TransactionListener() {
-      public void afterCommit(TransactionEvent event) {
-        ++listenerAfterCommit;
-        te = event;
-      }
+    TransactionListener tl =
+        new TransactionListener() {
+          public void afterCommit(TransactionEvent event) {
+            ++listenerAfterCommit;
+            te = event;
+          }
 
-      public void afterFailedCommit(TransactionEvent event) {
-        ++listenerAfterFailedCommit;
-        te = event;
-      }
+          public void afterFailedCommit(TransactionEvent event) {
+            ++listenerAfterFailedCommit;
+            te = event;
+          }
 
-      public void afterRollback(TransactionEvent event) {
-        ++listenerAfterRollback;
-        te = event;
-      }
+          public void afterRollback(TransactionEvent event) {
+            ++listenerAfterRollback;
+            te = event;
+          }
 
-      public void close() {
-        ++listenerClose;
-      }
-    };
+          public void close() {
+            ++listenerClose;
+          }
+        };
 
     this.txMgr.addListener(tl);
     Synchronization gfTXSync;
@@ -6157,25 +6198,26 @@ public class TXJUnitTest {
 
       // Create a new thread and have it update the same key, causing
       // a conflict
-      final int signal[] = { 0 };
-      Thread t = new Thread("non-TX conflict generator") {
-        public void run() {
-          try {
-            region.put("syncKey4", "syncVal4");
-            while (true)
-              synchronized (signal) {
-                signal[0] = 1;
-                signal.notify();
-                signal.wait();
-                if (signal[0] == 0) {
-                  break;
-                }
+      final int signal[] = {0};
+      Thread t =
+          new Thread("non-TX conflict generator") {
+            public void run() {
+              try {
+                region.put("syncKey4", "syncVal4");
+                while (true)
+                  synchronized (signal) {
+                    signal[0] = 1;
+                    signal.notify();
+                    signal.wait();
+                    if (signal[0] == 0) {
+                      break;
+                    }
+                  }
+              } catch (Exception error) {
+                fail("Non-tx thread failure due to: " + error);
               }
-          } catch (Exception error) {
-            fail("Non-tx thread failure due to: " + error);
-          }
-        }
-      };
+            }
+          };
       t.start();
       try {
         while (true)
@@ -6211,34 +6253,40 @@ public class TXJUnitTest {
   }
 
   @Test
-  public void testJTAEnlistment() throws CacheException, javax.transaction.NotSupportedException, javax.transaction.RollbackException, javax.transaction.SystemException, javax.transaction.HeuristicMixedException, javax.transaction.HeuristicRollbackException {
+  public void testJTAEnlistment()
+      throws CacheException, javax.transaction.NotSupportedException,
+          javax.transaction.RollbackException, javax.transaction.SystemException,
+          javax.transaction.HeuristicMixedException, javax.transaction.HeuristicRollbackException {
 
-    TransactionListener tl = new TransactionListener() {
-      public void afterCommit(TransactionEvent event) {
-        ++listenerAfterCommit;
-        te = event;
-      }
+    TransactionListener tl =
+        new TransactionListener() {
+          public void afterCommit(TransactionEvent event) {
+            ++listenerAfterCommit;
+            te = event;
+          }
 
-      public void afterFailedCommit(TransactionEvent event) {
-        ++listenerAfterFailedCommit;
-        te = event;
-      }
+          public void afterFailedCommit(TransactionEvent event) {
+            ++listenerAfterFailedCommit;
+            te = event;
+          }
 
-      public void afterRollback(TransactionEvent event) {
-        ++listenerAfterRollback;
-        te = event;
-      }
+          public void afterRollback(TransactionEvent event) {
+            ++listenerAfterRollback;
+            te = event;
+          }
 
-      public void close() {
-        ++listenerClose;
-      }
-    };
+          public void close() {
+            ++listenerClose;
+          }
+        };
 
     this.txMgr.addListener(tl);
 
     javax.transaction.UserTransaction userTx = null;
     try {
-      userTx = (javax.transaction.UserTransaction) this.cache.getJNDIContext().lookup("java:/UserTransaction");
+      userTx =
+          (javax.transaction.UserTransaction)
+              this.cache.getJNDIContext().lookup("java:/UserTransaction");
     } catch (VirtualMachineError e) {
       SystemFailure.initiateFailure(e);
       throw e;
@@ -6324,16 +6372,16 @@ public class TXJUnitTest {
 
     // Test enlistment for load
     AttributesMutator mutator = this.region.getAttributesMutator();
-    mutator.setCacheLoader(new CacheLoader() {
-      int count = 0;
+    mutator.setCacheLoader(
+        new CacheLoader() {
+          int count = 0;
 
-      public Object load(LoaderHelper helper) throws CacheLoaderException {
-        return new Integer(count++);
-      }
+          public Object load(LoaderHelper helper) throws CacheLoaderException {
+            return new Integer(count++);
+          }
 
-      public void close() {
-      }
-    });
+          public void close() {}
+        });
     assertEquals(4, this.listenerAfterCommit);
     userTx.begin();
     assertEquals(new Integer(0), this.region.get("enlistKey"));
@@ -6433,13 +6481,20 @@ public class TXJUnitTest {
 
     boolean done = false;
     try {
-      for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < 15 * 1000; done = (idx.getStatistics().getNumUpdates() == expectedUpdates)) {
+      for (StopWatch time = new StopWatch(true);
+          !done && time.elapsedTimeMillis() < 15 * 1000;
+          done = (idx.getStatistics().getNumUpdates() == expectedUpdates)) {
         Thread.sleep(20);
       }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
-    assertTrue("expectedUpdates " + expectedUpdates + " but got this " + idx.getStatistics().getNumUpdates(), done);
+    assertTrue(
+        "expectedUpdates "
+            + expectedUpdates
+            + " but got this "
+            + idx.getStatistics().getNumUpdates(),
+        done);
   }
 
   private static void waitForKeys(final Index idx, final int expectedKeys) {
@@ -6458,13 +6513,17 @@ public class TXJUnitTest {
 
     boolean done = false;
     try {
-      for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < 15 * 1000; done = (idx.getStatistics().getNumberOfKeys() == expectedKeys)) {
+      for (StopWatch time = new StopWatch(true);
+          !done && time.elapsedTimeMillis() < 15 * 1000;
+          done = (idx.getStatistics().getNumberOfKeys() == expectedKeys)) {
         Thread.sleep(20);
       }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
-    assertTrue("expectedKeys " + expectedKeys + " but got this " + idx.getStatistics().getNumberOfKeys(), done);
+    assertTrue(
+        "expectedKeys " + expectedKeys + " but got this " + idx.getStatistics().getNumberOfKeys(),
+        done);
   }
 
   @Test
@@ -6490,7 +6549,7 @@ public class TXJUnitTest {
       SelectResults res = (SelectResults) q.execute();
       assertEquals(2, res.size());
       String val;
-      for (Iterator resI = res.iterator(); resI.hasNext();) {
+      for (Iterator resI = res.iterator(); resI.hasNext(); ) {
         val = (String) resI.next();
         assertTrue("Value: " + val + " does not start with qval", val.startsWith("qval"));
       }
@@ -6503,7 +6562,7 @@ public class TXJUnitTest {
       q = qs.newQuery(aIqstr);
       res = (SelectResults) q.execute();
       assertEquals(2, res.size());
-      for (Iterator resI = res.iterator(); resI.hasNext();) {
+      for (Iterator resI = res.iterator(); resI.hasNext(); ) {
         val = (String) resI.next();
         assertTrue("Value: " + val + " does not start with qval", val.startsWith("qval"));
       }
@@ -6517,7 +6576,7 @@ public class TXJUnitTest {
       this.region.put("noQkey2", "noQval2");
       res = (SelectResults) q1.execute();
       assertEquals(2, res.size());
-      for (Iterator resI = res.iterator(); resI.hasNext();) {
+      for (Iterator resI = res.iterator(); resI.hasNext(); ) {
         val = (String) resI.next();
         assertTrue("Value: " + val + " does not start with qval", val.startsWith("qval"));
       }
@@ -6525,7 +6584,7 @@ public class TXJUnitTest {
       aIregion.put("noQkey2", "noQval2");
       res = (SelectResults) aIq1.execute();
       assertEquals(2, res.size());
-      for (Iterator resI = res.iterator(); resI.hasNext();) {
+      for (Iterator resI = res.iterator(); resI.hasNext(); ) {
         val = (String) resI.next();
         assertTrue("Value: " + val + " does not start with qval", val.startsWith("qval"));
       }
@@ -6553,7 +6612,8 @@ public class TXJUnitTest {
       assertEquals(2, index0.getStatistics().getNumberOfKeys());
       assertEquals(2, index0.getStatistics().getNumberOfValues());
       assertEquals(2, index0.getStatistics().getNumUpdates()); // Shouldn't this be zero?
-      Index aIindex0 = qs.createIndex("aITXIndex0", IndexType.FUNCTIONAL, "value.length", aIfromClause);
+      Index aIindex0 =
+          qs.createIndex("aITXIndex0", IndexType.FUNCTIONAL, "value.length", aIfromClause);
       assertEquals(2, aIindex0.getStatistics().getNumberOfKeys());
       assertEquals(2, aIindex0.getStatistics().getNumberOfValues());
       assertEquals(2, aIindex0.getStatistics().getNumUpdates()); // Shouldn't this be zero?
@@ -6572,7 +6632,8 @@ public class TXJUnitTest {
       assertEquals(3, index0.getStatistics().getNumberOfKeys());
       assertEquals(3, index0.getStatistics().getNumberOfValues());
       aIregion.put("qkey2", val2);
-      final IndexManager.IndexUpdaterThread upThread = ((AbstractRegion) aIregion).getIndexManager().getUpdaterThread();
+      final IndexManager.IndexUpdaterThread upThread =
+          ((AbstractRegion) aIregion).getIndexManager().getUpdaterThread();
       while (!upThread.isDone()) {
         pause(20);
       }
@@ -6750,6 +6811,7 @@ public class TXJUnitTest {
 
   /**
    * make sure that we do not expose BucketRegion on transactionListener events
+   *
    * @throws Exception
    */
   @Test
@@ -6759,7 +6821,8 @@ public class TXJUnitTest {
     ctm.addListener(tl);
     CacheListenerForRegionTest cl = new CacheListenerForRegionTest();
     AttributesFactory af = new AttributesFactory();
-    PartitionAttributes pa = new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(1).create();
+    PartitionAttributes pa =
+        new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(1).create();
     af.setPartitionAttributes(pa);
     af.addCacheListener(cl);
     Region pr = this.cache.createRegion("testTxEventForRegion", af.create());
@@ -6778,6 +6841,7 @@ public class TXJUnitTest {
 
   /**
    * make sure that we throw an UnsupportedOperationInTransactionException
+   *
    * @throws Exception
    */
   @Test
@@ -6785,7 +6849,8 @@ public class TXJUnitTest {
     TXManagerImpl ctm = this.cache.getTxManager();
     AttributesFactory af = new AttributesFactory();
     Region r = this.cache.createRegion("dRegion", af.create());
-    PartitionAttributes pa = new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(1).create();
+    PartitionAttributes pa =
+        new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(1).create();
     af.setPartitionAttributes(pa);
     Region pr = this.cache.createRegion("prRegion", af.create());
     Map map = new HashMap();
@@ -6805,6 +6870,7 @@ public class TXJUnitTest {
 
   /**
    * make sure that we throw an UnsupportedOperationInTransactionException
+   *
    * @throws Exception
    */
   @Test
@@ -6812,7 +6878,8 @@ public class TXJUnitTest {
     CacheTransactionManager ctm = this.cache.getCacheTransactionManager();
     AttributesFactory af = new AttributesFactory();
     Region r = this.cache.createRegion("dRegion", af.create());
-    PartitionAttributes pa = new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(1).create();
+    PartitionAttributes pa =
+        new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(1).create();
     af.setPartitionAttributes(pa);
     Region pr = this.cache.createRegion("prRegion", af.create());
     List list = new ArrayList();
@@ -6829,6 +6896,7 @@ public class TXJUnitTest {
 
   /**
    * make sure that we throw an UnsupportedOperationInTransactionException
+   *
    * @throws Exception
    */
   @Test
@@ -6836,7 +6904,8 @@ public class TXJUnitTest {
     CacheTransactionManager ctm = this.cache.getCacheTransactionManager();
     AttributesFactory af = new AttributesFactory();
     Region r = this.cache.createRegion("dRegion", af.create());
-    PartitionAttributes pa = new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(1).create();
+    PartitionAttributes pa =
+        new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(1).create();
     af.setPartitionAttributes(pa);
     Region pr = this.cache.createRegion("prRegion", af.create());
     List list = new ArrayList();
@@ -6851,7 +6920,8 @@ public class TXJUnitTest {
     }
     try {
       pr.localDestroyRegion();
-      fail("Should have thrown UnsupportedOperationInTransactionException during localDestroyRegion");
+      fail(
+          "Should have thrown UnsupportedOperationInTransactionException during localDestroyRegion");
     } catch (UnsupportedOperationInTransactionException ee) {
       // expected
     }
@@ -6864,7 +6934,8 @@ public class TXJUnitTest {
 
     try {
       r.localDestroyRegion();
-      fail("Should have thrown UnsupportedOperationInTransactionException during localDestroyRegion");
+      fail(
+          "Should have thrown UnsupportedOperationInTransactionException during localDestroyRegion");
     } catch (UnsupportedOperationInTransactionException ee) {
       // expected
     }
@@ -6875,11 +6946,11 @@ public class TXJUnitTest {
     // now we aren't in tx so these shouldn't throw
     pr.destroyRegion();
     r.destroyRegion();
-
   }
 
   /**
    * make sure that we throw an UnsupportedOperationInTransactionException
+   *
    * @throws Exception
    */
   @Test
@@ -6887,7 +6958,8 @@ public class TXJUnitTest {
     CacheTransactionManager ctm = this.cache.getCacheTransactionManager();
     AttributesFactory af = new AttributesFactory();
     Region r = this.cache.createRegion("dRegion", af.create());
-    PartitionAttributes pa = new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(1).create();
+    PartitionAttributes pa =
+        new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(1).create();
     af.setPartitionAttributes(pa);
     Region pr = this.cache.createRegion("prRegion", af.create());
     ctm.begin();
@@ -6899,7 +6971,8 @@ public class TXJUnitTest {
     }
     try {
       pr.localInvalidateRegion();
-      fail("Should have thrown UnsupportedOperationInTransactionException during localInvalidateRegion");
+      fail(
+          "Should have thrown UnsupportedOperationInTransactionException during localInvalidateRegion");
     } catch (UnsupportedOperationInTransactionException ee) {
       // expected
     }
@@ -6912,7 +6985,8 @@ public class TXJUnitTest {
 
     try {
       r.localInvalidateRegion();
-      fail("Should have thrown UnsupportedOperationInTransactionException during localInvalidateRegion");
+      fail(
+          "Should have thrown UnsupportedOperationInTransactionException during localInvalidateRegion");
     } catch (UnsupportedOperationInTransactionException ee) {
       // expected
     }
@@ -6920,11 +6994,11 @@ public class TXJUnitTest {
     // now we aren't in tx so these shouldn't throw
     pr.invalidateRegion();
     r.invalidateRegion();
-
   }
 
   /**
    * make sure that we throw an UnsupportedOperationInTransactionException
+   *
    * @throws Exception
    */
   @Test
@@ -6932,7 +7006,8 @@ public class TXJUnitTest {
     CacheTransactionManager ctm = this.cache.getCacheTransactionManager();
     AttributesFactory af = new AttributesFactory();
     Region r = this.cache.createRegion("dRegion", af.create());
-    PartitionAttributes pa = new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(1).create();
+    PartitionAttributes pa =
+        new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(1).create();
     af.setPartitionAttributes(pa);
     Region pr = this.cache.createRegion("prRegion", af.create());
     ctm.begin();
@@ -6957,7 +7032,8 @@ public class TXJUnitTest {
 
     try {
       r.localClear();
-      fail("Should have thrown UnsupportedOperationInTransactionException during localInvalidateRegion");
+      fail(
+          "Should have thrown UnsupportedOperationInTransactionException during localInvalidateRegion");
     } catch (UnsupportedOperationInTransactionException ee) {
       // expected
     }
@@ -6965,7 +7041,6 @@ public class TXJUnitTest {
     // now we aren't in tx so these shouldn't throw
     pr.invalidateRegion();
     r.invalidateRegion();
-
   }
 
   @Test

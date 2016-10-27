@@ -32,18 +32,13 @@ import org.apache.geode.internal.cache.DiskStoreImpl;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 /**
- * A request to from an admin VM to all non admin members
- * to start a backup. In the prepare phase of the backup,
- * the members will suspend bucket destroys to make sure
- * buckets aren't missed during the backup.
- * 
- *
+ * A request to from an admin VM to all non admin members to start a backup. In the prepare phase of
+ * the backup, the members will suspend bucket destroys to make sure buckets aren't missed during
+ * the backup.
  */
 public class FlushToDiskRequest extends CliLegacyMessage {
 
-  public FlushToDiskRequest() {
-
-  }
+  public FlushToDiskRequest() {}
 
   public static void send(DM dm, Set recipients) {
     FlushToDiskRequest request = new FlushToDiskRequest();

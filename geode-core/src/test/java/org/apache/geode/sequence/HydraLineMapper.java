@@ -29,9 +29,7 @@ import java.util.regex.Pattern;
 
 import org.apache.geode.sequence.LineMapper;
 
-/**
- *
- */
+/** */
 public class HydraLineMapper implements LineMapper {
   private static final Pattern VM_NAME_PATTERN = Pattern.compile("(vm_\\d+).*_(\\d+)(_end)?\\.log");
   private static final Pattern DISK_DIR_PATTERN = Pattern.compile("vm_(\\d+).*_disk_1");
@@ -62,7 +60,6 @@ public class HydraLineMapper implements LineMapper {
         }
       }
     }
-
   }
 
   private String getDiskStoreId(String diskStoreDir) {
@@ -81,7 +78,8 @@ public class HydraLineMapper implements LineMapper {
     return null;
   }
 
-  private String getDiskStoreIdFromInitFile(File dir, String fileName) throws FileNotFoundException, IOException {
+  private String getDiskStoreIdFromInitFile(File dir, String fileName)
+      throws FileNotFoundException, IOException {
     FileInputStream fis = new FileInputStream(new File(dir, fileName));
     try {
       byte[] bytes = new byte[1 + 8 + 8];
@@ -117,13 +115,13 @@ public class HydraLineMapper implements LineMapper {
       if (parentFile == null && file.getParentFile() == null) {
         return true;
       }
-      if (parentFile == null || file.getParentFile() == null || !file.getParentFile().equals(parentFile)) {
+      if (parentFile == null
+          || file.getParentFile() == null
+          || !file.getParentFile().equals(parentFile)) {
         return false;
       }
     }
 
     return new File(parentFile, "latest.prop").exists() || new File("latest.prop").exists();
-
   }
-
 }

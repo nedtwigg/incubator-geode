@@ -72,7 +72,8 @@ public class JmxManagerLocator implements TcpHandler {
     // nothing needed
   }
 
-  public void restarting(DistributedSystem ds, GemFireCache cache, SharedConfiguration sharedConfig) {
+  public void restarting(
+      DistributedSystem ds, GemFireCache cache, SharedConfiguration sharedConfig) {
     this.cache = (GemFireCacheImpl) cache;
   }
 
@@ -86,9 +87,11 @@ public class JmxManagerLocator implements TcpHandler {
     if (logger.isDebugEnabled()) {
       logger.debug("Locator requested to find or start jmx manager");
     }
-    List<JmxManagerProfile> alreadyManaging = this.cache.getJmxManagerAdvisor().adviseAlreadyManaging();
+    List<JmxManagerProfile> alreadyManaging =
+        this.cache.getJmxManagerAdvisor().adviseAlreadyManaging();
     if (alreadyManaging.isEmpty()) {
-      List<JmxManagerProfile> willingToManage = this.cache.getJmxManagerAdvisor().adviseWillingToManage();
+      List<JmxManagerProfile> willingToManage =
+          this.cache.getJmxManagerAdvisor().adviseWillingToManage();
       if (!willingToManage.isEmpty()) {
         synchronized (this) {
           alreadyManaging = this.cache.getJmxManagerAdvisor().adviseAlreadyManaging();
@@ -126,7 +129,12 @@ public class JmxManagerLocator implements TcpHandler {
                 // we asked to start one is still in the ds.
                 alreadyManaging = this.cache.getJmxManagerAdvisor().adviseAlreadyManaging();
                 int sleepCount = 0;
-                while (sleepCount < 20 && alreadyManaging.isEmpty() && this.cache.getDistributionManager().getDistributionManagerIds().contains(p.getDistributedMember())) {
+                while (sleepCount < 20
+                    && alreadyManaging.isEmpty()
+                    && this.cache
+                        .getDistributionManager()
+                        .getDistributionManagerIds()
+                        .contains(p.getDistributedMember())) {
                   sleepCount++;
                   try {
                     Thread.sleep(100);
@@ -170,7 +178,11 @@ public class JmxManagerLocator implements TcpHandler {
 
   private boolean sendStartJmxManager(InternalDistributedMember distributedMember) {
     try {
-      ArrayList<Object> resultContainer = (ArrayList<Object>) FunctionService.onMember(distributedMember).execute(new StartJmxManagerFunction()).getResult();
+      ArrayList<Object> resultContainer =
+          (ArrayList<Object>)
+              FunctionService.onMember(distributedMember)
+                  .execute(new StartJmxManagerFunction())
+                  .getResult();
       Object result = resultContainer.get(0);
       if (result instanceof Boolean) {
         return ((Boolean) result).booleanValue();
@@ -179,9 +191,16 @@ public class JmxManagerLocator implements TcpHandler {
         return false;
       }
     } catch (RuntimeException ex) {
-      if (!this.cache.getDistributionManager().getDistributionManagerIdsIncludingAdmin().contains(distributedMember)) {
+      if (!this.cache
+          .getDistributionManager()
+          .getDistributionManagerIdsIncludingAdmin()
+          .contains(distributedMember)) {
         // if the member went away then just return false
-        logger.info("Could not start jmx manager on {} because of {}", distributedMember, ex.getMessage(), ex);
+        logger.info(
+            "Could not start jmx manager on {} because of {}",
+            distributedMember,
+            ex.getMessage(),
+            ex);
         return false;
       } else {
         throw ex;
@@ -235,6 +254,5 @@ public class JmxManagerLocator implements TcpHandler {
     public boolean isHA() {
       return false;
     }
-
   }
 }

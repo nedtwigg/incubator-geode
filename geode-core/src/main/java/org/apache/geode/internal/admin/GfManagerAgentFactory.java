@@ -19,21 +19,15 @@ package org.apache.geode.internal.admin;
 
 import org.apache.geode.internal.admin.remote.*;
 
-/**
- * A factory for GfManagerAgent instances.  This is the main entry
- * point for the admin API.
- *
- *
- */
+/** A factory for GfManagerAgent instances. This is the main entry point for the admin API. */
 public class GfManagerAgentFactory {
 
   /**
    * Creates a GfManagerAgent for managing a distributed system.
    *
-   * @param config  definition of the distributed system to manage
+   * @param config definition of the distributed system to manage
    */
   public static GfManagerAgent getManagerAgent(GfManagerAgentConfig config) {
     return new RemoteGfManagerAgent(config);
   }
-
 }

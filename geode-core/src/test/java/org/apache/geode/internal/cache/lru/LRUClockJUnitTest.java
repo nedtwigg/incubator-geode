@@ -44,9 +44,7 @@ import org.apache.geode.internal.cache.InternalRegionArguments;
 import org.apache.geode.internal.cache.PlaceHolderDiskRegion;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * This class tests the LRUCapacityController's core clock algorithm.
- */
+/** This class tests the LRUCapacityController's core clock algorithm. */
 @Category(IntegrationTest.class)
 public class LRUClockJUnitTest {
 
@@ -54,8 +52,7 @@ public class LRUClockJUnitTest {
 
   static Properties sysProps = new Properties();
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
@@ -81,7 +78,8 @@ public class LRUClockJUnitTest {
 
     for (i = 0; i < 10; i++) {
       LRUTestEntry n = (LRUTestEntry) clock.getLRUEntry();
-      assertTrue("expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
+      assertTrue(
+          "expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
     }
 
     assertTrue("expected null", clock.getLRUEntry() == null);
@@ -106,7 +104,6 @@ public class LRUClockJUnitTest {
       } else {
         assertTrue("found wrong type: " + obj.getClass().getName(), false);
       }
-
     }
 
     int counter = 0;
@@ -139,7 +136,8 @@ public class LRUClockJUnitTest {
 
     for (i = 1; i < 10; i += 2) {
       LRUTestEntry n = (LRUTestEntry) clock.getLRUEntry();
-      assertTrue("expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
+      assertTrue(
+          "expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
     }
 
     assertTrue("expected null", clock.getLRUEntry() == null);
@@ -163,16 +161,18 @@ public class LRUClockJUnitTest {
 
     // getLRUEntry until empty... verify order of results.
 
-    // should find 1, 3, etc... as 0, 2, 4 etc... were marked recently used..      
+    // should find 1, 3, etc... as 0, 2, 4 etc... were marked recently used..
     for (i = 1; i < 10; i += 2) {
       LRUTestEntry n = (LRUTestEntry) clock.getLRUEntry();
-      assertTrue("expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
+      assertTrue(
+          "expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
     }
 
     // now 0, 2, 4 should go...
     for (i = 0; i < 10; i += 2) {
       LRUTestEntry n = (LRUTestEntry) clock.getLRUEntry();
-      assertTrue("expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
+      assertTrue(
+          "expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
     }
 
     assertTrue("expected null", clock.getLRUEntry() == null);
@@ -190,7 +190,8 @@ public class LRUClockJUnitTest {
     clock.unlinkEntry(nodes[0]);
     for (i = 1; i < 10; i++) {
       LRUTestEntry n = (LRUTestEntry) clock.getLRUEntry();
-      assertTrue("expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
+      assertTrue(
+          "expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
     }
     assertEquals(null, clock.getLRUEntry());
   }
@@ -207,11 +208,13 @@ public class LRUClockJUnitTest {
     clock.unlinkEntry(nodes[5]);
     for (i = 0; i < 5; i++) {
       LRUTestEntry n = (LRUTestEntry) clock.getLRUEntry();
-      assertTrue("expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
+      assertTrue(
+          "expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
     }
     for (i = 6; i < 10; i++) {
       LRUTestEntry n = (LRUTestEntry) clock.getLRUEntry();
-      assertTrue("expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
+      assertTrue(
+          "expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
     }
     assertEquals(null, clock.getLRUEntry());
   }
@@ -229,7 +232,8 @@ public class LRUClockJUnitTest {
 
     for (i = 0; i < 9; i++) {
       LRUTestEntry n = (LRUTestEntry) clock.getLRUEntry();
-      assertTrue("expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
+      assertTrue(
+          "expected nodes[" + nodes[i].id() + "], found nodes[" + n.id() + "]", n == nodes[i]);
     }
     assertEquals(null, clock.getLRUEntry());
   }
@@ -364,9 +368,22 @@ public class LRUClockJUnitTest {
       final String lruEvaluationsDesc = "Number of entries evaluated during LRU operations.";
       final String lruGreedyReturnsDesc = "Number of non-LRU entries evicted during LRU operations";
       final String lruDestroysDesc = "Number of entry destroys triggered by LRU.";
-      final String lruDestroysLimitDesc = "Maximum number of entry destroys triggered by LRU before scan occurs.";
+      final String lruDestroysLimitDesc =
+          "Maximum number of entry destroys triggered by LRU before scan occurs.";
 
-      statType = f.createType("TestLRUStatistics", "Statistics about byte based Least Recently Used region entry disposal", new StatisticDescriptor[] { f.createLongGauge("bytesAllowed", bytesAllowedDesc, "bytes"), f.createLongGauge("byteCount", byteCountDesc, "bytes"), f.createLongCounter("lruEvictions", lruEvictionsDesc, "entries"), f.createLongCounter("lruEvaluations", lruEvaluationsDesc, "entries"), f.createLongCounter("lruGreedyReturns", lruGreedyReturnsDesc, "entries"), f.createLongCounter("lruDestroys", lruDestroysDesc, "entries"), f.createLongCounter("lruDestroysLimit", lruDestroysLimitDesc, "entries"), });
+      statType =
+          f.createType(
+              "TestLRUStatistics",
+              "Statistics about byte based Least Recently Used region entry disposal",
+              new StatisticDescriptor[] {
+                f.createLongGauge("bytesAllowed", bytesAllowedDesc, "bytes"),
+                f.createLongGauge("byteCount", byteCountDesc, "bytes"),
+                f.createLongCounter("lruEvictions", lruEvictionsDesc, "entries"),
+                f.createLongCounter("lruEvaluations", lruEvaluationsDesc, "entries"),
+                f.createLongCounter("lruGreedyReturns", lruGreedyReturnsDesc, "entries"),
+                f.createLongCounter("lruDestroys", lruDestroysDesc, "entries"),
+                f.createLongCounter("lruDestroysLimit", lruDestroysLimitDesc, "entries"),
+              });
     }
 
     @Override
@@ -491,5 +508,4 @@ public class LRUClockJUnitTest {
     Region sub = root.createSubregion(testName.getMethodName(), af.create());
     return sub;
   }
-
 }

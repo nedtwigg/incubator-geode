@@ -24,19 +24,18 @@ import java.io.*;
 import org.apache.geode.distributed.internal.membership.*;
 
 /**
- * A message that is sent to all other distribution manager when
- * a distribution manager shuts down.
- * 
- * N.B. -- this is a SerialDistributionMessage due to bug32980
+ * A message that is sent to all other distribution manager when a distribution manager shuts down.
+ *
+ * <p>N.B. -- this is a SerialDistributionMessage due to bug32980
  */
-public final class ShutdownMessage extends HighPriorityDistributionMessage implements AdminMessageType, MessageWithReply {
+public final class ShutdownMessage extends HighPriorityDistributionMessage
+    implements AdminMessageType, MessageWithReply {
   /** The is of the distribution manager that is shutting down */
   protected InternalDistributedMember id;
+
   private int processorId;
 
-  /**
-   * Sets the id of the distribution manager that is shutting down
-   */
+  /** Sets the id of the distribution manager that is shutting down */
   void setDistributionManagerId(InternalDistributedMember id) {
     this.id = id;
   }
@@ -63,10 +62,9 @@ public final class ShutdownMessage extends HighPriorityDistributionMessage imple
   }
 
   /**
-   * Removes the distribution manager that is started up from the current
-   * DM's list of members.
+   * Removes the distribution manager that is started up from the current DM's list of members.
    *
-   * This method is invoked on the receiver side
+   * <p>This method is invoked on the receiver side
    */
   @Override
   protected void process(final DistributionManager dm) {
@@ -89,7 +87,8 @@ public final class ShutdownMessage extends HighPriorityDistributionMessage imple
     //    }
     //    else {
     //      dm.putOutgoing(reply);
-    dm.shutdownMessageReceived(id, LocalizedStrings.ShutdownMessage_SHUTDOWN_MESSAGE_RECEIVED.toLocalizedString());
+    dm.shutdownMessageReceived(
+        id, LocalizedStrings.ShutdownMessage_SHUTDOWN_MESSAGE_RECEIVED.toLocalizedString());
     //    }
   }
 
@@ -114,7 +113,7 @@ public final class ShutdownMessage extends HighPriorityDistributionMessage imple
 
   @Override
   public String toString() {
-    return LocalizedStrings.ShutdownMessage_SHUTDOWNMESSAGE_DM_0_HAS_SHUTDOWN.toLocalizedString(this.id);
+    return LocalizedStrings.ShutdownMessage_SHUTDOWNMESSAGE_DM_0_HAS_SHUTDOWN.toLocalizedString(
+        this.id);
   }
-
 }

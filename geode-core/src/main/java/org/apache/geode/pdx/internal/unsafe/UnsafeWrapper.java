@@ -21,14 +21,13 @@ import java.lang.reflect.Field;
 import sun.misc.Unsafe;
 
 /**
- * This class wraps the sun.misc.Unsafe class which is only available on Sun JVMs.
- * It is also available on other JVMs (like IBM).
- * 
- *
+ * This class wraps the sun.misc.Unsafe class which is only available on Sun JVMs. It is also
+ * available on other JVMs (like IBM).
  */
 public class UnsafeWrapper {
 
   private final Unsafe unsafe;
+
   {
     Unsafe tmp = null;
     try {

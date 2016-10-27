@@ -23,44 +23,43 @@ import org.apache.geode.security.GemFireSecurityException;
 
 /**
  * A factory for creating new connections.
- * @since GemFire 5.7
  *
+ * @since GemFire 5.7
  */
 public interface ConnectionFactory {
 
   /**
    * Create a client to server connection to the given server
+   *
    * @param location the server to connection
-   * @return a connection to that server, or null if 
-   * a connection could not be established.
-   * @throws GemFireSecurityException if there was a security exception 
-   * while trying to establish a connections.
+   * @return a connection to that server, or null if a connection could not be established.
+   * @throws GemFireSecurityException if there was a security exception while trying to establish a
+   *     connections.
    */
-  Connection createClientToServerConnection(ServerLocation location, boolean forQueue) throws GemFireSecurityException;
+  Connection createClientToServerConnection(ServerLocation location, boolean forQueue)
+      throws GemFireSecurityException;
 
   /**
-   * Returns the best server for this client to connect to.
-   * Returns null if no servers exist.
-   * @param currentServer if non-null then we are trying to replace a connection
-   *                      that we have to this server.
-   * @param excludedServers the list of servers
-   * to skip over when finding a server to connect to
+   * Returns the best server for this client to connect to. Returns null if no servers exist.
+   *
+   * @param currentServer if non-null then we are trying to replace a connection that we have to
+   *     this server.
+   * @param excludedServers the list of servers to skip over when finding a server to connect to
    */
   ServerLocation findBestServer(ServerLocation currentServer, Set excludedServers);
 
   /**
-   * Create a client to server connection to any server
-   * that is not in the excluded list.
-   * @param excludedServers the list of servers
-   * to skip over when finding a server to connect to
-   * @return a connection or null if 
-   * a connection could not be established.
-   * @throws GemFireSecurityException if there was a security exception
-   * trying to establish a connection.
+   * Create a client to server connection to any server that is not in the excluded list.
+   *
+   * @param excludedServers the list of servers to skip over when finding a server to connect to
+   * @return a connection or null if a connection could not be established.
+   * @throws GemFireSecurityException if there was a security exception trying to establish a
+   *     connection.
    */
   Connection createClientToServerConnection(Set excludedServers) throws GemFireSecurityException;
 
-  ClientUpdater createServerToClientConnection(Endpoint endpoint, QueueManager qManager, boolean isPrimary, ClientUpdater failedUpdater);
+  ClientUpdater createServerToClientConnection(
+      Endpoint endpoint, QueueManager qManager, boolean isPrimary, ClientUpdater failedUpdater);
 
   ServerBlackList getBlackList();
 }

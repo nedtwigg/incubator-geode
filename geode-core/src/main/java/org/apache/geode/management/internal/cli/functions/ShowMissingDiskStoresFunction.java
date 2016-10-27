@@ -72,11 +72,12 @@ public class ShowMissingDiskStoresFunction extends FunctionAdapter implements In
           for (PartitionedRegion pr : prs) {
             List<String> missingChildRegions = pr.getMissingColocatedChildren();
             for (String child : missingChildRegions) {
-              missingColocatedRegions.add(new ColocatedRegionDetails(member.getHost(), member.getName(), pr.getFullPath(), child));
+              missingColocatedRegions.add(
+                  new ColocatedRegionDetails(
+                      member.getHost(), member.getName(), pr.getFullPath(), child));
             }
           }
         }
-
       }
 
       if (memberMissingIDs.isEmpty() && missingColocatedRegions.isEmpty()) {

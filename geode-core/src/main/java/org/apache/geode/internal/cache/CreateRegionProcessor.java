@@ -60,10 +60,8 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
  * This message processor handles creation and initial exchange of
- * org.apache.geode.internal.cache.CacheDistributionAdvisor.Profiles. It 
- * represents creation of
- * a {@link CacheDistributionAdvisee}. Name remains CreateRegion to avoid
- * merge conflicts.
+ * org.apache.geode.internal.cache.CacheDistributionAdvisor.Profiles. It represents creation of a
+ * {@link CacheDistributionAdvisee}. Name remains CreateRegion to avoid merge conflicts.
  */
 public class CreateRegionProcessor implements ProfileExchangeProcessor {
   private static final Logger logger = LogService.getLogger();
@@ -183,7 +181,8 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
     }
   }
 
-  protected CreateRegionMessage getCreateRegionMessage(Set recps, ReplyProcessor21 proc, boolean useMcast) {
+  protected CreateRegionMessage getCreateRegionMessage(
+      Set recps, ReplyProcessor21 proc, boolean useMcast) {
     CreateRegionMessage msg = new CreateRegionMessage();
     msg.regionPath = this.newRegion.getFullPath();
     msg.profile = (CacheProfile) this.newRegion.getProfile();
@@ -194,19 +193,20 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
     return msg;
   }
 
-  public void setOnline(InternalDistributedMember target) {
-
-  }
+  public void setOnline(InternalDistributedMember target) {}
 
   class CreateRegionReplyProcessor extends ReplyProcessor21 {
 
     CreateRegionReplyProcessor(Set members) {
-      super((InternalDistributedSystem) CreateRegionProcessor.this.newRegion.getCache().getDistributedSystem(), members);
+      super(
+          (InternalDistributedSystem)
+              CreateRegionProcessor.this.newRegion.getCache().getDistributedSystem(),
+          members);
     }
 
     /**
-     * guards application of event state to the region so that we deserialize
-     * and apply event state only once
+     * guards application of event state to the region so that we deserialize and apply event state
+     * only once
      */
     private Object eventStateLock = new Object();
 
@@ -216,8 +216,8 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
     private boolean allMembersSkippedChecks = true;
 
     /**
-     * true if all members skipped CreateRegionMessage#checkCompatibility(),
-     * in which case CreateRegionMessage should be retried.
+     * true if all members skipped CreateRegionMessage#checkCompatibility(), in which case
+     * CreateRegionMessage should be retried.
      */
     public boolean needRetry() {
       return this.allMembersSkippedChecks;
@@ -225,7 +225,9 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
 
     @Override
     public void process(DistributionMessage msg) {
-      Assert.assertTrue(msg instanceof CreateRegionReplyMessage, "CreateRegionProcessor is unable to process message of type " + msg.getClass());
+      Assert.assertTrue(
+          msg instanceof CreateRegionReplyMessage,
+          "CreateRegionProcessor is unable to process message of type " + msg.getClass());
       CreateRegionReplyMessage reply = (CreateRegionReplyMessage) msg;
       LocalRegion lr = (LocalRegion) newRegion;
       if (logger.isDebugEnabled()) {
@@ -243,7 +245,8 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
             lr.enableConcurrencyChecks();
           }
 
-          CacheDistributionAdvisor cda = CreateRegionProcessor.this.newRegion.getCacheDistributionAdvisor();
+          CacheDistributionAdvisor cda =
+              CreateRegionProcessor.this.newRegion.getCacheDistributionAdvisor();
           cda.putProfile(reply.profile);
           if (reply.bucketProfiles != null) {
             RegionAdvisor ra = (RegionAdvisor) cda;
@@ -300,8 +303,8 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
     }
 
     /**
-     * IllegalStateException is an anticipated reply exception.  Receiving
-     * multiple replies with this exception is normal.
+     * IllegalStateException is an anticipated reply exception. Receiving multiple replies with this
+     * exception is normal.
      */
     @Override
     protected boolean logMultipleExceptions() {
@@ -309,7 +312,8 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
     }
   }
 
-  public static final class CreateRegionMessage extends HighPriorityDistributionMessage implements MessageWithReply {
+  public static final class CreateRegionMessage extends HighPriorityDistributionMessage
+      implements MessageWithReply {
 
     public boolean concurrencyChecksEnabled;
     protected String regionPath;
@@ -375,10 +379,14 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
         } else {
           if (lclRgn == null) {
             // check to see if a ProxyBucketRegion (not a true region) exists
-            handleCacheDistributionAdvisee(PartitionedRegionHelper.getProxyBucketRegion(cache, this.regionPath, false), false);
+            handleCacheDistributionAdvisee(
+                PartitionedRegionHelper.getProxyBucketRegion(cache, this.regionPath, false), false);
           } else {
             if (logger.isDebugEnabled()) {
-              logger.debug("<lclRgn scope is not distributed. Scope={}> {}", lclRgn.getAttributes().getScope(), this);
+              logger.debug(
+                  "<lclRgn scope is not distributed. Scope={}> {}",
+                  lclRgn.getAttributes().getScope(),
+                  this);
             }
           }
         }
@@ -409,7 +417,11 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
         if (replyException == null) {
           replyException = new ReplyException(t);
         } else {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.CreateRegionProcessor_MORE_THAN_ONE_EXCEPTION_THROWN_IN__0, this), t);
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings.CreateRegionProcessor_MORE_THAN_ONE_EXCEPTION_THROWN_IN__0,
+                  this),
+              t);
         }
       } finally {
         LocalRegion.setThreadInitLevelRequirement(oldLevel);
@@ -428,24 +440,25 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
         if (replyException != null && !this.incompatible) {
           // no need to log the exception if it was caused by compatibility check
           if (logger.isDebugEnabled()) {
-            logger.debug("While processing '{}', got exception, returning to sender", this, replyException);
+            logger.debug(
+                "While processing '{}', got exception, returning to sender", this, replyException);
           }
         }
         replyMsg.setException(replyException);
         dm.putOutgoing(replyMsg);
         if (lclRgn instanceof PartitionedRegion)
           ((PartitionedRegion) lclRgn).sendIndexCreationMsg(this.getSender());
-
       }
     }
 
     /**
-     * Attempts to process this message with the specified 
-     * <code>CacheDistributionAdvisee</code>.
+     * Attempts to process this message with the specified <code>CacheDistributionAdvisee</code>.
+     *
      * @param cda the CacheDistributionAdvisee to apply this profile to
      * @param isRealRegion true if CacheDistributionAdvisee is a real region
      */
-    private void handleCacheDistributionAdvisee(CacheDistributionAdvisee cda, boolean isRealRegion) {
+    private void handleCacheDistributionAdvisee(
+        CacheDistributionAdvisee cda, boolean isRealRegion) {
       if (cda == null) {
         // local region or proxy bucket region not found
         if (logger.isDebugEnabled()) {
@@ -518,11 +531,17 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
         this.skippedCompatibilityChecks = true;
       }
 
-      if (!initializing && !skipCheckForAccessor && (rgn.getAttributes().getDataPolicy().withPersistence() != profile.dataPolicy.withPersistence())) {
+      if (!initializing
+          && !skipCheckForAccessor
+          && (rgn.getAttributes().getDataPolicy().withPersistence()
+              != profile.dataPolicy.withPersistence())) {
         // 45186: Do not allow a persistent replicate to be started if a
         // non-persistent replicate is running
         if (!rgn.getAttributes().getDataPolicy().withPersistence()) {
-          result = LocalizedStrings.CreateRegionProcessor_CANNOT_CREATE_REGION_0_WITH_PERSISTANCE_TRUE_PERSISTENT_MEMBERS_B4_NON_PERSISTENT.toLocalizedString(regionPath, myId);
+          result =
+              LocalizedStrings
+                  .CreateRegionProcessor_CANNOT_CREATE_REGION_0_WITH_PERSISTANCE_TRUE_PERSISTENT_MEMBERS_B4_NON_PERSISTENT
+                  .toLocalizedString(regionPath, myId);
           skipConcurrencyChecks = true;
         } else {
           // make the new member turn on concurrency checks
@@ -530,53 +549,90 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
         }
       }
 
-      if (!initializing && !skipCheckForAccessor && !skipConcurrencyChecks && this.concurrencyChecksEnabled != otherCCEnabled) {
-        result = LocalizedStrings.CreateRegionProcessor_CANNOT_CREATE_REGION_0_CCENABLED_1_BECAUSE_ANOTHER_CACHE_HAS_THE_SAME_REGION_CCENABLED_2.toLocalizedString(new Object[] { regionPath, Boolean.valueOf(this.concurrencyChecksEnabled), myId, Boolean.valueOf(otherCCEnabled) });
+      if (!initializing
+          && !skipCheckForAccessor
+          && !skipConcurrencyChecks
+          && this.concurrencyChecksEnabled != otherCCEnabled) {
+        result =
+            LocalizedStrings
+                .CreateRegionProcessor_CANNOT_CREATE_REGION_0_CCENABLED_1_BECAUSE_ANOTHER_CACHE_HAS_THE_SAME_REGION_CCENABLED_2
+                .toLocalizedString(
+                    new Object[] {
+                      regionPath,
+                      Boolean.valueOf(this.concurrencyChecksEnabled),
+                      myId,
+                      Boolean.valueOf(otherCCEnabled)
+                    });
       }
 
       Set<String> otherGatewaySenderIds = ((LocalRegion) rgn).getGatewaySenderIds();
       Set<String> myGatewaySenderIds = profile.gatewaySenderIds;
       if (!otherGatewaySenderIds.equals(myGatewaySenderIds)) {
         if (!rgn.getFullPath().contains(DynamicRegionFactoryImpl.dynamicRegionListName)) {
-          result = LocalizedStrings.CreateRegionProcessor_CANNOT_CREATE_REGION_0_WITH_1_GATEWAY_SENDER_IDS_BECAUSE_ANOTHER_CACHE_HAS_THE_SAME_REGION_WITH_2_GATEWAY_SENDER_IDS.toLocalizedString(this.regionPath, myGatewaySenderIds, otherGatewaySenderIds);
+          result =
+              LocalizedStrings
+                  .CreateRegionProcessor_CANNOT_CREATE_REGION_0_WITH_1_GATEWAY_SENDER_IDS_BECAUSE_ANOTHER_CACHE_HAS_THE_SAME_REGION_WITH_2_GATEWAY_SENDER_IDS
+                  .toLocalizedString(this.regionPath, myGatewaySenderIds, otherGatewaySenderIds);
         }
       }
 
       Set<String> otherAsynEventQueueIds = ((LocalRegion) rgn).getAsyncEventQueueIds();
       Set<String> myAsyncEventQueueIds = profile.asyncEventQueueIds;
-      if (!isLocalOrRemoteAccessor(rgn, profile) && !otherAsynEventQueueIds.equals(myAsyncEventQueueIds)) {
-        result = LocalizedStrings.CreateRegionProcessor_CANNOT_CREATE_REGION_0_WITH_1_ASYNC_EVENT_IDS_BECAUSE_ANOTHER_CACHE_HAS_THE_SAME_REGION_WITH_2_ASYNC_EVENT_IDS.toLocalizedString(this.regionPath, myAsyncEventQueueIds, otherAsynEventQueueIds);
+      if (!isLocalOrRemoteAccessor(rgn, profile)
+          && !otherAsynEventQueueIds.equals(myAsyncEventQueueIds)) {
+        result =
+            LocalizedStrings
+                .CreateRegionProcessor_CANNOT_CREATE_REGION_0_WITH_1_ASYNC_EVENT_IDS_BECAUSE_ANOTHER_CACHE_HAS_THE_SAME_REGION_WITH_2_ASYNC_EVENT_IDS
+                .toLocalizedString(this.regionPath, myAsyncEventQueueIds, otherAsynEventQueueIds);
       }
 
       final PartitionAttributes pa = rgn.getAttributes().getPartitionAttributes();
       if (pa == null && profile.isPartitioned) {
-        result = LocalizedStrings.CreateRegionProcessor_CANNOT_CREATE_PARTITIONEDREGION_0_BECAUSE_ANOTHER_CACHE_HAS_THE_SAME_REGION_DEFINED_AS_A_NON_PARTITIONEDREGION.toLocalizedString(this.regionPath, myId);
+        result =
+            LocalizedStrings
+                .CreateRegionProcessor_CANNOT_CREATE_PARTITIONEDREGION_0_BECAUSE_ANOTHER_CACHE_HAS_THE_SAME_REGION_DEFINED_AS_A_NON_PARTITIONEDREGION
+                .toLocalizedString(this.regionPath, myId);
       } else if (pa != null && !profile.isPartitioned) {
-        result = LocalizedStrings.CreateRegionProcessor_CANNOT_CREATE_THE_NON_PARTITIONEDREGION_0_BECAUSE_ANOTHER_CACHE_HAS_A_PARTITIONED_REGION_DEFINED_WITH_THE_SAME_NAME.toLocalizedString(this.regionPath, myId);
+        result =
+            LocalizedStrings
+                .CreateRegionProcessor_CANNOT_CREATE_THE_NON_PARTITIONEDREGION_0_BECAUSE_ANOTHER_CACHE_HAS_A_PARTITIONED_REGION_DEFINED_WITH_THE_SAME_NAME
+                .toLocalizedString(this.regionPath, myId);
       } else if (profile.scope.isDistributed() && otherScope.isDistributed()) {
         // This check is somewhat unnecessary as all Partitioned Regions should have the same scope
         // due to the fact that Partitioned Regions do no support scope.
         if (profile.scope != otherScope) {
-          result = LocalizedStrings.CreateRegionProcessor_CANNOT_CREATE_REGION_0_WITH_1_SCOPE_BECAUSE_ANOTHER_CACHE_HAS_SAME_REGION_WITH_2_SCOPE.toLocalizedString(new Object[] { this.regionPath, profile.scope, myId, otherScope });
+          result =
+              LocalizedStrings
+                  .CreateRegionProcessor_CANNOT_CREATE_REGION_0_WITH_1_SCOPE_BECAUSE_ANOTHER_CACHE_HAS_SAME_REGION_WITH_2_SCOPE
+                  .toLocalizedString(
+                      new Object[] {this.regionPath, profile.scope, myId, otherScope});
         }
       }
 
       final boolean otherIsOffHeap = rgn.getAttributes().getOffHeap();
 
       boolean thisIsRemoteAccessor = false;
-      if (!rgn.getAttributes().getDataPolicy().withStorage() || (pa != null && pa.getLocalMaxMemory() == 0)) {
+      if (!rgn.getAttributes().getDataPolicy().withStorage()
+          || (pa != null && pa.getLocalMaxMemory() == 0)) {
         thisIsRemoteAccessor = true;
       }
 
-      if (!isRemoteAccessor(profile) && !thisIsRemoteAccessor && profile.isOffHeap != otherIsOffHeap) {
-        result = LocalizedStrings.CreateRegionProcessor_CANNOT_CREATE_REGION_0_WITH_OFF_HEAP_EQUALS_1_BECAUSE_ANOTHER_CACHE_2_HAS_SAME_THE_REGION_WITH_OFF_HEAP_EQUALS_3.toLocalizedString(new Object[] { this.regionPath, profile.isOffHeap, myId, otherIsOffHeap });
+      if (!isRemoteAccessor(profile)
+          && !thisIsRemoteAccessor
+          && profile.isOffHeap != otherIsOffHeap) {
+        result =
+            LocalizedStrings
+                .CreateRegionProcessor_CANNOT_CREATE_REGION_0_WITH_OFF_HEAP_EQUALS_1_BECAUSE_ANOTHER_CACHE_2_HAS_SAME_THE_REGION_WITH_OFF_HEAP_EQUALS_3
+                .toLocalizedString(
+                    new Object[] {this.regionPath, profile.isOffHeap, myId, otherIsOffHeap});
       }
 
       String cspResult = null;
       // TODO Compares set sizes and equivalent entries.
       if (profile.cacheServiceProfiles != null) {
         for (CacheServiceProfile remoteProfile : profile.cacheServiceProfiles) {
-          CacheServiceProfile localProfile = ((LocalRegion) rgn).getCacheServiceProfile(remoteProfile.getId());
+          CacheServiceProfile localProfile =
+              ((LocalRegion) rgn).getCacheServiceProfile(remoteProfile.getId());
           cspResult = remoteProfile.checkCompatibility(rgn.getFullPath(), localProfile);
           if (cspResult != null) {
             break;
@@ -588,7 +644,11 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
         }
       }
       if (logger.isDebugEnabled()) {
-        logger.debug("CreateRegionProcessor.checkCompatibility: this={}; other={}; result={}", rgn, profile, result);
+        logger.debug(
+            "CreateRegionProcessor.checkCompatibility: this={}; other={}; result={}",
+            rgn,
+            profile,
+            result);
       }
 
       //       if (profile.membershipAttributes != null) {
@@ -636,13 +696,11 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
     }
 
     /**
-     * When many members are started concurrently, it is possible that an
-     * accessor or non-version generating replicate receives CreateRegionMessage
-     * before it is initialized, thus preventing persistent members from
-     * starting. We skip compatibilityChecks if the region is not initialized,
-     * and let other members check compatibility. If all members
-     * skipCompatabilit checks, then the CreateRegionMessage should be retried.
-     * fixes #45186
+     * When many members are started concurrently, it is possible that an accessor or non-version
+     * generating replicate receives CreateRegionMessage before it is initialized, thus preventing
+     * persistent members from starting. We skip compatibilityChecks if the region is not
+     * initialized, and let other members check compatibility. If all members skipCompatabilit
+     * checks, then the CreateRegionMessage should be retried. fixes #45186
      */
     private boolean skipDuringInitialization(CacheDistributionAdvisee rgn) {
       boolean skip = false;
@@ -660,8 +718,8 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
     }
 
     /**
-     * For internal regions skip concurrency-checks-enabled checks, since we will
-     * set it to true after profile exchange if required.
+     * For internal regions skip concurrency-checks-enabled checks, since we will set it to true
+     * after profile exchange if required.
      */
     private boolean skipChecksForInternalRegion(CacheDistributionAdvisee rgn) {
       boolean skip = false;
@@ -673,8 +731,8 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
     }
 
     /**
-     * check for isLocalOrRemoteAccessor(CacheDistributionAdvisee, CacheProfile)
-     * and check if DistributedRegion does not generate entry versions.
+     * check for isLocalOrRemoteAccessor(CacheDistributionAdvisee, CacheProfile) and check if
+     * DistributedRegion does not generate entry versions.
      */
     private boolean skipCheckForAccessor(CacheDistributionAdvisee rgn, CacheProfile profile) {
       boolean skip = false;
@@ -685,11 +743,9 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
       return skip || isLocalOrRemoteAccessor(rgn, profile);
     }
 
-    /**
-     * @return true if profile being exchanged or region is an accessor
-     * i.e has no storage
-     */
-    protected static boolean isLocalOrRemoteAccessor(CacheDistributionAdvisee region, CacheProfile profile) {
+    /** @return true if profile being exchanged or region is an accessor i.e has no storage */
+    protected static boolean isLocalOrRemoteAccessor(
+        CacheDistributionAdvisee region, CacheProfile profile) {
       return isLocalAccessor(region) || isRemoteAccessor(profile);
     }
 
@@ -697,7 +753,8 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
       if (!region.getAttributes().getDataPolicy().withStorage()) {
         return true;
       }
-      if (region.getAttributes().getPartitionAttributes() != null && region.getAttributes().getPartitionAttributes().getLocalMaxMemory() == 0) {
+      if (region.getAttributes().getPartitionAttributes() != null
+          && region.getAttributes().getPartitionAttributes().getLocalMaxMemory() == 0) {
         return true;
       }
       return false;
@@ -765,8 +822,12 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
     protected CacheProfile profile;
     protected ArrayList bucketProfiles;
     protected Object eventState;
-    /** Added to fix 42051. If the region is in the middle of being destroyed, return the destroyed profile */
+    /**
+     * Added to fix 42051. If the region is in the middle of being destroyed, return the destroyed
+     * profile
+     */
     protected PersistentMemberID destroyedId;
+
     protected boolean skippedCompatibilityChecks;
 
     long seqKeyForWan = -1;
@@ -825,14 +886,15 @@ public class CreateRegionProcessor implements ProfileExchangeProcessor {
         int size = this.bucketProfiles.size();
         out.writeInt(size);
         for (int i = 0; i < size; i++) {
-          RegionAdvisor.BucketProfileAndId bp = (RegionAdvisor.BucketProfileAndId) this.bucketProfiles.get(i);
+          RegionAdvisor.BucketProfileAndId bp =
+              (RegionAdvisor.BucketProfileAndId) this.bucketProfiles.get(i);
           InternalDataSerializer.invokeToData(bp, out);
         }
       }
       if (this.eventState != null) {
         out.writeBoolean(true);
         //The isHARegion flag is false here because
-        //we currently only include the event state in the profile 
+        //we currently only include the event state in the profile
         //for bucket regions.
         EventStateHelper.toData(out, (Map) eventState, false);
       } else {

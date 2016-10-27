@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import org.apache.geode.internal.cache.tier.Command;
@@ -27,14 +25,13 @@ import java.io.IOException;
 
 public class UpdateClientNotification extends BaseCommand {
 
-  private final static UpdateClientNotification singleton = new UpdateClientNotification();
+  private static final UpdateClientNotification singleton = new UpdateClientNotification();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private UpdateClientNotification() {
-  }
+  private UpdateClientNotification() {}
 
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
@@ -72,5 +69,4 @@ public class UpdateClientNotification extends BaseCommand {
       stats.incProcessUpdateClientNotificationTime(start - oldStart);
     }
   }
-
 }

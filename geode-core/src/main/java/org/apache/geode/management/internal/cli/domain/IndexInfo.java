@@ -18,17 +18,15 @@ package org.apache.geode.management.internal.cli.domain;
 
 import java.io.Serializable;
 
-/***
- * Data class used to pass index related information to 
- * functions that create or destroy indexes
- *
+/**
+ * * Data class used to pass index related information to functions that create or destroy indexes
  */
 public class IndexInfo implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  public final static int RANGE_INDEX = 1;
-  public final static int KEY_INDEX = 2;
-  public final static int HASH_INDEX = 3;
+  public static final int RANGE_INDEX = 1;
+  public static final int KEY_INDEX = 2;
+  public static final int HASH_INDEX = 3;
 
   private String indexName;
   private String indexedExpression = null;
@@ -39,8 +37,9 @@ public class IndexInfo implements Serializable {
     this.indexName = indexName;
   }
 
-  /***
-   * Used for passing index information for destroying index.
+  /**
+   * * Used for passing index information for destroying index.
+   *
    * @param indexName
    * @param regionPath
    */
@@ -106,5 +105,4 @@ public class IndexInfo implements Serializable {
     sb.append(this.indexType);
     return sb.toString();
   }
-
 }

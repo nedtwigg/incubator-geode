@@ -29,35 +29,31 @@ import org.apache.geode.internal.cache.EventID;
 import org.apache.geode.internal.cache.tier.MessageType;
 
 /**
- * Class <code>ClientInstantiatorMessage</code> represents a message that is
- * to be sent to the client from a server , when a new <code>Instantiator</code>.
- * object is registerd on Server. This message contains array of serailized
- * instantiators along with the unique <code>EventID</code>
- * 
- * 
+ * Class <code>ClientInstantiatorMessage</code> represents a message that is to be sent to the
+ * client from a server , when a new <code>Instantiator</code>. object is registerd on Server. This
+ * message contains array of serailized instantiators along with the unique <code>EventID</code>
+ *
  * @since GemFire 5.0
  */
 public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
   private static final long serialVersionUID = 2949326125521840437L;
-  /**
-   * Serialized 2D array of the instantiators
-   */
+  /** Serialized 2D array of the instantiators */
   private byte[][] serializedInstantiators;
 
   /**
    * Constructor.
-   * 
-   * @param operation
-   *                The operation performed (e.g. AFTER_CREATE, AFTER_UPDATE,
-   *                AFTER_DESTROY, AFTER_INVALIDATE, AFTER_REGION_DESTROY)
-   * @param instantiator
-   *                Serialized 2D array of the instantiators
-   * @param memberId
-   *                membership id of the originator of the event
-   * @param eventIdentifier
-   *                EventID of this message
+   *
+   * @param operation The operation performed (e.g. AFTER_CREATE, AFTER_UPDATE, AFTER_DESTROY,
+   *     AFTER_INVALIDATE, AFTER_REGION_DESTROY)
+   * @param instantiator Serialized 2D array of the instantiators
+   * @param memberId membership id of the originator of the event
+   * @param eventIdentifier EventID of this message
    */
-  public ClientInstantiatorMessage(EnumListenerEvent operation, byte[][] instantiator, ClientProxyMembershipID memberId, EventID eventIdentifier) {
+  public ClientInstantiatorMessage(
+      EnumListenerEvent operation,
+      byte[][] instantiator,
+      ClientProxyMembershipID memberId,
+      EventID eventIdentifier) {
     super(operation, memberId, eventIdentifier);
     this.serializedInstantiators = instantiator;
   }
@@ -76,17 +72,12 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
     return true;
   }
 
-  /**
-   * default constructor
-   * 
-   */
-  public ClientInstantiatorMessage() {
-
-  }
+  /** default constructor */
+  public ClientInstantiatorMessage() {}
 
   //   /**
   //    * Returns the serialized value of Instantiators.
-  //    * 
+  //    *
   //    * @return the serialized value of Instantiators
   //    */
   //   public byte[][] getInstantiators()
@@ -96,7 +87,7 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
 
   /**
    * Determines whether or not to conflate this message.
-   * 
+   *
    * @return Whether to conflate this message
    */
   @Override
@@ -111,14 +102,16 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
     if (clientVersion.compareTo(Version.GFE_57) >= 0) {
       message = getGFEMessage(proxy.getProxyID(), null, clientVersion);
     } else {
-      throw new IOException("Unsupported client version for server-to-client message creation: " + clientVersion);
+      throw new IOException(
+          "Unsupported client version for server-to-client message creation: " + clientVersion);
     }
 
     return message;
   }
 
   @Override
-  protected Message getGFEMessage(ClientProxyMembershipID proxy, byte[] latestValue, Version clientVersion) throws IOException {
+  protected Message getGFEMessage(
+      ClientProxyMembershipID proxy, byte[] latestValue, Version clientVersion) throws IOException {
     Message message = null;
     int instantiatorsLength = this.serializedInstantiators.length;
     message = new Message(instantiatorsLength + 1, clientVersion); // one for eventID
@@ -141,10 +134,8 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
 
   /**
    * Writes an object to a <code>Datautput</code>.
-   * 
-   * @throws IOException
-   *                 If this serializer cannot write an object to
-   *                 <code>out</code>.
+   *
+   * @throws IOException If this serializer cannot write an object to <code>out</code>.
    * @see #fromData
    */
   @Override
@@ -162,12 +153,9 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
 
   /**
    * Reads an object from a <code>DataInput</code>.
-   * 
-   * @throws IOException
-   *                 If this serializer cannot read an object from
-   *                 <code>in</code>.
-   * @throws ClassNotFoundException
-   *                 If the class for an object being restored cannot be found.
+   *
+   * @throws IOException If this serializer cannot read an object from <code>in</code>.
+   * @throws ClassNotFoundException If the class for an object being restored cannot be found.
    * @see #toData
    */
   @Override
@@ -199,14 +187,21 @@ public final class ClientInstantiatorMessage extends ClientUpdateMessageImpl {
   }
 
   @Override
-  public void setLatestValue(Object value) {
-  }
+  public void setLatestValue(Object value) {}
 
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("ClientInstantiatorMessage[").append(";value=").append((Arrays.toString(this.serializedInstantiators))).append(";memberId=").append(getMembershipId()).append(";eventId=").append(getEventId()).append(";notifyAll=").append("]");
+    buffer
+        .append("ClientInstantiatorMessage[")
+        .append(";value=")
+        .append((Arrays.toString(this.serializedInstantiators)))
+        .append(";memberId=")
+        .append(getMembershipId())
+        .append(";eventId=")
+        .append(getEventId())
+        .append(";notifyAll=")
+        .append("]");
     return buffer.toString();
   }
-
 }

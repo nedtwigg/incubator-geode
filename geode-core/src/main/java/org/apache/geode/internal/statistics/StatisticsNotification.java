@@ -22,9 +22,7 @@ import org.apache.geode.StatisticDescriptor;
 import org.apache.geode.Statistics;
 import org.apache.geode.StatisticsType;
 
-/**
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public interface StatisticsNotification extends Iterable<StatisticId> {
 
   public static enum Type {
@@ -51,13 +49,22 @@ public interface StatisticsNotification extends Iterable<StatisticId> {
   /** Returns an iterator of all the stat instances that met the monitor's criteria */
   public Iterator<StatisticId> iterator();
 
-  /** Returns an iterator of all the stat instances for the specified descriptor that met the monitor's criteria */
+  /**
+   * Returns an iterator of all the stat instances for the specified descriptor that met the
+   * monitor's criteria
+   */
   public Iterator<StatisticId> iterator(StatisticDescriptor statDesc);
 
-  /** Returns an iterator of all the stat instances for the specified statistics instance that met the monitor's criteria */
+  /**
+   * Returns an iterator of all the stat instances for the specified statistics instance that met
+   * the monitor's criteria
+   */
   public Iterator<StatisticId> iterator(Statistics statistics);
 
-  /** Returns an iterator of all the stat instances for the specified statistics type that met the monitor's criteria */
+  /**
+   * Returns an iterator of all the stat instances for the specified statistics type that met the
+   * monitor's criteria
+   */
   public Iterator<StatisticId> iterator(StatisticsType statisticsType);
 
   /** Returns the value for the specified stat instance */

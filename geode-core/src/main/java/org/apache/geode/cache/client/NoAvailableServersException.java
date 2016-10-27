@@ -18,19 +18,18 @@ package org.apache.geode.cache.client;
 
 /**
  * An exception indicating that there are no active servers available to connect to.
+ *
  * @since GemFire 5.7
  */
 public class NoAvailableServersException extends ServerConnectivityException {
   private static final long serialVersionUID = -8212446737778234890L;
 
-  /**
-   * Create a new instance of NoAvailableServersException without a detail message or cause.
-   */
-  public NoAvailableServersException() {
-  }
+  /** Create a new instance of NoAvailableServersException without a detail message or cause. */
+  public NoAvailableServersException() {}
 
   /**
    * Create a new instance of NoAvailableServersException with a detail message
+   *
    * @param message the detail message
    */
   public NoAvailableServersException(String message) {
@@ -39,6 +38,7 @@ public class NoAvailableServersException extends ServerConnectivityException {
 
   /**
    * Create a new instance of NoAvailableServersException with a detail message and cause
+   *
    * @param message the detail message
    * @param cause the cause
    */
@@ -48,10 +48,10 @@ public class NoAvailableServersException extends ServerConnectivityException {
 
   /**
    * Create a new instance of NoAvailableServersException with a and cause
+   *
    * @param cause the cause
    */
   public NoAvailableServersException(Throwable cause) {
     super(cause);
   }
-
 }

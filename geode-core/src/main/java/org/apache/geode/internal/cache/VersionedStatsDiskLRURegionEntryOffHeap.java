@@ -18,18 +18,21 @@ package org.apache.geode.internal.cache;
 
 import java.util.UUID;
 
-public abstract class VersionedStatsDiskLRURegionEntryOffHeap extends VersionedStatsDiskLRURegionEntry implements OffHeapRegionEntry {
+public abstract class VersionedStatsDiskLRURegionEntryOffHeap
+    extends VersionedStatsDiskLRURegionEntry implements OffHeapRegionEntry {
   public VersionedStatsDiskLRURegionEntryOffHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
 
-  private static final VersionedStatsDiskLRURegionEntryOffHeapFactory factory = new VersionedStatsDiskLRURegionEntryOffHeapFactory();
+  private static final VersionedStatsDiskLRURegionEntryOffHeapFactory factory =
+      new VersionedStatsDiskLRURegionEntryOffHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;
   }
 
-  private static class VersionedStatsDiskLRURegionEntryOffHeapFactory implements RegionEntryFactory {
+  private static class VersionedStatsDiskLRURegionEntryOffHeapFactory
+      implements RegionEntryFactory {
     public final RegionEntry createEntry(RegionEntryContext context, Object key, Object value) {
       if (InlineKeyHelper.INLINE_REGION_KEYS) {
         Class<?> keyClass = key.getClass();
@@ -43,9 +46,11 @@ public abstract class VersionedStatsDiskLRURegionEntryOffHeap extends VersionedS
           if (info != null) {
             final boolean byteEncoded = info;
             if (skey.length() <= InlineKeyHelper.getMaxInlineStringKey(1, byteEncoded)) {
-              return new VersionedStatsDiskLRURegionEntryOffHeapStringKey1(context, skey, value, byteEncoded);
+              return new VersionedStatsDiskLRURegionEntryOffHeapStringKey1(
+                  context, skey, value, byteEncoded);
             } else {
-              return new VersionedStatsDiskLRURegionEntryOffHeapStringKey2(context, skey, value, byteEncoded);
+              return new VersionedStatsDiskLRURegionEntryOffHeapStringKey2(
+                  context, skey, value, byteEncoded);
             }
           }
         } else if (keyClass == UUID.class) {

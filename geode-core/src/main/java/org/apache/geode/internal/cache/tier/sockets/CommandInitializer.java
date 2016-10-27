@@ -107,7 +107,6 @@ import org.apache.geode.internal.cache.tier.sockets.command.UpdateClientNotifica
  *
  * @since GemFire 5.7
  */
-
 public class CommandInitializer {
 
   static Map<Version, Map<Integer, Command>> ALL_COMMANDS;
@@ -118,15 +117,16 @@ public class CommandInitializer {
 
   /**
    * Register a new command with the system.
-   * @param messageType - An ordinal for this message. This must be something defined in
-   * MessageType that has not already been allocated to a different command. 
-   * @param versionToNewCommand The command to register, for different versions. The key is
-   * the earliest version for which this command class is valid (starting with GFE_57).
-   * The value is the command object for clients starting with that version.
+   *
+   * @param messageType - An ordinal for this message. This must be something defined in MessageType
+   *     that has not already been allocated to a different command.
+   * @param versionToNewCommand The command to register, for different versions. The key is the
+   *     earliest version for which this command class is valid (starting with GFE_57). The value is
+   *     the command object for clients starting with that version.
    */
   public static void registerCommand(int messageType, Map<Version, Command> versionToNewCommand) {
     Command command = null;
-    //Iterate through all the gemfire versions, and 
+    //Iterate through all the gemfire versions, and
     //add a command to the map for that version
     for (Map.Entry<Version, Map<Integer, Command>> entry : ALL_COMMANDS.entrySet()) {
       Version version = entry.getKey();
@@ -134,7 +134,7 @@ public class CommandInitializer {
       //Get the current set of commands for this version.
       Map<Integer, Command> commandMap = entry.getValue();
 
-      //See if we have a new command to insert into this map. Otherwise, keep using the command we have 
+      //See if we have a new command to insert into this map. Otherwise, keep using the command we have
       //already read
       Command newerVersion = versionToNewCommand.get(version);
       if (newerVersion != null) {
@@ -143,7 +143,15 @@ public class CommandInitializer {
       if (command != null) {
         Command oldCommand = commandMap.get(messageType);
         if (oldCommand != null && oldCommand != command) {
-          throw new InternalGemFireError("Command is already defined int the map for message Type " + MessageType.getString(messageType) + ". Old Value=" + commandMap.get(messageType) + ", newValue=" + command + ", version=" + version);
+          throw new InternalGemFireError(
+              "Command is already defined int the map for message Type "
+                  + MessageType.getString(messageType)
+                  + ". Old Value="
+                  + commandMap.get(messageType)
+                  + ", newValue="
+                  + command
+                  + ", version="
+                  + version);
         }
         commandMap.put(messageType, command);
       }
@@ -161,7 +169,8 @@ public class CommandInitializer {
     gfe57Commands.put(MessageType.PUT, Put.getCommand());
     gfe57Commands.put(MessageType.PUTALL, PutAll.getCommand());
     gfe57Commands.put(MessageType.DESTROY, Destroy.getCommand());
-    gfe57Commands.put(MessageType.QUERY, org.apache.geode.internal.cache.tier.sockets.command.Query.getCommand());
+    gfe57Commands.put(
+        MessageType.QUERY, org.apache.geode.internal.cache.tier.sockets.command.Query.getCommand());
     gfe57Commands.put(MessageType.CLEAR_REGION, ClearRegion.getCommand());
     gfe57Commands.put(MessageType.DESTROY_REGION, DestroyRegion.getCommand());
     gfe57Commands.put(MessageType.REGISTER_INTEREST, RegisterInterest.getCommand());
@@ -174,7 +183,8 @@ public class CommandInitializer {
     gfe57Commands.put(MessageType.MAKE_PRIMARY, MakePrimary.getCommand());
     gfe57Commands.put(MessageType.PERIODIC_ACK, PeriodicAck.getCommand());
     gfe57Commands.put(MessageType.REGISTER_INSTANTIATORS, RegisterInstantiators.getCommand());
-    gfe57Commands.put(MessageType.UPDATE_CLIENT_NOTIFICATION, UpdateClientNotification.getCommand());
+    gfe57Commands.put(
+        MessageType.UPDATE_CLIENT_NOTIFICATION, UpdateClientNotification.getCommand());
     gfe57Commands.put(MessageType.CLOSE_CONNECTION, CloseConnection.getCommand());
     gfe57Commands.put(MessageType.CLIENT_READY, ClientReady.getCommand());
     gfe57Commands.put(MessageType.INVALID, Invalid.getCommand());
@@ -212,10 +222,14 @@ public class CommandInitializer {
     gfe65Commands.put(MessageType.EXECUTE_REGION_FUNCTION, ExecuteRegionFunction65.getCommand());
     gfe65Commands.put(MessageType.EXECUTE_FUNCTION, ExecuteFunction65.getCommand());
     gfe65Commands.put(MessageType.GET_CLIENT_PR_METADATA, GetClientPRMetadataCommand.getCommand());
-    gfe65Commands.put(MessageType.GET_CLIENT_PARTITION_ATTRIBUTES, GetClientPartitionAttributesCommand.getCommand());
+    gfe65Commands.put(
+        MessageType.GET_CLIENT_PARTITION_ATTRIBUTES,
+        GetClientPartitionAttributesCommand.getCommand());
     gfe65Commands.put(MessageType.USER_CREDENTIAL_MESSAGE, PutUserCredentials.getCommand());
     gfe65Commands.put(MessageType.REMOVE_USER_AUTH, RemoveUserAuth.getCommand());
-    gfe65Commands.put(MessageType.EXECUTE_REGION_FUNCTION_SINGLE_HOP, ExecuteRegionFunctionSingleHop.getCommand());
+    gfe65Commands.put(
+        MessageType.EXECUTE_REGION_FUNCTION_SINGLE_HOP,
+        ExecuteRegionFunctionSingleHop.getCommand());
 
     // Initialize the GFE 6.5.1 commands
     Map<Integer, Command> gfe651Commands = new HashMap<Integer, Command>();
@@ -228,7 +242,8 @@ public class CommandInitializer {
     ALL_COMMANDS.put(Version.GFE_6516, gfe6516Commands);
     gfe6516Commands.putAll(ALL_COMMANDS.get(Version.GFE_651));
     gfe6516Commands.put(MessageType.GET_ALL, GetAll651.getCommand());
-    gfe6516Commands.put(MessageType.GET_CLIENT_PR_METADATA, GetClientPRMetadataCommand66.getCommand());
+    gfe6516Commands.put(
+        MessageType.GET_CLIENT_PR_METADATA, GetClientPRMetadataCommand66.getCommand());
 
     // Initialize the GFE 6.6 commands
     Map<Integer, Command> gfe66Commands = new HashMap<Integer, Command>();
@@ -244,7 +259,9 @@ public class CommandInitializer {
     gfe66Commands.put(MessageType.TX_FAILOVER, TXFailoverCommand.getCommand());
     gfe66Commands.put(MessageType.GET_ENTRY, GetEntryCommand.getCommand());
     gfe66Commands.put(MessageType.TX_SYNCHRONIZATION, TXSynchronizationCommand.getCommand());
-    gfe66Commands.put(MessageType.GET_CLIENT_PARTITION_ATTRIBUTES, GetClientPartitionAttributesCommand66.getCommand());
+    gfe66Commands.put(
+        MessageType.GET_CLIENT_PARTITION_ATTRIBUTES,
+        GetClientPartitionAttributesCommand66.getCommand());
     gfe66Commands.put(MessageType.REGISTER_INTEREST_LIST, RegisterInterestList66.getCommand());
     gfe66Commands.put(MessageType.GET_FUNCTION_ATTRIBUTES, GetFunctionAttribute.getCommand());
     gfe66Commands.put(MessageType.EXECUTE_REGION_FUNCTION, ExecuteRegionFunction66.getCommand());
@@ -262,7 +279,7 @@ public class CommandInitializer {
     gfe662Commands.put(MessageType.GET_PDX_ENUM_BY_ID, GetPDXEnumById.getCommand());
 
     // Initialize the GFE 6.6.2.2 commands (same commands as the GFE 6.6.2 commands)
-    // The SERVER_TO_CLIENT_PING message was added, but it doesn't need to be registered here 
+    // The SERVER_TO_CLIENT_PING message was added, but it doesn't need to be registered here
     ALL_COMMANDS.put(Version.GFE_6622, gfe662Commands);
 
     // Initialize the GFE 70 commands
@@ -327,9 +344,7 @@ public class CommandInitializer {
     return getCommands(connection.getClientVersion());
   }
 
-  /**
-   * A method used by tests for Backward compatibility
-   */
+  /** A method used by tests for Backward compatibility */
   public static void testSetCommands(Map<Integer, Command> testCommands) {
     ALL_COMMANDS.put(Version.TEST_VERSION, testCommands);
   }

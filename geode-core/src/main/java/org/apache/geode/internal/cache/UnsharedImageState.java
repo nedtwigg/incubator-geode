@@ -35,20 +35,18 @@ import org.apache.geode.internal.util.concurrent.StoppableNonReentrantLock;
 import org.apache.geode.internal.util.concurrent.StoppableReentrantReadWriteLock;
 
 /**
- * Used on distributed replicated regions to track GII and various state.
- * Also used on pool regions to track register interest.
- * Note that currently a region will never have both a GII and RI in progress
- * at the same time.
+ * Used on distributed replicated regions to track GII and various state. Also used on pool regions
+ * to track register interest. Note that currently a region will never have both a GII and RI in
+ * progress at the same time.
  */
 public class UnsharedImageState implements ImageState {
   private static final Logger logger = LogService.getLogger();
 
   private final StoppableNonReentrantLock giiLock; // used for gii
   private final StoppableReentrantReadWriteLock riLock; // used for ri
-  /**
-   * Using CM as a Set of keys
-   */
+  /** Using CM as a Set of keys */
   private volatile ConcurrentMap destroyedEntryKeys;
+
   private volatile boolean regionInvalidated = false;
   private volatile boolean mayDoRecovery = false;
   private volatile boolean inRecovery = false;
@@ -59,7 +57,11 @@ public class UnsharedImageState implements ImageState {
   private volatile ConcurrentHashSet<VersionTagEntry> versionTags;
   private volatile ConcurrentHashSet<VersionSource> leftMembers;
 
-  UnsharedImageState(final boolean isClient, final boolean isReplicate, final boolean mayDoRecovery, CancelCriterion stopper) {
+  UnsharedImageState(
+      final boolean isClient,
+      final boolean isReplicate,
+      final boolean mayDoRecovery,
+      CancelCriterion stopper) {
     this.riLock = isClient ? new StoppableReentrantReadWriteLock(stopper) : null;
 
     this.giiLock = isReplicate ? new StoppableNonReentrantLock(stopper) : null;
@@ -174,8 +176,9 @@ public class UnsharedImageState implements ImageState {
     if (this.destroyedEntryKeys == null) {
       logger.info("region has no destroyedEntryKeys in its image state");
     } else {
-      logger.info("dump of image state destroyed entry keys of size {}", this.destroyedEntryKeys.size());
-      for (Iterator it = this.destroyedEntryKeys.keySet().iterator(); it.hasNext();) {
+      logger.info(
+          "dump of image state destroyed entry keys of size {}", this.destroyedEntryKeys.size());
+      for (Iterator it = this.destroyedEntryKeys.keySet().iterator(); it.hasNext(); ) {
         Object key = it.next();
         logger.info("key={}", key);
       }
@@ -183,8 +186,7 @@ public class UnsharedImageState implements ImageState {
   }
 
   /**
-   *  returns count of entries that have been destroyed by concurrent operations
-   *  while in token mode
+   * returns count of entries that have been destroyed by concurrent operations while in token mode
    */
   public int getDestroyedEntriesCount() {
     return this.destroyedEntryKeys.size();
@@ -216,9 +218,8 @@ public class UnsharedImageState implements ImageState {
   }
 
   /**
-   * Returns true if a region clear was received on the region during a GII.
-   * If true is returned the the flag is cleared.
-   * This method is used by unit tests.
+   * Returns true if a region clear was received on the region during a GII. If true is returned the
+   * the flag is cleared. This method is used by unit tests.
    */
   public boolean wasRegionClearedDuringGII() {
     if (isReplicate()) {

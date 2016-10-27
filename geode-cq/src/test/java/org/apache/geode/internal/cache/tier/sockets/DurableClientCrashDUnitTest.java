@@ -25,8 +25,8 @@ import org.apache.geode.cache30.CacheSerializableRunnable;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Class <code>DurableClientCrashDUnitTest</code> tests durable client
- * functionality when clients crash.
+ * Class <code>DurableClientCrashDUnitTest</code> tests durable client functionality when clients
+ * crash.
  *
  * @since GemFire 5.2
  */
@@ -53,36 +53,39 @@ public class DurableClientCrashDUnitTest extends DurableClientTestCase {
 
   @Override
   public void verifySimpleDurableClient() {
-    this.server1VM.invoke(new CacheSerializableRunnable("Verify durable client") {
-      public void run2() throws CacheException {
-        // Find the proxy
-        checkNumberOfClientProxies(1);
-        CacheClientProxy proxy = getClientProxy();
-        assertNotNull(proxy);
-      }
-    });
+    this.server1VM.invoke(
+        new CacheSerializableRunnable("Verify durable client") {
+          public void run2() throws CacheException {
+            // Find the proxy
+            checkNumberOfClientProxies(1);
+            CacheClientProxy proxy = getClientProxy();
+            assertNotNull(proxy);
+          }
+        });
   }
 
   @Override
   public void verifySimpleDurableClientMultipleServers() {
     // Verify the durable client is no longer on server1
-    this.server1VM.invoke(new CacheSerializableRunnable("Verify durable client") {
-      public void run2() throws CacheException {
-        // Find the proxy
-        checkNumberOfClientProxies(1);
-        CacheClientProxy proxy = getClientProxy();
-        assertNotNull(proxy);
-      }
-    });
+    this.server1VM.invoke(
+        new CacheSerializableRunnable("Verify durable client") {
+          public void run2() throws CacheException {
+            // Find the proxy
+            checkNumberOfClientProxies(1);
+            CacheClientProxy proxy = getClientProxy();
+            assertNotNull(proxy);
+          }
+        });
 
     // Verify the durable client is no longer on server2
-    this.server2VM.invoke(new CacheSerializableRunnable("Verify durable client") {
-      public void run2() throws CacheException {
-        // Find the proxy
-        checkNumberOfClientProxies(1);
-        CacheClientProxy proxy = getClientProxy();
-        assertNotNull(proxy);
-      }
-    });
+    this.server2VM.invoke(
+        new CacheSerializableRunnable("Verify durable client") {
+          public void run2() throws CacheException {
+            // Find the proxy
+            checkNumberOfClientProxies(1);
+            CacheClientProxy proxy = getClientProxy();
+            assertNotNull(proxy);
+          }
+        });
   }
 }

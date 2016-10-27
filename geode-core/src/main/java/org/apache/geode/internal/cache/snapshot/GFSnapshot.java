@@ -45,25 +45,18 @@ import org.apache.geode.pdx.internal.EnumInfo;
 import org.apache.geode.pdx.internal.PdxType;
 import org.apache.geode.pdx.internal.TypeRegistry;
 
-/**
- * Provides support for reading and writing snapshot files.
- * 
- */
+/** Provides support for reading and writing snapshot files. */
 public class GFSnapshot {
-  /**
-   * Writes cache entries to the snapshot.
-   */
+  /** Writes cache entries to the snapshot. */
   public interface SnapshotWriter {
     /**
      * Appends a cache entry to the snapshot.
-     * 
+     *
      * @param entry the cache entry
      */
     void snapshotEntry(SnapshotRecord entry) throws IOException;
 
-    /**
-     * Invoked to indicate that all entries have been written to the snapshot.
-     */
+    /** Invoked to indicate that all entries have been written to the snapshot. */
     void snapshotComplete() throws IOException;
   }
 
@@ -74,10 +67,9 @@ public class GFSnapshot {
   public static final int SNAP_VER_2 = 2;
 
   /** the snapshot file format */
-  private static final byte[] SNAP_FMT = { 0x47, 0x46, 0x53 };
+  private static final byte[] SNAP_FMT = {0x47, 0x46, 0x53};
 
-  private GFSnapshot() {
-  }
+  private GFSnapshot() {}
 
   public static void main(String[] args) throws Exception {
     if (args.length != 1) {
@@ -115,7 +107,7 @@ public class GFSnapshot {
 
   /**
    * Creates a snapshot file and provides a serializer to write entries to the snapshot.
-   * 
+   *
    * @param snapshot the snapshot file
    * @param region the region name
    * @return the callback to allow the invoker to provide the snapshot entries
@@ -138,16 +130,16 @@ public class GFSnapshot {
 
   /**
    * Reads a snapshot file.
-   * 
+   *
    * @param <K> the key type
    * @param <V> the value type
    * @param snapshot the snapshot file
    * @return the snapshot iterator
-   * 
    * @throws IOException error reading the snapshot file
    * @throws ClassNotFoundException unable to deserialize entry
    */
-  public static <K, V> SnapshotIterator<K, V> read(final File snapshot) throws IOException, ClassNotFoundException {
+  public static <K, V> SnapshotIterator<K, V> read(final File snapshot)
+      throws IOException, ClassNotFoundException {
     return new SnapshotIterator<K, V>() {
       GFSnapshotImporter in = new GFSnapshotImporter(snapshot);
 
@@ -188,22 +180,23 @@ public class GFSnapshot {
           final K key = record.getKeyObject();
           final V value = record.getValueObject();
 
-          next = new Entry<K, V>() {
-            @Override
-            public K getKey() {
-              return key;
-            }
+          next =
+              new Entry<K, V>() {
+                @Override
+                public K getKey() {
+                  return key;
+                }
 
-            @Override
-            public V getValue() {
-              return value;
-            }
+                @Override
+                public V getValue() {
+                  return value;
+                }
 
-            @Override
-            public V setValue(V value) {
-              throw new UnsupportedOperationException();
-            }
-          };
+                @Override
+                public V setValue(V value) {
+                  throw new UnsupportedOperationException();
+                }
+              };
           return true;
         }
 
@@ -213,9 +206,7 @@ public class GFSnapshot {
     };
   }
 
-  /**
-   * Writes a snapshot file.
-   */
+  /** Writes a snapshot file. */
   static class GFSnapshotExporter {
     /** the file channel, used for random access */
     private final FileChannel fc;
@@ -244,7 +235,7 @@ public class GFSnapshot {
 
     /**
      * Writes an entry in the snapshot.
-     * 
+     *
      * @param entry the snapshot entry
      * @throws IOException unable to write entry
      */
@@ -262,7 +253,9 @@ public class GFSnapshot {
 
       // write pdx types
       try {
-        GemFireCacheImpl cache = GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.");
+        GemFireCacheImpl cache =
+            GemFireCacheImpl.getForPdx(
+                "PDX registry is unavailable because the Cache has been closed.");
         new ExportedRegistry(cache.getPdxRegistry()).toData(dos);
       } catch (CacheClosedException e) {
         // ignore pdx types
@@ -278,9 +271,7 @@ public class GFSnapshot {
     }
   }
 
-  /**
-   * Reads a snapshot file.  
-   */
+  /** Reads a snapshot file. */
   static class GFSnapshotImporter {
     /** the snapshot file version */
     private final byte version;
@@ -307,14 +298,21 @@ public class GFSnapshot {
         // read the snapshot file header
         version = tmp.readByte();
         if (version == SNAP_VER_1) {
-          throw new IOException(LocalizedStrings.Snapshot_UNSUPPORTED_SNAPSHOT_VERSION_0.toLocalizedString(SNAP_VER_1) + ": " + in);
+          throw new IOException(
+              LocalizedStrings.Snapshot_UNSUPPORTED_SNAPSHOT_VERSION_0.toLocalizedString(SNAP_VER_1)
+                  + ": "
+                  + in);
 
         } else if (version == SNAP_VER_2) {
           // read format
           byte[] format = new byte[3];
           tmp.readFully(format);
           if (!Arrays.equals(format, SNAP_FMT)) {
-            throw new IOException(LocalizedStrings.Snapshot_UNRECOGNIZED_FILE_TYPE_0.toLocalizedString(Arrays.toString(format)) + ": " + in);
+            throw new IOException(
+                LocalizedStrings.Snapshot_UNRECOGNIZED_FILE_TYPE_0.toLocalizedString(
+                        Arrays.toString(format))
+                    + ": "
+                    + in);
           }
 
           // read pdx location
@@ -330,13 +328,16 @@ public class GFSnapshot {
             pdx.fromData(tmp);
           }
         } else {
-          throw new IOException(LocalizedStrings.Snapshot_UNRECOGNIZED_FILE_VERSION_0.toLocalizedString(version) + ": " + in);
+          throw new IOException(
+              LocalizedStrings.Snapshot_UNRECOGNIZED_FILE_VERSION_0.toLocalizedString(version)
+                  + ": "
+                  + in);
         }
       } finally {
         tmp.close();
       }
 
-      // check compatibility with the existing pdx types so we don't have to 
+      // check compatibility with the existing pdx types so we don't have to
       // do any translation...preexisting types or concurrent put ops may cause
       // this check to fail
       checkPdxTypeCompatibility();
@@ -349,6 +350,7 @@ public class GFSnapshot {
 
     /**
      * Returns the snapshot file version.
+     *
      * @return the version
      */
     public byte getVersion() {
@@ -357,6 +359,7 @@ public class GFSnapshot {
 
     /**
      * Returns the original pathname of the region used to create the snapshot.
+     *
      * @return the region name (full pathname)
      */
     public String getRegionName() {
@@ -365,6 +368,7 @@ public class GFSnapshot {
 
     /**
      * Returns the pdx types defined in the snapshot file.
+     *
      * @return the pdx types
      */
     public ExportedRegistry getPdxTypes() {
@@ -372,9 +376,8 @@ public class GFSnapshot {
     }
 
     /**
-     * Reads a snapshot entry.  If the last entry has been read, a null value
-     * will be returned.
-     * 
+     * Reads a snapshot entry. If the last entry has been read, a null value will be returned.
+     *
      * @return the entry or null
      * @throws IOException unable to read entry
      * @throws ClassNotFoundException unable to create entry

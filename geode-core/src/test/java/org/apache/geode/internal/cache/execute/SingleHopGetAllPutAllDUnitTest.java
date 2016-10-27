@@ -51,13 +51,12 @@ public class SingleHopGetAllPutAllDUnitTest extends PRClientServerTestBase {
 
   public SingleHopGetAllPutAllDUnitTest() {
     super();
-
   }
 
   /*
    * Do a getAll from client and see if all the values are returned.
    * Will also have to see if the function was routed from client to all the servers
-   * hosting the data. 
+   * hosting the data.
    */
   @Ignore("Disabled due to bug #50618")
   @Test
@@ -67,7 +66,8 @@ public class SingleHopGetAllPutAllDUnitTest extends PRClientServerTestBase {
   }
 
   private void createScenario() {
-    ArrayList commonAttributes = createCommonServerAttributes("TestPartitionedRegion", null, 1, 13, null);
+    ArrayList commonAttributes =
+        createCommonServerAttributes("TestPartitionedRegion", null, 1, 13, null);
     createClientServerScenarioSingleHop(commonAttributes, 20, 20, 20);
   }
 
@@ -83,7 +83,7 @@ public class SingleHopGetAllPutAllDUnitTest extends PRClientServerTestBase {
     try {
       int j = 0;
       Map origVals = new HashMap();
-      for (Iterator i = testValueList.iterator(); i.hasNext();) {
+      for (Iterator i = testValueList.iterator(); i.hasNext(); ) {
         testKeyList.add(j);
         Integer key = new Integer(j++);
         Object val = i.next();
@@ -112,29 +112,33 @@ public class SingleHopGetAllPutAllDUnitTest extends PRClientServerTestBase {
 
     final Map<String, ClientPartitionAdvisor> regionMetaData = cms.getClientPRMetadata_TEST_ONLY();
 
-    WaitCriterion wc = new WaitCriterion() {
+    WaitCriterion wc =
+        new WaitCriterion() {
 
-      public boolean done() {
-        return (regionMetaData.size() == 1);
-      }
+          public boolean done() {
+            return (regionMetaData.size() == 1);
+          }
 
-      public String description() {
-        return "Region metadat size is not 1. Exisitng size of regionMetaData is " + regionMetaData.size();
-      }
-    };
+          public String description() {
+            return "Region metadat size is not 1. Exisitng size of regionMetaData is "
+                + regionMetaData.size();
+          }
+        };
     Wait.waitForCriterion(wc, 5000, 200, true);
     assertTrue(regionMetaData.containsKey(region.getFullPath()));
     final ClientPartitionAdvisor prMetaData = regionMetaData.get(region.getFullPath());
-    wc = new WaitCriterion() {
+    wc =
+        new WaitCriterion() {
 
-      public boolean done() {
-        return (prMetaData.getBucketServerLocationsMap_TEST_ONLY().size() == 13);
-      }
+          public boolean done() {
+            return (prMetaData.getBucketServerLocationsMap_TEST_ONLY().size() == 13);
+          }
 
-      public String description() {
-        return "Bucket server location map size is not 13. Exisitng size is :" + prMetaData.getBucketServerLocationsMap_TEST_ONLY().size();
-      }
-    };
+          public String description() {
+            return "Bucket server location map size is not 13. Exisitng size is :"
+                + prMetaData.getBucketServerLocationsMap_TEST_ONLY().size();
+          }
+        };
     Wait.waitForCriterion(wc, 5000, 200, true);
     for (Entry entry : prMetaData.getBucketServerLocationsMap_TEST_ONLY().entrySet()) {
       assertEquals(2, ((List) entry.getValue()).size());
@@ -144,7 +148,7 @@ public class SingleHopGetAllPutAllDUnitTest extends PRClientServerTestBase {
   /*
    * Do a getAll from client and see if all the values are returned.
    * Will also have to see if the function was routed from client to all the servers
-   * hosting the data. 
+   * hosting the data.
    */
   @Test
   public void testServerPutAllFunction() {
@@ -189,7 +193,8 @@ public class SingleHopGetAllPutAllDUnitTest extends PRClientServerTestBase {
         noValueMap.put(key, null);
       }
       assertEquals(noValueMap, region.getAll(testKeysList));
-      Wait.pause(2000); // Why does this test keep pausing for 2 seconds and then do the exact same thing?
+      Wait.pause(
+          2000); // Why does this test keep pausing for 2 seconds and then do the exact same thing?
       region.removeAll(testKeysList);
       assertEquals(noValueMap, region.getAll(testKeysList));
     } catch (Exception e) {

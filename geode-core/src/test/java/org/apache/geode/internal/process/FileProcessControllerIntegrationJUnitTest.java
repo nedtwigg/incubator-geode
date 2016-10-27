@@ -45,20 +45,16 @@ import org.apache.geode.distributed.LocatorLauncher.Builder;
 import org.apache.geode.distributed.LocatorLauncher.LocatorState;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Integration tests for FileProcessController.
- */
+/** Integration tests for FileProcessController. */
 @Category(IntegrationTest.class)
 public class FileProcessControllerIntegrationJUnitTest {
 
   private ProcessType processType;
   private ExecutorService executor;
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
@@ -89,7 +85,10 @@ public class FileProcessControllerIntegrationJUnitTest {
     verifyException(controller).status();
 
     // then: we expect TimeoutException to be thrown
-    assertThat((Exception) caughtException()).isInstanceOf(TimeoutException.class).hasMessageContaining("Timed out waiting for process to create").hasNoCause();
+    assertThat((Exception) caughtException())
+        .isInstanceOf(TimeoutException.class)
+        .hasMessageContaining("Timed out waiting for process to create")
+        .hasNoCause();
   }
 
   @Test
@@ -111,16 +110,17 @@ public class FileProcessControllerIntegrationJUnitTest {
     AtomicReference<String> status = new AtomicReference<String>();
     AtomicReference<Exception> exception = new AtomicReference<Exception>();
     this.executor = Executors.newSingleThreadExecutor();
-    this.executor.execute(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          status.set(controller.status());
-        } catch (Exception e) {
-          exception.set(e);
-        }
-      }
-    });
+    this.executor.execute(
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              status.set(controller.status());
+            } catch (Exception e) {
+              exception.set(e);
+            }
+          }
+        });
 
     // write status
     String statusJson = generateStatusJson();
@@ -129,7 +129,11 @@ public class FileProcessControllerIntegrationJUnitTest {
 
     // then: returned status should be the json in the file
     assertThat(exception.get()).isNull();
-    with().pollInterval(10, MILLISECONDS).await().atMost(2, MINUTES).untilAtomic(status, equalTo(statusJson));
+    with()
+        .pollInterval(10, MILLISECONDS)
+        .await()
+        .atMost(2, MINUTES)
+        .untilAtomic(status, equalTo(statusJson));
     assertThat(status.get()).isEqualTo(statusJson);
     System.out.println(statusJson);
   }

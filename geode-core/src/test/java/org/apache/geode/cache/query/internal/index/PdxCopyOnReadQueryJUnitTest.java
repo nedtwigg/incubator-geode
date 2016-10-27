@@ -45,7 +45,8 @@ public class PdxCopyOnReadQueryJUnitTest {
   public void testCopyOnReadPdxSerialization() throws Exception {
     List<String> classes = new ArrayList<String>();
     classes.add(PortfolioPdx.class.getCanonicalName());
-    ReflectionBasedAutoSerializer serializer = new ReflectionBasedAutoSerializer(classes.toArray(new String[0]));
+    ReflectionBasedAutoSerializer serializer =
+        new ReflectionBasedAutoSerializer(classes.toArray(new String[0]));
 
     CacheFactory cf = new CacheFactory();
     cf.setPdxSerializer(serializer);
@@ -55,7 +56,8 @@ public class PdxCopyOnReadQueryJUnitTest {
     cache.setCopyOnRead(true);
 
     Region region = cache.createRegionFactory(RegionShortcut.REPLICATE).create("SimpleObjects");
-    Region duplicates = cache.createRegionFactory(RegionShortcut.REPLICATE).create("SimpleObjects_Duplicates");
+    Region duplicates =
+        cache.createRegionFactory(RegionShortcut.REPLICATE).create("SimpleObjects_Duplicates");
 
     for (int i = 0; i < 10; i++) {
       PortfolioPdx t = new PortfolioPdx(i);
@@ -67,8 +69,7 @@ public class PdxCopyOnReadQueryJUnitTest {
     SelectResults rs = (SelectResults) qs.newQuery("select * from /SimpleObjects").execute();
     assertEquals(10, rs.size());
     Query query = qs.newQuery("select * from /SimpleObjects_Duplicates s where s in ($1)");
-    SelectResults finalResults = (SelectResults) query.execute(new Object[] { rs });
+    SelectResults finalResults = (SelectResults) query.execute(new Object[] {rs});
     assertEquals(10, finalResults.size());
   }
-
 }

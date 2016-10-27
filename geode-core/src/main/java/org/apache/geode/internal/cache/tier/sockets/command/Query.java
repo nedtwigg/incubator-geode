@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import java.io.IOException;
@@ -36,17 +34,17 @@ import org.apache.geode.internal.security.AuthorizeRequest;
 
 public class Query extends BaseCommandQuery {
 
-  private final static Query singleton = new Query();
+  private static final Query singleton = new Query();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private Query() {
-  }
+  private Query() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, InterruptedException {
 
     // Based on MessageType.DESTROY
     // Added by gregp 10/18/05
@@ -64,11 +62,16 @@ public class Query extends BaseCommandQuery {
     }
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received query request from {} queryString: {}", servConn.getName(), servConn.getSocketString(), queryString);
+      logger.debug(
+          "{}: Received query request from {} queryString: {}",
+          servConn.getName(),
+          servConn.getSocketString(),
+          queryString);
     }
     try {
       // Create query
-      QueryService queryService = ((GemFireCacheImpl) servConn.getCachedRegionHelper().getCache()).getLocalQueryService();
+      QueryService queryService =
+          ((GemFireCacheImpl) servConn.getCachedRegionHelper().getCache()).getLocalQueryService();
       org.apache.geode.cache.query.Query query = queryService.newQuery(queryString);
       Set regionNames = ((DefaultQuery) query).getRegionsInQuery(null);
 
@@ -95,5 +98,4 @@ public class Query extends BaseCommandQuery {
       writeQueryResponseException(msg, e, false, servConn);
     }
   }
-
 }

@@ -17,13 +17,13 @@
 package org.apache.geode.admin;
 
 /**
- * Adminitrative interface for monitoring a statistic resource in a GemFire
- * system member.  A resource is comprised of one or many 
- * <code>Statistics</code>.
+ * Adminitrative interface for monitoring a statistic resource in a GemFire system member. A
+ * resource is comprised of one or many <code>Statistics</code>.
  *
- * @since GemFire     3.5
- *
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @since GemFire 3.5
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public interface StatisticResource {
 
@@ -50,16 +50,15 @@ public interface StatisticResource {
   public String getType();
 
   /**
-   * Returns a display string of the {@link SystemMember} owning this 
-   * resource.
+   * Returns a display string of the {@link SystemMember} owning this resource.
    *
    * @return a display string of the owning {@link SystemMember}
    */
   public String getOwner();
 
   /**
-   * Returns an ID that uniquely identifies the resource within the
-   * {@link SystemMember} it belongs to.
+   * Returns an ID that uniquely identifies the resource within the {@link SystemMember} it belongs
+   * to.
    *
    * @return unique id within the owning {@link SystemMember}
    */
@@ -73,12 +72,10 @@ public interface StatisticResource {
   public Statistic[] getStatistics();
 
   /**
-   * Refreshes the values of every {@link Statistic} in this resource by
-   * retrieving them from the member's VM.
+   * Refreshes the values of every {@link Statistic} in this resource by retrieving them from the
+   * member's VM.
    *
-   * @throws org.apache.geode.admin.AdminException 
-   *         if unable to refresh statistic values
+   * @throws org.apache.geode.admin.AdminException if unable to refresh statistic values
    */
   public void refresh() throws org.apache.geode.admin.AdminException;
-
 }

@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import java.io.IOException;
@@ -45,14 +43,13 @@ import org.apache.geode.i18n.StringId;
 
 public class Request extends BaseCommand {
 
-  private final static Request singleton = new Request();
+  private static final Request singleton = new Request();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  Request() {
-  }
+  Request() {}
 
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
@@ -96,13 +93,21 @@ public class Request extends BaseCommand {
       return;
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received get request ({} bytes) from {} for region {} key {} txId {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), regionName, key, msg.getTransactionId());
+      logger.debug(
+          "{}: Received get request ({} bytes) from {} for region {} key {} txId {}",
+          servConn.getName(),
+          msg.getPayloadLength(),
+          servConn.getSocketString(),
+          regionName,
+          key,
+          msg.getTransactionId());
     }
 
     // Process the get request
     if (key == null || regionName == null) {
       if ((key == null) && (regionName == null)) {
-        errMessage = LocalizedStrings.Request_THE_INPUT_REGION_NAME_AND_KEY_FOR_THE_GET_REQUEST_ARE_NULL;
+        errMessage =
+            LocalizedStrings.Request_THE_INPUT_REGION_NAME_AND_KEY_FOR_THE_GET_REQUEST_ARE_NULL;
       } else if (key == null) {
         errMessage = LocalizedStrings.Request_THE_INPUT_KEY_FOR_THE_GET_REQUEST_IS_NULL;
       } else if (regionName == null) {
@@ -116,7 +121,9 @@ public class Request extends BaseCommand {
     } else {
       Region region = servConn.getCache().getRegion(regionName);
       if (region == null) {
-        String reason = LocalizedStrings.Request__0_WAS_NOT_FOUND_DURING_GET_REQUEST.toLocalizedString(regionName);
+        String reason =
+            LocalizedStrings.Request__0_WAS_NOT_FOUND_DURING_GET_REQUEST.toLocalizedString(
+                regionName);
         writeRegionDestroyedEx(msg, regionName, reason, servConn);
         servConn.setAsTrue(RESPONDED);
       } else {
@@ -176,7 +183,8 @@ public class Request extends BaseCommand {
         if (region instanceof PartitionedRegion) {
           PartitionedRegion pr = (PartitionedRegion) region;
           if (pr.getNetworkHopType() != PartitionedRegion.NETWORK_HOP_NONE) {
-            writeResponseWithRefreshMetadata(data, callbackArg, msg, isObject, servConn, pr, pr.getNetworkHopType());
+            writeResponseWithRefreshMetadata(
+                data, callbackArg, msg, isObject, servConn, pr, pr.getNetworkHopType());
             pr.clearNetworkHopData();
           } else {
             writeResponse(data, callbackArg, msg, isObject, servConn);
@@ -187,7 +195,13 @@ public class Request extends BaseCommand {
 
         servConn.setAsTrue(RESPONDED);
         if (logger.isDebugEnabled()) {
-          logger.debug("{}: Wrote get response back to {} for region {} key {} value: {}", servConn.getName(), servConn.getSocketString(), regionName, key, data);
+          logger.debug(
+              "{}: Wrote get response back to {} for region {} key {} value: {}",
+              servConn.getName(),
+              servConn.getSocketString(),
+              regionName,
+              key,
+              data);
         }
         stats.incWriteGetResponseTime(DistributionStats.getStatTime() - start);
       }
@@ -197,7 +211,8 @@ public class Request extends BaseCommand {
   // take the result 2 element "result" as argument instead of
   // returning as the result to avoid creating the array repeatedly
   // for large number of entries like in getAll
-  public void getValueAndIsObject(Region region, Object key, Object callbackArg, ServerConnection servConn, Object[] result) {
+  public void getValueAndIsObject(
+      Region region, Object key, Object callbackArg, ServerConnection servConn, Object[] result) {
 
     String regionName = region.getFullPath();
     if (servConn != null) {
@@ -222,7 +237,10 @@ public class Request extends BaseCommand {
       } else {
         data = cd.getValue();
       }
-    } else if (data == Token.REMOVED_PHASE1 || data == Token.REMOVED_PHASE2 || data == Token.TOMBSTONE || data == Token.DESTROYED) {
+    } else if (data == Token.REMOVED_PHASE1
+        || data == Token.REMOVED_PHASE2
+        || data == Token.TOMBSTONE
+        || data == Token.DESTROYED) {
       data = null;
     } else if (data == Token.INVALID || data == Token.LOCAL_INVALID) {
       data = null; // fix for bug 35884

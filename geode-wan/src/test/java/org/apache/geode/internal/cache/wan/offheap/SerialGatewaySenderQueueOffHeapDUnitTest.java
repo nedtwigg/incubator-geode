@@ -39,5 +39,4 @@ public class SerialGatewaySenderQueueOffHeapDUnitTest extends SerialGatewaySende
   public boolean isOffHeap() {
     return true;
   }
-
 }

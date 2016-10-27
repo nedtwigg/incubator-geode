@@ -16,7 +16,7 @@
  */
 /*
  * Created on Feb 20, 2006
- * 
+ *
  * TODO To change the template for this generated file go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
@@ -35,16 +35,18 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
  * This test does a check that conflation in the buffer happen correctly
- * 
- * Conflation cases tested include:
+ *
+ * <p>Conflation cases tested include:
+ *
  * <ul>
- * <li> create, modify
- * <li> create, destroy
- * <li> create, destroy, create
- * <li> create, invalidate
- * <li> create, invalidate
- * <li> create, invalidate, modify
+ *   <li> create, modify
+ *   <li> create, destroy
+ *   <li> create, destroy, create
+ *   <li> create, invalidate
+ *   <li> create, invalidate
+ *   <li> create, invalidate, modify
  * </ul>
+ *
  * The test is done for persist only, overflow only and persist + overflow only (async modes).
  */
 @Category(IntegrationTest.class)
@@ -70,17 +72,13 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     region = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, diskProps);
   }
 
-  /**
-   * do a put followed by a put
-   */
+  /** do a put followed by a put */
   private void putAndPut() {
     region.put(new Integer(1), new Integer(1));
     region.put(new Integer(1), new Integer(2));
   }
 
-  /**
-   * do a put followed by a destroy on the same entry
-   */
+  /** do a put followed by a destroy on the same entry */
   private void putAndDestroy() {
     region.put(new Integer(1), new Integer(1));
     try {
@@ -91,17 +89,13 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * do a put destroy the same entry and put it again
-   */
+  /** do a put destroy the same entry and put it again */
   private void putDestroyPut() {
     putAndDestroy();
     region.put(new Integer(1), new Integer(2));
   }
 
-  /**
-   * put a key and then invalidate it
-   */
+  /** put a key and then invalidate it */
   private void putAndInvalidate() {
     region.put(new Integer(1), new Integer(1));
     try {
@@ -112,17 +106,13 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * put a key, invalidate it and the perform a put on it
-   */
+  /** put a key, invalidate it and the perform a put on it */
   private void putInvalidatePut() {
     putAndInvalidate();
     region.put(new Integer(1), new Integer(2));
   }
 
-  /**
-   * do a create and then a put on the same key
-   */
+  /** do a create and then a put on the same key */
   private void createAndPut() {
     try {
       region.create(new Integer(1), new Integer(1));
@@ -133,9 +123,7 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     region.put(new Integer(1), new Integer(2));
   }
 
-  /**
-   * do a create and then a destroy
-   */
+  /** do a create and then a destroy */
   private void createAndDestroy() {
     try {
       region.create(new Integer(1), new Integer(1));
@@ -151,9 +139,7 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * do a create then destroy the entry and create it again
-   */
+  /** do a create then destroy the entry and create it again */
   private void createDestroyCreate() {
     createAndDestroy();
     try {
@@ -164,9 +150,7 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * create an entry and then invalidate it
-   */
+  /** create an entry and then invalidate it */
   private void createAndInvalidate() {
     try {
       region.create(new Integer(1), new Integer(1));
@@ -182,17 +166,13 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * create an entry, invalidate it and then perform a put on the same key
-   */
+  /** create an entry, invalidate it and then perform a put on the same key */
   private void createInvalidatePut() {
     createAndInvalidate();
     region.put(new Integer(1), new Integer(2));
   }
 
-  /**
-   * validate whether a modification of an entry was correctly done
-   */
+  /** validate whether a modification of an entry was correctly done */
   private void validateModification() {
     Collection entries = ((LocalRegion) region).entries.regionEntries();
     if (entries.size() != 1) {
@@ -206,9 +186,7 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * validate whether nothing was written
-   */
+  /** validate whether nothing was written */
   private void validateNothingWritten() {
     Collection entries = ((LocalRegion) region).entries.regionEntries();
     //We actually will have a tombstone in the region, hence
@@ -219,9 +197,7 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     assertEquals(this.flushCount, getCurrentFlushCount());
   }
 
-  /**
-   * validate whether invalidate was done
-   */
+  /** validate whether invalidate was done */
   private void validateTombstone() {
     Collection entries = ((LocalRegion) region).entries.regionEntries();
     if (entries.size() != 1) {
@@ -233,9 +209,7 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     assertEquals(Token.TOMBSTONE, obj);
   }
 
-  /**
-   * validate whether invalidate was done
-   */
+  /** validate whether invalidate was done */
   private void validateInvalidate() {
     Collection entries = ((LocalRegion) region).entries.regionEntries();
     if (entries.size() != 1) {
@@ -258,16 +232,12 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     this.flushCount = getCurrentFlushCount();
   }
 
-  /**
-   * force a flush on the region
-   */
+  /** force a flush on the region */
   private void forceFlush() {
     ((LocalRegion) region).getDiskRegion().flushForTesting();
   }
 
-  /**
-   * all the operations done here
-   */
+  /** all the operations done here */
   private void allTest() {
     pauseFlush();
     createAndPut();
@@ -311,9 +281,7 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     region.clear();
   }
 
-  /**
-   * test conflation for perist only
-   */
+  /** test conflation for perist only */
   @Test
   public void testPersistOnlyConflation() throws Exception {
     createPersistOnly();
@@ -321,9 +289,7 @@ public class ConflationJUnitTest extends DiskRegionTestingBase {
     closeDown();
   }
 
-  /**
-   * test conflation for overflow and persist
-   */
+  /** test conflation for overflow and persist */
   @Test
   public void testOverFlowAndPersistOnlyConflation() throws Exception {
     createOverflowAndPersist();

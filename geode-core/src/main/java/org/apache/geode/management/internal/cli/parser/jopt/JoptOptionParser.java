@@ -42,12 +42,12 @@ import org.apache.geode.management.internal.cli.parser.preprocessor.TrimmedInput
 import org.apache.geode.management.internal.cli.util.HyphenFormatter;
 
 /**
- * Implementation of {@link GfshOptionParser} which internally makes use of
- * {@link joptsimple.OptionParser}
+ * Implementation of {@link GfshOptionParser} which internally makes use of {@link
+ * joptsimple.OptionParser}
  *
- * Newly constructed JoptOptionParser must be loaded with arguments and
- * options before parsing command strings.
- * 
+ * <p>Newly constructed JoptOptionParser must be loaded with arguments and options before parsing
+ * command strings.
+ *
  * @since GemFire 7.0
  */
 public class JoptOptionParser implements GfshOptionParser {
@@ -56,9 +56,7 @@ public class JoptOptionParser implements GfshOptionParser {
   private LinkedList<Argument> arguments = new LinkedList<Argument>();
   private LinkedList<Option> options;
 
-  /**
-   * Constructor
-   */
+  /** Constructor */
   public JoptOptionParser() {
     parser = new OptionParser(true);
     parser.allowsUnrecognizedOptions();
@@ -116,7 +114,8 @@ public class JoptOptionParser implements GfshOptionParser {
     optionSet.setUserInput(userInput != null ? userInput.trim() : "");
     if (userInput != null) {
       TrimmedInput input = PreprocessorUtils.trim(userInput);
-      String[] preProcessedInput = preProcess(new HyphenFormatter().formatCommand(input.getString()));
+      String[] preProcessedInput =
+          preProcess(new HyphenFormatter().formatCommand(input.getString()));
       joptsimple.OptionSet joptOptionSet = null;
       CliCommandOptionException ce = null;
       // int factor = 0;
@@ -131,7 +130,11 @@ public class JoptOptionParser implements GfshOptionParser {
         // Make sure there are no miscellaneous, unknown strings that cannot be identified as
         // either options or arguments.
         if (joptOptionSet.nonOptionArguments().size() > arguments.size()) {
-          String unknownString = (String) joptOptionSet.nonOptionArguments().get(arguments.size()); // added cast when geode-joptsimple was removed
+          String unknownString =
+              (String)
+                  joptOptionSet
+                      .nonOptionArguments()
+                      .get(arguments.size()); // added cast when geode-joptsimple was removed
           // If the first option is un-parseable then it will be returned as "<option>=<value>" since it's
           // been interpreted as an argument. However, all subsequent options will be returned as "<option>".
           // This hack splits off the string before the "=" sign if it's the first case.
@@ -144,7 +147,9 @@ public class JoptOptionParser implements GfshOptionParser {
         // First process the arguments
         StringBuffer argument = new StringBuffer();
         int j = 0;
-        for (int i = 0; i < joptOptionSet.nonOptionArguments().size() && j < arguments.size(); i++) {
+        for (int i = 0;
+            i < joptOptionSet.nonOptionArguments().size() && j < arguments.size();
+            i++) {
           argument = argument.append(joptOptionSet.nonOptionArguments().get(i));
           // Check for syntax of arguments before adding them to the
           // option set as we want to support quoted arguments and those
@@ -170,12 +175,15 @@ public class JoptOptionParser implements GfshOptionParser {
               // Check whether the user has actually entered the
               // full option or just the start
               boolean present = false;
-              outer: for (String inputSplit : preProcessedInput) {
+              outer:
+              for (String inputSplit : preProcessedInput) {
                 if (inputSplit.startsWith(SyntaxConstants.LONG_OPTION_SPECIFIER)) {
                   // Remove option prefix
-                  inputSplit = StringUtils.removeStart(inputSplit, SyntaxConstants.LONG_OPTION_SPECIFIER);
+                  inputSplit =
+                      StringUtils.removeStart(inputSplit, SyntaxConstants.LONG_OPTION_SPECIFIER);
                   // Remove value specifier
-                  inputSplit = StringUtils.removeEnd(inputSplit, SyntaxConstants.OPTION_VALUE_SPECIFIER);
+                  inputSplit =
+                      StringUtils.removeEnd(inputSplit, SyntaxConstants.OPTION_VALUE_SPECIFIER);
                   if (!inputSplit.equals("")) {
                     if (option.getLongOption().equals(inputSplit)) {
                       present = true;
@@ -194,11 +202,15 @@ public class JoptOptionParser implements GfshOptionParser {
               if (present) {
                 if (joptOptionSet.hasArgument(string)) {
                   List<?> arguments = joptOptionSet.valuesOf(string);
-                  if (arguments.size() > 1 && !(option.getConverter() instanceof MultipleValueConverter) && option.getValueSeparator() == null) {
+                  if (arguments.size() > 1
+                      && !(option.getConverter() instanceof MultipleValueConverter)
+                      && option.getValueSeparator() == null) {
                     List<String> optionList = new ArrayList<String>(1);
                     optionList.add(string);
                     // TODO: ce = processException(new MultipleArgumentsForOptionException(optionList, joptOptionSet)); // removed when geode-joptsimple was removed
-                  } else if ((arguments.size() == 1 && !(option.getConverter() instanceof MultipleValueConverter)) || option.getValueSeparator() == null) {
+                  } else if ((arguments.size() == 1
+                          && !(option.getConverter() instanceof MultipleValueConverter))
+                      || option.getValueSeparator() == null) {
                     optionSet.put(option, arguments.get(0).toString().trim());
                   } else {
                     StringBuffer value = new StringBuffer();
@@ -248,9 +260,10 @@ public class JoptOptionParser implements GfshOptionParser {
   private Option getOption(OptionException oe) {
     Option exceptionOption = null;
     Iterator<String> iterator = oe.options().iterator();
-    outermost: for (Option option : options) {
-      /* outer: */for (String string : option.getAggregate()) {
-        /* inner: */while (iterator.hasNext()) {
+    outermost:
+    for (Option option : options) {
+      /* outer: */ for (String string : option.getAggregate()) {
+        /* inner: */ while (iterator.hasNext()) {
           String joptOption = iterator.next();
           if (string.equals(joptOption)) {
             exceptionOption = option;
@@ -281,5 +294,4 @@ public class JoptOptionParser implements GfshOptionParser {
   public LinkedList<Option> getOptions() {
     return options;
   }
-
 }

@@ -25,19 +25,18 @@ import java.io.*;
 import org.apache.geode.distributed.internal.membership.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * get its current {@link Config}.
+ * A message that is sent to a particular distribution manager to get its current {@link Config}.
  */
 public final class FetchSysCfgResponse extends AdminResponse {
   // instance variables
   Config sc;
 
   /**
-   * Returns a <code>FetchSysCfgResponse</code> that will be returned to the
-   * specified recipient. The message will contains a copy of the local manager's
-   * config.
+   * Returns a <code>FetchSysCfgResponse</code> that will be returned to the specified recipient.
+   * The message will contains a copy of the local manager's config.
    */
-  public static FetchSysCfgResponse create(DistributionManager dm, InternalDistributedMember recipient) {
+  public static FetchSysCfgResponse create(
+      DistributionManager dm, InternalDistributedMember recipient) {
     FetchSysCfgResponse m = new FetchSysCfgResponse();
     m.setRecipient(recipient);
     Config conf = dm.getSystem().getConfig();

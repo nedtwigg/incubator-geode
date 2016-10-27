@@ -18,11 +18,7 @@ package org.apache.geode.management.internal.cli.dto;
 
 import java.io.Serializable;
 
-/**
- * Sample class for Data DUnit tests with JSON keys and values
- *
- */
-
+/** Sample class for Data DUnit tests with JSON keys and values */
 public class Value2 implements Serializable {
 
   private String stateName;
@@ -37,15 +33,13 @@ public class Value2 implements Serializable {
     this.areaInSqKm = i;
   }
 
-  public Value2() {
-  }
+  public Value2() {}
 
   public boolean equals(Object other) {
     if (other instanceof Value2) {
       Value2 v2 = (Value2) other;
       return v2.stateName.equals(stateName);
-    } else
-      return false;
+    } else return false;
   }
 
   public int hashCode() {
@@ -86,8 +80,15 @@ public class Value2 implements Serializable {
 
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(" Value2 [ stateName : ").append(stateName).append(" capitalCity : ").append(capitalCity).append(" population : ").append(population).append(" areaInSqKm : ").append(areaInSqKm).append(" ]");
+    sb.append(" Value2 [ stateName : ")
+        .append(stateName)
+        .append(" capitalCity : ")
+        .append(capitalCity)
+        .append(" population : ")
+        .append(population)
+        .append(" areaInSqKm : ")
+        .append(areaInSqKm)
+        .append(" ]");
     return sb.toString();
   }
-
 }

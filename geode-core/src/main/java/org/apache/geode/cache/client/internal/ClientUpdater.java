@@ -16,9 +16,7 @@
  */
 package org.apache.geode.cache.client.internal;
 
-/**
- *
- */
+/** */
 public interface ClientUpdater {
 
   void close();

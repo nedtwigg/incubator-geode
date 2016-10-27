@@ -17,8 +17,8 @@
 
 package org.apache.geode.cache;
 
-/** Thrown when attempting to create a {@link Cache} if one already exists.
- *
+/**
+ * Thrown when attempting to create a {@link Cache} if one already exists.
  *
  * @see CacheFactory#create
  * @since GemFire 3.0
@@ -33,6 +33,7 @@ public class CacheExistsException extends CacheException {
 
   /**
    * Constructs an instance of <code>CacheExistsException</code> with the specified detail message.
+   *
    * @param msg the detail message
    */
   public CacheExistsException(Cache cache, String msg) {
@@ -43,6 +44,7 @@ public class CacheExistsException extends CacheException {
   /**
    * Constructs an instance of <code>CacheExistsException</code> with the specified detail message
    * and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */

@@ -31,19 +31,15 @@ import org.apache.geode.internal.cache.persistence.PersistentMemberManager;
 import org.apache.geode.internal.cache.persistence.PersistentMemberPattern;
 
 /**
- * An instruction to all members that they should forget 
- * about the persistent member described by this pattern.
- * TODO prpersist - This extends AdminRequest, but it doesn't
- * work with most of the admin paradigm, which is a request response
- * to a single member. Maybe we need to a new base class.
- *
+ * An instruction to all members that they should forget about the persistent member described by
+ * this pattern. TODO prpersist - This extends AdminRequest, but it doesn't work with most of the
+ * admin paradigm, which is a request response to a single member. Maybe we need to a new base
+ * class.
  */
 public class RevokePersistentIDRequest extends CliLegacyMessage {
   PersistentMemberPattern pattern;
 
-  public RevokePersistentIDRequest() {
-
-  }
+  public RevokePersistentIDRequest() {}
 
   public RevokePersistentIDRequest(PersistentMemberPattern pattern) {
     this.pattern = pattern;
@@ -98,5 +94,4 @@ public class RevokePersistentIDRequest extends CliLegacyMessage {
     super.toData(out);
     InternalDataSerializer.invokeToData(pattern, out);
   }
-
 }

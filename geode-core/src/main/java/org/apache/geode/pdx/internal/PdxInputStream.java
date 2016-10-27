@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.pdx.internal;
 
 import java.io.IOException;
@@ -32,15 +30,18 @@ import org.apache.geode.internal.tcp.ImmutableByteBufferInputStream;
 
 /**
  * Used by PdxReaderImpl to manage the raw bytes of a PDX.
- * 
+ *
  * @since GemFire 6.6
  */
 public class PdxInputStream extends ImmutableByteBufferInputStream {
 
   /**
-   * Create a pdx input stream by whose contents are the first length
-   * bytes from the given input stream.
-   * @param existing the input stream whose content will go into this stream. Note that this existing stream will be read by this class (a copy is not made) so it should not be changed externally.
+   * Create a pdx input stream by whose contents are the first length bytes from the given input
+   * stream.
+   *
+   * @param existing the input stream whose content will go into this stream. Note that this
+   *     existing stream will be read by this class (a copy is not made) so it should not be changed
+   *     externally.
    * @param length the number of bytes to put in this stream
    */
   public PdxInputStream(ByteBufferInputStream existing, int length) {
@@ -49,7 +50,9 @@ public class PdxInputStream extends ImmutableByteBufferInputStream {
 
   /**
    * Create a pdx input stream whose contents are the given bytes
-   * @param bytes the content of this stream. Note that this byte array will be read by this class (a copy is not made) so it should not be changed externally.
+   *
+   * @param bytes the content of this stream. Note that this byte array will be read by this class
+   *     (a copy is not made) so it should not be changed externally.
    */
   public PdxInputStream(byte[] bytes) {
     super(bytes);
@@ -57,7 +60,9 @@ public class PdxInputStream extends ImmutableByteBufferInputStream {
 
   /**
    * Create a pdx input stream whose contents are the given bytes
-   * @param bb the content of this stream. Note that bb will be read by this class (a copy is not made) so it should not be changed externally.
+   *
+   * @param bb the content of this stream. Note that bb will be read by this class (a copy is not
+   *     made) so it should not be changed externally.
    */
   public PdxInputStream(ByteBuffer bb) {
     super(bb);
@@ -65,7 +70,9 @@ public class PdxInputStream extends ImmutableByteBufferInputStream {
 
   /**
    * Create a pdx input stream by copying another. A somewhat shallow copy is made.
-   * @param copy the input stream to copy. Note that this copy stream will be read by this class (a copy is not made) so it should not be changed externally.
+   *
+   * @param copy the input stream to copy. Note that this copy stream will be read by this class (a
+   *     copy is not made) so it should not be changed externally.
    */
   public PdxInputStream(PdxInputStream copy) {
     super(copy);
@@ -174,7 +181,6 @@ public class PdxInputStream extends ImmutableByteBufferInputStream {
     } catch (IndexOutOfBoundsException e) {
       throw new PdxSerializationException("Failed reading a PDX char field", e);
     }
-
   }
 
   @Override
@@ -337,7 +343,8 @@ public class PdxInputStream extends ImmutableByteBufferInputStream {
     } catch (IOException e) {
       throw new PdxSerializationException("Exception deserializing a PDX field", e);
     } catch (ClassNotFoundException ex) {
-      throw new InternalGemFireException("ClassNotFoundException should never be thrown but it was", ex);
+      throw new InternalGemFireException(
+          "ClassNotFoundException should never be thrown but it was", ex);
     }
   }
 
@@ -423,7 +430,8 @@ public class PdxInputStream extends ImmutableByteBufferInputStream {
     try {
       return super.slice(startOffset, endOffset);
     } catch (IllegalArgumentException e) {
-      throw new PdxSerializationException("Internal error; failed to slice start=" + startOffset + " end=" + endOffset, e);
+      throw new PdxSerializationException(
+          "Internal error; failed to slice start=" + startOffset + " end=" + endOffset, e);
     }
   }
 

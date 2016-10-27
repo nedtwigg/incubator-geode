@@ -54,9 +54,8 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * Adds bookkeeping info and cache-specific behavior to DistributionAdvisor.
- * Adds bit-encoded flags in addition to object info.
- *
+ * Adds bookkeeping info and cache-specific behavior to DistributionAdvisor. Adds bit-encoded flags
+ * in addition to object info.
  */
 @SuppressWarnings("deprecation")
 public class CacheDistributionAdvisor extends DistributionAdvisor {
@@ -67,6 +66,7 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
 
   /** bit masks */
   private static final int INTEREST_MASK = 0x01;
+
   private static final int REPLICATE_MASK = 0x02;
   private static final int LOADER_MASK = 0x04;
   private static final int WRITER_MASK = 0x08;
@@ -80,19 +80,18 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
   private static final int IS_PARTITIONED_MASK = 0x800;
   private static final int REGION_INITIALIZED_MASK = 0x1000;
   private static final int IS_GATEWAY_ENABLED_MASK = 0x2000;
-  //provider is no longer a supported attribute. 
+  //provider is no longer a supported attribute.
   //  private static final int IS_GII_PROVIDER_MASK = 0x4000;
   private static final int PERSISTENT_ID_MASK = 0x4000;
   /** does this member require operation notification (PartitionedRegions) */
   protected static final int REQUIRES_NOTIFICATION_MASK = 0x8000;
+
   private static final int HAS_CACHE_SERVER_MASK = 0x10000;
   private static final int REQUIRES_OLD_VALUE_MASK = 0x20000;
   // unused 0x40000;
   private static final int PERSISTENCE_INITIALIZED_MASK = 0x80000;
-  //Important below mentioned bit masks are not available 
-  /**
-   * Using following masks for gatewaysender queue startup polic informations.
-   */
+  //Important below mentioned bit masks are not available
+  /** Using following masks for gatewaysender queue startup polic informations. */
   // private static final int HUB_STARTUP_POLICY_MASK = 0x07<<20;
 
   private static final int GATEWAY_SENDER_IDS_MASK = 0x200000;
@@ -115,7 +114,8 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
     super(region);
   }
 
-  public static CacheDistributionAdvisor createCacheDistributionAdvisor(CacheDistributionAdvisee region) {
+  public static CacheDistributionAdvisor createCacheDistributionAdvisor(
+      CacheDistributionAdvisee region) {
     CacheDistributionAdvisor advisor = new CacheDistributionAdvisor(region);
     advisor.initialize();
     return advisor;
@@ -136,105 +136,115 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
 
   /**
    * Returns a the set of members that either want all events or are caching data.
+   *
    * @param excludeInRecovery if true then members in recovery are excluded
    */
-  private Set adviseAllEventsOrCached(final boolean excludeInRecovery) throws IllegalStateException {
+  private Set adviseAllEventsOrCached(final boolean excludeInRecovery)
+      throws IllegalStateException {
     getAdvisee().getCancelCriterion().checkCancelInProgress(null);
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile cp = (CacheProfile) profile;
-        if (excludeInRecovery && cp.inRecovery) {
-          return false;
-        }
-        return cp.cachedOrAllEventsWithListener();
-      }
-    });
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile cp = (CacheProfile) profile;
+            if (excludeInRecovery && cp.inRecovery) {
+              return false;
+            }
+            return cp.cachedOrAllEventsWithListener();
+          }
+        });
   }
 
-  /**
-   * Provide recipient information for an update or create operation.
-   *
-   */
+  /** Provide recipient information for an update or create operation. */
   Set adviseUpdate(final EntryEventImpl event) throws IllegalStateException {
     if (event.hasNewValue() || event.getOperation().isPutAll()) {
       // only need to distribute it to guys that want all events or cache data
-      return adviseAllEventsOrCached(true/*fixes 41147*/);
+      return adviseAllEventsOrCached(true /*fixes 41147*/);
     } else {
       // The new value is null so this is a create with a null value,
       // in which case we only need to distribute this message to replicates
       // or all events that are not a proxy or if a proxy has a listener
-      return adviseFilter(new Filter() {
-        public boolean include(Profile profile) {
-          assert profile instanceof CacheProfile;
-          CacheProfile cp = (CacheProfile) profile;
-          DataPolicy dp = cp.dataPolicy;
-          return dp.withReplication() || (cp.allEvents() && (dp.withStorage() || cp.hasCacheListener));
-        }
-      });
+      return adviseFilter(
+          new Filter() {
+            public boolean include(Profile profile) {
+              assert profile instanceof CacheProfile;
+              CacheProfile cp = (CacheProfile) profile;
+              DataPolicy dp = cp.dataPolicy;
+              return dp.withReplication()
+                  || (cp.allEvents() && (dp.withStorage() || cp.hasCacheListener));
+            }
+          });
     }
   }
 
   /**
    * Provide recipient information for TX lock and commit.
-   * @return Set of Serializable members that the current transaction
-   * will be distributed to.
-   * Currently this is any other member who has this region defined.
-   * No reference to Set kept by advisor so caller is free to modify it
+   *
+   * @return Set of Serializable members that the current transaction will be distributed to.
+   *     Currently this is any other member who has this region defined. No reference to Set kept by
+   *     advisor so caller is free to modify it
    */
   public Set<InternalDistributedMember> adviseTX() throws IllegalStateException {
 
-    boolean isMetaDataWithTransactions = getAdvisee() instanceof LocalRegion && ((LocalRegion) getAdvisee()).isMetaRegionWithTransactions();
+    boolean isMetaDataWithTransactions =
+        getAdvisee() instanceof LocalRegion
+            && ((LocalRegion) getAdvisee()).isMetaRegionWithTransactions();
 
     Set<InternalDistributedMember> badList = Collections.emptySet();
     if (!TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS && !isMetaDataWithTransactions) {
-      badList = adviseFilter(new Filter() {
-        public boolean include(Profile profile) {
-          assert profile instanceof CacheProfile;
-          CacheProfile prof = (CacheProfile) profile;
-          return (prof.isPersistent());
-        }
-      });
+      badList =
+          adviseFilter(
+              new Filter() {
+                public boolean include(Profile profile) {
+                  assert profile instanceof CacheProfile;
+                  CacheProfile prof = (CacheProfile) profile;
+                  return (prof.isPersistent());
+                }
+              });
     }
     if (badList.isEmpty()) {
-      return adviseFilter(new Filter() {
-        public boolean include(Profile profile) {
-          assert profile instanceof CacheProfile;
-          CacheProfile cp = (CacheProfile) profile;
-          return cp.cachedOrAllEvents();
-        }
-      });
+      return adviseFilter(
+          new Filter() {
+            public boolean include(Profile profile) {
+              assert profile instanceof CacheProfile;
+              CacheProfile cp = (CacheProfile) profile;
+              return cp.cachedOrAllEvents();
+            }
+          });
     } else {
       StringBuffer badIds = new StringBuffer();
       Iterator biI = badList.iterator();
       while (biI.hasNext()) {
         badIds.append(biI.next().toString());
-        if (biI.hasNext())
-          badIds.append(", ");
+        if (biI.hasNext()) badIds.append(", ");
       }
-      throw new IllegalStateException(LocalizedStrings.CacheDistributionAdvisor_ILLEGAL_REGION_CONFIGURATION_FOR_MEMBERS_0.toLocalizedString(badIds.toString()));
+      throw new IllegalStateException(
+          LocalizedStrings.CacheDistributionAdvisor_ILLEGAL_REGION_CONFIGURATION_FOR_MEMBERS_0
+              .toLocalizedString(badIds.toString()));
     }
   }
 
   /**
    * Provide recipient information for netLoad
-   * @return Set of Serializable members that have a CacheLoader installed;
-   * no reference to Set kept by advisor so caller is free to modify it
+   *
+   * @return Set of Serializable members that have a CacheLoader installed; no reference to Set kept
+   *     by advisor so caller is free to modify it
    */
   public Set adviseNetLoad() {
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile prof = (CacheProfile) profile;
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile prof = (CacheProfile) profile;
 
-        // if region in cache is not yet initialized, exclude
-        if (!prof.regionInitialized) { // fix for bug 41102
-          return false;
-        }
+            // if region in cache is not yet initialized, exclude
+            if (!prof.regionInitialized) { // fix for bug 41102
+              return false;
+            }
 
-        return prof.hasCacheLoader;
-      }
-    });
+            return prof.hasCacheLoader;
+          }
+        });
   }
 
   public FilterRoutingInfo adviseFilterRouting(CacheEvent event, Set cacheOpRecipients) {
@@ -245,105 +255,109 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
     return null;
   }
 
-  /**
-   * Same as adviseGeneric except in recovery excluded.
-   */
+  /** Same as adviseGeneric except in recovery excluded. */
   public Set adviseCacheOp() {
     return adviseAllEventsOrCached(true);
   }
 
   /**
-   * Same as adviseCacheOp but only includes members that are playing the
-   * specified role.
+   * Same as adviseCacheOp but only includes members that are playing the specified role.
+   *
    * @since GemFire 5.0
    */
   public Set adviseCacheOpRole(final Role role) {
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile cp = (CacheProfile) profile;
-        // if region in cache is not yet initialized, exclude
-        if (!cp.regionInitialized) {
-          return false;
-        }
-        if (!cp.cachedOrAllEventsWithListener()) {
-          return false;
-        }
-        return cp.getDistributedMember().getRoles().contains(role);
-      }
-    });
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile cp = (CacheProfile) profile;
+            // if region in cache is not yet initialized, exclude
+            if (!cp.regionInitialized) {
+              return false;
+            }
+            if (!cp.cachedOrAllEventsWithListener()) {
+              return false;
+            }
+            return cp.getDistributedMember().getRoles().contains(role);
+          }
+        });
   }
 
   /* *
    * Same as adviseGeneric but excludes guys in recover
    */
   public Set adviseInvalidateRegion() {
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile cp = (CacheProfile) profile;
-        return !cp.inRecovery;
-      }
-    });
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile cp = (CacheProfile) profile;
+            return !cp.inRecovery;
+          }
+        });
   }
 
-  /** Same as adviseGeneric
-   */
+  /** Same as adviseGeneric */
   public Set adviseDestroyRegion() {
     return adviseGeneric();
   }
 
   /**
    * Provide recipient information for netWrite
-   * @return Set of Serializable member ids that have a CacheWriter installed;
-   * no reference to Set kept by advisor so caller is free to modify it
+   *
+   * @return Set of Serializable member ids that have a CacheWriter installed; no reference to Set
+   *     kept by advisor so caller is free to modify it
    */
   public Set adviseNetWrite() {
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile prof = (CacheProfile) profile;
-        // if region in cache is in recovery, exclude
-        if (prof.inRecovery) {
-          return false;
-        }
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile prof = (CacheProfile) profile;
+            // if region in cache is in recovery, exclude
+            if (prof.inRecovery) {
+              return false;
+            }
 
-        return prof.hasCacheWriter;
-      }
-    });
+            return prof.hasCacheWriter;
+          }
+        });
   }
 
   public Set<InternalDistributedMember> adviseInitializedReplicates() {
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile cp = (CacheProfile) profile;
-        if (cp.dataPolicy.withReplication() && cp.regionInitialized) {
-          return true;
-        }
-        return false;
-      }
-    });
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile cp = (CacheProfile) profile;
+            if (cp.dataPolicy.withReplication() && cp.regionInitialized) {
+              return true;
+            }
+            return false;
+          }
+        });
   }
 
   /**
    * Provide recipient information for netSearch
-   * @return Set of Serializable member ids that have the region and
-   * are have storage (no need to search an empty cache)
+   *
+   * @return Set of Serializable member ids that have the region and are have storage (no need to
+   *     search an empty cache)
    */
   public Set adviseNetSearch() {
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile cp = (CacheProfile) profile;
-        // if region in cache is not yet initialized, exclude
-        if (!cp.regionInitialized) {
-          return false;
-        }
-        DataPolicy dp = cp.dataPolicy;
-        return dp.withStorage();
-      }
-    });
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile cp = (CacheProfile) profile;
+            // if region in cache is not yet initialized, exclude
+            if (!cp.regionInitialized) {
+              return false;
+            }
+            DataPolicy dp = cp.dataPolicy;
+            return dp.withStorage();
+          }
+        });
   }
 
   // moved dumpProfiles to DistributionAdvisor
@@ -353,7 +367,8 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
   }
 
   @SuppressWarnings("synthetic-access")
-  public InitialImageAdvice adviseInitialImage(InitialImageAdvice previousAdvice, boolean persistent) {
+  public InitialImageAdvice adviseInitialImage(
+      InitialImageAdvice previousAdvice, boolean persistent) {
     initializationGate();
 
     if (logger.isTraceEnabled(LogMarker.DA)) {
@@ -372,7 +387,8 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
     Set<InternalDistributedMember> uninitialized = new HashSet<InternalDistributedMember>();
     Set<InternalDistributedMember> nonPersistent = new HashSet<InternalDistributedMember>();
 
-    Map<InternalDistributedMember, CacheProfile> memberProfiles = new HashMap<InternalDistributedMember, CacheProfile>();
+    Map<InternalDistributedMember, CacheProfile> memberProfiles =
+        new HashMap<InternalDistributedMember, CacheProfile>();
 
     for (int i = 0; i < allProfiles.length; i++) {
       CacheProfile profile = (CacheProfile) allProfiles[i];
@@ -380,8 +396,11 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
       //Make sure that we don't return a member that was in the previous initial image advice.
       //Unless that member has changed it's profile since the last time we checked.
       if (previousAdvice != null) {
-        CacheProfile previousProfile = previousAdvice.memberProfiles.get(profile.getDistributedMember());
-        if (previousProfile != null && previousProfile.getSerialNumber() == profile.getSerialNumber() && previousProfile.getVersion() == profile.getVersion()) {
+        CacheProfile previousProfile =
+            previousAdvice.memberProfiles.get(profile.getDistributedMember());
+        if (previousProfile != null
+            && previousProfile.getSerialNumber() == profile.getSerialNumber()
+            && previousProfile.getVersion() == profile.getVersion()) {
           continue;
         }
       }
@@ -418,7 +437,9 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
       }
     }
 
-    InitialImageAdvice advice = new InitialImageAdvice(replicates, others, preloaded, empties, uninitialized, nonPersistent, memberProfiles);
+    InitialImageAdvice advice =
+        new InitialImageAdvice(
+            replicates, others, preloaded, empties, uninitialized, nonPersistent, memberProfiles);
 
     if (logger.isDebugEnabled()) {
       logger.debug(advice);
@@ -427,18 +448,20 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
   }
 
   /**
-   * returns the set of all the members in the system which requires old values
-   * and are not yet finished with initialization (including GII).
+   * returns the set of all the members in the system which requires old values and are not yet
+   * finished with initialization (including GII).
+   *
    * @since GemFire 5.5
    */
   public Set adviseRequiresOldValueInCacheOp() {
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile cp = (CacheProfile) profile;
-        return cp.requiresOldValueInEvents && !cp.regionInitialized;
-      }
-    });
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile cp = (CacheProfile) profile;
+            return cp.requiresOldValueInEvents && !cp.regionInitialized;
+          }
+        });
   }
 
   // moved adviseProfileExchange to DistributionAdvisor
@@ -470,9 +493,7 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
     return result;
   }
 
-  /**
-   * Profile information for a remote counterpart.
-   */
+  /** Profile information for a remote counterpart. */
   public static class CacheProfile extends DistributionAdvisor.Profile {
     public DataPolicy dataPolicy = DataPolicy.REPLICATE;
     public InterestPolicy interestPolicy = InterestPolicy.DEFAULT;
@@ -483,9 +504,7 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
     public boolean inRecovery = false;
     public Set<String> gatewaySenderIds = Collections.emptySet();
     public Set<String> asyncEventQueueIds = Collections.emptySet();
-    /**
-     * Will be null if the profile doesn't need to have the attributes
-     */
+    /** Will be null if the profile doesn't need to have the attributes */
     public SubscriptionAttributes subscriptionAttributes = null;
 
     public boolean isPartitioned = false;
@@ -498,51 +517,45 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
     // moved serialNumber to DistributionAdvisor.Profile
 
     /**
-     * this member's client interest / continuous query profile.  This is used
-     * for event processing to reduce the number of times CQs are executed and
-     * to have the originating member for an event pay the cpu cost of executing
-     * filters on the event.
+     * this member's client interest / continuous query profile. This is used for event processing
+     * to reduce the number of times CQs are executed and to have the originating member for an
+     * event pay the cpu cost of executing filters on the event.
      */
     public FilterProfile filterProfile;
 
-    /**
-     * Some cache listeners require old values in cache operation messages,
-     * at least during GII
-     */
+    /** Some cache listeners require old values in cache operation messages, at least during GII */
     public boolean requiresOldValueInEvents;
 
     /**
-     * Whether the region has completed initialization, including GII.
-     * This information may be incorrect for a PartitionedRegion, but
-     * may be relied upon for DistributedRegions (including BucketRegions)
-     * 
-     * @since GemFire prpersist this field is now overloaded for partitioned regions with persistence.
-     * In the case of pr persistence, this field indicates that the region has finished
-     * recovery from disk.
+     * Whether the region has completed initialization, including GII. This information may be
+     * incorrect for a PartitionedRegion, but may be relied upon for DistributedRegions (including
+     * BucketRegions)
+     *
+     * @since GemFire prpersist this field is now overloaded for partitioned regions with
+     *     persistence. In the case of pr persistence, this field indicates that the region has
+     *     finished recovery from disk.
      */
     public boolean regionInitialized;
 
     /**
-     * True when a members persistent store is initialized. Note that
-     * regionInitialized may be true when this is false in the case of createBucketAtomically.
-     * With createBucketAtomically, the peristent store is not created until
-     * the EndBucketCreationMessage is sent.
+     * True when a members persistent store is initialized. Note that regionInitialized may be true
+     * when this is false in the case of createBucketAtomically. With createBucketAtomically, the
+     * peristent store is not created until the EndBucketCreationMessage is sent.
      */
     public boolean persistenceInitialized;
 
     public PersistentMemberID persistentID;
 
     /**
-     * This member has any cache servers. This is not actively maintained for
-     * local profiles (i.e., a profile representing this vm)
+     * This member has any cache servers. This is not actively maintained for local profiles (i.e.,
+     * a profile representing this vm)
      */
     public boolean hasCacheServer = false;
 
     public List<CacheServiceProfile> cacheServiceProfiles = new ArrayList<>();
 
     /** for internal use, required for DataSerializer.readObject */
-    public CacheProfile() {
-    }
+    public CacheProfile() {}
 
     /** used for routing computation */
     public CacheProfile(FilterProfile localProfile) {
@@ -567,50 +580,31 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
           s |= PERSISTENT_MASK;
         }
       } else {
-        if (this.dataPolicy.isEmpty())
-          s |= PROXY_MASK;
-        if (this.dataPolicy.isPreloaded())
-          s |= PRELOADED_MASK;
+        if (this.dataPolicy.isEmpty()) s |= PROXY_MASK;
+        if (this.dataPolicy.isPreloaded()) s |= PRELOADED_MASK;
       }
-      if (this.subscriptionAttributes != null && this.subscriptionAttributes.getInterestPolicy().isAll()) {
+      if (this.subscriptionAttributes != null
+          && this.subscriptionAttributes.getInterestPolicy().isAll()) {
         s |= INTEREST_MASK;
       }
-      if (this.hasCacheLoader)
-        s |= LOADER_MASK;
-      if (this.hasCacheWriter)
-        s |= WRITER_MASK;
-      if (this.hasCacheListener)
-        s |= LISTENER_MASK;
-      if (this.scope.isDistributedAck())
-        s |= DIST_ACK_MASK;
-      if (this.scope.isGlobal())
-        s |= GLOBAL_MASK;
-      if (this.inRecovery)
-        s |= IN_RECOVERY_MASK;
-      if (this.isPartitioned)
-        s |= IS_PARTITIONED_MASK;
-      if (this.isGatewayEnabled)
-        s |= IS_GATEWAY_ENABLED_MASK;
-      if (this.isPersistent)
-        s |= PERSISTENT_MASK;
-      if (this.regionInitialized)
-        s |= REGION_INITIALIZED_MASK;
-      if (this.persistentID != null)
-        s |= PERSISTENT_ID_MASK;
-      if (this.hasCacheServer)
-        s |= HAS_CACHE_SERVER_MASK;
-      if (this.requiresOldValueInEvents)
-        s |= REQUIRES_OLD_VALUE_MASK;
-      if (this.persistenceInitialized)
-        s |= PERSISTENCE_INITIALIZED_MASK;
-      if (!this.gatewaySenderIds.isEmpty())
-        s |= GATEWAY_SENDER_IDS_MASK;
-      if (!this.asyncEventQueueIds.isEmpty())
-        s |= ASYNC_EVENT_QUEUE_IDS_MASK;
-      if (this.isOffHeap)
-        s |= IS_OFF_HEAP_MASK;
-      if (!this.cacheServiceProfiles.isEmpty())
-        s |= CACHE_SERVICE_PROFILES_MASK;
+      if (this.hasCacheLoader) s |= LOADER_MASK;
+      if (this.hasCacheWriter) s |= WRITER_MASK;
+      if (this.hasCacheListener) s |= LISTENER_MASK;
+      if (this.scope.isDistributedAck()) s |= DIST_ACK_MASK;
+      if (this.scope.isGlobal()) s |= GLOBAL_MASK;
+      if (this.inRecovery) s |= IN_RECOVERY_MASK;
+      if (this.isPartitioned) s |= IS_PARTITIONED_MASK;
+      if (this.isGatewayEnabled) s |= IS_GATEWAY_ENABLED_MASK;
+      if (this.isPersistent) s |= PERSISTENT_MASK;
+      if (this.regionInitialized) s |= REGION_INITIALIZED_MASK;
+      if (this.persistentID != null) s |= PERSISTENT_ID_MASK;
+      if (this.hasCacheServer) s |= HAS_CACHE_SERVER_MASK;
+      if (this.requiresOldValueInEvents) s |= REQUIRES_OLD_VALUE_MASK;
+      if (this.persistenceInitialized) s |= PERSISTENCE_INITIALIZED_MASK;
+      if (!this.gatewaySenderIds.isEmpty()) s |= GATEWAY_SENDER_IDS_MASK;
+      if (!this.asyncEventQueueIds.isEmpty()) s |= ASYNC_EVENT_QUEUE_IDS_MASK;
+      if (this.isOffHeap) s |= IS_OFF_HEAP_MASK;
+      if (!this.cacheServiceProfiles.isEmpty()) s |= CACHE_SERVICE_PROFILES_MASK;
       Assert.assertTrue(!this.scope.isLocal());
       return s;
     }
@@ -667,7 +661,10 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
       this.hasCacheLoader = (s & LOADER_MASK) != 0;
       this.hasCacheWriter = (s & WRITER_MASK) != 0;
       this.hasCacheListener = (s & LISTENER_MASK) != 0;
-      this.scope = (s & DIST_ACK_MASK) != 0 ? Scope.DISTRIBUTED_ACK : ((s & GLOBAL_MASK) != 0 ? Scope.GLOBAL : Scope.DISTRIBUTED_NO_ACK);
+      this.scope =
+          (s & DIST_ACK_MASK) != 0
+              ? Scope.DISTRIBUTED_ACK
+              : ((s & GLOBAL_MASK) != 0 ? Scope.GLOBAL : Scope.DISTRIBUTED_NO_ACK);
       this.inRecovery = (s & IN_RECOVERY_MASK) != 0;
       this.isPartitioned = (s & IS_PARTITIONED_MASK) != 0;
       this.isGatewayEnabled = (s & IS_GATEWAY_ENABLED_MASK) != 0;
@@ -681,15 +678,14 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
 
     /**
      * Sets the SubscriptionAttributes for the region that this profile is on
+     *
      * @since GemFire 5.0
      */
     public void setSubscriptionAttributes(SubscriptionAttributes sa) {
       this.subscriptionAttributes = sa;
     }
 
-    /**
-     * Return true if cached or allEvents and a listener
-     */
+    /** Return true if cached or allEvents and a listener */
     public boolean cachedOrAllEventsWithListener() {
       // to fix bug 36804 to ignore hasCacheListener
       //       return this.dataPolicy.withStorage() ||
@@ -697,16 +693,12 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
       return cachedOrAllEvents();
     }
 
-    /**
-     * Return true if cached or allEvents
-     */
+    /** Return true if cached or allEvents */
     public boolean cachedOrAllEvents() {
       return this.dataPolicy.withStorage() || allEvents();
     }
 
-    /**
-     * Return true if subscribed to all events
-     */
+    /** Return true if subscribed to all events */
     public boolean allEvents() {
       return this.subscriptionAttributes.getInterestPolicy().isAll();
     }
@@ -719,11 +711,14 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
       return (bits & CACHE_SERVICE_PROFILES_MASK) != 0;
     }
 
-    /**
-     * Used to process an incoming cache profile.
-     */
+    /** Used to process an incoming cache profile. */
     @Override
-    public void processIncoming(DistributionManager dm, String adviseePath, boolean removeProfile, boolean exchangeProfiles, final List<Profile> replyProfiles) {
+    public void processIncoming(
+        DistributionManager dm,
+        String adviseePath,
+        boolean removeProfile,
+        boolean exchangeProfiles,
+        final List<Profile> replyProfiles) {
       try {
         Assert.assertTrue(adviseePath != null, "adviseePath was null");
 
@@ -741,13 +736,28 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
               return;
             }
           }
-          handleCacheDistributionAdvisee((CacheDistributionAdvisee) lclRgn, adviseePath, removeProfile, exchangeProfiles, true, replyProfiles);
+          handleCacheDistributionAdvisee(
+              (CacheDistributionAdvisee) lclRgn,
+              adviseePath,
+              removeProfile,
+              exchangeProfiles,
+              true,
+              replyProfiles);
         } else {
           if (lclRgn == null) {
-            handleCacheDistributionAdvisee(PartitionedRegionHelper.getProxyBucketRegion(GemFireCacheImpl.getInstance(), adviseePath, false), adviseePath, removeProfile, exchangeProfiles, false, replyProfiles);
+            handleCacheDistributionAdvisee(
+                PartitionedRegionHelper.getProxyBucketRegion(
+                    GemFireCacheImpl.getInstance(), adviseePath, false),
+                adviseePath,
+                removeProfile,
+                exchangeProfiles,
+                false,
+                replyProfiles);
           } else {
             if (logger.isDebugEnabled()) {
-              logger.debug("While processing UpdateAttributes message, region has local scope: {}", adviseePath);
+              logger.debug(
+                  "While processing UpdateAttributes message, region has local scope: {}",
+                  adviseePath);
             }
           }
         }
@@ -770,23 +780,28 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
     }
 
     /**
-     * Attempts to process this message with the specified
-     * <code>CacheDistributionAdvisee</code>.
-     * 
-     * @param cda
-     *          the CacheDistributionAdvisee to apply this profile to
-     * @param isRealRegion
-     *          true if CacheDistributionAdvisee is a real region
+     * Attempts to process this message with the specified <code>CacheDistributionAdvisee</code>.
+     *
+     * @param cda the CacheDistributionAdvisee to apply this profile to
+     * @param isRealRegion true if CacheDistributionAdvisee is a real region
      */
-    private void handleCacheDistributionAdvisee(CacheDistributionAdvisee cda, String adviseePath, boolean removeProfile, boolean exchangeProfiles, boolean isRealRegion, final List<Profile> replyProfiles) {
+    private void handleCacheDistributionAdvisee(
+        CacheDistributionAdvisee cda,
+        String adviseePath,
+        boolean removeProfile,
+        boolean exchangeProfiles,
+        boolean isRealRegion,
+        final List<Profile> replyProfiles) {
       if (cda != null) {
-        handleDistributionAdvisee(cda, removeProfile, isRealRegion && exchangeProfiles, replyProfiles);
+        handleDistributionAdvisee(
+            cda, removeProfile, isRealRegion && exchangeProfiles, replyProfiles);
         if (logger.isDebugEnabled()) {
           logger.debug("While processing UpdateAttributes message, handled advisee: {}", cda);
         }
       } else {
         if (logger.isDebugEnabled()) {
-          logger.debug("While processing UpdateAttributes message, region not found: {}", adviseePath);
+          logger.debug(
+              "While processing UpdateAttributes message, region not found: {}", adviseePath);
         }
       }
     }
@@ -909,9 +924,10 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
     /** Set of peers that are preloaded */
     protected final Set<InternalDistributedMember> preloaded;
 
-    /** Set of tertiary recipients which are not replicates, in which case
-     *  they should all be queried and a superset taken of their images.
-     *  To be used only if the image cannot be obtained from the replicates set.
+    /**
+     * Set of tertiary recipients which are not replicates, in which case they should all be queried
+     * and a superset taken of their images. To be used only if the image cannot be obtained from
+     * the replicates set.
      */
     protected Set<InternalDistributedMember> others;
 
@@ -921,12 +937,19 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
     /** Set of members that may not have finished initializing their caches */
     protected final Set<InternalDistributedMember> uninitialized;
 
-    /** Set of members that are replicates but not persistent*/
+    /** Set of members that are replicates but not persistent */
     protected final Set<InternalDistributedMember> nonPersistent;
 
     private final Map<InternalDistributedMember, CacheProfile> memberProfiles;
 
-    protected InitialImageAdvice(Set<InternalDistributedMember> replicates, Set<InternalDistributedMember> others, Set<InternalDistributedMember> preloaded, Set<InternalDistributedMember> empties, Set<InternalDistributedMember> uninitialized, Set<InternalDistributedMember> nonPersistent, Map<InternalDistributedMember, CacheProfile> memberProfiles) {
+    protected InitialImageAdvice(
+        Set<InternalDistributedMember> replicates,
+        Set<InternalDistributedMember> others,
+        Set<InternalDistributedMember> preloaded,
+        Set<InternalDistributedMember> empties,
+        Set<InternalDistributedMember> uninitialized,
+        Set<InternalDistributedMember> nonPersistent,
+        Map<InternalDistributedMember, CacheProfile> memberProfiles) {
       this.replicates = replicates;
       this.others = others;
       this.preloaded = preloaded;
@@ -937,14 +960,31 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
     }
 
     public InitialImageAdvice() {
-      this(Collections.EMPTY_SET, Collections.EMPTY_SET, Collections.EMPTY_SET, Collections.EMPTY_SET, Collections.EMPTY_SET, Collections.EMPTY_SET, Collections.<InternalDistributedMember, CacheProfile> emptyMap());
+      this(
+          Collections.EMPTY_SET,
+          Collections.EMPTY_SET,
+          Collections.EMPTY_SET,
+          Collections.EMPTY_SET,
+          Collections.EMPTY_SET,
+          Collections.EMPTY_SET,
+          Collections.<InternalDistributedMember, CacheProfile>emptyMap());
     }
 
     @Override
     public String toString() {
-      return "InitialImageAdvice(" + "replicates=" + this.replicates + "; others=" + this.others + "; preloaded=" + this.preloaded + "; empty=" + this.empties + "; initializing=" + this.uninitialized + ")";
+      return "InitialImageAdvice("
+          + "replicates="
+          + this.replicates
+          + "; others="
+          + this.others
+          + "; preloaded="
+          + this.preloaded
+          + "; empty="
+          + this.empties
+          + "; initializing="
+          + this.uninitialized
+          + ")";
     }
-
   }
 
   // moved putProfile, doPutProfile, and putProfile to DistributionAdvisor
@@ -960,23 +1000,25 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
   // moved endOperation to DistributionAdvisor
 
   /**
-   * Provide only the new replicates given a set of existing
-   * memberIds
+   * Provide only the new replicates given a set of existing memberIds
+   *
    * @param oldRecipients the <code>Set</code> of memberIds that have received the message
    * @return the set of new replicate's memberIds
    * @since GemFire 5.1
    */
   public Set adviseNewReplicates(final Set oldRecipients) {
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile cp = (CacheProfile) profile;
-        if (cp.dataPolicy.withReplication() && !oldRecipients.contains(cp.getDistributedMember())) {
-          return true;
-        }
-        return false;
-      }
-    });
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile cp = (CacheProfile) profile;
+            if (cp.dataPolicy.withReplication()
+                && !oldRecipients.contains(cp.getDistributedMember())) {
+              return true;
+            }
+            return false;
+          }
+        });
   }
 
   // moved waitForCurrentOperations to DistributionAdvisor
@@ -985,79 +1027,82 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
 
   /**
    * Provide all the replicates including persistent replicates.
-   * 
+   *
    * @return the set of replicate's memberIds
    * @since GemFire 5.8
    */
   public Set<InternalDistributedMember> adviseReplicates() {
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile cp = (CacheProfile) profile;
-        if (cp.dataPolicy.withReplication()) {
-          return true;
-        }
-        return false;
-      }
-    });
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile cp = (CacheProfile) profile;
+            if (cp.dataPolicy.withReplication()) {
+              return true;
+            }
+            return false;
+          }
+        });
   }
 
   /**
    * Provide only the preloadeds given a set of existing memberIds
-   * 
+   *
    * @return the set of preloaded's memberIds
    * @since GemFire prPersistSprint1
    */
   public Set advisePreloadeds() {
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile cp = (CacheProfile) profile;
-        if (cp.dataPolicy.withPreloaded()) {
-          return true;
-        }
-        return false;
-      }
-    });
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile cp = (CacheProfile) profile;
+            if (cp.dataPolicy.withPreloaded()) {
+              return true;
+            }
+            return false;
+          }
+        });
   }
 
   /**
-   * Provide only the empty's (having DataPolicy.EMPTY) given a set of existing
-   * memberIds
-   * 
+   * Provide only the empty's (having DataPolicy.EMPTY) given a set of existing memberIds
+   *
    * @return the set of replicate's memberIds
    * @since GemFire 5.8
    */
   public Set adviseEmptys() {
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile cp = (CacheProfile) profile;
-        if (cp.dataPolicy.isEmpty()) {
-          return true;
-        }
-        return false;
-      }
-    });
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile cp = (CacheProfile) profile;
+            if (cp.dataPolicy.isEmpty()) {
+              return true;
+            }
+            return false;
+          }
+        });
   }
 
   /**
    * Provide only the normals (having DataPolicy.NORMAL) given a set of existing memberIds
-   * 
+   *
    * @return the set of normal's memberIds
    * @since GemFire 5.8
    */
   public Set adviseNormals() {
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile cp = (CacheProfile) profile;
-        if (cp.dataPolicy.isNormal()) {
-          return true;
-        }
-        return false;
-      }
-    });
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile cp = (CacheProfile) profile;
+            if (cp.dataPolicy.isNormal()) {
+              return true;
+            }
+            return false;
+          }
+        });
   }
 
   @Override
@@ -1071,14 +1116,14 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
   }
 
   /**
-   * Returns the list of all persistent members.
-   * For most cases, adviseInitializedPersistentMembers is more appropriate. These
-   * method includes members that are still in the process of GII.
+   * Returns the list of all persistent members. For most cases, adviseInitializedPersistentMembers
+   * is more appropriate. These method includes members that are still in the process of GII.
    */
   public Map<InternalDistributedMember, PersistentMemberID> advisePersistentMembers() {
     initializationGate();
 
-    Map<InternalDistributedMember, PersistentMemberID> result = new HashMap<InternalDistributedMember, PersistentMemberID>();
+    Map<InternalDistributedMember, PersistentMemberID> result =
+        new HashMap<InternalDistributedMember, PersistentMemberID>();
     Profile[] snapshot = this.profiles;
     for (Profile profile : snapshot) {
       CacheProfile cp = (CacheProfile) profile;
@@ -1093,7 +1138,8 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
   public Map<InternalDistributedMember, PersistentMemberID> adviseInitializedPersistentMembers() {
     initializationGate();
 
-    Map<InternalDistributedMember, PersistentMemberID> result = new HashMap<InternalDistributedMember, PersistentMemberID>();
+    Map<InternalDistributedMember, PersistentMemberID> result =
+        new HashMap<InternalDistributedMember, PersistentMemberID>();
     Profile[] snapshot = this.profiles;
     for (Profile profile : snapshot) {
       CacheProfile cp = (CacheProfile) profile;
@@ -1107,13 +1153,14 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
 
   public Set adviseCacheServers() {
     getAdvisee().getCancelCriterion().checkCancelInProgress(null);
-    return adviseFilter(new Filter() {
-      public boolean include(Profile profile) {
-        assert profile instanceof CacheProfile;
-        CacheProfile cp = (CacheProfile) profile;
-        return cp.hasCacheServer;
-      }
-    });
+    return adviseFilter(
+        new Filter() {
+          public boolean include(Profile profile) {
+            assert profile instanceof CacheProfile;
+            CacheProfile cp = (CacheProfile) profile;
+            return cp.hasCacheServer;
+          }
+        });
   }
 
   //Overrided for bucket regions. This listener also receives events
@@ -1127,7 +1174,8 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
   }
 
   @Override
-  public boolean removeId(ProfileId memberId, boolean crashed, boolean destroyed, boolean fromMembershipListener) {
+  public boolean removeId(
+      ProfileId memberId, boolean crashed, boolean destroyed, boolean fromMembershipListener) {
 
     boolean isPersistent = false;
     DiskStoreID persistentId = null;
@@ -1147,7 +1195,8 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
       DistributedRegion r = (DistributedRegion) advisee;
       if (!r.isInitialized() && !r.isUsedForPartitionedRegionBucket()) {
         if (logger.isDebugEnabled()) {
-          logger.debug("recording that {} has left during initialization of {}", memberId, r.getName());
+          logger.debug(
+              "recording that {} has left during initialization of {}", memberId, r.getName());
         }
         ImageState state = r.getImageState();
         if (isPersistent) {
@@ -1164,42 +1213,44 @@ public class CacheDistributionAdvisor extends DistributionAdvisor {
 
   public List<Set<String>> adviseSameGatewaySenderIds(final Set<String> allGatewaySenderIds) {
     final List<Set<String>> differSenderIds = new ArrayList<Set<String>>();
-    fetchProfiles(new Filter() {
-      public boolean include(final Profile profile) {
-        if (profile instanceof CacheProfile) {
-          final CacheProfile cp = (CacheProfile) profile;
-          if (allGatewaySenderIds.equals(cp.gatewaySenderIds)) {
-            return true;
-          } else {
-            differSenderIds.add(allGatewaySenderIds);
-            differSenderIds.add(cp.gatewaySenderIds);
+    fetchProfiles(
+        new Filter() {
+          public boolean include(final Profile profile) {
+            if (profile instanceof CacheProfile) {
+              final CacheProfile cp = (CacheProfile) profile;
+              if (allGatewaySenderIds.equals(cp.gatewaySenderIds)) {
+                return true;
+              } else {
+                differSenderIds.add(allGatewaySenderIds);
+                differSenderIds.add(cp.gatewaySenderIds);
+                return false;
+              }
+            }
             return false;
           }
-        }
-        return false;
-      }
-    });
+        });
     return differSenderIds;
   }
 
   public List<Set<String>> adviseSameAsyncEventQueueIds(final Set<String> allAsyncEventIds) {
     final List<Set<String>> differAsycnQueueIds = new ArrayList<Set<String>>();
-    List l = fetchProfiles(new Filter() {
-      public boolean include(final Profile profile) {
-        if (profile instanceof CacheProfile) {
-          final CacheProfile cp = (CacheProfile) profile;
-          if (allAsyncEventIds.equals(cp.asyncEventQueueIds)) {
-            return true;
-          } else {
-            differAsycnQueueIds.add(allAsyncEventIds);
-            differAsycnQueueIds.add(cp.asyncEventQueueIds);
-            return false;
-          }
-        }
-        return false;
-      }
-    });
+    List l =
+        fetchProfiles(
+            new Filter() {
+              public boolean include(final Profile profile) {
+                if (profile instanceof CacheProfile) {
+                  final CacheProfile cp = (CacheProfile) profile;
+                  if (allAsyncEventIds.equals(cp.asyncEventQueueIds)) {
+                    return true;
+                  } else {
+                    differAsycnQueueIds.add(allAsyncEventIds);
+                    differAsycnQueueIds.add(cp.asyncEventQueueIds);
+                    return false;
+                  }
+                }
+                return false;
+              }
+            });
     return differAsycnQueueIds;
   }
-
 }

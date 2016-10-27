@@ -34,10 +34,7 @@ import org.apache.geode.cache.query.data.Portfolio;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class CompiledGroupBySelectJUnitTest {
   private Region rgn;
@@ -58,7 +55,6 @@ public class CompiledGroupBySelectJUnitTest {
     af.setValueConstraint(valueConstraint);
     Region r1 = CacheUtils.createRegion(regionName, af.create(), false);
     return r1;
-
   }
 
   @Test
@@ -89,7 +85,8 @@ public class CompiledGroupBySelectJUnitTest {
     cs = query.getSimpleSelect();
     assertTrue(cs instanceof CompiledGroupBySelect);
 
-    queryStr = "select count(*) , pf.shortID from /portfolio pf where pf.ID > 0 group by pf.shortID";
+    queryStr =
+        "select count(*) , pf.shortID from /portfolio pf where pf.ID > 0 group by pf.shortID";
     query = (DefaultQuery) qs.newQuery(queryStr);
     cs = query.getSimpleSelect();
     assertTrue(cs instanceof CompiledGroupBySelect);
@@ -104,7 +101,9 @@ public class CompiledGroupBySelectJUnitTest {
     cs = query.getSimpleSelect();
     assertTrue(cs instanceof CompiledSelect);
 
-    queryStr = "select pf.status as status , pf.shortID as shid from /portfolio pf where pf.ID > 0 " + "group by status , shid order by shid";
+    queryStr =
+        "select pf.status as status , pf.shortID as shid from /portfolio pf where pf.ID > 0 "
+            + "group by status , shid order by shid";
     query = (DefaultQuery) qs.newQuery(queryStr);
     cs = query.getSimpleSelect();
     assertTrue(cs instanceof CompiledGroupBySelect);
@@ -118,7 +117,11 @@ public class CompiledGroupBySelectJUnitTest {
       DefaultQuery query = (DefaultQuery) qs.newQuery(queryStr);
       fail("query creation should have failed");
     } catch (QueryInvalidException qie) {
-      assertTrue(qie.toString().indexOf(LocalizedStrings.DefaultQuery_PROJ_COL_ABSENT_IN_GROUP_BY.toLocalizedString()) != -1);
+      assertTrue(
+          qie.toString()
+                  .indexOf(
+                      LocalizedStrings.DefaultQuery_PROJ_COL_ABSENT_IN_GROUP_BY.toLocalizedString())
+              != -1);
     }
 
     queryStr = "select * from /portfolio pf where pf.ID > 0 group by pf.ID";
@@ -126,7 +129,11 @@ public class CompiledGroupBySelectJUnitTest {
       DefaultQuery query = (DefaultQuery) qs.newQuery(queryStr);
       fail("query creation should have failed");
     } catch (QueryInvalidException qie) {
-      assertTrue(qie.toString().indexOf(LocalizedStrings.DefaultQuery_PROJ_COL_ABSENT_IN_GROUP_BY.toLocalizedString()) != -1);
+      assertTrue(
+          qie.toString()
+                  .indexOf(
+                      LocalizedStrings.DefaultQuery_PROJ_COL_ABSENT_IN_GROUP_BY.toLocalizedString())
+              != -1);
     }
 
     queryStr = "select * from /portfolio pf, pf.positions pos where pf.ID > 0 group by pf";
@@ -134,7 +141,9 @@ public class CompiledGroupBySelectJUnitTest {
       DefaultQuery query = (DefaultQuery) qs.newQuery(queryStr);
       fail("query creation should have failed");
     } catch (QueryInvalidException qie) {
-      assertTrue(qie.toString().indexOf("Query contains projected column not present in group by clause") != -1);
+      assertTrue(
+          qie.toString().indexOf("Query contains projected column not present in group by clause")
+              != -1);
     }
   }
 
@@ -146,8 +155,11 @@ public class CompiledGroupBySelectJUnitTest {
       DefaultQuery query = (DefaultQuery) qs.newQuery(queryStr);
       fail("query creation should have failed");
     } catch (QueryInvalidException qie) {
-      assertTrue(qie.toString().indexOf(LocalizedStrings.DefaultQuery_GROUP_BY_COL_ABSENT_IN_PROJ.toLocalizedString()) != -1);
+      assertTrue(
+          qie.toString()
+                  .indexOf(
+                      LocalizedStrings.DefaultQuery_GROUP_BY_COL_ABSENT_IN_PROJ.toLocalizedString())
+              != -1);
     }
   }
-
 }

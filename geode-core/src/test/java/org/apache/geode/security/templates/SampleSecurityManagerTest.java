@@ -36,7 +36,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.security.templates.SampleSecurityManager.Role;
 import org.apache.geode.security.templates.SampleSecurityManager.User;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class SampleSecurityManagerTest {
 
   private SampleSecurityManager sampleSecurityManager;
@@ -44,8 +44,7 @@ public class SampleSecurityManagerTest {
   private File jsonFile;
   private String json;
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
   @Before
   public void setUp() throws Exception {

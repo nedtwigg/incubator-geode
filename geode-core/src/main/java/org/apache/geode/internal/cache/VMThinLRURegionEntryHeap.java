@@ -23,7 +23,8 @@ public abstract class VMThinLRURegionEntryHeap extends VMThinLRURegionEntry {
     super(context, value);
   }
 
-  private static final VMThinLRURegionEntryHeapFactory factory = new VMThinLRURegionEntryHeapFactory();
+  private static final VMThinLRURegionEntryHeapFactory factory =
+      new VMThinLRURegionEntryHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;

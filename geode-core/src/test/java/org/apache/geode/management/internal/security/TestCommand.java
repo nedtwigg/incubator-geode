@@ -31,8 +31,10 @@ public class TestCommand {
   public static ResourcePermission dataManage = new ResourcePermission("DATA", "MANAGE");
 
   public static ResourcePermission regionARead = new ResourcePermission("DATA", "READ", "RegionA");
-  public static ResourcePermission regionAWrite = new ResourcePermission("DATA", "WRITE", "RegionA");
-  public static ResourcePermission regionAManage = new ResourcePermission("DATA", "MANAGE", "RegionA");
+  public static ResourcePermission regionAWrite =
+      new ResourcePermission("DATA", "WRITE", "RegionA");
+  public static ResourcePermission regionAManage =
+      new ResourcePermission("DATA", "MANAGE", "RegionA");
 
   public static ResourcePermission clusterRead = new ResourcePermission("CLUSTER", "READ");
   public static ResourcePermission clusterWrite = new ResourcePermission("CLUSTER", "WRITE");
@@ -97,8 +99,10 @@ public class TestCommand {
 
     //Data Commands
     createTestCommand("rebalance --include-region=RegionA", dataManage);
-    createTestCommand("export data --region=RegionA --file=export.txt --member=exportMember", regionARead);
-    createTestCommand("import data --region=RegionA --file=import.txt --member=importMember", regionAWrite);
+    createTestCommand(
+        "export data --region=RegionA --file=export.txt --member=exportMember", regionARead);
+    createTestCommand(
+        "import data --region=RegionA --file=import.txt --member=importMember", regionAWrite);
     createTestCommand("put --key=key1 --value=value1 --region=RegionA", regionAWrite);
     createTestCommand("get --key=key1 --region=RegionA", regionARead);
     createTestCommand("remove --region=RegionA --key=key1", regionAWrite);
@@ -127,12 +131,14 @@ public class TestCommand {
 
     // DurableClientCommands
     createTestCommand("close durable-client --durable-client-id=client1", dataManage);
-    createTestCommand("close durable-cq --durable-client-id=client1 --durable-cq-name=cq1", dataManage);
+    createTestCommand(
+        "close durable-cq --durable-client-id=client1 --durable-cq-name=cq1", dataManage);
     createTestCommand("show subscription-queue-size --durable-client-id=client1", clusterRead);
     createTestCommand("list durable-cqs --durable-client-id=client1", clusterRead);
 
     //ExportIMportSharedConfigurationCommands
-    createTestCommand("export cluster-configuration --zip-file-name=mySharedConfig.zip", clusterRead);
+    createTestCommand(
+        "export cluster-configuration --zip-file-name=mySharedConfig.zip", clusterRead);
     createTestCommand("import cluster-configuration --zip-file-name=value.zip", clusterManage);
 
     //FunctionCommands
@@ -147,8 +153,11 @@ public class TestCommand {
     //IndexCommands
     createTestCommand("clear defined indexes", dataManage);
     createTestCommand("create defined indexes", dataManage);
-    createTestCommand("create index --name=myKeyIndex --expression=region1.Id --region=RegionA --type=key", regionAManage);
-    createTestCommand("define index --name=myIndex1 --expression=exp1 --region=/RegionA", regionAManage);
+    createTestCommand(
+        "create index --name=myKeyIndex --expression=region1.Id --region=RegionA --type=key",
+        regionAManage);
+    createTestCommand(
+        "define index --name=myIndex1 --expression=exp1 --region=/RegionA", regionAManage);
     createTestCommand("destroy index --member=server2", dataManage);
     createTestCommand("destroy index --region=RegionA --member=server2", regionAManage);
     createTestCommand("list indexes", clusterRead);
@@ -184,7 +193,8 @@ public class TestCommand {
     //createTestCommand("pdx rename --old=org.apache --new=com.pivotal --disk-store=ds1 --disk-dirs=/diskDir1", dataManage);
 
     // Queue Commands
-    createTestCommand("create async-event-queue --id=myAEQ --listener=myApp.myListener", dataManage);
+    createTestCommand(
+        "create async-event-queue --id=myAEQ --listener=myApp.myListener", dataManage);
     createTestCommand("list async-event-queues", clusterRead);
 
     //RegionCommands
@@ -205,7 +215,8 @@ public class TestCommand {
     createTestCommand("sh ls", null);
 
     // WAN Commands
-    createTestCommand("create gateway-sender --id=sender1 --remote-distributed-system-id=2", dataManage);
+    createTestCommand(
+        "create gateway-sender --id=sender1 --remote-distributed-system-id=2", dataManage);
     createTestCommand("start gateway-sender --id=sender1", dataManage);
     createTestCommand("pause gateway-sender --id=sender1", dataManage);
     createTestCommand("resume gateway-sender --id=sender1", dataManage);

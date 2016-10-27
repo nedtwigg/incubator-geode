@@ -20,8 +20,8 @@ import org.apache.geode.admin.*;
 import org.apache.geode.distributed.DistributedMember;
 
 /**
- * An event delivered to a {@link SystemMembershipListener} when a
- * member has joined or left the distributed system.
+ * An event delivered to a {@link SystemMembershipListener} when a member has joined or left the
+ * distributed system.
  *
  * @since GemFire 5.0
  */
@@ -32,10 +32,7 @@ public class SystemMembershipEventImpl implements SystemMembershipEvent {
 
   ///////////////////////  Constructors  ///////////////////////
 
-  /**
-   * Creates a new <code>SystemMembershipEvent</code> for the member
-   * with the given id.
-   */
+  /** Creates a new <code>SystemMembershipEvent</code> for the member with the given id. */
   protected SystemMembershipEventImpl(DistributedMember id) {
     this.id = id;
   }
@@ -66,5 +63,4 @@ public class SystemMembershipEventImpl implements SystemMembershipEvent {
   public String toString() {
     return "Member " + this.getMemberId();
   }
-
 }

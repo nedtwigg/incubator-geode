@@ -44,11 +44,10 @@ import org.apache.geode.security.AccessControl;
 import org.apache.geode.security.NotAuthorizedException;
 
 /**
- * An authorization implementation for testing that checks for authorization
- * information in post-operation filtering, removes that field and allows the
- * operation only if the authorization field in {@link ObjectWithAuthz} object
- * allows the current principal.
- * 
+ * An authorization implementation for testing that checks for authorization information in
+ * post-operation filtering, removes that field and allows the operation only if the authorization
+ * field in {@link ObjectWithAuthz} object allows the current principal.
+ *
  * @since GemFire 5.5
  */
 public class FilterPostAuthorization implements AccessControl {
@@ -58,12 +57,14 @@ public class FilterPostAuthorization implements AccessControl {
   private LogWriterI18n logger;
 
   static {
-    Instantiator.register(new Instantiator(ObjectWithAuthz.class, ObjectWithAuthz.CLASSID) {
-      @Override
-      public DataSerializable newInstance() {
-        return new ObjectWithAuthz();
-      }
-    }, false);
+    Instantiator.register(
+        new Instantiator(ObjectWithAuthz.class, ObjectWithAuthz.CLASSID) {
+          @Override
+          public DataSerializable newInstance() {
+            return new ObjectWithAuthz();
+          }
+        },
+        false);
   }
 
   public FilterPostAuthorization() {
@@ -77,7 +78,8 @@ public class FilterPostAuthorization implements AccessControl {
     return new FilterPostAuthorization();
   }
 
-  public void init(Principal principal, DistributedMember remoteMember, Cache cache) throws NotAuthorizedException {
+  public void init(Principal principal, DistributedMember remoteMember, Cache cache)
+      throws NotAuthorizedException {
 
     this.principalName = (principal == null ? "" : principal.getName());
     this.logger = cache.getSecurityLoggerI18n();
@@ -94,20 +96,30 @@ public class FilterPostAuthorization implements AccessControl {
     try {
       obj = DataSerializer.readObject(dis);
       if (this.logger.finerEnabled()) {
-        this.logger.finer("FilterPostAuthorization: successfully read object " + "from serialized object: " + obj);
+        this.logger.finer(
+            "FilterPostAuthorization: successfully read object "
+                + "from serialized object: "
+                + obj);
       }
     } catch (Exception ex) {
-      this.logger.severe(LocalizedStrings.FilterPostAuthorization_FILTERPOSTAUTHORIZATION_AN_EXCEPTION_WAS_THROWN_WHILE_TRYING_TO_DESERIALIZE, ex);
+      this.logger.severe(
+          LocalizedStrings
+              .FilterPostAuthorization_FILTERPOSTAUTHORIZATION_AN_EXCEPTION_WAS_THROWN_WHILE_TRYING_TO_DESERIALIZE,
+          ex);
       return null;
     }
     obj = checkObjectAuth(obj);
     if (obj != null) {
-      HeapDataOutputStream hos = new HeapDataOutputStream(serializedObj.length + 32, Version.CURRENT);
+      HeapDataOutputStream hos =
+          new HeapDataOutputStream(serializedObj.length + 32, Version.CURRENT);
       try {
         DataSerializer.writeObject(obj, hos);
         return hos.toByteArray();
       } catch (Exception ex) {
-        this.logger.severe(LocalizedStrings.FilterPostAuthorization_FILTERPOSTAUTHORIZATION_AN_EXCEPTION_WAS_THROWN_WHILE_TRYING_TO_SERIALIZE, ex);
+        this.logger.severe(
+            LocalizedStrings
+                .FilterPostAuthorization_FILTERPOSTAUTHORIZATION_AN_EXCEPTION_WAS_THROWN_WHILE_TRYING_TO_SERIALIZE,
+            ex);
       }
     }
     return null;
@@ -126,11 +138,18 @@ public class FilterPostAuthorization implements AccessControl {
       int authzIndex = ((Integer) authzObj.getAuthz()).intValue() - '0';
       authzIndex %= 10;
       if ((lastChar == 0) || (authzIndex % lastChar != 0)) {
-        this.logger.warning(LocalizedStrings.FilterPostAuthorization_FILTERPOSTAUTHORIZATION_THE_USER_0_IS_NOT_AUTHORIZED_FOR_THE_OBJECT_1, new Object[] { this.principalName, authzObj.getVal() });
+        this.logger.warning(
+            LocalizedStrings
+                .FilterPostAuthorization_FILTERPOSTAUTHORIZATION_THE_USER_0_IS_NOT_AUTHORIZED_FOR_THE_OBJECT_1,
+            new Object[] {this.principalName, authzObj.getVal()});
         return null;
       } else {
         if (this.logger.fineEnabled()) {
-          this.logger.fine("FilterPostAuthorization: user [" + this.principalName + "] authorized for object: " + authzObj.getVal());
+          this.logger.fine(
+              "FilterPostAuthorization: user ["
+                  + this.principalName
+                  + "] authorized for object: "
+                  + authzObj.getVal());
         }
         if (value instanceof CqEntry) {
           return new CqEntry(((CqEntry) value).getKey(), authzObj.getVal());
@@ -139,7 +158,10 @@ public class FilterPostAuthorization implements AccessControl {
         }
       }
     }
-    this.logger.warning(LocalizedStrings.FilterPostAuthorization_FILTERPOSTAUTHORIZATION_THE_OBJECT_OF_TYPE_0_IS_NOT_AN_INSTANCE_OF_1, new Object[] { obj.getClass(), ObjectWithAuthz.class });
+    this.logger.warning(
+        LocalizedStrings
+            .FilterPostAuthorization_FILTERPOSTAUTHORIZATION_THE_OBJECT_OF_TYPE_0_IS_NOT_AN_INSTANCE_OF_1,
+        new Object[] {obj.getClass(), ObjectWithAuthz.class});
     return null;
   }
 
@@ -205,5 +227,4 @@ public class FilterPostAuthorization implements AccessControl {
 
     this.principalName = null;
   }
-
 }

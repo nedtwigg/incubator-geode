@@ -19,13 +19,10 @@ package org.apache.geode.cache.query.internal.parse;
 import antlr.*;
 import org.apache.geode.cache.query.internal.QCompiler;
 
-/**
- *
- */
+/** */
 public class ASTLimit extends GemFireAST {
 
-  public ASTLimit() {
-  }
+  public ASTLimit() {}
 
   /** Creates a new instance of ASTSortCriterion */
   public ASTLimit(Token t) {
@@ -36,5 +33,4 @@ public class ASTLimit extends GemFireAST {
     super.compile(compiler);
     compiler.compileLimit(this.getText());
   }
-
 }

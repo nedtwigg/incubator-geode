@@ -40,24 +40,21 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
-/**
- * 
- * @since GemFire 7.0
- * 
- */
+/** @since GemFire 7.0 */
 public class GatewaySenderFactoryImpl implements InternalGatewaySenderFactory {
 
   private static final Logger logger = LogService.getLogger();
 
   /**
-   * Used internally to pass the attributes from this factory to the real
-   * GatewaySender it is creating.
+   * Used internally to pass the attributes from this factory to the real GatewaySender it is
+   * creating.
    */
   private GatewaySenderAttributes attrs = new GatewaySenderAttributes();
 
   private Cache cache;
 
-  private static final AtomicBoolean GATEWAY_CONNECTION_READ_TIMEOUT_PROPERTY_CHECKED = new AtomicBoolean(false);
+  private static final AtomicBoolean GATEWAY_CONNECTION_READ_TIMEOUT_PROPERTY_CHECKED =
+      new AtomicBoolean(false);
 
   public GatewaySenderFactoryImpl(Cache cache) {
     this.cache = cache;
@@ -176,19 +173,31 @@ public class GatewaySenderFactoryImpl implements InternalGatewaySenderFactory {
   }
 
   public GatewaySender create(String id, int remoteDSId) {
-    int myDSId = InternalDistributedSystem.getAnyInstance().getDistributionManager().getDistributedSystemId();
+    int myDSId =
+        InternalDistributedSystem.getAnyInstance()
+            .getDistributionManager()
+            .getDistributedSystemId();
     if (remoteDSId == myDSId) {
-      throw new GatewaySenderException(LocalizedStrings.GatewaySenderImpl_GATEWAY_0_CANNOT_BE_CREATED_WITH_REMOTE_SITE_ID_EQUAL_TO_THIS_SITE_ID.toLocalizedString(id));
+      throw new GatewaySenderException(
+          LocalizedStrings
+              .GatewaySenderImpl_GATEWAY_0_CANNOT_BE_CREATED_WITH_REMOTE_SITE_ID_EQUAL_TO_THIS_SITE_ID
+              .toLocalizedString(id));
     }
     if (remoteDSId < 0) {
-      throw new GatewaySenderException(LocalizedStrings.GatewaySenderImpl_GATEWAY_0_CANNOT_BE_CREATED_WITH_REMOTE_SITE_ID_LESS_THAN_ZERO.toLocalizedString(id));
+      throw new GatewaySenderException(
+          LocalizedStrings
+              .GatewaySenderImpl_GATEWAY_0_CANNOT_BE_CREATED_WITH_REMOTE_SITE_ID_LESS_THAN_ZERO
+              .toLocalizedString(id));
     }
     this.attrs.id = id;
     this.attrs.remoteDs = remoteDSId;
     GatewaySender sender = null;
 
     if (this.attrs.getDispatcherThreads() <= 0) {
-      throw new GatewaySenderException(LocalizedStrings.GatewaySenderImpl_GATEWAY_SENDER_0_CANNOT_HAVE_DISPATCHER_THREADS_LESS_THAN_1.toLocalizedString(id));
+      throw new GatewaySenderException(
+          LocalizedStrings
+              .GatewaySenderImpl_GATEWAY_SENDER_0_CANNOT_HAVE_DISPATCHER_THREADS_LESS_THAN_1
+              .toLocalizedString(id));
     }
 
     // Verify socket read timeout if a proper logger is available
@@ -196,15 +205,29 @@ public class GatewaySenderFactoryImpl implements InternalGatewaySenderFactory {
       // If socket read timeout is less than the minimum, log a warning.
       // Ideally, this should throw a GatewaySenderException, but wan dunit tests
       // were failing, and we were running out of time to change them.
-      if (this.attrs.getSocketReadTimeout() != 0 && this.attrs.getSocketReadTimeout() < GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.Gateway_CONFIGURED_SOCKET_READ_TIMEOUT_TOO_LOW, new Object[] { "GatewaySender " + id, this.attrs.getSocketReadTimeout(), GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT }));
+      if (this.attrs.getSocketReadTimeout() != 0
+          && this.attrs.getSocketReadTimeout() < GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT) {
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.Gateway_CONFIGURED_SOCKET_READ_TIMEOUT_TOO_LOW,
+                new Object[] {
+                  "GatewaySender " + id,
+                  this.attrs.getSocketReadTimeout(),
+                  GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT
+                }));
         this.attrs.socketReadTimeout = GatewaySender.MINIMUM_SOCKET_READ_TIMEOUT;
       }
 
       // Log a warning if the old system property is set.
       if (GATEWAY_CONNECTION_READ_TIMEOUT_PROPERTY_CHECKED.compareAndSet(false, true)) {
         if (System.getProperty(GatewaySender.GATEWAY_CONNECTION_READ_TIMEOUT_PROPERTY) != null) {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.Gateway_OBSOLETE_SYSTEM_POPERTY, new Object[] { GatewaySender.GATEWAY_CONNECTION_READ_TIMEOUT_PROPERTY, "GatewaySender socket read timeout" }));
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings.Gateway_OBSOLETE_SYSTEM_POPERTY,
+                  new Object[] {
+                    GatewaySender.GATEWAY_CONNECTION_READ_TIMEOUT_PROPERTY,
+                    "GatewaySender socket read timeout"
+                  }));
         }
       }
     }
@@ -215,8 +238,12 @@ public class GatewaySenderFactoryImpl implements InternalGatewaySenderFactory {
       //            LocalizedStrings.GatewaySenderImpl_PARALLEL_GATEWAY_SENDER_0_CANNOT_BE_CREATED_WITH_DISPATCHER_THREADS_OTHER_THAN_1
       //                .toLocalizedString(id));
       //      }
-      if ((this.attrs.getOrderPolicy() != null) && this.attrs.getOrderPolicy().equals(OrderPolicy.THREAD)) {
-        throw new GatewaySenderException(LocalizedStrings.GatewaySenderImpl_PARALLEL_GATEWAY_SENDER_0_CANNOT_BE_CREATED_WITH_ORDER_POLICY_1.toLocalizedString(id, this.attrs.getOrderPolicy()));
+      if ((this.attrs.getOrderPolicy() != null)
+          && this.attrs.getOrderPolicy().equals(OrderPolicy.THREAD)) {
+        throw new GatewaySenderException(
+            LocalizedStrings
+                .GatewaySenderImpl_PARALLEL_GATEWAY_SENDER_0_CANNOT_BE_CREATED_WITH_ORDER_POLICY_1
+                .toLocalizedString(id, this.attrs.getOrderPolicy()));
       }
       if (this.cache instanceof GemFireCacheImpl) {
         sender = new ParallelGatewaySenderImpl(this.cache, this.attrs);
@@ -231,7 +258,10 @@ public class GatewaySenderFactoryImpl implements InternalGatewaySenderFactory {
       }
     } else {
       if (this.attrs.getAsyncEventListeners().size() > 0) {
-        throw new GatewaySenderException(LocalizedStrings.SerialGatewaySenderImpl_GATEWAY_0_CANNOT_DEFINE_A_REMOTE_SITE_BECAUSE_AT_LEAST_ONE_LISTENER_IS_ALREADY_ADDED.toLocalizedString(id));
+        throw new GatewaySenderException(
+            LocalizedStrings
+                .SerialGatewaySenderImpl_GATEWAY_0_CANNOT_DEFINE_A_REMOTE_SITE_BECAUSE_AT_LEAST_ONE_LISTENER_IS_ALREADY_ADDED
+                .toLocalizedString(id));
       }
       //      if (this.attrs.getOrderPolicy() != null) {
       //        if (this.attrs.getDispatcherThreads() == GatewaySender.DEFAULT_DISPATCHER_THREADS) {
@@ -263,12 +293,17 @@ public class GatewaySenderFactoryImpl implements InternalGatewaySenderFactory {
     GatewaySender sender = null;
 
     if (this.attrs.getDispatcherThreads() <= 0) {
-      throw new AsyncEventQueueConfigurationException(LocalizedStrings.AsyncEventQueue_0_CANNOT_HAVE_DISPATCHER_THREADS_LESS_THAN_1.toLocalizedString(id));
+      throw new AsyncEventQueueConfigurationException(
+          LocalizedStrings.AsyncEventQueue_0_CANNOT_HAVE_DISPATCHER_THREADS_LESS_THAN_1
+              .toLocalizedString(id));
     }
 
     if (this.attrs.isParallel()) {
-      if ((this.attrs.getOrderPolicy() != null) && this.attrs.getOrderPolicy().equals(OrderPolicy.THREAD)) {
-        throw new AsyncEventQueueConfigurationException(LocalizedStrings.AsyncEventQueue_0_CANNOT_BE_CREATED_WITH_ORDER_POLICY_1.toLocalizedString(id, this.attrs.getOrderPolicy()));
+      if ((this.attrs.getOrderPolicy() != null)
+          && this.attrs.getOrderPolicy().equals(OrderPolicy.THREAD)) {
+        throw new AsyncEventQueueConfigurationException(
+            LocalizedStrings.AsyncEventQueue_0_CANNOT_BE_CREATED_WITH_ORDER_POLICY_1
+                .toLocalizedString(id, this.attrs.getOrderPolicy()));
       }
 
       if (this.cache instanceof GemFireCacheImpl) {
@@ -316,7 +351,8 @@ public class GatewaySenderFactoryImpl implements InternalGatewaySenderFactory {
     return this;
   }
 
-  public GatewaySenderFactory setGatewayEventSubstitutionFilter(GatewayEventSubstitutionFilter filter) {
+  public GatewaySenderFactory setGatewayEventSubstitutionFilter(
+      GatewayEventSubstitutionFilter filter) {
     this.attrs.eventSubstitutionFilter = filter;
     return this;
   }

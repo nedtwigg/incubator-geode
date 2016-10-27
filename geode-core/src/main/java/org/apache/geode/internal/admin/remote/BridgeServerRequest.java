@@ -24,8 +24,8 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import java.io.*;
 
 /**
- * A message that is sent to a VM that hosts a cache to perform an
- * administrative operation on one of its bridge servers.
+ * A message that is sent to a VM that hosts a cache to perform an administrative operation on one
+ * of its bridge servers.
  *
  * @since GemFire 4.0
  */
@@ -59,108 +59,90 @@ public final class BridgeServerRequest extends AdminRequest {
 
   ////////////////////  Static Methods  ////////////////////
 
-  /**
-   * Creates a <code>BridgeServerRequest</code> for adding a new
-   * bridge server.
-   */
+  /** Creates a <code>BridgeServerRequest</code> for adding a new bridge server. */
   public static BridgeServerRequest createForAdd(CacheInfo cache) {
     BridgeServerRequest request = new BridgeServerRequest();
     request.cacheId = cache.getId();
     request.operation = ADD_OPERATION;
-    request.friendlyName = LocalizedStrings.BridgeServerRequest_ADD_BRIDGE_SERVER.toLocalizedString();
+    request.friendlyName =
+        LocalizedStrings.BridgeServerRequest_ADD_BRIDGE_SERVER.toLocalizedString();
     request.bridgeInfo = null;
     return request;
   }
 
-  /**
-   * Creates a <code>BridgeServerRequest</code> for adding a new
-   * bridge server.
-   */
+  /** Creates a <code>BridgeServerRequest</code> for adding a new bridge server. */
   public static BridgeServerRequest createForInfo(CacheInfo cache, int id) {
     BridgeServerRequest request = new BridgeServerRequest();
     request.cacheId = cache.getId();
     request.operation = INFO_OPERATION;
-    request.friendlyName = LocalizedStrings.BridgeServerRequest_GET_INFO_ABOUT_BRIDGE_SERVER_0.toLocalizedString(Integer.valueOf(id));
+    request.friendlyName =
+        LocalizedStrings.BridgeServerRequest_GET_INFO_ABOUT_BRIDGE_SERVER_0.toLocalizedString(
+            Integer.valueOf(id));
     request.bridgeId = id;
     request.bridgeInfo = null;
     return request;
   }
 
-  /**
-   * Creates a <code>BridgeServerRequest</code> for starting a
-   * bridge server.
-   */
+  /** Creates a <code>BridgeServerRequest</code> for starting a bridge server. */
   public static BridgeServerRequest createForStart(CacheInfo cache, RemoteBridgeServer bridge) {
     BridgeServerRequest request = new BridgeServerRequest();
     request.cacheId = cache.getId();
     request.operation = START_OPERATION;
-    request.friendlyName = LocalizedStrings.BridgeServerRequest_START_BRIDGE_SERVER_0.toLocalizedString(bridge);
+    request.friendlyName =
+        LocalizedStrings.BridgeServerRequest_START_BRIDGE_SERVER_0.toLocalizedString(bridge);
     request.bridgeInfo = bridge;
     return request;
   }
 
-  /**
-   * Creates a <code>BridgeServerRequest</code> for stopping a
-   * bridge server.
-   */
+  /** Creates a <code>BridgeServerRequest</code> for stopping a bridge server. */
   public static BridgeServerRequest createForStop(CacheInfo cache, RemoteBridgeServer bridge) {
     BridgeServerRequest request = new BridgeServerRequest();
     request.cacheId = cache.getId();
     request.operation = STOP_OPERATION;
-    request.friendlyName = LocalizedStrings.BridgeServerRequest_STOP_BRIDGE_SERVER_0.toLocalizedString(bridge);
+    request.friendlyName =
+        LocalizedStrings.BridgeServerRequest_STOP_BRIDGE_SERVER_0.toLocalizedString(bridge);
     request.bridgeInfo = bridge;
     return request;
   }
 
-  /**
-   * Returns a description of the given operation
-   */
+  /** Returns a description of the given operation */
   private static String getOperationDescription(int op) {
     switch (op) {
-    case ADD_OPERATION:
-      return LocalizedStrings.BridgeServerRequest_ADD_BRIDGE_SERVER.toLocalizedString();
-    case INFO_OPERATION:
-      return LocalizedStrings.BridgeServerRequest_GET_INFO_ABOUT_BRIDGE_SERVER_0.toLocalizedString();
-    default:
-      return LocalizedStrings.BridgeServerRequest_UNKNOWN_OPERATION_0.toLocalizedString(Integer.valueOf(op));
+      case ADD_OPERATION:
+        return LocalizedStrings.BridgeServerRequest_ADD_BRIDGE_SERVER.toLocalizedString();
+      case INFO_OPERATION:
+        return LocalizedStrings.BridgeServerRequest_GET_INFO_ABOUT_BRIDGE_SERVER_0
+            .toLocalizedString();
+      default:
+        return LocalizedStrings.BridgeServerRequest_UNKNOWN_OPERATION_0.toLocalizedString(
+            Integer.valueOf(op));
     }
   }
 
   ////////////////////  Instance Methods  ////////////////////
 
-  /**
-   * Creates a <Code>BridgeServerResponse</code> to this request
-   */
+  /** Creates a <Code>BridgeServerResponse</code> to this request */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return BridgeServerResponse.create(dm, this);
   }
 
-  /**
-   * Returns the id of the cache in which the bridge server resides
-   */
+  /** Returns the id of the cache in which the bridge server resides */
   int getCacheId() {
     return this.cacheId;
   }
 
-  /**
-   * Returns this operation to be performed
-   */
+  /** Returns this operation to be performed */
   int getOperation() {
     return this.operation;
   }
 
-  /**
-   * Returns the id of the bridge server for which information is
-   * requested.
-   */
+  /** Returns the id of the bridge server for which information is requested. */
   int getBridgeId() {
     return this.bridgeId;
   }
 
-  /**
-   * Returns the information about the bridge to operate on
-   */
+  /** Returns the information about the bridge to operate on */
   RemoteBridgeServer getBridgeInfo() {
     return this.bridgeInfo;
   }
@@ -191,5 +173,4 @@ public final class BridgeServerRequest extends AdminRequest {
   public String toString() {
     return "BridgeServerRequest: " + getOperationDescription(this.operation);
   }
-
 }

@@ -27,31 +27,49 @@ import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 import org.apache.geode.internal.cache.tier.sockets.VersionedObjectList;
 import org.apache.geode.internal.cache.versions.ConcurrentCacheModificationException;
 
-/**
- * 
- * @since GemFire 6.0tx
- */
+/** @since GemFire 6.0tx */
 public class LocalRegionDataView implements InternalDataView {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getDeserializedValue(java.lang.Object, org.apache.geode.internal.cache.LocalRegion, boolean)
    */
-  public Object getDeserializedValue(KeyInfo keyInfo, LocalRegion localRegion, boolean updateStats, boolean disableCopyOnRead, boolean preferCD, EntryEventImpl clientEvent, boolean returnTombstones, boolean retainResult) {
-    return localRegion.getDeserializedValue(null, keyInfo, updateStats, disableCopyOnRead, preferCD, clientEvent, returnTombstones, retainResult);
+  public Object getDeserializedValue(
+      KeyInfo keyInfo,
+      LocalRegion localRegion,
+      boolean updateStats,
+      boolean disableCopyOnRead,
+      boolean preferCD,
+      EntryEventImpl clientEvent,
+      boolean returnTombstones,
+      boolean retainResult) {
+    return localRegion.getDeserializedValue(
+        null,
+        keyInfo,
+        updateStats,
+        disableCopyOnRead,
+        preferCD,
+        clientEvent,
+        returnTombstones,
+        retainResult);
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#txDestroyExistingEntry(org.apache.geode.internal.cache.EntryEventImpl, boolean)
    */
-  public void destroyExistingEntry(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) {
+  public void destroyExistingEntry(
+      EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) {
     LocalRegion lr = event.getLocalRegion();
-    lr.mapDestroy(event, cacheWrite, false, // isEviction
+    lr.mapDestroy(
+        event,
+        cacheWrite,
+        false, // isEviction
         expectedOldValue);
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#txInvalidateExistingEntry(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean)
    */
-  public void invalidateExistingEntry(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {
+  public void invalidateExistingEntry(
+      EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {
     try {
       event.getLocalRegion().entries.invalidate(event, invokeCallbacks, forceNewEntry, false);
     } catch (ConcurrentCacheModificationException e) {
@@ -112,8 +130,24 @@ public class LocalRegionDataView implements InternalDataView {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#putEntry(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean, java.lang.Object, boolean, long, boolean)
    */
-  public boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) {
-    return event.getLocalRegion().virtualPut(event, ifNew, ifOld, expectedOldValue, requireOldValue, lastModified, overwriteDestroyed);
+  public boolean putEntry(
+      EntryEventImpl event,
+      boolean ifNew,
+      boolean ifOld,
+      Object expectedOldValue,
+      boolean requireOldValue,
+      long lastModified,
+      boolean overwriteDestroyed) {
+    return event
+        .getLocalRegion()
+        .virtualPut(
+            event,
+            ifNew,
+            ifOld,
+            expectedOldValue,
+            requireOldValue,
+            lastModified,
+            overwriteDestroyed);
   }
 
   /* (non-Javadoc)
@@ -126,14 +160,37 @@ public class LocalRegionDataView implements InternalDataView {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#findObject(org.apache.geode.internal.cache.LocalRegion, java.lang.Object, java.lang.Object, boolean, boolean, java.lang.Object)
    */
-  public Object findObject(KeyInfo keyInfo, LocalRegion r, boolean isCreate, boolean generateCallbacks, Object value, boolean disableCopyOnRead, boolean preferCD, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent, boolean returnTombstones) {
-    return r.nonTxnFindObject(keyInfo, isCreate, generateCallbacks, value, disableCopyOnRead, preferCD, requestingClient, clientEvent, returnTombstones);
+  public Object findObject(
+      KeyInfo keyInfo,
+      LocalRegion r,
+      boolean isCreate,
+      boolean generateCallbacks,
+      Object value,
+      boolean disableCopyOnRead,
+      boolean preferCD,
+      ClientProxyMembershipID requestingClient,
+      EntryEventImpl clientEvent,
+      boolean returnTombstones) {
+    return r.nonTxnFindObject(
+        keyInfo,
+        isCreate,
+        generateCallbacks,
+        value,
+        disableCopyOnRead,
+        preferCD,
+        requestingClient,
+        clientEvent,
+        returnTombstones);
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getEntryForIterator(org.apache.geode.internal.cache.LocalRegion, java.lang.Object, boolean)
    */
-  public Region.Entry<?, ?> getEntryForIterator(final KeyInfo keyInfo, final LocalRegion currRgn, boolean rememberReads, boolean allowTombstones) {
+  public Region.Entry<?, ?> getEntryForIterator(
+      final KeyInfo keyInfo,
+      final LocalRegion currRgn,
+      boolean rememberReads,
+      boolean allowTombstones) {
     final AbstractRegionEntry re = (AbstractRegionEntry) keyInfo.getKey();
     if (re != null && (!re.isDestroyedOrRemoved()) || (allowTombstones && re.isTombstone())) {
       return currRgn.new NonTXEntry(re);
@@ -144,7 +201,11 @@ public class LocalRegionDataView implements InternalDataView {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getKeyForIterator(java.lang.Object, org.apache.geode.internal.cache.LocalRegion, boolean)
    */
-  public Object getKeyForIterator(final KeyInfo keyInfo, final LocalRegion currRgn, boolean rememberReads, boolean allowTombstones) {
+  public Object getKeyForIterator(
+      final KeyInfo keyInfo,
+      final LocalRegion currRgn,
+      boolean rememberReads,
+      boolean allowTombstones) {
     final AbstractRegionEntry re = (AbstractRegionEntry) keyInfo.getKey();
     // fix for 42182, before returning a key verify that its value
     // is not a removed token
@@ -165,22 +226,40 @@ public class LocalRegionDataView implements InternalDataView {
    * (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getSerializedValue(org.apache.geode.internal.cache.BucketRegion, java.lang.Object, java.lang.Object)
    */
-  public Object getSerializedValue(LocalRegion localRegion, KeyInfo key, boolean doNotLockEntry, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent, boolean returnTombstones) throws DataLocationException {
+  public Object getSerializedValue(
+      LocalRegion localRegion,
+      KeyInfo key,
+      boolean doNotLockEntry,
+      ClientProxyMembershipID requestingClient,
+      EntryEventImpl clientEvent,
+      boolean returnTombstones)
+      throws DataLocationException {
     throw new IllegalStateException();
   }
 
-  public boolean putEntryOnRemote(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) throws DataLocationException {
+  public boolean putEntryOnRemote(
+      EntryEventImpl event,
+      boolean ifNew,
+      boolean ifOld,
+      Object expectedOldValue,
+      boolean requireOldValue,
+      long lastModified,
+      boolean overwriteDestroyed)
+      throws DataLocationException {
     throw new IllegalStateException();
   }
 
-  public void destroyOnRemote(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) throws DataLocationException {
+  public void destroyOnRemote(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue)
+      throws DataLocationException {
     destroyExistingEntry(event, cacheWrite, expectedOldValue);
   }
 
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#invalidateOnRemote(org.apache.geode.internal.cache.EntryEventImpl, boolean, boolean)
    */
-  public void invalidateOnRemote(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) throws DataLocationException {
+  public void invalidateOnRemote(
+      EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry)
+      throws DataLocationException {
     invalidateExistingEntry(event, invokeCallbacks, forceNewEntry);
   }
 
@@ -194,7 +273,8 @@ public class LocalRegionDataView implements InternalDataView {
   /* (non-Javadoc)
    * @see org.apache.geode.internal.cache.InternalDataView#getEntryOnRemote(java.lang.Object, org.apache.geode.internal.cache.LocalRegion)
    */
-  public Entry getEntryOnRemote(KeyInfo key, LocalRegion localRegion, boolean allowTombstones) throws DataLocationException {
+  public Entry getEntryOnRemote(KeyInfo key, LocalRegion localRegion, boolean allowTombstones)
+      throws DataLocationException {
     throw new IllegalStateException();
   }
 
@@ -220,8 +300,11 @@ public class LocalRegionDataView implements InternalDataView {
   }
 
   @Override
-  public void postPutAll(DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts, LocalRegion region) {
-    if (!region.dataPolicy.withStorage() && region.concurrencyChecksEnabled && putallOp.getBaseEvent().isBridgeEvent()) {
+  public void postPutAll(
+      DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts, LocalRegion region) {
+    if (!region.dataPolicy.withStorage()
+        && region.concurrencyChecksEnabled
+        && putallOp.getBaseEvent().isBridgeEvent()) {
       // if there is no local storage we need to transfer version information
       // to the successfulPuts list for transmission back to the client
       successfulPuts.clear();
@@ -232,8 +315,11 @@ public class LocalRegionDataView implements InternalDataView {
   }
 
   @Override
-  public void postRemoveAll(DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion region) {
-    if (!region.dataPolicy.withStorage() && region.concurrencyChecksEnabled && op.getBaseEvent().isBridgeEvent()) {
+  public void postRemoveAll(
+      DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion region) {
+    if (!region.dataPolicy.withStorage()
+        && region.concurrencyChecksEnabled
+        && op.getBaseEvent().isBridgeEvent()) {
       // if there is no local storage we need to transfer version information
       // to the successfulOps list for transmission back to the client
       successfulOps.clear();

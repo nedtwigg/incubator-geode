@@ -66,16 +66,27 @@ public class Bug36829DUnitTest extends JUnit4DistributedTestCase {
 
     final int durableClientTimeout = 600; // keep the client alive for 600
 
-    PORT = ((Integer) this.serverVM.invoke(() -> CacheServerTestUtil.createCacheServer("DUMMY_REGION", new Boolean(true)))).intValue();
+    PORT =
+        ((Integer)
+                this.serverVM.invoke(
+                    () -> CacheServerTestUtil.createCacheServer("DUMMY_REGION", new Boolean(true))))
+            .intValue();
 
-    this.ClientVM.invoke(() -> CacheServerTestUtil.createCacheClient(getClientPool(NetworkUtils.getServerHostName(ClientVM.getHost()), PORT, true, 0), REGION_NAME, getClientDistributedSystemProperties(durableClientId, durableClientTimeout), Boolean.TRUE));
+    this.ClientVM.invoke(
+        () ->
+            CacheServerTestUtil.createCacheClient(
+                getClientPool(NetworkUtils.getServerHostName(ClientVM.getHost()), PORT, true, 0),
+                REGION_NAME,
+                getClientDistributedSystemProperties(durableClientId, durableClientTimeout),
+                Boolean.TRUE));
 
     // Send clientReady message
-    this.ClientVM.invoke(new CacheSerializableRunnable("Send clientReady") {
-      public void run2() throws CacheException {
-        CacheServerTestUtil.getCache().readyForEvents();
-      }
-    });
+    this.ClientVM.invoke(
+        new CacheSerializableRunnable("Send clientReady") {
+          public void run2() throws CacheException {
+            CacheServerTestUtil.getCache().readyForEvents();
+          }
+        });
 
     // We expect in registerKey() that the RegionNotFoundException is thrown.
     // If exception is not thrown then the test fails.
@@ -112,13 +123,17 @@ public class Bug36829DUnitTest extends JUnit4DistributedTestCase {
     region.registerInterest(key, InterestResultPolicy.NONE);
   }
 
-  private Pool getClientPool(String host, int server1Port, boolean establishCallbackConnection, int redundancyLevel) {
+  private Pool getClientPool(
+      String host, int server1Port, boolean establishCallbackConnection, int redundancyLevel) {
     PoolFactory pf = PoolManager.createFactory();
-    pf.addServer(host, server1Port).setSubscriptionEnabled(establishCallbackConnection).setSubscriptionRedundancy(redundancyLevel);
+    pf.addServer(host, server1Port)
+        .setSubscriptionEnabled(establishCallbackConnection)
+        .setSubscriptionRedundancy(redundancyLevel);
     return ((PoolFactoryImpl) pf).getPoolAttributes();
   }
 
-  private Properties getClientDistributedSystemProperties(String durableClientId, int durableClientTimeout) {
+  private Properties getClientDistributedSystemProperties(
+      String durableClientId, int durableClientTimeout) {
     Properties properties = new Properties();
     properties.setProperty(MCAST_PORT, "0");
     properties.setProperty(LOCATORS, "");

@@ -40,10 +40,7 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
-/**
- * Queries the grantor for current leasing information of a lock.
- * 
- */
+/** Queries the grantor for current leasing information of a lock. */
 public class DLockQueryProcessor extends ReplyProcessor21 {
   private static final Logger logger = LogService.getLogger();
 
@@ -52,16 +49,20 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
 
   /**
    * Query the grantor for current leasing information of a lock.
-   * 
+   *
    * @param grantor the member that is the grantor
    * @param serviceName the name of the lock service
    * @param objectName the named lock
    * @param lockBatch true if the named lock is a TX lock batch
    * @param dm distribution manager to use for logging and messaging
-   * @return the query reply or null if there was no reply due to membership
-   * change
+   * @return the query reply or null if there was no reply due to membership change
    */
-  static DLockQueryReplyMessage query(final InternalDistributedMember grantor, final String serviceName, final Object objectName, final boolean lockBatch, final DM dm) {
+  static DLockQueryReplyMessage query(
+      final InternalDistributedMember grantor,
+      final String serviceName,
+      final Object objectName,
+      final boolean lockBatch,
+      final DM dm) {
     DLockQueryProcessor processor = new DLockQueryProcessor(dm, grantor, serviceName);
 
     DLockQueryMessage msg = new DLockQueryMessage();
@@ -95,7 +96,7 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
 
   /**
    * Instantiates a new DLockQueryProcessor.
-   * 
+   *
    * @param dm the distribution manager to use for logging and messaging
    * @param grantor the member to query for lock leasing info
    * @param serviceName the name of the lock service
@@ -125,7 +126,8 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
   // -------------------------------------------------------------------------
   //   DLockQueryMessage
   // -------------------------------------------------------------------------
-  public static final class DLockQueryMessage extends PooledDistributionMessage implements MessageWithReply {
+  public static final class DLockQueryMessage extends PooledDistributionMessage
+      implements MessageWithReply {
     /** The name of the DistributedLockService */
     protected String serviceName;
 
@@ -142,17 +144,14 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
     protected transient DLockService svc;
     protected transient DLockGrantor grantor;
 
-    public DLockQueryMessage() {
-    }
+    public DLockQueryMessage() {}
 
     @Override
     public int getProcessorId() {
       return this.processorId;
     }
 
-    /**
-     * Processes this message - invoked on the node that is the lock grantor.
-     */
+    /** Processes this message - invoked on the node that is the lock grantor. */
     @Override
     protected void process(final DistributionManager dm) {
       boolean failed = true;
@@ -204,28 +203,30 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
       basicProcess(dm, true); // don't use executor
     }
 
-    /** 
-     * Execute basicProcess inside Pooled Executor because grantor may not 
-     * be initializing which will require us to wait.
-     * <p>
-     * this.svc and this.grantor must be set before calling this method.
+    /**
+     * Execute basicProcess inside Pooled Executor because grantor may not be initializing which
+     * will require us to wait.
+     *
+     * <p>this.svc and this.grantor must be set before calling this method.
      */
     private void executeBasicProcess(final DM dm) {
       final DLockQueryMessage msg = this;
-      dm.getWaitingThreadPool().execute(new Runnable() {
-        public void run() {
-          if (logger.isTraceEnabled(LogMarker.DLS)) {
-            logger.trace(LogMarker.DLS, "[executeBasicProcess] {}", msg);
-          }
-          basicProcess(dm, true);
-        }
-      });
+      dm.getWaitingThreadPool()
+          .execute(
+              new Runnable() {
+                public void run() {
+                  if (logger.isTraceEnabled(LogMarker.DLS)) {
+                    logger.trace(LogMarker.DLS, "[executeBasicProcess] {}", msg);
+                  }
+                  basicProcess(dm, true);
+                }
+              });
     }
 
-    /** 
+    /**
      * Perform basic processing of this message.
-     * <p>
-     * this.svc and this.grantor must be set before calling this method.
+     *
+     * <p>this.svc and this.grantor must be set before calling this method.
      */
     protected void basicProcess(final DM dm, final boolean waitForGrantor) {
       final boolean isDebugEnabled_DLS = logger.isTraceEnabled(LogMarker.DLS);
@@ -241,8 +242,7 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
       replyMsg.leaseExpireTime = 0;
 
       try {
-        if (svc == null || svc.isDestroyed())
-          return;
+        if (svc == null || svc.isDestroyed()) return;
 
         if (waitForGrantor) {
           try {
@@ -258,7 +258,8 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
         }
 
         if (lockBatch) {
-          throw new UnsupportedOperationException("DLockQueryProcessor does not support lock batches");
+          throw new UnsupportedOperationException(
+              "DLockQueryProcessor does not support lock batches");
         } else {
           DLockGrantToken grantToken;
           try {
@@ -354,7 +355,7 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
     static final int NOT_GRANTOR = 0;
     static final int OK = 1;
 
-    /** OK or NOT_GRANTOR for the service  */
+    /** OK or NOT_GRANTOR for the service */
     protected int replyCode = NOT_GRANTOR;
 
     /** Member and thread holding lease on the lock */
@@ -366,13 +367,11 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
     /** Absolute time in millis when lease will expire */
     protected long leaseExpireTime;
 
-    public DLockQueryReplyMessage() {
-    }
+    public DLockQueryReplyMessage() {}
 
     /**
-     * Returns true if the queried grantor replied with the current lease info
-     * for the named lock.
-     * 
+     * Returns true if the queried grantor replied with the current lease info for the named lock.
+     *
      * @return true if the queried grantor replied with the current lease info
      */
     boolean repliedOK() {
@@ -381,7 +380,7 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
 
     /**
      * Returns true if the queried grantor replied NOT_GRANTOR.
-     * 
+     *
      * @return true if the queried grantor replied NOT_GRANTOR
      */
     boolean repliedNotGrantor() {
@@ -390,7 +389,7 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
 
     /**
      * Returns the member holding the lease or null if there was no lease.
-     * 
+     *
      * @return the member holding the lease or null
      */
     DistributedMember getLessee() {
@@ -403,7 +402,7 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
 
     /**
      * Returns the query reply's lesseeThread or null if there was no lease.
-     * 
+     *
      * @return the query reply's lesseeThread or null
      */
     RemoteThread getLesseeThread() {
@@ -412,7 +411,7 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
 
     /**
      * Return the query reply's leaseId or -1 if there was no lease.
-     * 
+     *
      * @return the query reply's leaseId or -1
      */
     int getLeaseId() {
@@ -421,7 +420,7 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
 
     /**
      * Return the query reply's leaseExpireTime or 0 if there was no lease.
-     * 
+     *
      * @return the query reply's leaseExpireTime or 0
      */
     long getLeaseExpireTime() {
@@ -438,7 +437,8 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
       super.fromData(in);
       this.replyCode = in.readInt();
       if (this.replyCode == OK) {
-        InternalDistributedMember lessee = (InternalDistributedMember) DataSerializer.readObject(in);
+        InternalDistributedMember lessee =
+            (InternalDistributedMember) DataSerializer.readObject(in);
         if (lessee != null) {
           this.lesseeThread = new RemoteThread(lessee, in.readInt());
         }
@@ -469,15 +469,15 @@ public class DLockQueryProcessor extends ReplyProcessor21 {
       sb.append(Integer.toHexString(hashCode()));
       sb.append(", replyCode: ");
       switch (this.replyCode) {
-      case NOT_GRANTOR:
-        sb.append("NOT_GRANTOR");
-        break;
-      case OK:
-        sb.append("OK");
-        break;
-      default:
-        sb.append(String.valueOf(this.replyCode));
-        break;
+        case NOT_GRANTOR:
+          sb.append("NOT_GRANTOR");
+          break;
+        case OK:
+          sb.append("OK");
+          break;
+        default:
+          sb.append(String.valueOf(this.replyCode));
+          break;
       }
       sb.append(", lesseeThread: ").append(this.lesseeThread);
       sb.append(", leaseId: ").append(this.leaseId);

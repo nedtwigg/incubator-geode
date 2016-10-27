@@ -17,18 +17,22 @@
 package org.apache.geode.internal.lang;
 
 /**
- * The Initializer class is a utility class to identify Initable objects and initialize them by calling their
- * init method.
- * <p/>
+ * The Initializer class is a utility class to identify Initable objects and initialize them by
+ * calling their init method.
+ *
+ * <p>
+ *
  * @see org.apache.geode.internal.lang.Initable
  * @since GemFire 8.0
  */
 public class Initializer {
 
   /**
-   * Initializes the specified Object by calling it's init method if and only if the Object implements the
-   * Initable interface.
-   * <p/>
+   * Initializes the specified Object by calling it's init method if and only if the Object
+   * implements the Initable interface.
+   *
+   * <p>
+   *
    * @param initableObj the Object targeted to be initialized.
    * @return true if the target Object was initialized using an init method; false otherwise.
    * @see org.apache.geode.internal.lang.Initable#init()
@@ -41,5 +45,4 @@ public class Initializer {
 
     return false;
   }
-
 }

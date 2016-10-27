@@ -19,14 +19,10 @@ package org.apache.geode.internal.cache.persistence.query;
 import java.util.Iterator;
 
 /**
- * An iterator that has an additional close method.
- * The iterator should be closed if it is abandoned before
- * reaching the end of the iteration to free up resources.
- *
+ * An iterator that has an additional close method. The iterator should be closed if it is abandoned
+ * before reaching the end of the iteration to free up resources.
  */
 public interface CloseableIterator<E> extends Iterator<E> {
-  /**
-   * Free up resources associated with this iterator.
-   */
+  /** Free up resources associated with this iterator. */
   void close();
 }

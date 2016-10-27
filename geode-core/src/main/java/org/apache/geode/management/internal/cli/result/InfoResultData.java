@@ -19,11 +19,7 @@ package org.apache.geode.management.internal.cli.result;
 import org.apache.geode.management.internal.cli.json.GfJsonException;
 import org.apache.geode.management.internal.cli.json.GfJsonObject;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class InfoResultData extends AbstractResultData {
   public static final String RESULT_CONTENT_MESSAGE = "message";
 
@@ -36,17 +32,15 @@ public class InfoResultData extends AbstractResultData {
   }
 
   /**
-   * 
    * @param headerText
    * @return this InfoResultData
-   * @throws ResultDataException 
+   * @throws ResultDataException
    */
   public InfoResultData setHeader(String headerText) {
     return (InfoResultData) super.setHeader(headerText);
   }
 
   /**
-   * 
    * @param line message to add
    * @return this InfoResultData
    */
@@ -61,18 +55,15 @@ public class InfoResultData extends AbstractResultData {
   }
 
   /**
-   * 
    * @param footerText
    * @return this InfoResultData
-   * @throws ResultDataException 
+   * @throws ResultDataException
    */
   public InfoResultData setFooter(String footerText) {
     return (InfoResultData) super.setFooter(footerText);
   }
 
-  /**
-   * @return the gfJsonObject
-   */
+  /** @return the gfJsonObject */
   public GfJsonObject getGfJsonObject() {
     return gfJsonObject;
   }

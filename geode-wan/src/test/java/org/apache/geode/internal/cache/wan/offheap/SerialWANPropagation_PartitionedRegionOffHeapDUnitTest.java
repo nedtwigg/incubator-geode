@@ -24,7 +24,8 @@ import org.apache.geode.internal.cache.wan.serial.SerialWANPropagation_Partition
 
 @SuppressWarnings("serial")
 @Category(DistributedTest.class)
-public class SerialWANPropagation_PartitionedRegionOffHeapDUnitTest extends SerialWANPropagation_PartitionedRegionDUnitTest {
+public class SerialWANPropagation_PartitionedRegionOffHeapDUnitTest
+    extends SerialWANPropagation_PartitionedRegionDUnitTest {
 
   public SerialWANPropagation_PartitionedRegionOffHeapDUnitTest() {
     super();
@@ -34,5 +35,4 @@ public class SerialWANPropagation_PartitionedRegionOffHeapDUnitTest extends Seri
   public boolean isOffHeap() {
     return true;
   }
-
 }

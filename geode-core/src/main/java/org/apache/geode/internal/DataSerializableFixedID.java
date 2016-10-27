@@ -21,43 +21,37 @@ import org.apache.geode.*;
 import java.io.*;
 
 /**
- * An interface that implements data serialization
- * for internal GemFire product classes that have a fixed id.
- * The fixed id is used
- * to represent the class, on the wire, at serialization time and used
- * in a switch statement at deserialization time.
- * All the codes should be static final in this class.
- * <p> Implementors MUST have a public zero-arg constructor.
+ * An interface that implements data serialization for internal GemFire product classes that have a
+ * fixed id. The fixed id is used to represent the class, on the wire, at serialization time and
+ * used in a switch statement at deserialization time. All the codes should be static final in this
+ * class.
  *
- * <p> Note that this class is for internal use only. Customer classes
- * that want to do something similiar should implement a subclass of
- * {@link DataSerializer} or {@link Instantiator}.
+ * <p>Implementors MUST have a public zero-arg constructor.
  *
- * <p>
- * To add a new DataSerializableFixedID do this following:
+ * <p>Note that this class is for internal use only. Customer classes that want to do something
+ * similiar should implement a subclass of {@link DataSerializer} or {@link Instantiator}.
+ *
+ * <p>To add a new DataSerializableFixedID do this following:
+ *
  * <ol>
- * <li> Define a constant with an id that is free and put it in
- *    <code>DataSerializableFixedID</code> as a "public static final byte".
- *    Make sure and update the "unused" comments to no longer mention your new id.
- *    If implementing a class used only for tests then there is no need to consume
- *    a fixed id and you should use {@link #NO_FIXED_ID}. In this case you can skip
- *    steps 3 and 4.
- * <li> Define a method in the class that
- *    implements <code>DataSerializableFixedID</code>
- *    named {@link #getDSFID} that returns the constant from step 1.
- * <li> Define a private static method in {@link DSFIDFactory} that returns an instance
- *    of the class from step 2 usually be calling its zero-arg constructor
- *    and then calling fromData(in).
- *    See the end of {@link DSFIDFactory} for examples.
- * <li> Add a case statement in {@link DSFIDFactory#create} for the constant
- *    from step 1 that calls the method from step 3.
- * <li> Implement {@link #toData} and {@link #fromData} just like you
- *    would on a <code>DataSerializer</code>. Make sure you follow the javadocs 
- *    for these methods to add support for rolling upgrades.
+ *   <li> Define a constant with an id that is free and put it in <code>DataSerializableFixedID
+ *       </code> as a "public static final byte". Make sure and update the "unused" comments to no
+ *       longer mention your new id. If implementing a class used only for tests then there is no
+ *       need to consume a fixed id and you should use {@link #NO_FIXED_ID}. In this case you can
+ *       skip steps 3 and 4.
+ *   <li> Define a method in the class that implements <code>DataSerializableFixedID</code> named
+ *       {@link #getDSFID} that returns the constant from step 1.
+ *   <li> Define a private static method in {@link DSFIDFactory} that returns an instance of the
+ *       class from step 2 usually be calling its zero-arg constructor and then calling
+ *       fromData(in). See the end of {@link DSFIDFactory} for examples.
+ *   <li> Add a case statement in {@link DSFIDFactory#create} for the constant from step 1 that
+ *       calls the method from step 3.
+ *   <li> Implement {@link #toData} and {@link #fromData} just like you would on a <code>
+ *       DataSerializer</code>. Make sure you follow the javadocs for these methods to add support
+ *       for rolling upgrades.
  * </ol>
  *
  * @see DataSerializer
- *
  * @since GemFire 5.7
  */
 public interface DataSerializableFixedID extends SerializationVersions {
@@ -69,14 +63,14 @@ public interface DataSerializableFixedID extends SerializationVersions {
   public FOO(DataInput in) throws IOException, ClassNotFoundException {
     fromData(in);
   }
-  
+
   public int getDSFID() {
     return FOO;
   }
-  
+
   In DataSerializableFixedId, allocate an ID for the class
   public static final byte FOO = -54;
-  
+
   In DSFIDFactory, add a case for the new class
     case FOO:
       return new FOO(in);
@@ -249,15 +243,12 @@ public interface DataSerializableFixedID extends SerializationVersions {
 
   // IDs -20 .. -16 are not used
 
-  /**
-   * A header byte meaning that the next element in the stream is a
-   * <code>VMIdProfile</code>.
-   */
+  /** A header byte meaning that the next element in the stream is a <code>VMIdProfile</code>. */
   public static final byte VMID_PROFILE_MESSAGE = -15;
 
   /**
-   * A header byte meaning that the next element in the stream is a
-   * <code>LocalRegion.UUIDProfile</code>.
+   * A header byte meaning that the next element in the stream is a <code>LocalRegion.UUIDProfile
+   * </code>.
    */
   public static final byte REGION_UUID_PROFILE_MESSAGE = -14;
 
@@ -297,30 +288,34 @@ public interface DataSerializableFixedID extends SerializationVersions {
   public static final byte ENUM_ID = 8;
   public static final byte ENUM_INFO = 9;
 
-  /** 
-   * A header byte meaning that the next element in the stream is 
-   * a <code>InitialImageOperation.EventStateMessage</code>. 
+  /**
+   * A header byte meaning that the next element in the stream is a <code>
+   * InitialImageOperation.EventStateMessage</code>.
    */
   public static final byte REGION_STATE_MESSAGE = 10;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>ClientInstantiatorMessage</code>.
+  /**
+   * A header byte meaning that the next element in the stream is a <code>ClientInstantiatorMessage
+   * </code>.
    */
   public static final byte CLIENT_INSTANTIATOR_MESSAGE = 11;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>InternalInstantiator.RegistrationMessage</code>.
+  /**
+   * A header byte meaning that the next element in the stream is a <code>
+   * InternalInstantiator.RegistrationMessage</code>.
    */
   public static final byte REGISTRATION_MESSAGE = 12;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>InternalInstantiator.RegistrationContextMessage</code>.
+  /**
+   * A header byte meaning that the next element in the stream is a <code>
+   * InternalInstantiator.RegistrationContextMessage</code>.
    */
   public static final byte REGISTRATION_CONTEXT_MESSAGE = 13;
 
   /** More Query Result Classes */
   // PRQueryProcessor.EndOfBucket
   public static final byte END_OF_BUCKET = 14;
+
   public static final byte RESULTS_BAG = 15;
   public static final byte STRUCT_BAG = 16;
 
@@ -335,15 +330,14 @@ public interface DataSerializableFixedID extends SerializationVersions {
   public static final byte FIND_DURABLE_QUEUE_REPLY = 23;
   public static final byte CACHE_SERVER_LOAD_MESSAGE = 24;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>ObjectPartList</code>.
-   */
+  /** A header byte meaning that the next element in the stream is a <code>ObjectPartList</code>. */
   public static final byte OBJECT_PART_LIST = 25;
 
   public static final byte REGION = 26;
 
-  /****** Query Result Classes *******/
+  /** **** Query Result Classes ****** */
   public static final byte RESULTS_COLLECTION_WRAPPER = 27;
+
   public static final byte RESULTS_SET = 28;
   public static final byte SORTED_RESULT_SET = 29;
   public static final byte SORTED_STRUCT_SET = 30;
@@ -351,21 +345,26 @@ public interface DataSerializableFixedID extends SerializationVersions {
   public static final byte STRUCT_IMPL = 32;
   public static final byte STRUCT_SET = 33;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>ClearRegionWithContextMessage</code>. */
+  /**
+   * A header byte meaning that the next element in the stream is a <code>
+   * ClearRegionWithContextMessage</code>.
+   */
   public static final byte CLEAR_REGION_MESSAGE_WITH_CONTEXT = 34;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>ClientUpdateMessage</code>. */
+  /**
+   * A header byte meaning that the next element in the stream is a <code>ClientUpdateMessage</code>
+   * .
+   */
   public static final byte CLIENT_UPDATE_MESSAGE = 35;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>EventID</code>. */
+  /** A header byte meaning that the next element in the stream is a <code>EventID</code>. */
   public static final byte EVENT_ID = 36;
 
   public static final byte INTEREST_RESULT_POLICY = 37;
-  /** A header byte meaning that the next element in the stream is a
-   * <code>ClientProxyMembershipID</code>. */
+  /**
+   * A header byte meaning that the next element in the stream is a <code>ClientProxyMembershipID
+   * </code>.
+   */
   public static final byte CLIENT_PROXY_MEMBERSHIPID = 38;
 
   public static final byte PR_BUCKET_BACKUP_MESSAGE = 39;
@@ -403,19 +402,22 @@ public interface DataSerializableFixedID extends SerializationVersions {
   // 70 available for reuse - retired in Geode v1.0
   //public static final byte IP_ADDRESS = 70;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>UpdateOperation.UpdateMessage</code>. */
+  /**
+   * A header byte meaning that the next element in the stream is a <code>
+   * UpdateOperation.UpdateMessage</code>.
+   */
   public static final byte UPDATE_MESSAGE = 71;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>ReplyMessage</code>. */
+  /** A header byte meaning that the next element in the stream is a <code>ReplyMessage</code>. */
   public static final byte REPLY_MESSAGE = 72;
 
   /** <code>DestroyMessage</code> */
   public static final byte PR_DESTROY = 73;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>CreateRegionReplyMessage</code>. */
+  /**
+   * A header byte meaning that the next element in the stream is a <code>CreateRegionReplyMessage
+   * </code>.
+   */
   public static final byte CREATE_REGION_REPLY_MESSAGE = 74;
 
   public static final byte QUERY_MESSAGE = 75;
@@ -433,8 +435,10 @@ public interface DataSerializableFixedID extends SerializationVersions {
   // DLockReleaseMessage
   public static final byte DLOCK_RELEASE_MESSAGE = 85;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>SystemMemberCacheMessage</code>. */
+  /**
+   * A header byte meaning that the next element in the stream is a <code>SystemMemberCacheMessage
+   * </code>.
+   */
   //added for feature requests #32887
   public static final byte ADMIN_CACHE_EVENT_MESSAGE = 86;
 
@@ -450,8 +454,10 @@ public interface DataSerializableFixedID extends SerializationVersions {
 
   public static final byte DISTRIBUTED_MEMBER = 92;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>UpdateOperation.UpdateWithContextMessage</code>. */
+  /**
+   * A header byte meaning that the next element in the stream is a <code>
+   * UpdateOperation.UpdateWithContextMessage</code>.
+   */
   public static final byte UPDATE_WITH_CONTEXT_MESSAGE = 93;
 
   // GrantorRequestProcessor
@@ -505,8 +511,7 @@ public interface DataSerializableFixedID extends SerializationVersions {
   public static final byte ELDER_INIT_REPLY_MESSAGE = 113;
   public static final byte DEPOSE_GRANTOR_MESSAGE = 114;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>HAEventWrapper</code>. */
+  /** A header byte meaning that the next element in the stream is a <code>HAEventWrapper</code>. */
   public static final byte HA_EVENT_WRAPPER = 115;
 
   public static final byte DLOCK_RELEASE_REPLY = 116;
@@ -536,8 +541,10 @@ public interface DataSerializableFixedID extends SerializationVersions {
   /** {@link org.apache.geode.internal.cache.Node} */
   public static final byte PR_NODE = 126;
 
-  /** A header byte meaning that the next element in the stream is a
-   * <code>DestroyOperation.DestroyWithContextMessage</code>. */
+  /**
+   * A header byte meaning that the next element in the stream is a <code>
+   * DestroyOperation.DestroyWithContextMessage</code>.
+   */
   public static final byte DESTROY_WITH_CONTEXT_MESSAGE = 127;
 
   // NOTE, CODES > 127 will take two bytes to serialize
@@ -803,50 +810,42 @@ public interface DataSerializableFixedID extends SerializationVersions {
   // NOTE, codes > 65535 will take 4 bytes to serialize
 
   /**
-   * This special code is a way for an implementor if this interface
-   * to say that it does not have a fixed id.
-   * In that case its class name is serialized.
-   * Currently only test classes just return this code.
+   * This special code is a way for an implementor if this interface to say that it does not have a
+   * fixed id. In that case its class name is serialized. Currently only test classes just return
+   * this code.
    */
   public static final int NO_FIXED_ID = Integer.MAX_VALUE;
 
   //////////////// END CODES ////////////
 
-  /**
-   * Returns the DataSerializer fixed id for the class that implements this method.
-   */
+  /** Returns the DataSerializer fixed id for the class that implements this method. */
   public int getDSFID();
 
   /**
-   * Writes the state of this object as primitive data to the given
-   * <code>DataOutput</code>.<br>
+   * Writes the state of this object as primitive data to the given <code>DataOutput</code>.<br>
    * <br>
-   * Note: For rolling upgrades, if there is a change in the object format from
-   * previous version, add a new toDataPre_GFE_X_X_X_X() method and add an entry for the
-   * current {@link Version} in the getSerializationVersions array of the implementing
-   * class. e.g. if msg format changed in version 80, create toDataPre_GFE_8_0_0_0, add
-   * Version.GFE_80 to the getSerializationVersions array and copy previous toData contents 
-   * to this newly created toDataPre_GFE_X_X_X_X() method.
-   * @throws IOException
-   *           A problem occurs while writing to <code>out</code>
+   * Note: For rolling upgrades, if there is a change in the object format from previous version,
+   * add a new toDataPre_GFE_X_X_X_X() method and add an entry for the current {@link Version} in
+   * the getSerializationVersions array of the implementing class. e.g. if msg format changed in
+   * version 80, create toDataPre_GFE_8_0_0_0, add Version.GFE_80 to the getSerializationVersions
+   * array and copy previous toData contents to this newly created toDataPre_GFE_X_X_X_X() method.
+   *
+   * @throws IOException A problem occurs while writing to <code>out</code>
    */
   public void toData(DataOutput out) throws IOException;
 
   /**
-   * Reads the state of this object as primitive data from the given
-   * <code>DataInput</code>. <br>
+   * Reads the state of this object as primitive data from the given <code>DataInput</code>. <br>
    * <br>
-   * Note: For rolling upgrades, if there is a change in the object format from
-   * previous version, add a new fromDataPre_GFE_X_X_X_X() method and add an entry for
-   * the current {@link Version} in the getSerializationVersions array of the implementing
-   * class. e.g. if msg format changed in version 80, create fromDataPre_GFE_8_0_0_0, add
-   * Version.GFE_80 to the getSerializationVersions array  and copy previous fromData 
-   * contents to this newly created fromDataPre_GFE_X_X_X_X() method.
-   * @throws IOException
-   *           A problem occurs while reading from <code>in</code>
-   * @throws ClassNotFoundException
-   *           A class could not be loaded while reading from <code>in</code>
+   * Note: For rolling upgrades, if there is a change in the object format from previous version,
+   * add a new fromDataPre_GFE_X_X_X_X() method and add an entry for the current {@link Version} in
+   * the getSerializationVersions array of the implementing class. e.g. if msg format changed in
+   * version 80, create fromDataPre_GFE_8_0_0_0, add Version.GFE_80 to the getSerializationVersions
+   * array and copy previous fromData contents to this newly created fromDataPre_GFE_X_X_X_X()
+   * method.
+   *
+   * @throws IOException A problem occurs while reading from <code>in</code>
+   * @throws ClassNotFoundException A class could not be loaded while reading from <code>in</code>
    */
   public void fromData(DataInput in) throws IOException, ClassNotFoundException;
-
 }

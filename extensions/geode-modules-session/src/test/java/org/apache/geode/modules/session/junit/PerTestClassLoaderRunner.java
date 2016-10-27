@@ -1,32 +1,13 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
-package org.apache.geode.modules.session.junit;
-
-/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to you under the Apache License, Version 2.0
+ * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,6 +15,22 @@ package org.apache.geode.modules.session.junit;
  * limitations under the License.
  */
 
+package org.apache.geode.modules.session.junit;
+
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ *
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -109,11 +106,14 @@ public class PerTestClassLoaderRunner extends NamedRunner {
       }
     }
 
-    ClassLoader classLoader = new ChildFirstClassLoader(urls.toArray(new URL[] {}), Thread.currentThread().getContextClassLoader());
+    ClassLoader classLoader =
+        new ChildFirstClassLoader(
+            urls.toArray(new URL[] {}), Thread.currentThread().getContextClassLoader());
 
     Thread.currentThread().setContextClassLoader(classLoader);
 
-    testClassFromClassLoader = new TestClass(classLoader.loadClass(getTestClass().getJavaClass().getName()));
+    testClassFromClassLoader =
+        new TestClass(classLoader.loadClass(getTestClass().getJavaClass().getName()));
     // See withAfters and withBefores for the reason.
     beforeFromClassLoader = classLoader.loadClass(Before.class.getName());
     afterFromClassLoader = classLoader.loadClass(After.class.getName());
@@ -131,7 +131,8 @@ public class PerTestClassLoaderRunner extends NamedRunner {
       // The method as parameter is from the original class and thus not found in our
       // class loaded by the custom name (reflection is class loader sensitive)
       // So find the same method but now in the class from the class Loader.
-      Method methodFromNewlyLoadedClass = testClassFromClassLoader.getJavaClass().getMethod(method.getName());
+      Method methodFromNewlyLoadedClass =
+          testClassFromClassLoader.getJavaClass().getMethod(method.getName());
       newMethod = new FrameworkMethod(methodFromNewlyLoadedClass);
     } catch (ClassNotFoundException e) {
       // Show any problem nicely as a JUnit Test failure.
@@ -152,7 +153,9 @@ public class PerTestClassLoaderRunner extends NamedRunner {
     // We now to need to search in the class from the custom loader.
     // We also need to search with the annotation loaded by the custom
     // class loader or otherwise we don't find any method.
-    List<FrameworkMethod> afters = testClassFromClassLoader.getAnnotatedMethods((Class<? extends Annotation>) afterFromClassLoader);
+    List<FrameworkMethod> afters =
+        testClassFromClassLoader.getAnnotatedMethods(
+            (Class<? extends Annotation>) afterFromClassLoader);
     return new RunAfters(statement, afters, target);
   }
 
@@ -162,16 +165,26 @@ public class PerTestClassLoaderRunner extends NamedRunner {
     // We now to need to search in the class from the custom loader.
     // We also need to search with the annotation loaded by the custom
     // class loader or otherwise we don't find any method.
-    List<FrameworkMethod> befores = testClassFromClassLoader.getAnnotatedMethods((Class<? extends Annotation>) beforeFromClassLoader);
+    List<FrameworkMethod> befores =
+        testClassFromClassLoader.getAnnotatedMethods(
+            (Class<? extends Annotation>) beforeFromClassLoader);
     return new RunBefores(statement, befores, target);
   }
 
   @SuppressWarnings("unchecked")
   @Override
   protected List<MethodRule> rules(Object target) {
-    List<MethodRule> result = testClassFromClassLoader.getAnnotatedMethodValues(target, (Class<? extends Annotation>) ruleFromClassLoader, (Class) methodRuleFromClassLoader);
+    List<MethodRule> result =
+        testClassFromClassLoader.getAnnotatedMethodValues(
+            target,
+            (Class<? extends Annotation>) ruleFromClassLoader,
+            (Class) methodRuleFromClassLoader);
 
-    result.addAll(testClassFromClassLoader.getAnnotatedFieldValues(target, (Class<? extends Annotation>) ruleFromClassLoader, (Class) methodRuleFromClassLoader));
+    result.addAll(
+        testClassFromClassLoader.getAnnotatedFieldValues(
+            target,
+            (Class<? extends Annotation>) ruleFromClassLoader,
+            (Class) methodRuleFromClassLoader));
 
     return result;
   }
@@ -179,9 +192,17 @@ public class PerTestClassLoaderRunner extends NamedRunner {
   @SuppressWarnings("unchecked")
   @Override
   protected List<TestRule> getTestRules(Object target) {
-    List<TestRule> result = testClassFromClassLoader.getAnnotatedMethodValues(target, (Class<? extends Annotation>) ruleFromClassLoader, (Class) testRuleFromClassLoader);
+    List<TestRule> result =
+        testClassFromClassLoader.getAnnotatedMethodValues(
+            target,
+            (Class<? extends Annotation>) ruleFromClassLoader,
+            (Class) testRuleFromClassLoader);
 
-    result.addAll(testClassFromClassLoader.getAnnotatedFieldValues(target, (Class<? extends Annotation>) ruleFromClassLoader, (Class) testRuleFromClassLoader));
+    result.addAll(
+        testClassFromClassLoader.getAnnotatedFieldValues(
+            target,
+            (Class<? extends Annotation>) ruleFromClassLoader,
+            (Class) testRuleFromClassLoader));
 
     return result;
   }

@@ -46,29 +46,40 @@ public class QueryDataFunctionApplyLimitClauseTest {
   public void applyLimitClauseDoesNothingIfLimitClauseSpecified() {
     String limitClause = " LIMIT 50";
     String selectQueryWithLimit = selectQuery + limitClause;
-    assertThat(QueryDataFunction.applyLimitClause(selectQueryWithLimit, limit_10, queryResultSetLimit_100)).isEqualTo(selectQueryWithLimit);
+    assertThat(
+            QueryDataFunction.applyLimitClause(
+                selectQueryWithLimit, limit_10, queryResultSetLimit_100))
+        .isEqualTo(selectQueryWithLimit);
   }
 
   @Test
   public void applyLimitClauseAddsQueryResultSetLimit() {
-    assertThat(QueryDataFunction.applyLimitClause(selectQuery, limit_0, queryResultSetLimit_100)).isEqualTo(selectQuery + " LIMIT " + queryResultSetLimit_100);
+    assertThat(QueryDataFunction.applyLimitClause(selectQuery, limit_0, queryResultSetLimit_100))
+        .isEqualTo(selectQuery + " LIMIT " + queryResultSetLimit_100);
   }
 
   @Test
   public void applyLimitClausePrefersLimitOverQueryResultSetLimit() {
-    assertThat(QueryDataFunction.applyLimitClause(selectQuery, limit_10, queryResultSetLimit_100)).isEqualTo(selectQuery + " LIMIT " + limit_10);
+    assertThat(QueryDataFunction.applyLimitClause(selectQuery, limit_10, queryResultSetLimit_100))
+        .isEqualTo(selectQuery + " LIMIT " + limit_10);
   }
 
   @Test // GEODE-1907
   public void applyLimitClauseAddsQueryResultSetLimitIfMissingSpaceAfterFrom() {
     String selectQueryMissingSpaceAfterFrom = "SELECT * FROM/MyRegion";
-    assertThat(QueryDataFunction.applyLimitClause(selectQueryMissingSpaceAfterFrom, limit_0, queryResultSetLimit_100)).isEqualTo(selectQueryMissingSpaceAfterFrom + " LIMIT " + queryResultSetLimit_100);
+    assertThat(
+            QueryDataFunction.applyLimitClause(
+                selectQueryMissingSpaceAfterFrom, limit_0, queryResultSetLimit_100))
+        .isEqualTo(selectQueryMissingSpaceAfterFrom + " LIMIT " + queryResultSetLimit_100);
   }
 
   @Test
-  public void applyLimitClauseDoesNotAddQueryResultSetLimitIfMissingSpaceAfterFromButLimitIsPresent() {
+  public void
+      applyLimitClauseDoesNotAddQueryResultSetLimitIfMissingSpaceAfterFromButLimitIsPresent() {
     String selectQueryMissingSpaceAfterFromWithLimit = "SELECT * FROM/MyRegion LIMIT " + limit_10;
-    assertThat(QueryDataFunction.applyLimitClause(selectQueryMissingSpaceAfterFromWithLimit, limit_0, queryResultSetLimit_100)).isEqualTo(selectQueryMissingSpaceAfterFromWithLimit);
+    assertThat(
+            QueryDataFunction.applyLimitClause(
+                selectQueryMissingSpaceAfterFromWithLimit, limit_0, queryResultSetLimit_100))
+        .isEqualTo(selectQueryMissingSpaceAfterFromWithLimit);
   }
-
 }

@@ -119,11 +119,9 @@ import org.apache.geode.pdx.PdxSerializer;
 import org.apache.geode.pdx.internal.TypeRegistry;
 
 /**
- * Represents a {@link Cache} that is created declaratively.  Notice
- * that it implements the {@link Cache} interface so that this class
- * must be updated when {@link Cache} is modified.  This class is
+ * Represents a {@link Cache} that is created declaratively. Notice that it implements the {@link
+ * Cache} interface so that this class must be updated when {@link Cache} is modified. This class is
  * public for testing purposes.
- *
  *
  * @since GemFire 3.0
  */
@@ -131,14 +129,17 @@ public class CacheCreation implements InternalCache {
 
   /** The amount of time to wait for a distributed lock */
   private int lockTimeout = GemFireCacheImpl.DEFAULT_LOCK_TIMEOUT;
+
   private boolean hasLockTimeout = false;
 
   /** The duration of a lease on a distributed lock */
   private int lockLease = GemFireCacheImpl.DEFAULT_LOCK_LEASE;
+
   private boolean hasLockLease = false;
 
   /** The amount of time to wait for a <code>netSearch</code> */
   private int searchTimeout = GemFireCacheImpl.DEFAULT_SEARCH_TIMEOUT;
+
   private boolean hasSearchTimeout = false;
 
   private boolean hasMessageSyncInterval = false;
@@ -148,17 +149,20 @@ public class CacheCreation implements InternalCache {
 
   /** Are dynamic regions enabled in this cache? */
   private DynamicRegionFactory.Config dynamicRegionFactoryConfig = null;
+
   private boolean hasDynamicRegionFactory = false;
 
   /** Is this a cache server? */
   private boolean isServer = false;
+
   private boolean hasServer = false;
 
   /** The bridge servers configured for this cache */
   private final List bridgeServers = new ArrayList();
 
   // Stores the properties used to initialize declarables.
-  private final Map<Declarable, Properties> declarablePropertiesMap = new HashMap<Declarable, Properties>();
+  private final Map<Declarable, Properties> declarablePropertiesMap =
+      new HashMap<Declarable, Properties>();
 
   private Set<GatewaySender> gatewaySenders = new HashSet<GatewaySender>();
 
@@ -170,6 +174,7 @@ public class CacheCreation implements InternalCache {
 
   /** The copyOnRead attribute */
   private boolean copyOnRead = GemFireCacheImpl.DEFAULT_COPY_ON_READ;
+
   private boolean hasCopyOnRead = false;
 
   /** The CacheTransactionManager representative for this Cache */
@@ -181,16 +186,16 @@ public class CacheCreation implements InternalCache {
   /** The named region attributes associated with this cache */
   private final Map namedRegionAttributes = new HashMap();
 
-  /** The names of the region attributes in the order in which they
-   * were added.  Keeping track of this ensures that named region
-   * attributes are processed in the correct order.  That is, "parent"
-   * named region attributes will be processed before "children" named
-   * region attributes. */
+  /**
+   * The names of the region attributes in the order in which they were added. Keeping track of this
+   * ensures that named region attributes are processed in the correct order. That is, "parent"
+   * named region attributes will be processed before "children" named region attributes.
+   */
   protected final List regionAttributesNames = new ArrayList();
 
-  /** The named disk store attributes associated with this cache.
-   * Made this linked so its iteration would be in insert order.
-   * This is important for unit testing 44914.
+  /**
+   * The named disk store attributes associated with this cache. Made this linked so its iteration
+   * would be in insert order. This is important for unit testing 44914.
    */
   protected final Map diskStores = new LinkedHashMap();
 
@@ -205,15 +210,14 @@ public class CacheCreation implements InternalCache {
 
   /**
    * {@link ExtensionPoint} support.
+   *
    * @since GemFire 8.1
    */
   private SimpleExtensionPoint<Cache> extensionPoint = new SimpleExtensionPoint<Cache>(this, this);
 
   ////////////////////////  Constructors  ////////////////////////
 
-  /**
-   * Creates a new <code>CacheCreation</code> with no root regions
-   */
+  /** Creates a new <code>CacheCreation</code> with no root regions */
   public CacheCreation() {
     this(false);
   }
@@ -224,8 +228,8 @@ public class CacheCreation implements InternalCache {
   }
 
   /**
-   * @param forParsing if true then this creation is used for parsing xml;
-   *   if false then it is used for generating xml.
+   * @param forParsing if true then this creation is used for parsing xml; if false then it is used
+   *     for generating xml.
    * @since GemFire 5.7
    */
   public CacheCreation(boolean forParsing) {
@@ -235,16 +239,14 @@ public class CacheCreation implements InternalCache {
     }
   }
 
-  /**
-   * @since GemFire 5.7
-   */
+  /** @since GemFire 5.7 */
   public void startingGenerate() {
     createInProgress.set(null);
   }
 
   //////////////////////  Instance Methods  //////////////////////
 
-  static final private RegionAttributes defaults = new AttributesFactory().create();
+  private static final RegionAttributes defaults = new AttributesFactory().create();
 
   RegionAttributes getDefaultAttributes() {
     return defaults;
@@ -257,9 +259,8 @@ public class CacheCreation implements InternalCache {
   /**
    * Sets the attributes of the root region
    *
-   * @throws RegionExistsException
-   *         If this cache already contains a region with the same
-   *         name as <code>root</code>.
+   * @throws RegionExistsException If this cache already contains a region with the same name as
+   *     <code>root</code>.
    */
   void addRootRegion(RegionCreation root) throws RegionExistsException {
 
@@ -318,7 +319,10 @@ public class CacheCreation implements InternalCache {
 
   public void setMessageSyncInterval(int seconds) {
     if (seconds < 0) {
-      throw new IllegalArgumentException(LocalizedStrings.CacheCreation_THE_MESSAGESYNCINTERVAL_PROPERTY_FOR_CACHE_CANNOT_BE_NEGATIVE.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .CacheCreation_THE_MESSAGESYNCINTERVAL_PROPERTY_FOR_CACHE_CANNOT_BE_NEGATIVE
+              .toLocalizedString());
     }
     HARegionQueue.setMessageSyncInterval(seconds);
     this.hasMessageSyncInterval = true;
@@ -330,7 +334,7 @@ public class CacheCreation implements InternalCache {
 
   public Set rootRegions() {
     Set regions = new LinkedHashSet();
-    for (Iterator itr = this.roots.values().iterator(); itr.hasNext();) {
+    for (Iterator itr = this.roots.values().iterator(); itr.hasNext(); ) {
       regions.add(itr.next());
     }
     return Collections.unmodifiableSet(regions);
@@ -338,7 +342,7 @@ public class CacheCreation implements InternalCache {
 
   /**
    * create diskstore factory
-   * 
+   *
    * @since GemFire prPersistSprint2
    */
   public DiskStoreFactory createDiskStoreFactory() {
@@ -346,16 +350,17 @@ public class CacheCreation implements InternalCache {
   }
 
   /**
-   * Store the current CacheCreation that is doing a create.
-   * Used from PoolManager to defer to CacheCreation as a manager of pools.
+   * Store the current CacheCreation that is doing a create. Used from PoolManager to defer to
+   * CacheCreation as a manager of pools.
+   *
    * @since GemFire 5.7
    */
   private static ThreadLocal createInProgress = new ThreadLocal();
 
   /**
-   * Returns null if the current thread is not doing a CacheCreation create.
-   * Otherwise returns the PoolManagerImpl of the CacheCreation of the
-   * create being invoked.
+   * Returns null if the current thread is not doing a CacheCreation create. Otherwise returns the
+   * PoolManagerImpl of the CacheCreation of the create being invoked.
+   *
    * @since GemFire 5.7
    */
   public static final PoolManagerImpl getCurrentPoolManager() {
@@ -363,21 +368,22 @@ public class CacheCreation implements InternalCache {
   }
 
   /**
-   * Fills in the contents of a {@link Cache} based on this creation
-   * object's state.
+   * Fills in the contents of a {@link Cache} based on this creation object's state.
    *
    * @throws TimeoutException
    * @throws CacheWriterException
    * @throws RegionExistsException
    * @throws GatewayException
    */
-  void create(GemFireCacheImpl cache) throws TimeoutException, CacheWriterException, GatewayException, RegionExistsException {
+  void create(GemFireCacheImpl cache)
+      throws TimeoutException, CacheWriterException, GatewayException, RegionExistsException {
     extensionPoint.beforeCreate(cache);
 
     cache.setDeclarativeCacheConfig(cacheConfig);
 
     if (cache.isClient()) {
-      throw new IllegalStateException("You must use client-cache in the cache.xml when ClientCacheFactory is used.");
+      throw new IllegalStateException(
+          "You must use client-cache in the cache.xml when ClientCacheFactory is used.");
     }
     if (this.hasLockLease()) {
       cache.setLockLease(this.lockLease);
@@ -420,7 +426,7 @@ public class CacheCreation implements InternalCache {
 
     cache.initializePdxRegistry();
 
-    for (Iterator iter = this.diskStores.values().iterator(); iter.hasNext();) {
+    for (Iterator iter = this.diskStores.values().iterator(); iter.hasNext(); ) {
       DiskStoreAttributesCreation creation = (DiskStoreAttributesCreation) iter.next();
       if (creation != pdxRegDSC) {
         createDiskStore(creation, cache);
@@ -437,7 +443,9 @@ public class CacheCreation implements InternalCache {
       cache.setCopyOnRead(this.copyOnRead);
     }
 
-    if (this.txMgrCreation != null && this.txMgrCreation.getListeners().length > 0 && cache.getCacheTransactionManager() != null) {
+    if (this.txMgrCreation != null
+        && this.txMgrCreation.getListeners().length > 0
+        && cache.getCacheTransactionManager() != null) {
       cache.getCacheTransactionManager().initListeners(this.txMgrCreation.getListeners());
     }
 
@@ -448,28 +456,36 @@ public class CacheCreation implements InternalCache {
     for (GatewaySender senderCreation : this.getGatewaySenders()) {
       GatewaySenderFactory factory = (GatewaySenderFactory) cache.createGatewaySenderFactory();
       ((InternalGatewaySenderFactory) factory).configureGatewaySender(senderCreation);
-      GatewaySender gatewaySender = factory.create(senderCreation.getId(), senderCreation.getRemoteDSId());
+      GatewaySender gatewaySender =
+          factory.create(senderCreation.getId(), senderCreation.getRemoteDSId());
       // Start the sender if it is not set to manually start
       if (gatewaySender.isManualStart()) {
-        cache.getLoggerI18n().info(LocalizedStrings.CacheCreation_0_IS_NOT_BEING_STARTED_SINCE_IT_IS_CONFIGURED_FOR_MANUAL_START, gatewaySender);
+        cache
+            .getLoggerI18n()
+            .info(
+                LocalizedStrings
+                    .CacheCreation_0_IS_NOT_BEING_STARTED_SINCE_IT_IS_CONFIGURED_FOR_MANUAL_START,
+                gatewaySender);
       }
     }
 
     for (AsyncEventQueue asyncEventQueueCreation : this.getAsyncEventQueues()) {
-      AsyncEventQueueFactoryImpl asyncQueueFactory = (AsyncEventQueueFactoryImpl) cache.createAsyncEventQueueFactory();
+      AsyncEventQueueFactoryImpl asyncQueueFactory =
+          (AsyncEventQueueFactoryImpl) cache.createAsyncEventQueueFactory();
       asyncQueueFactory.configureAsyncEventQueue(asyncEventQueueCreation);
 
       AsyncEventQueue asyncEventQueue = cache.getAsyncEventQueue(asyncEventQueueCreation.getId());
-      //      AsyncEventQueue asyncEventQueue = 
+      //      AsyncEventQueue asyncEventQueue =
       //        asyncQueueFactory.create(asyncEventQueueCreation.getId(), asyncEventQueueCreation.getAsyncEventListener());
       if (asyncEventQueue == null) {
-        asyncQueueFactory.create(asyncEventQueueCreation.getId(), asyncEventQueueCreation.getAsyncEventListener());
+        asyncQueueFactory.create(
+            asyncEventQueueCreation.getId(), asyncEventQueueCreation.getAsyncEventListener());
       }
     }
 
     cache.initializePdxRegistry();
 
-    for (Iterator iter = this.regionAttributesNames.iterator(); iter.hasNext();) {
+    for (Iterator iter = this.regionAttributesNames.iterator(); iter.hasNext(); ) {
       String id = (String) iter.next();
       RegionAttributesCreation creation = (RegionAttributesCreation) getRegionAttributes(id);
       creation.inheritAttributes(cache, false);
@@ -494,7 +510,8 @@ public class CacheCreation implements InternalCache {
     Integer serverPort = CacheServerLauncher.getServerPort();
     String serverBindAdd = CacheServerLauncher.getServerBindAddress();
     Boolean disableDefaultServer = CacheServerLauncher.disableDefaultServer.get();
-    startCacheServers(this.getCacheServers(), cache, serverPort, serverBindAdd, disableDefaultServer);
+    startCacheServers(
+        this.getCacheServers(), cache, serverPort, serverBindAdd, disableDefaultServer);
 
     for (GatewayReceiver receiverCreation : this.getGatewayReceivers()) {
       GatewayReceiverFactory factory = cache.createGatewayReceiverFactory();
@@ -510,7 +527,12 @@ public class CacheCreation implements InternalCache {
       factory.setHostnameForSenders(receiverCreation.getHost());
       GatewayReceiver receiver = factory.create();
       if (receiver.isManualStart()) {
-        cache.getLoggerI18n().info(LocalizedStrings.CacheCreation_0_IS_NOT_BEING_STARTED_SINCE_IT_IS_CONFIGURED_FOR_MANUAL_START, receiver);
+        cache
+            .getLoggerI18n()
+            .info(
+                LocalizedStrings
+                    .CacheCreation_0_IS_NOT_BEING_STARTED_SINCE_IT_IS_CONFIGURED_FOR_MANUAL_START,
+                receiver);
       }
     }
 
@@ -533,17 +555,26 @@ public class CacheCreation implements InternalCache {
   }
 
   /**
-   * starts declarative cache servers if a server is not running on the port already.
-   * Also adds a default server to the param declarativeCacheServers if a serverPort is specified.
+   * starts declarative cache servers if a server is not running on the port already. Also adds a
+   * default server to the param declarativeCacheServers if a serverPort is specified.
    */
-  protected void startCacheServers(List declarativeCacheServers, Cache cache, Integer serverPort, String serverBindAdd, Boolean disableDefaultServer) {
+  protected void startCacheServers(
+      List declarativeCacheServers,
+      Cache cache,
+      Integer serverPort,
+      String serverBindAdd,
+      Boolean disableDefaultServer) {
     CacheServerCreation defaultServer = null;
 
     if (declarativeCacheServers.size() > 1 && (serverPort != null || serverBindAdd != null)) {
-      throw new RuntimeException(LocalizedStrings.CacheServerLauncher_SERVER_PORT_MORE_THAN_ONE_CACHE_SERVER.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.CacheServerLauncher_SERVER_PORT_MORE_THAN_ONE_CACHE_SERVER
+              .toLocalizedString());
     }
 
-    if (declarativeCacheServers.isEmpty() && (serverPort != null || serverBindAdd != null) && (disableDefaultServer == null || !disableDefaultServer)) {
+    if (declarativeCacheServers.isEmpty()
+        && (serverPort != null || serverBindAdd != null)
+        && (disableDefaultServer == null || !disableDefaultServer)) {
       boolean existingCacheServer = false;
 
       List<CacheServer> cacheServers = cache.getCacheServers();
@@ -561,7 +592,7 @@ public class CacheCreation implements InternalCache {
       }
     }
 
-    for (Iterator iter = declarativeCacheServers.iterator(); iter.hasNext();) {
+    for (Iterator iter = declarativeCacheServers.iterator(); iter.hasNext(); ) {
       CacheServerCreation declaredCacheServer = (CacheServerCreation) iter.next();
 
       boolean startServer = true;
@@ -592,18 +623,17 @@ public class CacheCreation implements InternalCache {
       }
 
       try {
-        if (!impl.isRunning())
-          impl.start();
+        if (!impl.isRunning()) impl.start();
 
       } catch (IOException ex) {
-        throw new GemFireIOException(LocalizedStrings.CacheCreation_WHILE_STARTING_CACHE_SERVER_0.toLocalizedString(impl), ex);
+        throw new GemFireIOException(
+            LocalizedStrings.CacheCreation_WHILE_STARTING_CACHE_SERVER_0.toLocalizedString(impl),
+            ex);
       }
     }
   }
 
-  /**
-   * Returns a description of the disk store used by the pdx registry.
-   */
+  /** Returns a description of the disk store used by the pdx registry. */
   protected DiskStoreAttributesCreation initializePdxDiskStore(GemFireCacheImpl cache) {
     // to fix bug 44271 create the disk store used by the pdx registry first.
     // If it is using the default disk store we need to create it now.
@@ -635,11 +665,17 @@ public class CacheCreation implements InternalCache {
   }
 
   /**
-   * Returns whether or not this <code>CacheCreation</code> is
-   * equivalent to another <code>Cache</code>.
+   * Returns whether or not this <code>CacheCreation</code> is equivalent to another <code>Cache
+   * </code>.
    */
   public boolean sameAs(Cache other) {
-    boolean sameConfig = other.getLockLease() == this.getLockLease() && other.getLockTimeout() == this.getLockTimeout() && other.getSearchTimeout() == this.getSearchTimeout() && other.getMessageSyncInterval() == this.getMessageSyncInterval() && other.getCopyOnRead() == this.getCopyOnRead() && other.isServer() == this.isServer();
+    boolean sameConfig =
+        other.getLockLease() == this.getLockLease()
+            && other.getLockTimeout() == this.getLockTimeout()
+            && other.getSearchTimeout() == this.getSearchTimeout()
+            && other.getMessageSyncInterval() == this.getMessageSyncInterval()
+            && other.getCopyOnRead() == this.getCopyOnRead()
+            && other.isServer() == this.isServer();
 
     if (!sameConfig) {
       throw new RuntimeException(LocalizedStrings.CacheCreation_SAMECONFIG.toLocalizedString());
@@ -677,13 +713,14 @@ public class CacheCreation implements InternalCache {
       Collection myBridges = this.getCacheServers();
       Collection otherBridges = other.getCacheServers();
       if (myBridges.size() != otherBridges.size()) {
-        throw new RuntimeException(LocalizedStrings.CacheCreation_CACHESERVERS_SIZE.toLocalizedString());
+        throw new RuntimeException(
+            LocalizedStrings.CacheCreation_CACHESERVERS_SIZE.toLocalizedString());
       }
 
-      for (Iterator myIter = myBridges.iterator(); myIter.hasNext();) {
+      for (Iterator myIter = myBridges.iterator(); myIter.hasNext(); ) {
         CacheServerCreation myBridge = (CacheServerCreation) myIter.next();
         boolean found = false;
-        for (Iterator otherIter = otherBridges.iterator(); otherIter.hasNext();) {
+        for (Iterator otherIter = otherBridges.iterator(); otherIter.hasNext(); ) {
           CacheServer otherBridge = (CacheServer) otherIter.next();
           if (myBridge.sameAs(otherBridge)) {
             found = true;
@@ -692,13 +729,17 @@ public class CacheCreation implements InternalCache {
         }
 
         if (!found) {
-          throw new RuntimeException(LocalizedStrings.CacheCreation_CACHE_SERVER_0_NOT_FOUND.toLocalizedString(myBridge));
+          throw new RuntimeException(
+              LocalizedStrings.CacheCreation_CACHE_SERVER_0_NOT_FOUND.toLocalizedString(myBridge));
         }
       }
 
       { // compare connection pools
         Map m1 = getPools();
-        Map m2 = (other instanceof CacheCreation) ? ((CacheCreation) other).getPools() : PoolManager.getAll();
+        Map m2 =
+            (other instanceof CacheCreation)
+                ? ((CacheCreation) other).getPools()
+                : PoolManager.getAll();
         int m1Size = m1.size();
         {
           // ignore any gateway instances
@@ -730,7 +771,15 @@ public class CacheCreation implements InternalCache {
         }
 
         if (m1Size != m2Size) {
-          throw new RuntimeException("pool sizes differ m1Size=" + m1Size + " m2Size=" + m2Size + " m1=" + m1.values() + " m2=" + m2.values());
+          throw new RuntimeException(
+              "pool sizes differ m1Size="
+                  + m1Size
+                  + " m2Size="
+                  + m2Size
+                  + " m1="
+                  + m1.values()
+                  + " m2="
+                  + m2.values());
         }
 
         if (m1Size > 0) {
@@ -746,17 +795,20 @@ public class CacheCreation implements InternalCache {
       }
 
       // compare disk stores
-      for (Iterator myIter = diskStores.values().iterator(); myIter.hasNext();) {
+      for (Iterator myIter = diskStores.values().iterator(); myIter.hasNext(); ) {
         DiskStoreAttributesCreation dsac = (DiskStoreAttributesCreation) myIter.next();
         String name = dsac.getName();
         DiskStore ds = other.findDiskStore(name);
         if (ds == null) {
           getLogger().fine("Disk store " + name + " not found.");
-          throw new RuntimeException(LocalizedStrings.CacheCreation_DISKSTORE_NOTFOUND_0.toLocalizedString(name));
+          throw new RuntimeException(
+              LocalizedStrings.CacheCreation_DISKSTORE_NOTFOUND_0.toLocalizedString(name));
         } else {
           if (!dsac.sameAs(ds)) {
             getLogger().fine("Attributes for disk store " + name + " do not match");
-            throw new RuntimeException(LocalizedStrings.CacheCreation_ATTRIBUTES_FOR_DISKSTORE_0_DO_NOT_MATCH.toLocalizedString(name));
+            throw new RuntimeException(
+                LocalizedStrings.CacheCreation_ATTRIBUTES_FOR_DISKSTORE_0_DO_NOT_MATCH
+                    .toLocalizedString(name));
           }
         }
       }
@@ -764,23 +816,29 @@ public class CacheCreation implements InternalCache {
       Map myNamedAttributes = this.listRegionAttributes();
       Map otherNamedAttributes = other.listRegionAttributes();
       if (myNamedAttributes.size() != otherNamedAttributes.size()) {
-        throw new RuntimeException(LocalizedStrings.CacheCreation_NAMEDATTRIBUTES_SIZE.toLocalizedString());
+        throw new RuntimeException(
+            LocalizedStrings.CacheCreation_NAMEDATTRIBUTES_SIZE.toLocalizedString());
       }
 
-      for (Iterator myIter = myNamedAttributes.entrySet().iterator(); myIter.hasNext();) {
+      for (Iterator myIter = myNamedAttributes.entrySet().iterator(); myIter.hasNext(); ) {
         Map.Entry myEntry = (Map.Entry) myIter.next();
         String myId = (String) myEntry.getKey();
-        Assert.assertTrue(myEntry.getValue() instanceof RegionAttributesCreation, "Entry value is a " + myEntry.getValue().getClass().getName());
+        Assert.assertTrue(
+            myEntry.getValue() instanceof RegionAttributesCreation,
+            "Entry value is a " + myEntry.getValue().getClass().getName());
         RegionAttributesCreation myAttrs = (RegionAttributesCreation) myEntry.getValue();
         RegionAttributes otherAttrs = other.getRegionAttributes(myId);
         if (otherAttrs == null) {
           getLogger().fine("No attributes for " + myId);
-          throw new RuntimeException(LocalizedStrings.CacheCreation_NO_ATTRIBUTES_FOR_0.toLocalizedString(myId));
+          throw new RuntimeException(
+              LocalizedStrings.CacheCreation_NO_ATTRIBUTES_FOR_0.toLocalizedString(myId));
 
         } else {
           if (!myAttrs.sameAs(otherAttrs)) {
             getLogger().fine("Attributes for " + myId + " do not match");
-            throw new RuntimeException(LocalizedStrings.CacheCreation_ATTRIBUTES_FOR_0_DO_NOT_MATCH.toLocalizedString(myId));
+            throw new RuntimeException(
+                LocalizedStrings.CacheCreation_ATTRIBUTES_FOR_0_DO_NOT_MATCH.toLocalizedString(
+                    myId));
           }
         }
       }
@@ -795,9 +853,11 @@ public class CacheCreation implements InternalCache {
         RegionCreation r = (RegionCreation) it.next();
         Region r2 = other.getRegion(r.getName());
         if (r2 == null) {
-          throw new RuntimeException(LocalizedStrings.CacheCreation_NO_ROOT_0.toLocalizedString(r.getName()));
+          throw new RuntimeException(
+              LocalizedStrings.CacheCreation_NO_ROOT_0.toLocalizedString(r.getName()));
         } else if (!r.sameAs(r2)) {
-          throw new RuntimeException(LocalizedStrings.CacheCreation_REGIONS_DIFFER.toLocalizedString());
+          throw new RuntimeException(
+              LocalizedStrings.CacheCreation_REGIONS_DIFFER.toLocalizedString());
         }
       }
 
@@ -894,39 +954,33 @@ public class CacheCreation implements InternalCache {
     return queryService;
   }
 
-  /**
-   * @since GemFire 6.5
-   */
+  /** @since GemFire 6.5 */
   public <K, V> RegionFactory<K, V> createRegionFactory(RegionShortcut atts) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
 
-  /**
-   * @since GemFire 6.5
-   */
+  /** @since GemFire 6.5 */
   public <K, V> RegionFactory<K, V> createRegionFactory() {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
 
-  /**
-   * @since GemFire 6.5
-   */
+  /** @since GemFire 6.5 */
   public <K, V> RegionFactory<K, V> createRegionFactory(String regionAttributesId) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
 
-  /**
-   * @since GemFire 6.5
-   */
+  /** @since GemFire 6.5 */
   public <K, V> RegionFactory<K, V> createRegionFactory(RegionAttributes<K, V> regionAttributes) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
 
-  public Region createVMRegion(String name, RegionAttributes attrs) throws RegionExistsException, TimeoutException {
+  public Region createVMRegion(String name, RegionAttributes attrs)
+      throws RegionExistsException, TimeoutException {
     return createRegion(name, attrs);
   }
 
-  public Region createRegion(String name, RegionAttributes attrs) throws RegionExistsException, TimeoutException {
+  public Region createRegion(String name, RegionAttributes attrs)
+      throws RegionExistsException, TimeoutException {
     if (attrs instanceof RegionAttributesCreation) {
       ((RegionAttributesCreation) attrs).inheritAttributes(this);
       ((RegionAttributesCreation) attrs).prepareForValidation();
@@ -938,7 +992,8 @@ public class CacheCreation implements InternalCache {
     return region;
   }
 
-  public Region createRegion(String name, String refid) throws RegionExistsException, TimeoutException {
+  public Region createRegion(String name, String refid)
+      throws RegionExistsException, TimeoutException {
     RegionCreation region = new RegionCreation(this, name, refid);
     this.addRootRegion(region);
     return region;
@@ -1008,7 +1063,7 @@ public class CacheCreation implements InternalCache {
   //    this.gatewayReceivers.add(receiver);
   //    return receiver;
   //  }
-  //  
+  //
   public Set<GatewayReceiver> getGatewayReceivers() {
     return this.gatewayReceivers;
   }
@@ -1062,6 +1117,7 @@ public class CacheCreation implements InternalCache {
 
   /**
    * Implementation of {@link Cache#setCopyOnRead}
+   *
    * @since GemFire 4.0
    */
   public void setCopyOnRead(boolean copyOnRead) {
@@ -1071,6 +1127,7 @@ public class CacheCreation implements InternalCache {
 
   /**
    * Implementation of {@link Cache#getCopyOnRead}
+   *
    * @since GemFire 4.0
    */
   public boolean getCopyOnRead() {
@@ -1082,8 +1139,9 @@ public class CacheCreation implements InternalCache {
   }
 
   /**
-   * Adds a CacheTransactionManagerCreation for this Cache (really just a
-   * placeholder since a CacheTransactionManager is really a Cache singleton)
+   * Adds a CacheTransactionManagerCreation for this Cache (really just a placeholder since a
+   * CacheTransactionManager is really a Cache singleton)
+   *
    * @since GemFire 4.0
    * @see GemFireCacheImpl
    */
@@ -1091,9 +1149,7 @@ public class CacheCreation implements InternalCache {
     this.txMgrCreation = txm;
   }
 
-  /**
-   * @return Context jndi context associated with the Cache.
-   */
+  /** @return Context jndi context associated with the Cache. */
   public Context getJNDIContext() {
     return JNDIInvoker.getJNDIContext();
   }
@@ -1143,7 +1199,8 @@ public class CacheCreation implements InternalCache {
     return Collections.unmodifiableMap(this.namedRegionAttributes);
   }
 
-  public void loadCacheXml(InputStream is) throws TimeoutException, CacheWriterException, RegionExistsException {
+  public void loadCacheXml(InputStream is)
+      throws TimeoutException, CacheWriterException, RegionExistsException {
 
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
@@ -1253,8 +1310,8 @@ public class CacheCreation implements InternalCache {
 
   /**
    * Returns whether PdxInstance is preferred for PDX types instead of Java object.
-   * @see org.apache.geode.cache.CacheFactory#setPdxReadSerialized(boolean)
    *
+   * @see org.apache.geode.cache.CacheFactory#setPdxReadSerialized(boolean)
    * @since GemFire 6.6
    */
   public boolean getPdxReadSerialized() {
@@ -1377,206 +1434,267 @@ public class CacheCreation implements InternalCache {
     return null;
   }
 
-  public QueryService queryService = new org.apache.geode.cache.query.QueryService() {
+  public QueryService queryService =
+      new org.apache.geode.cache.query.QueryService() {
 
-    private Map<String, List> indexes = new HashMap<String, List>();
+        private Map<String, List> indexes = new HashMap<String, List>();
 
-    @Override
-    public Query newQuery(String queryString) {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public Query newQuery(String queryString) {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public Index createHashIndex(String indexName, String indexedExpression, String regionPath) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
-      return createHashIndex(indexName, indexedExpression, regionPath, "");
-    }
+        @Override
+        public Index createHashIndex(String indexName, String indexedExpression, String regionPath)
+            throws IndexInvalidException, IndexNameConflictException, IndexExistsException,
+                RegionNotFoundException, UnsupportedOperationException {
+          return createHashIndex(indexName, indexedExpression, regionPath, "");
+        }
 
-    @Override
-    public Index createHashIndex(String indexName, String indexedExpression, String regionPath, String imports) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
-      return createIndex(indexName, IndexType.HASH, indexedExpression, regionPath, imports);
-    }
+        @Override
+        public Index createHashIndex(
+            String indexName, String indexedExpression, String regionPath, String imports)
+            throws IndexInvalidException, IndexNameConflictException, IndexExistsException,
+                RegionNotFoundException, UnsupportedOperationException {
+          return createIndex(indexName, IndexType.HASH, indexedExpression, regionPath, imports);
+        }
 
-    @Override
-    public Index createIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
-      return createIndex(indexName, indexType, indexedExpression, fromClause, "");
-    }
+        @Override
+        public Index createIndex(
+            String indexName, IndexType indexType, String indexedExpression, String fromClause)
+            throws IndexInvalidException, IndexNameConflictException, IndexExistsException,
+                RegionNotFoundException, UnsupportedOperationException {
+          return createIndex(indexName, indexType, indexedExpression, fromClause, "");
+        }
 
-    @Override
-    /** 
-     * Due to not having the full implementation to determine region names etc
-     * this implementation will only match a single region with no alias at this time
-     */
-    public Index createIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause, String imports) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
-      IndexCreationData indexData = new IndexCreationData(indexName);
-      indexData.setFunctionalIndexData(fromClause, indexedExpression, imports);
-      indexData.setIndexType(indexType.toString());
-      List indexesForRegion = indexes.get(fromClause);
-      if (indexesForRegion == null) {
-        indexesForRegion = new ArrayList();
-        indexes.put(fromClause, indexesForRegion);
-      }
-      indexesForRegion.add(indexData);
-      return indexData;
-    }
+        @Override
+        /**
+         * Due to not having the full implementation to determine region names etc this
+         * implementation will only match a single region with no alias at this time
+         */
+        public Index createIndex(
+            String indexName,
+            IndexType indexType,
+            String indexedExpression,
+            String fromClause,
+            String imports)
+            throws IndexInvalidException, IndexNameConflictException, IndexExistsException,
+                RegionNotFoundException, UnsupportedOperationException {
+          IndexCreationData indexData = new IndexCreationData(indexName);
+          indexData.setFunctionalIndexData(fromClause, indexedExpression, imports);
+          indexData.setIndexType(indexType.toString());
+          List indexesForRegion = indexes.get(fromClause);
+          if (indexesForRegion == null) {
+            indexesForRegion = new ArrayList();
+            indexes.put(fromClause, indexesForRegion);
+          }
+          indexesForRegion.add(indexData);
+          return indexData;
+        }
 
-    @Override
-    public Index createIndex(String indexName, String indexedExpression, String regionPath) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
-      return createIndex(indexName, indexedExpression, regionPath, "");
-    }
+        @Override
+        public Index createIndex(String indexName, String indexedExpression, String regionPath)
+            throws IndexInvalidException, IndexNameConflictException, IndexExistsException,
+                RegionNotFoundException, UnsupportedOperationException {
+          return createIndex(indexName, indexedExpression, regionPath, "");
+        }
 
-    @Override
-    public Index createIndex(String indexName, String indexedExpression, String regionPath, String imports) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
-      return createIndex(indexName, IndexType.FUNCTIONAL, indexedExpression, regionPath, imports);
+        @Override
+        public Index createIndex(
+            String indexName, String indexedExpression, String regionPath, String imports)
+            throws IndexInvalidException, IndexNameConflictException, IndexExistsException,
+                RegionNotFoundException, UnsupportedOperationException {
+          return createIndex(
+              indexName, IndexType.FUNCTIONAL, indexedExpression, regionPath, imports);
+        }
 
-    }
+        @Override
+        public Index createKeyIndex(String indexName, String indexedExpression, String regionPath)
+            throws IndexInvalidException, IndexNameConflictException, IndexExistsException,
+                RegionNotFoundException, UnsupportedOperationException {
+          return createIndex(indexName, IndexType.PRIMARY_KEY, indexedExpression, regionPath, "");
+        }
 
-    @Override
-    public Index createKeyIndex(String indexName, String indexedExpression, String regionPath) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
-      return createIndex(indexName, IndexType.PRIMARY_KEY, indexedExpression, regionPath, "");
+        @Override
+        public Index getIndex(Region<?, ?> region, String indexName) {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    }
+        @Override
+        public Collection<Index> getIndexes() {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public Index getIndex(Region<?, ?> region, String indexName) {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public Collection<Index> getIndexes(Region<?, ?> region) {
+          return indexes.get(region.getFullPath());
+        }
 
-    @Override
-    public Collection<Index> getIndexes() {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public Collection<Index> getIndexes(Region<?, ?> region, IndexType indexType) {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public Collection<Index> getIndexes(Region<?, ?> region) {
-      return indexes.get(region.getFullPath());
-    }
+        @Override
+        public void removeIndex(Index index) {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public Collection<Index> getIndexes(Region<?, ?> region, IndexType indexType) {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public void removeIndexes() {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void removeIndex(Index index) {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public void removeIndexes(Region<?, ?> region) {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void removeIndexes() {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public CqQuery newCq(String queryString, CqAttributes cqAttr)
+            throws QueryInvalidException, CqException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void removeIndexes(Region<?, ?> region) {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public CqQuery newCq(String queryString, CqAttributes cqAttr, boolean isDurable)
+            throws QueryInvalidException, CqException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public CqQuery newCq(String queryString, CqAttributes cqAttr) throws QueryInvalidException, CqException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public CqQuery newCq(String name, String queryString, CqAttributes cqAttr)
+            throws QueryInvalidException, CqExistsException, CqException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public CqQuery newCq(String queryString, CqAttributes cqAttr, boolean isDurable) throws QueryInvalidException, CqException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public CqQuery newCq(
+            String name, String queryString, CqAttributes cqAttr, boolean isDurable)
+            throws QueryInvalidException, CqExistsException, CqException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public CqQuery newCq(String name, String queryString, CqAttributes cqAttr) throws QueryInvalidException, CqExistsException, CqException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public void closeCqs() {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public CqQuery newCq(String name, String queryString, CqAttributes cqAttr, boolean isDurable) throws QueryInvalidException, CqExistsException, CqException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public CqQuery[] getCqs() {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void closeCqs() {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public CqQuery[] getCqs(String regionName) throws CqException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public CqQuery[] getCqs() {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public CqQuery getCq(String cqName) {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public CqQuery[] getCqs(String regionName) throws CqException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public void executeCqs() throws CqException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public CqQuery getCq(String cqName) {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public void stopCqs() throws CqException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void executeCqs() throws CqException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public void executeCqs(String regionName) throws CqException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void stopCqs() throws CqException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public void stopCqs(String regionName) throws CqException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void executeCqs(String regionName) throws CqException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public List<String> getAllDurableCqsFromServer() throws CqException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void stopCqs(String regionName) throws CqException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public CqServiceStatistics getCqStatistics() {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public List<String> getAllDurableCqsFromServer() throws CqException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public void defineKeyIndex(String indexName, String indexedExpression, String fromClause)
+            throws RegionNotFoundException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public CqServiceStatistics getCqStatistics() {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public void defineHashIndex(String indexName, String indexedExpression, String regionPath)
+            throws RegionNotFoundException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void defineKeyIndex(String indexName, String indexedExpression, String fromClause) throws RegionNotFoundException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public void defineHashIndex(
+            String indexName, String indexedExpression, String regionPath, String imports)
+            throws RegionNotFoundException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void defineHashIndex(String indexName, String indexedExpression, String regionPath) throws RegionNotFoundException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public void defineIndex(String indexName, String indexedExpression, String regionPath)
+            throws RegionNotFoundException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void defineHashIndex(String indexName, String indexedExpression, String regionPath, String imports) throws RegionNotFoundException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public void defineIndex(
+            String indexName, String indexedExpression, String regionPath, String imports)
+            throws RegionNotFoundException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void defineIndex(String indexName, String indexedExpression, String regionPath) throws RegionNotFoundException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
+        @Override
+        public List<Index> createDefinedIndexes() throws MultiIndexCreationException {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
 
-    @Override
-    public void defineIndex(String indexName, String indexedExpression, String regionPath, String imports) throws RegionNotFoundException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
-
-    @Override
-    public List<Index> createDefinedIndexes() throws MultiIndexCreationException {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
-
-    @Override
-    public boolean clearDefinedIndexes() {
-      throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
-    }
-
-  };
+        @Override
+        public boolean clearDefinedIndexes() {
+          throw new UnsupportedOperationException(
+              LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
+        }
+      };
 
   @Override
   public <T extends CacheService> T getService(Class<T> clazz) {

@@ -57,9 +57,9 @@ import org.apache.geode.test.junit.runners.CategoryWithParameterizedRunnerFactor
 
 /**
  * Dunit Test to validate OnRegion function execution with REST APIs
+ *
  * @since GemFire 8.0
  */
-
 @Category(DistributedTest.class)
 @RunWith(Parameterized.class)
 @Parameterized.UseParametersRunnerFactory(CategoryWithParameterizedRunnerFactory.class)
@@ -69,8 +69,7 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
 
   private final String PR_REGION_NAME = "samplePRRegion";
 
-  @Parameterized.Parameter
-  public String urlContext;
+  @Parameterized.Parameter public String urlContext;
 
   @Parameterized.Parameters
   public static Collection<String> data() {
@@ -85,7 +84,8 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(policy);
-    Region region = CacheFactory.getAnyInstance().createRegion(REPLICATE_REGION_NAME, factory.create());
+    Region region =
+        CacheFactory.getAnyInstance().createRegion(REPLICATE_REGION_NAME, factory.create());
     org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Region Created :" + region);
     assertNotNull(region);
   }
@@ -105,7 +105,8 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
   }
 
   private void populatePRRegion() {
-    PartitionedRegion pr = (PartitionedRegion) CacheFactory.getAnyInstance().getRegion(PR_REGION_NAME);
+    PartitionedRegion pr =
+        (PartitionedRegion) CacheFactory.getAnyInstance().getRegion(PR_REGION_NAME);
     DistributedSystem.setThreadsSocketPolicy(false);
 
     for (int i = (pr.getTotalNumberOfBuckets() * 3); i > 0; i--) {
@@ -129,7 +130,6 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
     for (final Object testKey : testKeys) {
       region.put(testKey, j++);
     }
-
   }
 
   @Override
@@ -138,15 +138,35 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
   }
 
   private void createCacheAndRegisterFunction() {
-    restURLs.add(vm0.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm0.getHost().getHostName(), null, urlContext)));
-    restURLs.add(vm1.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm1.getHost().getHostName(), null, urlContext)));
-    restURLs.add(vm2.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm2.getHost().getHostName(), null, urlContext)));
-    restURLs.add(vm3.invoke("createCacheWithGroups", () -> createCacheWithGroups(vm3.getHost().getHostName(), null, urlContext)));
+    restURLs.add(
+        vm0.invoke(
+            "createCacheWithGroups",
+            () -> createCacheWithGroups(vm0.getHost().getHostName(), null, urlContext)));
+    restURLs.add(
+        vm1.invoke(
+            "createCacheWithGroups",
+            () -> createCacheWithGroups(vm1.getHost().getHostName(), null, urlContext)));
+    restURLs.add(
+        vm2.invoke(
+            "createCacheWithGroups",
+            () -> createCacheWithGroups(vm2.getHost().getHostName(), null, urlContext)));
+    restURLs.add(
+        vm3.invoke(
+            "createCacheWithGroups",
+            () -> createCacheWithGroups(vm3.getHost().getHostName(), null, urlContext)));
 
-    vm0.invoke("registerFunction(new SampleFunction())", () -> FunctionService.registerFunction(new SampleFunction()));
-    vm1.invoke("registerFunction(new SampleFunction())", () -> FunctionService.registerFunction(new SampleFunction()));
-    vm2.invoke("registerFunction(new SampleFunction())", () -> FunctionService.registerFunction(new SampleFunction()));
-    vm3.invoke("registerFunction(new SampleFunction())", () -> FunctionService.registerFunction(new SampleFunction()));
+    vm0.invoke(
+        "registerFunction(new SampleFunction())",
+        () -> FunctionService.registerFunction(new SampleFunction()));
+    vm1.invoke(
+        "registerFunction(new SampleFunction())",
+        () -> FunctionService.registerFunction(new SampleFunction()));
+    vm2.invoke(
+        "registerFunction(new SampleFunction())",
+        () -> FunctionService.registerFunction(new SampleFunction()));
+    vm3.invoke(
+        "registerFunction(new SampleFunction())",
+        () -> FunctionService.registerFunction(new SampleFunction()));
   }
 
   @Test
@@ -160,7 +180,9 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
 
     vm3.invoke("populateRRRegion", () -> populateRRRegion());
 
-    CloseableHttpResponse response = executeFunctionThroughRestCall("SampleFunction", REPLICATE_REGION_NAME, null, null, null, null);
+    CloseableHttpResponse response =
+        executeFunctionThroughRestCall(
+            "SampleFunction", REPLICATE_REGION_NAME, null, null, null, null);
     assertEquals(200, response.getStatusLine().getStatusCode());
     assertNotNull(response.getEntity());
 
@@ -178,7 +200,8 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
 
     vm3.invoke("populatePRRegion", () -> populatePRRegion());
 
-    CloseableHttpResponse response = executeFunctionThroughRestCall("SampleFunction", PR_REGION_NAME, null, null, null, null);
+    CloseableHttpResponse response =
+        executeFunctionThroughRestCall("SampleFunction", PR_REGION_NAME, null, null, null, null);
     assertEquals(200, response.getStatusLine().getStatusCode());
     assertNotNull(response.getEntity());
 
@@ -195,7 +218,8 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
 
     vm3.invoke("populatePRRegion", () -> populatePRRegion());
 
-    CloseableHttpResponse response = executeFunctionThroughRestCall("SampleFunction", PR_REGION_NAME, "key2", null, null, null);
+    CloseableHttpResponse response =
+        executeFunctionThroughRestCall("SampleFunction", PR_REGION_NAME, "key2", null, null, null);
     assertEquals(200, response.getStatusLine().getStatusCode());
     assertNotNull(response.getEntity());
 
@@ -218,20 +242,40 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
 
     vm3.invoke("populatePRRegion", () -> populatePRRegion());
 
-    String jsonBody = "[" + "{\"@type\": \"double\",\"@value\": 210}" + ",{\"@type\":\"org.apache.geode.rest.internal.web.controllers.Item\"," + "\"itemNo\":\"599\",\"description\":\"Part X Free on Bumper Offer\"," + "\"quantity\":\"2\"," + "\"unitprice\":\"5\"," + "\"totalprice\":\"10.00\"}" + "]";
+    String jsonBody =
+        "["
+            + "{\"@type\": \"double\",\"@value\": 210}"
+            + ",{\"@type\":\"org.apache.geode.rest.internal.web.controllers.Item\","
+            + "\"itemNo\":\"599\",\"description\":\"Part X Free on Bumper Offer\","
+            + "\"quantity\":\"2\","
+            + "\"unitprice\":\"5\","
+            + "\"totalprice\":\"10.00\"}"
+            + "]";
 
-    CloseableHttpResponse response = executeFunctionThroughRestCall("SampleFunction", PR_REGION_NAME, null, jsonBody, null, null);
+    CloseableHttpResponse response =
+        executeFunctionThroughRestCall(
+            "SampleFunction", PR_REGION_NAME, null, jsonBody, null, null);
     assertEquals(200, response.getStatusLine().getStatusCode());
     assertNotNull(response.getEntity());
 
     // Assert that only 1 node has executed the function.
     assertCorrectInvocationCount(4, vm0, vm1, vm2, vm3);
 
-    jsonBody = "[" + "{\"@type\": \"double\",\"@value\": 220}" + ",{\"@type\":\"org.apache.geode.rest.internal.web.controllers.Item\"," + "\"itemNo\":\"609\",\"description\":\"Part X Free on Bumper Offer\"," + "\"quantity\":\"3\"," + "\"unitprice\":\"9\"," + "\"totalprice\":\"12.00\"}" + "]";
+    jsonBody =
+        "["
+            + "{\"@type\": \"double\",\"@value\": 220}"
+            + ",{\"@type\":\"org.apache.geode.rest.internal.web.controllers.Item\","
+            + "\"itemNo\":\"609\",\"description\":\"Part X Free on Bumper Offer\","
+            + "\"quantity\":\"3\","
+            + "\"unitprice\":\"9\","
+            + "\"totalprice\":\"12.00\"}"
+            + "]";
 
     resetInvocationCounts(vm0, vm1, vm2, vm3);
 
-    response = executeFunctionThroughRestCall("SampleFunction", PR_REGION_NAME, "key2", jsonBody, null, null);
+    response =
+        executeFunctionThroughRestCall(
+            "SampleFunction", PR_REGION_NAME, "key2", jsonBody, null, null);
     assertEquals(200, response.getStatusLine().getStatusCode());
     assertNotNull(response.getEntity());
 
@@ -250,13 +294,25 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
       invocationCount++;
       if (context instanceof RegionFunctionContext) {
         RegionFunctionContext rfContext = (RegionFunctionContext) context;
-        rfContext.getDataSet().getCache().getLogger().info("Executing function :  SampleFunction.execute(hasResult=true) with filter: " + rfContext.getFilter() + "  " + rfContext);
+        rfContext
+            .getDataSet()
+            .getCache()
+            .getLogger()
+            .info(
+                "Executing function :  SampleFunction.execute(hasResult=true) with filter: "
+                    + rfContext.getFilter()
+                    + "  "
+                    + rfContext);
         if (rfContext.getArguments() instanceof Boolean) {
           /* return rfContext.getArguments(); */
           if (hasResult()) {
             rfContext.getResultSender().lastResult((Serializable) rfContext.getArguments());
           } else {
-            rfContext.getDataSet().getCache().getLogger().info("Executing function :  SampleFunction.execute(hasResult=false) " + rfContext);
+            rfContext
+                .getDataSet()
+                .getCache()
+                .getLogger()
+                .info("Executing function :  SampleFunction.execute(hasResult=false) " + rfContext);
             while (!rfContext.getDataSet().isDestroyed()) {
               rfContext.getDataSet().getCache().getLogger().info("For Bug43513 ");
               try {
@@ -274,7 +330,11 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
             try {
               Thread.sleep(2000);
             } catch (InterruptedException e) {
-              rfContext.getDataSet().getCache().getLogger().warning("Got Exception : Thread Interrupted" + e);
+              rfContext
+                  .getDataSet()
+                  .getCache()
+                  .getLogger()
+                  .warning("Got Exception : Thread Interrupted" + e);
             }
           }
           if (PartitionRegionHelper.isPartitionedRegion(rfContext.getDataSet())) {
@@ -283,7 +343,11 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
              * (Serializable)PartitionRegionHelper.getLocalDataForContext(
              * rfContext).get(key);
              */
-            rfContext.getResultSender().lastResult((Serializable) PartitionRegionHelper.getLocalDataForContext(rfContext).get(key));
+            rfContext
+                .getResultSender()
+                .lastResult(
+                    (Serializable)
+                        PartitionRegionHelper.getLocalDataForContext(rfContext).get(key));
           } else {
             rfContext.getResultSender().lastResult((Serializable) rfContext.getDataSet().get(key));
           }
@@ -301,7 +365,7 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
           /* return vals; */
         } else if (rfContext.getArguments() instanceof HashMap) {
           HashMap putData = (HashMap) rfContext.getArguments();
-          for (Iterator i = putData.entrySet().iterator(); i.hasNext();) {
+          for (Iterator i = putData.entrySet().iterator(); i.hasNext(); ) {
             Map.Entry me = (Map.Entry) i.next();
             rfContext.getDataSet().put(me.getKey(), me.getValue());
           }
@@ -315,7 +379,11 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
         } else {
           DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
           LogWriter logger = ds.getLogWriter();
-          logger.info("Executing in SampleFunction on Server : " + ds.getDistributedMember() + "with Context : " + context);
+          logger.info(
+              "Executing in SampleFunction on Server : "
+                  + ds.getDistributedMember()
+                  + "with Context : "
+                  + context);
           while (ds.isConnected()) {
             logger.fine("Just executing function in infinite loop for Bug43513");
             try {
@@ -348,5 +416,4 @@ public class RestAPIOnRegionFunctionExecutionDUnitTest extends RestAPITestBase {
       return false;
     }
   }
-
 }

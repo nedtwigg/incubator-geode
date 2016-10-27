@@ -22,11 +22,7 @@ import javax.management.NotificationBroadcasterSupport;
 
 import org.apache.geode.management.LockServiceMXBean;
 
-/**
- * Management API to manage a Lock Service MBean
- * 
- * 
- */
+/** Management API to manage a Lock Service MBean */
 public class LockServiceMBean extends NotificationBroadcasterSupport implements LockServiceMXBean {
 
   private LockServiceMBeanBridge bridge;
@@ -38,7 +34,6 @@ public class LockServiceMBean extends NotificationBroadcasterSupport implements 
   @Override
   public void becomeLockGrantor() {
     bridge.becomeLockGrantor();
-
   }
 
   @Override
@@ -87,5 +82,4 @@ public class LockServiceMBean extends NotificationBroadcasterSupport implements 
 
     return bridge.listHeldLocks();
   }
-
 }

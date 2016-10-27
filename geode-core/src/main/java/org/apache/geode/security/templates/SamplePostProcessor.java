@@ -21,26 +21,19 @@ import java.util.Properties;
 
 import org.apache.geode.security.PostProcessor;
 
-/**
- * This is example that implements PostProcessor
- */
+/** This is example that implements PostProcessor */
 public class SamplePostProcessor implements PostProcessor {
 
   @Override
-  public void init(final Properties securityProps) {
-  }
+  public void init(final Properties securityProps) {}
 
   /**
    * This simply modifies the value with all the parameter values
    *
-   * @param principal
-   *        The principal that's accessing the value
-   * @param regionName
-   *        The region that's been accessed. This could be null.
-   * @param key
-   *        the key of the value that's been accessed. This could be null.
-   * @param value
-   *        the value, this could be null.
+   * @param principal The principal that's accessing the value
+   * @param regionName The region that's been accessed. This could be null.
+   * @param key the key of the value that's been accessed. This could be null.
+   * @param value the value, this could be null.
    * @return the processed value
    */
   @Override

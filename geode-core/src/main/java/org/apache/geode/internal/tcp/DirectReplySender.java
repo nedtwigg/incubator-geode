@@ -36,11 +36,7 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
-/**
- * A reply sender which replies back directly to a dedicated socket
- * socket.
- *
- */
+/** A reply sender which replies back directly to a dedicated socket socket. */
 class DirectReplySender implements ReplySender {
   private static final Logger logger = LogService.getLogger();
 
@@ -72,7 +68,10 @@ class DirectReplySender implements ReplySender {
       ConnectExceptions ce = ms.getConnectExceptions();
       if (ce != null && !ce.getMembers().isEmpty()) {
         Assert.assertTrue(ce.getMembers().size() == 1);
-        logger.warn(LocalizedMessage.create(LocalizedStrings.DirectChannel_FAILURE_SENDING_DIRECT_REPLY, ce.getMembers().iterator().next()));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.DirectChannel_FAILURE_SENDING_DIRECT_REPLY,
+                ce.getMembers().iterator().next()));
         return Collections.singleton(ce.getMembers().iterator().next());
       }
       sentReply = true;
@@ -83,7 +82,8 @@ class DirectReplySender implements ReplySender {
       // exception from user code
       throw e;
     } catch (IOException ex) {
-      throw new InternalGemFireException(LocalizedStrings.DirectChannel_UNKNOWN_ERROR_SERIALIZING_MESSAGE.toLocalizedString(), ex);
+      throw new InternalGemFireException(
+          LocalizedStrings.DirectChannel_UNKNOWN_ERROR_SERIALIZING_MESSAGE.toLocalizedString(), ex);
     } finally {
       try {
         ms.close();
@@ -91,7 +91,5 @@ class DirectReplySender implements ReplySender {
         throw new InternalGemFireException("Unknown error serializing message", e);
       }
     }
-
   }
-
 }

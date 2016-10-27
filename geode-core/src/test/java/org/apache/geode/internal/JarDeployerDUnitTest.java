@@ -56,7 +56,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
  * Unit tests for the JarDeployer class
- * 
+ *
  * @since GemFire 7.0
  */
 @Category(DistributedTest.class)
@@ -91,7 +91,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     // First deploy of the JAR file
     File jarFile = getFirstVersionForTest(currentDir, "JarDeployerDUnit.jar");
     byte[] jarBytes = this.classBuilder.createJarFromName("JarDeployerDUnitDFACA");
-    jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
+    jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
 
     try {
       ClassPathLoader.getLatest().forName("JarDeployerDUnitDFACA");
@@ -111,7 +111,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     // was created and the first one was deleted.
     jarFile = getNextVersionJarFile(jarFile);
     jarBytes = this.classBuilder.createJarFromName("JarDeployerDUnitDFACB");
-    jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
+    jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
 
     if (!jarFile.exists()) {
       fail("JAR file not found where expected: " + jarFile.getName());
@@ -142,14 +142,14 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     // First deploy of the JAR file
     File jarFile = getFirstVersionForTest(currentDir, "JarDeployerDUnit.jar");
     byte[] jarBytes = this.classBuilder.createJarFromName("JarDeployerDUnitDNUWNC");
-    jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
+    jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
 
     if (!jarFile.exists()) {
       fail("JAR file not found where expected: " + jarFile.getName());
     }
 
     // Now deploy the same JAR file
-    jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
+    jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
 
     if (!jarFile.exists()) {
       fail("JAR file not found where expected: " + jarFile.getName());
@@ -170,7 +170,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     // Deploy the Class JAR file
     final File jarFile1 = getFirstVersionForTest(currentDir, "JarDeployerDUnit.jar");
     byte[] jarBytes = this.classBuilder.createJarFromName("JarDeployerDUnitDELA");
-    jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
+    jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
 
     try {
       ClassPathLoader.getLatest().forName("JarDeployerDUnitDELA");
@@ -181,40 +181,43 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     assertNotNull(ClassPathLoader.getLatest().getResource("JarDeployerDUnitDELA.class"));
 
     // Attempt to acquire an exclusive lock in the other VM
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        FileOutputStream outStream = null;
-        FileLock fileLock = null;
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            FileOutputStream outStream = null;
+            FileLock fileLock = null;
 
-        try {
-          outStream = new FileOutputStream(jarFile1, true);
-          fileLock = outStream.getChannel().tryLock(0, 1, false);
-          if (fileLock != null) {
-            fail("Should not have been able to obtain exclusive lock on file:" + jarFile1.getAbsolutePath());
-          }
-        } catch (FileNotFoundException fnfex) {
-          Assert.fail("JAR file not found where expected", fnfex);
-        } catch (IOException ioex) {
-          Assert.fail("IOException when trying to obtain exclusive lock", ioex);
-        } finally {
-          if (outStream != null) {
             try {
-              outStream.close();
+              outStream = new FileOutputStream(jarFile1, true);
+              fileLock = outStream.getChannel().tryLock(0, 1, false);
+              if (fileLock != null) {
+                fail(
+                    "Should not have been able to obtain exclusive lock on file:"
+                        + jarFile1.getAbsolutePath());
+              }
+            } catch (FileNotFoundException fnfex) {
+              Assert.fail("JAR file not found where expected", fnfex);
             } catch (IOException ioex) {
-              fail("Could not close lock file output stream");
+              Assert.fail("IOException when trying to obtain exclusive lock", ioex);
+            } finally {
+              if (outStream != null) {
+                try {
+                  outStream.close();
+                } catch (IOException ioex) {
+                  fail("Could not close lock file output stream");
+                }
+              }
+              if (fileLock != null) {
+                try {
+                  fileLock.channel().close();
+                } catch (IOException ioex) {
+                  fail("Could not close lock file channel");
+                }
+              }
             }
           }
-          if (fileLock != null) {
-            try {
-              fileLock.channel().close();
-            } catch (IOException ioex) {
-              fail("Could not close lock file channel");
-            }
-          }
-        }
-      }
-    });
+        });
   }
 
   @Test
@@ -226,7 +229,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     // Deploy the JAR file
     final File jarFile1 = getFirstVersionForTest(currentDir, "JarDeployerDUnit.jar");
     byte[] jarBytes = this.classBuilder.createJarFromName("JarDeployerDUnitDSLA");
-    jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
+    jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
 
     try {
       ClassPathLoader.getLatest().forName("JarDeployerDUnitDSLA");
@@ -235,23 +238,24 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     }
 
     // Acquire a shared lock in the other VM
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        if (!jarFile1.exists()) {
-          fail("JAR file not found where expected: " + jarFile1.getName());
-        }
-        try {
-          JarDeployerDUnitTest.savedFileLock = acquireSharedLock(jarFile1);
-        } catch (IOException ioex) {
-          fail("Unable to acquire the shared file lock");
-        }
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            if (!jarFile1.exists()) {
+              fail("JAR file not found where expected: " + jarFile1.getName());
+            }
+            try {
+              JarDeployerDUnitTest.savedFileLock = acquireSharedLock(jarFile1);
+            } catch (IOException ioex) {
+              fail("Unable to acquire the shared file lock");
+            }
+          }
+        });
 
     // Now update the JAR file and make sure the first one isn't deleted
     jarBytes = this.classBuilder.createJarFromName("JarDeployerDUnitDSLB");
-    jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
+    jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
 
     try {
       ClassPathLoader.getLatest().forName("JarDeployerDUnitDSLB");
@@ -269,16 +273,17 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
       fail("JAR file should not have been deleted: " + jarFile1.getName());
     }
 
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        try {
-          releaseLock(JarDeployerDUnitTest.savedFileLock, jarFile1);
-        } catch (IOException ioex) {
-          fail("Unable to release the shared file lock");
-        }
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            try {
+              releaseLock(JarDeployerDUnitTest.savedFileLock, jarFile1);
+            } catch (IOException ioex) {
+              fail("Unable to release the shared file lock");
+            }
+          }
+        });
   }
 
   @Test
@@ -290,7 +295,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     // Deploy the JAR file
     final File jarFile1 = getFirstVersionForTest(currentDir, "JarDeployerDUnit.jar");
     byte[] jarBytes = this.classBuilder.createJarFromName("JarDeployerDUnitUSL");
-    jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
+    jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
 
     try {
       ClassPathLoader.getLatest().forName("JarDeployerDUnitUSL");
@@ -299,19 +304,20 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     }
 
     // Acquire a shared lock in the other VM
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        if (!jarFile1.exists()) {
-          fail("JAR file not found where expected: " + jarFile1.getName());
-        }
-        try {
-          JarDeployerDUnitTest.savedFileLock = acquireSharedLock(jarFile1);
-        } catch (IOException ioex) {
-          fail("Unable to acquire the shared file lock");
-        }
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            if (!jarFile1.exists()) {
+              fail("JAR file not found where expected: " + jarFile1.getName());
+            }
+            try {
+              JarDeployerDUnitTest.savedFileLock = acquireSharedLock(jarFile1);
+            } catch (IOException ioex) {
+              fail("Unable to acquire the shared file lock");
+            }
+          }
+        });
 
     // Now undeploy the JAR file and make sure the first one isn't deleted
     jarDeployer.undeploy("JarDeployerDUnit.jar");
@@ -320,16 +326,17 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
       fail("JAR file should not have been deleted: " + jarFile1.getName());
     }
 
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        try {
-          releaseLock(JarDeployerDUnitTest.savedFileLock, jarFile1);
-        } catch (IOException ioex) {
-          fail("Unable to release the shared file lock");
-        }
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            try {
+              releaseLock(JarDeployerDUnitTest.savedFileLock, jarFile1);
+            } catch (IOException ioex) {
+              fail("Unable to release the shared file lock");
+            }
+          }
+        });
   }
 
   @Test
@@ -340,7 +347,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
 
     final File jarFile1 = getFirstVersionForTest(currentDir, "JarDeployerDUnit.jar");
     byte[] jarBytes = this.classBuilder.createJarFromName("JarDeployerDUnitDUBAVMA");
-    jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
+    jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
 
     try {
       ClassPathLoader.getLatest().forName("JarDeployerDUnitDUBAVMA");
@@ -350,24 +357,25 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
 
     final File jarFile2 = getNextVersionJarFile(jarFile1);
     final byte[] vmJarBytes = this.classBuilder.createJarFromName("JarDeployerDUnitDUBAVMB");
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        if (!jarFile1.exists()) {
-          fail("JAR file not found where expected: " + jarFile1.getName());
-        }
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            if (!jarFile1.exists()) {
+              fail("JAR file not found where expected: " + jarFile1.getName());
+            }
 
-        // The other VM writes out a newer version of the JAR file.
-        try {
-          writeJarBytesToFile(jarFile2, vmJarBytes);
-        } catch (IOException ioex) {
-          fail("Could not write JAR File");
-        }
-      }
-    });
+            // The other VM writes out a newer version of the JAR file.
+            try {
+              writeJarBytesToFile(jarFile2, vmJarBytes);
+            } catch (IOException ioex) {
+              fail("Could not write JAR File");
+            }
+          }
+        });
 
     // This VM is told to deploy the same JAR file.
-    jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { vmJarBytes });
+    jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {vmJarBytes});
 
     try {
       ClassPathLoader.getLatest().forName("JarDeployerDUnitDUBAVMB");
@@ -396,7 +404,8 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
   public void testLoadPreviouslyDeployedJars() throws IOException {
     final File parentJarFile = new File(JarDeployer.JAR_PREFIX + "JarDeployerDUnitAParent.jar#1");
     final File usesJarFile = new File(JarDeployer.JAR_PREFIX + "JarDeployerDUnitUses.jar#1");
-    final File functionJarFile = new File(JarDeployer.JAR_PREFIX + "JarDeployerDUnitFunction.jar#1");
+    final File functionJarFile =
+        new File(JarDeployer.JAR_PREFIX + "JarDeployerDUnitFunction.jar#1");
 
     // Write out a JAR files.
     StringBuffer stringBuffer = new StringBuffer();
@@ -405,7 +414,9 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     stringBuffer.append("public String getValueParent() {");
     stringBuffer.append("return \"PARENT\";}}");
 
-    byte[] jarBytes = this.classBuilder.createJarFromClassContent("jddunit/parent/JarDeployerDUnitParent", stringBuffer.toString());
+    byte[] jarBytes =
+        this.classBuilder.createJarFromClassContent(
+            "jddunit/parent/JarDeployerDUnitParent", stringBuffer.toString());
     FileOutputStream outStream = new FileOutputStream(parentJarFile);
     outStream.write(jarBytes);
     outStream.close();
@@ -416,7 +427,9 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     stringBuffer.append("public String getValueUses() {");
     stringBuffer.append("return \"USES\";}}");
 
-    jarBytes = this.classBuilder.createJarFromClassContent("jddunit/uses/JarDeployerDUnitUses", stringBuffer.toString());
+    jarBytes =
+        this.classBuilder.createJarFromClassContent(
+            "jddunit/uses/JarDeployerDUnitUses", stringBuffer.toString());
     outStream = new FileOutputStream(usesJarFile);
     outStream.write(jarBytes);
     outStream.close();
@@ -427,10 +440,12 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     stringBuffer.append("import jddunit.uses.JarDeployerDUnitUses;");
     stringBuffer.append("import org.apache.geode.cache.execute.Function;");
     stringBuffer.append("import org.apache.geode.cache.execute.FunctionContext;");
-    stringBuffer.append("public class JarDeployerDUnitFunction  extends JarDeployerDUnitParent implements Function {");
+    stringBuffer.append(
+        "public class JarDeployerDUnitFunction  extends JarDeployerDUnitParent implements Function {");
     stringBuffer.append("private JarDeployerDUnitUses uses = new JarDeployerDUnitUses();");
     stringBuffer.append("public boolean hasResult() {return true;}");
-    stringBuffer.append("public void execute(FunctionContext context) {context.getResultSender().lastResult(getValueParent() + \":\" + uses.getValueUses());}");
+    stringBuffer.append(
+        "public void execute(FunctionContext context) {context.getResultSender().lastResult(getValueParent() + \":\" + uses.getValueUses());}");
     stringBuffer.append("public String getId() {return \"JarDeployerDUnitFunction\";}");
     stringBuffer.append("public boolean optimizeForWrite() {return false;}");
     stringBuffer.append("public boolean isHA() {return false;}}");
@@ -438,7 +453,9 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     ClassBuilder functionClassBuilder = new ClassBuilder();
     functionClassBuilder.addToClassPath(parentJarFile.getAbsolutePath());
     functionClassBuilder.addToClassPath(usesJarFile.getAbsolutePath());
-    jarBytes = functionClassBuilder.createJarFromClassContent("jddunit/function/JarDeployerDUnitFunction", stringBuffer.toString());
+    jarBytes =
+        functionClassBuilder.createJarFromClassContent(
+            "jddunit/function/JarDeployerDUnitFunction", stringBuffer.toString());
     outStream = new FileOutputStream(functionJarFile);
     outStream.write(jarBytes);
     outStream.close();
@@ -447,7 +464,8 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     DistributedSystem distributedSystem = getSystem();
     getCache();
 
-    Execution execution = FunctionService.onMember(distributedSystem, distributedSystem.getDistributedMember());
+    Execution execution =
+        FunctionService.onMember(distributedSystem, distributedSystem.getDistributedMember());
     ResultCollector resultCollector = execution.execute("JarDeployerDUnitFunction");
     @SuppressWarnings("unchecked")
     List<String> result = (List<String>) resultCollector.getResult();
@@ -464,11 +482,12 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     Properties properties = new Properties();
     properties.put(ConfigurationProperties.DEPLOY_WORKING_DIR, alternateDir.getAbsolutePath());
     InternalDistributedSystem distributedSystem = getSystem(properties);
-    final JarDeployer jarDeployer = new JarDeployer(distributedSystem.getConfig().getDeployWorkingDir());
+    final JarDeployer jarDeployer =
+        new JarDeployer(distributedSystem.getConfig().getDeployWorkingDir());
 
     File jarFile = getFirstVersionForTest(alternateDir, "JarDeployerDUnit.jar");
     byte[] jarBytes = this.classBuilder.createJarFromName("JarDeployerDUnitDTAC");
-    jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
+    jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
 
     try {
       ClassPathLoader.getLatest().forName("JarDeployerDUnitDTAC");
@@ -496,7 +515,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
 
     // Test to verify that deployment fails if the directory doesn't exist.
     try {
-      jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
+      jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
       fail("Exception should have been thrown due to missing deployment directory.");
     } catch (IOException expected) {
       // Expected.
@@ -505,26 +524,27 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     // Test to verify that deployment succeeds if the directory doesn't
     // initially exist, but is then created while the JarDeployer is looping
     // looking for a valid directory.
-    Thread thread = new Thread() {
-      @Override
-      public void run() {
-        try {
-          barrier.await();
-        } catch (InterruptedException iex) {
-          fail("Interrupted while waiting.");
-        } catch (BrokenBarrierException bbex) {
-          fail("Broken barrier.");
-        }
+    Thread thread =
+        new Thread() {
+          @Override
+          public void run() {
+            try {
+              barrier.await();
+            } catch (InterruptedException iex) {
+              fail("Interrupted while waiting.");
+            } catch (BrokenBarrierException bbex) {
+              fail("Broken barrier.");
+            }
 
-        try {
-          jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
-        } catch (IOException ioex) {
-          fail("IOException received unexpectedly.");
-        } catch (ClassNotFoundException cnfex) {
-          fail("ClassNotFoundException received unexpectedly.");
-        }
-      }
-    };
+            try {
+              jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
+            } catch (IOException ioex) {
+              fail("IOException received unexpectedly.");
+            } catch (ClassNotFoundException cnfex) {
+              fail("ClassNotFoundException received unexpectedly.");
+            }
+          }
+        };
     thread.start();
 
     try {
@@ -548,20 +568,21 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     final JarDeployer suspendingJarDeployer = new JarDeployer();
     final CountDownLatch latch = new CountDownLatch(1);
 
-    Thread thread = new Thread() {
-      @Override
-      public void run() {
-        try {
-          suspendingJarDeployer.suspendAll();
-          latch.countDown();
-          Thread.sleep(3000);
-        } catch (InterruptedException iex) {
-          // It doesn't matter, just fail the test
-        }
-        JarDeployerDUnitTest.this.okayToResume = true;
-        suspendingJarDeployer.resumeAll();
-      }
-    };
+    Thread thread =
+        new Thread() {
+          @Override
+          public void run() {
+            try {
+              suspendingJarDeployer.suspendAll();
+              latch.countDown();
+              Thread.sleep(3000);
+            } catch (InterruptedException iex) {
+              // It doesn't matter, just fail the test
+            }
+            JarDeployerDUnitTest.this.okayToResume = true;
+            suspendingJarDeployer.resumeAll();
+          }
+        };
     thread.start();
 
     try {
@@ -569,7 +590,7 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     } catch (InterruptedException iex) {
       // It doesn't matter, just fail the test
     }
-    jarDeployer.deploy(new String[] { "JarDeployerDUnit.jar" }, new byte[][] { jarBytes });
+    jarDeployer.deploy(new String[] {"JarDeployerDUnit.jar"}, new byte[][] {jarBytes});
     if (!this.okayToResume) {
       fail("JarDeployer did not suspend as expected");
     }
@@ -580,14 +601,16 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     final JarDeployer jarDeployer = new JarDeployer();
 
     try {
-      jarDeployer.deploy(new String[] { "JarDeployerDUnitZLF.jar" }, new byte[][] { new byte[0] });
+      jarDeployer.deploy(new String[] {"JarDeployerDUnitZLF.jar"}, new byte[][] {new byte[0]});
       fail("Zero length files are not deployable");
     } catch (IllegalArgumentException expected) {
       // Expected
     }
 
     try {
-      jarDeployer.deploy(new String[] { "JarDeployerDUnitZLF1.jar", "JarDeployerDUnitZLF2.jar" }, new byte[][] { this.classBuilder.createJarFromName("JarDeployerDUnitZLF1"), new byte[0] });
+      jarDeployer.deploy(
+          new String[] {"JarDeployerDUnitZLF1.jar", "JarDeployerDUnitZLF2.jar"},
+          new byte[][] {this.classBuilder.createJarFromName("JarDeployerDUnitZLF1"), new byte[0]});
       fail("Zero length files are not deployable");
     } catch (IllegalArgumentException expected) {
       // Expected
@@ -599,40 +622,48 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     final JarDeployer jarDeployer = new JarDeployer();
 
     try {
-      jarDeployer.deploy(new String[] { "JarDeployerDUnitIJF.jar" }, new byte[][] { "INVALID JAR CONTENT".getBytes() });
+      jarDeployer.deploy(
+          new String[] {"JarDeployerDUnitIJF.jar"},
+          new byte[][] {"INVALID JAR CONTENT".getBytes()});
       fail("Non-JAR files are not deployable");
     } catch (IllegalArgumentException expected) {
       // Expected
     }
 
     try {
-      jarDeployer.deploy(new String[] { "JarDeployerDUnitIJF1.jar", "JarDeployerDUnitIJF2.jar" }, new byte[][] { this.classBuilder.createJarFromName("JarDeployerDUnitIJF1"), "INVALID JAR CONTENT".getBytes() });
+      jarDeployer.deploy(
+          new String[] {"JarDeployerDUnitIJF1.jar", "JarDeployerDUnitIJF2.jar"},
+          new byte[][] {
+            this.classBuilder.createJarFromName("JarDeployerDUnitIJF1"),
+            "INVALID JAR CONTENT".getBytes()
+          });
       fail("Non-JAR files are not deployable");
     } catch (IllegalArgumentException expected) {
       // Expected
     }
 
     final VM vm = Host.getHost(0).getVM(1);
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        File invalidFile = new File(JarDeployer.JAR_PREFIX + "JarDeployerDUnitIJF.jar#3");
-        try {
-          RandomAccessFile randomAccessFile = new RandomAccessFile(invalidFile, "rw");
-          randomAccessFile.write("GARBAGE".getBytes(), 0, 7);
-          randomAccessFile.close();
-        } catch (IOException ioex) {
-          Assert.fail("Error trying to create garbage file for test", ioex);
-        }
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            File invalidFile = new File(JarDeployer.JAR_PREFIX + "JarDeployerDUnitIJF.jar#3");
+            try {
+              RandomAccessFile randomAccessFile = new RandomAccessFile(invalidFile, "rw");
+              randomAccessFile.write("GARBAGE".getBytes(), 0, 7);
+              randomAccessFile.close();
+            } catch (IOException ioex) {
+              Assert.fail("Error trying to create garbage file for test", ioex);
+            }
 
-        getSystem();
-        getCache();
+            getSystem();
+            getCache();
 
-        if (invalidFile.exists()) {
-          fail("Invalid JAR file should have been deleted at startup");
-        }
-      }
-    });
+            if (invalidFile.exists()) {
+              fail("Invalid JAR file should have been deleted at startup");
+            }
+          }
+        });
   }
 
   FileLock acquireSharedLock(final File file) throws IOException {
@@ -669,22 +700,21 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
     int index = 0;
     try {
       for (; index < bytes.length; index++) {
-        if (((byte) inStream.read()) != bytes[index])
-          break;
+        if (((byte) inStream.read()) != bytes[index]) break;
       }
     } finally {
       inStream.close();
     }
 
     // If we didn't get to the end then something was different
-    if (index < bytes.length)
-      return false;
+    if (index < bytes.length) return false;
 
     return true;
   }
 
   private void deleteSavedJarFiles() throws IOException {
-    FileUtil.deleteMatching(new File("."), "^" + JarDeployer.JAR_PREFIX + "JarDeployerDUnit.*#\\d++$");
+    FileUtil.deleteMatching(
+        new File("."), "^" + JarDeployer.JAR_PREFIX + "JarDeployerDUnit.*#\\d++$");
     FileUtil.delete(new File("JarDeployerDUnit"));
   }
 
@@ -707,22 +737,26 @@ public class JarDeployerDUnitTest extends JUnit4CacheTestCase {
   private File[] findSortedOldVersionsOfJar(final File saveDirfile, final String jarFilename) {
     // Find all matching files
     final Pattern pattern = Pattern.compile("^" + JarDeployer.JAR_PREFIX + jarFilename + "#\\d++$");
-    final File[] oldJarFiles = saveDirfile.listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(final File file, final String name) {
-        return pattern.matcher(name).matches();
-      }
-    });
+    final File[] oldJarFiles =
+        saveDirfile.listFiles(
+            new FilenameFilter() {
+              @Override
+              public boolean accept(final File file, final String name) {
+                return pattern.matcher(name).matches();
+              }
+            });
 
     // Sort them in order from newest (highest version) to oldest
-    Arrays.sort(oldJarFiles, new Comparator<File>() {
-      @Override
-      public int compare(final File file1, final File file2) {
-        int file1Version = extractVersionFromFilename(file1);
-        int file2Version = extractVersionFromFilename(file2);
-        return file2Version - file1Version;
-      }
-    });
+    Arrays.sort(
+        oldJarFiles,
+        new Comparator<File>() {
+          @Override
+          public int compare(final File file1, final File file2) {
+            int file1Version = extractVersionFromFilename(file1);
+            int file2Version = extractVersionFromFilename(file2);
+            return file2Version - file1Version;
+          }
+        });
 
     return oldJarFiles;
   }

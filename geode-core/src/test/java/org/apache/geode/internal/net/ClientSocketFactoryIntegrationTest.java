@@ -46,14 +46,14 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 @Category(IntegrationTest.class)
 public class ClientSocketFactoryIntegrationTest {
 
-  private static final String EXCEPTION_MESSAGE = "TSocketFactory createSocket threw an IOException";
+  private static final String EXCEPTION_MESSAGE =
+      "TSocketFactory createSocket threw an IOException";
 
   private static volatile boolean invokedCreateSocket;
 
   private Socket socket;
 
-  @Rule
-  public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+  @Rule public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
   @Before
   public void setUp() throws Exception {
@@ -80,15 +80,20 @@ public class ClientSocketFactoryIntegrationTest {
 
   @Test
   public void testClientSocketFactory() throws Exception {
-    assertThatThrownBy(() -> this.socket = SocketCreatorFactory.getSocketCreatorForComponent(CLUSTER).connectForClient("localhost", 12345, 0)).isExactlyInstanceOf(IOException.class).hasMessage(EXCEPTION_MESSAGE);
+    assertThatThrownBy(
+            () ->
+                this.socket =
+                    SocketCreatorFactory.getSocketCreatorForComponent(CLUSTER)
+                        .connectForClient("localhost", 12345, 0))
+        .isExactlyInstanceOf(IOException.class)
+        .hasMessage(EXCEPTION_MESSAGE);
 
     assertThat(invokedCreateSocket).isTrue();
   }
 
   private static class TSocketFactory implements ClientSocketFactory {
 
-    public TSocketFactory() {
-    }
+    public TSocketFactory() {}
 
     public Socket createSocket(final InetAddress address, final int port) throws IOException {
       invokedCreateSocket = true;

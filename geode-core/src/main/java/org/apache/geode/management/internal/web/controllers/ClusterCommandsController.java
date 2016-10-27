@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * The ClusterCommandsController class implements GemFire REST API web service calls for the Gfsh Cluster
- * (System)-based commands.
+ * The ClusterCommandsController class implements GemFire REST API web service calls for the Gfsh
+ * Cluster (System)-based commands.
  *
  * @see org.springframework.stereotype.Controller
  * @see org.springframework.web.bind.annotation.RequestMapping
@@ -44,5 +44,4 @@ public class ClusterCommandsController extends AbstractCommandsController {
   public String statusClusterConfig() {
     return processCommand(CliStrings.STATUS_SHARED_CONFIG);
   }
-
 }

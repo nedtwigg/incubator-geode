@@ -22,19 +22,17 @@ import org.apache.geode.distributed.internal.membership.*;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * This class provides a way for a {@link CancellationMessage} to find its prey.
- * An {@link AdminRequest} that implements {@link Cancellable} should register
- * with this class before doing any work, and deregister just before returning
- * it's response.
+ * This class provides a way for a {@link CancellationMessage} to find its prey. An {@link
+ * AdminRequest} that implements {@link Cancellable} should register with this class before doing
+ * any work, and deregister just before returning it's response.
  */
 public class CancellationRegistry {
   private static CancellationRegistry internalRef;
   private Map map = new HashMap();
 
-  private CancellationRegistry() {
-  }
+  private CancellationRegistry() {}
 
-  public synchronized static CancellationRegistry getInstance() {
+  public static synchronized CancellationRegistry getInstance() {
     if (internalRef == null) {
       internalRef = new CancellationRegistry();
     }
@@ -61,13 +59,14 @@ public class CancellationRegistry {
 
   /////// Inner Classes ////////////////////////////////////////
 
-  static private class Key {
+  private static class Key {
     private final InternalDistributedMember console;
     private final int msgId;
 
     public Key(InternalDistributedMember console, int msgId) {
       if (console == null) {
-        throw new NullPointerException(LocalizedStrings.CancellationRegistry_NULL_CONSOLE.toLocalizedString());
+        throw new NullPointerException(
+            LocalizedStrings.CancellationRegistry_NULL_CONSOLE.toLocalizedString());
       }
 
       this.console = console;
@@ -76,8 +75,7 @@ public class CancellationRegistry {
 
     @Override
     public boolean equals(Object other) {
-      if (this == other)
-        return true;
+      if (this == other) return true;
       if (other instanceof Key) {
         Key toTest = (Key) other;
         return (toTest.console.equals(this.console) && toTest.msgId == this.msgId);

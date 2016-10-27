@@ -57,9 +57,7 @@ import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * Tests Redundancy Level Functionality
- */
+/** Tests Redundancy Level Functionality */
 @Category(DistributedTest.class)
 public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
 
@@ -111,10 +109,14 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
     IgnoredException.addIgnoredException("java.net.SocketException||java.net.ConnectException");
 
     // start servers first
-    PORT1 = ((Integer) server0.invoke(() -> RedundancyLevelTestBase.createServerCache())).intValue();
-    PORT2 = ((Integer) server1.invoke(() -> RedundancyLevelTestBase.createServerCache())).intValue();
-    PORT3 = ((Integer) server2.invoke(() -> RedundancyLevelTestBase.createServerCache())).intValue();
-    PORT4 = ((Integer) server3.invoke(() -> RedundancyLevelTestBase.createServerCache())).intValue();
+    PORT1 =
+        ((Integer) server0.invoke(() -> RedundancyLevelTestBase.createServerCache())).intValue();
+    PORT2 =
+        ((Integer) server1.invoke(() -> RedundancyLevelTestBase.createServerCache())).intValue();
+    PORT3 =
+        ((Integer) server2.invoke(() -> RedundancyLevelTestBase.createServerCache())).intValue();
+    PORT4 =
+        ((Integer) server3.invoke(() -> RedundancyLevelTestBase.createServerCache())).intValue();
 
     String hostName = NetworkUtils.getServerHostName(Host.getHost(0));
     SERVER1 = hostName + PORT1;
@@ -147,17 +149,18 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
 
   public static void verifyDispatcherIsAlive() {
     try {
-      WaitCriterion wc = new WaitCriterion() {
-        String excuse;
+      WaitCriterion wc =
+          new WaitCriterion() {
+            String excuse;
 
-        public boolean done() {
-          return cache.getCacheServers().size() == 1;
-        }
+            public boolean done() {
+              return cache.getCacheServers().size() == 1;
+            }
 
-        public String description() {
-          return excuse;
-        }
-      };
+            public String description() {
+              return excuse;
+            }
+          };
       Wait.waitForCriterion(wc, 3 * 60 * 1000, 1000, true);
 
       CacheServerImpl bs = (CacheServerImpl) cache.getCacheServers().iterator().next();
@@ -165,36 +168,38 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
       assertNotNull(bs.getAcceptor());
       assertNotNull(bs.getAcceptor().getCacheClientNotifier());
       final CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier();
-      wc = new WaitCriterion() {
-        String excuse;
+      wc =
+          new WaitCriterion() {
+            String excuse;
 
-        public boolean done() {
-          return ccn.getClientProxies().size() > 0;
-        }
+            public boolean done() {
+              return ccn.getClientProxies().size() > 0;
+            }
 
-        public String description() {
-          return excuse;
-        }
-      };
+            public String description() {
+              return excuse;
+            }
+          };
       Wait.waitForCriterion(wc, 60 * 1000, 1000, true);
 
       Iterator iter_prox = ccn.getClientProxies().iterator();
       if (iter_prox.hasNext()) {
         final CacheClientProxy proxy = (CacheClientProxy) iter_prox.next();
-        wc = new WaitCriterion() {
-          String excuse;
+        wc =
+            new WaitCriterion() {
+              String excuse;
 
-          public boolean done() {
-            if (proxy._messageDispatcher == null) {
-              return false;
-            }
-            return proxy._messageDispatcher.isAlive();
-          }
+              public boolean done() {
+                if (proxy._messageDispatcher == null) {
+                  return false;
+                }
+                return proxy._messageDispatcher.isAlive();
+              }
 
-          public String description() {
-            return excuse;
-          }
-        };
+              public String description() {
+                return excuse;
+              }
+            };
         Wait.waitForCriterion(wc, 60 * 1000, 1000, true);
         // assertTrue("Dispatcher on primary should be alive",   proxy._messageDispatcher.isAlive());
       }
@@ -206,17 +211,18 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
 
   public static void verifyDispatcherIsNotAlive() {
     try {
-      WaitCriterion wc = new WaitCriterion() {
-        String excuse;
+      WaitCriterion wc =
+          new WaitCriterion() {
+            String excuse;
 
-        public boolean done() {
-          return cache.getCacheServers().size() == 1;
-        }
+            public boolean done() {
+              return cache.getCacheServers().size() == 1;
+            }
 
-        public String description() {
-          return excuse;
-        }
-      };
+            public String description() {
+              return excuse;
+            }
+          };
       Wait.waitForCriterion(wc, 3 * 60 * 1000, 1000, true);
 
       CacheServerImpl bs = (CacheServerImpl) cache.getCacheServers().iterator().next();
@@ -224,23 +230,25 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
       assertNotNull(bs.getAcceptor());
       assertNotNull(bs.getAcceptor().getCacheClientNotifier());
       final CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier();
-      wc = new WaitCriterion() {
-        String excuse;
+      wc =
+          new WaitCriterion() {
+            String excuse;
 
-        public boolean done() {
-          return ccn.getClientProxies().size() > 0;
-        }
+            public boolean done() {
+              return ccn.getClientProxies().size() > 0;
+            }
 
-        public String description() {
-          return excuse;
-        }
-      };
+            public String description() {
+              return excuse;
+            }
+          };
       Wait.waitForCriterion(wc, 3 * 60 * 1000, 1000, true);
 
       Iterator iter_prox = ccn.getClientProxies().iterator();
       if (iter_prox.hasNext()) {
         CacheClientProxy proxy = (CacheClientProxy) iter_prox.next();
-        assertFalse("Dispatcher on secondary should not be alive", proxy._messageDispatcher.isAlive());
+        assertFalse(
+            "Dispatcher on secondary should not be alive", proxy._messageDispatcher.isAlive());
       }
 
     } catch (Exception ex) {
@@ -249,35 +257,49 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
   }
 
   public static void verifyRedundantServersContain(final String server) {
-    WaitCriterion wc = new WaitCriterion() {
-      public boolean done() {
-        return pool.getRedundantNames().contains(server);
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          public boolean done() {
+            return pool.getRedundantNames().contains(server);
+          }
 
-      public String description() {
-        return "Redundant servers (" + pool.getRedundantNames() + ") does not contain " + server;
-      }
-    };
+          public String description() {
+            return "Redundant servers ("
+                + pool.getRedundantNames()
+                + ") does not contain "
+                + server;
+          }
+        };
     Wait.waitForCriterion(wc, 60 * 1000, 2000, true);
   }
 
-  public static void verifyLiveAndRedundantServers(final int liveServers, final int redundantServers) {
-    WaitCriterion wc = new WaitCriterion() {
-      public boolean done() {
-        return pool.getConnectedServerCount() == liveServers && pool.getRedundantNames().size() == redundantServers;
-      }
+  public static void verifyLiveAndRedundantServers(
+      final int liveServers, final int redundantServers) {
+    WaitCriterion wc =
+        new WaitCriterion() {
+          public boolean done() {
+            return pool.getConnectedServerCount() == liveServers
+                && pool.getRedundantNames().size() == redundantServers;
+          }
 
-      public String description() {
-        return "Expected connected server count (" + pool.getConnectedServerCount() + ") to become " + liveServers + "and redundant count (" + pool.getRedundantNames().size() + ") to become " + redundantServers;
-      }
-    };
+          public String description() {
+            return "Expected connected server count ("
+                + pool.getConnectedServerCount()
+                + ") to become "
+                + liveServers
+                + "and redundant count ("
+                + pool.getRedundantNames().size()
+                + ") to become "
+                + redundantServers;
+          }
+        };
     Wait.waitForCriterion(wc, 120 * 1000, 2 * 1000, true);
   }
 
   public static void verifyDeadServers(int deadServers) {
     // this is now deadcode since it is always followed by verifyLiveAndRedundant
     //     long maxWaitTime = 180000;
-    //     long start = System.currentTimeMillis();    
+    //     long start = System.currentTimeMillis();
     //     while (proxy.getDeadServers().size() != deadServers) { // wait until condition is
     //       // met
     //       assertTrue("Waited over " + maxWaitTime + "for dead servers to become "
@@ -344,17 +366,18 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
 
   public static void verifyCCP() {
     try {
-      WaitCriterion wc = new WaitCriterion() {
-        String excuse;
+      WaitCriterion wc =
+          new WaitCriterion() {
+            String excuse;
 
-        public boolean done() {
-          return cache.getCacheServers().size() == 1;
-        }
+            public boolean done() {
+              return cache.getCacheServers().size() == 1;
+            }
 
-        public String description() {
-          return excuse;
-        }
-      };
+            public String description() {
+              return excuse;
+            }
+          };
       Wait.waitForCriterion(wc, 3 * 60 * 1000, 1000, true);
 
       CacheServerImpl bs = (CacheServerImpl) cache.getCacheServers().iterator().next();
@@ -364,17 +387,18 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
       assertNotNull(bs.getAcceptor().getCacheClientNotifier());
       // one client is connected to this server
       final CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier();
-      wc = new WaitCriterion() {
-        String excuse;
+      wc =
+          new WaitCriterion() {
+            String excuse;
 
-        public boolean done() {
-          return ccn.getClientProxies().size() == 1;
-        }
+            public boolean done() {
+              return ccn.getClientProxies().size() == 1;
+            }
 
-        public String description() {
-          return excuse;
-        }
-      };
+            public String description() {
+              return excuse;
+            }
+          };
       Wait.waitForCriterion(wc, 3 * 60 * 1000, 1000, true);
     } catch (Exception ex) {
       Assert.fail("exception in verifyCCP()", ex);
@@ -383,15 +407,18 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
 
   public static void verifyInterestRegistration() {
     try {
-      WaitCriterion wc = new WaitCriterion() {
-        public boolean done() {
-          return cache.getCacheServers().size() == 1;
-        }
+      WaitCriterion wc =
+          new WaitCriterion() {
+            public boolean done() {
+              return cache.getCacheServers().size() == 1;
+            }
 
-        public String description() {
-          return "Number of bridge servers (" + cache.getCacheServers().size() + ") never became 1";
-        }
-      };
+            public String description() {
+              return "Number of bridge servers ("
+                  + cache.getCacheServers().size()
+                  + ") never became 1";
+            }
+          };
       Wait.waitForCriterion(wc, 180 * 1000, 2000, true);
 
       CacheServerImpl bs = (CacheServerImpl) cache.getCacheServers().iterator().next();
@@ -399,44 +426,53 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
       assertNotNull(bs.getAcceptor());
       assertNotNull(bs.getAcceptor().getCacheClientNotifier());
       final CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier();
-      wc = new WaitCriterion() {
-        public boolean done() {
-          return ccn.getClientProxies().size() > 0;
-        }
+      wc =
+          new WaitCriterion() {
+            public boolean done() {
+              return ccn.getClientProxies().size() > 0;
+            }
 
-        public String description() {
-          return "Notifier's proxies is empty";
-        }
-      };
+            public String description() {
+              return "Notifier's proxies is empty";
+            }
+          };
       Wait.waitForCriterion(wc, 180 * 1000, 2000, true);
 
       Iterator iter_prox = ccn.getClientProxies().iterator();
 
       if (iter_prox.hasNext()) {
         final CacheClientProxy ccp = (CacheClientProxy) iter_prox.next();
-        wc = new WaitCriterion() {
-          String excuse;
+        wc =
+            new WaitCriterion() {
+              String excuse;
 
-          public boolean done() {
-            Set keysMap = (Set) ccp.cils[RegisterInterestTracker.interestListIndex].getProfile(Region.SEPARATOR + REGION_NAME).getKeysOfInterestFor(ccp.getProxyID());
-            if (keysMap == null) {
-              excuse = "keys of interest is null";
-              return false;
-            }
-            if (keysMap.size() != 2) {
-              excuse = "keys of interest size (" + keysMap.size() + ") not 2";
-              return false;
-            }
-            return true;
-          }
+              public boolean done() {
+                Set keysMap =
+                    (Set)
+                        ccp.cils[RegisterInterestTracker.interestListIndex]
+                            .getProfile(Region.SEPARATOR + REGION_NAME)
+                            .getKeysOfInterestFor(ccp.getProxyID());
+                if (keysMap == null) {
+                  excuse = "keys of interest is null";
+                  return false;
+                }
+                if (keysMap.size() != 2) {
+                  excuse = "keys of interest size (" + keysMap.size() + ") not 2";
+                  return false;
+                }
+                return true;
+              }
 
-          public String description() {
-            return excuse;
-          }
-        };
+              public String description() {
+                return excuse;
+              }
+            };
         Wait.waitForCriterion(wc, 180 * 1000, 2 * 1000, true);
 
-        Set keysMap = ccp.cils[RegisterInterestTracker.interestListIndex].getProfile(Region.SEPARATOR + REGION_NAME).getKeysOfInterestFor(ccp.getProxyID());
+        Set keysMap =
+            ccp.cils[RegisterInterestTracker.interestListIndex]
+                .getProfile(Region.SEPARATOR + REGION_NAME)
+                .getKeysOfInterestFor(ccp.getProxyID());
         assertTrue(keysMap.contains(k1));
         assertTrue(keysMap.contains(k2));
 
@@ -480,24 +516,43 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
     assertNotNull(cache);
   }
 
-  public static void createClientCache(String host, int port1, int port2, int port3, int port4, int redundancy) throws Exception {
-    createClientCache(host, port1, port2, port3, port4, redundancy, 3000, /* defaul socket timeout of 250 millisec*/
+  public static void createClientCache(
+      String host, int port1, int port2, int port3, int port4, int redundancy) throws Exception {
+    createClientCache(
+        host,
+        port1,
+        port2,
+        port3,
+        port4,
+        redundancy,
+        3000, /* defaul socket timeout of 250 millisec*/
         10 /*default retry interval*/);
   }
 
-  public static void createClientCache(String host, int port1, int port2, int port3, int port4, int redundancy, int socketReadTimeout, int retryInterval) throws Exception {
+  public static void createClientCache(
+      String host,
+      int port1,
+      int port2,
+      int port3,
+      int port4,
+      int redundancy,
+      int socketReadTimeout,
+      int retryInterval)
+      throws Exception {
     if (!FailOverDetectionByCCU) {
-      oldBo = ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-        public void beforeFailoverByCacheClientUpdater(ServerLocation epFailed) {
-          try {
-            Thread.sleep(300000);
-          } catch (InterruptedException ie) {
-            // expected - test will shut down the cache which will interrupt
-            // the CacheClientUpdater thread that invoked this method
-            Thread.currentThread().interrupt();
-          }
-        }
-      });
+      oldBo =
+          ClientServerObserverHolder.setInstance(
+              new ClientServerObserverAdapter() {
+                public void beforeFailoverByCacheClientUpdater(ServerLocation epFailed) {
+                  try {
+                    Thread.sleep(300000);
+                  } catch (InterruptedException ie) {
+                    // expected - test will shut down the cache which will interrupt
+                    // the CacheClientUpdater thread that invoked this method
+                    Thread.currentThread().interrupt();
+                  }
+                }
+              });
     }
 
     Properties props = new Properties();
@@ -505,7 +560,21 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
     props.setProperty(LOCATORS, "");
     new RedundancyLevelTestBase().createCache(props);
 
-    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, PORT1).addServer(host, PORT2).addServer(host, PORT3).addServer(host, PORT4).setSubscriptionEnabled(true).setReadTimeout(socketReadTimeout).setSocketBufferSize(32768).setMinConnections(8).setSubscriptionRedundancy(redundancy).setRetryAttempts(5).setPingInterval(retryInterval).create("DurableClientReconnectDUnitTestPool");
+    PoolImpl p =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(host, PORT1)
+                .addServer(host, PORT2)
+                .addServer(host, PORT3)
+                .addServer(host, PORT4)
+                .setSubscriptionEnabled(true)
+                .setReadTimeout(socketReadTimeout)
+                .setSocketBufferSize(32768)
+                .setMinConnections(8)
+                .setSubscriptionRedundancy(redundancy)
+                .setRetryAttempts(5)
+                .setPingInterval(retryInterval)
+                .create("DurableClientReconnectDUnitTestPool");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -560,8 +629,7 @@ public class RedundancyLevelTestBase extends JUnit4DistributedTestCase {
   @Override
   public final void preTearDown() throws Exception {
     try {
-      if (!FailOverDetectionByCCU)
-        ClientServerObserverHolder.setInstance(oldBo);
+      if (!FailOverDetectionByCCU) ClientServerObserverHolder.setInstance(oldBo);
 
       FailOverDetectionByCCU = false;
 

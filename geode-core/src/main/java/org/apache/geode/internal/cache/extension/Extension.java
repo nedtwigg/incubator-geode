@@ -23,43 +23,34 @@ import org.apache.geode.internal.cache.xmlcache.XmlGenerator;
 
 /**
  * Interface used for objects wishing to extend and {@link Extensible} object.
- * 
  *
  * @since GemFire 8.1
  */
 public interface Extension<T> {
 
   /**
-   * Get {@link XmlGenerator} capable of serializing this object's
-   * configuration.
-   * 
+   * Get {@link XmlGenerator} capable of serializing this object's configuration.
+   *
    * @return {@link XmlGenerator} for this object's configuration.
    * @since GemFire 8.1
    */
   XmlGenerator<T> getXmlGenerator();
 
   /**
-   * Called by {@link CacheXml} objects that are {@link Extensible} before
-   * creating this extension.
+   * Called by {@link CacheXml} objects that are {@link Extensible} before creating this extension.
    *
-   * @param source
-   *          source object this extension is currently attached to.
-   * @param cache
-   *          target object to attach any created extensions to.
+   * @param source source object this extension is currently attached to.
+   * @param cache target object to attach any created extensions to.
    * @since Geode 1.0.0
    */
   void beforeCreate(Extensible<T> source, Cache cache);
 
   /**
-   * Called by {@link CacheXml} objects that are {@link Extensible} to create
-   * this extension.
+   * Called by {@link CacheXml} objects that are {@link Extensible} to create this extension.
    *
-   * @param source
-   *          source object this extension is currently attached to.
-   * @param target
-   *          target object to attach any created extensions to.
+   * @param source source object this extension is currently attached to.
+   * @param target target object to attach any created extensions to.
    * @since GemFire 8.1
    */
   void onCreate(Extensible<T> source, Extensible<T> target);
-
 }

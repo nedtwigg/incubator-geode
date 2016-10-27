@@ -26,18 +26,13 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import java.io.*;
 //import java.util.*;
 
-/**
- * A message that is sent to a particular distribution manager to
- * add a statistic listener.
- */
+/** A message that is sent to a particular distribution manager to add a statistic listener. */
 public final class AddStatListenerRequest extends AdminRequest {
   // instance variables
   private long resourceId;
   private String statName;
 
-  /**
-   * Returns a <code>AddStatListenerRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>AddStatListenerRequest</code> to be sent to the specified recipient. */
   public static AddStatListenerRequest create(StatResource observedResource, Stat observedStat) {
     AddStatListenerRequest m = new AddStatListenerRequest();
     m.resourceId = observedResource.getResourceUniqueID();
@@ -46,12 +41,11 @@ public final class AddStatListenerRequest extends AdminRequest {
   }
 
   public AddStatListenerRequest() {
-    friendlyName = LocalizedStrings.AddStatListenerRequest_ADD_STATISTIC_RESOURCE_LISTENER.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.AddStatListenerRequest_ADD_STATISTIC_RESOURCE_LISTENER.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return AddStatListenerResponse.create(dm, this.getSender(), this.resourceId, this.statName);
@@ -77,6 +71,11 @@ public final class AddStatListenerRequest extends AdminRequest {
 
   @Override
   public String toString() {
-    return "AddStatListenerRequest from " + this.getRecipient() + " for " + this.resourceId + " " + this.statName;
+    return "AddStatListenerRequest from "
+        + this.getRecipient()
+        + " for "
+        + this.resourceId
+        + " "
+        + this.statName;
   }
 }

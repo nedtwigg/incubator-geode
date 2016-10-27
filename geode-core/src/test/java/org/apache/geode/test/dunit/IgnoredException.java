@@ -26,14 +26,12 @@ import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * <code>IgnoredException</code> provides static utility methods that
- * will log messages to add or remove <code>IgnoredException</code>s.
- * Each <code>IgnoredException</code> allows you to specify a suspect string
- * that will be ignored by the <code>GrepLogs</code> utility which is run 
- * after each <code>DistributedTest</code> test method.
- * 
- * These methods can be used directly: 
- * <code>IgnoredException.addIgnoredException(...)</code>, 
+ * <code>IgnoredException</code> provides static utility methods that will log messages to add or
+ * remove <code>IgnoredException</code>s. Each <code>IgnoredException</code> allows you to specify a
+ * suspect string that will be ignored by the <code>GrepLogs</code> utility which is run after each
+ * <code>DistributedTest</code> test method.
+ *
+ * <p>These methods can be used directly: <code>IgnoredException.addIgnoredException(...)</code>,
  * however, they are intended to be referenced through static import:
  *
  * <pre>
@@ -42,21 +40,20 @@ import org.apache.geode.internal.logging.LogService;
  *    addIgnoredException(...);
  * </pre>
  *
- * A test should use <code>addIgnoredException(...)</code> before executing
- * the code that will potentially log the suspect string. The test should
- * then <code>remove()</code> the <code>IgnoredException</code> immediately
- * after. Note that <code>DistributedTestCase.tearDown()</code> will 
- * automatically remove all current <code>IgnoredException</code>s by
- * invoking <code>removeAllIgnoredExceptions</code>.
- *  
- * A suspect string is typically an Exception class and/or message string.
+ * A test should use <code>addIgnoredException(...)</code> before executing the code that will
+ * potentially log the suspect string. The test should then <code>remove()</code> the <code>
+ * IgnoredException</code> immediately after. Note that <code>DistributedTestCase.tearDown()</code>
+ * will automatically remove all current <code>IgnoredException</code>s by invoking <code>
+ * removeAllIgnoredExceptions</code>.
  *
- * The <code>GrepLogs</code> utility is part of Hydra which is not included
- * in Apache Geode. The Hydra class which consumes logs and reports suspect
- * strings is <code>batterytest.greplogs.GrepLogs</code>.
- * 
- * Extracted from DistributedTestCase.
- * 
+ * <p>A suspect string is typically an Exception class and/or message string.
+ *
+ * <p>The <code>GrepLogs</code> utility is part of Hydra which is not included in Apache Geode. The
+ * Hydra class which consumes logs and reports suspect strings is <code>
+ * batterytest.greplogs.GrepLogs</code>.
+ *
+ * <p>Extracted from DistributedTestCase.
+ *
  * @since GemFire 5.7bugfix
  */
 @SuppressWarnings("serial")
@@ -68,7 +65,8 @@ public class IgnoredException implements Serializable {
 
   private final transient VM vm;
 
-  private static ConcurrentLinkedQueue<IgnoredException> ignoredExceptions = new ConcurrentLinkedQueue<IgnoredException>();
+  private static ConcurrentLinkedQueue<IgnoredException> ignoredExceptions =
+      new ConcurrentLinkedQueue<IgnoredException>();
 
   public IgnoredException(final String suspectString) {
     this.suspectString = suspectString;
@@ -100,23 +98,24 @@ public class IgnoredException implements Serializable {
     final String removeMessage = getRemoveMessage();
 
     @SuppressWarnings("serial")
-    SerializableRunnable removeRunnable = new SerializableRunnable(IgnoredException.class.getSimpleName() + " remove") {
-      public void run() {
-        // TODO: delete use of system.getLogWriter
-        DistributedSystem system = InternalDistributedSystem.getConnectedInstance();
-        if (system != null) {
-          system.getLogWriter().info(removeMessage);
-        }
+    SerializableRunnable removeRunnable =
+        new SerializableRunnable(IgnoredException.class.getSimpleName() + " remove") {
+          public void run() {
+            // TODO: delete use of system.getLogWriter
+            DistributedSystem system = InternalDistributedSystem.getConnectedInstance();
+            if (system != null) {
+              system.getLogWriter().info(removeMessage);
+            }
 
-        // TODO: delete use of LogWriterUtils
-        try {
-          LogWriterUtils.getLogWriter().info(removeMessage);
-        } catch (Exception noHydraLogger) {
-        }
+            // TODO: delete use of LogWriterUtils
+            try {
+              LogWriterUtils.getLogWriter().info(removeMessage);
+            } catch (Exception noHydraLogger) {
+            }
 
-        logger.info(removeMessage);
-      }
-    };
+            logger.info(removeMessage);
+          }
+        };
 
     try {
       removeRunnable.run();
@@ -139,11 +138,10 @@ public class IgnoredException implements Serializable {
   }
 
   /**
-   * Log in all VMs, in both the test logger and the GemFire logger the
-   * ignored exception string to prevent grep logs from complaining. The
-   * suspect string is used by the GrepLogs utility and so can contain
-   * regular expression characters.
-   * 
+   * Log in all VMs, in both the test logger and the GemFire logger the ignored exception string to
+   * prevent grep logs from complaining. The suspect string is used by the GrepLogs utility and so
+   * can contain regular expression characters.
+   *
    * @since GemFire 5.7bugfix
    * @param suspectString the exception string to expect
    * @param vm the VM on which to log the expected exception or null for all VMs
@@ -154,23 +152,24 @@ public class IgnoredException implements Serializable {
     final String addMessage = ignoredException.getAddMessage();
 
     @SuppressWarnings("serial")
-    SerializableRunnable addRunnable = new SerializableRunnable(IgnoredException.class.getSimpleName() + " addIgnoredException") {
-      public void run() {
-        // TODO: delete use of system.getLogWriter
-        DistributedSystem system = InternalDistributedSystem.getConnectedInstance();
-        if (system != null) {
-          system.getLogWriter().info(addMessage);
-        }
+    SerializableRunnable addRunnable =
+        new SerializableRunnable(IgnoredException.class.getSimpleName() + " addIgnoredException") {
+          public void run() {
+            // TODO: delete use of system.getLogWriter
+            DistributedSystem system = InternalDistributedSystem.getConnectedInstance();
+            if (system != null) {
+              system.getLogWriter().info(addMessage);
+            }
 
-        // TODO: delete use of LogWriterUtils
-        try {
-          LogWriterUtils.getLogWriter().info(addMessage);
-        } catch (Exception noHydraLogger) {
-        }
+            // TODO: delete use of LogWriterUtils
+            try {
+              LogWriterUtils.getLogWriter().info(addMessage);
+            } catch (Exception noHydraLogger) {
+            }
 
-        logger.info(addMessage);
-      }
-    };
+            logger.info(addMessage);
+          }
+        };
 
     try {
       addRunnable.run();
@@ -189,14 +188,13 @@ public class IgnoredException implements Serializable {
   }
 
   /**
-   * Log in all VMs, in both the test logger and the GemFire logger the
-   * ignored exception string to prevent grep logs from complaining. The
-   * suspect string is used by the GrepLogs utility and so can contain
-   * regular expression characters.
-   * 
-   * If you do not remove the ignored exception, it will be removed at the
-   * end of your test case automatically.
-   * 
+   * Log in all VMs, in both the test logger and the GemFire logger the ignored exception string to
+   * prevent grep logs from complaining. The suspect string is used by the GrepLogs utility and so
+   * can contain regular expression characters.
+   *
+   * <p>If you do not remove the ignored exception, it will be removed at the end of your test case
+   * automatically.
+   *
    * @since GemFire 5.7bugfix
    * @param suspectString the exception string to expect
    * @return an IgnoredException instance for removal

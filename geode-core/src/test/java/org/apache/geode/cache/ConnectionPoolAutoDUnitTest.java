@@ -32,21 +32,22 @@ public class ConnectionPoolAutoDUnitTest extends ConnectionPoolDUnitTest {
   @Override
   protected final void postSetUpConnectionPoolDUnitTest() throws Exception {
     ClientServerTestCase.AUTO_LOAD_BALANCE = true;
-    Invoke.invokeInEveryVM(new SerializableRunnable("setupAutoMode") {
-      public void run() {
-        ClientServerTestCase.AUTO_LOAD_BALANCE = true;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("setupAutoMode") {
+          public void run() {
+            ClientServerTestCase.AUTO_LOAD_BALANCE = true;
+          }
+        });
   }
 
   @Override
   protected final void postTearDownConnectionPoolDUnitTest() throws Exception {
     ClientServerTestCase.AUTO_LOAD_BALANCE = false;
-    Invoke.invokeInEveryVM(new SerializableRunnable("disableAutoMode") {
-      public void run() {
-        ClientServerTestCase.AUTO_LOAD_BALANCE = false;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("disableAutoMode") {
+          public void run() {
+            ClientServerTestCase.AUTO_LOAD_BALANCE = false;
+          }
+        });
   }
-
 }

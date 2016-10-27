@@ -23,9 +23,11 @@ import java.io.InputStream;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * The MultipartFileAdapter class is an Adapter built for extension in order to implement the MultipartFile interface
- * overriding behavior applicable to the implementation.
- * <p/>
+ * The MultipartFileAdapter class is an Adapter built for extension in order to implement the
+ * MultipartFile interface overriding behavior applicable to the implementation.
+ *
+ * <p>
+ *
  * @see org.springframework.web.multipart.MultipartFile
  * @since GemFire 8.0
  */
@@ -63,5 +65,4 @@ public class MultipartFileAdapter implements MultipartFile {
   public void transferTo(final File dest) throws IOException, IllegalStateException {
     throw new UnsupportedOperationException("Not Implemented!");
   }
-
 }

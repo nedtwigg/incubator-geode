@@ -28,10 +28,8 @@ import org.apache.geode.internal.admin.remote.DistributionLocatorId;
 
 /**
  * Requests remote locators of a remote WAN site
- * 
- * 
+ *
  * @since GemFire 6.6
- * 
  */
 public class RemoteLocatorJoinRequest implements DataSerializableFixedID {
 
@@ -43,7 +41,8 @@ public class RemoteLocatorJoinRequest implements DataSerializableFixedID {
     super();
   }
 
-  public RemoteLocatorJoinRequest(int distributedSystemId, DistributionLocatorId locator, String serverGroup) {
+  public RemoteLocatorJoinRequest(
+      int distributedSystemId, DistributionLocatorId locator, String serverGroup) {
     this.distributedSystemId = distributedSystemId;
     this.locator = locator;
   }
@@ -79,5 +78,4 @@ public class RemoteLocatorJoinRequest implements DataSerializableFixedID {
   public Version[] getSerializationVersions() {
     return null;
   }
-
 }

@@ -24,11 +24,10 @@ import org.apache.geode.cache.*;
 import org.apache.geode.cache.client.ClientNotReadyException;
 
 /**
- * <code>RegionFactoryImpl</code> extends RegionFactory
- * adding {@link RegionShortcut} support.
+ * <code>RegionFactoryImpl</code> extends RegionFactory adding {@link RegionShortcut} support.
+ *
  * @since GemFire 6.5
  */
-
 public class RegionFactoryImpl<K, V> extends RegionFactory<K, V> {
   public RegionFactoryImpl(GemFireCacheImpl cache) {
     super(cache);
@@ -45,5 +44,4 @@ public class RegionFactoryImpl<K, V> extends RegionFactory<K, V> {
   public RegionFactoryImpl(GemFireCacheImpl cache, String regionAttributesId) {
     super(cache, regionAttributesId);
   }
-
 }

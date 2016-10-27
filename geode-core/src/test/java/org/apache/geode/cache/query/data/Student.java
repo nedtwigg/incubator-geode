@@ -25,15 +25,12 @@ package org.apache.geode.cache.query.data;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 
- *  
- */
+/** */
 public class Student {
 
   private static int counter = 0;
-  static String[] names = { "English", "Hindi", "Maths", "Bio" };
-  static String[] teacher_names = { "X", "Y", "Z", "A" };
+  static String[] names = {"English", "Hindi", "Maths", "Bio"};
+  static String[] teacher_names = {"X", "Y", "Z", "A"};
   public String name;
   public int rollnum;
   public List subjects = new ArrayList();
@@ -49,8 +46,7 @@ public class Student {
       rollnum = ++counter;
     }
     int rem = rollnum % names.length;
-    if (rem == 0)
-      rem = 4;
+    if (rem == 0) rem = 4;
     for (int j = 0; j < rem; ++j) {
       subjects.add(this.new Subject(names[j]));
       teachers.add(new Teacher(teacher_names[j]));
@@ -72,7 +68,5 @@ public class Student {
     public Teacher(String teacher) {
       this.teacher = teacher;
     }
-
   }
-
 }

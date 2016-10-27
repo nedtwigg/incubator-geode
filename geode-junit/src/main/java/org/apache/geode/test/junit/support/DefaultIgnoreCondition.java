@@ -52,5 +52,4 @@ public class DefaultIgnoreCondition implements IgnoreCondition {
   public boolean evaluate(final Description testCaseDescription) {
     return isIgnore();
   }
-
 }

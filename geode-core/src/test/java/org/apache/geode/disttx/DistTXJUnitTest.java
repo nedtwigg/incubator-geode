@@ -36,13 +36,11 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 /**
  * Run the basic transaction functionality tests in TXJUnitTest after setting
  * "distributed-transactions" property to true
- *
  */
-@Category({ IntegrationTest.class, DistributedTransactionsTest.class })
+@Category({IntegrationTest.class, DistributedTransactionsTest.class})
 public class DistTXJUnitTest extends TXJUnitTest {
 
-  public DistTXJUnitTest() {
-  }
+  public DistTXJUnitTest() {}
 
   @Override
   protected void createCache() throws Exception {
@@ -92,5 +90,4 @@ public class DistTXJUnitTest extends TXJUnitTest {
     // [DISTTX] TODO Fix this issue. This test fails for DISTTX. This is
     // overridden to avoid running the actual test
   }
-
 }

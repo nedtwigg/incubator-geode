@@ -30,33 +30,33 @@ import java.io.*;
 import java.util.Set;
 
 /**
- * A message to update the Grantor with the latest TXLock participants
- * This class was added as part of the solution to bug 32999.  It is
- * used to update the Grantor that holds the lock batch for a given
- * TXLockId.  This update is needed in the event that a recovery is
- * needed when the TXLock Lessor (the origin VM of the transaction)
- * crashes/departs before or while sending the TXCommitMessage but
- * after making the reservation for the transaction.
- * 
+ * A message to update the Grantor with the latest TXLock participants This class was added as part
+ * of the solution to bug 32999. It is used to update the Grantor that holds the lock batch for a
+ * given TXLockId. This update is needed in the event that a recovery is needed when the TXLock
+ * Lessor (the origin VM of the transaction) crashes/departs before or while sending the
+ * TXCommitMessage but after making the reservation for the transaction.
+ *
  * @see org.apache.geode.internal.cache.TXCommitMessage#send(TXLockId)
  * @see org.apache.geode.internal.cache.TXCommitMessage#updateLockMembers
  * @see org.apache.geode.distributed.internal.locks.DLockGrantor#getLockBatch(Object)
- * @see org.apache.geode.distributed.internal.locks.DLockGrantor#updateLockBatch(Object, org.apache.geode.distributed.internal.locks.DLockBatch)
+ * @see org.apache.geode.distributed.internal.locks.DLockGrantor#updateLockBatch(Object,
+ *     org.apache.geode.distributed.internal.locks.DLockBatch)
  * @see TXLockBatch#getBatchId
  * @see TXLessorDepartureHandler
  * @see TXOriginatorRecoveryProcessor
  * @see org.apache.geode.internal.cache.TXFarSideCMTracker
- * 
  * @since GemFire 4.1.1
  */
-public final class TXLockUpdateParticipantsMessage extends PooledDistributionMessage implements MessageWithReply {
+public final class TXLockUpdateParticipantsMessage extends PooledDistributionMessage
+    implements MessageWithReply {
 
   private transient TXLockId txLockId;
   private transient String serviceName;
   private transient Set updatedParticipants;
   private transient int processorId;
 
-  public TXLockUpdateParticipantsMessage(TXLockId txLockId, String serviceName, Set updatedParticipants, int processorId) {
+  public TXLockUpdateParticipantsMessage(
+      TXLockId txLockId, String serviceName, Set updatedParticipants, int processorId) {
     this.txLockId = txLockId;
     this.serviceName = serviceName;
     this.updatedParticipants = updatedParticipants;
@@ -83,10 +83,11 @@ public final class TXLockUpdateParticipantsMessage extends PooledDistributionMes
   }
 
   /**
-   * Update the Grantor with a new set of Participants.  This method is meant to be used
-   * in a local context (does <b>NOT</b> involve any messaging)
+   * Update the Grantor with a new set of Participants. This method is meant to be used in a local
+   * context (does <b>NOT</b> involve any messaging)
    */
-  public static void updateParticipants(DLockService svc, TXLockId txLockId, Set updatedParticipants) {
+  public static void updateParticipants(
+      DLockService svc, TXLockId txLockId, Set updatedParticipants) {
     DLockGrantor grantor = null;
     try {
       grantor = DLockGrantor.waitForGrantor(svc);
@@ -137,12 +138,16 @@ public final class TXLockUpdateParticipantsMessage extends PooledDistributionMes
 
   @Override
   public String toString() {
-    return "TXLockUpdateParticipantsMessage for " + "service=" + this.serviceName + "; updatedParticipants=" + this.updatedParticipants + "; txLockId=" + this.txLockId;
+    return "TXLockUpdateParticipantsMessage for "
+        + "service="
+        + this.serviceName
+        + "; updatedParticipants="
+        + this.updatedParticipants
+        + "; txLockId="
+        + this.txLockId;
   }
 
-  /**
-   * The simple reply message that the sender waits for
-   */
+  /** The simple reply message that the sender waits for */
   public static final class TXLockUpdateParticipantsReplyMessage extends ReplyMessage {
 
     @Override
@@ -162,8 +167,10 @@ public final class TXLockUpdateParticipantsMessage extends PooledDistributionMes
 
     @Override
     public String toString() {
-      return "TXLockUpdateParticipantsReplyMessage processorId=" + super.processorId + "; sender=" + this.getSender();
+      return "TXLockUpdateParticipantsReplyMessage processorId="
+          + super.processorId
+          + "; sender="
+          + this.getSender();
     }
   }
-
 }

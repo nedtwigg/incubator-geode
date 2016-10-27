@@ -20,7 +20,7 @@ import org.apache.geode.cache.query.CqStatistics;
 
 /**
  * Provides statistical information about a CqQuery.
- * 
+ *
  * @since GemFire 5.5
  */
 public class CqStatisticsImpl implements CqStatistics {
@@ -33,6 +33,7 @@ public class CqStatisticsImpl implements CqStatistics {
 
   /**
    * Constructor for CqStatisticsImpl
+   *
    * @param cq - CqQuery reference to the CqQueryImpl object
    */
   public CqStatisticsImpl(CqQueryImpl cq) {
@@ -41,6 +42,7 @@ public class CqStatisticsImpl implements CqStatistics {
 
   /**
    * Returns the number of Insert events for this CQ.
+   *
    * @return the number of insert events
    */
   public long numInserts() {
@@ -49,6 +51,7 @@ public class CqStatisticsImpl implements CqStatistics {
 
   /**
    * Returns number of Delete events for this CQ.
+   *
    * @return the number of delete events
    */
   public long numDeletes() {
@@ -57,6 +60,7 @@ public class CqStatisticsImpl implements CqStatistics {
 
   /**
    * Returns number of Update events for this CQ.
+   *
    * @return the number of update events
    */
   public long numUpdates() {
@@ -65,10 +69,10 @@ public class CqStatisticsImpl implements CqStatistics {
 
   /**
    * Returns the total number of events for this CQ.
+   *
    * @return the total number of insert, update, and delete events
    */
   public long numEvents() {
     return cqQuery.getVsdStats().getNumEvents();
   }
-
 }

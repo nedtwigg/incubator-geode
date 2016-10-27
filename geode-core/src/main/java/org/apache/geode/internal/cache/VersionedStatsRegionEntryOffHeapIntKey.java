@@ -45,13 +45,12 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VersionedStatsRegionEntryOffHeapIntKey extends VersionedStatsRegionEntryOffHeap {
-  public VersionedStatsRegionEntryOffHeapIntKey(RegionEntryContext context, int key, @Retained Object value) {
+  public VersionedStatsRegionEntryOffHeapIntKey(
+      RegionEntryContext context, int key, @Retained Object value) {
     super(context, value);
     // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
     this.key = key;
@@ -61,9 +60,14 @@ public class VersionedStatsRegionEntryOffHeapIntKey extends VersionedStatsRegion
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VersionedStatsRegionEntryOffHeapIntKey> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VersionedStatsRegionEntryOffHeapIntKey.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VersionedStatsRegionEntryOffHeapIntKey>
+      lastModifiedUpdater =
+          AtomicLongFieldUpdater.newUpdater(
+              VersionedStatsRegionEntryOffHeapIntKey.class, "lastModified");
   /**
    * All access done using ohAddrUpdater so it is used even though the compiler can not tell it is.
    */
@@ -72,14 +76,17 @@ public class VersionedStatsRegionEntryOffHeapIntKey extends VersionedStatsRegion
   @Released
   private volatile long ohAddress;
   /**
-   * I needed to add this because I wanted clear to call setValue which normally can only be called while the re is synced.
-   * But if I sync in that code it causes a lock ordering deadlock with the disk regions because they also get a rw lock in clear.
-   * Some hardware platforms do not support CAS on a long. If gemfire is run on one of those the AtomicLongFieldUpdater does a sync
-   * on the re and we will once again be deadlocked.
-   * I don't know if we support any of the hardware platforms that do not have a 64bit CAS. If we do then we can expect deadlocks
-   * on disk regions.
+   * I needed to add this because I wanted clear to call setValue which normally can only be called
+   * while the re is synced. But if I sync in that code it causes a lock ordering deadlock with the
+   * disk regions because they also get a rw lock in clear. Some hardware platforms do not support
+   * CAS on a long. If gemfire is run on one of those the AtomicLongFieldUpdater does a sync on the
+   * re and we will once again be deadlocked. I don't know if we support any of the hardware
+   * platforms that do not have a 64bit CAS. If we do then we can expect deadlocks on disk regions.
    */
-  private final static AtomicLongFieldUpdater<VersionedStatsRegionEntryOffHeapIntKey> ohAddrUpdater = AtomicLongFieldUpdater.newUpdater(VersionedStatsRegionEntryOffHeapIntKey.class, "ohAddress");
+  private static final AtomicLongFieldUpdater<VersionedStatsRegionEntryOffHeapIntKey>
+      ohAddrUpdater =
+          AtomicLongFieldUpdater.newUpdater(
+              VersionedStatsRegionEntryOffHeapIntKey.class, "ohAddress");
 
   @Override
   public Token getValueAsToken() {
@@ -136,9 +143,7 @@ public class VersionedStatsRegionEntryOffHeapIntKey extends VersionedStatsRegion
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -147,16 +152,12 @@ public class VersionedStatsRegionEntryOffHeapIntKey extends VersionedStatsRegion
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -184,8 +185,14 @@ public class VersionedStatsRegionEntryOffHeapIntKey extends VersionedStatsRegion
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VersionedStatsRegionEntryOffHeapIntKey> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VersionedStatsRegionEntryOffHeapIntKey.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VersionedStatsRegionEntryOffHeapIntKey> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VersionedStatsRegionEntryOffHeapIntKey.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VersionedStatsRegionEntryOffHeapIntKey>
+      hitCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VersionedStatsRegionEntryOffHeapIntKey.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VersionedStatsRegionEntryOffHeapIntKey>
+      missCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VersionedStatsRegionEntryOffHeapIntKey.class, "missCount");
 
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {
@@ -306,7 +313,14 @@ public class VersionedStatsRegionEntryOffHeapIntKey extends VersionedStatsRegion
     return tag;
   }
 
-  public void processVersionTag(LocalRegion r, VersionTag tag, boolean isTombstoneFromGII, boolean hasDelta, VersionSource thisVM, InternalDistributedMember sender, boolean checkForConflicts) {
+  public void processVersionTag(
+      LocalRegion r,
+      VersionTag tag,
+      boolean isTombstoneFromGII,
+      boolean hasDelta,
+      VersionSource thisVM,
+      InternalDistributedMember sender,
+      boolean checkForConflicts) {
     basicProcessVersionTag(r, tag, isTombstoneFromGII, hasDelta, thisVM, sender, checkForConflicts);
   }
 
@@ -317,12 +331,12 @@ public class VersionedStatsRegionEntryOffHeapIntKey extends VersionedStatsRegion
     super.processVersionTag(cacheEvent);
   }
 
-  /** get rvv internal high byte.  Used by region entries for transferring to storage */
+  /** get rvv internal high byte. Used by region entries for transferring to storage */
   public short getRegionVersionHighBytes() {
     return this.regionVersionHighBytes;
   }
 
-  /** get rvv internal low bytes.  Used by region entries for transferring to storage */
+  /** get rvv internal low bytes. Used by region entries for transferring to storage */
   public int getRegionVersionLowBytes() {
     return this.regionVersionLowBytes;
   }

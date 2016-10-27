@@ -25,9 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.geode.distributed.DistributedSystem;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * A little class for testing the local DistributionManager
- */
+/** A little class for testing the local DistributionManager */
 public class LDM {
 
   private static final Logger logger = LogService.getLogger();
@@ -57,8 +55,7 @@ public class LDM {
 
   static class HelloMessage extends SerialDistributionMessage {
 
-    public HelloMessage() {
-    } // for Externalizable
+    public HelloMessage() {} // for Externalizable
 
     @Override
     public void process(DistributionManager dm) {
@@ -69,5 +66,4 @@ public class LDM {
       return NO_FIXED_ID;
     }
   }
-
 }

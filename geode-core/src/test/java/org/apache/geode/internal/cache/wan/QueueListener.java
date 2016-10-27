@@ -75,5 +75,4 @@ public class QueueListener implements CacheListener {
     // TODO Auto-generated method stub
 
   }
-
 }

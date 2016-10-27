@@ -27,16 +27,15 @@ import org.apache.geode.internal.offheap.annotations.Unretained;
 /**
  * A wrapper around the graph logger that logs entry level events.
  *
- *
- *TODO 
- *  - I think I need some options to choose to deserialize a key to record states.
+ * <p>TODO - I think I need some options to choose to deserialize a key to record states.
  */
 public class EntryLogger {
   private static final SequenceLogger GRAPH_LOGGER = SequenceLoggerImpl.getInstance();
   private static ThreadLocal<String> SOURCE = new ThreadLocal<String>();
   private static ThreadLocal<String> SOURCE_TYPE = new ThreadLocal<String>();
 
-  public static final String TRACK_VALUES_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "EntryLogger.TRACK_VALUES";
+  public static final String TRACK_VALUES_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "EntryLogger.TRACK_VALUES";
   private static final boolean TRACK_VALUES = Boolean.getBoolean(TRACK_VALUES_PROPERTY);
 
   public static void clearSource() {
@@ -55,7 +54,13 @@ public class EntryLogger {
 
   public static void logPut(EntryEventImpl event) {
     if (isEnabled()) {
-      GRAPH_LOGGER.logTransition(GraphType.KEY, getGraphName(event), getEdgeName("put"), processValue(event.getRawNewValue()), getSource(), getDest());
+      GRAPH_LOGGER.logTransition(
+          GraphType.KEY,
+          getGraphName(event),
+          getEdgeName("put"),
+          processValue(event.getRawNewValue()),
+          getSource(),
+          getDest());
     }
   }
 
@@ -72,55 +77,104 @@ public class EntryLogger {
   public static void logInvalidate(EntryEventImpl event) {
     if (isEnabled()) {
       final String invalidationType = event.getOperation().isLocal() ? "local_invalid" : "invalid";
-      GRAPH_LOGGER.logTransition(GraphType.KEY, getGraphName(event), getEdgeName("invalidate"), invalidationType, getSource(), getDest());
+      GRAPH_LOGGER.logTransition(
+          GraphType.KEY,
+          getGraphName(event),
+          getEdgeName("invalidate"),
+          invalidationType,
+          getSource(),
+          getDest());
     }
   }
 
   public static void logDestroy(EntryEventImpl event) {
     if (isEnabled()) {
-      GRAPH_LOGGER.logTransition(GraphType.KEY, getGraphName(event), getEdgeName("destroy"), "destroyed", getSource(), getDest());
+      GRAPH_LOGGER.logTransition(
+          GraphType.KEY,
+          getGraphName(event),
+          getEdgeName("destroy"),
+          "destroyed",
+          getSource(),
+          getDest());
     }
   }
 
   public static void logRecovery(Object owner, Object key, RecoveredEntry value) {
     if (isEnabled()) {
-      GRAPH_LOGGER.logTransition(GraphType.KEY, getGraphNameFromOwner(owner, key), "recovery", processValue(value.getValue()), getSource(), getDest());
+      GRAPH_LOGGER.logTransition(
+          GraphType.KEY,
+          getGraphNameFromOwner(owner, key),
+          "recovery",
+          processValue(value.getValue()),
+          getSource(),
+          getDest());
     }
   }
 
   public static void logPersistPut(String name, Object key, DiskStoreID diskStoreID) {
     if (isEnabled()) {
-      GRAPH_LOGGER.logTransition(GraphType.KEY, getGraphName(name, key), "persist", "persisted", getDest(), diskStoreID);
+      GRAPH_LOGGER.logTransition(
+          GraphType.KEY, getGraphName(name, key), "persist", "persisted", getDest(), diskStoreID);
     }
   }
 
   public static void logPersistDestroy(String name, Object key, DiskStoreID diskStoreID) {
     if (isEnabled()) {
-      GRAPH_LOGGER.logTransition(GraphType.KEY, getGraphName(name, key), "persist_destroy", "destroy", getDest(), diskStoreID);
+      GRAPH_LOGGER.logTransition(
+          GraphType.KEY,
+          getGraphName(name, key),
+          "persist_destroy",
+          "destroy",
+          getDest(),
+          diskStoreID);
     }
   }
 
   public static void logInitialImagePut(Object owner, Object key, Object newValue) {
     if (isEnabled()) {
-      GRAPH_LOGGER.logTransition(GraphType.KEY, getGraphNameFromOwner(owner, key), "GII", processValue(newValue), getSource(), getDest());
+      GRAPH_LOGGER.logTransition(
+          GraphType.KEY,
+          getGraphNameFromOwner(owner, key),
+          "GII",
+          processValue(newValue),
+          getSource(),
+          getDest());
     }
   }
 
   public static void logTXDestroy(Object owner, Object key) {
     if (isEnabled()) {
-      GRAPH_LOGGER.logTransition(GraphType.KEY, getGraphNameFromOwner(owner, key), getEdgeName("txdestroy"), "destroyed", getSource(), getDest());
+      GRAPH_LOGGER.logTransition(
+          GraphType.KEY,
+          getGraphNameFromOwner(owner, key),
+          getEdgeName("txdestroy"),
+          "destroyed",
+          getSource(),
+          getDest());
     }
   }
 
   public static void logTXInvalidate(Object owner, Object key) {
     if (isEnabled()) {
-      GRAPH_LOGGER.logTransition(GraphType.KEY, getGraphNameFromOwner(owner, key), getEdgeName("txinvalidate"), "invalid", getSource(), getDest());
+      GRAPH_LOGGER.logTransition(
+          GraphType.KEY,
+          getGraphNameFromOwner(owner, key),
+          getEdgeName("txinvalidate"),
+          "invalid",
+          getSource(),
+          getDest());
     }
   }
 
   public static void logTXPut(Object owner, Object key, Object nv) {
     if (isEnabled()) {
-      GRAPH_LOGGER.logTransition(GraphType.KEY, getGraphNameFromOwner(owner, key), getEdgeName("txput"), processValue(nv), getSource(), getDest());
+      GRAPH_LOGGER.logTransition(
+          GraphType.KEY,
+          getGraphNameFromOwner(owner, key),
+          getEdgeName("txput"),
+          processValue(nv),
+          getSource(),
+          getDest());
     }
   }
 
@@ -196,8 +250,13 @@ public class EntryLogger {
 
   public static void logUpdateEntryVersion(EntryEventImpl event) {
     if (isEnabled()) {
-      GRAPH_LOGGER.logTransition(GraphType.KEY, getGraphName(event), getEdgeName("update-version"), "version-updated", getSource(), getDest());
+      GRAPH_LOGGER.logTransition(
+          GraphType.KEY,
+          getGraphName(event),
+          getEdgeName("update-version"),
+          "version-updated",
+          getSource(),
+          getDest());
     }
   }
-
 }

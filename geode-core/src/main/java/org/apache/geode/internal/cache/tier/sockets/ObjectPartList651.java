@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets;
 
 import org.apache.geode.DataSerializer;
@@ -29,10 +27,8 @@ import java.util.ArrayList;
 
 /**
  * Adds one more object type which indicates that the key is not present at the server.
- * 
- * [bruce] THIS CLASS IS OBSOLETE AS OF V7.0.  It is replaced with VersionedObjectList
- *  
  *
+ * <p>[bruce] THIS CLASS IS OBSOLETE AS OF V7.0. It is replaced with VersionedObjectList
  */
 public class ObjectPartList651 extends ObjectPartList {
 
@@ -71,10 +67,16 @@ public class ObjectPartList651 extends ObjectPartList {
       System.arraycopy(this.objectTypeArray, 0, temp, 0, this.objectTypeArray.length);
       this.objectTypeArray = new byte[this.objects.size()];
       System.arraycopy(temp, 0, this.objectTypeArray, 0, temp.length);
-      System.arraycopy(other.objectTypeArray, 0, this.objectTypeArray, temp.length, other.objectTypeArray.length);
+      System.arraycopy(
+          other.objectTypeArray,
+          0,
+          this.objectTypeArray,
+          temp.length,
+          other.objectTypeArray.length);
     } else {
       this.objectTypeArray = new byte[this.objects.size()];
-      System.arraycopy(other.objectTypeArray, 0, this.objectTypeArray, 0, other.objectTypeArray.length);
+      System.arraycopy(
+          other.objectTypeArray, 0, this.objectTypeArray, 0, other.objectTypeArray.length);
     }
   }
 

@@ -16,11 +16,8 @@
  */
 package org.apache.geode.internal.statistics;
 
-/**
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public interface StatisticsListener {
 
   public void handleNotification(StatisticsNotification notification);
-
 }

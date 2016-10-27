@@ -28,10 +28,7 @@ import org.springframework.shell.core.Completion;
 import org.springframework.shell.core.Converter;
 import org.springframework.shell.core.MethodTarget;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class RegionPathConverter implements Converter<String> {
 
   public static final String DEFAULT_APP_CONTEXT_PATH = "";
@@ -47,16 +44,25 @@ public class RegionPathConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
     if (String.class.equals(targetType) && ConverterHint.REGIONPATH.equals(optionContext)) {
       Set<String> regionPathSet = getAllRegionPaths();
       Gfsh gfsh = Gfsh.getCurrentInstance();
       String currentContextPath = "";
       if (gfsh != null) {
         currentContextPath = gfsh.getEnvProperty(Gfsh.ENV_APP_CONTEXT_PATH);
-        if (currentContextPath != null && !org.apache.geode.management.internal.cli.converters.RegionPathConverter.DEFAULT_APP_CONTEXT_PATH.equals(currentContextPath)) {
+        if (currentContextPath != null
+            && !org.apache.geode.management.internal.cli.converters.RegionPathConverter
+                .DEFAULT_APP_CONTEXT_PATH.equals(currentContextPath)) {
           regionPathSet.remove(currentContextPath);
-          regionPathSet.add(org.apache.geode.management.internal.cli.converters.RegionPathConverter.DEFAULT_APP_CONTEXT_PATH);
+          regionPathSet.add(
+              org.apache.geode.management.internal.cli.converters.RegionPathConverter
+                  .DEFAULT_APP_CONTEXT_PATH);
         }
       }
 
@@ -79,7 +85,8 @@ public class RegionPathConverter implements Converter<String> {
 
     Gfsh gfsh = Gfsh.getCurrentInstance();
     if (gfsh != null && gfsh.isConnectedAndReady()) {
-      String[] regionPaths = gfsh.getOperationInvoker().getDistributedSystemMXBean().listAllRegionPaths();
+      String[] regionPaths =
+          gfsh.getOperationInvoker().getDistributedSystemMXBean().listAllRegionPaths();
       if (regionPaths != null && regionPaths.length > 0) {
         regionPathSet = new TreeSet<String>();
         for (String regionPath : regionPaths) {
@@ -92,5 +99,4 @@ public class RegionPathConverter implements Converter<String> {
 
     return regionPathSet;
   }
-
 }

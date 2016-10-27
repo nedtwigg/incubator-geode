@@ -21,71 +21,60 @@ import java.beans.ConstructorProperties;
 import org.apache.geode.cache.Region;
 
 /**
- * Composite date type used to distribute the fixed partition attributes for
- * a {@link Region}.
- * 
+ * Composite date type used to distribute the fixed partition attributes for a {@link Region}.
+ *
  * @since GemFire 7.0
  */
 public class FixedPartitionAttributesData {
 
-  /**
-   * Name of the Fixed partition
-   */
+  /** Name of the Fixed partition */
   private String name;
 
-  /**
-   * whether this is the primary partition
-   */
+  /** whether this is the primary partition */
   private boolean primary;
 
-  /**
-   * Number of buckets in the partition
-   */
+  /** Number of buckets in the partition */
   private int numBucket;
 
   /**
-   * 
-   * This constructor is to be used by internal JMX framework only. User should
-   * not try to create an instance of this class.
+   * This constructor is to be used by internal JMX framework only. User should not try to create an
+   * instance of this class.
    */
-  @ConstructorProperties({ "name", "primary", "numBucket"
-
-  })
+  @ConstructorProperties({"name", "primary", "numBucket"})
   public FixedPartitionAttributesData(String name, boolean primary, int numBucket) {
     this.name = name;
     this.primary = primary;
     this.numBucket = numBucket;
   }
 
-  /**
-   * Returns the name of the partition.
-   */
+  /** Returns the name of the partition. */
   public String getName() {
     return name;
   }
 
   /**
    * Returns whether this member is the primary for the partition.
-   * 
+   *
    * @return True if this member is the primary, false otherwise.
    */
   public boolean isPrimary() {
     return primary;
   }
 
-  /**
-   * Returns the number of buckets allowed for the partition.
-   */
+  /** Returns the number of buckets allowed for the partition. */
   public int getNumBucket() {
     return numBucket;
   }
 
-  /**
-   * String representation of FixedPartitionAttributesData
-   */
+  /** String representation of FixedPartitionAttributesData */
   @Override
   public String toString() {
-    return "FixedPartitionAttributesData [name=" + name + ", numBucket=" + numBucket + ", primary=" + primary + "]";
+    return "FixedPartitionAttributesData [name="
+        + name
+        + ", numBucket="
+        + numBucket
+        + ", primary="
+        + primary
+        + "]";
   }
-
 }

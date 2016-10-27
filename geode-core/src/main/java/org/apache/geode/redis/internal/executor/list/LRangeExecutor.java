@@ -91,14 +91,17 @@ public class LRangeExecutor extends ListExecutor {
     if (range == null)
       command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
     else
-      command.setResponse(Coder.getBulkStringArrayResponseOfValues(context.getByteBufAllocator(), range));
+      command.setResponse(
+          Coder.getBulkStringArrayResponseOfValues(context.getByteBufAllocator(), range));
   }
 
-  private List<Struct> getRange(ExecutionHandlerContext context, ByteArrayWrapper key, int start, int stop, Region r) throws Exception {
+  private List<Struct> getRange(
+      ExecutionHandlerContext context, ByteArrayWrapper key, int start, int stop, Region r)
+      throws Exception {
 
     Query query = getQuery(key, ListQuery.LRANGE, context);
 
-    Object[] params = { Integer.valueOf(stop + 1) };
+    Object[] params = {Integer.valueOf(stop + 1)};
     SelectResults<Struct> results = (SelectResults<Struct>) query.execute(params);
     int size = results.size();
     if (results == null || size <= start) {

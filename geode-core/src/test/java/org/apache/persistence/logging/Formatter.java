@@ -16,25 +16,19 @@
  */
 package org.apache.persistence.logging;
 
-/**
- * Abstract class that formats LogRecords
- */
+/** Abstract class that formats LogRecords */
 public abstract class Formatter {
 
   /** Should we print a stack trace along with logging messages */
-  protected static boolean STACK_TRACE = Boolean.getBoolean("org.apache.persistence.logging.StackTraces");
+  protected static boolean STACK_TRACE =
+      Boolean.getBoolean("org.apache.persistence.logging.StackTraces");
 
-  /**
-   * Formats the given log record as a String
-   */
+  /** Formats the given log record as a String */
   public abstract String format(LogRecord record);
 
-  /**
-   * Formats the message string from a log record
-   */
+  /** Formats the message string from a log record */
   public String formatMessage(LogRecord record) {
     // Simple
     return (record.getMessage());
   }
-
 }

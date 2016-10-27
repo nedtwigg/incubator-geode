@@ -56,12 +56,9 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
 /**
- * A test to ensure that we do not deserialize PDX objects
- * when we shouldn't
- * 
- * This test is trying to cover all of the possible access paths.
- * 
+ * A test to ensure that we do not deserialize PDX objects when we shouldn't
  *
+ * <p>This test is trying to cover all of the possible access paths.
  */
 @Category(DistributedTest.class)
 public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
@@ -70,10 +67,7 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     super();
   }
 
-  /**
-   * Test that we don't deserialize objects on a remote peer
-   * when performing operations. 
-   */
+  /** Test that we don't deserialize objects on a remote peer when performing operations. */
   @Test
   public void testP2P() {
     Host host = Host.getHost(0);
@@ -84,10 +78,7 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     doTest(vm0, vm1);
   }
 
-  /**
-   * Test to make sure we don't deserialize
-   * objects on a server that is a datastore 
-   */
+  /** Test to make sure we don't deserialize objects on a server that is a datastore */
   @Test
   public void testClientToDataStore() {
     Host host = Host.getHost(0);
@@ -97,10 +88,7 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     doTest(vm2, vm1);
   }
 
-  /**
-   * Test to make sure we don't deserialize
-   * objects on a server that is an accessor.
-   */
+  /** Test to make sure we don't deserialize objects on a server that is an accessor. */
   @Test
   public void testClientToAccessor() {
     Host host = Host.getHost(0);
@@ -110,10 +98,7 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     doTest(vm3, vm1);
   }
 
-  /**
-   * Test to make sure we don't deserialize
-   * objects on a client that has registered interest.
-   */
+  /** Test to make sure we don't deserialize objects on a client that has registered interest. */
   @Test
   public void testAccessorToClient() {
     Host host = Host.getHost(0);
@@ -125,19 +110,15 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * This test creates the following topology
-   * 
-   * vm0 a peer accessor for both a PR and a replicate region
-   * vm1 a peer data store for a replicate region and a PR
-   * vm2 a client of vm0
-   * vm3 a client vm1
-   * 
-   * The test then performs all region operations
-   * in operationVM, while deserialization is
+   *
+   * <p>vm0 a peer accessor for both a PR and a replicate region vm1 a peer data store for a
+   * replicate region and a PR vm2 a client of vm0 vm3 a client vm1
+   *
+   * <p>The test then performs all region operations in operationVM, while deserialization is
    * prevented in disallowDeserializationVM.
-   * 
-   * If an operation causes a deserialization in the
-   * disallow VM, this test will fail.
-   * 
+   *
+   * <p>If an operation causes a deserialization in the disallow VM, this test will fail.
+   *
    * @param operationVM
    * @param disallowDeserializationVM
    */
@@ -149,100 +130,138 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     VM vm3 = host.getVM(3);
 
     //Create an accessor
-    final int port0 = (Integer) vm0.invoke(new SerializableCallable() {
-      public Object call() {
-        Cache cache = getCache();
-        CacheServer server = createCacheServer(cache);
-        cache.createRegionFactory(RegionShortcut.REPLICATE_PROXY).create("replicate");
-        cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).create("pr");
-        cache.createRegionFactory(RegionShortcut.REPLICATE_PROXY).create("overflow_replicate");
-        cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).create("overflow_pr");
+    final int port0 =
+        (Integer)
+            vm0.invoke(
+                new SerializableCallable() {
+                  public Object call() {
+                    Cache cache = getCache();
+                    CacheServer server = createCacheServer(cache);
+                    cache.createRegionFactory(RegionShortcut.REPLICATE_PROXY).create("replicate");
+                    cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).create("pr");
+                    cache
+                        .createRegionFactory(RegionShortcut.REPLICATE_PROXY)
+                        .create("overflow_replicate");
+                    cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).create("overflow_pr");
 
-        return server.getPort();
-      }
-    });
+                    return server.getPort();
+                  }
+                });
 
     //Create a datastore
-    final int port1 = (Integer) vm1.invoke(new SerializableCallable() {
-      public Object call() {
-        Cache cache = getCache();
-        CacheServer server = createCacheServer(cache);
+    final int port1 =
+        (Integer)
+            vm1.invoke(
+                new SerializableCallable() {
+                  public Object call() {
+                    Cache cache = getCache();
+                    CacheServer server = createCacheServer(cache);
 
-        cache.createRegionFactory(RegionShortcut.REPLICATE).setCacheLoader(new TestCacheLoader()).create("replicate");
-        cache.createRegionFactory(RegionShortcut.PARTITION).setCacheLoader(new TestCacheLoader()).create("pr");
+                    cache
+                        .createRegionFactory(RegionShortcut.REPLICATE)
+                        .setCacheLoader(new TestCacheLoader())
+                        .create("replicate");
+                    cache
+                        .createRegionFactory(RegionShortcut.PARTITION)
+                        .setCacheLoader(new TestCacheLoader())
+                        .create("pr");
 
-        cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).setMaxOplogSize(1).create("store");
+                    cache
+                        .createDiskStoreFactory()
+                        .setDiskDirs(getDiskDirs())
+                        .setMaxOplogSize(1)
+                        .create("store");
 
-        //these regions will test that faulting in an object
-        //from disk doesn't cause an issue.
-        cache.createRegionFactory(RegionShortcut.REPLICATE_OVERFLOW).setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK)).setDiskStoreName("store").setCacheLoader(new TestCacheLoader()).create("overflow_replicate");
-        cache.createRegionFactory(RegionShortcut.PARTITION_OVERFLOW).setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK)).setDiskStoreName("store").setCacheLoader(new TestCacheLoader()).create("overflow_pr");
+                    //these regions will test that faulting in an object
+                    //from disk doesn't cause an issue.
+                    cache
+                        .createRegionFactory(RegionShortcut.REPLICATE_OVERFLOW)
+                        .setEvictionAttributes(
+                            EvictionAttributes.createLRUEntryAttributes(
+                                1, EvictionAction.OVERFLOW_TO_DISK))
+                        .setDiskStoreName("store")
+                        .setCacheLoader(new TestCacheLoader())
+                        .create("overflow_replicate");
+                    cache
+                        .createRegionFactory(RegionShortcut.PARTITION_OVERFLOW)
+                        .setEvictionAttributes(
+                            EvictionAttributes.createLRUEntryAttributes(
+                                1, EvictionAction.OVERFLOW_TO_DISK))
+                        .setDiskStoreName("store")
+                        .setCacheLoader(new TestCacheLoader())
+                        .create("overflow_pr");
 
-        return server.getPort();
-      }
-    });
+                    return server.getPort();
+                  }
+                });
 
     //create a client connected to the accessor
-    vm2.invoke(new SerializableCallable() {
+    vm2.invoke(
+        new SerializableCallable() {
 
-      public Object call() throws Exception {
-        createClient(port0);
-        return null;
-      }
-    });
+          public Object call() throws Exception {
+            createClient(port0);
+            return null;
+          }
+        });
 
     //create a client connected to the datastore
-    vm3.invoke(new SerializableCallable() {
+    vm3.invoke(
+        new SerializableCallable() {
 
-      public Object call() throws Exception {
-        createClient(port1);
-        return null;
-      }
-    });
+          public Object call() throws Exception {
+            createClient(port1);
+            return null;
+          }
+        });
 
     //Disallow deserialization
-    disallowDeserializationVM.invoke(new SerializableRunnable() {
+    disallowDeserializationVM.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        TestSerializable.throwExceptionOnDeserialization = true;
-      }
-    });
+          public void run() {
+            TestSerializable.throwExceptionOnDeserialization = true;
+          }
+        });
 
     //perform operations in the target VM
     try {
 
-      operationVM.invoke(new SerializableRunnable() {
+      operationVM.invoke(
+          new SerializableRunnable() {
 
-        public void run() {
-          Cache cache = getCache();
-          doOperations(cache.getRegion("replicate"));
-          doOperations(cache.getRegion("pr"));
-          doOperations(cache.getRegion("overflow_replicate"));
-          doOperations(cache.getRegion("overflow_pr"));
-        }
-      });
+            public void run() {
+              Cache cache = getCache();
+              doOperations(cache.getRegion("replicate"));
+              doOperations(cache.getRegion("pr"));
+              doOperations(cache.getRegion("overflow_replicate"));
+              doOperations(cache.getRegion("overflow_pr"));
+            }
+          });
 
     } finally {
       //Ok, now allow deserialization.
-      disallowDeserializationVM.invoke(new SerializableRunnable() {
+      disallowDeserializationVM.invoke(
+          new SerializableRunnable() {
 
-        public void run() {
-          TestSerializable.throwExceptionOnDeserialization = false;
-        }
-      });
+            public void run() {
+              TestSerializable.throwExceptionOnDeserialization = false;
+            }
+          });
     }
 
     //Sanity Check to make sure the values not in some weird form
     //on the actual datastore.
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
-        checkValues(cache.getRegion("replicate"));
-        checkValues(cache.getRegion("pr"));
-        checkValues(cache.getRegion("overflow_replicate"));
-        checkValues(cache.getRegion("overflow_pr"));
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
+            checkValues(cache.getRegion("replicate"));
+            checkValues(cache.getRegion("pr"));
+            checkValues(cache.getRegion("overflow_replicate"));
+            checkValues(cache.getRegion("overflow_pr"));
+          }
+        });
 
     //Make sure the clients receive keys they have registered interest in
     checkRegisterInterestValues(vm2);
@@ -250,29 +269,34 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void checkRegisterInterestValues(VM vm2) {
-    vm2.invoke(new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
-        checkClientValue(cache.getRegion("replicate"));
-        checkClientValue(cache.getRegion("pr"));
-        checkClientValue(cache.getRegion("overflow_replicate"));
-        checkClientValue(cache.getRegion("overflow_pr"));
-      }
-    });
+    vm2.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
+            checkClientValue(cache.getRegion("replicate"));
+            checkClientValue(cache.getRegion("pr"));
+            checkClientValue(cache.getRegion("overflow_replicate"));
+            checkClientValue(cache.getRegion("overflow_pr"));
+          }
+        });
   }
 
   protected void checkClientValue(final Region<Object, Object> region) {
     //Because register interest is asynchronous, we need to wait for the value to arrive.
-    Wait.waitForCriterion(new WaitCriterion() {
+    Wait.waitForCriterion(
+        new WaitCriterion() {
 
-      public boolean done() {
-        return region.get("A") != null;
-      }
+          public boolean done() {
+            return region.get("A") != null;
+          }
 
-      public String description() {
-        return "Client region never received value for key A";
-      }
-    }, 30000, 100, true);
+          public String description() {
+            return "Client region never received value for key A";
+          }
+        },
+        30000,
+        100,
+        true);
     assertEquals(TestSerializable.class, region.get("A").getClass());
 
     //do a register interest which will download the value
@@ -299,7 +323,12 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
 
     //Do a query
     try {
-      SelectResults queryResults = (SelectResults) getCache().getQueryService().newQuery("select * from " + region.getFullPath()).execute();
+      SelectResults queryResults =
+          (SelectResults)
+              getCache()
+                  .getQueryService()
+                  .newQuery("select * from " + region.getFullPath())
+                  .execute();
       for (Object result : queryResults.asList()) {
         assertEquals(TestSerializable.class, result.getClass());
       }
@@ -315,17 +344,17 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     //    region.put("C", new TestSerializable());
     //    assertIndexDetailsEquals(TestSerializable.class, region.get("C").getClass());
     //    txManager.commit();
-    //    
+    //
     //    txManager.begin();
     //    assertIndexDetailsEquals(TestSerializable.class, region.get("C").getClass());
     //    txManager.commit();
-    //    
-    //    
+    //
+    //
     //    //Test cache load in a transaction
     //    txManager.begin();
     //    assertIndexDetailsEquals(TestSerializable.class, region.get("D").getClass());
     //    txManager.commit();
-    //    
+    //
     //    txManager.begin();
     //    assertIndexDetailsEquals(TestSerializable.class, region.get("D").getClass());
     //    txManager.commit();
@@ -355,15 +384,17 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     cf.addPoolServer("localhost", port0);
     cf.setPoolSubscriptionEnabled(true);
     ClientCache cache = getClientCache(cf);
-    Region replicate = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create("replicate");
+    Region replicate =
+        cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create("replicate");
     Region pr = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create("pr");
-    cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create("overflow_replicate");
+    cache
+        .createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY)
+        .create("overflow_replicate");
     cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create("overflow_pr");
 
     //Register interest in a key
     replicate.registerInterest("A", InterestResultPolicy.KEYS_VALUES);
     pr.registerInterest("A", InterestResultPolicy.KEYS_VALUES);
-
   }
 
   public static class TestCacheLoader implements CacheLoader {
@@ -378,9 +409,7 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
     }
   }
 
-  /** Test PDX object. This object will fail to be
-   * deserialized in the target VM.
-   */
+  /** Test PDX object. This object will fail to be deserialized in the target VM. */
   public static class TestSerializable implements PdxSerializable {
     private static boolean throwExceptionOnDeserialization = false;
 
@@ -394,7 +423,5 @@ public class PdxDeserializationDUnitTest extends JUnit4CacheTestCase {
         throw new SerializationException("Deserialization should not be happening in this VM");
       }
     }
-
   }
-
 }

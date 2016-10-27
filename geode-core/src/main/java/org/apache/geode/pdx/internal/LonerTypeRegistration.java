@@ -23,11 +23,8 @@ import org.apache.geode.internal.cache.CacheConfig;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 /**
- * A type registration that is used for loners. In the 
- * loner case, we'll try to be helpful and not decide
- * what type registration to give the user until they actually 
- * use it.
- *
+ * A type registration that is used for loners. In the loner case, we'll try to be helpful and not
+ * decide what type registration to give the user until they actually use it.
  */
 public class LonerTypeRegistration implements TypeRegistration {
 
@@ -72,7 +69,6 @@ public class LonerTypeRegistration implements TypeRegistration {
     if (delegate != null) {
       delegate.creatingPersistentRegion();
     }
-
   }
 
   public void creatingPool() {
@@ -81,9 +77,8 @@ public class LonerTypeRegistration implements TypeRegistration {
   }
 
   /**
-   * Actually initialize the delegate. This is method
-   * is called when the type registry is used. At that time,
-   * it creates the registry.
+   * Actually initialize the delegate. This is method is called when the type registry is used. At
+   * that time, it creates the registry.
    */
   private synchronized void initializeRegistry() {
     initializeRegistry(cache.hasPool());
@@ -105,16 +100,16 @@ public class LonerTypeRegistration implements TypeRegistration {
   }
 
   /**
-   * Check to see if the current member is a loner and we can't tell
-   * if the user wants a peer or a client type registry.
+   * Check to see if the current member is a loner and we can't tell if the user wants a peer or a
+   * client type registry.
+   *
    * @param cache
-   * @return true if this member is a loner and we can't determine what
-   * type of registry they want.
+   * @return true if this member is a loner and we can't determine what type of registry they want.
    */
   public static boolean isIndeterminateLoner(GemFireCacheImpl cache) {
     boolean isLoner = cache.getDistributedSystem().isLoner();
     boolean pdxConfigured = cache.getPdxPersistent();
-    return isLoner && !pdxConfigured/* && !hasGateways*/;
+    return isLoner && !pdxConfigured /* && !hasGateways*/;
   }
 
   public int getEnumId(Enum<?> v) {
@@ -155,8 +150,7 @@ public class LonerTypeRegistration implements TypeRegistration {
   }
 
   @Override
-  public void testClearRegistry() {
-  }
+  public void testClearRegistry() {}
 
   @Override
   public boolean isClient() {

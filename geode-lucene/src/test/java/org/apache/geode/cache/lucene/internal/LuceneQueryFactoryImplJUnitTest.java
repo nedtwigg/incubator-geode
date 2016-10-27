@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -37,8 +37,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 public class LuceneQueryFactoryImplJUnitTest {
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @Rule public ExpectedException thrown = ExpectedException.none();
 
   @Test
   public void shouldCreateQueryWithCorrectAttributes() {
@@ -48,9 +47,10 @@ public class LuceneQueryFactoryImplJUnitTest {
     LuceneQueryFactoryImpl f = new LuceneQueryFactoryImpl(cache);
     f.setPageSize(5);
     f.setResultLimit(25);
-    String[] projection = new String[] { "a", "b" };
+    String[] projection = new String[] {"a", "b"};
     f.setProjectionFields(projection);
-    LuceneQuery<Object, Object> query = f.create("index", "region", new StringQueryProvider("test", DEFAULT_FIELD));
+    LuceneQuery<Object, Object> query =
+        f.create("index", "region", new StringQueryProvider("test", DEFAULT_FIELD));
     assertEquals(25, query.getLimit());
     assertEquals(5, query.getPageSize());
     assertArrayEquals(projection, query.getProjectedFieldNames());
@@ -63,7 +63,7 @@ public class LuceneQueryFactoryImplJUnitTest {
     Cache cache = mock(Cache.class);
     LuceneQueryFactoryImpl f = new LuceneQueryFactoryImpl(cache);
     thrown.expect(IllegalArgumentException.class);
-    LuceneQuery<Object, Object> query = f.create("index", "region", new StringQueryProvider("test", DEFAULT_FIELD));
+    LuceneQuery<Object, Object> query =
+        f.create("index", "region", new StringQueryProvider("test", DEFAULT_FIELD));
   }
-
 }

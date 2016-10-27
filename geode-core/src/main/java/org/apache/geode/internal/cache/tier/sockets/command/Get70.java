@@ -49,14 +49,15 @@ import org.apache.geode.security.NotAuthorizedException;
 
 public class Get70 extends BaseCommand {
 
-  private final static Get70 singleton = new Get70();
+  private static final Get70 singleton = new Get70();
 
   public static Command getCommand() {
     return singleton;
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long startparam) throws IOException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long startparam)
+      throws IOException {
     long start = startparam;
     Part regionNamePart = null, keyPart = null, valuePart = null;
     String regionName = null;
@@ -98,13 +99,21 @@ public class Get70 extends BaseCommand {
       return;
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received 7.0 get request ({} bytes) from {} for region {} key {} txId {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), regionName, key, msg.getTransactionId());
+      logger.debug(
+          "{}: Received 7.0 get request ({} bytes) from {} for region {} key {} txId {}",
+          servConn.getName(),
+          msg.getPayloadLength(),
+          servConn.getSocketString(),
+          regionName,
+          key,
+          msg.getTransactionId());
     }
 
     // Process the get request
     if (key == null || regionName == null) {
       if ((key == null) && (regionName == null)) {
-        errMessage = LocalizedStrings.Request_THE_INPUT_REGION_NAME_AND_KEY_FOR_THE_GET_REQUEST_ARE_NULL;
+        errMessage =
+            LocalizedStrings.Request_THE_INPUT_REGION_NAME_AND_KEY_FOR_THE_GET_REQUEST_ARE_NULL;
       } else if (key == null) {
         errMessage = LocalizedStrings.Request_THE_INPUT_KEY_FOR_THE_GET_REQUEST_IS_NULL;
       } else if (regionName == null) {
@@ -119,7 +128,9 @@ public class Get70 extends BaseCommand {
 
     Region region = servConn.getCache().getRegion(regionName);
     if (region == null) {
-      String reason = LocalizedStrings.Request__0_WAS_NOT_FOUND_DURING_GET_REQUEST.toLocalizedString(regionName);
+      String reason =
+          LocalizedStrings.Request__0_WAS_NOT_FOUND_DURING_GET_REQUEST.toLocalizedString(
+              regionName);
       writeRegionDestroyedEx(msg, regionName, reason, servConn);
       servConn.setAsTrue(RESPONDED);
       return;
@@ -152,8 +163,7 @@ public class Get70 extends BaseCommand {
       return;
     }
 
-    @Retained
-    final Object originalData = entry.value;
+    @Retained final Object originalData = entry.value;
     Object data = originalData;
     try {
       boolean isObject = entry.isObject;
@@ -194,7 +204,16 @@ public class Get70 extends BaseCommand {
       if (region instanceof PartitionedRegion) {
         PartitionedRegion pr = (PartitionedRegion) region;
         if (pr.getNetworkHopType() != PartitionedRegion.NETWORK_HOP_NONE) {
-          writeResponseWithRefreshMetadata(data, callbackArg, msg, isObject, servConn, pr, pr.getNetworkHopType(), versionTag, keyNotPresent);
+          writeResponseWithRefreshMetadata(
+              data,
+              callbackArg,
+              msg,
+              isObject,
+              servConn,
+              pr,
+              pr.getNetworkHopType(),
+              versionTag,
+              keyNotPresent);
           pr.clearNetworkHopData();
         } else {
           writeResponse(data, callbackArg, msg, isObject, versionTag, keyNotPresent, servConn);
@@ -208,21 +227,24 @@ public class Get70 extends BaseCommand {
 
     servConn.setAsTrue(RESPONDED);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Wrote get response back to {} for region {} {}", servConn.getName(), servConn.getSocketString(), regionName, entry);
+      logger.debug(
+          "{}: Wrote get response back to {} for region {} {}",
+          servConn.getName(),
+          servConn.getSocketString(),
+          regionName,
+          entry);
     }
     stats.incWriteGetResponseTime(DistributionStats.getStatTime() - start);
-
   }
 
   /**
-   * This method was added so that Get70 could, by default,
-   * call getEntryRetained, but the subclass GetEntry70
-   * could override it and call getValueAndIsObject.
-   * If we ever get to the point that no code needs to
-   * call getValueAndIsObject then this method can go away.
+   * This method was added so that Get70 could, by default, call getEntryRetained, but the subclass
+   * GetEntry70 could override it and call getValueAndIsObject. If we ever get to the point that no
+   * code needs to call getValueAndIsObject then this method can go away.
    */
   @Retained
-  protected Entry getEntry(Region region, Object key, Object callbackArg, ServerConnection servConn) {
+  protected Entry getEntry(
+      Region region, Object key, Object callbackArg, ServerConnection servConn) {
     return getEntryRetained(region, key, callbackArg, servConn);
   }
 
@@ -230,7 +252,8 @@ public class Get70 extends BaseCommand {
   // returning as the result to avoid creating the array repeatedly
   // for large number of entries like in getAll.  Third element added in
   // 7.0 for retrieving version information
-  public Entry getValueAndIsObject(Region region, Object key, Object callbackArg, ServerConnection servConn) {
+  public Entry getValueAndIsObject(
+      Region region, Object key, Object callbackArg, ServerConnection servConn) {
 
     //    Region.Entry entry;
     String regionName = region.getFullPath();
@@ -286,7 +309,9 @@ public class Get70 extends BaseCommand {
       } else {
         data = cd.getValue();
       }
-    } else if (data == Token.REMOVED_PHASE1 || data == Token.REMOVED_PHASE2 || data == Token.DESTROYED) {
+    } else if (data == Token.REMOVED_PHASE1
+        || data == Token.REMOVED_PHASE2
+        || data == Token.DESTROYED) {
       data = null;
     } else if (data == Token.INVALID || data == Token.LOCAL_INVALID) {
       data = null; // fix for bug 35884
@@ -302,11 +327,10 @@ public class Get70 extends BaseCommand {
     return result;
   }
 
-  /**
-   * Same as getValueAndIsObject but the returned value can be a retained off-heap reference.
-   */
+  /** Same as getValueAndIsObject but the returned value can be a retained off-heap reference. */
   @Retained
-  public Entry getEntryRetained(Region region, Object key, Object callbackArg, ServerConnection servConn) {
+  public Entry getEntryRetained(
+      Region region, Object key, Object callbackArg, ServerConnection servConn) {
 
     //    Region.Entry entry;
     String regionName = region.getFullPath();
@@ -319,12 +343,12 @@ public class Get70 extends BaseCommand {
     //    entry = lregion.getEntry(key, true);
 
     boolean isObject = true;
-    @Retained
-    Object data = null;
+    @Retained Object data = null;
 
     ClientProxyMembershipID id = servConn == null ? null : servConn.getProxyID();
     VersionTagHolder versionHolder = new VersionTagHolder();
-    data = ((LocalRegion) region).getRetained(key, callbackArg, true, true, id, versionHolder, true);
+    data =
+        ((LocalRegion) region).getRetained(key, callbackArg, true, true, id, versionHolder, true);
     versionTag = versionHolder.getVersionTag();
 
     // If it is Token.REMOVED, Token.DESTROYED,
@@ -363,7 +387,14 @@ public class Get70 extends BaseCommand {
 
     @Override
     public String toString() {
-      return "value=" + value + " isObject=" + isObject + " notPresent=" + keyNotPresent + " version=" + versionTag;
+      return "value="
+          + value
+          + " isObject="
+          + isObject
+          + " notPresent="
+          + keyNotPresent
+          + " version="
+          + versionTag;
     }
   }
 
@@ -373,11 +404,21 @@ public class Get70 extends BaseCommand {
   }
 
   @Override
-  protected void writeReplyWithRefreshMetadata(Message origMsg, ServerConnection servConn, PartitionedRegion pr, byte nwHop) throws IOException {
+  protected void writeReplyWithRefreshMetadata(
+      Message origMsg, ServerConnection servConn, PartitionedRegion pr, byte nwHop)
+      throws IOException {
     throw new UnsupportedOperationException();
   }
 
-  private void writeResponse(@Unretained Object data, Object callbackArg, Message origMsg, boolean isObject, VersionTag versionTag, boolean keyNotPresent, ServerConnection servConn) throws IOException {
+  private void writeResponse(
+      @Unretained Object data,
+      Object callbackArg,
+      Message origMsg,
+      boolean isObject,
+      VersionTag versionTag,
+      boolean keyNotPresent,
+      ServerConnection servConn)
+      throws IOException {
     Message responseMsg = servConn.getResponseMessage();
     responseMsg.setMessageType(MessageType.RESPONSE);
     responseMsg.setTransactionId(origMsg.getTransactionId());
@@ -417,11 +458,23 @@ public class Get70 extends BaseCommand {
     origMsg.clearParts();
   }
 
-  protected static void writeResponse(Object data, Object callbackArg, Message origMsg, boolean isObject, ServerConnection servConn) throws IOException {
+  protected static void writeResponse(
+      Object data, Object callbackArg, Message origMsg, boolean isObject, ServerConnection servConn)
+      throws IOException {
     throw new UnsupportedOperationException();
   }
 
-  private void writeResponseWithRefreshMetadata(@Unretained Object data, Object callbackArg, Message origMsg, boolean isObject, ServerConnection servConn, PartitionedRegion pr, byte nwHop, VersionTag versionTag, boolean keyNotPresent) throws IOException {
+  private void writeResponseWithRefreshMetadata(
+      @Unretained Object data,
+      Object callbackArg,
+      Message origMsg,
+      boolean isObject,
+      ServerConnection servConn,
+      PartitionedRegion pr,
+      byte nwHop,
+      VersionTag versionTag,
+      boolean keyNotPresent)
+      throws IOException {
     Message responseMsg = servConn.getResponseMessage();
     responseMsg.setMessageType(MessageType.RESPONSE);
     responseMsg.setTransactionId(origMsg.getTransactionId());
@@ -458,10 +511,9 @@ public class Get70 extends BaseCommand {
       responseMsg.addObjPart(versionTag);
     }
 
-    responseMsg.addBytesPart(new byte[] { pr.getMetadataVersion(), nwHop });
+    responseMsg.addBytesPart(new byte[] {pr.getMetadataVersion(), nwHop});
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     responseMsg.send(servConn);
     origMsg.clearParts();
   }
-
 }

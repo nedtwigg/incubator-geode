@@ -27,10 +27,9 @@ import org.apache.geode.internal.Version;
 
 /**
  * This represents the CQ key value pair for the CQ query results.
- *  
+ *
  * @since GemFire 6.5
  */
-
 public class CqEntry implements DataSerializableFixedID {
 
   private Object key;
@@ -42,15 +41,13 @@ public class CqEntry implements DataSerializableFixedID {
     this.value = value;
   }
 
-  /**
-   * Constructor to read serialized data.
-   */
-  public CqEntry() {
-  }
+  /** Constructor to read serialized data. */
+  public CqEntry() {}
 
   /**
    * return key
-   * @return  Object key
+   *
+   * @return Object key
    */
   public Object getKey() {
     return this.key;
@@ -58,6 +55,7 @@ public class CqEntry implements DataSerializableFixedID {
 
   /**
    * return value
+   *
    * @return Object value
    */
   public Object getValue() {
@@ -65,12 +63,13 @@ public class CqEntry implements DataSerializableFixedID {
   }
 
   /**
-   * Returns key values as Object[] with key as the
-   * first and value as the last element of the array.
+   * Returns key values as Object[] with key as the first and value as the last element of the
+   * array.
+   *
    * @return Object[] key, value pair
    */
   public Object[] getKeyValuePair() {
-    return new Object[] { key, value };
+    return new Object[] {key, value};
   }
 
   @Override
@@ -106,5 +105,4 @@ public class CqEntry implements DataSerializableFixedID {
   public Version[] getSerializationVersions() {
     return null;
   }
-
 }

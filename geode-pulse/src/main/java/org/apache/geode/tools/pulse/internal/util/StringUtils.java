@@ -21,30 +21,27 @@ package org.apache.geode.tools.pulse.internal.util;
 
 /**
  * Class StringUtils This is utility class for string.
- * 
- * 
+ *
  * @since GemFire version 7.0.1
  */
 public class StringUtils {
   /**
-   * Checks the string if it is not null, not empty, and not white space only
-   * using standard Java classes.
-   * 
-   * @param string
-   *          String to be checked.
-   * @return {@code true} if provided String is not null, is not empty, and has
-   *         at least one character that is not considered white space.
+   * Checks the string if it is not null, not empty, and not white space only using standard Java
+   * classes.
+   *
+   * @param string String to be checked.
+   * @return {@code true} if provided String is not null, is not empty, and has at least one
+   *     character that is not considered white space.
    */
   public static boolean isNotNullNotEmptyNotWhiteSpace(final String string) {
     return string != null && !string.isEmpty() && !string.trim().isEmpty();
   }
 
   /**
-   * Checking for String that is not null, not empty, and not white space only
-   * using standard Java classes.
-   * 
-   * @param value
-   *          String to be made compliant.
+   * Checking for String that is not null, not empty, and not white space only using standard Java
+   * classes.
+   *
+   * @param value String to be made compliant.
    * @return string compliant string.
    */
   public static String makeCompliantName(String value) {
@@ -61,9 +58,8 @@ public class StringUtils {
 
   /**
    * Function to get table name derived from region name/full path
-   * 
-   * @param regionName
-   *          String to be made compliant.
+   *
+   * @param regionName String to be made compliant.
    * @return string compliant string.
    */
   public static String getTableNameFromRegionName(String regionName) {
@@ -73,9 +69,8 @@ public class StringUtils {
 
   /**
    * Function to get region name/full path derived from table name
-   * 
-   * @param tableName
-   *          String to be made compliant.
+   *
+   * @param tableName String to be made compliant.
    * @return string compliant string.
    */
   public static String getRegionNameFromTableName(String tableName) {

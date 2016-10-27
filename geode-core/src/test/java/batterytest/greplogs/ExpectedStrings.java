@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package batterytest.greplogs;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-/**
- *
- */
+/** */
 public class ExpectedStrings {
 
-  private ExpectedStrings() {
-  }
+  private ExpectedStrings() {}
 
   public static boolean skipLogMsgs(String type) {
-    if (type.equals("junit") || type.equals("java") || type.equals("query") || type.equals("dunit")) {
+    if (type.equals("junit")
+        || type.equals("java")
+        || type.equals("query")
+        || type.equals("dunit")) {
       return true;
     } else {
       return false;
@@ -73,7 +71,7 @@ public class ExpectedStrings {
     expected.add(Pattern.compile("Invoked MembershipNotifierHook"));
     expected.add(Pattern.compile("java.io.IOException: Connection reset by peer"));
     expected.add(Pattern.compile("client connections exceeds the licensed limit"));
-    //Exclude this since the only tests with securty enabled, expect to see 
+    //Exclude this since the only tests with securty enabled, expect to see
     //these and if they don't then the test fails
     expected.add(Pattern.compile("NotAuthorizedException"));
     expected.add(Pattern.compile("above critical heap threshold"));
@@ -138,11 +136,20 @@ public class ExpectedStrings {
       expected.add(Pattern.compile("SQLException: Failed to start database 'newDB'"));
       expected.add(Pattern.compile("SQLException: Database 'newDB1' not found"));
       expected.add(Pattern.compile("INCORRECT_localhost"));
-      expected.add(Pattern.compile("WARNING: Failed to check connection: java.net.ConnectException: Connection refused"));
-      expected.add(Pattern.compile("WARNING: Failed to call the method close..:java.rmi.ConnectException:"));
-      expected.add(Pattern.compile("WARNING: Failed to restart: java.rmi.NoSuchObjectException: no such object in table"));
-      expected.add(Pattern.compile("WARNING: Failed to restart: java.rmi.ConnectException: Connection refused to host: .* nested exception is:"));
-      expected.add(Pattern.compile("UnitTests terminating abnormally after a client had a fatal task error"));
+      expected.add(
+          Pattern.compile(
+              "WARNING: Failed to check connection: java.net.ConnectException: Connection refused"));
+      expected.add(
+          Pattern.compile("WARNING: Failed to call the method close..:java.rmi.ConnectException:"));
+      expected.add(
+          Pattern.compile(
+              "WARNING: Failed to restart: java.rmi.NoSuchObjectException: no such object in table"));
+      expected.add(
+          Pattern.compile(
+              "WARNING: Failed to restart: java.rmi.ConnectException: Connection refused to host: .* nested exception is:"));
+      expected.add(
+          Pattern.compile(
+              "UnitTests terminating abnormally after a client had a fatal task error"));
       expected.add(Pattern.compile("Doing stack dump on all"));
       expected.add(Pattern.compile("Unit test result: FAILED ==> Unsuccessfully ran JUnit tests"));
       expected.add(Pattern.compile("IGNORE_EXCEPTION_test"));
@@ -154,7 +161,9 @@ public class ExpectedStrings {
       expected.add(Pattern.compile("Pool unexpected closed socket on server"));
       expected.add(Pattern.compile("SocketTimeoutException"));
       expected.add(Pattern.compile("Could not initialize a primary queue on startup"));
-      expected.add(Pattern.compile("java.lang.IllegalArgumentException: Sample timestamp must be greater than previous timestamp"));
+      expected.add(
+          Pattern.compile(
+              "java.lang.IllegalArgumentException: Sample timestamp must be greater than previous timestamp"));
       //The following 2 strings are ignored due to bug 52042
       expected.add(Pattern.compile("failed accepting client connection"));
       expected.add(Pattern.compile("Acceptor received unknown communication"));

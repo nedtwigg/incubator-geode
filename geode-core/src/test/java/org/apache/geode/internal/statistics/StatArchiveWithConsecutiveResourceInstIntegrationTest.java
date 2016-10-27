@@ -43,7 +43,8 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 /**
  * Confirms existence of GEODE-1782 and its fix.
  *
- * <p>GEODE-1782: StatArchiveReader ignores later stats resource with same name as closed stats resource
+ * <p>GEODE-1782: StatArchiveReader ignores later stats resource with same name as closed stats
+ * resource
  *
  * @since Geode 1.0
  */
@@ -55,11 +56,9 @@ public class StatArchiveWithConsecutiveResourceInstIntegrationTest {
   private File archiveFile;
   private StatSpec statSpec;
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
@@ -75,7 +74,8 @@ public class StatArchiveWithConsecutiveResourceInstIntegrationTest {
 
   @Test
   public void readingFourActiveCacheClientUpdaterStatsWithReaderMatchSpec() throws Exception {
-    StatArchiveReader reader = new StatArchiveReader(new File[] { this.archiveFile }, new StatSpec[] { this.statSpec }, true);
+    StatArchiveReader reader =
+        new StatArchiveReader(new File[] {this.archiveFile}, new StatSpec[] {this.statSpec}, true);
 
     Set<ResourceInst> resourceInstList = new HashSet<>();
     for (StatValue statValue : reader.matchSpec(this.statSpec)) {
@@ -89,10 +89,11 @@ public class StatArchiveWithConsecutiveResourceInstIntegrationTest {
 
   @Test
   public void readingFourActiveCacheClientUpdaterStatsWithReader() throws Exception {
-    StatArchiveReader reader = new StatArchiveReader(new File[] { this.archiveFile }, new StatSpec[] { this.statSpec }, true);
+    StatArchiveReader reader =
+        new StatArchiveReader(new File[] {this.archiveFile}, new StatSpec[] {this.statSpec}, true);
 
     Set<ResourceInst> resourceInstList = new HashSet<>();
-    for (Iterator<ResourceInst> it = reader.getResourceInstList().iterator(); it.hasNext();) {
+    for (Iterator<ResourceInst> it = reader.getResourceInstList().iterator(); it.hasNext(); ) {
       resourceInstList.add(it.next());
     }
 
@@ -104,5 +105,4 @@ public class StatArchiveWithConsecutiveResourceInstIntegrationTest {
       logger.info(this.testName.getMethodName() + ":ResourceInst: {}", resourceInst);
     }
   }
-
 }

@@ -39,11 +39,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
 /**
- * This is headless shell which can be used to submit random commands and get command-result It is used for commands
- * testing but can be used as for anything like programmatically sending commands to operate on GemFire Distributed
- * systems. TODO : Merge HeadlessGfsh and HeadlessGfshShell TODO : Provide constructor for optionally specifying
- * GfshConfig to provide logDirectory and logLevel
- *
+ * This is headless shell which can be used to submit random commands and get command-result It is
+ * used for commands testing but can be used as for anything like programmatically sending commands
+ * to operate on GemFire Distributed systems. TODO : Merge HeadlessGfsh and HeadlessGfshShell TODO :
+ * Provide constructor for optionally specifying GfshConfig to provide logDirectory and logLevel
  */
 @SuppressWarnings("rawtypes")
 public class HeadlessGfsh implements ResultHandler {
@@ -55,11 +54,13 @@ public class HeadlessGfsh implements ResultHandler {
   private long timeout = 20;
   public String outputString = null;
 
-  public HeadlessGfsh(String name, int timeout, String parentDir) throws ClassNotFoundException, IOException {
+  public HeadlessGfsh(String name, int timeout, String parentDir)
+      throws ClassNotFoundException, IOException {
     this(name, timeout, null, parentDir);
   }
 
-  public HeadlessGfsh(String name, int timeout, Properties envProps, String parentDir) throws ClassNotFoundException, IOException {
+  public HeadlessGfsh(String name, int timeout, Properties envProps, String parentDir)
+      throws ClassNotFoundException, IOException {
     this.timeout = timeout;
     System.setProperty("jline.terminal", GfshUnsupportedTerminal.class.getName());
     this.shell = new HeadlessGfshShell(name, this, parentDir);
@@ -74,11 +75,12 @@ public class HeadlessGfsh implements ResultHandler {
     // This allows us to avoid race conditions during startup - in particular a NPE on the ConsoleReader which is
     // created in a separate thread during start()
     CountDownLatch shellStarted = new CountDownLatch(1);
-    this.shell.addShellStatusListener((oldStatus, newStatus) -> {
-      if (newStatus.getStatus() == Status.STARTED) {
-        shellStarted.countDown();
-      }
-    });
+    this.shell.addShellStatusListener(
+        (oldStatus, newStatus) -> {
+          if (newStatus.getStatus() == Status.STARTED) {
+            shellStarted.countDown();
+          }
+        });
 
     this.shell.start();
     this.setThreadLocalInstance();
@@ -119,8 +121,7 @@ public class HeadlessGfsh implements ResultHandler {
 
   public Object getResult() throws InterruptedException {
     //Dont wait for when some command calls gfsh.stop();
-    if (shell.stopCalledThroughAPI)
-      return null;
+    if (shell.stopCalledThroughAPI) return null;
     try {
       Object result = queue.poll(timeout, TimeUnit.SECONDS);
       queue.clear();
@@ -171,7 +172,8 @@ public class HeadlessGfsh implements ResultHandler {
     private boolean hasError = false;
     boolean stopCalledThroughAPI = false;
 
-    protected HeadlessGfshShell(String testName, ResultHandler handler, String parentDir) throws ClassNotFoundException, IOException {
+    protected HeadlessGfshShell(String testName, ResultHandler handler, String parentDir)
+        throws ClassNotFoundException, IOException {
       super(false, new String[] {}, new HeadlessGfshConfig(testName, parentDir));
       this.handler = handler;
     }
@@ -224,8 +226,9 @@ public class HeadlessGfsh implements ResultHandler {
     }
 
     /**
-     * We override this method just to fool runner thread in reading from nothing. It waits for Condition endOfShell
-     * which is signalled when terminate is called. This achieves clean shutdown of runner thread.
+     * We override this method just to fool runner thread in reading from nothing. It waits for
+     * Condition endOfShell which is signalled when terminate is called. This achieves clean
+     * shutdown of runner thread.
      */
     @Override
     public void promptLoop() {
@@ -252,8 +255,8 @@ public class HeadlessGfsh implements ResultHandler {
     }
 
     /**
-     * This prints out error messages when Exceptions occur in shell. Capture it and set error flag=true and send
-     * ERROR_RESULT on the queue to signal thread waiting for CommandResult
+     * This prints out error messages when Exceptions occur in shell. Capture it and set error
+     * flag=true and send ERROR_RESULT on the queue to signal thread waiting for CommandResult
      */
     @Override
     public void logWarning(String message, Throwable t) {
@@ -265,8 +268,8 @@ public class HeadlessGfsh implements ResultHandler {
     }
 
     /**
-     * This prints out error messages when Exceptions occur in shell. Capture it and set error flag=true and send
-     * ERROR_RESULT on the queue to signal thread waiting for CommandResult
+     * This prints out error messages when Exceptions occur in shell. Capture it and set error
+     * flag=true and send ERROR_RESULT on the queue to signal thread waiting for CommandResult
      */
     @Override
     public void logSevere(String message, Throwable t) {
@@ -277,9 +280,7 @@ public class HeadlessGfsh implements ResultHandler {
       handleExecutionResult(ERROR_RESULT);
     }
 
-    /**
-     * Setup console-reader to capture Shell output
-     */
+    /** Setup console-reader to capture Shell output */
     @Override
     protected ConsoleReader createConsoleReader() {
       try {
@@ -293,9 +294,7 @@ public class HeadlessGfsh implements ResultHandler {
     }
   }
 
-  /**
-   * HeadlessGfshConfig for tests. Taken from TestableGfsh
-   */
+  /** HeadlessGfshConfig for tests. Taken from TestableGfsh */
   static class HeadlessGfshConfig extends GfshConfig {
     {
       // set vm as a gfsh vm
@@ -345,7 +344,8 @@ public class HeadlessGfsh implements ResultHandler {
     @Override
     public String getHistoryFileName() {
       if (generatedHistoryFileName == null) {
-        String fileName = new File(parentDir, (getFileNamePrefix() + "-gfsh.history")).getAbsolutePath();
+        String fileName =
+            new File(parentDir, (getFileNamePrefix() + "-gfsh.history")).getAbsolutePath();
         generatedHistoryFileName = fileName;
         return fileName;
       } else {
@@ -364,5 +364,4 @@ public class HeadlessGfsh implements ResultHandler {
       return Level.FINE;
     }
   }
-
 }

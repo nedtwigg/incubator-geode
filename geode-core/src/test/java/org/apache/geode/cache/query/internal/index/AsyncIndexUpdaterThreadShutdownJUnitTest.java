@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal.index;
 
 import org.apache.geode.cache.*;
@@ -32,13 +30,10 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
 /**
- * Test create a region (Replicated OR Partitioned) and sets index maintenance
- * Asynchronous so that {@link IndexManager} starts a new thread for index
- * maintenance when region is populated. This test verifies that after cache
- * close {@link IndexUpdaterThread} is shutdown for each region
+ * Test create a region (Replicated OR Partitioned) and sets index maintenance Asynchronous so that
+ * {@link IndexManager} starts a new thread for index maintenance when region is populated. This
+ * test verifies that after cache close {@link IndexUpdaterThread} is shutdown for each region
  * (Replicated/Bucket).
- * 
- * 
  */
 @Category(IntegrationTest.class)
 public class AsyncIndexUpdaterThreadShutdownJUnitTest {
@@ -72,12 +67,12 @@ public class AsyncIndexUpdaterThreadShutdownJUnitTest {
     internalCache.close("Normal disconnect", null, false, false);
 
     // Get Asynchronous index updater thread group from Distributed System.
-    ThreadGroup indexUpdaterThreadGroup = LoggingThreadGroup.getThreadGroup("QueryMonitor Thread Group");
+    ThreadGroup indexUpdaterThreadGroup =
+        LoggingThreadGroup.getThreadGroup("QueryMonitor Thread Group");
 
     assertEquals(0, indexUpdaterThreadGroup.activeCount());
 
     internalCache.getSystem().disconnect();
-
   }
 
   @Test
@@ -107,7 +102,8 @@ public class AsyncIndexUpdaterThreadShutdownJUnitTest {
     internalCache.close("Normal disconnect", null, false, false);
 
     // Get Asynchronous index updater thread group from Distributed System.
-    ThreadGroup indexUpdaterThreadGroup = LoggingThreadGroup.getThreadGroup("QueryMonitor Thread Group");
+    ThreadGroup indexUpdaterThreadGroup =
+        LoggingThreadGroup.getThreadGroup("QueryMonitor Thread Group");
 
     assertEquals(0, indexUpdaterThreadGroup.activeCount());
 

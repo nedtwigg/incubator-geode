@@ -70,16 +70,16 @@ public class XmlUtils {
 
   /**
    * Create an XML {@link Document} from the given {@link Reader}.
-   * 
-   * @param reader
-   *          to create document from.
+   *
+   * @param reader to create document from.
    * @return {@link Document} if successful, otherwise false.
-   * @throws ParserConfigurationException 
-   * @throws SAXException 
-   * @throws IOException 
+   * @throws ParserConfigurationException
+   * @throws SAXException
+   * @throws IOException
    * @since GemFire 8.1
    */
-  public static Document createDocumentFromReader(final Reader reader) throws SAXException, ParserConfigurationException, IOException {
+  public static Document createDocumentFromReader(final Reader reader)
+      throws SAXException, ParserConfigurationException, IOException {
     Document doc = null;
     InputSource inputSource = new InputSource(reader);
 
@@ -93,13 +93,16 @@ public class XmlUtils {
     return (NodeList) xpath.evaluate(searchString, node, XPathConstants.NODESET);
   }
 
-  public static NodeList query(Node node, String searchString, XPathContext xpathcontext) throws XPathExpressionException {
+  public static NodeList query(Node node, String searchString, XPathContext xpathcontext)
+      throws XPathExpressionException {
     XPath xpath = XPathFactory.newInstance().newXPath();
     xpath.setNamespaceContext(xpathcontext);
     return (NodeList) xpath.evaluate(searchString, node, XPathConstants.NODESET);
   }
 
-  public static Element querySingleElement(Node node, String searchString, final XPathContext xPathContext) throws XPathExpressionException {
+  public static Element querySingleElement(
+      Node node, String searchString, final XPathContext xPathContext)
+      throws XPathExpressionException {
     XPath xpath = XPathFactory.newInstance().newXPath();
     xpath.setNamespaceContext(xPathContext);
     Object result = xpath.evaluate(searchString, node, XPathConstants.NODE);
@@ -119,22 +122,25 @@ public class XmlUtils {
     return builder;
   }
 
-  /*****
-   * Adds a new node or replaces an existing node in the Document
+  /**
+   * *** Adds a new node or replaces an existing node in the Document
+   *
    * @param doc Target document where the node will added
    * @param xmlEntity contains definition of the xml entity
    * @throws IOException
-   * @throws ParserConfigurationException 
-   * @throws SAXException 
-   * @throws XPathExpressionException 
+   * @throws ParserConfigurationException
+   * @throws SAXException
+   * @throws XPathExpressionException
    */
-  public static void addNewNode(final Document doc, final XmlEntity xmlEntity) throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
+  public static void addNewNode(final Document doc, final XmlEntity xmlEntity)
+      throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
     // Build up map per call to avoid issues with caching wrong version of the map.
     final LinkedHashMap<String, CacheElement> elementOrderMap = CacheElement.buildElementMap(doc);
 
     final Node newNode = createNode(doc, xmlEntity.getXmlDefinition());
     final Node root = doc.getDocumentElement();
-    final int incomingElementOrder = getElementOrder(elementOrderMap, xmlEntity.getNamespace(), xmlEntity.getType());
+    final int incomingElementOrder =
+        getElementOrder(elementOrderMap, xmlEntity.getNamespace(), xmlEntity.getType());
 
     boolean nodeAdded = false;
     NodeList nodes = root.getChildNodes();
@@ -190,11 +196,13 @@ public class XmlUtils {
    * @param elementOrderMap
    * @param namespace
    * @param type
-   * @return <code>true</code> if element allows multiple, otherwise
-   *         <code>false</code>.
+   * @return <code>true</code> if element allows multiple, otherwise <code>false</code>.
    * @since GemFire 8.1
    */
-  private static boolean isMultiple(final LinkedHashMap<String, CacheElement> elementOrderMap, final String namespace, final String type) {
+  private static boolean isMultiple(
+      final LinkedHashMap<String, CacheElement> elementOrderMap,
+      final String namespace,
+      final String type) {
     if (CacheXml.GEODE_NAMESPACE.equals(namespace)) {
       // We only keep the cache elements in elementOrderMap
       final CacheElement cacheElement = elementOrderMap.get(type);
@@ -212,11 +220,13 @@ public class XmlUtils {
    * @param elementOrderMap
    * @param namespace
    * @param type
-   * @return position of the element if in map, otherwise
-   *         {@link Integer#MAX_VALUE}.
+   * @return position of the element if in map, otherwise {@link Integer#MAX_VALUE}.
    * @since GemFire 8.1
    */
-  private static int getElementOrder(final LinkedHashMap<String, CacheElement> elementOrderMap, final String namespace, final String type) {
+  private static int getElementOrder(
+      final LinkedHashMap<String, CacheElement> elementOrderMap,
+      final String namespace,
+      final String type) {
     if (CacheXml.GEODE_NAMESPACE.equals(namespace)) {
       // We only keep the cache elements in elementOrderMap
       final CacheElement cacheElement = elementOrderMap.get(type);
@@ -229,16 +239,18 @@ public class XmlUtils {
     return Integer.MAX_VALUE;
   }
 
-  /****
-   * Creates a node from the String xml definition
-   * @param owner 
+  /**
+   * ** Creates a node from the String xml definition
+   *
+   * @param owner
    * @param xmlDefintion
-   * @return Node representing the xml definition 
-   * @throws ParserConfigurationException 
-   * @throws IOException 
-   * @throws SAXException 
+   * @return Node representing the xml definition
+   * @throws ParserConfigurationException
+   * @throws IOException
+   * @throws SAXException
    */
-  private static Node createNode(Document owner, String xmlDefintion) throws SAXException, IOException, ParserConfigurationException {
+  private static Node createNode(Document owner, String xmlDefintion)
+      throws SAXException, IOException, ParserConfigurationException {
     InputSource inputSource = new InputSource(new StringReader(xmlDefintion));
     Document document = getDocumentBuilder().parse(inputSource);
     Node newNode = document.getDocumentElement();
@@ -267,37 +279,32 @@ public class XmlUtils {
   }
 
   /**
-   * Build schema location map of schemas used in given
-   * <code>schemaLocationAttribute</code>.
-   * 
-   * @see <a href="http://www.w3.org/TR/xmlschema-0/#schemaLocation">XML Schema
-   *      Part 0: Primer Second Edition | 5.6 schemaLocation</a>
-   * 
-   * @param schemaLocation
-   *          attribute value to build schema location map from.
+   * Build schema location map of schemas used in given <code>schemaLocationAttribute</code>.
+   *
+   * @see <a href="http://www.w3.org/TR/xmlschema-0/#schemaLocation">XML Schema Part 0: Primer
+   *     Second Edition | 5.6 schemaLocation</a>
+   * @param schemaLocation attribute value to build schema location map from.
    * @return {@link Map} of schema namespace URIs to location URLs.
    * @since GemFire 8.1
    */
-  public static final Map<String, List<String>> buildSchemaLocationMap(final String schemaLocation) {
+  public static final Map<String, List<String>> buildSchemaLocationMap(
+      final String schemaLocation) {
     return buildSchemaLocationMap(new HashMap<String, List<String>>(), schemaLocation);
   }
 
   /**
-  * Build schema location map of schemas used in given
-  * <code>schemaLocationAttribute</code> and adds them to the given
-  * <code>schemaLocationMap</code>.
-  * 
-  * @see <a href="http://www.w3.org/TR/xmlschema-0/#schemaLocation">XML Schema
-  *      Part 0: Primer Second Edition | 5.6 schemaLocation</a>
-  * 
-  * @param schemaLocationMap
-  *          {@link Map} to add schema locations to.
-  * @param schemaLocation
-  *          attribute value to build schema location map from.
-  * @return {@link Map} of schema namespace URIs to location URLs.
-  * @since GemFire 8.1
-  */
-  static final Map<String, List<String>> buildSchemaLocationMap(Map<String, List<String>> schemaLocationMap, final String schemaLocation) {
+   * Build schema location map of schemas used in given <code>schemaLocationAttribute</code> and
+   * adds them to the given <code>schemaLocationMap</code>.
+   *
+   * @see <a href="http://www.w3.org/TR/xmlschema-0/#schemaLocation">XML Schema Part 0: Primer
+   *     Second Edition | 5.6 schemaLocation</a>
+   * @param schemaLocationMap {@link Map} to add schema locations to.
+   * @param schemaLocation attribute value to build schema location map from.
+   * @return {@link Map} of schema namespace URIs to location URLs.
+   * @since GemFire 8.1
+   */
+  static final Map<String, List<String>> buildSchemaLocationMap(
+      Map<String, List<String>> schemaLocationMap, final String schemaLocation) {
     if (null == schemaLocation) {
       return schemaLocationMap;
     }
@@ -324,12 +331,13 @@ public class XmlUtils {
     return schemaLocationMap;
   }
 
-  /*****
-  * Deletes all the node from the document which match the definition provided by xmlentity
-  * @param doc 
-  * @param xmlEntity
-  * @throws Exception
-  */
+  /**
+   * *** Deletes all the node from the document which match the definition provided by xmlentity
+   *
+   * @param doc
+   * @param xmlEntity
+   * @throws Exception
+   */
   public static void deleteNode(Document doc, XmlEntity xmlEntity) throws Exception {
     NodeList nodes = getNodes(doc, xmlEntity);
     if (nodes != null) {
@@ -342,29 +350,32 @@ public class XmlUtils {
     }
   }
 
-  /****
-  * Gets all the nodes matching the definition given by the xml entity
-  * @param doc
-  * @param xmlEntity
-  * @return Nodes 
-  * @throws XPathExpressionException 
-  */
-  public static NodeList getNodes(Document doc, XmlEntity xmlEntity) throws XPathExpressionException {
-    return query(doc, xmlEntity.getSearchString(), new XPathContext(xmlEntity.getPrefix(), xmlEntity.getNamespace()));
+  /**
+   * ** Gets all the nodes matching the definition given by the xml entity
+   *
+   * @param doc
+   * @param xmlEntity
+   * @return Nodes
+   * @throws XPathExpressionException
+   */
+  public static NodeList getNodes(Document doc, XmlEntity xmlEntity)
+      throws XPathExpressionException {
+    return query(
+        doc,
+        xmlEntity.getSearchString(),
+        new XPathContext(xmlEntity.getPrefix(), xmlEntity.getNamespace()));
   }
 
   /**
    * An object used by an XPath query that maps namespaces to uris.
-   * 
-   * @see NamespaceContext
    *
+   * @see NamespaceContext
    */
   public static class XPathContext implements NamespaceContext {
     private HashMap<String, String> prefixToUri = new HashMap<String, String>();
     private HashMap<String, String> uriToPrefix = new HashMap<String, String>();
 
-    public XPathContext() {
-    }
+    public XPathContext() {}
 
     public XPathContext(String prefix, String uri) {
       addNamespace(prefix, uri);
@@ -389,31 +400,34 @@ public class XmlUtils {
     public Iterator<String> getPrefixes(String namespaceURI) {
       return Collections.singleton(getPrefix(namespaceURI)).iterator();
     }
-
   }
 
-  /****
-   * Converts the document to a well formatted Xml string
+  /**
+   * ** Converts the document to a well formatted Xml string
+   *
    * @param doc
    * @return pretty xml string
    * @throws IOException
-   * @throws TransformerException 
-   * @throws TransformerFactoryConfigurationError 
+   * @throws TransformerException
+   * @throws TransformerFactoryConfigurationError
    */
-  public static String prettyXml(Node doc) throws IOException, TransformerFactoryConfigurationError, TransformerException {
+  public static String prettyXml(Node doc)
+      throws IOException, TransformerFactoryConfigurationError, TransformerException {
     Transformer transformer = TransformerFactory.newInstance().newTransformer();
     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
     return transform(transformer, doc);
   }
 
-  public static final String elementToString(Node element) throws TransformerFactoryConfigurationError, TransformerException {
+  public static final String elementToString(Node element)
+      throws TransformerFactoryConfigurationError, TransformerException {
     Transformer transformer = TransformerFactory.newInstance().newTransformer();
 
     return transform(transformer, element);
   }
 
-  private static final String transform(Transformer transformer, Node element) throws TransformerException {
+  private static final String transform(Transformer transformer, Node element)
+      throws TransformerException {
     StreamResult result = new StreamResult(new StringWriter());
     DOMSource source = new DOMSource(element);
     transformer.transform(source, result);
@@ -422,50 +436,56 @@ public class XmlUtils {
     return xmlString;
   }
 
-  /****
-   * Convert the xmlString to pretty well formatted xmlString
+  /**
+   * ** Convert the xmlString to pretty well formatted xmlString
+   *
    * @param xmlContent
    * @return pretty xml string
    * @throws IOException
-   * @throws TransformerException 
-   * @throws TransformerFactoryConfigurationError 
-   * @throws ParserConfigurationException 
-   * @throws SAXException 
+   * @throws TransformerException
+   * @throws TransformerFactoryConfigurationError
+   * @throws ParserConfigurationException
+   * @throws SAXException
    */
-  public static String prettyXml(String xmlContent) throws IOException, TransformerFactoryConfigurationError, TransformerException, SAXException, ParserConfigurationException {
+  public static String prettyXml(String xmlContent)
+      throws IOException, TransformerFactoryConfigurationError, TransformerException, SAXException,
+          ParserConfigurationException {
     Document doc = createDocumentFromXml(xmlContent);
     return prettyXml(doc);
   }
 
-  /***
-   * Create a document from the xml 
+  /**
+   * * Create a document from the xml
+   *
    * @param xmlContent
-   * @return Document 
-   * @throws IOException 
-   * @throws ParserConfigurationException 
-   * @throws SAXException 
+   * @return Document
+   * @throws IOException
+   * @throws ParserConfigurationException
+   * @throws SAXException
    */
-  public static Document createDocumentFromXml(String xmlContent) throws SAXException, ParserConfigurationException, IOException {
+  public static Document createDocumentFromXml(String xmlContent)
+      throws SAXException, ParserConfigurationException, IOException {
     return createDocumentFromReader(new StringReader(xmlContent));
   }
 
   /**
-   * Upgrade the schema of a given Config XMl <code>document</code> to the given
-   * <code>namespace</code>, <code>schemaLocation</code> and
-   * <code>version</code>.
-   * 
-   * @param document
-   *          Config XML {@link Document} to upgrade.
-   * @param namespaceUri
-   *          Namespace URI to upgrade to.
-   * @param schemaLocation
-   *          Schema location to upgrade to.
-   * @throws XPathExpressionException 
-   * @throws ParserConfigurationException 
+   * Upgrade the schema of a given Config XMl <code>document</code> to the given <code>namespace
+   * </code>, <code>schemaLocation</code> and <code>version</code>.
+   *
+   * @param document Config XML {@link Document} to upgrade.
+   * @param namespaceUri Namespace URI to upgrade to.
+   * @param schemaLocation Schema location to upgrade to.
+   * @throws XPathExpressionException
+   * @throws ParserConfigurationException
    * @since GemFire 8.1
    */
   // UnitTest SharedConfigurationTest.testCreateAndUpgradeDocumentFromXml()
-  public static Document upgradeSchema(Document document, final String namespaceUri, final String schemaLocation, String schemaVersion) throws XPathExpressionException, ParserConfigurationException {
+  public static Document upgradeSchema(
+      Document document,
+      final String namespaceUri,
+      final String schemaLocation,
+      String schemaVersion)
+      throws XPathExpressionException, ParserConfigurationException {
     if (StringUtils.isBlank(namespaceUri)) {
       throw new IllegalArgumentException("namespaceUri");
     }
@@ -510,10 +530,15 @@ public class XmlUtils {
     }
 
     // Create schemaLocation attribute if missing.
-    final String schemaLocationAttribute = getAttribute(root, W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION, W3C_XML_SCHEMA_INSTANCE_NS_URI);
+    final String schemaLocationAttribute =
+        getAttribute(
+            root,
+            W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION,
+            W3C_XML_SCHEMA_INSTANCE_NS_URI);
 
     // Update schemaLocation for namespace.
-    final Map<String, List<String>> schemaLocationMap = buildSchemaLocationMap(schemaLocationAttribute);
+    final Map<String, List<String>> schemaLocationMap =
+        buildSchemaLocationMap(schemaLocationAttribute);
     List<String> schemaLocations = schemaLocationMap.get(namespaceUri);
     if (null == schemaLocations) {
       schemaLocations = new ArrayList<String>();
@@ -522,7 +547,10 @@ public class XmlUtils {
     schemaLocations.clear();
     schemaLocations.add(schemaLocation);
     String schemaLocationValue = getSchemaLocationValue(schemaLocationMap);
-    root.setAttributeNS(W3C_XML_SCHEMA_INSTANCE_NS_URI, xsiPrefix + ":" + W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION, schemaLocationValue);
+    root.setAttributeNS(
+        W3C_XML_SCHEMA_INSTANCE_NS_URI,
+        xsiPrefix + ":" + W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION,
+        schemaLocationValue);
 
     // Set schema version
     if (cachePrefix == null || cachePrefix.isEmpty()) {
@@ -535,17 +563,16 @@ public class XmlUtils {
   }
 
   /**
-   * Set the <code>schemaLocationAttribute</code> to the values of the
-   * <code>schemaLocationMap</code>.
-   * 
-   * @see <a href="http://www.w3.org/TR/xmlschema-0/#schemaLocation">XML Schema
-   *      Part 0: Primer Second Edition | 5.6 schemaLocation</a>
-   * 
-   * @param schemaLocationMap
-   *          {@link Map} to get schema locations from.
+   * Set the <code>schemaLocationAttribute</code> to the values of the <code>schemaLocationMap
+   * </code>.
+   *
+   * @see <a href="http://www.w3.org/TR/xmlschema-0/#schemaLocation">XML Schema Part 0: Primer
+   *     Second Edition | 5.6 schemaLocation</a>
+   * @param schemaLocationMap {@link Map} to get schema locations from.
    * @since GemFire 8.1
    */
-  private static final String getSchemaLocationValue(final Map<String, List<String>> schemaLocationMap) {
+  private static final String getSchemaLocationValue(
+      final Map<String, List<String>> schemaLocationMap) {
     final StringBuilder sb = new StringBuilder();
     for (final Map.Entry<String, List<String>> entry : schemaLocationMap.entrySet()) {
       for (final String schemaLocation : entry.getValue()) {
@@ -560,9 +587,8 @@ public class XmlUtils {
 
   /**
    * Build {@link Map} of namespace URIs to prefixes.
-   * 
-   * @param root
-   *          {@link Element} to get namespaces and prefixes from.
+   *
+   * @param root {@link Element} to get namespaces and prefixes from.
    * @return {@link Map} of namespace URIs to prefixes.
    * @since GemFire 8.1
    */
@@ -594,28 +620,26 @@ public class XmlUtils {
   }
 
   /**
-   * Change the namespace URI of a <code>node</code> and its children to
-   * <code>newNamespaceUri</code> if that node is in the given
-   * <code>oldNamespaceUri</code> namespace URI.
-   * 
-   * 
-   * @param node
-   *          {@link Node} to change namespace URI on.
-   * @param oldNamespaceUri
-   *          old namespace URI to change from.
-   * @param newNamespaceUri
-   *          new Namespace URI to change to.
+   * Change the namespace URI of a <code>node</code> and its children to <code>newNamespaceUri
+   * </code> if that node is in the given <code>oldNamespaceUri</code> namespace URI.
+   *
+   * @param node {@link Node} to change namespace URI on.
+   * @param oldNamespaceUri old namespace URI to change from.
+   * @param newNamespaceUri new Namespace URI to change to.
    * @throws XPathExpressionException
-   * @return the modified version of the passed in node. 
+   * @return the modified version of the passed in node.
    * @since GemFire 8.1
    */
-  static final Node changeNamespace(final Node node, final String oldNamespaceUri, final String newNamespaceUri) throws XPathExpressionException {
+  static final Node changeNamespace(
+      final Node node, final String oldNamespaceUri, final String newNamespaceUri)
+      throws XPathExpressionException {
     Node result = null;
     final NodeList nodes = query(node, "//*");
     for (int i = 0; i < nodes.getLength(); i++) {
       final Node element = nodes.item(i);
       if (element.getNamespaceURI() == null || element.getNamespaceURI().equals(oldNamespaceUri)) {
-        Node renamed = node.getOwnerDocument().renameNode(element, newNamespaceUri, element.getNodeName());
+        Node renamed =
+            node.getOwnerDocument().renameNode(element, newNamespaceUri, element.getNodeName());
         if (element == node) {
           result = renamed;
         }
@@ -624,8 +648,9 @@ public class XmlUtils {
     return result;
   }
 
-  /****
-   * Method to modify the root attribute (cache) of the XML 
+  /**
+   * ** Method to modify the root attribute (cache) of the XML
+   *
    * @param doc Target document whose root attributes must be modified
    * @param xmlEntity xml entity for the root , it also contains the attributes
    * @throws IOException
@@ -656,17 +681,20 @@ public class XmlUtils {
     }
   }
 
-  /***
-   * Reads the xml file as a String
+  /**
+   * * Reads the xml file as a String
+   *
    * @param xmlFilePath
    * @return String containing xml read from the file.
    * @throws IOException
-   * @throws ParserConfigurationException 
-   * @throws SAXException 
-   * @throws TransformerException 
-   * @throws TransformerFactoryConfigurationError 
+   * @throws ParserConfigurationException
+   * @throws SAXException
+   * @throws TransformerException
+   * @throws TransformerFactoryConfigurationError
    */
-  public static String readXmlAsStringFromFile(String xmlFilePath) throws IOException, SAXException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
+  public static String readXmlAsStringFromFile(String xmlFilePath)
+      throws IOException, SAXException, ParserConfigurationException,
+          TransformerFactoryConfigurationError, TransformerException {
     File file = new File(xmlFilePath);
     //The file can be empty if the only command we have issued for this group is deployJar
     if (file.length() == 0) {

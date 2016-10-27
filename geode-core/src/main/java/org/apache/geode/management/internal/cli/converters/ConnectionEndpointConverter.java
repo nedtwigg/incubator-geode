@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.management.internal.cli.converters;
 
 import java.util.List;
@@ -27,9 +25,7 @@ import org.springframework.shell.core.MethodTarget;
 
 import org.apache.geode.management.internal.cli.util.ConnectionEndpoint;
 
-/**
- *
- */
+/** */
 public class ConnectionEndpointConverter implements Converter<ConnectionEndpoint> {
   // Defaults
   static final String DEFAULT_JMX_HOST = "localhost";
@@ -38,7 +34,8 @@ public class ConnectionEndpointConverter implements Converter<ConnectionEndpoint
 
   public static final String DEFAULT_LOCATOR_HOST = "localhost";
   public static final int DEFAULT_LOCATOR_PORT = 10334;
-  public static final String DEFAULT_LOCATOR_ENDPOINTS = DEFAULT_LOCATOR_HOST + "[" + DEFAULT_LOCATOR_PORT + "]";
+  public static final String DEFAULT_LOCATOR_ENDPOINTS =
+      DEFAULT_LOCATOR_HOST + "[" + DEFAULT_LOCATOR_PORT + "]";
 
   @Override
   public boolean supports(Class<?> type, String optionContext) {
@@ -46,7 +43,8 @@ public class ConnectionEndpointConverter implements Converter<ConnectionEndpoint
   }
 
   @Override
-  public ConnectionEndpoint convertFromText(String value, Class<?> targetType, String optionContext) {
+  public ConnectionEndpoint convertFromText(
+      String value, Class<?> targetType, String optionContext) {
     //expected format host[port], port is optional
     String endpointStr = value.trim();
 
@@ -58,26 +56,31 @@ public class ConnectionEndpointConverter implements Converter<ConnectionEndpoint
       int openIndex = endpointStr.indexOf("[");
       int closeIndex = endpointStr.indexOf("]");
 
-      if (openIndex != -1) {//might have a port
+      if (openIndex != -1) { //might have a port
         if (closeIndex == -1) {
-          throw new IllegalArgumentException("Expected input: host[port] or host. Invalid value specified endpoints : " + value);
+          throw new IllegalArgumentException(
+              "Expected input: host[port] or host. Invalid value specified endpoints : " + value);
         }
         hostStr = endpointStr.substring(0, openIndex);
 
         portStr = endpointStr.substring(openIndex + 1, closeIndex);
 
         if (portStr.isEmpty()) {
-          throw new IllegalArgumentException("Expected input: host[port] or host. Invalid value specified endpoints : " + value);
+          throw new IllegalArgumentException(
+              "Expected input: host[port] or host. Invalid value specified endpoints : " + value);
         }
         try {
           port = Integer.valueOf(portStr);
         } catch (NumberFormatException e) {
-          throw new IllegalArgumentException("Expected input: host[port], Port should be a valid number between 1024-65536. Invalid value specified endpoints : " + value);
+          throw new IllegalArgumentException(
+              "Expected input: host[port], Port should be a valid number between 1024-65536. Invalid value specified endpoints : "
+                  + value);
         }
 
       } else if (closeIndex != -1) { //shouldn't be there if opening brace was not there
-        throw new IllegalArgumentException("Expected input: host[port] or host. Invalid value specified endpoints : " + value);
-      } else {//doesn't contain brackets, assume only host name is given & assume default port
+        throw new IllegalArgumentException(
+            "Expected input: host[port] or host. Invalid value specified endpoints : " + value);
+      } else { //doesn't contain brackets, assume only host name is given & assume default port
         hostStr = endpointStr;
       }
     }
@@ -86,7 +89,12 @@ public class ConnectionEndpointConverter implements Converter<ConnectionEndpoint
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
     if (ConnectionEndpoint.JMXMANAGER_OPTION_CONTEXT.equals(optionContext)) {
       completions.add(new Completion(DEFAULT_JMX_ENDPOINTS));
     } else if (ConnectionEndpoint.LOCATOR_OPTION_CONTEXT.equals(optionContext)) {
@@ -134,7 +142,5 @@ public class ConnectionEndpointConverter implements Converter<ConnectionEndpoint
     } catch (Exception e) {
       e.printStackTrace();
     }
-
   }
-
 }

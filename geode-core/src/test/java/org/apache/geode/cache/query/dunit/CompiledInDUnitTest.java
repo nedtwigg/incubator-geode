@@ -64,8 +64,7 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   private VM vm1;
   private VM client;
 
-  public CompiledInDUnitTest() {
-  }
+  public CompiledInDUnitTest() {}
 
   @Before
   public void setup() {
@@ -119,272 +118,358 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
   }
 
   public void closeClient(VM client) {
-    SerializableRunnable closeCache = new CacheSerializableRunnable("Close Client") {
-      public void run2() throws CacheException {
-        LogWriterUtils.getLogWriter().info("### Close Client. ###");
-        try {
-          closeCache();
-          disconnectFromDS();
-        } catch (Exception ex) {
-          LogWriterUtils.getLogWriter().info("### Failed to get close client. ###");
-        }
-      }
-    };
+    SerializableRunnable closeCache =
+        new CacheSerializableRunnable("Close Client") {
+          public void run2() throws CacheException {
+            LogWriterUtils.getLogWriter().info("### Close Client. ###");
+            try {
+              closeCache();
+              disconnectFromDS();
+            } catch (Exception ex) {
+              LogWriterUtils.getLogWriter().info("### Failed to get close client. ###");
+            }
+          }
+        };
 
     client.invoke(closeCache);
   }
 
   @Category(FlakyTest.class) // GEODE-1771
   @Test
-  public void whenMultipleEnumBindParametersAreUsedWithInQueryAndMapIndexIsPresentReturnCorrectResults() throws CacheException {
+  public void
+      whenMultipleEnumBindParametersAreUsedWithInQueryAndMapIndexIsPresentReturnCorrectResults()
+          throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
+    final String queryString =
+        "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createReplicateRegion();
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createReplicateRegion();
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY, DayEnum.TUESDAY };
-    vm1.invoke(executeQueryWithIndexOnReplicateRegion(numExpectedResults, queryString, bindArguments, "myIndex", "ts.getMapField[*]", regName + " ts"));
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY, DayEnum.TUESDAY};
+    vm1.invoke(
+        executeQueryWithIndexOnReplicateRegion(
+            numExpectedResults,
+            queryString,
+            bindArguments,
+            "myIndex",
+            "ts.getMapField[*]",
+            regName + " ts"));
   }
 
   @Test
-  public void whenMultipleEnumBindParametersAreUsedWithInQueryReturnCorrectResults() throws CacheException {
+  public void whenMultipleEnumBindParametersAreUsedWithInQueryReturnCorrectResults()
+      throws CacheException {
     final Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM client = host.getVM(3);
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
+    final String queryString =
+        "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createReplicateRegion();
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createReplicateRegion();
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY, DayEnum.TUESDAY };
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY, DayEnum.TUESDAY};
     vm1.invoke(executeQueryOnReplicateRegion(numExpectedResults, queryString, bindArguments));
   }
 
   @Test
-  public void whenASingleEnumBindParameterIsUsedWithInQueryAndMapIndexIsPresentReturnCorrectResults() throws CacheException {
+  public void
+      whenASingleEnumBindParameterIsUsedWithInQueryAndMapIndexIsPresentReturnCorrectResults()
+          throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createReplicateRegion();
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createReplicateRegion();
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY };
-    vm1.invoke(executeQueryWithIndexOnReplicateRegion(numExpectedResults, queryString, bindArguments, "myIndex", "ts.getMapField[*]", regName + " ts"));
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY};
+    vm1.invoke(
+        executeQueryWithIndexOnReplicateRegion(
+            numExpectedResults,
+            queryString,
+            bindArguments,
+            "myIndex",
+            "ts.getMapField[*]",
+            regName + " ts"));
   }
 
   @Test
-  public void whenASingleEnumBindParameterIsUsedWithInQueryReturnCorrectResults() throws CacheException {
+  public void whenASingleEnumBindParameterIsUsedWithInQueryReturnCorrectResults()
+      throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createReplicateRegion();
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createReplicateRegion();
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY };
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY};
     vm1.invoke(executeQueryOnReplicateRegion(numExpectedResults, queryString, bindArguments));
   }
 
   @Test
-  public void whenMultipleTypeBindParameterIsUsedWithInQueryAndMapIndexIsPresentReturnCorrectResults() throws CacheException {
+  public void
+      whenMultipleTypeBindParameterIsUsedWithInQueryAndMapIndexIsPresentReturnCorrectResults()
+          throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
 
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2,$3)";
+    final String queryString =
+        "select * from " + regName + " where getMapField['1'] in SET ($1,$2,$3)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createReplicateRegion();
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createReplicateRegion();
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { 2, DayEnum.MONDAY, "Tuesday" };
-    vm1.invoke(executeQueryWithIndexOnReplicateRegion(numExpectedResults, queryString, bindArguments, "myIndex", "ts.getMapField[*]", regName + " ts"));
+    Object[] bindArguments = new Object[] {2, DayEnum.MONDAY, "Tuesday"};
+    vm1.invoke(
+        executeQueryWithIndexOnReplicateRegion(
+            numExpectedResults,
+            queryString,
+            bindArguments,
+            "myIndex",
+            "ts.getMapField[*]",
+            regName + " ts"));
   }
 
   @Test
-  public void whenMultipleEnumBindParametersAreUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults() throws CacheException {
+  public void
+      whenMultipleEnumBindParametersAreUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults()
+          throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
+    final String queryString =
+        "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createPartitionRegion(false);
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createPartitionRegion(false);
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY, DayEnum.TUESDAY };
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY, DayEnum.TUESDAY};
     vm1.invoke(executeQueryOnPartitionRegion(numExpectedResults, queryString, bindArguments));
   }
 
   @Test
-  public void whenMultipleEnumBindParametersAreUsedWithInQueryInPartitionRegionReturnCorrectResults() throws CacheException {
+  public void
+      whenMultipleEnumBindParametersAreUsedWithInQueryInPartitionRegionReturnCorrectResults()
+          throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
+    final String queryString =
+        "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createPartitionRegion(false);
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createPartitionRegion(false);
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY, DayEnum.TUESDAY };
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY, DayEnum.TUESDAY};
     vm1.invoke(executeQueryOnPartitionRegion(numExpectedResults, queryString, bindArguments));
   }
 
   @Test
-  public void whenASingleEnumBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults() throws CacheException {
+  public void
+      whenASingleEnumBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults()
+          throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createPartitionRegion(false);
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createPartitionRegion(false);
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY };
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY};
     vm1.invoke(executeQueryOnPartitionRegion(numExpectedResults, queryString, bindArguments));
   }
 
   @Test
-  public void whenASingleEnumBindParameterIsUsedWithInQueryInPartitionRegionReturnCorrectResults() throws CacheException {
+  public void whenASingleEnumBindParameterIsUsedWithInQueryInPartitionRegionReturnCorrectResults()
+      throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createPartitionRegion(false);
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createPartitionRegion(false);
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY };
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY};
     vm1.invoke(executeQueryOnPartitionRegion(numExpectedResults, queryString, bindArguments));
   }
 
   @Test
-  public void whenMultipleTypeBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults() throws CacheException {
+  public void
+      whenMultipleTypeBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults()
+          throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
 
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2,$3)";
+    final String queryString =
+        "select * from " + regName + " where getMapField['1'] in SET ($1,$2,$3)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createPartitionRegion(false);
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createPartitionRegion(false);
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { 2, DayEnum.MONDAY, "Tuesday" };
+    Object[] bindArguments = new Object[] {2, DayEnum.MONDAY, "Tuesday"};
     vm1.invoke(executeQueryOnPartitionRegion(numExpectedResults, queryString, bindArguments));
   }
 
   @Test
-  public void whenEnumBindArgumentIsMatchedInSetWithIteratingFieldShouldReturnResults() throws CacheException {
+  public void whenEnumBindArgumentIsMatchedInSetWithIteratingFieldShouldReturnResults()
+      throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
 
     final String queryString = "select * from " + regName + " where $1 in SET (getMapField['1'])";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createReplicateRegion();
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createReplicateRegion();
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY };
-    vm1.invoke(executeQueryWithIndexOnReplicateRegion(numExpectedResults, queryString, bindArguments, "myIndex", "ts.getMapField[*]", regName + " ts"));
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY};
+    vm1.invoke(
+        executeQueryWithIndexOnReplicateRegion(
+            numExpectedResults,
+            queryString,
+            bindArguments,
+            "myIndex",
+            "ts.getMapField[*]",
+            regName + " ts"));
   }
 
   @Test
-  public void whenEnumBindArgumentIsMatchedInSetWithMultipleIteratingFieldShouldReturnResults() throws CacheException {
+  public void whenEnumBindArgumentIsMatchedInSetWithMultipleIteratingFieldShouldReturnResults()
+      throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
 
-    final String queryString = "select * from " + regName + " where $1 in SET (getMapField['1'], getMapField['0'])";
+    final String queryString =
+        "select * from " + regName + " where $1 in SET (getMapField['1'], getMapField['0'])";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createReplicateRegion();
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createReplicateRegion();
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.TUESDAY };
-    vm1.invoke(executeQueryWithIndexOnReplicateRegion(numExpectedResults, queryString, bindArguments, "myIndex", "ts.getMapField[*]", regName + " ts"));
+    Object[] bindArguments = new Object[] {DayEnum.TUESDAY};
+    vm1.invoke(
+        executeQueryWithIndexOnReplicateRegion(
+            numExpectedResults,
+            queryString,
+            bindArguments,
+            "myIndex",
+            "ts.getMapField[*]",
+            regName + " ts"));
   }
 
   @Test
-  public void whenEnumBindArgumentIsMatchedInSetWithMultiTypedIteratingFieldShouldReturnResults() throws CacheException {
+  public void whenEnumBindArgumentIsMatchedInSetWithMultiTypedIteratingFieldShouldReturnResults()
+      throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries;
 
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET (getMapField['1'], getMapField['2'], 'asdfasdf', getMapField['0'])";
+    final String queryString =
+        "select * from "
+            + regName
+            + " where getMapField['1'] in SET (getMapField['1'], getMapField['2'], 'asdfasdf', getMapField['0'])";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createReplicateRegion();
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createReplicateRegion();
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.TUESDAY };
-    vm1.invoke(executeQueryWithIndexOnReplicateRegion(numExpectedResults, queryString, bindArguments, "myIndex", "ts.getMapField[*]", regName + " ts"));
+    Object[] bindArguments = new Object[] {DayEnum.TUESDAY};
+    vm1.invoke(
+        executeQueryWithIndexOnReplicateRegion(
+            numExpectedResults,
+            queryString,
+            bindArguments,
+            "myIndex",
+            "ts.getMapField[*]",
+            regName + " ts"));
   }
 
   @Test
@@ -392,19 +477,30 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
     final int numberOfEntries = 10;
     final int numExpectedResults = 0;
 
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1, $2) AND getMapField['1'] in SET($3)";
+    final String queryString =
+        "select * from "
+            + regName
+            + " where getMapField['1'] in SET ($1, $2) AND getMapField['1'] in SET($3)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createReplicateRegion();
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createReplicateRegion();
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY, DayEnum.TUESDAY, DayEnum.WEDNESDAY };
-    vm1.invoke(executeQueryWithIndexOnReplicateRegion(numExpectedResults, queryString, bindArguments, "myIndex", "ts.getMapField[*]", regName + " ts"));
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY, DayEnum.TUESDAY, DayEnum.WEDNESDAY};
+    vm1.invoke(
+        executeQueryWithIndexOnReplicateRegion(
+            numExpectedResults,
+            queryString,
+            bindArguments,
+            "myIndex",
+            "ts.getMapField[*]",
+            regName + " ts"));
   }
 
   @Test
@@ -412,46 +508,69 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
     final int numberOfEntries = 10;
     final int numExpectedResults = 5;
 
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1, $2) AND getMapField['2'] in SET($3)";
+    final String queryString =
+        "select * from "
+            + regName
+            + " where getMapField['1'] in SET ($1, $2) AND getMapField['2'] in SET($3)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createReplicateRegion();
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        HashMap entries = new HashMap();
-        IntStream.range(0, 10).forEach(i -> {
-          MapTestObject object = new MapTestObject(i);
-          object.getMapField().put("2", DayEnum.WEDNESDAY);
-          entries.put("key" + i, object);
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createReplicateRegion();
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            HashMap entries = new HashMap();
+            IntStream.range(0, 10)
+                .forEach(
+                    i -> {
+                      MapTestObject object = new MapTestObject(i);
+                      object.getMapField().put("2", DayEnum.WEDNESDAY);
+                      entries.put("key" + i, object);
+                    });
+            createEntries(regionName, entries.entrySet().iterator());
+          }
         });
-        createEntries(regionName, entries.entrySet().iterator());
-      }
-    });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY, DayEnum.TUESDAY, DayEnum.WEDNESDAY };
-    vm1.invoke(executeQueryWithIndexOnReplicateRegion(numExpectedResults, queryString, bindArguments, "myIndex", "ts.getMapField[*]", regName + " ts"));
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY, DayEnum.TUESDAY, DayEnum.WEDNESDAY};
+    vm1.invoke(
+        executeQueryWithIndexOnReplicateRegion(
+            numExpectedResults,
+            queryString,
+            bindArguments,
+            "myIndex",
+            "ts.getMapField[*]",
+            regName + " ts"));
   }
 
   @Category(FlakyTest.class) // GEODE-1765
   @Test
-  public void whenInSetCollectionContainsNonUniqueValuesMatchingSetShouldNotBeDuplicated() throws CacheException {
+  public void whenInSetCollectionContainsNonUniqueValuesMatchingSetShouldNotBeDuplicated()
+      throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
 
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET($1, $1, $1)";
+    final String queryString =
+        "select * from " + regName + " where getMapField['1'] in SET($1, $1, $1)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createReplicateRegion();
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createReplicateRegion();
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY, DayEnum.TUESDAY, DayEnum.WEDNESDAY };
-    vm1.invoke(executeQueryWithIndexOnReplicateRegion(numExpectedResults, queryString, bindArguments, "myIndex", "ts.getMapField[*]", regName + " ts"));
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY, DayEnum.TUESDAY, DayEnum.WEDNESDAY};
+    vm1.invoke(
+        executeQueryWithIndexOnReplicateRegion(
+            numExpectedResults,
+            queryString,
+            bindArguments,
+            "myIndex",
+            "ts.getMapField[*]",
+            regName + " ts"));
   }
 
   @Test
@@ -459,116 +578,146 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries;
 
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1) OR getMapField['0'] in SET($2)";
+    final String queryString =
+        "select * from "
+            + regName
+            + " where getMapField['1'] in SET ($1) OR getMapField['0'] in SET($2)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createReplicateRegion();
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createReplicateRegion();
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY, DayEnum.TUESDAY };
-    vm1.invoke(executeQueryWithIndexOnReplicateRegion(numExpectedResults, queryString, bindArguments, "myIndex", "ts.getMapField[*]", regName + " ts"));
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY, DayEnum.TUESDAY};
+    vm1.invoke(
+        executeQueryWithIndexOnReplicateRegion(
+            numExpectedResults,
+            queryString,
+            bindArguments,
+            "myIndex",
+            "ts.getMapField[*]",
+            regName + " ts"));
   }
 
   @Test
-  public void whenUsingAccessorMultipleEnumBindParametersAreUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults() throws CacheException {
+  public void
+      whenUsingAccessorMultipleEnumBindParametersAreUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults()
+          throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
+    final String queryString =
+        "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createPartitionRegion(false);
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createPartitionRegion(false);
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY, DayEnum.TUESDAY };
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY, DayEnum.TUESDAY};
     vm1.invoke(executeQueryWithAccessor(numExpectedResults, queryString, bindArguments));
   }
 
   @Test
-  public void whenUsingAccessorMultipleEnumBindParametersAreUsedWithInQueryInPartitionRegionReturnCorrectResults() throws CacheException {
+  public void
+      whenUsingAccessorMultipleEnumBindParametersAreUsedWithInQueryInPartitionRegionReturnCorrectResults()
+          throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
+    final String queryString =
+        "select * from " + regName + " where getMapField['1'] in SET ($1,$2)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createPartitionRegion(false);
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createPartitionRegion(false);
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY, DayEnum.TUESDAY };
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY, DayEnum.TUESDAY};
     vm1.invoke(executeQueryWithAccessor(numExpectedResults, queryString, bindArguments));
   }
 
   @Test
-  public void whenUsingAccessorASingleEnumBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults() throws CacheException {
+  public void
+      whenUsingAccessorASingleEnumBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults()
+          throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createPartitionRegion(false);
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createPartitionRegion(false);
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY };
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY};
     vm1.invoke(executeQueryWithAccessor(numExpectedResults, queryString, bindArguments));
   }
 
   @Test
-  public void whenUsingAccessorASingleEnumBindParameterIsUsedWithInQueryInPartitionRegionReturnCorrectResults() throws CacheException {
+  public void
+      whenUsingAccessorASingleEnumBindParameterIsUsedWithInQueryInPartitionRegionReturnCorrectResults()
+          throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
     final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createPartitionRegion(false);
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createPartitionRegion(false);
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { DayEnum.MONDAY };
+    Object[] bindArguments = new Object[] {DayEnum.MONDAY};
     vm1.invoke(executeQueryWithAccessor(numExpectedResults, queryString, bindArguments));
   }
 
   @Test
-  public void whenUsingAccessorMultipleTypeBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults() throws CacheException {
+  public void
+      whenUsingAccessorMultipleTypeBindParameterIsUsedWithInQueryAndMapIndexIsPresentInPartitionRegionReturnCorrectResults()
+          throws CacheException {
     final int numberOfEntries = 10;
     final int numExpectedResults = numberOfEntries / 2;
 
-    final String queryString = "select * from " + regName + " where getMapField['1'] in SET ($1,$2,$3)";
+    final String queryString =
+        "select * from " + regName + " where getMapField['1'] in SET ($1,$2,$3)";
 
-    vm0.invoke(new CacheSerializableRunnable("Create Bridge Server") {
-      public void run2() throws CacheException {
-        configAndStartBridgeServer();
-        createPartitionRegion(false);
-        createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
-        createEntries(numberOfEntries, regionName);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Create Bridge Server") {
+          public void run2() throws CacheException {
+            configAndStartBridgeServer();
+            createPartitionRegion(false);
+            createIndex("myIndex", "ts.getMapField[*]", regName + " ts");
+            createEntries(numberOfEntries, regionName);
+          }
+        });
 
-    Object[] bindArguments = new Object[] { 2, DayEnum.MONDAY, "Tuesday" };
+    Object[] bindArguments = new Object[] {2, DayEnum.MONDAY, "Tuesday"};
     vm1.invoke(executeQueryWithAccessor(numExpectedResults, queryString, bindArguments));
   }
 
-  CacheSerializableRunnable executeQueryOnReplicateRegion(final int numberOfEntries, final String queryString, Object[] bindArguments) {
+  CacheSerializableRunnable executeQueryOnReplicateRegion(
+      final int numberOfEntries, final String queryString, Object[] bindArguments) {
     return new CacheSerializableRunnable("Execute Query in Replicated Region") {
       public void run2() throws CacheException {
         configAndStartBridgeServer();
@@ -578,7 +727,13 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
     };
   }
 
-  CacheSerializableRunnable executeQueryWithIndexOnReplicateRegion(final int numberOfEntries, final String queryString, Object[] bindArguments, String indexName, String indexExpression, String regionPath) {
+  CacheSerializableRunnable executeQueryWithIndexOnReplicateRegion(
+      final int numberOfEntries,
+      final String queryString,
+      Object[] bindArguments,
+      String indexName,
+      String indexExpression,
+      String regionPath) {
     return new CacheSerializableRunnable("Execute Query with Index in Replicated Region") {
       public void run2() throws CacheException {
         configAndStartBridgeServer();
@@ -589,7 +744,8 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
     };
   }
 
-  CacheSerializableRunnable executeQueryOnPartitionRegion(final int numberOfEntries, final String queryString, Object[] bindArguments) {
+  CacheSerializableRunnable executeQueryOnPartitionRegion(
+      final int numberOfEntries, final String queryString, Object[] bindArguments) {
     return new CacheSerializableRunnable("Execute Query in Partition Regions") {
       public void run2() throws CacheException {
         configAndStartBridgeServer();
@@ -599,7 +755,8 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
     };
   }
 
-  CacheSerializableRunnable executeQueryWithAccessor(final int numberOfEntries, final String queryString, Object[] bindArguments) {
+  CacheSerializableRunnable executeQueryWithAccessor(
+      final int numberOfEntries, final String queryString, Object[] bindArguments) {
     return new CacheSerializableRunnable("Execute Query with Accessor") {
       public void run2() throws CacheException {
         configAndStartBridgeServer();
@@ -645,14 +802,17 @@ public class CompiledInDUnitTest extends JUnit4CacheTestCase {
 
   void createEntries(String regionName, Iterator<Map.Entry> objects) {
     Region region = getRootRegion().getSubregion(regionName);
-    objects.forEachRemaining((mk) -> {
-      region.put(mk.getKey(), mk.getValue());
-    });
+    objects.forEachRemaining(
+        (mk) -> {
+          region.put(mk.getKey(), mk.getValue());
+        });
   }
 
   enum DayEnum {
-    MONDAY, TUESDAY, WEDNESDAY
-  }//Map objects should be either [1] = DayEnum.Monday or [0] = DayEnum.Tuesday
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY
+  } //Map objects should be either [1] = DayEnum.Monday or [0] = DayEnum.Tuesday
 
   static class MapTestObject implements Serializable {
 

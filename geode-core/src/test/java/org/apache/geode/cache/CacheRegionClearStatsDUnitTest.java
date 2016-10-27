@@ -37,9 +37,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * verifies the count of clear operation
- */
+/** verifies the count of clear operation */
 @Category(DistributedTest.class)
 public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
 
@@ -85,7 +83,17 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new CacheRegionClearStatsDUnitTest().createCache(props);
-    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, port1.intValue()).setSubscriptionEnabled(false).setThreadLocalConnections(true).setMinConnections(1).setReadTimeout(20000).setPingInterval(10000).setRetryAttempts(1).create("CacheRegionClearStatsDUnitTest");
+    PoolImpl p =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(host, port1.intValue())
+                .setSubscriptionEnabled(false)
+                .setThreadLocalConnections(true)
+                .setMinConnections(1)
+                .setReadTimeout(20000)
+                .setPingInterval(10000)
+                .setRetryAttempts(1)
+                .create("CacheRegionClearStatsDUnitTest");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -125,7 +133,17 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new CacheRegionClearStatsDUnitTest().createCache(props);
-    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, port1.intValue()).setSubscriptionEnabled(false).setThreadLocalConnections(true).setMinConnections(1).setReadTimeout(20000).setPingInterval(10000).setRetryAttempts(1).create("CacheRegionClearStatsDUnitTest");
+    PoolImpl p =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(host, port1.intValue())
+                .setSubscriptionEnabled(false)
+                .setThreadLocalConnections(true)
+                .setMinConnections(1)
+                .setReadTimeout(20000)
+                .setPingInterval(10000)
+                .setRetryAttempts(1)
+                .create("CacheRegionClearStatsDUnitTest");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -142,15 +160,19 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
    */
   @Test
   public void testClearStatsWithNormalRegion() {
-    Integer port1 = ((Integer) server1.invoke(() -> CacheRegionClearStatsDUnitTest.createServerCache()));
+    Integer port1 =
+        ((Integer) server1.invoke(() -> CacheRegionClearStatsDUnitTest.createServerCache()));
 
-    client1.invoke(() -> CacheRegionClearStatsDUnitTest.createClientCache(NetworkUtils.getServerHostName(server1.getHost()), port1));
+    client1.invoke(
+        () ->
+            CacheRegionClearStatsDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(server1.getHost()), port1));
     client1.invoke(() -> CacheRegionClearStatsDUnitTest.put());
 
     try {
       Thread.sleep(10000);
     } catch (Exception e) {
-      // sleep 
+      // sleep
     }
 
     client1.invoke(() -> CacheRegionClearStatsDUnitTest.validationClearStat());
@@ -164,15 +186,19 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
    */
   @Test
   public void testClearStatsWithDiskRegion() {
-    Integer port1 = ((Integer) server1.invoke(() -> CacheRegionClearStatsDUnitTest.createServerCacheDisk()));
+    Integer port1 =
+        ((Integer) server1.invoke(() -> CacheRegionClearStatsDUnitTest.createServerCacheDisk()));
 
-    client1.invoke(() -> CacheRegionClearStatsDUnitTest.createClientCacheDisk(NetworkUtils.getServerHostName(server1.getHost()), port1));
+    client1.invoke(
+        () ->
+            CacheRegionClearStatsDUnitTest.createClientCacheDisk(
+                NetworkUtils.getServerHostName(server1.getHost()), port1));
     client1.invoke(() -> CacheRegionClearStatsDUnitTest.put());
 
     try {
       Thread.sleep(10000);
     } catch (Exception e) {
-      // sleep 
+      // sleep
     }
 
     client1.invoke(() -> CacheRegionClearStatsDUnitTest.validationClearStat());
@@ -206,7 +232,7 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
       try {
         Thread.sleep(10000);
       } catch (Exception e) {
-        // sleep 
+        // sleep
       }
       r1.clear();
 
@@ -217,7 +243,7 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
       try {
         Thread.sleep(10000);
       } catch (Exception e) {
-        // sleep 
+        // sleep
       }
       r1.clear();
     } catch (Exception ex) {
@@ -228,5 +254,4 @@ public class CacheRegionClearStatsDUnitTest extends JUnit4DistributedTestCase {
   public static void validationClearStat() {
     assertEquals(cache.getCachePerfStats().getClearCount(), clearOp);
   }
-
 }

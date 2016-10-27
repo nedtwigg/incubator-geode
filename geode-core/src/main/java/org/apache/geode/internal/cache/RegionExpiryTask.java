@@ -17,10 +17,7 @@
 
 package org.apache.geode.internal.cache;
 
-/**
- * RegionExpiryTask represents a timeout event for region expiration
- */
-
+/** RegionExpiryTask represents a timeout event for region expiration */
 import org.apache.geode.SystemFailure;
 import org.apache.geode.cache.CacheException;
 import org.apache.geode.cache.ExpirationAttributes;
@@ -112,8 +109,11 @@ abstract class RegionExpiryTask extends ExpiryTask {
   }
 
   @Override
-  final protected void reschedule() throws CacheException {
-    if (isCacheClosing() || getLocalRegion().isClosed() || getLocalRegion().isDestroyed() || !isExpirationAllowed()) {
+  protected final void reschedule() throws CacheException {
+    if (isCacheClosing()
+        || getLocalRegion().isClosed()
+        || getLocalRegion().isDestroyed()
+        || !isExpirationAllowed()) {
       return;
     }
 
@@ -141,6 +141,13 @@ abstract class RegionExpiryTask extends ExpiryTask {
       // is still usable:
       SystemFailure.checkFailure();
     }
-    return super.toString() + " for " + getLocalRegion().getFullPath() + ", expiration time: " + expireTime + " [now: " + getNow() + "]";
+    return super.toString()
+        + " for "
+        + getLocalRegion().getFullPath()
+        + ", expiration time: "
+        + expireTime
+        + " [now: "
+        + getNow()
+        + "]";
   }
 }

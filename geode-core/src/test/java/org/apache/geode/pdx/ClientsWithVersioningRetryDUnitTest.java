@@ -80,33 +80,35 @@ public class ClientsWithVersioningRetryDUnitTest extends JUnit4CacheTestCase {
 
   @Override
   public final void postSetUp() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      @Override
-      public void run() {
-        //Disable endpoint shuffling, so that the client will always connect
-        //to the first server we give it.
-        System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "bridge.disableShufflingOfEndpoints", "true");
-      }
-
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            //Disable endpoint shuffling, so that the client will always connect
+            //to the first server we give it.
+            System.setProperty(
+                DistributionConfig.GEMFIRE_PREFIX + "bridge.disableShufflingOfEndpoints", "true");
+          }
+        });
   }
 
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      @Override
-      public void run() {
-        System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "bridge.disableShufflingOfEndpoints", "false");
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            System.setProperty(
+                DistributionConfig.GEMFIRE_PREFIX + "bridge.disableShufflingOfEndpoints", "false");
+          }
+        });
     for (IgnoredException ex : expectedExceptions) {
       ex.remove();
     }
   }
 
   /**
-   * Test that we can successfully retry a distributed put all and get
-   * the version information.
+   * Test that we can successfully retry a distributed put all and get the version information.
    * second failure in bug 44951
    */
   @Test
@@ -118,69 +120,112 @@ public class ClientsWithVersioningRetryDUnitTest extends JUnit4CacheTestCase {
     createServerRegion(vm0, RegionShortcut.REPLICATE);
     createServerRegion(vm1, RegionShortcut.REPLICATE);
 
-    // create an event tag in vm0 and then replay that event in vm1 
-    final DistributedMember memberID = (DistributedMember) vm0.invoke(new SerializableCallable("get id") {
-      public Object call() {
-        return ((DistributedRegion) getCache().getRegion("region")).getDistributionManager().getDistributionManagerId();
-      }
-    });
-    vm0.invoke(new SerializableCallable("create entry with fake event ID") {
-      @Override
-      public Object call() {
-        DistributedRegion dr = (DistributedRegion) getCache().getRegion("region");
-        VersionTag tag = new VMVersionTag();
-        tag.setMemberID(dr.getVersionMember());
-        tag.setRegionVersion(123);
-        tag.setEntryVersion(9);
-        tag.setVersionTimeStamp(System.currentTimeMillis());
-        EventID eventID = new EventID(new byte[0], 1, 0);
-        EntryEventImpl event = EntryEventImpl.create(dr, Operation.CREATE, "TestObject", "TestValue", null, false, memberID, true, eventID);
-        event.setVersionTag(tag);
-        event.setContext(new ClientProxyMembershipID(memberID));
-        dr.recordEvent(event);
-        event.release();
-        return memberID;
-      }
-    });
-    vm1.invoke(new SerializableRunnable("recover event tag in vm1 from vm0") {
-      @Override
-      public void run() {
-        DistributedRegion dr = (DistributedRegion) getCache().getRegion("region");
-        EventID eventID = new EventID(new byte[0], 1, 0);
-        EntryEventImpl event = EntryEventImpl.create(dr, Operation.CREATE, "TestObject", "TestValue", null, false, memberID, true, eventID);
-        try {
-          event.setContext(new ClientProxyMembershipID(memberID));
-          boolean recovered = ((BaseCommand) Put70.getCommand()).recoverVersionTagForRetriedOperation(event);
-          assertTrue("Expected to recover the version for this event ID", recovered);
-          assertEquals("Expected the region version to be 123", 123, event.getVersionTag().getRegionVersion());
-        } finally {
-          event.release();
-        }
-      }
-    });
+    // create an event tag in vm0 and then replay that event in vm1
+    final DistributedMember memberID =
+        (DistributedMember)
+            vm0.invoke(
+                new SerializableCallable("get id") {
+                  public Object call() {
+                    return ((DistributedRegion) getCache().getRegion("region"))
+                        .getDistributionManager()
+                        .getDistributionManagerId();
+                  }
+                });
+    vm0.invoke(
+        new SerializableCallable("create entry with fake event ID") {
+          @Override
+          public Object call() {
+            DistributedRegion dr = (DistributedRegion) getCache().getRegion("region");
+            VersionTag tag = new VMVersionTag();
+            tag.setMemberID(dr.getVersionMember());
+            tag.setRegionVersion(123);
+            tag.setEntryVersion(9);
+            tag.setVersionTimeStamp(System.currentTimeMillis());
+            EventID eventID = new EventID(new byte[0], 1, 0);
+            EntryEventImpl event =
+                EntryEventImpl.create(
+                    dr,
+                    Operation.CREATE,
+                    "TestObject",
+                    "TestValue",
+                    null,
+                    false,
+                    memberID,
+                    true,
+                    eventID);
+            event.setVersionTag(tag);
+            event.setContext(new ClientProxyMembershipID(memberID));
+            dr.recordEvent(event);
+            event.release();
+            return memberID;
+          }
+        });
+    vm1.invoke(
+        new SerializableRunnable("recover event tag in vm1 from vm0") {
+          @Override
+          public void run() {
+            DistributedRegion dr = (DistributedRegion) getCache().getRegion("region");
+            EventID eventID = new EventID(new byte[0], 1, 0);
+            EntryEventImpl event =
+                EntryEventImpl.create(
+                    dr,
+                    Operation.CREATE,
+                    "TestObject",
+                    "TestValue",
+                    null,
+                    false,
+                    memberID,
+                    true,
+                    eventID);
+            try {
+              event.setContext(new ClientProxyMembershipID(memberID));
+              boolean recovered =
+                  ((BaseCommand) Put70.getCommand()).recoverVersionTagForRetriedOperation(event);
+              assertTrue("Expected to recover the version for this event ID", recovered);
+              assertEquals(
+                  "Expected the region version to be 123",
+                  123,
+                  event.getVersionTag().getRegionVersion());
+            } finally {
+              event.release();
+            }
+          }
+        });
     // bug #48205 - a retried op in PR nodes not owning the primary bucket
     // may already have a version assigned to it in another backup bucket
-    vm1.invoke(new SerializableRunnable("recover posdup event tag in vm1 event tracker from vm0") {
-      @Override
-      public void run() {
-        DistributedRegion dr = (DistributedRegion) getCache().getRegion("region");
-        EventID eventID = new EventID(new byte[0], 1, 0);
-        EntryEventImpl event = EntryEventImpl.create(dr, Operation.CREATE, "TestObject", "TestValue", null, false, memberID, true, eventID);
-        event.setPossibleDuplicate(true);
-        try {
-          dr.hasSeenEvent(event);
-          assertTrue("Expected to recover the version for the event ID", event.getVersionTag() != null);
-        } finally {
-          event.release();
-        }
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable("recover posdup event tag in vm1 event tracker from vm0") {
+          @Override
+          public void run() {
+            DistributedRegion dr = (DistributedRegion) getCache().getRegion("region");
+            EventID eventID = new EventID(new byte[0], 1, 0);
+            EntryEventImpl event =
+                EntryEventImpl.create(
+                    dr,
+                    Operation.CREATE,
+                    "TestObject",
+                    "TestValue",
+                    null,
+                    false,
+                    memberID,
+                    true,
+                    eventID);
+            event.setPossibleDuplicate(true);
+            try {
+              dr.hasSeenEvent(event);
+              assertTrue(
+                  "Expected to recover the version for the event ID",
+                  event.getVersionTag() != null);
+            } finally {
+              event.release();
+            }
+          }
+        });
   }
 
   /**
-   * Test that we can successfully retry a distributed put all and get
-   * the version information.
-   * bug #45059
+   * Test that we can successfully retry a distributed put all and get the version information. bug
+   * #45059
    */
   @Test
   public void testRetryPutAll() {
@@ -191,30 +236,31 @@ public class ClientsWithVersioningRetryDUnitTest extends JUnit4CacheTestCase {
     final VM vm3 = host.getVM(3);
 
     createServerRegion(vm0, RegionShortcut.PARTITION_REDUNDANT_PERSISTENT);
-    vm0.invoke(new SerializableRunnable() {
-
-      @Override
-      public void run() {
-        //Make sure the bucket 0 is primary in this member.
-        Region region = getCache().getRegion("region");
-        region.put(0, "value");
-
-        //Add a listener to close vm1 when we send a distributed put all operation
-        //this will cause a retry after we have applied the original put all to
-        //the cache, causing a retry
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+    vm0.invoke(
+        new SerializableRunnable() {
 
           @Override
-          public void beforeSendMessage(DistributionManager dm, DistributionMessage msg) {
-            if (msg instanceof DistributedPutAllOperation.PutAllMessage) {
-              DistributionMessageObserver.setInstance(null);
-              disconnectFromDS(vm1);
-            }
+          public void run() {
+            //Make sure the bucket 0 is primary in this member.
+            Region region = getCache().getRegion("region");
+            region.put(0, "value");
+
+            //Add a listener to close vm1 when we send a distributed put all operation
+            //this will cause a retry after we have applied the original put all to
+            //the cache, causing a retry
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
+
+                  @Override
+                  public void beforeSendMessage(DistributionManager dm, DistributionMessage msg) {
+                    if (msg instanceof DistributedPutAllOperation.PutAllMessage) {
+                      DistributionMessageObserver.setInstance(null);
+                      disconnectFromDS(vm1);
+                    }
+                  }
+                });
           }
         });
-
-      }
-    });
 
     int port1 = createServerRegion(vm1, RegionShortcut.PARTITION_REDUNDANT_PERSISTENT);
     int port2 = createServerRegion(vm2, RegionShortcut.PARTITION_REDUNDANT_PERSISTENT);
@@ -227,45 +273,47 @@ public class ClientsWithVersioningRetryDUnitTest extends JUnit4CacheTestCase {
     //vm0 will kill vm1
     //vm0->vm2
     //client will retry the putall
-    vm3.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        Region region = getCache().getRegion("region");
-        Map map = new HashMap();
-        map.put(0, "a");
-        map.put(113, "b");
-        region.putAll(map);
-        RegionEntry entry = ((LocalRegion) region).getRegionEntry(0);
-        assertNotNull(entry);
-        assertNotNull(entry.getVersionStamp());
-        assertEquals(2, entry.getVersionStamp().getEntryVersion());
-        return null;
-      }
-    });
+    vm3.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Region region = getCache().getRegion("region");
+            Map map = new HashMap();
+            map.put(0, "a");
+            map.put(113, "b");
+            region.putAll(map);
+            RegionEntry entry = ((LocalRegion) region).getRegionEntry(0);
+            assertNotNull(entry);
+            assertNotNull(entry.getVersionStamp());
+            assertEquals(2, entry.getVersionStamp().getEntryVersion());
+            return null;
+          }
+        });
 
     //Verify the observer was triggered
-    vm0.invoke(new SerializableRunnable() {
+    vm0.invoke(
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        //if the observer was triggered, it would have cleared itself
-        assertNull(DistributionMessageObserver.getInstance());
-      }
-    });
+          @Override
+          public void run() {
+            //if the observer was triggered, it would have cleared itself
+            assertNull(DistributionMessageObserver.getInstance());
+          }
+        });
 
     //Make sure vm1 did in fact shut down
-    vm1.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        assertTrue(cache == null || cache.isClosed());
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            assertTrue(cache == null || cache.isClosed());
+          }
+        });
   }
 
   /**
-   * Test that we can successfully retry a distributed putAll on an accessor
-   * and get the version information.
-   * bug #48205
+   * Test that we can successfully retry a distributed putAll on an accessor and get the version
+   * information. bug #48205
    */
   @Test
   public void testRetryPutAllInAccessor() {
@@ -278,14 +326,15 @@ public class ClientsWithVersioningRetryDUnitTest extends JUnit4CacheTestCase {
     LogWriterUtils.getLogWriter().info("creating region in vm0");
     createRegionInPeer(vm0, RegionShortcut.PARTITION_REDUNDANT_PERSISTENT);
 
-    vm0.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        //Make sure the bucket 0 is primary in this member.
-        Region region = getCache().getRegion("region");
-        region.put(0, "value");
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            //Make sure the bucket 0 is primary in this member.
+            Region region = getCache().getRegion("region");
+            region.put(0, "value");
+          }
+        });
 
     LogWriterUtils.getLogWriter().info("creating region in vm1");
     createRegionInPeer(vm1, RegionShortcut.PARTITION_REDUNDANT_PERSISTENT);
@@ -295,28 +344,30 @@ public class ClientsWithVersioningRetryDUnitTest extends JUnit4CacheTestCase {
     createRegionInPeer(vm3, RegionShortcut.PARTITION_PROXY);
 
     expectedExceptions.add(IgnoredException.addIgnoredException("RuntimeException", vm2));
-    vm2.invoke(new SerializableRunnable("install message listener to ignore update") {
-      public void run() {
-        //Add a listener to close vm2 when we send a distributed put all operation
-        //this will cause a retry after we have applied the original put all to
-        //the cache, causing a retry
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
+    vm2.invoke(
+        new SerializableRunnable("install message listener to ignore update") {
+          public void run() {
+            //Add a listener to close vm2 when we send a distributed put all operation
+            //this will cause a retry after we have applied the original put all to
+            //the cache, causing a retry
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
 
-          @Override
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage msg) {
-            if (msg instanceof DistributedPutAllOperation.PutAllMessage) {
-              DistributionMessageObserver.setInstance(null);
-              Wait.pause(5000); // give vm1 time to process the message that we're ignoring
-              disconnectFromDS(vm0);
-              // no reply will be sent to vm0 due to this exception, but that's okay
-              // because vm0 has been shut down
-              throw new RuntimeException("test code is ignoring message: " + msg);
-            }
+                  @Override
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage msg) {
+                    if (msg instanceof DistributedPutAllOperation.PutAllMessage) {
+                      DistributionMessageObserver.setInstance(null);
+                      Wait.pause(5000); // give vm1 time to process the message that we're ignoring
+                      disconnectFromDS(vm0);
+                      // no reply will be sent to vm0 due to this exception, but that's okay
+                      // because vm0 has been shut down
+                      throw new RuntimeException("test code is ignoring message: " + msg);
+                    }
+                  }
+                });
           }
         });
-
-      }
-    });
 
     //This will be a put all to bucket 0
     //Here's the expected sequence
@@ -325,95 +376,104 @@ public class ClientsWithVersioningRetryDUnitTest extends JUnit4CacheTestCase {
     //vm2 will ignore the message & kill vm0
     //accessor->vm2 or vm1
     // version tag is recovered and put in the event & cache
-    vm3.invoke(new SerializableCallable("perform putAll in accessor") {
-      public Object call() throws Exception {
-        Region region = getCache().getRegion("region");
-        Map map = new HashMap();
-        map.put(0, "a");
-        map.put(113, "b");
-        region.putAll(map);
-        return null;
-      }
-    });
+    vm3.invoke(
+        new SerializableCallable("perform putAll in accessor") {
+          public Object call() throws Exception {
+            Region region = getCache().getRegion("region");
+            Map map = new HashMap();
+            map.put(0, "a");
+            map.put(113, "b");
+            region.putAll(map);
+            return null;
+          }
+        });
 
     // verify that the version is correct
-    vm1.invoke(new SerializableRunnable("verify vm1") {
+    vm1.invoke(
+        new SerializableRunnable("verify vm1") {
 
-      @Override
-      public void run() {
-        //if the observer was triggered, it would have cleared itself
-        assertNull(DistributionMessageObserver.getInstance());
+          @Override
+          public void run() {
+            //if the observer was triggered, it would have cleared itself
+            assertNull(DistributionMessageObserver.getInstance());
 
-        Region region = getCache().getRegion("region");
-        VersionTag tag = ((LocalRegion) region).getVersionTag(0);
-        assertEquals(2, tag.getEntryVersion());
-      }
-    });
+            Region region = getCache().getRegion("region");
+            VersionTag tag = ((LocalRegion) region).getVersionTag(0);
+            assertEquals(2, tag.getEntryVersion());
+          }
+        });
 
     //Verify the observer was triggered and the version is correct
-    vm2.invoke(new SerializableRunnable("verify vm2") {
+    vm2.invoke(
+        new SerializableRunnable("verify vm2") {
 
-      @Override
-      public void run() {
-        //if the observer was triggered, it would have cleared itself
-        assertNull(DistributionMessageObserver.getInstance());
+          @Override
+          public void run() {
+            //if the observer was triggered, it would have cleared itself
+            assertNull(DistributionMessageObserver.getInstance());
 
-        Region region = getCache().getRegion("region");
-        VersionTag tag = ((LocalRegion) region).getVersionTag(0);
-        assertEquals(2, tag.getEntryVersion());
-      }
-    });
+            Region region = getCache().getRegion("region");
+            VersionTag tag = ((LocalRegion) region).getVersionTag(0);
+            assertEquals(2, tag.getEntryVersion());
+          }
+        });
 
     //Make sure vm1 did in fact shut down
-    vm0.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        assertTrue(cache == null || cache.isClosed());
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            assertTrue(cache == null || cache.isClosed());
+          }
+        });
   }
 
   private void disconnectFromDS(VM vm) {
-    vm.invoke(new SerializableCallable("disconnecting vm " + vm) {
-      public Object call() throws Exception {
-        disconnectFromDS();
-        return null;
-      }
-    });
+    vm.invoke(
+        new SerializableCallable("disconnecting vm " + vm) {
+          public Object call() throws Exception {
+            disconnectFromDS();
+            return null;
+          }
+        });
   }
 
   private int createServerRegion(VM vm, final RegionShortcut shortcut) {
-    SerializableCallable createRegion = new SerializableCallable("create server region") {
-      public Object call() throws Exception {
-        RegionFactory<Object, Object> rf = getCache().createRegionFactory(shortcut);
-        if (!shortcut.equals(RegionShortcut.REPLICATE)) {
-          rf.setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(2).create());
-        }
-        rf.create("region");
+    SerializableCallable createRegion =
+        new SerializableCallable("create server region") {
+          public Object call() throws Exception {
+            RegionFactory<Object, Object> rf = getCache().createRegionFactory(shortcut);
+            if (!shortcut.equals(RegionShortcut.REPLICATE)) {
+              rf.setPartitionAttributes(
+                  new PartitionAttributesFactory().setRedundantCopies(2).create());
+            }
+            rf.create("region");
 
-        CacheServer server = getCache().addCacheServer();
-        int port = AvailablePortHelper.getRandomAvailableTCPPort();
-        server.setPort(port);
-        server.start();
-        return port;
-      }
-    };
+            CacheServer server = getCache().addCacheServer();
+            int port = AvailablePortHelper.getRandomAvailableTCPPort();
+            server.setPort(port);
+            server.start();
+            return port;
+          }
+        };
 
     return (Integer) vm.invoke(createRegion);
   }
 
   private void createRegionInPeer(VM vm, final RegionShortcut shortcut) {
-    SerializableCallable createRegion = new SerializableCallable("create peer region") {
-      public Object call() throws Exception {
-        RegionFactory<Object, Object> rf = getCache().createRegionFactory(shortcut);
-        if (!shortcut.equals(RegionShortcut.REPLICATE)) {
-          rf.setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(2).create());
-        }
-        rf.create("region");
-        return null;
-      }
-    };
+    SerializableCallable createRegion =
+        new SerializableCallable("create peer region") {
+          public Object call() throws Exception {
+            RegionFactory<Object, Object> rf = getCache().createRegionFactory(shortcut);
+            if (!shortcut.equals(RegionShortcut.REPLICATE)) {
+              rf.setPartitionAttributes(
+                  new PartitionAttributesFactory().setRedundantCopies(2).create());
+            }
+            rf.create("region");
+            return null;
+          }
+        };
     vm.invoke(createRegion);
   }
 
@@ -424,48 +484,50 @@ public class ClientsWithVersioningRetryDUnitTest extends JUnit4CacheTestCase {
   }
 
   private int createServerRegionWithPersistence(VM vm, final boolean persistentPdxRegistry) {
-    SerializableCallable createRegion = new SerializableCallable() {
-      public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory();
-        if (persistentPdxRegistry) {
-          cf.setPdxPersistent(true).setPdxDiskStore("store");
-        }
-        //      
-        Cache cache = getCache(cf);
-        cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("store");
+    SerializableCallable createRegion =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            CacheFactory cf = new CacheFactory();
+            if (persistentPdxRegistry) {
+              cf.setPdxPersistent(true).setPdxDiskStore("store");
+            }
+            //
+            Cache cache = getCache(cf);
+            cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("store");
 
-        AttributesFactory af = new AttributesFactory();
-        af.setScope(Scope.DISTRIBUTED_ACK);
-        af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-        af.setDiskStoreName("store");
-        createRootRegion("testSimplePdx", af.create());
+            AttributesFactory af = new AttributesFactory();
+            af.setScope(Scope.DISTRIBUTED_ACK);
+            af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+            af.setDiskStoreName("store");
+            createRootRegion("testSimplePdx", af.create());
 
-        CacheServer server = getCache().addCacheServer();
-        int port = AvailablePortHelper.getRandomAvailableTCPPort();
-        server.setPort(port);
-        server.start();
-        return port;
-      }
-    };
+            CacheServer server = getCache().addCacheServer();
+            int port = AvailablePortHelper.getRandomAvailableTCPPort();
+            server.setPort(port);
+            server.start();
+            return port;
+          }
+        };
 
     return (Integer) vm.invoke(createRegion);
   }
 
   private int createServerAccessor(VM vm) {
-    SerializableCallable createRegion = new SerializableCallable() {
-      public Object call() throws Exception {
-        AttributesFactory af = new AttributesFactory();
-        af.setScope(Scope.DISTRIBUTED_ACK);
-        af.setDataPolicy(DataPolicy.EMPTY);
-        createRootRegion("testSimplePdx", af.create());
+    SerializableCallable createRegion =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            AttributesFactory af = new AttributesFactory();
+            af.setScope(Scope.DISTRIBUTED_ACK);
+            af.setDataPolicy(DataPolicy.EMPTY);
+            createRootRegion("testSimplePdx", af.create());
 
-        CacheServer server = getCache().addCacheServer();
-        int port = AvailablePortHelper.getRandomAvailableTCPPort();
-        server.setPort(port);
-        server.start();
-        return port;
-      }
-    };
+            CacheServer server = getCache().addCacheServer();
+            int port = AvailablePortHelper.getRandomAvailableTCPPort();
+            server.setPort(port);
+            server.start();
+            return port;
+          }
+        };
 
     return (Integer) vm.invoke(createRegion);
   }
@@ -474,20 +536,22 @@ public class ClientsWithVersioningRetryDUnitTest extends JUnit4CacheTestCase {
     createClientRegion(vm, port1, port2, false);
   }
 
-  private void createClientRegion(final VM vm, final int port1, final int port2, final boolean threadLocalConnections) {
-    SerializableCallable createRegion = new SerializableCallable("create client region in " + vm) {
-      public Object call() throws Exception {
-        ClientCacheFactory cf = new ClientCacheFactory();
-        cf.addPoolServer(NetworkUtils.getServerHostName(vm.getHost()), port1);
-        cf.addPoolServer(NetworkUtils.getServerHostName(vm.getHost()), port2);
-        cf.setPoolPRSingleHopEnabled(false);
-        cf.setPoolThreadLocalConnections(threadLocalConnections);
-        cf.setPoolReadTimeout(10 * 60 * 1000);
-        ClientCache cache = getClientCache(cf);
-        cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create("region");
-        return null;
-      }
-    };
+  private void createClientRegion(
+      final VM vm, final int port1, final int port2, final boolean threadLocalConnections) {
+    SerializableCallable createRegion =
+        new SerializableCallable("create client region in " + vm) {
+          public Object call() throws Exception {
+            ClientCacheFactory cf = new ClientCacheFactory();
+            cf.addPoolServer(NetworkUtils.getServerHostName(vm.getHost()), port1);
+            cf.addPoolServer(NetworkUtils.getServerHostName(vm.getHost()), port2);
+            cf.setPoolPRSingleHopEnabled(false);
+            cf.setPoolThreadLocalConnections(threadLocalConnections);
+            cf.setPoolReadTimeout(10 * 60 * 1000);
+            ClientCache cache = getClientCache(cf);
+            cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create("region");
+            return null;
+          }
+        };
     vm.invoke(createRegion);
   }
 }

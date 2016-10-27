@@ -29,14 +29,9 @@ import org.apache.geode.internal.admin.remote.AlertLevelChangeMessage;
 import org.apache.geode.internal.logging.LogWriterImpl;
 
 /**
- * This class will act as a messenger from manager to members for various
- * operations.
- * 
- * To start with its is designed to Manager start stop details, change alert
- * level.
- * 
- * 
- * 
+ * This class will act as a messenger from manager to members for various operations.
+ *
+ * <p>To start with its is designed to Manager start stop details, change alert level.
  */
 public class MemberMessenger {
 
@@ -44,11 +39,11 @@ public class MemberMessenger {
   private ManagementResourceRepo repo;
   private InternalDistributedSystem system;
 
-  public MemberMessenger(MBeanJMXAdapter jmxAdapter, ManagementResourceRepo repo, InternalDistributedSystem system) {
+  public MemberMessenger(
+      MBeanJMXAdapter jmxAdapter, ManagementResourceRepo repo, InternalDistributedSystem system) {
     this.jmxAdapter = jmxAdapter;
     this.repo = repo;
     this.system = system;
-
   }
 
   public void sendManagerInfo(DistributedMember receiver) {
@@ -58,7 +53,6 @@ public class MemberMessenger {
     ManagerStartupMessage msg = ManagerStartupMessage.create(alertCode);
     msg.setRecipient((InternalDistributedMember) receiver);
     sendAsync(msg);
-
   }
 
   public void broadcastManagerInfo() {
@@ -77,12 +71,9 @@ public class MemberMessenger {
     if (dm instanceof DistributionManager) {
       msg.process((DistributionManager) system.getDistributionManager());
     }
-
   }
 
-  /**
-   * Sends a message and does not wait for a response
-   */
+  /** Sends a message and does not wait for a response */
   void sendAsync(DistributionMessage msg) {
     if (system != null) {
       system.getDistributionManager().putOutgoing(msg);
@@ -90,8 +81,8 @@ public class MemberMessenger {
   }
 
   /**
-   * Sets the alert level for this manager agent. Sends a
-   * {@link AlertLevelChangeMessage} to each member of the distributed system.
+   * Sets the alert level for this manager agent. Sends a {@link AlertLevelChangeMessage} to each
+   * member of the distributed system.
    */
   public void setAlertLevel(String levelName) {
     int alertCode = LogWriterImpl.levelNameToCode(levelName);

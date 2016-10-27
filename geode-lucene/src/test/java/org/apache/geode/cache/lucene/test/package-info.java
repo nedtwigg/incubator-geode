@@ -16,8 +16,5 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/**
- * Utility classes for testing the lucene functionality.
- */
-
+/** Utility classes for testing the lucene functionality. */
 package org.apache.geode.cache.lucene.test;

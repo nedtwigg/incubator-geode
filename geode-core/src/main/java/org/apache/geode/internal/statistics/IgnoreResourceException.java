@@ -19,43 +19,34 @@ package org.apache.geode.internal.statistics;
 import org.apache.geode.GemFireCheckedException;
 
 /**
- * Indicates that a Statistics resource instance with a null StatisticsType
- * should be ignored by the statistics sampler.
- * <p/>
- * Extracted from {@link StatArchiveWriter}.
- * 
+ * Indicates that a Statistics resource instance with a null StatisticsType should be ignored by the
+ * statistics sampler.
+ *
+ * <p>Extracted from {@link StatArchiveWriter}.
+ *
  * @since GemFire 7.0
  */
 public class IgnoreResourceException extends GemFireCheckedException {
   private static final long serialVersionUID = 3371071862581873081L;
 
-  /**
-   * Creates a new <code>IgnoreResourceException</code> with no detailed message.
-   */
+  /** Creates a new <code>IgnoreResourceException</code> with no detailed message. */
   public IgnoreResourceException() {
     super();
   }
 
-  /**
-   * Creates a new <code>IgnoreResourceException</code> with the given detail
-   * message.
-   */
+  /** Creates a new <code>IgnoreResourceException</code> with the given detail message. */
   public IgnoreResourceException(String message) {
     super(message);
   }
 
-  /**
-   * Creates a new <code>IgnoreResourceException</code> with the given detail
-   * message and cause.
-   */
+  /** Creates a new <code>IgnoreResourceException</code> with the given detail message and cause. */
   public IgnoreResourceException(String message, Throwable cause) {
     super(message);
     this.initCause(cause);
   }
 
   /**
-   * Creates a new <code>IgnoreResourceException</code> with the given cause and
-   * no detail message
+   * Creates a new <code>IgnoreResourceException</code> with the given cause and no detail message
    */
   public IgnoreResourceException(Throwable cause) {
     super();

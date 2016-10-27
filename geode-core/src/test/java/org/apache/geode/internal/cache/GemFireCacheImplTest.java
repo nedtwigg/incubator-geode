@@ -49,15 +49,20 @@ public class GemFireCacheImplTest {
       int MAX_THREADS = GemFireCacheImpl.EVENT_THREAD_LIMIT;
       final CountDownLatch cdl = new CountDownLatch(MAX_THREADS);
       for (int i = 1; i <= MAX_THREADS; i++) {
-        executor.execute(() -> {
-          cdl.countDown();
-          try {
-            cdl.await();
-          } catch (InterruptedException e) {
-          }
-        });
+        executor.execute(
+            () -> {
+              cdl.countDown();
+              try {
+                cdl.await();
+              } catch (InterruptedException e) {
+              }
+            });
       }
-      Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS).timeout(90, TimeUnit.SECONDS).until(() -> assertEquals(MAX_THREADS, executor.getCompletedTaskCount()));
+      Awaitility.await()
+          .pollInterval(10, TimeUnit.MILLISECONDS)
+          .pollDelay(10, TimeUnit.MILLISECONDS)
+          .timeout(90, TimeUnit.SECONDS)
+          .until(() -> assertEquals(MAX_THREADS, executor.getCompletedTaskCount()));
     } finally {
       gfc.close();
     }

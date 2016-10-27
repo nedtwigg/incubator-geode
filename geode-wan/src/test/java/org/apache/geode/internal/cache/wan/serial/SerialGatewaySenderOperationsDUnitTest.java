@@ -54,9 +54,7 @@ import org.apache.geode.test.dunit.RMIException;
 import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
-/**
- * 
- */
+/** */
 @Category(DistributedTest.class)
 public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
 
@@ -101,19 +99,24 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
 
     vm4.invoke(() -> SerialGatewaySenderOperationsDUnitTest.verifyGatewaySenderOperations("ln"));
     vm5.invoke(() -> SerialGatewaySenderOperationsDUnitTest.verifyGatewaySenderOperations("ln"));
-
   }
 
   protected void createSenderRegions() {
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
   }
 
   protected void createReceiverRegions() {
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
   }
 
   protected void createSenderCaches(Integer lnPort) {
@@ -160,7 +163,8 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm4.invoke(() -> SerialGatewaySenderOperationsDUnitTest.verifySenderPausedState("ln"));
     vm5.invoke(() -> SerialGatewaySenderOperationsDUnitTest.verifySenderPausedState("ln"));
 
-    AsyncInvocation inv1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 10));
+    AsyncInvocation inv1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 10));
 
     vm4.invoke(() -> WANTestBase.resumeSender("ln"));
     vm5.invoke(() -> WANTestBase.resumeSender("ln"));
@@ -181,7 +185,6 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
     validateQueueContents(vm5, "ln", 0);
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 100));
     vm3.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 100));
-
   }
 
   @Test
@@ -226,9 +229,7 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
 
     vm4.invoke(() -> WANTestBase.validateQueueSizeStat("ln", 0));
     vm5.invoke(() -> WANTestBase.validateQueueSizeStat("ln", 0));
-    /**
-     * Should have no effect on GatewaySenderState
-     */
+    /** Should have no effect on GatewaySenderState */
     vm4.invoke(() -> WANTestBase.resumeSender("ln"));
     vm5.invoke(() -> WANTestBase.resumeSender("ln"));
 
@@ -293,7 +294,8 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm3.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 200));
 
     //Do some puts while restarting a sender
-    AsyncInvocation asyncPuts = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 300));
+    AsyncInvocation asyncPuts =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 300));
 
     Thread.sleep(10);
     vm4.invoke(() -> WANTestBase.startSender("ln"));
@@ -305,7 +307,6 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm3.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 300));
 
     vm4.invoke(() -> WANTestBase.validateQueueSizeStat("ln", 0));
-
   }
 
   @Test
@@ -347,12 +348,14 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
     Integer nyPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, lnPort));
 
     createCacheInVMs(nyPort, vm2);
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
     vm2.invoke(() -> WANTestBase.createReceiver());
 
     createCacheInVMs(lnPort, vm4);
     createSenderVM4();
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
     vm4.invoke(() -> WANTestBase.startSender("ln"));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 10));
@@ -361,7 +364,8 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
 
     vm5.invoke(() -> WANTestBase.createCache(lnPort));
     createSenderVM5();
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
     vm5.invoke(() -> WANTestBase.startSender("ln"));
 
     vm5.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 100));
@@ -376,7 +380,8 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
 
     vm4.invoke(() -> WANTestBase.createCache(lnPort));
     createSenderVM4();
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
     vm4.invoke(() -> WANTestBase.startSender("ln"));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 10));
@@ -387,7 +392,8 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
 
     vm5.invoke(() -> WANTestBase.createCache(lnPort));
     createSenderVM5();
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
     vm5.invoke(() -> WANTestBase.startSender("ln"));
 
     vm5.invoke(() -> WANTestBase.doPutsFrom(getTestMethodName() + "_RR", 10, 110));
@@ -402,7 +408,8 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
 
     vm5.invoke(() -> WANTestBase.startSender("ln"));
     createCacheInVMs(nyPort, vm2);
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
     vm2.invoke(() -> WANTestBase.createReceiver());
 
     LogWriterUtils.getLogWriter().info("Completed puts in the region");
@@ -418,9 +425,7 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm.invoke(() -> WANTestBase.validateQueueContents(site, size));
   }
 
-  /**
-   * Destroy SerialGatewaySender on all the nodes.
-   */
+  /** Destroy SerialGatewaySender on all the nodes. */
   @Test
   public void testDestroySerialGatewaySenderOnAllNodes() {
     Integer lnPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
@@ -456,9 +461,7 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm5.invoke(() -> WANTestBase.verifySenderDestroyed("ln", false));
   }
 
-  /**
-   * Destroy SerialGatewaySender on a single node.
-   */
+  /** Destroy SerialGatewaySender on a single node. */
   @Test
   public void testDestroySerialGatewaySenderOnSingleNode() {
     Integer lnPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
@@ -492,8 +495,8 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
   }
 
   /**
-   * Since the sender is attached to a region and in use, it can not be destroyed.
-   * Hence, exception is thrown by the sender API.
+   * Since the sender is attached to a region and in use, it can not be destroyed. Hence, exception
+   * is thrown by the sender API.
    */
   @Test
   public void testDestroySerialGatewaySenderExceptionScenario() {
@@ -519,7 +522,9 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
     try {
       vm4.invoke(() -> WANTestBase.destroySender("ln"));
     } catch (RMIException e) {
-      assertTrue("Cause of the exception should be GatewaySenderException", e.getCause() instanceof GatewaySenderException);
+      assertTrue(
+          "Cause of the exception should be GatewaySenderException",
+          e.getCause() instanceof GatewaySenderException);
     }
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 10));
   }
@@ -539,26 +544,41 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
 
     startSenderInVMs("ln", vm4, vm5);
 
-    SerializableRunnable check = new SerializableRunnable("assert no cache servers") {
-      public void run() {
-        InternalLocator inl = (InternalLocator) Locator.getLocator();
-        ServerLocator server = inl.getServerLocatorAdvisee();
-        LogWriterUtils.getLogWriter().info("Server load map is " + server.getLoadMap());
-        assertTrue("expected an empty map but found " + server.getLoadMap(), server.getLoadMap().isEmpty());
-        QueueConnectionRequest request = new QueueConnectionRequest(ClientProxyMembershipID.getNewProxyMembership(InternalDistributedSystem.getConnectedInstance()), 1, new HashSet<>(), "", false);
-        QueueConnectionResponse response = (QueueConnectionResponse) server.processRequest(request);
-        assertTrue("expected no servers but found " + response.getServers(), response.getServers().isEmpty());
-      }
-    };
+    SerializableRunnable check =
+        new SerializableRunnable("assert no cache servers") {
+          public void run() {
+            InternalLocator inl = (InternalLocator) Locator.getLocator();
+            ServerLocator server = inl.getServerLocatorAdvisee();
+            LogWriterUtils.getLogWriter().info("Server load map is " + server.getLoadMap());
+            assertTrue(
+                "expected an empty map but found " + server.getLoadMap(),
+                server.getLoadMap().isEmpty());
+            QueueConnectionRequest request =
+                new QueueConnectionRequest(
+                    ClientProxyMembershipID.getNewProxyMembership(
+                        InternalDistributedSystem.getConnectedInstance()),
+                    1,
+                    new HashSet<>(),
+                    "",
+                    false);
+            QueueConnectionResponse response =
+                (QueueConnectionResponse) server.processRequest(request);
+            assertTrue(
+                "expected no servers but found " + response.getServers(),
+                response.getServers().isEmpty());
+          }
+        };
     vm0.invoke(check);
     vm1.invoke(check);
-
   }
 
   @Test
   public void registeringInstantiatorsInGatewayShouldNotCauseDeadlock() {
-    Integer lnPort = (Integer) vm0.invoke(WANTestBase.class, "createFirstLocatorWithDSId", new Object[] { 1 });
-    Integer nyPort = (Integer) vm1.invoke(WANTestBase.class, "createFirstRemoteLocator", new Object[] { 2, lnPort });
+    Integer lnPort =
+        (Integer) vm0.invoke(WANTestBase.class, "createFirstLocatorWithDSId", new Object[] {1});
+    Integer nyPort =
+        (Integer)
+            vm1.invoke(WANTestBase.class, "createFirstRemoteLocator", new Object[] {2, lnPort});
 
     vm2.invoke(() -> createReceiverAndServer(nyPort));
     vm3.invoke(() -> createReceiverAndServer(lnPort));
@@ -574,8 +594,11 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
 
   @Test
   public void registeringDataSerializableInGatewayShouldNotCauseDeadlock() {
-    Integer lnPort = (Integer) vm0.invoke(WANTestBase.class, "createFirstLocatorWithDSId", new Object[] { 1 });
-    Integer nyPort = (Integer) vm1.invoke(WANTestBase.class, "createFirstRemoteLocator", new Object[] { 2, lnPort });
+    Integer lnPort =
+        (Integer) vm0.invoke(WANTestBase.class, "createFirstLocatorWithDSId", new Object[] {1});
+    Integer nyPort =
+        (Integer)
+            vm1.invoke(WANTestBase.class, "createFirstRemoteLocator", new Object[] {2, lnPort});
 
     vm2.invoke(() -> createReceiverAndServer(nyPort));
     vm3.invoke(() -> createReceiverAndServer(lnPort));
@@ -662,7 +685,7 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
 
     @Override
     public Class<?>[] getSupportedClasses() {
-      return new Class<?>[] { TestObject.class };
+      return new Class<?>[] {TestObject.class};
     }
 
     @Override
@@ -687,8 +710,7 @@ public class SerialGatewaySenderOperationsDUnitTest extends WANTestBase {
 
     protected String id;
 
-    public TestObject() {
-    }
+    public TestObject() {}
 
     public TestObject(String id) {
       this.id = id;

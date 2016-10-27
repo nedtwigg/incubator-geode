@@ -18,10 +18,9 @@ package org.apache.geode.internal.cache;
 
 import org.apache.geode.internal.cache.versions.VersionStamp;
 
-/**
- *
- */
-public abstract class VersionedThinDiskRegionEntry extends VMThinDiskRegionEntry implements VersionStamp {
+/** */
+public abstract class VersionedThinDiskRegionEntry extends VMThinDiskRegionEntry
+    implements VersionStamp {
 
   protected VersionedThinDiskRegionEntry(RegionEntryContext context, Object value) {
     super(context, value);

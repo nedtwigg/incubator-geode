@@ -27,10 +27,7 @@ import org.springframework.shell.core.MethodTarget;
 import org.apache.geode.internal.logging.LogWriterImpl;
 import org.apache.geode.management.cli.ConverterHint;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class LogLevelConverter implements Converter<String> {
   private Set<Completion> logLevels;
 
@@ -53,7 +50,12 @@ public class LogLevelConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
     completions.addAll(logLevels);
     return !completions.isEmpty();
   }

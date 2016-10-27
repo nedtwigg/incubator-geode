@@ -68,12 +68,15 @@ public class ReconnectedCacheServerDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testCacheServerConfigRetained() {
     // make sure the environment isn't polluted
-    assertFalse(Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "autoReconnect-useCacheXMLFile"));
+    assertFalse(
+        Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "autoReconnect-useCacheXMLFile"));
 
     GemFireCacheImpl gc = (GemFireCacheImpl) this.cache;
 
     // fool the system into thinking cluster-config is being used
-    GMSMembershipManager mgr = (GMSMembershipManager) MembershipManagerHelper.getMembershipManager(gc.getDistributedSystem());
+    GMSMembershipManager mgr =
+        (GMSMembershipManager)
+            MembershipManagerHelper.getMembershipManager(gc.getDistributedSystem());
     mgr.saveCacheXmlForReconnect(true);
 
     // the cache server config should now be stored in the cache's config
@@ -84,12 +87,15 @@ public class ReconnectedCacheServerDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testDefaultCacheServerNotCreatedOnReconnect() {
 
-    assertFalse(Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "autoReconnect-useCacheXMLFile"));
+    assertFalse(
+        Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "autoReconnect-useCacheXMLFile"));
 
     GemFireCacheImpl gc = (GemFireCacheImpl) this.cache;
 
     // fool the system into thinking cluster-config is being used
-    GMSMembershipManager mgr = (GMSMembershipManager) MembershipManagerHelper.getMembershipManager(gc.getDistributedSystem());
+    GMSMembershipManager mgr =
+        (GMSMembershipManager)
+            MembershipManagerHelper.getMembershipManager(gc.getDistributedSystem());
     final boolean sharedConfigEnabled = true;
     mgr.saveCacheXmlForReconnect(sharedConfigEnabled);
 
@@ -102,7 +108,9 @@ public class ReconnectedCacheServerDUnitTest extends JUnit4CacheTestCase {
     InternalDistributedSystem system = gc.getDistributedSystem();
     system.createAndStartCacheServers(gc.getCacheConfig().getCacheServerCreation(), gc);
 
-    assertEquals("found these cache servers:" + gc.getCacheServers(), numServers, gc.getCacheServers().size());
-
+    assertEquals(
+        "found these cache servers:" + gc.getCacheServers(),
+        numServers,
+        gc.getCacheServers().size());
   }
 }

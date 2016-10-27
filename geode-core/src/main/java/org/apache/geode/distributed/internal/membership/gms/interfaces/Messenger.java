@@ -25,53 +25,45 @@ import org.apache.geode.distributed.internal.membership.NetView;
 import org.apache.geode.distributed.internal.membership.QuorumChecker;
 
 public interface Messenger extends Service {
-  /**
-   * adds a handler for the given class/interface of messages
-   */
+  /** adds a handler for the given class/interface of messages */
   void addHandler(Class c, MessageHandler h);
 
   /**
-   * sends an asynchronous message when the membership view may not have
-   * been established.  Returns destinations that did not
-   * receive the message due to no longer being in the view
+   * sends an asynchronous message when the membership view may not have been established. Returns
+   * destinations that did not receive the message due to no longer being in the view
    */
   Set<InternalDistributedMember> send(DistributionMessage m, NetView alternateView);
 
   /**
-   * sends an asynchronous message.  Returns destinations that did not
-   * receive the message due to no longer being in the view
+   * sends an asynchronous message. Returns destinations that did not receive the message due to no
+   * longer being in the view
    */
   Set<InternalDistributedMember> send(DistributionMessage m);
 
   /**
-   * sends an asynchronous message.  Returns destinations that did not
-   * receive the message due to no longer being in the view.  Does
-   * not guarantee delivery of the message (no retransmissions)
+   * sends an asynchronous message. Returns destinations that did not receive the message due to no
+   * longer being in the view. Does not guarantee delivery of the message (no retransmissions)
    */
   Set<InternalDistributedMember> sendUnreliably(DistributionMessage m);
 
-  /**
-   * returns the endpoint ID for this member
-   */
+  /** returns the endpoint ID for this member */
   InternalDistributedMember getMemberID();
 
-  /**
-   * retrieves the quorum checker that is used during auto-reconnect attempts
-   */
+  /** retrieves the quorum checker that is used during auto-reconnect attempts */
   QuorumChecker getQuorumChecker();
 
   /**
    * test whether multicast is not only turned on but is working
+   *
    * @return true multicast is enabled and working
    */
   boolean testMulticast(long timeout) throws InterruptedException;
 
   /**
-   * For the state-flush algorithm we need to be able to record
-   * the state of outgoing messages to the given member.  If multicast
-   * is being used for region operations we also need to record its
+   * For the state-flush algorithm we need to be able to record the state of outgoing messages to
+   * the given member. If multicast is being used for region operations we also need to record its
    * state.
-   * 
+   *
    * @param member the target member
    * @param state messaging state is stored in this map
    * @param includeMulticast whether to record multicast state
@@ -79,16 +71,17 @@ public interface Messenger extends Service {
   void getMessageState(InternalDistributedMember member, Map state, boolean includeMulticast);
 
   /**
-   * The flip-side of getMessageState, this method takes the state it recorded
-   * and waits for messages from the given member to be received.
-   * 
+   * The flip-side of getMessageState, this method takes the state it recorded and waits for
+   * messages from the given member to be received.
+   *
    * @param member the member flushing operations to this member
    * @param state the state of that member's outgoing messaging to this member
    */
   void waitForMessageState(InternalDistributedMember member, Map state) throws InterruptedException;
 
   /**
-   * Get the public key of member. 
+   * Get the public key of member.
+   *
    * @param mbr
    * @return byte[] public key for member
    */
@@ -96,32 +89,33 @@ public interface Messenger extends Service {
 
   /**
    * Set public key of member.
+   *
    * @param publickey
    * @param mbr
    */
-
   void setPublicKey(byte[] publickey, InternalDistributedMember mbr);
 
   /**
    * Set cluster key in local member.Memebr calls when it gets cluster key in join response
+   *
    * @param clusterSecretKey
    */
   void setClusterSecretKey(byte[] clusterSecretKey);
 
-  /** 
+  /**
    * To retrieve the cluster key. This needs to send cluster key to new memebr.
+   *
    * @return byte[] cluster key
    */
   byte[] getClusterSecretKey();
 
   /**
    * To set requestId in request. This requestId comes back in response to match the request.
+   *
    * @return int request id
    */
   int getRequestId();
 
-  /**
-   * Initialize the cluster key, this happens when member becomes coordinator.
-   */
+  /** Initialize the cluster key, this happens when member becomes coordinator. */
   void initClusterKey();
 }

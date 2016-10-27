@@ -32,9 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Class MembersListService
- * 
- * This class contains implementations of getting list of Cluster Members.
- * 
+ *
+ * <p>This class contains implementations of getting list of Cluster Members.
+ *
  * @since GemFire version 7.5
  */
 @Component

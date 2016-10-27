@@ -33,15 +33,13 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 
 /**
- * Same tests as that of {@link PRTXJUnitTest} after setting
- * "distributed-transactions" property to true
- *
+ * Same tests as that of {@link PRTXJUnitTest} after setting "distributed-transactions" property to
+ * true
  */
-@Category({ IntegrationTest.class, DistributedTransactionsTest.class })
+@Category({IntegrationTest.class, DistributedTransactionsTest.class})
 public class PRDistTXJUnitTest extends PRTXJUnitTest {
 
-  public PRDistTXJUnitTest() {
-  }
+  public PRDistTXJUnitTest() {}
 
   @Override
   protected void createCache() throws Exception {

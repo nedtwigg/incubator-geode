@@ -22,10 +22,7 @@ import java.util.logging.Level;
 import org.apache.geode.internal.lang.StringUtils;
 import org.apache.geode.internal.util.IOUtils;
 
-/**
- *
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 // According to 8.0 discussions, gfsh should have as less confing as possible
 // hence Persisting GfshConfig is not done
 public class GfshConfig {
@@ -57,21 +54,35 @@ public class GfshConfig {
   private int logFileDiskLimit;
 
   public GfshConfig() {
-    this(HISTORY_FILE.getAbsolutePath(), DEFAULT_PROMPT, MAX_HISTORY_SIZE, null, null, null, null, null);
+    this(
+        HISTORY_FILE.getAbsolutePath(),
+        DEFAULT_PROMPT,
+        MAX_HISTORY_SIZE,
+        null,
+        null,
+        null,
+        null,
+        null);
   }
 
   public boolean deleteHistoryFile() {
-    if (historyFileName == null)
-      return true;
+    if (historyFileName == null) return true;
 
     File file = new File(historyFileName);
-    if (!file.exists())
-      return true;
+    if (!file.exists()) return true;
 
     return file.delete();
   }
 
-  public GfshConfig(String historyFileName, String defaultPrompt, int historySize, String logDir, Level logLevel, Integer logLimit, Integer logCount, String initFileName) {
+  public GfshConfig(
+      String historyFileName,
+      String defaultPrompt,
+      int historySize,
+      String logDir,
+      Level logLevel,
+      Integer logLimit,
+      Integer logCount,
+      String initFileName) {
     this.historyFileName = historyFileName;
     this.defaultPrompt = defaultPrompt;
     this.historySize = historySize;
@@ -89,18 +100,27 @@ public class GfshConfig {
       this.logDir = logDir;
     }
     if (logLevel == null) {
-      this.logLevel = getLogLevel(System.getProperty(LOG_LEVEL_PROPERTY, DEFAULT_LOGLEVEL.getName()));
+      this.logLevel =
+          getLogLevel(System.getProperty(LOG_LEVEL_PROPERTY, DEFAULT_LOGLEVEL.getName()));
     } else {
       this.logLevel = logLevel;
     }
     if (logLimit == null) {
-      this.logFileSizeLimit = getParsedOrDefault(System.getProperty(LOG_FILE_SIZE_LIMIT_PROPERTY), LOG_FILE_SIZE_LIMIT_PROPERTY, DEFAULT_LOGFILE_SIZE_LIMIT);
+      this.logFileSizeLimit =
+          getParsedOrDefault(
+              System.getProperty(LOG_FILE_SIZE_LIMIT_PROPERTY),
+              LOG_FILE_SIZE_LIMIT_PROPERTY,
+              DEFAULT_LOGFILE_SIZE_LIMIT);
     } else {
       this.logFileSizeLimit = logLimit;
     }
     if (logCount == null) {
       // validation & correction to default is done in getLogFileCount()
-      this.logFileDiskLimit = getParsedOrDefault(System.getProperty(LOG_DISK_SPACE_LIMIT_PROPERTY), LOG_DISK_SPACE_LIMIT_PROPERTY, DEFAULT_LOGFILE_DISK_USAGE);
+      this.logFileDiskLimit =
+          getParsedOrDefault(
+              System.getProperty(LOG_DISK_SPACE_LIMIT_PROPERTY),
+              LOG_DISK_SPACE_LIMIT_PROPERTY,
+              DEFAULT_LOGFILE_DISK_USAGE);
     } else {
       this.logFileDiskLimit = logCount;
     }
@@ -156,7 +176,9 @@ public class GfshConfig {
 
   private String getLoggerConfig() {
     StringBuilder builder = new StringBuilder();
-    builder.append("init-file=" + (getInitFileName() == null ? "" : getInitFileName())).append(Gfsh.LINE_SEPARATOR);
+    builder
+        .append("init-file=" + (getInitFileName() == null ? "" : getInitFileName()))
+        .append(Gfsh.LINE_SEPARATOR);
     builder.append("log-file=" + getLogFilePath()).append(Gfsh.LINE_SEPARATOR);
     builder.append("log-level=" + getLogLevel().getName()).append(Gfsh.LINE_SEPARATOR);
     builder.append("log-file-size-limit=" + getLogFileSizeLimit()).append(Gfsh.LINE_SEPARATOR);
@@ -176,7 +198,8 @@ public class GfshConfig {
 
   private static Level getLogLevel(final String logLevelString) {
     try {
-      String logLevelAsString = StringUtils.isBlank(logLevelString) ? "" : logLevelString.trim(); //trim spaces if any
+      String logLevelAsString =
+          StringUtils.isBlank(logLevelString) ? "" : logLevelString.trim(); //trim spaces if any
       // To support level NONE, used by GemFire
       if ("NONE".equalsIgnoreCase(logLevelAsString)) {
         logLevelAsString = Level.OFF.getName();
@@ -204,14 +227,22 @@ public class GfshConfig {
     return homeDirPath;
   }
 
-  private static int getParsedOrDefault(final String numberString, final String parseValueFor, final int defaultValue) {
+  private static int getParsedOrDefault(
+      final String numberString, final String parseValueFor, final int defaultValue) {
     if (numberString == null) {
       return defaultValue;
     }
     try {
       return Integer.valueOf(numberString);
     } catch (NumberFormatException e) {
-      System.err.println("Invalid value \"" + numberString + "\" specified for: \"" + parseValueFor + "\". Using default value: \"" + defaultValue + "\".");
+      System.err.println(
+          "Invalid value \""
+              + numberString
+              + "\" specified for: \""
+              + parseValueFor
+              + "\". Using default value: \""
+              + defaultValue
+              + "\".");
       return defaultValue;
     }
   }
@@ -239,11 +270,15 @@ public class GfshConfig {
    * directory, then the home directory. It need not exist at all.
    */
   private String searchForInitFileName() {
-    String homeDirectoryInitFileName = System.getProperty("user.home") + File.separatorChar + DEFAULT_INIT_FILE_NAME;
-    String currentDirectoryInitFileName = System.getProperty("user.dir") + File.separatorChar + DEFAULT_INIT_FILE_NAME;
+    String homeDirectoryInitFileName =
+        System.getProperty("user.home") + File.separatorChar + DEFAULT_INIT_FILE_NAME;
+    String currentDirectoryInitFileName =
+        System.getProperty("user.dir") + File.separatorChar + DEFAULT_INIT_FILE_NAME;
     String systemPropertyInitFileName = System.getProperty(INIT_FILE_PROPERTY);
 
-    String[] initFileNames = { systemPropertyInitFileName, currentDirectoryInitFileName, homeDirectoryInitFileName };
+    String[] initFileNames = {
+      systemPropertyInitFileName, currentDirectoryInitFileName, homeDirectoryInitFileName
+    };
 
     for (String initFileName : initFileNames) {
       if (IOUtils.isExistingPathname(initFileName)) {

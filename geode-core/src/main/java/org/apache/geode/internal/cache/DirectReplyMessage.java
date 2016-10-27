@@ -19,39 +19,31 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.distributed.internal.DirectReplyProcessor;
 import org.apache.geode.distributed.internal.DistributionMessage;
 
-/**
- * A message that can reply directly to the sender
- * 
- * 
- *
- */
+/** A message that can reply directly to the sender */
 public interface DirectReplyMessage {
   /**
-   * Called on the sending side. This reply processor
-   * will be handed the responses from the message.
+   * Called on the sending side. This reply processor will be handed the responses from the message.
    */
   DirectReplyProcessor getDirectReplyProcessor();
 
   /**
-   * Indicates whether the message could send an acknowledgement
-   * back on the connection the request was sent on.  This flag 
-   * only takes effect when {@link org.apache.geode.distributed.DistributedSystem#setThreadsSocketPolicy(boolean)} 
-   * is set to <code>false</code>
-   * If this flag is set to true, the process method <b> must </b> reply
-   * by calling {@link DistributionMessage#getReplySender(org.apache.geode.distributed.internal.DM)} and using
-   * the result to send the reply. the ReplySender determines whether to reply
-   * directly or through the shared channel.
+   * Indicates whether the message could send an acknowledgement back on the connection the request
+   * was sent on. This flag only takes effect when {@link
+   * org.apache.geode.distributed.DistributedSystem#setThreadsSocketPolicy(boolean)} is set to
+   * <code>false</code> If this flag is set to true, the process method <b> must </b> reply by
+   * calling {@link DistributionMessage#getReplySender(org.apache.geode.distributed.internal.DM)}
+   * and using the result to send the reply. the ReplySender determines whether to reply directly or
+   * through the shared channel.
+   *
    * @return true if a direct acknowledgement is allowed
    * @see org.apache.geode.distributed.internal.direct.DirectChannel
    */
   boolean supportsDirectAck();
 
   /**
-   * Called on the sending side. This method is invoked
-   * if the message will end up using the shared channel.
-   * The message is expected to register the processor
-   * and send it's id to the receiving side.
-   * 
+   * Called on the sending side. This method is invoked if the message will end up using the shared
+   * channel. The message is expected to register the processor and send it's id to the receiving
+   * side.
    */
   void registerProcessor();
 }

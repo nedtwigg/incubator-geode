@@ -26,9 +26,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.junit.Before;
 import org.junit.experimental.categories.Category;
 
-/**
- * Test of the behavior of a custom ResultCollector when handling exceptions
- */
+/** Test of the behavior of a custom ResultCollector when handling exceptions */
 @Category(DistributedTest.class)
 public class FunctionServiceLocalPRDUnitTest extends FunctionServiceBase {
 
@@ -51,5 +49,4 @@ public class FunctionServiceLocalPRDUnitTest extends FunctionServiceBase {
   public int numberOfExecutions() {
     return 1;
   }
-
 }

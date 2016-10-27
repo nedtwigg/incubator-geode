@@ -18,8 +18,7 @@
 package org.apache.geode;
 
 /**
- * A <code>LicenseException</code> is thrown when
- * the license check fails.
+ * A <code>LicenseException</code> is thrown when the license check fails.
  *
  * @deprecated Licensing is not supported as of 8.0.
  */
@@ -29,25 +28,17 @@ public class LicenseException extends GemFireException {
 
   //////////////////////  Constructors  //////////////////////
 
-  /**
-   * Creates a new <code>LicenseException</code>.
-   */
+  /** Creates a new <code>LicenseException</code>. */
   public LicenseException(String message) {
     super(message);
   }
 
-  /**
-   * Creates a new <code>LicenseException</code> that was
-   * caused by a given exception
-   */
+  /** Creates a new <code>LicenseException</code> that was caused by a given exception */
   public LicenseException(String message, Throwable thr) {
     super(message, thr);
   }
 
-  /**
-   * Creates a new <code>LicenseException</code> that was
-   * caused by a given exception
-   */
+  /** Creates a new <code>LicenseException</code> that was caused by a given exception */
   public LicenseException(Throwable thr) {
     super(thr.getMessage(), thr);
   }

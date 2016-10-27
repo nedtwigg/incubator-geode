@@ -21,11 +21,9 @@ import org.apache.geode.internal.lang.SystemUtils;
 import org.apache.geode.management.internal.cli.GfshParser;
 import org.apache.geode.management.internal.cli.parser.SyntaxConstants;
 
-/**-
- * Helper class to build command strings, used in the Dunits for testing gfsh
- * commands
- * 
- * 
+/**
+ * - Helper class to build command strings, used in the Dunits for testing gfsh commands
+ *
  * @since GemFire 7.0
  */
 public class CommandStringBuilder {
@@ -44,7 +42,8 @@ public class CommandStringBuilder {
 
   public CommandStringBuilder addArgument(String argument) {
     if (hasOptions) {
-      throw new IllegalStateException("Arguments can't be specified after options. Built String is: " + buffer.toString());
+      throw new IllegalStateException(
+          "Arguments can't be specified after options. Built String is: " + buffer.toString());
     }
     buffer.append(ARG_SEPARATOR);
     buffer.append(argument);

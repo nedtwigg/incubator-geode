@@ -49,8 +49,8 @@ import static org.junit.Assert.*;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * The ServerLauncherTest class is a test suite of unit tests testing the contract, functionality and invariants
- * of the ServerLauncher class.
+ * The ServerLauncherTest class is a test suite of unit tests testing the contract, functionality
+ * and invariants of the ServerLauncher class.
  *
  * @see org.apache.geode.distributed.ServerLauncher
  * @see org.apache.geode.distributed.ServerLauncher.Builder
@@ -59,7 +59,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
  * @see org.junit.Test
  * @since GemFire 7.0
  */
-@SuppressWarnings({ "deprecation", "unused" })
+@SuppressWarnings({"deprecation", "unused"})
 @Category(UnitTest.class)
 public class ServerLauncherTest {
 
@@ -68,17 +68,17 @@ public class ServerLauncherTest {
   @Rule
   public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
-  @Rule
-  public final TestName testName = new TestName();
+  @Rule public final TestName testName = new TestName();
 
   @Before
   public void setup() {
-    mockContext = new Mockery() {
-      {
-        setImposteriser(ClassImposteriser.INSTANCE);
-        setThreadingPolicy(new Synchroniser());
-      }
-    };
+    mockContext =
+        new Mockery() {
+          {
+            setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
+          }
+        };
   }
 
   @After
@@ -173,7 +173,9 @@ public class ServerLauncherTest {
     try {
       new Builder().setMemberName("  ");
     } catch (IllegalArgumentException expected) {
-      assertEquals(LocalizedStrings.Launcher_Builder_MEMBER_NAME_ERROR_MESSAGE.toLocalizedString("Server"), expected.getMessage());
+      assertEquals(
+          LocalizedStrings.Launcher_Builder_MEMBER_NAME_ERROR_MESSAGE.toLocalizedString("Server"),
+          expected.getMessage());
       throw expected;
     }
   }
@@ -183,7 +185,9 @@ public class ServerLauncherTest {
     try {
       new Builder().setMemberName("");
     } catch (IllegalArgumentException expected) {
-      assertEquals(LocalizedStrings.Launcher_Builder_MEMBER_NAME_ERROR_MESSAGE.toLocalizedString("Server"), expected.getMessage());
+      assertEquals(
+          LocalizedStrings.Launcher_Builder_MEMBER_NAME_ERROR_MESSAGE.toLocalizedString("Server"),
+          expected.getMessage());
       throw expected;
     }
   }
@@ -210,7 +214,9 @@ public class ServerLauncherTest {
     try {
       new Builder().setPid(-1);
     } catch (IllegalArgumentException expected) {
-      assertEquals(LocalizedStrings.Launcher_Builder_PID_ERROR_MESSAGE.toLocalizedString(), expected.getMessage());
+      assertEquals(
+          LocalizedStrings.Launcher_Builder_PID_ERROR_MESSAGE.toLocalizedString(),
+          expected.getMessage());
       throw expected;
     }
   }
@@ -226,7 +232,8 @@ public class ServerLauncherTest {
     assertNull(builder.getServerBindAddress());
     assertSame(builder, builder.setServerBindAddress("  "));
     assertNull(builder.getServerBindAddress());
-    assertSame(builder, builder.setServerBindAddress(InetAddress.getLocalHost().getCanonicalHostName()));
+    assertSame(
+        builder, builder.setServerBindAddress(InetAddress.getLocalHost().getCanonicalHostName()));
     assertEquals(InetAddress.getLocalHost(), builder.getServerBindAddress());
   }
 
@@ -235,9 +242,13 @@ public class ServerLauncherTest {
     try {
       new Builder().setServerBindAddress("badHostName.badCompany.com");
     } catch (IllegalArgumentException expected) {
-      final String expectedMessage1 = LocalizedStrings.Launcher_Builder_UNKNOWN_HOST_ERROR_MESSAGE.toLocalizedString("Server");
-      final String expectedMessage2 = "badHostName.badCompany.com is not an address for this machine.";
-      assertTrue(expected.getMessage().equals(expectedMessage1) || expected.getMessage().equals(expectedMessage2));
+      final String expectedMessage1 =
+          LocalizedStrings.Launcher_Builder_UNKNOWN_HOST_ERROR_MESSAGE.toLocalizedString("Server");
+      final String expectedMessage2 =
+          "badHostName.badCompany.com is not an address for this machine.";
+      assertTrue(
+          expected.getMessage().equals(expectedMessage1)
+              || expected.getMessage().equals(expectedMessage2));
       if (expected.getMessage().equals(expectedMessage1)) {
         assertTrue(expected.getCause() instanceof UnknownHostException);
       }
@@ -298,7 +309,9 @@ public class ServerLauncherTest {
     try {
       new Builder().setServerPort(65536);
     } catch (IllegalArgumentException expected) {
-      assertEquals(LocalizedStrings.Launcher_Builder_INVALID_PORT_ERROR_MESSAGE.toLocalizedString("Server"), expected.getMessage());
+      assertEquals(
+          LocalizedStrings.Launcher_Builder_INVALID_PORT_ERROR_MESSAGE.toLocalizedString("Server"),
+          expected.getMessage());
       throw expected;
     }
   }
@@ -308,7 +321,9 @@ public class ServerLauncherTest {
     try {
       new Builder().setServerPort(-1);
     } catch (IllegalArgumentException expected) {
-      assertEquals(LocalizedStrings.Launcher_Builder_INVALID_PORT_ERROR_MESSAGE.toLocalizedString("Server"), expected.getMessage());
+      assertEquals(
+          LocalizedStrings.Launcher_Builder_INVALID_PORT_ERROR_MESSAGE.toLocalizedString("Server"),
+          expected.getMessage());
       throw expected;
     }
   }
@@ -329,7 +344,8 @@ public class ServerLauncherTest {
     try {
       new Builder().setCriticalHeapPercentage(100.01f);
     } catch (IllegalArgumentException expected) {
-      assertEquals("Critical heap percentage (100.01) must be between 0 and 100!", expected.getMessage());
+      assertEquals(
+          "Critical heap percentage (100.01) must be between 0 and 100!", expected.getMessage());
       throw expected;
     }
   }
@@ -339,7 +355,8 @@ public class ServerLauncherTest {
     try {
       new Builder().setCriticalHeapPercentage(-0.01f);
     } catch (IllegalArgumentException expected) {
-      assertEquals("Critical heap percentage (-0.01) must be between 0 and 100!", expected.getMessage());
+      assertEquals(
+          "Critical heap percentage (-0.01) must be between 0 and 100!", expected.getMessage());
       throw expected;
     }
   }
@@ -360,7 +377,8 @@ public class ServerLauncherTest {
     try {
       new Builder().setEvictionHeapPercentage(101.0f);
     } catch (IllegalArgumentException expected) {
-      assertEquals("Eviction heap percentage (101.0) must be between 0 and 100!", expected.getMessage());
+      assertEquals(
+          "Eviction heap percentage (101.0) must be between 0 and 100!", expected.getMessage());
       throw expected;
     }
   }
@@ -370,7 +388,8 @@ public class ServerLauncherTest {
     try {
       new Builder().setEvictionHeapPercentage(-10.0f);
     } catch (IllegalArgumentException expected) {
-      assertEquals("Eviction heap percentage (-10.0) must be between 0 and 100!", expected.getMessage());
+      assertEquals(
+          "Eviction heap percentage (-10.0) must be between 0 and 100!", expected.getMessage());
       throw expected;
     }
   }
@@ -475,14 +494,20 @@ public class ServerLauncherTest {
     try {
       new Builder().setSocketBufferSize(-8192);
     } catch (IllegalArgumentException expected) {
-      assertEquals("The Server's Socket Buffer Size (-8192) must be greater than 0!", expected.getMessage());
+      assertEquals(
+          "The Server's Socket Buffer Size (-8192) must be greater than 0!", expected.getMessage());
       throw expected;
     }
   }
 
   @Test
   public void testBuildWithMemberNameSetInApiPropertiesOnStart() {
-    ServerLauncher launcher = new Builder().setCommand(ServerLauncher.Command.START).setMemberName(null).set(NAME, "serverABC").build();
+    ServerLauncher launcher =
+        new Builder()
+            .setCommand(ServerLauncher.Command.START)
+            .setMemberName(null)
+            .set(NAME, "serverABC")
+            .build();
 
     assertNotNull(launcher);
     assertEquals(ServerLauncher.Command.START, launcher.getCommand());
@@ -494,7 +519,8 @@ public class ServerLauncherTest {
   public void testBuildWithMemberNameSetInSystemPropertiesOnStart() {
     System.setProperty(DistributionConfig.GEMFIRE_PREFIX + NAME, "serverXYZ");
 
-    ServerLauncher launcher = new Builder().setCommand(ServerLauncher.Command.START).setMemberName(null).build();
+    ServerLauncher launcher =
+        new Builder().setCommand(ServerLauncher.Command.START).setMemberName(null).build();
 
     assertNotNull(launcher);
     assertEquals(ServerLauncher.Command.START, launcher.getCommand());
@@ -506,7 +532,10 @@ public class ServerLauncherTest {
     try {
       new Builder().setCommand(Command.START).build();
     } catch (IllegalStateException expected) {
-      assertEquals(LocalizedStrings.Launcher_Builder_MEMBER_NAME_VALIDATION_ERROR_MESSAGE.toLocalizedString("Server"), expected.getMessage());
+      assertEquals(
+          LocalizedStrings.Launcher_Builder_MEMBER_NAME_VALIDATION_ERROR_MESSAGE.toLocalizedString(
+              "Server"),
+          expected.getMessage());
       throw expected;
     }
   }
@@ -516,12 +545,13 @@ public class ServerLauncherTest {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
     final CacheServer mockCacheServer = mockContext.mock(CacheServer.class, "CacheServer");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getCacheServers();
-        will(returnValue(Collections.singletonList(mockCacheServer)));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getCacheServers();
+            will(returnValue(Collections.singletonList(mockCacheServer)));
+          }
+        });
 
     final ServerLauncher serverLauncher = new Builder().setMemberName("serverOne").build();
 
@@ -534,12 +564,13 @@ public class ServerLauncherTest {
   public void testIsServingWhenNoCacheServersExist() {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getCacheServers();
-        will(returnValue(Collections.emptyList()));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getCacheServers();
+            will(returnValue(Collections.emptyList()));
+          }
+        });
 
     final ServerLauncher serverLauncher = new Builder().setMemberName("serverOne").build();
 
@@ -553,26 +584,27 @@ public class ServerLauncherTest {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
     final Cache mockReconnectedCache = mockContext.mock(Cache.class, "ReconnectedCache");
 
-    mockContext.checking(new Expectations() {
-      {
-        exactly(2).of(mockCache).isReconnecting();
-        will(returnValue(Boolean.FALSE));
+    mockContext.checking(
+        new Expectations() {
+          {
+            exactly(2).of(mockCache).isReconnecting();
+            will(returnValue(Boolean.FALSE));
 
-        oneOf(mockCache).getCacheServers();
-        will(returnValue(Collections.emptyList()));
+            oneOf(mockCache).getCacheServers();
+            will(returnValue(Collections.emptyList()));
 
-        oneOf(mockCache).isReconnecting();
-        will(returnValue(Boolean.TRUE));
+            oneOf(mockCache).isReconnecting();
+            will(returnValue(Boolean.TRUE));
 
-        oneOf(mockCache).getReconnectedCache();
-        will(returnValue(mockReconnectedCache));
+            oneOf(mockCache).getReconnectedCache();
+            will(returnValue(mockReconnectedCache));
 
-        oneOf(mockReconnectedCache).close();
+            oneOf(mockReconnectedCache).close();
+          }
+        });
 
-      }
-    });
-
-    final ServerLauncher serverLauncher = new Builder().setMemberName("serverOne").setCache(mockCache).build();
+    final ServerLauncher serverLauncher =
+        new Builder().setMemberName("serverOne").setCache(mockCache).build();
 
     assertNotNull(serverLauncher);
     serverLauncher.waitOnServer();
@@ -581,33 +613,36 @@ public class ServerLauncherTest {
   @Test
   public void reconnectingDistributedSystemIsDisconnectedOnStop() throws Exception {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
-    final DistributedSystem mockDistributedSystem = mockContext.mock(DistributedSystem.class, "DistributedSystem");
+    final DistributedSystem mockDistributedSystem =
+        mockContext.mock(DistributedSystem.class, "DistributedSystem");
     final Cache mockReconnectedCache = mockContext.mock(Cache.class, "ReconnectedCache");
 
-    mockContext.checking(new Expectations() {
-      {
-        exactly(1).of(mockCache).isReconnecting();
-        will(returnValue(Boolean.TRUE));
+    mockContext.checking(
+        new Expectations() {
+          {
+            exactly(1).of(mockCache).isReconnecting();
+            will(returnValue(Boolean.TRUE));
 
-        exactly(1).of(mockCache).getReconnectedCache();
-        will(returnValue(mockReconnectedCache));
+            exactly(1).of(mockCache).getReconnectedCache();
+            will(returnValue(mockReconnectedCache));
 
-        exactly(2).of(mockReconnectedCache).isReconnecting();
-        will(returnValue(Boolean.TRUE));
+            exactly(2).of(mockReconnectedCache).isReconnecting();
+            will(returnValue(Boolean.TRUE));
 
-        exactly(1).of(mockReconnectedCache).getReconnectedCache();
-        will(returnValue(null));
+            exactly(1).of(mockReconnectedCache).getReconnectedCache();
+            will(returnValue(null));
 
-        oneOf(mockReconnectedCache).getDistributedSystem();
-        will(returnValue(mockDistributedSystem));
+            oneOf(mockReconnectedCache).getDistributedSystem();
+            will(returnValue(mockDistributedSystem));
 
-        oneOf(mockDistributedSystem).stopReconnecting();
+            oneOf(mockDistributedSystem).stopReconnecting();
 
-        oneOf(mockReconnectedCache).close();
-      }
-    });
+            oneOf(mockReconnectedCache).close();
+          }
+        });
 
-    final ServerLauncher serverLauncher = new Builder().setMemberName("serverOne").setCache(mockCache).build();
+    final ServerLauncher serverLauncher =
+        new Builder().setMemberName("serverOne").setCache(mockCache).build();
 
     assertNotNull(serverLauncher);
     serverLauncher.setIsRunningForTest();
@@ -617,16 +652,18 @@ public class ServerLauncherTest {
   @Test
   public void testIsWaiting() {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
-    final DistributedSystem mockDistributedSystem = mockContext.mock(DistributedSystem.class, "DistributedSystem");
+    final DistributedSystem mockDistributedSystem =
+        mockContext.mock(DistributedSystem.class, "DistributedSystem");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getDistributedSystem();
-        will(returnValue(mockDistributedSystem));
-        oneOf(mockDistributedSystem).isConnected();
-        will(returnValue(true));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getDistributedSystem();
+            will(returnValue(mockDistributedSystem));
+            oneOf(mockDistributedSystem).isConnected();
+            will(returnValue(true));
+          }
+        });
 
     final ServerLauncher serverLauncher = new Builder().setMemberName("serverOne").build();
 
@@ -642,18 +679,20 @@ public class ServerLauncherTest {
   @Test
   public void testIsWaitingWhenNotConnected() {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
-    final DistributedSystem mockDistributedSystem = mockContext.mock(DistributedSystem.class, "DistributedSystem");
+    final DistributedSystem mockDistributedSystem =
+        mockContext.mock(DistributedSystem.class, "DistributedSystem");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getDistributedSystem();
-        will(returnValue(mockDistributedSystem));
-        oneOf(mockDistributedSystem).isConnected();
-        will(returnValue(false));
-        oneOf(mockCache).isReconnecting();
-        will(returnValue(Boolean.FALSE));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getDistributedSystem();
+            will(returnValue(mockDistributedSystem));
+            oneOf(mockDistributedSystem).isConnected();
+            will(returnValue(false));
+            oneOf(mockCache).isReconnecting();
+            will(returnValue(Boolean.FALSE));
+          }
+        });
 
     final ServerLauncher serverLauncher = new Builder().setMemberName("serverOne").build();
 
@@ -688,12 +727,13 @@ public class ServerLauncherTest {
   public void testIsDefaultServerEnabled() {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getCacheServers();
-        will(returnValue(Collections.emptyList()));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getCacheServers();
+            will(returnValue(Collections.emptyList()));
+          }
+        });
 
     ServerLauncher serverLauncher = new Builder().setMemberName("serverOne").build();
 
@@ -708,14 +748,16 @@ public class ServerLauncherTest {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
     final CacheServer mockCacheServer = mockContext.mock(CacheServer.class, "CacheServer");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getCacheServers();
-        will(returnValue(Collections.singletonList(mockCacheServer)));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getCacheServers();
+            will(returnValue(Collections.singletonList(mockCacheServer)));
+          }
+        });
 
-    final ServerLauncher serverLauncher = new Builder().setMemberName("serverOne").setDisableDefaultServer(false).build();
+    final ServerLauncher serverLauncher =
+        new Builder().setMemberName("serverOne").setDisableDefaultServer(false).build();
 
     assertNotNull(serverLauncher);
     assertEquals("serverOne", serverLauncher.getMemberName());
@@ -727,14 +769,16 @@ public class ServerLauncherTest {
   public void testIsDefaultServerEnabledWhenNoCacheServersExistAndDefaultServerDisabled() {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getCacheServers();
-        will(returnValue(Collections.emptyList()));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getCacheServers();
+            will(returnValue(Collections.emptyList()));
+          }
+        });
 
-    final ServerLauncher serverLauncher = new Builder().setMemberName("serverOne").setDisableDefaultServer(true).build();
+    final ServerLauncher serverLauncher =
+        new Builder().setMemberName("serverOne").setDisableDefaultServer(true).build();
 
     assertNotNull(serverLauncher);
     assertEquals("serverOne", serverLauncher.getMemberName());
@@ -747,19 +791,26 @@ public class ServerLauncherTest {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
     final CacheServer mockCacheServer = mockContext.mock(CacheServer.class, "CacheServer");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getCacheServers();
-        will(returnValue(Collections.emptyList()));
-        oneOf(mockCache).addCacheServer();
-        will(returnValue(mockCacheServer));
-        oneOf(mockCacheServer).setBindAddress(with(aNull(String.class)));
-        oneOf(mockCacheServer).setPort(with(equal(11235)));
-        oneOf(mockCacheServer).start();
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getCacheServers();
+            will(returnValue(Collections.emptyList()));
+            oneOf(mockCache).addCacheServer();
+            will(returnValue(mockCacheServer));
+            oneOf(mockCacheServer).setBindAddress(with(aNull(String.class)));
+            oneOf(mockCacheServer).setPort(with(equal(11235)));
+            oneOf(mockCacheServer).start();
+          }
+        });
 
-    final ServerLauncher serverLauncher = new Builder().setMemberName("serverOne").setServerBindAddress(null).setServerPort(11235).setDisableDefaultServer(false).build();
+    final ServerLauncher serverLauncher =
+        new Builder()
+            .setMemberName("serverOne")
+            .setServerBindAddress(null)
+            .setServerPort(11235)
+            .setDisableDefaultServer(false)
+            .build();
 
     assertNotNull(serverLauncher);
     assertEquals("serverOne", serverLauncher.getMemberName());
@@ -772,14 +823,16 @@ public class ServerLauncherTest {
   public void testStartCacheServerWhenDefaultServerDisabled() throws IOException {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getCacheServers();
-        will(returnValue(Collections.emptyList()));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getCacheServers();
+            will(returnValue(Collections.emptyList()));
+          }
+        });
 
-    final ServerLauncher serverLauncher = new Builder().setMemberName("serverOne").setDisableDefaultServer(true).build();
+    final ServerLauncher serverLauncher =
+        new Builder().setMemberName("serverOne").setDisableDefaultServer(true).build();
 
     assertNotNull(serverLauncher);
     assertEquals("serverOne", serverLauncher.getMemberName());
@@ -793,14 +846,16 @@ public class ServerLauncherTest {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
     final CacheServer mockCacheServer = mockContext.mock(CacheServer.class, "CacheServer");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getCacheServers();
-        will(returnValue(Collections.singletonList(mockCacheServer)));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getCacheServers();
+            will(returnValue(Collections.singletonList(mockCacheServer)));
+          }
+        });
 
-    final ServerLauncher serverLauncher = new Builder().setMemberName("serverOne").setDisableDefaultServer(false).build();
+    final ServerLauncher serverLauncher =
+        new Builder().setMemberName("serverOne").setDisableDefaultServer(false).build();
 
     assertNotNull(serverLauncher);
     assertEquals("serverOne", serverLauncher.getMemberName());
@@ -821,26 +876,33 @@ public class ServerLauncherTest {
 
       final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-      final DistributedSystem mockDistributedSystem = new DistributedSystemAdapter() {
-        @Override
-        public boolean isConnected() {
-          return connectionStateHolder.get();
-        }
-      };
+      final DistributedSystem mockDistributedSystem =
+          new DistributedSystemAdapter() {
+            @Override
+            public boolean isConnected() {
+              return connectionStateHolder.get();
+            }
+          };
 
-      mockContext.checking(new Expectations() {
-        {
-          allowing(mockCache).getDistributedSystem();
-          will(returnValue(mockDistributedSystem));
-          allowing(mockCache).isReconnecting();
-          will(returnValue(Boolean.FALSE));
-          allowing(mockCache).getCacheServers();
-          will(returnValue(Collections.emptyList()));
-          oneOf(mockCache).close();
-        }
-      });
+      mockContext.checking(
+          new Expectations() {
+            {
+              allowing(mockCache).getDistributedSystem();
+              will(returnValue(mockDistributedSystem));
+              allowing(mockCache).isReconnecting();
+              will(returnValue(Boolean.FALSE));
+              allowing(mockCache).getCacheServers();
+              will(returnValue(Collections.emptyList()));
+              oneOf(mockCache).close();
+            }
+          });
 
-      this.serverLauncher = new Builder().setMemberName("dataMember").setDisableDefaultServer(true).setCache(mockCache).build();
+      this.serverLauncher =
+          new Builder()
+              .setMemberName("dataMember")
+              .setDisableDefaultServer(true)
+              .setCache(mockCache)
+              .build();
 
       assertNotNull(this.serverLauncher);
       assertEquals("dataMember", this.serverLauncher.getMemberName());

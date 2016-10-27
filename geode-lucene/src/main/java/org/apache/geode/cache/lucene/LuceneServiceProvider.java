@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -24,22 +24,14 @@ import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.lucene.internal.InternalLuceneService;
 import org.apache.geode.internal.cache.InternalCache;
 
-/**
- * Class for retrieving or creating the currently running
- * instance of the LuceneService.
- *
- */
+/** Class for retrieving or creating the currently running instance of the LuceneService. */
 @Experimental
 public class LuceneServiceProvider {
-  /**
-   * Retrieve or create the lucene service for this cache
-   */
+  /** Retrieve or create the lucene service for this cache */
   public static LuceneService get(GemFireCache cache) {
     InternalCache internalCache = (InternalCache) cache;
     return internalCache.getService(InternalLuceneService.class);
   }
 
-  private LuceneServiceProvider() {
-
-  }
+  private LuceneServiceProvider() {}
 }

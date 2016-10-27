@@ -21,8 +21,7 @@
  */
 package org.apache.geode.cache.query.data;
 
-/**
- */
+/** */
 public class Keywords {
 
   //  "select", "distinct", "from", "where", "true", "false","undefined",

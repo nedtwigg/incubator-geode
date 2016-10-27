@@ -19,15 +19,15 @@ package org.apache.geode.cache.query;
 
 /**
  * Thrown during continuous query creation, execution time.
- * 
+ *
  * @since GemFire 5.5
  */
-
 public class CqException extends QueryException {
   private static final long serialVersionUID = -5905461592471139171L;
 
   /**
    * Constructor used by concrete subclasses
+   *
    * @param msg the error message
    * @param cause a Throwable cause of this exception
    */
@@ -37,6 +37,7 @@ public class CqException extends QueryException {
 
   /**
    * Constructor used by concrete subclasses
+   *
    * @param msg the error message
    */
   public CqException(String msg) {
@@ -45,10 +46,10 @@ public class CqException extends QueryException {
 
   /**
    * Constructor used by concrete subclasses
+   *
    * @param cause a Throwable cause of this exception
    */
   public CqException(Throwable cause) {
     super(cause);
   }
-
 }

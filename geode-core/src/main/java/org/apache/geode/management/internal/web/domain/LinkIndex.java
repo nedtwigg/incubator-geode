@@ -32,7 +32,9 @@ import org.apache.geode.internal.lang.StringUtils;
 
 /**
  * The LinkIndex class is abstraction for modeling an index of Links.
- * <p/>
+ *
+ * <p>
+ *
  * @see javax.xml.bind.annotation.XmlRootElement
  * @see org.apache.geode.management.internal.web.domain.Link
  * @since GemFire 8.0
@@ -135,5 +137,4 @@ public class LinkIndex implements Iterable<Link> {
 
     return buffer.toString();
   }
-
 }

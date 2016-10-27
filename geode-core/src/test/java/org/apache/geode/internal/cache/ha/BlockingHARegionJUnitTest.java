@@ -40,11 +40,11 @@ public class BlockingHARegionJUnitTest {
 
   private static Cache cache = null;
 
-  /** boolean to record an exception occurence in another thread**/
+  /** boolean to record an exception occurence in another thread* */
   private static volatile boolean exceptionOccured = false;
-  /** StringBuffer to store the exception**/
+  /** StringBuffer to store the exception* */
   private static StringBuffer exceptionString = new StringBuffer();
-  /** boolen to quit the for loop**/
+  /** boolen to quit the for loop* */
   private static volatile boolean quitForLoop = false;
 
   @Before
@@ -58,17 +58,23 @@ public class BlockingHARegionJUnitTest {
   }
 
   /**
-   * This test has a scenario where the HAReqionQueue capacity is just 1. There will
-   * be two thread. One doing a 1000 puts and the other doing a 1000 takes. The validation
-   * for this test is that it should not encounter any exceptions
+   * This test has a scenario where the HAReqionQueue capacity is just 1. There will be two thread.
+   * One doing a 1000 puts and the other doing a 1000 takes. The validation for this test is that it
+   * should not encounter any exceptions
    */
   @Test
   public void testBoundedPuts() throws Exception {
     exceptionOccured = false;
     HARegionQueueAttributes harqa = new HARegionQueueAttributes();
     harqa.setBlockingQueueCapacity(1);
-    HARegionQueue hrq = HARegionQueue.getHARegionQueueInstance("BlockingHARegionJUnitTest_Region", cache, harqa, HARegionQueue.BLOCKING_HA_QUEUE, false);
-    hrq.setPrimary(true);//fix for 40314 - capacity constraint is checked for primary only.
+    HARegionQueue hrq =
+        HARegionQueue.getHARegionQueueInstance(
+            "BlockingHARegionJUnitTest_Region",
+            cache,
+            harqa,
+            HARegionQueue.BLOCKING_HA_QUEUE,
+            false);
+    hrq.setPrimary(true); //fix for 40314 - capacity constraint is checked for primary only.
     Thread thread1 = new DoPuts(hrq, 1000);
     Thread thread2 = new DoTake(hrq, 1000);
 
@@ -86,13 +92,12 @@ public class BlockingHARegionJUnitTest {
   }
 
   /**
-   * This test tests whether puts are blocked. There are two threads. One which is going
-   * to do 2 puts and one which is going to do take a single take. The capacity of the
-   * region is just 1. The put thread is first started and it is then ensured that only one
-   * put has successfully made through and that the thread is still alive. Then the take thread
-   * is started. This will cause the region size to come down by one and the put thread waiting
-   * will go ahead and do the put. The thread should then die and the region size should be validated
-   * to reflect that.
+   * This test tests whether puts are blocked. There are two threads. One which is going to do 2
+   * puts and one which is going to do take a single take. The capacity of the region is just 1. The
+   * put thread is first started and it is then ensured that only one put has successfully made
+   * through and that the thread is still alive. Then the take thread is started. This will cause
+   * the region size to come down by one and the put thread waiting will go ahead and do the put.
+   * The thread should then die and the region size should be validated to reflect that.
    */
   @Test
   public void testPutBeingBlocked() throws Exception {
@@ -100,46 +105,55 @@ public class BlockingHARegionJUnitTest {
     quitForLoop = false;
     HARegionQueueAttributes harqa = new HARegionQueueAttributes();
     harqa.setBlockingQueueCapacity(1);
-    final HARegionQueue hrq = HARegionQueue.getHARegionQueueInstance("BlockingHARegionJUnitTest_Region", cache, harqa, HARegionQueue.BLOCKING_HA_QUEUE, false);
-    hrq.setPrimary(true);//fix for 40314 - capacity constraint is checked for primary only.
+    final HARegionQueue hrq =
+        HARegionQueue.getHARegionQueueInstance(
+            "BlockingHARegionJUnitTest_Region",
+            cache,
+            harqa,
+            HARegionQueue.BLOCKING_HA_QUEUE,
+            false);
+    hrq.setPrimary(true); //fix for 40314 - capacity constraint is checked for primary only.
     final Thread thread1 = new DoPuts(hrq, 2);
     thread1.start();
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return hrq.region.size() == 2;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return hrq.region.size() == 2;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 1000, 200, true);
     assertTrue(thread1.isAlive()); //thread should still be alive (in wait state)
 
     Thread thread2 = new DoTake(hrq, 1);
     thread2.start(); //start take thread
-    ev = new WaitCriterion() {
-      public boolean done() {
-        return hrq.region.size() == 3;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return hrq.region.size() == 3;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     //sleep. take will proceed and so will sleeping put
     Wait.waitForCriterion(ev, 3 * 1000, 200, true);
 
     // thread should have died since put should have proceeded
-    ev = new WaitCriterion() {
-      public boolean done() {
-        return !thread1.isAlive();
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return !thread1.isAlive();
+          }
 
-      public String description() {
-        return "thread1 still alive";
-      }
-    };
+          public String description() {
+            return "thread1 still alive";
+          }
+        };
     Wait.waitForCriterion(ev, 30 * 1000, 1000, true);
 
     ThreadUtils.join(thread1, 30 * 1000); // for completeness
@@ -151,11 +165,11 @@ public class BlockingHARegionJUnitTest {
   }
 
   /**
-   * This test tests that the region capacity is never exceeded even in highly
-   * concurrent environments. The region capacity is set to 10000. Then 5 threads start doing
-   * put simultaneously. They will reach a state where the queue is full and they will all
-   * go in a wait state. the region size would be verified to be 20000 (10000 puts and 10000 DACE objects).
-   * then the threads are interrupted and made to quit the loop
+   * This test tests that the region capacity is never exceeded even in highly concurrent
+   * environments. The region capacity is set to 10000. Then 5 threads start doing put
+   * simultaneously. They will reach a state where the queue is full and they will all go in a wait
+   * state. the region size would be verified to be 20000 (10000 puts and 10000 DACE objects). then
+   * the threads are interrupted and made to quit the loop
    */
   @Test
   public void testConcurrentPutsNotExceedingLimit() throws Exception {
@@ -163,8 +177,14 @@ public class BlockingHARegionJUnitTest {
     quitForLoop = false;
     HARegionQueueAttributes harqa = new HARegionQueueAttributes();
     harqa.setBlockingQueueCapacity(10000);
-    final HARegionQueue hrq = HARegionQueue.getHARegionQueueInstance("BlockingHARegionJUnitTest_Region", cache, harqa, HARegionQueue.BLOCKING_HA_QUEUE, false);
-    hrq.setPrimary(true);//fix for 40314 - capacity constraint is checked for primary only.
+    final HARegionQueue hrq =
+        HARegionQueue.getHARegionQueueInstance(
+            "BlockingHARegionJUnitTest_Region",
+            cache,
+            harqa,
+            HARegionQueue.BLOCKING_HA_QUEUE,
+            false);
+    hrq.setPrimary(true); //fix for 40314 - capacity constraint is checked for primary only.
     Thread thread1 = new DoPuts(hrq, 20000, 1);
     Thread thread2 = new DoPuts(hrq, 20000, 2);
     Thread thread3 = new DoPuts(hrq, 20000, 3);
@@ -177,15 +197,16 @@ public class BlockingHARegionJUnitTest {
     thread4.start();
     thread5.start();
 
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return hrq.region.size() == 20000;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return hrq.region.size() == 20000;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 30 * 1000, 200, true);
 
     assertTrue(thread1.isAlive());
@@ -217,11 +238,11 @@ public class BlockingHARegionJUnitTest {
   }
 
   /**
-   * This test tests that the region capacity is never exceeded even in highly
-   * concurrent environments. The region capacity is set to 10000. Then 5 threads start doing
-   * put simultaneously. They will reach a state where the queue is full and they will all
-   * go in a wait state. the region size would be verified to be 20000 (10000 puts and 10000 DACE objects).
-   * then the threads are interrupted and made to quit the loop
+   * This test tests that the region capacity is never exceeded even in highly concurrent
+   * environments. The region capacity is set to 10000. Then 5 threads start doing put
+   * simultaneously. They will reach a state where the queue is full and they will all go in a wait
+   * state. the region size would be verified to be 20000 (10000 puts and 10000 DACE objects). then
+   * the threads are interrupted and made to quit the loop
    */
   @Ignore("TODO: test is disabled")
   @Test
@@ -230,7 +251,13 @@ public class BlockingHARegionJUnitTest {
     quitForLoop = false;
     HARegionQueueAttributes harqa = new HARegionQueueAttributes();
     harqa.setBlockingQueueCapacity(10000);
-    final HARegionQueue hrq = HARegionQueue.getHARegionQueueInstance("BlockingHARegionJUnitTest_Region", cache, harqa, HARegionQueue.BLOCKING_HA_QUEUE, false);
+    final HARegionQueue hrq =
+        HARegionQueue.getHARegionQueueInstance(
+            "BlockingHARegionJUnitTest_Region",
+            cache,
+            harqa,
+            HARegionQueue.BLOCKING_HA_QUEUE,
+            false);
     Thread thread1 = new DoPuts(hrq, 40000, 1);
     Thread thread2 = new DoPuts(hrq, 40000, 2);
     Thread thread3 = new DoPuts(hrq, 40000, 3);
@@ -261,15 +288,16 @@ public class BlockingHARegionJUnitTest {
     ThreadUtils.join(thread9, 30 * 1000);
     ThreadUtils.join(thread10, 30 * 1000);
 
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return hrq.region.size() == 20000;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return hrq.region.size() == 20000;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 30 * 1000, 200, true);
 
     assertTrue(thread1.isAlive());
@@ -302,12 +330,11 @@ public class BlockingHARegionJUnitTest {
   }
 
   /**
-   * Tests the bug in HARegionQueue where the take side put permit is not being
-   * incremented   when the event arriving at the queue which has optimistically
-   * decreased the put permit, is not incrementing the take permit if the event
-   * has a sequence ID less than the last dispatched sequence ID. This event is
-   * rightly rejected from entering the queue but the take permit also needs to
-   * increase & a notify issued  
+   * Tests the bug in HARegionQueue where the take side put permit is not being incremented when the
+   * event arriving at the queue which has optimistically decreased the put permit, is not
+   * incrementing the take permit if the event has a sequence ID less than the last dispatched
+   * sequence ID. This event is rightly rejected from entering the queue but the take permit also
+   * needs to increase & a notify issued
    */
   @Test
   public void testHARQMaxCapacity_Bug37627() throws Exception {
@@ -317,24 +344,31 @@ public class BlockingHARegionJUnitTest {
       HARegionQueueAttributes harqa = new HARegionQueueAttributes();
       harqa.setBlockingQueueCapacity(1);
       harqa.setExpiryTime(180);
-      final HARegionQueue hrq = HARegionQueue.getHARegionQueueInstance("BlockingHARegionJUnitTest_Region", cache, harqa, HARegionQueue.BLOCKING_HA_QUEUE, false);
-      hrq.setPrimary(true);//fix for 40314 - capacity constraint is checked for primary only.
-      final EventID id1 = new EventID(new byte[] { 1 }, 1, 2); // violation
-      final EventID ignore = new EventID(new byte[] { 1 }, 1, 1); //
-      final EventID id2 = new EventID(new byte[] { 1 }, 1, 3); //
-      Thread t1 = new Thread() {
-        public void run() {
-          try {
-            hrq.put(new ConflatableObject("key1", "value1", id1, false, "region1"));
-            hrq.take();
-            hrq.put(new ConflatableObject("key2", "value1", ignore, false, "region1"));
-            hrq.put(new ConflatableObject("key3", "value1", id2, false, "region1"));
-          } catch (Exception e) {
-            exceptionString.append("First Put in region queue failed");
-            exceptionOccured = true;
-          }
-        }
-      };
+      final HARegionQueue hrq =
+          HARegionQueue.getHARegionQueueInstance(
+              "BlockingHARegionJUnitTest_Region",
+              cache,
+              harqa,
+              HARegionQueue.BLOCKING_HA_QUEUE,
+              false);
+      hrq.setPrimary(true); //fix for 40314 - capacity constraint is checked for primary only.
+      final EventID id1 = new EventID(new byte[] {1}, 1, 2); // violation
+      final EventID ignore = new EventID(new byte[] {1}, 1, 1); //
+      final EventID id2 = new EventID(new byte[] {1}, 1, 3); //
+      Thread t1 =
+          new Thread() {
+            public void run() {
+              try {
+                hrq.put(new ConflatableObject("key1", "value1", id1, false, "region1"));
+                hrq.take();
+                hrq.put(new ConflatableObject("key2", "value1", ignore, false, "region1"));
+                hrq.put(new ConflatableObject("key3", "value1", id2, false, "region1"));
+              } catch (Exception e) {
+                exceptionString.append("First Put in region queue failed");
+                exceptionOccured = true;
+              }
+            }
+          };
       t1.start();
       ThreadUtils.join(t1, 20 * 1000);
       if (exceptionOccured) {
@@ -347,9 +381,7 @@ public class BlockingHARegionJUnitTest {
     }
   }
 
-  /**
-   * class which does specified number of puts on the queue
-   */
+  /** class which does specified number of puts on the queue */
   private static class DoPuts extends Thread {
 
     HARegionQueue regionQueue = null;
@@ -360,9 +392,7 @@ public class BlockingHARegionJUnitTest {
       this.numberOfPuts = numberOfPuts;
     }
 
-    /**
-     * region id can be specified to generate Thread unique events
-     */
+    /** region id can be specified to generate Thread unique events */
     int regionId = 0;
 
     DoPuts(HARegionQueue haRegionQueue, int numberOfPuts, int regionId) {
@@ -375,7 +405,13 @@ public class BlockingHARegionJUnitTest {
     public void run() {
       for (int i = 0; i < numberOfPuts; i++) {
         try {
-          this.regionQueue.put(new ConflatableObject("" + i, "" + i, new EventID(new byte[regionId], i, i), false, "BlockingHARegionJUnitTest_Region"));
+          this.regionQueue.put(
+              new ConflatableObject(
+                  "" + i,
+                  "" + i,
+                  new EventID(new byte[regionId], i, i),
+                  false,
+                  "BlockingHARegionJUnitTest_Region"));
           if (quitForLoop) {
             break;
           }
@@ -390,9 +426,7 @@ public class BlockingHARegionJUnitTest {
     }
   }
 
-  /**
-   * class which does a specified number of takes
-   */
+  /** class which does a specified number of takes */
   private static class DoTake extends Thread {
 
     final HARegionQueue regionQueue;
@@ -415,5 +449,4 @@ public class BlockingHARegionJUnitTest {
       }
     }
   }
-
 }

@@ -38,8 +38,7 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * This class tests the basic functionality of the distributed unit
- * test framework.
+ * This class tests the basic functionality of the distributed unit test framework.
  *
  * @see JUnit4BasicDUnitTest
  */
@@ -72,29 +71,34 @@ public class JUnit4BasicDUnitTest extends JUnit4DistributedTestCase {
 
   @Test
   public void testPreconditions() {
-    invokeInEveryVM(() -> assertThat("getUniqueName() must not return null", getUniqueName(), notNullValue()));
+    invokeInEveryVM(
+        () -> assertThat("getUniqueName() must not return null", getUniqueName(), notNullValue()));
     invokeInEveryVM(() -> assertThat("bindings must not be null", bindings, notNullValue()));
   }
 
   @Test
   public void testInvokeOnClassTargetWithEmptyArgs() throws Exception {
-    assertThat(this.vm0.invoke(JUnit4BasicDUnitTest.class, "booleanValue", new Object[] {}), is(true));
+    assertThat(
+        this.vm0.invoke(JUnit4BasicDUnitTest.class, "booleanValue", new Object[] {}), is(true));
   }
 
   @Test
   public void testInvokeOnObjectTargetWithEmptyArgs() throws Exception {
-    assertThat(this.vm0.invoke(new JUnit4BasicDUnitTest(), "booleanValue", new Object[] {}), is(true));
+    assertThat(
+        this.vm0.invoke(new JUnit4BasicDUnitTest(), "booleanValue", new Object[] {}), is(true));
   }
 
   @Test
   public void testInvokeAsyncOnClassTargetWithEmptyArgs() throws Exception {
-    AsyncInvocation<?> async = this.vm0.invokeAsync(JUnit4BasicDUnitTest.class, "booleanValue", new Object[] {}).join();
+    AsyncInvocation<?> async =
+        this.vm0.invokeAsync(JUnit4BasicDUnitTest.class, "booleanValue", new Object[] {}).join();
     assertThat(async.getResult(), is(true));
   }
 
   @Test
   public void testInvokeAsyncOnObjectTargetWithEmptyArgs() throws Exception {
-    AsyncInvocation<?> async = this.vm0.invokeAsync(new JUnit4BasicDUnitTest(), "booleanValue", new Object[] {}).join();
+    AsyncInvocation<?> async =
+        this.vm0.invokeAsync(new JUnit4BasicDUnitTest(), "booleanValue", new Object[] {}).join();
     assertThat(async.getResult(), is(true));
   }
 
@@ -110,13 +114,15 @@ public class JUnit4BasicDUnitTest extends JUnit4DistributedTestCase {
 
   @Test
   public void testInvokeAsyncOnClassTargetWithNullArgs() throws Exception {
-    AsyncInvocation<?> async = this.vm0.invokeAsync(JUnit4BasicDUnitTest.class, "booleanValue", null).join();
+    AsyncInvocation<?> async =
+        this.vm0.invokeAsync(JUnit4BasicDUnitTest.class, "booleanValue", null).join();
     assertThat(async.getResult(), is(true));
   }
 
   @Test
   public void testInvokeAsyncOnObjectTargetWithNullArgs() throws Exception {
-    AsyncInvocation<?> async = this.vm0.invokeAsync(new JUnit4BasicDUnitTest(), "booleanValue", null).join();
+    AsyncInvocation<?> async =
+        this.vm0.invokeAsync(new JUnit4BasicDUnitTest(), "booleanValue", null).join();
     assertThat(async.getResult(), is(true));
   }
 
@@ -178,7 +184,8 @@ public class JUnit4BasicDUnitTest extends JUnit4DistributedTestCase {
 
   @Test
   public void testInvokeNamedRunnableLambdaAsync() throws Exception {
-    catchThrowable(this.vm0.invokeAsync("throwSomething", () -> throwException()).join()).checkException();
+    catchThrowable(this.vm0.invokeAsync("throwSomething", () -> throwException()).join())
+        .checkException();
 
     assertThat(caughtThrowable(), notNullValue());
     assertThat(caughtThrowable().getCause(), notNullValue());
@@ -235,7 +242,6 @@ public class JUnit4BasicDUnitTest extends JUnit4DistributedTestCase {
   }
 
   private static class BasicDUnitException extends RuntimeException {
-    public BasicDUnitException() {
-    }
+    public BasicDUnitException() {}
   }
 }

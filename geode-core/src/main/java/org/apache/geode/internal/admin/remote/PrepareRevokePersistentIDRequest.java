@@ -33,20 +33,16 @@ import org.apache.geode.internal.cache.persistence.PersistentMemberPattern;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * An instruction to all members that they should forget 
- * about the persistent member described by this pattern.
- * TODO prpersist - This extends AdminRequest, but it doesn't
- * work with most of the admin paradigm, which is a request response
- * to a single member. Maybe we need to a new base class.
- *
+ * An instruction to all members that they should forget about the persistent member described by
+ * this pattern. TODO prpersist - This extends AdminRequest, but it doesn't work with most of the
+ * admin paradigm, which is a request response to a single member. Maybe we need to a new base
+ * class.
  */
 public class PrepareRevokePersistentIDRequest extends CliLegacyMessage {
   PersistentMemberPattern pattern;
   private boolean cancel;
 
-  public PrepareRevokePersistentIDRequest() {
-
-  }
+  public PrepareRevokePersistentIDRequest() {}
 
   public PrepareRevokePersistentIDRequest(PersistentMemberPattern pattern, boolean cancel) {
     this.pattern = pattern;
@@ -64,7 +60,8 @@ public class PrepareRevokePersistentIDRequest extends CliLegacyMessage {
   private static void send(DM dm, PersistentMemberPattern pattern, boolean cancel) {
     Set recipients = dm.getOtherDistributionManagerIds();
     recipients.remove(dm.getId());
-    PrepareRevokePersistentIDRequest request = new PrepareRevokePersistentIDRequest(pattern, cancel);
+    PrepareRevokePersistentIDRequest request =
+        new PrepareRevokePersistentIDRequest(pattern, cancel);
     request.setRecipients(recipients);
 
     AdminMultipleReplyProcessor replyProcessor = new AdminMultipleReplyProcessor(dm, recipients);
@@ -94,7 +91,9 @@ public class PrepareRevokePersistentIDRequest extends CliLegacyMessage {
         mm.cancelRevoke(pattern);
       } else {
         if (!mm.prepareRevoke(pattern, dm, getSender())) {
-          throw new RevokeFailedException(LocalizedStrings.RevokeFailedException_Member_0_is_already_running_1.toLocalizedString(dm.getId(), pattern));
+          throw new RevokeFailedException(
+              LocalizedStrings.RevokeFailedException_Member_0_is_already_running_1
+                  .toLocalizedString(dm.getId(), pattern));
         }
       }
     }
@@ -120,5 +119,4 @@ public class PrepareRevokePersistentIDRequest extends CliLegacyMessage {
     InternalDataSerializer.invokeToData(pattern, out);
     out.writeBoolean(cancel);
   }
-
 }

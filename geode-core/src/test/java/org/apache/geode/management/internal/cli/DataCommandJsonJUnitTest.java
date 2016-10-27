@@ -34,7 +34,8 @@ public class DataCommandJsonJUnitTest {
 
   @Test
   public void testCollectionTypesInJson() {
-    String json = "{'attributes':{'power':'90hp'},'make':'502.1825','model':'502.1825','colors':['red','white','blue'],'attributeSet':['red','white','blue'], 'attributeArray':['red','white','blue']}";
+    String json =
+        "{'attributes':{'power':'90hp'},'make':'502.1825','model':'502.1825','colors':['red','white','blue'],'attributeSet':['red','white','blue'], 'attributeArray':['red','white','blue']}";
     Car car = (Car) JsonUtil.jsonToObject(json, Car.class);
     assertNotNull(car.getAttributeSet());
     assertTrue(car.getAttributeSet() instanceof HashSet);

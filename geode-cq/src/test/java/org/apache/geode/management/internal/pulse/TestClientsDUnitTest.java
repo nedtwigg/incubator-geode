@@ -36,13 +36,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
-/**
- * This is for testing Number of clients and can be extended for relevant test
- * addition
- * 
- * 
- */
-
+/** This is for testing Number of clients and can be extended for relevant test addition */
 @Category(DistributedTest.class)
 public class TestClientsDUnitTest extends ManagementTestBase {
 
@@ -53,24 +47,25 @@ public class TestClientsDUnitTest extends ManagementTestBase {
   }
 
   public static Integer getNumOfClients() {
-    final WaitCriterion waitCriteria = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        final ManagementService service = getManagementService();
-        final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
-        if (bean != null) {
-          if (bean.getNumClients() > 0) {
-            return true;
+    final WaitCriterion waitCriteria =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            final ManagementService service = getManagementService();
+            final DistributedSystemMXBean bean = service.getDistributedSystemMXBean();
+            if (bean != null) {
+              if (bean.getNumClients() > 0) {
+                return true;
+              }
+            }
+            return false;
           }
-        }
-        return false;
-      }
 
-      @Override
-      public String description() {
-        return "wait for getNumOfClients bean to complete and get results";
-      }
-    };
+          @Override
+          public String description() {
+            return "wait for getNumOfClients bean to complete and get results";
+          }
+        };
 
     Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
     final DistributedSystemMXBean bean = getManagementService().getDistributedSystemMXBean();
@@ -90,19 +85,15 @@ public class TestClientsDUnitTest extends ManagementTestBase {
     final int port = server.invoke(() -> CqQueryDUnitTest.getCacheServerPort());
     final String host0 = NetworkUtils.getServerHostName(server.getHost());
     cqDUnitTest.createClient(client, port, host0);
-    Integer numOfClients = (Integer) managingNode.invoke(() -> TestClientsDUnitTest.getNumOfClients());
+    Integer numOfClients =
+        (Integer) managingNode.invoke(() -> TestClientsDUnitTest.getNumOfClients());
     LogWriterUtils.getLogWriter().info("testNumOfClients numOfClients = " + numOfClients);
     cqDUnitTest.closeClient(client);
     cqDUnitTest.closeServer(server);
     assertEquals(1, numOfClients.intValue());
   }
 
-  public void verifyStatistics() {
+  public void verifyStatistics() {}
 
-  }
-
-  public void invokeOperations() {
-
-  }
-
+  public void invokeOperations() {}
 }

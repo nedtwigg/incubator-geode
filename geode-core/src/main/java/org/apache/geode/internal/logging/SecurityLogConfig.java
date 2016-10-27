@@ -21,9 +21,8 @@ import org.apache.geode.distributed.internal.DistributionConfig;
 import java.io.File;
 
 /**
- * LogConfig implementation for Security logging configuration that delegates 
- * to a DistributionConfig.
- * 
+ * LogConfig implementation for Security logging configuration that delegates to a
+ * DistributionConfig.
  */
 public class SecurityLogConfig implements LogConfig {
 

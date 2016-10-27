@@ -27,7 +27,6 @@ public class ClassLoadUtil {
   static Map wrapperTypes;
 
   static {
-
     if (primTypes == null) {
       Map ptMap = new HashMap();
       ptMap.put(boolean.class.getName(), boolean.class);
@@ -58,10 +57,7 @@ public class ClassLoadUtil {
     }
   }
 
-  /**
-   * Resolve the class from the given name.  Supports primitive
-   * types, too.
-   */
+  /** Resolve the class from the given name. Supports primitive types, too. */
   public static Class classFromName(String className) throws ClassNotFoundException {
     Class result = checkForPrimType(className);
     if (result == null) {
@@ -70,13 +66,13 @@ public class ClassLoadUtil {
     return result;
   }
 
-  /**
-   * Resolve the method from the given qualified name.
-   */
-  public static Method methodFromName(String fullyQualifiedMethodName, Class[] parameterTypes) throws ClassNotFoundException, NoSuchMethodException, SecurityException {
+  /** Resolve the method from the given qualified name. */
+  public static Method methodFromName(String fullyQualifiedMethodName, Class[] parameterTypes)
+      throws ClassNotFoundException, NoSuchMethodException, SecurityException {
     int classIndex = fullyQualifiedMethodName.lastIndexOf('.');
     if (classIndex <= 0) {
-      throw new ClassNotFoundException("Static creation function [" + fullyQualifiedMethodName + "] should be fully qualified");
+      throw new ClassNotFoundException(
+          "Static creation function [" + fullyQualifiedMethodName + "] should be fully qualified");
     }
     String className = fullyQualifiedMethodName.substring(0, classIndex);
     if (checkForPrimType(className) != null) {
@@ -87,18 +83,15 @@ public class ClassLoadUtil {
     return result.getMethod(methodName, parameterTypes);
   }
 
-  /**
-   * Resolve the method from the given qualified name. Only zero argument
-   * methods are supported.
-   */
-  public static Method methodFromName(String fullyQualifiedMethodName) throws ClassNotFoundException, NoSuchMethodException, SecurityException {
+  /** Resolve the method from the given qualified name. Only zero argument methods are supported. */
+  public static Method methodFromName(String fullyQualifiedMethodName)
+      throws ClassNotFoundException, NoSuchMethodException, SecurityException {
     return methodFromName(fullyQualifiedMethodName, (Class[]) null);
   }
 
   /**
-   * If the argument className is the name of a primitive type (including
-   * "void"), return the primitive type class (ex, boolean.class).  Otherwise,
-   * return null.
+   * If the argument className is the name of a primitive type (including "void"), return the
+   * primitive type class (ex, boolean.class). Otherwise, return null.
    */
   public static Class checkForPrimType(String className) {
 
@@ -106,13 +99,11 @@ public class ClassLoadUtil {
   }
 
   /**
-   * If the argument className is the name of a primitive type (not including
-   * "void"), return the wrapper class for that type (ex, Boolean.class).  
-   * Otherwise, return null.
+   * If the argument className is the name of a primitive type (not including "void"), return the
+   * wrapper class for that type (ex, Boolean.class). Otherwise, return null.
    */
   public static Class checkForWrapperType(String className) {
 
     return (Class) wrapperTypes.get(className);
   }
-
 }

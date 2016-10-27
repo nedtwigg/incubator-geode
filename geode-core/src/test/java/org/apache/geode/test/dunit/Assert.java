@@ -17,10 +17,9 @@
 package org.apache.geode.test.dunit;
 
 /**
- * Extends <code>org.junit.Assert</code> with additional assertion and fail
- * methods. 
- * 
- * These methods can be used directly: <code>Assert.assertIndexDetailsEquals(...)</code>,
+ * Extends <code>org.junit.Assert</code> with additional assertion and fail methods.
+ *
+ * <p>These methods can be used directly: <code>Assert.assertIndexDetailsEquals(...)</code>,
  * however, they are intended to be referenced through static import:
  *
  * <pre>
@@ -30,25 +29,22 @@ package org.apache.geode.test.dunit;
  * </pre>
  *
  * Extracted from DistributedTestCase.
- * 
+ *
  * @see java.lang.AssertionError
  */
 public class Assert extends org.junit.Assert {
 
-  protected Assert() {
-  }
+  protected Assert() {}
 
   /**
-   * Fails a test by throwing a new {@code AssertionError} with the specified
-   * detail message and cause.
+   * Fails a test by throwing a new {@code AssertionError} with the specified detail message and
+   * cause.
    *
-   * <p>Note that the detail message associated with
-   * {@code cause} is <i>not</i> automatically incorporated in
-   * this error's detail message.
+   * <p>Note that the detail message associated with {@code cause} is <i>not</i> automatically
+   * incorporated in this error's detail message.
    *
-   * @param  message the detail message, may be {@code null}
-   * @param  cause the cause, may be {@code null}
-   *
+   * @param message the detail message, may be {@code null}
+   * @param cause the cause, may be {@code null}
    * @see java.lang.AssertionError
    */
   public static void fail(final String message, final Throwable cause) {

@@ -37,7 +37,12 @@ public class ExplicitMoveDirector extends RebalanceDirectorAdapter {
   private final Object key;
   private InternalDistributedSystem ds;
 
-  public ExplicitMoveDirector(Object key, int bucketId, DistributedMember source, DistributedMember target, DistributedSystem distributedSystem) {
+  public ExplicitMoveDirector(
+      Object key,
+      int bucketId,
+      DistributedMember source,
+      DistributedMember target,
+      DistributedSystem distributedSystem) {
     this.key = key;
     this.bucketId = bucketId;
     this.source = (InternalDistributedMember) source;
@@ -61,35 +66,66 @@ public class ExplicitMoveDirector extends RebalanceDirectorAdapter {
     Member sourceMember = model.getMember(source);
     Member targetMember = model.getMember(target);
     if (sourceMember == null) {
-      throw new IllegalStateException(LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_SOURCE_NOT_DATA_STORE.toLocalizedString(model.getName(), source));
+      throw new IllegalStateException(
+          LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_SOURCE_NOT_DATA_STORE.toLocalizedString(
+              model.getName(), source));
     }
     if (targetMember == null) {
-      throw new IllegalStateException(LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_TARGET_NOT_DATA_STORE.toLocalizedString(model.getName(), target));
+      throw new IllegalStateException(
+          LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_TARGET_NOT_DATA_STORE.toLocalizedString(
+              model.getName(), target));
     }
 
     if (bucket == null) {
-      throw new IllegalStateException("The bucket for key " + key + ", bucket " + bucketId + ", region " + model.getName() + " does not exist");
+      throw new IllegalStateException(
+          "The bucket for key "
+              + key
+              + ", bucket "
+              + bucketId
+              + ", region "
+              + model.getName()
+              + " does not exist");
     }
 
     if (!bucket.getMembersHosting().contains(sourceMember)) {
-      throw new IllegalStateException("The bucket for key " + key + ", bucket " + bucketId + ", region " + model.getName() + " is not hosted by " + source + ". Members hosting: " + bucket.getMembersHosting());
+      throw new IllegalStateException(
+          "The bucket for key "
+              + key
+              + ", bucket "
+              + bucketId
+              + ", region "
+              + model.getName()
+              + " is not hosted by "
+              + source
+              + ". Members hosting: "
+              + bucket.getMembersHosting());
     }
 
-    RefusalReason reason = targetMember.willAcceptBucket(bucket, sourceMember, model.enforceUniqueZones());
+    RefusalReason reason =
+        targetMember.willAcceptBucket(bucket, sourceMember, model.enforceUniqueZones());
     if (reason.willAccept()) {
       if (!model.moveBucket(new Move(sourceMember, targetMember, bucket))) {
         //Double check to see if the source or destination have left the DS
         Set allMembers = ds.getDistributionManager().getDistributionManagerIdsIncludingAdmin();
         if (!allMembers.contains(sourceMember)) {
-          throw new IllegalStateException(LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_SOURCE_NOT_DATA_STORE.toLocalizedString(model.getName(), source));
+          throw new IllegalStateException(
+              LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_SOURCE_NOT_DATA_STORE.toLocalizedString(
+                  model.getName(), source));
         }
         if (!allMembers.contains(targetMember)) {
-          throw new IllegalStateException(LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_TARGET_NOT_DATA_STORE.toLocalizedString(model.getName(), target));
+          throw new IllegalStateException(
+              LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_TARGET_NOT_DATA_STORE.toLocalizedString(
+                  model.getName(), target));
         }
-        throw new IllegalStateException("Unable to move bucket " + bucket + " from " + sourceMember + " to " + targetMember);
+        throw new IllegalStateException(
+            "Unable to move bucket " + bucket + " from " + sourceMember + " to " + targetMember);
       }
     } else {
-      throw new IllegalStateException("Unable to move bucket for " + model.getName() + ". " + reason.formatMessage(sourceMember, targetMember, bucket));
+      throw new IllegalStateException(
+          "Unable to move bucket for "
+              + model.getName()
+              + ". "
+              + reason.formatMessage(sourceMember, targetMember, bucket));
     }
 
     return false;

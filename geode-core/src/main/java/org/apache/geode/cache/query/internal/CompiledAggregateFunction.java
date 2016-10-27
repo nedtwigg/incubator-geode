@@ -39,10 +39,7 @@ import org.apache.geode.cache.query.internal.parse.OQLLexerTokenTypes;
 import org.apache.geode.cache.query.internal.types.ObjectTypeImpl;
 import org.apache.geode.cache.query.types.ObjectType;
 
-/**
- * 
- *
- */
+/** */
 public class CompiledAggregateFunction extends AbstractCompiledValue {
 
   private final CompiledValue expr;
@@ -66,64 +63,67 @@ public class CompiledAggregateFunction extends AbstractCompiledValue {
   }
 
   @Override
-  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     boolean isPRQueryNode = context.getIsPRQueryNode();
     boolean isBucketNode = context.getBucketList() != null;
     switch (this.aggFuncType) {
+      case OQLLexerTokenTypes.SUM:
+        if (isPRQueryNode) {
+          return this.distinctOnly ? new SumDistinctPRQueryNode() : new Sum();
+        } else {
+          return this.distinctOnly
+              ? (isBucketNode ? new DistinctAggregator() : new SumDistinct())
+              : new Sum();
+        }
 
-    case OQLLexerTokenTypes.SUM:
-      if (isPRQueryNode) {
-        return this.distinctOnly ? new SumDistinctPRQueryNode() : new Sum();
-      } else {
-        return this.distinctOnly ? (isBucketNode ? new DistinctAggregator() : new SumDistinct()) : new Sum();
-      }
+      case OQLLexerTokenTypes.MAX:
+        return new MaxMin(true);
 
-    case OQLLexerTokenTypes.MAX:
-      return new MaxMin(true);
+      case OQLLexerTokenTypes.MIN:
+        return new MaxMin(false);
 
-    case OQLLexerTokenTypes.MIN:
-      return new MaxMin(false);
+      case OQLLexerTokenTypes.AVG:
+        if (isPRQueryNode) {
+          return this.distinctOnly ? new AvgDistinctPRQueryNode() : new AvgPRQueryNode();
+        } else {
+          return this.distinctOnly
+              ? (isBucketNode ? new DistinctAggregator() : new AvgDistinct())
+              : (isBucketNode ? new AvgBucketNode() : new Avg());
+        }
 
-    case OQLLexerTokenTypes.AVG:
-      if (isPRQueryNode) {
-        return this.distinctOnly ? new AvgDistinctPRQueryNode() : new AvgPRQueryNode();
-      } else {
-        return this.distinctOnly ? (isBucketNode ? new DistinctAggregator() : new AvgDistinct()) : (isBucketNode ? new AvgBucketNode() : new Avg());
-      }
+      case OQLLexerTokenTypes.COUNT:
+        if (isPRQueryNode) {
+          return this.distinctOnly ? new CountDistinctPRQueryNode() : new CountPRQueryNode();
+        } else {
+          return this.distinctOnly
+              ? (isBucketNode ? new DistinctAggregator() : new CountDistinct())
+              : new Count();
+        }
 
-    case OQLLexerTokenTypes.COUNT:
-      if (isPRQueryNode) {
-        return this.distinctOnly ? new CountDistinctPRQueryNode() : new CountPRQueryNode();
-      } else {
-        return this.distinctOnly ? (isBucketNode ? new DistinctAggregator() : new CountDistinct()) : new Count();
-      }
-
-    default:
-      throw new UnsupportedOperationException("Aggregate function not implemented");
-
+      default:
+        throw new UnsupportedOperationException("Aggregate function not implemented");
     }
-
   }
 
   private String getStringRep() {
     switch (this.aggFuncType) {
+      case OQLLexerTokenTypes.SUM:
+        return "sum";
 
-    case OQLLexerTokenTypes.SUM:
-      return "sum";
+      case OQLLexerTokenTypes.MAX:
+        return "max";
 
-    case OQLLexerTokenTypes.MAX:
-      return "max";
+      case OQLLexerTokenTypes.MIN:
+        return "min";
 
-    case OQLLexerTokenTypes.MIN:
-      return "min";
-
-    case OQLLexerTokenTypes.AVG:
-      return "avg";
-    case OQLLexerTokenTypes.COUNT:
-      return "count";
-    default:
-      throw new UnsupportedOperationException("Aggregate function not implemented");
-
+      case OQLLexerTokenTypes.AVG:
+        return "avg";
+      case OQLLexerTokenTypes.COUNT:
+        return "count";
+      default:
+        throw new UnsupportedOperationException("Aggregate function not implemented");
     }
   }
 
@@ -137,24 +137,23 @@ public class CompiledAggregateFunction extends AbstractCompiledValue {
 
   public ObjectType getObjectType() {
     switch (this.aggFuncType) {
+      case OQLLexerTokenTypes.SUM:
+      case OQLLexerTokenTypes.MAX:
+      case OQLLexerTokenTypes.MIN:
+      case OQLLexerTokenTypes.AVG:
+        return new ObjectTypeImpl(Number.class);
 
-    case OQLLexerTokenTypes.SUM:
-    case OQLLexerTokenTypes.MAX:
-    case OQLLexerTokenTypes.MIN:
-    case OQLLexerTokenTypes.AVG:
-      return new ObjectTypeImpl(Number.class);
+      case OQLLexerTokenTypes.COUNT:
+        return new ObjectTypeImpl(Integer.class);
 
-    case OQLLexerTokenTypes.COUNT:
-      return new ObjectTypeImpl(Integer.class);
-
-    default:
-      throw new UnsupportedOperationException("Aggregate function not implemented");
-
+      default:
+        throw new UnsupportedOperationException("Aggregate function not implemented");
     }
   }
 
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     clauseBuffer.insert(0, ')');
     if (this.expr != null) {
       this.expr.generateCanonicalizedExpression(clauseBuffer, context);

@@ -63,15 +63,13 @@ import org.apache.geode.internal.offheap.annotations.Retained;
 
 /**
  * A class that specifies a destroy operation.
- * 
- * Note: The reason for different classes for Destroy and Invalidate is to
- * prevent sending an extra bit for every DestroyMessage to differentiate an
- * invalidate versus a destroy. The assumption is that these operations are used
- * frequently, if they are not then it makes sense to fold the destroy and the
- * invalidate into the same message and use an extra bit to differentiate
- * 
+ *
+ * <p>Note: The reason for different classes for Destroy and Invalidate is to prevent sending an
+ * extra bit for every DestroyMessage to differentiate an invalidate versus a destroy. The
+ * assumption is that these operations are used frequently, if they are not then it makes sense to
+ * fold the destroy and the invalidate into the same message and use an extra bit to differentiate
+ *
  * @since GemFire 5.0
- *  
  */
 public class DestroyMessage extends PartitionMessageWithDirectReply {
 
@@ -86,7 +84,9 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
   /** The operation performed on the sender */
   private Operation op;
 
-  /** An additional object providing context for the operation, e.g., for BridgeServer notification */
+  /**
+   * An additional object providing context for the operation, e.g., for BridgeServer notification
+   */
   ClientProxyMembershipID bridgeContext;
 
   /** event identifier */
@@ -110,13 +110,16 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
 
   protected static final short CACHE_WRITE = UNRESERVED_FLAGS_START;
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public DestroyMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public DestroyMessage() {}
 
-  protected DestroyMessage(Set recipients, boolean notifyOnly, int regionId, DirectReplyProcessor processor, EntryEventImpl event, Object expectedOldValue) {
+  protected DestroyMessage(
+      Set recipients,
+      boolean notifyOnly,
+      int regionId,
+      DirectReplyProcessor processor,
+      EntryEventImpl event,
+      Object expectedOldValue) {
     super(recipients, regionId, processor, event);
     this.expectedOldValue = expectedOldValue;
     this.key = event.getKey();
@@ -161,10 +164,9 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
   }
 
   /**
-   * send a notification-only message to a set of listeners.  The processor
-   * id is passed with the message for reply message processing.  This method
-   * does not wait on the processor.
-   * 
+   * send a notification-only message to a set of listeners. The processor id is passed with the
+   * message for reply message processing. This method does not wait on the processor.
+   *
    * @param cacheOpReceivers receivers of associated bucket CacheOperationMessage
    * @param adjunctRecipients receivers that must get the event
    * @param filterRoutingInfo client routing information
@@ -173,35 +175,47 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
    * @param processor the processor to reply to
    * @return members that could not be notified
    */
-  public static Set notifyListeners(Set cacheOpReceivers, Set adjunctRecipients, FilterRoutingInfo filterRoutingInfo, PartitionedRegion r, EntryEventImpl event, DirectReplyProcessor processor) {
-    DestroyMessage msg = new DestroyMessage(Collections.EMPTY_SET, true, r.getPRId(), processor, event, null);
+  public static Set notifyListeners(
+      Set cacheOpReceivers,
+      Set adjunctRecipients,
+      FilterRoutingInfo filterRoutingInfo,
+      PartitionedRegion r,
+      EntryEventImpl event,
+      DirectReplyProcessor processor) {
+    DestroyMessage msg =
+        new DestroyMessage(Collections.EMPTY_SET, true, r.getPRId(), processor, event, null);
     msg.versionTag = event.getVersionTag();
-    return msg.relayToListeners(cacheOpReceivers, adjunctRecipients, filterRoutingInfo, event, r, processor);
+    return msg.relayToListeners(
+        cacheOpReceivers, adjunctRecipients, filterRoutingInfo, event, r, processor);
   }
 
   /**
-   * Sends a DestroyMessage
-   * {@link org.apache.geode.cache.Region#destroy(Object)}message to the
+   * Sends a DestroyMessage {@link org.apache.geode.cache.Region#destroy(Object)}message to the
    * recipient
-   * 
+   *
    * @param recipient the recipient of the message
-   * @param r
-   *          the PartitionedRegion for which the destroy was performed
+   * @param r the PartitionedRegion for which the destroy was performed
    * @param event the event causing this message
-   * @return the processor used to await the potential
-   *         {@link org.apache.geode.cache.CacheException}
+   * @return the processor used to await the potential {@link org.apache.geode.cache.CacheException}
    * @throws ForceReattemptException if the peer is no longer available
    */
-  public static DestroyResponse send(DistributedMember recipient, PartitionedRegion r, EntryEventImpl event, Object expectedOldValue) throws ForceReattemptException {
+  public static DestroyResponse send(
+      DistributedMember recipient,
+      PartitionedRegion r,
+      EntryEventImpl event,
+      Object expectedOldValue)
+      throws ForceReattemptException {
     //Assert.assertTrue(recipient != null, "DestroyMessage NULL recipient"); recipient may be null for event notification
     Set recipients = Collections.singleton(recipient);
     DestroyResponse p = new DestroyResponse(r.getSystem(), recipients, false);
     p.requireResponse();
-    DestroyMessage m = new DestroyMessage(recipients, false, r.getPRId(), p, event, expectedOldValue);
+    DestroyMessage m =
+        new DestroyMessage(recipients, false, r.getPRId(), p, event, expectedOldValue);
     m.setTransactionDistributed(r.getCache().getTxManager().isDistributed());
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new ForceReattemptException(LocalizedStrings.DestroyMessage_FAILED_SENDING_0.toLocalizedString(m));
+      throw new ForceReattemptException(
+          LocalizedStrings.DestroyMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
     return p;
   }
@@ -215,27 +229,45 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
   }
 
   /**
-   * This method is called upon receipt and make the desired changes to the
-   * PartitionedRegion Note: It is very important that this message does NOT
-   * cause any deadlocks as the sender will wait indefinitely for the
-   * acknowledgement
+   * This method is called upon receipt and make the desired changes to the PartitionedRegion Note:
+   * It is very important that this message does NOT cause any deadlocks as the sender will wait
+   * indefinitely for the acknowledgement
    */
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime) throws EntryExistsException, DataLocationException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion r, long startTime)
+      throws EntryExistsException, DataLocationException {
     InternalDistributedMember eventSender = originalSender;
     if (eventSender == null) {
       eventSender = getSender();
     }
-    @Released
-    EntryEventImpl event = null;
+    @Released EntryEventImpl event = null;
     try {
       if (this.bridgeContext != null) {
-        event = EntryEventImpl.create(r, getOperation(), this.key, null/*newValue*/, getCallbackArg(), false/*originRemote*/, eventSender, true/*generateCallbacks*/);
+        event =
+            EntryEventImpl.create(
+                r,
+                getOperation(),
+                this.key,
+                null /*newValue*/,
+                getCallbackArg(),
+                false /*originRemote*/,
+                eventSender,
+                true /*generateCallbacks*/);
         event.setContext(this.bridgeContext);
       } // bridgeContext != null
       else {
-        event = EntryEventImpl.create(r, getOperation(), this.key, null, /*newValue*/
-            getCallbackArg(), false/*originRemote - false to force distribution in buckets*/, eventSender, true/*generateCallbacks*/, false/*initializeId*/);
+        event =
+            EntryEventImpl.create(
+                r,
+                getOperation(),
+                this.key,
+                null, /*newValue*/
+                getCallbackArg(),
+                false /*originRemote - false to force distribution in buckets*/,
+                eventSender,
+                true /*generateCallbacks*/,
+                false /*initializeId*/);
       }
       if (this.versionTag != null) {
         this.versionTag.replaceNullIDs(getSender());
@@ -250,9 +282,12 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
       boolean sendReply = true;
 
       if (!notificationOnly) {
-        Assert.assertTrue(ds != null, "This process should have storage for an item in " + this.toString());
+        Assert.assertTrue(
+            ds != null, "This process should have storage for an item in " + this.toString());
         try {
-          Integer bucket = Integer.valueOf(PartitionedRegionHelper.getHashKey(r, null, this.key, null, this.cbArg));
+          Integer bucket =
+              Integer.valueOf(
+                  PartitionedRegionHelper.getHashKey(r, null, this.key, null, this.cbArg));
           //        try {
           //          // the event must show its true origin for cachewriter invocation
           //          event.setOriginRemote(true);
@@ -263,16 +298,29 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
           //          event.setOriginRemote(false);
           //        }
           event.setCausedByMessage(this);
-          r.getDataView().destroyOnRemote(event, true/*cacheWrite*/, this.expectedOldValue);
+          r.getDataView().destroyOnRemote(event, true /*cacheWrite*/, this.expectedOldValue);
           if (logger.isTraceEnabled(LogMarker.DM)) {
-            logger.trace(LogMarker.DM, "{} updated bucket: {} with key: {}", getClass().getName(), bucket, this.key);
+            logger.trace(
+                LogMarker.DM,
+                "{} updated bucket: {} with key: {}",
+                getClass().getName(),
+                bucket,
+                this.key);
           }
         } catch (CacheWriterException cwe) {
           sendReply(getSender(), this.processorId, dm, new ReplyException(cwe), r, startTime);
           return false;
         } catch (EntryNotFoundException eee) {
-          logger.trace(LogMarker.DM, "{}: operateOnRegion caught EntryNotFoundException", getClass().getName());
-          ReplyMessage.send(getSender(), getProcessorId(), new ReplyException(eee), getReplySender(dm), r.isInternalRegion());
+          logger.trace(
+              LogMarker.DM,
+              "{}: operateOnRegion caught EntryNotFoundException",
+              getClass().getName());
+          ReplyMessage.send(
+              getSender(),
+              getProcessorId(),
+              new ReplyException(eee),
+              getReplySender(dm),
+              r.isInternalRegion());
           sendReply = false; // this prevents us from acking later
         } catch (PrimaryBucketException pbe) {
           sendReply(getSender(), getProcessorId(), dm, new ReplyException(pbe), r, startTime);
@@ -282,8 +330,7 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
           this.versionTag = event.getVersionTag();
         }
       } else {
-        @Released
-        EntryEventImpl e2 = createListenerEvent(event, r, dm.getDistributionManagerId());
+        @Released EntryEventImpl e2 = createListenerEvent(event, r, dm.getDistributionManagerId());
         try {
           r.invokeDestroyCallbacks(EnumListenerEvent.AFTER_DESTROY, e2, r.isInitialized(), true);
         } finally {
@@ -303,14 +350,30 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
   }
 
   @Override
-  protected void sendReply(InternalDistributedMember member, int procId, DM dm, ReplyException ex, PartitionedRegion pr, long startTime) {
+  protected void sendReply(
+      InternalDistributedMember member,
+      int procId,
+      DM dm,
+      ReplyException ex,
+      PartitionedRegion pr,
+      long startTime) {
     if (pr != null && startTime > 0) {
       pr.getPrStats().endPartitionMessagesProcessing(startTime);
     }
     if (ex == null) {
-      DestroyReplyMessage.send(getSender(), getReplySender(dm), this.processorId, this.versionTag, pr != null && pr.isInternalRegion());
+      DestroyReplyMessage.send(
+          getSender(),
+          getReplySender(dm),
+          this.processorId,
+          this.versionTag,
+          pr != null && pr.isInternalRegion());
     } else {
-      ReplyMessage.send(getSender(), this.processorId, ex, getReplySender(dm), pr != null && pr.isInternalRegion());
+      ReplyMessage.send(
+          getSender(),
+          this.processorId,
+          ex,
+          getReplySender(dm),
+          pr != null && pr.isInternalRegion());
     }
   }
 
@@ -360,8 +423,7 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
   @Override
   protected short computeCompressedShort(short s) {
     s = super.computeCompressedShort(s);
-    if (this.filterInfo != null)
-      s |= HAS_FILTER_INFO;
+    if (this.filterInfo != null) s |= HAS_FILTER_INFO;
     return s;
   }
 
@@ -370,11 +432,13 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
     return this.eventId;
   }
 
-  /** create a new EntryEvent to be used in notifying listeners, bridge servers, etc.
-   * Caller must release result if it is != to sourceEvent
+  /**
+   * create a new EntryEvent to be used in notifying listeners, bridge servers, etc. Caller must
+   * release result if it is != to sourceEvent
    */
   @Retained
-  EntryEventImpl createListenerEvent(EntryEventImpl sourceEvent, PartitionedRegion r, InternalDistributedMember member) {
+  EntryEventImpl createListenerEvent(
+      EntryEventImpl sourceEvent, PartitionedRegion r, InternalDistributedMember member) {
     final EntryEventImpl e2;
     if (this.notificationOnly && this.bridgeContext == null) {
       e2 = sourceEvent;
@@ -399,7 +463,7 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
 
   /**
    * Assists the toString method in reporting the contents of this message
-   * 
+   *
    * @see PartitionMessage#toString()
    */
   @Override
@@ -455,10 +519,14 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
     private VersionTag versionTag;
 
     /** DSFIDFactory constructor */
-    public DestroyReplyMessage() {
-    }
+    public DestroyReplyMessage() {}
 
-    static void send(InternalDistributedMember recipient, ReplySender dm, int procId, VersionTag versionTag, boolean internal) {
+    static void send(
+        InternalDistributedMember recipient,
+        ReplySender dm,
+        int procId,
+        VersionTag versionTag,
+        boolean internal) {
       Assert.assertTrue(recipient != null, "DestroyReplyMessage NULL recipient");
       DestroyReplyMessage m = new DestroyReplyMessage(recipient, procId, versionTag);
       m.internal = internal;
@@ -480,7 +548,10 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
     public void process(final DM dm, final ReplyProcessor21 rp) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "DestroyReplyMessage process invoking reply processor with processorId: {}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "DestroyReplyMessage process invoking reply processor with processorId: {}",
+            this.processorId);
       }
       //dm.getLogger().warning("RemotePutResponse processor is " + ReplyProcessor21.getProcessor(this.processorId));
       if (rp == null) {
@@ -552,7 +623,6 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
     public boolean getInlineProcess() {
       return true;
     }
-
   }
 
   public static class DestroyResponse extends PartitionResponse {
@@ -570,5 +640,4 @@ public class DestroyMessage extends PartitionMessageWithDirectReply {
       return this.versionTag;
     }
   }
-
 }

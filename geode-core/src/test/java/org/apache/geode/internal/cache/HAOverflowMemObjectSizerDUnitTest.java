@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
@@ -51,8 +49,9 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Tests the size of clientUpdateMessageImpl with the size calculated by
- * {@link org.apache.geode.internal.cache.lru.MemLRUCapacityController} for HA overFlow
+ * Tests the size of clientUpdateMessageImpl with the size calculated by {@link
+ * org.apache.geode.internal.cache.lru.MemLRUCapacityController} for HA overFlow
+ *
  * @since GemFire 5.7
  */
 @Category(DistributedTest.class)
@@ -127,7 +126,7 @@ public class HAOverflowMemObjectSizerDUnitTest extends JUnit4DistributedTestCase
   /**
    * Creates cache and starts the bridge-server
    *
-   *  @param notification property of BridgeServer
+   * @param notification property of BridgeServer
    */
   public static Integer createCacheServer(Boolean notification) throws Exception {
     new HAOverflowMemObjectSizerDUnitTest().createCache(new Properties());
@@ -149,13 +148,18 @@ public class HAOverflowMemObjectSizerDUnitTest extends JUnit4DistributedTestCase
     /*
      * storing capacity controller reference
      */
-    cc = ((VMLRURegionMap) ((LocalRegion) cache.getRegion(Region.SEPARATOR + CacheServerImpl.generateNameForClientMsgsRegion(port))).entries)._getCCHelper();
+    cc =
+        ((VMLRURegionMap)
+                ((LocalRegion)
+                        cache.getRegion(
+                            Region.SEPARATOR
+                                + CacheServerImpl.generateNameForClientMsgsRegion(port)))
+                    .entries)
+            ._getCCHelper();
     return new Integer(server1.getPort());
   }
 
-  /**
-   * create client cache
-   */
+  /** create client cache */
   public static void createCacheClient(Integer port1, String host) throws Exception {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
@@ -164,7 +168,8 @@ public class HAOverflowMemObjectSizerDUnitTest extends JUnit4DistributedTestCase
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.NORMAL);
-    ClientServerTestCase.configureConnectionPool(factory, host, port1.intValue(), -1, true, -1, 2, null, -1, -1, false);
+    ClientServerTestCase.configureConnectionPool(
+        factory, host, port1.intValue(), -1, true, -1, 2, null, -1, -1, false);
     RegionAttributes attrs = factory.create();
     Region region = cache.createRegion(regionName, attrs);
     assertNotNull(region);
@@ -174,54 +179,73 @@ public class HAOverflowMemObjectSizerDUnitTest extends JUnit4DistributedTestCase
   /**
    * This test does the following :<br>
    * Configuration: notification by subscription is <b>true </b><br>
-   * 1)Verify size calculated by getSizeInByte() of ClientUpdateMessagesImpl is
-   * equal to the size calculated by memCapacity controller <br>
+   * 1)Verify size calculated by getSizeInByte() of ClientUpdateMessagesImpl is equal to the size
+   * calculated by memCapacity controller <br>
    */
   @Test
   public void testSizerImplementationofMemCapacityControllerWhenNotificationBySubscriptionIsTrue() {
 
-    Integer port1 = (Integer) serverVM.invoke(() -> HAOverflowMemObjectSizerDUnitTest.createCacheServer(new Boolean(true)));
+    Integer port1 =
+        (Integer)
+            serverVM.invoke(
+                () -> HAOverflowMemObjectSizerDUnitTest.createCacheServer(new Boolean(true)));
     serverPort1 = port1;
     serverVM.invoke(() -> ConflationDUnitTest.setIsSlowStart("15000"));
 
-    client.invoke(() -> HAOverflowMemObjectSizerDUnitTest.createCacheClient(port1, NetworkUtils.getServerHostName(client.getHost())));
+    client.invoke(
+        () ->
+            HAOverflowMemObjectSizerDUnitTest.createCacheClient(
+                port1, NetworkUtils.getServerHostName(client.getHost())));
 
-    serverVM.invoke(() -> HAOverflowMemObjectSizerDUnitTest.performPut(new Long(0L), new Long(100L)));
-    serverVM.invoke(() -> HAOverflowMemObjectSizerDUnitTest.sizerTestForMemCapacityController(serverPort1));
+    serverVM.invoke(
+        () -> HAOverflowMemObjectSizerDUnitTest.performPut(new Long(0L), new Long(100L)));
+    serverVM.invoke(
+        () -> HAOverflowMemObjectSizerDUnitTest.sizerTestForMemCapacityController(serverPort1));
   }
 
   /**
    * This test does the following :<br>
    * Configuration: notification by subscription is<b> false </b><br>
-   * 1)Verify size calculated by getSizeInByte() of ClientUpdateMessagesImpl is
-   * equal to the size calculated by memCapacity controller <br>
+   * 1)Verify size calculated by getSizeInByte() of ClientUpdateMessagesImpl is equal to the size
+   * calculated by memCapacity controller <br>
    */
   @Test
-  public void testSizerImplementationofMemCapacityControllerWhenNotificationBySubscriptionIsFalse() {
-    Integer port2 = (Integer) serverVM.invoke(() -> HAOverflowMemObjectSizerDUnitTest.createCacheServer(new Boolean(false)));
+  public void
+      testSizerImplementationofMemCapacityControllerWhenNotificationBySubscriptionIsFalse() {
+    Integer port2 =
+        (Integer)
+            serverVM.invoke(
+                () -> HAOverflowMemObjectSizerDUnitTest.createCacheServer(new Boolean(false)));
     serverPort2 = port2;
 
     serverVM.invoke(() -> ConflationDUnitTest.setIsSlowStart("15000"));
 
-    client.invoke(() -> HAOverflowMemObjectSizerDUnitTest.createCacheClient(port2, NetworkUtils.getServerHostName(client.getHost())));
+    client.invoke(
+        () ->
+            HAOverflowMemObjectSizerDUnitTest.createCacheClient(
+                port2, NetworkUtils.getServerHostName(client.getHost())));
 
-    serverVM.invoke(() -> HAOverflowMemObjectSizerDUnitTest.performPut(new Long(101L), new Long(200L)));
-    serverVM.invoke(() -> HAOverflowMemObjectSizerDUnitTest.sizerTestForMemCapacityController(serverPort2));
+    serverVM.invoke(
+        () -> HAOverflowMemObjectSizerDUnitTest.performPut(new Long(101L), new Long(200L)));
+    serverVM.invoke(
+        () -> HAOverflowMemObjectSizerDUnitTest.sizerTestForMemCapacityController(serverPort2));
   }
 
   /**
-   * Check for size return by ClientUpdateMessagesImpl getSizeInByte()
-   * with size return by memCapacity controller
+   * Check for size return by ClientUpdateMessagesImpl getSizeInByte() with size return by
+   * memCapacity controller
    *
    * @param port - BridgeServer port required to get ClientMessagesRegion
    */
   public static void sizerTestForMemCapacityController(Integer port) {
-    region = cache.getRegion(Region.SEPARATOR + CacheServerImpl.generateNameForClientMsgsRegion(port.intValue()));
+    region =
+        cache.getRegion(
+            Region.SEPARATOR + CacheServerImpl.generateNameForClientMsgsRegion(port.intValue()));
     assertNotNull(region);
     Set entries = region.entrySet();
     assertTrue(entries.size() > 0);
     Iterator iter = entries.iterator();
-    for (; iter.hasNext();) {
+    for (; iter.hasNext(); ) {
       Region.Entry entry = (Region.Entry) iter.next();
       ClientUpdateMessageImpl cum = (ClientUpdateMessageImpl) entry.getValue();
       // passed null to get the size of value ie CUM only ,
@@ -230,7 +254,9 @@ public class HAOverflowMemObjectSizerDUnitTest extends JUnit4DistributedTestCase
       // we need substract this over head
       // as this default value is private static in MemLRUCapacityController
       // cannot access directly
-      assertTrue("cum size is not equal", (cc.entrySize(null, entry.getValue()) - OVERHEAD_PER_ENTRY) == cum.getSizeInBytes());
+      assertTrue(
+          "cum size is not equal",
+          (cc.entrySize(null, entry.getValue()) - OVERHEAD_PER_ENTRY) == cum.getSizeInBytes());
     }
     cache.getLogger().fine("Test passed. Now, doing a cleanup job.");
     // added here as sleep should be on server where CMR is present and
@@ -241,10 +267,8 @@ public class HAOverflowMemObjectSizerDUnitTest extends JUnit4DistributedTestCase
   /**
    * Creates the cache
    *
-   * @param props -
-   *          distributed system props
-   * @throws Exception -
-   *           thrown in any problem occurs in creating cache
+   * @param props - distributed system props
+   * @throws Exception - thrown in any problem occurs in creating cache
    */
   private void createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
@@ -266,6 +290,7 @@ public class HAOverflowMemObjectSizerDUnitTest extends JUnit4DistributedTestCase
 
   /**
    * perform put on server region that will put entries on CMR region
+   *
    * @param lowerLimit
    * @param higerlimit - lower and upper limit on put
    */

@@ -23,12 +23,8 @@ import org.apache.geode.pdx.PdxWriter;
 public class ClientPDXSerializableObject implements PdxSerializable {
 
   @Override
-  public void toData(final PdxWriter writer) {
-
-  }
+  public void toData(final PdxWriter writer) {}
 
   @Override
-  public void fromData(final PdxReader reader) {
-
-  }
+  public void fromData(final PdxReader reader) {}
 }

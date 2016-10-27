@@ -53,38 +53,34 @@ import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Test class to verify proper RVV locking interaction between
- * entry operations such as PUT/REMOVE and the CLEAR region operation
- * 
- * GEODE-599: After an operation completed, it would unlock the RVV.
- * This was occurring before the operation was distributed to other members
- * which created a window in which another operation could be performed
- * prior to that operation being distributed.
- * 
- * The fix for GEODE-599 was to not release the lock until after
- * distributing the operation to the other members.
- *  
+ * Test class to verify proper RVV locking interaction between entry operations such as PUT/REMOVE
+ * and the CLEAR region operation
+ *
+ * <p>GEODE-599: After an operation completed, it would unlock the RVV. This was occurring before
+ * the operation was distributed to other members which created a window in which another operation
+ * could be performed prior to that operation being distributed.
+ *
+ * <p>The fix for GEODE-599 was to not release the lock until after distributing the operation to
+ * the other members.
  */
-
 @SuppressWarnings("serial")
 @Category(DistributedTest.class)
 public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
 
-  @Rule
-  public transient JUnitSoftAssertions softly = new JUnitSoftAssertions();
+  @Rule public transient JUnitSoftAssertions softly = new JUnitSoftAssertions();
   /*
    * The tests perform a single operation and a concurrent clear.
-   * 
+   *
    * opsVM determines where the single operation will be performed, null will perform the op on the test VM (vm0)
    * clearVM determines where the clear operation will be performed, null will perform the clear on the test VM (vm0)
-   * 
+   *
    * Specifying NULL/NULL for opsVM and clearVM has the effect of performing both in the same thread
    * whereas specifying vm0/vm0 for example will run them both on the same vm, but different threads.
    * NULL/NULL is not tested here since the same thread performing a clear prior to returning from a put
    * is not possible using the public API.
-   * 
+   *
    * Each test is performed twice once with operation and clear on the same vm, once on different vms.
-   * 
+   *
    */
   VM vm0, vm1, opsVM, clearVM;
 
@@ -105,7 +101,8 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   public void testPutOperationSameVM() {
     try {
       setupMembers();
-      setOpAndClearVM(vm0, vm0); // first arg is where to perform operation, second arg where to perform clear
+      setOpAndClearVM(
+          vm0, vm0); // first arg is where to perform operation, second arg where to perform clear
       opsVM.invoke(() -> setBasicHook(opsVM));
       runConsistencyTest(vm0, performPutOperation);
       checkForConsistencyErrors();
@@ -118,7 +115,8 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   public void testPutOperationDifferentVM() {
     try {
       setupMembers();
-      setOpAndClearVM(vm0, vm1); // first arg is where to perform operation, second arg where to perform clear   
+      setOpAndClearVM(
+          vm0, vm1); // first arg is where to perform operation, second arg where to perform clear
       opsVM.invoke(() -> setBasicHook(clearVM));
       runConsistencyTest(vm0, performPutOperation);
       checkForConsistencyErrors();
@@ -340,92 +338,100 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
     decrementStep1Latch();
   }
 
-  SerializableRunnable performPutOperation = new SerializableRunnable("perform PUT") {
-    @Override
-    public void run() {
-      try {
-        invokePut(opsVM);
-      } catch (Exception e) {
-        fail("while performing PUT", e);
-      }
-    }
-  };
-
-  SerializableRunnable performNoAckPutOperation = new SerializableRunnable("perform NoAckPUT") {
-    @Override
-    public void run() throws InterruptedException {
-      Runnable putThread1 = new Runnable() {
+  SerializableRunnable performPutOperation =
+      new SerializableRunnable("perform PUT") {
+        @Override
         public void run() {
-          DistributedSystem.setThreadsSocketPolicy(false);
-          doPut();
-          DistributedSystem.releaseThreadsSockets();
+          try {
+            invokePut(opsVM);
+          } catch (Exception e) {
+            fail("while performing PUT", e);
+          }
         }
       };
 
-      Runnable putThread2 = new Runnable() {
-        public void run() {
-          DistributedSystem.setThreadsSocketPolicy(false);
-          awaitStep1Latch();
-          doClear();
-          DistributedSystem.releaseThreadsSockets();
+  SerializableRunnable performNoAckPutOperation =
+      new SerializableRunnable("perform NoAckPUT") {
+        @Override
+        public void run() throws InterruptedException {
+          Runnable putThread1 =
+              new Runnable() {
+                public void run() {
+                  DistributedSystem.setThreadsSocketPolicy(false);
+                  doPut();
+                  DistributedSystem.releaseThreadsSockets();
+                }
+              };
+
+          Runnable putThread2 =
+              new Runnable() {
+                public void run() {
+                  DistributedSystem.setThreadsSocketPolicy(false);
+                  awaitStep1Latch();
+                  doClear();
+                  DistributedSystem.releaseThreadsSockets();
+                }
+              };
+
+          Thread t1 = new Thread(putThread1);
+          Thread t2 = new Thread(putThread2);
+          t2.start();
+          t1.start();
+          t1.join();
+          t2.join();
         }
       };
 
-      Thread t1 = new Thread(putThread1);
-      Thread t2 = new Thread(putThread2);
-      t2.start();
-      t1.start();
-      t1.join();
-      t2.join();
-    }
-  };
+  SerializableRunnable performRemoveOperation =
+      new SerializableRunnable("perform REMOVE") {
+        @Override
+        public void run() {
+          try {
+            invokePut(opsVM);
+            invokeRemove(opsVM);
+          } catch (Exception e) {
+            fail("while performing REMOVE", e);
+          }
+        }
+      };
 
-  SerializableRunnable performRemoveOperation = new SerializableRunnable("perform REMOVE") {
-    @Override
-    public void run() {
-      try {
-        invokePut(opsVM);
-        invokeRemove(opsVM);
-      } catch (Exception e) {
-        fail("while performing REMOVE", e);
-      }
-    }
-  };
+  SerializableRunnable performInvalidateOperation =
+      new SerializableRunnable("perform INVALIDATE") {
+        @Override
+        public void run() {
+          try {
+            invokePut(opsVM);
+            invokeInvalidate(opsVM);
+          } catch (Exception e) {
+            fail("while performing INVALIDATE", e);
+          }
+        }
+      };
 
-  SerializableRunnable performInvalidateOperation = new SerializableRunnable("perform INVALIDATE") {
-    @Override
-    public void run() {
-      try {
-        invokePut(opsVM);
-        invokeInvalidate(opsVM);
-      } catch (Exception e) {
-        fail("while performing INVALIDATE", e);
-      }
-    }
-  };
+  SerializableRunnable performPutAllOperation =
+      new SerializableRunnable("perform PUTALL") {
+        @Override
+        public void run() {
+          try {
+            invokePutAll(opsVM);
+          } catch (Exception e) {
+            fail("while performing PUTALL", e);
+          }
+        }
+      };
 
-  SerializableRunnable performPutAllOperation = new SerializableRunnable("perform PUTALL") {
-    @Override
-    public void run() {
-      try {
-        invokePutAll(opsVM);
-      } catch (Exception e) {
-        fail("while performing PUTALL", e);
-      }
-    }
-  };
-
-  SerializableRunnable performRemoveAllOperation = new SerializableRunnable("perform REMOVEALL") {
-    @Override
-    public void run() {
-      try {
-        invokePutAll(opsVM);
-        invokeRemoveAll(opsVM);
-      } catch (Exception e) {
-        fail("while performing REMOVEALL", e);
-      }
-    }
-  };
+  SerializableRunnable performRemoveAllOperation =
+      new SerializableRunnable("perform REMOVEALL") {
+        @Override
+        public void run() {
+          try {
+            invokePutAll(opsVM);
+            invokeRemoveAll(opsVM);
+          } catch (Exception e) {
+            fail("while performing REMOVEALL", e);
+          }
+        }
+      };
 
   // helper methods
 
@@ -465,15 +471,27 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
     Map<Object, Object> r1Contents = (Map<Object, Object>) vm1.invoke(() -> getRegionContents());
 
     String key = THE_KEY;
-    softly.assertThat(r1Contents.get(key)).as("region contents are not consistent for key %s", key).isEqualTo(r0Contents.get(key));
-    softly.assertThat(checkRegionEntry(vm1, key)).as("region entries are not consistent for key %s", key).isEqualTo(checkRegionEntry(vm0, key));
+    softly
+        .assertThat(r1Contents.get(key))
+        .as("region contents are not consistent for key %s", key)
+        .isEqualTo(r0Contents.get(key));
+    softly
+        .assertThat(checkRegionEntry(vm1, key))
+        .as("region entries are not consistent for key %s", key)
+        .isEqualTo(checkRegionEntry(vm0, key));
 
     for (int subi = 1; subi < 3; subi++) {
       String subkey = key + "-" + subi;
       if (r0Contents.containsKey(subkey)) {
-        softly.assertThat(r1Contents.get(subkey)).as("region contents are not consistent for key %s", subkey).isEqualTo(r0Contents.get(subkey));
+        softly
+            .assertThat(r1Contents.get(subkey))
+            .as("region contents are not consistent for key %s", subkey)
+            .isEqualTo(r0Contents.get(subkey));
       } else {
-        softly.assertThat(r1Contents).as("expected containsKey for %s to return false", subkey).doesNotContainKey(subkey);
+        softly
+            .assertThat(r1Contents)
+            .as("expected containsKey for %s to return false", subkey)
+            .doesNotContainKey(subkey);
       }
     }
   }
@@ -513,21 +531,25 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   }
 
   private InternalDistributedMember createCache(VM vm) {
-    return (InternalDistributedMember) vm.invoke(new SerializableCallable<Object>() {
-      public Object call() {
-        cache = getCache(new CacheFactory().set("conserve-sockets", "true"));
-        return getSystem().getDistributedMember();
-      }
-    });
+    return (InternalDistributedMember)
+        vm.invoke(
+            new SerializableCallable<Object>() {
+              public Object call() {
+                cache = getCache(new CacheFactory().set("conserve-sockets", "true"));
+                return getSystem().getDistributedMember();
+              }
+            });
   }
 
   private InternalDistributedMember createNoConserveSocketsCache(VM vm) {
-    return (InternalDistributedMember) vm.invoke(new SerializableCallable<Object>() {
-      public Object call() {
-        cache = getCache(new CacheFactory().set("conserve-sockets", "false"));
-        return getSystem().getDistributedMember();
-      }
-    });
+    return (InternalDistributedMember)
+        vm.invoke(
+            new SerializableCallable<Object>() {
+              public Object call() {
+                cache = getCache(new CacheFactory().set("conserve-sockets", "false"));
+                return getSystem().getDistributedMember();
+              }
+            });
   }
 
   private static void createRegion(String rgnName) {
@@ -557,7 +579,7 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   @SuppressWarnings("rawtypes")
   private static Map<Object, Object> getRegionContents() {
     Map<Object, Object> result = new HashMap<>();
-    for (Iterator i = region.entrySet().iterator(); i.hasNext();) {
+    for (Iterator i = region.entrySet().iterator(); i.hasNext(); ) {
       Region.Entry e = (Region.Entry) i.next();
       result.put(e.getKey(), e.getValue());
     }
@@ -570,7 +592,7 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   }
 
   static VM theOtherVM;
-  transient static CountDownLatch step1Latch, step2Latch;
+  static transient CountDownLatch step1Latch, step2Latch;
 
   public static void primeStep1Latch(int waitCount) {
     step1Latch = new CountDownLatch(waitCount);
@@ -629,7 +651,8 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
 
     @Override
     public void afterRelease(LocalRegion owner, CacheEvent event) {
-      if ((event.getOperation().isDestroy() || event.getOperation().isInvalidate()) && owner.getName().startsWith("test")) {
+      if ((event.getOperation().isDestroy() || event.getOperation().isInvalidate())
+          && owner.getName().startsWith("test")) {
         invokeClear(theOtherVM);
       }
     }
@@ -641,7 +664,9 @@ public class ClearRvvLockingDUnitTest extends JUnit4CacheTestCase {
   public static class ArmNoAckRemoteHook extends ARMLockTestHookAdapter {
     @Override
     public void beforeLock(LocalRegion owner, CacheEvent event) {
-      if (event.isOriginRemote() && event.getOperation().isCreate() && owner.getName().startsWith("test")) {
+      if (event.isOriginRemote()
+          && event.getOperation().isCreate()
+          && owner.getName().startsWith("test")) {
         theOtherVM.invoke(() -> releaseStep1()); // start clear
         awaitStep2Latch(); // wait for clear to complete
       }

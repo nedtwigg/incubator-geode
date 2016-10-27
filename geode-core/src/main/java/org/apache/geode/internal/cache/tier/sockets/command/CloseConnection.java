@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import java.io.IOException;
@@ -32,14 +30,13 @@ import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 
 public class CloseConnection extends BaseCommand {
 
-  private final static CloseConnection singleton = new CloseConnection();
+  private static final CloseConnection singleton = new CloseConnection();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private CloseConnection() {
-  }
+  private CloseConnection() {}
 
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
@@ -59,17 +56,30 @@ public class CloseConnection extends BaseCommand {
       String clientHost = servConn.getSocketHost();
       int clientPort = servConn.getSocketPort();
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Received close request ({} bytes) from {}:{}", servConn.getName(), msg.getPayloadLength(), clientHost, clientPort);
+        logger.debug(
+            "{}: Received close request ({} bytes) from {}:{}",
+            servConn.getName(),
+            msg.getPayloadLength(),
+            clientHost,
+            clientPort);
       }
 
       Part keepalivePart = msg.getPart(0);
       byte[] keepaliveByte = keepalivePart.getSerializedForm();
       boolean keepalive = (keepaliveByte == null || keepaliveByte[0] == 0) ? false : true;
 
-      servConn.getAcceptor().getCacheClientNotifier().setKeepAlive(servConn.getProxyID(), keepalive);
+      servConn
+          .getAcceptor()
+          .getCacheClientNotifier()
+          .setKeepAlive(servConn.getProxyID(), keepalive);
 
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Processed close request from {}:{}, keepAlive: {}", servConn.getName(), clientHost, clientPort, keepalive);
+        logger.debug(
+            "{}: Processed close request from {}:{}, keepAlive: {}",
+            servConn.getName(),
+            clientHost,
+            clientPort,
+            keepalive);
       }
     } finally {
       if (respondToClient) {
@@ -79,7 +89,5 @@ public class CloseConnection extends BaseCommand {
 
       stats.incProcessCloseConnectionTime(DistributionStats.getStatTime() - start);
     }
-
   }
-
 }

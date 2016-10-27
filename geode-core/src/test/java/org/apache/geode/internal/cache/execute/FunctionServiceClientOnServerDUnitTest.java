@@ -20,9 +20,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 import org.junit.experimental.categories.Category;
 
-/**
- * Tests onServers using a single server from a single client.
- */
+/** Tests onServers using a single server from a single client. */
 @Category(DistributedTest.class)
 public class FunctionServiceClientOnServerDUnitTest extends FunctionServiceClientOnServerBase {
 

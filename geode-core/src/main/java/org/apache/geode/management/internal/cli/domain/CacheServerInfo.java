@@ -68,5 +68,4 @@ public class CacheServerInfo implements Serializable {
     sb.append(this.isRunning);
     return sb.toString();
   }
-
 }

@@ -57,8 +57,8 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
 
   /**
    * tracks bucketIds of transactional operations so as to distinguish between
-   * TransactionDataNotColocated and TransactionDataRebalanced exceptions.
-   * Map rather than set, as a HashSet is backed by a HashMap. (avoids one "new" call).
+   * TransactionDataNotColocated and TransactionDataRebalanced exceptions. Map rather than set, as a
+   * HashSet is backed by a HashMap. (avoids one "new" call).
    */
   private Map<Integer, Boolean> buckets = new HashMap<Integer, Boolean>();
 
@@ -66,10 +66,12 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
     super(txstate, r);
   }
 
-  public void destroyExistingEntry(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) {
+  public void destroyExistingEntry(
+      EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) {
     PartitionedRegion pr = (PartitionedRegion) event.getLocalRegion();
     try {
-      pr.destroyRemotely(state.getTarget(), event.getKeyInfo().getBucketId(), event, expectedOldValue);
+      pr.destroyRemotely(
+          state.getTarget(), event.getKeyInfo().getBucketId(), event, expectedOldValue);
     } catch (TransactionException e) {
       RuntimeException re = getTransactionException(event.getKeyInfo(), e);
       re.initCause(e.getCause());
@@ -81,9 +83,16 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
     } catch (ForceReattemptException e) {
       RuntimeException re;
       if (isBucketNotFoundException(e)) {
-        re = new TransactionDataRebalancedException(LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING.toLocalizedString());
+        re =
+            new TransactionDataRebalancedException(
+                LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING
+                    .toLocalizedString());
       } else {
-        re = new TransactionDataNodeHasDepartedException(LocalizedStrings.PartitionedRegion_TRANSACTION_DATA_NODE_0_HAS_DEPARTED_TO_PROCEED_ROLLBACK_THIS_TRANSACTION_AND_BEGIN_A_NEW_ONE.toLocalizedString(state.getTarget()));
+        re =
+            new TransactionDataNodeHasDepartedException(
+                LocalizedStrings
+                    .PartitionedRegion_TRANSACTION_DATA_NODE_0_HAS_DEPARTED_TO_PROCEED_ROLLBACK_THIS_TRANSACTION_AND_BEGIN_A_NEW_ONE
+                    .toLocalizedString(state.getTarget()));
       }
       re.initCause(e);
       waitToRetry();
@@ -104,21 +113,23 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
     if (keyInfo != null && !buckets.isEmpty() && !buckets.containsKey(keyInfo.getBucketId())) {
       // for parent region if previous ops were successful and for child colocated regions
       // where the bucketId was not previously encountered
-      return new TransactionDataNotColocatedException(LocalizedStrings.PartitionedRegion_KEY_0_NOT_COLOCATED_WITH_TRANSACTION.toLocalizedString(keyInfo.getKey()));
+      return new TransactionDataNotColocatedException(
+          LocalizedStrings.PartitionedRegion_KEY_0_NOT_COLOCATED_WITH_TRANSACTION.toLocalizedString(
+              keyInfo.getKey()));
     }
     ex = cause;
     while (ex != null) {
       if (ex instanceof PrimaryBucketException) {
-        return new TransactionDataRebalancedException(LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING.toLocalizedString());
+        return new TransactionDataRebalancedException(
+            LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING
+                .toLocalizedString());
       }
       ex = ex.getCause();
     }
     return new TransactionDataNodeHasDepartedException(cause.getLocalizedMessage());
   }
 
-  /**
-   * wait to retry after getting a ForceReattemptException
-   */
+  /** wait to retry after getting a ForceReattemptException */
   private void waitToRetry() {
     // this is what PR operations do.  The 2000ms is not used
     (new RetryTimeKeeper(2000)).waitForBucketsRecovery();
@@ -127,7 +138,13 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
   public Entry getEntry(KeyInfo keyInfo, boolean allowTombstones) {
     PartitionedRegion pr = (PartitionedRegion) region;
     try {
-      Entry e = pr.getEntryRemotely((InternalDistributedMember) state.getTarget(), keyInfo.getBucketId(), keyInfo.getKey(), false, allowTombstones);
+      Entry e =
+          pr.getEntryRemotely(
+              (InternalDistributedMember) state.getTarget(),
+              keyInfo.getBucketId(),
+              keyInfo.getKey(),
+              false,
+              allowTombstones);
       trackBucketForTx(keyInfo);
       return e;
     } catch (EntryNotFoundException enfe) {
@@ -143,9 +160,16 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
     } catch (ForceReattemptException e) {
       RuntimeException re;
       if (isBucketNotFoundException(e)) {
-        re = new TransactionDataRebalancedException(LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING.toLocalizedString());
+        re =
+            new TransactionDataRebalancedException(
+                LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING
+                    .toLocalizedString());
       } else {
-        re = new TransactionDataNodeHasDepartedException(LocalizedStrings.PartitionedRegion_TRANSACTION_DATA_NODE_0_HAS_DEPARTED_TO_PROCEED_ROLLBACK_THIS_TRANSACTION_AND_BEGIN_A_NEW_ONE.toLocalizedString(state.getTarget()));
+        re =
+            new TransactionDataNodeHasDepartedException(
+                LocalizedStrings
+                    .PartitionedRegion_TRANSACTION_DATA_NODE_0_HAS_DEPARTED_TO_PROCEED_ROLLBACK_THIS_TRANSACTION_AND_BEGIN_A_NEW_ONE
+                    .toLocalizedString(state.getTarget()));
       }
       re.initCause(e);
       waitToRetry();
@@ -155,14 +179,18 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
 
   private void trackBucketForTx(KeyInfo keyInfo) {
     if (region.getCache().getLoggerI18n().fineEnabled()) {
-      region.getCache().getLoggerI18n().fine("adding bucket:" + keyInfo.getBucketId() + " for tx:" + state.getTransactionId());
+      region
+          .getCache()
+          .getLoggerI18n()
+          .fine("adding bucket:" + keyInfo.getBucketId() + " for tx:" + state.getTransactionId());
     }
     if (keyInfo.getBucketId() >= 0) {
       buckets.put(keyInfo.getBucketId(), Boolean.TRUE);
     }
   }
 
-  public void invalidateExistingEntry(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {
+  public void invalidateExistingEntry(
+      EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {
     PartitionedRegion pr = (PartitionedRegion) event.getLocalRegion();
     try {
       pr.invalidateRemotely(state.getTarget(), event.getKeyInfo().getBucketId(), event);
@@ -177,9 +205,16 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
     } catch (ForceReattemptException e) {
       RuntimeException re;
       if (isBucketNotFoundException(e)) {
-        re = new TransactionDataRebalancedException(LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING.toLocalizedString());
+        re =
+            new TransactionDataRebalancedException(
+                LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING
+                    .toLocalizedString());
       } else {
-        re = new TransactionDataNodeHasDepartedException(LocalizedStrings.PartitionedRegion_TRANSACTION_DATA_NODE_0_HAS_DEPARTED_TO_PROCEED_ROLLBACK_THIS_TRANSACTION_AND_BEGIN_A_NEW_ONE.toLocalizedString(state.getTarget()));
+        re =
+            new TransactionDataNodeHasDepartedException(
+                LocalizedStrings
+                    .PartitionedRegion_TRANSACTION_DATA_NODE_0_HAS_DEPARTED_TO_PROCEED_ROLLBACK_THIS_TRANSACTION_AND_BEGIN_A_NEW_ONE
+                    .toLocalizedString(state.getTarget()));
       }
       re.initCause(e);
       waitToRetry();
@@ -191,7 +226,11 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
   public boolean containsKey(KeyInfo keyInfo) {
     PartitionedRegion pr = (PartitionedRegion) region;
     try {
-      boolean retVal = pr.containsKeyRemotely((InternalDistributedMember) state.getTarget(), keyInfo.getBucketId(), keyInfo.getKey());
+      boolean retVal =
+          pr.containsKeyRemotely(
+              (InternalDistributedMember) state.getTarget(),
+              keyInfo.getBucketId(),
+              keyInfo.getKey());
       trackBucketForTx(keyInfo);
       return retVal;
     } catch (TransactionException e) {
@@ -207,7 +246,11 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
         return false;
       }
       waitToRetry();
-      RuntimeException re = new TransactionDataNodeHasDepartedException(LocalizedStrings.PartitionedRegion_TRANSACTION_DATA_NODE_0_HAS_DEPARTED_TO_PROCEED_ROLLBACK_THIS_TRANSACTION_AND_BEGIN_A_NEW_ONE.toLocalizedString(state.getTarget()));
+      RuntimeException re =
+          new TransactionDataNodeHasDepartedException(
+              LocalizedStrings
+                  .PartitionedRegion_TRANSACTION_DATA_NODE_0_HAS_DEPARTED_TO_PROCEED_ROLLBACK_THIS_TRANSACTION_AND_BEGIN_A_NEW_ONE
+                  .toLocalizedString(state.getTarget()));
       re.initCause(e);
       throw re;
     }
@@ -228,7 +271,11 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
   public boolean containsValueForKey(KeyInfo keyInfo) {
     PartitionedRegion pr = (PartitionedRegion) region;
     try {
-      boolean retVal = pr.containsValueForKeyRemotely((InternalDistributedMember) state.getTarget(), keyInfo.getBucketId(), keyInfo.getKey());
+      boolean retVal =
+          pr.containsValueForKeyRemotely(
+              (InternalDistributedMember) state.getTarget(),
+              keyInfo.getBucketId(),
+              keyInfo.getKey());
       trackBucketForTx(keyInfo);
       return retVal;
     } catch (TransactionException e) {
@@ -244,19 +291,39 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
         return false;
       }
       waitToRetry();
-      RuntimeException re = new TransactionDataNodeHasDepartedException(LocalizedStrings.PartitionedRegion_TRANSACTION_DATA_NODE_0_HAS_DEPARTED_TO_PROCEED_ROLLBACK_THIS_TRANSACTION_AND_BEGIN_A_NEW_ONE.toLocalizedString(state.getTarget()));
+      RuntimeException re =
+          new TransactionDataNodeHasDepartedException(
+              LocalizedStrings
+                  .PartitionedRegion_TRANSACTION_DATA_NODE_0_HAS_DEPARTED_TO_PROCEED_ROLLBACK_THIS_TRANSACTION_AND_BEGIN_A_NEW_ONE
+                  .toLocalizedString(state.getTarget()));
       re.initCause(e);
       throw re;
     }
   }
 
-  public Object findObject(KeyInfo keyInfo, boolean isCreate, boolean generateCallbacks, Object value, boolean peferCD, ClientProxyMembershipID requestingClient, EntryEventImpl clientEvent) {
+  public Object findObject(
+      KeyInfo keyInfo,
+      boolean isCreate,
+      boolean generateCallbacks,
+      Object value,
+      boolean peferCD,
+      ClientProxyMembershipID requestingClient,
+      EntryEventImpl clientEvent) {
     Object retVal = null;
     final Object key = keyInfo.getKey();
     final Object callbackArgument = keyInfo.getCallbackArg();
     PartitionedRegion pr = (PartitionedRegion) region;
     try {
-      retVal = pr.getRemotely((InternalDistributedMember) state.getTarget(), keyInfo.getBucketId(), key, callbackArgument, peferCD, requestingClient, clientEvent, false);
+      retVal =
+          pr.getRemotely(
+              (InternalDistributedMember) state.getTarget(),
+              keyInfo.getBucketId(),
+              key,
+              callbackArgument,
+              peferCD,
+              requestingClient,
+              clientEvent,
+              false);
     } catch (TransactionException e) {
       RuntimeException re = getTransactionException(keyInfo, e);
       re.initCause(e.getCause());
@@ -288,12 +355,20 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
     }
   }
 
-  public boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) {
+  public boolean putEntry(
+      EntryEventImpl event,
+      boolean ifNew,
+      boolean ifOld,
+      Object expectedOldValue,
+      boolean requireOldValue,
+      long lastModified,
+      boolean overwriteDestroyed) {
     boolean retVal = false;
     final LocalRegion r = event.getLocalRegion();
     PartitionedRegion pr = (PartitionedRegion) r;
     try {
-      retVal = pr.putRemotely(state.getTarget(), event, ifNew, ifOld, expectedOldValue, requireOldValue);
+      retVal =
+          pr.putRemotely(state.getTarget(), event, ifNew, ifOld, expectedOldValue, requireOldValue);
     } catch (TransactionException e) {
       RuntimeException re = getTransactionException(event.getKeyInfo(), e);
       re.initCause(e.getCause());
@@ -314,7 +389,8 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
 
   public int entryCount() {
     try {
-      RemoteSizeMessage.SizeResponse response = RemoteSizeMessage.send(Collections.singleton(state.getTarget()), region);
+      RemoteSizeMessage.SizeResponse response =
+          RemoteSizeMessage.send(Collections.singleton(state.getTarget()), region);
       return response.waitForSize();
     } catch (Exception e) {
       throw getTransactionException(null, e);
@@ -322,12 +398,13 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
   }
 
   /**
-   * Create PutAllPRMsgs for each bucket, and send them. 
-   * 
-   * @param putallO
-   *                DistributedPutAllOperation object.  
+   * Create PutAllPRMsgs for each bucket, and send them.
+   *
+   * @param putallO DistributedPutAllOperation object.
    */
-  public void postPutAll(DistributedPutAllOperation putallO, VersionedObjectList successfulPuts, LocalRegion r) throws TransactionException {
+  public void postPutAll(
+      DistributedPutAllOperation putallO, VersionedObjectList successfulPuts, LocalRegion r)
+      throws TransactionException {
     if (r.getCache().isCacheAtShutdownAll()) {
       throw new CacheClosedException("Cache is shutting down");
     }
@@ -351,12 +428,11 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
         partialKeys.addKeysAndVersions(versions);
         successfulPuts.addAll(versions);
       } catch (PutAllPartialResultException pre) {
-        // sendMsgByBucket applied partial keys 
+        // sendMsgByBucket applied partial keys
         partialKeys.consolidate(pre.getResult());
       } catch (Exception ex) {
         // If failed at other exception
-        @Released
-        EntryEventImpl firstEvent = prMsg.getFirstEvent(pr);
+        @Released EntryEventImpl firstEvent = prMsg.getFirstEvent(pr);
         try {
           partialKeys.saveFailedKey(firstEvent.getKey(), ex);
         } finally {
@@ -367,7 +443,11 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
     pr.prStats.endPutAll(startTime);
 
     if (partialKeys.hasFailure()) {
-      pr.getCache().getLoggerI18n().info(LocalizedStrings.Region_PutAll_Applied_PartialKeys_0_1, new Object[] { pr.getFullPath(), partialKeys });
+      pr.getCache()
+          .getLoggerI18n()
+          .info(
+              LocalizedStrings.Region_PutAll_Applied_PartialKeys_0_1,
+              new Object[] {pr.getFullPath(), partialKeys});
       if (putallO.isBridgeOperation()) {
         if (partialKeys.getFailure() instanceof CancelException) {
           throw (CancelException) partialKeys.getFailure();
@@ -385,7 +465,8 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
   }
 
   @Override
-  public void postRemoveAll(DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion r) {
+  public void postRemoveAll(
+      DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion r) {
     if (r.getCache().isCacheAtShutdownAll()) {
       throw new CacheClosedException("Cache is shutting down");
     }
@@ -409,12 +490,11 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
         partialKeys.addKeysAndVersions(versions);
         successfulOps.addAll(versions);
       } catch (PutAllPartialResultException pre) {
-        // sendMsgByBucket applied partial keys 
+        // sendMsgByBucket applied partial keys
         partialKeys.consolidate(pre.getResult());
       } catch (Exception ex) {
         // If failed at other exception
-        @Released
-        EntryEventImpl firstEvent = prMsg.getFirstEvent(pr);
+        @Released EntryEventImpl firstEvent = prMsg.getFirstEvent(pr);
         try {
           partialKeys.saveFailedKey(firstEvent.getKey(), ex);
         } finally {
@@ -425,7 +505,11 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
     pr.prStats.endRemoveAll(startTime);
 
     if (partialKeys.hasFailure()) {
-      pr.getCache().getLoggerI18n().info(LocalizedStrings.Region_RemoveAll_Applied_PartialKeys_0_1, new Object[] { pr.getFullPath(), partialKeys });
+      pr.getCache()
+          .getLoggerI18n()
+          .info(
+              LocalizedStrings.Region_RemoveAll_Applied_PartialKeys_0_1,
+              new Object[] {pr.getFullPath(), partialKeys});
       if (op.isBridgeOperation()) {
         if (partialKeys.getFailure() instanceof CancelException) {
           throw (CancelException) partialKeys.getFailure();
@@ -440,18 +524,20 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
         }
       }
     }
-
   }
 
   /* If failed after retries, it will throw PartitionedRegionStorageException, no need for return value */
-  private VersionedObjectList sendMsgByBucket(final Integer bucketId, PutAllPRMessage prMsg, PartitionedRegion pr) {
+  private VersionedObjectList sendMsgByBucket(
+      final Integer bucketId, PutAllPRMessage prMsg, PartitionedRegion pr) {
     // retry the put remotely until it finds the right node managing the bucket
-    InternalDistributedMember currentTarget = pr.getOrCreateNodeForBucketWrite(bucketId.intValue(), null);
+    InternalDistributedMember currentTarget =
+        pr.getOrCreateNodeForBucketWrite(bucketId.intValue(), null);
     if (!currentTarget.equals(this.state.getTarget())) {
-      @Released
-      EntryEventImpl firstEvent = prMsg.getFirstEvent(pr);
+      @Released EntryEventImpl firstEvent = prMsg.getFirstEvent(pr);
       try {
-        throw new TransactionDataNotColocatedException(LocalizedStrings.PartitionedRegion_KEY_0_NOT_COLOCATED_WITH_TRANSACTION.toLocalizedString(firstEvent.getKey()));
+        throw new TransactionDataNotColocatedException(
+            LocalizedStrings.PartitionedRegion_KEY_0_NOT_COLOCATED_WITH_TRANSACTION
+                .toLocalizedString(firstEvent.getKey()));
       } finally {
         firstEvent.release();
       }
@@ -462,7 +548,10 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
       pr.checkReadiness();
       throw new TransactionDataNotColocatedException(prce.getMessage());
     } catch (PrimaryBucketException notPrimary) {
-      RuntimeException re = new TransactionDataRebalancedException(LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING.toLocalizedString());
+      RuntimeException re =
+          new TransactionDataRebalancedException(
+              LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING
+                  .toLocalizedString());
       re.initCause(notPrimary);
       throw re;
     } catch (DataLocationException dle) {
@@ -471,14 +560,17 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
   }
 
   /* If failed after retries, it will throw PartitionedRegionStorageException, no need for return value */
-  private VersionedObjectList sendMsgByBucket(final Integer bucketId, RemoveAllPRMessage prMsg, PartitionedRegion pr) {
+  private VersionedObjectList sendMsgByBucket(
+      final Integer bucketId, RemoveAllPRMessage prMsg, PartitionedRegion pr) {
     // retry the put remotely until it finds the right node managing the bucket
-    InternalDistributedMember currentTarget = pr.getOrCreateNodeForBucketWrite(bucketId.intValue(), null);
+    InternalDistributedMember currentTarget =
+        pr.getOrCreateNodeForBucketWrite(bucketId.intValue(), null);
     if (!currentTarget.equals(this.state.getTarget())) {
-      @Released
-      EntryEventImpl firstEvent = prMsg.getFirstEvent(pr);
+      @Released EntryEventImpl firstEvent = prMsg.getFirstEvent(pr);
       try {
-        throw new TransactionDataNotColocatedException(LocalizedStrings.PartitionedRegion_KEY_0_NOT_COLOCATED_WITH_TRANSACTION.toLocalizedString(firstEvent.getKey()));
+        throw new TransactionDataNotColocatedException(
+            LocalizedStrings.PartitionedRegion_KEY_0_NOT_COLOCATED_WITH_TRANSACTION
+                .toLocalizedString(firstEvent.getKey()));
       } finally {
         firstEvent.release();
       }
@@ -489,7 +581,10 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
       pr.checkReadiness();
       throw new TransactionDataNotColocatedException(prce.getMessage());
     } catch (PrimaryBucketException notPrimary) {
-      RuntimeException re = new TransactionDataRebalancedException(LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING.toLocalizedString());
+      RuntimeException re =
+          new TransactionDataRebalancedException(
+              LocalizedStrings.PartitionedRegion_TRANSACTIONAL_DATA_MOVED_DUE_TO_REBALANCING
+                  .toLocalizedString());
       re.initCause(notPrimary);
       throw re;
     } catch (DataLocationException dle) {
@@ -498,7 +593,5 @@ public class PartitionedTXRegionStub extends AbstractPeerTXRegionStub {
   }
 
   @Override
-  public void cleanup() {
-  }
-
+  public void cleanup() {}
 }

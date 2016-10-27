@@ -20,56 +20,47 @@ import org.apache.geode.DataSerializable;
 import java.io.*;
 
 /**
- * Configuration attributes for defining subscriber requirements and behavior
- * for a <code>Region</code>.
- * 
- * <p>The {@link InterestPolicy} defines what remote operation's data/event
- * are of interest to this cache's region.</p>
- * 
+ * Configuration attributes for defining subscriber requirements and behavior for a <code>Region
+ * </code>.
+ *
+ * <p>The {@link InterestPolicy} defines what remote operation's data/event are of interest to this
+ * cache's region.
+ *
  * @since GemFire 5.0
  */
 public class SubscriptionAttributes implements DataSerializable, Externalizable {
 
-  /** 
-   * this subscriber's interest policy
-   */
+  /** this subscriber's interest policy */
   private /*final*/ InterestPolicy interestPolicy;
 
-  /**
-   * Creates a new <code>SubscriptionAttributes</code> with the default
-   * configuration
-   */
+  /** Creates a new <code>SubscriptionAttributes</code> with the default configuration */
   public SubscriptionAttributes() {
     this.interestPolicy = InterestPolicy.DEFAULT;
   }
 
   /**
-   * Creates a new <code>SubscriptionAttributes</code> with the given
-   * interest policy.
+   * Creates a new <code>SubscriptionAttributes</code> with the given interest policy.
+   *
    * @param interestPolicy the interest policy this subscriber will use
    */
   public SubscriptionAttributes(InterestPolicy interestPolicy) {
     this.interestPolicy = interestPolicy;
   }
 
-  /**
-   * Returns the interest policy of this subscriber.
-   */
+  /** Returns the interest policy of this subscriber. */
   public InterestPolicy getInterestPolicy() {
     return this.interestPolicy;
   }
 
   @Override
   public boolean equals(Object other) {
-    if (other == this)
-      return true;
-    if (other == null)
-      return false;
-    if (!(other instanceof SubscriptionAttributes))
-      return false;
+    if (other == this) return true;
+    if (other == null) return false;
+    if (!(other instanceof SubscriptionAttributes)) return false;
     final SubscriptionAttributes that = (SubscriptionAttributes) other;
 
-    if (this.interestPolicy != that.interestPolicy && !(this.interestPolicy != null && this.interestPolicy.equals(that.interestPolicy)))
+    if (this.interestPolicy != that.interestPolicy
+        && !(this.interestPolicy != null && this.interestPolicy.equals(that.interestPolicy)))
       return false;
 
     return true;
@@ -87,7 +78,7 @@ public class SubscriptionAttributes implements DataSerializable, Externalizable 
 
   /**
    * Returns a string representation of the object.
-   * 
+   *
    * @return a string representation of the object
    */
   @Override

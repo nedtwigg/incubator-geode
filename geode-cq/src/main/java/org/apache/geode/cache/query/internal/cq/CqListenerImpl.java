@@ -21,35 +21,34 @@ import org.apache.geode.cache.query.CqEvent;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * CqListener class, implements CqListener interface methods. 
- * Offers callback methods for the CqQuery.
+ * CqListener class, implements CqListener interface methods. Offers callback methods for the
+ * CqQuery.
  *
  * @since GemFire 5.5
  */
 public class CqListenerImpl implements CqListener {
 
   /**
-   * An event occurred that modifies the results of the query.
-   * This event does not contain an error.
+   * An event occurred that modifies the results of the query. This event does not contain an error.
    */
   public void onEvent(CqEvent aCqEvent) {
     if (true) {
-      throw new IllegalStateException(LocalizedStrings.CqListenerImpl_NOT_YET_SUPPORTED.toLocalizedString());
+      throw new IllegalStateException(
+          LocalizedStrings.CqListenerImpl_NOT_YET_SUPPORTED.toLocalizedString());
     }
   }
 
-  /** 
-   * An error occurred in the processing of a CQ.
-   * This event does contain an error. The newValue and oldValue in the
-   * may or may not be available, and will be null if not available.
+  /**
+   * An error occurred in the processing of a CQ. This event does contain an error. The newValue and
+   * oldValue in the may or may not be available, and will be null if not available.
    */
   public void onError(CqEvent aCqEvent) {
     if (true) {
-      throw new IllegalStateException(LocalizedStrings.CqListenerImpl_NOT_YET_SUPPORTED.toLocalizedString());
+      throw new IllegalStateException(
+          LocalizedStrings.CqListenerImpl_NOT_YET_SUPPORTED.toLocalizedString());
     }
   }
 
   /** CQ is being closed, do any cleanup here */
-  public void close() {
-  }
+  public void close() {}
 }

@@ -31,21 +31,20 @@ import org.apache.geode.internal.memcached.commands.ClientError;
 import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 
 /**
- * Reads the first line from the request and interprets the {@link Command}
- * from the memcached client
- * 
- *
+ * Reads the first line from the request and interprets the {@link Command} from the memcached
+ * client
  */
 public class RequestReader {
 
   private static final Charset charsetASCII = Charset.forName("US-ASCII");
 
-  private static final ThreadLocal<CharsetDecoder> asciiDecoder = new ThreadLocal<CharsetDecoder>() {
-    @Override
-    protected CharsetDecoder initialValue() {
-      return charsetASCII.newDecoder();
-    }
-  };
+  private static final ThreadLocal<CharsetDecoder> asciiDecoder =
+      new ThreadLocal<CharsetDecoder>() {
+        @Override
+        protected CharsetDecoder initialValue() {
+          return charsetASCII.newDecoder();
+        }
+      };
 
   private ByteBuffer buffer;
 
@@ -72,7 +71,7 @@ public class RequestReader {
   public RequestReader(Socket socket, Protocol protocol) {
     buffer = ByteBuffer.allocate(getBufferSize(socket.getChannel()));
     // set position to limit so that first read attempt
-    // returns hasRemaining() false 
+    // returns hasRemaining() false
     buffer.position(buffer.limit());
     this.socket = socket;
     this.protocol = protocol;
@@ -216,6 +215,7 @@ public class RequestReader {
 
   /**
    * Returns an initialized byteBuffer for sending the reply
+   *
    * @param size size of ByteBuffer
    * @return the initialized response buffer
    */
@@ -263,7 +263,8 @@ public class RequestReader {
       reply.put(POSITION_OPCODE, buffer.get(POSITION_OPCODE));
       reply.putInt(POSITION_OPAQUE, buffer.getInt(POSITION_OPAQUE));
       if (ConnectionHandler.getLogger().finerEnabled()) {
-        ConnectionHandler.getLogger().finer("sending reply:" + reply + " " + Command.buffertoString(reply));
+        ConnectionHandler.getLogger()
+            .finer("sending reply:" + reply + " " + Command.buffertoString(reply));
       }
     }
     SocketChannel channel = this.socket.getChannel();

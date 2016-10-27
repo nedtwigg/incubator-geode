@@ -36,17 +36,15 @@ import org.apache.geode.internal.logging.LogService;
 /**
  * Provides MBean support for the monitoring of a statistic resource.
  *
- * @since GemFire     3.5
- *
+ * @since GemFire 3.5
  */
-public class StatisticResourceJmxImpl extends org.apache.geode.admin.internal.StatisticResourceImpl implements javax.management.NotificationListener, org.apache.geode.admin.jmx.internal.ManagedResource {
+public class StatisticResourceJmxImpl extends org.apache.geode.admin.internal.StatisticResourceImpl
+    implements javax.management.NotificationListener,
+        org.apache.geode.admin.jmx.internal.ManagedResource {
 
   private static final Logger logger = LogService.getLogger();
 
-  /** 
-   * Interval in seconds between refreshes. Values less than one results in no 
-   * refreshing .
-   */
+  /** Interval in seconds between refreshes. Values less than one results in no refreshing . */
   private int refreshInterval = 0;
 
   /** The JMX object name of this managed resource */
@@ -62,26 +60,38 @@ public class StatisticResourceJmxImpl extends org.apache.geode.admin.internal.St
   /**
    * Constructor for the StatisticResource object
    *
-   * @param statResource  the admin StatResource to manage/monitor
-   * @param member        the SystemMember owning this resource
-   * @exception org.apache.geode.admin.AdminException 
-   *            if unable to create this StatisticResource for administration
+   * @param statResource the admin StatResource to manage/monitor
+   * @param member the SystemMember owning this resource
+   * @exception org.apache.geode.admin.AdminException if unable to create this StatisticResource for
+   *     administration
    */
-  public StatisticResourceJmxImpl(StatResource statResource, SystemMemberJmx member) throws org.apache.geode.admin.AdminException {
+  public StatisticResourceJmxImpl(StatResource statResource, SystemMemberJmx member)
+      throws org.apache.geode.admin.AdminException {
     super(statResource, member);
     initializeMBean();
   }
 
   /** Create and register the MBean to manage this resource */
   private void initializeMBean() throws org.apache.geode.admin.AdminException {
-    this.mbeanName = new StringBuffer("GemFire.Statistic:").append("source=").append(MBeanUtil.makeCompliantMBeanNameProperty(this.member.getId())).append(",type=").append(MBeanUtil.makeCompliantMBeanNameProperty(getType())).append(",name=").append(MBeanUtil.makeCompliantMBeanNameProperty(getName())).append(",uid=").append(getUniqueId()).toString();
+    this.mbeanName =
+        new StringBuffer("GemFire.Statistic:")
+            .append("source=")
+            .append(MBeanUtil.makeCompliantMBeanNameProperty(this.member.getId()))
+            .append(",type=")
+            .append(MBeanUtil.makeCompliantMBeanNameProperty(getType()))
+            .append(",name=")
+            .append(MBeanUtil.makeCompliantMBeanNameProperty(getName()))
+            .append(",uid=")
+            .append(getUniqueId())
+            .toString();
 
-    this.objectName = MBeanUtil.createMBean(this, addDynamicAttributes(MBeanUtil.lookupManagedBean(this)));
+    this.objectName =
+        MBeanUtil.createMBean(this, addDynamicAttributes(MBeanUtil.lookupManagedBean(this)));
 
     // Refresh Interval
-    AdminDistributedSystemJmxImpl sysJmx = (AdminDistributedSystemJmxImpl) this.member.getDistributedSystem();
-    if (sysJmx.getRefreshInterval() > 0)
-      this.refreshInterval = sysJmx.getRefreshInterval();
+    AdminDistributedSystemJmxImpl sysJmx =
+        (AdminDistributedSystemJmxImpl) this.member.getDistributedSystem();
+    if (sysJmx.getRefreshInterval() > 0) this.refreshInterval = sysJmx.getRefreshInterval();
   }
 
   // -------------------------------------------------------------------------
@@ -98,22 +108,24 @@ public class StatisticResourceJmxImpl extends org.apache.geode.admin.internal.St
   }
 
   /**
-   * Sets interval in seconds between statistic refreshes; zero or less turns 
-   * off auto refreshing.  Manual refreshing has no effect on when the next
-   * scheduled refresh will occur.
+   * Sets interval in seconds between statistic refreshes; zero or less turns off auto refreshing.
+   * Manual refreshing has no effect on when the next scheduled refresh will occur.
    *
-   * @param refreshInterval  the new refresh interval in seconds
+   * @param refreshInterval the new refresh interval in seconds
    */
   private void _setRefreshInterval(int refreshInterval) {
-    boolean isRegistered = MBeanUtil.isRefreshNotificationRegistered(this, RefreshNotificationType.STATISTIC_RESOURCE_STATISTICS);
+    boolean isRegistered =
+        MBeanUtil.isRefreshNotificationRegistered(
+            this, RefreshNotificationType.STATISTIC_RESOURCE_STATISTICS);
 
-    if (isRegistered && (getRefreshInterval() == refreshInterval))
-      return;
+    if (isRegistered && (getRefreshInterval() == refreshInterval)) return;
 
     try {
-      MBeanUtil.registerRefreshNotification(this, // NotificationListener
+      MBeanUtil.registerRefreshNotification(
+          this, // NotificationListener
           getMBeanName(), // User Data as MBean Name
-          RefreshNotificationType.STATISTIC_RESOURCE_STATISTICS, refreshInterval); // int
+          RefreshNotificationType.STATISTIC_RESOURCE_STATISTICS,
+          refreshInterval); // int
 
       this.refreshInterval = refreshInterval;
       timerInited = true;
@@ -138,18 +150,19 @@ public class StatisticResourceJmxImpl extends org.apache.geode.admin.internal.St
   }
 
   /**
-   * RefreshInterval is now set only through the AdminDistributedSystem property
-   * refreshInterval. Attempt to set refreshInterval on StatisticResourceJmx
-   * MBean would result in an OperationNotSupportedException
-   * Auto-refresh is enabled on demand when a call to getStatistics is made
-   * 
-   * @param refreshInterval
-   *          the new refresh interval in seconds
+   * RefreshInterval is now set only through the AdminDistributedSystem property refreshInterval.
+   * Attempt to set refreshInterval on StatisticResourceJmx MBean would result in an
+   * OperationNotSupportedException Auto-refresh is enabled on demand when a call to getStatistics
+   * is made
+   *
+   * @param refreshInterval the new refresh interval in seconds
    * @deprecated since 6.0 use DistributedSystemConfig.refreshInterval instead
    */
   @Deprecated
   public void setRefreshInterval(int refreshInterval) throws OperationNotSupportedException {
-    throw new OperationNotSupportedException(LocalizedStrings.MANAGED_RESOURCE_REFRESH_INTERVAL_CANT_BE_SET_DIRECTLY.toLocalizedString());
+    throw new OperationNotSupportedException(
+        LocalizedStrings.MANAGED_RESOURCE_REFRESH_INTERVAL_CANT_BE_SET_DIRECTLY
+            .toLocalizedString());
   }
 
   // -------------------------------------------------------------------------
@@ -157,24 +170,24 @@ public class StatisticResourceJmxImpl extends org.apache.geode.admin.internal.St
   // -------------------------------------------------------------------------
 
   /**
-   * Handles notification to refresh. Reacts by refreshing the values of this
-   * SystemMember's ConfigurationParamaters. Any other notification is ignored.
-   * Given notification is handled only if there is any JMX client connected to 
-   * the system.
-   * <p>
-   * TODO: investigate use of NotificationFilter instead of explicit check...
-   * 
-   * @param notification
-   *          the JMX notification being received
-   * @param hb
-   *          handback object is unused
+   * Handles notification to refresh. Reacts by refreshing the values of this SystemMember's
+   * ConfigurationParamaters. Any other notification is ignored. Given notification is handled only
+   * if there is any JMX client connected to the system.
+   *
+   * <p>TODO: investigate use of NotificationFilter instead of explicit check...
+   *
+   * @param notification the JMX notification being received
+   * @param hb handback object is unused
    */
   public void handleNotification(Notification notification, Object hb) {
-    AdminDistributedSystemJmxImpl adminDSJmx = (AdminDistributedSystemJmxImpl) this.member.getDistributedSystem();
+    AdminDistributedSystemJmxImpl adminDSJmx =
+        (AdminDistributedSystemJmxImpl) this.member.getDistributedSystem();
 
     String typeStatResourceStats = RefreshNotificationType.STATISTIC_RESOURCE_STATISTICS.getType();
 
-    if (typeStatResourceStats.equals(notification.getType()) && getMBeanName().equals(notification.getUserData()) && !adminDSJmx.isRmiClientCountZero()) {
+    if (typeStatResourceStats.equals(notification.getType())
+        && getMBeanName().equals(notification.getUserData())
+        && !adminDSJmx.isRmiClientCountZero()) {
       try {
         refresh();
 
@@ -214,13 +227,15 @@ public class StatisticResourceJmxImpl extends org.apache.geode.admin.internal.St
   /**
    * Add MBean attribute definitions for each Statistic.
    *
-   * @param managed   the mbean definition to add attributes to
-   * @return a new instance of ManagedBean copied from <code>managed</code> but 
-   *         with the new attributes added
+   * @param managed the mbean definition to add attributes to
+   * @return a new instance of ManagedBean copied from <code>managed</code> but with the new
+   *     attributes added
    */
-  ManagedBean addDynamicAttributes(ManagedBean managed) throws org.apache.geode.admin.AdminException {
+  ManagedBean addDynamicAttributes(ManagedBean managed)
+      throws org.apache.geode.admin.AdminException {
     if (managed == null) {
-      throw new IllegalArgumentException(LocalizedStrings.StatisticResourceJmxImpl_MANAGEDBEAN_IS_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.StatisticResourceJmxImpl_MANAGEDBEAN_IS_NULL.toLocalizedString());
     }
 
     refresh(); // to get the stats...
@@ -304,14 +319,12 @@ public class StatisticResourceJmxImpl extends org.apache.geode.admin.internal.St
   }
 
   /**
-   * Checks equality of the given object with <code>this</code> based on the
-   * type (Class) and the MBean Name returned by <code>getMBeanName()</code>
-   * methods.
-   * 
-   * @param obj
-   *          object to check equality with
-   * @return true if the given object is if the same type and its MBean Name is
-   *         same as <code>this</code> object's MBean Name, false otherwise
+   * Checks equality of the given object with <code>this</code> based on the type (Class) and the
+   * MBean Name returned by <code>getMBeanName()</code> methods.
+   *
+   * @param obj object to check equality with
+   * @return true if the given object is if the same type and its MBean Name is same as <code>this
+   *     </code> object's MBean Name, false otherwise
    */
   @Override
   public boolean equals(Object obj) {
@@ -325,9 +338,8 @@ public class StatisticResourceJmxImpl extends org.apache.geode.admin.internal.St
   }
 
   /**
-   * Returns hash code for <code>this</code> object which is based on the MBean 
-   * Name generated. 
-   * 
+   * Returns hash code for <code>this</code> object which is based on the MBean Name generated.
+   *
    * @return hash code for <code>this</code> object
    */
   @Override

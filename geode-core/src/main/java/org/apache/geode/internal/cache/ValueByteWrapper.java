@@ -16,11 +16,7 @@
  */
 package org.apache.geode.internal.cache;
 
-/**
- * A wrapper class for the operation which has been recovered to be recovered by
- * the htree
- */
-
+/** A wrapper class for the operation which has been recovered to be recovered by the htree */
 class ValueByteWrapper {
   /** stores the bytes that were read * */
   private final byte[] valueBytes;
@@ -29,14 +25,11 @@ class ValueByteWrapper {
 
   /**
    * Constructs the wrapper object
-   * 
-   * @param value
-   *          byte[] bytes read from oplog
-   * @param userBit
-   *          A byte describing the nature of the value i.e whether it is:
-   *          serialized , invalid or empty byte array etc.
+   *
+   * @param value byte[] bytes read from oplog
+   * @param userBit A byte describing the nature of the value i.e whether it is: serialized ,
+   *     invalid or empty byte array etc.
    */
-
   ValueByteWrapper(byte[] value, byte userBit) {
     this.valueBytes = value;
     this.userBit = userBit;
@@ -44,21 +37,17 @@ class ValueByteWrapper {
 
   /**
    * @return boolean returns true if the value bytes are a serialized object
-   * 
-   * boolean isSerialized() { return isSerialized; }
+   *     <p>boolean isSerialized() { return isSerialized; }
    */
 
-  /**
-   * @return byte[] returns the value bytes stored
-   */
+  /** @return byte[] returns the value bytes stored */
   byte[] getValueBytes() {
     return this.valueBytes;
   }
 
   /**
-   * Getter method for the userBit assosciated with the value read from Oplog
-   * during initialization
-   * 
+   * Getter method for the userBit assosciated with the value read from Oplog during initialization
+   *
    * @return byte value
    */
   byte getUserBit() {

@@ -52,9 +52,8 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 
 /**
- * This class tests the ContiunousQuery mechanism in GemFire.
- * This includes the test with different data activities.
- *
+ * This class tests the ContiunousQuery mechanism in GemFire. This includes the test with different
+ * data activities.
  */
 @Category(DistributedTest.class)
 public class CqStatsDUnitTest extends JUnit4CacheTestCase {
@@ -70,154 +69,220 @@ public class CqStatsDUnitTest extends JUnit4CacheTestCase {
     // avoid IllegalStateException from HandShake by connecting all vms to
     // system before creating pool
     getSystem();
-    Invoke.invokeInEveryVM(new SerializableRunnable("getSystem") {
-      public void run() {
-        getSystem();
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("getSystem") {
+          public void run() {
+            getSystem();
+          }
+        });
     postSetUpCqStatsDUnitTest();
   }
 
-  protected void postSetUpCqStatsDUnitTest() throws Exception {
+  protected void postSetUpCqStatsDUnitTest() throws Exception {}
+
+  public void validateCQStats(
+      VM vm,
+      final String cqName,
+      final int creates,
+      final int updates,
+      final int deletes,
+      final int totalEvents,
+      final int cqListenerInvocations) {
+    vm.invoke(
+        new CacheSerializableRunnable("Validate CQs") {
+          public void run2() throws CacheException {
+            LogWriterUtils.getLogWriter().info("### Validating CQ Stats. ### " + cqName);
+            //      Get CQ Service.
+            QueryService qService = null;
+            try {
+              qService = getCache().getQueryService();
+            } catch (Exception cqe) {
+              cqe.printStackTrace();
+              fail("Failed to get query service.");
+            }
+
+            CqService cqService = null;
+            try {
+              cqService = ((DefaultQueryService) qService).getCqService();
+            } catch (CqException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+              fail("Failed to get CqService, CQ : " + cqName);
+            }
+            Collection<? extends InternalCqQuery> cqs = cqService.getAllCqs();
+            if (cqs.size() == 0) {
+              fail("Failed to get CqQuery for CQ : " + cqName);
+            }
+            CqQueryImpl cQuery = (CqQueryImpl) cqs.iterator().next();
+
+            CqStatistics cqStats = cQuery.getStatistics();
+            CqQueryVsdStats cqVsdStats = cQuery.getVsdStats();
+            if (cqStats == null || cqVsdStats == null) {
+              fail("Failed to get CqQuery Stats for CQ : " + cqName);
+            }
+
+            getCache()
+                .getLogger()
+                .info(
+                    "#### CQ stats for "
+                        + cQuery.getName()
+                        + ": "
+                        + " Events Total: "
+                        + cqStats.numEvents()
+                        + " Events Created: "
+                        + cqStats.numInserts()
+                        + " Events Updated: "
+                        + cqStats.numUpdates()
+                        + " Events Deleted: "
+                        + cqStats.numDeletes()
+                        + " CQ Listener invocations: "
+                        + cqVsdStats.getNumCqListenerInvocations()
+                        + " Initial results time (nano sec): "
+                        + cqVsdStats.getCqInitialResultsTime());
+
+            //      Check for totalEvents count.
+            if (totalEvents != CqQueryDUnitTest.noTest) {
+              //        Result size validation.
+              assertEquals("Total Event Count mismatch", totalEvents, cqStats.numEvents());
+            }
+
+            //      Check for create count.
+            if (creates != CqQueryDUnitTest.noTest) {
+              assertEquals("Create Event mismatch", creates, cqStats.numInserts());
+            }
+
+            //      Check for update count.
+            if (updates != CqQueryDUnitTest.noTest) {
+              assertEquals("Update Event mismatch", updates, cqStats.numUpdates());
+            }
+
+            //      Check for delete count.
+            if (deletes != CqQueryDUnitTest.noTest) {
+              assertEquals("Delete Event mismatch", deletes, cqStats.numDeletes());
+            }
+
+            //      Check for CQ listener invocations.
+            if (cqListenerInvocations != CqQueryDUnitTest.noTest) {
+              assertEquals(
+                  "CQ Listener invocations mismatch",
+                  cqListenerInvocations,
+                  cqVsdStats.getNumCqListenerInvocations());
+            }
+            ////      Check for initial results time.
+            //        if (initialResultsTime != CqQueryDUnitTest.noTest && cqVsdStats.getCqInitialResultsTime() <= 0) {
+            //          assertIndexDetailsEquals("Initial results time mismatch", initialResultsTime, cqVsdStats.getCqInitialResultsTime());
+            //        }
+          }
+        });
   }
 
-  public void validateCQStats(VM vm, final String cqName, final int creates, final int updates, final int deletes, final int totalEvents, final int cqListenerInvocations) {
-    vm.invoke(new CacheSerializableRunnable("Validate CQs") {
-      public void run2() throws CacheException {
-        LogWriterUtils.getLogWriter().info("### Validating CQ Stats. ### " + cqName);
-        //      Get CQ Service.
-        QueryService qService = null;
-        try {
-          qService = getCache().getQueryService();
-        } catch (Exception cqe) {
-          cqe.printStackTrace();
-          fail("Failed to get query service.");
-        }
+  private void validateCQServiceStats(
+      VM vm,
+      final int created,
+      final int activated,
+      final int stopped,
+      final int closed,
+      final int cqsOnClient,
+      final int cqsOnRegion,
+      final int clientsWithCqs) {
+    vm.invoke(
+        new CacheSerializableRunnable("Validate CQ Service Stats") {
+          public void run2() throws CacheException {
+            LogWriterUtils.getLogWriter().info("### Validating CQ Service Stats. ### ");
+            //      Get CQ Service.
+            QueryService qService = null;
+            try {
+              qService = getCache().getQueryService();
+            } catch (Exception cqe) {
+              cqe.printStackTrace();
+              fail("Failed to getCQService.");
+            }
+            CqServiceStatistics cqServiceStats = null;
+            cqServiceStats = qService.getCqStatistics();
+            CqServiceVsdStats cqServiceVsdStats = null;
+            try {
+              cqServiceVsdStats =
+                  ((CqServiceImpl) ((DefaultQueryService) qService).getCqService()).stats;
+            } catch (CqException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
+            if (cqServiceStats == null) {
+              fail("Failed to get CQ Service Stats");
+            }
 
-        CqService cqService = null;
-        try {
-          cqService = ((DefaultQueryService) qService).getCqService();
-        } catch (CqException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-          fail("Failed to get CqService, CQ : " + cqName);
-        }
-        Collection<? extends InternalCqQuery> cqs = cqService.getAllCqs();
-        if (cqs.size() == 0) {
-          fail("Failed to get CqQuery for CQ : " + cqName);
-        }
-        CqQueryImpl cQuery = (CqQueryImpl) cqs.iterator().next();
+            getCache()
+                .getLogger()
+                .info(
+                    "#### CQ Service stats: "
+                        + " CQs created: "
+                        + cqServiceStats.numCqsCreated()
+                        + " CQs active: "
+                        + cqServiceStats.numCqsActive()
+                        + " CQs stopped: "
+                        + cqServiceStats.numCqsStopped()
+                        + " CQs closed: "
+                        + cqServiceStats.numCqsClosed()
+                        + " CQs on Client: "
+                        + cqServiceStats.numCqsOnClient()
+                        + " CQs on region /root/regionA : "
+                        + cqServiceVsdStats.numCqsOnRegion("/root/regionA")
+                        + " Clients with CQs: "
+                        + cqServiceVsdStats.getNumClientsWithCqs());
 
-        CqStatistics cqStats = cQuery.getStatistics();
-        CqQueryVsdStats cqVsdStats = cQuery.getVsdStats();
-        if (cqStats == null || cqVsdStats == null) {
-          fail("Failed to get CqQuery Stats for CQ : " + cqName);
-        }
+            //        Check for created count.
+            if (created != CqQueryDUnitTest.noTest) {
+              assertEquals(
+                  "Number of CQs created mismatch", created, cqServiceStats.numCqsCreated());
+            }
 
-        getCache().getLogger().info("#### CQ stats for " + cQuery.getName() + ": " + " Events Total: " + cqStats.numEvents() + " Events Created: " + cqStats.numInserts() + " Events Updated: " + cqStats.numUpdates() + " Events Deleted: " + cqStats.numDeletes() + " CQ Listener invocations: " + cqVsdStats.getNumCqListenerInvocations() + " Initial results time (nano sec): " + cqVsdStats.getCqInitialResultsTime());
+            //        Check for activated count.
+            if (activated != CqQueryDUnitTest.noTest) {
+              assertEquals(
+                  "Number of CQs activated mismatch", activated, cqServiceStats.numCqsActive());
+            }
 
-        //      Check for totalEvents count.
-        if (totalEvents != CqQueryDUnitTest.noTest) {
-          //        Result size validation.
-          assertEquals("Total Event Count mismatch", totalEvents, cqStats.numEvents());
-        }
+            //        Check for stopped count.
+            if (stopped != CqQueryDUnitTest.noTest) {
+              assertEquals(
+                  "Number of CQs stopped mismatch", stopped, cqServiceStats.numCqsStopped());
+            }
 
-        //      Check for create count.
-        if (creates != CqQueryDUnitTest.noTest) {
-          assertEquals("Create Event mismatch", creates, cqStats.numInserts());
-        }
+            //        Check for closed count.
+            if (closed != CqQueryDUnitTest.noTest) {
+              assertEquals("Number of CQs closed mismatch", closed, cqServiceStats.numCqsClosed());
+            }
 
-        //      Check for update count.
-        if (updates != CqQueryDUnitTest.noTest) {
-          assertEquals("Update Event mismatch", updates, cqStats.numUpdates());
-        }
+            // Check for CQs on client count.
+            if (cqsOnClient != CqQueryDUnitTest.noTest) {
+              assertEquals(
+                  "Number of CQs on client mismatch", cqsOnClient, cqServiceStats.numCqsOnClient());
+            }
 
-        //      Check for delete count.
-        if (deletes != CqQueryDUnitTest.noTest) {
-          assertEquals("Delete Event mismatch", deletes, cqStats.numDeletes());
-        }
+            // Check for CQs on region.
+            if (cqsOnRegion != CqQueryDUnitTest.noTest) {
+              assertEquals(
+                  "Number of CQs on region /root/regionA mismatch",
+                  cqsOnRegion,
+                  cqServiceVsdStats.numCqsOnRegion("/root/regionA"));
+            }
 
-        //      Check for CQ listener invocations.
-        if (cqListenerInvocations != CqQueryDUnitTest.noTest) {
-          assertEquals("CQ Listener invocations mismatch", cqListenerInvocations, cqVsdStats.getNumCqListenerInvocations());
-        }
-        ////      Check for initial results time.
-        //        if (initialResultsTime != CqQueryDUnitTest.noTest && cqVsdStats.getCqInitialResultsTime() <= 0) {
-        //          assertIndexDetailsEquals("Initial results time mismatch", initialResultsTime, cqVsdStats.getCqInitialResultsTime());
-        //        }
-      }
-    });
-  }
-
-  private void validateCQServiceStats(VM vm, final int created, final int activated, final int stopped, final int closed, final int cqsOnClient, final int cqsOnRegion, final int clientsWithCqs) {
-    vm.invoke(new CacheSerializableRunnable("Validate CQ Service Stats") {
-      public void run2() throws CacheException {
-        LogWriterUtils.getLogWriter().info("### Validating CQ Service Stats. ### ");
-        //      Get CQ Service.
-        QueryService qService = null;
-        try {
-          qService = getCache().getQueryService();
-        } catch (Exception cqe) {
-          cqe.printStackTrace();
-          fail("Failed to getCQService.");
-        }
-        CqServiceStatistics cqServiceStats = null;
-        cqServiceStats = qService.getCqStatistics();
-        CqServiceVsdStats cqServiceVsdStats = null;
-        try {
-          cqServiceVsdStats = ((CqServiceImpl) ((DefaultQueryService) qService).getCqService()).stats;
-        } catch (CqException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        if (cqServiceStats == null) {
-          fail("Failed to get CQ Service Stats");
-        }
-
-        getCache().getLogger().info("#### CQ Service stats: " + " CQs created: " + cqServiceStats.numCqsCreated() + " CQs active: " + cqServiceStats.numCqsActive() + " CQs stopped: " + cqServiceStats.numCqsStopped() + " CQs closed: " + cqServiceStats.numCqsClosed() + " CQs on Client: " + cqServiceStats.numCqsOnClient() + " CQs on region /root/regionA : " + cqServiceVsdStats.numCqsOnRegion("/root/regionA") + " Clients with CQs: " + cqServiceVsdStats.getNumClientsWithCqs());
-
-        //        Check for created count.
-        if (created != CqQueryDUnitTest.noTest) {
-          assertEquals("Number of CQs created mismatch", created, cqServiceStats.numCqsCreated());
-        }
-
-        //        Check for activated count.
-        if (activated != CqQueryDUnitTest.noTest) {
-          assertEquals("Number of CQs activated mismatch", activated, cqServiceStats.numCqsActive());
-        }
-
-        //        Check for stopped count.
-        if (stopped != CqQueryDUnitTest.noTest) {
-          assertEquals("Number of CQs stopped mismatch", stopped, cqServiceStats.numCqsStopped());
-        }
-
-        //        Check for closed count.
-        if (closed != CqQueryDUnitTest.noTest) {
-          assertEquals("Number of CQs closed mismatch", closed, cqServiceStats.numCqsClosed());
-        }
-
-        // Check for CQs on client count.
-        if (cqsOnClient != CqQueryDUnitTest.noTest) {
-          assertEquals("Number of CQs on client mismatch", cqsOnClient, cqServiceStats.numCqsOnClient());
-        }
-
-        // Check for CQs on region.
-        if (cqsOnRegion != CqQueryDUnitTest.noTest) {
-          assertEquals("Number of CQs on region /root/regionA mismatch", cqsOnRegion, cqServiceVsdStats.numCqsOnRegion("/root/regionA"));
-        }
-
-        // Check for clients with CQs count.
-        if (clientsWithCqs != CqQueryDUnitTest.noTest) {
-          assertEquals("Clints with CQs mismatch", clientsWithCqs, cqServiceVsdStats.getNumClientsWithCqs());
-        }
-      }
-    });
+            // Check for clients with CQs count.
+            if (clientsWithCqs != CqQueryDUnitTest.noTest) {
+              assertEquals(
+                  "Clints with CQs mismatch",
+                  clientsWithCqs,
+                  cqServiceVsdStats.getNumClientsWithCqs());
+            }
+          }
+        });
   }
 
   private static final int PAUSE = 8 * 1000; // 5 * 1000
 
   /**
    * Test for CQ and CQ Service Statistics
+   *
    * @throws Exception
    */
   @Test
@@ -249,8 +314,8 @@ public class CqStatsDUnitTest extends JUnit4CacheTestCase {
     validateCQStats(client, "testCQStatistics_0", 0, 0, 0, 0, 0);
 
     // The stat would have not updated yet.
-    // Commenting out the following check; the check for resultset initialization 
-    // is anyway done in the next validation. 
+    // Commenting out the following check; the check for resultset initialization
+    // is anyway done in the next validation.
     // validateCQStats(server, "testCQStatistics_0", 0, 0, 0, 0, CqQueryDUnitTest.noTest, 1);
 
     /* Init values at server. */
@@ -261,7 +326,17 @@ public class CqStatsDUnitTest extends JUnit4CacheTestCase {
     size = 200;
 
     // validate CQs.
-    cqDUnitTest.validateCQ(client, "testCQStatistics_0", /* resultSize: */ CqQueryDUnitTest.noTest, /* creates: */ 100, /* updates: */ 100, /* deletes; */ 0, /* queryInserts: */ 100, /* queryUpdates: */ 100, /* queryDeletes: */ 0, /* totalEvents: */ 200);
+    cqDUnitTest.validateCQ(
+        client,
+        "testCQStatistics_0", /* resultSize: */
+        CqQueryDUnitTest.noTest, /* creates: */
+        100, /* updates: */
+        100, /* deletes; */
+        0, /* queryInserts: */
+        100, /* queryUpdates: */
+        100, /* queryDeletes: */
+        0, /* totalEvents: */
+        200);
 
     // Test CQ stats
     validateCQStats(client, "testCQStatistics_0", 100, 100, 0, 200, 200);
@@ -275,7 +350,17 @@ public class CqStatsDUnitTest extends JUnit4CacheTestCase {
     size = 10;
     Wait.pause(PAUSE);
 
-    cqDUnitTest.validateCQ(client, "testCQStatistics_0", /* resultSize: */ CqQueryDUnitTest.noTest, /* creates: */100, /* updates: */ 100, /* deletes; */ 100, /* queryInserts: */ 100, /* queryUpdates: */ 100, /* queryDeletes: */ 100, /* totalEvents: */ 300);
+    cqDUnitTest.validateCQ(
+        client,
+        "testCQStatistics_0", /* resultSize: */
+        CqQueryDUnitTest.noTest, /* creates: */
+        100, /* updates: */
+        100, /* deletes; */
+        100, /* queryInserts: */
+        100, /* queryUpdates: */
+        100, /* queryDeletes: */
+        100, /* totalEvents: */
+        300);
 
     // Test CQ stats
     validateCQStats(client, "testCQStatistics_0", 100, 100, 100, 300, 300);
@@ -293,6 +378,7 @@ public class CqStatsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Test for CQ Service Statistics
+   *
    * @throws Exception
    */
   @Test
@@ -327,7 +413,8 @@ public class CqStatsDUnitTest extends JUnit4CacheTestCase {
 
     getCache().getLogger().info("Validating CQ Service stats on clients: #2");
     validateCQServiceStats(client1, 1, 1, 0, 0, 1, 1, CqQueryDUnitTest.noTest);
-    validateCQServiceStats(client2, 1, 1, 0, 0, 1, CqQueryDUnitTest.noTest, CqQueryDUnitTest.noTest);
+    validateCQServiceStats(
+        client2, 1, 1, 0, 0, 1, CqQueryDUnitTest.noTest, CqQueryDUnitTest.noTest);
 
     getCache().getLogger().info("Validating CQ Service stats on server: #1");
     validateCQServiceStats(server, 2, 2, 0, 0, CqQueryDUnitTest.noTest, 1, 2);
@@ -339,18 +426,29 @@ public class CqStatsDUnitTest extends JUnit4CacheTestCase {
     cqDUnitTest.waitForCreated(client1, "testCQServiceStatistics_0", CqQueryDUnitTest.KEY + size);
 
     // validate CQs.
-    cqDUnitTest.validateCQ(client1, cqName, /* resultSize: */ CqQueryDUnitTest.noTest, /* creates: */ size, /* updates: */ 0, /* deletes; */ 0, /* queryInserts: */ size, /* queryUpdates: */ 0, /* queryDeletes: */ 0, /* totalEvents: */ size);
+    cqDUnitTest.validateCQ(
+        client1,
+        cqName, /* resultSize: */
+        CqQueryDUnitTest.noTest, /* creates: */
+        size, /* updates: */
+        0, /* deletes; */
+        0, /* queryInserts: */
+        size, /* queryUpdates: */
+        0, /* queryDeletes: */
+        0, /* totalEvents: */
+        size);
     Wait.pause(PAUSE);
 
     // Test CQ Service stats
     getCache().getLogger().info("Validating CQ Service stats on clients: #3");
     validateCQServiceStats(client1, 1, 1, 0, 0, 1, 1, CqQueryDUnitTest.noTest);
-    validateCQServiceStats(client2, 1, 1, 0, 0, 1, CqQueryDUnitTest.noTest, CqQueryDUnitTest.noTest);
+    validateCQServiceStats(
+        client2, 1, 1, 0, 0, 1, CqQueryDUnitTest.noTest, CqQueryDUnitTest.noTest);
 
     getCache().getLogger().info("Validating CQ Service stats on server: #1");
     validateCQServiceStats(server, 2, 2, 0, 0, CqQueryDUnitTest.noTest, 1, 2);
 
-    //Create CQs with no name, execute, and close. 
+    //Create CQs with no name, execute, and close.
     cqDUnitTest.createAndExecCQNoName(client1, cqDUnitTest.cqs[0]);
     Wait.pause(PAUSE);
 
@@ -378,9 +476,11 @@ public class CqStatsDUnitTest extends JUnit4CacheTestCase {
 
     // Test CQ Service stats
     getCache().getLogger().info("Validating CQ Service stats on client: #6");
-    validateCQServiceStats(client2, 1, 0, 1, 0, 1, CqQueryDUnitTest.noTest, CqQueryDUnitTest.noTest);
+    validateCQServiceStats(
+        client2, 1, 0, 1, 0, 1, CqQueryDUnitTest.noTest, CqQueryDUnitTest.noTest);
     getCache().getLogger().info("Validating CQ Service stats on server: #4");
-    validateCQServiceStats(server, 22, 0, 1, 21, CqQueryDUnitTest.noTest, CqQueryDUnitTest.noTest, 1);
+    validateCQServiceStats(
+        server, 22, 0, 1, 21, CqQueryDUnitTest.noTest, CqQueryDUnitTest.noTest, 1);
 
     // Test  CQ Close
     cqDUnitTest.closeCQ(client2, cqName10);
@@ -398,5 +498,4 @@ public class CqStatsDUnitTest extends JUnit4CacheTestCase {
     cqDUnitTest.closeClient(client2);
     cqDUnitTest.closeServer(server);
   }
-
 }

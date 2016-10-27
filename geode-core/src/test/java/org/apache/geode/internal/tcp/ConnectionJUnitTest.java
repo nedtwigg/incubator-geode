@@ -37,8 +37,8 @@ import org.apache.geode.test.junit.categories.UnitTest;
 public class ConnectionJUnitTest {
 
   /**
-   * Test whether suspicion is raised about a member that
-   * closes its shared/unordered TCPConduit connection
+   * Test whether suspicion is raised about a member that closes its shared/unordered TCPConduit
+   * connection
    */
   @Test
   public void testSuspicionRaised() throws Exception {

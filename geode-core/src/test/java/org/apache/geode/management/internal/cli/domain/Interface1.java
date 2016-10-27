@@ -16,6 +16,4 @@
  */
 package org.apache.geode.management.internal.cli.domain;
 
-public interface Interface1 {
-
-}
+public interface Interface1 {}

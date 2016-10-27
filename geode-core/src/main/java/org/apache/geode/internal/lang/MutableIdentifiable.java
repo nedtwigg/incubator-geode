@@ -19,9 +19,12 @@ package org.apache.geode.internal.lang;
 import org.apache.geode.lang.Identifiable;
 
 /**
- * The MutableIdentifiable interface defines a contract for classes whose mutable Object instances can
- * be uniquely identified relative to other Object instances within the same class type hierarchy.
- * <p/>
+ * The MutableIdentifiable interface defines a contract for classes whose mutable Object instances
+ * can be uniquely identified relative to other Object instances within the same class type
+ * hierarchy.
+ *
+ * <p>
+ *
  * @param <T> the class type of the identifier.
  * @see java.lang.Comparable
  * @since GemFire 7.0
@@ -30,9 +33,10 @@ public interface MutableIdentifiable<T> extends Identifiable {
 
   /**
    * Set the identifier uniquely identifying this Object instance.
-   * <p/>
+   *
+   * <p>
+   *
    * @param id an identifier uniquely identifying this Object.
    */
   public void setId(T id);
-
 }

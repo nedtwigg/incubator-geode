@@ -55,8 +55,7 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
 
   private String groupName = "Lucene";
 
-  @Rule
-  public LocatorServerConfigurationRule ls = new LocatorServerConfigurationRule(this);
+  @Rule public LocatorServerConfigurationRule ls = new LocatorServerConfigurationRule(this);
 
   @Test
   public void indexGetsCreatedUsingClusterConfiguration() throws Exception {
@@ -74,12 +73,13 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
     // Start vm2. This should have lucene index created using cluster
     // configuration.
     VM vm2 = startNodeUsingClusterConfiguration(2, false);
-    vm2.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      assertNotNull(index);
-      validateIndexFields(new String[] { "field1", "field2", "field3" }, index);
-    });
+    vm2.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          assertNotNull(index);
+          validateIndexFields(new String[] {"field1", "field2", "field3"}, index);
+        });
   }
 
   @Test
@@ -99,15 +99,23 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
     // Start vm2. This should have lucene index created using cluster
     // configuration.
     VM vm2 = startNodeUsingClusterConfiguration(2, false);
-    vm2.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      assertNotNull(index);
-      String[] fields = new String[] { "field1", "field2", "field3" };
-      validateIndexFields(fields, index);
-      // Add this check back when we complete xml generation for analyzer.
-      this.validateIndexFieldAnalyzer(fields, new String[] { "org.apache.lucene.analysis.standard.StandardAnalyzer", "org.apache.lucene.analysis.standard.StandardAnalyzer", "org.apache.lucene.analysis.standard.StandardAnalyzer" }, index);
-    });
+    vm2.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          assertNotNull(index);
+          String[] fields = new String[] {"field1", "field2", "field3"};
+          validateIndexFields(fields, index);
+          // Add this check back when we complete xml generation for analyzer.
+          this.validateIndexFieldAnalyzer(
+              fields,
+              new String[] {
+                "org.apache.lucene.analysis.standard.StandardAnalyzer",
+                "org.apache.lucene.analysis.standard.StandardAnalyzer",
+                "org.apache.lucene.analysis.standard.StandardAnalyzer"
+              },
+              index);
+        });
   }
 
   @Test
@@ -131,19 +139,21 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
     createRegionUsingGfsh(REGION_NAME, RegionShortcut.PARTITION, groupName);
 
     // VM2 should have lucene index created using gfsh execution.
-    vm2.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      assertNotNull(index);
-      validateIndexFields(new String[] { "field1", "field2", "field3" }, index);
-    });
+    vm2.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          assertNotNull(index);
+          validateIndexFields(new String[] {"field1", "field2", "field3"}, index);
+        });
 
     // The Lucene index is present in vm3.
-    vm3.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      assertNotNull(index);
-    });
+    vm3.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          assertNotNull(index);
+        });
   }
 
   @Test
@@ -167,19 +177,21 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
     createRegionUsingGfsh(REGION_NAME, RegionShortcut.PARTITION, groupName);
 
     // VM2 should have lucene index created using gfsh execution
-    vm2.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      assertNotNull(index);
-      validateIndexFields(new String[] { "field1", "field2", "field3" }, index);
-    });
+    vm2.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          assertNotNull(index);
+          validateIndexFields(new String[] {"field1", "field2", "field3"}, index);
+        });
 
     // The Lucene index should not be present in vm3.
-    vm3.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      assertNull(index);
-    });
+    vm3.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          assertNull(index);
+        });
   }
 
   @Test
@@ -203,19 +215,21 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
     VM vm3 = startNodeUsingClusterConfiguration(3, false);
 
     // VM2 should have lucene index created using gfsh execution
-    vm2.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      assertNotNull(index);
-      validateIndexFields(new String[] { "field1", "field2", "field3" }, index);
-    });
+    vm2.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          assertNotNull(index);
+          validateIndexFields(new String[] {"field1", "field2", "field3"}, index);
+        });
 
     // The Lucene index should not be present in vm3.
-    vm3.invoke(() -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
-      assertNull(index);
-    });
+    vm3.invoke(
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          final LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
+          assertNull(index);
+        });
   }
 
   private void createAndConnectGfshToLocator() {
@@ -278,7 +292,11 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
     csb.addOption(LuceneCliStrings.LUCENE__INDEX_NAME, INDEX_NAME);
     csb.addOption(LuceneCliStrings.LUCENE__REGION_PATH, REGION_NAME);
     csb.addOption(LuceneCliStrings.LUCENE_CREATE_INDEX__FIELD, "field1,field2,field3");
-    csb.addOption(LuceneCliStrings.LUCENE_CREATE_INDEX__ANALYZER, "org.apache.lucene.analysis.standard.StandardAnalyzer," + "org.apache.lucene.analysis.standard.StandardAnalyzer," + "org.apache.lucene.analysis.standard.StandardAnalyzer");
+    csb.addOption(
+        LuceneCliStrings.LUCENE_CREATE_INDEX__ANALYZER,
+        "org.apache.lucene.analysis.standard.StandardAnalyzer,"
+            + "org.apache.lucene.analysis.standard.StandardAnalyzer,"
+            + "org.apache.lucene.analysis.standard.StandardAnalyzer");
 
     if (addGroup) {
       csb.addOption(LuceneCliStrings.LUCENE_CREATE_INDEX__GROUP, groupName);
@@ -287,7 +305,8 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
     executeCommand(csb.toString());
   }
 
-  private void createRegionUsingGfsh(String regionName, RegionShortcut regionShortCut, String group) {
+  private void createRegionUsingGfsh(
+      String regionName, RegionShortcut regionShortCut, String group) {
     CommandStringBuilder csb = new CommandStringBuilder(CliStrings.CREATE_REGION);
     csb.addOption(CliStrings.CREATE_REGION__REGION, regionName);
     csb.addOption(CliStrings.CREATE_REGION__REGIONSHORTCUT, regionShortCut.name());
@@ -298,7 +317,8 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
   private void executeAndVerifyCommand(String commandString) {
     CommandResult cmdResult = executeCommand(commandString);
     org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Command : " + commandString);
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Command Result : " + commandResultToString(cmdResult));
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("Command Result : " + commandResultToString(cmdResult));
     assertEquals(Status.OK, cmdResult.getStatus());
   }
 
@@ -316,5 +336,4 @@ public class LuceneClusterConfigurationDUnitTest extends CliCommandTestBase {
       assertEquals(analyzers[i], a.getClass().getName());
     }
   }
-
 }

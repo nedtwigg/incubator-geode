@@ -49,7 +49,7 @@ public class IndexOnEntrySetJUnitTest {
 
   @After
   public void tearDown() throws Exception {
-    // Destroy current Region for other tests    
+    // Destroy current Region for other tests
     IndexManager.testHook = null;
     if (testRegion != null) {
       testRegion.destroyRegion();
@@ -58,16 +58,45 @@ public class IndexOnEntrySetJUnitTest {
   }
 
   private String[] getQueriesOnRegion(String regionName) {
-    return new String[] { "SELECT DISTINCT entry.value, entry.key FROM /" + regionName + ".entrySet entry WHERE entry.key.PartitionID > 0 AND " + "entry.key.Index > 1 ORDER BY entry.key.Index ASC LIMIT 2", "SELECT DISTINCT entry.value, entry.key FROM /" + regionName + ".entrySet entry WHERE entry.key.Index > 1 ORDER BY entry.key.Index ASC LIMIT 2", "SELECT DISTINCT * FROM /" + regionName + ".entrySet entry WHERE entry.key.PartitionID > 0 AND " + "entry.key.Index > 1 ORDER BY entry.key.Index ASC LIMIT 2", "SELECT DISTINCT entry.value, entry.key FROM /" + regionName + ".entrySet entry WHERE entry.key.PartitionID > 0 AND " + "entry.key.Index > 1 LIMIT 2", "SELECT DISTINCT entry.value, entry.key FROM /" + regionName + ".entrySet entry WHERE entry.key.PartitionID > 0 AND " + "entry.key.Index > 1 ORDER BY entry.key.Index ASC", };
+    return new String[] {
+      "SELECT DISTINCT entry.value, entry.key FROM /"
+          + regionName
+          + ".entrySet entry WHERE entry.key.PartitionID > 0 AND "
+          + "entry.key.Index > 1 ORDER BY entry.key.Index ASC LIMIT 2",
+      "SELECT DISTINCT entry.value, entry.key FROM /"
+          + regionName
+          + ".entrySet entry WHERE entry.key.Index > 1 ORDER BY entry.key.Index ASC LIMIT 2",
+      "SELECT DISTINCT * FROM /"
+          + regionName
+          + ".entrySet entry WHERE entry.key.PartitionID > 0 AND "
+          + "entry.key.Index > 1 ORDER BY entry.key.Index ASC LIMIT 2",
+      "SELECT DISTINCT entry.value, entry.key FROM /"
+          + regionName
+          + ".entrySet entry WHERE entry.key.PartitionID > 0 AND "
+          + "entry.key.Index > 1 LIMIT 2",
+      "SELECT DISTINCT entry.value, entry.key FROM /"
+          + regionName
+          + ".entrySet entry WHERE entry.key.PartitionID > 0 AND "
+          + "entry.key.Index > 1 ORDER BY entry.key.Index ASC",
+    };
   }
 
   private String[] getQueriesOnRegionForPut(String regionName) {
-    return new String[] { "SELECT DISTINCT entry.value, entry.key FROM /" + regionName + ".entrySet entry WHERE entry.key.PartitionID = 50 AND " + "entry.key.Index > 1 ORDER BY entry.key.Index ASC LIMIT 2", "SELECT DISTINCT entry.value, entry.key FROM /" + regionName + ".entrySet entry WHERE entry.value = 50 AND " + "entry.key.Index > 1 ORDER BY entry.key.Index ASC LIMIT 2" };
+    return new String[] {
+      "SELECT DISTINCT entry.value, entry.key FROM /"
+          + regionName
+          + ".entrySet entry WHERE entry.key.PartitionID = 50 AND "
+          + "entry.key.Index > 1 ORDER BY entry.key.Index ASC LIMIT 2",
+      "SELECT DISTINCT entry.value, entry.key FROM /"
+          + regionName
+          + ".entrySet entry WHERE entry.value = 50 AND "
+          + "entry.key.Index > 1 ORDER BY entry.key.Index ASC LIMIT 2"
+    };
   }
 
   /**
-   * Test queries with index on replicated regions and concurrent PUT, DESTORY, INVALIDATE operations.
-   * Make sure there is no UNDEFINED in the query result.
+   * Test queries with index on replicated regions and concurrent PUT, DESTORY, INVALIDATE
+   * operations. Make sure there is no UNDEFINED in the query result.
    */
   @Test
   public void testQueriesOnReplicatedRegion() throws Exception {
@@ -77,8 +106,8 @@ public class IndexOnEntrySetJUnitTest {
   }
 
   /**
-   * Test queries with index on partitioned regions and concurrent PUT, DESTORY, INVALIDATE operations.
-   * Make sure there is no UNDEFINED in the query result.
+   * Test queries with index on partitioned regions and concurrent PUT, DESTORY, INVALIDATE
+   * operations. Make sure there is no UNDEFINED in the query result.
    */
   @Test
   public void testQueriesOnPartitionedRegion() throws Exception {
@@ -122,11 +151,11 @@ public class IndexOnEntrySetJUnitTest {
     }
   }
 
-  /**** Query Execution Helpers ****/
-
-  private void executeQueryTest(String[] queries, String indexedExpression, String regionPath) throws Exception {
+  /** ** Query Execution Helpers *** */
+  private void executeQueryTest(String[] queries, String indexedExpression, String regionPath)
+      throws Exception {
     Cache cache = CacheUtils.getCache();
-    boolean[] booleanVals = { true, false };
+    boolean[] booleanVals = {true, false};
     for (String query : queries) {
       for (boolean isDestroy : booleanVals) {
         clearData(testRegion);
@@ -134,9 +163,11 @@ public class IndexOnEntrySetJUnitTest {
         Assert.assertNotNull(cache.getRegion(testRegionName));
         Assert.assertEquals(numElem, cache.getRegion(testRegionName).size());
         if (isDestroy) {
-          helpTestFunctionalIndexForQuery(query, indexedExpression, regionPath, new DestroyEntryTestHook(testRegion));
+          helpTestFunctionalIndexForQuery(
+              query, indexedExpression, regionPath, new DestroyEntryTestHook(testRegion));
         } else {
-          helpTestFunctionalIndexForQuery(query, indexedExpression, regionPath, new InvalidateEntryTestHook(testRegion));
+          helpTestFunctionalIndexForQuery(
+              query, indexedExpression, regionPath, new InvalidateEntryTestHook(testRegion));
         }
       }
     }
@@ -147,18 +178,20 @@ public class IndexOnEntrySetJUnitTest {
       populateRegion(testRegion);
       Assert.assertNotNull(cache.getRegion(testRegionName));
       Assert.assertEquals(numElem, cache.getRegion(testRegionName).size());
-      helpTestFunctionalIndexForQuery(query, indexedExpression, regionPath, new PutEntryTestHook(testRegion));
+      helpTestFunctionalIndexForQuery(
+          query, indexedExpression, regionPath, new PutEntryTestHook(testRegion));
     }
   }
 
   /**
-   *  helper method to test against a functional index
-   *  make sure there is no UNDEFINED result
-   * 
+   * helper method to test against a functional index make sure there is no UNDEFINED result
+   *
    * @param query
-   * 
-   * @throws Exception */
-  private SelectResults helpTestFunctionalIndexForQuery(String query, String indexedExpression, String regionPath, AbstractTestHook testHook) throws Exception {
+   * @throws Exception
+   */
+  private SelectResults helpTestFunctionalIndexForQuery(
+      String query, String indexedExpression, String regionPath, AbstractTestHook testHook)
+      throws Exception {
     MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
     QueryObserverHolder.setInstance(observer);
     IndexManager.testHook = testHook;
@@ -220,13 +253,10 @@ public class IndexOnEntrySetJUnitTest {
 
     public String toString() {
       return "somekey:" + Index + "," + PartitionID;
-
     }
   }
 
-  /**
-   * Test hook
-   */
+  /** Test hook */
   abstract class AbstractTestHook implements IndexManager.TestHook {
     boolean isTestHookCalled = false;
     Object waitObj = new Object();
@@ -240,9 +270,7 @@ public class IndexOnEntrySetJUnitTest {
       return isTestHookCalled;
     }
 
-    /**
-     * Subclass override with different operation
-     */
+    /** Subclass override with different operation */
     public abstract void doOp();
 
     @Override
@@ -251,14 +279,16 @@ public class IndexOnEntrySetJUnitTest {
         if (!isTestHookCalled) {
           isTestHookCalled = true;
           try {
-            new Thread(new Runnable() {
-              public void run() {
-                doOp();
-                synchronized (waitObj) {
-                  waitObj.notifyAll();
-                }
-              }
-            }).start();
+            new Thread(
+                    new Runnable() {
+                      public void run() {
+                        doOp();
+                        synchronized (waitObj) {
+                          waitObj.notifyAll();
+                        }
+                      }
+                    })
+                .start();
             synchronized (waitObj) {
               waitObj.wait();
             }
@@ -267,9 +297,7 @@ public class IndexOnEntrySetJUnitTest {
           }
         }
       }
-
     }
-
   }
 
   class DestroyEntryTestHook extends AbstractTestHook {

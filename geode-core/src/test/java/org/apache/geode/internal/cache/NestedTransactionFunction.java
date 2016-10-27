@@ -31,23 +31,17 @@ import org.apache.geode.internal.cache.TXId;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * This function is used by {@link CommitFunction} to commit existing transaction.
- * A {@link TransactionId} corresponding to the transaction to be
- * committed must be provided as an argument while invoking this function.<br />
- * 
- * When executed this function commits a transaction if it exists locally.<br />
- * 
- * This function returns a single Boolean as result, whose value is <code>Boolean.TRUE</code>
- * if the transaction committed successfully otherwise the return value is
- * <code>Boolean.FALSE</code><br />
- * 
- * This function is <b>not</b> registered on the cache servers by default, and
- * it is the user's responsibility to register this function. see
- * {@link FunctionService#registerFunction(Function)}
- * 
+ * This function is used by {@link CommitFunction} to commit existing transaction. A {@link
+ * TransactionId} corresponding to the transaction to be committed must be provided as an argument
+ * while invoking this function.<br>
+ * When executed this function commits a transaction if it exists locally.<br>
+ * This function returns a single Boolean as result, whose value is <code>Boolean.TRUE</code> if the
+ * transaction committed successfully otherwise the return value is <code>Boolean.FALSE</code><br>
+ * This function is <b>not</b> registered on the cache servers by default, and it is the user's
+ * responsibility to register this function. see {@link FunctionService#registerFunction(Function)}
+ *
  * @see CommitFunction
  * @since GemFire 6.6.1
- *
  */
 public class NestedTransactionFunction implements Function {
   private static final Logger logger = LogService.getLogger();
@@ -70,7 +64,8 @@ public class NestedTransactionFunction implements Function {
       txId = (TXId) args.get(0);
       action = (Integer) args.get(1);
     } catch (ClassCastException e) {
-      logger.info("CommitFunction should be invoked with a TransactionId as an argument i.e. withArgs(txId).execute(function)");
+      logger.info(
+          "CommitFunction should be invoked with a TransactionId as an argument i.e. withArgs(txId).execute(function)");
       throw e;
     }
     CacheTransactionManager txMgr = cache.getCacheTransactionManager();
@@ -112,5 +107,4 @@ public class NestedTransactionFunction implements Function {
   public boolean isHA() {
     return false;
   }
-
 }

@@ -29,11 +29,8 @@ import org.apache.geode.internal.ClassLoadUtil;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * Cache listener on local monitoring region to get Manager's local MBean
- * updates. This acts as an aggregator interface for Manager. Its used only on
- * Manager's side.
- * 
- * 
+ * Cache listener on local monitoring region to get Manager's local MBean updates. This acts as an
+ * aggregator interface for Manager. Its used only on Manager's side.
  */
 public class MonitoringRegionCacheListener extends CacheListenerAdapter<String, Object> {
 
@@ -78,7 +75,6 @@ public class MonitoringRegionCacheListener extends CacheListenerAdapter<String, 
         logger.debug("Aggregation Failed failed for {} with exception {}", e);
       }
     }
-
   }
 
   @Override
@@ -87,7 +83,7 @@ public class MonitoringRegionCacheListener extends CacheListenerAdapter<String, 
     try {
 
       if (!service.isStartedAndOpen() || !service.isManager()) {
-        // NO OP return; No work for Non Manager Nodes 
+        // NO OP return; No work for Non Manager Nodes
         return;
       }
       objectName = ObjectName.getInstance(event.getKey());
@@ -106,9 +102,12 @@ public class MonitoringRegionCacheListener extends CacheListenerAdapter<String, 
 
     } catch (Exception e) {
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Aggregation Failed failed for {} With Exception {}", THIS_COMPONENT, objectName, e);
+        logger.debug(
+            "{}: Aggregation Failed failed for {} With Exception {}",
+            THIS_COMPONENT,
+            objectName,
+            e);
       }
     }
   }
-
 }

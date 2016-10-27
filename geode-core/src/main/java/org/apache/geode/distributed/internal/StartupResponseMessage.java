@@ -37,35 +37,38 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * A message that is sent to all other distribution manager when
- * a distribution manager starts up.
+ * A message that is sent to all other distribution manager when a distribution manager starts up.
  */
-public class StartupResponseMessage extends HighPriorityDistributionMessage implements AdminMessageType {
+public class StartupResponseMessage extends HighPriorityDistributionMessage
+    implements AdminMessageType {
   private static final Logger logger = LogService.getLogger();
 
   /** The current cache time of the sending DM */
   protected String rejectionMessage;
+
   protected int processorId;
   protected boolean responderIsAdmin;
   protected Set interfaces;
   protected int distributedSystemId;
   protected String redundancyZone;
 
-  /**
-   * To fix B39705, added the instance variables for storing instantiator information. 
-   **/
+  /** To fix B39705, added the instance variables for storing instantiator information. */
   protected int[] serializerIds = null;
+
   protected String[] serializerClasseNames = null;
   protected String[] instantiatorClasseNames = null;
   protected String[] instantiatedClasseNames = null;
   protected int[] instantiatorIds = null;
   protected transient StringBuffer fromDataProblems;
 
-  public StartupResponseMessage() {
+  public StartupResponseMessage() {}
 
-  }
-
-  StartupResponseMessage(DistributionManager dm, int processorId, InternalDistributedMember recipient, String rejectionMessage, boolean responderIsAdmin) {
+  StartupResponseMessage(
+      DistributionManager dm,
+      int processorId,
+      InternalDistributedMember recipient,
+      String rejectionMessage,
+      boolean responderIsAdmin) {
     //    StartupResponseMessage m = new StartupResponseMessage();
 
     setRecipient(recipient);
@@ -79,10 +82,9 @@ public class StartupResponseMessage extends HighPriorityDistributionMessage impl
     this.redundancyZone = dm.getRedundancyZone(dm.getId());
 
     /**
-     * To fix B39705, we have added the instance variables to initialize the
-     * information about the instantiators. While preparing the response message,
-     * we populate this information. 
-     **/
+     * To fix B39705, we have added the instance variables to initialize the information about the
+     * instantiators. While preparing the response message, we populate this information.
+     */
     // Fix for #43677
     Object[] instantiators = InternalInstantiator.getInstantiatorsForSerialization();
     this.instantiatorClasseNames = new String[instantiators.length];
@@ -111,9 +113,7 @@ public class StartupResponseMessage extends HighPriorityDistributionMessage impl
     }
   }
 
-  /**
-   * set the processor id for this message
-   */
+  /** set the processor id for this message */
   public void setProcessorId(int processorId) {
     this.processorId = processorId;
   }
@@ -130,10 +130,9 @@ public class StartupResponseMessage extends HighPriorityDistributionMessage impl
   }
 
   /**
-   * Adds the distribution managers that have started up to the current
-   * DM's list of members.
+   * Adds the distribution managers that have started up to the current DM's list of members.
    *
-   * This method is invoked on the receiver side
+   * <p>This method is invoked on the receiver side
    */
   @Override
   protected void process(DistributionManager dm) {
@@ -176,7 +175,8 @@ public class StartupResponseMessage extends HighPriorityDistributionMessage impl
 
     dm.processStartupResponse(this.sender, this.rejectionMessage);
 
-    StartupMessageReplyProcessor proc = (StartupMessageReplyProcessor) ReplyProcessor21.getProcessor(processorId);
+    StartupMessageReplyProcessor proc =
+        (StartupMessageReplyProcessor) ReplyProcessor21.getProcessor(processorId);
     if (proc != null) {
       if (this.rejectionMessage != null) {
         // there's no reason to wait for other responses
@@ -256,7 +256,7 @@ public class StartupResponseMessage extends HighPriorityDistributionMessage impl
       try {
         serializerClasseNames[i] = DataSerializer.readNonPrimitiveClassName(in);
       } finally {
-        serializerIds[i] = in.readInt(); // id  
+        serializerIds[i] = in.readInt(); // id
       }
     }
 
@@ -279,6 +279,13 @@ public class StartupResponseMessage extends HighPriorityDistributionMessage impl
 
   @Override
   public String toString() {
-    return "StartupResponse: rejectionMessage=" + this.rejectionMessage + " processor=" + processorId + " responderIsAdmin=" + this.responderIsAdmin + " distributed system id = " + this.distributedSystemId;
+    return "StartupResponse: rejectionMessage="
+        + this.rejectionMessage
+        + " processor="
+        + processorId
+        + " responderIsAdmin="
+        + this.responderIsAdmin
+        + " distributed system id = "
+        + this.distributedSystemId;
   }
 }

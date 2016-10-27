@@ -24,14 +24,10 @@ public class Address {
   public String postalCode;
 
   public Address() {
-    if (Employee.rand.nextFloat() < .5)
-      street = "20575 NW von Neumann Dr";
-    if (Employee.rand.nextFloat() < 0.5)
-      city = "Beaverton";
-    if (Employee.rand.nextFloat() < 0.5)
-      state = "OR";
-    if (Employee.rand.nextFloat() < 0.5)
-      postalCode = "97006";
+    if (Employee.rand.nextFloat() < .5) street = "20575 NW von Neumann Dr";
+    if (Employee.rand.nextFloat() < 0.5) city = "Beaverton";
+    if (Employee.rand.nextFloat() < 0.5) state = "OR";
+    if (Employee.rand.nextFloat() < 0.5) postalCode = "97006";
   }
 
   public String toString() {
@@ -45,5 +41,4 @@ public class Address {
   public void city(String city) {
     this.city = city;
   }
-
 }

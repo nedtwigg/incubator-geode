@@ -24,16 +24,15 @@ import org.apache.geode.internal.admin.GemFireVM;
 import static org.apache.geode.distributed.ConfigurationProperties.LOCATORS;
 
 /**
- * A <code>SystemMember</code> that is also managed (or manageable) by
- * the admin API.
+ * A <code>SystemMember</code> that is also managed (or manageable) by the admin API.
  *
- * This class must be public so that its methods can be invoked
- * reflectively (for MBean operations) on instances of its
- * subclasses. 
+ * <p>This class must be public so that its methods can be invoked reflectively (for MBean
+ * operations) on instances of its subclasses.
  *
  * @since GemFire 4.0
  */
-public abstract class ManagedSystemMemberImpl extends SystemMemberImpl implements InternalManagedEntity {
+public abstract class ManagedSystemMemberImpl extends SystemMemberImpl
+    implements InternalManagedEntity {
 
   /** Controller for starting and stopping local or remote managers */
   protected ManagedEntityController controller;
@@ -47,22 +46,22 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl implement
   //////////////////////  Constructors  //////////////////////
 
   /**
-   * Creates a new <code>ManagedSystemMemberImpl</code> that
-   * represents an existing member of an
+   * Creates a new <code>ManagedSystemMemberImpl</code> that represents an existing member of an
    * <code>AdminDistributedSystem</code>.
    */
-  protected ManagedSystemMemberImpl(AdminDistributedSystemImpl system, GemFireVM vm) throws AdminException {
+  protected ManagedSystemMemberImpl(AdminDistributedSystemImpl system, GemFireVM vm)
+      throws AdminException {
 
     super(system, vm);
     this.controller = system.getEntityController();
   }
 
   /**
-   * Creates a new <code>ManagedSystemMemberImpl</code> that
-   * represents a non-existing member with the given
-   * <code>ManagedEntityConfig</code> that has not yet been started.
+   * Creates a new <code>ManagedSystemMemberImpl</code> that represents a non-existing member with
+   * the given <code>ManagedEntityConfig</code> that has not yet been started.
    */
-  protected ManagedSystemMemberImpl(AdminDistributedSystemImpl system, ManagedEntityConfig config) throws AdminException {
+  protected ManagedSystemMemberImpl(AdminDistributedSystemImpl system, ManagedEntityConfig config)
+      throws AdminException {
 
     super(system);
     this.internalId = null;
@@ -116,10 +115,9 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl implement
   }
 
   /**
-   * Returns whether or not this managed system member needs to be
-   * stopped.  If this member is stopped or is stopping, then it does
-   * not need to be stopped.  Otherwise, it will atomically place this
-   * member in the {@link #STOPPING} state.  See bug 32455.
+   * Returns whether or not this managed system member needs to be stopped. If this member is
+   * stopped or is stopping, then it does not need to be stopped. Otherwise, it will atomically
+   * place this member in the {@link #STOPPING} state. See bug 32455.
    */
   protected boolean needToStop() {
     synchronized (this.stateChange) {
@@ -134,11 +132,9 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl implement
   }
 
   /**
-   * Returns whether or not this managed system member needs to be
-   * started.  If this member is started or is starting, then it
-   * does not need to be started.  Otherwise, it will atomically
-   * place this member in the {@link #STARTING} state.  See bug
-   * 32455.
+   * Returns whether or not this managed system member needs to be started. If this member is
+   * started or is starting, then it does not need to be started. Otherwise, it will atomically
+   * place this member in the {@link #STARTING} state. See bug 32455.
    */
   protected boolean needToStart() {
     synchronized (this.stateChange) {
@@ -153,8 +149,8 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl implement
   }
 
   /**
-   * Sets the state of this managed system member depending on whether
-   * or not <code>vm</code> is <code>null</code>.
+   * Sets the state of this managed system member depending on whether or not <code>vm</code> is
+   * <code>null</code>.
    */
   @Override
   void setGemFireVM(GemFireVM vm) throws AdminException {
@@ -167,13 +163,10 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl implement
     }
   }
 
-  /**
-   * Waits until this system member's "state" is {@link #RUNNING}.
-   */
+  /** Waits until this system member's "state" is {@link #RUNNING}. */
   public boolean waitToStart(long timeout) throws InterruptedException {
 
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
 
     long start = System.currentTimeMillis();
     while (System.currentTimeMillis() - start < timeout) {
@@ -192,13 +185,10 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl implement
     }
   }
 
-  /**
-   * Waits until this system member's "state" is {@link #STOPPED}.
-   */
+  /** Waits until this system member's "state" is {@link #STOPPED}. */
   public boolean waitToStop(long timeout) throws InterruptedException {
 
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
     long start = System.currentTimeMillis();
     while (System.currentTimeMillis() - start < timeout) {
       synchronized (this.stateChange) {
@@ -217,9 +207,8 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl implement
   }
 
   /**
-   * Appends configuration information to a <code>StringBuffer</code>
-   * that contains a command line.  Handles certain configuration
-   * parameters specially.
+   * Appends configuration information to a <code>StringBuffer</code> that contains a command line.
+   * Handles certain configuration parameters specially.
    */
   protected void appendConfiguration(StringBuffer sb) {
     ConfigurationParameter[] params = this.getConfiguration();
@@ -261,5 +250,4 @@ public abstract class ManagedSystemMemberImpl extends SystemMemberImpl implement
       }
     }
   }
-
 }

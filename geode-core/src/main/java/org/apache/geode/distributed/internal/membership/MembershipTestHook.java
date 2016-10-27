@@ -14,25 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.distributed.internal.membership;
 
-/**
- * Test hook for hydra test development
- * 
- *
- */
+/** Test hook for hydra test development */
 public interface MembershipTestHook {
-  /**
-   * test hook invoked prior to shutting down distributed system
-   */
+  /** test hook invoked prior to shutting down distributed system */
   public void beforeMembershipFailure(String reason, Throwable cause);
 
-  /**
-   * test hook invoked after shutting down distributed system
-   */
+  /** test hook invoked after shutting down distributed system */
   public void afterMembershipFailure(String reason, Throwable cause);
-
 }

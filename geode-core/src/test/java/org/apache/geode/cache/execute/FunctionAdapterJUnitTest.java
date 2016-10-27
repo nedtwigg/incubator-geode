@@ -47,7 +47,6 @@ public class FunctionAdapterJUnitTest {
   @Test
   public void hasResultDefaultsTrue() {
     assertTrue(adapter.hasResult());
-
   }
 
   @Test
@@ -58,8 +57,6 @@ public class FunctionAdapterJUnitTest {
   private static class MyFunctionAdapter extends FunctionAdapter {
 
     @Override
-    public void execute(final FunctionContext context) {
-    }
-
+    public void execute(final FunctionContext context) {}
   }
 }

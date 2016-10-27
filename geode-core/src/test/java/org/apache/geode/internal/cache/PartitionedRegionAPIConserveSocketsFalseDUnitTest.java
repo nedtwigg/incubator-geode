@@ -31,7 +31,8 @@ import org.apache.geode.test.junit.categories.DistributedTest;
  * @see org.apache.geode.distributed.DistributedSystem#setThreadsSocketPolicy(boolean)
  */
 @Category(DistributedTest.class)
-public class PartitionedRegionAPIConserveSocketsFalseDUnitTest extends PartitionedRegionAPIDUnitTest {
+public class PartitionedRegionAPIConserveSocketsFalseDUnitTest
+    extends PartitionedRegionAPIDUnitTest {
 
   @Override
   public Properties getDistributedSystemProperties() {

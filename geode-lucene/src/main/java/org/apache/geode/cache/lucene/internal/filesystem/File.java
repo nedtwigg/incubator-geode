@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -33,9 +33,7 @@ import org.apache.geode.InternalGemFireError;
 import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
-/**
- * A file that is stored in a gemfire region.
- */
+/** A file that is stored in a gemfire region. */
 public class File implements DataSerializableFixedID {
 
   private transient FileSystem fileSystem;
@@ -48,11 +46,8 @@ public class File implements DataSerializableFixedID {
   long modified = created;
   UUID id = UUID.randomUUID();
 
-  /**
-   * Constructor for serialization only
-   */
-  public File() {
-  }
+  /** Constructor for serialization only */
+  public File() {}
 
   File(final FileSystem fileSystem, final String name) {
     setFileSystem(fileSystem);
@@ -60,48 +55,37 @@ public class File implements DataSerializableFixedID {
     this.name = name;
   }
 
-  /**
-   * @return the name
-   */
+  /** @return the name */
   public String getName() {
     return name;
   }
 
-  /**
-   * @return the length
-   */
+  /** @return the length */
   public long getLength() {
     return length;
   }
 
-  /**
-   * @return the created
-   */
+  /** @return the created */
   public long getCreated() {
     return created;
   }
 
-  /**
-   * @return the modified
-   */
+  /** @return the modified */
   public long getModified() {
     return modified;
   }
 
   /**
    * Get an input stream that reads from the beginning the file
-   * 
-   * The input stream is not threadsafe
+   *
+   * <p>The input stream is not threadsafe
    */
   public SeekableInputStream getInputStream() {
     // TODO get read lock?
     return new FileInputStream(this);
   }
 
-  /**
-   * Get an output stream that appends to the end
-   * of the file.
-   */
+  /** Get an output stream that appends to the end of the file. */
   public OutputStream getOutputStream() {
     return new FileOutputStream(this);
   }
@@ -152,9 +136,7 @@ public class File implements DataSerializableFixedID {
     id = new UUID(high, low);
   }
 
-  /**
-   * Export this to a {@link java.io.File}
-   */
+  /** Export this to a {@link java.io.File} */
   public void export(final java.io.File exportLocation) {
     java.io.File targetFile = new java.io.File(exportLocation, getName());
     try {

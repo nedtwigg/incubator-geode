@@ -16,9 +16,7 @@
  */
 package org.apache.geode.internal.sequencelog;
 
-/**
- *
- */
+/** */
 public class Transition {
 
   private final long timestamp;
@@ -29,7 +27,8 @@ public class Transition {
   private final Object dest;
   private final Object state;
 
-  public Transition(GraphType type, Object graphName, Object edgeName, Object state, Object source, Object dest) {
+  public Transition(
+      GraphType type, Object graphName, Object edgeName, Object state, Object source, Object dest) {
     this.timestamp = System.currentTimeMillis();
     this.type = type;
     this.graphName = graphName;
@@ -39,7 +38,14 @@ public class Transition {
     this.dest = dest;
   }
 
-  public Transition(long timestamp, GraphType type, Object graphName, Object edgeName, Object state, Object source, Object dest) {
+  public Transition(
+      long timestamp,
+      GraphType type,
+      Object graphName,
+      Object edgeName,
+      Object state,
+      Object source,
+      Object dest) {
     this.timestamp = timestamp;
     this.type = type;
     this.graphName = graphName;

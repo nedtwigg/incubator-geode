@@ -21,22 +21,19 @@ import java.util.NoSuchElementException;
 import java.util.Map.Entry;
 
 /**
- * Iterates over the entries in a region snapshot.  Holds resources that must
- * be freed via {@link #close()}.
- * 
+ * Iterates over the entries in a region snapshot. Holds resources that must be freed via {@link
+ * #close()}.
+ *
  * @param <K> the key type of the snapshot region
  * @param <V> the value type the snapshot region
- * 
  * @see SnapshotReader
- * 
  * @since GemFire 7.0
  */
 public interface SnapshotIterator<K, V> {
   /**
    * Returns true if there are more elements in the iteration.
-   * 
+   *
    * @return true if the iterator has more elements.
-   * 
    * @throws IOException error reading the snapshot
    * @throws ClassNotFoundException error deserializing the snapshot element
    */
@@ -44,9 +41,8 @@ public interface SnapshotIterator<K, V> {
 
   /**
    * Returns the next element in the iteration.
-   * 
+   *
    * @return the next element
-   * 
    * @throws NoSuchElementException there are no further elements
    * @throws IOException error reading the snapshot
    * @throws ClassNotFoundException error deserializing the snapshot element
@@ -55,6 +51,7 @@ public interface SnapshotIterator<K, V> {
 
   /**
    * Closes the iterator and its underlying resources.
+   *
    * @throws IOException error closing the iterator
    */
   void close() throws IOException;

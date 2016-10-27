@@ -33,10 +33,10 @@ import org.apache.geode.distributed.internal.ServerLocation;
 import org.apache.geode.internal.cache.tier.sockets.ServerQueueStatus;
 
 /**
- * A connection managed by the connection manager. Keeps track
- * of the current state of the connection. 
- * @since GemFire 5.7
+ * A connection managed by the connection manager. Keeps track of the current state of the
+ * connection.
  *
+ * @since GemFire 5.7
  */
 class PooledConnection implements Connection {
 
@@ -82,8 +82,9 @@ class PooledConnection implements Connection {
     }
   }
 
-  /** When a pooled connection is destroyed, it's not destroyed
-   * right away, but when it is returned to the pool.
+  /**
+   * When a pooled connection is destroyed, it's not destroyed right away, but when it is returned
+   * to the pool.
    */
   public void destroy() {
     this.shouldDestroy.set(true);
@@ -113,7 +114,6 @@ class PooledConnection implements Connection {
       this.connection.emergencyClose();
     }
     this.connection = null;
-
   }
 
   Connection getConnection() {
@@ -126,6 +126,7 @@ class PooledConnection implements Connection {
 
   /**
    * Set the destroy bit if it is not already set.
+   *
    * @return true if we were able to set to bit; false if someone else already did
    */
   public boolean setShouldDestroy() {
@@ -164,8 +165,7 @@ class PooledConnection implements Connection {
   public synchronized boolean switchConnection(Connection newCon) throws InterruptedException {
     Connection oldCon = null;
     synchronized (this) {
-      if (shouldDestroy())
-        return false;
+      if (shouldDestroy()) return false;
 
       if (this.active && !shouldDestroy()) {
         this.waitingToSwitch = true;
@@ -178,8 +178,7 @@ class PooledConnection implements Connection {
           notifyAll();
         }
       }
-      if (shouldDestroy())
-        return false;
+      if (shouldDestroy()) return false;
       assert !this.active;
       final long now = System.nanoTime();
       oldCon = this.connection;
@@ -230,9 +229,7 @@ class PooledConnection implements Connection {
     this.birthDate = ts;
   }
 
-  /**
-   * Returns the number of nanos remaining is this guys life.
-   */
+  /** Returns the number of nanos remaining is this guys life. */
   public long remainingLife(long now, long timeoutNanos) {
     return (getBirthDate() - now) + timeoutNanos;
   }
@@ -242,18 +239,12 @@ class PooledConnection implements Connection {
   }
 
   /**
-   * If we were able to idle timeout this connection then return
-   * -1.
-   * If this connection has already been destroyed return 0.
-   * Otherwise return the amount of idle time he has remaining.
-   * If he is active we can't time him out now and a hint is returned
-   * as when we should check him next.
-   
-   * 
+   * If we were able to idle timeout this connection then return -1. If this connection has already
+   * been destroyed return 0. Otherwise return the amount of idle time he has remaining. If he is
+   * active we can't time him out now and a hint is returned as when we should check him next.
    */
   public long doIdleTimeout(long now, long timeoutNanos) {
-    if (shouldDestroy())
-      return 0;
+    if (shouldDestroy()) return 0;
     synchronized (this) {
       if (isActive()) {
         // this is a reasonable value to return since odds are that
@@ -276,9 +267,7 @@ class PooledConnection implements Connection {
     }
   }
 
-  /**
-   * Return true if the connection has been idle long enough to expire.
-   */
+  /** Return true if the connection has been idle long enough to expire. */
   public boolean hasIdleExpired(long now, long timeoutNanos) {
     synchronized (this) {
       if (isActive()) {

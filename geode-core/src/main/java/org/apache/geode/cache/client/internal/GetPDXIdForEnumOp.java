@@ -25,13 +25,14 @@ import org.apache.geode.pdx.internal.EnumInfo;
 
 /**
  * Retrieve the PDXType, given an integer PDX id, from a server.
+ *
  * @since GemFire 6.6.2
  */
 public class GetPDXIdForEnumOp {
   /**
-   * Register a bunch of instantiators on a server
-   * using connections from the given pool
-   * to communicate with the server.
+   * Register a bunch of instantiators on a server using connections from the given pool to
+   * communicate with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    */
   public static int execute(ExecutablePool pool, EnumInfo ei) {
@@ -44,9 +45,7 @@ public class GetPDXIdForEnumOp {
   }
 
   private static class GetPDXIdForEnumOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public GetPDXIdForEnumOpImpl(EnumInfo ei) {
       super(MessageType.GET_PDX_ID_FOR_ENUM, 1);
       getMessage().addObjPart(ei);
@@ -68,7 +67,8 @@ public class GetPDXIdForEnumOp {
         } else if (isErrorResponse(msgType)) {
           throw new ServerOperationException(part.getString());
         } else {
-          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
+          throw new InternalGemFireError(
+              "Unexpected message type " + MessageType.getString(msgType));
         }
       }
     }
@@ -85,7 +85,8 @@ public class GetPDXIdForEnumOp {
 
     @Override
     protected void endSendAttempt(ConnectionStats stats, long start) {
-      stats.endGetPDXTypeByIdSend(start, hasFailed()); /* reusing type stats instead of adding enum ones */
+      stats.endGetPDXTypeByIdSend(
+          start, hasFailed()); /* reusing type stats instead of adding enum ones */
     }
 
     @Override
@@ -94,8 +95,7 @@ public class GetPDXIdForEnumOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

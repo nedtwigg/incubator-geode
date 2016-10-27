@@ -39,16 +39,17 @@ import org.apache.geode.test.dunit.rules.LocatorServerConfigurationRule;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class SecurityClusterConfigDUnitTest extends JUnit4DistributedTestCase {
 
-  @Rule
-  public LocatorServerConfigurationRule lsRule = new LocatorServerConfigurationRule(this);
+  @Rule public LocatorServerConfigurationRule lsRule = new LocatorServerConfigurationRule(this);
 
   @Before
   public void before() throws Exception {
-    IgnoredException.addIgnoredException(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toString());
-    IgnoredException.addIgnoredException(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION_2.toString());
+    IgnoredException.addIgnoredException(
+        LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toString());
+    IgnoredException.addIgnoredException(
+        LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION_2.toString());
     Properties props = new Properties();
     props.setProperty(SECURITY_MANAGER, SimpleSecurityManager.class.getName());
     props.put(JMX_MANAGER, "false");
@@ -113,8 +114,9 @@ public class SecurityClusterConfigDUnitTest extends JUnit4DistributedTestCase {
     // initial security properties should only contain initial set of values
     InternalDistributedSystem ds = lsRule.getSystem(props);
 
-    assertThatThrownBy(() -> CacheFactory.create(ds)).isInstanceOf(GemFireConfigException.class).hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toLocalizedString());
-
+    assertThatThrownBy(() -> CacheFactory.create(ds))
+        .isInstanceOf(GemFireConfigException.class)
+        .hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toLocalizedString());
   }
 
   @Test
@@ -130,8 +132,9 @@ public class SecurityClusterConfigDUnitTest extends JUnit4DistributedTestCase {
     // initial security properties should only contain initial set of values
     InternalDistributedSystem ds = lsRule.getSystem(props);
 
-    assertThatThrownBy(() -> CacheFactory.create(ds)).isInstanceOf(GemFireConfigException.class).hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toLocalizedString());
-
+    assertThatThrownBy(() -> CacheFactory.create(ds))
+        .isInstanceOf(GemFireConfigException.class)
+        .hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toLocalizedString());
   }
 
   @Test
@@ -146,8 +149,8 @@ public class SecurityClusterConfigDUnitTest extends JUnit4DistributedTestCase {
 
     InternalDistributedSystem ds = lsRule.getSystem(props);
 
-    assertThatThrownBy(() -> CacheFactory.create(ds)).isInstanceOf(GemFireConfigException.class).hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION_2.toLocalizedString());
-
+    assertThatThrownBy(() -> CacheFactory.create(ds))
+        .isInstanceOf(GemFireConfigException.class)
+        .hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION_2.toLocalizedString());
   }
-
 }

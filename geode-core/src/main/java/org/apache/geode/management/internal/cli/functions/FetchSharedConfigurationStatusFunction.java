@@ -25,7 +25,8 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.lang.StringUtils;
 import org.apache.geode.management.internal.configuration.domain.SharedConfigurationStatus;
 
-public class FetchSharedConfigurationStatusFunction extends FunctionAdapter implements InternalEntity {
+public class FetchSharedConfigurationStatusFunction extends FunctionAdapter
+    implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
 
@@ -41,7 +42,7 @@ public class FetchSharedConfigurationStatusFunction extends FunctionAdapter impl
       memberId = member.getId();
     }
 
-    CliFunctionResult result = new CliFunctionResult(memberId, new String[] { status.name() });
+    CliFunctionResult result = new CliFunctionResult(memberId, new String[] {status.name()});
     context.getResultSender().lastResult(result);
   }
 
@@ -49,5 +50,4 @@ public class FetchSharedConfigurationStatusFunction extends FunctionAdapter impl
   public String getId() {
     return FetchSharedConfigurationStatusFunction.class.getName();
   }
-
 }

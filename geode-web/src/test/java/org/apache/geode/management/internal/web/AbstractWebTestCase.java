@@ -28,9 +28,11 @@ import org.apache.geode.internal.lang.StringUtils;
 import org.apache.geode.management.internal.web.domain.Link;
 
 /**
- * The AbstractWebDomainTests class is abstract base class containing functionality common to a test suite classes
- * in the org.apache.geode.management.internal.web.domain package.
- * <p/>
+ * The AbstractWebDomainTests class is abstract base class containing functionality common to a test
+ * suite classes in the org.apache.geode.management.internal.web.domain package.
+ *
+ * <p>
+ *
  * @see java.net.URI
  * @see java.net.URLDecoder
  * @see java.net.URLEncoder
@@ -73,7 +75,6 @@ public abstract class AbstractWebTestCase {
 
     for (final Link link : links) {
       buffer.append(count++ > 0 ? ", " : StringUtils.EMPTY_STRING).append(toString(link));
-
     }
 
     buffer.append("]");
@@ -89,8 +90,8 @@ public abstract class AbstractWebTestCase {
     return decode(uri.toString());
   }
 
-  protected URI toUri(final String uriString) throws UnsupportedEncodingException, URISyntaxException {
+  protected URI toUri(final String uriString)
+      throws UnsupportedEncodingException, URISyntaxException {
     return new URI(encode(uriString));
   }
-
 }

@@ -56,9 +56,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 @Category(DistributedTest.class)
 public class QueueMsgDUnitTest extends ReliabilityTestCase {
 
-  /**
-   * Make sure that cache operations are queued when a required role is missing
-   */
+  /** Make sure that cache operations are queued when a required role is missing */
   @Ignore("TODO: test is disabled")
   @Test
   public void testQueueWhenRoleMissing() throws Exception {
@@ -92,144 +90,143 @@ public class QueueMsgDUnitTest extends ReliabilityTestCase {
     VM vm = Host.getHost(0).getVM(0);
     // now create a system that fills this role since it does not create the
     // region our queue should not be flushed
-    vm.invoke(new SerializableRunnable() {
-      public void run() {
-        Properties config = new Properties();
-        config.setProperty(ROLES, "missing");
-        getSystem(config);
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Properties config = new Properties();
+            config.setProperty(ROLES, "missing");
+            getSystem(config);
+          }
+        });
 
     // we still should have everything queued since the region is not created
     assertEquals(queuedOps, stats.getReliableQueuedOps());
 
     // now create the region
-    vm.invoke(new CacheSerializableRunnable("create root") {
-      public void run2() throws CacheException {
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        factory.setDataPolicy(DataPolicy.NORMAL);
-        factory.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
-        TestCacheListener cl = new TestCacheListener() {
-          public void afterCreate2(EntryEvent event) {
+    vm.invoke(
+        new CacheSerializableRunnable("create root") {
+          public void run2() throws CacheException {
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            factory.setDataPolicy(DataPolicy.NORMAL);
+            factory.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
+            TestCacheListener cl =
+                new TestCacheListener() {
+                  public void afterCreate2(EntryEvent event) {}
+
+                  public void afterUpdate2(EntryEvent event) {}
+
+                  public void afterInvalidate2(EntryEvent event) {}
+
+                  public void afterDestroy2(EntryEvent event) {}
+                };
+            cl.enableEventHistory();
+            factory.addCacheListener(cl);
+            createRootRegion(factory.create());
+          }
+        });
+    // after some amount of time we should see the queuedOps flushed
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return stats.getReliableQueuedOps() == 0;
           }
 
-          public void afterUpdate2(EntryEvent event) {
-          }
-
-          public void afterInvalidate2(EntryEvent event) {
-          }
-
-          public void afterDestroy2(EntryEvent event) {
+          public String description() {
+            return "waiting for reliableQueuedOps to become 0";
           }
         };
-        cl.enableEventHistory();
-        factory.addCacheListener(cl);
-        createRootRegion(factory.create());
-      }
-    });
-    // after some amount of time we should see the queuedOps flushed
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return stats.getReliableQueuedOps() == 0;
-      }
-
-      public String description() {
-        return "waiting for reliableQueuedOps to become 0";
-      }
-    };
     Wait.waitForCriterion(ev, 5 * 1000, 200, true);
 
     // now check that the queued op was delivered
-    vm.invoke(new CacheSerializableRunnable("check") {
-      public void run2() throws CacheException {
-        Region r = getRootRegion();
-        assertEquals(null, r.getEntry("createKey"));
-        //assertIndexDetailsEquals("putValue", r.getEntry("createKey").getValue());
-        {
-          int evIdx = 0;
-          TestCacheListener cl = (TestCacheListener) r.getAttributes().getCacheListener();
-          List events = cl.getEventHistory();
-          {
-            CacheEvent ce = (CacheEvent) events.get(evIdx++);
-            assertEquals(Operation.REGION_CREATE, ce.getOperation());
-          }
-          {
-            EntryEvent ee = (EntryEvent) events.get(evIdx++);
-            assertEquals(Operation.CREATE, ee.getOperation());
-            assertEquals("createKey", ee.getKey());
-            assertEquals("createValue", ee.getNewValue());
-            assertEquals(null, ee.getOldValue());
-            assertEquals("createCBArg", ee.getCallbackArgument());
-            assertEquals(true, ee.isOriginRemote());
-          }
-          {
-            EntryEvent ee = (EntryEvent) events.get(evIdx++);
-            assertEquals(Operation.INVALIDATE, ee.getOperation());
-            assertEquals("createKey", ee.getKey());
-            assertEquals(null, ee.getNewValue());
-            assertEquals("createValue", ee.getOldValue());
-            assertEquals("invalidateCBArg", ee.getCallbackArgument());
-            assertEquals(true, ee.isOriginRemote());
-          }
-          {
-            EntryEvent ee = (EntryEvent) events.get(evIdx++);
-            assertEquals(Operation.UPDATE, ee.getOperation());
-            assertEquals("createKey", ee.getKey());
-            assertEquals("putValue", ee.getNewValue());
-            assertEquals(null, ee.getOldValue());
-            assertEquals("putCBArg", ee.getCallbackArgument());
-            assertEquals(true, ee.isOriginRemote());
-          }
-          {
-            EntryEvent ee = (EntryEvent) events.get(evIdx++);
-            assertEquals(Operation.DESTROY, ee.getOperation());
-            assertEquals("createKey", ee.getKey());
-            assertEquals(null, ee.getNewValue());
-            assertEquals("putValue", ee.getOldValue());
-            assertEquals("destroyCBArg", ee.getCallbackArgument());
-            assertEquals(true, ee.isOriginRemote());
-          }
-          {
-            EntryEvent ee = (EntryEvent) events.get(evIdx++);
-            assertEquals(Operation.PUTALL_CREATE, ee.getOperation());
-            assertEquals("aKey", ee.getKey());
-            assertEquals("aValue", ee.getNewValue());
-            assertEquals(null, ee.getOldValue());
-            assertEquals(null, ee.getCallbackArgument());
-            assertEquals(true, ee.isOriginRemote());
-          }
-          {
-            EntryEvent ee = (EntryEvent) events.get(evIdx++);
-            assertEquals(Operation.PUTALL_CREATE, ee.getOperation());
-            assertEquals("bKey", ee.getKey());
-            assertEquals("bValue", ee.getNewValue());
-            assertEquals(null, ee.getOldValue());
-            assertEquals(null, ee.getCallbackArgument());
-            assertEquals(true, ee.isOriginRemote());
-          }
-          {
-            RegionEvent re = (RegionEvent) events.get(evIdx++);
-            assertEquals(Operation.REGION_INVALIDATE, re.getOperation());
-            assertEquals("invalidateRegionCBArg", re.getCallbackArgument());
-            assertEquals(true, re.isOriginRemote());
-          }
-          {
-            RegionEvent re = (RegionEvent) events.get(evIdx++);
-            assertEquals(Operation.REGION_CLEAR, re.getOperation());
-            assertEquals(null, re.getCallbackArgument());
-            assertEquals(true, re.isOriginRemote());
-          }
+    vm.invoke(
+        new CacheSerializableRunnable("check") {
+          public void run2() throws CacheException {
+            Region r = getRootRegion();
+            assertEquals(null, r.getEntry("createKey"));
+            //assertIndexDetailsEquals("putValue", r.getEntry("createKey").getValue());
+            {
+              int evIdx = 0;
+              TestCacheListener cl = (TestCacheListener) r.getAttributes().getCacheListener();
+              List events = cl.getEventHistory();
+              {
+                CacheEvent ce = (CacheEvent) events.get(evIdx++);
+                assertEquals(Operation.REGION_CREATE, ce.getOperation());
+              }
+              {
+                EntryEvent ee = (EntryEvent) events.get(evIdx++);
+                assertEquals(Operation.CREATE, ee.getOperation());
+                assertEquals("createKey", ee.getKey());
+                assertEquals("createValue", ee.getNewValue());
+                assertEquals(null, ee.getOldValue());
+                assertEquals("createCBArg", ee.getCallbackArgument());
+                assertEquals(true, ee.isOriginRemote());
+              }
+              {
+                EntryEvent ee = (EntryEvent) events.get(evIdx++);
+                assertEquals(Operation.INVALIDATE, ee.getOperation());
+                assertEquals("createKey", ee.getKey());
+                assertEquals(null, ee.getNewValue());
+                assertEquals("createValue", ee.getOldValue());
+                assertEquals("invalidateCBArg", ee.getCallbackArgument());
+                assertEquals(true, ee.isOriginRemote());
+              }
+              {
+                EntryEvent ee = (EntryEvent) events.get(evIdx++);
+                assertEquals(Operation.UPDATE, ee.getOperation());
+                assertEquals("createKey", ee.getKey());
+                assertEquals("putValue", ee.getNewValue());
+                assertEquals(null, ee.getOldValue());
+                assertEquals("putCBArg", ee.getCallbackArgument());
+                assertEquals(true, ee.isOriginRemote());
+              }
+              {
+                EntryEvent ee = (EntryEvent) events.get(evIdx++);
+                assertEquals(Operation.DESTROY, ee.getOperation());
+                assertEquals("createKey", ee.getKey());
+                assertEquals(null, ee.getNewValue());
+                assertEquals("putValue", ee.getOldValue());
+                assertEquals("destroyCBArg", ee.getCallbackArgument());
+                assertEquals(true, ee.isOriginRemote());
+              }
+              {
+                EntryEvent ee = (EntryEvent) events.get(evIdx++);
+                assertEquals(Operation.PUTALL_CREATE, ee.getOperation());
+                assertEquals("aKey", ee.getKey());
+                assertEquals("aValue", ee.getNewValue());
+                assertEquals(null, ee.getOldValue());
+                assertEquals(null, ee.getCallbackArgument());
+                assertEquals(true, ee.isOriginRemote());
+              }
+              {
+                EntryEvent ee = (EntryEvent) events.get(evIdx++);
+                assertEquals(Operation.PUTALL_CREATE, ee.getOperation());
+                assertEquals("bKey", ee.getKey());
+                assertEquals("bValue", ee.getNewValue());
+                assertEquals(null, ee.getOldValue());
+                assertEquals(null, ee.getCallbackArgument());
+                assertEquals(true, ee.isOriginRemote());
+              }
+              {
+                RegionEvent re = (RegionEvent) events.get(evIdx++);
+                assertEquals(Operation.REGION_INVALIDATE, re.getOperation());
+                assertEquals("invalidateRegionCBArg", re.getCallbackArgument());
+                assertEquals(true, re.isOriginRemote());
+              }
+              {
+                RegionEvent re = (RegionEvent) events.get(evIdx++);
+                assertEquals(Operation.REGION_CLEAR, re.getOperation());
+                assertEquals(null, re.getCallbackArgument());
+                assertEquals(true, re.isOriginRemote());
+              }
 
-          assertEquals(evIdx, events.size());
-        }
-      }
-    });
+              assertEquals(evIdx, events.size());
+            }
+          }
+        });
   }
 
-  /**
-   * Make sure a queued region does not allow non-queued subscribers
-   */
+  /** Make sure a queued region does not allow non-queued subscribers */
   @Ignore("TODO: test is disabled")
   @Test
   public void testIllegalConfigQueueExists() throws Exception {
@@ -238,38 +235,48 @@ public class QueueMsgDUnitTest extends ReliabilityTestCase {
     createRootRegion(factory.create());
 
     VM vm = Host.getHost(0).getVM(0);
-    vm.invoke(new SerializableRunnable() {
-      public void run() {
-        Properties config = new Properties();
-        config.setProperty(ROLES, "pubFirst");
-        getSystem(config);
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Properties config = new Properties();
+            config.setProperty(ROLES, "pubFirst");
+            getSystem(config);
+          }
+        });
 
     // now create the region
-    vm.invoke(new CacheSerializableRunnable("create root") {
-      public void run2() throws CacheException {
-        final String expectedExceptions = "does not allow queued messages";
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        // setting the following makes things legal
-        factory.setDataPolicy(DataPolicy.NORMAL);
-        factory.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
-        getCache().getLogger().info("<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
-        try {
-          createRootRegion(factory.create());
-          fail("expected IllegalStateException");
-        } catch (IllegalStateException expected) {
-        } finally {
-          getCache().getLogger().info("<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>");
-        }
-      }
-    });
+    vm.invoke(
+        new CacheSerializableRunnable("create root") {
+          public void run2() throws CacheException {
+            final String expectedExceptions = "does not allow queued messages";
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            // setting the following makes things legal
+            factory.setDataPolicy(DataPolicy.NORMAL);
+            factory.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
+            getCache()
+                .getLogger()
+                .info(
+                    "<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
+            try {
+              createRootRegion(factory.create());
+              fail("expected IllegalStateException");
+            } catch (IllegalStateException expected) {
+            } finally {
+              getCache()
+                  .getLogger()
+                  .info(
+                      "<ExpectedException action=remove>"
+                          + expectedExceptions
+                          + "</ExpectedException>");
+            }
+          }
+        });
   }
 
   /**
-   * Make sure a subscriber that does not allow queued messages causes a
-   * queued publisher to fail creation
+   * Make sure a subscriber that does not allow queued messages causes a queued publisher to fail
+   * creation
    */
   @Ignore("TODO: test is disabled")
   @Test
@@ -277,35 +284,41 @@ public class QueueMsgDUnitTest extends ReliabilityTestCase {
     final String expectedExceptions = "does not allow queued messages";
 
     VM vm = Host.getHost(0).getVM(0);
-    vm.invoke(new SerializableRunnable() {
-      public void run() {
-        Properties config = new Properties();
-        config.setProperty(ROLES, "subFirst");
-        getSystem(config);
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Properties config = new Properties();
+            config.setProperty(ROLES, "subFirst");
+            getSystem(config);
+          }
+        });
 
     // now create the region
-    vm.invoke(new CacheSerializableRunnable("create root") {
-      public void run2() throws CacheException {
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        // setting the following makes things legal
-        factory.setDataPolicy(DataPolicy.NORMAL);
-        factory.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
-        createRootRegion(factory.create());
-      }
-    });
+    vm.invoke(
+        new CacheSerializableRunnable("create root") {
+          public void run2() throws CacheException {
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            // setting the following makes things legal
+            factory.setDataPolicy(DataPolicy.NORMAL);
+            factory.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
+            createRootRegion(factory.create());
+          }
+        });
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
-    getCache().getLogger().info("<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
+    getCache()
+        .getLogger()
+        .info("<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
     try {
       createRootRegion(factory.create());
       fail("expected IllegalStateException");
     } catch (IllegalStateException expected) {
     } finally {
-      getCache().getLogger().info("<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>");
+      getCache()
+          .getLogger()
+          .info("<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>");
     }
   }
 }

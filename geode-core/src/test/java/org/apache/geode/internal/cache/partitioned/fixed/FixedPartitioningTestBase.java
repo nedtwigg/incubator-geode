@@ -73,9 +73,7 @@ import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * This is the base class to do operations
- */
+/** This is the base class to do operations */
 @Category(DistributedTest.class)
 public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
 
@@ -101,27 +99,54 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
   private static PartitionedRegionObserver origObserver;
 
   public enum Months_Accessor {
-    JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP
+    JAN,
+    FEB,
+    MAR,
+    APR,
+    MAY,
+    JUN,
+    JUL,
+    AUG,
+    SEP
   };
 
   public enum Months_DataStore {
-    JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC
+    JAN,
+    FEB,
+    MAR,
+    APR,
+    MAY,
+    JUN,
+    JUL,
+    AUG,
+    SEP,
+    OCT,
+    NOV,
+    DEC
   };
 
   public enum Q1_Months {
-    JAN, FEB, MAR
+    JAN,
+    FEB,
+    MAR
   };
 
   public enum Q2_Months {
-    APR, MAY, JUN
+    APR,
+    MAY,
+    JUN
   };
 
   public enum Q3_Months {
-    JUL, AUG, SEP
+    JUL,
+    AUG,
+    SEP
   };
 
   public enum Q4_Months {
-    OCT, NOV, DEC
+    OCT,
+    NOV,
+    DEC
   };
 
   public FixedPartitioningTestBase() {
@@ -133,7 +158,8 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
   }
 
   public static void createCacheOnMember_DisableMovePrimary() {
-    System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "DISABLE_MOVE_PRIMARIES_ON_STARTUP", "true");
+    System.setProperty(
+        DistributionConfig.GEMFIRE_PREFIX + "DISABLE_MOVE_PRIMARIES_ON_STARTUP", "true");
     new FixedPartitioningTestBase().createCache();
   }
 
@@ -152,7 +178,15 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  public static void createRegionWithPartitionAttributes(String regionName, List<FixedPartitionAttributes> fpaList, Integer redCopies, Integer localMaxMemory, Integer totalNumBuckets, PartitionResolver resolver, String colocatedWith, boolean isPersistence) {
+  public static void createRegionWithPartitionAttributes(
+      String regionName,
+      List<FixedPartitionAttributes> fpaList,
+      Integer redCopies,
+      Integer localMaxMemory,
+      Integer totalNumBuckets,
+      PartitionResolver resolver,
+      String colocatedWith,
+      boolean isPersistence) {
     PartitionAttributesFactory paf_FPR = new PartitionAttributesFactory();
     paf_FPR.setRedundantCopies(redCopies);
     paf_FPR.setLocalMaxMemory(localMaxMemory);
@@ -186,11 +220,10 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
     } catch (InterruptedException e) {
       org.apache.geode.test.dunit.Assert.fail("Not expecting exception", e);
     }
-
   }
 
   public static File[] getDiskDirs() {
-    return new File[] { getDiskDir() };
+    return new File[] {getDiskDir()};
   }
 
   private static File getDiskDir() {
@@ -325,7 +358,8 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
       try {
         assertEquals(customer, region_Cust.get(custid));
       } catch (Exception e) {
-        org.apache.geode.test.dunit.Assert.fail("getForColocation : failed while doing get operation in CustomerPartitionedRegion ", e);
+        org.apache.geode.test.dunit.Assert.fail(
+            "getForColocation : failed while doing get operation in CustomerPartitionedRegion ", e);
       }
     }
     Region region_Ord = (PartitionedRegion) cache.getRegion(order);
@@ -385,12 +419,12 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
           String value = month.toString() + i;
           region_FPR.put(date, value);
         }
-
       }
     }
   }
 
-  public static void putThroughDataStore_FixedPartitionResolver_PartitionResolver(String regionName) {
+  public static void putThroughDataStore_FixedPartitionResolver_PartitionResolver(
+      String regionName) {
     region_FPR = (PartitionedRegion) cache.getRegion(regionName);
     assertNotNull(region_FPR);
     for (int i = 1; i < 10; i++) {
@@ -433,7 +467,9 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
       try {
         partitionedregion.put(custid, customer);
       } catch (Exception e) {
-        org.apache.geode.test.dunit.Assert.fail("putCustomerPartitionedRegion : failed while doing put operation in CustomerPartitionedRegion ", e);
+        org.apache.geode.test.dunit.Assert.fail(
+            "putCustomerPartitionedRegion : failed while doing put operation in CustomerPartitionedRegion ",
+            e);
       }
       LogWriterUtils.getLogWriter().info("Customer :- { " + custid + " : " + customer + " }");
     }
@@ -453,7 +489,9 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
         try {
           partitionedregion.put(orderId, order);
         } catch (Exception e) {
-          org.apache.geode.test.dunit.Assert.fail("putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ", e);
+          org.apache.geode.test.dunit.Assert.fail(
+              "putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ",
+              e);
         }
         LogWriterUtils.getLogWriter().info("Order :- { " + orderId + " : " + order + " }");
       }
@@ -476,9 +514,12 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
           try {
             partitionedregion.put(shipmentId, shipment);
           } catch (Exception e) {
-            org.apache.geode.test.dunit.Assert.fail("putShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ", e);
+            org.apache.geode.test.dunit.Assert.fail(
+                "putShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ",
+                e);
           }
-          LogWriterUtils.getLogWriter().info("Shipment :- { " + shipmentId + " : " + shipment + " }");
+          LogWriterUtils.getLogWriter()
+              .info("Shipment :- { " + shipmentId + " : " + shipment + " }");
         }
       }
     }
@@ -495,7 +536,9 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
       try {
         partitionedregion.put(custid, customer);
       } catch (Exception e) {
-        org.apache.geode.test.dunit.Assert.fail("putCustomerPartitionedRegion : failed while doing put operation in CustomerPartitionedRegion ", e);
+        org.apache.geode.test.dunit.Assert.fail(
+            "putCustomerPartitionedRegion : failed while doing put operation in CustomerPartitionedRegion ",
+            e);
       }
       LogWriterUtils.getLogWriter().info("Customer :- { " + custid + " : " + customer + " }");
     }
@@ -515,7 +558,9 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
         try {
           partitionedregion.put(orderId, order);
         } catch (Exception e) {
-          org.apache.geode.test.dunit.Assert.fail("putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ", e);
+          org.apache.geode.test.dunit.Assert.fail(
+              "putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ",
+              e);
         }
         LogWriterUtils.getLogWriter().info("Order :- { " + orderId + " : " + order + " }");
       }
@@ -538,9 +583,12 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
           try {
             partitionedregion.put(shipmentId, shipment);
           } catch (Exception e) {
-            org.apache.geode.test.dunit.Assert.fail("putShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ", e);
+            org.apache.geode.test.dunit.Assert.fail(
+                "putShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ",
+                e);
           }
-          LogWriterUtils.getLogWriter().info("Shipment :- { " + shipmentId + " : " + shipment + " }");
+          LogWriterUtils.getLogWriter()
+              .info("Shipment :- { " + shipmentId + " : " + shipment + " }");
         }
       }
     }
@@ -558,7 +606,9 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
         try {
           partitionedregion.put(custid, customer);
         } catch (Exception e) {
-          org.apache.geode.test.dunit.Assert.fail("putCustomerPartitionedRegion : failed while doing put operation in CustomerPartitionedRegion ", e);
+          org.apache.geode.test.dunit.Assert.fail(
+              "putCustomerPartitionedRegion : failed while doing put operation in CustomerPartitionedRegion ",
+              e);
         }
         LogWriterUtils.getLogWriter().info("Customer :- { " + custid + " : " + customer + " }");
       }
@@ -580,7 +630,9 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
           try {
             partitionedregion.put(orderId, order);
           } catch (Exception e) {
-            org.apache.geode.test.dunit.Assert.fail("putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ", e);
+            org.apache.geode.test.dunit.Assert.fail(
+                "putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ",
+                e);
           }
           LogWriterUtils.getLogWriter().info("Order :- { " + orderId + " : " + order + " }");
         }
@@ -605,9 +657,12 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
             try {
               partitionedregion.put(shipmentId, shipment);
             } catch (Exception e) {
-              org.apache.geode.test.dunit.Assert.fail("putShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ", e);
+              org.apache.geode.test.dunit.Assert.fail(
+                  "putShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ",
+                  e);
             }
-            LogWriterUtils.getLogWriter().info("Shipment :- { " + shipmentId + " : " + shipment + " }");
+            LogWriterUtils.getLogWriter()
+                .info("Shipment :- { " + shipmentId + " : " + shipment + " }");
           }
         }
       }
@@ -626,7 +681,9 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
         try {
           partitionedregion.put(custid, customer);
         } catch (Exception e) {
-          org.apache.geode.test.dunit.Assert.fail("putCustomerPartitionedRegion : failed while doing put operation in CustomerPartitionedRegion ", e);
+          org.apache.geode.test.dunit.Assert.fail(
+              "putCustomerPartitionedRegion : failed while doing put operation in CustomerPartitionedRegion ",
+              e);
         }
         LogWriterUtils.getLogWriter().info("Customer :- { " + custid + " : " + customer + " }");
       }
@@ -648,7 +705,9 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
           try {
             partitionedregion.put(orderId, order);
           } catch (Exception e) {
-            org.apache.geode.test.dunit.Assert.fail("putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ", e);
+            org.apache.geode.test.dunit.Assert.fail(
+                "putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ",
+                e);
           }
           LogWriterUtils.getLogWriter().info("Order :- { " + orderId + " : " + order + " }");
         }
@@ -673,9 +732,12 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
             try {
               partitionedregion.put(shipmentId, shipment);
             } catch (Exception e) {
-              org.apache.geode.test.dunit.Assert.fail("putShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ", e);
+              org.apache.geode.test.dunit.Assert.fail(
+                  "putShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ",
+                  e);
             }
-            LogWriterUtils.getLogWriter().info("Shipment :- { " + shipmentId + " : " + shipment + " }");
+            LogWriterUtils.getLogWriter()
+                .info("Shipment :- { " + shipmentId + " : " + shipment + " }");
           }
         }
       }
@@ -723,18 +785,26 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
     return null;
   }
 
-  public static void validateAfterPutPartitionedRegion(String customerPartitionedRegionName, String orderPartitionedRegionName, String shipmentPartitionedRegionName) throws ClassNotFoundException {
+  public static void validateAfterPutPartitionedRegion(
+      String customerPartitionedRegionName,
+      String orderPartitionedRegionName,
+      String shipmentPartitionedRegionName)
+      throws ClassNotFoundException {
 
     assertNotNull(cache);
     PartitionedRegion customerPartitionedregion = null;
     PartitionedRegion orderPartitionedregion = null;
     PartitionedRegion shipmentPartitionedregion = null;
     try {
-      customerPartitionedregion = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + customerPartitionedRegionName);
-      orderPartitionedregion = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + orderPartitionedRegionName);
-      shipmentPartitionedregion = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + shipmentPartitionedRegionName);
+      customerPartitionedregion =
+          (PartitionedRegion) cache.getRegion(Region.SEPARATOR + customerPartitionedRegionName);
+      orderPartitionedregion =
+          (PartitionedRegion) cache.getRegion(Region.SEPARATOR + orderPartitionedRegionName);
+      shipmentPartitionedregion =
+          (PartitionedRegion) cache.getRegion(Region.SEPARATOR + shipmentPartitionedRegionName);
     } catch (Exception e) {
-      org.apache.geode.test.dunit.Assert.fail("validateAfterPutPartitionedRegion : failed while getting the region", e);
+      org.apache.geode.test.dunit.Assert.fail(
+          "validateAfterPutPartitionedRegion : failed while getting the region", e);
     }
     assertNotNull(customerPartitionedregion);
 
@@ -758,7 +828,8 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
           // assertNotNull(orderPartitionedregion.get(orderId));
 
           if (custId.equals(orderId.getCustId())) {
-            LogWriterUtils.getLogWriter().info(orderId + "belongs to node " + idmForCustomer + " " + idmForOrder);
+            LogWriterUtils.getLogWriter()
+                .info(orderId + "belongs to node " + idmForCustomer + " " + idmForOrder);
             assertEquals(idmForCustomer, idmForOrder);
           }
           Set shipmentKey = shipmentPartitionedregion.getBucketKeys(i);
@@ -768,7 +839,8 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
             ShipmentId shipmentId = (ShipmentId) shipmentIterator.next();
             // assertNotNull(shipmentPartitionedregion.get(shipmentId));
             if (orderId.equals(shipmentId.getOrderId())) {
-              LogWriterUtils.getLogWriter().info(shipmentId + "belongs to node " + idmForOrder + " " + idmForShipment);
+              LogWriterUtils.getLogWriter()
+                  .info(shipmentId + "belongs to node " + idmForOrder + " " + idmForShipment);
             }
           }
         }
@@ -974,52 +1046,103 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
 
   public static void checkPrimaryBucketsForQuarter(Integer numBuckets, Integer primaryBuckets) {
     HashMap localBucket2RegionMap = (HashMap) region_FPR.getDataStore().getSizeLocally();
-    LogWriterUtils.getLogWriter().info("Size of the " + region_FPR + " in this VM :- " + localBucket2RegionMap.size() + "List of buckets : " + localBucket2RegionMap.keySet());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Size of the "
+                + region_FPR
+                + " in this VM :- "
+                + localBucket2RegionMap.size()
+                + "List of buckets : "
+                + localBucket2RegionMap.keySet());
     assertEquals(numBuckets.intValue(), localBucket2RegionMap.size());
-    LogWriterUtils.getLogWriter().info("Size of primary buckets the " + region_FPR + " in this VM :- " + region_FPR.getDataStore().getNumberOfPrimaryBucketsManaged());
-    LogWriterUtils.getLogWriter().info("Lit of Primaries in this VM :- " + region_FPR.getDataStore().getAllLocalPrimaryBucketIds());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Size of primary buckets the "
+                + region_FPR
+                + " in this VM :- "
+                + region_FPR.getDataStore().getNumberOfPrimaryBucketsManaged());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Lit of Primaries in this VM :- "
+                + region_FPR.getDataStore().getAllLocalPrimaryBucketIds());
 
-    assertEquals(primaryBuckets.intValue(), region_FPR.getDataStore().getNumberOfPrimaryBucketsManaged());
+    assertEquals(
+        primaryBuckets.intValue(), region_FPR.getDataStore().getNumberOfPrimaryBucketsManaged());
   }
 
-  public static void checkPrimaryBucketsForQuarterAfterCacheClosed(Integer numBuckets, Integer primaryBuckets) {
+  public static void checkPrimaryBucketsForQuarterAfterCacheClosed(
+      Integer numBuckets, Integer primaryBuckets) {
     HashMap localBucket2RegionMap = (HashMap) region_FPR.getDataStore().getSizeLocally();
-    LogWriterUtils.getLogWriter().info("Size of the " + region_FPR + " in this VM :- " + localBucket2RegionMap.size() + "List of buckets : " + localBucket2RegionMap.keySet());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Size of the "
+                + region_FPR
+                + " in this VM :- "
+                + localBucket2RegionMap.size()
+                + "List of buckets : "
+                + localBucket2RegionMap.keySet());
     assertEquals(numBuckets.intValue(), localBucket2RegionMap.size());
-    LogWriterUtils.getLogWriter().info("Size of primary buckets the " + region_FPR + " in this VM :- " + region_FPR.getDataStore().getNumberOfPrimaryBucketsManaged());
-    LogWriterUtils.getLogWriter().info("Lit of Primaries in this VM :- " + region_FPR.getDataStore().getAllLocalPrimaryBucketIds());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Size of primary buckets the "
+                + region_FPR
+                + " in this VM :- "
+                + region_FPR.getDataStore().getNumberOfPrimaryBucketsManaged());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Lit of Primaries in this VM :- "
+                + region_FPR.getDataStore().getAllLocalPrimaryBucketIds());
 
-    assertEquals(region_FPR.getDataStore().getNumberOfPrimaryBucketsManaged() % primaryBuckets.intValue(), 0);
+    assertEquals(
+        region_FPR.getDataStore().getNumberOfPrimaryBucketsManaged() % primaryBuckets.intValue(),
+        0);
   }
 
-  public static void checkPrimaryBucketsForCustomer(Integer numBuckets, Integer primaryBuckets, String customerPartitionedRegionName) {
+  public static void checkPrimaryBucketsForCustomer(
+      Integer numBuckets, Integer primaryBuckets, String customerPartitionedRegionName) {
     PartitionedRegion customerPartitionedregion = null;
     try {
-      customerPartitionedregion = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + customerPartitionedRegionName);
+      customerPartitionedregion =
+          (PartitionedRegion) cache.getRegion(Region.SEPARATOR + customerPartitionedRegionName);
     } catch (Exception e) {
-      org.apache.geode.test.dunit.Assert.fail("validateAfterPutPartitionedRegion : failed while getting the region", e);
+      org.apache.geode.test.dunit.Assert.fail(
+          "validateAfterPutPartitionedRegion : failed while getting the region", e);
     }
-    HashMap localBucket2RegionMap_Customer = (HashMap) customerPartitionedregion.getDataStore().getSizeLocally();
+    HashMap localBucket2RegionMap_Customer =
+        (HashMap) customerPartitionedregion.getDataStore().getSizeLocally();
     assertEquals(numBuckets.intValue(), localBucket2RegionMap_Customer.size());
-    List primaryBuckets_Customer = customerPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
+    List primaryBuckets_Customer =
+        customerPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
     assertEquals(primaryBuckets.intValue(), primaryBuckets_Customer.size());
   }
 
-  public static void checkPrimaryBucketsForColocation(Integer numBuckets, Integer primaryBuckets, String customerPartitionedRegionName, String orderPartitionedRegionName, String shipmentPartitionedRegionName) {
+  public static void checkPrimaryBucketsForColocation(
+      Integer numBuckets,
+      Integer primaryBuckets,
+      String customerPartitionedRegionName,
+      String orderPartitionedRegionName,
+      String shipmentPartitionedRegionName) {
     assertNotNull(cache);
     PartitionedRegion customerPartitionedregion = null;
     PartitionedRegion orderPartitionedregion = null;
     PartitionedRegion shipmentPartitionedregion = null;
     try {
-      customerPartitionedregion = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + customerPartitionedRegionName);
-      orderPartitionedregion = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + orderPartitionedRegionName);
-      shipmentPartitionedregion = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + shipmentPartitionedRegionName);
+      customerPartitionedregion =
+          (PartitionedRegion) cache.getRegion(Region.SEPARATOR + customerPartitionedRegionName);
+      orderPartitionedregion =
+          (PartitionedRegion) cache.getRegion(Region.SEPARATOR + orderPartitionedRegionName);
+      shipmentPartitionedregion =
+          (PartitionedRegion) cache.getRegion(Region.SEPARATOR + shipmentPartitionedRegionName);
     } catch (Exception e) {
-      org.apache.geode.test.dunit.Assert.fail("validateAfterPutPartitionedRegion : failed while getting the region", e);
+      org.apache.geode.test.dunit.Assert.fail(
+          "validateAfterPutPartitionedRegion : failed while getting the region", e);
     }
-    HashMap localBucket2RegionMap_Customer = (HashMap) customerPartitionedregion.getDataStore().getSizeLocally();
-    HashMap localBucket2RegionMap_Order = (HashMap) orderPartitionedregion.getDataStore().getSizeLocally();
-    HashMap localBucket2RegionMap_Shipment = (HashMap) shipmentPartitionedregion.getDataStore().getSizeLocally();
+    HashMap localBucket2RegionMap_Customer =
+        (HashMap) customerPartitionedregion.getDataStore().getSizeLocally();
+    HashMap localBucket2RegionMap_Order =
+        (HashMap) orderPartitionedregion.getDataStore().getSizeLocally();
+    HashMap localBucket2RegionMap_Shipment =
+        (HashMap) shipmentPartitionedregion.getDataStore().getSizeLocally();
     assertEquals(numBuckets.intValue(), localBucket2RegionMap_Customer.size());
     assertEquals(numBuckets.intValue(), localBucket2RegionMap_Order.size());
     assertEquals(numBuckets.intValue(), localBucket2RegionMap_Shipment.size());
@@ -1028,9 +1151,12 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
     assertEquals(localBucket2RegionMap_Customer.keySet(), localBucket2RegionMap_Shipment.keySet());
     assertEquals(localBucket2RegionMap_Order.keySet(), localBucket2RegionMap_Shipment.keySet());
 
-    List primaryBuckets_Customer = customerPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
-    List primaryBuckets_Order = orderPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
-    List primaryBuckets_Shipment = shipmentPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
+    List primaryBuckets_Customer =
+        customerPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
+    List primaryBuckets_Order =
+        orderPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
+    List primaryBuckets_Shipment =
+        shipmentPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
 
     assertEquals(primaryBuckets.intValue(), primaryBuckets_Customer.size());
     assertEquals(primaryBuckets.intValue(), primaryBuckets_Order.size());
@@ -1041,21 +1167,33 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
     assertEquals(primaryBuckets_Order, primaryBuckets_Shipment);
   }
 
-  public static void checkPrimaryBucketsForColocationAfterCacheClosed(Integer numBuckets, Integer primaryBuckets, String customerPartitionedRegionName, String orderPartitionedRegionName, String shipmentPartitionedRegionName) {
+  public static void checkPrimaryBucketsForColocationAfterCacheClosed(
+      Integer numBuckets,
+      Integer primaryBuckets,
+      String customerPartitionedRegionName,
+      String orderPartitionedRegionName,
+      String shipmentPartitionedRegionName) {
     assertNotNull(cache);
     PartitionedRegion customerPartitionedregion = null;
     PartitionedRegion orderPartitionedregion = null;
     PartitionedRegion shipmentPartitionedregion = null;
     try {
-      customerPartitionedregion = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + customerPartitionedRegionName);
-      orderPartitionedregion = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + orderPartitionedRegionName);
-      shipmentPartitionedregion = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + shipmentPartitionedRegionName);
+      customerPartitionedregion =
+          (PartitionedRegion) cache.getRegion(Region.SEPARATOR + customerPartitionedRegionName);
+      orderPartitionedregion =
+          (PartitionedRegion) cache.getRegion(Region.SEPARATOR + orderPartitionedRegionName);
+      shipmentPartitionedregion =
+          (PartitionedRegion) cache.getRegion(Region.SEPARATOR + shipmentPartitionedRegionName);
     } catch (Exception e) {
-      org.apache.geode.test.dunit.Assert.fail("validateAfterPutPartitionedRegion : failed while getting the region", e);
+      org.apache.geode.test.dunit.Assert.fail(
+          "validateAfterPutPartitionedRegion : failed while getting the region", e);
     }
-    HashMap localBucket2RegionMap_Customer = (HashMap) customerPartitionedregion.getDataStore().getSizeLocally();
-    HashMap localBucket2RegionMap_Order = (HashMap) orderPartitionedregion.getDataStore().getSizeLocally();
-    HashMap localBucket2RegionMap_Shipment = (HashMap) shipmentPartitionedregion.getDataStore().getSizeLocally();
+    HashMap localBucket2RegionMap_Customer =
+        (HashMap) customerPartitionedregion.getDataStore().getSizeLocally();
+    HashMap localBucket2RegionMap_Order =
+        (HashMap) orderPartitionedregion.getDataStore().getSizeLocally();
+    HashMap localBucket2RegionMap_Shipment =
+        (HashMap) shipmentPartitionedregion.getDataStore().getSizeLocally();
     assertEquals(numBuckets.intValue(), localBucket2RegionMap_Customer.size());
     assertEquals(numBuckets.intValue(), localBucket2RegionMap_Order.size());
     assertEquals(numBuckets.intValue(), localBucket2RegionMap_Shipment.size());
@@ -1064,9 +1202,12 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
     assertEquals(localBucket2RegionMap_Customer.keySet(), localBucket2RegionMap_Shipment.keySet());
     assertEquals(localBucket2RegionMap_Order.keySet(), localBucket2RegionMap_Shipment.keySet());
 
-    List primaryBuckets_Customer = customerPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
-    List primaryBuckets_Order = orderPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
-    List primaryBuckets_Shipment = shipmentPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
+    List primaryBuckets_Customer =
+        customerPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
+    List primaryBuckets_Order =
+        orderPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
+    List primaryBuckets_Shipment =
+        shipmentPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
 
     assertEquals(primaryBuckets_Customer.size() % primaryBuckets.intValue(), 0);
     assertEquals(primaryBuckets_Order.size() % primaryBuckets.intValue(), 0);
@@ -1079,15 +1220,16 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
 
   public static void checkFPR(String regionName) {
     region_FPR = (PartitionedRegion) cache.getRegion(regionName);
-    PartitionedRegion colocatedRegion = (PartitionedRegion) cache.getRegion(region_FPR.getColocatedWith());
+    PartitionedRegion colocatedRegion =
+        (PartitionedRegion) cache.getRegion(region_FPR.getColocatedWith());
     List<FixedPartitionAttributesImpl> childFPAs = region_FPR.getFixedPartitionAttributesImpl();
-    List<FixedPartitionAttributesImpl> parentFPAs = colocatedRegion.getFixedPartitionAttributesImpl();
+    List<FixedPartitionAttributesImpl> parentFPAs =
+        colocatedRegion.getFixedPartitionAttributesImpl();
     assertEquals(parentFPAs, childFPAs);
   }
 
   public static void checkStartingBucketIDs() {
     assertEquals(region_FPR.getDataStore().getAllLocalPrimaryBucketIds().size() % 3, 0);
-
   }
 
   public static void checkStartingBucketIDs_Nodedown() {
@@ -1100,33 +1242,37 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
 
   public static void setPRObserverBeforeCalculateStartingBucketId() {
     PartitionedRegion.BEFORE_CALCULATE_STARTING_BUCKET_FLAG = true;
-    origObserver = PartitionedRegionObserverHolder.setInstance(new PartitionedRegionObserverAdapter() {
-      public void beforeCalculatingStartingBucketId() {
-        WaitCriterion wc = new WaitCriterion() {
-          String excuse;
+    origObserver =
+        PartitionedRegionObserverHolder.setInstance(
+            new PartitionedRegionObserverAdapter() {
+              public void beforeCalculatingStartingBucketId() {
+                WaitCriterion wc =
+                    new WaitCriterion() {
+                      String excuse;
 
-          public boolean done() {
-            Region prRoot = PartitionedRegionHelper.getPRRoot(cache);
-            PartitionRegionConfig regionConfig = (PartitionRegionConfig) prRoot.get("#Quarter");
-            if (regionConfig == null) {
-              return false;
-            } else {
-              if (!regionConfig.isFirstDataStoreCreated()) {
-                return true;
-              } else {
-                return false;
+                      public boolean done() {
+                        Region prRoot = PartitionedRegionHelper.getPRRoot(cache);
+                        PartitionRegionConfig regionConfig =
+                            (PartitionRegionConfig) prRoot.get("#Quarter");
+                        if (regionConfig == null) {
+                          return false;
+                        } else {
+                          if (!regionConfig.isFirstDataStoreCreated()) {
+                            return true;
+                          } else {
+                            return false;
+                          }
+                        }
+                      }
+
+                      public String description() {
+                        return excuse;
+                      }
+                    };
+                Wait.waitForCriterion(wc, 20000, 500, false);
+                LogWriterUtils.getLogWriter().info("end of beforeCalculatingStartingBucketId");
               }
-            }
-          }
-
-          public String description() {
-            return excuse;
-          }
-        };
-        Wait.waitForCriterion(wc, 20000, 500, false);
-        LogWriterUtils.getLogWriter().info("end of beforeCalculatingStartingBucketId");
-      }
-    });
+            });
   }
 
   public static void resetPRObserverBeforeCalculateStartingBucketId() throws Exception {
@@ -1155,15 +1301,13 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * Local destroy all root regions and close the cache.  
-   */
-  protected synchronized static void remoteTearDown() {
+  /** Local destroy all root regions and close the cache. */
+  protected static synchronized void remoteTearDown() {
     try {
       if (cache != null && !cache.isClosed()) {
         //try to destroy the root regions first so that
         //we clean up any persistent files.
-        for (Iterator itr = cache.rootRegions().iterator(); itr.hasNext();) {
+        for (Iterator itr = cache.rootRegions().iterator(); itr.hasNext(); ) {
           Region root = (Region) itr.next();
           //          String name = root.getName();
           //for colocated regions you can't locally destroy a partitioned
@@ -1189,7 +1333,6 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
         throw e;
       } catch (Throwable t) {
         LogWriterUtils.getLogWriter().error("Error in closing the cache ", t);
-
       }
     }
 
@@ -1212,5 +1355,4 @@ public class FixedPartitioningTestBase extends JUnit4DistributedTestCase {
       cache.getDistributedSystem().disconnect();
     }
   }
-
 }

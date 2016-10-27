@@ -18,47 +18,45 @@ package org.apache.geode.cache;
 
 import javax.print.attribute.EnumSyntax;
 
-/** The algorithm used to determine when to perform an {@link org.apache.geode.cache.EvictionAction}
- * 
+/**
+ * The algorithm used to determine when to perform an {@link org.apache.geode.cache.EvictionAction}
+ *
  * @since GemFire 5.0
  * @see org.apache.geode.cache.EvictionAction
  * @see org.apache.geode.internal.cache.EvictionAttributesImpl
  */
 public final class EvictionAlgorithm extends EnumSyntax {
   private static final long serialVersionUID = 5778669432033106789L;
-  /** 
-   * The canonical EvictionAction that represents no eviction action  
-   */
+  /** The canonical EvictionAction that represents no eviction action */
   public static final EvictionAlgorithm NONE = new EvictionAlgorithm(0);
 
   /**
-   * An algorithm that considers the number of Entries in the Region before
-   * invoking its {@link EvictionAction} 
+   * An algorithm that considers the number of Entries in the Region before invoking its {@link
+   * EvictionAction}
    */
   public static final EvictionAlgorithm LRU_ENTRY = new EvictionAlgorithm(1);
 
-  /** 
-   * An algorithm that considers the JVM heap size before invoking its {@link EvictionAction}
-   */
+  /** An algorithm that considers the JVM heap size before invoking its {@link EvictionAction} */
   public static final EvictionAlgorithm LRU_HEAP = new EvictionAlgorithm(2);
 
-  /** 
-   * An algorithm that considers the amount of bytes consumed by the Region before invoking its {@link EvictionAction} 
+  /**
+   * An algorithm that considers the amount of bytes consumed by the Region before invoking its
+   * {@link EvictionAction}
    */
   public static final EvictionAlgorithm LRU_MEMORY = new EvictionAlgorithm(3);
 
   /**
-   * An algorithm that considers the number of Entries in the Region before
-   * invoking its {@link EvictionAction}
-   * 
+   * An algorithm that considers the number of Entries in the Region before invoking its {@link
+   * EvictionAction}
+   *
    * @deprecated
    */
   public static final EvictionAlgorithm LIFO_ENTRY = new EvictionAlgorithm(4);
 
   /**
-   * An algorithm that considers the amount of bytes consumed by the Region
-   * before invoking its {@link EvictionAction}
-   * 
+   * An algorithm that considers the amount of bytes consumed by the Region before invoking its
+   * {@link EvictionAction}
+   *
    * @deprecated
    */
   public static final EvictionAlgorithm LIFO_MEMORY = new EvictionAlgorithm(5);
@@ -67,24 +65,34 @@ public final class EvictionAlgorithm extends EnumSyntax {
     super(val);
   }
 
-  private static final String[] stringTable = { "none", "lru-entry-count", "lru-heap-percentage", "lru-memory-size", "lifo-entry-count", "lifo-memory-size" };
+  private static final String[] stringTable = {
+    "none",
+    "lru-entry-count",
+    "lru-heap-percentage",
+    "lru-memory-size",
+    "lifo-entry-count",
+    "lifo-memory-size"
+  };
 
   @Override
-  final protected String[] getStringTable() {
+  protected final String[] getStringTable() {
     return stringTable;
   }
 
   //TODO post Java 1.8.0u45 uncomment final flag, see JDK-8076152
-  private static /*final*/ EvictionAlgorithm[] enumValueTable = { NONE, LRU_ENTRY, LRU_HEAP, LRU_MEMORY, LIFO_ENTRY, LIFO_MEMORY, };
+  private static /*final*/ EvictionAlgorithm[] enumValueTable = {
+    NONE, LRU_ENTRY, LRU_HEAP, LRU_MEMORY, LIFO_ENTRY, LIFO_MEMORY,
+  };
 
   @Override
-  final protected EnumSyntax[] getEnumValueTable() {
+  protected final EnumSyntax[] getEnumValueTable() {
     return enumValueTable;
   }
 
   /**
-   * Returns the eviction action the corresponds to the given parameter.
-   * Returns <code>null</code> if no action corresponds.
+   * Returns the eviction action the corresponds to the given parameter. Returns <code>null</code>
+   * if no action corresponds.
+   *
    * @since GemFire 6.5
    */
   public static EvictionAlgorithm parseValue(int v) {
@@ -96,10 +104,8 @@ public final class EvictionAlgorithm extends EnumSyntax {
   }
 
   public static EvictionAlgorithm parseAction(String s) {
-    if (s == null)
-      return null;
-    if (s.length() < 1)
-      return null;
+    if (s == null) return null;
+    if (s.length() < 1) return null;
     for (int i = 0; i < stringTable.length; ++i) {
       if (s.equals(stringTable[i])) {
         return enumValueTable[i];
@@ -129,9 +135,7 @@ public final class EvictionAlgorithm extends EnumSyntax {
     return this == NONE;
   }
 
-  /**
-   * @deprecated
-   */
+  /** @deprecated */
   public boolean isLIFO() {
     return this == LIFO_ENTRY || this == LIFO_MEMORY;
   }

@@ -32,39 +32,35 @@ import org.apache.geode.internal.lang.StringUtils;
 import org.apache.geode.pdx.PdxInstance;
 
 /**
- * The first time someone asks this instance for its Object it will deserialize
- * the bytes and from then on keep a reference to the deserialized form.
- * So it "prefers deserialization".
- *
+ * The first time someone asks this instance for its Object it will deserialize the bytes and from
+ * then on keep a reference to the deserialized form. So it "prefers deserialization".
  */
 public final class VMCachedDeserializable implements CachedDeserializable, DataSerializableFixedID {
 
   /** The cached value */
   private volatile Object value;
+
   private int valueSize; // only set in constructor or fromData
 
   /**
-   * +PER_OBJECT_OVERHEAD for VMCachedDeserializable object
-   * +4 for value field
-   * +4 for valueSize field
+   * +PER_OBJECT_OVERHEAD for VMCachedDeserializable object +4 for value field +4 for valueSize
+   * field
    */
   static final int MEM_OVERHEAD = PER_OBJECT_OVERHEAD + 4 + 4;
 
-  /**
-   * zero-arg constructor for serialization only
-   */
-  public VMCachedDeserializable() {
-  }
+  /** zero-arg constructor for serialization only */
+  public VMCachedDeserializable() {}
 
-  /** 
+  /**
    * Creates a new instance of <code>VMCachedDeserializable</code>.
    *
-   * Note that, in general, instances of this class should be obtained
-   * via {@link CachedDeserializableFactory}.
+   * <p>Note that, in general, instances of this class should be obtained via {@link
+   * CachedDeserializableFactory}.
    */
   VMCachedDeserializable(byte[] serializedValue) {
     if (serializedValue == null)
-      throw new NullPointerException(LocalizedStrings.VMCachedDeserializable_VALUE_MUST_NOT_BE_NULL.toLocalizedString());
+      throw new NullPointerException(
+          LocalizedStrings.VMCachedDeserializable_VALUE_MUST_NOT_BE_NULL.toLocalizedString());
     this.value = serializedValue;
     this.valueSize = CachedDeserializableFactory.getByteSize(serializedValue);
   }
@@ -75,8 +71,9 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
   }
 
   /**
-   * Create a new instance with an object and it's size.
-   * Note the caller decides if objectSize is the memory size or the serialized size.
+   * Create a new instance with an object and it's size. Note the caller decides if objectSize is
+   * the memory size or the serialized size.
+   *
    * @param object
    * @param objectSize
    */
@@ -109,8 +106,7 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
         boolean isCacheListenerInvoked = re.isCacheListenerInvocationInProgress();
         synchronized (le) {
           v = this.value;
-          if (!(v instanceof byte[]))
-            return v;
+          if (!(v instanceof byte[])) return v;
           v = EntryEventImpl.deserialize((byte[]) v);
           if (threadAlreadySynced && !isCacheListenerInvoked) {
             // to fix bug 43355 and 43409 don't change the value form
@@ -131,8 +127,7 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
         // we sync on this so we will only do one deserialize
         synchronized (this) {
           v = this.value;
-          if (!(v instanceof byte[]))
-            return v;
+          if (!(v instanceof byte[])) return v;
           v = EntryEventImpl.deserialize((byte[]) v);
           if (!(v instanceof PdxInstance)) {
             this.value = v;
@@ -184,20 +179,16 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
     }
   }
 
-  /**
-   * Return the serialized value as a byte[]
-   */
+  /** Return the serialized value as a byte[] */
   public byte[] getSerializedValue() {
     Object v = this.value;
-    if (v instanceof byte[])
-      return (byte[]) v;
+    if (v instanceof byte[]) return (byte[]) v;
     return EntryEventImpl.serialize(v);
   }
 
   /**
-   * Return current value regardless of whether it is serialized or
-   * deserialized: if it was serialized than it is a byte[], otherwise
-   * it is not a byte[].
+   * Return current value regardless of whether it is serialized or deserialized: if it was
+   * serialized than it is a byte[], otherwise it is not a byte[].
    */
   public Object getValue() {
     return this.value;
@@ -244,11 +235,14 @@ public final class VMCachedDeserializable implements CachedDeserializable, DataS
   public void fillSerializedValue(BytesAndBitsForCompactor wrapper, byte userBits) {
     Object v = this.value;
     if (v instanceof byte[]) {
-      wrapper.setData((byte[]) v, userBits, ((byte[]) v).length, false /* Not Reusable as it refers to underlying value*/);
+      wrapper.setData(
+          (byte[]) v,
+          userBits,
+          ((byte[]) v).length,
+          false /* Not Reusable as it refers to underlying value*/);
     } else {
       EntryEventImpl.fillSerializedValue(wrapper, v, userBits);
     }
-
   }
 
   public String getStringForm() {

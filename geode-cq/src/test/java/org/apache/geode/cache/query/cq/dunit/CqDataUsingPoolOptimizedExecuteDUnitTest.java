@@ -30,10 +30,7 @@ import org.apache.geode.test.dunit.IgnoredException;
 import org.apache.geode.test.dunit.Invoke;
 import org.apache.geode.test.dunit.SerializableRunnable;
 
-/**
- * Test class for testing {@link CqServiceImpl#EXECUTE_QUERY_DURING_INIT} flag
- *
- */
+/** Test class for testing {@link CqServiceImpl#EXECUTE_QUERY_DURING_INIT} flag */
 @Category(DistributedTest.class)
 public class CqDataUsingPoolOptimizedExecuteDUnitTest extends CqDataUsingPoolDUnitTest {
 
@@ -49,19 +46,21 @@ public class CqDataUsingPoolOptimizedExecuteDUnitTest extends CqDataUsingPoolDUn
 
   @Override
   protected final void postSetUpCqDataUsingPoolDUnitTest() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableRunnable("set test hook") {
-      public void run() {
-        CqServiceImpl.EXECUTE_QUERY_DURING_INIT = false;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("set test hook") {
+          public void run() {
+            CqServiceImpl.EXECUTE_QUERY_DURING_INIT = false;
+          }
+        });
   }
 
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableRunnable("getSystem") {
-      public void run() {
-        CqServiceImpl.EXECUTE_QUERY_DURING_INIT = true;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("getSystem") {
+          public void run() {
+            CqServiceImpl.EXECUTE_QUERY_DURING_INIT = true;
+          }
+        });
   }
 }

@@ -22,12 +22,11 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Specifies how access to the region is affected when one or more required
- * roles are lost. A role is lost when it is are offline and no longer
- * present in the system membership.
- * The <code>LossAction</code> is specified when configuring a region's
- * {@link org.apache.geode.cache.MembershipAttributes}.
- * 
+ * Specifies how access to the region is affected when one or more required roles are lost. A role
+ * is lost when it is are offline and no longer present in the system membership. The <code>
+ * LossAction</code> is specified when configuring a region's {@link
+ * org.apache.geode.cache.MembershipAttributes}.
+ *
  * @deprecated this feature is scheduled to be removed
  */
 public class LossAction implements Serializable {
@@ -37,34 +36,29 @@ public class LossAction implements Serializable {
   //   LossAction, package.html
 
   /**
-   * The region is unavailable when required roles are missing. All operations
-   * including read and write access are denied.  All read and write operations
-   * on the region will result in {@link RegionAccessException} while any 
-   * required roles are absent.  Basic administration of the region is allowed,
-   * including {@linkplain Region#close close} and 
-   * {@linkplain Region#localDestroyRegion() localDestroyRegion}.
+   * The region is unavailable when required roles are missing. All operations including read and
+   * write access are denied. All read and write operations on the region will result in {@link
+   * RegionAccessException} while any required roles are absent. Basic administration of the region
+   * is allowed, including {@linkplain Region#close close} and {@linkplain
+   * Region#localDestroyRegion() localDestroyRegion}.
    */
   public static final LossAction NO_ACCESS = new LossAction("NO_ACCESS");
 
-  /** 
-   * Only local access to the region is allowed when required roles are 
-   * missing.  All distributed write operations on the region will throw 
-   * {@link RegionAccessException} while any required roles are absent.
-   * Reads which result in a netSearch behave normally, while any attempt
-   * to invoke a netLoad is not allowed.
+  /**
+   * Only local access to the region is allowed when required roles are missing. All distributed
+   * write operations on the region will throw {@link RegionAccessException} while any required
+   * roles are absent. Reads which result in a netSearch behave normally, while any attempt to
+   * invoke a netLoad is not allowed.
    */
   public static final LossAction LIMITED_ACCESS = new LossAction("LIMITED_ACCESS");
 
-  /** 
-   * Access to the region is unaffected when required roles are missing. 
-   */
+  /** Access to the region is unaffected when required roles are missing. */
   public static final LossAction FULL_ACCESS = new LossAction("FULL_ACCESS");
 
-  /** 
-   * Loss of required roles causes the entire cache to be closed. In addition,
-   * this process will disconnect from the DistributedSystem and then
-   * reconnect. Attempting to use any existing references to the regions
-   * or cache will throw a {@link CacheClosedException}.
+  /**
+   * Loss of required roles causes the entire cache to be closed. In addition, this process will
+   * disconnect from the DistributedSystem and then reconnect. Attempting to use any existing
+   * references to the regions or cache will throw a {@link CacheClosedException}.
    */
   public static final LossAction RECONNECT = new LossAction("RECONNECT");
 
@@ -77,7 +71,9 @@ public class LossAction implements Serializable {
 
   private static byte nextOrdinal = 0;
 
-  private static final LossAction[] PRIVATE_VALUES = { NO_ACCESS, LIMITED_ACCESS, FULL_ACCESS, RECONNECT };
+  private static final LossAction[] PRIVATE_VALUES = {
+    NO_ACCESS, LIMITED_ACCESS, FULL_ACCESS, RECONNECT
+  };
 
   /** List of all LossAction values */
   public static final List VALUES = Collections.unmodifiableList(Arrays.asList(PRIVATE_VALUES));
@@ -99,14 +95,16 @@ public class LossAction implements Serializable {
   /** Return the LossAction specified by name */
   public static LossAction fromName(String name) {
     if (name == null || name.length() == 0) {
-      throw new IllegalArgumentException(LocalizedStrings.LossAction_INVALID_LOSSACTION_NAME_0.toLocalizedString(name));
+      throw new IllegalArgumentException(
+          LocalizedStrings.LossAction_INVALID_LOSSACTION_NAME_0.toLocalizedString(name));
     }
     for (int i = 0; i < PRIVATE_VALUES.length; i++) {
       if (name.equals(PRIVATE_VALUES[i].name)) {
         return PRIVATE_VALUES[i];
       }
     }
-    throw new IllegalArgumentException(LocalizedStrings.LossAction_INVALID_LOSSACTION_NAME_0.toLocalizedString(name));
+    throw new IllegalArgumentException(
+        LocalizedStrings.LossAction_INVALID_LOSSACTION_NAME_0.toLocalizedString(name));
   }
 
   /** Returns true if this is <code>NO_ACCESS</code>. */
@@ -129,13 +127,13 @@ public class LossAction implements Serializable {
     return this == RECONNECT;
   }
 
-  /** 
+  /**
    * Returns a string representation for this loss action.
+   *
    * @return the name of this loss action
    */
   @Override
   public String toString() {
     return this.name;
   }
-
 }

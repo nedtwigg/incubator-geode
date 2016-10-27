@@ -24,18 +24,15 @@ import java.util.Set;
 import org.apache.geode.internal.DataSerializableFixedID;
 
 /**
- * A request from a client to the locator asking for a
- * server to connect to for client to server traffic.
- *
+ * A request from a client to the locator asking for a server to connect to for client to server
+ * traffic.
  */
 public class ClientConnectionRequest extends ServerLocationRequest {
-  Set/*<ServerLocation>*/ excludedServers;
+  Set /*<ServerLocation>*/ excludedServers;
 
-  public ClientConnectionRequest() {
+  public ClientConnectionRequest() {}
 
-  }
-
-  public ClientConnectionRequest(Set/*<ServerLocation>*/ excludedServers, String serverGroup) {
+  public ClientConnectionRequest(Set /*<ServerLocation>*/ excludedServers, String serverGroup) {
     super(serverGroup);
     this.excludedServers = excludedServers;
   }
@@ -58,7 +55,11 @@ public class ClientConnectionRequest extends ServerLocationRequest {
 
   @Override
   public String toString() {
-    return "ClientConnectionRequest{group=" + getServerGroup() + ", excluded=" + getExcludedServers() + "}";
+    return "ClientConnectionRequest{group="
+        + getServerGroup()
+        + ", excluded="
+        + getExcludedServers()
+        + "}";
   }
 
   public int getDSFID() {

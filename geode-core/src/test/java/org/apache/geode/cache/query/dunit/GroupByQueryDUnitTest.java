@@ -51,10 +51,7 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * 
- *
- */
+/** */
 @Category(DistributedTest.class)
 public class GroupByQueryDUnitTest extends JUnit4CacheTestCase {
 
@@ -73,7 +70,6 @@ public class GroupByQueryDUnitTest extends JUnit4CacheTestCase {
     createPR(vm3);
     this.runQuery(vm0);
     this.closeCache(vm0, vm1, vm2, vm3);
-
   }
 
   private void runQuery(VM queryVM) throws Exception {
@@ -81,109 +77,122 @@ public class GroupByQueryDUnitTest extends JUnit4CacheTestCase {
     // "/region.entrySet entry");
 
     // Do Puts
-    queryVM.invoke(new SerializableRunnable("putting data") {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion("portfolio");
-        for (int i = 1; i < 200; ++i) {
-          Portfolio pf = new Portfolio(i);
-          pf.shortID = (short) ((short) i / 5);
-          region.put("" + i, pf);
-        }
-      }
-    });
-
-    queryVM.invoke(new SerializableRunnable("query") {
-      public void run() {
-        try {
-          QueryService qs = getCache().getQueryService();
-          String queryStr = "select  p.shortID as short_id  from /portfolio p where p.ID >= 0 group by short_id ";
-          Query query = qs.newQuery(queryStr);
-          SelectResults<Struct> results = (SelectResults<Struct>) query.execute();
-          Iterator<Struct> iter = results.iterator();
-          int counter = 0;
-          while (iter.hasNext()) {
-            Struct str = iter.next();
-            assertEquals(counter++, ((Short) str.get("short_id")).intValue());
+    queryVM.invoke(
+        new SerializableRunnable("putting data") {
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion("portfolio");
+            for (int i = 1; i < 200; ++i) {
+              Portfolio pf = new Portfolio(i);
+              pf.shortID = (short) ((short) i / 5);
+              region.put("" + i, pf);
+            }
           }
-          assertEquals(39, counter - 1);
-        } catch (QueryInvocationTargetException e) {
-          fail(e.toString());
-        } catch (NameResolutionException e) {
-          fail(e.toString());
+        });
 
-        } catch (TypeMismatchException e) {
-          fail(e.toString());
+    queryVM.invoke(
+        new SerializableRunnable("query") {
+          public void run() {
+            try {
+              QueryService qs = getCache().getQueryService();
+              String queryStr =
+                  "select  p.shortID as short_id  from /portfolio p where p.ID >= 0 group by short_id ";
+              Query query = qs.newQuery(queryStr);
+              SelectResults<Struct> results = (SelectResults<Struct>) query.execute();
+              Iterator<Struct> iter = results.iterator();
+              int counter = 0;
+              while (iter.hasNext()) {
+                Struct str = iter.next();
+                assertEquals(counter++, ((Short) str.get("short_id")).intValue());
+              }
+              assertEquals(39, counter - 1);
+            } catch (QueryInvocationTargetException e) {
+              fail(e.toString());
+            } catch (NameResolutionException e) {
+              fail(e.toString());
 
-        } catch (FunctionDomainException e) {
-          fail(e.toString());
+            } catch (TypeMismatchException e) {
+              fail(e.toString());
 
-        }
-
-      }
-    });
+            } catch (FunctionDomainException e) {
+              fail(e.toString());
+            }
+          }
+        });
   }
 
   private void createBuckets(VM vm) {
-    vm.invoke(new SerializableRunnable("create accessor") {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion("region");
-        for (int i = 0; i < 10; i++) {
-          region.put(i, i);
-        }
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable("create accessor") {
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion("region");
+            for (int i = 0; i < 10; i++) {
+              region.put(i, i);
+            }
+          }
+        });
   }
 
   private void createPR(VM vm) {
-    vm.invoke(new SerializableRunnable("create data store") {
-      public void run() {
-        Cache cache = getCache();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setTotalNumBuckets(10);
-        cache.createRegionFactory(RegionShortcut.PARTITION).setPartitionAttributes(paf.create()).create("portfolio");
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable("create data store") {
+          public void run() {
+            Cache cache = getCache();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setTotalNumBuckets(10);
+            cache
+                .createRegionFactory(RegionShortcut.PARTITION)
+                .setPartitionAttributes(paf.create())
+                .create("portfolio");
+          }
+        });
   }
 
   private void createAccessor(VM vm) {
-    vm.invoke(new SerializableRunnable("create accessor") {
+    vm.invoke(
+        new SerializableRunnable("create accessor") {
 
-      public void run() {
-        Cache cache = getCache();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setTotalNumBuckets(10);
-        paf.setLocalMaxMemory(0);
-        cache.createRegionFactory(RegionShortcut.PARTITION_PROXY).setPartitionAttributes(paf.create()).create("portfolio");
-      }
-    });
+          public void run() {
+            Cache cache = getCache();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setTotalNumBuckets(10);
+            paf.setLocalMaxMemory(0);
+            cache
+                .createRegionFactory(RegionShortcut.PARTITION_PROXY)
+                .setPartitionAttributes(paf.create())
+                .create("portfolio");
+          }
+        });
   }
 
-  private void createIndex(VM vm, final String indexName, final String indexedExpression, final String regionPath) {
-    vm.invoke(new SerializableRunnable("create index") {
-      public void run() {
-        try {
-          Cache cache = getCache();
-          cache.getQueryService().createIndex(indexName, indexedExpression, regionPath);
-        } catch (RegionNotFoundException e) {
-          fail(e.toString());
-        } catch (IndexExistsException e) {
-          fail(e.toString());
-        } catch (IndexNameConflictException e) {
-          fail(e.toString());
-        }
-      }
-    });
+  private void createIndex(
+      VM vm, final String indexName, final String indexedExpression, final String regionPath) {
+    vm.invoke(
+        new SerializableRunnable("create index") {
+          public void run() {
+            try {
+              Cache cache = getCache();
+              cache.getQueryService().createIndex(indexName, indexedExpression, regionPath);
+            } catch (RegionNotFoundException e) {
+              fail(e.toString());
+            } catch (IndexExistsException e) {
+              fail(e.toString());
+            } catch (IndexNameConflictException e) {
+              fail(e.toString());
+            }
+          }
+        });
   }
 
   private void closeCache(VM... vms) {
     for (VM vm : vms) {
-      vm.invoke(new SerializableRunnable() {
-        public void run() {
-          getCache().close();
-        }
-      });
+      vm.invoke(
+          new SerializableRunnable() {
+            public void run() {
+              getCache().close();
+            }
+          });
     }
   }
 }

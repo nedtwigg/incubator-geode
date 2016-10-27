@@ -49,9 +49,7 @@ import org.apache.geode.util.JSR166TestCase;
 @Category(IntegrationTest.class)
 public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reformat
 
-  /**
-   * Create a map from Integers 1-5 to Strings "A"-"E".
-   */
+  /** Create a map from Integers 1-5 to Strings "A"-"E". */
   private static CustomEntryConcurrentHashMap map5() {
     CustomEntryConcurrentHashMap map = new CustomEntryConcurrentHashMap(5);
     assertTrue(map.isEmpty());
@@ -65,9 +63,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     return map;
   }
 
-  /**
-   *  clear removes all pairs
-   */
+  /** clear removes all pairs */
   @Test
   public void testClear() {
     CustomEntryConcurrentHashMap map = map5();
@@ -75,9 +71,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertEquals(map.size(), 0);
   }
 
-  /**
-   *  Maps with same contents are equal
-   */
+  /** Maps with same contents are equal */
   @Test
   public void testEquals() {
     CustomEntryConcurrentHashMap map1 = map5();
@@ -89,9 +83,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertFalse(map2.equals(map1));
   }
 
-  /**
-   *  contains returns true for contained value
-   */
+  /** contains returns true for contained value */
   @Test
   public void testContains() {
     CustomEntryConcurrentHashMap map = map5();
@@ -99,9 +91,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertFalse(map.contains("Z"));
   }
 
-  /**
-   *  containsKey returns true for contained key
-   */
+  /** containsKey returns true for contained key */
   @Test
   public void testContainsKey() {
     CustomEntryConcurrentHashMap map = map5();
@@ -109,9 +99,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertFalse(map.containsKey(zero));
   }
 
-  /**
-   *  containsValue returns true for held values
-   */
+  /** containsValue returns true for held values */
   @Test
   public void testContainsValue() {
     CustomEntryConcurrentHashMap map = map5();
@@ -119,10 +107,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertFalse(map.containsValue("Z"));
   }
 
-  /**
-   *   enumeration returns an enumeration containing the correct
-   *   elements
-   */
+  /** enumeration returns an enumeration containing the correct elements */
   @Test
   public void testEnumeration() {
     CustomEntryConcurrentHashMap map = map5();
@@ -135,10 +120,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertEquals(5, count);
   }
 
-  /**
-   *  get returns the correct element at the given key,
-   *  or null if not present
-   */
+  /** get returns the correct element at the given key, or null if not present */
   @Test
   public void testGet() {
     CustomEntryConcurrentHashMap map = map5();
@@ -147,9 +129,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertNull(map.get("anything"));
   }
 
-  /**
-   *  isEmpty is true of empty map and false for non-empty
-   */
+  /** isEmpty is true of empty map and false for non-empty */
   @Test
   public void testIsEmpty() {
     CustomEntryConcurrentHashMap empty = new CustomEntryConcurrentHashMap();
@@ -158,9 +138,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertFalse(map.isEmpty());
   }
 
-  /**
-   *   keys returns an enumeration containing all the keys from the map
-   */
+  /** keys returns an enumeration containing all the keys from the map */
   @Test
   public void testKeys() {
     CustomEntryConcurrentHashMap map = map5();
@@ -173,9 +151,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertEquals(5, count);
   }
 
-  /**
-   *   keySet returns a Set containing all the keys
-   */
+  /** keySet returns a Set containing all the keys */
   @Test
   public void testKeySet() {
     CustomEntryConcurrentHashMap map = map5();
@@ -188,9 +164,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertTrue(s.contains(five));
   }
 
-  /**
-   *  keySet.toArray returns contains all keys
-   */
+  /** keySet.toArray returns contains all keys */
   @Test
   public void testKeySetToArray() {
     CustomEntryConcurrentHashMap map = map5();
@@ -202,9 +176,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertFalse(s.containsAll(Arrays.asList(ar)));
   }
 
-  /**
-   *  Values.toArray contains all values
-   */
+  /** Values.toArray contains all values */
   @Test
   public void testValuesToArray() {
     CustomEntryConcurrentHashMap map = map5();
@@ -219,9 +191,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertTrue(s.contains("E"));
   }
 
-  /**
-   *  entrySet.toArray contains all entries
-   */
+  /** entrySet.toArray contains all entries */
   @Test
   public void testEntrySetToArray() {
     CustomEntryConcurrentHashMap map = map5();
@@ -234,9 +204,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * values collection contains all values
-   */
+  /** values collection contains all values */
   @Test
   public void testValues() {
     CustomEntryConcurrentHashMap map = map5();
@@ -249,9 +217,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertTrue(s.contains("E"));
   }
 
-  /**
-   * entrySet contains all pairs
-   */
+  /** entrySet contains all pairs */
   @Test
   public void testEntrySet() {
     CustomEntryConcurrentHashMap map = map5();
@@ -260,13 +226,16 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     Iterator it = s.iterator();
     while (it.hasNext()) {
       Map.Entry e = (Map.Entry) it.next();
-      assertTrue((e.getKey().equals(one) && e.getValue().equals("A")) || (e.getKey().equals(two) && e.getValue().equals("B")) || (e.getKey().equals(three) && e.getValue().equals("C")) || (e.getKey().equals(four) && e.getValue().equals("D")) || (e.getKey().equals(five) && e.getValue().equals("E")));
+      assertTrue(
+          (e.getKey().equals(one) && e.getValue().equals("A"))
+              || (e.getKey().equals(two) && e.getValue().equals("B"))
+              || (e.getKey().equals(three) && e.getValue().equals("C"))
+              || (e.getKey().equals(four) && e.getValue().equals("D"))
+              || (e.getKey().equals(five) && e.getValue().equals("E")));
     }
   }
 
-  /**
-   *   putAll  adds all key-value pairs from the given map
-   */
+  /** putAll adds all key-value pairs from the given map */
   @Test
   public void testPutAll() {
     CustomEntryConcurrentHashMap empty = new CustomEntryConcurrentHashMap();
@@ -280,9 +249,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertTrue(empty.containsKey(five));
   }
 
-  /**
-   *   putIfAbsent works when the given key is not present
-   */
+  /** putIfAbsent works when the given key is not present */
   @Test
   public void testPutIfAbsent() {
     CustomEntryConcurrentHashMap map = map5();
@@ -290,18 +257,14 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertTrue(map.containsKey(six));
   }
 
-  /**
-   *   putIfAbsent does not add the pair if the key is already present
-   */
+  /** putIfAbsent does not add the pair if the key is already present */
   @Test
   public void testPutIfAbsent2() {
     CustomEntryConcurrentHashMap map = map5();
     assertEquals("A", map.putIfAbsent(one, "Z"));
   }
 
-  /**
-   *   replace fails when the given key is not present
-   */
+  /** replace fails when the given key is not present */
   @Test
   public void testReplace() {
     CustomEntryConcurrentHashMap map = map5();
@@ -309,9 +272,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertFalse(map.containsKey(six));
   }
 
-  /**
-   *   replace succeeds if the key is already present
-   */
+  /** replace succeeds if the key is already present */
   @Test
   public void testReplace2() {
     CustomEntryConcurrentHashMap map = map5();
@@ -319,9 +280,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertEquals("Z", map.get(one));
   }
 
-  /**
-   * replace value fails when the given key not mapped to expected value
-   */
+  /** replace value fails when the given key not mapped to expected value */
   @Test
   public void testReplaceValue() {
     CustomEntryConcurrentHashMap map = map5();
@@ -330,9 +289,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertEquals("A", map.get(one));
   }
 
-  /**
-   * replace value succeeds when the given key mapped to expected value
-   */
+  /** replace value succeeds when the given key mapped to expected value */
   @Test
   public void testReplaceValue2() {
     CustomEntryConcurrentHashMap map = map5();
@@ -341,9 +298,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertEquals("Z", map.get(one));
   }
 
-  /**
-   *   remove removes the correct key-value pair from the map
-   */
+  /** remove removes the correct key-value pair from the map */
   @Test
   public void testRemove() {
     CustomEntryConcurrentHashMap map = map5();
@@ -352,9 +307,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertFalse(map.containsKey(five));
   }
 
-  /**
-   * remove(key,value) removes only if pair present
-   */
+  /** remove(key,value) removes only if pair present */
   @Test
   public void testRemove2() {
     CustomEntryConcurrentHashMap map = map5();
@@ -364,12 +317,9 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     map.remove(four, "A");
     assertEquals(4, map.size());
     assertTrue(map.containsKey(four));
-
   }
 
-  /**
-   *   size returns the correct values
-   */
+  /** size returns the correct values */
   @Test
   public void testSize() {
     CustomEntryConcurrentHashMap map = map5();
@@ -378,9 +328,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     assertEquals(5, map.size());
   }
 
-  /**
-   * toString contains toString of elements
-   */
+  /** toString contains toString of elements */
   @Test
   public void testToString() {
     CustomEntryConcurrentHashMap map = map5();
@@ -392,9 +340,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
 
   // Exception tests
 
-  /**
-   * Cannot create with negative capacity
-   */
+  /** Cannot create with negative capacity */
   @Test
   public void testConstructor1() {
     try {
@@ -404,9 +350,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * Cannot create with negative concurrency level
-   */
+  /** Cannot create with negative concurrency level */
   @Test
   public void testConstructor2() {
     try {
@@ -416,9 +360,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * Cannot create with only negative capacity
-   */
+  /** Cannot create with only negative capacity */
   @Test
   public void testConstructor3() {
     try {
@@ -428,9 +370,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * get(null) throws NPE
-   */
+  /** get(null) throws NPE */
   @Test
   public void testGet_NullPointerException() {
     try {
@@ -441,9 +381,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * containsKey(null) throws NPE
-   */
+  /** containsKey(null) throws NPE */
   @Test
   public void testContainsKey_NullPointerException() {
     try {
@@ -454,9 +392,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * containsValue(null) throws NPE
-   */
+  /** containsValue(null) throws NPE */
   @Test
   public void testContainsValue_NullPointerException() {
     try {
@@ -467,9 +403,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * contains(null) throws NPE
-   */
+  /** contains(null) throws NPE */
   @Test
   public void testContains_NullPointerException() {
     try {
@@ -480,9 +414,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * put(null,x) throws NPE
-   */
+  /** put(null,x) throws NPE */
   @Test
   public void testPut1_NullPointerException() {
     try {
@@ -493,9 +425,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * put(x, null) throws NPE
-   */
+  /** put(x, null) throws NPE */
   @Test
   public void testPut2_NullPointerException() {
     try {
@@ -506,9 +436,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * putIfAbsent(null, x) throws NPE
-   */
+  /** putIfAbsent(null, x) throws NPE */
   @Test
   public void testPutIfAbsent1_NullPointerException() {
     try {
@@ -519,9 +447,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * replace(null, x) throws NPE
-   */
+  /** replace(null, x) throws NPE */
   @Test
   public void testReplace_NullPointerException() {
     try {
@@ -532,9 +458,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * replace(null, x, y) throws NPE
-   */
+  /** replace(null, x, y) throws NPE */
   @Test
   public void testReplaceValue_NullPointerException() {
     try {
@@ -545,9 +469,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * putIfAbsent(x, null) throws NPE
-   */
+  /** putIfAbsent(x, null) throws NPE */
   @Test
   public void testPutIfAbsent2_NullPointerException() {
     try {
@@ -558,9 +480,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * replace(x, null) throws NPE
-   */
+  /** replace(x, null) throws NPE */
   @Test
   public void testReplace2_NullPointerException() {
     try {
@@ -571,9 +491,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * replace(x, null, y) throws NPE
-   */
+  /** replace(x, null, y) throws NPE */
   @Test
   public void testReplaceValue2_NullPointerException() {
     try {
@@ -584,9 +502,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * replace(x, y, null) throws NPE
-   */
+  /** replace(x, y, null) throws NPE */
   @Test
   public void testReplaceValue3_NullPointerException() {
     try {
@@ -597,9 +513,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * remove(null) throws NPE
-   */
+  /** remove(null) throws NPE */
   @Test
   public void testRemove1_NullPointerException() {
     try {
@@ -611,9 +525,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * remove(null, x) throws NPE
-   */
+  /** remove(null, x) throws NPE */
   @Test
   public void testRemove2_NullPointerException() {
     try {
@@ -625,9 +537,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * remove(x, null) returns false
-   */
+  /** remove(x, null) returns false */
   @Test
   public void testRemove3() {
     try {
@@ -639,9 +549,7 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * A deserialized map equals original
-   */
+  /** A deserialized map equals original */
   @Test
   public void testSerialization() {
     CustomEntryConcurrentHashMap q = map5();
@@ -664,16 +572,13 @@ public class ConcurrentHashMapJUnitTest extends JSR166TestCase { // TODO: reform
     }
   }
 
-  /**
-   * SetValue of an EntrySet entry sets value in the map.
-   */
+  /** SetValue of an EntrySet entry sets value in the map. */
   @Test
   public void testSetValueWriteThrough() {
     // Adapted from a bug report by Eric Zoerner
     CustomEntryConcurrentHashMap map = new CustomEntryConcurrentHashMap(2, 5.0f, 1);
     assertTrue(map.isEmpty());
-    for (int i = 0; i < 20; i++)
-      map.put(new Integer(i), new Integer(i));
+    for (int i = 0; i < 20; i++) map.put(new Integer(i), new Integer(i));
     assertFalse(map.isEmpty());
     Map.Entry entry1 = (Map.Entry) map.entrySet().iterator().next();
 

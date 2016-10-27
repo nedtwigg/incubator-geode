@@ -23,9 +23,8 @@ import org.apache.geode.management.internal.cli.parser.preprocessor.Preprocessor
 
 /**
  * Option of a Command
- * 
+ *
  * @since GemFire 7.0
- * 
  */
 public class Option extends Parameter {
 
@@ -87,7 +86,11 @@ public class Option extends Parameter {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append(Option.class.getSimpleName()).append("[longOption=" + longOption).append(",help=" + help).append(",required=" + required + "]");
+    builder
+        .append(Option.class.getSimpleName())
+        .append("[longOption=" + longOption)
+        .append(",help=" + help)
+        .append(",required=" + required + "]");
     return builder.toString();
   }
 

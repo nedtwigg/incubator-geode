@@ -25,11 +25,9 @@ import org.apache.geode.management.internal.cli.util.GfshConsoleReader;
 
 /**
  * Factory for Console Reader Utility.
- * 
- * Default uses <code>java.io.Console</code> returned by
- * <code>System.console()</code>
- * 
- * 
+ *
+ * <p>Default uses <code>java.io.Console</code> returned by <code>System.console()</code>
+ *
  * @since GemFire 7.0.1
  */
 public class GfeConsoleReaderFactory {
@@ -45,7 +43,12 @@ public class GfeConsoleReaderFactory {
     if (CliUtil.isGfshVM()) {
       LogWrapper.getInstance().info("GfeConsoleReaderFactory.createConsoleReader(): isGfshVM");
       consoleReader = new GfshConsoleReader();
-      LogWrapper.getInstance().info("GfeConsoleReaderFactory.createConsoleReader(): consoleReader: " + consoleReader + "=" + consoleReader.isSupported());
+      LogWrapper.getInstance()
+          .info(
+              "GfeConsoleReaderFactory.createConsoleReader(): consoleReader: "
+                  + consoleReader
+                  + "="
+                  + consoleReader.isSupported());
     }
     if (consoleReader == null) {
       consoleReader = new GfeConsoleReader();

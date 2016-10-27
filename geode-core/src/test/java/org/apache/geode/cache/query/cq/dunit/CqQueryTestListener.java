@@ -35,9 +35,7 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 import com.jayway.awaitility.Awaitility;
 
-/**
- *
- */
+/** */
 public class CqQueryTestListener implements CqStatusListener {
   protected final LogWriter logger;
   protected volatile int eventCreateCount = 0;
@@ -59,15 +57,15 @@ public class CqQueryTestListener implements CqStatusListener {
   protected volatile boolean eventRegionClear = false;
   protected volatile boolean eventRegionInvalidate = false;
 
-  final public Set destroys = Collections.synchronizedSet(new HashSet());
-  final public Set creates = Collections.synchronizedSet(new HashSet());
-  final public Set invalidates = Collections.synchronizedSet(new HashSet());
-  final public Set updates = Collections.synchronizedSet(new HashSet());
-  final public Set errors = Collections.synchronizedSet(new HashSet());
+  public final Set destroys = Collections.synchronizedSet(new HashSet());
+  public final Set creates = Collections.synchronizedSet(new HashSet());
+  public final Set invalidates = Collections.synchronizedSet(new HashSet());
+  public final Set updates = Collections.synchronizedSet(new HashSet());
+  public final Set errors = Collections.synchronizedSet(new HashSet());
 
-  static private final String WAIT_PROPERTY = "CqQueryTestListener.maxWaitTime";
+  private static final String WAIT_PROPERTY = "CqQueryTestListener.maxWaitTime";
 
-  static private final int WAIT_DEFAULT = (20 * 1000);
+  private static final int WAIT_DEFAULT = (20 * 1000);
 
   public static final long MAX_TIME = Integer.getInteger(WAIT_PROPERTY, WAIT_DEFAULT).intValue();;
 
@@ -76,7 +74,7 @@ public class CqQueryTestListener implements CqStatusListener {
 
   // This is to avoid reference to PerUserRequestSecurityTest which will fail to
   // initialize in a non Hydra environment.
-  static public boolean usedForUnitTests = true;
+  public static boolean usedForUnitTests = true;
 
   public ConcurrentLinkedQueue events = new ConcurrentLinkedQueue();
 
@@ -96,7 +94,7 @@ public class CqQueryTestListener implements CqStatusListener {
     //    logger.info("CqEvent for the CQ: " + this.cqName  +
     //                "; Key=" + key +
     //                "; baseOp=" + baseOperation +
-    //                "; queryOp=" + queryOperation + 
+    //                "; queryOp=" + queryOperation +
     //                "; totalEventCount=" + this.totalEventCount
     //                );
 
@@ -196,191 +194,272 @@ public class CqQueryTestListener implements CqStatusListener {
   }
 
   public void printInfo(final boolean printKeys) {
-    logger.info("####" + this.cqName + ": " + " Events Total :" + this.getTotalEventCount() + " Events Created :" + this.eventCreateCount + " Events Updated :" + this.eventUpdateCount + " Events Deleted :" + this.eventDeleteCount + " Events Invalidated :" + this.eventInvalidateCount + " Query Inserts :" + this.eventQueryInsertCount + " Query Updates :" + this.eventQueryUpdateCount + " Query Deletes :" + this.eventQueryDeleteCount + " Query Invalidates :" + this.eventQueryInvalidateCount + " Total Events :" + this.totalEventCount);
+    logger.info(
+        "####"
+            + this.cqName
+            + ": "
+            + " Events Total :"
+            + this.getTotalEventCount()
+            + " Events Created :"
+            + this.eventCreateCount
+            + " Events Updated :"
+            + this.eventUpdateCount
+            + " Events Deleted :"
+            + this.eventDeleteCount
+            + " Events Invalidated :"
+            + this.eventInvalidateCount
+            + " Query Inserts :"
+            + this.eventQueryInsertCount
+            + " Query Updates :"
+            + this.eventQueryUpdateCount
+            + " Query Deletes :"
+            + this.eventQueryDeleteCount
+            + " Query Invalidates :"
+            + this.eventQueryInvalidateCount
+            + " Total Events :"
+            + this.totalEventCount);
     if (printKeys) {
       // for debugging on failuers ...
-      logger.info("Number of Insert for key : " + this.creates.size() + " and updates : " + this.updates.size() + " and number of destroys : " + this.destroys.size() + " and number of invalidates : " + this.invalidates.size());
+      logger.info(
+          "Number of Insert for key : "
+              + this.creates.size()
+              + " and updates : "
+              + this.updates.size()
+              + " and number of destroys : "
+              + this.destroys.size()
+              + " and number of invalidates : "
+              + this.invalidates.size());
 
       logger.info("Keys in created sets : " + this.creates.toString());
       logger.info("Key in updates sets : " + this.updates.toString());
       logger.info("Key in destorys sets : " + this.destroys.toString());
       logger.info("Key in invalidates sets : " + this.invalidates.toString());
     }
-
   }
 
   public boolean waitForCreated(final Object key) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return CqQueryTestListener.this.creates.contains(key);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return CqQueryTestListener.this.creates.contains(key);
+          }
 
-      public String description() {
-        return "never got create event for CQ " + CqQueryTestListener.this.cqName + " key " + key;
-      }
-    };
+          public String description() {
+            return "never got create event for CQ "
+                + CqQueryTestListener.this.cqName
+                + " key "
+                + key;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForTotalEvents(final int total) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return (CqQueryTestListener.this.totalEventCount == total);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return (CqQueryTestListener.this.totalEventCount == total);
+          }
 
-      public String description() {
-        return "Did not receive expected number of events " + CqQueryTestListener.this.cqName + " expected: " + total + " receieved: " + CqQueryTestListener.this.totalEventCount;
-      }
-    };
+          public String description() {
+            return "Did not receive expected number of events "
+                + CqQueryTestListener.this.cqName
+                + " expected: "
+                + total
+                + " receieved: "
+                + CqQueryTestListener.this.totalEventCount;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForDestroyed(final Object key) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return CqQueryTestListener.this.destroys.contains(key);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return CqQueryTestListener.this.destroys.contains(key);
+          }
 
-      public String description() {
-        return "never got destroy event for key " + key + " in CQ " + CqQueryTestListener.this.cqName;
-      }
-    };
+          public String description() {
+            return "never got destroy event for key "
+                + key
+                + " in CQ "
+                + CqQueryTestListener.this.cqName;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForInvalidated(final Object key) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return CqQueryTestListener.this.invalidates.contains(key);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return CqQueryTestListener.this.invalidates.contains(key);
+          }
 
-      public String description() {
-        return "never got invalidate event for CQ " + CqQueryTestListener.this.cqName;
-      }
-    };
+          public String description() {
+            return "never got invalidate event for CQ " + CqQueryTestListener.this.cqName;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForUpdated(final Object key) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return CqQueryTestListener.this.updates.contains(key);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return CqQueryTestListener.this.updates.contains(key);
+          }
 
-      public String description() {
-        return "never got update event for CQ " + CqQueryTestListener.this.cqName;
-      }
-    };
+          public String description() {
+            return "never got update event for CQ " + CqQueryTestListener.this.cqName;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForClose() {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return CqQueryTestListener.this.eventClose;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return CqQueryTestListener.this.eventClose;
+          }
 
-      public String description() {
-        return "never got close event for CQ " + CqQueryTestListener.this.cqName;
-      }
-    };
+          public String description() {
+            return "never got close event for CQ " + CqQueryTestListener.this.cqName;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForRegionClear() {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return CqQueryTestListener.this.eventRegionClear;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return CqQueryTestListener.this.eventRegionClear;
+          }
 
-      public String description() {
-        return "never got region clear event for CQ " + CqQueryTestListener.this.cqName;
-      }
-    };
+          public String description() {
+            return "never got region clear event for CQ " + CqQueryTestListener.this.cqName;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForRegionInvalidate() {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return CqQueryTestListener.this.eventRegionInvalidate;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return CqQueryTestListener.this.eventRegionInvalidate;
+          }
 
-      public String description() {
-        return "never got region invalidate event for CQ " + CqQueryTestListener.this.cqName;
-      }
-    };
+          public String description() {
+            return "never got region invalidate event for CQ " + CqQueryTestListener.this.cqName;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForError(final String expectedMessage) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        Iterator iterator = CqQueryTestListener.this.errors.iterator();
-        while (iterator.hasNext()) {
-          String errorMessage = (String) iterator.next();
-          if (errorMessage.equals(expectedMessage)) {
-            return true;
-          } else {
-            logger.fine("errors that exist:" + errorMessage);
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            Iterator iterator = CqQueryTestListener.this.errors.iterator();
+            while (iterator.hasNext()) {
+              String errorMessage = (String) iterator.next();
+              if (errorMessage.equals(expectedMessage)) {
+                return true;
+              } else {
+                logger.fine("errors that exist:" + errorMessage);
+              }
+            }
+            return false;
           }
-        }
-        return false;
-      }
 
-      public String description() {
-        return "never got create error for CQ " + CqQueryTestListener.this.cqName + " messaged " + expectedMessage;
-      }
-    };
+          public String description() {
+            return "never got create error for CQ "
+                + CqQueryTestListener.this.cqName
+                + " messaged "
+                + expectedMessage;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForCqsDisconnectedEvents(final int total) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return (CqQueryTestListener.this.cqsDisconnectedCount == total);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return (CqQueryTestListener.this.cqsDisconnectedCount == total);
+          }
 
-      public String description() {
-        return "Did not receive expected number of calls to cqsDisconnected() " + CqQueryTestListener.this.cqName + " expected: " + total + " received: " + CqQueryTestListener.this.cqsDisconnectedCount;
-      }
-    };
+          public String description() {
+            return "Did not receive expected number of calls to cqsDisconnected() "
+                + CqQueryTestListener.this.cqName
+                + " expected: "
+                + total
+                + " received: "
+                + CqQueryTestListener.this.cqsDisconnectedCount;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public boolean waitForCqsConnectedEvents(final int total) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return (CqQueryTestListener.this.cqsConnectedCount == total);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return (CqQueryTestListener.this.cqsConnectedCount == total);
+          }
 
-      public String description() {
-        return "Did not receive expected number of calls to cqsConnected() " + CqQueryTestListener.this.cqName + " expected: " + total + " receieved: " + CqQueryTestListener.this.cqsConnectedCount;
-      }
-    };
+          public String description() {
+            return "Did not receive expected number of calls to cqsConnected() "
+                + CqQueryTestListener.this.cqName
+                + " expected: "
+                + total
+                + " receieved: "
+                + CqQueryTestListener.this.cqsConnectedCount;
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
-  public void waitForEvents(final int creates, final int updates, final int deletes, final int queryInserts, final int queryUpdates, final int queryDeletes, final int totalEvents) {
+  public void waitForEvents(
+      final int creates,
+      final int updates,
+      final int deletes,
+      final int queryInserts,
+      final int queryUpdates,
+      final int queryDeletes,
+      final int totalEvents) {
     // Wait for expected events to arrive
     try {
-      Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> {
-        if ((creates > 0 && creates != this.getCreateEventCount()) || (updates > 0 && updates != this.getUpdateEventCount()) || (deletes > 0 && deletes != this.getDeleteEventCount()) || (queryInserts > 0 && queryInserts != this.getQueryInsertEventCount()) || (queryUpdates > 0 && queryUpdates != this.getQueryUpdateEventCount()) || (queryDeletes > 0 && queryDeletes != this.getQueryDeleteEventCount()) || (totalEvents > 0 && totalEvents != this.getTotalEventCount())) {
-          return false;
-        }
-        return true;
-      });
+      Awaitility.await()
+          .atMost(5, TimeUnit.SECONDS)
+          .until(
+              () -> {
+                if ((creates > 0 && creates != this.getCreateEventCount())
+                    || (updates > 0 && updates != this.getUpdateEventCount())
+                    || (deletes > 0 && deletes != this.getDeleteEventCount())
+                    || (queryInserts > 0 && queryInserts != this.getQueryInsertEventCount())
+                    || (queryUpdates > 0 && queryUpdates != this.getQueryUpdateEventCount())
+                    || (queryDeletes > 0 && queryDeletes != this.getQueryDeleteEventCount())
+                    || (totalEvents > 0 && totalEvents != this.getTotalEventCount())) {
+                  return false;
+                }
+                return true;
+              });
     } catch (Exception ex) {
       // We just wait for expected events to arrive.
       // Caller will do validation and throw exception.
@@ -394,5 +473,4 @@ public class CqQueryTestListener implements CqStatusListener {
     updates.clear();
     this.eventClose = false;
   }
-
 }

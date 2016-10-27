@@ -29,5 +29,4 @@ public class SUnionStoreExecutor extends SUnionExecutor {
   public String getArgsError() {
     return ArityDef.SUNIONSTORE;
   }
-
 }

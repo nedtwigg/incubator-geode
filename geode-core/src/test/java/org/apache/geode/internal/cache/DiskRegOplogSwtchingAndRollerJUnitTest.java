@@ -32,9 +32,7 @@ import org.apache.geode.cache.Scope;
 import org.apache.geode.internal.cache.lru.LRUStatistics;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Miscellaneous disk tests
- */
+/** Miscellaneous disk tests */
 @Category(IntegrationTest.class)
 public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBase {
 
@@ -54,9 +52,7 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
 
   private Object getValOnDsk = null;
 
-  /**
-   * tests non occurrence of DiskAccessException
-   */
+  /** tests non occurrence of DiskAccessException */
   @Test
   public void testSyncPersistRegionDAExp() {
     File testingDirectory1 = new File("testingDirectory1");
@@ -91,8 +87,7 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
     closeDown();
 
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-
-  }// end of testSyncPersistRegionDAExp
+  } // end of testSyncPersistRegionDAExp
 
   @Test
   public void testAsyncPersistRegionDAExp() {
@@ -127,7 +122,7 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
     // region.close(); // closes disk file which will flush all buffers
     closeDown();
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-  }// end of testAsyncPersistRegionDAExp
+  } // end of testAsyncPersistRegionDAExp
 
   private void diskAccessExpHelpermethod(final Region region) {
     final byte[] value = new byte[990];
@@ -147,9 +142,7 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
     }
   }
 
-  /**
-   * DiskRegionRollingJUnitTest :
-   */
+  /** DiskRegionRollingJUnitTest : */
   @Test
   public void testSyncRollingHappening() {
     try {
@@ -158,16 +151,19 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
       diskRegionProperties.setMaxOplogSize(512);
       diskRegionProperties.setRolling(true);
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-      Region region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+      Region region =
+          DiskRegionHelperFactory.getSyncPersistOnlyRegion(
+              cache, diskRegionProperties, Scope.LOCAL);
 
-      CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-        public void beforeGoingToCompact() {
-          synchronized (forWaitNotify) {
-            forWaitNotify.notify();
-            gotNotification = true;
-          }
-        }
-      });
+      CacheObserverHolder.setInstance(
+          new CacheObserverAdapter() {
+            public void beforeGoingToCompact() {
+              synchronized (forWaitNotify) {
+                forWaitNotify.notify();
+                gotNotification = true;
+              }
+            }
+          });
 
       //This will end up 50% garbage
       //1 live create
@@ -206,16 +202,19 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
       diskRegionProperties.setMaxOplogSize(512);
       diskRegionProperties.setRolling(false);
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-      Region region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+      Region region =
+          DiskRegionHelperFactory.getSyncPersistOnlyRegion(
+              cache, diskRegionProperties, Scope.LOCAL);
 
-      CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-        public void beforeGoingToCompact() {
-          synchronized (forWaitNotify) {
-            forWaitNotify.notify();
-            gotNotification = true;
-          }
-        }
-      });
+      CacheObserverHolder.setInstance(
+          new CacheObserverAdapter() {
+            public void beforeGoingToCompact() {
+              synchronized (forWaitNotify) {
+                forWaitNotify.notify();
+                gotNotification = true;
+              }
+            }
+          });
 
       region.forceRolling();
 
@@ -244,16 +243,18 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
       diskRegionProperties.setMaxOplogSize(512);
       diskRegionProperties.setRolling(true);
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-      Region region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskRegionProperties);
+      Region region =
+          DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskRegionProperties);
 
-      CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-        public void beforeGoingToCompact() {
-          synchronized (forWaitNotify) {
-            forWaitNotify.notify();
-            gotNotification = true;
-          }
-        }
-      });
+      CacheObserverHolder.setInstance(
+          new CacheObserverAdapter() {
+            public void beforeGoingToCompact() {
+              synchronized (forWaitNotify) {
+                forWaitNotify.notify();
+                gotNotification = true;
+              }
+            }
+          });
 
       //This will end up 50% garbage
       //1 live create
@@ -296,16 +297,18 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
       diskRegionProperties.setMaxOplogSize(512);
       diskRegionProperties.setRolling(false);
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-      Region region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskRegionProperties);
+      Region region =
+          DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskRegionProperties);
 
-      CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-        public void beforeGoingToCompact() {
-          synchronized (forWaitNotify) {
-            forWaitNotify.notify();
-            gotNotification = true;
-          }
-        }
-      });
+      CacheObserverHolder.setInstance(
+          new CacheObserverAdapter() {
+            public void beforeGoingToCompact() {
+              synchronized (forWaitNotify) {
+                forWaitNotify.notify();
+                gotNotification = true;
+              }
+            }
+          });
 
       region.forceRolling();
 
@@ -326,12 +329,11 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
   }
 
   /**
-   * DiskRegOplog1OverridingOplog2JUnitTest: Disk Region test : oplog1 flush
-   * overriding oplog2 flush
-   * 
-   * This test will hold the flush of oplog1 and flush oplog2 before it. After
-   * that oplog1 is allowed to flush. A get of an entry which was first put in
-   * oplog1 and then in oplog2 should result in the get being done from oplog2.
+   * DiskRegOplog1OverridingOplog2JUnitTest: Disk Region test : oplog1 flush overriding oplog2 flush
+   *
+   * <p>This test will hold the flush of oplog1 and flush oplog2 before it. After that oplog1 is
+   * allowed to flush. A get of an entry which was first put in oplog1 and then in oplog2 should
+   * result in the get being done from oplog2.
    */
   @Test
   public void testOplog1FlushOverridingOplog2Flush() {
@@ -345,32 +347,31 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
     region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskProps);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
 
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      boolean callOnce = false;
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
+          boolean callOnce = false;
 
-      public void goingToFlush() {
-        synchronized (this) {
+          public void goingToFlush() {
+            synchronized (this) {
+              if (!callOnce) {
+                try {
+                  region.put("1", "2");
+                } catch (Exception e) {
+                  logWriter.error("exception not expected", e);
+                  failureCause = "FAILED::" + e.toString();
+                  testFailed = true;
+                  fail("FAILED::" + e.toString());
+                }
 
-          if (!callOnce) {
-            try {
-              region.put("1", "2");
-            } catch (Exception e) {
-              logWriter.error("exception not expected", e);
-              failureCause = "FAILED::" + e.toString();
-              testFailed = true;
-              fail("FAILED::" + e.toString());
+                Thread th = new Thread(new DoesFlush(region));
+                th.setName("TestingThread");
+                th.start();
+                Thread.yield();
+              }
+              callOnce = true;
             }
-
-            Thread th = new Thread(new DoesFlush(region));
-            th.setName("TestingThread");
-            th.start();
-            Thread.yield();
           }
-          callOnce = true;
-        }
-
-      }
-    });
+        });
 
     try {
       region.put("1", "1");
@@ -406,8 +407,7 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
     assertFalse(failureCause, testFailed);
     // region.close(); // closes disk file which will flush all buffers
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-
-  }// end of testOplog1FlushOverridingOplog2Flush
+  } // end of testOplog1FlushOverridingOplog2Flush
 
   private class DoesFlush implements Runnable {
 
@@ -428,8 +428,8 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
   }
 
   /**
-   * OplogRoller should correctly add those entries created in an Oplog , but by
-   * the time rolling has started , the entry exists in the current oplog
+   * OplogRoller should correctly add those entries created in an Oplog , but by the time rolling
+   * has started , the entry exists in the current oplog
    */
   @Test
   public void testEntryExistsinCurrentOplog() {
@@ -442,35 +442,35 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
 
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      boolean callOnce = false;
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
+          boolean callOnce = false;
 
-      public void beforeGoingToCompact() {
-        synchronized (this) {
-          if (!callOnce) {
-            try {
-              for (int i = 0; i < 100; i++) {
-                region.put(new Integer(i), "newVal" + i);
+          public void beforeGoingToCompact() {
+            synchronized (this) {
+              if (!callOnce) {
+                try {
+                  for (int i = 0; i < 100; i++) {
+                    region.put(new Integer(i), "newVal" + i);
+                  }
+                } catch (Exception e) {
+                  logWriter.error("exception not expected", e);
+                  failureCause = "FAILED::" + e.toString();
+                  testFailed = true;
+                  fail("FAILED::" + e.toString());
+                }
               }
-            } catch (Exception e) {
-              logWriter.error("exception not expected", e);
-              failureCause = "FAILED::" + e.toString();
-              testFailed = true;
-              fail("FAILED::" + e.toString());
+              callOnce = true;
             }
           }
-          callOnce = true;
-        }
 
-      }
-
-      public void afterHavingCompacted() {
-        synchronized (region) {
-          region.notify();
-          hasBeenNotified = true;
-        }
-      }
-    });
+          public void afterHavingCompacted() {
+            synchronized (region) {
+              region.notify();
+              hasBeenNotified = true;
+            }
+          }
+        });
 
     try {
       for (int i = 0; i < 100; i++) {
@@ -513,12 +513,9 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
     assertFalse(failureCause, testFailed);
     // region.close();
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-  }// end of testEntryExistsinCurrentOplog
+  } // end of testEntryExistsinCurrentOplog
 
-  /**
-   * Entries deleted in current Oplog are recorded correctly during the rolling
-   * of that oplog
-   */
+  /** Entries deleted in current Oplog are recorded correctly during the rolling of that oplog */
   @Test
   public void testEntryDeletedinCurrentOplog() {
     hasBeenNotified = false;
@@ -531,41 +528,39 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
 
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      boolean callOnce = false;
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
+          boolean callOnce = false;
 
-      public void beforeGoingToCompact() {
-        synchronized (this) {
+          public void beforeGoingToCompact() {
+            synchronized (this) {
+              if (!callOnce) {
+                try {
 
-          if (!callOnce) {
-            try {
+                  region.destroy(new Integer(10));
+                  region.destroy(new Integer(20));
+                  region.destroy(new Integer(30));
+                  region.destroy(new Integer(40));
+                  region.destroy(new Integer(50));
 
-              region.destroy(new Integer(10));
-              region.destroy(new Integer(20));
-              region.destroy(new Integer(30));
-              region.destroy(new Integer(40));
-              region.destroy(new Integer(50));
-
-            } catch (Exception e) {
-              logWriter.error("exception not expected", e);
-              failureCause = "FAILED::" + e.toString();
-              testFailed = true;
-              fail("FAILED::" + e.toString());
+                } catch (Exception e) {
+                  logWriter.error("exception not expected", e);
+                  failureCause = "FAILED::" + e.toString();
+                  testFailed = true;
+                  fail("FAILED::" + e.toString());
+                }
+              }
+              callOnce = true;
             }
           }
-          callOnce = true;
-        }
 
-      }
-
-      public void afterHavingCompacted() {
-        synchronized (region) {
-          region.notify();
-          hasBeenNotified = true;
-        }
-      }
-
-    });
+          public void afterHavingCompacted() {
+            synchronized (region) {
+              region.notify();
+              hasBeenNotified = true;
+            }
+          }
+        });
 
     try {
       for (int i = 0; i < 100; i++) {
@@ -613,15 +608,13 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
     }
     assertFalse(failureCause, testFailed);
     // region.close();
-  }// end of testEntryDeletedinCurrentOplog
+  } // end of testEntryDeletedinCurrentOplog
 
   private LRUStatistics getLRUStats(Region region) {
     return ((LocalRegion) region).getEvictionController().getLRUHelper().getStats();
   }
 
-  /**
-   * to validate the get operation performed on a byte array.
-   */
+  /** to validate the get operation performed on a byte array. */
   private boolean getByteArrVal(Long key, Region region) {
     Object val = null;
     byte[] val2 = new byte[1024];
@@ -642,15 +635,15 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
       result = (x[i] == val2[i]);
     }
     if (!result) {
-      fail("The val of byte[] put at 100th key obtained from disk is not euqal to the value put initially");
+      fail(
+          "The val of byte[] put at 100th key obtained from disk is not euqal to the value put initially");
     }
     return result;
   }
 
   /**
-   * DiskRegOplogRollerWaitingForAsyncWriterJUnitTest: Disk Region test : Oplog
-   * Roller should wait for asynch writer to terminate if asynch flush is going
-   * on , before deleting the oplog
+   * DiskRegOplogRollerWaitingForAsyncWriterJUnitTest: Disk Region test : Oplog Roller should wait
+   * for asynch writer to terminate if asynch flush is going on , before deleting the oplog
    */
   private boolean afterWritingBytes = false;
 
@@ -666,44 +659,41 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
     region = DiskRegionHelperFactory.getAsyncPersistOnlyRegion(cache, diskProps);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
 
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      boolean callOnce = false;
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
+          boolean callOnce = false;
 
-      public void afterWritingBytes() {
+          public void afterWritingBytes() {
 
-        synchronized (this) {
+            synchronized (this) {
+              if (!callOnce) {
+                try {
+                  region.put("1", "2");
+                } catch (Exception e) {
+                  logWriter.error("exception not expected", e);
+                  fail("FAILED::" + e.toString());
+                  failureCause = "FAILED::" + e.toString();
+                  testFailed = true;
+                }
 
-          if (!callOnce) {
-            try {
-              region.put("1", "2");
-            } catch (Exception e) {
-              logWriter.error("exception not expected", e);
-              fail("FAILED::" + e.toString());
-              failureCause = "FAILED::" + e.toString();
+                Thread th = new Thread(new DoesFlush1(region));
+                th.setName("TestingThread");
+                th.start();
+                Thread.yield();
+              }
+              callOnce = true;
+              afterWritingBytes = true;
+            }
+          }
+
+          public void afterHavingCompacted() {
+            if (!afterWritingBytes) {
+              fail("Roller didnt wait for Async writer to terminate!");
+              failureCause = "Roller didnt wait for Async writer to terminate!";
               testFailed = true;
             }
-
-            Thread th = new Thread(new DoesFlush1(region));
-            th.setName("TestingThread");
-            th.start();
-            Thread.yield();
-
           }
-          callOnce = true;
-          afterWritingBytes = true;
-        }
-
-      }
-
-      public void afterHavingCompacted() {
-        if (!afterWritingBytes) {
-          fail("Roller didnt wait for Async writer to terminate!");
-          failureCause = "Roller didnt wait for Async writer to terminate!";
-          testFailed = true;
-        }
-      }
-
-    });
+        });
 
     try {
       region.put("1", "1");
@@ -737,7 +727,7 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
     assertFalse(failureCause, testFailed);
     //region.close(); // closes disk file which will flush all buffers
 
-  }// end of testOplogRollerWaitingForAsyncWriter
+  } // end of testOplogRollerWaitingForAsyncWriter
 
   private class DoesFlush1 implements Runnable {
 
@@ -758,8 +748,8 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
   }
 
   /**
-   * Task 125: Ensuring that retrieval of evicted entry data for rolling
-   * purposes is correct & does not cause any eviction sort of things
+   * Task 125: Ensuring that retrieval of evicted entry data for rolling purposes is correct & does
+   * not cause any eviction sort of things
    */
   @Test
   public void testGetEvictedEntry() throws EntryNotFoundException {
@@ -851,12 +841,11 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
     assertTrue(((LocalRegion) region).getValueOnDisk("key99") == null);
 
     //region.close(); // closes disk file which will flush all buffers
-  }// end of testGetEvictedEntry
+  } // end of testGetEvictedEntry
 
   /**
-   * DiskRegNoDiskAccessExceptionTest: tests that while rolling is set to true
-   * DiskAccessException doesn't occur even when amount of put data exceeds the
-   * max dir sizes.
+   * DiskRegNoDiskAccessExceptionTest: tests that while rolling is set to true DiskAccessException
+   * doesn't occur even when amount of put data exceeds the max dir sizes.
    */
   @Test
   public void testDiskFullExcep() {
@@ -901,6 +890,5 @@ public class DiskRegOplogSwtchingAndRollerJUnitTest extends DiskRegionTestingBas
 
     //region.close(); // closes disk file which will flush all buffers
 
-  }//end of testDiskFullExcep
-
-}// end of test class
+  } //end of testDiskFullExcep
+} // end of test class

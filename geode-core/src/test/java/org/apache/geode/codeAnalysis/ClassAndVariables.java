@@ -45,7 +45,6 @@ public class ClassAndVariables implements Comparable {
     } catch (Throwable e) {
       System.out.println("Unable to load" + name + ":" + e);
     }
-
   }
 
   public int compareTo(Object other) {
@@ -59,5 +58,4 @@ public class ClassAndVariables implements Comparable {
   public String toString() {
     return ClassAndVariableDetails.convertForStoring(this);
   }
-
 }

@@ -46,102 +46,59 @@ import org.apache.geode.internal.Assert;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * Conjunctions and Disjunctions (LITERAL_and LITERAL_or) As a part of feature
- * development to ensure index usage for multiple regions & index usage in equi
- * join conditions across the regions , a CompiledJunction's organized operands
- * method creates internal structures like GroupJunction, AllGroupJunction &
- * CompositeGroupJunction. The method createJunction is where the decision of
- * creating an AllGroupJunction ( wrapping multiple GroupJunctions and
- * CompositeGroupJunctions) or a single GroupJunction or a singe
- * CompositeGroupJunction is taken.
- * 
- *          CompiledJunction -----> on organization of Operands may result in any 
- *          of the following cases
- *          
- *          1)    CompiledJunction
- *                     |
- *                     |
- *          --------------------------------
- *          |                               |                     
- *       CompiledJunction                GroupJunction (Filter evaluable)
- *       (Filter evaluable)   
- *       
- *       2)    CompiledJunction
- *                     |
- *                     |
- *          --------------------------------
- *          |                               |                     
- *       CompiledJunction                RangeJunction (Filter evaluable same index operands. May contain iter operands belonging to the same Group)
- *       (Filter evaluable)
- *           
- *           
- *      3)      CompiledJunction
- *                     |
- *                     |
- *          --------------------------------
- *          |                               |                     
- *       CompiledJunction                GroupJunction (Filter evaluable)
- *       (Filter evaluable)                     |
- *                                                | 
- *                                      ----------------------------------------------
- *                                      |                                             |
- *                                   CompiledComparison                               RangeJunction 
- *                            (at least one filter evaluable compiled
- *                             Comparison using an index shared by no other
- *                             condition)           
- *                             
- *                             
- *     5)      CompiledJunction
- *                     |
- *                     |
- *          --------------------------------
- *          |                               |                     
- *       CompiledJunction                GroupJunction (Filter evaluable)
- *       (Filter evaluable)                     |
- *                                                | 
- *                                      ---------------------------------------
- *                                      |                     |                |
- *                                   RangeJunction          RangeJunction   CompiledComparison
- *                                                                            (zero or more Filter evaluable or iter
- *                                                                             evaluable )      
- * 
- *   6)    CompiledJunction
- *             |
- *     ----------------------------------
- *     |                                 |
- *   CompiledJunction                AllGroupJunction
- *   (filter evaluable)                  |
- *                             ------------------------------------------------
- *                             |                             |                 |
- *                          GroupJunction               GroupJunction       CompositeGroupJunction
- *                                                                                |
- *                                                                            ---------------------------------------
- *                                                                            |             |                        |
- *                                                                         GroupJunction  equi join conditions    GroupJunction       
- * 
- * 
- * 
- * @version $Revision: 1.2 $                                  
+ * Conjunctions and Disjunctions (LITERAL_and LITERAL_or) As a part of feature development to ensure
+ * index usage for multiple regions & index usage in equi join conditions across the regions , a
+ * CompiledJunction's organized operands method creates internal structures like GroupJunction,
+ * AllGroupJunction & CompositeGroupJunction. The method createJunction is where the decision of
+ * creating an AllGroupJunction ( wrapping multiple GroupJunctions and CompositeGroupJunctions) or a
+ * single GroupJunction or a singe CompositeGroupJunction is taken.
+ *
+ * <p>CompiledJunction -----> on organization of Operands may result in any of the following cases
+ *
+ * <p>1) CompiledJunction | | -------------------------------- | | CompiledJunction GroupJunction
+ * (Filter evaluable) (Filter evaluable)
+ *
+ * <p>2) CompiledJunction | | -------------------------------- | | CompiledJunction RangeJunction
+ * (Filter evaluable same index operands. May contain iter operands belonging to the same Group)
+ * (Filter evaluable)
+ *
+ * <p>3) CompiledJunction | | -------------------------------- | | CompiledJunction GroupJunction
+ * (Filter evaluable) (Filter evaluable) | | ---------------------------------------------- | |
+ * CompiledComparison RangeJunction (at least one filter evaluable compiled Comparison using an
+ * index shared by no other condition)
+ *
+ * <p>5) CompiledJunction | | -------------------------------- | | CompiledJunction GroupJunction
+ * (Filter evaluable) (Filter evaluable) | | --------------------------------------- | | |
+ * RangeJunction RangeJunction CompiledComparison (zero or more Filter evaluable or iter evaluable )
+ *
+ * <p>6) CompiledJunction | ---------------------------------- | | CompiledJunction AllGroupJunction
+ * (filter evaluable) | ------------------------------------------------ | | | GroupJunction
+ * GroupJunction CompositeGroupJunction | --------------------------------------- | | |
+ * GroupJunction equi join conditions GroupJunction
+ *
+ * @version $Revision: 1.2 $
  */
 public class CompiledJunction extends AbstractCompiledValue implements Negatable {
 
   /** left operand */
   private final CompiledValue[] _operands;
+
   private int _operator = 0;
   private List unevaluatedFilterOperands = null;
 
   //A token to place into the samesort map.  This is to let the engine know there is more than one index
-  //being used for this junction but allows actual operands to form range junctions if enough exist. 
+  //being used for this junction but allows actual operands to form range junctions if enough exist.
   //The mechanism checks to see if the mapped object is an integer, if so, it increments, if it's not it sets as 1
   //Because we are a string place holder, the next actual operand would just start at one.  If the join is added
   //after a valid operand has already set the counter to an integer, we instead just ignore and do not set the place holder
-  private final static String PLACEHOLDER_FOR_JOIN = "join";
+  private static final String PLACEHOLDER_FOR_JOIN = "join";
 
   CompiledJunction(CompiledValue[] operands, int operator) {
     // invariant: operator must be LITERAL_and or LITERAL_or
     // invariant: at least two operands
     if (!((operator == LITERAL_or || operator == LITERAL_and) && operands.length >= 2)) {
-      throw new InternalGemFireError("operator=" + operator + "operands.length =" + operands.length);
+      throw new InternalGemFireError(
+          "operator=" + operator + "operands.length =" + operands.length);
     }
     _operator = operator;
     _operands = operands;
@@ -156,20 +113,23 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
     return JUNCTION;
   }
 
-  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     Object r = _operands[0].evaluate(context); // UNDEFINED, null, or a Boolean
     // if it's true, and op is or then return true immediately
     // if it's false and the op is and then return false immediately
     if (r instanceof Boolean)
-      if (((Boolean) r).booleanValue() && _operator == LITERAL_or)
-        return r;
-      else if (!((Boolean) r).booleanValue() && _operator == LITERAL_and)
-        return r;
+      if (((Boolean) r).booleanValue() && _operator == LITERAL_or) return r;
+      else if (!((Boolean) r).booleanValue() && _operator == LITERAL_and) return r;
     if (r == null || r == QueryService.UNDEFINED)
       r = QueryService.UNDEFINED; // keep going to see if we hit a
     // short-circuiting truth value
     else if (!(r instanceof Boolean))
-      throw new TypeMismatchException(LocalizedStrings.CompiledJunction_LITERAL_ANDLITERAL_OR_OPERANDS_MUST_BE_OF_TYPE_BOOLEAN_NOT_TYPE_0.toLocalizedString(r.getClass().getName()));
+      throw new TypeMismatchException(
+          LocalizedStrings
+              .CompiledJunction_LITERAL_ANDLITERAL_OR_OPERANDS_MUST_BE_OF_TYPE_BOOLEAN_NOT_TYPE_0
+              .toLocalizedString(r.getClass().getName()));
     for (int i = 1; i < _operands.length; i++) {
       Object ri = null;
       try {
@@ -179,15 +139,16 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
       }
       // Boolean
       if (ri instanceof Boolean)
-        if (((Boolean) ri).booleanValue() && _operator == LITERAL_or)
-          return ri;
-        else if (!((Boolean) ri).booleanValue() && _operator == LITERAL_and)
-          return ri;
+        if (((Boolean) ri).booleanValue() && _operator == LITERAL_or) return ri;
+        else if (!((Boolean) ri).booleanValue() && _operator == LITERAL_and) return ri;
       if (ri == null || ri == QueryService.UNDEFINED || r == QueryService.UNDEFINED) {
         r = QueryService.UNDEFINED;
         continue; // keep going to see if we hit a short-circuiting truth value
       } else if (!(ri instanceof Boolean))
-        throw new TypeMismatchException(LocalizedStrings.CompiledJunction_LITERAL_ANDLITERAL_OR_OPERANDS_MUST_BE_OF_TYPE_BOOLEAN_NOT_TYPE_0.toLocalizedString(ri.getClass().getName()));
+        throw new TypeMismatchException(
+            LocalizedStrings
+                .CompiledJunction_LITERAL_ANDLITERAL_OR_OPERANDS_MUST_BE_OF_TYPE_BOOLEAN_NOT_TYPE_0
+                .toLocalizedString(ri.getClass().getName()));
       // now do the actual and/or
       if (_operator == LITERAL_and)
         r = Boolean.valueOf(((Boolean) r).booleanValue() && ((Boolean) ri).booleanValue());
@@ -199,7 +160,8 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
   }
 
   @Override
-  public Set computeDependencies(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  public Set computeDependencies(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     for (int i = 0; i < _operands.length; i++) {
       context.addDependencies(this, this._operands[i].computeDependencies(context));
     }
@@ -207,14 +169,20 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
   }
 
   @Override
-  public SelectResults filterEvaluate(ExecutionContext context, SelectResults intermediateResults) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public SelectResults filterEvaluate(ExecutionContext context, SelectResults intermediateResults)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     OrganizedOperands newOperands = organizeOperands(context);
     SelectResults result = intermediateResults;
     Support.Assert(newOperands.filterOperand != null);
     // evaluate directly on the operand
-    result = newOperands.isSingleFilter ? (newOperands.filterOperand).filterEvaluate(context, result) : (newOperands.filterOperand).auxFilterEvaluate(context, result);
+    result =
+        newOperands.isSingleFilter
+            ? (newOperands.filterOperand).filterEvaluate(context, result)
+            : (newOperands.filterOperand).auxFilterEvaluate(context, result);
     if (!newOperands.isSingleFilter) {
-      List unevaluatedOps = ((CompiledJunction) newOperands.filterOperand).unevaluatedFilterOperands;
+      List unevaluatedOps =
+          ((CompiledJunction) newOperands.filterOperand).unevaluatedFilterOperands;
       if (unevaluatedOps != null) {
         if (newOperands.iterateOperand == null) {
           if (unevaluatedOps.size() == 1) {
@@ -253,7 +221,9 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
     return result;
   }
 
-  private List getCondtionsSortedOnIncreasingEstimatedIndexResultSize(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  private List getCondtionsSortedOnIncreasingEstimatedIndexResultSize(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     // The checks invoked before this function have ensured that all the
     // operands are of type ComparisonQueryInfo and of the form 'var = constant'.
     // Also need for sorting will not arise if there are only two operands
@@ -276,15 +246,19 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
   }
 
   /**
-   * invariant: all operands are known to be evaluated as a filter no operand
-   * organization is necessary
+   * invariant: all operands are known to be evaluated as a filter no operand organization is
+   * necessary
    */
   @Override
-  public SelectResults auxFilterEvaluate(ExecutionContext context, SelectResults intermediateResults) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public SelectResults auxFilterEvaluate(
+      ExecutionContext context, SelectResults intermediateResults)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     // evaluate the result set from the indexed values
     // using the intermediate results so far (passed in)
     // put results into new intermediate results
-    List sortedConditionsList = this.getCondtionsSortedOnIncreasingEstimatedIndexResultSize(context);
+    List sortedConditionsList =
+        this.getCondtionsSortedOnIncreasingEstimatedIndexResultSize(context);
 
     // Sort the operands in increasing order of resultset size
     Iterator sortedConditionsItr = sortedConditionsList.iterator();
@@ -301,12 +275,16 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
       // recursion being ended by evaluating auxIterEvaluate if any. The passing
       // of IntermediateResult in filterEvalaute causes AND junction evaluation
       // to be corrupted , if the intermediateResultset contains some value.
-      SelectResults filterResults = ((Filter) sortedConditionsItr.next()).filterEvaluate(context, null);
+      SelectResults filterResults =
+          ((Filter) sortedConditionsItr.next()).filterEvaluate(context, null);
       if (_operator == LITERAL_and) {
         if (filterResults != null && filterResults.isEmpty()) {
           return filterResults;
         } else if (filterResults != null) {
-          intermediateResults = (intermediateResults == null) ? filterResults : QueryUtils.intersection(intermediateResults, filterResults, context);
+          intermediateResults =
+              (intermediateResults == null)
+                  ? filterResults
+                  : QueryUtils.intersection(intermediateResults, filterResults, context);
 
           sortedConditionsItr.remove();
 
@@ -325,7 +303,10 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
         // Though if the operand evaluates to false,it is permissible case
         // for filterEvaluation.
         Assert.assertTrue(filterResults != null);
-        intermediateResults = intermediateResults == null ? filterResults : QueryUtils.union(intermediateResults, filterResults, context);
+        intermediateResults =
+            intermediateResults == null
+                ? filterResults
+                : QueryUtils.union(intermediateResults, filterResults, context);
       }
     }
     if (_operator == LITERAL_and && !sortedConditionsList.isEmpty()) {
@@ -335,7 +316,10 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
   }
 
   /** invariant: the operand is known to be evaluated by iteration */
-  SelectResults auxIterateEvaluate(CompiledValue operand, ExecutionContext context, SelectResults intermediateResults) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  SelectResults auxIterateEvaluate(
+      CompiledValue operand, ExecutionContext context, SelectResults intermediateResults)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     // Asif: This can be a valid value if we have an AND condition like ID=1 AND
     // true = true. In such cases , if an index is not available on ID still we
     // have at least one expression which is independent of current scope. In
@@ -351,9 +335,11 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
     // to do iterations below ) but it can never be null. As null itself
     // signifies that the junction cannot be evaluated as a filter.
     if (intermediateResults == null)
-      throw new RuntimeException(LocalizedStrings.CompiledJunction_INTERMEDIATERESULTS_CAN_NOT_BE_NULL.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.CompiledJunction_INTERMEDIATERESULTS_CAN_NOT_BE_NULL
+              .toLocalizedString());
     if (intermediateResults.isEmpty()) // short circuit
-      return intermediateResults;
+    return intermediateResults;
     List currentIters = context.getCurrentIterators();
     RuntimeIterator rIters[] = new RuntimeIterator[currentIters.size()];
     currentIters.toArray(rIters);
@@ -386,10 +372,11 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
           observer.afterIterationEvaluation(result);
         }
         if (result instanceof Boolean) {
-          if (((Boolean) result).booleanValue())
-            resultSet.add(tuple);
+          if (((Boolean) result).booleanValue()) resultSet.add(tuple);
         } else if (result != null && result != QueryService.UNDEFINED)
-          throw new TypeMismatchException(LocalizedStrings.CompiledJunction_ANDOR_OPERANDS_MUST_BE_OF_TYPE_BOOLEAN_NOT_TYPE_0.toLocalizedString(result.getClass().getName()));
+          throw new TypeMismatchException(
+              LocalizedStrings.CompiledJunction_ANDOR_OPERANDS_MUST_BE_OF_TYPE_BOOLEAN_NOT_TYPE_0
+                  .toLocalizedString(result.getClass().getName()));
       }
     } finally {
       observer.endIteration(resultSet);
@@ -398,21 +385,21 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
   }
 
   /**
-   * invariant: all operands are known to be evaluated as a filter no operand
-   * organization is necessary
+   * invariant: all operands are known to be evaluated as a filter no operand organization is
+   * necessary
    */
   public void negate() {
     _operator = inverseOperator(_operator);
     for (int i = 0; i < _operands.length; i++) {
-      if (_operands[i] instanceof Negatable)
-        ((Negatable) _operands[i]).negate();
-      else
-        _operands[i] = new CompiledNegation(_operands[i]);
+      if (_operands[i] instanceof Negatable) ((Negatable) _operands[i]).negate();
+      else _operands[i] = new CompiledNegation(_operands[i]);
     }
   }
 
   @Override
-  protected PlanInfo protGetPlanInfo(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  protected PlanInfo protGetPlanInfo(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     Support.Assert(_operator == LITERAL_or || _operator == LITERAL_and);
     PlanInfo resultPlanInfo = new PlanInfo();
     // set default evalAsFilter depending on operator
@@ -445,17 +432,14 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
   }
 
   /**
-   * TODO: Should composite operands be part of iterator operands of
-   * CompiledJunction or should it be part of AllGroupJunction Write a unit Test
-   * for this function.
+   * TODO: Should composite operands be part of iterator operands of CompiledJunction or should it
+   * be part of AllGroupJunction Write a unit Test for this function.
    *
-   * Asif: The iterators which can be considered part of GroupJunction are
-   * those which are exclusively dependent only on the independent
-   * iterator of the group. Any iterator which is ultimately dependent
-   * on more than one independent iterators cannot be assumed to be part of
-   * the GroupJunction, even if one of independent iterator belongs to a
-   * different scope.
-   * 
+   * <p>Asif: The iterators which can be considered part of GroupJunction are those which are
+   * exclusively dependent only on the independent iterator of the group. Any iterator which is
+   * ultimately dependent on more than one independent iterators cannot be assumed to be part of the
+   * GroupJunction, even if one of independent iterator belongs to a different scope.
+   *
    * @param context
    * @return New combination of AbstractCompiledValue(s) in form of CompiledJunction.
    * @throws FunctionDomainException
@@ -463,7 +447,9 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
    * @throws NameResolutionException
    * @throws QueryInvocationTargetException
    */
-  OrganizedOperands organizeOperands(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  OrganizedOperands organizeOperands(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     // get the list of operands to evaluate, and evaluate operands that can use
     // indexes first.
     List evalOperands = new ArrayList(_operands.length);
@@ -512,16 +498,19 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
       } else {
         // If the operand happens to be a Like predicate , this is the point
         // where we can expand as now the structures created are all for the current
-        // execution. We expand only if the current junction is AND because if its 
+        // execution. We expand only if the current junction is AND because if its
         // OR we cannot bring Like at level of OR , because like itself is an AND
         // Also cannot expand for NOT LIKE because CCs generated by CompiledLike with AND
         // will be converted to OR by negation
         CompiledValue expandedOperands[] = null;
 
-        if (operand.getType() == LIKE && this._operator == OQLLexerTokenTypes.LITERAL_and && ((CompiledLike) operand).getOperator() != OQLLexerTokenTypes.TOK_NE) {
-          expandedOperands = ((CompiledLike) operand).getExpandedOperandsWithIndexInfoSetIfAny(context);
+        if (operand.getType() == LIKE
+            && this._operator == OQLLexerTokenTypes.LITERAL_and
+            && ((CompiledLike) operand).getOperator() != OQLLexerTokenTypes.TOK_NE) {
+          expandedOperands =
+              ((CompiledLike) operand).getExpandedOperandsWithIndexInfoSetIfAny(context);
         } else {
-          expandedOperands = new CompiledValue[] { operand };
+          expandedOperands = new CompiledValue[] {operand};
         }
 
         for (CompiledValue expndOperand : expandedOperands) {
@@ -534,13 +523,16 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
             // Condition which is filter evaluable that means necessarily that
             // RHS is dependent on one independent iterator & LHS on the other.
             if (operandEvalAsFilter) {
-              Support.Assert(set.size() == 2, " The no of independent iterators should be equal to 2");
+              Support.Assert(
+                  set.size() == 2, " The no of independent iterators should be equal to 2");
               compositeFilterOpsMap.put(expndOperand, set);
             } else {
               compositeIterOperands.add(expndOperand);
             }
           } else {
-            Support.Assert(set.size() == 1, "The size has to be 1 & cannot be zero as that would mean it is independent");
+            Support.Assert(
+                set.size() == 1,
+                "The size has to be 1 & cannot be zero as that would mean it is independent");
             RuntimeIterator rIter = (RuntimeIterator) set.iterator().next();
             List operandsList = (List) iterToOperands.get(rIter);
             if (operandsList == null) {
@@ -572,7 +564,15 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
      */
     if (isJunctionNeeded) {
       // There exists at least one condition which must have an index available.
-      Filter junction = createJunction(compositeIterOperands, compositeFilterOpsMap, iterToOperands, context, indexCount, evalOperands, indexExistsOnNonJoinOp);
+      Filter junction =
+          createJunction(
+              compositeIterOperands,
+              compositeFilterOpsMap,
+              iterToOperands,
+              context,
+              indexCount,
+              evalOperands,
+              indexExistsOnNonJoinOp);
       // Asif Ensure that independent operands are always at the start
       evalOperands.add(indexCount++, junction);
     } else {
@@ -597,8 +597,7 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
       result.isSingleFilter = true;
     } else {
       CompiledValue[] newOperands = new CompiledValue[indexCount];
-      for (int i = 0; i < indexCount; i++)
-        newOperands[i] = (CompiledValue) evalOperands.get(i);
+      for (int i = 0; i < indexCount; i++) newOperands[i] = (CompiledValue) evalOperands.get(i);
       filterOperands = new CompiledJunction(newOperands, _operator);
     }
     // get iterating operands
@@ -609,8 +608,7 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
     int numIterating = evalOperands.size() - indexCount;
     Support.Assert(_operator == LITERAL_and || numIterating == 0);
     if (numIterating > 0) {
-      if (numIterating == 1)
-        iterateOperands = (CompiledValue) evalOperands.get(indexCount);
+      if (numIterating == 1) iterateOperands = (CompiledValue) evalOperands.get(indexCount);
       else {
         CompiledValue[] newOperands = new CompiledValue[numIterating];
         for (int i = 0; i < numIterating; i++)
@@ -624,43 +622,35 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
   }
 
   /**
-   * Creates a GroupJunction or a RangeJunction based on the operands passed.
-   * The operands are either Filter Operands belonging to single independent
-   * RuntimeIterator or are iter evaluable on the RuntimeIterator[] passed as
-   * parameter. If all the filter evaluable operands use a single Index , than
-   * a RangeJunction is created with iter operand as part of RangeJunction. If
-   * there exists operands using multiple indexes, then a GroupJunction is
-   * created. In that case , the operands using the same index are grouped in a
-   * RangeJunction & that Range Junction becomes part of the GroupJunction. A
-   * GroupJunction may contain one or more RangeJunction
-   * 
-   * @param needsCompacting
-   *                boolean indicating if there is a possibility of
-   *                RangeJunction or not. If needsCompacting is false , then a
-   *                GroupJunction will be formed, without any RangeJunction
-   * @param grpIndpndntItr
-   *                Array of RuntimeIterator which represents the independent
-   *                iterator for the Group. for all cases , except a
-   *                CompositeGroupJunction containing a single GroupJunction ,
-   *                will have a single RuntimeIterator in this array.
-   * @param completeExpnsn
-   *                boolean indicating whether the Group or Range Junction needs
-   *                to be expanded to the query from clause level or the group
-   *                level
-   * @param cv
-   *                Array of CompiledValue containing operands belonging to a
-   *                group
-   * @param sameIndexOperands
-   *                Map object containing Index as the key & as a value an
-   *                Integer object or a List. If it contains an Integer as value
-   *                against Index, it implies that there is only one operand
-   *                which uses that type of index & hence cannot form a
-   *                RangeJunction. If it contains a List then the Lis contains
-   *                the operands which use same index & thus can form a
-   *                RangeJunction
+   * Creates a GroupJunction or a RangeJunction based on the operands passed. The operands are
+   * either Filter Operands belonging to single independent RuntimeIterator or are iter evaluable on
+   * the RuntimeIterator[] passed as parameter. If all the filter evaluable operands use a single
+   * Index , than a RangeJunction is created with iter operand as part of RangeJunction. If there
+   * exists operands using multiple indexes, then a GroupJunction is created. In that case , the
+   * operands using the same index are grouped in a RangeJunction & that Range Junction becomes part
+   * of the GroupJunction. A GroupJunction may contain one or more RangeJunction
+   *
+   * @param needsCompacting boolean indicating if there is a possibility of RangeJunction or not. If
+   *     needsCompacting is false , then a GroupJunction will be formed, without any RangeJunction
+   * @param grpIndpndntItr Array of RuntimeIterator which represents the independent iterator for
+   *     the Group. for all cases , except a CompositeGroupJunction containing a single
+   *     GroupJunction , will have a single RuntimeIterator in this array.
+   * @param completeExpnsn boolean indicating whether the Group or Range Junction needs to be
+   *     expanded to the query from clause level or the group level
+   * @param cv Array of CompiledValue containing operands belonging to a group
+   * @param sameIndexOperands Map object containing Index as the key & as a value an Integer object
+   *     or a List. If it contains an Integer as value against Index, it implies that there is only
+   *     one operand which uses that type of index & hence cannot form a RangeJunction. If it
+   *     contains a List then the Lis contains the operands which use same index & thus can form a
+   *     RangeJunction
    * @return Object of GroupJunction or RangeJunction as the case may be
    */
-  private AbstractGroupOrRangeJunction createGroupJunctionOrRangeJunction(boolean needsCompacting, RuntimeIterator[] grpIndpndntItr, boolean completeExpnsn, CompiledValue[] cv, Map sameIndexOperands) {
+  private AbstractGroupOrRangeJunction createGroupJunctionOrRangeJunction(
+      boolean needsCompacting,
+      RuntimeIterator[] grpIndpndntItr,
+      boolean completeExpnsn,
+      CompiledValue[] cv,
+      Map sameIndexOperands) {
     AbstractGroupOrRangeJunction junction;
     if (needsCompacting) {
       Iterator itr = sameIndexOperands.values().iterator();
@@ -688,7 +678,8 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
             List ops = (List) listOrPosition;
             nullifiedFields += ops.size();
             CompiledValue operands[] = (CompiledValue[]) ops.toArray(new CompiledValue[ops.size()]);
-            rangeJunctions[numRangeJunctions++] = new RangeJunction(this._operator, grpIndpndntItr, completeExpnsn, operands);
+            rangeJunctions[numRangeJunctions++] =
+                new RangeJunction(this._operator, grpIndpndntItr, completeExpnsn, operands);
           }
         }
         int totalOperands = cv.length - nullifiedFields + numRangeJunctions;
@@ -712,7 +703,10 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
     return junction;
   }
 
-  private boolean sortSameIndexOperandsForGroupJunction(CompiledValue cv[], List operandsList, Map sameIndexOperands, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException, FunctionDomainException, QueryInvocationTargetException {
+  private boolean sortSameIndexOperandsForGroupJunction(
+      CompiledValue cv[], List operandsList, Map sameIndexOperands, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException,
+          FunctionDomainException, QueryInvocationTargetException {
     int size = operandsList.size();
     CompiledValue tempOp = null;
     boolean needsCompacting = false;
@@ -726,7 +720,8 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
         indx = ((Indexable) tempOp).getIndexInfo(context);
         //We are now sorting these for joins, therefore we need to weed out the join indexes
         if (!IndexManager.JOIN_OPTIMIZATION || indx.length == 1) {
-          Assert.assertTrue(indx.length == 1, "There should have been just one index for the condition");
+          Assert.assertTrue(
+              indx.length == 1, "There should have been just one index for the condition");
           listOrPosition = sameIndexOperands.get(indx[0]._index);
         }
       }
@@ -771,7 +766,9 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
   }
 
   //This is called only if the CompiledJunction was either independent or filter evaluable.
-  public int getSizeEstimate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public int getSizeEstimate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     if (this.isDependentOnCurrentScope(context)) {
       return Integer.MAX_VALUE;
     } else {
@@ -781,12 +778,25 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
 
   // TODO: Optmize this function further in terms of creation of Arrays &
   // Lists
-  private Filter createJunction(List compositeIterOperands, Map compositeFilterOpsMap, Map iterToOperands, ExecutionContext context, int indexCount, List evalOperands, boolean indexExistsOnNonJoinOp) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
-    Support.Assert(!(iterToOperands.isEmpty() && compositeFilterOpsMap.isEmpty()), " There should not have been any need to create a Junction");
+  private Filter createJunction(
+      List compositeIterOperands,
+      Map compositeFilterOpsMap,
+      Map iterToOperands,
+      ExecutionContext context,
+      int indexCount,
+      List evalOperands,
+      boolean indexExistsOnNonJoinOp)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
+    Support.Assert(
+        !(iterToOperands.isEmpty() && compositeFilterOpsMap.isEmpty()),
+        " There should not have been any need to create a Junction");
     CompiledValue junction = null;
     int size;
     /*---------- Create only a  GroupJunction */
-    if (iterToOperands.size() == 1 && (compositeFilterOpsMap.isEmpty() || (indexExistsOnNonJoinOp && IndexManager.JOIN_OPTIMIZATION))) {
+    if (iterToOperands.size() == 1
+        && (compositeFilterOpsMap.isEmpty()
+            || (indexExistsOnNonJoinOp && IndexManager.JOIN_OPTIMIZATION))) {
       if ((indexExistsOnNonJoinOp && IndexManager.JOIN_OPTIMIZATION)) {
         // For the optimization we will want to add the compositeFilterOpsMap 848
         // without the optimization we only fall into here if it's empty anyways, but have not tested the removal of this if clause
@@ -835,8 +845,15 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
       Map sameIndexOperands = new HashMap(size);
       CompiledValue cv[] = new CompiledValue[size];
       //Enable only for AND junction
-      boolean needsCompacting = sortSameIndexOperandsForGroupJunction(cv, operandsList, sameIndexOperands, context);
-      junction = createGroupJunctionOrRangeJunction(needsCompacting, new RuntimeIterator[] { (RuntimeIterator) entry.getKey() }, true /* need a Complete expansion */, cv, sameIndexOperands);
+      boolean needsCompacting =
+          sortSameIndexOperandsForGroupJunction(cv, operandsList, sameIndexOperands, context);
+      junction =
+          createGroupJunctionOrRangeJunction(
+              needsCompacting,
+              new RuntimeIterator[] {(RuntimeIterator) entry.getKey()},
+              true /* need a Complete expansion */,
+              cv,
+              sameIndexOperands);
     }
     /*
      * Asif : An AllGroupJunction or a CompositeGroupJunction can get created.
@@ -941,7 +958,8 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
           Object listOrPosition = null;
           if (isFilterevaluable) {
             indx = ((Indexable) tempOp).getIndexInfo(context);
-            Assert.assertTrue(indx.length == 1, "There should have been just one index for the condition");
+            Assert.assertTrue(
+                indx.length == 1, "There should have been just one index for the condition");
             listOrPosition = sameIndexOperands.get(indx[0]._index);
           }
           if (listOrPosition != null) {
@@ -980,7 +998,13 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
           }
         } else {
           RuntimeIterator grpIndpndtItr = (RuntimeIterator) entry.getKey();
-          AbstractGroupOrRangeJunction gj = createGroupJunctionOrRangeJunction(needsCompacting, new RuntimeIterator[] { (RuntimeIterator) entry.getKey() }, false/* Expand only to Group Level */, cv, sameIndexOperands);
+          AbstractGroupOrRangeJunction gj =
+              createGroupJunctionOrRangeJunction(
+                  needsCompacting,
+                  new RuntimeIterator[] {(RuntimeIterator) entry.getKey()},
+                  false /* Expand only to Group Level */,
+                  cv,
+                  sameIndexOperands);
           CompositeGroupJunction cgj = null;
           if ((cgj = (CompositeGroupJunction) tempMap.get(grpIndpndtItr)) != null) {
             cgj.addGroupOrRangeJunction(gj);
@@ -1032,7 +1056,12 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
         compositeIterOperands.toArray(newOps);
         // Asif : If gjTemp is a RangeJunction, we will get an instance of
         // RangeJunction else we will get an instance of GroupJunction.
-        junction = gjTemp.createNewOfSameType(this._operator, gjTemp.getIndependentIteratorForGroup(), true/* The expansion needs to be complete */, newOps);
+        junction =
+            gjTemp.createNewOfSameType(
+                this._operator,
+                gjTemp.getIndependentIteratorForGroup(),
+                true /* The expansion needs to be complete */,
+                newOps);
 
       } else {
         gjs.addAll(cgjs);
@@ -1044,45 +1073,53 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
 
   // Asif : This function provides package visbility for testing the
   // output of organizeOperands function.
-  OrganizedOperands testOrganizedOperands(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  OrganizedOperands testOrganizedOperands(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     return organizeOperands(context);
   }
 
   @Override
-  public boolean isProjectionEvaluationAPossibility(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public boolean isProjectionEvaluationAPossibility(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     for (int i = 0; i < this._operands.length; ++i) {
       // LIKE gives rise to a JUNCTION in CompiledLike whether wildcard is present or not
-      if ((this._operands[i].getType() == JUNCTION || this._operands[i].getType() == LIKE) && this._operands[i].getPlanInfo(context).evalAsFilter) {
+      if ((this._operands[i].getType() == JUNCTION || this._operands[i].getType() == LIKE)
+          && this._operands[i].getPlanInfo(context).evalAsFilter) {
         return false;
       }
     }
     return true;
   }
 
-  /* 
+  /*
    * This method checks the limit applicability on index intermediate results for
    * junctions and optimizes the limit on index intermediate results ONLY if ONE index
    * is used for whole query and all conditions in where clause use that index. Look at
    * the call hierarchy of this function. There are two cases:
-   * 
+   *
    * Literal_OR: A junction with OR will contain operands which are CompiledComparison or
    * CompiledJunction (or subjunction). we recursively check if all of those use the same index
    * and if ANY one of those comparisons or subjunctions does not use the index, it retruns false.
-   * 
+   *
    * Literal_AND: If we get combination of comparisons and subjunctions then limit is NOT
-   * applicable on index results. Like, "where ID != 10 AND (ID < 5 OR ID > 10) LIMIT 5". 
+   * applicable on index results. Like, "where ID != 10 AND (ID < 5 OR ID > 10) LIMIT 5".
    * If we get only comparisons ONLY then if all comparisons use the same index then limit
    * is applicable and this returns true. Like, "where ID != 10 AND (ID < 5 AND ID > 10) LIMIT 5".
-   * 
+   *
    */
   @Override
-  public boolean isLimitApplicableAtIndexLevel(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public boolean isLimitApplicableAtIndexLevel(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     if (this._operator == LITERAL_or) {
       //There is a slight inefficiency in the sense that if the subjunction ( say AND) cannot apply limit,
       // then limit would not be applied at remaining conditions of OR. But since we have single flag
       //governing the behaviour of applying limit at index level, we cannot make it true for specific clauses
       for (int i = 0; i < this._operands.length; ++i) {
-        if (!this._operands[i].getPlanInfo(context).evalAsFilter || ((Filter) this._operands[i]).isLimitApplicableAtIndexLevel(context)) {
+        if (!this._operands[i].getPlanInfo(context).evalAsFilter
+            || ((Filter) this._operands[i]).isLimitApplicableAtIndexLevel(context)) {
           return false;
         }
       }
@@ -1095,7 +1132,8 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
       // we can for the time being return true if there exists atleast one indexable condition
       boolean foundIndex = false;
       for (int i = 0; i < this._operands.length; ++i) {
-        if (this._operands[i].getPlanInfo(context).evalAsFilter && this._operands[i].getType() == JUNCTION) {
+        if (this._operands[i].getPlanInfo(context).evalAsFilter
+            && this._operands[i].getType() == JUNCTION) {
           return false;
         } else if (this._operands[i].getPlanInfo(context).evalAsFilter) {
           foundIndex = true;
@@ -1106,7 +1144,10 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
   }
 
   @Override
-  public boolean isOrderByApplicableAtIndexLevel(ExecutionContext context, String canonicalizedOrderByClause) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public boolean isOrderByApplicableAtIndexLevel(
+      ExecutionContext context, String canonicalizedOrderByClause)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     if (this._operator == LITERAL_and) {
       //Set<IndexProtocol> usedIndex = new HashSet<IndexProtocol>();
       boolean foundRightIndex = false;
@@ -1116,8 +1157,10 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
           return false;
         } else if (pi.evalAsFilter) {
           if (!foundRightIndex) {
-            IndexProtocol ip = (IndexProtocol) this._operands[i].getPlanInfo(context).indexes.get(0);
-            if (ip.getCanonicalizedIndexedExpression().equals(canonicalizedOrderByClause) && pi.isPreferred) {
+            IndexProtocol ip =
+                (IndexProtocol) this._operands[i].getPlanInfo(context).indexes.get(0);
+            if (ip.getCanonicalizedIndexedExpression().equals(canonicalizedOrderByClause)
+                && pi.isPreferred) {
               foundRightIndex = true;
             }
           }
@@ -1136,7 +1179,7 @@ public class CompiledJunction extends AbstractCompiledValue implements Negatable
    * class CGJData { RuntimeIterator [] indpndItrs = null; List iterOperands =
    * null; List groupJunctions = null; CompiledValue []
    * compositeCompiledComparisons = null;
-   * 
+   *
    * CGJData(RuntimeIterator [] indpndItrs, List iterOperands,List
    * groupJunctions, CompiledValue [] compositeCompiledComparisons) {
    * this.indpndItrs = indpndItrs; this.iterOperands = iterOperands;

@@ -34,21 +34,18 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Confirm that bug 34583 is fixed. Cause of bug is recursion is
- * entries iterator that causes stack overflow.
+ * Confirm that bug 34583 is fixed. Cause of bug is recursion is entries iterator that causes stack
+ * overflow.
  */
 @Category(IntegrationTest.class)
 public class Bug34583JUnitTest {
 
-  public Bug34583JUnitTest() {
-  }
+  public Bug34583JUnitTest() {}
 
-  public void setup() {
-  }
+  public void setup() {}
 
   @After
-  public void tearDown() {
-  }
+  public void tearDown() {}
 
   @Test
   public void testBunchOfInvalidEntries() throws Exception {

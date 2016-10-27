@@ -62,9 +62,7 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
     return CacheXml.VERSION_7_0;
   }
 
-  /**
-   * Added to test the scenario of defect #50600.
-   */
+  /** Added to test the scenario of defect #50600. */
   @Test
   public void testAsyncEventQueueWithGatewayEventFilter() {
     getSystem();
@@ -93,7 +91,8 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
     assertNotNull(c);
 
     Set<AsyncEventQueue> asyncEventQueuesOnCache = c.getAsyncEventQueues();
-    assertTrue("Size of asyncEventQueues should be greater than 0", asyncEventQueuesOnCache.size() > 0);
+    assertTrue(
+        "Size of asyncEventQueues should be greater than 0", asyncEventQueuesOnCache.size() > 0);
 
     for (AsyncEventQueue asyncEventQueueOnCache : asyncEventQueuesOnCache) {
       CacheXml70DUnitTest.validateAsyncEventQueue(asyncEventQueue, asyncEventQueueOnCache);
@@ -207,8 +206,7 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
   }
 
   public static class MyGatewayEventFilter implements GatewayEventFilter, Declarable {
-    public void afterAcknowledgement(GatewayQueueEvent event) {
-    }
+    public void afterAcknowledgement(GatewayQueueEvent event) {}
 
     public boolean beforeEnqueue(GatewayQueueEvent event) {
       return true;
@@ -218,20 +216,21 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
       return true;
     }
 
-    public void close() {
-    }
+    public void close() {}
 
-    public void init(Properties properties) {
-    }
+    public void init(Properties properties) {}
   }
 
   static void validateGatewayReceiver(GatewayReceiver receiver1, GatewayReceiver gatewayReceiver) {
     assertEquals(receiver1.getHost(), gatewayReceiver.getHost());
     assertEquals(receiver1.getStartPort(), gatewayReceiver.getStartPort());
     assertEquals(receiver1.getEndPort(), gatewayReceiver.getEndPort());
-    assertEquals(receiver1.getMaximumTimeBetweenPings(), gatewayReceiver.getMaximumTimeBetweenPings());
+    assertEquals(
+        receiver1.getMaximumTimeBetweenPings(), gatewayReceiver.getMaximumTimeBetweenPings());
     assertEquals(receiver1.getSocketBufferSize(), gatewayReceiver.getSocketBufferSize());
-    assertEquals(receiver1.getGatewayTransportFilters().size(), gatewayReceiver.getGatewayTransportFilters().size());
+    assertEquals(
+        receiver1.getGatewayTransportFilters().size(),
+        gatewayReceiver.getGatewayTransportFilters().size());
   }
 
   static void validateGatewaySender(GatewaySender sender1, GatewaySender gatewaySender) {
@@ -246,14 +245,19 @@ public class CacheXml70GatewayDUnitTest extends CacheXmlTestCase {
     assertEquals(sender1.isDiskSynchronous(), gatewaySender.isDiskSynchronous());
     assertEquals(sender1.getMaximumQueueMemory(), gatewaySender.getMaximumQueueMemory());
     assertEquals(sender1.getAlertThreshold(), gatewaySender.getAlertThreshold());
-    assertEquals(sender1.getGatewayEventFilters().size(), gatewaySender.getGatewayEventFilters().size());
-    assertEquals(sender1.getGatewayTransportFilters().size(), gatewaySender.getGatewayTransportFilters().size());
+    assertEquals(
+        sender1.getGatewayEventFilters().size(), gatewaySender.getGatewayEventFilters().size());
+    assertEquals(
+        sender1.getGatewayTransportFilters().size(),
+        gatewaySender.getGatewayTransportFilters().size());
 
     boolean isParallel = sender1.isParallel();
     if (isParallel) {
-      assertTrue("sender should be instanceof Creation", sender1 instanceof ParallelGatewaySenderCreation);
+      assertTrue(
+          "sender should be instanceof Creation", sender1 instanceof ParallelGatewaySenderCreation);
     } else {
-      assertTrue("sender should be instanceof Creation", sender1 instanceof SerialGatewaySenderCreation);
+      assertTrue(
+          "sender should be instanceof Creation", sender1 instanceof SerialGatewaySenderCreation);
     }
   }
 }

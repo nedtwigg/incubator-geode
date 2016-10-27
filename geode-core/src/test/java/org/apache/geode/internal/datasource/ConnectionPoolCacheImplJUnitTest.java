@@ -16,7 +16,7 @@
  */
 /*
  * ConnectionPoolCacheImplJUnitTest.java JUnit based test
- * 
+ *
  * Created on March 3, 2005, 5:26 PM
  */
 package org.apache.geode.internal.datasource;
@@ -63,7 +63,8 @@ public class ConnectionPoolCacheImplJUnitTest {
     try {
       props = new Properties();
       props.setProperty(MCAST_PORT, "0");
-      String path = TestUtil.getResourcePath(ConnectionPoolCacheImplJUnitTest.class, "/jta/cachejta.xml");
+      String path =
+          TestUtil.getResourcePath(ConnectionPoolCacheImplJUnitTest.class, "/jta/cachejta.xml");
       props.setProperty(CACHE_XML_FILE, path);
       ds1 = DistributedSystem.connect(props);
       cache = CacheFactory.create(ds1);
@@ -84,7 +85,8 @@ public class ConnectionPoolCacheImplJUnitTest {
     GemFireBasicDataSource ds = (GemFireBasicDataSource) ctx.lookup("java:/SimpleDataSource");
     Connection conn = ds.getConnection();
     if (conn == null)
-      fail("DataSourceFactoryTest-testGetSimpleDataSource() Error in creating the GemFireBasicDataSource");
+      fail(
+          "DataSourceFactoryTest-testGetSimpleDataSource() Error in creating the GemFireBasicDataSource");
   }
 
   @Test
@@ -104,7 +106,8 @@ public class ConnectionPoolCacheImplJUnitTest {
 
   public static void createPool() throws Exception {
     Context ctx = cache.getJNDIContext();
-    GemFireConnPooledDataSource ds = (GemFireConnPooledDataSource) ctx.lookup("java:/PooledDataSource");
+    GemFireConnPooledDataSource ds =
+        (GemFireConnPooledDataSource) ctx.lookup("java:/PooledDataSource");
     provider = (GemFireConnectionPoolManager) ds.getConnectionProvider();
     poolCache = (ConnectionPoolCacheImpl) provider.getConnectionPoolCache();
     maxPoolSize = poolCache.getMaxLimit();
@@ -146,8 +149,7 @@ public class ConnectionPoolCacheImplJUnitTest {
           while (true) {
             newTime = System.currentTimeMillis();
             duration = newTime - birthTime;
-            if (duration > 5)
-              break;
+            if (duration > 5) break;
           }
           //          display = numC + 1;
           //System.out.println(" Returning connection " + display + "from "+

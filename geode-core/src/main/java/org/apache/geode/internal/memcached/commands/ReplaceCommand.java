@@ -26,14 +26,11 @@ import org.apache.geode.internal.memcached.ResponseStatus;
 import org.apache.geode.internal.memcached.ValueWrapper;
 
 /**
- * general format of the command is:<br/>
+ * general format of the command is:<br>
  * <code>
  * &lt;command name&gt; &lt;key&gt; &lt;flags&gt; &lt;exptime&gt; &lt;bytes&gt; [noreply]\r\n
- * </code><br/>
- * 
- * "replace" means "store this data, but only if the server *does*
- * already hold data for this key".
- * 
+ * </code><br>
+ * "replace" means "store this data, but only if the server *does* already hold data for this key".
  */
 public class ReplaceCommand extends StorageCommand {
 
@@ -51,7 +48,8 @@ public class ReplaceCommand extends StorageCommand {
   }
 
   @Override
-  public ByteBuffer processBinaryStorageCommand(Object key, byte[] value, long cas, int flags, Cache cache, RequestReader request) {
+  public ByteBuffer processBinaryStorageCommand(
+      Object key, byte[] value, long cas, int flags, Cache cache, RequestReader request) {
     ByteBuffer response = request.getResponse();
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
     ValueWrapper val = ValueWrapper.getWrappedValue(value, flags);
@@ -91,9 +89,7 @@ public class ReplaceCommand extends StorageCommand {
     return response;
   }
 
-  /**
-   * Overridden by Q command
-   */
+  /** Overridden by Q command */
   protected boolean isQuiet() {
     return false;
   }

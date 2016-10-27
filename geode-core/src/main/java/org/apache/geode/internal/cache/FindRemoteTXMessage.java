@@ -44,18 +44,17 @@ import org.apache.geode.internal.cache.partitioned.PartitionMessage;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * Message to all the peers to ask which member hosts the transaction
- * for the given transaction id
+ * Message to all the peers to ask which member hosts the transaction for the given transaction id
  */
-public class FindRemoteTXMessage extends HighPriorityDistributionMessage implements MessageWithReply {
+public class FindRemoteTXMessage extends HighPriorityDistributionMessage
+    implements MessageWithReply {
 
   private static final Logger logger = LogService.getLogger();
 
   private TXId txId;
   private int processorId;
 
-  public FindRemoteTXMessage() {
-  }
+  public FindRemoteTXMessage() {}
 
   public FindRemoteTXMessage(TXId txid, int processorId, Set recipients) {
     super();
@@ -66,15 +65,18 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
 
   /**
    * Asks all the peers if they host a transaction for the given txId
+   *
    * @param txId the transaction id
-   * @return reply processor containing memberId of the member that hosts
-   * the transaction and a recently committed transactionMessage if any
+   * @return reply processor containing memberId of the member that hosts the transaction and a
+   *     recently committed transactionMessage if any
    */
   public static FindRemoteTXMessageReplyProcessor send(Cache cache, TXId txId) {
-    final InternalDistributedSystem system = (InternalDistributedSystem) cache.getDistributedSystem();
+    final InternalDistributedSystem system =
+        (InternalDistributedSystem) cache.getDistributedSystem();
     DM dm = system.getDistributionManager();
     Set recipients = dm.getOtherDistributionManagerIds();
-    FindRemoteTXMessageReplyProcessor processor = new FindRemoteTXMessageReplyProcessor(dm, recipients, txId);
+    FindRemoteTXMessageReplyProcessor processor =
+        new FindRemoteTXMessageReplyProcessor(dm, recipients, txId);
     FindRemoteTXMessage msg = new FindRemoteTXMessage(txId, processor.getProcessorId(), recipients);
     dm.putOutgoing(msg);
     return processor;
@@ -93,7 +95,8 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
         logger.debug("processing {}", this);
       }
       FindRemoteTXMessageReply reply = new FindRemoteTXMessageReply();
-      GemFireCacheImpl cache = GemFireCacheImpl.getInstance();//.getExisting("Looking up CacheTransactionManager");
+      GemFireCacheImpl cache =
+          GemFireCacheImpl.getInstance(); //.getExisting("Looking up CacheTransactionManager");
       if (cache != null) {
         TXManagerImpl mgr = (TXManagerImpl) cache.getCacheTransactionManager();
         mgr.waitForCompletingTransaction(txId); // in case there is a lost commit going on
@@ -114,7 +117,11 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
       getReplySender(dm).putOutgoing(reply);
       sendReply = false;
       if (logger.isDebugEnabled()) {
-        logger.debug("TX: FoundRemoteTXMessage: isHostingTx for txid:{}? {} isPartialCommit? {}", txId, reply.isHostingTx, reply.isPartialCommitMessage);
+        logger.debug(
+            "TX: FoundRemoteTXMessage: isHostingTx for txid:{}? {} isPartialCommit? {}",
+            txId,
+            reply.isHostingTx,
+            reply.isPartialCommitMessage);
       }
     } catch (VirtualMachineError err) {
       SystemFailure.initiateFailure(err);
@@ -147,9 +154,17 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
   public String toString() {
     StringBuffer buff = new StringBuffer();
     String className = getClass().getName();
-    //    className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo> more generic version 
-    buff.append(className.substring(className.indexOf(PartitionMessage.PN_TOKEN) + PartitionMessage.PN_TOKEN.length())); // partition.<foo>
-    buff.append("(txId=").append(this.txId).append("; sender=").append(getSender()).append("; processorId=").append(this.processorId);
+    //    className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo> more generic version
+    buff.append(
+        className.substring(
+            className.indexOf(PartitionMessage.PN_TOKEN)
+                + PartitionMessage.PN_TOKEN.length())); // partition.<foo>
+    buff.append("(txId=")
+        .append(this.txId)
+        .append("; sender=")
+        .append(getSender())
+        .append("; processorId=")
+        .append(this.processorId);
     buff.append(")");
     return buff.toString();
   }
@@ -193,9 +208,7 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
       super.process(msg);
     }
 
-    /**
-     * @return the member that is hosting the tx
-     */
+    /** @return the member that is hosting the tx */
     public InternalDistributedMember getHostingMember() {
       return hostingMember;
     }
@@ -206,9 +219,8 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
     }
 
     /**
-     * @return if hosting member is null, the rebuilt TXCommitMessage
-     *  from partial TXCommitMessages distributed to peers during
-     *  commit processing
+     * @return if hosting member is null, the rebuilt TXCommitMessage from partial TXCommitMessages
+     *     distributed to peers during commit processing
      */
     public TXCommitMessage getTxCommitMessage() {
       if (this.txCommit != null) {
@@ -231,18 +243,16 @@ public class FindRemoteTXMessage extends HighPriorityDistributionMessage impleme
   }
 
   /**
-   * Reply message for {@link FindRemoteTXMessage}. Reply is a boolean
-   * to indicate if the recipient hosts or has recently hosted the tx state.
-   * If the member did host the txState previously, reply contains
-   * the complete TXCommitMessage representing the tx.
+   * Reply message for {@link FindRemoteTXMessage}. Reply is a boolean to indicate if the recipient
+   * hosts or has recently hosted the tx state. If the member did host the txState previously, reply
+   * contains the complete TXCommitMessage representing the tx.
    */
   public static class FindRemoteTXMessageReply extends ReplyMessage {
     protected boolean isHostingTx;
     protected boolean isPartialCommitMessage;
     protected TXCommitMessage txCommitMessage;
 
-    public FindRemoteTXMessageReply() {
-    }
+    public FindRemoteTXMessageReply() {}
 
     @Override
     public int getDSFID() {

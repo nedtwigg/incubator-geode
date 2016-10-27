@@ -23,8 +23,7 @@ import org.apache.geode.cache.query.internal.QCompiler;
 public class ASTIdentifier extends GemFireAST {
   private static final long serialVersionUID = -7534067808767107958L;
 
-  public ASTIdentifier() {
-  }
+  public ASTIdentifier() {}
 
   public ASTIdentifier(Token t) {
     super(t);
@@ -34,5 +33,4 @@ public class ASTIdentifier extends GemFireAST {
   public void compile(QCompiler compiler) {
     compiler.pushId(getText());
   }
-
 }

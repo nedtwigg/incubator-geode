@@ -33,11 +33,7 @@ import java.net.UnknownHostException;
 import java.util.*;
 import java.util.zip.GZIPOutputStream;
 
-/**
- * StatArchiveWriter provides APIs to write statistic snapshots to an archive
- * file.
- *
- */
+/** StatArchiveWriter provides APIs to write statistic snapshots to an archive file. */
 public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
 
   private static final Logger logger = LogService.getLogger();
@@ -46,7 +42,8 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
   private static volatile String traceStatisticsTypeName = null;
   private static volatile int traceResourceInstId = -1;
 
-  private final boolean trace = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "stats.debug.traceStatArchiveWriter");
+  private final boolean trace =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "stats.debug.traceStatArchiveWriter");
 
   private final Set<ResourceInstance> sampleWrittenForResources = new HashSet<ResourceInstance>();
   private final Set<ResourceInstance> addedResources = new HashSet<ResourceInstance>();
@@ -61,6 +58,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
 
   /**
    * Opens a StatArchiveWriter that will archive to the specified file.
+   *
    * @throws GemFireIOException if <code>archiveName</code> can not be written to
    */
   public StatArchiveWriter(StatArchiveDescriptor archiveDescriptor) {
@@ -68,15 +66,24 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
 
     if (archiveDescriptor.getArchiveName().endsWith(".gz")) {
       try {
-        this.outStream = new GZIPOutputStream(new FileOutputStream(archiveDescriptor.getArchiveName()), 32768);
+        this.outStream =
+            new GZIPOutputStream(new FileOutputStream(archiveDescriptor.getArchiveName()), 32768);
       } catch (IOException ex) {
-        throw new GemFireIOException(LocalizedStrings.StatArchiveWriter_COULD_NOT_OPEN_0.toLocalizedString(archiveDescriptor.getArchiveName()), ex);
+        throw new GemFireIOException(
+            LocalizedStrings.StatArchiveWriter_COULD_NOT_OPEN_0.toLocalizedString(
+                archiveDescriptor.getArchiveName()),
+            ex);
       }
     } else {
       try {
-        this.outStream = new BufferedOutputStream(new FileOutputStream(archiveDescriptor.getArchiveName()), 32768);
+        this.outStream =
+            new BufferedOutputStream(
+                new FileOutputStream(archiveDescriptor.getArchiveName()), 32768);
       } catch (IOException ex) {
-        throw new GemFireIOException(LocalizedStrings.StatArchiveWriter_COULD_NOT_OPEN_0.toLocalizedString(archiveDescriptor.getArchiveName()), ex);
+        throw new GemFireIOException(
+            LocalizedStrings.StatArchiveWriter_COULD_NOT_OPEN_0.toLocalizedString(
+                archiveDescriptor.getArchiveName()),
+            ex);
       }
     }
 
@@ -122,6 +129,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
 
   /**
    * Closes the statArchiver by flushing its data to disk a closing its output stream.
+   *
    * @throws GemFireIOException if the archive file could not be closed.
    */
   public final void close() {
@@ -138,7 +146,9 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
         this.traceOutStream.close();
       }
     } catch (IOException ex) {
-      throw new GemFireIOException(LocalizedStrings.StatArchiveWriter_COULD_NOT_CLOSE_STATARCHIVER_FILE.toLocalizedString(), ex);
+      throw new GemFireIOException(
+          LocalizedStrings.StatArchiveWriter_COULD_NOT_CLOSE_STATARCHIVER_FILE.toLocalizedString(),
+          ex);
     }
     if (getSampleCount() == 0) {
       // If we are closing an empty file go ahead and delete it.
@@ -148,14 +158,17 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     }
   }
 
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE", justification = "Best effort attempt to delete a GFS file without any samples.")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE",
+    justification = "Best effort attempt to delete a GFS file without any samples."
+  )
   private static void deleteFileIfPossible(File file) {
     file.delete();
   }
 
   /**
-   * Returns the number of bytes written so far to this archive.
-   * This does not take compression into account.
+   * Returns the number of bytes written so far to this archive. This does not take compression into
+   * account.
    */
   public final long bytesWritten() {
     return this.dataOut.getBytesWritten();
@@ -189,7 +202,11 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
 
   private void writeHeader(long initialDate, StatArchiveDescriptor archiveDescriptor) {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeHeader initialDate={} archiveDescriptor={}", initialDate, archiveDescriptor);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "StatArchiveWriter#writeHeader initialDate={} archiveDescriptor={}",
+          initialDate,
+          archiveDescriptor);
     }
     try {
       this.dataOut.writeByte(HEADER_TOKEN);
@@ -207,30 +224,53 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
 
       if (this.trace) {
         this.traceDataOut.println("writeHeader traceStatisticsName: " + traceStatisticsName);
-        this.traceDataOut.println("writeHeader traceStatisticsTypeName: " + traceStatisticsTypeName);
+        this.traceDataOut.println(
+            "writeHeader traceStatisticsTypeName: " + traceStatisticsTypeName);
         this.traceDataOut.println("writeHeader#writeByte HEADER_TOKEN: " + HEADER_TOKEN);
         this.traceDataOut.println("writeHeader#writeByte ARCHIVE_VERSION: " + ARCHIVE_VERSION);
         this.traceDataOut.println("writeHeader#writeLong initialDate: " + initialDate);
-        this.traceDataOut.println("writeHeader#writeLong archiveDescriptor.getSystemId(): " + archiveDescriptor.getSystemId());
-        this.traceDataOut.println("writeHeader#writeLong archiveDescriptor.getSystemStartTime(): " + archiveDescriptor.getSystemStartTime());
-        this.traceDataOut.println("writeHeader#writeInt timeZone.getRawOffset(): " + timeZone.getRawOffset());
+        this.traceDataOut.println(
+            "writeHeader#writeLong archiveDescriptor.getSystemId(): "
+                + archiveDescriptor.getSystemId());
+        this.traceDataOut.println(
+            "writeHeader#writeLong archiveDescriptor.getSystemStartTime(): "
+                + archiveDescriptor.getSystemStartTime());
+        this.traceDataOut.println(
+            "writeHeader#writeInt timeZone.getRawOffset(): " + timeZone.getRawOffset());
         this.traceDataOut.println("writeHeader#writeUTF timeZone.getID(): " + timeZone.getID());
-        this.traceDataOut.println("writeHeader#writeUTF archiveDescriptor.getSystemDirectoryPath(): " + archiveDescriptor.getSystemDirectoryPath());
-        this.traceDataOut.println("writeHeader#writeUTF archiveDescriptor.getProductDescription(): " + archiveDescriptor.getProductDescription());
+        this.traceDataOut.println(
+            "writeHeader#writeUTF archiveDescriptor.getSystemDirectoryPath(): "
+                + archiveDescriptor.getSystemDirectoryPath());
+        this.traceDataOut.println(
+            "writeHeader#writeUTF archiveDescriptor.getProductDescription(): "
+                + archiveDescriptor.getProductDescription());
         this.traceDataOut.println("writeHeader#writeUTF getOSInfo(): " + getOSInfo());
         this.traceDataOut.println("writeHeader#writeUTF getMachineInfo(): " + getMachineInfo());
       }
     } catch (IOException ex) {
-      throw new GemFireIOException(LocalizedStrings.StatArchiveWriter_FAILED_WRITING_HEADER_TO_STATISTIC_ARCHIVE.toLocalizedString(), ex);
+      throw new GemFireIOException(
+          LocalizedStrings.StatArchiveWriter_FAILED_WRITING_HEADER_TO_STATISTIC_ARCHIVE
+              .toLocalizedString(),
+          ex);
     }
   }
 
   public void allocatedResourceType(ResourceType resourceType) {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#allocatedResourceType resourceType={}", resourceType);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "StatArchiveWriter#allocatedResourceType resourceType={}",
+          resourceType);
     }
     if (resourceType.getStatisticDescriptors().length >= ILLEGAL_STAT_OFFSET) {
-      throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_COULD_NOT_ARCHIVE_TYPE_0_BECAUSE_IT_HAD_MORE_THAN_1_STATISTICS.toLocalizedString(new Object[] { resourceType.getStatisticsType().getName(), Integer.valueOf(ILLEGAL_STAT_OFFSET - 1) }));
+      throw new InternalGemFireException(
+          LocalizedStrings
+              .StatArchiveWriter_COULD_NOT_ARCHIVE_TYPE_0_BECAUSE_IT_HAD_MORE_THAN_1_STATISTICS
+              .toLocalizedString(
+                  new Object[] {
+                    resourceType.getStatisticsType().getName(),
+                    Integer.valueOf(ILLEGAL_STAT_OFFSET - 1)
+                  }));
     }
     // write the type to the archive
     try {
@@ -240,11 +280,19 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       this.dataOut.writeUTF(resourceType.getStatisticsType().getDescription());
       StatisticDescriptor[] stats = resourceType.getStatisticDescriptors();
       this.dataOut.writeShort(stats.length);
-      if (this.trace && (traceStatisticsTypeName == null || traceStatisticsTypeName.equals(resourceType.getStatisticsType().getName()))) {
-        this.traceDataOut.println("allocatedResourceType#writeByte RESOURCE_TYPE_TOKEN: " + RESOURCE_TYPE_TOKEN);
-        this.traceDataOut.println("allocatedResourceType#writeInt resourceType.getId(): " + resourceType.getId());
-        this.traceDataOut.println("allocatedResourceType#writeUTF resourceType.getStatisticsType().getName(): " + resourceType.getStatisticsType().getName());
-        this.traceDataOut.println("allocatedResourceType#writeUTF resourceType.getStatisticsType().getDescription(): " + resourceType.getStatisticsType().getDescription());
+      if (this.trace
+          && (traceStatisticsTypeName == null
+              || traceStatisticsTypeName.equals(resourceType.getStatisticsType().getName()))) {
+        this.traceDataOut.println(
+            "allocatedResourceType#writeByte RESOURCE_TYPE_TOKEN: " + RESOURCE_TYPE_TOKEN);
+        this.traceDataOut.println(
+            "allocatedResourceType#writeInt resourceType.getId(): " + resourceType.getId());
+        this.traceDataOut.println(
+            "allocatedResourceType#writeUTF resourceType.getStatisticsType().getName(): "
+                + resourceType.getStatisticsType().getName());
+        this.traceDataOut.println(
+            "allocatedResourceType#writeUTF resourceType.getStatisticsType().getDescription(): "
+                + resourceType.getStatisticsType().getDescription());
         this.traceDataOut.println("allocatedResourceType#writeShort stats.length: " + stats.length);
       }
       for (int i = 0; i < stats.length; i++) {
@@ -254,27 +302,55 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
         this.dataOut.writeBoolean(stats[i].isLargerBetter());
         this.dataOut.writeUTF(stats[i].getUnit());
         this.dataOut.writeUTF(stats[i].getDescription());
-        if (this.trace && (traceStatisticsTypeName == null || traceStatisticsTypeName.equals(resourceType.getStatisticsType().getName()))) {
-          this.traceDataOut.println("allocatedResourceType#writeUTF stats[i].getName(): " + stats[i].getName());
-          this.traceDataOut.println("allocatedResourceType#writeByte ((StatisticDescriptorImpl)stats[i]).getTypeCode(): " + ((StatisticDescriptorImpl) stats[i]).getTypeCode());
-          this.traceDataOut.println("allocatedResourceType#writeBoolean stats[i].isCounter(): " + stats[i].isCounter());
-          this.traceDataOut.println("allocatedResourceType#writeBoolean stats[i].isLargerBetter(): " + stats[i].isLargerBetter());
-          this.traceDataOut.println("allocatedResourceType#writeUTF stats[i].getUnit(): " + stats[i].getUnit());
-          this.traceDataOut.println("allocatedResourceType#writeUTF stats[i].getDescription(): " + stats[i].getDescription());
+        if (this.trace
+            && (traceStatisticsTypeName == null
+                || traceStatisticsTypeName.equals(resourceType.getStatisticsType().getName()))) {
+          this.traceDataOut.println(
+              "allocatedResourceType#writeUTF stats[i].getName(): " + stats[i].getName());
+          this.traceDataOut.println(
+              "allocatedResourceType#writeByte ((StatisticDescriptorImpl)stats[i]).getTypeCode(): "
+                  + ((StatisticDescriptorImpl) stats[i]).getTypeCode());
+          this.traceDataOut.println(
+              "allocatedResourceType#writeBoolean stats[i].isCounter(): " + stats[i].isCounter());
+          this.traceDataOut.println(
+              "allocatedResourceType#writeBoolean stats[i].isLargerBetter(): "
+                  + stats[i].isLargerBetter());
+          this.traceDataOut.println(
+              "allocatedResourceType#writeUTF stats[i].getUnit(): " + stats[i].getUnit());
+          this.traceDataOut.println(
+              "allocatedResourceType#writeUTF stats[i].getDescription(): "
+                  + stats[i].getDescription());
         }
       }
     } catch (IOException ex) {
-      throw new GemFireIOException(LocalizedStrings.StatArchiveWriter_FAILED_WRITING_NEW_RESOURCE_TYPE_TO_STATISTIC_ARCHIVE.toLocalizedString(), ex);
+      throw new GemFireIOException(
+          LocalizedStrings.StatArchiveWriter_FAILED_WRITING_NEW_RESOURCE_TYPE_TO_STATISTIC_ARCHIVE
+              .toLocalizedString(),
+          ex);
     }
   }
 
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", justification = "This is only for debugging and there is never more than one instance being traced because there is only one stat sampler.")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
+    justification =
+        "This is only for debugging and there is never more than one instance being traced because there is only one stat sampler."
+  )
   public void allocatedResourceInstance(ResourceInstance statResource) {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#allocatedResourceInstance statResource={}", statResource);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "StatArchiveWriter#allocatedResourceInstance statResource={}",
+          statResource);
     }
     if (statResource.getResourceType().getStatisticDescriptors().length >= ILLEGAL_STAT_OFFSET) {
-      throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_COULD_NOT_ARCHIVE_TYPE_0_BECAUSE_IT_HAD_MORE_THAN_1_STATISTICS.toLocalizedString(new Object[] { statResource.getResourceType().getStatisticsType().getName(), Integer.valueOf(ILLEGAL_STAT_OFFSET - 1) }));
+      throw new InternalGemFireException(
+          LocalizedStrings
+              .StatArchiveWriter_COULD_NOT_ARCHIVE_TYPE_0_BECAUSE_IT_HAD_MORE_THAN_1_STATISTICS
+              .toLocalizedString(
+                  new Object[] {
+                    statResource.getResourceType().getStatisticsType().getName(),
+                    Integer.valueOf(ILLEGAL_STAT_OFFSET - 1)
+                  }));
     }
     if (statResource.getStatistics().isClosed()) {
       return;
@@ -286,23 +362,44 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       this.dataOut.writeUTF(statResource.getStatistics().getTextId());
       this.dataOut.writeLong(statResource.getStatistics().getNumericId());
       this.dataOut.writeInt(statResource.getResourceType().getId());
-      if (this.trace && (traceStatisticsName == null || traceStatisticsName.equals(statResource.getStatistics().getTextId())) && (traceStatisticsTypeName == null || traceStatisticsTypeName.equals(statResource.getResourceType().getStatisticsType().getName()))) {
+      if (this.trace
+          && (traceStatisticsName == null
+              || traceStatisticsName.equals(statResource.getStatistics().getTextId()))
+          && (traceStatisticsTypeName == null
+              || traceStatisticsTypeName.equals(
+                  statResource.getResourceType().getStatisticsType().getName()))) {
         traceResourceInstId = statResource.getId();
         this.traceDataOut.println("writeHeader traceResourceInstId: " + traceResourceInstId);
-        this.traceDataOut.println("allocatedResourceInstance#writeByte RESOURCE_INSTANCE_CREATE_TOKEN: " + RESOURCE_INSTANCE_CREATE_TOKEN);
-        this.traceDataOut.println("allocatedResourceInstance#writeInt statResource.getId(): " + statResource.getId());
-        this.traceDataOut.println("allocatedResourceInstance#writeUTF statResource.getStatistics().getTextId(): " + statResource.getStatistics().getTextId());
-        this.traceDataOut.println("allocatedResourceInstance#writeLong statResource.getStatistics().getNumericId(): " + statResource.getStatistics().getNumericId());
-        this.traceDataOut.println("allocatedResourceInstance#writeInt statResource.getResourceType().getId(): " + statResource.getResourceType().getId());
+        this.traceDataOut.println(
+            "allocatedResourceInstance#writeByte RESOURCE_INSTANCE_CREATE_TOKEN: "
+                + RESOURCE_INSTANCE_CREATE_TOKEN);
+        this.traceDataOut.println(
+            "allocatedResourceInstance#writeInt statResource.getId(): " + statResource.getId());
+        this.traceDataOut.println(
+            "allocatedResourceInstance#writeUTF statResource.getStatistics().getTextId(): "
+                + statResource.getStatistics().getTextId());
+        this.traceDataOut.println(
+            "allocatedResourceInstance#writeLong statResource.getStatistics().getNumericId(): "
+                + statResource.getStatistics().getNumericId());
+        this.traceDataOut.println(
+            "allocatedResourceInstance#writeInt statResource.getResourceType().getId(): "
+                + statResource.getResourceType().getId());
       }
     } catch (IOException ex) {
-      throw new GemFireIOException(LocalizedStrings.StatArchiveWriter_FAILED_WRITING_NEW_RESOURCE_INSTANCE_TO_STATISTIC_ARCHIVE.toLocalizedString(), ex);
+      throw new GemFireIOException(
+          LocalizedStrings
+              .StatArchiveWriter_FAILED_WRITING_NEW_RESOURCE_INSTANCE_TO_STATISTIC_ARCHIVE
+              .toLocalizedString(),
+          ex);
     }
   }
 
   public void destroyedResourceInstance(ResourceInstance resourceInstance) {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#destroyedResourceInstance resourceInstance={}", resourceInstance);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "StatArchiveWriter#destroyedResourceInstance resourceInstance={}",
+          resourceInstance);
     }
     if (!this.addedResources.contains(resourceInstance)) { // Fix for bug #45377
       return;
@@ -314,19 +411,39 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     try {
       this.dataOut.writeByte(RESOURCE_INSTANCE_DELETE_TOKEN);
       this.dataOut.writeInt(resourceInstance.getId());
-      if (this.trace && (traceStatisticsName == null || traceStatisticsName.equals(resourceInstance.getStatistics().getTextId())) && (traceStatisticsTypeName == null || traceStatisticsTypeName.equals(resourceInstance.getResourceType().getStatisticsType().getName()))) {
-        this.traceDataOut.println("destroyedResourceInstance#writeByte RESOURCE_INSTANCE_DELETE_TOKEN: " + RESOURCE_INSTANCE_DELETE_TOKEN);
-        this.traceDataOut.println("destroyedResourceInstance#writeInt resourceInstance.getId(): " + resourceInstance.getId());
+      if (this.trace
+          && (traceStatisticsName == null
+              || traceStatisticsName.equals(resourceInstance.getStatistics().getTextId()))
+          && (traceStatisticsTypeName == null
+              || traceStatisticsTypeName.equals(
+                  resourceInstance.getResourceType().getStatisticsType().getName()))) {
+        this.traceDataOut.println(
+            "destroyedResourceInstance#writeByte RESOURCE_INSTANCE_DELETE_TOKEN: "
+                + RESOURCE_INSTANCE_DELETE_TOKEN);
+        this.traceDataOut.println(
+            "destroyedResourceInstance#writeInt resourceInstance.getId(): "
+                + resourceInstance.getId());
       }
     } catch (IOException ex) {
-      throw new GemFireIOException(LocalizedStrings.StatArchiveWriter_FAILED_WRITING_DELETE_RESOURCE_INSTANCE_TO_STATISTIC_ARCHIVE.toLocalizedString(), ex);
+      throw new GemFireIOException(
+          LocalizedStrings
+              .StatArchiveWriter_FAILED_WRITING_DELETE_RESOURCE_INSTANCE_TO_STATISTIC_ARCHIVE
+              .toLocalizedString(),
+          ex);
     }
   }
 
   static long calcDelta(long previousMillis, long currentMillis) {
     long delta = currentMillis - previousMillis;
     if (delta <= 0) {
-      throw new IllegalArgumentException("Sample timestamp must be greater than previous timestamp (millisTimeStamp is " + currentMillis + ", previousMillis is " + previousMillis + " and delta is " + delta + ").");
+      throw new IllegalArgumentException(
+          "Sample timestamp must be greater than previous timestamp (millisTimeStamp is "
+              + currentMillis
+              + ", previousMillis is "
+              + previousMillis
+              + " and delta is "
+              + delta
+              + ").");
     }
     return delta;
   }
@@ -335,16 +452,24 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     final long millisTimeStamp = NanoTimer.nanosToMillis(nanosTimeStamp);
     final long delta = calcDelta(this.previousMillisTimeStamp, millisTimeStamp);
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeTimeStamp millisTimeStamp={}, delta={}", millisTimeStamp, (int) delta);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "StatArchiveWriter#writeTimeStamp millisTimeStamp={}, delta={}",
+          millisTimeStamp,
+          (int) delta);
     }
     if (delta > MAX_SHORT_TIMESTAMP) {
       if (delta > Integer.MAX_VALUE) {
-        throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_TIMESTAMP_DELTA_0_WAS_GREATER_THAN_1.toLocalizedString(new Object[] { Long.valueOf(delta), Integer.valueOf(Integer.MAX_VALUE) }));
+        throw new InternalGemFireException(
+            LocalizedStrings.StatArchiveWriter_TIMESTAMP_DELTA_0_WAS_GREATER_THAN_1
+                .toLocalizedString(
+                    new Object[] {Long.valueOf(delta), Integer.valueOf(Integer.MAX_VALUE)}));
       }
       this.dataOut.writeShort(INT_TIMESTAMP_TOKEN);
       this.dataOut.writeInt((int) delta);
       if (this.trace) {
-        this.traceDataOut.println("writeTimeStamp#writeShort INT_TIMESTAMP_TOKEN: " + INT_TIMESTAMP_TOKEN);
+        this.traceDataOut.println(
+            "writeTimeStamp#writeShort INT_TIMESTAMP_TOKEN: " + INT_TIMESTAMP_TOKEN);
         this.traceDataOut.println("writeTimeStamp#writeInt (int)delta: " + (int) delta);
       }
     } else {
@@ -356,9 +481,7 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     this.previousMillisTimeStamp = millisTimeStamp;
   }
 
-  /**
-   * Writes the resource instance id to the <code>dataOut</code> stream.
-   */
+  /** Writes the resource instance id to the <code>dataOut</code> stream. */
   private void writeResourceInst(int instId) throws IOException {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
       logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeResourceInst instId={}", instId);
@@ -368,9 +491,12 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
         this.dataOut.writeByte(INT_RESOURCE_INST_ID_TOKEN);
         this.dataOut.writeInt(instId);
         if (this.trace && (traceResourceInstId == -1 || traceResourceInstId == instId)) {
-          this.traceDataOut.println("writeResourceInst#writeByte INT_RESOURCE_INST_ID_TOKEN: " + INT_RESOURCE_INST_ID_TOKEN);
+          this.traceDataOut.println(
+              "writeResourceInst#writeByte INT_RESOURCE_INST_ID_TOKEN: "
+                  + INT_RESOURCE_INST_ID_TOKEN);
           if (instId == ILLEGAL_RESOURCE_INST_ID) {
-            this.traceDataOut.println("writeResourceInst#writeInt ILLEGAL_RESOURCE_INST_ID: " + ILLEGAL_RESOURCE_INST_ID);
+            this.traceDataOut.println(
+                "writeResourceInst#writeInt ILLEGAL_RESOURCE_INST_ID: " + ILLEGAL_RESOURCE_INST_ID);
           } else {
             this.traceDataOut.println("writeResourceInst#writeInt instId: " + instId);
           }
@@ -379,9 +505,13 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
         this.dataOut.writeByte(SHORT_RESOURCE_INST_ID_TOKEN);
         this.dataOut.writeShort(instId);
         if (this.trace && (traceResourceInstId == -1 || traceResourceInstId == instId)) {
-          this.traceDataOut.println("writeResourceInst#writeByte SHORT_RESOURCE_INST_ID_TOKEN: " + SHORT_RESOURCE_INST_ID_TOKEN);
+          this.traceDataOut.println(
+              "writeResourceInst#writeByte SHORT_RESOURCE_INST_ID_TOKEN: "
+                  + SHORT_RESOURCE_INST_ID_TOKEN);
           if (instId == ILLEGAL_RESOURCE_INST_ID) {
-            this.traceDataOut.println("writeResourceInst#writeShort ILLEGAL_RESOURCE_INST_ID: " + ILLEGAL_RESOURCE_INST_ID);
+            this.traceDataOut.println(
+                "writeResourceInst#writeShort ILLEGAL_RESOURCE_INST_ID: "
+                    + ILLEGAL_RESOURCE_INST_ID);
           } else {
             this.traceDataOut.println("writeResourceInst#writeShort instId: " + instId);
           }
@@ -391,7 +521,8 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
       this.dataOut.writeByte(instId);
       if (this.trace && (traceResourceInstId == -1 || traceResourceInstId == instId)) {
         if (instId == ILLEGAL_RESOURCE_INST_ID) {
-          this.traceDataOut.println("writeResourceInst#writeByte ILLEGAL_RESOURCE_INST_ID: " + ILLEGAL_RESOURCE_INST_ID);
+          this.traceDataOut.println(
+              "writeResourceInst#writeByte ILLEGAL_RESOURCE_INST_ID: " + ILLEGAL_RESOURCE_INST_ID);
         } else {
           this.traceDataOut.println("writeResourceInst#writeByte instId: " + instId);
         }
@@ -401,7 +532,11 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
 
   public void sampled(long nanosTimeStamp, List<ResourceInstance> resourceInstances) {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#sampled nanosTimeStamp={}, resourceInstances={}", nanosTimeStamp, resourceInstances);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "StatArchiveWriter#sampled nanosTimeStamp={}, resourceInstances={}",
+          nanosTimeStamp,
+          resourceInstances);
     }
     try {
       this.dataOut.writeByte(SAMPLE_TOKEN);
@@ -418,7 +553,10 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
         this.traceDataOut.flush();
       }
     } catch (IOException ex) {
-      throw new GemFireIOException(LocalizedStrings.StatArchiveWriter_FAILED_WRITING_SAMPLE_TO_STATISTIC_ARCHIVE.toLocalizedString(), ex);
+      throw new GemFireIOException(
+          LocalizedStrings.StatArchiveWriter_FAILED_WRITING_SAMPLE_TO_STATISTIC_ARCHIVE
+              .toLocalizedString(),
+          ex);
     }
     this.sampleCount++; // only inc after sample done w/o an exception thrown
   }
@@ -432,7 +570,12 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     if (isDebugEnabled_STATISTICS) {
       logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeSample ri={}", ri);
     }
-    if (this.trace && (traceStatisticsName == null || traceStatisticsName.equals(ri.getStatistics().getTextId())) && (traceStatisticsTypeName == null || traceStatisticsTypeName.equals(ri.getResourceType().getStatisticsType().getName()))) {
+    if (this.trace
+        && (traceStatisticsName == null
+            || traceStatisticsName.equals(ri.getStatistics().getTextId()))
+        && (traceStatisticsTypeName == null
+            || traceStatisticsTypeName.equals(
+                ri.getResourceType().getStatisticsType().getName()))) {
       this.traceDataOut.println("writeSample#writeSample for ri=" + ri);
     }
     if (ri.getStatistics().isClosed()) {
@@ -440,7 +583,11 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     }
     StatisticDescriptor[] stats = ri.getResourceType().getStatisticDescriptors();
     if (stats.length > 254) {
-      throw new Error("StatisticsType " + ri.getResourceType().getStatisticsType().getName() + " has too many stats: " + stats.length);
+      throw new Error(
+          "StatisticsType "
+              + ri.getResourceType().getStatisticsType().getName()
+              + " has too many stats: "
+              + stats.length);
     }
     boolean wroteInstId = false;
     boolean checkForChange = true;
@@ -453,7 +600,12 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
 
     long[] previousStatValues = ri.getPreviousStatValues();
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeSample checkForChange={}, previousStatValues={}, stats.length={}", checkForChange, Arrays.toString(previousStatValues), stats.length);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "StatArchiveWriter#writeSample checkForChange={}, previousStatValues={}, stats.length={}",
+          checkForChange,
+          Arrays.toString(previousStatValues),
+          stats.length);
     }
     if (previousStatValues == null) {
       previousStatValues = new long[stats.length];
@@ -471,29 +623,50 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
             writeResourceInst(ri.getId());
           }
           this.dataOut.writeByte(i);
-          if (this.trace && (traceStatisticsName == null || traceStatisticsName.equals(ri.getStatistics().getTextId())) && (traceStatisticsTypeName == null || traceStatisticsTypeName.equals(ri.getResourceType().getStatisticsType().getName()))) {
+          if (this.trace
+              && (traceStatisticsName == null
+                  || traceStatisticsName.equals(ri.getStatistics().getTextId()))
+              && (traceStatisticsTypeName == null
+                  || traceStatisticsTypeName.equals(
+                      ri.getResourceType().getStatisticsType().getName()))) {
             this.traceDataOut.println("writeSample#writeByte i: " + i);
           }
           if (isDebugEnabled_STATISTICS) {
-            logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeStatValue stats[{}]={}, delta={}", i, stats[i], delta);
+            logger.trace(
+                LogMarker.STATISTICS,
+                "StatArchiveWriter#writeStatValue stats[{}]={}, delta={}",
+                i,
+                stats[i],
+                delta);
           }
           writeStatValue(stats[i], delta, this.dataOut);
-          if (this.trace && (traceStatisticsName == null || traceStatisticsName.equals(ri.getStatistics().getTextId())) && (traceStatisticsTypeName == null || traceStatisticsTypeName.equals(ri.getResourceType().getStatisticsType().getName()))) {
+          if (this.trace
+              && (traceStatisticsName == null
+                  || traceStatisticsName.equals(ri.getStatistics().getTextId()))
+              && (traceStatisticsTypeName == null
+                  || traceStatisticsTypeName.equals(
+                      ri.getResourceType().getStatisticsType().getName()))) {
             byte typeCode = ((StatisticDescriptorImpl) stats[i]).getTypeCode();
             switch (typeCode) {
-            case BYTE_CODE:
-              this.traceDataOut.println("writeStatValue#writeByte " + typeCodeToString(typeCode) + " delta: " + delta);
-              break;
-            case SHORT_CODE:
-              this.traceDataOut.println("writeStatValue#writeShort" + typeCodeToString(typeCode) + " delta: " + delta);
-              break;
-            case INT_CODE:
-            case FLOAT_CODE:
-            case LONG_CODE:
-            case DOUBLE_CODE:
-              this.traceDataOut.println("writeStatValue#writeCompactValue " + typeCodeToString(typeCode) + " delta: " + delta);
-              break;
-            default:
+              case BYTE_CODE:
+                this.traceDataOut.println(
+                    "writeStatValue#writeByte " + typeCodeToString(typeCode) + " delta: " + delta);
+                break;
+              case SHORT_CODE:
+                this.traceDataOut.println(
+                    "writeStatValue#writeShort" + typeCodeToString(typeCode) + " delta: " + delta);
+                break;
+              case INT_CODE:
+              case FLOAT_CODE:
+              case LONG_CODE:
+              case DOUBLE_CODE:
+                this.traceDataOut.println(
+                    "writeStatValue#writeCompactValue "
+                        + typeCodeToString(typeCode)
+                        + " delta: "
+                        + delta);
+                break;
+              default:
             }
           }
         }
@@ -504,12 +677,19 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
 
     if (wroteInstId) {
       this.dataOut.writeByte(ILLEGAL_STAT_OFFSET);
-      if (this.trace && (traceStatisticsName == null || traceStatisticsName.equals(ri.getStatistics().getTextId())) && (traceStatisticsTypeName == null || traceStatisticsTypeName.equals(ri.getResourceType().getStatisticsType().getName()))) {
-        this.traceDataOut.println("writeSample#writeByte ILLEGAL_STAT_OFFSET: " + ILLEGAL_STAT_OFFSET);
+      if (this.trace
+          && (traceStatisticsName == null
+              || traceStatisticsName.equals(ri.getStatistics().getTextId()))
+          && (traceStatisticsTypeName == null
+              || traceStatisticsTypeName.equals(
+                  ri.getResourceType().getStatisticsType().getName()))) {
+        this.traceDataOut.println(
+            "writeSample#writeByte ILLEGAL_STAT_OFFSET: " + ILLEGAL_STAT_OFFSET);
       }
     }
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveWriter#writeSample statsWritten={}", statsWritten);
+      logger.trace(
+          LogMarker.STATISTICS, "StatArchiveWriter#writeSample statsWritten={}", statsWritten);
     }
   }
 
@@ -560,7 +740,11 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
         }
       }
       if (idx <= 2) {
-        throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_EXPECTED_IDX_TO_BE_GREATER_THAN_2_IT_WAS_0_FOR_THE_VALUE_1.toLocalizedString(new Object[] { Integer.valueOf(idx), Long.valueOf(originalValue) }));
+        throw new InternalGemFireException(
+            LocalizedStrings
+                .StatArchiveWriter_EXPECTED_IDX_TO_BE_GREATER_THAN_2_IT_WAS_0_FOR_THE_VALUE_1
+                .toLocalizedString(
+                    new Object[] {Integer.valueOf(idx), Long.valueOf(originalValue)}));
       }
       int token = COMPACT_VALUE_2_TOKEN + (idx - 2);
       dataOut.writeByte(token);
@@ -599,27 +783,30 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     return v;
   }
 
-  protected static void writeStatValue(StatisticDescriptor f, long v, DataOutput dataOut) throws IOException {
+  protected static void writeStatValue(StatisticDescriptor f, long v, DataOutput dataOut)
+      throws IOException {
     byte typeCode = ((StatisticDescriptorImpl) f).getTypeCode();
     writeStatValue(typeCode, v, dataOut);
   }
 
   public static void writeStatValue(byte typeCode, long v, DataOutput dataOut) throws IOException {
     switch (typeCode) {
-    case BYTE_CODE:
-      dataOut.writeByte((int) v);
-      break;
-    case SHORT_CODE:
-      dataOut.writeShort((int) v);
-      break;
-    case INT_CODE:
-    case FLOAT_CODE:
-    case LONG_CODE:
-    case DOUBLE_CODE:
-      writeCompactValue(v, dataOut);
-      break;
-    default:
-      throw new InternalGemFireException(LocalizedStrings.StatArchiveWriter_UNEXPECTED_TYPE_CODE_0.toLocalizedString(Byte.valueOf(typeCode)));
+      case BYTE_CODE:
+        dataOut.writeByte((int) v);
+        break;
+      case SHORT_CODE:
+        dataOut.writeShort((int) v);
+        break;
+      case INT_CODE:
+      case FLOAT_CODE:
+      case LONG_CODE:
+      case DOUBLE_CODE:
+        writeCompactValue(v, dataOut);
+        break;
+      default:
+        throw new InternalGemFireException(
+            LocalizedStrings.StatArchiveWriter_UNEXPECTED_TYPE_CODE_0.toLocalizedString(
+                Byte.valueOf(typeCode)));
     }
   }
 
@@ -637,20 +824,20 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
 
   private static String typeCodeToString(byte typeCode) {
     switch (typeCode) {
-    case BYTE_CODE:
-      return "BYTE_CODE";
-    case SHORT_CODE:
-      return "SHORT_CODE";
-    case INT_CODE:
-      return "INT_CODE";
-    case FLOAT_CODE:
-      return "FLOAT_CODE";
-    case LONG_CODE:
-      return "LONG_CODE";
-    case DOUBLE_CODE:
-      return "DOUBLE_CODE";
-    default:
-      return "unknown typeCode " + typeCode;
+      case BYTE_CODE:
+        return "BYTE_CODE";
+      case SHORT_CODE:
+        return "SHORT_CODE";
+      case INT_CODE:
+        return "INT_CODE";
+      case FLOAT_CODE:
+        return "FLOAT_CODE";
+      case LONG_CODE:
+        return "LONG_CODE";
+      case DOUBLE_CODE:
+        return "DOUBLE_CODE";
+      default:
+        return "unknown typeCode " + typeCode;
     }
   }
 
@@ -676,35 +863,43 @@ public class StatArchiveWriter implements StatArchiveFormat, SampleHandler {
     }
 
     public final void write(int b) throws IOException {
-      throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
 
     public final void write(byte[] b, int off, int len) throws IOException {
-      throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
 
     public final void write(byte[] b) throws IOException {
-      throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
 
     public final void writeBytes(String v) throws IOException {
-      throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
 
     public final void writeChar(int v) throws IOException {
-      throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
 
     public final void writeChars(String v) throws IOException {
-      throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
 
     public final void writeDouble(double v) throws IOException {
-      throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
 
     public final void writeFloat(float v) throws IOException {
-      throw new RuntimeException(LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.StatArchiveWriter_METHOD_UNIMPLEMENTED.toLocalizedString());
     }
 
     public final void writeBoolean(boolean v) throws IOException {

@@ -20,10 +20,9 @@ import org.apache.geode.CancelException;
 
 /**
  * Thrown when a GemFire connection pool has been terminated.
- * 
+ *
  * @since GemFire 6.0
  */
-
 public class PoolCancelledException extends CancelException {
 
   private static final long serialVersionUID = -4562742255812266767L;
@@ -43,5 +42,4 @@ public class PoolCancelledException extends CancelException {
   public PoolCancelledException(String s) {
     super(s);
   }
-
 }

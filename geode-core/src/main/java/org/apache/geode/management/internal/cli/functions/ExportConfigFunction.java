@@ -65,32 +65,52 @@ public class ExportConfigFunction implements Function, InternalEntity {
       printWriter.close();
 
       // Generate the properties file
-      DistributionConfigImpl config = (DistributionConfigImpl) ((InternalDistributedSystem) cache.getDistributedSystem()).getConfig();
+      DistributionConfigImpl config =
+          (DistributionConfigImpl)
+              ((InternalDistributedSystem) cache.getDistributedSystem()).getConfig();
       StringBuffer propStringBuf = new StringBuffer();
       String lineSeparator = System.getProperty("line.separator");
       for (Map.Entry entry : config.getConfigPropsFromSource(ConfigSource.runtime()).entrySet()) {
         if (entry.getValue() != null && !entry.getValue().equals("")) {
-          propStringBuf.append(entry.getKey()).append("=").append(entry.getValue()).append(lineSeparator);
+          propStringBuf
+              .append(entry.getKey())
+              .append("=")
+              .append(entry.getValue())
+              .append(lineSeparator);
         }
       }
       for (Map.Entry entry : config.getConfigPropsFromSource(ConfigSource.api()).entrySet()) {
         if (entry.getValue() != null && !entry.getValue().equals("")) {
-          propStringBuf.append(entry.getKey()).append("=").append(entry.getValue()).append(lineSeparator);
+          propStringBuf
+              .append(entry.getKey())
+              .append("=")
+              .append(entry.getValue())
+              .append(lineSeparator);
         }
       }
       for (Map.Entry entry : config.getConfigPropsDefinedUsingFiles().entrySet()) {
         if (entry.getValue() != null && !entry.getValue().equals("")) {
-          propStringBuf.append(entry.getKey()).append("=").append(entry.getValue()).append(lineSeparator);
+          propStringBuf
+              .append(entry.getKey())
+              .append("=")
+              .append(entry.getValue())
+              .append(lineSeparator);
         }
       }
       // fix for bug 46653
       for (Map.Entry entry : config.getConfigPropsFromSource(ConfigSource.launcher()).entrySet()) {
         if (entry.getValue() != null && !entry.getValue().equals("")) {
-          propStringBuf.append(entry.getKey()).append("=").append(entry.getValue()).append(lineSeparator);
+          propStringBuf
+              .append(entry.getKey())
+              .append("=")
+              .append(entry.getValue())
+              .append(lineSeparator);
         }
       }
 
-      CliFunctionResult result = new CliFunctionResult(memberId, new String[] { xmlWriter.toString(), propStringBuf.toString() });
+      CliFunctionResult result =
+          new CliFunctionResult(
+              memberId, new String[] {xmlWriter.toString(), propStringBuf.toString()});
 
       context.getResultSender().lastResult(result);
 

@@ -27,11 +27,7 @@ import org.apache.geode.cache.query.AmbiguousNameException;
 import org.apache.geode.cache.query.NameResolutionException;
 import org.apache.geode.cache.query.TypeMismatchException;
 
-/**
- * Class Description
- *
- */
-
+/** Class Description */
 public class CompiledBindArgument extends AbstractCompiledValue {
   private int index; // one-based
 
@@ -44,10 +40,12 @@ public class CompiledBindArgument extends AbstractCompiledValue {
   }
 
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
 
     Object bindArg;
-    if (context.isBindArgsSet() && (bindArg = context.getBindArgument(this.index)) instanceof Region) {
+    if (context.isBindArgsSet()
+        && (bindArg = context.getBindArgument(this.index)) instanceof Region) {
       clauseBuffer.insert(0, ((Region) bindArg).getFullPath());
     } else {
       clauseBuffer.insert(0, "$" + this.index);
@@ -77,7 +75,8 @@ public class CompiledBindArgument extends AbstractCompiledValue {
    */
   public Object evaluate(Object[] bindArguments) {
     if (index > bindArguments.length) {
-      throw new IllegalArgumentException(LocalizedStrings.ExecutionContext_TOO_FEW_QUERY_PARAMETERS.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.ExecutionContext_TOO_FEW_QUERY_PARAMETERS.toLocalizedString());
     }
     return bindArguments[index - 1];
   }

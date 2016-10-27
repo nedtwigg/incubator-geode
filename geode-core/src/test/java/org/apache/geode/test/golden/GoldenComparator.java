@@ -31,7 +31,7 @@ import org.apache.geode.test.process.OutputFormatter;
 
 /**
  * Compares test output to golden text file.
- * 
+ *
  * @since GemFire 4.1.1
  */
 public abstract class GoldenComparator {
@@ -50,7 +50,8 @@ public abstract class GoldenComparator {
     return new InputStreamReader(goldenStream);
   }
 
-  public void assertOutputMatchesGoldenFile(final String actualOutput, final String goldenFileName) throws IOException {
+  public void assertOutputMatchesGoldenFile(final String actualOutput, final String goldenFileName)
+      throws IOException {
     debug("GoldenComparator:assertOutputMatchesGoldenFile");
     final BufferedReader goldenReader = new BufferedReader(readGoldenFile(goldenFileName));
     final BufferedReader actualReader = new BufferedReader(new StringReader(actualOutput));
@@ -72,20 +73,43 @@ public abstract class GoldenComparator {
       goldenLine = goldenStrings.get(lineCount - 1);
 
       if (actualLine == null && goldenLine != null) {
-        fail("EOF reached in actual output but golden file, " + goldenFileName + ", continues at line " + lineCount + ": " + goldenLine + new OutputFormatter(actualStrings));
+        fail(
+            "EOF reached in actual output but golden file, "
+                + goldenFileName
+                + ", continues at line "
+                + lineCount
+                + ": "
+                + goldenLine
+                + new OutputFormatter(actualStrings));
 
       } else if (actualLine != null && goldenLine == null) {
-        fail("EOF reached in golden file, " + goldenFileName + ", but actual output continues at line " + lineCount + ": " + actualLine + new OutputFormatter(actualStrings));
+        fail(
+            "EOF reached in golden file, "
+                + goldenFileName
+                + ", but actual output continues at line "
+                + lineCount
+                + ": "
+                + actualLine
+                + new OutputFormatter(actualStrings));
 
       } else if (actualLine != null && goldenLine != null) {
-        assertTrue("Actual output \"" + actualLine + "\" did not match expected pattern \"" + goldenLine + "\" at line " + lineCount + " in " + goldenFileName + ": " + new OutputFormatter(actualStrings), compareLines(actualLine, goldenLine));
+        assertTrue(
+            "Actual output \""
+                + actualLine
+                + "\" did not match expected pattern \""
+                + goldenLine
+                + "\" at line "
+                + lineCount
+                + " in "
+                + goldenFileName
+                + ": "
+                + new OutputFormatter(actualStrings),
+            compareLines(actualLine, goldenLine));
       }
     } while (actualLine != null && goldenLine != null);
   }
 
-  /**
-   * Returns true if the line matches and is ok. Otherwise returns false.
-   */
+  /** Returns true if the line matches and is ok. Otherwise returns false. */
   protected abstract boolean compareLines(final String actualLine, final String goldenLine);
 
   private List<String> readLines(final BufferedReader reader) throws IOException {
@@ -131,7 +155,11 @@ public abstract class GoldenComparator {
       }
       // TODO: collect up entire stack trace if there is one (might span multiple lines)
       debug("About to fail because of " + line);
-      fail("Actual output contains a problem (warning/error/severe) on line " + lineCount + ": " + line);
+      fail(
+          "Actual output contains a problem (warning/error/severe) on line "
+              + lineCount
+              + ": "
+              + line);
     }
   }
 

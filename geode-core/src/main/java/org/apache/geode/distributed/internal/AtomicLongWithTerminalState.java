@@ -20,11 +20,11 @@ package org.apache.geode.distributed.internal;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * An atomic integer with update methods that check to see if the value is equal
- * to a special flag. Care should be taken to ensure that the value can never
- * become the special value accidentally. For example, a long that can never go
- * negative with normal use could have a terminal state of Long.MIN_VALUE
- * 
+ * An atomic integer with update methods that check to see if the value is equal to a special flag.
+ * Care should be taken to ensure that the value can never become the special value accidentally.
+ * For example, a long that can never go negative with normal use could have a terminal state of
+ * Long.MIN_VALUE
+ *
  * @since GemFire 6.0
  */
 public class AtomicLongWithTerminalState extends AtomicLong {
@@ -40,12 +40,12 @@ public class AtomicLongWithTerminalState extends AtomicLong {
   }
 
   /**
-   * Add and the the given delta to the long, unless the long
-   * has been set to the terminal state.
+   * Add and the the given delta to the long, unless the long has been set to the terminal state.
+   *
    * @param terminalState
    * @param delta
-   * @return the new value of the field, or the terminalState if the field
-   * is already set to the terminal state.
+   * @return the new value of the field, or the terminalState if the field is already set to the
+   *     terminal state.
    */
   public long compareAddAndGet(long terminalState, long delta) {
     while (true) {

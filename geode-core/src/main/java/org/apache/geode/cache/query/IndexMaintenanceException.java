@@ -20,22 +20,20 @@ package org.apache.geode.cache.query;
 import org.apache.geode.cache.CacheRuntimeException;
 
 /**
- * Thrown if an error occurs while updating query indexes during
- * region modification.
+ * Thrown if an error occurs while updating query indexes during region modification.
  *
  * @since GemFire 4.0
  */
 public class IndexMaintenanceException extends CacheRuntimeException {
   private static final long serialVersionUID = 3326023943226474039L;
 
-  /**
-   * Creates a new instance of <code>IndexMaintenanceException</code> without detail message.
-   */
-  public IndexMaintenanceException() {
-  }
+  /** Creates a new instance of <code>IndexMaintenanceException</code> without detail message. */
+  public IndexMaintenanceException() {}
 
   /**
-   * Constructs an instance of <code>IndexMaintenanceException</code> with the specified detail message.
+   * Constructs an instance of <code>IndexMaintenanceException</code> with the specified detail
+   * message.
+   *
    * @param msg the detail message.
    */
   public IndexMaintenanceException(String msg) {
@@ -43,8 +41,9 @@ public class IndexMaintenanceException extends CacheRuntimeException {
   }
 
   /**
-   * Constructs an instance of <code>IndexMaintenanceException</code> with the specified detail message
-   * and cause.
+   * Constructs an instance of <code>IndexMaintenanceException</code> with the specified detail
+   * message and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */
@@ -54,10 +53,10 @@ public class IndexMaintenanceException extends CacheRuntimeException {
 
   /**
    * Constructs an instance of <code>IndexMaintenanceException</code> with the specified cause.
+   *
    * @param cause the causal Throwable
    */
   public IndexMaintenanceException(Throwable cause) {
     super(cause);
   }
-
 }

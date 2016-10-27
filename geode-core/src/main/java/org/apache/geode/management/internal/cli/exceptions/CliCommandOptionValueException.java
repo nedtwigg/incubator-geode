@@ -24,11 +24,16 @@ public class CliCommandOptionValueException extends CliCommandOptionException {
 
   private final String value;
 
-  public CliCommandOptionValueException(final CommandTarget commandTarget, final Option option, final String value) {
+  public CliCommandOptionValueException(
+      final CommandTarget commandTarget, final Option option, final String value) {
     this(commandTarget, option, null, value, null);
   }
 
-  public CliCommandOptionValueException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet, final String value) {
+  public CliCommandOptionValueException(
+      final CommandTarget commandTarget,
+      final Option option,
+      final OptionSet optionSet,
+      final String value) {
     this(commandTarget, option, null, value, null);
   }
 
@@ -36,7 +41,12 @@ public class CliCommandOptionValueException extends CliCommandOptionException {
     this(null, null, null, null, cause);
   }
 
-  public CliCommandOptionValueException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet, final String value, final Throwable cause) {
+  public CliCommandOptionValueException(
+      final CommandTarget commandTarget,
+      final Option option,
+      final OptionSet optionSet,
+      final String value,
+      final Throwable cause) {
     super(commandTarget, option, optionSet, cause);
     this.value = value;
   }

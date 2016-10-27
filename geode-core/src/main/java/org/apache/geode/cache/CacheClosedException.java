@@ -20,11 +20,8 @@ import org.apache.geode.CancelException;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 /**
- * Indicates that the caching system has 
- * been closed. Can be thrown from almost any method related to regions or the
- * <code>Cache</code> after the cache has been closed.
- *
- *
+ * Indicates that the caching system has been closed. Can be thrown from almost any method related
+ * to regions or the <code>Cache</code> after the cache has been closed.
  *
  * @see Cache
  * @since GemFire 3.0
@@ -32,9 +29,7 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 public class CacheClosedException extends CancelException {
   private static final long serialVersionUID = -6479561694497811262L;
 
-  /**
-   * Constructs a new <code>CacheClosedException</code>.
-   */
+  /** Constructs a new <code>CacheClosedException</code>. */
   public CacheClosedException() {
     super();
   }
@@ -54,8 +49,7 @@ public class CacheClosedException extends CancelException {
   }
 
   /**
-   * Constructs a new <code>CacheClosedException</code> with a message string
-   * and a cause.
+   * Constructs a new <code>CacheClosedException</code> with a message string and a cause.
    *
    * @param msg the message string
    * @param cause a causal Throwable

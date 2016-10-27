@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.geode.modules.session;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
@@ -57,9 +57,7 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
 
   protected VM vm0;
 
-  /**
-   * Check that the basics are working
-   */
+  /** Check that the basics are working */
   @Test
   public void testSanity() throws Exception {
     WebConversation wc = new WebConversation();
@@ -72,20 +70,23 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test callback functionality. This is here really just as an example. Callbacks are useful to implement per test
-   * actions which can be defined within the actual test method instead of in a separate servlet class.
+   * Test callback functionality. This is here really just as an example. Callbacks are useful to
+   * implement per test actions which can be defined within the actual test method instead of in a
+   * separate servlet class.
    */
   @Test
   public void testCallback() throws Exception {
     final String helloWorld = "Hello World";
-    Callback c = new Callback() {
+    Callback c =
+        new Callback() {
 
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        PrintWriter out = response.getWriter();
-        out.write(helloWorld);
-      }
-    };
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            PrintWriter out = response.getWriter();
+            out.write(helloWorld);
+          }
+        };
     servlet.getServletContext().setAttribute("callback", c);
 
     WebConversation wc = new WebConversation();
@@ -98,19 +99,19 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
     assertEquals(helloWorld, response.getText());
   }
 
-  /**
-   * Test that calling session.isNew() works for the initial as well as subsequent requests.
-   */
+  /** Test that calling session.isNew() works for the initial as well as subsequent requests. */
   @Test
   public void testIsNew() throws Exception {
-    Callback c = new Callback() {
+    Callback c =
+        new Callback() {
 
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession();
-        response.getWriter().write(Boolean.toString(session.isNew()));
-      }
-    };
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession session = request.getSession();
+            response.getWriter().write(Boolean.toString(session.isNew()));
+          }
+        };
     servlet.getServletContext().setAttribute("callback", c);
 
     WebConversation wc = new WebConversation();
@@ -127,7 +128,8 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Check that our session persists. The values we pass in as query params are used to set attributes on the session.
+   * Check that our session persists. The values we pass in as query params are used to set
+   * attributes on the session.
    */
   @Test
   public void testSessionPersists1() throws Exception {
@@ -153,9 +155,7 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
     assertEquals(value, response.getText());
   }
 
-  /**
-   * Test that invalidating a session makes it's attributes inaccessible.
-   */
+  /** Test that invalidating a session makes it's attributes inaccessible. */
   @Test
   public void testInvalidate() throws Exception {
     String key = "value_testInvalidate";
@@ -184,9 +184,7 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
     assertEquals("", response.getText());
   }
 
-  /**
-   * Test setting the session expiration
-   */
+  /** Test setting the session expiration */
   @Test
   public void testSessionExpiration1() throws Exception {
     // TestSessions only live for a second
@@ -216,20 +214,21 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test setting the session expiration via a property change as would happen under normal deployment conditions.
+   * Test setting the session expiration via a property change as would happen under normal
+   * deployment conditions.
    */
   @Test
   public void testSessionExpiration2() throws Exception {
     // TestSessions only live for a minute
-    sessionManager.propertyChange(new PropertyChangeEvent(server.getRootContext(), "sessionTimeout", new Integer(30), new Integer(1)));
+    sessionManager.propertyChange(
+        new PropertyChangeEvent(
+            server.getRootContext(), "sessionTimeout", new Integer(30), new Integer(1)));
 
     // Check that the value has been set to 60 seconds
     assertEquals(60, sessionManager.getMaxInactiveInterval());
   }
 
-  /**
-   * Test that removing a session attribute also removes it from the region
-   */
+  /** Test that removing a session attribute also removes it from the region */
   @Test
   public void testRemoveAttribute() throws Exception {
     String key = "value_testRemoveAttribute";
@@ -258,9 +257,7 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
     assertNull(region.get(sessionId).getAttribute(key));
   }
 
-  /**
-   * Test that a session attribute gets set into the region too.
-   */
+  /** Test that a session attribute gets set into the region too. */
   @Test
   public void testBasicRegion() throws Exception {
     String key = "value_testBasicRegion";
@@ -279,9 +276,7 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
     assertEquals(value, region.get(sessionId).getAttribute(key));
   }
 
-  /**
-   * Test that a session attribute gets removed from the region when the session is invalidated.
-   */
+  /** Test that a session attribute gets removed from the region when the session is invalidated. */
   @Test
   public void testRegionInvalidate() throws Exception {
     String key = "value_testRegionInvalidate";
@@ -307,21 +302,24 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test that multiple attribute updates, within the same request result in only the latest one being effective.
+   * Test that multiple attribute updates, within the same request result in only the latest one
+   * being effective.
    */
   @Test
   public void testMultipleAttributeUpdates() throws Exception {
     final String key = "value_testMultipleAttributeUpdates";
-    Callback c = new Callback() {
+    Callback c =
+        new Callback() {
 
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession();
-        for (int i = 0; i < 1000; i++) {
-          session.setAttribute(key, Integer.toString(i));
-        }
-      }
-    };
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession session = request.getSession();
+            for (int i = 0; i < 1000; i++) {
+              session.setAttribute(key, Integer.toString(i));
+            }
+          }
+        };
     servlet.getServletContext().setAttribute("callback", c);
 
     WebConversation wc = new WebConversation();
@@ -342,14 +340,16 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
    */
   @Test
   public void testCommitSessionValveInvalidSession() throws Exception {
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession();
-        session.invalidate();
-        response.getWriter().write("done");
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession session = request.getSession();
+            session.invalidate();
+            response.getWriter().write("done");
+          }
+        };
     servlet.getServletContext().setAttribute("callback", c);
 
     WebConversation wc = new WebConversation();
@@ -363,18 +363,18 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
     assertEquals("done", response.getText());
   }
 
-  /**
-   * Test for issue #45 Sessions are being created for every request
-   */
+  /** Test for issue #45 Sessions are being created for every request */
   @Test
   public void testExtraSessionsNotCreated() throws Exception {
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Do nothing with sessions
-        response.getWriter().write("done");
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            // Do nothing with sessions
+            response.getWriter().write("done");
+          }
+        };
     servlet.getServletContext().setAttribute("callback", c);
 
     WebConversation wc = new WebConversation();
@@ -390,26 +390,29 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
   }
 
   /**
-   * Test for issue #46 lastAccessedTime is not updated at the start of the request, but only at the end.
+   * Test for issue #46 lastAccessedTime is not updated at the start of the request, but only at the
+   * end.
    */
   @Test
   public void testLastAccessedTime() throws Exception {
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession();
-        // Hack to expose the session to our test context
-        session.getServletContext().setAttribute("session", session);
-        session.setAttribute("lastAccessTime", session.getLastAccessedTime());
-        try {
-          Thread.sleep(100);
-        } catch (InterruptedException ex) {
-        }
-        session.setAttribute("somethingElse", 1);
-        request.getSession();
-        response.getWriter().write("done");
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession session = request.getSession();
+            // Hack to expose the session to our test context
+            session.getServletContext().setAttribute("session", session);
+            session.setAttribute("lastAccessTime", session.getLastAccessedTime());
+            try {
+              Thread.sleep(100);
+            } catch (InterruptedException ex) {
+            }
+            session.setAttribute("somethingElse", 1);
+            request.getSession();
+            response.getWriter().write("done");
+          }
+        };
     servlet.getServletContext().setAttribute("callback", c);
 
     WebConversation wc = new WebConversation();
@@ -423,6 +426,11 @@ public abstract class TestSessionsTomcat8Base extends JUnit4DistributedTestCase 
     HttpSession session = (HttpSession) servlet.getServletContext().getAttribute("session");
     Long lastAccess = (Long) session.getAttribute("lastAccessTime");
 
-    assertTrue("Last access time not set correctly: " + lastAccess.longValue() + " not <= " + session.getLastAccessedTime(), lastAccess.longValue() <= session.getLastAccessedTime());
+    assertTrue(
+        "Last access time not set correctly: "
+            + lastAccess.longValue()
+            + " not <= "
+            + session.getLastAccessedTime(),
+        lastAccess.longValue() <= session.getLastAccessedTime());
   }
 }

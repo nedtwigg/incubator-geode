@@ -36,59 +36,52 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/** <p>MsgStreamer supports streaming a message to a tcp Connection
- * in chunks. This allows us to send a message without needing to
- * perserialize it completely in memory thus saving buffer memory.
-
-    @since GemFire 5.0.2
-   
-    */
-
-public class MsgStreamer extends OutputStream implements ObjToByteArraySerializer, BaseMsgStreamer, ByteBufferWriter {
+/**
+ * MsgStreamer supports streaming a message to a tcp Connection in chunks. This allows us to send a
+ * message without needing to perserialize it completely in memory thus saving buffer memory.
+ *
+ * @since GemFire 5.0.2
+ */
+public class MsgStreamer extends OutputStream
+    implements ObjToByteArraySerializer, BaseMsgStreamer, ByteBufferWriter {
 
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * List of connections to send this msg to.
-   */
+  /** List of connections to send this msg to. */
   private final List<?> cons;
 
-  /**
-   * Any exceptions that happen during sends
-   */
+  /** Any exceptions that happen during sends */
   private ConnectExceptions ce;
   /**
-   * The byte buffer we used for preparing a chunk of the message.
-   * Currently this buffer is obtained from the connection.
+   * The byte buffer we used for preparing a chunk of the message. Currently this buffer is obtained
+   * from the connection.
    */
   private final ByteBuffer buffer;
+
   private int flushedBytes = 0;
   // the message this streamer is to send
   private final DistributionMessage msg;
   /**
-   * True if this message went out as a normal one (it fit it one chunk)
-   * False if this message needed to be chunked.
+   * True if this message went out as a normal one (it fit it one chunk) False if this message
+   * needed to be chunked.
    */
   private boolean normalMsg = false;
   /**
-   * Set to true when we have started serializing a message.
-   * If this is true and doneWritingMsg is false
-   * and we think we have finished writing the msg then we have a problem.
+   * Set to true when we have started serializing a message. If this is true and doneWritingMsg is
+   * false and we think we have finished writing the msg then we have a problem.
    */
   private boolean startedSerializingMsg = false;
-  /**
-   * Set to true after last byte of message has been written to this stream.
-   */
+  /** Set to true after last byte of message has been written to this stream. */
   private boolean doneWritingMsg = false;
-  final private DMStats stats;
+
+  private final DMStats stats;
 
   private short msgId;
   private long serStartTime;
   private final boolean directReply;
 
   /**
-   * Called to free up resources used by this streamer after the streamer has
-   * produced its message.
+   * Called to free up resources used by this streamer after the streamer has produced its message.
    */
   protected final void release() {
     MsgIdGenerator.release(this.msgId);
@@ -98,16 +91,16 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
   }
 
   /**
-   * Returns an exception the describes which cons the message was not sent to.
-   * Call this after {@link #writeMessage}.
+   * Returns an exception the describes which cons the message was not sent to. Call this after
+   * {@link #writeMessage}.
    */
   public final ConnectExceptions getConnectExceptions() {
     return this.ce;
   }
 
   /**
-   * Returns a list of the Connections that the message was sent to.
-   * Call this after {@link #writeMessage}.
+   * Returns a list of the Connections that the message was sent to. Call this after {@link
+   * #writeMessage}.
    */
   public final List<?> getSentConnections() {
     return this.cons;
@@ -115,11 +108,16 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
 
   /**
    * Create a msg streamer that will send the given msg to the given cons.
-   * 
-   * Note: This is no longer supposed to be called directly rather the
-   * {@link #create} method should now be used.
+   *
+   * <p>Note: This is no longer supposed to be called directly rather the {@link #create} method
+   * should now be used.
    */
-  MsgStreamer(List<?> cons, DistributionMessage msg, boolean directReply, DMStats stats, int sendBufferSize) {
+  MsgStreamer(
+      List<?> cons,
+      DistributionMessage msg,
+      boolean directReply,
+      DMStats stats,
+      int sendBufferSize) {
     this.stats = stats;
     this.msg = msg;
     this.cons = cons;
@@ -132,11 +130,12 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
   }
 
   /**
-   * Create message streamers splitting into versioned streamers, if required,
-   * for given list of connections to remote nodes. This method can either
-   * return a single MsgStreamer object or a List of MsgStreamer objects.
+   * Create message streamers splitting into versioned streamers, if required, for given list of
+   * connections to remote nodes. This method can either return a single MsgStreamer object or a
+   * List of MsgStreamer objects.
    */
-  public static BaseMsgStreamer create(List<?> cons, final DistributionMessage msg, final boolean directReply, final DMStats stats) {
+  public static BaseMsgStreamer create(
+      List<?> cons, final DistributionMessage msg, final boolean directReply, final DMStats stats) {
     final Connection firstCon = (Connection) cons.get(0);
     // split into different versions if required
     Version version;
@@ -166,7 +165,8 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
       } else {
         // if there is a versioned stream created, then split remaining
         // connections to unversioned stream
-        final ArrayList<MsgStreamer> streamers = new ArrayList<MsgStreamer>(versionToConnMap.size() + 1);
+        final ArrayList<MsgStreamer> streamers =
+            new ArrayList<MsgStreamer>(versionToConnMap.size() + 1);
         final int sendBufferSize = firstCon.getSendBufferSize();
         if (numCons > numVersioned) {
           // allocating list of numCons size so that as the result of
@@ -180,11 +180,16 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
           }
           streamers.add(new MsgStreamer(unversionedCons, msg, directReply, stats, sendBufferSize));
         }
-        for (ObjectIterator<Object2ObjectMap.Entry> itr = versionToConnMap.object2ObjectEntrySet().fastIterator(); itr.hasNext();) {
+        for (ObjectIterator<Object2ObjectMap.Entry> itr =
+                versionToConnMap.object2ObjectEntrySet().fastIterator();
+            itr.hasNext();
+            ) {
           Object2ObjectMap.Entry entry = itr.next();
           Object ver = entry.getKey();
           Object l = entry.getValue();
-          streamers.add(new VersionedMsgStreamer((List<?>) l, msg, directReply, stats, sendBufferSize, (Version) ver));
+          streamers.add(
+              new VersionedMsgStreamer(
+                  (List<?>) l, msg, directReply, stats, sendBufferSize, (Version) ver));
         }
         return new MsgStreamerList(streamers);
       }
@@ -192,18 +197,20 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
       return new MsgStreamer(cons, msg, directReply, stats, firstCon.getSendBufferSize());
     } else {
       // create a single VersionedMsgStreamer
-      return new VersionedMsgStreamer(cons, msg, directReply, stats, firstCon.getSendBufferSize(), version);
+      return new VersionedMsgStreamer(
+          cons, msg, directReply, stats, firstCon.getSendBufferSize(), version);
     }
   }
 
   /**
    * set connections to be "in use" and schedule alert tasks
+   *
    * @param startTime
    * @param ackTimeout
    * @param ackSDTimeout
    */
   public void reserveConnections(long startTime, long ackTimeout, long ackSDTimeout) {
-    for (Iterator it = cons.iterator(); it.hasNext();) {
+    for (Iterator it = cons.iterator(); it.hasNext(); ) {
       Connection con = (Connection) it.next();
       con.setInUse(true, startTime, ackTimeout, ackSDTimeout, cons);
       if (ackTimeout > 0) {
@@ -216,9 +223,7 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
     this.serStartTime = stats.startMsgSerialization();
   }
 
-  /**
-   * @throws IOException if serialization failure
-   */
+  /** @throws IOException if serialization failure */
   public final int writeMessage() throws IOException {
     //    if (logger.isTraceEnabled()) logger.trace(this.msg);
 
@@ -287,7 +292,9 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
   public final void realFlush(boolean lastFlushForMessage) {
     if (isOverflowMode()) {
       if (this.overflowBuf == null) {
-        this.overflowBuf = new HeapDataOutputStream(this.buffer.capacity() - Connection.MSG_HEADER_BYTES, Version.CURRENT);
+        this.overflowBuf =
+            new HeapDataOutputStream(
+                this.buffer.capacity() - Connection.MSG_HEADER_BYTES, Version.CURRENT);
       }
       return;
     }
@@ -301,22 +308,25 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
       conflationMsg = this.msg;
     }
     this.stats.endMsgSerialization(this.serStartTime);
-    for (Iterator it = this.cons.iterator(); it.hasNext();) {
+    for (Iterator it = this.cons.iterator(); it.hasNext(); ) {
       Connection con = (Connection) it.next();
       try {
-        con.sendPreserialized(this.buffer, lastFlushForMessage && this.msg.containsRegionContentChange(), conflationMsg);
+        con.sendPreserialized(
+            this.buffer,
+            lastFlushForMessage && this.msg.containsRegionContentChange(),
+            conflationMsg);
       } catch (IOException ex) {
         it.remove();
-        if (this.ce == null)
-          this.ce = new ConnectExceptions();
+        if (this.ce == null) this.ce = new ConnectExceptions();
         this.ce.addFailure(con.getRemoteAddress(), ex);
-        con.closeForReconnect(LocalizedStrings.MsgStreamer_CLOSING_DUE_TO_0.toLocalizedString("IOException"));
+        con.closeForReconnect(
+            LocalizedStrings.MsgStreamer_CLOSING_DUE_TO_0.toLocalizedString("IOException"));
       } catch (ConnectionException ex) {
         it.remove();
-        if (this.ce == null)
-          this.ce = new ConnectExceptions();
+        if (this.ce == null) this.ce = new ConnectExceptions();
         this.ce.addFailure(con.getRemoteAddress(), ex);
-        con.closeForReconnect(LocalizedStrings.MsgStreamer_CLOSING_DUE_TO_0.toLocalizedString("ConnectionException"));
+        con.closeForReconnect(
+            LocalizedStrings.MsgStreamer_CLOSING_DUE_TO_0.toLocalizedString("ConnectionException"));
       }
       this.buffer.rewind();
     }
@@ -332,7 +342,7 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
         // if we wrote any bytes on the cnxs then we need to close them
         // since they have been corrupted by a partial serialization.
         if (this.flushedBytes > 0) {
-          for (Iterator it = this.cons.iterator(); it.hasNext();) {
+          for (Iterator it = this.cons.iterator(); it.hasNext(); ) {
             Connection con = (Connection) it.next();
             con.closeForReconnect("Message serialization could not complete");
           }
@@ -405,8 +415,7 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
     }
   }
 
-  /** write the header after the message has been written to the
-      stream */
+  /** write the header after the message has been written to the stream */
   private final void setMessageHeader() {
     Assert.assertTrue(this.overflowBuf == null);
     Assert.assertTrue(!isOverflowMode());
@@ -430,7 +439,9 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
       }
     }
 
-    this.buffer.putInt(Connection.MSG_HEADER_SIZE_OFFSET, Connection.calcHdrSize(this.buffer.limit() - Connection.MSG_HEADER_BYTES));
+    this.buffer.putInt(
+        Connection.MSG_HEADER_SIZE_OFFSET,
+        Connection.calcHdrSize(this.buffer.limit() - Connection.MSG_HEADER_BYTES));
     this.buffer.put(Connection.MSG_HEADER_TYPE_OFFSET, (byte) (msgType & 0xff));
     this.buffer.putShort(Connection.MSG_HEADER_ID_OFFSET, this.msgId);
     this.buffer.position(0);
@@ -438,58 +449,48 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
 
   // DataOutput methods
   /**
-     * Writes a <code>boolean</code> value to this output stream.
-     * If the argument <code>v</code>
-     * is <code>true</code>, the value <code>(byte)1</code>
-     * is written; if <code>v</code> is <code>false</code>,
-     * the  value <code>(byte)0</code> is written.
-     * The byte written by this method may
-     * be read by the <code>readBoolean</code>
-     * method of interface <code>DataInput</code>,
-     * which will then return a <code>boolean</code>
-     * equal to <code>v</code>.
-     *
-     * @param      v   the boolean to be written.
-     */
+   * Writes a <code>boolean</code> value to this output stream. If the argument <code>v</code> is
+   * <code>true</code>, the value <code>(byte)1</code> is written; if <code>v</code> is <code>false
+   * </code>, the value <code>(byte)0</code> is written. The byte written by this method may be read
+   * by the <code>readBoolean</code> method of interface <code>DataInput</code>, which will then
+   * return a <code>boolean</code> equal to <code>v</code>.
+   *
+   * @param v the boolean to be written.
+   */
   public final void writeBoolean(boolean v) {
     write(v ? 1 : 0);
   }
 
   /**
-     * Writes to the output stream the eight low-
-     * order bits of the argument <code>v</code>.
-     * The 24 high-order bits of <code>v</code>
-     * are ignored. (This means  that <code>writeByte</code>
-     * does exactly the same thing as <code>write</code>
-     * for an integer argument.) The byte written
-     * by this method may be read by the <code>readByte</code>
-     * method of interface <code>DataInput</code>,
-     * which will then return a <code>byte</code>
-     * equal to <code>(byte)v</code>.
-     *
-     * @param      v   the byte value to be written.
-     */
+   * Writes to the output stream the eight low- order bits of the argument <code>v</code>. The 24
+   * high-order bits of <code>v</code> are ignored. (This means that <code>writeByte</code> does
+   * exactly the same thing as <code>write</code> for an integer argument.) The byte written by this
+   * method may be read by the <code>readByte</code> method of interface <code>DataInput</code>,
+   * which will then return a <code>byte</code> equal to <code>(byte)v</code>.
+   *
+   * @param v the byte value to be written.
+   */
   public final void writeByte(int v) {
     write(v);
   }
 
   /**
-     * Writes two bytes to the output
-     * stream to represent the value of the argument.
-     * The byte values to be written, in the  order
-     * shown, are: <p>
-     * <pre><code>
-     * (byte)(0xff &amp; (v &gt;&gt; 8))
-     * (byte)(0xff &amp; v)
-     * </code> </pre> <p>
-     * The bytes written by this method may be
-     * read by the <code>readShort</code> method
-     * of interface <code>DataInput</code> , which
-     * will then return a <code>short</code> equal
-     * to <code>(short)v</code>.
-     *
-     * @param      v   the <code>short</code> value to be written.
-     */
+   * Writes two bytes to the output stream to represent the value of the argument. The byte values
+   * to be written, in the order shown, are:
+   *
+   * <p>
+   *
+   * <pre><code>
+   * (byte)(0xff &amp; (v &gt;&gt; 8))
+   * (byte)(0xff &amp; v)
+   * </code> </pre>
+   *
+   * <p>The bytes written by this method may be read by the <code>readShort</code> method of
+   * interface <code>DataInput</code> , which will then return a <code>short</code> equal to <code>
+   * (short)v</code>.
+   *
+   * @param v the <code>short</code> value to be written.
+   */
   public final void writeShort(int v) {
     //    if (logger.isTraceEnabled()) logger.trace(" short={}", v);
 
@@ -502,23 +503,22 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
   }
 
   /**
-     * Writes a <code>char</code> value, wich
-     * is comprised of two bytes, to the
-     * output stream.
-     * The byte values to be written, in the  order
-     * shown, are:
-     * <p><pre><code>
-     * (byte)(0xff &amp; (v &gt;&gt; 8))
-     * (byte)(0xff &amp; v)
-     * </code></pre><p>
-     * The bytes written by this method may be
-     * read by the <code>readChar</code> method
-     * of interface <code>DataInput</code> , which
-     * will then return a <code>char</code> equal
-     * to <code>(char)v</code>.
-     *
-     * @param      v   the <code>char</code> value to be written.
-     */
+   * Writes a <code>char</code> value, wich is comprised of two bytes, to the output stream. The
+   * byte values to be written, in the order shown, are:
+   *
+   * <p>
+   *
+   * <pre><code>
+   * (byte)(0xff &amp; (v &gt;&gt; 8))
+   * (byte)(0xff &amp; v)
+   * </code></pre>
+   *
+   * <p>The bytes written by this method may be read by the <code>readChar</code> method of
+   * interface <code>DataInput</code> , which will then return a <code>char</code> equal to <code>
+   * (char)v</code>.
+   *
+   * @param v the <code>char</code> value to be written.
+   */
   public final void writeChar(int v) {
     //    if (logger.isTraceEnabled()) logger.trace(" char={}", v);
 
@@ -531,23 +531,23 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
   }
 
   /**
-     * Writes an <code>int</code> value, which is
-     * comprised of four bytes, to the output stream.
-     * The byte values to be written, in the  order
-     * shown, are:
-     * <p><pre><code>
-     * (byte)(0xff &amp; (v &gt;&gt; 24))
-     * (byte)(0xff &amp; (v &gt;&gt; 16))
-     * (byte)(0xff &amp; (v &gt;&gt; &#32; &#32;8))
-     * (byte)(0xff &amp; v)
-     * </code></pre><p>
-     * The bytes written by this method may be read
-     * by the <code>readInt</code> method of interface
-     * <code>DataInput</code> , which will then
-     * return an <code>int</code> equal to <code>v</code>.
-     *
-     * @param      v   the <code>int</code> value to be written.
-     */
+   * Writes an <code>int</code> value, which is comprised of four bytes, to the output stream. The
+   * byte values to be written, in the order shown, are:
+   *
+   * <p>
+   *
+   * <pre><code>
+   * (byte)(0xff &amp; (v &gt;&gt; 24))
+   * (byte)(0xff &amp; (v &gt;&gt; 16))
+   * (byte)(0xff &amp; (v &gt;&gt; &#32; &#32;8))
+   * (byte)(0xff &amp; v)
+   * </code></pre>
+   *
+   * <p>The bytes written by this method may be read by the <code>readInt</code> method of interface
+   * <code>DataInput</code> , which will then return an <code>int</code> equal to <code>v</code>.
+   *
+   * @param v the <code>int</code> value to be written.
+   */
   public final void writeInt(int v) {
     //    if (logger.isTraceEnabled()) logger.trace(" int={}", v);
 
@@ -560,28 +560,28 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
   }
 
   /**
-     * Writes a <code>long</code> value, which is
-     * comprised of eight bytes, to the output stream.
-     * The byte values to be written, in the  order
-     * shown, are:
-     * <p><pre><code>
-     * (byte)(0xff &amp; (v &gt;&gt; 56))
-     * (byte)(0xff &amp; (v &gt;&gt; 48))
-     * (byte)(0xff &amp; (v &gt;&gt; 40))
-     * (byte)(0xff &amp; (v &gt;&gt; 32))
-     * (byte)(0xff &amp; (v &gt;&gt; 24))
-     * (byte)(0xff &amp; (v &gt;&gt; 16))
-     * (byte)(0xff &amp; (v &gt;&gt;  8))
-     * (byte)(0xff &amp; v)
-     * </code></pre><p>
-     * The bytes written by this method may be
-     * read by the <code>readLong</code> method
-     * of interface <code>DataInput</code> , which
-     * will then return a <code>long</code> equal
-     * to <code>v</code>.
-     *
-     * @param      v   the <code>long</code> value to be written.
-     */
+   * Writes a <code>long</code> value, which is comprised of eight bytes, to the output stream. The
+   * byte values to be written, in the order shown, are:
+   *
+   * <p>
+   *
+   * <pre><code>
+   * (byte)(0xff &amp; (v &gt;&gt; 56))
+   * (byte)(0xff &amp; (v &gt;&gt; 48))
+   * (byte)(0xff &amp; (v &gt;&gt; 40))
+   * (byte)(0xff &amp; (v &gt;&gt; 32))
+   * (byte)(0xff &amp; (v &gt;&gt; 24))
+   * (byte)(0xff &amp; (v &gt;&gt; 16))
+   * (byte)(0xff &amp; (v &gt;&gt;  8))
+   * (byte)(0xff &amp; v)
+   * </code></pre>
+   *
+   * <p>The bytes written by this method may be read by the <code>readLong</code> method of
+   * interface <code>DataInput</code> , which will then return a <code>long</code> equal to <code>v
+   * </code>.
+   *
+   * @param v the <code>long</code> value to be written.
+   */
   public final void writeLong(long v) {
     //    if (logger.isTraceEnabled()) logger.trace(" long={}", v);
 
@@ -594,21 +594,15 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
   }
 
   /**
-     * Writes a <code>float</code> value,
-     * which is comprised of four bytes, to the output stream.
-     * It does this as if it first converts this
-     * <code>float</code> value to an <code>int</code>
-     * in exactly the manner of the <code>Float.floatToIntBits</code>
-     * method  and then writes the <code>int</code>
-     * value in exactly the manner of the  <code>writeInt</code>
-     * method.  The bytes written by this method
-     * may be read by the <code>readFloat</code>
-     * method of interface <code>DataInput</code>,
-     * which will then return a <code>float</code>
-     * equal to <code>v</code>.
-     *
-     * @param      v   the <code>float</code> value to be written.
-     */
+   * Writes a <code>float</code> value, which is comprised of four bytes, to the output stream. It
+   * does this as if it first converts this <code>float</code> value to an <code>int</code> in
+   * exactly the manner of the <code>Float.floatToIntBits</code> method and then writes the <code>
+   * int</code> value in exactly the manner of the <code>writeInt</code> method. The bytes written
+   * by this method may be read by the <code>readFloat</code> method of interface <code>DataInput
+   * </code>, which will then return a <code>float</code> equal to <code>v</code>.
+   *
+   * @param v the <code>float</code> value to be written.
+   */
   public final void writeFloat(float v) {
     //    if (logger.isTraceEnabled()) logger.trace(" float={}", v);
 
@@ -621,21 +615,15 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
   }
 
   /**
-     * Writes a <code>double</code> value,
-     * which is comprised of eight bytes, to the output stream.
-     * It does this as if it first converts this
-     * <code>double</code> value to a <code>long</code>
-     * in exactly the manner of the <code>Double.doubleToLongBits</code>
-     * method  and then writes the <code>long</code>
-     * value in exactly the manner of the  <code>writeLong</code>
-     * method. The bytes written by this method
-     * may be read by the <code>readDouble</code>
-     * method of interface <code>DataInput</code>,
-     * which will then return a <code>double</code>
-     * equal to <code>v</code>.
-     *
-     * @param      v   the <code>double</code> value to be written.
-     */
+   * Writes a <code>double</code> value, which is comprised of eight bytes, to the output stream. It
+   * does this as if it first converts this <code>double</code> value to a <code>long</code> in
+   * exactly the manner of the <code>Double.doubleToLongBits</code> method and then writes the
+   * <code>long</code> value in exactly the manner of the <code>writeLong</code> method. The bytes
+   * written by this method may be read by the <code>readDouble</code> method of interface <code>
+   * DataInput</code>, which will then return a <code>double</code> equal to <code>v</code>.
+   *
+   * @param v the <code>double</code> value to be written.
+   */
   public final void writeDouble(double v) {
     //    if (logger.isTraceEnabled()) logger.trace(" double={}", v);
 
@@ -648,24 +636,18 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
   }
 
   /**
-     * Writes a string to the output stream.
-     * For every character in the string
-     * <code>s</code>,  taken in order, one byte
-     * is written to the output stream.  If
-     * <code>s</code> is <code>null</code>, a <code>NullPointerException</code>
-     * is thrown.<p>  If <code>s.length</code>
-     * is zero, then no bytes are written. Otherwise,
-     * the character <code>s[0]</code> is written
-     * first, then <code>s[1]</code>, and so on;
-     * the last character written is <code>s[s.length-1]</code>.
-     * For each character, one byte is written,
-     * the low-order byte, in exactly the manner
-     * of the <code>writeByte</code> method . The
-     * high-order eight bits of each character
-     * in the string are ignored.
-     *
-     * @param      str the string of bytes to be written.
-     */
+   * Writes a string to the output stream. For every character in the string <code>s</code>, taken
+   * in order, one byte is written to the output stream. If <code>s</code> is <code>null</code>, a
+   * <code>NullPointerException</code> is thrown.
+   *
+   * <p>If <code>s.length</code> is zero, then no bytes are written. Otherwise, the character <code>
+   * s[0]</code> is written first, then <code>s[1]</code>, and so on; the last character written is
+   * <code>s[s.length-1]</code>. For each character, one byte is written, the low-order byte, in
+   * exactly the manner of the <code>writeByte</code> method . The high-order eight bits of each
+   * character in the string are ignored.
+   *
+   * @param str the string of bytes to be written.
+   */
   public final void writeBytes(String str) {
     //    if (logger.isTraceEnabled()) logger.trace(" bytes={}", str);
 
@@ -682,22 +664,15 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
   }
 
   /**
-     * Writes every character in the string <code>s</code>,
-     * to the output stream, in order,
-     * two bytes per character. If <code>s</code>
-     * is <code>null</code>, a <code>NullPointerException</code>
-     * is thrown.  If <code>s.length</code>
-     * is zero, then no characters are written.
-     * Otherwise, the character <code>s[0]</code>
-     * is written first, then <code>s[1]</code>,
-     * and so on; the last character written is
-     * <code>s[s.length-1]</code>. For each character,
-     * two bytes are actually written, high-order
-     * byte first, in exactly the manner of the
-     * <code>writeChar</code> method.
-     *
-     * @param      s   the string value to be written.
-     */
+   * Writes every character in the string <code>s</code>, to the output stream, in order, two bytes
+   * per character. If <code>s</code> is <code>null</code>, a <code>NullPointerException</code> is
+   * thrown. If <code>s.length</code> is zero, then no characters are written. Otherwise, the
+   * character <code>s[0]</code> is written first, then <code>s[1]</code>, and so on; the last
+   * character written is <code>s[s.length-1]</code>. For each character, two bytes are actually
+   * written, high-order byte first, in exactly the manner of the <code>writeChar</code> method.
+   *
+   * @param s the string value to be written.
+   */
   public final void writeChars(String s) {
     //    if (logger.isTraceEnabled()) logger.trace(" chars={}", s);
 
@@ -730,61 +705,60 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
   }
 
   /**
-   * Use -Dgemfire.ASCII_STRINGS=true if all String instances contain
-   * ASCII characters. Setting this to true gives a performance improvement.
+   * Use -Dgemfire.ASCII_STRINGS=true if all String instances contain ASCII characters. Setting this
+   * to true gives a performance improvement.
    */
-  private static final boolean ASCII_STRINGS = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "ASCII_STRINGS");
+  private static final boolean ASCII_STRINGS =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "ASCII_STRINGS");
 
   /**
-     * Writes two bytes of length information
-     * to the output stream, followed
-     * by the Java modified UTF representation
-     * of  every character in the string <code>s</code>.
-     * If <code>s</code> is <code>null</code>,
-     * a <code>NullPointerException</code> is thrown.
-     * Each character in the string <code>s</code>
-     * is converted to a group of one, two, or
-     * three bytes, depending on the value of the
-     * character.<p>
-     * If a character <code>c</code>
-     * is in the range <code>&#92;u0001</code> through
-     * <code>&#92;u007f</code>, it is represented
-     * by one byte:<p>
-     * <pre>(byte)c </pre>  <p>
-     * If a character <code>c</code> is <code>&#92;u0000</code>
-     * or is in the range <code>&#92;u0080</code>
-     * through <code>&#92;u07ff</code>, then it is
-     * represented by two bytes, to be written
-     * in the order shown:<p> <pre><code>
-     * (byte)(0xc0 | (0x1f &amp; (c &gt;&gt; 6)))
-     * (byte)(0x80 | (0x3f &amp; c))
-     *  </code></pre>  <p> If a character
-     * <code>c</code> is in the range <code>&#92;u0800</code>
-     * through <code>uffff</code>, then it is
-     * represented by three bytes, to be written
-     * in the order shown:<p> <pre><code>
-     * (byte)(0xe0 | (0x0f &amp; (c &gt;&gt; 12)))
-     * (byte)(0x80 | (0x3f &amp; (c &gt;&gt;  6)))
-     * (byte)(0x80 | (0x3f &amp; c))
-     *  </code></pre>  <p> First,
-     * the total number of bytes needed to represent
-     * all the characters of <code>s</code> is
-     * calculated. If this number is larger than
-     * <code>65535</code>, then a <code>UTFDataFormatException</code>
-     * is thrown. Otherwise, this length is written
-     * to the output stream in exactly the manner
-     * of the <code>writeShort</code> method;
-     * after this, the one-, two-, or three-byte
-     * representation of each character in the
-     * string <code>s</code> is written.<p>  The
-     * bytes written by this method may be read
-     * by the <code>readUTF</code> method of interface
-     * <code>DataInput</code> , which will then
-     * return a <code>String</code> equal to <code>s</code>.
-     *
-     * @param      str   the string value to be written.
-     * @exception  IOException  if an I/O error occurs.
-     */
+   * Writes two bytes of length information to the output stream, followed by the Java modified UTF
+   * representation of every character in the string <code>s</code>. If <code>s</code> is <code>null
+   * </code>, a <code>NullPointerException</code> is thrown. Each character in the string <code>s
+   * </code> is converted to a group of one, two, or three bytes, depending on the value of the
+   * character.
+   *
+   * <p>If a character <code>c</code> is in the range <code>&#92;u0001</code> through <code>
+   * &#92;u007f</code>, it is represented by one byte:
+   *
+   * <p>
+   *
+   * <pre>(byte)c </pre>
+   *
+   * <p>If a character <code>c</code> is <code>&#92;u0000</code> or is in the range <code>&#92;u0080
+   * </code> through <code>&#92;u07ff</code>, then it is represented by two bytes, to be written in
+   * the order shown:
+   *
+   * <p>
+   *
+   * <pre><code>
+   * (byte)(0xc0 | (0x1f &amp; (c &gt;&gt; 6)))
+   * (byte)(0x80 | (0x3f &amp; c))
+   *  </code></pre>
+   *
+   * <p>If a character <code>c</code> is in the range <code>&#92;u0800</code> through <code>uffff
+   * </code>, then it is represented by three bytes, to be written in the order shown:
+   *
+   * <p>
+   *
+   * <pre><code>
+   * (byte)(0xe0 | (0x0f &amp; (c &gt;&gt; 12)))
+   * (byte)(0x80 | (0x3f &amp; (c &gt;&gt;  6)))
+   * (byte)(0x80 | (0x3f &amp; c))
+   *  </code></pre>
+   *
+   * <p>First, the total number of bytes needed to represent all the characters of <code>s</code> is
+   * calculated. If this number is larger than <code>65535</code>, then a <code>
+   * UTFDataFormatException</code> is thrown. Otherwise, this length is written to the output stream
+   * in exactly the manner of the <code>writeShort</code> method; after this, the one-, two-, or
+   * three-byte representation of each character in the string <code>s</code> is written.
+   *
+   * <p>The bytes written by this method may be read by the <code>readUTF</code> method of interface
+   * <code>DataInput</code> , which will then return a <code>String</code> equal to <code>s</code>.
+   *
+   * @param str the string value to be written.
+   * @exception IOException if an I/O error occurs.
+   */
   public final void writeUTF(String str) throws IOException {
     //    if (logger.isTraceEnabled()) logger.trace(" utf={}", str);
 
@@ -871,9 +845,7 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
     }
   }
 
-  /**
-   * Used when we know the max size will fit in the current buffer.
-   */
+  /** Used when we know the max size will fit in the current buffer. */
   private final void writeQuickFullUTF(String str, int strlen) throws IOException {
     int utfSizeIdx = this.buffer.position();
     // skip bytes reserved for length
@@ -901,15 +873,12 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
   }
 
   /**
-   * Attempt to fit v into the current buffer as a serialized byte array.
-   * This is done by reserving 5 bytes for the length
-   * and then starting the serialization. If all the bytes fit
-   * then the length is fixed up and we are done.
-   * If it doesn't fit then we need to serialize the remainder to a temporary
-   * HeapDataOutputStream and then fix the length flush the first chunk and
-   * then send the contents of the HeapDataOutputStream to this streamer.
-   * All of this is done to prevent an extra copy when the serialized form
-   * will all fit into our current buffer.
+   * Attempt to fit v into the current buffer as a serialized byte array. This is done by reserving
+   * 5 bytes for the length and then starting the serialization. If all the bytes fit then the
+   * length is fixed up and we are done. If it doesn't fit then we need to serialize the remainder
+   * to a temporary HeapDataOutputStream and then fix the length flush the first chunk and then send
+   * the contents of the HeapDataOutputStream to this streamer. All of this is done to prevent an
+   * extra copy when the serialized form will all fit into our current buffer.
    */
   public final void writeAsSerializedByteArray(Object v) throws IOException {
     if (v instanceof HeapDataOutputStream) {
@@ -929,7 +898,9 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
       if (remainingSpace < 5) {
         // we don't even have room to write the length field so just create
         // the overflowBuf
-        this.overflowBuf = new HeapDataOutputStream(this.buffer.capacity() - Connection.MSG_HEADER_BYTES, Version.CURRENT);
+        this.overflowBuf =
+            new HeapDataOutputStream(
+                this.buffer.capacity() - Connection.MSG_HEADER_BYTES, Version.CURRENT);
         this.overflowBuf.writeAsSerializedByteArray(v);
         return;
       }
@@ -947,7 +918,10 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
       try {
         DataSerializer.writeObject(v, this);
       } catch (IOException e) {
-        RuntimeException e2 = new IllegalArgumentException(LocalizedStrings.MsgStreamer_AN_EXCEPTION_WAS_THROWN_WHILE_SERIALIZING.toLocalizedString());
+        RuntimeException e2 =
+            new IllegalArgumentException(
+                LocalizedStrings.MsgStreamer_AN_EXCEPTION_WAS_THROWN_WHILE_SERIALIZING
+                    .toLocalizedString());
         e2.initCause(e);
         throw e2;
       }
@@ -971,5 +945,4 @@ public class MsgStreamer extends OutputStream implements ObjToByteArraySerialize
       }
     }
   }
-
 }

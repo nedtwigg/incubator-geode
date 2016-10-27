@@ -23,11 +23,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**This class is similar to HashSet supporting all the feature
- * of ConcurrentHashMap
- * 
- *
- */
+/** This class is similar to HashSet supporting all the feature of ConcurrentHashMap */
 public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E>, Serializable {
 
   private static final long serialVersionUID = -3338819662572203596L;
@@ -81,5 +77,4 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E>, Seri
   public int size() {
     return map.size();
   }
-
 }

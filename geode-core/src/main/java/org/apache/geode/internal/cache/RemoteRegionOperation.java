@@ -38,11 +38,10 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * This message is used be a replicate region to perform region-level ops like
- * clear() and invalidateRegion().  It is used when the target region has
- * concurrency control enabled so that region-version-vectors must be used to
- * execute these operations.
- * 
+ * This message is used be a replicate region to perform region-level ops like clear() and
+ * invalidateRegion(). It is used when the target region has concurrency control enabled so that
+ * region-version-vectors must be used to execute these operations.
+ *
  * @since GemFire 7.0
  */
 public final class RemoteRegionOperation extends RemoteOperationMessageWithDirectReply {
@@ -53,13 +52,13 @@ public final class RemoteRegionOperation extends RemoteOperationMessageWithDirec
     //    INVALIDATE
   }
 
-  transient private DistributedRegion region;
+  private transient DistributedRegion region;
   private Operation op;
 
-  public RemoteRegionOperation() {
-  }
+  public RemoteRegionOperation() {}
 
-  public static RemoteRegionOperation clear(InternalDistributedMember recipient, DistributedRegion region) {
+  public static RemoteRegionOperation clear(
+      InternalDistributedMember recipient, DistributedRegion region) {
     return new RemoteRegionOperation(recipient, region, Operation.CLEAR);
   }
 
@@ -67,14 +66,17 @@ public final class RemoteRegionOperation extends RemoteOperationMessageWithDirec
   //    return new RemoteRegionOperation(recipient, region, Operation.INVALIDATE);
   //  }
 
-  private RemoteRegionOperation(InternalDistributedMember recipient, DistributedRegion region, Operation op) {
-    super(recipient, region.getFullPath(), new RemoteOperationResponse(region.getSystem(), Collections.singleton(recipient)));
+  private RemoteRegionOperation(
+      InternalDistributedMember recipient, DistributedRegion region, Operation op) {
+    super(
+        recipient,
+        region.getFullPath(),
+        new RemoteOperationResponse(region.getSystem(), Collections.singleton(recipient)));
     this.op = op;
     this.region = region;
   }
 
-  /**
-   */
+  /** */
   public void distribute() throws RemoteOperationException {
     RemoteOperationResponse p = (RemoteOperationResponse) this.processor;
 
@@ -87,9 +89,11 @@ public final class RemoteRegionOperation extends RemoteOperationMessageWithDirec
   }
 
   @Override
-  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime) throws CacheException, RemoteOperationException {
+  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime)
+      throws CacheException, RemoteOperationException {
     if (logger.isTraceEnabled(LogMarker.DM)) {
-      logger.trace(LogMarker.DM, "DistributedRemoteRegionOperation operateOnRegion: {}", r.getFullPath());
+      logger.trace(
+          LogMarker.DM, "DistributedRemoteRegionOperation operateOnRegion: {}", r.getFullPath());
     }
 
     if (!(r instanceof PartitionedRegion)) {
@@ -102,7 +106,7 @@ public final class RemoteRegionOperation extends RemoteOperationMessageWithDirec
       //      r.invalidateRegion();
     }
 
-    //r.getPrStats().endPartitionMessagesProcessing(startTime); 
+    //r.getPrStats().endPartitionMessagesProcessing(startTime);
     RemoteRegionOperationReplyMessage.send(getSender(), getProcessorId(), getReplySender(dm));
 
     // Unless there was an exception thrown, this message handles sending the
@@ -134,18 +138,16 @@ public final class RemoteRegionOperation extends RemoteOperationMessageWithDirec
 
   public static final class RemoteRegionOperationReplyMessage extends ReplyMessage {
 
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public RemoteRegionOperationReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public RemoteRegionOperationReplyMessage() {}
 
     private RemoteRegionOperationReplyMessage(int processorId) {
       this.processorId = processorId;
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient, int processorId, ReplySender replySender) {
+    public static void send(
+        InternalDistributedMember recipient, int processorId, ReplySender replySender) {
       Assert.assertTrue(recipient != null, "RemoteRegionOperationReplyMessage NULL reply message");
       RemoteRegionOperationReplyMessage m = new RemoteRegionOperationReplyMessage(processorId);
       m.setRecipient(recipient);
@@ -153,11 +155,9 @@ public final class RemoteRegionOperation extends RemoteOperationMessageWithDirec
     }
 
     /**
-     * Processes this message. This method is invoked by the receiver of the
-     * message.
-     * 
-     * @param dm
-     *          the distribution manager that is processing the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
+     * @param dm the distribution manager that is processing the message.
      */
     @Override
     public void process(final DM dm, ReplyProcessor21 processor) {
@@ -192,10 +192,12 @@ public final class RemoteRegionOperation extends RemoteOperationMessageWithDirec
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("RemoteRegionOperationReplyMessage ").append("processorid=").append(this.processorId).append(" reply to sender ").append(this.getSender());
+      sb.append("RemoteRegionOperationReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" reply to sender ")
+          .append(this.getSender());
       return sb.toString();
     }
-
   }
-
 }

@@ -33,36 +33,27 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import java.util.Properties;
 
 /**
- * A <code>HeapLRUCapacityController</code> controls the contents of
- * {@link Region} based on the percentage of memory that is
- * currently being used. If the percentage of memory in use exceeds
- * the given percentage, then the least recently used entry of the region is
- * evicted.
- * 
- * <P>
- * 
- * For heap regions:
- * GemStone has found that the <code>HeapLRUCapacityController</code> has the
- * most effect on a VM that is lauched with both the <code>-Xmx</code> and
- * <code>-Xms</code> switches used. Many virtual machine implementations have
- * additional VM switches to control the behavior of the garbage collector. We
- * suggest that you investigate tuning the garbage collector when using a
- * <code>HeapLRUCapacityController</code>. In particular, we have found that
- * when running with Sun's <A
- * href="http://java.sun.com/docs/hotspot/gc/index.html">HotSpot</a> VM, the
- * <code>-XX:+UseConcMarkSweepGC</code> and <code>-XX:+UseParNewGC</code>
- * options improve the behavior of the <code>HeapLRUCapacityController</code>.
- * 
- * 
+ * A <code>HeapLRUCapacityController</code> controls the contents of {@link Region} based on the
+ * percentage of memory that is currently being used. If the percentage of memory in use exceeds the
+ * given percentage, then the least recently used entry of the region is evicted.
+ *
+ * <p>For heap regions: GemStone has found that the <code>HeapLRUCapacityController</code> has the
+ * most effect on a VM that is lauched with both the <code>-Xmx</code> and <code>-Xms</code>
+ * switches used. Many virtual machine implementations have additional VM switches to control the
+ * behavior of the garbage collector. We suggest that you investigate tuning the garbage collector
+ * when using a <code>HeapLRUCapacityController</code>. In particular, we have found that when
+ * running with Sun's <A href="http://java.sun.com/docs/hotspot/gc/index.html">HotSpot</a> VM, the
+ * <code>-XX:+UseConcMarkSweepGC</code> and <code>-XX:+UseParNewGC</code> options improve the
+ * behavior of the <code>HeapLRUCapacityController</code>.
+ *
  * @since GemFire 3.2
  */
 @SuppressWarnings("synthetic-access")
 public class HeapLRUCapacityController extends LRUAlgorithm {
   private static final long serialVersionUID = 4970685814429530675L;
-  /**
-   * The default percentage of VM heap usage over which LRU eviction occurs
-   */
-  public static final String TOP_UP_HEAP_EVICTION_PERCENTAGE_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "topUpHeapEvictionPercentage";
+  /** The default percentage of VM heap usage over which LRU eviction occurs */
+  public static final String TOP_UP_HEAP_EVICTION_PERCENTAGE_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "topUpHeapEvictionPercentage";
 
   public static final float DEFAULT_TOP_UP_HEAP_EVICTION_PERCENTAGE = 4.0f;
 
@@ -73,8 +64,8 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
   private int perEntryOverhead = PER_ENTRY_OVERHEAD;
 
   /**
-   * The default number of milliseconds the evictor thread should wait before
-   * evicting the LRU entry.
+   * The default number of milliseconds the evictor thread should wait before evicting the LRU
+   * entry.
    */
   public static final int DEFAULT_EVICTOR_INTERVAL = 500;
 
@@ -84,14 +75,28 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
     // create the stats type for MemLRU.
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    final String entryBytesDesc = "The amount of memory currently used by regions configured for eviction.";
+    final String entryBytesDesc =
+        "The amount of memory currently used by regions configured for eviction.";
     final String lruEvictionsDesc = "Number of total entry evictions triggered by LRU.";
-    final String lruDestroysDesc = "Number of entries destroyed in the region through both destroy cache operations and eviction. Reset to zero each time it exceeds lruDestroysLimit.";
-    final String lruDestroysLimitDesc = "Maximum number of entry destroys triggered by LRU before scan occurs.";
+    final String lruDestroysDesc =
+        "Number of entries destroyed in the region through both destroy cache operations and eviction. Reset to zero each time it exceeds lruDestroysLimit.";
+    final String lruDestroysLimitDesc =
+        "Maximum number of entry destroys triggered by LRU before scan occurs.";
     final String lruEvaluationsDesc = "Number of entries evaluated during LRU operations.";
     final String lruGreedyReturnsDesc = "Number of non-LRU entries evicted during LRU operations";
 
-    statType = f.createType("HeapLRUStatistics", "Statistics about byte based Least Recently Used region entry disposal", new StatisticDescriptor[] { f.createLongGauge("entryBytes", entryBytesDesc, "bytes"), f.createLongCounter("lruEvictions", lruEvictionsDesc, "entries"), f.createLongCounter("lruDestroys", lruDestroysDesc, "entries"), f.createLongGauge("lruDestroysLimit", lruDestroysLimitDesc, "entries"), f.createLongCounter("lruEvaluations", lruEvaluationsDesc, "entries"), f.createLongCounter("lruGreedyReturns", lruGreedyReturnsDesc, "entries"), });
+    statType =
+        f.createType(
+            "HeapLRUStatistics",
+            "Statistics about byte based Least Recently Used region entry disposal",
+            new StatisticDescriptor[] {
+              f.createLongGauge("entryBytes", entryBytesDesc, "bytes"),
+              f.createLongCounter("lruEvictions", lruEvictionsDesc, "entries"),
+              f.createLongCounter("lruDestroys", lruDestroysDesc, "entries"),
+              f.createLongGauge("lruDestroysLimit", lruDestroysLimitDesc, "entries"),
+              f.createLongCounter("lruEvaluations", lruEvaluationsDesc, "entries"),
+              f.createLongCounter("lruGreedyReturns", lruGreedyReturnsDesc, "entries"),
+            });
   }
 
   // //////////////////// Instance Fields /////////////////////
@@ -100,24 +105,22 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
 
   /**
    * Creates a new <code>HeapLRUCapacityController</code> with the given eviction action.
-   * 
-   * @param evictionAction
-   *          The action that will occur when an entry is evicted
-   * 
+   *
+   * @param evictionAction The action that will occur when an entry is evicted
    */
   public HeapLRUCapacityController(EvictionAction evictionAction, Region region) {
     super(evictionAction, region);
   }
 
-  public HeapLRUCapacityController(ObjectSizer sizerImpl, EvictionAction evictionAction, Region region) {
+  public HeapLRUCapacityController(
+      ObjectSizer sizerImpl, EvictionAction evictionAction, Region region) {
     super(evictionAction, region);
     setSizer(sizerImpl);
   }
   // ///////////////////// Instance Methods ///////////////////////
 
   @Override
-  public void setLimit(int maximum) {
-  }
+  public void setLimit(int maximum) {}
 
   // Candidate for removal since capacity controller is no longer part of
   // cache.xml
@@ -138,15 +141,14 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
 
   @Override
   public boolean equals(Object cc) {
-    if (!super.equals(cc))
-      return false;
+    if (!super.equals(cc)) return false;
     return true;
   }
 
   /*
    * (non-Javadoc)
    * @see java.lang.Object#hashCode()
-   * 
+   *
    * Note that we just need to make sure that equal objects return equal
    * hashcodes; nothing really elaborate is done here.
    */
@@ -158,20 +160,20 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
 
   /**
    * Returns a brief description of this eviction controller.
-   * 
+   *
    * @since GemFire 4.0
    */
   @Override
   public String toString() {
-    return LocalizedStrings.HeapLRUCapacityController_HEAPLRUCAPACITYCONTROLLER_WITH_A_CAPACITY_OF_0_OF_HEAP_AND_AN_THREAD_INTERVAL_OF_1_AND_EVICTION_ACTION_2.toLocalizedString(new Object[] { Long.valueOf(this.getLimit()), this.getEvictionAction() });
+    return LocalizedStrings
+        .HeapLRUCapacityController_HEAPLRUCAPACITYCONTROLLER_WITH_A_CAPACITY_OF_0_OF_HEAP_AND_AN_THREAD_INTERVAL_OF_1_AND_EVICTION_ACTION_2
+        .toLocalizedString(new Object[] {Long.valueOf(this.getLimit()), this.getEvictionAction()});
   }
 
   /**
-   * Sets the {@link ObjectSizer} used to calculate the size of
-   * objects placed in the cache.
+   * Sets the {@link ObjectSizer} used to calculate the size of objects placed in the cache.
    *
-   * @param sizer
-   *        The name of the sizer class
+   * @param sizer The name of the sizer class
    */
   private void setSizer(ObjectSizer sizer) {
     this.sizer = sizer;
@@ -181,17 +183,12 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
   protected EnableLRU createLRUHelper() {
     return new AbstractEnableLRU() {
 
-      /**
-       * Indicate what kind of <code>EvictionAlgorithm</code> this helper
-       * implements
-       */
+      /** Indicate what kind of <code>EvictionAlgorithm</code> this helper implements */
       public EvictionAlgorithm getEvictionAlgorithm() {
         return EvictionAlgorithm.LRU_HEAP;
       }
 
-      /**
-       * As far as we're concerned all entries have the same size
-       */
+      /** As far as we're concerned all entries have the same size */
       public int entrySize(Object key, Object value) throws IllegalArgumentException {
         // value is null only after eviction occurs. A change in size is
         // required for eviction stats, bug 30974
@@ -209,8 +206,8 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
       }
 
       /**
-       * In addition to initializing the statistics, create an evictor thread to
-       * periodically evict the LRU entry.
+       * In addition to initializing the statistics, create an evictor thread to periodically evict
+       * the LRU entry.
        */
       @Override
       public LRUStatistics initStats(Object region, StatisticsFactory sf) {
@@ -257,13 +254,11 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
       }
 
       /**
-       * Okay, deep breath. Instead of basing the LRU calculation on the number
-       * of entries in the region or on their "size" (which turned out to be
-       * incorrectly estimated in the general case), we use the amount of
-       * memory currently in use. If the amount of memory current in use
-       * {@linkplain Runtime#maxMemory max memory} -
-       * {@linkplain Runtime#freeMemory free memory} is greater than the
-       * overflow threshold, then we evict the LRU entry.
+       * Okay, deep breath. Instead of basing the LRU calculation on the number of entries in the
+       * region or on their "size" (which turned out to be incorrectly estimated in the general
+       * case), we use the amount of memory currently in use. If the amount of memory current in use
+       * {@linkplain Runtime#maxMemory max memory} - {@linkplain Runtime#freeMemory free memory} is
+       * greater than the overflow threshold, then we evict the LRU entry.
        */
       public boolean mustEvict(LRUStatistics stats, Region region, int delta) {
         final GemFireCacheImpl cache;
@@ -299,9 +294,9 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
   private ObjectSizer sizer;
 
   /**
-   * Return the size of an object as stored in GemFire... Typically this is the
-   * serialized size in bytes.. This implementation is slow.... Need to add
-   * Sizer interface and call it for customer objects.
+   * Return the size of an object as stored in GemFire... Typically this is the serialized size in
+   * bytes.. This implementation is slow.... Need to add Sizer interface and call it for customer
+   * objects.
    */
   protected int sizeof(Object o) throws IllegalArgumentException {
     return MemLRUCapacityController.basicSizeof(o, this.sizer);
@@ -314,5 +309,4 @@ public class HeapLRUCapacityController extends LRUAlgorithm {
   public void setEntryOverHead(int entryOverHead) {
     this.perEntryOverhead = entryOverHead;
   }
-
 }

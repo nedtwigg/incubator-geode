@@ -23,21 +23,19 @@ import org.apache.geode.internal.cache.Conflatable;
 import java.io.IOException;
 
 /**
- * Interface <code>ClientMessage</code> is a message representing a cache
- * operation that is sent from a server to an interested client. 
- *
+ * Interface <code>ClientMessage</code> is a message representing a cache operation that is sent
+ * from a server to an interested client.
  *
  * @since GemFire 5.5
  */
 public interface ClientMessage extends Conflatable, DataSerializableFixedID {
 
   /**
-   * Returns a <code>Message</code> generated from the fields of this
-   * <code>ClientMessage</code>.
+   * Returns a <code>Message</code> generated from the fields of this <code>ClientMessage</code>.
    *
    * @param proxy the proxy that is dispatching this message
-   * @return a <code>Message</code> generated from the fields of this
-   *         <code>ClientUpdateMessage</code>
+   * @return a <code>Message</code> generated from the fields of this <code>ClientUpdateMessage
+   *     </code>
    * @throws IOException
    * @see org.apache.geode.internal.cache.tier.sockets.Message
    */

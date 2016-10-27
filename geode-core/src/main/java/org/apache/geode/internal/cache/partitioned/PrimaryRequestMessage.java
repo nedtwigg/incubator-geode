@@ -41,12 +41,9 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- *
- * The primary request message signals bucket owners to re-select the 
- * primary owner of the bucket.  It is sent by client threads which need
- * to use the bucket, however do not know of its primary location.
- * 
- *
+ * The primary request message signals bucket owners to re-select the primary owner of the bucket.
+ * It is sent by client threads which need to use the bucket, however do not know of its primary
+ * location.
  */
 public final class PrimaryRequestMessage extends PartitionMessage {
   private static final Logger logger = LogService.getLogger();
@@ -58,27 +55,30 @@ public final class PrimaryRequestMessage extends PartitionMessage {
 
   /**
    * Send request for primary election
-   * @param recipients those members which own the bucket 
+   *
+   * @param recipients those members which own the bucket
    * @param r the Partitioned Region which uses/owns the bucket
    * @param bucketId the idenity of the bucket
-   * @return a response object on which the caller waits for acknowledgement of which member is the primary
+   * @return a response object on which the caller waits for acknowledgement of which member is the
+   *     primary
    * @throws ForceReattemptException if the message was unable to be sent
    */
-  public static PrimaryResponse send(Set recipients, PartitionedRegion r, int bucketId) throws ForceReattemptException {
+  public static PrimaryResponse send(Set recipients, PartitionedRegion r, int bucketId)
+      throws ForceReattemptException {
     Assert.assertTrue(recipients != null, "PrimaryRequestMessage NULL recipient");
     PrimaryResponse p = new PrimaryResponse(r.getSystem(), recipients);
     PrimaryRequestMessage m = new PrimaryRequestMessage(recipients, r.getPRId(), p, bucketId);
 
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new ForceReattemptException(LocalizedStrings.PrimaryRequestMessage_FAILED_SENDING_0.toLocalizedString(m));
+      throw new ForceReattemptException(
+          LocalizedStrings.PrimaryRequestMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
 
     return p;
   }
 
-  public PrimaryRequestMessage() {
-  }
+  public PrimaryRequestMessage() {}
 
   private PrimaryRequestMessage(Set recipients, int regionId, ReplyProcessor21 processor, int bId) {
     super(recipients, regionId, processor);
@@ -92,7 +92,9 @@ public final class PrimaryRequestMessage extends PartitionMessage {
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException, ForceReattemptException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion pr, long startTime)
+      throws CacheException, ForceReattemptException {
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace(LogMarker.DM, "PrimaryRequestMessage operateOnRegion: {}", pr.getFullPath());
     }
@@ -131,22 +133,21 @@ public final class PrimaryRequestMessage extends PartitionMessage {
     return DistributionManager.WAITING_POOL_EXECUTOR;
   }
 
-  /**
-   * The reply to a PrimarRequestMessage, indicating if the sender is the primary
-   */
-  static public final class PrimaryRequestReplyMessage extends ReplyMessage {
+  /** The reply to a PrimarRequestMessage, indicating if the sender is the primary */
+  public static final class PrimaryRequestReplyMessage extends ReplyMessage {
     private static final long serialVersionUID = 1L;
 
     public volatile boolean isPrimary;
 
-    protected static void sendReply(InternalDistributedMember member, int procId, boolean isPrimary, DM dm) {
+    protected static void sendReply(
+        InternalDistributedMember member, int procId, boolean isPrimary, DM dm) {
       dm.putOutgoing(new PrimaryRequestReplyMessage(member, procId, isPrimary));
     }
 
-    public PrimaryRequestReplyMessage() {
-    }
+    public PrimaryRequestReplyMessage() {}
 
-    private PrimaryRequestReplyMessage(InternalDistributedMember member, int procId, boolean isPrimary2) {
+    private PrimaryRequestReplyMessage(
+        InternalDistributedMember member, int procId, boolean isPrimary2) {
       setRecipient(member);
       setProcessorId(procId);
       this.isPrimary = isPrimary2;
@@ -172,9 +173,10 @@ public final class PrimaryRequestMessage extends PartitionMessage {
 
   /**
    * A processor to capture the member who was selected as primary for the bucket requested
+   *
    * @since GemFire 5.1
    */
-  static public class PrimaryResponse extends ReplyProcessor21 {
+  public static class PrimaryResponse extends ReplyProcessor21 {
     private volatile PrimaryRequestReplyMessage msg;
 
     protected PrimaryResponse(InternalDistributedSystem ds, Set recipients) {
@@ -189,7 +191,8 @@ public final class PrimaryRequestMessage extends PartitionMessage {
           if (reply.isPrimary) {
             this.msg = reply;
             if (logger.isTraceEnabled(LogMarker.DM)) {
-              logger.trace(LogMarker.DM, "PrimaryRequestResponse primary is {}", this.msg.getSender());
+              logger.trace(
+                  LogMarker.DM, "PrimaryRequestResponse primary is {}", this.msg.getSender());
             }
           } else {
             if (logger.isTraceEnabled(LogMarker.DM)) {
@@ -211,14 +214,21 @@ public final class PrimaryRequestMessage extends PartitionMessage {
         Throwable t = e.getCause();
         if (t instanceof CancelException) {
           if (logger.isTraceEnabled(LogMarker.DM)) {
-            logger.trace(LogMarker.DM, "NodeResponse got remote CacheClosedException, throwing PartitionedRegionCommunication Exception. {}", t.getMessage(), t);
+            logger.trace(
+                LogMarker.DM,
+                "NodeResponse got remote CacheClosedException, throwing PartitionedRegionCommunication Exception. {}",
+                t.getMessage(),
+                t);
           }
-          throw new ForceReattemptException(LocalizedStrings.PrimaryRequestMessage_NODERESPONSE_GOT_REMOTE_CACHECLOSEDEXCEPTION_THROWING_PARTITIONEDREGIONCOMMUNICATION_EXCEPTION.toLocalizedString(), t);
+          throw new ForceReattemptException(
+              LocalizedStrings
+                  .PrimaryRequestMessage_NODERESPONSE_GOT_REMOTE_CACHECLOSEDEXCEPTION_THROWING_PARTITIONEDREGIONCOMMUNICATION_EXCEPTION
+                  .toLocalizedString(),
+              t);
         }
         e.handleAsUnexpected();
       }
       return this.msg.getSender();
     }
   }
-
 }

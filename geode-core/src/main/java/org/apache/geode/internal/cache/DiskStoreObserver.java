@@ -18,10 +18,7 @@ package org.apache.geode.internal.cache;
 
 import java.util.Map;
 
-/**
- * For testing purposes only, observers events in the disk store.
- *
- */
+/** For testing purposes only, observers events in the disk store. */
 public abstract class DiskStoreObserver {
 
   private static DiskStoreObserver INSTANCE = null;
@@ -30,16 +27,11 @@ public abstract class DiskStoreObserver {
     INSTANCE = observer;
   }
 
-  public void beforeAsyncValueRecovery(DiskStoreImpl store) {
+  public void beforeAsyncValueRecovery(DiskStoreImpl store) {}
 
-  }
+  public void afterAsyncValueRecovery(DiskStoreImpl store) {}
 
-  public void afterAsyncValueRecovery(DiskStoreImpl store) {
-
-  }
-
-  public void afterWriteGCRVV(DiskRegion dr) {
-  }
+  public void afterWriteGCRVV(DiskRegion dr) {}
 
   static void startAsyncValueRecovery(DiskStoreImpl store) {
     if (INSTANCE != null) {

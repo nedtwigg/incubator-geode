@@ -62,7 +62,8 @@ public class StreamingOperationManyDUnitTest extends JUnit4DistributedTestCase {
       otherMemberIds.add(vm.invoke(() -> getSystem().getDistributedMember()));
     }
 
-    TestStreamingOperationManyProviderNoExceptions streamOp = new TestStreamingOperationManyProviderNoExceptions(getSystem());
+    TestStreamingOperationManyProviderNoExceptions streamOp =
+        new TestStreamingOperationManyProviderNoExceptions(getSystem());
     streamOp.getDataFromAll(otherMemberIds);
     assertTrue(streamOp.dataValidated);
   }
@@ -81,13 +82,15 @@ public class StreamingOperationManyDUnitTest extends JUnit4DistributedTestCase {
     }
 
     protected DistributionMessage createRequestMessage(Set recipients, ReplyProcessor21 processor) {
-      TestRequestStreamingMessageManyProviderNoExceptions msg = new TestRequestStreamingMessageManyProviderNoExceptions();
+      TestRequestStreamingMessageManyProviderNoExceptions msg =
+          new TestRequestStreamingMessageManyProviderNoExceptions();
       msg.setRecipients(recipients);
       msg.processorId = processor == null ? 0 : processor.getProcessorId();
       return msg;
     }
 
-    protected synchronized boolean processData(List objects, InternalDistributedMember sender, int sequenceNum, boolean lastInSequence) {
+    protected synchronized boolean processData(
+        List objects, InternalDistributedMember sender, int sequenceNum, boolean lastInSequence) {
       LogWriter logger = this.sys.getLogWriter();
 
       ConcurrentMap chunkMap = (ConcurrentMap) senderMap.get(sender);
@@ -107,7 +110,9 @@ public class StreamingOperationManyDUnitTest extends JUnit4DistributedTestCase {
 
       if (lastInSequence) {
         numChunks = sequenceNum + 1;
-        prevValue = senderNumChunksMap.putIfAbsent(sender, new Integer(sequenceNum + 1)); // sequenceNum is 0-based
+        prevValue =
+            senderNumChunksMap.putIfAbsent(
+                sender, new Integer(sequenceNum + 1)); // sequenceNum is 0-based
         if (prevValue != null) {
           logger.severe("prevValue != null");
         }
@@ -123,11 +128,12 @@ public class StreamingOperationManyDUnitTest extends JUnit4DistributedTestCase {
       //                   + " senderMap.size=" + senderMap.size());
 
       // are we completely done with all senders ?
-      if (chunkMap.size() == numChunks && // done with this sender
+      if (chunkMap.size() == numChunks
+          && // done with this sender
           senderMap.size() == 4) { // we've heard from all 4 senders
         //         logger.info("completely done (maybe)");
         boolean completelyDone = true; // start with true assumption
-        for (Iterator itr = senderMap.entrySet().iterator(); itr.hasNext();) {
+        for (Iterator itr = senderMap.entrySet().iterator(); itr.hasNext(); ) {
           Map.Entry entry = (Map.Entry) itr.next();
           InternalDistributedMember senderV = (InternalDistributedMember) entry.getKey();
           ConcurrentMap chunkMapV = (ConcurrentMap) entry.getValue();
@@ -160,7 +166,7 @@ public class StreamingOperationManyDUnitTest extends JUnit4DistributedTestCase {
 
     private void validateData() {
       LogWriter logger = this.sys.getLogWriter();
-      for (Iterator senderItr = this.senderMap.entrySet().iterator(); senderItr.hasNext();) {
+      for (Iterator senderItr = this.senderMap.entrySet().iterator(); senderItr.hasNext(); ) {
         Map.Entry entry = (Map.Entry) senderItr.next();
         ConcurrentMap chunkMap = (ConcurrentMap) entry.getValue();
         InternalDistributedMember sender = (InternalDistributedMember) entry.getKey();
@@ -169,7 +175,7 @@ public class StreamingOperationManyDUnitTest extends JUnit4DistributedTestCase {
         int expectedInt = 0;
 
         // sort the input streams
-        for (Iterator itr = chunkMap.entrySet().iterator(); itr.hasNext();) {
+        for (Iterator itr = chunkMap.entrySet().iterator(); itr.hasNext(); ) {
           Map.Entry entry2 = (Map.Entry) itr.next();
           int seqNum = ((Integer) entry2.getKey()).intValue();
           objList = (List) entry2.getValue();
@@ -191,16 +197,25 @@ public class StreamingOperationManyDUnitTest extends JUnit4DistributedTestCase {
           }
         }
         if (count != NUM_INTEGERS) {
-          logger.severe("found " + count + " integers from " + sender + " , expected " + NUM_INTEGERS);
+          logger.severe(
+              "found " + count + " integers from " + sender + " , expected " + NUM_INTEGERS);
           return;
         }
-        logger.info("Received " + count + " integers from " + sender + " in " + chunkMap.size() + " chunks");
+        logger.info(
+            "Received "
+                + count
+                + " integers from "
+                + sender
+                + " in "
+                + chunkMap.size()
+                + " chunks");
       }
       dataValidated = true;
     }
   }
 
-  public static final class TestRequestStreamingMessageManyProviderNoExceptions extends StreamingOperation.RequestStreamingMessage {
+  public static final class TestRequestStreamingMessageManyProviderNoExceptions
+      extends StreamingOperation.RequestStreamingMessage {
     private int nextInt = -10;
     private int count = 0;
 

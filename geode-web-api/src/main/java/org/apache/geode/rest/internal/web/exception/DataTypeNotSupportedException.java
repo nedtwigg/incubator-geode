@@ -20,15 +20,18 @@ package org.apache.geode.rest.internal.web.exception;
 import org.apache.geode.GemFireException;
 
 /**
- * Indicates that error encountered while converting Non-Pdx type values/data into RESTful format, i.e JSON
- * <p/>
+ * Indicates that error encountered while converting Non-Pdx type values/data into RESTful format,
+ * i.e JSON
+ *
+ * <p>
+ *
  * @since GemFire 8.1
  */
-
 public class DataTypeNotSupportedException extends GemFireException {
 
   /**
    * Create the exception with the given message.
+   *
    * @param message the message of the new exception
    */
   public DataTypeNotSupportedException(String message) {
@@ -37,11 +40,11 @@ public class DataTypeNotSupportedException extends GemFireException {
 
   /**
    * Create the exception with the given message and cause.
+   *
    * @param message the message of the new exception
    * @param cause the cause of the new exception
    */
   public DataTypeNotSupportedException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

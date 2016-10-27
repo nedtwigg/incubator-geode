@@ -33,17 +33,23 @@ import org.apache.geode.internal.cache.BucketRegion;
 import org.apache.geode.internal.cache.PartitionedRegion;
 
 public class RawIndexRepositoryFactory extends IndexRepositoryFactory {
-  public RawIndexRepositoryFactory() {
-  }
+  public RawIndexRepositoryFactory() {}
 
-  public IndexRepository createIndexRepository(final Integer bucketId, LuceneSerializer serializer, LuceneIndexImpl index, PartitionedRegion userRegion) throws IOException {
+  public IndexRepository createIndexRepository(
+      final Integer bucketId,
+      LuceneSerializer serializer,
+      LuceneIndexImpl index,
+      PartitionedRegion userRegion)
+      throws IOException {
     final IndexRepository repo;
     LuceneRawIndex indexForRaw = (LuceneRawIndex) index;
     BucketRegion dataBucket = getMatchingBucket(userRegion, bucketId);
 
     Directory dir = null;
     if (indexForRaw.withPersistence()) {
-      String bucketLocation = LuceneServiceImpl.getUniqueIndexName(index.getName(), index.getRegionPath() + "_" + bucketId);
+      String bucketLocation =
+          LuceneServiceImpl.getUniqueIndexName(
+              index.getName(), index.getRegionPath() + "_" + bucketId);
       File location = new File(index.getName(), bucketLocation);
       if (!location.exists()) {
         location.mkdirs();
@@ -54,6 +60,7 @@ public class RawIndexRepositoryFactory extends IndexRepositoryFactory {
     }
     IndexWriterConfig config = new IndexWriterConfig(indexForRaw.getAnalyzer());
     IndexWriter writer = new IndexWriter(dir, config);
-    return new IndexRepositoryImpl(null, writer, serializer, indexForRaw.getIndexStats(), dataBucket);
+    return new IndexRepositoryImpl(
+        null, writer, serializer, indexForRaw.getIndexStats(), dataBucket);
   }
 }

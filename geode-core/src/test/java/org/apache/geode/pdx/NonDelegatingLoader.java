@@ -61,5 +61,4 @@ class NonDelegatingLoader extends ClassLoader {
     }
     return clazz;
   }
-
 }

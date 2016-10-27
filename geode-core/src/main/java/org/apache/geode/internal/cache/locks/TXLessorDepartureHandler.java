@@ -31,10 +31,8 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * Handles departure of lessor (lease holder) by sending a message asking
- * each participant if it's ok to release the leases. Upon receipt of all
- * replies the lease will be automatically released.
- *
+ * Handles departure of lessor (lease holder) by sending a message asking each participant if it's
+ * ok to release the leases. Upon receipt of all replies the lease will be automatically released.
  */
 public class TXLessorDepartureHandler implements DLockLessorDepartureHandler {
   private static final Logger logger = LogService.getLogger();
@@ -42,8 +40,7 @@ public class TXLessorDepartureHandler implements DLockLessorDepartureHandler {
   public void handleDepartureOf(InternalDistributedMember owner, DLockGrantor grantor) {
     // get DTLS
     TXLockService dtls = TXLockService.getDTLS();
-    if (dtls == null)
-      return;
+    if (dtls == null) return;
     try {
       if (!dtls.isLockGrantor()) {
         logger.debug("This member is not lock grantor; exiting TXLessorDepartureHandler");
@@ -54,7 +51,8 @@ public class TXLessorDepartureHandler implements DLockLessorDepartureHandler {
 
       //DLockGrantor grantor = DLockGrantor.waitForGrantor(dlock, true);
       if (grantor == null || grantor.isDestroyed()) {
-        logger.debug("Lock grantor does not exist or has been destroyed; exiting TXLessorDepartureHandler");
+        logger.debug(
+            "Lock grantor does not exist or has been destroyed; exiting TXLessorDepartureHandler");
         return;
       }
 
@@ -71,23 +69,30 @@ public class TXLessorDepartureHandler implements DLockLessorDepartureHandler {
     } // outer try-catch
   }
 
-  private void sendRecoveryMsgs(final DM dm, final DLockBatch[] batches, final InternalDistributedMember owner, final DLockGrantor grantor) {
+  private void sendRecoveryMsgs(
+      final DM dm,
+      final DLockBatch[] batches,
+      final InternalDistributedMember owner,
+      final DLockGrantor grantor) {
     try {
-      dm.getWaitingThreadPool().execute(new Runnable() {
-        public void run() {
-          for (int i = 0; i < batches.length; i++) {
-            TXLockBatch batch = (TXLockBatch) batches[i];
-            // send TXOriginatorDepartureMessage
-            Set participants = batch.getParticipants();
-            TXOriginatorRecoveryProcessor.sendMessage(participants, owner, batch.getTXLockId(), grantor, dm);
-          }
-        }
-      });
+      dm.getWaitingThreadPool()
+          .execute(
+              new Runnable() {
+                public void run() {
+                  for (int i = 0; i < batches.length; i++) {
+                    TXLockBatch batch = (TXLockBatch) batches[i];
+                    // send TXOriginatorDepartureMessage
+                    Set participants = batch.getParticipants();
+                    TXOriginatorRecoveryProcessor.sendMessage(
+                        participants, owner, batch.getTXLockId(), grantor, dm);
+                  }
+                }
+              });
     } catch (RejectedExecutionException e) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Rejected sending recovery messages for departure of tx originator {}", owner, e);
+        logger.debug(
+            "Rejected sending recovery messages for departure of tx originator {}", owner, e);
       }
     }
   }
-
 }

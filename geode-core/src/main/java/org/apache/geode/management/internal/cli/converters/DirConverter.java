@@ -28,12 +28,7 @@ import org.apache.geode.management.cli.ConverterHint;
 import org.apache.geode.management.internal.cli.MultipleValueAdapter;
 import org.apache.geode.management.internal.cli.shell.Gfsh;
 
-/**
- *
- * @since GemFire 7.0
- * 
- * 
- */
+/** @since GemFire 7.0 */
 public class DirConverter extends MultipleValueAdapter<String[]> {
 
   private static final String HOME_DIRECTORY_SYMBOL = "~";
@@ -46,18 +41,35 @@ public class DirConverter extends MultipleValueAdapter<String[]> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String[] existingData, String context, MethodTarget target) {
-    String adjustedUserInput = convertUserInputIntoAFullyQualifiedPath((existingData != null) ? existingData[existingData.length - 1] : "");
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String[] existingData,
+      String context,
+      MethodTarget target) {
+    String adjustedUserInput =
+        convertUserInputIntoAFullyQualifiedPath(
+            (existingData != null) ? existingData[existingData.length - 1] : "");
 
-    String directoryData = adjustedUserInput.substring(0, adjustedUserInput.lastIndexOf(File.separator) + 1);
-    adjustedUserInput = adjustedUserInput.substring(adjustedUserInput.lastIndexOf(File.separator) + 1);
+    String directoryData =
+        adjustedUserInput.substring(0, adjustedUserInput.lastIndexOf(File.separator) + 1);
+    adjustedUserInput =
+        adjustedUserInput.substring(adjustedUserInput.lastIndexOf(File.separator) + 1);
 
-    populate(completions, adjustedUserInput, ((existingData != null) ? existingData[existingData.length - 1] : ""), directoryData);
+    populate(
+        completions,
+        adjustedUserInput,
+        ((existingData != null) ? existingData[existingData.length - 1] : ""),
+        directoryData);
 
     return true;
   }
 
-  protected void populate(final List<Completion> completions, final String adjustedUserInput, final String originalUserInput, final String directoryData) {
+  protected void populate(
+      final List<Completion> completions,
+      final String adjustedUserInput,
+      final String originalUserInput,
+      final String directoryData) {
     File directory = new File(directoryData);
 
     if (!directory.isDirectory()) {
@@ -65,11 +77,12 @@ public class DirConverter extends MultipleValueAdapter<String[]> {
     }
 
     for (File file : directory.listFiles()) {
-      if (adjustedUserInput == null || adjustedUserInput.length() == 0 || file.getName().toLowerCase().startsWith(adjustedUserInput.toLowerCase())) {
+      if (adjustedUserInput == null
+          || adjustedUserInput.length() == 0
+          || file.getName().toLowerCase().startsWith(adjustedUserInput.toLowerCase())) {
 
         String completion = "";
-        if (directoryData.length() > 0)
-          completion += directoryData;
+        if (directoryData.length() > 0) completion += directoryData;
         completion += file.getName();
 
         completion = convertCompletionBackIntoUserInputStyle(originalUserInput, completion);
@@ -81,7 +94,8 @@ public class DirConverter extends MultipleValueAdapter<String[]> {
     }
   }
 
-  private String convertCompletionBackIntoUserInputStyle(final String originalUserInput, final String completion) {
+  private String convertCompletionBackIntoUserInputStyle(
+      final String originalUserInput, final String completion) {
     if (FileUtils.denotesAbsolutePath(originalUserInput)) {
       // Input was originally as a fully-qualified path, so we just keep the
       // completion in that form
@@ -99,16 +113,14 @@ public class DirConverter extends MultipleValueAdapter<String[]> {
   }
 
   /**
-   * If the user input starts with a tilde character (~), replace the tilde
-   * character with the user's home directory. If the user input does not start
-   * with a tilde, simply return the original user input without any changes if
-   * the input specifies an absolute path, or return an absolute path based on
-   * the working directory if the input specifies a relative path.
-   * 
-   * @param userInput
-   *          the user input, which may commence with a tilde (required)
-   * @return a string that is guaranteed to no longer contain a tilde as the
-   *         first character (never null)
+   * If the user input starts with a tilde character (~), replace the tilde character with the
+   * user's home directory. If the user input does not start with a tilde, simply return the
+   * original user input without any changes if the input specifies an absolute path, or return an
+   * absolute path based on the working directory if the input specifies a relative path.
+   *
+   * @param userInput the user input, which may commence with a tilde (required)
+   * @return a string that is guaranteed to no longer contain a tilde as the first character (never
+   *     null)
    */
   private String convertUserInputIntoAFullyQualifiedPath(final String userInput) {
     if (FileUtils.denotesAbsolutePath(userInput)) {
@@ -136,9 +148,8 @@ public class DirConverter extends MultipleValueAdapter<String[]> {
   }
 
   /**
-   * @return the "current working directory" this {@link DirConverter} should
-   *         use if the user fails to provide an explicit directory in their
-   *         input (required)
+   * @return the "current working directory" this {@link DirConverter} should use if the user fails
+   *     to provide an explicit directory in their input (required)
    */
   private File getWorkingDirectory() {
     return Gfsh.getCurrentInstance().getHome();
@@ -151,5 +162,4 @@ public class DirConverter extends MultipleValueAdapter<String[]> {
     }
     return false;
   }
-
 }

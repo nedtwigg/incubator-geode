@@ -26,9 +26,7 @@ import java.io.*;
 import java.util.*;
 import org.apache.geode.distributed.internal.membership.*;
 
-/**
- * Responds to {@link ObjectDetailsRequest}.
- */
+/** Responds to {@link ObjectDetailsRequest}. */
 public final class ObjectDetailsResponse extends AdminResponse implements Cancellable {
   // instance variables
   private Object objectValue;
@@ -37,11 +35,11 @@ public final class ObjectDetailsResponse extends AdminResponse implements Cancel
   private transient boolean cancelled;
 
   /**
-   * Returns a <code>ObjectValueResponse</code> that will be returned to the
-   * specified recipient. The message will contains a copy of the local manager's
-   * system config.
+   * Returns a <code>ObjectValueResponse</code> that will be returned to the specified recipient.
+   * The message will contains a copy of the local manager's system config.
    */
-  public static ObjectDetailsResponse create(DistributionManager dm, InternalDistributedMember recipient) {
+  public static ObjectDetailsResponse create(
+      DistributionManager dm, InternalDistributedMember recipient) {
     ObjectDetailsResponse m = new ObjectDetailsResponse();
     m.setRecipient(recipient);
     return m;
@@ -50,22 +48,17 @@ public final class ObjectDetailsResponse extends AdminResponse implements Cancel
   void buildDetails(Region r, Object objName, int inspectionType) {
     try {
       objName = getObjectName(r, objName);
-      if (cancelled)
-        return;
+      if (cancelled) return;
       if (r.containsKey(objName)) {
-        if (cancelled)
-          return;
+        if (cancelled) return;
         // @todo darrel: race condition; could be unloaded between isPresent and get call.
         Region.Entry e = r.getEntry(objName);
         Object v = e.getValue();
-        if (cancelled)
-          return;
+        if (cancelled) return;
         objectValue = CacheDisplay.getCachedObjectDisplay(v, inspectionType);
-        if (cancelled)
-          return;
+        if (cancelled) return;
         userAttribute = CacheDisplay.getCachedObjectDisplay(e.getUserAttribute(), inspectionType);
-        if (cancelled)
-          return;
+        if (cancelled) return;
         try {
           stats = new RemoteCacheStatistics(e.getStatistics());
         } catch (StatisticsDisabledException ignore) {
@@ -119,7 +112,7 @@ public final class ObjectDetailsResponse extends AdminResponse implements Cancel
   }
 
   // Holds the last result of getObjectName to optimize the next call
-  static private Object lastObjectNameFound = null;
+  private static Object lastObjectNameFound = null;
 
   static Object getObjectName(Region r, Object objName) throws CacheException {
     if (objName instanceof RemoteObjectName) {

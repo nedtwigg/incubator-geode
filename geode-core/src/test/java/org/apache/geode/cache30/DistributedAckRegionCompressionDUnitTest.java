@@ -26,14 +26,14 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
  * Tests Distributed Ack Region with compression.
- * 
+ *
  * @since GemFire 8.0
  */
 @Category(DistributedTest.class)
-@SuppressWarnings({ "deprecation", "serial" })
+@SuppressWarnings({"deprecation", "serial"})
 public class DistributedAckRegionCompressionDUnitTest extends DistributedAckRegionDUnitTest {
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   @Override
   protected RegionAttributes getRegionAttributes() {
     Compressor compressor = null;
@@ -49,7 +49,7 @@ public class DistributedAckRegionCompressionDUnitTest extends DistributedAckRegi
     return factory.create();
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   @Override
   protected RegionAttributes getRegionAttributes(String type) {
     Compressor compressor = null;

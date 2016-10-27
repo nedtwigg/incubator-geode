@@ -30,33 +30,57 @@ import org.apache.geode.test.dunit.AsyncInvocation;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
-public class IntegratedClientRegisterInterestAuthDistributedTest extends AbstractSecureServerDUnitTest {
+@Category({DistributedTest.class, SecurityTest.class})
+public class IntegratedClientRegisterInterestAuthDistributedTest
+    extends AbstractSecureServerDUnitTest {
   @Test
   public void testRegisterInterest() throws InterruptedException {
     // client1 connects to server as a user not authorized to do any operations
-    AsyncInvocation ai1 = client1.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("stranger", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai1 =
+        client1.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("stranger", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      assertNotAuthorized(() -> region.registerInterest("key3"), "DATA:READ:AuthRegion:key3");
-    });
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              assertNotAuthorized(
+                  () -> region.registerInterest("key3"), "DATA:READ:AuthRegion:key3");
+            });
 
     // client2 connects to user as a user authorized to use AuthRegion region
-    AsyncInvocation ai2 = client2.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionUser", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai2 =
+        client2.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("authRegionUser", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      region.registerInterest("key3"); //  DATA:READ:AuthRegion:key3;
-    });
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              region.registerInterest("key3"); //  DATA:READ:AuthRegion:key3;
+            });
 
     // client3 connects to user as a user authorized to use key1 in AuthRegion region
-    AsyncInvocation ai3 = client3.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("key1User", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai3 =
+        client3.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("key1User", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      assertNotAuthorized(() -> region.registerInterest("key2"), "DATA:READ:AuthRegion:key2");
-    });
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              assertNotAuthorized(
+                  () -> region.registerInterest("key2"), "DATA:READ:AuthRegion:key2");
+            });
 
     ai1.join();
     ai2.join();
@@ -70,29 +94,53 @@ public class IntegratedClientRegisterInterestAuthDistributedTest extends Abstrac
   @Test
   public void testRegisterInterestRegex() throws InterruptedException {
     //client1 connects to server as a user not authorized to do any operations
-    AsyncInvocation ai1 = client1.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("stranger", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai1 =
+        client1.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("stranger", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      assertNotAuthorized(() -> region.registerInterestRegex("key.*"), "DATA:READ:AuthRegion");
-    });
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              assertNotAuthorized(
+                  () -> region.registerInterestRegex("key.*"), "DATA:READ:AuthRegion");
+            });
 
     // client2 connects to user as a user authorized to use AuthRegion region
-    AsyncInvocation ai2 = client2.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionUser", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai2 =
+        client2.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("authRegionUser", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      region.registerInterestRegex("key[0-9]+"); //  DATA:READ:AuthRegion:key3;
-    });
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              region.registerInterestRegex("key[0-9]+"); //  DATA:READ:AuthRegion:key3;
+            });
 
     // client3 connects to user as a user authorized to use key1 in AuthRegion region
-    AsyncInvocation ai3 = client3.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("key1User", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai3 =
+        client3.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("key1User", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      assertNotAuthorized(() -> region.registerInterestRegex("key[0-9]+"), "DATA:READ:AuthRegion");
-      assertNotAuthorized(() -> region.registerInterestRegex("key1"), "DATA:READ:AuthRegion");
-    });
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              assertNotAuthorized(
+                  () -> region.registerInterestRegex("key[0-9]+"), "DATA:READ:AuthRegion");
+              assertNotAuthorized(
+                  () -> region.registerInterestRegex("key1"), "DATA:READ:AuthRegion");
+            });
 
     ai1.join();
     ai2.join();
@@ -110,28 +158,49 @@ public class IntegratedClientRegisterInterestAuthDistributedTest extends Abstrac
     keys.add("key2");
 
     //client1 connects to server as a user not authorized to do any operations
-    AsyncInvocation ai1 = client1.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("stranger", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai1 =
+        client1.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("stranger", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      assertNotAuthorized(() -> region.registerInterest(keys), "DATA:READ:AuthRegion");
-    });
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              assertNotAuthorized(() -> region.registerInterest(keys), "DATA:READ:AuthRegion");
+            });
 
     // client2 connects to user as a user authorized to use AuthRegion region
-    AsyncInvocation ai2 = client2.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionUser", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai2 =
+        client2.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("authRegionUser", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      region.registerInterest(keys); //  DATA:READ:AuthRegion;
-    });
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              region.registerInterest(keys); //  DATA:READ:AuthRegion;
+            });
 
     // client3 connects to user as a user authorized to use key1 in AuthRegion region
-    AsyncInvocation ai3 = client3.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("key1User", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai3 =
+        client3.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("key1User", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      assertNotAuthorized(() -> region.registerInterest(keys), "DATA:READ:AuthRegion");
-    });
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              assertNotAuthorized(() -> region.registerInterest(keys), "DATA:READ:AuthRegion");
+            });
 
     ai1.join();
     ai2.join();
@@ -141,5 +210,4 @@ public class IntegratedClientRegisterInterestAuthDistributedTest extends Abstrac
     ai2.checkException();
     ai3.checkException();
   }
-
 }

@@ -17,7 +17,7 @@
 /*
  * Created on Apr 18, 2005
  *
- * 
+ *
  */
 package org.apache.geode.internal.cache.xmlcache;
 
@@ -27,9 +27,8 @@ import org.apache.geode.cache.query.IndexStatistics;
 import org.apache.geode.cache.query.IndexType;
 
 /**
- * 
- * This class contains the information needed to create an index It will
- * contain the callback data between <index></index> invocation
+ * This class contains the information needed to create an index It will contain the callback data
+ * between <index></index> invocation
  */
 class IndexCreationData implements Index {
 

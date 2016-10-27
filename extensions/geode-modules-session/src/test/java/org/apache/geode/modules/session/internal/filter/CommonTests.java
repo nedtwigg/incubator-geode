@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.geode.modules.session.internal.filter;
 
 import static org.junit.Assert.*;
@@ -42,8 +42,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * This servlet tests the effects of the downstream SessionCachingFilter filter.
- * When these tests are performed, the filter would already have taken effect.
+ * This servlet tests the effects of the downstream SessionCachingFilter filter. When these tests
+ * are performed, the filter would already have taken effect.
  */
 public abstract class CommonTests extends BasicServletTestCaseAdapter {
 
@@ -89,12 +89,13 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
   public void testGetAttributeRequest2() throws Exception {
     // Setup
     CallbackServlet s = (CallbackServlet) getServlet();
-    s.setCallback(new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) {
-        request.setAttribute("foo", "bar");
-      }
-    });
+    s.setCallback(
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response) {
+            request.setAttribute("foo", "bar");
+          }
+        });
     doFilter();
 
     assertEquals("bar", getFilteredRequest().getAttribute("foo"));
@@ -111,9 +112,7 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     assertEquals("bar", request.getSession().getAttribute("foo"));
   }
 
-  /**
-   * Are attributes preserved across client requests?
-   */
+  /** Are attributes preserved across client requests? */
   @Test
   public void testGetAttributeSession2() throws Exception {
     doFilter();
@@ -130,26 +129,25 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     assertEquals("bar", request.getSession().getAttribute("foo"));
   }
 
-  /**
-   * Setting a session attribute to null should remove it
-   */
+  /** Setting a session attribute to null should remove it */
   @Test
   public void testSetAttributeNullSession1() throws Exception {
     // Setup
     CallbackServlet s = (CallbackServlet) getServlet();
-    s.setCallback(new Callback() {
-      private boolean called = false;
+    s.setCallback(
+        new Callback() {
+          private boolean called = false;
 
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) {
-        if (called) {
-          request.getSession().setAttribute("foo", null);
-        } else {
-          request.getSession().setAttribute("foo", "bar");
-          called = true;
-        }
-      }
-    });
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response) {
+            if (called) {
+              request.getSession().setAttribute("foo", null);
+            } else {
+              request.getSession().setAttribute("foo", "bar");
+              called = true;
+            }
+          }
+        });
 
     doFilter();
     doFilter();
@@ -160,10 +158,7 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     assertNull("Attribute should be null but is " + attr, attr);
   }
 
-  /**
-   * Test that various methods throw the appropriate exception when the session is
-   * invalid.
-   */
+  /** Test that various methods throw the appropriate exception when the session is invalid. */
   @Test
   public void testInvalidate1() throws Exception {
     doFilter();
@@ -325,9 +320,7 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     }
   }
 
-  /**
-   * Test that Session Attribute events get triggered
-   */
+  /** Test that Session Attribute events get triggered */
   @Test
   public void testSessionAttributeListener1() throws Exception {
     AbstractListener listener = new HttpSessionAttributeListenerImpl();
@@ -337,7 +330,10 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     doFilter();
 
     // Ugh
-    MockHttpSession session = (MockHttpSession) ((GemfireHttpSession) ((HttpServletRequest) getFilteredRequest()).getSession()).getNativeSession();
+    MockHttpSession session =
+        (MockHttpSession)
+            ((GemfireHttpSession) ((HttpServletRequest) getFilteredRequest()).getSession())
+                .getNativeSession();
     session.addAttributeListener((HttpSessionAttributeListener) listener);
     session.setAttribute("foo", "bar");
     session.setAttribute("foo", "baz");
@@ -349,9 +345,7 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     assertEquals(ListenerEventType.SESSION_ATTRIBUTE_REMOVED, listener.getEvents().get(2));
   }
 
-  /**
-   * Test that both replace and remove events get triggered
-   */
+  /** Test that both replace and remove events get triggered */
   @Test
   public void testHttpSessionBindingListener1() throws Exception {
     doFilter();
@@ -380,12 +374,12 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
   public void testGetId1() throws Exception {
     doFilter();
 
-    assertNotNull("Session Id should not be null", ((HttpServletRequest) getFilteredRequest()).getSession().getId());
+    assertNotNull(
+        "Session Id should not be null",
+        ((HttpServletRequest) getFilteredRequest()).getSession().getId());
   }
 
-  /**
-   * Test that multiple calls from the same client return the same session id
-   */
+  /** Test that multiple calls from the same client return the same session id */
   @Test
   public void testGetId2() throws Exception {
     doFilter();
@@ -398,7 +392,10 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
 
     doFilter();
 
-    assertEquals("Session Ids should be the same", sessionId, ((HttpServletRequest) getFilteredRequest()).getSession().getId());
+    assertEquals(
+        "Session Ids should be the same",
+        sessionId,
+        ((HttpServletRequest) getFilteredRequest()).getSession().getId());
   }
 
   @Test
@@ -406,12 +403,11 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     doFilter();
 
     HttpServletRequest request = (HttpServletRequest) getFilteredRequest();
-    assertTrue("Session should have a non-zero creation time", request.getSession().getCreationTime() > 0);
+    assertTrue(
+        "Session should have a non-zero creation time", request.getSession().getCreationTime() > 0);
   }
 
-  /**
-   * Test that multiple calls from the same client don't change the creation time.
-   */
+  /** Test that multiple calls from the same client don't change the creation time. */
   @Test
   public void testGetCreationTime2() throws Exception {
     doFilter();
@@ -424,7 +420,10 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
 
     doFilter();
 
-    assertEquals("Session creation time should be the same", creationTime, ((HttpServletRequest) getFilteredRequest()).getSession().getCreationTime());
+    assertEquals(
+        "Session creation time should be the same",
+        creationTime,
+        ((HttpServletRequest) getFilteredRequest()).getSession().getCreationTime());
   }
 
   @Test
@@ -436,7 +435,8 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
 
     HttpServletRequest request = (HttpServletRequest) getFilteredRequest();
 
-    assertEquals("Request does not contain requested session ID", "999-GF", request.getRequestedSessionId());
+    assertEquals(
+        "Request does not contain requested session ID", "999-GF", request.getRequestedSessionId());
   }
 
   @Test
@@ -444,23 +444,24 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     doFilter();
 
     HttpServletRequest request = (HttpServletRequest) getFilteredRequest();
-    assertTrue("Session should have a non-zero last access time", request.getSession().getLastAccessedTime() > 0);
+    assertTrue(
+        "Session should have a non-zero last access time",
+        request.getSession().getLastAccessedTime() > 0);
   }
 
-  /**
-   * Test that repeated accesses update the last accessed time
-   */
+  /** Test that repeated accesses update the last accessed time */
   @Test
   public void testGetLastAccessedTime2() throws Exception {
     // Setup
     CallbackServlet s = (CallbackServlet) getServlet();
-    s.setCallback(new Callback() {
+    s.setCallback(
+        new Callback() {
 
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) {
-        request.getSession();
-      }
-    });
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response) {
+            request.getSession();
+          }
+        });
 
     doFilter();
 
@@ -480,7 +481,9 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     Thread.sleep(50);
     doFilter();
 
-    assertTrue("Last access time should be changing", request.getSession().getLastAccessedTime() > lastAccess);
+    assertTrue(
+        "Last access time should be changing",
+        request.getSession().getLastAccessedTime() > lastAccess);
   }
 
   @Test
@@ -501,20 +504,19 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
     assertTrue("Session should be new", request.getSession().isNew());
   }
 
-  /**
-   * Subsequent calls should not return true
-   */
+  /** Subsequent calls should not return true */
   @Test
   public void testIsNew2() throws Exception {
     // Setup
     CallbackServlet s = (CallbackServlet) getServlet();
-    s.setCallback(new Callback() {
+    s.setCallback(
+        new Callback() {
 
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) {
-        request.getSession();
-      }
-    });
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response) {
+            request.getSession();
+          }
+        });
 
     doFilter();
 
@@ -577,24 +579,19 @@ public abstract class CommonTests extends BasicServletTestCaseAdapter {
   public static class RequestWrappingFilter implements Filter {
 
     @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
-
-    }
+    public void init(final FilterConfig filterConfig) throws ServletException {}
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+        throws IOException, ServletException {
       final HttpServletRequest httpRequest = (HttpServletRequest) request;
       httpRequest.getSession();
       httpRequest.setAttribute("original_session", httpRequest.getSession());
       request = new HttpServletRequestWrapper(httpRequest);
       chain.doFilter(request, response);
-
     }
 
     @Override
-    public void destroy() {
-
-    }
+    public void destroy() {}
   }
-
 }

@@ -26,21 +26,16 @@ import org.apache.geode.internal.cache.persistence.DiskStoreID;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
-   * Used to represent a recovered disk region. Once the region actually exists
-   * this instance will be thrown away and a real DiskRegion instance will replace it.
-   * This class needs to keep track of any information that can be recovered
-   * from the DiskInitFile.
-   *
-   *
-   * @since GemFire prPersistSprint2
-   */
+ * Used to represent a recovered disk region. Once the region actually exists this instance will be
+ * thrown away and a real DiskRegion instance will replace it. This class needs to keep track of any
+ * information that can be recovered from the DiskInitFile.
+ *
+ * @since GemFire prPersistSprint2
+ */
 public class PlaceHolderDiskRegion extends AbstractDiskRegion implements DiskRecoveryStore {
   private final String name;
 
-  /**
-   * This constructor is used when creating a region found during recovery
-   * of the DiskInitFile.
-   */
+  /** This constructor is used when creating a region found during recovery of the DiskInitFile. */
   PlaceHolderDiskRegion(DiskStoreImpl ds, long id, String name) {
     super(ds, id);
     this.name = name;
@@ -48,8 +43,8 @@ public class PlaceHolderDiskRegion extends AbstractDiskRegion implements DiskRec
   }
 
   /**
-   * This constructor is used when we are closing an existing region.
-   * We want to remember that it is still present in the disk store.
+   * This constructor is used when we are closing an existing region. We want to remember that it is
+   * still present in the disk store.
    */
   PlaceHolderDiskRegion(DiskRegionView drv) {
     super(drv);
@@ -92,7 +87,7 @@ public class PlaceHolderDiskRegion extends AbstractDiskRegion implements DiskRec
     return sb.toString();
   }
 
-  // DiskRecoveryStore methods 
+  // DiskRecoveryStore methods
   public DiskRegionView getDiskRegionView() {
     return this;
   }
@@ -108,7 +103,8 @@ public class PlaceHolderDiskRegion extends AbstractDiskRegion implements DiskRec
   public DiskEntry initializeRecoveredEntry(Object key, DiskEntry.RecoveredEntry value) {
     RegionEntry re = getRecoveredEntryMap().initRecoveredEntry(key, value);
     if (re == null) {
-      throw new InternalGemFireError(LocalizedStrings.LocalRegion_ENTRY_ALREADY_EXISTED_0.toLocalizedString(key));
+      throw new InternalGemFireError(
+          LocalizedStrings.LocalRegion_ENTRY_ALREADY_EXISTED_0.toLocalizedString(key));
     }
     return (DiskEntry) re;
   }
@@ -176,8 +172,14 @@ public class PlaceHolderDiskRegion extends AbstractDiskRegion implements DiskRec
   }
 
   public void handleDiskAccessException(DiskAccessException dae) {
-    getDiskStore().getCache().getLoggerI18n().error(LocalizedStrings.PlaceHolderDiskRegion_A_DISKACCESSEXCEPTION_HAS_OCCURED_WHILE_RECOVERING_FROM_DISK, getName(), dae);
-
+    getDiskStore()
+        .getCache()
+        .getLoggerI18n()
+        .error(
+            LocalizedStrings
+                .PlaceHolderDiskRegion_A_DISKACCESSEXCEPTION_HAS_OCCURED_WHILE_RECOVERING_FROM_DISK,
+            getName(),
+            dae);
   }
 
   public boolean didClearCountChange() {
@@ -200,7 +202,8 @@ public class PlaceHolderDiskRegion extends AbstractDiskRegion implements DiskRec
     return false;
   }
 
-  public void initializeStats(long numEntriesInVM, long numOverflowOnDisk, long numOverflowBytesOnDisk) {
+  public void initializeStats(
+      long numEntriesInVM, long numOverflowOnDisk, long numOverflowBytesOnDisk) {
     this.numEntriesInVM.set(numEntriesInVM);
     this.numOverflowOnDisk.set(numOverflowOnDisk);
     this.numOverflowBytesOnDisk.set(numOverflowBytesOnDisk);

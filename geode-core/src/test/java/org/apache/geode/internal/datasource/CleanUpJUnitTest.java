@@ -39,9 +39,8 @@ import static org.junit.Assert.fail;
 //import javax.sql.PooledConnection;
 
 /**
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code
+ * Generation - Code and Comments
  */
 @Category(IntegrationTest.class)
 public class CleanUpJUnitTest {
@@ -72,7 +71,8 @@ public class CleanUpJUnitTest {
       GemFireBasicDataSource ds = (GemFireBasicDataSource) ctx.lookup("java:/SimpleDataSource");
       Connection conn = ds.getConnection();
       if (conn == null)
-        fail("DataSourceFactoryTest-testGetSimpleDataSource() Error in creating the GemFireBasicDataSource");
+        fail(
+            "DataSourceFactoryTest-testGetSimpleDataSource() Error in creating the GemFireBasicDataSource");
     } catch (Exception e) {
       fail("Exception occured in testGetSimpleDataSource due to " + e);
       e.printStackTrace();
@@ -97,9 +97,12 @@ public class CleanUpJUnitTest {
   public void testBlockingTimeOut() {
     try {
       Context ctx = cache.getJNDIContext();
-      GemFireConnPooledDataSource ds = (GemFireConnPooledDataSource) ctx.lookup("java:/PooledDataSource");
-      GemFireConnectionPoolManager provider = (GemFireConnectionPoolManager) ds.getConnectionProvider();
-      ConnectionPoolCacheImpl poolCache = (ConnectionPoolCacheImpl) provider.getConnectionPoolCache();
+      GemFireConnPooledDataSource ds =
+          (GemFireConnPooledDataSource) ctx.lookup("java:/PooledDataSource");
+      GemFireConnectionPoolManager provider =
+          (GemFireConnectionPoolManager) ds.getConnectionProvider();
+      ConnectionPoolCacheImpl poolCache =
+          (ConnectionPoolCacheImpl) provider.getConnectionPoolCache();
       poolCache.getPooledConnectionFromPool();
       Thread.sleep(40000);
       if (!(poolCache.activeCache.isEmpty())) {

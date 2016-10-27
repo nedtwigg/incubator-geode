@@ -37,9 +37,11 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The ThreadUtilsJUnitTest class is a test suite of test cases for testing the contract and functionality of the ThreadUtils
- * class.
- * <p/>
+ * The ThreadUtilsJUnitTest class is a test suite of test cases for testing the contract and
+ * functionality of the ThreadUtils class.
+ *
+ * <p>
+ *
  * @see org.apache.geode.internal.lang.ThreadUtils
  * @see org.jmock.Expectations
  * @see org.jmock.Mockery
@@ -54,12 +56,13 @@ public class ThreadUtilsJUnitTest {
 
   @Before
   public void setUp() {
-    mockContext = new Mockery() {
-      {
-        setImposteriser(ClassImposteriser.INSTANCE);
-        setThreadingPolicy(new Synchroniser());
-      }
-    };
+    mockContext =
+        new Mockery() {
+          {
+            setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
+          }
+        };
   }
 
   @After
@@ -86,11 +89,12 @@ public class ThreadUtilsJUnitTest {
   public void testInterruptWithNonNullThread() {
     final Thread mockThread = mockContext.mock(Thread.class, "Interrupted Thread");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockThread).interrupt();
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockThread).interrupt();
+          }
+        });
 
     ThreadUtils.interrupt(mockThread);
   }
@@ -107,10 +111,11 @@ public class ThreadUtilsJUnitTest {
 
   @Test
   public void testIsAliveWithUnstartedThread() {
-    final Thread thread = new Thread(new Runnable() {
-      public void run() {
-      }
-    });
+    final Thread thread =
+        new Thread(
+            new Runnable() {
+              public void run() {}
+            });
     assertFalse(ThreadUtils.isAlive(thread));
   }
 
@@ -118,11 +123,13 @@ public class ThreadUtilsJUnitTest {
   public void testIsAliveWithStoppedThread() throws InterruptedException {
     final AtomicBoolean ran = new AtomicBoolean(false);
 
-    final Thread thread = new Thread(new Runnable() {
-      public void run() {
-        ran.set(true);
-      }
-    });
+    final Thread thread =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                ran.set(true);
+              }
+            });
 
     thread.start();
     thread.join(50);
@@ -140,12 +147,13 @@ public class ThreadUtilsJUnitTest {
   public void testIsWaitingWithRunningThread() {
     final Thread runningThread = mockContext.mock(Thread.class, "Running Thread");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(runningThread).getState();
-        will(returnValue(State.RUNNABLE));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(runningThread).getState();
+            will(returnValue(State.RUNNABLE));
+          }
+        });
 
     assertFalse(ThreadUtils.isWaiting(runningThread));
   }
@@ -154,12 +162,13 @@ public class ThreadUtilsJUnitTest {
   public void testIsWaitingWithWaitingThread() {
     final Thread waitingThread = mockContext.mock(Thread.class, "Waiting Thread");
 
-    mockContext.checking(new Expectations() {
-      {
-        one(waitingThread).getState();
-        will(returnValue(State.WAITING));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            one(waitingThread).getState();
+            will(returnValue(State.WAITING));
+          }
+        });
 
     assertTrue(ThreadUtils.isWaiting(waitingThread));
   }
@@ -218,5 +227,4 @@ public class ThreadUtilsJUnitTest {
       assertThat(actualSleepDuration).isGreaterThan(0);
     }
   }
-
 }

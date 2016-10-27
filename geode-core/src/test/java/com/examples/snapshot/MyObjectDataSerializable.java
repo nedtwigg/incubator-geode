@@ -23,8 +23,7 @@ import java.io.IOException;
 import org.apache.geode.DataSerializable;
 
 public class MyObjectDataSerializable extends MyObject implements DataSerializable {
-  public MyObjectDataSerializable() {
-  }
+  public MyObjectDataSerializable() {}
 
   public MyObjectDataSerializable(long number, String s) {
     super(number, s);

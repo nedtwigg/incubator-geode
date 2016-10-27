@@ -66,5 +66,4 @@ public class CompiledCode {
       catch_type = source.readUnsignedShort();
     }
   }
-
 }

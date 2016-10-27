@@ -36,15 +36,15 @@ public final class TestDelta implements Delta, DataSerializable, Cloneable {
   public int deltas;
   public int clones;
 
-  public TestDelta() {
-  }
+  public TestDelta() {}
 
   public TestDelta(boolean hasDelta, String info) {
     this.hasDelta = hasDelta;
     this.info = info;
   }
 
-  public synchronized void checkFields(final int serializations, final int deserializations, final int deltas, final int clones) {
+  public synchronized void checkFields(
+      final int serializations, final int deserializations, final int deltas, final int clones) {
     assertEquals(serializations, this.serializations);
     assertEquals(deserializations, this.deserializations);
     assertEquals(deltas, this.deltas);

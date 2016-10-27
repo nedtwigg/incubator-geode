@@ -25,10 +25,7 @@ import org.apache.geode.cache.asyncqueue.internal.AsyncEventQueueStats;
 import org.apache.geode.management.internal.beans.AsyncEventQueueMBeanBridge;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class AsyncEventQueueStatsJUnitTest extends MBeanStatsTestCase {
 
@@ -54,11 +51,9 @@ public class AsyncEventQueueStatsJUnitTest extends MBeanStatsTestCase {
     sample();
 
     assertEquals(0, getEventQueueSize());
-
   }
 
   private int getEventQueueSize() {
     return bridge.getEventQueueSize();
   }
-
 }

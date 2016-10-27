@@ -28,8 +28,7 @@ public class DSInsidePdx implements PdxSerializable {
   private String myString2;
   private float myFloat;
 
-  public DSInsidePdx() {
-  }
+  public DSInsidePdx() {}
 
   public DSInsidePdx(String str1, long myLong, DataSerializable myDS, String str2, float myFloat) {
     this.myString1 = str1;
@@ -57,7 +56,17 @@ public class DSInsidePdx implements PdxSerializable {
 
   @Override
   public String toString() {
-    return "DSInsidePdx [myString1=" + myString1 + ", myLong=" + myLong + ", myDS=" + myDS + ", myString2=" + myString2 + ", myFloat=" + myFloat + "]";
+    return "DSInsidePdx [myString1="
+        + myString1
+        + ", myLong="
+        + myLong
+        + ", myDS="
+        + myDS
+        + ", myString2="
+        + myString2
+        + ", myFloat="
+        + myFloat
+        + "]";
   }
 
   @Override
@@ -74,32 +83,21 @@ public class DSInsidePdx implements PdxSerializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     DSInsidePdx other = (DSInsidePdx) obj;
     if (myDS == null) {
-      if (other.myDS != null)
-        return false;
-    } else if (!myDS.equals(other.myDS))
-      return false;
-    if (Float.floatToIntBits(myFloat) != Float.floatToIntBits(other.myFloat))
-      return false;
-    if (myLong != other.myLong)
-      return false;
+      if (other.myDS != null) return false;
+    } else if (!myDS.equals(other.myDS)) return false;
+    if (Float.floatToIntBits(myFloat) != Float.floatToIntBits(other.myFloat)) return false;
+    if (myLong != other.myLong) return false;
     if (myString1 == null) {
-      if (other.myString1 != null)
-        return false;
-    } else if (!myString1.equals(other.myString1))
-      return false;
+      if (other.myString1 != null) return false;
+    } else if (!myString1.equals(other.myString1)) return false;
     if (myString2 == null) {
-      if (other.myString2 != null)
-        return false;
-    } else if (!myString2.equals(other.myString2))
-      return false;
+      if (other.myString2 != null) return false;
+    } else if (!myString2.equals(other.myString2)) return false;
     return true;
   }
 }

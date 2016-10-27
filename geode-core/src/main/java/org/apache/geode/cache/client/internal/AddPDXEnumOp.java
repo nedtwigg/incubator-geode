@@ -22,13 +22,14 @@ import org.apache.geode.pdx.internal.EnumInfo;
 
 /**
  * Push a PDX Enum id to other servers.
+ *
  * @since GemFire 6.6.2
  */
 public class AddPDXEnumOp {
   /**
-   * Register a bunch of instantiators on a server
-   * using connections from the given pool
-   * to communicate with the server.
+   * Register a bunch of instantiators on a server using connections from the given pool to
+   * communicate with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    */
   public static void execute(ExecutablePool pool, int id, EnumInfo ei) {
@@ -42,9 +43,7 @@ public class AddPDXEnumOp {
   }
 
   private static class AddPdxEnumOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public AddPdxEnumOpImpl(int id, EnumInfo ei) {
       super(MessageType.ADD_PDX_ENUM, 2);
       getMessage().addObjPart(ei);
@@ -78,8 +77,7 @@ public class AddPDXEnumOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

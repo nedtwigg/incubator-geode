@@ -32,8 +32,7 @@ import org.junit.rules.ExpectedException;
 
 @Category(UnitTest.class)
 public class LuceneServiceImplJUnitTest {
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @Rule public ExpectedException thrown = ExpectedException.none();
 
   @Test
   public void shouldThrowIllegalArgumentExceptionIfFieldsAreMissing() {
@@ -48,5 +47,4 @@ public class LuceneServiceImplJUnitTest {
     thrown.expect(IllegalArgumentException.class);
     service.createIndex("index", "region", Collections.emptyMap());
   }
-
 }

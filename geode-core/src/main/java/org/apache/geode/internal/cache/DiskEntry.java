@@ -50,51 +50,44 @@ import org.apache.geode.internal.offheap.annotations.Unretained;
 import org.apache.geode.internal.util.BlobHelper;
 
 /**
- * Represents an entry in an {@link RegionMap} whose value may be
- * stored on disk.  This interface provides accessor and mutator
- * methods for a disk entry's state.  This allows us to abstract all
- * of the interesting behavior into a {@linkplain DiskEntry.Helper
- * helper class} that we only need to implement once.
+ * Represents an entry in an {@link RegionMap} whose value may be stored on disk. This interface
+ * provides accessor and mutator methods for a disk entry's state. This allows us to abstract all of
+ * the interesting behavior into a {@linkplain DiskEntry.Helper helper class} that we only need to
+ * implement once.
  *
- * <P>
- *
- * Each <code>DiskEntry</code> has a unique <code>id</code> that is
- * used by the {@link DiskRegion} to identify the key/value pair.
- * Before the disk entry is written to disk, the value of the
- * <code>id</code> is {@link DiskRegion#INVALID_ID invalid}.  Once the
- * object has been written to disk, the <code>id</code> is a positive
- * number.  If the value is {@linkplain Helper#update updated}, then the
- * <code>id</code> is negated to signify that the value on disk is
- * dirty.
+ * <p>Each <code>DiskEntry</code> has a unique <code>id</code> that is used by the {@link
+ * DiskRegion} to identify the key/value pair. Before the disk entry is written to disk, the value
+ * of the <code>id</code> is {@link DiskRegion#INVALID_ID invalid}. Once the object has been written
+ * to disk, the <code>id</code> is a positive number. If the value is {@linkplain Helper#update
+ * updated}, then the <code>id</code> is negated to signify that the value on disk is dirty.
  *
  * @see DiskRegion
- *
- *
  * @since GemFire 3.2
  */
 public interface DiskEntry extends RegionEntry {
   /**
    * Sets the value with a {@link RegionEntryContext}.
+   *
    * @param context the value's context.
    * @param value an entry value.
    */
   public void setValueWithContext(RegionEntryContext context, Object value);
 
   /**
-   * In some cases we need to do something just before we drop the value
-   * from a DiskEntry that is being moved (i.e. overflowed) to disk.
+   * In some cases we need to do something just before we drop the value from a DiskEntry that is
+   * being moved (i.e. overflowed) to disk.
+   *
    * @param context
    */
   public void handleValueOverflow(RegionEntryContext context);
 
   /**
-   * Returns true if the DiskEntry value is equal to {@link Token#DESTROYED}, {@link Token#REMOVED_PHASE1}, or {@link Token#REMOVED_PHASE2}.
+   * Returns true if the DiskEntry value is equal to {@link Token#DESTROYED}, {@link
+   * Token#REMOVED_PHASE1}, or {@link Token#REMOVED_PHASE2}.
    */
   public boolean isRemovedFromDisk();
 
-  /**
-   * Returns the id of this <code>DiskEntry</code>
-   */
+  /** Returns the id of this <code>DiskEntry</code> */
   public DiskId getDiskId();
 
   public void _removePhase1();
@@ -109,32 +102,23 @@ public interface DiskEntry extends RegionEntry {
 
   public void setNext(DiskEntry v);
 
-  /**
-   * Used as the entry value if it was invalidated.
-   */
+  /** Used as the entry value if it was invalidated. */
   public static final byte[] INVALID_BYTES = new byte[0];
-  /**
-   * Used as the entry value if it was locally invalidated.
-   */
+  /** Used as the entry value if it was locally invalidated. */
   public static final byte[] LOCAL_INVALID_BYTES = new byte[0];
-  /**
-   * Used as the entry value if it was tombstone.
-   */
+  /** Used as the entry value if it was tombstone. */
   public static final byte[] TOMBSTONE_BYTES = new byte[0];
 
   ///////////////////////  Inner Classes  //////////////////////
 
-  /**
-   * A Helper class for performing functions common to all
-   * <code>DiskEntry</code>s. 
-   */
+  /** A Helper class for performing functions common to all <code>DiskEntry</code>s. */
   public static class Helper {
     private static final Logger logger = LogService.getLogger();
 
     /**
-     * Testing purpose only
-     * Get the value of an entry that is on disk without faulting
-     * it in and without looking in the io buffer.
+     * Testing purpose only Get the value of an entry that is on disk without faulting it in and
+     * without looking in the io buffer.
+     *
      * @since GemFire 3.2.1
      */
     static Object getValueOnDisk(DiskEntry entry, DiskRegion dr) {
@@ -145,7 +129,11 @@ public interface DiskEntry extends RegionEntry {
       dr.acquireReadLock();
       try {
         synchronized (id) {
-          if (id == null || (dr.isBackup() && id.getKeyId() == DiskRegion.INVALID_ID) || (!entry.isValueNull() && id.needsToBeWritten() && !EntryBits.isRecoveredFromDisk(id.getUserBits()))/*fix for bug 41942*/) {
+          if (id == null
+              || (dr.isBackup() && id.getKeyId() == DiskRegion.INVALID_ID)
+              || (!entry.isValueNull()
+                  && id.needsToBeWritten()
+                  && !EntryBits.isRecoveredFromDisk(id.getUserBits())) /*fix for bug 41942*/) {
             return null;
           }
 
@@ -157,9 +145,10 @@ public interface DiskEntry extends RegionEntry {
     }
 
     /**
-     * Get the serialized value directly from disk.  Returned object may be
-     * a {@link CachedDeserializable}.  Goes straight to disk without faulting
-     * into memory.  Only looks at the disk storage, not at heap storage.
+     * Get the serialized value directly from disk. Returned object may be a {@link
+     * CachedDeserializable}. Goes straight to disk without faulting into memory. Only looks at the
+     * disk storage, not at heap storage.
+     *
      * @param entry the entry used to identify the value to fetch
      * @param dr the persistent storage from which to fetch the value
      * @return either null, byte array, or CacheDeserializable
@@ -175,7 +164,9 @@ public interface DiskEntry extends RegionEntry {
         synchronized (did) {
           if (did == null || (dr.isBackup() && did.getKeyId() == DiskRegion.INVALID_ID)) {
             return null;
-          } else if (!entry.isValueNull() && did.needsToBeWritten() && !EntryBits.isRecoveredFromDisk(did.getUserBits())/*fix for bug 41942*/) {
+          } else if (!entry.isValueNull()
+              && did.needsToBeWritten()
+              && !EntryBits.isRecoveredFromDisk(did.getUserBits()) /*fix for bug 41942*/) {
             return null;
           }
           return dr.getSerializedData(did);
@@ -186,16 +177,15 @@ public interface DiskEntry extends RegionEntry {
     }
 
     /**
-     * Get the value of an entry that is on disk without
-     * faulting it in . It checks for the presence in the buffer also.
-     * This method is used for concurrent map operations and CQ processing
-     * 
+     * Get the value of an entry that is on disk without faulting it in . It checks for the presence
+     * in the buffer also. This method is used for concurrent map operations and CQ processing
+     *
      * @throws DiskAccessException
      * @since GemFire 5.1
      */
-    static Object getValueOnDiskOrBuffer(DiskEntry entry, DiskRegion dr, RegionEntryContext context) {
-      @Released
-      Object v = getOffHeapValueOnDiskOrBuffer(entry, dr, context);
+    static Object getValueOnDiskOrBuffer(
+        DiskEntry entry, DiskRegion dr, RegionEntryContext context) {
+      @Released Object v = getOffHeapValueOnDiskOrBuffer(entry, dr, context);
       if (v instanceof CachedDeserializable) {
         CachedDeserializable cd = (CachedDeserializable) v;
         try {
@@ -208,7 +198,8 @@ public interface DiskEntry extends RegionEntry {
     }
 
     @Retained
-    static Object getOffHeapValueOnDiskOrBuffer(DiskEntry entry, DiskRegion dr, RegionEntryContext context) {
+    static Object getOffHeapValueOnDiskOrBuffer(
+        DiskEntry entry, DiskRegion dr, RegionEntryContext context) {
       DiskId did = entry.getDiskId();
       Object syncObj = did;
       if (syncObj == null) {
@@ -221,13 +212,20 @@ public interface DiskEntry extends RegionEntry {
         synchronized (syncObj) {
           if (did != null && did.isPendingAsync()) {
             @Retained
-            Object v = entry._getValueRetain(context, true); // TODO:KIRK:OK Rusty had Object v = entry.getValueWithContext(context);
+            Object v =
+                entry._getValueRetain(
+                    context,
+                    true); // TODO:KIRK:OK Rusty had Object v = entry.getValueWithContext(context);
             if (Token.isRemovedFromDisk(v)) {
               v = null;
             }
             return v;
           }
-          if (did == null || (dr.isBackup() && did.getKeyId() == DiskRegion.INVALID_ID) || (!entry.isValueNull() && did.needsToBeWritten() && !EntryBits.isRecoveredFromDisk(did.getUserBits()))/*fix for bug 41942*/) {
+          if (did == null
+              || (dr.isBackup() && did.getKeyId() == DiskRegion.INVALID_ID)
+              || (!entry.isValueNull()
+                  && did.needsToBeWritten()
+                  && !EntryBits.isRecoveredFromDisk(did.getUserBits())) /*fix for bug 41942*/) {
             return null;
           }
 
@@ -240,7 +238,11 @@ public interface DiskEntry extends RegionEntry {
       }
     }
 
-    static boolean isOverflowedToDisk(DiskEntry de, DiskRegion dr, DistributedRegion.DiskPosition dp, RegionEntryContext context) {
+    static boolean isOverflowedToDisk(
+        DiskEntry de,
+        DiskRegion dr,
+        DistributedRegion.DiskPosition dp,
+        RegionEntryContext context) {
       Object v = null;
       DiskId did;
       synchronized (de) {
@@ -278,11 +280,17 @@ public interface DiskEntry extends RegionEntry {
     }
 
     /**
-     * Get the value of an entry that is on disk without faulting
-     * it in.
+     * Get the value of an entry that is on disk without faulting it in.
+     *
      * @since GemFire 3.2.1
      */
-    static boolean fillInValue(DiskEntry de, InitialImageOperation.Entry entry, DiskRegion dr, DM mgr, ByteArrayDataInput in, RegionEntryContext context) {
+    static boolean fillInValue(
+        DiskEntry de,
+        InitialImageOperation.Entry entry,
+        DiskRegion dr,
+        DM mgr,
+        ByteArrayDataInput in,
+        RegionEntryContext context) {
       @Retained
       @Released
       Object v = null;
@@ -302,7 +310,10 @@ public interface DiskEntry extends RegionEntry {
           entry.setLastModified(mgr, de.getLastModified());
 
           ReferenceCountHelper.setReferenceCountOwner(entry);
-          v = de._getValueRetain(context, true); // OFFHEAP copied to heap entry; todo allow entry to refer to offheap since it will be copied to network.
+          v =
+              de._getValueRetain(
+                  context,
+                  true); // OFFHEAP copied to heap entry; todo allow entry to refer to offheap since it will be copied to network.
           ReferenceCountHelper.setReferenceCountOwner(null);
           if (v == null) {
             if (did == null) {
@@ -315,7 +326,10 @@ public interface DiskEntry extends RegionEntry {
               return fillInValue(de, entry, dr, mgr, in, context);
             }
             if (logger.isDebugEnabled()) {
-              logger.debug("DiskEntry.Helper.fillInValue, key={}; getting value from disk, disk id={}", entry.key, did);
+              logger.debug(
+                  "DiskEntry.Helper.fillInValue, key={}; getting value from disk, disk id={}",
+                  entry.key,
+                  did);
             }
             BytesAndBits bb = null;
             try {
@@ -367,7 +381,10 @@ public interface DiskEntry extends RegionEntry {
                 entry.value = hdos;
                 entry.setSerialized(true);
               } catch (IOException e) {
-                RuntimeException e2 = new IllegalArgumentException(LocalizedStrings.DiskEntry_AN_IOEXCEPTION_WAS_THROWN_WHILE_SERIALIZING.toLocalizedString());
+                RuntimeException e2 =
+                    new IllegalArgumentException(
+                        LocalizedStrings.DiskEntry_AN_IOEXCEPTION_WAS_THROWN_WHILE_SERIALIZING
+                            .toLocalizedString());
                 e2.initCause(e);
                 throw e2;
               }
@@ -407,7 +424,10 @@ public interface DiskEntry extends RegionEntry {
             entry.value = hdos;
             entry.setSerialized(true);
           } catch (IOException e) {
-            RuntimeException e2 = new IllegalArgumentException(LocalizedStrings.DiskEntry_AN_IOEXCEPTION_WAS_THROWN_WHILE_SERIALIZING.toLocalizedString());
+            RuntimeException e2 =
+                new IllegalArgumentException(
+                    LocalizedStrings.DiskEntry_AN_IOEXCEPTION_WAS_THROWN_WHILE_SERIALIZING
+                        .toLocalizedString());
             e2.initCause(e);
             throw e2;
           }
@@ -416,9 +436,7 @@ public interface DiskEntry extends RegionEntry {
       return true;
     }
 
-    /**
-     * Used to initialize a new disk entry
-     */
+    /** Used to initialize a new disk entry */
     static void initialize(DiskEntry entry, DiskRecoveryStore r, Object newValue) {
       DiskRegionView drv = null;
       if (r instanceof LocalRegion) {
@@ -427,7 +445,8 @@ public interface DiskEntry extends RegionEntry {
         drv = (DiskRegionView) r;
       }
       if (drv == null) {
-        throw new IllegalArgumentException(LocalizedStrings.DiskEntry_DISK_REGION_IS_NULL.toLocalizedString());
+        throw new IllegalArgumentException(
+            LocalizedStrings.DiskEntry_DISK_REGION_IS_NULL.toLocalizedString());
       }
 
       if (newValue instanceof RecoveredEntry) {
@@ -440,11 +459,12 @@ public interface DiskEntry extends RegionEntry {
         did.setUserBits(re.getUserBits());
         did.setValueLength(re.getValueLength());
         if (re.getRecoveredKeyId() < 0) {
-          updateStats(drv, r, 0/*InVM*/, 1/*OnDisk*/, did.getValueLength());
+          updateStats(drv, r, 0 /*InVM*/, 1 /*OnDisk*/, did.getValueLength());
         } else {
-          entry.setValueWithContext(drv, entry.prepareValueForCache((RegionEntryContext) r, re.getValue(), false));
+          entry.setValueWithContext(
+              drv, entry.prepareValueForCache((RegionEntryContext) r, re.getValue(), false));
           if (!Tombstone.isInvalidOrRemoved(re.getValue())) {
-            updateStats(drv, r, 1/*InVM*/, 0/*OnDisk*/, 0);
+            updateStats(drv, r, 1 /*InVM*/, 0 /*OnDisk*/, 0);
           }
         }
       } else {
@@ -453,14 +473,16 @@ public interface DiskEntry extends RegionEntry {
           did.setKeyId(DiskRegion.INVALID_ID);
         }
         if (newValue != null && !Token.isInvalidOrRemoved(newValue)) {
-          updateStats(drv, r, 1/*InVM*/, 0/*OnDisk*/, 0);
+          updateStats(drv, r, 1 /*InVM*/, 0 /*OnDisk*/, 0);
         }
       }
     }
 
     private static final ValueWrapper INVALID_VW = new ByteArrayValueWrapper(true, INVALID_BYTES);
-    private static final ValueWrapper LOCAL_INVALID_VW = new ByteArrayValueWrapper(true, LOCAL_INVALID_BYTES);
-    private static final ValueWrapper TOMBSTONE_VW = new ByteArrayValueWrapper(true, TOMBSTONE_BYTES);
+    private static final ValueWrapper LOCAL_INVALID_VW =
+        new ByteArrayValueWrapper(true, LOCAL_INVALID_BYTES);
+    private static final ValueWrapper TOMBSTONE_VW =
+        new ByteArrayValueWrapper(true, TOMBSTONE_BYTES);
 
     public static interface ValueWrapper {
       public boolean isSerialized();
@@ -567,13 +589,10 @@ public interface DiskEntry extends RegionEntry {
     }
 
     /**
-     * This class is a bit of a hack used by the compactor.
-     * For the compactor always copies to a byte[] so
-     * this class is just a simple wrapper.
-     * It is possible that the length of the byte array is greater
-     * than the actual length of the wrapped data.
-     * At the time we create this we are all done with isSerialized
-     * and userBits so those methods are not supported.
+     * This class is a bit of a hack used by the compactor. For the compactor always copies to a
+     * byte[] so this class is just a simple wrapper. It is possible that the length of the byte
+     * array is greater than the actual length of the wrapped data. At the time we create this we
+     * are all done with isSerialized and userBits so those methods are not supported.
      */
     public static class CompactorValueWrapper extends ByteArrayValueWrapper {
       private final int length;
@@ -600,13 +619,11 @@ public interface DiskEntry extends RegionEntry {
     }
 
     /**
-     * Note that the StoredObject this ValueWrapper is created with
-     * is unretained so it must be used before the owner of
-     * the StoredObject releases it.
-     * Since the RegionEntry that has the value we are writing to
-     * disk has it retained we are ok as long as this ValueWrapper's
-     * life ends before the RegionEntry sync is released.
-     * Note that this class is only used with uncompressed StoredObjects.
+     * Note that the StoredObject this ValueWrapper is created with is unretained so it must be used
+     * before the owner of the StoredObject releases it. Since the RegionEntry that has the value we
+     * are writing to disk has it retained we are ok as long as this ValueWrapper's life ends before
+     * the RegionEntry sync is released. Note that this class is only used with uncompressed
+     * StoredObjects.
      */
     public static class OffHeapValueWrapper implements ValueWrapper {
       private final @Unretained StoredObject offHeapData;
@@ -688,17 +705,15 @@ public interface DiskEntry extends RegionEntry {
     }
 
     /**
-     * Returns true if the given object is off-heap
-     * and it is worth wrapping a reference to it
-     * instead of copying its data to the heap.
-     * Currently all StoredObject's with a refCount are
+     * Returns true if the given object is off-heap and it is worth wrapping a reference to it
+     * instead of copying its data to the heap. Currently all StoredObject's with a refCount are
      * wrapped.
      */
     public static boolean wrapOffHeapReference(Object o) {
       if (o instanceof StoredObject) {
         StoredObject so = (StoredObject) o;
         if (so.hasRefCount()) {
-          // 
+          //
           return true;
         }
       }
@@ -747,7 +762,8 @@ public interface DiskEntry extends RegionEntry {
           } else {
             bytes = EntryEventImpl.serialize(value);
             if (bytes.length == 0) {
-              throw new IllegalStateException("serializing <" + value + "> produced empty byte array");
+              throw new IllegalStateException(
+                  "serializing <" + value + "> produced empty byte array");
             }
             if (event != null) {
               event.setCachedSerializedNewValue(bytes);
@@ -758,7 +774,8 @@ public interface DiskEntry extends RegionEntry {
       }
     }
 
-    public static ValueWrapper createValueWrapperFromEntry(DiskEntry entry, LocalRegion region, EntryEventImpl event) {
+    public static ValueWrapper createValueWrapperFromEntry(
+        DiskEntry entry, LocalRegion region, EntryEventImpl event) {
       if (event != null) {
         // For off-heap it should be faster to pass a reference to the
         // StoredObject instead of using the cached byte[] (unless it is also compressed).
@@ -779,8 +796,7 @@ public interface DiskEntry extends RegionEntry {
           return createValueWrapper(rawValue, event);
         }
       }
-      @Retained
-      Object value = entry._getValueRetain(region, true);
+      @Retained Object value = entry._getValueRetain(region, true);
       try {
         return createValueWrapper(value, event);
       } finally {
@@ -788,40 +804,49 @@ public interface DiskEntry extends RegionEntry {
       }
     }
 
-    private static void writeToDisk(DiskEntry entry, LocalRegion region, boolean async) throws RegionClearedException {
+    private static void writeToDisk(DiskEntry entry, LocalRegion region, boolean async)
+        throws RegionClearedException {
       writeToDisk(entry, region, async, null);
     }
 
     /**
      * Writes the key/value object stored in the given entry to disk
+     *
      * @throws RegionClearedException
-     * 
      * @see DiskRegion#put
      */
-    private static void writeToDisk(DiskEntry entry, LocalRegion region, boolean async, EntryEventImpl event) throws RegionClearedException {
+    private static void writeToDisk(
+        DiskEntry entry, LocalRegion region, boolean async, EntryEventImpl event)
+        throws RegionClearedException {
       writeBytesToDisk(entry, region, async, createValueWrapperFromEntry(entry, region, event));
     }
 
-    private static void writeBytesToDisk(DiskEntry entry, LocalRegion region, boolean async, ValueWrapper vw) throws RegionClearedException {
+    private static void writeBytesToDisk(
+        DiskEntry entry, LocalRegion region, boolean async, ValueWrapper vw)
+        throws RegionClearedException {
       // @todo does the following unmark need to be called when an async
       // write is scheduled or is it ok for doAsyncFlush to do it?
       entry.getDiskId().unmarkForWriting();
       region.getDiskRegion().put(entry, region, vw, async);
     }
 
-    public static void update(DiskEntry entry, LocalRegion region, Object newValue) throws RegionClearedException {
+    public static void update(DiskEntry entry, LocalRegion region, Object newValue)
+        throws RegionClearedException {
       update(entry, region, newValue, null);
     }
 
     /**
-     * Updates the value of the disk entry with a new value. This allows us to
-     * free up disk space in the non-backup case.
-     * 
+     * Updates the value of the disk entry with a new value. This allows us to free up disk space in
+     * the non-backup case.
+     *
      * @throws RegionClearedException
      */
-    public static void update(DiskEntry entry, LocalRegion region, Object newValue, EntryEventImpl event) throws RegionClearedException {
+    public static void update(
+        DiskEntry entry, LocalRegion region, Object newValue, EntryEventImpl event)
+        throws RegionClearedException {
       if (newValue == null) {
-        throw new NullPointerException(LocalizedStrings.DiskEntry_ENTRYS_VALUE_SHOULD_NOT_BE_NULL.toLocalizedString());
+        throw new NullPointerException(
+            LocalizedStrings.DiskEntry_ENTRYS_VALUE_SHOULD_NOT_BE_NULL.toLocalizedString());
       }
 
       AsyncDiskEntry asyncDiskEntry = null;
@@ -849,7 +874,9 @@ public interface DiskEntry extends RegionEntry {
       }
     }
 
-    private static AsyncDiskEntry basicUpdate(DiskEntry entry, LocalRegion region, Object newValue, EntryEventImpl event) throws RegionClearedException {
+    private static AsyncDiskEntry basicUpdate(
+        DiskEntry entry, LocalRegion region, Object newValue, EntryEventImpl event)
+        throws RegionClearedException {
       AsyncDiskEntry result = null;
       DiskRegion dr = region.getDiskRegion();
       DiskId did = entry.getDiskId();
@@ -874,7 +901,8 @@ public interface DiskEntry extends RegionEntry {
           } else {
             // Asif Ensure that the value is rightly set despite clear so
             // that it can be distributed correctly
-            entry.setValueWithContext(region, newValue); // OFFHEAP newValue was already preparedForCache
+            entry.setValueWithContext(
+                region, newValue); // OFFHEAP newValue was already preparedForCache
           }
         }
       } else if (newValue instanceof RecoveredEntry) {
@@ -901,7 +929,8 @@ public interface DiskEntry extends RegionEntry {
             entry.setValueWithContext(region, null); // fixes bug 41119
           }
         } else {
-          entry.setValueWithContext(region, entry.prepareValueForCache(region, re.getValue(), false));
+          entry.setValueWithContext(
+              region, entry.prepareValueForCache(region, re.getValue(), false));
         }
 
         if (re.getRecoveredKeyId() < 0) { // recovering an entry whose new value is on disk
@@ -911,7 +940,7 @@ public interface DiskEntry extends RegionEntry {
             if (Token.isInvalidOrRemoved(oldValueAsToken)) { // but tokens are never in vm
               inVM = 0;
             }
-            updateStats(dr, region, inVM, 1/*OnDisk*/, did.getValueLength());
+            updateStats(dr, region, inVM, 1 /*OnDisk*/, did.getValueLength());
           } else { // the entry's old value is also on disk
             int valueLenDelta = -oldValueLength; // but it is no longer
             valueLenDelta += did.getValueLength(); // new one is now on disk
@@ -923,7 +952,7 @@ public interface DiskEntry extends RegionEntry {
             inVM = 0;
           }
           if (oldKeyId < 0) { // the entry's old value is on disk
-            updateStats(dr, region, inVM, -1/*OnDisk*/, -oldValueLength);
+            updateStats(dr, region, inVM, -1 /*OnDisk*/, -oldValueLength);
           } else { // the entry's old value was in the vm
             if (inVM == 1 && Token.isInvalidOrRemoved(oldValueAsToken)) {
               // the old state was not in vm and not on disk. But now we are in vm.
@@ -935,7 +964,7 @@ public interface DiskEntry extends RegionEntry {
           }
         }
       } else {
-        //The new value in the entry needs to be set after the disk writing 
+        //The new value in the entry needs to be set after the disk writing
         // has succeeded.
 
         //entry.setValueWithContext(region, newValue); // OFFHEAP newValue already prepared
@@ -999,17 +1028,17 @@ public interface DiskEntry extends RegionEntry {
 
         if (Token.isInvalidOrRemoved(newValue)) {
           if (oldValue == null) {
-            updateStats(dr, region, 0/*InVM*/, -1/*OnDisk*/, -oldValueLength);
+            updateStats(dr, region, 0 /*InVM*/, -1 /*OnDisk*/, -oldValueLength);
           } else if (!Token.isInvalidOrRemoved(oldValue)) {
-            updateStats(dr, region, -1/*InVM*/, 0/*OnDisk*/, 0);
+            updateStats(dr, region, -1 /*InVM*/, 0 /*OnDisk*/, 0);
           } else {
             // oldValue was also a token which is neither in vm or on disk.
           }
         } else { // we have a value to put in the vm
           if (oldValue == null) {
-            updateStats(dr, region, 1/*InVM*/, -1/*OnDisk*/, -oldValueLength);
+            updateStats(dr, region, 1 /*InVM*/, -1 /*OnDisk*/, -oldValueLength);
           } else if (Token.isInvalidOrRemoved(oldValue)) {
-            updateStats(dr, region, 1/*InVM*/, 0/*OnDisk*/, 0/*overflowBytesOnDisk*/);
+            updateStats(dr, region, 1 /*InVM*/, 0 /*OnDisk*/, 0 /*overflowBytesOnDisk*/);
           } else {
             // old value was also in vm so no change
           }
@@ -1032,9 +1061,14 @@ public interface DiskEntry extends RegionEntry {
       return result;
     }
 
-    public static void updateRecoveredEntry(PlaceHolderDiskRegion drv, DiskEntry entry, RecoveredEntry newValue, RegionEntryContext context) {
+    public static void updateRecoveredEntry(
+        PlaceHolderDiskRegion drv,
+        DiskEntry entry,
+        RecoveredEntry newValue,
+        RegionEntryContext context) {
       if (newValue == null) {
-        throw new NullPointerException(LocalizedStrings.DiskEntry_ENTRYS_VALUE_SHOULD_NOT_BE_NULL.toLocalizedString());
+        throw new NullPointerException(
+            LocalizedStrings.DiskEntry_ENTRYS_VALUE_SHOULD_NOT_BE_NULL.toLocalizedString());
       }
       DiskId did = entry.getDiskId();
       synchronized (did) {
@@ -1054,13 +1088,14 @@ public interface DiskEntry extends RegionEntry {
         did.setUserBits(newValue.getUserBits());
         did.setValueLength(newValue.getValueLength());
         if (newValue.getRecoveredKeyId() >= 0) {
-          entry.setValueWithContext(context, entry.prepareValueForCache(drv, newValue.getValue(), false));
+          entry.setValueWithContext(
+              context, entry.prepareValueForCache(drv, newValue.getValue(), false));
           int inVM = 1;
           if (Token.isInvalidOrRemoved(newValue.getValue())) { // but tokens never in vm
             inVM = 0;
           }
           if (oldValueWasNull) { // the entry's old value is on disk
-            updateStats(drv, null, inVM, -1/*OnDisk*/, -oldValueLength);
+            updateStats(drv, null, inVM, -1 /*OnDisk*/, -oldValueLength);
           } else { // the entry's old value was in the vm
             if (inVM == 1 && Token.isInvalidOrRemoved(oldValueAsToken)) {
               // the old state was not in vm and not on disk. But now we are in vm.
@@ -1080,7 +1115,7 @@ public interface DiskEntry extends RegionEntry {
             if (Token.isInvalidOrRemoved(oldValueAsToken)) { // but tokens are never in vm
               inVM = 0;
             }
-            updateStats(drv, null, inVM, 1/*OnDisk*/, did.getValueLength());
+            updateStats(drv, null, inVM, 1 /*OnDisk*/, did.getValueLength());
           } else { // the entry's old value is also on disk
             int valueLenDelta = -oldValueLength; // but it is no longer
             valueLenDelta += did.getValueLength(); // new one is now on disk
@@ -1091,7 +1126,8 @@ public interface DiskEntry extends RegionEntry {
     }
 
     public static Object getValueInVMOrDiskWithoutFaultIn(DiskEntry entry, LocalRegion region) {
-      Object result = OffHeapHelper.copyAndReleaseIfNeeded(getValueOffHeapOrDiskWithoutFaultIn(entry, region));
+      Object result =
+          OffHeapHelper.copyAndReleaseIfNeeded(getValueOffHeapOrDiskWithoutFaultIn(entry, region));
       if (result instanceof CachedDeserializable) {
         result = ((CachedDeserializable) result).getDeserializedValue(null, null);
       }
@@ -1101,10 +1137,14 @@ public interface DiskEntry extends RegionEntry {
     @Retained
     public static Object getValueOffHeapOrDiskWithoutFaultIn(DiskEntry entry, LocalRegion region) {
       @Retained
-      Object v = entry._getValueRetain(region, true); // TODO:KIRK:OK Object v = entry.getValueWithContext(region);
+      Object v =
+          entry._getValueRetain(
+              region, true); // TODO:KIRK:OK Object v = entry.getValueWithContext(region);
       if (v == null || Token.isRemovedFromDisk(v) && !region.isIndexCreationThread()) {
         synchronized (entry) {
-          v = entry._getValueRetain(region, true); // TODO:KIRK:OK v = entry.getValueWithContext(region);
+          v =
+              entry._getValueRetain(
+                  region, true); // TODO:KIRK:OK v = entry.getValueWithContext(region);
           if (v == null) {
             v = Helper.getOffHeapValueOnDiskOrBuffer(entry, region.getDiskRegion(), region);
           }
@@ -1125,7 +1165,6 @@ public interface DiskEntry extends RegionEntry {
     }
 
     /**
-     * 
      * @param entry
      * @param region
      * @return Value
@@ -1140,14 +1179,14 @@ public interface DiskEntry extends RegionEntry {
       return faultInValue(entry, region, true);
     }
 
-    /**
-     * @param retainResult if true then the result may be a retained off-heap reference
-     */
+    /** @param retainResult if true then the result may be a retained off-heap reference */
     @Retained
     private static Object faultInValue(DiskEntry entry, LocalRegion region, boolean retainResult) {
       DiskRegion dr = region.getDiskRegion();
       @Retained
-      Object v = entry._getValueRetain(region, true); // TODO:KIRK:OK Object v = entry.getValueWithContext(region);
+      Object v =
+          entry._getValueRetain(
+              region, true); // TODO:KIRK:OK Object v = entry.getValueWithContext(region);
       boolean lruFaultedIn = false;
       boolean done = false;
       try {
@@ -1174,7 +1213,9 @@ public interface DiskEntry extends RegionEntry {
         }
         if (!done && (v == null || Token.isRemovedFromDisk(v) && !region.isIndexCreationThread())) {
           synchronized (entry) {
-            v = entry._getValueRetain(region, true); // TODO:KIRK:OK v = entry.getValueWithContext(region);
+            v =
+                entry._getValueRetain(
+                    region, true); // TODO:KIRK:OK v = entry.getValueWithContext(region);
             if (v == null) {
               v = readValueFromDisk(entry, region);
               if (entry instanceof LRUEntry) {
@@ -1205,7 +1246,8 @@ public interface DiskEntry extends RegionEntry {
       return v; // OFFHEAP: the value ends up being returned by RegionEntry.getValue
     }
 
-    public static void recoverValue(DiskEntry entry, long oplogId, DiskRecoveryStore recoveryStore, ByteArrayDataInput in) {
+    public static void recoverValue(
+        DiskEntry entry, long oplogId, DiskRecoveryStore recoveryStore, ByteArrayDataInput in) {
       boolean lruFaultedIn = false;
       synchronized (entry) {
         if (entry.isValueNull()) {
@@ -1242,9 +1284,7 @@ public interface DiskEntry extends RegionEntry {
       }
     }
 
-    /**
-     *  Caller must have "did" synced.
-     */
+    /** Caller must have "did" synced. */
     private static Object getValueFromDisk(DiskRegionView dr, DiskId did, ByteArrayDataInput in) {
       Object value;
       if (dr.isBackup() && did.getKeyId() == DiskRegion.INVALID_ID) {
@@ -1275,17 +1315,18 @@ public interface DiskEntry extends RegionEntry {
     }
 
     private static void lruUpdateCallback(DiskRecoveryStore recoveryStore) {
-      /* 
+      /*
        * Used conditional check to see if
        * if its a LIFO Enabled,
        * yes then disable lruUpdateCallback()
        * and called updateStats()
        * its keep track of actual entries
-       * present in memory - useful when 
+       * present in memory - useful when
        * checking capacity constraint
        */
       try {
-        if (recoveryStore.getEvictionAttributes() != null && recoveryStore.getEvictionAttributes().getAlgorithm().isLIFO()) {
+        if (recoveryStore.getEvictionAttributes() != null
+            && recoveryStore.getEvictionAttributes().getAlgorithm().isLIFO()) {
           ((VMLRURegionMap) recoveryStore.getRegionMap()).updateStats();
           return;
         }
@@ -1308,11 +1349,9 @@ public interface DiskEntry extends RegionEntry {
     }
 
     /**
-     * Returns the value of this map entry, reading it from disk, if necessary.
-     * Sets the value in the entry.
-     * This is only called by the faultIn code once it has determined that
-     * the value is no longer in memory.
-     * Caller must have "entry" synced.
+     * Returns the value of this map entry, reading it from disk, if necessary. Sets the value in
+     * the entry. This is only called by the faultIn code once it has determined that the value is
+     * no longer in memory. Caller must have "entry" synced.
      */
     private static Object readValueFromDisk(DiskEntry entry, DiskRecoveryStore region) {
 
@@ -1325,8 +1364,7 @@ public interface DiskEntry extends RegionEntry {
       try {
         synchronized (did) {
           Object value = getValueFromDisk(dr, did, null);
-          if (value == null)
-            return null;
+          if (value == null) return null;
           setValueOnFaultIn(value, did, entry, dr, region);
           return value;
         }
@@ -1337,29 +1375,34 @@ public interface DiskEntry extends RegionEntry {
 
     /**
      * Caller must have "entry" and "did" synced and "dr" readLocked.
-     * @return the unretained result must be used by the caller before it releases the sync on "entry".
+     *
+     * @return the unretained result must be used by the caller before it releases the sync on
+     *     "entry".
      */
     @Unretained
-    private static Object setValueOnFaultIn(Object value, DiskId did, DiskEntry entry, DiskRegionView dr, DiskRecoveryStore region) {
+    private static Object setValueOnFaultIn(
+        Object value, DiskId did, DiskEntry entry, DiskRegionView dr, DiskRecoveryStore region) {
       //    dr.getOwner().getCache().getLogger().info("DEBUG: faulting in entry with key " + entry.getKey());
       int bytesOnDisk = getValueLength(did);
       // Retained by the prepareValueForCache call for the region entry.
       // NOTE that we return this value unretained because the retain is owned by the region entry not the caller.
       @Retained
       Object preparedValue = entry.prepareValueForCache((RegionEntryContext) region, value, false);
-      region.updateSizeOnFaultIn(entry.getKey(), region.calculateValueSize(preparedValue), bytesOnDisk);
+      region.updateSizeOnFaultIn(
+          entry.getKey(), region.calculateValueSize(preparedValue), bytesOnDisk);
       //did.setValueSerializedSize(0);
       // I think the following assertion is true but need to run
       // a regression with it. Reenable this post 6.5
       //Assert.assertTrue(entry._getValue() == null);
       entry.setValueWithContext((RegionEntryContext) region, preparedValue);
       if (!Token.isInvalidOrRemoved(value)) {
-        updateStats(dr, region, 1/*InVM*/, -1/*OnDisk*/, -bytesOnDisk);
+        updateStats(dr, region, 1 /*InVM*/, -1 /*OnDisk*/, -bytesOnDisk);
       }
       return preparedValue;
     }
 
-    static Object readSerializedValue(byte[] valueBytes, Version version, ByteArrayDataInput in, boolean forceDeserialize) {
+    static Object readSerializedValue(
+        byte[] valueBytes, Version version, ByteArrayDataInput in, boolean forceDeserialize) {
       if (forceDeserialize) {
         // deserialize checking for product version change
         return EntryEventImpl.deserialize(valueBytes, version, in);
@@ -1375,7 +1418,12 @@ public interface DiskEntry extends RegionEntry {
       return valueBytes;
     }
 
-    public static void updateStats(DiskRegionView drv, Object owner, int entriesInVmDelta, int overflowOnDiskDelta, int overflowBytesOnDiskDelta) {
+    public static void updateStats(
+        DiskRegionView drv,
+        Object owner,
+        int entriesInVmDelta,
+        int overflowOnDiskDelta,
+        int overflowBytesOnDiskDelta) {
       if (entriesInVmDelta != 0) {
         drv.incNumEntriesInVM(entriesInVmDelta);
       }
@@ -1400,18 +1448,19 @@ public interface DiskEntry extends RegionEntry {
     }
 
     /**
-     * Writes the value of this <code>DiskEntry</code> to disk and
-     * <code>null</code> s out the reference to the value to free up VM space.
-     * <p>
-     * Note that if the value had already been written to disk, it is not
-     * written again.
-     * <p>
-     * Caller must synchronize on entry and it is assumed the entry is evicted
-     * 
-     * see #writeToDisk
+     * Writes the value of this <code>DiskEntry</code> to disk and <code>null</code> s out the
+     * reference to the value to free up VM space.
+     *
+     * <p>Note that if the value had already been written to disk, it is not written again.
+     *
+     * <p>Caller must synchronize on entry and it is assumed the entry is evicted
+     *
+     * <p>see #writeToDisk
+     *
      * @throws RegionClearedException
      */
-    public static int overflowToDisk(DiskEntry entry, LocalRegion region, EnableLRU ccHelper) throws RegionClearedException {
+    public static int overflowToDisk(DiskEntry entry, LocalRegion region, EnableLRU ccHelper)
+        throws RegionClearedException {
       DiskRegion dr = region.getDiskRegion();
       final int oldSize = region.calculateRegionEntryValueSize(entry);
       ;
@@ -1461,7 +1510,7 @@ public interface DiskEntry extends RegionEntry {
             change = ((LRUClockNode) entry).updateEntrySize(ccHelper);
             // the caller checked to make sure we had something to overflow
             // so dec inVM and inc onDisk
-            updateStats(dr, region, -1/*InVM*/, 1/*OnDisk*/, getValueLength(did));
+            updateStats(dr, region, -1 /*InVM*/, 1 /*OnDisk*/, getValueLength(did));
           }
         }
       } finally {
@@ -1487,8 +1536,7 @@ public interface DiskEntry extends RegionEntry {
     }
 
     public static void doAsyncFlush(VersionTag tag, LocalRegion region) {
-      if (region.isThisRegionBeingClosedOrDestroyed())
-        return;
+      if (region.isThisRegionBeingClosedOrDestroyed()) return;
       DiskRegion dr = region.getDiskRegion();
       if (!dr.isBackup()) {
         return;
@@ -1504,6 +1552,7 @@ public interface DiskEntry extends RegionEntry {
 
     /**
      * Flush an entry that was previously scheduled to be written to disk.
+     *
      * @since GemFire prPersistSprint1
      */
     public static void doAsyncFlush(DiskEntry entry, LocalRegion region, VersionTag tag) {
@@ -1511,14 +1560,15 @@ public interface DiskEntry extends RegionEntry {
     }
 
     /**
-     * Does a synchronous write to disk for a region that uses async.
-     * This method is used by both doAsyncFlush and handleFullAsyncQueue to fix GEODE-1700.
-     * @param asyncQueueWasFull true if caller wanted to put this entry in the queue
-     *        but could not do so because it was full
+     * Does a synchronous write to disk for a region that uses async. This method is used by both
+     * doAsyncFlush and handleFullAsyncQueue to fix GEODE-1700.
+     *
+     * @param asyncQueueWasFull true if caller wanted to put this entry in the queue but could not
+     *     do so because it was full
      */
-    private static void writeEntryToDisk(DiskEntry entry, LocalRegion region, VersionTag tag, boolean asyncQueueWasFull) {
-      if (region.isThisRegionBeingClosedOrDestroyed())
-        return;
+    private static void writeEntryToDisk(
+        DiskEntry entry, LocalRegion region, VersionTag tag, boolean asyncQueueWasFull) {
+      if (region.isThisRegionBeingClosedOrDestroyed()) return;
       DiskRegion dr = region.getDiskRegion();
       if (!asyncQueueWasFull) {
         dr.setClearCountReference();
@@ -1541,23 +1591,26 @@ public interface DiskEntry extends RegionEntry {
                 final int entryValSize = region.calculateRegionEntryValueSize(entry);
                 try {
                   if (Token.isRemovedFromDisk(entryVal)) {
-                    if (region.isThisRegionBeingClosedOrDestroyed())
-                      return;
+                    if (region.isThisRegionBeingClosedOrDestroyed()) return;
                     dr.remove(region, entry, true, false);
                     if (dr.isBackup()) {
                       did.setKeyId(DiskRegion.INVALID_ID); // fix for bug 41340
                     }
-                  } else if ((Token.isInvalid(entryVal) || entryVal == Token.TOMBSTONE) && !dr.isBackup()) {
+                  } else if ((Token.isInvalid(entryVal) || entryVal == Token.TOMBSTONE)
+                      && !dr.isBackup()) {
                     // no need to write invalid or tombstones to disk if overflow only
                   } else if (entryVal != null) {
                     writeToDisk(entry, region, true);
                     assert !dr.isSync();
                     // Only setValue to null if this was an evict.
                     // We could just be a backup that is writing async.
-                    if (!Token.isInvalid(entryVal) && (entryVal != Token.TOMBSTONE) && entry instanceof LRUEntry && ((LRUEntry) entry).testEvicted()) {
+                    if (!Token.isInvalid(entryVal)
+                        && (entryVal != Token.TOMBSTONE)
+                        && entry instanceof LRUEntry
+                        && ((LRUEntry) entry).testEvicted()) {
                       // Moved this here to fix bug 40116.
                       region.updateSizeOnEvict(entry.getKey(), entryValSize);
-                      updateStats(dr, region, -1/*InVM*/, 1/*OnDisk*/, did.getValueLength());
+                      updateStats(dr, region, -1 /*InVM*/, 1 /*OnDisk*/, did.getValueLength());
                       entry.handleValueOverflow(region);
                       entry.setValueWithContext(region, null);
                     }
@@ -1577,7 +1630,10 @@ public interface DiskEntry extends RegionEntry {
                 //as this entry. If not, write the tag as a conflicting operation.
                 //to update the RVV.
                 VersionStamp stamp = entry.getVersionStamp();
-                if (tag != null && stamp != null && (stamp.getMemberID() != tag.getMemberID() || stamp.getRegionVersion() != tag.getRegionVersion())) {
+                if (tag != null
+                    && stamp != null
+                    && (stamp.getMemberID() != tag.getMemberID()
+                        || stamp.getRegionVersion() != tag.getRegionVersion())) {
                   DiskEntry.Helper.doAsyncFlush(tag, region);
                 }
               } else {
@@ -1602,10 +1658,11 @@ public interface DiskEntry extends RegionEntry {
     /**
      * Removes the key/value pair in the given entry from disk
      *
-     * @throws RegionClearedException If the operation is aborted due to a clear 
+     * @throws RegionClearedException If the operation is aborted due to a clear
      * @see DiskRegion#remove
      */
-    public static void removeFromDisk(DiskEntry entry, LocalRegion region, boolean isClear) throws RegionClearedException {
+    public static void removeFromDisk(DiskEntry entry, LocalRegion region, boolean isClear)
+        throws RegionClearedException {
       DiskRegion dr = region.getDiskRegion();
       DiskId did = entry.getDiskId();
       Object syncObj = did;
@@ -1631,14 +1688,15 @@ public interface DiskEntry extends RegionEntry {
       }
     }
 
-    private static AsyncDiskEntry basicRemoveFromDisk(DiskEntry entry, LocalRegion region, boolean isClear) throws RegionClearedException {
+    private static AsyncDiskEntry basicRemoveFromDisk(
+        DiskEntry entry, LocalRegion region, boolean isClear) throws RegionClearedException {
       final DiskRegion dr = region.getDiskRegion();
       final DiskId did = entry.getDiskId();
       final Object curValAsToken = entry.getValueAsToken();
       if (did == null || (dr.isBackup() && did.getKeyId() == DiskRegion.INVALID_ID)) {
         // Not on disk yet
         if (!Token.isInvalidOrRemoved(curValAsToken)) {
-          updateStats(dr, region, -1/*InVM*/, 0/*OnDisk*/, 0);
+          updateStats(dr, region, -1 /*InVM*/, 0 /*OnDisk*/, 0);
         }
         dr.unscheduleAsyncWrite(did);
         return null;
@@ -1674,9 +1732,9 @@ public interface DiskEntry extends RegionEntry {
         }
       }
       if (curValAsToken == null) {
-        updateStats(dr, region, 0/*InVM*/, -1/*OnDisk*/, -oldValueLength);
+        updateStats(dr, region, 0 /*InVM*/, -1 /*OnDisk*/, -oldValueLength);
       } else if (!Token.isInvalidOrRemoved(curValAsToken)) {
-        updateStats(dr, region, -1/*InVM*/, 0/*OnDisk*/, 0);
+        updateStats(dr, region, -1 /*InVM*/, 0 /*OnDisk*/, 0);
       }
       return result;
     }
@@ -1720,12 +1778,11 @@ public interface DiskEntry extends RegionEntry {
         scheduleAsyncWrite(new AsyncDiskEntry(region, tag));
       }
     }
-
   }
 
   /**
-   * A marker object for an entry that has been recovered from disk.
-   * It is handled specially when it is placed in a region.
+   * A marker object for an entry that has been recovered from disk. It is handled specially when it
+   * is placed in a region.
    */
   public static class RecoveredEntry {
 
@@ -1743,15 +1800,22 @@ public interface DiskEntry extends RegionEntry {
     private VersionTag tag;
 
     /**
-     * Only for this constructor, the value is not loaded into the region & it is lying
-     * on the oplogs. Since Oplogs rely on DiskId to furnish user bits so as to correctly 
-     * interpret bytes, the userbit needs to be set correctly here.
+     * Only for this constructor, the value is not loaded into the region & it is lying on the
+     * oplogs. Since Oplogs rely on DiskId to furnish user bits so as to correctly interpret bytes,
+     * the userbit needs to be set correctly here.
      */
-    public RecoveredEntry(long keyId, long oplogId, long offsetInOplog, byte userBits, int valueLength) {
+    public RecoveredEntry(
+        long keyId, long oplogId, long offsetInOplog, byte userBits, int valueLength) {
       this(-keyId, oplogId, offsetInOplog, userBits, valueLength, null);
     }
 
-    public RecoveredEntry(long keyId, long oplogId, long offsetInOplog, byte userBits, int valueLength, Object value) {
+    public RecoveredEntry(
+        long keyId,
+        long oplogId,
+        long offsetInOplog,
+        byte userBits,
+        int valueLength,
+        Object value) {
       this.recoveredKeyId = keyId;
       this.value = value;
       this.oplogId = oplogId;
@@ -1760,27 +1824,23 @@ public interface DiskEntry extends RegionEntry {
       this.valueLength = valueLength;
     }
 
-    /**
-     * Returns the disk id of the entry being recovered
-     */
+    /** Returns the disk id of the entry being recovered */
     public long getRecoveredKeyId() {
       return this.recoveredKeyId;
     }
 
     /**
-     * Returns the value of the recovered entry. Note that if the
-     * disk id is < 0 then the value has not been faulted in and
-     * this method will return null.
+     * Returns the value of the recovered entry. Note that if the disk id is < 0 then the value has
+     * not been faulted in and this method will return null.
      */
     public Object getValue() {
       return this.value;
     }
 
     /**
-     * 
-     * @return byte indicating the user bits. The correct value is returned only in the specific case of
-     * entry  recovered from oplog ( & not rolled to Htree) & the RECOVER_VALUES flag is false . In other cases
-     * the exact value is not needed
+     * @return byte indicating the user bits. The correct value is returned only in the specific
+     *     case of entry recovered from oplog ( & not rolled to Htree) & the RECOVER_VALUES flag is
+     *     false . In other cases the exact value is not needed
      */
     public byte getUserBits() {
       return this.userBits;

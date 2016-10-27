@@ -25,9 +25,7 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit tests for {@link ThrowableUtils}
- */
+/** Unit tests for {@link ThrowableUtils} */
 @Category(UnitTest.class)
 public class ThrowableUtilsTest {
 
@@ -116,7 +114,10 @@ public class ThrowableUtilsTest {
 
   @Test
   public void hasCauseTypeOfNestedClassShouldReturnTrue() {
-    assertThat(hasCauseType(new OneException(new TwoException(new OtherException())), OtherException.class)).isTrue();
+    assertThat(
+            hasCauseType(
+                new OneException(new TwoException(new OtherException())), OtherException.class))
+        .isTrue();
   }
 
   @Test
@@ -176,7 +177,8 @@ public class ThrowableUtilsTest {
     return ThrowableUtils.getRootCause(throwable);
   }
 
-  public boolean hasCauseType(final Throwable throwable, final Class<? extends Throwable> causeClass) {
+  public boolean hasCauseType(
+      final Throwable throwable, final Class<? extends Throwable> causeClass) {
     return ThrowableUtils.hasCauseType(throwable, causeClass);
   }
 
@@ -185,8 +187,7 @@ public class ThrowableUtilsTest {
   }
 
   private static class OneException extends Exception {
-    public OneException() {
-    }
+    public OneException() {}
 
     public OneException(String message) {
       super(message);
@@ -202,8 +203,7 @@ public class ThrowableUtilsTest {
   }
 
   private static class SubException extends OneException {
-    public SubException() {
-    }
+    public SubException() {}
 
     public SubException(String message) {
       super(message);
@@ -219,8 +219,7 @@ public class ThrowableUtilsTest {
   }
 
   private static class TwoException extends Exception {
-    public TwoException() {
-    }
+    public TwoException() {}
 
     public TwoException(String message) {
       super(message);
@@ -236,8 +235,7 @@ public class ThrowableUtilsTest {
   }
 
   private static class OtherException extends Exception {
-    public OtherException() {
-    }
+    public OtherException() {}
 
     public OtherException(String message) {
       super(message);

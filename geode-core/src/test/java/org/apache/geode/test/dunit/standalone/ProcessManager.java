@@ -41,9 +41,7 @@ import org.apache.geode.distributed.internal.DistributionConfig;
 import org.apache.geode.distributed.internal.InternalLocator;
 import org.apache.geode.internal.FileUtil;
 
-/**
- *
- */
+/** */
 public class ProcessManager {
   private int namingPort;
   private Map<Integer, ProcessHolder> processes = new HashMap<Integer, ProcessHolder>();
@@ -71,7 +69,11 @@ public class ProcessManager {
     } catch (IOException e) {
       //This delete is occasionally failing on some platforms, maybe due to a lingering
       //process. Allow the process to be launched anyway.
-      System.err.println("Unable to delete " + workingDir + ". Currently contains " + Arrays.asList(workingDir.list()));
+      System.err.println(
+          "Unable to delete "
+              + workingDir
+              + ". Currently contains "
+              + Arrays.asList(workingDir.list()));
     }
     workingDir.mkdirs();
     if (log4jConfig != null) {
@@ -122,30 +124,32 @@ public class ProcessManager {
     }
   }
 
-  private void linkStreams(final int vmNum, final ProcessHolder holder, final InputStream in, final PrintStream out) {
-    Thread ioTransport = new Thread() {
-      public void run() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        String vmName = (vmNum == -2) ? "[locator]" : "[vm_" + vmNum + "]";
-        try {
-          String line = reader.readLine();
-          while (line != null) {
-            if (line.length() == 0) {
-              out.println();
-            } else {
-              out.print(vmName);
-              out.println(line);
+  private void linkStreams(
+      final int vmNum, final ProcessHolder holder, final InputStream in, final PrintStream out) {
+    Thread ioTransport =
+        new Thread() {
+          public void run() {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String vmName = (vmNum == -2) ? "[locator]" : "[vm_" + vmNum + "]";
+            try {
+              String line = reader.readLine();
+              while (line != null) {
+                if (line.length() == 0) {
+                  out.println();
+                } else {
+                  out.print(vmName);
+                  out.println(line);
+                }
+                line = reader.readLine();
+              }
+            } catch (Exception e) {
+              if (!holder.isKilled()) {
+                out.println("Error transporting IO from child process");
+                e.printStackTrace(out);
+              }
             }
-            line = reader.readLine();
           }
-        } catch (Exception e) {
-          if (!holder.isKilled()) {
-            out.println("Error transporting IO from child process");
-            e.printStackTrace(out);
-          }
-        }
-      }
-    };
+        };
 
     ioTransport.setDaemon(true);
     ioTransport.start();
@@ -178,7 +182,8 @@ public class ProcessManager {
       // most distributed unit tests were written under the assumption that network partition
       // detection is disabled, so we turn it off in the locator.  Tests for network partition
       // detection should create a separate locator that has it enabled
-      cmds.add("-D" + DistributionConfig.GEMFIRE_PREFIX + ENABLE_NETWORK_PARTITION_DETECTION + "=false");
+      cmds.add(
+          "-D" + DistributionConfig.GEMFIRE_PREFIX + ENABLE_NETWORK_PARTITION_DETECTION + "=false");
     }
     cmds.add("-D" + LOG_LEVEL + "=" + DUnitLauncher.logLevel);
     if (DUnitLauncher.LOG4J != null) {
@@ -222,8 +227,8 @@ public class ProcessManager {
   }
 
   /**
-   * Get the java agent passed to this process and pass it to the child VMs.
-   * This was added to support jacoco code coverage reports
+   * Get the java agent passed to this process and pass it to the child VMs. This was added to
+   * support jacoco code coverage reports
    */
   private String getAgentString() {
     RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
@@ -231,10 +236,16 @@ public class ProcessManager {
       for (String arg : runtimeBean.getInputArguments()) {
         if (arg.contains("-javaagent:")) {
           //HACK for gradle bug  GRADLE-2859. Jacoco is passing a relative path
-          //That won't work when we pass this to dunit VMs in a different 
+          //That won't work when we pass this to dunit VMs in a different
           //directory
-          arg = arg.replace("-javaagent:..", "-javaagent:" + System.getProperty("user.dir") + File.separator + "..");
-          arg = arg.replace("destfile=..", "destfile=" + System.getProperty("user.dir") + File.separator + "..");
+          arg =
+              arg.replace(
+                  "-javaagent:..",
+                  "-javaagent:" + System.getProperty("user.dir") + File.separator + "..");
+          arg =
+              arg.replace(
+                  "destfile=..",
+                  "destfile=" + System.getProperty("user.dir") + File.separator + "..");
           return arg;
         }
       }
@@ -272,7 +283,6 @@ public class ProcessManager {
     public void kill() {
       this.killed = true;
       process.destroy();
-
     }
 
     public Process getProcess() {
@@ -288,7 +298,8 @@ public class ProcessManager {
     }
   }
 
-  public RemoteDUnitVMIF getStub(int i) throws AccessException, RemoteException, NotBoundException, InterruptedException {
+  public RemoteDUnitVMIF getStub(int i)
+      throws AccessException, RemoteException, NotBoundException, InterruptedException {
     waitForVMs(DUnitLauncher.STARTUP_TIMEOUT);
     return (RemoteDUnitVMIF) registry.lookup("vm" + i);
   }

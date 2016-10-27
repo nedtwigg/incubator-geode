@@ -26,12 +26,11 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * This JUnit tests concurrent rolling and normal region operations
- * put,get,clear,destroy in both sync and async mode
- * 
- * A region operation is done on the same key that is about to be rolled or has
- * just been rolled and the region operation is verified to have been correctly
- * executed.
+ * This JUnit tests concurrent rolling and normal region operations put,get,clear,destroy in both
+ * sync and async mode
+ *
+ * <p>A region operation is done on the same key that is about to be rolled or has just been rolled
+ * and the region operation is verified to have been correctly executed.
  */
 @Category(IntegrationTest.class)
 public class ConcurrentFlushingAndRegionOperationsJUnitTest extends DiskRegionTestingBase {
@@ -40,24 +39,24 @@ public class ConcurrentFlushingAndRegionOperationsJUnitTest extends DiskRegionTe
 
   /**
    * A put is done on the same entry before flushing that entry
-   * 
-   * The test ensures that put is not done twice by using a alreadyComeHere
-   * boolean.
-   * 
+   *
+   * <p>The test ensures that put is not done twice by using a alreadyComeHere boolean.
+   *
    * @param region
    */
   void putBeforeFlush(final Region region) {
     alreadyComeHere = false;
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void goingToFlush() {
-        if (!alreadyComeHere) {
-          // this should do an in place update of the re we just took of the queue
-          region.put("Key", "Value2");
-        }
-        alreadyComeHere = true;
-      }
-    });
+          public void goingToFlush() {
+            if (!alreadyComeHere) {
+              // this should do an in place update of the re we just took of the queue
+              region.put("Key", "Value2");
+            }
+            alreadyComeHere = true;
+          }
+        });
     ((LocalRegion) region).getDiskRegion().pauseFlusherForTesting();
     region.put("Key", "Value1");
     ((LocalRegion) region).getDiskRegion().flushForTesting();
@@ -71,24 +70,23 @@ public class ConcurrentFlushingAndRegionOperationsJUnitTest extends DiskRegionTe
   }
 
   /**
-   * a single get is done on the entry about to be flushed. multiple gets are
-   * avoided by the alreadyComeHere boolean
-   * 
-   * 
-   * 
+   * a single get is done on the entry about to be flushed. multiple gets are avoided by the
+   * alreadyComeHere boolean
+   *
    * @param region
    */
   void getBeforeFlush(final Region region) {
     alreadyComeHere = false;
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void goingToFlush() {
-        if (!alreadyComeHere) {
-          region.get("Key");
-        }
-        alreadyComeHere = true;
-      }
-    });
+          public void goingToFlush() {
+            if (!alreadyComeHere) {
+              region.get("Key");
+            }
+            alreadyComeHere = true;
+          }
+        });
     ((LocalRegion) region).getDiskRegion().pauseFlusherForTesting();
     region.put("Key", "Value1");
     ((LocalRegion) region).getDiskRegion().flushForTesting();
@@ -102,25 +100,26 @@ public class ConcurrentFlushingAndRegionOperationsJUnitTest extends DiskRegionTe
 
   /**
    * the entry which is about to be flushed is deleted
-   * 
+   *
    * @param region
    */
   void delBeforeFlush(final Region region) {
     alreadyComeHere = false;
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void goingToFlush() {
-        if (!alreadyComeHere) {
-          try {
-            region.destroy("Key");
-          } catch (Exception e) {
-            logWriter.error("Exception occured", e);
-            fail("Exception occured when it was not supposed to occur");
+          public void goingToFlush() {
+            if (!alreadyComeHere) {
+              try {
+                region.destroy("Key");
+              } catch (Exception e) {
+                logWriter.error("Exception occured", e);
+                fail("Exception occured when it was not supposed to occur");
+              }
+            }
+            alreadyComeHere = true;
           }
-        }
-        alreadyComeHere = true;
-      }
-    });
+        });
     ((LocalRegion) region).getDiskRegion().pauseFlusherForTesting();
     region.put("Key", "Value1");
     ((LocalRegion) region).getDiskRegion().flushForTesting();
@@ -145,35 +144,36 @@ public class ConcurrentFlushingAndRegionOperationsJUnitTest extends DiskRegionTe
   }
 
   /**
-   * region is closed before going to be flushed The region is going to be
-   * closed in a separate thread. A 3000 ms wait is done to ensure that the
-   * separate thread has successfully closed the region
-   * 
+   * region is closed before going to be flushed The region is going to be closed in a separate
+   * thread. A 3000 ms wait is done to ensure that the separate thread has successfully closed the
+   * region
+   *
    * @param region
    */
   void closeBeforeFlush(final Region region) {
     hasBeenNotified = false;
     alreadyComeHere = false;
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void goingToFlush() {
-        if (!alreadyComeHere) {
-          try {
-            new Close(region).start();
-            try {
-              Thread.sleep(3000);
-            } catch (InterruptedException ok) {
-              // this is ok; the async writer thread is interrupted during shutdown
-              Thread.currentThread().interrupt();
+          public void goingToFlush() {
+            if (!alreadyComeHere) {
+              try {
+                new Close(region).start();
+                try {
+                  Thread.sleep(3000);
+                } catch (InterruptedException ok) {
+                  // this is ok; the async writer thread is interrupted during shutdown
+                  Thread.currentThread().interrupt();
+                }
+              } catch (Exception e) {
+                logWriter.error("Exception occured", e);
+                fail("Exception occured when it was not supposed to occur");
+              }
             }
-          } catch (Exception e) {
-            logWriter.error("Exception occured", e);
-            fail("Exception occured when it was not supposed to occur");
+            alreadyComeHere = true;
           }
-        }
-        alreadyComeHere = true;
-      }
-    });
+        });
     ((LocalRegion) region).getDiskRegion().pauseFlusherForTesting();
     region.put("Key", "Value1");
     ((LocalRegion) region).getDiskRegion().flushForTesting();
@@ -190,35 +190,35 @@ public class ConcurrentFlushingAndRegionOperationsJUnitTest extends DiskRegionTe
   }
 
   /**
-   * A region close is done after flush is over. The close is done in a separate
-   * thread and a 3000 ms wait is put to ensure that the separate thread has
-   * closed the region
-   * 
+   * A region close is done after flush is over. The close is done in a separate thread and a 3000
+   * ms wait is put to ensure that the separate thread has closed the region
+   *
    * @param region
    */
   void closeAfterFlush(final Region region) {
     hasBeenNotified = false;
     alreadyComeHere = false;
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void afterWritingBytes() {
-        if (!alreadyComeHere) {
-          try {
-            new Close(region).start();
-            try {
-              Thread.sleep(3000);
-            } catch (InterruptedException ok) {
-              // this is ok; the async writer thread is interrupted during shutdown
-              Thread.currentThread().interrupt();
+          public void afterWritingBytes() {
+            if (!alreadyComeHere) {
+              try {
+                new Close(region).start();
+                try {
+                  Thread.sleep(3000);
+                } catch (InterruptedException ok) {
+                  // this is ok; the async writer thread is interrupted during shutdown
+                  Thread.currentThread().interrupt();
+                }
+              } catch (Exception e) {
+                logWriter.error("Exception occured", e);
+                fail("Exception occured when it was not supposed to occur");
+              }
             }
-          } catch (Exception e) {
-            logWriter.error("Exception occured", e);
-            fail("Exception occured when it was not supposed to occur");
+            alreadyComeHere = true;
           }
-        }
-        alreadyComeHere = true;
-      }
-    });
+        });
     ((LocalRegion) region).getDiskRegion().pauseFlusherForTesting();
     region.put("Key", "Value1");
     ((LocalRegion) region).getDiskRegion().flushForTesting();
@@ -260,31 +260,31 @@ public class ConcurrentFlushingAndRegionOperationsJUnitTest extends DiskRegionTe
 
   void putAfterFlush(final Region region) {
     alreadyComeHere = false;
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void afterWritingBytes() {
-        if (!alreadyComeHere) {
-          DiskEntry de = (DiskEntry) ((LocalRegion) region).basicGetEntry("Key");
-          if (de == null)
-            return; // this is caused by the first flush
-          DiskId id = de.getDiskId();
-          long oldOplogId = id.getOplogId();
-          long oldOplogOffset = id.getOffsetInOplog();
-          ((LocalRegion) region).getDiskRegion().pauseFlusherForTesting();
-          //           region.getCache().getLogger().info("putting value2");
-          region.put("Key", "Value2");
-          id = ((DiskEntry) (((LocalRegion) region).basicGetEntry("Key"))).getDiskId();
-          long newOplogId = id.getOplogId();
-          long newOplogOffset = id.getOffsetInOplog();
-          id.setOplogId(oldOplogId);
-          id.setOffsetInOplog(oldOplogOffset);
-          assertEquals("Value1", ((LocalRegion) region).getDiskRegion().getNoBuffer(id));
-          id.setOplogId(newOplogId);
-          id.setOffsetInOplog(newOplogOffset);
-        }
-        alreadyComeHere = true;
-      }
-    });
+          public void afterWritingBytes() {
+            if (!alreadyComeHere) {
+              DiskEntry de = (DiskEntry) ((LocalRegion) region).basicGetEntry("Key");
+              if (de == null) return; // this is caused by the first flush
+              DiskId id = de.getDiskId();
+              long oldOplogId = id.getOplogId();
+              long oldOplogOffset = id.getOffsetInOplog();
+              ((LocalRegion) region).getDiskRegion().pauseFlusherForTesting();
+              //           region.getCache().getLogger().info("putting value2");
+              region.put("Key", "Value2");
+              id = ((DiskEntry) (((LocalRegion) region).basicGetEntry("Key"))).getDiskId();
+              long newOplogId = id.getOplogId();
+              long newOplogOffset = id.getOffsetInOplog();
+              id.setOplogId(oldOplogId);
+              id.setOffsetInOplog(oldOplogOffset);
+              assertEquals("Value1", ((LocalRegion) region).getDiskRegion().getNoBuffer(id));
+              id.setOplogId(newOplogId);
+              id.setOffsetInOplog(newOplogOffset);
+            }
+            alreadyComeHere = true;
+          }
+        });
     //     region.getCache().getLogger().info("before pause");
     ((LocalRegion) region).getDiskRegion().pauseFlusherForTesting();
     //     region.getCache().getLogger().info("putting value1");
@@ -307,20 +307,20 @@ public class ConcurrentFlushingAndRegionOperationsJUnitTest extends DiskRegionTe
       logWriter.error("Exception occured", e);
       fail("Entry not found although was supposed to be there");
     }
-
   }
 
   void getAfterFlush(final Region region) {
     alreadyComeHere = false;
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void afterWritingBytes() {
-        if (!alreadyComeHere) {
-          region.get("key");
-        }
-        alreadyComeHere = true;
-      }
-    });
+          public void afterWritingBytes() {
+            if (!alreadyComeHere) {
+              region.get("key");
+            }
+            alreadyComeHere = true;
+          }
+        });
     ((LocalRegion) region).getDiskRegion().pauseFlusherForTesting();
     region.put("Key", "Value1");
     ((LocalRegion) region).getDiskRegion().flushForTesting();
@@ -334,21 +334,22 @@ public class ConcurrentFlushingAndRegionOperationsJUnitTest extends DiskRegionTe
 
   void delAfterFlush(final Region region) {
     alreadyComeHere = false;
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void afterWritingBytes() {
-        if (!alreadyComeHere) {
-          try {
+          public void afterWritingBytes() {
+            if (!alreadyComeHere) {
+              try {
 
-            region.destroy("Key");
-          } catch (Exception e1) {
-            logWriter.error("Exception occured", e1);
-            fail("encounter exception when not expected " + e1);
+                region.destroy("Key");
+              } catch (Exception e1) {
+                logWriter.error("Exception occured", e1);
+                fail("encounter exception when not expected " + e1);
+              }
+            }
+            alreadyComeHere = true;
           }
-        }
-        alreadyComeHere = true;
-      }
-    });
+        });
     ((LocalRegion) region).getDiskRegion().pauseFlusherForTesting();
     region.put("Key", "Value1");
     ((LocalRegion) region).getDiskRegion().flushForTesting();
@@ -551,10 +552,10 @@ public class ConcurrentFlushingAndRegionOperationsJUnitTest extends DiskRegionTe
       } catch (Exception e) {
         logWriter.error("Exception occured", e);
         testFailed = true;
-        failureCause = "Exception occured when it was not supposed to occur, due to " + e + "in Close::run";
+        failureCause =
+            "Exception occured when it was not supposed to occur, due to " + e + "in Close::run";
         fail("Exception occured when it was not supposed to occur, due to " + e);
       }
     }
   }
-
 }

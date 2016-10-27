@@ -28,16 +28,13 @@ public class NullLogWriter implements LogWriter {
   }
 
   @Override
-  public void severe(String msg, Throwable ex) {
-  }
+  public void severe(String msg, Throwable ex) {}
 
   @Override
-  public void severe(String msg) {
-  }
+  public void severe(String msg) {}
 
   @Override
-  public void severe(Throwable ex) {
-  }
+  public void severe(Throwable ex) {}
 
   @Override
   public boolean errorEnabled() {
@@ -45,16 +42,13 @@ public class NullLogWriter implements LogWriter {
   }
 
   @Override
-  public void error(String msg, Throwable ex) {
-  }
+  public void error(String msg, Throwable ex) {}
 
   @Override
-  public void error(String msg) {
-  }
+  public void error(String msg) {}
 
   @Override
-  public void error(Throwable ex) {
-  }
+  public void error(Throwable ex) {}
 
   @Override
   public boolean warningEnabled() {
@@ -62,16 +56,13 @@ public class NullLogWriter implements LogWriter {
   }
 
   @Override
-  public void warning(String msg, Throwable ex) {
-  }
+  public void warning(String msg, Throwable ex) {}
 
   @Override
-  public void warning(String msg) {
-  }
+  public void warning(String msg) {}
 
   @Override
-  public void warning(Throwable ex) {
-  }
+  public void warning(Throwable ex) {}
 
   @Override
   public boolean infoEnabled() {
@@ -79,16 +70,13 @@ public class NullLogWriter implements LogWriter {
   }
 
   @Override
-  public void info(String msg, Throwable ex) {
-  }
+  public void info(String msg, Throwable ex) {}
 
   @Override
-  public void info(String msg) {
-  }
+  public void info(String msg) {}
 
   @Override
-  public void info(Throwable ex) {
-  }
+  public void info(Throwable ex) {}
 
   @Override
   public boolean configEnabled() {
@@ -96,16 +84,13 @@ public class NullLogWriter implements LogWriter {
   }
 
   @Override
-  public void config(String msg, Throwable ex) {
-  }
+  public void config(String msg, Throwable ex) {}
 
   @Override
-  public void config(String msg) {
-  }
+  public void config(String msg) {}
 
   @Override
-  public void config(Throwable ex) {
-  }
+  public void config(Throwable ex) {}
 
   @Override
   public boolean fineEnabled() {
@@ -113,16 +98,13 @@ public class NullLogWriter implements LogWriter {
   }
 
   @Override
-  public void fine(String msg, Throwable ex) {
-  }
+  public void fine(String msg, Throwable ex) {}
 
   @Override
-  public void fine(String msg) {
-  }
+  public void fine(String msg) {}
 
   @Override
-  public void fine(Throwable ex) {
-  }
+  public void fine(Throwable ex) {}
 
   @Override
   public boolean finerEnabled() {
@@ -130,28 +112,22 @@ public class NullLogWriter implements LogWriter {
   }
 
   @Override
-  public void finer(String msg, Throwable ex) {
-  }
+  public void finer(String msg, Throwable ex) {}
 
   @Override
-  public void finer(String msg) {
-  }
+  public void finer(String msg) {}
 
   @Override
-  public void finer(Throwable ex) {
-  }
+  public void finer(Throwable ex) {}
 
   @Override
-  public void entering(String sourceClass, String sourceMethod) {
-  }
+  public void entering(String sourceClass, String sourceMethod) {}
 
   @Override
-  public void exiting(String sourceClass, String sourceMethod) {
-  }
+  public void exiting(String sourceClass, String sourceMethod) {}
 
   @Override
-  public void throwing(String sourceClass, String sourceMethod, Throwable thrown) {
-  }
+  public void throwing(String sourceClass, String sourceMethod, Throwable thrown) {}
 
   @Override
   public boolean finestEnabled() {
@@ -159,16 +135,13 @@ public class NullLogWriter implements LogWriter {
   }
 
   @Override
-  public void finest(String msg, Throwable ex) {
-  }
+  public void finest(String msg, Throwable ex) {}
 
   @Override
-  public void finest(String msg) {
-  }
+  public void finest(String msg) {}
 
   @Override
-  public void finest(Throwable ex) {
-  }
+  public void finest(Throwable ex) {}
 
   @Override
   public Handler getHandler() {

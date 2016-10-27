@@ -37,8 +37,7 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 
 // TODO:TEST clean this up and add assertions
-/**
- */
+/** */
 @Category(IntegrationTest.class)
 public class NegativeNumberQueriesJUnitTest {
 
@@ -83,9 +82,9 @@ public class NegativeNumberQueriesJUnitTest {
     String queryStr = "SELECT DISTINCT * FROM /numbers num WHERE num.id1 >= -200";
     Query q = qs.newQuery(queryStr);
     SelectResults rs = (SelectResults) q.execute();
-    CacheUtils.log("--------------------- Size of Result Set is: -------------------------" + rs.size());
-
-  }// end of testGetQueryTimes
+    CacheUtils.log(
+        "--------------------- Size of Result Set is: -------------------------" + rs.size());
+  } // end of testGetQueryTimes
 
   private void populateRegionsWithNumbers() throws Exception {
     CacheUtils.log("--------------------- Populating Data -------------------------");
@@ -96,7 +95,7 @@ public class NegativeNumberQueriesJUnitTest {
       region.put(String.valueOf(i), new Numbers(i));
     }
     CacheUtils.log("--------------------- Data Populatio done -------------------------");
-  }// end of populateRegions
+  } // end of populateRegions
 
   private void createIndexOnNumbers() throws Exception {
     CacheUtils.log("--------------------- Creating Indices -------------------------");
@@ -107,6 +106,5 @@ public class NegativeNumberQueriesJUnitTest {
     qs.createIndex("avg", IndexType.FUNCTIONAL, "num.max1", "/numbers num");
     qs.createIndex("l", IndexType.FUNCTIONAL, "num.l", "/numbers num");
     CacheUtils.log("--------------------- Index Creation Done -------------------------");
-  }// end of createIndex
-
-}// end of NegativeNumberQueriesJUnitTest
+  } // end of createIndex
+} // end of NegativeNumberQueriesJUnitTest

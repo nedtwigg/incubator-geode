@@ -27,14 +27,12 @@ import org.apache.geode.internal.sequencelog.io.Filter;
 import org.apache.geode.internal.sequencelog.io.InputStreamReader;
 import org.apache.geode.internal.sequencelog.model.GraphReaderCallback;
 
-/**
- *
- */
+/** */
 public class TextDisplay {
 
   /**
    * @param args
-   * @throws IOException 
+   * @throws IOException
    */
   public static void main(String[] args) throws IOException {
     File[] files;
@@ -44,36 +42,66 @@ public class TextDisplay {
         files[i] = new File(args[i]);
       }
     } else {
-      files = new File[] { new File("states.graph") };
+      files = new File[] {new File("states.graph")};
     }
 
     for (File file : files) {
       System.out.println("FILE: " + file);
-      InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(file)));
-      reader.addToGraphs(new GraphReaderCallback() {
+      InputStreamReader reader =
+          new InputStreamReader(new BufferedInputStream(new FileInputStream(file)));
+      reader.addToGraphs(
+          new GraphReaderCallback() {
 
-        public void addEdge(long timestamp, GraphType graphType, String graphName, String edgeName, String state, String source, String dest) {
-          System.out.println(timestamp + ": (" + graphType + ", " + graphName + ", " + edgeName + ", " + state + ", " + source + ", " + dest + ")");
+            public void addEdge(
+                long timestamp,
+                GraphType graphType,
+                String graphName,
+                String edgeName,
+                String state,
+                String source,
+                String dest) {
+              System.out.println(
+                  timestamp + ": (" + graphType + ", " + graphName + ", " + edgeName + ", " + state
+                      + ", " + source + ", " + dest + ")");
+            }
 
-        }
+            public void addEdgePattern(
+                long timestamp,
+                GraphType graphType,
+                Pattern graphNamePattern,
+                String edgeName,
+                String state,
+                String source,
+                String dest) {
+              System.out.println(
+                  timestamp
+                      + ": ("
+                      + graphType
+                      + ", "
+                      + graphNamePattern
+                      + ", "
+                      + edgeName
+                      + ", "
+                      + state
+                      + ", "
+                      + source
+                      + ", "
+                      + dest
+                      + ")");
+            }
+          },
+          new Filter() {
 
-        public void addEdgePattern(long timestamp, GraphType graphType, Pattern graphNamePattern, String edgeName, String state, String source, String dest) {
-          System.out.println(timestamp + ": (" + graphType + ", " + graphNamePattern + ", " + edgeName + ", " + state + ", " + source + ", " + dest + ")");
-        }
-      }, new Filter() {
+            public boolean accept(
+                GraphType graphType, String name, String edgeName, String source, String dest) {
+              return true;
+            }
 
-        public boolean accept(GraphType graphType, String name, String edgeName, String source, String dest) {
-          return true;
-        }
-
-        public boolean acceptPattern(GraphType graphType, Pattern pattern, String edgeName, String source, String dest) {
-          return true;
-        }
-
-      });
-
+            public boolean acceptPattern(
+                GraphType graphType, Pattern pattern, String edgeName, String source, String dest) {
+              return true;
+            }
+          });
     }
-
   }
-
 }

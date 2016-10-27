@@ -22,8 +22,8 @@ import java.util.Set;
 import org.apache.geode.internal.cache.tier.InterestType;
 
 /**
- * Interface <code>InterestRegistrationEvent</code> encapsulated interest
- * event information like region and keys of interest.
+ * Interface <code>InterestRegistrationEvent</code> encapsulated interest event information like
+ * region and keys of interest.
  *
  * @since GemFire 6.0
  */
@@ -38,14 +38,14 @@ public interface InterestRegistrationEvent {
 
   /**
    * Returns the region to which this interest belongs.
-   * 
+   *
    * @return the region to which this interest belongs
    */
   public Region<?, ?> getRegion();
 
   /**
    * Returns a <code>Set</code> of keys of interest.
-   * 
+   *
    * @return a <code>Set</code> of keys of interest
    */
   public Set<?> getKeysOfInterest();
@@ -65,27 +65,23 @@ public interface InterestRegistrationEvent {
   public boolean isRegister();
 
   /**
-   * Returns whether this event's interest type is
-   * {@link InterestType#KEY}.
+   * Returns whether this event's interest type is {@link InterestType#KEY}.
    *
-   * @return whether this event's interest type is
-   *         {@link InterestType#KEY}
+   * @return whether this event's interest type is {@link InterestType#KEY}
    */
   public boolean isKey();
 
   /**
-   * Returns whether this event's interest type is
-   * {@link InterestType#REGULAR_EXPRESSION}.
+   * Returns whether this event's interest type is {@link InterestType#REGULAR_EXPRESSION}.
    *
-   * @return whether this event's interest type is
-   *         {@link InterestType#REGULAR_EXPRESSION}
+   * @return whether this event's interest type is {@link InterestType#REGULAR_EXPRESSION}
    */
   public boolean isRegularExpression();
 
-  /** 
-   * Returns the {@link ClientSession} that initiated this event 
-   *  
-   * @return the {@link ClientSession} that initiated this event 
+  /**
+   * Returns the {@link ClientSession} that initiated this event
+   *
+   * @return the {@link ClientSession} that initiated this event
    */
   public ClientSession getClientSession();
 }

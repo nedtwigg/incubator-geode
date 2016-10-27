@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import org.apache.geode.cache.*;
@@ -35,12 +33,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * This test creates an entry and verifies if {@link UpdateOperation} applies
- * correctly on it after various other operations have been applied on it
- * (Including destroy when entry is a {@link Tombstone}).
- * 
- * @since GemFire 7.0.1
+ * This test creates an entry and verifies if {@link UpdateOperation} applies correctly on it after
+ * various other operations have been applied on it (Including destroy when entry is a {@link
+ * Tombstone}).
  *
+ * @since GemFire 7.0.1
  */
 @Category(IntegrationTest.class)
 public class UpdateVersionJUnitTest {
@@ -62,10 +59,7 @@ public class UpdateVersionJUnitTest {
     return updateTimeStampEvent;
   }
 
-  /**
-   * Tests for LocalRegion.
-   */
-
+  /** Tests for LocalRegion. */
   @Test
   public void testUpdateVersionAfterCreate() {
 
@@ -106,7 +100,10 @@ public class UpdateVersionJUnitTest {
       regionEntry = ((NonTXEntry) entry).getRegionEntry();
 
       stamp = regionEntry.getVersionStamp();
-      assertEquals("Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion", time, stamp.getVersionTimeStamp());
+      assertEquals(
+          "Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion",
+          time,
+          stamp.getVersionTimeStamp());
       assertEquals(++entryVersion, stamp.getEntryVersion());
       assertEquals(member, stamp.getMemberID());
       assertEquals(dsid, stamp.getDistributedSystemId());
@@ -160,7 +157,10 @@ public class UpdateVersionJUnitTest {
       regionEntry = ((NonTXEntry) entry).getRegionEntry();
 
       stamp = regionEntry.getVersionStamp();
-      assertEquals("Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion", time, stamp.getVersionTimeStamp());
+      assertEquals(
+          "Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion",
+          time,
+          stamp.getVersionTimeStamp());
       assertEquals(++entryVersion, stamp.getEntryVersion());
       assertEquals(member, stamp.getMemberID());
       assertEquals(dsid, stamp.getDistributedSystemId());
@@ -217,7 +217,10 @@ public class UpdateVersionJUnitTest {
       regionEntry = ((NonTXEntry) entry).getRegionEntry();
 
       stamp = regionEntry.getVersionStamp();
-      assertEquals("Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion", time, stamp.getVersionTimeStamp());
+      assertEquals(
+          "Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion",
+          time,
+          stamp.getVersionTimeStamp());
       assertEquals(++entryVersion, stamp.getEntryVersion());
       assertEquals(member, stamp.getMemberID());
       assertEquals(dsid, stamp.getDistributedSystemId());
@@ -227,10 +230,7 @@ public class UpdateVersionJUnitTest {
     }
   }
 
-  /**
-   * Tests for Partitioned Region.
-   */
-
+  /** Tests for Partitioned Region. */
   @Test
   public void testUpdateVersionAfterCreateOnPR() {
 
@@ -271,7 +271,10 @@ public class UpdateVersionJUnitTest {
       regionEntry = ((EntrySnapshot) entry).getRegionEntry();
 
       stamp = regionEntry.getVersionStamp();
-      assertEquals("Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion", time, stamp.getVersionTimeStamp());
+      assertEquals(
+          "Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion",
+          time,
+          stamp.getVersionTimeStamp());
       assertEquals(++entryVersion, stamp.getEntryVersion());
       assertEquals(member, stamp.getMemberID());
       assertEquals(dsid, stamp.getDistributedSystemId());
@@ -325,7 +328,10 @@ public class UpdateVersionJUnitTest {
       regionEntry = ((EntrySnapshot) entry).getRegionEntry();
 
       stamp = regionEntry.getVersionStamp();
-      assertEquals("Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion", time, stamp.getVersionTimeStamp());
+      assertEquals(
+          "Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion",
+          time,
+          stamp.getVersionTimeStamp());
       assertEquals(++entryVersion, stamp.getEntryVersion());
       assertEquals(member, stamp.getMemberID());
       assertEquals(dsid, stamp.getDistributedSystemId());
@@ -382,7 +388,10 @@ public class UpdateVersionJUnitTest {
       regionEntry = ((EntrySnapshot) entry).getRegionEntry();
 
       stamp = regionEntry.getVersionStamp();
-      assertEquals("Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion", time, stamp.getVersionTimeStamp());
+      assertEquals(
+          "Time stamp did NOT get updated by UPDATE_VERSION operation on LocalRegion",
+          time,
+          stamp.getVersionTimeStamp());
       assertEquals(++entryVersion, stamp.getEntryVersion());
       assertEquals(member, stamp.getMemberID());
       assertEquals(dsid, stamp.getDistributedSystemId());

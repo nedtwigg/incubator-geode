@@ -25,8 +25,8 @@ import java.io.InputStream;
 
 /**
  * The abstract superclass of classes that convert XML into a {@link
- * org.apache.geode.admin.DistributedSystemConfig} and vice versa.
- * It provides helper methods and constants.
+ * org.apache.geode.admin.DistributedSystemConfig} and vice versa. It provides helper methods and
+ * constants.
  *
  * @since GemFire 4.0
  */
@@ -39,7 +39,8 @@ abstract class ManagedEntityConfigXml implements EntityResolver, ErrorHandler {
   protected static final String SYSTEM_ID = "http://www.gemstone.com/dtd/ds5_0.dtd";
 
   /** The public ID for the DTD */
-  protected static final String PUBLIC_ID = "-//GemStone Systems, Inc.//GemFire Distributed System 5.0//EN";
+  protected static final String PUBLIC_ID =
+      "-//GemStone Systems, Inc.//GemFire Distributed System 5.0//EN";
 
   /** The name of the <code>distributed-system</code> element. */
   public static final String DISTRIBUTED_SYSTEM = "distributed-system";
@@ -107,26 +108,29 @@ abstract class ManagedEntityConfigXml implements EntityResolver, ErrorHandler {
   ///////////////////////  Instance Methods  ///////////////////////
 
   /**
-   * Given a public id, attempt to resolve it to a DTD.  Returns an
-   * <code>InputSoure</code> for the DTD.
+   * Given a public id, attempt to resolve it to a DTD. Returns an <code>InputSoure</code> for the
+   * DTD.
    */
   public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 
     if (publicId == null || systemId == null) {
-      throw new SAXException(LocalizedStrings.ManagedEntityConfigXml_PUBLIC_ID_0_SYSTEM_ID_1.toLocalizedString(new Object[] { publicId, systemId }));
+      throw new SAXException(
+          LocalizedStrings.ManagedEntityConfigXml_PUBLIC_ID_0_SYSTEM_ID_1.toLocalizedString(
+              new Object[] {publicId, systemId}));
     }
 
     // Figure out the location for the publicId.
     String location = DTD_LOCATION;
 
     InputSource result;
-    //    if (location != null) (cannot be null) 
+    //    if (location != null) (cannot be null)
     {
       InputStream stream = ClassPathLoader.getLatest().getResourceAsStream(getClass(), location);
       if (stream != null) {
         result = new InputSource(stream);
       } else {
-        throw new SAXNotRecognizedException(LocalizedStrings.ManagedEntityConfigXml_DTD_NOT_FOUND_0.toLocalizedString(location));
+        throw new SAXNotRecognizedException(
+            LocalizedStrings.ManagedEntityConfigXml_DTD_NOT_FOUND_0.toLocalizedString(location));
       }
 
       //    } else {
@@ -136,29 +140,25 @@ abstract class ManagedEntityConfigXml implements EntityResolver, ErrorHandler {
     return result;
   }
 
-  /**
-   * Warnings are ignored
-   */
-  public void warning(SAXParseException ex) throws SAXException {
+  /** Warnings are ignored */
+  public void warning(SAXParseException ex) throws SAXException {}
 
-  }
-
-  /**
-   * Throws a {@link org.apache.geode.cache.CacheXmlException}
-   */
+  /** Throws a {@link org.apache.geode.cache.CacheXmlException} */
   public void error(SAXParseException ex) throws SAXException {
-    IllegalArgumentException ex2 = new IllegalArgumentException(LocalizedStrings.ManagedEntityConfigXml_ERROR_WHILE_PARSING_XML.toLocalizedString());
+    IllegalArgumentException ex2 =
+        new IllegalArgumentException(
+            LocalizedStrings.ManagedEntityConfigXml_ERROR_WHILE_PARSING_XML.toLocalizedString());
     ex2.initCause(ex);
     throw ex2;
   }
 
-  /**
-   * Throws a {@link org.apache.geode.cache.CacheXmlException}
-   */
+  /** Throws a {@link org.apache.geode.cache.CacheXmlException} */
   public void fatalError(SAXParseException ex) throws SAXException {
-    IllegalArgumentException ex2 = new IllegalArgumentException(LocalizedStrings.ManagedEntityConfigXml_FATAL_ERROR_WHILE_PARSING_XML.toLocalizedString());
+    IllegalArgumentException ex2 =
+        new IllegalArgumentException(
+            LocalizedStrings.ManagedEntityConfigXml_FATAL_ERROR_WHILE_PARSING_XML
+                .toLocalizedString());
     ex2.initCause(ex);
     throw ex2;
   }
-
 }

@@ -21,10 +21,9 @@ import java.io.IOException;
 import java.io.ObjectOutput;
 
 /**
- * An extension to {@link ObjectOutput} that implements
- * {@link VersionedDataStream} wrapping given {@link ObjectOutput} for a stream
- * directed to a different product version.
- * 
+ * An extension to {@link ObjectOutput} that implements {@link VersionedDataStream} wrapping given
+ * {@link ObjectOutput} for a stream directed to a different product version.
+ *
  * @since GemFire 7.1
  */
 public final class VersionedObjectOutput implements ObjectOutput, VersionedDataStream {
@@ -33,14 +32,10 @@ public final class VersionedObjectOutput implements ObjectOutput, VersionedDataS
   private final Version version;
 
   /**
-   * Creates a VersionedObjectOutput that wraps the specified underlying
-   * ObjectOutput.
-   * 
-   * @param out
-   *          the underlying {@link ObjectOutput}
-   * @param version
-   *          the product version that serialized object on the given
-   *          {@link ObjectOutput}
+   * Creates a VersionedObjectOutput that wraps the specified underlying ObjectOutput.
+   *
+   * @param out the underlying {@link ObjectOutput}
+   * @param version the product version that serialized object on the given {@link ObjectOutput}
    */
   public VersionedObjectOutput(ObjectOutput out, Version version) {
     if (version.compareTo(Version.CURRENT) > 0) {
@@ -50,145 +45,109 @@ public final class VersionedObjectOutput implements ObjectOutput, VersionedDataS
     this.version = version;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public Version getVersion() {
     return this.version;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void write(int b) throws IOException {
     this.out.write(b);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void write(byte[] b) throws IOException {
     this.out.write(b);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void write(byte[] b, int off, int len) throws IOException {
     this.out.write(b, off, len);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeBoolean(boolean v) throws IOException {
     this.out.writeBoolean(v);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeByte(int v) throws IOException {
     this.out.writeByte(v);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeShort(int v) throws IOException {
     this.out.writeShort(v);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeChar(int v) throws IOException {
     this.out.writeChar(v);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeInt(int v) throws IOException {
     this.out.writeInt(v);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeLong(long v) throws IOException {
     this.out.writeLong(v);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeFloat(float v) throws IOException {
     this.out.writeFloat(v);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeDouble(double v) throws IOException {
     this.out.writeDouble(v);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeBytes(String s) throws IOException {
     this.out.writeBytes(s);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeChars(String s) throws IOException {
     this.out.writeChars(s);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeUTF(String s) throws IOException {
     this.out.writeUTF(s);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeObject(Object obj) throws IOException {
     this.out.writeObject(obj);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void flush() throws IOException {
     this.out.flush();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void close() throws IOException {
     this.out.close();

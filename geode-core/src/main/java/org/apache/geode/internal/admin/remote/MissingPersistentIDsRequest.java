@@ -38,11 +38,9 @@ import org.apache.geode.internal.cache.persistence.PersistentMemberManager;
 import org.apache.geode.internal.cache.persistence.PersistentMemberPattern;
 
 /**
- * A request to all members for any persistent members that
- * they are waiting for.
- * TODO prpersist - This extends AdminRequest, but it doesn't
- * work with most of the admin paradigm, which is a request response
- * to a single member. Maybe we need to a new base class.
+ * A request to all members for any persistent members that they are waiting for. TODO prpersist -
+ * This extends AdminRequest, but it doesn't work with most of the admin paradigm, which is a
+ * request response to a single member. Maybe we need to a new base class.
  */
 public class MissingPersistentIDsRequest extends CliLegacyMessage {
 
@@ -68,7 +66,8 @@ public class MissingPersistentIDsRequest extends CliLegacyMessage {
     Set<PersistentID> results = replyProcessor.missing;
     Set<PersistentID> existing = replyProcessor.existing;
 
-    MissingPersistentIDsResponse localResponse = (MissingPersistentIDsResponse) request.createResponse((DistributionManager) dm);
+    MissingPersistentIDsResponse localResponse =
+        (MissingPersistentIDsResponse) request.createResponse((DistributionManager) dm);
     results.addAll(localResponse.getMissingIds());
     existing.addAll(localResponse.getLocalIds());
 

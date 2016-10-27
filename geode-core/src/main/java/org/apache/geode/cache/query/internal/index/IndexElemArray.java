@@ -22,9 +22,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * A wrapper around an object array for storing values in index data structure
- * with minimal set of operations supported and the maximum size of 128 elements  
- * 
+ * A wrapper around an object array for storing values in index data structure with minimal set of
+ * operations supported and the maximum size of 128 elements
+ *
  * @since GemFire 7.0
  */
 public class IndexElemArray implements Iterable, Collection {
@@ -42,20 +42,16 @@ public class IndexElemArray implements Iterable, Collection {
     this.elementData = new Object[initialCapacity];
   }
 
-  /**
-   * Constructs an empty list with an initial capacity of ten.
-   */
+  /** Constructs an empty list with an initial capacity of ten. */
   public IndexElemArray() {
     this(IndexManager.INDEX_ELEMARRAY_SIZE);
   }
 
   /**
-   * Increases the capacity of this <tt>ArrayList</tt> instance, if necessary,
-   * to ensure that it can hold at least the number of elements specified by the
-   * minimum capacity argument.
-   * 
-   * @param minCapacity
-   *          the desired minimum capacity
+   * Increases the capacity of this <tt>ArrayList</tt> instance, if necessary, to ensure that it can
+   * hold at least the number of elements specified by the minimum capacity argument.
+   *
+   * @param minCapacity the desired minimum capacity
    */
   private void ensureCapacity(int minCapacity) {
     int oldCapacity = elementData.length;
@@ -72,9 +68,9 @@ public class IndexElemArray implements Iterable, Collection {
   }
 
   /**
-   * Returns the number of elements in this list. (Warning: May not return
-   * correct size always, as remove operation is not atomic)
-   * 
+   * Returns the number of elements in this list. (Warning: May not return correct size always, as
+   * remove operation is not atomic)
+   *
    * @return the number of elements in this list
    */
   public int size() {
@@ -83,7 +79,7 @@ public class IndexElemArray implements Iterable, Collection {
 
   /**
    * Returns <tt>true</tt> if this list contains no elements.
-   * 
+   *
    * @return <tt>true</tt> if this list contains no elements
    */
   public boolean isEmpty() {
@@ -91,13 +87,11 @@ public class IndexElemArray implements Iterable, Collection {
   }
 
   /**
-   * Returns <tt>true</tt> if this list contains the specified element. More
-   * formally, returns <tt>true</tt> if and only if this list contains at least
-   * one element <tt>e</tt> such that
+   * Returns <tt>true</tt> if this list contains the specified element. More formally, returns
+   * <tt>true</tt> if and only if this list contains at least one element <tt>e</tt> such that
    * <tt>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</tt>.
-   * 
-   * @param o
-   *          element whose presence in this list is to be tested
+   *
+   * @param o element whose presence in this list is to be tested
    * @return <tt>true</tt> if this list contains the specified element
    */
   public boolean contains(Object o) {
@@ -105,22 +99,17 @@ public class IndexElemArray implements Iterable, Collection {
   }
 
   /**
-   * Returns the index of the first occurrence of the specified element in this
-   * list, or -1 if this list does not contain the element. More formally,
-   * returns the lowest index <tt>i</tt> such that
-   * <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt>,
-   * or -1 if there is no such index.
+   * Returns the index of the first occurrence of the specified element in this list, or -1 if this
+   * list does not contain the element. More formally, returns the lowest index <tt>i</tt> such that
+   * <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt>, or -1 if there is no
+   * such index.
    */
   public int indexOf(Object o) {
     synchronized (lock) {
       if (o == null) {
-        for (int i = 0; i < size; i++)
-          if (elementData[i] == null)
-            return i;
+        for (int i = 0; i < size; i++) if (elementData[i] == null) return i;
       } else {
-        for (int i = 0; i < size; i++)
-          if (o.equals(elementData[i]))
-            return i;
+        for (int i = 0; i < size; i++) if (o.equals(elementData[i])) return i;
       }
     }
     return -1;
@@ -128,12 +117,10 @@ public class IndexElemArray implements Iterable, Collection {
 
   /**
    * Returns the element at the specified position in this list.
-   * 
-   * @param index
-   *          index of the element to return
+   *
+   * @param index index of the element to return
    * @return the element at the specified position in this list
    * @throws IndexOutOfBoundsException
-   *          
    */
   public Object get(int index) {
     synchronized (lock) {
@@ -143,16 +130,12 @@ public class IndexElemArray implements Iterable, Collection {
   }
 
   /**
-   * Replaces the element at the specified position in this list with the
-   * specified element.
-   * 
-   * @param index
-   *          index of the element to replace
-   * @param element
-   *          element to be stored at the specified position
+   * Replaces the element at the specified position in this list with the specified element.
+   *
+   * @param index index of the element to replace
+   * @param element element to be stored at the specified position
    * @return the element previously at the specified position
    * @throws IndexOutOfBoundsException
-   *           
    */
   public Object set(int index, Object element) {
     synchronized (lock) {
@@ -165,12 +148,10 @@ public class IndexElemArray implements Iterable, Collection {
   }
 
   /**
-   * Appends the specified element to the end of this array.
-   * If the array is full, creates a new array with 
-   * new capacity = old capacity + 5
-   * 
-   * @param e
-   *          element to be appended to this list
+   * Appends the specified element to the end of this array. If the array is full, creates a new
+   * array with new capacity = old capacity + 5
+   *
+   * @param e element to be appended to this list
    * @return <tt>true</tt> (as specified by {@link Collection#add})
    * @throws ArrayIndexOutOfBoundsException
    */
@@ -184,16 +165,14 @@ public class IndexElemArray implements Iterable, Collection {
   }
 
   /**
-   * Removes the first occurrence of the specified element from this list, if it
-   * is present. If the list does not contain the element, it is unchanged. More
-   * formally, removes the element with the lowest index <tt>i</tt> such that
-   * <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt>
-   * (if such an element exists). Returns <tt>true</tt> if this list contained
-   * the specified element (or equivalently, if this list changed as a result of
-   * the call).
-   * 
-   * @param o
-   *          element to be removed from this list, if present
+   * Removes the first occurrence of the specified element from this list, if it is present. If the
+   * list does not contain the element, it is unchanged. More formally, removes the element with the
+   * lowest index <tt>i</tt> such that
+   * <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt> (if such an element
+   * exists). Returns <tt>true</tt> if this list contained the specified element (or equivalently,
+   * if this list changed as a result of the call).
+   *
+   * @param o element to be removed from this list, if present
    * @return <tt>true</tt> if this list contained the specified element
    */
   public boolean remove(Object o) {
@@ -231,10 +210,7 @@ public class IndexElemArray implements Iterable, Collection {
     --size;
   }
 
-  /**
-   * Removes all of the elements from this list. The list will be empty after
-   * this call returns.
-   */
+  /** Removes all of the elements from this list. The list will be empty after this call returns. */
   public void clear() {
     // Let gc do its work
     synchronized (lock) {
@@ -246,10 +222,9 @@ public class IndexElemArray implements Iterable, Collection {
   }
 
   /**
-   * Checks if the given index is in range. If not, throws an appropriate
-   * runtime exception. This method does *not* check if the index is negative:
-   * It is always used immediately prior to an array access, which throws an
-   * ArrayIndexOutOfBoundsException if index is negative.
+   * Checks if the given index is in range. If not, throws an appropriate runtime exception. This
+   * method does *not* check if the index is negative: It is always used immediately prior to an
+   * array access, which throws an ArrayIndexOutOfBoundsException if index is negative.
    */
   private void RangeCheck(int index) {
     if (index >= size) {
@@ -293,10 +268,9 @@ public class IndexElemArray implements Iterable, Collection {
     }
 
     /**
-     * Checks if the array has next element, stores reference to the current
-     * element and increments cursor. This is required since an element may be
-     * removed between hasNext() and next() method calls
-     * 
+     * Checks if the array has next element, stores reference to the current element and increments
+     * cursor. This is required since an element may be removed between hasNext() and next() method
+     * calls
      */
     @Override
     public boolean hasNext() {
@@ -304,8 +278,8 @@ public class IndexElemArray implements Iterable, Collection {
     }
 
     /**
-     * Returns next element. But does not increment the cursor.
-     * Always use hasNext() before this method call
+     * Returns next element. But does not increment the cursor. Always use hasNext() before this
+     * method call
      */
     @Override
     public Object next() {
@@ -324,7 +298,6 @@ public class IndexElemArray implements Iterable, Collection {
     public void remove() {
       throw new UnsupportedOperationException("remove() method is not supported");
     }
-
   }
 
   @Override

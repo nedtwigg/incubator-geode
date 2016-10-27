@@ -68,9 +68,9 @@ import org.apache.geode.util.test.TestUtil;
 @Category(DistributedTest.class)
 public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
 
-  static private final String WAIT_PROPERTY = "QueryIndexBuckets.maxWaitTime";
+  private static final String WAIT_PROPERTY = "QueryIndexBuckets.maxWaitTime";
 
-  static private final int WAIT_DEFAULT = (60 * 1000);
+  private static final int WAIT_DEFAULT = (60 * 1000);
 
   public static final long MAX_TIME = Integer.getInteger(WAIT_PROPERTY, WAIT_DEFAULT).intValue();
 
@@ -87,9 +87,37 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
   final String statusIndex = "statusIndex";
   final String idIndex = "idIndex";
 
-  String queryStr[][] = new String[][] { { "Select * from /" + name + " where ID > 10", "Select * from /" + repRegName + " where ID > 10", "Select * from /" + persistentRegName + " where ID > 10", }, { "Select * from /" + name + " where ID = 5", "Select * from /" + repRegName + " where ID = 5", "Select * from /" + persistentRegName + " where ID = 5", "Select * from /" + nameWithHash + " where ID = 5", "Select * from /" + repRegNameWithHash + " where ID = 5", "Select * from /" + persistentRegNameWithHash + " where ID = 5" }, { "Select * from /" + name + " where status = 'active'", "Select * from /" + repRegName + " where status = 'active'", "Select * from /" + persistentRegName + " where status = 'active'", "Select * from /" + nameWithHash + " where status = 'active'", "Select * from /" + repRegNameWithHash + " where status = 'active'", "Select * from /" + persistentRegNameWithHash + " where status = 'active'", }, };
+  String queryStr[][] =
+      new String[][] {
+        {
+          "Select * from /" + name + " where ID > 10",
+          "Select * from /" + repRegName + " where ID > 10",
+          "Select * from /" + persistentRegName + " where ID > 10",
+        },
+        {
+          "Select * from /" + name + " where ID = 5",
+          "Select * from /" + repRegName + " where ID = 5",
+          "Select * from /" + persistentRegName + " where ID = 5",
+          "Select * from /" + nameWithHash + " where ID = 5",
+          "Select * from /" + repRegNameWithHash + " where ID = 5",
+          "Select * from /" + persistentRegNameWithHash + " where ID = 5"
+        },
+        {
+          "Select * from /" + name + " where status = 'active'",
+          "Select * from /" + repRegName + " where status = 'active'",
+          "Select * from /" + persistentRegName + " where status = 'active'",
+          "Select * from /" + nameWithHash + " where status = 'active'",
+          "Select * from /" + repRegNameWithHash + " where status = 'active'",
+          "Select * from /" + persistentRegNameWithHash + " where status = 'active'",
+        },
+      };
 
-  String queryStrNoIndex[] = new String[] { "Select * from /" + noIndexRepReg + " where ID > 10", "Select * from /" + noIndexRepReg + " where ID = 5", "Select * from /" + noIndexRepReg + " where status = 'active'", };
+  String queryStrNoIndex[] =
+      new String[] {
+        "Select * from /" + noIndexRepReg + " where ID > 10",
+        "Select * from /" + noIndexRepReg + " where ID = 5",
+        "Select * from /" + noIndexRepReg + " where status = 'active'",
+      };
 
   String queryStrValid = "Select * from /" + noIndexRepReg + " where ID > 10";
 
@@ -109,9 +137,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     FileUtil.delete(new File(GemFireCacheImpl.DEFAULT_DS_NAME).getAbsoluteFile());
   }
 
-  /**
-   * Creates partitioned index from an xml description.
-   */
+  /** Creates partitioned index from an xml description. */
   @Test
   public void testCreateIndexThroughXML() throws Exception {
 
@@ -120,11 +146,14 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     final String fileName = "IndexCreation.xml";
 
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Creating index using an xml file name : " + fileName);
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("Creating index using an xml file name : " + fileName);
 
-    AsyncInvocation asyInvk0 = vm0.invokeAsync(createIndexThrougXML("vm0testCreateIndexThroughXML", name, fileName));
+    AsyncInvocation asyInvk0 =
+        vm0.invokeAsync(createIndexThrougXML("vm0testCreateIndexThroughXML", name, fileName));
 
-    AsyncInvocation asyInvk1 = vm1.invokeAsync(createIndexThrougXML("vm1testCreateIndexThroughXML", name, fileName));
+    AsyncInvocation asyInvk1 =
+        vm1.invokeAsync(createIndexThrougXML("vm1testCreateIndexThroughXML", name, fileName));
 
     ThreadUtils.join(asyInvk1, 30 * 1000);
     if (asyInvk1.exceptionOccurred()) {
@@ -175,9 +204,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(close());
   }
 
-  /**
-   * Creates partitioned index from an xml description.
-   */
+  /** Creates partitioned index from an xml description. */
   @Test
   public void testCreateIndexWhileDoingGII() throws Exception {
 
@@ -186,7 +213,8 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     final String fileName = "IndexCreation.xml";
 
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Creating index using an xml file name : " + fileName);
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("Creating index using an xml file name : " + fileName);
 
     vm0.invoke(createIndexThrougXML("vm0testCreateIndexWhileDoingGII", name, fileName));
     // LoadRegion
@@ -219,7 +247,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm0.invoke(prIndexCreationCheck(nameWithHash, idIndex, 50));
     vm1.invoke(prIndexCreationCheck(nameWithHash, idIndex, 50));
 
-    // Execute query and verify index usage    
+    // Execute query and verify index usage
     vm0.invoke(executeQuery(name));
     vm1.invoke(executeQuery(name));
 
@@ -228,9 +256,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(close());
   }
 
-  /**
-   * Creates partitioned index from an xml description.
-   */
+  /** Creates partitioned index from an xml description. */
   @Test
   public void testReplicatedRegionCreateIndexWhileDoingGII() throws Exception {
 
@@ -239,9 +265,11 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     final String fileName = "IndexCreation.xml";
 
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Creating index using an xml file name : " + fileName);
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("Creating index using an xml file name : " + fileName);
 
-    vm0.invoke(createIndexThrougXML("vm0testRRegionCreateIndexWhileDoingGII", repRegName, fileName));
+    vm0.invoke(
+        createIndexThrougXML("vm0testRRegionCreateIndexWhileDoingGII", repRegName, fileName));
     // LoadRegion
     vm0.invoke(loadRegion(repRegName));
     vm0.invoke(loadRegion(repRegNameWithHash));
@@ -250,7 +278,8 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm0.invoke(indexCreationCheck(repRegNameWithHash, statusIndex));
 
     vm1.invoke(setTestHook());
-    vm1.invoke(createIndexThrougXML("vm1testRRegionCreateIndexWhileDoingGII", repRegName, fileName));
+    vm1.invoke(
+        createIndexThrougXML("vm1testRRegionCreateIndexWhileDoingGII", repRegName, fileName));
 
     vm0.invoke(indexCreationCheck(repRegName, statusIndex));
     vm1.invoke(indexCreationCheck(repRegName, statusIndex));
@@ -267,7 +296,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm0.invoke(indexCreationCheck(repRegNameWithHash, "secIndex"));
     vm1.invoke(indexCreationCheck(repRegNameWithHash, "secIndex"));
 
-    // Execute query and verify index usage    
+    // Execute query and verify index usage
     vm0.invoke(executeQuery(repRegName));
     vm1.invoke(executeQuery(repRegName));
 
@@ -276,9 +305,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(close());
   }
 
-  /**
-   * Creates persistent partitioned index from an xml description.
-   */
+  /** Creates persistent partitioned index from an xml description. */
   @Test
   public void testPersistentPRRegionCreateIndexWhileDoingGII() throws Exception {
 
@@ -287,7 +314,8 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     final String fileName = "IndexCreation.xml";
 
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Creating index using an xml file name : " + fileName);
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("Creating index using an xml file name : " + fileName);
 
     vm0.invoke(createIndexThrougXML("vm0testPersistentPRRegion", persistentRegName, fileName));
     // LoadRegion
@@ -315,19 +343,20 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm0.invoke(prIndexCreationCheck(persistentRegNameWithHash, "secIndex", 50));
     vm1.invoke(prIndexCreationCheck(persistentRegNameWithHash, "secIndex", 50));
 
-    // Execute query and verify index usage    
+    // Execute query and verify index usage
     vm0.invoke(executeQuery(persistentRegName));
     vm1.invoke(executeQuery(persistentRegName));
 
     // close one vm cache
     vm1.invoke(resetTestHook());
-    vm1.invoke(new SerializableRunnable() {
+    vm1.invoke(
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        closeCache();
-      }
-    });
+          @Override
+          public void run() {
+            closeCache();
+          }
+        });
 
     // restart
     vm1.invoke(setTestHook());
@@ -339,9 +368,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(close());
   }
 
-  /**
-   * Creates partitioned index from an xml description.
-   */
+  /** Creates partitioned index from an xml description. */
   @Test
   public void testCreateIndexWhileDoingGIIWithEmptyPRRegion() throws Exception {
 
@@ -350,7 +377,8 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     final String fileName = "IndexCreation.xml";
 
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("### in testCreateIndexWhileDoingGIIWithEmptyPRRegion.");
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("### in testCreateIndexWhileDoingGIIWithEmptyPRRegion.");
 
     vm0.invoke(createIndexThrougXML("vm0testGIIWithEmptyPRRegion", name, fileName));
     vm0.invoke(prIndexCreationCheck(name, statusIndex, -1));
@@ -375,9 +403,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(close());
   }
 
-  /**
-   * Creates partitioned index from an xml description.
-   */
+  /** Creates partitioned index from an xml description. */
   @Test
   public void testCreateAsyncIndexWhileDoingGII() throws Exception {
 
@@ -386,9 +412,11 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     final String fileName = "IndexCreation.xml";
 
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Creating index using an xml file name : " + fileName);
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("Creating index using an xml file name : " + fileName);
 
-    AsyncInvocation asyInvk0 = vm0.invokeAsync(createIndexThrougXML("vm0testAsyncIndexWhileDoingGII", name, fileName));
+    AsyncInvocation asyInvk0 =
+        vm0.invokeAsync(createIndexThrougXML("vm0testAsyncIndexWhileDoingGII", name, fileName));
 
     ThreadUtils.join(asyInvk0, 30 * 1000);
     if (asyInvk0.exceptionOccurred()) {
@@ -399,7 +427,8 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     asyInvk0 = vm0.invokeAsync(loadRegion(name));
 
     vm1.invoke(setTestHook());
-    AsyncInvocation asyInvk1 = vm1.invokeAsync(createIndexThrougXML("vm1testAsyncIndexWhileDoingGII", name, fileName));
+    AsyncInvocation asyInvk1 =
+        vm1.invokeAsync(createIndexThrougXML("vm1testAsyncIndexWhileDoingGII", name, fileName));
 
     vm0.invoke(prIndexCreationCheck(name, statusIndex, 50));
 
@@ -420,9 +449,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(close());
   }
 
-  /**
-   * Creates indexes and compares the results between index and non-index results.
-   */
+  /** Creates indexes and compares the results between index and non-index results. */
   @Test
   public void testCreateIndexWhileDoingGIIAndCompareQueryResults() throws Exception {
 
@@ -431,7 +458,8 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     final String fileName = "IndexCreation.xml";
 
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Creating index using an xml file name : " + fileName);
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("Creating index using an xml file name : " + fileName);
 
     vm0.invoke(createIndexThrougXML("vm0testIndexCompareQResults", name, fileName));
     // LoadRegion
@@ -471,7 +499,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(prIndexCreationCheck(persistentRegNameWithHash, "secIndex", 50));
     vm1.invoke(indexCreationCheck(repRegNameWithHash, "secIndex"));
 
-    // Execute query and verify index usage    
+    // Execute query and verify index usage
     vm0.invoke(executeQueryAndCompareResult(name, true));
     vm1.invoke(executeQueryAndCompareResult(name, true));
 
@@ -480,9 +508,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(close());
   }
 
-  /**
-   * Creates async partitioned index from an xml description.
-   */
+  /** Creates async partitioned index from an xml description. */
   @Test
   public void testCreateAsyncIndexWhileDoingGIIAndQuery() throws Exception {
 
@@ -491,9 +517,11 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     final String fileName = "IndexCreation.xml";
 
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Creating index using an xml file name : " + fileName);
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("Creating index using an xml file name : " + fileName);
 
-    AsyncInvocation asyInvk0 = vm0.invokeAsync(createIndexThrougXML("vm0testCreateAsyncIndexGIIAndQuery", name, fileName));
+    AsyncInvocation asyInvk0 =
+        vm0.invokeAsync(createIndexThrougXML("vm0testCreateAsyncIndexGIIAndQuery", name, fileName));
     ThreadUtils.join(asyInvk0, 30 * 1000);
     if (asyInvk0.exceptionOccurred()) {
       Assert.fail("asyInvk0 failed", asyInvk0.getException());
@@ -503,7 +531,8 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     asyInvk0 = vm0.invokeAsync(loadRegion(name));
 
     vm1.invoke(setTestHook());
-    AsyncInvocation asyInvk1 = vm1.invokeAsync(createIndexThrougXML("vm1testCreateAsyncIndexGIIAndQuery", name, fileName));
+    AsyncInvocation asyInvk1 =
+        vm1.invokeAsync(createIndexThrougXML("vm1testCreateAsyncIndexGIIAndQuery", name, fileName));
 
     ThreadUtils.join(asyInvk1, 30 * 1000);
     if (asyInvk1.exceptionOccurred()) {
@@ -517,7 +546,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm0.invoke(prIndexCreationCheck(name, statusIndex, 50));
     vm1.invoke(prIndexCreationCheck(name, statusIndex, 50));
 
-    // Execute query and verify index usage    
+    // Execute query and verify index usage
     vm0.invoke(executeQuery(name));
     vm1.invoke(executeQuery(name));
 
@@ -528,8 +557,8 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Creates asynch indexes and compares the results between index and non-index results.
-   * <p>
-   * DISABLED.  This test is disabled due to a high rate of failure.  See ticket #52167
+   *
+   * <p>DISABLED. This test is disabled due to a high rate of failure. See ticket #52167
    */
   @Ignore("TODO: test is disabled because of #52167")
   @Test
@@ -540,7 +569,8 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     final String fileName = "IndexCreation.xml";
 
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Creating index using an xml file name : " + fileName);
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("Creating index using an xml file name : " + fileName);
 
     vm0.invoke(createIndexThrougXML("vm0testAsyncIndexAndCompareQResults", name, fileName));
     // LoadRegion
@@ -566,7 +596,7 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     vm1.invoke(prIndexCreationCheck(persistentRegName, "secIndex", 50));
     vm1.invoke(indexCreationCheck(repRegName, "secIndex"));
 
-    // Execute query and verify index usage    
+    // Execute query and verify index usage
     vm0.invoke(executeQueryAndCompareResult(name, false));
     vm1.invoke(executeQueryAndCompareResult(name, false));
 
@@ -582,9 +612,14 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
     final String fileName = "IndexCreation.xml";
 
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Creating index using an xml file name : " + fileName);
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("Creating index using an xml file name : " + fileName);
     //create index using xml
-    vm0.invoke(createIndexThrougXML("vm0testIndexCreationForReplicatedPersistentOverFlowRegionOnRestart", persistentOverFlowRegName, fileName));
+    vm0.invoke(
+        createIndexThrougXML(
+            "vm0testIndexCreationForReplicatedPersistentOverFlowRegionOnRestart",
+            persistentOverFlowRegName,
+            fileName));
     //verify index creation
     vm0.invoke(indexCreationCheck(persistentOverFlowRegName, statusIndex));
     //LoadRegion
@@ -592,251 +627,284 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     //close cache without deleting diskstore
     vm0.invoke(closeWithoutDeletingDiskStore());
     //start cache by recovering data from diskstore
-    vm0.invoke(createIndexThrougXML("vm0testIndexCreationForReplicatedPersistentOverFlowRegionOnRestart", persistentOverFlowRegName, fileName));
+    vm0.invoke(
+        createIndexThrougXML(
+            "vm0testIndexCreationForReplicatedPersistentOverFlowRegionOnRestart",
+            persistentOverFlowRegName,
+            fileName));
     //verify index creation on restart
     vm0.invoke(indexCreationCheck(persistentOverFlowRegName, statusIndex));
-    //close cache and delete diskstore 
+    //close cache and delete diskstore
     vm0.invoke(close());
-
   }
 
   public CacheSerializableRunnable setTestHook() {
-    SerializableRunnable sr = new CacheSerializableRunnable("TestHook") {
-      public void run2() {
-        class IndexTestHook implements IndexManager.TestHook {
-          public boolean indexCreatedAsPartOfGII;
+    SerializableRunnable sr =
+        new CacheSerializableRunnable("TestHook") {
+          public void run2() {
+            class IndexTestHook implements IndexManager.TestHook {
+              public boolean indexCreatedAsPartOfGII;
 
-          public void hook(int spot) throws RuntimeException {
-            GemFireCacheImpl.getInstance().getLogger().fine("In IndexTestHook.hook(). hook() argument value is : " + spot);
-            if (spot == 1) {
-              throw new RuntimeException("Index is not created as part of Region GII.");
-            }
+              public void hook(int spot) throws RuntimeException {
+                GemFireCacheImpl.getInstance()
+                    .getLogger()
+                    .fine("In IndexTestHook.hook(). hook() argument value is : " + spot);
+                if (spot == 1) {
+                  throw new RuntimeException("Index is not created as part of Region GII.");
+                }
+              }
+            };
+            IndexManager.testHook = new IndexTestHook();
           }
-        }
-        ;
-        IndexManager.testHook = new IndexTestHook();
-      }
-    };
+        };
     return (CacheSerializableRunnable) sr;
   }
 
   public CacheSerializableRunnable resetTestHook() {
-    SerializableRunnable sr = new CacheSerializableRunnable("TestHook") {
-      public void run2() {
-        IndexManager.testHook = null;
-      }
-    };
-    return (CacheSerializableRunnable) sr;
-  }
-
-  public CacheSerializableRunnable createIndexThrougXML(final String vmid, final String regionName, final String xmlFileName) {
-    SerializableRunnable sr = new CacheSerializableRunnable("RegionCreator") {
-      public void run2() {
-        try {
-          //closeCache();
-          File file = findFile(xmlFileName);
-          GemFireCacheImpl.testCacheXml = file;
-          //DistributedTestCase.diskStore = vmid;
-          getSystem();
-          Cache cache = getCache();
-          Region region = cache.getRegion(regionName);
-          if (region == null) {
-            fail("Region not found." + regionName);
+    SerializableRunnable sr =
+        new CacheSerializableRunnable("TestHook") {
+          public void run2() {
+            IndexManager.testHook = null;
           }
-        } finally {
-          GemFireCacheImpl.testCacheXml = null;
-          //DistributedTestCase.diskStore = null;
-        }
-      }
-    };
+        };
     return (CacheSerializableRunnable) sr;
   }
 
-  public CacheSerializableRunnable prIndexCreationCheck(final String regionName, final String indexName, final int bucketCount) {
-    CacheSerializableRunnable sr = new CacheSerializableRunnable("pr IndexCreationCheck" + regionName + " indexName :" + indexName) {
-      public void run2() {
-        //closeCache();
-        Cache cache = getCache();
-        LogWriter logger = cache.getLogger();
-        PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
-        Map indexMap = region.getIndex();
-        PartitionedIndex index = (PartitionedIndex) region.getIndex().get(indexName);
-        if (index == null) {
-          fail("Index " + indexName + " Not Found for region " + regionName);
-        }
-        logger.info("Current number of buckets indexed : " + "" + ((PartitionedIndex) index).getNumberOfIndexedBuckets());
-        if (bucketCount >= 0) {
-          waitForIndexedBuckets((PartitionedIndex) index, bucketCount);
-        }
-        if (!index.isPopulated()) {
-          fail("Index isPopulatedFlag is not set to true");
-        }
-      }
-    };
+  public CacheSerializableRunnable createIndexThrougXML(
+      final String vmid, final String regionName, final String xmlFileName) {
+    SerializableRunnable sr =
+        new CacheSerializableRunnable("RegionCreator") {
+          public void run2() {
+            try {
+              //closeCache();
+              File file = findFile(xmlFileName);
+              GemFireCacheImpl.testCacheXml = file;
+              //DistributedTestCase.diskStore = vmid;
+              getSystem();
+              Cache cache = getCache();
+              Region region = cache.getRegion(regionName);
+              if (region == null) {
+                fail("Region not found." + regionName);
+              }
+            } finally {
+              GemFireCacheImpl.testCacheXml = null;
+              //DistributedTestCase.diskStore = null;
+            }
+          }
+        };
+    return (CacheSerializableRunnable) sr;
+  }
+
+  public CacheSerializableRunnable prIndexCreationCheck(
+      final String regionName, final String indexName, final int bucketCount) {
+    CacheSerializableRunnable sr =
+        new CacheSerializableRunnable(
+            "pr IndexCreationCheck" + regionName + " indexName :" + indexName) {
+          public void run2() {
+            //closeCache();
+            Cache cache = getCache();
+            LogWriter logger = cache.getLogger();
+            PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
+            Map indexMap = region.getIndex();
+            PartitionedIndex index = (PartitionedIndex) region.getIndex().get(indexName);
+            if (index == null) {
+              fail("Index " + indexName + " Not Found for region " + regionName);
+            }
+            logger.info(
+                "Current number of buckets indexed : "
+                    + ""
+                    + ((PartitionedIndex) index).getNumberOfIndexedBuckets());
+            if (bucketCount >= 0) {
+              waitForIndexedBuckets((PartitionedIndex) index, bucketCount);
+            }
+            if (!index.isPopulated()) {
+              fail("Index isPopulatedFlag is not set to true");
+            }
+          }
+        };
     return sr;
   }
 
-  public CacheSerializableRunnable indexCreationCheck(final String regionName, final String indexName) {
-    CacheSerializableRunnable sr = new CacheSerializableRunnable("IndexCreationCheck region: " + regionName + " indexName :" + indexName) {
-      public void run2() {
-        //closeCache();
-        Cache cache = getCache();
-        LogWriter logger = cache.getLogger();
-        LocalRegion region = (LocalRegion) cache.getRegion(regionName);
-        Index index = region.getIndexManager().getIndex(indexName);
-        if (index == null) {
-          fail("Index " + indexName + " Not Found for region name:" + regionName);
-        }
-      }
-    };
+  public CacheSerializableRunnable indexCreationCheck(
+      final String regionName, final String indexName) {
+    CacheSerializableRunnable sr =
+        new CacheSerializableRunnable(
+            "IndexCreationCheck region: " + regionName + " indexName :" + indexName) {
+          public void run2() {
+            //closeCache();
+            Cache cache = getCache();
+            LogWriter logger = cache.getLogger();
+            LocalRegion region = (LocalRegion) cache.getRegion(regionName);
+            Index index = region.getIndexManager().getIndex(indexName);
+            if (index == null) {
+              fail("Index " + indexName + " Not Found for region name:" + regionName);
+            }
+          }
+        };
     return sr;
   }
 
   public boolean waitForIndexedBuckets(final PartitionedIndex index, final int bucketCount) {
 
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return (index.getNumberOfIndexedBuckets() >= bucketCount);
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return (index.getNumberOfIndexedBuckets() >= bucketCount);
+          }
 
-      public String description() {
-        return "Number of Indexed Bucket is less than the expected number. " + bucketCount + ", " + index.getNumberOfIndexedBuckets();
-      }
-    };
+          public String description() {
+            return "Number of Indexed Bucket is less than the expected number. "
+                + bucketCount
+                + ", "
+                + index.getNumberOfIndexedBuckets();
+          }
+        };
     Wait.waitForCriterion(ev, MAX_TIME, 200, true);
     return true;
   }
 
   public CacheSerializableRunnable loadRegion(final String name) {
-    CacheSerializableRunnable sr = new CacheSerializableRunnable("load region on " + name) {
-      public void run2() {
-        Cache cache = getCache();
-        LogWriter logger = cache.getLogger();
-        Region region = cache.getRegion(name);
-        for (int i = 0; i < 100; i++) {
-          region.put("" + i, new Portfolio(i));
-        }
-      }
-    };
+    CacheSerializableRunnable sr =
+        new CacheSerializableRunnable("load region on " + name) {
+          public void run2() {
+            Cache cache = getCache();
+            LogWriter logger = cache.getLogger();
+            Region region = cache.getRegion(name);
+            for (int i = 0; i < 100; i++) {
+              region.put("" + i, new Portfolio(i));
+            }
+          }
+        };
     return sr;
   }
 
   public CacheSerializableRunnable loadRegion(final String name, final int size) {
-    CacheSerializableRunnable sr = new CacheSerializableRunnable("LoadRegion: " + name + " size :" + size) {
-      public void run2() {
-        Cache cache = getCache();
-        LogWriter logger = cache.getLogger();
-        Region region = cache.getRegion(name);
-        for (int i = 0; i < size; i++) {
-          region.put("" + i, new Portfolio(i));
-        }
-      }
-    };
+    CacheSerializableRunnable sr =
+        new CacheSerializableRunnable("LoadRegion: " + name + " size :" + size) {
+          public void run2() {
+            Cache cache = getCache();
+            LogWriter logger = cache.getLogger();
+            Region region = cache.getRegion(name);
+            for (int i = 0; i < size; i++) {
+              region.put("" + i, new Portfolio(i));
+            }
+          }
+        };
     return sr;
   }
 
   public CacheSerializableRunnable executeQuery(final String rname) {
-    CacheSerializableRunnable sr = new CacheSerializableRunnable("execute query on " + rname) {
-      public void run2() {
-        QueryService qs = getCache().getQueryService();
-        QueryObserverImpl observer = new QueryObserverImpl();
-        QueryObserverHolder.setInstance(observer);
-        String queryStr = "Select * from /" + rname + " where ID > 10";
-        Query query = qs.newQuery(queryStr);
-        try {
-          query.execute();
-        } catch (Exception ex) {
-          fail("Failed to execute the query.");
-        }
-        if (!observer.isIndexesUsed) {
-          fail("Index not used for query. " + queryStr);
-        }
-      }
-    };
-    return sr;
-  }
-
-  public CacheSerializableRunnable executeQueryAndCompareResult(final String rname, final boolean compareHash) {
-    CacheSerializableRunnable sr = new CacheSerializableRunnable("execute query and compare results.") {
-      public void run2() {
-        QueryService qs = getCache().getQueryService();
-
-        StructSetOrResultsSet ssORrs = new StructSetOrResultsSet();
-        SelectResults[][] sr = new SelectResults[1][2];
-        String s[] = new String[2];
-        for (int j = 0; j < queryStr.length; j++) {
-          String[] queryArray = queryStr[j];
-          int numQueriesToCheck = compareHash ? queryArray.length : 3;
-          for (int i = 0; i < numQueriesToCheck; i++) {
+    CacheSerializableRunnable sr =
+        new CacheSerializableRunnable("execute query on " + rname) {
+          public void run2() {
+            QueryService qs = getCache().getQueryService();
             QueryObserverImpl observer = new QueryObserverImpl();
             QueryObserverHolder.setInstance(observer);
-            // Query using index.
-            s[0] = queryStr[j][i];
-            // Execute query with index.
-            Query query = qs.newQuery(s[0]);
-
+            String queryStr = "Select * from /" + rname + " where ID > 10";
+            Query query = qs.newQuery(queryStr);
             try {
-              sr[0][0] = (SelectResults) query.execute();
+              query.execute();
             } catch (Exception ex) {
               fail("Failed to execute the query.");
             }
             if (!observer.isIndexesUsed) {
-              fail("Index not used for query. " + s[0]);
+              fail("Index not used for query. " + queryStr);
             }
-
-            // Query using no index.
-            s[1] = queryStrNoIndex[j];
-            try {
-              query = qs.newQuery(s[1]);
-              sr[0][1] = (SelectResults) query.execute();
-            } catch (Exception ex) {
-              fail("Failed to execute the query on no index region.");
-            }
-
-            // compare.
-            org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Execute query : \n queryStr with index: " + s[0] + " \n queryStr without index: " + s[1]);
-            ssORrs.CompareQueryResultsWithoutAndWithIndexes(sr, 1, s);
           }
-        }
-      }
-    };
+        };
+    return sr;
+  }
+
+  public CacheSerializableRunnable executeQueryAndCompareResult(
+      final String rname, final boolean compareHash) {
+    CacheSerializableRunnable sr =
+        new CacheSerializableRunnable("execute query and compare results.") {
+          public void run2() {
+            QueryService qs = getCache().getQueryService();
+
+            StructSetOrResultsSet ssORrs = new StructSetOrResultsSet();
+            SelectResults[][] sr = new SelectResults[1][2];
+            String s[] = new String[2];
+            for (int j = 0; j < queryStr.length; j++) {
+              String[] queryArray = queryStr[j];
+              int numQueriesToCheck = compareHash ? queryArray.length : 3;
+              for (int i = 0; i < numQueriesToCheck; i++) {
+                QueryObserverImpl observer = new QueryObserverImpl();
+                QueryObserverHolder.setInstance(observer);
+                // Query using index.
+                s[0] = queryStr[j][i];
+                // Execute query with index.
+                Query query = qs.newQuery(s[0]);
+
+                try {
+                  sr[0][0] = (SelectResults) query.execute();
+                } catch (Exception ex) {
+                  fail("Failed to execute the query.");
+                }
+                if (!observer.isIndexesUsed) {
+                  fail("Index not used for query. " + s[0]);
+                }
+
+                // Query using no index.
+                s[1] = queryStrNoIndex[j];
+                try {
+                  query = qs.newQuery(s[1]);
+                  sr[0][1] = (SelectResults) query.execute();
+                } catch (Exception ex) {
+                  fail("Failed to execute the query on no index region.");
+                }
+
+                // compare.
+                org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+                    .info(
+                        "Execute query : \n queryStr with index: "
+                            + s[0]
+                            + " \n queryStr without index: "
+                            + s[1]);
+                ssORrs.CompareQueryResultsWithoutAndWithIndexes(sr, 1, s);
+              }
+            }
+          }
+        };
     return sr;
   }
 
   public CacheSerializableRunnable closeWithoutDeletingDiskStore() {
-    CacheSerializableRunnable sr = new CacheSerializableRunnable("close") {
-      public void run2() {
-        IndexManager.testHook = null;
-        // close the cache.
-        closeCache();
-        disconnectFromDS();
-      }
-    };
+    CacheSerializableRunnable sr =
+        new CacheSerializableRunnable("close") {
+          public void run2() {
+            IndexManager.testHook = null;
+            // close the cache.
+            closeCache();
+            disconnectFromDS();
+          }
+        };
     return sr;
   }
 
   public CacheSerializableRunnable close() {
-    CacheSerializableRunnable sr = new CacheSerializableRunnable("close") {
-      public void run2() {
-        IndexManager.testHook = null;
+    CacheSerializableRunnable sr =
+        new CacheSerializableRunnable("close") {
+          public void run2() {
+            IndexManager.testHook = null;
 
-        // Get the disk store name.
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        String diskStoreName = cache.getDefaultDiskStoreName();
+            // Get the disk store name.
+            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+            String diskStoreName = cache.getDefaultDiskStoreName();
 
-        // close the cache.
-        closeCache();
-        disconnectFromDS();
+            // close the cache.
+            closeCache();
+            disconnectFromDS();
 
-        // remove the disk store.
-        File diskDir = new File(diskStoreName).getAbsoluteFile();
-        try {
-          org.apache.geode.internal.FileUtil.delete(diskDir);
-        } catch (Exception ex) {
-          fail("Failed to delete the disDir");
-        }
-      }
-    };
+            // remove the disk store.
+            File diskDir = new File(diskStoreName).getAbsoluteFile();
+            try {
+              org.apache.geode.internal.FileUtil.delete(diskDir);
+            } catch (Exception ex) {
+              fail("Failed to delete the disDir");
+            }
+          }
+        };
     return sr;
   }
 
@@ -849,7 +917,8 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     new Exception("TEST DEBUG###" + diskStoreId).printStackTrace();
     if (basicGetSystem() == null || !basicGetSystem().isConnected()) {
       // Figure out our distributed system properties
-      Properties p = DistributedTestUtils.getAllDistributedSystemProperties(getDistributedSystemProperties());
+      Properties p =
+          DistributedTestUtils.getAllDistributedSystemProperties(getDistributedSystemProperties());
       getSystem(p);
     }
     return basicGetSystem();
@@ -859,7 +928,8 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
     Cache cache = basicGetCache();
     if (cache == null) {
       try {
-        System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "DISABLE_DISCONNECT_DS_ON_CACHE_CLOSE", "true");
+        System.setProperty(
+            DistributionConfig.GEMFIRE_PREFIX + "DISABLE_DISCONNECT_DS_ON_CACHE_CLOSE", "true");
         cache = CacheFactory.create(system);
       } catch (CacheExistsException e) {
         Assert.fail("the cache already exists", e);
@@ -870,7 +940,8 @@ public class QueryIndexUsingXMLDUnitTest extends JUnit4CacheTestCase {
       } catch (Exception ex) {
         Assert.fail("Checked exception while initializing cache??", ex);
       } finally {
-        System.clearProperty(DistributionConfig.GEMFIRE_PREFIX + "DISABLE_DISCONNECT_DS_ON_CACHE_CLOSE");
+        System.clearProperty(
+            DistributionConfig.GEMFIRE_PREFIX + "DISABLE_DISCONNECT_DS_ON_CACHE_CLOSE");
       }
     }
     return cache;

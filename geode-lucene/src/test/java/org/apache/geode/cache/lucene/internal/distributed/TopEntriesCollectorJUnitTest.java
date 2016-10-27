@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -76,7 +76,8 @@ public class TopEntriesCollectorJUnitTest {
 
     TopEntriesCollector hits = manager.reduce(collectors);
     assertEquals(8, hits.getEntries().getHits().size());
-    TopEntriesJUnitTest.verifyResultOrder(hits.getEntries().getHits(), r1_1, r2_1, r3_1, r1_2, r2_2, r3_2, r1_3, r3_3);
+    TopEntriesJUnitTest.verifyResultOrder(
+        hits.getEntries().getHits(), r1_1, r2_1, r3_1, r1_2, r2_2, r3_2, r1_3, r3_3);
 
     // input collector should not change
     assertEquals(3, c1.getEntries().getHits().size());

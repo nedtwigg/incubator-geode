@@ -19,22 +19,21 @@ package org.apache.geode.internal.offheap;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 /**
- * A fragment is a block of memory that can have chunks allocated from it.
- * The allocations are always from the front so the free memory is always
- * at the end. The freeIdx keeps track of the first byte of free memory in
- * the fragment.
- * The base memory address and the total size of a fragment never change.
- * During defragmentation fragments go away and are recreated.
- * 
- *
+ * A fragment is a block of memory that can have chunks allocated from it. The allocations are
+ * always from the front so the free memory is always at the end. The freeIdx keeps track of the
+ * first byte of free memory in the fragment. The base memory address and the total size of a
+ * fragment never change. During defragmentation fragments go away and are recreated.
  */
 public class Fragment implements MemoryBlock {
   private static final byte FILL_BYTE = OffHeapStoredObject.FILL_BYTE;
   private final long baseAddr;
   private final int size;
+
   @SuppressWarnings("unused")
   private volatile int freeIdx;
-  private static AtomicIntegerFieldUpdater<Fragment> freeIdxUpdater = AtomicIntegerFieldUpdater.newUpdater(Fragment.class, "freeIdx");
+
+  private static AtomicIntegerFieldUpdater<Fragment> freeIdxUpdater =
+      AtomicIntegerFieldUpdater.newUpdater(Fragment.class, "freeIdx");
 
   public Fragment(long addr, int size) {
     MemoryAllocatorImpl.validateAddress(addr);
@@ -135,5 +134,4 @@ public class Fragment implements MemoryBlock {
   public String toString() {
     return "Fragment [baseAddr=" + baseAddr + ", size=" + size + ", freeIdx=" + freeIdx + "]";
   }
-
 }

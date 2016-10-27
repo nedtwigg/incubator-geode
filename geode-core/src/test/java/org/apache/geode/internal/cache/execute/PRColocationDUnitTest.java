@@ -81,11 +81,7 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 
-/**
- * This is the test for the custom and colocated partitioning of
- * PartitionedRegion
- * 
- */
+/** This is the test for the custom and colocated partitioning of PartitionedRegion */
 @SuppressWarnings("synthetic-access")
 @Category(DistributedTest.class)
 public class PRColocationDUnitTest extends JUnit4CacheTestCase {
@@ -104,11 +100,11 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
 
   protected static int defaultStringSize = 0;
 
-  final static String CustomerPartitionedRegionName = "CustomerPartitionedRegion";
+  static final String CustomerPartitionedRegionName = "CustomerPartitionedRegion";
 
-  final static String OrderPartitionedRegionName = "OrderPartitionedRegion";
+  static final String OrderPartitionedRegionName = "OrderPartitionedRegion";
 
-  final static String ShipmentPartitionedRegionName = "ShipmentPartitionedRegion";
+  static final String ShipmentPartitionedRegionName = "ShipmentPartitionedRegion";
 
   String regionName = null;
 
@@ -139,8 +135,8 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
   }
 
   /*
-  * Test for bug 41820 
-  */
+   * Test for bug 41820
+   */
   @Test
   public void testDestroyColocatedPartitionedRegion() throws Throwable {
     createCacheInAllVms();
@@ -151,22 +147,46 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = "A";
     colocatedWith = null;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "B";
     colocatedWith = "/A";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "C";
     colocatedWith = "/A";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
-    attributeObjects = new Object[] { "/A" };
+    attributeObjects = new Object[] {"/A"};
     dataStore1.invoke(PRColocationDUnitTest.class, "destroyPR", attributeObjects);
   }
 
@@ -183,90 +203,210 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = "A";
     colocatedWith = null;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "B";
     colocatedWith = "/A";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "C";
     colocatedWith = "/A";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "D";
     colocatedWith = "/B";
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "E";
     colocatedWith = "/B";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "F";
     colocatedWith = "/B";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "G";
     colocatedWith = "/C";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "H";
     colocatedWith = "/C";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "I";
     colocatedWith = "/C";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "J";
     colocatedWith = "/D";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "K";
     colocatedWith = "/D";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "L";
     colocatedWith = "/E";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "M";
     colocatedWith = "/F";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "N";
     colocatedWith = "/G";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "O";
     colocatedWith = "/I";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     accessor.invoke(() -> PRColocationDUnitTest.validateColocatedRegions("A"));
@@ -293,90 +433,210 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = "A";
     colocatedWith = null;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "B";
     colocatedWith = "A";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "C";
     colocatedWith = "A";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "D";
     colocatedWith = "B";
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "E";
     colocatedWith = "B";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "F";
     colocatedWith = "B";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "G";
     colocatedWith = "C";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "H";
     colocatedWith = "C";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "I";
     colocatedWith = "C";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "J";
     colocatedWith = "D";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "K";
     colocatedWith = "D";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "L";
     colocatedWith = "E";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "M";
     colocatedWith = "F";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "N";
     colocatedWith = "G";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     regionName = "O";
     colocatedWith = "I";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     accessor.invoke(() -> PRColocationDUnitTest.validateColocatedRegions("A"));
@@ -400,90 +660,210 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = "A";
     colocatedWith = null;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "B";
     colocatedWith = "/rootA/A";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "C";
     colocatedWith = "/rootA/A";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "D";
     colocatedWith = "/rootB/B";
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "E";
     colocatedWith = "/rootB/B";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "F";
     colocatedWith = "/rootB/B";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "G";
     colocatedWith = "/rootC/C";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "H";
     colocatedWith = "/rootC/C";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "I";
     colocatedWith = "/rootC/C";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "J";
     colocatedWith = "/rootD/D";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "K";
     colocatedWith = "/rootD/D";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "L";
     colocatedWith = "/rootE/E";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "M";
     colocatedWith = "/rootF/F";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "N";
     colocatedWith = "/rootG/G";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "O";
     colocatedWith = "/rootI/I";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     accessor.invoke(() -> PRColocationDUnitTest.validateColocatedRegions("rootA/A"));
@@ -507,90 +887,210 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = "A";
     colocatedWith = null;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "B";
     colocatedWith = "rootA/A";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "C";
     colocatedWith = "rootA/A";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "D";
     colocatedWith = "rootB/B";
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "E";
     colocatedWith = "rootB/B";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "F";
     colocatedWith = "rootB/B";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "G";
     colocatedWith = "rootC/C";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "H";
     colocatedWith = "rootC/C";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "I";
     colocatedWith = "rootC/C";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "J";
     colocatedWith = "rootD/D";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "K";
     colocatedWith = "rootD/D";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "L";
     colocatedWith = "rootE/E";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "M";
     colocatedWith = "rootF/F";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "N";
     colocatedWith = "rootG/G";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     regionName = "O";
     colocatedWith = "rootI/I";
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createSubPartitionedRegion(attributeObjects);
 
     accessor.invoke(() -> PRColocationDUnitTest.validateColocatedRegions("rootA/A"));
@@ -609,61 +1109,82 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
 
     createCacheInAllVms();
 
-    dataStore1.invoke(new CacheSerializableRunnable("testColocatedPRwithAccessorOnDifferentNode") {
-      @Override
-      public void run2() {
-        String partitionedRegionName = CustomerPartitionedRegionName;
-        colocatedWith = null;
-        isPartitionResolver = new Boolean(false);
-        redundancy = new Integer(0);
-        localMaxmemory = new Integer(50);
-        totalNumBuckets = new Integer(11);
+    dataStore1.invoke(
+        new CacheSerializableRunnable("testColocatedPRwithAccessorOnDifferentNode") {
+          @Override
+          public void run2() {
+            String partitionedRegionName = CustomerPartitionedRegionName;
+            colocatedWith = null;
+            isPartitionResolver = new Boolean(false);
+            redundancy = new Integer(0);
+            localMaxmemory = new Integer(50);
+            totalNumBuckets = new Integer(11);
 
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(redundancy.intValue()).setLocalMaxMemory(localMaxmemory.intValue()).setTotalNumBuckets(totalNumBuckets.intValue()).setColocatedWith(colocatedWith);
-        if (isPartitionResolver.booleanValue()) {
-          paf.setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
-        }
-        PartitionAttributes prAttr = paf.create();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(prAttr);
-        assertNotNull(basicGetCache());
-        Region pr = basicGetCache().createRegion(partitionedRegionName, attr.create());
-        assertNotNull(pr);
-        LogWriterUtils.getLogWriter().info("Partitioned Region " + partitionedRegionName + " created Successfully :" + pr.toString());
-      }
-    });
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(redundancy.intValue())
+                .setLocalMaxMemory(localMaxmemory.intValue())
+                .setTotalNumBuckets(totalNumBuckets.intValue())
+                .setColocatedWith(colocatedWith);
+            if (isPartitionResolver.booleanValue()) {
+              paf.setPartitionResolver(
+                  new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
+            }
+            PartitionAttributes prAttr = paf.create();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(prAttr);
+            assertNotNull(basicGetCache());
+            Region pr = basicGetCache().createRegion(partitionedRegionName, attr.create());
+            assertNotNull(pr);
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "Partitioned Region "
+                        + partitionedRegionName
+                        + " created Successfully :"
+                        + pr.toString());
+          }
+        });
 
     // add expected exception string
-    final IgnoredException ex = IgnoredException.addIgnoredException("Colocated regions should have accessors at the same node", dataStore1);
-    dataStore1.invoke(new CacheSerializableRunnable("Colocated PR with Accessor on different nodes") {
-      @Override
-      public void run2() {
-        regionName = OrderPartitionedRegionName;
-        colocatedWith = CustomerPartitionedRegionName;
-        isPartitionResolver = new Boolean(false);
-        localMaxmemory = new Integer(0);
-        redundancy = new Integer(0);
-        totalNumBuckets = new Integer(11);
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(redundancy.intValue()).setLocalMaxMemory(localMaxmemory.intValue()).setTotalNumBuckets(totalNumBuckets.intValue()).setColocatedWith(colocatedWith);
-        if (isPartitionResolver.booleanValue()) {
-          paf.setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
-        }
-        PartitionAttributes prAttr = paf.create();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(prAttr);
-        assertNotNull(basicGetCache());
-        try {
-          basicGetCache().createRegion(regionName, attr.create());
-          fail("It should have failed with Exception: Colocated regions " + "should have accessors at the same node");
-        } catch (Exception Expected) {
-          Expected.printStackTrace();
-          LogWriterUtils.getLogWriter().info("Expected Message : " + Expected.getMessage());
-          assertTrue(Expected.getMessage().startsWith("Colocated regions should have accessors at the same node"));
-        }
-      }
-    });
+    final IgnoredException ex =
+        IgnoredException.addIgnoredException(
+            "Colocated regions should have accessors at the same node", dataStore1);
+    dataStore1.invoke(
+        new CacheSerializableRunnable("Colocated PR with Accessor on different nodes") {
+          @Override
+          public void run2() {
+            regionName = OrderPartitionedRegionName;
+            colocatedWith = CustomerPartitionedRegionName;
+            isPartitionResolver = new Boolean(false);
+            localMaxmemory = new Integer(0);
+            redundancy = new Integer(0);
+            totalNumBuckets = new Integer(11);
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(redundancy.intValue())
+                .setLocalMaxMemory(localMaxmemory.intValue())
+                .setTotalNumBuckets(totalNumBuckets.intValue())
+                .setColocatedWith(colocatedWith);
+            if (isPartitionResolver.booleanValue()) {
+              paf.setPartitionResolver(
+                  new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
+            }
+            PartitionAttributes prAttr = paf.create();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(prAttr);
+            assertNotNull(basicGetCache());
+            try {
+              basicGetCache().createRegion(regionName, attr.create());
+              fail(
+                  "It should have failed with Exception: Colocated regions "
+                      + "should have accessors at the same node");
+            } catch (Exception Expected) {
+              Expected.printStackTrace();
+              LogWriterUtils.getLogWriter().info("Expected Message : " + Expected.getMessage());
+              assertTrue(
+                  Expected.getMessage()
+                      .startsWith("Colocated regions should have accessors at the same node"));
+            }
+          }
+        });
     ex.remove();
   }
 
@@ -672,59 +1193,80 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
 
     createCacheInAllVms();
 
-    dataStore1.invoke(new CacheSerializableRunnable("testColocatedPRWithAccessorOnDifferentNode2") {
-      @Override
-      public void run2() {
-        String partitionedRegionName = CustomerPartitionedRegionName;
-        colocatedWith = null;
-        isPartitionResolver = new Boolean(false);
-        redundancy = new Integer(0);
-        localMaxmemory = new Integer(0);
-        totalNumBuckets = new Integer(11);
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(redundancy.intValue()).setLocalMaxMemory(localMaxmemory.intValue()).setTotalNumBuckets(totalNumBuckets.intValue()).setColocatedWith(colocatedWith);
-        if (isPartitionResolver.booleanValue()) {
-          paf.setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
-        }
-        PartitionAttributes prAttr = paf.create();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(prAttr);
-        assertNotNull(basicGetCache());
-        Region pr = basicGetCache().createRegion(partitionedRegionName, attr.create());
-        assertNotNull(pr);
-        LogWriterUtils.getLogWriter().info("Partitioned Region " + partitionedRegionName + " created Successfully :" + pr.toString());
-      }
-    });
+    dataStore1.invoke(
+        new CacheSerializableRunnable("testColocatedPRWithAccessorOnDifferentNode2") {
+          @Override
+          public void run2() {
+            String partitionedRegionName = CustomerPartitionedRegionName;
+            colocatedWith = null;
+            isPartitionResolver = new Boolean(false);
+            redundancy = new Integer(0);
+            localMaxmemory = new Integer(0);
+            totalNumBuckets = new Integer(11);
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(redundancy.intValue())
+                .setLocalMaxMemory(localMaxmemory.intValue())
+                .setTotalNumBuckets(totalNumBuckets.intValue())
+                .setColocatedWith(colocatedWith);
+            if (isPartitionResolver.booleanValue()) {
+              paf.setPartitionResolver(
+                  new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
+            }
+            PartitionAttributes prAttr = paf.create();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(prAttr);
+            assertNotNull(basicGetCache());
+            Region pr = basicGetCache().createRegion(partitionedRegionName, attr.create());
+            assertNotNull(pr);
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "Partitioned Region "
+                        + partitionedRegionName
+                        + " created Successfully :"
+                        + pr.toString());
+          }
+        });
 
     // add expected exception string
-    final IgnoredException ex = IgnoredException.addIgnoredException("Colocated regions should have accessors at the same node", dataStore1);
-    dataStore1.invoke(new CacheSerializableRunnable("Colocated PR with accessor on different nodes") {
-      @Override
-      public void run2() {
-        regionName = OrderPartitionedRegionName;
-        colocatedWith = CustomerPartitionedRegionName;
-        isPartitionResolver = new Boolean(false);
-        redundancy = new Integer(0);
-        localMaxmemory = new Integer(50);
-        totalNumBuckets = new Integer(11);
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(redundancy.intValue()).setLocalMaxMemory(localMaxmemory.intValue()).setTotalNumBuckets(totalNumBuckets.intValue()).setColocatedWith(colocatedWith);
-        if (isPartitionResolver.booleanValue()) {
-          paf.setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
-        }
-        PartitionAttributes prAttr = paf.create();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(prAttr);
-        assertNotNull(basicGetCache());
-        try {
-          basicGetCache().createRegion(regionName, attr.create());
-          fail("It should have failed with Exception: Colocated regions " + "should have accessors at the same node");
-        } catch (Exception Expected) {
-          LogWriterUtils.getLogWriter().info("Expected Message : " + Expected.getMessage());
-          assertTrue(Expected.getMessage().startsWith("Colocated regions should have accessors at the same node"));
-        }
-      }
-    });
+    final IgnoredException ex =
+        IgnoredException.addIgnoredException(
+            "Colocated regions should have accessors at the same node", dataStore1);
+    dataStore1.invoke(
+        new CacheSerializableRunnable("Colocated PR with accessor on different nodes") {
+          @Override
+          public void run2() {
+            regionName = OrderPartitionedRegionName;
+            colocatedWith = CustomerPartitionedRegionName;
+            isPartitionResolver = new Boolean(false);
+            redundancy = new Integer(0);
+            localMaxmemory = new Integer(50);
+            totalNumBuckets = new Integer(11);
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(redundancy.intValue())
+                .setLocalMaxMemory(localMaxmemory.intValue())
+                .setTotalNumBuckets(totalNumBuckets.intValue())
+                .setColocatedWith(colocatedWith);
+            if (isPartitionResolver.booleanValue()) {
+              paf.setPartitionResolver(
+                  new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
+            }
+            PartitionAttributes prAttr = paf.create();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(prAttr);
+            assertNotNull(basicGetCache());
+            try {
+              basicGetCache().createRegion(regionName, attr.create());
+              fail(
+                  "It should have failed with Exception: Colocated regions "
+                      + "should have accessors at the same node");
+            } catch (Exception Expected) {
+              LogWriterUtils.getLogWriter().info("Expected Message : " + Expected.getMessage());
+              assertTrue(
+                  Expected.getMessage()
+                      .startsWith("Colocated regions should have accessors at the same node"));
+            }
+          }
+        });
     ex.remove();
   }
 
@@ -733,117 +1275,155 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
 
     createCacheInAllVms();
 
-    dataStore1.invoke(new CacheSerializableRunnable("TestColocatedPRWithPROnDifferentNode") {
-      @Override
-      public void run2() {
-        String partitionedRegionName = CustomerPartitionedRegionName;
-        colocatedWith = null;
-        isPartitionResolver = new Boolean(false);
-        redundancy = new Integer(0);
-        localMaxmemory = new Integer(20);
-        totalNumBuckets = new Integer(11);
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(redundancy.intValue()).setLocalMaxMemory(localMaxmemory.intValue()).setTotalNumBuckets(totalNumBuckets.intValue()).setColocatedWith(colocatedWith);
-        if (isPartitionResolver.booleanValue()) {
-          paf.setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
-        }
-        PartitionAttributes prAttr = paf.create();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(prAttr);
-        assertNotNull(basicGetCache());
-        Region pr = basicGetCache().createRegion(partitionedRegionName, attr.create());
-        assertNotNull(pr);
-        LogWriterUtils.getLogWriter().info("Partitioned Region " + partitionedRegionName + " created Successfully :" + pr.toString());
-      }
-    });
+    dataStore1.invoke(
+        new CacheSerializableRunnable("TestColocatedPRWithPROnDifferentNode") {
+          @Override
+          public void run2() {
+            String partitionedRegionName = CustomerPartitionedRegionName;
+            colocatedWith = null;
+            isPartitionResolver = new Boolean(false);
+            redundancy = new Integer(0);
+            localMaxmemory = new Integer(20);
+            totalNumBuckets = new Integer(11);
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(redundancy.intValue())
+                .setLocalMaxMemory(localMaxmemory.intValue())
+                .setTotalNumBuckets(totalNumBuckets.intValue())
+                .setColocatedWith(colocatedWith);
+            if (isPartitionResolver.booleanValue()) {
+              paf.setPartitionResolver(
+                  new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
+            }
+            PartitionAttributes prAttr = paf.create();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(prAttr);
+            assertNotNull(basicGetCache());
+            Region pr = basicGetCache().createRegion(partitionedRegionName, attr.create());
+            assertNotNull(pr);
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "Partitioned Region "
+                        + partitionedRegionName
+                        + " created Successfully :"
+                        + pr.toString());
+          }
+        });
 
-    dataStore2.invoke(new CacheSerializableRunnable("testColocatedPRwithPROnDifferentNode") {
-      @Override
-      public void run2() {
-        String partitionedRegionName = CustomerPartitionedRegionName;
-        colocatedWith = null;
-        isPartitionResolver = new Boolean(false);
-        redundancy = new Integer(0);
-        localMaxmemory = new Integer(20);
-        totalNumBuckets = new Integer(11);
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(redundancy.intValue()).setLocalMaxMemory(localMaxmemory.intValue()).setTotalNumBuckets(totalNumBuckets.intValue()).setColocatedWith(colocatedWith);
-        if (isPartitionResolver.booleanValue()) {
-          paf.setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
-        }
-        PartitionAttributes prAttr = paf.create();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(prAttr);
-        assertNotNull(basicGetCache());
-        Region pr = basicGetCache().createRegion(partitionedRegionName, attr.create());
-        assertNotNull(pr);
-        LogWriterUtils.getLogWriter().info("Partitioned Region " + partitionedRegionName + " created Successfully :" + pr.toString());
-      }
-    });
+    dataStore2.invoke(
+        new CacheSerializableRunnable("testColocatedPRwithPROnDifferentNode") {
+          @Override
+          public void run2() {
+            String partitionedRegionName = CustomerPartitionedRegionName;
+            colocatedWith = null;
+            isPartitionResolver = new Boolean(false);
+            redundancy = new Integer(0);
+            localMaxmemory = new Integer(20);
+            totalNumBuckets = new Integer(11);
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(redundancy.intValue())
+                .setLocalMaxMemory(localMaxmemory.intValue())
+                .setTotalNumBuckets(totalNumBuckets.intValue())
+                .setColocatedWith(colocatedWith);
+            if (isPartitionResolver.booleanValue()) {
+              paf.setPartitionResolver(
+                  new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
+            }
+            PartitionAttributes prAttr = paf.create();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(prAttr);
+            assertNotNull(basicGetCache());
+            Region pr = basicGetCache().createRegion(partitionedRegionName, attr.create());
+            assertNotNull(pr);
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "Partitioned Region "
+                        + partitionedRegionName
+                        + " created Successfully :"
+                        + pr.toString());
+          }
+        });
 
     // add expected exception string
-    final IgnoredException ex = IgnoredException.addIgnoredException("Cannot create buckets", dataStore2);
-    dataStore2.invoke(new CacheSerializableRunnable("Colocated PR with PR on different node") {
-      @Override
-      public void run2() {
-        regionName = OrderPartitionedRegionName;
-        colocatedWith = CustomerPartitionedRegionName;
-        isPartitionResolver = new Boolean(false);
-        redundancy = new Integer(0);
-        localMaxmemory = new Integer(50);
-        totalNumBuckets = new Integer(11);
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(redundancy.intValue()).setLocalMaxMemory(localMaxmemory.intValue()).setTotalNumBuckets(totalNumBuckets.intValue()).setColocatedWith(colocatedWith);
-        if (isPartitionResolver.booleanValue()) {
-          paf.setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
-        }
-        PartitionAttributes prAttr = paf.create();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(prAttr);
-        assertNotNull(basicGetCache());
-        try {
-          Region r = basicGetCache().createRegion(regionName, attr.create());
-          // fail("It should have failed with Exception : Colocated regions
-          // should have accessors at the same node");
-          r.put("key", "value");
-          fail("Failed because we did not receive the exception - : Cannot create buckets, " + "as colocated regions are not configured to be at the same nodes.");
-        } catch (Exception Expected) {
-          LogWriterUtils.getLogWriter().info("Expected Message : " + Expected.getMessage());
-          assertTrue(Expected.getMessage().contains("Cannot create buckets, as " + "colocated regions are not configured to be at the same nodes."));
-        }
-      }
-    });
+    final IgnoredException ex =
+        IgnoredException.addIgnoredException("Cannot create buckets", dataStore2);
+    dataStore2.invoke(
+        new CacheSerializableRunnable("Colocated PR with PR on different node") {
+          @Override
+          public void run2() {
+            regionName = OrderPartitionedRegionName;
+            colocatedWith = CustomerPartitionedRegionName;
+            isPartitionResolver = new Boolean(false);
+            redundancy = new Integer(0);
+            localMaxmemory = new Integer(50);
+            totalNumBuckets = new Integer(11);
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(redundancy.intValue())
+                .setLocalMaxMemory(localMaxmemory.intValue())
+                .setTotalNumBuckets(totalNumBuckets.intValue())
+                .setColocatedWith(colocatedWith);
+            if (isPartitionResolver.booleanValue()) {
+              paf.setPartitionResolver(
+                  new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
+            }
+            PartitionAttributes prAttr = paf.create();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(prAttr);
+            assertNotNull(basicGetCache());
+            try {
+              Region r = basicGetCache().createRegion(regionName, attr.create());
+              // fail("It should have failed with Exception : Colocated regions
+              // should have accessors at the same node");
+              r.put("key", "value");
+              fail(
+                  "Failed because we did not receive the exception - : Cannot create buckets, "
+                      + "as colocated regions are not configured to be at the same nodes.");
+            } catch (Exception Expected) {
+              LogWriterUtils.getLogWriter().info("Expected Message : " + Expected.getMessage());
+              assertTrue(
+                  Expected.getMessage()
+                      .contains(
+                          "Cannot create buckets, as "
+                              + "colocated regions are not configured to be at the same nodes."));
+            }
+          }
+        });
     ex.remove();
 
-    dataStore1.invoke(new CacheSerializableRunnable("Colocated PR with PR on different node") {
-      @Override
-      public void run2() {
-        regionName = OrderPartitionedRegionName;
-        colocatedWith = CustomerPartitionedRegionName;
-        isPartitionResolver = new Boolean(false);
-        redundancy = new Integer(0);
-        localMaxmemory = new Integer(50);
-        totalNumBuckets = new Integer(11);
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(redundancy.intValue()).setLocalMaxMemory(localMaxmemory.intValue()).setTotalNumBuckets(totalNumBuckets.intValue()).setColocatedWith(colocatedWith);
-        if (isPartitionResolver.booleanValue()) {
-          paf.setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
-        }
-        PartitionAttributes prAttr = paf.create();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(prAttr);
-        assertNotNull(basicGetCache());
-        try {
-          Region r = basicGetCache().createRegion(regionName, attr.create());
-          r.put("key", "value");
-          assertEquals("value", (String) r.get("key"));
-        } catch (Exception NotExpected) {
-          NotExpected.printStackTrace();
-          LogWriterUtils.getLogWriter().info("Unexpected Exception Message : " + NotExpected.getMessage());
-          Assert.fail("Unpexpected Exception", NotExpected);
-        }
-      }
-    });
+    dataStore1.invoke(
+        new CacheSerializableRunnable("Colocated PR with PR on different node") {
+          @Override
+          public void run2() {
+            regionName = OrderPartitionedRegionName;
+            colocatedWith = CustomerPartitionedRegionName;
+            isPartitionResolver = new Boolean(false);
+            redundancy = new Integer(0);
+            localMaxmemory = new Integer(50);
+            totalNumBuckets = new Integer(11);
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(redundancy.intValue())
+                .setLocalMaxMemory(localMaxmemory.intValue())
+                .setTotalNumBuckets(totalNumBuckets.intValue())
+                .setColocatedWith(colocatedWith);
+            if (isPartitionResolver.booleanValue()) {
+              paf.setPartitionResolver(
+                  new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
+            }
+            PartitionAttributes prAttr = paf.create();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(prAttr);
+            assertNotNull(basicGetCache());
+            try {
+              Region r = basicGetCache().createRegion(regionName, attr.create());
+              r.put("key", "value");
+              assertEquals("value", (String) r.get("key"));
+            } catch (Exception NotExpected) {
+              NotExpected.printStackTrace();
+              LogWriterUtils.getLogWriter()
+                  .info("Unexpected Exception Message : " + NotExpected.getMessage());
+              Assert.fail("Unpexpected Exception", NotExpected);
+            }
+          }
+        });
   }
 
   @Test
@@ -856,52 +1436,74 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = CustomerPartitionedRegionName;
     colocatedWith = null;
     isPartitionResolver = new Boolean(false);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Create Order PartitionedRegion in All VMs
     regionName = OrderPartitionedRegionName;
     colocatedWith = CustomerPartitionedRegionName;
     isPartitionResolver = new Boolean(false);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Put the customer 1-10 in CustomerPartitionedRegion
 
-    accessor.invoke(() -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
     // Put the order 1-10 for each Customer in OrderPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putOrderPartitionedRegion(OrderPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putOrderPartitionedRegion(OrderPartitionedRegionName));
 
     // add expected exception string
     final String expectedExMessage = "Any Region in colocation chain cannot be destroyed locally.";
     final IgnoredException ex = IgnoredException.addIgnoredException(expectedExMessage, dataStore1);
-    dataStore1.invoke(new CacheSerializableRunnable("PR with Local destroy") {
-      @Override
-      public void run2() {
-        Region partitionedregion = basicGetCache().getRegion(Region.SEPARATOR + OrderPartitionedRegionName);
-        try {
-          partitionedregion.localDestroyRegion();
-          fail("It should have thrown an Exception saying: " + expectedExMessage);
-        } catch (Exception Expected) {
-          LogWriterUtils.getLogWriter().info("Expected Messageee : " + Expected.getMessage());
-          assertTrue(Expected.getMessage().contains(expectedExMessage));
-        }
-      }
-    });
+    dataStore1.invoke(
+        new CacheSerializableRunnable("PR with Local destroy") {
+          @Override
+          public void run2() {
+            Region partitionedregion =
+                basicGetCache().getRegion(Region.SEPARATOR + OrderPartitionedRegionName);
+            try {
+              partitionedregion.localDestroyRegion();
+              fail("It should have thrown an Exception saying: " + expectedExMessage);
+            } catch (Exception Expected) {
+              LogWriterUtils.getLogWriter().info("Expected Messageee : " + Expected.getMessage());
+              assertTrue(Expected.getMessage().contains(expectedExMessage));
+            }
+          }
+        });
 
-    dataStore1.invoke(new CacheSerializableRunnable("PR with Local Destroy") {
-      @Override
-      public void run2() {
-        Region partitionedregion = basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
-        try {
-          partitionedregion.localDestroyRegion();
-          fail("It should have thrown an Exception saying: " + expectedExMessage);
-        } catch (Exception Expected) {
-          LogWriterUtils.getLogWriter().info("Expected Messageee : " + Expected.getMessage());
-          assertTrue(Expected.getMessage().contains(expectedExMessage));
-        }
-      }
-    });
+    dataStore1.invoke(
+        new CacheSerializableRunnable("PR with Local Destroy") {
+          @Override
+          public void run2() {
+            Region partitionedregion =
+                basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
+            try {
+              partitionedregion.localDestroyRegion();
+              fail("It should have thrown an Exception saying: " + expectedExMessage);
+            } catch (Exception Expected) {
+              LogWriterUtils.getLogWriter().info("Expected Messageee : " + Expected.getMessage());
+              assertTrue(Expected.getMessage().contains(expectedExMessage));
+            }
+          }
+        });
     ex.remove();
   }
 
@@ -916,14 +1518,30 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
       regionName = CustomerPartitionedRegionName;
       colocatedWith = null;
       isPartitionResolver = new Boolean(false);
-      attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+      attributeObjects =
+          new Object[] {
+            regionName,
+            redundancy,
+            localMaxmemory,
+            totalNumBuckets,
+            colocatedWith,
+            isPartitionResolver
+          };
       createPartitionedRegion(attributeObjects);
 
       // Create Order PartitionedRegion in All VMs
       regionName = OrderPartitionedRegionName;
       colocatedWith = CustomerPartitionedRegionName;
       isPartitionResolver = new Boolean(false);
-      attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+      attributeObjects =
+          new Object[] {
+            regionName,
+            redundancy,
+            localMaxmemory,
+            totalNumBuckets,
+            colocatedWith,
+            isPartitionResolver
+          };
       createPartitionedRegion(attributeObjects);
     } catch (Exception Expected) {
       assertTrue(Expected instanceof IllegalStateException);
@@ -931,55 +1549,64 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
 
     // Put the customer 1-10 in CustomerPartitionedRegion
 
-    accessor.invoke(() -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
     // Put the order 1-10 for each Customer in OrderPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putOrderPartitionedRegion(OrderPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putOrderPartitionedRegion(OrderPartitionedRegionName));
 
     // add expected exception string
-    final String expectedExMessage = "colocation chain cannot be destroyed, " + "unless all its children";
+    final String expectedExMessage =
+        "colocation chain cannot be destroyed, " + "unless all its children";
     final IgnoredException ex = IgnoredException.addIgnoredException(expectedExMessage, dataStore1);
-    dataStore1.invoke(new CacheSerializableRunnable("PR with destroy") {
-      @Override
-      public void run2() {
-        Region partitionedregion = basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
-        try {
-          partitionedregion.destroyRegion();
-          fail("It should have thrown an Exception saying: " + expectedExMessage);
-        } catch (IllegalStateException expected) {
-          LogWriterUtils.getLogWriter().info("Got message: " + expected.getMessage());
-          assertTrue(expected.getMessage().contains(expectedExMessage));
-        }
-      }
-    });
+    dataStore1.invoke(
+        new CacheSerializableRunnable("PR with destroy") {
+          @Override
+          public void run2() {
+            Region partitionedregion =
+                basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
+            try {
+              partitionedregion.destroyRegion();
+              fail("It should have thrown an Exception saying: " + expectedExMessage);
+            } catch (IllegalStateException expected) {
+              LogWriterUtils.getLogWriter().info("Got message: " + expected.getMessage());
+              assertTrue(expected.getMessage().contains(expectedExMessage));
+            }
+          }
+        });
     ex.remove();
 
-    dataStore1.invoke(new CacheSerializableRunnable("PR with destroy") {
-      @Override
-      public void run2() {
-        Region partitionedregion = basicGetCache().getRegion(Region.SEPARATOR + OrderPartitionedRegionName);
-        try {
-          partitionedregion.destroyRegion();
-        } catch (Exception unexpected) {
-          unexpected.printStackTrace();
-          LogWriterUtils.getLogWriter().info("Unexpected Message: " + unexpected.getMessage());
-          fail("Could not destroy the child region.");
-        }
-      }
-    });
+    dataStore1.invoke(
+        new CacheSerializableRunnable("PR with destroy") {
+          @Override
+          public void run2() {
+            Region partitionedregion =
+                basicGetCache().getRegion(Region.SEPARATOR + OrderPartitionedRegionName);
+            try {
+              partitionedregion.destroyRegion();
+            } catch (Exception unexpected) {
+              unexpected.printStackTrace();
+              LogWriterUtils.getLogWriter().info("Unexpected Message: " + unexpected.getMessage());
+              fail("Could not destroy the child region.");
+            }
+          }
+        });
 
-    dataStore1.invoke(new CacheSerializableRunnable("PR with destroy") {
-      @Override
-      public void run2() {
-        Region partitionedregion = basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
-        try {
-          partitionedregion.destroyRegion();
-        } catch (Exception unexpected) {
-          unexpected.printStackTrace();
-          LogWriterUtils.getLogWriter().info("Unexpected Message: " + unexpected.getMessage());
-          fail("Could not destroy the parent region.");
-        }
-      }
-    });
+    dataStore1.invoke(
+        new CacheSerializableRunnable("PR with destroy") {
+          @Override
+          public void run2() {
+            Region partitionedregion =
+                basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
+            try {
+              partitionedregion.destroyRegion();
+            } catch (Exception unexpected) {
+              unexpected.printStackTrace();
+              LogWriterUtils.getLogWriter().info("Unexpected Message: " + unexpected.getMessage());
+              fail("Could not destroy the parent region.");
+            }
+          }
+        });
   }
 
   @Test
@@ -993,29 +1620,53 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = CustomerPartitionedRegionName;
     colocatedWith = null;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Create Order PartitionedRegion in All VMs
     regionName = OrderPartitionedRegionName;
     colocatedWith = CustomerPartitionedRegionName;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Put the customer 1-10 in CustomerPartitionedRegion
 
-    accessor.invoke(() -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
     // Put the order 1-10 for each Customer in OrderPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putOrderPartitionedRegion(OrderPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putOrderPartitionedRegion(OrderPartitionedRegionName));
 
-    // Closing region with colocated regions will throw an exception 
+    // Closing region with colocated regions will throw an exception
     // and the region will not be closed.
-    accessor.invoke(() -> PRColocationDUnitTest.closeRegionWithColocatedRegions(CustomerPartitionedRegionName, false));
+    accessor.invoke(
+        () ->
+            PRColocationDUnitTest.closeRegionWithColocatedRegions(
+                CustomerPartitionedRegionName, false));
 
-    // Destroying region with colocated regions will throw an exception 
+    // Destroying region with colocated regions will throw an exception
     // and the region will not be closed.
-    accessor.invoke(() -> PRColocationDUnitTest.closeRegionWithColocatedRegions(CustomerPartitionedRegionName, true));
+    accessor.invoke(
+        () ->
+            PRColocationDUnitTest.closeRegionWithColocatedRegions(
+                CustomerPartitionedRegionName, true));
 
     // Closing the colocated regions in the right order should work
     accessor.invoke(() -> PRColocationDUnitTest.closeRegion(OrderPartitionedRegionName));
@@ -1036,34 +1687,55 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
       regionName = CustomerPartitionedRegionName;
       colocatedWith = null;
       isPartitionResolver = new Boolean(false);
-      attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+      attributeObjects =
+          new Object[] {
+            regionName,
+            redundancy,
+            localMaxmemory,
+            totalNumBuckets,
+            colocatedWith,
+            isPartitionResolver
+          };
       createPartitionedRegion(attributeObjects);
 
       // Create Order PartitionedRegion in All VMs
       regionName = OrderPartitionedRegionName;
       colocatedWith = CustomerPartitionedRegionName;
       isPartitionResolver = new Boolean(false);
-      attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+      attributeObjects =
+          new Object[] {
+            regionName,
+            redundancy,
+            localMaxmemory,
+            totalNumBuckets,
+            colocatedWith,
+            isPartitionResolver
+          };
       createPartitionedRegion(attributeObjects);
 
       // With same Key Based Partition Resolver
-      accessor.invoke(new SerializableCallable("Create data, invoke exectuable") {
-        public Object call() throws Exception {
-          PartitionedRegion prForCustomer = (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
-          assertNotNull(prForCustomer);
-          DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(1);
-          prForCustomer.put(dummy, new Integer(100));
-          assertEquals(prForCustomer.get(dummy), new Integer(100));
-          LogWriterUtils.getLogWriter().info("Key :" + dummy.dummyID + " Value :" + prForCustomer.get(dummy));
+      accessor.invoke(
+          new SerializableCallable("Create data, invoke exectuable") {
+            public Object call() throws Exception {
+              PartitionedRegion prForCustomer =
+                  (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
+              assertNotNull(prForCustomer);
+              DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(1);
+              prForCustomer.put(dummy, new Integer(100));
+              assertEquals(prForCustomer.get(dummy), new Integer(100));
+              LogWriterUtils.getLogWriter()
+                  .info("Key :" + dummy.dummyID + " Value :" + prForCustomer.get(dummy));
 
-          PartitionedRegion prForOrder = (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
-          assertNotNull(prForOrder);
-          prForOrder.put(dummy, new Integer(200));
-          assertEquals(prForOrder.get(dummy), new Integer(200));
-          LogWriterUtils.getLogWriter().info("Key :" + dummy.dummyID + " Value :" + prForOrder.get(dummy));
-          return null;
-        }
-      });
+              PartitionedRegion prForOrder =
+                  (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
+              assertNotNull(prForOrder);
+              prForOrder.put(dummy, new Integer(200));
+              assertEquals(prForOrder.get(dummy), new Integer(200));
+              LogWriterUtils.getLogWriter()
+                  .info("Key :" + dummy.dummyID + " Value :" + prForOrder.get(dummy));
+              return null;
+            }
+          });
     } catch (Exception unexpected) {
       unexpected.printStackTrace();
       LogWriterUtils.getLogWriter().info("Unexpected Message: " + unexpected.getMessage());
@@ -1073,11 +1745,11 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
 
   /*
    * Test added to check the colocation of regions
-   * Also checks for the colocation of the buckets  
+   * Also checks for the colocation of the buckets
    */
   @Test
   public void testColocationPartitionedRegion() throws Throwable {
-    // Create Cache in all VMs VM0,VM1,VM2,VM3 
+    // Create Cache in all VMs VM0,VM1,VM2,VM3
 
     createCacheInAllVms();
 
@@ -1089,55 +1761,114 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = CustomerPartitionedRegionName;
     colocatedWith = null;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Create Order PartitionedRegion in All VMs
     regionName = OrderPartitionedRegionName;
     colocatedWith = CustomerPartitionedRegionName;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Create Shipment PartitionedRegion in All VMs
     regionName = ShipmentPartitionedRegionName;
     colocatedWith = OrderPartitionedRegionName;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Initial Validation for the number of data stores and number of profiles
-    accessor.invoke(() -> PRColocationDUnitTest.validateBeforePutCustomerPartitionedRegion(CustomerPartitionedRegionName));
+    accessor.invoke(
+        () ->
+            PRColocationDUnitTest.validateBeforePutCustomerPartitionedRegion(
+                CustomerPartitionedRegionName));
 
     // Put the customer 1-10 in CustomerPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
 
     // Put the order 1-10 for each Customer in OrderPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putOrderPartitionedRegion(OrderPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putOrderPartitionedRegion(OrderPartitionedRegionName));
 
     // Put the shipment 1-10 for each order in ShipmentPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putShipmentPartitionedRegion(ShipmentPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putShipmentPartitionedRegion(ShipmentPartitionedRegionName));
 
     // for VM0 DataStore check the number of buckets created and the size of
     // bucket for all partitionedRegion
-    Integer totalBucketsInDataStore1 = (Integer) dataStore1.invoke(() -> PRColocationDUnitTest.validateDataStore(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+    Integer totalBucketsInDataStore1 =
+        (Integer)
+            dataStore1.invoke(
+                () ->
+                    PRColocationDUnitTest.validateDataStore(
+                        CustomerPartitionedRegionName,
+                        OrderPartitionedRegionName,
+                        ShipmentPartitionedRegionName));
 
     // for VM1 DataStore check the number of buckets created and the size of
     // bucket for all partitionedRegion
-    Integer totalBucketsInDataStore2 = (Integer) dataStore2.invoke(() -> PRColocationDUnitTest.validateDataStore(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+    Integer totalBucketsInDataStore2 =
+        (Integer)
+            dataStore2.invoke(
+                () ->
+                    PRColocationDUnitTest.validateDataStore(
+                        CustomerPartitionedRegionName,
+                        OrderPartitionedRegionName,
+                        ShipmentPartitionedRegionName));
 
     // for VM3 Datastore check the number of buckets created and the size of
     // bucket for all partitionedRegion
-    Integer totalBucketsInDataStore3 = (Integer) dataStore3.invoke(() -> PRColocationDUnitTest.validateDataStore(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+    Integer totalBucketsInDataStore3 =
+        (Integer)
+            dataStore3.invoke(
+                () ->
+                    PRColocationDUnitTest.validateDataStore(
+                        CustomerPartitionedRegionName,
+                        OrderPartitionedRegionName,
+                        ShipmentPartitionedRegionName));
 
     // Check the total number of buckets created in all three Vms are equalto 30
-    totalNumBucketsInTest = totalBucketsInDataStore1.intValue() + totalBucketsInDataStore2.intValue() + totalBucketsInDataStore3.intValue();
+    totalNumBucketsInTest =
+        totalBucketsInDataStore1.intValue()
+            + totalBucketsInDataStore2.intValue()
+            + totalBucketsInDataStore3.intValue();
     assertEquals(totalNumBucketsInTest, 30);
 
     // This is the importatnt check. Checks that the colocated Customer,Order
     // and Shipment are in the same VM
 
-    accessor.invoke(() -> PRColocationDUnitTest.validateAfterPutPartitionedRegion(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+    accessor.invoke(
+        () ->
+            PRColocationDUnitTest.validateAfterPutPartitionedRegion(
+                CustomerPartitionedRegionName,
+                OrderPartitionedRegionName,
+                ShipmentPartitionedRegionName));
   }
 
   /**
@@ -1145,15 +1876,19 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
    * Member 1: PR2 colocatedWith PR1 <br>
    * Member 2: PR2 is not colocated <br>
    * Should throw IllegalStateException
-   * 
+   *
    * @throws Throwable
    */
   @Category(FlakyTest.class) // GEODE-1698
   @Test
-  public void testColocationPartitionedRegionWithNullColocationSpecifiedOnOneNode() throws Throwable {
+  public void testColocationPartitionedRegionWithNullColocationSpecifiedOnOneNode()
+      throws Throwable {
     try {
       createCacheInAllVms();
-      getCache().getLogger().info("<ExpectedException action=add>" + "IllegalStateException" + "</ExpectedException>");
+      getCache()
+          .getLogger()
+          .info(
+              "<ExpectedException action=add>" + "IllegalStateException" + "</ExpectedException>");
 
       redundancy = new Integer(1);
       localMaxmemory = new Integer(50);
@@ -1163,28 +1898,63 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
       regionName = CustomerPartitionedRegionName;
       colocatedWith = null;
       isPartitionResolver = new Boolean(true);
-      attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, null /*colocatedWith*/, isPartitionResolver };
+      attributeObjects =
+          new Object[] {
+            regionName,
+            redundancy,
+            localMaxmemory,
+            totalNumBuckets,
+            null /*colocatedWith*/,
+            isPartitionResolver
+          };
       dataStore1.invoke(PRColocationDUnitTest.class, "createPR", attributeObjects);
-      createPR(regionName, redundancy, localMaxmemory, totalNumBuckets, null /*colocatedWith*/, isPartitionResolver, false);
+      createPR(
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          null /*colocatedWith*/,
+          isPartitionResolver,
+          false);
       // Create Order PartitionedRegion in All VMs
       regionName = OrderPartitionedRegionName;
       colocatedWith = CustomerPartitionedRegionName;
       isPartitionResolver = new Boolean(true);
-      attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+      attributeObjects =
+          new Object[] {
+            regionName,
+            redundancy,
+            localMaxmemory,
+            totalNumBuckets,
+            colocatedWith,
+            isPartitionResolver
+          };
       dataStore1.invoke(PRColocationDUnitTest.class, "createPR", attributeObjects);
-      createPR(regionName, redundancy, localMaxmemory, totalNumBuckets, null/*colocatedWith*/, isPartitionResolver, false);
+      createPR(
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          null /*colocatedWith*/,
+          isPartitionResolver,
+          false);
       fail("test failed due to illgal colocation settings did not thorw expected exception");
     } catch (IllegalStateException expected) {
       // test pass
       assertTrue(expected.getMessage().contains("The colocatedWith="));
     } finally {
-      getCache().getLogger().info("<ExpectedException action=remove>" + "IllegalStateException" + "</ExpectedException>");
+      getCache()
+          .getLogger()
+          .info(
+              "<ExpectedException action=remove>"
+                  + "IllegalStateException"
+                  + "</ExpectedException>");
     }
   }
 
   /*
    * Test added to check the colocation of regions
-   * Also checks for the colocation of the buckets with redundancy specified 
+   * Also checks for the colocation of the buckets with redundancy specified
    */
   @Test
   public void testColocationPartitionedRegionWithRedundancy() throws Throwable {
@@ -1200,72 +1970,147 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = CustomerPartitionedRegionName;
     colocatedWith = null;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Create Customer PartitionedRegion in All VMs
     regionName = OrderPartitionedRegionName;
     colocatedWith = CustomerPartitionedRegionName;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Create Customer PartitionedRegion in All VMs
     regionName = ShipmentPartitionedRegionName;
     colocatedWith = OrderPartitionedRegionName;
     isPartitionResolver = new Boolean(true);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Initial Validation for the number of data stores and number of profiles
-    accessor.invoke(() -> PRColocationDUnitTest.validateBeforePutCustomerPartitionedRegion(CustomerPartitionedRegionName));
+    accessor.invoke(
+        () ->
+            PRColocationDUnitTest.validateBeforePutCustomerPartitionedRegion(
+                CustomerPartitionedRegionName));
 
     // Put the customer 1-10 in CustomerPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
 
     // Put the order 1-10 for each Customer in OrderPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putOrderPartitionedRegion(OrderPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putOrderPartitionedRegion(OrderPartitionedRegionName));
 
     // Put the shipment 1-10 for each order in ShipmentPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putShipmentPartitionedRegion(ShipmentPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putShipmentPartitionedRegion(ShipmentPartitionedRegionName));
 
     //  This is the importatnt check. Checks that the colocated Customer,Order
     // and Shipment are in the same VM
-    accessor.invoke(() -> PRColocationDUnitTest.validateAfterPutPartitionedRegion(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+    accessor.invoke(
+        () ->
+            PRColocationDUnitTest.validateAfterPutPartitionedRegion(
+                CustomerPartitionedRegionName,
+                OrderPartitionedRegionName,
+                ShipmentPartitionedRegionName));
 
     // for VM0 DataStore check the number of buckets created and the size of
     // bucket for all partitionedRegion
-    Integer totalBucketsInDataStore1 = (Integer) dataStore1.invoke(() -> PRColocationDUnitTest.validateDataStore(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+    Integer totalBucketsInDataStore1 =
+        (Integer)
+            dataStore1.invoke(
+                () ->
+                    PRColocationDUnitTest.validateDataStore(
+                        CustomerPartitionedRegionName,
+                        OrderPartitionedRegionName,
+                        ShipmentPartitionedRegionName));
 
     // for VM1 DataStore check the number of buckets created and the size of
     // bucket for all partitionedRegion
-    Integer totalBucketsInDataStore2 = (Integer) dataStore2.invoke(() -> PRColocationDUnitTest.validateDataStore(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+    Integer totalBucketsInDataStore2 =
+        (Integer)
+            dataStore2.invoke(
+                () ->
+                    PRColocationDUnitTest.validateDataStore(
+                        CustomerPartitionedRegionName,
+                        OrderPartitionedRegionName,
+                        ShipmentPartitionedRegionName));
 
     // for VM3 Datastore check the number of buckets created and the size of
     // bucket for all partitionedRegion
-    Integer totalBucketsInDataStore3 = (Integer) dataStore3.invoke(() -> PRColocationDUnitTest.validateDataStore(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+    Integer totalBucketsInDataStore3 =
+        (Integer)
+            dataStore3.invoke(
+                () ->
+                    PRColocationDUnitTest.validateDataStore(
+                        CustomerPartitionedRegionName,
+                        OrderPartitionedRegionName,
+                        ShipmentPartitionedRegionName));
 
     if (redundancy.intValue() > 0) {
       // for VM0 DataStore check the number of buckets created and the size of
       // bucket for all partitionedRegion
-      dataStore1.invoke(() -> PRColocationDUnitTest.validateDataStoreForRedundancy(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+      dataStore1.invoke(
+          () ->
+              PRColocationDUnitTest.validateDataStoreForRedundancy(
+                  CustomerPartitionedRegionName,
+                  OrderPartitionedRegionName,
+                  ShipmentPartitionedRegionName));
 
       // for VM1 DataStore check the number of buckets created and the size of
       // bucket for all partitionedRegion
-      dataStore2.invoke(() -> PRColocationDUnitTest.validateDataStoreForRedundancy(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+      dataStore2.invoke(
+          () ->
+              PRColocationDUnitTest.validateDataStoreForRedundancy(
+                  CustomerPartitionedRegionName,
+                  OrderPartitionedRegionName,
+                  ShipmentPartitionedRegionName));
 
       // for VM3 Datastore check the number of buckets created and the size of
       // bucket for all partitionedRegion
-      dataStore3.invoke(() -> PRColocationDUnitTest.validateDataStoreForRedundancy(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+      dataStore3.invoke(
+          () ->
+              PRColocationDUnitTest.validateDataStoreForRedundancy(
+                  CustomerPartitionedRegionName,
+                  OrderPartitionedRegionName,
+                  ShipmentPartitionedRegionName));
     }
 
     // Check the total number of buckets created in all three Vms are equalto 60
-    totalNumBucketsInTest = totalBucketsInDataStore1.intValue() + totalBucketsInDataStore2.intValue() + totalBucketsInDataStore3.intValue();
+    totalNumBucketsInTest =
+        totalBucketsInDataStore1.intValue()
+            + totalBucketsInDataStore2.intValue()
+            + totalBucketsInDataStore3.intValue();
     assertEquals(totalNumBucketsInTest, 60);
   }
 
   /**
    * Confirm that the redundancy must be the same for colocated partitioned regions
+   *
    * @throws Exception
    */
   @Test
@@ -1274,27 +2119,46 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     final Integer red0 = Integer.valueOf(0);
     final Integer red1 = Integer.valueOf(1);
 
-    CacheSerializableRunnable createPRsWithRed = new CacheSerializableRunnable("createPrsWithDifferentRedundancy") {
-      @Override
-      public void run2() throws CacheException {
-        getCache();
-        IgnoredException.addIgnoredException("redundancy should be same as the redundancy");
-        createPR(rName, red1, Integer.valueOf(100), Integer.valueOf(3), null, Boolean.FALSE, Boolean.FALSE);
-        try {
-          createPR(rName + "colo", red0, Integer.valueOf(100), Integer.valueOf(3), rName, Boolean.FALSE, Boolean.FALSE);
-          fail("Expected different redundancy levels to throw.");
-        } catch (IllegalStateException expected) {
-          assertEquals(LocalizedStrings.PartitionAttributesImpl_CURRENT_PARTITIONEDREGIONS_REDUNDANCY_SHOULD_BE_SAME_AS_THE_REDUNDANCY_OF_COLOCATED_PARTITIONEDREGION.toLocalizedString(), expected.getMessage());
-        }
-      }
-    };
+    CacheSerializableRunnable createPRsWithRed =
+        new CacheSerializableRunnable("createPrsWithDifferentRedundancy") {
+          @Override
+          public void run2() throws CacheException {
+            getCache();
+            IgnoredException.addIgnoredException("redundancy should be same as the redundancy");
+            createPR(
+                rName,
+                red1,
+                Integer.valueOf(100),
+                Integer.valueOf(3),
+                null,
+                Boolean.FALSE,
+                Boolean.FALSE);
+            try {
+              createPR(
+                  rName + "colo",
+                  red0,
+                  Integer.valueOf(100),
+                  Integer.valueOf(3),
+                  rName,
+                  Boolean.FALSE,
+                  Boolean.FALSE);
+              fail("Expected different redundancy levels to throw.");
+            } catch (IllegalStateException expected) {
+              assertEquals(
+                  LocalizedStrings
+                      .PartitionAttributesImpl_CURRENT_PARTITIONEDREGIONS_REDUNDANCY_SHOULD_BE_SAME_AS_THE_REDUNDANCY_OF_COLOCATED_PARTITIONEDREGION
+                      .toLocalizedString(),
+                  expected.getMessage());
+            }
+          }
+        };
     dataStore1.invoke(createPRsWithRed);
   }
 
   /**
-   * Tests to make sure that a VM will not make copies of
-   * any buckets for a region until all of the colocated regions are 
-   * created.
+   * Tests to make sure that a VM will not make copies of any buckets for a region until all of the
+   * colocated regions are created.
+   *
    * @throws Throwable
    */
   @Test
@@ -1307,67 +2171,89 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = CustomerPartitionedRegionName;
     colocatedWith = null;
     isPartitionResolver = new Boolean(false);
-    Object[] attributeObjects1 = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    Object[] attributeObjects1 =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     dataStore1.invoke(PRColocationDUnitTest.class, "createPR", attributeObjects1);
 
     // Create Order PartitionedRegion in Data store 1
     regionName = OrderPartitionedRegionName;
     colocatedWith = CustomerPartitionedRegionName;
     isPartitionResolver = new Boolean(false);
-    Object[] attributeObjects2 = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    Object[] attributeObjects2 =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     dataStore1.invoke(PRColocationDUnitTest.class, "createPR", attributeObjects2);
 
     //create a few buckets in dataStore1
-    dataStore1.invoke(new SerializableRunnable("put data in region") {
-      public void run() {
-        Region region1 = basicGetCache().getRegion(CustomerPartitionedRegionName);
-        Region region2 = basicGetCache().getRegion(OrderPartitionedRegionName);
-        region1.put(Integer.valueOf(1), "A");
-        region1.put(Integer.valueOf(2), "A");
-        region2.put(Integer.valueOf(1), "A");
-        region2.put(Integer.valueOf(2), "A");
-      }
-    });
+    dataStore1.invoke(
+        new SerializableRunnable("put data in region") {
+          public void run() {
+            Region region1 = basicGetCache().getRegion(CustomerPartitionedRegionName);
+            Region region2 = basicGetCache().getRegion(OrderPartitionedRegionName);
+            region1.put(Integer.valueOf(1), "A");
+            region1.put(Integer.valueOf(2), "A");
+            region2.put(Integer.valueOf(1), "A");
+            region2.put(Integer.valueOf(2), "A");
+          }
+        });
 
     //add a listener for region recovery
-    dataStore2.invoke(new SerializableRunnable("Add recovery listener") {
-      public void run() {
-        InternalResourceManager.setResourceObserver(new MyResourceObserver());
-      }
-    });
+    dataStore2.invoke(
+        new SerializableRunnable("Add recovery listener") {
+          public void run() {
+            InternalResourceManager.setResourceObserver(new MyResourceObserver());
+          }
+        });
 
     dataStore2.invoke(PRColocationDUnitTest.class, "createPR", attributeObjects1);
 
     //Make sure no redundant copies of buckets get created for the first PR in datastore2 because
     //the second PR has not yet been created.
-    SerializableRunnable checkForBuckets = new SerializableRunnable("check for buckets") {
-      public void run() {
-        PartitionedRegion region1 = (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
-        MyResourceObserver observer = (MyResourceObserver) InternalResourceManager.getResourceObserver();
-        try {
-          observer.waitForRegion(region1, 60 * 1000);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
+    SerializableRunnable checkForBuckets =
+        new SerializableRunnable("check for buckets") {
+          public void run() {
+            PartitionedRegion region1 =
+                (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
+            MyResourceObserver observer =
+                (MyResourceObserver) InternalResourceManager.getResourceObserver();
+            try {
+              observer.waitForRegion(region1, 60 * 1000);
+            } catch (InterruptedException e) {
+              throw new RuntimeException(e);
+            }
 
-        //there should be no buckets on this node, because we don't
-        //have all of the colocated regions
-        assertEquals(Collections.emptyList(), region1.getLocalBucketsListTestOnly());
-        assertEquals(0, region1.getRegionAdvisor().getBucketRedundancy(1));
-      }
-    };
+            //there should be no buckets on this node, because we don't
+            //have all of the colocated regions
+            assertEquals(Collections.emptyList(), region1.getLocalBucketsListTestOnly());
+            assertEquals(0, region1.getRegionAdvisor().getBucketRedundancy(1));
+          }
+        };
 
     dataStore2.invoke(checkForBuckets);
 
     //create another bucket in dataStore1
-    dataStore1.invoke(new SerializableRunnable("put data in region") {
-      public void run() {
-        Region region1 = basicGetCache().getRegion(CustomerPartitionedRegionName);
-        Region region2 = basicGetCache().getRegion(OrderPartitionedRegionName);
-        region1.put(Integer.valueOf(3), "A");
-        region2.put(Integer.valueOf(3), "A");
-      }
-    });
+    dataStore1.invoke(
+        new SerializableRunnable("put data in region") {
+          public void run() {
+            Region region1 = basicGetCache().getRegion(CustomerPartitionedRegionName);
+            Region region2 = basicGetCache().getRegion(OrderPartitionedRegionName);
+            region1.put(Integer.valueOf(3), "A");
+            region2.put(Integer.valueOf(3), "A");
+          }
+        });
 
     //Make sure that no copies of buckets are created for the first PR in datastore2
     dataStore2.invoke(checkForBuckets);
@@ -1375,22 +2261,26 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     dataStore2.invoke(PRColocationDUnitTest.class, "createPR", attributeObjects2);
 
     //Now we should get redundant copies of buckets for both PRs
-    dataStore2.invoke(new SerializableRunnable("check for bucket creation") {
-      public void run() {
-        PartitionedRegion region1 = (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
-        PartitionedRegion region2 = (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
-        MyResourceObserver observer = (MyResourceObserver) InternalResourceManager.getResourceObserver();
-        try {
-          observer.waitForRegion(region2, 60 * 1000);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
+    dataStore2.invoke(
+        new SerializableRunnable("check for bucket creation") {
+          public void run() {
+            PartitionedRegion region1 =
+                (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
+            PartitionedRegion region2 =
+                (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
+            MyResourceObserver observer =
+                (MyResourceObserver) InternalResourceManager.getResourceObserver();
+            try {
+              observer.waitForRegion(region2, 60 * 1000);
+            } catch (InterruptedException e) {
+              throw new RuntimeException(e);
+            }
 
-        //we should now have copies all of the buckets
-        assertEquals(3, region1.getLocalBucketsListTestOnly().size());
-        assertEquals(3, region2.getLocalBucketsListTestOnly().size());
-      }
-    });
+            //we should now have copies all of the buckets
+            assertEquals(3, region1.getLocalBucketsListTestOnly().size());
+            assertEquals(3, region2.getLocalBucketsListTestOnly().size());
+          }
+        });
   }
 
   @Test
@@ -1407,25 +2297,52 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = CustomerPartitionedRegionName;
     colocatedWith = null;
     isPartitionResolver = new Boolean(false);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Create Order PartitionedRegion in All VMs
     regionName = OrderPartitionedRegionName;
     colocatedWith = CustomerPartitionedRegionName;
     isPartitionResolver = new Boolean(false);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Create Shipment PartitionedRegion in All VMs
     regionName = ShipmentPartitionedRegionName;
     colocatedWith = OrderPartitionedRegionName;
     isPartitionResolver = new Boolean(false);
-    attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
     createPartitionedRegion(attributeObjects);
 
     // Initial Validation for the number of data stores and number of profiles
-    accessor.invoke(() -> PRColocationDUnitTest.validateBeforePutCustomerPartitionedRegion(CustomerPartitionedRegionName));
+    accessor.invoke(
+        () ->
+            PRColocationDUnitTest.validateBeforePutCustomerPartitionedRegion(
+                CustomerPartitionedRegionName));
 
     // Put the customer 1-10 in CustomerPartitionedRegion
     accessor.invoke(() -> PRColocationDUnitTest.putData_KeyBasedPartitionResolver());
@@ -1438,18 +2355,20 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     createCacheInAllVms();
 
     //add a listener for region recovery
-    dataStore1.invoke(new SerializableRunnable("Add recovery listener") {
-      public void run() {
-        InternalResourceManager.setResourceObserver(new MyResourceObserver());
-      }
-    });
+    dataStore1.invoke(
+        new SerializableRunnable("Add recovery listener") {
+          public void run() {
+            InternalResourceManager.setResourceObserver(new MyResourceObserver());
+          }
+        });
 
     //add a listener for region recovery
-    dataStore2.invoke(new SerializableRunnable("Add recovery listener") {
-      public void run() {
-        InternalResourceManager.setResourceObserver(new MyResourceObserver());
-      }
-    });
+    dataStore2.invoke(
+        new SerializableRunnable("Add recovery listener") {
+          public void run() {
+            InternalResourceManager.setResourceObserver(new MyResourceObserver());
+          }
+        });
 
     redundancy = new Integer(1);
     localMaxmemory = new Integer(50);
@@ -1458,32 +2377,44 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = CustomerPartitionedRegionName;
     colocatedWith = null;
     isPartitionResolver = new Boolean(false);
-    Object[] attributeObjects1 = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    Object[] attributeObjects1 =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
 
     dataStore1.invoke(PRColocationDUnitTest.class, "createPR", attributeObjects1);
 
     //create a few buckets in dataStore1
-    dataStore1.invoke(new SerializableRunnable("put data in region") {
-      public void run() {
-        Region region1 = basicGetCache().getRegion(CustomerPartitionedRegionName);
-        region1.put(Integer.valueOf(1), "A");
-        region1.put(Integer.valueOf(2), "B");
-      }
-    });
+    dataStore1.invoke(
+        new SerializableRunnable("put data in region") {
+          public void run() {
+            Region region1 = basicGetCache().getRegion(CustomerPartitionedRegionName);
+            region1.put(Integer.valueOf(1), "A");
+            region1.put(Integer.valueOf(2), "B");
+          }
+        });
 
-    SerializableRunnable checkForBuckets_ForCustomer = new SerializableRunnable("check for buckets") {
-      public void run() {
-        PartitionedRegion region1 = (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
-        MyResourceObserver observer = (MyResourceObserver) InternalResourceManager.getResourceObserver();
-        try {
-          observer.waitForRegion(region1, 60 * 1000);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
-        assertEquals(2, region1.getDataStore().getAllLocalBucketIds().size());
-        assertEquals(2, region1.getDataStore().getAllLocalPrimaryBucketIds().size());
-      }
-    };
+    SerializableRunnable checkForBuckets_ForCustomer =
+        new SerializableRunnable("check for buckets") {
+          public void run() {
+            PartitionedRegion region1 =
+                (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
+            MyResourceObserver observer =
+                (MyResourceObserver) InternalResourceManager.getResourceObserver();
+            try {
+              observer.waitForRegion(region1, 60 * 1000);
+            } catch (InterruptedException e) {
+              throw new RuntimeException(e);
+            }
+            assertEquals(2, region1.getDataStore().getAllLocalBucketIds().size());
+            assertEquals(2, region1.getDataStore().getAllLocalPrimaryBucketIds().size());
+          }
+        };
 
     dataStore1.invoke(checkForBuckets_ForCustomer);
 
@@ -1491,51 +2422,66 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = OrderPartitionedRegionName;
     colocatedWith = CustomerPartitionedRegionName;
     isPartitionResolver = new Boolean(false);
-    Object[] attributeObjects2 = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    Object[] attributeObjects2 =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
 
     dataStore1.invoke(PRColocationDUnitTest.class, "createPR", attributeObjects2);
 
-    SerializableRunnable checkForBuckets_ForOrder = new SerializableRunnable("check for buckets") {
-      public void run() {
-        PartitionedRegion region = (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
-        MyResourceObserver observer = (MyResourceObserver) InternalResourceManager.getResourceObserver();
-        try {
-          observer.waitForRegion(region, 60 * 1000);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
-        assertEquals(2, region.getDataStore().getAllLocalBucketIds().size());
-        assertEquals(2, region.getDataStore().getAllLocalPrimaryBucketIds().size());
-      }
-    };
+    SerializableRunnable checkForBuckets_ForOrder =
+        new SerializableRunnable("check for buckets") {
+          public void run() {
+            PartitionedRegion region =
+                (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
+            MyResourceObserver observer =
+                (MyResourceObserver) InternalResourceManager.getResourceObserver();
+            try {
+              observer.waitForRegion(region, 60 * 1000);
+            } catch (InterruptedException e) {
+              throw new RuntimeException(e);
+            }
+            assertEquals(2, region.getDataStore().getAllLocalBucketIds().size());
+            assertEquals(2, region.getDataStore().getAllLocalPrimaryBucketIds().size());
+          }
+        };
     Wait.pause(5000);
     dataStore1.invoke(checkForBuckets_ForOrder);
 
     dataStore2.invoke(PRColocationDUnitTest.class, "createPR", attributeObjects1);
 
-    SerializableRunnable checkForBuckets = new SerializableRunnable("check for buckets") {
-      public void run() {
-        PartitionedRegion region1 = (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
-        MyResourceObserver observer = (MyResourceObserver) InternalResourceManager.getResourceObserver();
-        try {
-          observer.waitForRegion(region1, 60 * 1000);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
-        assertEquals(0, region1.getDataStore().getAllLocalBucketIds().size());
-        assertEquals(0, region1.getDataStore().getAllLocalPrimaryBucketIds().size());
-      }
-    };
+    SerializableRunnable checkForBuckets =
+        new SerializableRunnable("check for buckets") {
+          public void run() {
+            PartitionedRegion region1 =
+                (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
+            MyResourceObserver observer =
+                (MyResourceObserver) InternalResourceManager.getResourceObserver();
+            try {
+              observer.waitForRegion(region1, 60 * 1000);
+            } catch (InterruptedException e) {
+              throw new RuntimeException(e);
+            }
+            assertEquals(0, region1.getDataStore().getAllLocalBucketIds().size());
+            assertEquals(0, region1.getDataStore().getAllLocalPrimaryBucketIds().size());
+          }
+        };
 
     dataStore2.invoke(checkForBuckets);
 
     //create another bucket in dataStore1
-    dataStore1.invoke(new SerializableRunnable("put data in region") {
-      public void run() {
-        Region region1 = basicGetCache().getRegion(CustomerPartitionedRegionName);
-        region1.put(Integer.valueOf(3), "C");
-      }
-    });
+    dataStore1.invoke(
+        new SerializableRunnable("put data in region") {
+          public void run() {
+            Region region1 = basicGetCache().getRegion(CustomerPartitionedRegionName);
+            region1.put(Integer.valueOf(3), "C");
+          }
+        });
 
     //Make sure that no copies of buckets are created for the first PR in datastore2
     dataStore2.invoke(checkForBuckets);
@@ -1543,38 +2489,43 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     dataStore2.invoke(PRColocationDUnitTest.class, "createPR", attributeObjects2);
 
     //Now we should get redundant copies of buckets for both PRs
-    dataStore2.invoke(new SerializableRunnable("check for bucket creation") {
-      public void run() {
-        PartitionedRegion region1 = (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
-        PartitionedRegion region2 = (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
-        MyResourceObserver observer = (MyResourceObserver) InternalResourceManager.getResourceObserver();
-        try {
-          observer.waitForRegion(region2, 1 * 60 * 1000);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
+    dataStore2.invoke(
+        new SerializableRunnable("check for bucket creation") {
+          public void run() {
+            PartitionedRegion region1 =
+                (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
+            PartitionedRegion region2 =
+                (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
+            MyResourceObserver observer =
+                (MyResourceObserver) InternalResourceManager.getResourceObserver();
+            try {
+              observer.waitForRegion(region2, 1 * 60 * 1000);
+            } catch (InterruptedException e) {
+              throw new RuntimeException(e);
+            }
 
-        //we should now have copies all of the buckets
-        assertEquals(3, region1.getLocalBucketsListTestOnly().size());
-        assertEquals(3, region2.getLocalBucketsListTestOnly().size());
-      }
-    });
+            //we should now have copies all of the buckets
+            assertEquals(3, region1.getLocalBucketsListTestOnly().size());
+            assertEquals(3, region2.getLocalBucketsListTestOnly().size());
+          }
+        });
 
-    dataStore1.invoke(new SerializableRunnable("check for bucket creation") {
-      public void run() {
-        PartitionedRegion region2 = (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
-        assertEquals(3, region2.getLocalBucketsListTestOnly().size());
-      }
-    });
+    dataStore1.invoke(
+        new SerializableRunnable("check for bucket creation") {
+          public void run() {
+            PartitionedRegion region2 =
+                (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
+            assertEquals(3, region2.getLocalBucketsListTestOnly().size());
+          }
+        });
   }
 
   /**
-   * Test for hang condition observed with the 
-   * PRHARedundancyProvider.createMissingBuckets code.
-   * 
-   * A parent region is populated with buckets. Then the
-   * child region is created simultaneously on several nodes.
-   * 
+   * Test for hang condition observed with the PRHARedundancyProvider.createMissingBuckets code.
+   *
+   * <p>A parent region is populated with buckets. Then the child region is created simultaneously
+   * on several nodes.
+   *
    * @throws Throwable
    */
   @Test
@@ -1582,18 +2533,20 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     createCacheInAllVms();
 
     //add a listener for region recovery
-    dataStore1.invoke(new SerializableRunnable("Add recovery listener") {
-      public void run() {
-        InternalResourceManager.setResourceObserver(new MyResourceObserver());
-      }
-    });
+    dataStore1.invoke(
+        new SerializableRunnable("Add recovery listener") {
+          public void run() {
+            InternalResourceManager.setResourceObserver(new MyResourceObserver());
+          }
+        });
 
     //add a listener for region recovery
-    dataStore2.invoke(new SerializableRunnable("Add recovery listener") {
-      public void run() {
-        InternalResourceManager.setResourceObserver(new MyResourceObserver());
-      }
-    });
+    dataStore2.invoke(
+        new SerializableRunnable("Add recovery listener") {
+          public void run() {
+            InternalResourceManager.setResourceObserver(new MyResourceObserver());
+          }
+        });
 
     redundancy = new Integer(1);
     localMaxmemory = new Integer(50);
@@ -1602,29 +2555,48 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     regionName = CustomerPartitionedRegionName;
     colocatedWith = null;
     isPartitionResolver = new Boolean(false);
-    Object[] attributeObjects1 = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    Object[] attributeObjects1 =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
 
     dataStore1.invoke(PRColocationDUnitTest.class, "createPR", attributeObjects1);
     dataStore2.invoke(PRColocationDUnitTest.class, "createPR", attributeObjects1);
 
     //create a few buckets in dataStore1
-    dataStore1.invoke(new SerializableRunnable("put data in region") {
-      public void run() {
-        Region region1 = basicGetCache().getRegion(CustomerPartitionedRegionName);
-        for (int i = 0; i < 50; i++) {
-          region1.put(Integer.valueOf(i), "A");
-        }
-      }
-    });
+    dataStore1.invoke(
+        new SerializableRunnable("put data in region") {
+          public void run() {
+            Region region1 = basicGetCache().getRegion(CustomerPartitionedRegionName);
+            for (int i = 0; i < 50; i++) {
+              region1.put(Integer.valueOf(i), "A");
+            }
+          }
+        });
 
     // Create Order PartitionedRegion in Data store 1
     regionName = OrderPartitionedRegionName;
     colocatedWith = CustomerPartitionedRegionName;
     isPartitionResolver = new Boolean(false);
-    Object[] attributeObjects2 = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver };
+    Object[] attributeObjects2 =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver
+        };
 
-    AsyncInvocation async1 = dataStore1.invokeAsync(PRColocationDUnitTest.class, "createPR", attributeObjects2);
-    AsyncInvocation async2 = dataStore2.invokeAsync(PRColocationDUnitTest.class, "createPR", attributeObjects2);
+    AsyncInvocation async1 =
+        dataStore1.invokeAsync(PRColocationDUnitTest.class, "createPR", attributeObjects2);
+    AsyncInvocation async2 =
+        dataStore2.invokeAsync(PRColocationDUnitTest.class, "createPR", attributeObjects2);
 
     async1.join();
     if (async1.exceptionOccurred()) {
@@ -1637,30 +2609,36 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     }
 
     Wait.pause(5000);
-    SerializableRunnable checkForBuckets_ForOrder = new SerializableRunnable("check for buckets") {
-      public void run() {
-        PartitionedRegion region = (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
-        MyResourceObserver observer = (MyResourceObserver) InternalResourceManager.getResourceObserver();
-        try {
-          observer.waitForRegion(region, 60 * 1000);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
-        assertEquals(50, region.getDataStore().getAllLocalBucketIds().size());
-        assertEquals(25, region.getDataStore().getAllLocalPrimaryBucketIds().size());
-      }
-    };
+    SerializableRunnable checkForBuckets_ForOrder =
+        new SerializableRunnable("check for buckets") {
+          public void run() {
+            PartitionedRegion region =
+                (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
+            MyResourceObserver observer =
+                (MyResourceObserver) InternalResourceManager.getResourceObserver();
+            try {
+              observer.waitForRegion(region, 60 * 1000);
+            } catch (InterruptedException e) {
+              throw new RuntimeException(e);
+            }
+            assertEquals(50, region.getDataStore().getAllLocalBucketIds().size());
+            assertEquals(25, region.getDataStore().getAllLocalPrimaryBucketIds().size());
+          }
+        };
 
     dataStore1.invoke(checkForBuckets_ForOrder);
     dataStore2.invoke(checkForBuckets_ForOrder);
   }
 
   public static void putData_KeyBasedPartitionResolver() {
-    PartitionedRegion prForCustomer = (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
+    PartitionedRegion prForCustomer =
+        (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
     assertNotNull(prForCustomer);
-    PartitionedRegion prForOrder = (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
+    PartitionedRegion prForOrder =
+        (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
     assertNotNull(prForOrder);
-    PartitionedRegion prForShipment = (PartitionedRegion) basicGetCache().getRegion(ShipmentPartitionedRegionName);
+    PartitionedRegion prForShipment =
+        (PartitionedRegion) basicGetCache().getRegion(ShipmentPartitionedRegionName);
     assertNotNull(prForShipment);
 
     for (int i = 1; i <= 100; i++) {
@@ -1673,56 +2651,70 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
 
   public static void executeFunction() {
 
-    Function inlineFunction = new FunctionAdapter() {
-      @Override
-      public void execute(FunctionContext context) {
-        RegionFunctionContext rfContext = (RegionFunctionContext) context;
-        Region r = rfContext.getDataSet();
-        if (r.getName().equals(CustomerPartitionedRegionName)) {
-          Map map = ColocationHelper.getColocatedLocalDataSetsForBuckets((PartitionedRegion) r, new HashSet<Integer>());
-          assertEquals(2, map.size());
-          rfContext.getResultSender().sendResult(map.size());
-          map = ColocationHelper.constructAndGetAllColocatedLocalDataSet((PartitionedRegion) r, new HashSet<Integer>());
-          assertEquals(3, map.size());
-          rfContext.getResultSender().lastResult(map.size());
-        } else if (r.getName().equals(OrderPartitionedRegionName)) {
-          Map map = ColocationHelper.getColocatedLocalDataSetsForBuckets((PartitionedRegion) r, new HashSet<Integer>());
-          assertEquals(2, map.size());
-          rfContext.getResultSender().sendResult(map.size());
-          map = ColocationHelper.constructAndGetAllColocatedLocalDataSet((PartitionedRegion) r, new HashSet<Integer>());
-          assertEquals(3, map.size());
-          rfContext.getResultSender().lastResult(map.size());
-        } else if (r.getName().equals(ShipmentPartitionedRegionName)) {
-          Map map = ColocationHelper.getColocatedLocalDataSetsForBuckets((PartitionedRegion) r, new HashSet<Integer>());
-          assertEquals(2, map.size());
-          rfContext.getResultSender().sendResult(map.size());
-          map = ColocationHelper.constructAndGetAllColocatedLocalDataSet((PartitionedRegion) r, new HashSet<Integer>());
-          assertEquals(3, map.size());
-          rfContext.getResultSender().lastResult(map.size());
-        }
-      }
+    Function inlineFunction =
+        new FunctionAdapter() {
+          @Override
+          public void execute(FunctionContext context) {
+            RegionFunctionContext rfContext = (RegionFunctionContext) context;
+            Region r = rfContext.getDataSet();
+            if (r.getName().equals(CustomerPartitionedRegionName)) {
+              Map map =
+                  ColocationHelper.getColocatedLocalDataSetsForBuckets(
+                      (PartitionedRegion) r, new HashSet<Integer>());
+              assertEquals(2, map.size());
+              rfContext.getResultSender().sendResult(map.size());
+              map =
+                  ColocationHelper.constructAndGetAllColocatedLocalDataSet(
+                      (PartitionedRegion) r, new HashSet<Integer>());
+              assertEquals(3, map.size());
+              rfContext.getResultSender().lastResult(map.size());
+            } else if (r.getName().equals(OrderPartitionedRegionName)) {
+              Map map =
+                  ColocationHelper.getColocatedLocalDataSetsForBuckets(
+                      (PartitionedRegion) r, new HashSet<Integer>());
+              assertEquals(2, map.size());
+              rfContext.getResultSender().sendResult(map.size());
+              map =
+                  ColocationHelper.constructAndGetAllColocatedLocalDataSet(
+                      (PartitionedRegion) r, new HashSet<Integer>());
+              assertEquals(3, map.size());
+              rfContext.getResultSender().lastResult(map.size());
+            } else if (r.getName().equals(ShipmentPartitionedRegionName)) {
+              Map map =
+                  ColocationHelper.getColocatedLocalDataSetsForBuckets(
+                      (PartitionedRegion) r, new HashSet<Integer>());
+              assertEquals(2, map.size());
+              rfContext.getResultSender().sendResult(map.size());
+              map =
+                  ColocationHelper.constructAndGetAllColocatedLocalDataSet(
+                      (PartitionedRegion) r, new HashSet<Integer>());
+              assertEquals(3, map.size());
+              rfContext.getResultSender().lastResult(map.size());
+            }
+          }
 
-      @Override
-      public String getId() {
-        return "inlineFunction";
-      }
+          @Override
+          public String getId() {
+            return "inlineFunction";
+          }
 
-      @Override
-      public boolean hasResult() {
-        return true;
-      }
+          @Override
+          public boolean hasResult() {
+            return true;
+          }
 
-      @Override
-      public boolean isHA() {
-        return false;
-      }
+          @Override
+          public boolean isHA() {
+            return false;
+          }
 
-      @Override
-      public boolean optimizeForWrite() {
-        return false;
-      }
-    };
-    PartitionedRegion prForCustomer = (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
+          @Override
+          public boolean optimizeForWrite() {
+            return false;
+          }
+        };
+    PartitionedRegion prForCustomer =
+        (PartitionedRegion) basicGetCache().getRegion(CustomerPartitionedRegionName);
     final Set testKeysSet = new HashSet();
     DummyKeyBasedRoutingResolver dummy = new DummyKeyBasedRoutingResolver(10);
     testKeysSet.add(dummy);
@@ -1730,26 +2722,37 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     ResultCollector rc = dataSet.withFilter(testKeysSet).execute(inlineFunction);
     assertEquals(2, ((List) rc.getResult()).size());
 
-    PartitionedRegion prForOrder = (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
+    PartitionedRegion prForOrder =
+        (PartitionedRegion) basicGetCache().getRegion(OrderPartitionedRegionName);
     dataSet = FunctionService.onRegion(prForOrder);
     rc = dataSet.withFilter(testKeysSet).execute(inlineFunction);
     assertEquals(2, ((List) rc.getResult()).size());
 
-    PartitionedRegion prForShipment = (PartitionedRegion) basicGetCache().getRegion(ShipmentPartitionedRegionName);
+    PartitionedRegion prForShipment =
+        (PartitionedRegion) basicGetCache().getRegion(ShipmentPartitionedRegionName);
     dataSet = FunctionService.onRegion(prForShipment);
     rc = dataSet.withFilter(testKeysSet).execute(inlineFunction);
     assertEquals(2, ((List) rc.getResult()).size());
   }
 
-  public static void validateDataStoreForRedundancy(String customerPartitionedRegionName, String orderPartitionedRegionName, String shipmentPartitionedRegionName) {
+  public static void validateDataStoreForRedundancy(
+      String customerPartitionedRegionName,
+      String orderPartitionedRegionName,
+      String shipmentPartitionedRegionName) {
 
     PartitionedRegion customerPartitionedregion = null;
     PartitionedRegion orderPartitionedregion = null;
     PartitionedRegion shipmentPartitionedregion = null;
     try {
-      customerPartitionedregion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + customerPartitionedRegionName);
-      orderPartitionedregion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + orderPartitionedRegionName);
-      shipmentPartitionedregion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + shipmentPartitionedRegionName);
+      customerPartitionedregion =
+          (PartitionedRegion)
+              basicGetCache().getRegion(Region.SEPARATOR + customerPartitionedRegionName);
+      orderPartitionedregion =
+          (PartitionedRegion)
+              basicGetCache().getRegion(Region.SEPARATOR + orderPartitionedRegionName);
+      shipmentPartitionedregion =
+          (PartitionedRegion)
+              basicGetCache().getRegion(Region.SEPARATOR + shipmentPartitionedRegionName);
     } catch (Exception e) {
       fail("validateDataStore : Failed while getting the region from basicGetCache()");
     }
@@ -1762,15 +2765,20 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
 
     {
       // this is the test for the colocation of the secondaries
-      int totalSizeOfBucketsForCustomer = customerPartitionedregion.getDataStore().getBucketsManaged();
-      int sizeOfPrimaryBucketsForCustomer = customerPartitionedregion.getDataStore().getNumberOfPrimaryBucketsManaged();
-      int sizeOfSecondaryBucketsForCustomer = totalSizeOfBucketsForCustomer - sizeOfPrimaryBucketsForCustomer;
+      int totalSizeOfBucketsForCustomer =
+          customerPartitionedregion.getDataStore().getBucketsManaged();
+      int sizeOfPrimaryBucketsForCustomer =
+          customerPartitionedregion.getDataStore().getNumberOfPrimaryBucketsManaged();
+      int sizeOfSecondaryBucketsForCustomer =
+          totalSizeOfBucketsForCustomer - sizeOfPrimaryBucketsForCustomer;
 
-      primaryBucketListForCustomer = (ArrayList) customerPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
+      primaryBucketListForCustomer =
+          (ArrayList) customerPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
 
       secondaryBucketListForCustomer = new ArrayList(sizeOfSecondaryBucketsForCustomer);
 
-      HashMap localBucket2RegionMap = (HashMap) customerPartitionedregion.getDataStore().getSizeLocally();
+      HashMap localBucket2RegionMap =
+          (HashMap) customerPartitionedregion.getDataStore().getSizeLocally();
       Set customerEntrySet = localBucket2RegionMap.entrySet();
       assertNotNull(customerEntrySet);
       Iterator customerIterator = customerEntrySet.iterator();
@@ -1786,13 +2794,11 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
             break;
           }
         }
-        if (isSecondary)
-          secondaryBucketListForCustomer.add(me.getKey());
+        if (isSecondary) secondaryBucketListForCustomer.add(me.getKey());
       }
       Iterator primaryBucketIterator = primaryBucketListForCustomer.iterator();
       while (primaryBucketIterator.hasNext()) {
         LogWriterUtils.getLogWriter().info("Primary Bucket : " + primaryBucketIterator.next());
-
       }
       Iterator SecondaryBucketIterator = secondaryBucketListForCustomer.iterator();
       while (SecondaryBucketIterator.hasNext()) {
@@ -1801,14 +2807,18 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     }
     {
       int totalSizeOfBucketsForOrder = orderPartitionedregion.getDataStore().getBucketsManaged();
-      int sizeOfPrimaryBucketsForOrder = orderPartitionedregion.getDataStore().getNumberOfPrimaryBucketsManaged();
-      int sizeOfSecondaryBucketsForOrder = totalSizeOfBucketsForOrder - sizeOfPrimaryBucketsForOrder;
+      int sizeOfPrimaryBucketsForOrder =
+          orderPartitionedregion.getDataStore().getNumberOfPrimaryBucketsManaged();
+      int sizeOfSecondaryBucketsForOrder =
+          totalSizeOfBucketsForOrder - sizeOfPrimaryBucketsForOrder;
 
-      primaryBucketListForOrder = (ArrayList) orderPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
+      primaryBucketListForOrder =
+          (ArrayList) orderPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
 
       secondaryBucketListForOrder = new ArrayList(sizeOfSecondaryBucketsForOrder);
 
-      HashMap localBucket2RegionMap = (HashMap) customerPartitionedregion.getDataStore().getSizeLocally();
+      HashMap localBucket2RegionMap =
+          (HashMap) customerPartitionedregion.getDataStore().getSizeLocally();
       Set customerEntrySet = localBucket2RegionMap.entrySet();
       assertNotNull(customerEntrySet);
       boolean isSecondary = false;
@@ -1824,13 +2834,11 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
             break;
           }
         }
-        if (isSecondary)
-          secondaryBucketListForOrder.add(me.getKey());
+        if (isSecondary) secondaryBucketListForOrder.add(me.getKey());
       }
       Iterator primaryBucketIterator = primaryBucketListForOrder.iterator();
       while (primaryBucketIterator.hasNext()) {
         LogWriterUtils.getLogWriter().info("Primary Bucket : " + primaryBucketIterator.next());
-
       }
       Iterator SecondaryBucketIterator = secondaryBucketListForOrder.iterator();
       while (SecondaryBucketIterator.hasNext()) {
@@ -1838,15 +2846,20 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
       }
     }
     {
-      int totalSizeOfBucketsForShipment = shipmentPartitionedregion.getDataStore().getBucketsManaged();
-      int sizeOfPrimaryBucketsForShipment = shipmentPartitionedregion.getDataStore().getNumberOfPrimaryBucketsManaged();
-      int sizeOfSecondaryBucketsForShipment = totalSizeOfBucketsForShipment - sizeOfPrimaryBucketsForShipment;
+      int totalSizeOfBucketsForShipment =
+          shipmentPartitionedregion.getDataStore().getBucketsManaged();
+      int sizeOfPrimaryBucketsForShipment =
+          shipmentPartitionedregion.getDataStore().getNumberOfPrimaryBucketsManaged();
+      int sizeOfSecondaryBucketsForShipment =
+          totalSizeOfBucketsForShipment - sizeOfPrimaryBucketsForShipment;
 
-      primaryBucketListForShipment = (ArrayList) shipmentPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
+      primaryBucketListForShipment =
+          (ArrayList) shipmentPartitionedregion.getDataStore().getLocalPrimaryBucketsListTestOnly();
 
       secondaryBucketListForShipment = new ArrayList(sizeOfSecondaryBucketsForShipment);
 
-      HashMap localBucket2RegionMap = (HashMap) shipmentPartitionedregion.getDataStore().getSizeLocally();
+      HashMap localBucket2RegionMap =
+          (HashMap) shipmentPartitionedregion.getDataStore().getSizeLocally();
       Set customerEntrySet = localBucket2RegionMap.entrySet();
       assertNotNull(customerEntrySet);
       Iterator customerIterator = customerEntrySet.iterator();
@@ -1862,13 +2875,11 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
             break;
           }
         }
-        if (isSecondary)
-          secondaryBucketListForShipment.add(me.getKey());
+        if (isSecondary) secondaryBucketListForShipment.add(me.getKey());
       }
       Iterator primaryBucketIterator = primaryBucketListForShipment.iterator();
       while (primaryBucketIterator.hasNext()) {
         LogWriterUtils.getLogWriter().info("Primary Bucket : " + primaryBucketIterator.next());
-
       }
       Iterator SecondaryBucketIterator = secondaryBucketListForShipment.iterator();
       while (SecondaryBucketIterator.hasNext()) {
@@ -1885,23 +2896,43 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     assertTrue(secondaryBucketListForOrder.containsAll(secondaryBucketListForOrder));
   }
 
-  public static Integer validateDataStore(String customerPartitionedRegionName, String orderPartitionedRegionName, String shipmentPartitionedRegionName) {
+  public static Integer validateDataStore(
+      String customerPartitionedRegionName,
+      String orderPartitionedRegionName,
+      String shipmentPartitionedRegionName) {
 
     PartitionedRegion customerPartitionedregion = null;
     PartitionedRegion orderPartitionedregion = null;
     PartitionedRegion shipmentPartitionedregion = null;
     try {
-      customerPartitionedregion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + customerPartitionedRegionName);
-      orderPartitionedregion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + orderPartitionedRegionName);
-      shipmentPartitionedregion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + shipmentPartitionedRegionName);
+      customerPartitionedregion =
+          (PartitionedRegion)
+              basicGetCache().getRegion(Region.SEPARATOR + customerPartitionedRegionName);
+      orderPartitionedregion =
+          (PartitionedRegion)
+              basicGetCache().getRegion(Region.SEPARATOR + orderPartitionedRegionName);
+      shipmentPartitionedregion =
+          (PartitionedRegion)
+              basicGetCache().getRegion(Region.SEPARATOR + shipmentPartitionedRegionName);
     } catch (Exception e) {
       fail("validateDataStore : Failed while getting the region from cache");
     }
 
-    HashMap localBucket2RegionMap = (HashMap) customerPartitionedregion.getDataStore().getSizeLocally();
+    HashMap localBucket2RegionMap =
+        (HashMap) customerPartitionedregion.getDataStore().getSizeLocally();
     int customerBucketSize = localBucket2RegionMap.size();
-    LogWriterUtils.getLogWriter().info("Size of the " + customerPartitionedRegionName + " in this VM :- " + localBucket2RegionMap.size());
-    LogWriterUtils.getLogWriter().info("Size of primary buckets the " + customerPartitionedRegionName + " in this VM :- " + customerPartitionedregion.getDataStore().getNumberOfPrimaryBucketsManaged());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Size of the "
+                + customerPartitionedRegionName
+                + " in this VM :- "
+                + localBucket2RegionMap.size());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Size of primary buckets the "
+                + customerPartitionedRegionName
+                + " in this VM :- "
+                + customerPartitionedregion.getDataStore().getNumberOfPrimaryBucketsManaged());
     Set customerEntrySet = localBucket2RegionMap.entrySet();
     assertNotNull(customerEntrySet);
     Iterator customerIterator = customerEntrySet.iterator();
@@ -1909,14 +2940,25 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
       Map.Entry me = (Map.Entry) customerIterator.next();
       Integer size = (Integer) me.getValue();
       assertEquals(1, size.intValue());
-      LogWriterUtils.getLogWriter().info("Size of the Bucket " + me.getKey() + ": - " + size.toString());
+      LogWriterUtils.getLogWriter()
+          .info("Size of the Bucket " + me.getKey() + ": - " + size.toString());
     }
 
     //This is the test to check the size of the buckets created
     localBucket2RegionMap = (HashMap) orderPartitionedregion.getDataStore().getSizeLocally();
     int orderBucketSize = localBucket2RegionMap.size();
-    LogWriterUtils.getLogWriter().info("Size of the " + orderPartitionedRegionName + " in this VM :- " + localBucket2RegionMap.size());
-    LogWriterUtils.getLogWriter().info("Size of primary buckets the " + orderPartitionedRegionName + " in this VM :- " + orderPartitionedregion.getDataStore().getNumberOfPrimaryBucketsManaged());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Size of the "
+                + orderPartitionedRegionName
+                + " in this VM :- "
+                + localBucket2RegionMap.size());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Size of primary buckets the "
+                + orderPartitionedRegionName
+                + " in this VM :- "
+                + orderPartitionedregion.getDataStore().getNumberOfPrimaryBucketsManaged());
 
     Set orderEntrySet = localBucket2RegionMap.entrySet();
     assertNotNull(orderEntrySet);
@@ -1925,12 +2967,23 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
       Map.Entry me = (Map.Entry) orderIterator.next();
       Integer size = (Integer) me.getValue();
       assertEquals(10, size.intValue());
-      LogWriterUtils.getLogWriter().info("Size of the Bucket " + me.getKey() + ": - " + size.toString());
+      LogWriterUtils.getLogWriter()
+          .info("Size of the Bucket " + me.getKey() + ": - " + size.toString());
     }
     localBucket2RegionMap = (HashMap) shipmentPartitionedregion.getDataStore().getSizeLocally();
     int shipmentBucketSize = localBucket2RegionMap.size();
-    LogWriterUtils.getLogWriter().info("Size of the " + shipmentPartitionedRegionName + " in this VM :- " + localBucket2RegionMap.size());
-    LogWriterUtils.getLogWriter().info("Size of primary buckets the " + shipmentPartitionedRegionName + " in this VM :- " + shipmentPartitionedregion.getDataStore().getNumberOfPrimaryBucketsManaged());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Size of the "
+                + shipmentPartitionedRegionName
+                + " in this VM :- "
+                + localBucket2RegionMap.size());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Size of primary buckets the "
+                + shipmentPartitionedRegionName
+                + " in this VM :- "
+                + shipmentPartitionedregion.getDataStore().getNumberOfPrimaryBucketsManaged());
     Set shipmentEntrySet = localBucket2RegionMap.entrySet();
     assertNotNull(shipmentEntrySet);
     Iterator shipmentIterator = shipmentEntrySet.iterator();
@@ -1938,15 +2991,16 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
       Map.Entry me = (Map.Entry) shipmentIterator.next();
       Integer size = (Integer) me.getValue();
       assertEquals(100, size.intValue());
-      LogWriterUtils.getLogWriter().info("Size of the Bucket " + me.getKey() + ": - " + size.toString());
+      LogWriterUtils.getLogWriter()
+          .info("Size of the Bucket " + me.getKey() + ": - " + size.toString());
     }
 
     return new Integer(customerBucketSize + orderBucketSize + shipmentBucketSize);
-
   }
 
   public static void validateColocatedRegions(String partitionedRegionName) {
-    PartitionedRegion partitionedRegion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + partitionedRegionName);
+    PartitionedRegion partitionedRegion =
+        (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + partitionedRegionName);
     Map colocatedRegions;
 
     colocatedRegions = ColocationHelper.getAllColocationRegions(partitionedRegion);
@@ -1971,25 +3025,38 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     assertNotNull(basicGetCache());
     PartitionedRegion partitionedregion = null;
     try {
-      partitionedregion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + partitionedRegionName);
+      partitionedregion =
+          (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + partitionedRegionName);
     } catch (Exception e) {
-      Assert.fail("validateBeforePutCustomerPartitionedRegion : Failed while getting the region from cache", e);
+      Assert.fail(
+          "validateBeforePutCustomerPartitionedRegion : Failed while getting the region from cache",
+          e);
     }
     assertNotNull(partitionedregion);
     assertTrue(partitionedregion.getRegionAdvisor().getNumProfiles() == 3);
     assertTrue(partitionedregion.getRegionAdvisor().getNumDataStores() == 3);
   }
 
-  public static void validateAfterPutPartitionedRegion(String customerPartitionedRegionName, String orderPartitionedRegionName, String shipmentPartitionedRegionName) throws ClassNotFoundException {
+  public static void validateAfterPutPartitionedRegion(
+      String customerPartitionedRegionName,
+      String orderPartitionedRegionName,
+      String shipmentPartitionedRegionName)
+      throws ClassNotFoundException {
 
     assertNotNull(basicGetCache());
     PartitionedRegion customerPartitionedregion = null;
     PartitionedRegion orderPartitionedregion = null;
     PartitionedRegion shipmentPartitionedregion = null;
     try {
-      customerPartitionedregion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + customerPartitionedRegionName);
-      orderPartitionedregion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + orderPartitionedRegionName);
-      shipmentPartitionedregion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + shipmentPartitionedRegionName);
+      customerPartitionedregion =
+          (PartitionedRegion)
+              basicGetCache().getRegion(Region.SEPARATOR + customerPartitionedRegionName);
+      orderPartitionedregion =
+          (PartitionedRegion)
+              basicGetCache().getRegion(Region.SEPARATOR + orderPartitionedRegionName);
+      shipmentPartitionedregion =
+          (PartitionedRegion)
+              basicGetCache().getRegion(Region.SEPARATOR + shipmentPartitionedRegionName);
     } catch (Exception e) {
       Assert.fail("validateAfterPutPartitionedRegion : failed while getting the region", e);
     }
@@ -2016,7 +3083,8 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
           // assertNotNull(orderPartitionedregion.get(orderId));
 
           if (custId.equals(orderId.getCustId())) {
-            LogWriterUtils.getLogWriter().info(orderId + "belongs to node " + idmForCustomer + " " + idmForOrder);
+            LogWriterUtils.getLogWriter()
+                .info(orderId + "belongs to node " + idmForCustomer + " " + idmForOrder);
             assertEquals(idmForCustomer, idmForOrder);
           }
           Set shipmentKey = shipmentPartitionedregion.getBucketKeys(i);
@@ -2026,13 +3094,13 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
             ShipmentId shipmentId = (ShipmentId) shipmentIterator.next();
             // assertNotNull(shipmentPartitionedregion.get(shipmentId));
             if (orderId.equals(shipmentId.getOrderId())) {
-              LogWriterUtils.getLogWriter().info(shipmentId + "belongs to node " + idmForOrder + " " + idmForShipment);
+              LogWriterUtils.getLogWriter()
+                  .info(shipmentId + "belongs to node " + idmForOrder + " " + idmForShipment);
             }
           }
         }
       }
     }
-
   }
 
   protected void createCacheInAllVms() {
@@ -2040,7 +3108,6 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     dataStore2.invoke(() -> PRColocationDUnitTest.createCacheInVm());
     dataStore3.invoke(() -> PRColocationDUnitTest.createCacheInVm());
     accessor.invoke(() -> PRColocationDUnitTest.createCacheInVm());
-
   }
 
   public static void putInPartitionedRegion(Region pr) {
@@ -2054,7 +3121,8 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
         assertTrue(pr.containsKey(custid));
         assertEquals(customer, pr.get(custid));
       } catch (Exception e) {
-        Assert.fail("putInPartitionedRegion : failed while doing put operation in " + pr.getFullPath(), e);
+        Assert.fail(
+            "putInPartitionedRegion : failed while doing put operation in " + pr.getFullPath(), e);
       }
     }
   }
@@ -2070,20 +3138,21 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     }
   }
 
-  public static void closeRegionWithColocatedRegions(String partitionedRegionName, boolean destroy) {
+  public static void closeRegionWithColocatedRegions(
+      String partitionedRegionName, boolean destroy) {
     assertNotNull(basicGetCache());
     Region partitionedregion = basicGetCache().getRegion(Region.SEPARATOR + partitionedRegionName);
     assertNotNull(partitionedregion);
     boolean exceptionThrown = false;
     try {
-      if (destroy)
-        partitionedregion.destroyRegion();
-      else
-        partitionedregion.close();
+      if (destroy) partitionedregion.destroyRegion();
+      else partitionedregion.close();
     } catch (IllegalStateException e) {
       exceptionThrown = true;
     }
-    assertTrue("Region should have failed to close. regionName = " + partitionedRegionName, exceptionThrown);
+    assertTrue(
+        "Region should have failed to close. regionName = " + partitionedRegionName,
+        exceptionThrown);
   }
 
   public static void putCustomerPartitionedRegion(String partitionedRegionName) {
@@ -2098,7 +3167,9 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
         assertTrue(partitionedregion.containsKey(custid));
         assertEquals(customer, partitionedregion.get(custid));
       } catch (Exception e) {
-        Assert.fail("putCustomerPartitionedRegion : failed while doing put operation in CustomerPartitionedRegion ", e);
+        Assert.fail(
+            "putCustomerPartitionedRegion : failed while doing put operation in CustomerPartitionedRegion ",
+            e);
       }
       LogWriterUtils.getLogWriter().info("Customer :- { " + custid + " : " + customer + " }");
     }
@@ -2120,7 +3191,9 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
           assertEquals(order, partitionedregion.get(orderId));
 
         } catch (Exception e) {
-          Assert.fail("putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ", e);
+          Assert.fail(
+              "putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ",
+              e);
         }
         LogWriterUtils.getLogWriter().info("Order :- { " + orderId + " : " + order + " }");
       }
@@ -2143,7 +3216,9 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
           assertEquals(order, partitionedregion.get(orderId));
 
         } catch (Exception e) {
-          Assert.fail("putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ", e);
+          Assert.fail(
+              "putOrderPartitionedRegion : failed while doing put operation in OrderPartitionedRegion ",
+              e);
         }
         LogWriterUtils.getLogWriter().info("Order :- { " + orderId + " : " + order + " }");
       }
@@ -2168,9 +3243,12 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
             assertTrue(partitionedregion.containsKey(shipmentId));
             assertEquals(shipment, partitionedregion.get(shipmentId));
           } catch (Exception e) {
-            Assert.fail("putShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ", e);
+            Assert.fail(
+                "putShipmentPartitionedRegion : failed while doing put operation in ShipmentPartitionedRegion ",
+                e);
           }
-          LogWriterUtils.getLogWriter().info("Shipment :- { " + shipmentId + " : " + shipment + " }");
+          LogWriterUtils.getLogWriter()
+              .info("Shipment :- { " + shipmentId + " : " + shipment + " }");
         }
       }
     }
@@ -2213,13 +3291,36 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     }
   }
 
-  public static void createPR(String partitionedRegionName, Integer redundancy, Integer localMaxMemory, Integer totalNumBuckets, Object colocatedWith, Boolean isPartitionResolver) {
-    createPR(partitionedRegionName, redundancy, localMaxMemory, totalNumBuckets, colocatedWith, isPartitionResolver, Boolean.FALSE);
+  public static void createPR(
+      String partitionedRegionName,
+      Integer redundancy,
+      Integer localMaxMemory,
+      Integer totalNumBuckets,
+      Object colocatedWith,
+      Boolean isPartitionResolver) {
+    createPR(
+        partitionedRegionName,
+        redundancy,
+        localMaxMemory,
+        totalNumBuckets,
+        colocatedWith,
+        isPartitionResolver,
+        Boolean.FALSE);
   }
 
-  public static void createPR(String partitionedRegionName, Integer redundancy, Integer localMaxMemory, Integer totalNumBuckets, Object colocatedWith, Boolean isPartitionResolver, Boolean concurrencyChecks) {
+  public static void createPR(
+      String partitionedRegionName,
+      Integer redundancy,
+      Integer localMaxMemory,
+      Integer totalNumBuckets,
+      Object colocatedWith,
+      Boolean isPartitionResolver,
+      Boolean concurrencyChecks) {
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
-    paf.setRedundantCopies(redundancy.intValue()).setLocalMaxMemory(localMaxMemory.intValue()).setTotalNumBuckets(totalNumBuckets.intValue()).setColocatedWith((String) colocatedWith);
+    paf.setRedundantCopies(redundancy.intValue())
+        .setLocalMaxMemory(localMaxMemory.intValue())
+        .setTotalNumBuckets(totalNumBuckets.intValue())
+        .setColocatedWith((String) colocatedWith);
     if (isPartitionResolver.booleanValue()) {
       paf.setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
     }
@@ -2230,12 +3331,26 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     assertNotNull(basicGetCache());
     Region pr = basicGetCache().createRegion(partitionedRegionName, attr.create());
     assertNotNull(pr);
-    LogWriterUtils.getLogWriter().info("Partitioned Region " + partitionedRegionName + " created Successfully :" + pr.toString());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Partitioned Region "
+                + partitionedRegionName
+                + " created Successfully :"
+                + pr.toString());
   }
 
-  public static void createSubPR(String partitionedRegionName, Integer redundancy, Integer localMaxMemory, Integer totalNumBuckets, Object colocatedWith, Boolean isPartitionResolver) {
+  public static void createSubPR(
+      String partitionedRegionName,
+      Integer redundancy,
+      Integer localMaxMemory,
+      Integer totalNumBuckets,
+      Object colocatedWith,
+      Boolean isPartitionResolver) {
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
-    paf.setRedundantCopies(redundancy.intValue()).setLocalMaxMemory(localMaxMemory.intValue()).setTotalNumBuckets(totalNumBuckets.intValue()).setColocatedWith((String) colocatedWith);
+    paf.setRedundantCopies(redundancy.intValue())
+        .setLocalMaxMemory(localMaxMemory.intValue())
+        .setTotalNumBuckets(totalNumBuckets.intValue())
+        .setColocatedWith((String) colocatedWith);
     if (isPartitionResolver.booleanValue()) {
       paf.setPartitionResolver(new CustomerIDPartitionResolver("CustomerIDPartitionResolver"));
     }
@@ -2246,7 +3361,8 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
     attr.setPartitionAttributes(prAttr);
     Region pr = root.createSubregion(partitionedRegionName, attr.create());
     assertNotNull(pr);
-    LogWriterUtils.getLogWriter().info("Partitioned sub region " + pr.getName() + " created Successfully :" + pr.toString());
+    LogWriterUtils.getLogWriter()
+        .info("Partitioned sub region " + pr.getName() + " created Successfully :" + pr.toString());
     if (localMaxMemory == 0) {
       putInPartitionedRegion(pr);
     }
@@ -2258,11 +3374,12 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
 
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        InternalResourceManager.setResourceObserver(null);
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            InternalResourceManager.setResourceObserver(null);
+          }
+        });
     InternalResourceManager.setResourceObserver(null);
   }
 
@@ -2286,7 +3403,6 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
         }
       }
     }
-
   }
 
   public static String getDefaultAddOnString() {
@@ -2304,8 +3420,7 @@ public class PRColocationDUnitTest extends JUnit4CacheTestCase {
 class DummyKeyBasedRoutingResolver implements PartitionResolver, DataSerializable {
   Integer dummyID;
 
-  public DummyKeyBasedRoutingResolver() {
-  }
+  public DummyKeyBasedRoutingResolver() {}
 
   public DummyKeyBasedRoutingResolver(int id) {
     this.dummyID = new Integer(id);
@@ -2340,14 +3455,11 @@ class DummyKeyBasedRoutingResolver implements PartitionResolver, DataSerializabl
 
   @Override
   public boolean equals(Object o) {
-    if (this == o)
-      return true;
+    if (this == o) return true;
 
-    if (!(o instanceof DummyKeyBasedRoutingResolver))
-      return false;
+    if (!(o instanceof DummyKeyBasedRoutingResolver)) return false;
 
     DummyKeyBasedRoutingResolver otherDummyID = (DummyKeyBasedRoutingResolver) o;
     return (otherDummyID.dummyID.equals(dummyID));
-
   }
 }

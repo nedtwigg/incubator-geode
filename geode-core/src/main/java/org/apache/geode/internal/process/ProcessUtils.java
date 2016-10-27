@@ -26,22 +26,19 @@ import org.apache.geode.internal.util.IOUtils;
 
 /**
  * Utility operations for processes such as identifying the process id (pid).
- * 
+ *
  * @since GemFire 7.0
  */
 public final class ProcessUtils {
 
   private static InternalProcessUtils internal = initializeInternalProcessUtils();
 
-  private ProcessUtils() {
-  }
+  private ProcessUtils() {}
 
   /**
    * Returns the pid for this process.
-   * 
-   * @throws PidUnavailableException if parsing the pid from the name of the
-   * RuntimeMXBean fails
-   * 
+   *
+   * @throws PidUnavailableException if parsing the pid from the name of the RuntimeMXBean fails
    * @see java.lang.management.RuntimeMXBean#getName()
    */
   public static int identifyPid() throws PidUnavailableException {
@@ -49,11 +46,9 @@ public final class ProcessUtils {
   }
 
   /**
-   * Returns the pid for this process using the specified name from 
-   * RuntimeMXBean.
-   * 
-   * @throws PidUnavailableException if parsing the pid from the RuntimeMXBean 
-   * name fails
+   * Returns the pid for this process using the specified name from RuntimeMXBean.
+   *
+   * @throws PidUnavailableException if parsing the pid from the RuntimeMXBean name fails
    */
   public static int identifyPid(final String name) throws PidUnavailableException {
     try {
@@ -68,9 +63,9 @@ public final class ProcessUtils {
   }
 
   /**
-   * Returns true if a process identified by the process id is
-   * currently running on this host machine.
-   * 
+   * Returns true if a process identified by the process id is currently running on this host
+   * machine.
+   *
    * @param pid process id to check for
    * @return true if the pid matches a currently running process
    */
@@ -79,9 +74,9 @@ public final class ProcessUtils {
   }
 
   /**
-   * Returns true if a process identified by the specified Process is
-   * currently running on this host machine.
-   * 
+   * Returns true if a process identified by the specified Process is currently running on this host
+   * machine.
+   *
    * @param process the Process to check
    * @return true if the Process is a currently running process
    */
@@ -90,9 +85,9 @@ public final class ProcessUtils {
   }
 
   /**
-   * Returns true if a process identified by the process id was
-   * running on this host machine and has been terminated by this operation.
-   * 
+   * Returns true if a process identified by the process id was running on this host machine and has
+   * been terminated by this operation.
+   *
    * @param pid process id
    * @return true if the process was terminated by this operation
    */
@@ -111,16 +106,14 @@ public final class ProcessUtils {
   }
 
   /**
-   * Returns true if Attach API or JNA NativeCalls is available for killing 
-   * process or checking if it is alive.
+   * Returns true if Attach API or JNA NativeCalls is available for killing process or checking if
+   * it is alive.
    */
   public static boolean isAvailable() {
     return internal.isAvailable();
   }
 
-  /**
-   * Returns true if Attach API is available for checking status.
-   */
+  /** Returns true if Attach API is available for checking status. */
   public static boolean isAttachApiAvailable() {
     return internal.isAttachApiAvailable();
   }
@@ -180,9 +173,7 @@ public final class ProcessUtils {
     };
   }
 
-  /**
-   * Defines the SPI for ProcessUtils
-   */
+  /** Defines the SPI for ProcessUtils */
   interface InternalProcessUtils {
     public boolean isProcessAlive(int pid);
 

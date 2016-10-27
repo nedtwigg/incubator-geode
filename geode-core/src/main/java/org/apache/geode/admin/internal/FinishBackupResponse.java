@@ -27,11 +27,8 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.admin.remote.AdminResponse;
 
 /**
- * The reply for a {@link FinishBackupRequest}. The
- * reply contains the persistent ids of the disk stores
- * that were backed up on this member.
- * 
- *
+ * The reply for a {@link FinishBackupRequest}. The reply contains the persistent ids of the disk
+ * stores that were backed up on this member.
  */
 public class FinishBackupResponse extends AdminResponse {
 
@@ -41,7 +38,8 @@ public class FinishBackupResponse extends AdminResponse {
     super();
   }
 
-  public FinishBackupResponse(InternalDistributedMember sender, HashSet<PersistentID> persistentIds) {
+  public FinishBackupResponse(
+      InternalDistributedMember sender, HashSet<PersistentID> persistentIds) {
     this.setRecipient(sender);
     this.persistentIds = persistentIds;
   }

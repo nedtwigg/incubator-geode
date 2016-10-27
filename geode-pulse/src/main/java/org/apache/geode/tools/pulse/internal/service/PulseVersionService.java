@@ -30,14 +30,12 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Class PulseVersionService
- * 
- * This class contains implementations of getting Pulse Applications Version's
- * details (like version details, build details, source details, etc) from
- * properties file
- * 
+ *
+ * <p>This class contains implementations of getting Pulse Applications Version's details (like
+ * version details, build details, source details, etc) from properties file
+ *
  * @since GemFire version 7.0.Beta
  */
-
 @Component
 @Service("PulseVersion")
 @Scope("singleton")
@@ -61,5 +59,4 @@ public class PulseVersionService implements PulseService {
     // Send json response
     return responseJSON;
   }
-
 }

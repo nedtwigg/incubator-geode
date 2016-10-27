@@ -26,22 +26,23 @@ import java.net.URL;
 import java.net.URLDecoder;
 
 /**
- * The class puts in one place the code that will determine the
- * name of the GemFire shared library.
+ * The class puts in one place the code that will determine the name of the GemFire shared library.
  * This aids debugging.
  */
 public class SharedLibrary {
 
-  /** A suffix added on to distinguish between the Linux and Solaris library 
-   *  names since they reside in the same directory. 
+  /**
+   * A suffix added on to distinguish between the Linux and Solaris library names since they reside
+   * in the same directory.
    */
-  private final static String SOLARIS_LIBRARY_SUFFIX = "_sol";
+  private static final String SOLARIS_LIBRARY_SUFFIX = "_sol";
 
   private static final boolean is64Bit;
   private static final int referenceSize;
   private static final int objectHeaderSize;
 
   private static final UnsafeWrapper unsafe;
+
   static {
     UnsafeWrapper tmp = null;
     try {
@@ -91,7 +92,7 @@ public class SharedLibrary {
           // UseCompressedClassPointers requires UseCompressedOops
           // but UseCompressedOops does not require UseCompressedClassPointers.
           // But it seems unlikely that someone would compress their oops
-          // not their class pointers. 
+          // not their class pointers.
           scaleIndex = unsafe.arrayScaleIndex(Object[].class);
           if (scaleIndex == 4) {
             // compressed oops
@@ -101,7 +102,10 @@ public class SharedLibrary {
             tmpReferenceSize = 8;
             tmpObjectHeaderSize = 16;
           } else {
-            System.out.println("Unexpected arrayScaleIndex " + scaleIndex + ". Using max heap size to estimate reference size.");
+            System.out.println(
+                "Unexpected arrayScaleIndex "
+                    + scaleIndex
+                    + ". Using max heap size to estimate reference size.");
             scaleIndex = 0;
           }
         }
@@ -134,8 +138,8 @@ public class SharedLibrary {
   }
 
   /**
-   * @return true if this process is running on Solaris, no effort is made to 
-   * distinguish between sparc and x86, the library will simply fail to load.
+   * @return true if this process is running on Solaris, no effort is made to distinguish between
+   *     sparc and x86, the library will simply fail to load.
    * @throws RuntimeException if sun.arch.data.model doesn't fit expectations
    */
   public static boolean isSolaris() {
@@ -143,9 +147,7 @@ public class SharedLibrary {
     return osName.equals("SunOS");
   }
 
-  /**
-   * Returns the os specific name of the GemFire shared library.
-   */
+  /** Returns the os specific name of the GemFire shared library. */
   public static String getName() {
     StringBuffer result = new StringBuffer("gemfire");
     if (isSolaris()) {
@@ -187,15 +189,18 @@ public class SharedLibrary {
         return;
       }
     } catch (InternalGemFireError ige) {
-      /** Unable to make a guess as to where the gemfire native library 
-          is based on its position relative to gemfire jar. */
+      /**
+       * Unable to make a guess as to where the gemfire native library is based on its position
+       * relative to gemfire jar.
+       */
       if (debug) {
         System.out.println("Problem loading library from URL path: " + ige);
       }
     } catch (UnsatisfiedLinkError ule) {
-      /** Unable to load the gemfire native library in the product tree,
-          This is very unexpected and should not happen.
-          Reattempting using System.loadLibrary */
+      /**
+       * Unable to load the gemfire native library in the product tree, This is very unexpected and
+       * should not happen. Reattempting using System.loadLibrary
+       */
       if (debug) {
         System.out.println("Problem loading library from URL path: " + ule);
       }
@@ -204,12 +209,9 @@ public class SharedLibrary {
   }
 
   /**
-   * Returns the size in bytes of a C pointer in this
-   * shared library,  returns 4 for a 32 bit shared library,
-   * and 8 for a 64 bit shared library . 
-   * This method makes a native call, so you can't use it to
-   * determine which library to load .
-   * 
+   * Returns the size in bytes of a C pointer in this shared library, returns 4 for a 32 bit shared
+   * library, and 8 for a 64 bit shared library . This method makes a native call, so you can't use
+   * it to determine which library to load .
    */
   public static int pointerSizeBytes() {
     return SmHelper.pointerSizeBytes();
@@ -217,10 +219,11 @@ public class SharedLibrary {
 
   /**
    * Accessor method for the is64Bit flag
+   *
    * @return returns a boolean indicating if the 64bit native library was loaded.
    * @since GemFire 5.1
    */
-  public final static boolean getIs64Bit() {
+  public static final boolean getIs64Bit() {
     return PureJavaMode.is64Bit();
   }
 

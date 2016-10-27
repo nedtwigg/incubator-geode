@@ -87,20 +87,24 @@ public class MultiIndexCreationJUnitTest {
     assertEquals(10, ind.getStatistics().getNumberOfKeys());
     assertEquals(10, ind.getStatistics().getNumberOfValues());
 
-    QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private boolean indexCalled = false;
+    QueryObserver old =
+        QueryObserverHolder.setInstance(
+            new QueryObserverAdapter() {
+              private boolean indexCalled = false;
 
-      public void afterIndexLookup(Collection results) {
-        indexCalled = true;
-      }
+              public void afterIndexLookup(Collection results) {
+                indexCalled = true;
+              }
 
-      public void endQuery() {
-        assertTrue(indexCalled);
-      }
+              public void endQuery() {
+                assertTrue(indexCalled);
+              }
+            });
 
-    });
-
-    String[] queries = { "select * from " + r.getFullPath() + " where status = 'active'", "select * from " + r.getFullPath() + " where ID > 4" };
+    String[] queries = {
+      "select * from " + r.getFullPath() + " where status = 'active'",
+      "select * from " + r.getFullPath() + " where ID > 4"
+    };
 
     for (int i = 0; i < queries.length; i++) {
       SelectResults sr = (SelectResults) qs.newQuery(queries[i]).execute();
@@ -138,20 +142,24 @@ public class MultiIndexCreationJUnitTest {
     assertEquals(10, ind.getStatistics().getNumberOfKeys());
     assertEquals(10, ind.getStatistics().getNumberOfValues());
 
-    QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private boolean indexCalled = false;
+    QueryObserver old =
+        QueryObserverHolder.setInstance(
+            new QueryObserverAdapter() {
+              private boolean indexCalled = false;
 
-      public void afterIndexLookup(Collection results) {
-        indexCalled = true;
-      }
+              public void afterIndexLookup(Collection results) {
+                indexCalled = true;
+              }
 
-      public void endQuery() {
-        assertTrue(indexCalled);
-      }
+              public void endQuery() {
+                assertTrue(indexCalled);
+              }
+            });
 
-    });
-
-    String[] queries = { "select * from " + r.getFullPath() + " where status = 'active'", "select * from " + r.getFullPath() + " where ID > 4" };
+    String[] queries = {
+      "select * from " + r.getFullPath() + " where status = 'active'",
+      "select * from " + r.getFullPath() + " where ID > 4"
+    };
 
     for (int i = 0; i < queries.length; i++) {
       SelectResults sr = (SelectResults) qs.newQuery(queries[i]).execute();
@@ -177,20 +185,24 @@ public class MultiIndexCreationJUnitTest {
     ind = qs.getIndex(r, "IDIndex");
     assertNull("Index should not have been created", ind);
 
-    QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private boolean indexCalled = false;
+    QueryObserver old =
+        QueryObserverHolder.setInstance(
+            new QueryObserverAdapter() {
+              private boolean indexCalled = false;
 
-      public void afterIndexLookup(Collection results) {
-        indexCalled = true;
-      }
+              public void afterIndexLookup(Collection results) {
+                indexCalled = true;
+              }
 
-      public void endQuery() {
-        assertFalse(indexCalled);
-      }
+              public void endQuery() {
+                assertFalse(indexCalled);
+              }
+            });
 
-    });
-
-    String[] queries = { "select * from " + r.getFullPath() + " where status = 'active'", "select * from " + r.getFullPath() + " where ID > 4" };
+    String[] queries = {
+      "select * from " + r.getFullPath() + " where status = 'active'",
+      "select * from " + r.getFullPath() + " where ID > 4"
+    };
 
     for (int i = 0; i < queries.length; i++) {
       SelectResults sr = (SelectResults) qs.newQuery(queries[i]).execute();
@@ -214,7 +226,9 @@ public class MultiIndexCreationJUnitTest {
       indexes = qs.createDefinedIndexes();
       fail("Exception should have been thrown");
     } catch (MultiIndexCreationException me) {
-      assertTrue("IndexExistsException should have been thrown ", me.getExceptionsMap().values().iterator().next() instanceof IndexExistsException);
+      assertTrue(
+          "IndexExistsException should have been thrown ",
+          me.getExceptionsMap().values().iterator().next() instanceof IndexExistsException);
     }
     assertNull("Index should not have been returned", indexes);
 
@@ -224,17 +238,20 @@ public class MultiIndexCreationJUnitTest {
     assertNotNull("Index should not be null.", ind);
     assertEquals(10, ind.getStatistics().getNumberOfKeys());
     assertEquals(10, ind.getStatistics().getNumberOfValues());
-
   }
 
   @Test
   public void testIndexCreationOnMultipleRegions() throws Exception {
-    Region pr = CacheUtils.getCache().createRegionFactory(RegionShortcut.PARTITION).create(prRegionName);
+    Region pr =
+        CacheUtils.getCache().createRegionFactory(RegionShortcut.PARTITION).create(prRegionName);
     for (int i = 0; i < 10; i++) {
       pr.put("" + i, new Portfolio(i));
     }
 
-    Region overflow = CacheUtils.getCache().createRegionFactory(RegionShortcut.REPLICATE_OVERFLOW).create(overflowRegionName);
+    Region overflow =
+        CacheUtils.getCache()
+            .createRegionFactory(RegionShortcut.REPLICATE_OVERFLOW)
+            .create(overflowRegionName);
     for (int i = 0; i < 10; i++) {
       overflow.put("" + i, new Portfolio(i));
     }
@@ -265,20 +282,25 @@ public class MultiIndexCreationJUnitTest {
     assertEquals(12, ind.getStatistics().getNumberOfKeys());
     assertEquals(20, ind.getStatistics().getNumberOfValues());
 
-    QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private boolean indexCalled = false;
+    QueryObserver old =
+        QueryObserverHolder.setInstance(
+            new QueryObserverAdapter() {
+              private boolean indexCalled = false;
 
-      public void afterIndexLookup(Collection results) {
-        indexCalled = true;
-      }
+              public void afterIndexLookup(Collection results) {
+                indexCalled = true;
+              }
 
-      public void endQuery() {
-        assertTrue(indexCalled);
-      }
+              public void endQuery() {
+                assertTrue(indexCalled);
+              }
+            });
 
-    });
-
-    String[] queries = { "select * from " + overflow.getFullPath() + " where status = 'active'", "select * from " + pr.getFullPath() + " where ID > 4", "select * from " + r.getFullPath() + " p, p.positions.values pos where pos.secId != NULL" };
+    String[] queries = {
+      "select * from " + overflow.getFullPath() + " where status = 'active'",
+      "select * from " + pr.getFullPath() + " where ID > 4",
+      "select * from " + r.getFullPath() + " p, p.positions.values pos where pos.secId != NULL"
+    };
 
     for (int i = 0; i < queries.length; i++) {
       SelectResults sr = (SelectResults) qs.newQuery(queries[i]).execute();
@@ -289,13 +311,16 @@ public class MultiIndexCreationJUnitTest {
       }
     }
     QueryObserverHolder.setInstance(old);
-
   }
 
   @Test
   public void testIndexCreationOnMultipleRegionsBeforePuts() throws Exception {
-    Region pr = CacheUtils.getCache().createRegionFactory(RegionShortcut.PARTITION).create(prRegionName);
-    Region overflow = CacheUtils.getCache().createRegionFactory(RegionShortcut.REPLICATE_OVERFLOW).create(overflowRegionName);
+    Region pr =
+        CacheUtils.getCache().createRegionFactory(RegionShortcut.PARTITION).create(prRegionName);
+    Region overflow =
+        CacheUtils.getCache()
+            .createRegionFactory(RegionShortcut.REPLICATE_OVERFLOW)
+            .create(overflowRegionName);
     Region r = CacheUtils.getRegion(regionName);
 
     QueryService qs = CacheUtils.getQueryService();
@@ -331,20 +356,25 @@ public class MultiIndexCreationJUnitTest {
     assertEquals(12, ind.getStatistics().getNumberOfKeys());
     assertEquals(20, ind.getStatistics().getNumberOfValues());
 
-    QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private boolean indexCalled = false;
+    QueryObserver old =
+        QueryObserverHolder.setInstance(
+            new QueryObserverAdapter() {
+              private boolean indexCalled = false;
 
-      public void afterIndexLookup(Collection results) {
-        indexCalled = true;
-      }
+              public void afterIndexLookup(Collection results) {
+                indexCalled = true;
+              }
 
-      public void endQuery() {
-        assertTrue(indexCalled);
-      }
+              public void endQuery() {
+                assertTrue(indexCalled);
+              }
+            });
 
-    });
-
-    String[] queries = { "select * from " + overflow.getFullPath() + " where status = 'active'", "select * from " + pr.getFullPath() + " where ID > 4", "select * from " + r.getFullPath() + " p, p.positions.values pos where pos.secId != NULL" };
+    String[] queries = {
+      "select * from " + overflow.getFullPath() + " where status = 'active'",
+      "select * from " + pr.getFullPath() + " where ID > 4",
+      "select * from " + r.getFullPath() + " p, p.positions.values pos where pos.secId != NULL"
+    };
 
     for (int i = 0; i < queries.length; i++) {
       SelectResults sr = (SelectResults) qs.newQuery(queries[i]).execute();
@@ -355,7 +385,5 @@ public class MultiIndexCreationJUnitTest {
       }
     }
     QueryObserverHolder.setInstance(old);
-
   }
-
 }

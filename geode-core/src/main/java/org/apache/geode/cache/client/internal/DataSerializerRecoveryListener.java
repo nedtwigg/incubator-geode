@@ -60,7 +60,8 @@ public class DataSerializerRecoveryListener extends EndpointManager.EndpointList
   public void endpointNoLongerInUse(Endpoint endpoint) {
     int count = endpointCount.decrementAndGet();
     if (logger.isDebugEnabled()) {
-      logger.debug("DataSerializerRecoveryTask - EndpointNoLongerInUse. Now have {} endpoints", count);
+      logger.debug(
+          "DataSerializerRecoveryTask - EndpointNoLongerInUse. Now have {} endpoints", count);
     }
   }
 
@@ -133,21 +134,28 @@ public class DataSerializerRecoveryListener extends EndpointManager.EndpointList
           Throwable cause = e.getCause();
           boolean cnfException = false;
           if (cause instanceof ClassNotFoundException) {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.DataSerializerRecoveryListener_ERROR_CLASSNOTFOUNDEXCEPTION, cause.getMessage()));
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings.DataSerializerRecoveryListener_ERROR_CLASSNOTFOUNDEXCEPTION,
+                    cause.getMessage()));
             cnfException = true;
           }
 
           if (!recoveryScheduled && !cnfException) {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.DataSerializerRecoveryListener_ERROR_RECOVERING_DATASERIALIZERS), e);
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings
+                        .DataSerializerRecoveryListener_ERROR_RECOVERING_DATASERIALIZERS),
+                e);
             try {
               background.schedule(new RecoveryTask(), pingInterval, TimeUnit.MILLISECONDS);
               recoveryScheduled = true;
-            } catch (RejectedExecutionException ex) { // GEODE-1613 - suspect string while shutting down
+            } catch (
+                RejectedExecutionException ex) { // GEODE-1613 - suspect string while shutting down
               if (!background.isTerminated() && !pool.getCancelCriterion().isCancelInProgress()) {
                 throw ex;
               }
             }
-
           }
         } finally {
           pool.releaseThreadLocalConnection();

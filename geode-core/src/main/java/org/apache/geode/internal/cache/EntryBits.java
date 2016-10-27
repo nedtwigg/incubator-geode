@@ -17,10 +17,7 @@
 
 package org.apache.geode.internal.cache;
 
-/**
- * Interprets a one-byte bit field used for entry properties.
- *
- */
+/** Interprets a one-byte bit field used for entry properties. */
 public abstract class EntryBits {
   private static final byte SERIALIZED = 0x1; // persistent bit
   private static final byte INVALID = 0x2; // persistent bit
@@ -28,7 +25,7 @@ public abstract class EntryBits {
   private static final byte RECOVERED_FROM_DISK = 0x8; // used by DiskId; transient bit
   private static final byte PENDING_ASYNC = 0x10; // used by DiskId; transient bit
   private static final byte TOMBSTONE = 0x40;
-  private static final byte WITH_VERSIONS = (byte) 0x80; // oplog entry contains versions 
+  private static final byte WITH_VERSIONS = (byte) 0x80; // oplog entry contains versions
 
   public static boolean isSerialized(byte b) {
     return (b & SERIALIZED) != 0;
@@ -62,10 +59,7 @@ public abstract class EntryBits {
     return (b & (INVALID | LOCAL_INVALID)) != 0;
   }
 
-  /**
-   * If it is not invalid and not local_invalid
-   * then we need a value.
-   */
+  /** If it is not invalid and not local_invalid then we need a value. */
   public static boolean isNeedsValue(byte b) {
     return (b & (INVALID | LOCAL_INVALID | TOMBSTONE)) == 0;
   }
@@ -91,16 +85,16 @@ public abstract class EntryBits {
   }
 
   public static byte setRecoveredFromDisk(byte b, boolean isRecoveredFromDisk) {
-    return isRecoveredFromDisk ? (byte) (b | RECOVERED_FROM_DISK) : (byte) (b & ~RECOVERED_FROM_DISK);
+    return isRecoveredFromDisk
+        ? (byte) (b | RECOVERED_FROM_DISK)
+        : (byte) (b & ~RECOVERED_FROM_DISK);
   }
 
   public static byte setPendingAsync(byte b, boolean isPendingAsync) {
     return isPendingAsync ? (byte) (b | PENDING_ASYNC) : (byte) (b & ~PENDING_ASYNC);
   }
 
-  /**
-   * Returns a byte whose bits are those that need to be written to disk
-   */
+  /** Returns a byte whose bits are those that need to be written to disk */
   public static byte getPersistentBits(byte b) {
     return (byte) (b & (SERIALIZED | INVALID | LOCAL_INVALID | TOMBSTONE | WITH_VERSIONS));
   }

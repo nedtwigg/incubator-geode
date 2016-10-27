@@ -19,10 +19,7 @@ package org.apache.geode.internal.ra.spi;
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnectionMetaData;
 
-/**
- * 
- *
- */
+/** */
 public class JCAManagedConnectionMetaData implements ManagedConnectionMetaData {
   private final String prodName;
 
@@ -53,5 +50,4 @@ public class JCAManagedConnectionMetaData implements ManagedConnectionMetaData {
   public String getUserName() throws ResourceException {
     return this.user;
   }
-
 }

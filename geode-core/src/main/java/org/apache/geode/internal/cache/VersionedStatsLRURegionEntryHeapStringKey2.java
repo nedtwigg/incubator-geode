@@ -44,13 +44,12 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VersionedStatsLRURegionEntryHeapStringKey2 extends VersionedStatsLRURegionEntryHeap {
-  public VersionedStatsLRURegionEntryHeapStringKey2(RegionEntryContext context, String key, Object value, boolean byteEncode) {
+  public VersionedStatsLRURegionEntryHeapStringKey2(
+      RegionEntryContext context, String key, Object value, boolean byteEncode) {
     super(context, value);
     // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
     // caller has already confirmed that key.length <= MAX_INLINE_STRING_KEY
@@ -88,9 +87,14 @@ public class VersionedStatsLRURegionEntryHeapStringKey2 extends VersionedStatsLR
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VersionedStatsLRURegionEntryHeapStringKey2> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VersionedStatsLRURegionEntryHeapStringKey2.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VersionedStatsLRURegionEntryHeapStringKey2>
+      lastModifiedUpdater =
+          AtomicLongFieldUpdater.newUpdater(
+              VersionedStatsLRURegionEntryHeapStringKey2.class, "lastModified");
   private volatile Object value;
 
   @Override
@@ -111,9 +115,7 @@ public class VersionedStatsLRURegionEntryHeapStringKey2 extends VersionedStatsLR
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -122,16 +124,12 @@ public class VersionedStatsLRURegionEntryHeapStringKey2 extends VersionedStatsLR
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -144,7 +142,9 @@ public class VersionedStatsLRURegionEntryHeapStringKey2 extends VersionedStatsLR
   }
 
   public final synchronized int updateEntrySize(EnableLRU capacityController) {
-    return updateEntrySize(capacityController, _getValue()); // OFHEAP: _getValue ok w/o incing refcount because we are synced and only getting the size
+    return updateEntrySize(
+        capacityController,
+        _getValue()); // OFHEAP: _getValue ok w/o incing refcount because we are synced and only getting the size
   }
 
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
@@ -253,8 +253,14 @@ public class VersionedStatsLRURegionEntryHeapStringKey2 extends VersionedStatsLR
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VersionedStatsLRURegionEntryHeapStringKey2> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VersionedStatsLRURegionEntryHeapStringKey2.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VersionedStatsLRURegionEntryHeapStringKey2> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VersionedStatsLRURegionEntryHeapStringKey2.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VersionedStatsLRURegionEntryHeapStringKey2>
+      hitCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VersionedStatsLRURegionEntryHeapStringKey2.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VersionedStatsLRURegionEntryHeapStringKey2>
+      missCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VersionedStatsLRURegionEntryHeapStringKey2.class, "missCount");
 
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {
@@ -375,7 +381,14 @@ public class VersionedStatsLRURegionEntryHeapStringKey2 extends VersionedStatsLR
     return tag;
   }
 
-  public void processVersionTag(LocalRegion r, VersionTag tag, boolean isTombstoneFromGII, boolean hasDelta, VersionSource thisVM, InternalDistributedMember sender, boolean checkForConflicts) {
+  public void processVersionTag(
+      LocalRegion r,
+      VersionTag tag,
+      boolean isTombstoneFromGII,
+      boolean hasDelta,
+      VersionSource thisVM,
+      InternalDistributedMember sender,
+      boolean checkForConflicts) {
     basicProcessVersionTag(r, tag, isTombstoneFromGII, hasDelta, thisVM, sender, checkForConflicts);
   }
 
@@ -386,12 +399,12 @@ public class VersionedStatsLRURegionEntryHeapStringKey2 extends VersionedStatsLR
     super.processVersionTag(cacheEvent);
   }
 
-  /** get rvv internal high byte.  Used by region entries for transferring to storage */
+  /** get rvv internal high byte. Used by region entries for transferring to storage */
   public short getRegionVersionHighBytes() {
     return this.regionVersionHighBytes;
   }
 
-  /** get rvv internal low bytes.  Used by region entries for transferring to storage */
+  /** get rvv internal low bytes. Used by region entries for transferring to storage */
   public int getRegionVersionLowBytes() {
     return this.regionVersionLowBytes;
   }

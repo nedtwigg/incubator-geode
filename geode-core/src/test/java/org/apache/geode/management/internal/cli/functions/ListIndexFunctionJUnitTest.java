@@ -52,10 +52,9 @@ import org.apache.geode.management.internal.cli.domain.IndexDetails.IndexStatist
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The ListIndexFunctionJUnitTest class is test suite of test cases testing the contract and functionality of the
- * ListIndexFunction GemFire function.
- * </p>
- * </p>
+ * The ListIndexFunctionJUnitTest class is test suite of test cases testing the contract and
+ * functionality of the ListIndexFunction GemFire function.
+ *
  * @see org.apache.geode.management.internal.cli.functions.ListIndexFunction
  * @see org.jmock.Expectations
  * @see org.jmock.Mockery
@@ -72,11 +71,12 @@ public class ListIndexFunctionJUnitTest {
 
   @Before
   public void setup() {
-    mockContext = new Mockery() {
-      {
-        setImposteriser(ClassImposteriser.INSTANCE);
-      }
-    };
+    mockContext =
+        new Mockery() {
+          {
+            setImposteriser(ClassImposteriser.INSTANCE);
+          }
+        };
     mockCounter = new AtomicLong(0l);
   }
 
@@ -86,34 +86,61 @@ public class ListIndexFunctionJUnitTest {
     mockContext = null;
   }
 
-  private void assertIndexDetailsEquals(final IndexDetails expectedIndexDetails, final IndexDetails actualIndexDetails) {
+  private void assertIndexDetailsEquals(
+      final IndexDetails expectedIndexDetails, final IndexDetails actualIndexDetails) {
     assertEquals(expectedIndexDetails.getFromClause(), actualIndexDetails.getFromClause());
-    assertEquals(expectedIndexDetails.getIndexedExpression(), actualIndexDetails.getIndexedExpression());
+    assertEquals(
+        expectedIndexDetails.getIndexedExpression(), actualIndexDetails.getIndexedExpression());
     assertEquals(expectedIndexDetails.getIndexName(), actualIndexDetails.getIndexName());
-    assertIndexStatisticsDetailsEquals(expectedIndexDetails.getIndexStatisticsDetails(), actualIndexDetails.getIndexStatisticsDetails());
+    assertIndexStatisticsDetailsEquals(
+        expectedIndexDetails.getIndexStatisticsDetails(),
+        actualIndexDetails.getIndexStatisticsDetails());
     assertEquals(expectedIndexDetails.getIndexType(), actualIndexDetails.getIndexType());
     assertEquals(expectedIndexDetails.getMemberId(), actualIndexDetails.getMemberId());
     assertEquals(expectedIndexDetails.getMemberName(), actualIndexDetails.getMemberName());
-    assertEquals(expectedIndexDetails.getProjectionAttributes(), actualIndexDetails.getProjectionAttributes());
+    assertEquals(
+        expectedIndexDetails.getProjectionAttributes(),
+        actualIndexDetails.getProjectionAttributes());
     assertEquals(expectedIndexDetails.getRegionName(), actualIndexDetails.getRegionName());
     assertEquals(expectedIndexDetails.getRegionPath(), actualIndexDetails.getRegionPath());
   }
 
-  private void assertIndexStatisticsDetailsEquals(final IndexStatisticsDetails expectedIndexStatisticsDetails, final IndexStatisticsDetails actualIndexStatisticsDetails) {
+  private void assertIndexStatisticsDetailsEquals(
+      final IndexStatisticsDetails expectedIndexStatisticsDetails,
+      final IndexStatisticsDetails actualIndexStatisticsDetails) {
     if (expectedIndexStatisticsDetails != null) {
       assertNotNull(actualIndexStatisticsDetails);
-      assertEquals(expectedIndexStatisticsDetails.getNumberOfKeys(), actualIndexStatisticsDetails.getNumberOfKeys());
-      assertEquals(expectedIndexStatisticsDetails.getNumberOfUpdates(), actualIndexStatisticsDetails.getNumberOfUpdates());
-      assertEquals(expectedIndexStatisticsDetails.getNumberOfValues(), actualIndexStatisticsDetails.getNumberOfValues());
-      assertEquals(expectedIndexStatisticsDetails.getTotalUpdateTime(), actualIndexStatisticsDetails.getTotalUpdateTime());
-      assertEquals(expectedIndexStatisticsDetails.getTotalUses(), actualIndexStatisticsDetails.getTotalUses());
+      assertEquals(
+          expectedIndexStatisticsDetails.getNumberOfKeys(),
+          actualIndexStatisticsDetails.getNumberOfKeys());
+      assertEquals(
+          expectedIndexStatisticsDetails.getNumberOfUpdates(),
+          actualIndexStatisticsDetails.getNumberOfUpdates());
+      assertEquals(
+          expectedIndexStatisticsDetails.getNumberOfValues(),
+          actualIndexStatisticsDetails.getNumberOfValues());
+      assertEquals(
+          expectedIndexStatisticsDetails.getTotalUpdateTime(),
+          actualIndexStatisticsDetails.getTotalUpdateTime());
+      assertEquals(
+          expectedIndexStatisticsDetails.getTotalUses(),
+          actualIndexStatisticsDetails.getTotalUses());
 
     } else {
       assertNull(actualIndexStatisticsDetails);
     }
   }
 
-  private IndexDetails createIndexDetails(final String memberId, final String regionPath, final String indexName, final IndexType indexType, final String fromClause, final String indexedExpression, final String memberName, final String projectionAttributes, final String regionName) {
+  private IndexDetails createIndexDetails(
+      final String memberId,
+      final String regionPath,
+      final String indexName,
+      final IndexType indexType,
+      final String fromClause,
+      final String indexedExpression,
+      final String memberName,
+      final String projectionAttributes,
+      final String regionName) {
     final IndexDetails indexDetails = new IndexDetails(memberId, regionPath, indexName);
 
     indexDetails.setFromClause(fromClause);
@@ -126,7 +153,12 @@ public class ListIndexFunctionJUnitTest {
     return indexDetails;
   }
 
-  private IndexStatisticsDetails createIndexStatisticsDetails(final Long numberOfKeys, final Long numberOfUpdates, final Long numberOfValues, final Long totalUpdateTime, final Long totalUses) {
+  private IndexStatisticsDetails createIndexStatisticsDetails(
+      final Long numberOfKeys,
+      final Long numberOfUpdates,
+      final Long numberOfValues,
+      final Long totalUpdateTime,
+      final Long totalUses) {
     final IndexStatisticsDetails indexStatisticsDetails = new IndexStatisticsDetails();
 
     indexStatisticsDetails.setNumberOfKeys(numberOfKeys);
@@ -143,58 +175,73 @@ public class ListIndexFunctionJUnitTest {
   }
 
   private Index createMockIndex(final IndexDetails indexDetails) {
-    final Index mockIndex = mockContext.mock(Index.class, "Index " + indexDetails.getIndexName() + " " + mockCounter.getAndIncrement());
+    final Index mockIndex =
+        mockContext.mock(
+            Index.class,
+            "Index " + indexDetails.getIndexName() + " " + mockCounter.getAndIncrement());
 
-    final Region mockRegion = mockContext.mock(Region.class, "Region " + indexDetails.getRegionPath() + " " + mockCounter.getAndIncrement());
+    final Region mockRegion =
+        mockContext.mock(
+            Region.class,
+            "Region " + indexDetails.getRegionPath() + " " + mockCounter.getAndIncrement());
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockIndex).getFromClause();
-        will(returnValue(indexDetails.getFromClause()));
-        oneOf(mockIndex).getIndexedExpression();
-        will(returnValue(indexDetails.getIndexedExpression()));
-        oneOf(mockIndex).getName();
-        will(returnValue(indexDetails.getIndexName()));
-        oneOf(mockIndex).getProjectionAttributes();
-        will(returnValue(indexDetails.getProjectionAttributes()));
-        exactly(2).of(mockIndex).getRegion();
-        will(returnValue(mockRegion));
-        oneOf(mockIndex).getType();
-        will(returnValue(getIndexType(indexDetails.getIndexType())));
-        oneOf(mockRegion).getName();
-        will(returnValue(indexDetails.getRegionName()));
-        oneOf(mockRegion).getFullPath();
-        will(returnValue(indexDetails.getRegionPath()));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockIndex).getFromClause();
+            will(returnValue(indexDetails.getFromClause()));
+            oneOf(mockIndex).getIndexedExpression();
+            will(returnValue(indexDetails.getIndexedExpression()));
+            oneOf(mockIndex).getName();
+            will(returnValue(indexDetails.getIndexName()));
+            oneOf(mockIndex).getProjectionAttributes();
+            will(returnValue(indexDetails.getProjectionAttributes()));
+            exactly(2).of(mockIndex).getRegion();
+            will(returnValue(mockRegion));
+            oneOf(mockIndex).getType();
+            will(returnValue(getIndexType(indexDetails.getIndexType())));
+            oneOf(mockRegion).getName();
+            will(returnValue(indexDetails.getRegionName()));
+            oneOf(mockRegion).getFullPath();
+            will(returnValue(indexDetails.getRegionPath()));
+          }
+        });
 
     if (indexDetails.getIndexStatisticsDetails() != null) {
-      final IndexStatistics mockIndexStatistics = mockContext.mock(IndexStatistics.class, "IndexStatistics " + indexDetails.getIndexName() + " " + mockCounter.getAndIncrement());
+      final IndexStatistics mockIndexStatistics =
+          mockContext.mock(
+              IndexStatistics.class,
+              "IndexStatistics "
+                  + indexDetails.getIndexName()
+                  + " "
+                  + mockCounter.getAndIncrement());
 
-      mockContext.checking(new Expectations() {
-        {
-          exactly(2).of(mockIndex).getStatistics();
-          will(returnValue(mockIndexStatistics));
-          oneOf(mockIndexStatistics).getNumUpdates();
-          will(returnValue(indexDetails.getIndexStatisticsDetails().getNumberOfUpdates()));
-          oneOf(mockIndexStatistics).getNumberOfKeys();
-          will(returnValue(indexDetails.getIndexStatisticsDetails().getNumberOfKeys()));
-          oneOf(mockIndexStatistics).getNumberOfValues();
-          will(returnValue(indexDetails.getIndexStatisticsDetails().getNumberOfValues()));
-          oneOf(mockIndexStatistics).getTotalUpdateTime();
-          will(returnValue(indexDetails.getIndexStatisticsDetails().getTotalUpdateTime()));
-          oneOf(mockIndexStatistics).getTotalUses();
-          will(returnValue(indexDetails.getIndexStatisticsDetails().getTotalUses()));
-        }
-      });
+      mockContext.checking(
+          new Expectations() {
+            {
+              exactly(2).of(mockIndex).getStatistics();
+              will(returnValue(mockIndexStatistics));
+              oneOf(mockIndexStatistics).getNumUpdates();
+              will(returnValue(indexDetails.getIndexStatisticsDetails().getNumberOfUpdates()));
+              oneOf(mockIndexStatistics).getNumberOfKeys();
+              will(returnValue(indexDetails.getIndexStatisticsDetails().getNumberOfKeys()));
+              oneOf(mockIndexStatistics).getNumberOfValues();
+              will(returnValue(indexDetails.getIndexStatisticsDetails().getNumberOfValues()));
+              oneOf(mockIndexStatistics).getTotalUpdateTime();
+              will(returnValue(indexDetails.getIndexStatisticsDetails().getTotalUpdateTime()));
+              oneOf(mockIndexStatistics).getTotalUses();
+              will(returnValue(indexDetails.getIndexStatisticsDetails().getTotalUses()));
+            }
+          });
 
     } else {
-      mockContext.checking(new Expectations() {
-        {
-          oneOf(mockIndex).getStatistics();
-          will(returnValue(null));
-        }
-      });
+      mockContext.checking(
+          new Expectations() {
+            {
+              oneOf(mockIndex).getStatistics();
+              will(returnValue(null));
+            }
+          });
     }
 
     return mockIndex;
@@ -202,12 +249,12 @@ public class ListIndexFunctionJUnitTest {
 
   private IndexType getIndexType(final IndexDetails.IndexType type) {
     switch (type) {
-    case FUNCTIONAL:
-      return IndexType.FUNCTIONAL;
-    case PRIMARY_KEY:
-      return IndexType.PRIMARY_KEY;
-    default:
-      return null;
+      case FUNCTIONAL:
+        return IndexType.FUNCTIONAL;
+      case PRIMARY_KEY:
+        return IndexType.PRIMARY_KEY;
+      default:
+        return null;
     }
   }
 
@@ -219,20 +266,64 @@ public class ListIndexFunctionJUnitTest {
 
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    final DistributedSystem mockDistributedSystem = mockContext.mock(DistributedSystem.class, "DistributedSystem");
-    final DistributedMember mockDistributedMember = mockContext.mock(DistributedMember.class, "DistributedMember");
+    final DistributedSystem mockDistributedSystem =
+        mockContext.mock(DistributedSystem.class, "DistributedSystem");
+    final DistributedMember mockDistributedMember =
+        mockContext.mock(DistributedMember.class, "DistributedMember");
 
-    final IndexDetails indexDetailsOne = createIndexDetails(memberId, "/Employees", "empIdIdx", IndexType.PRIMARY_KEY, "/Employees", "id", memberName, "id, firstName, lastName", "Employees");
+    final IndexDetails indexDetailsOne =
+        createIndexDetails(
+            memberId,
+            "/Employees",
+            "empIdIdx",
+            IndexType.PRIMARY_KEY,
+            "/Employees",
+            "id",
+            memberName,
+            "id, firstName, lastName",
+            "Employees");
 
-    indexDetailsOne.setIndexStatisticsDetails(createIndexStatisticsDetails(10124l, 4096l, 10124l, 1284100l, 280120l));
+    indexDetailsOne.setIndexStatisticsDetails(
+        createIndexStatisticsDetails(10124l, 4096l, 10124l, 1284100l, 280120l));
 
-    final IndexDetails indexDetailsTwo = createIndexDetails(memberId, "/Employees", "empGivenNameIdx", IndexType.FUNCTIONAL, "/Employees", "lastName", memberName, "id, firstName, lastName", "Employees");
+    final IndexDetails indexDetailsTwo =
+        createIndexDetails(
+            memberId,
+            "/Employees",
+            "empGivenNameIdx",
+            IndexType.FUNCTIONAL,
+            "/Employees",
+            "lastName",
+            memberName,
+            "id, firstName, lastName",
+            "Employees");
 
-    final IndexDetails indexDetailsThree = createIndexDetails(memberId, "/Contractors", "empIdIdx", IndexType.PRIMARY_KEY, "/Contrators", "id", memberName, "id, firstName, lastName", "Contractors");
+    final IndexDetails indexDetailsThree =
+        createIndexDetails(
+            memberId,
+            "/Contractors",
+            "empIdIdx",
+            IndexType.PRIMARY_KEY,
+            "/Contrators",
+            "id",
+            memberName,
+            "id, firstName, lastName",
+            "Contractors");
 
-    indexDetailsThree.setIndexStatisticsDetails(createIndexStatisticsDetails(1024l, 256l, 20248l, 768001l, 24480l));
+    indexDetailsThree.setIndexStatisticsDetails(
+        createIndexStatisticsDetails(1024l, 256l, 20248l, 768001l, 24480l));
 
-    final IndexDetails indexDetailsFour = createIndexDetails(memberId, "/Employees", "empIdIdx", IndexType.FUNCTIONAL, "/Employees", "emp_id", memberName, "id, surname, givenname", "Employees");
+    final IndexDetails indexDetailsFour =
+        createIndexDetails(
+            memberId,
+            "/Employees",
+            "empIdIdx",
+            IndexType.FUNCTIONAL,
+            "/Employees",
+            "emp_id",
+            memberName,
+            "id, surname, givenname",
+            "Employees");
 
     final Set<IndexDetails> expectedIndexDetailsSet = new HashSet<IndexDetails>(3);
 
@@ -242,28 +333,36 @@ public class ListIndexFunctionJUnitTest {
 
     final QueryService mockQueryService = mockContext.mock(QueryService.class, "QueryService");
 
-    final FunctionContext mockFunctionContext = mockContext.mock(FunctionContext.class, "FunctionContext");
+    final FunctionContext mockFunctionContext =
+        mockContext.mock(FunctionContext.class, "FunctionContext");
 
     final TestResultSender testResultSender = new TestResultSender();
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getDistributedSystem();
-        will(returnValue(mockDistributedSystem));
-        oneOf(mockCache).getQueryService();
-        will(returnValue(mockQueryService));
-        oneOf(mockDistributedSystem).getDistributedMember();
-        will(returnValue(mockDistributedMember));
-        exactly(4).of(mockDistributedMember).getId();
-        will(returnValue(memberId));
-        exactly(4).of(mockDistributedMember).getName();
-        will(returnValue(memberName));
-        oneOf(mockQueryService).getIndexes();
-        will(returnValue(Arrays.asList(createMockIndex(indexDetailsOne), createMockIndex(indexDetailsTwo), createMockIndex(indexDetailsThree), createMockIndex(indexDetailsFour))));
-        oneOf(mockFunctionContext).getResultSender();
-        will(returnValue(testResultSender));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getDistributedSystem();
+            will(returnValue(mockDistributedSystem));
+            oneOf(mockCache).getQueryService();
+            will(returnValue(mockQueryService));
+            oneOf(mockDistributedSystem).getDistributedMember();
+            will(returnValue(mockDistributedMember));
+            exactly(4).of(mockDistributedMember).getId();
+            will(returnValue(memberId));
+            exactly(4).of(mockDistributedMember).getName();
+            will(returnValue(memberName));
+            oneOf(mockQueryService).getIndexes();
+            will(
+                returnValue(
+                    Arrays.asList(
+                        createMockIndex(indexDetailsOne),
+                        createMockIndex(indexDetailsTwo),
+                        createMockIndex(indexDetailsThree),
+                        createMockIndex(indexDetailsFour))));
+            oneOf(mockFunctionContext).getResultSender();
+            will(returnValue(testResultSender));
+          }
+        });
 
     final ListIndexFunction function = createListIndexFunction(mockCache);
 
@@ -280,12 +379,15 @@ public class ListIndexFunctionJUnitTest {
     assertEquals(expectedIndexDetailsSet.size(), actualIndexDetailsSet.size());
 
     for (final IndexDetails expectedIndexDetails : expectedIndexDetailsSet) {
-      final IndexDetails actualIndexDetails = CollectionUtils.findBy(actualIndexDetailsSet, new Filter<IndexDetails>() {
-        @Override
-        public boolean accept(final IndexDetails indexDetails) {
-          return ObjectUtils.equals(expectedIndexDetails, indexDetails);
-        }
-      });
+      final IndexDetails actualIndexDetails =
+          CollectionUtils.findBy(
+              actualIndexDetailsSet,
+              new Filter<IndexDetails>() {
+                @Override
+                public boolean accept(final IndexDetails indexDetails) {
+                  return ObjectUtils.equals(expectedIndexDetails, indexDetails);
+                }
+              });
 
       assertNotNull(actualIndexDetails);
       assertIndexDetailsEquals(expectedIndexDetails, actualIndexDetails);
@@ -297,29 +399,33 @@ public class ListIndexFunctionJUnitTest {
   public void testExecuteWithNoIndexes() throws Throwable {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    final DistributedSystem mockDistributedSystem = mockContext.mock(DistributedSystem.class, "DistributedSystem");
-    final DistributedMember mockDistributedMember = mockContext.mock(DistributedMember.class, "DistributedMember");
+    final DistributedSystem mockDistributedSystem =
+        mockContext.mock(DistributedSystem.class, "DistributedSystem");
+    final DistributedMember mockDistributedMember =
+        mockContext.mock(DistributedMember.class, "DistributedMember");
 
     final QueryService mockQueryService = mockContext.mock(QueryService.class, "QueryService");
 
-    final FunctionContext mockFunctionContext = mockContext.mock(FunctionContext.class, "FunctionContext");
+    final FunctionContext mockFunctionContext =
+        mockContext.mock(FunctionContext.class, "FunctionContext");
 
     final TestResultSender testResultSender = new TestResultSender();
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getDistributedSystem();
-        will(returnValue(mockDistributedSystem));
-        oneOf(mockCache).getQueryService();
-        will(returnValue(mockQueryService));
-        oneOf(mockDistributedSystem).getDistributedMember();
-        will(returnValue(mockDistributedMember));
-        oneOf(mockQueryService).getIndexes();
-        will(returnValue(Collections.emptyList()));
-        oneOf(mockFunctionContext).getResultSender();
-        will(returnValue(testResultSender));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getDistributedSystem();
+            will(returnValue(mockDistributedSystem));
+            oneOf(mockCache).getQueryService();
+            will(returnValue(mockQueryService));
+            oneOf(mockDistributedSystem).getDistributedMember();
+            will(returnValue(mockDistributedMember));
+            oneOf(mockQueryService).getIndexes();
+            will(returnValue(Collections.emptyList()));
+            oneOf(mockFunctionContext).getResultSender();
+            will(returnValue(testResultSender));
+          }
+        });
 
     final ListIndexFunction function = createListIndexFunction(mockCache);
 
@@ -340,29 +446,33 @@ public class ListIndexFunctionJUnitTest {
   public void testExecuteThrowsException() throws Throwable {
     final Cache mockCache = mockContext.mock(Cache.class, "Cache");
 
-    final DistributedSystem mockDistributedSystem = mockContext.mock(DistributedSystem.class, "DistributedSystem");
-    final DistributedMember mockDistributedMember = mockContext.mock(DistributedMember.class, "DistributedMember");
+    final DistributedSystem mockDistributedSystem =
+        mockContext.mock(DistributedSystem.class, "DistributedSystem");
+    final DistributedMember mockDistributedMember =
+        mockContext.mock(DistributedMember.class, "DistributedMember");
 
     final QueryService mockQueryService = mockContext.mock(QueryService.class, "QueryService");
 
-    final FunctionContext mockFunctionContext = mockContext.mock(FunctionContext.class, "FunctionContext");
+    final FunctionContext mockFunctionContext =
+        mockContext.mock(FunctionContext.class, "FunctionContext");
 
     final TestResultSender testResultSender = new TestResultSender();
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockCache).getDistributedSystem();
-        will(returnValue(mockDistributedSystem));
-        oneOf(mockCache).getQueryService();
-        will(returnValue(mockQueryService));
-        oneOf(mockDistributedSystem).getDistributedMember();
-        will(returnValue(mockDistributedMember));
-        oneOf(mockQueryService).getIndexes();
-        will(throwException(new RuntimeException("expected")));
-        oneOf(mockFunctionContext).getResultSender();
-        will(returnValue(testResultSender));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockCache).getDistributedSystem();
+            will(returnValue(mockDistributedSystem));
+            oneOf(mockCache).getQueryService();
+            will(returnValue(mockQueryService));
+            oneOf(mockDistributedSystem).getDistributedMember();
+            will(returnValue(mockDistributedMember));
+            oneOf(mockQueryService).getIndexes();
+            will(throwException(new RuntimeException("expected")));
+            oneOf(mockFunctionContext).getResultSender();
+            will(returnValue(testResultSender));
+          }
+        });
 
     final ListIndexFunction function = createListIndexFunction(mockCache);
 
@@ -420,5 +530,4 @@ public class ListIndexFunctionJUnitTest {
       this.t = t;
     }
   }
-
 }

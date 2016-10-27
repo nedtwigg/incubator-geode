@@ -19,8 +19,8 @@ package org.apache.geode.management.membership;
 import org.apache.geode.distributed.DistributedMember;
 
 /**
- * An event delivered to a {@link ClientMembershipListener} when this process
- * detects connection changes to ClientServers or clients.
+ * An event delivered to a {@link ClientMembershipListener} when this process detects connection
+ * changes to ClientServers or clients.
  *
  * @since GemFire 8.0
  */
@@ -41,10 +41,8 @@ public interface ClientMembershipEvent {
   public String getMemberId();
 
   /**
-   * Returns true if the member is a client to a CacheServer hosted by
-   * this process. Returns false if the member is a peer that this
-   * process is connected to.
+   * Returns true if the member is a client to a CacheServer hosted by this process. Returns false
+   * if the member is a peer that this process is connected to.
    */
   public boolean isClient();
-
 }

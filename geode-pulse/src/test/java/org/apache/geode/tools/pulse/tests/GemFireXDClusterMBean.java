@@ -28,5 +28,4 @@ public interface GemFireXDClusterMBean {
   public int getProcedureCallsInProgress();
 
   public CompositeData getNetworkServerClientConnectionStats();
-
 }

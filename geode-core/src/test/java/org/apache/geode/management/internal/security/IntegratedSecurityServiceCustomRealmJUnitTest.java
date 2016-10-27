@@ -31,14 +31,16 @@ import org.apache.geode.test.junit.categories.SecurityTest;
  *
  * @see IntegratedSecurityServiceWithIniFileJUnitTest
  */
-@Category({ IntegrationTest.class, SecurityTest.class })
-public class IntegratedSecurityServiceCustomRealmJUnitTest extends IntegratedSecurityServiceWithIniFileJUnitTest {
+@Category({IntegrationTest.class, SecurityTest.class})
+public class IntegratedSecurityServiceCustomRealmJUnitTest
+    extends IntegratedSecurityServiceWithIniFileJUnitTest {
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    props.put(SampleSecurityManager.SECURITY_JSON, "org/apache/geode/management/internal/security/shiro-ini.json");
+    props.put(
+        SampleSecurityManager.SECURITY_JSON,
+        "org/apache/geode/management/internal/security/shiro-ini.json");
     props.put(SECURITY_MANAGER, SampleSecurityManager.class.getName());
     IntegratedSecurityService.getSecurityService().initSecurity(props);
   }
-
 }

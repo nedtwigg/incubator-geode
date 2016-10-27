@@ -18,18 +18,15 @@ package org.apache.persistence.logging;
 
 import java.io.*;
 
-/**
- * A <code>StreamHandler</code> exports log records to an
- * <code>OutputStream</code>. 
- */
+/** A <code>StreamHandler</code> exports log records to an <code>OutputStream</code>. */
 public class StreamHandler extends Handler {
 
   /** The destination PrintWriter */
   private PrintWriter pw;
 
   /**
-   * Creates a new <code>StreamHandler</code> that exports log records
-   * to an <code>OutputStream</code> in a given format.
+   * Creates a new <code>StreamHandler</code> that exports log records to an <code>OutputStream
+   * </code> in a given format.
    */
   public StreamHandler(OutputStream stream, Formatter formatter) {
     super();
@@ -57,5 +54,4 @@ public class StreamHandler extends Handler {
     Formatter formatter = this.getFormatter();
     pw.print(formatter.format(record));
   }
-
 }

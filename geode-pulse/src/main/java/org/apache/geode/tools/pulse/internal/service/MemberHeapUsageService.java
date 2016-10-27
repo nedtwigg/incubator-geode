@@ -33,10 +33,10 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Class MemberHeapUsageService
- * 
- * This class contains implementations of getting Memeber's current Heap Usage
- * and its trend over the time.
- * 
+ *
+ * <p>This class contains implementations of getting Memeber's current Heap Usage and its trend over
+ * the time.
+ *
  * @since GemFire version 7.5
  */
 @Component
@@ -62,7 +62,10 @@ public class MemberHeapUsageService implements PulseService {
 
     if (clusterMember != null) {
       // response
-      responseJSON.put("heapUsageTrend", mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_HEAP_USAGE_SAMPLE)));
+      responseJSON.put(
+          "heapUsageTrend",
+          mapper.valueToTree(
+              clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_HEAP_USAGE_SAMPLE)));
       responseJSON.put("currentHeapUsage", clusterMember.getCurrentHeapSize());
     }
 

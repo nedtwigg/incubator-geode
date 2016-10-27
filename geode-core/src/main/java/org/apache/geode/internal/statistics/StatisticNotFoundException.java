@@ -18,31 +18,23 @@ package org.apache.geode.internal.statistics;
 
 import org.apache.geode.GemFireCheckedException;
 
-/**
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class StatisticNotFoundException extends GemFireCheckedException {
 
   private static final long serialVersionUID = -6232790142851058203L;
 
-  /**
-   * Creates a new <code>StatisticNotFoundException</code> with no detailed message.
-   */
+  /** Creates a new <code>StatisticNotFoundException</code> with no detailed message. */
   public StatisticNotFoundException() {
     super();
   }
 
-  /**
-   * Creates a new <code>StatisticNotFoundException</code> with the given detail
-   * message.
-   */
+  /** Creates a new <code>StatisticNotFoundException</code> with the given detail message. */
   public StatisticNotFoundException(String message) {
     super(message);
   }
 
   /**
-   * Creates a new <code>StatisticNotFoundException</code> with the given detail
-   * message and cause.
+   * Creates a new <code>StatisticNotFoundException</code> with the given detail message and cause.
    */
   public StatisticNotFoundException(String message, Throwable cause) {
     super(message);
@@ -50,12 +42,11 @@ public class StatisticNotFoundException extends GemFireCheckedException {
   }
 
   /**
-   * Creates a new <code>StatisticNotFoundException</code> with the given cause and
-   * no detail message
+   * Creates a new <code>StatisticNotFoundException</code> with the given cause and no detail
+   * message
    */
   public StatisticNotFoundException(Throwable cause) {
     super();
     this.initCause(cause);
   }
-
 }

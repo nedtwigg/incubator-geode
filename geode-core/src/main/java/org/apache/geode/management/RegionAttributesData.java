@@ -23,7 +23,7 @@ import org.apache.geode.cache.Region;
 
 /**
  * Composite data type used to distribute attributes for a {@link Region}.
- * 
+ *
  * @since GemFire 7.0
  */
 public class RegionAttributesData {
@@ -60,13 +60,72 @@ public class RegionAttributesData {
   private boolean offHeap;
 
   /**
-   * 
-   * This constructor is to be used by internal JMX framework only. User should
-   * not try to create an instance of this class.
+   * This constructor is to be used by internal JMX framework only. User should not try to create an
+   * instance of this class.
    */
-  @ConstructorProperties({ "cacheLoaderClassName", "cacheWriterClassName", "keyConstraintClassName", "valueConstraintClassName", "regionTimeToLive", "regionIdleTimeout", "entryTimeToLive", "entryIdleTimeout", "customEntryTimeToLive", "customEntryIdleTimeout", "ignoreJTA", "dataPolicy", "scope", "initialCapacity", "loadFactor", "lockGrantor", "multicastEnabled", "concurrencyLevel", "indexMaintenanceSynchronous", "statisticsEnabled", "subscriptionConflationEnabled", "asyncConflationEnabled", "poolName", "cloningEnabled", "diskStoreName", "interestPolicy", "diskSynchronous", "cacheListeners", "compressorClassName", "offHeap" })
-
-  public RegionAttributesData(String cacheLoaderClassName, String cacheWriterClassName, String keyConstraintClassName, String valueConstraintClassName, int regionTimeToLive, int regionIdleTimeout, int entryTimeToLive, int entryIdleTimeout, String customEntryTimeToLive, String customEntryIdleTimeout, boolean ignoreJTA, String dataPolicy, String scope, int initialCapacity, float loadFactor, boolean lockGrantor, boolean multicastEnabled, int concurrencyLevel, boolean indexMaintenanceSynchronous, boolean statisticsEnabled, boolean subscriptionConflationEnabled, boolean asyncConflationEnabled, String poolName, boolean cloningEnabled, String diskStoreName, String interestPolicy, boolean diskSynchronous, String[] cacheListeners, String compressorClassName, boolean offHeap) {
+  @ConstructorProperties({
+    "cacheLoaderClassName",
+    "cacheWriterClassName",
+    "keyConstraintClassName",
+    "valueConstraintClassName",
+    "regionTimeToLive",
+    "regionIdleTimeout",
+    "entryTimeToLive",
+    "entryIdleTimeout",
+    "customEntryTimeToLive",
+    "customEntryIdleTimeout",
+    "ignoreJTA",
+    "dataPolicy",
+    "scope",
+    "initialCapacity",
+    "loadFactor",
+    "lockGrantor",
+    "multicastEnabled",
+    "concurrencyLevel",
+    "indexMaintenanceSynchronous",
+    "statisticsEnabled",
+    "subscriptionConflationEnabled",
+    "asyncConflationEnabled",
+    "poolName",
+    "cloningEnabled",
+    "diskStoreName",
+    "interestPolicy",
+    "diskSynchronous",
+    "cacheListeners",
+    "compressorClassName",
+    "offHeap"
+  })
+  public RegionAttributesData(
+      String cacheLoaderClassName,
+      String cacheWriterClassName,
+      String keyConstraintClassName,
+      String valueConstraintClassName,
+      int regionTimeToLive,
+      int regionIdleTimeout,
+      int entryTimeToLive,
+      int entryIdleTimeout,
+      String customEntryTimeToLive,
+      String customEntryIdleTimeout,
+      boolean ignoreJTA,
+      String dataPolicy,
+      String scope,
+      int initialCapacity,
+      float loadFactor,
+      boolean lockGrantor,
+      boolean multicastEnabled,
+      int concurrencyLevel,
+      boolean indexMaintenanceSynchronous,
+      boolean statisticsEnabled,
+      boolean subscriptionConflationEnabled,
+      boolean asyncConflationEnabled,
+      String poolName,
+      boolean cloningEnabled,
+      String diskStoreName,
+      String interestPolicy,
+      boolean diskSynchronous,
+      String[] cacheListeners,
+      String compressorClassName,
+      boolean offHeap) {
 
     this.cacheLoaderClassName = cacheLoaderClassName;
     this.cacheWriterClassName = cacheWriterClassName;
@@ -100,125 +159,93 @@ public class RegionAttributesData {
     this.offHeap = offHeap;
   }
 
-  /**
-   * Returns the Class of cache loader associated with this region.
-   */
+  /** Returns the Class of cache loader associated with this region. */
   public String getCacheLoaderClassName() {
     return cacheLoaderClassName;
   }
 
-  /** 
-   * Returns the Class of the cache writer associated with this region.
-   */
+  /** Returns the Class of the cache writer associated with this region. */
   public String getCacheWriterClassName() {
     return cacheWriterClassName;
   }
 
-  /**
-   * Returns the Class that the keys in this region are constrained to
-   * (must be an instance of).
-   */
+  /** Returns the Class that the keys in this region are constrained to (must be an instance of). */
   public String getKeyConstraintClassName() {
     return keyConstraintClassName;
   }
 
   /**
-   * Returns the Class that the values in this region are constrained to
-   * (must be an instance of).
+   * Returns the Class that the values in this region are constrained to (must be an instance of).
    */
   public String getValueConstraintClassName() {
     return valueConstraintClassName;
   }
 
-  /** 
-   * Returns the time to live expiration for the Region.
-   */
+  /** Returns the time to live expiration for the Region. */
   public int getRegionTimeToLive() {
     return regionTimeToLive;
   }
 
-  /**
-   * Returns the idle timeout expiration for the Region.
-   */
+  /** Returns the idle timeout expiration for the Region. */
   public int getRegionIdleTimeout() {
     return regionIdleTimeout;
   }
 
-  /**
-   * Returns the time to live expiration for entries in the Region.
-   */
+  /** Returns the time to live expiration for entries in the Region. */
   public int getEntryTimeToLive() {
     return entryTimeToLive;
   }
 
-  /**
-   * Returns the idle timeout expiration for entries in the Region.
-   */
+  /** Returns the idle timeout expiration for entries in the Region. */
   public int getEntryIdleTimeout() {
     return entryIdleTimeout;
   }
 
-  /** 
-   * Returns the custom time to live expiration for entries in the
-   * Region, if one exists.
-   */
+  /** Returns the custom time to live expiration for entries in the Region, if one exists. */
   public String getCustomEntryTimeToLive() {
     return customEntryTimeToLive;
   }
 
-  /**
-   * Returns the custom idle timeout expiration for entries in the Region,
-   * if one exists.
-   */
+  /** Returns the custom idle timeout expiration for entries in the Region, if one exists. */
   public String getCustomEntryIdleTimeout() {
     return customEntryIdleTimeout;
   }
 
   /**
    * Returns whether JTA transactions are being ignored.
-   * 
+   *
    * @return True if JTA transactions are being ignored, false otherwise.
    */
   public boolean isIgnoreJTA() {
     return ignoreJTA;
   }
 
-  /**
-   * Returns the data policy.
-   */
+  /** Returns the data policy. */
   public String getDataPolicy() {
     return dataPolicy;
   }
 
-  /**
-   * Returns the scope.
-   */
+  /** Returns the scope. */
   public String getScope() {
     return scope;
   }
 
-  /**
-   * Returns the initial capacity of entries in the Region.
-   */
+  /** Returns the initial capacity of entries in the Region. */
   public int getInitialCapacity() {
     return initialCapacity;
   }
 
-  /**
-   * Returns the load factor of entries in the Region.
-   */
+  /** Returns the load factor of entries in the Region. */
   public float getLoadFactor() {
     return loadFactor;
   }
 
   /**
-   * Returns whether this member is configured to become the lock granter 
-   * when the Region is created. It does not indicate whether this member
-   * is currently the lock granter for the Region.
-   * 
-   * @return True if this member is configured to start the Region as the
-   *         lock granter, false otherwise. Always returns false if the scope
-   *         of the Region is not <code>Scope.GLOBAL</code>
+   * Returns whether this member is configured to become the lock granter when the Region is
+   * created. It does not indicate whether this member is currently the lock granter for the Region.
+   *
+   * @return True if this member is configured to start the Region as the lock granter, false
+   *     otherwise. Always returns false if the scope of the Region is not <code>Scope.GLOBAL</code>
    */
   public boolean isLockGrantor() {
     return lockGrantor;
@@ -226,35 +253,31 @@ public class RegionAttributesData {
 
   /**
    * Returns whether multicast communication is enabled for the Region.
-   * 
+   *
    * @return True if multicast communication is enabled, false otherwise.
    */
   public boolean isMulticastEnabled() {
     return multicastEnabled;
   }
 
-  /**
-   * Returns the concurrency level for entries in the Region.
-   */
+  /** Returns the concurrency level for entries in the Region. */
   public int getConcurrencyLevel() {
     return concurrencyLevel;
   }
 
   /**
-   * Returns whether query service index maintenance will be done
-   * synchronously.
-   * 
-   * @return True if query service index maintenance will be done
-   *         synchronously or false if it will be done asynchronously.
+   * Returns whether query service index maintenance will be done synchronously.
+   *
+   * @return True if query service index maintenance will be done synchronously or false if it will
+   *     be done asynchronously.
    */
   public boolean isIndexMaintenanceSynchronous() {
     return indexMaintenanceSynchronous;
   }
 
   /**
-   * Returns whether statistic collection is enabled for the Region and its
-   * entries.
-   * 
+   * Returns whether statistic collection is enabled for the Region and its entries.
+   *
    * @return True if statistic collection is enabled, false otherwise.
    */
   public boolean isStatisticsEnabled() {
@@ -262,9 +285,9 @@ public class RegionAttributesData {
   }
 
   /**
-   * Returns whether conflation is enabled for sending messages from a cache
-   * server to its clients.  This value only has meaning for client to server
-   * communication and is not relevant for peer to peer communication.
+   * Returns whether conflation is enabled for sending messages from a cache server to its clients.
+   * This value only has meaning for client to server communication and is not relevant for peer to
+   * peer communication.
    *
    * @return True if conflation is enabled, false otherwise.
    */
@@ -273,8 +296,7 @@ public class RegionAttributesData {
   }
 
   /**
-   * Returns whether asynchronous conflation is enabled for sending messages
-   * to peers.
+   * Returns whether asynchronous conflation is enabled for sending messages to peers.
    *
    * @return True if asynchronous conflation is enabled, false otherwise.
    */
@@ -283,11 +305,10 @@ public class RegionAttributesData {
   }
 
   /**
-   * Returns the name of the Pool that this Region will use to communicate
-   * with servers, if any.
-   * 
-   * @return The name of the Pool used to communicate with servers or null if the
-   *         host member communicates with peers.
+   * Returns the name of the Pool that this Region will use to communicate with servers, if any.
+   *
+   * @return The name of the Pool used to communicate with servers or null if the host member
+   *     communicates with peers.
    */
   public String getPoolName() {
     return poolName;
@@ -302,23 +323,19 @@ public class RegionAttributesData {
     return cloningEnabled;
   }
 
-  /**
-   * Returns the name of the DiskStore associated with the Region.
-   */
+  /** Returns the name of the DiskStore associated with the Region. */
   public String getDiskStoreName() {
     return diskStoreName;
   }
 
-  /** 
-   * Returns the subscriber's interest policy.
-   */
+  /** Returns the subscriber's interest policy. */
   public String getInterestPolicy() {
     return interestPolicy;
   }
 
   /**
    * Returns whether disk writes are synchronous.
-   * 
+   *
    * @return True if disk writes are synchronous, false otherwise.
    */
   public boolean isDiskSynchronous() {
@@ -326,8 +343,7 @@ public class RegionAttributesData {
   }
 
   /**
-   * Returns a list of CacheListeners for the Region.
-   * An empty array if no listener is specified.
+   * Returns a list of CacheListeners for the Region. An empty array if no listener is specified.
    */
   public String[] getCacheListeners() {
     return cacheListeners;
@@ -335,6 +351,7 @@ public class RegionAttributesData {
 
   /**
    * Returns the compressor class name used by the region.
+   *
    * @return null if no compression is used.
    */
   public String getCompressorClassName() {
@@ -343,19 +360,76 @@ public class RegionAttributesData {
 
   /**
    * Returns true if the region uses off-heap memory.
+   *
    * @return false if the region does not use off-heap memory.
    */
   public boolean getOffHeap() {
     return this.offHeap;
   }
 
-  /**
-   * String representation of RegionAttributesData
-   */
+  /** String representation of RegionAttributesData */
   @Override
   public String toString() {
-    return "RegionAttributesData [asyncConflationEnabled=" + asyncConflationEnabled + ", cacheListeners=" + Arrays.toString(cacheListeners) + ", cacheLoaderClassName=" + cacheLoaderClassName + ", cacheWriterClassName=" + cacheWriterClassName + ", cloningEnabled=" + cloningEnabled + ", compressorClassName=" + compressorClassName + ", concurrencyLevel=" + concurrencyLevel + ", customEntryIdleTimeout=" + customEntryIdleTimeout + ", customEntryTimeToLive=" + customEntryTimeToLive + ", dataPolicy=" + dataPolicy + ", diskStoreName=" + diskStoreName + ", diskSynchronous=" + diskSynchronous + ", entryIdleTimeout=" + entryIdleTimeout + ", entryTimeToLive=" + entryTimeToLive + ", ignoreJTA=" + ignoreJTA + ", indexMaintenanceSynchronous=" + indexMaintenanceSynchronous + ", initialCapacity=" + initialCapacity + ", interestPolicy=" + interestPolicy + ", keyConstraintClassName=" + keyConstraintClassName + ", loadFactor=" + loadFactor + ", lockGrantor=" + lockGrantor + ", multicastEnabled="
-        + multicastEnabled + ", offHeap=" + offHeap + ", poolName=" + poolName + ", regionIdleTimeout=" + regionIdleTimeout + ", regionTimeToLive=" + regionTimeToLive + ", scope=" + scope + ", statisticsEnabled=" + statisticsEnabled + ", subscriptionConflationEnabled=" + subscriptionConflationEnabled + ", valueConstraintClassName=" + valueConstraintClassName + "]";
+    return "RegionAttributesData [asyncConflationEnabled="
+        + asyncConflationEnabled
+        + ", cacheListeners="
+        + Arrays.toString(cacheListeners)
+        + ", cacheLoaderClassName="
+        + cacheLoaderClassName
+        + ", cacheWriterClassName="
+        + cacheWriterClassName
+        + ", cloningEnabled="
+        + cloningEnabled
+        + ", compressorClassName="
+        + compressorClassName
+        + ", concurrencyLevel="
+        + concurrencyLevel
+        + ", customEntryIdleTimeout="
+        + customEntryIdleTimeout
+        + ", customEntryTimeToLive="
+        + customEntryTimeToLive
+        + ", dataPolicy="
+        + dataPolicy
+        + ", diskStoreName="
+        + diskStoreName
+        + ", diskSynchronous="
+        + diskSynchronous
+        + ", entryIdleTimeout="
+        + entryIdleTimeout
+        + ", entryTimeToLive="
+        + entryTimeToLive
+        + ", ignoreJTA="
+        + ignoreJTA
+        + ", indexMaintenanceSynchronous="
+        + indexMaintenanceSynchronous
+        + ", initialCapacity="
+        + initialCapacity
+        + ", interestPolicy="
+        + interestPolicy
+        + ", keyConstraintClassName="
+        + keyConstraintClassName
+        + ", loadFactor="
+        + loadFactor
+        + ", lockGrantor="
+        + lockGrantor
+        + ", multicastEnabled="
+        + multicastEnabled
+        + ", offHeap="
+        + offHeap
+        + ", poolName="
+        + poolName
+        + ", regionIdleTimeout="
+        + regionIdleTimeout
+        + ", regionTimeToLive="
+        + regionTimeToLive
+        + ", scope="
+        + scope
+        + ", statisticsEnabled="
+        + statisticsEnabled
+        + ", subscriptionConflationEnabled="
+        + subscriptionConflationEnabled
+        + ", valueConstraintClassName="
+        + valueConstraintClassName
+        + "]";
   }
-
 }

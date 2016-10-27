@@ -46,19 +46,19 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
  * A single client to server connection.
- * 
- * The execute  method of this class is synchronized to
- * prevent two ops from using the client to server connection
- *  at the same time.
- * @since GemFire 5.7
  *
+ * <p>The execute method of this class is synchronized to prevent two ops from using the client to
+ * server connection at the same time.
+ *
+ * @since GemFire 5.7
  */
 public class ConnectionImpl implements Connection {
 
   private static Logger logger = LogService.getLogger();
 
-  /**Test hook to simulate a client crashing. If true, we will
-   * not notify the server when we close the connection.
+  /**
+   * Test hook to simulate a client crashing. If true, we will not notify the server when we close
+   * the connection.
    */
   private static boolean TEST_DURABLE_CLIENT_CRASH = false;
 
@@ -70,9 +70,9 @@ public class ConnectionImpl implements Connection {
   private volatile boolean connectFinished;
   private final AtomicBoolean destroyed = new AtomicBoolean();
   private Endpoint endpoint;
-  private short wanSiteVersion = -1;//In Gateway communication version of connected wan site
-                                    //will be stored after successful handshake
-                                    //  private final CancelCriterion cancelCriterion;
+  private short wanSiteVersion = -1; //In Gateway communication version of connected wan site
+  //will be stored after successful handshake
+  //  private final CancelCriterion cancelCriterion;
   private final InternalDistributedSystem ds;
 
   private OutputStream out;
@@ -87,8 +87,20 @@ public class ConnectionImpl implements Connection {
     this.ds = ds;
   }
 
-  public ServerQueueStatus connect(EndpointManager endpointManager, ServerLocation location, HandShake handShake, int socketBufferSize, int handShakeTimeout, int readTimeout, byte communicationMode, GatewaySender sender, SocketCreator sc) throws IOException {
-    theSocket = sc.connectForClient(location.getHostName(), location.getPort(), handShakeTimeout, socketBufferSize);
+  public ServerQueueStatus connect(
+      EndpointManager endpointManager,
+      ServerLocation location,
+      HandShake handShake,
+      int socketBufferSize,
+      int handShakeTimeout,
+      int readTimeout,
+      byte communicationMode,
+      GatewaySender sender,
+      SocketCreator sc)
+      throws IOException {
+    theSocket =
+        sc.connectForClient(
+            location.getHostName(), location.getPort(), handShakeTimeout, socketBufferSize);
     theSocket.setTcpNoDelay(true);
     //System.out.println("ConnectionImpl setting buffer sizes: " +
     // socketBufferSize);
@@ -242,14 +254,16 @@ public class ConnectionImpl implements Connection {
   public Object execute(Op op) throws Exception {
     Object result;
     // Do not synchronize when used for GatewaySender
-    // as the same connection is being used 
+    // as the same connection is being used
     if ((op instanceof AbstractOp) && ((AbstractOp) op).isGatewaySenderOp()) {
       result = op.attempt(this);
       endpoint.updateLastExecute();
       return result;
     }
     synchronized (this) {
-      if (op instanceof ExecuteFunctionOpImpl || op instanceof ExecuteRegionFunctionOpImpl || op instanceof ExecuteRegionFunctionSingleHopOpImpl) {
+      if (op instanceof ExecuteFunctionOpImpl
+          || op instanceof ExecuteRegionFunctionOpImpl
+          || op instanceof ExecuteRegionFunctionSingleHopOpImpl) {
         int earliertimeout = this.getSocket().getSoTimeout();
         this.getSocket().setSoTimeout(GemFireCacheImpl.getClientFunctionTimeout());
         try {
@@ -263,7 +277,6 @@ public class ConnectionImpl implements Connection {
     }
     endpoint.updateLastExecute();
     return result;
-
   }
 
   public static void loadEmergencyClasses() {
@@ -298,9 +311,7 @@ public class ConnectionImpl implements Connection {
     this.handShake = handShake;
   }
 
-  /**
-   * test hook
-   */
+  /** test hook */
   public static void setTEST_DURABLE_CLIENT_CRASH(boolean v) {
     TEST_DURABLE_CLIENT_CRASH = v;
   }
@@ -317,7 +328,14 @@ public class ConnectionImpl implements Connection {
 
   private void verifySocketBufferSize(int requestedBufferSize, int actualBufferSize, String type) {
     if (actualBufferSize < requestedBufferSize) {
-      logger.info(LocalizedMessage.create(LocalizedStrings.Connection_SOCKET_0_IS_1_INSTEAD_OF_THE_REQUESTED_2, new Object[] { new StringBuilder(type).append(" buffer size").toString(), actualBufferSize, requestedBufferSize }));
+      logger.info(
+          LocalizedMessage.create(
+              LocalizedStrings.Connection_SOCKET_0_IS_1_INSTEAD_OF_THE_REQUESTED_2,
+              new Object[] {
+                new StringBuilder(type).append(" buffer size").toString(),
+                actualBufferSize,
+                requestedBufferSize
+              }));
     }
   }
 }

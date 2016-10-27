@@ -103,13 +103,20 @@ public class WanCommandListDUnitTest extends WANCommandTestBase {
       getLogWriter().info("testListGatewaySender" + strCmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData tableResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_SENDER).retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
-      List<String> result_senderIds = tableResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
+      TabularResultData tableResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_SENDER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
+      List<String> result_senderIds =
+          tableResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
       assertTrue(result_senderIds.contains("ln_Serial"));
       assertTrue(result_senderIds.contains("ln_Parallel"));
       assertEquals(5, result_senderIds.size());
 
-      assertEquals(null, ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER));
+      assertEquals(
+          null,
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER));
     } else {
       fail("testListGatewaySender failed as did not get CommandResult");
     }
@@ -145,13 +152,19 @@ public class WanCommandListDUnitTest extends WANCommandTestBase {
       getLogWriter().info("testListGatewayReceiver" + strCmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData tableResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER).retrieveTable(CliStrings.TABLE_GATEWAY_RECEIVER);
+      TabularResultData tableResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_RECEIVER);
       List<String> ports = tableResultData.retrieveAllValues(CliStrings.RESULT_PORT);
       assertEquals(2, ports.size());
       List<String> hosts = tableResultData.retrieveAllValues(CliStrings.RESULT_HOST_MEMBER);
       assertEquals(2, hosts.size());
 
-      assertEquals(null, ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_SENDER));
+      assertEquals(
+          null,
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_SENDER));
 
     } else {
       fail("testListGatewayReceiver failed as did not get CommandResult");
@@ -196,13 +209,20 @@ public class WanCommandListDUnitTest extends WANCommandTestBase {
       getLogWriter().info("testListGatewaySenderGatewayReceiver : " + strCmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData tableSenderResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_SENDER).retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
-      List<String> senders = tableSenderResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
+      TabularResultData tableSenderResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_SENDER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
+      List<String> senders =
+          tableSenderResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
       assertEquals(4, senders.size());
       List<String> hosts = tableSenderResultData.retrieveAllValues(CliStrings.RESULT_HOST_MEMBER);
       assertEquals(4, hosts.size());
 
-      TabularResultData tableReceiverResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER).retrieveTable(CliStrings.TABLE_GATEWAY_RECEIVER);
+      TabularResultData tableReceiverResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_RECEIVER);
       List<String> ports = tableReceiverResultData.retrieveAllValues(CliStrings.RESULT_PORT);
       assertEquals(1, ports.size());
       hosts = tableReceiverResultData.retrieveAllValues(CliStrings.RESULT_HOST_MEMBER);
@@ -243,15 +263,20 @@ public class WanCommandListDUnitTest extends WANCommandTestBase {
     vm7.invoke(() -> createSender("ln_Parallel", 1, true, 100, 400, false, false, null, false));
 
     pause(10000);
-    String command = CliStrings.LIST_GATEWAY + " --" + CliStrings.LIST_GATEWAY__GROUP + "=Serial_Sender";
+    String command =
+        CliStrings.LIST_GATEWAY + " --" + CliStrings.LIST_GATEWAY__GROUP + "=Serial_Sender";
     CommandResult cmdResult = executeCommand(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
       getLogWriter().info("testListGatewaySenderGatewayReceiver_group : " + strCmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData tableSenderResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_SENDER).retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
-      List<String> senders = tableSenderResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
+      TabularResultData tableSenderResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_SENDER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
+      List<String> senders =
+          tableSenderResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
       assertEquals(4, senders.size());
       List<String> hosts = tableSenderResultData.retrieveAllValues(CliStrings.RESULT_HOST_MEMBER);
       assertEquals(4, hosts.size());
@@ -263,11 +288,18 @@ public class WanCommandListDUnitTest extends WANCommandTestBase {
     command = CliStrings.LIST_GATEWAY + " --" + CliStrings.LIST_GATEWAY__GROUP + "=Parallel_Sender";
     cmdResult = executeCommand(command);
     if (cmdResult != null) {
-      TabularResultData tableSenderResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_SENDER).retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
-      List<String> senders = tableSenderResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
+      TabularResultData tableSenderResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_SENDER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
+      List<String> senders =
+          tableSenderResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
       assertEquals(5, senders.size());
 
-      TabularResultData tableReceiverResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER).retrieveTable(CliStrings.TABLE_GATEWAY_RECEIVER);
+      TabularResultData tableReceiverResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_RECEIVER);
       List<String> ports = tableReceiverResultData.retrieveAllValues(CliStrings.RESULT_PORT);
       assertEquals(1, ports.size());
 
@@ -285,11 +317,18 @@ public class WanCommandListDUnitTest extends WANCommandTestBase {
       getLogWriter().info("testListGatewaySenderGatewayReceiver_group : " + strCmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData tableSenderResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_SENDER).retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
-      List<String> senders = tableSenderResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
+      TabularResultData tableSenderResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_SENDER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
+      List<String> senders =
+          tableSenderResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
       assertEquals(1, senders.size());
 
-      TabularResultData tableReceiverResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER).retrieveTable(CliStrings.TABLE_GATEWAY_RECEIVER);
+      TabularResultData tableReceiverResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_RECEIVER);
       List<String> ports = tableReceiverResultData.retrieveAllValues(CliStrings.RESULT_PORT);
       assertEquals(1, ports.size());
 
@@ -297,42 +336,63 @@ public class WanCommandListDUnitTest extends WANCommandTestBase {
       fail("testListGatewaySenderGatewayReceiver_group failed as did not get CommandResult");
     }
 
-    command = CliStrings.LIST_GATEWAY + " --" + CliStrings.LIST_GATEWAY__GROUP + "=Serial_Sender,Parallel_Sender";
+    command =
+        CliStrings.LIST_GATEWAY
+            + " --"
+            + CliStrings.LIST_GATEWAY__GROUP
+            + "=Serial_Sender,Parallel_Sender";
     cmdResult = executeCommand(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
       getLogWriter().info("testListGatewaySenderGatewayReceiver_group : " + strCmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData tableSenderResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_SENDER).retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
-      List<String> senders = tableSenderResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
+      TabularResultData tableSenderResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_SENDER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
+      List<String> senders =
+          tableSenderResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
       assertEquals(5, senders.size());
 
-      TabularResultData tableReceiverResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER).retrieveTable(CliStrings.TABLE_GATEWAY_RECEIVER);
+      TabularResultData tableReceiverResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_RECEIVER);
       List<String> ports = tableReceiverResultData.retrieveAllValues(CliStrings.RESULT_PORT);
       assertEquals(1, ports.size());
     } else {
       fail("testListGatewaySenderGatewayReceiver_group failed as did not get CommandResult");
     }
 
-    command = CliStrings.LIST_GATEWAY + " --" + CliStrings.LIST_GATEWAY__GROUP + "=Serial_Sender,Parallel_Sender,Receiver_Group";
+    command =
+        CliStrings.LIST_GATEWAY
+            + " --"
+            + CliStrings.LIST_GATEWAY__GROUP
+            + "=Serial_Sender,Parallel_Sender,Receiver_Group";
     cmdResult = executeCommand(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
       getLogWriter().info("testListGatewaySenderGatewayReceiver_group : " + strCmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
 
-      TabularResultData tableSenderResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_SENDER).retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
-      List<String> senders = tableSenderResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
+      TabularResultData tableSenderResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_SENDER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_SENDER);
+      List<String> senders =
+          tableSenderResultData.retrieveAllValues(CliStrings.RESULT_GATEWAY_SENDER_ID);
       assertEquals(5, senders.size());
 
-      TabularResultData tableReceiverResultData = ((CompositeResultData) cmdResult.getResultData()).retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER).retrieveTable(CliStrings.TABLE_GATEWAY_RECEIVER);
+      TabularResultData tableReceiverResultData =
+          ((CompositeResultData) cmdResult.getResultData())
+              .retrieveSection(CliStrings.SECTION_GATEWAY_RECEIVER)
+              .retrieveTable(CliStrings.TABLE_GATEWAY_RECEIVER);
       List<String> ports = tableReceiverResultData.retrieveAllValues(CliStrings.RESULT_PORT);
       assertEquals(1, ports.size());
 
     } else {
       fail("testListGatewaySenderGatewayReceiver_group failed as did not get CommandResult");
     }
-
   }
 }

@@ -115,10 +115,7 @@ public class NanoTimerJUnitTest {
     assertTrue(timer.getTimeSinceReset() <= ts.getTime() - timer.getLastResetTime());
   }
 
-  /**
-   * Simple deterministic clock. Any time you want
-   * your clock to tick call incTime.
-   */
+  /** Simple deterministic clock. Any time you want your clock to tick call incTime. */
   private class TestTimeService implements TimeService {
     private long now;
 

@@ -17,12 +17,10 @@
 package org.apache.geode.internal.cache.partitioned.rebalance;
 
 /**
- * The composite director performs a complete rebalance, which can remove over
- * redundant buckets, satisfy redundancy, move buckets, and move primaries.
- * 
- * This is the most commonly used director.
- * 
- * 
+ * The composite director performs a complete rebalance, which can remove over redundant buckets,
+ * satisfy redundancy, move buckets, and move primaries.
+ *
+ * <p>This is the most commonly used director.
  */
 public class CompositeDirector extends RebalanceDirectorAdapter {
 
@@ -44,13 +42,16 @@ public class CompositeDirector extends RebalanceDirectorAdapter {
   private PartitionedRegionLoadModel model;
 
   /**
-  * @param removeOverRedundancy true to remove buckets that exceed redundancy
-  * levels
-  * @param satisfyRedundancy true to satisfy redundancy as part of the operation
-  * @param moveBuckets true to move buckets as part of the operation
-  * @param movePrimaries true to move primaries as part of the operation
-  */
-  public CompositeDirector(boolean removeOverRedundancy, boolean satisfyRedundancy, boolean moveBuckets, boolean movePrimaries) {
+   * @param removeOverRedundancy true to remove buckets that exceed redundancy levels
+   * @param satisfyRedundancy true to satisfy redundancy as part of the operation
+   * @param moveBuckets true to move buckets as part of the operation
+   * @param movePrimaries true to move primaries as part of the operation
+   */
+  public CompositeDirector(
+      boolean removeOverRedundancy,
+      boolean satisfyRedundancy,
+      boolean moveBuckets,
+      boolean movePrimaries) {
     this.initialRemoveOverRedundancy = removeOverRedundancy;
     this.initialSatisfyRedundancy = satisfyRedundancy;
     this.initialMoveBuckets = moveBuckets;
@@ -115,5 +116,4 @@ public class CompositeDirector extends RebalanceDirectorAdapter {
 
     return attemptedOperation;
   }
-
 }

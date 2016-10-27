@@ -18,21 +18,16 @@
 package org.apache.geode.distributed.internal;
 
 /**
- * Used to implement statistics on a pool.
- * The implementation will call these methods at to proper time.
- *
+ * Used to implement statistics on a pool. The implementation will call these methods at to proper
+ * time.
  *
  * @since GemFire 3.5
  */
 public interface PoolStatHelper {
 
-  /**
-   * Called each time the pool starts working on a job.
-   */
+  /** Called each time the pool starts working on a job. */
   public void startJob();
 
-  /**
-   * Called each time the pool finishes a job it started.
-   */
+  /** Called each time the pool finishes a job it started. */
   public void endJob();
 }

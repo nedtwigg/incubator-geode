@@ -83,12 +83,9 @@ class RestAPITestBase extends JUnit4DistributedTestCase {
     postSetUpRestAPITestBase();
   }
 
-  private void postSetUpRestAPITestBase() throws Exception {
-  }
+  private void postSetUpRestAPITestBase() throws Exception {}
 
-  /**
-   * close the clients and teh servers
-   */
+  /** close the clients and teh servers */
   @Override
   public final void preTearDown() throws Exception {
     vm0.invoke(() -> closeCache());
@@ -97,9 +94,7 @@ class RestAPITestBase extends JUnit4DistributedTestCase {
     vm3.invoke(() -> closeCache());
   }
 
-  /**
-   * close the cache
-   */
+  /** close the cache */
   private void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
@@ -129,11 +124,18 @@ class RestAPITestBase extends JUnit4DistributedTestCase {
   }
 
   private int getInvocationCount() {
-    RestFunctionTemplate function = (RestFunctionTemplate) FunctionService.getFunction(getFunctionID());
+    RestFunctionTemplate function =
+        (RestFunctionTemplate) FunctionService.getFunction(getFunctionID());
     return function.invocationCount;
   }
 
-  CloseableHttpResponse executeFunctionThroughRestCall(String function, String regionName, String filter, String jsonBody, String groups, String members) {
+  CloseableHttpResponse executeFunctionThroughRestCall(
+      String function,
+      String regionName,
+      String filter,
+      String jsonBody,
+      String groups,
+      String members) {
     System.out.println("Entering executeFunctionThroughRestCall");
     CloseableHttpResponse value = null;
     try {
@@ -141,7 +143,8 @@ class RestAPITestBase extends JUnit4DistributedTestCase {
       Random randomGenerator = new Random();
       int restURLIndex = randomGenerator.nextInt(restURLs.size());
 
-      HttpPost post = createHTTPPost(function, regionName, filter, restURLIndex, groups, members, jsonBody);
+      HttpPost post =
+          createHTTPPost(function, regionName, filter, restURLIndex, groups, members, jsonBody);
 
       System.out.println("Request: POST " + post.toString());
       value = httpclient.execute(post);
@@ -151,9 +154,20 @@ class RestAPITestBase extends JUnit4DistributedTestCase {
     return value;
   }
 
-  private HttpPost createHTTPPost(String function, String regionName, String filter, int restUrlIndex, String groups, String members, String jsonBody) {
+  private HttpPost createHTTPPost(
+      String function,
+      String regionName,
+      String filter,
+      int restUrlIndex,
+      String groups,
+      String members,
+      String jsonBody) {
     StringBuilder restURLBuilder = new StringBuilder();
-    restURLBuilder.append(restURLs.get(restUrlIndex)).append("/functions/").append(function).append("?");
+    restURLBuilder
+        .append(restURLs.get(restUrlIndex))
+        .append("/functions/")
+        .append(function)
+        .append("?");
     if (regionName != null && !regionName.isEmpty()) {
       restURLBuilder.append("onRegion=").append(regionName);
     } else if (groups != null && !groups.isEmpty()) {
@@ -179,7 +193,8 @@ class RestAPITestBase extends JUnit4DistributedTestCase {
     throw new RuntimeException("This method should be overridden");
   }
 
-  void assertHttpResponse(CloseableHttpResponse response, int httpCode, int expectedServerResponses) {
+  void assertHttpResponse(
+      CloseableHttpResponse response, int httpCode, int expectedServerResponses) {
     assertEquals(httpCode, response.getStatusLine().getStatusCode());
 
     //verify response has body flag, expected is true.

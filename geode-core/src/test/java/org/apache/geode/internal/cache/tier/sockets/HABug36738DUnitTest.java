@@ -43,14 +43,11 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * This is the bugtest for bug no. 36738. When Object of class
- * ClientUpdateMessage gets deserialized it thows NPE if region mentioned in the
- * ClientUpdateMessage is not present on the node. The test performs following
- * operations 
- * 1. Create server1 and HARegion. 
- * 2. Perform put operations on HARegion with the value as ClientUpdateMessage. 
- * 3. Create server2 and HARegion in it so that GII will happen. 
- * 4. Perform get operations from server2.
+ * This is the bugtest for bug no. 36738. When Object of class ClientUpdateMessage gets deserialized
+ * it thows NPE if region mentioned in the ClientUpdateMessage is not present on the node. The test
+ * performs following operations 1. Create server1 and HARegion. 2. Perform put operations on
+ * HARegion with the value as ClientUpdateMessage. 3. Create server2 and HARegion in it so that GII
+ * will happen. 4. Perform get operations from server2.
  */
 @Category(DistributedTest.class)
 public class HABug36738DUnitTest extends JUnit4DistributedTestCase {
@@ -101,7 +98,16 @@ public class HABug36738DUnitTest extends JUnit4DistributedTestCase {
     cache.createVMRegion(REGION_NAME, factory.createRegionAttributes());
 
     for (int i = 0; i < COUNT; i++) {
-      ClientUpdateMessage clientMessage = new ClientUpdateMessageImpl(EnumListenerEvent.AFTER_UPDATE, (LocalRegion) this.haRegion, null, ("value" + i).getBytes(), (byte) 0x01, null, new ClientProxyMembershipID(), new EventID(("memberID" + i).getBytes(), i, i));
+      ClientUpdateMessage clientMessage =
+          new ClientUpdateMessageImpl(
+              EnumListenerEvent.AFTER_UPDATE,
+              (LocalRegion) this.haRegion,
+              null,
+              ("value" + i).getBytes(),
+              (byte) 0x01,
+              null,
+              new ClientProxyMembershipID(),
+              new EventID(("memberID" + i).getBytes(), i, i));
 
       this.haRegion.put(i, clientMessage);
     }
@@ -114,11 +120,14 @@ public class HABug36738DUnitTest extends JUnit4DistributedTestCase {
     factory.setMirrorType(MirrorType.KEYS_VALUES);
     factory.setScope(Scope.DISTRIBUTED_ACK);
 
-    haRegion = HARegion.getInstance(HAREGION_NAME, (GemFireCacheImpl) cache, null, factory.createRegionAttributes());
+    haRegion =
+        HARegion.getInstance(
+            HAREGION_NAME, (GemFireCacheImpl) cache, null, factory.createRegionAttributes());
   }
 
   private void checkRegionQueueSize() {
-    final HARegion region = (HARegion) cache.getRegion(Region.SEPARATOR + HAHelper.getRegionQueueName(HAREGION_NAME));
+    final HARegion region =
+        (HARegion) cache.getRegion(Region.SEPARATOR + HAHelper.getRegionQueueName(HAREGION_NAME));
     assertNotNull(region);
     assertEquals(COUNT, region.size());
   }

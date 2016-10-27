@@ -16,10 +16,7 @@
  */
 package org.apache.geode.cache.query.internal.aggregate;
 
-/**
- * Computes the sum of distinct values for replicated region based queries.
- *
- */
+/** Computes the sum of distinct values for replicated region based queries. */
 public class SumDistinct extends DistinctAggregator {
 
   @Override
@@ -30,5 +27,4 @@ public class SumDistinct extends DistinctAggregator {
     }
     return downCast(sum);
   }
-
 }

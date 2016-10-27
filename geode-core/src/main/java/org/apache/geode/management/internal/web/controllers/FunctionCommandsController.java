@@ -30,9 +30,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * The FunctionCommandsController class implements GemFire Management REST API web service endpoints for the
- * Gfsh Function Commands.
- * <p/>
+ * The FunctionCommandsController class implements GemFire Management REST API web service endpoints
+ * for the Gfsh Function Commands.
+ *
+ * <p>
+ *
  * @see org.apache.geode.management.internal.cli.commands.FunctionCommands
  * @see org.apache.geode.management.internal.web.controllers.AbstractCommandsController
  * @see org.springframework.stereotype.Controller
@@ -50,18 +52,24 @@ public class FunctionCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/functions")
   @ResponseBody
-  public String listFunctions(@RequestParam(value = CliStrings.LIST_FUNCTION__GROUP, required = false)
-  final String[] groups, @RequestParam(value = CliStrings.LIST_FUNCTION__MEMBER, required = false)
-  final String[] members, @RequestParam(value = CliStrings.LIST_FUNCTION__MATCHES, required = false)
-  final String matches) {
+  public String listFunctions(
+      @RequestParam(value = CliStrings.LIST_FUNCTION__GROUP, required = false)
+          final String[] groups,
+      @RequestParam(value = CliStrings.LIST_FUNCTION__MEMBER, required = false)
+          final String[] members,
+      @RequestParam(value = CliStrings.LIST_FUNCTION__MATCHES, required = false)
+          final String matches) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.LIST_FUNCTION);
 
     if (hasValue(groups)) {
-      command.addOption(CliStrings.LIST_FUNCTION__GROUP, StringUtils.concat(groups, StringUtils.COMMA_DELIMITER));
+      command.addOption(
+          CliStrings.LIST_FUNCTION__GROUP, StringUtils.concat(groups, StringUtils.COMMA_DELIMITER));
     }
 
     if (hasValue(members)) {
-      command.addOption(CliStrings.LIST_FUNCTION__MEMBER, StringUtils.concat(members, StringUtils.COMMA_DELIMITER));
+      command.addOption(
+          CliStrings.LIST_FUNCTION__MEMBER,
+          StringUtils.concat(members, StringUtils.COMMA_DELIMITER));
     }
 
     if (hasValue(matches)) {
@@ -72,14 +80,20 @@ public class FunctionCommandsController extends AbstractCommandsController {
   }
 
   @RequestMapping(method = RequestMethod.POST, value = "/functions/{id}")
-  public Callable<ResponseEntity<String>> executeFunction(@PathVariable("id")
-  final String functionId, @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ONGROUPS, required = false)
-  final String groupName, @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ONMEMBER, required = false)
-  final String memberNameId, @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ONREGION, required = false)
-  final String regionNamePath, @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ARGUMENTS, required = false)
-  final String[] arguments, @RequestParam(value = CliStrings.EXECUTE_FUNCTION__FILTER, required = false)
-  final String filter, @RequestParam(value = CliStrings.EXECUTE_FUNCTION__RESULTCOLLECTOR, required = false)
-  final String resultCollector) {
+  public Callable<ResponseEntity<String>> executeFunction(
+      @PathVariable("id") final String functionId,
+      @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ONGROUPS, required = false)
+          final String groupName,
+      @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ONMEMBER, required = false)
+          final String memberNameId,
+      @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ONREGION, required = false)
+          final String regionNamePath,
+      @RequestParam(value = CliStrings.EXECUTE_FUNCTION__ARGUMENTS, required = false)
+          final String[] arguments,
+      @RequestParam(value = CliStrings.EXECUTE_FUNCTION__FILTER, required = false)
+          final String filter,
+      @RequestParam(value = CliStrings.EXECUTE_FUNCTION__RESULTCOLLECTOR, required = false)
+          final String resultCollector) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.EXECUTE_FUNCTION);
 
     command.addOption(CliStrings.EXECUTE_FUNCTION__ID, decode(functionId));
@@ -97,7 +111,9 @@ public class FunctionCommandsController extends AbstractCommandsController {
     }
 
     if (hasValue(arguments)) {
-      command.addOption(CliStrings.EXECUTE_FUNCTION__ARGUMENTS, StringUtils.concat(arguments, StringUtils.COMMA_DELIMITER));
+      command.addOption(
+          CliStrings.EXECUTE_FUNCTION__ARGUMENTS,
+          StringUtils.concat(arguments, StringUtils.COMMA_DELIMITER));
     }
 
     if (hasValue(filter)) {
@@ -112,10 +128,12 @@ public class FunctionCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/functions/{id}")
   @ResponseBody
-  public String destroyFunction(@PathVariable("id")
-  final String functionId, @RequestParam(value = CliStrings.DESTROY_FUNCTION__ONGROUPS, required = false)
-  final String groupName, @RequestParam(value = CliStrings.DESTROY_FUNCTION__ONMEMBER, required = false)
-  final String memberNameId) {
+  public String destroyFunction(
+      @PathVariable("id") final String functionId,
+      @RequestParam(value = CliStrings.DESTROY_FUNCTION__ONGROUPS, required = false)
+          final String groupName,
+      @RequestParam(value = CliStrings.DESTROY_FUNCTION__ONMEMBER, required = false)
+          final String memberNameId) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.DESTROY_FUNCTION);
 
     command.addOption(CliStrings.DESTROY_FUNCTION__ID, decode(functionId));
@@ -130,5 +148,4 @@ public class FunctionCommandsController extends AbstractCommandsController {
 
     return processCommand(command.toString());
   }
-
 }

@@ -35,44 +35,45 @@ import org.apache.geode.internal.process.StartupStatusListener;
 import org.apache.geode.i18n.StringId;
 
 /**
-  * Abstract implementation of {@link InternalLogWriter}.
-  * Each logger has a level and it will only print messages whose
-  * level is greater than or equal to the logger's level. The supported
-  * logger level constants, in ascending order, are:
-  * <ol>
-  * <li> {@link #ALL_LEVEL}
-  * <li> {@link #FINEST_LEVEL}
-  * <li> {@link #FINER_LEVEL}
-  * <li> {@link #FINE_LEVEL}
-  * <li> {@link #CONFIG_LEVEL}
-  * <li> {@link #INFO_LEVEL}
-  * <li> {@link #WARNING_LEVEL}
-  * <li> {@link #ERROR_LEVEL}
-  * <li> {@link #SEVERE_LEVEL}
-  * <li> {@link #NONE_LEVEL}
-  * </ol>
-  * <p>
-  * Subclasses must implement:
-  * <ol>
-  * <li> {@link #getLogWriterLevel}
-  * <li> {@link #put(int, String, Throwable)}
-  * <li> {@link #put(int, StringId, Object[], Throwable)}
-  * </ol>
-  */
+ * Abstract implementation of {@link InternalLogWriter}. Each logger has a level and it will only
+ * print messages whose level is greater than or equal to the logger's level. The supported logger
+ * level constants, in ascending order, are:
+ *
+ * <ol>
+ *   <li> {@link #ALL_LEVEL}
+ *   <li> {@link #FINEST_LEVEL}
+ *   <li> {@link #FINER_LEVEL}
+ *   <li> {@link #FINE_LEVEL}
+ *   <li> {@link #CONFIG_LEVEL}
+ *   <li> {@link #INFO_LEVEL}
+ *   <li> {@link #WARNING_LEVEL}
+ *   <li> {@link #ERROR_LEVEL}
+ *   <li> {@link #SEVERE_LEVEL}
+ *   <li> {@link #NONE_LEVEL}
+ * </ol>
+ *
+ * <p>Subclasses must implement:
+ *
+ * <ol>
+ *   <li> {@link #getLogWriterLevel}
+ *   <li> {@link #put(int, String, Throwable)}
+ *   <li> {@link #put(int, StringId, Object[], Throwable)}
+ * </ol>
+ */
 public abstract class LogWriterImpl implements InternalLogWriter {
 
   // Constants
   /**
-   * A bit mask to remove any potential flags added to the msgLevel.
-   * Intended to be used in {@link #getRealLogLevel}.
+   * A bit mask to remove any potential flags added to the msgLevel. Intended to be used in {@link
+   * #getRealLogLevel}.
    */
-  private final static int LOGGING_FLAGS_MASK = 0x00FFFFFF;
+  private static final int LOGGING_FLAGS_MASK = 0x00FFFFFF;
 
   /**
-   * A flag to indicate the {@link SecurityLogWriter#SECURITY_PREFIX} 
-   * should be appended to the log level.
+   * A flag to indicate the {@link SecurityLogWriter#SECURITY_PREFIX} should be appended to the log
+   * level.
    */
-  protected final static int SECURITY_LOGGING_FLAG = 0x40000000;
+  protected static final int SECURITY_LOGGING_FLAG = 0x40000000;
 
   static {
     Assert.assertTrue(ALL_LEVEL == Level.ALL.intValue());
@@ -84,14 +85,19 @@ public abstract class LogWriterImpl implements InternalLogWriter {
     Assert.assertTrue(INFO_LEVEL == Level.INFO.intValue());
     Assert.assertTrue(WARNING_LEVEL == Level.WARNING.intValue());
     Assert.assertTrue(SEVERE_LEVEL == Level.SEVERE.intValue());
-    int logLevels = FINEST_LEVEL | FINER_LEVEL | FINE_LEVEL | CONFIG_LEVEL | INFO_LEVEL | WARNING_LEVEL | SEVERE_LEVEL;
+    int logLevels =
+        FINEST_LEVEL
+            | FINER_LEVEL
+            | FINE_LEVEL
+            | CONFIG_LEVEL
+            | INFO_LEVEL
+            | WARNING_LEVEL
+            | SEVERE_LEVEL;
     Assert.assertTrue(logLevels == (logLevels & LOGGING_FLAGS_MASK));
     Assert.assertTrue(0 == (logLevels & SECURITY_LOGGING_FLAG));
   }
 
-  /**
-   * A listener which can be registered to be informed of startup events
-   */
+  /** A listener which can be registered to be informed of startup events */
   private static volatile StartupStatusListener startupListener;
 
   // Constructors
@@ -99,9 +105,7 @@ public abstract class LogWriterImpl implements InternalLogWriter {
     this.timeFormatter = DateFormatter.createDateFormat();
   }
 
-  /**
-   * Gets the writer's level.
-   */
+  /** Gets the writer's level. */
   public abstract int getLogWriterLevel();
 
   public boolean isSecure() {
@@ -119,39 +123,37 @@ public abstract class LogWriterImpl implements InternalLogWriter {
     return b.toString();
   }
 
-  /**
-   * Gets the string representation for the given <code>level</code> int code.
-   */
+  /** Gets the string representation for the given <code>level</code> int code. */
   public static String levelToString(int level) {
     switch (level) {
-    case ALL_LEVEL:
-      return "all";
-    case FINEST_LEVEL:
-      return "finest";
-    case FINER_LEVEL:
-      return "finer";
-    case FINE_LEVEL:
-      return "fine";
-    case CONFIG_LEVEL:
-      return "config";
-    case INFO_LEVEL:
-      return "info";
-    case WARNING_LEVEL:
-      return "warning";
-    case ERROR_LEVEL:
-      return "error";
-    case SEVERE_LEVEL:
-      return "severe";
-    case NONE_LEVEL:
-      return "none";
-    default:
-      return levelToStringSpecialCase(level);
+      case ALL_LEVEL:
+        return "all";
+      case FINEST_LEVEL:
+        return "finest";
+      case FINER_LEVEL:
+        return "finer";
+      case FINE_LEVEL:
+        return "fine";
+      case CONFIG_LEVEL:
+        return "config";
+      case INFO_LEVEL:
+        return "info";
+      case WARNING_LEVEL:
+        return "warning";
+      case ERROR_LEVEL:
+        return "error";
+      case SEVERE_LEVEL:
+        return "severe";
+      case NONE_LEVEL:
+        return "none";
+      default:
+        return levelToStringSpecialCase(level);
     }
   }
 
   /**
-   * Handles the special cases for {@link #levelToString(int)} including
-   * such cases as the SECURITY_LOGGING_PREFIX and an invalid log level.
+   * Handles the special cases for {@link #levelToString(int)} including such cases as the
+   * SECURITY_LOGGING_PREFIX and an invalid log level.
    */
   private static String levelToStringSpecialCase(int levelWithFlags) {
     if ((levelWithFlags & SECURITY_LOGGING_FLAG) != 0) {
@@ -201,6 +203,7 @@ public abstract class LogWriterImpl implements InternalLogWriter {
 
   /**
    * Gets the level code for the given <code>levelName</code>.
+   *
    * @throws IllegalArgumentException if an unknown level name is given.
    */
   public static int levelNameToCode(String levelName) {
@@ -242,11 +245,13 @@ public abstract class LogWriterImpl implements InternalLogWriter {
     } catch (NumberFormatException ignore) {
     } catch (NullPointerException ignore) {
     }
-    throw new IllegalArgumentException("Unknown log-level \"" + levelName + "\". Valid levels are: " + join(levelNames) + ".");
+    throw new IllegalArgumentException(
+        "Unknown log-level \"" + levelName + "\". Valid levels are: " + join(levelNames) + ".");
   }
 
   /**
    * Gets a String representation of the current time.
+   *
    * @return a String representation of the current time.
    */
   protected String getTimeStamp() {
@@ -255,6 +260,7 @@ public abstract class LogWriterImpl implements InternalLogWriter {
 
   /**
    * Convert a Date to a timestamp String.
+   *
    * @param d a Date to format as a timestamp String.
    * @return a String representation of the current time.
    */
@@ -280,42 +286,33 @@ public abstract class LogWriterImpl implements InternalLogWriter {
 
   // Implementation of LogWriterI18n interface
   /**
-   * Returns true if "severe" log messages are enabled.
-   * Returns false if "severe" log messages are disabled.
+   * Returns true if "severe" log messages are enabled. Returns false if "severe" log messages are
+   * disabled.
    */
   public boolean severeEnabled() {
     return getLogWriterLevel() <= SEVERE_LEVEL;
   }
 
-  /**
-   * Writes both a message and exception to this writer.
-   * The message level is "severe".
-   */
+  /** Writes both a message and exception to this writer. The message level is "severe". */
   public void severe(String msg, Throwable ex) {
     if (this.severeEnabled()) {
       this.put(SEVERE_LEVEL, msg, ex);
     }
   }
 
-  /**
-   * Writes a message to this writer.
-   * The message level is "severe".
-   */
+  /** Writes a message to this writer. The message level is "severe". */
   public void severe(String msg) {
     this.severe(msg, null);
   }
 
-  /**
-   * Writes an exception to this writer.
-   * The exception level is "severe".
-   */
+  /** Writes an exception to this writer. The exception level is "severe". */
   public void severe(Throwable ex) {
     this.severe(LocalizedStrings.EMPTY, ex);
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "severe".
+   * Writes both a message and exception to this writer. The message level is "severe".
+   *
    * @since GemFire 6.0
    */
   public void severe(StringId msgID, Object[] params, Throwable ex) {
@@ -325,19 +322,19 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "severe".
+   * Writes both a message and exception to this writer. The message level is "severe".
+   *
    * @since GemFire 6.0
    */
   public void severe(StringId msgID, Object param, Throwable ex) {
     if (this.severeEnabled()) {
-      this.put(SEVERE_LEVEL, msgID, new Object[] { param }, ex);
+      this.put(SEVERE_LEVEL, msgID, new Object[] {param}, ex);
     }
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "severe".
+   * Writes both a message and exception to this writer. The message level is "severe".
+   *
    * @since GemFire 6.0
    */
   public void severe(StringId msgID, Throwable ex) {
@@ -345,8 +342,8 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "severe".
+   * Writes both a message and exception to this writer. The message level is "severe".
+   *
    * @since GemFire 6.0
    */
   public void severe(StringId msgID, Object[] params) {
@@ -354,8 +351,8 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "severe".
+   * Writes both a message and exception to this writer. The message level is "severe".
+   *
    * @since GemFire 6.0
    */
   public void severe(StringId msgID, Object param) {
@@ -363,50 +360,39 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "severe".
+   * Writes both a message and exception to this writer. The message level is "severe".
+   *
    * @since GemFire 6.0
    */
   public void severe(StringId msgID) {
     severe(msgID, null, null);
   }
 
-  /**
-   * @return true if "error" log messages are enabled.
-   */
+  /** @return true if "error" log messages are enabled. */
   public boolean errorEnabled() {
     return getLogWriterLevel() <= ERROR_LEVEL;
   }
 
-  /**
-   * Writes both a message and exception to this writer.
-   * The message level is "error".
-   */
+  /** Writes both a message and exception to this writer. The message level is "error". */
   public void error(String msg, Throwable ex) {
     if (this.errorEnabled()) {
       this.put(ERROR_LEVEL, msg, ex);
     }
   }
 
-  /**
-   * Writes a message to this writer.
-   * The message level is "error".
-   */
+  /** Writes a message to this writer. The message level is "error". */
   public void error(String msg) {
     this.error(msg, null);
   }
 
-  /**
-   * Writes an exception to this writer.
-   * The exception level is "error".
-   */
+  /** Writes an exception to this writer. The exception level is "error". */
   public void error(Throwable ex) {
     this.error(LocalizedStrings.EMPTY, ex);
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "error".
+   * Writes both a message and exception to this writer. The message level is "error".
+   *
    * @since GemFire 6.0
    */
   public void error(StringId msgID, Object[] params, Throwable ex) {
@@ -416,19 +402,19 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "error".
+   * Writes both a message and exception to this writer. The message level is "error".
+   *
    * @since GemFire 6.0
    */
   public void error(StringId msgID, Object param, Throwable ex) {
     if (this.errorEnabled()) {
-      this.put(ERROR_LEVEL, msgID, new Object[] { param }, ex);
+      this.put(ERROR_LEVEL, msgID, new Object[] {param}, ex);
     }
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "error".
+   * Writes both a message and exception to this writer. The message level is "error".
+   *
    * @since GemFire 6.0
    */
   public void error(StringId msgID, Throwable ex) {
@@ -436,8 +422,8 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "error".
+   * Writes both a message and exception to this writer. The message level is "error".
+   *
    * @since GemFire 6.0
    */
   public void error(StringId msgID, Object[] params) {
@@ -445,8 +431,8 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "error".
+   * Writes both a message and exception to this writer. The message level is "error".
+   *
    * @since GemFire 6.0
    */
   public void error(StringId msgID, Object param) {
@@ -454,50 +440,39 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "error".
+   * Writes both a message and exception to this writer. The message level is "error".
+   *
    * @since GemFire 6.0
    */
   public void error(StringId msgID) {
     error(msgID, null, null);
   }
 
-  /**
-   * @return true if "warning" log messages are enabled.
-   */
+  /** @return true if "warning" log messages are enabled. */
   public boolean warningEnabled() {
     return getLogWriterLevel() <= WARNING_LEVEL;
   }
 
-  /**
-   * Writes both a message and exception to this writer.
-   * The message level is "warning".
-   */
+  /** Writes both a message and exception to this writer. The message level is "warning". */
   public void warning(String msg, Throwable ex) {
     if (this.warningEnabled()) {
       this.put(WARNING_LEVEL, msg, ex);
     }
   }
 
-  /**
-   * Writes a message to this writer.
-   * The message level is "warning".
-   */
+  /** Writes a message to this writer. The message level is "warning". */
   public void warning(String msg) {
     this.warning(msg, null);
   }
 
-  /**
-   * Writes an exception to this writer.
-   * The exception level is "warning".
-   */
+  /** Writes an exception to this writer. The exception level is "warning". */
   public void warning(Throwable ex) {
     this.warning(LocalizedStrings.EMPTY, ex);
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "warning".
+   * Writes both a message and exception to this writer. The message level is "warning".
+   *
    * @since GemFire 6.0
    */
   public void warning(StringId msgID, Object[] params, Throwable ex) {
@@ -507,19 +482,19 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "warning".
+   * Writes both a message and exception to this writer. The message level is "warning".
+   *
    * @since GemFire 6.0
    */
   public void warning(StringId msgID, Object param, Throwable ex) {
     if (this.warningEnabled()) {
-      this.put(WARNING_LEVEL, msgID, new Object[] { param }, ex);
+      this.put(WARNING_LEVEL, msgID, new Object[] {param}, ex);
     }
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "warning".
+   * Writes both a message and exception to this writer. The message level is "warning".
+   *
    * @since GemFire 6.0
    */
   public void warning(StringId msgID, Throwable ex) {
@@ -527,8 +502,8 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "warning".
+   * Writes both a message and exception to this writer. The message level is "warning".
+   *
    * @since GemFire 6.0
    */
   public void warning(StringId msgID, Object[] params) {
@@ -536,8 +511,8 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "warning".
+   * Writes both a message and exception to this writer. The message level is "warning".
+   *
    * @since GemFire 6.0
    */
   public void warning(StringId msgID, Object param) {
@@ -545,51 +520,40 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "warning".
+   * Writes both a message and exception to this writer. The message level is "warning".
+   *
    * @since GemFire 6.0
    */
   public void warning(StringId msgID) {
     warning(msgID, null, null);
   }
 
-  /**
-   * @return true if "info" log messages are enabled.
-   */
+  /** @return true if "info" log messages are enabled. */
   public boolean infoEnabled() {
     return getLogWriterLevel() <= INFO_LEVEL
-    /* (bug 29581) && !SmHelper._memorySpaceLow() */;
+    /* (bug 29581) && !SmHelper._memorySpaceLow() */ ;
   }
 
-  /**
-   * Writes both a message and exception to this writer.
-   * The message level is "information".
-   */
+  /** Writes both a message and exception to this writer. The message level is "information". */
   public void info(String msg, Throwable ex) {
     if (this.infoEnabled()) {
       this.put(INFO_LEVEL, msg, ex);
     }
   }
 
-  /**
-   * Writes a message to this writer.
-   * The message level is "information".
-   */
+  /** Writes a message to this writer. The message level is "information". */
   public void info(String msg) {
     this.info(msg, null);
   }
 
-  /**
-   * Writes an exception to this writer.
-   * The exception level is "information".
-   */
+  /** Writes an exception to this writer. The exception level is "information". */
   public void info(Throwable ex) {
     this.info(LocalizedStrings.EMPTY, ex);
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "info".
+   * Writes both a message and exception to this writer. The message level is "info".
+   *
    * @since GemFire 6.0
    */
   public void info(StringId msgID, Object[] params, Throwable ex) {
@@ -599,19 +563,19 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "info".
+   * Writes both a message and exception to this writer. The message level is "info".
+   *
    * @since GemFire 6.0
    */
   public void info(StringId msgID, Object param, Throwable ex) {
     if (this.infoEnabled()) {
-      this.put(INFO_LEVEL, msgID, new Object[] { param }, ex);
+      this.put(INFO_LEVEL, msgID, new Object[] {param}, ex);
     }
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "info".
+   * Writes both a message and exception to this writer. The message level is "info".
+   *
    * @since GemFire 6.0
    */
   public void info(StringId msgID, Throwable ex) {
@@ -619,8 +583,8 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "info".
+   * Writes both a message and exception to this writer. The message level is "info".
+   *
    * @since GemFire 6.0
    */
   public void info(StringId msgID, Object[] params) {
@@ -628,8 +592,8 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "info".
+   * Writes both a message and exception to this writer. The message level is "info".
+   *
    * @since GemFire 6.0
    */
   public void info(StringId msgID, Object param) {
@@ -637,50 +601,39 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "info".
+   * Writes both a message and exception to this writer. The message level is "info".
+   *
    * @since GemFire 6.0
    */
   public void info(StringId msgID) {
     info(msgID, null, null);
   }
 
-  /**
-   * @return true if "config" log messages are enabled.
-   */
+  /** @return true if "config" log messages are enabled. */
   public boolean configEnabled() {
     return getLogWriterLevel() <= CONFIG_LEVEL;
   }
 
-  /**
-   * Writes both a message and exception to this writer.
-   * The message level is "config".
-   */
+  /** Writes both a message and exception to this writer. The message level is "config". */
   public void config(String msg, Throwable ex) {
     if (this.configEnabled()) {
       this.put(CONFIG_LEVEL, msg, ex);
     }
   }
 
-  /**
-   * Writes a message to this writer.
-   * The message level is "config".
-   */
+  /** Writes a message to this writer. The message level is "config". */
   public void config(String msg) {
     this.config(msg, null);
   }
 
-  /**
-   * Writes an exception to this writer.
-   * The exception level is "config".
-   */
+  /** Writes an exception to this writer. The exception level is "config". */
   public void config(Throwable ex) {
     this.config(LocalizedStrings.EMPTY, ex);
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "config".
+   * Writes both a message and exception to this writer. The message level is "config".
+   *
    * @since GemFire 6.0
    */
   public void config(StringId msgID, Object[] params, Throwable ex) {
@@ -690,19 +643,19 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "config".
+   * Writes both a message and exception to this writer. The message level is "config".
+   *
    * @since GemFire 6.0
    */
   public void config(StringId msgID, Object param, Throwable ex) {
     if (this.configEnabled()) {
-      this.put(CONFIG_LEVEL, msgID, new Object[] { param }, ex);
+      this.put(CONFIG_LEVEL, msgID, new Object[] {param}, ex);
     }
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "config".
+   * Writes both a message and exception to this writer. The message level is "config".
+   *
    * @since GemFire 6.0
    */
   public void config(StringId msgID, Throwable ex) {
@@ -710,8 +663,8 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "config".
+   * Writes both a message and exception to this writer. The message level is "config".
+   *
    * @since GemFire 6.0
    */
   public void config(StringId msgID, Object[] params) {
@@ -719,8 +672,8 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "config".
+   * Writes both a message and exception to this writer. The message level is "config".
+   *
    * @since GemFire 6.0
    */
   public void config(StringId msgID, Object param) {
@@ -728,88 +681,69 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * The message level is "config".
+   * Writes both a message and exception to this writer. The message level is "config".
+   *
    * @since GemFire 6.0
    */
   public void config(StringId msgID) {
     config(msgID, null, null);
   }
 
-  /**
-   * @return true if "fine" log messages are enabled.
-   */
+  /** @return true if "fine" log messages are enabled. */
   public boolean fineEnabled() {
     return getLogWriterLevel() <= FINE_LEVEL
-    /* (bug 29581) && !SmHelper._memorySpaceLow() */;
+    /* (bug 29581) && !SmHelper._memorySpaceLow() */ ;
   }
 
-  /**
-   * Writes both a message and exception to this writer.
-   * The message level is "fine".
-   */
+  /** Writes both a message and exception to this writer. The message level is "fine". */
   public void fine(String msg, Throwable ex) {
     if (this.fineEnabled()) {
       this.put(FINE_LEVEL, msg, ex);
     }
   }
 
-  /**
-   * Writes a message to this writer.
-   * The message level is "fine".
-   */
+  /** Writes a message to this writer. The message level is "fine". */
   public void fine(String msg) {
     this.fine(msg, null);
   }
 
-  /**
-   * Writes an exception to this writer.
-   * The exception level is "fine".
-   */
+  /** Writes an exception to this writer. The exception level is "fine". */
   public void fine(Throwable ex) {
     this.fine(null, ex);
   }
 
   /**
-   * Returns true if "finer" log messages are enabled.
-   * Returns false if "finer" log messages are disabled.
+   * Returns true if "finer" log messages are enabled. Returns false if "finer" log messages are
+   * disabled.
    */
   public boolean finerEnabled() {
     return getLogWriterLevel() <= FINER_LEVEL
-    /* (bug 29581) && !SmHelper._memorySpaceLow() */;
+    /* (bug 29581) && !SmHelper._memorySpaceLow() */ ;
   }
 
-  /**
-   * Writes both a message and exception to this writer.
-   * The message level is "finer".
-   */
+  /** Writes both a message and exception to this writer. The message level is "finer". */
   public void finer(String msg, Throwable ex) {
     if (this.finerEnabled()) {
       this.put(FINER_LEVEL, msg, ex);
     }
   }
 
-  /**
-   * Writes a message to this writer.
-   * The message level is "finer".
-   */
+  /** Writes a message to this writer. The message level is "finer". */
   public void finer(String msg) {
     this.finer(msg, null);
   }
 
-  /**
-   * Writes an exception to this writer.
-   * The exception level is "finer".
-   */
+  /** Writes an exception to this writer. The exception level is "finer". */
   public void finer(Throwable ex) {
     this.finer(null, ex);
   }
 
   /**
    * Log a method entry.
-   * <p>The logging is done using the <code>finer</code> level.
-   * The string message will start with <code>"ENTRY"</code> and
-   * include the class and method names.
+   *
+   * <p>The logging is done using the <code>finer</code> level. The string message will start with
+   * <code>"ENTRY"</code> and include the class and method names.
+   *
    * @param sourceClass Name of class that issued the logging request.
    * @param sourceMethod Name of the method that issued the logging request.
    */
@@ -821,9 +755,10 @@ public abstract class LogWriterImpl implements InternalLogWriter {
 
   /**
    * Log a method return.
-   * <p>The logging is done using the <code>finer</code> level.
-   * The string message will start with <code>"RETURN"</code> and
-   * include the class and method names.
+   *
+   * <p>The logging is done using the <code>finer</code> level. The string message will start with
+   * <code>"RETURN"</code> and include the class and method names.
+   *
    * @param sourceClass Name of class that issued the logging request.
    * @param sourceMethod Name of the method that issued the logging request.
    */
@@ -835,13 +770,14 @@ public abstract class LogWriterImpl implements InternalLogWriter {
 
   /**
    * Log throwing an exception.
-   * <p> Use to log that a method is
-   * terminating by throwing an exception. The logging is done using
+   *
+   * <p>Use to log that a method is terminating by throwing an exception. The logging is done using
    * the <code>finer</code> level.
-   * <p> This is a convenience method that could be done
-   * instead by calling {@link #finer(String, Throwable)}.
-   * The string message will start with <code>"THROW"</code> and
-   * include the class and method names.
+   *
+   * <p>This is a convenience method that could be done instead by calling {@link #finer(String,
+   * Throwable)}. The string message will start with <code>"THROW"</code> and include the class and
+   * method names.
+   *
    * @param sourceClass Name of class that issued the logging request.
    * @param sourceMethod Name of the method that issued the logging request.
    * @param thrown The Throwable that is being thrown.
@@ -853,45 +789,35 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Returns true if "finest" log messages are enabled.
-   * Returns false if "finest" log messages are disabled.
+   * Returns true if "finest" log messages are enabled. Returns false if "finest" log messages are
+   * disabled.
    */
   public boolean finestEnabled() {
     return getLogWriterLevel() <= FINEST_LEVEL
-    /* (bug 29581) && !SmHelper._memorySpaceLow() */;
+    /* (bug 29581) && !SmHelper._memorySpaceLow() */ ;
   }
 
-  /**
-   * Writes both a message and exception to this writer.
-   * The message level is "finest".
-   */
+  /** Writes both a message and exception to this writer. The message level is "finest". */
   public void finest(String msg, Throwable ex) {
     if (this.finestEnabled()) {
       this.put(FINEST_LEVEL, msg, ex);
     }
   }
 
-  /**
-   * Writes a message to this writer.
-   * The message level is "finest".
-   */
+  /** Writes a message to this writer. The message level is "finest". */
   public void finest(String msg) {
     this.finest(msg, null);
   }
 
-  /**
-   * Writes an exception to this writer.
-   * The exception level is "finest".
-   */
+  /** Writes an exception to this writer. The exception level is "finest". */
   public void finest(Throwable ex) {
     this.finest(null, ex);
   }
 
   /**
-   * Writes both a message and exception to this writer.
-   * If a startup listener is registered,
-   * the message will be written to the listener as well
-   * to be reported to a user.
+   * Writes both a message and exception to this writer. If a startup listener is registered, the
+   * message will be written to the listener as well to be reported to a user.
+   *
    * @since GemFire 7.0
    */
   public void startup(StringId msgID, Object[] params) {
@@ -910,27 +836,20 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   // internal implemenation methods
   /**
    * Logs a message and an exception of the given level.
-   * 
-   * @param msgLevel
-   *                the level code for the message to log
-   * @param msg
-   *                the actual message to log
-   * @param exception
-   *                the actual Exception to log
+   *
+   * @param msgLevel the level code for the message to log
+   * @param msg the actual message to log
+   * @param exception the actual Exception to log
    */
   public abstract void put(int msgLevel, String msg, Throwable exception);
 
   /**
    * Logs a message and an exception of the given level.
-   * 
-   * @param msgLevel
-   *                the level code for the message to log
-   * @param msgId
-   *                A locale agnostic form of the message
-   * @param params
-   *                the Object arguments to plug into the message               
-   * @param exception
-   *                the actual Exception to log
+   *
+   * @param msgLevel the level code for the message to log
+   * @param msgId A locale agnostic form of the message
+   * @param params the Object arguments to plug into the message
+   * @param exception the actual Exception to log
    */
   public abstract void put(int msgLevel, StringId msgId, Object[] params, Throwable exception);
 
@@ -983,9 +902,9 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Check if a message of the given level would actually be logged by this
-   * logger.
-   * This check is based on the Logger effective level.
+   * Check if a message of the given level would actually be logged by this logger. This check is
+   * based on the Logger effective level.
+   *
    * @param level a message logging level
    * @return true if the given message level is currently being logged.
    */
@@ -994,9 +913,9 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Log a message, with associated Throwable information.
-   * If the logger is currently enabled for the given message level then the
-   * given message is logged.
+   * Log a message, with associated Throwable information. If the logger is currently enabled for
+   * the given message level then the given message is logged.
+   *
    * @param level One of the message level identifiers, e.g. SEVERE
    * @param message The string message
    * @param thrown - Throwable associated with log message.
@@ -1008,9 +927,9 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Log a message.
-   * If the logger is currently enabled for the given message level then the
-   * given message is logged.
+   * Log a message. If the logger is currently enabled for the given message level then the given
+   * message is logged.
+   *
    * @param level One of the message level identifiers, e.g. SEVERE
    * @param message The string message
    */
@@ -1032,49 +951,55 @@ public abstract class LogWriterImpl implements InternalLogWriter {
   }
 
   /**
-   * Utility to periodically log a stack trace for a thread.  The thread should
-   * be alive when this method is invoked.
+   * Utility to periodically log a stack trace for a thread. The thread should be alive when this
+   * method is invoked.
+   *
    * @param toStdout whether to log to stdout or to this log writer
    * @param targetThread the thread to snapshot
    * @param interval millis to wait betweeen snaps
    * @param done when to stop snapshotting (also ceases if targetThread dies)
    */
-  public void logTraces(final boolean toStdout, final Thread targetThread, final int interval, final AtomicBoolean done) {
+  public void logTraces(
+      final boolean toStdout,
+      final Thread targetThread,
+      final int interval,
+      final AtomicBoolean done) {
     if (targetThread == null) {
       return;
     }
-    Thread watcherThread = new Thread("Stack Tracer for '" + targetThread.getName() + "'") {
-      @Override
-      public void run() {
-        while (!done.get()) {
-          try {
-            Thread.sleep(500);
-          } catch (InterruptedException e) {
-            return;
-          }
-          if (!done.get() && targetThread.isAlive()) {
-            StringBuffer sb = new StringBuffer(500);
-            if (toStdout) {
-              sb.append("[trace ").append(getTimeStamp()).append("] ");
-            }
-            StackTraceElement[] els = targetThread.getStackTrace();
-            sb.append("Stack trace for '").append(targetThread.toString()).append("'\n");
-            if (els.length > 0) {
-              for (int i = 0; i < els.length; i++) {
-                sb.append("\tat ").append(els[i].toString()).append("\n");
+    Thread watcherThread =
+        new Thread("Stack Tracer for '" + targetThread.getName() + "'") {
+          @Override
+          public void run() {
+            while (!done.get()) {
+              try {
+                Thread.sleep(500);
+              } catch (InterruptedException e) {
+                return;
               }
-            } else {
-              sb.append("    no stack\n");
-            }
-            if (toStdout) {
-              System.out.println(sb.toString());
-            } else {
-              info(LocalizedStrings.DEBUG, sb.toString());
+              if (!done.get() && targetThread.isAlive()) {
+                StringBuffer sb = new StringBuffer(500);
+                if (toStdout) {
+                  sb.append("[trace ").append(getTimeStamp()).append("] ");
+                }
+                StackTraceElement[] els = targetThread.getStackTrace();
+                sb.append("Stack trace for '").append(targetThread.toString()).append("'\n");
+                if (els.length > 0) {
+                  for (int i = 0; i < els.length; i++) {
+                    sb.append("\tat ").append(els[i].toString()).append("\n");
+                  }
+                } else {
+                  sb.append("    no stack\n");
+                }
+                if (toStdout) {
+                  System.out.println(sb.toString());
+                } else {
+                  info(LocalizedStrings.DEBUG, sb.toString());
+                }
+              }
             }
           }
-        }
-      }
-    };
+        };
     watcherThread.start();
   }
 

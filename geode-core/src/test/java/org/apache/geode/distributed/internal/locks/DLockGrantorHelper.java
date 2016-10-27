@@ -20,8 +20,7 @@ import org.apache.geode.distributed.DistributedLockService;
 import org.apache.geode.distributed.internal.membership.*;
 
 /**
- * DLockGrantorHelper provides testing operations that are not normally
- * exposed in the DLockGrantor.
+ * DLockGrantorHelper provides testing operations that are not normally exposed in the DLockGrantor.
  *
  * @since GemFire 5.0
  */
@@ -34,7 +33,8 @@ public class DLockGrantorHelper {
    * If the specified service instance is not the grantor, this method will
    * return without performing anything.
    */
-  public static void forceDepartureOf(DistributedLockService dlock, InternalDistributedMember member) {
+  public static void forceDepartureOf(
+      DistributedLockService dlock, InternalDistributedMember member) {
     DLockGrantor grantor = null;
     try {
       grantor = DLockGrantor.waitForGrantor((DLockService) dlock);
@@ -73,7 +73,7 @@ public class DLockGrantorHelper {
 
   //  /** Returns true if process is DM elder for this system. */
   //  public static boolean isElder() {
-  //    InternalDistributedSystem sys = 
+  //    InternalDistributedSystem sys =
   //        (InternalDistributedSystem) InternalDistributedSystem.getAnyInstance();
   //    DM dm = sys.getDistributionManager();
   //    return dm.isElder();
@@ -81,7 +81,7 @@ public class DLockGrantorHelper {
 
   //  /** Changes grantorInfo in Elder state to require grantor recovery. */
   //  public static void forceGrantorRecovery(DistributedLockService dlock) {
-  //    InternalDistributedSystem sys = 
+  //    InternalDistributedSystem sys =
   //        (InternalDistributedSystem) InternalDistributedSystem.getAnyInstance();
   //    DistributionManager dm = (DistributionManager) sys.getDistributionManager();
   //    ElderState es = dm.getElderState();

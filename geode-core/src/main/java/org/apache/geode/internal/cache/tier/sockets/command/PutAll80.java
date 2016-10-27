@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Author: Gester Zhou
- */
+/** Author: Gester Zhou */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import java.io.IOException;
@@ -56,14 +54,13 @@ import org.apache.geode.internal.util.Breadcrumbs;
 
 public class PutAll80 extends BaseCommand {
 
-  private final static PutAll80 singleton = new PutAll80();
+  private static final PutAll80 singleton = new PutAll80();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  protected PutAll80() {
-  }
+  protected PutAll80() {}
 
   protected String putAllClassName() {
     return "putAll80";
@@ -78,7 +75,8 @@ public class PutAll80 extends BaseCommand {
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long startp) throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long startp)
+      throws IOException, InterruptedException {
     long start = startp; // copy this since we need to modify it
     Part regionNamePart = null, numberOfKeysPart = null, keyPart = null, valuePart = null;
     String regionName = null;
@@ -108,7 +106,9 @@ public class PutAll80 extends BaseCommand {
       regionName = regionNamePart.getString();
 
       if (regionName == null) {
-        String putAllMsg = LocalizedStrings.PutAll_THE_INPUT_REGION_NAME_FOR_THE_PUTALL_REQUEST_IS_NULL.toLocalizedString();
+        String putAllMsg =
+            LocalizedStrings.PutAll_THE_INPUT_REGION_NAME_FOR_THE_PUTALL_REQUEST_IS_NULL
+                .toLocalizedString();
         logger.warn("{}: {}", servConn.getName(), putAllMsg);
         errMessage.append(putAllMsg);
         writeChunkedErrorResponse(msg, MessageType.PUT_DATA_ERROR, errMessage.toString(), servConn);
@@ -152,7 +152,18 @@ public class PutAll80 extends BaseCommand {
 
       if (logger.isDebugEnabled()) {
         StringBuilder buffer = new StringBuilder();
-        buffer.append(servConn.getName()).append(": Received ").append(this.putAllClassName()).append(" request from ").append(servConn.getSocketString()).append(" for region ").append(regionName).append(callbackArg != null ? (" callbackArg " + callbackArg) : "").append(" with ").append(numberOfKeys).append(" entries.");
+        buffer
+            .append(servConn.getName())
+            .append(": Received ")
+            .append(this.putAllClassName())
+            .append(" request from ")
+            .append(servConn.getSocketString())
+            .append(" for region ")
+            .append(regionName)
+            .append(callbackArg != null ? (" callbackArg " + callbackArg) : "")
+            .append(" with ")
+            .append(numberOfKeys)
+            .append(" entries.");
         logger.debug(buffer.toString());
       }
       // building the map
@@ -163,20 +174,26 @@ public class PutAll80 extends BaseCommand {
         keyPart = msg.getPart(BASE_PART_COUNT + i * 2);
         key = keyPart.getStringOrObject();
         if (key == null) {
-          String putAllMsg = LocalizedStrings.PutAll_ONE_OF_THE_INPUT_KEYS_FOR_THE_PUTALL_REQUEST_IS_NULL.toLocalizedString();
+          String putAllMsg =
+              LocalizedStrings.PutAll_ONE_OF_THE_INPUT_KEYS_FOR_THE_PUTALL_REQUEST_IS_NULL
+                  .toLocalizedString();
           logger.warn("{}: {}", servConn.getName(), putAllMsg);
           errMessage.append(putAllMsg);
-          writeChunkedErrorResponse(msg, MessageType.PUT_DATA_ERROR, errMessage.toString(), servConn);
+          writeChunkedErrorResponse(
+              msg, MessageType.PUT_DATA_ERROR, errMessage.toString(), servConn);
           servConn.setAsTrue(RESPONDED);
           return;
         }
 
         valuePart = msg.getPart(BASE_PART_COUNT + i * 2 + 1);
         if (valuePart.isNull()) {
-          String putAllMsg = LocalizedStrings.PutAll_ONE_OF_THE_INPUT_VALUES_FOR_THE_PUTALL_REQUEST_IS_NULL.toLocalizedString();
+          String putAllMsg =
+              LocalizedStrings.PutAll_ONE_OF_THE_INPUT_VALUES_FOR_THE_PUTALL_REQUEST_IS_NULL
+                  .toLocalizedString();
           logger.warn("{}: {}", servConn.getName(), putAllMsg);
           errMessage.append(putAllMsg);
-          writeChunkedErrorResponse(msg, MessageType.PUT_DATA_ERROR, errMessage.toString(), servConn);
+          writeChunkedErrorResponse(
+              msg, MessageType.PUT_DATA_ERROR, errMessage.toString(), servConn);
           servConn.setAsTrue(RESPONDED);
           return;
         }
@@ -186,7 +203,7 @@ public class PutAll80 extends BaseCommand {
         if (valuePart.isObject()) {
           // We're shoe-horning support for invalidated entries into putAll
           // here...however Token.INVALID cannot be wrapped in a DataSerializable.
-          // Also, this code is using skipCallbacks as an import flag. If we make 
+          // Also, this code is using skipCallbacks as an import flag. If we make
           // skipCallbacks configurable this code will need to be updated.
           if (skipCallbacks && Token.INVALID.isSerializedValue(valuePart.getSerializedForm())) {
             value = Token.INVALID;
@@ -208,8 +225,11 @@ public class PutAll80 extends BaseCommand {
           if (region instanceof PartitionedRegion) {
             PartitionedRegion pr = (PartitionedRegion) region;
             int bucketId = pr.getKeyInfo(key).getBucketId();
-            long entryThreadId = ThreadIdentifier.createFakeThreadIDForBulkOp(bucketId, entryEventId.getThreadID());
-            entryEventId = new EventID(entryEventId.getMembershipID(), entryThreadId, entryEventId.getSequenceID());
+            long entryThreadId =
+                ThreadIdentifier.createFakeThreadIDForBulkOp(bucketId, entryEventId.getThreadID());
+            entryEventId =
+                new EventID(
+                    entryEventId.getMembershipID(), entryThreadId, entryEventId.getSequenceID());
           }
 
           VersionTag tag = findVersionTagsForRetriedBulkOp(region, entryEventId);
@@ -223,7 +243,8 @@ public class PutAll80 extends BaseCommand {
         //      isObjectMap.put(key, new Boolean(isObject));
       } // for
 
-      if (msg.getNumberOfParts() == (BASE_PART_COUNT + 2 * numberOfKeys + 1)) {//it means optional timeout has been added
+      if (msg.getNumberOfParts()
+          == (BASE_PART_COUNT + 2 * numberOfKeys + 1)) { //it means optional timeout has been added
         int timeout = msg.getPart(BASE_PART_COUNT + 2 * numberOfKeys).getInt();
         servConn.setRequestSpecificTimeout(timeout);
       }
@@ -235,7 +256,8 @@ public class PutAll80 extends BaseCommand {
         if (DynamicRegionFactory.regionIsDynamicRegionList(regionName)) {
           authzRequest.createRegionAuthorize(regionName);
         } else {
-          PutAllOperationContext putAllContext = authzRequest.putAllAuthorize(regionName, map, callbackArg);
+          PutAllOperationContext putAllContext =
+              authzRequest.putAllAuthorize(regionName, map, callbackArg);
           map = putAllContext.getMap();
           if (map instanceof UpdateOnlyMap) {
             map = ((UpdateOnlyMap) map).getInternalMap();
@@ -245,27 +267,33 @@ public class PutAll80 extends BaseCommand {
       } else {
         // no auth, so update the map based on isObjectMap here
         /*
-         Collection entries = map.entrySet();
-         Iterator iterator = entries.iterator();
-         Map.Entry mapEntry = null;
-         while (iterator.hasNext()) {
-         mapEntry = (Map.Entry)iterator.next();
-         Object currkey = mapEntry.getKey();
-         byte[] serializedValue = (byte[])mapEntry.getValue();
-         boolean isObject = ((Boolean)isObjectMap.get(currkey)).booleanValue();
-         if (isObject) {
-         map.put(currkey, CachedDeserializableFactory.create(serializedValue));
-         }
-         }
-         */
+        Collection entries = map.entrySet();
+        Iterator iterator = entries.iterator();
+        Map.Entry mapEntry = null;
+        while (iterator.hasNext()) {
+        mapEntry = (Map.Entry)iterator.next();
+        Object currkey = mapEntry.getKey();
+        byte[] serializedValue = (byte[])mapEntry.getValue();
+        boolean isObject = ((Boolean)isObjectMap.get(currkey)).booleanValue();
+        if (isObject) {
+        map.put(currkey, CachedDeserializableFactory.create(serializedValue));
+        }
+        }
+        */
       }
 
-      response = region.basicBridgePutAll(map, retryVersions, servConn.getProxyID(), eventId, skipCallbacks, callbackArg);
+      response =
+          region.basicBridgePutAll(
+              map, retryVersions, servConn.getProxyID(), eventId, skipCallbacks, callbackArg);
       if (!region.getConcurrencyChecksEnabled() || clientIsEmpty || !clientHasCCEnabled) {
         // the client only needs this if versioning is being used and the client
         // has storage
         if (logger.isTraceEnabled()) {
-          logger.trace("setting response to null. region-cc-enabled={}; clientIsEmpty={}; client-cc-enabled={}", region.getConcurrencyChecksEnabled(), clientIsEmpty, clientHasCCEnabled);
+          logger.trace(
+              "setting response to null. region-cc-enabled={}; clientIsEmpty={}; client-cc-enabled={}",
+              region.getConcurrencyChecksEnabled(),
+              clientIsEmpty,
+              clientHasCCEnabled);
         }
         response = null;
       }
@@ -297,7 +325,10 @@ public class PutAll80 extends BaseCommand {
       // If an exception occurs during the put, preserve the connection
       writeChunkedException(msg, ce, false, servConn);
       servConn.setAsTrue(RESPONDED);
-      logger.warn(LocalizedMessage.create(LocalizedStrings.Generic_0_UNEXPECTED_EXCEPTION, servConn.getName()), ce);
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.Generic_0_UNEXPECTED_EXCEPTION, servConn.getName()),
+          ce);
       return;
     } finally {
       long oldStart = start;
@@ -305,7 +336,13 @@ public class PutAll80 extends BaseCommand {
       stats.incProcessPutAllTime(start - oldStart);
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Sending {} response back to {} for regin {} {}", servConn.getName(), putAllClassName(), servConn.getSocketString(), regionName, (logger.isTraceEnabled() ? ": " + response : ""));
+      logger.debug(
+          "{}: Sending {} response back to {} for regin {} {}",
+          servConn.getName(),
+          putAllClassName(),
+          servConn.getSocketString(),
+          regionName,
+          (logger.isTraceEnabled() ? ": " + response : ""));
     }
 
     // Increment statistics and write the reply
@@ -321,7 +358,8 @@ public class PutAll80 extends BaseCommand {
     throw new UnsupportedOperationException();
   }
 
-  protected void writeReply(Message origMsg, VersionedObjectList response, ServerConnection servConn) throws IOException {
+  protected void writeReply(
+      Message origMsg, VersionedObjectList response, ServerConnection servConn) throws IOException {
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     ChunkedMessage replyMsg = servConn.getChunkedResponseMessage();
     replyMsg.setMessageType(MessageType.RESPONSE);
@@ -331,13 +369,17 @@ public class PutAll80 extends BaseCommand {
       response.setKeys(null);
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("sending chunked response header.  version list size={}{}", listSize, (logger.isTraceEnabled() ? " list=" + response : ""));
+      logger.debug(
+          "sending chunked response header.  version list size={}{}",
+          listSize,
+          (logger.isTraceEnabled() ? " list=" + response : ""));
     }
     replyMsg.sendHeader();
     if (listSize > 0) {
       int chunkSize = 2 * maximumChunkSize;
       // Chunker will stream over the list in its toData method
-      VersionedObjectList.Chunker chunk = new VersionedObjectList.Chunker(response, chunkSize, false, false);
+      VersionedObjectList.Chunker chunk =
+          new VersionedObjectList.Chunker(response, chunkSize, false, false);
       for (int i = 0; i < listSize; i += chunkSize) {
         boolean lastChunk = (i + chunkSize >= listSize);
         replyMsg.setNumberOfParts(1);
@@ -346,7 +388,11 @@ public class PutAll80 extends BaseCommand {
         replyMsg.setTransactionId(origMsg.getTransactionId());
         replyMsg.addObjPart(chunk);
         if (logger.isDebugEnabled()) {
-          logger.debug("sending chunk at index {} last chunk={} numParts={}", i, lastChunk, replyMsg.getNumberOfParts());
+          logger.debug(
+              "sending chunk at index {} last chunk={} numParts={}",
+              i,
+              lastChunk,
+              replyMsg.getNumberOfParts());
         }
         replyMsg.sendChunk(servConn);
       }
@@ -365,11 +411,19 @@ public class PutAll80 extends BaseCommand {
   }
 
   @Override
-  protected void writeReplyWithRefreshMetadata(Message origMsg, ServerConnection servConn, PartitionedRegion pr, byte nwHop) throws IOException {
+  protected void writeReplyWithRefreshMetadata(
+      Message origMsg, ServerConnection servConn, PartitionedRegion pr, byte nwHop)
+      throws IOException {
     throw new UnsupportedOperationException();
   }
 
-  private void writeReplyWithRefreshMetadata(Message origMsg, VersionedObjectList response, ServerConnection servConn, PartitionedRegion pr, byte nwHop) throws IOException {
+  private void writeReplyWithRefreshMetadata(
+      Message origMsg,
+      VersionedObjectList response,
+      ServerConnection servConn,
+      PartitionedRegion pr,
+      byte nwHop)
+      throws IOException {
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     ChunkedMessage replyMsg = servConn.getChunkedResponseMessage();
     replyMsg.setMessageType(MessageType.RESPONSE);
@@ -377,21 +431,25 @@ public class PutAll80 extends BaseCommand {
     replyMsg.sendHeader();
     int listSize = (response == null) ? 0 : response.size();
     if (logger.isDebugEnabled()) {
-      logger.debug("sending chunked response header with metadata refresh status. Version list size = {}{}", listSize, (logger.isTraceEnabled() ? "; list=" + response : ""));
+      logger.debug(
+          "sending chunked response header with metadata refresh status. Version list size = {}{}",
+          listSize,
+          (logger.isTraceEnabled() ? "; list=" + response : ""));
     }
     if (response != null) {
       response.setKeys(null);
     }
     replyMsg.setNumberOfParts(1);
     replyMsg.setTransactionId(origMsg.getTransactionId());
-    replyMsg.addBytesPart(new byte[] { pr.getMetadataVersion(), nwHop });
+    replyMsg.addBytesPart(new byte[] {pr.getMetadataVersion(), nwHop});
     if (listSize > 0) {
       replyMsg.setLastChunk(false);
       replyMsg.sendChunk(servConn);
 
       int chunkSize = 2 * maximumChunkSize; // maximumChunkSize
       // Chunker will stream over the list in its toData method
-      VersionedObjectList.Chunker chunk = new VersionedObjectList.Chunker(response, chunkSize, false, false);
+      VersionedObjectList.Chunker chunk =
+          new VersionedObjectList.Chunker(response, chunkSize, false, false);
       for (int i = 0; i < listSize; i += chunkSize) {
         boolean lastChunk = (i + chunkSize >= listSize);
         replyMsg.setNumberOfParts(1); // resets the message
@@ -400,7 +458,11 @@ public class PutAll80 extends BaseCommand {
         replyMsg.setTransactionId(origMsg.getTransactionId());
         replyMsg.addObjPart(chunk);
         if (logger.isDebugEnabled()) {
-          logger.debug("sending chunk at index {} last chunk={} numParts={}", i, lastChunk, replyMsg.getNumberOfParts());
+          logger.debug(
+              "sending chunk at index {} last chunk={} numParts={}",
+              i,
+              lastChunk,
+              replyMsg.getNumberOfParts());
         }
         replyMsg.sendChunk(servConn);
       }
@@ -413,8 +475,8 @@ public class PutAll80 extends BaseCommand {
     }
     pr.getPrStats().incPRMetaDataSentCount();
     if (logger.isTraceEnabled()) {
-      logger.trace("{}: rpl with REFRESH_METADAT tx: {}", servConn.getName(), origMsg.getTransactionId());
+      logger.trace(
+          "{}: rpl with REFRESH_METADAT tx: {}", servConn.getName(), origMsg.getTransactionId());
     }
   }
-
 }

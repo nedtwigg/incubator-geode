@@ -28,13 +28,7 @@ import org.apache.geode.StatisticsFactory;
 import org.apache.geode.StatisticsType;
 import org.apache.geode.admin.Statistic;
 
-/**
- * 
- * Implemetation of {@link StatisticInfo}, provides all the information
- * {@link Statistic}
- * 
- * 
- */
+/** Implemetation of {@link StatisticInfo}, provides all the information {@link Statistic} */
 public class StatisticInfoImpl implements StatisticInfo {
   private static final long serialVersionUID = -1525964578728218894L;
 
@@ -61,11 +55,13 @@ public class StatisticInfoImpl implements StatisticInfo {
   }
 
   public void setStatisticName(String statisticName) {
-    throw new UnsupportedOperationException("StatisticInfoImpl class does not support setStatisticName method.");
+    throw new UnsupportedOperationException(
+        "StatisticInfoImpl class does not support setStatisticName method.");
   }
 
   public void setStatisticsTextId(String statisticsTextId) {
-    throw new UnsupportedOperationException("StatisticInfoImpl class does not support setStatisticsTextId method.");
+    throw new UnsupportedOperationException(
+        "StatisticInfoImpl class does not support setStatisticsTextId method.");
   }
 
   public Number getValue() {
@@ -85,7 +81,8 @@ public class StatisticInfoImpl implements StatisticInfo {
   }
 
   public void setStatisticsTypeName(String statisticsType) {
-    throw new UnsupportedOperationException("StatisticInfoImpl class does not support setStatisticsTypeName method.");
+    throw new UnsupportedOperationException(
+        "StatisticInfoImpl class does not support setStatisticsTypeName method.");
   }
 
   @Override
@@ -99,18 +96,18 @@ public class StatisticInfoImpl implements StatisticInfo {
 
     StatisticInfoImpl other = (StatisticInfoImpl) object;
 
-    if (StringUtils.equals(getStatisticName(), other.getStatisticName()) && statisticsTextId != null && statisticsTextId.equals(other.getStatisticsTextId())) {
+    if (StringUtils.equals(getStatisticName(), other.getStatisticName())
+        && statisticsTextId != null
+        && statisticsTextId.equals(other.getStatisticsTextId())) {
       return true;
     }
 
     return false;
   }
 
-  public void toData(DataOutput out) throws IOException {
-  }
+  public void toData(DataOutput out) throws IOException {}
 
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-  }
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
   @Override
   public int hashCode() {
@@ -126,19 +123,16 @@ public class StatisticInfoImpl implements StatisticInfo {
     int startBrack = toString.indexOf("[");
     int endBrack = toString.indexOf("]");
 
-    if (startBrack == -1 || endBrack == -1)
-      return null;
+    if (startBrack == -1 || endBrack == -1) return null;
 
     String name = toString.substring(0, startBrack).trim();
     String ids = toString.substring(startBrack + 1, endBrack).trim();
 
     StatisticsType type = f.findType(name);
-    if (type == null)
-      return null;
+    if (type == null) return null;
 
     Statistics[] stats = f.findStatisticsByType(type);
-    if (stats.length == 0)
-      return null;
+    if (stats.length == 0) return null;
 
     StatisticDescriptor[] descs = type.getStatistics();
     for (int i = 0; i < descs.length; i++) {

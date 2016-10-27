@@ -20,10 +20,9 @@ import org.apache.geode.OutOfOffHeapMemoryException;
 import org.apache.geode.distributed.internal.InternalDistributedSystem;
 
 /**
- * Used to asynchronously disconnect an InternalDistributedSystem
- * when we run out of off-heap memory.
- * If the STAY_CONNECTED_ON_OUTOFOFFHEAPMEMORY_PROPERTY sys prop
- * is set to true then this listener will not disconnect.
+ * Used to asynchronously disconnect an InternalDistributedSystem when we run out of off-heap
+ * memory. If the STAY_CONNECTED_ON_OUTOFOFFHEAPMEMORY_PROPERTY sys prop is set to true then this
+ * listener will not disconnect.
  */
 class DisconnectingOutOfOffHeapMemoryListener implements OutOfOffHeapMemoryListener {
   private final Object lock = new Object();
@@ -56,18 +55,25 @@ class DisconnectingOutOfOffHeapMemoryListener implements OutOfOffHeapMemoryListe
         dsToDisconnect.getDistributionManager().setRootCause(cause);
       }
 
-      Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-          dsToDisconnect.getLogWriter().info("OffHeapStorage about to invoke disconnect on " + dsToDisconnect);
-          dsToDisconnect.disconnect(cause.getMessage(), cause, false);
-        }
-      };
+      Runnable runnable =
+          new Runnable() {
+            @Override
+            public void run() {
+              dsToDisconnect
+                  .getLogWriter()
+                  .info("OffHeapStorage about to invoke disconnect on " + dsToDisconnect);
+              dsToDisconnect.disconnect(cause.getMessage(), cause, false);
+            }
+          };
 
       // invoking disconnect is async because caller may be a DM pool thread which will block until DM shutdown times out
 
       //LogWriterImpl.LoggingThreadGroup group = LogWriterImpl.createThreadGroup("MemScale Threads", ids.getLogWriterI18n());
-      String name = this.getClass().getSimpleName() + "@" + this.hashCode() + " Handle OutOfOffHeapMemoryException Thread";
+      String name =
+          this.getClass().getSimpleName()
+              + "@"
+              + this.hashCode()
+              + " Handle OutOfOffHeapMemoryException Thread";
       //Thread thread = new Thread(group, runnable, name);
       Thread thread = new Thread(runnable, name);
       thread.setDaemon(true);

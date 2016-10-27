@@ -34,9 +34,8 @@ import org.apache.geode.distributed.DistributedSystem;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * This test tests Illegal arguments being passed to create disk regions. The
- * creation of the DWA object should throw a relevant exception if the
- * arguments specified are incorrect.
+ * This test tests Illegal arguments being passed to create disk regions. The creation of the DWA
+ * object should throw a relevant exception if the arguments specified are incorrect.
  */
 @Category(IntegrationTest.class)
 public class DiskRegionIllegalArguementsJUnitTest {
@@ -64,9 +63,7 @@ public class DiskRegionIllegalArguementsJUnitTest {
     cache.close();
   }
 
-  /**
-   * test Illegal max oplog size
-   */
+  /** test Illegal max oplog size */
   @Test
   public void testMaxOplogSize() {
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
@@ -137,9 +134,9 @@ public class DiskRegionIllegalArguementsJUnitTest {
     file3.deleteOnExit();
     file4.deleteOnExit();
 
-    File[] dirs = { file1, file2, file3, file4 };
+    File[] dirs = {file1, file2, file3, file4};
 
-    int[] ints = { 1, 2, 3, -4 };
+    int[] ints = {1, 2, 3, -4};
 
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     try {
@@ -148,7 +145,7 @@ public class DiskRegionIllegalArguementsJUnitTest {
     } catch (IllegalArgumentException ok) {
     }
 
-    int[] ints1 = { 1, 2, 3 };
+    int[] ints1 = {1, 2, 3};
 
     try {
       dsf.setDiskDirsAndSizes(dirs, ints1);
@@ -167,9 +164,9 @@ public class DiskRegionIllegalArguementsJUnitTest {
     File file3 = new File("file8");
     File file4 = new File("file9");
 
-    File[] dirs = { file1, file2, file3, file4 };
+    File[] dirs = {file1, file2, file3, file4};
 
-    int[] ints = { 1, 2, 3, 4 };
+    int[] ints = {1, 2, 3, 4};
 
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     try {
@@ -180,7 +177,7 @@ public class DiskRegionIllegalArguementsJUnitTest {
     } catch (IllegalArgumentException e) {
     }
 
-    int[] ints1 = { 1, 2, 3 };
+    int[] ints1 = {1, 2, 3};
     file1.mkdir();
     file2.mkdir();
     file3.mkdir();

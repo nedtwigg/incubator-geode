@@ -60,18 +60,20 @@ public abstract class FunctionServiceClientAccessorPRBase extends FunctionServic
       createRegion(vm);
     }
 
-    vm0.invoke(() -> {
-      Region region = getCache().getRegion(REGION);
-      PartitionRegionHelper.assignBucketsToPartitions(region);
-    });
+    vm0.invoke(
+        () -> {
+          Region region = getCache().getRegion(REGION);
+          PartitionRegionHelper.assignBucketsToPartitions(region);
+        });
 
     region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION);
   }
 
   private void createRegion(final VM vm) {
-    vm.invoke(() -> {
-      getCache().createRegionFactory(RegionShortcut.PARTITION).create(REGION);
-    });
+    vm.invoke(
+        () -> {
+          getCache().createRegionFactory(RegionShortcut.PARTITION).create(REGION);
+        });
   }
 
   @Override
@@ -80,8 +82,8 @@ public abstract class FunctionServiceClientAccessorPRBase extends FunctionServic
   }
 
   /**
-   * Test that a custom result collector will still receive all partial
-   * results from other members when one source fails
+   * Test that a custom result collector will still receive all partial results from other members
+   * when one source fails
    */
   @Test
   public void nonHAFunctionResultCollectorIsPassedPartialResultsAfterBucketMove() {
@@ -95,7 +97,10 @@ public abstract class FunctionServiceClientAccessorPRBase extends FunctionServic
 
     //Execute a function which will close the cache on one source.
     try {
-      ResultCollector rc = getExecution().withCollector(customCollector).execute(new BucketMovingNonHAFunction(firstMember, secondMember));
+      ResultCollector rc =
+          getExecution()
+              .withCollector(customCollector)
+              .execute(new BucketMovingNonHAFunction(firstMember, secondMember));
       rc.getResult();
       fail("Should have thrown an exception");
     } catch (Exception expected) {
@@ -106,15 +111,16 @@ public abstract class FunctionServiceClientAccessorPRBase extends FunctionServic
   }
 
   /**
-   * A function which will close the cache if the given source matches
-   * the source executing this function
+   * A function which will close the cache if the given source matches the source executing this
+   * function
    */
   private class BucketMovingNonHAFunction implements Function {
 
     private final InternalDistributedMember source;
     private final InternalDistributedMember destination;
 
-    public BucketMovingNonHAFunction(final InternalDistributedMember source, final InternalDistributedMember destination) {
+    public BucketMovingNonHAFunction(
+        final InternalDistributedMember source, final InternalDistributedMember destination) {
       this.source = source;
       this.destination = destination;
     }
@@ -122,10 +128,12 @@ public abstract class FunctionServiceClientAccessorPRBase extends FunctionServic
     @Override
     public void execute(FunctionContext context) {
       RegionFunctionContext regionFunctionContext = (RegionFunctionContext) context;
-      final InternalDistributedMember myId = InternalDistributedSystem.getAnyInstance().getDistributedMember();
+      final InternalDistributedMember myId =
+          InternalDistributedSystem.getAnyInstance().getDistributedMember();
       //Move all buckets to the destination
       if (myId.equals(source)) {
-        PartitionRegionHelper.moveData(regionFunctionContext.getDataSet(), source, destination, 100);
+        PartitionRegionHelper.moveData(
+            regionFunctionContext.getDataSet(), source, destination, 100);
       }
       pause(1000);
       context.getResultSender().lastResult(myId);

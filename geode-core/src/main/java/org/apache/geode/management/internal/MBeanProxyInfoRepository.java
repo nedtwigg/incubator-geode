@@ -31,26 +31,18 @@ import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * This class is a repository of all proxy related information multiple indices
- * are provided for searching This searching capability will ease while various
- * proxy ops. It will also be used while filter addition/ removal if dynamic
- * filters are going to be supported.
- * 
- * 
+ * This class is a repository of all proxy related information multiple indices are provided for
+ * searching This searching capability will ease while various proxy ops. It will also be used while
+ * filter addition/ removal if dynamic filters are going to be supported.
  */
-
 public class MBeanProxyInfoRepository {
 
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * This index will keep a map between old object name and proxy info
-   */
+  /** This index will keep a map between old object name and proxy info */
   private Map<ObjectName, ProxyInfo> objectNameIndex;
 
-  /**
-   * This index will keep a map between old object name and proxy info
-   */
+  /** This index will keep a map between old object name and proxy info */
   private Map<DistributedMember, Set<ObjectName>> memberIndex;
 
   protected MBeanProxyInfoRepository() {
@@ -61,11 +53,9 @@ public class MBeanProxyInfoRepository {
 
   /**
    * Add the {@link ProxyInfo} into repository for future quick access
-   * 
-   * @param member
-   *          Distributed Member
-   * @param proxyInfo
-   *          Proxy Info instance
+   *
+   * @param member Distributed Member
+   * @param proxyInfo Proxy Info instance
    */
   protected void addProxyToRepository(DistributedMember member, ProxyInfo proxyInfo) {
     ObjectName objectName = proxyInfo.getObjectName();
@@ -81,12 +71,11 @@ public class MBeanProxyInfoRepository {
       proxyInfoSet.add(proxyInfo.getObjectName());
       memberIndex.put(member, proxyInfoSet);
     }
-
   }
 
   /**
    * Finds the proxy instance by {@link javax.management.ObjectName}
-   * 
+   *
    * @param objectName
    * @param interfaceClass
    * @return instance of proxy
@@ -103,12 +92,11 @@ public class MBeanProxyInfoRepository {
     } else {
       return null;
     }
-
   }
 
   /**
    * Finds the proxy instance by {@link javax.management.ObjectName}
-   * 
+   *
    * @param objectName
    * @return instance of proxy
    */
@@ -122,12 +110,11 @@ public class MBeanProxyInfoRepository {
   }
 
   /**
-   * Finds the set of proxy instances by {@link org.apache.geode.distributed.DistributedMember} 
-   * 
-   * @param member
-   *          DistributedMember
-   * @return A set of proxy instance on which user can invoke operations as
-   *         defined by the proxy interface
+   * Finds the set of proxy instances by {@link org.apache.geode.distributed.DistributedMember}
+   *
+   * @param member DistributedMember
+   * @return A set of proxy instance on which user can invoke operations as defined by the proxy
+   *     interface
    */
   protected Set<ObjectName> findProxySet(DistributedMember member) {
     if (logger.isTraceEnabled()) {
@@ -143,14 +130,11 @@ public class MBeanProxyInfoRepository {
   }
 
   /**
-   * Removes a proxy of a given
-   * {@link org.apache.geode.distributed.DistributedMember} and given
+   * Removes a proxy of a given {@link org.apache.geode.distributed.DistributedMember} and given
    * {@link javax.management.ObjectName}
-   * 
-   * @param member
-   *          DistributedMember
-   * @param objectName
-   *          MBean name
+   *
+   * @param member DistributedMember
+   * @param objectName MBean name
    */
   protected void removeProxy(DistributedMember member, ObjectName objectName) {
     ProxyInfo info = objectNameIndex.remove(objectName);
@@ -161,7 +145,5 @@ public class MBeanProxyInfoRepository {
     if (proxyInfoSet.contains(objectName)) {
       proxyInfoSet.remove(objectName);
     }
-
   }
-
 }

@@ -57,9 +57,7 @@ public class RegionReliabilityListenerDUnitTest extends ReliabilityTestCase {
     super();
   }
 
-  /**
-   * Tests the notification of afterRoleGain and afterRoleLoss
-   */
+  /** Tests the notification of afterRoleGain and afterRoleLoss */
   @Test
   public void testRoleGainAndLoss() throws Exception {
     final String name = this.getUniqueName();
@@ -73,30 +71,34 @@ public class RegionReliabilityListenerDUnitTest extends ReliabilityTestCase {
     final String roleD = name + "-D";
 
     // assign names to 4 vms...
-    final String[] requiredRoles = { roleA, roleC, roleD };
-    final String[] rolesProp = { "", roleA, roleA, roleC + "," + roleD };
-    final String[][] vmRoles = new String[][] { {}, { roleA }, { roleA }, { roleC, roleD } };
+    final String[] requiredRoles = {roleA, roleC, roleD};
+    final String[] rolesProp = {"", roleA, roleA, roleC + "," + roleD};
+    final String[][] vmRoles = new String[][] {{}, {roleA}, {roleA}, {roleC, roleD}};
     for (int i = 0; i < vmRoles.length; i++) {
       final int vm = i;
-      Host.getHost(0).getVM(vm).invoke(new SerializableRunnable() {
-        public void run() {
-          Properties config = new Properties();
-          config.setProperty(ROLES, rolesProp[vm]);
-          getSystem(config);
-        }
-      });
+      Host.getHost(0)
+          .getVM(vm)
+          .invoke(
+              new SerializableRunnable() {
+                public void run() {
+                  Properties config = new Properties();
+                  config.setProperty(ROLES, rolesProp[vm]);
+                  getSystem(config);
+                }
+              });
     }
 
     // define RegionRoleListener
-    final RegionRoleListener listener = new RegionRoleListenerAdapter() {
-      public void afterRoleGain(RoleEvent event) {
-        RegionReliabilityListenerDUnitTest.rolesGain = event.getRequiredRoles();
-      }
+    final RegionRoleListener listener =
+        new RegionRoleListenerAdapter() {
+          public void afterRoleGain(RoleEvent event) {
+            RegionReliabilityListenerDUnitTest.rolesGain = event.getRequiredRoles();
+          }
 
-      public void afterRoleLoss(RoleEvent event) {
-        RegionReliabilityListenerDUnitTest.rolesLoss = event.getRequiredRoles();
-      }
-    };
+          public void afterRoleLoss(RoleEvent event) {
+            RegionReliabilityListenerDUnitTest.rolesLoss = event.getRequiredRoles();
+          }
+        };
 
     // connect controller to system...
     Properties config = new Properties();
@@ -104,7 +106,8 @@ public class RegionReliabilityListenerDUnitTest extends ReliabilityTestCase {
     getSystem(config);
 
     // create region in controller...
-    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra =
+        new MembershipAttributes(requiredRoles, LossAction.FULL_ACCESS, ResumptionAction.NONE);
 
     AttributesFactory fac = new AttributesFactory();
     fac.addCacheListener(listener);
@@ -121,14 +124,15 @@ public class RegionReliabilityListenerDUnitTest extends ReliabilityTestCase {
     assertMissingRoles(name, requiredRoles);
 
     // assert gain is fired...
-    SerializableRunnable create = new CacheSerializableRunnable("Create Region") {
-      public void run2() throws CacheException {
-        AttributesFactory fac = new AttributesFactory();
-        fac.setScope(Scope.DISTRIBUTED_ACK);
-        RegionAttributes attr = fac.create();
-        createRootRegion(name, attr);
-      }
-    };
+    SerializableRunnable create =
+        new CacheSerializableRunnable("Create Region") {
+          public void run2() throws CacheException {
+            AttributesFactory fac = new AttributesFactory();
+            fac.setScope(Scope.DISTRIBUTED_ACK);
+            RegionAttributes attr = fac.create();
+            createRootRegion(name, attr);
+          }
+        };
 
     // create region in vm0... no gain for no role
     Host.getHost(0).getVM(vm0).invoke(create);
@@ -167,12 +171,13 @@ public class RegionReliabilityListenerDUnitTest extends ReliabilityTestCase {
     assertMissingRoles(name, new String[0]); // no missing roles
 
     // assert loss is fired...
-    SerializableRunnable destroy = new CacheSerializableRunnable("Destroy Region") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion(name);
-        region.localDestroyRegion();
-      }
-    };
+    SerializableRunnable destroy =
+        new CacheSerializableRunnable("Destroy Region") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion(name);
+            region.localDestroyRegion();
+          }
+        };
 
     // destroy region in vm0... no loss of any role
     Host.getHost(0).getVM(vm0).invoke(destroy);
@@ -210,5 +215,4 @@ public class RegionReliabilityListenerDUnitTest extends ReliabilityTestCase {
     rolesLoss = null;
     assertMissingRoles(name, requiredRoles); // all roles are missing
   }
-
 }

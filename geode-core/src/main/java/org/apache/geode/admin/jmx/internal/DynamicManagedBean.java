@@ -25,9 +25,9 @@ import org.apache.commons.modeler.OperationInfo;
 import org.apache.commons.modeler.ManagedBean;
 
 /**
- * Extends ManagedBean to allow for dynamically creating new instances of
- * ManagedBean based on an existing instance of ManagedBean.
- * 
+ * Extends ManagedBean to allow for dynamically creating new instances of ManagedBean based on an
+ * existing instance of ManagedBean.
+ *
  * @since GemFire 5.0.1
  */
 public class DynamicManagedBean extends org.apache.commons.modeler.ManagedBean {
@@ -48,8 +48,8 @@ public class DynamicManagedBean extends org.apache.commons.modeler.ManagedBean {
     this.operations = managed.getOperations();
     this.type = managed.getType();
 
-    /* we don't use modelerType and it's nice to remove it to keep the list of 
-       attributes cleaned up...*/
+    /* we don't use modelerType and it's nice to remove it to keep the list of
+    attributes cleaned up...*/
     removeAttribute("modelerType");
   }
 
@@ -69,7 +69,8 @@ public class DynamicManagedBean extends org.apache.commons.modeler.ManagedBean {
           attributesList.add(this.attributes[i]);
         }
       }
-      this.attributes = (AttributeInfo[]) attributesList.toArray(new AttributeInfo[attributesList.size()]);
+      this.attributes =
+          (AttributeInfo[]) attributesList.toArray(new AttributeInfo[attributesList.size()]);
 
       /* super.info should be nulled out anytime the structure is changed,
        * such as altering the attributes, operations, or notifications
@@ -82,8 +83,8 @@ public class DynamicManagedBean extends org.apache.commons.modeler.ManagedBean {
   }
 
   /**
-   * Removes the operation with the given name from thie
-   * <code>ManageBean</code>'s operation descriptor list.
+   * Removes the operation with the given name from thie <code>ManageBean</code>'s operation
+   * descriptor list.
    *
    * @since GemFire 4.0
    */
@@ -99,7 +100,8 @@ public class DynamicManagedBean extends org.apache.commons.modeler.ManagedBean {
           operationsList.add(this.operations[i]);
         }
       }
-      this.operations = (OperationInfo[]) operationsList.toArray(new OperationInfo[operationsList.size()]);
+      this.operations =
+          (OperationInfo[]) operationsList.toArray(new OperationInfo[operationsList.size()]);
 
       /* super.info should be nulled out anytime the structure is changed,
        * such as altering the operations, operations, or notifications
@@ -111,9 +113,7 @@ public class DynamicManagedBean extends org.apache.commons.modeler.ManagedBean {
     }
   }
 
-  /**
-   * Return a string representation of this managed bean.
-   */
+  /** Return a string representation of this managed bean. */
   @Override
   public String toString() {
     StringBuffer sb = new StringBuffer("DynamicManagedBean[");

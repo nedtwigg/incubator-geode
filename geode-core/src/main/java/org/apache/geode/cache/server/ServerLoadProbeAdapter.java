@@ -17,25 +17,17 @@
 package org.apache.geode.cache.server;
 
 /**
- * Utility class that implements all methods in {@link ServerLoadProbe} with
- * empty implementations for open and close. Applications can subclass this
- * class and only override the methods for the events of interest.
- * 
+ * Utility class that implements all methods in {@link ServerLoadProbe} with empty implementations
+ * for open and close. Applications can subclass this class and only override the methods for the
+ * events of interest.
+ *
  * @since GemFire 5.7
- * 
  */
 public abstract class ServerLoadProbeAdapter implements ServerLoadProbe {
 
-  /**
-   * Does nothing.
-   */
-  public void close() {
-  }
+  /** Does nothing. */
+  public void close() {}
 
-  /**
-   * Does nothing.
-   */
-  public void open() {
-  }
-
+  /** Does nothing. */
+  public void open() {}
 }

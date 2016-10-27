@@ -21,14 +21,10 @@ package org.apache.geode.internal.cache;
 //import org.apache.geode.distributed.internal.DM;
 
 /**
- * Implementation class of RegionEntry interface.
- * VM -> entries stored in VM memory
- * Thin -> no extra statistics
- * Disk -> entries can be on disk 
+ * Implementation class of RegionEntry interface. VM -> entries stored in VM memory Thin -> no extra
+ * statistics Disk -> entries can be on disk
  *
  * @since GemFire 3.5.1
- *
- *
  */
 public abstract class VMThinDiskRegionEntry extends AbstractOplogDiskRegionEntry {
   protected VMThinDiskRegionEntry(RegionEntryContext context, Object value) {

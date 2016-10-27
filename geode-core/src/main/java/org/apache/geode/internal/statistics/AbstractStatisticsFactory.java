@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * An abstract standalone implementation of {@link StatisticsFactory}.
- * It can be used in contexts that do not have the GemFire product
- * or in vm's that do not have a distributed system nor a gemfire connection.
+ * An abstract standalone implementation of {@link StatisticsFactory}. It can be used in contexts
+ * that do not have the GemFire product or in vm's that do not have a distributed system nor a
+ * gemfire connection.
  *
  * @since GemFire 7.0
  */
@@ -58,8 +58,7 @@ public abstract class AbstractStatisticsFactory implements StatisticsFactory, St
     this.tf = StatisticsTypeFactoryImpl.singleton();
   }
 
-  public void close() {
-  }
+  public void close() {}
 
   @Override
   public final String getName() {
@@ -106,7 +105,8 @@ public abstract class AbstractStatisticsFactory implements StatisticsFactory, St
         }
       }
     }
-    throw new RuntimeException(LocalizedStrings.PureStatSampler_COULD_NOT_FIND_STATISTICS_INSTANCE.toLocalizedString());
+    throw new RuntimeException(
+        LocalizedStrings.PureStatSampler_COULD_NOT_FIND_STATISTICS_INSTANCE.toLocalizedString());
   }
 
   @Override
@@ -143,12 +143,14 @@ public abstract class AbstractStatisticsFactory implements StatisticsFactory, St
     return createOsStatistics(type, textId, 0, 0);
   }
 
-  protected Statistics createOsStatistics(StatisticsType type, String textId, long numericId, int osStatFlags) {
+  protected Statistics createOsStatistics(
+      StatisticsType type, String textId, long numericId, int osStatFlags) {
     long myUniqueId;
     synchronized (statsListUniqueIdLock) {
       myUniqueId = statsListUniqueId++; // fix for bug 30597
     }
-    Statistics result = new LocalStatisticsImpl(type, textId, numericId, myUniqueId, false, osStatFlags, this);
+    Statistics result =
+        new LocalStatisticsImpl(type, textId, numericId, myUniqueId, false, osStatFlags, this);
     synchronized (statsList) {
       statsList.add(result);
       statsListModCount++;
@@ -245,11 +247,10 @@ public abstract class AbstractStatisticsFactory implements StatisticsFactory, St
 
   // StatisticsTypeFactory methods
 
-  /**
-   * Creates or finds a StatisticType for the given shared class.
-   */
+  /** Creates or finds a StatisticType for the given shared class. */
   @Override
-  public final StatisticsType createType(String name, String description, StatisticDescriptor[] stats) {
+  public final StatisticsType createType(
+      String name, String description, StatisticDescriptor[] stats) {
     return tf.createType(name, description, stats);
   }
 
@@ -269,12 +270,14 @@ public abstract class AbstractStatisticsFactory implements StatisticsFactory, St
   }
 
   @Override
-  public final StatisticDescriptor createLongCounter(String name, String description, String units) {
+  public final StatisticDescriptor createLongCounter(
+      String name, String description, String units) {
     return tf.createLongCounter(name, description, units);
   }
 
   @Override
-  public final StatisticDescriptor createDoubleCounter(String name, String description, String units) {
+  public final StatisticDescriptor createDoubleCounter(
+      String name, String description, String units) {
     return tf.createDoubleCounter(name, description, units);
   }
 
@@ -289,37 +292,44 @@ public abstract class AbstractStatisticsFactory implements StatisticsFactory, St
   }
 
   @Override
-  public final StatisticDescriptor createDoubleGauge(String name, String description, String units) {
+  public final StatisticDescriptor createDoubleGauge(
+      String name, String description, String units) {
     return tf.createDoubleGauge(name, description, units);
   }
 
   @Override
-  public final StatisticDescriptor createIntCounter(String name, String description, String units, boolean largerBetter) {
+  public final StatisticDescriptor createIntCounter(
+      String name, String description, String units, boolean largerBetter) {
     return tf.createIntCounter(name, description, units, largerBetter);
   }
 
   @Override
-  public final StatisticDescriptor createLongCounter(String name, String description, String units, boolean largerBetter) {
+  public final StatisticDescriptor createLongCounter(
+      String name, String description, String units, boolean largerBetter) {
     return tf.createLongCounter(name, description, units, largerBetter);
   }
 
   @Override
-  public final StatisticDescriptor createDoubleCounter(String name, String description, String units, boolean largerBetter) {
+  public final StatisticDescriptor createDoubleCounter(
+      String name, String description, String units, boolean largerBetter) {
     return tf.createDoubleCounter(name, description, units, largerBetter);
   }
 
   @Override
-  public final StatisticDescriptor createIntGauge(String name, String description, String units, boolean largerBetter) {
+  public final StatisticDescriptor createIntGauge(
+      String name, String description, String units, boolean largerBetter) {
     return tf.createIntGauge(name, description, units, largerBetter);
   }
 
   @Override
-  public final StatisticDescriptor createLongGauge(String name, String description, String units, boolean largerBetter) {
+  public final StatisticDescriptor createLongGauge(
+      String name, String description, String units, boolean largerBetter) {
     return tf.createLongGauge(name, description, units, largerBetter);
   }
 
   @Override
-  public final StatisticDescriptor createDoubleGauge(String name, String description, String units, boolean largerBetter) {
+  public final StatisticDescriptor createDoubleGauge(
+      String name, String description, String units, boolean largerBetter) {
     return tf.createDoubleGauge(name, description, units, largerBetter);
   }
 }

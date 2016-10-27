@@ -34,41 +34,31 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * A generic function to act as a conduit between Managing Node and Managed
- * nodes.
- * 
- * The direction of request flow is from Managing Node to Managing Node.
- * 
- * The following methods are executed at Managed node on behalf of the proxy.
- * 
- * 1) All setter methods 2) All operations 3) addNotificationListener 4)
+ * A generic function to act as a conduit between Managing Node and Managed nodes.
+ *
+ * <p>The direction of request flow is from Managing Node to Managing Node.
+ *
+ * <p>The following methods are executed at Managed node on behalf of the proxy.
+ *
+ * <p>1) All setter methods 2) All operations 3) addNotificationListener 4)
  * removeNotificationListener 5) getNotificationInfo
- * 
- * 
  */
-
 public class ManagementFunction extends FunctionAdapter implements InternalEntity {
 
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
 
-  /**
-   * Platform MBean server.
-   */
+  /** Platform MBean server. */
   private MBeanServer mbeanServer = MBeanJMXAdapter.mbeanServer;
 
-  /**
-   * Notification hub instance
-   */
+  /** Notification hub instance */
   private NotificationHub notificationHub;
 
   /**
    * Public constructor
-   * 
+   *
    * @param notifHub
    */
   public ManagementFunction(NotificationHub notifHub) {
@@ -76,10 +66,9 @@ public class ManagementFunction extends FunctionAdapter implements InternalEntit
   }
 
   /**
-   * Actual function execution. It delegates task at managed node according to
-   * the request received.
-   * 
-   * If any exception is encountered it will set the result to UNDEFINED
+   * Actual function execution. It delegates task at managed node according to the request received.
+   *
+   * <p>If any exception is encountered it will set the result to UNDEFINED
    */
   public void execute(FunctionContext fc) {
 
@@ -143,14 +132,13 @@ public class ManagementFunction extends FunctionAdapter implements InternalEntit
     } finally {
       if (!executedSuccessfully) {
         if (cache == null || (cache != null && cache.isClosed())) {
-          Exception e = new Exception(ManagementStrings.MEMBER_IS_SHUTTING_DOWN.toLocalizedString());
+          Exception e =
+              new Exception(ManagementStrings.MEMBER_IS_SHUTTING_DOWN.toLocalizedString());
           sendException(e, fc);
           return; // member is closing or invalid member
         }
-
       }
     }
-
   }
 
   public String getId() {
@@ -164,5 +152,4 @@ public class ManagementFunction extends FunctionAdapter implements InternalEntit
     }
     fc.getResultSender().sendException(e);
   }
-
 }

@@ -24,16 +24,11 @@ import org.apache.geode.internal.memcached.RequestReader;
 import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 
 /**
- * This command is currently no-op.<br/>
- * 
- * The command "stats" is used to query the server about statistics it
- * maintains and other internal data. It has two forms. Without
- * arguments:
- * 
- * stats\r\n
- * it causes the server to output general-purpose statistics
- * 
+ * This command is currently no-op.<br>
+ * The command "stats" is used to query the server about statistics it maintains and other internal
+ * data. It has two forms. Without arguments:
  *
+ * <p>stats\r\n it causes the server to output general-purpose statistics
  */
 public class StatsCommand extends AbstractCommand {
 
@@ -45,5 +40,4 @@ public class StatsCommand extends AbstractCommand {
     request.getRequest().position(HEADER_LENGTH);
     return request.getResponse();
   }
-
 }

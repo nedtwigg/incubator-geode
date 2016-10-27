@@ -41,12 +41,12 @@ public class ConcurrentStartTest {
   private Cache cache;
   private int numServers = 10;
 
-  @Rule
-  public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+  @Rule public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
   @Before
   public void setUp() {
-    System.setProperty(DistributedSystem.PROPERTIES_FILE_PROPERTY, getClass().getSimpleName() + ".properties");
+    System.setProperty(
+        DistributedSystem.PROPERTIES_FILE_PROPERTY, getClass().getSimpleName() + ".properties");
   }
 
   @After
@@ -78,23 +78,23 @@ public class ConcurrentStartTest {
     final Thread[] threads = new Thread[n];
     for (int i = 0; i < n; i++) {
       final int j = i;
-      Runnable r = new Runnable() {
+      Runnable r =
+          new Runnable() {
 
-        @Override
-        public void run() {
-          GeodeRedisServer s = new GeodeRedisServer(ports[j]);
-          s.start();
-          s.shutdown();
-        }
-      };
+            @Override
+            public void run() {
+              GeodeRedisServer s = new GeodeRedisServer(ports[j]);
+              s.start();
+              s.shutdown();
+            }
+          };
 
       Thread t = new Thread(r);
       t.setDaemon(true);
       t.start();
       threads[i] = t;
     }
-    for (Thread t : threads)
-      t.join();
+    for (Thread t : threads) t.join();
     this.cache = GemFireCacheImpl.getInstance();
     assertFalse(this.cache.isClosed());
   }

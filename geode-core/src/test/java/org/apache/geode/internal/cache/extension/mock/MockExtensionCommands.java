@@ -45,7 +45,6 @@ import org.springframework.shell.core.annotation.CliOption;
 
 /**
  * Mock Extension gfsh commands.
- * 
  *
  * @since GemFire 8.1
  */
@@ -69,101 +68,101 @@ public class MockExtensionCommands implements CommandMarker {
 
   /**
    * Creates a {@link MockRegionExtension} on the given <code>regionName</code>.
-   * 
-   * @param regionName
-   *          {@link Region} name on which to create {@link MockRegionExtension}
-   *          .
-   * @param value
-   *          {@link String} value to set on
-   *          {@link MockRegionExtension#setValue(String)}.
+   *
+   * @param regionName {@link Region} name on which to create {@link MockRegionExtension} .
+   * @param value {@link String} value to set on {@link MockRegionExtension#setValue(String)}.
    * @return {@link Result}
    * @since GemFire 8.1
    */
   @CliCommand(value = CREATE_MOCK_REGION_EXTENSION)
   @CliMetaData(writesToSharedConfiguration = true)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result createMockRegionExtension(@CliOption(key = OPTION_REGION_NAME, mandatory = true)
-  final String regionName, @CliOption(key = OPTION_VALUE, mandatory = true)
-  final String value) {
-    return executeFunctionOnAllMembersTabulateResultPersist(CreateMockRegionExtensionFunction.INSTANCE, true, CreateMockRegionExtensionFunction.toArgs(regionName, value));
+  public Result createMockRegionExtension(
+      @CliOption(key = OPTION_REGION_NAME, mandatory = true) final String regionName,
+      @CliOption(key = OPTION_VALUE, mandatory = true) final String value) {
+    return executeFunctionOnAllMembersTabulateResultPersist(
+        CreateMockRegionExtensionFunction.INSTANCE,
+        true,
+        CreateMockRegionExtensionFunction.toArgs(regionName, value));
   }
 
   /**
    * Alters a {@link MockRegionExtension} on the given <code>regionName</code>.
-   * 
-   * @param regionName
-   *          {@link Region} name on which to create {@link MockRegionExtension}
-   *          .
-   * @param value
-   *          {@link String} value to set on
-   *          {@link MockRegionExtension#setValue(String)}.
+   *
+   * @param regionName {@link Region} name on which to create {@link MockRegionExtension} .
+   * @param value {@link String} value to set on {@link MockRegionExtension#setValue(String)}.
    * @return {@link Result}
    * @since GemFire 8.1
    */
   @CliCommand(value = ALTER_MOCK_REGION_EXTENSION)
   @CliMetaData(writesToSharedConfiguration = true)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result alterMockRegionExtension(@CliOption(key = OPTION_REGION_NAME, mandatory = true)
-  final String regionName, @CliOption(key = OPTION_VALUE, mandatory = true)
-  final String value) {
-    return executeFunctionOnAllMembersTabulateResultPersist(AlterMockRegionExtensionFunction.INSTANCE, true, AlterMockRegionExtensionFunction.toArgs(regionName, value));
+  public Result alterMockRegionExtension(
+      @CliOption(key = OPTION_REGION_NAME, mandatory = true) final String regionName,
+      @CliOption(key = OPTION_VALUE, mandatory = true) final String value) {
+    return executeFunctionOnAllMembersTabulateResultPersist(
+        AlterMockRegionExtensionFunction.INSTANCE,
+        true,
+        AlterMockRegionExtensionFunction.toArgs(regionName, value));
   }
 
   /**
-   * Destroy the {@link MockRegionExtension} on the given
-   * <code>regionName</code>.
-   * 
-   * @param regionName
-   *          {@link Region} name on which to create {@link MockRegionExtension}
-   *          .
+   * Destroy the {@link MockRegionExtension} on the given <code>regionName</code>.
+   *
+   * @param regionName {@link Region} name on which to create {@link MockRegionExtension} .
    * @return {@link Result}
    * @since GemFire 8.1
    */
   @CliCommand(value = DESTROY_MOCK_REGION_EXTENSION)
   @CliMetaData(writesToSharedConfiguration = true)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result destroyMockRegionExtension(@CliOption(key = OPTION_REGION_NAME, mandatory = true)
-  final String regionName) {
-    return executeFunctionOnAllMembersTabulateResultPersist(DestroyMockRegionExtensionFunction.INSTANCE, true, DestroyMockRegionExtensionFunction.toArgs(regionName));
+  public Result destroyMockRegionExtension(
+      @CliOption(key = OPTION_REGION_NAME, mandatory = true) final String regionName) {
+    return executeFunctionOnAllMembersTabulateResultPersist(
+        DestroyMockRegionExtensionFunction.INSTANCE,
+        true,
+        DestroyMockRegionExtensionFunction.toArgs(regionName));
   }
 
   /**
    * Creates a {@link MockCacheExtension}.
-   * 
-   * @param value
-   *          {@link String} value to set on
-   *          {@link MockCacheExtension#setValue(String)}.
+   *
+   * @param value {@link String} value to set on {@link MockCacheExtension#setValue(String)}.
    * @return {@link Result}
    * @since GemFire 8.1
    */
   @CliCommand(value = CREATE_MOCK_CACHE_EXTENSION)
   @CliMetaData(writesToSharedConfiguration = true)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result createMockCacheExtension(@CliOption(key = OPTION_VALUE, mandatory = true)
-  final String value) {
-    return executeFunctionOnAllMembersTabulateResultPersist(CreateMockCacheExtensionFunction.INSTANCE, true, CreateMockCacheExtensionFunction.toArgs(value));
+  public Result createMockCacheExtension(
+      @CliOption(key = OPTION_VALUE, mandatory = true) final String value) {
+    return executeFunctionOnAllMembersTabulateResultPersist(
+        CreateMockCacheExtensionFunction.INSTANCE,
+        true,
+        CreateMockCacheExtensionFunction.toArgs(value));
   }
 
   /**
    * Alter a {@link MockCacheExtension}.
-   * 
-   * @param value
-   *          {@link String} value to set on
-   *          {@link MockCacheExtension#setValue(String)}.
+   *
+   * @param value {@link String} value to set on {@link MockCacheExtension#setValue(String)}.
    * @return {@link Result}
    * @since GemFire 8.1
    */
   @CliCommand(value = ALTER_MOCK_CACHE_EXTENSION)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
   @CliMetaData(writesToSharedConfiguration = true)
-  public Result alterMockCacheExtension(@CliOption(key = OPTION_VALUE, mandatory = true)
-  final String value) {
-    return executeFunctionOnAllMembersTabulateResultPersist(AlterMockCacheExtensionFunction.INSTANCE, true, AlterMockCacheExtensionFunction.toArgs(value));
+  public Result alterMockCacheExtension(
+      @CliOption(key = OPTION_VALUE, mandatory = true) final String value) {
+    return executeFunctionOnAllMembersTabulateResultPersist(
+        AlterMockCacheExtensionFunction.INSTANCE,
+        true,
+        AlterMockCacheExtensionFunction.toArgs(value));
   }
 
   /**
    * Destroy a {@link MockCacheExtension}.
-   * 
+   *
    * @return {@link Result}
    * @since GemFire 8.1
    */
@@ -171,30 +170,32 @@ public class MockExtensionCommands implements CommandMarker {
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
   @CliMetaData(writesToSharedConfiguration = true)
   public Result destroyMockCacheExtension() {
-    return executeFunctionOnAllMembersTabulateResultPersist(DestroyMockCacheExtensionFunction.INSTANCE, false);
+    return executeFunctionOnAllMembersTabulateResultPersist(
+        DestroyMockCacheExtensionFunction.INSTANCE, false);
   }
 
   /**
-   * Call <code>function</code> with <code>args</code> on all members, tabulate
-   * results and persist shared config if changed.
-   * 
-   * @param function
-   *          {@link Function} to execute.
-   * @param addXmlElement
-   *          If <code>true</code> then add result {@link XmlEntity} to the
-   *          config, otherwise delete it.
-   * @param args
-   *          Arguments to pass to function.
+   * Call <code>function</code> with <code>args</code> on all members, tabulate results and persist
+   * shared config if changed.
+   *
+   * @param function {@link Function} to execute.
+   * @param addXmlElement If <code>true</code> then add result {@link XmlEntity} to the config,
+   *     otherwise delete it.
+   * @param args Arguments to pass to function.
    * @return {@link TabularResultData}
    * @since GemFire 8.1
    */
-  protected Result executeFunctionOnAllMembersTabulateResultPersist(final Function function, final boolean addXmlElement, final Object... args) {
+  protected Result executeFunctionOnAllMembersTabulateResultPersist(
+      final Function function, final boolean addXmlElement, final Object... args) {
     final Cache cache = CacheFactory.getAnyInstance();
     final Set<DistributedMember> members = CliUtil.getAllNormalMembers(cache);
 
     @SuppressWarnings("unchecked")
-    final ResultCollector<CliFunctionResult, List<CliFunctionResult>> resultCollector = (ResultCollector<CliFunctionResult, List<CliFunctionResult>>) CliUtil.executeFunction(function, args, members);
-    final List<CliFunctionResult> functionResults = (List<CliFunctionResult>) resultCollector.getResult();
+    final ResultCollector<CliFunctionResult, List<CliFunctionResult>> resultCollector =
+        (ResultCollector<CliFunctionResult, List<CliFunctionResult>>)
+            CliUtil.executeFunction(function, args, members);
+    final List<CliFunctionResult> functionResults =
+        (List<CliFunctionResult>) resultCollector.getResult();
 
     XmlEntity xmlEntity = null;
     final TabularResultData tabularResultData = ResultBuilder.createTabularResultData();
@@ -218,11 +219,11 @@ public class MockExtensionCommands implements CommandMarker {
       if (addXmlElement) {
         result.setCommandPersisted((new SharedConfigurationWriter()).addXmlEntity(xmlEntity, null));
       } else {
-        result.setCommandPersisted((new SharedConfigurationWriter()).deleteXmlEntity(xmlEntity, null));
+        result.setCommandPersisted(
+            (new SharedConfigurationWriter()).deleteXmlEntity(xmlEntity, null));
       }
     }
 
     return result;
   }
-
 }

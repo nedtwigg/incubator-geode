@@ -31,8 +31,7 @@ public class CustomResultCollector implements ResultCollector {
     this.resultList.add(result);
   }
 
-  public void endResults() {
-  }
+  public void endResults() {}
 
   public Object getResult() throws FunctionException {
     return resultList;

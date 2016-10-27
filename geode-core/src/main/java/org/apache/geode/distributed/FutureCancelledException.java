@@ -21,10 +21,9 @@ import org.apache.geode.CancelException;
 
 /**
  * Thrown when a {@link Future} has been cancelled.
- * 
+ *
  * @since GemFire 6.0
  */
-
 public class FutureCancelledException extends CancelException {
   private static final long serialVersionUID = -4599338440381989844L;
 
@@ -43,5 +42,4 @@ public class FutureCancelledException extends CancelException {
   public FutureCancelledException(String s) {
     super(s);
   }
-
 }

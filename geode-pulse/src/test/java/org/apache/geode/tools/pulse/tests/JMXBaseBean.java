@@ -59,5 +59,4 @@ public abstract class JMXBaseBean {
   protected float getFloat(String key) {
     return Float.parseFloat(JMXProperties.getInstance().getProperty(getKey(key)));
   }
-
 }

@@ -28,12 +28,10 @@ public class ASTParameter extends GemFireAST {
     super(t);
   }
 
-  public ASTParameter() {
-  }
+  public ASTParameter() {}
 
   @Override
   public void compile(QCompiler compiler) {
     compiler.pushBindArgument(Integer.parseInt(getFirstChild().getText()));
   }
-
 }

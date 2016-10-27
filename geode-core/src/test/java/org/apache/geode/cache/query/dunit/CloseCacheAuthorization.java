@@ -27,9 +27,7 @@ import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.security.AccessControl;
 import org.apache.geode.security.NotAuthorizedException;
 
-/**
- * Used by CqStateDUnitTest
- */
+/** Used by CqStateDUnitTest */
 public class CloseCacheAuthorization implements AccessControl {
 
   private DistributedMember remoteDistributedMember;
@@ -41,11 +39,11 @@ public class CloseCacheAuthorization implements AccessControl {
   }
 
   @Override
-  public void close() {
-  }
+  public void close() {}
 
   @Override
-  public void init(Principal principal, DistributedMember remoteMember, Cache cache) throws NotAuthorizedException {
+  public void init(Principal principal, DistributedMember remoteMember, Cache cache)
+      throws NotAuthorizedException {
     this.remoteDistributedMember = remoteMember;
     this.cache = cache;
     this.logger = cache.getSecurityLogger();

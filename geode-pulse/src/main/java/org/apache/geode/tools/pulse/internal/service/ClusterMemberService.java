@@ -40,9 +40,9 @@ import java.util.List;
 
 /**
  * Class ClusterMemberService
- * 
- * This class contains implementations of getting Cluster Member's details
- * 
+ *
+ * <p>This class contains implementations of getting Cluster Member's details
+ *
  * @since GemFire version 7.5
  */
 @Component
@@ -110,7 +110,8 @@ public class ClusterMemberService implements PulseService {
       memberJSON.put("threads", clusterMember.getNumThreads());
 
       // Number of member clients
-      if (PulseController.getPulseProductSupport().equalsIgnoreCase(PulseConstants.PRODUCT_NAME_SQLFIRE)) {
+      if (PulseController.getPulseProductSupport()
+          .equalsIgnoreCase(PulseConstants.PRODUCT_NAME_SQLFIRE)) {
         memberJSON.put("clients", clusterMember.getNumSqlfireClients());
       } else {
         memberJSON.put("clients", clusterMember.getMemberClientsHMap().size());

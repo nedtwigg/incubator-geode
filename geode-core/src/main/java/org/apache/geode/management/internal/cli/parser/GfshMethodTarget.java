@@ -24,7 +24,7 @@ import org.springframework.util.ObjectUtils;
 
 /**
  * A method that can be executed via a shell command.
- * 
+ *
  * @since GemFire 7.0
  */
 public class GfshMethodTarget {
@@ -37,11 +37,9 @@ public class GfshMethodTarget {
 
   /**
    * Constructor for a <code>null remainingBuffer</code> and <code>key</code>
-   * 
-   * @param method
-   *          the method to invoke (required)
-   * @param target
-   *          the object on which the method is to be invoked (required)
+   *
+   * @param method the method to invoke (required)
+   * @param target the object on which the method is to be invoked (required)
    */
   public GfshMethodTarget(final Method method, final Object target) {
     this(method, target, null, null);
@@ -49,17 +47,14 @@ public class GfshMethodTarget {
 
   /**
    * Constructor that allows all fields to be set
-   * 
-   * @param method
-   *          the method to invoke (required)
-   * @param target
-   *          the object on which the method is to be invoked (required)
-   * @param remainingBuffer
-   *          can be blank
-   * @param key
-   *          can be blank
+   *
+   * @param method the method to invoke (required)
+   * @param target the object on which the method is to be invoked (required)
+   * @param remainingBuffer can be blank
+   * @param key can be blank
    */
-  public GfshMethodTarget(final Method method, final Object target, final String remainingBuffer, final String key) {
+  public GfshMethodTarget(
+      final Method method, final Object target, final String remainingBuffer, final String key) {
     Assert.notNull(method, "Method is required");
     Assert.notNull(target, "Target is required");
     this.key = StringUtils.trimToEmpty(key);
@@ -99,13 +94,23 @@ public class GfshMethodTarget {
 
   @Override
   public int hashCode() {
-    return ObjectUtils.nullSafeHashCode(new Object[] { method, target });
+    return ObjectUtils.nullSafeHashCode(new Object[] {method, target});
   }
 
   @Override
   public final String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append(GfshMethodTarget.class.getSimpleName()).append("[key=" + key).append(",remainingBuffer=" + remainingBuffer + ",target=" + target + ",method=" + method + "]");
+    builder
+        .append(GfshMethodTarget.class.getSimpleName())
+        .append("[key=" + key)
+        .append(
+            ",remainingBuffer="
+                + remainingBuffer
+                + ",target="
+                + target
+                + ",method="
+                + method
+                + "]");
     return builder.toString();
   }
 

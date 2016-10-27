@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import org.junit.experimental.categories.Category;
@@ -37,16 +35,11 @@ import org.apache.geode.test.dunit.VM;
 
 import java.util.Iterator;
 
-/**
- * Test that keys iterator do not returned keys with removed token as its values
- *
- */
+/** Test that keys iterator do not returned keys with removed token as its values */
 @Category(DistributedTest.class)
 public class IteratorDUnitTest extends JUnit4CacheTestCase {
 
-  /**
-   * @param name
-   */
+  /** @param name */
   public IteratorDUnitTest() {
     super();
   }
@@ -78,38 +71,44 @@ public class IteratorDUnitTest extends JUnit4CacheTestCase {
     VM datastore = host.getVM(1);
     final String regionName = getUniqueName();
 
-    accessor.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        getGemfireCache().createRegionFactory(RegionShortcut.PARTITION_PROXY).create(regionName);
-        return null;
-      }
-    });
-    datastore.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        Region r = getGemfireCache().createRegionFactory(RegionShortcut.PARTITION).create(regionName);
-        r.put("key", "value");
-        r.put("key2", "value2");
-        r.put("key3", "value3");
-        PartitionedRegion pr = (PartitionedRegion) r;
-        BucketRegion br = pr.getBucketRegion("key");
-        assertNotNull(br);
-        // simulate a removed key
-        br.getRegionMap().getEntry("key").setValue(pr, Token.REMOVED_PHASE1);
-        return null;
-      }
-    });
-    accessor.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        Region r = getGemfireCache().getRegion(regionName);
-        Iterator it = r.keySet().iterator();
-        int numKeys = 0;
-        while (it.hasNext()) {
-          it.next();
-          numKeys++;
-        }
-        assertEquals(2, numKeys);
-        return null;
-      }
-    });
+    accessor.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            getGemfireCache()
+                .createRegionFactory(RegionShortcut.PARTITION_PROXY)
+                .create(regionName);
+            return null;
+          }
+        });
+    datastore.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Region r =
+                getGemfireCache().createRegionFactory(RegionShortcut.PARTITION).create(regionName);
+            r.put("key", "value");
+            r.put("key2", "value2");
+            r.put("key3", "value3");
+            PartitionedRegion pr = (PartitionedRegion) r;
+            BucketRegion br = pr.getBucketRegion("key");
+            assertNotNull(br);
+            // simulate a removed key
+            br.getRegionMap().getEntry("key").setValue(pr, Token.REMOVED_PHASE1);
+            return null;
+          }
+        });
+    accessor.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Region r = getGemfireCache().getRegion(regionName);
+            Iterator it = r.keySet().iterator();
+            int numKeys = 0;
+            while (it.hasNext()) {
+              it.next();
+              numKeys++;
+            }
+            assertEquals(2, numKeys);
+            return null;
+          }
+        });
   }
 }

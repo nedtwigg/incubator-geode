@@ -18,36 +18,30 @@
 package org.apache.geode.security;
 
 /**
- * Thrown if the distributed system is in secure mode and this client/peer has
- * not set the security credentials.
- * 
+ * Thrown if the distributed system is in secure mode and this client/peer has not set the security
+ * credentials.
+ *
  * @since GemFire 5.5
  */
 public class AuthenticationRequiredException extends GemFireSecurityException {
   private static final long serialVersionUID = 4675976651103154919L;
 
   /**
-   * Constructs instance of <code>NotAuthenticatedException</code> with error
-   * message.
-   * 
-   * @param message
-   *                the error message
+   * Constructs instance of <code>NotAuthenticatedException</code> with error message.
+   *
+   * @param message the error message
    */
   public AuthenticationRequiredException(String message) {
     super(message);
   }
 
   /**
-   * Constructs instance of <code>NotAuthenticatedException</code> with error
-   * message and cause.
-   * 
-   * @param message
-   *                the error message
-   * @param cause
-   *                a <code>Throwable</code> that is a cause of this exception
+   * Constructs instance of <code>NotAuthenticatedException</code> with error message and cause.
+   *
+   * @param message the error message
+   * @param cause a <code>Throwable</code> that is a cause of this exception
    */
   public AuthenticationRequiredException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

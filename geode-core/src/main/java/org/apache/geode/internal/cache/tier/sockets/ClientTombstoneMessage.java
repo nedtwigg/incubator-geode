@@ -31,41 +31,40 @@ import org.apache.geode.internal.cache.tier.Acceptor;
 import org.apache.geode.internal.cache.tier.MessageType;
 import org.apache.geode.internal.cache.versions.VersionSource;
 
-/**
- * 
- *
- */
+/** */
 public class ClientTombstoneMessage extends ClientUpdateMessageImpl {
 
   enum TOperation {
-    GC, GC_PR
+    GC,
+    GC_PR
   }
 
   private Object removalInformation;
   private TOperation op;
 
   /** GC operation for non-partitioned regions */
-  public static ClientTombstoneMessage gc(LocalRegion region, Map<VersionSource, Long> regionGCVersions, EventID eventId) {
+  public static ClientTombstoneMessage gc(
+      LocalRegion region, Map<VersionSource, Long> regionGCVersions, EventID eventId) {
     return new ClientTombstoneMessage(TOperation.GC, region, regionGCVersions, eventId);
   }
 
   /** GC operation for partitioned regions */
-  public static ClientTombstoneMessage gc(LocalRegion region, Set<Object> removedKeys, EventID eventId) {
+  public static ClientTombstoneMessage gc(
+      LocalRegion region, Set<Object> removedKeys, EventID eventId) {
     return new ClientTombstoneMessage(TOperation.GC_PR, region, removedKeys, eventId);
   }
 
-  private ClientTombstoneMessage(TOperation op, LocalRegion region, Object removalInformation, EventID eventId) {
+  private ClientTombstoneMessage(
+      TOperation op, LocalRegion region, Object removalInformation, EventID eventId) {
     super(EnumListenerEvent.AFTER_TOMBSTONE_EXPIRATION, null, eventId);
     this.op = op;
     this.removalInformation = removalInformation;
-    setRegionName(region.getFullPath()); // fix for bug #45962 - tombstone message must have the region name
+    setRegionName(
+        region.getFullPath()); // fix for bug #45962 - tombstone message must have the region name
   }
 
-  /**
-   * default constructor
-   */
-  public ClientTombstoneMessage() {
-  }
+  /** default constructor */
+  public ClientTombstoneMessage() {}
 
   @Override
   public boolean shouldBeConflated() {
@@ -150,8 +149,7 @@ public class ClientTombstoneMessage extends ClientUpdateMessageImpl {
   }
 
   @Override
-  public void setLatestValue(Object value) {
-  }
+  public void setLatestValue(Object value) {}
 
   @Override
   public boolean isClientInterested(ClientProxyMembershipID clientId) {
@@ -166,7 +164,18 @@ public class ClientTombstoneMessage extends ClientUpdateMessageImpl {
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("ClientTombstoneMessage[op=").append(this.op).append(";region=").append(getRegionName()).append(";removalInfo=").append(this.removalInformation).append(";memberId=").append(getMembershipId()).append(";eventId=").append(getEventId()).append("]");
+    buffer
+        .append("ClientTombstoneMessage[op=")
+        .append(this.op)
+        .append(";region=")
+        .append(getRegionName())
+        .append(";removalInfo=")
+        .append(this.removalInformation)
+        .append(";memberId=")
+        .append(getMembershipId())
+        .append(";eventId=")
+        .append(getEventId())
+        .append("]");
     return buffer.toString();
   }
 }

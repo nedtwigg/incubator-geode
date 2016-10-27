@@ -29,12 +29,10 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 /**
- * Internal tokens used as region values. These tokens
- * are never seen from the public API.
+ * Internal tokens used as region values. These tokens are never seen from the public API.
  *
- * These classes are Serializable and implement readResolve to support
- * canonicalization in the face of copysharing.
- *
+ * <p>These classes are Serializable and implement readResolve to support canonicalization in the
+ * face of copysharing.
  */
 public abstract class Token {
 
@@ -46,39 +44,32 @@ public abstract class Token {
   public static final Destroyed DESTROYED = new Destroyed();
 
   /**
-   * Tombstone is used to hold onto destroyed entries in regions
-   * supporting entry versioning.  DESTROYED and REMOVED_PHASE2
-   * tokens transition to TOMBSTONE during GII and normal entry
+   * Tombstone is used to hold onto destroyed entries in regions supporting entry versioning.
+   * DESTROYED and REMOVED_PHASE2 tokens transition to TOMBSTONE during GII and normal entry
    * removal.
    */
   public static final Tombstone TOMBSTONE = new Tombstone();
 
   /**
-   * Used when a RegionEntry is removed from a RegionMap. In phase 1 of
-   * removal, the destroy() operation is applied to the entry under
-   * synchronization.  The lock is then released while distribution
-   * is done.  During this period, the entry may be modified, preventing
-   * the entry from being removed from its map.
+   * Used when a RegionEntry is removed from a RegionMap. In phase 1 of removal, the destroy()
+   * operation is applied to the entry under synchronization. The lock is then released while
+   * distribution is done. During this period, the entry may be modified, preventing the entry from
+   * being removed from its map.
    */
   public static final Removed REMOVED_PHASE1 = new Removed();
 
   /**
-   * Used when a RegionEntry is removed from a RegionMap.  In phase 2 of
-   * removal, callbacks for the entry are invoked under synchronization
-   * and the entry is then removed from the map.  If an entry is seen in
-   * this state, you should wait in a loop for the entry to be removed
-   * from the map.
+   * Used when a RegionEntry is removed from a RegionMap. In phase 2 of removal, callbacks for the
+   * entry are invoked under synchronization and the entry is then removed from the map. If an entry
+   * is seen in this state, you should wait in a loop for the entry to be removed from the map.
    */
   public static final Removed2 REMOVED_PHASE2 = new Removed2();
 
-  /**
-   * Used to designate end of stream in StreamingOperation
-   */
+  /** Used to designate end of stream in StreamingOperation */
   public static final EndOfStream END_OF_STREAM = new EndOfStream();
 
   /**
-   * Indicates that a decision was made to not provide some information
-   * that is normally available.
+   * Indicates that a decision was made to not provide some information that is normally available.
    */
   public static final NotAvailable NOT_AVAILABLE = new NotAvailable();
 
@@ -88,14 +79,10 @@ public abstract class Token {
   // token as an address.
   // See OffHeapRegionEntryHelper.objectToAddress.
 
-  /**
-   * A token used to represent a value that is not a token.
-   */
+  /** A token used to represent a value that is not a token. */
   public static final NotAToken NOT_A_TOKEN = new NotAToken();
 
-  /**
-   * Returns true if o is INVALID, LOCAL_INVALID, DESTROYED, or REMOVED.
-   */
+  /** Returns true if o is INVALID, LOCAL_INVALID, DESTROYED, or REMOVED. */
   public static final boolean isInvalidOrRemoved(Object o) {
     return isInvalid(o) || isRemoved(o);
   }
@@ -116,14 +103,11 @@ public abstract class Token {
     return o == DESTROYED;
   }
 
-  /**
-   * Singleton token indicating an Invalid Entry.
-   */
+  /** Singleton token indicating an Invalid Entry. */
   public static class Invalid extends Token implements DataSerializableFixedID, Serializable {
     private static final long serialVersionUID = -4133205114649525169L;
 
-    protected Invalid() {
-    }
+    protected Invalid() {}
 
     @Override
     public String toString() {
@@ -138,15 +122,15 @@ public abstract class Token {
       return TOKEN_INVALID;
     }
 
-    public void toData(DataOutput out) throws IOException {
-    }
+    public void toData(DataOutput out) throws IOException {}
 
-    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-    }
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
     public boolean isSerializedValue(byte[] value) {
       ByteBuffer buf = ByteBuffer.wrap(value);
-      return buf.capacity() == 3 && buf.get() == DSCODE.DS_FIXED_ID_SHORT && buf.getShort() == getDSFID();
+      return buf.capacity() == 3
+          && buf.get() == DSCODE.DS_FIXED_ID_SHORT
+          && buf.getShort() == getDSFID();
     }
 
     @Override
@@ -159,8 +143,7 @@ public abstract class Token {
   public static class LocalInvalid extends Invalid {
     private static final long serialVersionUID = 4110159168041217249L;
 
-    protected LocalInvalid() {
-    }
+    protected LocalInvalid() {}
 
     @Override
     public String toString() {
@@ -180,8 +163,7 @@ public abstract class Token {
   public static class Destroyed extends Token implements DataSerializableFixedID, Serializable {
     private static final long serialVersionUID = -1922513819482668368L;
 
-    protected Destroyed() {
-    }
+    protected Destroyed() {}
 
     @Override
     public String toString() {
@@ -196,11 +178,9 @@ public abstract class Token {
       return TOKEN_DESTROYED;
     }
 
-    public void toData(DataOutput out) throws IOException {
-    }
+    public void toData(DataOutput out) throws IOException {}
 
-    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-    }
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
     @Override
     public Version[] getSerializationVersions() {
@@ -212,8 +192,7 @@ public abstract class Token {
   public static class Tombstone extends Token implements DataSerializableFixedID, Serializable {
     static final long serialVersionUID = -6388232623019450170L;
 
-    protected Tombstone() {
-    }
+    protected Tombstone() {}
 
     @Override
     public String toString() {
@@ -228,11 +207,9 @@ public abstract class Token {
       return TOKEN_TOMBSTONE;
     }
 
-    public void toData(DataOutput out) throws IOException {
-    }
+    public void toData(DataOutput out) throws IOException {}
 
-    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-    }
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
     @Override
     public Version[] getSerializationVersions() {
@@ -244,8 +221,7 @@ public abstract class Token {
   public static class Removed extends Token implements DataSerializableFixedID, Serializable {
     private static final long serialVersionUID = -1999836887955504653L;
 
-    protected Removed() {
-    }
+    protected Removed() {}
 
     @Override
     public String toString() {
@@ -260,11 +236,9 @@ public abstract class Token {
       return TOKEN_REMOVED;
     }
 
-    public void toData(DataOutput out) throws IOException {
-    }
+    public void toData(DataOutput out) throws IOException {}
 
-    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-    }
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
     @Override
     public Version[] getSerializationVersions() {
@@ -276,8 +250,7 @@ public abstract class Token {
   public static class Removed2 extends Token implements DataSerializableFixedID, Serializable {
     private static final long serialVersionUID = 5122235867167804597L;
 
-    protected Removed2() {
-    }
+    protected Removed2() {}
 
     @Override
     public String toString() {
@@ -292,11 +265,9 @@ public abstract class Token {
       return TOKEN_REMOVED2;
     }
 
-    public void toData(DataOutput out) throws IOException {
-    }
+    public void toData(DataOutput out) throws IOException {}
 
-    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-    }
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
     @Override
     public Version[] getSerializationVersions() {
@@ -306,8 +277,7 @@ public abstract class Token {
   }
 
   public static class NotAvailable extends Token {
-    protected NotAvailable() {
-    }
+    protected NotAvailable() {}
 
     @Override
     public String toString() {
@@ -317,8 +287,7 @@ public abstract class Token {
   }
 
   public static class NotAToken extends Token {
-    protected NotAToken() {
-    }
+    protected NotAToken() {}
 
     @Override
     public String toString() {
@@ -329,8 +298,7 @@ public abstract class Token {
 
   /** Token used in StreamingOperation, StreamingPartitionOperation */
   public static final class EndOfStream extends Token implements DataSerializableFixedID {
-    public EndOfStream() {
-    }
+    public EndOfStream() {}
 
     @Override
     public String toString() {
@@ -345,11 +313,9 @@ public abstract class Token {
       return END_OF_STREAM_TOKEN;
     }
 
-    public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-    }
+    public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
-    public void toData(DataOutput out) throws IOException {
-    }
+    public void toData(DataOutput out) throws IOException {}
 
     @Override
     public Version[] getSerializationVersions() {
@@ -357,5 +323,4 @@ public abstract class Token {
       return null;
     }
   }
-
 }

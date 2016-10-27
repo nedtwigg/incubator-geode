@@ -26,17 +26,30 @@ import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.OpenType;
 import javax.management.openmbean.SimpleType;
 
-public class GemFireXDCluster extends NotificationBroadcasterSupport implements GemFireXDClusterMBean {
+public class GemFireXDCluster extends NotificationBroadcasterSupport
+    implements GemFireXDClusterMBean {
   private String name = null;
 
-  private static String[] itemNames = { "connectionsAttempted", "connectionsActive", "connectionsClosed", "connectionsFailed" };;
-  private static String[] itemDescriptions = { "connectionsAttempted", "connectionsActive", "connectionsClosed", "connectionsFailed" };
-  private static OpenType[] itemTypes = { SimpleType.LONG, SimpleType.LONG, SimpleType.LONG, SimpleType.LONG };
+  private static String[] itemNames = {
+    "connectionsAttempted", "connectionsActive", "connectionsClosed", "connectionsFailed"
+  };;
+  private static String[] itemDescriptions = {
+    "connectionsAttempted", "connectionsActive", "connectionsClosed", "connectionsFailed"
+  };
+  private static OpenType[] itemTypes = {
+    SimpleType.LONG, SimpleType.LONG, SimpleType.LONG, SimpleType.LONG
+  };
   private static CompositeType networkServerClientConnectionStats = null;
 
   static {
     try {
-      networkServerClientConnectionStats = new CompositeType("NetworkServerClientConnectionStats", "Network Server Client Connection Stats Information", itemNames, itemDescriptions, itemTypes);
+      networkServerClientConnectionStats =
+          new CompositeType(
+              "NetworkServerClientConnectionStats",
+              "Network Server Client Connection Stats Information",
+              itemNames,
+              itemDescriptions,
+              itemTypes);
 
     } catch (OpenDataException e) {
       e.printStackTrace();
@@ -53,17 +66,20 @@ public class GemFireXDCluster extends NotificationBroadcasterSupport implements 
 
   @Override
   public int getProcedureCallsCompleted() {
-    return Integer.parseInt(JMXProperties.getInstance().getProperty(getKey("ProcedureCallsCompleted")));
+    return Integer.parseInt(
+        JMXProperties.getInstance().getProperty(getKey("ProcedureCallsCompleted")));
   }
 
   @Override
   public int getProcedureCallsInProgress() {
-    return Integer.parseInt(JMXProperties.getInstance().getProperty(getKey("ProcedureCallsInProgress")));
+    return Integer.parseInt(
+        JMXProperties.getInstance().getProperty(getKey("ProcedureCallsInProgress")));
   }
 
   @Override
   public CompositeData getNetworkServerClientConnectionStats() {
-    String value = JMXProperties.getInstance().getProperty(getKey("NetworkServerClientConnectionStats"), "");
+    String value =
+        JMXProperties.getInstance().getProperty(getKey("NetworkServerClientConnectionStats"), "");
     String[] values = value.split(",");
     Long[] itemValues = new Long[values.length];
     for (int i = 0; i < values.length; i++) {
@@ -72,13 +88,12 @@ public class GemFireXDCluster extends NotificationBroadcasterSupport implements 
 
     CompositeData nscCompData;
     try {
-      nscCompData = new CompositeDataSupport(networkServerClientConnectionStats, itemNames, itemValues);
+      nscCompData =
+          new CompositeDataSupport(networkServerClientConnectionStats, itemNames, itemValues);
     } catch (OpenDataException e) {
       e.printStackTrace();
       nscCompData = null;
     }
     return nscCompData;
-
   }
-
 }

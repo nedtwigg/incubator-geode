@@ -18,8 +18,7 @@
 package org.apache.geode.cache.query;
 
 /**
- * Thrown when the number of bound paramters for a query does not match the
- * number of placeholders.
+ * Thrown when the number of bound paramters for a query does not match the number of placeholders.
  *
  * @since GemFire 4.0
  */
@@ -28,10 +27,10 @@ public class ParameterCountInvalidException extends QueryException {
 
   /**
    * Creates a new instance of QueryParameterCountInvalidException
+   *
    * @param message the error message
    */
   public ParameterCountInvalidException(String message) {
     super(message);
   }
-
 }

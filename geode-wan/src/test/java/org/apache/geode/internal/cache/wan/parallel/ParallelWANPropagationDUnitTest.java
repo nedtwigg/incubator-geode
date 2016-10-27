@@ -82,7 +82,12 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
     Set regionSet = gemCache.rootRegions();
 
     for (Object r : regionSet) {
-      if (((Region) r).getName().equals(((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0].getRegion().getName())) {
+      if (((Region) r)
+          .getName()
+          .equals(
+              ((AbstractGatewaySender) sender).getQueues().toArray(new RegionQueue[1])[0]
+                  .getRegion()
+                  .getName())) {
         fail("The shadowPR is exposed to the user");
       }
     }
@@ -136,6 +141,7 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
 
   /**
    * Normal happy scenario test case.
+   *
    * @throws Exception
    */
   @Test
@@ -181,11 +187,13 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
   }
 
   protected SerializableRunnableIF createReceiverPartitionedRegionRedundancy1() {
-    return () -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap());
+    return () ->
+        WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap());
   }
 
   protected SerializableRunnableIF createPartitionedRegionRedundancy1Runnable() {
-    return () -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap());
+    return () ->
+        WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap());
   }
 
   protected SerializableRunnableIF waitForSenderRunnable() {
@@ -234,6 +242,7 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
 
   /**
    * Normal happy scenario test case2.
+   *
    * @throws Exception
    */
   @Test
@@ -275,12 +284,10 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
   }
 
   /**
-   * Local and remote sites are up and running.
-   * Local site cache is closed and the site is built again.
-   * Puts are done to local site.
-   * Expected: Remote site should receive all the events put after the local
-   * site was built back.
-   * 
+   * Local and remote sites are up and running. Local site cache is closed and the site is built
+   * again. Puts are done to local site. Expected: Remote site should receive all the events put
+   * after the local site was built back.
+   *
    * @throws Exception
    */
   @Test
@@ -323,7 +330,8 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.killSender());
     vm7.invoke(() -> WANTestBase.killSender());
 
-    Integer regionSize = (Integer) vm2.invoke(() -> WANTestBase.getRegionSize(getTestMethodName() + "_PR"));
+    Integer regionSize =
+        (Integer) vm2.invoke(() -> WANTestBase.getRegionSize(getTestMethodName() + "_PR"));
     LogWriterUtils.getLogWriter().info("Region size on remote is: " + regionSize);
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
@@ -376,15 +384,33 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
     vm7.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createColocatedPartitionedRegions(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createColocatedPartitionedRegions(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createColocatedPartitionedRegions(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createColocatedPartitionedRegions(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegions(
+                getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegions(
+                getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegions(
+                getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegions(
+                getTestMethodName(), "ln", 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
-    vm2.invoke(() -> WANTestBase.createColocatedPartitionedRegions(getTestMethodName(), null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createColocatedPartitionedRegions(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegions(
+                getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegions(
+                getTestMethodName(), null, 1, 100, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName(), 1000));
 
@@ -398,14 +424,12 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
   }
 
   /**
-   * Create colocated partitioned regions.
-   * Parent region has PGS attached and child region doesn't.
-   * 
-   * Validate that events for parent region reaches remote site.
-   * 
+   * Create colocated partitioned regions. Parent region has PGS attached and child region doesn't.
+   *
+   * <p>Validate that events for parent region reaches remote site.
+   *
    * @throws Exception
    */
-
   @Test
   public void testParallelColocatedPropagation2() throws Exception {
     Integer lnPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
@@ -420,15 +444,33 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
     vm7.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createColocatedPartitionedRegions2(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createColocatedPartitionedRegions2(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createColocatedPartitionedRegions2(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createColocatedPartitionedRegions2(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegions2(
+                getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegions2(
+                getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegions2(
+                getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegions2(
+                getTestMethodName(), "ln", 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
-    vm2.invoke(() -> WANTestBase.createColocatedPartitionedRegions2(getTestMethodName(), null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createColocatedPartitionedRegions2(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegions2(
+                getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegions2(
+                getTestMethodName(), null, 1, 100, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName(), 1000));
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_child1", 1000));
@@ -445,15 +487,17 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_child2", 0));
   }
 
-  @Category(FlakyTest.class) // GEODE-1312  
+  @Category(FlakyTest.class) // GEODE-1312
   @Test
   public void testParallelPropagationWithOverflow() throws Exception {
     Integer lnPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
     Integer nyPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, lnPort));
 
     createCacheInVMs(nyPort, vm2, vm3);
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
     createReceiverInVMs(vm2, vm3);
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
@@ -462,10 +506,14 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
     vm7.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
@@ -496,29 +544,61 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
     createReceiverInVMs(vm2, vm3);
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createSender("lnSerial", 2, false, 100, 10, false, false, null, true));
-    vm5.invoke(() -> WANTestBase.createSender("lnSerial", 2, false, 100, 10, false, false, null, true));
+    vm4.invoke(
+        () -> WANTestBase.createSender("lnSerial", 2, false, 100, 10, false, false, null, true));
+    vm5.invoke(
+        () -> WANTestBase.createSender("lnSerial", 2, false, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createSender("lnParallel", 2, true, 100, 10, false, false, null, true));
-    vm5.invoke(() -> WANTestBase.createSender("lnParallel", 2, true, 100, 10, false, false, null, true));
-    vm6.invoke(() -> WANTestBase.createSender("lnParallel", 2, true, 100, 10, false, false, null, true));
-    vm7.invoke(() -> WANTestBase.createSender("lnParallel", 2, true, 100, 10, false, false, null, true));
+    vm4.invoke(
+        () -> WANTestBase.createSender("lnParallel", 2, true, 100, 10, false, false, null, true));
+    vm5.invoke(
+        () -> WANTestBase.createSender("lnParallel", 2, true, 100, 10, false, false, null, true));
+    vm6.invoke(
+        () -> WANTestBase.createSender("lnParallel", 2, true, 100, 10, false, false, null, true));
+    vm7.invoke(
+        () -> WANTestBase.createSender("lnParallel", 2, true, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     vm2.invoke(createReceiverPartitionedRegionRedundancy1());
     vm3.invoke(createReceiverPartitionedRegionRedundancy1());
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createReplicatedRegion(
+                getTestMethodName() + "_RR", "lnSerial", isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnParallel", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnParallel", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnParallel", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnParallel", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnParallel", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnParallel", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnParallel", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnParallel", 1, 100, isOffHeap()));
 
     startSenderInVMs("lnSerial", vm4, vm5);
 
@@ -553,20 +633,40 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createSender("lnParallel1", 2, true, 100, 10, false, false, null, true));
-    vm5.invoke(() -> WANTestBase.createSender("lnParallel1", 2, true, 100, 10, false, false, null, true));
-    vm6.invoke(() -> WANTestBase.createSender("lnParallel1", 2, true, 100, 10, false, false, null, true));
-    vm7.invoke(() -> WANTestBase.createSender("lnParallel1", 2, true, 100, 10, false, false, null, true));
+    vm4.invoke(
+        () -> WANTestBase.createSender("lnParallel1", 2, true, 100, 10, false, false, null, true));
+    vm5.invoke(
+        () -> WANTestBase.createSender("lnParallel1", 2, true, 100, 10, false, false, null, true));
+    vm6.invoke(
+        () -> WANTestBase.createSender("lnParallel1", 2, true, 100, 10, false, false, null, true));
+    vm7.invoke(
+        () -> WANTestBase.createSender("lnParallel1", 2, true, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createSender("lnParallel2", 3, true, 100, 10, false, false, null, true));
-    vm5.invoke(() -> WANTestBase.createSender("lnParallel2", 3, true, 100, 10, false, false, null, true));
-    vm6.invoke(() -> WANTestBase.createSender("lnParallel2", 3, true, 100, 10, false, false, null, true));
-    vm7.invoke(() -> WANTestBase.createSender("lnParallel2", 3, true, 100, 10, false, false, null, true));
+    vm4.invoke(
+        () -> WANTestBase.createSender("lnParallel2", 3, true, 100, 10, false, false, null, true));
+    vm5.invoke(
+        () -> WANTestBase.createSender("lnParallel2", 3, true, 100, 10, false, false, null, true));
+    vm6.invoke(
+        () -> WANTestBase.createSender("lnParallel2", 3, true, 100, 10, false, false, null, true));
+    vm7.invoke(
+        () -> WANTestBase.createSender("lnParallel2", 3, true, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnParallel1,lnParallel2", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnParallel1,lnParallel2", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnParallel1,lnParallel2", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "lnParallel1,lnParallel2", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnParallel1,lnParallel2", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnParallel1,lnParallel2", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnParallel1,lnParallel2", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "lnParallel1,lnParallel2", 1, 100, isOffHeap()));
 
     startSenderInVMs("lnParallel1", vm4, vm5, vm6, vm7);
 
@@ -619,20 +719,34 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
     vm7.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 2, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 2, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 2, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 2, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 2, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 2, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 2, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 2, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
     vm2.invoke(createReceiverPartitionedRegionRedundancy1());
     vm3.invoke(createReceiverPartitionedRegionRedundancy1());
 
-    AsyncInvocation inv1 = vm7.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 5000));
+    AsyncInvocation inv1 =
+        vm7.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 5000));
     Wait.pause(500);
     AsyncInvocation inv2 = vm4.invokeAsync(() -> WANTestBase.killSender());
-    AsyncInvocation inv3 = vm6.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 10000));
+    AsyncInvocation inv3 =
+        vm6.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 10000));
     Wait.pause(1500);
     AsyncInvocation inv4 = vm5.invokeAsync(() -> WANTestBase.killSender());
     inv1.join();
@@ -660,20 +774,38 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
     createReceiverInVMs(vm2, vm3);
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter(), true));
-    vm5.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter(), true));
-    vm6.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter(), true));
-    vm7.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter(), true));
+    vm4.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter(), true));
+    vm5.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter(), true));
+    vm6.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter(), true));
+    vm7.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter(), true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
 
     //wait for senders to be running before doing any puts. This will ensure that
     //not a single events is lost
@@ -728,13 +860,12 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
     vm7.invoke(() -> WANTestBase.validateParallelSenderQueueAllBucketsDrained("ln"));
 
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 5000));
-
   }
 
   /**
    * There was a bug that all destroy events were being put into different buckets of sender queue
    * against the key 0. Bug# 44304
-   *  
+   *
    * @throws Exception
    */
   @Test
@@ -799,11 +930,11 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
 
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 500));
     vm3.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 500));
-
   }
 
   /**
    * Normal happy scenario test case. But with Tx operations
+   *
    * @throws Exception
    */
   @Test
@@ -949,11 +1080,11 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
 
     vm4.invoke(() -> WANTestBase.validateQueueContents("ln", 10));
     vm4.invoke(() -> WANTestBase.checkPRQLocalSize("ln", 10));
-
   }
 
   /**
-   * Added for defect #50364 Can't colocate region that has AEQ with a region that does not have that same AEQ
+   * Added for defect #50364 Can't colocate region that has AEQ with a region that does not have
+   * that same AEQ
    */
   @Test
   public void testParallelSenderAttachedToChildRegionButNotToParentRegion() {
@@ -973,15 +1104,28 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
     startSenderInVMs("ln", vm3);
 
     //create leader (parent) PR on site1
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "PARENT_PR", null, 0, 100, isOffHeap()));
-    String parentRegionFullPath = (String) vm3.invoke(() -> WANTestBase.getRegionFullPath(getTestMethodName() + "PARENT_PR"));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "PARENT_PR", null, 0, 100, isOffHeap()));
+    String parentRegionFullPath =
+        (String) vm3.invoke(() -> WANTestBase.getRegionFullPath(getTestMethodName() + "PARENT_PR"));
 
     //create colocated (child) PR on site1
-    vm3.invoke(() -> WANTestBase.createColocatedPartitionedRegion(getTestMethodName() + "CHILD_PR", "ln", 0, 100, parentRegionFullPath));
+    vm3.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegion(
+                getTestMethodName() + "CHILD_PR", "ln", 0, 100, parentRegionFullPath));
 
     //create leader and colocated PR on site2
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "PARENT_PR", null, 0, 100, isOffHeap()));
-    vm2.invoke(() -> WANTestBase.createColocatedPartitionedRegion(getTestMethodName() + "CHILD_PR", null, 0, 100, parentRegionFullPath));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "PARENT_PR", null, 0, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createColocatedPartitionedRegion(
+                getTestMethodName() + "CHILD_PR", null, 0, 100, parentRegionFullPath));
 
     //do puts in colocated (child) PR on site1
     vm3.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "CHILD_PR", 1000));
@@ -1000,20 +1144,38 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm2, vm3, vm4, vm5);
 
-    vm2.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter_AfterAck(), true));
-    vm3.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter_AfterAck(), true));
-    vm4.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter_AfterAck(), true));
-    vm5.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter_AfterAck(), true));
+    vm2.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter_AfterAck(), true));
+    vm3.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter_AfterAck(), true));
+    vm4.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter_AfterAck(), true));
+    vm5.invoke(
+        () ->
+            WANTestBase.createSender(
+                "ln", 2, true, 100, 10, false, false, new MyGatewayEventFilter_AfterAck(), true));
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), "ln", 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm2, vm3, vm4, vm5);
 
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName(), null, 1, 100, isOffHeap()));
 
     // wait for senders to be running before doing any puts. This will ensure
     // that
@@ -1044,7 +1206,5 @@ public class ParallelWANPropagationDUnitTest extends WANTestBase {
     Integer vm5Acks = (Integer) vm5.invoke(() -> WANTestBase.validateAfterAck("ln"));
 
     assertEquals(2000, (vm2Acks + vm3Acks + vm4Acks + vm5Acks));
-
   }
-
 }

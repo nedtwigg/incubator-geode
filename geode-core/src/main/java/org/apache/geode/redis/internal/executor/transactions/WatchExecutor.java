@@ -25,7 +25,7 @@ public class WatchExecutor extends TransactionExecutor {
 
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
-    command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_WATCH));
+    command.setResponse(
+        Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_WATCH));
   }
-
 }

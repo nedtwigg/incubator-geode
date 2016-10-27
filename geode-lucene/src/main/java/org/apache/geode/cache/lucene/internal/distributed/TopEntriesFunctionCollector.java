@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -35,17 +35,17 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * A {@link ResultCollector} implementation for collecting and ordering {@link TopEntries}. The {@link TopEntries}
- * objects will be created by members when a {@link LuceneQuery} is executed on the local data hosted by the member. The
- * member executing this logic must have sufficient space to hold all the {@link EntryScore} documents returned from the
- * members.
- * 
- * <p>
- * This class will perform a lazy merge operation. Merge will take place if the merge {@link ResultCollector#getResult}
- * is invoked or if the combined result size is more than the limit set. In the later case, merge will be performed
- * whenever {@link ResultCollector#addResult} is invoked.
+ * A {@link ResultCollector} implementation for collecting and ordering {@link TopEntries}. The
+ * {@link TopEntries} objects will be created by members when a {@link LuceneQuery} is executed on
+ * the local data hosted by the member. The member executing this logic must have sufficient space
+ * to hold all the {@link EntryScore} documents returned from the members.
+ *
+ * <p>This class will perform a lazy merge operation. Merge will take place if the merge {@link
+ * ResultCollector#getResult} is invoked or if the combined result size is more than the limit set.
+ * In the later case, merge will be performed whenever {@link ResultCollector#addResult} is invoked.
  */
-public class TopEntriesFunctionCollector implements ResultCollector<TopEntriesCollector, TopEntries> {
+public class TopEntriesFunctionCollector
+    implements ResultCollector<TopEntriesCollector, TopEntries> {
   // Use this instance to perform reduce operation
   final CollectorManager<TopEntriesCollector> manager;
 
@@ -55,7 +55,7 @@ public class TopEntriesFunctionCollector implements ResultCollector<TopEntriesCo
   final String id;
 
   // Instance of gemfire cache to check status and other utility methods
-  final private GemFireCacheImpl cache;
+  private final GemFireCacheImpl cache;
   private static final Logger logger = LogService.getLogger();
 
   private final Collection<TopEntriesCollector> subResults = new ArrayList<>();
@@ -69,7 +69,8 @@ public class TopEntriesFunctionCollector implements ResultCollector<TopEntriesCo
     this(context, null);
   }
 
-  public TopEntriesFunctionCollector(LuceneFunctionContext<TopEntriesCollector> context, GemFireCacheImpl cache) {
+  public TopEntriesFunctionCollector(
+      LuceneFunctionContext<TopEntriesCollector> context, GemFireCacheImpl cache) {
     this.cache = cache;
     id = cache == null ? String.valueOf(this.hashCode()) : cache.getName();
 
@@ -139,7 +140,8 @@ public class TopEntriesFunctionCollector implements ResultCollector<TopEntriesCo
   public void clearResults() {
     synchronized (subResults) {
       if (waitForResults.getCount() == 0) {
-        throw new IllegalStateException("This collector is closed and cannot accept anymore results");
+        throw new IllegalStateException(
+            "This collector is closed and cannot accept anymore results");
       }
 
       subResults.clear();
@@ -150,7 +152,8 @@ public class TopEntriesFunctionCollector implements ResultCollector<TopEntriesCo
   public void addResult(DistributedMember memberID, TopEntriesCollector resultOfSingleExecution) {
     synchronized (subResults) {
       if (waitForResults.getCount() == 0) {
-        throw new IllegalStateException("This collector is closed and cannot accept anymore results");
+        throw new IllegalStateException(
+            "This collector is closed and cannot accept anymore results");
       }
       subResults.add(resultOfSingleExecution);
     }

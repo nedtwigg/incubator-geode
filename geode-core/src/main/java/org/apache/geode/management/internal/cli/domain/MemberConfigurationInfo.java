@@ -36,7 +36,6 @@ public class MemberConfigurationInfo implements Serializable {
   public MemberConfigurationInfo() {
     RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
     setJvmInputArguments(runtimeBean.getInputArguments());
-
   }
 
   public List<String> getJvmInputArguments() {
@@ -110,5 +109,4 @@ public class MemberConfigurationInfo implements Serializable {
   public void setPdxAttrributes(Map<String, String> pdxAttrributes) {
     this.pdxAttributes = pdxAttrributes;
   }
-
 }

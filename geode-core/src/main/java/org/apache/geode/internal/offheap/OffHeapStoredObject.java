@@ -32,68 +32,53 @@ import org.apache.geode.internal.cache.RegionEntryContext;
 import org.apache.geode.internal.offheap.annotations.Unretained;
 
 /**
-   * A class that stores a Java object in off-heap memory.
-   * See {@link AddressableMemoryManager} for how off-heap memory
-   * can be allocated, accessed, modified, and freed.
-   * Currently the object stored in this class
-   * is always an entry value of a Region.
-   * Note: this class has a natural ordering that is inconsistent with equals.
-   * Instances of this class should have a short lifetime. We do not store references
-   * to it in the cache. Instead the memoryAddress is stored in a primitive field in
-   * the cache and if used it will then, if needed, create an instance of this class.
-   */
-public class OffHeapStoredObject extends AbstractStoredObject implements Comparable<OffHeapStoredObject>, MemoryBlock {
-  /**
-   * The memory address of the first byte of addressable memory that belongs to this object
-   */
+ * A class that stores a Java object in off-heap memory. See {@link AddressableMemoryManager} for
+ * how off-heap memory can be allocated, accessed, modified, and freed. Currently the object stored
+ * in this class is always an entry value of a Region. Note: this class has a natural ordering that
+ * is inconsistent with equals. Instances of this class should have a short lifetime. We do not
+ * store references to it in the cache. Instead the memoryAddress is stored in a primitive field in
+ * the cache and if used it will then, if needed, create an instance of this class.
+ */
+public class OffHeapStoredObject extends AbstractStoredObject
+    implements Comparable<OffHeapStoredObject>, MemoryBlock {
+  /** The memory address of the first byte of addressable memory that belongs to this object */
   private final long memoryAddress;
 
   /**
-   * The useCount, chunkSize, dataSizeDelta, isSerialized, and isCompressed
-   * are all stored in addressable memory in a HEADER. This saves heap memory
-   * by using off heap.
+   * The useCount, chunkSize, dataSizeDelta, isSerialized, and isCompressed are all stored in
+   * addressable memory in a HEADER. This saves heap memory by using off heap.
    */
-  public final static int HEADER_SIZE = 4 + 4;
+  public static final int HEADER_SIZE = 4 + 4;
   /**
-   * We need to smallest chunk to at least have enough room for a hdr
-   * and for an off heap ref (which is a long).
+   * We need to smallest chunk to at least have enough room for a hdr and for an off heap ref (which
+   * is a long).
    */
-  public final static int MIN_CHUNK_SIZE = HEADER_SIZE + 8;
+  public static final int MIN_CHUNK_SIZE = HEADER_SIZE + 8;
+  /** int field. The number of bytes in this chunk. */
+  private static final int CHUNK_SIZE_OFFSET = 0;
   /**
-   * int field.
-   * The number of bytes in this chunk.
+   * Volatile int field The upper two bits are used for the isSerialized and isCompressed flags. The
+   * next three bits are unused. The lower 3 bits of the most significant byte contains a magic
+   * number to help us detect if we are changing the ref count of an object that has been released.
+   * The next byte contains the dataSizeDelta. The number of bytes of logical data in this chunk.
+   * Since the number of bytes of logical data is always <= chunkSize and since chunkSize never
+   * changes, we have dataSize be a delta whose max value would be HUGE_MULTIPLE-1. The lower two
+   * bytes contains the use count.
    */
-  private final static int CHUNK_SIZE_OFFSET = 0;
-  /**
-   * Volatile int field
-   * The upper two bits are used for the isSerialized
-   * and isCompressed flags.
-   * The next three bits are unused.
-   * The lower 3 bits of the most significant byte contains a magic number to help us detect
-   * if we are changing the ref count of an object that has been released.
-   * The next byte contains the dataSizeDelta.
-   * The number of bytes of logical data in this chunk.
-   * Since the number of bytes of logical data is always <= chunkSize
-   * and since chunkSize never changes, we have dataSize be
-   * a delta whose max value would be HUGE_MULTIPLE-1.
-   * The lower two bytes contains the use count.
-   */
-  final static int REF_COUNT_OFFSET = 4;
-  /**
-   * The upper two bits are used for the isSerialized
-   * and isCompressed flags.
-   */
-  final static int IS_SERIALIZED_BIT = 0x80000000;
-  final static int IS_COMPRESSED_BIT = 0x40000000;
+  static final int REF_COUNT_OFFSET = 4;
+  /** The upper two bits are used for the isSerialized and isCompressed flags. */
+  static final int IS_SERIALIZED_BIT = 0x80000000;
+
+  static final int IS_COMPRESSED_BIT = 0x40000000;
   // UNUSED 0x38000000
-  final static int MAGIC_MASK = 0x07000000;
-  final static int MAGIC_NUMBER = 0x05000000;
-  final static int DATA_SIZE_DELTA_MASK = 0x00ff0000;
-  final static int DATA_SIZE_SHIFT = 16;
-  final static int REF_COUNT_MASK = 0x0000ffff;
-  final static int MAX_REF_COUNT = 0xFFFF;
-  final static long FILL_PATTERN = 0x3c3c3c3c3c3c3c3cL;
-  final static byte FILL_BYTE = 0x3c;
+  static final int MAGIC_MASK = 0x07000000;
+  static final int MAGIC_NUMBER = 0x05000000;
+  static final int DATA_SIZE_DELTA_MASK = 0x00ff0000;
+  static final int DATA_SIZE_SHIFT = 16;
+  static final int REF_COUNT_MASK = 0x0000ffff;
+  static final int MAX_REF_COUNT = 0xFFFF;
+  static final long FILL_PATTERN = 0x3c3c3c3c3c3c3c3cL;
+  static final byte FILL_BYTE = 0x3c;
 
   protected OffHeapStoredObject(long memoryAddress, int chunkSize) {
     MemoryAllocatorImpl.validateAddressAndSize(memoryAddress, chunkSize);
@@ -107,21 +92,23 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
   }
 
   public void readyForAllocation() {
-    if (!AddressableMemoryManager.writeIntVolatile(getAddress() + REF_COUNT_OFFSET, 0, MAGIC_NUMBER)) {
-      throw new IllegalStateException("Expected 0 but found " + Integer.toHexString(AddressableMemoryManager.readIntVolatile(getAddress() + REF_COUNT_OFFSET)));
+    if (!AddressableMemoryManager.writeIntVolatile(
+        getAddress() + REF_COUNT_OFFSET, 0, MAGIC_NUMBER)) {
+      throw new IllegalStateException(
+          "Expected 0 but found "
+              + Integer.toHexString(
+                  AddressableMemoryManager.readIntVolatile(getAddress() + REF_COUNT_OFFSET)));
     }
   }
 
-  /**
-   * Should only be used by FakeChunk subclass
-   */
+  /** Should only be used by FakeChunk subclass */
   protected OffHeapStoredObject() {
     this.memoryAddress = 0L;
   }
 
   /**
-   * Used to create a Chunk given an existing, already allocated,
-   * memoryAddress. The off heap header has already been initialized.
+   * Used to create a Chunk given an existing, already allocated, memoryAddress. The off heap header
+   * has already been initialized.
    */
   protected OffHeapStoredObject(long memoryAddress) {
     MemoryAllocatorImpl.validateAddress(memoryAddress);
@@ -229,13 +216,14 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
     return true;
   }
 
-  /**
-   * Throw an exception if this chunk is not allocated
-   */
+  /** Throw an exception if this chunk is not allocated */
   public void checkIsAllocated() {
-    int originalBits = AddressableMemoryManager.readIntVolatile(this.memoryAddress + REF_COUNT_OFFSET);
+    int originalBits =
+        AddressableMemoryManager.readIntVolatile(this.memoryAddress + REF_COUNT_OFFSET);
     if ((originalBits & MAGIC_MASK) != MAGIC_NUMBER) {
-      throw new IllegalStateException("It looks like this off heap memory was already freed. rawBits=" + Integer.toHexString(originalBits));
+      throw new IllegalStateException(
+          "It looks like this off heap memory was already freed. rawBits="
+              + Integer.toHexString(originalBits));
     }
   }
 
@@ -243,9 +231,7 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
     setSize(getSize() + inc);
   }
 
-  protected void beforeReturningToAllocator() {
-
-  }
+  protected void beforeReturningToAllocator() {}
 
   @Override
   public int getSize() {
@@ -322,13 +308,26 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
 
   /**
    * Returns an address that can be used with AddressableMemoryManager to access this object's data.
-   * @param offset the offset from this chunk's first byte of the byte the returned address should point to. Must be >= 0.
-   * @param size the number of bytes that will be read using the returned address. Assertion will use this to verify that all the memory accessed belongs to this chunk. Must be > 0.
+   *
+   * @param offset the offset from this chunk's first byte of the byte the returned address should
+   *     point to. Must be >= 0.
+   * @param size the number of bytes that will be read using the returned address. Assertion will
+   *     use this to verify that all the memory accessed belongs to this chunk. Must be > 0.
    * @return a memory address that can be used to access this object's data
    */
   @Override
   public long getAddressForReadingData(int offset, int size) {
-    assert offset >= 0 && offset + size <= getDataSize() : "Offset=" + offset + ",size=" + size + ",dataSize=" + getDataSize() + ", chunkSize=" + getSize() + ", but offset + size must be <= " + getDataSize();
+    assert offset >= 0 && offset + size <= getDataSize()
+        : "Offset="
+            + offset
+            + ",size="
+            + size
+            + ",dataSize="
+            + getDataSize()
+            + ", chunkSize="
+            + getSize()
+            + ", but offset + size must be <= "
+            + getDataSize();
     assert size > 0;
     long result = getBaseDataAddress() + offset;
     // validateAddressAndSizeWithinSlab(result, size);
@@ -411,9 +410,7 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
     return result;
   }
 
-  /**
-   * Returns the raw possibly compressed bytes of this chunk
-   */
+  /** Returns the raw possibly compressed bytes of this chunk */
   public byte[] getCompressedBytes() {
     byte[] result = new byte[getDataSize()];
     readDataBytes(0, result);
@@ -424,7 +421,8 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
 
   /**
    * This method should only be called on uncompressed objects
-   * @return byte array of the StoredObject value. 
+   *
+   * @return byte array of the StoredObject value.
    */
   protected byte[] getRawBytes() {
     assert !isCompressed();
@@ -450,9 +448,7 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
     }
   }
 
-  /**
-   * We want this to include memory overhead so use getSize() instead of getDataSize().
-   */
+  /** We want this to include memory overhead so use getSize() instead of getDataSize(). */
   @Override
   public int getSizeInBytes() {
     // Calling getSize includes the off heap header size.
@@ -468,12 +464,16 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
 
   @Override
   public boolean isSerialized() {
-    return (AddressableMemoryManager.readInt(this.memoryAddress + REF_COUNT_OFFSET) & IS_SERIALIZED_BIT) != 0;
+    return (AddressableMemoryManager.readInt(this.memoryAddress + REF_COUNT_OFFSET)
+            & IS_SERIALIZED_BIT)
+        != 0;
   }
 
   @Override
   public boolean isCompressed() {
-    return (AddressableMemoryManager.readInt(this.memoryAddress + REF_COUNT_OFFSET) & IS_COMPRESSED_BIT) != 0;
+    return (AddressableMemoryManager.readInt(this.memoryAddress + REF_COUNT_OFFSET)
+            & IS_COMPRESSED_BIT)
+        != 0;
   }
 
   @Override
@@ -508,6 +508,7 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
 
   /**
    * Fills the chunk with a repeated byte fill pattern.
+   *
    * @param baseAddress the starting address for a {@link OffHeapStoredObject}.
    */
   public static void fill(long baseAddress) {
@@ -518,8 +519,9 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
   }
 
   /**
-   * Validates that the fill pattern for this chunk has not been disturbed.  This method
-   * assumes the TINY_MULTIPLE is 8 bytes.
+   * Validates that the fill pattern for this chunk has not been disturbed. This method assumes the
+   * TINY_MULTIPLE is 8 bytes.
+   *
    * @throws IllegalStateException when the pattern has been violated.
    */
   public void validateFill() {
@@ -530,7 +532,8 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
 
     for (int i = 0; i < size; i += FreeListManager.TINY_MULTIPLE) {
       if (AddressableMemoryManager.readLong(startAddress + i) != FILL_PATTERN) {
-        throw new IllegalStateException("Fill pattern violated for chunk " + getAddress() + " with size " + getSize());
+        throw new IllegalStateException(
+            "Fill pattern violated for chunk " + getAddress() + " with size " + getSize());
       }
     }
   }
@@ -540,12 +543,16 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
       int bits;
       int originalBits;
       do {
-        originalBits = AddressableMemoryManager.readIntVolatile(this.memoryAddress + REF_COUNT_OFFSET);
+        originalBits =
+            AddressableMemoryManager.readIntVolatile(this.memoryAddress + REF_COUNT_OFFSET);
         if ((originalBits & MAGIC_MASK) != MAGIC_NUMBER) {
-          throw new IllegalStateException("It looks like this off heap memory was already freed. rawBits=" + Integer.toHexString(originalBits));
+          throw new IllegalStateException(
+              "It looks like this off heap memory was already freed. rawBits="
+                  + Integer.toHexString(originalBits));
         }
         bits = originalBits | IS_SERIALIZED_BIT;
-      } while (!AddressableMemoryManager.writeIntVolatile(this.memoryAddress + REF_COUNT_OFFSET, originalBits, bits));
+      } while (!AddressableMemoryManager.writeIntVolatile(
+          this.memoryAddress + REF_COUNT_OFFSET, originalBits, bits));
     }
   }
 
@@ -554,12 +561,16 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
       int bits;
       int originalBits;
       do {
-        originalBits = AddressableMemoryManager.readIntVolatile(this.memoryAddress + REF_COUNT_OFFSET);
+        originalBits =
+            AddressableMemoryManager.readIntVolatile(this.memoryAddress + REF_COUNT_OFFSET);
         if ((originalBits & MAGIC_MASK) != MAGIC_NUMBER) {
-          throw new IllegalStateException("It looks like this off heap memory was already freed. rawBits=" + Integer.toHexString(originalBits));
+          throw new IllegalStateException(
+              "It looks like this off heap memory was already freed. rawBits="
+                  + Integer.toHexString(originalBits));
         }
         bits = originalBits | IS_COMPRESSED_BIT;
-      } while (!AddressableMemoryManager.writeIntVolatile(this.memoryAddress + REF_COUNT_OFFSET, originalBits, bits));
+      } while (!AddressableMemoryManager.writeIntVolatile(
+          this.memoryAddress + REF_COUNT_OFFSET, originalBits, bits));
     }
   }
 
@@ -571,14 +582,18 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
     int bits;
     int originalBits;
     do {
-      originalBits = AddressableMemoryManager.readIntVolatile(this.memoryAddress + REF_COUNT_OFFSET);
+      originalBits =
+          AddressableMemoryManager.readIntVolatile(this.memoryAddress + REF_COUNT_OFFSET);
       if ((originalBits & MAGIC_MASK) != MAGIC_NUMBER) {
-        throw new IllegalStateException("It looks like this off heap memory was already freed. rawBits=" + Integer.toHexString(originalBits));
+        throw new IllegalStateException(
+            "It looks like this off heap memory was already freed. rawBits="
+                + Integer.toHexString(originalBits));
       }
       bits = originalBits;
       bits &= ~DATA_SIZE_DELTA_MASK; // clear the old dataSizeDelta bits
       bits |= delta; // set the dataSizeDelta bits to the new delta value
-    } while (!AddressableMemoryManager.writeIntVolatile(this.memoryAddress + REF_COUNT_OFFSET, originalBits, bits));
+    } while (!AddressableMemoryManager.writeIntVolatile(
+        this.memoryAddress + REF_COUNT_OFFSET, originalBits, bits));
   }
 
   public void initializeUseCount() {
@@ -586,13 +601,20 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
     do {
       rawBits = AddressableMemoryManager.readIntVolatile(this.memoryAddress + REF_COUNT_OFFSET);
       if ((rawBits & MAGIC_MASK) != MAGIC_NUMBER) {
-        throw new IllegalStateException("It looks like this off heap memory was already freed. rawBits=" + Integer.toHexString(rawBits));
+        throw new IllegalStateException(
+            "It looks like this off heap memory was already freed. rawBits="
+                + Integer.toHexString(rawBits));
       }
       int uc = rawBits & REF_COUNT_MASK;
       if (uc != 0) {
-        throw new IllegalStateException("Expected use count to be zero but it was: " + uc + " rawBits=0x" + Integer.toHexString(rawBits));
+        throw new IllegalStateException(
+            "Expected use count to be zero but it was: "
+                + uc
+                + " rawBits=0x"
+                + Integer.toHexString(rawBits));
       }
-    } while (!AddressableMemoryManager.writeIntVolatile(this.memoryAddress + REF_COUNT_OFFSET, rawBits, rawBits + 1));
+    } while (!AddressableMemoryManager.writeIntVolatile(
+        this.memoryAddress + REF_COUNT_OFFSET, rawBits, rawBits + 1));
   }
 
   public static int getRefCount(long memAddr) {
@@ -613,15 +635,22 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
       }
       uc = rawBits & REF_COUNT_MASK;
       if (uc == MAX_REF_COUNT) {
-        throw new IllegalStateException("Maximum use count exceeded. rawBits=" + Integer.toHexString(rawBits));
+        throw new IllegalStateException(
+            "Maximum use count exceeded. rawBits=" + Integer.toHexString(rawBits));
       } else if (uc == 0) {
         return false;
       }
       retryCount++;
       if (retryCount > 1000) {
-        throw new IllegalStateException("tried to write " + (rawBits + 1) + " to @" + Long.toHexString(memAddr) + " 1,000 times.");
+        throw new IllegalStateException(
+            "tried to write "
+                + (rawBits + 1)
+                + " to @"
+                + Long.toHexString(memAddr)
+                + " 1,000 times.");
       }
-    } while (!AddressableMemoryManager.writeIntVolatile(memAddr + REF_COUNT_OFFSET, rawBits, rawBits + 1));
+    } while (!AddressableMemoryManager.writeIntVolatile(
+        memAddr + REF_COUNT_OFFSET, rawBits, rawBits + 1));
     //debugLog("use inced ref count " + (uc+1) + " @" + Long.toHexString(memAddr), true);
     if (ReferenceCountHelper.trackReferenceCounts()) {
       ReferenceCountHelper.refCountChanged(memAddr, false, uc + 1);
@@ -643,14 +672,24 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
       returnToAllocator = false;
       rawBits = AddressableMemoryManager.readIntVolatile(memAddr + REF_COUNT_OFFSET);
       if ((rawBits & MAGIC_MASK) != MAGIC_NUMBER) {
-        String msg = "It looks like off heap memory @" + Long.toHexString(memAddr) + " was already freed. rawBits=" + Integer.toHexString(rawBits) + " history=" + ReferenceCountHelper.getFreeRefCountInfo(memAddr);
+        String msg =
+            "It looks like off heap memory @"
+                + Long.toHexString(memAddr)
+                + " was already freed. rawBits="
+                + Integer.toHexString(rawBits)
+                + " history="
+                + ReferenceCountHelper.getFreeRefCountInfo(memAddr);
         //debugLog(msg, true);
         throw new IllegalStateException(msg);
       }
       int curCount = rawBits & REF_COUNT_MASK;
       if ((curCount) == 0) {
         //debugLog("too many frees @" + Long.toHexString(memAddr), true);
-        throw new IllegalStateException("Memory has already been freed." + " history=" + ReferenceCountHelper.getFreeRefCountInfo(memAddr) /*+ System.identityHashCode(this)*/);
+        throw new IllegalStateException(
+            "Memory has already been freed."
+                + " history="
+                + ReferenceCountHelper.getFreeRefCountInfo(
+                    memAddr) /*+ System.identityHashCode(this)*/);
       }
       if (curCount == 1) {
         newCount = 0; // clear the use count, bits, and the delta size since it will be freed.
@@ -658,7 +697,8 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
       } else {
         newCount = rawBits - 1;
       }
-    } while (!AddressableMemoryManager.writeIntVolatile(memAddr + REF_COUNT_OFFSET, rawBits, newCount));
+    } while (!AddressableMemoryManager.writeIntVolatile(
+        memAddr + REF_COUNT_OFFSET, rawBits, newCount));
     //debugLog("free deced ref count " + (newCount&USE_COUNT_MASK) + " @" + Long.toHexString(memAddr), true);
     if (returnToAllocator) {
       if (ReferenceCountHelper.trackReferenceCounts()) {
@@ -680,7 +720,14 @@ public class OffHeapStoredObject extends AbstractStoredObject implements Compara
 
   @Override
   public String toString() {
-    return super.toString() + ":<dataSize=" + getDataSize() + " refCount=" + getRefCount() + " addr=" + Long.toHexString(getAddress()) + ">";
+    return super.toString()
+        + ":<dataSize="
+        + getDataSize()
+        + " refCount="
+        + getRefCount()
+        + " addr="
+        + Long.toHexString(getAddress())
+        + ">";
   }
 
   @Override

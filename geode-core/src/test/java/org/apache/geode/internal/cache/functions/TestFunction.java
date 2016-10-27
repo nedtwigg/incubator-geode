@@ -76,14 +76,17 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
   public static final String TEST_FUNCTION_NONHA_SERVER = "executeFunctionNonHAOnServer";
   public static final String TEST_FUNCTION_NONHA_REGION = "executeFunctionNonHAOnRegion";
   public static final String TEST_FUNCTION_HA_REGION = "executeFunctionHAOnRegion";
-  public static final String TEST_FUNCTION_REEXECUTE_EXCEPTION = "executeFunctionReexecuteException";
-  public static final String TEST_FUNCTION_ONSERVER_REEXECUTE_EXCEPTION = "executeFunctionReexecuteExceptionOnServer";
+  public static final String TEST_FUNCTION_REEXECUTE_EXCEPTION =
+      "executeFunctionReexecuteException";
+  public static final String TEST_FUNCTION_ONSERVER_REEXECUTE_EXCEPTION =
+      "executeFunctionReexecuteExceptionOnServer";
   public static final String TEST_FUNCTION_NO_LASTRESULT = "executeFunctionWithoutLastResult";
   public static final String TEST_FUNCTION_LASTRESULT = "executeFunctionWithLastResult";
   public static final String TEST_FUNCTION_SEND_EXCEPTION = "executeFunction_SendException";
   public static final String TEST_FUNCTION_THROW_EXCEPTION = "executeFunction_ThrowException";
   public static final String TEST_FUNCTION_RETURN_ARGS = "executeFunctionToReturnArgs";
-  public static final String TEST_FUNCTION_RUNNING_FOR_LONG_TIME = "executeFunctionRunningForLongTime";
+  public static final String TEST_FUNCTION_RUNNING_FOR_LONG_TIME =
+      "executeFunctionRunningForLongTime";
   public static final String TEST_FUNCTION_BUCKET_FILTER = "TestFunctionBucketFilter";
   public static final String TEST_FUNCTION_NONHA_NOP = "executeFunctionNoHANop";
   private static final String ID = "id";
@@ -111,12 +114,11 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     id = id + hashCode();
     this.props.setProperty(ID, id);
     this.props.setProperty(NOACKTEST, Boolean.toString(hashCodeId));
-
   }
 
   /**
    * Application execution implementation
-   * 
+   *
    * @since GemFire 5.8Beta
    */
   @Override
@@ -190,7 +192,6 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
       logger.info("Exception in executeFunctionRunningForLongTime");
     }
     context.getResultSender().lastResult("Ran executeFunctionRunningForLongTime for 10000000");
-
   }
 
   public void executeFunctionBucketFilter(FunctionContext context) {
@@ -200,7 +201,7 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     PartitionedRegion pr = (PartitionedRegion) rfc.getDataSet();
     Set<Integer> bucketIDs = rfc.getLocalBucketSet(pr);
     pr.getGemFireCache().getLogger().fine("LOCAL BUCKETSET =" + bucketIDs);
-    ResultSender<Integer> rs = context.<Integer> getResultSender();
+    ResultSender<Integer> rs = context.<Integer>getResultSender();
     if (!pr.getDataStore().areAllBucketsHosted(bucketIDs)) {
       throw new AssertionError("bucket IDs =" + bucketIDs + " not all hosted locally");
     } else {
@@ -215,7 +216,11 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
   public void executeFunctionReturningArgs(FunctionContext context) {
     DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
     LogWriter logger = ds.getLogWriter();
-    logger.info("Executing executeFunctionReturningArgs in TestFunction on Member : " + ds.getDistributedMember() + "with Context : " + context);
+    logger.info(
+        "Executing executeFunctionReturningArgs in TestFunction on Member : "
+            + ds.getDistributedMember()
+            + "with Context : "
+            + context);
     if (!hasResult()) {
       return;
     }
@@ -225,13 +230,16 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     } else {
       context.getResultSender().lastResult(Boolean.FALSE);
     }
-
   }
 
   public void execute1(FunctionContext context) {
     DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
     LogWriter logger = ds.getLogWriter();
-    logger.info("Executing execute1 in TestFunction on Member : " + ds.getDistributedMember() + "with Context : " + context);
+    logger.info(
+        "Executing execute1 in TestFunction on Member : "
+            + ds.getDistributedMember()
+            + "with Context : "
+            + context);
     if (!hasResult()) {
       return;
     }
@@ -246,7 +254,7 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     } else if (context.getArguments() instanceof Set) {
       Set origKeys = (Set) context.getArguments();
       ArrayList vals = new ArrayList();
-      for (Iterator i = origKeys.iterator(); i.hasNext();) {
+      for (Iterator i = origKeys.iterator(); i.hasNext(); ) {
         Object val = i.next();
         if (val != null) {
           vals.add(val);
@@ -263,13 +271,21 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
   public void execute2(FunctionContext context) {
     if (context instanceof RegionFunctionContext) {
       RegionFunctionContext rfContext = (RegionFunctionContext) context;
-      rfContext.getDataSet().getCache().getLogger().info("Executing function :  TestFunction2.execute " + rfContext);
+      rfContext
+          .getDataSet()
+          .getCache()
+          .getLogger()
+          .info("Executing function :  TestFunction2.execute " + rfContext);
       if (rfContext.getArguments() instanceof Boolean) {
         /*return rfContext.getArguments();*/
         if (hasResult()) {
           rfContext.getResultSender().lastResult((Serializable) rfContext.getArguments());
         } else {
-          rfContext.getDataSet().getCache().getLogger().info("Executing function :  TestFunction2.execute " + rfContext);
+          rfContext
+              .getDataSet()
+              .getCache()
+              .getLogger()
+              .info("Executing function :  TestFunction2.execute " + rfContext);
           while (true && !rfContext.getDataSet().isDestroyed()) {
             rfContext.getDataSet().getCache().getLogger().info("For Bug43513 ");
             try {
@@ -282,16 +298,24 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
         }
       } else if (rfContext.getArguments() instanceof String) {
         String key = (String) rfContext.getArguments();
-        if (key.equals("TestingTimeOut")) { // for test PRFunctionExecutionDUnitTest#testRemoteMultiKeyExecution_timeout
+        if (key.equals(
+            "TestingTimeOut")) { // for test PRFunctionExecutionDUnitTest#testRemoteMultiKeyExecution_timeout
           try {
             Thread.sleep(2000);
           } catch (InterruptedException e) {
-            rfContext.getDataSet().getCache().getLogger().warning("Got Exception : Thread Interrupted" + e);
+            rfContext
+                .getDataSet()
+                .getCache()
+                .getLogger()
+                .warning("Got Exception : Thread Interrupted" + e);
           }
         }
         if (PartitionRegionHelper.isPartitionedRegion(rfContext.getDataSet())) {
           /*return (Serializable)PartitionRegionHelper.getLocalDataForContext(rfContext).get(key);*/
-          rfContext.getResultSender().lastResult((Serializable) PartitionRegionHelper.getLocalDataForContext(rfContext).get(key));
+          rfContext
+              .getResultSender()
+              .lastResult(
+                  (Serializable) PartitionRegionHelper.getLocalDataForContext(rfContext).get(key));
         } else {
           rfContext.getResultSender().lastResult((Serializable) rfContext.getDataSet().get(key));
         }
@@ -309,7 +333,7 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
         /*return vals;*/
       } else if (rfContext.getArguments() instanceof HashMap) {
         HashMap putData = (HashMap) rfContext.getArguments();
-        for (Iterator i = putData.entrySet().iterator(); i.hasNext();) {
+        for (Iterator i = putData.entrySet().iterator(); i.hasNext(); ) {
           Map.Entry me = (Map.Entry) i.next();
           rfContext.getDataSet().put(me.getKey(), me.getValue());
         }
@@ -323,7 +347,11 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
       } else {
         DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
         LogWriter logger = ds.getLogWriter();
-        logger.info("Executing in TestFunction on Server : " + ds.getDistributedMember() + "with Context : " + context);
+        logger.info(
+            "Executing in TestFunction on Server : "
+                + ds.getDistributedMember()
+                + "with Context : "
+                + context);
         while (ds.isConnected()) {
           logger.fine("Just executing function in infinite loop for Bug43513");
           try {
@@ -334,18 +362,21 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
         }
       }
     }
-
   }
 
   public void execute3(FunctionContext context) {
 
     if (context instanceof RegionFunctionContext) {
       RegionFunctionContext prContext = (RegionFunctionContext) context;
-      prContext.getDataSet().getCache().getLogger().info("Executing function : TestFunction3.execute " + prContext);
+      prContext
+          .getDataSet()
+          .getCache()
+          .getLogger()
+          .info("Executing function : TestFunction3.execute " + prContext);
       if (prContext.getArguments() instanceof Set) {
         Set origKeys = (Set) prContext.getArguments();
         ArrayList vals = new ArrayList();
-        for (Iterator i = origKeys.iterator(); i.hasNext();) {
+        for (Iterator i = origKeys.iterator(); i.hasNext(); ) {
           Object val = PartitionRegionHelper.getLocalDataForContext(prContext).get(i.next());
           if (val != null) {
             vals.add(val);
@@ -356,7 +387,7 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
       } else if (prContext.getFilter() != null) {
         Set origKeys = prContext.getFilter();
         ArrayList vals = new ArrayList();
-        for (Iterator i = origKeys.iterator(); i.hasNext();) {
+        for (Iterator i = origKeys.iterator(); i.hasNext(); ) {
           Object val = PartitionRegionHelper.getLocalDataForContext(prContext).get(i.next());
           if (val != null) {
             vals.add(val);
@@ -375,14 +406,17 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
       //context.getResultSender().sendResult(Boolean.FALSE);
       context.getResultSender().lastResult(Boolean.FALSE);
     }
-
   }
 
   public void execute4(FunctionContext context) {
 
     if (context instanceof RegionFunctionContext) {
       RegionFunctionContext prContext = (RegionFunctionContext) context;
-      prContext.getDataSet().getCache().getLogger().info("Executing function :  TestFunction4-7.execute " + prContext);
+      prContext
+          .getDataSet()
+          .getCache()
+          .getLogger()
+          .info("Executing function :  TestFunction4-7.execute " + prContext);
       if (prContext.getArguments() instanceof Boolean) {
         /*return prContext.getArguments();*/
         if (hasResult())
@@ -390,11 +424,14 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
       } else if (prContext.getArguments() instanceof String) {
         String key = (String) prContext.getArguments();
         /*return (Serializable)PartitionRegionHelper.getLocalDataForContext(prContext).get(key);*/
-        prContext.getResultSender().lastResult((Serializable) PartitionRegionHelper.getLocalDataForContext(prContext).get(key));
+        prContext
+            .getResultSender()
+            .lastResult(
+                (Serializable) PartitionRegionHelper.getLocalDataForContext(prContext).get(key));
       } else if (prContext.getArguments() instanceof Set) {
         Set origKeys = (Set) prContext.getArguments();
         ArrayList vals = new ArrayList();
-        for (Iterator i = origKeys.iterator(); i.hasNext();) {
+        for (Iterator i = origKeys.iterator(); i.hasNext(); ) {
           Object val = PartitionRegionHelper.getLocalDataForContext(prContext).get(i.next());
           if (val != null) {
             vals.add(val);
@@ -402,37 +439,36 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
         }
         /*return vals;*/
         //prContext.getResultSender().sendResult(vals);
-        if (hasResult())
-          prContext.getResultSender().lastResult(vals);
+        if (hasResult()) prContext.getResultSender().lastResult(vals);
       } else if (prContext.getArguments() instanceof HashMap) {
         HashMap putData = (HashMap) prContext.getArguments();
-        for (Iterator i = putData.entrySet().iterator(); i.hasNext();) {
+        for (Iterator i = putData.entrySet().iterator(); i.hasNext(); ) {
           Map.Entry me = (Map.Entry) i.next();
           prContext.getDataSet().put(me.getKey(), me.getValue());
         }
         /*return Boolean.TRUE;*/
         //prContext.getResultSender().sendResult(Boolean.TRUE);
-        if (hasResult())
-          prContext.getResultSender().lastResult(Boolean.TRUE);
+        if (hasResult()) prContext.getResultSender().lastResult(Boolean.TRUE);
       } else {
         /*return Boolean.FALSE;*/
         //prContext.getResultSender().sendResult(Boolean.FALSE);
-        if (hasResult())
-          prContext.getResultSender().lastResult(Boolean.FALSE);
+        if (hasResult()) prContext.getResultSender().lastResult(Boolean.FALSE);
       }
     } else {
       /*return Boolean.FALSE;*/
       //context.getResultSender().sendResult(Boolean.FALSE);
-      if (hasResult())
-        context.getResultSender().lastResult(Boolean.FALSE);
+      if (hasResult()) context.getResultSender().lastResult(Boolean.FALSE);
     }
-
   }
 
   public void execute5(FunctionContext context) {
     DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
     LogWriter logger = ds.getLogWriter();
-    logger.info("Executing executeException in TestFunction on Member : " + ds.getDistributedMember() + "with Context : " + context);
+    logger.info(
+        "Executing executeException in TestFunction on Member : "
+            + ds.getDistributedMember()
+            + "with Context : "
+            + context);
     if (this.hasResult()) {
       if (context.getArguments() instanceof String) {
         context.getResultSender().lastResult("Success");
@@ -447,7 +483,14 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
       if (context.getArguments() instanceof String) {
         String args = (String) context.getArguments();
         if (!args.equalsIgnoreCase("Key")) {
-          Assert.assertTrue(args.equals(InternalDistributedSystem.getAnyInstance().getDistributedMember().getId()), "Args was supposed to be [" + InternalDistributedSystem.getAnyInstance().getDistributedMember().getId() + "] but was:[" + args + "]");
+          Assert.assertTrue(
+              args.equals(
+                  InternalDistributedSystem.getAnyInstance().getDistributedMember().getId()),
+              "Args was supposed to be ["
+                  + InternalDistributedSystem.getAnyInstance().getDistributedMember().getId()
+                  + "] but was:["
+                  + args
+                  + "]");
         }
         context.getResultSender().lastResult("Success");
       } else {
@@ -459,7 +502,11 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
   public void execute8(FunctionContext context) {
     if (context instanceof RegionFunctionContext) {
       RegionFunctionContext rfContext = (RegionFunctionContext) context;
-      rfContext.getDataSet().getCache().getLogger().info("Executing function :  TestFunction8.execute " + rfContext);
+      rfContext
+          .getDataSet()
+          .getCache()
+          .getLogger()
+          .info("Executing function :  TestFunction8.execute " + rfContext);
 
       if (rfContext.getArguments() instanceof Boolean) {
         /*return rfContext.getArguments();*/
@@ -512,30 +559,43 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
   public void execute9(FunctionContext context) {
     if (context instanceof RegionFunctionContext) {
       RegionFunctionContext rfContext = (RegionFunctionContext) context;
-      rfContext.getDataSet().getCache().getLogger().info("Executing function :  TestFunction9.execute " + rfContext);
+      rfContext
+          .getDataSet()
+          .getCache()
+          .getLogger()
+          .info("Executing function :  TestFunction9.execute " + rfContext);
       if (rfContext.getArguments() instanceof Boolean) {
         rfContext.getResultSender().lastResult((Serializable) rfContext.getArguments());
       } else if (rfContext.getArguments() instanceof String) {
         String key = (String) rfContext.getArguments();
-        if (key.equals("TestingTimeOut")) { // for test PRFunctionExecutionDUnitTest#testRemoteMultiKeyExecution_timeout
+        if (key.equals(
+            "TestingTimeOut")) { // for test PRFunctionExecutionDUnitTest#testRemoteMultiKeyExecution_timeout
           try {
             synchronized (this) {
               this.wait(2000);
             }
           } catch (InterruptedException e) {
-            rfContext.getDataSet().getCache().getLogger().warning("Got Exception : Thread Interrupted" + e);
+            rfContext
+                .getDataSet()
+                .getCache()
+                .getLogger()
+                .warning("Got Exception : Thread Interrupted" + e);
           }
         }
         if (context instanceof RegionFunctionContext) {
           RegionFunctionContext prContext = (RegionFunctionContext) context;
           if (PartitionRegionHelper.isPartitionedRegion(prContext.getDataSet())) {
-            rfContext.getResultSender().lastResult((Serializable) PartitionRegionHelper.getLocalDataForContext(prContext).get(key));
+            rfContext
+                .getResultSender()
+                .lastResult(
+                    (Serializable)
+                        PartitionRegionHelper.getLocalDataForContext(prContext).get(key));
           }
         }
       } else if (rfContext.getArguments() instanceof Set) {
         Set origKeys = (Set) rfContext.getArguments();
         ArrayList vals = new ArrayList();
-        for (Iterator i = origKeys.iterator(); i.hasNext();) {
+        for (Iterator i = origKeys.iterator(); i.hasNext(); ) {
           Object val = null;
           if (context instanceof RegionFunctionContext) {
             RegionFunctionContext prContext = (RegionFunctionContext) context;
@@ -544,10 +604,8 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
             val = rfContext.getDataSet().get(i.next());
           }
 
-          if (i.hasNext())
-            rfContext.getResultSender().sendResult((Serializable) val);
-          else
-            rfContext.getResultSender().lastResult((Serializable) val);
+          if (i.hasNext()) rfContext.getResultSender().sendResult((Serializable) val);
+          else rfContext.getResultSender().lastResult((Serializable) val);
 
           if (val != null) {
             vals.add(val);
@@ -555,7 +613,7 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
         }
       } else if (rfContext.getArguments() instanceof HashMap) {
         HashMap putData = (HashMap) rfContext.getArguments();
-        for (Iterator i = putData.entrySet().iterator(); i.hasNext();) {
+        for (Iterator i = putData.entrySet().iterator(); i.hasNext(); ) {
           Map.Entry me = (Map.Entry) i.next();
           rfContext.getDataSet().put(me.getKey(), me.getValue());
         }
@@ -572,7 +630,11 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
   private void executeException(FunctionContext context) {
     DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
     LogWriter logger = ds.getLogWriter();
-    logger.fine("Executing executeException in TestFunction on Member : " + ds.getDistributedMember() + "with Context : " + context);
+    logger.fine(
+        "Executing executeException in TestFunction on Member : "
+            + ds.getDistributedMember()
+            + "with Context : "
+            + context);
     if (context.getArguments() instanceof Boolean) {
       logger.fine("MyFunctionExecutionException Exception is intentionally thrown");
       throw new MyFunctionExecutionException("I have been thrown from TestFunction");
@@ -583,7 +645,7 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     } else if (context.getArguments() instanceof Set) {
       Set origKeys = (Set) context.getArguments();
       ArrayList vals = new ArrayList();
-      for (Iterator i = origKeys.iterator(); i.hasNext();) {
+      for (Iterator i = origKeys.iterator(); i.hasNext(); ) {
         Object val = i.next();
         if (val != null) {
           vals.add(val);
@@ -600,23 +662,36 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
   private void executeWithSendException(FunctionContext context) {
     DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
     LogWriter logger = ds.getLogWriter();
-    logger.fine("Executing executeWithSendException in TestFunction on Member : " + ds.getDistributedMember() + "with Context : " + context);
+    logger.fine(
+        "Executing executeWithSendException in TestFunction on Member : "
+            + ds.getDistributedMember()
+            + "with Context : "
+            + context);
     if (context.getArguments() instanceof Boolean) {
-      context.getResultSender().sendException(new MyFunctionExecutionException("I have been send from TestFunction"));
+      context
+          .getResultSender()
+          .sendException(new MyFunctionExecutionException("I have been send from TestFunction"));
     } else if (context.getArguments() instanceof String) {
       String arg = (String) context.getArguments();
       if (arg.equals("Multiple")) {
         logger.fine("Sending Exception First time");
-        context.getResultSender().sendException(new MyFunctionExecutionException("I have been send from TestFunction"));
+        context
+            .getResultSender()
+            .sendException(new MyFunctionExecutionException("I have been send from TestFunction"));
         logger.fine("Sending Exception Second time");
-        context.getResultSender().sendException(new MyFunctionExecutionException("I have been send from TestFunction"));
+        context
+            .getResultSender()
+            .sendException(new MyFunctionExecutionException("I have been send from TestFunction"));
       }
     } else if (context.getArguments() instanceof Set) {
       Set args = (Set) context.getArguments();
       for (int i = 0; i < args.size(); i++) {
         context.getResultSender().sendResult(new Integer(i));
       }
-      context.getResultSender().sendException(new MyFunctionExecutionException("I have been thrown from TestFunction with set"));
+      context
+          .getResultSender()
+          .sendException(
+              new MyFunctionExecutionException("I have been thrown from TestFunction with set"));
     } else {
       logger.fine("Result sent back :" + Boolean.FALSE);
       context.getResultSender().lastResult(Boolean.FALSE);
@@ -627,13 +702,17 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
     RegionFunctionContext rfContext = (RegionFunctionContext) context;
     LogWriter logger = ds.getLogWriter();
-    logger.fine("Executing executeWithThrowException in TestFunction on Member : " + ds.getDistributedMember() + "with Context : " + context);
+    logger.fine(
+        "Executing executeWithThrowException in TestFunction on Member : "
+            + ds.getDistributedMember()
+            + "with Context : "
+            + context);
     if (context.getArguments() instanceof Boolean) {
       logger.fine("MyFunctionExecutionException Exception is intentionally thrown");
       throw new MyFunctionExecutionException("I have been thrown from TestFunction");
     } else if (rfContext.getArguments() instanceof Set) {
       Set origKeys = (Set) rfContext.getArguments();
-      for (Iterator i = origKeys.iterator(); i.hasNext();) {
+      for (Iterator i = origKeys.iterator(); i.hasNext(); ) {
         Region r = PartitionRegionHelper.getLocalDataForContext(rfContext);
         Object key = i.next();
         Object val = r.get(key);
@@ -651,7 +730,11 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     retryCount++;
     DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
     LogWriter logger = ds.getLogWriter();
-    logger.fine("Executing executeException in TestFunction on Member : " + ds.getDistributedMember() + "with Context : " + context);
+    logger.fine(
+        "Executing executeException in TestFunction on Member : "
+            + ds.getDistributedMember()
+            + "with Context : "
+            + context);
     if (retryCount >= 5) {
       logger.fine("Tried Function Execution 5 times. Now Returning after 5 attempts");
       context.getResultSender().lastResult(new Integer(retryCount));
@@ -660,7 +743,8 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     }
     if (context.getArguments() instanceof Boolean) {
       logger.fine("MyFunctionExecutionException is intentionally thrown");
-      throw new FunctionInvocationTargetException(new MyFunctionExecutionException("I have been thrown from TestFunction"));
+      throw new FunctionInvocationTargetException(
+          new MyFunctionExecutionException("I have been thrown from TestFunction"));
     }
   }
 
@@ -668,7 +752,11 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     ResultSender resultSender = context.getResultSender();
     if (context instanceof RegionFunctionContext) {
       RegionFunctionContext rfContext = (RegionFunctionContext) context;
-      rfContext.getDataSet().getCache().getLogger().info("Executing function :  TestFunctionexecuteResultSender.execute " + rfContext);
+      rfContext
+          .getDataSet()
+          .getCache()
+          .getLogger()
+          .info("Executing function :  TestFunctionexecuteResultSender.execute " + rfContext);
       if (rfContext.getArguments() instanceof Boolean) {
         if (this.hasResult()) {
           resultSender.lastResult((Serializable) rfContext.getArguments());
@@ -694,17 +782,18 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
   }
 
   public void executeSocketTimeOut(FunctionContext context) {
-    WaitCriterion wc = new WaitCriterion() {
-      String excuse;
+    WaitCriterion wc =
+        new WaitCriterion() {
+          String excuse;
 
-      public boolean done() {
-        return false;
-      }
+          public boolean done() {
+            return false;
+          }
 
-      public String description() {
-        return excuse;
-      }
-    };
+          public String description() {
+            return excuse;
+          }
+        };
     Wait.waitForCriterion(wc, 15000, 1000, false);
     if (context.getArguments() instanceof Boolean) {
       context.getResultSender().lastResult((Serializable) context.getArguments());
@@ -713,7 +802,7 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     } else if (context.getArguments() instanceof Set) {
       Set origKeys = (Set) context.getArguments();
       ArrayList vals = new ArrayList();
-      for (Iterator i = origKeys.iterator(); i.hasNext();) {
+      for (Iterator i = origKeys.iterator(); i.hasNext(); ) {
         Object val = i.next();
         if (val != null) {
           vals.add(val);
@@ -738,19 +827,28 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     }
     if (context instanceof RegionFunctionContext) {
       RegionFunctionContext rfContext = (RegionFunctionContext) context;
-      rfContext.getDataSet().getCache().getLogger().info("Executing function :  TestFunction.execute " + rfContext);
+      rfContext
+          .getDataSet()
+          .getCache()
+          .getLogger()
+          .info("Executing function :  TestFunction.execute " + rfContext);
       if (rfContext.getArguments() instanceof Boolean) {
         /*return rfContext.getArguments();*/
         rfContext.getResultSender().lastResult((Serializable) rfContext.getArguments());
       } else if (rfContext.getArguments() instanceof String) {
         String key = (String) rfContext.getArguments();
-        if (key.equals("TestingTimeOut")) { // for test PRFunctionExecutionDUnitTest#testRemoteMultiKeyExecution_timeout
+        if (key.equals(
+            "TestingTimeOut")) { // for test PRFunctionExecutionDUnitTest#testRemoteMultiKeyExecution_timeout
           try {
             synchronized (this) {
               this.wait(2000);
             }
           } catch (InterruptedException e) {
-            rfContext.getDataSet().getCache().getLogger().warning("Got Exception : Thread Interrupted" + e);
+            rfContext
+                .getDataSet()
+                .getCache()
+                .getLogger()
+                .warning("Got Exception : Thread Interrupted" + e);
           }
         }
         try {
@@ -758,11 +856,18 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
             this.wait(2000);
           }
         } catch (InterruptedException e) {
-          rfContext.getDataSet().getCache().getLogger().warning("Got Exception : Thread Interrupted" + e);
+          rfContext
+              .getDataSet()
+              .getCache()
+              .getLogger()
+              .warning("Got Exception : Thread Interrupted" + e);
         }
         if (PartitionRegionHelper.isPartitionedRegion(rfContext.getDataSet())) {
           /*return (Serializable)PartitionRegionHelper.getLocalDataForContext(rfContext).get(key);*/
-          rfContext.getResultSender().lastResult((Serializable) PartitionRegionHelper.getLocalDataForContext(rfContext).get(key));
+          rfContext
+              .getResultSender()
+              .lastResult(
+                  (Serializable) PartitionRegionHelper.getLocalDataForContext(rfContext).get(key));
         } else {
           rfContext.getResultSender().lastResult((Serializable) rfContext.getDataSet().get(key));
         }
@@ -770,7 +875,7 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
       } else if (rfContext.getArguments() instanceof Set) {
         Set origKeys = (Set) rfContext.getArguments();
         ArrayList vals = new ArrayList();
-        for (Iterator i = origKeys.iterator(); i.hasNext();) {
+        for (Iterator i = origKeys.iterator(); i.hasNext(); ) {
           Object val = PartitionRegionHelper.getLocalDataForContext(rfContext).get(i.next());
           if (val != null) {
             vals.add(val);
@@ -780,7 +885,7 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
         /*return vals;*/
       } else if (rfContext.getArguments() instanceof HashMap) {
         HashMap putData = (HashMap) rfContext.getArguments();
-        for (Iterator i = putData.entrySet().iterator(); i.hasNext();) {
+        for (Iterator i = putData.entrySet().iterator(); i.hasNext(); ) {
           Map.Entry me = (Map.Entry) i.next();
           rfContext.getDataSet().put(me.getKey(), me.getValue());
         }
@@ -791,24 +896,24 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     } else {
       context.getResultSender().lastResult(Boolean.FALSE);
     }
-
   }
 
   public void executeHA(FunctionContext context) {
     RegionFunctionContext rcontext = (RegionFunctionContext) context;
     Region region = rcontext.getDataSet();
     region.getCache().getLogger().fine("executeHA#execute( " + rcontext + " )");
-    WaitCriterion wc = new WaitCriterion() {
-      String excuse;
+    WaitCriterion wc =
+        new WaitCriterion() {
+          String excuse;
 
-      public boolean done() {
-        return false;
-      }
+          public boolean done() {
+            return false;
+          }
 
-      public String description() {
-        return excuse;
-      }
-    };
+          public String description() {
+            return excuse;
+          }
+        };
     Wait.waitForCriterion(wc, 10000, 500, false);
     rcontext.getResultSender().lastResult((Serializable) rcontext.getArguments());
   }
@@ -833,7 +938,10 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
         } else {
           r.put("stopped", ++numTimesStopped);
           for (CacheServer s : servers) {
-            if (((CacheServerImpl) s).getSystem().getDistributedMember().equals(((GemFireCacheImpl) CacheFactory.getAnyInstance()).getMyId())) {
+            if (((CacheServerImpl) s)
+                .getSystem()
+                .getDistributedMember()
+                .equals(((GemFireCacheImpl) CacheFactory.getAnyInstance()).getMyId())) {
               s.stop();
               DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
               ds.disconnect();
@@ -858,13 +966,15 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
       }
 
       for (CacheServer s : servers) {
-        if (((CacheServerImpl) s).getSystem().getDistributedMember().equals(((GemFireCacheImpl) CacheFactory.getAnyInstance()).getMyId())) {
+        if (((CacheServerImpl) s)
+            .getSystem()
+            .getDistributedMember()
+            .equals(((GemFireCacheImpl) CacheFactory.getAnyInstance()).getMyId())) {
           s.stop();
           DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
           ds.disconnect();
         }
       }
-
     }
   }
 
@@ -873,7 +983,11 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     ArrayList<String> args = (ArrayList<String>) context.getArguments();
 
     RegionFunctionContext rfContext = (RegionFunctionContext) context;
-    rfContext.getDataSet().getCache().getLogger().info("Executing function :  executeHAAndNonHAOnRegion " + rfContext);
+    rfContext
+        .getDataSet()
+        .getCache()
+        .getLogger()
+        .info("Executing function :  executeHAAndNonHAOnRegion " + rfContext);
 
     Region r = CacheFactory.getAnyInstance().getRegion(args.get(0));
     String testName = args.get(1);
@@ -892,7 +1006,10 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
         } else {
           r.put("stopped", ++numTimesStopped);
           for (CacheServer s : servers) {
-            if (((CacheServerImpl) s).getSystem().getDistributedMember().equals(((GemFireCacheImpl) CacheFactory.getAnyInstance()).getMyId())) {
+            if (((CacheServerImpl) s)
+                .getSystem()
+                .getDistributedMember()
+                .equals(((GemFireCacheImpl) CacheFactory.getAnyInstance()).getMyId())) {
               s.stop();
               DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
               ds.disconnect();
@@ -917,7 +1034,10 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
       }
 
       for (CacheServer s : servers) {
-        if (((CacheServerImpl) s).getSystem().getDistributedMember().equals(((GemFireCacheImpl) CacheFactory.getAnyInstance()).getMyId())) {
+        if (((CacheServerImpl) s)
+            .getSystem()
+            .getDistributedMember()
+            .equals(((GemFireCacheImpl) CacheFactory.getAnyInstance()).getMyId())) {
           s.stop();
           DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
           ds.disconnect();
@@ -936,7 +1056,11 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
 
     DistributedSystem ds = InternalDistributedSystem.getAnyInstance();
     LogWriter logger = ds.getLogWriter();
-    logger.fine("Executing executeException in TestFunction on Member : " + ds.getDistributedMember() + "with Context : " + context);
+    logger.fine(
+        "Executing executeException in TestFunction on Member : "
+            + ds.getDistributedMember()
+            + "with Context : "
+            + context);
     if (retryCount >= 5) {
       logger.fine("Tried Function Execution 5 times. Now Returning after 5 attempts");
       context.getResultSender().sendResult(new Integer(firstExecutionCount));
@@ -947,13 +1071,16 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     }
     if (context.getArguments() instanceof Boolean) {
       logger.fine("MyFunctionExecutionException Exception is intentionally thrown");
-      throw new InternalFunctionInvocationTargetException(new MyFunctionExecutionException("I have been thrown from TestFunction"));
+      throw new InternalFunctionInvocationTargetException(
+          new MyFunctionExecutionException("I have been thrown from TestFunction"));
     }
   }
 
   public void executeWithNoLastResult(FunctionContext context) {
     // add expected exception
-    InternalDistributedSystem.getConnectedInstance().getLogWriter().info("<ExpectedException action=add>did not send last result" + "</ExpectedException>");
+    InternalDistributedSystem.getConnectedInstance()
+        .getLogWriter()
+        .info("<ExpectedException action=add>did not send last result" + "</ExpectedException>");
     context.getResultSender().sendResult((Serializable) context.getArguments());
   }
 
@@ -976,7 +1103,7 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
 
   /**
    * Get the function identifier, used by clients to invoke this function
-   * 
+   *
    * @return an object identifying this function
    * @since GemFire 5.8Beta
    */
@@ -987,8 +1114,7 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
+    if (this == obj) return true;
     if (!(obj instanceof TestFunction)) {
       return false;
     }
@@ -1024,10 +1150,12 @@ public class TestFunction extends FunctionAdapter implements Declarable2 {
     if (getId().equals(TEST_FUNCTION10)) {
       return true;
     }
-    if (getId().equals(TEST_FUNCTION_NONHA_SERVER) || getId().equals(TEST_FUNCTION_NONHA_REGION) || getId().equals(TEST_FUNCTION_NONHA_NOP) || getId().equals(TEST_FUNCTION_NONHA)) {
+    if (getId().equals(TEST_FUNCTION_NONHA_SERVER)
+        || getId().equals(TEST_FUNCTION_NONHA_REGION)
+        || getId().equals(TEST_FUNCTION_NONHA_NOP)
+        || getId().equals(TEST_FUNCTION_NONHA)) {
       return false;
     }
     return Boolean.valueOf(this.props.getProperty(HAVE_RESULTS)).booleanValue();
   }
-
 }

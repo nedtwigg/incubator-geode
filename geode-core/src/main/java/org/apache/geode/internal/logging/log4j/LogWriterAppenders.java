@@ -30,16 +30,16 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Holds on to one or many instances of LogWriterAppender and provides
- * convenience methods for controlling their lifecycles.
- * 
+ * Holds on to one or many instances of LogWriterAppender and provides convenience methods for
+ * controlling their lifecycles.
  */
 public class LogWriterAppenders {
-  public final static String APPEND_TO_LOG_FILE = DistributionConfig.GEMFIRE_PREFIX + "append-log";
+  public static final String APPEND_TO_LOG_FILE = DistributionConfig.GEMFIRE_PREFIX + "append-log";
   private static final boolean ALLOW_REDIRECT = true;
 
   public enum Identifier {
-    MAIN(false), SECURITY(true);
+    MAIN(false),
+    SECURITY(true);
     private final boolean isSecure;
 
     private Identifier(final boolean isSecure) {
@@ -51,20 +51,23 @@ public class LogWriterAppenders {
     }
   };
 
-  private static Map<Identifier, LogWriterAppender> appenders = new HashMap<Identifier, LogWriterAppender>();
-  private static Map<Identifier, AtomicInteger> references = new HashMap<Identifier, AtomicInteger>();
+  private static Map<Identifier, LogWriterAppender> appenders =
+      new HashMap<Identifier, LogWriterAppender>();
+  private static Map<Identifier, AtomicInteger> references =
+      new HashMap<Identifier, AtomicInteger>();
 
-  /**
-   * Returns the named LogWriterAppender or null if it does not exist.
-   */
-  public synchronized static LogWriterAppender getAppender(final Identifier id) {
+  /** Returns the named LogWriterAppender or null if it does not exist. */
+  public static synchronized LogWriterAppender getAppender(final Identifier id) {
     return appenders.get(id);
   }
 
-  /**
-   * Returns the named LogWriterAppender or creates it if necessary.
-   */
-  public synchronized static LogWriterAppender getOrCreateAppender(final Identifier id, final boolean appendToFile, final boolean isLoner, final LogConfig config, final boolean logConfig) {
+  /** Returns the named LogWriterAppender or creates it if necessary. */
+  public static synchronized LogWriterAppender getOrCreateAppender(
+      final Identifier id,
+      final boolean appendToFile,
+      final boolean isLoner,
+      final LogConfig config,
+      final boolean logConfig) {
     LogWriterAppender appender = appenders.get(id);
     if (appender == null) {
       appender = createLogWriterAppender(appendToFile, isLoner, id.isSecure(), config, logConfig);
@@ -77,31 +80,29 @@ public class LogWriterAppenders {
     return appender;
   }
 
-  /**
-   * Returns the named LogWriterAppender or creates it if necessary.
-   */
-  public static LogWriterAppender getOrCreateAppender(final Identifier id, final boolean isLoner, final LogConfig config, final boolean logConfig) {
+  /** Returns the named LogWriterAppender or creates it if necessary. */
+  public static LogWriterAppender getOrCreateAppender(
+      final Identifier id, final boolean isLoner, final LogConfig config, final boolean logConfig) {
     final boolean appendToFile = Boolean.getBoolean(APPEND_TO_LOG_FILE);
     return getOrCreateAppender(id, appendToFile, isLoner, config, logConfig);
   }
 
   /**
-   * Creates the log writer appender for a distributed system based on the system's
-   * parsed configuration. The initial banner and messages are also entered into
-   * the log by this method.
-   * 
-   * @param isLoner
-   *                Whether the distributed system is a loner or not
-   * @param isSecurity
-   *                Whether a log for security related messages has to be
-   *                created
-   * @param config
-   *                The DistributionConfig for the target distributed system
+   * Creates the log writer appender for a distributed system based on the system's parsed
+   * configuration. The initial banner and messages are also entered into the log by this method.
+   *
+   * @param isLoner Whether the distributed system is a loner or not
+   * @param isSecurity Whether a log for security related messages has to be created
+   * @param config The DistributionConfig for the target distributed system
    * @param logConfig if true log the configuration
-   * @throws GemFireIOException
-   *                 if the log file can't be opened for writing
+   * @throws GemFireIOException if the log file can't be opened for writing
    */
-  static LogWriterAppender createLogWriterAppender(final boolean appendToFile, final boolean isLoner, final boolean isSecurity, final LogConfig config, final boolean logConfig) {
+  static LogWriterAppender createLogWriterAppender(
+      final boolean appendToFile,
+      final boolean isLoner,
+      final boolean isSecurity,
+      final LogConfig config,
+      final boolean logConfig) {
 
     final boolean isDistributionConfig = config instanceof DistributionConfig;
     final DistributionConfig dsConfig = isDistributionConfig ? (DistributionConfig) config : null;
@@ -133,18 +134,34 @@ public class LogWriterAppenders {
 
     // if logFile exists attempt to rename it for rolling
     if (logFile.exists()) {
-      final boolean useChildLogging = config.getLogFile() != null && !config.getLogFile().equals(new File("")) && config.getLogFileSizeLimit() != 0;
-      final boolean statArchivesRolling = isDistributionConfig && dsConfig.getStatisticArchiveFile() != null && !dsConfig.getStatisticArchiveFile().equals(new File("")) && dsConfig.getArchiveFileSizeLimit() != 0 && dsConfig.getStatisticSamplingEnabled();
+      final boolean useChildLogging =
+          config.getLogFile() != null
+              && !config.getLogFile().equals(new File(""))
+              && config.getLogFileSizeLimit() != 0;
+      final boolean statArchivesRolling =
+          isDistributionConfig
+              && dsConfig.getStatisticArchiveFile() != null
+              && !dsConfig.getStatisticArchiveFile().equals(new File(""))
+              && dsConfig.getArchiveFileSizeLimit() != 0
+              && dsConfig.getStatisticSamplingEnabled();
 
-      if (!appendToFile || useChildLogging || statArchivesRolling) { // check useChildLogging for bug 50659
-        final File oldMain = ManagerLogWriter.getLogNameForOldMainLog(logFile, isSecurity || useChildLogging || statArchivesRolling);
+      if (!appendToFile
+          || useChildLogging
+          || statArchivesRolling) { // check useChildLogging for bug 50659
+        final File oldMain =
+            ManagerLogWriter.getLogNameForOldMainLog(
+                logFile, isSecurity || useChildLogging || statArchivesRolling);
         final boolean succeeded = LogFileUtils.renameAggressively(logFile, oldMain);
 
         if (succeeded) {
-          firstMsg = LocalizedStrings.InternalDistributedSystem_RENAMED_OLD_LOG_FILE_TO_0.toLocalizedString(oldMain);
+          firstMsg =
+              LocalizedStrings.InternalDistributedSystem_RENAMED_OLD_LOG_FILE_TO_0
+                  .toLocalizedString(oldMain);
         } else {
           firstMsgWarning = true;
-          firstMsg = LocalizedStrings.InternalDistributedSystem_COULD_NOT_RENAME_0_TO_1.toLocalizedString(new Object[] { logFile, oldMain });
+          firstMsg =
+              LocalizedStrings.InternalDistributedSystem_COULD_NOT_RENAME_0_TO_1.toLocalizedString(
+                  new Object[] {logFile, oldMain});
         }
       }
     }
@@ -154,7 +171,9 @@ public class LogWriterAppenders {
     try {
       fos = new FileOutputStream(logFile, true);
     } catch (FileNotFoundException ex) {
-      String s = LocalizedStrings.InternalDistributedSystem_COULD_NOT_OPEN_LOG_FILE_0.toLocalizedString(logFile);
+      String s =
+          LocalizedStrings.InternalDistributedSystem_COULD_NOT_OPEN_LOG_FILE_0.toLocalizedString(
+              logFile);
       throw new GemFireIOException(s, ex);
     }
     final PrintStream out = new PrintStream(fos);
@@ -182,14 +201,18 @@ public class LogWriterAppenders {
     if (isSecurity) {
       appenderContext[0] = LogService.getAppenderContext(LogService.SECURITY_LOGGER_NAME);
     } else {
-      appenderContext[0] = LogService.getAppenderContext(); // ROOT or gemfire.logging.appenders.LOGGER
+      appenderContext[0] =
+          LogService.getAppenderContext(); // ROOT or gemfire.logging.appenders.LOGGER
     }
 
     // create the LogWriterAppender that delegates to ManagerLogWriter;
-    final LogWriterAppender appender = LogWriterAppender.create(appenderContext, logWriterLoggerName, mlw, fos);
+    final LogWriterAppender appender =
+        LogWriterAppender.create(appenderContext, logWriterLoggerName, mlw, fos);
 
     // remove stdout appender from MAIN_LOGGER_NAME only if isUsingGemFireDefaultConfig -- see #51819
-    if (!isSecurity && LogService.MAIN_LOGGER_NAME.equals(logWriterLoggerName) && LogService.isUsingGemFireDefaultConfig()) {
+    if (!isSecurity
+        && LogService.MAIN_LOGGER_NAME.equals(logWriterLoggerName)
+        && LogService.isUsingGemFireDefaultConfig()) {
       LogService.removeConsoleAppender();
     }
 
@@ -207,7 +230,9 @@ public class LogWriterAppenders {
     if (logConfig) {
       if (!isLoner) {
         // LOG:CONFIG: changed from config to info
-        logWriter.info(LocalizedStrings.InternalDistributedSystem_STARTUP_CONFIGURATIONN_0, config.toLoggerString());
+        logWriter.info(
+            LocalizedStrings.InternalDistributedSystem_STARTUP_CONFIGURATIONN_0,
+            config.toLoggerString());
       }
     }
 
@@ -227,14 +252,14 @@ public class LogWriterAppenders {
     return appender;
   }
 
-  public synchronized static void startupComplete(final Identifier id) {
+  public static synchronized void startupComplete(final Identifier id) {
     LogWriterAppender appender = appenders.get(id);
     if (appender != null) {
       appender.startupComplete();
     }
   }
 
-  public synchronized static void destroy(final Identifier id) {
+  public static synchronized void destroy(final Identifier id) {
     // TODO:LOG:KIRK: new Exception("KIRK destroy called for " + id).printStackTrace();
     LogWriterAppender appender = appenders.get(id);
     if (appender == null) {
@@ -245,7 +270,8 @@ public class LogWriterAppenders {
       throw new IllegalStateException("Count is null for " + id);
     }
     if (count.get() < 0) {
-      throw new IllegalStateException("Count is non-positive integer for " + id + ": " + count.get());
+      throw new IllegalStateException(
+          "Count is non-positive integer for " + id + ": " + count.get());
     }
     if (count.decrementAndGet() > 0) {
       return;
@@ -256,14 +282,14 @@ public class LogWriterAppenders {
     }
   }
 
-  public synchronized static void stop(final Identifier id) {
+  public static synchronized void stop(final Identifier id) {
     LogWriterAppender appender = appenders.get(id);
     if (appender != null) {
       appender.stop();
     }
   }
 
-  public synchronized static void configChanged(final Identifier id) {
+  public static synchronized void configChanged(final Identifier id) {
     LogWriterAppender appender = appenders.get(id);
     if (appender != null) {
       appender.configChanged();

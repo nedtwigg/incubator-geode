@@ -19,10 +19,7 @@ package org.apache.geode.cache.query.internal.parse;
 import antlr.*;
 import org.apache.geode.cache.query.internal.QCompiler;
 
-/**
- * 
- *
- */
+/** */
 public class ASTOrderBy extends GemFireAST {
   private static final long serialVersionUID = 2262777181888775078L;
 
@@ -30,13 +27,11 @@ public class ASTOrderBy extends GemFireAST {
     super(t);
   }
 
-  public ASTOrderBy() {
-  }
+  public ASTOrderBy() {}
 
   @Override
   public void compile(QCompiler compiler) {
     super.compile(compiler);
     compiler.compileOrederByClause(this.getNumberOfChildren());
   }
-
 }

@@ -45,10 +45,7 @@ import org.apache.geode.internal.cache.PartitionedRegion;
 import org.apache.geode.internal.cache.control.MemoryThresholds;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * 
- * 
- */
+/** */
 public class MultiRegionFunctionExecutor extends AbstractExecution {
 
   private final Set<Region> regions;
@@ -69,7 +66,12 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
     this.sender = drfe.sender;
   }
 
-  private MultiRegionFunctionExecutor(Set<Region> regions, Set filter2, Object args, MemberMappedArgument memberMappedArg, ServerToClientFunctionResultSender resultSender) {
+  private MultiRegionFunctionExecutor(
+      Set<Region> regions,
+      Set filter2,
+      Object args,
+      MemberMappedArgument memberMappedArg,
+      ServerToClientFunctionResultSender resultSender) {
     if (args != null) {
       this.args = args;
     } else if (memberMappedArg != null) {
@@ -85,7 +87,8 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
     this.isClientServerMode = true;
   }
 
-  private MultiRegionFunctionExecutor(MultiRegionFunctionExecutor executor, MemberMappedArgument argument) {
+  private MultiRegionFunctionExecutor(
+      MultiRegionFunctionExecutor executor, MemberMappedArgument argument) {
     super(executor);
     this.regions = executor.getRegions();
     this.filter.clear();
@@ -93,7 +96,6 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
     this.sender = executor.getServerResultSender();
     this.memberMappedArg = argument;
     this.isMemberMappedArgument = true;
-
   }
 
   private MultiRegionFunctionExecutor(MultiRegionFunctionExecutor executor, ResultCollector rs) {
@@ -127,7 +129,10 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
 
   public InternalExecution withMemberMappedArgument(MemberMappedArgument argument) {
     if (argument == null) {
-      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("MemberMapped Arg"));
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("MemberMapped Arg"));
     }
     return new MultiRegionFunctionExecutor(this, argument);
   }
@@ -142,25 +147,35 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
 
   public Execution withArgs(Object args) {
     if (args == null) {
-      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("args"));
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("args"));
     }
     return new MultiRegionFunctionExecutor(this, args);
   }
 
   public Execution withCollector(ResultCollector<?, ?> rc) {
     if (rc == null) {
-      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("Result Collector"));
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("Result Collector"));
     }
     return new MultiRegionFunctionExecutor(this, rc);
   }
 
   public Execution withFilter(Set<?> filter) {
-    throw new FunctionException(LocalizedStrings.ExecuteFunction_CANNOT_SPECIFY_0_FOR_ONREGIONS_FUNCTION.toLocalizedString("filter"));
+    throw new FunctionException(
+        LocalizedStrings.ExecuteFunction_CANNOT_SPECIFY_0_FOR_ONREGIONS_FUNCTION.toLocalizedString(
+            "filter"));
   }
 
   @Override
   public InternalExecution withBucketFilter(Set<Integer> bucketIDs) {
-    throw new FunctionException(LocalizedStrings.ExecuteFunction_CANNOT_SPECIFY_0_FOR_ONREGIONS_FUNCTION.toLocalizedString("bucket as filter"));
+    throw new FunctionException(
+        LocalizedStrings.ExecuteFunction_CANNOT_SPECIFY_0_FOR_ONREGIONS_FUNCTION.toLocalizedString(
+            "bucket as filter"));
   }
 
   @Override
@@ -177,28 +192,41 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
     }
   }
 
-  private ResultCollector executeFunction(final Function function, ResultCollector resultCollector) {
+  private ResultCollector executeFunction(
+      final Function function, ResultCollector resultCollector) {
     InternalDistributedSystem ds = InternalDistributedSystem.getConnectedInstance();
     if (ds == null) {
-      throw new IllegalStateException(LocalizedStrings.ExecuteFunction_DS_NOT_CREATED_OR_NOT_READY.toLocalizedString());
+      throw new IllegalStateException(
+          LocalizedStrings.ExecuteFunction_DS_NOT_CREATED_OR_NOT_READY.toLocalizedString());
     }
     final DM dm = ds.getDistributionManager();
-    final Map<InternalDistributedMember, Set<String>> memberToRegionMap = calculateMemberToRegionMap();
-    final Set<InternalDistributedMember> dest = new HashSet<InternalDistributedMember>(memberToRegionMap.keySet());
+    final Map<InternalDistributedMember, Set<String>> memberToRegionMap =
+        calculateMemberToRegionMap();
+    final Set<InternalDistributedMember> dest =
+        new HashSet<InternalDistributedMember>(memberToRegionMap.keySet());
 
     if (dest.isEmpty()) {
-      throw new FunctionException(LocalizedStrings.MemberFunctionExecutor_NO_MEMBER_FOUND_FOR_EXECUTING_FUNCTION_0.toLocalizedString(function.getId()));
+      throw new FunctionException(
+          LocalizedStrings.MemberFunctionExecutor_NO_MEMBER_FOUND_FOR_EXECUTING_FUNCTION_0
+              .toLocalizedString(function.getId()));
     }
     final GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-    if (function.optimizeForWrite() && cache != null && cache.getResourceManager().getHeapMonitor().containsHeapCriticalMembers(dest) && !MemoryThresholds.isLowMemoryExceptionDisabled()) {
+    if (function.optimizeForWrite()
+        && cache != null
+        && cache.getResourceManager().getHeapMonitor().containsHeapCriticalMembers(dest)
+        && !MemoryThresholds.isLowMemoryExceptionDisabled()) {
       Set<InternalDistributedMember> hcm = cache.getResourceAdvisor().adviseCritialMembers();
       Set<DistributedMember> sm = SetUtils.intersection(hcm, dest);
-      throw new LowMemoryException(LocalizedStrings.ResourceManager_LOW_MEMORY_FOR_0_FUNCEXEC_MEMBERS_1.toLocalizedString(new Object[] { function.getId(), sm }), sm);
+      throw new LowMemoryException(
+          LocalizedStrings.ResourceManager_LOW_MEMORY_FOR_0_FUNCEXEC_MEMBERS_1.toLocalizedString(
+              new Object[] {function.getId(), sm}),
+          sm);
     }
     setExecutionNodes(dest);
 
     final InternalDistributedMember localVM = cache.getMyId();
-    final LocalResultCollector<?, ?> localResultCollector = getLocalResultCollector(function, resultCollector);
+    final LocalResultCollector<?, ?> localResultCollector =
+        getLocalResultCollector(function, resultCollector);
     boolean remoteOnly = false;
     boolean localOnly = false;
     if (!dest.contains(localVM)) {
@@ -208,7 +236,9 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
       localOnly = true;
     }
     validateExecution(function, dest);
-    final MemberFunctionResultSender resultSender = new MemberFunctionResultSender(dm, localResultCollector, function, localOnly, remoteOnly, null);
+    final MemberFunctionResultSender resultSender =
+        new MemberFunctionResultSender(
+            dm, localResultCollector, function, localOnly, remoteOnly, null);
     if (dest.contains(localVM)) {
       // if member is local VM
       dest.remove(localVM);
@@ -220,17 +250,32 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
           regions.add(cache1.getRegion(regionPath));
         }
       }
-      final FunctionContextImpl context = new MultiRegionFunctionContextImpl(function.getId(), getArgumentsForMember(localVM.getId()), resultSender, regions, this.isReExecute);
+      final FunctionContextImpl context =
+          new MultiRegionFunctionContextImpl(
+              function.getId(),
+              getArgumentsForMember(localVM.getId()),
+              resultSender,
+              regions,
+              this.isReExecute);
       boolean isTx = cache.getTxManager().getTXState() == null ? false : true;
       executeFunctionOnLocalNode(function, context, resultSender, dm, isTx);
     }
     if (!dest.isEmpty()) {
-      HashMap<InternalDistributedMember, Object> memberArgs = new HashMap<InternalDistributedMember, Object>();
+      HashMap<InternalDistributedMember, Object> memberArgs =
+          new HashMap<InternalDistributedMember, Object>();
       for (InternalDistributedMember recip : dest) {
         memberArgs.put(recip, getArgumentsForMember(recip.getId()));
       }
       Assert.assertTrue(memberArgs.size() == dest.size());
-      MultiRegionFunctionResultWaiter waiter = new MultiRegionFunctionResultWaiter(ds, localResultCollector, function, dest, memberArgs, resultSender, memberToRegionMap);
+      MultiRegionFunctionResultWaiter waiter =
+          new MultiRegionFunctionResultWaiter(
+              ds,
+              localResultCollector,
+              function,
+              dest,
+              memberArgs,
+              resultSender,
+              memberToRegionMap);
 
       ResultCollector reply = waiter.getFunctionResultFrom(dest, function, this);
       return reply;
@@ -239,7 +284,8 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
   }
 
   private Map<InternalDistributedMember, Set<String>> calculateMemberToRegionMap() {
-    Map<InternalDistributedMember, Set<String>> memberToRegions = new HashMap<InternalDistributedMember, Set<String>>();
+    Map<InternalDistributedMember, Set<String>> memberToRegions =
+        new HashMap<InternalDistributedMember, Set<String>>();
     // nodes is maintained for node pruning logic
     Set<InternalDistributedMember> nodes = new HashSet<InternalDistributedMember>();
     for (Region region : regions) {
@@ -273,7 +319,8 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
         if (dp.isEmpty() || dp.isNormal()) {
           // Add local members
           DistributedRegion dr = (DistributedRegion) region;
-          Set<InternalDistributedMember> replicates = dr.getCacheDistributionAdvisor().adviseInitializedReplicates();
+          Set<InternalDistributedMember> replicates =
+              dr.getCacheDistributionAdvisor().adviseInitializedReplicates();
           // if existing nodes contain one of the nodes from replicates
           boolean added = false;
           for (InternalDistributedMember member : replicates) {
@@ -291,7 +338,9 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
           // if existing nodes set is mutually exclusive to replicates
           if (replicates.size() != 0 && !added) {
             // select a random replicate
-            InternalDistributedMember member = (InternalDistributedMember) (replicates.toArray()[new Random().nextInt(replicates.size())]);
+            InternalDistributedMember member =
+                (InternalDistributedMember)
+                    (replicates.toArray()[new Random().nextInt(replicates.size())]);
             Set<String> regions = memberToRegions.get(member);
             if (regions == null) {
               regions = new HashSet<String>();
@@ -339,7 +388,9 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
     }
     if (cache != null && cache.getTxManager().getTXState() != null) {
       if (targetMembers.size() > 1) {
-        throw new TransactionException(LocalizedStrings.PartitionedRegion_TX_FUNCTION_ON_MORE_THAN_ONE_NODE.toLocalizedString());
+        throw new TransactionException(
+            LocalizedStrings.PartitionedRegion_TX_FUNCTION_ON_MORE_THAN_ONE_NODE
+                .toLocalizedString());
       } else {
         assert targetMembers.size() == 1;
         DistributedMember funcTarget = (DistributedMember) targetMembers.iterator().next();
@@ -347,14 +398,21 @@ public class MultiRegionFunctionExecutor extends AbstractExecution {
         if (target == null) {
           cache.getTxManager().getTXState().setTarget(funcTarget);
         } else if (!target.equals(funcTarget)) {
-          throw new TransactionDataNotColocatedException(LocalizedStrings.PartitionedRegion_TX_FUNCTION_EXECUTION_NOT_COLOCATED_0_1.toLocalizedString(new Object[] { target, funcTarget }));
+          throw new TransactionDataNotColocatedException(
+              LocalizedStrings.PartitionedRegion_TX_FUNCTION_EXECUTION_NOT_COLOCATED_0_1
+                  .toLocalizedString(new Object[] {target, funcTarget}));
         }
       }
     }
-    if (function.optimizeForWrite() && cache.getResourceManager().getHeapMonitor().containsHeapCriticalMembers(targetMembers) && !MemoryThresholds.isLowMemoryExceptionDisabled()) {
+    if (function.optimizeForWrite()
+        && cache.getResourceManager().getHeapMonitor().containsHeapCriticalMembers(targetMembers)
+        && !MemoryThresholds.isLowMemoryExceptionDisabled()) {
       Set<InternalDistributedMember> hcm = cache.getResourceAdvisor().adviseCritialMembers();
       Set<DistributedMember> sm = SetUtils.intersection(hcm, targetMembers);
-      throw new LowMemoryException(LocalizedStrings.ResourceManager_LOW_MEMORY_FOR_0_FUNCEXEC_MEMBERS_1.toLocalizedString(new Object[] { function.getId(), sm }), sm);
+      throw new LowMemoryException(
+          LocalizedStrings.ResourceManager_LOW_MEMORY_FOR_0_FUNCEXEC_MEMBERS_1.toLocalizedString(
+              new Object[] {function.getId(), sm}),
+          sm);
     }
   }
 }

@@ -58,13 +58,14 @@ import org.apache.geode.management.internal.cli.shell.Gfsh;
 import org.apache.geode.management.internal.cli.util.RegionAttributesNames;
 import org.apache.geode.management.internal.security.ResourceOperation;
 
-/***
- * Class containing implementation of commands based on region:
+/**
+ * * Class containing implementation of commands based on region:
+ *
  * <ul>
- * <li>list region
- * <li>describe region
+ *   <li>list region
+ *   <li>describe region
  * </ul>
- * 
+ *
  * @since GemFire 7.0
  */
 public class RegionCommands implements CommandMarker {
@@ -73,12 +74,28 @@ public class RegionCommands implements CommandMarker {
   }
 
   private static final GetRegionsFunction getRegionsFunction = new GetRegionsFunction();
-  private static final GetRegionDescriptionFunction getRegionDescription = new GetRegionDescriptionFunction();
+  private static final GetRegionDescriptionFunction getRegionDescription =
+      new GetRegionDescriptionFunction();
 
-  @CliCommand(value = { CliStrings.LIST_REGION }, help = CliStrings.LIST_REGION__HELP)
+  @CliCommand(
+    value = {CliStrings.LIST_REGION},
+    help = CliStrings.LIST_REGION__HELP
+  )
   @CliMetaData(shellOnly = false, relatedTopic = CliStrings.TOPIC_GEODE_REGION)
   @ResourceOperation(resource = Resource.DATA, operation = Operation.READ)
-  public Result listRegion(@CliOption(key = { CliStrings.LIST_REGION__GROUP }, optionContext = ConverterHint.MEMBERGROUP, help = CliStrings.LIST_REGION__GROUP__HELP) String group, @CliOption(key = { CliStrings.LIST_REGION__MEMBER }, optionContext = ConverterHint.MEMBERIDNAME, help = CliStrings.LIST_REGION__MEMBER__HELP) String memberNameOrId) {
+  public Result listRegion(
+      @CliOption(
+            key = {CliStrings.LIST_REGION__GROUP},
+            optionContext = ConverterHint.MEMBERGROUP,
+            help = CliStrings.LIST_REGION__GROUP__HELP
+          )
+          String group,
+      @CliOption(
+            key = {CliStrings.LIST_REGION__MEMBER},
+            optionContext = ConverterHint.MEMBERIDNAME,
+            help = CliStrings.LIST_REGION__MEMBER__HELP
+          )
+          String memberNameOrId) {
     Result result = null;
     try {
       Set<RegionInformation> regionInfoSet = new LinkedHashSet<RegionInformation>();
@@ -137,17 +154,35 @@ public class RegionCommands implements CommandMarker {
         }
       }
     } catch (FunctionInvocationTargetException e) {
-      result = ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.COULD_NOT_EXECUTE_COMMAND_TRY_AGAIN, CliStrings.LIST_REGION));
+      result =
+          ResultBuilder.createGemFireErrorResult(
+              CliStrings.format(
+                  CliStrings.COULD_NOT_EXECUTE_COMMAND_TRY_AGAIN, CliStrings.LIST_REGION));
     } catch (Exception e) {
-      result = ResultBuilder.createGemFireErrorResult(CliStrings.LIST_REGION__MSG__ERROR + " : " + e.getMessage());
+      result =
+          ResultBuilder.createGemFireErrorResult(
+              CliStrings.LIST_REGION__MSG__ERROR + " : " + e.getMessage());
     }
     return result;
   }
 
-  @CliCommand(value = { CliStrings.DESCRIBE_REGION }, help = CliStrings.DESCRIBE_REGION__HELP)
-  @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_CONFIG })
+  @CliCommand(
+    value = {CliStrings.DESCRIBE_REGION},
+    help = CliStrings.DESCRIBE_REGION__HELP
+  )
+  @CliMetaData(
+    shellOnly = false,
+    relatedTopic = {CliStrings.TOPIC_GEODE_REGION, CliStrings.TOPIC_GEODE_CONFIG}
+  )
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result describeRegion(@CliOption(key = CliStrings.DESCRIBE_REGION__NAME, optionContext = ConverterHint.REGIONPATH, help = CliStrings.DESCRIBE_REGION__NAME__HELP, mandatory = true) String regionName) {
+  public Result describeRegion(
+      @CliOption(
+            key = CliStrings.DESCRIBE_REGION__NAME,
+            optionContext = ConverterHint.REGIONPATH,
+            help = CliStrings.DESCRIBE_REGION__NAME__HELP,
+            mandatory = true
+          )
+          String regionName) {
 
     Result result = null;
     try {
@@ -161,7 +196,8 @@ public class RegionCommands implements CommandMarker {
       }
 
       Cache cache = CacheFactory.getAnyInstance();
-      ResultCollector<?, ?> rc = CliUtil.executeFunction(getRegionDescription, regionName, CliUtil.getAllMembers(cache));
+      ResultCollector<?, ?> rc =
+          CliUtil.executeFunction(getRegionDescription, regionName, CliUtil.getAllMembers(cache));
 
       List<?> resultList = (List<?>) rc.getResult();
 
@@ -180,7 +216,8 @@ public class RegionCommands implements CommandMarker {
 
             for (int j = i + 1; j < results.length; j++) {
               if (results[j] != null && results[j] instanceof RegionDescriptionPerMember) {
-                RegionDescriptionPerMember preyRegionDescPerMember = (RegionDescriptionPerMember) results[j];
+                RegionDescriptionPerMember preyRegionDescPerMember =
+                    (RegionDescriptionPerMember) results[j];
                 if (regionDescription.add(preyRegionDescPerMember)) {
                   results[j] = null;
                 }
@@ -195,7 +232,8 @@ public class RegionCommands implements CommandMarker {
       }
 
       if (regionDescriptionList.isEmpty()) {
-        return ResultBuilder.createUserErrorResult(CliStrings.format(CliStrings.REGION_NOT_FOUND, regionName));
+        return ResultBuilder.createUserErrorResult(
+            CliStrings.format(CliStrings.REGION_NOT_FOUND, regionName));
       }
 
       CompositeResultData crd = ResultBuilder.createCompositeResultData();
@@ -204,11 +242,12 @@ public class RegionCommands implements CommandMarker {
       while (iters.hasNext()) {
         RegionDescription regionDescription = iters.next();
 
-        //No point in displaying the scope for PR's 
+        //No point in displaying the scope for PR's
         if (regionDescription.isPartition()) {
           regionDescription.getCndRegionAttributes().remove(RegionAttributesNames.SCOPE);
         } else {
-          String scope = regionDescription.getCndRegionAttributes().get(RegionAttributesNames.SCOPE);
+          String scope =
+              regionDescription.getCndRegionAttributes().get(RegionAttributesNames.SCOPE);
           if (scope != null) {
             scope = scope.toLowerCase().replace('_', '-');
             regionDescription.getCndRegionAttributes().put(RegionAttributesNames.SCOPE, scope);
@@ -218,7 +257,8 @@ public class RegionCommands implements CommandMarker {
         regionSection.addSeparator('-');
         regionSection.addData("Name", regionDescription.getName());
 
-        String dataPolicy = regionDescription.getDataPolicy().toString().toLowerCase().replace('_', ' ');
+        String dataPolicy =
+            regionDescription.getDataPolicy().toString().toLowerCase().replace('_', ' ');
         regionSection.addData("Data Policy", dataPolicy);
 
         String memberType = "";
@@ -228,12 +268,16 @@ public class RegionCommands implements CommandMarker {
         } else {
           memberType = CliStrings.DESCRIBE_REGION__HOSTING__MEMBER;
         }
-        regionSection.addData(memberType, CliUtil.convertStringSetToString(regionDescription.getHostingMembers(), '\n'));
+        regionSection.addData(
+            memberType,
+            CliUtil.convertStringSetToString(regionDescription.getHostingMembers(), '\n'));
         regionSection.addSeparator('.');
 
         TabularResultData commonNonDefaultAttrTable = regionSection.addSection().addTable();
 
-        commonNonDefaultAttrTable.setHeader(CliStrings.format(CliStrings.DESCRIBE_REGION__NONDEFAULT__COMMONATTRIBUTES__HEADER, memberType));
+        commonNonDefaultAttrTable.setHeader(
+            CliStrings.format(
+                CliStrings.DESCRIBE_REGION__NONDEFAULT__COMMONATTRIBUTES__HEADER, memberType));
         // Common Non Default Region Attributes
         Map<String, String> cndRegionAttrsMap = regionDescription.getCndRegionAttributes();
 
@@ -243,12 +287,22 @@ public class RegionCommands implements CommandMarker {
         // Common Non Default Partition Attributes
         Map<String, String> cndPartitionAttrsMap = regionDescription.getCndPartitionAttributes();
 
-        writeCommonAttributesToTable(commonNonDefaultAttrTable, CliStrings.DESCRIBE_REGION__ATTRIBUTE__TYPE__REGION, cndRegionAttrsMap);
-        writeCommonAttributesToTable(commonNonDefaultAttrTable, CliStrings.DESCRIBE_REGION__ATTRIBUTE__TYPE__EVICTION, cndEvictionAttrsMap);
-        writeCommonAttributesToTable(commonNonDefaultAttrTable, CliStrings.DESCRIBE_REGION__ATTRIBUTE__TYPE__PARTITION, cndPartitionAttrsMap);
+        writeCommonAttributesToTable(
+            commonNonDefaultAttrTable,
+            CliStrings.DESCRIBE_REGION__ATTRIBUTE__TYPE__REGION,
+            cndRegionAttrsMap);
+        writeCommonAttributesToTable(
+            commonNonDefaultAttrTable,
+            CliStrings.DESCRIBE_REGION__ATTRIBUTE__TYPE__EVICTION,
+            cndEvictionAttrsMap);
+        writeCommonAttributesToTable(
+            commonNonDefaultAttrTable,
+            CliStrings.DESCRIBE_REGION__ATTRIBUTE__TYPE__PARTITION,
+            cndPartitionAttrsMap);
 
         // Member-wise non default Attributes
-        Map<String, RegionDescriptionPerMember> regDescPerMemberMap = regionDescription.getRegionDescriptionPerMemberMap();
+        Map<String, RegionDescriptionPerMember> regDescPerMemberMap =
+            regionDescription.getRegionDescriptionPerMemberMap();
         Set<String> members = regDescPerMemberMap.keySet();
 
         TabularResultData table = regionSection.addSection().addTable();
@@ -278,32 +332,58 @@ public class RegionCommands implements CommandMarker {
           if (!(ndRa.isEmpty() && ndEa.isEmpty() && ndPa.isEmpty()) || fpaList != null) {
             setHeader = true;
             boolean memberNameAdded = false;
-            memberNameAdded = writeAttributesToTable(table, CliStrings.DESCRIBE_REGION__ATTRIBUTE__TYPE__REGION, ndRa, member, memberNameAdded);
-            memberNameAdded = writeAttributesToTable(table, CliStrings.DESCRIBE_REGION__ATTRIBUTE__TYPE__EVICTION, ndEa, member, memberNameAdded);
-            memberNameAdded = writeAttributesToTable(table, CliStrings.DESCRIBE_REGION__ATTRIBUTE__TYPE__PARTITION, ndPa, member, memberNameAdded);
+            memberNameAdded =
+                writeAttributesToTable(
+                    table,
+                    CliStrings.DESCRIBE_REGION__ATTRIBUTE__TYPE__REGION,
+                    ndRa,
+                    member,
+                    memberNameAdded);
+            memberNameAdded =
+                writeAttributesToTable(
+                    table,
+                    CliStrings.DESCRIBE_REGION__ATTRIBUTE__TYPE__EVICTION,
+                    ndEa,
+                    member,
+                    memberNameAdded);
+            memberNameAdded =
+                writeAttributesToTable(
+                    table,
+                    CliStrings.DESCRIBE_REGION__ATTRIBUTE__TYPE__PARTITION,
+                    ndPa,
+                    member,
+                    memberNameAdded);
 
             writeFixedPartitionAttributesToTable(table, "", fpaList, member, memberNameAdded);
-            //Fix for #46767 
+            //Fix for #46767
             //writeAttributeToTable(table, "", "", "", "");
           }
         }
 
         if (setHeader == true) {
-          table.setHeader(CliStrings.format(CliStrings.DESCRIBE_REGION__NONDEFAULT__PERMEMBERATTRIBUTES__HEADER, memberType));
+          table.setHeader(
+              CliStrings.format(
+                  CliStrings.DESCRIBE_REGION__NONDEFAULT__PERMEMBERATTRIBUTES__HEADER, memberType));
         }
       }
 
       result = ResultBuilder.buildResult(crd);
     } catch (FunctionInvocationTargetException e) {
-      result = ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.COULD_NOT_EXECUTE_COMMAND_TRY_AGAIN, CliStrings.DESCRIBE_REGION));
+      result =
+          ResultBuilder.createGemFireErrorResult(
+              CliStrings.format(
+                  CliStrings.COULD_NOT_EXECUTE_COMMAND_TRY_AGAIN, CliStrings.DESCRIBE_REGION));
     } catch (Exception e) {
-      String errorMessage = CliStrings.format(CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(), e.getMessage());
+      String errorMessage =
+          CliStrings.format(
+              CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(), e.getMessage());
       result = ResultBuilder.createGemFireErrorResult(errorMessage);
     }
     return result;
   }
 
-  private void writeCommonAttributesToTable(TabularResultData table, String attributeType, Map<String, String> attributesMap) {
+  private void writeCommonAttributesToTable(
+      TabularResultData table, String attributeType, Map<String, String> attributesMap) {
     if (!attributesMap.isEmpty()) {
       Set<String> attributes = attributesMap.keySet();
       boolean isTypeAdded = false;
@@ -327,7 +407,12 @@ public class RegionCommands implements CommandMarker {
     }
   }
 
-  private boolean writeFixedPartitionAttributesToTable(TabularResultData table, String attributeType, List<FixedPartitionAttributesInfo> fpaList, String member, boolean isMemberNameAdded) {
+  private boolean writeFixedPartitionAttributesToTable(
+      TabularResultData table,
+      String attributeType,
+      List<FixedPartitionAttributesInfo> fpaList,
+      String member,
+      boolean isMemberNameAdded) {
 
     if (fpaList != null) {
       boolean isTypeAdded = false;
@@ -371,7 +456,12 @@ public class RegionCommands implements CommandMarker {
     return isMemberNameAdded;
   }
 
-  private boolean writeAttributesToTable(TabularResultData table, String attributeType, Map<String, String> attributesMap, String member, boolean isMemberNameAdded) {
+  private boolean writeAttributesToTable(
+      TabularResultData table,
+      String attributeType,
+      Map<String, String> attributesMap,
+      String member,
+      boolean isMemberNameAdded) {
     if (!attributesMap.isEmpty()) {
       Set<String> attributes = attributesMap.keySet();
       boolean isTypeAdded = false;
@@ -405,7 +495,12 @@ public class RegionCommands implements CommandMarker {
     return isMemberNameAdded;
   }
 
-  public void writeAttributeToTable(TabularResultData table, String member, String attributeType, String attributeName, String attributeValue) {
+  public void writeAttributeToTable(
+      TabularResultData table,
+      String member,
+      String attributeType,
+      String attributeName,
+      String attributeValue) {
 
     final String blank = "";
     if (attributeValue != null) {
@@ -430,7 +525,8 @@ public class RegionCommands implements CommandMarker {
     }
   }
 
-  private void writeCommonAttributeToTable(TabularResultData table, String attributeType, String attributeName, String attributeValue) {
+  private void writeCommonAttributeToTable(
+      TabularResultData table, String attributeType, String attributeName, String attributeValue) {
     final String blank = "";
 
     if (attributeValue != null) {
@@ -448,11 +544,11 @@ public class RegionCommands implements CommandMarker {
           table.accumulate(CliStrings.DESCRIBE_REGION__ATTRIBUTE__VALUE, value);
         }
       }
-
     }
   }
 
-  public void addChildSection(SectionResultData parentSection, Map<String, String> map, String header) {
+  public void addChildSection(
+      SectionResultData parentSection, Map<String, String> map, String header) {
     if (!map.isEmpty()) {
       Set<String> attributes = map.keySet();
       SectionResultData section = parentSection.addSection();
@@ -463,7 +559,7 @@ public class RegionCommands implements CommandMarker {
     }
   }
 
-  @CliAvailabilityIndicator({ CliStrings.LIST_REGION, CliStrings.DESCRIBE_REGION })
+  @CliAvailabilityIndicator({CliStrings.LIST_REGION, CliStrings.DESCRIBE_REGION})
   public boolean isRegionCommandAvailable() {
     boolean isAvailable = true; // always available on server
     if (CliUtil.isGfshVM()) { // in gfsh check if connected //TODO - Abhishek: make this better
@@ -471,5 +567,4 @@ public class RegionCommands implements CommandMarker {
     }
     return isAvailable;
   }
-
 }

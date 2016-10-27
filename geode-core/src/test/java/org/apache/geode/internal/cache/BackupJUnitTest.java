@@ -35,9 +35,7 @@ import java.util.*;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.*;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class BackupJUnitTest {
   protected static GemFireCacheImpl cache = null;
@@ -47,8 +45,7 @@ public class BackupJUnitTest {
   protected static DistributedSystem ds = null;
   protected static Properties props = new Properties();
 
-  static {
-  }
+  static {}
 
   private File backupDir;
   private File[] diskDirs;
@@ -108,33 +105,36 @@ public class BackupJUnitTest {
 
   @Test
   public void testBackupAndRecover() throws IOException, InterruptedException {
-    backupAndRecover(new RegionCreator() {
-      public Region createRegion() {
-        DiskStoreImpl ds = createDiskStore();
-        Region region = BackupJUnitTest.this.createRegion();
-        return region;
-      }
-    });
+    backupAndRecover(
+        new RegionCreator() {
+          public Region createRegion() {
+            DiskStoreImpl ds = createDiskStore();
+            Region region = BackupJUnitTest.this.createRegion();
+            return region;
+          }
+        });
   }
 
   @Test
   public void testBackupAndRecoverOldConfig() throws IOException, InterruptedException {
-    backupAndRecover(new RegionCreator() {
-      public Region createRegion() {
-        DiskStoreImpl ds = createDiskStore();
-        RegionFactory rf = new RegionFactory();
-        rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-        rf.setDiskDirs(diskDirs);
-        DiskWriteAttributesFactory daf = new DiskWriteAttributesFactory();
-        daf.setMaxOplogSize(1);
-        rf.setDiskWriteAttributes(daf.create());
-        Region region = rf.create("region");
-        return region;
-      }
-    });
+    backupAndRecover(
+        new RegionCreator() {
+          public Region createRegion() {
+            DiskStoreImpl ds = createDiskStore();
+            RegionFactory rf = new RegionFactory();
+            rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+            rf.setDiskDirs(diskDirs);
+            DiskWriteAttributesFactory daf = new DiskWriteAttributesFactory();
+            daf.setMaxOplogSize(1);
+            rf.setDiskWriteAttributes(daf.create());
+            Region region = rf.create("region");
+            return region;
+          }
+        });
   }
 
-  public void backupAndRecover(RegionCreator regionFactory) throws IOException, InterruptedException {
+  public void backupAndRecover(RegionCreator regionFactory)
+      throws IOException, InterruptedException {
     Region region = regionFactory.createRegion();
 
     //Put enough data to roll some oplogs
@@ -187,7 +187,7 @@ public class BackupJUnitTest {
 
     cache.close();
 
-    //Make sure the restore script refuses to run before we destroy the files. 
+    //Make sure the restore script refuses to run before we destroy the files.
     restoreBackup(true);
 
     //Make sure the disk store is unaffected by the failed restore
@@ -205,7 +205,7 @@ public class BackupJUnitTest {
     //destroy the disk directories
     destroyDiskDirs();
 
-    //Now the restore script should work 
+    //Now the restore script should work
     restoreBackup(false);
 
     //Make sure the cache has the restored backup
@@ -227,7 +227,10 @@ public class BackupJUnitTest {
     BackupManager backup = cache.startBackup(cache.getDistributedSystem().getDistributedMember());
     backup.prepareBackup();
     backup.finishBackup(backupDir, null, false);
-    assertEquals("No backup files should have been created", Collections.emptyList(), Arrays.asList(backupDir.list()));
+    assertEquals(
+        "No backup files should have been created",
+        Collections.emptyList(),
+        Arrays.asList(backupDir.list()));
   }
 
   @Test
@@ -242,7 +245,10 @@ public class BackupJUnitTest {
     backup.prepareBackup();
     backup.finishBackup(backupDir, null, false);
 
-    assertEquals("No backup files should have been created", Collections.emptyList(), Arrays.asList(backupDir.list()));
+    assertEquals(
+        "No backup files should have been created",
+        Collections.emptyList(),
+        Arrays.asList(backupDir.list()));
   }
 
   @Test
@@ -329,7 +335,6 @@ public class BackupJUnitTest {
       for (int j = 0; j < expected.length; j++) {
         assertEquals("Byte wrong on entry " + i + ", byte " + j, expected[j], bytes[j]);
       }
-
     }
   }
 
@@ -346,10 +351,10 @@ public class BackupJUnitTest {
     for (File script : restoreScripts) {
       execute(script, expectFailure);
     }
-
   }
 
-  private void execute(File script, boolean expectFailure) throws IOException, InterruptedException {
+  private void execute(File script, boolean expectFailure)
+      throws IOException, InterruptedException {
     ProcessBuilder pb = new ProcessBuilder(script.getAbsolutePath());
     pb.redirectErrorStream(true);
     Process process = pb.start();
@@ -374,7 +379,6 @@ public class BackupJUnitTest {
         assertEquals(0, result);
       }
     }
-
   }
 
   protected Region createRegion() {
@@ -388,7 +392,8 @@ public class BackupJUnitTest {
   private Region createOverflowRegion() {
     RegionFactory rf = new RegionFactory();
     rf.setDiskStoreName("diskStore");
-    rf.setEvictionAttributes(EvictionAttributes.createLIFOEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
+    rf.setEvictionAttributes(
+        EvictionAttributes.createLIFOEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
     rf.setDataPolicy(DataPolicy.NORMAL);
     Region region = rf.create("region");
     return region;
@@ -410,5 +415,4 @@ public class BackupJUnitTest {
   private static interface RegionCreator {
     public Region createRegion();
   }
-
 }

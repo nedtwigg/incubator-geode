@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.apache.geode.modules.session.internal.filter.attributes;
 
@@ -33,51 +33,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract implementation for attributes. Should be sub-classed to provide
- * differing implementations for synchronous or delta propagation. The backing
- * store used is defined by the session manager.
+ * Abstract implementation for attributes. Should be sub-classed to provide differing
+ * implementations for synchronous or delta propagation. The backing store used is defined by the
+ * session manager.
  */
 public abstract class AbstractSessionAttributes implements SessionAttributes {
 
-  private static final Logger LOG = LoggerFactory.getLogger(AbstractSessionAttributes.class.getName());
+  private static final Logger LOG =
+      LoggerFactory.getLogger(AbstractSessionAttributes.class.getName());
 
-  /**
-   * Internal attribute store.
-   */
-  protected Map<String, Object> attributes = Collections.synchronizedMap(new HashMap<String, Object>());
+  /** Internal attribute store. */
+  protected Map<String, Object> attributes =
+      Collections.synchronizedMap(new HashMap<String, Object>());
 
-  /**
-   * The session to which these attributes belong
-   */
+  /** The session to which these attributes belong */
   protected transient GemfireHttpSession session;
 
-  /**
-   * The last accessed time
-   */
+  /** The last accessed time */
   protected long lastAccessedTime;
 
-  /**
-   * The maximum inactive interval. Default is 1800 seconds.
-   */
+  /** The maximum inactive interval. Default is 1800 seconds. */
   protected int maxInactiveInterval = 60 * 30;
 
-  /**
-   * The JVM Id who last committed these attributes
-   */
+  /** The JVM Id who last committed these attributes */
   protected String jvmOwnerId;
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void setSession(GemfireHttpSession session) {
     this.session = session;
   }
 
   /**
-   * {@inheritDoc} The actual de-serialization of any domain objects is deferred
-   * until the point at which they are actually retrieved by the application
-   * layer.
+   * {@inheritDoc} The actual de-serialization of any domain objects is deferred until the point at
+   * which they are actually retrieved by the application layer.
    */
   @Override
   public Object getAttribute(String name) {
@@ -90,24 +79,25 @@ public abstract class AbstractSessionAttributes implements SessionAttributes {
         value = BlobHelper.deserializeBlob((byte[]) value);
         attributes.put(name, value);
       } catch (Exception iox) {
-        LOG.error("Attribute '" + name + " contains a byte[] that cannot be deserialized due " + "to the following exception", iox);
+        LOG.error(
+            "Attribute '"
+                + name
+                + " contains a byte[] that cannot be deserialized due "
+                + "to the following exception",
+            iox);
       }
     }
 
     return value;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public Set<String> getAttributeNames() {
     return attributes.keySet();
   }
 
-  /**
-   * {@inheritDoc} +
-   */
+  /** {@inheritDoc} + */
   @Override
   public void setMaxInactiveInterval(int interval) {
     maxInactiveInterval = interval;
@@ -129,8 +119,8 @@ public abstract class AbstractSessionAttributes implements SessionAttributes {
   }
 
   /**
-   * {@inheritDoc} This method calls back into the session to flush the whole
-   * session including its attributes.
+   * {@inheritDoc} This method calls back into the session to flush the whole session including its
+   * attributes.
    */
   @Override
   public void flush() {
@@ -138,9 +128,8 @@ public abstract class AbstractSessionAttributes implements SessionAttributes {
   }
 
   /**
-   * Use DeltaEvents to propagate the actual attribute data - DeltaEvents turn
-   * the values into byte arrays which means that the actual domain classes are
-   * not required on the server.
+   * Use DeltaEvents to propagate the actual attribute data - DeltaEvents turn the values into byte
+   * arrays which means that the actual domain classes are not required on the server.
    */
   @Override
   public void toData(DataOutput out) throws IOException {

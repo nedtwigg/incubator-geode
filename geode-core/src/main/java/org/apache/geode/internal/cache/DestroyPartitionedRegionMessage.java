@@ -42,22 +42,21 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
  * This message is sent for two purposes <br>
- * 1) To destroy the
- * {@link org.apache.geode.internal.cache.PartitionedRegion} for all members
- * specified (typically sent to all members that have the
- * <code>PartitionedRegion</code> defined.) <br>
- * 2) To inform the other nodes that {@link org.apache.geode.internal.cache.PartitionedRegion} is closed/locally destroyed or cache is closed on a node<br>
+ * 1) To destroy the {@link org.apache.geode.internal.cache.PartitionedRegion} for all members
+ * specified (typically sent to all members that have the <code>PartitionedRegion</code> defined.)
+ * <br>
+ * 2) To inform the other nodes that {@link org.apache.geode.internal.cache.PartitionedRegion} is
+ * closed/locally destroyed or cache is closed on a node<br>
  * This results in updating of the RegionAdvisor of the remote nodes.
- * 
- * Sending this message should flush all previous
- * {@link org.apache.geode.cache.Region} operations, which means this
- * operation should not over-ride
- * {@link org.apache.geode.internal.cache.partitioned.PartitionMessage#getProcessorId()}.  It is critical 
+ *
+ * <p>Sending this message should flush all previous {@link org.apache.geode.cache.Region}
+ * operations, which means this operation should not over-ride {@link
+ * org.apache.geode.internal.cache.partitioned.PartitionMessage#getProcessorId()}. It is critical
  * guarantee delivery of events sent prior to this message.
-
- * A standard {@link ReplyMessage} is used to send the reply, however any exception that it carries
- * is ignored, preventing interuption after sending this message.
- * 
+ *
+ * <p>A standard {@link ReplyMessage} is used to send the reply, however any exception that it
+ * carries is ignored, preventing interuption after sending this message.
+ *
  * @since GemFire 5.0
  */
 public final class DestroyPartitionedRegionMessage extends PartitionMessage {
@@ -74,20 +73,21 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage {
   /** Serial numbers of the buckets for this region */
   private int bucketSerials[];
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public DestroyPartitionedRegionMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public DestroyPartitionedRegionMessage() {}
 
   /**
-   * 
    * @param recipients the set of members on which the partitioned region should be destoryed
    * @param region the partitioned region
    * @param processor the processor that the reply will use to notify of the reply.
    * @see #send(Set, PartitionedRegion, RegionEventImpl, int[])
    */
-  private DestroyPartitionedRegionMessage(Set recipients, PartitionedRegion region, ReplyProcessor21 processor, final RegionEventImpl event, int serials[]) {
+  private DestroyPartitionedRegionMessage(
+      Set recipients,
+      PartitionedRegion region,
+      ReplyProcessor21 processor,
+      final RegionEventImpl event,
+      int serials[]) {
     super(recipients, region.getPRId(), processor);
     this.cbArg = event.getRawCallbackArgument();
     this.op = event.getOperation();
@@ -97,23 +97,24 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage {
   }
 
   /**
-   * 
-   * @param recipients
-   *          set of members who have the PartitionedRegion defined.
-   * @param r
-   *          the PartitionedRegion to destroy on each member
+   * @param recipients set of members who have the PartitionedRegion defined.
+   * @param r the PartitionedRegion to destroy on each member
    * @return the response on which to wait for the confirmation
    */
-  public static DestroyPartitionedRegionResponse send(Set recipients, PartitionedRegion r, final RegionEventImpl event, int serials[]) {
+  public static DestroyPartitionedRegionResponse send(
+      Set recipients, PartitionedRegion r, final RegionEventImpl event, int serials[]) {
     Assert.assertTrue(recipients != null, "DestroyMessage NULL recipients set");
-    DestroyPartitionedRegionResponse resp = new DestroyPartitionedRegionResponse(r.getSystem(), recipients);
-    DestroyPartitionedRegionMessage m = new DestroyPartitionedRegionMessage(recipients, r, resp, event, serials);
+    DestroyPartitionedRegionResponse resp =
+        new DestroyPartitionedRegionResponse(r.getSystem(), recipients);
+    DestroyPartitionedRegionMessage m =
+        new DestroyPartitionedRegionMessage(recipients, r, resp, event, serials);
     r.getDistributionManager().putOutgoing(m);
     return resp;
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime) throws CacheException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion r, long startTime) throws CacheException {
     if (this.op.isLocal()) {
       // notify the advisor that the sending member has locally destroyed (or closed) the region
 
@@ -133,7 +134,11 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage {
       if (DistributionAdvisor.isNewerSerialNumber(oldSerial, this.prSerial)) {
         ok = false;
         if (logger.isDebugEnabled()) {
-          logger.debug("Not removing region {}l serial requested = {}; actual is {}", r.getName(), this.prSerial, r.getSerialNumber());
+          logger.debug(
+              "Not removing region {}l serial requested = {}; actual is {}",
+              r.getName(),
+              this.prSerial,
+              r.getSerialNumber());
         }
       }
       if (ok) {
@@ -149,7 +154,7 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage {
       return false;
     }
 
-    // If region's isDestroyed flag is true, we can check if local destroy is done or not and if NOT, 
+    // If region's isDestroyed flag is true, we can check if local destroy is done or not and if NOT,
     // we can invoke destroyPartitionedRegionLocally method.
     if (r.isDestroyed()) {
       boolean isClose = this.op.isClose();
@@ -210,18 +215,19 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage {
   }
 
   /**
-   * The response on which to wait for all the replies.  This response ignores any exceptions received from the "far side"
-   * 
+   * The response on which to wait for all the replies. This response ignores any exceptions
+   * received from the "far side"
+   *
    * @since GemFire 5.0
    */
-  static public class DestroyPartitionedRegionResponse extends ReplyProcessor21 {
+  public static class DestroyPartitionedRegionResponse extends ReplyProcessor21 {
     public DestroyPartitionedRegionResponse(InternalDistributedSystem system, Set initMembers) {
       super(system, initMembers);
     }
 
     /**
-     * Ignore any incoming exception from other VMs, we just want an
-     * acknowledgement that the message was processed.
+     * Ignore any incoming exception from other VMs, we just want an acknowledgement that the
+     * message was processed.
      */
     @Override
     protected void processException(ReplyException ex) {
@@ -230,5 +236,4 @@ public final class DestroyPartitionedRegionMessage extends PartitionMessage {
       }
     }
   }
-
 }

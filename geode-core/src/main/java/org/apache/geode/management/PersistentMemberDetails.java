@@ -19,11 +19,10 @@ package org.apache.geode.management;
 import java.beans.ConstructorProperties;
 
 /**
- * Composite data type used to distribute attributes for the missing disk
- * store of a persistent member.
+ * Composite data type used to distribute attributes for the missing disk store of a persistent
+ * member.
  *
  * @since GemFire 7.0
- *
  */
 public class PersistentMemberDetails {
 
@@ -32,35 +31,28 @@ public class PersistentMemberDetails {
   private final String diskStoreId;
 
   /**
-   * 
-   * This constructor is to be used by internal JMX framework only. User should
-   * not try to create an instance of this class.
+   * This constructor is to be used by internal JMX framework only. User should not try to create an
+   * instance of this class.
    */
-  @ConstructorProperties({ "host", "directory", "diskStoreId" })
-  public PersistentMemberDetails(final String host, final String directory, final String diskStoreId) {
+  @ConstructorProperties({"host", "directory", "diskStoreId"})
+  public PersistentMemberDetails(
+      final String host, final String directory, final String diskStoreId) {
     this.host = host;
     this.directory = directory;
     this.diskStoreId = diskStoreId;
   }
 
-  /**
-   * Returns the name or IP address of the host on which the member is
-   * running.
-   */
+  /** Returns the name or IP address of the host on which the member is running. */
   public String getHost() {
     return this.host;
   }
 
-  /**
-   * Returns the directory in which the <code>DiskStore</code> is saved.
-   */
+  /** Returns the directory in which the <code>DiskStore</code> is saved. */
   public String getDirectory() {
     return this.directory;
   }
 
-  /**
-   * Returns the ID of the <code>DiskStore</code>.
-   */
+  /** Returns the ID of the <code>DiskStore</code>. */
   public String getDiskStoreId() {
     return this.diskStoreId;
   }

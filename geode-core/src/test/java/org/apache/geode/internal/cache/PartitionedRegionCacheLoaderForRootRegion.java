@@ -25,9 +25,7 @@ import org.apache.geode.cache.CacheLoaderException;
 import org.apache.geode.cache.LoaderHelper;
 import org.apache.geode.cache.Declarable;
 
-/**
- * This class is CacheLoader for partition region
- */
+/** This class is CacheLoader for partition region */
 public class PartitionedRegionCacheLoaderForRootRegion implements CacheLoader, Declarable {
 
   @Override
@@ -48,11 +46,8 @@ public class PartitionedRegionCacheLoaderForRootRegion implements CacheLoader, D
   }
 
   @Override
-  public void close() {
-  }
+  public void close() {}
 
   @Override
-  public void init(Properties props) {
-  }
-
+  public void init(Properties props) {}
 }

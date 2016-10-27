@@ -75,15 +75,12 @@ import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.FlakyTest;
 
 /**
- * An abstract class whose test methods test the functionality of a
- * region regardless of its scope.
+ * An abstract class whose test methods test the functionality of a region regardless of its scope.
  *
- * <P>
+ * <p>This class also contains functionality that is used by subclasses. See {@link
+ * #getRegionAttributes}.
  *
- * This class also contains functionality that is used by subclasses.
- * See {@link #getRegionAttributes}.
- *
- * TODO:davidw: Test {@link CacheStatistics}
+ * <p>TODO:davidw: Test {@link CacheStatistics}
  *
  * @since GemFire 3.0
  */
@@ -91,19 +88,20 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
 
   /** A <code>CacheListener</code> used by a test */
   static TestCacheListener listener;
+
   static TestCacheListener subrgnListener;
 
   /** A <code>CacheLoader</code> used by a test */
   static TestCacheLoader loader;
+
   static TestCacheLoader subrgnLoader;
 
   /** A <code>CacheWriter</code> used by a test */
   static TestCacheWriter writer;
+
   static TestCacheWriter subrgnWriter;
 
-  /**
-   * Clears fields used by a test
-   */
+  /** Clears fields used by a test */
   private static void cleanup() {
     listener = null;
     loader = null;
@@ -120,12 +118,10 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     postTearDownRegionTestCase();
   }
 
-  protected void postTearDownRegionTestCase() throws Exception {
-  }
+  protected void postTearDownRegionTestCase() throws Exception {}
 
   /**
-   * Returns a region with the given name and the attributes for this
-   * test.
+   * Returns a region with the given name and the attributes for this test.
    *
    * @see #getRegionAttributes
    */
@@ -139,23 +135,17 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Returns the attributes of a region to be tested by this test.
-   * Note that the decision as to which attributes are used is left up
-   * to the concrete subclass.
+   * Returns the attributes of a region to be tested by this test. Note that the decision as to
+   * which attributes are used is left up to the concrete subclass.
    */
   protected abstract RegionAttributes getRegionAttributes();
 
   /** pauses only if no ack */
-  protected void pauseIfNecessary() {
-  }
+  protected void pauseIfNecessary() {}
 
-  protected void pauseIfNecessary(int ms) {
-  }
+  protected void pauseIfNecessary(int ms) {}
 
-  /**
-   * Make sure all messages done on region r have
-   * been processed on the remote side.
-   */
+  /** Make sure all messages done on region r have been processed on the remote side. */
   protected void flushIfNecessary(Region r) {
     // Only needed for no-ack regions
   }
@@ -194,8 +184,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests that creating or getting entries at an improper time throws
-   * exceptions.
+   * Tests that creating or getting entries at an improper time throws exceptions.
    *
    * @see Region#get
    * @see Region#getEntry
@@ -216,21 +205,30 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     try {
       // partitioned regions are logging the EntryExistsException, so emit
       // a directive to ignore it
-      region.getCache().getLogger().info("<ExpectedException action=add>" + "org.apache.geode.cache.EntryExistsException" + "</ExpectedException>");
+      region
+          .getCache()
+          .getLogger()
+          .info(
+              "<ExpectedException action=add>"
+                  + "org.apache.geode.cache.EntryExistsException"
+                  + "</ExpectedException>");
       region.create(key, value);
       fail("Should have thrown an EntryExistsException");
 
     } catch (EntryExistsException ex) {
       // okay...
     } finally {
-      region.getCache().getLogger().info("<ExpectedException action=remove>" + "org.apache.geode.cache.EntryExistsException" + "</ExpectedException>");
+      region
+          .getCache()
+          .getLogger()
+          .info(
+              "<ExpectedException action=remove>"
+                  + "org.apache.geode.cache.EntryExistsException"
+                  + "</ExpectedException>");
     }
   }
 
-  /**
-   * Tests that {@link Region#put} on a previously non-existent region
-   * entry creates it.
-   */
+  /** Tests that {@link Region#put} on a previously non-existent region entry creates it. */
   @Test
   public void testPutNonExistentEntry() throws CacheException {
     String name = this.getUniqueName();
@@ -253,12 +251,14 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       assertEquals(1, values.size());
       assertEquals(value, values.iterator().next());
     } catch (UnsupportedOperationException uoe) {
-      org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Region.values() reported UnsupportedOperation");
+      org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+          .info("Region.values() reported UnsupportedOperation");
     }
   }
 
   /**
    * Indicate whether subregions are supported
+   *
    * @return
    */
   protected boolean supportsSubregions() {
@@ -267,16 +267,14 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
 
   /**
    * Indicate whether localDestroy and localInvalidate are supported
+   *
    * @return true if they are supported
    */
   protected boolean supportsLocalDestroyAndLocalInvalidate() {
     return true;
   }
 
-  /**
-   * Tests that sending <code>null</code> to various APIs throws the
-   * appropriate exception.
-   */
+  /** Tests that sending <code>null</code> to various APIs throws the appropriate exception. */
   @Test
   public void testNulls() throws CacheException {
     if (!supportsSubregions()) {
@@ -378,9 +376,8 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests creating subregions.  Note that this tests accesses the
-   * Region's {@link Region#getStatistics statistics}, so the region
-   * must have been created with statistics enabled.
+   * Tests creating subregions. Note that this tests accesses the Region's {@link
+   * Region#getStatistics statistics}, so the region must have been created with statistics enabled.
    */
   @Test
   public void testCreateSubregions() throws CacheException {
@@ -424,7 +421,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     assertEquals(subregion, subregions.iterator().next());
   }
 
-  static public boolean entryIsLocal(Region.Entry re) {
+  public static boolean entryIsLocal(Region.Entry re) {
     if (re instanceof EntrySnapshot) {
       return ((EntrySnapshot) re).wasInitiallyLocal();
     } else {
@@ -432,10 +429,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     }
   }
 
-  /**
-   * Tests {@link Region#destroy destroying} an entry and attempting
-   * to access it afterwards.
-   */
+  /** Tests {@link Region#destroy destroying} an entry and attempting to access it afterwards. */
   @Test
   public void testDestroyEntry() throws CacheException {
     String name = this.getUniqueName();
@@ -460,7 +454,8 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     region.destroy(key);
 
     Region.Entry entry2 = region.getEntry(key);
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Found entry for destroyed key: " + entry2);
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("Found entry for destroyed key: " + entry2);
     assertNull(entry2);
     if (entry.isLocal()) {
       assertTrue(entry.isDestroyed());
@@ -519,8 +514,8 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests destroying an entire region and that accessing it after it
-   * has been destory causes a {@link RegionDestroyedException}.
+   * Tests destroying an entire region and that accessing it after it has been destory causes a
+   * {@link RegionDestroyedException}.
    *
    * @see Region#destroyRegion
    */
@@ -820,9 +815,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     }
   }
 
-  /**
-   * Tests the {@link Region#entries} method without recursion
-   */
+  /** Tests the {@link Region#entries} method without recursion */
   @Test
   public void testEntries() throws CacheException {
     String name = this.getUniqueName();
@@ -838,7 +831,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       Set entries = region.entries(false);
       assertEquals(3, entries.size());
 
-      Set keys = new HashSet(Arrays.asList(new String[] { "A", "B", "C" }));
+      Set keys = new HashSet(Arrays.asList(new String[] {"A", "B", "C"}));
       Iterator iter = entries.iterator();
       for (int i = 0; i < 3; i++) {
         assertTrue(iter.hasNext());
@@ -851,7 +844,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       Set entries = region.entries(true);
       assertEquals(3, entries.size());
 
-      Set keys = new HashSet(Arrays.asList(new String[] { "A", "B", "C" }));
+      Set keys = new HashSet(Arrays.asList(new String[] {"A", "B", "C"}));
       Iterator iter = entries.iterator();
       for (int i = 0; i < 3; i++) {
         assertTrue(iter.hasNext());
@@ -864,25 +857,25 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       Iterator iter = region.entries(false).iterator();
       iter.next();
       region.destroy("B");
-     
+
       try {
         iter.next();
         fail("Should have thrown a ConcurrentModificationException");
-     
+
       } catch (ConcurrentModificationException ex) {
         // pass...
       }
     }
-     
+
     {
       Iterator iter = region.entries(false).iterator();
       iter.next();
       region.put("D", "d");
-     
+
       try {
         iter.next();
         fail("Should have thrown a ConcurrentModificationException");
-     
+
       } catch (ConcurrentModificationException ex) {
         // pass...
       }
@@ -898,12 +891,9 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
         assertFalse(entry.isDestroyed());
       }
     }
-
   }
 
-  /**
-   * Tests the {@link Region#entries} method with recursion
-   */
+  /** Tests the {@link Region#entries} method with recursion */
   @Test
   public void testEntriesRecursive() throws CacheException {
     if (!supportsSubregions()) {
@@ -925,11 +915,12 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       Set entries = region.entries(true);
       assertEquals(6, entries.size());
 
-      Set keys = new HashSet(Arrays.asList(new String[] { "A", "B", "C", "D", "E", "F" }));
+      Set keys = new HashSet(Arrays.asList(new String[] {"A", "B", "C", "D", "E", "F"}));
       Iterator iter = entries.iterator();
       for (int i = 0; i < 6; i++) {
         assertTrue("!hasNext, i=" + i, iter.hasNext());
-        assertTrue("remove returned false, i=" + i, keys.remove(((Region.Entry) iter.next()).getKey()));
+        assertTrue(
+            "remove returned false, i=" + i, keys.remove(((Region.Entry) iter.next()).getKey()));
       }
       assertFalse(iter.hasNext());
     }
@@ -938,11 +929,12 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       Set entries = getRootRegion().entries(true);
       assertEquals(6, entries.size());
 
-      Set keys = new HashSet(Arrays.asList(new String[] { "A", "B", "C", "D", "E", "F" }));
+      Set keys = new HashSet(Arrays.asList(new String[] {"A", "B", "C", "D", "E", "F"}));
       Iterator iter = entries.iterator();
       for (int i = 0; i < 6; i++) {
         assertTrue("!hasNext, i=" + i, iter.hasNext());
-        assertTrue("remove returned false, i=" + i, keys.remove(((Region.Entry) iter.next()).getKey()));
+        assertTrue(
+            "remove returned false, i=" + i, keys.remove(((Region.Entry) iter.next()).getKey()));
       }
       assertFalse(iter.hasNext());
     }
@@ -955,12 +947,9 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       assertEquals(false, region.containsKey(ekey));
       assertTrue(entry.isDestroyed());
     }
-
   }
 
-  /**
-   * Tests the {@link Region#getCache} method (for what it's worth)
-   */
+  /** Tests the {@link Region#getCache} method (for what it's worth) */
   @Test
   public void testGetCache() throws CacheException {
     String name = this.getUniqueName();
@@ -968,9 +957,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     assertSame(this.getCache(), region.getCache());
   }
 
-  /**
-   * Tests the {@link Region#getName} method
-   */
+  /** Tests the {@link Region#getName} method */
   @Test
   public void testGetName() throws CacheException {
     String name = this.getUniqueName();
@@ -980,9 +967,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     assertEquals("root", region.getParentRegion().getName());
   }
 
-  /**
-   * Tests the {@link Region#getFullPath} method
-   */
+  /** Tests the {@link Region#getFullPath} method */
   @Test
   public void testGetPathFromRoot() throws CacheException {
     if (!supportsSubregions()) {
@@ -999,9 +984,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     assertEquals(fullPath + "/SUB", sub.getFullPath());
   }
 
-  /**
-   * Tests the {@link Region#getParentRegion} method
-   */
+  /** Tests the {@link Region#getParentRegion} method */
   @Test
   public void testGetParentRegion() throws CacheException {
     if (!supportsSubregions()) {
@@ -1035,9 +1018,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     assertEquals(value, region.getUserAttribute());
   }
 
-  /**
-   * Tests a region entry's user attribute
-   */
+  /** Tests a region entry's user attribute */
   @Test
   public void testEntryUserAttribute() throws CacheException {
     String name = this.getUniqueName();
@@ -1056,9 +1037,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     assertEquals(attr, entry.getUserAttribute());
   }
 
-  /**
-   * Tests invalidating a region entry
-   */
+  /** Tests invalidating a region entry */
   @Test
   public void testInvalidateEntry() throws CacheException {
     String name = this.getUniqueName();
@@ -1068,20 +1047,24 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     Region region = createRegion(name);
     region.put(key, value);
 
-    int beforeInvalidates = ((org.apache.geode.internal.cache.GemFireCacheImpl) getCache()).getCachePerfStats().getInvalidates();
+    int beforeInvalidates =
+        ((org.apache.geode.internal.cache.GemFireCacheImpl) getCache())
+            .getCachePerfStats()
+            .getInvalidates();
     Region.Entry entry = region.getEntry(key);
     region.invalidate(key);
     if (entry.isLocal()) {
       assertNull(entry.getValue());
     }
     assertNull(region.get(key));
-    int afterInvalidates = ((org.apache.geode.internal.cache.GemFireCacheImpl) getCache()).getCachePerfStats().getInvalidates();
+    int afterInvalidates =
+        ((org.apache.geode.internal.cache.GemFireCacheImpl) getCache())
+            .getCachePerfStats()
+            .getInvalidates();
     assertEquals("Invalidate CachePerfStats incorrect", beforeInvalidates + 1, afterInvalidates);
   }
 
-  /**
-   * Tests invalidating an entire region
-   */
+  /** Tests invalidating an entire region */
   @Test
   public void testInvalidateRegion() throws CacheException {
     String name = this.getUniqueName();
@@ -1112,14 +1095,13 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
 
     for (int i = 0; i < 50; i++) {
       String key = "Key=" + i;
-      assertFalse("containsValueForKey returned true for key " + key, region.containsValueForKey(key));
+      assertFalse(
+          "containsValueForKey returned true for key " + key, region.containsValueForKey(key));
       assertTrue("containsKey returned false for key " + key, region.containsKey(key));
     }
   }
 
-  /**
-   * Tests the {@link Region#keys} method.
-   */
+  /** Tests the {@link Region#keys} method. */
   @Test
   public void testKeys() throws CacheException {
     String name = this.getUniqueName();
@@ -1145,25 +1127,25 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       Iterator iter = region.keys().iterator();
       iter.next();
       region.destroy("B");
-     
+
       try {
         iter.next();
         fail("Should have thrown a ConcurrentModificationException");
-     
+
       } catch (ConcurrentModificationException ex) {
         // pass...
       }
     }
-     
+
     {
       Iterator iter = region.keys().iterator();
       iter.next();
       region.put("D", "d");
-     
+
       try {
         iter.next();
         fail("Should have thrown a ConcurrentModificationException");
-     
+
       } catch (ConcurrentModificationException ex) {
         // pass...
       }
@@ -1172,9 +1154,8 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests {@link Region#localDestroy locally destroying} an entry and
-   * attempting to access it afterwards.  (Not too useful with a
-   * <code>LOCAL</code> region.)
+   * Tests {@link Region#localDestroy locally destroying} an entry and attempting to access it
+   * afterwards. (Not too useful with a <code>LOCAL</code> region.)
    */
   @Test
   public void testLocalDestroyEntry() throws CacheException {
@@ -1191,16 +1172,13 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
 
     try {
       region.localDestroy(key);
-      if (isMirrored)
-        fail("Should have thrown an IllegalStateException");
+      if (isMirrored) fail("Should have thrown an IllegalStateException");
       fail("Should have thrown an EntryNotFoundException");
     } catch (EntryNotFoundException ex) {
       // pass...
     } catch (IllegalStateException ex) {
-      if (!isMirrored)
-        throw ex;
-      else
-        return; // abort test
+      if (!isMirrored) throw ex;
+      else return; // abort test
     }
 
     region.put(key, value);
@@ -1264,9 +1242,8 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests locally destroying an entire region and that accessing it
-   * after it has been destory causes a {@link
-   * RegionDestroyedException}.
+   * Tests locally destroying an entire region and that accessing it after it has been destory
+   * causes a {@link RegionDestroyedException}.
    *
    * @see Region#localDestroyRegion
    */
@@ -1563,8 +1540,8 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests closing a region, and checks different behavior when this is a disk
-   * region with persistBackup.
+   * Tests closing a region, and checks different behavior when this is a disk region with
+   * persistBackup.
    */
   @Test
   public void testCloseRegion() throws CacheException {
@@ -1574,19 +1551,20 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
 
     AttributesFactory fac = new AttributesFactory(getRegionAttributes());
 
-    TestCacheListener list = new TestCacheListener() {
-      public void afterCreate2(EntryEvent event) {
-        // do nothing
-      }
+    TestCacheListener list =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent event) {
+            // do nothing
+          }
 
-      public void afterRegionDestroy2(RegionEvent re) {
-        assertEquals(Operation.REGION_CLOSE, re.getOperation());
-      }
+          public void afterRegionDestroy2(RegionEvent re) {
+            assertEquals(Operation.REGION_CLOSE, re.getOperation());
+          }
 
-      public void close2() {
-        // okay
-      }
-    };
+          public void close2() {
+            // okay
+          }
+        };
 
     fac.setCacheListener(list);
 
@@ -1653,9 +1631,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     region.localDestroyRegion();
   }
 
-  /**
-   * Tests locally invalidating a region entry
-   */
+  /** Tests locally invalidating a region entry */
   @Test
   public void testLocalInvalidateEntry() throws CacheException {
     if (!supportsLocalDestroyAndLocalInvalidate()) {
@@ -1672,21 +1648,16 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     boolean isMirrorKeysValues = getRegionAttributes().getMirrorType().isKeysValues();
     try {
       region.localInvalidate(key);
-      if (isMirrorKeysValues)
-        fail("Should have thrown an IllegalStateException");
+      if (isMirrorKeysValues) fail("Should have thrown an IllegalStateException");
     } catch (IllegalStateException e) {
-      if (!isMirrorKeysValues)
-        throw e;
-      else
-        return; // abort test
+      if (!isMirrorKeysValues) throw e;
+      else return; // abort test
     }
     assertNull(entry.getValue());
     assertNull(region.get(key));
   }
 
-  /**
-   * Tests locally invalidating an entire region
-   */
+  /** Tests locally invalidating an entire region */
   @Test
   public void testLocalInvalidateRegion() throws CacheException {
     String name = this.getUniqueName();
@@ -1699,13 +1670,10 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     boolean isKV = getRegionAttributes().getMirrorType().isKeysValues();
     try {
       region.localInvalidateRegion();
-      if (isKV)
-        fail("Should have thrown an IllegalStateException");
+      if (isKV) fail("Should have thrown an IllegalStateException");
     } catch (IllegalStateException e) {
-      if (!isKV)
-        throw e;
-      else
-        return; // abort test
+      if (!isKV) throw e;
+      else return; // abort test
     }
 
     Region.Entry entry;
@@ -1723,9 +1691,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     assertNull(entry.getValue());
   }
 
-  /**
-   * Tests the {@link Region#subregions} method without recursion
-   */
+  /** Tests the {@link Region#subregions} method without recursion */
   @Test
   public void testSubregions() throws CacheException {
     if (!supportsSubregions()) {
@@ -1744,7 +1710,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       Set subregions = region.subregions(false);
       assertEquals(3, subregions.size());
 
-      Set names = new HashSet(Arrays.asList(new String[] { "A", "B", "C" }));
+      Set names = new HashSet(Arrays.asList(new String[] {"A", "B", "C"}));
       Iterator iter = subregions.iterator();
       for (int i = 0; i < 3; i++) {
         assertTrue(iter.hasNext());
@@ -1757,25 +1723,25 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       Iterator iter = region.subregions(false).iterator();
       Region sub = (Region) iter.next();
       sub.destroyRegion();
-     
+
       try {
         iter.next();
         fail("Should have thrown a ConcurrentModificationException");
-     
+
       } catch (ConcurrentModificationException ex) {
         // pass...
       }
     }
-     
+
     {
       Iterator iter = region.subregions(false).iterator();
       iter.next();
       region.createSubregion("D", region.getAttributes());
-     
+
       try {
         iter.next();
         fail("Should have thrown a ConcurrentModificationException");
-     
+
       } catch (ConcurrentModificationException ex) {
         // pass...
       }
@@ -1783,9 +1749,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
      */
   }
 
-  /**
-   * Tests the {@link Region#subregions} method with recursion
-   */
+  /** Tests the {@link Region#subregions} method with recursion */
   @Test
   public void testSubregionsRecursive() throws CacheException {
     if (!supportsSubregions()) {
@@ -1806,7 +1770,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       Set subregions = region.subregions(true);
       assertEquals(6, subregions.size());
 
-      Set names = new HashSet(Arrays.asList(new String[] { "A", "B", "C", "D", "E", "F" }));
+      Set names = new HashSet(Arrays.asList(new String[] {"A", "B", "C", "D", "E", "F"}));
       Iterator iter = subregions.iterator();
       for (int i = 0; i < 6; i++) {
         assertTrue(iter.hasNext());
@@ -1818,32 +1782,32 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     {
       Iterator iter = region.subregions(true).iterator();
       iter.next();
-     
+
       // Destroy in the subregion should effect parent region's
       // iterator
       B.destroyRegion();
-     
+
       try {
         iter.next();
         fail("Should have thrown a ConcurrentModificationException");
-     
+
       } catch (ConcurrentModificationException ex) {
         // pass...
       }
     }
-     
+
     {
       Iterator iter = region.subregions(true).iterator();
       iter.next();
-     
+
       // Modifying the subregion should effect parent region's
       // iterator
       A.createSubregion("G", getRAs(region.getAttributes()));
-     
+
       try {
         iter.next();
         fail("Should have thrown a ConcurrentModificationException");
-     
+
       } catch (ConcurrentModificationException ex) {
         // pass...
       }
@@ -1851,9 +1815,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
      */
   }
 
-  /**
-   * Tests the {@link Region#values} method without recursion
-   */
+  /** Tests the {@link Region#values} method without recursion */
   @Test
   public void testValues() throws CacheException {
     String name = this.getUniqueName();
@@ -1911,10 +1873,10 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
 
   // Helper functions
   ////////////////////////////
-  static private final String WAIT_PROPERTY = "UpdatePropagationDUnitTest.maxWaitTime";
-  static private final int WAIT_DEFAULT = 60000;
+  private static final String WAIT_PROPERTY = "UpdatePropagationDUnitTest.maxWaitTime";
+  private static final int WAIT_DEFAULT = 60000;
 
-  static private final int SLOP = 1000; // milliseconds
+  private static final int SLOP = 1000; // milliseconds
 
   private Object fetchEntryValue(Region.Entry re) {
     if (re.isLocal()) {
@@ -1931,10 +1893,9 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Since <em>tilt</em> is the earliest time we expect, one must
-   * check the current time <em>before</em> invoking the operation
-   * intended to keep the entry alive.
-   * 
+   * Since <em>tilt</em> is the earliest time we expect, one must check the current time
+   * <em>before</em> invoking the operation intended to keep the entry alive.
+   *
    * @param entry entry we want to be invalidated
    * @param p_tilt earliest time we expect to see the invalidate
    */
@@ -1943,10 +1904,9 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Since <em>tilt</em> is the earliest time we expect, one must
-   * check the current time <em>before</em> invoking the operation
-   * intended to keep the entry alive.
-   * 
+   * Since <em>tilt</em> is the earliest time we expect, one must check the current time
+   * <em>before</em> invoking the operation intended to keep the entry alive.
+   *
    * @param entry entry we want to be invalidated
    * @param p_tilt earliest time we expect to see the invalidate
    * @param pauseMs the number of milliseconds to pause before checking again
@@ -1960,7 +1920,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       // we have no entry?  That's ok.
       return;
     }
-    for (;;) {
+    for (; ; ) {
       boolean wasInvalidated = fetchEntryValue(entry) == null; // do this 1st
       long now = System.currentTimeMillis(); // do this 2nd
       if (now >= tilt) {
@@ -1972,10 +1932,25 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
         continue;
       }
       if (now >= tilt - SLOP) {
-        org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().warning("Entry invalidated sloppily " + "now=" + now + " tilt=" + tilt + " delta = " + (tilt - now));
+        org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+            .warning(
+                "Entry invalidated sloppily "
+                    + "now="
+                    + now
+                    + " tilt="
+                    + tilt
+                    + " delta = "
+                    + (tilt - now));
         break;
       }
-      fail("Entry invalidated prematurely " + "now=" + now + " tilt=" + tilt + " delta = " + (tilt - now));
+      fail(
+          "Entry invalidated prematurely "
+              + "now="
+              + now
+              + " tilt="
+              + tilt
+              + " delta = "
+              + (tilt - now));
     }
 
     // After the timeout passes, we will tolerate a slight
@@ -1984,12 +1959,10 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     // Slight lag? WAIT_DEFAULT is 60,000 ms. Many of our tests configure 20ms expiration.
     final int maxWaitTime = Integer.getInteger(WAIT_PROPERTY, WAIT_DEFAULT).intValue();
     tilt += maxWaitTime;
-    for (;;) {
-      if (fetchEntryValue(entry) == null)
-        break;
+    for (; ; ) {
+      if (fetchEntryValue(entry) == null) break;
       if (System.currentTimeMillis() > tilt) {
-        if (fetchEntryValue(entry) == null)
-          break;
+        if (fetchEntryValue(entry) == null) break;
         fail("Entry failed to invalidate");
       }
       Wait.pause(pauseMs);
@@ -2011,10 +1984,9 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Since <em>tilt</em> is the earliest time we expect, one must
-   * check the current time <em>before</em> invoking the operation
-   * intended to keep the entry alive.
-   * 
+   * Since <em>tilt</em> is the earliest time we expect, one must check the current time
+   * <em>before</em> invoking the operation intended to keep the entry alive.
+   *
    * @param entry entry we want to be invalidated
    * @param p_tilt earliest time we expect to see the invalidate
    */
@@ -2023,10 +1995,9 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Since <em>tilt</em> is the earliest time we expect, one must
-   * check the current time <em>before</em> invoking the operation
-   * intended to keep the entry alive.
-   * 
+   * Since <em>tilt</em> is the earliest time we expect, one must check the current time
+   * <em>before</em> invoking the operation intended to keep the entry alive.
+   *
    * @param entry entry we want to be invalidated
    * @param p_tilt earliest time we expect to see the invalidate
    * @param pauseMs the number of milliseconds to pause before checking again
@@ -2035,19 +2006,33 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     long tilt = p_tilt;
     // up until the time that the expiry fires, the entry
     // better not be null...
-    for (;;) {
+    for (; ; ) {
       long now = System.currentTimeMillis();
-      if (now >= tilt)
-        break;
+      if (now >= tilt) break;
       if (!isEntryDestroyed(entry)) {
         Wait.pause(pauseMs);
         continue;
       }
       if (now >= tilt - SLOP) {
-        org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().warning("Entry destroyed sloppily " + "now=" + now + " tilt=" + tilt + " delta = " + (tilt - now));
+        org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+            .warning(
+                "Entry destroyed sloppily "
+                    + "now="
+                    + now
+                    + " tilt="
+                    + tilt
+                    + " delta = "
+                    + (tilt - now));
         break;
       }
-      fail("Entry destroyed prematurely" + "now=" + now + " tilt=" + tilt + " delta = " + (tilt - now));
+      fail(
+          "Entry destroyed prematurely"
+              + "now="
+              + now
+              + " tilt="
+              + tilt
+              + " delta = "
+              + (tilt - now));
     }
 
     // After the timeout passes, we will tolerate a slight
@@ -2055,40 +2040,51 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     // system loading)
     final int maxWaitTime = Integer.getInteger(WAIT_PROPERTY, WAIT_DEFAULT).intValue();
     tilt += maxWaitTime;
-    for (;;) {
-      if (isEntryDestroyed(entry))
-        break;
+    for (; ; ) {
+      if (isEntryDestroyed(entry)) break;
       Assert.assertTrue(System.currentTimeMillis() <= tilt, "Entry failed to destroy");
       Wait.pause(pauseMs);
     }
   }
 
   /**
-   * Since <em>tilt</em> is the earliest time we expect, one must
-   * check the current time <em>before</em> invoking the operation
-   * intended to keep the region alive.
-   * 
+   * Since <em>tilt</em> is the earliest time we expect, one must check the current time
+   * <em>before</em> invoking the operation intended to keep the region alive.
+   *
    * @param region region we want to be destroyed
    * @param p_tilt earliest time we expect to see the destroy
    */
-
   protected void waitForRegionDestroy(Region region, long p_tilt) {
     long tilt = p_tilt;
     // up until the time that the expiry fires, the entry
     // better not be null...
-    for (;;) {
+    for (; ; ) {
       long now = System.currentTimeMillis();
-      if (now >= tilt)
-        break;
+      if (now >= tilt) break;
       if (!region.isDestroyed()) {
         Wait.pause(10);
         continue;
       }
       if (now >= tilt - SLOP) {
-        org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().warning("Region destroyed sloppily " + "now=" + now + " tilt=" + tilt + " delta = " + (tilt - now));
+        org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+            .warning(
+                "Region destroyed sloppily "
+                    + "now="
+                    + now
+                    + " tilt="
+                    + tilt
+                    + " delta = "
+                    + (tilt - now));
         break;
       }
-      fail("Region destroyed prematurely" + "now=" + now + " tilt=" + tilt + " delta = " + (tilt - now));
+      fail(
+          "Region destroyed prematurely"
+              + "now="
+              + now
+              + " tilt="
+              + tilt
+              + " delta = "
+              + (tilt - now));
     }
 
     // After the timeout passes, we will tolerate a slight
@@ -2096,18 +2092,14 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     // system loading)
     final int maxWaitTime = Integer.getInteger(WAIT_PROPERTY, WAIT_DEFAULT).intValue();
     tilt += maxWaitTime;
-    for (;;) {
-      if (region.isDestroyed())
-        break;
+    for (; ; ) {
+      if (region.isDestroyed()) break;
       Assert.assertTrue(System.currentTimeMillis() <= tilt, "Region failed to destroy");
       Wait.pause(10);
     }
   }
 
-  /**
-   * Tests that an entry in a region expires with an
-   * invalidation after a given time to live.
-   */
+  /** Tests that an entry in a region expires with an invalidation after a given time to live. */
   @Test
   public void testEntryTtlInvalidate() throws CacheException {
 
@@ -2124,9 +2116,9 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
 
     Region region = null;
     /**
-             * Crank up the expiration so test runs faster.
-             * This property only needs to be set while the region is created
-             */
+     * Crank up the expiration so test runs faster. This property only needs to be set while the
+     * region is created
+     */
     System.setProperty(LocalRegion.EXPIRY_MS_PROPERTY, "true");
     try {
       region = createRegion(name, attrs);
@@ -2148,9 +2140,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     waitForInvalidate(entry, tilt);
   }
 
-  /**
-   * Verify that special entries expire but other entries in the region don't
-   */
+  /** Verify that special entries expire but other entries in the region don't */
   @Test
   public void testCustomEntryTtl1() {
 
@@ -2169,8 +2159,8 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
 
     Region region = null;
     /**
-     * Crank up the expiration so test runs faster.
-     * This property only needs to be set while the region is created
+     * Crank up the expiration so test runs faster. This property only needs to be set while the
+     * region is created
      */
     System.setProperty(LocalRegion.EXPIRY_MS_PROPERTY, "true");
     try {
@@ -2201,9 +2191,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     assert (region.get(key1).equals(value));
   }
 
-  /**
-   * Verify that special entries don't expire but other entries in the region do
-   */
+  /** Verify that special entries don't expire but other entries in the region do */
   @Test
   public void testCustomEntryTtl2() {
 
@@ -2218,16 +2206,14 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     ExpirationAttributes expire2 = new ExpirationAttributes(timeout, ExpirationAction.INVALIDATE);
     factory.setCustomEntryTimeToLive(new TestExpiry(key2, expire2));
     factory.setStatisticsEnabled(true);
-    TestCacheListener list = new TestCacheListener() {
-      public void afterCreate2(EntryEvent e) {
-      }
+    TestCacheListener list =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent e) {}
 
-      public void afterUpdate2(EntryEvent e) {
-      }
+          public void afterUpdate2(EntryEvent e) {}
 
-      public void afterInvalidate2(EntryEvent e) {
-      }
-    };
+          public void afterInvalidate2(EntryEvent e) {}
+        };
     factory.addCacheListener(list);
     RegionAttributes attrs = factory.create();
 
@@ -2284,8 +2270,8 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   protected volatile int eventCount;
 
   /**
-   * Expire an entry with a custom expiration.  Set a new custom expiration, create the
-   * same entry again, make sure it observes the <em>new</em> expiration
+   * Expire an entry with a custom expiration. Set a new custom expiration, create the same entry
+   * again, make sure it observes the <em>new</em> expiration
    */
   @Test
   public void testCustomEntryTtl3() {
@@ -2302,27 +2288,27 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     //    factory.setEntryIdleTimeout(expire);
     factory.setCustomEntryTimeToLive(new TestExpiry(key1, expire1));
     factory.setStatisticsEnabled(true);
-    TestCacheListener list = new TestCacheListener() {
-      public void afterCreate2(EntryEvent e) {
-      }
+    TestCacheListener list =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent e) {}
 
-      public void afterUpdate2(EntryEvent e) {
-      }
+          public void afterUpdate2(EntryEvent e) {}
 
-      public void afterInvalidate2(EntryEvent e) {
-        eventCount++;
-      }
-    };
+          public void afterInvalidate2(EntryEvent e) {
+            eventCount++;
+          }
+        };
     // Disk regions are VERY slow, so we need to wait for the event...
-    WaitCriterion waitForEventCountToBeOne = new WaitCriterion() {
-      public boolean done() {
-        return eventCount == 1;
-      }
+    WaitCriterion waitForEventCountToBeOne =
+        new WaitCriterion() {
+          public boolean done() {
+            return eventCount == 1;
+          }
 
-      public String description() {
-        return "eventCount never became 1";
-      }
-    };
+          public String description() {
+            return "eventCount never became 1";
+          }
+        };
     eventCount = 0;
     factory.addCacheListener(list);
     RegionAttributes attrs = factory.create();
@@ -2370,7 +2356,8 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       // Change custom expiry for this region now...
       final String key2 = "KEY2";
       AttributesMutator mutt = region.getAttributesMutator();
-      ExpirationAttributes expire2 = new ExpirationAttributes(timeout2, ExpirationAction.INVALIDATE);
+      ExpirationAttributes expire2 =
+          new ExpirationAttributes(timeout2, ExpirationAction.INVALIDATE);
       mutt.setCustomEntryTimeToLive(new TestExpiry(key2, expire2));
 
       ExpiryTask.suspendExpiration();
@@ -2403,10 +2390,9 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Configure entry expiration with a ttl time.
-   * Create an entry and records its scheduled expiration time.
-   * Then mutate the region expiration configuration and confirm
-   * that the entry's expiration time is rescheduled.
+   * Configure entry expiration with a ttl time. Create an entry and records its scheduled
+   * expiration time. Then mutate the region expiration configuration and confirm that the entry's
+   * expiration time is rescheduled.
    */
   @Test
   public void testEntryTtl3() {
@@ -2421,17 +2407,16 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     ExpirationAttributes expire1 = new ExpirationAttributes(timeout1, ExpirationAction.INVALIDATE);
     factory.setEntryTimeToLive(expire1);
     factory.setStatisticsEnabled(true);
-    TestCacheListener list = new TestCacheListener() {
-      public void afterCreate2(EntryEvent e) {
-      }
+    TestCacheListener list =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent e) {}
 
-      public void afterUpdate2(EntryEvent e) {
-      }
+          public void afterUpdate2(EntryEvent e) {}
 
-      public void afterInvalidate2(EntryEvent e) {
-        eventCount++;
-      }
-    };
+          public void afterInvalidate2(EntryEvent e) {
+            eventCount++;
+          }
+        };
     eventCount = 0;
     factory.addCacheListener(list);
     RegionAttributes attrs = factory.create();
@@ -2454,7 +2439,11 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     eet = region.getEntryExpiryTask(key1);
     final long secondExpiryTime = eet.getExpirationTime();
     if ((secondExpiryTime - firstExpiryTime) <= 0) {
-      fail("expiration time should have been greater after changing region config from 500 to 2000. firstExpiryTime=" + firstExpiryTime + " secondExpiryTime=" + secondExpiryTime);
+      fail(
+          "expiration time should have been greater after changing region config from 500 to 2000. firstExpiryTime="
+              + firstExpiryTime
+              + " secondExpiryTime="
+              + secondExpiryTime);
     }
 
     // now set back to be more recent
@@ -2473,26 +2462,28 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     mutt = region.getAttributesMutator();
     ExpirationAttributes expire4 = new ExpirationAttributes(1, ExpirationAction.INVALIDATE);
     mutt.setEntryTimeToLive(expire4);
-    WaitCriterion wc = new WaitCriterion() {
-      public boolean done() {
-        return fetchEntryValue(entry) == null;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          public boolean done() {
+            return fetchEntryValue(entry) == null;
+          }
 
-      public String description() {
-        return "entry never became invalid";
-      }
-    };
+          public String description() {
+            return "entry never became invalid";
+          }
+        };
     Wait.waitForCriterion(wc, 10 * 1000, 10, true);
 
-    WaitCriterion waitForEventCountToBeOne = new WaitCriterion() {
-      public boolean done() {
-        return eventCount == 1;
-      }
+    WaitCriterion waitForEventCountToBeOne =
+        new WaitCriterion() {
+          public boolean done() {
+            return eventCount == 1;
+          }
 
-      public String description() {
-        return "eventCount never became 1";
-      }
-    };
+          public String description() {
+            return "eventCount never became 1";
+          }
+        };
     Wait.waitForCriterion(waitForEventCountToBeOne, 10 * 1000, 10, true);
     eventCount = 0;
   }
@@ -2512,7 +2503,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   //    final String key1 = "KEY1";
   //    final String value1 = "VALUE1";
   //    final String value2 = "VALUE2";
-  //    
+  //
   //    AttributesFactory factory = new AttributesFactory(getRegionAttributes());
   //    ExpirationAttributes expire1 =
   //            new ExpirationAttributes(timeout1, ExpirationAction.INVALIDATE);
@@ -2527,7 +2518,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   //    eventCount = 0;
   //    factory.addCacheListener(list);
   //    RegionAttributes attrs = factory.create();
-  //    
+  //
   //    Region region = null;
   //    System.setProperty(LocalRegion.EXPIRY_MS_PROPERTY", "true");
   //    try {
@@ -2569,13 +2560,13 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   //      assertTrue(list.waitForInvocation(1000));
   //      assertTrue(eventCount == 1);
   //      eventCount = 0;
-  //      
+  //
   //      // Change custom expiry for this region now...
   //      AttributesMutator mutt = region.getAttributesMutator();
   //      ExpirationAttributes expire2 =
   //        new ExpirationAttributes(timeout2, ExpirationAction.INVALIDATE);
   //      mutt.setEntryTimeToLive(expire2);
-  //      
+  //
   //      ExpiryTask.suspendExpiration();
   //      try {
   //        region.put(key1, value2);
@@ -2589,14 +2580,14 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   //      assertTrue(list.waitForInvocation(1000));
   //      assertTrue(eventCount == 1);
   //      eventCount = 0;
-  //      
+  //
   //      region.destroy(key1);
   //    }
   //  }
 
   /**
-   * Tests that an entry whose value is loaded into a region
-   * expires with an invalidation after a given time to live.
+   * Tests that an entry whose value is loaded into a region expires with an invalidation after a
+   * given time to live.
    */
   @Test
   public void testEntryFromLoadTtlInvalidate() throws CacheException, InterruptedException {
@@ -2610,11 +2601,12 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     ExpirationAttributes expire = new ExpirationAttributes(timeout, ExpirationAction.INVALIDATE);
     factory.setEntryTimeToLive(expire);
     factory.setStatisticsEnabled(true);
-    factory.setCacheLoader(new TestCacheLoader() {
-      public Object load2(LoaderHelper helper) {
-        return value;
-      }
-    });
+    factory.setCacheLoader(
+        new TestCacheLoader() {
+          public Object load2(LoaderHelper helper) {
+            return value;
+          }
+        });
     RegionAttributes attrs = factory.create();
 
     Region region = null;
@@ -2640,10 +2632,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     }
   }
 
-  /**
-   * Tests that an entry in a region expires with a destroy
-   * after a given time to live.
-   */
+  /** Tests that an entry in a region expires with a destroy after a given time to live. */
   @Test
   public void testEntryTtlDestroy() throws CacheException, InterruptedException {
 
@@ -2680,66 +2669,60 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     }
   }
 
-  /**
-   * Tests that a region expires with an invalidation after a
-   * given time to live.
-   */
+  /** Tests that a region expires with an invalidation after a given time to live. */
   @Test
   public void testRegionTtlInvalidate() throws CacheException, InterruptedException {
 
-    if (getRegionAttributes().getPartitionAttributes() != null)
-      return;
+    if (getRegionAttributes().getPartitionAttributes() != null) return;
 
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     final String name = this.getUniqueName();
 
-    vm0.invoke(new CacheSerializableRunnable("testRegionTtlInvalidate") {
-      public void run2() throws CacheException {
-        final int timeout = 22; // ms
-        final Object key = "KEY";
-        final Object value = "VALUE";
+    vm0.invoke(
+        new CacheSerializableRunnable("testRegionTtlInvalidate") {
+          public void run2() throws CacheException {
+            final int timeout = 22; // ms
+            final Object key = "KEY";
+            final Object value = "VALUE";
 
-        AttributesFactory factory = new AttributesFactory(getRegionAttributes());
-        ExpirationAttributes expire = new ExpirationAttributes(timeout, ExpirationAction.INVALIDATE);
-        factory.setRegionTimeToLive(expire);
-        factory.setStatisticsEnabled(true);
-        RegionAttributes attrs = factory.create();
+            AttributesFactory factory = new AttributesFactory(getRegionAttributes());
+            ExpirationAttributes expire =
+                new ExpirationAttributes(timeout, ExpirationAction.INVALIDATE);
+            factory.setRegionTimeToLive(expire);
+            factory.setStatisticsEnabled(true);
+            RegionAttributes attrs = factory.create();
 
-        Region region = null;
-        Region.Entry entry = null;
-        long tilt;
-        ExpiryTask.suspendExpiration();
-        try {
-          System.setProperty(LocalRegion.EXPIRY_MS_PROPERTY, "true");
-          try {
-            region = createRegion(name, attrs);
-            region.put(key, value);
-            region.put("k2", "v2");
-            tilt = System.currentTimeMillis() + timeout;
-            entry = region.getEntry(key);
-            assertNotNull(entry.getValue());
-          } finally {
-            System.getProperties().remove(LocalRegion.EXPIRY_MS_PROPERTY);
+            Region region = null;
+            Region.Entry entry = null;
+            long tilt;
+            ExpiryTask.suspendExpiration();
+            try {
+              System.setProperty(LocalRegion.EXPIRY_MS_PROPERTY, "true");
+              try {
+                region = createRegion(name, attrs);
+                region.put(key, value);
+                region.put("k2", "v2");
+                tilt = System.currentTimeMillis() + timeout;
+                entry = region.getEntry(key);
+                assertNotNull(entry.getValue());
+              } finally {
+                System.getProperties().remove(LocalRegion.EXPIRY_MS_PROPERTY);
+              }
+            } finally {
+              ExpiryTask.permitExpiration();
+            }
+            waitForInvalidate(entry, tilt, 10);
+            waitForInvalidate(region.getEntry("k2"), tilt, 10);
           }
-        } finally {
-          ExpiryTask.permitExpiration();
-        }
-        waitForInvalidate(entry, tilt, 10);
-        waitForInvalidate(region.getEntry("k2"), tilt, 10);
-      }
-    });
+        });
   }
 
-  /**
-   * Tests that a region expires with a destruction after a
-   * given time to live.
-   */
+  /** Tests that a region expires with a destruction after a given time to live. */
   @Test
   public void testRegionTtlDestroy() throws CacheException, InterruptedException {
 
-    if (getRegionAttributes().getPartitionAttributes() != null)
-      return;
+    if (getRegionAttributes().getPartitionAttributes() != null) return;
 
     final String name = this.getUniqueName();
     final int timeout = 22; // ms
@@ -2774,8 +2757,8 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests that an entry in a local region that remains idle for a
-   * given amount of time is invalidated.
+   * Tests that an entry in a local region that remains idle for a given amount of time is
+   * invalidated.
    */
   @Test
   public void testEntryIdleInvalidate() throws CacheException, InterruptedException {
@@ -2789,16 +2772,14 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     ExpirationAttributes expire = new ExpirationAttributes(timeout, ExpirationAction.INVALIDATE);
     factory.setEntryIdleTimeout(expire);
     factory.setStatisticsEnabled(true);
-    TestCacheListener list = new TestCacheListener() {
-      public void afterCreate2(EntryEvent e) {
-      }
+    TestCacheListener list =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent e) {}
 
-      public void afterUpdate2(EntryEvent e) {
-      }
+          public void afterUpdate2(EntryEvent e) {}
 
-      public void afterInvalidate2(EntryEvent e) {
-      }
-    };
+          public void afterInvalidate2(EntryEvent e) {}
+        };
     factory.setCacheListener(list);
     RegionAttributes attrs = factory.create();
 
@@ -2864,19 +2845,15 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     /* (non-Javadoc)
      * @see org.apache.geode.cache.Declarable#init(java.util.Properties)
      */
-    public void init(Properties props) {
-    }
+    public void init(Properties props) {}
 
     /* (non-Javadoc)
      * @see org.apache.geode.cache.CacheCallback#close()
      */
-    public void close() {
-    }
+    public void close() {}
   }
 
-  /**
-   * Verify that special entries expire but other entries in the region don't
-   */
+  /** Verify that special entries expire but other entries in the region don't */
   @Test
   public void testCustomEntryIdleTimeout1() {
 
@@ -2891,16 +2868,14 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     //    factory.setEntryIdleTimeout(expire);
     factory.setCustomEntryIdleTimeout(new TestExpiry(key2, expire));
     factory.setStatisticsEnabled(true);
-    TestCacheListener list = new TestCacheListener() {
-      public void afterCreate2(EntryEvent e) {
-      }
+    TestCacheListener list =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent e) {}
 
-      public void afterUpdate2(EntryEvent e) {
-      }
+          public void afterUpdate2(EntryEvent e) {}
 
-      public void afterInvalidate2(EntryEvent e) {
-      }
-    };
+          public void afterInvalidate2(EntryEvent e) {}
+        };
     factory.addCacheListener(list);
     RegionAttributes attrs = factory.create();
 
@@ -2954,9 +2929,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     assertTrue(region.get(key1).equals(value));
   }
 
-  /**
-   * Verify that special entries don't expire but other entries in the region do
-   */
+  /** Verify that special entries don't expire but other entries in the region do */
   @Test
   public void testCustomEntryIdleTimeout2() {
 
@@ -2972,16 +2945,14 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     ExpirationAttributes expire2 = new ExpirationAttributes(0, ExpirationAction.INVALIDATE);
     factory.setCustomEntryIdleTimeout(new TestExpiry(key2, expire2));
     factory.setStatisticsEnabled(true);
-    TestCacheListener list = new TestCacheListener() {
-      public void afterCreate2(EntryEvent e) {
-      }
+    TestCacheListener list =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent e) {}
 
-      public void afterUpdate2(EntryEvent e) {
-      }
+          public void afterUpdate2(EntryEvent e) {}
 
-      public void afterInvalidate2(EntryEvent e) {
-      }
-    };
+          public void afterInvalidate2(EntryEvent e) {}
+        };
     factory.addCacheListener(list);
     RegionAttributes attrs = factory.create();
 
@@ -3036,10 +3007,9 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Configure custome entry expiration with an idle time.
-   * Create an entry and records its scheduled expiration time.
-   * Then mutate the region expiration configuration and confirm
-   * that the entry's expiration time is rescheduled.
+   * Configure custome entry expiration with an idle time. Create an entry and records its scheduled
+   * expiration time. Then mutate the region expiration configuration and confirm that the entry's
+   * expiration time is rescheduled.
    */
   @Test
   public void testCustomEntryIdleTimeout3() {
@@ -3054,17 +3024,16 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     ExpirationAttributes expire1 = new ExpirationAttributes(timeout1, ExpirationAction.INVALIDATE);
     factory.setCustomEntryIdleTimeout(new TestExpiry(key1, expire1));
     factory.setStatisticsEnabled(true);
-    TestCacheListener list = new TestCacheListener() {
-      public void afterCreate2(EntryEvent e) {
-      }
+    TestCacheListener list =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent e) {}
 
-      public void afterUpdate2(EntryEvent e) {
-      }
+          public void afterUpdate2(EntryEvent e) {}
 
-      public void afterInvalidate2(EntryEvent e) {
-        eventCount++;
-      }
-    };
+          public void afterInvalidate2(EntryEvent e) {
+            eventCount++;
+          }
+        };
     eventCount = 0;
     factory.addCacheListener(list);
     RegionAttributes attrs = factory.create();
@@ -3087,7 +3056,11 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     eet = region.getEntryExpiryTask(key1);
     final long secondExpiryTime = eet.getExpirationTime();
     if ((secondExpiryTime - firstExpiryTime) <= 0) {
-      fail("expiration time should have been greater after changing region config from 500 to 2000. firstExpiryTime=" + firstExpiryTime + " secondExpiryTime=" + secondExpiryTime);
+      fail(
+          "expiration time should have been greater after changing region config from 500 to 2000. firstExpiryTime="
+              + firstExpiryTime
+              + " secondExpiryTime="
+              + secondExpiryTime);
     }
 
     // now set back to be more recent
@@ -3106,35 +3079,36 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     mutt = region.getAttributesMutator();
     ExpirationAttributes expire4 = new ExpirationAttributes(1, ExpirationAction.INVALIDATE);
     mutt.setCustomEntryIdleTimeout(new TestExpiry(key1, expire4));
-    WaitCriterion wc = new WaitCriterion() {
-      public boolean done() {
-        return fetchEntryValue(entry) == null;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          public boolean done() {
+            return fetchEntryValue(entry) == null;
+          }
 
-      public String description() {
-        return "entry never became invalid";
-      }
-    };
+          public String description() {
+            return "entry never became invalid";
+          }
+        };
     Wait.waitForCriterion(wc, 10 * 1000, 10, true);
 
-    WaitCriterion waitForEventCountToBeOne = new WaitCriterion() {
-      public boolean done() {
-        return eventCount == 1;
-      }
+    WaitCriterion waitForEventCountToBeOne =
+        new WaitCriterion() {
+          public boolean done() {
+            return eventCount == 1;
+          }
 
-      public String description() {
-        return "eventCount never became 1";
-      }
-    };
+          public String description() {
+            return "eventCount never became 1";
+          }
+        };
     Wait.waitForCriterion(waitForEventCountToBeOne, 10 * 1000, 10, true);
     eventCount = 0;
   }
 
   /**
-   * Configure entry expiration with a idle time.
-   * Create an entry and records its scheduled expiration time.
-   * Then mutate the region expiration configuration and confirm
-   * that the entry's expiration time is rescheduled.
+   * Configure entry expiration with a idle time. Create an entry and records its scheduled
+   * expiration time. Then mutate the region expiration configuration and confirm that the entry's
+   * expiration time is rescheduled.
    */
   @Test
   public void testEntryIdleTimeout3() {
@@ -3149,17 +3123,16 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     ExpirationAttributes expire1 = new ExpirationAttributes(timeout1, ExpirationAction.INVALIDATE);
     factory.setEntryIdleTimeout(expire1);
     factory.setStatisticsEnabled(true);
-    TestCacheListener list = new TestCacheListener() {
-      public void afterCreate2(EntryEvent e) {
-      }
+    TestCacheListener list =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent e) {}
 
-      public void afterUpdate2(EntryEvent e) {
-      }
+          public void afterUpdate2(EntryEvent e) {}
 
-      public void afterInvalidate2(EntryEvent e) {
-        eventCount++;
-      }
-    };
+          public void afterInvalidate2(EntryEvent e) {
+            eventCount++;
+          }
+        };
     eventCount = 0;
     factory.addCacheListener(list);
     RegionAttributes attrs = factory.create();
@@ -3182,7 +3155,11 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     eet = region.getEntryExpiryTask(key1);
     final long secondExpiryTime = eet.getExpirationTime();
     if ((secondExpiryTime - firstExpiryTime) <= 0) {
-      fail("expiration time should have been greater after changing region config from 500 to 2000. firstExpiryTime=" + firstExpiryTime + " secondExpiryTime=" + secondExpiryTime);
+      fail(
+          "expiration time should have been greater after changing region config from 500 to 2000. firstExpiryTime="
+              + firstExpiryTime
+              + " secondExpiryTime="
+              + secondExpiryTime);
     }
 
     // now set back to be more recent
@@ -3201,26 +3178,28 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     mutt = region.getAttributesMutator();
     ExpirationAttributes expire4 = new ExpirationAttributes(1, ExpirationAction.INVALIDATE);
     mutt.setEntryIdleTimeout(expire4);
-    WaitCriterion wc = new WaitCriterion() {
-      public boolean done() {
-        return fetchEntryValue(entry) == null;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          public boolean done() {
+            return fetchEntryValue(entry) == null;
+          }
 
-      public String description() {
-        return "entry never became invalid";
-      }
-    };
+          public String description() {
+            return "entry never became invalid";
+          }
+        };
     Wait.waitForCriterion(wc, 10 * 1000, 10, true);
 
-    WaitCriterion waitForEventCountToBeOne = new WaitCriterion() {
-      public boolean done() {
-        return eventCount == 1;
-      }
+    WaitCriterion waitForEventCountToBeOne =
+        new WaitCriterion() {
+          public boolean done() {
+            return eventCount == 1;
+          }
 
-      public String description() {
-        return "eventCount never became 1";
-      }
-    };
+          public String description() {
+            return "eventCount never became 1";
+          }
+        };
     Wait.waitForCriterion(waitForEventCountToBeOne, 10 * 1000, 10, true);
     eventCount = 0;
   }
@@ -3240,7 +3219,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   //    final String key1 = "KEY1";
   //    final String value1 = "VALUE1";
   //    final String value2 = "VALUE2";
-  //    
+  //
   //    AttributesFactory factory = new AttributesFactory(getRegionAttributes());
   //    ExpirationAttributes expire1 =
   //            new ExpirationAttributes(timeout1, ExpirationAction.INVALIDATE);
@@ -3255,7 +3234,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   //    eventCount = 0;
   //    factory.addCacheListener(list);
   //    RegionAttributes attrs = factory.create();
-  //    
+  //
   //    Region region = null;
   //    System.setProperty(LocalRegion.EXPIRY_MS_PROPERTY, "true");
   //    try {
@@ -3297,13 +3276,13 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   //      assertTrue(list.waitForInvocation(1000));
   //      assertTrue(eventCount == 1);
   //      eventCount = 0;
-  //      
+  //
   //      // Change expiry for this region now...
   //      AttributesMutator mutt = region.getAttributesMutator();
   //      ExpirationAttributes expire2 =
   //        new ExpirationAttributes(timeout2, ExpirationAction.INVALIDATE);
   //      mutt.setEntryIdleTimeout(expire2);
-  //      
+  //
   //      ExpiryTask.suspendExpiration();
   //      try {
   //        region.put(key1, value2);
@@ -3317,7 +3296,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   //      assertTrue(list.waitForInvocation(1000));
   //      assertTrue(eventCount == 1);
   //      eventCount = 0;
-  //      
+  //
   //      region.destroy(key1);
   //    }
   //  }
@@ -3326,7 +3305,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
 
     /**
      * Object --> CountExpiry
-     * 
+     *
      * @guarded.By CountExpiry.class
      */
     static final HashMap invokeCounts = new HashMap();
@@ -3361,19 +3340,15 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     /* (non-Javadoc)
      * @see org.apache.geode.cache.Declarable#init(java.util.Properties)
      */
-    public void init(Properties props) {
-    }
+    public void init(Properties props) {}
 
     /* (non-Javadoc)
      * @see org.apache.geode.cache.CacheCallback#close()
      */
-    public void close() {
-    }
+    public void close() {}
   }
 
-  /**
-   * Verify that expiry is calculatod only once on an entry
-   */
+  /** Verify that expiry is calculatod only once on an entry */
   @Test
   public void testCustomIdleOnce() {
 
@@ -3395,9 +3370,9 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
 
     Region region = null;
     /**
-             * Crank up the expiration so test runs faster.
-             * This property only needs to be set while the region is created
-             */
+     * Crank up the expiration so test runs faster. This property only needs to be set while the
+     * region is created
+     */
     System.setProperty(LocalRegion.EXPIRY_MS_PROPERTY, "true");
     try {
       region = createRegion(name, attrs);
@@ -3443,9 +3418,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     } // synchronized
   }
 
-  /**
-   * Verify that a get or put resets the idle time on an entry
-   */
+  /** Verify that a get or put resets the idle time on an entry */
   @Test
   public void testCustomEntryIdleReset() {
 
@@ -3459,16 +3432,14 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     //    factory.setEntryIdleTimeout(expire);
     factory.setCustomEntryIdleTimeout(new TestExpiry(key1, expire));
     factory.setStatisticsEnabled(true);
-    TestCacheListener list = new TestCacheListener() {
-      public void afterCreate2(EntryEvent e) {
-      }
+    TestCacheListener list =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent e) {}
 
-      public void afterUpdate2(EntryEvent e) {
-      }
+          public void afterUpdate2(EntryEvent e) {}
 
-      public void afterInvalidate2(EntryEvent e) {
-      }
-    };
+          public void afterInvalidate2(EntryEvent e) {}
+        };
     factory.addCacheListener(list);
     RegionAttributes attrs = factory.create();
 
@@ -3490,14 +3461,22 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
         assertSame(eet, region.getEntryExpiryTask(key1));
         final long getExpiryTime = eet.getExpirationTime();
         if (getExpiryTime - createExpiryTime <= 0L) {
-          fail("get did not reset the expiration time. createExpiryTime=" + createExpiryTime + " getExpiryTime=" + getExpiryTime);
+          fail(
+              "get did not reset the expiration time. createExpiryTime="
+                  + createExpiryTime
+                  + " getExpiryTime="
+                  + getExpiryTime);
         }
         Wait.waitForExpiryClockToChange(region);
         region.put(key1, value);
         assertSame(eet, region.getEntryExpiryTask(key1));
         final long putExpiryTime = eet.getExpirationTime();
         if (putExpiryTime - getExpiryTime <= 0L) {
-          fail("put did not reset the expiration time. getExpiryTime=" + getExpiryTime + " putExpiryTime=" + putExpiryTime);
+          fail(
+              "put did not reset the expiration time. getExpiryTime="
+                  + getExpiryTime
+                  + " putExpiryTime="
+                  + putExpiryTime);
         }
       } finally {
         ExpiryTask.permitExpiration();
@@ -3510,7 +3489,9 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
   class ExpiryCallbacks implements ExpiryTaskListener {
     @Override
     public void afterCancel(ExpiryTask et) {
-      getCache().getLogger().info("ExpiryCallbacks.afterCancel", new RuntimeException("TaskCanceled"));
+      getCache()
+          .getLogger()
+          .info("ExpiryCallbacks.afterCancel", new RuntimeException("TaskCanceled"));
     }
 
     @Override
@@ -3540,7 +3521,30 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       Date ttlTime = new Date(et.getTTLExpirationTime());
       Date getNow = new Date(et.getNow());
       Date scheduleETime = new Date(et.scheduledExecutionTime());
-      getCache().getLogger().info(callback + " now: " + getCurrentTimeStamp(now) + " ttl:" + getCurrentTimeStamp(ttl) + " idleExpTime:" + getCurrentTimeStamp(idleExpTime) + " ttlTime:" + getCurrentTimeStamp(ttlTime) + " getNow:" + getCurrentTimeStamp(getNow) + " scheduleETime:" + getCurrentTimeStamp(scheduleETime) + " getKey:" + et.getKey() + " isPending:" + et.isPending() + " et :" + et + " Task reference " + System.identityHashCode(et));
+      getCache()
+          .getLogger()
+          .info(
+              callback
+                  + " now: "
+                  + getCurrentTimeStamp(now)
+                  + " ttl:"
+                  + getCurrentTimeStamp(ttl)
+                  + " idleExpTime:"
+                  + getCurrentTimeStamp(idleExpTime)
+                  + " ttlTime:"
+                  + getCurrentTimeStamp(ttlTime)
+                  + " getNow:"
+                  + getCurrentTimeStamp(getNow)
+                  + " scheduleETime:"
+                  + getCurrentTimeStamp(scheduleETime)
+                  + " getKey:"
+                  + et.getKey()
+                  + " isPending:"
+                  + et.isPending()
+                  + " et :"
+                  + et
+                  + " Task reference "
+                  + System.identityHashCode(et));
     }
 
     public String getCurrentTimeStamp(Date d) {
@@ -3556,14 +3560,12 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     public void afterExpire(ExpiryTask et) {
       printState(et, "ExpiryCallbacks.afterExpire");
     }
-
   }
 
-  /**
-   * Tests that an entry in a region that remains idle for a
-   * given amount of time is destroyed.
-   */
-  @Category(FlakyTest.class) // GEODE-706: time sensitive, expiration, waitForDestroy, EXPIRY_MS_PROPERTY, short timeout
+  /** Tests that an entry in a region that remains idle for a given amount of time is destroyed. */
+  @Category(
+      FlakyTest
+          .class) // GEODE-706: time sensitive, expiration, waitForDestroy, EXPIRY_MS_PROPERTY, short timeout
   @Test
   public void testEntryIdleDestroy() throws Exception {
 
@@ -3577,13 +3579,12 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     ExpirationAttributes expire = new ExpirationAttributes(timeout, ExpirationAction.DESTROY);
     factory.setEntryIdleTimeout(expire);
     factory.setStatisticsEnabled(true);
-    TestCacheListener list = new TestCacheListener() {
-      public void afterCreate2(EntryEvent e) {
-      }
+    TestCacheListener list =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent e) {}
 
-      public void afterDestroy2(EntryEvent e) {
-      }
-    };
+          public void afterDestroy2(EntryEvent e) {}
+        };
     factory.setCacheListener(list);
     RegionAttributes attrs = factory.create();
 
@@ -3620,11 +3621,11 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       System.getProperties().remove(LocalRegion.EXPIRY_MS_PROPERTY);
       EntryExpiryTask.expiryTaskListener = null;
     }
-
   }
 
   /**
    * Verify that accessing an entry resets its idle time
+   *
    * @throws Exception
    */
   @Test
@@ -3652,7 +3653,11 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     assertSame(eet, region.getEntryExpiryTask(key));
     long getExpiryTime = eet.getExpirationTime();
     if (getExpiryTime - createExpiryTime <= 0L) {
-      fail("get did not reset the expiration time. createExpiryTime=" + createExpiryTime + " getExpiryTime=" + getExpiryTime);
+      fail(
+          "get did not reset the expiration time. createExpiryTime="
+              + createExpiryTime
+              + " getExpiryTime="
+              + getExpiryTime);
     }
 
     Wait.waitForExpiryClockToChange(region);
@@ -3660,7 +3665,11 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     assertSame(eet, region.getEntryExpiryTask(key));
     long putExpiryTime = eet.getExpirationTime();
     if (putExpiryTime - getExpiryTime <= 0L) {
-      fail("put did not reset the expiration time. getExpiryTime=" + getExpiryTime + " putExpiryTime=" + putExpiryTime);
+      fail(
+          "put did not reset the expiration time. getExpiryTime="
+              + getExpiryTime
+              + " putExpiryTime="
+              + putExpiryTime);
     }
 
     // TODO other ops that should be validated?
@@ -3673,11 +3682,19 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     long invalidateExpiryTime = eet.getExpirationTime();
     if (region.getConcurrencyChecksEnabled()) {
       if (putExpiryTime - getExpiryTime <= 0L) {
-        fail("invalidate did not reset the expiration time. putExpiryTime=" + putExpiryTime + " invalidateExpiryTime=" + invalidateExpiryTime);
+        fail(
+            "invalidate did not reset the expiration time. putExpiryTime="
+                + putExpiryTime
+                + " invalidateExpiryTime="
+                + invalidateExpiryTime);
       }
     } else {
       if (invalidateExpiryTime != putExpiryTime) {
-        fail("invalidate did reset the expiration time. putExpiryTime=" + putExpiryTime + " invalidateExpiryTime=" + invalidateExpiryTime);
+        fail(
+            "invalidate did reset the expiration time. putExpiryTime="
+                + putExpiryTime
+                + " invalidateExpiryTime="
+                + invalidateExpiryTime);
       }
     }
   }
@@ -3688,8 +3705,10 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     final String name = this.getUniqueName();
     final int timeout = 20; // ms
     final int hugeTimeout = Integer.MAX_VALUE;
-    final ExpirationAttributes expire = new ExpirationAttributes(timeout, ExpirationAction.INVALIDATE);
-    final ExpirationAttributes hugeExpire = new ExpirationAttributes(hugeTimeout, ExpirationAction.INVALIDATE);
+    final ExpirationAttributes expire =
+        new ExpirationAttributes(timeout, ExpirationAction.INVALIDATE);
+    final ExpirationAttributes hugeExpire =
+        new ExpirationAttributes(hugeTimeout, ExpirationAction.INVALIDATE);
     final String key = "KEY";
     final String value = "VALUE";
 
@@ -3731,10 +3750,7 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     waitForInvalidate(entry, tilt);
   }
 
-  /**
-   * Verify that accessing an entry does not delay expiration due
-   * to TTL
-   */
+  /** Verify that accessing an entry does not delay expiration due to TTL */
   @Test
   public void testEntryIdleTtl() {
 
@@ -3744,7 +3760,8 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     final String key = "IDLE_TTL_KEY";
     final String value = "IDLE_TTL_VALUE";
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
-    ExpirationAttributes expireIdle = new ExpirationAttributes(timeout / 2, ExpirationAction.DESTROY);
+    ExpirationAttributes expireIdle =
+        new ExpirationAttributes(timeout / 2, ExpirationAction.DESTROY);
     factory.setEntryIdleTimeout(expireIdle);
     ExpirationAttributes expireTtl = new ExpirationAttributes(timeout, ExpirationAction.DESTROY);
     factory.setEntryTimeToLive(expireTtl);
@@ -3758,7 +3775,11 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     final long firstIdleExpiryTime = eet.getIdleExpirationTime();
     final long firstTTLExpiryTime = eet.getTTLExpirationTime();
     if ((firstIdleExpiryTime - firstTTLExpiryTime) >= 0) {
-      fail("idle should be less than ttl: idle=" + firstIdleExpiryTime + " ttl=" + firstTTLExpiryTime);
+      fail(
+          "idle should be less than ttl: idle="
+              + firstIdleExpiryTime
+              + " ttl="
+              + firstTTLExpiryTime);
     }
     Wait.waitForExpiryClockToChange(region);
     region.get(key);
@@ -3769,7 +3790,11 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     assertEquals(firstTTLExpiryTime, secondTTLExpiryTime);
     // and does change the idle expiry time
     if ((secondIdleExpiryTime - firstIdleExpiryTime) <= 0) {
-      fail("idle should have increased: idle=" + firstIdleExpiryTime + " idle2=" + secondIdleExpiryTime);
+      fail(
+          "idle should have increased: idle="
+              + firstIdleExpiryTime
+              + " idle2="
+              + secondIdleExpiryTime);
     }
   }
 
@@ -3797,36 +3822,53 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       // Now go from no timeout to a timeout
       Region.Entry entry = region.getEntry(key);
       assertEquals(value, entry.getValue());
-      region.getAttributesMutator().setRegionIdleTimeout(new ExpirationAttributes(12000/*ms*/, ExpirationAction.INVALIDATE));
+      region
+          .getAttributesMutator()
+          .setRegionIdleTimeout(
+              new ExpirationAttributes(12000 /*ms*/, ExpirationAction.INVALIDATE));
       region.put(key, value);
       long tilt = System.currentTimeMillis();
 
       ExpiryTask expiryTask = region.getRegionIdleExpiryTask();
       long mediumExpiryTime = expiryTask.getExpirationTime();
-      region.getAttributesMutator().setRegionIdleTimeout(new ExpirationAttributes(999000/*ms*/, ExpirationAction.INVALIDATE));
+      region
+          .getAttributesMutator()
+          .setRegionIdleTimeout(
+              new ExpirationAttributes(999000 /*ms*/, ExpirationAction.INVALIDATE));
       expiryTask = region.getRegionIdleExpiryTask();
       long hugeExpiryTime = expiryTask.getExpirationTime();
       ExpiryTask.suspendExpiration();
       long shortExpiryTime;
       try {
-        region.getAttributesMutator().setRegionIdleTimeout(new ExpirationAttributes(20/*ms*/, ExpirationAction.INVALIDATE));
+        region
+            .getAttributesMutator()
+            .setRegionIdleTimeout(new ExpirationAttributes(20 /*ms*/, ExpirationAction.INVALIDATE));
         expiryTask = region.getRegionIdleExpiryTask();
         shortExpiryTime = expiryTask.getExpirationTime();
       } finally {
         ExpiryTask.permitExpiration();
       }
       waitForInvalidate(entry, tilt + 20, 10);
-      assertTrue("expected hugeExpiryTime=" + hugeExpiryTime + " to be > than mediumExpiryTime=" + mediumExpiryTime, (hugeExpiryTime - mediumExpiryTime) > 0);
-      assertTrue("expected mediumExpiryTime=" + mediumExpiryTime + " to be > than shortExpiryTime=" + shortExpiryTime, (mediumExpiryTime - shortExpiryTime) > 0);
+      assertTrue(
+          "expected hugeExpiryTime="
+              + hugeExpiryTime
+              + " to be > than mediumExpiryTime="
+              + mediumExpiryTime,
+          (hugeExpiryTime - mediumExpiryTime) > 0);
+      assertTrue(
+          "expected mediumExpiryTime="
+              + mediumExpiryTime
+              + " to be > than shortExpiryTime="
+              + shortExpiryTime,
+          (mediumExpiryTime - shortExpiryTime) > 0);
     } finally {
       System.getProperties().remove(LocalRegion.EXPIRY_MS_PROPERTY);
     }
   }
 
   /**
-   * Tests that a region that remains idle for a given amount of
-   * time is invalidated.  Also tests that accessing an entry of a
-   * region or a subregion counts as an access.
+   * Tests that a region that remains idle for a given amount of time is invalidated. Also tests
+   * that accessing an entry of a region or a subregion counts as an access.
    */
   @Test
   public void testRegionIdleInvalidate() throws InterruptedException, CacheException {
@@ -3844,105 +3886,137 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
 
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
-    vm0.invoke(new CacheSerializableRunnable("testRegionIdleInvalidate") {
-      public void run2() throws CacheException {
-        TestCacheListener list = new TestCacheListener() {
-          private int createCount = 0;
+    vm0.invoke(
+        new CacheSerializableRunnable("testRegionIdleInvalidate") {
+          public void run2() throws CacheException {
+            TestCacheListener list =
+                new TestCacheListener() {
+                  private int createCount = 0;
 
-          public void afterInvalidate2(EntryEvent e) {
-            e.getRegion().getCache().getLogger().info("invalidate2 key=" + e.getKey());
+                  public void afterInvalidate2(EntryEvent e) {
+                    e.getRegion().getCache().getLogger().info("invalidate2 key=" + e.getKey());
+                  }
+
+                  public void afterRegionInvalidate2(RegionEvent e) {}
+
+                  public void afterUpdate2(EntryEvent e) {
+                    this.wasInvoked(); // Clear the flag
+                  }
+
+                  public void afterCreate2(EntryEvent e) {
+                    this.createCount++;
+                    // we only expect one create; all the rest should be updates
+                    assertEquals(1, this.createCount);
+                    this.wasInvoked(); // Clear the flag
+                  }
+                };
+            AttributesFactory factory = new AttributesFactory(getRegionAttributes());
+            ExpirationAttributes expire =
+                new ExpirationAttributes(timeout, ExpirationAction.INVALIDATE);
+            factory.setRegionIdleTimeout(expire);
+            factory.setStatisticsEnabled(true);
+            RegionAttributes subRegAttrs = factory.create();
+            factory.setCacheListener(list);
+            RegionAttributes attrs = factory.create();
+
+            Region region = null;
+            Region sub = null;
+            Region.Entry entry = null;
+            long tilt;
+            System.setProperty(LocalRegion.EXPIRY_MS_PROPERTY, "true");
+            ExpiryTask.suspendExpiration();
+            try {
+              region = createRegion(name, attrs);
+              region.put(key, value);
+              tilt = System.currentTimeMillis() + timeout;
+              entry = region.getEntry(key);
+              assertEquals(value, entry.getValue());
+              sub = region.createSubregion(subname, subRegAttrs);
+            } finally {
+              System.getProperties().remove(LocalRegion.EXPIRY_MS_PROPERTY);
+              ExpiryTask.permitExpiration();
+            }
+            waitForInvalidate(entry, tilt, 10);
+
+            assertTrue(list.waitForInvocation(333));
+
+            // The next phase of the test verifies that a get will cause the
+            // expiration time to be extended.
+            // For this phase we don't worry about actually expiring but just
+            // making sure the expiration time gets extended.
+            final int EXPIRATION_MS = 9000;
+            region
+                .getAttributesMutator()
+                .setRegionIdleTimeout(
+                    new ExpirationAttributes(EXPIRATION_MS, ExpirationAction.INVALIDATE));
+
+            LocalRegion lr = (LocalRegion) region;
+            {
+              ExpiryTask expiryTask = lr.getRegionIdleExpiryTask();
+              region.put(key, value);
+              long createExpiry = expiryTask.getExpirationTime();
+              long changeTime = Wait.waitForExpiryClockToChange(lr, createExpiry - EXPIRATION_MS);
+              region.put(key, "VALUE2");
+              long putExpiry = expiryTask.getExpirationTime();
+              assertTrue(
+                  "CLOCK went back in time! Expected putBaseExpiry="
+                      + (putExpiry - EXPIRATION_MS)
+                      + " to be >= than changeTime="
+                      + changeTime,
+                  (putExpiry - EXPIRATION_MS - changeTime) >= 0);
+              assertTrue(
+                  "expected putExpiry=" + putExpiry + " to be > than createExpiry=" + createExpiry,
+                  (putExpiry - createExpiry) > 0);
+              changeTime = Wait.waitForExpiryClockToChange(lr, putExpiry - EXPIRATION_MS);
+              region.get(key);
+              long getExpiry = expiryTask.getExpirationTime();
+              assertTrue(
+                  "CLOCK went back in time! Expected getBaseExpiry="
+                      + (getExpiry - EXPIRATION_MS)
+                      + " to be >= than changeTime="
+                      + changeTime,
+                  (getExpiry - EXPIRATION_MS - changeTime) >= 0);
+              assertTrue(
+                  "expected getExpiry=" + getExpiry + " to be > than putExpiry=" + putExpiry,
+                  (getExpiry - putExpiry) > 0);
+
+              changeTime = Wait.waitForExpiryClockToChange(lr, getExpiry - EXPIRATION_MS);
+              sub.put(key, value);
+              long subPutExpiry = expiryTask.getExpirationTime();
+              assertTrue(
+                  "CLOCK went back in time! Expected subPutBaseExpiry="
+                      + (subPutExpiry - EXPIRATION_MS)
+                      + " to be >= than changeTime="
+                      + changeTime,
+                  (subPutExpiry - EXPIRATION_MS - changeTime) >= 0);
+              assertTrue(
+                  "expected subPutExpiry=" + subPutExpiry + " to be > than getExpiry=" + getExpiry,
+                  (subPutExpiry - getExpiry) > 0);
+              changeTime = Wait.waitForExpiryClockToChange(lr, subPutExpiry - EXPIRATION_MS);
+              sub.get(key);
+              long subGetExpiry = expiryTask.getExpirationTime();
+              assertTrue(
+                  "CLOCK went back in time! Expected subGetBaseExpiry="
+                      + (subGetExpiry - EXPIRATION_MS)
+                      + " to be >= than changeTime="
+                      + changeTime,
+                  (subGetExpiry - EXPIRATION_MS - changeTime) >= 0);
+              assertTrue(
+                  "expected subGetExpiry="
+                      + subGetExpiry
+                      + " to be > than subPutExpiry="
+                      + subPutExpiry,
+                  (subGetExpiry - subPutExpiry) > 0);
+            }
           }
-
-          public void afterRegionInvalidate2(RegionEvent e) {
-          }
-
-          public void afterUpdate2(EntryEvent e) {
-            this.wasInvoked(); // Clear the flag
-          }
-
-          public void afterCreate2(EntryEvent e) {
-            this.createCount++;
-            // we only expect one create; all the rest should be updates
-            assertEquals(1, this.createCount);
-            this.wasInvoked(); // Clear the flag
-          }
-        };
-        AttributesFactory factory = new AttributesFactory(getRegionAttributes());
-        ExpirationAttributes expire = new ExpirationAttributes(timeout, ExpirationAction.INVALIDATE);
-        factory.setRegionIdleTimeout(expire);
-        factory.setStatisticsEnabled(true);
-        RegionAttributes subRegAttrs = factory.create();
-        factory.setCacheListener(list);
-        RegionAttributes attrs = factory.create();
-
-        Region region = null;
-        Region sub = null;
-        Region.Entry entry = null;
-        long tilt;
-        System.setProperty(LocalRegion.EXPIRY_MS_PROPERTY, "true");
-        ExpiryTask.suspendExpiration();
-        try {
-          region = createRegion(name, attrs);
-          region.put(key, value);
-          tilt = System.currentTimeMillis() + timeout;
-          entry = region.getEntry(key);
-          assertEquals(value, entry.getValue());
-          sub = region.createSubregion(subname, subRegAttrs);
-        } finally {
-          System.getProperties().remove(LocalRegion.EXPIRY_MS_PROPERTY);
-          ExpiryTask.permitExpiration();
-        }
-        waitForInvalidate(entry, tilt, 10);
-
-        assertTrue(list.waitForInvocation(333));
-
-        // The next phase of the test verifies that a get will cause the
-        // expiration time to be extended.
-        // For this phase we don't worry about actually expiring but just
-        // making sure the expiration time gets extended.
-        final int EXPIRATION_MS = 9000;
-        region.getAttributesMutator().setRegionIdleTimeout(new ExpirationAttributes(EXPIRATION_MS, ExpirationAction.INVALIDATE));
-
-        LocalRegion lr = (LocalRegion) region;
-        {
-          ExpiryTask expiryTask = lr.getRegionIdleExpiryTask();
-          region.put(key, value);
-          long createExpiry = expiryTask.getExpirationTime();
-          long changeTime = Wait.waitForExpiryClockToChange(lr, createExpiry - EXPIRATION_MS);
-          region.put(key, "VALUE2");
-          long putExpiry = expiryTask.getExpirationTime();
-          assertTrue("CLOCK went back in time! Expected putBaseExpiry=" + (putExpiry - EXPIRATION_MS) + " to be >= than changeTime=" + changeTime, (putExpiry - EXPIRATION_MS - changeTime) >= 0);
-          assertTrue("expected putExpiry=" + putExpiry + " to be > than createExpiry=" + createExpiry, (putExpiry - createExpiry) > 0);
-          changeTime = Wait.waitForExpiryClockToChange(lr, putExpiry - EXPIRATION_MS);
-          region.get(key);
-          long getExpiry = expiryTask.getExpirationTime();
-          assertTrue("CLOCK went back in time! Expected getBaseExpiry=" + (getExpiry - EXPIRATION_MS) + " to be >= than changeTime=" + changeTime, (getExpiry - EXPIRATION_MS - changeTime) >= 0);
-          assertTrue("expected getExpiry=" + getExpiry + " to be > than putExpiry=" + putExpiry, (getExpiry - putExpiry) > 0);
-
-          changeTime = Wait.waitForExpiryClockToChange(lr, getExpiry - EXPIRATION_MS);
-          sub.put(key, value);
-          long subPutExpiry = expiryTask.getExpirationTime();
-          assertTrue("CLOCK went back in time! Expected subPutBaseExpiry=" + (subPutExpiry - EXPIRATION_MS) + " to be >= than changeTime=" + changeTime, (subPutExpiry - EXPIRATION_MS - changeTime) >= 0);
-          assertTrue("expected subPutExpiry=" + subPutExpiry + " to be > than getExpiry=" + getExpiry, (subPutExpiry - getExpiry) > 0);
-          changeTime = Wait.waitForExpiryClockToChange(lr, subPutExpiry - EXPIRATION_MS);
-          sub.get(key);
-          long subGetExpiry = expiryTask.getExpirationTime();
-          assertTrue("CLOCK went back in time! Expected subGetBaseExpiry=" + (subGetExpiry - EXPIRATION_MS) + " to be >= than changeTime=" + changeTime, (subGetExpiry - EXPIRATION_MS - changeTime) >= 0);
-          assertTrue("expected subGetExpiry=" + subGetExpiry + " to be > than subPutExpiry=" + subPutExpiry, (subGetExpiry - subPutExpiry) > 0);
-        }
-      }
-    });
+        });
   }
 
-  /**
-   * Tests that a region expires with a destruction after a
-   * given idle time.
-   */
+  /** Tests that a region expires with a destruction after a given idle time. */
   @Test
   public void testRegionIdleDestroy() throws CacheException, InterruptedException {
 
-    if (getRegionAttributes().getPartitionAttributes() != null)
-      return;
+    if (getRegionAttributes().getPartitionAttributes() != null) return;
 
     final String name = this.getUniqueName();
     final int timeout = 22; // ms
@@ -3974,11 +4048,10 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     }
   }
 
-  /** Tests basic creation and loading of a snapshot from perspective of
-   *  single VM
-   */
+  /** Tests basic creation and loading of a snapshot from perspective of single VM */
   public static Region preSnapshotRegion = null;
-  private final static int MAX_KEYS = 10;
+
+  private static final int MAX_KEYS = 10;
 
   @Test
   public void testSnapshot() throws IOException, CacheException, ClassNotFoundException {
@@ -3990,11 +4063,12 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     // create region in other VMs if distributed
     boolean isDistributed = getRegionAttributes().getScope().isDistributed();
     if (isDistributed) {
-      Invoke.invokeInEveryVM(new CacheSerializableRunnable("create presnapshot region") {
-        public void run2() throws CacheException {
-          preSnapshotRegion = createRegion(name);
-        }
-      });
+      Invoke.invokeInEveryVM(
+          new CacheSerializableRunnable("create presnapshot region") {
+            public void run2() throws CacheException {
+              preSnapshotRegion = createRegion(name);
+            }
+          });
     }
 
     // add data to region in controller
@@ -4032,11 +4106,12 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
 
       // test postSnapshot behavior in other VMs if distributed
       if (isDistributed) {
-        Invoke.invokeInEveryVM(new CacheSerializableRunnable("postSnapshot") {
-          public void run2() throws CacheException {
-            RegionTestCase.this.remoteTestPostSnapshot(name, false, false);
-          }
-        });
+        Invoke.invokeInEveryVM(
+            new CacheSerializableRunnable("postSnapshot") {
+              public void run2() throws CacheException {
+                RegionTestCase.this.remoteTestPostSnapshot(name, false, false);
+              }
+            });
       }
     } finally {
       file.delete();
@@ -4053,11 +4128,12 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     // create region in other VMs if distributed
     boolean isDistributed = getRegionAttributes().getScope().isDistributed();
     if (isDistributed) {
-      Invoke.invokeInEveryVM(new CacheSerializableRunnable("create presnapshot region") {
-        public void run2() throws CacheException {
-          preSnapshotRegion = createRootRegion(name, getRegionAttributes());
-        }
-      });
+      Invoke.invokeInEveryVM(
+          new CacheSerializableRunnable("create presnapshot region") {
+            public void run2() throws CacheException {
+              preSnapshotRegion = createRootRegion(name, getRegionAttributes());
+            }
+          });
     }
 
     // add data to region in controller
@@ -4101,11 +4177,12 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       // test postSnapshot behavior in other VMs if distributed
       if (isDistributed) {
         log.info("before distributed remoteTestPostSnapshot");
-        Invoke.invokeInEveryVM(new CacheSerializableRunnable("postSnapshot") {
-          public void run2() throws CacheException {
-            RegionTestCase.this.remoteTestPostSnapshot(name, false, true);
-          }
-        });
+        Invoke.invokeInEveryVM(
+            new CacheSerializableRunnable("postSnapshot") {
+              public void run2() throws CacheException {
+                RegionTestCase.this.remoteTestPostSnapshot(name, false, true);
+              }
+            });
         log.info("after distributed remoteTestPostSnapshot");
       }
     } finally {
@@ -4113,7 +4190,8 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     }
   }
 
-  public void remoteTestPostSnapshot(String name, boolean isController, boolean isRoot) throws CacheException {
+  public void remoteTestPostSnapshot(String name, boolean isController, boolean isRoot)
+      throws CacheException {
     assertTrue(preSnapshotRegion.isDestroyed());
 
     try {
@@ -4128,7 +4206,10 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
     Region postSnapshotRegion = isRoot ? getRootRegion(name) : getRootRegion().getSubregion(name);
     assertNotNull("Could not get reference to reinitialized region", postSnapshotRegion);
 
-    boolean expectData = isController || postSnapshotRegion.getAttributes().getMirrorType().isMirrored() || postSnapshotRegion.getAttributes().getDataPolicy().isPreloaded();
+    boolean expectData =
+        isController
+            || postSnapshotRegion.getAttributes().getMirrorType().isMirrored()
+            || postSnapshotRegion.getAttributes().getDataPolicy().isPreloaded();
     log.info("region has " + postSnapshotRegion.keys().size() + " entries");
     assertEquals(expectData ? MAX_KEYS : 0, postSnapshotRegion.keys().size());
     // gets the data either locally or by netSearch
@@ -4139,5 +4220,4 @@ public abstract class RegionTestCase extends JUnit4CacheTestCase {
       assertTrue(postSnapshotRegion.containsKey("9"));
     }
   }
-
 }

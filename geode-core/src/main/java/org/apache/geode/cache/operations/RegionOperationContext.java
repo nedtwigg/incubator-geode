@@ -18,11 +18,11 @@
 package org.apache.geode.cache.operations;
 
 /**
- * Encapsulates a region-level operation in both the pre-operation and
- * post-operation cases. The operations this class encapsulates are
- * {@link org.apache.geode.cache.operations.OperationContext.OperationCode#REGION_CLEAR} 
- * and {@link org.apache.geode.cache.operations.OperationContext.OperationCode#REGION_DESTROY}.
- * 
+ * Encapsulates a region-level operation in both the pre-operation and post-operation cases. The
+ * operations this class encapsulates are {@link
+ * org.apache.geode.cache.operations.OperationContext.OperationCode#REGION_CLEAR} and {@link
+ * org.apache.geode.cache.operations.OperationContext.OperationCode#REGION_DESTROY}.
+ *
  * @since GemFire 5.5
  */
 public abstract class RegionOperationContext extends OperationContext {
@@ -35,9 +35,8 @@ public abstract class RegionOperationContext extends OperationContext {
 
   /**
    * Constructor for a region operation.
-   * 
-   * @param postOperation
-   *                true to set the post-operation flag
+   *
+   * @param postOperation true to set the post-operation flag
    */
   public RegionOperationContext(boolean postOperation) {
     this.callbackArg = null;
@@ -45,19 +44,16 @@ public abstract class RegionOperationContext extends OperationContext {
   }
 
   /**
-   * Return the operation associated with the <code>OperationContext</code>
-   * object.
-   * 
-   * @return The <code>OperationCode</code> of this operation. This is one of
-   *         {@link org.apache.geode.cache.operations.OperationContext.OperationCode#REGION_CLEAR} or
-   *         {@link org.apache.geode.cache.operations.OperationContext.OperationCode#REGION_DESTROY}.
+   * Return the operation associated with the <code>OperationContext</code> object.
+   *
+   * @return The <code>OperationCode</code> of this operation. This is one of {@link
+   *     org.apache.geode.cache.operations.OperationContext.OperationCode#REGION_CLEAR} or {@link
+   *     org.apache.geode.cache.operations.OperationContext.OperationCode#REGION_DESTROY}.
    */
   @Override
   public abstract OperationCode getOperationCode();
 
-  /**
-   * True if the context is for post-operation.
-   */
+  /** True if the context is for post-operation. */
   @Override
   public boolean isPostOperation() {
     return this.postOperation;
@@ -65,7 +61,7 @@ public abstract class RegionOperationContext extends OperationContext {
 
   /**
    * Get the callback argument object for this operation.
-   * 
+   *
    * @return the callback argument object for this operation.
    */
   public Object getCallbackArg() {
@@ -74,12 +70,10 @@ public abstract class RegionOperationContext extends OperationContext {
 
   /**
    * Set the callback argument object for this operation.
-   * 
-   * @param callbackArg
-   *                the callback argument object for this operation.
+   *
+   * @param callbackArg the callback argument object for this operation.
    */
   public void setCallbackArg(Object callbackArg) {
     this.callbackArg = callbackArg;
   }
-
 }

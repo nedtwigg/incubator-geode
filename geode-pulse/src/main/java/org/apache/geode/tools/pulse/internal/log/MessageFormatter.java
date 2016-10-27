@@ -34,10 +34,9 @@ import org.apache.geode.tools.pulse.internal.data.Repository;
 
 /**
  * Class MessageFormatter
- * 
- * MessageFormatter is the custom formatter class for formatting the log
- * messages.
- * 
+ *
+ * <p>MessageFormatter is the custom formatter class for formatting the log messages.
+ *
  * @since GemFire version 7.0.1
  */
 public class MessageFormatter extends Formatter {

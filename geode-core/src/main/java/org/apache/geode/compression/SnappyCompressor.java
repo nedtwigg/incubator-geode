@@ -23,22 +23,20 @@ import org.iq80.snappy.CorruptionException;
 import org.iq80.snappy.Snappy;
 
 /**
- * An implementation of {@link Compressor} for Google's Snappy compression
- * codec. Utilizes the java-snappy wrapper.
- * 
+ * An implementation of {@link Compressor} for Google's Snappy compression codec. Utilizes the
+ * java-snappy wrapper.
+ *
  * @since GemFire 8.0
  */
 public final class SnappyCompressor implements Compressor, Serializable {
   private static final long serialVersionUID = 496609875302446099L;
 
-  /**
-   * Create a new instance of the SnappyCompressor.
-   */
-  public SnappyCompressor() {
-  }
+  /** Create a new instance of the SnappyCompressor. */
+  public SnappyCompressor() {}
 
   /**
    * Get the single, default instance of the SnappyCompressor.
+   *
    * @deprecated As of Geode 1.0, getDefaultInstance is deprecated. Use constructor instead.
    */
   public static final SnappyCompressor getDefaultInstance() {

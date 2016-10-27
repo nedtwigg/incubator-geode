@@ -86,11 +86,13 @@ public class MemberCommandsDUnitTest extends JUnit4CacheTestCase {
   private void createRegionsWithSubRegions() {
     final Cache cache = getCache();
 
-    RegionFactory<String, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.REPLICATE);
+    RegionFactory<String, Integer> dataRegionFactory =
+        cache.createRegionFactory(RegionShortcut.REPLICATE);
     dataRegionFactory.setConcurrencyLevel(3);
     Region<String, Integer> region1 = dataRegionFactory.create(REGION1);
     region1.createSubregion(SUBREGION1C, region1.getAttributes());
-    Region<String, Integer> subregion2 = region1.createSubregion(SUBREGION1A, region1.getAttributes());
+    Region<String, Integer> subregion2 =
+        region1.createSubregion(SUBREGION1A, region1.getAttributes());
 
     subregion2.createSubregion(SUBREGION1B, subregion2.getAttributes());
     dataRegionFactory.create(REGION2);
@@ -100,21 +102,31 @@ public class MemberCommandsDUnitTest extends JUnit4CacheTestCase {
   private void createPartitionedRegion1() {
     final Cache cache = getCache();
     // Create the data region
-    RegionFactory<String, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
+    RegionFactory<String, Integer> dataRegionFactory =
+        cache.createRegionFactory(RegionShortcut.PARTITION);
     dataRegionFactory.create(PR1);
   }
 
   private void createPartitionedRegion(String regionName) {
     final Cache cache = getCache();
     // Create the data region
-    RegionFactory<String, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
+    RegionFactory<String, Integer> dataRegionFactory =
+        cache.createRegionFactory(RegionShortcut.PARTITION);
     dataRegionFactory.setConcurrencyLevel(4);
-    EvictionAttributes ea = EvictionAttributes.createLIFOEntryAttributes(100, EvictionAction.LOCAL_DESTROY);
+    EvictionAttributes ea =
+        EvictionAttributes.createLIFOEntryAttributes(100, EvictionAction.LOCAL_DESTROY);
     dataRegionFactory.setEvictionAttributes(ea);
     dataRegionFactory.setEnableAsyncConflation(true);
 
     FixedPartitionAttributes fpa = FixedPartitionAttributes.createFixedPartition("Par1", true);
-    PartitionAttributes pa = new PartitionAttributesFactory().setLocalMaxMemory(100).setRecoveryDelay(2).setTotalMaxMemory(200).setRedundantCopies(1).addFixedPartitionAttributes(fpa).create();
+    PartitionAttributes pa =
+        new PartitionAttributesFactory()
+            .setLocalMaxMemory(100)
+            .setRecoveryDelay(2)
+            .setTotalMaxMemory(200)
+            .setRedundantCopies(1)
+            .addFixedPartitionAttributes(fpa)
+            .create();
     dataRegionFactory.setPartitionAttributes(pa);
 
     dataRegionFactory.create(regionName);
@@ -123,14 +135,15 @@ public class MemberCommandsDUnitTest extends JUnit4CacheTestCase {
   private void createLocalRegion() {
     final Cache cache = getCache();
     // Create the data region
-    RegionFactory<String, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.LOCAL);
+    RegionFactory<String, Integer> dataRegionFactory =
+        cache.createRegionFactory(RegionShortcut.LOCAL);
     dataRegionFactory.create("LocalRegion");
   }
 
   private void setupSystem() throws IOException {
     disconnectAllFromDS();
     final Host host = Host.getHost(0);
-    final VM[] servers = { host.getVM(0), host.getVM(1) };
+    final VM[] servers = {host.getVM(0), host.getVM(1)};
 
     final Properties propsMe = createProperties("me", "G1");
     final Properties propsServer1 = createProperties("Server1", "G1");
@@ -138,25 +151,30 @@ public class MemberCommandsDUnitTest extends JUnit4CacheTestCase {
 
     getSystem(propsMe);
     final Cache cache = getCache();
-    RegionFactory<String, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.REPLICATE_PROXY);
+    RegionFactory<String, Integer> dataRegionFactory =
+        cache.createRegionFactory(RegionShortcut.REPLICATE_PROXY);
     dataRegionFactory.setConcurrencyLevel(5);
     Region<String, Integer> region1 = dataRegionFactory.create(REGION1);
 
-    servers[1].invoke(new SerializableRunnable("Create cache for server1") {
-      public void run() {
-        getSystem(propsServer2);
-        createRegionsWithSubRegions();
-        createLocalRegion();
-        createPartitionedRegion("ParReg1");
-      }
-    });
-    servers[0].invoke(new SerializableRunnable("Create cache for server0") {
-      public void run() {
-        getSystem(propsServer1);
-        createRegionsWithSubRegions();
-        createLocalRegion();
-      }
-    });
+    servers[1]
+        .invoke(
+            new SerializableRunnable("Create cache for server1") {
+              public void run() {
+                getSystem(propsServer2);
+                createRegionsWithSubRegions();
+                createLocalRegion();
+                createPartitionedRegion("ParReg1");
+              }
+            });
+    servers[0]
+        .invoke(
+            new SerializableRunnable("Create cache for server0") {
+              public void run() {
+                getSystem(propsServer1);
+                createRegionsWithSubRegions();
+                createLocalRegion();
+              }
+            });
   }
 
   private Properties createProperties(Host host, int locatorPort) {
@@ -172,9 +190,7 @@ public class MemberCommandsDUnitTest extends JUnit4CacheTestCase {
     return props;
   }
 
-  /**
-   * Creates the cache.
-   */
+  /** Creates the cache. */
   private void createCache(Properties props) {
     getSystem(props);
     final Cache cache = getCache();
@@ -190,7 +206,8 @@ public class MemberCommandsDUnitTest extends JUnit4CacheTestCase {
   public void testListMemberAll() throws IOException, ClassNotFoundException {
     setupSystem();
     CommandProcessor commandProcessor = new CommandProcessor();
-    Result result = commandProcessor.createCommandStatement(CliStrings.LIST_MEMBER, EMPTY_ENV).process();
+    Result result =
+        commandProcessor.createCommandStatement(CliStrings.LIST_MEMBER, EMPTY_ENV).process();
     getLogWriter().info("#SB" + getResultAsString(result));
     assertEquals(true, result.getStatus().equals(Status.OK));
   }
@@ -204,7 +221,7 @@ public class MemberCommandsDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testListMemberWithNoCache() throws IOException, ClassNotFoundException {
     final Host host = Host.getHost(0);
-    final VM[] servers = { host.getVM(0), host.getVM(1) };
+    final VM[] servers = {host.getVM(0), host.getVM(1)};
     final int openPorts[] = AvailablePortHelper.getRandomAvailableTCPPorts(1);
     final File logFile = new File(getUniqueName() + "-locator" + openPorts[0] + ".log");
 
@@ -213,7 +230,8 @@ public class MemberCommandsDUnitTest extends JUnit4CacheTestCase {
 
       final Properties props = createProperties(host, openPorts[0]);
       CommandProcessor commandProcessor = new CommandProcessor();
-      Result result = commandProcessor.createCommandStatement(CliStrings.LIST_MEMBER, EMPTY_ENV).process();
+      Result result =
+          commandProcessor.createCommandStatement(CliStrings.LIST_MEMBER, EMPTY_ENV).process();
 
       getLogWriter().info("#SB" + getResultAsString(result));
       assertEquals(true, result.getStatus().equals(Status.ERROR));
@@ -256,7 +274,10 @@ public class MemberCommandsDUnitTest extends JUnit4CacheTestCase {
 
     while (iters.hasNext()) {
       DistributedMember member = iters.next();
-      Result result = commandProcessor.createCommandStatement("describe member --name=" + member.getId(), EMPTY_ENV).process();
+      Result result =
+          commandProcessor
+              .createCommandStatement("describe member --name=" + member.getId(), EMPTY_ENV)
+              .process();
       assertEquals(true, result.getStatus().equals(Status.OK));
       getLogWriter().info("#SB" + getResultAsString(result));
       //assertIndexDetailsEquals(true, result.getStatus().equals(Status.OK));

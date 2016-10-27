@@ -30,10 +30,7 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
-/**
- * Test TransactionManagerImpl methods not tested by UserTransactionImplTest
- * 
- */
+/** Test TransactionManagerImpl methods not tested by UserTransactionImplTest */
 @Category(IntegrationTest.class)
 public class TransactionManagerImplJUnitTest {
 
@@ -63,8 +60,7 @@ public class TransactionManagerImplJUnitTest {
   }
 
   @After
-  public void tearDown() {
-  }
+  public void tearDown() {}
 
   @Test
   public void testGetTransaction() throws Exception {
@@ -96,7 +92,8 @@ public class TransactionManagerImplJUnitTest {
     Transaction txn = (Transaction) tm.getTransactionMap().get(thread);
     GlobalTransaction gTxn1 = (GlobalTransaction) tm.getGlobalTransactionMap().get(txn);
     GlobalTransaction gTxn2 = tm.getGlobalTransaction();
-    assertTrue("Get Global Transaction not returning the correct global transaction", gTxn1 == gTxn2);
+    assertTrue(
+        "Get Global Transaction not returning the correct global transaction", gTxn1 == gTxn2);
     utx.commit();
   }
 
@@ -106,16 +103,17 @@ public class TransactionManagerImplJUnitTest {
     utx.begin();
     Thread thread = Thread.currentThread();
     Transaction txn = (Transaction) tm.getTransactionMap().get(thread);
-    txn.registerSynchronization(new Synchronization() {
+    txn.registerSynchronization(
+        new Synchronization() {
 
-      public void beforeCompletion() {
-        throw new RuntimeException("MyException");
-      }
+          public void beforeCompletion() {
+            throw new RuntimeException("MyException");
+          }
 
-      public void afterCompletion(int status) {
-        assertTrue(status == Status.STATUS_ROLLEDBACK);
-      }
-    });
+          public void afterCompletion(int status) {
+            assertTrue(status == Status.STATUS_ROLLEDBACK);
+          }
+        });
     try {
       utx.commit();
       fail("The commit should have thrown RolledBackException");
@@ -131,20 +129,21 @@ public class TransactionManagerImplJUnitTest {
     utx.begin();
     Thread thread = Thread.currentThread();
     Transaction txn = (Transaction) tm.getTransactionMap().get(thread);
-    txn.registerSynchronization(new Synchronization() {
+    txn.registerSynchronization(
+        new Synchronization() {
 
-      public void beforeCompletion() {
-        try {
-          utx.setRollbackOnly();
-        } catch (Exception se) {
-          fail("Set Roll Back only caused failure.Exception =" + se);
-        }
-      }
+          public void beforeCompletion() {
+            try {
+              utx.setRollbackOnly();
+            } catch (Exception se) {
+              fail("Set Roll Back only caused failure.Exception =" + se);
+            }
+          }
 
-      public void afterCompletion(int status) {
-        assertTrue(status == Status.STATUS_ROLLEDBACK);
-      }
-    });
+          public void afterCompletion(int status) {
+            assertTrue(status == Status.STATUS_ROLLEDBACK);
+          }
+        });
     try {
       utx.commit();
       fail("The commit should have thrown RolledBackException");
@@ -159,25 +158,26 @@ public class TransactionManagerImplJUnitTest {
     utx.begin();
     Thread thread = Thread.currentThread();
     Transaction txn = (Transaction) tm.getTransactionMap().get(thread);
-    txn.registerSynchronization(new Synchronization() {
+    txn.registerSynchronization(
+        new Synchronization() {
 
-      public void beforeCompletion() {
-      }
+          public void beforeCompletion() {}
 
-      public void afterCompletion(int status) {
-        assertTrue(status == Status.STATUS_ROLLEDBACK);
-      }
-    });
-    txn.enlistResource(new XAResourceAdaptor() {
+          public void afterCompletion(int status) {
+            assertTrue(status == Status.STATUS_ROLLEDBACK);
+          }
+        });
+    txn.enlistResource(
+        new XAResourceAdaptor() {
 
-      public void commit(Xid arg0, boolean arg1) throws XAException {
-        throw new XAException(5);
-      }
+          public void commit(Xid arg0, boolean arg1) throws XAException {
+            throw new XAException(5);
+          }
 
-      public void rollback(Xid arg0) throws XAException {
-        throw new XAException(6);
-      }
-    });
+          public void rollback(Xid arg0) throws XAException {
+            throw new XAException(6);
+          }
+        });
     try {
       utx.commit();
       fail("The commit should have thrown SystemException");
@@ -192,25 +192,26 @@ public class TransactionManagerImplJUnitTest {
     utx.begin();
     Thread thread = Thread.currentThread();
     Transaction txn = (Transaction) tm.getTransactionMap().get(thread);
-    txn.registerSynchronization(new Synchronization() {
+    txn.registerSynchronization(
+        new Synchronization() {
 
-      public void beforeCompletion() {
-        fail("Notify Before Completion should not be called in rollback");
-      }
+          public void beforeCompletion() {
+            fail("Notify Before Completion should not be called in rollback");
+          }
 
-      public void afterCompletion(int status) {
-        assertTrue(status == Status.STATUS_ROLLEDBACK);
-      }
-    });
-    txn.enlistResource(new XAResourceAdaptor() {
+          public void afterCompletion(int status) {
+            assertTrue(status == Status.STATUS_ROLLEDBACK);
+          }
+        });
+    txn.enlistResource(
+        new XAResourceAdaptor() {
 
-      public void commit(Xid arg0, boolean arg1) throws XAException {
-      }
+          public void commit(Xid arg0, boolean arg1) throws XAException {}
 
-      public void rollback(Xid arg0) throws XAException {
-        throw new XAException(6);
-      }
-    });
+          public void rollback(Xid arg0) throws XAException {
+            throw new XAException(6);
+          }
+        });
     try {
       utx.rollback();
       fail("The rollback should have thrown SystemException");
@@ -225,18 +226,18 @@ public class TransactionManagerImplJUnitTest {
     utx.begin();
     Thread thread = Thread.currentThread();
     Transaction txn = (Transaction) tm.getTransactionMap().get(thread);
-    txn.registerSynchronization(new Synchronization() {
+    txn.registerSynchronization(
+        new Synchronization() {
 
-      public void beforeCompletion() {
-        fail("Notify Before Completion should not be called in rollback");
-      }
+          public void beforeCompletion() {
+            fail("Notify Before Completion should not be called in rollback");
+          }
 
-      public void afterCompletion(int status) {
-        assertTrue(status == Status.STATUS_ROLLEDBACK);
-      }
-    });
-    txn.enlistResource(new XAResourceAdaptor() {
-    });
+          public void afterCompletion(int status) {
+            assertTrue(status == Status.STATUS_ROLLEDBACK);
+          }
+        });
+    txn.enlistResource(new XAResourceAdaptor() {});
     utx.rollback();
     assertTrue(tm.getGlobalTransactionMap().isEmpty());
     System.out.println("RolledBack successfully");
@@ -267,18 +268,13 @@ class XAResourceAdaptor implements XAResource {
     return 0;
   }
 
-  public void forget(Xid arg0) throws XAException {
-  }
+  public void forget(Xid arg0) throws XAException {}
 
-  public void rollback(Xid arg0) throws XAException {
-  }
+  public void rollback(Xid arg0) throws XAException {}
 
-  public void end(Xid arg0, int arg1) throws XAException {
-  }
+  public void end(Xid arg0, int arg1) throws XAException {}
 
-  public void start(Xid arg0, int arg1) throws XAException {
-  }
+  public void start(Xid arg0, int arg1) throws XAException {}
 
-  public void commit(Xid arg0, boolean arg1) throws XAException {
-  }
+  public void commit(Xid arg0, boolean arg1) throws XAException {}
 }

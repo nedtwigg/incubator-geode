@@ -45,13 +45,12 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VersionedStatsLRURegionEntryHeapUUIDKey extends VersionedStatsLRURegionEntryHeap {
-  public VersionedStatsLRURegionEntryHeapUUIDKey(RegionEntryContext context, UUID key, Object value) {
+  public VersionedStatsLRURegionEntryHeapUUIDKey(
+      RegionEntryContext context, UUID key, Object value) {
     super(context, value);
     // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
     this.keyMostSigBits = key.getMostSignificantBits();
@@ -62,9 +61,14 @@ public class VersionedStatsLRURegionEntryHeapUUIDKey extends VersionedStatsLRURe
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VersionedStatsLRURegionEntryHeapUUIDKey> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VersionedStatsLRURegionEntryHeapUUIDKey.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VersionedStatsLRURegionEntryHeapUUIDKey>
+      lastModifiedUpdater =
+          AtomicLongFieldUpdater.newUpdater(
+              VersionedStatsLRURegionEntryHeapUUIDKey.class, "lastModified");
   private volatile Object value;
 
   @Override
@@ -85,9 +89,7 @@ public class VersionedStatsLRURegionEntryHeapUUIDKey extends VersionedStatsLRURe
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -96,16 +98,12 @@ public class VersionedStatsLRURegionEntryHeapUUIDKey extends VersionedStatsLRURe
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -118,7 +116,9 @@ public class VersionedStatsLRURegionEntryHeapUUIDKey extends VersionedStatsLRURe
   }
 
   public final synchronized int updateEntrySize(EnableLRU capacityController) {
-    return updateEntrySize(capacityController, _getValue()); // OFHEAP: _getValue ok w/o incing refcount because we are synced and only getting the size
+    return updateEntrySize(
+        capacityController,
+        _getValue()); // OFHEAP: _getValue ok w/o incing refcount because we are synced and only getting the size
   }
 
   // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
@@ -227,8 +227,14 @@ public class VersionedStatsLRURegionEntryHeapUUIDKey extends VersionedStatsLRURe
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VersionedStatsLRURegionEntryHeapUUIDKey> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VersionedStatsLRURegionEntryHeapUUIDKey.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VersionedStatsLRURegionEntryHeapUUIDKey> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VersionedStatsLRURegionEntryHeapUUIDKey.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VersionedStatsLRURegionEntryHeapUUIDKey>
+      hitCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VersionedStatsLRURegionEntryHeapUUIDKey.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VersionedStatsLRURegionEntryHeapUUIDKey>
+      missCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VersionedStatsLRURegionEntryHeapUUIDKey.class, "missCount");
 
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {
@@ -349,7 +355,14 @@ public class VersionedStatsLRURegionEntryHeapUUIDKey extends VersionedStatsLRURe
     return tag;
   }
 
-  public void processVersionTag(LocalRegion r, VersionTag tag, boolean isTombstoneFromGII, boolean hasDelta, VersionSource thisVM, InternalDistributedMember sender, boolean checkForConflicts) {
+  public void processVersionTag(
+      LocalRegion r,
+      VersionTag tag,
+      boolean isTombstoneFromGII,
+      boolean hasDelta,
+      VersionSource thisVM,
+      InternalDistributedMember sender,
+      boolean checkForConflicts) {
     basicProcessVersionTag(r, tag, isTombstoneFromGII, hasDelta, thisVM, sender, checkForConflicts);
   }
 
@@ -360,12 +373,12 @@ public class VersionedStatsLRURegionEntryHeapUUIDKey extends VersionedStatsLRURe
     super.processVersionTag(cacheEvent);
   }
 
-  /** get rvv internal high byte.  Used by region entries for transferring to storage */
+  /** get rvv internal high byte. Used by region entries for transferring to storage */
   public short getRegionVersionHighBytes() {
     return this.regionVersionHighBytes;
   }
 
-  /** get rvv internal low bytes.  Used by region entries for transferring to storage */
+  /** get rvv internal low bytes. Used by region entries for transferring to storage */
   public int getRegionVersionLowBytes() {
     return this.regionVersionLowBytes;
   }
@@ -384,7 +397,8 @@ public class VersionedStatsLRURegionEntryHeapUUIDKey extends VersionedStatsLRURe
   public boolean isKeyEqual(Object k) {
     if (k instanceof UUID) {
       UUID uuid = (UUID) k;
-      return uuid.getLeastSignificantBits() == this.keyLeastSigBits && uuid.getMostSignificantBits() == this.keyMostSigBits;
+      return uuid.getLeastSignificantBits() == this.keyLeastSigBits
+          && uuid.getMostSignificantBits() == this.keyMostSigBits;
     }
     return false;
   }

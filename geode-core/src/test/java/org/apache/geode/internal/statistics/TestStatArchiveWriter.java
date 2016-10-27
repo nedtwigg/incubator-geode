@@ -18,9 +18,7 @@ package org.apache.geode.internal.statistics;
 
 import java.util.TimeZone;
 
-/**
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class TestStatArchiveWriter extends StatArchiveWriter {
   public static final long WRITER_PREVIOUS_TIMESTAMP_NANOS = 432662613L;
   public static final long WRITER_INITIAL_DATE_MILLIS = 1340037741173L;

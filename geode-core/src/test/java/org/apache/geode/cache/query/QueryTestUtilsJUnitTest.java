@@ -35,11 +35,7 @@ import org.apache.geode.cache.query.data.Numbers;
 import org.apache.geode.cache.query.data.Portfolio;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * A sample test class using the QueryTestUtils
- * 
- * 
- */
+/** A sample test class using the QueryTestUtils */
 @Category(IntegrationTest.class)
 public class QueryTestUtilsJUnitTest {
 
@@ -84,7 +80,7 @@ public class QueryTestUtilsJUnitTest {
   @Test
   public void testQueries() {
     utils.initializeQueryMap();
-    String[] queries = { "1" }; //SELECT * FROM /exampleRegion WHERE status = 'active'
+    String[] queries = {"1"}; //SELECT * FROM /exampleRegion WHERE status = 'active'
     int results = 0;
     try {
       for (Object result : utils.executeQueries(queries)) {
@@ -109,7 +105,7 @@ public class QueryTestUtilsJUnitTest {
   @Test
   public void testQueriesWithoutDistinct() throws Exception {
     this.populateOffsetPortfolioValuesInRegion("exampleRegion", 2);
-    String[] queries = { "181" };
+    String[] queries = {"181"};
     int results = 0;
     for (Object result : utils.executeQueriesWithoutDistinct(queries)) {
       if (result instanceof SelectResults) {
@@ -129,7 +125,7 @@ public class QueryTestUtilsJUnitTest {
 
   @Test
   public void testQueriesWithDistinct() throws Exception {
-    String[] queries = { "181" };
+    String[] queries = {"181"};
     int results = 0;
     int i = 7;
     for (Object result : utils.executeQueriesWithDistinct(queries)) {
@@ -152,5 +148,4 @@ public class QueryTestUtilsJUnitTest {
   public void tearDown() throws Exception {
     utils.closeCache();
   }
-
 }

@@ -45,7 +45,7 @@ public class ClientTXStateStub extends TXStateStub {
 
   //  /** a flag to turn off automatic replay of transactions.  Maybe this should be a pool property? */
   //  private static final boolean ENABLE_REPLAY = Boolean.getBoolean("gemfire.enable-transaction-replay");
-  //  
+  //
   //  /** time to pause between transaction replays, in millis */
   //  private static final int TRANSACTION_REPLAY_PAUSE = Integer.getInteger("gemfire.transaction-replay-pause", 500).intValue();
 
@@ -57,35 +57,35 @@ public class ClientTXStateStub extends TXStateStub {
   private ServerLocation serverAffinityLocation;
 
   /** the operations performed in the current transaction are held in this list */
-  private List<TransactionalOperation> recordedOperations = Collections.synchronizedList(new LinkedList<TransactionalOperation>());
+  private List<TransactionalOperation> recordedOperations =
+      Collections.synchronizedList(new LinkedList<TransactionalOperation>());
 
   /** lock request for obtaining local locks */
   private TXLockRequest lockReq;
 
   private Runnable internalAfterLocalLocks;
 
-  /**
-   * System property to disable conflict checks on clients.
-   */
-  private static final boolean DISABLE_CONFLICT_CHECK_ON_CLIENT = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disableConflictChecksOnClient");
+  /** System property to disable conflict checks on clients. */
+  private static final boolean DISABLE_CONFLICT_CHECK_ON_CLIENT =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disableConflictChecksOnClient");
 
-  /**
-   * @return true if transactional operation recording is enabled (test hook)
-   */
+  /** @return true if transactional operation recording is enabled (test hook) */
   public static boolean transactionRecordingEnabled() {
     return !DISABLE_CONFLICT_CHECK_ON_CLIENT || recordedTransactionalOperations != null;
   }
 
   /**
    * test hook
-   *   
+   *
    * @param t a ThreadLocal to hold lists of TransactionalOperations
    */
-  public static void setTransactionalOperationContainer(ThreadLocal<List<TransactionalOperation>> t) {
+  public static void setTransactionalOperationContainer(
+      ThreadLocal<List<TransactionalOperation>> t) {
     recordedTransactionalOperations = t;
   }
 
-  public ClientTXStateStub(TXStateProxy stateProxy, DistributedMember target, LocalRegion firstRegion) {
+  public ClientTXStateStub(
+      TXStateProxy stateProxy, DistributedMember target, LocalRegion firstRegion) {
     super(stateProxy, target);
     firstProxy = firstRegion.getServerProxy();
     this.firstProxy.getPool().setupServerAffinity(true);
@@ -110,9 +110,8 @@ public class ClientTXStateStub extends TXStateStub {
 
   /**
    * Lock the keys in a local transaction manager
-   * 
-   * @throws CommitConflictException
-   *           if the key is already locked by some other transaction
+   *
+   * @throws CommitConflictException if the key is already locked by some other transaction
    */
   private void obtainLocalLocks() {
     lockReq = new TXLockRequest();
@@ -124,7 +123,8 @@ public class ClientTXStateStub extends TXStateStub {
           rlr = new TXRegionLockRequestImpl(cache.getRegionByPath(txOp.getRegionName()));
           lockReq.addLocalRequest(rlr);
         }
-        if (txOp.getOperation() == ServerRegionOperation.PUT_ALL || txOp.getOperation() == ServerRegionOperation.REMOVE_ALL) {
+        if (txOp.getOperation() == ServerRegionOperation.PUT_ALL
+            || txOp.getOperation() == ServerRegionOperation.REMOVE_ALL) {
           rlr.addEntryKeys(txOp.getKeys());
         } else {
           rlr.addEntryKey(txOp.getKey());
@@ -176,9 +176,16 @@ public class ClientTXStateStub extends TXStateStub {
   @Override
   protected void validateRegionCanJoinTransaction(LocalRegion region) throws TransactionException {
     if (!region.hasServerProxy()) {
-      throw new TransactionException("Region " + region.getName() + " is local to this client and cannot be used in a transaction.");
-    } else if (this.firstProxy != null && this.firstProxy.getPool() != region.getServerProxy().getPool()) {
-      throw new TransactionException("Region " + region.getName() + " is using a different server pool than other regions in this transaction.");
+      throw new TransactionException(
+          "Region "
+              + region.getName()
+              + " is local to this client and cannot be used in a transaction.");
+    } else if (this.firstProxy != null
+        && this.firstProxy.getPool() != region.getServerProxy().getPool()) {
+      throw new TransactionException(
+          "Region "
+              + region.getName()
+              + " is using a different server pool than other regions in this transaction.");
     }
   }
 
@@ -200,7 +207,8 @@ public class ClientTXStateStub extends TXStateStub {
       TXCommitMessage txcm = this.firstProxy.afterCompletion(status, proxy.getTxId().getUniqId());
       if (status == Status.STATUS_COMMITTED) {
         if (txcm == null) {
-          throw new TransactionInDoubtException(LocalizedStrings.ClientTXStateStub_COMMIT_FAILED_ON_SERVER.toLocalizedString());
+          throw new TransactionInDoubtException(
+              LocalizedStrings.ClientTXStateStub_COMMIT_FAILED_ON_SERVER.toLocalizedString());
         } else {
           afterServerCommit(txcm);
         }
@@ -249,7 +257,10 @@ public class ClientTXStateStub extends TXStateStub {
     this.serverAffinityLocation = this.firstProxy.getPool().getServerAffinityLocation();
     this.firstProxy.getPool().releaseServerAffinity();
     if (logger.isDebugEnabled()) {
-      logger.debug("TX: suspending transaction: {} server delegate: {}", getTransactionId(), this.serverAffinityLocation);
+      logger.debug(
+          "TX: suspending transaction: {} server delegate: {}",
+          getTransactionId(),
+          this.serverAffinityLocation);
     }
   }
 
@@ -257,22 +268,23 @@ public class ClientTXStateStub extends TXStateStub {
     this.firstProxy.getPool().setupServerAffinity(true);
     this.firstProxy.getPool().setServerAffinityLocation(this.serverAffinityLocation);
     if (logger.isDebugEnabled()) {
-      logger.debug("TX: resuming transaction: {} server delegate: {}", getTransactionId(), this.serverAffinityLocation);
+      logger.debug(
+          "TX: resuming transaction: {} server delegate: {}",
+          getTransactionId(),
+          this.serverAffinityLocation);
     }
   }
 
-  /**
-   * test hook - maintain a list of tx operations
-   */
-  public void recordTXOperation(ServerRegionDataAccess region, ServerRegionOperation op, Object key, Object arguments[]) {
+  /** test hook - maintain a list of tx operations */
+  public void recordTXOperation(
+      ServerRegionDataAccess region, ServerRegionOperation op, Object key, Object arguments[]) {
     if (ClientTXStateStub.transactionRecordingEnabled()) {
-      this.recordedOperations.add(new TransactionalOperation(this, region.getRegionName(), op, key, arguments));
+      this.recordedOperations.add(
+          new TransactionalOperation(this, region.getRegionName(), op, key, arguments));
     }
   }
 
-  /** Add an internal callback which is run after the the local locks
-   * are obtained
-   */
+  /** Add an internal callback which is run after the the local locks are obtained */
   public void setAfterLocalLocks(Runnable afterLocalLocks) {
     this.internalAfterLocalLocks = afterLocalLocks;
   }

@@ -48,7 +48,8 @@ public class SMoveExecutor extends SetExecutor {
     checkDataType(source, RedisDataType.REDIS_SET, context);
     checkDataType(destination, RedisDataType.REDIS_SET, context);
     @SuppressWarnings("unchecked")
-    Region<ByteArrayWrapper, Boolean> sourceRegion = (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getRegion(source);
+    Region<ByteArrayWrapper, Boolean> sourceRegion =
+        (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getRegion(source);
 
     if (sourceRegion == null) {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_MOVED));
@@ -64,10 +65,11 @@ public class SMoveExecutor extends SetExecutor {
     }
 
     @SuppressWarnings("unchecked")
-    Region<ByteArrayWrapper, Boolean> destinationRegion = (Region<ByteArrayWrapper, Boolean>) getOrCreateRegion(context, destination, RedisDataType.REDIS_SET);
+    Region<ByteArrayWrapper, Boolean> destinationRegion =
+        (Region<ByteArrayWrapper, Boolean>)
+            getOrCreateRegion(context, destination, RedisDataType.REDIS_SET);
     destinationRegion.put(mem, true);
 
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), MOVED));
   }
-
 }

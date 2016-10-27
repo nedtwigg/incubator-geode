@@ -23,22 +23,20 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * A builder that caches the singleton value. 
- * 
- * The result is created and cached by the first thread that invokes the underlying
- * {@code Callable}.  Concurrent requests will block and be notified once the
- * originating request has completed.  Once the result has been cached, all 
- * subsequent invocations will return the cached result until it has been cleared.
- * When the value type acquires resources, it is recommended that the type implement
- * {@link Closeable}.  This will allow the resources to be freed if a temporary
- * value is created by a concurrent clear operation.  In all other cases the user
- * is responsible for clearing an resources held by the cached value.
- * <p>
- * The caching technique is most useful as a defense against a call that is invoked by
- * multiple threads but executes blocking operations serially.  Even when the call
- * supports timeouts, the serial execution penalty can cause "timeout stacking"
- * and thus unbounded delays on the invoking threads.
- * 
+ * A builder that caches the singleton value.
+ *
+ * <p>The result is created and cached by the first thread that invokes the underlying {@code
+ * Callable}. Concurrent requests will block and be notified once the originating request has
+ * completed. Once the result has been cached, all subsequent invocations will return the cached
+ * result until it has been cleared. When the value type acquires resources, it is recommended that
+ * the type implement {@link Closeable}. This will allow the resources to be freed if a temporary
+ * value is created by a concurrent clear operation. In all other cases the user is responsible for
+ * clearing an resources held by the cached value.
+ *
+ * <p>The caching technique is most useful as a defense against a call that is invoked by multiple
+ * threads but executes blocking operations serially. Even when the call supports timeouts, the
+ * serial execution penalty can cause "timeout stacking" and thus unbounded delays on the invoking
+ * threads.
  *
  * @param <T> the type of the singleton
  */
@@ -51,33 +49,33 @@ public class SingletonValue<T extends Closeable> {
   public interface SingletonBuilder<T extends Closeable> {
     /**
      * Constructs the value.
-     * 
+     *
      * @return the value
      * @throws IOException unable to construct the value
      */
     T create() throws IOException;
 
-    /**
-     * Invoked after the value is successfully created and stored.
-     */
+    /** Invoked after the value is successfully created and stored. */
     void postCreate();
 
-    /**
-     * Invoked when a thread is waiting for the result of {@link #create}.
-     */
+    /** Invoked when a thread is waiting for the result of {@link #create}. */
     void createInProgress();
   }
 
-  /** 
-   * Defines the value state.  Allowable transitions are:
+  /**
+   * Defines the value state. Allowable transitions are:
+   *
    * <ul>
-   *  <li>{@code NOT_SET} -> {@code IN_PROGRESS}
-   *  <li>{@code IN_PROGRESS} -> {@code NOT_SET}, {@code SET}, {@code CLEARED}
-   *  <li>{@code SET} -> {@code NOT_SET}, {@code CLEARED}
+   *   <li>{@code NOT_SET} -> {@code IN_PROGRESS}
+   *   <li>{@code IN_PROGRESS} -> {@code NOT_SET}, {@code SET}, {@code CLEARED}
+   *   <li>{@code SET} -> {@code NOT_SET}, {@code CLEARED}
    * </ul>
    */
   private enum ValueState {
-    NOT_SET, IN_PROGRESS, SET, CLEARED
+    NOT_SET,
+    IN_PROGRESS,
+    SET,
+    CLEARED
   }
 
   /** the delegated invocation */
@@ -111,6 +109,7 @@ public class SingletonValue<T extends Closeable> {
 
   /**
    * Returns true if the value is cached.
+   *
    * @return true if cached
    */
   public boolean hasCachedValue() {
@@ -124,6 +123,7 @@ public class SingletonValue<T extends Closeable> {
 
   /**
    * Returns true if the value is cached.
+   *
    * @return true if cached
    */
   public boolean isCleared() {
@@ -137,6 +137,7 @@ public class SingletonValue<T extends Closeable> {
 
   /**
    * Returns the cached result, or null if the value is not cached.
+   *
    * @return the cached result
    */
   public T getCachedValue() {
@@ -149,9 +150,9 @@ public class SingletonValue<T extends Closeable> {
   }
 
   /**
-   * Clears the cached result.  Any threads waiting for the result will retry unless
-   * {@code allowReset} is {@code false}.
-   * 
+   * Clears the cached result. Any threads waiting for the result will retry unless {@code
+   * allowReset} is {@code false}.
+   *
    * @param allowReset true if the value is allowed to be cached subsequently
    * @return the old value, or null if not set.
    */
@@ -184,7 +185,7 @@ public class SingletonValue<T extends Closeable> {
 
   /**
    * Clears the cached value as long it matches the expected value.
-   * 
+   *
    * @param expect the expected value
    * @param allowReset true if the value is allowed be be cached subsequently
    * @return true if the value was cleared
@@ -205,7 +206,10 @@ public class SingletonValue<T extends Closeable> {
     }
   }
 
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "UL_UNRELEASED_LOCK", justification = "findbugs is wrong and Darrel agrees")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "UL_UNRELEASED_LOCK",
+    justification = "findbugs is wrong and Darrel agrees"
+  )
   public T get() throws IOException {
     assert sync.getHoldCount() == 0;
 
@@ -213,46 +217,46 @@ public class SingletonValue<T extends Closeable> {
     boolean doUnlock = true;
     try {
       switch (state) {
-      case NOT_SET:
-        assert current == null;
-        current = Thread.currentThread();
-        state = ValueState.IN_PROGRESS;
+        case NOT_SET:
+          assert current == null;
+          current = Thread.currentThread();
+          state = ValueState.IN_PROGRESS;
 
-        doUnlock = false;
-        sync.unlock();
+          doUnlock = false;
+          sync.unlock();
 
-        // invoke the task while NOT locked
-        return acquireValue();
+          // invoke the task while NOT locked
+          return acquireValue();
 
-      case IN_PROGRESS:
-        builder.createInProgress();
-        while (state == ValueState.IN_PROGRESS) {
-          try {
-            change.await();
-          } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new InterruptedIOException();
+        case IN_PROGRESS:
+          builder.createInProgress();
+          while (state == ValueState.IN_PROGRESS) {
+            try {
+              change.await();
+            } catch (InterruptedException e) {
+              Thread.currentThread().interrupt();
+              throw new InterruptedIOException();
+            }
           }
-        }
 
-        if (error != null) {
-          throw error;
-        }
+          if (error != null) {
+            throw error;
+          }
 
-        doUnlock = false;
-        sync.unlock();
+          doUnlock = false;
+          sync.unlock();
 
-        // try again
-        return get();
+          // try again
+          return get();
 
-      case SET:
-        return value;
+        case SET:
+          return value;
 
-      case CLEARED:
-        throw new IOException("Value has been cleared and cannot be reset");
+        case CLEARED:
+          throw new IOException("Value has been cleared and cannot be reset");
 
-      default:
-        throw new IllegalStateException("Unknown ValueState: " + state);
+        default:
+          throw new IllegalStateException("Unknown ValueState: " + state);
       }
     } finally {
       if (doUnlock) {
@@ -261,7 +265,10 @@ public class SingletonValue<T extends Closeable> {
     }
   }
 
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "UL_UNRELEASED_LOCK", justification = "findbugs is wrong and Darrel agrees")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "UL_UNRELEASED_LOCK",
+    justification = "findbugs is wrong and Darrel agrees"
+  )
   private T acquireValue() throws IOException {
     T result = null;
     IOException err = null;

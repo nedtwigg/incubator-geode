@@ -28,15 +28,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class provides an early fix for JUnit issue <a href="https://github.com/junit-team/junit4/issues/751>751</a>.
+ * This class provides an early fix for JUnit issue <a
+ * href="https://github.com/junit-team/junit4/issues/751>751</a>.
  *
- * Once JUnit 4.13 is released, this class can be removed.
+ * <p>Once JUnit 4.13 is released, this class can be removed.
  *
- * See also <a href="https://issues.apache.org/jira/browse/GEODE-1350">GEODE-1350</a>
+ * <p>See also <a href="https://issues.apache.org/jira/browse/GEODE-1350">GEODE-1350</a>
  */
 public class CategoryWithParameterizedRunnerFactory implements ParametersRunnerFactory {
   @Override
-  public Runner createRunnerForTestWithParameters(TestWithParameters test) throws InitializationError {
+  public Runner createRunnerForTestWithParameters(TestWithParameters test)
+      throws InitializationError {
     return new CategoryWithParameterizedRunner(test);
   }
 }

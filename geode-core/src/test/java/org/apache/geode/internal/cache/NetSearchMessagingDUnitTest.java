@@ -84,7 +84,6 @@ public class NetSearchMessagingDUnitTest extends JUnit4CacheTestCase {
 
     //Test with a real value value
     {
-
       put(vm3, "a", "b");
 
       long vm0Count = getReceivedMessages(vm0);
@@ -104,7 +103,6 @@ public class NetSearchMessagingDUnitTest extends JUnit4CacheTestCase {
       //Make sure the normal guy didn't see any messages
       assertEquals(vm2Count, getReceivedMessages(vm2));
     }
-
   }
 
   @Category(FlakyTest.class) // GEODE-1155: time sensitive, waitForCriterion
@@ -134,12 +132,13 @@ public class NetSearchMessagingDUnitTest extends JUnit4CacheTestCase {
       waitForReceivedMessages(vm3, vm3Count + 3);
 
       //Make sure the normal guys each saw 1 query message.
-      assertEquals(vm0Count + vm1Count + vm2Count + 3, getReceivedMessages(vm0) + getReceivedMessages(vm1) + getReceivedMessages(vm2));
+      assertEquals(
+          vm0Count + vm1Count + vm2Count + 3,
+          getReceivedMessages(vm0) + getReceivedMessages(vm1) + getReceivedMessages(vm2));
     }
 
     //Test with a real value value
     {
-
       put(vm3, "a", "b");
 
       long vm0Count = getReceivedMessages(vm0);
@@ -155,16 +154,16 @@ public class NetSearchMessagingDUnitTest extends JUnit4CacheTestCase {
       waitForReceivedMessages(vm3, vm3Count + 3);
 
       //Make sure the normal guys each saw 1 query message.
-      assertEquals(vm0Count + vm1Count + vm2Count + 3, getReceivedMessages(vm0) + getReceivedMessages(vm1) + getReceivedMessages(vm2));
+      assertEquals(
+          vm0Count + vm1Count + vm2Count + 3,
+          getReceivedMessages(vm0) + getReceivedMessages(vm1) + getReceivedMessages(vm2));
     }
-
   }
 
   /**
-   * In bug #48186 a deadlock occurs when a netsearch pulls in a value from
-   * the disk and causes a LRU eviction of another entry.  Here we merely
-   * demonstrate that a netsearch that gets the value of an overflow entry
-   * does not update the LRU status of that entry.
+   * In bug #48186 a deadlock occurs when a netsearch pulls in a value from the disk and causes a
+   * LRU eviction of another entry. Here we merely demonstrate that a netsearch that gets the value
+   * of an overflow entry does not update the LRU status of that entry.
    */
   @Test
   public void testNetSearchNoLRU() {
@@ -185,17 +184,18 @@ public class NetSearchMessagingDUnitTest extends JUnit4CacheTestCase {
       // the cache in vm0 is now full and LRU will occur on this next put()
       put(vm2, "f", "6");
 
-      SerializableCallable verifyEvicted = new SerializableCallable("verify eviction of 'a'") {
-        public Object call() {
-          Cache cache = getCache();
-          LocalRegion region = (LocalRegion) cache.getRegion("region");
-          RegionEntry re = region.getRegionEntry("a");
-          Object o = re.getValueInVM(null);
-          LogWriterUtils.getLogWriter().info("key a=" + o);
-          ;
-          return o == null || o == Token.NOT_AVAILABLE;
-        }
-      };
+      SerializableCallable verifyEvicted =
+          new SerializableCallable("verify eviction of 'a'") {
+            public Object call() {
+              Cache cache = getCache();
+              LocalRegion region = (LocalRegion) cache.getRegion("region");
+              RegionEntry re = region.getRegionEntry("a");
+              Object o = re.getValueInVM(null);
+              LogWriterUtils.getLogWriter().info("key a=" + o);
+              ;
+              return o == null || o == Token.NOT_AVAILABLE;
+            }
+          };
 
       boolean evicted = (Boolean) vm2.invoke(verifyEvicted);
       assertTrue("expected 'a' to be evicted", evicted);
@@ -206,25 +206,28 @@ public class NetSearchMessagingDUnitTest extends JUnit4CacheTestCase {
 
       evicted = (Boolean) vm2.invoke(verifyEvicted);
       assertTrue("expected 'a' to still be evicted", evicted);
-      vm2.invoke(new SerializableRunnable("verify other entries are not evicted") {
-        public void run() {
-          Cache cache = getCache();
-          LocalRegion region = (LocalRegion) cache.getRegion("region");
-          String[] keys = new String[] { "b", "c", "d", "e", "f" };
-          for (String key : keys) {
-            RegionEntry re = region.getRegionEntry(key);
-            Object o = re.getValueInVM(null);
-            LogWriterUtils.getLogWriter().info("key " + key + "=" + o);
-            assertTrue("expected key " + key + " to not be evicted", (o != null) && (o != Token.NOT_AVAILABLE));
-          }
-        }
-      });
+      vm2.invoke(
+          new SerializableRunnable("verify other entries are not evicted") {
+            public void run() {
+              Cache cache = getCache();
+              LocalRegion region = (LocalRegion) cache.getRegion("region");
+              String[] keys = new String[] {"b", "c", "d", "e", "f"};
+              for (String key : keys) {
+                RegionEntry re = region.getRegionEntry(key);
+                Object o = re.getValueInVM(null);
+                LogWriterUtils.getLogWriter().info("key " + key + "=" + o);
+                assertTrue(
+                    "expected key " + key + " to not be evicted",
+                    (o != null) && (o != Token.NOT_AVAILABLE));
+              }
+            }
+          });
     }
   }
 
   /**
-   * Make sure that even if we start out by net searching replicates,
-   * we'll fall back to net searching normal members.
+   * Make sure that even if we start out by net searching replicates, we'll fall back to net
+   * searching normal members.
    */
   @Test
   public void testNetSearchFailoverFromReplicate() {
@@ -236,19 +239,22 @@ public class NetSearchMessagingDUnitTest extends JUnit4CacheTestCase {
 
     //Install a listener to kill this member
     //when we get the netsearch request
-    vm0.invoke(new SerializableRunnable("Install listener") {
+    vm0.invoke(
+        new SerializableRunnable("Install listener") {
 
-      public void run() {
-        DistributionMessageObserver ob = new DistributionMessageObserver() {
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof NetSearchRequestMessage) {
-              disconnectFromDS();
-            }
+          public void run() {
+            DistributionMessageObserver ob =
+                new DistributionMessageObserver() {
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof NetSearchRequestMessage) {
+                      disconnectFromDS();
+                    }
+                  }
+                };
+            DistributionMessageObserver.setInstance(ob);
           }
-        };
-        DistributionMessageObserver.setInstance(ob);
-      }
-    });
+        });
 
     createReplicate(vm0);
     createNormal(vm1);
@@ -267,14 +273,14 @@ public class NetSearchMessagingDUnitTest extends JUnit4CacheTestCase {
       assertEquals("b", get(vm3, "a"));
 
       //Make sure we were disconnected in vm0
-      vm0.invoke(new SerializableRunnable("check disconnected") {
+      vm0.invoke(
+          new SerializableRunnable("check disconnected") {
 
-        public void run() {
-          assertNull(GemFireCacheImpl.getInstance());
-        }
-      });
+            public void run() {
+              assertNull(GemFireCacheImpl.getInstance());
+            }
+          });
     }
-
   }
 
   @Test
@@ -287,19 +293,22 @@ public class NetSearchMessagingDUnitTest extends JUnit4CacheTestCase {
 
     //Install a listener to kill this member
     //when we get the netsearch request
-    vm0.invoke(new SerializableRunnable("Install listener") {
+    vm0.invoke(
+        new SerializableRunnable("Install listener") {
 
-      public void run() {
-        DistributionMessageObserver ob = new DistributionMessageObserver() {
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof NetSearchRequestMessage) {
-              disconnectFromDS();
-            }
+          public void run() {
+            DistributionMessageObserver ob =
+                new DistributionMessageObserver() {
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof NetSearchRequestMessage) {
+                      disconnectFromDS();
+                    }
+                  }
+                };
+            DistributionMessageObserver.setInstance(ob);
           }
-        };
-        DistributionMessageObserver.setInstance(ob);
-      }
-    });
+        });
 
     createReplicate(vm0);
     createReplicate(vm1);
@@ -314,124 +323,136 @@ public class NetSearchMessagingDUnitTest extends JUnit4CacheTestCase {
         assertEquals("b", get(vm3, "a"));
 
         //Make sure we were disconnected in vm0
-        disconnected = (Boolean) vm0.invoke(new SerializableCallable("check disconnected") {
+        disconnected =
+            (Boolean)
+                vm0.invoke(
+                    new SerializableCallable("check disconnected") {
 
-          public Object call() {
-            return GemFireCacheImpl.getInstance() == null;
-          }
-        });
+                      public Object call() {
+                        return GemFireCacheImpl.getInstance() == null;
+                      }
+                    });
       }
     }
-
   }
 
   private Object put(VM vm, final String key, final String value) {
-    return vm.invoke(new SerializableCallable() {
+    return vm.invoke(
+        new SerializableCallable() {
 
-      public Object call() {
-        Cache cache = getCache();
-        Region region = cache.getRegion("region");
-        LogWriterUtils.getLogWriter().info("putting key=" + key + "=" + value);
-        Object result = region.put(key, value);
-        LogWriterUtils.getLogWriter().info("done putting key=" + key);
-        return result;
-      }
-    });
+          public Object call() {
+            Cache cache = getCache();
+            Region region = cache.getRegion("region");
+            LogWriterUtils.getLogWriter().info("putting key=" + key + "=" + value);
+            Object result = region.put(key, value);
+            LogWriterUtils.getLogWriter().info("done putting key=" + key);
+            return result;
+          }
+        });
   }
 
   private Object get(VM vm, final Object key) {
-    return vm.invoke(new SerializableCallable("get " + key) {
+    return vm.invoke(
+        new SerializableCallable("get " + key) {
 
-      public Object call() {
-        Cache cache = getCache();
-        Region region = cache.getRegion("region");
-        return region.get(key);
-      }
-    });
+          public Object call() {
+            Cache cache = getCache();
+            Region region = cache.getRegion("region");
+            return region.get(key);
+          }
+        });
   }
 
   private void waitForReceivedMessages(final VM vm, final long expected) {
-    Wait.waitForCriterion(new WaitCriterion() {
+    Wait.waitForCriterion(
+        new WaitCriterion() {
 
-      @Override
-      public boolean done() {
-        return getReceivedMessages(vm) == expected;
-      }
+          @Override
+          public boolean done() {
+            return getReceivedMessages(vm) == expected;
+          }
 
-      @Override
-      public String description() {
-        return "Expected " + expected + " but got " + getReceivedMessages(vm);
-      }
-    }, 2000, 100, true);
+          @Override
+          public String description() {
+            return "Expected " + expected + " but got " + getReceivedMessages(vm);
+          }
+        },
+        2000,
+        100,
+        true);
   }
 
   private long getReceivedMessages(VM vm) {
-    return ((Long) vm.invoke(new SerializableCallable() {
+    return ((Long)
+            vm.invoke(
+                new SerializableCallable() {
 
-      public Object call() {
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        return cache.getDistributedSystem().getDMStats().getReceivedMessages();
-      }
-    })).intValue();
+                  public Object call() {
+                    GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+                    return cache.getDistributedSystem().getDMStats().getReceivedMessages();
+                  }
+                }))
+        .intValue();
   }
 
   private void createEmpty(VM vm) {
-    vm.invoke(new SerializableRunnable() {
+    vm.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        RegionFactory rf = new RegionFactory();
-        rf.setScope(Scope.DISTRIBUTED_ACK);
-        rf.setConcurrencyChecksEnabled(false);
-        rf.setDataPolicy(DataPolicy.EMPTY);
-        rf.create("region");
-      }
-    });
-
+          public void run() {
+            Cache cache = getCache();
+            RegionFactory rf = new RegionFactory();
+            rf.setScope(Scope.DISTRIBUTED_ACK);
+            rf.setConcurrencyChecksEnabled(false);
+            rf.setDataPolicy(DataPolicy.EMPTY);
+            rf.create("region");
+          }
+        });
   }
 
   private void createNormal(VM vm) {
-    vm.invoke(new SerializableRunnable() {
+    vm.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        RegionFactory rf = new RegionFactory();
-        rf.setScope(Scope.DISTRIBUTED_ACK);
-        rf.setConcurrencyChecksEnabled(false);
-        rf.setDataPolicy(DataPolicy.NORMAL);
-        rf.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
-        rf.create("region");
-      }
-    });
-
+          public void run() {
+            Cache cache = getCache();
+            RegionFactory rf = new RegionFactory();
+            rf.setScope(Scope.DISTRIBUTED_ACK);
+            rf.setConcurrencyChecksEnabled(false);
+            rf.setDataPolicy(DataPolicy.NORMAL);
+            rf.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
+            rf.create("region");
+          }
+        });
   }
 
   private void createOverflow(VM vm, final int count) {
-    vm.invoke(new SerializableRunnable() {
+    vm.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        RegionFactory rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
-        rf.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(count, EvictionAction.OVERFLOW_TO_DISK));
-        rf.create("region");
-      }
-    });
-
+          public void run() {
+            Cache cache = getCache();
+            RegionFactory rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
+            rf.setEvictionAttributes(
+                EvictionAttributes.createLRUEntryAttributes(
+                    count, EvictionAction.OVERFLOW_TO_DISK));
+            rf.create("region");
+          }
+        });
   }
 
   private void createReplicate(VM vm) {
-    vm.invoke(new SerializableRunnable() {
+    vm.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        RegionFactory rf = new RegionFactory();
-        rf.setScope(Scope.DISTRIBUTED_ACK);
-        rf.setConcurrencyChecksEnabled(false);
-        rf.setDataPolicy(DataPolicy.REPLICATE);
-        rf.create("region");
-      }
-    });
-
+          public void run() {
+            Cache cache = getCache();
+            RegionFactory rf = new RegionFactory();
+            rf.setScope(Scope.DISTRIBUTED_ACK);
+            rf.setConcurrencyChecksEnabled(false);
+            rf.setDataPolicy(DataPolicy.REPLICATE);
+            rf.create("region");
+          }
+        });
   }
-
 }

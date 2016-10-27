@@ -36,9 +36,7 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 
-/**
- * DUnit test for operations on ParallelGatewaySender
- */
+/** DUnit test for operations on ParallelGatewaySender */
 @Category(DistributedTest.class)
 public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
 
@@ -65,9 +63,7 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     validateRegionSizes(getTestMethodName() + "_PR", 0, vm2, vm3);
   }
 
-  /**
-   * Defect 44323 (ParallelGatewaySender should not be started on Accessor node)
-   */
+  /** Defect 44323 (ParallelGatewaySender should not be started on Accessor node) */
   @Test
   public void testParallelGatewaySenderStartOnAccessorNode() {
     Integer[] locatorPorts = createLNAndNYLocators();
@@ -89,9 +85,7 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     validateRegionSizes(getTestMethodName() + "_PR", 10, vm2, vm3);
   }
 
-  /**
-   * Normal scenario in which the sender is paused in between.
-   */
+  /** Normal scenario in which the sender is paused in between. */
   @Test
   public void testParallelPropagationSenderPause() throws Exception {
     Integer[] locatorPorts = createLNAndNYLocators();
@@ -119,9 +113,7 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm2.invoke(() -> WANTestBase.validateRegionSizeRemainsSame(getTestMethodName() + "_PR", 100));
   }
 
-  /**
-   * Normal scenario in which a paused sender is resumed.
-   */
+  /** Normal scenario in which a paused sender is resumed. */
   @Test
   public void testParallelPropagationSenderResume() throws Exception {
     Integer[] locatorPorts = createLNAndNYLocators();
@@ -160,9 +152,9 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
   }
 
   /**
-   * Negative scenario in which a sender that is stopped (and not paused) is resumed.
-   * Expected: resume is only valid for pause. If a sender which is stopped is resumed,
-   * it will not be started again.
+   * Negative scenario in which a sender that is stopped (and not paused) is resumed. Expected:
+   * resume is only valid for pause. If a sender which is stopped is resumed, it will not be started
+   * again.
    */
   @Test
   public void testParallelPropagationSenderResumeNegativeScenario() throws Exception {
@@ -178,11 +170,23 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
@@ -207,14 +211,12 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     //do more puts
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
 
-    //validate region size on remote vm to contain only the events put in local site 
+    //validate region size on remote vm to contain only the events put in local site
     //before the senders are stopped.
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 100));
   }
 
-  /**
-   * Normal scenario in which a sender is stopped.
-   */
+  /** Normal scenario in which a sender is stopped. */
   @Test
   public void testParallelPropagationSenderStop() throws Exception {
     IgnoredException.addIgnoredException("Broken pipe");
@@ -240,9 +242,7 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm2.invoke(() -> WANTestBase.validateRegionSizeRemainsSame(getTestMethodName() + "_PR", 100));
   }
 
-  /**
-   * Normal scenario in which a sender is stopped and then started again.
-   */
+  /** Normal scenario in which a sender is stopped and then started again. */
   @Test
   public void testParallelPropagationSenderStartAfterStop() throws Exception {
     IgnoredException.addIgnoredException("Broken pipe");
@@ -323,9 +323,9 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
   }
 
   /**
-   * Normal scenario in which a sender is stopped and then started again.
-   * Differs from above test case in the way that when the sender is starting from
-   * stopped state, puts are simultaneously happening on the region by another thread.
+   * Normal scenario in which a sender is stopped and then started again. Differs from above test
+   * case in the way that when the sender is starting from stopped state, puts are simultaneously
+   * happening on the region by another thread.
    */
   @Test
   public void testParallelPropagationSenderStartAfterStop_Scenario2() throws Exception {
@@ -365,7 +365,8 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm2.invoke(() -> WANTestBase.validateRegionSizeRemainsSame(getTestMethodName() + "_PR", 200));
 
     //SECOND RUN: start async puts on region
-    AsyncInvocation async = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 5000));
+    AsyncInvocation async =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 5000));
     LogWriterUtils.getLogWriter().info("Started high number of puts by async thread");
 
     LogWriterUtils.getLogWriter().info("Starting the senders at the same time");
@@ -383,9 +384,7 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.validateQueueContents("ln", 0));
   }
 
-  /**
-   * Normal scenario in which a sender is stopped and then started again on accessor node.
-   */
+  /** Normal scenario in which a sender is stopped and then started again on accessor node. */
   @Test
   public void testParallelPropagationSenderStartAfterStopOnAccessorNode() throws Exception {
     IgnoredException.addIgnoredException("Broken pipe");
@@ -421,7 +420,8 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm2.invoke(() -> WANTestBase.validateRegionSizeRemainsSame(getTestMethodName() + "_PR", 200));
 
     //SECOND RUN: do some more puts
-    AsyncInvocation async = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
+    AsyncInvocation async =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
     async.join();
     Wait.pause(5000);
 
@@ -433,10 +433,7 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 1000));
   }
 
-  /**
-   * Normal scenario in which a combinations of start, pause, resume operations
-   * is tested
-   */
+  /** Normal scenario in which a combinations of start, pause, resume operations is tested */
   @Test
   public void testStartPauseResumeParallelGatewaySender() throws Exception {
     Integer[] locatorPorts = createLNAndNYLocators();
@@ -448,9 +445,9 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
     LogWriterUtils.getLogWriter().info("Done 1000 puts on local site");
 
-    //Since puts are already done on userPR, it will have the buckets created. 
+    //Since puts are already done on userPR, it will have the buckets created.
     //During sender start, it will wait until those buckets are created for shadowPR as well.
-    //Start the senders in async threads, so colocation of shadowPR will be complete and 
+    //Start the senders in async threads, so colocation of shadowPR will be complete and
     //missing buckets will be created in PRHARedundancyProvider.createMissingBuckets().
     startSenderInVMsAsync("ln", vm4, vm5, vm6, vm7);
 
@@ -472,7 +469,8 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.verifySenderPausedState("ln"));
     vm7.invoke(() -> WANTestBase.verifySenderPausedState("ln"));
 
-    AsyncInvocation inv1 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
+    AsyncInvocation inv1 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
     LogWriterUtils.getLogWriter().info("Started 1000 async puts on local site");
 
     vm4.invoke(() -> WANTestBase.resumeSender("ln"));
@@ -499,8 +497,8 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
   }
 
   /**
-   * Since the sender is attached to a region and in use, it can not be
-   * destroyed. Hence, exception is thrown by the sender API.
+   * Since the sender is attached to a region and in use, it can not be destroyed. Hence, exception
+   * is thrown by the sender API.
    */
   @Test
   public void testDestroyParallelGatewaySenderExceptionScenario() {
@@ -519,12 +517,16 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     try {
       vm4.invoke(() -> WANTestBase.destroySender("ln"));
     } catch (RMIException e) {
-      assertTrue("Cause of the exception should be GatewaySenderException", e.getCause() instanceof GatewaySenderException);
+      assertTrue(
+          "Cause of the exception should be GatewaySenderException",
+          e.getCause() instanceof GatewaySenderException);
     }
     try {
       vm5.invoke(() -> WANTestBase.destroySender("ln"));
     } catch (RMIException e) {
-      assertTrue("Cause of the exception should be GatewaySenderException", e.getCause() instanceof GatewaySenderException);
+      assertTrue(
+          "Cause of the exception should be GatewaySenderException",
+          e.getCause() instanceof GatewaySenderException);
     }
 
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 1000));
@@ -584,27 +586,35 @@ public class ParallelGatewaySenderOperationsDUnitTest extends WANTestBase {
     validateRegionSizes(regionName, numPuts, vm4);
 
     // Start receiver
-    IgnoredException ignoredMTLE = IgnoredException.addIgnoredException(MessageTooLargeException.class.getName(), vm4);
-    IgnoredException ignoredGIOE = IgnoredException.addIgnoredException(GemFireIOException.class.getName(), vm4);
+    IgnoredException ignoredMTLE =
+        IgnoredException.addIgnoredException(MessageTooLargeException.class.getName(), vm4);
+    IgnoredException ignoredGIOE =
+        IgnoredException.addIgnoredException(GemFireIOException.class.getName(), vm4);
     vm2.invoke(() -> createCache(nyPort));
     vm2.invoke(() -> createPartitionedRegion(regionName, null, 0, 100, isOffHeap()));
     vm2.invoke(() -> createReceiver());
     validateRegionSizes(regionName, numPuts, vm2);
 
-    vm4.invoke(() -> {
-      final AbstractGatewaySender sender = (AbstractGatewaySender) cache.getGatewaySender("ln");
-      assertTrue(sender.getStatistics().getBatchesResized() > 0);
-    });
+    vm4.invoke(
+        () -> {
+          final AbstractGatewaySender sender = (AbstractGatewaySender) cache.getGatewaySender("ln");
+          assertTrue(sender.getStatistics().getBatchesResized() > 0);
+        });
     ignoredMTLE.remove();
     ignoredGIOE.remove();
   }
 
   private void setMaximumMessageSize(int maximumMessageSizeBytes) {
     Message.MAX_MESSAGE_SIZE = maximumMessageSizeBytes;
-    LogWriterUtils.getLogWriter().info("Set gemfire.client.max-message-size: " + System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "client.max-message-size"));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Set gemfire.client.max-message-size: "
+                + System.getProperty(
+                    DistributionConfig.GEMFIRE_PREFIX + "client.max-message-size"));
   }
 
-  private void createSendersReceiversAndPartitionedRegion(Integer lnPort, Integer nyPort, boolean createAccessors, boolean startSenders) {
+  private void createSendersReceiversAndPartitionedRegion(
+      Integer lnPort, Integer nyPort, boolean createAccessors, boolean startSenders) {
     // Note: This is a test-specific method used by several test to create
     // receivers, senders and partitioned regions.
     createSendersAndReceivers(lnPort, nyPort);

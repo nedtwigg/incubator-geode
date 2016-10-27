@@ -23,25 +23,18 @@ import java.io.IOException;
 import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
-/**
- * 
- *
- */
-
+/** */
 public class RemoteLocatorPingRequest implements DataSerializableFixedID {
 
   public RemoteLocatorPingRequest() {
     super();
   }
 
-  public RemoteLocatorPingRequest(String serverGroup) {
-  }
+  public RemoteLocatorPingRequest(String serverGroup) {}
 
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-  }
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
-  public void toData(DataOutput out) throws IOException {
-  }
+  public void toData(DataOutput out) throws IOException {}
 
   public int getDSFID() {
     return DataSerializableFixedID.REMOTE_LOCATOR_PING_REQUEST;
@@ -51,5 +44,4 @@ public class RemoteLocatorPingRequest implements DataSerializableFixedID {
   public Version[] getSerializationVersions() {
     return null;
   }
-
 }

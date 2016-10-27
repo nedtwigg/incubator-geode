@@ -34,7 +34,7 @@ public class PortfolioData implements Declarable, Serializable {
 
   public String status;
 
-  public String[] names = { "aaa", "bbb", "ccc", "ddd" };
+  public String[] names = {"aaa", "bbb", "ccc", "ddd"};
 
   /*
    * public String getStatus(){ return status;
@@ -63,11 +63,11 @@ public class PortfolioData implements Declarable, Serializable {
     return status.equals("active");
   }
 
-  public static String secIds[] = { "SUN", "IBM", "YHOO", "GOOG", "MSFT", "AOL", "APPL", "ORCL", "SAP", "DELL", "RHAT", "NOVL", "HP" };
+  public static String secIds[] = {
+    "SUN", "IBM", "YHOO", "GOOG", "MSFT", "AOL", "APPL", "ORCL", "SAP", "DELL", "RHAT", "NOVL", "HP"
+  };
 
-  public PortfolioData() {
-
-  }
+  public PortfolioData() {}
 
   public PortfolioData(int i) {
     ID = i;
@@ -82,14 +82,15 @@ public class PortfolioData implements Declarable, Serializable {
   }
 
   public String toString() {
-    String out = "Portfolio [ID=" + ID + " status=" + status + " type=" + type + " pkid=" + pkid + "\n ";
+    String out =
+        "Portfolio [ID=" + ID + " status=" + status + " type=" + type + " pkid=" + pkid + "\n ";
 
     return out + "\n]";
   }
 
   /**
    * Getter for property type.S
-   * 
+   *
    * @return Value of property type.
    */
   public String getType() {
@@ -127,7 +128,5 @@ public class PortfolioData implements Declarable, Serializable {
     this.ID = Integer.parseInt(props.getProperty("id"));
     this.type = props.getProperty("type", "type1");
     this.status = props.getProperty("status", "active");
-
   }
-
 }

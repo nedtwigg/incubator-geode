@@ -41,8 +41,9 @@ import org.apache.geode.cache.query.RegionNotFoundException;
 import org.apache.geode.internal.InternalEntity;
 
 /**
- * The LuceneSearchIndexFunction class is a function used to collect the information on a particular lucene index.
- * </p>
+ * The LuceneSearchIndexFunction class is a function used to collect the information on a particular
+ * lucene index.
+ *
  * @see Cache
  * @see org.apache.geode.cache.execute.Function
  * @see FunctionAdapter
@@ -70,16 +71,35 @@ public class LuceneSearchIndexFunction<K, V> extends FunctionAdapter implements 
     LuceneService luceneService = LuceneServiceProvider.get(getCache());
     try {
       if (luceneService.getIndex(queryInfo.getIndexName(), queryInfo.getRegionPath()) == null) {
-        throw new Exception("Index " + queryInfo.getIndexName() + " not found on region " + queryInfo.getRegionPath());
+        throw new Exception(
+            "Index "
+                + queryInfo.getIndexName()
+                + " not found on region "
+                + queryInfo.getRegionPath());
       }
-      final LuceneQuery<K, V> query = luceneService.createLuceneQueryFactory().setResultLimit(queryInfo.getLimit()).create(queryInfo.getIndexName(), queryInfo.getRegionPath(), queryInfo.getQueryString(), queryInfo.getDefaultField());
+      final LuceneQuery<K, V> query =
+          luceneService
+              .createLuceneQueryFactory()
+              .setResultLimit(queryInfo.getLimit())
+              .create(
+                  queryInfo.getIndexName(),
+                  queryInfo.getRegionPath(),
+                  queryInfo.getQueryString(),
+                  queryInfo.getDefaultField());
       if (queryInfo.getKeysOnly()) {
         query.findKeys().forEach(key -> result.add(new LuceneSearchResults(key.toString())));
       } else {
         PageableLuceneQueryResults pageableLuceneQueryResults = query.findPages();
         while (pageableLuceneQueryResults.hasNext()) {
           List<LuceneResultStruct> page = pageableLuceneQueryResults.next();
-          page.stream().forEach(searchResult -> result.add(new LuceneSearchResults<K, V>(searchResult.getKey().toString(), searchResult.getValue().toString(), searchResult.getScore())));
+          page.stream()
+              .forEach(
+                  searchResult ->
+                      result.add(
+                          new LuceneSearchResults<K, V>(
+                              searchResult.getKey().toString(),
+                              searchResult.getValue().toString(),
+                              searchResult.getScore())));
         }
       }
       if (result != null) {

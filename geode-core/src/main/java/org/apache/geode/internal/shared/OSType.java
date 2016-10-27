@@ -18,8 +18,8 @@
 package org.apache.geode.internal.shared;
 
 /**
- * Enumeration for various types of OSes supported by {@link NativeCalls} using
- * JNA ({@link NativeCallsJNAImpl}).
+ * Enumeration for various types of OSes supported by {@link NativeCalls} using JNA ({@link
+ * NativeCallsJNAImpl}).
  */
 public enum OSType {
 
@@ -55,9 +55,7 @@ public enum OSType {
     }
   },
 
-  /**
-   * Indicates a generic POSIX complaint OS (at least to a reasonable degree).
-   */
+  /** Indicates a generic POSIX complaint OS (at least to a reasonable degree). */
   GENERIC_POSIX {
     @Override
     public boolean isPOSIX() {
@@ -65,28 +63,18 @@ public enum OSType {
     }
   },
 
-  /**
-   * Indicates a Microsoft Windows family OS.
-   */
+  /** Indicates a Microsoft Windows family OS. */
   WIN,
 
-  /**
-   * Indicates an OS whose kind cannot be determined or that is not supported by
-   * JNA.
-   */
+  /** Indicates an OS whose kind cannot be determined or that is not supported by JNA. */
   GENERIC;
 
-  /**
-   * Indicates a Microsoft Windows family OS.
-   */
+  /** Indicates a Microsoft Windows family OS. */
   public final boolean isWindows() {
     return this == WIN;
   }
 
-  /**
-   * Indicates an OS that conforms to POSIX specifications (at least to a
-   * reasonable degree).
-   */
+  /** Indicates an OS that conforms to POSIX specifications (at least to a reasonable degree). */
   public boolean isPOSIX() {
     return false;
   }

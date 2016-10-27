@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -48,17 +48,20 @@ public class LuceneQueryFactoryImpl implements LuceneQueryFactory {
   }
 
   @Override
-  public <K, V> LuceneQuery<K, V> create(String indexName, String regionName, String queryString, String defaultField) {
+  public <K, V> LuceneQuery<K, V> create(
+      String indexName, String regionName, String queryString, String defaultField) {
     return create(indexName, regionName, new StringQueryProvider(queryString, defaultField));
   }
 
   @Override
-  public <K, V> LuceneQuery<K, V> create(String indexName, String regionName, LuceneQueryProvider provider) {
+  public <K, V> LuceneQuery<K, V> create(
+      String indexName, String regionName, LuceneQueryProvider provider) {
     Region<K, V> region = cache.getRegion(regionName);
     if (region == null) {
       throw new IllegalArgumentException("Region not found: " + regionName);
     }
-    LuceneQueryImpl<K, V> luceneQuery = new LuceneQueryImpl<K, V>(indexName, region, provider, projectionFields, limit, pageSize);
+    LuceneQueryImpl<K, V> luceneQuery =
+        new LuceneQueryImpl<K, V>(indexName, region, provider, projectionFields, limit, pageSize);
     return luceneQuery;
   }
 
@@ -67,5 +70,4 @@ public class LuceneQueryFactoryImpl implements LuceneQueryFactory {
     projectionFields = fieldNames.clone();
     return this;
   }
-
 }

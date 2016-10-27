@@ -23,29 +23,23 @@ import org.apache.geode.internal.Assert;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-/**
- * This class is a "stoppable" cover for {@link CountDownLatch}.
- */
+/** This class is a "stoppable" cover for {@link CountDownLatch}. */
 public class StoppableCountDownLatch {
 
-  /**
-   * This is how often waiters will wake up to check for cancellation
-   */
-  static final long RETRY_TIME = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "stoppable-retry-interval", 2000).longValue();
+  /** This is how often waiters will wake up to check for cancellation */
+  static final long RETRY_TIME =
+      Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "stoppable-retry-interval", 2000)
+          .longValue();
 
-  /**
-   * The underlying latch
-   */
+  /** The underlying latch */
   private final CountDownLatch latch;
 
-  /**
-   * The cancellation criterion
-   */
+  /** The cancellation criterion */
   private final CancelCriterion stopper;
 
   /**
-   * @param count the number of times {@link #countDown} must be invoked
-   *        before threads can pass through {@link #await()}
+   * @param count the number of times {@link #countDown} must be invoked before threads can pass
+   *     through {@link #await()}
    * @throws IllegalArgumentException if {@code count} is negative
    */
   public StoppableCountDownLatch(CancelCriterion stopper, int count) {
@@ -54,11 +48,9 @@ public class StoppableCountDownLatch {
     this.stopper = stopper;
   }
 
-  /**
-   * @throws InterruptedException
-   */
+  /** @throws InterruptedException */
   public void await() throws InterruptedException {
-    for (;;) {
+    for (; ; ) {
       stopper.checkCancelInProgress(null);
       if (latch.await(RETRY_TIME, TimeUnit.MILLISECONDS)) {
         break;
@@ -80,16 +72,12 @@ public class StoppableCountDownLatch {
     latch.countDown();
   }
 
-  /**
-   * @return the current count
-   */
+  /** @return the current count */
   public long getCount() {
     return latch.getCount();
   }
 
-  /**
-   * @return a string identifying this latch, as well as its state
-   */
+  /** @return a string identifying this latch, as well as its state */
   @Override
   public String toString() {
     return "(Stoppable) " + latch.toString();

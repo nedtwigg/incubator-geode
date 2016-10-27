@@ -30,8 +30,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/**
- */
+/** */
 public class GemfireSequenceDisplay {
 
   private JLabel selectedGraphsLabel;
@@ -44,12 +43,11 @@ public class GemfireSequenceDisplay {
   private SequencePanel sequencePanel;
 
   /**
-   * Create the GUI and show it.  For thread safety,
-   * this method should be invoked from the
+   * Create the GUI and show it. For thread safety, this method should be invoked from the
    * event-dispatching thread.
    *
    * @param graphs
-   * @param lineMapper 
+   * @param lineMapper
    */
   private void createAndShowGUI(final GraphSet graphs, LineMapper lineMapper) {
     //Create and set up the window.
@@ -81,18 +79,21 @@ public class GemfireSequenceDisplay {
 
     JMenu sequenceMenu = new JMenu("Sequence");
     sequenceMenu.setMnemonic(KeyEvent.VK_S);
-    sequenceMenu.getAccessibleContext().setAccessibleDescription("The only menu in this program that has menu items");
+    sequenceMenu
+        .getAccessibleContext()
+        .setAccessibleDescription("The only menu in this program that has menu items");
     menuBar.add(sequenceMenu);
     JMenuItem selectGraphs = new JMenuItem("Choose Graphs", KeyEvent.VK_G);
     selectGraphs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
     selectGraphs.getAccessibleContext().setAccessibleDescription("Select what graphs to display");
     selectGraphs.setActionCommand("selectgraphs");
-    selectGraphs.addActionListener(new ActionListener() {
+    selectGraphs.addActionListener(
+        new ActionListener() {
 
-      public void actionPerformed(ActionEvent e) {
-        showGraphSelector();
-      }
-    });
+          public void actionPerformed(ActionEvent e) {
+            showGraphSelector();
+          }
+        });
 
     sequenceMenu.add(selectGraphs);
     frame.setJMenuBar(menuBar);
@@ -100,12 +101,13 @@ public class GemfireSequenceDisplay {
 
   private void createSelectGraphDialog(final GraphSet graphs) {
     selectGraphDialog = new SelectGraphDialog(graphs);
-    selectGraphDialog.addSelectionListener(new SelectGraphDialog.SelectionListener() {
+    selectGraphDialog.addSelectionListener(
+        new SelectGraphDialog.SelectionListener() {
 
-      public void selectionChanged(List<GraphID> selectedIds) {
-        updateGraphs(selectedIds);
-      }
-    });
+          public void selectionChanged(List<GraphID> selectedIds) {
+            updateGraphs(selectedIds);
+          }
+        });
     selectGraphDialog.pack();
   }
 
@@ -163,7 +165,8 @@ public class GemfireSequenceDisplay {
     for (Map.Entry<GraphID, Graph> entry : map.entrySet()) {
       GraphID graphId = entry.getKey();
       Graph graph = entry.getValue();
-      Map<String, Lifeline> lines = new LinkedHashMap<String, Lifeline>(graphs.getLocations().size());
+      Map<String, Lifeline> lines =
+          new LinkedHashMap<String, Lifeline>(graphs.getLocations().size());
       List<Arrow> arrows = new ArrayList<Arrow>();
       Map<Vertex, LifelineState> states = new HashMap<Vertex, LifelineState>();
       for (String location : graphs.getLocations()) {
@@ -214,13 +217,18 @@ public class GemfireSequenceDisplay {
 
   private SequenceDiagram createSequenceDiagram(GraphSet graphs, LineMapper lineMapper) {
 
-    sequenceDiagram = new SequenceDiagram(graphs.getMinTime(), graphs.getMaxTime(), graphs.getLocations(), lineMapper);
+    sequenceDiagram =
+        new SequenceDiagram(
+            graphs.getMinTime(), graphs.getMaxTime(), graphs.getLocations(), lineMapper);
     return sequenceDiagram;
   }
 
   private static LifelineState createState(Lifeline lifeline, GraphSet graphs, Vertex dest) {
     long start = dest.getTimestamp();
-    long end = dest.getNextVertexOnDest() == null ? graphs.getMaxTime() : dest.getNextVertexOnDest().getTimestamp();
+    long end =
+        dest.getNextVertexOnDest() == null
+            ? graphs.getMaxTime()
+            : dest.getNextVertexOnDest().getTimestamp();
     return new LifelineState(lifeline, dest.getState(), start, end);
   }
 
@@ -240,11 +248,14 @@ public class GemfireSequenceDisplay {
         } else {
           fileList.add(new File(args[i]));
         }
-
       }
       files = fileList.toArray(new File[0]);
     } else {
-      System.err.println("Usage: java -jar sequence.jar (-logs) (-filterkey key)* <file>+\n\n" + "\t-logs (expiremental) instead of using .graph files, parse the gemfire logs to generate the sequence display" + "\t-filterkey a java regular expression to match against key names. If specified\n" + "The list of key sequence diagrams will only contain matching keys");
+      System.err.println(
+          "Usage: java -jar sequence.jar (-logs) (-filterkey key)* <file>+\n\n"
+              + "\t-logs (expiremental) instead of using .graph files, parse the gemfire logs to generate the sequence display"
+              + "\t-filterkey a java regular expression to match against key names. If specified\n"
+              + "The list of key sequence diagrams will only contain matching keys");
       System.exit(1);
       return;
     }
@@ -257,14 +268,16 @@ public class GemfireSequenceDisplay {
     final GemfireSequenceDisplay display = new GemfireSequenceDisplay();
     //Schedule a job for the event-dispatching thread:
     //creating and showing this application's GUI.
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        display.createAndShowGUI(graphs, lineMapper);
-      }
-    });
+    javax.swing.SwingUtilities.invokeLater(
+        new Runnable() {
+          public void run() {
+            display.createAndShowGUI(graphs, lineMapper);
+          }
+        });
   }
 
-  private static GraphSet getGraphs(boolean useLogFiles, Set<String> keyFilters, File[] files) throws IOException {
+  private static GraphSet getGraphs(boolean useLogFiles, Set<String> keyFilters, File[] files)
+      throws IOException {
     Filter graphFilter = new KeyFilter(keyFilters);
 
     GraphReader reader = new GraphReader(files);
@@ -278,7 +291,7 @@ public class GemfireSequenceDisplay {
   }
 
   /**
-   * @param files 
+   * @param files
    * @return
    */
   private static LineMapper getLineMapper(File[] files) {
@@ -298,7 +311,8 @@ public class GemfireSequenceDisplay {
       }
     }
 
-    public boolean accept(GraphType graphType, String name, String edgeName, String source, String dest) {
+    public boolean accept(
+        GraphType graphType, String name, String edgeName, String source, String dest) {
       if (graphType.equals(GraphType.KEY)) {
         for (Pattern pattern : patterns) {
           if (pattern.matcher(name).find()) {
@@ -312,10 +326,9 @@ public class GemfireSequenceDisplay {
       }
     }
 
-    public boolean acceptPattern(GraphType graphType, Pattern pattern, String edgeName, String source, String dest) {
+    public boolean acceptPattern(
+        GraphType graphType, Pattern pattern, String edgeName, String source, String dest) {
       return true;
     }
-
   }
-
 }

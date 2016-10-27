@@ -29,20 +29,18 @@ import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * This class is the superclass of all distributed tests using JUnit 3.
- */
+/** This class is the superclass of all distributed tests using JUnit 3. */
 @Category(DistributedTest.class)
-public abstract class JUnit3DistributedTestCase extends TestCase implements DistributedTestFixture, Serializable {
+public abstract class JUnit3DistributedTestCase extends TestCase
+    implements DistributedTestFixture, Serializable {
 
   private static final Logger logger = LogService.getLogger();
 
-  private final JUnit4DistributedTestCase delegate = new JUnit4DistributedTestCase(this) {
-  };
+  private final JUnit4DistributedTestCase delegate = new JUnit4DistributedTestCase(this) {};
 
   /**
-   * Constructs a new distributed test. All JUnit 3 test classes need to have a
-   * String-arg constructor.
+   * Constructs a new distributed test. All JUnit 3 test classes need to have a String-arg
+   * constructor.
    */
   public JUnit3DistributedTestCase(final String name) {
     super(name);
@@ -53,23 +51,22 @@ public abstract class JUnit3DistributedTestCase extends TestCase implements Dist
   // methods for tests
   //---------------------------------------------------------------------------
 
-  /**
-   * @deprecated Please override {@link #getDistributedSystemProperties()} instead.
-   */
+  /** @deprecated Please override {@link #getDistributedSystemProperties()} instead. */
   @Deprecated
-  public final void setSystem(final Properties props, final DistributedSystem ds) { // TODO: override getDistributedSystemProperties and then delete
+  public final void setSystem(
+      final Properties props,
+      final DistributedSystem ds) { // TODO: override getDistributedSystemProperties and then delete
     delegate.setSystem(props, ds);
   }
 
   /**
-   * Returns this VM's connection to the distributed system.  If necessary, the
-   * connection will be lazily created using the given {@code Properties}.
+   * Returns this VM's connection to the distributed system. If necessary, the connection will be
+   * lazily created using the given {@code Properties}.
    *
-   * <p>Do not override this method. Override {@link #getDistributedSystemProperties()}
-   * instead.
+   * <p>Do not override this method. Override {@link #getDistributedSystemProperties()} instead.
    *
-   * <p>Note: "final" was removed so that WANTestBase can override this method.
-   * This was part of the xd offheap merge.
+   * <p>Note: "final" was removed so that WANTestBase can override this method. This was part of the
+   * xd offheap merge.
    *
    * @since GemFire 3.0
    */
@@ -78,15 +75,13 @@ public abstract class JUnit3DistributedTestCase extends TestCase implements Dist
   }
 
   /**
-   * Returns this VM's connection to the distributed system.  If necessary, the
-   * connection will be lazily created using the {@code Properties} returned by
-   * {@link #getDistributedSystemProperties()}.
+   * Returns this VM's connection to the distributed system. If necessary, the connection will be
+   * lazily created using the {@code Properties} returned by {@link
+   * #getDistributedSystemProperties()}.
    *
-   * <p>Do not override this method. Override {@link #getDistributedSystemProperties()}
-   * instead.
+   * <p>Do not override this method. Override {@link #getDistributedSystemProperties()} instead.
    *
    * @see #getSystem(Properties)
-   *
    * @since GemFire 3.0
    */
   public final InternalDistributedSystem getSystem() {
@@ -114,17 +109,15 @@ public abstract class JUnit3DistributedTestCase extends TestCase implements Dist
     return delegate.getLonerSystem();
   }
 
-  /**
-   * Returns whether or this VM is connected to a {@link DistributedSystem}.
-   */
+  /** Returns whether or this VM is connected to a {@link DistributedSystem}. */
   public final boolean isConnectedToDS() {
     return delegate.isConnectedToDS();
   }
 
   /**
-   * Returns a {@code Properties} object used to configure a connection to a
-   * {@link DistributedSystem}. Unless overridden, this method will return an
-   * empty {@code Properties} object.
+   * Returns a {@code Properties} object used to configure a connection to a {@link
+   * DistributedSystem}. Unless overridden, this method will return an empty {@code Properties}
+   * object.
    *
    * @since GemFire 3.0
    */
@@ -136,9 +129,7 @@ public abstract class JUnit3DistributedTestCase extends TestCase implements Dist
     JUnit4DistributedTestCase.disconnectAllFromDS();
   }
 
-  /**
-   * Disconnects this VM from the distributed system
-   */
+  /** Disconnects this VM from the distributed system */
   public static final void disconnectFromDS() {
     JUnit4DistributedTestCase.disconnectFromDS();
   }
@@ -152,8 +143,8 @@ public abstract class JUnit3DistributedTestCase extends TestCase implements Dist
   }
 
   /**
-   * Returns a unique name for this test method.  It is based on the
-   * name of the class as well as the name of the method.
+   * Returns a unique name for this test method. It is based on the name of the class as well as the
+   * name of the method.
    */
   public final String getUniqueName() {
     return delegate.getUniqueName();
@@ -165,10 +156,9 @@ public abstract class JUnit3DistributedTestCase extends TestCase implements Dist
 
   /**
    * Sets up the DistributedTestCase.
-   * <p>
-   * Do not override this method. Override {@link #preSetUp()} with work that
-   * needs to occur before setUp() or override {@link #postSetUp()} with work
-   * that needs to occur after setUp().
+   *
+   * <p>Do not override this method. Override {@link #preSetUp()} with work that needs to occur
+   * before setUp() or override {@link #postSetUp()} with work that needs to occur after setUp().
    */
   @Override
   public final void setUp() throws Exception {
@@ -176,20 +166,20 @@ public abstract class JUnit3DistributedTestCase extends TestCase implements Dist
   }
 
   /**
-   * {@code preSetUp()} is invoked before {@link JUnit4DistributedTestCase#setUpDistributedTestCase()}.
+   * {@code preSetUp()} is invoked before {@link
+   * JUnit4DistributedTestCase#setUpDistributedTestCase()}.
    *
    * <p>Override this as needed. Default implementation is empty.
    */
-  public void preSetUp() throws Exception {
-  }
+  public void preSetUp() throws Exception {}
 
   /**
-   * {@code postSetUp()} is invoked after {@link JUnit4DistributedTestCase#setUpDistributedTestCase()}.
+   * {@code postSetUp()} is invoked after {@link
+   * JUnit4DistributedTestCase#setUpDistributedTestCase()}.
    *
    * <p>Override this as needed. Default implementation is empty.
    */
-  public void postSetUp() throws Exception {
-  }
+  public void postSetUp() throws Exception {}
 
   //---------------------------------------------------------------------------
   // teardown methods
@@ -198,9 +188,9 @@ public abstract class JUnit3DistributedTestCase extends TestCase implements Dist
   /**
    * Tears down the DistributedTestCase.
    *
-   * <p>Do not override this method. Override {@link #preTearDown()} with work that
-   * needs to occur before tearDown() or override {@link #postTearDown()} with work
-   * that needs to occur after tearDown().
+   * <p>Do not override this method. Override {@link #preTearDown()} with work that needs to occur
+   * before tearDown() or override {@link #postTearDown()} with work that needs to occur after
+   * tearDown().
    */
   @Override
   public final void tearDown() throws Exception {
@@ -208,42 +198,39 @@ public abstract class JUnit3DistributedTestCase extends TestCase implements Dist
   }
 
   /**
-   * {@code preTearDown()} is invoked before {@link JUnit4DistributedTestCase#tearDownDistributedTestCase()}.
+   * {@code preTearDown()} is invoked before {@link
+   * JUnit4DistributedTestCase#tearDownDistributedTestCase()}.
    *
    * <p>Override this as needed. Default implementation is empty.
    */
-  public void preTearDown() throws Exception {
-  }
+  public void preTearDown() throws Exception {}
 
   /**
-   * {@code postTearDown()} is invoked after {@link JUnit4DistributedTestCase#tearDownDistributedTestCase()}.
+   * {@code postTearDown()} is invoked after {@link
+   * JUnit4DistributedTestCase#tearDownDistributedTestCase()}.
    *
    * <p>Override this as needed. Default implementation is empty.
    */
-  public void postTearDown() throws Exception {
-  }
+  public void postTearDown() throws Exception {}
 
   /**
-   * {@code preTearDownAssertions()} is invoked before any tear down methods
-   * have been invoked. If this method throws anything, tear down methods will
-   * still be invoked.
+   * {@code preTearDownAssertions()} is invoked before any tear down methods have been invoked. If
+   * this method throws anything, tear down methods will still be invoked.
    *
    * <p>Override this as needed. Default implementation is empty.
    */
-  public void preTearDownAssertions() throws Exception {
-  }
+  public void preTearDownAssertions() throws Exception {}
 
   /**
-   * {@code postTearDownAssertions()} is invoked after all tear down methods
-   * have completed. This method will not be invoked if
-   * {@code preTearDownAssertions()} throws.
+   * {@code postTearDownAssertions()} is invoked after all tear down methods have completed. This
+   * method will not be invoked if {@code preTearDownAssertions()} throws.
    *
    * <p>Override this as needed. Default implementation is empty.
    */
-  public void postTearDownAssertions() throws Exception {
-  }
+  public void postTearDownAssertions() throws Exception {}
 
-  protected static final void destroyRegions(final Cache cache) { // TODO: this should move to CacheTestCase
+  protected static final void destroyRegions(
+      final Cache cache) { // TODO: this should move to CacheTestCase
     JUnit4DistributedTestCase.destroyRegions(cache);
   }
 }

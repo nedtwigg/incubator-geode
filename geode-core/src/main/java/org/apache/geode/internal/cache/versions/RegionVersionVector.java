@@ -46,44 +46,51 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * RegionVersionVector tracks the highest region-level version number of
- * operations applied to a region for each member that has the region.<p>
+ * RegionVersionVector tracks the highest region-level version number of operations applied to a
+ * region for each member that has the region.
  *
+ * <p>
  */
-public abstract class RegionVersionVector<T extends VersionSource<?>> implements DataSerializableFixedID, MembershipListener {
+public abstract class RegionVersionVector<T extends VersionSource<?>>
+    implements DataSerializableFixedID, MembershipListener {
 
   private static final Logger logger = LogService.getLogger();
 
-  public static boolean DEBUG = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "VersionVector.VERBOSE"); //TODO:LOG:CONVERT: REMOVE THIS
+  public static boolean DEBUG =
+      Boolean.getBoolean(
+          DistributionConfig.GEMFIRE_PREFIX
+              + "VersionVector.VERBOSE"); //TODO:LOG:CONVERT: REMOVE THIS
 
   ////////////////////  The following statics exist for unit testing. ////////////////////////////
 
   /** maximum ms wait time while waiting for dominance to be achieved */
-  public static long MAX_DOMINANCE_WAIT_TIME = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "max-dominance-wait-time", 5000);
+  public static long MAX_DOMINANCE_WAIT_TIME =
+      Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "max-dominance-wait-time", 5000);
 
   /** maximum ms pause time while waiting for dominance to be achieved */
-  public static long DOMINANCE_PAUSE_TIME = Math.min(Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "dominance-pause-time", 300), MAX_DOMINANCE_WAIT_TIME);
+  public static long DOMINANCE_PAUSE_TIME =
+      Math.min(
+          Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "dominance-pause-time", 300),
+          MAX_DOMINANCE_WAIT_TIME);
 
   private static int INITIAL_CAPACITY = 2;
   private static int CONCURRENCY_LEVEL = 2;
   private static float LOAD_FACTOR = 0.75f;
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /** map of member to version h older.  This is the actual version "vector" */
+  /** map of member to version h older. This is the actual version "vector" */
   private ConcurrentHashMap<T, RegionVersionHolder<T>> memberToVersion;
 
   /** current version in the local region for generating next version */
   private AtomicLong localVersion = new AtomicLong(0);
   /**
-   * The list of exceptions for the local member. The version held
-   * in this RegionVersionHolder may not be accurate, but the exception list
-   * is. We can have exceptions for our own id if we recover from disk
-   * or GII from a peer that has exceptions from us.
-   * 
-   * The version held in this object can lag behind the localVersion atomic
-   * long, because that long is incremented without obtaining a lock.
-   * Operations that use the localException list are responsible for updating
-   * the version of the local exceptions under lock.
+   * The list of exceptions for the local member. The version held in this RegionVersionHolder may
+   * not be accurate, but the exception list is. We can have exceptions for our own id if we recover
+   * from disk or GII from a peer that has exceptions from us.
+   *
+   * <p>The version held in this object can lag behind the localVersion atomic long, because that
+   * long is incremented without obtaining a lock. Operations that use the localException list are
+   * responsible for updating the version of the local exceptions under lock.
    */
   private RegionVersionHolder<T> localExceptions;
 
@@ -94,9 +101,8 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   private T myId;
 
   /**
-   * a flag stating whether this vector contains only the version information
-   * for a single member.  This is used when a member crashed to transmit only
-   * the version information for that member.
+   * a flag stating whether this vector contains only the version information for a single member.
+   * This is used when a member crashed to transmit only the version information for that member.
    */
   private boolean singleMember;
 
@@ -121,18 +127,20 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   private transient boolean clientVector;
 
   /**
-   * this read/write lock is used to stop generation of new versions by the vector
-   * while a region-level operation is underway.  The locking scheme assumes that
-   * only one region-level RVV operation is allowed at a time on a region across the
-   * distributed system.  If that changes then the locking scheme here may need
-   * additional work.
+   * this read/write lock is used to stop generation of new versions by the vector while a
+   * region-level operation is underway. The locking scheme assumes that only one region-level RVV
+   * operation is allowed at a time on a region across the distributed system. If that changes then
+   * the locking scheme here may need additional work.
    */
-  private transient final ReentrantReadWriteLock versionLock = new ReentrantReadWriteLock();
+  private final transient ReentrantReadWriteLock versionLock = new ReentrantReadWriteLock();
+
   private transient volatile boolean locked; // this is only modified by the version locking thread
-  private transient volatile boolean doUnlock; // this is only modified by the version locking thread
+  private transient volatile boolean
+      doUnlock; // this is only modified by the version locking thread
   private transient InternalDistributedMember lockOwner; // guarded by lockWaitSync
 
-  private transient final Object clearLockSync = new Object(); // sync for coordinating thread startup and lockOwner setting
+  private final transient Object clearLockSync =
+      new Object(); // sync for coordinating thread startup and lockOwner setting
 
   /** create a live version vector for a region */
   public RegionVersionVector(T ownerId) {
@@ -146,38 +154,58 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     this.regionName = owner == null ? "" : "region " + owner.getFullPath();
 
     this.localExceptions = new RegionVersionHolder<T>(0);
-    this.memberToVersion = new ConcurrentHashMap<T, RegionVersionHolder<T>>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
-    this.memberToGCVersion = new ConcurrentHashMap<T, Long>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+    this.memberToVersion =
+        new ConcurrentHashMap<T, RegionVersionHolder<T>>(
+            INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+    this.memberToGCVersion =
+        new ConcurrentHashMap<T, Long>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
   }
 
   /**
-   * Retrieve a vector that can be sent to another member.  This clones all
-   * of the version information to protect against concurrent modification
-   * during serialization
+   * Retrieve a vector that can be sent to another member. This clones all of the version
+   * information to protect against concurrent modification during serialization
    */
   public RegionVersionVector<T> getCloneForTransmission() {
     Map<T, RegionVersionHolder<T>> liveHolders;
     liveHolders = new HashMap<T, RegionVersionHolder<T>>(this.memberToVersion);
-    ConcurrentHashMap<T, RegionVersionHolder<T>> clonedHolders = new ConcurrentHashMap<T, RegionVersionHolder<T>>(liveHolders.size(), LOAD_FACTOR, CONCURRENCY_LEVEL);
+    ConcurrentHashMap<T, RegionVersionHolder<T>> clonedHolders =
+        new ConcurrentHashMap<T, RegionVersionHolder<T>>(
+            liveHolders.size(), LOAD_FACTOR, CONCURRENCY_LEVEL);
     for (Map.Entry<T, RegionVersionHolder<T>> entry : liveHolders.entrySet()) {
       clonedHolders.put(entry.getKey(), entry.getValue().clone());
     }
-    ConcurrentHashMap<T, Long> gcVersions = new ConcurrentHashMap<T, Long>(this.memberToGCVersion.size(), LOAD_FACTOR, CONCURRENCY_LEVEL);
+    ConcurrentHashMap<T, Long> gcVersions =
+        new ConcurrentHashMap<T, Long>(
+            this.memberToGCVersion.size(), LOAD_FACTOR, CONCURRENCY_LEVEL);
     gcVersions.putAll(this.memberToGCVersion);
     RegionVersionHolder<T> clonedLocalHolder;
     clonedLocalHolder = this.localExceptions.clone();
     //Make sure the holder that we send to the peer does
     //have an accurate RegionVersionHolder for our local version
-    return createCopy(this.myId, clonedHolders, this.localVersion.get(), gcVersions, this.localGCVersion.get(), false, clonedLocalHolder);
+    return createCopy(
+        this.myId,
+        clonedHolders,
+        this.localVersion.get(),
+        gcVersions,
+        this.localGCVersion.get(),
+        false,
+        clonedLocalHolder);
   }
 
-  protected abstract RegionVersionVector<T> createCopy(T ownerId, ConcurrentHashMap<T, RegionVersionHolder<T>> vector, long version, ConcurrentHashMap<T, Long> gcVersions, long gcVersion, boolean singleMember, RegionVersionHolder<T> clonedLocalHolder);
+  protected abstract RegionVersionVector<T> createCopy(
+      T ownerId,
+      ConcurrentHashMap<T, RegionVersionHolder<T>> vector,
+      long version,
+      ConcurrentHashMap<T, Long> gcVersions,
+      long gcVersion,
+      boolean singleMember,
+      RegionVersionHolder<T> clonedLocalHolder);
 
   /**
-   * Retrieve a vector that can be sent to another member.  This clones only
-   * the version information for the given ID.<p>
-   * The clone returned by this method does not have distributed garbage-collection
-   * information.
+   * Retrieve a vector that can be sent to another member. This clones only the version information
+   * for the given ID.
+   *
+   * <p>The clone returned by this method does not have distributed garbage-collection information.
    */
   public RegionVersionVector<T> getCloneForTransmission(T mbr) {
     Map<T, RegionVersionHolder<T>> liveHolders;
@@ -188,12 +216,17 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     } else {
       holder = holder.clone();
     }
-    return createCopy(this.myId, new ConcurrentHashMap<T, RegionVersionHolder<T>>(Collections.singletonMap(mbr, holder)), 0, new ConcurrentHashMap<T, Long>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL), 0, true, new RegionVersionHolder<T>(-1));
+    return createCopy(
+        this.myId,
+        new ConcurrentHashMap<T, RegionVersionHolder<T>>(Collections.singletonMap(mbr, holder)),
+        0,
+        new ConcurrentHashMap<T, Long>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL),
+        0,
+        true,
+        new RegionVersionHolder<T>(-1));
   }
 
-  /**
-   * Retrieve a collection of tombstone GC region-versions
-   */
+  /** Retrieve a collection of tombstone GC region-versions */
   public Map<T, Long> getTombstoneGCVector() {
     Map<T, Long> result;
     synchronized (memberToGCVersion) {
@@ -222,8 +255,10 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     return true;
   }
 
-  /** locks against new version generation and returns the current region version number 
-   * @param regionPath 
+  /**
+   * locks against new version generation and returns the current region version number
+   *
+   * @param regionPath
    */
   public long lockForClear(String regionPath, DM dm, InternalDistributedMember locker) {
     lockVersionGeneration(regionPath, dm, locker);
@@ -235,7 +270,8 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     synchronized (this.clearLockSync) {
       InternalDistributedSystem instance = InternalDistributedSystem.getAnyInstance();
       if (instance != null && logger.isDebugEnabled()) {
-        logger.debug("Unlocking for clear, from member {} RVV {}", locker, System.identityHashCode(this));
+        logger.debug(
+            "Unlocking for clear, from member {} RVV {}", locker, System.identityHashCode(this));
       }
       if (this.lockOwner != null && !locker.equals(this.lockOwner)) {
         if (instance != null && logger.isDebugEnabled()) {
@@ -249,71 +285,87 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * This schedules a thread that owns the version-generation write-lock for this
-   * vector.  The method unlockVersionGeneration notifies the thread to release
-   * the lock and terminate its run.
-   * @param regionPath 
+   * This schedules a thread that owns the version-generation write-lock for this vector. The method
+   * unlockVersionGeneration notifies the thread to release the lock and terminate its run.
+   *
+   * @param regionPath
    * @param dm the distribution manager - used to obtain an executor to hold the thread
    * @param locker the member requesting the lock (currently not used)
    */
-  private void lockVersionGeneration(final String regionPath, final DM dm, final InternalDistributedMember locker) {
+  private void lockVersionGeneration(
+      final String regionPath, final DM dm, final InternalDistributedMember locker) {
     final CountDownLatch acquiredLock = new CountDownLatch(1);
     if (logger.isDebugEnabled()) {
-      logger.debug("Locking version generation for {} region {} RVV {}", locker, regionPath, System.identityHashCode(this));
+      logger.debug(
+          "Locking version generation for {} region {} RVV {}",
+          locker,
+          regionPath,
+          System.identityHashCode(this));
     }
     // this could block for a while if a limit has been set on the waiting-thread-pool
-    dm.getWaitingThreadPool().execute(new Runnable() {
-      @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = { "UL_UNRELEASED_LOCK", "IMSE_DONT_CATCH_IMSE" })
-      public void run() {
-        boolean haveLock = false;
-        synchronized (clearLockSync) {
-          try {
-            // TODO Following code does not seem necessary as dlock has been taken
-            // so no two threads will try to enter in this code section.
-            while (locked && dm.isCurrentMember(locker)) {
-              try {
-                clearLockSync.wait();
-              } catch (InterruptedException e) {
-                // okay to ignore - release the lock and exit
-              }
-            }
-            if (logger.isDebugEnabled()) {
-              logger.debug("Waiting thread is now locking version generation for {} region {} RVV {}", locker, regionPath, System.identityHashCode(this));
-            }
-            try {
-              versionLock.writeLock().lock();
-              lockOwner = locker;
-              doUnlock = false;
-              locked = true;
-              haveLock = true;
-              acquiredLock.countDown();
-            } catch (IllegalMonitorStateException e) {
-              // dlock on the clear() operation should prevent this from happening
-              logger.fatal(LocalizedMessage.create(LocalizedStrings.RVV_LOCKING_CONFUSED, new Object[] { locker, lockOwner }));
-              return;
-            }
+    dm.getWaitingThreadPool()
+        .execute(
+            new Runnable() {
+              @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+                value = {"UL_UNRELEASED_LOCK", "IMSE_DONT_CATCH_IMSE"}
+              )
+              public void run() {
+                boolean haveLock = false;
+                synchronized (clearLockSync) {
+                  try {
+                    // TODO Following code does not seem necessary as dlock has been taken
+                    // so no two threads will try to enter in this code section.
+                    while (locked && dm.isCurrentMember(locker)) {
+                      try {
+                        clearLockSync.wait();
+                      } catch (InterruptedException e) {
+                        // okay to ignore - release the lock and exit
+                      }
+                    }
+                    if (logger.isDebugEnabled()) {
+                      logger.debug(
+                          "Waiting thread is now locking version generation for {} region {} RVV {}",
+                          locker,
+                          regionPath,
+                          System.identityHashCode(this));
+                    }
+                    try {
+                      versionLock.writeLock().lock();
+                      lockOwner = locker;
+                      doUnlock = false;
+                      locked = true;
+                      haveLock = true;
+                      acquiredLock.countDown();
+                    } catch (IllegalMonitorStateException e) {
+                      // dlock on the clear() operation should prevent this from happening
+                      logger.fatal(
+                          LocalizedMessage.create(
+                              LocalizedStrings.RVV_LOCKING_CONFUSED,
+                              new Object[] {locker, lockOwner}));
+                      return;
+                    }
 
-            while (!doUnlock && dm.isCurrentMember(locker)) {
-              try {
-                clearLockSync.wait(250);
-              } catch (InterruptedException e) {
-                // okay to ignore - release the lock and exit
+                    while (!doUnlock && dm.isCurrentMember(locker)) {
+                      try {
+                        clearLockSync.wait(250);
+                      } catch (InterruptedException e) {
+                        // okay to ignore - release the lock and exit
+                      }
+                    }
+                  } finally {
+                    if (haveLock) {
+                      locked = false; // this must be clear when the writeLock is released
+                      // so we don't get warnings about it still being locked
+                      versionLock.writeLock().unlock();
+                      doUnlock = false;
+                      clearLockSync.notifyAll();
+                      // leave lockOwner set so we can see who the last lock request came from
+                    }
+                    acquiredLock.countDown();
+                  }
+                }
               }
-            }
-          } finally {
-            if (haveLock) {
-              locked = false; // this must be clear when the writeLock is released
-                              // so we don't get warnings about it still being locked
-              versionLock.writeLock().unlock();
-              doUnlock = false;
-              clearLockSync.notifyAll();
-              // leave lockOwner set so we can see who the last lock request came from
-            }
-            acquiredLock.countDown();
-          }
-        }
-      }
-    });
+            });
     boolean interrupted = false;
     while (dm.isCurrentMember(locker)) {
       try {
@@ -330,7 +382,6 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     if (logger.isDebugEnabled()) {
       logger.debug("Done locking");
     }
-
   }
 
   private void unlockVersionGeneration(final InternalDistributedMember locker) {
@@ -340,31 +391,25 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     }
   }
 
-  /**
-   * return the next local version number
-   */
+  /** return the next local version number */
   public long getNextVersion() {
     return getNextVersion(true);
   }
 
-  /**
-   * return the next local version number for a clear() operation,
-   * bypassing lock checks
-   */
+  /** return the next local version number for a clear() operation, bypassing lock checks */
   public long getNextVersionWhileLocked() {
     return getNextVersion(false);
   }
 
-  /**
-   * return the next local version number
-   */
+  /** return the next local version number */
   private long getNextVersion(boolean checkLocked) {
     if (checkLocked && this.locked) {
       // this should never be the case.  If version generation is locked and we get here
       // then the path to this point is not protected by getting the version generation
       // lock from the RVV but it should be
       if (logger.isDebugEnabled()) {
-        logger.debug("Generating a version tag when version generation is locked by {}", this.lockOwner);
+        logger.debug(
+            "Generating a version tag when version generation is locked by {}", this.lockOwner);
       }
     }
     long new_version = localVersion.incrementAndGet();
@@ -402,16 +447,17 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     synchronized (localExceptions) {
       if (v != localExceptions.version) {
         if (logger.isDebugEnabled()) {
-          logger.debug("Adjust localExceptions.version {} to equal localVersion {}", localExceptions.version, localVersion.get());
+          logger.debug(
+              "Adjust localExceptions.version {} to equal localVersion {}",
+              localExceptions.version,
+              localVersion.get());
         }
         localExceptions.version = v;
       }
     }
   }
 
-  /**
-   * return the current version for this member
-   */
+  /** return the current version for this member */
   public long getCurrentVersion() {
     synchronized (localExceptions) {
       syncLocalVersion();
@@ -419,16 +465,12 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     }
   }
 
-  /**
-   * return the current version for this member
-   */
+  /** return the current version for this member */
   public RegionVersionHolder<T> getLocalExceptions() {
     return localExceptions;
   }
 
-  /**
-   * return version holder for this member
-   */
+  /** return version holder for this member */
   public RegionVersionHolder<T> getHolderForMember(T id) {
     if (id.equals(this.myId)) {
       return localExceptions;
@@ -437,35 +479,32 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     }
   }
 
-  /**
-   * returns the ID of the member that owns this version vector
-   */
+  /** returns the ID of the member that owns this version vector */
   public T getOwnerId() {
     return this.myId;
   }
 
   /**
-   * turns off recording of versions for this vector.  This can be used when
-   * recording of versions is not necessary, as in an empty region
+   * turns off recording of versions for this vector. This can be used when recording of versions is
+   * not necessary, as in an empty region
    */
   public void turnOffRecordingForEmptyRegion() {
     this.recordingDisabled = true;
   }
 
   /**
-   * client version vectors only record GC numbers and don't keep exceptions, etc, because
-   * there could be MANY of them
+   * client version vectors only record GC numbers and don't keep exceptions, etc, because there
+   * could be MANY of them
    */
   public void setIsClientVector() {
     this.clientVector = true;
   }
 
-  /**
-   * record all of the version information from an initial image provider
-   */
+  /** record all of the version information from an initial image provider */
   public void recordVersions(RegionVersionVector<T> otherVector) {
     synchronized (this.memberToVersion) {
-      for (Map.Entry<T, RegionVersionHolder<T>> entry : otherVector.getMemberToVersion().entrySet()) {
+      for (Map.Entry<T, RegionVersionHolder<T>> entry :
+          otherVector.getMemberToVersion().entrySet()) {
         T mbr = entry.getKey();
         RegionVersionHolder<T> otherHolder = entry.getValue();
 
@@ -476,19 +515,22 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
       otherVector.syncLocalVersion();
       initializeVersionHolder(otherVector.getOwnerId(), otherVector.localExceptions);
 
-      if (otherVector.getCurrentVersion() > 0 && !this.memberToVersion.containsKey(otherVector.getOwnerId())) {
+      if (otherVector.getCurrentVersion() > 0
+          && !this.memberToVersion.containsKey(otherVector.getOwnerId())) {
         recordVersion(otherVector.getOwnerId(), otherVector.getCurrentVersion());
       }
 
       // check if I have updates from members that the otherVector does not have
       // If yes, these are unfinished ops and should be cleaned
       for (T mbr : this.memberToVersion.keySet()) {
-        if (!otherVector.memberToVersion.containsKey(mbr) && !mbr.equals(otherVector.getOwnerId())) {
+        if (!otherVector.memberToVersion.containsKey(mbr)
+            && !mbr.equals(otherVector.getOwnerId())) {
           RegionVersionHolder holder = this.memberToVersion.get(mbr);
           initializeVersionHolder(mbr, new RegionVersionHolder(0));
         }
       }
-      if (!otherVector.memberToVersion.containsKey(myId) && !myId.equals(otherVector.getOwnerId())) {
+      if (!otherVector.memberToVersion.containsKey(myId)
+          && !myId.equals(otherVector.getOwnerId())) {
         initializeVersionHolder(myId, new RegionVersionHolder(0));
       }
 
@@ -544,8 +586,9 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * Records a received region-version.  These are transmitted in VersionTags
-   * in messages between peers and from servers to clients.
+   * Records a received region-version. These are transmitted in VersionTags in messages between
+   * peers and from servers to clients.
+   *
    * @param tag the version information
    */
   public void recordVersion(T mbr, VersionTag<T> tag) {
@@ -563,7 +606,13 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
       //the replayed event.
       synchronized (localExceptions) {
         if (this.localVersion.get() < tag.getRegionVersion()) {
-          Assert.fail("recordVersion invoked for a local version tag that is higher than our local version. rvv=" + this + ", tag=" + tag + " " + regionName);
+          Assert.fail(
+              "recordVersion invoked for a local version tag that is higher than our local version. rvv="
+                  + this
+                  + ", tag="
+                  + tag
+                  + " "
+                  + regionName);
         }
       }
     }
@@ -572,14 +621,13 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * Records a received region-version.  These are transmitted in VersionTags
-   * in messages between peers and from servers to clients.  In general you
-   * should use recordVersion(mbr, versionTag) so that the tag is marked as having
-   * been recorded.  This will keep DistributedCacheOperation.basicProcess()
-   * from trying to record it again.
-   * 
-   * This method is also called for versions which have been recovered from disk.
-   * 
+   * Records a received region-version. These are transmitted in VersionTags in messages between
+   * peers and from servers to clients. In general you should use recordVersion(mbr, versionTag) so
+   * that the tag is marked as having been recorded. This will keep
+   * DistributedCacheOperation.basicProcess() from trying to record it again.
+   *
+   * <p>This method is also called for versions which have been recovered from disk.
+   *
    * @param member the peer that performed the operation
    * @param version the version of the peers region that reflects the operation
    */
@@ -628,13 +676,17 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * Records a version holder that we have recovered from disk. This
-   * version holder replaces the current version holder if it dominates
-   * the version holder we already have. This method will called once for
-   * each oplog we recover.
-   * @param latestOplog 
+   * Records a version holder that we have recovered from disk. This version holder replaces the
+   * current version holder if it dominates the version holder we already have. This method will
+   * called once for each oplog we recover.
+   *
+   * @param latestOplog
    */
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ML_SYNC_ON_FIELD_TO_GUARD_CHANGING_THAT_FIELD", justification = "sync on localExceptions guards concurrent modification but this is a replacement")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "ML_SYNC_ON_FIELD_TO_GUARD_CHANGING_THAT_FIELD",
+    justification =
+        "sync on localExceptions guards concurrent modification but this is a replacement"
+  )
   public void initRecoveredVersion(T member, RegionVersionHolder<T> v, boolean latestOplog) {
     RegionVersionHolder<T> recovered = v.clone();
 
@@ -649,7 +701,10 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
         if (latestOplog || localVersion.get() == 0) {
           localExceptions = recovered;
           if (logger.isTraceEnabled(LogMarker.RVV)) {
-            logger.trace(LogMarker.RVV, "initRecoveredVersion setting local version to {}", recovered.version);
+            logger.trace(
+                LogMarker.RVV,
+                "initRecoveredVersion setting local version to {}",
+                recovered.version);
           }
           localVersion.set(recovered.version);
         }
@@ -674,9 +729,7 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     }
   }
 
-  /**
-   * get the last recorded region version number for the given member
-   */
+  /** get the last recorded region version number for the given member */
   public long getVersionForMember(T mbr) {
     RegionVersionHolder<T> holder = this.memberToVersion.get(mbr);
     if (holder == null) {
@@ -690,10 +743,7 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     }
   }
 
-  /**
-   * Returns a list of the members that have been marked as having left the
-   * system.
-   */
+  /** Returns a list of the members that have been marked as having left the system. */
   public Set<T> getDepartedMembersSet() {
     synchronized (this.memberToVersion) {
       Set<T> result = new HashSet<T>();
@@ -708,7 +758,7 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
 
   /**
    * Test to see if this vector has seen the given version.
-   * 
+   *
    * @return true if this vector has seen the given version
    */
   public boolean contains(T id, long version) {
@@ -734,13 +784,16 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * Removes departed members not in the given collection of IDs from the
-   * version vector
+   * Removes departed members not in the given collection of IDs from the version vector
+   *
    * @param idsToKeep collection of the kind of IDs appropriate for this vector
    */
   public void removeOldMembers(Set<VersionSource<T>> idsToKeep) {
     synchronized (this.memberToVersion) {
-      for (Iterator<Map.Entry<T, RegionVersionHolder<T>>> it = this.memberToVersion.entrySet().iterator(); it.hasNext();) {
+      for (Iterator<Map.Entry<T, RegionVersionHolder<T>>> it =
+              this.memberToVersion.entrySet().iterator();
+          it.hasNext();
+          ) {
         Map.Entry<T, RegionVersionHolder<T>> entry = it.next();
         if (entry.getValue().isDepartedMember) {
           if (!idsToKeep.contains(entry.getKey())) {
@@ -755,23 +808,18 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     }
   }
 
-  /**
-   * Test hook - does this vector hold an entry for the given ID?
-   */
+  /** Test hook - does this vector hold an entry for the given ID? */
   public boolean containsMember(T id) {
-    if (this.memberToVersion.containsKey(id))
-      return true;
-    if (this.memberToGCVersion.containsKey(id))
-      return true;
-    if (this.canonicalIds.containsKey(id))
-      return true;
+    if (this.memberToVersion.containsKey(id)) return true;
+    if (this.memberToGCVersion.containsKey(id)) return true;
+    if (this.canonicalIds.containsKey(id)) return true;
     return false;
   }
 
   /**
-   * This marks the given entry as departed, making it eligible to be
-   * removed during an operation like DistributedRegion.synchronizeWith()
-   * 
+   * This marks the given entry as departed, making it eligible to be removed during an operation
+   * like DistributedRegion.synchronizeWith()
+   *
    * @param id
    */
   protected void markDepartedMember(T id) {
@@ -784,13 +832,13 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * check to see if tombstone removal in this RVV indicates that tombstones
-   * have been removed from its Region that have not been removed from the
-   * argument's Region.  If this is the case, then a delta GII may leave
-   * entries in the other RVV's Region that should be deleted.
+   * check to see if tombstone removal in this RVV indicates that tombstones have been removed from
+   * its Region that have not been removed from the argument's Region. If this is the case, then a
+   * delta GII may leave entries in the other RVV's Region that should be deleted.
+   *
    * @param other
-   * @return true if there have been tombstone removals in this vector's Region
-   *         that were not done in the argument's region
+   * @return true if there have been tombstone removals in this vector's Region that were not done
+   *     in the argument's region
    */
   public boolean hasHigherTombstoneGCVersions(RegionVersionVector<T> other) {
     if (this.localGCVersion.get() > 0) {
@@ -830,15 +878,16 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * Test to see if this vector's region may be able to provide updates
-   * that the given vector has not seen.  This method assumes that the argument
-   * is not a live vector and requires no synchronization.
+   * Test to see if this vector's region may be able to provide updates that the given vector has
+   * not seen. This method assumes that the argument is not a live vector and requires no
+   * synchronization.
    */
   public boolean isNewerThanOrCanFillExceptionsFor(RegionVersionVector<T> other) {
     if (other.singleMember) {
       // do the diff for only a single member.  This is typically a member that
       // recently crashed.
-      Map.Entry<T, RegionVersionHolder<T>> entry = other.memberToVersion.entrySet().iterator().next();
+      Map.Entry<T, RegionVersionHolder<T>> entry =
+          other.memberToVersion.entrySet().iterator().next();
       RegionVersionHolder<T> holder = this.memberToVersion.get(entry.getKey());
       if (holder == null) {
         return false;
@@ -887,14 +936,13 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     }
   }
 
-  /**
-   * Test to see if this vector's rvvgc has updates that has not seen. 
-   */
+  /** Test to see if this vector's rvvgc has updates that has not seen. */
   public synchronized boolean isRVVGCDominatedBy(RegionVersionVector<T> other) {
     if (other.singleMember) {
       // do the diff for only a single member.  This is typically a member that
       // recently crashed.
-      Map.Entry<T, RegionVersionHolder<T>> entry = other.memberToVersion.entrySet().iterator().next();
+      Map.Entry<T, RegionVersionHolder<T>> entry =
+          other.memberToVersion.entrySet().iterator().next();
 
       Long gcVersion = this.memberToGCVersion.get(entry.getKey());
       return isGCVersionDominatedByHolder(gcVersion, entry.getValue());
@@ -928,9 +976,9 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * wait for this vector to dominate the given vector.  This means that
-   * the receiver has seen all version changes that the given vector has seen.
-   * 
+   * wait for this vector to dominate the given vector. This means that the receiver has seen all
+   * version changes that the given vector has seen.
+   *
    * @param otherVector the vector, usually from another member, that we want to dominate
    * @param region the region owning this vector
    * @return true if dominance was achieved
@@ -983,8 +1031,9 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * Remove any exceptions for the given member that are older than the given version.
-   * This is used after a synchronization operation to get rid of unneeded history.
+   * Remove any exceptions for the given member that are older than the given version. This is used
+   * after a synchronization operation to get rid of unneeded history.
+   *
    * @param mbr
    * @param version
    */
@@ -998,8 +1047,8 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * This is used by clear() while version generation is locked to remove old
-   * exceptions and update the GC vector to be the same as the current version vector
+   * This is used by clear() while version generation is locked to remove old exceptions and update
+   * the GC vector to be the same as the current version vector
    */
   public void removeOldVersions() {
     synchronized (this.memberToVersion) {
@@ -1019,9 +1068,7 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     }
   }
 
-  /**
-   * Test hook
-   */
+  /** Test hook */
   public int getExceptionCount(T mbr) {
     if (mbr.equals(this.myId)) {
       return localExceptions.getExceptionCount();
@@ -1033,9 +1080,19 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     return h.getExceptionCount();
   }
 
-  /** constructor used to create a cloned vector 
-   * @param localExceptions */
-  protected RegionVersionVector(T ownerId, ConcurrentHashMap<T, RegionVersionHolder<T>> vector, long version, ConcurrentHashMap<T, Long> gcVersions, long gcVersion, boolean singleMember, RegionVersionHolder<T> localExceptions) {
+  /**
+   * constructor used to create a cloned vector
+   *
+   * @param localExceptions
+   */
+  protected RegionVersionVector(
+      T ownerId,
+      ConcurrentHashMap<T, RegionVersionHolder<T>> vector,
+      long version,
+      ConcurrentHashMap<T, Long> gcVersions,
+      long gcVersion,
+      boolean singleMember,
+      RegionVersionHolder<T> localExceptions) {
     this.myId = ownerId;
     this.memberToVersion = vector;
     this.memberToGCVersion = gcVersions;
@@ -1047,14 +1104,17 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
 
   /** deserialize a cloned vector */
   public RegionVersionVector() {
-    this.memberToVersion = new ConcurrentHashMap<T, RegionVersionHolder<T>>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
-    this.memberToGCVersion = new ConcurrentHashMap<T, Long>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+    this.memberToVersion =
+        new ConcurrentHashMap<T, RegionVersionHolder<T>>(
+            INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+    this.memberToGCVersion =
+        new ConcurrentHashMap<T, Long>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
   }
 
   /**
-   * after deserializing a version tag or RVV the IDs in it should be replaced
-   * with references to IDs returned by this method.  This vastly reduces the
-   * memory footprint of tags/stamps/rvvs
+   * after deserializing a version tag or RVV the IDs in it should be replaced with references to
+   * IDs returned by this method. This vastly reduces the memory footprint of tags/stamps/rvvs
+   *
    * @param id
    * @return the canonical reference
    */
@@ -1146,9 +1206,10 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   protected abstract T readMember(DataInput in) throws IOException, ClassNotFoundException;
 
   /**
-   * When a tombstone is removed from the entry map this method must be called
-   * to record the max region-version of any tombstone reaped.  Any older versions
-   * are then immediately eligible for reaping.
+   * When a tombstone is removed from the entry map this method must be called to record the max
+   * region-version of any tombstone reaped. Any older versions are then immediately eligible for
+   * reaping.
+   *
    * @param mbr
    * @param regionVersion
    */
@@ -1183,6 +1244,7 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
 
   /**
    * record all of the GC versions in the given vector
+   *
    * @param other
    */
   public void recordGCVersions(RegionVersionVector<T> other) {
@@ -1194,10 +1256,10 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * returns true if tombstones newer than the given version have already been reaped.
-   * This means that a clear or GC has been received that should have wiped out the
-   * operation this version stamp represents, but this operation had not yet been
-   * received
+   * returns true if tombstones newer than the given version have already been reaped. This means
+   * that a clear or GC has been received that should have wiped out the operation this version
+   * stamp represents, but this operation had not yet been received
+   *
    * @param mbr
    * @param gcVersion
    * @return true if the given version should be rejected
@@ -1216,8 +1278,8 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * returns the highest region-version of any tombstone owned by the given
-   * member that was reaped in this vector's region 
+   * returns the highest region-version of any tombstone owned by the given member that was reaped
+   * in this vector's region
    */
   public long getGCVersion(T mbr) {
     if (mbr == null || mbr.equals(this.myId)) {
@@ -1234,23 +1296,21 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * Get a map of the member to the version and exception list for that member,
-   * including the local member.
+   * Get a map of the member to the version and exception list for that member, including the local
+   * member.
    */
   public Map<T, RegionVersionHolder<T>> getMemberToVersion() {
     RegionVersionHolder<T> myExceptions;
     myExceptions = this.localExceptions.clone();
 
-    HashMap<T, RegionVersionHolder<T>> results = new HashMap<T, RegionVersionHolder<T>>(memberToVersion);
+    HashMap<T, RegionVersionHolder<T>> results =
+        new HashMap<T, RegionVersionHolder<T>>(memberToVersion);
 
     results.put(getOwnerId(), myExceptions);
     return results;
   }
 
-  /**
-   * Get a map of member to the GC version of that member, including
-   * the local member. 
-   */
+  /** Get a map of member to the GC version of that member, including the local member. */
   public synchronized Map<T, Long> getMemberToGCVersion() {
     HashMap<T, Long> results = new HashMap<T, Long>(memberToGCVersion);
     if (localGCVersion.get() > 0) {
@@ -1259,10 +1319,7 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     return results;
   }
 
-  /**
-   * Remove an exceptions that are older than the current GC version
-   * for each member in the RVV.
-   */
+  /** Remove an exceptions that are older than the current GC version for each member in the RVV. */
   public void pruneOldExceptions() {
     Set<T> members;
     members = new HashSet<T>(memberToGCVersion.keySet());
@@ -1286,7 +1343,12 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   @Override
   public String toString() {
     if (this.isLiveVector) {
-      return "RegionVersionVector{rv" + this.localVersion + " gc" + this.localGCVersion + "}@" + System.identityHashCode(this);
+      return "RegionVersionVector{rv"
+          + this.localVersion
+          + " gc"
+          + this.localGCVersion
+          + "}@"
+          + System.identityHashCode(this);
     } else {
       return fullToString();
     }
@@ -1295,7 +1357,12 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   /** this toString method is not thread-safe */
   public String fullToString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("RegionVersionVector[").append(this.myId).append("={rv").append(this.localExceptions.version).append(" gc" + this.localGCVersion).append(" localVersion=" + this.localVersion);
+    sb.append("RegionVersionVector[")
+        .append(this.myId)
+        .append("={rv")
+        .append(this.localExceptions.version)
+        .append(" gc" + this.localGCVersion)
+        .append(" localVersion=" + this.localVersion);
     try {
       sb.append(" local exceptions=" + this.localExceptions.exceptionsToString());
     } catch (ConcurrentModificationException c) {
@@ -1321,16 +1388,15 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     return sb.toString();
   }
 
-  public void memberJoined(InternalDistributedMember id) {
-  }
+  public void memberJoined(InternalDistributedMember id) {}
 
-  public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
-  }
+  public void memberSuspect(
+      InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {}
 
-  public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
-  }
+  public void quorumLost(
+      Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {}
 
-  /* 
+  /*
    * (non-Javadoc)
    * this ensures that the version generation lock is released
    * @see org.apache.geode.distributed.internal.MembershipListener#memberDeparted(org.apache.geode.distributed.internal.membership.InternalDistributedMember, boolean)
@@ -1340,17 +1406,22 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     // thread so that membership events aren't blocked
     InternalDistributedSystem system = InternalDistributedSystem.getAnyInstance();
     if (system != null) {
-      system.getDistributionManager().getWaitingThreadPool().execute(new Runnable() {
-        public void run() {
-          unlockForClear(id);
-        }
-      });
+      system
+          .getDistributionManager()
+          .getWaitingThreadPool()
+          .execute(
+              new Runnable() {
+                public void run() {
+                  unlockForClear(id);
+                }
+              });
     } else {
       unlockForClear(id);
     }
   }
 
-  public static RegionVersionVector<?> create(boolean persistent, DataInput in) throws IOException, ClassNotFoundException {
+  public static RegionVersionVector<?> create(boolean persistent, DataInput in)
+      throws IOException, ClassNotFoundException {
     RegionVersionVector<?> rvv;
     if (persistent) {
       rvv = new DiskRegionVersionVector();
@@ -1370,8 +1441,8 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * For test purposes, see if two RVVs have seen the same events
-   * and GC version vectors
+   * For test purposes, see if two RVVs have seen the same events and GC version vectors
+   *
    * @return true if the RVVs are the same.
    */
   public boolean sameAs(RegionVersionVector<T> other) {
@@ -1382,7 +1453,7 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
     if (!myMemberToVersion.keySet().equals(otherMemberToVersion.keySet())) {
       return false;
     }
-    for (Iterator<T> it = myMemberToVersion.keySet().iterator(); it.hasNext();) {
+    for (Iterator<T> it = myMemberToVersion.keySet().iterator(); it.hasNext(); ) {
       T key = it.next();
       if (!myMemberToVersion.get(key).sameAs(otherMemberToVersion.get(key))) {
         return false;
@@ -1400,10 +1471,10 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * Note: test only. 
-   * If put in production will cause ConcurrentModificationException
-   * see if two RVVs have seen the same events and GC version vectors
-   * This will treat member with null version the same as member with version=0
+   * Note: test only. If put in production will cause ConcurrentModificationException see if two
+   * RVVs have seen the same events and GC version vectors This will treat member with null version
+   * the same as member with version=0
+   *
    * @return true if the RVVs are the same logically.
    */
   public boolean logicallySameAs(RegionVersionVector<T> other) {
@@ -1411,17 +1482,14 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   }
 
   /**
-   * @return true if this vector represents the entry for a single member
-   * to be used in synchronizing caches for that member in the case of 
-   * a crash.  Otherwise return false.
+   * @return true if this vector represents the entry for a single member to be used in
+   *     synchronizing caches for that member in the case of a crash. Otherwise return false.
    */
   public boolean isForSynchronization() {
     return this.singleMember;
   }
 
-  /**
-   * Test hook - see if a member is marked as "departed"
-   */
+  /** Test hook - see if a member is marked as "departed" */
   public boolean isDepartedMember(VersionSource<T> mbr) {
     RegionVersionHolder<T> h = memberToVersion.get(mbr);
     return (h != null) && h.isDepartedMember;
@@ -1434,7 +1502,7 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   //  /**
   //   * This class will wrap DM member IDs to provide integers that can be stored
   //   * on disk and be timed out in the vector.
-  //   * 
+  //   *
   //   *
   //   */
   //  static class RVVMember implements Comparable {
@@ -1442,7 +1510,7 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   //    T memberId;
   //    long timeAdded;
   //    long internalId;
-  //    
+  //
   //    RVVMember(T m, long timeAdded, long internalId) {
   //      this.memberId = m;
   //      this.timeAdded = timeAdded;
@@ -1451,7 +1519,7 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   //        NextId.set(internalId);
   //      }
   //    }
-  //    
+  //
   //    RVVMember(T m) {
   //      this.memberId = m;
   //      this.timeAdded = System.currentTimeMillis();
@@ -1470,7 +1538,7 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   //    public int hashCode() {
   //      return this.memberId.hashCode();
   //    }
-  //    
+  //
   //    @Override
   //    public boolean equals(Object o) {
   //      if (o instanceof T) {
@@ -1479,7 +1547,7 @@ public abstract class RegionVersionVector<T extends VersionSource<?>> implements
   //        return this.memberId.equals(((RVVMember)o).memberId);
   //      }
   //    }
-  //    
+  //
   //    @Override
   //    public String toString() {
   //      return "vID(#"+this.internalId+"; time="+this.timeAdded+"; id="+this.memberId+")";

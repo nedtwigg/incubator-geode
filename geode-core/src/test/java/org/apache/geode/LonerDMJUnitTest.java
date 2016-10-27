@@ -35,8 +35,8 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.*;
 
 /**
- * This class makes sure an isolated "loner" distribution manager
- * can be created and do some cache functions.
+ * This class makes sure an isolated "loner" distribution manager can be created and do some cache
+ * functions.
  */
 @SuppressWarnings("deprecation")
 @Category(IntegrationTest.class)
@@ -181,7 +181,9 @@ public class LonerDMJUnitTest {
     assertTrue(ds.getMemberId().indexOf(name) > -1);
     String memberid = ds.getMemberId();
     String shortname = shortName(host);
-    assertTrue("'" + memberid + "' does not contain '" + shortname + "'", memberid.indexOf(shortname) > -1);
+    assertTrue(
+        "'" + memberid + "' does not contain '" + shortname + "'",
+        memberid.indexOf(shortname) > -1);
     // make sure the loner port can be updated
     ((LonerDistributionManager) ((InternalDistributedSystem) ds).getDM()).updateLonerPort(100);
   }
@@ -190,10 +192,7 @@ public class LonerDMJUnitTest {
     assertNotNull(hostname);
     int index = hostname.indexOf('.');
 
-    if (index > 0 && !Character.isDigit(hostname.charAt(0)))
-      return hostname.substring(0, index);
-    else
-      return hostname;
+    if (index > 0 && !Character.isDigit(hostname.charAt(0))) return hostname.substring(0, index);
+    else return hostname;
   }
-
 }

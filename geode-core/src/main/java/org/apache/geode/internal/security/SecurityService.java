@@ -87,7 +87,8 @@ public interface SecurityService {
 
   Object postProcess(String regionPath, Object key, Object value, boolean valueIsSerialized);
 
-  Object postProcess(Object principal, String regionPath, Object key, Object value, boolean valueIsSerialized);
+  Object postProcess(
+      Object principal, String regionPath, Object key, Object value, boolean valueIsSerialized);
 
   boolean isClientSecurityRequired();
 
@@ -99,10 +100,7 @@ public interface SecurityService {
 
   PostProcessor getPostProcessor();
 
-  /**
-   * this method would never return null, it either throws an exception or
-   * returns an object
-   */
+  /** this method would never return null, it either throws an exception or returns an object */
   public static <T> T getObjectOfTypeFromClassName(String className, Class<T> expectedClazz) {
     Class actualClass = null;
     try {
@@ -112,44 +110,45 @@ public interface SecurityService {
     }
 
     if (!expectedClazz.isAssignableFrom(actualClass)) {
-      throw new GemFireSecurityException("Instance could not be obtained. Expecting a " + expectedClazz.getName() + " class.");
+      throw new GemFireSecurityException(
+          "Instance could not be obtained. Expecting a " + expectedClazz.getName() + " class.");
     }
 
     T actualObject = null;
     try {
       actualObject = (T) actualClass.newInstance();
     } catch (Exception e) {
-      throw new GemFireSecurityException("Instance could not be obtained. Error instantiating " + actualClass.getName(), e);
+      throw new GemFireSecurityException(
+          "Instance could not be obtained. Error instantiating " + actualClass.getName(), e);
     }
     return actualObject;
   }
 
-  /**
-   * this method would never return null, it either throws an exception or
-   * returns an object
-   */
-  public static <T> T getObjectOfTypeFromFactoryMethod(String factoryMethodName, Class<T> expectedClazz) {
+  /** this method would never return null, it either throws an exception or returns an object */
+  public static <T> T getObjectOfTypeFromFactoryMethod(
+      String factoryMethodName, Class<T> expectedClazz) {
     T actualObject = null;
     try {
       Method factoryMethod = ClassLoadUtil.methodFromName(factoryMethodName);
       actualObject = (T) factoryMethod.invoke(null, (Object[]) null);
     } catch (Exception e) {
-      throw new GemFireSecurityException("Instance could not be obtained from " + factoryMethodName, e);
+      throw new GemFireSecurityException(
+          "Instance could not be obtained from " + factoryMethodName, e);
     }
 
     if (actualObject == null) {
-      throw new GemFireSecurityException("Instance could not be obtained from " + factoryMethodName);
+      throw new GemFireSecurityException(
+          "Instance could not be obtained from " + factoryMethodName);
     }
 
     return actualObject;
   }
 
   /**
-   * this method would never return null, it either throws an exception or
-   * returns an object
+   * this method would never return null, it either throws an exception or returns an object
    *
-   * @return an object of type expectedClazz. This method would never return
-   * null. It either returns an non-null object or throws exception.
+   * @return an object of type expectedClazz. This method would never return null. It either returns
+   *     an non-null object or throws exception.
    */
   public static <T> T getObjectOfType(String classOrMethod, Class<T> expectedClazz) {
     T object = null;
@@ -163,10 +162,13 @@ public interface SecurityService {
 
   public static Properties getCredentials(Properties securityProps) {
     Properties credentials = null;
-    if (securityProps.containsKey(ResourceConstants.USER_NAME) && securityProps.containsKey(ResourceConstants.PASSWORD)) {
+    if (securityProps.containsKey(ResourceConstants.USER_NAME)
+        && securityProps.containsKey(ResourceConstants.PASSWORD)) {
       credentials = new Properties();
-      credentials.setProperty(ResourceConstants.USER_NAME, securityProps.getProperty(ResourceConstants.USER_NAME));
-      credentials.setProperty(ResourceConstants.PASSWORD, securityProps.getProperty(ResourceConstants.PASSWORD));
+      credentials.setProperty(
+          ResourceConstants.USER_NAME, securityProps.getProperty(ResourceConstants.USER_NAME));
+      credentials.setProperty(
+          ResourceConstants.PASSWORD, securityProps.getProperty(ResourceConstants.PASSWORD));
     }
     return credentials;
   }
@@ -174,5 +176,4 @@ public interface SecurityService {
   static SecurityService getSecurityService() {
     return IntegratedSecurityService.getSecurityService();
   }
-
 }

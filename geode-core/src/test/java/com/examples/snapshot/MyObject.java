@@ -20,16 +20,12 @@ import java.io.Serializable;
 
 import org.apache.geode.pdx.PdxInstance;
 
-/**
- * Data class for testing snapshots, cannot be located in org.apache.*.
- * 
- */
+/** Data class for testing snapshots, cannot be located in org.apache.*. */
 public class MyObject implements Serializable {
   protected long f1;
   protected String f2;
 
-  public MyObject() {
-  }
+  public MyObject() {}
 
   public MyObject(long number, String s) {
     f1 = number;

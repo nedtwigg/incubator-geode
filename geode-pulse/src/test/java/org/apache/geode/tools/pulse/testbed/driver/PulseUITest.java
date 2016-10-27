@@ -82,10 +82,12 @@ public class PulseUITest {
     DesiredCapabilities capabilities = new DesiredCapabilities();
     capabilities.setJavascriptEnabled(true);
     capabilities.setCapability("takesScreenshot", true);
-    capabilities.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/16.0");
+    capabilities.setCapability(
+        "phantomjs.page.settings.userAgent",
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/16.0");
 
     driver = new PhantomJSDriver(capabilities);
-    driver.manage().window().maximize();//required to make all elements visible
+    driver.manage().window().maximize(); //required to make all elements visible
 
     Thread.sleep(5000); //wait till pulse starts polling threads...
     testBed = new TestBed();
@@ -109,12 +111,15 @@ public class PulseUITest {
     userNameElement.sendKeys(userName);
     passwordElement.sendKeys(password);
     passwordElement.submit();
-    WebElement userNameOnPulsePage = (new WebDriverWait(driver, 10)).until(new ExpectedCondition<WebElement>() {
-      @Override
-      public WebElement apply(WebDriver d) {
-        return d.findElement(By.id("userName"));
-      }
-    });
+    WebElement userNameOnPulsePage =
+        (new WebDriverWait(driver, 10))
+            .until(
+                new ExpectedCondition<WebElement>() {
+                  @Override
+                  public WebElement apply(WebDriver d) {
+                    return d.findElement(By.id("userName"));
+                  }
+                });
     assertNotNull(userNameOnPulsePage);
   }
 
@@ -137,22 +142,28 @@ public class PulseUITest {
   }
 
   private void waitForElementByClassName(final String className, int seconds) {
-    WebElement linkTextOnPulsePage1 = (new WebDriverWait(driver, seconds)).until(new ExpectedCondition<WebElement>() {
-      @Override
-      public WebElement apply(WebDriver d) {
-        return d.findElement(By.className(className));
-      }
-    });
+    WebElement linkTextOnPulsePage1 =
+        (new WebDriverWait(driver, seconds))
+            .until(
+                new ExpectedCondition<WebElement>() {
+                  @Override
+                  public WebElement apply(WebDriver d) {
+                    return d.findElement(By.className(className));
+                  }
+                });
     assertNotNull(linkTextOnPulsePage1);
   }
 
   private void waitForElementById(final String id, int seconds) {
-    WebElement element = (new WebDriverWait(driver, 10)).until(new ExpectedCondition<WebElement>() {
-      @Override
-      public WebElement apply(WebDriver d) {
-        return d.findElement(By.id(id));
-      }
-    });
+    WebElement element =
+        (new WebDriverWait(driver, 10))
+            .until(
+                new ExpectedCondition<WebElement>() {
+                  @Override
+                  public WebElement apply(WebDriver d) {
+                    return d.findElement(By.id(id));
+                  }
+                });
     assertNotNull(element);
   }
 
@@ -163,10 +174,14 @@ public class PulseUITest {
     List<Peer> peers = testBed.getRootDs().getPeers();
     List<Region> regions = testBed.getRootDs().getRegions();
     int totalMembers = servers.size() + locators.size() + peers.size();
-    int clusterMembers = Integer.parseInt(driver.findElement(By.id(CLUSTER_VIEW_MEMBERS_ID)).getText());
-    int clusterServers = Integer.parseInt(driver.findElement(By.id(CLUSTER_VIEW_SERVERS_ID)).getText());
-    int clusterLocators = Integer.parseInt(driver.findElement(By.id(CLUSTER_VIEW_LOCATORS_ID)).getText());
-    int clusterRegions = Integer.parseInt(driver.findElement(By.id(CLUSTER_VIEW_REGIONS_ID)).getText());
+    int clusterMembers =
+        Integer.parseInt(driver.findElement(By.id(CLUSTER_VIEW_MEMBERS_ID)).getText());
+    int clusterServers =
+        Integer.parseInt(driver.findElement(By.id(CLUSTER_VIEW_SERVERS_ID)).getText());
+    int clusterLocators =
+        Integer.parseInt(driver.findElement(By.id(CLUSTER_VIEW_LOCATORS_ID)).getText());
+    int clusterRegions =
+        Integer.parseInt(driver.findElement(By.id(CLUSTER_VIEW_REGIONS_ID)).getText());
     assertEquals(totalMembers, clusterMembers);
     assertEquals(servers.size(), clusterServers);
     assertEquals(locators.size(), clusterLocators);
@@ -186,7 +201,8 @@ public class PulseUITest {
       List regionMemberscount1 = testBed.getRootDs().getRegion(regionName1).getMembers();
       int regionEntCount1 = testBed.getRootDs().getRegion(regionName1).getEntryCount();
       int regionMembers1 = Integer.parseInt(driver.findElement(By.id("regionMembers")).getText());
-      int regionEntryCount1 = Integer.parseInt(driver.findElement(By.id("regionEntryCount")).getText());
+      int regionEntryCount1 =
+          Integer.parseInt(driver.findElement(By.id("regionEntryCount")).getText());
       assertEquals(regionMemberscount1.size(), regionMembers1);
       assertEquals(regionEntCount1, regionEntryCount1);
     }
@@ -233,21 +249,22 @@ public class PulseUITest {
       timeout();
       String peername = driver.findElement(By.id("memberName")).getText();
       List<Region> serverRegionscount = testBed.getRootDs().getRegions(server);
-      int serverRegions = Integer.parseInt(driver.findElement(By.id("memberRegionsCount")).getText());
+      int serverRegions =
+          Integer.parseInt(driver.findElement(By.id("memberRegionsCount")).getText());
       assertEquals(serverRegionscount.size(), serverRegions);
       prevSelectedMember = peername;
     }
     /*
-    for (Locator l : locators) {      
+    for (Locator l : locators) {
       String locator = l.getName();
       System.out.println("Checking regions mapping for locator " + locator);
       WebElement comboBox = driver.findElement(By.linkText(prevSelectedMember));
-      comboBox.click();                 
-      WebElement comboList = driver.findElement(By.id("clusterMembersContainer"));     
+      comboBox.click();
+      WebElement comboList = driver.findElement(By.id("clusterMembersContainer"));
       WebElement selectedMember = comboList.findElement(By.linkText(locator));
       selectedMember.click();
       timeout();
-      String peername = driver.findElement(By.id("memberName")).getText();      
+      String peername = driver.findElement(By.id("memberName")).getText();
       List<Region> locatorRegionscount = testBed.getRootDs().getRegions(locator);
       int locatorRegions = Integer.parseInt(driver.findElement(
           By.id("memberRegionsCount")).getText());
@@ -257,12 +274,15 @@ public class PulseUITest {
   }
 
   public void timeout() {
-    WebElement memberNameOnPulsePage = (new WebDriverWait(driver, 10)).until(new ExpectedCondition<WebElement>() {
-      @Override
-      public WebElement apply(WebDriver d) {
-        return d.findElement(By.id("memberName"));
-      }
-    });
+    WebElement memberNameOnPulsePage =
+        (new WebDriverWait(driver, 10))
+            .until(
+                new ExpectedCondition<WebElement>() {
+                  @Override
+                  public WebElement apply(WebDriver d) {
+                    return d.findElement(By.id("memberName"));
+                  }
+                });
     assertNotNull(memberNameOnPulsePage);
   }
 }

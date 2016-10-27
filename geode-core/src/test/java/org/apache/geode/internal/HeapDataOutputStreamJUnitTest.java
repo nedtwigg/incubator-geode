@@ -32,10 +32,9 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
  * Test of methods on HeapDataOutputStream
- * 
- * TODO right now this just tests the new
- * write(ByteBuffer) method. We might want
- * to add some unit tests for the existing methods.
+ *
+ * <p>TODO right now this just tests the new write(ByteBuffer) method. We might want to add some
+ * unit tests for the existing methods.
  */
 @Category(UnitTest.class)
 public class HeapDataOutputStreamJUnitTest {
@@ -65,7 +64,11 @@ public class HeapDataOutputStreamJUnitTest {
 
     out.write(0);
 
-    byte[] bytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33 };
+    byte[] bytes =
+        new byte[] {
+          1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+          26, 27, 28, 29, 30, 31, 32, 33
+        };
     out.write(ByteBuffer.wrap(bytes));
 
     out.write(34);
@@ -149,8 +152,11 @@ public class HeapDataOutputStreamJUnitTest {
     DataSerializer.writeObject(vh, out);
     UnitTestValueHolder vh2 = DataSerializer.readObject(new DataInputStream(out.getInputStream()));
     if (!Arrays.equals(bytes, (byte[]) vh2.getValue())) {
-      fail("expected " + Arrays.toString(bytes) + " but found " + Arrays.toString((byte[]) vh2.getValue()));
+      fail(
+          "expected "
+              + Arrays.toString(bytes)
+              + " but found "
+              + Arrays.toString((byte[]) vh2.getValue()));
     }
   }
-
 }

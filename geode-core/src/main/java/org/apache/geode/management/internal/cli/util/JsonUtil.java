@@ -41,24 +41,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * This class contains utility methods for JSON (http://www.json.org/) which is 
- * used by classes used for the Command Line Interface (CLI).
- * 
- * 
+ * This class contains utility methods for JSON (http://www.json.org/) which is used by classes used
+ * for the Command Line Interface (CLI).
+ *
  * @since GemFire 7.0
  */
 public class JsonUtil {
 
   /**
-   * Converts given JSON String in to a Map. 
-   * Refer http://www.json.org/ to construct a JSON format.
-   * 
-   * @param jsonString
-   *          jsonString to be converted in to a Map.
+   * Converts given JSON String in to a Map. Refer http://www.json.org/ to construct a JSON format.
+   *
+   * @param jsonString jsonString to be converted in to a Map.
    * @return a Map created from
-   * 
-   * @throws IllegalArgumentException
-   *           if the specified JSON string can not be converted in to a Map
+   * @throws IllegalArgumentException if the specified JSON string can not be converted in to a Map
    */
   public static Map<String, String> jsonToMap(String jsonString) {
     Map<String, String> jsonMap = new TreeMap<String, String>();
@@ -72,15 +67,15 @@ public class JsonUtil {
       }
 
     } catch (GfJsonException e) {
-      throw new IllegalArgumentException("Could not convert jsonString : '" + jsonString + "' to map.");
+      throw new IllegalArgumentException(
+          "Could not convert jsonString : '" + jsonString + "' to map.");
     }
     return jsonMap;
   }
 
   /**
-   * Converts given Map in to a JSON string representing a Map. 
-   * Refer http://www.json.org/ for more.
-   * 
+   * Converts given Map in to a JSON string representing a Map. Refer http://www.json.org/ for more.
+   *
    * @param properties a Map of Strings to be converted in to JSON String
    * @return a JSON string representing the specified Map.
    */
@@ -89,9 +84,9 @@ public class JsonUtil {
   }
 
   /**
-   * Converts given Object in to a JSON string representing an Object. 
-   * Refer http://www.json.org/ for more.
-   * 
+   * Converts given Object in to a JSON string representing an Object. Refer http://www.json.org/
+   * for more.
+   *
    * @param object an Object to be converted in to JSON String
    * @return a JSON string representing the specified object.
    */
@@ -100,11 +95,10 @@ public class JsonUtil {
   }
 
   /**
-   * Converts given Object in to a JSON string representing an Object. 
-   * If object contains an attribute which itself is another object
-   * it will be displayed as className if its json representation
-   * exceeds the length
-   * 
+   * Converts given Object in to a JSON string representing an Object. If object contains an
+   * attribute which itself is another object it will be displayed as className if its json
+   * representation exceeds the length
+   *
    * @param object an Object to be converted in to JSON String
    * @return a JSON string representing the specified object.
    */
@@ -116,7 +110,8 @@ public class JsonUtil {
     return objectToJsonNestedChkCDep(object, length, true);
   }
 
-  private static String objectToJsonNestedChkCDep(Object object, int length, boolean checkCyclicDep) {
+  private static String objectToJsonNestedChkCDep(
+      Object object, int length, boolean checkCyclicDep) {
     GfJsonObject jsonObject = new GfJsonObject(object, checkCyclicDep);
     Iterator<String> iterator = jsonObject.keys();
     while (iterator.hasNext()) {
@@ -140,15 +135,13 @@ public class JsonUtil {
   }
 
   /**
-   * Converts given JSON String in to a Object. 
-   * Refer http://www.json.org/ to construct a JSON format.
-   * 
-   * @param jsonString
-   *          jsonString to be converted in to a Map.
+   * Converts given JSON String in to a Object. Refer http://www.json.org/ to construct a JSON
+   * format.
+   *
+   * @param jsonString jsonString to be converted in to a Map.
    * @return an object constructed from given JSON String
-   * 
-   * @throws IllegalArgumentException
-   *           if the specified JSON string can not be converted in to an Object
+   * @throws IllegalArgumentException if the specified JSON string can not be converted in to an
+   *     Object
    */
   public static <T> T jsonToObject(String jsonString, Class<T> klass) {
     T objectFromJson = null;
@@ -188,15 +181,18 @@ public class JsonUtil {
             } else {
               value = jsonToObject(value.toString(), parameterType);
             }
-            method.invoke(objectFromJson, new Object[] { value });
+            method.invoke(objectFromJson, new Object[] {value});
             noOfFields--;
           }
-
         }
       }
 
       if (noOfFields != 0) {
-        throw new IllegalArgumentException("Not enough setter methods for fields in given JSON String : " + jsonString + " in class : " + klass);
+        throw new IllegalArgumentException(
+            "Not enough setter methods for fields in given JSON String : "
+                + jsonString
+                + " in class : "
+                + klass);
       }
 
     } catch (InstantiationException e) {
@@ -235,17 +231,19 @@ public class JsonUtil {
         throw new GfJsonException("Expected JSONArray for array type");
       }
     } else
-      throw new GfJsonException("Array contains non-primitive element. Non-primitive elements are not supported in json array");
+      throw new GfJsonException(
+          "Array contains non-primitive element. Non-primitive elements are not supported in json array");
   }
 
   /**
    * This is used in Put command this method uses HashSet as default implementation
+   *
    * @param value
-   * @param parameterType 
+   * @param parameterType
    * @return setValue
-   * @throws GfJsonException 
+   * @throws GfJsonException
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   private static Object toSet(Object value, Class<?> parameterType) throws GfJsonException {
     try {
       JSONArray array = (JSONArray) value;
@@ -255,7 +253,8 @@ public class JsonUtil {
         if (isPrimitiveOrWrapper(element.getClass())) {
           set.add(element);
         } else
-          throw new GfJsonException("Only primitive types are supported in set type for input commands");
+          throw new GfJsonException(
+              "Only primitive types are supported in set type for input commands");
       }
       return set;
     } catch (JSONException e) {
@@ -276,11 +275,13 @@ public class JsonUtil {
           if (isPrimitiveOrWrapper(elem.getClass())) {
             map.put(key, elem);
           } else
-            throw new GfJsonException("Only primitive types are supported in map type for input commands");
+            throw new GfJsonException(
+                "Only primitive types are supported in map type for input commands");
         }
         return map;
       } else
-        throw new GfJsonException("Expected JSONObject for Map. Retrieved type is " + value.getClass());
+        throw new GfJsonException(
+            "Expected JSONObject for Map. Retrieved type is " + value.getClass());
     } catch (JSONException e) {
       throw new GfJsonException(e);
     }
@@ -295,7 +296,8 @@ public class JsonUtil {
         if (isPrimitiveOrWrapper(element.getClass())) {
           list.add(element);
         } else
-          throw new GfJsonException("Only primitive types are supported in set type for input commands");
+          throw new GfJsonException(
+              "Only primitive types are supported in set type for input commands");
       }
       return list;
     } catch (JSONException e) {
@@ -360,10 +362,27 @@ public class JsonUtil {
   }
 
   public static boolean isPrimitiveOrWrapper(Class<?> klass) {
-    return klass.isAssignableFrom(Byte.class) || klass.isAssignableFrom(byte.class) || klass.isAssignableFrom(Short.class) || klass.isAssignableFrom(short.class) || klass.isAssignableFrom(Integer.class) || klass.isAssignableFrom(int.class) || klass.isAssignableFrom(Long.class) || klass.isAssignableFrom(long.class) || klass.isAssignableFrom(Float.class) || klass.isAssignableFrom(float.class) || klass.isAssignableFrom(Double.class) || klass.isAssignableFrom(double.class) || klass.isAssignableFrom(Boolean.class) || klass.isAssignableFrom(boolean.class) || klass.isAssignableFrom(String.class) || klass.isAssignableFrom(Character.class) || klass.isAssignableFrom(char.class);
+    return klass.isAssignableFrom(Byte.class)
+        || klass.isAssignableFrom(byte.class)
+        || klass.isAssignableFrom(Short.class)
+        || klass.isAssignableFrom(short.class)
+        || klass.isAssignableFrom(Integer.class)
+        || klass.isAssignableFrom(int.class)
+        || klass.isAssignableFrom(Long.class)
+        || klass.isAssignableFrom(long.class)
+        || klass.isAssignableFrom(Float.class)
+        || klass.isAssignableFrom(float.class)
+        || klass.isAssignableFrom(Double.class)
+        || klass.isAssignableFrom(double.class)
+        || klass.isAssignableFrom(Boolean.class)
+        || klass.isAssignableFrom(boolean.class)
+        || klass.isAssignableFrom(String.class)
+        || klass.isAssignableFrom(Character.class)
+        || klass.isAssignableFrom(char.class);
   }
 
-  public static Object getPrimitiveOrWrapperValue(Class<?> klass, Object value) throws IllegalArgumentException {
+  public static Object getPrimitiveOrWrapperValue(Class<?> klass, Object value)
+      throws IllegalArgumentException {
     if (klass.isAssignableFrom(Byte.class) || klass.isAssignableFrom(byte.class)) {
       return value;
     } else if (klass.isAssignableFrom(Short.class) || klass.isAssignableFrom(short.class)) {
@@ -384,29 +403,31 @@ public class JsonUtil {
       // Need to take care of converting between string to char values
       if (value instanceof String) {
         String str = (String) value;
-        if (str.length() == 1)
-          return new Character(str.charAt(0));
+        if (str.length() == 1) return new Character(str.charAt(0));
         else if (str.length() > 1 || str.length() == 0) {
-          throw new IllegalArgumentException("Expected Character value but found String with length " + str.length());
+          throw new IllegalArgumentException(
+              "Expected Character value but found String with length " + str.length());
         }
       } else if (value instanceof Character) {
         return value;
       } else {
-        throw new IllegalArgumentException("Expected Character value but found " + value.getClass());
+        throw new IllegalArgumentException(
+            "Expected Character value but found " + value.getClass());
       }
     } else if (klass.isAssignableFrom(char.class)) {
       // Need to take care of converting between string to char values
       if (value instanceof String) {
         String str = (String) value;
-        if (str.length() == 1)
-          return str.charAt(0);
+        if (str.length() == 1) return str.charAt(0);
         else if (str.length() > 1 || str.length() == 0) {
-          throw new IllegalArgumentException("Expected Character value but found String with length " + str.length());
+          throw new IllegalArgumentException(
+              "Expected Character value but found String with length " + str.length());
         }
       } else if (value instanceof Character) {
         return ((Character) value).charValue();
       } else {
-        throw new IllegalArgumentException("Expected Character value but found " + value.getClass());
+        throw new IllegalArgumentException(
+            "Expected Character value but found " + value.getClass());
       }
     } else {
       return null;
@@ -471,7 +492,8 @@ public class JsonUtil {
       for (int i = 0; i < size; i++) {
         GfJsonObject cliJsonSerializableState = cliJsonSerializableArray.getJSONObject(i);
         int jsId = cliJsonSerializableState.getInt(CliJsonSerializable.JSID);
-        CliJsonSerializable cliJsonSerializable = CliJsonSerializableFactory.getCliJsonSerializable(jsId);
+        CliJsonSerializable cliJsonSerializable =
+            CliJsonSerializableFactory.getCliJsonSerializable(jsId);
         cliJsonSerializable.fromJson(cliJsonSerializableState);
         cliJsonSerializables.add(cliJsonSerializable);
       }
@@ -492,7 +514,8 @@ public class JsonUtil {
       for (int i = 0; i < size; i++) {
         GfJsonObject cliJsonSerializableState = cliJsonSerializableArray.getJSONObject(i);
         int jsId = cliJsonSerializableState.getInt(CliJsonSerializable.JSID);
-        CliJsonSerializable cliJsonSerializable = CliJsonSerializableFactory.getCliJsonSerializable(jsId);
+        CliJsonSerializable cliJsonSerializable =
+            CliJsonSerializableFactory.getCliJsonSerializable(jsId);
         cliJsonSerializable.fromJson(cliJsonSerializableState);
         cliJsonSerializables.add(cliJsonSerializable);
       }
@@ -507,7 +530,8 @@ public class JsonUtil {
     System.out.println(capitalize("key"));
     System.out.println(capitalize("Key"));
 
-    String str = "{\"org.apache.geode.management.internal.cli.JsonUtil$Employee\":{\"id\":1234,\"name\":\"Foo BAR\",\"department\":{\"id\":456,\"name\":\"support\"}}}";
+    String str =
+        "{\"org.apache.geode.management.internal.cli.JsonUtil$Employee\":{\"id\":1234,\"name\":\"Foo BAR\",\"department\":{\"id\":456,\"name\":\"support\"}}}";
     Object jsonToObject = jsonToObject(str);
     System.out.println(jsonToObject);
 
@@ -576,5 +600,4 @@ public class JsonUtil {
       return "Department [id=" + id + ", name=" + name + "]";
     }
   }
-
 }

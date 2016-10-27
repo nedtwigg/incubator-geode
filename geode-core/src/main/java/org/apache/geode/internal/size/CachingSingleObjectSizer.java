@@ -21,9 +21,7 @@ import java.util.Map;
 
 import org.apache.geode.internal.util.concurrent.CopyOnWriteWeakHashMap;
 
-/**
- *
- */
+/** */
 public class CachingSingleObjectSizer implements SingleObjectSizer {
   private final Map<Class, Long> sizeCache = new CopyOnWriteWeakHashMap<Class, Long>();
   private final SingleObjectSizer wrappedSizer;
@@ -46,5 +44,4 @@ public class CachingSingleObjectSizer implements SingleObjectSizer {
       return size.longValue();
     }
   }
-
 }

@@ -31,9 +31,7 @@ public class MyGatewayEventFilter1 implements GatewayEventFilter, Declarable2 {
     this.resolveProps = new Properties();
   }
 
-  public void close() {
-
-  }
+  public void close() {}
 
   public Properties getConfig() {
     return this.resolveProps;

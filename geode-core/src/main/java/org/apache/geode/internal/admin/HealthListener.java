@@ -20,11 +20,9 @@ package org.apache.geode.internal.admin;
 import org.apache.geode.admin.GemFireHealth;
 
 /**
- * Interface for those who want to be alerted of a change in a GemFireVM's
- * health.
+ * Interface for those who want to be alerted of a change in a GemFireVM's health.
  *
  * @see org.apache.geode.admin.GemFireHealthConfig
- *
  * @since GemFire 3.5
  */
 public interface HealthListener {
@@ -32,11 +30,8 @@ public interface HealthListener {
   /**
    * Called by a GemFireVM whenever a health status change is detected.
    *
-   * @param member
-   *        The member whose health has changed
-   * @param status
-   *        the new health status
+   * @param member The member whose health has changed
+   * @param status the new health status
    */
   public void healthChanged(GemFireVM member, GemFireHealth.Health status);
-
 }

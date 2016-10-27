@@ -16,9 +16,7 @@
  */
 package org.apache.geode.internal.statistics;
 
-/**
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public final class GaugeMonitor extends StatisticsMonitor {
 
   private final Number lowThreshold;

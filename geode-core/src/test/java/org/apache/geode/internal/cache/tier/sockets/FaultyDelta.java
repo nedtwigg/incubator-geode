@@ -29,8 +29,9 @@ import org.apache.geode.InvalidDeltaException;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 /**
- * Faulty delta implementation, raising ArrayIndexOutOfBound exception as
- * fromDelta reads incorrect sequence then wrote by toDelta
+ * Faulty delta implementation, raising ArrayIndexOutOfBound exception as fromDelta reads incorrect
+ * sequence then wrote by toDelta
+ *
  * @since GemFire 6.1
  */
 public class FaultyDelta implements Delta, DataSerializable {
@@ -57,15 +58,25 @@ public class FaultyDelta implements Delta, DataSerializable {
         // intentionly to produce faulty fromDelta implementation
         if ((deltaBits & INT_MASK) == INT_MASK) {
           this.bigObj = DataSerializer.readByteArray(in);
-          GemFireCacheImpl.getInstance().getLogger().fine(" Applied delta on DeltaImpl's field 'bigObj' = {" + this.bigObj[0] + " " + this.bigObj[1] + "}");
+          GemFireCacheImpl.getInstance()
+              .getLogger()
+              .fine(
+                  " Applied delta on DeltaImpl's field 'bigObj' = {"
+                      + this.bigObj[0]
+                      + " "
+                      + this.bigObj[1]
+                      + "}");
         }
         if ((deltaBits & BIG_OBJECT_MASK) == BIG_OBJECT_MASK) {
           this.intVal = DataSerializer.readPrimitiveInt(in);
-          GemFireCacheImpl.getInstance().getLogger().fine(" Applied delta on DeltaImpl's field 'intVal' = " + this.intVal);
+          GemFireCacheImpl.getInstance()
+              .getLogger()
+              .fine(" Applied delta on DeltaImpl's field 'intVal' = " + this.intVal);
         }
         if ((deltaBits | COMPLETE_MASK) != COMPLETE_MASK) {
           GemFireCacheImpl.getInstance().getLogger().fine(" <unknown field code>");
-          throw new IllegalArgumentException("DeltaImpl.fromDelta(): Unknown field code, " + deltaBits);
+          throw new IllegalArgumentException(
+              "DeltaImpl.fromDelta(): Unknown field code, " + deltaBits);
         }
       }
     } catch (IOException ioe) {
@@ -86,11 +97,20 @@ public class FaultyDelta implements Delta, DataSerializable {
       DataSerializer.writeByte(this.deltaBits, out);
       GemFireCacheImpl.getInstance().getLogger().fine("Extracting delta from " + this.toString());
       if ((deltaBits & INT_MASK) == INT_MASK) {
-        GemFireCacheImpl.getInstance().getLogger().fine(" Extracted delta from DeltaObj's field 'intVal' = " + this.intVal);
+        GemFireCacheImpl.getInstance()
+            .getLogger()
+            .fine(" Extracted delta from DeltaObj's field 'intVal' = " + this.intVal);
         DataSerializer.writePrimitiveInt(this.intVal, out);
       }
       if ((deltaBits & BIG_OBJECT_MASK) == BIG_OBJECT_MASK) {
-        GemFireCacheImpl.getInstance().getLogger().fine(" Extracted delta from DeltaObj's field 'bigObj' = {" + this.bigObj[0] + " " + this.bigObj[1] + "}");
+        GemFireCacheImpl.getInstance()
+            .getLogger()
+            .fine(
+                " Extracted delta from DeltaObj's field 'bigObj' = {"
+                    + this.bigObj[0]
+                    + " "
+                    + this.bigObj[1]
+                    + "}");
         DataSerializer.writeByteArray(this.bigObj, out);
       }
       if ((deltaBits | COMPLETE_MASK) != COMPLETE_MASK) {
@@ -98,7 +118,9 @@ public class FaultyDelta implements Delta, DataSerializable {
         throw new IllegalArgumentException("DeltaImpl.toDelta(): Unknown field code, " + deltaBits);
       }
       DataSerializer.writeByte((byte) 255, out);
-      GemFireCacheImpl.getInstance().getLogger().fine(" Writing extra DeltaObj's field 'byte' = " + 255);
+      GemFireCacheImpl.getInstance()
+          .getLogger()
+          .fine(" Writing extra DeltaObj's field 'byte' = " + 255);
       GemFireCacheImpl.getInstance().getLogger().fine("-----------");
       resetDeltaStatus();
     } catch (IOException ioe) {
@@ -108,7 +130,6 @@ public class FaultyDelta implements Delta, DataSerializable {
       GemFireCacheImpl.getInstance().getLogger().warning("DeltaObj.toDelta(): " + iae);
       throw new InvalidDeltaException(iae);
     }
-
   }
 
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
@@ -147,6 +168,14 @@ public class FaultyDelta implements Delta, DataSerializable {
   }
 
   public String toString() {
-    return "DeltaObj[hasDelta=" + this.hasDelta + ",intVal=" + this.intVal + ",bigObj={" + this.bigObj[0] + "," + this.bigObj[1] + "}]";
+    return "DeltaObj[hasDelta="
+        + this.hasDelta
+        + ",intVal="
+        + this.intVal
+        + ",bigObj={"
+        + this.bigObj[0]
+        + ","
+        + this.bigObj[1]
+        + "}]";
   }
 }

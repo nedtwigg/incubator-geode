@@ -35,9 +35,7 @@ import org.apache.geode.cache.PartitionAttributesFactory;
 import org.apache.geode.cache.Region;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Test the replace method with an entry that has overflowed to disk.
- */
+/** Test the replace method with an entry that has overflowed to disk. */
 @Category(IntegrationTest.class)
 public class ReplaceWithOverflowJUnitTest {
 
@@ -61,7 +59,15 @@ public class ReplaceWithOverflowJUnitTest {
 
   @Before
   public void createRegion() {
-    region = cache.<String, String> createRegionFactory().setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK)).setPartitionAttributes(new PartitionAttributesFactory<String, String>().setTotalNumBuckets(1).create()).setDataPolicy(DataPolicy.PARTITION).create("ReplaceWithOverflowJUnitTest");
+    region =
+        cache
+            .<String, String>createRegionFactory()
+            .setEvictionAttributes(
+                EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK))
+            .setPartitionAttributes(
+                new PartitionAttributesFactory<String, String>().setTotalNumBuckets(1).create())
+            .setDataPolicy(DataPolicy.PARTITION)
+            .create("ReplaceWithOverflowJUnitTest");
   }
 
   @After
@@ -89,5 +95,4 @@ public class ReplaceWithOverflowJUnitTest {
     assertEquals(false, region.replace("3", "foobar", "three"));
     assertEquals(true, region.replace("3", null, "three"));
   }
-
 }

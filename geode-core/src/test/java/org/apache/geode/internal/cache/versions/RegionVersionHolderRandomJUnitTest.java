@@ -31,12 +31,10 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * A test of the region version holder, where all of the
- * test methods will now build there RVV by applying versions
- * in a random order.
- * 
- * This test also contains some other non deterministic RVV junit tests
+ * A test of the region version holder, where all of the test methods will now build there RVV by
+ * applying versions in a random order.
  *
+ * <p>This test also contains some other non deterministic RVV junit tests
  */
 @Category(UnitTest.class)
 public class RegionVersionHolderRandomJUnitTest extends RegionVersionHolderSmallBitSetJUnitTest {
@@ -52,8 +50,8 @@ public class RegionVersionHolderRandomJUnitTest extends RegionVersionHolderSmall
   }
 
   /**
-   * Record versions in random order, rather than in sequential order
-   * This should generate and fill some exceptions.
+   * Record versions in random order, rather than in sequential order This should generate and fill
+   * some exceptions.
    */
   @Override
   protected void recordVersions(RegionVersionHolder vh, BitSet bs) {
@@ -73,9 +71,8 @@ public class RegionVersionHolderRandomJUnitTest extends RegionVersionHolderSmall
   }
 
   /**
-   * This tries to be a more "real life" test. A bunch of threads perform
-   * updates, which should create exceptions. Verify that the final
-   * exception list is correct.
+   * This tries to be a more "real life" test. A bunch of threads perform updates, which should
+   * create exceptions. Verify that the final exception list is correct.
    */
   @Test
   public void testParallelThreads() throws InterruptedException {
@@ -128,7 +125,13 @@ public class RegionVersionHolderRandomJUnitTest extends RegionVersionHolderSmall
     private RegionVersionHolder vh1;
     private RegionVersionHolder vh2;
 
-    public HolderUpdater(int updates, int myNumber, int numUpdaters, IntOpenHashSet exceptions, RegionVersionHolder vh1, RegionVersionHolder vh2) {
+    public HolderUpdater(
+        int updates,
+        int myNumber,
+        int numUpdaters,
+        IntOpenHashSet exceptions,
+        RegionVersionHolder vh1,
+        RegionVersionHolder vh2) {
       this.updates = updates;
       this.myNumber = myNumber;
       this.numUpdaters = numUpdaters;
@@ -158,9 +161,6 @@ public class RegionVersionHolderRandomJUnitTest extends RegionVersionHolderSmall
           Thread.yield();
         }
       }
-
     }
-
   }
-
 }

@@ -38,12 +38,7 @@ import org.apache.geode.internal.Assert;
 import org.apache.geode.internal.cache.PartitionedRegionTestHelper;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Class verifies Region#query(String predicate) API for PartitionedRegion on a
- * single VM.
- * 
- * 
- */
+/** Class verifies Region#query(String predicate) API for PartitionedRegion on a single VM. */
 @Category(IntegrationTest.class)
 public class PRQueryJUnitTest {
   String regionName = "portfolios";
@@ -58,11 +53,10 @@ public class PRQueryJUnitTest {
   }
 
   /**
-   * Tests the execution of query on a PartitionedRegion created on a single
-   * data store. <br>
-   * 1. Creates a PR with redundancy=0 on a single VM. 2. Puts some test Objects
-   * in cache. 3. Fires queries on the data and verifies the result.
-   * 
+   * Tests the execution of query on a PartitionedRegion created on a single data store. <br>
+   * 1. Creates a PR with redundancy=0 on a single VM. 2. Puts some test Objects in cache. 3. Fires
+   * queries on the data and verifies the result.
+   *
    * @throws Exception
    */
   @Test
@@ -144,18 +138,86 @@ public class PRQueryJUnitTest {
     Cache cache = CacheUtils.getCache();
     QueryService queryService = CacheUtils.getCache().getQueryService();
     Region region = cache.createRegionFactory(RegionShortcut.PARTITION).create("TEST_REGION");
-    Query query = queryService.newQuery("SELECT distinct COUNT(*) FROM (SELECT DISTINCT tr.id, tr.domain FROM /TEST_REGION tr)");
-    region.put("1", cache.createPdxInstanceFactory("obj1").writeString("id", "1").writeString("domain", "domain1").create());
-    region.put("2", cache.createPdxInstanceFactory("obj2").writeString("id", "1").writeString("domain", "domain1").create());
-    region.put("3", cache.createPdxInstanceFactory("obj3").writeString("id", "1").writeString("domain", "domain1").create());
-    region.put("4", cache.createPdxInstanceFactory("obj4").writeString("id", "1").writeString("domain", "domain1").create());
-    region.put("5", cache.createPdxInstanceFactory("obj5").writeString("id", "1").writeString("domain", "domain1").create());
-    region.put("6", cache.createPdxInstanceFactory("obj6").writeString("id", "1").writeString("domain", "domain2").create());
-    region.put("7", cache.createPdxInstanceFactory("obj7").writeString("id", "1").writeString("domain", "domain2").create());
-    region.put("8", cache.createPdxInstanceFactory("obj8").writeString("id", "1").writeString("domain", "domain2").create());
-    region.put("9", cache.createPdxInstanceFactory("obj9").writeString("id", "1").writeString("domain", "domain2").create());
-    region.put("10", cache.createPdxInstanceFactory("obj10").writeString("id", "1").writeString("domain", "domain2").create());
-    region.put("11", cache.createPdxInstanceFactory("obj11").writeString("id", "1").writeString("domain", "domain2").create());
+    Query query =
+        queryService.newQuery(
+            "SELECT distinct COUNT(*) FROM (SELECT DISTINCT tr.id, tr.domain FROM /TEST_REGION tr)");
+    region.put(
+        "1",
+        cache
+            .createPdxInstanceFactory("obj1")
+            .writeString("id", "1")
+            .writeString("domain", "domain1")
+            .create());
+    region.put(
+        "2",
+        cache
+            .createPdxInstanceFactory("obj2")
+            .writeString("id", "1")
+            .writeString("domain", "domain1")
+            .create());
+    region.put(
+        "3",
+        cache
+            .createPdxInstanceFactory("obj3")
+            .writeString("id", "1")
+            .writeString("domain", "domain1")
+            .create());
+    region.put(
+        "4",
+        cache
+            .createPdxInstanceFactory("obj4")
+            .writeString("id", "1")
+            .writeString("domain", "domain1")
+            .create());
+    region.put(
+        "5",
+        cache
+            .createPdxInstanceFactory("obj5")
+            .writeString("id", "1")
+            .writeString("domain", "domain1")
+            .create());
+    region.put(
+        "6",
+        cache
+            .createPdxInstanceFactory("obj6")
+            .writeString("id", "1")
+            .writeString("domain", "domain2")
+            .create());
+    region.put(
+        "7",
+        cache
+            .createPdxInstanceFactory("obj7")
+            .writeString("id", "1")
+            .writeString("domain", "domain2")
+            .create());
+    region.put(
+        "8",
+        cache
+            .createPdxInstanceFactory("obj8")
+            .writeString("id", "1")
+            .writeString("domain", "domain2")
+            .create());
+    region.put(
+        "9",
+        cache
+            .createPdxInstanceFactory("obj9")
+            .writeString("id", "1")
+            .writeString("domain", "domain2")
+            .create());
+    region.put(
+        "10",
+        cache
+            .createPdxInstanceFactory("obj10")
+            .writeString("id", "1")
+            .writeString("domain", "domain2")
+            .create());
+    region.put(
+        "11",
+        cache
+            .createPdxInstanceFactory("obj11")
+            .writeString("id", "1")
+            .writeString("domain", "domain2")
+            .create());
 
     SelectResults queryResults = (SelectResults) query.execute();
     Assert.assertTrue(queryResults.size() == 1);
@@ -166,7 +228,7 @@ public class PRQueryJUnitTest {
 
   /**
    * Populates the region with the Objects stores in the data Object array.
-   * 
+   *
    * @param region
    * @param data
    */

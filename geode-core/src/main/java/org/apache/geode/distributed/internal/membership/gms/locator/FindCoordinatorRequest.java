@@ -30,7 +30,8 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.internal.Version;
 
-public class FindCoordinatorRequest extends HighPriorityDistributionMessage implements PeerLocatorRequest {
+public class FindCoordinatorRequest extends HighPriorityDistributionMessage
+    implements PeerLocatorRequest {
 
   private InternalDistributedMember memberID;
   private Collection<InternalDistributedMember> rejectedCoordinators;
@@ -44,7 +45,13 @@ public class FindCoordinatorRequest extends HighPriorityDistributionMessage impl
     this.dhalgo = "";
   }
 
-  public FindCoordinatorRequest(InternalDistributedMember myId, Collection<InternalDistributedMember> rejectedCoordinators, int lastViewId, byte[] pk, int requestId, String dhalgo) {
+  public FindCoordinatorRequest(
+      InternalDistributedMember myId,
+      Collection<InternalDistributedMember> rejectedCoordinators,
+      int lastViewId,
+      byte[] pk,
+      int requestId,
+      String dhalgo) {
     this.memberID = myId;
     this.rejectedCoordinators = rejectedCoordinators;
     this.lastViewId = lastViewId;
@@ -80,7 +87,13 @@ public class FindCoordinatorRequest extends HighPriorityDistributionMessage impl
   @Override
   public String toString() {
     if (rejectedCoordinators != null) {
-      return "FindCoordinatorRequest(memberID=" + memberID + ", rejected=" + rejectedCoordinators + ", lastViewId=" + lastViewId + ")";
+      return "FindCoordinatorRequest(memberID="
+          + memberID
+          + ", rejected="
+          + rejectedCoordinators
+          + ", lastViewId="
+          + lastViewId
+          + ")";
     } else {
       return "FindCoordinatorRequest(memberID=" + memberID + ")";
     }
@@ -143,34 +156,27 @@ public class FindCoordinatorRequest extends HighPriorityDistributionMessage impl
     result = prime * result + lastViewId;
     result = prime * result + ((dhalgo == null) ? 0 : dhalgo.hashCode());
     result = prime * result + ((memberID == null) ? 0 : memberID.hashCode());
-    result = prime * result + ((rejectedCoordinators == null) ? 0 : rejectedCoordinators.hashCode());
+    result =
+        prime * result + ((rejectedCoordinators == null) ? 0 : rejectedCoordinators.hashCode());
     return result;
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     FindCoordinatorRequest other = (FindCoordinatorRequest) obj;
-    if (lastViewId != other.lastViewId)
-      return false;
+    if (lastViewId != other.lastViewId) return false;
     if (!dhalgo.equals(other.dhalgo)) {
       return false;
     }
     if (memberID == null) {
-      if (other.memberID != null)
-        return false;
-    } else if (!memberID.equals(other.memberID))
-      return false;
+      if (other.memberID != null) return false;
+    } else if (!memberID.equals(other.memberID)) return false;
     if (rejectedCoordinators == null) {
-      if (other.rejectedCoordinators != null)
-        return false;
-    } else if (!rejectedCoordinators.equals(other.rejectedCoordinators))
-      return false;
+      if (other.rejectedCoordinators != null) return false;
+    } else if (!rejectedCoordinators.equals(other.rejectedCoordinators)) return false;
     return true;
   }
 }

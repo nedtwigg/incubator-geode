@@ -43,7 +43,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
 /**
  * The LuceneCreateIndexFunction class is a function used to create Lucene indexes.
- * </p>
+ *
  * @see Cache
  * @see org.apache.geode.cache.execute.Function
  * @see FunctionAdapter
@@ -90,19 +90,20 @@ public class LuceneCreateIndexFunction extends FunctionAdapter implements Intern
       XmlEntity xmlEntity = null;
       context.getResultSender().lastResult(new CliFunctionResult(memberId, xmlEntity));
     } catch (Exception e) {
-      String exceptionMessage = CliStrings.format(CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(), e.getMessage());
+      String exceptionMessage =
+          CliStrings.format(
+              CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(), e.getMessage());
       context.getResultSender().lastResult(new CliFunctionResult(memberId, e, e.getMessage()));
     }
   }
 
   private Analyzer toAnalyzer(String className) {
-    if (className == null)
-      className = StandardAnalyzer.class.getCanonicalName();
+    if (className == null) className = StandardAnalyzer.class.getCanonicalName();
     else if (StringUtils.trim(className).equals("") | StringUtils.trim(className).equals("null"))
       className = StandardAnalyzer.class.getCanonicalName();
 
-    Class<? extends Analyzer> clazz = CliUtil.forName(className, LuceneCliStrings.LUCENE_CREATE_INDEX__ANALYZER);
+    Class<? extends Analyzer> clazz =
+        CliUtil.forName(className, LuceneCliStrings.LUCENE_CREATE_INDEX__ANALYZER);
     return CliUtil.newInstance(clazz, LuceneCliStrings.LUCENE_CREATE_INDEX__ANALYZER);
   }
-
 }

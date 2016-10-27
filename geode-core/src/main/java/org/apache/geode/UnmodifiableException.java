@@ -17,19 +17,16 @@
 package org.apache.geode;
 
 /**
- * A <code>UnmodifiableException</code> is thrown when a
- * an attempt is made to modify a GemFire member configuration attribute
- * that can not currently be modified. In most cases the reason it can
- * not be modified is that the member is active.
+ * A <code>UnmodifiableException</code> is thrown when a an attempt is made to modify a GemFire
+ * member configuration attribute that can not currently be modified. In most cases the reason it
+ * can not be modified is that the member is active.
  */
 public class UnmodifiableException extends GemFireException {
   private static final long serialVersionUID = -1043243260052395455L;
 
   //////////////////////  Constructors  //////////////////////
 
-  /**
-   * Creates a new <code>UnmodifiableException</code>.
-   */
+  /** Creates a new <code>UnmodifiableException</code>. */
   public UnmodifiableException(String message) {
     super(message);
   }

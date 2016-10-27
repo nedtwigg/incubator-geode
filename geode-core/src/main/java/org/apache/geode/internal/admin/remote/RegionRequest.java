@@ -25,8 +25,8 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import java.io.*;
 
 /**
- * A message that is sent to a particular application to get the
- * region for the specified path.
+ * A message that is sent to a particular application to get the region for the specified path.
+ *
  * @since GemFire 3.5
  */
 public final class RegionRequest extends AdminRequest {
@@ -60,13 +60,10 @@ public final class RegionRequest extends AdminRequest {
   //////////////////////  Static Methods  ///////////////////////
 
   /**
-   * Returns a <code>RegionRequest</code> for getting a region with
-   * the given name.
+   * Returns a <code>RegionRequest</code> for getting a region with the given name.
    *
-   * @param c
-   *        The admin object for the remote cache
-   * @param path
-   *        The full path to the region
+   * @param c The admin object for the remote cache
+   * @param path The full path to the region
    */
   public static RegionRequest createForGet(CacheInfo c, String path) {
     RegionRequest m = new RegionRequest();
@@ -78,10 +75,11 @@ public final class RegionRequest extends AdminRequest {
   }
 
   /**
-   * Returns a <code>RegionRequest</code> for creating a VM root
-   * region with the given name and attributes. 
+   * Returns a <code>RegionRequest</code> for creating a VM root region with the given name and
+   * attributes.
    */
-  public static RegionRequest createForCreateRoot(CacheInfo c, String name, RegionAttributes attrs) {
+  public static RegionRequest createForCreateRoot(
+      CacheInfo c, String name, RegionAttributes attrs) {
     RegionRequest m = new RegionRequest();
     m.action = CREATE_VM_ROOT;
     m.cacheId = c.getId();
@@ -92,10 +90,11 @@ public final class RegionRequest extends AdminRequest {
   }
 
   /**
-   * Returns a <code>RegionRequest</code> for creating a VM root
-   * region with the given name and attributes. 
+   * Returns a <code>RegionRequest</code> for creating a VM root region with the given name and
+   * attributes.
    */
-  public static RegionRequest createForCreateSubregion(CacheInfo c, String parentPath, String name, RegionAttributes attrs) {
+  public static RegionRequest createForCreateSubregion(
+      CacheInfo c, String parentPath, String name, RegionAttributes attrs) {
     RegionRequest m = new RegionRequest();
     m.action = CREATE_VM_REGION;
     m.cacheId = c.getId();
@@ -110,9 +109,7 @@ public final class RegionRequest extends AdminRequest {
     RegionRequest.setFriendlyName(this);
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     // nothing needs to be done. If we got this far then a cache must exist.
@@ -151,18 +148,23 @@ public final class RegionRequest extends AdminRequest {
 
   private static void setFriendlyName(RegionRequest rgnRqst) {
     switch (rgnRqst.action) {
-    case GET_REGION:
-      rgnRqst.friendlyName = LocalizedStrings.RegionRequest_GET_A_SPECIFIC_REGION_FROM_THE_ROOT.toLocalizedString();
-      break;
-    case CREATE_VM_ROOT:
-      rgnRqst.friendlyName = LocalizedStrings.RegionRequest_CREATE_A_NEW_ROOT_VM_REGION.toLocalizedString();
-      break;
-    case CREATE_VM_REGION:
-      rgnRqst.friendlyName = LocalizedStrings.RegionRequest_CREATE_A_NEW_VM_REGION.toLocalizedString();
-      break;
-    default:
-      rgnRqst.friendlyName = LocalizedStrings.RegionRequest_UNKNOWN_OPERATION_0.toLocalizedString(Integer.valueOf(rgnRqst.action));
-      break;
+      case GET_REGION:
+        rgnRqst.friendlyName =
+            LocalizedStrings.RegionRequest_GET_A_SPECIFIC_REGION_FROM_THE_ROOT.toLocalizedString();
+        break;
+      case CREATE_VM_ROOT:
+        rgnRqst.friendlyName =
+            LocalizedStrings.RegionRequest_CREATE_A_NEW_ROOT_VM_REGION.toLocalizedString();
+        break;
+      case CREATE_VM_REGION:
+        rgnRqst.friendlyName =
+            LocalizedStrings.RegionRequest_CREATE_A_NEW_VM_REGION.toLocalizedString();
+        break;
+      default:
+        rgnRqst.friendlyName =
+            LocalizedStrings.RegionRequest_UNKNOWN_OPERATION_0.toLocalizedString(
+                Integer.valueOf(rgnRqst.action));
+        break;
     }
   }
 }

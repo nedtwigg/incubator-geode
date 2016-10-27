@@ -58,8 +58,7 @@ public class GetBitExecutor extends StringExecutor {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_INT));
       return;
     }
-    if (offset < 0)
-      offset += bytes.length * 8;
+    if (offset < 0) offset += bytes.length * 8;
 
     if (offset < 0 || offset > bytes.length * 8) {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), 0));
@@ -78,5 +77,4 @@ public class GetBitExecutor extends StringExecutor {
 
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), bit));
   }
-
 }

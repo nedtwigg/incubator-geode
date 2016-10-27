@@ -16,9 +16,9 @@
  */
 
 /**
- * Used to carry arguments between gfsh region command implementations and the functions
- * that do the work for those commands.
- * 
+ * Used to carry arguments between gfsh region command implementations and the functions that do the
+ * work for those commands.
+ *
  * @since GemFire 7.0
  */
 package org.apache.geode.management.internal.cli.functions;
@@ -80,7 +80,40 @@ public class RegionFunctionArgs implements Serializable {
   private final boolean isSetOffHeap;
   private RegionAttributes<?, ?> regionAttributes;
 
-  public RegionFunctionArgs(String regionPath, RegionShortcut regionShortcut, String useAttributesFrom, boolean skipIfExists, String keyConstraint, String valueConstraint, Boolean statisticsEnabled, RegionFunctionArgs.ExpirationAttrs entryExpirationIdleTime, RegionFunctionArgs.ExpirationAttrs entryExpirationTTL, RegionFunctionArgs.ExpirationAttrs regionExpirationIdleTime, RegionFunctionArgs.ExpirationAttrs regionExpirationTTL, String diskStore, Boolean diskSynchronous, Boolean enableAsyncConflation, Boolean enableSubscriptionConflation, String[] cacheListeners, String cacheLoader, String cacheWriter, String[] asyncEventQueueIds, String[] gatewaySenderIds, Boolean concurrencyChecksEnabled, Boolean cloningEnabled, Integer concurrencyLevel, String prColocatedWith, Integer prLocalMaxMemory, Long prRecoveryDelay, Integer prRedundantCopies, Long prStartupRecoveryDelay, Long prTotalMaxMemory, Integer prTotalNumBuckets, Integer evictionMax, String compressor, Boolean offHeap,
+  public RegionFunctionArgs(
+      String regionPath,
+      RegionShortcut regionShortcut,
+      String useAttributesFrom,
+      boolean skipIfExists,
+      String keyConstraint,
+      String valueConstraint,
+      Boolean statisticsEnabled,
+      RegionFunctionArgs.ExpirationAttrs entryExpirationIdleTime,
+      RegionFunctionArgs.ExpirationAttrs entryExpirationTTL,
+      RegionFunctionArgs.ExpirationAttrs regionExpirationIdleTime,
+      RegionFunctionArgs.ExpirationAttrs regionExpirationTTL,
+      String diskStore,
+      Boolean diskSynchronous,
+      Boolean enableAsyncConflation,
+      Boolean enableSubscriptionConflation,
+      String[] cacheListeners,
+      String cacheLoader,
+      String cacheWriter,
+      String[] asyncEventQueueIds,
+      String[] gatewaySenderIds,
+      Boolean concurrencyChecksEnabled,
+      Boolean cloningEnabled,
+      Integer concurrencyLevel,
+      String prColocatedWith,
+      Integer prLocalMaxMemory,
+      Long prRecoveryDelay,
+      Integer prRedundantCopies,
+      Long prStartupRecoveryDelay,
+      Long prTotalMaxMemory,
+      Integer prTotalNumBuckets,
+      Integer evictionMax,
+      String compressor,
+      Boolean offHeap,
       Boolean mcastEnabled) {
     this.regionPath = regionPath;
     this.regionShortcut = regionShortcut;
@@ -146,7 +179,15 @@ public class RegionFunctionArgs implements Serializable {
     if (this.isSetConcurrencyLevel) {
       this.concurrencyLevel = concurrencyLevel;
     }
-    this.partitionArgs = new PartitionArgs(prColocatedWith, prLocalMaxMemory, prRecoveryDelay, prRedundantCopies, prStartupRecoveryDelay, prTotalMaxMemory, prTotalNumBuckets);
+    this.partitionArgs =
+        new PartitionArgs(
+            prColocatedWith,
+            prLocalMaxMemory,
+            prRecoveryDelay,
+            prRedundantCopies,
+            prStartupRecoveryDelay,
+            prTotalMaxMemory,
+            prTotalNumBuckets);
 
     this.isSetCompressor = (compressor != null);
     if (this.isSetCompressor) {
@@ -159,119 +200,155 @@ public class RegionFunctionArgs implements Serializable {
   }
 
   // Constructor to be used for supplied region attributes
-  public RegionFunctionArgs(String regionPath, String useAttributesFrom, boolean skipIfExists, String keyConstraint, String valueConstraint, Boolean statisticsEnabled, RegionFunctionArgs.ExpirationAttrs entryExpirationIdleTime, RegionFunctionArgs.ExpirationAttrs entryExpirationTTL, RegionFunctionArgs.ExpirationAttrs regionExpirationIdleTime, RegionFunctionArgs.ExpirationAttrs regionExpirationTTL, String diskStore, Boolean diskSynchronous, Boolean enableAsyncConflation, Boolean enableSubscriptionConflation, String[] cacheListeners, String cacheLoader, String cacheWriter, String[] asyncEventQueueIds, String[] gatewaySenderIds, Boolean concurrencyChecksEnabled, Boolean cloningEnabled, Integer concurrencyLevel, String prColocatedWith, Integer prLocalMaxMemory, Long prRecoveryDelay, Integer prRedundantCopies, Long prStartupRecoveryDelay, Long prTotalMaxMemory, Integer prTotalNumBuckets, Boolean offHeap, Boolean mcastEnabled, RegionAttributes<?, ?> regionAttributes) {
-    this(regionPath, null, useAttributesFrom, skipIfExists, keyConstraint, valueConstraint, statisticsEnabled, entryExpirationIdleTime, entryExpirationTTL, regionExpirationIdleTime, regionExpirationTTL, diskStore, diskSynchronous, enableAsyncConflation, enableSubscriptionConflation, cacheListeners, cacheLoader, cacheWriter, asyncEventQueueIds, gatewaySenderIds, concurrencyChecksEnabled, cloningEnabled, concurrencyLevel, prColocatedWith, prLocalMaxMemory, prRecoveryDelay, prRedundantCopies, prStartupRecoveryDelay, prTotalMaxMemory, prTotalNumBuckets, null, null, offHeap, mcastEnabled);
+  public RegionFunctionArgs(
+      String regionPath,
+      String useAttributesFrom,
+      boolean skipIfExists,
+      String keyConstraint,
+      String valueConstraint,
+      Boolean statisticsEnabled,
+      RegionFunctionArgs.ExpirationAttrs entryExpirationIdleTime,
+      RegionFunctionArgs.ExpirationAttrs entryExpirationTTL,
+      RegionFunctionArgs.ExpirationAttrs regionExpirationIdleTime,
+      RegionFunctionArgs.ExpirationAttrs regionExpirationTTL,
+      String diskStore,
+      Boolean diskSynchronous,
+      Boolean enableAsyncConflation,
+      Boolean enableSubscriptionConflation,
+      String[] cacheListeners,
+      String cacheLoader,
+      String cacheWriter,
+      String[] asyncEventQueueIds,
+      String[] gatewaySenderIds,
+      Boolean concurrencyChecksEnabled,
+      Boolean cloningEnabled,
+      Integer concurrencyLevel,
+      String prColocatedWith,
+      Integer prLocalMaxMemory,
+      Long prRecoveryDelay,
+      Integer prRedundantCopies,
+      Long prStartupRecoveryDelay,
+      Long prTotalMaxMemory,
+      Integer prTotalNumBuckets,
+      Boolean offHeap,
+      Boolean mcastEnabled,
+      RegionAttributes<?, ?> regionAttributes) {
+    this(
+        regionPath,
+        null,
+        useAttributesFrom,
+        skipIfExists,
+        keyConstraint,
+        valueConstraint,
+        statisticsEnabled,
+        entryExpirationIdleTime,
+        entryExpirationTTL,
+        regionExpirationIdleTime,
+        regionExpirationTTL,
+        diskStore,
+        diskSynchronous,
+        enableAsyncConflation,
+        enableSubscriptionConflation,
+        cacheListeners,
+        cacheLoader,
+        cacheWriter,
+        asyncEventQueueIds,
+        gatewaySenderIds,
+        concurrencyChecksEnabled,
+        cloningEnabled,
+        concurrencyLevel,
+        prColocatedWith,
+        prLocalMaxMemory,
+        prRecoveryDelay,
+        prRedundantCopies,
+        prStartupRecoveryDelay,
+        prTotalMaxMemory,
+        prTotalNumBuckets,
+        null,
+        null,
+        offHeap,
+        mcastEnabled);
     this.regionAttributes = regionAttributes;
   }
 
-  /**
-   * @return the regionPath
-   */
+  /** @return the regionPath */
   public String getRegionPath() {
     return this.regionPath;
   }
 
-  /**
-   * @return the regionShortcut
-   */
+  /** @return the regionShortcut */
   public RegionShortcut getRegionShortcut() {
     return this.regionShortcut;
   }
 
-  /**
-   * @return the useAttributesFrom
-   */
+  /** @return the useAttributesFrom */
   public String getUseAttributesFrom() {
     return this.useAttributesFrom;
   }
 
-  /**
-   * @return true if need to use specified region attributes
-   */
+  /** @return true if need to use specified region attributes */
   public Boolean isSetUseAttributesFrom() {
-    return this.regionShortcut == null && this.useAttributesFrom != null && this.regionAttributes != null;
+    return this.regionShortcut == null
+        && this.useAttributesFrom != null
+        && this.regionAttributes != null;
   }
 
-  /**
-   * @return the skipIfExists
-   */
+  /** @return the skipIfExists */
   public Boolean isSkipIfExists() {
     return this.skipIfExists;
   }
 
-  /**
-   * @return the keyConstraint
-   */
+  /** @return the keyConstraint */
   public String getKeyConstraint() {
     return this.keyConstraint;
   }
 
-  /**
-   * @return the valueConstraint
-   */
+  /** @return the valueConstraint */
   public String getValueConstraint() {
     return this.valueConstraint;
   }
 
-  /**
-   * @return the statisticsEnabled
-   */
+  /** @return the statisticsEnabled */
   public Boolean isStatisticsEnabled() {
     return this.statisticsEnabled;
   }
 
-  /**
-   * @return the isSetStatisticsEnabled
-   */
+  /** @return the isSetStatisticsEnabled */
   public Boolean isSetStatisticsEnabled() {
     return this.isSetStatisticsEnabled;
   }
 
-  /**
-   * @return the entryExpirationIdleTime
-   */
+  /** @return the entryExpirationIdleTime */
   public RegionFunctionArgs.ExpirationAttrs getEntryExpirationIdleTime() {
     return this.entryExpirationIdleTime;
   }
 
-  /**
-   * @return the entryExpirationTTL
-   */
+  /** @return the entryExpirationTTL */
   public RegionFunctionArgs.ExpirationAttrs getEntryExpirationTTL() {
     return this.entryExpirationTTL;
   }
 
-  /**
-   * @return the regionExpirationIdleTime
-   */
+  /** @return the regionExpirationIdleTime */
   public RegionFunctionArgs.ExpirationAttrs getRegionExpirationIdleTime() {
     return this.regionExpirationIdleTime;
   }
 
-  /**
-   * @return the regionExpirationTTL
-   */
+  /** @return the regionExpirationTTL */
   public RegionFunctionArgs.ExpirationAttrs getRegionExpirationTTL() {
     return this.regionExpirationTTL;
   }
 
-  /**
-   * @return the diskStore
-   */
+  /** @return the diskStore */
   public String getDiskStore() {
     return this.diskStore;
   }
 
-  /**
-   * @return the diskSynchronous
-   */
+  /** @return the diskSynchronous */
   public Boolean isDiskSynchronous() {
     return this.diskSynchronous;
   }
 
-  /**
-   * @return the isSetDiskSynchronous
-   */
+  /** @return the isSetDiskSynchronous */
   public Boolean isSetDiskSynchronous() {
     return this.isSetDiskSynchronous;
   }
@@ -284,37 +361,27 @@ public class RegionFunctionArgs implements Serializable {
     return this.isSetOffHeap;
   }
 
-  /**
-   * @return the enableAsyncConflation
-   */
+  /** @return the enableAsyncConflation */
   public Boolean isEnableAsyncConflation() {
     return this.enableAsyncConflation;
   }
 
-  /**
-   * @return the isSetEnableAsyncConflation
-   */
+  /** @return the isSetEnableAsyncConflation */
   public Boolean isSetEnableAsyncConflation() {
     return this.isSetEnableAsyncConflation;
   }
 
-  /**
-   * @return the enableSubscriptionConflation
-   */
+  /** @return the enableSubscriptionConflation */
   public Boolean isEnableSubscriptionConflation() {
     return this.enableSubscriptionConflation;
   }
 
-  /**
-   * @return the isSetEnableSubscriptionConflation
-   */
+  /** @return the isSetEnableSubscriptionConflation */
   public Boolean isSetEnableSubscriptionConflation() {
     return this.isSetEnableSubscriptionConflation;
   }
 
-  /**
-   * @return the cacheListeners
-   */
+  /** @return the cacheListeners */
   public Set<String> getCacheListeners() {
     if (this.cacheListeners == null) {
       return null;
@@ -322,23 +389,17 @@ public class RegionFunctionArgs implements Serializable {
     return Collections.unmodifiableSet(this.cacheListeners);
   }
 
-  /**
-   * @return the cacheLoader
-   */
+  /** @return the cacheLoader */
   public String getCacheLoader() {
     return this.cacheLoader;
   }
 
-  /**
-   * @return the cacheWriter
-   */
+  /** @return the cacheWriter */
   public String getCacheWriter() {
     return this.cacheWriter;
   }
 
-  /**
-   * @return the asyncEventQueueIds
-   */
+  /** @return the asyncEventQueueIds */
   public Set<String> getAsyncEventQueueIds() {
     if (this.asyncEventQueueIds == null) {
       return null;
@@ -346,9 +407,7 @@ public class RegionFunctionArgs implements Serializable {
     return Collections.unmodifiableSet(this.asyncEventQueueIds);
   }
 
-  /**
-   * @return the gatewaySenderIds
-   */
+  /** @return the gatewaySenderIds */
   public Set<String> getGatewaySenderIds() {
     if (this.gatewaySenderIds == null) {
       return null;
@@ -356,104 +415,77 @@ public class RegionFunctionArgs implements Serializable {
     return Collections.unmodifiableSet(this.gatewaySenderIds);
   }
 
-  /**
-   * @return the concurrencyChecksEnabled
-   */
+  /** @return the concurrencyChecksEnabled */
   public Boolean isConcurrencyChecksEnabled() {
     return this.concurrencyChecksEnabled;
   }
 
-  /**
-   * @return the isSetConcurrencyChecksEnabled
-   */
+  /** @return the isSetConcurrencyChecksEnabled */
   public Boolean isSetConcurrencyChecksEnabled() {
     return this.isSetConcurrencyChecksEnabled;
   }
 
-  /**
-   * @return the cloningEnabled
-   */
+  /** @return the cloningEnabled */
   public Boolean isCloningEnabled() {
     return this.cloningEnabled;
   }
 
-  /**
-   * @return the isSetCloningEnabled
-   */
+  /** @return the isSetCloningEnabled */
   public Boolean isSetCloningEnabled() {
     return this.isSetCloningEnabled;
   }
 
-  /**
-   * @return the mcastEnabled setting
-   */
+  /** @return the mcastEnabled setting */
   public Boolean isMcastEnabled() {
     return this.mcastEnabled;
   }
 
-  /**
-   * @return the isSetCloningEnabled
-   */
+  /** @return the isSetCloningEnabled */
   public Boolean isSetMcastEnabled() {
     return this.isSetMcastEnabled;
   }
 
-  /**
-   * @return the concurrencyLevel
-   */
+  /** @return the concurrencyLevel */
   public Integer getConcurrencyLevel() {
     return this.concurrencyLevel;
   }
 
-  /**
-   * @return the isSetConcurrencyLevel
-   */
+  /** @return the isSetConcurrencyLevel */
   public Boolean isSetConcurrencyLevel() {
     return this.isSetConcurrencyLevel;
   }
 
   public boolean withPartitioning() {
-    return hasPartitionAttributes() || (this.regionShortcut != null && this.regionShortcut.name().startsWith("PARTITION"));
+    return hasPartitionAttributes()
+        || (this.regionShortcut != null && this.regionShortcut.name().startsWith("PARTITION"));
   }
 
-  /**
-   * @return the partitionArgs
-   */
+  /** @return the partitionArgs */
   public boolean hasPartitionAttributes() {
     return this.partitionArgs != null && this.partitionArgs.hasPartitionAttributes();
   }
 
-  /**
-   * @return the partitionArgs
-   */
+  /** @return the partitionArgs */
   public PartitionArgs getPartitionArgs() {
     return this.partitionArgs;
   }
 
-  /**
-   * @return the evictionMax
-   */
+  /** @return the evictionMax */
   public Integer getEvictionMax() {
     return this.evictionMax;
   }
 
-  /**
-   * @return the compressor.
-   */
+  /** @return the compressor. */
   public String getCompressor() {
     return this.compressor;
   }
 
-  /**
-   * @return the isSetCompressor.
-   */
+  /** @return the isSetCompressor. */
   public boolean isSetCompressor() {
     return this.isSetCompressor;
   }
 
-  /**
-   * @return the regionAttributes
-   */
+  /** @return the regionAttributes */
   @SuppressWarnings("unchecked")
   public <K, V> RegionAttributes<K, V> getRegionAttributes() {
     return (RegionAttributes<K, V>) this.regionAttributes;
@@ -484,23 +516,17 @@ public class RegionFunctionArgs implements Serializable {
       return expirationAttr;
     }
 
-    /**
-     * @return the type
-     */
+    /** @return the type */
     public ExpirationFor getType() {
       return type;
     }
 
-    /**
-     * @return the time
-     */
+    /** @return the time */
     public Integer getTime() {
       return time;
     }
 
-    /**
-     * @return the action
-     */
+    /** @return the action */
     public ExpirationAction getAction() {
       return action;
     }
@@ -532,12 +558,18 @@ public class RegionFunctionArgs implements Serializable {
       } else if (action.equalsIgnoreCase(ExpirationAction.LOCAL_INVALIDATE.toString())) {
         return ExpirationAction.LOCAL_INVALIDATE;
       } else {
-        throw new IllegalArgumentException(CliStrings.format(CliStrings.CREATE_REGION__MSG__EXPIRATION_ACTION_0_IS_NOT_VALID, new Object[] { action }));
+        throw new IllegalArgumentException(
+            CliStrings.format(
+                CliStrings.CREATE_REGION__MSG__EXPIRATION_ACTION_0_IS_NOT_VALID,
+                new Object[] {action}));
       }
     }
 
     public static enum ExpirationFor {
-      REGION_IDLE, REGION_TTL, ENTRY_IDLE, ENTRY_TTL;
+      REGION_IDLE,
+      REGION_TTL,
+      ENTRY_IDLE,
+      ENTRY_TTL;
     }
   }
 
@@ -561,7 +593,14 @@ public class RegionFunctionArgs implements Serializable {
     private boolean hasPartitionAttributes;
     private final Set<String> userSpecifiedPartitionAttributes = new HashSet<String>();
 
-    public PartitionArgs(String prColocatedWith, Integer prLocalMaxMemory, Long prRecoveryDelay, Integer prRedundantCopies, Long prStartupRecoveryDelay, Long prTotalMaxMemory, Integer prTotalNumBuckets) {
+    public PartitionArgs(
+        String prColocatedWith,
+        Integer prLocalMaxMemory,
+        Long prRecoveryDelay,
+        Integer prRedundantCopies,
+        Long prStartupRecoveryDelay,
+        Long prTotalMaxMemory,
+        Integer prTotalNumBuckets) {
       this.prColocatedWith = prColocatedWith;
       if (this.prColocatedWith != null) {
         this.hasPartitionAttributes = true;
@@ -605,107 +644,77 @@ public class RegionFunctionArgs implements Serializable {
       }
     }
 
-    /**
-     * @return the hasPartitionAttributes
-     */
+    /** @return the hasPartitionAttributes */
     public Boolean hasPartitionAttributes() {
       return hasPartitionAttributes;
     }
 
-    /**
-     * @return the userSpecifiedPartitionAttributes
-     */
+    /** @return the userSpecifiedPartitionAttributes */
     public String getUserSpecifiedPartitionAttributes() {
       return CliUtil.collectionToString(userSpecifiedPartitionAttributes, -1);
     }
 
-    /**
-     * @return the prColocatedWith
-     */
+    /** @return the prColocatedWith */
     public String getPrColocatedWith() {
       return prColocatedWith;
     }
 
-    /**
-     * @return the prLocalMaxMemory
-     */
+    /** @return the prLocalMaxMemory */
     public Integer getPrLocalMaxMemory() {
       return prLocalMaxMemory;
     }
 
-    /**
-     * @return the isSetPRLocalMaxMemory
-     */
+    /** @return the isSetPRLocalMaxMemory */
     public Boolean isSetPRLocalMaxMemory() {
       return isSetPRLocalMaxMemory;
     }
 
-    /**
-     * @return the prRecoveryDelay
-     */
+    /** @return the prRecoveryDelay */
     public Long getPrRecoveryDelay() {
       return prRecoveryDelay;
     }
 
-    /**
-     * @return the isSetPRRecoveryDelay
-     */
+    /** @return the isSetPRRecoveryDelay */
     public Boolean isSetPRRecoveryDelay() {
       return isSetPRRecoveryDelay;
     }
 
-    /**
-     * @return the prRedundantCopies
-     */
+    /** @return the prRedundantCopies */
     public Integer getPrRedundantCopies() {
       return prRedundantCopies;
     }
 
-    /**
-     * @return the isSetPRRedundantCopies
-     */
+    /** @return the isSetPRRedundantCopies */
     public Boolean isSetPRRedundantCopies() {
       return isSetPRRedundantCopies;
     }
 
-    /**
-     * @return the prStartupRecoveryDelay
-     */
+    /** @return the prStartupRecoveryDelay */
     public Long getPrStartupRecoveryDelay() {
       return prStartupRecoveryDelay;
     }
 
-    /**
-     * @return the isSetPRStartupRecoveryDelay
-     */
+    /** @return the isSetPRStartupRecoveryDelay */
     public Boolean isSetPRStartupRecoveryDelay() {
       return isSetPRStartupRecoveryDelay;
     }
 
-    /**
-     * @return the prTotalMaxMemory
-     */
+    /** @return the prTotalMaxMemory */
     public Long getPrTotalMaxMemory() {
       return prTotalMaxMemory;
     }
 
-    /**
-     * @return the isSetPRTotalMaxMemory
-     */
+    /** @return the isSetPRTotalMaxMemory */
     public Boolean isSetPRTotalMaxMemory() {
       return isSetPRTotalMaxMemory;
     }
 
-    /**
-     * @return the prTotalNumBuckets
-     */
+    /** @return the prTotalNumBuckets */
     public Integer getPrTotalNumBuckets() {
       return prTotalNumBuckets;
     }
 
-    /**
-     * @return the isSetPRTotalNumBuckets
-     */
+    /** @return the isSetPRTotalNumBuckets */
     public Boolean isSetPRTotalNumBuckets() {
       return isSetPRTotalNumBuckets;
     }

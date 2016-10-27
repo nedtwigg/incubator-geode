@@ -131,21 +131,20 @@ import org.apache.geode.redis.internal.executor.transactions.UnwatchExecutor;
 import org.apache.geode.redis.internal.executor.transactions.WatchExecutor;
 
 /**
- * The redis command type used by the server. Each command is directly from
- * the redis protocol and calling {@link #getExecutor()} on a type returns the executor
- * class for that command.
- * 
- *
+ * The redis command type used by the server. Each command is directly from the redis protocol and
+ * calling {@link #getExecutor()} on a type returns the executor class for that command.
  */
 public enum RedisCommandType {
 
-  /***************************************
-   *************** Keys ******************
-   ***************************************/
+  /**
+   * ************************************* ************** Keys ******************
+   * *************************************
+   */
 
   /**
-   * AUTH password <p>
-   * Authenticate to the server
+   * AUTH password
+   *
+   * <p>Authenticate to the server
    */
   AUTH {
     private Executor executor;
@@ -167,8 +166,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * DEL key [key ...] <p>
-   * Delete a key
+   * DEL key [key ...]
+   *
+   * <p>Delete a key
    */
   DEL {
     private Executor executor;
@@ -190,8 +190,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * EXISTS key <p>
-   * Determine if a key exists
+   * EXISTS key
+   *
+   * <p>Determine if a key exists
    */
   EXISTS {
     private Executor executor;
@@ -213,8 +214,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * EXPIRE key seconds <p>
-   * Set a key's time to live in seconds
+   * EXPIRE key seconds
+   *
+   * <p>Set a key's time to live in seconds
    */
   EXPIRE {
     private Executor executor;
@@ -236,8 +238,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * EXPIREAT key timestamp <p>
-   * Set the expiration for a key as a UNIX timestamp
+   * EXPIREAT key timestamp
+   *
+   * <p>Set the expiration for a key as a UNIX timestamp
    */
   EXPIREAT {
     private Executor executor;
@@ -259,8 +262,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * FLUSHALL <p>
-   * Remove all keys from all databases
+   * FLUSHALL
+   *
+   * <p>Remove all keys from all databases
    */
   FLUSHALL {
     private Executor executor;
@@ -282,7 +286,11 @@ public enum RedisCommandType {
   },
 
   /**
-   * FLUSHDB<p>Remove all keys from the current database<p>Same as FLUSHALL for this implementation
+   * FLUSHDB
+   *
+   * <p>Remove all keys from the current database
+   *
+   * <p>Same as FLUSHALL for this implementation
    */
   FLUSHDB {
     private Executor executor;
@@ -304,8 +312,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * KEYS pattern <p>
-   * Find all keys matching the given pattern
+   * KEYS pattern
+   *
+   * <p>Find all keys matching the given pattern
    */
   KEYS {
     private Executor executor;
@@ -327,8 +336,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * PERSIST key <p>
-   * Remove the expiration from a key
+   * PERSIST key
+   *
+   * <p>Remove the expiration from a key
    */
   PERSIST {
     private Executor executor;
@@ -350,7 +360,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * PEXPIRE key milliseconds<p>Set a key's time to live in milliseconds
+   * PEXPIRE key milliseconds
+   *
+   * <p>Set a key's time to live in milliseconds
    */
   PEXPIRE {
     private Executor executor;
@@ -372,7 +384,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * PEXPIREAT key milliseconds-timestamp<p>Set the expiration for a key as a UNIX timestamp specified in milliseconds
+   * PEXPIREAT key milliseconds-timestamp
+   *
+   * <p>Set the expiration for a key as a UNIX timestamp specified in milliseconds
    */
   PEXPIREAT {
     private Executor executor;
@@ -394,7 +408,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * PTTL key<p>Get the time to live for a key in milliseconds
+   * PTTL key
+   *
+   * <p>Get the time to live for a key in milliseconds
    */
   PTTL {
     private Executor executor;
@@ -416,7 +432,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SCAN cursor [MATCH pattern] [COUNT count]<p>Incrementally iterate the keys space
+   * SCAN cursor [MATCH pattern] [COUNT count]
+   *
+   * <p>Incrementally iterate the keys space
    */
   SCAN {
     private Executor executor;
@@ -438,7 +456,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * TTL key<p>Get the time to live for a key
+   * TTL key
+   *
+   * <p>Get the time to live for a key
    */
   TTL {
     private Executor executor;
@@ -460,7 +480,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * TYPE key<p>Determine the type stored at key
+   * TYPE key
+   *
+   * <p>Determine the type stored at key
    */
   TYPE {
     private Executor executor;
@@ -481,12 +503,15 @@ public enum RedisCommandType {
     }
   },
 
-  /***************************************
-   ************** Strings ****************
-   ***************************************/
+  /**
+   * ************************************* ************* Strings ****************
+   * *************************************
+   */
 
   /**
-   * APPEND key value<p>Append a value to a key
+   * APPEND key value
+   *
+   * <p>Append a value to a key
    */
   APPEND {
     private Executor executor;
@@ -508,7 +533,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * BITCOUNT key start end [start end ...]<p>Count set bits in a string
+   * BITCOUNT key start end [start end ...]
+   *
+   * <p>Count set bits in a string
    */
   BITCOUNT {
     private Executor executor;
@@ -530,7 +557,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * BITOP operation destkey key [key ...]<p>Perform bitwise operations between strings
+   * BITOP operation destkey key [key ...]
+   *
+   * <p>Perform bitwise operations between strings
    */
   BITOP {
     private Executor executor;
@@ -552,7 +581,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * BITPOS key bit [start] [end]<p>Find first bit set or clear in a string
+   * BITPOS key bit [start] [end]
+   *
+   * <p>Find first bit set or clear in a string
    */
   BITPOS {
     private Executor executor;
@@ -574,7 +605,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * DECR key<p>Decrement the integer value of a key by one
+   * DECR key
+   *
+   * <p>Decrement the integer value of a key by one
    */
   DECR {
     private Executor executor;
@@ -596,7 +629,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * DECRBY key decrement<p>Decrement the integer value of a key by the given number
+   * DECRBY key decrement
+   *
+   * <p>Decrement the integer value of a key by the given number
    */
   DECRBY {
     private Executor executor;
@@ -618,7 +653,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * GET key<p>Get the value of a key
+   * GET key
+   *
+   * <p>Get the value of a key
    */
   GET {
     private Executor executor;
@@ -640,7 +677,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * GETBIT key offset<p>Returns the bit value at offset in the string value stored at key
+   * GETBIT key offset
+   *
+   * <p>Returns the bit value at offset in the string value stored at key
    */
   GETBIT {
     private Executor executor;
@@ -662,7 +701,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * GETRANGE key start end<p>Get a substring of the string stored at a key
+   * GETRANGE key start end
+   *
+   * <p>Get a substring of the string stored at a key
    */
   GETRANGE {
     private Executor executor;
@@ -684,7 +725,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * GETSET key value<p>Set the string value of a key and return its old value
+   * GETSET key value
+   *
+   * <p>Set the string value of a key and return its old value
    */
   GETSET {
     private Executor executor;
@@ -706,7 +749,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * INCR key<p>Increment the integer value of a key by one
+   * INCR key
+   *
+   * <p>Increment the integer value of a key by one
    */
   INCR {
     private Executor executor;
@@ -728,7 +773,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * INCRBY key increment<p>Increment the integer value of a key by the given amount
+   * INCRBY key increment
+   *
+   * <p>Increment the integer value of a key by the given amount
    */
   INCRBY {
     private Executor executor;
@@ -750,7 +797,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * INCRBYFLOAT key increment<p>Increment the float value of a key by the given amount
+   * INCRBYFLOAT key increment
+   *
+   * <p>Increment the float value of a key by the given amount
    */
   INCRBYFLOAT {
     private Executor executor;
@@ -772,7 +821,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * MGET key [key ...]<p>Get the values of all the given keys
+   * MGET key [key ...]
+   *
+   * <p>Get the values of all the given keys
    */
   MGET {
     private Executor executor;
@@ -794,7 +845,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * MSET key value [key value ...]<p>Set multiple keys to multiple values
+   * MSET key value [key value ...]
+   *
+   * <p>Set multiple keys to multiple values
    */
   MSET {
     private Executor executor;
@@ -816,7 +869,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * MSETNX key value [key value ...]<p>Set multiple keys to multiple values, only if none of the keys exist
+   * MSETNX key value [key value ...]
+   *
+   * <p>Set multiple keys to multiple values, only if none of the keys exist
    */
   MSETNX {
     private Executor executor;
@@ -838,7 +893,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * PSETEX key milliseconds value<p>Set the value and expiration in milliseconds of a key
+   * PSETEX key milliseconds value
+   *
+   * <p>Set the value and expiration in milliseconds of a key
    */
   PSETEX {
     private Executor executor;
@@ -860,7 +917,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SETEX key seconds value<p>Set the value and expiration of a key
+   * SETEX key seconds value
+   *
+   * <p>Set the value and expiration of a key
    */
   SETEX {
     private Executor executor;
@@ -882,7 +941,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SET key value [EX seconds] [PX milliseconds] [NX|XX]<p>Set the string value of a key
+   * SET key value [EX seconds] [PX milliseconds] [NX|XX]
+   *
+   * <p>Set the string value of a key
    */
   SET {
     private Executor executor;
@@ -904,7 +965,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SETBIT key offset value<P>Sets or clears the bit at offset in the string value stored at key
+   * SETBIT key offset value
+   *
+   * <p>Sets or clears the bit at offset in the string value stored at key
    */
   SETBIT {
     private Executor executor;
@@ -926,7 +989,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SETNX key value<p>Set the value of a key, only if the key does not exist
+   * SETNX key value
+   *
+   * <p>Set the value of a key, only if the key does not exist
    */
   SETNX {
     private Executor executor;
@@ -948,7 +1013,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SETRANGE key offset value<p>Overwrite part of a string at key starting at the specified offset
+   * SETRANGE key offset value
+   *
+   * <p>Overwrite part of a string at key starting at the specified offset
    */
   SETRANGE {
     private Executor executor;
@@ -970,7 +1037,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * STRLEN key<p>Get the length of the value stored in a key
+   * STRLEN key
+   *
+   * <p>Get the length of the value stored in a key
    */
   STRLEN {
     private Executor executor;
@@ -991,11 +1060,14 @@ public enum RedisCommandType {
     }
   },
 
-  /***************************************
-   **************** Hashes ***************
-   ***************************************/
   /**
-   * HDEL key field [field ...]<p>Delete one or more hash fields
+   * ************************************* *************** Hashes ***************
+   * *************************************
+   */
+  /**
+   * HDEL key field [field ...]
+   *
+   * <p>Delete one or more hash fields
    */
   HDEL {
     private Executor executor;
@@ -1017,7 +1089,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HEXISTS key field<p>Determine if a hash field exists
+   * HEXISTS key field
+   *
+   * <p>Determine if a hash field exists
    */
   HEXISTS {
     private Executor executor;
@@ -1039,7 +1113,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HGET key field<p>Get the value of a hash field
+   * HGET key field
+   *
+   * <p>Get the value of a hash field
    */
   HGET {
     private Executor executor;
@@ -1061,7 +1137,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HGETALL key<p>Get all the fields and values in a hash
+   * HGETALL key
+   *
+   * <p>Get all the fields and values in a hash
    */
   HGETALL {
     private Executor executor;
@@ -1083,7 +1161,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HINCRBY key field increment<p>Increment the integer value of a hash field by the given number
+   * HINCRBY key field increment
+   *
+   * <p>Increment the integer value of a hash field by the given number
    */
   HINCRBY {
     private Executor executor;
@@ -1105,7 +1185,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HINCRBYFLOAT key field increment<p>Increment the float value of a hash field by the given amount
+   * HINCRBYFLOAT key field increment
+   *
+   * <p>Increment the float value of a hash field by the given amount
    */
   HINCRBYFLOAT {
     private Executor executor;
@@ -1127,7 +1209,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HKEYS key<p>Get all the fields in a hash
+   * HKEYS key
+   *
+   * <p>Get all the fields in a hash
    */
   HKEYS {
     private Executor executor;
@@ -1149,7 +1233,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HLEN key<p>Get the number of fields in a hash
+   * HLEN key
+   *
+   * <p>Get the number of fields in a hash
    */
   HLEN {
     private Executor executor;
@@ -1171,7 +1257,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HMGET key field [field ...]<p>Get the values of all the given hash fields
+   * HMGET key field [field ...]
+   *
+   * <p>Get the values of all the given hash fields
    */
   HMGET {
     private Executor executor;
@@ -1193,7 +1281,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HMSET key field value [field value ...]<p>Set multiple hash fields to multiple values
+   * HMSET key field value [field value ...]
+   *
+   * <p>Set multiple hash fields to multiple values
    */
   HMSET {
     private Executor executor;
@@ -1215,7 +1305,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HSCAN key cursor [MATCH pattern] [COUNT count]<p>Incrementally iterate hash fields and associated values
+   * HSCAN key cursor [MATCH pattern] [COUNT count]
+   *
+   * <p>Incrementally iterate hash fields and associated values
    */
   HSCAN {
     private Executor executor;
@@ -1237,7 +1329,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HSET key field value<p>Set the string value of a hash field
+   * HSET key field value
+   *
+   * <p>Set the string value of a hash field
    */
   HSET {
     private Executor executor;
@@ -1259,7 +1353,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HSETNX key field value<p>Set the value of a hash field, only if the field does not exist
+   * HSETNX key field value
+   *
+   * <p>Set the value of a hash field, only if the field does not exist
    */
   HSETNX {
     private Executor executor;
@@ -1281,7 +1377,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * HVALS key<p>Get all the values in a hash
+   * HVALS key
+   *
+   * <p>Get all the values in a hash
    */
   HVALS {
     private Executor executor;
@@ -1302,12 +1400,15 @@ public enum RedisCommandType {
     }
   },
 
-  /***************************************
-   *********** HyperLogLogs **************
-   ***************************************/
+  /**
+   * ************************************* ********** HyperLogLogs **************
+   * *************************************
+   */
 
   /**
-   * PFADD key element [element ...]<p>Adds the specified elements to the specified HyperLogLog
+   * PFADD key element [element ...]
+   *
+   * <p>Adds the specified elements to the specified HyperLogLog
    */
   PFADD {
     private Executor executor;
@@ -1329,7 +1430,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * PFCOUNT key [key ...]<p>Return the approximated cardinality of the set(s) observed by the HyperLogLog at key(s)
+   * PFCOUNT key [key ...]
+   *
+   * <p>Return the approximated cardinality of the set(s) observed by the HyperLogLog at key(s)
    */
   PFCOUNT {
     private Executor executor;
@@ -1351,7 +1454,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * PFMERGE destkey sourcekey [sourcekey ...]<p>Merge N different HyperLogLogs into a single one
+   * PFMERGE destkey sourcekey [sourcekey ...]
+   *
+   * <p>Merge N different HyperLogLogs into a single one
    */
   PFMERGE {
     private Executor executor;
@@ -1372,12 +1477,15 @@ public enum RedisCommandType {
     }
   },
 
-  /***************************************
-   *************** Lists *****************
-   ***************************************/
+  /**
+   * ************************************* ************** Lists *****************
+   * *************************************
+   */
 
   /**
-   * LINDEX key index<p>Get an element from a list by its index
+   * LINDEX key index
+   *
+   * <p>Get an element from a list by its index
    */
   LINDEX {
     private Executor executor;
@@ -1399,7 +1507,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * LINSERT key BEFORE|AFTER pivot value<p>Insert an element before or after another element in a list
+   * LINSERT key BEFORE|AFTER pivot value
+   *
+   * <p>Insert an element before or after another element in a list
    */
   LINSERT {
     private Executor executor;
@@ -1421,7 +1531,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * LLEN key<p>Get the length of a list
+   * LLEN key
+   *
+   * <p>Get the length of a list
    */
   LLEN {
     private Executor executor;
@@ -1443,7 +1555,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * LPOP key<p>Remove and get the first element in a list
+   * LPOP key
+   *
+   * <p>Remove and get the first element in a list
    */
   LPOP {
     private Executor executor;
@@ -1465,7 +1579,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * LPUSH key value [value ...]<p>Prepend one or multiple values to a list
+   * LPUSH key value [value ...]
+   *
+   * <p>Prepend one or multiple values to a list
    */
   LPUSH {
     private Executor executor;
@@ -1487,7 +1603,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * LPUSHX key value<p>Prepend a value to a list, only if the list exists
+   * LPUSHX key value
+   *
+   * <p>Prepend a value to a list, only if the list exists
    */
   LPUSHX {
     private Executor executor;
@@ -1509,7 +1627,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * LRANGE key start stop<p>Get a range of elements from a list
+   * LRANGE key start stop
+   *
+   * <p>Get a range of elements from a list
    */
   LRANGE {
     private Executor executor;
@@ -1531,7 +1651,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * LREM key count value<p>Remove elements from a list
+   * LREM key count value
+   *
+   * <p>Remove elements from a list
    */
   LREM {
     private Executor executor;
@@ -1553,7 +1675,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * LSET key index value<p>Set the value of an element in a list by its index
+   * LSET key index value
+   *
+   * <p>Set the value of an element in a list by its index
    */
   LSET {
     private Executor executor;
@@ -1575,7 +1699,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * LTRIM key start stop<p>Trim a list to the specified range
+   * LTRIM key start stop
+   *
+   * <p>Trim a list to the specified range
    */
   LTRIM {
     private Executor executor;
@@ -1597,7 +1723,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * RPOP key<p>Remove and get the last element in a list
+   * RPOP key
+   *
+   * <p>Remove and get the last element in a list
    */
   RPOP {
     private Executor executor;
@@ -1619,7 +1747,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * RPUSH key value [value ...]<p>Append one or multiple values to a list
+   * RPUSH key value [value ...]
+   *
+   * <p>Append one or multiple values to a list
    */
   RPUSH {
     private Executor executor;
@@ -1641,7 +1771,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * RPUSHX key value<p>Append a value to a list, only if the list exists
+   * RPUSHX key value
+   *
+   * <p>Append a value to a list, only if the list exists
    */
   RPUSHX {
     private Executor executor;
@@ -1662,12 +1794,15 @@ public enum RedisCommandType {
     }
   },
 
-  /***************************************
-   **************** Sets *****************
-   ***************************************/
+  /**
+   * ************************************* *************** Sets *****************
+   * *************************************
+   */
 
   /**
-   * SADD key member [member ...]<p>Add one or more members to a set
+   * SADD key member [member ...]
+   *
+   * <p>Add one or more members to a set
    */
   SADD {
     private Executor executor;
@@ -1689,7 +1824,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SCARD key<p>Get the number of members in a set
+   * SCARD key
+   *
+   * <p>Get the number of members in a set
    */
   SCARD {
     private Executor executor;
@@ -1711,7 +1848,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SDIFF key [key ...]<p>Subtract multiple sets
+   * SDIFF key [key ...]
+   *
+   * <p>Subtract multiple sets
    */
   SDIFF {
     private Executor executor;
@@ -1733,7 +1872,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SDIFFSTORE destination key [key ...]<p>Subtract multiple sets and store the resulting set in a key
+   * SDIFFSTORE destination key [key ...]
+   *
+   * <p>Subtract multiple sets and store the resulting set in a key
    */
   SDIFFSTORE {
     private Executor executor;
@@ -1755,7 +1896,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SISMEMBER key member<p>Determine if a given value is a member of a set
+   * SISMEMBER key member
+   *
+   * <p>Determine if a given value is a member of a set
    */
   SISMEMBER {
     private Executor executor;
@@ -1777,7 +1920,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SINTER key [key ...]<p>Intersect multiple sets
+   * SINTER key [key ...]
+   *
+   * <p>Intersect multiple sets
    */
   SINTER {
     private Executor executor;
@@ -1799,7 +1944,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SINTERSTORE destination key [key ...]<p>Intersect multiple sets and store the resulting set in a key
+   * SINTERSTORE destination key [key ...]
+   *
+   * <p>Intersect multiple sets and store the resulting set in a key
    */
   SINTERSTORE {
     private Executor executor;
@@ -1821,7 +1968,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SMEMBERS key<p>Get all the members in a set
+   * SMEMBERS key
+   *
+   * <p>Get all the members in a set
    */
   SMEMBERS {
     private Executor executor;
@@ -1843,7 +1992,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SMOVE source destination member<p>Move a member from one set to another
+   * SMOVE source destination member
+   *
+   * <p>Move a member from one set to another
    */
   SMOVE {
     private Executor executor;
@@ -1865,7 +2016,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SPOP key<p>Remove and return a random member from a set
+   * SPOP key
+   *
+   * <p>Remove and return a random member from a set
    */
   SPOP {
     private Executor executor;
@@ -1887,7 +2040,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SRANDMEMBER key [count]<p>Get one or multiple random members from a set
+   * SRANDMEMBER key [count]
+   *
+   * <p>Get one or multiple random members from a set
    */
   SRANDMEMBER {
     private Executor executor;
@@ -1909,7 +2064,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SUNION key [key ...]<p>Add multiple sets
+   * SUNION key [key ...]
+   *
+   * <p>Add multiple sets
    */
   SUNION {
     private Executor executor;
@@ -1931,7 +2088,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SUNIONSTORE destination key [key ...]<p>Add multiple sets and store the resulting set in a key
+   * SUNIONSTORE destination key [key ...]
+   *
+   * <p>Add multiple sets and store the resulting set in a key
    */
   SUNIONSTORE {
     private Executor executor;
@@ -1953,7 +2112,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SSCAN key cursor [MATCH pattern] [COUNT count]<p>Incrementally iterate Set elements
+   * SSCAN key cursor [MATCH pattern] [COUNT count]
+   *
+   * <p>Incrementally iterate Set elements
    */
   SSCAN {
     private Executor executor;
@@ -1975,7 +2136,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SREM key member [member ...]<p>Remove one or more members from a set
+   * SREM key member [member ...]
+   *
+   * <p>Remove one or more members from a set
    */
   SREM {
     private Executor executor;
@@ -1996,12 +2159,15 @@ public enum RedisCommandType {
     }
   },
 
-  /***************************************
-   ************* Sorted Sets *************
-   ***************************************/
+  /**
+   * ************************************* ************ Sorted Sets *************
+   * *************************************
+   */
 
   /**
-   * ZADD key score member [score member ...]<p>Add one or more members to a sorted set, or update its score if it already exists
+   * ZADD key score member [score member ...]
+   *
+   * <p>Add one or more members to a sorted set, or update its score if it already exists
    */
   ZADD {
     private Executor executor;
@@ -2023,7 +2189,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZCARD key<p>Get the number of members in a sorted set
+   * ZCARD key
+   *
+   * <p>Get the number of members in a sorted set
    */
   ZCARD {
     private Executor executor;
@@ -2045,7 +2213,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZCOUNT key min max<p>Count the members in a sorted set with scores within the given values
+   * ZCOUNT key min max
+   *
+   * <p>Count the members in a sorted set with scores within the given values
    */
   ZCOUNT {
     private Executor executor;
@@ -2067,7 +2237,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZINCRBY key increment member<p>Increment the score of a member in a sorted set
+   * ZINCRBY key increment member
+   *
+   * <p>Increment the score of a member in a sorted set
    */
   ZINCRBY {
     private Executor executor;
@@ -2089,7 +2261,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZLEXCOUNT key min max<p>Count the number of members in a sorted set between a given lexicographical range
+   * ZLEXCOUNT key min max
+   *
+   * <p>Count the number of members in a sorted set between a given lexicographical range
    */
   ZLEXCOUNT {
     private Executor executor;
@@ -2111,7 +2285,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZRANGE key start stop [WITHSCORES]<p>Return a range of members in a sorted set, by index
+   * ZRANGE key start stop [WITHSCORES]
+   *
+   * <p>Return a range of members in a sorted set, by index
    */
   ZRANGE {
     private Executor executor;
@@ -2133,7 +2309,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZRANGEBYLEX key min max [LIMIT offset count]<p>Return a range of members in a sorted set, by lexicographical range
+   * ZRANGEBYLEX key min max [LIMIT offset count]
+   *
+   * <p>Return a range of members in a sorted set, by lexicographical range
    */
   ZRANGEBYLEX {
     private Executor executor;
@@ -2155,7 +2333,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]<p>Return a range of members in a sorted set, by score
+   * ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]
+   *
+   * <p>Return a range of members in a sorted set, by score
    */
   ZRANGEBYSCORE {
     private Executor executor;
@@ -2177,7 +2357,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZREVRANGE key start stop [WITHSCORES]<p>Return a range of members in a sorted set, by index, with scores ordered from high to low
+   * ZREVRANGE key start stop [WITHSCORES]
+   *
+   * <p>Return a range of members in a sorted set, by index, with scores ordered from high to low
    */
   ZREVRANGE {
     private Executor executor;
@@ -2199,7 +2381,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZRANK key member<p>Determine the index of a member in a sorted set
+   * ZRANK key member
+   *
+   * <p>Determine the index of a member in a sorted set
    */
   ZRANK {
     private Executor executor;
@@ -2221,7 +2405,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZREM key member [member ...]<p>Remove one or more members from a sorted set
+   * ZREM key member [member ...]
+   *
+   * <p>Remove one or more members from a sorted set
    */
   ZREM {
     private Executor executor;
@@ -2243,7 +2429,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZREMRANGEBYLEX key min max<p>Remove all members in a sorted set between the given lexicographical range
+   * ZREMRANGEBYLEX key min max
+   *
+   * <p>Remove all members in a sorted set between the given lexicographical range
    */
   ZREMRANGEBYLEX {
     private Executor executor;
@@ -2265,7 +2453,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZREMRANGEBYRANK key start stop<p>Remove all members in a sorted set within the given indexes
+   * ZREMRANGEBYRANK key start stop
+   *
+   * <p>Remove all members in a sorted set within the given indexes
    */
   ZREMRANGEBYRANK {
     private Executor executor;
@@ -2287,7 +2477,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZREMRANGEBYSCORE key min max<p>Remove all members in a sorted set within the given scores
+   * ZREMRANGEBYSCORE key min max
+   *
+   * <p>Remove all members in a sorted set within the given scores
    */
   ZREMRANGEBYSCORE {
     private Executor executor;
@@ -2309,7 +2501,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]<p>Return a range of members in a sorted set, by score, with scores ordered from high to low
+   * ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]
+   *
+   * <p>Return a range of members in a sorted set, by score, with scores ordered from high to low
    */
   ZREVRANGEBYSCORE {
     private Executor executor;
@@ -2331,7 +2525,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZREVRANK key member<p>Determine the index of a member in a sorted set, with scores ordered from high to low
+   * ZREVRANK key member
+   *
+   * <p>Determine the index of a member in a sorted set, with scores ordered from high to low
    */
   ZREVRANK {
     private Executor executor;
@@ -2353,7 +2549,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZSCAN key cursor [MATCH pattern] [COUNT count]<P>Incrementally iterate sorted sets elements and associated scores
+   * ZSCAN key cursor [MATCH pattern] [COUNT count]
+   *
+   * <p>Incrementally iterate sorted sets elements and associated scores
    */
   ZSCAN {
     private Executor executor;
@@ -2375,7 +2573,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ZSCORE key member<p>Get the score associated with the given member in a sorted set
+   * ZSCORE key member
+   *
+   * <p>Get the score associated with the given member in a sorted set
    */
   ZSCORE {
     private Executor executor;
@@ -2396,12 +2596,15 @@ public enum RedisCommandType {
     }
   },
 
-  /***************************************
-   ************ Transactions *************
-   ***************************************/
+  /**
+   * ************************************* *********** Transactions *************
+   * *************************************
+   */
 
   /**
-   * DISCARD<p>Discard all commands issued after MULTI
+   * DISCARD
+   *
+   * <p>Discard all commands issued after MULTI
    */
   DISCARD {
     private Executor executor;
@@ -2423,7 +2626,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * EXEC<p>Execute all commands issued after MULTI
+   * EXEC
+   *
+   * <p>Execute all commands issued after MULTI
    */
   EXEC {
     private Executor executor;
@@ -2445,7 +2650,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * MULTI<p>Mark the start of a transaction block
+   * MULTI
+   *
+   * <p>Mark the start of a transaction block
    */
   MULTI {
     private Executor executor;
@@ -2467,7 +2674,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * UNWATCH<p>Forget about all watched keys
+   * UNWATCH
+   *
+   * <p>Forget about all watched keys
    */
   UNWATCH {
     private Executor executor;
@@ -2489,7 +2698,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * WATCH key [key ...]<p>Watch the given keys to determine execution of the MULTI/EXEC block
+   * WATCH key [key ...]
+   *
+   * <p>Watch the given keys to determine execution of the MULTI/EXEC block
    */
   WATCH {
     private Executor executor;
@@ -2510,12 +2721,15 @@ public enum RedisCommandType {
     }
   },
 
-  /***************************************
-   *************** Server ****************
-   ***************************************/
+  /**
+   * ************************************* ************** Server ****************
+   * *************************************
+   */
 
   /**
-   * DBSIZE<p>Return the number of keys in the selected database
+   * DBSIZE
+   *
+   * <p>Return the number of keys in the selected database
    */
   DBSIZE {
     private Executor executor;
@@ -2537,7 +2751,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * ECHO message<p>Echo the given string
+   * ECHO message
+   *
+   * <p>Echo the given string
    */
   ECHO {
     private Executor executor;
@@ -2559,7 +2775,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * TIME <p>Return the current server time
+   * TIME
+   *
+   * <p>Return the current server time
    */
   TIME {
     private Executor executor;
@@ -2581,7 +2799,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * PING<p>Ping the server
+   * PING
+   *
+   * <p>Ping the server
    */
   PING {
     private Executor executor;
@@ -2603,7 +2823,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * QUIT<p>Close the connection
+   * QUIT
+   *
+   * <p>Close the connection
    */
   QUIT {
     private Executor executor;
@@ -2625,7 +2847,9 @@ public enum RedisCommandType {
   },
 
   /**
-   * SHUTDOWN<p>Shut down the server
+   * SHUTDOWN
+   *
+   * <p>Shut down the server
    */
   SHUTDOWN {
     private Executor executor;
@@ -2667,9 +2891,9 @@ public enum RedisCommandType {
   };
 
   /**
-   * Abstract method overridden by each value in enum
-   * to get the executor associated with that command type
-   * 
+   * Abstract method overridden by each value in enum to get the executor associated with that
+   * command type
+   *
    * @return {@link Executor} for command type
    */
   public abstract Executor getExecutor();

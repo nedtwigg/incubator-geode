@@ -45,14 +45,10 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
 /**
- * Disk Reg DUNIT Test:
- * A byte array value when put in a remote VM , gets pushed to local VM as a 
- * VMCachedDeserializable object & that should get persisted in the DiskRegion correctly.
- * The value when obtained from the disk ,locally , 
- * should be correctly obtained as ByteArrray.
- * 
+ * Disk Reg DUNIT Test: A byte array value when put in a remote VM , gets pushed to local VM as a
+ * VMCachedDeserializable object & that should get persisted in the DiskRegion correctly. The value
+ * when obtained from the disk ,locally , should be correctly obtained as ByteArrray.
  */
-
 @Category(DistributedTest.class)
 public class DiskRegByteArrayDUnitTest extends JUnit4CacheTestCase {
   static Cache cache;
@@ -62,7 +58,7 @@ public class DiskRegByteArrayDUnitTest extends JUnit4CacheTestCase {
   static Region region;
   static CacheTransactionManager cacheTxnMgr;
   protected static File[] dirs = null;
-  final static byte[] value = new byte[1024];
+  static final byte[] value = new byte[1024];
 
   public DiskRegByteArrayDUnitTest() {
     super();
@@ -97,11 +93,12 @@ public class DiskRegByteArrayDUnitTest extends JUnit4CacheTestCase {
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
     cache = null;
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        cache = null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            cache = null;
+          }
+        });
   }
 
   /* public void tearDown(){
@@ -122,7 +119,12 @@ public class DiskRegByteArrayDUnitTest extends JUnit4CacheTestCase {
       factory.setScope(Scope.DISTRIBUTED_ACK);
       factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
       factory.setDiskSynchronous(false);
-      factory.setDiskStoreName(cache.createDiskStoreFactory().setDiskDirs(dirs).create("DiskRegByteArrayDUnitTest").getName());
+      factory.setDiskStoreName(
+          cache
+              .createDiskStoreFactory()
+              .setDiskDirs(dirs)
+              .create("DiskRegByteArrayDUnitTest")
+              .getName());
       RegionAttributes attr = factory.create();
       region = cache.createVMRegion("region", attr);
     } catch (Exception ex) {
@@ -140,7 +142,12 @@ public class DiskRegByteArrayDUnitTest extends JUnit4CacheTestCase {
       factory.setScope(Scope.DISTRIBUTED_ACK);
       factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
       factory.setDiskSynchronous(false);
-      factory.setDiskStoreName(cache.createDiskStoreFactory().setDiskDirs(dirs).create("DiskRegByteArrayDUnitTest").getName());
+      factory.setDiskStoreName(
+          cache
+              .createDiskStoreFactory()
+              .setDiskDirs(dirs)
+              .create("DiskRegByteArrayDUnitTest")
+              .getName());
       RegionAttributes attr = factory.create();
       region = cache.createVMRegion("region", attr);
     } catch (Exception ex) {
@@ -171,17 +178,16 @@ public class DiskRegByteArrayDUnitTest extends JUnit4CacheTestCase {
     Object[] objArr = new Object[1];
     objArr[0] = "key";
 
-    //Put in vm0 
+    //Put in vm0
     vm0.invoke(DiskRegByteArrayDUnitTest.class, "putMethod", objArr);
     //forceflush data to disk
     vm1.invoke(() -> DiskRegByteArrayDUnitTest.flushMethod());
     /* get the val from disk
      * verify that the value retrieved from disk represents a byte[]
-     * 
+     *
      */
     vm1.invoke(DiskRegByteArrayDUnitTest.class, "verifyByteArray", objArr);
-
-  }//end of test case1
+  } //end of test case1
 
   public static Object putMethod(Object ob) {
     Object obj = null;
@@ -195,7 +201,7 @@ public class DiskRegByteArrayDUnitTest extends JUnit4CacheTestCase {
       fail("Failed while region.put");
     }
     return obj;
-  }//end of putMethod
+  } //end of putMethod
 
   public static Object getMethod(Object ob) {
     Object obj = null;
@@ -209,33 +215,33 @@ public class DiskRegByteArrayDUnitTest extends JUnit4CacheTestCase {
 
   public static Object getValueFromDiskMethod(Object ob) {
     Object val = null;
-    //get from disk   
+    //get from disk
     try {
       DiskId diskId = ((DiskEntry) (((LocalRegion) region).basicGetEntry(ob))).getDiskId();
       val = ((LocalRegion) region).getDiskRegion().get(diskId);
     } catch (Exception ex) {
       ex.printStackTrace();
       fail("Failed to get the value on disk");
-
     }
     return val;
-
-  }//end of getValueFromDiskMethod
+  } //end of getValueFromDiskMethod
 
   public static boolean verifyByteArray(Object ob) {
     boolean result = false;
     Object val = null;
     Arrays.fill(value, (byte) 77);
-    //get from disk   
+    //get from disk
     try {
       DiskId diskId = ((DiskEntry) (((LocalRegion) region).basicGetEntry(ob))).getDiskId();
       val = ((LocalRegion) region).getDiskRegion().get(diskId);
     } catch (Exception ex) {
       ex.printStackTrace();
       fail("Failed to get the value on disk");
-
     }
-    assertTrue("The value retrieved from disk is not a byte[] " + "or the length of byte[] is not equla to the length set while put", (((byte[]) val).length) == (value.length));
+    assertTrue(
+        "The value retrieved from disk is not a byte[] "
+            + "or the length of byte[] is not equla to the length set while put",
+        (((byte[]) val).length) == (value.length));
 
     byte[] x = null;
     x = (byte[]) val;
@@ -246,13 +252,9 @@ public class DiskRegByteArrayDUnitTest extends JUnit4CacheTestCase {
     }
 
     return result;
+  } //end of verifyByteArray
 
-  }//end of verifyByteArray
-
-  /**
-   * Force flush the data to disk
-   *
-   */
+  /** Force flush the data to disk */
   public static void flushMethod() {
     try {
       ((LocalRegion) region).getDiskRegion().forceFlush();
@@ -260,5 +262,4 @@ public class DiskRegByteArrayDUnitTest extends JUnit4CacheTestCase {
       ex.printStackTrace();
     }
   }
-
-}// end of class
+} // end of class

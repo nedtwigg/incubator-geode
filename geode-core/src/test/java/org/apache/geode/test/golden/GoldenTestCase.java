@@ -40,11 +40,17 @@ public abstract class GoldenTestCase {
 
   /** Use to enable debug output in the JUnit process */
   protected static final String DEBUG_PROPERTY = "golden.test.DEBUG";
+
   protected static final boolean DEBUG = Boolean.getBoolean(DEBUG_PROPERTY);
 
   /** The log4j2 config used within the spawned process */
-  private static final String LOG4J2_CONFIG_URL_STRING = GoldenTestCase.class.getResource("log4j2-test.xml").toString();
-  private static final String[] JVM_ARGS = new String[] { "-D" + ConfigurationFactory.CONFIGURATION_FILE_PROPERTY + "=" + LOG4J2_CONFIG_URL_STRING };
+  private static final String LOG4J2_CONFIG_URL_STRING =
+      GoldenTestCase.class.getResource("log4j2-test.xml").toString();
+
+  private static final String[] JVM_ARGS =
+      new String[] {
+        "-D" + ConfigurationFactory.CONFIGURATION_FILE_PROPERTY + "=" + LOG4J2_CONFIG_URL_STRING
+      };
 
   private final List<ProcessWrapper> processes = new ArrayList<ProcessWrapper>();
 
@@ -68,7 +74,7 @@ public abstract class GoldenTestCase {
 
   /**
    * Override this for additional set up.
-   * 
+   *
    * @throws Exception
    */
   public void subSetUp() throws Exception {
@@ -76,47 +82,49 @@ public abstract class GoldenTestCase {
   }
 
   /**
-   * Override this for additional tear down after destroying all processes and
-   * printing output.
-   * 
+   * Override this for additional tear down after destroying all processes and printing output.
+   *
    * @throws Exception
    */
   public void subTearDown() throws Exception {
     // override me
   }
 
-  protected final ProcessWrapper createProcessWrapper(final ProcessWrapper.Builder processWrapperBuilder, final Class<?> main) {
-    final ProcessWrapper processWrapper = processWrapperBuilder.jvmArguments(JVM_ARGS).mainClass(main).build();
+  protected final ProcessWrapper createProcessWrapper(
+      final ProcessWrapper.Builder processWrapperBuilder, final Class<?> main) {
+    final ProcessWrapper processWrapper =
+        processWrapperBuilder.jvmArguments(JVM_ARGS).mainClass(main).build();
     this.processes.add(processWrapper);
     return processWrapper;
   }
 
-  /** 
-   * Creates and returns a new GoldenComparator instance. Default implementation
-   * is RegexGoldenComparator. Override if you need a different implementation
-   * such as StringGoldenComparator.
+  /**
+   * Creates and returns a new GoldenComparator instance. Default implementation is
+   * RegexGoldenComparator. Override if you need a different implementation such as
+   * StringGoldenComparator.
    */
   protected GoldenComparator createGoldenComparator() {
     return new RegexGoldenComparator(expectedProblemLines());
   }
 
   /**
-   * Returns an array of expected problem strings. Without overriding this,
-   * any line with warning, error or severe will cause the test to fail. By
-   * default, null is returned.
-   * 
-   *(see PartitionedRegionTest which expects a WARNING log message) 
+   * Returns an array of expected problem strings. Without overriding this, any line with warning,
+   * error or severe will cause the test to fail. By default, null is returned.
+   *
+   * <p>(see PartitionedRegionTest which expects a WARNING log message)
    */
   protected String[] expectedProblemLines() {
     return null;
   }
 
-  protected void assertOutputMatchesGoldenFile(final String actualOutput, final String goldenFileName) throws IOException {
+  protected void assertOutputMatchesGoldenFile(
+      final String actualOutput, final String goldenFileName) throws IOException {
     GoldenComparator comparator = createGoldenComparator();
     comparator.assertOutputMatchesGoldenFile(actualOutput, goldenFileName);
   }
 
-  protected final void assertOutputMatchesGoldenFile(final ProcessWrapper process, final String goldenFileName) throws IOException {
+  protected final void assertOutputMatchesGoldenFile(
+      final ProcessWrapper process, final String goldenFileName) throws IOException {
     GoldenComparator comparator = createGoldenComparator();
     comparator.assertOutputMatchesGoldenFile(process.getOutput(), goldenFileName);
   }
@@ -129,9 +137,7 @@ public abstract class GoldenTestCase {
     return editProperties(properties);
   }
 
-  /**
-   * Override this to modify the properties that were created by createProperties().
-   */
+  /** Override this to modify the properties that were created by createProperties(). */
   protected Properties editProperties(final Properties properties) {
     return properties;
   }
@@ -140,7 +146,8 @@ public abstract class GoldenTestCase {
     System.out.println(string);
   }
 
-  protected final void printProcessOutput(final ProcessWrapper process, final boolean ignoreStopped) {
+  protected final void printProcessOutput(
+      final ProcessWrapper process, final boolean ignoreStopped) {
     debug(process.getOutput(ignoreStopped), "OUTPUT");
   }
 

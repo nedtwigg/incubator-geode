@@ -64,9 +64,7 @@ public class JarDeployer implements Serializable {
     this.deployDirectory = deployDirectory;
   }
 
-  /**
-   * Re-deploy all previously deployed JAR files.
-   */
+  /** Re-deploy all previously deployed JAR files. */
   public void loadPreviouslyDeployedJars() {
     List<JarClassLoader> jarClassLoaders = new ArrayList<JarClassLoader>();
 
@@ -86,11 +84,13 @@ public class JarDeployer implements Serializable {
               try {
                 final byte[] jarBytes = getJarContent(jarFiles[0]);
                 if (!JarClassLoader.isValidJarContent(jarBytes)) {
-                  logger.warn("Invalid JAR file found and deleted: {}", jarFiles[0].getAbsolutePath());
+                  logger.warn(
+                      "Invalid JAR file found and deleted: {}", jarFiles[0].getAbsolutePath());
                   jarFiles[0].delete();
                 } else {
                   // Test to see if the exact same file is already in use
-                  if (jarClassLoader == null || !jarClassLoader.getFileName().equals(jarFiles[0].getName())) {
+                  if (jarClassLoader == null
+                      || !jarClassLoader.getFileName().equals(jarFiles[0].getName())) {
                     jarClassLoader = new JarClassLoader(jarFiles[0], jarName, jarBytes);
                     ClassPathLoader.getLatest().addOrReplaceAndSetLatest(jarClassLoader);
                     jarClassLoaders.add(jarClassLoader);
@@ -99,13 +99,16 @@ public class JarDeployer implements Serializable {
               } catch (IOException ioex) {
                 // Another process deleted the file so don't bother doing anything else with it
                 if (logger.isDebugEnabled()) {
-                  logger.debug("Failed attempt to use JAR to create JarClassLoader for: {}", jarName);
+                  logger.debug(
+                      "Failed attempt to use JAR to create JarClassLoader for: {}", jarName);
                 }
               }
 
               // Remove any old left-behind versions of this JAR file
               for (File jarFile : jarFiles) {
-                if (jarFile.exists() && (jarClassLoader == null || !jarClassLoader.getFileName().equals(jarFile.getName()))) {
+                if (jarFile.exists()
+                    && (jarClassLoader == null
+                        || !jarClassLoader.getFileName().equals(jarFile.getName()))) {
                   attemptFileLockAndDelete(jarFile);
                 }
               }
@@ -130,16 +133,15 @@ public class JarDeployer implements Serializable {
 
   /**
    * Deploy the given JAR files.
-   * 
-   * @param jarNames
-   *          Array of names of the JAR files to deploy.
-   * @param jarBytes
-   *          Array of contents of the JAR files to deploy.
-   * @return An array of newly created JAR class loaders. Entries will be null for an JARs that were already deployed.
-   * @throws IOException
-   *           When there's an error saving the JAR file to disk
+   *
+   * @param jarNames Array of names of the JAR files to deploy.
+   * @param jarBytes Array of contents of the JAR files to deploy.
+   * @return An array of newly created JAR class loaders. Entries will be null for an JARs that were
+   *     already deployed.
+   * @throws IOException When there's an error saving the JAR file to disk
    */
-  public JarClassLoader[] deploy(final String jarNames[], final byte[][] jarBytes) throws IOException, ClassNotFoundException {
+  public JarClassLoader[] deploy(final String jarNames[], final byte[][] jarBytes)
+      throws IOException, ClassNotFoundException {
     JarClassLoader[] jarClassLoaders = new JarClassLoader[jarNames.length];
     verifyWritableDeployDirectory();
 
@@ -147,7 +149,8 @@ public class JarDeployer implements Serializable {
     try {
       for (int i = 0; i < jarNames.length; i++) {
         if (!JarClassLoader.isValidJarContent(jarBytes[i])) {
-          throw new IllegalArgumentException("File does not contain valid JAR content: " + jarNames[i]);
+          throw new IllegalArgumentException(
+              "File does not contain valid JAR content: " + jarNames[i]);
         }
       }
 
@@ -168,21 +171,24 @@ public class JarDeployer implements Serializable {
 
   /**
    * Deploy the given JAR file without registering functions.
-   * 
-   * @param jarName
-   *          Name of the JAR file to deploy.
-   * @param jarBytes
-   *          Contents of the JAR file to deploy.
+   *
+   * @param jarName Name of the JAR file to deploy.
+   * @param jarBytes Contents of the JAR file to deploy.
    * @return The newly created JarClassLoader or null if the JAR was already deployed
-   * @throws IOException
-   *           When there's an error saving the JAR file to disk
+   * @throws IOException When there's an error saving the JAR file to disk
    */
-  private JarClassLoader deployWithoutRegistering(final String jarName, final byte[] jarBytes) throws IOException {
+  private JarClassLoader deployWithoutRegistering(final String jarName, final byte[] jarBytes)
+      throws IOException {
     JarClassLoader oldJarClassLoader = findJarClassLoader(jarName);
 
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
-      logger.debug("Deploying {}: {}", jarName, (oldJarClassLoader == null ? ": not yet deployed" : ": already deployed as " + oldJarClassLoader.getFileCanonicalPath()));
+      logger.debug(
+          "Deploying {}: {}",
+          jarName,
+          (oldJarClassLoader == null
+              ? ": not yet deployed"
+              : ": already deployed as " + oldJarClassLoader.getFileCanonicalPath()));
     }
 
     // Test to see if the exact same file is being deployed
@@ -205,11 +211,15 @@ public class JarDeployer implements Serializable {
           if (writeJarBytesToFile(nextVersionJarFile, jarBytes)) {
             newJarClassLoader = new JarClassLoader(nextVersionJarFile, jarName, jarBytes);
             if (isDebugEnabled) {
-              logger.debug("Successfully created initial JarClassLoader at file: {}", nextVersionJarFile.getAbsolutePath());
+              logger.debug(
+                  "Successfully created initial JarClassLoader at file: {}",
+                  nextVersionJarFile.getAbsolutePath());
             }
           } else {
             if (isDebugEnabled) {
-              logger.debug("Unable to write contents for first version of JAR to file: {}", nextVersionJarFile.getAbsolutePath());
+              logger.debug(
+                  "Unable to write contents for first version of JAR to file: {}",
+                  nextVersionJarFile.getAbsolutePath());
             }
           }
 
@@ -218,11 +228,15 @@ public class JarDeployer implements Serializable {
           // already on disk.
           if (doesFileMatchBytes(oldJarFiles[0], jarBytes)) {
             if (isDebugEnabled) {
-              logger.debug("A version on disk was an exact match for the JAR being deployed: {}", oldJarFiles[0].getAbsolutePath());
+              logger.debug(
+                  "A version on disk was an exact match for the JAR being deployed: {}",
+                  oldJarFiles[0].getAbsolutePath());
             }
             newJarClassLoader = new JarClassLoader(oldJarFiles[0], jarName, jarBytes);
             if (isDebugEnabled) {
-              logger.debug("Successfully reused JAR to create JarClassLoader from file: {}", oldJarFiles[0].getAbsolutePath());
+              logger.debug(
+                  "Successfully reused JAR to create JarClassLoader from file: {}",
+                  oldJarFiles[0].getAbsolutePath());
             }
           } else {
             // This JAR isn't on disk
@@ -233,25 +247,35 @@ public class JarDeployer implements Serializable {
             if (writeJarBytesToFile(nextVersionJarFile, jarBytes)) {
               newJarClassLoader = new JarClassLoader(nextVersionJarFile, jarName, jarBytes);
               if (isDebugEnabled) {
-                logger.debug("Successfully created next JarClassLoader at file: {}", nextVersionJarFile.getAbsolutePath());
+                logger.debug(
+                    "Successfully created next JarClassLoader at file: {}",
+                    nextVersionJarFile.getAbsolutePath());
               }
             } else {
               if (isDebugEnabled) {
-                logger.debug("Unable to write contents for next version of JAR to file: {}", nextVersionJarFile.getAbsolutePath());
+                logger.debug(
+                    "Unable to write contents for next version of JAR to file: {}",
+                    nextVersionJarFile.getAbsolutePath());
               }
             }
           }
         }
       } catch (IOException ioex) {
         // Another process deleted the file before we could get to it, just start again
-        logger.info("Failed attempt to use JAR to create JarClassLoader for: {} : {}", jarName, ioex.getMessage());
+        logger.info(
+            "Failed attempt to use JAR to create JarClassLoader for: {} : {}",
+            jarName,
+            ioex.getMessage());
       }
 
       if (isDebugEnabled) {
         if (newJarClassLoader == null) {
-          logger.debug("Unable to determine a JAR file location, will loop and try again: {}", jarName);
+          logger.debug(
+              "Unable to determine a JAR file location, will loop and try again: {}", jarName);
         } else {
-          logger.debug("Exiting loop for JarClassLoader creation using file: {}", newJarClassLoader.getFileName());
+          logger.debug(
+              "Exiting loop for JarClassLoader creation using file: {}",
+              newJarClassLoader.getFileName());
         }
       }
     } while (newJarClassLoader == null);
@@ -268,12 +292,10 @@ public class JarDeployer implements Serializable {
 
   /**
    * Undeploy the given JAR file.
-   * 
-   * @param jarName
-   *          The name of the JAR file to undeploy
+   *
+   * @param jarName The name of the JAR file to undeploy
    * @return The path to the location on disk where the JAR file had been deployed
-   * @throws IOException
-   *           If there's a problem deleting the file
+   * @throws IOException If there's a problem deleting the file
    */
   public String undeploy(final String jarName) throws IOException {
     JarClassLoader jarClassLoader = null;
@@ -296,7 +318,7 @@ public class JarDeployer implements Serializable {
 
   /**
    * Get a list of all currently deployed JarClassLoaders.
-   * 
+   *
    * @return The list of JarClassLoaders
    */
   public List<JarClassLoader> findJarClassLoaders() {
@@ -312,20 +334,19 @@ public class JarDeployer implements Serializable {
   }
 
   /**
-   * Suspend all deploy and undeploy operations. This is done by acquiring and holding
-   * the lock needed in order to perform a deploy or undeploy and so it will cause all
-   * threads attempting to do one of these to block. This makes it somewhat of a time
-   * sensitive call as forcing these other threads to block for an extended period of
-   * time may cause other unforeseen problems.  It must be followed by a call
-   * to {@link #resumeAll()}.
+   * Suspend all deploy and undeploy operations. This is done by acquiring and holding the lock
+   * needed in order to perform a deploy or undeploy and so it will cause all threads attempting to
+   * do one of these to block. This makes it somewhat of a time sensitive call as forcing these
+   * other threads to block for an extended period of time may cause other unforeseen problems. It
+   * must be followed by a call to {@link #resumeAll()}.
    */
   public void suspendAll() {
     lock.lock();
   }
 
   /**
-   * Release the lock that controls entry into the deploy/undeploy methods
-   * which will allow those activities to continue.
+   * Release the lock that controls entry into the deploy/undeploy methods which will allow those
+   * activities to continue.
    */
   public void resumeAll() {
     lock.unlock();
@@ -333,9 +354,9 @@ public class JarDeployer implements Serializable {
 
   /**
    * Figure out the next version of a JAR file
-   * 
-   * @param latestJarName
-   *          The previous most recent version of the JAR file or original name if there wasn't one
+   *
+   * @param latestJarName The previous most recent version of the JAR file or original name if there
+   *     wasn't one
    * @return The file that represents the next version
    */
   private File getNextVersionJarFile(final String latestJarName) {
@@ -354,13 +375,12 @@ public class JarDeployer implements Serializable {
   }
 
   /**
-   * Attempt to write the given bytes to the given file. If this VM is able to successfully write the contents to the
-   * file, or another VM writes the exact same contents, then the write is considered to be successful.
-   * 
-   * @param file
-   *          File of the JAR file to deploy.
-   * @param jarBytes
-   *          Contents of the JAR file to deploy.
+   * Attempt to write the given bytes to the given file. If this VM is able to successfully write
+   * the contents to the file, or another VM writes the exact same contents, then the write is
+   * considered to be successful.
+   *
+   * @param file File of the JAR file to deploy.
+   * @param jarBytes Contents of the JAR file to deploy.
    * @return True if the file was successfully written, false otherwise
    */
   private boolean writeJarBytesToFile(final File file, final byte[] jarBytes) {
@@ -387,17 +407,15 @@ public class JarDeployer implements Serializable {
   }
 
   /**
-   * Determine if the contents of the file referenced is an exact match for the bytes provided. The method first checks
-   * to see if the file is actively being written by checking the length over time. If it appears that the file is
-   * actively being written, then it loops waiting for that to complete before doing the comparison.
-   * 
-   * @param file
-   *          File to compare
-   * @param bytes
-   *          Bytes to compare
+   * Determine if the contents of the file referenced is an exact match for the bytes provided. The
+   * method first checks to see if the file is actively being written by checking the length over
+   * time. If it appears that the file is actively being written, then it loops waiting for that to
+   * complete before doing the comparison.
+   *
+   * @param file File to compare
+   * @param bytes Bytes to compare
    * @return True if there's an exact match, false otherwise
-   * @throws IOException
-   *           If there's a problem reading the file
+   * @throws IOException If there's a problem reading the file
    */
   private boolean doesFileMatchBytes(final File file, final byte[] bytes) throws IOException {
     // First check to see if the file is actively being written (if it's not big enough)
@@ -426,7 +444,8 @@ public class JarDeployer implements Serializable {
     // If they don't have the same number of bytes then nothing to do
     if (file.length() != bytes.length) {
       if (isDebugEnabled) {
-        logger.debug("Unmatching file length when waiting for another to write file: {}", absolutePath);
+        logger.debug(
+            "Unmatching file length when waiting for another to write file: {}", absolutePath);
       }
       return false;
     }
@@ -438,7 +457,8 @@ public class JarDeployer implements Serializable {
       for (; index < bytes.length; index++) {
         if (((byte) inStream.read()) != bytes[index]) {
           if (isDebugEnabled) {
-            logger.debug("Did not find a match when waiting for another to write file: {}", absolutePath);
+            logger.debug(
+                "Did not find a match when waiting for another to write file: {}", absolutePath);
           }
           return false;
         }
@@ -461,7 +481,10 @@ public class JarDeployer implements Serializable {
 
         if (fileLock != null) {
           if (isDebugEnabled) {
-            logger.debug("Tried and acquired exclusive lock for file: {}, w/ channel {}", absolutePath, fileLock.channel());
+            logger.debug(
+                "Tried and acquired exclusive lock for file: {}, w/ channel {}",
+                absolutePath,
+                fileLock.channel());
           }
 
           if (file.delete()) {
@@ -470,7 +493,9 @@ public class JarDeployer implements Serializable {
             }
           } else {
             if (isDebugEnabled) {
-              logger.debug("Could not delete file, will truncate instead and delete on exit: {}", absolutePath);
+              logger.debug(
+                  "Could not delete file, will truncate instead and delete on exit: {}",
+                  absolutePath);
             }
             file.deleteOnExit();
 
@@ -497,7 +522,10 @@ public class JarDeployer implements Serializable {
             fileLock.release();
             fileLock.channel().close();
             if (isDebugEnabled) {
-              logger.debug("Released file lock for file: {}, w/ channel: {}", absolutePath, fileLock.channel());
+              logger.debug(
+                  "Released file lock for file: {}, w/ channel: {}",
+                  absolutePath,
+                  fileLock.channel());
             }
           } catch (IOException ioex) {
             logger.error("Could not close channel on JAR lock file", ioex);
@@ -515,9 +543,8 @@ public class JarDeployer implements Serializable {
 
   /**
    * Find the version number that's embedded in the name of this file
-   * 
-   * @param file
-   *          File to get the version number from
+   *
+   * @param file File to get the version number from
    * @return The version number embedded in the filename
    */
   int extractVersionFromFilename(final File file) {
@@ -530,12 +557,14 @@ public class JarDeployer implements Serializable {
     final Pattern pattern = Pattern.compile("^" + JAR_PREFIX + "(.*)#\\d++$");
 
     // Find all deployed JAR files
-    final File[] oldFiles = this.deployDirectory.listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(final File file, final String name) {
-        return pattern.matcher(name).matches();
-      }
-    });
+    final File[] oldFiles =
+        this.deployDirectory.listFiles(
+            new FilenameFilter() {
+              @Override
+              public boolean accept(final File file, final String name) {
+                return pattern.matcher(name).matches();
+              }
+            });
 
     // Now add just the original JAR name to the set
     final Set<String> jarNames = new HashSet<String>();
@@ -548,32 +577,35 @@ public class JarDeployer implements Serializable {
   }
 
   /**
-   * Find all versions of the JAR file that are currently on disk and return them sorted from newest (highest version)
-   * to oldest
-   * 
-   * @param jarFilename
-   *          Name of the JAR file that we want old versions of
+   * Find all versions of the JAR file that are currently on disk and return them sorted from newest
+   * (highest version) to oldest
+   *
+   * @param jarFilename Name of the JAR file that we want old versions of
    * @return Sorted array of files that are older versions of the given JAR
    */
   private File[] findSortedOldVersionsOfJar(final String jarFilename) {
     // Find all matching files
     final Pattern pattern = Pattern.compile("^" + JAR_PREFIX + jarFilename + "#\\d++$");
-    final File[] oldJarFiles = this.deployDirectory.listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(final File file, final String name) {
-        return (pattern.matcher(name).matches());
-      }
-    });
+    final File[] oldJarFiles =
+        this.deployDirectory.listFiles(
+            new FilenameFilter() {
+              @Override
+              public boolean accept(final File file, final String name) {
+                return (pattern.matcher(name).matches());
+              }
+            });
 
     // Sort them in order from newest (highest version) to oldest
-    Arrays.sort(oldJarFiles, new Comparator<File>() {
-      @Override
-      public int compare(final File file1, final File file2) {
-        int file1Version = extractVersionFromFilename(file1);
-        int file2Version = extractVersionFromFilename(file2);
-        return file2Version - file1Version;
-      }
-    });
+    Arrays.sort(
+        oldJarFiles,
+        new Comparator<File>() {
+          @Override
+          public int compare(final File file1, final File file2) {
+            int file1Version = extractVersionFromFilename(file1);
+            int file2Version = extractVersionFromFilename(file2);
+            return file2Version - file1Version;
+          }
+        });
 
     return oldJarFiles;
   }
@@ -581,7 +613,8 @@ public class JarDeployer implements Serializable {
   private JarClassLoader findJarClassLoader(final String jarName) {
     Collection<ClassLoader> classLoaders = ClassPathLoader.getLatest().getClassLoaders();
     for (ClassLoader classLoader : classLoaders) {
-      if (classLoader instanceof JarClassLoader && ((JarClassLoader) classLoader).getJarName().equals(jarName)) {
+      if (classLoader instanceof JarClassLoader
+          && ((JarClassLoader) classLoader).getJarName().equals(jarName)) {
         return (JarClassLoader) classLoader;
       }
     }
@@ -590,9 +623,8 @@ public class JarDeployer implements Serializable {
 
   /**
    * Make sure that the deploy directory is writable.
-   * 
-   * @throws IOException
-   *           If the directory isn't writable
+   *
+   * @throws IOException If the directory isn't writable
    */
   private void verifyWritableDeployDirectory() throws IOException {
     Exception exception = null;

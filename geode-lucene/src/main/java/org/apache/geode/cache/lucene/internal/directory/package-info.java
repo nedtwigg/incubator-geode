@@ -17,7 +17,7 @@
  * under the License.
  */
 /**
- * An implementation of Lucene's {@link org.apache.lucene.store.Directory} interface that uses the filesystem
- * API in {@link org.apache.geode.cache.lucene.internal.filesystem.FileSystem}
+ * An implementation of Lucene's {@link org.apache.lucene.store.Directory} interface that uses the
+ * filesystem API in {@link org.apache.geode.cache.lucene.internal.filesystem.FileSystem}
  */
 package org.apache.geode.cache.lucene.internal.directory;

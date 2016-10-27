@@ -45,9 +45,10 @@ public abstract class FunctionServicePeerAccessorPRBase extends FunctionServiceB
   }
 
   private void createRegion(final VM vm) {
-    vm.invoke(() -> {
-      getCache().createRegionFactory(RegionShortcut.PARTITION).create(REGION);
-    });
+    vm.invoke(
+        () -> {
+          getCache().createRegionFactory(RegionShortcut.PARTITION).create(REGION);
+        });
   }
 
   @Override
@@ -57,11 +58,9 @@ public abstract class FunctionServicePeerAccessorPRBase extends FunctionServiceB
 
   @Ignore("GEODE-1348 - With this topology, the exception is not wrapped in FunctionException")
   @Override
-  public void defaultCollectorThrowsExceptionAfterFunctionThrowsIllegalState() {
-  }
+  public void defaultCollectorThrowsExceptionAfterFunctionThrowsIllegalState() {}
 
   @Ignore("GEODE-1348 - With this topology, the exception is not wrapped in FunctionException")
   @Override
-  public void customCollectorDoesNotSeeExceptionFunctionThrowsIllegalState() {
-  }
+  public void customCollectorDoesNotSeeExceptionFunctionThrowsIllegalState() {}
 }

@@ -30,11 +30,7 @@ import org.apache.geode.cache.execute.FunctionContext;
 import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * 
- * @since GemFire 8.0
- */
-
+/** @since GemFire 8.0 */
 public class MembersForRegionFunction implements Function, InternalEntity {
   private static final Logger logger = LogService.getLogger();
 
@@ -91,5 +87,4 @@ public class MembersForRegionFunction implements Function, InternalEntity {
   public boolean optimizeForWrite() {
     return false;
   }
-
 }

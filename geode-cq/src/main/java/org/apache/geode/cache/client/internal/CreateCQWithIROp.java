@@ -26,12 +26,14 @@ import org.apache.geode.internal.cache.tier.MessageType;
 
 /**
  * Creates a CQ and fetches initial results on a server
+ *
  * @since GemFire 5.7
  */
 public class CreateCQWithIROp {
   /**
-   * Create a continuous query on the server using connections from the given pool
-   * to communicate with the server.
+   * Create a continuous query on the server using connections from the given pool to communicate
+   * with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param cqName name of the CQ to create
    * @param queryStr string OQL statement to be executed
@@ -39,8 +41,15 @@ public class CreateCQWithIROp {
    * @param isDurable true if CQ is durable
    * @param regionDataPolicy the data policy ordinal of the region
    */
-  public static SelectResults execute(ExecutablePool pool, String cqName, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
-    AbstractOp op = new CreateCQWithIROpImpl(cqName, queryStr, cqState, isDurable, regionDataPolicy);
+  public static SelectResults execute(
+      ExecutablePool pool,
+      String cqName,
+      String queryStr,
+      int cqState,
+      boolean isDurable,
+      byte regionDataPolicy) {
+    AbstractOp op =
+        new CreateCQWithIROpImpl(cqName, queryStr, cqState, isDurable, regionDataPolicy);
     return (SelectResults) pool.executeOnQueuesAndReturnPrimaryResult(op);
   }
 
@@ -48,23 +57,20 @@ public class CreateCQWithIROp {
     // no instances allowed
   }
 
-  /**
-   * Note we extend QueryOpImpl to inherit processResponse and isErrorResponse
-   */
+  /** Note we extend QueryOpImpl to inherit processResponse and isErrorResponse */
   private static class CreateCQWithIROpImpl extends QueryOpImpl {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
-    public CreateCQWithIROpImpl(String cqName, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
+    /** @throws org.apache.geode.SerializationException if serialization fails */
+    public CreateCQWithIROpImpl(
+        String cqName, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
       super(MessageType.EXECUTECQ_WITH_IR_MSG_TYPE, 5);
       getMessage().addStringPart(cqName);
       getMessage().addStringPart(queryStr);
       getMessage().addIntPart(cqState);
       {
         byte durableByte = (byte) (isDurable ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] { durableByte });
+        getMessage().addBytesPart(new byte[] {durableByte});
       }
-      getMessage().addBytesPart(new byte[] { regionDataPolicy });
+      getMessage().addBytesPart(new byte[] {regionDataPolicy});
     }
 
     @Override

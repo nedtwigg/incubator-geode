@@ -22,20 +22,19 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.geode.StatisticsFactory;
 
 /**
- * A holder for a disk Directory. Used for maintaining the available space and
- * updating disk statistics
- * 
+ * A holder for a disk Directory. Used for maintaining the available space and updating disk
+ * statistics
+ *
  * @since GemFire 5.1
- * 
  */
 public class DirectoryHolder {
 
   private final File dir;
 
-  /** capacity of directory in bytes **/
+  /** capacity of directory in bytes * */
   private final long capacity;
 
-  /** Total size of oplogs in bytes **/
+  /** Total size of oplogs in bytes * */
   private final AtomicLong totalOplogSize = new AtomicLong();
 
   private int index;
@@ -43,7 +42,7 @@ public class DirectoryHolder {
   /** The stats for this region */
   private final DiskDirectoryStats dirStats;
 
-  /** For testing purposes we can set the disk directory size in bytes **/
+  /** For testing purposes we can set the disk directory size in bytes * */
   static boolean SET_DIRECTORY_SIZE_IN_BYTES_FOR_TESTING_PURPOSES = false;
 
   DirectoryHolder(StatisticsFactory factory, File dir, long space, int index) {
@@ -73,7 +72,14 @@ public class DirectoryHolder {
 
   public String toString() {
     StringBuffer sb = new StringBuffer();
-    sb.append("dir=").append(getDir()).append(" maxSpace=").append(getCapacity()).append(" usedSpace=").append(getUsedSpace()).append(" availableSpace=").append(getAvailableSpace());
+    sb.append("dir=")
+        .append(getDir())
+        .append(" maxSpace=")
+        .append(getCapacity())
+        .append(" usedSpace=")
+        .append(getUsedSpace())
+        .append(" availableSpace=")
+        .append(getAvailableSpace());
     return sb.toString();
   }
 

@@ -37,7 +37,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
  * Tests {@link StartupMessageData}.
- * 
+ *
  * @since GemFire 7.0
  */
 @Category(UnitTest.class)
@@ -84,9 +84,11 @@ public class StartupMessageDataJUnitTest {
     data.writeHostedLocators(hostedLocators);
     assertEquals(1, data.getOptionalFields().size());
 
-    String hostedLocatorsField = data.getOptionalFields().getProperty(StartupMessageData.HOSTED_LOCATORS);
+    String hostedLocatorsField =
+        data.getOptionalFields().getProperty(StartupMessageData.HOSTED_LOCATORS);
 
-    StringTokenizer st = new StringTokenizer(hostedLocatorsField, StartupMessageData.COMMA_DELIMITER);
+    StringTokenizer st =
+        new StringTokenizer(hostedLocatorsField, StartupMessageData.COMMA_DELIMITER);
     for (int i = 0; st.hasMoreTokens(); i++) {
       assertEquals(locatorStrings[i], st.nextToken());
     }
@@ -203,7 +205,8 @@ public class StartupMessageDataJUnitTest {
     assertNotNull(hostedLocatorsString);
 
     Collection<String> actualLocatorStrings = new ArrayList<String>(1);
-    StringTokenizer st = new StringTokenizer(hostedLocatorsString, StartupMessageData.COMMA_DELIMITER);
+    StringTokenizer st =
+        new StringTokenizer(hostedLocatorsString, StartupMessageData.COMMA_DELIMITER);
     while (st.hasMoreTokens()) {
       actualLocatorStrings.add(st.nextToken());
     }
@@ -249,9 +252,11 @@ public class StartupMessageDataJUnitTest {
   }
 
   private String createOneLocatorString() throws Exception {
-    DistributionLocatorId locatorId = new DistributionLocatorId(SocketCreator.getLocalHost(), 445566, "111.222.333.444", null);
+    DistributionLocatorId locatorId =
+        new DistributionLocatorId(SocketCreator.getLocalHost(), 445566, "111.222.333.444", null);
     String locatorString = locatorId.marshal();
-    assertEquals("" + locatorId.getHost().getHostAddress() + ":111.222.333.444[445566]", locatorString);
+    assertEquals(
+        "" + locatorId.getHost().getHostAddress() + ":111.222.333.444[445566]", locatorString);
     return locatorString;
   }
 
@@ -261,7 +266,13 @@ public class StartupMessageDataJUnitTest {
       int j = i + 1;
       int k = j + 1;
       int l = k + 1;
-      DistributionLocatorId locatorId = new DistributionLocatorId(SocketCreator.getLocalHost(), 445566, "" + i + "" + i + "" + i + "." + j + "" + j + "" + j + "." + k + "" + k + "" + k + "." + l + "" + l + "" + l, null);
+      DistributionLocatorId locatorId =
+          new DistributionLocatorId(
+              SocketCreator.getLocalHost(),
+              445566,
+              "" + i + "" + i + "" + i + "." + j + "" + j + "" + j + "." + k + "" + k + "" + k + "."
+                  + l + "" + l + "" + l,
+              null);
       locatorStrings[i] = locatorId.marshal();
     }
     return locatorStrings;

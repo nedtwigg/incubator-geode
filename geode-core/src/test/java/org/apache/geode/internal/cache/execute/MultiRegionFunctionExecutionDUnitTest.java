@@ -83,11 +83,12 @@ public class MultiRegionFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
     cache = null;
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        cache = null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            cache = null;
+          }
+        });
   }
 
   @Test
@@ -99,63 +100,69 @@ public class MultiRegionFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
     createRegionsOnUnitControllerVm();
     Set<Region> regions = new HashSet<Region>();
     regions.add(PR1);
-    InternalFunctionService.onRegions(regions).execute(new FunctionAdapter() {
+    InternalFunctionService.onRegions(regions)
+        .execute(
+            new FunctionAdapter() {
 
-      @Override
-      public void execute(FunctionContext context) {
-        MultiRegionFunctionContext mrContext = (MultiRegionFunctionContext) context;
-        Set<Region> regions = mrContext.getRegions();
-        Assert.assertTrue(1 == regions.size());
-        context.getResultSender().lastResult(Boolean.TRUE);
-      }
+              @Override
+              public void execute(FunctionContext context) {
+                MultiRegionFunctionContext mrContext = (MultiRegionFunctionContext) context;
+                Set<Region> regions = mrContext.getRegions();
+                Assert.assertTrue(1 == regions.size());
+                context.getResultSender().lastResult(Boolean.TRUE);
+              }
 
-      @Override
-      public String getId() {
-        // TODO Auto-generated method stub
-        return getClass().getName();
-      }
-
-    }).getResult();
+              @Override
+              public String getId() {
+                // TODO Auto-generated method stub
+                return getClass().getName();
+              }
+            })
+        .getResult();
     regions.add(PR2);
-    InternalFunctionService.onRegions(regions).execute(new FunctionAdapter() {
+    InternalFunctionService.onRegions(regions)
+        .execute(
+            new FunctionAdapter() {
 
-      @Override
-      public void execute(FunctionContext context) {
-        MultiRegionFunctionContext mrContext = (MultiRegionFunctionContext) context;
-        Set<Region> regions = mrContext.getRegions();
-        Assert.assertTrue(0 != regions.size());
-        context.getResultSender().lastResult(Boolean.TRUE);
-      }
+              @Override
+              public void execute(FunctionContext context) {
+                MultiRegionFunctionContext mrContext = (MultiRegionFunctionContext) context;
+                Set<Region> regions = mrContext.getRegions();
+                Assert.assertTrue(0 != regions.size());
+                context.getResultSender().lastResult(Boolean.TRUE);
+              }
 
-      @Override
-      public String getId() {
-        // TODO Auto-generated method stub
-        return getClass().getName();
-      }
-
-    }).getResult();
+              @Override
+              public String getId() {
+                // TODO Auto-generated method stub
+                return getClass().getName();
+              }
+            })
+        .getResult();
 
     regions.add(PR2);
     regions.add(RR1);
     regions.add(RR2);
     regions.add(LR1);
-    InternalFunctionService.onRegions(regions).execute(new FunctionAdapter() {
+    InternalFunctionService.onRegions(regions)
+        .execute(
+            new FunctionAdapter() {
 
-      @Override
-      public void execute(FunctionContext context) {
-        MultiRegionFunctionContext mrContext = (MultiRegionFunctionContext) context;
-        Set<Region> regions = mrContext.getRegions();
-        Assert.assertTrue(0 != regions.size());
-        context.getResultSender().lastResult(Boolean.TRUE);
-      }
+              @Override
+              public void execute(FunctionContext context) {
+                MultiRegionFunctionContext mrContext = (MultiRegionFunctionContext) context;
+                Set<Region> regions = mrContext.getRegions();
+                Assert.assertTrue(0 != regions.size());
+                context.getResultSender().lastResult(Boolean.TRUE);
+              }
 
-      @Override
-      public String getId() {
-        // TODO Auto-generated method stub
-        return getClass().getName();
-      }
-
-    }).getResult();
+              @Override
+              public String getId() {
+                // TODO Auto-generated method stub
+                return getClass().getName();
+              }
+            })
+        .getResult();
   }
 
   public void createCache() {
@@ -306,5 +313,4 @@ public class MultiRegionFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
       LR1.put(new Integer(i), new Integer(i));
     }
   }
-
 }

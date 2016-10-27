@@ -26,22 +26,17 @@ import org.apache.geode.internal.cache.EventID;
 import org.apache.geode.internal.cache.tier.MessageType;
 
 /**
- * Class <code>ClientPingMessageImpl</code> is a ping message that is
- * periodically placed in the <code>CacheClientProxy</code>'s queue to verify
- * the client connection is still alive.
- * 
- * 
+ * Class <code>ClientPingMessageImpl</code> is a ping message that is periodically placed in the
+ * <code>CacheClientProxy</code>'s queue to verify the client connection is still alive.
+ *
  * @since GemFire 6.6.2.x
  */
 public final class ClientPingMessageImpl implements ClientMessage {
 
   private static final long serialVersionUID = 5423895238521508743L;
 
-  /**
-   * Default constructor.
-   */
-  public ClientPingMessageImpl() {
-  }
+  /** Default constructor. */
+  public ClientPingMessageImpl() {}
 
   public Message getMessage(CacheClientProxy proxy, boolean notify) throws IOException {
     Version clientVersion = proxy.getVersion();
@@ -49,7 +44,8 @@ public final class ClientPingMessageImpl implements ClientMessage {
     if (clientVersion.compareTo(Version.GFE_6622) >= 0) {
       message = getGFEMessage();
     } else {
-      throw new IOException("Unsupported client version for server-to-client message creation: " + clientVersion);
+      throw new IOException(
+          "Unsupported client version for server-to-client message creation: " + clientVersion);
     }
 
     return message;
@@ -66,15 +62,13 @@ public final class ClientPingMessageImpl implements ClientMessage {
     return true;
   }
 
-  public void toData(DataOutput out) throws IOException {
-  }
+  public void toData(DataOutput out) throws IOException {}
 
   public int getDSFID() {
     return CLIENT_PING_MESSAGE_IMPL;
   }
 
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-  }
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
   public EventID getEventId() {
     return null;

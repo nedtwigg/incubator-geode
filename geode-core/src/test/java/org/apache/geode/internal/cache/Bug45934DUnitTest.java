@@ -59,18 +59,20 @@ public class Bug45934DUnitTest extends JUnit4CacheTestCase {
     Cache cache = getCache(cf);
 
     // 2. create normal region locally
-    RegionFactory<Integer, Integer> rf = cache.<Integer, Integer> createRegionFactory();
+    RegionFactory<Integer, Integer> rf = cache.<Integer, Integer>createRegionFactory();
     rf.setDataPolicy(DataPolicy.NORMAL);
     rf.setScope(Scope.DISTRIBUTED_ACK);
     Region<Integer, Integer> region = rf.create(name);
 
     // 3. reset the error flag after initial failure
-    AbstractUpdateOperation.test_InvalidVersionAction = new DelayedAction(new Runnable() {
-      @Override
-      public void run() {
-        unsetRemoteFlag(remote);
-      }
-    });
+    AbstractUpdateOperation.test_InvalidVersionAction =
+        new DelayedAction(
+            new Runnable() {
+              @Override
+              public void run() {
+                unsetRemoteFlag(remote);
+              }
+            });
     AbstractUpdateOperation.test_InvalidVersionAction.allowToProceed();
 
     // 3. put data
@@ -88,30 +90,34 @@ public class Bug45934DUnitTest extends JUnit4CacheTestCase {
   }
 
   private void createRemoteRegion(final VM remote, final String name) {
-    SerializableCallable create = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory();
-        cf.set(MCAST_PORT, "45934");
-        cf.set(CONSERVE_SOCKETS, "false");
+    SerializableCallable create =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheFactory cf = new CacheFactory();
+            cf.set(MCAST_PORT, "45934");
+            cf.set(CONSERVE_SOCKETS, "false");
 
-        getCache(cf).<Integer, Integer> createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT).create(name);
+            getCache(cf)
+                .<Integer, Integer>createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT)
+                .create(name);
 
-        AbstractUpdateOperation.test_InvalidVersion = true;
-        return null;
-      }
-    };
+            AbstractUpdateOperation.test_InvalidVersion = true;
+            return null;
+          }
+        };
     remote.invoke(create);
   }
 
   private void unsetRemoteFlag(final VM remote) {
-    SerializableCallable create = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        AbstractUpdateOperation.test_InvalidVersion = false;
-        return null;
-      }
-    };
+    SerializableCallable create =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            AbstractUpdateOperation.test_InvalidVersion = false;
+            return null;
+          }
+        };
     remote.invoke(create);
   }
 
@@ -123,17 +129,18 @@ public class Bug45934DUnitTest extends JUnit4CacheTestCase {
   }
 
   private void verify(VM vm, final String name, final int count) {
-    SerializableCallable verify = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<Integer, Integer> r = getCache().getRegion(name);
-        assertEquals(count, r.size());
-        for (int i = 0; i < count; i++) {
-          assertEquals(i, (int) r.get(i));
-        }
-        return null;
-      }
-    };
+    SerializableCallable verify =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<Integer, Integer> r = getCache().getRegion(name);
+            assertEquals(count, r.size());
+            for (int i = 0; i < count; i++) {
+              assertEquals(i, (int) r.get(i));
+            }
+            return null;
+          }
+        };
     vm.invoke(verify);
   }
 }

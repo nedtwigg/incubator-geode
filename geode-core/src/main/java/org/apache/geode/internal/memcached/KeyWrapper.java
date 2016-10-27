@@ -25,22 +25,18 @@ import org.apache.geode.DataSerializable;
 import org.apache.geode.DataSerializer;
 
 /**
- * Since byte[] cannot be used as keys in a Region/Map, instances of this
- * class are used. Instances of this class encapsulate byte[] keys and
- * override equals and hashCode to base them on contents on byte[].
- * 
+ * Since byte[] cannot be used as keys in a Region/Map, instances of this class are used. Instances
+ * of this class encapsulate byte[] keys and override equals and hashCode to base them on contents
+ * on byte[].
  */
 public class KeyWrapper implements DataSerializable {
 
   private static final long serialVersionUID = -3241981993525734772L;
 
-  /**
-   * the key being wrapped
-   */
+  /** the key being wrapped */
   private byte[] key;
 
-  public KeyWrapper() {
-  }
+  public KeyWrapper() {}
 
   private KeyWrapper(byte[] key) {
     this.key = key;
@@ -48,6 +44,7 @@ public class KeyWrapper implements DataSerializable {
 
   /**
    * This method should be used to obtain instances of KeyWrapper.
+   *
    * @param key the key to wrap
    * @return an instance of KeyWrapper that can be used as a key in Region/Map
    */

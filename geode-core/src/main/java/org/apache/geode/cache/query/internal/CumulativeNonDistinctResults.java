@@ -43,25 +43,22 @@ import org.apache.geode.internal.HeapDataOutputStream;
 import org.apache.geode.internal.HeapDataOutputStream.LongUpdater;
 import org.apache.geode.internal.Version;
 
-/**
- * This is used as a wrapper over all the results of PR which are of non
- * distinct type
- * 
- *
- */
+/** This is used as a wrapper over all the results of PR which are of non distinct type */
 public class CumulativeNonDistinctResults<E> implements SelectResults<E>, DataSerializableFixedID {
 
   private CollectionType collectionType;
   private Collection<E> data;
 
-  public CumulativeNonDistinctResults() {
-  }
+  public CumulativeNonDistinctResults() {}
 
-  public CumulativeNonDistinctResults(Collection<? extends Collection<E>> results, int limit, ObjectType elementType, List<Metadata> collectionsMetadata) {
+  public CumulativeNonDistinctResults(
+      Collection<? extends Collection<E>> results,
+      int limit,
+      ObjectType elementType,
+      List<Metadata> collectionsMetadata) {
 
     this.collectionType = new CollectionTypeImpl(CumulativeNonDistinctResults.class, elementType);
     this.data = new CumulativeNonDistinctResultsCollection(results, limit, collectionsMetadata);
-
   }
 
   @Override
@@ -127,7 +124,6 @@ public class CumulativeNonDistinctResults<E> implements SelectResults<E>, DataSe
   @Override
   public void clear() {
     throw new UnsupportedOperationException("Removal from collection not supported");
-
   }
 
   @Override
@@ -140,7 +136,7 @@ public class CumulativeNonDistinctResults<E> implements SelectResults<E>, DataSe
 
     // expensive!!
     int count = 0;
-    for (Iterator<E> itr = this.iterator()/* this.base.iterator() */; itr.hasNext();) {
+    for (Iterator<E> itr = this.iterator() /* this.base.iterator() */; itr.hasNext(); ) {
       E v = itr.next();
       if (element == null ? v == null : element.equals(v)) {
         count++;
@@ -175,11 +171,13 @@ public class CumulativeNonDistinctResults<E> implements SelectResults<E>, DataSe
     private final List<Metadata> collectionsMetdata;
     private final int limit;
 
-    public CumulativeNonDistinctResultsCollection(Collection<? extends Collection<E>> results, int limit, List<Metadata> collectionsMetadata) {
+    public CumulativeNonDistinctResultsCollection(
+        Collection<? extends Collection<E>> results,
+        int limit,
+        List<Metadata> collectionsMetadata) {
       this.results = results;
       this.limit = limit;
       this.collectionsMetdata = collectionsMetadata;
-
     }
 
     @Override
@@ -217,7 +215,7 @@ public class CumulativeNonDistinctResults<E> implements SelectResults<E>, DataSe
       protected final Iterator<E>[] iterators;
       protected int currentIterator = 0;
       private Boolean cachedHasNext = null;
-      final private boolean isStruct;
+      private final boolean isStruct;
       private final boolean[] objectChangedMarker = new boolean[1];
 
       protected CumulativeCollectionIterator() {
@@ -258,23 +256,30 @@ public class CumulativeNonDistinctResults<E> implements SelectResults<E>, DataSe
         this.cachedHasNext = null;
         Metadata metadata = collectionsMetdata.get(this.currentIterator);
         E original = this.iterators[this.currentIterator].next();
-        Object e = PDXUtils.convertPDX(original, isStruct, metadata.getDomainObjectForPdx, metadata.getDeserializedObject, metadata.localResults, objectChangedMarker, false);
+        Object e =
+            PDXUtils.convertPDX(
+                original,
+                isStruct,
+                metadata.getDomainObjectForPdx,
+                metadata.getDeserializedObject,
+                metadata.localResults,
+                objectChangedMarker,
+                false);
         if (isStruct) {
           if (objectChangedMarker[0]) {
-            return (E) new StructImpl((StructTypeImpl) collectionType.getElementType(), (Object[]) e);
+            return (E)
+                new StructImpl((StructTypeImpl) collectionType.getElementType(), (Object[]) e);
           } else {
             return original;
           }
         } else {
           return (E) e;
         }
-
       }
 
       @Override
       public void remove() {
         throw new UnsupportedOperationException("remove not supported");
-
       }
     }
   }
@@ -333,7 +338,6 @@ public class CumulativeNonDistinctResults<E> implements SelectResults<E>, DataSe
     }
     lu.update(numElements);
     hdos.sendTo(out);
-
   }
 
   @Override
@@ -354,15 +358,16 @@ public class CumulativeNonDistinctResults<E> implements SelectResults<E>, DataSe
     final boolean getDeserializedObject;
     final boolean localResults;
 
-    private Metadata(boolean getDomainObjectForPdx, boolean getDeserializedObject, boolean localResults) {
+    private Metadata(
+        boolean getDomainObjectForPdx, boolean getDeserializedObject, boolean localResults) {
       this.getDomainObjectForPdx = getDomainObjectForPdx;
       this.getDeserializedObject = getDeserializedObject;
       this.localResults = localResults;
-
     }
   }
 
-  public static Metadata getCollectionMetadata(boolean getDomainObjectForPdx, boolean getDeserializedObject, boolean localResults) {
+  public static Metadata getCollectionMetadata(
+      boolean getDomainObjectForPdx, boolean getDeserializedObject, boolean localResults) {
     return new Metadata(getDomainObjectForPdx, getDeserializedObject, localResults);
   }
 }

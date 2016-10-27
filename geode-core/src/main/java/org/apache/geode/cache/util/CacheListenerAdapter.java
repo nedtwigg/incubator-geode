@@ -22,45 +22,35 @@ import org.apache.geode.cache.EntryEvent;
 import org.apache.geode.cache.RegionEvent;
 
 /**
- * <p>Utility class that implements all methods in <code>CacheListener</code>
- * with empty implementations. Applications can subclass this class and only
- * override the methods for the events of interest.<p>
- * 
+ * Utility class that implements all methods in <code>CacheListener</code> with empty
+ * implementations. Applications can subclass this class and only override the methods for the
+ * events of interest.
+ *
+ * <p>
+ *
  * <p>Subclasses declared in a Cache XML file, it must also implement {@link Declarable}
- * </p>
- * 
- * 
+ *
  * @since GemFire 3.0
  */
 public abstract class CacheListenerAdapter<K, V> implements CacheListener<K, V> {
 
-  public void afterCreate(EntryEvent<K, V> event) {
-  }
+  public void afterCreate(EntryEvent<K, V> event) {}
 
-  public void afterDestroy(EntryEvent<K, V> event) {
-  }
+  public void afterDestroy(EntryEvent<K, V> event) {}
 
-  public void afterInvalidate(EntryEvent<K, V> event) {
-  }
+  public void afterInvalidate(EntryEvent<K, V> event) {}
 
-  public void afterRegionDestroy(RegionEvent<K, V> event) {
-  }
+  public void afterRegionDestroy(RegionEvent<K, V> event) {}
 
-  public void afterRegionCreate(RegionEvent<K, V> event) {
-  }
+  public void afterRegionCreate(RegionEvent<K, V> event) {}
 
-  public void afterRegionInvalidate(RegionEvent<K, V> event) {
-  }
+  public void afterRegionInvalidate(RegionEvent<K, V> event) {}
 
-  public void afterUpdate(EntryEvent<K, V> event) {
-  }
+  public void afterUpdate(EntryEvent<K, V> event) {}
 
-  public void afterRegionClear(RegionEvent<K, V> event) {
-  }
+  public void afterRegionClear(RegionEvent<K, V> event) {}
 
-  public void afterRegionLive(RegionEvent<K, V> event) {
-  }
+  public void afterRegionLive(RegionEvent<K, V> event) {}
 
-  public void close() {
-  }
+  public void close() {}
 }

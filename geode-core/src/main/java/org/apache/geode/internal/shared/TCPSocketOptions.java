@@ -20,27 +20,20 @@ package org.apache.geode.internal.shared;
 import java.net.Socket;
 
 /**
- * Extended TCP socket options to set socket-specific KEEPALIVE settings etc.
- * Passed to {@link NativeCalls} API to set these options on the Java
- * {@link Socket} using native OS specific calls.
- * 
+ * Extended TCP socket options to set socket-specific KEEPALIVE settings etc. Passed to {@link
+ * NativeCalls} API to set these options on the Java {@link Socket} using native OS specific calls.
+ *
  * @since GemFire 8.0
  */
 public enum TCPSocketOptions {
 
-  /**
-   * TCP keepalive time between two transmissions on socket in idle condition
-   * (in seconds)
-   */
+  /** TCP keepalive time between two transmissions on socket in idle condition (in seconds) */
   OPT_KEEPIDLE,
   /**
-   * TCP keepalive duration between successive transmissions on socket if no
-   * reply to packet sent after idle timeout (in seconds)
+   * TCP keepalive duration between successive transmissions on socket if no reply to packet sent
+   * after idle timeout (in seconds)
    */
   OPT_KEEPINTVL,
-  /**
-   * number of retransmissions to be sent before declaring the other end to be
-   * dead
-   */
+  /** number of retransmissions to be sent before declaring the other end to be dead */
   OPT_KEEPCNT
 }

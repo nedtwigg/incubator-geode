@@ -23,10 +23,7 @@ import org.apache.geode.internal.InternalStatisticsDisabledException;
 //import org.apache.geode.internal.util.Callable;
 //import org.apache.geode.util.concurrent.locks.Lock;
 
-/**
- *
- *
- */
+/** */
 class CacheStatisticsImpl implements CacheStatistics {
   private final LocalRegion region;
   private final RegionEntry regionEntry;

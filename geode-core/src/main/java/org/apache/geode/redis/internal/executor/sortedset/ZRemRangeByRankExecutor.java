@@ -43,7 +43,8 @@ public class ZRemRangeByRankExecutor extends SortedSetExecutor {
     List<byte[]> commandElems = command.getProcessedCommand();
 
     if (commandElems.size() < 4) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.ZREMRANGEBYRANK));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.ZREMRANGEBYRANK));
       return;
     }
 
@@ -72,8 +73,7 @@ public class ZRemRangeByRankExecutor extends SortedSetExecutor {
 
     startRank = getBoundedStartIndex(startRank, sSetSize);
     stopRank = getBoundedEndIndex(stopRank, sSetSize);
-    if (stopRank > sSetSize - 1)
-      stopRank = sSetSize - 1;
+    if (stopRank > sSetSize - 1) stopRank = sSetSize - 1;
 
     if (startRank > stopRank) {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), 0));
@@ -96,23 +96,21 @@ public class ZRemRangeByRankExecutor extends SortedSetExecutor {
     if (removeList != null) {
       for (Object entry : removeList) {
         ByteArrayWrapper removeKey;
-        if (entry instanceof Entry)
-          removeKey = (ByteArrayWrapper) ((Entry<?, ?>) entry).getKey();
-        else
-          removeKey = (ByteArrayWrapper) ((Struct) entry).getFieldValues()[0];
+        if (entry instanceof Entry) removeKey = (ByteArrayWrapper) ((Entry<?, ?>) entry).getKey();
+        else removeKey = (ByteArrayWrapper) ((Struct) entry).getFieldValues()[0];
         Object oldVal = keyRegion.remove(removeKey);
-        if (oldVal != null)
-          numRemoved++;
+        if (oldVal != null) numRemoved++;
       }
-      if (keyRegion.isEmpty())
-        context.getRegionProvider().removeKey(key);
+      if (keyRegion.isEmpty()) context.getRegionProvider().removeKey(key);
     }
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), numRemoved));
   }
 
-  private List<?> getRemoveKeys(ExecutionHandlerContext context, ByteArrayWrapper key, int startRank, int stopRank) throws Exception {
+  private List<?> getRemoveKeys(
+      ExecutionHandlerContext context, ByteArrayWrapper key, int startRank, int stopRank)
+      throws Exception {
     Query query = getQuery(key, SortedSetQuery.ZREMRANGEBYRANK, context);
-    Object[] params = { stopRank + 1 };
+    Object[] params = {stopRank + 1};
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
 

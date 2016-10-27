@@ -45,13 +45,10 @@ import org.apache.geode.internal.cache.partitioned.RegionAdvisor.PartitionProfil
 import org.apache.geode.internal.util.VersionedArrayList;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * This class is an integration test for <code>PartitionedRegionQueryEvaluator</code> class.
- */
+/** This class is an integration test for <code>PartitionedRegionQueryEvaluator</code> class. */
 @Category(IntegrationTest.class)
 public class PartitionedRegionQueryEvaluatorIntegrationTest {
-  @Rule
-  public TestName name = new TestName();
+  @Rule public TestName name = new TestName();
   LogWriter logger = null;
 
   @Before
@@ -61,10 +58,7 @@ public class PartitionedRegionQueryEvaluatorIntegrationTest {
     }
   }
 
-  /**
-   * Test for the helper method getNodeToBucketMap.
-   * 
-   */
+  /** Test for the helper method getNodeToBucketMap. */
   @Test
   public void testGetNodeToBucketMap() {
     int totalNodes = 100;
@@ -72,16 +66,29 @@ public class PartitionedRegionQueryEvaluatorIntegrationTest {
     String localMaxMemory = "0";
     final int redundancy = 1;
     final int totalNoOfBuckets = 5;
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(prPrefix, localMaxMemory, redundancy);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                prPrefix, localMaxMemory, redundancy);
 
     HashSet<Integer> bucketsToQuery = new HashSet<Integer>();
     for (int i = 0; i < totalNoOfBuckets; i++) {
       bucketsToQuery.add(i);
     }
     final String expectedUnknownHostException = UnknownHostException.class.getName();
-    pr.getCache().getLogger().info("<ExpectedException action=add>" + expectedUnknownHostException + "</ExpectedException>");
+    pr.getCache()
+        .getLogger()
+        .info(
+            "<ExpectedException action=add>"
+                + expectedUnknownHostException
+                + "</ExpectedException>");
     final ArrayList nodes = createNodeList(totalNodes);
-    pr.getCache().getLogger().info("<ExpectedException action=remove>" + expectedUnknownHostException + "</ExpectedException>");
+    pr.getCache()
+        .getLogger()
+        .info(
+            "<ExpectedException action=remove>"
+                + expectedUnknownHostException
+                + "</ExpectedException>");
     // populating bucket2Node of the partition region
     // ArrayList<InternalDistributedMember>
     final ArrayList dses = createDataStoreList(totalNodes);
@@ -90,7 +97,8 @@ public class PartitionedRegionQueryEvaluatorIntegrationTest {
     populateAllPartitionedRegion(pr, nodes);
 
     // running the algorithm and getting the list of bucktes to grab
-    PartitionedRegionQueryEvaluator evalr = new PartitionedRegionQueryEvaluator(pr.getSystem(), pr, null, null, null, bucketsToQuery);
+    PartitionedRegionQueryEvaluator evalr =
+        new PartitionedRegionQueryEvaluator(pr.getSystem(), pr, null, null, null, bucketsToQuery);
     Map n2bMap = null;
     try {
       n2bMap = evalr.buildNodeToBucketMap();
@@ -98,24 +106,24 @@ public class PartitionedRegionQueryEvaluatorIntegrationTest {
 
     }
     ArrayList buckList = new ArrayList();
-    for (Iterator itr = n2bMap.entrySet().iterator(); itr.hasNext();) {
+    for (Iterator itr = n2bMap.entrySet().iterator(); itr.hasNext(); ) {
       Map.Entry entry = (Map.Entry) itr.next();
-      if (entry.getValue() != null)
-        buckList.addAll((List) entry.getValue());
+      if (entry.getValue() != null) buckList.addAll((List) entry.getValue());
     }
     // checking size of the two lists
     assertEquals("Unexpected number of buckets", totalNoOfBuckets, buckList.size());
     for (int i = 0; i < totalNoOfBuckets; i++) {
-      assertTrue(" Bucket with Id = " + i + " not present in bucketList.", buckList.contains(new Integer(i)));
+      assertTrue(
+          " Bucket with Id = " + i + " not present in bucketList.",
+          buckList.contains(new Integer(i)));
     }
     clearAllPartitionedRegion(pr);
     logger.info("************test ended successfully **********");
-
   }
 
   /**
    * This function populates bucket2Node region of the partition region
-   * 
+   *
    * @param pr
    */
   public void populateBucket2Node(PartitionedRegion pr, List nodes, int numOfBuckets) {
@@ -157,51 +165,50 @@ public class PartitionedRegionQueryEvaluatorIntegrationTest {
 
   /**
    * This function decides number of the nodes in the list of bucket2Node region
-   * 
+   *
    * @param i
    * @return
    */
   private int setNodeListCnt(int i) {
     int nListcnt = 0;
     switch (i) {
-    case 0:
-      nListcnt = 1;
-      break;
-    case 1:
-      nListcnt = 4;
-      break;
-    case 2:
-      nListcnt = 1;
-      break;
-    case 3:
-      nListcnt = 2;
-      break;
-    case 4:
-      nListcnt = 1;
-      break;
-    case 5:
-      nListcnt = 3;
-      break;
-    case 6:
-      nListcnt = 3;
-      break;
-    case 7:
-      nListcnt = 1;
-      break;
-    case 8:
-      nListcnt = 1;
-      break;
-    case 9:
-      nListcnt = 2;
-      break;
-
+      case 0:
+        nListcnt = 1;
+        break;
+      case 1:
+        nListcnt = 4;
+        break;
+      case 2:
+        nListcnt = 1;
+        break;
+      case 3:
+        nListcnt = 2;
+        break;
+      case 4:
+        nListcnt = 1;
+        break;
+      case 5:
+        nListcnt = 3;
+        break;
+      case 6:
+        nListcnt = 3;
+        break;
+      case 7:
+        nListcnt = 1;
+        break;
+      case 8:
+        nListcnt = 1;
+        break;
+      case 9:
+        nListcnt = 2;
+        break;
     }
     return nListcnt;
   }
 
   /**
    * This functions number of new nodes specified by nCount.
-   * 
+   *
    * @param nCount
    * @return
    */
@@ -237,15 +244,22 @@ public class PartitionedRegionQueryEvaluatorIntegrationTest {
     try {
       mem = new InternalDistributedMember("host" + i, 3033);
     } catch (java.net.UnknownHostException uhe) {
-      logger.severe("PartitionedRegion: initalizeNode() Unknown host = " + hostname + " servicePort = " + 0, uhe);
-      throw new PartitionedRegionException("PartitionedRegionDataStore: initalizeNode() Unknown host = " + hostname + " servicePort = " + 0, uhe);
+      logger.severe(
+          "PartitionedRegion: initalizeNode() Unknown host = " + hostname + " servicePort = " + 0,
+          uhe);
+      throw new PartitionedRegionException(
+          "PartitionedRegionDataStore: initalizeNode() Unknown host = "
+              + hostname
+              + " servicePort = "
+              + 0,
+          uhe);
     }
     return mem;
   }
 
   /**
    * this function creates new node.
-   * 
+   *
    * @return
    */
   public Node createNode(int i) {
@@ -265,9 +279,11 @@ public class PartitionedRegionQueryEvaluatorIntegrationTest {
     Region rootReg = PartitionedRegionHelper.getPRRoot(pr.getCache());
     //    Region allPRs = PartitionedRegionHelper.getPRConfigRegion(rootReg, pr
     //        .getCache());
-    PartitionRegionConfig prConf = new PartitionRegionConfig(pr.getPRId(), pr.getFullPath(), pr.getPartitionAttributes(), pr.getScope());
+    PartitionRegionConfig prConf =
+        new PartitionRegionConfig(
+            pr.getPRId(), pr.getFullPath(), pr.getPartitionAttributes(), pr.getScope());
     RegionAdvisor ra = pr.getRegionAdvisor();
-    for (Iterator itr = nodes.iterator(); itr.hasNext();) {
+    for (Iterator itr = nodes.iterator(); itr.hasNext(); ) {
       Node n = (Node) itr.next();
       prConf.addNode(n);
       PartitionProfile pp = (PartitionProfile) ra.createProfile();

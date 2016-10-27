@@ -19,10 +19,10 @@ package org.apache.geode.internal.cache.xmlcache;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * This class represents the data given for binding an overflow mechanism to a
- * client subscription. It encapsulates eviction policy, capacity and overflowDirectory.
- * This object will get created for every <b>client-subscription</b> tag
- * 
+ * This class represents the data given for binding an overflow mechanism to a client subscription.
+ * It encapsulates eviction policy, capacity and overflowDirectory. This object will get created for
+ * every <b>client-subscription</b> tag
+ *
  * @since GemFire 5.7
  */
 public class ClientHaQueueCreation {
@@ -53,26 +53,25 @@ public class ClientHaQueueCreation {
     this.haEvictionPolicy = policy;
   }
 
-  /**
-   * @deprecated as of prPersistSprint2
-   */
+  /** @deprecated as of prPersistSprint2 */
   public String getOverflowDirectory() {
     if (this.getDiskStoreName() != null) {
-      throw new IllegalStateException(LocalizedStrings.DiskStore_Deprecated_API_0_Cannot_Mix_With_DiskStore_1.toLocalizedString(new Object[] { "getOverflowDirectory", this.getDiskStoreName() }));
+      throw new IllegalStateException(
+          LocalizedStrings.DiskStore_Deprecated_API_0_Cannot_Mix_With_DiskStore_1.toLocalizedString(
+              new Object[] {"getOverflowDirectory", this.getDiskStoreName()}));
     }
     return this.overflowDirectory;
   }
 
-  /**
-   * @deprecated as of prPersistSprint2
-   */
+  /** @deprecated as of prPersistSprint2 */
   public void setOverflowDirectory(String overflowDirectory) {
     if (this.getDiskStoreName() != null) {
-      throw new IllegalStateException(LocalizedStrings.DiskStore_Deprecated_API_0_Cannot_Mix_With_DiskStore_1.toLocalizedString(new Object[] { "setOverflowDirectory", this.getDiskStoreName() }));
+      throw new IllegalStateException(
+          LocalizedStrings.DiskStore_Deprecated_API_0_Cannot_Mix_With_DiskStore_1.toLocalizedString(
+              new Object[] {"setOverflowDirectory", this.getDiskStoreName()}));
     }
     this.overflowDirectory = overflowDirectory;
     setHasOverflowDirectory(true);
-
   }
 
   public String getDiskStoreName() {
@@ -81,7 +80,9 @@ public class ClientHaQueueCreation {
 
   public void setDiskStoreName(String diskStoreName) {
     if (hasOverflowDirectory()) {
-      throw new IllegalStateException(LocalizedStrings.DiskStore_Deprecated_API_0_Cannot_Mix_With_DiskStore_1.toLocalizedString(new Object[] { "setDiskStoreName", this.getDiskStoreName() }));
+      throw new IllegalStateException(
+          LocalizedStrings.DiskStore_Deprecated_API_0_Cannot_Mix_With_DiskStore_1.toLocalizedString(
+              new Object[] {"setDiskStoreName", this.getDiskStoreName()}));
     }
     this.diskStoreName = diskStoreName;
   }

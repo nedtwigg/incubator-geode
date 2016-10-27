@@ -42,7 +42,8 @@ import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
 import org.springframework.shell.core.annotation.CliCommand;
 
 public class StatusCommands extends AbstractCommandsSupport implements CommandMarker {
-  static final FetchSharedConfigurationStatusFunction fetchSharedConfigStatusFunction = new FetchSharedConfigurationStatusFunction();
+  static final FetchSharedConfigurationStatusFunction fetchSharedConfigStatusFunction =
+      new FetchSharedConfigurationStatusFunction();
 
   @SuppressWarnings("unchecked")
   @CliCommand(value = CliStrings.STATUS_SHARED_CONFIG, help = CliStrings.STATUS_SHARED_CONFIG_HELP)
@@ -50,7 +51,9 @@ public class StatusCommands extends AbstractCommandsSupport implements CommandMa
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
   public Result statusSharedConfiguration() {
     final GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-    final Set<DistributedMember> locators = new HashSet<DistributedMember>(cache.getDistributionManager().getAllHostedLocatorsWithSharedConfiguration().keySet());
+    final Set<DistributedMember> locators =
+        new HashSet<DistributedMember>(
+            cache.getDistributionManager().getAllHostedLocatorsWithSharedConfiguration().keySet());
     if (locators.isEmpty()) {
       return ResultBuilder.createInfoResult(CliStrings.NO_LOCATORS_WITH_SHARED_CONFIG);
     } else {
@@ -60,7 +63,8 @@ public class StatusCommands extends AbstractCommandsSupport implements CommandMa
 
   private TabularResultData getSharedConfigurationStatus(Set<DistributedMember> locators) {
     boolean isSharedConfigRunning = false;
-    ResultCollector<?, ?> rc = CliUtil.executeFunction(fetchSharedConfigStatusFunction, null, locators);
+    ResultCollector<?, ?> rc =
+        CliUtil.executeFunction(fetchSharedConfigStatusFunction, null, locators);
     List<CliFunctionResult> results = (List<CliFunctionResult>) rc.getResult();
     TabularResultData table = ResultBuilder.createTabularResultData();
     table.setHeader("Status of shared configuration on locators");
@@ -80,7 +84,7 @@ public class StatusCommands extends AbstractCommandsSupport implements CommandMa
     return table;
   }
 
-  @CliAvailabilityIndicator({ CliStrings.STATUS_SHARED_CONFIG })
+  @CliAvailabilityIndicator({CliStrings.STATUS_SHARED_CONFIG})
   public final boolean isConnected() {
     if (!CliUtil.isGfshVM()) {
       return true;

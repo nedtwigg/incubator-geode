@@ -19,9 +19,8 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.internal.cache.versions.VersionTag;
 
 /**
- * This class is just used to hold the version tag for an operation.
- * It does need release to be called (unlike other EntryEventImpls)
- * because it never has off-heap value references.
+ * This class is just used to hold the version tag for an operation. It does need release to be
+ * called (unlike other EntryEventImpls) because it never has off-heap value references.
  */
 public class VersionTagHolder extends EntryEventImpl {
   public VersionTagHolder(VersionTag<?> tag) {

@@ -17,7 +17,7 @@
 /*
  * Created on Aug 23, 2005
  *
- * 
+ *
  */
 package org.apache.geode.internal.cache;
 
@@ -44,10 +44,7 @@ import org.apache.geode.internal.util.StopWatch;
 import org.apache.geode.test.dunit.ThreadUtils;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- *  
- */
+/** */
 @Category(IntegrationTest.class)
 public class MapInterface2JUnitTest {
 
@@ -72,7 +69,9 @@ public class MapInterface2JUnitTest {
   public void testBasicMapClearNonTrnxn() {
     Region rgn = CacheUtils.getRegion("Portfolios");
     int size = rgn.size();
-    assertTrue("MapInterface2JUnitTest::basicMapClearNonTranxn: The init size of region is zero", size > 0);
+    assertTrue(
+        "MapInterface2JUnitTest::basicMapClearNonTranxn: The init size of region is zero",
+        size > 0);
     rgn.clear();
     if (rgn.size() != 0) {
       fail("The region size is non zerio even after issuing clear");
@@ -83,7 +82,9 @@ public class MapInterface2JUnitTest {
   public void testBasicMapClearTrnxn() {
     Region rgn = CacheUtils.getRegion("Portfolios");
     int size = rgn.size();
-    assertTrue("MapInterface2JUnitTest::basicMapClearNonTranxn: The init size of region is zero", size > 0);
+    assertTrue(
+        "MapInterface2JUnitTest::basicMapClearNonTranxn: The init size of region is zero",
+        size > 0);
     CacheTransactionManager tm = CacheUtils.getCacheTranxnMgr();
     tm.begin();
     rgn.put("6", new Portfolio(6));
@@ -110,18 +111,21 @@ public class MapInterface2JUnitTest {
   public void testBasicMapAfterClearCalback() {
     Region rgn = CacheUtils.getRegion("Portfolios");
     AttributesMutator atm = rgn.getAttributesMutator();
-    atm.setCacheListener(new CacheListenerAdapter() {
+    atm.setCacheListener(
+        new CacheListenerAdapter() {
 
-      public void afterRegionClear(RegionEvent event) {
-        synchronized (MapInterface2JUnitTest.this) {
-          event.getRegion().getCache().getLogger().info("afterRegionClear call back " + event);
-          afterClearCallbackOccured = true;
-          MapInterface2JUnitTest.this.notify();
-        }
-      }
-    });
+          public void afterRegionClear(RegionEvent event) {
+            synchronized (MapInterface2JUnitTest.this) {
+              event.getRegion().getCache().getLogger().info("afterRegionClear call back " + event);
+              afterClearCallbackOccured = true;
+              MapInterface2JUnitTest.this.notify();
+            }
+          }
+        });
     int size = rgn.size();
-    assertTrue("MapInterface2JUnitTest::basicMapClearNonTranxn: The init size of region is zero", size > 0);
+    assertTrue(
+        "MapInterface2JUnitTest::basicMapClearNonTranxn: The init size of region is zero",
+        size > 0);
     rgn.clear();
     if (rgn.size() != 0) {
       fail("The region size is non zero even after issuing clear");
@@ -153,42 +157,48 @@ public class MapInterface2JUnitTest {
     }
 
     final Object callbackSync = new Object();
-    final boolean[] canCallbackProceed = new boolean[] { false };
+    final boolean[] canCallbackProceed = new boolean[] {false};
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      public void afterRegionClear(RegionEvent event) {
-        //Allow main thread to proceed just before sleeping
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
+          public void afterRegionClear(RegionEvent event) {
+            //Allow main thread to proceed just before sleeping
 
-        try {
-          synchronized (MapInterface2JUnitTest.this) {
-            MapInterface2JUnitTest.this.mainThreadProceed = true;
-            MapInterface2JUnitTest.this.notify();
-          }
-          event.getRegion().getCache().getLogger().info("*******Main THread Notified *********");
-          synchronized (callbackSync) {
-            long maxWait = 20000;
-            StopWatch timer = new StopWatch(true);
-            while (!canCallbackProceed[0]) {
-              long timeLeft = maxWait - timer.elapsedTimeMillis();
-              if (timeLeft > 0) {
-                callbackSync.wait(timeLeft);
-              } else {
-                fail("testBlockGlobalScopeInSingleVM attempted to wait too long");
+            try {
+              synchronized (MapInterface2JUnitTest.this) {
+                MapInterface2JUnitTest.this.mainThreadProceed = true;
+                MapInterface2JUnitTest.this.notify();
               }
+              event
+                  .getRegion()
+                  .getCache()
+                  .getLogger()
+                  .info("*******Main THread Notified *********");
+              synchronized (callbackSync) {
+                long maxWait = 20000;
+                StopWatch timer = new StopWatch(true);
+                while (!canCallbackProceed[0]) {
+                  long timeLeft = maxWait - timer.elapsedTimeMillis();
+                  if (timeLeft > 0) {
+                    callbackSync.wait(timeLeft);
+                  } else {
+                    fail("testBlockGlobalScopeInSingleVM attempted to wait too long");
+                  }
+                }
+              }
+              event.getRegion().getCache().getLogger().info("******* Callback complete *********");
+            } catch (InterruptedException ie) {
+              ie.printStackTrace();
             }
           }
-          event.getRegion().getCache().getLogger().info("******* Callback complete *********");
-        } catch (InterruptedException ie) {
-          ie.printStackTrace();
-        }
-      }
-    });
-    Thread th = new Thread(new Runnable() {
-      public void run() {
-        region.clear();
-      }
-
-    });
+        });
+    Thread th =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                region.clear();
+              }
+            });
 
     th.start();
     try {
@@ -224,29 +234,39 @@ public class MapInterface2JUnitTest {
     }
 
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      public void afterRegionClear(RegionEvent event) {
-        //Allwo main thread to proceed just before sleeping
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
+          public void afterRegionClear(RegionEvent event) {
+            //Allwo main thread to proceed just before sleeping
 
-        try {
-          synchronized (MapInterface2JUnitTest.this) {
-            MapInterface2JUnitTest.this.mainThreadProceed = true;
-            MapInterface2JUnitTest.this.notify();
+            try {
+              synchronized (MapInterface2JUnitTest.this) {
+                MapInterface2JUnitTest.this.mainThreadProceed = true;
+                MapInterface2JUnitTest.this.notify();
+              }
+              event
+                  .getRegion()
+                  .getCache()
+                  .getLogger()
+                  .info("*******Main THread Notified *********");
+              Thread.sleep(1000);
+              event
+                  .getRegion()
+                  .getCache()
+                  .getLogger()
+                  .info("******* After Sleeping 5000 *********");
+            } catch (InterruptedException ie) {
+              fail("interrupted");
+            }
           }
-          event.getRegion().getCache().getLogger().info("*******Main THread Notified *********");
-          Thread.sleep(1000);
-          event.getRegion().getCache().getLogger().info("******* After Sleeping 5000 *********");
-        } catch (InterruptedException ie) {
-          fail("interrupted");
-        }
-      }
-    });
-    Thread th = new Thread(new Runnable() {
-      public void run() {
-        region.clear();
-      }
-
-    });
+        });
+    Thread th =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                region.clear();
+              }
+            });
 
     th.start();
     try {
@@ -265,5 +285,4 @@ public class MapInterface2JUnitTest {
     }
     ThreadUtils.join(th, 30 * 1000);
   }
-
 }

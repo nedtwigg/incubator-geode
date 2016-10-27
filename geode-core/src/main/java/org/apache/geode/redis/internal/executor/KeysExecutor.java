@@ -48,19 +48,22 @@ public class KeysExecutor extends AbstractExecutor {
     try {
       pattern = GlobPattern.compile(glob);
     } catch (PatternSyntaxException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_ILLEGAL_GLOB));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_ILLEGAL_GLOB));
       return;
     }
 
     for (String key : allKeys) {
-      if (!(key.equals(GeodeRedisServer.REDIS_META_DATA_REGION) || key.equals(GeodeRedisServer.STRING_REGION) || key.equals(GeodeRedisServer.HLL_REGION)) && pattern.matcher(key).matches())
-        matchingKeys.add(key);
+      if (!(key.equals(GeodeRedisServer.REDIS_META_DATA_REGION)
+              || key.equals(GeodeRedisServer.STRING_REGION)
+              || key.equals(GeodeRedisServer.HLL_REGION))
+          && pattern.matcher(key).matches()) matchingKeys.add(key);
     }
 
     if (matchingKeys.isEmpty())
       command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
     else
-      command.setResponse(Coder.getBulkStringArrayResponse(context.getByteBufAllocator(), matchingKeys));
-
+      command.setResponse(
+          Coder.getBulkStringArrayResponse(context.getByteBufAllocator(), matchingKeys));
   }
 }

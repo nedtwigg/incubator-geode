@@ -36,11 +36,7 @@ import org.apache.geode.internal.cache.versions.ConcurrentCacheModificationExcep
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.offheap.annotations.Retained;
 
-/**
- * Handles distribution messaging for invalidating an entry in a region.
- * 
- *  
- */
+/** Handles distribution messaging for invalidating an entry in a region. */
 public class InvalidateOperation extends DistributedCacheOperation {
   private static final Logger logger = LogService.getLogger();
 
@@ -74,7 +70,8 @@ public class InvalidateOperation extends DistributedCacheOperation {
     protected EventID eventId = null;
 
     @Override
-    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException {
+    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm)
+        throws EntryNotFoundException {
       EntryEventImpl ev = (EntryEventImpl) event;
       DistributedRegion rgn = (DistributedRegion) ev.region;
 
@@ -87,7 +84,9 @@ public class InvalidateOperation extends DistributedCacheOperation {
           // if this is a mirrored region and we're still initializing, or
           // concurrency conflict detection is enabled (requiring version #
           // retention) then force new entry creation
-          boolean forceNewEntry = rgn.dataPolicy.withReplication() && (!rgn.isInitialized() || rgn.getConcurrencyChecksEnabled());
+          boolean forceNewEntry =
+              rgn.dataPolicy.withReplication()
+                  && (!rgn.isInitialized() || rgn.getConcurrencyChecksEnabled());
           boolean invokeCallbacks = rgn.isInitialized();
           rgn.basicInvalidate(ev, invokeCallbacks, forceNewEntry);
         }
@@ -103,7 +102,9 @@ public class InvalidateOperation extends DistributedCacheOperation {
     @Retained
     protected InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException {
       @Retained
-      EntryEventImpl ev = EntryEventImpl.create(rgn, getOperation(), this.key, null, this.callbackArg, true, getSender());
+      EntryEventImpl ev =
+          EntryEventImpl.create(
+              rgn, getOperation(), this.key, null, this.callbackArg, true, getSender());
       ev.setEventId(this.eventId);
       setOldValueInEvent(ev);
       ev.setVersionTag(this.versionTag);
@@ -147,7 +148,9 @@ public class InvalidateOperation extends DistributedCacheOperation {
     @Override
     public List getOperations() {
       byte deserializationPolicy = DistributedCacheOperation.DESERIALIZATION_POLICY_NONE;
-      QueuedOperation qOp = new QueuedOperation(getOperation(), this.key, null, null, deserializationPolicy, this.callbackArg);
+      QueuedOperation qOp =
+          new QueuedOperation(
+              getOperation(), this.key, null, null, deserializationPolicy, this.callbackArg);
       return Collections.singletonList(qOp);
     }
 
@@ -199,6 +202,5 @@ public class InvalidateOperation extends DistributedCacheOperation {
       super.toData(out);
       DataSerializer.writeObject(this.context, out);
     }
-
   }
 }

@@ -37,32 +37,46 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 /**
- * Launcher class for : <ul>
- * <li> gfsh 7.0
- * <li> server
- * <li> locator
- * <li> Tools (Pulse, VSD, JConsole, JVisualVM)
- * <li> Running Command Line Interface (CLI) Commands from OS prompt like <ol>
- *   <li><ul>
- *   <li> compact offline-disk-store - Compact an offline disk store. If the disk store is large, additional memory may need to be allocated to the process using the --J=-Xmx??? parameter.
- *   <li> describe offline-disk-store - Display information about an offline disk store.
- *   <li> encrypt password - Encrypt a password for use in data source configuration.
- *   <li> run - Execute a set of GFSH commands. Commands that normally prompt for additional input will instead use default values.
- *   <li> start jconsole - Start the JDK's JConsole tool in a separate process. JConsole will be launched, but connecting to GemFire must be done manually.
- *   <li> start jvisualvm - Start the JDK's Java VisualVM (jvisualvm) tool in a separate process. Java VisualVM will be launched, but connecting to GemFire must be done manually.
- *   <li> start locator - Start a Locator.
- *   <li> start pulse - Open a new window in the default Web browser with the URL for the Pulse application.
- *   <li> start server - Start a GemFire Cache Server.
- *   <li> start vsd - Start VSD in a separate process.
- *   <li> status locator - Display the status of a Locator. Possible statuses are: started, online, offline or not responding.
- *   <li> status server - Display the status of a GemFire Cache Server.
- *   <li> stop locator - Stop a Locator.
- *   <li> stop server - Stop a GemFire Cache Server.
- *   <li> validate offline-disk-store - Scan the contents of a disk store to verify that it has no errors.
- *   <li> version - Display product version information.
- *   </ul></li>
- *   <li> multiple commands specified using an option "-e"
- *  </ol>
+ * Launcher class for :
+ *
+ * <ul>
+ *   <li> gfsh 7.0
+ *   <li> server
+ *   <li> locator
+ *   <li> Tools (Pulse, VSD, JConsole, JVisualVM)
+ *   <li> Running Command Line Interface (CLI) Commands from OS prompt like
+ *       <ol>
+ *         <li>
+ *             <ul>
+ *               <li> compact offline-disk-store - Compact an offline disk store. If the disk store
+ *                   is large, additional memory may need to be allocated to the process using the
+ *                   --J=-Xmx??? parameter.
+ *               <li> describe offline-disk-store - Display information about an offline disk store.
+ *               <li> encrypt password - Encrypt a password for use in data source configuration.
+ *               <li> run - Execute a set of GFSH commands. Commands that normally prompt for
+ *                   additional input will instead use default values.
+ *               <li> start jconsole - Start the JDK's JConsole tool in a separate process. JConsole
+ *                   will be launched, but connecting to GemFire must be done manually.
+ *               <li> start jvisualvm - Start the JDK's Java VisualVM (jvisualvm) tool in a separate
+ *                   process. Java VisualVM will be launched, but connecting to GemFire must be done
+ *                   manually.
+ *               <li> start locator - Start a Locator.
+ *               <li> start pulse - Open a new window in the default Web browser with the URL for
+ *                   the Pulse application.
+ *               <li> start server - Start a GemFire Cache Server.
+ *               <li> start vsd - Start VSD in a separate process.
+ *               <li> status locator - Display the status of a Locator. Possible statuses are:
+ *                   started, online, offline or not responding.
+ *               <li> status server - Display the status of a GemFire Cache Server.
+ *               <li> stop locator - Stop a Locator.
+ *               <li> stop server - Stop a GemFire Cache Server.
+ *               <li> validate offline-disk-store - Scan the contents of a disk store to verify that
+ *                   it has no errors.
+ *               <li> version - Display product version information.
+ *             </ul>
+ *         <li> multiple commands specified using an option "-e"
+ *       </ol>
+ *
  * </ul>
  *
  * @since GemFire 7.0
@@ -72,7 +86,10 @@ public final class Launcher {
   private static final String HELP_OPTION = "help";
   private static final String HELP = CliStrings.HELP;
 
-  private static final String MSG_INVALID_COMMAND_OR_OPTION = "Invalid command or option : {0}." + GfshParser.LINE_SEPARATOR + "Use 'gfsh help' to display additional information.";
+  private static final String MSG_INVALID_COMMAND_OR_OPTION =
+      "Invalid command or option : {0}."
+          + GfshParser.LINE_SEPARATOR
+          + "Use 'gfsh help' to display additional information.";
 
   private final Set<String> allowedCommandLineCommands;
   private final OptionParser commandLineParser;
@@ -88,7 +105,10 @@ public final class Launcher {
     // should we start without tomcat/servlet jars?
     String nonExistingDependency = CliUtil.cliDependenciesExist(true);
     if (nonExistingDependency != null) {
-      System.err.println("Required (" + nonExistingDependency + ") libraries not found in the classpath. gfsh can't start.");
+      System.err.println(
+          "Required ("
+              + nonExistingDependency
+              + ") libraries not found in the classpath. gfsh can't start.");
       return;
     }
 
@@ -162,12 +182,12 @@ public final class Launcher {
         }
 
         if (!commandIsAllowed) {
-          System.err.println(CliStrings.format(MSG_INVALID_COMMAND_OR_OPTION, CliUtil.arrayToString(args)));
+          System.err.println(
+              CliStrings.format(MSG_INVALID_COMMAND_OR_OPTION, CliUtil.arrayToString(args)));
           exitRequest = ExitShellRequest.FATAL_EXIT;
         } else {
           if (!gfsh.executeScriptLine(commandLineCommand)) {
-            if (gfsh.getLastExecutionStatus() != 0)
-              exitRequest = ExitShellRequest.FATAL_EXIT;
+            if (gfsh.getLastExecutionStatus() != 0) exitRequest = ExitShellRequest.FATAL_EXIT;
           } else if (gfsh.getLastExecutionStatus() != 0) {
             exitRequest = ExitShellRequest.FATAL_EXIT;
           }
@@ -183,7 +203,8 @@ public final class Launcher {
     try {
       parsedOptions = this.commandLineParser.parse(args);
     } catch (OptionException e) {
-      System.err.println(CliStrings.format(MSG_INVALID_COMMAND_OR_OPTION, CliUtil.arrayToString(args)));
+      System.err.println(
+          CliStrings.format(MSG_INVALID_COMMAND_OR_OPTION, CliUtil.arrayToString(args)));
       return ExitShellRequest.FATAL_EXIT.getExitCode();
     }
     boolean launchShell = true;
@@ -219,10 +240,18 @@ public final class Launcher {
           List<String> commandsToExecute = (List<String>) parsedOptions.valuesOf(EXECUTE_OPTION);
 
           // Execute all of the commands in the list, one at a time.
-          for (int i = 0; i < commandsToExecute.size() && exitRequest == ExitShellRequest.NORMAL_EXIT; i++) {
+          for (int i = 0;
+              i < commandsToExecute.size() && exitRequest == ExitShellRequest.NORMAL_EXIT;
+              i++) {
             String command = commandsToExecute.get(i);
             // sanitize the output string to not show the password
-            System.out.println(GfshParser.LINE_SEPARATOR + "(" + (i + 1) + ") Executing - " + GfshHistory.redact(command) + GfshParser.LINE_SEPARATOR);
+            System.out.println(
+                GfshParser.LINE_SEPARATOR
+                    + "("
+                    + (i + 1)
+                    + ") Executing - "
+                    + GfshHistory.redact(command)
+                    + GfshParser.LINE_SEPARATOR);
             if (!gfsh.executeScriptLine(command) || gfsh.getLastExecutionStatus() != 0) {
               exitRequest = ExitShellRequest.FATAL_EXIT;
             }
@@ -265,23 +294,33 @@ public final class Launcher {
     stream.print(GemFireVersion.getGemFireVersion());
     stream.println(" Command Line Shell" + GfshParser.LINE_SEPARATOR);
     stream.println("USAGE");
-    stream.println("gfsh [ <command> [option]* | <help> [command] | [--help | -h] | [-e \"<command> [option]*\"]* ]" + GfshParser.LINE_SEPARATOR);
+    stream.println(
+        "gfsh [ <command> [option]* | <help> [command] | [--help | -h] | [-e \"<command> [option]*\"]* ]"
+            + GfshParser.LINE_SEPARATOR);
     stream.println("OPTIONS");
     stream.println("-e  Execute a command");
-    stream.println(Gfsh.wrapText("Commands may be any that are available from the interactive gfsh prompt.  " + "For commands that require a Manager to complete, the first command in the list must be \"connect\".", 1));
+    stream.println(
+        Gfsh.wrapText(
+            "Commands may be any that are available from the interactive gfsh prompt.  "
+                + "For commands that require a Manager to complete, the first command in the list must be \"connect\".",
+            1));
     stream.println(GfshParser.LINE_SEPARATOR + "AVAILABLE COMMANDS");
     stream.print(gfsh.obtainHelp("", this.allowedCommandLineCommands));
     stream.println("EXAMPLES");
     stream.println("gfsh");
     stream.println(Gfsh.wrapText("Start GFSH in interactive mode.", 1));
     stream.println("gfsh -h");
-    stream.println(Gfsh.wrapText("Displays 'this' help. ('gfsh --help' or 'gfsh help' is equivalent)", 1));
+    stream.println(
+        Gfsh.wrapText("Displays 'this' help. ('gfsh --help' or 'gfsh help' is equivalent)", 1));
     stream.println("gfsh help start locator");
     stream.println(Gfsh.wrapText("Display help for the \"start locator\" command.", 1));
     stream.println("gfsh start locator --name=locator1");
     stream.println(Gfsh.wrapText("Start a Locator with the name \"locator1\".", 1));
     stream.println("gfsh -e \"connect\" -e \"list members\"");
-    stream.println(Gfsh.wrapText("Connect to a running Locator using the default connection information and run the \"list members\" command.", 1));
+    stream.println(
+        Gfsh.wrapText(
+            "Connect to a running Locator using the default connection information and run the \"list members\" command.",
+            1));
     stream.println();
 
     printExecuteUsage(stream);

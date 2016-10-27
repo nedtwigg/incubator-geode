@@ -34,11 +34,10 @@ import org.apache.geode.internal.cache.wan.WANTestBase;
 import org.apache.geode.internal.cache.wan.serial.SerialGatewaySenderOperationsDUnitTest;
 import org.apache.geode.test.dunit.VM;
 
-/**
- *
- */
+/** */
 @Category(DistributedTest.class)
-public class ConcurrentSerialGatewaySenderOperationsDUnitTest extends SerialGatewaySenderOperationsDUnitTest {
+public class ConcurrentSerialGatewaySenderOperationsDUnitTest
+    extends SerialGatewaySenderOperationsDUnitTest {
 
   private static final long serialVersionUID = 1L;
 
@@ -47,11 +46,17 @@ public class ConcurrentSerialGatewaySenderOperationsDUnitTest extends SerialGate
   }
 
   protected void createSenderVM5() {
-    vm5.invoke(() -> WANTestBase.createConcurrentSender("ln", 2, false, 100, 10, false, true, null, true, 5, OrderPolicy.KEY));
+    vm5.invoke(
+        () ->
+            WANTestBase.createConcurrentSender(
+                "ln", 2, false, 100, 10, false, true, null, true, 5, OrderPolicy.KEY));
   }
 
   protected void createSenderVM4() {
-    vm4.invoke(() -> WANTestBase.createConcurrentSender("ln", 2, false, 100, 10, false, true, null, true, 5, OrderPolicy.KEY));
+    vm4.invoke(
+        () ->
+            WANTestBase.createConcurrentSender(
+                "ln", 2, false, 100, 10, false, true, null, true, 5, OrderPolicy.KEY));
   }
 
   protected void validateQueueClosedVM4() {

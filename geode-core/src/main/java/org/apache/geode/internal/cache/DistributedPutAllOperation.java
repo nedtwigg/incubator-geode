@@ -66,7 +66,7 @@ import org.apache.geode.internal.offheap.annotations.Unretained;
 
 /**
  * Handles distribution of a Region.putall operation.
- * 
+ *
  * @since GemFire 5.0
  */
 public class DistributedPutAllOperation extends AbstractUpdateOperation {
@@ -102,9 +102,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     this.isBridgeOp = isBridgeOp;
   }
 
-  /**
-   * return if the operation is bridge operation
-   */
+  /** return if the operation is bridge operation */
   public boolean isBridgeOperation() {
     return this.isBridgeOp;
   }
@@ -120,18 +118,14 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     this.putAllDataSize = putAllEntryData.length;
   }
 
-  /**
-   * Add an entry that this putall operation should distribute.
-   */
+  /** Add an entry that this putall operation should distribute. */
   public void addEntry(PutAllEntryData putAllEntry) {
     this.putAllData[this.putAllDataSize] = putAllEntry;
     this.putAllDataSize += 1;
     //cachedEvents.add(ev);
   }
 
-  /**
-   * Add an entry that this putall operation should distribute.
-   */
+  /** Add an entry that this putall operation should distribute. */
   public void addEntry(EntryEventImpl ev) {
     this.putAllData[this.putAllDataSize] = new PutAllEntryData(ev);
     this.putAllDataSize += 1;
@@ -139,9 +133,9 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
   }
 
   /**
-   * Add an entry that this putall operation should distribute.
-   * This method is for a special case: the callback will be called after this
-   * in hasSeenEvent() case, so we should change the status beforehand
+   * Add an entry that this putall operation should distribute. This method is for a special case:
+   * the callback will be called after this in hasSeenEvent() case, so we should change the status
+   * beforehand
    */
   public void addEntry(EntryEventImpl ev, boolean newCallbackInvoked) {
     this.putAllData[this.putAllDataSize] = new PutAllEntryData(ev);
@@ -153,10 +147,8 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
   /**
    * Add an entry for PR bucket's msg.
    *
-   * @param ev
-   *           event to be added
-   * @param bucketId
-   *           message is for this bucket
+   * @param ev event to be added
+   * @param bucketId message is for this bucket
    */
   public void addEntry(EntryEventImpl ev, Integer bucketId) {
     this.putAllData[this.putAllDataSize] = new PutAllEntryData(ev);
@@ -168,8 +160,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
   /**
    * set using fake thread id
    *
-   * @param status 
-   *            whether the entry is using fake event id
+   * @param status whether the entry is using fake event id
    */
   public void setUseFakeEventId(boolean status) {
     for (int i = 0; i < putAllDataSize; i++) {
@@ -178,10 +169,9 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
   }
 
   /**
-   * In the originating cache, this returns an iterator on the list
-   * of events caused by the putAll operation.  This is cached for
-   * listener notification purposes.  The iterator is guaranteed to return
-   * events in the order they are present in putAllData[]
+   * In the originating cache, this returns an iterator on the list of events caused by the putAll
+   * operation. This is cached for listener notification purposes. The iterator is guaranteed to
+   * return events in the order they are present in putAllData[]
    */
   public Iterator eventIterator() {
     return new Iterator() {
@@ -193,8 +183,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
 
       @Unretained
       public Object next() {
-        @Unretained
-        EntryEventImpl ev = getEventForPosition(position);
+        @Unretained EntryEventImpl ev = getEventForPosition(position);
         position++;
         return ev;
       };
@@ -226,7 +215,17 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     }
     LocalRegion region = (LocalRegion) this.event.getRegion();
     @Retained
-    EntryEventImpl ev = EntryEventImpl.create(region, entry.getOp(), entry.getKey(), null/* value */, this.event.getCallbackArgument(), false /* originRemote */, this.event.getDistributedMember(), this.event.isGenerateCallbacks(), entry.getEventID());
+    EntryEventImpl ev =
+        EntryEventImpl.create(
+            region,
+            entry.getOp(),
+            entry.getKey(),
+            null /* value */,
+            this.event.getCallbackArgument(),
+            false /* originRemote */,
+            this.event.getDistributedMember(),
+            this.event.isGenerateCallbacks(),
+            entry.getEventID());
     boolean returnedEv = false;
     try {
       ev.setPossibleDuplicate(entry.isPossibleDuplicate());
@@ -240,7 +239,8 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
 
       entry.event = ev;
       returnedEv = true;
-      if (entry.getValue() == null && ev.getRegion().getAttributes().getDataPolicy() == DataPolicy.NORMAL) {
+      if (entry.getValue() == null
+          && ev.getRegion().getAttributes().getDataPolicy() == DataPolicy.NORMAL) {
         ev.setLocalInvalid(true);
       }
       ev.setNewValue(entry.getValue());
@@ -267,9 +267,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     return getEvent();
   }
 
-  /**
-   * Data that represents a single entry being putall'd.
-   */
+  /** Data that represents a single entry being putall'd. */
   public static final class PutAllEntryData {
 
     final Object key;
@@ -301,9 +299,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
 
     transient boolean inhibitDistribution;
 
-    /**
-     * Constructor to use when preparing to send putall data out
-     */
+    /** Constructor to use when preparing to send putall data out */
     public PutAllEntryData(EntryEventImpl event) {
 
       this.key = event.getKey();
@@ -327,10 +323,10 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
       setInhibitDistribution(event.getInhibitDistribution());
     }
 
-    /**
-     * Constructor to use when receiving a putall from someone else
-     */
-    public PutAllEntryData(DataInput in, EventID baseEventID, int idx, Version version, ByteArrayDataInput bytesIn) throws IOException, ClassNotFoundException {
+    /** Constructor to use when receiving a putall from someone else */
+    public PutAllEntryData(
+        DataInput in, EventID baseEventID, int idx, Version version, ByteArrayDataInput bytesIn)
+        throws IOException, ClassNotFoundException {
       this.key = DataSerializer.readObject(in);
       byte flgs = in.readByte();
       if ((flgs & IS_OBJECT) != 0) {
@@ -367,7 +363,12 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     @Override
     public String toString() {
       StringBuilder sb = new StringBuilder(50);
-      sb.append("(").append(getKey()).append(",").append(getValue()).append(",").append(getOldValue());
+      sb.append("(")
+          .append(getKey())
+          .append(",")
+          .append(getValue())
+          .append(",")
+          .append(getOldValue());
       if (this.bucketId > 0) {
         sb.append(", b").append(this.bucketId);
       }
@@ -389,10 +390,9 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     }
 
     /**
-     * Used to serialize this instances data to <code>out</code>.
-     * If changes are made to this method make sure that it is backwards
-     * compatible by creating toDataPreXX methods. Also make sure that the callers
-     * to this method are backwards compatible by creating toDataPreXX methods for
+     * Used to serialize this instances data to <code>out</code>. If changes are made to this method
+     * make sure that it is backwards compatible by creating toDataPreXX methods. Also make sure
+     * that the callers to this method are backwards compatible by creating toDataPreXX methods for
      * them even if they are not changed. <br>
      * Callers for this method are: <br>
      * {@link PutAllMessage#toData(DataOutput)} <br>
@@ -417,16 +417,15 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
       }
       out.writeByte(this.op.ordinal);
       byte bits = this.flags;
-      if (this.filterRouting != null)
-        bits |= FILTER_ROUTING;
+      if (this.filterRouting != null) bits |= FILTER_ROUTING;
       if (this.versionTag != null) {
         bits |= VERSION_TAG;
         if (this.versionTag instanceof DiskVersionTag) {
           bits |= PERSISTENT_TAG;
         }
       }
-      //TODO: Yogesh, this should be conditional, 
-      // make sure that we sent it on wire only 
+      //TODO: Yogesh, this should be conditional,
+      // make sure that we sent it on wire only
       // when parallel wan is enabled
       bits |= HAS_TAILKEY;
       out.writeByte(bits);
@@ -438,32 +437,26 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
         InternalDataSerializer.invokeToData(this.versionTag, out);
       }
       if (isUsedFakeEventId()) {
-        // fake event id should be serialized 
+        // fake event id should be serialized
         InternalDataSerializer.invokeToData(this.eventID, out);
       }
-      //TODO: Yogesh, this should be conditional, 
-      // make sure that we sent it on wire only 
+      //TODO: Yogesh, this should be conditional,
+      // make sure that we sent it on wire only
       // when parallel wan is enabled
       DataSerializer.writeLong(this.tailKey, out);
     }
 
-    /**
-     * Returns the key
-     */
+    /** Returns the key */
     public Object getKey() {
       return this.key;
     }
 
-    /**
-     * Returns the value
-     */
+    /** Returns the value */
     public Object getValue() {
       return this.value;
     }
 
-    /**
-     * Returns the old value
-     */
+    /** Returns the old value */
     public Object getOldValue() {
       return this.oldValue;
     }
@@ -476,9 +469,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
       this.tailKey = key;
     }
 
-    /**
-     * Returns the operation
-     */
+    /** Returns the operation */
     public Operation getOp() {
       return this.op;
     }
@@ -490,8 +481,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     /**
      * change event id for the entry
      *
-     * @param eventId 
-     *               new event id
+     * @param eventId new event id
      */
     public void setEventId(EventID eventId) {
       this.eventID = eventId;
@@ -500,8 +490,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     /**
      * change bucket id for the entry
      *
-     * @param bucketId 
-     *                new bucket id
+     * @param bucketId new bucket id
      */
     public void setBucketId(Integer bucketId) {
       this.bucketId = bucketId;
@@ -517,13 +506,11 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     }
 
     /**
-     * change event id into fake event id
-     * The algorithm is to change the threadid into 
-     * bucketid*MAX_THREAD_PER_CLIENT+oldthreadid. So from the log, we can
-     * derive the original thread id.
+     * change event id into fake event id The algorithm is to change the threadid into
+     * bucketid*MAX_THREAD_PER_CLIENT+oldthreadid. So from the log, we can derive the original
+     * thread id.
      *
-     * @return wether current event id is fake or not 
-     *                new bucket id
+     * @return wether current event id is fake or not new bucket id
      */
     public boolean setFakeEventID() {
       if (bucketId.intValue() < 0) {
@@ -533,7 +520,9 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
       if (!isUsedFakeEventId()) {
         // assign a fake big thread id. bucket id starts from 0. In order to distinguish
         // with other read thread, let bucket id starts from 1 in fake thread id
-        long threadId = ThreadIdentifier.createFakeThreadIDForBulkOp(bucketId.intValue(), eventID.getThreadID());
+        long threadId =
+            ThreadIdentifier.createFakeThreadIDForBulkOp(
+                bucketId.intValue(), eventID.getThreadID());
         this.eventID = new EventID(eventID.getMembershipID(), threadId, eventID.getSequenceID());
         this.setUsedFakeEventId(true);
       }
@@ -593,7 +582,8 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     }
   }
 
-  public static final class EntryVersionsList extends ArrayList<VersionTag> implements DataSerializableFixedID, Externalizable {
+  public static final class EntryVersionsList extends ArrayList<VersionTag>
+      implements DataSerializableFixedID, Externalizable {
 
     public EntryVersionsList() {
       // Do nothing
@@ -603,7 +593,8 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
       super(size);
     }
 
-    public static EntryVersionsList create(DataInput in) throws IOException, ClassNotFoundException {
+    public static EntryVersionsList create(DataInput in)
+        throws IOException, ClassNotFoundException {
       EntryVersionsList newList = new EntryVersionsList();
       InternalDataSerializer.invokeFromData(newList, in);
       return newList;
@@ -632,10 +623,11 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     }
 
     /**
-     * replace null membership IDs in version tags with the given member ID.
-     * VersionTags received from a server may have null IDs because they were
-     * operations  performed by that server.  We transmit them as nulls to cut
-     * costs, but have to do the swap on the receiving end (in the client)
+     * replace null membership IDs in version tags with the given member ID. VersionTags received
+     * from a server may have null IDs because they were operations performed by that server. We
+     * transmit them as nulls to cut costs, but have to do the swap on the receiving end (in the
+     * client)
+     *
      * @param sender
      */
     public void replaceNullIDs(DistributedMember sender) {
@@ -675,7 +667,11 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
       }
 
       if (logger.isTraceEnabled(LogMarker.GII_VERSIONED_ENTRY)) {
-        logger.trace(LogMarker.GII_VERSIONED_ENTRY, "serializing {} with flags 0x{}", this, Integer.toHexString(flags));
+        logger.trace(
+            LogMarker.GII_VERSIONED_ENTRY,
+            "serializing {} with flags 0x{}",
+            this,
+            Integer.toHexString(flags));
       }
 
       out.writeByte(flags);
@@ -718,7 +714,9 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
       boolean persistent = (flags & 0x20) == 0x20;
 
       if (logger.isTraceEnabled(LogMarker.GII_VERSIONED_ENTRY)) {
-        logger.debug("deserializing a InitialImageVersionedObjectList with flags 0x{}", Integer.toHexString(flags));
+        logger.debug(
+            "deserializing a InitialImageVersionedObjectList with flags 0x{}",
+            Integer.toHexString(flags));
       }
 
       if (hasTags) {
@@ -730,23 +728,23 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
         for (int i = 0; i < size; i++) {
           byte entryType = in.readByte();
           switch (entryType) {
-          case FLAG_NULL_TAG:
-            add(null);
-            break;
-          case FLAG_FULL_TAG:
-            add(VersionTag.create(persistent, in));
-            break;
-          case FLAG_TAG_WITH_NEW_ID:
-            VersionTag tag = VersionTag.create(persistent, in);
-            ids.add(tag.getMemberID());
-            add(tag);
-            break;
-          case FLAG_TAG_WITH_NUMBER_ID:
-            tag = VersionTag.create(persistent, in);
-            int idNumber = (int) InternalDataSerializer.readUnsignedVL(in);
-            tag.setMemberID(ids.get(idNumber));
-            add(tag);
-            break;
+            case FLAG_NULL_TAG:
+              add(null);
+              break;
+            case FLAG_FULL_TAG:
+              add(VersionTag.create(persistent, in));
+              break;
+            case FLAG_TAG_WITH_NEW_ID:
+              VersionTag tag = VersionTag.create(persistent, in);
+              ids.add(tag.getMemberID());
+              add(tag);
+              break;
+            case FLAG_TAG_WITH_NUMBER_ID:
+              tag = VersionTag.create(persistent, in);
+              int idNumber = (int) InternalDataSerializer.readUnsignedVL(in);
+              tag.setMemberID(ids.get(idNumber));
+              add(tag);
+              break;
           }
         }
       }
@@ -784,8 +782,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     }
     FilterRoutingInfo consolidated = new FilterRoutingInfo();
     for (int i = 0; i < this.putAllData.length; i++) {
-      @Unretained
-      EntryEventImpl ev = getEventForPosition(i);
+      @Unretained EntryEventImpl ev = getEventForPosition(i);
       if (ev != null) {
         FilterRoutingInfo eventRouting = advisor.adviseFilterRouting(ev, cacheOpRecipients);
         if (eventRouting != null) {
@@ -827,14 +824,20 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
 
   /**
    * Create PutAllPRMessage for notify only (to adjunct nodes)
-   * 
-   * @param bucketId
-   *               create message to send to this bucket
+   *
+   * @param bucketId create message to send to this bucket
    * @return PutAllPRMessage
    */
   public PutAllPRMessage createPRMessagesNotifyOnly(int bucketId) {
     final EntryEventImpl event = getBaseEvent();
-    PutAllPRMessage prMsg = new PutAllPRMessage(bucketId, putAllDataSize, true, event.isPossibleDuplicate(), !event.isGenerateCallbacks(), event.getCallbackArgument());
+    PutAllPRMessage prMsg =
+        new PutAllPRMessage(
+            bucketId,
+            putAllDataSize,
+            true,
+            event.isPossibleDuplicate(),
+            !event.isGenerateCallbacks(),
+            event.getCallbackArgument());
     if (event.getContext() != null) {
       prMsg.setBridgeContext(event.getContext());
     }
@@ -849,7 +852,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
 
   /**
    * Create PutAllPRMessages for primary buckets out of dpao
-   * 
+   *
    * @return a HashMap contain PutAllPRMessages, key is bucket id
    */
   public HashMap createPRMessages() {
@@ -861,8 +864,16 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
       Integer bucketId = putAllData[i].bucketId;
       PutAllPRMessage prMsg = (PutAllPRMessage) prMsgMap.get(bucketId);
       if (prMsg == null) {
-        prMsg = new PutAllPRMessage(bucketId.intValue(), putAllDataSize, false, event.isPossibleDuplicate(), !event.isGenerateCallbacks(), event.getCallbackArgument());
-        prMsg.setTransactionDistributed(event.getRegion().getCache().getTxManager().isDistributed());
+        prMsg =
+            new PutAllPRMessage(
+                bucketId.intValue(),
+                putAllDataSize,
+                false,
+                event.isPossibleDuplicate(),
+                !event.isGenerateCallbacks(),
+                event.getCallbackArgument());
+        prMsg.setTransactionDistributed(
+            event.getRegion().getCache().getTxManager().isDistributed());
 
         // set dpao's context(original sender) into each PutAllMsg
         // dpao's event's context could be null if it's P2P putAll in PR
@@ -873,7 +884,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
 
       // Modify the event id, assign new thread id and new sequence id
       // We have to set fake event id here, because we cannot derive old event id from baseId+idx as we
-      // did in DR's PutAllMessage. 
+      // did in DR's PutAllMessage.
       putAllData[i].setFakeEventID();
       // we only save the reference in prMsg. No duplicate copy
       prMsg.addEntry(putAllData[i]);
@@ -893,10 +904,14 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     // can generate a version for the operation
 
     RegionAttributes attr = this.event.getRegion().getAttributes();
-    if (attr.getConcurrencyChecksEnabled() && !attr.getDataPolicy().withReplication() && attr.getScope() != Scope.GLOBAL) {
+    if (attr.getConcurrencyChecksEnabled()
+        && !attr.getDataPolicy().withReplication()
+        && attr.getScope() != Scope.GLOBAL) {
       if (attr.getDataPolicy() == DataPolicy.EMPTY) {
         // all entries are without version tags
-        boolean success = RemotePutAllMessage.distribute((EntryEventImpl) this.event, this.putAllData, this.putAllDataSize);
+        boolean success =
+            RemotePutAllMessage.distribute(
+                (EntryEventImpl) this.event, this.putAllData, this.putAllDataSize);
         if (success) {
           m.callbackArg = this.event.getCallbackArgument();
           m.putAllData = new PutAllEntryData[0];
@@ -917,12 +932,15 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
           logger.trace("Found these versionless entries: {}", Arrays.toString(versionless));
         }
         if (versionless.length > 0) {
-          boolean success = RemotePutAllMessage.distribute((EntryEventImpl) this.event, versionless, versionless.length);
+          boolean success =
+              RemotePutAllMessage.distribute(
+                  (EntryEventImpl) this.event, versionless, versionless.length);
           if (success) {
             versionless = null;
             PutAllEntryData[] versioned = selectVersionedEntries();
             if (logger.isTraceEnabled()) {
-              logger.trace("Found these remaining versioned entries: {}", Arrays.toString(versioned));
+              logger.trace(
+                  "Found these remaining versioned entries: {}", Arrays.toString(versioned));
             }
             m.callbackArg = this.event.getCallbackArgument();
             m.putAllData = versioned;
@@ -1004,9 +1022,9 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
   }
 
   /**
-   * version tags are gathered from local operations and remote operation
-   * responses.  This method gathers all of them and stores them in the
-   * given list.
+   * version tags are gathered from local operations and remote operation responses. This method
+   * gathers all of them and stores them in the given list.
+   *
    * @param list
    */
   protected void fillVersionedObjectList(VersionedObjectList list) {
@@ -1038,17 +1056,24 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     }
 
     /**
-     * Note this this is a "dummy" event since this message contains a list of
-     * entries each one of which has its own event. The key thing needed in this
-     * event is the region. This is the event that gets passed to
-     * basicOperateOnRegion
+     * Note this this is a "dummy" event since this message contains a list of entries each one of
+     * which has its own event. The key thing needed in this event is the region. This is the event
+     * that gets passed to basicOperateOnRegion
      */
     @Override
     @Retained
     protected InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException {
       // Gester: We have to specify eventId for the message of MAP
       @Retained
-      EntryEventImpl event = EntryEventImpl.create(rgn, Operation.PUTALL_UPDATE /* op */, null /* key */, null/* value */, this.callbackArg, true /* originRemote */, getSender());
+      EntryEventImpl event =
+          EntryEventImpl.create(
+              rgn,
+              Operation.PUTALL_UPDATE /* op */,
+              null /* key */,
+              null /* value */,
+              this.callbackArg,
+              true /* originRemote */,
+              getSender());
       if (this.context != null) {
         event.context = this.context;
       }
@@ -1071,17 +1096,25 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     }
 
     /**
-     * Does the "put" of one entry for a "putall" operation. Note it calls back
-     * to AbstractUpdateOperation.UpdateMessage#basicOperationOnRegion
-     * 
-     * @param entry
-     *          the entry being put
-     * @param rgn
-     *          the region the entry is put in
+     * Does the "put" of one entry for a "putall" operation. Note it calls back to
+     * AbstractUpdateOperation.UpdateMessage#basicOperationOnRegion
+     *
+     * @param entry the entry being put
+     * @param rgn the region the entry is put in
      */
     public void doEntryPut(PutAllEntryData entry, DistributedRegion rgn) {
       @Released
-      EntryEventImpl ev = PutAllMessage.createEntryEvent(entry, getSender(), this.context, rgn, this.possibleDuplicate, this.needsRouting, this.callbackArg, true, skipCallbacks);
+      EntryEventImpl ev =
+          PutAllMessage.createEntryEvent(
+              entry,
+              getSender(),
+              this.context,
+              rgn,
+              this.possibleDuplicate,
+              this.needsRouting,
+              this.callbackArg,
+              true,
+              skipCallbacks);
       // we don't need to set old value here, because the msg is from remote. local old value will get from next step
       try {
         super.basicOperateOnRegion(ev, rgn);
@@ -1097,6 +1130,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
 
     /**
      * create an event for a PutAllEntryData element
+     *
      * @param entry
      * @param sender
      * @param context
@@ -1107,11 +1141,30 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
      * @return the event to be used in applying the element
      */
     @Retained
-    public static EntryEventImpl createEntryEvent(PutAllEntryData entry, InternalDistributedMember sender, ClientProxyMembershipID context, DistributedRegion rgn, boolean possibleDuplicate, boolean needsRouting, Object callbackArg, boolean originRemote, boolean skipCallbacks) {
+    public static EntryEventImpl createEntryEvent(
+        PutAllEntryData entry,
+        InternalDistributedMember sender,
+        ClientProxyMembershipID context,
+        DistributedRegion rgn,
+        boolean possibleDuplicate,
+        boolean needsRouting,
+        Object callbackArg,
+        boolean originRemote,
+        boolean skipCallbacks) {
       final Object key = entry.getKey();
       EventID evId = entry.getEventID();
       @Retained
-      EntryEventImpl ev = EntryEventImpl.create(rgn, entry.getOp(), key, null/* value */, callbackArg, originRemote, sender, !skipCallbacks, evId);
+      EntryEventImpl ev =
+          EntryEventImpl.create(
+              rgn,
+              entry.getOp(),
+              key,
+              null /* value */,
+              callbackArg,
+              originRemote,
+              sender,
+              !skipCallbacks,
+              evId);
       boolean returnedEv = false;
       try {
         if (context != null) {
@@ -1134,9 +1187,7 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
           InternalDistributedMember id = rgn.getMyId();
           ev.setLocalFilterInfo(entry.filterRouting.getFilterInfo(id));
         }
-        /**
-         * Setting tailKey for the secondary bucket here. Tail key was update by the primary.
-         */
+        /** Setting tailKey for the secondary bucket here. Tail key was update by the primary. */
         ev.setTailKey(entry.getTailKey());
         returnedEv = true;
         return ev;
@@ -1155,18 +1206,24 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
         }
       }
 
-      rgn.syncBulkOp(new Runnable() {
-        public void run() {
-          final boolean isDebugEnabled = logger.isDebugEnabled();
-          for (int i = 0; i < putAllDataSize; ++i) {
-            if (isDebugEnabled) {
-              logger.debug("putAll processing {} with {} sender={}", putAllData[i], putAllData[i].versionTag, sender);
+      rgn.syncBulkOp(
+          new Runnable() {
+            public void run() {
+              final boolean isDebugEnabled = logger.isDebugEnabled();
+              for (int i = 0; i < putAllDataSize; ++i) {
+                if (isDebugEnabled) {
+                  logger.debug(
+                      "putAll processing {} with {} sender={}",
+                      putAllData[i],
+                      putAllData[i].versionTag,
+                      sender);
+                }
+                putAllData[i].setSender(sender);
+                doEntryPut(putAllData[i], rgn);
+              }
             }
-            putAllData[i].setSender(sender);
-            doEntryPut(putAllData[i], rgn);
-          }
-        }
-      }, ev.getEventId());
+          },
+          ev.getEventId());
     }
 
     public int getDSFID() {
@@ -1235,10 +1292,8 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
     @Override
     protected short computeCompressedShort(short s) {
       s = super.computeCompressedShort(s);
-      if (this.context != null)
-        s |= HAS_BRIDGE_CONTEXT;
-      if (this.skipCallbacks)
-        s |= SKIP_CALLBACKS;
+      if (this.context != null) s |= HAS_BRIDGE_CONTEXT;
+      if (this.skipCallbacks) s |= SKIP_CALLBACKS;
       return s;
     }
 
@@ -1272,7 +1327,14 @@ public class DistributedPutAllOperation extends AbstractUpdateOperation {
           valueBytes = (byte[]) v;
         }
 
-        ops[i] = new QueuedOperation(entry.getOp(), entry.getKey(), valueBytes, valueObj, deserializationPolicy, this.callbackArg);
+        ops[i] =
+            new QueuedOperation(
+                entry.getOp(),
+                entry.getKey(),
+                valueBytes,
+                valueObj,
+                deserializationPolicy,
+                this.callbackArg);
       }
       return Arrays.asList(ops);
     }

@@ -32,18 +32,32 @@ import org.apache.geode.cache.RegionShortcut;
 
 public class RegionGenerator {
   public enum RegionType {
-    REPLICATE, REPLICATE_PERSISTENT, REPLICATE_PERSISTENT_OVERFLOW, PARTITION, PARTITION_PERSISTENT, PARTITION_PERSISTENT_OVERFLOW;
+    REPLICATE,
+    REPLICATE_PERSISTENT,
+    REPLICATE_PERSISTENT_OVERFLOW,
+    PARTITION,
+    PARTITION_PERSISTENT,
+    PARTITION_PERSISTENT_OVERFLOW;
 
     public static RegionType[] persistentValues() {
-      return new RegionType[] { REPLICATE_PERSISTENT, REPLICATE_PERSISTENT_OVERFLOW, PARTITION_PERSISTENT, PARTITION_PERSISTENT_OVERFLOW };
+      return new RegionType[] {
+        REPLICATE_PERSISTENT,
+        REPLICATE_PERSISTENT_OVERFLOW,
+        PARTITION_PERSISTENT,
+        PARTITION_PERSISTENT_OVERFLOW
+      };
     }
   }
 
   public enum SerializationType {
-    SERIALIZABLE, DATA_SERIALIZABLE, DATA_SERIALIZER, PDX, PDX_SERIALIZER;
+    SERIALIZABLE,
+    DATA_SERIALIZABLE,
+    DATA_SERIALIZER,
+    PDX,
+    PDX_SERIALIZER;
 
     public static SerializationType[] offlineValues() {
-      return new SerializationType[] { SERIALIZABLE, DATA_SERIALIZABLE, DATA_SERIALIZER };
+      return new SerializationType[] {SERIALIZABLE, DATA_SERIALIZABLE, DATA_SERIALIZER};
     }
   }
 
@@ -54,43 +68,55 @@ public class RegionGenerator {
   public <K, V> Region<K, V> createRegion(Cache c, String diskStore, RegionType type, String name) {
     Region<Integer, MyObject> r = c.getRegion(name);
     switch (type) {
-    case REPLICATE:
-      return c.<K, V> createRegionFactory(RegionShortcut.REPLICATE).create(name);
+      case REPLICATE:
+        return c.<K, V>createRegionFactory(RegionShortcut.REPLICATE).create(name);
 
-    case REPLICATE_PERSISTENT:
-      return c.<K, V> createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT).setDiskStoreName(diskStore).create(name);
+      case REPLICATE_PERSISTENT:
+        return c.<K, V>createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT)
+            .setDiskStoreName(diskStore)
+            .create(name);
 
-    case REPLICATE_PERSISTENT_OVERFLOW:
-      return c.<K, V> createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT_OVERFLOW).setEvictionAttributes(EvictionAttributes.createLIFOEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK)).setDiskStoreName(diskStore).create(name);
+      case REPLICATE_PERSISTENT_OVERFLOW:
+        return c.<K, V>createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT_OVERFLOW)
+            .setEvictionAttributes(
+                EvictionAttributes.createLIFOEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK))
+            .setDiskStoreName(diskStore)
+            .create(name);
 
-    case PARTITION:
-      return c.<K, V> createRegionFactory(RegionShortcut.PARTITION).create(name);
+      case PARTITION:
+        return c.<K, V>createRegionFactory(RegionShortcut.PARTITION).create(name);
 
-    case PARTITION_PERSISTENT:
-      return c.<K, V> createRegionFactory(RegionShortcut.PARTITION_PERSISTENT).setDiskStoreName(diskStore).create(name);
+      case PARTITION_PERSISTENT:
+        return c.<K, V>createRegionFactory(RegionShortcut.PARTITION_PERSISTENT)
+            .setDiskStoreName(diskStore)
+            .create(name);
 
-    case PARTITION_PERSISTENT_OVERFLOW:
-      return c.<K, V> createRegionFactory(RegionShortcut.PARTITION_PERSISTENT_OVERFLOW).setEvictionAttributes(EvictionAttributes.createLIFOEntryAttributes(5, EvictionAction.OVERFLOW_TO_DISK)).setDiskStoreName(diskStore).create(name);
+      case PARTITION_PERSISTENT_OVERFLOW:
+        return c.<K, V>createRegionFactory(RegionShortcut.PARTITION_PERSISTENT_OVERFLOW)
+            .setEvictionAttributes(
+                EvictionAttributes.createLIFOEntryAttributes(5, EvictionAction.OVERFLOW_TO_DISK))
+            .setDiskStoreName(diskStore)
+            .create(name);
     }
     throw new IllegalArgumentException();
   }
 
   public MyObject createData(SerializationType type, int f1, String f2) {
     switch (type) {
-    case SERIALIZABLE:
-      return new MyObject(f1, f2);
+      case SERIALIZABLE:
+        return new MyObject(f1, f2);
 
-    case DATA_SERIALIZABLE:
-      return new MyObjectDataSerializable(f1, f2);
+      case DATA_SERIALIZABLE:
+        return new MyObjectDataSerializable(f1, f2);
 
-    case DATA_SERIALIZER:
-      return new MyObjectDataSerializable2(f1, f2);
+      case DATA_SERIALIZER:
+        return new MyObjectDataSerializable2(f1, f2);
 
-    case PDX:
-      return new MyObjectPdx(f1, f2, MyEnumPdx.const1);
+      case PDX:
+        return new MyObjectPdx(f1, f2, MyEnumPdx.const1);
 
-    case PDX_SERIALIZER:
-      return new MyObjectPdx2(f1, f2);
+      case PDX_SERIALIZER:
+        return new MyObjectPdx2(f1, f2);
     }
     throw new IllegalArgumentException();
   }

@@ -52,11 +52,10 @@ import org.apache.geode.internal.logging.InternalLogWriter;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * Common support for MBeans and {@link ManagedResource}s.  Static loading of
- * this class creates the MBeanServer and Modeler Registry.
+ * Common support for MBeans and {@link ManagedResource}s. Static loading of this class creates the
+ * MBeanServer and Modeler Registry.
  *
- * @since GemFire     3.5
- *
+ * @since GemFire 3.5
  */
 public class MBeanUtil {
 
@@ -83,17 +82,17 @@ public class MBeanUtil {
   /** Actual TimerMBean responsible for refresh notifications */
   private static TimerMBean refreshTimer;
 
-  /** 
+  /**
    * Map of ObjectNames to current timerNotificationIds
-   * <p>
-   * map: key=ObjectName, 
-   *      value=map: key=RefreshNotificationType,
-   *                 value=timerNotificationId
+   *
+   * <p>map: key=ObjectName, value=map: key=RefreshNotificationType, value=timerNotificationId
    */
-  private static Map<NotificationListener, Map<RefreshNotificationType, Integer>> refreshClients = new HashMap<NotificationListener, Map<RefreshNotificationType, Integer>>();
+  private static Map<NotificationListener, Map<RefreshNotificationType, Integer>> refreshClients =
+      new HashMap<NotificationListener, Map<RefreshNotificationType, Integer>>();
 
   /** key=ObjectName, value=ManagedResource */
-  private final static Map<ObjectName, ManagedResource> managedResources = new HashMap<ObjectName, ManagedResource>();
+  private static final Map<ObjectName, ManagedResource> managedResources =
+      new HashMap<ObjectName, ManagedResource>();
 
   static {
     try {
@@ -104,9 +103,8 @@ public class MBeanUtil {
   }
 
   /**
-   * Initializes Mbean Server, Registry, Refresh Timer & registers Server 
-   * Notification Listener.
-   * 
+   * Initializes Mbean Server, Registry, Refresh Timer & registers Server Notification Listener.
+   *
    * @return reference to the mbeanServer
    */
   static MBeanServer start() {
@@ -122,24 +120,21 @@ public class MBeanUtil {
     return mbeanServer;
   }
 
-  /**
-   * Stops Registry, Refresh Timer. Releases Mbean Server after.
-   */
+  /** Stops Registry, Refresh Timer. Releases Mbean Server after. */
   static void stop() {
     if (isStarted) {
       stopRefreshTimer();
 
       registry.stop();
       registry = null;
-      releaseMBeanServer();//makes mbeanServer null
+      releaseMBeanServer(); //makes mbeanServer null
       isStarted = false;
     }
   }
 
   /**
-   * Create and configure (if necessary) and return the <code>MBeanServer</code> 
-   * with which we will be registering our <code>ModelMBean</code> 
-   * implementations.
+   * Create and configure (if necessary) and return the <code>MBeanServer</code> with which we will
+   * be registering our <code>ModelMBean</code> implementations.
    *
    * @see javax.management.MBeanServer
    */
@@ -151,8 +146,8 @@ public class MBeanUtil {
   }
 
   /**
-   * Create and configure (if necessary) and return the Commons-Modeler registry 
-   * of managed object descriptions.
+   * Create and configure (if necessary) and return the Commons-Modeler registry of managed object
+   * descriptions.
    *
    * @see org.apache.commons.modeler.Registry
    */
@@ -161,7 +156,8 @@ public class MBeanUtil {
       try {
         registry = Registry.getRegistry(null, null);
         if (mbeanServer == null) {
-          throw new IllegalStateException(LocalizedStrings.MBeanUtil_MBEAN_SERVER_NOT_INITIALIZED_YET.toLocalizedString());
+          throw new IllegalStateException(
+              LocalizedStrings.MBeanUtil_MBEAN_SERVER_NOT_INITIALIZED_YET.toLocalizedString());
         }
         registry.setMBeanServer(mbeanServer);
 
@@ -169,30 +165,33 @@ public class MBeanUtil {
         //System.out.println(LocalizedStrings.MBeanUtil_LOADING_RESOURCE_0.toLocalizedString(mbeansResource));
 
         URL url = ClassPathLoader.getLatest().getResource(MBeanUtil.class, mbeansResource);
-        raiseOnFailure(url != null, LocalizedStrings.MBeanUtil_FAILED_TO_FIND_0.toLocalizedString(new Object[] { mbeansResource }));
+        raiseOnFailure(
+            url != null,
+            LocalizedStrings.MBeanUtil_FAILED_TO_FIND_0.toLocalizedString(
+                new Object[] {mbeansResource}));
         registry.loadMetadata(url);
 
         // simple test to make sure the xml was actually loaded and is valid...
         String[] test = registry.findManagedBeans();
-        raiseOnFailure(test != null && test.length > 0, LocalizedStrings.MBeanUtil_FAILED_TO_LOAD_0.toLocalizedString(new Object[] { mbeansResource }));
+        raiseOnFailure(
+            test != null && test.length > 0,
+            LocalizedStrings.MBeanUtil_FAILED_TO_LOAD_0.toLocalizedString(
+                new Object[] {mbeansResource}));
       } catch (Exception e) {
         logStackTrace(Level.WARN, e);
-        throw new RuntimeAdminException(LocalizedStrings.MBeanUtil_FAILED_TO_GET_MBEAN_REGISTRY.toLocalizedString(), e);
+        throw new RuntimeAdminException(
+            LocalizedStrings.MBeanUtil_FAILED_TO_GET_MBEAN_REGISTRY.toLocalizedString(), e);
       }
     }
     return registry;
   }
 
   /**
-   * Creates and registers a <code>ModelMBean</code> for the specified
-   * <code>ManagedResource</code>. State changing callbacks into the 
-   * <code>ManagedResource</code> will also be made.
+   * Creates and registers a <code>ModelMBean</code> for the specified <code>ManagedResource</code>.
+   * State changing callbacks into the <code>ManagedResource</code> will also be made.
    *
-   * @param resource
-   *        the ManagedResource to create a managing MBean for
-   *
+   * @param resource the ManagedResource to create a managing MBean for
    * @return The object name of the newly-created MBean
-   *
    * @see ManagedResource#setModelMBean
    */
   static ObjectName createMBean(ManagedResource resource) {
@@ -200,12 +199,11 @@ public class MBeanUtil {
   }
 
   /**
-   * Creates and registers a <code>ModelMBean</code> for the specified
-   * <code>ManagedResource</code>. State changing callbacks into the 
-   * <code>ManagedResource</code> will also be made.
+   * Creates and registers a <code>ModelMBean</code> for the specified <code>ManagedResource</code>.
+   * State changing callbacks into the <code>ManagedResource</code> will also be made.
    *
    * @param resource the ManagedResource to create a managing MBean for
-   * @param managed  the ManagedBean definition to create the MBean with
+   * @param managed the ManagedBean definition to create the MBean with
    * @see ManagedResource#setModelMBean
    */
   static ObjectName createMBean(ManagedResource resource, ManagedBean managed) {
@@ -219,7 +217,9 @@ public class MBeanUtil {
       try {
         objName = ObjectName.getInstance(resource.getMBeanName());
       } catch (MalformedObjectNameException e) {
-        throw new MalformedObjectNameException(LocalizedStrings.MBeanUtil_0_IN_1.toLocalizedString(new Object[] { e.getMessage(), resource.getMBeanName() }));
+        throw new MalformedObjectNameException(
+            LocalizedStrings.MBeanUtil_0_IN_1.toLocalizedString(
+                new Object[] {e.getMessage(), resource.getMBeanName()}));
       }
 
       synchronized (MBeanUtil.class) {
@@ -235,22 +235,21 @@ public class MBeanUtil {
       }
       return objName;
     } catch (java.lang.Exception e) {
-      throw new RuntimeAdminException(LocalizedStrings.MBeanUtil_FAILED_TO_CREATE_MBEAN_FOR_0.toLocalizedString(new Object[] { resource.getMBeanName() }), e);
+      throw new RuntimeAdminException(
+          LocalizedStrings.MBeanUtil_FAILED_TO_CREATE_MBEAN_FOR_0.toLocalizedString(
+              new Object[] {resource.getMBeanName()}),
+          e);
     }
   }
 
   /**
-   * Ensures that an MBean is registered for the specified 
-   * <code>ManagedResource</code>.  If an MBean cannot be found in the
-   * <code>MBeanServer</code>, then this creates and registers a 
-   * <code>ModelMBean</code>. State changing callbacks into the 
-   * <code>ManagedResource</code> will also be made.
+   * Ensures that an MBean is registered for the specified <code>ManagedResource</code>. If an MBean
+   * cannot be found in the <code>MBeanServer</code>, then this creates and registers a <code>
+   * ModelMBean</code>. State changing callbacks into the <code>ManagedResource</code> will also be
+   * made.
    *
-   * @param resource
-   *        the ManagedResource to create a managing MBean for
-   *
+   * @param resource the ManagedResource to create a managing MBean for
    * @return The object name of the MBean that manages the ManagedResource
-   *
    * @see ManagedResource#setModelMBean
    */
   static ObjectName ensureMBeanIsRegistered(ManagedResource resource) {
@@ -261,7 +260,10 @@ public class MBeanUtil {
           return createMBean(resource);
         }
       }
-      raiseOnFailure(mbeanServer.isRegistered(objName), LocalizedStrings.MBeanUtil_COULDNT_FIND_MBEAN_REGISTERED_WITH_OBJECTNAME_0.toLocalizedString(new Object[] { objName.toString() }));
+      raiseOnFailure(
+          mbeanServer.isRegistered(objName),
+          LocalizedStrings.MBeanUtil_COULDNT_FIND_MBEAN_REGISTERED_WITH_OBJECTNAME_0
+              .toLocalizedString(new Object[] {objName.toString()}));
       return objName;
     } catch (java.lang.Exception e) {
       throw new RuntimeAdminException(e);
@@ -269,8 +271,8 @@ public class MBeanUtil {
   }
 
   /**
-   * Retrieves the <code>ManagedBean</code> configuration from the Registry for 
-   * the specified <code>ManagedResource</code>
+   * Retrieves the <code>ManagedBean</code> configuration from the Registry for the specified <code>
+   * ManagedResource</code>
    *
    * @param resource the ManagedResource to find the configuration for
    */
@@ -280,11 +282,13 @@ public class MBeanUtil {
     if (registry != null) {
       managed = registry.findManagedBean(resource.getManagedResourceType().getClassTypeName());
     } else {
-      throw new IllegalArgumentException(LocalizedStrings.MBeanUtil_MANAGEDBEAN_IS_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.MBeanUtil_MANAGEDBEAN_IS_NULL.toLocalizedString());
     }
 
     if (managed == null) {
-      throw new IllegalArgumentException(LocalizedStrings.MBeanUtil_MANAGEDBEAN_IS_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.MBeanUtil_MANAGEDBEAN_IS_NULL.toLocalizedString());
     }
 
     // customize the defn...
@@ -294,24 +298,32 @@ public class MBeanUtil {
   }
 
   /**
-   * Registers a refresh notification for the specified client MBean.  
-   * Specifying zero for the refreshInterval disables notification for the 
-   * refresh client. Note: this does not currently support remote connections.
+   * Registers a refresh notification for the specified client MBean. Specifying zero for the
+   * refreshInterval disables notification for the refresh client. Note: this does not currently
+   * support remote connections.
    *
-   * @param client          client to listen for refresh notifications
-   * @param userData        userData to register with the Notification 
-   * @param type            refresh notification type the client will use
+   * @param client client to listen for refresh notifications
+   * @param userData userData to register with the Notification
+   * @param type refresh notification type the client will use
    * @param refreshInterval the seconds between refreshes
    */
-  static void registerRefreshNotification(NotificationListener client, Object userData, RefreshNotificationType type, int refreshInterval) {
+  static void registerRefreshNotification(
+      NotificationListener client,
+      Object userData,
+      RefreshNotificationType type,
+      int refreshInterval) {
     if (client == null) {
-      throw new IllegalArgumentException(LocalizedStrings.MBeanUtil_NOTIFICATIONLISTENER_IS_REQUIRED.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.MBeanUtil_NOTIFICATIONLISTENER_IS_REQUIRED.toLocalizedString());
     }
     if (type == null) {
-      throw new IllegalArgumentException(LocalizedStrings.MBeanUtil_REFRESHNOTIFICATIONTYPE_IS_REQUIRED.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.MBeanUtil_REFRESHNOTIFICATIONTYPE_IS_REQUIRED.toLocalizedString());
     }
     if (refreshTimerObjectName == null || refreshTimer == null) {
-      throw new IllegalStateException(LocalizedStrings.MBeanUtil_REFRESHTIMER_HAS_NOT_BEEN_PROPERLY_INITIALIZED.toLocalizedString());
+      throw new IllegalStateException(
+          LocalizedStrings.MBeanUtil_REFRESHTIMER_HAS_NOT_BEEN_PROPERLY_INITIALIZED
+              .toLocalizedString());
     }
 
     try {
@@ -335,14 +347,19 @@ public class MBeanUtil {
         validateRefreshTimer();
         try {
           // register client as a listener with MBeanServer...
-          mbeanServer.addNotificationListener(refreshTimerObjectName, // timer to listen to
+          mbeanServer.addNotificationListener(
+              refreshTimerObjectName, // timer to listen to
               client, // the NotificationListener object
               null, // optional NotificationFilter TODO: convert to using
               new Object() // not used but null throws IllegalArgumentException
-          );
+              );
         } catch (InstanceNotFoundException e) {
           // should not happen since we already checked refreshTimerObjectName
-          logStackTrace(Level.WARN, e, LocalizedStrings.MBeanUtil_COULD_NOT_FIND_REGISTERED_REFRESHTIMER_INSTANCE.toLocalizedString());
+          logStackTrace(
+              Level.WARN,
+              e,
+              LocalizedStrings.MBeanUtil_COULD_NOT_FIND_REGISTERED_REFRESHTIMER_INSTANCE
+                  .toLocalizedString());
         }
       }
 
@@ -364,11 +381,13 @@ public class MBeanUtil {
 
       if (refreshInterval > 0) {
         // add notification to the refresh timer...
-        timerNotificationId = refreshTimer.addNotification(type.getType(), // type
-            type.getMessage(), // message = "refresh"
-            userData, // userData
-            new Date(System.currentTimeMillis() + refreshInterval * 1000), // first occurence
-            refreshInterval * 1000); // period to repeat  
+        timerNotificationId =
+            refreshTimer.addNotification(
+                type.getType(), // type
+                type.getMessage(), // message = "refresh"
+                userData, // userData
+                new Date(System.currentTimeMillis() + refreshInterval * 1000), // first occurence
+                refreshInterval * 1000); // period to repeat
 
         // put an entry into the map for the listener...
         notifications.put(type, timerNotificationId);
@@ -396,15 +415,15 @@ public class MBeanUtil {
   }
 
   /**
-   * Verifies a refresh notification for the specified client MBean.
-   * If notification is not registered, then returns a false
+   * Verifies a refresh notification for the specified client MBean. If notification is not
+   * registered, then returns a false
    *
-   * @param client          client to listen for refresh notifications
-   * @param type            refresh notification type the client will use
-   *
-   * @return isRegistered   boolean indicating if a notification is registered
+   * @param client client to listen for refresh notifications
+   * @param type refresh notification type the client will use
+   * @return isRegistered boolean indicating if a notification is registered
    */
-  static boolean isRefreshNotificationRegistered(NotificationListener client, RefreshNotificationType type) {
+  static boolean isRefreshNotificationRegistered(
+      NotificationListener client, RefreshNotificationType type) {
     boolean isRegistered = false;
 
     // get the notifications for the specified client...
@@ -425,9 +444,9 @@ public class MBeanUtil {
     return isRegistered;
   }
 
-  /** 
-   * Validates refreshTimer has been registered without problems and attempts 
-   * to re-register if there is a problem. 
+  /**
+   * Validates refreshTimer has been registered without problems and attempts to re-register if
+   * there is a problem.
    */
   static void validateRefreshTimer() {
     if (refreshTimerObjectName == null || refreshTimer == null) {
@@ -451,9 +470,7 @@ public class MBeanUtil {
     }
   }
 
-  /**
-   * Initializes the timer for sending refresh notifications.
-   */
+  /** Initializes the timer for sending refresh notifications. */
   static void createRefreshTimer() {
     try {
       refreshTimer = new javax.management.timer.Timer();
@@ -461,17 +478,24 @@ public class MBeanUtil {
 
       refreshTimer.start();
     } catch (JMException e) {
-      logStackTrace(Level.WARN, e, LocalizedStrings.MBeanUtil_FAILED_TO_CREATE_REFRESH_TIMER.toLocalizedString());
+      logStackTrace(
+          Level.WARN,
+          e,
+          LocalizedStrings.MBeanUtil_FAILED_TO_CREATE_REFRESH_TIMER.toLocalizedString());
     } catch (JMRuntimeException e) {
-      logStackTrace(Level.WARN, e, LocalizedStrings.MBeanUtil_FAILED_TO_CREATE_REFRESH_TIMER.toLocalizedString());
+      logStackTrace(
+          Level.WARN,
+          e,
+          LocalizedStrings.MBeanUtil_FAILED_TO_CREATE_REFRESH_TIMER.toLocalizedString());
     } catch (Exception e) {
-      logStackTrace(Level.WARN, e, LocalizedStrings.MBeanUtil_FAILED_TO_CREATE_REFRESH_TIMER.toLocalizedString());
+      logStackTrace(
+          Level.WARN,
+          e,
+          LocalizedStrings.MBeanUtil_FAILED_TO_CREATE_REFRESH_TIMER.toLocalizedString());
     }
   }
 
-  /**
-   * Initializes the timer for sending refresh notifications.
-   */
+  /** Initializes the timer for sending refresh notifications. */
   static void stopRefreshTimer() {
     try {
       if (refreshTimer != null && mbeanServer != null) {
@@ -489,21 +513,19 @@ public class MBeanUtil {
   }
 
   /**
-   * Return a String that been modified to be compliant as a property of an 
-   * ObjectName.
-   * <p>
-   * The property name of an ObjectName may not contain any of the following
-   * characters:  <b><i>:  ,  =  *  ?</i></b>
-   * <p>
-   * This method will replace the above non-compliant characters with a
-   * dash:  <b><i>-</i></b>
-   * <p>
-   * If value is empty, this method will return the string "nothing".
-   * <p>
-   * Note: this is <code>public</code> because certain tests call this from
-   * outside of the package. TODO: clean this up
+   * Return a String that been modified to be compliant as a property of an ObjectName.
    *
-   * @param value  the potentially non-compliant ObjectName property
+   * <p>The property name of an ObjectName may not contain any of the following characters: <b><i>:
+   * , = * ?</i></b>
+   *
+   * <p>This method will replace the above non-compliant characters with a dash: <b><i>-</i></b>
+   *
+   * <p>If value is empty, this method will return the string "nothing".
+   *
+   * <p>Note: this is <code>public</code> because certain tests call this from outside of the
+   * package. TODO: clean this up
+   *
+   * @param value the potentially non-compliant ObjectName property
    * @return the value modified to be compliant as an ObjectName property
    */
   public static String makeCompliantMBeanNameProperty(String value) {
@@ -518,10 +540,7 @@ public class MBeanUtil {
     return value;
   }
 
-  /**
-   * Unregisters all GemFire MBeans and then releases the MBeanServer for
-   * garbage collection.
-   */
+  /** Unregisters all GemFire MBeans and then releases the MBeanServer for garbage collection. */
   static void releaseMBeanServer() {
     try {
       // unregister all GemFire mbeans...
@@ -539,7 +558,7 @@ public class MBeanUtil {
     } catch (JMRuntimeException e) {
       logStackTrace(Level.WARN, e);
     }
-    /* See #42391. Cleaning up the static maps which might be still holding  
+    /* See #42391. Cleaning up the static maps which might be still holding
      * references to ManagedResources */
     synchronized (MBeanUtil.managedResources) {
       MBeanUtil.managedResources.clear();
@@ -547,7 +566,7 @@ public class MBeanUtil {
     synchronized (refreshClients) {
       refreshClients.clear();
     }
-    /* See #42391. Cleaning up the static maps which might be still holding 
+    /* See #42391. Cleaning up the static maps which might be still holding
      * references to ManagedResources */
     synchronized (MBeanUtil.managedResources) {
       MBeanUtil.managedResources.clear();
@@ -559,30 +578,39 @@ public class MBeanUtil {
 
   /**
    * Returns true if a MBean with given ObjectName is registered.
-   * 
-   * @param objectName
-   *          ObjectName to use for checking if MBean is registered
-   * @return true if MBeanServer is not null & MBean with given ObjectName is
-   *         registered with the MBeanServer        
+   *
+   * @param objectName ObjectName to use for checking if MBean is registered
+   * @return true if MBeanServer is not null & MBean with given ObjectName is registered with the
+   *     MBeanServer
    */
   static boolean isRegistered(ObjectName objectName) {
     return mbeanServer != null && mbeanServer.isRegistered(objectName);
   }
 
-  /**
-   * Unregisters the identified MBean if it's registered.
-   */
+  /** Unregisters the identified MBean if it's registered. */
   static void unregisterMBean(ObjectName objectName) {
     try {
       if (mbeanServer != null && mbeanServer.isRegistered(objectName)) {
         mbeanServer.unregisterMBean(objectName);
       }
     } catch (MBeanRegistrationException e) {
-      logStackTrace(Level.WARN, null, LocalizedStrings.MBeanUtil_FAILED_WHILE_UNREGISTERING_MBEAN_WITH_OBJECTNAME_0.toLocalizedString(new Object[] { objectName }));
+      logStackTrace(
+          Level.WARN,
+          null,
+          LocalizedStrings.MBeanUtil_FAILED_WHILE_UNREGISTERING_MBEAN_WITH_OBJECTNAME_0
+              .toLocalizedString(new Object[] {objectName}));
     } catch (InstanceNotFoundException e) {
-      logStackTrace(Level.WARN, null, LocalizedStrings.MBeanUtil_WHILE_UNREGISTERING_COULDNT_FIND_MBEAN_WITH_OBJECTNAME_0.toLocalizedString(new Object[] { objectName }));
+      logStackTrace(
+          Level.WARN,
+          null,
+          LocalizedStrings.MBeanUtil_WHILE_UNREGISTERING_COULDNT_FIND_MBEAN_WITH_OBJECTNAME_0
+              .toLocalizedString(new Object[] {objectName}));
     } catch (JMRuntimeException e) {
-      logStackTrace(Level.WARN, null, LocalizedStrings.MBeanUtil_COULD_NOT_UNREGISTER_MBEAN_WITH_OBJECTNAME_0.toLocalizedString(new Object[] { objectName }));
+      logStackTrace(
+          Level.WARN,
+          null,
+          LocalizedStrings.MBeanUtil_COULD_NOT_UNREGISTER_MBEAN_WITH_OBJECTNAME_0.toLocalizedString(
+              new Object[] {objectName}));
     }
   }
 
@@ -592,7 +620,7 @@ public class MBeanUtil {
 
       // call cleanup on managedResource here and not rely on listener
       // since it is possible that notification listener not deliver
-      // all notifications of un-registration. If resource is 
+      // all notifications of un-registration. If resource is
       // cleaned here, another call from the listener should be as good as a no-op
       cleanupResource(resource);
     }
@@ -612,7 +640,7 @@ public class MBeanUtil {
     }
 
     // never registered before if  null ...
-    // Also as of current, there is ever only 1 Notification type per 
+    // Also as of current, there is ever only 1 Notification type per
     // MBean, so we do need need a while loop here
     if (notifications != null) {
 
@@ -635,16 +663,21 @@ public class MBeanUtil {
       try {
         if (mbeanServer != null && mbeanServer.isRegistered(refreshTimerObjectName)) {
           // remove client as a listener with MBeanServer...
-          mbeanServer.removeNotificationListener(refreshTimerObjectName, // timer to listen to
+          mbeanServer.removeNotificationListener(
+              refreshTimerObjectName, // timer to listen to
               (NotificationListener) resource // the NotificationListener object
-          );
+              );
         }
       } catch (ListenerNotFoundException xptn) {
         // should not happen since we already checked refreshTimerObjectName
         logStackTrace(Level.WARN, null, xptn.getMessage());
       } catch (InstanceNotFoundException xptn) {
         // should not happen since we already checked refreshTimerObjectName
-        logStackTrace(Level.WARN, null, LocalizedStrings.MBeanUtil_WHILE_UNREGISTERING_COULDNT_FIND_MBEAN_WITH_OBJECTNAME_0.toLocalizedString(new Object[] { refreshTimerObjectName }));
+        logStackTrace(
+            Level.WARN,
+            null,
+            LocalizedStrings.MBeanUtil_WHILE_UNREGISTERING_COULDNT_FIND_MBEAN_WITH_OBJECTNAME_0
+                .toLocalizedString(new Object[] {refreshTimerObjectName}));
       }
     }
   }
@@ -662,7 +695,8 @@ public class MBeanUtil {
   /** Returns true if the path is on Windows. */
   static boolean pathIsWindows(String path) {
     if (path != null && path.length() > 1) {
-      return (Character.isLetter(path.charAt(0)) && path.charAt(1) == ':') || (path.startsWith("//") || path.startsWith("\\\\"));
+      return (Character.isLetter(path.charAt(0)) && path.charAt(1) == ':')
+          || (path.startsWith("//") || path.startsWith("\\\\"));
     }
     return false;
   }
@@ -674,70 +708,76 @@ public class MBeanUtil {
     try {
       // the MBeanServerDelegate name is spec'ed as the following...
       ObjectName delegate = ObjectName.getInstance("JMImplementation:type=MBeanServerDelegate");
-      mbeanServer.addNotificationListener(delegate, new NotificationListener() {
-        public void handleNotification(Notification notification, Object handback) {
-          MBeanServerNotification serverNotification = (MBeanServerNotification) notification;
-          if (MBeanServerNotification.UNREGISTRATION_NOTIFICATION.equals(serverNotification.getType())) {
-            ObjectName objectName = serverNotification.getMBeanName();
-            synchronized (MBeanUtil.managedResources) {
-              Object entry = MBeanUtil.managedResources.get(objectName);
-              if (entry == null)
-                return;
-              if (!(entry instanceof ManagedResource)) {
-                throw new ClassCastException(LocalizedStrings.MBeanUtil_0_IS_NOT_A_MANAGEDRESOURCE.toLocalizedString(new Object[] { entry.getClass().getName() }));
-              }
-              ManagedResource resource = (ManagedResource) entry;
-              {
-                // call cleanup on managedResource
-                cleanupResource(resource);
+      mbeanServer.addNotificationListener(
+          delegate,
+          new NotificationListener() {
+            public void handleNotification(Notification notification, Object handback) {
+              MBeanServerNotification serverNotification = (MBeanServerNotification) notification;
+              if (MBeanServerNotification.UNREGISTRATION_NOTIFICATION.equals(
+                  serverNotification.getType())) {
+                ObjectName objectName = serverNotification.getMBeanName();
+                synchronized (MBeanUtil.managedResources) {
+                  Object entry = MBeanUtil.managedResources.get(objectName);
+                  if (entry == null) return;
+                  if (!(entry instanceof ManagedResource)) {
+                    throw new ClassCastException(
+                        LocalizedStrings.MBeanUtil_0_IS_NOT_A_MANAGEDRESOURCE.toLocalizedString(
+                            new Object[] {entry.getClass().getName()}));
+                  }
+                  ManagedResource resource = (ManagedResource) entry;
+                  {
+                    // call cleanup on managedResource
+                    cleanupResource(resource);
+                  }
+                }
               }
             }
-          }
-        }
-      }, null, null);
+          },
+          null,
+          null);
     } catch (JMException e) {
-      logStackTrace(Level.WARN, e, LocalizedStrings.MBeanUtil_FAILED_TO_REGISTER_SERVERNOTIFICATIONLISTENER.toLocalizedString());
+      logStackTrace(
+          Level.WARN,
+          e,
+          LocalizedStrings.MBeanUtil_FAILED_TO_REGISTER_SERVERNOTIFICATIONLISTENER
+              .toLocalizedString());
     } catch (JMRuntimeException e) {
-      logStackTrace(Level.WARN, e, LocalizedStrings.MBeanUtil_FAILED_TO_REGISTER_SERVERNOTIFICATIONLISTENER.toLocalizedString());
+      logStackTrace(
+          Level.WARN,
+          e,
+          LocalizedStrings.MBeanUtil_FAILED_TO_REGISTER_SERVERNOTIFICATIONLISTENER
+              .toLocalizedString());
     }
   }
 
   /**
-   * Logs the stack trace for the given Throwable if logger is initialized else
-   * prints the stack trace using System.out.
-   * 
-   * @param level
-   *          severity level to log at
-   * @param throwable
-   *          Throwable to log stack trace for
+   * Logs the stack trace for the given Throwable if logger is initialized else prints the stack
+   * trace using System.out.
+   *
+   * @param level severity level to log at
+   * @param throwable Throwable to log stack trace for
    */
   public static void logStackTrace(Level level, Throwable throwable) {
     logStackTrace(level, throwable, null);
   }
 
   /**
-   * Logs the stack trace for the given Throwable if logger is initialized else
-   * prints the stack trace using System.out.
-   * 
-   * @param level
-   *          severity level to log at
-   * @param throwable
-   *          Throwable to log stack trace for
-   * @param message
-   *          user friendly error message to show
+   * Logs the stack trace for the given Throwable if logger is initialized else prints the stack
+   * trace using System.out.
+   *
+   * @param level severity level to log at
+   * @param throwable Throwable to log stack trace for
+   * @param message user friendly error message to show
    */
   public static void logStackTrace(Level level, Throwable throwable, String message) {
     logger.log(level, message, throwable);
   }
 
   /**
-   * Raises RuntimeAdminException with given 'message' if given 'condition' is
-   * false.
-   * 
-   * @param condition
-   *          condition to evaluate
-   * @param message
-   *          failure message
+   * Raises RuntimeAdminException with given 'message' if given 'condition' is false.
+   *
+   * @param condition condition to evaluate
+   * @param message failure message
    */
   private static void raiseOnFailure(boolean condition, String message) {
     if (!condition) {

@@ -25,27 +25,23 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular app vm to request the region
- * statistics of a given region.
+ * A message that is sent to a particular app vm to request the region statistics of a given region.
  */
 public final class RegionAttributesRequest extends RegionAdminRequest {
   // instance variables
 
-  /**
-   * Returns a <code>RegionAttributesRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>RegionAttributesRequest</code> to be sent to the specified recipient. */
   public static RegionAttributesRequest create() {
     RegionAttributesRequest m = new RegionAttributesRequest();
     return m;
   }
 
   public RegionAttributesRequest() {
-    friendlyName = LocalizedStrings.RegionAttributesRequest_FETCH_REGION_ATTRIBUTES.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.RegionAttributesRequest_FETCH_REGION_ATTRIBUTES.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return RegionAttributesResponse.create(dm, this.getSender(), this.getRegion(dm.getSystem()));

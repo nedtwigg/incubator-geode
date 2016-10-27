@@ -62,8 +62,7 @@ public class GFSnapshotDUnitTest extends JUnit4DistributedTestCase {
   private VM client;
   private Host host;
 
-  @Rule
-  public SerializableTemporaryFolder temporaryFolder = new SerializableTemporaryFolder();
+  @Rule public SerializableTemporaryFolder temporaryFolder = new SerializableTemporaryFolder();
 
   @Before
   public void before() {
@@ -80,20 +79,26 @@ public class GFSnapshotDUnitTest extends JUnit4DistributedTestCase {
 
     Properties properties = configureCommonProperties(new Properties());
 
-    locator.invoke("Start Locator", () -> configureAndStartLocator(locatorPort, serverHostName, properties));
-    server.invoke("Start Server", () -> configureAndStartServer(locatorPort, serverHostName, properties));
-    client.invoke("Start client", () -> {
-      createAndStartClient(locatorPort, serverHostName);
-      return null;
-    });
+    locator.invoke(
+        "Start Locator", () -> configureAndStartLocator(locatorPort, serverHostName, properties));
+    server.invoke(
+        "Start Server", () -> configureAndStartServer(locatorPort, serverHostName, properties));
+    client.invoke(
+        "Start client",
+        () -> {
+          createAndStartClient(locatorPort, serverHostName);
+          return null;
+        });
     client.invoke("Populate data", () -> populateDataOnClient());
     String snapshotFilePath = server.invoke("Export data snapshot", () -> createSnapshot());
-    client.invoke("Iterate over snapshot", () -> {
-      ClientCache clientCache = ClientCacheFactory.getAnyInstance();
-      clientCache.close();
-      createAndStartClient(locatorPort, serverHostName);
-      iterateOverSnapshot(snapshotFilePath);
-    });
+    client.invoke(
+        "Iterate over snapshot",
+        () -> {
+          ClientCache clientCache = ClientCacheFactory.getAnyInstance();
+          clientCache.close();
+          createAndStartClient(locatorPort, serverHostName);
+          iterateOverSnapshot(snapshotFilePath);
+        });
   }
 
   private void createAndStartClient(final int locatorPort, final String serverHostName) {
@@ -120,7 +125,8 @@ public class GFSnapshotDUnitTest extends JUnit4DistributedTestCase {
     return file.getAbsolutePath();
   }
 
-  private void iterateOverSnapshot(final String snapshotFilePath) throws IOException, ClassNotFoundException {
+  private void iterateOverSnapshot(final String snapshotFilePath)
+      throws IOException, ClassNotFoundException {
 
     File mySnapshot = new File(snapshotFilePath + "/snapshot-TestRegion");
     SnapshotIterator<Integer, TestObject> snapshotIterator = SnapshotReader.read(mySnapshot);
@@ -153,7 +159,9 @@ public class GFSnapshotDUnitTest extends JUnit4DistributedTestCase {
     return properties;
   }
 
-  private void configureAndStartLocator(final int locatorPort, final String serverHostName, final Properties properties) throws IOException {
+  private void configureAndStartLocator(
+      final int locatorPort, final String serverHostName, final Properties properties)
+      throws IOException {
     DistributedTestUtils.deleteLocatorStateFile();
 
     final String memberName = getUniqueName() + "-locator";
@@ -164,12 +172,20 @@ public class GFSnapshotDUnitTest extends JUnit4DistributedTestCase {
     for (String propertyName : properties.stringPropertyNames()) {
       builder.set(propertyName, properties.getProperty(propertyName));
     }
-    LocatorLauncher locatorLauncher = builder.setBindAddress(serverHostName).setHostnameForClients(serverHostName).setMemberName(memberName).setPort(locatorPort).setWorkingDirectory(workingDirectory.getCanonicalPath()).build();
+    LocatorLauncher locatorLauncher =
+        builder
+            .setBindAddress(serverHostName)
+            .setHostnameForClients(serverHostName)
+            .setMemberName(memberName)
+            .setPort(locatorPort)
+            .setWorkingDirectory(workingDirectory.getCanonicalPath())
+            .build();
     locatorLauncher.start();
-
   }
 
-  private void configureAndStartServer(final int locatorPort, final String serverHostName, final Properties properties) throws IOException {
+  private void configureAndStartServer(
+      final int locatorPort, final String serverHostName, final Properties properties)
+      throws IOException {
     final String memberName = getUniqueName() + "-server";
     final File workingDirectory = temporaryFolder.newFolder(memberName);
     final File pdxDirectory = temporaryFolder.newFolder(memberName + "-pdx");
@@ -181,17 +197,37 @@ public class GFSnapshotDUnitTest extends JUnit4DistributedTestCase {
       builder.set(propertyName, properties.getProperty(propertyName));
     }
 
-    ServerLauncher serverLauncher = builder.set("locators", serverHostName + "[" + locatorPort + "]").setMemberName(memberName).set("log-level", "config").setHostNameForClients(serverHostName).setServerBindAddress(serverHostName).setServerPort(0).setWorkingDirectory(workingDirectory.getCanonicalPath()).setPdxDiskStore("pdxDS").setPdxPersistent(true).build();
+    ServerLauncher serverLauncher =
+        builder
+            .set("locators", serverHostName + "[" + locatorPort + "]")
+            .setMemberName(memberName)
+            .set("log-level", "config")
+            .setHostNameForClients(serverHostName)
+            .setServerBindAddress(serverHostName)
+            .setServerPort(0)
+            .setWorkingDirectory(workingDirectory.getCanonicalPath())
+            .setPdxDiskStore("pdxDS")
+            .setPdxPersistent(true)
+            .build();
     serverLauncher.start();
 
     Cache cache = CacheFactory.getAnyInstance();
 
-    cache.createDiskStoreFactory().setDiskDirsAndSizes(new File[] { pdxDirectory }, new int[] { 16000 }).create("pdxDS");
+    cache
+        .createDiskStoreFactory()
+        .setDiskDirsAndSizes(new File[] {pdxDirectory}, new int[] {16000})
+        .create("pdxDS");
 
-    cache.createDiskStoreFactory().setDiskDirsAndSizes(new File[] { diskStoreDirectory }, new int[] { 16000 }).create("diskStore");
+    cache
+        .createDiskStoreFactory()
+        .setDiskDirsAndSizes(new File[] {diskStoreDirectory}, new int[] {16000})
+        .create("diskStore");
 
     RegionFactory<Object, Object> regionFactory = cache.createRegionFactory();
-    regionFactory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE).setScope(Scope.DISTRIBUTED_ACK).setDiskStoreName("diskStore").create("TestRegion");
+    regionFactory
+        .setDataPolicy(DataPolicy.PERSISTENT_REPLICATE)
+        .setScope(Scope.DISTRIBUTED_ACK)
+        .setDiskStoreName("diskStore")
+        .create("TestRegion");
   }
-
 }

@@ -52,10 +52,8 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
  * Removes a batch of events from the remote secondary queues
- * 
- * 
+ *
  * @since GemFire 7.0
- * 
  */
 public class ParallelQueueBatchRemovalMessage extends PartitionMessage {
 
@@ -63,11 +61,13 @@ public class ParallelQueueBatchRemovalMessage extends PartitionMessage {
 
   private Map<Integer, List> bucketToTailKey;
 
-  public ParallelQueueBatchRemovalMessage() {
+  public ParallelQueueBatchRemovalMessage() {}
 
-  }
-
-  public ParallelQueueBatchRemovalMessage(Set<InternalDistributedMember> recipient, int regionId, ReplyProcessor21 processor, Map bucketToTailKey) {
+  public ParallelQueueBatchRemovalMessage(
+      Set<InternalDistributedMember> recipient,
+      int regionId,
+      ReplyProcessor21 processor,
+      Map bucketToTailKey) {
     super(recipient, regionId, processor);
     this.bucketToTailKey = bucketToTailKey;
   }
@@ -78,35 +78,48 @@ public class ParallelQueueBatchRemovalMessage extends PartitionMessage {
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
     for (Integer bucketId : this.bucketToTailKey.keySet()) {
       if (pr.getRegionAdvisor().getBucketAdvisor(bucketId).isHosting()) {
         List dispatchedKeys = this.bucketToTailKey.get(bucketId);
         try {
-          BucketRegionQueue bucketRegionQueue = (BucketRegionQueue) pr.getDataStore().getInitializedBucketForId(null, bucketId);
+          BucketRegionQueue bucketRegionQueue =
+              (BucketRegionQueue) pr.getDataStore().getInitializedBucketForId(null, bucketId);
 
           for (Object key : dispatchedKeys) {
             try {
-              for (GatewayEventFilter filter : pr.getParallelGatewaySender().getGatewayEventFilters()) {
+              for (GatewayEventFilter filter :
+                  pr.getParallelGatewaySender().getGatewayEventFilters()) {
                 GatewayQueueEvent eventForFilter = (GatewayQueueEvent) bucketRegionQueue.get(key);
                 try {
                   if (eventForFilter != null) {
                     filter.afterAcknowledgement(eventForFilter);
                   }
                 } catch (Exception e) {
-                  logger.fatal(LocalizedMessage.create(LocalizedStrings.GatewayEventFilter_EXCEPTION_OCCURED_WHILE_HANDLING_CALL_TO_0_AFTER_ACKNOWLEDGEMENT_FOR_EVENT_1, new Object[] { filter.toString(), eventForFilter }), e);
+                  logger.fatal(
+                      LocalizedMessage.create(
+                          LocalizedStrings
+                              .GatewayEventFilter_EXCEPTION_OCCURED_WHILE_HANDLING_CALL_TO_0_AFTER_ACKNOWLEDGEMENT_FOR_EVENT_1,
+                          new Object[] {filter.toString(), eventForFilter}),
+                      e);
                 }
               }
               bucketRegionQueue.destroyKey(key);
             } catch (EntryNotFoundException e) {
               if (logger.isDebugEnabled()) {
-                logger.debug("WARNING! Got EntryNotFoundException while destroying the key {} for bucket {}", key, bucketId);
+                logger.debug(
+                    "WARNING! Got EntryNotFoundException while destroying the key {} for bucket {}",
+                    key,
+                    bucketId);
               }
             }
           }
         } catch (ForceReattemptException fe) {
           if (logger.isDebugEnabled()) {
-            logger.debug("Got ForceReattemptException while getting bucket {} to destroyLocally the keys.", bucketId);
+            logger.debug(
+                "Got ForceReattemptException while getting bucket {} to destroyLocally the keys.",
+                bucketId);
           }
         }
       }
@@ -115,11 +128,16 @@ public class ParallelQueueBatchRemovalMessage extends PartitionMessage {
     return false;
   }
 
-  public static ParallelQueueBatchRemovalResponse send(Set<InternalDistributedMember> recipients, PartitionedRegion pr, Map<Integer, List> bucketToTailKey) {
+  public static ParallelQueueBatchRemovalResponse send(
+      Set<InternalDistributedMember> recipients,
+      PartitionedRegion pr,
+      Map<Integer, List> bucketToTailKey) {
     Assert.assertTrue(recipients != null, "BatchRemovalResponse NULL recipient");
 
-    ParallelQueueBatchRemovalResponse response = new ParallelQueueBatchRemovalResponse(pr.getSystem(), recipients, pr);
-    ParallelQueueBatchRemovalMessage msg = new ParallelQueueBatchRemovalMessage(recipients, pr.getPRId(), response, bucketToTailKey);
+    ParallelQueueBatchRemovalResponse response =
+        new ParallelQueueBatchRemovalResponse(pr.getSystem(), recipients, pr);
+    ParallelQueueBatchRemovalMessage msg =
+        new ParallelQueueBatchRemovalMessage(recipients, pr.getPRId(), response, bucketToTailKey);
 
     Set<InternalDistributedMember> failures = pr.getDistributionManager().putOutgoing(msg);
 
@@ -144,11 +162,8 @@ public class ParallelQueueBatchRemovalMessage extends PartitionMessage {
   }
 
   public static final class BatchRemovalReplyMessage extends ReplyMessage {
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public BatchRemovalReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public BatchRemovalReplyMessage() {}
 
     public BatchRemovalReplyMessage(DataInput in) throws IOException, ClassNotFoundException {
       fromData(in);
@@ -163,7 +178,9 @@ public class ParallelQueueBatchRemovalMessage extends PartitionMessage {
     public void process(DM dm, ReplyProcessor21 processor) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.debug("BatchRemovalReplyMessage process invoking reply processor with processorId: {}", this.processorId);
+        logger.debug(
+            "BatchRemovalReplyMessage process invoking reply processor with processorId: {}",
+            this.processorId);
       }
 
       if (processor == null) {
@@ -180,7 +197,8 @@ public class ParallelQueueBatchRemovalMessage extends PartitionMessage {
       dm.getStats().incReplyMessageTime(NanoTimer.getTime() - startTime);
     }
 
-    private static void sendWithException(InternalDistributedMember recipient, int processorId, DM dm, ReplyException re) {
+    private static void sendWithException(
+        InternalDistributedMember recipient, int processorId, DM dm, ReplyException re) {
       Assert.assertTrue(recipient != null, "BecomePrimaryBucketReplyMessage NULL recipient");
       BatchRemovalReplyMessage m = new BatchRemovalReplyMessage(processorId, re);
       m.setRecipient(recipient);
@@ -205,18 +223,26 @@ public class ParallelQueueBatchRemovalMessage extends PartitionMessage {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("BatchRemovalReplyMessage ").append("processorid=").append(this.processorId).append(" reply to sender ").append(this.getSender());
+      sb.append("BatchRemovalReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" reply to sender ")
+          .append(this.getSender());
       return sb.toString();
     }
   }
 
   public static class ParallelQueueBatchRemovalResponse extends PartitionResponse {
 
-    public ParallelQueueBatchRemovalResponse(InternalDistributedSystem dm, Set<InternalDistributedMember> recipients) {
+    public ParallelQueueBatchRemovalResponse(
+        InternalDistributedSystem dm, Set<InternalDistributedMember> recipients) {
       super(dm, recipients);
     }
 
-    public ParallelQueueBatchRemovalResponse(InternalDistributedSystem ds, Set<InternalDistributedMember> recipients, PartitionedRegion theRegion) {
+    public ParallelQueueBatchRemovalResponse(
+        InternalDistributedSystem ds,
+        Set<InternalDistributedMember> recipients,
+        PartitionedRegion theRegion) {
       super(ds, recipients);
     }
 

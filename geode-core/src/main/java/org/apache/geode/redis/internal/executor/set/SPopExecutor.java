@@ -39,7 +39,8 @@ public class SPopExecutor extends SetExecutor {
 
     ByteArrayWrapper key = command.getKey();
     @SuppressWarnings("unchecked")
-    Region<ByteArrayWrapper, Boolean> keyRegion = (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getRegion(key);
+    Region<ByteArrayWrapper, Boolean> keyRegion =
+        (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getRegion(key);
     if (keyRegion == null || keyRegion.isEmpty()) {
       command.setResponse(Coder.getNilResponse(context.getByteBufAllocator()));
       return;
@@ -57,5 +58,4 @@ public class SPopExecutor extends SetExecutor {
     }
     command.setResponse(Coder.getBulkStringResponse(context.getByteBufAllocator(), pop.toBytes()));
   }
-
 }

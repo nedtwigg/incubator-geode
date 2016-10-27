@@ -35,9 +35,7 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Quick sanity tests to make sure MainLauncher is functional.
- */
+/** Quick sanity tests to make sure MainLauncher is functional. */
 @Category(UnitTest.class)
 public class MainLauncherJUnitTest {
 
@@ -48,8 +46,7 @@ public class MainLauncherJUnitTest {
   private final String launchedClass = getClass().getName();
   private ExecutorService futures;
 
-  @Rule
-  public final TextFromStandardInputStream systemInMock = emptyStandardInputStream();
+  @Rule public final TextFromStandardInputStream systemInMock = emptyStandardInputStream();
 
   @Before
   public void before() {
@@ -69,7 +66,7 @@ public class MainLauncherJUnitTest {
     Class<?> clazz = getClass();
     Method mainMethod = clazz.getMethod("main", String[].class);
     String[] args = null;
-    mainMethod.invoke(null, new Object[] { args });
+    mainMethod.invoke(null, new Object[] {args});
     assertTrue(flag);
   }
 
@@ -78,7 +75,7 @@ public class MainLauncherJUnitTest {
     Class<?> clazz = getClass();
     Method mainMethod = clazz.getMethod("main", String[].class);
     String[] args = new String[0];
-    mainMethod.invoke(null, new Object[] { args });
+    mainMethod.invoke(null, new Object[] {args});
     assertTrue(flag);
   }
 
@@ -86,8 +83,8 @@ public class MainLauncherJUnitTest {
   public void testInvokeMainWithOneArg() throws Exception {
     Class<?> clazz = getClass();
     Method mainMethod = clazz.getMethod("main", String[].class);
-    String[] args = new String[] { "arg0" };
-    mainMethod.invoke(null, new Object[] { args });
+    String[] args = new String[] {"arg0"};
+    mainMethod.invoke(null, new Object[] {args});
     assertTrue(flag);
   }
 
@@ -95,23 +92,26 @@ public class MainLauncherJUnitTest {
   public void testInvokeMainWithTwoArgs() throws Exception {
     Class<?> clazz = getClass();
     Method mainMethod = clazz.getMethod("main", String[].class);
-    String[] args = new String[] { "arg0", "arg1" };
-    mainMethod.invoke(null, new Object[] { args });
+    String[] args = new String[] {"arg0", "arg1"};
+    mainMethod.invoke(null, new Object[] {args});
     assertTrue(flag);
   }
 
   @Test
   public void testInvokeMainWithMainLauncherWithNoArgs() throws Exception {
-    Future<Boolean> future = this.futures.submit(new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        Class<?> clazz = MainLauncher.class;
-        Method mainMethod = clazz.getMethod("main", String[].class);
-        String[] args = new String[] { launchedClass };
-        mainMethod.invoke(null, new Object[] { args }); // this will block until "\n" is fed to System.in
-        return true;
-      }
-    });
+    Future<Boolean> future =
+        this.futures.submit(
+            new Callable<Boolean>() {
+              @Override
+              public Boolean call() throws Exception {
+                Class<?> clazz = MainLauncher.class;
+                Method mainMethod = clazz.getMethod("main", String[].class);
+                String[] args = new String[] {launchedClass};
+                mainMethod.invoke(
+                    null, new Object[] {args}); // this will block until "\n" is fed to System.in
+                return true;
+              }
+            });
     systemInMock.provideText("\n");
     assertTrue(future.get(TIMEOUT_SECONDS, TimeUnit.SECONDS));
     assertTrue(flag);
@@ -119,16 +119,18 @@ public class MainLauncherJUnitTest {
 
   @Test
   public void testInvokeMainWithMainLauncherWithOneArg() throws Exception {
-    Future<Boolean> future = this.futures.submit(new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        Class<?> clazz = MainLauncher.class;
-        Method mainMethod = clazz.getMethod("main", String[].class);
-        String[] args = new String[] { launchedClass, "arg0" };
-        mainMethod.invoke(null, new Object[] { args });
-        return true;
-      }
-    });
+    Future<Boolean> future =
+        this.futures.submit(
+            new Callable<Boolean>() {
+              @Override
+              public Boolean call() throws Exception {
+                Class<?> clazz = MainLauncher.class;
+                Method mainMethod = clazz.getMethod("main", String[].class);
+                String[] args = new String[] {launchedClass, "arg0"};
+                mainMethod.invoke(null, new Object[] {args});
+                return true;
+              }
+            });
     systemInMock.provideText("\n");
     assertTrue(future.get(TIMEOUT_SECONDS, TimeUnit.SECONDS));
     assertTrue(flag);
@@ -136,16 +138,18 @@ public class MainLauncherJUnitTest {
 
   @Test
   public void testInvokeMainWithMainLauncherWithTwoArgs() throws Exception {
-    Future<Boolean> future = this.futures.submit(new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        Class<?> clazz = MainLauncher.class;
-        Method mainMethod = clazz.getMethod("main", String[].class);
-        String[] args = new String[] { launchedClass, "arg0", "arg1" };
-        mainMethod.invoke(null, new Object[] { args });
-        return true;
-      }
-    });
+    Future<Boolean> future =
+        this.futures.submit(
+            new Callable<Boolean>() {
+              @Override
+              public Boolean call() throws Exception {
+                Class<?> clazz = MainLauncher.class;
+                Method mainMethod = clazz.getMethod("main", String[].class);
+                String[] args = new String[] {launchedClass, "arg0", "arg1"};
+                mainMethod.invoke(null, new Object[] {args});
+                return true;
+              }
+            });
     systemInMock.provideText("\n");
     assertTrue(future.get(TIMEOUT_SECONDS, TimeUnit.SECONDS));
     assertTrue(flag);

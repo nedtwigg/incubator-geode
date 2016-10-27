@@ -21,18 +21,13 @@ import java.util.Comparator;
 import org.apache.geode.cache.query.SelectResults;
 
 /**
- * Comparator used by the sorted set for storing the results obtained from
- * evaluation of various filter operands in an increasing order of the size ,
- * which will ensure that the intersection of the results for evaluation of AND
- * junction is optimum in performance.
- * 
+ * Comparator used by the sorted set for storing the results obtained from evaluation of various
+ * filter operands in an increasing order of the size , which will ensure that the intersection of
+ * the results for evaluation of AND junction is optimum in performance.
  */
-
 class SelectResultsComparator implements Comparator {
 
-  /**
-   * Sort the array in ascending order of collection sizes.
-   */
+  /** Sort the array in ascending order of collection sizes. */
   public int compare(Object obj1, Object obj2) {
     if (!(obj1 instanceof SelectResults) || !(obj2 instanceof SelectResults)) {
       Support.assertionFailed("The objects need to be of type SelectResults");
@@ -49,9 +44,7 @@ class SelectResultsComparator implements Comparator {
     return answer;
   }
 
-  /**
-   * Overwrite default equals implementation.
-   */
+  /** Overwrite default equals implementation. */
   @Override
   public boolean equals(Object o1) {
     return this == o1;

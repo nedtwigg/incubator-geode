@@ -35,20 +35,15 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.cache.execute.AbstractExecution;
 
 /**
- * This class uses gemfire function execution to get the dependencies between
- * threads present in each member of the distributed system. It then uses the
- * {@link DeadlockDetector} class to determine if any deadlocks exist within
- * those dependencies.
- * 
- * 
+ * This class uses gemfire function execution to get the dependencies between threads present in
+ * each member of the distributed system. It then uses the {@link DeadlockDetector} class to
+ * determine if any deadlocks exist within those dependencies.
  */
 public class GemFireDeadlockDetector {
 
   private Set<DistributedMember> targetMembers = null;
 
-  public GemFireDeadlockDetector() {
-
-  }
+  public GemFireDeadlockDetector() {}
 
   public GemFireDeadlockDetector(Set<DistributedMember> targetMembers) {
     this.targetMembers = targetMembers;
@@ -56,36 +51,33 @@ public class GemFireDeadlockDetector {
 
   /**
    * Find any deadlocks the exist in this distributed system.
-   * 
-   * The deadlocks are returned as a list of dependencies. See {@link DeadlockDetector}
+   *
+   * <p>The deadlocks are returned as a list of dependencies. See {@link DeadlockDetector}
    */
   public DependencyGraph find() {
 
     final DeadlockDetector detector = new DeadlockDetector();
-    ResultCollector<HashSet<Dependency>, Serializable> collector = new ResultCollector<HashSet<Dependency>, Serializable>() {
+    ResultCollector<HashSet<Dependency>, Serializable> collector =
+        new ResultCollector<HashSet<Dependency>, Serializable>() {
 
-      public synchronized Serializable getResult() throws FunctionException {
-        return null;
-      }
+          public synchronized Serializable getResult() throws FunctionException {
+            return null;
+          }
 
-      public synchronized Serializable getResult(long timeout, TimeUnit unit) throws FunctionException, InterruptedException {
-        return null;
-      }
+          public synchronized Serializable getResult(long timeout, TimeUnit unit)
+              throws FunctionException, InterruptedException {
+            return null;
+          }
 
-      public synchronized void addResult(DistributedMember memberID, HashSet<Dependency> resultOfSingleExecution) {
-        detector.addDependencies(resultOfSingleExecution);
+          public synchronized void addResult(
+              DistributedMember memberID, HashSet<Dependency> resultOfSingleExecution) {
+            detector.addDependencies(resultOfSingleExecution);
+          }
 
-      }
+          public void endResults() {}
 
-      public void endResults() {
-
-      }
-
-      public void clearResults() {
-
-      }
-
-    };
+          public void clearResults() {}
+        };
 
     Execution execution;
     if (targetMembers != null) {
@@ -95,7 +87,9 @@ public class GemFireDeadlockDetector {
     }
 
     ((AbstractExecution) execution).setIgnoreDepartedMembers(true);
-    collector = (ResultCollector<HashSet<Dependency>, Serializable>) execution.execute(new CollectDependencyFunction());
+    collector =
+        (ResultCollector<HashSet<Dependency>, Serializable>)
+            execution.execute(new CollectDependencyFunction());
 
     //Wait for results
     collector.getResult();

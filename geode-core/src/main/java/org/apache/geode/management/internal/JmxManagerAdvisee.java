@@ -26,10 +26,7 @@ import org.apache.geode.management.internal.JmxManagerAdvisor.JmxManagerProfile;
 
 import java.net.UnknownHostException;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class JmxManagerAdvisee implements DistributionAdvisee {
 
   private final int serialNumber;
@@ -91,7 +88,8 @@ public class JmxManagerAdvisee implements DistributionAdvisee {
     int port = 0;
     boolean ssl = false;
     boolean started = false;
-    SystemManagementService service = (SystemManagementService) ManagementService.getExistingManagementService(this.cache);
+    SystemManagementService service =
+        (SystemManagementService) ManagementService.getExistingManagementService(this.cache);
     if (service != null) {
       jmxManager = service.isManagerCreated();
       started = service.isManager();
@@ -142,5 +140,4 @@ public class JmxManagerAdvisee implements DistributionAdvisee {
   void initProfile(JmxManagerProfile p) {
     this.myMostRecentProfile = p;
   }
-
 }

@@ -41,9 +41,11 @@ import org.apache.geode.management.internal.web.domain.Link;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The ClientHttpRequestJUnitTest class is a test suite of test cases testing the contract and functionality of the
- * ClientHttpRequest class.
- * <p/>
+ * The ClientHttpRequestJUnitTest class is a test suite of test cases testing the contract and
+ * functionality of the ClientHttpRequest class.
+ *
+ * <p>
+ *
  * @see org.apache.geode.management.internal.web.AbstractWebTestCase
  * @see org.apache.geode.management.internal.web.http.ClientHttpRequest
  * @see org.jmock.Mockery
@@ -90,31 +92,45 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     assertEquals(link, request.getLink());
     assertEquals(org.springframework.http.HttpMethod.GET, request.getMethod());
 
-    link = new Link("delete-resource", toUri("http://host.domain.com:8080/app/resources/{id}"), HttpMethod.DELETE);
+    link =
+        new Link(
+            "delete-resource",
+            toUri("http://host.domain.com:8080/app/resources/{id}"),
+            HttpMethod.DELETE);
     request = new ClientHttpRequest(link);
 
     assertEquals(link, request.getLink());
     assertEquals(org.springframework.http.HttpMethod.DELETE, request.getMethod());
 
-    link = new Link("delete-resource", toUri("http://host.domain.com:8080/app/service"), HttpMethod.HEAD);
+    link =
+        new Link(
+            "delete-resource", toUri("http://host.domain.com:8080/app/service"), HttpMethod.HEAD);
     request = new ClientHttpRequest(link);
 
     assertEquals(link, request.getLink());
     assertEquals(org.springframework.http.HttpMethod.HEAD, request.getMethod());
 
-    link = new Link("delete-resource", toUri("http://host.domain.com:8080/app/service"), HttpMethod.OPTIONS);
+    link =
+        new Link(
+            "delete-resource",
+            toUri("http://host.domain.com:8080/app/service"),
+            HttpMethod.OPTIONS);
     request = new ClientHttpRequest(link);
 
     assertEquals(link, request.getLink());
     assertEquals(org.springframework.http.HttpMethod.OPTIONS, request.getMethod());
 
-    link = new Link("delete-resource", toUri("http://host.domain.com:8080/app/resources"), HttpMethod.POST);
+    link =
+        new Link(
+            "delete-resource", toUri("http://host.domain.com:8080/app/resources"), HttpMethod.POST);
     request = new ClientHttpRequest(link);
 
     assertEquals(link, request.getLink());
     assertEquals(org.springframework.http.HttpMethod.POST, request.getMethod());
 
-    link = new Link("delete-resource", toUri("http://host.domain.com:8080/app/resources"), HttpMethod.PUT);
+    link =
+        new Link(
+            "delete-resource", toUri("http://host.domain.com:8080/app/resources"), HttpMethod.PUT);
     request = new ClientHttpRequest(link);
 
     assertEquals(link, request.getLink());
@@ -129,7 +145,9 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testIsDelete() throws Exception {
-    final Link expectedLink = new Link("delete", toUri("http://host.domain.com:8080/app/resources/{id}"), HttpMethod.DELETE);
+    final Link expectedLink =
+        new Link(
+            "delete", toUri("http://host.domain.com:8080/app/resources/{id}"), HttpMethod.DELETE);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     assertEquals(expectedLink, request.getLink());
@@ -141,7 +159,8 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testIsGet() throws Exception {
-    final Link expectedLink = new Link("get", toUri("http://host.domain.com:8080/app/resources/{id}"), HttpMethod.GET);
+    final Link expectedLink =
+        new Link("get", toUri("http://host.domain.com:8080/app/resources/{id}"), HttpMethod.GET);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     assertEquals(expectedLink, request.getLink());
@@ -153,7 +172,8 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testIsPost() throws Exception {
-    final Link expectedLink = new Link("post", toUri("http://host.domain.com:8080/app/resources"), HttpMethod.POST);
+    final Link expectedLink =
+        new Link("post", toUri("http://host.domain.com:8080/app/resources"), HttpMethod.POST);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     assertEquals(expectedLink, request.getLink());
@@ -165,7 +185,8 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testIsPut() throws Exception {
-    final Link expectedLink = new Link("put", toUri("http://host.domain.com:8080/app/resources/{id}"), HttpMethod.PUT);
+    final Link expectedLink =
+        new Link("put", toUri("http://host.domain.com:8080/app/resources/{id}"), HttpMethod.PUT);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     assertEquals(expectedLink, request.getLink());
@@ -177,7 +198,10 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testGetPathVariables() throws Exception {
-    final Link expectedLink = new Link("test", toUri("http://host.domain.com:8080/app/libraries/{name}/books/{author}/{title}"));
+    final Link expectedLink =
+        new Link(
+            "test",
+            toUri("http://host.domain.com:8080/app/libraries/{name}/books/{author}/{title}"));
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     assertEquals(expectedLink, request.getLink());
@@ -209,19 +233,29 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testGetURLForGet() throws Exception {
-    final Link expectedLink = new Link("find", toUri("http://host.domain.com:8080/app/libraries/{name}/books"), HttpMethod.GET);
+    final Link expectedLink =
+        new Link(
+            "find",
+            toUri("http://host.domain.com:8080/app/libraries/{name}/books"),
+            HttpMethod.GET);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     request.addParameterValues("author", "Rowling");
     request.addParameterValues("category", "science-fiction");
 
     assertEquals(expectedLink, request.getLink());
-    assertEquals("http://host.domain.com:8080/app/libraries/amazon/books?author=Rowling&category=science-fiction", toString(request.getURL(Collections.singletonMap("name", "amazon"))));
+    assertEquals(
+        "http://host.domain.com:8080/app/libraries/amazon/books?author=Rowling&category=science-fiction",
+        toString(request.getURL(Collections.singletonMap("name", "amazon"))));
   }
 
   @Test
   public void testGetURLForGetEncoded() throws Exception {
-    final Link expectedLink = new Link("readValue4Key", toUri("http://host.domain.com:8080/app/regions/{region}/keys/{key}"), HttpMethod.GET);
+    final Link expectedLink =
+        new Link(
+            "readValue4Key",
+            toUri("http://host.domain.com:8080/app/regions/{region}/keys/{key}"),
+            HttpMethod.GET);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     final Map<String, Object> uriVariables = new HashMap<String, Object>(4);
@@ -231,12 +265,18 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     uriVariables.put("item", "456");
 
     assertEquals(expectedLink, request.getLink());
-    assertEquals("http://host.domain.com:8080/app/regions/Customers%2FAccounts%2FOrders/keys/123", toString(request.getURL(uriVariables)));
+    assertEquals(
+        "http://host.domain.com:8080/app/regions/Customers%2FAccounts%2FOrders/keys/123",
+        toString(request.getURL(uriVariables)));
   }
 
   @Test
   public void testGetURLForGetWithQueryParametersNoBody() throws Exception {
-    final Link expectedLink = new Link("find", toUri("http://host.domain.com:8080/app/libraries/{name}/books/{author}"), HttpMethod.GET);
+    final Link expectedLink =
+        new Link(
+            "find",
+            toUri("http://host.domain.com:8080/app/libraries/{name}/books/{author}"),
+            HttpMethod.GET);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     request.addParameterValues("author", "Rowling");
@@ -252,23 +292,35 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     uriVariables.put("name", "Amazon");
 
     assertEquals(expectedLink, request.getLink());
-    assertEquals("http://host.domain.com:8080/app/libraries/Amazon/books/Rowling?category=science-fiction&year=2007", toString(request.getURL(uriVariables)));
+    assertEquals(
+        "http://host.domain.com:8080/app/libraries/Amazon/books/Rowling?category=science-fiction&year=2007",
+        toString(request.getURL(uriVariables)));
   }
 
   @Test
   public void testGetURLForDelete() throws Exception {
-    final Link expectedLink = new Link("delete-all", toUri("http://host.domain.com:8080/app/libraries/{name}/books"), HttpMethod.DELETE);
+    final Link expectedLink =
+        new Link(
+            "delete-all",
+            toUri("http://host.domain.com:8080/app/libraries/{name}/books"),
+            HttpMethod.DELETE);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     request.addParameterValues("category", "romance");
 
     assertEquals(expectedLink, request.getLink());
-    assertEquals("http://host.domain.com:8080/app/libraries/congress/books?category=romance", toString(request.getURL(Collections.singletonMap("name", "congress"))));
+    assertEquals(
+        "http://host.domain.com:8080/app/libraries/congress/books?category=romance",
+        toString(request.getURL(Collections.singletonMap("name", "congress"))));
   }
 
   @Test
   public void testGetURLForPost() throws Exception {
-    final Link expectedLink = new Link("post", toUri("http://host.domain.com:8080/app/libraries/{name}/books"), HttpMethod.POST);
+    final Link expectedLink =
+        new Link(
+            "post",
+            toUri("http://host.domain.com:8080/app/libraries/{name}/books"),
+            HttpMethod.POST);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     request.addParameterValues("author", "Douglas Adams");
@@ -277,12 +329,18 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     request.addParameterValues("isbn", "0345453743");
 
     assertEquals(expectedLink, request.getLink());
-    assertEquals("http://host.domain.com:8080/app/libraries/royal/books", toString(request.getURL(Collections.singletonMap("name", "royal"))));
+    assertEquals(
+        "http://host.domain.com:8080/app/libraries/royal/books",
+        toString(request.getURL(Collections.singletonMap("name", "royal"))));
   }
 
   @Test
   public void testGetURLForPut() throws Exception {
-    final Link expectedLink = new Link("put", toUri("http://host.domain.com:8080/app/libraries/{name}/books/{isbn}"), HttpMethod.PUT);
+    final Link expectedLink =
+        new Link(
+            "put",
+            toUri("http://host.domain.com:8080/app/libraries/{name}/books/{isbn}"),
+            HttpMethod.PUT);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     request.addParameterValues("year", "1983");
@@ -293,12 +351,18 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     uriVariables.put("isbn", "0345453743");
 
     assertEquals(expectedLink, request.getLink());
-    assertEquals("http://host.domain.com:8080/app/libraries/royal/books/0345453743", toString(request.getURL(uriVariables)));
+    assertEquals(
+        "http://host.domain.com:8080/app/libraries/royal/books/0345453743",
+        toString(request.getURL(uriVariables)));
   }
 
   @Test
   public void testCreateRequestEntityForGet() throws Exception {
-    final Link expectedLink = new Link("find", toUri("http://host.domain.com:8080/app/libraries/{name}/books"), HttpMethod.GET);
+    final Link expectedLink =
+        new Link(
+            "find",
+            toUri("http://host.domain.com:8080/app/libraries/{name}/books"),
+            HttpMethod.GET);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     assertEquals(expectedLink, request.getLink());
@@ -317,7 +381,11 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testCreateRequestEntityForDelete() throws Exception {
-    final Link expectedLink = new Link("delete-all", toUri("http://host.domain.com:8080/app/libraries/{name}/books"), HttpMethod.DELETE);
+    final Link expectedLink =
+        new Link(
+            "delete-all",
+            toUri("http://host.domain.com:8080/app/libraries/{name}/books"),
+            HttpMethod.DELETE);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     assertEquals(expectedLink, request.getLink());
@@ -329,68 +397,89 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
 
     assertNotNull(requestEntity);
     assertNotNull(requestEntity.getHeaders());
-    assertEquals(Collections.singletonList(MediaType.APPLICATION_JSON), requestEntity.getHeaders().getAccept());
+    assertEquals(
+        Collections.singletonList(MediaType.APPLICATION_JSON),
+        requestEntity.getHeaders().getAccept());
     assertNull(requestEntity.getBody());
   }
 
   @Test
   @SuppressWarnings("unchecked")
   public void testCreateRequestEntityForPost() throws Exception {
-    final Link expectedLink = new Link("post", toUri("http://host.domain.com:8080/app/libraries/{name}/books"), HttpMethod.POST);
+    final Link expectedLink =
+        new Link(
+            "post",
+            toUri("http://host.domain.com:8080/app/libraries/{name}/books"),
+            HttpMethod.POST);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     assertEquals(expectedLink, request.getLink());
 
-    final MultiValueMap<String, Object> expectedRequestParameters = new LinkedMultiValueMap<String, Object>(4);
+    final MultiValueMap<String, Object> expectedRequestParameters =
+        new LinkedMultiValueMap<String, Object>(4);
 
     expectedRequestParameters.add("author", "Douglas Adams");
     expectedRequestParameters.add("title", "The Hitchhiker's Guide to the Galaxy");
     expectedRequestParameters.add("year", "1979");
     expectedRequestParameters.add("isbn", "0345453743");
 
-    request.addHeaderValues(HttpHeader.CONTENT_TYPE.getName(), MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+    request.addHeaderValues(
+        HttpHeader.CONTENT_TYPE.getName(), MediaType.APPLICATION_FORM_URLENCODED_VALUE);
     request.addParameterValues("author", expectedRequestParameters.getFirst("author"));
     request.addParameterValues("title", expectedRequestParameters.getFirst("title"));
     request.addParameterValues("year", expectedRequestParameters.getFirst("year"));
     request.addParameterValues("isbn", expectedRequestParameters.getFirst("isbn"));
 
-    final HttpEntity<MultiValueMap<String, Object>> requestEntity = (HttpEntity<MultiValueMap<String, Object>>) request.createRequestEntity();
+    final HttpEntity<MultiValueMap<String, Object>> requestEntity =
+        (HttpEntity<MultiValueMap<String, Object>>) request.createRequestEntity();
 
     assertNotNull(requestEntity);
     assertNotNull(requestEntity.getHeaders());
-    assertEquals(MediaType.APPLICATION_FORM_URLENCODED, requestEntity.getHeaders().getContentType());
+    assertEquals(
+        MediaType.APPLICATION_FORM_URLENCODED, requestEntity.getHeaders().getContentType());
     assertEquals(expectedRequestParameters, requestEntity.getBody());
   }
 
   @Test
   @SuppressWarnings("unchecked")
   public void testCreateRequestEntityForPut() throws Exception {
-    final Link expectedLink = new Link("put", toUri("http://host.domain.com:8080/app/libraries/{name}/books/{isbn}"), HttpMethod.PUT);
+    final Link expectedLink =
+        new Link(
+            "put",
+            toUri("http://host.domain.com:8080/app/libraries/{name}/books/{isbn}"),
+            HttpMethod.PUT);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     assertEquals(expectedLink, request.getLink());
 
-    final MultiValueMap<String, Object> expectedRequestParameters = new LinkedMultiValueMap<String, Object>(4);
+    final MultiValueMap<String, Object> expectedRequestParameters =
+        new LinkedMultiValueMap<String, Object>(4);
 
     expectedRequestParameters.add("year", "1979");
 
     request.addHeaderValues(HttpHeader.ACCEPT.getName(), MediaType.TEXT_XML_VALUE);
-    request.addHeaderValues(HttpHeader.CONTENT_TYPE.getName(), MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+    request.addHeaderValues(
+        HttpHeader.CONTENT_TYPE.getName(), MediaType.APPLICATION_FORM_URLENCODED_VALUE);
     request.addParameterValues("year", expectedRequestParameters.getFirst("year"));
 
-    final HttpEntity<MultiValueMap<String, Object>> requestEntity = (HttpEntity<MultiValueMap<String, Object>>) request.createRequestEntity();
+    final HttpEntity<MultiValueMap<String, Object>> requestEntity =
+        (HttpEntity<MultiValueMap<String, Object>>) request.createRequestEntity();
 
     assertNotNull(requestEntity);
     assertNotNull(requestEntity.getHeaders());
-    assertEquals(Collections.singletonList(MediaType.TEXT_XML), requestEntity.getHeaders().getAccept());
-    assertEquals(MediaType.APPLICATION_FORM_URLENCODED, requestEntity.getHeaders().getContentType());
+    assertEquals(
+        Collections.singletonList(MediaType.TEXT_XML), requestEntity.getHeaders().getAccept());
+    assertEquals(
+        MediaType.APPLICATION_FORM_URLENCODED, requestEntity.getHeaders().getContentType());
     assertEquals(expectedRequestParameters, requestEntity.getBody());
   }
 
   @Test
   public void testCreateRequestEntityOnPost() throws Exception {
-    final Library mockLibrary = mockContext.mock(Library.class, "testCreateRequestEntityOnPost.Library");
-    final Link expectedLink = new Link("post", toUri("http://host.domain.com:8080/app/libraries"), HttpMethod.POST);
+    final Library mockLibrary =
+        mockContext.mock(Library.class, "testCreateRequestEntityOnPost.Library");
+    final Link expectedLink =
+        new Link("post", toUri("http://host.domain.com:8080/app/libraries"), HttpMethod.POST);
 
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
@@ -411,7 +500,11 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
   @Test
   public void testCreateRequestEntityOnPut() throws Exception {
     final Book mockBook = mockContext.mock(Book.class, "testCreateRequestEntityOnPut.Book");
-    final Link expectedLink = new Link("put", toUri("http://host.domain.com:8080/app/libraries/{name}/books/{id}"), HttpMethod.PUT);
+    final Link expectedLink =
+        new Link(
+            "put",
+            toUri("http://host.domain.com:8080/app/libraries/{name}/books/{id}"),
+            HttpMethod.PUT);
 
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
@@ -425,42 +518,67 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
 
     assertSame(mockBook, request.getContent());
     assertEquals("0-123456789", request.getParameterValue("isbn"));
-    assertTrue(request.getParameterValues("category").containsAll(Arrays.asList("science-fiction", "sci-fi", "fiction")));
+    assertTrue(
+        request
+            .getParameterValues("category")
+            .containsAll(Arrays.asList("science-fiction", "sci-fi", "fiction")));
 
     final HttpEntity<?> requestEntity = request.createRequestEntity();
 
     assertNotNull(requestEntity);
     assertTrue(requestEntity.getBody() instanceof MultiValueMap);
-    assertEquals(MediaType.APPLICATION_FORM_URLENCODED, requestEntity.getHeaders().getContentType());
+    assertEquals(
+        MediaType.APPLICATION_FORM_URLENCODED, requestEntity.getHeaders().getContentType());
   }
 
   @Test
   public void testSetAndGetHeaderValues() throws Exception {
-    final Link expectedLink = new Link("put", toUri("http://host.domain.com:8080/app/libraries"), HttpMethod.PUT);
+    final Link expectedLink =
+        new Link("put", toUri("http://host.domain.com:8080/app/libraries"), HttpMethod.PUT);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     assertEquals(expectedLink, request.getLink());
     assertTrue(request.getHeaders().isEmpty());
 
     request.addHeaderValues(HttpHeader.CONTENT_TYPE.getName(), MediaType.APPLICATION_JSON_VALUE);
-    request.addHeaderValues(HttpHeader.ACCEPT.getName(), MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_PLAIN_VALUE);
+    request.addHeaderValues(
+        HttpHeader.ACCEPT.getName(),
+        MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_XML_VALUE,
+        MediaType.TEXT_PLAIN_VALUE);
 
-    assertEquals(MediaType.APPLICATION_JSON_VALUE, request.getHeaderValue(HttpHeader.CONTENT_TYPE.getName()));
+    assertEquals(
+        MediaType.APPLICATION_JSON_VALUE,
+        request.getHeaderValue(HttpHeader.CONTENT_TYPE.getName()));
     assertEquals(1, request.getHeaderValues(HttpHeader.CONTENT_TYPE.getName()).size());
-    assertEquals(MediaType.APPLICATION_JSON_VALUE, request.getHeaderValue(HttpHeader.ACCEPT.getName()));
+    assertEquals(
+        MediaType.APPLICATION_JSON_VALUE, request.getHeaderValue(HttpHeader.ACCEPT.getName()));
     assertEquals(3, request.getHeaderValues(HttpHeader.ACCEPT.getName()).size());
-    assertTrue(request.getHeaderValues(HttpHeader.ACCEPT.getName()).containsAll(Arrays.asList(MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_PLAIN_VALUE)));
+    assertTrue(
+        request
+            .getHeaderValues(HttpHeader.ACCEPT.getName())
+            .containsAll(
+                Arrays.asList(
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE,
+                    MediaType.TEXT_PLAIN_VALUE)));
 
     request.setHeader(HttpHeader.ACCEPT.getName(), MediaType.APPLICATION_OCTET_STREAM_VALUE);
 
-    assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, request.getHeaderValue(HttpHeader.ACCEPT.getName()));
+    assertEquals(
+        MediaType.APPLICATION_OCTET_STREAM_VALUE,
+        request.getHeaderValue(HttpHeader.ACCEPT.getName()));
     assertEquals(1, request.getHeaderValues(HttpHeader.ACCEPT.getName()).size());
-    assertTrue(request.getHeaderValues(HttpHeader.ACCEPT.getName()).containsAll(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM_VALUE)));
+    assertTrue(
+        request
+            .getHeaderValues(HttpHeader.ACCEPT.getName())
+            .containsAll(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM_VALUE)));
   }
 
   @Test
   public void testSetAndGetParameterValues() throws Exception {
-    final Link expectedLink = new Link("put", toUri("http://host.domain.com:8080/app/libraries"), HttpMethod.PUT);
+    final Link expectedLink =
+        new Link("put", toUri("http://host.domain.com:8080/app/libraries"), HttpMethod.PUT);
     final ClientHttpRequest request = new ClientHttpRequest(expectedLink);
 
     assertEquals(expectedLink, request.getLink());
@@ -473,13 +591,17 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
     assertEquals(1, request.getParameterValues("parameterOne").size());
     assertEquals("test", request.getParameterValue("parameterTwo"));
     assertEquals(3, request.getParameterValues("parameterTwo").size());
-    assertTrue(request.getParameterValues("parameterTwo").containsAll(Arrays.asList("test", "testing", "tested")));
+    assertTrue(
+        request
+            .getParameterValues("parameterTwo")
+            .containsAll(Arrays.asList("test", "testing", "tested")));
 
     request.setParameter("parameterTwo", "development");
 
     assertEquals("development", request.getParameterValue("parameterTwo"));
     assertEquals(1, request.getParameterValues("parameterTwo").size());
-    assertTrue(request.getParameterValues("parameterTwo").containsAll(Arrays.asList("development")));
+    assertTrue(
+        request.getParameterValues("parameterTwo").containsAll(Arrays.asList("development")));
   }
 
   @SuppressWarnings("unused")
@@ -497,5 +619,4 @@ public class ClientHttpRequestJUnitTest extends AbstractWebTestCase {
 
     public Integer getYear();
   }
-
 }

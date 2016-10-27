@@ -48,6 +48,7 @@ import org.apache.geode.internal.logging.LogService;
 
 /**
  * Does a region putAll on a server
+ *
  * @since GemFire 5.7
  */
 public class PutAllOp {
@@ -58,16 +59,31 @@ public class PutAllOp {
   public static final int FLAG_CONCURRENCY_CHECKS = 0x02;
 
   /**
-   * Does a region put on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region put on a server using connections from the given pool to communicate with the
+   * server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the putAll on
    * @param map the Map of keys and values to put
    * @param eventId the event id for this putAll
    * @param skipCallbacks true if no callbacks will be invoked
    */
-  public static VersionedObjectList execute(ExecutablePool pool, Region region, Map map, EventID eventId, boolean skipCallbacks, boolean isRetry, Object callbackArg) {
-    PutAllOpImpl op = new PutAllOpImpl(region, map, eventId, ((PoolImpl) pool).getPRSingleHopEnabled(), skipCallbacks, callbackArg);
+  public static VersionedObjectList execute(
+      ExecutablePool pool,
+      Region region,
+      Map map,
+      EventID eventId,
+      boolean skipCallbacks,
+      boolean isRetry,
+      Object callbackArg) {
+    PutAllOpImpl op =
+        new PutAllOpImpl(
+            region,
+            map,
+            eventId,
+            ((PoolImpl) pool).getPRSingleHopEnabled(),
+            skipCallbacks,
+            callbackArg);
     op.initMessagePart();
     if (isRetry) {
       op.getMessage().setIsRetry();
@@ -76,40 +92,64 @@ public class PutAllOp {
   }
 
   /**
-   * Does a region put on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region put on a server using connections from the given pool to communicate with the
+   * server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the putAll on
    * @param map the Map of keys and values to put
    * @param eventId the event id for this putAll
    */
-  public static VersionedObjectList execute(ExecutablePool pool, Region region, Map map, EventID eventId, boolean skipCallbacks, int retryAttempts, Object callbackArg) {
+  public static VersionedObjectList execute(
+      ExecutablePool pool,
+      Region region,
+      Map map,
+      EventID eventId,
+      boolean skipCallbacks,
+      int retryAttempts,
+      Object callbackArg) {
     ClientMetadataService cms = ((LocalRegion) region).getCache().getClientMetadataService();
 
-    Map<ServerLocation, HashSet> serverToFilterMap = cms.getServerToFilterMap(map.keySet(), region, true);
+    Map<ServerLocation, HashSet> serverToFilterMap =
+        cms.getServerToFilterMap(map.keySet(), region, true);
 
     if (serverToFilterMap == null || serverToFilterMap.isEmpty()) {
-      AbstractOp op = new PutAllOpImpl(region, map, eventId, ((PoolImpl) pool).getPRSingleHopEnabled(), skipCallbacks, callbackArg);
+      AbstractOp op =
+          new PutAllOpImpl(
+              region,
+              map,
+              eventId,
+              ((PoolImpl) pool).getPRSingleHopEnabled(),
+              skipCallbacks,
+              callbackArg);
       op.initMessagePart();
       return (VersionedObjectList) pool.execute(op);
     }
 
-    List callableTasks = constructAndGetPutAllTasks(region, map, eventId, skipCallbacks, serverToFilterMap, (PoolImpl) pool, callbackArg);
+    List callableTasks =
+        constructAndGetPutAllTasks(
+            region, map, eventId, skipCallbacks, serverToFilterMap, (PoolImpl) pool, callbackArg);
 
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
       logger.debug("PutAllOp#execute : Number of putAll tasks is : {}", callableTasks.size());
     }
-    HashMap<ServerLocation, RuntimeException> failedServers = new HashMap<ServerLocation, RuntimeException>();
+    HashMap<ServerLocation, RuntimeException> failedServers =
+        new HashMap<ServerLocation, RuntimeException>();
     PutAllPartialResult result = new PutAllPartialResult(map.size());
     try {
-      Map<ServerLocation, Object> results = SingleHopClientExecutor.submitBulkOp(callableTasks, cms, (LocalRegion) region, failedServers);
+      Map<ServerLocation, Object> results =
+          SingleHopClientExecutor.submitBulkOp(
+              callableTasks, cms, (LocalRegion) region, failedServers);
       for (Map.Entry<ServerLocation, Object> entry : results.entrySet()) {
         Object value = entry.getValue();
         if (value instanceof PutAllPartialResultException) {
           PutAllPartialResultException pap = (PutAllPartialResultException) value;
           if (isDebugEnabled) {
-            logger.debug("PutAll SingleHop encountered PutAllPartialResultException exception: {}, failedServers are {}", pap, failedServers.keySet());
+            logger.debug(
+                "PutAll SingleHop encountered PutAllPartialResultException exception: {}, failedServers are {}",
+                pap,
+                failedServers.keySet());
           }
           result.consolidate(pap.getResult());
         } else {
@@ -152,7 +192,7 @@ public class PutAllOp {
         result.addKeys(succeedKeySet);
       }
 
-      // send maps for the failed servers one by one instead of merging 
+      // send maps for the failed servers one by one instead of merging
       // them into one big map. The reason is, we have to keep the same event
       // ids for each sub map. There is a unit test in PutAllCSDUnitTest for
       // the otherwise case.
@@ -163,7 +203,7 @@ public class PutAllOp {
         RuntimeException savedRTE = failedServers.get(failedServer);
         if (savedRTE instanceof PutAllPartialResultException) {
           // will not retry for PutAllPartialResultException
-          // but it means at least one sub map ever failed 
+          // but it means at least one sub map ever failed
           oneSubMapRetryFailed = true;
           continue;
         }
@@ -174,7 +214,8 @@ public class PutAllOp {
         }
 
         try {
-          VersionedObjectList v = PutAllOp.execute(pool, region, newMap, eventId, skipCallbacks, true, callbackArg);
+          VersionedObjectList v =
+              PutAllOp.execute(pool, region, newMap, eventId, skipCallbacks, true, callbackArg);
           if (v == null) {
             result.addKeys(keySet);
           } else {
@@ -183,7 +224,10 @@ public class PutAllOp {
         } catch (PutAllPartialResultException pre) {
           oneSubMapRetryFailed = true;
           if (logger.isDebugEnabled()) {
-            logger.debug("Retry failed with PutAllPartialResultException: {} Before retry: {}", pre, result.getKeyListString());
+            logger.debug(
+                "Retry failed with PutAllPartialResultException: {} Before retry: {}",
+                pre,
+                result.getKeyListString());
           }
           result.consolidate(pre.getResult());
         } catch (Exception rte) {
@@ -207,7 +251,14 @@ public class PutAllOp {
     // no instances allowed
   }
 
-  static List constructAndGetPutAllTasks(Region region, final Map map, final EventID eventId, boolean skipCallbacks, final Map<ServerLocation, HashSet> serverToFilterMap, final PoolImpl pool, Object callbackArg) {
+  static List constructAndGetPutAllTasks(
+      Region region,
+      final Map map,
+      final EventID eventId,
+      boolean skipCallbacks,
+      final Map<ServerLocation, HashSet> serverToFilterMap,
+      final PoolImpl pool,
+      Object callbackArg) {
     final List<SingleHopOperationCallable> tasks = new ArrayList<SingleHopOperationCallable>();
     ArrayList<ServerLocation> servers = new ArrayList<ServerLocation>(serverToFilterMap.keySet());
 
@@ -221,9 +272,15 @@ public class PutAllOp {
       for (Object key : filterSet) {
         newKeysValuesMap.put(key, map.get(key));
       }
-      AbstractOp putAllOp = new PutAllOpImpl(region, newKeysValuesMap, eventId, true, skipCallbacks, callbackArg);
+      AbstractOp putAllOp =
+          new PutAllOpImpl(region, newKeysValuesMap, eventId, true, skipCallbacks, callbackArg);
 
-      SingleHopOperationCallable task = new SingleHopOperationCallable(new ServerLocation(server.getHostName(), server.getPort()), pool, putAllOp, UserAttributes.userAttributes.get());
+      SingleHopOperationCallable task =
+          new SingleHopOperationCallable(
+              new ServerLocation(server.getHostName(), server.getPort()),
+              pool,
+              putAllOp,
+              UserAttributes.userAttributes.get());
       tasks.add(task);
     }
     return tasks;
@@ -239,11 +296,17 @@ public class PutAllOp {
     private final Object callbackArg;
     private ArrayList keys = null;
 
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
-    public PutAllOpImpl(Region region, Map map, EventID eventId, boolean prSingleHopEnabled, boolean skipCallbacks, Object callbackArg) {
-      super(callbackArg != null ? MessageType.PUT_ALL_WITH_CALLBACK : MessageType.PUTALL, (callbackArg != null ? 6 : 5) + (map.size() * 2));
+    /** @throws org.apache.geode.SerializationException if serialization fails */
+    public PutAllOpImpl(
+        Region region,
+        Map map,
+        EventID eventId,
+        boolean prSingleHopEnabled,
+        boolean skipCallbacks,
+        Object callbackArg) {
+      super(
+          callbackArg != null ? MessageType.PUT_ALL_WITH_CALLBACK : MessageType.PUTALL,
+          (callbackArg != null ? 6 : 5) + (map.size() * 2));
       this.prSingleHopEnabled = prSingleHopEnabled;
       this.region = (LocalRegion) region;
       getMessage().addStringPart(region.getFullPath());
@@ -310,49 +373,55 @@ public class PutAllOp {
       final VersionedObjectList result = new VersionedObjectList();
       final Exception[] exceptionRef = new Exception[1];
       try {
-        processChunkedResponse((ChunkedMessage) msg, "putAll", new ChunkHandler() {
-          public void handle(ChunkedMessage cm) throws Exception {
-            int numParts = msg.getNumberOfParts();
-            final boolean isDebugEnabled = logger.isDebugEnabled();
-            if (isDebugEnabled) {
-              logger.debug("putAllOp.processChunkedResponse processing message with {} parts", numParts);
-            }
-            for (int partNo = 0; partNo < numParts; partNo++) {
-              Part part = cm.getPart(partNo);
-              try {
-                Object o = part.getObject();
+        processChunkedResponse(
+            (ChunkedMessage) msg,
+            "putAll",
+            new ChunkHandler() {
+              public void handle(ChunkedMessage cm) throws Exception {
+                int numParts = msg.getNumberOfParts();
+                final boolean isDebugEnabled = logger.isDebugEnabled();
                 if (isDebugEnabled) {
-                  logger.debug("part({}) contained {}", partNo, o);
+                  logger.debug(
+                      "putAllOp.processChunkedResponse processing message with {} parts", numParts);
                 }
-                if (o == null) {
-                  // no response is an okay response
-                } else if (o instanceof byte[]) {
-                  if (prSingleHopEnabled) {
-                    byte[] bytesReceived = part.getSerializedForm();
-                    if (bytesReceived[0] != ClientMetadataService.INITIAL_VERSION) { // nw hop
-                      if (region != null) {
-                        try {
-                          ClientMetadataService cms = region.getCache().getClientMetadataService();
-                          cms.scheduleGetPRMetaData(region, false, bytesReceived[1]);
-                        } catch (CacheClosedException e) {
+                for (int partNo = 0; partNo < numParts; partNo++) {
+                  Part part = cm.getPart(partNo);
+                  try {
+                    Object o = part.getObject();
+                    if (isDebugEnabled) {
+                      logger.debug("part({}) contained {}", partNo, o);
+                    }
+                    if (o == null) {
+                      // no response is an okay response
+                    } else if (o instanceof byte[]) {
+                      if (prSingleHopEnabled) {
+                        byte[] bytesReceived = part.getSerializedForm();
+                        if (bytesReceived[0] != ClientMetadataService.INITIAL_VERSION) { // nw hop
+                          if (region != null) {
+                            try {
+                              ClientMetadataService cms =
+                                  region.getCache().getClientMetadataService();
+                              cms.scheduleGetPRMetaData(region, false, bytesReceived[1]);
+                            } catch (CacheClosedException e) {
+                            }
+                          }
                         }
                       }
+                    } else if (o instanceof Throwable) {
+                      String s = "While performing a remote putAll";
+                      exceptionRef[0] = new ServerOperationException(s, (Throwable) o);
+                    } else {
+                      VersionedObjectList chunk = (VersionedObjectList) o;
+                      chunk.replaceNullIDs(con.getEndpoint().getMemberId());
+                      result.addAll(chunk);
                     }
+                  } catch (Exception e) {
+                    exceptionRef[0] =
+                        new ServerOperationException("Unable to deserialize value", e);
                   }
-                } else if (o instanceof Throwable) {
-                  String s = "While performing a remote putAll";
-                  exceptionRef[0] = new ServerOperationException(s, (Throwable) o);
-                } else {
-                  VersionedObjectList chunk = (VersionedObjectList) o;
-                  chunk.replaceNullIDs(con.getEndpoint().getMemberId());
-                  result.addAll(chunk);
                 }
-              } catch (Exception e) {
-                exceptionRef[0] = new ServerOperationException("Unable to deserialize value", e);
               }
-            }
-          }
-        });
+            });
       } catch (ServerOperationException e) {
         if (e.getCause() instanceof PutAllPartialResultException) {
           PutAllPartialResultException cause = (PutAllPartialResultException) e.getCause();
@@ -396,5 +465,4 @@ public class PutAllOp {
       stats.endPutAll(start, hasTimedOut(), hasFailed());
     }
   }
-
 }

@@ -57,8 +57,8 @@ public class ClientRegisterInterestDUnitTest extends ClientServerTestCase {
   }
 
   /**
-   * Tests for Bug 35381 Calling register interest if 
-   * establishCallbackConnection is not set causes bridge server NPE.
+   * Tests for Bug 35381 Calling register interest if establishCallbackConnection is not set causes
+   * bridge server NPE.
    */
   @Test
   public void testBug35381() throws Exception {
@@ -68,30 +68,31 @@ public class ClientRegisterInterestDUnitTest extends ClientServerTestCase {
 
     final int whichVM = 0;
     final VM vm = Host.getHost(0).getVM(whichVM);
-    vm.invoke(new CacheSerializableRunnable("Create bridge server") {
-      public void run2() throws CacheException {
-        LogWriterUtils.getLogWriter().info("[testBug35381] Create BridgeServer");
-        getSystem();
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        Region region = createRegion(name, factory.create());
-        assertNotNull(region);
-        assertNotNull(getRootRegion().getSubregion(name));
-        region.put("KEY-1", "VAL-1");
+    vm.invoke(
+        new CacheSerializableRunnable("Create bridge server") {
+          public void run2() throws CacheException {
+            LogWriterUtils.getLogWriter().info("[testBug35381] Create BridgeServer");
+            getSystem();
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            Region region = createRegion(name, factory.create());
+            assertNotNull(region);
+            assertNotNull(getRootRegion().getSubregion(name));
+            region.put("KEY-1", "VAL-1");
 
-        try {
-          bridgeServerPort = startBridgeServer(0);
-        } catch (IOException e) {
-          LogWriterUtils.getLogWriter().error("startBridgeServer threw IOException", e);
-          fail("startBridgeServer threw IOException ", e);
-        }
+            try {
+              bridgeServerPort = startBridgeServer(0);
+            } catch (IOException e) {
+              LogWriterUtils.getLogWriter().error("startBridgeServer threw IOException", e);
+              fail("startBridgeServer threw IOException ", e);
+            }
 
-        assertTrue(bridgeServerPort != 0);
+            assertTrue(bridgeServerPort != 0);
 
-        LogWriterUtils.getLogWriter().info("[testBug35381] port=" + bridgeServerPort);
-        LogWriterUtils.getLogWriter().info("[testBug35381] serverMemberId=" + getMemberId());
-      }
-    });
+            LogWriterUtils.getLogWriter().info("[testBug35381] port=" + bridgeServerPort);
+            LogWriterUtils.getLogWriter().info("[testBug35381] serverMemberId=" + getMemberId());
+          }
+        });
     ports[whichVM] = vm.invoke(() -> ClientRegisterInterestDUnitTest.getBridgeServerPort());
     assertTrue(ports[whichVM] != 0);
 
@@ -107,12 +108,20 @@ public class ClientRegisterInterestDUnitTest extends ClientServerTestCase {
 
     LogWriterUtils.getLogWriter().info("[testBug35381] creating connection pool");
     boolean establishCallbackConnection = false; // SOURCE OF BUG 35381
-    ClientServerTestCase.configureConnectionPool(factory, NetworkUtils.getServerHostName(host), ports, establishCallbackConnection, -1, -1, null);
+    ClientServerTestCase.configureConnectionPool(
+        factory,
+        NetworkUtils.getServerHostName(host),
+        ports,
+        establishCallbackConnection,
+        -1,
+        -1,
+        null);
     Region region = createRegion(name, factory.create());
     assertNotNull(getRootRegion().getSubregion(name));
     try {
       region.registerInterest("KEY-1");
-      fail("registerInterest failed to throw SubscriptionNotEnabledException with establishCallbackConnection set to false");
+      fail(
+          "registerInterest failed to throw SubscriptionNotEnabledException with establishCallbackConnection set to false");
     } catch (SubscriptionNotEnabledException expected) {
     }
   }
@@ -122,17 +131,14 @@ public class ClientRegisterInterestDUnitTest extends ClientServerTestCase {
   }
 
   /**
-   * Tests failover of register interest from client point of view. Related
-   * bugs include:
+   * Tests failover of register interest from client point of view. Related bugs include:
    *
-   * <p>Bug 35654 "failed re-registration may never be detected and thus
-   * may never re-re-register"
+   * <p>Bug 35654 "failed re-registration may never be detected and thus may never re-re-register"
    *
-   * <p>Bug 35639 "registerInterest re-registration happens everytime a healthy
-   * server is detected"
+   * <p>Bug 35639 "registerInterest re-registration happens everytime a healthy server is detected"
    *
-   * <p>Bug 35655 "a single failed re-registration causes all other pending
-   * re-registrations to be cancelled"
+   * <p>Bug 35655 "a single failed re-registration causes all other pending re-registrations to be
+   * cancelled"
    */
   @Ignore("TODO")
   @Test
@@ -152,74 +158,85 @@ public class ClientRegisterInterestDUnitTest extends ClientServerTestCase {
     // create first bridge server with region for client...
     final int firstServerIdx = 0;
     final VM firstServerVM = Host.getHost(0).getVM(firstServerIdx);
-    firstServerVM.invoke(new CacheSerializableRunnable("Create first bridge server") {
-      public void run2() throws CacheException {
-        LogWriterUtils.getLogWriter().info("[testRegisterInterestFailover] Create first bridge server");
-        getSystem();
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        Region region1 = createRootRegion(regionName1, factory.create());
-        Region region2 = createRootRegion(regionName2, factory.create());
-        Region region3 = createRootRegion(regionName3, factory.create());
-        region1.put(key1, "VAL-1");
-        region2.put(key2, "VAL-1");
-        region3.put(key3, "VAL-1");
+    firstServerVM.invoke(
+        new CacheSerializableRunnable("Create first bridge server") {
+          public void run2() throws CacheException {
+            LogWriterUtils.getLogWriter()
+                .info("[testRegisterInterestFailover] Create first bridge server");
+            getSystem();
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            Region region1 = createRootRegion(regionName1, factory.create());
+            Region region2 = createRootRegion(regionName2, factory.create());
+            Region region3 = createRootRegion(regionName3, factory.create());
+            region1.put(key1, "VAL-1");
+            region2.put(key2, "VAL-1");
+            region3.put(key3, "VAL-1");
 
-        try {
-          bridgeServerPort = startBridgeServer(0);
-        } catch (IOException e) {
-          LogWriterUtils.getLogWriter().error("startBridgeServer threw IOException", e);
-          fail("startBridgeServer threw IOException ", e);
-        }
+            try {
+              bridgeServerPort = startBridgeServer(0);
+            } catch (IOException e) {
+              LogWriterUtils.getLogWriter().error("startBridgeServer threw IOException", e);
+              fail("startBridgeServer threw IOException ", e);
+            }
 
-        assertTrue(bridgeServerPort != 0);
+            assertTrue(bridgeServerPort != 0);
 
-        LogWriterUtils.getLogWriter().info("[testRegisterInterestFailover] " + "firstServer port=" + bridgeServerPort);
-        LogWriterUtils.getLogWriter().info("[testRegisterInterestFailover] " + "firstServer memberId=" + getMemberId());
-      }
-    });
+            LogWriterUtils.getLogWriter()
+                .info("[testRegisterInterestFailover] " + "firstServer port=" + bridgeServerPort);
+            LogWriterUtils.getLogWriter()
+                .info("[testRegisterInterestFailover] " + "firstServer memberId=" + getMemberId());
+          }
+        });
 
     // create second bridge server missing region for client...
     final int secondServerIdx = 1;
     final VM secondServerVM = Host.getHost(0).getVM(secondServerIdx);
-    secondServerVM.invoke(new CacheSerializableRunnable("Create second bridge server") {
-      public void run2() throws CacheException {
-        LogWriterUtils.getLogWriter().info("[testRegisterInterestFailover] Create second bridge server");
-        getSystem();
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        Region region1 = createRootRegion(regionName1, factory.create());
-        Region region3 = createRootRegion(regionName3, factory.create());
-        region1.put(key1, "VAL-2");
-        region3.put(key3, "VAL-2");
+    secondServerVM.invoke(
+        new CacheSerializableRunnable("Create second bridge server") {
+          public void run2() throws CacheException {
+            LogWriterUtils.getLogWriter()
+                .info("[testRegisterInterestFailover] Create second bridge server");
+            getSystem();
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            Region region1 = createRootRegion(regionName1, factory.create());
+            Region region3 = createRootRegion(regionName3, factory.create());
+            region1.put(key1, "VAL-2");
+            region3.put(key3, "VAL-2");
 
-        try {
-          bridgeServerPort = startBridgeServer(0);
-        } catch (IOException e) {
-          LogWriterUtils.getLogWriter().error("startBridgeServer threw IOException", e);
-          fail("startBridgeServer threw IOException ", e);
-        }
+            try {
+              bridgeServerPort = startBridgeServer(0);
+            } catch (IOException e) {
+              LogWriterUtils.getLogWriter().error("startBridgeServer threw IOException", e);
+              fail("startBridgeServer threw IOException ", e);
+            }
 
-        assertTrue(bridgeServerPort != 0);
+            assertTrue(bridgeServerPort != 0);
 
-        LogWriterUtils.getLogWriter().info("[testRegisterInterestFailover] " + "secondServer port=" + bridgeServerPort);
-        LogWriterUtils.getLogWriter().info("[testRegisterInterestFailover] " + "secondServer memberId=" + getMemberId());
-      }
-    });
+            LogWriterUtils.getLogWriter()
+                .info("[testRegisterInterestFailover] " + "secondServer port=" + bridgeServerPort);
+            LogWriterUtils.getLogWriter()
+                .info("[testRegisterInterestFailover] " + "secondServer memberId=" + getMemberId());
+          }
+        });
 
     // get the bridge server ports...
-    ports[firstServerIdx] = firstServerVM.invoke(() -> ClientRegisterInterestDUnitTest.getBridgeServerPort());
+    ports[firstServerIdx] =
+        firstServerVM.invoke(() -> ClientRegisterInterestDUnitTest.getBridgeServerPort());
     assertTrue(ports[firstServerIdx] != 0);
-    ports[secondServerIdx] = secondServerVM.invoke(() -> ClientRegisterInterestDUnitTest.getBridgeServerPort());
+    ports[secondServerIdx] =
+        secondServerVM.invoke(() -> ClientRegisterInterestDUnitTest.getBridgeServerPort());
     assertTrue(ports[secondServerIdx] != 0);
     assertTrue(ports[firstServerIdx] != ports[secondServerIdx]);
 
     // stop second and third servers
-    secondServerVM.invoke(new CacheSerializableRunnable("Stop second bridge server") {
-      public void run2() throws CacheException {
-        stopBridgeServers(getCache());
-      }
-    });
+    secondServerVM.invoke(
+        new CacheSerializableRunnable("Stop second bridge server") {
+          public void run2() throws CacheException {
+            stopBridgeServers(getCache());
+          }
+        });
 
     // create the bridge client
     LogWriterUtils.getLogWriter().info("[testBug35654] create bridge client");
@@ -234,7 +251,16 @@ public class ClientRegisterInterestDUnitTest extends ClientServerTestCase {
 
     LogWriterUtils.getLogWriter().info("[testRegisterInterestFailover] creating connection pool");
     boolean establishCallbackConnection = true;
-    final PoolImpl p = (PoolImpl) ClientServerTestCase.configureConnectionPool(factory, NetworkUtils.getServerHostName(host), ports, establishCallbackConnection, -1, -1, null);
+    final PoolImpl p =
+        (PoolImpl)
+            ClientServerTestCase.configureConnectionPool(
+                factory,
+                NetworkUtils.getServerHostName(host),
+                ports,
+                establishCallbackConnection,
+                -1,
+                -1,
+                null);
 
     final Region region1 = createRootRegion(regionName1, factory.create());
     final Region region2 = createRootRegion(regionName2, factory.create());
@@ -257,15 +283,16 @@ public class ClientRegisterInterestDUnitTest extends ClientServerTestCase {
     assertTrue(region3.getInterestListRegex().isEmpty());
 
     // get ConnectionProxy and wait until connected to first server
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return p.getPrimaryPort() != -1;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return p.getPrimaryPort() != -1;
+          }
 
-      public String description() {
-        return "primary port remained invalid";
-      }
-    };
+          public String description() {
+            return "primary port remained invalid";
+          }
+        };
     Wait.waitForCriterion(ev, 10 * 1000, 200, true);
     assertEquals(ports[firstServerIdx], p.getPrimaryPort());
 
@@ -275,61 +302,67 @@ public class ClientRegisterInterestDUnitTest extends ClientServerTestCase {
     assertEquals("VAL-1", region3.get(key3));
 
     // do puts on server1 and make sure values come thru for all 3 registrations
-    firstServerVM.invoke(new CacheSerializableRunnable("Puts from first bridge server") {
-      public void run2() throws CacheException {
-        Region region1 = getCache().getRegion(regionName1);
-        region1.put(key1, "VAL-1-1");
-        Region region2 = getCache().getRegion(regionName2);
-        region2.put(key2, "VAL-1-1");
-        Region region3 = getCache().getRegion(regionName3);
-        region3.put(key3, "VAL-1-1");
-      }
-    });
+    firstServerVM.invoke(
+        new CacheSerializableRunnable("Puts from first bridge server") {
+          public void run2() throws CacheException {
+            Region region1 = getCache().getRegion(regionName1);
+            region1.put(key1, "VAL-1-1");
+            Region region2 = getCache().getRegion(regionName2);
+            region2.put(key2, "VAL-1-1");
+            Region region3 = getCache().getRegion(regionName3);
+            region3.put(key3, "VAL-1-1");
+          }
+        });
 
-    ev = new WaitCriterion() {
-      public boolean done() {
-        if (!"VAL-1-1".equals(region1.get(key1)) || !"VAL-1-1".equals(region2.get(key2)) || !"VAL-1-1".equals(region3.get(key3)))
-          return false;
-        return true;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            if (!"VAL-1-1".equals(region1.get(key1))
+                || !"VAL-1-1".equals(region2.get(key2))
+                || !"VAL-1-1".equals(region3.get(key3))) return false;
+            return true;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 10 * 1000, 200, true);
     assertEquals("VAL-1-1", region1.get(key1));
     assertEquals("VAL-1-1", region2.get(key2));
     assertEquals("VAL-1-1", region3.get(key3));
 
     // force failover to server 2
-    secondServerVM.invoke(new CacheSerializableRunnable("Start second bridge server") {
-      public void run2() throws CacheException {
-        try {
-          startBridgeServer(ports[secondServerIdx]);
-        } catch (IOException e) {
-          LogWriterUtils.getLogWriter().error("startBridgeServer threw IOException", e);
-          fail("startBridgeServer threw IOException ", e);
-        }
-      }
-    });
+    secondServerVM.invoke(
+        new CacheSerializableRunnable("Start second bridge server") {
+          public void run2() throws CacheException {
+            try {
+              startBridgeServer(ports[secondServerIdx]);
+            } catch (IOException e) {
+              LogWriterUtils.getLogWriter().error("startBridgeServer threw IOException", e);
+              fail("startBridgeServer threw IOException ", e);
+            }
+          }
+        });
 
-    firstServerVM.invoke(new CacheSerializableRunnable("Stop first bridge server") {
-      public void run2() throws CacheException {
-        stopBridgeServers(getCache());
-      }
-    });
+    firstServerVM.invoke(
+        new CacheSerializableRunnable("Stop first bridge server") {
+          public void run2() throws CacheException {
+            stopBridgeServers(getCache());
+          }
+        });
 
     // wait for failover to second server
-    ev = new WaitCriterion() {
-      public boolean done() {
-        return ports[secondServerIdx] == p.getPrimaryPort();
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return ports[secondServerIdx] == p.getPrimaryPort();
+          }
 
-      public String description() {
-        return "primary port never became " + ports[secondServerIdx];
-      }
-    };
+          public String description() {
+            return "primary port never became " + ports[secondServerIdx];
+          }
+        };
     Wait.waitForCriterion(ev, 100 * 1000, 200, true);
 
     try {
@@ -340,13 +373,14 @@ public class ClientRegisterInterestDUnitTest extends ClientServerTestCase {
 
     // region2 registration should be gone now
     // do puts on server2 and make sure values come thru for only 2 registrations
-    secondServerVM.invoke(new CacheSerializableRunnable("Puts from second bridge server") {
-      public void run2() throws CacheException {
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        createRootRegion(regionName2, factory.create());
-      }
-    });
+    secondServerVM.invoke(
+        new CacheSerializableRunnable("Puts from second bridge server") {
+          public void run2() throws CacheException {
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            createRootRegion(regionName2, factory.create());
+          }
+        });
 
     // assert that there is no actively registered interest on region2
     assertTrue(region2.getInterestList().isEmpty());
@@ -354,29 +388,31 @@ public class ClientRegisterInterestDUnitTest extends ClientServerTestCase {
 
     region2.put(key2, "VAL-0");
 
-    secondServerVM.invoke(new CacheSerializableRunnable("Put from second bridge server") {
-      public void run2() throws CacheException {
-        Region region1 = getCache().getRegion(regionName1);
-        region1.put(key1, "VAL-2-2");
-        Region region2 = getCache().getRegion(regionName2);
-        region2.put(key2, "VAL-2-1");
-        Region region3 = getCache().getRegion(regionName3);
-        region3.put(key3, "VAL-2-2");
-      }
-    });
+    secondServerVM.invoke(
+        new CacheSerializableRunnable("Put from second bridge server") {
+          public void run2() throws CacheException {
+            Region region1 = getCache().getRegion(regionName1);
+            region1.put(key1, "VAL-2-2");
+            Region region2 = getCache().getRegion(regionName2);
+            region2.put(key2, "VAL-2-1");
+            Region region3 = getCache().getRegion(regionName3);
+            region3.put(key3, "VAL-2-2");
+          }
+        });
 
     // wait for updates to come thru
-    ev = new WaitCriterion() {
-      public boolean done() {
-        if (!"VAL-2-2".equals(region1.get(key1)) || !"VAL-2-2".equals(region3.get(key3)))
-          return false;
-        return true;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            if (!"VAL-2-2".equals(region1.get(key1)) || !"VAL-2-2".equals(region3.get(key3)))
+              return false;
+            return true;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 100 * 1000, 200, true);
     assertEquals("VAL-2-2", region1.get(key1));
     assertEquals("VAL-0", region2.get(key2));
@@ -389,29 +425,32 @@ public class ClientRegisterInterestDUnitTest extends ClientServerTestCase {
     region2.registerInterest(key2);
     assertEquals("VAL-2-1", region2.get(key2));
 
-    secondServerVM.invoke(new CacheSerializableRunnable("Put from second bridge server") {
-      public void run2() throws CacheException {
-        Region region1 = getCache().getRegion(regionName1);
-        region1.put(key1, "VAL-2-3");
-        Region region2 = getCache().getRegion(regionName2);
-        region2.put(key2, "VAL-2-2");
-        Region region3 = getCache().getRegion(regionName3);
-        region3.put(key3, "VAL-2-3");
-      }
-    });
+    secondServerVM.invoke(
+        new CacheSerializableRunnable("Put from second bridge server") {
+          public void run2() throws CacheException {
+            Region region1 = getCache().getRegion(regionName1);
+            region1.put(key1, "VAL-2-3");
+            Region region2 = getCache().getRegion(regionName2);
+            region2.put(key2, "VAL-2-2");
+            Region region3 = getCache().getRegion(regionName3);
+            region3.put(key3, "VAL-2-3");
+          }
+        });
 
     // wait for updates to come thru
-    ev = new WaitCriterion() {
-      public boolean done() {
-        if (!"VAL-2-3".equals(region1.get(key1)) || !"VAL-2-2".equals(region2.get(key2)) || !"VAL-2-3".equals(region3.get(key3)))
-          return false;
-        return true;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            if (!"VAL-2-3".equals(region1.get(key1))
+                || !"VAL-2-2".equals(region2.get(key2))
+                || !"VAL-2-3".equals(region3.get(key3))) return false;
+            return true;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 100 * 1000, 200, true);
     assertEquals("VAL-2-3", region1.get(key1));
     assertEquals("VAL-2-2", region2.get(key2));
@@ -420,5 +459,4 @@ public class ClientRegisterInterestDUnitTest extends ClientServerTestCase {
     // assert public methods report actively registered interest on region2
     assertTrue(region2.getInterestList().contains(key2));
   }
-
 }

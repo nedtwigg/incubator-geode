@@ -58,5 +58,4 @@ public class HValsExecutor extends HashExecutor {
 
     command.setResponse(Coder.getBulkStringArrayResponse(context.getByteBufAllocator(), vals));
   }
-
 }

@@ -53,8 +53,45 @@ public class LuceneIndexStats {
 
   static {
     final StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
-    statsType = f.createType(statsTypeName, statsTypeDescription, new StatisticDescriptor[] { f.createIntCounter("queryExecutions", "Number of lucene queries executed on this member", "operations"), f.createLongCounter("queryExecutionTime", "Amount of time spent executing lucene queries", "nanoseconds"), f.createIntGauge("queryExecutionsInProgress", "Number of query executions currently in progress", "operations"), f.createLongCounter("queryExecutionTotalHits", "Total number of documents returned by query executions", "entries"), f.createIntCounter("updates", "Number of lucene index documents added/removed on this member", "operations"), f.createLongCounter("updateTime", "Amount of time spent adding or removing documents from the index", "nanoseconds"), f.createIntGauge("updatesInProgress", "Number of index updates in progress", "operations"), f.createIntCounter("commits", "Number of lucene index commits on this member", "operations"),
-        f.createLongCounter("commitTime", "Amount of time spent in lucene index commits", "nanoseconds"), f.createIntGauge("commitsInProgress", "Number of lucene index commits in progress", "operations"), f.createIntGauge("documents", "Number of documents in the index", "documents"), });
+    statsType =
+        f.createType(
+            statsTypeName,
+            statsTypeDescription,
+            new StatisticDescriptor[] {
+              f.createIntCounter(
+                  "queryExecutions",
+                  "Number of lucene queries executed on this member",
+                  "operations"),
+              f.createLongCounter(
+                  "queryExecutionTime",
+                  "Amount of time spent executing lucene queries",
+                  "nanoseconds"),
+              f.createIntGauge(
+                  "queryExecutionsInProgress",
+                  "Number of query executions currently in progress",
+                  "operations"),
+              f.createLongCounter(
+                  "queryExecutionTotalHits",
+                  "Total number of documents returned by query executions",
+                  "entries"),
+              f.createIntCounter(
+                  "updates",
+                  "Number of lucene index documents added/removed on this member",
+                  "operations"),
+              f.createLongCounter(
+                  "updateTime",
+                  "Amount of time spent adding or removing documents from the index",
+                  "nanoseconds"),
+              f.createIntGauge(
+                  "updatesInProgress", "Number of index updates in progress", "operations"),
+              f.createIntCounter(
+                  "commits", "Number of lucene index commits on this member", "operations"),
+              f.createLongCounter(
+                  "commitTime", "Amount of time spent in lucene index commits", "nanoseconds"),
+              f.createIntGauge(
+                  "commitsInProgress", "Number of lucene index commits in progress", "operations"),
+              f.createIntGauge("documents", "Number of documents in the index", "documents"),
+            });
 
     queryExecutionsId = statsType.nameToId("queryExecutions");
     queryExecutionTimeId = statsType.nameToId("queryExecutionTime");
@@ -74,17 +111,13 @@ public class LuceneIndexStats {
     stats.setIntSupplier(documentsId, this::computeDocumentCount);
   }
 
-  /**
-   * @return the timestamp that marks the start of the operation
-   */
+  /** @return the timestamp that marks the start of the operation */
   public long startQuery() {
     stats.incInt(queryExecutionsInProgressId, 1);
     return getStatTime();
   }
 
-  /**
-   * @param start the timestamp taken when the operation started
-   */
+  /** @param start the timestamp taken when the operation started */
   public void endQuery(long start, final int totalHits) {
     stats.incLong(queryExecutionTimeId, getStatTime() - start);
     stats.incInt(queryExecutionsInProgressId, -1);
@@ -92,34 +125,26 @@ public class LuceneIndexStats {
     stats.incLong(queryExecutionTotalHitsId, totalHits);
   }
 
-  /**
-   * @return the timestamp that marks the start of the operation
-   */
+  /** @return the timestamp that marks the start of the operation */
   public long startUpdate() {
     stats.incInt(updatesInProgressId, 1);
     return getStatTime();
   }
 
-  /**
-   * @param start the timestamp taken when the operation started
-   */
+  /** @param start the timestamp taken when the operation started */
   public void endUpdate(long start) {
     stats.incLong(updateTimeId, getStatTime() - start);
     stats.incInt(updatesInProgressId, -1);
     stats.incInt(updatesId, 1);
   }
 
-  /**
-   * @return the timestamp that marks the start of the operation
-   */
+  /** @return the timestamp that marks the start of the operation */
   public long startCommit() {
     stats.incInt(commitsInProgressId, 1);
     return getStatTime();
   }
 
-  /**
-   * @param start the timestamp taken when the operation started
-   */
+  /** @param start the timestamp taken when the operation started */
   public void endCommit(long start) {
     stats.incLong(commitTimeId, getStatTime() - start);
     stats.incInt(commitsInProgressId, -1);

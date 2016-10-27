@@ -33,21 +33,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.apache.geode.CancelCriterion;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit tests for {@link CallbackSampler}.
- */
+/** Unit tests for {@link CallbackSampler}. */
 @Category(UnitTest.class)
 @RunWith(MockitoJUnitRunner.class)
 public class CallbackSamplerTest {
 
-  @Mock
-  CancelCriterion cancelCriterion;
-  @Mock
-  StatSamplerStats statSamplerStats;
-  @Mock
-  StatisticsManager statisticsManager;
-  @Mock
-  ScheduledExecutorService executorService;
+  @Mock CancelCriterion cancelCriterion;
+  @Mock StatSamplerStats statSamplerStats;
+  @Mock StatisticsManager statisticsManager;
+  @Mock ScheduledExecutorService executorService;
 
   private CallbackSampler sampler;
 
@@ -91,8 +85,8 @@ public class CallbackSamplerTest {
   private Runnable invokeStartAndGetTask() {
     sampler.start(executorService, statisticsManager, 1, TimeUnit.MILLISECONDS);
     ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-    verify(executorService).scheduleAtFixedRate(runnableCaptor.capture(), eq(1L), eq(1L), eq(TimeUnit.MILLISECONDS));
+    verify(executorService)
+        .scheduleAtFixedRate(runnableCaptor.capture(), eq(1L), eq(1L), eq(TimeUnit.MILLISECONDS));
     return runnableCaptor.getValue();
   }
-
 }

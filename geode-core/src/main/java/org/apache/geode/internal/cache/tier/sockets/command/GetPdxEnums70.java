@@ -29,20 +29,21 @@ import org.apache.geode.pdx.internal.EnumInfo;
 
 public class GetPdxEnums70 extends BaseCommand {
 
-  private final static GetPdxEnums70 singleton = new GetPdxEnums70();
+  private static final GetPdxEnums70 singleton = new GetPdxEnums70();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private GetPdxEnums70() {
-  }
+  private GetPdxEnums70() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received get pdx enums from {}", servConn.getName(), servConn.getSocketString());
+      logger.debug(
+          "{}: Received get pdx enums from {}", servConn.getName(), servConn.getSocketString());
     }
 
     Map<Integer, EnumInfo> enums;

@@ -21,15 +21,13 @@ import java.util.Iterator;
 import org.apache.geode.cache.query.types.CollectionType;
 
 /**
- * This interface is to be implemented by all SelectResults implementation which
- * can hold struct using field values array ( Object[]) 
- * 
+ * This interface is to be implemented by all SelectResults implementation which can hold struct
+ * using field values array ( Object[])
+ *
  * @see SortedStructSet
  * @see StructSet
  * @see StructBag
  * @see SortedStructBag
- * 
- *
  */
 public interface StructFields {
 

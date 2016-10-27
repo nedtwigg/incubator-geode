@@ -49,16 +49,14 @@ import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * This is Targetted conflation Dunit test.
- *  1 Client & 1 Server.
- *  Slow down the dispatcher.
- *  From the unit controller VM using separate invoke every time so that different thread
- *  context are created on the server ,test the following
- *  1) Do a create & then update on same key , the client should receive 2 calabcks.
- *  2) Do create , then update & update. The client should receive 2 callbacks , one for create & one for the last update.
- *  3) Do create , then update, update, invalidate. The client should receive 3 callbacks, one for create one for the last update
- *     and one for the invalidate.
- *  4) Do a create , update , update & destroy. The client should receive 3 callbacks ( craete , conflated update & destroy).
+ * This is Targetted conflation Dunit test. 1 Client & 1 Server. Slow down the dispatcher. From the
+ * unit controller VM using separate invoke every time so that different thread context are created
+ * on the server ,test the following 1) Do a create & then update on same key , the client should
+ * receive 2 calabcks. 2) Do create , then update & update. The client should receive 2 callbacks ,
+ * one for create & one for the last update. 3) Do create , then update, update, invalidate. The
+ * client should receive 3 callbacks, one for create one for the last update and one for the
+ * invalidate. 4) Do a create , update , update & destroy. The client should receive 3 callbacks (
+ * craete , conflated update & destroy).
  */
 @Category(DistributedTest.class)
 public class HAConflationDUnitTest extends JUnit4CacheTestCase {
@@ -106,10 +104,16 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     // Client 1 VM
     client1 = host.getVM(2);
 
-    int PORT1 = ((Integer) server1.invoke(() -> HAConflationDUnitTest.createServerCache(new Boolean(false)))).intValue();
+    int PORT1 =
+        ((Integer)
+                server1.invoke(() -> HAConflationDUnitTest.createServerCache(new Boolean(false))))
+            .intValue();
     server1.invoke(() -> ConflationDUnitTest.setIsSlowStart());
     server1.invoke(() -> HAConflationDUnitTest.makeDispatcherSlow());
-    client1.invoke(() -> HAConflationDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT1), new Boolean(true)));
+    client1.invoke(
+        () ->
+            HAConflationDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT1), new Boolean(true)));
   }
 
   @Override
@@ -127,11 +131,10 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * In this test do a create & then update on same key ,
-   * the client should receive 2 calabcks.
+   * In this test do a create & then update on same key , the client should receive 2 calabcks.
+   *
    * @throws Exception
    */
-
   @Test
   public void testConflationCreateUpdate() throws Exception {
     server1.invoke(putFromServer(KEY1, VALUE1));
@@ -139,12 +142,12 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     server1.invoke(putFromServer(LAST_KEY, LAST_VALUE));
     expectedNoEvents = 2;
     client1.invoke(checkNoEvents(expectedNoEvents));
-
   }
 
   /**
-   * In this test do create , then update & update.
-   * The client should receive 2 callbacks , one for create & one for the last update.
+   * In this test do create , then update & update. The client should receive 2 callbacks , one for
+   * create & one for the last update.
+   *
    * @throws Exception
    */
   @Test
@@ -162,13 +165,12 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     server1.invoke(putFromServer(LAST_KEY, LAST_VALUE));
     expectedNoEvents = 2;
     client1.invoke(checkNoEvents(expectedNoEvents));
-
   }
 
   /**
-   * In this test do create , then update, update, invalidate.
-   * The client should receive 3 callbacks, one for create one for the last update
-   * and one for the invalidate.
+   * In this test do create , then update, update, invalidate. The client should receive 3
+   * callbacks, one for create one for the last update and one for the invalidate.
+   *
    * @throws Exception
    */
   @Test
@@ -181,12 +183,12 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     server1.invoke(putFromServer(LAST_KEY, LAST_VALUE));
     expectedNoEvents = 3;
     client1.invoke(checkNoEvents(expectedNoEvents));
-
   }
 
   /**
-   * In this test do a create , update , update & destroy.
-   * The client should receive 3 callbacks ( craete , conflated update & destroy).
+   * In this test do a create , update , update & destroy. The client should receive 3 callbacks (
+   * craete , conflated update & destroy).
+   *
    * @throws Exception
    */
   @Test
@@ -199,86 +201,86 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     server1.invoke(putFromServer(LAST_KEY, LAST_VALUE));
     expectedNoEvents = 3;
     client1.invoke(checkNoEvents(expectedNoEvents));
-
   }
 
   private CacheSerializableRunnable putFromServer(final String key, final String value) {
-    CacheSerializableRunnable performPut = new CacheSerializableRunnable("putFromServer") {
-      public void run2() throws CacheException {
-        Region region = basicGetCache().getRegion(Region.SEPARATOR + regionName);
-        assertNotNull(region);
-        basicGetCache().getLogger().info("starting put()");
-        region.put(key, value);
-        basicGetCache().getLogger().info("finished put()");
-      }
-    };
+    CacheSerializableRunnable performPut =
+        new CacheSerializableRunnable("putFromServer") {
+          public void run2() throws CacheException {
+            Region region = basicGetCache().getRegion(Region.SEPARATOR + regionName);
+            assertNotNull(region);
+            basicGetCache().getLogger().info("starting put()");
+            region.put(key, value);
+            basicGetCache().getLogger().info("finished put()");
+          }
+        };
 
     return performPut;
   }
 
   private CacheSerializableRunnable invalidateFromServer(final String key) {
-    CacheSerializableRunnable performInvalidate = new CacheSerializableRunnable("invalidateFromServer") {
-      public void run2() throws CacheException {
-        Region region = basicGetCache().getRegion(Region.SEPARATOR + regionName);
-        assertNotNull(region);
-        region.invalidate(key);
-        basicGetCache().getLogger().info("done invalidate() successfully");
-
-      }
-    };
+    CacheSerializableRunnable performInvalidate =
+        new CacheSerializableRunnable("invalidateFromServer") {
+          public void run2() throws CacheException {
+            Region region = basicGetCache().getRegion(Region.SEPARATOR + regionName);
+            assertNotNull(region);
+            region.invalidate(key);
+            basicGetCache().getLogger().info("done invalidate() successfully");
+          }
+        };
 
     return performInvalidate;
   }
 
   private CacheSerializableRunnable destroyFromServer(final String key) {
-    CacheSerializableRunnable performDestroy = new CacheSerializableRunnable("performDestroy") {
-      public void run2() throws CacheException {
-        Region region = basicGetCache().getRegion(Region.SEPARATOR + regionName);
-        assertNotNull(region);
-        region.destroy(key);
-        basicGetCache().getLogger().info("done destroy successfully");
-
-      }
-    };
+    CacheSerializableRunnable performDestroy =
+        new CacheSerializableRunnable("performDestroy") {
+          public void run2() throws CacheException {
+            Region region = basicGetCache().getRegion(Region.SEPARATOR + regionName);
+            assertNotNull(region);
+            region.destroy(key);
+            basicGetCache().getLogger().info("done destroy successfully");
+          }
+        };
 
     return performDestroy;
   }
 
   private CacheSerializableRunnable checkNoEvents(final int expectedEvents) {
-    CacheSerializableRunnable checkEvents = new CacheSerializableRunnable("checkEvents") {
-      final int interval = 200; // millis
+    CacheSerializableRunnable checkEvents =
+        new CacheSerializableRunnable("checkEvents") {
+          final int interval = 200; // millis
 
-      public void run2() throws CacheException {
-        WaitCriterion w = new WaitCriterion() {
-          public boolean done() {
-            synchronized (HAConflationDUnitTest.LOCK) {
+          public void run2() throws CacheException {
+            WaitCriterion w =
+                new WaitCriterion() {
+                  public boolean done() {
+                    synchronized (HAConflationDUnitTest.LOCK) {
+                      if (!lastKeyArrived) {
+                        try {
+                          LOCK.wait(interval);
+                        } catch (InterruptedException e) {
+                          fail("interrupted");
+                        }
+                      }
+                    }
+                    return lastKeyArrived;
+                  }
 
-              if (!lastKeyArrived) {
-                try {
-                  LOCK.wait(interval);
-                } catch (InterruptedException e) {
-                  fail("interrupted");
-                }
-              }
-            }
-            return lastKeyArrived;
-          }
+                  public String description() {
+                    return "expected " + expectedEvents + " events but received " + actualNoEvents;
+                  }
+                };
 
-          public String description() {
-            return "expected " + expectedEvents + " events but received " + actualNoEvents;
+            Wait.waitForCriterion(w, 3 * 60 * 1000, interval, true);
           }
         };
-
-        Wait.waitForCriterion(w, 3 * 60 * 1000, interval, true);
-      }
-    };
     return checkEvents;
   }
 
   public static void makeDispatcherSlow() {
 
     System.setProperty("slowStartTimeForTesting", "15000");
-
   }
 
   private void createCache(Properties props) throws Exception {
@@ -290,14 +292,16 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     assertNotNull(basicGetCache());
   }
 
-  public static void createClientCache(String host, Integer port1, Boolean isListenerPresent) throws Exception {
+  public static void createClientCache(String host, Integer port1, Boolean isListenerPresent)
+      throws Exception {
     int PORT1 = port1.intValue();
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new HAConflationDUnitTest().createCache(props);
     AttributesFactory factory = new AttributesFactory();
-    ClientServerTestCase.configureConnectionPool(factory, host, new int[] { PORT1 }, true, -1, -1, null);
+    ClientServerTestCase.configureConnectionPool(
+        factory, host, new int[] {PORT1}, true, -1, -1, null);
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setEnableConflation(true);
     if (isListenerPresent.booleanValue() == true) {
@@ -315,7 +319,6 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     region.registerInterest(LAST_KEY);
     lastKeyArrived = false;
     actualNoEvents = 0;
-
   }
 
   public static Integer createServerCache(Boolean isListenerPresent) throws Exception {
@@ -338,7 +341,6 @@ public class HAConflationDUnitTest extends JUnit4CacheTestCase {
     server.start();
     return new Integer(server.getPort());
   }
-
 }
 
 class HAClientCountEventListener implements CacheListener, Declarable {
@@ -353,24 +355,20 @@ class HAClientCountEventListener implements CacheListener, Declarable {
     } else {
       HAConflationDUnitTest.actualNoEvents++;
     }
-
   }
 
   public void afterUpdate(EntryEvent event) {
 
     HAConflationDUnitTest.actualNoEvents++;
-
   }
 
   public void afterInvalidate(EntryEvent event) {
 
     HAConflationDUnitTest.actualNoEvents++;
-
   }
 
   public void afterDestroy(EntryEvent event) {
     HAConflationDUnitTest.actualNoEvents++;
-
   }
 
   public void afterRegionInvalidate(RegionEvent event) {

@@ -25,7 +25,8 @@ import org.apache.geode.cache.*;
 import java.io.*;
 //import java.util.*;
 
-public final class SnapshotResultMessage extends PooledDistributionMessage implements AdminMessageType {
+public final class SnapshotResultMessage extends PooledDistributionMessage
+    implements AdminMessageType {
   private CacheSnapshot results;
   private int snapshotId;
 
@@ -76,5 +77,4 @@ public final class SnapshotResultMessage extends PooledDistributionMessage imple
     this.results = (CacheSnapshot) DataSerializer.readObject(in);
     this.snapshotId = in.readInt();
   }
-
 }

@@ -22,14 +22,11 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-/**
- *
- */
+/** */
 public class ShutdownAllResponse extends AdminResponse {
   private transient boolean isToShutDown = true;
 
-  public ShutdownAllResponse() {
-  }
+  public ShutdownAllResponse() {}
 
   @Override
   public boolean getInlineProcess() {
@@ -69,7 +66,12 @@ public class ShutdownAllResponse extends AdminResponse {
 
   @Override
   public String toString() {
-    return "ShutdownAllResponse from " + this.getSender() + " msgId=" + this.getMsgId() + " isToShutDown=" + this.isToShutDown;
+    return "ShutdownAllResponse from "
+        + this.getSender()
+        + " msgId="
+        + this.getMsgId()
+        + " isToShutDown="
+        + this.isToShutDown;
   }
 
   public boolean isToShutDown() {

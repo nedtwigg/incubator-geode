@@ -17,11 +17,10 @@
 
 package org.apache.geode.cache;
 
-/** Contains information about an event affecting a region, including
- * its identity and the circumstances of the event.
- * This is passed in to <code>CacheListener</code> and <code>CacheWriter</code>.
- *
- *
+/**
+ * Contains information about an event affecting a region, including its identity and the
+ * circumstances of the event. This is passed in to <code>CacheListener</code> and <code>CacheWriter
+ * </code>.
  *
  * @see CacheListener
  * @see CacheWriter
@@ -31,10 +30,8 @@ package org.apache.geode.cache;
 public interface RegionEvent<K, V> extends CacheEvent<K, V> {
 
   /**
-   * Return true if this region was destroyed but is being reinitialized,
-   * for example if a snapshot was just loaded. Can only return true for
-   * an event related to region destruction.
+   * Return true if this region was destroyed but is being reinitialized, for example if a snapshot
+   * was just loaded. Can only return true for an event related to region destruction.
    */
   public boolean isReinitializing();
-
 }

@@ -24,40 +24,32 @@ import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.CacheException;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * Test class for Blocking HA region queue functionalities
- *  
- * 
- * 
- */
+/** Test class for Blocking HA region queue functionalities */
 
-//TODO:Asif: Modify the test to allow working with the new class containing 
+//TODO:Asif: Modify the test to allow working with the new class containing
 //ReadWrite lock functionality
 public class TestBlockingHARegionQueue extends HARegionQueue.TestOnlyHARegionQueue {
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * Object on which to synchronize/wait
-   */
+  /** Object on which to synchronize/wait */
   private Object forWaiting = new Object();
 
   boolean takeFirst = false;
 
   boolean takeWhenPeekInProgress = false;
 
-  public TestBlockingHARegionQueue(String regionName, Cache cache) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+  public TestBlockingHARegionQueue(String regionName, Cache cache)
+      throws IOException, ClassNotFoundException, CacheException, InterruptedException {
     super(regionName, cache);
   }
 
   /**
-   * Does a put and a notifyAll() multiple threads can possibly be waiting on
-   * this queue to put
+   * Does a put and a notifyAll() multiple threads can possibly be waiting on this queue to put
+   *
    * @throws CacheException
    * @throws InterruptedException
-   * 
    * @return boolean whether object was successfully put onto the queue
    */
-
   public boolean put(Object object) throws CacheException, InterruptedException {
     boolean putDone = super.put(object);
 
@@ -73,11 +65,11 @@ public class TestBlockingHARegionQueue extends HARegionQueue.TestOnlyHARegionQue
   }
 
   /**
-   * blocking peek. This method will not return till it has acquired a
-   * legitimate object from teh queue.
-   * @throws InterruptedException 
+   * blocking peek. This method will not return till it has acquired a legitimate object from teh
+   * queue.
+   *
+   * @throws InterruptedException
    */
-
   public Object peek() throws InterruptedException {
     Object object = null;
     while (true) {
@@ -86,8 +78,7 @@ public class TestBlockingHARegionQueue extends HARegionQueue.TestOnlyHARegionQue
         try {
           this.take();
         } catch (CacheException ce) {
-          throw new RuntimeException(ce) {
-          };
+          throw new RuntimeException(ce) {};
         }
         this.takeWhenPeekInProgress = false;
       }

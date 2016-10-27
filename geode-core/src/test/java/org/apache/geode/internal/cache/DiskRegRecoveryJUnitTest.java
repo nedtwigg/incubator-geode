@@ -41,7 +41,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
  * Disk region recovery tests
- * 
+ *
  * @since GemFire 5.1
  */
 @Category(IntegrationTest.class)
@@ -65,20 +65,17 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Disk region recovery test for Persist only with sync writes. Test has four
-   * steps : STEP 1: Create cache. Create Region. Put entries. Close cache. STEP
-   * 2: Create cache. Create Region with the same name as that of in STEP 1. Put
-   * few more entries. Get and verify the entries put in STEP 1 and STEP 2 STEP
-   * 3: Again Create cache. Create Region with the same name as that of in STEP
-   * 1. Get and verify the entries put in STEP 1 and STEP 2. STEP 4: Create
-   * cache. Create Region with the same name as that of in STEP 1. Get and
-   * verify the entries put in STEP 1 and STEP 2.
+   * Disk region recovery test for Persist only with sync writes. Test has four steps : STEP 1:
+   * Create cache. Create Region. Put entries. Close cache. STEP 2: Create cache. Create Region with
+   * the same name as that of in STEP 1. Put few more entries. Get and verify the entries put in
+   * STEP 1 and STEP 2 STEP 3: Again Create cache. Create Region with the same name as that of in
+   * STEP 1. Get and verify the entries put in STEP 1 and STEP 2. STEP 4: Create cache. Create
+   * Region with the same name as that of in STEP 1. Get and verify the entries put in STEP 1 and
+   * STEP 2.
    */
   @Test
   public void testDiskRegRecovery() {
-    /**
-     * STEP 1
-     */
+    /** STEP 1 */
     diskProps.setPersistBackup(true);
     diskProps.setRegionName("RecoveryTestRegion");
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
@@ -116,16 +113,12 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
     assertEquals(new Float(108F), region.get("108"));
     assertEquals(new Double(109d), region.get("109"));
     int origSize = region.size();
-    /**
-     * close the cache after that create it again and then put few more values
-     */
+    /** close the cache after that create it again and then put few more values */
     if (cache != null) {
       cache.close();
     }
 
-    /**
-     * STEP 2: create the cache and region with the same name
-     */
+    /** STEP 2: create the cache and region with the same name */
     try {
       try {
         cache = createCache();
@@ -184,26 +177,20 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
     assertTrue(region.get("117").equals(new Float(117F)));
     assertTrue(region.get("118").equals(new Double(118d)));
     getByteArrValZeroLnth("119", region);
-    /**
-     * close the cache after that create it again
-     */
+    /** close the cache after that create it again */
     if (cache != null) {
       cache.close();
-      if (logWriter.fineEnabled())
-        logWriter.fine("Cache closed");
+      if (logWriter.fineEnabled()) logWriter.fine("Cache closed");
     }
 
-    /**
-     * STEP 3: Create the cache and region And close the cache
-     */
+    /** STEP 3: Create the cache and region And close the cache */
     try {
       try {
         cache = createCache();
       } catch (Exception e) {
         fail(" failure in creation of cache due to " + e);
       }
-      if (logWriter.fineEnabled())
-        logWriter.fine("Cache created to test the recovery..");
+      if (logWriter.fineEnabled()) logWriter.fine("Cache created to test the recovery..");
       //Create region
       diskProps.setPersistBackup(true);
       diskProps.setRegionName("RecoveryTestRegion");
@@ -233,27 +220,20 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
     assertTrue(region.get("117").equals(new Float(117F)));
     assertTrue(region.get("118").equals(new Double(118d)));
     getByteArrValZeroLnth("119", region);
-    /**
-     * close the cache after that create it again
-     */
+    /** close the cache after that create it again */
     if (cache != null) {
       cache.close();
-      if (logWriter.fineEnabled())
-        logWriter.fine("Cache closed");
+      if (logWriter.fineEnabled()) logWriter.fine("Cache closed");
     }
 
-    /**
-     * STEP 4: Create the cache and region verify disk reg recovery And close
-     * the cache
-     */
+    /** STEP 4: Create the cache and region verify disk reg recovery And close the cache */
     try {
       try {
         cache = createCache();
       } catch (Exception e) {
         fail(" failure in creation of cache due to " + e);
       }
-      if (logWriter.fineEnabled())
-        logWriter.fine("Cache created to test the recovery..");
+      if (logWriter.fineEnabled()) logWriter.fine("Cache created to test the recovery..");
       //Create region
       diskProps.setPersistBackup(true);
       diskProps.setRegionName("RecoveryTestRegion");
@@ -289,18 +269,15 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Disk region recovery test for Persist only with sync writes. Test has four
-   * steps : STEP 1: Create cache. Create Region. Put entries. Close cache. STEP
-   * 2: Create cache. Create Region with the same name as that of in STEP 1. Delete some entries.
-   * Close the Cache   * 
-   * 3: Again Create cache. Create Region with the same name as that of in STEP
-   * 4) Verify that the entries got deleted
+   * Disk region recovery test for Persist only with sync writes. Test has four steps : STEP 1:
+   * Create cache. Create Region. Put entries. Close cache. STEP 2: Create cache. Create Region with
+   * the same name as that of in STEP 1. Delete some entries. Close the Cache * 3: Again Create
+   * cache. Create Region with the same name as that of in STEP 4) Verify that the entries got
+   * deleted
    */
   @Test
   public void testBug39989_1() {
-    /**
-     * STEP 1
-     */
+    /** STEP 1 */
     diskProps.setPersistBackup(true);
     diskProps.setRegionName("RecoveryTestRegion");
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
@@ -312,16 +289,12 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
       region.put(new Integer(i), value);
     }
 
-    /**
-     * close the cache after that create it again and then put few more values
-     */
+    /** close the cache after that create it again and then put few more values */
     if (cache != null) {
       cache.close();
     }
 
-    /**
-     * STEP 2: create the cache and region with the same name
-     */
+    /** STEP 2: create the cache and region with the same name */
     try {
       try {
         cache = createCache();
@@ -341,26 +314,20 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
       logWriter.error("exception not expected", e);
       fail("failed while (in STEP 2) creating the cache and/or region" + e.toString());
     }
-    /**
-     * close the cache after that create it again
-     */
+    /** close the cache after that create it again */
     if (cache != null) {
       cache.close();
-      if (logWriter.fineEnabled())
-        logWriter.fine("Cache closed");
+      if (logWriter.fineEnabled()) logWriter.fine("Cache closed");
     }
 
-    /**
-     * STEP 3: Create the cache and region And close the cache
-     */
+    /** STEP 3: Create the cache and region And close the cache */
     try {
       try {
         cache = createCache();
       } catch (Exception e) {
         fail(" failure in creation of cache due to " + e);
       }
-      if (logWriter.fineEnabled())
-        logWriter.fine("Cache created to test the recovery..");
+      if (logWriter.fineEnabled()) logWriter.fine("Cache created to test the recovery..");
       //Create region
       diskProps.setPersistBackup(true);
       diskProps.setRegionName("RecoveryTestRegion");
@@ -376,19 +343,14 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Disk region recovery test for Persist only with sync writes. Test has four
-   * steps : STEP 1: Create cache. Create Region. Put entries. Close cache. STEP
-   * 2: Create cache. Create Region with the same name as that of in STEP 1. Delete some entries.
-   * 3) Recreate the deleted entries
-   * Close the Cache   * 
-   * 3: Again Create cache.
-   * 4) check if the region creation is successful
+   * Disk region recovery test for Persist only with sync writes. Test has four steps : STEP 1:
+   * Create cache. Create Region. Put entries. Close cache. STEP 2: Create cache. Create Region with
+   * the same name as that of in STEP 1. Delete some entries. 3) Recreate the deleted entries Close
+   * the Cache * 3: Again Create cache. 4) check if the region creation is successful
    */
   @Test
   public void testBug39989_2() {
-    /**
-     * STEP 1
-     */
+    /** STEP 1 */
     diskProps.setPersistBackup(true);
     diskProps.setRegionName("RecoveryTestRegion");
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
@@ -401,16 +363,12 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
       region.put(new Integer(i), value);
     }
 
-    /**
-     * close the cache after that create it again and then put few more values
-     */
+    /** close the cache after that create it again and then put few more values */
     if (cache != null) {
       cache.close();
     }
 
-    /**
-     * STEP 2: create the cache and region with the same name
-     */
+    /** STEP 2: create the cache and region with the same name */
     try {
       try {
         cache = createCache();
@@ -436,26 +394,20 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
       logWriter.error("exception not expected", e);
       fail("failed while (in STEP 2) creating the cache and/or region" + e.toString());
     }
-    /**
-     * close the cache after that create it again
-     */
+    /** close the cache after that create it again */
     if (cache != null) {
       cache.close();
-      if (logWriter.fineEnabled())
-        logWriter.fine("Cache closed");
+      if (logWriter.fineEnabled()) logWriter.fine("Cache closed");
     }
 
-    /**
-     * STEP 3: Create the cache and region And close the cache
-     */
+    /** STEP 3: Create the cache and region And close the cache */
     try {
       try {
         cache = createCache();
       } catch (Exception e) {
         fail(" failure in creation of cache due to " + e);
       }
-      if (logWriter.fineEnabled())
-        logWriter.fine("Cache created to test the recovery..");
+      if (logWriter.fineEnabled()) logWriter.fine("Cache created to test the recovery..");
       //Create region
       diskProps.setPersistBackup(true);
       diskProps.setRegionName("RecoveryTestRegion");
@@ -469,9 +421,7 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
     closeDown(); // closes disk file which will flush all buffers
   }
 
-  /**
-   * To validate the get operation performed on a byte array.
-   */
+  /** To validate the get operation performed on a byte array. */
   private void getByteArrVal(String key, Region region) {
     byte[] val = (byte[]) region.get(key);
     //verify that the retrieved byte[] equals to the value put initially.
@@ -482,9 +432,7 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * to validate the get operation performed on a byte array of length zero
-   */
+  /** to validate the get operation performed on a byte array of length zero */
   private boolean getByteArrValZeroLnth(String key, Region region) {
     Object val0 = null;
     byte[] val2 = new byte[0];
@@ -499,18 +447,27 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
     byte[] x = null;
     x = (byte[]) val0;
     //verify that the value of the entry is an instance of byte []
-    assertTrue("the value of the entry having key 119 is NOT an" + " instance of byte []", val0 instanceof byte[]);
+    assertTrue(
+        "the value of the entry having key 119 is NOT an" + " instance of byte []",
+        val0 instanceof byte[]);
 
     result = x.length == val2.length;
 
     if (!result) {
-      fail("The lenghth of byte[] put at 119th key obtained from disk " + "is not euqal to the lenght of byte[] put initially");
+      fail(
+          "The lenghth of byte[] put at 119th key obtained from disk "
+              + "is not euqal to the lenght of byte[] put initially");
     }
     return result;
   }
 
   private void verifyOplogSizeZeroAfterRecovery(Region region) {
-    assertEquals(Oplog.OPLOG_MAGIC_SEQ_REC_SIZE * 2 + Oplog.OPLOG_DISK_STORE_REC_SIZE * 2 + EMPTY_RVV_SIZE + Oplog.OPLOG_GEMFIRE_VERSION_REC_SIZE * 2, ((LocalRegion) region).getDiskRegion().testHook_getChild().getOplogSize());
+    assertEquals(
+        Oplog.OPLOG_MAGIC_SEQ_REC_SIZE * 2
+            + Oplog.OPLOG_DISK_STORE_REC_SIZE * 2
+            + EMPTY_RVV_SIZE
+            + Oplog.OPLOG_GEMFIRE_VERSION_REC_SIZE * 2,
+        ((LocalRegion) region).getDiskRegion().testHook_getChild().getOplogSize());
   }
 
   @Test
@@ -601,7 +558,8 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
       }
       for (int i = 0; i < 1000; i++) {
         try {
-          Assert.assertTrue(((LocalRegion) region).getValueOnDisk(new Integer(i)).equals(new Integer(i)));
+          Assert.assertTrue(
+              ((LocalRegion) region).getValueOnDisk(new Integer(i)).equals(new Integer(i)));
         } catch (EntryNotFoundException e) {
           fail("Entry not found not expected but occured ");
         }
@@ -655,7 +613,9 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
     try {
       oplogFile = ((LocalRegion) region).getDiskRegion().testHook_getChild().getOplogFile();
     } catch (Exception e) {
-      logWriter.error("Exception in synching data present in the buffers of RandomAccessFile of Oplog, to the disk", e);
+      logWriter.error(
+          "Exception in synching data present in the buffers of RandomAccessFile of Oplog, to the disk",
+          e);
       fail("Test failed because synching of data present in buffer of RandomAccesFile ");
     }
     region.close();
@@ -694,17 +654,19 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
 
     //set cache observer to check oplogs rolling
-    CacheObserver co = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      public void afterHavingCompacted() {
-        synchronized (region) {
-          if (!rollingDone) {
-            rollingDone = true;
-          } else {
-            fail("rollingDone was set before actually rolling");
-          }
-        }
-      }
-    });
+    CacheObserver co =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
+              public void afterHavingCompacted() {
+                synchronized (region) {
+                  if (!rollingDone) {
+                    rollingDone = true;
+                  } else {
+                    fail("rollingDone was set before actually rolling");
+                  }
+                }
+              }
+            });
 
     byte[] value = new byte[900]; // two values per oplog
     region.put("0", value);
@@ -745,13 +707,12 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * This tests the case where potential of writing a dummy byte was tehre.
-   * The case would be compactor terminating early. The create is present in both 
-   * Htree as well as Oplog. When recovery is done, the create is added to the 
-   * Oplog createdEntrySet.  Now while compactor iterates over the entries in the region,
-   * it skips the created entry because its Htree Offset is > -1. As a result  it
-   * leaves it in created set & so when the compactor processes the created Set it 
-   * thinks that the entry is now referenced in the any of the subsequent oplogs & thus
+   * This tests the case where potential of writing a dummy byte was tehre. The case would be
+   * compactor terminating early. The create is present in both Htree as well as Oplog. When
+   * recovery is done, the create is added to the Oplog createdEntrySet. Now while compactor
+   * iterates over the entries in the region, it skips the created entry because its Htree Offset is
+   * > -1. As a result it leaves it in created set & so when the compactor processes the created Set
+   * it thinks that the entry is now referenced in the any of the subsequent oplogs & thus
    * overwrites it with a byte[].
    */
   @Test
@@ -764,15 +725,19 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
 
     // create sync persist region.
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
-    System.err.println("<ExpectedException action=add>" + "KillCompactorException" + "</ExpectedException>");
-    logWriter.info("<ExpectedException action=add>" + "KillCompactorException" + "</ExpectedException>");
+    System.err.println(
+        "<ExpectedException action=add>" + "KillCompactorException" + "</ExpectedException>");
+    logWriter.info(
+        "<ExpectedException action=add>" + "KillCompactorException" + "</ExpectedException>");
     try {
-      CacheObserver cob = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-        public void beforeDeletingCompactedOplog(Oplog compactedOplog) {
-          // killed compactor after rolling but before deleting oplogs
-          throw new DiskStoreImpl.KillCompactorException();
-        }
-      });
+      CacheObserver cob =
+          CacheObserverHolder.setInstance(
+              new CacheObserverAdapter() {
+                public void beforeDeletingCompactedOplog(Oplog compactedOplog) {
+                  // killed compactor after rolling but before deleting oplogs
+                  throw new DiskStoreImpl.KillCompactorException();
+                }
+              });
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
       region.put("key1", "Testing");
       region.put("key2", "Vestigial");
@@ -788,13 +753,17 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
       CacheObserverHolder.setInstance(new CacheObserverAdapter());
     } finally {
-      System.err.println("<ExpectedException action=remove>" + "KillCompactorException" + "</ExpectedException>");
-      logWriter.info("<ExpectedException action=remove>" + "KillCompactorException" + "</ExpectedException>");
+      System.err.println(
+          "<ExpectedException action=remove>" + "KillCompactorException" + "</ExpectedException>");
+      logWriter.info(
+          "<ExpectedException action=remove>" + "KillCompactorException" + "</ExpectedException>");
     }
 
     cache = createCache();
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
-    assertTrue("Expected region size is 5 but got it as " + region.entrySet().size(), region.entrySet().size() == 5);
+    assertTrue(
+        "Expected region size is 5 but got it as " + region.entrySet().size(),
+        region.entrySet().size() == 5);
     assertEquals(region.get("key1"), "Testing");
     Thread.sleep(5);
     if (cache != null) {
@@ -804,7 +773,9 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
     CacheObserverHolder.setInstance(new CacheObserverAdapter());
     cache = createCache();
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
-    assertTrue("Expected region size is 5 but got it as " + region.entrySet().size(), region.entrySet().size() == 5);
+    assertTrue(
+        "Expected region size is 5 but got it as " + region.entrySet().size(),
+        region.entrySet().size() == 5);
     assertTrue(region.get("key1").equals("Testing"));
   }
 
@@ -1098,7 +1069,6 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
         System.clearProperty(DiskStoreImpl.RECOVER_VALUE_PROPERTY_NAME);
       }
     }
-
   }
 
   @Test
@@ -1108,7 +1078,8 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
       diskProps.setPersistBackup(true);
       diskProps.setSynchronous(true);
       diskProps.setRolling(true);
-      System.setProperty(DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "true");
+      System.setProperty(
+          DiskStoreImpl.COMPLETE_COMPACTION_BEFORE_TERMINATION_PROPERTY_NAME, "true");
       diskProps.setRegionName("testBug");
       region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
       assertEquals(0, region.size());
@@ -1267,10 +1238,9 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * Make sure recovery correctly sets stats.
-   * Currently this test only checks inVM vs onDisk.
-   * It could be enhanced to also check bucketStats.
-   * See bug 41849 for the bug that motivated this unit test.
+   * Make sure recovery correctly sets stats. Currently this test only checks inVM vs onDisk. It
+   * could be enhanced to also check bucketStats. See bug 41849 for the bug that motivated this unit
+   * test.
    */
   private void basicVerifyStats(boolean recovValues) {
     String oldValue = System.getProperty(DiskStoreImpl.RECOVER_VALUE_PROPERTY_NAME);
@@ -1350,7 +1320,11 @@ public class DiskRegRecoveryJUnitTest extends DiskRegionTestingBase {
 
   private void waitForInVMToBe(final DiskRegion dr, final int expected) {
     // values are recovered async from disk
-    Awaitility.await().pollInterval(10, TimeUnit.MILLISECONDS).pollDelay(10, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS).until(() -> assertEquals(expected, dr.getNumEntriesInVM()));
+    Awaitility.await()
+        .pollInterval(10, TimeUnit.MILLISECONDS)
+        .pollDelay(10, TimeUnit.MILLISECONDS)
+        .atMost(30, TimeUnit.SECONDS)
+        .until(() -> assertEquals(expected, dr.getNumEntriesInVM()));
   }
 
   @Test

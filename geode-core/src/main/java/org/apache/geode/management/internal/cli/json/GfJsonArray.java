@@ -25,8 +25,7 @@ import org.json.JSONException;
 
 /**
  * Wrapper over JSONArray.
- * 
- * 
+ *
  * @since GemFire 7.0
  */
 public class GfJsonArray {
@@ -37,7 +36,6 @@ public class GfJsonArray {
   }
 
   /**
-   * 
    * @param array
    * @throws GfJsonException If not an array.
    */
@@ -54,7 +52,6 @@ public class GfJsonArray {
   }
 
   /**
-   * 
    * @param source
    * @throws GfJsonException If there is a syntax error.
    */
@@ -68,7 +65,7 @@ public class GfJsonArray {
 
   /**
    * Get the object value associated with an index.
-   * 
+   *
    * @param index
    * @return An object value.
    * @throws GfJsonException If there is no value for the index.
@@ -96,13 +93,10 @@ public class GfJsonArray {
   }
 
   /**
-   * 
    * @param index
    * @param value
    * @return this GfJsonArray
-   * @throws GfJsonException
-   *           If the index is negative or if the the value is an invalid
-   *           number.
+   * @throws GfJsonException If the index is negative or if the the value is an invalid number.
    */
   public GfJsonArray put(int index, Object value) throws GfJsonException {
     try {
@@ -119,12 +113,10 @@ public class GfJsonArray {
   }
 
   /**
-   * 
    * @param index
    * @param value
    * @return this GfJsonArray
-   * @throws GfJsonException
-   *           If the index is negative or if the value is not finite.
+   * @throws GfJsonException If the index is negative or if the value is not finite.
    */
   public GfJsonArray put(int index, Collection<?> value) throws GfJsonException {
     try {
@@ -141,13 +133,10 @@ public class GfJsonArray {
   }
 
   /**
-   * 
    * @param index
    * @param value
    * @return this GfJsonArray
-   * @throws GfJsonException
-   *           If the index is negative or if the the value is an invalid
-   *           number.
+   * @throws GfJsonException If the index is negative or if the the value is an invalid number.
    */
   public GfJsonArray put(int index, Map<?, ?> value) throws GfJsonException {
     try {
@@ -168,11 +157,9 @@ public class GfJsonArray {
   }
 
   /**
-   * 
    * @param indentFactor
    * @return this GfJsonArray
-   * @throws GfJsonException
-   *           If the object contains an invalid number.
+   * @throws GfJsonException If the object contains an invalid number.
    */
   public String toIndentedString(int indentFactor) throws GfJsonException {
     try {

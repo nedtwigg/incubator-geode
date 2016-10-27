@@ -22,16 +22,13 @@ import org.apache.geode.cache.query.internal.QCompiler;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * AST class used for an AST node that cannot be compiled directly
- * because it is either data for another operation or is
- * a feature that is not yet supported by GemFire
- *
+ * AST class used for an AST node that cannot be compiled directly because it is either data for
+ * another operation or is a feature that is not yet supported by GemFire
  */
 public class ASTUnsupported extends GemFireAST {
   private static final long serialVersionUID = -1192307218047393827L;
 
-  public ASTUnsupported() {
-  }
+  public ASTUnsupported() {}
 
   public ASTUnsupported(Token t) {
     super(t);
@@ -39,6 +36,7 @@ public class ASTUnsupported extends GemFireAST {
 
   @Override
   public void compile(QCompiler compiler) {
-    throw new UnsupportedOperationException(LocalizedStrings.ASTUnsupported_UNSUPPORTED_FEATURE_0.toLocalizedString(getText()));
+    throw new UnsupportedOperationException(
+        LocalizedStrings.ASTUnsupported_UNSUPPORTED_FEATURE_0.toLocalizedString(getText()));
   }
 }

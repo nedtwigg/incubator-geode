@@ -28,10 +28,7 @@ import org.apache.geode.internal.cache.AbstractRegion;
 import org.apache.geode.management.internal.cli.domain.EvictionAttributesInfo;
 import org.apache.geode.management.internal.cli.domain.PartitionAttributesInfo;
 
-/***
- * Contains the default values for the region attributes
- *
- */
+/** * Contains the default values for the region attributes */
 public final class RegionAttributesDefault {
   public static final Scope SCOPE = AbstractRegion.DEFAULT_SCOPE.DISTRIBUTED_NO_ACK;
   public static final DataPolicy DATA_POLICY = DataPolicy.DEFAULT;
@@ -74,7 +71,8 @@ public final class RegionAttributesDefault {
   public static final int TOTAL_NUM_BUCKETS = PartitionAttributesFactory.GLOBAL_MAX_BUCKETS_DEFAULT;
   public static final String COLOCATED_WITH = "";
   public static final long RECOVERY_DELAY = PartitionAttributesFactory.RECOVERY_DELAY_DEFAULT;
-  public static final long STARTUP_RECOVERY_DELAY = PartitionAttributesFactory.STARTUP_RECOVERY_DELAY_DEFAULT;
+  public static final long STARTUP_RECOVERY_DELAY =
+      PartitionAttributesFactory.STARTUP_RECOVERY_DELAY_DEFAULT;
   public static final String PARTITION_RESOLVER = "";
   public static final List<String> PARTITION_LISTENERS = null;
 
@@ -84,5 +82,4 @@ public final class RegionAttributesDefault {
   public static final long EVICTION_MAX_VALUE = 0;
 
   public static final boolean OFF_HEAP = false;
-
 }

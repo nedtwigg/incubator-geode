@@ -27,8 +27,7 @@ import org.apache.geode.distributed.internal.DistributionMessage;
 import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
-/**
- */
+/** */
 public abstract class StreamingFunctionOperation {
 
   protected final InternalDistributedSystem sys;
@@ -48,7 +47,13 @@ public abstract class StreamingFunctionOperation {
   protected int totalLastMsgRecieved = 0;
 
   /** Creates a new instance of StreamingOperation */
-  public StreamingFunctionOperation(InternalDistributedSystem sys, ResultCollector rc, Function function, final HashMap<InternalDistributedMember, Object> memberArgs, Set recipients, ResultSender resultSender) {
+  public StreamingFunctionOperation(
+      InternalDistributedSystem sys,
+      ResultCollector rc,
+      Function function,
+      final HashMap<InternalDistributedMember, Object> memberArgs,
+      Set recipients,
+      ResultSender resultSender) {
     this.sys = sys;
     this.rc = rc;
     this.functionObject = function;
@@ -58,7 +63,11 @@ public abstract class StreamingFunctionOperation {
   }
 
   /** Creates a new instance of StreamingOperation */
-  public StreamingFunctionOperation(InternalDistributedSystem sys, ResultCollector rc, Function function, ResultSender resultSender) {
+  public StreamingFunctionOperation(
+      InternalDistributedSystem sys,
+      ResultCollector rc,
+      Function function,
+      ResultSender resultSender) {
     this.sys = sys;
     this.rc = rc;
     this.functionObject = function;
@@ -86,23 +95,36 @@ public abstract class StreamingFunctionOperation {
     }
   }
 
-  public ResultCollector getFunctionResultFrom(Set recipients, Function function, AbstractExecution execution) {
-    if (recipients.isEmpty())
-      return rc;
+  public ResultCollector getFunctionResultFrom(
+      Set recipients, Function function, AbstractExecution execution) {
+    if (recipients.isEmpty()) return rc;
 
-    FunctionStreamingResultCollector processor = new FunctionStreamingResultCollector(this, this.sys, recipients, rc, function, execution);
+    FunctionStreamingResultCollector processor =
+        new FunctionStreamingResultCollector(this, this.sys, recipients, rc, function, execution);
     this.reply = processor;
     for (InternalDistributedMember recip : this.memberArgs.keySet()) {
       DistributionMessage m = null;
-      if (execution instanceof DistributedRegionFunctionExecutor || execution instanceof MultiRegionFunctionExecutor) {
-        m = createRequestMessage(Collections.singleton(recip), processor, execution.isReExecute(), execution.isFnSerializationReqd());
+      if (execution instanceof DistributedRegionFunctionExecutor
+          || execution instanceof MultiRegionFunctionExecutor) {
+        m =
+            createRequestMessage(
+                Collections.singleton(recip),
+                processor,
+                execution.isReExecute(),
+                execution.isFnSerializationReqd());
       } else {
-        m = createRequestMessage(Collections.singleton(recip), processor, false, execution.isFnSerializationReqd());
+        m =
+            createRequestMessage(
+                Collections.singleton(recip), processor, false, execution.isFnSerializationReqd());
       }
       this.sys.getDistributionManager().putOutgoing(m);
     }
     return processor;
   }
 
-  protected abstract DistributionMessage createRequestMessage(Set<InternalDistributedMember> singleton, FunctionStreamingResultCollector processor, boolean isReExecute, boolean isFnSerializationReqd);
+  protected abstract DistributionMessage createRequestMessage(
+      Set<InternalDistributedMember> singleton,
+      FunctionStreamingResultCollector processor,
+      boolean isReExecute,
+      boolean isFnSerializationReqd);
 }

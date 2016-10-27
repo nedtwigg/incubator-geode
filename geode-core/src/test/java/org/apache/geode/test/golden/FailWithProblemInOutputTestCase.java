@@ -23,20 +23,29 @@ import org.junit.Test;
 import org.apache.geode.test.process.ProcessWrapper;
 
 /**
- * Abstract test case for tests verifying that test output with a
- * log message of warning/error/severe will cause expected failures.
- * 
+ * Abstract test case for tests verifying that test output with a log message of
+ * warning/error/severe will cause expected failures.
  */
 public abstract class FailWithProblemInOutputTestCase extends FailOutputTestCase {
 
   @Override
   protected String[] expectedProblemLines() {
-    return new String[] { ".*" + name() + ".*" };
+    return new String[] {".*" + name() + ".*"};
   }
 
   @Test
   public void testFailWithProblemLogMessageInOutput() throws Exception {
-    final String goldenString = "Begin " + name() + ".main" + "\n" + "Press Enter to continue." + "\n" + "End " + name() + ".main" + "\n";
+    final String goldenString =
+        "Begin "
+            + name()
+            + ".main"
+            + "\n"
+            + "Press Enter to continue."
+            + "\n"
+            + "End "
+            + name()
+            + ".main"
+            + "\n";
     debug(goldenString, "GOLDEN");
 
     final ProcessWrapper process = createProcessWrapper(new ProcessWrapper.Builder(), getClass());

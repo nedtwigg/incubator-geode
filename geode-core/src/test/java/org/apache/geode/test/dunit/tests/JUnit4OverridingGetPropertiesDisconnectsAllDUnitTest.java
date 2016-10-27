@@ -28,11 +28,12 @@ import static org.apache.geode.test.dunit.Assert.*;
 import static org.apache.geode.test.dunit.Invoke.invokeInEveryVM;
 
 /**
- * Verifies that overriding {@code getDistributedSystemProperties} results
- * in {@code disconnectAllFromDS} during tear down.
+ * Verifies that overriding {@code getDistributedSystemProperties} results in {@code
+ * disconnectAllFromDS} during tear down.
  */
 @Category(DistributedTest.class)
-public class JUnit4OverridingGetPropertiesDisconnectsAllDUnitTest extends JUnit4DistributedTestCase {
+public class JUnit4OverridingGetPropertiesDisconnectsAllDUnitTest
+    extends JUnit4DistributedTestCase {
 
   @Override
   public final void preTearDownAssertions() throws Exception {

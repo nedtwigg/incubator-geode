@@ -24,19 +24,21 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 //import java.util.Set;
 import org.apache.geode.i18n.StringId;
 
-/** Provides a set of APIs to help the
- * implementation of the <code>CacheLoader</code> load method. An instance of <code>LoaderHelper</code>
- * is only valid within the {@link CacheLoader#load(LoaderHelper) load}
- * method.
- *
+/**
+ * Provides a set of APIs to help the implementation of the <code>CacheLoader</code> load method. An
+ * instance of <code>LoaderHelper</code> is only valid within the {@link
+ * CacheLoader#load(LoaderHelper) load} method.
  *
  * @see CacheLoader#load(LoaderHelper) load
  * @since GemFire 2.0
  */
 public class LoaderHelperImpl implements LoaderHelper {
-  /** The message issued when the user attempts to netSearch on a
-   * LOCAL Region.  It is public for testing purposes only. */
-  public static final StringId NET_SEARCH_LOCAL = LocalizedStrings.LoaderHelperImpl_CANNOT_NETSEARCH_FOR_A_SCOPELOCAL_OBJECT;
+  /**
+   * The message issued when the user attempts to netSearch on a LOCAL Region. It is public for
+   * testing purposes only.
+   */
+  public static final StringId NET_SEARCH_LOCAL =
+      LocalizedStrings.LoaderHelperImpl_CANNOT_NETSEARCH_FOR_A_SCOPELOCAL_OBJECT;
 
   private final Object key;
   private final boolean netSearchAllowed;
@@ -45,7 +47,12 @@ public class LoaderHelperImpl implements LoaderHelper {
   private final Object aCallbackArgument;
   private SearchLoadAndWriteProcessor searcher = null;
 
-  public LoaderHelperImpl(Region region, Object key, Object aCallbackArgument, boolean netSearchAllowed, SearchLoadAndWriteProcessor searcher) {
+  public LoaderHelperImpl(
+      Region region,
+      Object key,
+      Object aCallbackArgument,
+      boolean netSearchAllowed,
+      SearchLoadAndWriteProcessor searcher) {
     this.region = region;
     this.key = key;
     this.aCallbackArgument = aCallbackArgument;
@@ -54,7 +61,13 @@ public class LoaderHelperImpl implements LoaderHelper {
     this.searcher = searcher;
   }
 
-  public LoaderHelperImpl(Region region, Object key, Object aCallbackArgument, boolean netSearchAllowed, boolean netLoadAllowed, SearchLoadAndWriteProcessor searcher) {
+  public LoaderHelperImpl(
+      Region region,
+      Object key,
+      Object aCallbackArgument,
+      boolean netSearchAllowed,
+      boolean netLoadAllowed,
+      SearchLoadAndWriteProcessor searcher) {
     this.region = region;
     this.key = key;
     this.aCallbackArgument = aCallbackArgument;
@@ -63,22 +76,20 @@ public class LoaderHelperImpl implements LoaderHelper {
     this.searcher = searcher;
   }
 
-  /** Searchs other caches for the value to be loaded. If the cache is part of
-   * a distributed caching system, <code>netSearch</code> will try to locate the requested
-   * value in any other cache within the system.
-   * If the search is successful, a reference to a local copy of the
-   * value is returned. If there is no value for this entry present in the
-   * system, and doNetLoad is true, GemFire looks for and invokes
-   * <code>CacheLoaders</code> in other nodes in the system.  The net load
-   * will invoke one loader at a time until a loader either returns a
-   * non-null value, or throws an exception.  If the object
-   * is not found <code>null</code> is returned.
+  /**
+   * Searchs other caches for the value to be loaded. If the cache is part of a distributed caching
+   * system, <code>netSearch</code> will try to locate the requested value in any other cache within
+   * the system. If the search is successful, a reference to a local copy of the value is returned.
+   * If there is no value for this entry present in the system, and doNetLoad is true, GemFire looks
+   * for and invokes <code>CacheLoaders</code> in other nodes in the system. The net load will
+   * invoke one loader at a time until a loader either returns a non-null value, or throws an
+   * exception. If the object is not found <code>null</code> is returned.
    *
-   * @param doNetLoad if true, and there is no valid value found
-   * for this entry in the system, then look for and invoke loaders
-   * on other nodes.
+   * @param doNetLoad if true, and there is no valid value found for this entry in the system, then
+   *     look for and invoke loaders on other nodes.
    * @return the requested value or null if not found
-   * @throws TimeoutException if the netSearch times out before getting a response from another cache
+   * @throws TimeoutException if the netSearch times out before getting a response from another
+   *     cache
    */
   public Object netSearch(final boolean doNetLoad) throws CacheLoaderException, TimeoutException {
 
@@ -142,9 +153,10 @@ public class LoaderHelperImpl implements LoaderHelper {
     return region;
   }
 
-  /** Return the argument object for the load method that was passed in from
-   * application code. This object is passed in as <i>aLoaderArgument</i> in
-   * {@link Region#get(Object, Object) get}.
+  /**
+   * Return the argument object for the load method that was passed in from application code. This
+   * object is passed in as <i>aLoaderArgument</i> in {@link Region#get(Object, Object) get}.
+   *
    * @return the argument or null if one was not supplied
    */
   public Object getArgument() {
@@ -153,6 +165,11 @@ public class LoaderHelperImpl implements LoaderHelper {
 
   @Override
   public String toString() {
-    return "LoaderHelper region: " + getRegion() + " key: " + getKey() + " argument: " + getArgument();
+    return "LoaderHelper region: "
+        + getRegion()
+        + " key: "
+        + getKey()
+        + " argument: "
+        + getArgument();
   }
 }

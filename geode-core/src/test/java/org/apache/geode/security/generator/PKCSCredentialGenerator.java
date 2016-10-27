@@ -52,7 +52,8 @@ public class PKCSCredentialGenerator extends CredentialGenerator {
 
   @Override
   protected Properties initialize() throws IllegalArgumentException {
-    final String keyStoreFile = TestUtil.getResourcePath(PKCSCredentialGenerator.class, keyStoreDir + "/publickeyfile");
+    final String keyStoreFile =
+        TestUtil.getResourcePath(PKCSCredentialGenerator.class, keyStoreDir + "/publickeyfile");
 
     final Properties props = new Properties();
     props.setProperty(PKCSAuthenticator.PUBLIC_KEY_FILE, keyStoreFile);
@@ -78,7 +79,9 @@ public class PKCSCredentialGenerator extends CredentialGenerator {
 
   @Override
   public Properties getInvalidCredentials(int index) {
-    final String keyStoreFile = TestUtil.getResourcePath(PKCSCredentialGenerator.class, keyStoreDir + "/gemfire11.keystore");
+    final String keyStoreFile =
+        TestUtil.getResourcePath(
+            PKCSCredentialGenerator.class, keyStoreDir + "/gemfire11.keystore");
 
     final Properties props = new Properties();
     props.setProperty(PKCSAuthInit.KEYSTORE_FILE_PATH, keyStoreFile);
@@ -91,7 +94,9 @@ public class PKCSCredentialGenerator extends CredentialGenerator {
   @Override
   public Properties getValidCredentials(int index) {
     final int aliasnum = (index % 10) + 1;
-    final String keyStoreFile = TestUtil.getResourcePath(PKCSCredentialGenerator.class, keyStoreDir + "/gemfire" + aliasnum + ".keystore");
+    final String keyStoreFile =
+        TestUtil.getResourcePath(
+            PKCSCredentialGenerator.class, keyStoreDir + "/gemfire" + aliasnum + ".keystore");
 
     final Properties props = new Properties();
     props.setProperty(PKCSAuthInit.KEYSTORE_FILE_PATH, keyStoreFile);
@@ -103,7 +108,9 @@ public class PKCSCredentialGenerator extends CredentialGenerator {
 
   @Override
   public Properties getValidCredentials(Principal principal) {
-    final String keyStoreFile = TestUtil.getResourcePath(PKCSCredentialGenerator.class, keyStoreDir + principal.getName() + ".keystore");
+    final String keyStoreFile =
+        TestUtil.getResourcePath(
+            PKCSCredentialGenerator.class, keyStoreDir + principal.getName() + ".keystore");
 
     final Properties props = new Properties();
     props.setProperty(PKCSAuthInit.KEYSTORE_FILE_PATH, keyStoreFile);

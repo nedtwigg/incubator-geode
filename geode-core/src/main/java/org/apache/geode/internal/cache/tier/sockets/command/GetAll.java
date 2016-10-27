@@ -39,14 +39,15 @@ import org.apache.geode.security.NotAuthorizedException;
 
 public class GetAll extends BaseCommand {
 
-  private final static GetAll singleton = new GetAll();
+  private static final GetAll singleton = new GetAll();
 
   public static Command getCommand() {
     return singleton;
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, InterruptedException {
     Part regionNamePart = null, keysPart = null;
     String regionName = null;
     Object[] keys = null;
@@ -69,7 +70,15 @@ public class GetAll extends BaseCommand {
 
     if (logger.isDebugEnabled()) {
       StringBuffer buffer = new StringBuffer();
-      buffer.append(servConn.getName()).append(": Received getAll request (").append(msg.getPayloadLength()).append(" bytes) from ").append(servConn.getSocketString()).append(" for region ").append(regionName).append(" keys ");
+      buffer
+          .append(servConn.getName())
+          .append(": Received getAll request (")
+          .append(msg.getPayloadLength())
+          .append(" bytes) from ")
+          .append(servConn.getSocketString())
+          .append(" for region ")
+          .append(regionName)
+          .append(" keys ");
       if (keys != null) {
         for (int i = 0; i < keys.length; i++) {
           buffer.append(keys[i]).append(" ");
@@ -87,7 +96,9 @@ public class GetAll extends BaseCommand {
       String message = null;
       //      if (regionName == null) (can only be null)
       {
-        message = LocalizedStrings.GetAll_THE_INPUT_REGION_NAME_FOR_THE_GETALL_REQUEST_IS_NULL.toLocalizedString();
+        message =
+            LocalizedStrings.GetAll_THE_INPUT_REGION_NAME_FOR_THE_GETALL_REQUEST_IS_NULL
+                .toLocalizedString();
       }
       logger.warn("{}: {}", servConn.getName(), message);
       writeChunkedErrorResponse(msg, MessageType.GET_ALL_DATA_ERROR, message, servConn);
@@ -124,7 +135,9 @@ public class GetAll extends BaseCommand {
     }
   }
 
-  private void fillAndSendGetAllResponseChunks(Region region, String regionName, Object[] keys, ServerConnection servConn) throws IOException {
+  private void fillAndSendGetAllResponseChunks(
+      Region region, String regionName, Object[] keys, ServerConnection servConn)
+      throws IOException {
 
     // Interpret null keys object as a request to get all key,value entry pairs
     // of the region; otherwise iterate each key and perform the get behavior.
@@ -170,7 +183,12 @@ public class GetAll extends BaseCommand {
             logger.debug("{}: Passed GET pre-authorization for key={}", servConn.getName(), key);
           }
         } catch (NotAuthorizedException ex) {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1, new Object[] { servConn.getName(), key }), ex);
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1,
+                  new Object[] {servConn.getName(), key}),
+              ex);
           values.addExceptionPart(key, ex);
           continue;
         }
@@ -179,7 +197,12 @@ public class GetAll extends BaseCommand {
       try {
         this.securityService.authorizeRegionRead(regionName, key.toString());
       } catch (NotAuthorizedException ex) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1, new Object[] { servConn.getName(), key }), ex);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1,
+                new Object[] {servConn.getName(), key}),
+            ex);
         values.addExceptionPart(key, ex);
         continue;
       }
@@ -206,10 +229,16 @@ public class GetAll extends BaseCommand {
           }
           isObject = getContext.isObject();
           if (logger.isDebugEnabled()) {
-            logger.debug("{}: Passed GET post-authorization for key={}: {}", servConn.getName(), key, value);
+            logger.debug(
+                "{}: Passed GET post-authorization for key={}: {}", servConn.getName(), key, value);
           }
         } catch (NotAuthorizedException ex) {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1, new Object[] { servConn.getName(), key }), ex);
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .GetAll_0_CAUGHT_THE_FOLLOWING_EXCEPTION_ATTEMPTING_TO_GET_VALUE_FOR_KEY_1,
+                  new Object[] {servConn.getName(), key}),
+              ex);
           values.addExceptionPart(key, ex);
           continue;
         }
@@ -231,17 +260,24 @@ public class GetAll extends BaseCommand {
     servConn.setAsTrue(RESPONDED);
   }
 
-  private static void sendGetAllResponseChunk(Region region, ObjectPartList list, boolean lastChunk, ServerConnection servConn) throws IOException {
+  private static void sendGetAllResponseChunk(
+      Region region, ObjectPartList list, boolean lastChunk, ServerConnection servConn)
+      throws IOException {
     ChunkedMessage chunkedResponseMsg = servConn.getChunkedResponseMessage();
     chunkedResponseMsg.setNumberOfParts(1);
     chunkedResponseMsg.setLastChunk(lastChunk);
     chunkedResponseMsg.addObjPart(list, zipValues);
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Sending {} getAll response chunk for region={} values={} chunk=<{}>", servConn.getName(), (lastChunk ? " last " : " "), region.getFullPath(), list, chunkedResponseMsg);
+      logger.debug(
+          "{}: Sending {} getAll response chunk for region={} values={} chunk=<{}>",
+          servConn.getName(),
+          (lastChunk ? " last " : " "),
+          region.getFullPath(),
+          list,
+          chunkedResponseMsg);
     }
 
     chunkedResponseMsg.sendChunk(servConn);
   }
-
 }

@@ -18,12 +18,11 @@
 package org.apache.geode;
 
 /**
- * This is the abstract superclass of exceptions that are thrown and
- * declared.
- * <p>
- * This class ought to be called <em>GemFireException</em>, but that name
- * is reserved for an older class that extends {@link java.lang.RuntimeException}.
- * 
+ * This is the abstract superclass of exceptions that are thrown and declared.
+ *
+ * <p>This class ought to be called <em>GemFireException</em>, but that name is reserved for an
+ * older class that extends {@link java.lang.RuntimeException}.
+ *
  * @see org.apache.geode.GemFireException
  * @since GemFire 5.1
  */
@@ -31,33 +30,24 @@ public abstract class GemFireCheckedException extends Exception {
 
   //////////////////////  Constructors  //////////////////////
 
-  /**
-   * Creates a new <code>GemFireException</code> with no detailed message.
-   */
+  /** Creates a new <code>GemFireException</code> with no detailed message. */
   public GemFireCheckedException() {
     super();
   }
 
-  /**
-   * Creates a new <code>GemFireCheckedException</code> with the given detail
-   * message.
-   */
+  /** Creates a new <code>GemFireCheckedException</code> with the given detail message. */
   public GemFireCheckedException(String message) {
     super(message);
   }
 
-  /**
-   * Creates a new <code>GemFireException</code> with the given detail
-   * message and cause.
-   */
+  /** Creates a new <code>GemFireException</code> with the given detail message and cause. */
   public GemFireCheckedException(String message, Throwable cause) {
     super(message);
     this.initCause(cause);
   }
 
   /**
-   * Creates a new <code>GemFireCheckedException</code> with the given cause and
-   * no detail message
+   * Creates a new <code>GemFireCheckedException</code> with the given cause and no detail message
    */
   public GemFireCheckedException(Throwable cause) {
     super();
@@ -67,12 +57,11 @@ public abstract class GemFireCheckedException extends Exception {
   ////////////////////  Instance Methods  ////////////////////
 
   /**
-   * Returns the root cause of this <code>GemFireCheckedException</code> or
-   * <code>null</code> if the cause is nonexistent or unknown.
+   * Returns the root cause of this <code>GemFireCheckedException</code> or <code>null</code> if the
+   * cause is nonexistent or unknown.
    */
   public Throwable getRootCause() {
-    if (this.getCause() == null)
-      return null;
+    if (this.getCause() == null) return null;
     Throwable root = this.getCause();
     while (root != null) {
       //          if ( ! ( root instanceof GemFireCheckedException )) {
@@ -87,5 +76,4 @@ public abstract class GemFireCheckedException extends Exception {
     }
     return root;
   }
-
 }

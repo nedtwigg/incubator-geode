@@ -32,14 +32,16 @@ public class RemoveMemberMessage extends HighPriorityDistributionMessage impleme
   private InternalDistributedMember memberID;
   private String reason;
 
-  public RemoveMemberMessage(InternalDistributedMember recipient, InternalDistributedMember id, String reason) {
+  public RemoveMemberMessage(
+      InternalDistributedMember recipient, InternalDistributedMember id, String reason) {
     super();
     setRecipient(recipient);
     this.memberID = id;
     this.reason = reason;
   }
 
-  public RemoveMemberMessage(List<InternalDistributedMember> recipients, InternalDistributedMember id, String reason) {
+  public RemoveMemberMessage(
+      List<InternalDistributedMember> recipients, InternalDistributedMember id, String reason) {
     super();
     setRecipients(recipients);
     this.memberID = id;
@@ -89,5 +91,4 @@ public class RemoveMemberMessage extends HighPriorityDistributionMessage impleme
     memberID = DataSerializer.readObject(in);
     reason = DataSerializer.readString(in);
   }
-
 }

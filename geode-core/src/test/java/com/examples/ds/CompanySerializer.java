@@ -25,20 +25,15 @@ public class CompanySerializer extends DataSerializer {
     DataSerializer.register(CompanySerializer.class);
   }
 
-  /**
-   * May be invoked reflectively if instances of Company are
-   * distributed to other VMs.
-   */
-  public CompanySerializer() {
-
-  }
+  /** May be invoked reflectively if instances of Company are distributed to other VMs. */
+  public CompanySerializer() {}
 
   public int getId() {
     return 42;
   }
 
   public Class[] getSupportedClasses() {
-    return new Class[] { Company.class };
+    return new Class[] {Company.class};
   }
 
   public boolean toData(Object o, DataOutput out) throws IOException {

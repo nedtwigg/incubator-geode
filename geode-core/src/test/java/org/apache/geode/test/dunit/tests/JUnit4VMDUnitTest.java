@@ -32,9 +32,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * This class tests the functionality of the {@link VM} class.
- */
+/** This class tests the functionality of the {@link VM} class. */
 @Category(DistributedTest.class)
 public class JUnit4VMDUnitTest extends JUnit4DistributedTestCase {
 
@@ -111,7 +109,7 @@ public class JUnit4VMDUnitTest extends JUnit4DistributedTestCase {
     a1.join();
     assertEquals(new Integer(1), a1.getReturnValue());
     // Assert object method invocation works with no return
-    a1 = vm.invokeAsync(o, "set", new Object[] { new Integer(3) });
+    a1 = vm.invokeAsync(o, "set", new Object[] {new Integer(3)});
     a1.join();
     assertNull(a1.getReturnValue());
   }
@@ -128,23 +126,17 @@ public class JUnit4VMDUnitTest extends JUnit4DistributedTestCase {
     COUNTER.incrementAndGet();
   }
 
-  /**
-   * Accessed via reflection.  DO NOT REMOVE
-   */
+  /** Accessed via reflection. DO NOT REMOVE */
   private static byte remoteByteMethod() {
     return BYTE_VALUE;
   }
 
-  /**
-   * Accessed via reflection.  DO NOT REMOVE
-   */
+  /** Accessed via reflection. DO NOT REMOVE */
   private static boolean remoteBooleanMethod() {
     return BOOLEAN_VALUE;
   }
 
-  /**
-   * Accessed via reflection.  DO NOT REMOVE
-   */
+  /** Accessed via reflection. DO NOT REMOVE */
   private static long remoteLongMethod() {
     return LONG_VALUE;
   }

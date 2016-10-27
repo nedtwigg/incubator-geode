@@ -23,18 +23,19 @@ import org.apache.geode.test.dunit.internal.JUnit3DistributedTestCase;
 
 public class SharedConfigurationTestUtils {
 
-  public static final SerializableRunnable cleanupLocator = new SerializableRunnable() {
-    @Override
-    public void run() {
-      InternalLocator locator = InternalLocator.getLocator();
-      if (locator != null) {
-        SharedConfiguration sharedConfig = locator.getSharedConfiguration();
-        if (sharedConfig != null) {
-          sharedConfig.destroySharedConfiguration();
+  public static final SerializableRunnable cleanupLocator =
+      new SerializableRunnable() {
+        @Override
+        public void run() {
+          InternalLocator locator = InternalLocator.getLocator();
+          if (locator != null) {
+            SharedConfiguration sharedConfig = locator.getSharedConfiguration();
+            if (sharedConfig != null) {
+              sharedConfig.destroySharedConfiguration();
+            }
+            locator.stop();
+          }
+          JUnit3DistributedTestCase.disconnectAllFromDS();
         }
-        locator.stop();
-      }
-      JUnit3DistributedTestCase.disconnectAllFromDS();
-    }
-  };
+      };
 }

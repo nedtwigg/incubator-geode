@@ -25,10 +25,12 @@ import org.apache.geode.pdx.PdxWriter;
 import java.io.Serializable;
 
 /**
-* The Person class is an abstraction modeling a person.
-* <p/>
-* @since GemFire 8.0
-*/
+ * The Person class is an abstraction modeling a person.
+ *
+ * <p>
+ *
+ * @since GemFire 8.0
+ */
 @SuppressWarnings("unused")
 public class Person implements PdxSerializable {
 
@@ -46,8 +48,7 @@ public class Person implements PdxSerializable {
   private String middleName;
   private String lastName;
 
-  public Person() {
-  }
+  public Person() {}
 
   public Person(final Long id) {
     this.id = id;
@@ -127,7 +128,10 @@ public class Person implements PdxSerializable {
 
     final Person that = (Person) obj;
 
-    return (ObjectUtils.equals(this.getId(), that.getId()) || (ObjectUtils.equals(this.getBirthDate(), that.getBirthDate()) && ObjectUtils.equals(this.getLastName(), that.getLastName()) && ObjectUtils.equals(this.getFirstName(), that.getFirstName())));
+    return (ObjectUtils.equals(this.getId(), that.getId())
+        || (ObjectUtils.equals(this.getBirthDate(), that.getBirthDate())
+            && ObjectUtils.equals(this.getLastName(), that.getLastName())
+            && ObjectUtils.equals(this.getFirstName(), that.getFirstName())));
   }
 
   @Override
@@ -148,7 +152,9 @@ public class Person implements PdxSerializable {
     buffer.append(", firstName = ").append(getFirstName());
     buffer.append(", middleName = ").append(getMiddleName());
     buffer.append(", lastName = ").append(getLastName());
-    buffer.append(", birthDate = ").append(DateTimeUtils.format(getBirthDate(), DOB_FORMAT_PATTERN));
+    buffer
+        .append(", birthDate = ")
+        .append(DateTimeUtils.format(getBirthDate(), DOB_FORMAT_PATTERN));
     buffer.append(", gender = ").append(getGender());
     buffer.append(" }");
     return buffer.toString();
@@ -163,7 +169,6 @@ public class Person implements PdxSerializable {
     writer.writeString("lastName", lastName);
     writer.writeObject("gender", gender);
     writer.writeDate("birthDate", birthDate);
-
   }
 
   @Override
@@ -175,7 +180,5 @@ public class Person implements PdxSerializable {
     lastName = reader.readString("lastName");
     gender = (Gender) reader.readObject("gender");
     birthDate = reader.readDate("birthDate");
-
   }
-
 }

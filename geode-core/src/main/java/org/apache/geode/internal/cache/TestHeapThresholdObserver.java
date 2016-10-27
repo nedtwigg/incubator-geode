@@ -16,11 +16,7 @@
  */
 package org.apache.geode.internal.cache;
 
-/**
- * Test only hand back object passed to
- * 
- * 
- */
+/** Test only hand back object passed to */
 public class TestHeapThresholdObserver {
 
   private int threshold;
@@ -51,7 +47,8 @@ public class TestHeapThresholdObserver {
     return thresholdInBytes;
   }
 
-  public void setNotificationInfo(int threshold, long maxMemory, long thresholdInBytes, long delta) {
+  public void setNotificationInfo(
+      int threshold, long maxMemory, long thresholdInBytes, long delta) {
     this.threshold = threshold;
     this.maxMemory = maxMemory;
     this.thresholdInBytes = thresholdInBytes;

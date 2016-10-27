@@ -27,8 +27,11 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 /**
- * The UriUtilsJUnitTest class is a test suite of test cases testing the contract and functionality of the UriUtils class.
- * <p/>
+ * The UriUtilsJUnitTest class is a test suite of test cases testing the contract and functionality
+ * of the UriUtils class.
+ *
+ * <p>
+ *
  * @see org.apache.geode.management.internal.web.AbstractWebTestCase
  * @see org.apache.geode.management.internal.web.util.UriUtils
  * @see org.junit.Assert
@@ -45,7 +48,13 @@ public class UriUtilsJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testDecodeStringArray() throws Exception {
-    final String[] encodedValues = { null, "123", "test", encode("Path/Subpath"), encode(encode(encode("/Customers/Accounts/Orders/Items"))) };
+    final String[] encodedValues = {
+      null,
+      "123",
+      "test",
+      encode("Path/Subpath"),
+      encode(encode(encode("/Customers/Accounts/Orders/Items")))
+    };
 
     final String[] decodedValues = UriUtils.decode(encodedValues);
 
@@ -60,7 +69,16 @@ public class UriUtilsJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testDecodeMap() throws Exception {
-    final Map<String, Object> encodedForm = createMap(createArray("0", "1", "2", "3", "4"), (Object[]) createArray(null, "123", "test", encode("Path/Subpath"), encode(encode(encode("/Customers/Accounts/Orders/Items")))));
+    final Map<String, Object> encodedForm =
+        createMap(
+            createArray("0", "1", "2", "3", "4"),
+            (Object[])
+                createArray(
+                    null,
+                    "123",
+                    "test",
+                    encode("Path/Subpath"),
+                    encode(encode(encode("/Customers/Accounts/Orders/Items")))));
 
     final Map<String, Object> decodedForm = UriUtils.decode(encodedForm);
 
@@ -80,7 +98,9 @@ public class UriUtilsJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testEncodeStringArray() throws Exception {
-    final String[] values = { null, "123", "test", "Path/Subpath", "/Customers/Accounts/Orders/Items" };
+    final String[] values = {
+      null, "123", "test", "Path/Subpath", "/Customers/Accounts/Orders/Items"
+    };
     final String[] encodedValues = UriUtils.encode(values);
 
     assertSame(values, encodedValues);
@@ -94,7 +114,12 @@ public class UriUtilsJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testEncodeMap() throws Exception {
-    final Map<String, Object> form = createMap(createArray("0", "1", "2", "3", "4"), (Object[]) createArray(null, "123", "test", "Path/Subpath", "/Customers/Accounts/Orders/Items"));
+    final Map<String, Object> form =
+        createMap(
+            createArray("0", "1", "2", "3", "4"),
+            (Object[])
+                createArray(
+                    null, "123", "test", "Path/Subpath", "/Customers/Accounts/Orders/Items"));
 
     final Map<String, Object> encodedForm = UriUtils.encode(form);
 
@@ -106,5 +131,4 @@ public class UriUtilsJUnitTest extends AbstractWebTestCase {
     assertEquals(encode("Path/Subpath"), encodedForm.get("3"));
     assertEquals(encode("/Customers/Accounts/Orders/Items"), encodedForm.get("4"));
   }
-
 }

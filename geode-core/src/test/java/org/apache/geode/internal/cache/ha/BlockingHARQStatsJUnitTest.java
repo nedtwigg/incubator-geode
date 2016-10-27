@@ -24,46 +24,45 @@ import org.apache.geode.cache.CacheException;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Test runs all tests of HARegionQueueStatsJUnitTest using
- * BlockingHARegionQueue instead of HARegionQueue
- * 
- * 
+ * Test runs all tests of HARegionQueueStatsJUnitTest using BlockingHARegionQueue instead of
+ * HARegionQueue
  */
 @Category(IntegrationTest.class)
 public class BlockingHARQStatsJUnitTest extends HARegionQueueStatsJUnitTest {
 
   /**
    * Creates a BlockingHARegionQueue object.
-   * 
-   * @param name -
-   *          name of the underlying region for region-queue
+   *
+   * @param name - name of the underlying region for region-queue
    * @return the BlockingHARegionQueue instance
    * @throws IOException
    * @throws ClassNotFoundException
    * @throws CacheException
    * @throws InterruptedException
    */
-  protected HARegionQueue createHARegionQueue(String name) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
-    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, HARegionQueue.BLOCKING_HA_QUEUE, false);
+  protected HARegionQueue createHARegionQueue(String name)
+      throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    HARegionQueue regionqueue =
+        HARegionQueue.getHARegionQueueInstance(name, cache, HARegionQueue.BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 
   /**
    * Creates a BlockingHARegionQueue object.
-   * 
-   * @param name -
-   *          name of the underlying region for region-queue
-   * @param attrs -
-   *          attributes for the BlockingHARegionQueue
+   *
+   * @param name - name of the underlying region for region-queue
+   * @param attrs - attributes for the BlockingHARegionQueue
    * @return the BlockingHARegionQueue instance
    * @throws IOException
    * @throws ClassNotFoundException
    * @throws CacheException
    * @throws InterruptedException
    */
-  protected HARegionQueue createHARegionQueue(String name, HARegionQueueAttributes attrs) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
-    HARegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, attrs, HARegionQueue.BLOCKING_HA_QUEUE, false);
+  protected HARegionQueue createHARegionQueue(String name, HARegionQueueAttributes attrs)
+      throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    HARegionQueue regionqueue =
+        HARegionQueue.getHARegionQueueInstance(
+            name, cache, attrs, HARegionQueue.BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
-
 }

@@ -34,8 +34,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 @Category(IntegrationTest.class)
 public class MultiThreadedOplogPerJUnitPerformanceTest {
 
-  @Rule
-  public TestName name = new TestName();
+  @Rule public TestName name = new TestName();
 
   protected Region region;
 
@@ -77,10 +76,7 @@ public class MultiThreadedOplogPerJUnitPerformanceTest {
     deleteFiles();
   }
 
-  /**
-   * cleans all the directory of all the files present in them
-   *  
-   */
+  /** cleans all the directory of all the files present in them */
   protected static void deleteFiles() {
     for (int i = 0; i < 4; i++) {
       File[] files = dirs[i].listFiles();
@@ -109,7 +105,8 @@ public class MultiThreadedOplogPerJUnitPerformanceTest {
     AttributesFactory factory = new AttributesFactory();
     factory.setPersistBackup(false);
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(10, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(10, EvictionAction.OVERFLOW_TO_DISK));
     //    Properties props1 = new Properties();
     factory.setDiskSynchronous(true);
     dsf.setAutoCompact(false);
@@ -137,7 +134,8 @@ public class MultiThreadedOplogPerJUnitPerformanceTest {
 
     System.out.println(" total puts is " + totalPuts);
     System.out.println(" total time in milliseconds is " + totalTime);
-    System.out.println(" writes per second is " + (totalPuts * 1000 * numberOfThreads) / (totalTime));
+    System.out.println(
+        " writes per second is " + (totalPuts * 1000 * numberOfThreads) / (totalTime));
     region.destroyRegion();
   }
 
@@ -164,7 +162,6 @@ public class MultiThreadedOplogPerJUnitPerformanceTest {
       bytes[0] = 1;
       bytes[1000] = 2;
       this.num = num1 * 10000;
-
     }
 
     public void run() {
@@ -177,12 +174,12 @@ public class MultiThreadedOplogPerJUnitPerformanceTest {
           region.put(new Integer((i + 1) + num), bytes);
           /*
            * DiskRegion dr =((LocalRegion)region).getDiskRegion();
-           * 
+           *
            * DiskEntry entry =
            * (DiskEntry)(((LocalRegion)region).basicGetEntry(new
            * Integer((i+1)+num))); try{ byte[] val =
            * (byte[])dr.getNoBuffer(entry.getDiskId()); }catch(Exception e) {
-           * 
+           *
            * System.out.print("EROR. "+ " Count ="+i ); e.printStackTrace();
            *  }
            */

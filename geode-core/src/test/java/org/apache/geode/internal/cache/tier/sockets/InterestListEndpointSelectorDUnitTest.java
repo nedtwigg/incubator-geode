@@ -26,9 +26,7 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Just like InterestListEndpointDUnitTest but uses thread pool (i.e. selector)
- * in bridge servers
- *
+ * Just like InterestListEndpointDUnitTest but uses thread pool (i.e. selector) in bridge servers
  */
 @Category(DistributedTest.class)
 public class InterestListEndpointSelectorDUnitTest extends InterestListEndpointDUnitTest {

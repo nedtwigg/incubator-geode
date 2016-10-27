@@ -29,7 +29,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 
 public class GetFunctionAttribute extends BaseCommand {
 
-  private final static GetFunctionAttribute singleton = new GetFunctionAttribute();
+  private static final GetFunctionAttribute singleton = new GetFunctionAttribute();
 
   public static Command getCommand() {
     return singleton;
@@ -40,7 +40,10 @@ public class GetFunctionAttribute extends BaseCommand {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     String functionId = msg.getPart(0).getString();
     if (functionId == null) {
-      String message = LocalizedStrings.GetFunctionAttribute_THE_INPUT_0_FOR_GET_FUNCTION_ATTRIBUTE_REQUEST_IS_NULL.toLocalizedString("functionId");
+      String message =
+          LocalizedStrings
+              .GetFunctionAttribute_THE_INPUT_0_FOR_GET_FUNCTION_ATTRIBUTE_REQUEST_IS_NULL
+              .toLocalizedString("functionId");
       logger.warn("{}: {}", servConn.getName(), message);
       sendError(msg, message, servConn);
       return;
@@ -49,7 +52,9 @@ public class GetFunctionAttribute extends BaseCommand {
     Function function = FunctionService.getFunction(functionId);
     if (function == null) {
       String message = null;
-      message = LocalizedStrings.GetFunctionAttribute_THE_FUNCTION_IS_NOT_REGISTERED_FOR_FUNCTION_ID_0.toLocalizedString(functionId);
+      message =
+          LocalizedStrings.GetFunctionAttribute_THE_FUNCTION_IS_NOT_REGISTERED_FOR_FUNCTION_ID_0
+              .toLocalizedString(functionId);
       logger.warn("{}: {}", servConn.getName(), message);
       sendError(msg, message, servConn);
       return;
@@ -64,11 +69,11 @@ public class GetFunctionAttribute extends BaseCommand {
     writeResponseWithFunctionAttribute(functionAttributes, msg, servConn);
   }
 
-  private void sendError(Message msg, String message, ServerConnection servConn) throws IOException {
+  private void sendError(Message msg, String message, ServerConnection servConn)
+      throws IOException {
     synchronized (msg) {
       writeErrorResponse(msg, MessageType.REQUESTDATAERROR, message, servConn);
       servConn.setAsTrue(RESPONDED);
     }
   }
-
 }

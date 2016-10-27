@@ -43,10 +43,8 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 import org.apache.geode.test.junit.runners.CategoryWithParameterizedRunnerFactory;
 
-/**
- * @since GemFire  8.1
- */
-@Category({ DistributedTest.class, SecurityTest.class })
+/** @since GemFire 8.1 */
+@Category({DistributedTest.class, SecurityTest.class})
 @RunWith(Parameterized.class)
 @Parameterized.UseParametersRunnerFactory(CategoryWithParameterizedRunnerFactory.class)
 public class ConnectCommandWithHttpAndSSLDUnitTest extends CliCommandTestBase {
@@ -55,8 +53,7 @@ public class ConnectCommandWithHttpAndSSLDUnitTest extends CliCommandTestBase {
 
   private File jks;
 
-  @Parameterized.Parameter
-  public String urlContext;
+  @Parameterized.Parameter public String urlContext;
 
   @Parameterized.Parameters
   public static Collection<String> data() {
@@ -221,12 +218,12 @@ public class ConnectCommandWithHttpAndSSLDUnitTest extends CliCommandTestBase {
     localProps.setProperty(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, "password");
     localProps.setProperty(HTTP_SERVICE_SSL_PROTOCOLS, "TLSv1.2");
 
-    //Its bad to hard code here. But using SocketFactory.getDefaultCiphers() somehow is not working with the option 
+    //Its bad to hard code here. But using SocketFactory.getDefaultCiphers() somehow is not working with the option
     //"https.cipherSuites" which is required to restrict cipher suite with HttpsURLConnection
     //Keeping the below code for further investigation on different Java versions ( 7 & 8) @TODO
 
     /*SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-    
+
     sslContext.init(null, null, new java.security.SecureRandom());
     String[] cipherSuites = sslContext.getSocketFactory().getSupportedCipherSuites();*/
 
@@ -252,7 +249,9 @@ public class ConnectCommandWithHttpAndSSLDUnitTest extends CliCommandTestBase {
     localProps.setProperty(HTTP_SERVICE_SSL_KEYSTORE, jks.getCanonicalPath());
     localProps.setProperty(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, "password");
     localProps.setProperty(HTTP_SERVICE_SSL_PROTOCOLS, "TLSv1.2");
-    localProps.setProperty(HTTP_SERVICE_SSL_CIPHERS, "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_EMPTY_RENEGOTIATION_INFO_SCSV");
+    localProps.setProperty(
+        HTTP_SERVICE_SSL_CIPHERS,
+        "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_EMPTY_RENEGOTIATION_INFO_SCSV");
 
     Properties clientProps = new Properties();
     clientProps.setProperty(CONNECT__TRUST_STORE, jks.getCanonicalPath());
@@ -264,7 +263,8 @@ public class ConnectCommandWithHttpAndSSLDUnitTest extends CliCommandTestBase {
   }
 
   @Override
-  protected void connect(final String host, final int jmxPort, final int httpPort, final HeadlessGfsh shell) {
+  protected void connect(
+      final String host, final int jmxPort, final int httpPort, final HeadlessGfsh shell) {
     assertNotNull(host);
     assertNotNull(shell);
 
@@ -274,12 +274,13 @@ public class ConnectCommandWithHttpAndSSLDUnitTest extends CliCommandTestBase {
     // This is for testing purpose only. If we remove this piece of code we will
     // get a java.security.cert.CertificateException
     // as matching hostname can not be obtained in all test environment.
-    HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-      @Override
-      public boolean verify(String string, SSLSession ssls) {
-        return true;
-      }
-    });
+    HttpsURLConnection.setDefaultHostnameVerifier(
+        new HostnameVerifier() {
+          @Override
+          public boolean verify(String string, SSLSession ssls) {
+            return true;
+          }
+        });
 
     endpoint = "https://" + host + ":" + httpPort + urlContext + "/v1";
 
@@ -291,29 +292,39 @@ public class ConnectCommandWithHttpAndSSLDUnitTest extends CliCommandTestBase {
       command.addOption(CONNECT__KEY_STORE, sslInfoHolder.get().getProperty(CONNECT__KEY_STORE));
     }
     if (sslInfoHolder.get().getProperty(CONNECT__KEY_STORE_PASSWORD) != null) {
-      command.addOption(CONNECT__KEY_STORE_PASSWORD, sslInfoHolder.get().getProperty(CONNECT__KEY_STORE_PASSWORD));
+      command.addOption(
+          CONNECT__KEY_STORE_PASSWORD,
+          sslInfoHolder.get().getProperty(CONNECT__KEY_STORE_PASSWORD));
     }
     if (sslInfoHolder.get().getProperty(CONNECT__TRUST_STORE) != null) {
-      command.addOption(CONNECT__TRUST_STORE, sslInfoHolder.get().getProperty(CONNECT__TRUST_STORE));
+      command.addOption(
+          CONNECT__TRUST_STORE, sslInfoHolder.get().getProperty(CONNECT__TRUST_STORE));
     }
     if (sslInfoHolder.get().getProperty(CONNECT__TRUST_STORE_PASSWORD) != null) {
-      command.addOption(CONNECT__TRUST_STORE_PASSWORD, sslInfoHolder.get().getProperty(CONNECT__TRUST_STORE_PASSWORD));
+      command.addOption(
+          CONNECT__TRUST_STORE_PASSWORD,
+          sslInfoHolder.get().getProperty(CONNECT__TRUST_STORE_PASSWORD));
     }
     if (sslInfoHolder.get().getProperty(CONNECT__SSL_PROTOCOLS) != null) {
-      command.addOption(CONNECT__SSL_PROTOCOLS, sslInfoHolder.get().getProperty(CONNECT__SSL_PROTOCOLS));
+      command.addOption(
+          CONNECT__SSL_PROTOCOLS, sslInfoHolder.get().getProperty(CONNECT__SSL_PROTOCOLS));
     }
     if (sslInfoHolder.get().getProperty(CONNECT__SSL_CIPHERS) != null) {
-      command.addOption(CONNECT__SSL_CIPHERS, sslInfoHolder.get().getProperty(CONNECT__SSL_CIPHERS));
+      command.addOption(
+          CONNECT__SSL_CIPHERS, sslInfoHolder.get().getProperty(CONNECT__SSL_CIPHERS));
     }
 
     CommandResult result = executeCommand(shell, command.toString());
 
     if (!shell.isConnectedAndReady()) {
-      fail("Connect command failed to connect to manager " + endpoint + " result=" + commandResultToString(result));
+      fail(
+          "Connect command failed to connect to manager "
+              + endpoint
+              + " result="
+              + commandResultToString(result));
     }
 
     info("Successfully connected to managing node using HTTPS");
     assertEquals(true, shell.isConnectedAndReady());
   }
-
 }

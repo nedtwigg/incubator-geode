@@ -44,7 +44,9 @@ public class PdxStringJUnitTest {
   @Before
   public void setUp() {
     // make it a loner
-    this.c = (GemFireCacheImpl) new CacheFactory().set(MCAST_PORT, "0").setPdxReadSerialized(true).create();
+    this.c =
+        (GemFireCacheImpl)
+            new CacheFactory().set(MCAST_PORT, "0").setPdxReadSerialized(true).create();
   }
 
   @After
@@ -66,7 +68,6 @@ public class PdxStringJUnitTest {
 
     pdx2 = new PdxString("ABC");
     assertEquals(false, pdx1.equals(pdx2));
-
   }
 
   @Test
@@ -84,7 +85,6 @@ public class PdxStringJUnitTest {
     map = new Object2ObjectOpenHashMap();
     map.put(pdx1, "abc");
     assertEquals(map.get(pdx2), "abc");
-
   }
 
   @Test
@@ -154,7 +154,5 @@ public class PdxStringJUnitTest {
     PdxInstanceImpl pi = (PdxInstanceImpl) pf.create();
     pdx = (PdxString) pi.getRawField("secId");
     assertEquals(s, pdx.toString());
-
   }
-
 }

@@ -24,15 +24,10 @@ import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.management.internal.cli.CliUtil;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
-/***
- * Function to load the shared configuration (already imported) from the disk. 
- *
- */
+/** * Function to load the shared configuration (already imported) from the disk. */
 public class LoadSharedConfigurationFunction extends FunctionAdapter implements InternalEntity {
 
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
 
   @Override
@@ -44,14 +39,18 @@ public class LoadSharedConfigurationFunction extends FunctionAdapter implements 
       if (locator.isSharedConfigurationRunning()) {
         SharedConfiguration sc = locator.getSharedConfiguration();
         sc.loadSharedConfigurationFromDisk();
-        CliFunctionResult cliFunctionResult = new CliFunctionResult(memberName, true, CliStrings.IMPORT_SHARED_CONFIG__SUCCESS__MSG);
+        CliFunctionResult cliFunctionResult =
+            new CliFunctionResult(memberName, true, CliStrings.IMPORT_SHARED_CONFIG__SUCCESS__MSG);
         context.getResultSender().lastResult(cliFunctionResult);
       } else {
-        CliFunctionResult cliFunctionResult = new CliFunctionResult(memberName, false, CliStrings.SHARED_CONFIGURATION_NOT_STARTED);
+        CliFunctionResult cliFunctionResult =
+            new CliFunctionResult(memberName, false, CliStrings.SHARED_CONFIGURATION_NOT_STARTED);
         context.getResultSender().lastResult(cliFunctionResult);
       }
     } catch (Exception e) {
-      context.getResultSender().lastResult(new CliFunctionResult(memberName, e, CliUtil.stackTraceAsString(e)));
+      context
+          .getResultSender()
+          .lastResult(new CliFunctionResult(memberName, e, CliUtil.stackTraceAsString(e)));
     }
   }
 
@@ -59,5 +58,4 @@ public class LoadSharedConfigurationFunction extends FunctionAdapter implements 
   public String getId() {
     return LoadSharedConfigurationFunction.class.getName();
   }
-
 }

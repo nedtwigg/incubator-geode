@@ -25,7 +25,7 @@ import org.apache.geode.internal.logging.LogService;
 
 /**
  * Invokes a ControlRequestHandler when a control file has been created.
- * 
+ *
  * @since GemFire 8.0
  */
 final class ControlFileWatchdog implements Runnable {
@@ -41,7 +41,11 @@ final class ControlFileWatchdog implements Runnable {
   private Thread thread;
   private boolean alive;
 
-  ControlFileWatchdog(final File workingDir, final String fileName, final ControlRequestHandler requestHandler, final boolean stopAfterRequest) {
+  ControlFileWatchdog(
+      final File workingDir,
+      final String fileName,
+      final ControlRequestHandler requestHandler,
+      final boolean stopAfterRequest) {
     this.workingDir = workingDir;
     this.file = new File(this.workingDir, fileName);
     this.requestHandler = requestHandler;
@@ -67,7 +71,9 @@ final class ControlFileWatchdog implements Runnable {
           Thread.currentThread().interrupt();
           // allow to loop around and check isAlive()
         } catch (IOException e) {
-          logger.error("Unable to control process with {}. Please add tools.jar from JDK to classpath for improved process control.", this.file);
+          logger.error(
+              "Unable to control process with {}. Please add tools.jar from JDK to classpath for improved process control.",
+              this.file);
           // allow to loop around and check isAlive()
         }
       }
@@ -145,12 +151,14 @@ final class ControlFileWatchdog implements Runnable {
   }
 
   private String createThreadName() {
-    return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) + " monitoring " + this.file.getName();
+    return getClass().getSimpleName()
+        + "@"
+        + Integer.toHexString(hashCode())
+        + " monitoring "
+        + this.file.getName();
   }
 
-  /**
-   * Defines the callback to be invoked when the control file exists.
-   */
+  /** Defines the callback to be invoked when the control file exists. */
   interface ControlRequestHandler {
     public void handleRequest() throws IOException;
   }

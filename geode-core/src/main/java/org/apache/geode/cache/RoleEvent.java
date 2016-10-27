@@ -19,20 +19,15 @@ package org.apache.geode.cache;
 
 import java.util.Set;
 
-/** 
- * Contains information about an event affecting a region reliability, 
- * including its identity and the circumstances of the event. This is 
- * passed in to {@link RegionRoleListener}.
+/**
+ * Contains information about an event affecting a region reliability, including its identity and
+ * the circumstances of the event. This is passed in to {@link RegionRoleListener}.
  *
  * @deprecated this feature is scheduled to be removed
  * @see RegionRoleListener
  */
 public interface RoleEvent<K, V> extends RegionEvent<K, V> {
 
-  /**
-   * Returns the required roles that were lost or gained because of this
-   * event.
-   */
+  /** Returns the required roles that were lost or gained because of this event. */
   public Set<String> getRequiredRoles();
-
 }

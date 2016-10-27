@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import org.junit.experimental.categories.Category;
@@ -41,10 +39,7 @@ import org.apache.geode.test.dunit.Host;
 import org.apache.geode.test.dunit.SerializableCallable;
 import org.apache.geode.test.dunit.VM;
 
-/**
- * This tests invalidateRegion functionality on partitioned regions
- *
- */
+/** This tests invalidateRegion functionality on partitioned regions */
 @Category(DistributedTest.class)
 public class PartitionedRegionInvalidateDUnitTest extends JUnit4CacheTestCase {
 
@@ -54,7 +49,11 @@ public class PartitionedRegionInvalidateDUnitTest extends JUnit4CacheTestCase {
 
   void createRegion(String name, boolean accessor, int redundantCopies) {
     AttributesFactory af = new AttributesFactory();
-    af.setPartitionAttributes(new PartitionAttributesFactory().setLocalMaxMemory(accessor ? 0 : 12).setRedundantCopies(redundantCopies).create());
+    af.setPartitionAttributes(
+        new PartitionAttributesFactory()
+            .setLocalMaxMemory(accessor ? 0 : 12)
+            .setRedundantCopies(redundantCopies)
+            .create());
     getCache().createRegion(name, af.create());
   }
 
@@ -63,34 +62,35 @@ public class PartitionedRegionInvalidateDUnitTest extends JUnit4CacheTestCase {
     Host host = Host.getHost(0);
     VM vm = host.getVM(0);
     final String rName = getUniqueName();
-    vm.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        createRegion(rName, false, 0);
-        Region r = getCache().getRegion(rName);
-        InvalidatePRListener l = new InvalidatePRListener();
-        r.getAttributesMutator().addCacheListener(l);
-        for (int i = 0; i <= 113; i++) {
-          r.put(i, "value" + i);
-        }
-        PartitionedRegion pr = (PartitionedRegion) r;
-        assertTrue(pr.getDataStore().getAllLocalBuckets().size() == 113);
-        for (Object v : pr.values()) {
-          assertNotNull(v);
-        }
-        r.invalidateRegion();
-        assertTrue(l.afterRegionInvalidateCalled);
-        l.afterRegionInvalidateCalled = false;
-        for (int i = 0; i <= 113; i++) {
-          r.put(i, "value" + i);
-        }
-        Object callbackArg = "CallBACK";
-        l.callbackArg = callbackArg;
-        r.invalidateRegion(callbackArg);
-        assertTrue(l.afterRegionInvalidateCalled);
-        l.afterRegionInvalidateCalled = false;
-        return null;
-      }
-    });
+    vm.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            createRegion(rName, false, 0);
+            Region r = getCache().getRegion(rName);
+            InvalidatePRListener l = new InvalidatePRListener();
+            r.getAttributesMutator().addCacheListener(l);
+            for (int i = 0; i <= 113; i++) {
+              r.put(i, "value" + i);
+            }
+            PartitionedRegion pr = (PartitionedRegion) r;
+            assertTrue(pr.getDataStore().getAllLocalBuckets().size() == 113);
+            for (Object v : pr.values()) {
+              assertNotNull(v);
+            }
+            r.invalidateRegion();
+            assertTrue(l.afterRegionInvalidateCalled);
+            l.afterRegionInvalidateCalled = false;
+            for (int i = 0; i <= 113; i++) {
+              r.put(i, "value" + i);
+            }
+            Object callbackArg = "CallBACK";
+            l.callbackArg = callbackArg;
+            r.invalidateRegion(callbackArg);
+            assertTrue(l.afterRegionInvalidateCalled);
+            l.afterRegionInvalidateCalled = false;
+            return null;
+          }
+        });
   }
 
   @Test
@@ -119,72 +119,77 @@ public class PartitionedRegionInvalidateDUnitTest extends JUnit4CacheTestCase {
         r.getAttributesMutator().setCacheWriter(w);
         return null;
       }
-    }
-    ;
+    };
     vm0.invoke(new CreateRegion(true));
     vm1.invoke(new CreateRegion(false));
     vm2.invoke(new CreateRegion(true));
     vm3.invoke(new CreateRegion(true));
 
-    vm1.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        Region r = getCache().getRegion(rName);
-        for (int i = 0; i <= 113; i++) {
-          r.put(i, "value" + i);
-        }
-        for (int i = 0; i <= 113; i++) {
-          assertNotNull(r.get(i));
-        }
-        r.invalidateRegion();
+    vm1.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Region r = getCache().getRegion(rName);
+            for (int i = 0; i <= 113; i++) {
+              r.put(i, "value" + i);
+            }
+            for (int i = 0; i <= 113; i++) {
+              assertNotNull(r.get(i));
+            }
+            r.invalidateRegion();
 
-        return null;
-      }
-    });
-    SerializableCallable validateCallbacks = new SerializableCallable() {
-      public Object call() throws Exception {
-        Region r = getCache().getRegion(rName);
-        InvalidatePRListener l = (InvalidatePRListener) r.getAttributes().getCacheListeners()[0];
-        assertTrue(l.afterRegionInvalidateCalled);
-        l.afterRegionInvalidateCalled = false;
+            return null;
+          }
+        });
+    SerializableCallable validateCallbacks =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Region r = getCache().getRegion(rName);
+            InvalidatePRListener l =
+                (InvalidatePRListener) r.getAttributes().getCacheListeners()[0];
+            assertTrue(l.afterRegionInvalidateCalled);
+            l.afterRegionInvalidateCalled = false;
 
-        l.callbackArg = "CallBACK";
-        return null;
-      }
-    };
+            l.callbackArg = "CallBACK";
+            return null;
+          }
+        };
     vm0.invoke(validateCallbacks);
     vm1.invoke(validateCallbacks);
     vm2.invoke(validateCallbacks);
     vm3.invoke(validateCallbacks);
 
-    vm1.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        Region r = getCache().getRegion(rName);
-        InvalidatePRListener l = (InvalidatePRListener) r.getAttributes().getCacheListeners()[0];
-        for (int i = 0; i <= 113; i++) {
-          r.put(i, "value" + i);
-        }
-        Object callbackArg = "CallBACK";
-        l.callbackArg = callbackArg;
-        r.invalidateRegion(callbackArg);
+    vm1.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Region r = getCache().getRegion(rName);
+            InvalidatePRListener l =
+                (InvalidatePRListener) r.getAttributes().getCacheListeners()[0];
+            for (int i = 0; i <= 113; i++) {
+              r.put(i, "value" + i);
+            }
+            Object callbackArg = "CallBACK";
+            l.callbackArg = callbackArg;
+            r.invalidateRegion(callbackArg);
 
-        return null;
-      }
-    });
+            return null;
+          }
+        });
 
     vm0.invoke(validateCallbacks);
     vm1.invoke(validateCallbacks);
     vm2.invoke(validateCallbacks);
     vm3.invoke(validateCallbacks);
 
-    vm1.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        Region r = getCache().getRegion(rName);
-        for (int i = 0; i <= 113; i++) {
-          assertNull("Expected null but was " + r.get(i), r.get(i));
-        }
-        return null;
-      }
-    });
+    vm1.invoke(
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Region r = getCache().getRegion(rName);
+            for (int i = 0; i <= 113; i++) {
+              assertNull("Expected null but was " + r.get(i), r.get(i));
+            }
+            return null;
+          }
+        });
   }
 
   class InvalidatePRListener extends CacheListenerAdapter {
@@ -219,6 +224,5 @@ public class PartitionedRegionInvalidateDUnitTest extends JUnit4CacheTestCase {
     public void beforeRegionClear(RegionEvent event) throws CacheWriterException {
       fail("writer should not have been called");
     }
-
   }
 }

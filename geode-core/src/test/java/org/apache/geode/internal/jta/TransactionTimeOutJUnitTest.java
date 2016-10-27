@@ -51,9 +51,7 @@ import org.apache.geode.internal.datasource.GemFireTransactionDataSource;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.util.test.TestUtil;
 
-/**
- * TODO: this test has no assertions or validations of any sort
- */
+/** TODO: this test has no assertions or validations of any sort */
 @Category(IntegrationTest.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TransactionTimeOutJUnitTest {
@@ -61,8 +59,7 @@ public class TransactionTimeOutJUnitTest {
   private static DistributedSystem ds1 = null;
   private static Cache cache = null;
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
@@ -75,7 +72,8 @@ public class TransactionTimeOutJUnitTest {
     tmpFile.deleteOnExit();
 
     String path = tmpFile.getAbsolutePath();
-    String file_as_str = readFile(TestUtil.getResourcePath(TransactionTimeOutJUnitTest.class, "/jta/cachejta.xml"));
+    String file_as_str =
+        readFile(TestUtil.getResourcePath(TransactionTimeOutJUnitTest.class, "/jta/cachejta.xml"));
     String modified_file_str = file_as_str.replaceAll("newDB", "newDB_" + pid);
 
     FileOutputStream fos = new FileOutputStream(path);
@@ -178,7 +176,8 @@ public class TransactionTimeOutJUnitTest {
     Context ctx = cache.getJNDIContext();
     DataSource ds2 = (DataSource) ctx.lookup("java:/SimpleDataSource");
     ds2.getConnection();
-    GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
+    GemFireTransactionDataSource ds =
+        (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
     UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
     utx.begin();
     Connection conn = ds.getConnection();
@@ -208,7 +207,8 @@ public class TransactionTimeOutJUnitTest {
     Context ctx = cache.getJNDIContext();
     DataSource ds2 = (DataSource) ctx.lookup("java:/SimpleDataSource");
     ds2.getConnection();
-    GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
+    GemFireTransactionDataSource ds =
+        (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
     UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
     utx.begin();
     Connection conn = ds.getConnection();
@@ -241,7 +241,8 @@ public class TransactionTimeOutJUnitTest {
     Context ctx = cache.getJNDIContext();
     DataSource ds2 = (DataSource) ctx.lookup("java:/SimpleDataSource");
     Connection conn2 = ds2.getConnection();
-    GemFireTransactionDataSource ds = (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
+    GemFireTransactionDataSource ds =
+        (GemFireTransactionDataSource) ctx.lookup("java:/XAPooledDataSource");
     UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
     utx.begin();
     Connection conn = ds.getConnection();
@@ -284,5 +285,4 @@ public class TransactionTimeOutJUnitTest {
     }
     return sb.toString();
   }
-
 }

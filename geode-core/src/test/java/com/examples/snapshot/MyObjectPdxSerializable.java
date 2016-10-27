@@ -21,8 +21,7 @@ import org.apache.geode.pdx.PdxSerializable;
 import org.apache.geode.pdx.PdxWriter;
 
 public class MyObjectPdxSerializable extends MyObject implements PdxSerializable {
-  public MyObjectPdxSerializable() {
-  }
+  public MyObjectPdxSerializable() {}
 
   public MyObjectPdxSerializable(long number, String s) {
     super(number, s);

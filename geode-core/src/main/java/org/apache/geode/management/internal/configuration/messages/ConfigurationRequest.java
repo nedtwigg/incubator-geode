@@ -28,10 +28,7 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 import org.apache.geode.internal.lang.StringUtils;
 
-/***
- * Request sent by a member to the locator requesting the shared configuration
- *
- */
+/** * Request sent by a member to the locator requesting the shared configuration */
 public class ConfigurationRequest implements DataSerializableFixedID {
   private static int DEFAULT_NUM_ATTEMPTS = 5;
   private Set<String> groups = new HashSet<String>();
@@ -52,8 +49,7 @@ public class ConfigurationRequest implements DataSerializableFixedID {
   }
 
   public void addGroups(String group) {
-    if (!StringUtils.isBlank(group))
-      this.groups.add(group);
+    if (!StringUtils.isBlank(group)) this.groups.add(group);
   }
 
   @Override
@@ -113,7 +109,7 @@ public class ConfigurationRequest implements DataSerializableFixedID {
   //Asif: Returning null, as otherwise backward compatibility tests fail
   // due to missing pre to & from data functions.
   public Version[] getSerializationVersions() {
-    return null;//new Version[] { Version.CURRENT };
+    return null; //new Version[] { Version.CURRENT };
   }
 
   public int getNumAttempts() {
@@ -123,5 +119,4 @@ public class ConfigurationRequest implements DataSerializableFixedID {
   public void setNumAttempts(int numAttempts) {
     this.numAttempts = numAttempts;
   }
-
 }

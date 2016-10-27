@@ -50,10 +50,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-/**
- * Test ReadOnly operations are accesible from RMI Connector with readOnly user
- *
- */
+/** Test ReadOnly operations are accesible from RMI Connector with readOnly user */
 @Category(IntegrationTest.class)
 public class ReadOpFileAccessControllerJUnitTest {
 
@@ -68,8 +65,7 @@ public class ReadOpFileAccessControllerJUnitTest {
   public static final String SERVICE_URLPREFIX = "service:jmx:rmi:///jndi/rmi:";
   private static final String NEW_LINE = System.getProperty("line.separator");
 
-  @Rule
-  public TemporaryFolder tempFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder tempFolder = new TemporaryFolder();
 
   @Before
   public void setUp() throws Exception {
@@ -98,8 +94,10 @@ public class ReadOpFileAccessControllerJUnitTest {
   }
 
   @Test
-  public void testReadOnlyOperations() throws IOException, InstanceNotFoundException, ReflectionException, MBeanException {
-    ManagementService service = ManagementService.getExistingManagementService(GemFireCacheImpl.getInstance());
+  public void testReadOnlyOperations()
+      throws IOException, InstanceNotFoundException, ReflectionException, MBeanException {
+    ManagementService service =
+        ManagementService.getExistingManagementService(GemFireCacheImpl.getInstance());
     String accessFileName = createAccessFile();
     String passwordFileName = createPasswordFile();
     createConnector(accessFileName, passwordFileName);
@@ -108,9 +106,14 @@ public class ReadOpFileAccessControllerJUnitTest {
     DistributedMember member = cache.getMyId();
 
     assertNotNull(server.invoke(service.getMemberMBeanName(member), "listRegions", null, null));
-    assertNotNull(server.invoke(service.getMemberMBeanName(member), "listGemFireProperties", null, null));
-    assertNotNull(server.invoke(service.getMemberMBeanName(member), "listConnectedGatewayReceivers", null, null));
-    assertNotNull(server.invoke(service.getMemberMBeanName(member), "listConnectedGatewaySenders", null, null));
+    assertNotNull(
+        server.invoke(service.getMemberMBeanName(member), "listGemFireProperties", null, null));
+    assertNotNull(
+        server.invoke(
+            service.getMemberMBeanName(member), "listConnectedGatewayReceivers", null, null));
+    assertNotNull(
+        server.invoke(
+            service.getMemberMBeanName(member), "listConnectedGatewaySenders", null, null));
 
     assertNotNull(server.invoke(service.getMemberMBeanName(member), "showJVMMetrics", null, null));
     assertNotNull(server.invoke(service.getMemberMBeanName(member), "showOSMetrics", null, null));
@@ -119,20 +122,19 @@ public class ReadOpFileAccessControllerJUnitTest {
 
     assertNotNull(server.invoke(service.getMemberMBeanName(member), "viewLicense", null, null));
 
-    //TODO QueryData : Start Manager fails due to  #50280 : Can not start manager inside a loner    
+    //TODO QueryData : Start Manager fails due to  #50280 : Can not start manager inside a loner
     try {
       server.invoke(service.getMemberMBeanName(member), "compactAllDiskStores", null, null);
       fail("Admin operation accessible to readonly user");
     } catch (SecurityException e) {
-      //ok 
+      //ok
     }
-
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   private MBeanServerConnection connectToRmiConnector() throws MalformedURLException, IOException {
     String serviceUrl = SERVICE_URLPREFIX + "//" + hostname + ":" + port + "/jmxconnector";
-    String[] creds = { "user", "user" };
+    String[] creds = {"user", "user"};
     Map env = new HashMap();
     env.put(JMXConnector.CREDENTIALS, creds);
     connector = JMXConnectorFactory.connect(new JMXServiceURL(serviceUrl), env);
@@ -182,5 +184,4 @@ public class ReadOpFileAccessControllerJUnitTest {
   private static DistributedSystem getSystem(Properties properties) {
     return DistributedSystem.connect(properties);
   }
-
 }

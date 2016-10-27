@@ -30,63 +30,48 @@ import org.apache.geode.management.internal.FederationComponent;
 import org.apache.geode.management.internal.ManagementConstants;
 
 /**
- * Bridge for the Distributed lock service. It provides an aggregated view of a
- * lock service which might be present in multiple members.
- * 
- * Proxies are added as and when proxies are received by Federation framework.
- * 
- * Each method which access all the proxies to gather data from them creates an
- * Iterator. Iterates over them and gather data. Creating multiple iterator on
- * each method call is a concern and a better way needs to be introduced.
- * 
- * 
+ * Bridge for the Distributed lock service. It provides an aggregated view of a lock service which
+ * might be present in multiple members.
+ *
+ * <p>Proxies are added as and when proxies are received by Federation framework.
+ *
+ * <p>Each method which access all the proxies to gather data from them creates an Iterator.
+ * Iterates over them and gather data. Creating multiple iterator on each method call is a concern
+ * and a better way needs to be introduced.
  */
 public class DistributedLockServiceBridge {
 
-  /**
-   * Map of LockServiceMXBean proxies
-   */
+  /** Map of LockServiceMXBean proxies */
   private Map<ObjectName, LockServiceMXBean> mapOfProxy;
 
-  /**
-   * List of locks. keeping it member level to avoid object creation cost during
-   * each call.
-   */
+  /** List of locks. keeping it member level to avoid object creation cost during each call. */
   private List<String> listHeldLock;
 
-  /**
-   * Map of threads holding lock
-   */
+  /** Map of threads holding lock */
   private Map<String, String> threadsHoldingLock;
 
-  /**
-   * set size of this proxy set
-   */
+  /** set size of this proxy set */
   private volatile int setSize;
 
   /**
    * Public constructor
-   * 
-   * @param objectName
-   *          name of the MBean
-   * @param proxy
-   *          reference to the proxy
+   *
+   * @param objectName name of the MBean
+   * @param proxy reference to the proxy
    */
-  public DistributedLockServiceBridge(ObjectName objectName, LockServiceMXBean proxy, FederationComponent newState) {
+  public DistributedLockServiceBridge(
+      ObjectName objectName, LockServiceMXBean proxy, FederationComponent newState) {
     this.mapOfProxy = new ConcurrentHashMap<ObjectName, LockServiceMXBean>();
     this.listHeldLock = new ArrayList<String>();
     this.threadsHoldingLock = new HashMap<String, String>();
     addProxyToMap(objectName, proxy);
-
   }
 
   /**
    * Add a proxy to the proxy map
-   * 
-   * @param objectName
-   *          name of the MBean
-   * @param proxy
-   *          reference to the proxy
+   *
+   * @param objectName name of the MBean
+   * @param proxy reference to the proxy
    */
   public void addProxyToMap(ObjectName objectName, LockServiceMXBean proxy) {
     if (mapOfProxy != null) {
@@ -96,11 +81,8 @@ public class DistributedLockServiceBridge {
   }
 
   /**
-   * 
-   * @param objectName
-   *          name of the MBean
-   * @param proxy
-   *          reference to the proxy
+   * @param objectName name of the MBean
+   * @param proxy reference to the proxy
    * @return true if no proxies left for this aggregator to work on
    */
   public boolean removeProxyFromMap(ObjectName objectName, LockServiceMXBean proxy) {
@@ -110,16 +92,12 @@ public class DistributedLockServiceBridge {
       if (mapOfProxy.values().size() == 0) {
         setSize = 0;
         return true;
-
       }
     }
     return false;
   }
 
-  /**
-   * 
-   * @return member name of the grantor
-   */
+  /** @return member name of the grantor */
   public String fetchGrantorMember() {
     Iterator<LockServiceMXBean> it = mapOfProxy.values().iterator();
     if (it != null) {
@@ -131,19 +109,13 @@ public class DistributedLockServiceBridge {
     return null;
   }
 
-  /**
-   * 
-   * @return number of members using this lock service
-   */
+  /** @return number of members using this lock service */
   public int getMemberCount() {
 
     return setSize;
   }
 
-  /**
-   * 
-   * @return list of members using this lock service
-   */
+  /** @return list of members using this lock service */
   public String[] getMemberNames() {
     Iterator<LockServiceMXBean> it = mapOfProxy.values().iterator();
     if (it != null) {
@@ -151,15 +123,11 @@ public class DistributedLockServiceBridge {
         String[] memberNames = it.next().getMemberNames();
         return memberNames;
       }
-
     }
     return ManagementConstants.NO_DATA_STRING;
   }
 
-  /**
-   * 
-   * @return name of the lock service
-   */
+  /** @return name of the lock service */
   public String getName() {
     Iterator<LockServiceMXBean> it = mapOfProxy.values().iterator();
     if (it != null) {
@@ -167,15 +135,11 @@ public class DistributedLockServiceBridge {
         String name = it.next().getName();
         return name;
       }
-
     }
     return null;
   }
 
-  /**
-   * 
-   * @return lists the name of locks held by this member's threads
-   */
+  /** @return lists the name of locks held by this member's threads */
   public String[] listHeldLocks() {
     Iterator<LockServiceMXBean> it = mapOfProxy.values().iterator();
     listHeldLock.clear();
@@ -187,20 +151,13 @@ public class DistributedLockServiceBridge {
             listHeldLock.add(lock);
           }
         }
-
       }
-
     }
     String[] tmpStr = new String[listHeldLock.size()];
     return listHeldLock.toArray(tmpStr);
-
   }
 
-  /**
-   * 
-   * @return a map of object name and thread name if this member holds lock or
-   *         null/none
-   */
+  /** @return a map of object name and thread name if this member holds lock or null/none */
   public Map<String, String> listThreadsHoldingLock() {
     Iterator<LockServiceMXBean> it = mapOfProxy.values().iterator();
     threadsHoldingLock.clear();
@@ -210,11 +167,8 @@ public class DistributedLockServiceBridge {
         if (threadLockMap != null) {
           threadsHoldingLock.putAll(threadLockMap);
         }
-
       }
-
     }
     return threadsHoldingLock;
   }
-
 }

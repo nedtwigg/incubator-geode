@@ -62,8 +62,8 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 import org.apache.geode.internal.offheap.annotations.Released;
 
 /**
- * A Replicate Region removeAll message.  Meant to be sent only to
- * the peer who hosts transactional data.
+ * A Replicate Region removeAll message. Meant to be sent only to the peer who hosts transactional
+ * data.
  *
  * @since GemFire 8.1
  */
@@ -74,7 +74,9 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
 
   private int removeAllDataCount = 0;
 
-  /** An additional object providing context for the operation, e.g., for BridgeServer notification */
+  /**
+   * An additional object providing context for the operation, e.g., for BridgeServer notification
+   */
   ClientProxyMembershipID bridgeContext;
 
   private transient InternalDistributedSystem internalDs;
@@ -104,7 +106,7 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
   /*
    * this is similar to send() but it selects an initialized replicate
    * that is used to proxy the message
-   * 
+   *
    */
   public static boolean distribute(EntryEventImpl event, RemoveAllEntryData[] data, int dataCount) {
     boolean successful = false;
@@ -119,12 +121,20 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
       replicates = l;
     }
     int attempts = 0;
-    for (Iterator<InternalDistributedMember> it = replicates.iterator(); it.hasNext();) {
+    for (Iterator<InternalDistributedMember> it = replicates.iterator(); it.hasNext(); ) {
       InternalDistributedMember replicate = it.next();
       try {
         attempts++;
         final boolean posDup = (attempts > 1);
-        RemoveAllResponse response = send(replicate, event, data, dataCount, false, DistributionManager.SERIAL_EXECUTOR, posDup);
+        RemoveAllResponse response =
+            send(
+                replicate,
+                event,
+                data,
+                dataCount,
+                false,
+                DistributionManager.SERIAL_EXECUTOR,
+                posDup);
         response.waitForCacheException();
         VersionedObjectList result = response.getResponse();
 
@@ -153,14 +163,25 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
         successful = true; // not a cancel-exception, so don't complain any more about it
       } catch (RemoteOperationException e) {
         if (logger.isTraceEnabled(LogMarker.DM)) {
-          logger.trace(LogMarker.DM, "RemoteRemoveAllMessage caught an unexpected exception during distribution", e);
+          logger.trace(
+              LogMarker.DM,
+              "RemoteRemoveAllMessage caught an unexpected exception during distribution",
+              e);
         }
       }
     }
     return successful;
   }
 
-  RemoteRemoveAllMessage(EntryEventImpl event, Set recipients, DirectReplyProcessor p, RemoveAllEntryData[] removeAllData, int removeAllDataCount, boolean useOriginRemote, int processorType, boolean possibleDuplicate) {
+  RemoteRemoveAllMessage(
+      EntryEventImpl event,
+      Set recipients,
+      DirectReplyProcessor p,
+      RemoveAllEntryData[] removeAllData,
+      int removeAllDataCount,
+      boolean useOriginRemote,
+      int processorType,
+      boolean possibleDuplicate) {
     super(recipients, event.getRegion().getFullPath(), p);
     this.resetRecipients();
     if (recipients != null) {
@@ -178,8 +199,7 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
     this.callbackArg = event.getCallbackArgument();
   }
 
-  public RemoteRemoveAllMessage() {
-  }
+  public RemoteRemoveAllMessage() {}
 
   /*
    * Sends a LocalRegion RemoteRemoveAllMessage to the recipient
@@ -189,15 +209,33 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
    *         sent, or null to indicate that no acknowledgement will be sent
    * @throws ForceReattemptException if the peer is no longer available
    */
-  public static RemoveAllResponse send(DistributedMember recipient, EntryEventImpl event, RemoveAllEntryData[] removeAllData, int removeAllDataCount, boolean useOriginRemote, int processorType, boolean possibleDuplicate) throws RemoteOperationException {
+  public static RemoveAllResponse send(
+      DistributedMember recipient,
+      EntryEventImpl event,
+      RemoveAllEntryData[] removeAllData,
+      int removeAllDataCount,
+      boolean useOriginRemote,
+      int processorType,
+      boolean possibleDuplicate)
+      throws RemoteOperationException {
     //Assert.assertTrue(recipient != null, "RemoteRemoveAllMessage NULL recipient");  recipient can be null for event notifications
     Set recipients = Collections.singleton(recipient);
     RemoveAllResponse p = new RemoveAllResponse(event.getRegion().getSystem(), recipients);
-    RemoteRemoveAllMessage msg = new RemoteRemoveAllMessage(event, recipients, p, removeAllData, removeAllDataCount, useOriginRemote, processorType, possibleDuplicate);
+    RemoteRemoveAllMessage msg =
+        new RemoteRemoveAllMessage(
+            event,
+            recipients,
+            p,
+            removeAllData,
+            removeAllDataCount,
+            useOriginRemote,
+            processorType,
+            possibleDuplicate);
     msg.setTransactionDistributed(event.getRegion().getCache().getTxManager().isDistributed());
     Set failures = event.getRegion().getDistributionManager().putOutgoing(msg);
     if (failures != null && failures.size() > 0) {
-      throw new RemoteOperationException(LocalizedStrings.RemotePutMessage_FAILED_SENDING_0.toLocalizedString(msg));
+      throw new RemoteOperationException(
+          LocalizedStrings.RemotePutMessage_FAILED_SENDING_0.toLocalizedString(msg));
     }
     return p;
   }
@@ -276,10 +314,8 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
   @Override
   protected short computeCompressedShort() {
     short flags = super.computeCompressedShort();
-    if (this.posDup)
-      flags |= POS_DUP;
-    if (this.bridgeContext != null)
-      flags |= HAS_BRIDGE_CONTEXT;
+    if (this.posDup) flags |= POS_DUP;
+    if (this.bridgeContext != null) flags |= HAS_BRIDGE_CONTEXT;
     return flags;
   }
 
@@ -289,7 +325,8 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
   }
 
   @Override
-  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime) throws RemoteOperationException {
+  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime)
+      throws RemoteOperationException {
 
     final boolean sendReply;
 
@@ -310,21 +347,25 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
 
   /* we need a event with content for waitForNodeOrCreateBucket() */
   /**
-   * This method is called by both operateOnLocalRegion() when processing a remote msg
-   * or by sendMsgByBucket() when processing a msg targeted to local Jvm. 
-   * LocalRegion Note: It is very important that this message does NOT
-   * cause any deadlocks as the sender will wait indefinitely for the
-   * acknowledgment
+   * This method is called by both operateOnLocalRegion() when processing a remote msg or by
+   * sendMsgByBucket() when processing a msg targeted to local Jvm. LocalRegion Note: It is very
+   * important that this message does NOT cause any deadlocks as the sender will wait indefinitely
+   * for the acknowledgment
+   *
    * @param r partitioned region
    * @param eventSender the endpoint server who received request from client
    * @return If succeeds, return true, otherwise, throw exception
    */
-  public final boolean doLocalRemoveAll(final LocalRegion r, final InternalDistributedMember eventSender) throws EntryExistsException, RemoteOperationException {
+  public final boolean doLocalRemoveAll(
+      final LocalRegion r, final InternalDistributedMember eventSender)
+      throws EntryExistsException, RemoteOperationException {
     final DistributedRegion dr = (DistributedRegion) r;
 
     // create a base event and a op for RemoveAllMessage distributed btw redundant buckets
     @Released
-    EntryEventImpl baseEvent = EntryEventImpl.create(r, Operation.REMOVEALL_DESTROY, null, null, this.callbackArg, false, eventSender, true);
+    EntryEventImpl baseEvent =
+        EntryEventImpl.create(
+            r, Operation.REMOVEALL_DESTROY, null, null, this.callbackArg, false, eventSender, true);
     try {
 
       baseEvent.setCausedByMessage(this);
@@ -336,39 +377,64 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
       }
       baseEvent.setPossibleDuplicate(this.posDup);
       if (logger.isDebugEnabled()) {
-        logger.debug("RemoteRemoveAllMessage.doLocalRemoveAll: eventSender is {}, baseEvent is {}, msg is {}", eventSender, baseEvent, this);
+        logger.debug(
+            "RemoteRemoveAllMessage.doLocalRemoveAll: eventSender is {}, baseEvent is {}, msg is {}",
+            eventSender,
+            baseEvent,
+            this);
       }
-      final DistributedRemoveAllOperation op = new DistributedRemoveAllOperation(baseEvent, removeAllDataCount, false);
+      final DistributedRemoveAllOperation op =
+          new DistributedRemoveAllOperation(baseEvent, removeAllDataCount, false);
       try {
-        final VersionedObjectList versions = new VersionedObjectList(removeAllDataCount, true, dr.concurrencyChecksEnabled);
-        dr.syncBulkOp(new Runnable() {
-          @SuppressWarnings("synthetic-access")
-          public void run() {
-            InternalDistributedMember myId = r.getDistributionManager().getDistributionManagerId();
-            for (int i = 0; i < removeAllDataCount; ++i) {
-              @Released
-              EntryEventImpl ev = RemoveAllPRMessage.getEventFromEntry(r, myId, eventSender, i, removeAllData, false, bridgeContext, posDup, false);
-              try {
-                ev.setRemoveAllOperation(op);
-                if (logger.isDebugEnabled()) {
-                  logger.debug("invoking basicDestroy with {}", ev);
+        final VersionedObjectList versions =
+            new VersionedObjectList(removeAllDataCount, true, dr.concurrencyChecksEnabled);
+        dr.syncBulkOp(
+            new Runnable() {
+              @SuppressWarnings("synthetic-access")
+              public void run() {
+                InternalDistributedMember myId =
+                    r.getDistributionManager().getDistributionManagerId();
+                for (int i = 0; i < removeAllDataCount; ++i) {
+                  @Released
+                  EntryEventImpl ev =
+                      RemoveAllPRMessage.getEventFromEntry(
+                          r,
+                          myId,
+                          eventSender,
+                          i,
+                          removeAllData,
+                          false,
+                          bridgeContext,
+                          posDup,
+                          false);
+                  try {
+                    ev.setRemoveAllOperation(op);
+                    if (logger.isDebugEnabled()) {
+                      logger.debug("invoking basicDestroy with {}", ev);
+                    }
+                    try {
+                      dr.basicDestroy(ev, true, null);
+                    } catch (EntryNotFoundException ignore) {
+                    }
+                    removeAllData[i].versionTag = ev.getVersionTag();
+                    versions.addKeyAndVersion(removeAllData[i].key, ev.getVersionTag());
+                  } finally {
+                    ev.release();
+                  }
                 }
-                try {
-                  dr.basicDestroy(ev, true, null);
-                } catch (EntryNotFoundException ignore) {
-                }
-                removeAllData[i].versionTag = ev.getVersionTag();
-                versions.addKeyAndVersion(removeAllData[i].key, ev.getVersionTag());
-              } finally {
-                ev.release();
               }
-            }
-          }
-        }, baseEvent.getEventId());
+            },
+            baseEvent.getEventId());
         if (getTXUniqId() != TXManagerImpl.NOTX || dr.getConcurrencyChecksEnabled()) {
           dr.getDataView().postRemoveAll(op, versions, dr);
         }
-        RemoveAllReplyMessage.send(getSender(), this.processorId, getReplySender(r.getDistributionManager()), versions, this.removeAllData, this.removeAllDataCount);
+        RemoveAllReplyMessage.send(
+            getSender(),
+            this.processorId,
+            getReplySender(r.getDistributionManager()),
+            versions,
+            this.removeAllData,
+            this.removeAllDataCount);
         return false;
       } finally {
         op.freeOffHeapResources();
@@ -385,7 +451,13 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
 
   // override reply message type from PartitionMessage
   @Override
-  protected void sendReply(InternalDistributedMember member, int procId, DM dm, ReplyException ex, LocalRegion r, long startTime) {
+  protected void sendReply(
+      InternalDistributedMember member,
+      int procId,
+      DM dm,
+      ReplyException ex,
+      LocalRegion r,
+      long startTime) {
     ReplyMessage.send(member, procId, ex, getReplySender(dm), r != null && r.isInternalRegion());
   }
 
@@ -397,7 +469,8 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
       buff.append("; bridgeContext=").append(this.bridgeContext);
     }
     for (int i = 0; i < removeAllDataCount; i++) {
-      buff.append("; entry" + i + ":").append(removeAllData[i] == null ? "null" : removeAllData[i].getKey());
+      buff.append("; entry" + i + ":")
+          .append(removeAllData[i] == null ? "null" : removeAllData[i].getKey());
     }
   }
 
@@ -410,23 +483,34 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
       return true;
     }
 
-    private RemoveAllReplyMessage(int processorId, VersionedObjectList versionList, RemoveAllEntryData[] removeAllData, int removeAllCount) {
+    private RemoveAllReplyMessage(
+        int processorId,
+        VersionedObjectList versionList,
+        RemoveAllEntryData[] removeAllData,
+        int removeAllCount) {
       super();
       this.versions = versionList;
       setProcessorId(processorId);
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient, int processorId, ReplySender dm, VersionedObjectList versions, RemoveAllEntryData[] removeAllData, int removeAllDataCount) {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        ReplySender dm,
+        VersionedObjectList versions,
+        RemoveAllEntryData[] removeAllData,
+        int removeAllDataCount) {
       Assert.assertTrue(recipient != null, "RemoveAllReplyMessage NULL reply message");
-      RemoveAllReplyMessage m = new RemoveAllReplyMessage(processorId, versions, removeAllData, removeAllDataCount);
+      RemoveAllReplyMessage m =
+          new RemoveAllReplyMessage(processorId, versions, removeAllData, removeAllDataCount);
       m.setRecipient(recipient);
       dm.putOutgoing(m);
     }
 
     /**
-     * Processes this message.  This method is invoked by the receiver
-     * of the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
      * @param dm the distribution manager that is processing the message.
      */
     @Override
@@ -456,8 +540,7 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
       return REMOTE_REMOVE_ALL_REPLY_MESSAGE;
     }
 
-    public RemoveAllReplyMessage() {
-    }
+    public RemoveAllReplyMessage() {}
 
     @Override
     public void fromData(DataInput in) throws IOException, ClassNotFoundException {
@@ -474,15 +557,16 @@ public final class RemoteRemoveAllMessage extends RemoteOperationMessageWithDire
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("RemoveAllReplyMessage ").append(" processorid=").append(this.processorId).append(" returning versionTags=").append(this.versions);
+      sb.append("RemoveAllReplyMessage ")
+          .append(" processorid=")
+          .append(this.processorId)
+          .append(" returning versionTags=")
+          .append(this.versions);
       return sb.toString();
     }
-
   }
 
-  /**
-   * A processor to capture the value returned by {@link RemoteRemoveAllMessage}
-   */
+  /** A processor to capture the value returned by {@link RemoteRemoveAllMessage} */
   public static class RemoveAllResponse extends RemoteOperationResponse {
     private VersionedObjectList versions;
 

@@ -18,11 +18,7 @@ package org.apache.geode.management.internal.cli.dto;
 
 import java.io.Serializable;
 
-/**
- * Sample class for Data DUnit tests with JSON keys and values
- *
- */
-
+/** Sample class for Data DUnit tests with JSON keys and values */
 public class Value1 implements Serializable {
 
   private String name;
@@ -83,8 +79,7 @@ public class Value1 implements Serializable {
     if (other instanceof Value1) {
       Value1 v = (Value1) other;
       return v.employeeId == employeeId;
-    } else
-      return false;
+    } else return false;
   }
 
   public int hashCode() {
@@ -93,8 +88,17 @@ public class Value1 implements Serializable {
 
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(" Value1 [ Name : ").append(name).append(" lastName : ").append(lastName).append(" department : ").append(department).append(" age : ").append(age).append(" employeeId : ").append(employeeId).append(" ]");
+    sb.append(" Value1 [ Name : ")
+        .append(name)
+        .append(" lastName : ")
+        .append(lastName)
+        .append(" department : ")
+        .append(department)
+        .append(" age : ")
+        .append(age)
+        .append(" employeeId : ")
+        .append(employeeId)
+        .append(" ]");
     return sb.toString();
   }
-
 }

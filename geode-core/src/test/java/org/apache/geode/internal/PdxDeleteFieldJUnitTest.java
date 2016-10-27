@@ -48,14 +48,16 @@ public class PdxDeleteFieldJUnitTest {
     File f = new File(DS_NAME);
     f.mkdir();
     try {
-      Cache cache = (new CacheFactory(props)).setPdxPersistent(true).setPdxDiskStore(DS_NAME).create();
+      Cache cache =
+          (new CacheFactory(props)).setPdxPersistent(true).setPdxDiskStore(DS_NAME).create();
       try {
         {
           DiskStoreFactory dsf = cache.createDiskStoreFactory();
-          dsf.setDiskDirs(new File[] { f });
+          dsf.setDiskDirs(new File[] {f});
           dsf.create(DS_NAME);
         }
-        RegionFactory<String, PdxValue> rf1 = cache.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT);
+        RegionFactory<String, PdxValue> rf1 =
+            cache.createRegionFactory(RegionShortcut.LOCAL_PERSISTENT);
         rf1.setDiskStoreName(DS_NAME);
         Region<String, PdxValue> region1 = rf1.create("region1");
         PdxValue pdxValue = new PdxValue(1, 2L);
@@ -68,12 +70,14 @@ public class PdxDeleteFieldJUnitTest {
         }
         cache.close();
 
-        Collection<PdxType> types = DiskStoreImpl.pdxDeleteField(DS_NAME, new File[] { f }, PdxValue.class.getName(), "fieldToDelete");
+        Collection<PdxType> types =
+            DiskStoreImpl.pdxDeleteField(
+                DS_NAME, new File[] {f}, PdxValue.class.getName(), "fieldToDelete");
         assertEquals(1, types.size());
         PdxType pt = types.iterator().next();
         assertEquals(PdxValue.class.getName(), pt.getClassName());
         assertEquals(null, pt.getPdxField("fieldToDelete"));
-        types = DiskStoreImpl.getPdxTypes(DS_NAME, new File[] { f });
+        types = DiskStoreImpl.getPdxTypes(DS_NAME, new File[] {f});
         assertEquals(1, types.size());
         pt = types.iterator().next();
         assertEquals(PdxValue.class.getName(), pt.getClassName());
@@ -83,7 +87,7 @@ public class PdxDeleteFieldJUnitTest {
         cache = (new CacheFactory(props)).setPdxPersistent(true).setPdxDiskStore(DS_NAME).create();
         {
           DiskStoreFactory dsf = cache.createDiskStoreFactory();
-          dsf.setDiskDirs(new File[] { f });
+          dsf.setDiskDirs(new File[] {f});
           dsf.create(DS_NAME);
           PdxValue deserializedPdxValue = (PdxValue) BlobHelper.deserializeBlob(pdxValueBytes);
           assertEquals(1, deserializedPdxValue.value);
@@ -177,8 +181,7 @@ public class PdxDeleteFieldJUnitTest {
     public int value;
     public long fieldToDelete = -1L;
 
-    public PdxValue() {
-    } // for deserialization
+    public PdxValue() {} // for deserialization
 
     public PdxValue(int v, long lv) {
       this.value = v;

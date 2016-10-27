@@ -24,10 +24,10 @@ public class Student extends Person {
   private float _gpa;
   private Department _dept;
 
-  public Student() {
-  }
+  public Student() {}
 
-  public Student(String ssn, String name, Date birthdate, Collection courses, float gpa, Department dept) {
+  public Student(
+      String ssn, String name, Date birthdate, Collection courses, float gpa, Department dept) {
     super(ssn, name, birthdate);
     initCourses();
     _courses.addAll(courses);
@@ -36,8 +36,7 @@ public class Student extends Person {
   }
 
   public Set getCourses() {
-    if (_courses.isEmpty())
-      return Collections.EMPTY_SET;
+    if (_courses.isEmpty()) return Collections.EMPTY_SET;
     return _courses;
   }
 
@@ -50,17 +49,14 @@ public class Student extends Person {
   }
 
   public void addCourse(Course course) {
-    if (_courses == null)
-      initCourses();
+    if (_courses == null) initCourses();
     _courses.add(course);
   }
 
   public void removeCourse(Course course) {
-    if (_courses == null)
-      return;
+    if (_courses == null) return;
     _courses.remove(course);
-    if (_courses.isEmpty())
-      _courses = null;
+    if (_courses.isEmpty()) _courses = null;
   }
 
   public void setGPA(float gpa) {
@@ -75,5 +71,4 @@ public class Student extends Person {
     //_courses = Utils.getQueryService().newIndexableSet(Course.class);
     _courses = new HashSet();
   }
-
 }

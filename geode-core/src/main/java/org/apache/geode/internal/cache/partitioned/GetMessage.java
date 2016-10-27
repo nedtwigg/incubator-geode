@@ -57,13 +57,13 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * This message is used as the request for a
- * {@link org.apache.geode.cache.Region#get(Object)}operation. The reply is
- * sent in a {@link org.apache.geode.internal.cache.partitioned.GetMessage}. 
- * 
- * Since the {@link org.apache.geode.cache.Region#get(Object)}operation is
- * used <bold>very </bold> frequently the performance of this class is critical.
- * 
+ * This message is used as the request for a {@link
+ * org.apache.geode.cache.Region#get(Object)}operation. The reply is sent in a {@link
+ * org.apache.geode.internal.cache.partitioned.GetMessage}.
+ *
+ * <p>Since the {@link org.apache.geode.cache.Region#get(Object)}operation is used <bold>very
+ * </bold> frequently the performance of this class is critical.
+ *
  * @since GemFire 5.0
  */
 public final class GetMessage extends PartitionMessageWithDirectReply {
@@ -85,13 +85,17 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
   protected static final int HAS_LOADER = NOTIFICATION_ONLY;
   protected static final int CAN_START_TX = IF_NEW;
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public GetMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public GetMessage() {}
 
-  private GetMessage(InternalDistributedMember recipient, int regionId, DirectReplyProcessor processor, final Object key, final Object aCallbackArgument, ClientProxyMembershipID context, boolean returnTombstones) {
+  private GetMessage(
+      InternalDistributedMember recipient,
+      int regionId,
+      DirectReplyProcessor processor,
+      final Object key,
+      final Object aCallbackArgument,
+      ClientProxyMembershipID context,
+      boolean returnTombstones) {
     super(recipient, regionId, processor);
     this.key = key;
     this.cbArg = aCallbackArgument;
@@ -99,10 +103,11 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
     this.returnTombstones = returnTombstones;
   }
 
-  private static final boolean ORDER_PR_GETS = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "order-pr-gets");
+  private static final boolean ORDER_PR_GETS =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "order-pr-gets");
 
   @Override
-  final public int getProcessorType() {
+  public final int getProcessorType() {
     if (!forceUseOfPRExecutor && !ORDER_PR_GETS && !isDirectAck()) {
       try {
         PartitionedRegion pr = PartitionedRegion.getPRFromId(this.regionId);
@@ -114,7 +119,8 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
         // Syncing a region entry can lead to dead-lock (see bug 52078).
         // So if either of these conditions hold this message can not be
         // processed in the p2p msg reader.
-        if (pr.getAttributes().getDataPolicy().withPersistence() || !pr.getAttributes().getEvictionAttributes().getAlgorithm().isNone()) {
+        if (pr.getAttributes().getDataPolicy().withPersistence()
+            || !pr.getAttributes().getEvictionAttributes().getAlgorithm().isNone()) {
           return DistributionManager.PARTITIONED_REGION_EXECUTOR;
         }
       } catch (PRLocallyDestroyedException ignore) {
@@ -144,7 +150,9 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
   }
 
   @Override
-  protected final boolean operateOnPartitionedRegion(final DistributionManager dm, PartitionedRegion r, long startTime) throws ForceReattemptException {
+  protected final boolean operateOnPartitionedRegion(
+      final DistributionManager dm, PartitionedRegion r, long startTime)
+      throws ForceReattemptException {
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace(LogMarker.DM, "GetMessage operateOnRegion: {}", r.getFullPath());
     }
@@ -164,7 +172,10 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
           KeyInfo keyInfo = r.getKeyInfo(key, cbArg);
           boolean lockEntry = forceUseOfPRExecutor || isDirectAck();
 
-          val = r.getDataView().getSerializedValue(r, keyInfo, !lockEntry, this.context, event, returnTombstones);
+          val =
+              r.getDataView()
+                  .getSerializedValue(
+                      r, keyInfo, !lockEntry, this.context, event, returnTombstones);
 
           if (val == BucketRegion.REQUIRES_ENTRY_LOCK) {
             Assert.assertTrue(!lockEntry);
@@ -177,7 +188,18 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
           }
           valueBytes = val instanceof RawValue ? (RawValue) val : new RawValue(val);
         } catch (DistributedSystemDisconnectedException sde) {
-          sendReply(getSender(), this.processorId, dm, new ReplyException(new ForceReattemptException(LocalizedStrings.GetMessage_OPERATION_GOT_INTERRUPTED_DUE_TO_SHUTDOWN_IN_PROGRESS_ON_REMOTE_VM.toLocalizedString(), sde)), r, startTime);
+          sendReply(
+              getSender(),
+              this.processorId,
+              dm,
+              new ReplyException(
+                  new ForceReattemptException(
+                      LocalizedStrings
+                          .GetMessage_OPERATION_GOT_INTERRUPTED_DUE_TO_SHUTDOWN_IN_PROGRESS_ON_REMOTE_VM
+                          .toLocalizedString(),
+                      sde)),
+              r,
+              startTime);
           return false;
         } catch (PrimaryBucketException pbe) {
           sendReply(getSender(), getProcessorId(), dm, new ReplyException(pbe), r, startTime);
@@ -188,27 +210,36 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
         }
 
         if (logger.isTraceEnabled(LogMarker.DM)) {
-          logger.debug("GetMessage sending serialized value {} back via GetReplyMessage using processorId: {}", valueBytes, getProcessorId());
+          logger.debug(
+              "GetMessage sending serialized value {} back via GetReplyMessage using processorId: {}",
+              valueBytes,
+              getProcessorId());
         }
 
         r.getPrStats().endPartitionMessagesProcessing(startTime);
-        GetReplyMessage.send(getSender(), getProcessorId(), valueBytes, getReplySender(dm), event.getVersionTag());
+        GetReplyMessage.send(
+            getSender(), getProcessorId(), valueBytes, getReplySender(dm), event.getVersionTag());
         // Unless there was an exception thrown, this message handles sending the
         // response
         return false;
       } else {
-        throw new InternalGemFireError(LocalizedStrings.GetMessage_GET_MESSAGE_SENT_TO_WRONG_MEMBER.toLocalizedString());
+        throw new InternalGemFireError(
+            LocalizedStrings.GetMessage_GET_MESSAGE_SENT_TO_WRONG_MEMBER.toLocalizedString());
       }
     } finally {
       OffHeapHelper.release(val);
     }
-
   }
 
   @Override
   protected void appendFields(StringBuffer buff) {
     super.appendFields(buff);
-    buff.append("; key=").append(this.key).append("; callback arg=").append(this.cbArg).append("; context=").append(this.context);
+    buff.append("; key=")
+        .append(this.key)
+        .append("; callback arg=")
+        .append(this.cbArg)
+        .append("; context=")
+        .append(this.context);
   }
 
   public int getDSFID() {
@@ -249,55 +280,57 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
   }
 
   /**
-   * Sends a PartitionedRegion
-   * {@link org.apache.geode.cache.Region#get(Object)} message   
-   * 
-   * @param recipient
-   *          the member that the get message is sent to
-   * @param r
-   *          the PartitionedRegion for which get was performed upon
-   * @param key
-   *          the object to which the value should be feteched
+   * Sends a PartitionedRegion {@link org.apache.geode.cache.Region#get(Object)} message
+   *
+   * @param recipient the member that the get message is sent to
+   * @param r the PartitionedRegion for which get was performed upon
+   * @param key the object to which the value should be feteched
    * @param requestingClient the client cache that requested this item
-   * @return the processor used to fetch the returned value associated with the
-   *         key
+   * @return the processor used to fetch the returned value associated with the key
    * @throws ForceReattemptException if the peer is no longer available
    */
-  public static GetResponse send(InternalDistributedMember recipient, PartitionedRegion r, final Object key, final Object aCallbackArgument, ClientProxyMembershipID requestingClient, boolean returnTombstones) throws ForceReattemptException {
+  public static GetResponse send(
+      InternalDistributedMember recipient,
+      PartitionedRegion r,
+      final Object key,
+      final Object aCallbackArgument,
+      ClientProxyMembershipID requestingClient,
+      boolean returnTombstones)
+      throws ForceReattemptException {
     Assert.assertTrue(recipient != null, "PRDistribuedGetReplyMessage NULL reply message");
     GetResponse p = new GetResponse(r.getSystem(), Collections.singleton(recipient), key);
-    GetMessage m = new GetMessage(recipient, r.getPRId(), p, key, aCallbackArgument, requestingClient, returnTombstones);
+    GetMessage m =
+        new GetMessage(
+            recipient, r.getPRId(), p, key, aCallbackArgument, requestingClient, returnTombstones);
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new ForceReattemptException(LocalizedStrings.GetMessage_FAILED_SENDING_0.toLocalizedString(m));
+      throw new ForceReattemptException(
+          LocalizedStrings.GetMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
 
     return p;
   }
 
   /**
-   * This message is used for the reply to a
-   * {@link org.apache.geode.cache.Region#get(Object)}operation This is the
-   * reply to a {@link GetMessage}.
-   * 
-   * Since the {@link org.apache.geode.cache.Region#get(Object)}operation
-   * is used <bold>very </bold> frequently the performance of this class is
-   * critical.
-   * 
+   * This message is used for the reply to a {@link
+   * org.apache.geode.cache.Region#get(Object)}operation This is the reply to a {@link GetMessage}.
+   *
+   * <p>Since the {@link org.apache.geode.cache.Region#get(Object)}operation is used <bold>very
+   * </bold> frequently the performance of this class is critical.
+   *
    * @since GemFire 5.0
    */
   public static final class GetReplyMessage extends ReplyMessage {
-    /** 
-     * The raw value in the cache which may be serialized to the output stream, if 
-     * it is NOT already a byte array 
+    /**
+     * The raw value in the cache which may be serialized to the output stream, if it is NOT already
+     * a byte array
      */
     private transient RawValue rawVal;
 
     /**
-     * Indicates that the value already a byte array (aka user blob) and does
-     * not need de-serialization. Also indicates if the value has been
-     * serialized directly as an object rather than as a byte array and whether
-     * it is INVALID/LOCAL_INVALID or TOMBSTONE.
+     * Indicates that the value already a byte array (aka user blob) and does not need
+     * de-serialization. Also indicates if the value has been serialized directly as an object
+     * rather than as a byte array and whether it is INVALID/LOCAL_INVALID or TOMBSTONE.
      */
     byte valueType;
 
@@ -322,11 +355,8 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
 
     public transient Version remoteVersion;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public GetReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public GetReplyMessage() {}
 
     private GetReplyMessage(int processorId, RawValue val, VersionTag versionTag) {
       setProcessorId(processorId);
@@ -351,17 +381,24 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
     }
 
     /**
-     * Return the value from the get operation, serialize it bytes as late as
-     * possible to avoid making un-neccesary byte[] copies.  De-serialize those 
-     * same bytes as late as possible to avoid using precious threads (aka P2P readers). 
+     * Return the value from the get operation, serialize it bytes as late as possible to avoid
+     * making un-neccesary byte[] copies. De-serialize those same bytes as late as possible to avoid
+     * using precious threads (aka P2P readers).
+     *
      * @param recipient the origin VM that performed the get
      * @param processorId the processor on which the origin thread is waiting
-     * @param val the raw value that will eventually be serialized 
+     * @param val the raw value that will eventually be serialized
      * @param replySender distribution manager used to send the reply
      * @param versionTag the version of the object
      * @throws ForceReattemptException
      */
-    public static void send(InternalDistributedMember recipient, int processorId, RawValue val, ReplySender replySender, VersionTag versionTag) throws ForceReattemptException {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        RawValue val,
+        ReplySender replySender,
+        VersionTag versionTag)
+        throws ForceReattemptException {
       Assert.assertTrue(recipient != null, "PRDistribuedGetReplyMessage NULL reply message");
       GetReplyMessage m = new GetReplyMessage(processorId, val, versionTag);
       m.setRecipient(recipient);
@@ -369,18 +406,19 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
     }
 
     /**
-     * Processes this message. This method is invoked by the receiver of the
-     * message.
-     * 
-     * @param dm
-     *          the distribution manager that is processing the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
+     * @param dm the distribution manager that is processing the message.
      */
     @Override
     public void process(final DM dm, ReplyProcessor21 processor) {
       final boolean isDebugEnabled = logger.isTraceEnabled(LogMarker.DM);
       final long startTime = getTimestamp();
       if (isDebugEnabled) {
-        logger.trace(LogMarker.DM, "GetReplyMessage process invoking reply processor with processorId: {}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "GetReplyMessage process invoking reply processor with processorId: {}",
+            this.processorId);
       }
 
       if (processor == null) {
@@ -447,7 +485,11 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
     @Override
     public String toString() {
       StringBuilder sb = new StringBuilder();
-      sb.append("GetReplyMessage ").append("processorid=").append(this.processorId).append(" reply to sender ").append(this.getSender());
+      sb.append("GetReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" reply to sender ")
+          .append(this.getSender());
       if (this.valueType == VALUE_IS_TOMBSTONE) {
         sb.append(" returning tombstone token.");
       } else if (this.valueType == VALUE_IS_INVALID) {
@@ -467,9 +509,9 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
   }
 
   /**
-   * A processor to capture the value returned by {@link 
+   * A processor to capture the value returned by {@link
    * org.apache.geode.internal.cache.partitioned.GetMessage.GetReplyMessage}
-   * 
+   *
    * @since GemFire 5.0
    */
   public static class GetResponse extends PartitionResponse {
@@ -493,7 +535,9 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
         GetReplyMessage reply = (GetReplyMessage) msg;
         // De-serialization needs to occur in the requesting thread, not a P2P thread
         // (or some other limited resource)
-        if (reply.valueInBytes != null || reply.valueType == GetReplyMessage.VALUE_IS_INVALID || reply.valueType == GetReplyMessage.VALUE_IS_TOMBSTONE) {
+        if (reply.valueInBytes != null
+            || reply.valueType == GetReplyMessage.VALUE_IS_INVALID
+            || reply.valueType == GetReplyMessage.VALUE_IS_TOMBSTONE) {
           this.getReply = reply;
         }
         this.returnValueReceived = true;
@@ -503,10 +547,10 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
     }
 
     /**
-     * De-seralize the value, if the value isn't already a byte array, this 
-     * method should be called in the context of the requesting thread for the
-     * best scalability
-     * @param preferCD 
+     * De-seralize the value, if the value isn't already a byte array, this method should be called
+     * in the context of the requesting thread for the best scalability
+     *
+     * @param preferCD
      * @see EntryEventImpl#deserialize(byte[])
      * @return the value object
      */
@@ -515,41 +559,44 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
       try {
         if (reply != null) {
           switch (reply.valueType) {
-          case GetReplyMessage.VALUE_IS_BYTES:
-            return reply.valueInBytes;
-          case GetReplyMessage.VALUE_IS_INVALID:
-            return Token.INVALID;
-          case GetReplyMessage.VALUE_IS_TOMBSTONE:
-            return Token.TOMBSTONE;
-          default:
-            if (reply.valueInBytes != null) {
-              if (preferCD) {
-                return CachedDeserializableFactory.create(reply.valueInBytes);
+            case GetReplyMessage.VALUE_IS_BYTES:
+              return reply.valueInBytes;
+            case GetReplyMessage.VALUE_IS_INVALID:
+              return Token.INVALID;
+            case GetReplyMessage.VALUE_IS_TOMBSTONE:
+              return Token.TOMBSTONE;
+            default:
+              if (reply.valueInBytes != null) {
+                if (preferCD) {
+                  return CachedDeserializableFactory.create(reply.valueInBytes);
+                } else {
+                  return BlobHelper.deserializeBlob(reply.valueInBytes, reply.remoteVersion, null);
+                }
               } else {
-                return BlobHelper.deserializeBlob(reply.valueInBytes, reply.remoteVersion, null);
+                return null;
               }
-            } else {
-              return null;
-            }
           }
         }
         return null;
       } catch (IOException e) {
-        throw new ForceReattemptException(LocalizedStrings.GetMessage_UNABLE_TO_DESERIALIZE_VALUE_IOEXCEPTION.toLocalizedString(), e);
+        throw new ForceReattemptException(
+            LocalizedStrings.GetMessage_UNABLE_TO_DESERIALIZE_VALUE_IOEXCEPTION.toLocalizedString(),
+            e);
       } catch (ClassNotFoundException e) {
-        throw new ForceReattemptException(LocalizedStrings.GetMessage_UNABLE_TO_DESERIALIZE_VALUE_CLASSNOTFOUNDEXCEPTION.toLocalizedString(), e);
+        throw new ForceReattemptException(
+            LocalizedStrings.GetMessage_UNABLE_TO_DESERIALIZE_VALUE_CLASSNOTFOUNDEXCEPTION
+                .toLocalizedString(),
+            e);
       }
     }
 
-    /**
-     * @return version information for the entry after successfully reading a response
-     */
+    /** @return version information for the entry after successfully reading a response */
     public VersionTag getVersionTag() {
       return this.versionTag;
     }
 
     /**
-     * @param preferCD 
+     * @param preferCD
      * @return Object associated with the key that was sent in the get message
      * @throws ForceReattemptException if the peer is no longer available
      */
@@ -578,10 +625,10 @@ public final class GetMessage extends PartitionMessageWithDirectReply {
         throw e;
       }
       if (!this.returnValueReceived) {
-        throw new ForceReattemptException(LocalizedStrings.GetMessage_NO_RETURN_VALUE_RECEIVED.toLocalizedString());
+        throw new ForceReattemptException(
+            LocalizedStrings.GetMessage_NO_RETURN_VALUE_RECEIVED.toLocalizedString());
       }
       return getValue(preferCD);
     }
   }
-
 }

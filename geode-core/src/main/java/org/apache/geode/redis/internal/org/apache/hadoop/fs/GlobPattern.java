@@ -1,29 +1,23 @@
 /**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.geode.redis.internal.org.apache.hadoop.fs;
 
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-/**
- * A class for POSIX glob pattern with brace expansions.
- */
+/** A class for POSIX glob pattern with brace expansions. */
 public class GlobPattern {
   private static final char BACKSLASH = '\\';
   private Pattern compiled;
@@ -31,21 +25,21 @@ public class GlobPattern {
 
   /**
    * Construct the glob pattern object with a glob pattern string
+   *
    * @param globPattern the glob pattern string
    */
   public GlobPattern(String globPattern) {
     set(globPattern);
   }
 
-  /**
-   * @return the compiled pattern
-   */
+  /** @return the compiled pattern */
   public Pattern compiled() {
     return compiled;
   }
 
   /**
    * Compile glob pattern string
+   *
    * @param globPattern the glob pattern
    * @return the pattern object
    */
@@ -55,6 +49,7 @@ public class GlobPattern {
 
   /**
    * Match input against the compiled glob pattern
+   *
    * @param s input chars
    * @return true for successful matches
    */
@@ -64,7 +59,8 @@ public class GlobPattern {
 
   /**
    * Set and compile a glob pattern
-   * @param glob  the glob pattern string
+   *
+   * @param glob the glob pattern string
    */
   public void set(String glob) {
     StringBuilder regex = new StringBuilder();
@@ -77,67 +73,67 @@ public class GlobPattern {
       char c = glob.charAt(i);
 
       switch (c) {
-      case BACKSLASH:
-        if (++i >= len) {
-          error("Missing escaped character", glob, i);
-        }
-        regex.append(c).append(glob.charAt(i));
-        continue;
-      case '.':
-      case '$':
-      case '(':
-      case ')':
-      case '|':
-      case '+':
-        // escape regex special chars that are not glob special chars
-        regex.append(BACKSLASH);
-        break;
-      case '*':
-        regex.append('.');
-        hasWildcard = true;
-        break;
-      case '?':
-        regex.append('.');
-        hasWildcard = true;
-        continue;
-      case '{': // start of a group
-        regex.append("(?:"); // non-capturing
-        curlyOpen++;
-        hasWildcard = true;
-        continue;
-      case ',':
-        regex.append(curlyOpen > 0 ? '|' : c);
-        continue;
-      case '}':
-        if (curlyOpen > 0) {
-          // end of a group
-          curlyOpen--;
-          regex.append(")");
+        case BACKSLASH:
+          if (++i >= len) {
+            error("Missing escaped character", glob, i);
+          }
+          regex.append(c).append(glob.charAt(i));
           continue;
-        }
-        break;
-      case '[':
-        if (setOpen > 0) {
-          error("Unclosed character class", glob, i);
-        }
-        setOpen++;
-        hasWildcard = true;
-        break;
-      case '^': // ^ inside [...] can be unescaped
-        if (setOpen == 0) {
+        case '.':
+        case '$':
+        case '(':
+        case ')':
+        case '|':
+        case '+':
+          // escape regex special chars that are not glob special chars
           regex.append(BACKSLASH);
-        }
-        break;
-      case '!': // [! needs to be translated to [^
-        regex.append(setOpen > 0 && '[' == glob.charAt(i - 1) ? '^' : '!');
-        continue;
-      case ']':
-        // Many set errors like [][] could not be easily detected here,
-        // as []], []-] and [-] are all valid POSIX glob and java regex.
-        // We'll just let the regex compiler do the real work.
-        setOpen = 0;
-        break;
-      default:
+          break;
+        case '*':
+          regex.append('.');
+          hasWildcard = true;
+          break;
+        case '?':
+          regex.append('.');
+          hasWildcard = true;
+          continue;
+        case '{': // start of a group
+          regex.append("(?:"); // non-capturing
+          curlyOpen++;
+          hasWildcard = true;
+          continue;
+        case ',':
+          regex.append(curlyOpen > 0 ? '|' : c);
+          continue;
+        case '}':
+          if (curlyOpen > 0) {
+            // end of a group
+            curlyOpen--;
+            regex.append(")");
+            continue;
+          }
+          break;
+        case '[':
+          if (setOpen > 0) {
+            error("Unclosed character class", glob, i);
+          }
+          setOpen++;
+          hasWildcard = true;
+          break;
+        case '^': // ^ inside [...] can be unescaped
+          if (setOpen == 0) {
+            regex.append(BACKSLASH);
+          }
+          break;
+        case '!': // [! needs to be translated to [^
+          regex.append(setOpen > 0 && '[' == glob.charAt(i - 1) ? '^' : '!');
+          continue;
+        case ']':
+          // Many set errors like [][] could not be easily detected here,
+          // as []], []-] and [-] are all valid POSIX glob and java regex.
+          // We'll just let the regex compiler do the real work.
+          setOpen = 0;
+          break;
+        default:
       }
       regex.append(c);
     }
@@ -151,9 +147,7 @@ public class GlobPattern {
     compiled = Pattern.compile(regex.toString());
   }
 
-  /**
-   * @return true if this is a wildcard pattern (with special chars)
-   */
+  /** @return true if this is a wildcard pattern (with special chars) */
   public boolean hasWildcard() {
     return hasWildcard;
   }

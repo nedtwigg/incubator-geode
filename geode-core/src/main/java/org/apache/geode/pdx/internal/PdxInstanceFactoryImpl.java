@@ -27,13 +27,13 @@ import org.apache.geode.pdx.PdxInstanceFactory;
 import org.apache.geode.pdx.PdxUnreadFields;
 
 /**
- * PdxInstances created with this factory can never be deserialized
- * but you can access their fields just like any other pdx.
- * <p>The current implementation of this interface is meant for internal use only.
- * The way it defines a PdxType is expensive since it can never figure out it is
- * already defined without doing an expensive check in the type registry.
- * We should optimize this before making this a public feature.
+ * PdxInstances created with this factory can never be deserialized but you can access their fields
+ * just like any other pdx.
  *
+ * <p>The current implementation of this interface is meant for internal use only. The way it
+ * defines a PdxType is expensive since it can never figure out it is already defined without doing
+ * an expensive check in the type registry. We should optimize this before making this a public
+ * feature.
  */
 public class PdxInstanceFactoryImpl implements PdxInstanceFactory {
 
@@ -43,7 +43,9 @@ public class PdxInstanceFactoryImpl implements PdxInstanceFactory {
   private PdxInstanceFactoryImpl(String name, boolean expectDomainClass) {
     PdxOutputStream os = new PdxOutputStream();
     PdxType pt = new PdxType(name, expectDomainClass);
-    GemFireCacheImpl gfc = GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.");
+    GemFireCacheImpl gfc =
+        GemFireCacheImpl.getForPdx(
+            "PDX registry is unavailable because the Cache has been closed.");
     TypeRegistry tr = gfc.getPdxRegistry();
     this.writer = new PdxWriterImpl(pt, tr, os);
   }
@@ -179,7 +181,8 @@ public class PdxInstanceFactoryImpl implements PdxInstanceFactory {
     return this;
   }
 
-  public <CT, VT extends CT> PdxInstanceFactory writeField(String fieldName, VT fieldValue, Class<CT> fieldType) {
+  public <CT, VT extends CT> PdxInstanceFactory writeField(
+      String fieldName, VT fieldValue, Class<CT> fieldType) {
     return writeField(fieldName, fieldValue, fieldType, false);
   }
 
@@ -208,7 +211,8 @@ public class PdxInstanceFactoryImpl implements PdxInstanceFactory {
     return this;
   }
 
-  public PdxInstanceFactory writeObjectArray(String fieldName, Object[] value, boolean checkPortability) {
+  public PdxInstanceFactory writeObjectArray(
+      String fieldName, Object[] value, boolean checkPortability) {
     if (InternalDataSerializer.is662SerializationEnabled()) {
       boolean alreadyInProgress = InternalDataSerializer.isPdxSerializationInProgress();
       if (!alreadyInProgress) {
@@ -227,7 +231,8 @@ public class PdxInstanceFactoryImpl implements PdxInstanceFactory {
     return this;
   }
 
-  public <CT, VT extends CT> PdxInstanceFactory writeField(String fieldName, VT fieldValue, Class<CT> fieldType, boolean checkPortability) {
+  public <CT, VT extends CT> PdxInstanceFactory writeField(
+      String fieldName, VT fieldValue, Class<CT> fieldType, boolean checkPortability) {
     if (InternalDataSerializer.is662SerializationEnabled()) {
       boolean alreadyInProgress = InternalDataSerializer.isPdxSerializationInProgress();
       if (!alreadyInProgress) {
@@ -246,7 +251,8 @@ public class PdxInstanceFactoryImpl implements PdxInstanceFactory {
     return this;
   }
 
-  public static PdxInstance createPdxEnum(String className, String enumName, int enumOrdinal, GemFireCacheImpl gfc) {
+  public static PdxInstance createPdxEnum(
+      String className, String enumName, int enumOrdinal, GemFireCacheImpl gfc) {
     if (className == null) {
       throw new IllegalArgumentException("className must not be null");
     }
@@ -257,5 +263,4 @@ public class PdxInstanceFactoryImpl implements PdxInstanceFactory {
     EnumInfo ei = new EnumInfo(className, enumName, enumOrdinal);
     return ei.getPdxInstance(tr.defineEnum(ei));
   }
-
 }

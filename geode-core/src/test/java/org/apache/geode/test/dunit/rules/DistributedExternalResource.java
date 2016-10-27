@@ -19,8 +19,8 @@ package org.apache.geode.test.dunit.rules;
 import org.apache.geode.test.junit.rules.serializable.SerializableExternalResource;
 
 /**
- * Distributed version of SerializableExternalResource which affects all remote
- * DUnit JVMs including the Locator JVM.
+ * Distributed version of SerializableExternalResource which affects all remote DUnit JVMs including
+ * the Locator JVM.
  */
 public class DistributedExternalResource extends SerializableExternalResource {
 

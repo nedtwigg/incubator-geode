@@ -86,9 +86,11 @@ import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.junit.categories.FlakyTest;
 
 @Category(DistributedTest.class)
-public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPartitionedRegionTestBase {
+public class PersistentColocatedPartitionedRegionDUnitTest
+    extends PersistentPartitionedRegionTestBase {
 
-  private static final String PATTERN_FOR_MISSING_CHILD_LOG = "(?s)Persistent data recovery for region .*is prevented by offline colocated region.*";
+  private static final String PATTERN_FOR_MISSING_CHILD_LOG =
+      "(?s)Persistent data recovery for region .*is prevented by offline colocated region.*";
   private static final int NUM_BUCKETS = 15;
   private static final int MAX_WAIT = 30 * 1000;
   private static final int DEFAULT_NUM_EXPECTED_LOG_MESSAGES = 1;
@@ -112,63 +114,63 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(1);
 
-    vm0.invoke(new SerializableRunnable("create") {
-      public void run() {
-        Cache cache = getCache();
+    vm0.invoke(
+        new SerializableRunnable("create") {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
 
-        //Create Persistent region
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(0);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion("persistentLeader", af.create());
+            //Create Persistent region
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(0);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion("persistentLeader", af.create());
 
-        af.setDataPolicy(DataPolicy.PARTITION);
-        af.setDiskStoreName(null);
-        cache.createRegion("nonPersistentLeader", af.create());
+            af.setDataPolicy(DataPolicy.PARTITION);
+            af.setDiskStoreName(null);
+            cache.createRegion("nonPersistentLeader", af.create());
 
-        //Create a non persistent PR
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        paf.setColocatedWith("nonPersistentLeader");
-        af.setPartitionAttributes(paf.create());
+            //Create a non persistent PR
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            paf.setColocatedWith("nonPersistentLeader");
+            af.setPartitionAttributes(paf.create());
 
-        //Try to colocate a persistent PR with the non persistent PR. This should fail.
-        IgnoredException exp = IgnoredException.addIgnoredException("IllegalStateException");
-        try {
-          cache.createRegion("colocated", af.create());
-          fail("should not have been able to create a persistent region colocated with a non persistent region");
-        } catch (IllegalStateException expected) {
-          //do nothing
-        } finally {
-          exp.remove();
-        }
+            //Try to colocate a persistent PR with the non persistent PR. This should fail.
+            IgnoredException exp = IgnoredException.addIgnoredException("IllegalStateException");
+            try {
+              cache.createRegion("colocated", af.create());
+              fail(
+                  "should not have been able to create a persistent region colocated with a non persistent region");
+            } catch (IllegalStateException expected) {
+              //do nothing
+            } finally {
+              exp.remove();
+            }
 
-        //Try to colocate a persistent PR with another persistent PR. This should work.
-        paf.setColocatedWith("persistentLeader");
-        af.setPartitionAttributes(paf.create());
-        cache.createRegion("colocated", af.create());
+            //Try to colocate a persistent PR with another persistent PR. This should work.
+            paf.setColocatedWith("persistentLeader");
+            af.setPartitionAttributes(paf.create());
+            cache.createRegion("colocated", af.create());
 
-        //We should also be able to colocate a non persistent region with a persistent region.
-        af.setDataPolicy(DataPolicy.PARTITION);
-        af.setDiskStoreName(null);
-        paf.setColocatedWith("persistentLeader");
-        af.setPartitionAttributes(paf.create());
-        cache.createRegion("colocated2", af.create());
-      }
-    });
+            //We should also be able to colocate a non persistent region with a persistent region.
+            af.setDataPolicy(DataPolicy.PARTITION);
+            af.setDiskStoreName(null);
+            paf.setColocatedWith("persistentLeader");
+            af.setPartitionAttributes(paf.create());
+            cache.createRegion("colocated2", af.create());
+          }
+        });
   }
 
-  /**
-   * Testing that we can colocate persistent PRs
-   */
+  /** Testing that we can colocate persistent PRs */
   @Test
   public void testColocatedPRs() throws Throwable {
     Host host = Host.getHost(0);
@@ -176,32 +178,33 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
 
-    SerializableRunnable createPRs = new SerializableRunnable("region1") {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createPRs =
+        new SerializableRunnable("region1") {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(0);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion(PR_REGION_NAME, af.create());
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(0);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion(PR_REGION_NAME, af.create());
 
-        paf.setColocatedWith(PR_REGION_NAME);
-        af.setPartitionAttributes(paf.create());
-        cache.createRegion("region2", af.create());
-        paf.setColocatedWith("region2");
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PARTITION);
-        af.setDiskStoreName(null);
-        cache.createRegion("region3", af.create());
-      }
-    };
+            paf.setColocatedWith(PR_REGION_NAME);
+            af.setPartitionAttributes(paf.create());
+            cache.createRegion("region2", af.create());
+            paf.setColocatedWith("region2");
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PARTITION);
+            af.setDiskStoreName(null);
+            cache.createRegion("region3", af.create());
+          }
+        };
     vm0.invoke(createPRs);
     vm1.invoke(createPRs);
     vm2.invoke(createPRs);
@@ -252,7 +255,6 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     assertEquals(vm0Buckets, getBucketList(vm0, "region3"));
     assertEquals(vm1Buckets, getBucketList(vm1, "region3"));
     assertEquals(vm2Buckets, getBucketList(vm2, "region3"));
-
   }
 
   private void createPR(String regionName, boolean persistent) {
@@ -263,7 +265,8 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     createPR(regionName, colocatedWith, persistent, "disk");
   }
 
-  private void createPR(String regionName, String colocatedRegionName, boolean persistent, String diskName) {
+  private void createPR(
+      String regionName, String colocatedRegionName, boolean persistent, String diskName) {
     Cache cache = getCache();
 
     DiskStore ds = cache.findDiskStore(diskName);
@@ -287,332 +290,395 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     cache.createRegion(regionName, af.create());
   }
 
-  private SerializableRunnable createPRsColocatedPairThread = new SerializableRunnable("create2PRs") {
-    public void run() {
-      createPR(PR_REGION_NAME, true);
-      createPR("region2", PR_REGION_NAME, true);
-    }
-  };
-
-  private SerializableRunnable createMultipleColocatedChildPRs = new SerializableRunnable("create multiple child PRs") {
-    @Override
-    public void run() throws Exception {
-      createPR(PR_REGION_NAME, true);
-      for (int i = 2; i < numChildPRs + 2; ++i) {
-        createPR("region" + i, PR_REGION_NAME, true);
-      }
-    }
-  };
-
-  private SerializableRunnable createPRColocationHierarchy = new SerializableRunnable("create PR colocation hierarchy") {
-    @Override
-    public void run() throws Exception {
-      createPR(PR_REGION_NAME, true);
-      createPR("region2", PR_REGION_NAME, true);
-      for (int i = 3; i < numChildPRGenerations + 2; ++i) {
-        createPR("region" + i, "region" + (i - 1), true);
-      }
-    }
-  };
-
-  private SerializableCallable createPRsMissingParentRegionThread = new SerializableCallable("createPRsMissingParentRegion") {
-    public Object call() throws Exception {
-      String exClass = "";
-      Exception ex = null;
-      try {
-        // Skip creation of first region - expect region2 creation to fail
-        //createPR(PR_REGION_NAME, true);
-        createPR("region2", PR_REGION_NAME, true);
-      } catch (Exception e) {
-        ex = e;
-        exClass = e.getClass().toString();
-      } finally {
-        return ex;
-      }
-    }
-  };
-
-  private SerializableCallable delayedCreatePRsMissingParentRegionThread = new SerializableCallable("delayedCreatePRsMissingParentRegion") {
-    public Object call() throws Exception {
-      String exClass = "";
-      Exception ex = null;
-      // To ensure that the targeted code paths in ColocationHelper.getColocatedRegion is taken, this 
-      // thread delays the attempted creation on the local member of colocated child region when parent doesn't exist.
-      // The delay is so that both parent and child regions will be created on another member and the PR root config 
-      // will have an entry for the parent region.
-      try {
-        await().pollDelay(50, TimeUnit.MILLISECONDS).atMost(100, TimeUnit.MILLISECONDS).until(() -> {
-          return false;
-        });
-      } catch (Exception e) {
-      }
-      try {
-        // Skip creation of first region - expect region2 creation to fail
-        //createPR(PR_REGION_NAME, true);
-        createPR("region2", PR_REGION_NAME, true);
-      } catch (Exception e) {
-        ex = e;
-        exClass = e.getClass().toString();
-      } finally {
-        return ex;
-      }
-    }
-  };
-
-  private SerializableCallable createPRsMissingChildRegionThread = new SerializableCallable("createPRsMissingChildRegion") {
-    Appender mockAppender;
-    ArgumentCaptor<LogEvent> loggingEventCaptor;
-
-    public Object call() throws Exception {
-      // Setup for capturing logger messages
-      Appender mockAppender = mock(Appender.class);
-      when(mockAppender.getName()).thenReturn("MockAppender");
-      when(mockAppender.isStarted()).thenReturn(true);
-      when(mockAppender.isStopped()).thenReturn(false);
-      Logger logger = (Logger) LogManager.getLogger(ColocationLogger.class);
-      logger.addAppender(mockAppender);
-      logger.setLevel(Level.WARN);
-      loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
-
-      // Logger interval may have been hooked by the test, so adjust test delays here
-      int logInterval = ColocationLogger.getLogInterval();
-      List<LogEvent> logEvents = Collections.emptyList();
-
-      AtomicBoolean isDone = new AtomicBoolean(false);
-      try {
-        createPR(PR_REGION_NAME, true);
-        // Let this thread continue running long enough for the missing region to be logged a couple times.
-        // Child regions do not get created by this thread. (1.5*logInterval < delay < 2*logInterval)
-        await().atMost((int) (1.75 * logInterval), TimeUnit.MILLISECONDS).until(() -> {
-          verify(mockAppender, times(numExpectedLogMessages)).append(loggingEventCaptor.capture());
-        });
-        //createPR("region2", PR_REGION_NAME, true);  // This child region is never created
-      } catch (Exception e) {
-        e.printStackTrace();
-      } finally {
-        logEvents = loggingEventCaptor.getAllValues();
-        assertEquals(String.format("Expected %d messages to be logged, got %d.", numExpectedLogMessages, logEvents.size()), numExpectedLogMessages, logEvents.size());
-        String logMsg = logEvents.get(0).getMessage().getFormattedMessage();
-        logger.removeAppender(mockAppender);
-        numExpectedLogMessages = 1;
-        return logMsg;
-      }
-    }
-  };
-
-  private SerializableCallable createPRsMissingChildRegionDelayedStartThread = new SerializableCallable("createPRsMissingChildRegionDelayedStart") {
-    Appender mockAppender;
-    ArgumentCaptor<LogEvent> loggingEventCaptor;
-
-    public Object call() throws Exception {
-      // Setup for capturing logger messages
-      mockAppender = mock(Appender.class);
-      when(mockAppender.getName()).thenReturn("MockAppender");
-      when(mockAppender.isStarted()).thenReturn(true);
-      when(mockAppender.isStopped()).thenReturn(false);
-      Logger logger = (Logger) LogManager.getLogger(ColocationLogger.class);
-      logger.addAppender(mockAppender);
-      logger.setLevel(Level.WARN);
-      loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
-
-      // Logger interval may have been hooked by the test, so adjust test delays here
-      int logInterval = ColocationLogger.getLogInterval();
-      List<LogEvent> logEvents = Collections.emptyList();
-
-      try {
-        createPR(PR_REGION_NAME, true);
-        // Delay creation of second (i.e child) region to see missing colocated region log message (logInterval/2 < delay < logInterval)
-        await().atMost((int) (.75 * logInterval), TimeUnit.MILLISECONDS).until(() -> {
-          verify(mockAppender, times(1)).append(loggingEventCaptor.capture());
-        });
-        logEvents = loggingEventCaptor.getAllValues();
-        createPR("region2", PR_REGION_NAME, true);
-        // Another delay before exiting the thread to make sure that missing region logging doesn't continue after 
-        // missing region is created (delay > logInterval)
-        await().atMost((int) (1.25 * logInterval), TimeUnit.MILLISECONDS).until(() -> {
-          verifyNoMoreInteractions(mockAppender);
-        });
-        fail("Unexpected missing colocated region log message");
-      } finally {
-        assertEquals(String.format("Expected %d messages to be logged, got %d.", numExpectedLogMessages, logEvents.size()), numExpectedLogMessages, logEvents.size());
-        String logMsg = logEvents.get(0).getMessage().getFormattedMessage();
-        logger.removeAppender(mockAppender);
-        numExpectedLogMessages = 1;
-        mockAppender = null;
-        return logMsg;
-      }
-    }
-  };
-
-  private SerializableCallable createPRsSequencedChildrenCreationThread = new SerializableCallable("createPRsSequencedChildrenCreation") {
-    Appender mockAppender;
-    ArgumentCaptor<LogEvent> loggingEventCaptor;
-
-    public Object call() throws Exception {
-      // Setup for capturing logger messages
-      mockAppender = mock(Appender.class);
-      when(mockAppender.getName()).thenReturn("MockAppender");
-      when(mockAppender.isStarted()).thenReturn(true);
-      when(mockAppender.isStopped()).thenReturn(false);
-      Logger logger = (Logger) LogManager.getLogger(ColocationLogger.class);
-      logger.addAppender(mockAppender);
-      logger.setLevel(Level.WARN);
-      loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
-
-      // Logger interval may have been hooked by the test, so adjust test delays here
-      int logInterval = ColocationLogger.getLogInterval();
-      List<LogEvent> logEvents = Collections.emptyList();
-      int numLogEvents = 0;
-
-      createPR(PR_REGION_NAME, true);
-      // Delay creation of child generation regions to see missing colocated region log message (logInterval/2 < delay < logInterval)
-      // parent region is generation 1, child region is generation 2, grandchild is 3, etc.
-      for (int generation = 2; generation < (numChildPRGenerations + 2); ++generation) {
-        String childPRName = "region" + generation;
-        String colocatedWithRegionName = generation == 2 ? PR_REGION_NAME : "region" + (generation - 1);
-        loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
-
-        // delay between starting generations of child regions
-        try {
-          await().atMost(delayForChildCreation, TimeUnit.MILLISECONDS).until(() -> {
-            return false;
-          });
-        } catch (ConditionTimeoutException e) {
+  private SerializableRunnable createPRsColocatedPairThread =
+      new SerializableRunnable("create2PRs") {
+        public void run() {
+          createPR(PR_REGION_NAME, true);
+          createPR("region2", PR_REGION_NAME, true);
         }
-        // check for log messages
-        verify(mockAppender, times((generation - 1) * generation / 2)).append(loggingEventCaptor.capture());
-        logEvents = loggingEventCaptor.getAllValues();
-        String logMsg = loggingEventCaptor.getValue().getMessage().getFormattedMessage();
+      };
 
-        // Start the child region
-        createPR(childPRName, colocatedWithRegionName, true);
-      }
-      // Another delay before exiting the thread to make sure that missing region logging doesn't continue after 
-      // all regions created (delay > logInterval)
-      String logMsg = "";
-      try {
-        await().atMost((int) (delayForChildCreation * 1.2), TimeUnit.MILLISECONDS).until(() -> {
-          return false;
-        });
-      } catch (ConditionTimeoutException e) {
-      } finally {
-        logEvents = loggingEventCaptor.getAllValues();
-        assertEquals(String.format("Expected warning messages to be logged."), numExpectedLogMessages, logEvents.size());
-        logMsg = logEvents.get(0).getMessage().getFormattedMessage();
-        logger.removeAppender(mockAppender);
-      }
-      numExpectedLogMessages = 1;
-      mockAppender = null;
-      return logMsg;
-    }
-  };
-
-  private SerializableCallable createMultipleColocatedChildPRsWithSequencedStart = new SerializableCallable("createPRsMultipleSequencedChildrenCreation") {
-    Appender mockAppender;
-    ArgumentCaptor<LogEvent> loggingEventCaptor;
-
-    public Object call() throws Exception {
-      // Setup for capturing logger messages
-      mockAppender = mock(Appender.class);
-      when(mockAppender.getName()).thenReturn("MockAppender");
-      when(mockAppender.isStarted()).thenReturn(true);
-      when(mockAppender.isStopped()).thenReturn(false);
-      Logger logger = (Logger) LogManager.getLogger(ColocationLogger.class);
-      logger.addAppender(mockAppender);
-      logger.setLevel(Level.WARN);
-      loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
-
-      // Logger interval may have been hooked by the test, so adjust test delays here
-      int logInterval = ColocationLogger.getLogInterval();
-      List<LogEvent> logEvents = Collections.emptyList();
-      int numLogEvents = 0;
-
-      createPR(PR_REGION_NAME, true);
-      // Delay creation of child generation regions to see missing colocated region log message (logInterval/2 < delay < logInterval)
-      for (int regionNum = 2; regionNum < (numChildPRs + 2); ++regionNum) {
-        String childPRName = "region" + regionNum;
-        loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
-
-        // delay between starting generations of child regions
-        try {
-          await().atMost(delayForChildCreation, TimeUnit.MILLISECONDS).until(() -> {
-            return false;
-          });
-        } catch (ConditionTimeoutException e) {
+  private SerializableRunnable createMultipleColocatedChildPRs =
+      new SerializableRunnable("create multiple child PRs") {
+        @Override
+        public void run() throws Exception {
+          createPR(PR_REGION_NAME, true);
+          for (int i = 2; i < numChildPRs + 2; ++i) {
+            createPR("region" + i, PR_REGION_NAME, true);
+          }
         }
-        // check for log messages
-        verify(mockAppender, times(regionNum - 1)).append(loggingEventCaptor.capture());
-        logEvents = loggingEventCaptor.getAllValues();
-        String logMsg = loggingEventCaptor.getValue().getMessage().getFormattedMessage();
-        numLogEvents = logEvents.size();
-        assertEquals("Expected warning messages to be logged.", regionNum - 1, numLogEvents);
+      };
 
-        // Start the child region
-        try {
-          createPR(childPRName, PR_REGION_NAME, true);
-        } catch (Exception e) {
+  private SerializableRunnable createPRColocationHierarchy =
+      new SerializableRunnable("create PR colocation hierarchy") {
+        @Override
+        public void run() throws Exception {
+          createPR(PR_REGION_NAME, true);
+          createPR("region2", PR_REGION_NAME, true);
+          for (int i = 3; i < numChildPRGenerations + 2; ++i) {
+            createPR("region" + i, "region" + (i - 1), true);
+          }
         }
-      }
-      // Another delay before exiting the thread to make sure that missing region logging doesn't continue after 
-      // all regions created (delay > logInterval)
-      try {
-        await().atMost((int) (delayForChildCreation * 1.2), TimeUnit.MILLISECONDS).until(() -> {
-          return false;
-        });
-      } catch (ConditionTimeoutException e) {
-      }
-      String logMsg;
-      try {
-        logEvents = loggingEventCaptor.getAllValues();
-        assertEquals(String.format("Expected warning messages to be logged."), numExpectedLogMessages, logEvents.size());
-        logMsg = logEvents.get(0).getMessage().getFormattedMessage();
-      } finally {
-        logger.removeAppender(mockAppender);
-        numExpectedLogMessages = 1;
-        mockAppender = null;
-      }
-      return logMsg;
-    }
-  };
+      };
 
-  private SerializableCallable createPRsMissingGrandchildRegionThread = new SerializableCallable("createPRsMissingChildRegion") {
-    Appender mockAppender;
-    ArgumentCaptor<LogEvent> loggingEventCaptor;
+  private SerializableCallable createPRsMissingParentRegionThread =
+      new SerializableCallable("createPRsMissingParentRegion") {
+        public Object call() throws Exception {
+          String exClass = "";
+          Exception ex = null;
+          try {
+            // Skip creation of first region - expect region2 creation to fail
+            //createPR(PR_REGION_NAME, true);
+            createPR("region2", PR_REGION_NAME, true);
+          } catch (Exception e) {
+            ex = e;
+            exClass = e.getClass().toString();
+          } finally {
+            return ex;
+          }
+        }
+      };
 
-    public Object call() throws Exception {
-      // Setup for capturing logger messages
-      Appender mockAppender = mock(Appender.class);
-      when(mockAppender.getName()).thenReturn("MockAppender");
-      when(mockAppender.isStarted()).thenReturn(true);
-      when(mockAppender.isStopped()).thenReturn(false);
-      Logger logger = (Logger) LogManager.getLogger(ColocationLogger.class);
-      logger.addAppender(mockAppender);
-      logger.setLevel(Level.WARN);
-      loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
+  private SerializableCallable delayedCreatePRsMissingParentRegionThread =
+      new SerializableCallable("delayedCreatePRsMissingParentRegion") {
+        public Object call() throws Exception {
+          String exClass = "";
+          Exception ex = null;
+          // To ensure that the targeted code paths in ColocationHelper.getColocatedRegion is taken, this
+          // thread delays the attempted creation on the local member of colocated child region when parent doesn't exist.
+          // The delay is so that both parent and child regions will be created on another member and the PR root config
+          // will have an entry for the parent region.
+          try {
+            await()
+                .pollDelay(50, TimeUnit.MILLISECONDS)
+                .atMost(100, TimeUnit.MILLISECONDS)
+                .until(
+                    () -> {
+                      return false;
+                    });
+          } catch (Exception e) {
+          }
+          try {
+            // Skip creation of first region - expect region2 creation to fail
+            //createPR(PR_REGION_NAME, true);
+            createPR("region2", PR_REGION_NAME, true);
+          } catch (Exception e) {
+            ex = e;
+            exClass = e.getClass().toString();
+          } finally {
+            return ex;
+          }
+        }
+      };
 
-      // Logger interval may have been hooked by the test, so adjust test delays here
-      int logInterval = ColocationLogger.getLogInterval();
-      List<LogEvent> logEvents = Collections.emptyList();
+  private SerializableCallable createPRsMissingChildRegionThread =
+      new SerializableCallable("createPRsMissingChildRegion") {
+        Appender mockAppender;
+        ArgumentCaptor<LogEvent> loggingEventCaptor;
 
-      try {
-        createPR(PR_REGION_NAME, true);
-        createPR("region2", PR_REGION_NAME, true); // This child region is never created
-        // Let this thread continue running long enough for the missing region to be logged a couple times.
-        // Grandchild region does not get created by this thread. (1.5*logInterval < delay < 2*logInterval)
-        await().atMost((int) (1.75 * logInterval), TimeUnit.MILLISECONDS).until(() -> {
-          verify(mockAppender, times(numExpectedLogMessages)).append(loggingEventCaptor.capture());
-        });
-        //createPR("region3", PR_REGION_NAME, true);  // This child region is never created
-      } finally {
-        logEvents = loggingEventCaptor.getAllValues();
-        assertEquals(String.format("Expected %d messages to be logged, got %d.", numExpectedLogMessages, logEvents.size()), numExpectedLogMessages, logEvents.size());
-        String logMsg = logEvents.get(0).getMessage().getFormattedMessage();
-        logger.removeAppender(mockAppender);
-        numExpectedLogMessages = 1;
-        return logMsg;
-      }
-    }
-  };
+        public Object call() throws Exception {
+          // Setup for capturing logger messages
+          Appender mockAppender = mock(Appender.class);
+          when(mockAppender.getName()).thenReturn("MockAppender");
+          when(mockAppender.isStarted()).thenReturn(true);
+          when(mockAppender.isStopped()).thenReturn(false);
+          Logger logger = (Logger) LogManager.getLogger(ColocationLogger.class);
+          logger.addAppender(mockAppender);
+          logger.setLevel(Level.WARN);
+          loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
+
+          // Logger interval may have been hooked by the test, so adjust test delays here
+          int logInterval = ColocationLogger.getLogInterval();
+          List<LogEvent> logEvents = Collections.emptyList();
+
+          AtomicBoolean isDone = new AtomicBoolean(false);
+          try {
+            createPR(PR_REGION_NAME, true);
+            // Let this thread continue running long enough for the missing region to be logged a couple times.
+            // Child regions do not get created by this thread. (1.5*logInterval < delay < 2*logInterval)
+            await()
+                .atMost((int) (1.75 * logInterval), TimeUnit.MILLISECONDS)
+                .until(
+                    () -> {
+                      verify(mockAppender, times(numExpectedLogMessages))
+                          .append(loggingEventCaptor.capture());
+                    });
+            //createPR("region2", PR_REGION_NAME, true);  // This child region is never created
+          } catch (Exception e) {
+            e.printStackTrace();
+          } finally {
+            logEvents = loggingEventCaptor.getAllValues();
+            assertEquals(
+                String.format(
+                    "Expected %d messages to be logged, got %d.",
+                    numExpectedLogMessages, logEvents.size()),
+                numExpectedLogMessages,
+                logEvents.size());
+            String logMsg = logEvents.get(0).getMessage().getFormattedMessage();
+            logger.removeAppender(mockAppender);
+            numExpectedLogMessages = 1;
+            return logMsg;
+          }
+        }
+      };
+
+  private SerializableCallable createPRsMissingChildRegionDelayedStartThread =
+      new SerializableCallable("createPRsMissingChildRegionDelayedStart") {
+        Appender mockAppender;
+        ArgumentCaptor<LogEvent> loggingEventCaptor;
+
+        public Object call() throws Exception {
+          // Setup for capturing logger messages
+          mockAppender = mock(Appender.class);
+          when(mockAppender.getName()).thenReturn("MockAppender");
+          when(mockAppender.isStarted()).thenReturn(true);
+          when(mockAppender.isStopped()).thenReturn(false);
+          Logger logger = (Logger) LogManager.getLogger(ColocationLogger.class);
+          logger.addAppender(mockAppender);
+          logger.setLevel(Level.WARN);
+          loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
+
+          // Logger interval may have been hooked by the test, so adjust test delays here
+          int logInterval = ColocationLogger.getLogInterval();
+          List<LogEvent> logEvents = Collections.emptyList();
+
+          try {
+            createPR(PR_REGION_NAME, true);
+            // Delay creation of second (i.e child) region to see missing colocated region log message (logInterval/2 < delay < logInterval)
+            await()
+                .atMost((int) (.75 * logInterval), TimeUnit.MILLISECONDS)
+                .until(
+                    () -> {
+                      verify(mockAppender, times(1)).append(loggingEventCaptor.capture());
+                    });
+            logEvents = loggingEventCaptor.getAllValues();
+            createPR("region2", PR_REGION_NAME, true);
+            // Another delay before exiting the thread to make sure that missing region logging doesn't continue after
+            // missing region is created (delay > logInterval)
+            await()
+                .atMost((int) (1.25 * logInterval), TimeUnit.MILLISECONDS)
+                .until(
+                    () -> {
+                      verifyNoMoreInteractions(mockAppender);
+                    });
+            fail("Unexpected missing colocated region log message");
+          } finally {
+            assertEquals(
+                String.format(
+                    "Expected %d messages to be logged, got %d.",
+                    numExpectedLogMessages, logEvents.size()),
+                numExpectedLogMessages,
+                logEvents.size());
+            String logMsg = logEvents.get(0).getMessage().getFormattedMessage();
+            logger.removeAppender(mockAppender);
+            numExpectedLogMessages = 1;
+            mockAppender = null;
+            return logMsg;
+          }
+        }
+      };
+
+  private SerializableCallable createPRsSequencedChildrenCreationThread =
+      new SerializableCallable("createPRsSequencedChildrenCreation") {
+        Appender mockAppender;
+        ArgumentCaptor<LogEvent> loggingEventCaptor;
+
+        public Object call() throws Exception {
+          // Setup for capturing logger messages
+          mockAppender = mock(Appender.class);
+          when(mockAppender.getName()).thenReturn("MockAppender");
+          when(mockAppender.isStarted()).thenReturn(true);
+          when(mockAppender.isStopped()).thenReturn(false);
+          Logger logger = (Logger) LogManager.getLogger(ColocationLogger.class);
+          logger.addAppender(mockAppender);
+          logger.setLevel(Level.WARN);
+          loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
+
+          // Logger interval may have been hooked by the test, so adjust test delays here
+          int logInterval = ColocationLogger.getLogInterval();
+          List<LogEvent> logEvents = Collections.emptyList();
+          int numLogEvents = 0;
+
+          createPR(PR_REGION_NAME, true);
+          // Delay creation of child generation regions to see missing colocated region log message (logInterval/2 < delay < logInterval)
+          // parent region is generation 1, child region is generation 2, grandchild is 3, etc.
+          for (int generation = 2; generation < (numChildPRGenerations + 2); ++generation) {
+            String childPRName = "region" + generation;
+            String colocatedWithRegionName =
+                generation == 2 ? PR_REGION_NAME : "region" + (generation - 1);
+            loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
+
+            // delay between starting generations of child regions
+            try {
+              await()
+                  .atMost(delayForChildCreation, TimeUnit.MILLISECONDS)
+                  .until(
+                      () -> {
+                        return false;
+                      });
+            } catch (ConditionTimeoutException e) {
+            }
+            // check for log messages
+            verify(mockAppender, times((generation - 1) * generation / 2))
+                .append(loggingEventCaptor.capture());
+            logEvents = loggingEventCaptor.getAllValues();
+            String logMsg = loggingEventCaptor.getValue().getMessage().getFormattedMessage();
+
+            // Start the child region
+            createPR(childPRName, colocatedWithRegionName, true);
+          }
+          // Another delay before exiting the thread to make sure that missing region logging doesn't continue after
+          // all regions created (delay > logInterval)
+          String logMsg = "";
+          try {
+            await()
+                .atMost((int) (delayForChildCreation * 1.2), TimeUnit.MILLISECONDS)
+                .until(
+                    () -> {
+                      return false;
+                    });
+          } catch (ConditionTimeoutException e) {
+          } finally {
+            logEvents = loggingEventCaptor.getAllValues();
+            assertEquals(
+                String.format("Expected warning messages to be logged."),
+                numExpectedLogMessages,
+                logEvents.size());
+            logMsg = logEvents.get(0).getMessage().getFormattedMessage();
+            logger.removeAppender(mockAppender);
+          }
+          numExpectedLogMessages = 1;
+          mockAppender = null;
+          return logMsg;
+        }
+      };
+
+  private SerializableCallable createMultipleColocatedChildPRsWithSequencedStart =
+      new SerializableCallable("createPRsMultipleSequencedChildrenCreation") {
+        Appender mockAppender;
+        ArgumentCaptor<LogEvent> loggingEventCaptor;
+
+        public Object call() throws Exception {
+          // Setup for capturing logger messages
+          mockAppender = mock(Appender.class);
+          when(mockAppender.getName()).thenReturn("MockAppender");
+          when(mockAppender.isStarted()).thenReturn(true);
+          when(mockAppender.isStopped()).thenReturn(false);
+          Logger logger = (Logger) LogManager.getLogger(ColocationLogger.class);
+          logger.addAppender(mockAppender);
+          logger.setLevel(Level.WARN);
+          loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
+
+          // Logger interval may have been hooked by the test, so adjust test delays here
+          int logInterval = ColocationLogger.getLogInterval();
+          List<LogEvent> logEvents = Collections.emptyList();
+          int numLogEvents = 0;
+
+          createPR(PR_REGION_NAME, true);
+          // Delay creation of child generation regions to see missing colocated region log message (logInterval/2 < delay < logInterval)
+          for (int regionNum = 2; regionNum < (numChildPRs + 2); ++regionNum) {
+            String childPRName = "region" + regionNum;
+            loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
+
+            // delay between starting generations of child regions
+            try {
+              await()
+                  .atMost(delayForChildCreation, TimeUnit.MILLISECONDS)
+                  .until(
+                      () -> {
+                        return false;
+                      });
+            } catch (ConditionTimeoutException e) {
+            }
+            // check for log messages
+            verify(mockAppender, times(regionNum - 1)).append(loggingEventCaptor.capture());
+            logEvents = loggingEventCaptor.getAllValues();
+            String logMsg = loggingEventCaptor.getValue().getMessage().getFormattedMessage();
+            numLogEvents = logEvents.size();
+            assertEquals("Expected warning messages to be logged.", regionNum - 1, numLogEvents);
+
+            // Start the child region
+            try {
+              createPR(childPRName, PR_REGION_NAME, true);
+            } catch (Exception e) {
+            }
+          }
+          // Another delay before exiting the thread to make sure that missing region logging doesn't continue after
+          // all regions created (delay > logInterval)
+          try {
+            await()
+                .atMost((int) (delayForChildCreation * 1.2), TimeUnit.MILLISECONDS)
+                .until(
+                    () -> {
+                      return false;
+                    });
+          } catch (ConditionTimeoutException e) {
+          }
+          String logMsg;
+          try {
+            logEvents = loggingEventCaptor.getAllValues();
+            assertEquals(
+                String.format("Expected warning messages to be logged."),
+                numExpectedLogMessages,
+                logEvents.size());
+            logMsg = logEvents.get(0).getMessage().getFormattedMessage();
+          } finally {
+            logger.removeAppender(mockAppender);
+            numExpectedLogMessages = 1;
+            mockAppender = null;
+          }
+          return logMsg;
+        }
+      };
+
+  private SerializableCallable createPRsMissingGrandchildRegionThread =
+      new SerializableCallable("createPRsMissingChildRegion") {
+        Appender mockAppender;
+        ArgumentCaptor<LogEvent> loggingEventCaptor;
+
+        public Object call() throws Exception {
+          // Setup for capturing logger messages
+          Appender mockAppender = mock(Appender.class);
+          when(mockAppender.getName()).thenReturn("MockAppender");
+          when(mockAppender.isStarted()).thenReturn(true);
+          when(mockAppender.isStopped()).thenReturn(false);
+          Logger logger = (Logger) LogManager.getLogger(ColocationLogger.class);
+          logger.addAppender(mockAppender);
+          logger.setLevel(Level.WARN);
+          loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
+
+          // Logger interval may have been hooked by the test, so adjust test delays here
+          int logInterval = ColocationLogger.getLogInterval();
+          List<LogEvent> logEvents = Collections.emptyList();
+
+          try {
+            createPR(PR_REGION_NAME, true);
+            createPR("region2", PR_REGION_NAME, true); // This child region is never created
+            // Let this thread continue running long enough for the missing region to be logged a couple times.
+            // Grandchild region does not get created by this thread. (1.5*logInterval < delay < 2*logInterval)
+            await()
+                .atMost((int) (1.75 * logInterval), TimeUnit.MILLISECONDS)
+                .until(
+                    () -> {
+                      verify(mockAppender, times(numExpectedLogMessages))
+                          .append(loggingEventCaptor.capture());
+                    });
+            //createPR("region3", PR_REGION_NAME, true);  // This child region is never created
+          } finally {
+            logEvents = loggingEventCaptor.getAllValues();
+            assertEquals(
+                String.format(
+                    "Expected %d messages to be logged, got %d.",
+                    numExpectedLogMessages, logEvents.size()),
+                numExpectedLogMessages,
+                logEvents.size());
+            String logMsg = logEvents.get(0).getMessage().getFormattedMessage();
+            logger.removeAppender(mockAppender);
+            numExpectedLogMessages = 1;
+            return logMsg;
+          }
+        }
+      };
 
   private class ColocationLoggerIntervalSetter extends SerializableRunnable {
     private int logInterval;
@@ -701,9 +767,7 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     }
   }
 
-  /**
-   * Testing that missing colocated persistent PRs are logged as warning
-   */
+  /** Testing that missing colocated persistent PRs are logged as warning */
   @Test
   public void testMissingColocatedParentPR() throws Throwable {
     Host host = Host.getHost(0);
@@ -729,13 +793,18 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     Object remoteException = null;
     remoteException = vm0.invoke(createPRsMissingParentRegionThread);
 
-    assertEquals("Expected IllegalState Exception for missing colocated parent region", IllegalStateException.class, remoteException.getClass());
-    assertTrue("Expected IllegalState Exception for missing colocated parent region", remoteException.toString().matches("java.lang.IllegalStateException: Region specified in 'colocated-with'.*"));
+    assertEquals(
+        "Expected IllegalState Exception for missing colocated parent region",
+        IllegalStateException.class,
+        remoteException.getClass());
+    assertTrue(
+        "Expected IllegalState Exception for missing colocated parent region",
+        remoteException
+            .toString()
+            .matches("java.lang.IllegalStateException: Region specified in 'colocated-with'.*"));
   }
 
-  /**
-   * Testing that parent colocated persistent PRs only missing on local member throws exception 
-   */
+  /** Testing that parent colocated persistent PRs only missing on local member throws exception */
   @Test
   public void testMissingColocatedParentPRWherePRConfigExists() throws Throwable {
     Host host = Host.getHost(0);
@@ -768,8 +837,15 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
       async1a = vm1.invokeAsync(delayedCreatePRsMissingParentRegionThread);
       remoteException = async1a.get(MAX_WAIT, TimeUnit.MILLISECONDS);
 
-      assertEquals("Expected IllegalState Exception for missing colocated parent region", IllegalStateException.class, remoteException.getClass());
-      assertTrue("Expected IllegalState Exception for missing colocated parent region", remoteException.toString().matches("java.lang.IllegalStateException: Region specified in 'colocated-with'.*"));
+      assertEquals(
+          "Expected IllegalState Exception for missing colocated parent region",
+          IllegalStateException.class,
+          remoteException.getClass());
+      assertTrue(
+          "Expected IllegalState Exception for missing colocated parent region",
+          remoteException
+              .toString()
+              .matches("java.lang.IllegalStateException: Region specified in 'colocated-with'.*"));
     } finally {
       // The real test is done now (either passing or failing) but there's some cleanup in this test that needs to be done.
       //
@@ -784,9 +860,7 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     }
   }
 
-  /**
-   * Testing that missing colocated child persistent PRs are logged as warning
-   */
+  /** Testing that missing colocated child persistent PRs are logged as warning */
   @Test
   public void testMissingColocatedChildPRDueToDelayedStart() throws Throwable {
     int loggerTestInterval = 4000; // millis
@@ -824,12 +898,12 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     vm0.invoke(new ColocationLoggerIntervalResetter());
     vm1.invoke(new ColocationLoggerIntervalResetter());
 
-    assertTrue("Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"", logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
+    assertTrue(
+        "Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"",
+        logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
   }
 
-  /**
-   * Testing that missing colocated child persistent PRs are logged as warning
-   */
+  /** Testing that missing colocated child persistent PRs are logged as warning */
   @Test
   public void testMissingColocatedChildPR() throws Throwable {
     int loggerTestInterval = 4000; // millis
@@ -867,12 +941,14 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     vm0.invoke(new ColocationLoggerIntervalResetter());
     vm1.invoke(new ColocationLoggerIntervalResetter());
 
-    assertTrue("Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"", logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
+    assertTrue(
+        "Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"",
+        logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
   }
 
   /**
-   * Test that when there is more than one missing colocated child persistent PRs for a region all missing regions are logged
-   * in the warning. 
+   * Test that when there is more than one missing colocated child persistent PRs for a region all
+   * missing regions are logged in the warning.
    */
   @Test
   public void testMultipleColocatedChildPRsMissing() throws Throwable {
@@ -919,12 +995,15 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     vm0.invoke(new ColocationLoggerIntervalResetter());
     vm1.invoke(new ColocationLoggerIntervalResetter());
 
-    assertTrue("Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"", logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
+    assertTrue(
+        "Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"",
+        logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
   }
 
   /**
-   * Test that when there is more than one missing colocated child persistent PRs for a region all missing regions are logged
-   * in the warning. Verifies that as regions are created they no longer appear in the warning.
+   * Test that when there is more than one missing colocated child persistent PRs for a region all
+   * missing regions are logged in the warning. Verifies that as regions are created they no longer
+   * appear in the warning.
    */
   @Test
   public void testMultipleColocatedChildPRsMissingWithSequencedStart() throws Throwable {
@@ -973,12 +1052,12 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     vm0.invoke(new ColocationLoggerIntervalResetter());
     vm1.invoke(new ColocationLoggerIntervalResetter());
 
-    assertTrue("Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"", logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
+    assertTrue(
+        "Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"",
+        logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
   }
 
-  /**
-   * Testing that all missing persistent PRs in a colocation hierarchy are logged as warnings
-   */
+  /** Testing that all missing persistent PRs in a colocation hierarchy are logged as warnings */
   @Test
   public void testHierarchyOfColocatedChildPRsMissing() throws Throwable {
     int loggerTestInterval = 4000; // millis
@@ -1025,12 +1104,12 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     vm0.invoke(new ColocationLoggerIntervalResetter());
     vm1.invoke(new ColocationLoggerIntervalResetter());
 
-    assertTrue("Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"", logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
+    assertTrue(
+        "Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"",
+        logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
   }
 
-  /**
-   * Testing that all missing persistent PRs in a colocation hierarchy are logged as warnings
-   */
+  /** Testing that all missing persistent PRs in a colocation hierarchy are logged as warnings */
   @Test
   public void testHierarchyOfColocatedChildPRsMissingGrandchild() throws Throwable {
     int loggerTestInterval = 4000; // millis
@@ -1064,8 +1143,10 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     vm0.invoke(new ColocationLoggerIntervalSetter(loggerTestInterval));
     vm1.invoke(new ColocationLoggerIntervalSetter(loggerTestInterval));
     // Expected warning logs only on the child region, because without the child there's nothing known about the remaining hierarchy
-    vm0.invoke(new ExpectedNumLogMessageSetter(numChildGenerations * (numChildGenerations + 1) / 2));
-    vm1.invoke(new ExpectedNumLogMessageSetter(numChildGenerations * (numChildGenerations + 1) / 2));
+    vm0.invoke(
+        new ExpectedNumLogMessageSetter(numChildGenerations * (numChildGenerations + 1) / 2));
+    vm1.invoke(
+        new ExpectedNumLogMessageSetter(numChildGenerations * (numChildGenerations + 1) / 2));
     vm0.invoke(new DelayForChildCreationSetter((int) (loggerTestInterval)));
     vm1.invoke(new DelayForChildCreationSetter((int) (loggerTestInterval)));
 
@@ -1079,26 +1160,30 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     vm0.invoke(new ColocationLoggerIntervalResetter());
     vm1.invoke(new ColocationLoggerIntervalResetter());
 
-    assertTrue("Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"", logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
+    assertTrue(
+        "Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"",
+        logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
   }
 
-  private SerializableRunnable createPRColocationTree = new SerializableRunnable("create PR colocation hierarchy") {
-    @Override
-    public void run() throws Exception {
-      createPR("Parent", true);
-      createPR("Gen1_C1", "Parent", true);
-      createPR("Gen1_C2", "Parent", true);
-      createPR("Gen2_C1_1", "Gen1_C1", true);
-      createPR("Gen2_C1_2", "Gen1_C1", true);
-      createPR("Gen2_C2_1", "Gen1_C2", true);
-      createPR("Gen2_C2_2", "Gen1_C2", true);
-    }
-  };
+  private SerializableRunnable createPRColocationTree =
+      new SerializableRunnable("create PR colocation hierarchy") {
+        @Override
+        public void run() throws Exception {
+          createPR("Parent", true);
+          createPR("Gen1_C1", "Parent", true);
+          createPR("Gen1_C2", "Parent", true);
+          createPR("Gen2_C1_1", "Gen1_C1", true);
+          createPR("Gen2_C1_2", "Gen1_C1", true);
+          createPR("Gen2_C2_1", "Gen1_C2", true);
+          createPR("Gen2_C2_2", "Gen1_C2", true);
+        }
+      };
 
   /**
-   * The colocation tree has the regions started in a specific order so that the logging is predictable.
-   * For each entry in the list, the array values are:
-   * <pre> 
+   * The colocation tree has the regions started in a specific order so that the logging is
+   * predictable. For each entry in the list, the array values are:
+   *
+   * <pre>
    *   [0] - the region name
    *   [1] - the name of that region's parent
    *   [2] - the number of warnings that will be logged after the region is created (1 warning for
@@ -1106,85 +1191,97 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
    * </pre>
    */
   private static final List<Object[]> CHILD_REGION_RESTART_ORDER = new ArrayList<Object[]>();
+
   static {
-    CHILD_REGION_RESTART_ORDER.add(new Object[] { "Gen1_C1", "Parent", 2 });
-    CHILD_REGION_RESTART_ORDER.add(new Object[] { "Gen2_C1_1", "Gen1_C1", 2 });
-    CHILD_REGION_RESTART_ORDER.add(new Object[] { "Gen1_C2", "Parent", 3 });
-    CHILD_REGION_RESTART_ORDER.add(new Object[] { "Gen2_C1_2", "Gen1_C1", 2 });
-    CHILD_REGION_RESTART_ORDER.add(new Object[] { "Gen2_C2_1", "Gen1_C2", 2 });
-    CHILD_REGION_RESTART_ORDER.add(new Object[] { "Gen2_C2_2", "Gen1_C2", 0 });
+    CHILD_REGION_RESTART_ORDER.add(new Object[] {"Gen1_C1", "Parent", 2});
+    CHILD_REGION_RESTART_ORDER.add(new Object[] {"Gen2_C1_1", "Gen1_C1", 2});
+    CHILD_REGION_RESTART_ORDER.add(new Object[] {"Gen1_C2", "Parent", 3});
+    CHILD_REGION_RESTART_ORDER.add(new Object[] {"Gen2_C1_2", "Gen1_C1", 2});
+    CHILD_REGION_RESTART_ORDER.add(new Object[] {"Gen2_C2_1", "Gen1_C2", 2});
+    CHILD_REGION_RESTART_ORDER.add(new Object[] {"Gen2_C2_2", "Gen1_C2", 0});
   }
 
-  private SerializableCallable createPRsSequencedColocationTreeCreationThread = new SerializableCallable("createPRsSequencedColocationTreeCreation") {
-    Appender mockAppender;
-    ArgumentCaptor<LogEvent> loggingEventCaptor;
+  private SerializableCallable createPRsSequencedColocationTreeCreationThread =
+      new SerializableCallable("createPRsSequencedColocationTreeCreation") {
+        Appender mockAppender;
+        ArgumentCaptor<LogEvent> loggingEventCaptor;
 
-    public Object call() throws Exception {
-      // Setup for capturing logger messages
-      mockAppender = mock(Appender.class);
-      when(mockAppender.getName()).thenReturn("MockAppender");
-      when(mockAppender.isStarted()).thenReturn(true);
-      when(mockAppender.isStopped()).thenReturn(false);
-      Logger logger = (Logger) LogManager.getLogger(ColocationLogger.class);
-      logger.addAppender(mockAppender);
-      logger.setLevel(Level.WARN);
-      loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
+        public Object call() throws Exception {
+          // Setup for capturing logger messages
+          mockAppender = mock(Appender.class);
+          when(mockAppender.getName()).thenReturn("MockAppender");
+          when(mockAppender.isStarted()).thenReturn(true);
+          when(mockAppender.isStopped()).thenReturn(false);
+          Logger logger = (Logger) LogManager.getLogger(ColocationLogger.class);
+          logger.addAppender(mockAppender);
+          logger.setLevel(Level.WARN);
+          loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
 
-      // Logger interval may have been hooked by the test, so adjust test delays here
-      int logInterval = ColocationLogger.getLogInterval();
-      List<LogEvent> logEvents = Collections.emptyList();
-      int nLogEvents = 0;
-      int nExpectedLogs = 1;
+          // Logger interval may have been hooked by the test, so adjust test delays here
+          int logInterval = ColocationLogger.getLogInterval();
+          List<LogEvent> logEvents = Collections.emptyList();
+          int nLogEvents = 0;
+          int nExpectedLogs = 1;
 
-      createPR("Parent", true);
-      // Delay creation of descendant regions in the hierarchy to see missing colocated region 
-      // log messages (logInterval/2 < delay < logInterval)
-      for (Object[] regionInfo : CHILD_REGION_RESTART_ORDER) {
-        loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
-        String childPRName = (String) regionInfo[0];
-        String colocatedWithRegionName = (String) regionInfo[1];
-        int nLogsAfterRegionCreation = (int) regionInfo[2];
+          createPR("Parent", true);
+          // Delay creation of descendant regions in the hierarchy to see missing colocated region
+          // log messages (logInterval/2 < delay < logInterval)
+          for (Object[] regionInfo : CHILD_REGION_RESTART_ORDER) {
+            loggingEventCaptor = ArgumentCaptor.forClass(LogEvent.class);
+            String childPRName = (String) regionInfo[0];
+            String colocatedWithRegionName = (String) regionInfo[1];
+            int nLogsAfterRegionCreation = (int) regionInfo[2];
 
-        // delay between starting generations of child regions
-        try {
-          await().atMost(delayForChildCreation, TimeUnit.MILLISECONDS).until(() -> {
-            return false;
-          });
-        } catch (ConditionTimeoutException e) {
+            // delay between starting generations of child regions
+            try {
+              await()
+                  .atMost(delayForChildCreation, TimeUnit.MILLISECONDS)
+                  .until(
+                      () -> {
+                        return false;
+                      });
+            } catch (ConditionTimeoutException e) {
+            }
+            // check for log messages that occurred during the delay
+            verify(mockAppender, times(nExpectedLogs)).append(loggingEventCaptor.capture());
+            nExpectedLogs += nLogsAfterRegionCreation;
+            logEvents = loggingEventCaptor.getAllValues();
+            String logMsg = loggingEventCaptor.getValue().getMessage().getFormattedMessage();
+
+            // Finally start the next child region
+            createPR(childPRName, colocatedWithRegionName, true);
+          }
+          // Another delay before exiting the thread to make sure that missing region logging doesn't continue after
+          // all regions created (delay > logInterval)
+          String logMsg = "";
+          try {
+            await()
+                .atMost((int) (delayForChildCreation * 1.2), TimeUnit.MILLISECONDS)
+                .until(
+                    () -> {
+                      return false;
+                    });
+          } catch (ConditionTimeoutException e) {
+          } finally {
+            logEvents = loggingEventCaptor.getAllValues();
+            assertEquals(
+                String.format("Expected warning messages to be logged."),
+                nExpectedLogs,
+                logEvents.size());
+            logMsg = logEvents.get(0).getMessage().getFormattedMessage();
+            logger.removeAppender(mockAppender);
+          }
+          numExpectedLogMessages = 1;
+          mockAppender = null;
+          return logMsg;
         }
-        // check for log messages that occurred during the delay
-        verify(mockAppender, times(nExpectedLogs)).append(loggingEventCaptor.capture());
-        nExpectedLogs += nLogsAfterRegionCreation;
-        logEvents = loggingEventCaptor.getAllValues();
-        String logMsg = loggingEventCaptor.getValue().getMessage().getFormattedMessage();
-
-        // Finally start the next child region
-        createPR(childPRName, colocatedWithRegionName, true);
-      }
-      // Another delay before exiting the thread to make sure that missing region logging doesn't continue after 
-      // all regions created (delay > logInterval)
-      String logMsg = "";
-      try {
-        await().atMost((int) (delayForChildCreation * 1.2), TimeUnit.MILLISECONDS).until(() -> {
-          return false;
-        });
-      } catch (ConditionTimeoutException e) {
-      } finally {
-        logEvents = loggingEventCaptor.getAllValues();
-        assertEquals(String.format("Expected warning messages to be logged."), nExpectedLogs, logEvents.size());
-        logMsg = logEvents.get(0).getMessage().getFormattedMessage();
-        logger.removeAppender(mockAppender);
-      }
-      numExpectedLogMessages = 1;
-      mockAppender = null;
-      return logMsg;
-    }
-  };
+      };
 
   /**
    * Testing that all missing persistent PRs in a colocation tree hierarchy are logged as warnings.
-   * This test is a combines the "multiple children" and "hierarchy of children" tests.
-   * This is the colocation tree for this test
+   * This test is a combines the "multiple children" and "hierarchy of children" tests. This is the
+   * colocation tree for this test
+   *
    * <pre>
    *                  Parent
    *                /         \
@@ -1218,7 +1315,8 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     assertFalse(vm0Buckets.isEmpty());
     Set<Integer> vm1Buckets = getBucketList(vm1, "Parent");
     assertFalse(vm1Buckets.isEmpty());
-    for (String region : new String[] { "Gen1_C1", "Gen1_C2", "Gen2_C1_1", "Gen2_C1_2", "Gen2_C2_1", "Gen2_C2_2" }) {
+    for (String region :
+        new String[] {"Gen1_C1", "Gen1_C2", "Gen2_C1_1", "Gen2_C1_2", "Gen2_C2_1", "Gen2_C2_2"}) {
       assertEquals(vm0Buckets, getBucketList(vm0, region));
       assertEquals(vm1Buckets, getBucketList(vm1, region));
     }
@@ -1240,12 +1338,14 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     vm1.invoke(new ColocationLoggerIntervalResetter());
 
     // Expected warning logs only on the child region, because without the child there's nothing known about the remaining hierarchy
-    assertTrue("Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"", logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
+    assertTrue(
+        "Expected missing colocated region warning on remote. Got message \"" + logMsg + "\"",
+        logMsg.toString().matches(PATTERN_FOR_MISSING_CHILD_LOG));
   }
 
   /**
-   * Testing what happens we we recreate colocated persistent PRs by creating
-   * one PR everywhere and then the other PR everywhere.
+   * Testing what happens we we recreate colocated persistent PRs by creating one PR everywhere and
+   * then the other PR everywhere.
    */
   @Test
   public void testColocatedPRsRecoveryOnePRAtATime() throws Throwable {
@@ -1254,23 +1354,24 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
 
-    SerializableRunnable createParentPR = new SerializableRunnable("createParentPR") {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createParentPR =
+        new SerializableRunnable("createParentPR") {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion(PR_REGION_NAME, af.create());
-      }
-    };
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion(PR_REGION_NAME, af.create());
+          }
+        };
     SerializableRunnable createChildPR = getCreateChildPRRunnable();
     vm0.invoke(createParentPR);
     vm1.invoke(createParentPR);
@@ -1351,14 +1452,15 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
         Cache cache = getCache();
 
         final CountDownLatch recoveryDone = new CountDownLatch(1);
-        ResourceObserver observer = new InternalResourceManager.ResourceObserverAdapter() {
-          @Override
-          public void recoveryFinished(Region region) {
-            if (region.getName().equals("region2")) {
-              recoveryDone.countDown();
-            }
-          }
-        };
+        ResourceObserver observer =
+            new InternalResourceManager.ResourceObserverAdapter() {
+              @Override
+              public void recoveryFinished(Region region) {
+                if (region.getName().equals("region2")) {
+                  recoveryDone.countDown();
+                }
+              }
+            };
         InternalResourceManager.setResourceObserver(observer);
 
         AttributesFactory af = new AttributesFactory();
@@ -1384,23 +1486,24 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
 
-    SerializableRunnable createParentPR = new SerializableRunnable("createParentPR") {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createParentPR =
+        new SerializableRunnable("createParentPR") {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion(PR_REGION_NAME, af.create());
-      }
-    };
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion(PR_REGION_NAME, af.create());
+          }
+        };
     SerializableRunnable createChildPR = getCreateChildPRRunnable();
 
     vm0.invoke(createParentPR);
@@ -1479,119 +1582,121 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
 
   @Test
   public void testReplaceOfflineMemberAndRestart() throws Throwable {
-    SerializableRunnable createPRs = new SerializableRunnable("region1") {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createPRs =
+        new SerializableRunnable("region1") {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
 
-        final CountDownLatch recoveryDone = new CountDownLatch(2);
-        ResourceObserver observer = new InternalResourceManager.ResourceObserverAdapter() {
-          @Override
-          public void recoveryFinished(Region region) {
-            recoveryDone.countDown();
+            final CountDownLatch recoveryDone = new CountDownLatch(2);
+            ResourceObserver observer =
+                new InternalResourceManager.ResourceObserverAdapter() {
+                  @Override
+                  public void recoveryFinished(Region region) {
+                    recoveryDone.countDown();
+                  }
+                };
+            InternalResourceManager.setResourceObserver(observer);
+
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            paf.setRecoveryDelay(0);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion(PR_REGION_NAME, af.create());
+
+            paf.setColocatedWith(PR_REGION_NAME);
+            af.setPartitionAttributes(paf.create());
+            cache.createRegion("region2", af.create());
+
+            try {
+              if (!recoveryDone.await(MAX_WAIT, TimeUnit.MILLISECONDS)) {
+                fail("timed out");
+              }
+            } catch (InterruptedException e) {
+              Assert.fail("interrupted", e);
+            }
           }
         };
-        InternalResourceManager.setResourceObserver(observer);
-
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setRecoveryDelay(0);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion(PR_REGION_NAME, af.create());
-
-        paf.setColocatedWith(PR_REGION_NAME);
-        af.setPartitionAttributes(paf.create());
-        cache.createRegion("region2", af.create());
-
-        try {
-          if (!recoveryDone.await(MAX_WAIT, TimeUnit.MILLISECONDS)) {
-            fail("timed out");
-          }
-        } catch (InterruptedException e) {
-          Assert.fail("interrupted", e);
-        }
-      }
-    };
 
     replaceOfflineMemberAndRestart(createPRs);
   }
 
   /**
-   * Test that if we replace an offline member, even if colocated regions are
-   * in different disk stores, we still keep our metadata consistent.
+   * Test that if we replace an offline member, even if colocated regions are in different disk
+   * stores, we still keep our metadata consistent.
+   *
    * @throws Throwable
    */
   @Test
   public void testReplaceOfflineMemberAndRestartTwoDiskStores() throws Throwable {
-    SerializableRunnable createPRs = new SerializableRunnable("region1") {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createPRs =
+        new SerializableRunnable("region1") {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
 
-        final CountDownLatch recoveryDone = new CountDownLatch(2);
-        ResourceObserver observer = new InternalResourceManager.ResourceObserverAdapter() {
-          @Override
-          public void recoveryFinished(Region region) {
-            recoveryDone.countDown();
+            final CountDownLatch recoveryDone = new CountDownLatch(2);
+            ResourceObserver observer =
+                new InternalResourceManager.ResourceObserverAdapter() {
+                  @Override
+                  public void recoveryFinished(Region region) {
+                    recoveryDone.countDown();
+                  }
+                };
+            InternalResourceManager.setResourceObserver(observer);
+
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            paf.setRecoveryDelay(0);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion(PR_REGION_NAME, af.create());
+
+            DiskStore ds2 = cache.findDiskStore("disk2");
+            if (ds2 == null) {
+              ds2 = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk2");
+            }
+
+            paf.setColocatedWith(PR_REGION_NAME);
+            af.setPartitionAttributes(paf.create());
+            af.setDiskStoreName("disk2");
+            cache.createRegion("region2", af.create());
+
+            try {
+              if (!recoveryDone.await(MAX_WAIT, TimeUnit.MILLISECONDS)) {
+                fail("timed out");
+              }
+            } catch (InterruptedException e) {
+              Assert.fail("interrupted", e);
+            }
           }
         };
-        InternalResourceManager.setResourceObserver(observer);
-
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setRecoveryDelay(0);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion(PR_REGION_NAME, af.create());
-
-        DiskStore ds2 = cache.findDiskStore("disk2");
-        if (ds2 == null) {
-          ds2 = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk2");
-        }
-
-        paf.setColocatedWith(PR_REGION_NAME);
-        af.setPartitionAttributes(paf.create());
-        af.setDiskStoreName("disk2");
-        cache.createRegion("region2", af.create());
-
-        try {
-          if (!recoveryDone.await(MAX_WAIT, TimeUnit.MILLISECONDS)) {
-            fail("timed out");
-          }
-        } catch (InterruptedException e) {
-          Assert.fail("interrupted", e);
-        }
-      }
-    };
 
     replaceOfflineMemberAndRestart(createPRs);
   }
 
   /**
-   * Test for support issue 7870.
-   * 1. Run three members with redundancy 1 and recovery delay 0
-   * 2. Kill one of the members, to trigger replacement of buckets
-   * 3. Shutdown all members and restart.
-   * 
-   * What was happening is that in the parent PR, we discarded
-   * our offline data in one member, but in the child PR the other
-   * members ended up waiting for the child bucket to be created
-   * in the member that discarded it's offline data.
-   * 
-   * @throws Throwable 
+   * Test for support issue 7870. 1. Run three members with redundancy 1 and recovery delay 0 2.
+   * Kill one of the members, to trigger replacement of buckets 3. Shutdown all members and restart.
+   *
+   * <p>What was happening is that in the parent PR, we discarded our offline data in one member,
+   * but in the child PR the other members ended up waiting for the child bucket to be created in
+   * the member that discarded it's offline data.
+   *
+   * @throws Throwable
    */
   public void replaceOfflineMemberAndRestart(SerializableRunnable createPRs) throws Throwable {
     disconnectAllFromDS();
@@ -1622,23 +1727,26 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     try {
 
       //Close the remaining members.
-      vm0.invoke(new SerializableCallable() {
+      vm0.invoke(
+          new SerializableCallable() {
 
-        public Object call() throws Exception {
-          InternalDistributedSystem ds = (InternalDistributedSystem) getCache().getDistributedSystem();
-          AdminDistributedSystemImpl.shutDownAllMembers(ds.getDistributionManager(), 600000);
-          return null;
-        }
-      });
+            public Object call() throws Exception {
+              InternalDistributedSystem ds =
+                  (InternalDistributedSystem) getCache().getDistributedSystem();
+              AdminDistributedSystemImpl.shutDownAllMembers(ds.getDistributionManager(), 600000);
+              return null;
+            }
+          });
 
       //Make sure that vm-1 is completely disconnected
       //The shutdown all asynchronously finishes the disconnect after
       //replying to the admin member.
-      vm1.invoke(new SerializableRunnable() {
-        public void run() {
-          basicGetSystem().disconnect();
-        }
-      });
+      vm1.invoke(
+          new SerializableRunnable() {
+            public void run() {
+              basicGetSystem().disconnect();
+            }
+          });
 
       //Recreate the members. Try to make sure that
       //the member with the latest copy of the buckets
@@ -1681,144 +1789,149 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
 
   @Test
   public void testReplaceOfflineMemberAndRestartCreateColocatedPRLate() throws Throwable {
-    SerializableRunnable createParentPR = new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createParentPR =
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setRecoveryDelay(0);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion(PR_REGION_NAME, af.create());
-      }
-    };
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            paf.setRecoveryDelay(0);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion(PR_REGION_NAME, af.create());
+          }
+        };
 
-    SerializableRunnable createChildPR = new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createChildPR =
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
 
-        final CountDownLatch recoveryDone = new CountDownLatch(1);
-        ResourceObserver observer = new InternalResourceManager.ResourceObserverAdapter() {
-          @Override
-          public void recoveryFinished(Region region) {
-            if (region.getName().contains("region2")) {
-              recoveryDone.countDown();
+            final CountDownLatch recoveryDone = new CountDownLatch(1);
+            ResourceObserver observer =
+                new InternalResourceManager.ResourceObserverAdapter() {
+                  @Override
+                  public void recoveryFinished(Region region) {
+                    if (region.getName().contains("region2")) {
+                      recoveryDone.countDown();
+                    }
+                  }
+                };
+            InternalResourceManager.setResourceObserver(observer);
+
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            paf.setRecoveryDelay(0);
+            paf.setColocatedWith(PR_REGION_NAME);
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            af.setPartitionAttributes(paf.create());
+            cache.createRegion("region2", af.create());
+
+            try {
+              if (!recoveryDone.await(MAX_WAIT, TimeUnit.MILLISECONDS)) {
+                fail("timed out");
+              }
+            } catch (InterruptedException e) {
+              Assert.fail("interrupted", e);
             }
           }
         };
-        InternalResourceManager.setResourceObserver(observer);
-
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setRecoveryDelay(0);
-        paf.setColocatedWith(PR_REGION_NAME);
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        af.setPartitionAttributes(paf.create());
-        cache.createRegion("region2", af.create());
-
-        try {
-          if (!recoveryDone.await(MAX_WAIT, TimeUnit.MILLISECONDS)) {
-            fail("timed out");
-          }
-        } catch (InterruptedException e) {
-          Assert.fail("interrupted", e);
-        }
-      }
-    };
 
     replaceOfflineMemberAndRestartCreateColocatedPRLate(createParentPR, createChildPR);
   }
 
   @Test
-  public void testReplaceOfflineMemberAndRestartCreateColocatedPRLateTwoDiskStores() throws Throwable {
-    SerializableRunnable createParentPR = new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
+  public void testReplaceOfflineMemberAndRestartCreateColocatedPRLateTwoDiskStores()
+      throws Throwable {
+    SerializableRunnable createParentPR =
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setRecoveryDelay(0);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion(PR_REGION_NAME, af.create());
-      }
-    };
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            paf.setRecoveryDelay(0);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion(PR_REGION_NAME, af.create());
+          }
+        };
 
-    SerializableRunnable createChildPR = new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createChildPR =
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
 
-        final CountDownLatch recoveryDone = new CountDownLatch(1);
-        ResourceObserver observer = new InternalResourceManager.ResourceObserverAdapter() {
-          @Override
-          public void recoveryFinished(Region region) {
-            if (region.getName().contains("region2")) {
-              recoveryDone.countDown();
+            final CountDownLatch recoveryDone = new CountDownLatch(1);
+            ResourceObserver observer =
+                new InternalResourceManager.ResourceObserverAdapter() {
+                  @Override
+                  public void recoveryFinished(Region region) {
+                    if (region.getName().contains("region2")) {
+                      recoveryDone.countDown();
+                    }
+                  }
+                };
+            InternalResourceManager.setResourceObserver(observer);
+
+            DiskStore ds2 = cache.findDiskStore("disk2");
+            if (ds2 == null) {
+              ds2 = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk2");
+            }
+
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            paf.setRecoveryDelay(0);
+            paf.setColocatedWith(PR_REGION_NAME);
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk2");
+            af.setPartitionAttributes(paf.create());
+            cache.createRegion("region2", af.create());
+
+            try {
+              if (!recoveryDone.await(MAX_WAIT, TimeUnit.MILLISECONDS)) {
+                fail("timed out");
+              }
+            } catch (InterruptedException e) {
+              Assert.fail("interrupted", e);
             }
           }
         };
-        InternalResourceManager.setResourceObserver(observer);
-
-        DiskStore ds2 = cache.findDiskStore("disk2");
-        if (ds2 == null) {
-          ds2 = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk2");
-        }
-
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setRecoveryDelay(0);
-        paf.setColocatedWith(PR_REGION_NAME);
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk2");
-        af.setPartitionAttributes(paf.create());
-        cache.createRegion("region2", af.create());
-
-        try {
-          if (!recoveryDone.await(MAX_WAIT, TimeUnit.MILLISECONDS)) {
-            fail("timed out");
-          }
-        } catch (InterruptedException e) {
-          Assert.fail("interrupted", e);
-        }
-      }
-    };
 
     replaceOfflineMemberAndRestartCreateColocatedPRLate(createParentPR, createChildPR);
   }
 
   /**
-   * Test for support issue 7870.
-   * 1. Run three members with redundancy 1 and recovery delay 0
-   * 2. Kill one of the members, to trigger replacement of buckets
-   * 3. Shutdown all members and restart.
-   * 
-   * What was happening is that in the parent PR, we discarded
-   * our offline data in one member, but in the child PR the other
-   * members ended up waiting for the child bucket to be created
-   * in the member that discarded it's offline data.
-   * 
-   * In this test case, we're creating the child PR later,
-   * after the parent buckets have already been completely created.
-   * 
-   * @throws Throwable 
+   * Test for support issue 7870. 1. Run three members with redundancy 1 and recovery delay 0 2.
+   * Kill one of the members, to trigger replacement of buckets 3. Shutdown all members and restart.
+   *
+   * <p>What was happening is that in the parent PR, we discarded our offline data in one member,
+   * but in the child PR the other members ended up waiting for the child bucket to be created in
+   * the member that discarded it's offline data.
+   *
+   * <p>In this test case, we're creating the child PR later, after the parent buckets have already
+   * been completely created.
+   *
+   * @throws Throwable
    */
-  public void replaceOfflineMemberAndRestartCreateColocatedPRLate(SerializableRunnable createParentPR, SerializableRunnable createChildPR) throws Throwable {
+  public void replaceOfflineMemberAndRestartCreateColocatedPRLate(
+      SerializableRunnable createParentPR, SerializableRunnable createChildPR) throws Throwable {
     IgnoredException.addIgnoredException("PartitionOfflineException");
     IgnoredException.addIgnoredException("RegionDestroyedException");
     Host host = Host.getHost(0);
@@ -1849,23 +1962,26 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     createData(vm0, 0, NUM_BUCKETS, "b", "region2");
 
     //Close the remaining members.
-    vm0.invoke(new SerializableCallable() {
+    vm0.invoke(
+        new SerializableCallable() {
 
-      public Object call() throws Exception {
-        InternalDistributedSystem ds = (InternalDistributedSystem) getCache().getDistributedSystem();
-        AdminDistributedSystemImpl.shutDownAllMembers(ds.getDistributionManager(), 0);
-        return null;
-      }
-    });
+          public Object call() throws Exception {
+            InternalDistributedSystem ds =
+                (InternalDistributedSystem) getCache().getDistributedSystem();
+            AdminDistributedSystemImpl.shutDownAllMembers(ds.getDistributionManager(), 0);
+            return null;
+          }
+        });
 
     //Make sure that vm-1 is completely disconnected
     //The shutdown all asynchronously finishes the disconnect after
     //replying to the admin member.
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
-        basicGetSystem().disconnect();
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            basicGetSystem().disconnect();
+          }
+        });
 
     //Recreate the parent region. Try to make sure that
     //the member with the latest copy of the buckets
@@ -1882,7 +1998,7 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     //Wait for async tasks
     Wait.pause(2000);
 
-    //Recreate the child region. 
+    //Recreate the child region.
     async2 = vm2.invokeAsync(createChildPR);
     async1 = vm1.invokeAsync(createChildPR);
     async0 = vm0.invokeAsync(createChildPR);
@@ -1915,8 +2031,8 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
   }
 
   /**
-   * Test what happens when we crash in the middle of
-   * satisfying redundancy for a colocated bucket.
+   * Test what happens when we crash in the middle of satisfying redundancy for a colocated bucket.
+   *
    * @throws Throwable
    */
   //This test method is disabled because it is failing
@@ -1928,31 +2044,32 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-    SerializableRunnable createPRs = new SerializableRunnable("region1") {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createPRs =
+        new SerializableRunnable("region1") {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        //Workaround for 44414 - disable recovery delay so we shutdown
-        //vm1 at a predictable point.
-        paf.setRecoveryDelay(-1);
-        paf.setStartupRecoveryDelay(-1);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion(PR_REGION_NAME, af.create());
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            //Workaround for 44414 - disable recovery delay so we shutdown
+            //vm1 at a predictable point.
+            paf.setRecoveryDelay(-1);
+            paf.setStartupRecoveryDelay(-1);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion(PR_REGION_NAME, af.create());
 
-        paf.setColocatedWith(PR_REGION_NAME);
-        af.setPartitionAttributes(paf.create());
-        cache.createRegion("region2", af.create());
-      }
-    };
+            paf.setColocatedWith(PR_REGION_NAME);
+            af.setPartitionAttributes(paf.create());
+            cache.createRegion("region2", af.create());
+          }
+        };
 
     //Create the PR on vm0
     vm0.invoke(createPRs);
@@ -1966,25 +2083,28 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     //We shouldn't have created any buckets in vm1 yet.
     assertEquals(Collections.emptySet(), getBucketList(vm1));
 
-    //Add an observer that will disconnect before allowing the peer to 
+    //Add an observer that will disconnect before allowing the peer to
     //GII a colocated bucket. This should leave the peer with only the parent
     //bucket
-    vm0.invoke(new SerializableRunnable() {
+    vm0.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        DistributionMessageObserver.setInstance(new DistributionMessageObserver() {
-          @Override
-          public void beforeProcessMessage(DistributionManager dm, DistributionMessage message) {
-            if (message instanceof RequestImageMessage) {
-              if (((RequestImageMessage) message).regionPath.contains("region2")) {
-                DistributionMessageObserver.setInstance(null);
-                disconnectFromDS();
-              }
-            }
+          public void run() {
+            DistributionMessageObserver.setInstance(
+                new DistributionMessageObserver() {
+                  @Override
+                  public void beforeProcessMessage(
+                      DistributionManager dm, DistributionMessage message) {
+                    if (message instanceof RequestImageMessage) {
+                      if (((RequestImageMessage) message).regionPath.contains("region2")) {
+                        DistributionMessageObserver.setInstance(null);
+                        disconnectFromDS();
+                      }
+                    }
+                  }
+                });
           }
         });
-      }
-    });
 
     IgnoredException ex = IgnoredException.addIgnoredException("PartitionOfflineException", vm1);
     try {
@@ -2002,32 +2122,38 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
       }
 
       //Wait for vm0 to be closed by the callback
-      vm0.invoke(new SerializableCallable() {
+      vm0.invoke(
+          new SerializableCallable() {
 
-        public Object call() throws Exception {
-          Wait.waitForCriterion(new WaitCriterion() {
-            public boolean done() {
-              InternalDistributedSystem ds = basicGetSystem();
-              return ds == null || !ds.isConnected();
+            public Object call() throws Exception {
+              Wait.waitForCriterion(
+                  new WaitCriterion() {
+                    public boolean done() {
+                      InternalDistributedSystem ds = basicGetSystem();
+                      return ds == null || !ds.isConnected();
+                    }
+
+                    public String description() {
+                      return "DS did not disconnect";
+                    }
+                  },
+                  MAX_WAIT,
+                  100,
+                  true);
+
+              return null;
             }
-
-            public String description() {
-              return "DS did not disconnect";
-            }
-          }, MAX_WAIT, 100, true);
-
-          return null;
-        }
-      });
+          });
 
       //close the cache in vm1
-      SerializableCallable disconnectFromDS = new SerializableCallable() {
+      SerializableCallable disconnectFromDS =
+          new SerializableCallable() {
 
-        public Object call() throws Exception {
-          disconnectFromDS();
-          return null;
-        }
-      };
+            public Object call() throws Exception {
+              disconnectFromDS();
+              return null;
+            }
+          };
       vm1.invoke(disconnectFromDS);
 
       //Make sure vm0 is disconnected. This avoids a race where we
@@ -2051,8 +2177,8 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
   }
 
   /**
-   * Test what happens when we restart persistent members while
-   * there is an accessor concurrently performing puts. This is for bug 43899
+   * Test what happens when we restart persistent members while there is an accessor concurrently
+   * performing puts. This is for bug 43899
    */
   @Test
   public void testRecoverySystemWithConcurrentPutter() throws Throwable {
@@ -2065,87 +2191,92 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     //Define all of the runnables used in this test
 
     //runnable to create accessors
-    SerializableRunnable createAccessor = new SerializableRunnable("createAccessor") {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createAccessor =
+        new SerializableRunnable("createAccessor") {
+          public void run() {
+            Cache cache = getCache();
 
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setLocalMaxMemory(0);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PARTITION);
-        cache.createRegion(PR_REGION_NAME, af.create());
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            paf.setLocalMaxMemory(0);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PARTITION);
+            cache.createRegion(PR_REGION_NAME, af.create());
 
-        paf.setColocatedWith(PR_REGION_NAME);
-        af.setPartitionAttributes(paf.create());
-        cache.createRegion("region2", af.create());
-      }
-    };
+            paf.setColocatedWith(PR_REGION_NAME);
+            af.setPartitionAttributes(paf.create());
+            cache.createRegion("region2", af.create());
+          }
+        };
 
     //runnable to create PRs
-    SerializableRunnable createPRs = new SerializableRunnable("region1") {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createPRs =
+        new SerializableRunnable("region1") {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion(PR_REGION_NAME, af.create());
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion(PR_REGION_NAME, af.create());
 
-        paf.setColocatedWith(PR_REGION_NAME);
-        af.setPartitionAttributes(paf.create());
-        cache.createRegion("region2", af.create());
-      }
-    };
+            paf.setColocatedWith(PR_REGION_NAME);
+            af.setPartitionAttributes(paf.create());
+            cache.createRegion("region2", af.create());
+          }
+        };
 
     //runnable to close the cache.
-    SerializableRunnable closeCache = new SerializableRunnable("region1") {
-      public void run() {
-        closeCache();
-      }
-    };
+    SerializableRunnable closeCache =
+        new SerializableRunnable("region1") {
+          public void run() {
+            closeCache();
+          }
+        };
 
     //Runnable to do a bunch of puts handle exceptions
     //due to the fact that member is offline.
-    SerializableRunnable doABunchOfPuts = new SerializableRunnable("region1") {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(PR_REGION_NAME);
-        try {
-          for (int i = 0;; i++) {
+    SerializableRunnable doABunchOfPuts =
+        new SerializableRunnable("region1") {
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(PR_REGION_NAME);
             try {
-              region.get(i % NUM_BUCKETS);
-            } catch (PartitionOfflineException expected) {
-              //do nothing.
-            } catch (PartitionedRegionStorageException expected) {
-              //do nothing.
+              for (int i = 0; ; i++) {
+                try {
+                  region.get(i % NUM_BUCKETS);
+                } catch (PartitionOfflineException expected) {
+                  //do nothing.
+                } catch (PartitionedRegionStorageException expected) {
+                  //do nothing.
+                }
+                Thread.yield();
+              }
+            } catch (CacheClosedException expected) {
+              //ok, we're done.
             }
-            Thread.yield();
           }
-        } catch (CacheClosedException expected) {
-          //ok, we're done.
-        }
-      }
-    };
+        };
 
     //Runnable to clean up disk dirs on a members
-    SerializableRunnable cleanDiskDirs = new SerializableRunnable("Clean disk dirs") {
-      public void run() {
-        try {
-          cleanDiskDirs();
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-      }
-    };
+    SerializableRunnable cleanDiskDirs =
+        new SerializableRunnable("Clean disk dirs") {
+          public void run() {
+            try {
+              cleanDiskDirs();
+            } catch (IOException e) {
+              throw new RuntimeException(e);
+            }
+          }
+        };
 
     //Create the PR two members
     vm1.invoke(createPRs);
@@ -2192,52 +2323,52 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
   @Category(FlakyTest.class) // GEODE-506: time sensitive, async actions with 30 sec max
   @Test
   public void testRebalanceWithOfflineChildRegion() throws Throwable {
-    SerializableRunnable createParentPR = new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createParentPR =
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(0);
-        paf.setRecoveryDelay(0);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion(PR_REGION_NAME, af.create());
-      }
-    };
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(0);
+            paf.setRecoveryDelay(0);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion(PR_REGION_NAME, af.create());
+          }
+        };
 
-    SerializableRunnable createChildPR = new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createChildPR =
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
 
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(0);
-        paf.setRecoveryDelay(0);
-        paf.setColocatedWith(PR_REGION_NAME);
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        af.setPartitionAttributes(paf.create());
-        cache.createRegion("region2", af.create());
-      }
-    };
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(0);
+            paf.setRecoveryDelay(0);
+            paf.setColocatedWith(PR_REGION_NAME);
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            af.setPartitionAttributes(paf.create());
+            cache.createRegion("region2", af.create());
+          }
+        };
 
     rebalanceWithOfflineChildRegion(createParentPR, createChildPR);
-
   }
 
   /**
-   * Test that a rebalance will regions are in the middle of recovery
-   * doesn't cause issues.
-   * 
-   * This is slightly different than {{@link #testRebalanceWithOfflineChildRegion()}
-   * because in this case all of the regions have been created, but
-   * they are in the middle of actually recovering buckets from disk.
+   * Test that a rebalance will regions are in the middle of recovery doesn't cause issues.
+   *
+   * <p>This is slightly different than {{@link #testRebalanceWithOfflineChildRegion()} because in
+   * this case all of the regions have been created, but they are in the middle of actually
+   * recovering buckets from disk.
    */
   @Test
   public void testRebalanceDuringRecovery() throws Throwable {
@@ -2246,32 +2377,33 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
 
-    SerializableRunnable createPRs = new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createPRs =
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setRecoveryDelay(-1);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion(PR_REGION_NAME, af.create());
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            paf.setRecoveryDelay(-1);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion(PR_REGION_NAME, af.create());
 
-        paf.setRedundantCopies(1);
-        paf.setRecoveryDelay(-1);
-        paf.setColocatedWith(PR_REGION_NAME);
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        af.setPartitionAttributes(paf.create());
-        cache.createRegion("region2", af.create());
-      }
-    };
+            paf.setRedundantCopies(1);
+            paf.setRecoveryDelay(-1);
+            paf.setColocatedWith(PR_REGION_NAME);
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            af.setPartitionAttributes(paf.create());
+            cache.createRegion("region2", af.create());
+          }
+        };
 
     //Create the PRs on two members
     vm0.invoke(createPRs);
@@ -2285,33 +2417,36 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     closeCache(vm1);
     closeCache(vm0);
 
-    SerializableRunnable addHook = new SerializableRunnable() {
-      @Override
-      public void run() {
-        PartitionedRegionObserverHolder.setInstance(new PRObserver());
-      }
-    };
+    SerializableRunnable addHook =
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            PartitionedRegionObserverHolder.setInstance(new PRObserver());
+          }
+        };
 
-    SerializableRunnable waitForHook = new SerializableRunnable() {
-      @Override
-      public void run() {
-        PRObserver observer = (PRObserver) PartitionedRegionObserverHolder.getInstance();
-        try {
-          observer.waitForCreate();
-        } catch (InterruptedException e) {
-          Assert.fail("interrupted", e);
-        }
-      }
-    };
+    SerializableRunnable waitForHook =
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            PRObserver observer = (PRObserver) PartitionedRegionObserverHolder.getInstance();
+            try {
+              observer.waitForCreate();
+            } catch (InterruptedException e) {
+              Assert.fail("interrupted", e);
+            }
+          }
+        };
 
-    SerializableRunnable removeHook = new SerializableRunnable() {
-      @Override
-      public void run() {
-        PRObserver observer = (PRObserver) PartitionedRegionObserverHolder.getInstance();
-        observer.release();
-        PartitionedRegionObserverHolder.setInstance(new PartitionedRegionObserverAdapter());
-      }
-    };
+    SerializableRunnable removeHook =
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            PRObserver observer = (PRObserver) PartitionedRegionObserverHolder.getInstance();
+            observer.release();
+            PartitionedRegionObserverHolder.setInstance(new PartitionedRegionObserverAdapter());
+          }
+        };
 
     vm1.invoke(addHook);
     //    vm1.invoke(addHook);
@@ -2366,52 +2501,54 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
   @Category(FlakyTest.class) // GEODE-1380: time sensitive, async actions with 30 sec max
   @Test
   public void testRebalanceWithOfflineChildRegionTwoDiskStores() throws Throwable {
-    SerializableRunnable createParentPR = new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createParentPR =
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds = cache.findDiskStore("disk");
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
-        }
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(0);
-        paf.setRecoveryDelay(0);
-        af.setPartitionAttributes(paf.create());
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk");
-        cache.createRegion(PR_REGION_NAME, af.create());
-      }
-    };
+            DiskStore ds = cache.findDiskStore("disk");
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
+            }
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(0);
+            paf.setRecoveryDelay(0);
+            af.setPartitionAttributes(paf.create());
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk");
+            cache.createRegion(PR_REGION_NAME, af.create());
+          }
+        };
 
-    SerializableRunnable createChildPR = new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
+    SerializableRunnable createChildPR =
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
 
-        DiskStore ds2 = cache.findDiskStore("disk2");
-        if (ds2 == null) {
-          ds2 = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk2");
-        }
+            DiskStore ds2 = cache.findDiskStore("disk2");
+            if (ds2 == null) {
+              ds2 = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk2");
+            }
 
-        AttributesFactory af = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(0);
-        paf.setRecoveryDelay(0);
-        paf.setColocatedWith(PR_REGION_NAME);
-        af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-        af.setDiskStoreName("disk2");
-        af.setPartitionAttributes(paf.create());
-        cache.createRegion("region2", af.create());
-      }
-    };
+            AttributesFactory af = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(0);
+            paf.setRecoveryDelay(0);
+            paf.setColocatedWith(PR_REGION_NAME);
+            af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+            af.setDiskStoreName("disk2");
+            af.setPartitionAttributes(paf.create());
+            cache.createRegion("region2", af.create());
+          }
+        };
 
     rebalanceWithOfflineChildRegion(createParentPR, createChildPR);
   }
 
   /**
-   * Test that a user is not allowed to change the colocation of 
-   * a PR with persistent data.
+   * Test that a user is not allowed to change the colocation of a PR with persistent data.
+   *
    * @throws Throwable
    */
   @Category(FlakyTest.class) // GEODE-900: disk dependency, filesystem sensitive
@@ -2424,7 +2561,8 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     closeCache();
 
     //Restart colocated with "region2"
-    IgnoredException ex = IgnoredException.addIgnoredException("DiskAccessException|IllegalStateException");
+    IgnoredException ex =
+        IgnoredException.addIgnoredException("DiskAccessException|IllegalStateException");
     try {
       createColocatedPRs("region2");
       fail("Should have received an illegal state exception");
@@ -2437,7 +2575,7 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     //Close everything
     closeCache();
 
-    //Restart colocated with region1. 
+    //Restart colocated with region1.
     //Make sure we didn't screw anything up.
     createColocatedPRs("/region1");
 
@@ -2461,10 +2599,9 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
   }
 
   /**
-   * Create three PRs on a VM, named region1, region2, and region3.
-   * The colocated with attribute describes which region region3 
-   * should be colocated with.
-   * 
+   * Create three PRs on a VM, named region1, region2, and region3. The colocated with attribute
+   * describes which region region3 should be colocated with.
+   *
    * @param colocatedWith
    */
   private void createColocatedPRs(final String colocatedWith) {
@@ -2492,11 +2629,13 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
   }
 
   /**
-   * Test for bug 43570. Rebalance a persistent parent PR before we recover
-   * the persistent child PR from disk.
+   * Test for bug 43570. Rebalance a persistent parent PR before we recover the persistent child PR
+   * from disk.
+   *
    * @throws Throwable
    */
-  public void rebalanceWithOfflineChildRegion(SerializableRunnable createParentPR, SerializableRunnable createChildPR) throws Throwable {
+  public void rebalanceWithOfflineChildRegion(
+      SerializableRunnable createParentPR, SerializableRunnable createChildPR) throws Throwable {
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
@@ -2535,7 +2674,7 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
     RebalanceResults rebalanceResults = rebalance(vm2);
     assertEquals(0, rebalanceResults.getTotalBucketTransfersCompleted());
 
-    //Recreate the child region. 
+    //Recreate the child region.
     async1 = vm1.invokeAsync(createChildPR);
     async0 = vm0.invokeAsync(createChildPR);
     AsyncInvocation async2 = vm2.invokeAsync(createChildPR);
@@ -2552,13 +2691,16 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
   }
 
   private RebalanceResults rebalance(VM vm) {
-    return (RebalanceResults) vm.invoke(new SerializableCallable() {
+    return (RebalanceResults)
+        vm.invoke(
+            new SerializableCallable() {
 
-      public Object call() throws Exception {
-        RebalanceOperation op = getCache().getResourceManager().createRebalanceFactory().start();
-        return op.getResults();
-      }
-    });
+              public Object call() throws Exception {
+                RebalanceOperation op =
+                    getCache().getResourceManager().createRebalanceFactory().start();
+                return op.getResults();
+              }
+            });
   }
 
   private static class PRObserver extends PartitionedRegionObserverAdapter {
@@ -2593,5 +2735,4 @@ public class PersistentColocatedPartitionedRegionDUnitTest extends PersistentPar
       rebalanceDone.countDown();
     }
   }
-
 }

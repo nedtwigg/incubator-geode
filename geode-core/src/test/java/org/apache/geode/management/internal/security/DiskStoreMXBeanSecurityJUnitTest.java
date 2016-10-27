@@ -30,7 +30,7 @@ import org.apache.geode.management.DiskStoreMXBean;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class DiskStoreMXBeanSecurityJUnitTest {
 
   private static int jmxManagerPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
@@ -38,7 +38,9 @@ public class DiskStoreMXBeanSecurityJUnitTest {
   private DiskStoreMXBean bean;
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
+  public static JsonAuthorizationCacheStartRule serverRule =
+      new JsonAuthorizationCacheStartRule(
+          jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
 
   @Rule
   public MBeanServerConnectionRule connectionRule = new MBeanServerConnectionRule(jmxManagerPort);
@@ -72,14 +74,23 @@ public class DiskStoreMXBeanSecurityJUnitTest {
   @JMXConnectionConfiguration(user = "data-user", password = "1234567")
   public void testNoAccess() throws Exception {
     assertThatThrownBy(() -> bean.flush()).hasMessageContaining(TestCommand.dataManage.toString());
-    assertThatThrownBy(() -> bean.forceCompaction()).hasMessageContaining(TestCommand.dataManage.toString());
-    assertThatThrownBy(() -> bean.forceRoll()).hasMessageContaining(TestCommand.dataManage.toString());
-    assertThatThrownBy(() -> bean.getCompactionThreshold()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> bean.getDiskDirectories()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> bean.getDiskReadsRate()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> bean.isAutoCompact()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> bean.isForceCompactionAllowed()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> bean.setDiskUsageCriticalPercentage(0.5f)).hasMessageContaining(TestCommand.dataManage.toString());
-    assertThatThrownBy(() -> bean.setDiskUsageWarningPercentage(0.5f)).hasMessageContaining(TestCommand.dataManage.toString());
+    assertThatThrownBy(() -> bean.forceCompaction())
+        .hasMessageContaining(TestCommand.dataManage.toString());
+    assertThatThrownBy(() -> bean.forceRoll())
+        .hasMessageContaining(TestCommand.dataManage.toString());
+    assertThatThrownBy(() -> bean.getCompactionThreshold())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.getDiskDirectories())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.getDiskReadsRate())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.isAutoCompact())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.isForceCompactionAllowed())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.setDiskUsageCriticalPercentage(0.5f))
+        .hasMessageContaining(TestCommand.dataManage.toString());
+    assertThatThrownBy(() -> bean.setDiskUsageWarningPercentage(0.5f))
+        .hasMessageContaining(TestCommand.dataManage.toString());
   }
 }

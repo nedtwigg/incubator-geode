@@ -21,7 +21,7 @@ import org.apache.geode.internal.DataSerializableFixedID;
 
 /**
  * The LocatorStatusRequest class...
- * </p>
+ *
  * @see org.apache.geode.cache.client.internal.locator.ServerLocationRequest
  * @see org.apache.geode.internal.DataSerializableFixedID
  * @since GemFire 7.0
@@ -32,5 +32,4 @@ public class LocatorStatusRequest extends ServerLocationRequest {
   public int getDSFID() {
     return DataSerializableFixedID.LOCATOR_STATUS_REQUEST;
   }
-
 }

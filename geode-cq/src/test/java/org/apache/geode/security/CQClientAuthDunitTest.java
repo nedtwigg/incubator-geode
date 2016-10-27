@@ -40,7 +40,7 @@ import org.apache.geode.security.templates.UserPasswordAuthInit;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class CQClientAuthDunitTest extends AbstractSecureServerDUnitTest {
 
   public CQClientAuthDunitTest() {
@@ -50,38 +50,41 @@ public class CQClientAuthDunitTest extends AbstractSecureServerDUnitTest {
   @Test
   public void testPostProcess() {
     String query = "select * from /AuthRegion";
-    client1.invoke(() -> {
-      Properties props = new Properties();
-      props.setProperty(LOCATORS, "");
-      props.setProperty(MCAST_PORT, "0");
-      props.setProperty(SECURITY_CLIENT_AUTH_INIT, UserPasswordAuthInit.class.getName() + ".create");
-      ClientCacheFactory factory = new ClientCacheFactory(props);
+    client1.invoke(
+        () -> {
+          Properties props = new Properties();
+          props.setProperty(LOCATORS, "");
+          props.setProperty(MCAST_PORT, "0");
+          props.setProperty(
+              SECURITY_CLIENT_AUTH_INIT, UserPasswordAuthInit.class.getName() + ".create");
+          ClientCacheFactory factory = new ClientCacheFactory(props);
 
-      factory.addPoolServer("localhost", this.serverPort);
-      factory.setPoolThreadLocalConnections(false);
-      factory.setPoolMinConnections(5);
-      factory.setPoolSubscriptionEnabled(true);
-      factory.setPoolMultiuserAuthentication(true);
+          factory.addPoolServer("localhost", this.serverPort);
+          factory.setPoolThreadLocalConnections(false);
+          factory.setPoolMinConnections(5);
+          factory.setPoolSubscriptionEnabled(true);
+          factory.setPoolMultiuserAuthentication(true);
 
-      ClientCache clientCache = factory.create();
-      Region region = clientCache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      Pool pool = PoolManager.find(region);
+          ClientCache clientCache = factory.create();
+          Region region =
+              clientCache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+          Pool pool = PoolManager.find(region);
 
-      Properties userProps = new Properties();
-      userProps.setProperty("security-username", "super-user");
-      userProps.setProperty("security-password", "1234567");
-      ProxyCache cache = (ProxyCache) clientCache.createAuthenticatedView(userProps, pool.getName());
+          Properties userProps = new Properties();
+          userProps.setProperty("security-username", "super-user");
+          userProps.setProperty("security-password", "1234567");
+          ProxyCache cache =
+              (ProxyCache) clientCache.createAuthenticatedView(userProps, pool.getName());
 
-      QueryService qs = cache.getQueryService();
+          QueryService qs = cache.getQueryService();
 
-      CqAttributesFactory cqAttributesFactory = new CqAttributesFactory();
+          CqAttributesFactory cqAttributesFactory = new CqAttributesFactory();
 
-      CqAttributes cqa = cqAttributesFactory.create();
+          CqAttributes cqa = cqAttributesFactory.create();
 
-      // Create the CqQuery
-      CqQuery cq = qs.newCq("CQ1", query, cqa, true);
-      cq.execute();
-    });
+          // Create the CqQuery
+          CqQuery cq = qs.newCq("CQ1", query, cqa, true);
+          cq.execute();
+        });
   }
-
 }

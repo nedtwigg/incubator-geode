@@ -38,10 +38,9 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.pdx.PdxInstance;
 
 /**
- * Gemfire function to add free items in the existing order
- * if the total price for that order is greater then the argument
+ * Gemfire function to add free items in the existing order if the total price for that order is
+ * greater then the argument
  */
-
 public class AddFreeItemToOrders implements Function {
 
   public void execute(FunctionContext context) {
@@ -75,7 +74,8 @@ public class AddFreeItemToOrders implements Function {
       context.getResultSender().lastResult(vals);
     }
 
-    String oql = "SELECT DISTINCT entry.key FROM /orders.entries entry WHERE entry.value.totalPrice > $1";
+    String oql =
+        "SELECT DISTINCT entry.key FROM /orders.entries entry WHERE entry.value.totalPrice > $1";
     Object queryArgs[] = new Object[1];
     queryArgs[0] = argsList.get(0);
 
@@ -92,17 +92,29 @@ public class AddFreeItemToOrders implements Function {
         }
     } catch (FunctionDomainException e) {
       if (c != null)
-        c.getLogger().info("Caught FunctionDomainException while executing function AddFreeItemToOrders: " + e.getMessage());
+        c.getLogger()
+            .info(
+                "Caught FunctionDomainException while executing function AddFreeItemToOrders: "
+                    + e.getMessage());
 
     } catch (TypeMismatchException e) {
       if (c != null)
-        c.getLogger().info("Caught TypeMismatchException while executing function AddFreeItemToOrders: " + e.getMessage());
+        c.getLogger()
+            .info(
+                "Caught TypeMismatchException while executing function AddFreeItemToOrders: "
+                    + e.getMessage());
     } catch (NameResolutionException e) {
       if (c != null)
-        c.getLogger().info("Caught NameResolutionException while executing function AddFreeItemToOrders: " + e.getMessage());
+        c.getLogger()
+            .info(
+                "Caught NameResolutionException while executing function AddFreeItemToOrders: "
+                    + e.getMessage());
     } catch (QueryInvocationTargetException e) {
       if (c != null)
-        c.getLogger().info("Caught QueryInvocationTargetException while executing function AddFreeItemToOrders" + e.getMessage());
+        c.getLogger()
+            .info(
+                "Caught QueryInvocationTargetException while executing function AddFreeItemToOrders"
+                    + e.getMessage());
     }
 
     //class has to be in classpath.
@@ -127,7 +139,6 @@ public class AddFreeItemToOrders implements Function {
     } catch (Exception e) {
       context.getResultSender().lastResult("failure");
     }
-
   }
 
   public String getId() {

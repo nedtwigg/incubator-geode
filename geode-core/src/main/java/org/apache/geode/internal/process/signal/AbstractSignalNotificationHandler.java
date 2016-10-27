@@ -27,7 +27,7 @@ import java.util.Set;
 
 /**
  * The AbstractSignalNotificationHandler class...
- * </p>
+ *
  * @see org.apache.geode.internal.process.signal.Signal
  * @see org.apache.geode.internal.process.signal.SignalEvent
  * @see org.apache.geode.internal.process.signal.SignalListener
@@ -37,44 +37,56 @@ import java.util.Set;
 public abstract class AbstractSignalNotificationHandler {
 
   // NOTE use the enumerated type instead...
-  @Deprecated
-  protected static final List<String> SIGNAL_NAMES;
+  @Deprecated protected static final List<String> SIGNAL_NAMES;
 
   // Based on Open BSD OS Signals...
   static {
-    final String[] SIGNAL_NAMES_ARRAY = new String[] { "", "HUP", "INT", "QUIT", "ILL", "TRAP", "ABRT", "EMT", "FPE", "KILL", "BUS", "SEGV", "SYS", "PIPE", "ALRM", "TERM", "URG", "STOP", "TSTP", "CONT", "CHLD", "TTIN", "TTOU", "IO", "XCPU", "XFSZ", "VTALRM", "PROF", "WINCH", "INFO", "USR1", "USR2" };
+    final String[] SIGNAL_NAMES_ARRAY =
+        new String[] {
+          "", "HUP", "INT", "QUIT", "ILL", "TRAP", "ABRT", "EMT", "FPE", "KILL", "BUS", "SEGV",
+          "SYS", "PIPE", "ALRM", "TERM", "URG", "STOP", "TSTP", "CONT", "CHLD", "TTIN", "TTOU",
+          "IO", "XCPU", "XFSZ", "VTALRM", "PROF", "WINCH", "INFO", "USR1", "USR2"
+        };
 
     SIGNAL_NAMES = Collections.unmodifiableList(Arrays.asList(SIGNAL_NAMES_ARRAY));
   }
 
-  protected static final SignalListener LOGGING_SIGNAL_LISTENER = new SignalListener() {
-    public void handle(final SignalEvent event) {
-      System.out.printf("Logging SignalListener Received Signal '%1$s' (%2$d)%n", event.getSignal().getName(), event.getSignal().getNumber());
-    }
-  };
+  protected static final SignalListener LOGGING_SIGNAL_LISTENER =
+      new SignalListener() {
+        public void handle(final SignalEvent event) {
+          System.out.printf(
+              "Logging SignalListener Received Signal '%1$s' (%2$d)%n",
+              event.getSignal().getName(), event.getSignal().getNumber());
+        }
+      };
 
-  protected static final SignalListener NO_OP_SIGNAL_LISTENER = new SignalListener() {
-    public void handle(final SignalEvent event) {
-      // no op
-    }
-  };
+  protected static final SignalListener NO_OP_SIGNAL_LISTENER =
+      new SignalListener() {
+        public void handle(final SignalEvent event) {
+          // no op
+        }
+      };
 
   // Map used to register SignalListeners with SignalHandlers...
-  private final Map<Signal, Set<SignalListener>> signalListeners = Collections.synchronizedMap(new HashMap<Signal, Set<SignalListener>>(Signal.values().length));
+  private final Map<Signal, Set<SignalListener>> signalListeners =
+      Collections.synchronizedMap(new HashMap<Signal, Set<SignalListener>>(Signal.values().length));
 
-  protected static void assertNotNull(final Object obj, final String message, final Object... arguments) {
+  protected static void assertNotNull(
+      final Object obj, final String message, final Object... arguments) {
     if (obj == null) {
       throw new NullPointerException(String.format(message, arguments));
     }
   }
 
-  protected static void assertState(final boolean state, final String message, final Object... arguments) {
+  protected static void assertState(
+      final boolean state, final String message, final Object... arguments) {
     if (!state) {
       throw new IllegalStateException(String.format(message, arguments));
     }
   }
 
-  protected static void assertValidArgument(final boolean valid, final String message, final Object... arguments) {
+  protected static void assertValidArgument(
+      final boolean valid, final String message, final Object... arguments) {
     if (!valid) {
       throw new IllegalArgumentException(String.format(message, arguments));
     }
@@ -103,7 +115,9 @@ public abstract class AbstractSignalNotificationHandler {
   }
 
   public boolean isListening(final SignalListener listener, final Signal signal) {
-    assertNotNull(signal, "The signal to determine whether the listener is registered listening for cannot be null!");
+    assertNotNull(
+        signal,
+        "The signal to determine whether the listener is registered listening for cannot be null!");
     return signalListeners.get(signal).contains(listener);
   }
 
@@ -123,7 +137,8 @@ public abstract class AbstractSignalNotificationHandler {
   }
 
   public boolean registerListener(final SignalListener listener) {
-    assertNotNull(listener, "The SignalListener to register, listening for all signals cannot be null!");
+    assertNotNull(
+        listener, "The SignalListener to register, listening for all signals cannot be null!");
 
     boolean registered = false;
 
@@ -136,7 +151,10 @@ public abstract class AbstractSignalNotificationHandler {
 
   public boolean registerListener(final SignalListener listener, final Signal signal) {
     assertNotNull(signal, "The signal to register the listener for cannot be null!");
-    assertNotNull(listener, "The SignalListener being registered to listen for '%1$s' signals cannot be null!", signal.getName());
+    assertNotNull(
+        listener,
+        "The SignalListener being registered to listen for '%1$s' signals cannot be null!",
+        signal.getName());
 
     return signalListeners.get(signal).add(listener);
   }
@@ -167,5 +185,4 @@ public abstract class AbstractSignalNotificationHandler {
       return listeners.isEmpty();
     }
   }
-
 }

@@ -19,89 +19,86 @@ package org.apache.geode.cache;
 import org.apache.geode.internal.cache.FixedPartitionAttributesImpl;
 
 /**
- * Composite date type used to distribute the attributes for a fixed partition.
- * </p>
- * 
- * {@link org.apache.geode.cache.PartitionAttributes#getFixedPartitionAttributes()}
- * returns all fixed partitions in Partitioned Region attributes. </p>
- * {@link org.apache.geode.cache.PartitionAttributesFactory#addFixedPartitionAttributes(FixedPartitionAttributes)}
- * configures <code>FixedPartitionAttributes</Code> in
- * <code>PartitionedRegionAttributes</code> </p>
- * 
+ * Composite date type used to distribute the attributes for a fixed partition. {@link
+ * org.apache.geode.cache.PartitionAttributes#getFixedPartitionAttributes()} returns all fixed
+ * partitions in Partitioned Region attributes. {@link
+ * org.apache.geode.cache.PartitionAttributesFactory#addFixedPartitionAttributes(FixedPartitionAttributes)}
+ * configures <code>FixedPartitionAttributes</Code> in <code>PartitionedRegionAttributes</code>
+ *
  * @see org.apache.geode.cache.PartitionAttributes
  * @see org.apache.geode.cache.PartitionAttributesFactory
- * 
  * @since GemFire 6.6
  */
-
 public abstract class FixedPartitionAttributes {
 
-  private final static boolean DEFAULT_PRIMARY_STATUS = false;
+  private static final boolean DEFAULT_PRIMARY_STATUS = false;
 
-  private final static int DEFAULT_NUM_BUCKETS = 1;
+  private static final int DEFAULT_NUM_BUCKETS = 1;
 
   /**
    * Creates an instance of <code>FixedPartitionAttributes</code>.
-   * 
-   * @param name
-   *          Name of the fixed partition.
+   *
+   * @param name Name of the fixed partition.
    */
-  final public static FixedPartitionAttributes createFixedPartition(String name) {
-    return new FixedPartitionAttributesImpl().setPartitionName(name).isPrimary(DEFAULT_PRIMARY_STATUS).setNumBuckets(DEFAULT_NUM_BUCKETS);
+  public static final FixedPartitionAttributes createFixedPartition(String name) {
+    return new FixedPartitionAttributesImpl()
+        .setPartitionName(name)
+        .isPrimary(DEFAULT_PRIMARY_STATUS)
+        .setNumBuckets(DEFAULT_NUM_BUCKETS);
   }
 
   /**
    * Creates an instance of <code>FixedPartitionAttributes</code>.
-   * 
-   * @param name
-   *          Name of the fixed partition.
-   * @param isPrimary
-   *          True if this member is the primary for the partition.
+   *
+   * @param name Name of the fixed partition.
+   * @param isPrimary True if this member is the primary for the partition.
    */
-  final public static FixedPartitionAttributes createFixedPartition(String name, boolean isPrimary) {
-    return new FixedPartitionAttributesImpl().setPartitionName(name).isPrimary(isPrimary).setNumBuckets(DEFAULT_NUM_BUCKETS);
+  public static final FixedPartitionAttributes createFixedPartition(
+      String name, boolean isPrimary) {
+    return new FixedPartitionAttributesImpl()
+        .setPartitionName(name)
+        .isPrimary(isPrimary)
+        .setNumBuckets(DEFAULT_NUM_BUCKETS);
   }
 
   /**
    * Creates an instance of <code>FixedPartitionAttributes</code>.
-   * 
-   * @param name
-   *          Name of the fixed partition.
-   * @param isPrimary
-   *          True if this member is the primary for the partition.
-   * @param numBuckets
-   *          Number of buckets allowed for the partition.
+   *
+   * @param name Name of the fixed partition.
+   * @param isPrimary True if this member is the primary for the partition.
+   * @param numBuckets Number of buckets allowed for the partition.
    */
-  final public static FixedPartitionAttributes createFixedPartition(String name, boolean isPrimary, int numBuckets) {
-    return new FixedPartitionAttributesImpl().setPartitionName(name).isPrimary(isPrimary).setNumBuckets(numBuckets);
+  public static final FixedPartitionAttributes createFixedPartition(
+      String name, boolean isPrimary, int numBuckets) {
+    return new FixedPartitionAttributesImpl()
+        .setPartitionName(name)
+        .isPrimary(isPrimary)
+        .setNumBuckets(numBuckets);
   }
 
   /**
    * Creates an instance of <code>FixedPartitionAttributes</code>.
-   * 
-   * @param name
-   *          Name of the fixed partition.
-   * @param numBuckets
-   *          Number of buckets allowed for the partition.
+   *
+   * @param name Name of the fixed partition.
+   * @param numBuckets Number of buckets allowed for the partition.
    */
-  final public static FixedPartitionAttributes createFixedPartition(String name, int numBuckets) {
-    return new FixedPartitionAttributesImpl().setPartitionName(name).isPrimary(DEFAULT_PRIMARY_STATUS).setNumBuckets(numBuckets);
+  public static final FixedPartitionAttributes createFixedPartition(String name, int numBuckets) {
+    return new FixedPartitionAttributesImpl()
+        .setPartitionName(name)
+        .isPrimary(DEFAULT_PRIMARY_STATUS)
+        .setNumBuckets(numBuckets);
   }
 
-  /**
-   * Returns the name of the fixed partition.
-   */
+  /** Returns the name of the fixed partition. */
   public abstract String getPartitionName();
 
   /**
    * Returns whether this member is the primary for the partition.
-   * 
+   *
    * @return True if this member is the primary, false otherwise.
    */
   public abstract boolean isPrimary();
 
-  /**
-   * Returns the number of buckets allowed for the partition.
-   */
+  /** Returns the number of buckets allowed for the partition. */
   public abstract int getNumBuckets();
 }

@@ -27,38 +27,40 @@ import org.apache.geode.cache.wan.GatewaySender;
 import org.apache.geode.internal.cache.wan.DistributedSystemListener;
 
 /**
- * This is an implementation of DistributedSystemListener. When a
- * addedDistributedSystem is called a Region is created on both sites and
- * GatewaySender and GatewayReciever is started on site 1 and site 2
- * respectively.
- * 
- * When a removedDistributedSystem is called, GatewaySender and GatewayReceiver
- * is stopped on site1 and site2 respectively.
- * 
- * 
+ * This is an implementation of DistributedSystemListener. When a addedDistributedSystem is called a
+ * Region is created on both sites and GatewaySender and GatewayReciever is started on site 1 and
+ * site 2 respectively.
+ *
+ * <p>When a removedDistributedSystem is called, GatewaySender and GatewayReceiver is stopped on
+ * site1 and site2 respectively.
  */
 public class MyDistributedSystemListener implements DistributedSystemListener {
 
   Cache cache;
 
-  public MyDistributedSystemListener() {
-  }
+  public MyDistributedSystemListener() {}
 
-  /**
-   * Please note that dynamic addition of the sender id to region is not yet available.  
-   */
+  /** Please note that dynamic addition of the sender id to region is not yet available. */
   public void addedDistributedSystem(int remoteDsId) {
     cache = CacheFactory.getAnyInstance();
 
-    //When a site with distributed-system-id = 2 joins, create a region and a gatewaysender with remoteDsId = 2 
+    //When a site with distributed-system-id = 2 joins, create a region and a gatewaysender with remoteDsId = 2
     if (remoteDsId == 2) {
       if (cache != null) {
-        GatewaySender serialSender = cache.createGatewaySenderFactory().setManualStart(true).setPersistenceEnabled(false).setDiskStoreName("LN_" + remoteDsId).create("LN_" + remoteDsId, remoteDsId);
+        GatewaySender serialSender =
+            cache
+                .createGatewaySenderFactory()
+                .setManualStart(true)
+                .setPersistenceEnabled(false)
+                .setDiskStoreName("LN_" + remoteDsId)
+                .create("LN_" + remoteDsId, remoteDsId);
         System.out.println("Sender Created : " + serialSender.getId());
 
-        Region region = cache.createRegionFactory()
-            //.addSerialGatewaySenderId("LN_" + remoteDsId)
-            .create("MyRegion");
+        Region region =
+            cache
+                .createRegionFactory()
+                //.addSerialGatewaySenderId("LN_" + remoteDsId)
+                .create("MyRegion");
         System.out.println("Created Region : " + region.getName());
 
         try {
@@ -70,12 +72,13 @@ public class MyDistributedSystemListener implements DistributedSystemListener {
       } else {
         throw new CacheClosedException("Cache is not initialized here");
       }
-    } else { //When a site with distributed-system-id = 1 joins, create a region and a gatewayReceiver with  
+    } else { //When a site with distributed-system-id = 1 joins, create a region and a gatewayReceiver with
       if (cache != null) {
         Region region = cache.createRegionFactory().create("MyRegion");
         System.out.println("Created Region :" + region.getName());
 
-        GatewayReceiver receiver = cache.createGatewayReceiverFactory().setStartPort(12345).setManualStart(true).create();
+        GatewayReceiver receiver =
+            cache.createGatewayReceiverFactory().setStartPort(12345).setManualStart(true).create();
         System.out.println("Created GatewayReceiver : " + receiver);
         try {
           receiver.start();
@@ -89,7 +92,8 @@ public class MyDistributedSystemListener implements DistributedSystemListener {
 
   public void removedDistributedSystem(int remoteDsId) {
     cache = CacheFactory.getAnyInstance();
-    if (remoteDsId == 2) { //When a site with distributed-system-id = -2 joins, stop gatewaysender with remoteDsId = 2 
+    if (remoteDsId
+        == 2) { //When a site with distributed-system-id = -2 joins, stop gatewaysender with remoteDsId = 2
       if (cache != null) {
         GatewaySender sender = cache.getGatewaySender("LN_" + 2);
         sender.stop();

@@ -43,19 +43,15 @@ import org.apache.geode.test.dunit.ThreadUtils;
 import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 
-/**
- * 
- */
+/** */
 @Category(DistributedTest.class)
-public class PRBasicIndexCreationDeadlockDUnitTest extends PartitionedRegionDUnitTestCase
+public class PRBasicIndexCreationDeadlockDUnitTest extends PartitionedRegionDUnitTestCase {
 
-{
   /**
    * constructor
-   * 
+   *
    * @param name
    */
-
   public PRBasicIndexCreationDeadlockDUnitTest() {
     super();
   }
@@ -102,14 +98,15 @@ public class PRBasicIndexCreationDeadlockDUnitTest extends PartitionedRegionDUni
     AsyncInvocation[] asyns = new AsyncInvocation[2];
 
     try {
-      vm0.invoke(new CacheSerializableRunnable("Create disk store directories") {
+      vm0.invoke(
+          new CacheSerializableRunnable("Create disk store directories") {
 
-        @Override
-        public void run2() throws CacheException {
-          boolean success = (dir1).mkdir();
-          success = (dir2).mkdir();
-        }
-      });
+            @Override
+            public void run2() throws CacheException {
+              boolean success = (dir1).mkdir();
+              success = (dir2).mkdir();
+            }
+          });
 
       vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name));
       vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name));
@@ -117,103 +114,114 @@ public class PRBasicIndexCreationDeadlockDUnitTest extends PartitionedRegionDUni
       final Portfolio[] portfoliosAndPositions = createPortfoliosAndPositions(100);
 
       // Putting the data into the PR's created
-      vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRPutsKeyValue(name, portfoliosAndPositions, 0, 100));
+      vm0.invoke(
+          PRQHelp.getCacheSerializableRunnableForPRPutsKeyValue(
+              name, portfoliosAndPositions, 0, 100));
 
-      vm0.invoke(new CacheSerializableRunnable("Close VM0 cache") {
+      vm0.invoke(
+          new CacheSerializableRunnable("Close VM0 cache") {
 
-        @Override
-        public void run2() throws CacheException {
-          GemFireCacheImpl.getInstance().close();
-        }
-      });
+            @Override
+            public void run2() throws CacheException {
+              GemFireCacheImpl.getInstance().close();
+            }
+          });
 
-      vm1.invoke(new CacheSerializableRunnable("Close VM1 cache") {
+      vm1.invoke(
+          new CacheSerializableRunnable("Close VM1 cache") {
 
-        @Override
-        public void run2() throws CacheException {
-          GemFireCacheImpl.getInstance().close();
-        }
-      });
+            @Override
+            public void run2() throws CacheException {
+              GemFireCacheImpl.getInstance().close();
+            }
+          });
 
       // Restart the caches with testHook.
-      asyns[0] = vm0.invokeAsync(new CacheSerializableRunnable("Restart VM0 cache") {
+      asyns[0] =
+          vm0.invokeAsync(
+              new CacheSerializableRunnable("Restart VM0 cache") {
 
-        @Override
-        public void run2() throws CacheException {
-          GemFireCacheImpl.testCacheXml = PRQHelp.findFile(fileName1);
-          IndexUtils.testHook = new IndexUtilTestHook();
-          getCache();
-        }
-      });
+                @Override
+                public void run2() throws CacheException {
+                  GemFireCacheImpl.testCacheXml = PRQHelp.findFile(fileName1);
+                  IndexUtils.testHook = new IndexUtilTestHook();
+                  getCache();
+                }
+              });
 
-      //asyns[1] = 
-      vm0.invoke(new CacheSerializableRunnable("Checking hook in VM0 cache") {
+      //asyns[1] =
+      vm0.invoke(
+          new CacheSerializableRunnable("Checking hook in VM0 cache") {
 
-        @Override
-        public void run2() throws CacheException {
-          IndexUtilTestHook hook = (IndexUtilTestHook) IndexUtils.testHook;
-          while (hook == null) {
-            hook = (IndexUtilTestHook) IndexUtils.testHook;
-            Wait.pause(20);
-          }
-          while (!hook.isHooked()) {
-            Wait.pause(30);
-          }
-          //hook.setHooked(false);
-          hook_vm1 = true;
-          /*while (!hook_vm2) {
-            pause(40);
-          }
-          hook.setHooked(false);*/
-        }
-      });
+            @Override
+            public void run2() throws CacheException {
+              IndexUtilTestHook hook = (IndexUtilTestHook) IndexUtils.testHook;
+              while (hook == null) {
+                hook = (IndexUtilTestHook) IndexUtils.testHook;
+                Wait.pause(20);
+              }
+              while (!hook.isHooked()) {
+                Wait.pause(30);
+              }
+              //hook.setHooked(false);
+              hook_vm1 = true;
+              /*while (!hook_vm2) {
+                pause(40);
+              }
+              hook.setHooked(false);*/
+            }
+          });
 
-      asyns[1] = vm1.invokeAsync(new CacheSerializableRunnable("Restart VM1 cache") {
+      asyns[1] =
+          vm1.invokeAsync(
+              new CacheSerializableRunnable("Restart VM1 cache") {
 
-        @Override
-        public void run2() throws CacheException {
-          GemFireCacheImpl.testCacheXml = PRQHelp.findFile(fileName2);
-          getCache();
-        }
-      });
+                @Override
+                public void run2() throws CacheException {
+                  GemFireCacheImpl.testCacheXml = PRQHelp.findFile(fileName2);
+                  getCache();
+                }
+              });
 
       Wait.pause(2000);
 
-      vm0.invoke(new CacheSerializableRunnable("Checking hook in VM0 cache again") {
+      vm0.invoke(
+          new CacheSerializableRunnable("Checking hook in VM0 cache again") {
 
-        @Override
-        public void run2() throws CacheException {
-          IndexUtilTestHook hook = (IndexUtilTestHook) IndexUtils.testHook;
-          while (hook == null) {
-            hook = (IndexUtilTestHook) IndexUtils.testHook;
-            Wait.pause(20);
-          }
-          while (!hook.isHooked()) {
-            Wait.pause(30);
-          }
-          hook.setHooked(false);
-          hook_vm1 = false;
-        }
-      });
+            @Override
+            public void run2() throws CacheException {
+              IndexUtilTestHook hook = (IndexUtilTestHook) IndexUtils.testHook;
+              while (hook == null) {
+                hook = (IndexUtilTestHook) IndexUtils.testHook;
+                Wait.pause(20);
+              }
+              while (!hook.isHooked()) {
+                Wait.pause(30);
+              }
+              hook.setHooked(false);
+              hook_vm1 = false;
+            }
+          });
 
       for (AsyncInvocation async : asyns) {
         ThreadUtils.join(async, 10000);
       }
     } finally {
 
-      vm0.invoke(new CacheSerializableRunnable("Close VM0 cache") {
+      vm0.invoke(
+          new CacheSerializableRunnable("Close VM0 cache") {
 
-        @Override
-        public void run2() throws CacheException {
-          dir1.delete();
-          dir2.delete();
-          IndexUtilTestHook hook = (IndexUtilTestHook) IndexUtils.testHook;
-          if (hook != null) {
-            hook.setHooked(true);
-            IndexUtils.testHook = null;
-          }
-        }
-      });
+            @Override
+            public void run2() throws CacheException {
+              dir1.delete();
+              dir2.delete();
+              IndexUtilTestHook hook = (IndexUtilTestHook) IndexUtils.testHook;
+              if (hook != null) {
+                hook.setHooked(true);
+                IndexUtils.testHook = null;
+              }
+            }
+          });
     }
   }
 
@@ -233,15 +241,15 @@ public class PRBasicIndexCreationDeadlockDUnitTest extends PartitionedRegionDUni
     public synchronized void hook(int spot) throws RuntimeException {
       GemFireCacheImpl.getInstance().getLogger().fine("IndexUtilTestHook is set");
       switch (spot) {
-      case 0:
-        hooked = true;
-        while (hooked) {
-          Wait.pause(300);
-        }
-        break;
+        case 0:
+          hooked = true;
+          while (hooked) {
+            Wait.pause(300);
+          }
+          break;
 
-      default:
-        break;
+        default:
+          break;
       }
     }
   }

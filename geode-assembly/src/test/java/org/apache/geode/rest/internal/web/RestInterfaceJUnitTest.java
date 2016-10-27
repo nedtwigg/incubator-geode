@@ -69,10 +69,11 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * The GemFireRestInterfaceTest class is a test suite of test cases testing the contract and functionality of the
- * GemFire Developer REST API, mixing Java clients, this test GemFire's Cache Region API, along with
- * a REST-based client, also this test using Spring's RestTemplate, testing the proper interaction, especially
- * in the case of an application domain object type having a java.util.Date property.
+ * The GemFireRestInterfaceTest class is a test suite of test cases testing the contract and
+ * functionality of the GemFire Developer REST API, mixing Java clients, this test GemFire's Cache
+ * Region API, along with a REST-based client, also this test using Spring's RestTemplate, testing
+ * the proper interaction, especially in the case of an application domain object type having a
+ * java.util.Date property.
  *
  * @see org.junit.Test
  * @see org.junit.runner.RunWith
@@ -91,14 +92,13 @@ public class RestInterfaceJUnitTest {
 
   protected static int DEFAULT_HTTP_SERVICE_PORT = 8189;
 
-  protected static final String REST_API_SERVICE_ENDPOINT = "http://localhost:%1$d/gemfire-api/v1/%2$s/%3$s";
+  protected static final String REST_API_SERVICE_ENDPOINT =
+      "http://localhost:%1$d/gemfire-api/v1/%2$s/%3$s";
   protected static final String UTF_8 = "UTF-8";
 
-  @Autowired
-  private Cache gemfireCache;
+  @Autowired private Cache gemfireCache;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
   @Resource(name = "gemfireProperties")
   private Properties gemfireProperties;
@@ -116,9 +116,20 @@ public class RestInterfaceJUnitTest {
     if (gemfireCache == null) {
       gemfireProperties = (gemfireProperties != null ? gemfireProperties : new Properties());
 
-      gemfireCache = new CacheFactory()
-          //.setPdxSerializer(new ReflectionBasedAutoSerializer(Person.class.getPackage().getName().concat(".*")))
-          .setPdxSerializer(new ReflectionBasedAutoSerializer(Person.class.getName().replaceAll("\\$", "."))).setPdxReadSerialized(true).setPdxIgnoreUnreadFields(false).set("name", getClass().getSimpleName()).set(MCAST_PORT, "0").set(LOG_LEVEL, "config").set(HTTP_SERVICE_BIND_ADDRESS, "localhost").set(HTTP_SERVICE_PORT, String.valueOf(getHttpServicePort())).set(START_DEV_REST_API, "true").create();
+      gemfireCache =
+          new CacheFactory()
+              //.setPdxSerializer(new ReflectionBasedAutoSerializer(Person.class.getPackage().getName().concat(".*")))
+              .setPdxSerializer(
+                  new ReflectionBasedAutoSerializer(Person.class.getName().replaceAll("\\$", ".")))
+              .setPdxReadSerialized(true)
+              .setPdxIgnoreUnreadFields(false)
+              .set("name", getClass().getSimpleName())
+              .set(MCAST_PORT, "0")
+              .set(LOG_LEVEL, "config")
+              .set(HTTP_SERVICE_BIND_ADDRESS, "localhost")
+              .set(HTTP_SERVICE_PORT, String.valueOf(getHttpServicePort()))
+              .set(START_DEV_REST_API, "true")
+              .create();
 
       RegionFactory<String, Object> peopleRegionFactory = gemfireCache.createRegionFactory();
 
@@ -137,7 +148,8 @@ public class RestInterfaceJUnitTest {
 
   protected synchronized int getHttpServicePort() {
     try {
-      return Integer.parseInt(StringUtils.trimWhitespace(gemfireProperties.getProperty(HTTP_SERVICE_PORT)));
+      return Integer.parseInt(
+          StringUtils.trimWhitespace(gemfireProperties.getProperty(HTTP_SERVICE_PORT)));
     } catch (NumberFormatException ignore) {
       int httpServicePort = getHttpServicePort(DEFAULT_HTTP_SERVICE_PORT);
       gemfireProperties.setProperty(HTTP_SERVICE_PORT, String.valueOf(httpServicePort));
@@ -147,18 +159,23 @@ public class RestInterfaceJUnitTest {
 
   private int getHttpServicePort(final int defaultHttpServicePort) {
     int httpServicePort = AvailablePortHelper.getRandomAvailableTCPPort();
-    return (httpServicePort > 1024 && httpServicePort < 65536 ? httpServicePort : defaultHttpServicePort);
+    return (httpServicePort > 1024 && httpServicePort < 65536
+        ? httpServicePort
+        : defaultHttpServicePort);
   }
 
   protected ObjectMapper getObjectMapper() {
     if (objectMapper == null) {
-      Jackson2ObjectMapperFactoryBean objectMapperFactoryBean = new Jackson2ObjectMapperFactoryBean();
+      Jackson2ObjectMapperFactoryBean objectMapperFactoryBean =
+          new Jackson2ObjectMapperFactoryBean();
 
       objectMapperFactoryBean.setFailOnEmptyBeans(true);
       objectMapperFactoryBean.setFeaturesToEnable(Feature.ALLOW_COMMENTS);
       objectMapperFactoryBean.setFeaturesToEnable(Feature.ALLOW_SINGLE_QUOTES);
-      objectMapperFactoryBean.setFeaturesToEnable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
-      objectMapperFactoryBean.setFeaturesToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+      objectMapperFactoryBean.setFeaturesToEnable(
+          DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+      objectMapperFactoryBean.setFeaturesToDisable(
+          DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
       objectMapperFactoryBean.setIndentOutput(true);
       objectMapperFactoryBean.setSimpleDateFormat("MM/dd/yyyy");
       objectMapperFactoryBean.afterPropertiesSet();
@@ -179,14 +196,19 @@ public class RestInterfaceJUnitTest {
   }
 
   protected String getAdhocQueryRestApiEndpoint(final int httpServicePort, final String query) {
-    return String.format(REST_API_SERVICE_ENDPOINT, httpServicePort, "queries", String.format("adhoc?q=%1$s", query));
+    return String.format(
+        REST_API_SERVICE_ENDPOINT,
+        httpServicePort,
+        "queries",
+        String.format("adhoc?q=%1$s", query));
   }
 
   protected String getRegionGetRestApiEndpoint(final Region<?, ?> region, final String key) {
     return getRegionGetRestApiEndpoint(getHttpServicePort(), region, key);
   }
 
-  protected String getRegionGetRestApiEndpoint(final int httpServicePort, final Region<?, ?> region, final String key) {
+  protected String getRegionGetRestApiEndpoint(
+      final int httpServicePort, final Region<?, ?> region, final String key) {
     return String.format(REST_API_SERVICE_ENDPOINT, httpServicePort, region.getName(), key);
   }
 
@@ -203,71 +225,76 @@ public class RestInterfaceJUnitTest {
     return createPerson(firstName, lastName, null);
   }
 
-  protected Person createPerson(final String firstName, final String lastName, final Date birthDate) {
+  protected Person createPerson(
+      final String firstName, final String lastName, final Date birthDate) {
     return new Person(firstName, lastName, birthDate);
   }
 
   protected RestTemplate createRestTemplate() {
-    MappingJackson2HttpMessageConverter httpMessageConverter = new MappingJackson2HttpMessageConverter();
+    MappingJackson2HttpMessageConverter httpMessageConverter =
+        new MappingJackson2HttpMessageConverter();
 
     httpMessageConverter.setObjectMapper(getObjectMapper());
 
-    return setErrorHandler(new RestTemplate(Collections.<HttpMessageConverter<?>> singletonList(httpMessageConverter)));
+    return setErrorHandler(
+        new RestTemplate(Collections.<HttpMessageConverter<?>>singletonList(httpMessageConverter)));
   }
 
   private RestTemplate setErrorHandler(final RestTemplate restTemplate) {
-    restTemplate.setErrorHandler(new ResponseErrorHandler() {
-      private final Set<HttpStatus> errorStatuses = new HashSet<>();
+    restTemplate.setErrorHandler(
+        new ResponseErrorHandler() {
+          private final Set<HttpStatus> errorStatuses = new HashSet<>();
 
-      /* non-static */ {
-        errorStatuses.add(HttpStatus.BAD_REQUEST);
-        errorStatuses.add(HttpStatus.UNAUTHORIZED);
-        errorStatuses.add(HttpStatus.FORBIDDEN);
-        errorStatuses.add(HttpStatus.NOT_FOUND);
-        errorStatuses.add(HttpStatus.METHOD_NOT_ALLOWED);
-        errorStatuses.add(HttpStatus.NOT_ACCEPTABLE);
-        errorStatuses.add(HttpStatus.REQUEST_TIMEOUT);
-        errorStatuses.add(HttpStatus.CONFLICT);
-        errorStatuses.add(HttpStatus.REQUEST_ENTITY_TOO_LARGE);
-        errorStatuses.add(HttpStatus.REQUEST_URI_TOO_LONG);
-        errorStatuses.add(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
-        errorStatuses.add(HttpStatus.TOO_MANY_REQUESTS);
-        errorStatuses.add(HttpStatus.INTERNAL_SERVER_ERROR);
-        errorStatuses.add(HttpStatus.NOT_IMPLEMENTED);
-        errorStatuses.add(HttpStatus.BAD_GATEWAY);
-        errorStatuses.add(HttpStatus.SERVICE_UNAVAILABLE);
-      }
-
-      @Override
-      public boolean hasError(final ClientHttpResponse response) throws IOException {
-        return errorStatuses.contains(response.getStatusCode());
-      }
-
-      @Override
-      public void handleError(final ClientHttpResponse response) throws IOException {
-        System.err.printf("%1$d - %2$s%n", response.getRawStatusCode(), response.getStatusText());
-        System.err.println(readBody(response));
-      }
-
-      private String readBody(final ClientHttpResponse response) throws IOException {
-        BufferedReader responseBodyReader = null;
-
-        try {
-          responseBodyReader = new BufferedReader(new InputStreamReader(response.getBody()));
-
-          StringBuilder buffer = new StringBuilder();
-          String line;
-
-          while ((line = responseBodyReader.readLine()) != null) {
-            buffer.append(line).append(System.getProperty("line.separator"));
+          /* non-static */ {
+            errorStatuses.add(HttpStatus.BAD_REQUEST);
+            errorStatuses.add(HttpStatus.UNAUTHORIZED);
+            errorStatuses.add(HttpStatus.FORBIDDEN);
+            errorStatuses.add(HttpStatus.NOT_FOUND);
+            errorStatuses.add(HttpStatus.METHOD_NOT_ALLOWED);
+            errorStatuses.add(HttpStatus.NOT_ACCEPTABLE);
+            errorStatuses.add(HttpStatus.REQUEST_TIMEOUT);
+            errorStatuses.add(HttpStatus.CONFLICT);
+            errorStatuses.add(HttpStatus.REQUEST_ENTITY_TOO_LARGE);
+            errorStatuses.add(HttpStatus.REQUEST_URI_TOO_LONG);
+            errorStatuses.add(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+            errorStatuses.add(HttpStatus.TOO_MANY_REQUESTS);
+            errorStatuses.add(HttpStatus.INTERNAL_SERVER_ERROR);
+            errorStatuses.add(HttpStatus.NOT_IMPLEMENTED);
+            errorStatuses.add(HttpStatus.BAD_GATEWAY);
+            errorStatuses.add(HttpStatus.SERVICE_UNAVAILABLE);
           }
 
-          return buffer.toString().trim();
-        } finally {
-          IOUtils.close(responseBodyReader);
-        }
-      }
-    });
+          @Override
+          public boolean hasError(final ClientHttpResponse response) throws IOException {
+            return errorStatuses.contains(response.getStatusCode());
+          }
+
+          @Override
+          public void handleError(final ClientHttpResponse response) throws IOException {
+            System.err.printf(
+                "%1$d - %2$s%n", response.getRawStatusCode(), response.getStatusText());
+            System.err.println(readBody(response));
+          }
+
+          private String readBody(final ClientHttpResponse response) throws IOException {
+            BufferedReader responseBodyReader = null;
+
+            try {
+              responseBodyReader = new BufferedReader(new InputStreamReader(response.getBody()));
+
+              StringBuilder buffer = new StringBuilder();
+              String line;
+
+              while ((line = responseBodyReader.readLine()) != null) {
+                buffer.append(line).append(System.getProperty("line.separator"));
+              }
+
+              return buffer.toString().trim();
+            } finally {
+              IOUtils.close(responseBodyReader);
+            }
+          }
+        });
 
     return restTemplate;
   }
@@ -295,7 +322,9 @@ public class RestInterfaceJUnitTest {
 
     RestTemplate restTemplate = createRestTemplate();
 
-    Person jonDoeResource = restTemplate.getForObject(getRegionGetRestApiEndpoint(getPeopleRegion(), key), Person.class);
+    Person jonDoeResource =
+        restTemplate.getForObject(
+            getRegionGetRestApiEndpoint(getPeopleRegion(), key), Person.class);
 
     assertNotNull(jonDoeResource);
     assertNotSame(jonDoe, jonDoeResource);
@@ -304,11 +333,13 @@ public class RestInterfaceJUnitTest {
     /*
     Object result = runQueryUsingApi(getPeopleRegion().getRegionService(), String.format("SELECT * FROM %1$s",
       getPeopleRegion().getFullPath()));
-    
+
     System.out.printf("(OQL Query using API) Person is (%1$s)%n", result);
     */
 
-    String url = getAdhocQueryRestApiEndpoint(String.format("SELECT * FROM %1$s", getPeopleRegion().getFullPath()));
+    String url =
+        getAdhocQueryRestApiEndpoint(
+            String.format("SELECT * FROM %1$s", getPeopleRegion().getFullPath()));
 
     System.out.printf("URL (%1$s)%n", url);
 
@@ -325,7 +356,8 @@ public class RestInterfaceJUnitTest {
     assertEquals(jonDoe, jonDoeResource);
   }
 
-  private Object runQueryUsingApi(final RegionService regionService, final String queryString) throws Exception {
+  private Object runQueryUsingApi(final RegionService regionService, final String queryString)
+      throws Exception {
     return regionService.getQueryService().newQuery(queryString).execute();
   }
 
@@ -341,8 +373,7 @@ public class RestInterfaceJUnitTest {
     private String firstName;
     private String lastName;
 
-    public Person() {
-    }
+    public Person() {}
 
     public Person(final String firstName, final String lastName) {
       this(firstName, lastName, null);
@@ -359,7 +390,9 @@ public class RestInterfaceJUnitTest {
     }
 
     public void setBirthDate(final Date birthDate) {
-      Assert.isTrue(birthDate == null || birthDate.compareTo(Calendar.getInstance().getTime()) <= 0, "A Person's date of birth cannot be after today!");
+      Assert.isTrue(
+          birthDate == null || birthDate.compareTo(Calendar.getInstance().getTime()) <= 0,
+          "A Person's date of birth cannot be after today!");
       this.birthDate = birthDate;
     }
 
@@ -386,7 +419,13 @@ public class RestInterfaceJUnitTest {
     }
 
     protected String format(final Date dateTime, final String dateFormatPattern) {
-      return (dateTime == null ? null : new SimpleDateFormat(StringUtils.hasText(dateFormatPattern) ? dateFormatPattern : DEFAULT_BIRTH_DATE_FORMAT_PATTERN).format(dateTime));
+      return (dateTime == null
+          ? null
+          : new SimpleDateFormat(
+                  StringUtils.hasText(dateFormatPattern)
+                      ? dateFormatPattern
+                      : DEFAULT_BIRTH_DATE_FORMAT_PATTERN)
+              .format(dateTime));
     }
 
     @Override
@@ -415,7 +454,9 @@ public class RestInterfaceJUnitTest {
 
       Person that = (Person) obj;
 
-      return ObjectUtils.nullSafeEquals(this.getFirstName(), that.getFirstName()) && ObjectUtils.nullSafeEquals(this.getLastName(), that.getLastName()) && ObjectUtils.nullSafeEquals(this.getBirthDate(), that.getBirthDate());
+      return ObjectUtils.nullSafeEquals(this.getFirstName(), that.getFirstName())
+          && ObjectUtils.nullSafeEquals(this.getLastName(), that.getLastName())
+          && ObjectUtils.nullSafeEquals(this.getBirthDate(), that.getBirthDate());
     }
 
     @Override
@@ -429,8 +470,9 @@ public class RestInterfaceJUnitTest {
 
     @Override
     public String toString() {
-      return String.format("{ @type = %1$s, firstName = %2$s, lastName = %3$s, birthDate = %4$s }", getClass().getName(), getFirstName(), getLastName(), format(getBirthDate()));
+      return String.format(
+          "{ @type = %1$s, firstName = %2$s, lastName = %3$s, birthDate = %4$s }",
+          getClass().getName(), getFirstName(), getLastName(), format(getBirthDate()));
     }
   }
-
 }

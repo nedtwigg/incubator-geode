@@ -21,24 +21,18 @@ import org.apache.geode.distributed.internal.DistributionStats;
 import java.util.*;
 
 /**
- * An instance of ThrottlingMemLinkedQueue allows the instantiator to
- * specify a maximum queue footprint (M) and a size to begin throttling (B) 
- * (which must be between 1 and the M).  When adding an element to
- * the queue, if the size of the queue is less than B, the element is
- * added immediately.  In case of udp, If the size of the queue has reached M, 
- * the add will block until the size is less than M.  If the size of the
- * queue is between B and M, the add will block with a sleep time that
- * is at least 1 millisecond, and is proportional to the size of the 
- * queue.
+ * An instance of ThrottlingMemLinkedQueue allows the instantiator to specify a maximum queue
+ * footprint (M) and a size to begin throttling (B) (which must be between 1 and the M). When adding
+ * an element to the queue, if the size of the queue is less than B, the element is added
+ * immediately. In case of udp, If the size of the queue has reached M, the add will block until the
+ * size is less than M. If the size of the queue is between B and M, the add will block with a sleep
+ * time that is at least 1 millisecond, and is proportional to the size of the queue.
  *
- * ThrottlingMemLinkedQueue objects can currently hold only Sizeable objects.
- * Inserting other types of objects will cause class cast exceptions to be thrown
- * on put/take.
+ * <p>ThrottlingMemLinkedQueue objects can currently hold only Sizeable objects. Inserting other
+ * types of objects will cause class cast exceptions to be thrown on put/take.
  *
  * @since GemFire 3.0
- *
  */
-
 public class ThrottlingMemLinkedQueueWithDMStats extends OverflowQueueWithDMStats {
   private static final long serialVersionUID = 5425180246954573433L;
 
@@ -58,7 +52,12 @@ public class ThrottlingMemLinkedQueueWithDMStats extends OverflowQueueWithDMStat
   private volatile int memSize;
 
   /** Creates a new instance of ThrottlingMessageQueue */
-  public ThrottlingMemLinkedQueueWithDMStats(int maxMemSize, int startThrottleMemSize, int maxSize, int startThrottleSize, ThrottledMemQueueStatHelper stats) {
+  public ThrottlingMemLinkedQueueWithDMStats(
+      int maxMemSize,
+      int startThrottleMemSize,
+      int maxSize,
+      int startThrottleSize,
+      ThrottledMemQueueStatHelper stats) {
     super(maxSize, stats);
     this.maxMemSize = maxMemSize;
     this.startThrottleMemSize = startThrottleMemSize;
@@ -80,11 +79,18 @@ public class ThrottlingMemLinkedQueueWithDMStats extends OverflowQueueWithDMStat
 
     int myMemSize = memSize;
     if (myMemSize > startThrottleMemSize) {
-      sleep = (int) (((float) (myMemSize - startThrottleMemSize) / (float) (maxMemSize - startThrottleMemSize)) * 100);
+      sleep =
+          (int)
+              (((float) (myMemSize - startThrottleMemSize)
+                      / (float) (maxMemSize - startThrottleMemSize))
+                  * 100);
     } else {
       int qSize = size();
       if (qSize > startThrottleSize) {
-        sleep = (int) (((float) (qSize - startThrottleSize) / (float) (maxSize - startThrottleSize)) * 100);
+        sleep =
+            (int)
+                (((float) (qSize - startThrottleSize) / (float) (maxSize - startThrottleSize))
+                    * 100);
       } else {
         // no need to throttle
         return 0;
@@ -109,8 +115,7 @@ public class ThrottlingMemLinkedQueueWithDMStats extends OverflowQueueWithDMStat
 
   @Override
   protected void preAddInterruptibly(Object o) throws InterruptedException {
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
     // only block threads reading from tcp stream sockets.  blocking udp
     // will cause retransmission storms
     if (!DistributionMessage.isPreciousThread()) {

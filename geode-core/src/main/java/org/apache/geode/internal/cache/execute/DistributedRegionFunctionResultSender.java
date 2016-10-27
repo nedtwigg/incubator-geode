@@ -30,10 +30,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
-/**
- * 
- *
- */
+/** */
 public final class DistributedRegionFunctionResultSender implements InternalResultSender {
 
   private static final Logger logger = LogService.getLogger();
@@ -55,24 +52,26 @@ public final class DistributedRegionFunctionResultSender implements InternalResu
   private boolean localLastResultRecieved = false;
 
   /**
-   * Have to combine next two construcotr in one and make a new class which will
-   * send Results back.
-   * 
+   * Have to combine next two construcotr in one and make a new class which will send Results back.
+   *
    * @param msg
    * @param dm
    */
-  public DistributedRegionFunctionResultSender(DM dm, DistributedRegionFunctionStreamingMessage msg, Function function) {
+  public DistributedRegionFunctionResultSender(
+      DM dm, DistributedRegionFunctionStreamingMessage msg, Function function) {
     this.msg = msg;
     this.dm = dm;
     this.functionObject = function;
   }
 
   /**
-   * Have to combine next two construcotr in one and make a new class which will
-   * send Results back.
-   *
+   * Have to combine next two construcotr in one and make a new class which will send Results back.
    */
-  public DistributedRegionFunctionResultSender(DM dm, ResultCollector rc, Function function, final ServerToClientFunctionResultSender sender) {
+  public DistributedRegionFunctionResultSender(
+      DM dm,
+      ResultCollector rc,
+      Function function,
+      final ServerToClientFunctionResultSender sender) {
     this.dm = dm;
     this.isLocal = true;
     this.rc = rc;
@@ -82,7 +81,9 @@ public final class DistributedRegionFunctionResultSender implements InternalResu
 
   public void lastResult(Object oneResult) {
     if (!this.functionObject.hasResult()) {
-      throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
+      throw new IllegalStateException(
+          LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+              "send"));
     }
     if (this.localLastResultRecieved) {
       return;
@@ -97,7 +98,8 @@ public final class DistributedRegionFunctionResultSender implements InternalResu
       if (isLocal) {
         this.rc.addResult(dm.getDistributionManagerId(), oneResult);
         this.rc.endResults();
-        FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem()).incResultsReceived();
+        FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem())
+            .incResultsReceived();
       } else {
         try {
           this.msg.sendReplyForOneResult(dm, oneResult, true, enableOrderedResultStreming);
@@ -108,14 +110,16 @@ public final class DistributedRegionFunctionResultSender implements InternalResu
         }
       }
       //incrementing result sent stats.
-      FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem()).incResultsReturned();
+      FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem())
+          .incResultsReturned();
     }
-
   }
 
   public void lastResult(Object oneResult, DistributedMember memberID) {
     if (!this.functionObject.hasResult()) {
-      throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
+      throw new IllegalStateException(
+          LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+              "send"));
     }
     this.localLastResultRecieved = true;
     if (this.sender != null) { // Client-Server
@@ -140,22 +144,25 @@ public final class DistributedRegionFunctionResultSender implements InternalResu
       if (this.dm == null) {
         FunctionStats.getFunctionStats(functionObject.getId()).incResultsReceived();
       } else {
-        FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem()).incResultsReceived();
+        FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem())
+            .incResultsReceived();
       }
     }
-
   }
 
   public synchronized void sendResult(Object oneResult) {
     if (!this.functionObject.hasResult()) {
-      throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
+      throw new IllegalStateException(
+          LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+              "send"));
     }
     if (this.sender != null) { // Client-Server
       sender.sendResult(oneResult);
     } else {
       if (isLocal) {
         this.rc.addResult(dm.getDistributionManagerId(), oneResult);
-        FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem()).incResultsReceived();
+        FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem())
+            .incResultsReceived();
       } else {
         try {
           this.msg.sendReplyForOneResult(dm, oneResult, false, enableOrderedResultStreming);
@@ -166,13 +173,16 @@ public final class DistributedRegionFunctionResultSender implements InternalResu
         }
       }
       //incrementing result sent stats.
-      FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem()).incResultsReturned();
+      FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem())
+          .incResultsReturned();
     }
   }
 
   public synchronized void sendResult(Object oneResult, DistributedMember memberID) {
     if (!this.functionObject.hasResult()) {
-      throw new IllegalStateException(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("send"));
+      throw new IllegalStateException(
+          LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString(
+              "send"));
     }
     if (this.sender != null) { // Client-Server
       sender.sendResult(oneResult, memberID);
@@ -182,7 +192,8 @@ public final class DistributedRegionFunctionResultSender implements InternalResu
         if (this.dm == null) {
           FunctionStats.getFunctionStats(functionObject.getId()).incResultsReceived();
         } else {
-          FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem()).incResultsReceived();
+          FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem())
+              .incResultsReceived();
         }
       } else {
         try {
@@ -197,7 +208,8 @@ public final class DistributedRegionFunctionResultSender implements InternalResu
       if (this.dm == null) {
         FunctionStats.getFunctionStats(functionObject.getId()).incResultsReturned();
       } else {
-        FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem()).incResultsReturned();
+        FunctionStats.getFunctionStats(functionObject.getId(), this.dm.getSystem())
+            .incResultsReturned();
       }
     }
   }
@@ -215,7 +227,11 @@ public final class DistributedRegionFunctionResultSender implements InternalResu
     } else {
       ((LocalResultCollector) this.rc).setException(exception);
       //this.lastResult(exception);
-      logger.info(LocalizedMessage.create(LocalizedStrings.DistributedRegionFunctionResultSender_UNEXPECTED_EXCEPTION_DURING_FUNCTION_EXECUTION_ON_LOCAL_NODE), exception);
+      logger.info(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .DistributedRegionFunctionResultSender_UNEXPECTED_EXCEPTION_DURING_FUNCTION_EXECUTION_ON_LOCAL_NODE),
+          exception);
     }
     this.rc.endResults();
     this.localLastResultRecieved = true;

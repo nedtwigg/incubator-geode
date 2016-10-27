@@ -24,11 +24,7 @@ import org.apache.geode.internal.cache.persistence.query.IdentityExtractor;
 import org.apache.geode.internal.cache.persistence.query.ResultBag;
 import org.apache.geode.internal.cache.persistence.query.SortKeyExtractor;
 
-/**
- * Mock sorted bag implementation. Uses the mock index map
- * internally, for convenience.
- *
- */
+/** Mock sorted bag implementation. Uses the mock index map internally, for convenience. */
 public class SortedResultBagImpl implements ResultBag {
   private final IndexMapImpl map;
   private AtomicLong counter = new AtomicLong();
@@ -44,7 +40,6 @@ public class SortedResultBagImpl implements ResultBag {
   @Override
   public void add(Object e) {
     map.put(extractor.getSortKey(e), counter.incrementAndGet(), e);
-
   }
 
   @Override

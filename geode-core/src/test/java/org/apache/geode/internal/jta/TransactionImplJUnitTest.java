@@ -16,7 +16,7 @@
  */
 /*
  * Test TransactionImpl methods not tested by UserTransactionImpl
- * 
+ *
  */
 package org.apache.geode.internal.jta;
 
@@ -32,8 +32,7 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.assertTrue;
 
-/**
- */
+/** */
 @Category(IntegrationTest.class)
 public class TransactionImplJUnitTest {
 
@@ -63,8 +62,7 @@ public class TransactionImplJUnitTest {
   }
 
   @After
-  public void tearDown() {
-  }
+  public void tearDown() {}
 
   @Test
   public void testRegisterSynchronization() throws Exception {

@@ -18,9 +18,7 @@ package org.apache.geode.internal.cache.partitioned;
 
 import org.apache.geode.GemFireException;
 
-/**
- *
- */
+/** */
 public class RedundancyAlreadyMetException extends GemFireException {
 
   public RedundancyAlreadyMetException() {

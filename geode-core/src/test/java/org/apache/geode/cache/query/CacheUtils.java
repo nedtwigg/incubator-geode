@@ -36,15 +36,14 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-/**
- * 
- */
+/** */
 public class CacheUtils {
 
   static Properties props = new Properties();
   static DistributedSystem ds;
   static volatile Cache cache;
   static QueryService qs;
+
   static {
     try {
       init();
@@ -119,7 +118,8 @@ public class CacheUtils {
     return null;
   }
 
-  public static Region createRegion(String regionName, RegionAttributes regionAttributes, boolean flag) {
+  public static Region createRegion(
+      String regionName, RegionAttributes regionAttributes, boolean flag) {
     try {
       Region region = cache.createRegion(regionName, regionAttributes);
       return region;
@@ -133,7 +133,8 @@ public class CacheUtils {
     return createRegion(regionName, valueConstraint, null);
   }
 
-  public static Region createRegion(String regionName, Class valueConstraint, boolean indexMaintenanceSynchronous) {
+  public static Region createRegion(
+      String regionName, Class valueConstraint, boolean indexMaintenanceSynchronous) {
     try {
       AttributesFactory attributesFactory = new AttributesFactory();
       attributesFactory.setValueConstraint(valueConstraint);
@@ -150,8 +151,7 @@ public class CacheUtils {
   public static Region createRegion(Region parentRegion, String regionName, Class valueConstraint) {
     try {
       AttributesFactory attributesFactory = new AttributesFactory();
-      if (valueConstraint != null)
-        attributesFactory.setValueConstraint(valueConstraint);
+      if (valueConstraint != null) attributesFactory.setValueConstraint(valueConstraint);
       RegionAttributes regionAttributes = attributesFactory.create();
       Region region = parentRegion.createSubregion(regionName, regionAttributes);
       return region;
@@ -166,8 +166,7 @@ public class CacheUtils {
   }
 
   public static QueryService getQueryService() {
-    if (cache.isClosed())
-      startCache();
+    if (cache.isClosed()) startCache();
     return cache.getQueryService();
   }
 
@@ -204,25 +203,45 @@ public class CacheUtils {
         log("Both SelectResults are of the same Type i.e.--> " + collType1);
       } else {
         log("Collection type are : " + collType1 + "and  " + collType2);
-        fail("FAILED:Select results Collection Type is different in both the cases. CollectionType1=" + collType1 + " CollectionType2=" + collType2);
+        fail(
+            "FAILED:Select results Collection Type is different in both the cases. CollectionType1="
+                + collType1
+                + " CollectionType2="
+                + collType2);
       }
       if (type1.equals(type2)) {
         log("Both SelectResults have same element Type i.e.--> " + type1);
       } else {
-        log("Classes are :  type1=" + type1.getSimpleClassName() + " type2= " + type2.getSimpleClassName());
-        fail("FAILED:SelectResult Element Type is different in both the cases. Type1=" + type1 + " Type2=" + type2);
+        log(
+            "Classes are :  type1="
+                + type1.getSimpleClassName()
+                + " type2= "
+                + type2.getSimpleClassName());
+        fail(
+            "FAILED:SelectResult Element Type is different in both the cases. Type1="
+                + type1
+                + " Type2="
+                + type2);
       }
 
       if (collType1.equals(collType2)) {
         log("Both SelectResults are of the same Type i.e.--> " + collType1);
       } else {
         log("Collections are : " + collType1 + " " + collType2);
-        fail("FAILED:SelectResults Collection Type is different in both the cases. CollType1=" + collType1 + " CollType2=" + collType2);
+        fail(
+            "FAILED:SelectResults Collection Type is different in both the cases. CollType1="
+                + collType1
+                + " CollType2="
+                + collType2);
       }
       if (r[j][0].size() == r[j][1].size()) {
         log("Both SelectResults are of Same Size i.e.  Size= " + r[j][1].size());
       } else {
-        fail("FAILED:SelectResults size is different in both the cases. Size1=" + r[j][0].size() + " Size2 = " + r[j][1].size());
+        fail(
+            "FAILED:SelectResults size is different in both the cases. Size1="
+                + r[j][0].size()
+                + " Size2 = "
+                + r[j][1].size());
       }
       set2 = ((r[j][1]).asSet());
       set1 = ((r[j][0]).asSet());
@@ -241,7 +260,8 @@ public class CacheUtils {
             assertEquals(values1.length, values2.length);
             boolean elementEqual = true;
             for (int i = 0; i < values1.length; ++i) {
-              elementEqual = elementEqual && ((values1[i] == values2[i]) || values1[i].equals(values2[i]));
+              elementEqual =
+                  elementEqual && ((values1[i] == values2[i]) || values1[i].equals(values2[i]));
             }
             exactMatch = elementEqual;
           } else {
@@ -252,7 +272,8 @@ public class CacheUtils {
           }
         }
         if (!exactMatch) {
-          fail("Atleast one element in the pair of SelectResults supposedly identical, is not equal ");
+          fail(
+              "Atleast one element in the pair of SelectResults supposedly identical, is not equal ");
         }
       }
     }
@@ -265,7 +286,8 @@ public class CacheUtils {
     Iterator itert1 = null;
     Iterator itert2 = null;
     ObjectType type1, type2;
-    outer: for (int j = 0; j < r.length; j++) {
+    outer:
+    for (int j = 0; j < r.length; j++) {
       CollectionType collType1 = r[j][0].getCollectionType();
       CollectionType collType2 = r[j][1].getCollectionType();
       type1 = collType1.getElementType();
@@ -275,15 +297,19 @@ public class CacheUtils {
         log("Both SelectResults are of the same Type i.e.--> " + collType1);
       } else {
         log("Collection type are : " + collType1 + "and  " + collType2);
-        //test.fail("FAILED:Select results Collection Type is different in both the cases. CollectionType1="+collType1 + " CollectionType2="+collType2); 
+        //test.fail("FAILED:Select results Collection Type is different in both the cases. CollectionType1="+collType1 + " CollectionType2="+collType2);
         ok = false;
         break;
       }
       if (type1.equals(type2)) {
         log("Both SelectResults have same element Type i.e.--> " + type1);
       } else {
-        log("Classes are :  type1=" + type1.getSimpleClassName() + " type2= " + type2.getSimpleClassName());
-        //test.fail("FAILED:SelectResult Element Type is different in both the cases. Type1="+ type1 + " Type2="+ type2); 
+        log(
+            "Classes are :  type1="
+                + type1.getSimpleClassName()
+                + " type2= "
+                + type2.getSimpleClassName());
+        //test.fail("FAILED:SelectResult Element Type is different in both the cases. Type1="+ type1 + " Type2="+ type2);
         ok = false;
         break;
       }
@@ -292,14 +318,14 @@ public class CacheUtils {
         log("Both SelectResults are of the same Type i.e.--> " + collType1);
       } else {
         log("Collections are : " + collType1 + " " + collType2);
-        //test.fail("FAILED:SelectResults Collection Type is different in both the cases. CollType1="+ collType1 + " CollType2="+ collType2); 
+        //test.fail("FAILED:SelectResults Collection Type is different in both the cases. CollType1="+ collType1 + " CollType2="+ collType2);
         ok = false;
         break;
       }
       if (r[j][0].size() == r[j][1].size()) {
         log("Both SelectResults are of Same Size i.e.  Size= " + r[j][1].size());
       } else {
-        //test.fail("FAILED:SelectResults size is different in both the cases. Size1="  + r[j][0].size() + " Size2 = " + r[j][1].size()); 
+        //test.fail("FAILED:SelectResults size is different in both the cases. Size1="  + r[j][0].size() + " Size2 = " + r[j][1].size());
         ok = false;
         break;
       }
@@ -325,7 +351,8 @@ public class CacheUtils {
             boolean elementEqual = true;
             for (int i = 0; i < values1.length; ++i) {
               if (values1[i] != null) {
-                elementEqual = elementEqual && ((values1[i] == values2[i]) || values1[i].equals(values2[i]));
+                elementEqual =
+                    elementEqual && ((values1[i] == values2[i]) || values1[i].equals(values2[i]));
               } else {
                 elementEqual = elementEqual && ((values1[i] == values2[i]));
               }
@@ -339,7 +366,7 @@ public class CacheUtils {
           }
         }
         if (!exactMatch) {
-          //test.fail("Atleast one element in the pair of SelectResults supposedly identical, is not equal "); 
+          //test.fail("Atleast one element in the pair of SelectResults supposedly identical, is not equal ");
           ok = false;
           break outer;
         }
@@ -347,5 +374,4 @@ public class CacheUtils {
     }
     return ok;
   }
-
 }

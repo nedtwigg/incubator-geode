@@ -39,7 +39,9 @@ public class MemberRegionFunction implements Function, InternalEntity {
     try {
       Function function = FunctionService.getFunction(functionId);
       if (function == null) {
-        context.getResultSender().lastResult("For region on a member did not get function " + functionId);
+        context
+            .getResultSender()
+            .lastResult("For region on a member did not get function " + functionId);
       }
       Execution execution = FunctionService.onRegion(cache.getRegion(region));
       if (execution == null) {
@@ -50,17 +52,17 @@ public class MemberRegionFunction implements Function, InternalEntity {
       }
 
     } catch (FunctionException e) {
-      context.getResultSender().lastResult("FunctionException in MemberRegionFunction =" + e.getMessage());
+      context
+          .getResultSender()
+          .lastResult("FunctionException in MemberRegionFunction =" + e.getMessage());
     } catch (Exception e) {
       context.getResultSender().lastResult("Exception in MemberRegionFunction =" + e.getMessage());
     }
-
   }
 
   @Override
   public String getId() {
     return MemberRegionFunction.ID;
-
   }
 
   @Override
@@ -78,5 +80,4 @@ public class MemberRegionFunction implements Function, InternalEntity {
   public boolean isHA() {
     return false;
   }
-
 }

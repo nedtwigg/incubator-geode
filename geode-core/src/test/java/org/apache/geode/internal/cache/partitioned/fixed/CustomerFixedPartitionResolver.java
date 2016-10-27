@@ -31,8 +31,7 @@ import org.apache.geode.internal.cache.execute.data.ShipmentId;
 
 public class CustomerFixedPartitionResolver implements FixedPartitionResolver, DataSerializable {
 
-  public CustomerFixedPartitionResolver() {
-  }
+  public CustomerFixedPartitionResolver() {}
 
   public String getPartitionName(EntryOperation opDetails, Set allAvailablePartitions) {
 
@@ -61,7 +60,6 @@ public class CustomerFixedPartitionResolver implements FixedPartitionResolver, D
     } else {
       return "Invalid";
     }
-
   }
 
   public Serializable getRoutingObject(EntryOperation opDetails) {
@@ -100,5 +98,4 @@ public class CustomerFixedPartitionResolver implements FixedPartitionResolver, D
     // TODO Auto-generated method stub
 
   }
-
 }

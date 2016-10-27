@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * File comment
- */
+/** File comment */
 package org.apache.geode.internal.cache.xmlcache;
 
 import java.util.Set;
@@ -26,9 +24,7 @@ import org.apache.geode.cache.control.RebalanceOperation;
 import org.apache.geode.cache.control.ResourceManager;
 import org.apache.geode.internal.cache.control.MemoryThresholds;
 
-/**
- * @since GemFire 6.0
- */
+/** @since GemFire 6.0 */
 public class ResourceManagerCreation implements ResourceManager {
 
   private volatile float criticalHeapPercentage;
@@ -78,6 +74,7 @@ public class ResourceManagerCreation implements ResourceManager {
 
   /**
    * Determine if the critical heap was configured
+   *
    * @return true if it was configured
    */
   public boolean hasCriticalHeap() {
@@ -107,6 +104,7 @@ public class ResourceManagerCreation implements ResourceManager {
 
   /**
    * Determine if the critical off-heap was configured
+   *
    * @return true if it was configured
    */
   public boolean hasCriticalOffHeap() {
@@ -128,28 +126,42 @@ public class ResourceManagerCreation implements ResourceManager {
     }
   }
 
-  /**
-   * @param other the other ResourceManager with which to compare 
-   */
+  /** @param other the other ResourceManager with which to compare */
   public void sameAs(ResourceManager other) {
     if (getCriticalHeapPercentage() != other.getCriticalHeapPercentage()) {
-      throw new RuntimeException("Resource Manager critical heap percentages differ: " + getCriticalHeapPercentage() + " != " + other.getCriticalHeapPercentage());
+      throw new RuntimeException(
+          "Resource Manager critical heap percentages differ: "
+              + getCriticalHeapPercentage()
+              + " != "
+              + other.getCriticalHeapPercentage());
     }
     if (getCriticalOffHeapPercentage() != other.getCriticalOffHeapPercentage()) {
-      throw new RuntimeException("Resource Manager critical off-heap percentages differ: " + getCriticalOffHeapPercentage() + " != " + other.getCriticalOffHeapPercentage());
+      throw new RuntimeException(
+          "Resource Manager critical off-heap percentages differ: "
+              + getCriticalOffHeapPercentage()
+              + " != "
+              + other.getCriticalOffHeapPercentage());
     }
     if (hasEvictionHeap()) {
       // If we don't have it set don't compare since other may have been set to
       // a smart default.
       if (getEvictionHeapPercentage() != other.getEvictionHeapPercentage()) {
-        throw new RuntimeException("Resource Manager eviction heap percentages differ: " + getEvictionHeapPercentage() + " != " + other.getEvictionHeapPercentage());
+        throw new RuntimeException(
+            "Resource Manager eviction heap percentages differ: "
+                + getEvictionHeapPercentage()
+                + " != "
+                + other.getEvictionHeapPercentage());
       }
     }
     if (hasEvictionOffHeap()) {
       // If we don't have it set don't compare since other may have been set to
       // a smart default.
       if (getEvictionOffHeapPercentage() != other.getEvictionOffHeapPercentage()) {
-        throw new RuntimeException("Resource Manager eviction off-heap percentages differ: " + getEvictionOffHeapPercentage() + " != " + other.getEvictionOffHeapPercentage());
+        throw new RuntimeException(
+            "Resource Manager eviction off-heap percentages differ: "
+                + getEvictionOffHeapPercentage()
+                + " != "
+                + other.getEvictionOffHeapPercentage());
       }
     }
   }
@@ -175,6 +187,7 @@ public class ResourceManagerCreation implements ResourceManager {
 
   /**
    * Determine if the eviction heap was configured
+   *
    * @return true if the eviction heap was configured
    */
   public boolean hasEvictionHeap() {
@@ -202,6 +215,7 @@ public class ResourceManagerCreation implements ResourceManager {
 
   /**
    * Determine if the eviction off-heap was configured
+   *
    * @return true if the eviction off-heap was configured
    */
   public boolean hasEvictionOffHeap() {

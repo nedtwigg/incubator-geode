@@ -20,9 +20,9 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.cache.*;
 
 /**
- * EntryExpiryTask already implements the algorithm for figuring out
- * expiration.  This class has it use the remote expiration attributes 
- * provided by the netsearch, rather than this region's attributes.
+ * EntryExpiryTask already implements the algorithm for figuring out expiration. This class has it
+ * use the remote expiration attributes provided by the netsearch, rather than this region's
+ * attributes.
  */
 public class NetSearchExpirationCalculator extends EntryExpiryTask {
 
@@ -45,5 +45,4 @@ public class NetSearchExpirationCalculator extends EntryExpiryTask {
   protected ExpirationAttributes getIdleAttributes() {
     return this.idleAttr;
   }
-
 }

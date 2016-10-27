@@ -19,29 +19,22 @@ package org.apache.geode.management.internal;
 import javax.management.ObjectName;
 
 /**
- * Proxy info class holds details about proxy
- * for quicker access during several Management 
+ * Proxy info class holds details about proxy for quicker access during several Management
  * operations
- *
  */
 public class ProxyInfo {
 
-  /**
-   * Proxy Interface
-   */
+  /** Proxy Interface */
   private Class proxyInterface;
-  /**
-   * proxy instance
-   */
+  /** proxy instance */
   private Object proxyInstance;
 
-  /**
-   * JMX name of proxy
-   */
+  /** JMX name of proxy */
   private ObjectName objectName;
 
   /**
    * public constructor
+   *
    * @param proxyInstance
    * @param objectName
    */
@@ -49,11 +42,11 @@ public class ProxyInfo {
     this.proxyInstance = proxyInstance;
     this.proxyInterface = proxyInterface;
     this.objectName = objectName;
-
   }
 
   /**
    * get the proxy instance
+   *
    * @return proxyInstance
    */
   public Object getProxyInstance() {
@@ -62,6 +55,7 @@ public class ProxyInfo {
 
   /**
    * get MBean name
+   *
    * @return ObjectName
    */
   public ObjectName getObjectName() {
@@ -75,5 +69,4 @@ public class ProxyInfo {
   public void setProxyInterface(Class proxyInterface) {
     this.proxyInterface = proxyInterface;
   }
-
 }

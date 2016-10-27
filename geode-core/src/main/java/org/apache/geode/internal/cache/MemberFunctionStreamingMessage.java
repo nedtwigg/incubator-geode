@@ -52,11 +52,9 @@ import org.apache.geode.internal.cache.execute.MultiRegionFunctionContextImpl;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * 
- * 
- */
-public class MemberFunctionStreamingMessage extends DistributionMessage implements TransactionMessage, MessageWithReply {
+/** */
+public class MemberFunctionStreamingMessage extends DistributionMessage
+    implements TransactionMessage, MessageWithReply {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -85,10 +83,14 @@ public class MemberFunctionStreamingMessage extends DistributionMessage implemen
 
   private static final short IS_REEXECUTE = UNRESERVED_FLAGS_START;
 
-  public MemberFunctionStreamingMessage() {
-  }
+  public MemberFunctionStreamingMessage() {}
 
-  public MemberFunctionStreamingMessage(Function function, int procId, Object ar, boolean isFnSerializationReqd, boolean isReExecute) {
+  public MemberFunctionStreamingMessage(
+      Function function,
+      int procId,
+      Object ar,
+      boolean isFnSerializationReqd,
+      boolean isReExecute) {
     this.functionObject = function;
     this.processorId = procId;
     this.args = ar;
@@ -102,7 +104,13 @@ public class MemberFunctionStreamingMessage extends DistributionMessage implemen
   }
 
   // For Multi region function execution
-  public MemberFunctionStreamingMessage(Function function, int procId, Object ar, boolean isFnSerializationReqd, Set<String> regions, boolean isReExecute) {
+  public MemberFunctionStreamingMessage(
+      Function function,
+      int procId,
+      Object ar,
+      boolean isFnSerializationReqd,
+      Set<String> regions,
+      boolean isReExecute) {
     this.functionObject = function;
     this.processorId = procId;
     this.args = ar;
@@ -151,13 +159,18 @@ public class MemberFunctionStreamingMessage extends DistributionMessage implemen
     Throwable thr = null;
     ReplyException rex = null;
     if (this.functionObject == null) {
-      rex = new ReplyException(new FunctionException(LocalizedStrings.ExecuteFunction_FUNCTION_NAMED_0_IS_NOT_REGISTERED.toLocalizedString(this.functionName)));
+      rex =
+          new ReplyException(
+              new FunctionException(
+                  LocalizedStrings.ExecuteFunction_FUNCTION_NAMED_0_IS_NOT_REGISTERED
+                      .toLocalizedString(this.functionName)));
 
       replyWithException(dm, rex);
       return;
     }
 
-    FunctionStats stats = FunctionStats.getFunctionStats(this.functionObject.getId(), dm.getSystem());
+    FunctionStats stats =
+        FunctionStats.getFunctionStats(this.functionObject.getId(), dm.getSystem());
     TXStateProxy tx = null;
     try {
       tx = prepForTransaction();
@@ -167,27 +180,40 @@ public class MemberFunctionStreamingMessage extends DistributionMessage implemen
         GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
         for (String regionPath : this.regionPathSet) {
           if (checkCacheClosing(dm) || checkDSClosing(dm)) {
-            thr = new CacheClosedException(LocalizedStrings.PartitionMessage_REMOTE_CACHE_IS_CLOSED_0.toLocalizedString(dm.getId()));
+            thr =
+                new CacheClosedException(
+                    LocalizedStrings.PartitionMessage_REMOTE_CACHE_IS_CLOSED_0.toLocalizedString(
+                        dm.getId()));
             return;
           }
           regions.add(cache.getRegion(regionPath));
         }
       }
-      FunctionContextImpl context = new MultiRegionFunctionContextImpl(this.functionObject.getId(), this.args, resultSender, regions, isReExecute);
+      FunctionContextImpl context =
+          new MultiRegionFunctionContextImpl(
+              this.functionObject.getId(), this.args, resultSender, regions, isReExecute);
 
       long start = stats.startTime();
       stats.startFunctionExecution(this.functionObject.hasResult());
       if (logger.isDebugEnabled()) {
-        logger.debug("Executing Function: {} on remote member with context: {}", this.functionObject.getId(), context.toString());
+        logger.debug(
+            "Executing Function: {} on remote member with context: {}",
+            this.functionObject.getId(),
+            context.toString());
       }
       this.functionObject.execute(context);
       if (!this.replyLastMsg && this.functionObject.hasResult()) {
-        throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_FUNCTION_0_DID_NOT_SENT_LAST_RESULT.toString(functionObject.getId()));
+        throw new FunctionException(
+            LocalizedStrings.ExecuteFunction_THE_FUNCTION_0_DID_NOT_SENT_LAST_RESULT.toString(
+                functionObject.getId()));
       }
       stats.endFunctionExecution(start, this.functionObject.hasResult());
     } catch (FunctionException functionException) {
       if (logger.isDebugEnabled()) {
-        logger.debug("FunctionException occured on remote member while executing Function: {}", this.functionObject.getId(), functionException);
+        logger.debug(
+            "FunctionException occured on remote member while executing Function: {}",
+            this.functionObject.getId(),
+            functionException);
       }
       stats.endFunctionExecutionWithException(this.functionObject.hasResult());
       rex = new ReplyException(functionException);
@@ -203,7 +229,10 @@ public class MemberFunctionStreamingMessage extends DistributionMessage implemen
       replyWithException(dm, rex);
     } catch (Exception exception) {
       if (logger.isDebugEnabled()) {
-        logger.debug("Exception occured on remote member while executing Function: {}", this.functionObject.getId(), exception);
+        logger.debug(
+            "Exception occured on remote member while executing Function: {}",
+            this.functionObject.getId(),
+            exception);
       }
       stats.endFunctionExecutionWithException(this.functionObject.hasResult());
       rex = new ReplyException(exception);
@@ -253,8 +282,7 @@ public class MemberFunctionStreamingMessage extends DistributionMessage implemen
       this.processorId = in.readInt();
       ReplyProcessor21.setMessageRPId(this.processorId);
     }
-    if ((flags & HAS_TX_ID) != 0)
-      this.txUniqId = in.readInt();
+    if ((flags & HAS_TX_ID) != 0) this.txUniqId = in.readInt();
     if ((flags & HAS_TX_MEMBERID) != 0) {
       this.txMemberId = (InternalDistributedMember) DataSerializer.readObject(in);
     }
@@ -280,22 +308,15 @@ public class MemberFunctionStreamingMessage extends DistributionMessage implemen
     super.toData(out);
 
     short flags = 0;
-    if (this.processorId != 0)
-      flags |= HAS_PROCESSOR_ID;
-    if (this.txUniqId != TXManagerImpl.NOTX)
-      flags |= HAS_TX_ID;
-    if (this.txMemberId != null)
-      flags |= HAS_TX_MEMBERID;
-    if (this.isReExecute)
-      flags |= IS_REEXECUTE;
+    if (this.processorId != 0) flags |= HAS_PROCESSOR_ID;
+    if (this.txUniqId != TXManagerImpl.NOTX) flags |= HAS_TX_ID;
+    if (this.txMemberId != null) flags |= HAS_TX_MEMBERID;
+    if (this.isReExecute) flags |= IS_REEXECUTE;
     out.writeShort(flags);
 
-    if (this.processorId != 0)
-      out.writeInt(this.processorId);
-    if (this.txUniqId != TXManagerImpl.NOTX)
-      out.writeInt(this.txUniqId);
-    if (this.txMemberId != null)
-      DataSerializer.writeObject(this.txMemberId, out);
+    if (this.processorId != 0) out.writeInt(this.processorId);
+    if (this.txUniqId != TXManagerImpl.NOTX) out.writeInt(this.txUniqId);
+    if (this.txMemberId != null) DataSerializer.writeObject(this.txMemberId, out);
 
     if (this.isFnSerializationReqd) {
       DataSerializer.writeObject(this.functionObject, out);
@@ -306,14 +327,15 @@ public class MemberFunctionStreamingMessage extends DistributionMessage implemen
     DataSerializer.writeObject(this.regionPathSet, out);
   }
 
-  public synchronized boolean sendReplyForOneResult(DM dm, Object oneResult, boolean lastResult, boolean sendResultsInOrder) throws CacheException, QueryException, ForceReattemptException, InterruptedException {
+  public synchronized boolean sendReplyForOneResult(
+      DM dm, Object oneResult, boolean lastResult, boolean sendResultsInOrder)
+      throws CacheException, QueryException, ForceReattemptException, InterruptedException {
 
     if (this.replyLastMsg) {
       return false;
     }
 
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
     int msgNum = this.replyMsgNum;
     this.replyLastMsg = lastResult;
 
@@ -326,9 +348,17 @@ public class MemberFunctionStreamingMessage extends DistributionMessage implemen
     return false;
   }
 
-  protected void sendReply(InternalDistributedMember member, int procId, DM dm, Object oneResult, int msgNum, boolean lastResult, boolean sendResultsInOrder) {
+  protected void sendReply(
+      InternalDistributedMember member,
+      int procId,
+      DM dm,
+      Object oneResult,
+      int msgNum,
+      boolean lastResult,
+      boolean sendResultsInOrder) {
     if (sendResultsInOrder) {
-      FunctionStreamingOrderedReplyMessage.send(member, procId, null, dm, oneResult, msgNum, lastResult);
+      FunctionStreamingOrderedReplyMessage.send(
+          member, procId, null, dm, oneResult, msgNum, lastResult);
     } else {
       FunctionStreamingReplyMessage.send(member, procId, null, dm, oneResult, msgNum, lastResult);
     }
@@ -339,20 +369,18 @@ public class MemberFunctionStreamingMessage extends DistributionMessage implemen
     return DistributionManager.REGION_FUNCTION_EXECUTION_EXECUTOR;
   }
 
-  /**
-   * check to see if the cache is closing
-   */
-  final public boolean checkCacheClosing(DistributionManager dm) {
+  /** check to see if the cache is closing */
+  public final boolean checkCacheClosing(DistributionManager dm) {
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
     return (cache == null || cache.getCancelCriterion().isCancelInProgress());
   }
 
   /**
    * check to see if the distributed system is closing
-   * 
+   *
    * @return true if the distributed system is closing
    */
-  final public boolean checkDSClosing(DistributionManager dm) {
+  public final boolean checkDSClosing(DistributionManager dm) {
     InternalDistributedSystem ds = dm.getSystem();
     return (ds == null || ds.isDisconnecting());
   }

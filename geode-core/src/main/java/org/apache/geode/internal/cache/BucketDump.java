@@ -26,33 +26,29 @@ import org.apache.geode.internal.cache.versions.RegionVersionVector;
 import org.apache.geode.internal.cache.versions.VersionTag;
 
 /**
- * This class is used for getting the contents of buckets and then optionally
- * compare them. It may contain the region version vector for the bucket as well
- * as all of the entries.
- * 
- * 
+ * This class is used for getting the contents of buckets and then optionally compare them. It may
+ * contain the region version vector for the bucket as well as all of the entries.
  */
 public class BucketDump {
-  /**
-   * The version vector for this bucket
-   */
+  /** The version vector for this bucket */
   private final RegionVersionVector rvv;
 
-  /**
-   * The contents of the bucket
-   */
+  /** The contents of the bucket */
   private final Map<Object, Object> values;
 
-  /**
-   * The contents of the bucket
-   */
+  /** The contents of the bucket */
   private final Map<Object, VersionTag> versions;
 
   private final int bucketId;
 
   private final InternalDistributedMember member;
 
-  public BucketDump(int bucketId, InternalDistributedMember member, RegionVersionVector rvv, Map<Object, Object> values, Map<Object, VersionTag> versions) {
+  public BucketDump(
+      int bucketId,
+      InternalDistributedMember member,
+      RegionVersionVector rvv,
+      Map<Object, Object> values,
+      Map<Object, VersionTag> versions) {
     this.bucketId = bucketId;
     this.member = member;
     this.rvv = rvv;
@@ -97,7 +93,7 @@ public class BucketDump {
 
   @Override
   public String toString() {
-    //    int sz; 
+    //    int sz;
     //    synchronized(this) {
     //      sz = this.size();
     //    }
@@ -115,23 +111,16 @@ public class BucketDump {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     BucketDump other = (BucketDump) obj;
     if (values == null) {
-      if (other.values != null)
-        return false;
-    } else if (!values.equals(other.values))
-      return false;
+      if (other.values != null) return false;
+    } else if (!values.equals(other.values)) return false;
     if (versions == null) {
-      if (other.versions != null)
-        return false;
-    } else if (!versions.equals(other.versions))
-      return false;
+      if (other.versions != null) return false;
+    } else if (!versions.equals(other.versions)) return false;
     return true;
   }
 }

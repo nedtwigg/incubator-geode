@@ -35,7 +35,7 @@ import org.apache.geode.management.ManagementService;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class GatewayReceiverMBeanSecurityTest {
 
   private static int jmxManagerPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
@@ -47,7 +47,9 @@ public class GatewayReceiverMBeanSecurityTest {
   private GatewayReceiverMXBean bean;
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
+  public static JsonAuthorizationCacheStartRule serverRule =
+      new JsonAuthorizationCacheStartRule(
+          jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
 
   @Rule
   public MBeanServerConnectionRule connectionRule = new MBeanServerConnectionRule(jmxManagerPort);
@@ -84,9 +86,9 @@ public class GatewayReceiverMBeanSecurityTest {
   @Test
   @JMXConnectionConfiguration(user = "data-user", password = "1234567")
   public void testNoAccess() throws Exception {
-    assertThatThrownBy(() -> bean.getTotalConnectionsTimedOut()).hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.getTotalConnectionsTimedOut())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
     assertThatThrownBy(() -> bean.start()).hasMessageContaining(TestCommand.dataManage.toString());
     assertThatThrownBy(() -> bean.stop()).hasMessageContaining(TestCommand.dataManage.toString());
   }
-
 }

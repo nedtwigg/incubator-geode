@@ -42,11 +42,10 @@ import javax.management.ObjectName;
 import javax.management.modelmbean.ModelMBean;
 //import javax.management.modelmbean.ModelMBeanAttributeInfo;
 
-/**
- * Provides MBean support for managing a distribution locator.
- *
- */
-public class DistributionLocatorJmxImpl extends org.apache.geode.admin.internal.DistributionLocatorImpl implements org.apache.geode.admin.jmx.internal.ManagedResource, DistributionLocatorConfig {
+/** Provides MBean support for managing a distribution locator. */
+public class DistributionLocatorJmxImpl
+    extends org.apache.geode.admin.internal.DistributionLocatorImpl
+    implements org.apache.geode.admin.jmx.internal.ManagedResource, DistributionLocatorConfig {
 
   /** The JMX object name of this managed resource */
   private ObjectName objectName;
@@ -56,17 +55,19 @@ public class DistributionLocatorJmxImpl extends org.apache.geode.admin.internal.
   // -------------------------------------------------------------------------
 
   /**
-   * Constructs new instance of DistributionLocatorJmxImpl for managing a
-   * distribution locator service via JMX.
+   * Constructs new instance of DistributionLocatorJmxImpl for managing a distribution locator
+   * service via JMX.
    */
-  public DistributionLocatorJmxImpl(DistributionLocatorConfig config, AdminDistributedSystemImpl system) {
+  public DistributionLocatorJmxImpl(
+      DistributionLocatorConfig config, AdminDistributedSystemImpl system) {
     super(config, system);
     initializeMBean();
   }
 
   /** Create and register the MBean to manage this resource */
   private void initializeMBean() {
-    this.mbeanName = "GemFire:type=DistributionLocator,id=" + MBeanUtil.makeCompliantMBeanNameProperty(getId());
+    this.mbeanName =
+        "GemFire:type=DistributionLocator,id=" + MBeanUtil.makeCompliantMBeanNameProperty(getId());
     this.objectName = MBeanUtil.createMBean(this, MBeanUtil.lookupManagedBean(this));
   }
 
@@ -175,7 +176,5 @@ public class DistributionLocatorJmxImpl extends org.apache.geode.admin.internal.
     return ManagedResourceType.DISTRIBUTION_LOCATOR;
   }
 
-  public void cleanupResource() {
-  }
-
+  public void cleanupResource() {}
 }

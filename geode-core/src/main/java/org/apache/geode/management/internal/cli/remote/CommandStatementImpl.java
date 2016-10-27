@@ -24,11 +24,7 @@ import org.springframework.shell.event.ParseResult;
 import org.apache.geode.management.cli.CommandStatement;
 import org.apache.geode.management.cli.Result;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class CommandStatementImpl implements CommandStatement {
 
   private CommandProcessor cmdProcessor;
@@ -36,7 +32,8 @@ public class CommandStatementImpl implements CommandStatement {
   private Map<String, String> env;
   private ParseResult parseResult;
 
-  CommandStatementImpl(String commandString, Map<String, String> env, CommandProcessor cmdProcessor) {
+  CommandStatementImpl(
+      String commandString, Map<String, String> env, CommandProcessor cmdProcessor) {
     this.commandString = commandString;
     this.env = env;
     this.cmdProcessor = cmdProcessor;
@@ -66,16 +63,12 @@ public class CommandStatementImpl implements CommandStatement {
     return cmdProcessor.executeCommand(this);
   }
 
-  /**
-   * @return the parseResult
-   */
+  /** @return the parseResult */
   ParseResult getParseResult() {
     return parseResult;
   }
 
-  /**
-   * @param parseResult the parseResult to set
-   */
+  /** @param parseResult the parseResult to set */
   void setParseResult(ParseResult parseResult) {
     this.parseResult = parseResult;
   }
@@ -94,6 +87,11 @@ public class CommandStatementImpl implements CommandStatement {
    */
   @Override
   public String toString() {
-    return CommandStatement.class.getSimpleName() + "[commandString=" + commandString + ", env=" + env + "]";
+    return CommandStatement.class.getSimpleName()
+        + "[commandString="
+        + commandString
+        + ", env="
+        + env
+        + "]";
   }
 }

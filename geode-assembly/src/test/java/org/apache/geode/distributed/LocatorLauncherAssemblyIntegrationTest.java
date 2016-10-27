@@ -40,13 +40,12 @@ import static org.junit.Assert.*;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
-/**
- * These tests are part of assembly as they require the REST war file to be present.
- */
+/** These tests are part of assembly as they require the REST war file to be present. */
 @Category(IntegrationTest.class)
 @RunWith(Parameterized.class)
 @Parameterized.UseParametersRunnerFactory(CategoryWithParameterizedRunnerFactory.class)
-public class LocatorLauncherAssemblyIntegrationTest extends AbstractLocatorLauncherIntegrationTestCase {
+public class LocatorLauncherAssemblyIntegrationTest
+    extends AbstractLocatorLauncherIntegrationTestCase {
 
   @Before
   public final void setUpLocatorLauncherLocalTest() throws Exception {
@@ -66,7 +65,17 @@ public class LocatorLauncherAssemblyIntegrationTest extends AbstractLocatorLaunc
   public void testLocatorStopsWhenJmxPortIsZero() throws Throwable {
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
-    final Builder builder = new Builder().setMemberName(getUniqueName()).setPort(this.locatorPort).setRedirectOutput(false).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(ENABLE_CLUSTER_CONFIGURATION, "false").set(JMX_MANAGER, "true").set(JMX_MANAGER_START, "true").set(JMX_MANAGER_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setMemberName(getUniqueName())
+            .setPort(this.locatorPort)
+            .setRedirectOutput(false)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(ENABLE_CLUSTER_CONFIGURATION, "false")
+            .set(JMX_MANAGER, "true")
+            .set(JMX_MANAGER_START, "true")
+            .set(JMX_MANAGER_PORT, "0");
 
     performTest(builder);
   }
@@ -79,7 +88,17 @@ public class LocatorLauncherAssemblyIntegrationTest extends AbstractLocatorLaunc
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
     final int jmxPort = AvailablePortHelper.getRandomAvailableTCPPorts(1)[0];
 
-    final Builder builder = new Builder().setMemberName(getUniqueName()).setPort(this.locatorPort).setRedirectOutput(false).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(ENABLE_CLUSTER_CONFIGURATION, "false").set(JMX_MANAGER, "true").set(JMX_MANAGER_START, "true").set(JMX_MANAGER_PORT, Integer.toString(jmxPort));
+    final Builder builder =
+        new Builder()
+            .setMemberName(getUniqueName())
+            .setPort(this.locatorPort)
+            .setRedirectOutput(false)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(ENABLE_CLUSTER_CONFIGURATION, "false")
+            .set(JMX_MANAGER, "true")
+            .set(JMX_MANAGER_START, "true")
+            .set(JMX_MANAGER_PORT, Integer.toString(jmxPort));
 
     performTest(builder);
   }
@@ -98,7 +117,9 @@ public class LocatorLauncherAssemblyIntegrationTest extends AbstractLocatorLaunc
 
       // validate the pid file and its contents
       this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.LOCATOR.getPidFileName());
-      assertTrue("Pid file " + this.pidFile.getCanonicalPath().toString() + " should exist", this.pidFile.exists());
+      assertTrue(
+          "Pid file " + this.pidFile.getCanonicalPath().toString() + " should exist",
+          this.pidFile.exists());
       final int pid = readPid(this.pidFile);
       assertTrue(pid > 0);
       assertEquals(ProcessUtils.identifyPid(), pid);

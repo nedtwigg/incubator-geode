@@ -25,11 +25,7 @@ import javax.management.MBeanException;
 import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.OpenType;
 
-/**
- * Each data type in corresponding to an Open type will have a
- * 
- * 
- */
+/** Each data type in corresponding to an Open type will have a */
 public class OpenMethod {
 
   private static final OpenType[] noOpenTypes = new OpenType[0];
@@ -42,7 +38,7 @@ public class OpenMethod {
 
   /**
    * Static method to get the OpenMethod
-   * 
+   *
    * @param m
    * @return an open method
    */
@@ -50,7 +46,13 @@ public class OpenMethod {
     try {
       return new OpenMethod(m);
     } catch (OpenDataException ode) {
-      final String msg = "Method " + m.getDeclaringClass().getName() + "." + m.getName() + " has parameter or return type that " + "cannot be translated into an open type";
+      final String msg =
+          "Method "
+              + m.getDeclaringClass().getName()
+              + "."
+              + m.getName()
+              + " has parameter or return type that "
+              + "cannot be translated into an open type";
       throw new IllegalArgumentException(msg, ode);
     }
   }
@@ -100,8 +102,7 @@ public class OpenMethod {
   }
 
   String[] getOpenSignature() {
-    if (paramTypeConverters.length == 0)
-      return noStrings;
+    if (paramTypeConverters.length == 0) return noStrings;
 
     String[] sig = new String[paramTypeConverters.length];
     for (int i = 0; i < paramTypeConverters.length; i++)
@@ -118,8 +119,7 @@ public class OpenMethod {
   }
 
   final Object[] toOpenParameters(Object[] params) throws OpenDataException {
-    if (paramConversionIsIdentity || params == null)
-      return params;
+    if (paramConversionIsIdentity || params == null) return params;
     final Object[] oparams = new Object[params.length];
     for (int i = 0; i < params.length; i++)
       oparams[i] = paramTypeConverters[i].toOpenValue(params[i]);
@@ -127,8 +127,7 @@ public class OpenMethod {
   }
 
   final Object[] fromOpenParameters(Object[] params) throws InvalidObjectException {
-    if (paramConversionIsIdentity || params == null)
-      return params;
+    if (paramConversionIsIdentity || params == null) return params;
     final Object[] jparams = new Object[params.length];
     for (int i = 0; i < params.length; i++)
       jparams[i] = paramTypeConverters[i].fromOpenValue(params[i]);
@@ -143,7 +142,8 @@ public class OpenMethod {
     return paramTypeConverters[paramNo].fromOpenValue(param);
   }
 
-  Object invokeWithOpenReturn(Object obj, Object[] params) throws MBeanException, IllegalAccessException, InvocationTargetException {
+  Object invokeWithOpenReturn(Object obj, Object[] params)
+      throws MBeanException, IllegalAccessException, InvocationTargetException {
     final Object[] javaParams;
     try {
       javaParams = fromOpenParameters(params);
@@ -176,5 +176,4 @@ public class OpenMethod {
     }
     paramConversionIsIdentity = identity;
   }
-
 }

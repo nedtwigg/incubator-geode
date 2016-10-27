@@ -39,8 +39,7 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   private SecurityService securityService = IntegratedSecurityService.getSecurityService();
 
-  @Autowired
-  private GeodeAuthenticationProvider authProvider;
+  @Autowired private GeodeAuthenticationProvider authProvider;
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -54,7 +53,19 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
   }
 
   protected void configure(HttpSecurity http) throws Exception {
-    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests().antMatchers("/ping").permitAll().anyRequest().authenticated().and().formLogin().and().csrf().disable();
+    http.sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .authorizeRequests()
+        .antMatchers("/ping")
+        .permitAll()
+        .anyRequest()
+        .authenticated()
+        .and()
+        .formLogin()
+        .and()
+        .csrf()
+        .disable();
 
     if (securityService.isIntegratedSecurity()) {
       http.httpBasic();

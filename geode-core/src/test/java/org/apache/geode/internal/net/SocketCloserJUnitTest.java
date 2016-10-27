@@ -33,9 +33,7 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Tests the default SocketCloser.
- */
+/** Tests the default SocketCloser. */
 @Category(UnitTest.class)
 public class SocketCloserJUnitTest {
 
@@ -59,23 +57,22 @@ public class SocketCloserJUnitTest {
     return new SocketCloser();
   }
 
-  /**
-   * Test that close requests are async.
-   */
+  /** Test that close requests are async. */
   @Test
   public void testAsync() {
     final CountDownLatch cdl = new CountDownLatch(1);
     final AtomicInteger waitingToClose = new AtomicInteger(0);
-    Runnable r = new Runnable() {
-      @Override
-      public void run() {
-        try {
-          waitingToClose.incrementAndGet();
-          cdl.await();
-        } catch (InterruptedException e) {
-        }
-      }
-    };
+    Runnable r =
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              waitingToClose.incrementAndGet();
+              cdl.await();
+            } catch (InterruptedException e) {
+            }
+          }
+        };
 
     final int SOCKET_COUNT = 100;
     final Socket[] aSockets = new Socket[SOCKET_COUNT];
@@ -112,15 +109,19 @@ public class SocketCloserJUnitTest {
     // So verify that this many are currently waiting on cdl.
     {
       final int maxThreads = this.socketCloser.getMaxThreads();
-      WaitCriterion wc = new WaitCriterion() {
-        public boolean done() {
-          return waitingToClose.get() == 2 * maxThreads;
-        }
+      WaitCriterion wc =
+          new WaitCriterion() {
+            public boolean done() {
+              return waitingToClose.get() == 2 * maxThreads;
+            }
 
-        public String description() {
-          return "expected " + 2 * maxThreads + " waiters but found only " + waitingToClose.get();
-        }
-      };
+            public String description() {
+              return "expected "
+                  + 2 * maxThreads
+                  + " waiters but found only "
+                  + waitingToClose.get();
+            }
+          };
       Wait.waitForCriterion(wc, 5000, 10, true);
     }
     // now count down the latch that allows the sockets to close
@@ -128,37 +129,36 @@ public class SocketCloserJUnitTest {
     // now all the sockets should get closed; use a wait criteria
     // since a thread pool is doing to closes
     {
-      WaitCriterion wc = new WaitCriterion() {
-        public boolean done() {
-          for (int i = 0; i < SOCKET_COUNT; i++) {
-            if (!aSockets[i].isClosed() || !bSockets[i].isClosed()) {
-              return false;
+      WaitCriterion wc =
+          new WaitCriterion() {
+            public boolean done() {
+              for (int i = 0; i < SOCKET_COUNT; i++) {
+                if (!aSockets[i].isClosed() || !bSockets[i].isClosed()) {
+                  return false;
+                }
+              }
+              return true;
             }
-          }
-          return true;
-        }
 
-        public String description() {
-          return "one or more sockets did not close";
-        }
-      };
+            public String description() {
+              return "one or more sockets did not close";
+            }
+          };
       Wait.waitForCriterion(wc, 5000, 10, true);
     }
   }
 
-  /**
-   * Verify that requesting an asyncClose on an already
-   * closed socket is a noop.
-   */
+  /** Verify that requesting an asyncClose on an already closed socket is a noop. */
   @Test
   public void testClosedSocket() throws Exception {
     final AtomicBoolean runnableCalled = new AtomicBoolean();
-    Runnable r = new Runnable() {
-      @Override
-      public void run() {
-        runnableCalled.set(true);
-      }
-    };
+    Runnable r =
+        new Runnable() {
+          @Override
+          public void run() {
+            runnableCalled.set(true);
+          }
+        };
 
     Socket s = createClosableSocket();
     s.close();
@@ -167,31 +167,31 @@ public class SocketCloserJUnitTest {
     assertEquals(false, runnableCalled.get());
   }
 
-  /**
-   * Verify that a closed SocketCloser will still close an open socket
-   */
+  /** Verify that a closed SocketCloser will still close an open socket */
   @Test
   public void testClosedSocketCloser() {
     final AtomicBoolean runnableCalled = new AtomicBoolean();
-    Runnable r = new Runnable() {
-      @Override
-      public void run() {
-        runnableCalled.set(true);
-      }
-    };
+    Runnable r =
+        new Runnable() {
+          @Override
+          public void run() {
+            runnableCalled.set(true);
+          }
+        };
 
     final Socket s = createClosableSocket();
     this.socketCloser.close();
     this.socketCloser.asyncClose(s, "A", r);
-    WaitCriterion wc = new WaitCriterion() {
-      public boolean done() {
-        return runnableCalled.get() && s.isClosed();
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          public boolean done() {
+            return runnableCalled.get() && s.isClosed();
+          }
 
-      public String description() {
-        return "runnable was not called or socket was not closed";
-      }
-    };
+          public String description() {
+            return "runnable was not called or socket was not closed";
+          }
+        };
     Wait.waitForCriterion(wc, 5000, 10, true);
   }
 }

@@ -43,8 +43,8 @@ public final class AppCacheSnapshotMessage extends RegionAdminMessage {
     Region r = getRegion(dm.getSystem());
     if (r != null) {
       try {
-        //         LinkedList entries = getEntriesForRegion(r, this.getSender());    
-        //         new ResponseThread(this.getSender(), numResults, dm, this.snapshotId).start();                
+        //         LinkedList entries = getEntriesForRegion(r, this.getSender());
+        //         new ResponseThread(this.getSender(), numResults, dm, this.snapshotId).start();
         SnapshotResultMessage m = SnapshotResultMessage.create(r, snapshotId);
         m.setRecipient(this.getSender());
         dm.putOutgoing(m);
@@ -78,7 +78,7 @@ public final class AppCacheSnapshotMessage extends RegionAdminMessage {
   //         for (Iterator iter = entries.iterator(); iter.hasNext(); ) {
   //           snaps.addLast(new RemoteEntrySnapshot((Region.Entry)iter.next(), statsEnabled));
   //         }
-  //       } 
+  //       }
 
   //       consolesToSnapshots.put(recipient, snaps);
   //       return snaps;
@@ -152,7 +152,7 @@ public final class AppCacheSnapshotMessage extends RegionAdminMessage {
   //           break;
   //         } else {
   //           try {
-  //             sleep(50);            
+  //             sleep(50);
   //           } catch (InterruptedException ignore) {}
   //         }
   //       }

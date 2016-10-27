@@ -27,22 +27,19 @@ import org.apache.geode.internal.Version;
 import org.apache.geode.internal.admin.StatAlert;
 import org.apache.geode.internal.admin.StatAlertDefinition;
 
-/**
- * Implementation of {@link StatAlertDefinition}, represents threshold as
- * number
- * 
- */
-public final class NumberThresholdDecoratorImpl extends BaseDecoratorImpl implements DataSerializableFixedID {
+/** Implementation of {@link StatAlertDefinition}, represents threshold as number */
+public final class NumberThresholdDecoratorImpl extends BaseDecoratorImpl
+    implements DataSerializableFixedID {
 
   private static final long serialVersionUID = -1799140125261894306L;
 
   protected Number threshold;
   protected boolean evalForGtThan;
 
-  public NumberThresholdDecoratorImpl() {
-  }
+  public NumberThresholdDecoratorImpl() {}
 
-  public NumberThresholdDecoratorImpl(StatAlertDefinition definition, Number threshold, boolean evalForGtThan) {
+  public NumberThresholdDecoratorImpl(
+      StatAlertDefinition definition, Number threshold, boolean evalForGtThan) {
     super(definition);
     this.threshold = threshold;
     this.evalForGtThan = evalForGtThan;
@@ -77,15 +74,12 @@ public final class NumberThresholdDecoratorImpl extends BaseDecoratorImpl implem
     return buffer.toString();
   }
 
-  /**
-   * This eval just applies to a single value or the 1st value in params
-   */
+  /** This eval just applies to a single value or the 1st value in params */
   @Override
   public boolean evaluate(Number[] params) {
     if (this.evalForGtThan)
       return super.evaluate(params) && isGreaterThan(getValue(params)[0], threshold);
-    else
-      return super.evaluate(params) && isLessThan(getValue(params)[0], threshold);
+    else return super.evaluate(params) && isLessThan(getValue(params)[0], threshold);
   }
 
   @Override

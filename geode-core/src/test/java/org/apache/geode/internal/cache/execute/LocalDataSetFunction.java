@@ -39,7 +39,8 @@ public class LocalDataSetFunction extends FunctionAdapter {
     RegionFunctionContext rContext = (RegionFunctionContext) context;
     Region cust = rContext.getDataSet();
     LocalDataSet localCust = (LocalDataSet) PartitionRegionHelper.getLocalDataForContext(rContext);
-    Map<String, Region<?, ?>> localColocatedRegions = PartitionRegionHelper.getLocalColocatedRegions(rContext);
+    Map<String, Region<?, ?>> localColocatedRegions =
+        PartitionRegionHelper.getLocalColocatedRegions(rContext);
     Map<String, Region<?, ?>> colocatedRegions = PartitionRegionHelper.getColocatedRegions(cust);
 
     Assert.assertTrue(colocatedRegions.size() == 2);
@@ -57,8 +58,10 @@ public class LocalDataSetFunction extends FunctionAdapter {
     Set shipKeySet = ship.keySet();
     Set localShipKeySet = localShip.keySet();
 
-    Assert.assertTrue(localCust.getBucketSet().size() == ((LocalDataSet) localOrd).getBucketSet().size());
-    Assert.assertTrue(localCust.getBucketSet().size() == ((LocalDataSet) localShip).getBucketSet().size());
+    Assert.assertTrue(
+        localCust.getBucketSet().size() == ((LocalDataSet) localOrd).getBucketSet().size());
+    Assert.assertTrue(
+        localCust.getBucketSet().size() == ((LocalDataSet) localShip).getBucketSet().size());
 
     Assert.assertTrue(custKeySet.size() == 120);
     Assert.assertTrue(ordKeySet.size() == 120);
@@ -85,5 +88,4 @@ public class LocalDataSetFunction extends FunctionAdapter {
   public boolean isHA() {
     return false;
   }
-
 }

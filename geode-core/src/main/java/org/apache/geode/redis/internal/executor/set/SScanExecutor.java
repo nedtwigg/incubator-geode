@@ -46,9 +46,11 @@ public class SScanExecutor extends AbstractScanExecutor {
     ByteArrayWrapper key = command.getKey();
     checkDataType(key, RedisDataType.REDIS_SET, context);
     @SuppressWarnings("unchecked")
-    Region<ByteArrayWrapper, Boolean> keyRegion = (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getRegion(key);
+    Region<ByteArrayWrapper, Boolean> keyRegion =
+        (Region<ByteArrayWrapper, Boolean>) context.getRegionProvider().getRegion(key);
     if (keyRegion == null) {
-      command.setResponse(Coder.getScanResponse(context.getByteBufAllocator(), new ArrayList<String>()));
+      command.setResponse(
+          Coder.getScanResponse(context.getByteBufAllocator(), new ArrayList<String>()));
       return;
     }
     byte[] cAr = commandElems.get(2);
@@ -107,12 +109,15 @@ public class SScanExecutor extends AbstractScanExecutor {
     try {
       matchPattern = convertGlobToRegex(globMatchPattern);
     } catch (PatternSyntaxException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_ILLEGAL_GLOB));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_ILLEGAL_GLOB));
       return;
     }
 
     @SuppressWarnings("unchecked")
-    List<ByteArrayWrapper> returnList = (List<ByteArrayWrapper>) getIteration(new ArrayList(keyRegion.keySet()), matchPattern, count, cursor);
+    List<ByteArrayWrapper> returnList =
+        (List<ByteArrayWrapper>)
+            getIteration(new ArrayList(keyRegion.keySet()), matchPattern, count, cursor);
 
     command.setResponse(Coder.getScanResponse(context.getByteBufAllocator(), returnList));
   }
@@ -141,14 +146,11 @@ public class SScanExecutor extends AbstractScanExecutor {
           returnList.add(value);
           numElements++;
         }
-      } else
-        break;
+      } else break;
     }
 
-    if (i == size - 1)
-      returnList.add(0, String.valueOf(0));
-    else
-      returnList.add(0, String.valueOf(i));
+    if (i == size - 1) returnList.add(0, String.valueOf(0));
+    else returnList.add(0, String.valueOf(i));
     return returnList;
   }
 }

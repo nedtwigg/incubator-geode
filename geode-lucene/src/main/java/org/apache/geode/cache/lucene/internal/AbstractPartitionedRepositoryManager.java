@@ -35,18 +35,21 @@ import org.apache.geode.internal.cache.execute.InternalRegionFunctionContext;
 
 public abstract class AbstractPartitionedRepositoryManager implements RepositoryManager {
 
-  /** map of the parent bucket region to the index repository
-   * 
-   * This is based on the BucketRegion in case a bucket is rebalanced, we don't want to 
-   * return a stale index repository. If a bucket moves off of this node and
-   * comes back, it will have a new BucketRegion object.
-   * 
-   * It is weak so that the old BucketRegion will be garbage collected. 
+  /**
+   * map of the parent bucket region to the index repository
+   *
+   * <p>This is based on the BucketRegion in case a bucket is rebalanced, we don't want to return a
+   * stale index repository. If a bucket moves off of this node and comes back, it will have a new
+   * BucketRegion object.
+   *
+   * <p>It is weak so that the old BucketRegion will be garbage collected.
    */
-  protected final ConcurrentHashMap<Integer, IndexRepository> indexRepositories = new ConcurrentHashMap<Integer, IndexRepository>();
+  protected final ConcurrentHashMap<Integer, IndexRepository> indexRepositories =
+      new ConcurrentHashMap<Integer, IndexRepository>();
 
   /** The user region for this index */
   protected final PartitionedRegion userRegion;
+
   protected final LuceneSerializer serializer;
   protected final LuceneIndexImpl index;
 
@@ -57,24 +60,33 @@ public abstract class AbstractPartitionedRepositoryManager implements Repository
   }
 
   @Override
-  public IndexRepository getRepository(Region region, Object key, Object callbackArg) throws BucketNotFoundException {
+  public IndexRepository getRepository(Region region, Object key, Object callbackArg)
+      throws BucketNotFoundException {
     BucketRegion userBucket = userRegion.getBucketRegion(key, callbackArg);
     if (userBucket == null) {
-      throw new BucketNotFoundException("User bucket was not found for region " + region + "key " + key + " callbackarg " + callbackArg);
+      throw new BucketNotFoundException(
+          "User bucket was not found for region "
+              + region
+              + "key "
+              + key
+              + " callbackarg "
+              + callbackArg);
     }
 
     return getRepository(userBucket.getId());
   }
 
   @Override
-  public Collection<IndexRepository> getRepositories(RegionFunctionContext ctx) throws BucketNotFoundException {
+  public Collection<IndexRepository> getRepositories(RegionFunctionContext ctx)
+      throws BucketNotFoundException {
     Region<Object, Object> region = ctx.getDataSet();
     Set<Integer> buckets = ((InternalRegionFunctionContext) ctx).getLocalBucketSet(region);
     ArrayList<IndexRepository> repos = new ArrayList<IndexRepository>(buckets.size());
     for (Integer bucketId : buckets) {
       BucketRegion userBucket = userRegion.getDataStore().getLocalBucketById(bucketId);
       if (userBucket == null) {
-        throw new BucketNotFoundException("User bucket was not found for region " + region + "bucket id " + bucketId);
+        throw new BucketNotFoundException(
+            "User bucket was not found for region " + region + "bucket id " + bucketId);
       } else {
         repos.add(getRepository(userBucket.getId()));
       }
@@ -83,35 +95,41 @@ public abstract class AbstractPartitionedRepositoryManager implements Repository
     return repos;
   }
 
-  public abstract IndexRepository createOneIndexRepository(final Integer bucketId, LuceneSerializer serializer, LuceneIndexImpl index, PartitionedRegion userRegion) throws IOException;
+  public abstract IndexRepository createOneIndexRepository(
+      final Integer bucketId,
+      LuceneSerializer serializer,
+      LuceneIndexImpl index,
+      PartitionedRegion userRegion)
+      throws IOException;
 
-  /**
-   * Return the repository for a given user bucket
-   */
+  /** Return the repository for a given user bucket */
   protected IndexRepository getRepository(Integer bucketId) throws BucketNotFoundException {
     IndexRepository repo = indexRepositories.get(bucketId);
     if (repo != null && !repo.isClosed()) {
       return repo;
     }
 
-    repo = indexRepositories.compute(bucketId, (key, oldRepository) -> {
-      if (oldRepository != null && !oldRepository.isClosed()) {
-        return oldRepository;
-      }
-      if (oldRepository != null) {
-        oldRepository.cleanup();
-      }
+    repo =
+        indexRepositories.compute(
+            bucketId,
+            (key, oldRepository) -> {
+              if (oldRepository != null && !oldRepository.isClosed()) {
+                return oldRepository;
+              }
+              if (oldRepository != null) {
+                oldRepository.cleanup();
+              }
 
-      try {
-        return createOneIndexRepository(bucketId, serializer, index, userRegion);
-      } catch (IOException e) {
-        throw new InternalGemFireError("Unable to create index repository", e);
-      }
-
-    });
+              try {
+                return createOneIndexRepository(bucketId, serializer, index, userRegion);
+              } catch (IOException e) {
+                throw new InternalGemFireError("Unable to create index repository", e);
+              }
+            });
 
     if (repo == null) {
-      throw new BucketNotFoundException("Colocated index buckets not found for bucket id " + bucketId);
+      throw new BucketNotFoundException(
+          "Colocated index buckets not found for bucket id " + bucketId);
     }
 
     return repo;

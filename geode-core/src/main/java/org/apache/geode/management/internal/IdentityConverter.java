@@ -21,11 +21,8 @@ import java.lang.reflect.Type;
 import javax.management.openmbean.OpenType;
 
 /**
- * Converter for classes where the open data is identical to the original
- * data. This is true for any of the SimpleType types, and for an
- * any-dimension array of those
- * 
- *
+ * Converter for classes where the open data is identical to the original data. This is true for any
+ * of the SimpleType types, and for an any-dimension array of those
  */
 public final class IdentityConverter extends OpenTypeConverter {
   IdentityConverter(Type targetType, OpenType openType, Class openClass) {

@@ -25,9 +25,7 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit tests for DistributedSystem class.
- */
+/** Unit tests for DistributedSystem class. */
 @Category(UnitTest.class)
 public class DistributedSystemJUnitTest {
 
@@ -36,7 +34,8 @@ public class DistributedSystemJUnitTest {
 
   @Test
   public void getPropertiesFileShouldUseDefault() throws Exception {
-    assertThat(DistributedSystem.getPropertiesFile()).isEqualTo(DistributedSystem.PROPERTIES_FILE_DEFAULT);
+    assertThat(DistributedSystem.getPropertiesFile())
+        .isEqualTo(DistributedSystem.PROPERTIES_FILE_DEFAULT);
   }
 
   @Test
@@ -57,7 +56,8 @@ public class DistributedSystemJUnitTest {
 
   @Test
   public void getSecurityPropertiesFileShouldUseDefault() throws Exception {
-    assertThat(DistributedSystem.getSecurityPropertiesFile()).isEqualTo(DistributedSystem.SECURITY_PROPERTIES_FILE_DEFAULT);
+    assertThat(DistributedSystem.getSecurityPropertiesFile())
+        .isEqualTo(DistributedSystem.SECURITY_PROPERTIES_FILE_DEFAULT);
   }
 
   @Test

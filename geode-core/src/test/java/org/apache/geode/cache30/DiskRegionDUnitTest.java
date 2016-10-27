@@ -65,18 +65,14 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
 /**
- * Tests the functionality of cache regions whose contents may be
- * written to disk.
- *
+ * Tests the functionality of cache regions whose contents may be written to disk.
  *
  * @since GemFire 3.2
  */
 @Category(DistributedTest.class)
 public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
 
-  /**
-   * Creates a new <code>DiskRegionDUnitTest</code>
-   */
+  /** Creates a new <code>DiskRegionDUnitTest</code> */
   public DiskRegionDUnitTest() {
     super();
   }
@@ -87,7 +83,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
   //     factory.setEarlyAck(false);
   //     factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
   //     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-  //     factory.setDiskSynchronous(true);    
+  //     factory.setDiskSynchronous(true);
   //     factory.setDiskWriteAttributes(dwaf.create());
   //     File d = new File("DiskRegions" + OSProcess.getId());
   //     d.mkdirs();
@@ -97,9 +93,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
   //     return factory.create();
   //   }
 
-  /**
-   * Returns the <code>LRUStatistics</code> for the given region
-   */
+  /** Returns the <code>LRUStatistics</code> for the given region */
   protected LRUStatistics getLRUStats(Region region) {
     final LocalRegion l = (LocalRegion) region;
     return l.getEvictionController().getLRUHelper().getStats();
@@ -107,20 +101,19 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
 
   ////////  Test Methods
 
-  /**
-   * Tests that data overflows correctly to a disk region
-   */
+  /** Tests that data overflows correctly to a disk region */
   @Test
   public void testDiskRegionOverflow() throws Exception {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
 
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     factory.setDiskSynchronous(true);
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
@@ -151,7 +144,20 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
 
     flush(region);
 
-    LogWriterUtils.getLogWriter().info("DEBUG: writes=" + diskStats.getWrites() + " reads=" + diskStats.getReads() + " evictions=" + lruStats.getEvictions() + " total=" + total + " numEntriesInVM=" + diskStats.getNumEntriesInVM() + " numOverflows=" + diskStats.getNumOverflowOnDisk());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "DEBUG: writes="
+                + diskStats.getWrites()
+                + " reads="
+                + diskStats.getReads()
+                + " evictions="
+                + lruStats.getEvictions()
+                + " total="
+                + total
+                + " numEntriesInVM="
+                + diskStats.getNumEntriesInVM()
+                + " numOverflows="
+                + diskStats.getNumOverflowOnDisk());
 
     assertEquals(1, diskStats.getWrites());
     assertEquals(0, diskStats.getReads());
@@ -165,7 +171,20 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     assertNotNull(value);
     assertEquals(0, ((int[]) value)[0]);
 
-    LogWriterUtils.getLogWriter().info("DEBUG: writes=" + diskStats.getWrites() + " reads=" + diskStats.getReads() + " evictions=" + lruStats.getEvictions() + " total=" + total + " numEntriesInVM=" + diskStats.getNumEntriesInVM() + " numOverflows=" + diskStats.getNumOverflowOnDisk());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "DEBUG: writes="
+                + diskStats.getWrites()
+                + " reads="
+                + diskStats.getReads()
+                + " evictions="
+                + lruStats.getEvictions()
+                + " total="
+                + total
+                + " numEntriesInVM="
+                + diskStats.getNumEntriesInVM()
+                + " numOverflows="
+                + diskStats.getNumOverflowOnDisk());
 
     assertEquals(2, diskStats.getWrites());
     assertEquals(1, diskStats.getReads());
@@ -178,28 +197,28 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     }
   }
 
-  /**
-   * Makes sure that updates from other VMs cause existing entries to
-   * be written to disk.
-   */
+  /** Makes sure that updates from other VMs cause existing entries to be written to disk. */
   @Test
   public void testRemoteUpdates() throws Exception {
     final String name = this.getUniqueName();
 
-    SerializableRunnable create = new CacheSerializableRunnable("Create region") {
-      public void run2() throws CacheException {
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.DISTRIBUTED_NO_ACK);
-        factory.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(2, null, EvictionAction.OVERFLOW_TO_DISK));
-        File d = new File("DiskRegions" + OSProcess.getId());
-        d.mkdirs();
-        DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-        dsf.setDiskDirs(new File[] { d });
-        DiskStore ds = dsf.create(name);
-        factory.setDiskStoreName(ds.getName());
-        createRegion(name, factory.create());
-      }
-    };
+    SerializableRunnable create =
+        new CacheSerializableRunnable("Create region") {
+          public void run2() throws CacheException {
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.DISTRIBUTED_NO_ACK);
+            factory.setEvictionAttributes(
+                EvictionAttributes.createLRUMemoryAttributes(
+                    2, null, EvictionAction.OVERFLOW_TO_DISK));
+            File d = new File("DiskRegions" + OSProcess.getId());
+            d.mkdirs();
+            DiskStoreFactory dsf = getCache().createDiskStoreFactory();
+            dsf.setDiskDirs(new File[] {d});
+            DiskStore ds = dsf.create(name);
+            factory.setDiskStoreName(ds.getName());
+            createRegion(name, factory.create());
+          }
+        };
 
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
@@ -208,88 +227,92 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     vm0.invoke(create);
     vm1.invoke(create);
 
-    vm0.invoke(new CacheSerializableRunnable("Fill Region") {
-      public void run2() throws CacheException {
-        LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
-        //          DiskRegion dr = region.getDiskRegion();
-        LRUStatistics lruStats = getLRUStats(region);
-        int i;
-        for (i = 0; lruStats.getEvictions() <= 0; i++) {
-          region.put(new Integer(i), new short[250]);
-        }
-        assertTrue(i > 5);
-      }
-    });
-
-    vm1.invoke(new CacheSerializableRunnable("Update Region") {
-      public void run2() throws CacheException {
-        LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
-        //          DiskRegion dr = region.getDiskRegion();
-        //          LRUStatistics lruStats = getLRUStats(region);
-        for (int i = 0; i < 10; i++) {
-          region.put(new Integer(i), new int[250]);
-        }
-      }
-    });
-
-    vm0.invoke(new CacheSerializableRunnable("Verify overflow") {
-      public void run2() throws CacheException {
-        LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
-        //          DiskRegion dr = region.getDiskRegion();
-        final LRUStatistics lruStats = getLRUStats(region);
-        WaitCriterion ev = new WaitCriterion() {
-          public boolean done() {
-            return lruStats.getEvictions() > 6;
+    vm0.invoke(
+        new CacheSerializableRunnable("Fill Region") {
+          public void run2() throws CacheException {
+            LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
+            //          DiskRegion dr = region.getDiskRegion();
+            LRUStatistics lruStats = getLRUStats(region);
+            int i;
+            for (i = 0; lruStats.getEvictions() <= 0; i++) {
+              region.put(new Integer(i), new short[250]);
+            }
+            assertTrue(i > 5);
           }
+        });
 
-          public String description() {
-            return "waiting for evictions to exceed 6";
+    vm1.invoke(
+        new CacheSerializableRunnable("Update Region") {
+          public void run2() throws CacheException {
+            LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
+            //          DiskRegion dr = region.getDiskRegion();
+            //          LRUStatistics lruStats = getLRUStats(region);
+            for (int i = 0; i < 10; i++) {
+              region.put(new Integer(i), new int[250]);
+            }
           }
-        };
-        Wait.waitForCriterion(ev, 5 * 1000, 200, true);
-        //DiskRegionStats diskStats = dr.getStats();
-        //assertTrue(diskStats.getWrites() > 6);
-      }
-    });
+        });
 
-    vm0.invoke(new CacheSerializableRunnable("Populate with byte[]") {
-      public void run2() throws CacheException {
-        LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
-        //          DiskRegion dr = region.getDiskRegion();
-        //          LRUStatistics lruStats = getLRUStats(region);
-        for (int i = 0; i < 10000; i++) {
-          region.put(String.valueOf(i), String.valueOf(i).getBytes());
-        }
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Verify overflow") {
+          public void run2() throws CacheException {
+            LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
+            //          DiskRegion dr = region.getDiskRegion();
+            final LRUStatistics lruStats = getLRUStats(region);
+            WaitCriterion ev =
+                new WaitCriterion() {
+                  public boolean done() {
+                    return lruStats.getEvictions() > 6;
+                  }
 
-    vm1.invoke(new CacheSerializableRunnable("Get with byte[]") {
-      public void run2() throws CacheException {
-        LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
-        //          DiskRegion dr = region.getDiskRegion();
-        //          LRUStatistics lruStats = getLRUStats(region);
-        for (int i = 0; i < 10000; i++) {
-          byte[] bytes = (byte[]) region.get(String.valueOf(i));
-          assertEquals(String.valueOf(i), new String(bytes));
-        }
-      }
-    });
+                  public String description() {
+                    return "waiting for evictions to exceed 6";
+                  }
+                };
+            Wait.waitForCriterion(ev, 5 * 1000, 200, true);
+            //DiskRegionStats diskStats = dr.getStats();
+            //assertTrue(diskStats.getWrites() > 6);
+          }
+        });
+
+    vm0.invoke(
+        new CacheSerializableRunnable("Populate with byte[]") {
+          public void run2() throws CacheException {
+            LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
+            //          DiskRegion dr = region.getDiskRegion();
+            //          LRUStatistics lruStats = getLRUStats(region);
+            for (int i = 0; i < 10000; i++) {
+              region.put(String.valueOf(i), String.valueOf(i).getBytes());
+            }
+          }
+        });
+
+    vm1.invoke(
+        new CacheSerializableRunnable("Get with byte[]") {
+          public void run2() throws CacheException {
+            LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
+            //          DiskRegion dr = region.getDiskRegion();
+            //          LRUStatistics lruStats = getLRUStats(region);
+            for (int i = 0; i < 10000; i++) {
+              byte[] bytes = (byte[]) region.get(String.valueOf(i));
+              assertEquals(String.valueOf(i), new String(bytes));
+            }
+          }
+        });
   }
 
-  /**
-   * Overflows a region and makes sure that gets of recently-used
-   * objects do not cause faults.
-   */
+  /** Overflows a region and makes sure that gets of recently-used objects do not cause faults. */
   @Test
   public void testNoFaults() throws Exception {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
     Region region = createRegion(name, factory.create());
@@ -320,33 +343,34 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests overflow with mirrored regions.  Note that we have to use
-   * <code>byte</code> array values in this test.  Otherwise, the size
-   * of the data in the "puter" VM would be different from the size of
-   * the data in the receiver VM, thus cause the two VMs to have
-   * different LRU eviction behavior.
+   * Tests overflow with mirrored regions. Note that we have to use <code>byte</code> array values
+   * in this test. Otherwise, the size of the data in the "puter" VM would be different from the
+   * size of the data in the receiver VM, thus cause the two VMs to have different LRU eviction
+   * behavior.
    */
   @Test
   public void testOverflowMirror() throws Exception {
     final String name = this.getUniqueName();
 
-    SerializableRunnable create = new CacheSerializableRunnable("Create region") {
-      public void run2() throws CacheException {
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        factory.setEarlyAck(false);
-        factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
-        factory.setDataPolicy(DataPolicy.REPLICATE);
-        File d = new File("DiskRegions" + OSProcess.getId());
-        d.mkdirs();
-        DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-        dsf.setDiskDirs(new File[] { d });
-        factory.setDiskSynchronous(true);
-        DiskStore ds = dsf.create(name);
-        factory.setDiskStoreName(ds.getName());
-        createRegion(name, factory.create());
-      }
-    };
+    SerializableRunnable create =
+        new CacheSerializableRunnable("Create region") {
+          public void run2() throws CacheException {
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            factory.setEarlyAck(false);
+            factory.setEvictionAttributes(
+                EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+            factory.setDataPolicy(DataPolicy.REPLICATE);
+            File d = new File("DiskRegions" + OSProcess.getId());
+            d.mkdirs();
+            DiskStoreFactory dsf = getCache().createDiskStoreFactory();
+            dsf.setDiskDirs(new File[] {d});
+            factory.setDiskSynchronous(true);
+            DiskStore ds = dsf.create(name);
+            factory.setDiskStoreName(ds.getName());
+            createRegion(name, factory.create());
+          }
+        };
 
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
@@ -355,53 +379,53 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     vm0.invoke(create);
     vm1.invoke(create);
 
-    vm0.invoke(new CacheSerializableRunnable("Fill Region") {
-      public void run2() throws CacheException {
-        LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
-        //          DiskRegion dr = region.getDiskRegion();
-        LRUStatistics lruStats = getLRUStats(region);
-        for (int i = 0; lruStats.getEvictions() < 10; i++) {
-          LogWriterUtils.getLogWriter().info("Put " + i);
-          region.put(new Integer(i), new byte[1]);
-        }
+    vm0.invoke(
+        new CacheSerializableRunnable("Fill Region") {
+          public void run2() throws CacheException {
+            LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
+            //          DiskRegion dr = region.getDiskRegion();
+            LRUStatistics lruStats = getLRUStats(region);
+            for (int i = 0; lruStats.getEvictions() < 10; i++) {
+              LogWriterUtils.getLogWriter().info("Put " + i);
+              region.put(new Integer(i), new byte[1]);
+            }
 
-        assertEquals(10, lruStats.getEvictions());
-      }
-    });
+            assertEquals(10, lruStats.getEvictions());
+          }
+        });
 
-    vm1.invoke(new CacheSerializableRunnable("Verify overflow") {
-      public void run2() throws CacheException {
-        LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
-        //          DiskRegion dr = region.getDiskRegion();
-        LRUStatistics lruStats = getLRUStats(region);
-        assertEquals(10, lruStats.getEvictions());
+    vm1.invoke(
+        new CacheSerializableRunnable("Verify overflow") {
+          public void run2() throws CacheException {
+            LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
+            //          DiskRegion dr = region.getDiskRegion();
+            LRUStatistics lruStats = getLRUStats(region);
+            assertEquals(10, lruStats.getEvictions());
 
-        // Because we are DISTRIBUTED_ACK, we can rely on the order
-        // in which messages arrive and hence the order of the LRU
-        // entries.
-        for (int i = 0; i < 10; i++) {
-          region.get(new Integer(i));
-          assertEquals("No eviction for " + i, 10 + 1 + i, lruStats.getEvictions());
-        }
-      }
-    });
-
+            // Because we are DISTRIBUTED_ACK, we can rely on the order
+            // in which messages arrive and hence the order of the LRU
+            // entries.
+            for (int i = 0; i < 10; i++) {
+              region.get(new Integer(i));
+              assertEquals("No eviction for " + i, 10 + 1 + i, lruStats.getEvictions());
+            }
+          }
+        });
   }
 
-  /**
-   * Tests destroying entries in an overflow region
-   */
+  /** Tests destroying entries in an overflow region */
   @Test
   public void testDestroy() throws Exception {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
 
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     factory.setDiskSynchronous(true);
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
@@ -447,26 +471,25 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests cache listeners in an overflow region are invoked and that
-   * their events are reasonable.
+   * Tests cache listeners in an overflow region are invoked and that their events are reasonable.
    */
   @Test
   public void testCacheEvents() throws Exception {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
-    TestCacheListener listener = new TestCacheListener() {
-      public void afterCreate2(EntryEvent event) {
-
-      }
-    };
+    TestCacheListener listener =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent event) {}
+        };
     factory.addCacheListener(listener);
 
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     factory.setDiskSynchronous(true);
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
@@ -484,10 +507,10 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
 
     assertTrue(listener.wasInvoked());
 
-    listener = new TestCacheListener() {
-      public void close2() {
-      }
-    };
+    listener =
+        new TestCacheListener() {
+          public void close2() {}
+        };
 
     region.getAttributesMutator().setCacheListener(listener);
 
@@ -499,15 +522,16 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
 
     assertFalse(listener.wasInvoked());
 
-    listener = new TestCacheListener() {
-      public void afterUpdate2(EntryEvent event) {
-        Integer key = (Integer) event.getKey();
-        assertEquals(null, event.getOldValue());
-        assertEquals(false, event.isOldValueAvailable());
-        byte[] value = (byte[]) event.getNewValue();
-        assertEquals(key.intValue(), value.length);
-      }
-    };
+    listener =
+        new TestCacheListener() {
+          public void afterUpdate2(EntryEvent event) {
+            Integer key = (Integer) event.getKey();
+            assertEquals(null, event.getOldValue());
+            assertEquals(false, event.isOldValueAvailable());
+            byte[] value = (byte[]) event.getNewValue();
+            assertEquals(key.intValue(), value.length);
+          }
+        };
 
     region.getAttributesMutator().setCacheListener(listener);
 
@@ -519,18 +543,19 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests that an {@link IllegalStateException} is thrown when the
-   * region is full of keys and entries.
+   * Tests that an {@link IllegalStateException} is thrown when the region is full of keys and
+   * entries.
    */
   public void fillUpOverflowRegion() throws Exception {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
     Region region = createRegion(name, factory.create());
@@ -551,20 +576,18 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     fail("Should have thrown an IllegalStateException");
   }
 
-  /**
-   * Tests iterating over all of the values when some have been
-   * overflowed.
-   */
+  /** Tests iterating over all of the values when some have been overflowed. */
   @Test
   public void testValues() throws Exception {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
     Region region = createRegion(name, factory.create());
@@ -584,7 +607,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     Collection values = region.values();
     assertEquals(total, values.size());
 
-    for (Iterator iter = values.iterator(); iter.hasNext();) {
+    for (Iterator iter = values.iterator(); iter.hasNext(); ) {
       Object value = iter.next();
       assertNotNull(value);
       int[] array = (int[]) value;
@@ -594,9 +617,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     }
   }
 
-  /**
-   * Tests for region.evictValue().
-   */
+  /** Tests for region.evictValue(). */
   @Test
   public void testRegionEvictValue() throws Exception {
     final String name = this.getUniqueName() + "testRegionEvictValue";
@@ -608,7 +629,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     //factory.setEvictionAttributes(EvictionAttributes.createLIFOEntryAttributes(capacity, EvictionAction.OVERFLOW_TO_DISK));
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
     Region region = createRegion(name, factory.create());
@@ -640,9 +661,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     }
   }
 
-  /**
-   * Tests calling region.evictValue() on region with eviction-attribute set.
-   */
+  /** Tests calling region.evictValue() on region with eviction-attribute set. */
   @Test
   public void testEvictValueOnRegionWithEvictionAttributes() throws Exception {
     final String name = this.getUniqueName() + "testRegionEvictValue";
@@ -652,9 +671,10 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
     Region region = createRegion(name, factory.create());
@@ -668,19 +688,16 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     for (int i = 0; i < size / 4; i++) {
       try {
         ((LocalRegion) region).evictValue("Key-" + i);
-        fail("Should have thrown exception with, evictValue not supported on region with eviction attributes.");
+        fail(
+            "Should have thrown exception with, evictValue not supported on region with eviction attributes.");
       } catch (Exception ex) {
         // Expected exception.
         // continue.
       }
     }
-
   }
 
-  /**
-   * Tests that the disk region statistics are updated correctly for
-   * persist backup regions.
-   */
+  /** Tests that the disk region statistics are updated correctly for persist backup regions. */
   @Test
   public void testBackupStatistics() throws CacheException {
     final String name = this.getUniqueName();
@@ -692,7 +709,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     final int total = 10;
 
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     factory.setDiskSynchronous(true);
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
@@ -752,12 +769,13 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     factory.setDiskSynchronous(true);
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
@@ -806,7 +824,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     getCache();
     {
       dsf = getCache().createDiskStoreFactory();
-      dsf.setDiskDirs(new File[] { d });
+      dsf.setDiskDirs(new File[] {d});
       dsf.create(name);
       Region region = createRegion(name, factory.create());
       assertEquals(total, region.keys().size());
@@ -833,20 +851,20 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
   // we no longer switchIn files if GII aborts.
 
   /**
-   * Tests getting the {@linkplain
-   * org.apache.geode.cache.Region.Entry#getValue values} of
-   * region entries that have been overflowed.
+   * Tests getting the {@linkplain org.apache.geode.cache.Region.Entry#getValue values} of region
+   * entries that have been overflowed.
    */
   @Test
   public void testRegionEntryValues() throws Exception {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
     Region region = createRegion(name, factory.create());
@@ -866,7 +884,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     Set values = region.entries(false);
     assertEquals(total, values.size());
 
-    for (Iterator iter = values.iterator(); iter.hasNext();) {
+    for (Iterator iter = values.iterator(); iter.hasNext(); ) {
       Region.Entry entry = (Region.Entry) iter.next();
       Integer key = (Integer) entry.getKey();
       int[] value = (int[]) entry.getValue();
@@ -876,19 +894,20 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests that once an overflowed entry is {@linkplain
-   * Region#invalidate invalidated} its value is gone.
+   * Tests that once an overflowed entry is {@linkplain Region#invalidate invalidated} its value is
+   * gone.
    */
   @Test
   public void testInvalidate() throws Exception {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
     Region region = createRegion(name, factory.create());
@@ -909,28 +928,30 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests that invalidates and updates received from different VMs
-   * are handled appropriately by overflow regions.
+   * Tests that invalidates and updates received from different VMs are handled appropriately by
+   * overflow regions.
    */
   @Test
   public void testDistributedInvalidate() throws Exception {
     final String name = this.getUniqueName();
 
-    SerializableRunnable create = new CacheSerializableRunnable("Create region") {
-      public void run2() throws CacheException {
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        factory.setEarlyAck(false);
-        factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
-        File d = new File("DiskRegions" + OSProcess.getId());
-        d.mkdirs();
-        DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-        dsf.setDiskDirs(new File[] { d });
-        DiskStore ds = dsf.create(name);
-        factory.setDiskStoreName(ds.getName());
-        createRegion(name, factory.create());
-      }
-    };
+    SerializableRunnable create =
+        new CacheSerializableRunnable("Create region") {
+          public void run2() throws CacheException {
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            factory.setEarlyAck(false);
+            factory.setEvictionAttributes(
+                EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+            File d = new File("DiskRegions" + OSProcess.getId());
+            d.mkdirs();
+            DiskStoreFactory dsf = getCache().createDiskStoreFactory();
+            dsf.setDiskDirs(new File[] {d});
+            DiskStore ds = dsf.create(name);
+            factory.setDiskStoreName(ds.getName());
+            createRegion(name, factory.create());
+          }
+        };
 
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
@@ -939,85 +960,91 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     vm0.invoke(create);
     vm1.invoke(create);
 
-    vm0.invoke(new CacheSerializableRunnable("Fill Region") {
-      public void run2() throws CacheException {
-        LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
-        //          DiskRegion dr = region.getDiskRegion();
-        LRUStatistics lruStats = getLRUStats(region);
-        for (int i = 0; lruStats.getEvictions() < 10; i++) {
-          LogWriterUtils.getLogWriter().info("Put " + i);
-          region.put(new Integer(i), new byte[1]);
-        }
+    vm0.invoke(
+        new CacheSerializableRunnable("Fill Region") {
+          public void run2() throws CacheException {
+            LocalRegion region = (LocalRegion) getRootRegion().getSubregion(name);
+            //          DiskRegion dr = region.getDiskRegion();
+            LRUStatistics lruStats = getLRUStats(region);
+            for (int i = 0; lruStats.getEvictions() < 10; i++) {
+              LogWriterUtils.getLogWriter().info("Put " + i);
+              region.put(new Integer(i), new byte[1]);
+            }
 
-        assertEquals(10, lruStats.getEvictions());
-      }
-    });
+            assertEquals(10, lruStats.getEvictions());
+          }
+        });
 
     final Object key = new Integer(20);
 
-    vm1.invoke(new CacheSerializableRunnable("Invalidate entry") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(name);
-        assertNotNull(region.get(key));
-        region.invalidate(key);
-      }
-    });
-
-    vm0.invoke(new CacheSerializableRunnable("Verify invalidate") {
-      public void run2() throws CacheException {
-        final Region region = getRootRegion().getSubregion(name);
-        WaitCriterion ev = new WaitCriterion() {
-          public boolean done() {
-            return region.get(key) == null;
+    vm1.invoke(
+        new CacheSerializableRunnable("Invalidate entry") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(name);
+            assertNotNull(region.get(key));
+            region.invalidate(key);
           }
+        });
 
-          public String description() {
-            return "value for key remains: " + key;
+    vm0.invoke(
+        new CacheSerializableRunnable("Verify invalidate") {
+          public void run2() throws CacheException {
+            final Region region = getRootRegion().getSubregion(name);
+            WaitCriterion ev =
+                new WaitCriterion() {
+                  public boolean done() {
+                    return region.get(key) == null;
+                  }
+
+                  public String description() {
+                    return "value for key remains: " + key;
+                  }
+                };
+            Wait.waitForCriterion(ev, 500, 200, true);
           }
-        };
-        Wait.waitForCriterion(ev, 500, 200, true);
-      }
-    });
+        });
 
     final String newValue = "NEW VALUE";
 
-    vm1.invoke(new CacheSerializableRunnable("Update entry") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(name);
-        region.put(key, newValue);
-      }
-    });
-
-    vm0.invoke(new CacheSerializableRunnable("Verify update") {
-      public void run2() throws CacheException {
-        final Region region = getRootRegion().getSubregion(name);
-        WaitCriterion ev = new WaitCriterion() {
-          public boolean done() {
-            return newValue.equals(region.get(key));
+    vm1.invoke(
+        new CacheSerializableRunnable("Update entry") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(name);
+            region.put(key, newValue);
           }
+        });
 
-          public String description() {
-            return "verify update";
+    vm0.invoke(
+        new CacheSerializableRunnable("Verify update") {
+          public void run2() throws CacheException {
+            final Region region = getRootRegion().getSubregion(name);
+            WaitCriterion ev =
+                new WaitCriterion() {
+                  public boolean done() {
+                    return newValue.equals(region.get(key));
+                  }
+
+                  public String description() {
+                    return "verify update";
+                  }
+                };
+            Wait.waitForCriterion(ev, 500, 200, true);
           }
-        };
-        Wait.waitForCriterion(ev, 500, 200, true);
-      }
-    });
+        });
   }
 
-  /**
-   * Tests that the updated value gets overflowed
-   */
+  /** Tests that the updated value gets overflowed */
   @Test
   public void testOverflowUpdatedValue() throws Exception {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
     Region region = createRegion(name, factory.create());
@@ -1040,7 +1067,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     assertEquals(newValue, region.get(key));
 
     // Iterate over a bunch of stuff to cause the updated entry to be
-    // overflowed 
+    // overflowed
     for (int i = 1; i < total; i++) {
       region.get(new Integer(i));
     }
@@ -1049,30 +1076,26 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     assertEquals(newValue, region.get(key));
   }
 
-  /**
-   * Flushing all pending writes to disk.
-   */
+  /** Flushing all pending writes to disk. */
   private static void flush(Region region) {
     ((LocalRegion) region).getDiskRegion().flushForTesting();
   }
 
-  /**
-   * Tests that the "test hook" {@link DiskRegionStats} work as
-   * advertised. 
-   */
+  /** Tests that the "test hook" {@link DiskRegionStats} work as advertised. */
   @Test
   public void testTestHookStatistics() throws Exception {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     //    factory.setConcurrencyChecksEnabled(false);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
     factory.setDiskSynchronous(true);
 
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
     LocalRegion region = (LocalRegion) createRegion(name, factory.create());
@@ -1095,7 +1118,8 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
 
     // Net change of zero
     region.get(new Integer(0));
-    assertEquals(region.entryCount(), diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
+    assertEquals(
+        region.entryCount(), diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
     assertEquals(total - 1, diskStats.getNumEntriesInVM());
     assertEquals(1, diskStats.getNumOverflowOnDisk());
 
@@ -1104,59 +1128,65 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     region.put(new Integer(total + 11), new int[1]);
     region.put(new Integer(total + 12), new int[1]);
     region.put(new Integer(total + 13), new int[1]);
-    assertEquals(region.entryCount(), diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
+    assertEquals(
+        region.entryCount(), diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
     assertEquals(total - 1, diskStats.getNumEntriesInVM());
     assertEquals(5, diskStats.getNumOverflowOnDisk());
 
     // Make sure invalidate of inVM entry changes inVM count but not disk
     region.invalidate(new Integer(total + 10));
-    assertEquals(region.entryCount() - 1, diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
+    assertEquals(
+        region.entryCount() - 1, diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
     assertEquals(total - 2, diskStats.getNumEntriesInVM());
     assertEquals(5, diskStats.getNumOverflowOnDisk());
 
     // Make sure local-invalidate of inVM entry changes inVM count but not disk
     region.localInvalidate(new Integer(total + 11));
-    assertEquals(region.entryCount() - 2, diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
+    assertEquals(
+        region.entryCount() - 2, diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
     assertEquals(total - 3, diskStats.getNumEntriesInVM());
     assertEquals(5, diskStats.getNumOverflowOnDisk());
 
     // Make sure destroy of invalid entry does not change inVM or onDisk but changes entry count
     region.destroy(new Integer(total + 10));
     //((LocalRegion)region).dumpBackingMap();
-    assertEquals(region.entryCount() - 1, diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
+    assertEquals(
+        region.entryCount() - 1, diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
     assertEquals(total - 3, diskStats.getNumEntriesInVM());
     assertEquals(5, diskStats.getNumOverflowOnDisk());
 
     // Make sure destroy of inVM entry does change inVM but not onDisk
     region.destroy(new Integer(total + 12));
-    assertEquals(region.entryCount() - 1, diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
+    assertEquals(
+        region.entryCount() - 1, diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
     assertEquals(total - 4, diskStats.getNumEntriesInVM());
     assertEquals(5, diskStats.getNumOverflowOnDisk());
 
     // Destroy an entry that has been overflowed
     region.destroy(new Integer(3));
-    assertEquals(region.entryCount() - 1, diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
+    assertEquals(
+        region.entryCount() - 1, diskStats.getNumEntriesInVM() + diskStats.getNumOverflowOnDisk());
     assertEquals(total - 4, diskStats.getNumEntriesInVM());
     assertEquals(4, diskStats.getNumOverflowOnDisk());
   }
 
   /**
-   * Tests the {@link LocalRegion#getValueInVM getValueInVM} and
-   * {@link LocalRegion#getValueOnDisk getValueOnDisk} methods that
-   * were added for testing.
+   * Tests the {@link LocalRegion#getValueInVM getValueInVM} and {@link LocalRegion#getValueOnDisk
+   * getValueOnDisk} methods that were added for testing.
    */
   @Test
   public void testLowLevelGetMethods() throws Exception {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
     factory.setDiskSynchronous(true);
 
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
     LocalRegion region = (LocalRegion) createRegion(name, factory.create());
@@ -1195,22 +1225,20 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     assertEquals(1, array[0]);
   }
 
-  /**
-   * Tests disk overflow with an entry-based {@link
-   * LRUCapacityController}. 
-   */
+  /** Tests disk overflow with an entry-based {@link LRUCapacityController}. */
   @Test
   public void testLRUCapacityController() throws CacheException {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1000, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(1000, EvictionAction.OVERFLOW_TO_DISK));
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
     factory.setDiskSynchronous(true);
 
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
     Region region = createRegion(name, factory.create());
@@ -1271,8 +1299,8 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests a disk-based region with an {@link LRUCapacityController}
-   * with size 1 and an eviction action of "overflow".
+   * Tests a disk-based region with an {@link LRUCapacityController} with size 1 and an eviction
+   * action of "overflow".
    */
   @Test
   public void testLRUCCSizeOne() throws CacheException {
@@ -1281,22 +1309,22 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     final String name = this.getUniqueName();
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(threshold, EvictionAction.OVERFLOW_TO_DISK));
-    factory.setCacheLoader(new CacheLoader() {
-      public Object load(LoaderHelper helper) throws CacheLoaderException {
-        return "LOADED VALUE";
-      }
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(threshold, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setCacheLoader(
+        new CacheLoader() {
+          public Object load(LoaderHelper helper) throws CacheLoaderException {
+            return "LOADED VALUE";
+          }
 
-      public void close() {
-      }
-
-    });
+          public void close() {}
+        });
     DiskStoreFactory dsf = getCache().createDiskStoreFactory();
     factory.setDiskSynchronous(true);
 
     File d = new File("DiskRegions" + OSProcess.getId());
     d.mkdirs();
-    dsf.setDiskDirs(new File[] { d });
+    dsf.setDiskDirs(new File[] {d});
     DiskStore ds = dsf.create(name);
     factory.setDiskStoreName(ds.getName());
 
@@ -1338,37 +1366,40 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     VM vm3 = host.getVM(2);
     final String regionName = getName();
 
-    vm1.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        RegionFactory rf = getCache().createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT);
-        Region r = rf.create(regionName);
-        assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
-        return null;
-      }
-    });
-    vm2.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        RegionFactory rf = getCache().createRegionFactory(RegionShortcut.REPLICATE);
-        Region region = rf.create(regionName);
-        assertTrue(region.getAttributes().getConcurrencyChecksEnabled());
-        return null;
-      }
-    });
-    vm3.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Cache cache = getCache();
-        AttributesFactory af = new AttributesFactory();
-        af.setScope(Scope.DISTRIBUTED_ACK);
-        RegionFactory rf = cache.createRegionFactory(af.create());
-        Region r = rf.create(regionName);
-        assertNotNull(r);
-        assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
-        return null;
-      }
-    });
+    vm1.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            RegionFactory rf = getCache().createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT);
+            Region r = rf.create(regionName);
+            assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
+            return null;
+          }
+        });
+    vm2.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            RegionFactory rf = getCache().createRegionFactory(RegionShortcut.REPLICATE);
+            Region region = rf.create(regionName);
+            assertTrue(region.getAttributes().getConcurrencyChecksEnabled());
+            return null;
+          }
+        });
+    vm3.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Cache cache = getCache();
+            AttributesFactory af = new AttributesFactory();
+            af.setScope(Scope.DISTRIBUTED_ACK);
+            RegionFactory rf = cache.createRegionFactory(af.create());
+            Region r = rf.create(regionName);
+            assertNotNull(r);
+            assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1378,34 +1409,41 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
     VM vm2 = host.getVM(1);
     VM vm3 = host.getVM(2);
     final String regionName = getName();
-    SerializableCallable createRRProxy = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region r = getCache().createRegionFactory(RegionShortcut.REPLICATE_PROXY).create(regionName);
-        assertNotNull(r);
-        return null;
-      }
-    };
-    SerializableCallable createPersistentRR = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region r = getCache().createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT).create(regionName);
-        assertNotNull(r);
-        return null;
-      }
-    };
+    SerializableCallable createRRProxy =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region r =
+                getCache().createRegionFactory(RegionShortcut.REPLICATE_PROXY).create(regionName);
+            assertNotNull(r);
+            return null;
+          }
+        };
+    SerializableCallable createPersistentRR =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region r =
+                getCache()
+                    .createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT)
+                    .create(regionName);
+            assertNotNull(r);
+            return null;
+          }
+        };
     vm1.invoke(createRRProxy);
     vm2.invoke(createPersistentRR);
     vm3.invoke(createRRProxy);
 
-    SerializableCallable assertConcurrency = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region r = getCache().getRegion(regionName);
-        assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
-        return null;
-      }
-    };
+    SerializableCallable assertConcurrency =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region r = getCache().getRegion(regionName);
+            assertTrue(r.getAttributes().getConcurrencyChecksEnabled());
+            return null;
+          }
+        };
 
     vm1.invoke(assertConcurrency);
     vm3.invoke(assertConcurrency);
@@ -1443,7 +1481,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
 
   //     // Set up recovery scenario in vm2
   //     vm2.invoke(new CacheSerializableRunnable("Create Disk Region and close cache") {
-  //       public void run2() throws CacheException {        
+  //       public void run2() throws CacheException {
   //         getLogWriter().info("DEBUG nbput: start phase one");
   //         AttributesFactory factory =
   //           new AttributesFactory(getRegionAttributes());
@@ -1455,7 +1493,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
   //           rgn.put(new Integer(i), values[i]);
   //         }
   //         assertIndexDetailsEquals(NB1_NUM_ENTRIES, rgn.keys().size());
-  //         //close and create to ensure that all data will go to htree 
+  //         //close and create to ensure that all data will go to htree
   //         //TODO: Mitul : remove this later to fine tune test to also take oplogs recovery into account
   //         rgn.close();
   //         rgn = createRegion(name, factory.createRegionAttributes());
@@ -1525,7 +1563,7 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
   //       }
   //     });
 
-  //     // in the meantime, do recovery in vm2 
+  //     // in the meantime, do recovery in vm2
   //     AsyncInvocation async2 = vm2.invokeAsync(new CacheSerializableRunnable("Do Recovery") {
   //       public void run2() throws CacheException {
   //         AttributesFactory factory =
@@ -1603,6 +1641,6 @@ public class DiskRegionDUnitTest extends JUnit4CacheTestCase {
   //           " were updated concurrently with getInitialImage, and I'd expect at least " +
   //           MIN_NB_PUTS + " or so", numPutsDuringRecovery >= MIN_NB_PUTS);
   //       }
-  //     });    
-  //   }  
+  //     });
+  //   }
 }

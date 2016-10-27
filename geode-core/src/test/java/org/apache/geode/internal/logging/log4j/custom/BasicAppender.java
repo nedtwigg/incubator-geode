@@ -37,12 +37,17 @@ public class BasicAppender extends AbstractAppender {
 
   private final List<LogEvent> events = new ArrayList<>();
 
-  public BasicAppender(final String name, final Filter filter, final Layout<? extends Serializable> layout) {
+  public BasicAppender(
+      final String name, final Filter filter, final Layout<? extends Serializable> layout) {
     super(name, filter, layout);
   }
 
   @PluginFactory
-  public static BasicAppender createAppender(@PluginAttribute("name") String name, @PluginAttribute("ignoreExceptions") boolean ignoreExceptions, @PluginElement("Layout") Layout layout, @PluginElement("Filters") Filter filter) {
+  public static BasicAppender createAppender(
+      @PluginAttribute("name") String name,
+      @PluginAttribute("ignoreExceptions") boolean ignoreExceptions,
+      @PluginElement("Layout") Layout layout,
+      @PluginElement("Filters") Filter filter) {
     if (layout == null) {
       layout = PatternLayout.createDefaultLayout();
     }

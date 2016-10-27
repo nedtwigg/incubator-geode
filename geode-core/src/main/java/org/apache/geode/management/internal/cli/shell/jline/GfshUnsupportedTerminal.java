@@ -19,9 +19,8 @@ package org.apache.geode.management.internal.cli.shell.jline;
 import jline.UnsupportedTerminal;
 
 /**
- * Used when gfsh is run in Head Less mode. 
- * Doesn't support ANSI.
- * 
+ * Used when gfsh is run in Head Less mode. Doesn't support ANSI.
+ *
  * @since GemFire 7.0
  */
 public class GfshUnsupportedTerminal extends UnsupportedTerminal {

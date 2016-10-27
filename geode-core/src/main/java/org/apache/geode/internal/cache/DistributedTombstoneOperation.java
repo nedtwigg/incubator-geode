@@ -38,9 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- *
- */
+/** */
 public class DistributedTombstoneOperation extends DistributedCacheOperation {
   private enum TOperation {
     GC,
@@ -52,7 +50,8 @@ public class DistributedTombstoneOperation extends DistributedCacheOperation {
   private TOperation op;
 
   public static DistributedTombstoneOperation gc(DistributedRegion region, EventID eventId) {
-    RegionEventImpl rev = new RegionEventImpl(region, Operation.REGION_EXPIRE_DESTROY, null, false, region.getMyId());
+    RegionEventImpl rev =
+        new RegionEventImpl(region, Operation.REGION_EXPIRE_DESTROY, null, false, region.getMyId());
     rev.setEventID(eventId);
     DistributedTombstoneOperation top = new DistributedTombstoneOperation(rev);
     top.op = TOperation.GC;
@@ -62,7 +61,8 @@ public class DistributedTombstoneOperation extends DistributedCacheOperation {
   private DistributedTombstoneOperation(RegionEventImpl rev) {
     super(rev);
     //    this.regionVersion = ((DistributedRegion)rev.getRegion()).getVersionVector().getMaxTombstoneGCVersion();
-    this.regionGCVersions = ((DistributedRegion) rev.getRegion()).getVersionVector().getTombstoneGCVector();
+    this.regionGCVersions =
+        ((DistributedRegion) rev.getRegion()).getVersionVector().getTombstoneGCVector();
   }
 
   @Override
@@ -103,14 +103,13 @@ public class DistributedTombstoneOperation extends DistributedCacheOperation {
     return advisor.adviseInvalidateRegion();
   }
 
-  /**
-   * returns the region versions sent to other members for tombstone collection
-   */
+  /** returns the region versions sent to other members for tombstone collection */
   public Map<VersionSource, Long> getRegionGCVersions() {
     return this.regionGCVersions;
   }
 
-  public static class TombstoneMessage extends CacheOperationMessage implements SerializationVersions {
+  public static class TombstoneMessage extends CacheOperationMessage
+      implements SerializationVersions {
     //    protected long regionVersion;
     protected Map<VersionSource, Long> regionGCVersions;
     protected TOperation op;
@@ -118,11 +117,8 @@ public class DistributedTombstoneOperation extends DistributedCacheOperation {
 
     private static Version[] serializationVersions = null; // new Version[]{ };
 
-    /**
-     * for deserialization
-     */
-    public TombstoneMessage() {
-    }
+    /** for deserialization */
+    public TombstoneMessage() {}
 
     @Override
     protected InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException {
@@ -132,13 +128,16 @@ public class DistributedTombstoneOperation extends DistributedCacheOperation {
     }
 
     protected RegionEventImpl createRegionEvent(DistributedRegion rgn) {
-      RegionEventImpl event = new RegionEventImpl(rgn, getOperation(), this.callbackArg, true /* originRemote */, getSender());
+      RegionEventImpl event =
+          new RegionEventImpl(
+              rgn, getOperation(), this.callbackArg, true /* originRemote */, getSender());
       event.setEventID(this.eventID);
       return event;
     }
 
     @Override
-    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException {
+    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm)
+        throws EntryNotFoundException {
       boolean sendReply = true;
 
       DistributedRegion region = (DistributedRegion) event.getRegion();
@@ -216,7 +215,5 @@ public class DistributedTombstoneOperation extends DistributedCacheOperation {
       buff.append("; eventID=").append(this.eventID);
       buff.append("; regionGCVersions=").append(this.regionGCVersions);
     }
-
   }
-
 }

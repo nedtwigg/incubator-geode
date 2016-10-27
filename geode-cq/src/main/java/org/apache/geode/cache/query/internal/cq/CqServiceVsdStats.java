@@ -33,14 +33,10 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * This class tracks GemFire statistics related to CqService.
- * Specifically the following statistics are tracked:
- *      Number of CQs created
- *      Number of active CQs
- *      Number of CQs suspended or stopped
- *      Number of CQs closed
- *      Number of CQs on a client 
- * 
+ * This class tracks GemFire statistics related to CqService. Specifically the following statistics
+ * are tracked: Number of CQs created Number of active CQs Number of CQs suspended or stopped Number
+ * of CQs closed Number of CQs on a client
+ *
  * @since GemFire 5.5
  */
 public class CqServiceVsdStats {
@@ -109,16 +105,30 @@ public class CqServiceVsdStats {
   /** Id for unique CQs, difference in CQ queries */
   private static final int _numUniqueCqQuery;
 
-  /**
-   * Static initializer to create and initialize the <code>StatisticsType</code>
-   */
+  /** Static initializer to create and initialize the <code>StatisticsType</code> */
   static {
     String statName = "CqServiceStats";
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    _type = f.createType(statName, statName, new StatisticDescriptor[] { f.createLongCounter(CQS_CREATED, "Number of CQs created.", "operations"), f.createLongCounter(CQS_ACTIVE, "Number of CQS actively executing.", "operations"), f.createLongCounter(CQS_STOPPED, "Number of CQs stopped.", "operations"), f.createLongCounter(CQS_CLOSED, "Number of CQs closed.", "operations"), f.createLongCounter(CQS_ON_CLIENT, "Number of CQs on the client.", "operations"), f.createLongCounter(CLIENTS_WITH_CQS, "Number of Clients with CQs.", "operations"), f.createLongCounter(CQ_QUERY_EXECUTION_TIME, "Time taken for CQ Query Execution.", "nanoseconds"), f.createLongCounter(CQ_QUERY_EXECUTIONS_COMPLETED, "Number of CQ Query Executions.", "operations"), f.createIntGauge(CQ_QUERY_EXECUTION_IN_PROGRESS, "CQ Query Execution In Progress.", "operations"), f.createIntGauge(UNIQUE_CQ_QUERY, "Number of Unique CQ Querys.", "Queries"),
-
-    });
+    _type =
+        f.createType(
+            statName,
+            statName,
+            new StatisticDescriptor[] {
+              f.createLongCounter(CQS_CREATED, "Number of CQs created.", "operations"),
+              f.createLongCounter(CQS_ACTIVE, "Number of CQS actively executing.", "operations"),
+              f.createLongCounter(CQS_STOPPED, "Number of CQs stopped.", "operations"),
+              f.createLongCounter(CQS_CLOSED, "Number of CQs closed.", "operations"),
+              f.createLongCounter(CQS_ON_CLIENT, "Number of CQs on the client.", "operations"),
+              f.createLongCounter(CLIENTS_WITH_CQS, "Number of Clients with CQs.", "operations"),
+              f.createLongCounter(
+                  CQ_QUERY_EXECUTION_TIME, "Time taken for CQ Query Execution.", "nanoseconds"),
+              f.createLongCounter(
+                  CQ_QUERY_EXECUTIONS_COMPLETED, "Number of CQ Query Executions.", "operations"),
+              f.createIntGauge(
+                  CQ_QUERY_EXECUTION_IN_PROGRESS, "CQ Query Execution In Progress.", "operations"),
+              f.createIntGauge(UNIQUE_CQ_QUERY, "Number of Unique CQ Querys.", "Queries"),
+            });
 
     // Initialize id fields
     _numCqsCreatedId = _type.nameToId(CQS_CREATED);
@@ -131,7 +141,6 @@ public class CqServiceVsdStats {
     _cqQueryExecutionsCompletedId = _type.nameToId(CQ_QUERY_EXECUTIONS_COMPLETED);
     _cqQueryExecutionInProgressId = _type.nameToId(CQ_QUERY_EXECUTION_IN_PROGRESS);
     _numUniqueCqQuery = _type.nameToId(UNIQUE_CQ_QUERY);
-
   }
 
   /** The <code>Statistics</code> instance to which most behavior is delegated */
@@ -139,10 +148,9 @@ public class CqServiceVsdStats {
 
   /**
    * Constructor.
-   * 
-   * @param factory
-   *          The <code>StatisticsFactory</code> which creates the
-   *          <code>Statistics</code> instance
+   *
+   * @param factory The <code>StatisticsFactory</code> which creates the <code>Statistics</code>
+   *     instance
    */
   public CqServiceVsdStats(StatisticsFactory factory) {
     this._stats = factory.createAtomicStatistics(_type, "CqServiceStats");
@@ -150,140 +158,116 @@ public class CqServiceVsdStats {
 
   // /////////////////// Instance Methods /////////////////////
 
-  /**
-   * Closes the <code>HARegionQueueStats</code>.
-   */
+  /** Closes the <code>HARegionQueueStats</code>. */
   public void close() {
     this._stats.close();
   }
 
   /**
    * Returns the current value of the "numCqsCreated" stat.
-   * 
+   *
    * @return the current value of the "numCqsCreated" stat
    */
   public long getNumCqsCreated() {
     return this._stats.getLong(_numCqsCreatedId);
   }
 
-  /**
-   * Increments the "numCqsCreated" stat by 1.
-   */
+  /** Increments the "numCqsCreated" stat by 1. */
   public void incCqsCreated() {
     this._stats.incLong(_numCqsCreatedId, 1);
   }
 
   /**
    * Returns the current value of the "numCqsActive" stat.
-   * 
+   *
    * @return the current value of the "numCqsActive" stat
    */
   public long getNumCqsActive() {
     return this._stats.getLong(_numCqsActiveId);
   }
 
-  /**
-   * Increments the "numCqsActive" stat by 1.
-   */
+  /** Increments the "numCqsActive" stat by 1. */
   public void incCqsActive() {
     this._stats.incLong(_numCqsActiveId, 1);
   }
 
-  /**
-   * Decrements the "numCqsActive" stat by 1.
-   */
+  /** Decrements the "numCqsActive" stat by 1. */
   public void decCqsActive() {
     this._stats.incLong(_numCqsActiveId, -1);
   }
 
   /**
    * Returns the current value of the "numCqsStopped" stat.
-   * 
+   *
    * @return the current value of the "numCqsStopped" stat
    */
   public long getNumCqsStopped() {
     return this._stats.getLong(_numCqsStoppedId);
   }
 
-  /**
-   * Increments the "numCqsStopped" stat by 1.
-   */
+  /** Increments the "numCqsStopped" stat by 1. */
   public void incCqsStopped() {
     this._stats.incLong(_numCqsStoppedId, 1);
   }
 
-  /**
-   * Decrements the "numCqsStopped" stat by 1.
-   */
+  /** Decrements the "numCqsStopped" stat by 1. */
   public void decCqsStopped() {
     this._stats.incLong(_numCqsStoppedId, -1);
   }
 
   /**
    * Returns the current value of the "numCqsClosed" stat.
-   * 
+   *
    * @return the current value of the "numCqsClosed" stat
    */
   public long getNumCqsClosed() {
     return this._stats.getLong(_numCqsClosedId);
   }
 
-  /**
-   * Increments the "numCqsClosed" stat by 1.
-   */
+  /** Increments the "numCqsClosed" stat by 1. */
   public void incCqsClosed() {
     this._stats.incLong(_numCqsClosedId, 1);
   }
 
   /**
    * Returns the current value of the "numCqsOnClient" stat.
-   * 
+   *
    * @return the current value of the "numCqsOnClient" stat
    */
   public long getNumCqsOnClient() {
     return this._stats.getLong(_numCqsOnClientId);
   }
 
-  /**
-   * Increments the "numCqsOnClient" stat by 1.
-   */
+  /** Increments the "numCqsOnClient" stat by 1. */
   public void incCqsOnClient() {
     this._stats.incLong(_numCqsOnClientId, 1);
   }
 
-  /**
-   * Decrements the "numCqsOnClient" stat by 1.
-   */
+  /** Decrements the "numCqsOnClient" stat by 1. */
   public void decCqsOnClient() {
     this._stats.incLong(_numCqsOnClientId, -1);
   }
 
   /**
    * Returns the current value of the "numClientsWithCqs" stat.
-   * 
+   *
    * @return the current value of the "numClientsWithCqs" stat
    */
   public long getNumClientsWithCqs() {
     return this._stats.getLong(_numClientsWithCqsId);
   }
 
-  /**
-   * Increments the "numClientsWithCqs" stat by 1.
-   */
+  /** Increments the "numClientsWithCqs" stat by 1. */
   public void incClientsWithCqs() {
     this._stats.incLong(_numClientsWithCqsId, 1);
   }
 
-  /**
-   * Decrements the "numCqsOnClient" stat by 1.
-   */
+  /** Decrements the "numCqsOnClient" stat by 1. */
   public void decClientsWithCqs() {
     this._stats.incLong(_numClientsWithCqsId, -1);
   }
 
-  /**
-   * Start the CQ Query Execution time.
-   */
+  /** Start the CQ Query Execution time. */
   public long startCqQueryExecution() {
     this._stats.incInt(_cqQueryExecutionInProgressId, 1);
     return NanoTimer.getTime();
@@ -291,6 +275,7 @@ public class CqServiceVsdStats {
 
   /**
    * End CQ Query Execution Time.
+   *
    * @param start long time value.
    */
   public void endCqQueryExecution(long start) {
@@ -302,30 +287,29 @@ public class CqServiceVsdStats {
 
   /**
    * Returns the total time spent executing the CQ Queries.
+   *
    * @return long time spent.
    */
   public long getCqQueryExecutionTime() {
     return this._stats.getLong(_cqQueryExecutionTimeId);
   }
 
-  /**
-   * Increments number of Unique queries.
-   */
+  /** Increments number of Unique queries. */
   public void incUniqueCqQuery() {
     this._stats.incInt(_numUniqueCqQuery, 1);
   }
 
-  /**
-   * Decrements number of unique Queries.
-   */
+  /** Decrements number of unique Queries. */
   public void decUniqueCqQuery() {
     this._stats.incInt(_numUniqueCqQuery, -1);
   }
 
   /**
-   * This is a test method.  It silently ignores exceptions and should not be
-   * used outside of unit tests.<p>
-   * Returns the number of CQs (active + suspended) on the given region.
+   * This is a test method. It silently ignores exceptions and should not be used outside of unit
+   * tests.
+   *
+   * <p>Returns the number of CQs (active + suspended) on the given region.
+   *
    * @param regionName
    */
   public long numCqsOnRegion(String regionName) {
@@ -354,7 +338,10 @@ public class CqServiceVsdStats {
         return fp.getCqCount();
       } catch (Exception ex) {
         if (logger.isDebugEnabled()) {
-          logger.debug("Failed to get serverside CQ count for region: {} {}", regionName, ex.getLocalizedMessage());
+          logger.debug(
+              "Failed to get serverside CQ count for region: {} {}",
+              regionName,
+              ex.getLocalizedMessage());
         }
       }
     } else {

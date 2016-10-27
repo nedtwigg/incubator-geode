@@ -39,15 +39,13 @@ import org.apache.geode.internal.logging.log4j.LogWriterAppenders;
 import org.apache.geode.internal.logging.log4j.LogWriterLogger;
 
 /**
- * Extracted from {@link HostStatSampler} and
- * {@link GemFireStatSampler}.
- * <p/>
- * The StatArchiveHandler handles statistics samples by archiving them to a 
- * file. This handler provides archive file rolling (file size limit) and 
- * removal (disk space limit). This handler creates and uses an instance of
- * {@link StatArchiveWriter} for the currently
- * open archive file (unless archiving is disabled).
- * 
+ * Extracted from {@link HostStatSampler} and {@link GemFireStatSampler}.
+ *
+ * <p>The StatArchiveHandler handles statistics samples by archiving them to a file. This handler
+ * provides archive file rolling (file size limit) and removal (disk space limit). This handler
+ * creates and uses an instance of {@link StatArchiveWriter} for the currently open archive file
+ * (unless archiving is disabled).
+ *
  * @since GemFire 7.0
  */
 public class StatArchiveHandler implements SampleHandler {
@@ -61,9 +59,8 @@ public class StatArchiveHandler implements SampleHandler {
   private final SampleCollector collector;
 
   /**
-   * Indicates if archiving has been disabled by specifying empty string for
-   * the archive file name. Other threads may call in to changeArchiveFile
-   * to manipulate this flag.
+   * Indicates if archiving has been disabled by specifying empty string for the archive file name.
+   * Other threads may call in to changeArchiveFile to manipulate this flag.
    */
   private volatile boolean disabledArchiving = false;
 
@@ -80,8 +77,8 @@ public class StatArchiveHandler implements SampleHandler {
   private int archiveId = -1;
 
   /**
-   * Constructs a new instance. The {@link StatArchiveHandlerConfig} and 
-   * {@link SampleCollector} must not be null.
+   * Constructs a new instance. The {@link StatArchiveHandlerConfig} and {@link SampleCollector}
+   * must not be null.
    */
   public StatArchiveHandler(StatArchiveHandlerConfig config, SampleCollector sampleCollector) {
     this.config = config;
@@ -90,6 +87,7 @@ public class StatArchiveHandler implements SampleHandler {
 
   /**
    * Initializes the stat archiver with nanosTimeStamp.
+   *
    * @param nanosTimeStamp
    */
   public void initialize(long nanosTimeStamp) {
@@ -98,8 +96,8 @@ public class StatArchiveHandler implements SampleHandler {
   }
 
   /**
-   * Closes any {@link StatArchiveWriter}
-   * currently in use by this handler.
+   * Closes any {@link StatArchiveWriter} currently in use by this handler.
+   *
    * @throws GemFireException
    */
   public void close() throws GemFireException {
@@ -114,13 +112,20 @@ public class StatArchiveHandler implements SampleHandler {
     if (this.archiver.getSampleCount() > 0) {
       StringWriter sw = new StringWriter();
       ex.printStackTrace(new PrintWriter(sw, true));
-      logger.warn(LogMarker.STATISTICS, LocalizedMessage.create(LocalizedStrings.HostStatSampler_STATISTIC_ARCHIVER_SHUTTING_DOWN_BECAUSE__0, sw));
+      logger.warn(
+          LogMarker.STATISTICS,
+          LocalizedMessage.create(
+              LocalizedStrings.HostStatSampler_STATISTIC_ARCHIVER_SHUTTING_DOWN_BECAUSE__0, sw));
     }
     try {
       this.archiver.close();
     } catch (GemFireException ignore) {
       if (this.archiver.getSampleCount() > 0) {
-        logger.warn(LogMarker.STATISTICS, LocalizedMessage.create(LocalizedStrings.HostStatSampler_STATISIC_ARCHIVER_SHUTDOWN_FAILED_BECAUSE__0, ignore.getMessage()));
+        logger.warn(
+            LogMarker.STATISTICS,
+            LocalizedMessage.create(
+                LocalizedStrings.HostStatSampler_STATISIC_ARCHIVER_SHUTDOWN_FAILED_BECAUSE__0,
+                ignore.getMessage()));
       }
     }
     if (this.archiver.getSampleCount() == 0 && this.archiveId != -1) {
@@ -134,16 +139,26 @@ public class StatArchiveHandler implements SampleHandler {
   public void sampled(long nanosTimeStamp, List<ResourceInstance> resourceInstances) {
     synchronized (this) {
       if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-        logger.trace(LogMarker.STATISTICS, "StatArchiveHandler#sampled resourceInstances={}", resourceInstances);
+        logger.trace(
+            LogMarker.STATISTICS,
+            "StatArchiveHandler#sampled resourceInstances={}",
+            resourceInstances);
       }
       if (archiver != null) {
         try {
           archiver.sampled(nanosTimeStamp, resourceInstances);
           if (archiver.getSampleCount() == 1) {
-            logger.info(LogMarker.STATISTICS, LocalizedMessage.create(LocalizedStrings.GemFireStatSampler_ARCHIVING_STATISTICS_TO__0_, archiver.getArchiveName()));
+            logger.info(
+                LogMarker.STATISTICS,
+                LocalizedMessage.create(
+                    LocalizedStrings.GemFireStatSampler_ARCHIVING_STATISTICS_TO__0_,
+                    archiver.getArchiveName()));
           }
         } catch (IllegalArgumentException e) {
-          logger.warn(LogMarker.STATISTICS, "Use of java.lang.System.nanoTime() resulted in a non-positive timestamp delta. Skipping archival of statistics sample.", e);
+          logger.warn(
+              LogMarker.STATISTICS,
+              "Use of java.lang.System.nanoTime() resulted in a non-positive timestamp delta. Skipping archival of statistics sample.",
+              e);
         } catch (GemFireException ex) {
           handleArchiverException(ex); // this will null out archiver
         }
@@ -185,7 +200,10 @@ public class StatArchiveHandler implements SampleHandler {
   @Override
   public void allocatedResourceType(ResourceType resourceType) {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveHandler#allocatedResourceType resourceType={}", resourceType);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "StatArchiveHandler#allocatedResourceType resourceType={}",
+          resourceType);
     }
     if (archiver != null) {
       try {
@@ -199,7 +217,10 @@ public class StatArchiveHandler implements SampleHandler {
   @Override
   public void allocatedResourceInstance(ResourceInstance resourceInstance) {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveHandler#allocatedResourceInstance resourceInstance={}", resourceInstance);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "StatArchiveHandler#allocatedResourceInstance resourceInstance={}",
+          resourceInstance);
     }
     if (archiver != null) {
       try {
@@ -213,7 +234,10 @@ public class StatArchiveHandler implements SampleHandler {
   @Override
   public void destroyedResourceInstance(ResourceInstance resourceInstance) {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveHandler#destroyedResourceInstance resourceInstance={}", resourceInstance);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "StatArchiveHandler#destroyedResourceInstance resourceInstance={}",
+          resourceInstance);
     }
     if (archiver != null) {
       try {
@@ -224,9 +248,7 @@ public class StatArchiveHandler implements SampleHandler {
     }
   }
 
-  /**
-   * Returns the configuration for this handler.
-   */
+  /** Returns the configuration for this handler. */
   public StatArchiveHandlerConfig getStatArchiveHandlerConfig() {
     return this.config;
   }
@@ -245,16 +267,14 @@ public class StatArchiveHandler implements SampleHandler {
   }
 
   /**
-   * Changes the archive file to the new file or disables archiving if an
-   * empty string is specified. This may be invoked by any thread other than 
-   * the stat sampler.
-   * <p/>
-   * If the file name matches any archive file(s) already in {@link #archiveDir} 
-   * then this may trigger rolling and/or removal if appropriate based on {@link 
-   * StatArchiveHandlerConfig#getArchiveFileSizeLimit() file size limit} and 
-   * {@link StatArchiveHandlerConfig#getArchiveDiskSpaceLimit() disk space 
-   * limit}.
-   * 
+   * Changes the archive file to the new file or disables archiving if an empty string is specified.
+   * This may be invoked by any thread other than the stat sampler.
+   *
+   * <p>If the file name matches any archive file(s) already in {@link #archiveDir} then this may
+   * trigger rolling and/or removal if appropriate based on {@link
+   * StatArchiveHandlerConfig#getArchiveFileSizeLimit() file size limit} and {@link
+   * StatArchiveHandlerConfig#getArchiveDiskSpaceLimit() disk space limit}.
+   *
    * @param newFile the new archive file to use or "" to disable archiving
    * @param nanosTimeStamp
    */
@@ -268,21 +288,18 @@ public class StatArchiveHandler implements SampleHandler {
 
   /**
    * Changes the archive file using the same configured archive file name.
-   * <p/>
-   * If the file name matches any archive file(s) already in {@link #archiveDir} 
-   * then this may trigger rolling and/or removal if appropriate based on {@link 
-   * StatArchiveHandlerConfig#getArchiveFileSizeLimit() file size limit} and 
-   * {@link StatArchiveHandlerConfig#getArchiveDiskSpaceLimit() disk space 
-   * limit}.
-   * <p/>
-   * If resetHandler is true, then this handler will reset itself with the
-   * SampleCollector by removing and re-adding itself in order to receive 
-   * allocation notifications about all resource types and instances.
-   *  
-   * @param resetHandler true if the handler should reset itself with the
-   * SampleCollector in order to receive allocation notifications about all 
-   * resource types and instances
-   * 
+   *
+   * <p>If the file name matches any archive file(s) already in {@link #archiveDir} then this may
+   * trigger rolling and/or removal if appropriate based on {@link
+   * StatArchiveHandlerConfig#getArchiveFileSizeLimit() file size limit} and {@link
+   * StatArchiveHandlerConfig#getArchiveDiskSpaceLimit() disk space limit}.
+   *
+   * <p>If resetHandler is true, then this handler will reset itself with the SampleCollector by
+   * removing and re-adding itself in order to receive allocation notifications about all resource
+   * types and instances.
+   *
+   * @param resetHandler true if the handler should reset itself with the SampleCollector in order
+   *     to receive allocation notifications about all resource types and instances
    * @param nanosTimeStamp
    */
   private void changeArchiveFile(boolean resetHandler, long nanosTimeStamp) {
@@ -290,19 +307,17 @@ public class StatArchiveHandler implements SampleHandler {
   }
 
   /**
-   * Changes the archive file to the new file or disables archiving if an
-   * empty string is specified. 
-   * <p/>
-   * If the file name matches any archive file(s) already in {@link #archiveDir} 
-   * then this may trigger rolling and/or removal if appropriate based on {@link 
-   * StatArchiveHandlerConfig#getArchiveFileSizeLimit() file size limit} and 
-   * {@link StatArchiveHandlerConfig#getArchiveDiskSpaceLimit() disk space 
-   * limit}.
-   * <p/>
-   * If resetHandler is true, then this handler will reset itself with the
-   * SampleCollector by removing and re-adding itself in order to receive 
-   * allocation notifications about all resource types and instances.
-   * 
+   * Changes the archive file to the new file or disables archiving if an empty string is specified.
+   *
+   * <p>If the file name matches any archive file(s) already in {@link #archiveDir} then this may
+   * trigger rolling and/or removal if appropriate based on {@link
+   * StatArchiveHandlerConfig#getArchiveFileSizeLimit() file size limit} and {@link
+   * StatArchiveHandlerConfig#getArchiveDiskSpaceLimit() disk space limit}.
+   *
+   * <p>If resetHandler is true, then this handler will reset itself with the SampleCollector by
+   * removing and re-adding itself in order to receive allocation notifications about all resource
+   * types and instances.
+   *
    * @param newFile
    * @param resetHandler
    * @param nanosTimeStamp
@@ -310,7 +325,11 @@ public class StatArchiveHandler implements SampleHandler {
   private void changeArchiveFile(File newFile, boolean resetHandler, long nanosTimeStamp) {
     final boolean isDebugEnabled_STATISTICS = logger.isTraceEnabled(LogMarker.STATISTICS);
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "StatArchiveHandler#changeArchiveFile newFile={}, nanosTimeStamp={}", newFile, nanosTimeStamp);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "StatArchiveHandler#changeArchiveFile newFile={}, nanosTimeStamp={}",
+          newFile,
+          nanosTimeStamp);
     }
     StatArchiveWriter newArchiver = null;
     boolean archiveClosed = false;
@@ -318,7 +337,10 @@ public class StatArchiveHandler implements SampleHandler {
       // disable archiving
       if (!this.disabledArchiving) {
         this.disabledArchiving = true;
-        logger.info(LogMarker.STATISTICS, LocalizedMessage.create(LocalizedStrings.GemFireStatSampler_DISABLING_STATISTIC_ARCHIVAL));
+        logger.info(
+            LogMarker.STATISTICS,
+            LocalizedMessage.create(
+                LocalizedStrings.GemFireStatSampler_DISABLING_STATISTIC_ARCHIVAL));
       }
     } else {
       this.disabledArchiving = false;
@@ -331,14 +353,19 @@ public class StatArchiveHandler implements SampleHandler {
           synchronized (this) {
             if (resetHandler) {
               if (isDebugEnabled_STATISTICS) {
-                logger.trace(LogMarker.STATISTICS, "StatArchiveHandler#changeArchiveFile removing handler");
+                logger.trace(
+                    LogMarker.STATISTICS, "StatArchiveHandler#changeArchiveFile removing handler");
               }
               this.collector.removeSampleHandler(this);
             }
             try {
               archiver.close();
             } catch (GemFireException ignore) {
-              logger.warn(LogMarker.STATISTICS, LocalizedMessage.create(LocalizedStrings.GemFireStatSampler_STATISTIC_ARCHIVE_CLOSE_FAILED_BECAUSE__0, ignore.getMessage()));
+              logger.warn(
+                  LogMarker.STATISTICS,
+                  LocalizedMessage.create(
+                      LocalizedStrings.GemFireStatSampler_STATISTIC_ARCHIVE_CLOSE_FAILED_BECAUSE__0,
+                      ignore.getMessage()));
             }
           }
         }
@@ -351,9 +378,17 @@ public class StatArchiveHandler implements SampleHandler {
           oldFile = getRenameArchiveName(newFile);
         }
         if (!newFile.renameTo(oldFile)) {
-          logger.warn(LogMarker.STATISTICS, LocalizedMessage.create(LocalizedStrings.GemFireStatSampler_COULD_NOT_RENAME_0_TO_1, new Object[] { newFile, oldFile }));
+          logger.warn(
+              LogMarker.STATISTICS,
+              LocalizedMessage.create(
+                  LocalizedStrings.GemFireStatSampler_COULD_NOT_RENAME_0_TO_1,
+                  new Object[] {newFile, oldFile}));
         } else {
-          logger.info(LogMarker.STATISTICS, LocalizedMessage.create(LocalizedStrings.GemFireStatSampler_RENAMED_OLD_EXISTING_ARCHIVE_TO__0_, oldFile));
+          logger.info(
+              LogMarker.STATISTICS,
+              LocalizedMessage.create(
+                  LocalizedStrings.GemFireStatSampler_RENAMED_OLD_EXISTING_ARCHIVE_TO__0_,
+                  oldFile));
         }
       } else {
         if (!newFile.getAbsoluteFile().getParentFile().equals(archiveDir)) {
@@ -367,11 +402,22 @@ public class StatArchiveHandler implements SampleHandler {
         }
       }
       try {
-        StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(newFile.getPath()).setSystemId(this.config.getSystemId()).setSystemStartTime(this.config.getSystemStartTime()).setSystemDirectoryPath(this.config.getSystemDirectoryPath()).setProductDescription(this.config.getProductDescription()).build();
+        StatArchiveDescriptor archiveDescriptor =
+            new StatArchiveDescriptor.Builder()
+                .setArchiveName(newFile.getPath())
+                .setSystemId(this.config.getSystemId())
+                .setSystemStartTime(this.config.getSystemStartTime())
+                .setSystemDirectoryPath(this.config.getSystemDirectoryPath())
+                .setProductDescription(this.config.getProductDescription())
+                .build();
         newArchiver = new StatArchiveWriter(archiveDescriptor);
         newArchiver.initialize(nanosTimeStamp);
       } catch (GemFireIOException ex) {
-        logger.warn(LogMarker.STATISTICS, LocalizedMessage.create(LocalizedStrings.GemFireStatSampler_COULD_NOT_OPEN_STATISTIC_ARCHIVE_0_CAUSE_1, new Object[] { newFile, ex.getLocalizedMessage() }));
+        logger.warn(
+            LogMarker.STATISTICS,
+            LocalizedMessage.create(
+                LocalizedStrings.GemFireStatSampler_COULD_NOT_OPEN_STATISTIC_ARCHIVE_0_CAUSE_1,
+                new Object[] {newFile, ex.getLocalizedMessage()}));
         throw ex;
       }
     }
@@ -384,7 +430,8 @@ public class StatArchiveHandler implements SampleHandler {
       } else {
         if (resetHandler) {
           if (isDebugEnabled_STATISTICS) {
-            logger.trace(LogMarker.STATISTICS, "StatArchiveHandler#changeArchiveFile removing handler");
+            logger.trace(
+                LogMarker.STATISTICS, "StatArchiveHandler#changeArchiveFile removing handler");
           }
           this.collector.removeSampleHandler(this);
         }
@@ -392,7 +439,11 @@ public class StatArchiveHandler implements SampleHandler {
           try {
             archiver.close();
           } catch (GemFireException ignore) {
-            logger.warn(LogMarker.STATISTICS, LocalizedMessage.create(LocalizedStrings.GemFireStatSampler_STATISTIC_ARCHIVE_CLOSE_FAILED_BECAUSE__0, ignore.getMessage()));
+            logger.warn(
+                LogMarker.STATISTICS,
+                LocalizedMessage.create(
+                    LocalizedStrings.GemFireStatSampler_STATISTIC_ARCHIVE_CLOSE_FAILED_BECAUSE__0,
+                    ignore.getMessage()));
           }
           removeOldArchives(newFile, this.config.getArchiveDiskSpaceLimit());
         }
@@ -408,17 +459,16 @@ public class StatArchiveHandler implements SampleHandler {
   }
 
   /**
-   * Returns the modified archive file name to use after incrementing {@link 
-   * #mainArchiveId} and {@link #archiveId} based on existing files 
-   * {@link #archiveDir}. This is only used if {@link 
-   * StatArchiveHandlerConfig#getArchiveFileSizeLimit() file size limit} has
-   * been specified as non-zero (which enables file rolling).
-   * 
+   * Returns the modified archive file name to use after incrementing {@link #mainArchiveId} and
+   * {@link #archiveId} based on existing files {@link #archiveDir}. This is only used if {@link
+   * StatArchiveHandlerConfig#getArchiveFileSizeLimit() file size limit} has been specified as
+   * non-zero (which enables file rolling).
+   *
    * @param archive the archive file name to modify
-   * @param archiveClosed true if archive was just being written by us; false if it was written by the previous process.
-   * 
-   * @return the modified archive file name to use; it is modified by applying
-   * mainArchiveId and archiveId to the name for supporting file rolling
+   * @param archiveClosed true if archive was just being written by us; false if it was written by
+   *     the previous process.
+   * @return the modified archive file name to use; it is modified by applying mainArchiveId and
+   *     archiveId to the name for supporting file rolling
    */
   private File getRollingArchiveName(File archive, boolean archiveClosed) {
     if (mainArchiveId != -1) {
@@ -458,7 +508,8 @@ public class StatArchiveHandler implements SampleHandler {
       StringBuffer buf = new StringBuffer(archive.getPath());
       int insertIdx = buf.lastIndexOf(".");
       if (insertIdx == -1) {
-        buf.append(ManagerLogWriter.formatId(mainArchiveId)).append(ManagerLogWriter.formatId(archiveId));
+        buf.append(ManagerLogWriter.formatId(mainArchiveId))
+            .append(ManagerLogWriter.formatId(archiveId));
       } else {
         buf.insert(insertIdx, ManagerLogWriter.formatId(archiveId));
         buf.insert(insertIdx, ManagerLogWriter.formatId(mainArchiveId));
@@ -474,7 +525,9 @@ public class StatArchiveHandler implements SampleHandler {
         markerName = markerName.substring(0, dotIdx);
       }
       StringBuffer buf = new StringBuffer(markerName);
-      buf.append(ManagerLogWriter.formatId(mainArchiveId)).append(ManagerLogWriter.formatId(0)).append(".marker");
+      buf.append(ManagerLogWriter.formatId(mainArchiveId))
+          .append(ManagerLogWriter.formatId(0))
+          .append(".marker");
       File marker = new File(buf.toString());
       if (marker.exists()) {
         if (!marker.delete()) {
@@ -494,7 +547,9 @@ public class StatArchiveHandler implements SampleHandler {
         markerName = markerName.substring(0, dotIdx);
       }
       StringBuffer buf = new StringBuffer(markerName);
-      buf.append(ManagerLogWriter.formatId(mainArchiveId)).append(ManagerLogWriter.formatId(0)).append(".marker");
+      buf.append(ManagerLogWriter.formatId(mainArchiveId))
+          .append(ManagerLogWriter.formatId(0))
+          .append(".marker");
       File marker = new File(buf.toString());
       if (!marker.exists()) {
         try {
@@ -545,7 +600,9 @@ public class StatArchiveHandler implements SampleHandler {
       markerName = markerName.substring(0, dotIdx);
     }
     StringBuffer buf = new StringBuffer(markerName);
-    buf.append(ManagerLogWriter.formatId(mainArchiveId)).append(ManagerLogWriter.formatId(0)).append(".marker");
+    buf.append(ManagerLogWriter.formatId(mainArchiveId))
+        .append(ManagerLogWriter.formatId(0))
+        .append(".marker");
     File marker = new File(buf.toString());
     if (!marker.exists()) {
       try {
@@ -559,15 +616,13 @@ public class StatArchiveHandler implements SampleHandler {
   }
 
   /**
-   * Modifies the desired archive file name with a main id (similar to {@link 
-   * #mainArchiveId} if the archive file's dir already contains GemFire
-   * stat archive or log files containing a main id in the file name.
-   *  
+   * Modifies the desired archive file name with a main id (similar to {@link #mainArchiveId} if the
+   * archive file's dir already contains GemFire stat archive or log files containing a main id in
+   * the file name.
+   *
    * @param archive the archive file name to modify
-   * 
-   * @return the modified archive file name to use; it is modified by applying
-   * the next main id if any files in the dir already have a main id in the file
-   * name
+   * @return the modified archive file name to use; it is modified by applying the next main id if
+   *     any files in the dir already have a main id in the file name
    */
   private static File getRenameArchiveName(File archive) {
     File dir = archive.getAbsoluteFile().getParentFile();
@@ -593,11 +648,10 @@ public class StatArchiveHandler implements SampleHandler {
   }
 
   /**
-   * Remove old versions of the specified archive file name in order to stay
-   * under the specified disk space limit. Old versions of the archive file
-   * are those that match based on using {@link #getArchivePattern(String)}
-   * which ignores mainArchiveId and archiveId.
-   * 
+   * Remove old versions of the specified archive file name in order to stay under the specified
+   * disk space limit. Old versions of the archive file are those that match based on using {@link
+   * #getArchivePattern(String)} which ignores mainArchiveId and archiveId.
+   *
    * @param archiveFile the archive file to remove old versions of
    * @param spaceLimit the disk space limit
    */
@@ -606,7 +660,13 @@ public class StatArchiveHandler implements SampleHandler {
       return;
     }
     File archiveDir = archiveFile.getAbsoluteFile().getParentFile();
-    ManagerLogWriter.checkDiskSpace("archive", archiveFile, spaceLimit, archiveDir, getArchivePattern(archiveFile.getName()), getOrCreateLogWriter());
+    ManagerLogWriter.checkDiskSpace(
+        "archive",
+        archiveFile,
+        spaceLimit,
+        archiveDir,
+        getArchivePattern(archiveFile.getName()),
+        getOrCreateLogWriter());
   }
 
   private static InternalLogWriter getOrCreateLogWriter() {
@@ -618,9 +678,9 @@ public class StatArchiveHandler implements SampleHandler {
   }
 
   /**
-   * Create a regex pattern which will match the specified archive file name
-   * even if it has a mainArchiveId and/or archiveId.
-   * 
+   * Create a regex pattern which will match the specified archive file name even if it has a
+   * mainArchiveId and/or archiveId.
+   *
    * @param name archive file name to create a regex pattern for
    * @return regex pattern to use in finding matching file names
    */

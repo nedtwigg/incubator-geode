@@ -19,10 +19,9 @@ package org.apache.geode.admin.internal;
 import org.apache.geode.admin.*;
 
 // @todo Make this class (and all of its subclasses) {@link java.io.Externalizable} or
-// {@link org.apache.geode.DataSerializable}. 
+// {@link org.apache.geode.DataSerializable}.
 /**
  * The implementation of <code>MemberHealthConfig</code>
- *
  *
  * @since GemFire 3.5
  */
@@ -30,32 +29,25 @@ public abstract class MemberHealthConfigImpl implements MemberHealthConfig, java
 
   private static final long serialVersionUID = 3966032573073580490L;
 
-  /** The maximum process size (in megabytes) of a healthy member of
-   * the distributed system. */
+  /** The maximum process size (in megabytes) of a healthy member of the distributed system. */
   private long maxVMProcessSize = DEFAULT_MAX_VM_PROCESS_SIZE;
 
-  /** The maximum number of enqueued incoming or outgoing
-   * messages that a healthy member of a distributed system can
-   * have. */
+  /**
+   * The maximum number of enqueued incoming or outgoing messages that a healthy member of a
+   * distributed system can have.
+   */
   private long maxMessageQueueSize = DEFAULT_MAX_MESSAGE_QUEUE_SIZE;
 
-  /** The maximum number message replies that can timeout in a healthy
-   * member. */
+  /** The maximum number message replies that can timeout in a healthy member. */
   private long maxReplyTimeouts = DEFAULT_MAX_REPLY_TIMEOUTS;
 
-  /** The maximum multicast retransmit / multicast message count ratio
-   */
+  /** The maximum multicast retransmit / multicast message count ratio */
   private double maxRetransmissionRatio = DEFAULT_MAX_RETRANSMISSION_RATIO;
 
   ///////////////////////  Constructors  ///////////////////////
 
-  /**
-   * Creates a new <code>MemberHealthConfigImpl</code> with the
-   * default configuration.
-   */
-  MemberHealthConfigImpl() {
-
-  }
+  /** Creates a new <code>MemberHealthConfigImpl</code> with the default configuration. */
+  MemberHealthConfigImpl() {}
 
   /////////////////////  Instance Methods  //////////////////////
 

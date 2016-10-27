@@ -20,16 +20,12 @@ import org.apache.geode.internal.cache.InterestFilter;
  * limitations under the License.
  */
 
-/**
- * TestFilter is used by FilterProfileJUnitTest
- */
+/** TestFilter is used by FilterProfileJUnitTest */
 public class TestFilter implements InterestFilter {
-  public TestFilter() {
-  }
+  public TestFilter() {}
 
   @Override
-  public void close() {
-  }
+  public void close() {}
 
   @Override
   public boolean notifyOnCreate(InterestEvent event) {

@@ -73,8 +73,35 @@ public class BlockingTimeOutJUnitTest {
     String search = "<jndi-binding type=\"XAPooledDataSource\"";
     String last_search = "</jndi-binding>";
     String newDB = "newDB_" + RANDOM;
-    String jndi_str = "<jndi-binding type=\"XAPooledDataSource\" jndi-name=\"XAPooledDataSource\"		              jdbc-driver-class=\"org.apache.derby.jdbc.EmbeddedDriver\" init-pool-size=\"1\" max-pool-size=\"2\" idle-timeout-seconds=\"600\" blocking-timeout-seconds=\"" + BLOCKING_TIMEOUT + "\" login-timeout-seconds=\"25\" conn-pooled-datasource-class=\"org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource\" xa-datasource-class=\"org.apache.derby.jdbc.EmbeddedXADataSource\" user-name=\"mitul\" password=\"83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a\" connection-url=\"jdbc:derby:" + newDB + ";create=true\" >";
-    String config_prop = "<config-property>" + "<config-property-name>description</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>hi</config-property-value>" + "</config-property>" + "<config-property>" + "<config-property-name>user</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>mitul</config-property-value>" + "</config-property>" + "<config-property>" + "<config-property-name>password</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a</config-property-value>	" + "</config-property>" + "<config-property>" + "<config-property-name>databaseName</config-property-name>" + "<config-property-type>java.lang.String</config-property-type>" + "<config-property-value>" + newDB + "</config-property-value>" + "</config-property>\n";
+    String jndi_str =
+        "<jndi-binding type=\"XAPooledDataSource\" jndi-name=\"XAPooledDataSource\"		              jdbc-driver-class=\"org.apache.derby.jdbc.EmbeddedDriver\" init-pool-size=\"1\" max-pool-size=\"2\" idle-timeout-seconds=\"600\" blocking-timeout-seconds=\""
+            + BLOCKING_TIMEOUT
+            + "\" login-timeout-seconds=\"25\" conn-pooled-datasource-class=\"org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource\" xa-datasource-class=\"org.apache.derby.jdbc.EmbeddedXADataSource\" user-name=\"mitul\" password=\"83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a\" connection-url=\"jdbc:derby:"
+            + newDB
+            + ";create=true\" >";
+    String config_prop =
+        "<config-property>"
+            + "<config-property-name>description</config-property-name>"
+            + "<config-property-type>java.lang.String</config-property-type>"
+            + "<config-property-value>hi</config-property-value>"
+            + "</config-property>"
+            + "<config-property>"
+            + "<config-property-name>user</config-property-name>"
+            + "<config-property-type>java.lang.String</config-property-type>"
+            + "<config-property-value>mitul</config-property-value>"
+            + "</config-property>"
+            + "<config-property>"
+            + "<config-property-name>password</config-property-name>"
+            + "<config-property-type>java.lang.String</config-property-type>"
+            + "<config-property-value>83f0069202c571faf1ae6c42b4ad46030e4e31c17409e19a</config-property-value>	"
+            + "</config-property>"
+            + "<config-property>"
+            + "<config-property-name>databaseName</config-property-name>"
+            + "<config-property-type>java.lang.String</config-property-type>"
+            + "<config-property-value>"
+            + newDB
+            + "</config-property-value>"
+            + "</config-property>\n";
     String new_str = jndi_str + config_prop;
     /*
      * String new_str = " <jndi-binding type=\"XAPooledDataSource\"
@@ -140,7 +167,10 @@ public class BlockingTimeOutJUnitTest {
   private static void createTable(String tableName) throws Exception {
     Context ctx = cache.getJNDIContext();
     DataSource ds = (DataSource) ctx.lookup("java:/SimpleDataSource");
-    String sql = "create table " + tableName + " (id integer NOT NULL, name varchar(50), CONSTRAINT the_key PRIMARY KEY(id))";
+    String sql =
+        "create table "
+            + tableName
+            + " (id integer NOT NULL, name varchar(50), CONSTRAINT the_key PRIMARY KEY(id))";
     logger.debug(sql);
     Connection conn = ds.getConnection();
     Statement sm = conn.createStatement();

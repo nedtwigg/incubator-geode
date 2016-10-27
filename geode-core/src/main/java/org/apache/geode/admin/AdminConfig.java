@@ -28,18 +28,20 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * AdminConfig loads/stores the member information list. The list contains
- * all of the members being monitored.
+ * AdminConfig loads/stores the member information list. The list contains all of the members being
+ * monitored.
  *
- * Config must be of the format:
+ * <p>Config must be of the format:
+ *
  * <p>
  * <li> Name=What you want displayed as a name for the instance
  * <li> Type=SERVER|CLIENT
- * <li> Host=A valid hostname or IP Address where the instance is
- * running
- * <li> Port=The port you are using to open the monitor port for
- * the instance
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * <li> Host=A valid hostname or IP Address where the instance is running
+ * <li> Port=The port you are using to open the monitor port for the instance
+ *
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public class AdminConfig {
   // Name, Type, Host, Port
@@ -92,7 +94,10 @@ public class AdminConfig {
 
       // Header
       ps.print("#");
-      ps.println(LocalizedStrings.AdminConfig_THIS_FILE_IS_GENERATED_BY_ADMINCONSOLE_EDIT_AS_YOU_WISH_BUT_IT_WILL_BE_OVERWRITTEN_IF_IT_IS_MODIFIED_IN_ADMINCONSOLE.toLocalizedString());
+      ps.println(
+          LocalizedStrings
+              .AdminConfig_THIS_FILE_IS_GENERATED_BY_ADMINCONSOLE_EDIT_AS_YOU_WISH_BUT_IT_WILL_BE_OVERWRITTEN_IF_IT_IS_MODIFIED_IN_ADMINCONSOLE
+              .toLocalizedString());
       ps.println("#");
       ps.println(LocalizedStrings.AdminConfig_MODIFIED_0.toLocalizedString(new Date()));
       ps.println("#");

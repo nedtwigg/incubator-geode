@@ -20,12 +20,10 @@ package hydra;
 import org.apache.geode.*;
 
 /**
- *  Abstract class for clients giving scheduling instructions to the
- *  hydra master.
- *  <p>
- *  Use the arguments to give the reason for the exception.
+ * Abstract class for clients giving scheduling instructions to the hydra master.
+ *
+ * <p>Use the arguments to give the reason for the exception.
  */
-
 public abstract class SchedulingOrder extends GemFireException {
   public SchedulingOrder() {
     super();

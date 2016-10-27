@@ -23,8 +23,7 @@ import org.apache.geode.cache.query.internal.QCompiler;
 public class ASTIn extends GemFireAST {
   private static final long serialVersionUID = -7688132343283983119L;
 
-  public ASTIn() {
-  }
+  public ASTIn() {}
 
   public ASTIn(Token t) {
     super(t);
@@ -37,5 +36,4 @@ public class ASTIn extends GemFireAST {
     // puts c1 then c2 on stack
     compiler.inExpr();
   }
-
 }

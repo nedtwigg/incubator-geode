@@ -40,17 +40,15 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.regex.Pattern;
 
 /**
- * The core of auto serialization which is used in both aspect and
- * reflection-based auto-serialization. This simple manager class is a singleton
- * which tracks the relevant fields for each class which is to be
- * auto-serialized.
- * This class used to be a singleton. But now every instance of ReflectionBasedAutoSerializer
- * will have its own instance of this class. We allow instances of this class to be found
- * so that tests can access internal apis that are not exposed on the public ReflectionBasedAutoSerializer.
- * 
+ * The core of auto serialization which is used in both aspect and reflection-based
+ * auto-serialization. This simple manager class is a singleton which tracks the relevant fields for
+ * each class which is to be auto-serialized. This class used to be a singleton. But now every
+ * instance of ReflectionBasedAutoSerializer will have its own instance of this class. We allow
+ * instances of this class to be found so that tests can access internal apis that are not exposed
+ * on the public ReflectionBasedAutoSerializer.
+ *
  * @since GemFire 6.6
  */
-
 public class AutoSerializableManager {
   private static final Logger logger = LogService.getLogger();
 
@@ -62,7 +60,8 @@ public class AutoSerializableManager {
   /*
    * Map of class and list of fields, we're interested in, for that class.
    */
-  private final Map<Class<?>, AutoClassInfo> classMap = new CopyOnWriteWeakHashMap<Class<?>, AutoClassInfo>();
+  private final Map<Class<?>, AutoClassInfo> classMap =
+      new CopyOnWriteWeakHashMap<Class<?>, AutoClassInfo>();
 
   /*
    * Mapping between class patterns and identity field patterns.
@@ -79,7 +78,8 @@ public class AutoSerializableManager {
    * or via cache.xml will not evaluate any hardcoded excludes. This helps with
    * testing as well as possibly debugging future customer issues.
    */
-  private static final String NO_HARDCODED_EXCLUDES_PARAM = DistributionConfig.GEMFIRE_PREFIX + "auto.serialization.no.hardcoded.excludes";
+  private static final String NO_HARDCODED_EXCLUDES_PARAM =
+      DistributionConfig.GEMFIRE_PREFIX + "auto.serialization.no.hardcoded.excludes";
 
   private boolean noHardcodedExcludes = Boolean.getBoolean(NO_HARDCODED_EXCLUDES_PARAM);
 
@@ -92,13 +92,14 @@ public class AutoSerializableManager {
   /*
    * Hardcoded set of patterns which we always exclude.
    */
-  private Set<Pattern> hardcodedExclusions = new HashSet<Pattern>() {
-    {
-      add(Pattern.compile("com\\.gemstone\\..*"));
-      add(Pattern.compile("java\\..*"));
-      add(Pattern.compile("javax\\..*"));
-    }
-  };
+  private Set<Pattern> hardcodedExclusions =
+      new HashSet<Pattern>() {
+        {
+          add(Pattern.compile("com\\.gemstone\\..*"));
+          add(Pattern.compile("java\\..*"));
+          add(Pattern.compile("javax\\..*"));
+        }
+      };
 
   /*
    * Cache of class names which have been determined to be excluded from
@@ -114,7 +115,7 @@ public class AutoSerializableManager {
 
   /*
    * Used to hold the class names which have triggered a warning because
-   * they have been determined that they should be auto serialized 
+   * they have been determined that they should be auto serialized
    * based on a pattern much but were not because that either do not
    * have a public no-arg constructor or have explicit java serialization code.
    */
@@ -126,7 +127,8 @@ public class AutoSerializableManager {
     return this.owner;
   }
 
-  public static AutoSerializableManager create(ReflectionBasedAutoSerializer owner, boolean checkPortability, String... patterns) {
+  public static AutoSerializableManager create(
+      ReflectionBasedAutoSerializer owner, boolean checkPortability, String... patterns) {
     AutoSerializableManager result = new AutoSerializableManager(owner);
     result.reconfigure(checkPortability, patterns);
     return result;
@@ -173,9 +175,9 @@ public class AutoSerializableManager {
   /*
    * Helper method to determine whether the class of a given object is a class
    * which we are interested in (de)serializing.
-   * 
+   *
    * @param obj
-   * 
+   *
    * @return true if the object should be considered for serialization or false
    * otherwise
    */
@@ -226,7 +228,7 @@ public class AutoSerializableManager {
   /*
    * Helper method to determine whether a class has a default constructor.
    * That's needed so that it can be re-instantiated by PDX on de-serialization.
-   * 
+   *
    */
   private boolean hasValidConstructor(Class<?> clazz, Pattern matchedPattern) {
     if (unsafe != null && !USE_CONSTRUCTOR) {
@@ -240,7 +242,10 @@ public class AutoSerializableManager {
       String className = clazz.getName();
       if (!loggedNoAutoSerializeMsg.contains(className)) {
         loggedNoAutoSerializeMsg.add(className);
-        logger.warn("Class {} matched with '{}' cannot be auto-serialized due to missing public no-arg constructor. Will attempt using Java serialization.", className, matchedPattern.pattern());
+        logger.warn(
+            "Class {} matched with '{}' cannot be auto-serialized due to missing public no-arg constructor. Will attempt using Java serialization.",
+            className,
+            matchedPattern.pattern());
       }
       return false;
     }
@@ -252,22 +257,32 @@ public class AutoSerializableManager {
         String className = clazz.getName();
         if (!loggedNoAutoSerializeMsg.contains(className)) {
           loggedNoAutoSerializeMsg.add(className);
-          logger.warn("Class {} matched with '{}' cannot be auto-serialized because it is Externalizable. Java serialization will be used instead of auto-serialization.", className, matchedPattern.pattern());
+          logger.warn(
+              "Class {} matched with '{}' cannot be auto-serialized because it is Externalizable. Java serialization will be used instead of auto-serialization.",
+              className,
+              matchedPattern.pattern());
         }
         return true;
       } else {
-        if (getPrivateMethod(clazz, "writeObject", new Class[] { ObjectOutputStream.class }, Void.TYPE)) {
+        if (getPrivateMethod(
+            clazz, "writeObject", new Class[] {ObjectOutputStream.class}, Void.TYPE)) {
           String className = clazz.getName();
           if (!loggedNoAutoSerializeMsg.contains(className)) {
             loggedNoAutoSerializeMsg.add(className);
-            logger.warn("Class {} matched with '{}' cannot be auto-serialized because it has a writeObject(ObjectOutputStream) method. Java serialization will be used instead of auto-serialization.", className, matchedPattern.pattern());
+            logger.warn(
+                "Class {} matched with '{}' cannot be auto-serialized because it has a writeObject(ObjectOutputStream) method. Java serialization will be used instead of auto-serialization.",
+                className,
+                matchedPattern.pattern());
           }
           return true;
         } else if (getInheritableMethod(clazz, "writeReplace", null, Object.class)) {
           String className = clazz.getName();
           if (!loggedNoAutoSerializeMsg.contains(className)) {
             loggedNoAutoSerializeMsg.add(className);
-            logger.warn("Class {} matched with '{}' cannot be auto-serialized because it has a writeReplace() method. Java serialization will be used instead of auto-serialization.", className, matchedPattern.pattern());
+            logger.warn(
+                "Class {} matched with '{}' cannot be auto-serialized because it has a writeReplace() method. Java serialization will be used instead of auto-serialization.",
+                className,
+                matchedPattern.pattern());
           }
           return true;
         }
@@ -277,25 +292,28 @@ public class AutoSerializableManager {
   }
 
   /**
-   * Returns true if a non-static private method with given signature defined by given
-   * class, or false if none found.
+   * Returns true if a non-static private method with given signature defined by given class, or
+   * false if none found.
    */
-  private static boolean getPrivateMethod(Class cl, String name, Class[] argTypes, Class returnType) {
+  private static boolean getPrivateMethod(
+      Class cl, String name, Class[] argTypes, Class returnType) {
     try {
       Method meth = cl.getDeclaredMethod(name, argTypes);
       int mods = meth.getModifiers();
-      return ((meth.getReturnType() == returnType) && ((mods & Modifier.STATIC) == 0) && ((mods & Modifier.PRIVATE) != 0));
+      return ((meth.getReturnType() == returnType)
+          && ((mods & Modifier.STATIC) == 0)
+          && ((mods & Modifier.PRIVATE) != 0));
     } catch (NoSuchMethodException ex) {
       return false;
     }
   }
 
   /**
-   * Returns true if a non-static, non-abstract method with given signature provided it
-   * is defined by or accessible (via inheritance) by the given class, or
-   * false if no match found.
+   * Returns true if a non-static, non-abstract method with given signature provided it is defined
+   * by or accessible (via inheritance) by the given class, or false if no match found.
    */
-  private static boolean getInheritableMethod(Class cl, String name, Class[] argTypes, Class returnType) {
+  private static boolean getInheritableMethod(
+      Class cl, String name, Class[] argTypes, Class returnType) {
     Method meth = null;
     Class defCl = cl;
     while (defCl != null) {
@@ -322,17 +340,13 @@ public class AutoSerializableManager {
     }
   }
 
-  /**
-   * Returns true if classes are defined in the same runtime package, false
-   * otherwise.
-   */
+  /** Returns true if classes are defined in the same runtime package, false otherwise. */
   private static boolean packageEquals(Class cl1, Class cl2) {
-    return (cl1.getClassLoader() == cl2.getClassLoader() && getPackageName(cl1).equals(getPackageName(cl2)));
+    return (cl1.getClassLoader() == cl2.getClassLoader()
+        && getPackageName(cl1).equals(getPackageName(cl2)));
   }
 
-  /**
-   * Returns package name of given class.
-   */
+  /** Returns package name of given class. */
   private static String getPackageName(Class cl) {
     String s = cl.getName();
     int i = s.lastIndexOf('[');
@@ -344,17 +358,14 @@ public class AutoSerializableManager {
   }
 
   /**
-   * Given a class, figure out which fields we're interested in serializing. The
-   * class' entire hierarchy will be traversed and used. Transients and statics
-   * will be ignored.
-   * 
-   * @param clazz
-   *          the <code>Class</code> we're interested in
+   * Given a class, figure out which fields we're interested in serializing. The class' entire
+   * hierarchy will be traversed and used. Transients and statics will be ignored.
+   *
+   * @param clazz the <code>Class</code> we're interested in
    * @return a list of fields to be used when this class is (de)serialized
    */
   public List<PdxFieldWrapper> getFields(Class<?> clazz) {
     return getClassInfo(clazz).getFields();
-
   }
 
   public AutoClassInfo getExistingClassInfo(Class<?> clazz) {
@@ -367,8 +378,7 @@ public class AutoSerializableManager {
     if (classInfo == null) {
       synchronized (classMap) {
         classInfo = classMap.get(tmpClass);
-        if (classInfo != null)
-          return classInfo;
+        if (classInfo != null) return classInfo;
 
         List<PdxFieldWrapper> fieldList = new ArrayList<PdxFieldWrapper>();
         List<PdxFieldWrapper> variableLenFields = new ArrayList<PdxFieldWrapper>();
@@ -380,7 +390,14 @@ public class AutoSerializableManager {
               // Should this be reset at some point?
               f.setAccessible(true);
               FieldType ft = getOwner().getFieldType(f, clazz);
-              PdxFieldWrapper fw = PdxFieldWrapper.create(this, f, ft, getOwner().getFieldName(f, clazz), getOwner().transformFieldValue(f, clazz), getOwner().isIdentityField(f, clazz));
+              PdxFieldWrapper fw =
+                  PdxFieldWrapper.create(
+                      this,
+                      f,
+                      ft,
+                      getOwner().getFieldName(f, clazz),
+                      getOwner().transformFieldValue(f, clazz),
+                      getOwner().isIdentityField(f, clazz));
               if (ft.isFixedWidth()) {
                 fieldList.add(fw);
               } else {
@@ -393,7 +410,10 @@ public class AutoSerializableManager {
 
         fieldList.addAll(variableLenFields);
         classInfo = new AutoClassInfo(clazz, fieldList);
-        logger.info("Auto serializer generating type for {} for fields: {}", clazz, classInfo.toFormattedString());
+        logger.info(
+            "Auto serializer generating type for {} for fields: {}",
+            clazz,
+            classInfo.toFormattedString());
         classMap.put(clazz, classInfo);
       } // end sync
     }
@@ -405,7 +425,9 @@ public class AutoSerializableManager {
   }
 
   public boolean defaultIsFieldIncluded(Field f, Class<?> clazz) {
-    return !Modifier.isTransient(f.getModifiers()) && !Modifier.isStatic(f.getModifiers()) && !fieldMatches(f, clazz.getName(), excludePatterns);
+    return !Modifier.isTransient(f.getModifiers())
+        && !Modifier.isStatic(f.getModifiers())
+        && !fieldMatches(f, clazz.getName(), excludePatterns);
   }
 
   public FieldType defaultGetFieldType(Field f, Class<?> clazz) {
@@ -435,7 +457,8 @@ public class AutoSerializableManager {
       return this.field.getBoolean(o);
     }
 
-    public void setBoolean(Object o, boolean v) throws IllegalArgumentException, IllegalAccessException {
+    public void setBoolean(Object o, boolean v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.setBoolean(o, v);
     }
 
@@ -451,7 +474,8 @@ public class AutoSerializableManager {
       return this.field.getShort(o);
     }
 
-    public void setShort(Object o, short v) throws IllegalArgumentException, IllegalAccessException {
+    public void setShort(Object o, short v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.setShort(o, v);
     }
 
@@ -475,7 +499,8 @@ public class AutoSerializableManager {
       return this.field.getFloat(o);
     }
 
-    public void setFloat(Object o, float v) throws IllegalArgumentException, IllegalAccessException {
+    public void setFloat(Object o, float v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.setFloat(o, v);
     }
 
@@ -483,7 +508,8 @@ public class AutoSerializableManager {
       return this.field.getDouble(o);
     }
 
-    public void setDouble(Object o, double v) throws IllegalArgumentException, IllegalAccessException {
+    public void setDouble(Object o, double v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.setDouble(o, v);
     }
 
@@ -491,7 +517,8 @@ public class AutoSerializableManager {
       return this.field.get(o);
     }
 
-    public void setObject(Object o, Object v) throws IllegalArgumentException, IllegalAccessException {
+    public void setObject(Object o, Object v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.set(o, v);
     }
 
@@ -525,7 +552,8 @@ public class AutoSerializableManager {
     }
 
     @Override
-    public void setBoolean(Object o, boolean v) throws IllegalArgumentException, IllegalAccessException {
+    public void setBoolean(Object o, boolean v)
+        throws IllegalArgumentException, IllegalAccessException {
       unsafe.putBoolean(o, this.offset, v);
     }
 
@@ -545,7 +573,8 @@ public class AutoSerializableManager {
     }
 
     @Override
-    public void setShort(Object o, short v) throws IllegalArgumentException, IllegalAccessException {
+    public void setShort(Object o, short v)
+        throws IllegalArgumentException, IllegalAccessException {
       unsafe.putShort(o, this.offset, v);
     }
 
@@ -575,7 +604,8 @@ public class AutoSerializableManager {
     }
 
     @Override
-    public void setFloat(Object o, float v) throws IllegalArgumentException, IllegalAccessException {
+    public void setFloat(Object o, float v)
+        throws IllegalArgumentException, IllegalAccessException {
       unsafe.putFloat(o, this.offset, v);
     }
 
@@ -585,7 +615,8 @@ public class AutoSerializableManager {
     }
 
     @Override
-    public void setDouble(Object o, double v) throws IllegalArgumentException, IllegalAccessException {
+    public void setDouble(Object o, double v)
+        throws IllegalArgumentException, IllegalAccessException {
       unsafe.putDouble(o, this.offset, v);
     }
 
@@ -595,7 +626,8 @@ public class AutoSerializableManager {
     }
 
     @Override
-    public void setObject(Object o, Object v) throws IllegalArgumentException, IllegalAccessException {
+    public void setObject(Object o, Object v)
+        throws IllegalArgumentException, IllegalAccessException {
       unsafe.putObject(o, this.offset, v);
     }
   }
@@ -603,6 +635,7 @@ public class AutoSerializableManager {
   // unsafe will be null if the Unsafe class is not available or SAFE was requested.
   // We attempt to use Unsafe by default for best performance.
   private static final UnsafeWrapper unsafe;
+
   static {
     UnsafeWrapper tmp = null;
     // only use Unsafe if SAFE was not explicitly requested
@@ -623,14 +656,19 @@ public class AutoSerializableManager {
     unsafe = tmp;
   }
 
-  public static abstract class PdxFieldWrapper {
+  public abstract static class PdxFieldWrapper {
     private final FieldWrapper field;
     private final String fieldName;
     private final boolean transformValue;
     private final AutoSerializableManager owner;
     private final boolean isIdentityField;
 
-    protected PdxFieldWrapper(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    protected PdxFieldWrapper(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       FieldWrapper tmp;
       if (unsafe != null) {
         tmp = new UnsafeFieldWrapper(f);
@@ -644,54 +682,60 @@ public class AutoSerializableManager {
       this.isIdentityField = isIdentityField;
     }
 
-    public static PdxFieldWrapper create(AutoSerializableManager owner, Field f, FieldType ft, String name, boolean transformValue, boolean isIdentityField) {
+    public static PdxFieldWrapper create(
+        AutoSerializableManager owner,
+        Field f,
+        FieldType ft,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       switch (ft) {
-      case INT:
-        return new IntField(owner, f, name, transformValue, isIdentityField);
-      case BYTE:
-        return new ByteField(owner, f, name, transformValue, isIdentityField);
-      case LONG:
-        return new LongField(owner, f, name, transformValue, isIdentityField);
-      case BOOLEAN:
-        return new BooleanField(owner, f, name, transformValue, isIdentityField);
-      case CHAR:
-        return new CharField(owner, f, name, transformValue, isIdentityField);
-      case SHORT:
-        return new ShortField(owner, f, name, transformValue, isIdentityField);
-      case DOUBLE:
-        return new DoubleField(owner, f, name, transformValue, isIdentityField);
-      case FLOAT:
-        return new FloatField(owner, f, name, transformValue, isIdentityField);
-      case STRING:
-        return new StringField(owner, f, name, transformValue, isIdentityField);
-      case DATE:
-        return new DateField(owner, f, name, transformValue, isIdentityField);
-      case BYTE_ARRAY:
-        return new ByteArrayField(owner, f, name, transformValue, isIdentityField);
-      case STRING_ARRAY:
-        return new StringArrayField(owner, f, name, transformValue, isIdentityField);
-      case ARRAY_OF_BYTE_ARRAYS:
-        return new ByteArrayArrayField(owner, f, name, transformValue, isIdentityField);
-      case BOOLEAN_ARRAY:
-        return new BooleanArrayField(owner, f, name, transformValue, isIdentityField);
-      case CHAR_ARRAY:
-        return new CharArrayField(owner, f, name, transformValue, isIdentityField);
-      case SHORT_ARRAY:
-        return new ShortArrayField(owner, f, name, transformValue, isIdentityField);
-      case INT_ARRAY:
-        return new IntArrayField(owner, f, name, transformValue, isIdentityField);
-      case LONG_ARRAY:
-        return new LongArrayField(owner, f, name, transformValue, isIdentityField);
-      case FLOAT_ARRAY:
-        return new FloatArrayField(owner, f, name, transformValue, isIdentityField);
-      case DOUBLE_ARRAY:
-        return new DoubleArrayField(owner, f, name, transformValue, isIdentityField);
-      case OBJECT_ARRAY:
-        return new ObjectArrayField(owner, f, name, transformValue, isIdentityField);
-      case OBJECT:
-        return new ObjectField(owner, f, name, transformValue, isIdentityField);
-      default:
-        throw new IllegalStateException("unhandled field type " + ft);
+        case INT:
+          return new IntField(owner, f, name, transformValue, isIdentityField);
+        case BYTE:
+          return new ByteField(owner, f, name, transformValue, isIdentityField);
+        case LONG:
+          return new LongField(owner, f, name, transformValue, isIdentityField);
+        case BOOLEAN:
+          return new BooleanField(owner, f, name, transformValue, isIdentityField);
+        case CHAR:
+          return new CharField(owner, f, name, transformValue, isIdentityField);
+        case SHORT:
+          return new ShortField(owner, f, name, transformValue, isIdentityField);
+        case DOUBLE:
+          return new DoubleField(owner, f, name, transformValue, isIdentityField);
+        case FLOAT:
+          return new FloatField(owner, f, name, transformValue, isIdentityField);
+        case STRING:
+          return new StringField(owner, f, name, transformValue, isIdentityField);
+        case DATE:
+          return new DateField(owner, f, name, transformValue, isIdentityField);
+        case BYTE_ARRAY:
+          return new ByteArrayField(owner, f, name, transformValue, isIdentityField);
+        case STRING_ARRAY:
+          return new StringArrayField(owner, f, name, transformValue, isIdentityField);
+        case ARRAY_OF_BYTE_ARRAYS:
+          return new ByteArrayArrayField(owner, f, name, transformValue, isIdentityField);
+        case BOOLEAN_ARRAY:
+          return new BooleanArrayField(owner, f, name, transformValue, isIdentityField);
+        case CHAR_ARRAY:
+          return new CharArrayField(owner, f, name, transformValue, isIdentityField);
+        case SHORT_ARRAY:
+          return new ShortArrayField(owner, f, name, transformValue, isIdentityField);
+        case INT_ARRAY:
+          return new IntArrayField(owner, f, name, transformValue, isIdentityField);
+        case LONG_ARRAY:
+          return new LongArrayField(owner, f, name, transformValue, isIdentityField);
+        case FLOAT_ARRAY:
+          return new FloatArrayField(owner, f, name, transformValue, isIdentityField);
+        case DOUBLE_ARRAY:
+          return new DoubleArrayField(owner, f, name, transformValue, isIdentityField);
+        case OBJECT_ARRAY:
+          return new ObjectArrayField(owner, f, name, transformValue, isIdentityField);
+        case OBJECT:
+          return new ObjectField(owner, f, name, transformValue, isIdentityField);
+        default:
+          throw new IllegalStateException("unhandled field type " + ft);
       }
     }
 
@@ -713,19 +757,21 @@ public class AutoSerializableManager {
 
     public abstract void serialize(PdxWriterImpl writer, Object obj, boolean optimizeWrite);
 
-    public abstract void serializeValue(PdxWriterImpl writer, Object newValue, boolean optimizeWrite);
+    public abstract void serializeValue(
+        PdxWriterImpl writer, Object newValue, boolean optimizeWrite);
 
     public abstract void deserialize(InternalPdxReader reader, Object obj);
 
     public abstract void orderedDeserialize(InternalPdxReader reader, Object obj);
 
-    protected final Object readTransformIf(Object o, Object serializedValue) throws IllegalArgumentException, IllegalAccessException {
-      if (!transform())
-        return serializedValue;
+    protected final Object readTransformIf(Object o, Object serializedValue)
+        throws IllegalArgumentException, IllegalAccessException {
+      if (!transform()) return serializedValue;
       return readTransform(o, serializedValue);
     }
 
-    protected final Object readTransform(Object o, Object serializedValue) throws IllegalArgumentException, IllegalAccessException {
+    protected final Object readTransform(Object o, Object serializedValue)
+        throws IllegalArgumentException, IllegalAccessException {
       return this.owner.getOwner().readTransform(getField(), o.getClass(), serializedValue);
     }
 
@@ -745,7 +791,8 @@ public class AutoSerializableManager {
       return this.field.getBoolean(o);
     }
 
-    protected void setBoolean(Object o, boolean v) throws IllegalArgumentException, IllegalAccessException {
+    protected void setBoolean(Object o, boolean v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.setBoolean(o, v);
     }
 
@@ -753,7 +800,8 @@ public class AutoSerializableManager {
       return this.field.getByte(o);
     }
 
-    protected void setByte(Object o, byte v) throws IllegalArgumentException, IllegalAccessException {
+    protected void setByte(Object o, byte v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.setByte(o, v);
     }
 
@@ -761,7 +809,8 @@ public class AutoSerializableManager {
       return this.field.getShort(o);
     }
 
-    protected void setShort(Object o, short v) throws IllegalArgumentException, IllegalAccessException {
+    protected void setShort(Object o, short v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.setShort(o, v);
     }
 
@@ -769,7 +818,8 @@ public class AutoSerializableManager {
       return this.field.getChar(o);
     }
 
-    protected void setChar(Object o, char v) throws IllegalArgumentException, IllegalAccessException {
+    protected void setChar(Object o, char v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.setChar(o, v);
     }
 
@@ -777,7 +827,8 @@ public class AutoSerializableManager {
       return this.field.getLong(o);
     }
 
-    protected void setLong(Object o, long v) throws IllegalArgumentException, IllegalAccessException {
+    protected void setLong(Object o, long v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.setLong(o, v);
     }
 
@@ -785,7 +836,8 @@ public class AutoSerializableManager {
       return this.field.getFloat(o);
     }
 
-    protected void setFloat(Object o, float v) throws IllegalArgumentException, IllegalAccessException {
+    protected void setFloat(Object o, float v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.setFloat(o, v);
     }
 
@@ -793,7 +845,8 @@ public class AutoSerializableManager {
       return this.field.getDouble(o);
     }
 
-    protected void setDouble(Object o, double v) throws IllegalArgumentException, IllegalAccessException {
+    protected void setDouble(Object o, double v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.setDouble(o, v);
     }
 
@@ -801,7 +854,8 @@ public class AutoSerializableManager {
       return this.field.getObject(o);
     }
 
-    protected void setObject(Object o, Object v) throws IllegalArgumentException, IllegalAccessException {
+    protected void setObject(Object o, Object v)
+        throws IllegalArgumentException, IllegalAccessException {
       this.field.setObject(o, v);
     }
 
@@ -816,7 +870,12 @@ public class AutoSerializableManager {
   }
 
   public static final class IntField extends PdxFieldWrapper {
-    public IntField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public IntField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -873,7 +932,12 @@ public class AutoSerializableManager {
   }
 
   public static final class ByteField extends PdxFieldWrapper {
-    public ByteField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public ByteField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -930,7 +994,12 @@ public class AutoSerializableManager {
   }
 
   public static final class LongField extends PdxFieldWrapper {
-    public LongField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public LongField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -987,7 +1056,12 @@ public class AutoSerializableManager {
   }
 
   public static final class BooleanField extends PdxFieldWrapper {
-    public BooleanField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public BooleanField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1044,7 +1118,12 @@ public class AutoSerializableManager {
   }
 
   public static final class CharField extends PdxFieldWrapper {
-    public CharField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public CharField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1101,7 +1180,12 @@ public class AutoSerializableManager {
   }
 
   public static final class ShortField extends PdxFieldWrapper {
-    public ShortField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public ShortField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1158,7 +1242,12 @@ public class AutoSerializableManager {
   }
 
   public static final class FloatField extends PdxFieldWrapper {
-    public FloatField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public FloatField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1215,7 +1304,12 @@ public class AutoSerializableManager {
   }
 
   public static final class DoubleField extends PdxFieldWrapper {
-    public DoubleField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public DoubleField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1272,7 +1366,12 @@ public class AutoSerializableManager {
   }
 
   public static final class ObjectField extends PdxFieldWrapper {
-    public ObjectField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public ObjectField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1317,7 +1416,12 @@ public class AutoSerializableManager {
   }
 
   public static final class StringField extends PdxFieldWrapper {
-    public StringField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public StringField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1362,7 +1466,12 @@ public class AutoSerializableManager {
   }
 
   public static final class DateField extends PdxFieldWrapper {
-    public DateField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public DateField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1407,7 +1516,12 @@ public class AutoSerializableManager {
   }
 
   public static final class ByteArrayField extends PdxFieldWrapper {
-    public ByteArrayField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public ByteArrayField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1452,7 +1566,12 @@ public class AutoSerializableManager {
   }
 
   public static final class BooleanArrayField extends PdxFieldWrapper {
-    public BooleanArrayField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public BooleanArrayField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1497,7 +1616,12 @@ public class AutoSerializableManager {
   }
 
   public static final class ShortArrayField extends PdxFieldWrapper {
-    public ShortArrayField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public ShortArrayField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1542,7 +1666,12 @@ public class AutoSerializableManager {
   }
 
   public static final class CharArrayField extends PdxFieldWrapper {
-    public CharArrayField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public CharArrayField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1587,7 +1716,12 @@ public class AutoSerializableManager {
   }
 
   public static final class IntArrayField extends PdxFieldWrapper {
-    public IntArrayField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public IntArrayField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1632,7 +1766,12 @@ public class AutoSerializableManager {
   }
 
   public static final class LongArrayField extends PdxFieldWrapper {
-    public LongArrayField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public LongArrayField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1677,7 +1816,12 @@ public class AutoSerializableManager {
   }
 
   public static final class FloatArrayField extends PdxFieldWrapper {
-    public FloatArrayField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public FloatArrayField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1722,7 +1866,12 @@ public class AutoSerializableManager {
   }
 
   public static final class DoubleArrayField extends PdxFieldWrapper {
-    public DoubleArrayField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public DoubleArrayField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1767,7 +1916,12 @@ public class AutoSerializableManager {
   }
 
   public static final class StringArrayField extends PdxFieldWrapper {
-    public StringArrayField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public StringArrayField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1812,7 +1966,12 @@ public class AutoSerializableManager {
   }
 
   public static final class ByteArrayArrayField extends PdxFieldWrapper {
-    public ByteArrayArrayField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public ByteArrayArrayField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1857,7 +2016,12 @@ public class AutoSerializableManager {
   }
 
   public static final class ObjectArrayField extends PdxFieldWrapper {
-    public ObjectArrayField(AutoSerializableManager owner, Field f, String name, boolean transformValue, boolean isIdentityField) {
+    public ObjectArrayField(
+        AutoSerializableManager owner,
+        Field f,
+        String name,
+        boolean transformValue,
+        boolean isIdentityField) {
       super(owner, f, name, transformValue, isIdentityField);
     }
 
@@ -1902,28 +2066,21 @@ public class AutoSerializableManager {
   }
 
   /**
-   * Given an object, use its class to determine which fields are to be used
-   * when (de)serializing.
-   * 
-   * @param obj
-   *          the object whose class we're interested in
-   * @return a list of fields to be used when this object's class is
-   *         (de)serialized
+   * Given an object, use its class to determine which fields are to be used when (de)serializing.
+   *
+   * @param obj the object whose class we're interested in
+   * @return a list of fields to be used when this object's class is (de)serialized
    */
   public List<PdxFieldWrapper> getFields(Object obj) {
     return getFields(obj.getClass());
   }
 
   /**
-   * Using the given PdxWriter, write out the relevant fields for the object
-   * instance passed in.
-   * 
-   * @param writer
-   *          the <code>PdxWriter</code> to use when writing the object
-   * @param obj
-   *          the object to serialize
-   * @return <code>true</code> if the object was serialized, <code>false</code>
-   *         otherwise
+   * Using the given PdxWriter, write out the relevant fields for the object instance passed in.
+   *
+   * @param writer the <code>PdxWriter</code> to use when writing the object
+   * @param obj the object to serialize
+   * @return <code>true</code> if the object was serialized, <code>false</code> otherwise
    */
   public boolean writeData(PdxWriter writer, Object obj) {
     if (isRelevant(obj.getClass())) {
@@ -1933,27 +2090,30 @@ public class AutoSerializableManager {
     return false;
   }
 
-  private static void handleException(Exception ex, boolean serialization, String fieldName, Object obj) {
+  private static void handleException(
+      Exception ex, boolean serialization, String fieldName, Object obj) {
     if (ex instanceof CancelException) {
       // fix for bug 43936
       throw (CancelException) ex;
     } else if (ex instanceof NonPortableClassException) {
       throw (NonPortableClassException) ex;
     } else {
-      throw new PdxSerializationException((serialization ? "Serialization" : "Deserialization") + " error on field " + fieldName + " for class " + obj.getClass().getName(), ex);
+      throw new PdxSerializationException(
+          (serialization ? "Serialization" : "Deserialization")
+              + " error on field "
+              + fieldName
+              + " for class "
+              + obj.getClass().getName(),
+          ex);
     }
   }
 
   /**
    * Using the given PdxWriter, write out the fields which have been passed in.
-   * 
-   * @param writer
-   *          the <code>PdxWriter</code> to use when writing the object
-   * @param obj
-   *          the object to serialize
-   * @param autoClassInfo
-   *          a <code>List</code> of <code>Field</code>s which are to be written
-   *          out
+   *
+   * @param writer the <code>PdxWriter</code> to use when writing the object
+   * @param obj the object to serialize
+   * @param autoClassInfo a <code>List</code> of <code>Field</code>s which are to be written out
    */
   public void writeData(PdxWriter writer, Object obj, AutoClassInfo autoClassInfo) {
     PdxWriterImpl w = (PdxWriterImpl) writer;
@@ -1970,7 +2130,8 @@ public class AutoSerializableManager {
       //System.out.println("DEBUG writing field=" + f.getField().getName() + " offset=" + ((PdxWriterImpl)writer).position());
       if (f.transform()) {
         try {
-          Object newValue = getOwner().writeTransform(f.getField(), obj.getClass(), f.getObject(obj));
+          Object newValue =
+              getOwner().writeTransform(f.getField(), obj.getClass(), f.getObject(obj));
           f.serializeValue(w, newValue, optimizeFieldWrites);
         } catch (Exception ex) {
           f.handleException(true, obj, ex);
@@ -1991,15 +2152,14 @@ public class AutoSerializableManager {
     }
   }
 
-  private static final boolean USE_CONSTRUCTOR = !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "autopdx.ignoreConstructor");
+  private static final boolean USE_CONSTRUCTOR =
+      !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "autopdx.ignoreConstructor");
 
   /**
    * Using the given PdxReader, recreate the given object.
-   * 
-   * @param reader
-   *          the <code>PdxReader</code> to use when reading the object
-   * @param clazz
-   *          the class of the object to re-create
+   *
+   * @param reader the <code>PdxReader</code> to use when reading the object
+   * @param clazz the class of the object to re-create
    */
   public Object readData(PdxReader reader, Class<?> clazz) {
     Object result = null;
@@ -2022,21 +2182,23 @@ public class AutoSerializableManager {
 
   /**
    * Add a new class pattern / identity-field pattern tuple
+   *
    * @param classPattern the class pattern
-   * @param fieldPattern the pattern to identify a field as an identity field
-   *  within the given class pattern
+   * @param fieldPattern the pattern to identify a field as an identity field within the given class
+   *     pattern
    */
   public void addIdentityPattern(String classPattern, String fieldPattern) {
-    identityPatterns.add(new String[] { classPattern, fieldPattern });
+    identityPatterns.add(new String[] {classPattern, fieldPattern});
   }
 
   /**
-   * Return the identity patterns. The patterns are returned as a <code>List</code>
-   * of <code>String</code> arrays of size 2 - essentially a tuple of the form
+   * Return the identity patterns. The patterns are returned as a <code>List</code> of <code>String
+   * </code> arrays of size 2 - essentially a tuple of the form
+   *
    * <pre>
    *   (classPattern, identityPattern)
    * </pre>
-   * 
+   *
    * @return the identity patterns
    */
   public List<String[]> getIdentityPatterns() {
@@ -2045,21 +2207,23 @@ public class AutoSerializableManager {
 
   /**
    * Add a new class pattern / exclude-field pattern tuple
+   *
    * @param classPattern the class pattern
-   * @param fieldPattern the pattern to exclude a field from serialization
-   *  within the given class pattern
+   * @param fieldPattern the pattern to exclude a field from serialization within the given class
+   *     pattern
    */
   public void addExcludePattern(String classPattern, String fieldPattern) {
-    excludePatterns.add(new String[] { classPattern, fieldPattern });
+    excludePatterns.add(new String[] {classPattern, fieldPattern});
   }
 
   /**
-   * Return the exclude patterns. The patterns are returned as a <code>List</code>
-   * of <code>String</code> arrays of size 2 - essentially a tuple of the form
+   * Return the exclude patterns. The patterns are returned as a <code>List</code> of <code>String
+   * </code> arrays of size 2 - essentially a tuple of the form
+   *
    * <pre>
    *   (classPattern, excludePattern)
    * </pre>
-   * 
+   *
    * @return the exclude patterns
    */
   public List<String[]> getExcludePatterns() {
@@ -2069,10 +2233,10 @@ public class AutoSerializableManager {
   /*
    * Helper method which determines whether a given field matches a set of
    * class/field patterns.
-   * 
+   *
    * @param field the <code>Field</code> to consider
    * @param field the className which references this field
-   * @param matches a map containing the 
+   * @param matches a map containing the
    * @param
    */
   private boolean fieldMatches(Field field, String className, List<String[]> matches) {
@@ -2087,29 +2251,20 @@ public class AutoSerializableManager {
     return false;
   }
 
-  /**
-   * Holds meta information about a class that we have auto serialized.
-   *
-   */
+  /** Holds meta information about a class that we have auto serialized. */
   public static class AutoClassInfo {
     private final WeakReference<Class<?>> clazzRef;
-    /**
-     * The fields that describe the class
-     */
+    /** The fields that describe the class */
     private final List<PdxFieldWrapper> fields;
-    /**
-     * The pdxType ids that we are known to exactly match.
-     */
+    /** The pdxType ids that we are known to exactly match. */
     private final Set<Integer> matchingPdxIds = new CopyOnWriteArraySet<Integer>();
     /**
-     * The pdxType ids that do not exactly match our class.
-     * Either their field order differs it they have extra or missing fields.
+     * The pdxType ids that do not exactly match our class. Either their field order differs it they
+     * have extra or missing fields.
      */
     private final Set<Integer> mismatchingPdxIds = new CopyOnWriteArraySet<Integer>();
 
-    /**
-     * The PdxType created by the first serialization by the auto serializer.
-     */
+    /** The PdxType created by the first serialization by the auto serializer. */
     private PdxType serializedType = null;
 
     public AutoClassInfo(Class<?> clazz, List<PdxFieldWrapper> fields) {
@@ -2139,7 +2294,10 @@ public class AutoSerializableManager {
           result = clazz.newInstance();
         }
       } catch (Exception ex) {
-        throw new PdxSerializationException(LocalizedStrings.DataSerializer_COULD_NOT_CREATE_AN_INSTANCE_OF_A_CLASS_0.toLocalizedString(clazz.getName()), ex);
+        throw new PdxSerializationException(
+            LocalizedStrings.DataSerializer_COULD_NOT_CREATE_AN_INSTANCE_OF_A_CLASS_0
+                .toLocalizedString(clazz.getName()),
+            ex);
       }
       return result;
     }
@@ -2224,10 +2382,12 @@ public class AutoSerializableManager {
               noHardcodedExcludes = true;
             }
           } else {
-            throw new IllegalArgumentException("ReflectionBasedAutoSerializer: unknown init property \"" + key + "\"");
+            throw new IllegalArgumentException(
+                "ReflectionBasedAutoSerializer: unknown init property \"" + key + "\"");
           }
         } else {
-          throw new IllegalArgumentException("ReflectionBasedAutoSerializer: unknown non-String init property \"" + o + "\"");
+          throw new IllegalArgumentException(
+              "ReflectionBasedAutoSerializer: unknown non-String init property \"" + o + "\"");
         }
       }
     }
@@ -2246,7 +2406,7 @@ public class AutoSerializableManager {
     for (Pattern p : classPatterns) {
       tmp.add(p.pattern());
     }
-    for (Iterator<String> i = tmp.iterator(); i.hasNext();) {
+    for (Iterator<String> i = tmp.iterator(); i.hasNext(); ) {
       String s = i.next();
       sb.append(s);
       if (i.hasNext()) {
@@ -2256,7 +2416,7 @@ public class AutoSerializableManager {
 
     if (getIdentityPatterns().size() > 0) {
       sb.append(", ");
-      for (Iterator<String[]> i = getIdentityPatterns().iterator(); i.hasNext();) {
+      for (Iterator<String[]> i = getIdentityPatterns().iterator(); i.hasNext(); ) {
         String[] s = i.next();
         sb.append(s[0]).append("#" + OPT_IDENTITY + "=").append(s[1]);
         if (i.hasNext()) {
@@ -2267,7 +2427,7 @@ public class AutoSerializableManager {
 
     if (getExcludePatterns().size() > 0) {
       sb.append(", ");
-      for (Iterator<String[]> i = getExcludePatterns().iterator(); i.hasNext();) {
+      for (Iterator<String[]> i = getExcludePatterns().iterator(); i.hasNext(); ) {
         String[] s = i.next();
         sb.append(s[0]).append("#" + OPT_EXCLUDE + "=").append(s[1]);
         if (i.hasNext()) {
@@ -2307,14 +2467,16 @@ public class AutoSerializableManager {
 
           String[] paramVals = split[i].split("=");
           if (paramVals.length != 2) {
-            throw new IllegalArgumentException("Unable to correctly process auto serialization init value: " + value);
+            throw new IllegalArgumentException(
+                "Unable to correctly process auto serialization init value: " + value);
           }
           if (OPT_IDENTITY.equalsIgnoreCase(paramVals[0])) {
             identityPattern = paramVals[1];
           } else if (OPT_EXCLUDE.equalsIgnoreCase(paramVals[0])) {
             excludePattern = paramVals[1];
           } else {
-            throw new IllegalArgumentException("Unable to correctly process auto serialization init value: " + value);
+            throw new IllegalArgumentException(
+                "Unable to correctly process auto serialization init value: " + value);
           }
           if (identityPattern != null) {
             addIdentityPattern(split[0], identityPattern);
@@ -2351,30 +2513,20 @@ public class AutoSerializableManager {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     AutoSerializableManager other = (AutoSerializableManager) obj;
-    if (checkPortability != other.checkPortability)
-      return false;
+    if (checkPortability != other.checkPortability) return false;
     if (classPatterns == null) {
-      if (other.classPatterns != null)
-        return false;
-    } else if (!classPatterns.equals(other.classPatterns))
-      return false;
+      if (other.classPatterns != null) return false;
+    } else if (!classPatterns.equals(other.classPatterns)) return false;
     if (excludePatterns == null) {
-      if (other.excludePatterns != null)
-        return false;
-    } else if (!excludePatterns.equals(other.excludePatterns))
-      return false;
+      if (other.excludePatterns != null) return false;
+    } else if (!excludePatterns.equals(other.excludePatterns)) return false;
     if (identityPatterns == null) {
-      if (other.identityPatterns != null)
-        return false;
-    } else if (!identityPatterns.equals(other.identityPatterns))
-      return false;
+      if (other.identityPatterns != null) return false;
+    } else if (!identityPatterns.equals(other.identityPatterns)) return false;
     return true;
   }
 }

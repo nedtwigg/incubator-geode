@@ -20,41 +20,33 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Defines the common date format for GemFire and provides DateFormat instances.
- * 
- */
+/** Defines the common date format for GemFire and provides DateFormat instances. */
 public final class DateFormatter {
 
-  /**
-   * The format string used to format the timestamp of GemFire log messages
-   */
-  public final static String FORMAT_STRING = "yyyy/MM/dd HH:mm:ss.SSS z";
+  /** The format string used to format the timestamp of GemFire log messages */
+  public static final String FORMAT_STRING = "yyyy/MM/dd HH:mm:ss.SSS z";
 
-  private final static DateFormat timeFormatter = createDateFormat();
+  private static final DateFormat timeFormatter = createDateFormat();
 
   /**
    * Creates a SimpleDateFormat using {@link #FORMAT_STRING}.
-   * 
-   * Thread Safety Issue: (From SimpleDateFormat)
-   * Date formats are not synchronized.
-   * It is recommended to create separate format instances for each thread.
-   * If multiple threads access a format concurrently, it must be synchronized
-   * externally.
+   *
+   * <p>Thread Safety Issue: (From SimpleDateFormat) Date formats are not synchronized. It is
+   * recommended to create separate format instances for each thread. If multiple threads access a
+   * format concurrently, it must be synchronized externally.
    */
   public static DateFormat createDateFormat() {
     return new SimpleDateFormat(DateFormatter.FORMAT_STRING);
   }
 
-  /**
-   * Creates a SimpleDateFormat using specified formatString.
-   */
+  /** Creates a SimpleDateFormat using specified formatString. */
   public static DateFormat createDateFormat(final String formatString) {
     return new SimpleDateFormat(formatString);
   }
 
   /**
    * Gets a String representation of the current time.
+   *
    * @return a String representation of the current time.
    */
   public static String getTimeStamp() {
@@ -63,6 +55,7 @@ public final class DateFormatter {
 
   /**
    * Convert a Date to a timestamp String.
+   *
    * @param d a Date to format as a timestamp String.
    * @return a String representation of the current time.
    */
@@ -86,9 +79,6 @@ public final class DateFormatter {
     }
   }
 
-  /**
-   * Do not instantiate this class.
-   */
-  private DateFormatter() {
-  }
+  /** Do not instantiate this class. */
+  private DateFormatter() {}
 }

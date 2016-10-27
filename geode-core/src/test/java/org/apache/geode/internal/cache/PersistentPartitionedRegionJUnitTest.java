@@ -198,9 +198,13 @@ public class PersistentPartitionedRegionJUnitTest {
     props.setProperty(LOG_LEVEL, "info");
     //    props.setProperty("log-file", "junit.log");
     cache = new CacheFactory(props).create();
-    cache.createDiskStoreFactory().setMaxOplogSize(1).setDiskDirs(new File[] { dir }).create("disk");
+    cache.createDiskStoreFactory().setMaxOplogSize(1).setDiskDirs(new File[] {dir}).create("disk");
 
-    RegionFactory<Object, Object> rf = cache.createRegionFactory().setDataPolicy(DataPolicy.PERSISTENT_PARTITION).setDiskStoreName("disk");
+    RegionFactory<Object, Object> rf =
+        cache
+            .createRegionFactory()
+            .setDataPolicy(DataPolicy.PERSISTENT_PARTITION)
+            .setDiskStoreName("disk");
     rf.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(1).create());
     if (ttl > 0) {
       rf.setEntryTimeToLive(new ExpirationAttributes(ttl, ExpirationAction.DESTROY));

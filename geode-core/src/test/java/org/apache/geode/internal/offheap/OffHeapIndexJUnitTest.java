@@ -34,11 +34,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-/**
- * Test off-heap regions with indexes.
- * 
- *
- */
+/** Test off-heap regions with indexes. */
 @Category(IntegrationTest.class)
 public class OffHeapIndexJUnitTest {
   private GemFireCacheImpl gfc;
@@ -60,7 +56,9 @@ public class OffHeapIndexJUnitTest {
   }
 
   @Test
-  public void testUnsupportedAsyncIndexes() throws RegionNotFoundException, IndexInvalidException, IndexNameConflictException, IndexExistsException {
+  public void testUnsupportedAsyncIndexes()
+      throws RegionNotFoundException, IndexInvalidException, IndexNameConflictException,
+          IndexExistsException {
     RegionFactory<Object, Object> rf = this.gfc.createRegionFactory();
     rf.setOffHeap(true);
     rf.setIndexMaintenanceSynchronous(false);
@@ -70,12 +68,16 @@ public class OffHeapIndexJUnitTest {
       qs.createIndex("idx", "age", "/r");
       fail("expected UnsupportedOperationException");
     } catch (UnsupportedOperationException expected) {
-      assertEquals("Asynchronous index maintenance is currently not supported for off-heap regions. The off-heap region is /r", expected.getMessage());
+      assertEquals(
+          "Asynchronous index maintenance is currently not supported for off-heap regions. The off-heap region is /r",
+          expected.getMessage());
     }
   }
 
   @Test
-  public void testUnsupportedMultiIteratorIndexes() throws RegionNotFoundException, IndexInvalidException, IndexNameConflictException, IndexExistsException {
+  public void testUnsupportedMultiIteratorIndexes()
+      throws RegionNotFoundException, IndexInvalidException, IndexNameConflictException,
+          IndexExistsException {
     RegionFactory<Object, Object> rf = this.gfc.createRegionFactory();
     rf.setOffHeap(true);
     rf.setIndexMaintenanceSynchronous(true);
@@ -85,7 +87,9 @@ public class OffHeapIndexJUnitTest {
       qs.createIndex("idx", "addr", "/r r, r.addresses addr");
       fail("expected UnsupportedOperationException");
     } catch (UnsupportedOperationException expected) {
-      assertEquals("From clauses having multiple iterators(collections) are not supported for off-heap regions. The off-heap region is /r", expected.getMessage());
+      assertEquals(
+          "From clauses having multiple iterators(collections) are not supported for off-heap regions. The off-heap region is /r",
+          expected.getMessage());
     }
   }
 }

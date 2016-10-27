@@ -31,9 +31,11 @@ import org.apache.geode.internal.cache.CachedDeserializableFactory;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The StringUtilsJUnitTest is a test suite containing test cases for testing the contract and functionality of
- * the StringUtils class.
- * <p/>
+ * The StringUtilsJUnitTest is a test suite containing test cases for testing the contract and
+ * functionality of the StringUtils class.
+ *
+ * <p>
+ *
  * @see org.apache.geode.internal.lang.StringUtils
  * @see org.junit.Assert
  * @see org.junit.Test
@@ -60,21 +62,21 @@ public class StringUtilsJUnitTest {
   public void testConcatWithDelimiter() {
     assertEquals("", StringUtils.concat(null, null));
     assertEquals("", StringUtils.concat(null, " "));
-    assertEquals("", StringUtils.concat(new Object[] { "" }, " "));
-    assertEquals(" ", StringUtils.concat(new Object[] { " " }, " "));
-    assertEquals("     ", StringUtils.concat(new Object[] { " ", " ", " " }, " "));
-    assertEquals(" | | ", StringUtils.concat(new Object[] { " ", " ", " " }, "|"));
-    assertEquals("abc", StringUtils.concat(new Object[] { "a", "b", "c" }, null));
-    assertEquals("abc", StringUtils.concat(new Object[] { "a", "b", "c" }, ""));
-    assertEquals("a b c", StringUtils.concat(new Object[] { "a", "b", "c" }, " "));
-    assertEquals("a   b   c", StringUtils.concat(new Object[] { "a", "b", "c" }, "   "));
-    assertEquals("a_b_c", StringUtils.concat(new Object[] { "a", "b", "c" }, "_"));
-    assertEquals("a|b|c", StringUtils.concat(new Object[] { "a", "b", "c" }, "|"));
-    assertEquals("a>b>c", StringUtils.concat(new Object[] { "a", "b", "c" }, ">"));
-    assertEquals("a&b&c", StringUtils.concat(new Object[] { "a", "b", "c" }, "&"));
-    assertEquals("*", StringUtils.concat(new Object[] { "*" }, "*"));
-    assertEquals("***", StringUtils.concat(new Object[] { "*", "*" }, "*"));
-    assertEquals("*-*", StringUtils.concat(new Object[] { "*", "*" }, "-"));
+    assertEquals("", StringUtils.concat(new Object[] {""}, " "));
+    assertEquals(" ", StringUtils.concat(new Object[] {" "}, " "));
+    assertEquals("     ", StringUtils.concat(new Object[] {" ", " ", " "}, " "));
+    assertEquals(" | | ", StringUtils.concat(new Object[] {" ", " ", " "}, "|"));
+    assertEquals("abc", StringUtils.concat(new Object[] {"a", "b", "c"}, null));
+    assertEquals("abc", StringUtils.concat(new Object[] {"a", "b", "c"}, ""));
+    assertEquals("a b c", StringUtils.concat(new Object[] {"a", "b", "c"}, " "));
+    assertEquals("a   b   c", StringUtils.concat(new Object[] {"a", "b", "c"}, "   "));
+    assertEquals("a_b_c", StringUtils.concat(new Object[] {"a", "b", "c"}, "_"));
+    assertEquals("a|b|c", StringUtils.concat(new Object[] {"a", "b", "c"}, "|"));
+    assertEquals("a>b>c", StringUtils.concat(new Object[] {"a", "b", "c"}, ">"));
+    assertEquals("a&b&c", StringUtils.concat(new Object[] {"a", "b", "c"}, "&"));
+    assertEquals("*", StringUtils.concat(new Object[] {"*"}, "*"));
+    assertEquals("***", StringUtils.concat(new Object[] {"*", "*"}, "*"));
+    assertEquals("*-*", StringUtils.concat(new Object[] {"*", "*"}, "-"));
   }
 
   @Test
@@ -293,7 +295,14 @@ public class StringUtilsJUnitTest {
   public void testWrap() {
     final String line = "The line of text to split for testing purposes!";
 
-    final String expectedLine = "The line of".concat(StringUtils.LINE_SEPARATOR).concat("text to split").concat(StringUtils.LINE_SEPARATOR).concat("for testing").concat(StringUtils.LINE_SEPARATOR).concat("purposes!");
+    final String expectedLine =
+        "The line of"
+            .concat(StringUtils.LINE_SEPARATOR)
+            .concat("text to split")
+            .concat(StringUtils.LINE_SEPARATOR)
+            .concat("for testing")
+            .concat(StringUtils.LINE_SEPARATOR)
+            .concat("purposes!");
 
     final String actualLine = StringUtils.wrap(line, 15, null);
 
@@ -305,7 +314,17 @@ public class StringUtilsJUnitTest {
   public void testWrapWithIndent() {
     final String line = "The line of text to split for testing purposes!";
 
-    final String expectedLine = "The line of".concat(StringUtils.LINE_SEPARATOR).concat("\t").concat("text to split").concat(StringUtils.LINE_SEPARATOR).concat("\t").concat("for testing").concat(StringUtils.LINE_SEPARATOR).concat("\t").concat("purposes!");
+    final String expectedLine =
+        "The line of"
+            .concat(StringUtils.LINE_SEPARATOR)
+            .concat("\t")
+            .concat("text to split")
+            .concat(StringUtils.LINE_SEPARATOR)
+            .concat("\t")
+            .concat("for testing")
+            .concat(StringUtils.LINE_SEPARATOR)
+            .concat("\t")
+            .concat("purposes!");
 
     final String actualLine = StringUtils.wrap(line, 15, "\t");
 
@@ -317,15 +336,26 @@ public class StringUtilsJUnitTest {
   public void testForceToString() throws IOException {
     assertEquals("null", StringUtils.forceToString(null));
     assertEquals("Object[][]", StringUtils.forceToString(new Object[0][0]));
-    assertEquals("byte[1, 2]", StringUtils.forceToString(new byte[] { 1, 2 }));
-    assertEquals("int[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]", StringUtils.forceToString(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }));
-    assertEquals("long[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, and 1 more]", StringUtils.forceToString(new long[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 }));
-    assertEquals("short[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, and 2 more]", StringUtils.forceToString(new short[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 }));
-    assertEquals("char[1, 2, 3]", StringUtils.forceToString(new char[] { '1', '2', '3' }));
-    assertEquals("boolean[true, false]", StringUtils.forceToString(new boolean[] { true, false }));
-    assertEquals("float[1.0]", StringUtils.forceToString(new float[] { 1.0f }));
-    assertEquals("double[1.0, 2.0]", StringUtils.forceToString(new double[] { 1.0, 2.0 }));
-    assertEquals("String[start, middle, end]", StringUtils.forceToString(new String[] { "start", "middle", "end" }));
+    assertEquals("byte[1, 2]", StringUtils.forceToString(new byte[] {1, 2}));
+    assertEquals(
+        "int[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]",
+        StringUtils.forceToString(
+            new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}));
+    assertEquals(
+        "long[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, and 1 more]",
+        StringUtils.forceToString(
+            new long[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17}));
+    assertEquals(
+        "short[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, and 2 more]",
+        StringUtils.forceToString(
+            new short[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18}));
+    assertEquals("char[1, 2, 3]", StringUtils.forceToString(new char[] {'1', '2', '3'}));
+    assertEquals("boolean[true, false]", StringUtils.forceToString(new boolean[] {true, false}));
+    assertEquals("float[1.0]", StringUtils.forceToString(new float[] {1.0f}));
+    assertEquals("double[1.0, 2.0]", StringUtils.forceToString(new double[] {1.0, 2.0}));
+    assertEquals(
+        "String[start, middle, end]",
+        StringUtils.forceToString(new String[] {"start", "middle", "end"}));
     // make sure CacheDeserializables do not get deserialized when getting their string form
     Object v = "value";
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -338,5 +368,4 @@ public class StringUtilsJUnitTest {
     assertEquals("value", StringUtils.forceToString(cd));
     assertSame(valueBytes, cd.getValue());
   }
-
 }

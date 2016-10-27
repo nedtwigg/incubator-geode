@@ -63,8 +63,10 @@ public class SerialGatewaySenderQueueDUnitTest extends WANTestBase {
     vm2.invoke(() -> WANTestBase.createCache(nyPort));
     vm3.invoke(() -> WANTestBase.createCache(nyPort));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     vm2.invoke(() -> WANTestBase.createReceiver());
     vm3.invoke(() -> WANTestBase.createReceiver());
@@ -74,15 +76,25 @@ public class SerialGatewaySenderQueueDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.createCache(lnPort));
     vm7.invoke(() -> WANTestBase.createCache(lnPort));
 
-    vm4.invoke(() -> WANTestBase.createSenderWithMultipleDispatchers("ln", 2, false, 100, 10, false, false, null, true, 1, OrderPolicy.KEY));
-    vm5.invoke(() -> WANTestBase.createSenderWithMultipleDispatchers("ln", 2, false, 100, 10, false, false, null, true, 1, OrderPolicy.KEY));
+    vm4.invoke(
+        () ->
+            WANTestBase.createSenderWithMultipleDispatchers(
+                "ln", 2, false, 100, 10, false, false, null, true, 1, OrderPolicy.KEY));
+    vm5.invoke(
+        () ->
+            WANTestBase.createSenderWithMultipleDispatchers(
+                "ln", 2, false, 100, 10, false, false, null, true, 1, OrderPolicy.KEY));
 
     startSenderInVMs("ln", vm4, vm5);
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm6.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm7.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.addQueueListener("ln", false));
     vm5.invoke(() -> WANTestBase.addQueueListener("ln", false));
@@ -142,21 +154,45 @@ public class SerialGatewaySenderQueueDUnitTest extends WANTestBase {
     createCacheInVMs(nyPort, vm2, vm3);
     createReceiverInVMs(vm2, vm3);
 
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
     vm2.invoke(() -> WANTestBase.addListenerOnRegion(getTestMethodName() + "_PR"));
     vm3.invoke(() -> WANTestBase.addListenerOnRegion(getTestMethodName() + "_PR"));
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createSenderWithMultipleDispatchers("ln", 2, false, 100, 10, false, false, null, true, 1, OrderPolicy.KEY));
-    vm5.invoke(() -> WANTestBase.createSenderWithMultipleDispatchers("ln", 2, false, 100, 10, false, false, null, true, 1, OrderPolicy.KEY));
+    vm4.invoke(
+        () ->
+            WANTestBase.createSenderWithMultipleDispatchers(
+                "ln", 2, false, 100, 10, false, false, null, true, 1, OrderPolicy.KEY));
+    vm5.invoke(
+        () ->
+            WANTestBase.createSenderWithMultipleDispatchers(
+                "ln", 2, false, 100, 10, false, false, null, true, 1, OrderPolicy.KEY));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5);
 
@@ -185,14 +221,15 @@ public class SerialGatewaySenderQueueDUnitTest extends WANTestBase {
   }
 
   /**
-   * Test to validate that serial gateway sender queue diskSynchronous attribute
-   * when persistence of sender is enabled. 
+   * Test to validate that serial gateway sender queue diskSynchronous attribute when persistence of
+   * sender is enabled.
    */
   @Test
   public void test_ValidateSerialGatewaySenderQueueAttributes_1() {
     Integer localLocPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
 
-    Integer remoteLocPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, localLocPort));
+    Integer remoteLocPort =
+        (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, localLocPort));
 
     WANTestBase test = new WANTestBase(getTestMethodName());
     Properties props = test.getDistributedSystemProperties();
@@ -201,9 +238,10 @@ public class SerialGatewaySenderQueueDUnitTest extends WANTestBase {
     InternalDistributedSystem ds = test.getSystem(props);
     cache = CacheFactory.create(ds);
 
-    File directory = new File("TKSender" + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+    File directory =
+        new File("TKSender" + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
     directory.mkdir();
-    File[] dirs1 = new File[] { directory };
+    File[] dirs1 = new File[] {directory};
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     dsf.setDiskDirs(dirs1);
     DiskStore diskStore = dsf.create("FORNY");
@@ -212,7 +250,7 @@ public class SerialGatewaySenderQueueDUnitTest extends WANTestBase {
     fact.setBatchConflationEnabled(true);
     fact.setBatchSize(200);
     fact.setBatchTimeInterval(300);
-    fact.setPersistenceEnabled(true);// enable the persistence
+    fact.setPersistenceEnabled(true); // enable the persistence
     fact.setDiskSynchronous(true);
     fact.setDiskStoreName("FORNY");
     fact.setMaximumQueueMemory(200);
@@ -230,7 +268,10 @@ public class SerialGatewaySenderQueueDUnitTest extends WANTestBase {
       AttributesFactory factory = new AttributesFactory();
       factory.addGatewaySenderId(sender1.getId());
       factory.setDataPolicy(DataPolicy.PARTITION);
-      Region region = cache.createRegionFactory(factory.create()).create("test_ValidateGatewaySenderAttributes");
+      Region region =
+          cache
+              .createRegionFactory(factory.create())
+              .create("test_ValidateGatewaySenderAttributes");
       Set<GatewaySender> senders = cache.getGatewaySenders();
       assertEquals(senders.size(), 1);
       GatewaySender gatewaySender = senders.iterator().next();
@@ -244,14 +285,15 @@ public class SerialGatewaySenderQueueDUnitTest extends WANTestBase {
   }
 
   /**
-   * Test to validate that serial gateway sender queue diskSynchronous attribute
-   * when persistence of sender is not enabled. 
+   * Test to validate that serial gateway sender queue diskSynchronous attribute when persistence of
+   * sender is not enabled.
    */
   @Test
   public void test_ValidateSerialGatewaySenderQueueAttributes_2() {
     Integer localLocPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
 
-    Integer remoteLocPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, localLocPort));
+    Integer remoteLocPort =
+        (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, localLocPort));
 
     WANTestBase test = new WANTestBase(getTestMethodName());
     Properties props = test.getDistributedSystemProperties();
@@ -264,7 +306,7 @@ public class SerialGatewaySenderQueueDUnitTest extends WANTestBase {
     fact.setBatchConflationEnabled(true);
     fact.setBatchSize(200);
     fact.setBatchTimeInterval(300);
-    fact.setPersistenceEnabled(false);//set persistence to false
+    fact.setPersistenceEnabled(false); //set persistence to false
     fact.setDiskSynchronous(true);
     fact.setMaximumQueueMemory(200);
     fact.setAlertThreshold(1200);
@@ -281,7 +323,10 @@ public class SerialGatewaySenderQueueDUnitTest extends WANTestBase {
       AttributesFactory factory = new AttributesFactory();
       factory.addGatewaySenderId(sender1.getId());
       factory.setDataPolicy(DataPolicy.PARTITION);
-      Region region = cache.createRegionFactory(factory.create()).create("test_ValidateGatewaySenderAttributes");
+      Region region =
+          cache
+              .createRegionFactory(factory.create())
+              .create("test_ValidateGatewaySenderAttributes");
       Set<GatewaySender> senders = cache.getGatewaySenders();
       assertEquals(senders.size(), 1);
       GatewaySender gatewaySender = senders.iterator().next();
@@ -294,5 +339,4 @@ public class SerialGatewaySenderQueueDUnitTest extends WANTestBase {
       exp.remove();
     }
   }
-
 }

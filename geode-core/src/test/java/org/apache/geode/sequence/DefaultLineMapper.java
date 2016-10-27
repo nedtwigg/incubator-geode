@@ -21,13 +21,10 @@ import java.util.regex.Pattern;
 
 import org.apache.geode.sequence.LineMapper;
 
-/**
- * A lifeline mapper that just returns a shortened version of 
- * a member id.
- *
- */
+/** A lifeline mapper that just returns a shortened version of a member id. */
 public class DefaultLineMapper implements LineMapper {
-  private static Pattern MEMBER_ID_RE = Pattern.compile(".*\\((\\d+)(:admin)?(:loner)?\\).*:\\d+(/\\d+|.*:.*)");
+  private static Pattern MEMBER_ID_RE =
+      Pattern.compile(".*\\((\\d+)(:admin)?(:loner)?\\).*:\\d+(/\\d+|.*:.*)");
 
   public String getShortNameForLine(String name) {
     Matcher matcher = MEMBER_ID_RE.matcher(name);
@@ -37,5 +34,4 @@ public class DefaultLineMapper implements LineMapper {
       return name;
     }
   }
-
 }

@@ -23,18 +23,13 @@
 
 package org.apache.geode.cache.query.data;
 
-/**
- *
- */
+/** */
 public class Data {
 
   /** Creates a new instance of Data */
-  public Data() {
-  }
+  public Data() {}
 
-  public void voidMethod() {
-
-  }
+  public void voidMethod() {}
 
   public boolean booleanMethod() {
     return true;

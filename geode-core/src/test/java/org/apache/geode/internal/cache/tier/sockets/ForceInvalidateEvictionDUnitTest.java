@@ -60,9 +60,7 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
-/**
- *
- */
+/** */
 @Category(DistributedTest.class)
 public class ForceInvalidateEvictionDUnitTest extends JUnit4CacheTestCase {
 
@@ -72,7 +70,8 @@ public class ForceInvalidateEvictionDUnitTest extends JUnit4CacheTestCase {
     super();
   }
 
-  private void doPropagationTest(VM sourceVM, VM destinationVm, boolean validateCallbacks, boolean validateContent) {
+  private void doPropagationTest(
+      VM sourceVM, VM destinationVm, boolean validateCallbacks, boolean validateContent) {
 
     addListener(destinationVm);
 
@@ -177,13 +176,14 @@ public class ForceInvalidateEvictionDUnitTest extends JUnit4CacheTestCase {
     int port1 = addCacheServer(vm0);
     createClient(vm3, port1);
     doPropagationTest(vm2, vm3, true, true);
-    vm3.invoke(new SerializableRunnable("close cache") {
+    vm3.invoke(
+        new SerializableRunnable("close cache") {
 
-      public void run() {
-        Cache cache = getCache();
-        cache.close();
-      }
-    });
+          public void run() {
+            Cache cache = getCache();
+            cache.close();
+          }
+        });
 
     //test an invalidate from the accessor through the other data store
     int port2 = addCacheServer(vm1);
@@ -193,196 +193,214 @@ public class ForceInvalidateEvictionDUnitTest extends JUnit4CacheTestCase {
 
   private void createPR(VM vm) {
     final String name = getUniqueName();
-    vm.invoke(new SerializableRunnable() {
+    vm.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        RegionFactory rf = new RegionFactory();
-        rf.setOffHeap(isOffHeapEnabled());
-        rf.setDataPolicy(DataPolicy.PARTITION);
+          public void run() {
+            Cache cache = getCache();
+            RegionFactory rf = new RegionFactory();
+            rf.setOffHeap(isOffHeapEnabled());
+            rf.setDataPolicy(DataPolicy.PARTITION);
 
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setTotalNumBuckets(5);
-        rf.setPartitionAttributes(paf.create());
-        rf.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1));
-        rf.setConcurrencyChecksEnabled(false);
-        rf.create(name);
-      }
-    });
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            paf.setTotalNumBuckets(5);
+            rf.setPartitionAttributes(paf.create());
+            rf.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1));
+            rf.setConcurrencyChecksEnabled(false);
+            rf.create(name);
+          }
+        });
   }
 
   private void createAccessor(VM vm, final boolean allContent) {
     final String name = getUniqueName();
-    vm.invoke(new SerializableRunnable() {
+    vm.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        RegionFactory rf = new RegionFactory();
-        rf.setOffHeap(isOffHeapEnabled());
-        rf.setDataPolicy(DataPolicy.PARTITION);
+          public void run() {
+            Cache cache = getCache();
+            RegionFactory rf = new RegionFactory();
+            rf.setOffHeap(isOffHeapEnabled());
+            rf.setDataPolicy(DataPolicy.PARTITION);
 
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setTotalNumBuckets(5);
-        paf.setLocalMaxMemory(0);
-        rf.setPartitionAttributes(paf.create());
-        rf.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1));
-        rf.setConcurrencyChecksEnabled(false);
-        if (allContent) {
-          //          rf.initCacheListeners(new CacheListener [] { new MyListener()});
-          rf.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
-        }
-        rf.create(name);
-      }
-    });
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            paf.setTotalNumBuckets(5);
+            paf.setLocalMaxMemory(0);
+            rf.setPartitionAttributes(paf.create());
+            rf.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1));
+            rf.setConcurrencyChecksEnabled(false);
+            if (allContent) {
+              //          rf.initCacheListeners(new CacheListener [] { new MyListener()});
+              rf.setSubscriptionAttributes(new SubscriptionAttributes(InterestPolicy.ALL));
+            }
+            rf.create(name);
+          }
+        });
   }
 
   private void addListener(VM vm) {
     final String name = getUniqueName();
-    vm.invoke(new SerializableRunnable() {
+    vm.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(name);
-        AttributesMutator am = region.getAttributesMutator();
-        am.initCacheListeners(new CacheListener[] { new MyListener() });
-      }
-    });
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(name);
+            AttributesMutator am = region.getAttributesMutator();
+            am.initCacheListeners(new CacheListener[] {new MyListener()});
+          }
+        });
   }
 
   private void removeListener(VM vm) {
     final String name = getUniqueName();
-    vm.invoke(new SerializableRunnable() {
+    vm.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(name);
-        AttributesMutator am = region.getAttributesMutator();
-        am.initCacheListeners(null);
-      }
-    });
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(name);
+            AttributesMutator am = region.getAttributesMutator();
+            am.initCacheListeners(null);
+          }
+        });
   }
 
   private void checkAndClearListener(VM vm, final Serializable key, final boolean invalidated) {
     final String name = getUniqueName();
-    vm.invoke(new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(name);
-        final MyListener listener = (MyListener) region.getAttributes().getCacheListeners()[0];
-        if (invalidated) {
-          Wait.waitForCriterion(new WaitCriterion() {
+    vm.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(name);
+            final MyListener listener = (MyListener) region.getAttributes().getCacheListeners()[0];
+            if (invalidated) {
+              Wait.waitForCriterion(
+                  new WaitCriterion() {
 
-            public String description() {
-              return "Didn't receive invalidate after 30 seconds";
+                    public String description() {
+                      return "Didn't receive invalidate after 30 seconds";
+                    }
+
+                    public boolean done() {
+                      return listener.remove(key);
+                    }
+                  },
+                  30000,
+                  100,
+                  true);
+            } else {
+              assertFalse(listener.remove(key));
             }
-
-            public boolean done() {
-              return listener.remove(key);
-            }
-
-          }, 30000, 100, true);
-        } else {
-          assertFalse(listener.remove(key));
-        }
-      }
-    });
+          }
+        });
   }
 
   private void checkValue(VM vm, final Serializable key, final Object expected) {
     final String name = getUniqueName();
-    vm.invoke(new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
-        final LocalRegion region = (LocalRegion) cache.getRegion(name);
+    vm.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
+            final LocalRegion region = (LocalRegion) cache.getRegion(name);
 
-        Wait.waitForCriterion(new WaitCriterion() {
+            Wait.waitForCriterion(
+                new WaitCriterion() {
 
-          public boolean done() {
-            Object value = null;
-            try {
-              value = region.getValueInVM(key);
-              if (value instanceof CachedDeserializable) {
-                value = ((CachedDeserializable) value).getDeserializedForReading();
-              }
-            } catch (EntryNotFoundException e) {
-              //ok
-            }
-            return expected == null ? value == null : expected.equals(value);
+                  public boolean done() {
+                    Object value = null;
+                    try {
+                      value = region.getValueInVM(key);
+                      if (value instanceof CachedDeserializable) {
+                        value = ((CachedDeserializable) value).getDeserializedForReading();
+                      }
+                    } catch (EntryNotFoundException e) {
+                      //ok
+                    }
+                    return expected == null ? value == null : expected.equals(value);
+                  }
+
+                  public String description() {
+                    return "Value did not become "
+                        + expected
+                        + " after 30s: "
+                        + region.getValueInVM(key);
+                  }
+                },
+                30000,
+                100,
+                true);
           }
-
-          public String description() {
-            return "Value did not become " + expected + " after 30s: " + region.getValueInVM(key);
-          }
-        }, 30000, 100, true);
-
-      }
-    });
+        });
   }
 
   private void invalidateEntry(VM vm, final Serializable key) {
     final String name = getUniqueName();
-    vm.invoke(new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(name);
-        region.invalidate(key);
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(name);
+            region.invalidate(key);
+          }
+        });
   }
 
   private void putEntries(VM vm, final int start, final int end) {
     final String name = getUniqueName();
-    vm.invoke(new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(name);
-        for (int i = start; i < end; i++) {
-          region.put(i, "value");
-        }
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(name);
+            for (int i = start; i < end; i++) {
+              region.put(i, "value");
+            }
+          }
+        });
   }
 
   private void createClient(VM vm, final int port) {
     final String name = getUniqueName();
     final Host host = Host.getHost(0);
-    vm.invoke(new SerializableRunnable() {
+    vm.invoke(
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
+          public void run() {
+            Cache cache = getCache();
 
-        PoolFactory pf = PoolManager.createFactory();
-        pf.addServer(NetworkUtils.getServerHostName(host), port);
-        pf.setSubscriptionEnabled(true);
-        pf.create(name);
-        RegionFactory rf = new RegionFactory();
-        rf.setOffHeap(isOffHeapEnabled());
-        rf.setScope(Scope.LOCAL);
-        rf.setPoolName(name);
-        Region region = rf.create(name);
-        region.registerInterest("ALL_KEYS");
-      }
-    });
-
+            PoolFactory pf = PoolManager.createFactory();
+            pf.addServer(NetworkUtils.getServerHostName(host), port);
+            pf.setSubscriptionEnabled(true);
+            pf.create(name);
+            RegionFactory rf = new RegionFactory();
+            rf.setOffHeap(isOffHeapEnabled());
+            rf.setScope(Scope.LOCAL);
+            rf.setPoolName(name);
+            Region region = rf.create(name);
+            region.registerInterest("ALL_KEYS");
+          }
+        });
   }
 
   private int addCacheServer(VM vm) {
     final int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
-    vm.invoke(new SerializableRunnable("add bridge server") {
-      public void run() {
-        Cache cache = getCache();
-        CacheServer server = cache.addCacheServer();
-        server.setNotifyBySubscription(true);
-        server.setPort(port);
-        try {
-          server.start();
-        } catch (IOException e) {
-          Assert.fail("IO Exception", e);
-        }
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable("add bridge server") {
+          public void run() {
+            Cache cache = getCache();
+            CacheServer server = cache.addCacheServer();
+            server.setNotifyBySubscription(true);
+            server.setPort(port);
+            try {
+              server.start();
+            } catch (IOException e) {
+              Assert.fail("IO Exception", e);
+            }
+          }
+        });
 
     return port;
   }

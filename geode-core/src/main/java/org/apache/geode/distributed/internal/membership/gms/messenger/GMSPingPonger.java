@@ -23,15 +23,17 @@ import org.jgroups.Message;
 import org.apache.geode.internal.Version;
 
 public class GMSPingPonger {
-  private byte[] pingInBytes = new byte[] { 'p', 'i', 'n', 'g' };
-  private byte[] pongInBytes = new byte[] { 'p', 'o', 'n', 'g' };
+  private byte[] pingInBytes = new byte[] {'p', 'i', 'n', 'g'};
+  private byte[] pongInBytes = new byte[] {'p', 'o', 'n', 'g'};
 
   public boolean isPingMessage(byte[] buffer) {
-    return buffer.length == 4 && (buffer[0] == 'p' && buffer[1] == 'i' && buffer[2] == 'n' && buffer[3] == 'g');
+    return buffer.length == 4
+        && (buffer[0] == 'p' && buffer[1] == 'i' && buffer[2] == 'n' && buffer[3] == 'g');
   }
 
   public boolean isPongMessage(byte[] buffer) {
-    return buffer.length == 4 && (buffer[0] == 'p' && buffer[1] == 'o' && buffer[2] == 'n' && buffer[3] == 'g');
+    return buffer.length == 4
+        && (buffer[0] == 'p' && buffer[1] == 'o' && buffer[2] == 'n' && buffer[3] == 'g');
   }
 
   public void sendPongMessage(JChannel channel, Address src, Address dest) throws Exception {
@@ -61,5 +63,4 @@ public class GMSPingPonger {
     msg.setFlag(Message.Flag.OOB);
     return msg;
   }
-
 }

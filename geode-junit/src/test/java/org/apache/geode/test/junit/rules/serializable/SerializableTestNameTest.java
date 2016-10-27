@@ -31,9 +31,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-/**
- * Unit tests for {@link SerializableTestName}.
- */
+/** Unit tests for {@link SerializableTestName}. */
 @Category(UnitTest.class)
 public class SerializableTestNameTest {
 

@@ -30,9 +30,7 @@ import org.junit.runner.notification.Failure;
 import org.apache.geode.test.junit.IgnoreUntil;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit tests for {@link IgnoreUntilRule}.
- */
+/** Unit tests for {@link IgnoreUntilRule}. */
 @Category(UnitTest.class)
 public class IgnoreUntilRuleTest {
 
@@ -56,7 +54,9 @@ public class IgnoreUntilRuleTest {
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
     Failure failure = failures.get(0);
-    assertThat(failure.getException()).isExactlyInstanceOf(AssertionError.class).hasMessage(ASSERTION_ERROR_MESSAGE);
+    assertThat(failure.getException())
+        .isExactlyInstanceOf(AssertionError.class)
+        .hasMessage(ASSERTION_ERROR_MESSAGE);
     assertThat(ShouldExecuteWhenUntilIsInPast.count).isEqualTo(1);
   }
 
@@ -70,13 +70,13 @@ public class IgnoreUntilRuleTest {
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
     Failure failure = failures.get(0);
-    assertThat(failure.getException()).isExactlyInstanceOf(AssertionError.class).hasMessage(ASSERTION_ERROR_MESSAGE);
+    assertThat(failure.getException())
+        .isExactlyInstanceOf(AssertionError.class)
+        .hasMessage(ASSERTION_ERROR_MESSAGE);
     assertThat(ShouldExecuteWhenUntilIsDefault.count).isEqualTo(1);
   }
 
-  /**
-   * Used by test {@link #shouldIgnoreWhenUntilIsInFuture()}
-   */
+  /** Used by test {@link #shouldIgnoreWhenUntilIsInFuture()} */
   public static class ShouldIgnoreWhenUntilIsInFuture {
 
     static int count = 0;
@@ -86,8 +86,7 @@ public class IgnoreUntilRuleTest {
       count = 0;
     }
 
-    @Rule
-    public final IgnoreUntilRule ignoreUntilRule = new IgnoreUntilRule();
+    @Rule public final IgnoreUntilRule ignoreUntilRule = new IgnoreUntilRule();
 
     @Test
     @IgnoreUntil(value = "description", until = "3000-01-01")
@@ -97,9 +96,7 @@ public class IgnoreUntilRuleTest {
     }
   }
 
-  /**
-   * Used by test {@link #shouldExecuteWhenUntilIsInPast()}
-   */
+  /** Used by test {@link #shouldExecuteWhenUntilIsInPast()} */
   public static class ShouldExecuteWhenUntilIsInPast {
 
     static int count = 0;
@@ -109,8 +106,7 @@ public class IgnoreUntilRuleTest {
       count = 0;
     }
 
-    @Rule
-    public final IgnoreUntilRule ignoreUntilRule = new IgnoreUntilRule();
+    @Rule public final IgnoreUntilRule ignoreUntilRule = new IgnoreUntilRule();
 
     @Test
     @IgnoreUntil(value = "description", until = "1980-01-01")
@@ -120,9 +116,7 @@ public class IgnoreUntilRuleTest {
     }
   }
 
-  /**
-   * Used by test {@link #shouldExecuteWhenUntilIsDefault()}
-   */
+  /** Used by test {@link #shouldExecuteWhenUntilIsDefault()} */
   public static class ShouldExecuteWhenUntilIsDefault {
 
     static int count = 0;
@@ -132,8 +126,7 @@ public class IgnoreUntilRuleTest {
       count = 0;
     }
 
-    @Rule
-    public final IgnoreUntilRule ignoreUntilRule = new IgnoreUntilRule();
+    @Rule public final IgnoreUntilRule ignoreUntilRule = new IgnoreUntilRule();
 
     @Test
     @IgnoreUntil("description")

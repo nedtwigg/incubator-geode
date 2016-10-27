@@ -60,23 +60,15 @@ public class ColocationHelperTest {
   private Appender mockAppender;
   private ArgumentCaptor<LogEvent> loggingEventCaptor;
 
-  /**
-   * @throws java.lang.Exception
-   */
+  /** @throws java.lang.Exception */
   @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
-  }
+  public static void setUpBeforeClass() throws Exception {}
 
-  /**
-   * @throws java.lang.Exception
-   */
+  /** @throws java.lang.Exception */
   @AfterClass
-  public static void tearDownAfterClass() throws Exception {
-  }
+  public static void tearDownAfterClass() throws Exception {}
 
-  /**
-   * @throws java.lang.Exception
-   */
+  /** @throws java.lang.Exception */
   @Before
   public void setUp() throws Exception {
     cache = Fakes.cache();
@@ -89,21 +81,21 @@ public class ColocationHelperTest {
     oldCacheInstance = GemFireCacheImpl.setInstanceForTests(cache);
   }
 
-  /**
-   * @throws java.lang.Exception
-   */
+  /** @throws java.lang.Exception */
   @After
   public void tearDown() throws Exception {
     GemFireCacheImpl.setInstanceForTests(oldCacheInstance);
   }
 
   /**
-   * Test method for {@link org.apache.geode.internal.cache.ColocationHelper#getColocatedRegion(org.apache.geode.internal.cache.PartitionedRegion)}.
+   * Test method for {@link
+   * org.apache.geode.internal.cache.ColocationHelper#getColocatedRegion(org.apache.geode.internal.cache.PartitionedRegion)}.
    */
   @Test
   public void testGetColocatedRegionThrowsIllegalStateExceptionForMissingParentRegion() {
     when(pr.getCache()).thenReturn(cache);
-    when(cache.getRegion(PartitionedRegionHelper.PR_ROOT_REGION_NAME, true)).thenReturn(mock(DistributedRegion.class));
+    when(cache.getRegion(PartitionedRegionHelper.PR_ROOT_REGION_NAME, true))
+        .thenReturn(mock(DistributedRegion.class));
     when(pr.getPartitionAttributes()).thenReturn(pa);
     when(pr.getFullPath()).thenReturn("/region1");
     when(pa.getColocatedWith()).thenReturn("region2");
@@ -113,15 +105,21 @@ public class ColocationHelperTest {
     try {
       colocatedPR = ColocationHelper.getColocatedRegion(pr);
     } catch (Exception e) {
-      assertEquals("Expected IllegalStateException for missing colocated parent region", IllegalStateException.class, e.getClass());
-      assertTrue("Expected IllegalStateException to be thrown for missing colocated region", e.getMessage().matches("Region specified in 'colocated-with' .* does not exist.*"));
+      assertEquals(
+          "Expected IllegalStateException for missing colocated parent region",
+          IllegalStateException.class,
+          e.getClass());
+      assertTrue(
+          "Expected IllegalStateException to be thrown for missing colocated region",
+          e.getMessage().matches("Region specified in 'colocated-with' .* does not exist.*"));
       caughtIllegalStateException = true;
     }
     assertTrue(caughtIllegalStateException);
   }
 
   /**
-   * Test method for {@link org.apache.geode.internal.cache.ColocationHelper#getColocatedRegion(org.apache.geode.internal.cache.PartitionedRegion)}.
+   * Test method for {@link
+   * org.apache.geode.internal.cache.ColocationHelper#getColocatedRegion(org.apache.geode.internal.cache.PartitionedRegion)}.
    */
   @Test
   public void testGetColocatedRegionLogsWarningForMissingRegionWhenPRConfigHasRegion() {
@@ -137,8 +135,13 @@ public class ColocationHelperTest {
     try {
       colocatedPR = ColocationHelper.getColocatedRegion(pr);
     } catch (Exception e) {
-      assertEquals("Expected IllegalStateException for missing colocated parent region", IllegalStateException.class, e.getClass());
-      assertTrue("Expected IllegalStateException to be thrown for missing colocated region", e.getMessage().matches("Region specified in 'colocated-with' .* does not exist.*"));
+      assertEquals(
+          "Expected IllegalStateException for missing colocated parent region",
+          IllegalStateException.class,
+          e.getClass());
+      assertTrue(
+          "Expected IllegalStateException to be thrown for missing colocated region",
+          e.getMessage().matches("Region specified in 'colocated-with' .* does not exist.*"));
       caughtIllegalStateException = true;
     }
     assertTrue(caughtIllegalStateException);

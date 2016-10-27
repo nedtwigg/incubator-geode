@@ -28,11 +28,7 @@ import org.apache.geode.management.MemberMXBean;
 import org.apache.geode.management.OSMetrics;
 import org.apache.geode.management.internal.cli.remote.CommandExecutionContext;
 
-/**
- * This MBean is a gateway to cache and a member
- * 
- * 
- */
+/** This MBean is a gateway to cache and a member */
 public class MemberMBean extends NotificationBroadcasterSupport implements MemberMXBean {
 
   private MemberMBeanBridge bridge;
@@ -423,7 +419,6 @@ public class MemberMBean extends NotificationBroadcasterSupport implements Membe
   @Override
   public void shutDownMember() {
     bridge.shutDownMember();
-
   }
 
   @Override

@@ -24,9 +24,8 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * Exception thrown when a DistributionMessage is processed to be propagated
- * back to the sender of the message.
- *
+ * Exception thrown when a DistributionMessage is processed to be propagated back to the sender of
+ * the message.
  */
 public class ReplyException extends GemFireException {
   private static final long serialVersionUID = -4410839793809166071L;
@@ -35,14 +34,14 @@ public class ReplyException extends GemFireException {
 
   /**
    * Creates a new instance of <code>ReplyException</code> without detail message.
-   * 
-   * Used by serialization
+   *
+   * <p>Used by serialization
    */
-  public ReplyException() {
-  }
+  public ReplyException() {}
 
   /**
    * Constructs an instance of <code>ReplyException</code> with the specified detail message.
+   *
    * @param msg the detail message.
    */
   public ReplyException(String msg) {
@@ -50,8 +49,9 @@ public class ReplyException extends GemFireException {
   }
 
   /**
-   * Constructs an instance of <code>ReplyException</code> with the specified detail message
-   * and cause.
+   * Constructs an instance of <code>ReplyException</code> with the specified detail message and
+   * cause.
+   *
    * @param msg the detail message.
    * @param cause the causal Throwable
    */
@@ -61,22 +61,25 @@ public class ReplyException extends GemFireException {
 
   /**
    * Constructs an instance of <code>ReplyException</code> with the specified cause.
+   *
    * @param cause the causal Throwable
    */
   public ReplyException(Throwable cause) {
     super(cause);
   }
 
-  /** After expected reply exceptions have already been handled, 
-   * call this method to handle this exception as unexpected,
-   * i.e. converts to an appropriate runtime exception and throws it.
-   * If there is a a causal exception, then this method will
-   * throw that instead of the ReplyException.
+  /**
+   * After expected reply exceptions have already been handled, call this method to handle this
+   * exception as unexpected, i.e. converts to an appropriate runtime exception and throws it. If
+   * there is a a causal exception, then this method will throw that instead of the ReplyException.
    */
   public void handleAsUnexpected() {
     Throwable c = getCause();
     if (c == null) {
-      throw new InternalGemFireException(LocalizedStrings.ReplyException_UNEXPECTED_EXCEPTION_ON_MEMBER_0.toLocalizedString(getSender()), this);
+      throw new InternalGemFireException(
+          LocalizedStrings.ReplyException_UNEXPECTED_EXCEPTION_ON_MEMBER_0.toLocalizedString(
+              getSender()),
+          this);
     }
     if (c instanceof RuntimeException) {
       fixUpRemoteEx(c);
@@ -90,13 +93,16 @@ public class ReplyException extends GemFireException {
       //for bug 43602
       throw new SerializationException("Class not found", c);
     }
-    throw new InternalGemFireException(LocalizedStrings.ReplyException_UNEXPECTED_EXCEPTION_ON_MEMBER_0.toLocalizedString(getSender()), c);
+    throw new InternalGemFireException(
+        LocalizedStrings.ReplyException_UNEXPECTED_EXCEPTION_ON_MEMBER_0.toLocalizedString(
+            getSender()),
+        c);
   }
 
   /**
-   * Fixes a remote exception that this ReplyException has wrapped. Adds the 
-   * local stack frames. The remote stack elements have the sender id info. 
-   * 
+   * Fixes a remote exception that this ReplyException has wrapped. Adds the local stack frames. The
+   * remote stack elements have the sender id info.
+   *
    * @param t Remote exception to fix up
    * @since GemFire 5.1
    */
@@ -122,7 +128,8 @@ public class ReplyException extends GemFireException {
     }
 
     // do not consider localStartIdx no. of elements.
-    StackTraceElement[] newStack = new StackTraceElement[remoteStack.length + localStack.length - localStartIdx];
+    StackTraceElement[] newStack =
+        new StackTraceElement[remoteStack.length + localStack.length - localStartIdx];
 
     int i = 0;
     for (; i < remoteStack.length; i++) {
@@ -136,14 +143,11 @@ public class ReplyException extends GemFireException {
   }
 
   /**
-   * Adds the sender information to the stack trace elements of the given
-   * exception. Also traverses recursively over the 'cause' for adding this
-   * sender information.
-   * 
-   * @param toModify
-   *          Throwable instance to modify the stack trace elements
-   * @param senderId
-   *          id of the sender member
+   * Adds the sender information to the stack trace elements of the given exception. Also traverses
+   * recursively over the 'cause' for adding this sender information.
+   *
+   * @param toModify Throwable instance to modify the stack trace elements
+   * @param senderId id of the sender member
    */
   private static void addSenderInfo(Throwable toModify, String senderId) {
     StackTraceElement[] stackTrace = toModify.getStackTrace();
@@ -152,7 +156,12 @@ public class ReplyException extends GemFireException {
     for (int i = 0; i < stackTrace.length; i++) {
       element = stackTrace[i];
       if (!element.getClassName().startsWith(REMOTE_MEMBER_TOKEN)) {
-        stackTrace[i] = new StackTraceElement(REMOTE_MEMBER_TOKEN + " '" + senderId + "' in " + element.getClassName(), element.getMethodName(), element.getFileName(), element.getLineNumber());
+        stackTrace[i] =
+            new StackTraceElement(
+                REMOTE_MEMBER_TOKEN + " '" + senderId + "' in " + element.getClassName(),
+                element.getMethodName(),
+                element.getFileName(),
+                element.getLineNumber());
       }
     }
 
@@ -166,6 +175,7 @@ public class ReplyException extends GemFireException {
 
   /**
    * Sets the member that threw the received exception
+   *
    * @param sendr the member that threw the exception
    * @since GemFire 6.0
    */
@@ -177,6 +187,7 @@ public class ReplyException extends GemFireException {
 
   /**
    * Gets the member which threw the exception
+   *
    * @return the throwing member
    * @since GemFire 6.0
    */

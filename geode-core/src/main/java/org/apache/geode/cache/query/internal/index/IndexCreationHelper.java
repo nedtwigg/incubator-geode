@@ -29,9 +29,7 @@ import org.apache.geode.cache.query.*;
 import org.apache.geode.cache.query.internal.CompiledValue;
 import org.apache.geode.cache.query.internal.QCompiler;
 
-/**
- * 
- */
+/** */
 public abstract class IndexCreationHelper {
 
   public static int INDEX_QUERY_SCOPE_ID = -2;
@@ -57,7 +55,8 @@ public abstract class IndexCreationHelper {
   // modifying it
   String[] canonicalizedIteratorDefinitions = null;
 
-  IndexCreationHelper(String fromClause, String projectionAttributes, Cache cache) throws IndexInvalidException {
+  IndexCreationHelper(String fromClause, String projectionAttributes, Cache cache)
+      throws IndexInvalidException {
     this.cache = cache;
     // Asif:LThe fromClause,indexedExpression & projectionAttributes
     // will get modified with the canonicalized value , once the

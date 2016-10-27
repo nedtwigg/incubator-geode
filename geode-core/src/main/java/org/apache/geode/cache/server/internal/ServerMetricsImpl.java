@@ -21,9 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.geode.cache.server.ServerMetrics;
 
 /**
- * Metrics describing the load on a  bridge server.
- * @since GemFire 5.7
+ * Metrics describing the load on a bridge server.
  *
+ * @since GemFire 5.7
  */
 public class ServerMetricsImpl implements ServerMetrics {
   private final AtomicInteger clientCount = new AtomicInteger();
@@ -74,5 +74,4 @@ public class ServerMetricsImpl implements ServerMetrics {
   public void decQueueCount() {
     queueCount.decrementAndGet();
   }
-
 }

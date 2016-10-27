@@ -27,16 +27,18 @@ import org.apache.geode.distributed.internal.membership.*;
 
 /**
  * The response to reseting the health status.
+ *
  * @since GemFire 3.5
  */
 public final class ResetHealthStatusResponse extends AdminResponse {
   // instance variables
 
   /**
-   * Returns a <code>ResetHealthStatusResponse</code> that will be returned to the
-   * specified recipient.
+   * Returns a <code>ResetHealthStatusResponse</code> that will be returned to the specified
+   * recipient.
    */
-  public static ResetHealthStatusResponse create(DistributionManager dm, InternalDistributedMember recipient, int id) {
+  public static ResetHealthStatusResponse create(
+      DistributionManager dm, InternalDistributedMember recipient, int id) {
     ResetHealthStatusResponse m = new ResetHealthStatusResponse();
     m.setRecipient(recipient);
     {

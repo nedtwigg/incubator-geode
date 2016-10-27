@@ -22,8 +22,8 @@ import org.apache.geode.distributed.internal.membership.*;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * This is a reply processor which tracks departed members in order for
- * reliable messaging to determine which recipients departed before replying.
+ * This is a reply processor which tracks departed members in order for reliable messaging to
+ * determine which recipients departed before replying.
  *
  * @since GemFire 5.0
  */
@@ -32,7 +32,8 @@ public class ReliableReplyProcessor21 extends ReplyProcessor21 {
   /** The members that departed before replying */
   private Set departedMembers;
 
-  public ReliableReplyProcessor21(InternalDistributedSystem system, InternalDistributedMember member) {
+  public ReliableReplyProcessor21(
+      InternalDistributedSystem system, InternalDistributedMember member) {
     super(system, member);
   }
 
@@ -49,16 +50,13 @@ public class ReliableReplyProcessor21 extends ReplyProcessor21 {
   }
 
   /**
-   * This method is invoked after a member has explicitly left
-   * the system.  It may not get invoked if a member becomes unreachable
-   * due to crash or network problems.
-   * <p>
-   * ReliableReplyProcessor21 overrides this to add the departed member to
-   * the departedMembers if we haven't already received a reply from that
-   * member.
-   * <p>
-   * Note: race condition exists between membershipListener and processing 
-   * of replies.
+   * This method is invoked after a member has explicitly left the system. It may not get invoked if
+   * a member becomes unreachable due to crash or network problems.
+   *
+   * <p>ReliableReplyProcessor21 overrides this to add the departed member to the departedMembers if
+   * we haven't already received a reply from that member.
+   *
+   * <p>Note: race condition exists between membershipListener and processing of replies.
    */
   @Override
   public void memberDeparted(final InternalDistributedMember id, final boolean crashed) {
@@ -73,10 +71,7 @@ public class ReliableReplyProcessor21 extends ReplyProcessor21 {
     checkIfDone();
   }
 
-  /**
-   * Returns the recipients that have departed prior to processing a reply
-   * from them.
-   */
+  /** Returns the recipients that have departed prior to processing a reply from them. */
   public Set getDepartedMembers() {
     synchronized (this) {
       if (this.departedMembers == null) {
@@ -88,13 +83,15 @@ public class ReliableReplyProcessor21 extends ReplyProcessor21 {
   }
 
   /**
-   * Use this method instead of {@link #waitForReplies()} if you want the wait to throw an
-   * exception when a member departs.
+   * Use this method instead of {@link #waitForReplies()} if you want the wait to throw an exception
+   * when a member departs.
+   *
    * @throws ReplyException the exception passed back in reply
    * @throws InterruptedException
    * @throws ReliableReplyException when a member departs
    */
-  public final void waitForReliableDelivery() throws ReplyException, InterruptedException, ReliableReplyException {
+  public final void waitForReliableDelivery()
+      throws ReplyException, InterruptedException, ReliableReplyException {
     waitForReliableDelivery(0);
   }
 
@@ -105,11 +102,14 @@ public class ReliableReplyProcessor21 extends ReplyProcessor21 {
    * @throws InterruptedException
    * @throws ReliableReplyException
    */
-  public final void waitForReliableDelivery(long msecs) throws ReplyException, InterruptedException, ReliableReplyException {
+  public final void waitForReliableDelivery(long msecs)
+      throws ReplyException, InterruptedException, ReliableReplyException {
     super.waitForReplies(msecs);
     synchronized (this) {
       if (this.departedMembers != null) {
-        throw new ReliableReplyException(LocalizedStrings.ReliableReplyProcessor_FAILED_TO_DELIVER_MESSAGE_TO_MEMBERS_0.toLocalizedString(departedMembers));
+        throw new ReliableReplyException(
+            LocalizedStrings.ReliableReplyProcessor_FAILED_TO_DELIVER_MESSAGE_TO_MEMBERS_0
+                .toLocalizedString(departedMembers));
       }
     }
   }

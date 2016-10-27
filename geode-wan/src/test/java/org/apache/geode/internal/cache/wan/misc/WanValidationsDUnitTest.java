@@ -55,16 +55,14 @@ public class WanValidationsDUnitTest extends WANTestBase {
   }
 
   /**
-   * Test to make sure that serial sender Ids configured in Distributed Region
-   * is same across all DR nodes TODO : Should this validation hold tru now.
-   * Discuss. If I have 2 members on Which DR is defined. But sender is defined
-   * on only one member. How can I add the instance on the sender in Region
-   * which does not have a sender. I can bypass the existing validation for the
-   * DR with SerialGatewaySender. But for PR with SerialGatewaySender, we need
-   * to send the adjunct message. Find out the way to send the adjunct message
-   * to the member on which serialGatewaySender is available.
+   * Test to make sure that serial sender Ids configured in Distributed Region is same across all DR
+   * nodes TODO : Should this validation hold tru now. Discuss. If I have 2 members on Which DR is
+   * defined. But sender is defined on only one member. How can I add the instance on the sender in
+   * Region which does not have a sender. I can bypass the existing validation for the DR with
+   * SerialGatewaySender. But for PR with SerialGatewaySender, we need to send the adjunct message.
+   * Find out the way to send the adjunct message to the member on which serialGatewaySender is
+   * available.
    */
-
   @Test
   public void testSameSerialGatewaySenderIdAcrossSameDistributedRegion() throws Exception {
     IgnoredException.addIgnoredException("another cache has the same region defined");
@@ -74,36 +72,44 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
       createCacheInVMs(lnPort, vm4, vm5);
 
-      vm4.invoke(() -> WANTestBase.createSender("ln1", 2, false, 10, 100, false, false, null, true));
-      vm4.invoke(() -> WANTestBase.createSender("ln2", 2, false, 10, 100, false, false, null, true));
+      vm4.invoke(
+          () -> WANTestBase.createSender("ln1", 2, false, 10, 100, false, false, null, true));
+      vm4.invoke(
+          () -> WANTestBase.createSender("ln2", 2, false, 10, 100, false, false, null, true));
 
-      vm5.invoke(() -> WANTestBase.createSender("ln2", 2, false, 10, 100, false, false, null, true));
-      vm5.invoke(() -> WANTestBase.createSender("ln3", 2, false, 10, 100, false, false, null, true));
+      vm5.invoke(
+          () -> WANTestBase.createSender("ln2", 2, false, 10, 100, false, false, null, true));
+      vm5.invoke(
+          () -> WANTestBase.createSender("ln3", 2, false, 10, 100, false, false, null, true));
 
-      vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln1,ln2", isOffHeap()));
+      vm4.invoke(
+          () ->
+              WANTestBase.createReplicatedRegion(
+                  getTestMethodName() + "_RR", "ln1,ln2", isOffHeap()));
 
-      vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln2,ln3", isOffHeap()));
+      vm5.invoke(
+          () ->
+              WANTestBase.createReplicatedRegion(
+                  getTestMethodName() + "_RR", "ln2,ln3", isOffHeap()));
       fail("Expected IllegalStateException with incompatible gateway sender ids message");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("Cannot create Region"))) {
-        Assert.fail("Expected IllegalStateException with incompatible gateway sender ids message", e);
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause().getMessage().contains("Cannot create Region"))) {
+        Assert.fail(
+            "Expected IllegalStateException with incompatible gateway sender ids message", e);
       }
     }
   }
 
   /**
    * Validate that ParallelGatewaySender can be added to Distributed region
-   * 
+   *
    * @throws Exception
-   * 
-   * 
-   * Below test is disabled intentionally Replicated region with Parallel Async
-   * Event queue is not supported. Test is added for the same
-   * ReplicatedRegion_ParallelWANPropagationDUnitTest#test_DR_PGS_1Nodes_Put_Receiver
-   * 
-   * We are gone support this configuration in upcoming releases
+   *     <p>Below test is disabled intentionally Replicated region with Parallel Async Event queue
+   *     is not supported. Test is added for the same
+   *     ReplicatedRegion_ParallelWANPropagationDUnitTest#test_DR_PGS_1Nodes_Put_Receiver
+   *     <p>We are gone support this configuration in upcoming releases
    */
-
   @Ignore("Bug51491")
   @Test
   public void testParallelGatewaySenderForDistributedRegion() throws Exception {
@@ -113,13 +119,19 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
       createCacheInVMs(lnPort, vm4, vm5);
 
-      vm4.invoke(() -> WANTestBase.createSender("ln1", 2, true, 10, 100, false, false, null, false));
+      vm4.invoke(
+          () -> WANTestBase.createSender("ln1", 2, true, 10, 100, false, false, null, false));
 
-      vm5.invoke(() -> WANTestBase.createSender("ln2", 2, true, 10, 100, false, false, null, false));
+      vm5.invoke(
+          () -> WANTestBase.createSender("ln2", 2, true, 10, 100, false, false, null, false));
 
-      vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln1", isOffHeap()));
+      vm4.invoke(
+          () ->
+              WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln1", isOffHeap()));
 
-      vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln1", isOffHeap()));
+      vm5.invoke(
+          () ->
+              WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln1", isOffHeap()));
 
     } catch (Exception e) {
       Assert.fail("Caught Exception", e);
@@ -127,8 +139,8 @@ public class WanValidationsDUnitTest extends WANTestBase {
   }
 
   /**
-   * Test to make sure that serial sender Ids configured in partitioned regions
-   * should be same across all PR members
+   * Test to make sure that serial sender Ids configured in partitioned regions should be same
+   * across all PR members
    */
   @Test
   public void testSameSerialGatewaySenderIdAcrossSamePartitionedRegion() throws Exception {
@@ -138,18 +150,30 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
       createCacheInVMs(lnPort, vm4, vm5);
 
-      vm4.invoke(() -> WANTestBase.createSender("ln1", 2, false, 10, 100, false, false, null, true));
-      vm4.invoke(() -> WANTestBase.createSender("ln2", 2, false, 10, 100, false, false, null, true));
+      vm4.invoke(
+          () -> WANTestBase.createSender("ln1", 2, false, 10, 100, false, false, null, true));
+      vm4.invoke(
+          () -> WANTestBase.createSender("ln2", 2, false, 10, 100, false, false, null, true));
 
-      vm5.invoke(() -> WANTestBase.createSender("ln2", 2, false, 10, 100, false, false, null, true));
-      vm5.invoke(() -> WANTestBase.createSender("ln3", 2, false, 10, 100, false, false, null, true));
+      vm5.invoke(
+          () -> WANTestBase.createSender("ln2", 2, false, 10, 100, false, false, null, true));
+      vm5.invoke(
+          () -> WANTestBase.createSender("ln3", 2, false, 10, 100, false, false, null, true));
 
-      vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln1,ln2", 1, 100, isOffHeap()));
-      vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln2,ln3", 1, 100, isOffHeap()));
+      vm4.invoke(
+          () ->
+              WANTestBase.createPartitionedRegion(
+                  getTestMethodName() + "_PR", "ln1,ln2", 1, 100, isOffHeap()));
+      vm5.invoke(
+          () ->
+              WANTestBase.createPartitionedRegion(
+                  getTestMethodName() + "_PR", "ln2,ln3", 1, 100, isOffHeap()));
       fail("Expected IllegalStateException with incompatible gateway sender ids message");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("Cannot create Region"))) {
-        Assert.fail("Expected IllegalStateException with incompatible gateway sender ids message", e);
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause().getMessage().contains("Cannot create Region"))) {
+        Assert.fail(
+            "Expected IllegalStateException with incompatible gateway sender ids message", e);
       }
     }
   }
@@ -162,19 +186,27 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
       createCacheInVMs(lnPort, vm4, vm5);
 
-      vm4.invoke(() -> WANTestBase.createReplicatedRegionWithAsyncEventQueue(getTestMethodName() + "_RR", "ln1", isOffHeap()));
-      vm5.invoke(() -> WANTestBase.createReplicatedRegionWithAsyncEventQueue(getTestMethodName() + "_RR", "ln2", isOffHeap()));
+      vm4.invoke(
+          () ->
+              WANTestBase.createReplicatedRegionWithAsyncEventQueue(
+                  getTestMethodName() + "_RR", "ln1", isOffHeap()));
+      vm5.invoke(
+          () ->
+              WANTestBase.createReplicatedRegionWithAsyncEventQueue(
+                  getTestMethodName() + "_RR", "ln2", isOffHeap()));
       fail("Expected IllegalStateException with incompatible gateway sender ids message");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("Cannot create Region"))) {
-        Assert.fail("Expected IllegalStateException with incompatible gateway sender ids message", e);
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause().getMessage().contains("Cannot create Region"))) {
+        Assert.fail(
+            "Expected IllegalStateException with incompatible gateway sender ids message", e);
       }
     }
   }
 
   /**
-   * Test to make sure that parallel sender Ids configured in partitioned
-   * regions should be same across all PR members
+   * Test to make sure that parallel sender Ids configured in partitioned regions should be same
+   * across all PR members
    */
   @Test
   public void testSameParallelGatewaySenderIdAcrossSamePartitionedRegion() throws Exception {
@@ -190,21 +222,28 @@ public class WanValidationsDUnitTest extends WANTestBase {
       vm5.invoke(() -> WANTestBase.createSender("ln2", 2, true, 10, 100, false, false, null, true));
       vm5.invoke(() -> WANTestBase.createSender("ln3", 2, true, 10, 100, false, false, null, true));
 
-      vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln1,ln2", 1, 100, isOffHeap()));
-      vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln2,ln3", 1, 100, isOffHeap()));
+      vm4.invoke(
+          () ->
+              WANTestBase.createPartitionedRegion(
+                  getTestMethodName() + "_PR", "ln1,ln2", 1, 100, isOffHeap()));
+      vm5.invoke(
+          () ->
+              WANTestBase.createPartitionedRegion(
+                  getTestMethodName() + "_PR", "ln2,ln3", 1, 100, isOffHeap()));
 
       fail("Expected IllegalStateException with incompatible gateway sender ids message");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("Cannot create Region"))) {
-        Assert.fail("Expected IllegalStateException with incompatible gateway sender ids message", e);
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause().getMessage().contains("Cannot create Region"))) {
+        Assert.fail(
+            "Expected IllegalStateException with incompatible gateway sender ids message", e);
       }
     }
   }
 
   /**
-   * Test to make sure that same parallel gateway sender id can be used by 2
-   * different PRs
-   * 
+   * Test to make sure that same parallel gateway sender id can be used by 2 different PRs
+   *
    * @throws Exception
    */
   @Ignore
@@ -215,14 +254,35 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
       createCacheInVMs(lnPort, vm1);
 
-      vm1.invoke(() -> WANTestBase.createSender("ln1_Parallel", 2, true, 10, 100, false, false, null, true));
-      vm1.invoke(() -> WANTestBase.createSender("ln2_Parallel", 2, true, 10, 100, false, false, null, true));
+      vm1.invoke(
+          () ->
+              WANTestBase.createSender("ln1_Parallel", 2, true, 10, 100, false, false, null, true));
+      vm1.invoke(
+          () ->
+              WANTestBase.createSender("ln2_Parallel", 2, true, 10, 100, false, false, null, true));
 
-      vm1.invoke(() -> WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(getTestMethodName() + "_PR1", null, "ln1_Parallel,ln2_Parallel", null, isOffHeap()));
-      vm1.invoke(() -> WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(getTestMethodName() + "_PR2", null, "ln1_Parallel,ln2_Parallel", null, isOffHeap()));
+      vm1.invoke(
+          () ->
+              WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(
+                  getTestMethodName() + "_PR1",
+                  null,
+                  "ln1_Parallel,ln2_Parallel",
+                  null,
+                  isOffHeap()));
+      vm1.invoke(
+          () ->
+              WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(
+                  getTestMethodName() + "_PR2",
+                  null,
+                  "ln1_Parallel,ln2_Parallel",
+                  null,
+                  isOffHeap()));
 
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("cannot have the same parallel gateway sender id"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains("cannot have the same parallel gateway sender id"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -236,26 +296,45 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
       createCacheInVMs(lnPort, vm1);
 
-      vm1.invoke(() -> WANTestBase.createSender("ln1_Parallel", 2, true, 10, 100, false, false, null, true));
-      vm1.invoke(() -> WANTestBase.createSender("ln2_Parallel", 2, true, 10, 100, false, false, null, true));
+      vm1.invoke(
+          () ->
+              WANTestBase.createSender("ln1_Parallel", 2, true, 10, 100, false, false, null, true));
+      vm1.invoke(
+          () ->
+              WANTestBase.createSender("ln2_Parallel", 2, true, 10, 100, false, false, null, true));
 
-      vm1.invoke(() -> WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(getTestMethodName() + "_PR1", null, "ln1_Parallel", null, isOffHeap()));
-      vm1.invoke(() -> WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(getTestMethodName() + "_PR2", null, "ln1_Parallel,ln2_Parallel", getTestMethodName() + "_PR1", isOffHeap()));
+      vm1.invoke(
+          () ->
+              WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(
+                  getTestMethodName() + "_PR1", null, "ln1_Parallel", null, isOffHeap()));
+      vm1.invoke(
+          () ->
+              WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(
+                  getTestMethodName() + "_PR2",
+                  null,
+                  "ln1_Parallel,ln2_Parallel",
+                  getTestMethodName() + "_PR1",
+                  isOffHeap()));
       //now we support this
       //fail("Expected IllegalStateException with incompatible gateway sender ids in colocated regions");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("should have same parallel gateway sender ids"))) {
-        Assert.fail("Expected IllegalStateException with incompatible gateway sender ids in colocated regions", e);
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains("should have same parallel gateway sender ids"))) {
+        Assert.fail(
+            "Expected IllegalStateException with incompatible gateway sender ids in colocated regions",
+            e);
       }
     }
   }
 
   /**
-   * Validate that if Colocated partitioned region doesn't want to add a PGS even if its 
-   * parent has one then it is fine
+   * Validate that if Colocated partitioned region doesn't want to add a PGS even if its parent has
+   * one then it is fine
+   *
    * @throws Exception
    */
-
   @Test
   public void testSameParallelGatewaySenderIdAcrossColocatedPartitionedRegion2() throws Exception {
     try {
@@ -263,11 +342,25 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
       createCacheInVMs(lnPort, vm1);
 
-      vm1.invoke(() -> WANTestBase.createSender("ln1_Parallel", 2, true, 10, 100, false, false, null, true));
-      vm1.invoke(() -> WANTestBase.createSender("ln2_Parallel", 2, true, 10, 100, false, false, null, true));
+      vm1.invoke(
+          () ->
+              WANTestBase.createSender("ln1_Parallel", 2, true, 10, 100, false, false, null, true));
+      vm1.invoke(
+          () ->
+              WANTestBase.createSender("ln2_Parallel", 2, true, 10, 100, false, false, null, true));
 
-      vm1.invoke(() -> WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(getTestMethodName() + "_PR1", null, "ln1_Parallel", null, isOffHeap()));
-      vm1.invoke(() -> WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(getTestMethodName() + "_PR2", null, null, getTestMethodName() + "_PR1", isOffHeap()));
+      vm1.invoke(
+          () ->
+              WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(
+                  getTestMethodName() + "_PR1", null, "ln1_Parallel", null, isOffHeap()));
+      vm1.invoke(
+          () ->
+              WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(
+                  getTestMethodName() + "_PR2",
+                  null,
+                  null,
+                  getTestMethodName() + "_PR1",
+                  isOffHeap()));
 
     } catch (Exception e) {
       Assert.fail("The tests caught Exception.", e);
@@ -275,11 +368,10 @@ public class WanValidationsDUnitTest extends WANTestBase {
   }
 
   /**
-   * Validate that if Colocated partitioned region has a subset of PGS
-   * then it is fine. 
+   * Validate that if Colocated partitioned region has a subset of PGS then it is fine.
+   *
    * @throws Exception
    */
-
   @Test
   public void testSameParallelGatewaySenderIdAcrossColocatedPartitionedRegion3() throws Exception {
     try {
@@ -287,11 +379,29 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
       createCacheInVMs(lnPort, vm1);
 
-      vm1.invoke(() -> WANTestBase.createSender("ln1_Parallel", 2, true, 10, 100, false, false, null, true));
-      vm1.invoke(() -> WANTestBase.createSender("ln2_Parallel", 2, true, 10, 100, false, false, null, true));
+      vm1.invoke(
+          () ->
+              WANTestBase.createSender("ln1_Parallel", 2, true, 10, 100, false, false, null, true));
+      vm1.invoke(
+          () ->
+              WANTestBase.createSender("ln2_Parallel", 2, true, 10, 100, false, false, null, true));
 
-      vm1.invoke(() -> WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(getTestMethodName() + "_PR1", null, "ln1_Parallel,ln2_Parallel", null, isOffHeap()));
-      vm1.invoke(() -> WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(getTestMethodName() + "_PR2", null, "ln1_Parallel", getTestMethodName() + "_PR1", isOffHeap()));
+      vm1.invoke(
+          () ->
+              WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(
+                  getTestMethodName() + "_PR1",
+                  null,
+                  "ln1_Parallel,ln2_Parallel",
+                  null,
+                  isOffHeap()));
+      vm1.invoke(
+          () ->
+              WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(
+                  getTestMethodName() + "_PR2",
+                  null,
+                  "ln1_Parallel",
+                  getTestMethodName() + "_PR1",
+                  isOffHeap()));
 
     } catch (Exception e) {
       Assert.fail("The tests caught Exception.", e);
@@ -299,11 +409,10 @@ public class WanValidationsDUnitTest extends WANTestBase {
   }
 
   /**
-   * Validate that if Colocated partitioned region has a superset of PGS
-   * then Exception is thrown. 
+   * Validate that if Colocated partitioned region has a superset of PGS then Exception is thrown.
+   *
    * @throws Exception
    */
-
   @Test
   public void testSameParallelGatewaySenderIdAcrossColocatedPartitionedRegion4() throws Exception {
     try {
@@ -311,36 +420,66 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
       createCacheInVMs(lnPort, vm1);
 
-      vm1.invoke(() -> WANTestBase.createSender("ln1_Parallel", 2, true, 10, 100, false, false, null, true));
-      vm1.invoke(() -> WANTestBase.createSender("ln2_Parallel", 2, true, 10, 100, false, false, null, true));
-      vm1.invoke(() -> WANTestBase.createSender("ln3_Parallel", 2, true, 10, 100, false, false, null, true));
+      vm1.invoke(
+          () ->
+              WANTestBase.createSender("ln1_Parallel", 2, true, 10, 100, false, false, null, true));
+      vm1.invoke(
+          () ->
+              WANTestBase.createSender("ln2_Parallel", 2, true, 10, 100, false, false, null, true));
+      vm1.invoke(
+          () ->
+              WANTestBase.createSender("ln3_Parallel", 2, true, 10, 100, false, false, null, true));
 
-      vm1.invoke(() -> WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(getTestMethodName() + "_PR1", null, "ln1_Parallel,ln2_Parallel", null, isOffHeap()));
-      vm1.invoke(() -> WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(getTestMethodName() + "_PR2", null, "ln1_Parallel,ln2_Parallel,ln3_Parallel", getTestMethodName() + "_PR1", isOffHeap()));
+      vm1.invoke(
+          () ->
+              WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(
+                  getTestMethodName() + "_PR1",
+                  null,
+                  "ln1_Parallel,ln2_Parallel",
+                  null,
+                  isOffHeap()));
+      vm1.invoke(
+          () ->
+              WANTestBase.createPartitionedRegionWithSerialParallelSenderIds(
+                  getTestMethodName() + "_PR2",
+                  null,
+                  "ln1_Parallel,ln2_Parallel,ln3_Parallel",
+                  getTestMethodName() + "_PR1",
+                  isOffHeap()));
       //now we support this
       //fail("Expected IllegalStateException with incompatible gateway sender ids in colocated regions");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("should have same parallel gateway sender ids"))) {
-        Assert.fail("Expected IllegalStateException with incompatible gateway sender ids in colocated regions", e);
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains("should have same parallel gateway sender ids"))) {
+        Assert.fail(
+            "Expected IllegalStateException with incompatible gateway sender ids in colocated regions",
+            e);
       }
     }
   }
 
-  /**
-   * SerialGatewaySender and ParallelGatewaySender with same name is allowed
-   */
+  /** SerialGatewaySender and ParallelGatewaySender with same name is allowed */
   @Test
   public void testSerialGatewaySenderAndParallelGatewaySenderWithSameName() {
     Integer lnPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
 
     createCacheInVMs(lnPort, vm1);
 
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, null, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, false, 100, false, false, null, null, true, false));
     try {
-      vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, true, 100, false, false, null, null, true, false));
+      vm1.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 2, true, 100, false, false, null, null, true, false));
       fail("Expected IllegalStateException : Sender names should be different.");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("is already defined in this cache"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause().getMessage().contains("is already defined in this cache"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -353,13 +492,23 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm1, vm2);
 
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, null, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, false, 100, false, false, null, null, true, false));
 
     try {
-      vm2.invoke(() -> WANTestBase.createSenderForValidations("ln", 3, false, 100, false, false, null, null, true, false));
+      vm2.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 3, false, 100, false, false, null, null, true, false));
       fail("Expected IllegalStateException : Remote Ds Ids should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same Gateway Sender defined with remote ds id"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains(
+                  "because another cache has the same Gateway Sender defined with remote ds id"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -372,13 +521,22 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm1, vm2);
 
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, null, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, false, 100, false, false, null, null, true, false));
 
     try {
-      vm2.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, true, 100, false, false, null, null, true, false));
+      vm2.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 2, true, 100, false, false, null, null, true, false));
       fail("Expected IllegalStateException : is not serial Gateway Sender");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same sender as serial gateway sender"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains("because another cache has the same sender as serial gateway sender"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -391,13 +549,22 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm1, vm2);
 
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, true, 100, false, false, null, null, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, true, 100, false, false, null, null, true, false));
 
     try {
-      vm2.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, null, true, false));
+      vm2.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 2, false, 100, false, false, null, null, true, false));
       fail("Expected IllegalStateException : is not parallel Gateway Sender");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same sender as parallel gateway sender"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains("because another cache has the same sender as parallel gateway sender"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -410,14 +577,24 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm1, vm2);
 
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, null, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, false, 100, false, false, null, null, true, false));
 
     // isBatchConflation
     try {
-      vm2.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, true, false, null, null, true, false));
+      vm2.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 2, false, 100, true, false, null, null, true, false));
       fail("Expected IllegalStateException : isBatchConflation Should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("another cache has the same Gateway Sender defined with isBatchConflationEnabled"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains(
+                  "another cache has the same Gateway Sender defined with isBatchConflationEnabled"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -430,12 +607,22 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm1, vm2);
 
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, null, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, false, 100, false, false, null, null, true, false));
     try {
-      vm2.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, true, null, null, true, false));
+      vm2.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 2, false, 100, false, true, null, null, true, false));
       fail("Expected IllegalStateException : isPersistentEnabled Should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same Gateway Sender defined with isPersistentEnabled"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains(
+                  "because another cache has the same Gateway Sender defined with isPersistentEnabled"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -447,12 +634,22 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm1, vm2);
 
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, null, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, false, 100, false, false, null, null, true, false));
     try {
-      vm2.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 50, false, false, null, null, true, false));
+      vm2.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 2, false, 50, false, false, null, null, true, false));
       fail("Expected IllegalStateException : alertThreshold Should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same Gateway Sender defined with alertThreshold"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains(
+                  "because another cache has the same Gateway Sender defined with alertThreshold"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -464,12 +661,22 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm1, vm2);
 
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, null, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, false, 100, false, false, null, null, true, false));
     try {
-      vm2.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, null, false, false));
+      vm2.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 2, false, 100, false, false, null, null, false, false));
       fail("Expected IllegalStateException : manualStart Should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same Gateway Sender defined with manual start"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains(
+                  "because another cache has the same Gateway Sender defined with manual start"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -483,14 +690,24 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     ArrayList<GatewayEventFilter> eventFilters = new ArrayList<GatewayEventFilter>();
     eventFilters.add(new MyGatewayEventFilter());
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, eventFilters, null, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, false, 100, false, false, eventFilters, null, true, false));
     try {
       eventFilters.clear();
       eventFilters.add(new Filter70());
-      vm2.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, eventFilters, null, true, false));
+      vm2.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 2, false, 100, false, false, eventFilters, null, true, false));
       fail("Expected IllegalStateException : GatewayEventFilters Should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same Gateway Sender defined with GatewayEventFilters"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains(
+                  "because another cache has the same Gateway Sender defined with GatewayEventFilters"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -504,15 +721,25 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     ArrayList<GatewayEventFilter> eventFilters = new ArrayList<GatewayEventFilter>();
     eventFilters.add(new MyGatewayEventFilter());
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, eventFilters, null, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, false, 100, false, false, eventFilters, null, true, false));
     try {
       eventFilters.clear();
       eventFilters.add(new MyGatewayEventFilter());
       eventFilters.add(new Filter70());
-      vm2.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, eventFilters, null, true, false));
+      vm2.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 2, false, 100, false, false, eventFilters, null, true, false));
       fail("Expected IllegalStateException : GatewayEventFilters Should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same Gateway Sender defined with GatewayEventFilters"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains(
+                  "because another cache has the same Gateway Sender defined with GatewayEventFilters"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -527,15 +754,25 @@ public class WanValidationsDUnitTest extends WANTestBase {
     ArrayList<GatewayTransportFilter> transportFilters = new ArrayList<GatewayTransportFilter>();
     transportFilters.add(new MyGatewayTransportFilter1());
     transportFilters.add(new MyGatewayTransportFilter2());
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, transportFilters, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, false, 100, false, false, null, transportFilters, true, false));
     try {
       transportFilters.clear();
       transportFilters.add(new MyGatewayTransportFilter3());
       transportFilters.add(new MyGatewayTransportFilter4());
-      vm2.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, transportFilters, true, false));
+      vm2.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 2, false, 100, false, false, null, transportFilters, true, false));
       fail("Expected IllegalStateException : GatewayEventFilters Should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same Gateway Sender defined with GatewayTransportFilters"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains(
+                  "because another cache has the same Gateway Sender defined with GatewayTransportFilters"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -550,15 +787,25 @@ public class WanValidationsDUnitTest extends WANTestBase {
     ArrayList<GatewayTransportFilter> transportFilters = new ArrayList<GatewayTransportFilter>();
     transportFilters.add(new MyGatewayTransportFilter1());
     transportFilters.add(new MyGatewayTransportFilter2());
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, transportFilters, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, false, 100, false, false, null, transportFilters, true, false));
     try {
       transportFilters.clear();
       transportFilters.add(new MyGatewayTransportFilter2());
       transportFilters.add(new MyGatewayTransportFilter1());
-      vm2.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, transportFilters, true, false));
+      vm2.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 2, false, 100, false, false, null, transportFilters, true, false));
       fail("Expected IllegalStateException : GatewayEventFilters Should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same Gateway Sender defined with GatewayTransportFilters"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains(
+                  "because another cache has the same Gateway Sender defined with GatewayTransportFilters"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -570,22 +817,32 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm1, vm2);
 
-    vm1.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, null, true, false));
+    vm1.invoke(
+        () ->
+            WANTestBase.createSenderForValidations(
+                "ln", 2, false, 100, false, false, null, null, true, false));
 
     try {
-      vm2.invoke(() -> WANTestBase.createSenderForValidations("ln", 2, false, 100, false, false, null, null, true, true));
+      vm2.invoke(
+          () ->
+              WANTestBase.createSenderForValidations(
+                  "ln", 2, false, 100, false, false, null, null, true, true));
       fail("Expected IllegalStateException : isDiskSynchronous Should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same Gateway Sender defined with isDiskSynchronous"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains(
+                  "because another cache has the same Gateway Sender defined with isDiskSynchronous"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
   }
 
   /**
-   * This test has been added for the defect # 44372.
-   * A single VM hosts a bridge server as well as a Receiver.
-   * Expected: Cache.getCacheServer should return only the Bridge server and not the Receiver
+   * This test has been added for the defect # 44372. A single VM hosts a bridge server as well as a
+   * Receiver. Expected: Cache.getCacheServer should return only the Bridge server and not the
+   * Receiver
    */
   @Test
   public void test_GetCacheServersDoesNotReturnReceivers() {
@@ -598,15 +855,20 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     Map cacheServers = (Map) vm4.invoke(() -> WANTestBase.getCacheServers());
 
-    assertEquals("Cache.getCacheServers returned incorrect BridgeServers: ", 1, cacheServers.get("BridgeServer"));
-    assertEquals("Cache.getCacheServers returned incorrect ReceiverServers: ", 0, cacheServers.get("ReceiverServer"));
+    assertEquals(
+        "Cache.getCacheServers returned incorrect BridgeServers: ",
+        1,
+        cacheServers.get("BridgeServer"));
+    assertEquals(
+        "Cache.getCacheServers returned incorrect ReceiverServers: ",
+        0,
+        cacheServers.get("ReceiverServer"));
   }
 
   /**
-   * Added for the defect # 44372.
-   * Two VMs are part of the DS. 
-   * One VM hosts a Bridge server while the other hosts a Receiver.
-   * Expected: Cache.getCacheServers should only return the bridge server and not the Receiver.
+   * Added for the defect # 44372. Two VMs are part of the DS. One VM hosts a Bridge server while
+   * the other hosts a Receiver. Expected: Cache.getCacheServers should only return the bridge
+   * server and not the Receiver.
    */
   @Test
   public void test_GetCacheServersDoesNotReturnReceivers_Scenario2() {
@@ -620,12 +882,23 @@ public class WanValidationsDUnitTest extends WANTestBase {
     Map cacheServers_vm4 = (Map) vm4.invoke(() -> WANTestBase.getCacheServers());
     Map cacheServers_vm5 = (Map) vm5.invoke(() -> WANTestBase.getCacheServers());
 
-    assertEquals("Cache.getCacheServers on vm4 returned incorrect BridgeServers: ", 0, cacheServers_vm4.get("BridgeServer"));
-    assertEquals("Cache.getCacheServers on vm4 returned incorrect ReceiverServers: ", 0, cacheServers_vm4.get("ReceiverServer"));
+    assertEquals(
+        "Cache.getCacheServers on vm4 returned incorrect BridgeServers: ",
+        0,
+        cacheServers_vm4.get("BridgeServer"));
+    assertEquals(
+        "Cache.getCacheServers on vm4 returned incorrect ReceiverServers: ",
+        0,
+        cacheServers_vm4.get("ReceiverServer"));
 
-    assertEquals("Cache.getCacheServers on vm5 returned incorrect BridgeServers: ", 1, cacheServers_vm5.get("BridgeServer"));
-    assertEquals("Cache.getCacheServers on vm5 returned incorrect ReceiverServers: ", 0, cacheServers_vm5.get("ReceiverServer"));
-
+    assertEquals(
+        "Cache.getCacheServers on vm5 returned incorrect BridgeServers: ",
+        1,
+        cacheServers_vm5.get("BridgeServer"));
+    assertEquals(
+        "Cache.getCacheServers on vm5 returned incorrect ReceiverServers: ",
+        0,
+        cacheServers_vm5.get("ReceiverServer"));
   }
 
   // dispatcher threads are same across all the nodes for ParallelGatewaySender
@@ -640,14 +913,24 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm1, vm2);
 
-    vm1.invoke(() -> WANTestBase.createConcurrentSender("ln", 2, true, 100, 10, false, false, null, true, 5, OrderPolicy.KEY));
+    vm1.invoke(
+        () ->
+            WANTestBase.createConcurrentSender(
+                "ln", 2, true, 100, 10, false, false, null, true, 5, OrderPolicy.KEY));
 
     // dispatcher threads
     try {
-      vm2.invoke(() -> WANTestBase.createConcurrentSender("ln", 2, true, 100, 10, false, false, null, true, 4, OrderPolicy.KEY));
+      vm2.invoke(
+          () ->
+              WANTestBase.createConcurrentSender(
+                  "ln", 2, true, 100, 10, false, false, null, true, 4, OrderPolicy.KEY));
       fail("Expected IllegalStateException : dispatcher threads Should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same Gateway Sender defined with dispatcherThread"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains(
+                  "because another cache has the same Gateway Sender defined with dispatcherThread"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -666,14 +949,24 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm1, vm2);
 
-    vm1.invoke(() -> WANTestBase.createConcurrentSender("ln", 2, true, 100, 10, false, false, null, true, 5, OrderPolicy.KEY));
+    vm1.invoke(
+        () ->
+            WANTestBase.createConcurrentSender(
+                "ln", 2, true, 100, 10, false, false, null, true, 5, OrderPolicy.KEY));
 
     // dispatcher threads
     try {
-      vm2.invoke(() -> WANTestBase.createConcurrentSender("ln", 2, true, 100, 10, false, false, null, true, 5, OrderPolicy.PARTITION));
+      vm2.invoke(
+          () ->
+              WANTestBase.createConcurrentSender(
+                  "ln", 2, true, 100, 10, false, false, null, true, 5, OrderPolicy.PARTITION));
       fail("Expected IllegalStateException : order policy Should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof IllegalStateException) || !(e.getCause().getMessage().contains("because another cache has the same Gateway Sender defined with orderPolicy"))) {
+      if (!(e.getCause() instanceof IllegalStateException)
+          || !(e.getCause()
+              .getMessage()
+              .contains(
+                  "because another cache has the same Gateway Sender defined with orderPolicy"))) {
         Assert.fail("Expected IllegalStateException", e);
       }
     }
@@ -699,15 +992,20 @@ public class WanValidationsDUnitTest extends WANTestBase {
     vm6.invoke(createReceiverReplicatedRegion());
     vm7.invoke(createReceiverReplicatedRegion());
 
-    vm4.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
+    vm4.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
 
-    vm5.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
+    vm5.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
 
     try {
       vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 10));
       fail("Expected GatewaySenderConfigurationException : Sender Ids should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof GatewaySenderConfigurationException) || !(e.getCause().getMessage().contains("For region across all members, gateway sender ids should be same."))) {
+      if (!(e.getCause() instanceof GatewaySenderConfigurationException)
+          || !(e.getCause()
+              .getMessage()
+              .contains("For region across all members, gateway sender ids should be same."))) {
         Assert.fail("Expected GatewaySenderConfigurationException", e);
       }
     }
@@ -719,25 +1017,38 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
-    vm5.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
-    vm6.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
-    vm7.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm4.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm5.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm6.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm7.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
 
     vm4.invoke(createReceiverReplicatedRegion());
     vm5.invoke(createReceiverReplicatedRegion());
     vm6.invoke(createReceiverReplicatedRegion());
     vm7.invoke(createReceiverReplicatedRegion());
 
-    vm4.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
+    vm4.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_RR", "ln"));
 
-    vm5.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
+    vm5.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_RR", "ln"));
 
     try {
       vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
       fail("Expected GatewaySenderConfigurationException : AsyncEvent queue IDs should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof GatewaySenderConfigurationException) || !(e.getCause().getMessage().contains("For region across all members, AsyncEvent queue IDs should be same."))) {
+      if (!(e.getCause() instanceof GatewaySenderConfigurationException)
+          || !(e.getCause()
+              .getMessage()
+              .contains("For region across all members, AsyncEvent queue IDs should be same."))) {
         Assert.fail("Expected GatewaySenderConfigurationException", e);
       }
     }
@@ -767,13 +1078,17 @@ public class WanValidationsDUnitTest extends WANTestBase {
     vm6.invoke(createReceiverReplicatedRegion());
     vm7.invoke(createReceiverReplicatedRegion());
 
-    vm4.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
+    vm4.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
 
-    vm5.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
+    vm5.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
 
-    vm6.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
+    vm6.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
 
-    vm7.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
+    vm7.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
 
     vm4.invoke(() -> WANTestBase.waitForSenderRunningState("ln"));
 
@@ -788,27 +1103,43 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
-    vm5.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
-    vm6.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
-    vm7.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm4.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm5.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm6.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm7.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
 
     vm4.invoke(createReceiverReplicatedRegion());
     vm5.invoke(createReceiverReplicatedRegion());
     vm6.invoke(createReceiverReplicatedRegion());
     vm7.invoke(createReceiverReplicatedRegion());
 
-    vm4.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
-    vm5.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
-    vm6.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
-    vm7.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_RR", "ln"));
+    vm4.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_RR", "ln"));
+    vm5.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_RR", "ln"));
+    vm6.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_RR", "ln"));
+    vm7.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_RR", "ln"));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
 
-    vm4.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 1000));// primary sender
-    vm5.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 0));// secondary
-    vm6.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 0));// secondary
-    vm7.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 0));// secondary
+    vm4.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 1000)); // primary sender
+    vm5.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 0)); // secondary
+    vm6.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 0)); // secondary
+    vm7.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 0)); // secondary
   }
 
   @Test
@@ -818,7 +1149,10 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(nyPort, vm2);
     vm2.invoke(() -> WANTestBase.createReceiver());
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_RR", null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_RR", null, 1, 100, isOffHeap()));
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
@@ -829,14 +1163,28 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm4.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
 
-    vm5.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm5.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
 
     vm4.invoke(() -> WANTestBase.waitForSenderRunningState("ln"));
 
@@ -844,7 +1192,10 @@ public class WanValidationsDUnitTest extends WANTestBase {
       vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 10));
       fail("Expected GatewaySenderConfigurationException : Sender Ids should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof GatewaySenderConfigurationException) || !(e.getCause().getMessage().contains("For region across all members, gateway sender ids should be same."))) {
+      if (!(e.getCause() instanceof GatewaySenderConfigurationException)
+          || !(e.getCause()
+              .getMessage()
+              .contains("For region across all members, gateway sender ids should be same."))) {
         Assert.fail("Expected GatewaySenderConfigurationException", e);
       }
     }
@@ -856,24 +1207,49 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
-    vm5.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
-    vm6.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
-    vm7.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm4.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm5.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm6.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm7.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm5.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm4.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_PR", "ln"));
+    vm5.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_PR", "ln"));
 
     try {
       vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
       fail("Expected GatewaySenderConfigurationException : AsyncEvent queue IDs should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof GatewaySenderConfigurationException) || !(e.getCause().getMessage().contains("For region across all members, AsyncEvent queue IDs should be same."))) {
+      if (!(e.getCause() instanceof GatewaySenderConfigurationException)
+          || !(e.getCause()
+              .getMessage()
+              .contains("For region across all members, AsyncEvent queue IDs should be same."))) {
         Assert.fail("Expected GatewaySenderConfigurationException", e);
       }
     }
@@ -886,7 +1262,10 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(nyPort, vm2);
     vm2.invoke(() -> WANTestBase.createReceiver());
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
@@ -897,15 +1276,31 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm5.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm6.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm7.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm4.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm5.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm6.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm7.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
 
     vm4.invoke(() -> WANTestBase.waitForSenderRunningState("ln"));
 
@@ -922,27 +1317,55 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
-    vm5.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
-    vm6.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
-    vm7.invoke(() -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm4.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm5.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm6.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
+    vm7.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", false, 100, 100, false, false, null, false));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm5.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm6.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm7.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm4.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_PR", "ln"));
+    vm5.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_PR", "ln"));
+    vm6.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_PR", "ln"));
+    vm7.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_PR", "ln"));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 1000));
 
-    vm4.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 1000));// primary sender
-    vm5.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 0));// secondary
-    vm6.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 0));// secondary
-    vm7.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 0));// secondary
+    vm4.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 1000)); // primary sender
+    vm5.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 0)); // secondary
+    vm6.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 0)); // secondary
+    vm7.invoke(() -> WANTestBase.validateAsyncEventListener("ln", 0)); // secondary
   }
 
   @Test
@@ -951,7 +1374,10 @@ public class WanValidationsDUnitTest extends WANTestBase {
     Integer nyPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, lnPort));
 
     createCacheInVMs(nyPort, vm2);
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
     vm2.invoke(() -> WANTestBase.createReceiver());
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
@@ -960,13 +1386,27 @@ public class WanValidationsDUnitTest extends WANTestBase {
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
     startSenderInVMs("ln", vm4, vm5);
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm5.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm4.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm5.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
 
     vm4.invoke(() -> WANTestBase.waitForSenderRunningState("ln"));
 
@@ -974,7 +1414,10 @@ public class WanValidationsDUnitTest extends WANTestBase {
       vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 10));
       fail("Expected GatewaySenderConfigurationException : Sender Ids should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof GatewaySenderConfigurationException) || !(e.getCause().getMessage().contains("For region across all members, gateway sender ids should be same."))) {
+      if (!(e.getCause() instanceof GatewaySenderConfigurationException)
+          || !(e.getCause()
+              .getMessage()
+              .contains("For region across all members, gateway sender ids should be same."))) {
         Assert.fail("Expected GatewaySenderConfigurationException", e);
       }
     }
@@ -986,37 +1429,67 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
-    vm5.invoke(() -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
-    vm6.invoke(() -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
-    vm7.invoke(() -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
+    vm4.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
+    vm5.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
+    vm6.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
+    vm7.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm5.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm4.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_PR", "ln"));
+    vm5.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_PR", "ln"));
 
     try {
       vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 10));
       fail("Expected GatewaySenderConfigurationException : AsyncEvent queue IDs should match");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof GatewaySenderConfigurationException) || !(e.getCause().getMessage().contains("For region across all members, AsyncEvent queue IDs should be same."))) {
+      if (!(e.getCause() instanceof GatewaySenderConfigurationException)
+          || !(e.getCause()
+              .getMessage()
+              .contains("For region across all members, AsyncEvent queue IDs should be same."))) {
         Assert.fail("Expected GatewaySenderConfigurationException", e);
       }
     }
   }
 
-  @Category(FlakyTest.class) // GEODE-1019: random ports, time sensitive, waitForCriterion, suspect string: loss of quorum
+  @Category(
+      FlakyTest
+          .class) // GEODE-1019: random ports, time sensitive, waitForCriterion, suspect string: loss of quorum
   @Test
   public void testBug50434_PR_Parallel_pass() throws Exception {
     Integer lnPort = (Integer) vm0.invoke(() -> WANTestBase.createFirstLocatorWithDSId(1));
     Integer nyPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, lnPort));
 
     createCacheInVMs(nyPort, vm2);
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
     vm2.invoke(() -> WANTestBase.createReceiver());
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
@@ -1026,17 +1499,33 @@ public class WanValidationsDUnitTest extends WANTestBase {
     vm6.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
     vm7.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
 
     startSenderInVMs("ln", vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm5.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm6.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm7.invoke(() -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm4.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm5.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm6.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm7.invoke(
+        () -> WANTestBase.addSenderThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 10));
 
@@ -1049,20 +1538,48 @@ public class WanValidationsDUnitTest extends WANTestBase {
 
     createCacheInVMs(lnPort, vm4, vm5, vm6, vm7);
 
-    vm4.invoke(() -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
-    vm5.invoke(() -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
-    vm6.invoke(() -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
-    vm7.invoke(() -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
+    vm4.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
+    vm5.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
+    vm6.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
+    vm7.invoke(
+        () -> WANTestBase.createAsyncEventQueue("ln", true, 100, 100, false, false, null, false));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 10, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm5.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm6.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
-    vm7.invoke(() -> WANTestBase.addAsyncEventQueueThroughAttributesMutator(getTestMethodName() + "_PR", "ln"));
+    vm4.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_PR", "ln"));
+    vm5.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_PR", "ln"));
+    vm6.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_PR", "ln"));
+    vm7.invoke(
+        () ->
+            WANTestBase.addAsyncEventQueueThroughAttributesMutator(
+                getTestMethodName() + "_PR", "ln"));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 256));
 
@@ -1094,31 +1611,43 @@ public class WanValidationsDUnitTest extends WANTestBase {
     createCacheInVMs(lnPort, vm4, vm5);
 
     try {
-      vm4.invoke(() -> WANTestBase.createSender("ln1", 2, true, 10, 100, false, false, null, false));
-      vm4.invoke(() -> WANTestBase.createPartitionedRegionWithPersistence(getTestMethodName() + "_PR", "ln1", 1, 100));
+      vm4.invoke(
+          () -> WANTestBase.createSender("ln1", 2, true, 10, 100, false, false, null, false));
+      vm4.invoke(
+          () ->
+              WANTestBase.createPartitionedRegionWithPersistence(
+                  getTestMethodName() + "_PR", "ln1", 1, 100));
       fail("Expected GatewaySenderException with incompatible gateway sender ids and region");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof GatewaySenderException) || !(e.getCause().getMessage().contains("can not be attached to persistent region "))) {
-        Assert.fail("Expected GatewaySenderException with incompatible gateway sender ids and region", e);
+      if (!(e.getCause() instanceof GatewaySenderException)
+          || !(e.getCause().getMessage().contains("can not be attached to persistent region "))) {
+        Assert.fail(
+            "Expected GatewaySenderException with incompatible gateway sender ids and region", e);
       }
     }
 
     try {
-      vm5.invoke(() -> WANTestBase.createPartitionedRegionWithPersistence(getTestMethodName() + "_PR", "ln1", 1, 100));
-      vm5.invoke(() -> WANTestBase.createSender("ln1", 2, true, 10, 100, false, false, null, false));
+      vm5.invoke(
+          () ->
+              WANTestBase.createPartitionedRegionWithPersistence(
+                  getTestMethodName() + "_PR", "ln1", 1, 100));
+      vm5.invoke(
+          () -> WANTestBase.createSender("ln1", 2, true, 10, 100, false, false, null, false));
       fail("Expected GatewaySenderException with incompatible gateway sender ids and region");
     } catch (Exception e) {
-      if (!(e.getCause() instanceof GatewaySenderException) || !(e.getCause().getMessage().contains("can not be attached to persistent region "))) {
-        Assert.fail("Expected GatewaySenderException with incompatible gateway sender ids and region", e);
+      if (!(e.getCause() instanceof GatewaySenderException)
+          || !(e.getCause().getMessage().contains("can not be attached to persistent region "))) {
+        Assert.fail(
+            "Expected GatewaySenderException with incompatible gateway sender ids and region", e);
       }
     }
   }
 
   /**
    * Test configuration::
-   * 
-   * Region: Replicated WAN: Serial Number of WAN sites: 2 Region persistence
-   * enabled: false Async channel persistence enabled: false
+   *
+   * <p>Region: Replicated WAN: Serial Number of WAN sites: 2 Region persistence enabled: false
+   * Async channel persistence enabled: false
    */
   @Test
   public void testReplicatedSerialAsyncEventQueueWith2WANSites() {
@@ -1131,17 +1660,41 @@ public class WanValidationsDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm4.invoke(() -> WANTestBase.createAsyncEventQueue("lnAsync", false, 100, 100, false, false, null, false));
-    vm5.invoke(() -> WANTestBase.createAsyncEventQueue("lnAsync", false, 100, 100, false, false, null, false));
-    vm6.invoke(() -> WANTestBase.createAsyncEventQueue("lnAsync", false, 100, 100, false, false, null, false));
-    vm7.invoke(() -> WANTestBase.createAsyncEventQueue("lnAsync", false, 100, 100, false, false, null, false));
+    vm4.invoke(
+        () ->
+            WANTestBase.createAsyncEventQueue(
+                "lnAsync", false, 100, 100, false, false, null, false));
+    vm5.invoke(
+        () ->
+            WANTestBase.createAsyncEventQueue(
+                "lnAsync", false, 100, 100, false, false, null, false));
+    vm6.invoke(
+        () ->
+            WANTestBase.createAsyncEventQueue(
+                "lnAsync", false, 100, 100, false, false, null, false));
+    vm7.invoke(
+        () ->
+            WANTestBase.createAsyncEventQueue(
+                "lnAsync", false, 100, 100, false, false, null, false));
 
     startSenderInVMs("ln", vm4, vm5);
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegionWithSenderAndAsyncEventQueue(getTestMethodName() + "_RR", "ln", "lnAsync", isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createReplicatedRegionWithSenderAndAsyncEventQueue(getTestMethodName() + "_RR", "ln", "lnAsync", isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createReplicatedRegionWithSenderAndAsyncEventQueue(getTestMethodName() + "_RR", "ln", "lnAsync", isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createReplicatedRegionWithSenderAndAsyncEventQueue(getTestMethodName() + "_RR", "ln", "lnAsync", isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createReplicatedRegionWithSenderAndAsyncEventQueue(
+                getTestMethodName() + "_RR", "ln", "lnAsync", isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createReplicatedRegionWithSenderAndAsyncEventQueue(
+                getTestMethodName() + "_RR", "ln", "lnAsync", isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createReplicatedRegionWithSenderAndAsyncEventQueue(
+                getTestMethodName() + "_RR", "ln", "lnAsync", isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createReplicatedRegionWithSenderAndAsyncEventQueue(
+                getTestMethodName() + "_RR", "ln", "lnAsync", isOffHeap()));
     // ------------- END - CREATE CACHE, REGION ON LOCAL SITE -------------//
 
     // ------------- START - CREATE CACHE ON REMOTE SITE ---------------//
@@ -1151,31 +1704,42 @@ public class WanValidationsDUnitTest extends WANTestBase {
     vm2.invoke(() -> WANTestBase.createSender("ny", 1, false, 100, 10, false, false, null, true));
     vm3.invoke(() -> WANTestBase.createSender("ny", 1, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createAsyncEventQueue("nyAsync", false, 100, 100, false, false, null, false));
-    vm3.invoke(() -> WANTestBase.createAsyncEventQueue("nyAsync", false, 100, 100, false, false, null, false));
+    vm2.invoke(
+        () ->
+            WANTestBase.createAsyncEventQueue(
+                "nyAsync", false, 100, 100, false, false, null, false));
+    vm3.invoke(
+        () ->
+            WANTestBase.createAsyncEventQueue(
+                "nyAsync", false, 100, 100, false, false, null, false));
 
     startSenderInVMs("ny", vm2, vm3);
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegionWithSenderAndAsyncEventQueue(getTestMethodName() + "_RR", "ny", "nyAsync", isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createReplicatedRegionWithSenderAndAsyncEventQueue(getTestMethodName() + "_RR", "ny", "nyAsync", isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createReplicatedRegionWithSenderAndAsyncEventQueue(
+                getTestMethodName() + "_RR", "ny", "nyAsync", isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createReplicatedRegionWithSenderAndAsyncEventQueue(
+                getTestMethodName() + "_RR", "ny", "nyAsync", isOffHeap()));
 
     // ------------- END - CREATE CACHE, REGION ON REMOTE SITE -------------//
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
 
     // validate AsyncEventListener on local site
-    vm4.invoke(() -> WANTestBase.validateAsyncEventListener("lnAsync", 1000));// primary sender
-    vm5.invoke(() -> WANTestBase.validateAsyncEventListener("lnAsync", 0));// secondary
-    vm6.invoke(() -> WANTestBase.validateAsyncEventListener("lnAsync", 0));// secondary
-    vm7.invoke(() -> WANTestBase.validateAsyncEventListener("lnAsync", 0));// secondary
+    vm4.invoke(() -> WANTestBase.validateAsyncEventListener("lnAsync", 1000)); // primary sender
+    vm5.invoke(() -> WANTestBase.validateAsyncEventListener("lnAsync", 0)); // secondary
+    vm6.invoke(() -> WANTestBase.validateAsyncEventListener("lnAsync", 0)); // secondary
+    vm7.invoke(() -> WANTestBase.validateAsyncEventListener("lnAsync", 0)); // secondary
 
     // validate region size on remote site
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 1000));
     vm3.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 1000));
 
     // validate AsyncEventListener on remote site
-    vm2.invoke(() -> WANTestBase.validateAsyncEventListener("nyAsync", 1000));// primary sender
-    vm3.invoke(() -> WANTestBase.validateAsyncEventListener("nyAsync", 0));// secondary
-
+    vm2.invoke(() -> WANTestBase.validateAsyncEventListener("nyAsync", 1000)); // primary sender
+    vm3.invoke(() -> WANTestBase.validateAsyncEventListener("nyAsync", 0)); // secondary
   }
 }

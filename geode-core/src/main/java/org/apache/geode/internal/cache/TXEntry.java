@@ -28,11 +28,8 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.offheap.annotations.Unretained;
 
 /** ******************* Class Entry ***************************************** */
-
 public class TXEntry implements Region.Entry {
-  /**
-   * 
-   */
+  /** */
   private final LocalRegion localRegion;
 
   protected final KeyInfo keyInfo;
@@ -42,12 +39,9 @@ public class TXEntry implements Region.Entry {
 
   private final TXStateInterface myTX;
 
-  /**
-   * Create an Entry given a key. The returned Entry may or may not be
-   * destroyed
-   */
+  /** Create an Entry given a key. The returned Entry may or may not be destroyed */
   TXEntry(LocalRegion localRegion, KeyInfo key, TXStateInterface tx) {
-    this(localRegion, key, tx, true/*rememberReads*/);
+    this(localRegion, key, tx, true /*rememberReads*/);
   }
 
   TXEntry(LocalRegion localRegion, KeyInfo key, TXStateInterface tx, boolean rememberReads) {
@@ -64,9 +58,12 @@ public class TXEntry implements Region.Entry {
 
   protected void checkTX() {
     // Protect against the case where this instance was handed to a different thread w/ or w/o a transaction
-    // Protect against the case where the transaction associated with this entry is not in progress 
+    // Protect against the case where the transaction associated with this entry is not in progress
     if (!this.myTX.isInProgressAndSameAs(this.localRegion.getTXState())) {
-      throw new IllegalStateException(LocalizedStrings.LocalRegion_REGIONENTRY_WAS_CREATED_WITH_TRANSACTION_THAT_IS_NO_LONGER_ACTIVE.toLocalizedString(this.myTX.getTransactionId()));
+      throw new IllegalStateException(
+          LocalizedStrings
+              .LocalRegion_REGIONENTRY_WAS_CREATED_WITH_TRANSACTION_THAT_IS_NO_LONGER_ACTIVE
+              .toLocalizedString(this.myTX.getTransactionId()));
     }
   }
 
@@ -97,7 +94,9 @@ public class TXEntry implements Region.Entry {
     checkTX();
     //    Object value = this.localRegion.getDeserialized(this.key, false, this.myTX, this.rememberReads);
     @Unretained
-    Object value = this.myTX.getDeserializedValue(keyInfo, this.localRegion, false, false, false, null, false, false);
+    Object value =
+        this.myTX.getDeserializedValue(
+            keyInfo, this.localRegion, false, false, false, null, false, false);
     if (value == null) {
       throw new EntryDestroyedException(this.keyInfo.getKey().toString());
     } else if (Token.isInvalid(value)) {
@@ -117,16 +116,22 @@ public class TXEntry implements Region.Entry {
     checkEntryDestroyed();
     checkTX();
     if (!this.localRegion.statisticsEnabled) {
-      throw new StatisticsDisabledException(LocalizedStrings.LocalRegion_STATISTICS_DISABLED_FOR_REGION_0.toLocalizedString(this.localRegion.getFullPath()));
+      throw new StatisticsDisabledException(
+          LocalizedStrings.LocalRegion_STATISTICS_DISABLED_FOR_REGION_0.toLocalizedString(
+              this.localRegion.getFullPath()));
     }
     // On a TXEntry stats are non-existent so return a dummy impl
     return new CacheStatistics() {
       public long getLastModifiedTime() {
-        return (getRegion() != null) ? ((LocalRegion) getRegion()).cacheTimeMillis() : System.currentTimeMillis();
+        return (getRegion() != null)
+            ? ((LocalRegion) getRegion()).cacheTimeMillis()
+            : System.currentTimeMillis();
       }
 
       public long getLastAccessedTime() {
-        return (getRegion() != null) ? ((LocalRegion) getRegion()).cacheTimeMillis() : System.currentTimeMillis();
+        return (getRegion() != null)
+            ? ((LocalRegion) getRegion()).cacheTimeMillis()
+            : System.currentTimeMillis();
       }
 
       public long getMissCount() {
@@ -141,8 +146,7 @@ public class TXEntry implements Region.Entry {
         return 0;
       }
 
-      public void resetCounts() {
-      }
+      public void resetCounts() {}
     };
   }
 
@@ -175,7 +179,8 @@ public class TXEntry implements Region.Entry {
 
   private void throwIfUAOperationForPR() {
     if (this.localRegion instanceof PartitionedRegion) {
-      throw new UnsupportedOperationException(LocalizedStrings.TXEntry_UA_NOT_SUPPORTED_FOR_PR.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings.TXEntry_UA_NOT_SUPPORTED_FOR_PR.toLocalizedString());
     }
   }
 
@@ -185,7 +190,8 @@ public class TXEntry implements Region.Entry {
       return false;
     }
     TXEntry lre = (TXEntry) obj;
-    return this.keyInfo.getKey().equals(lre.keyInfo.getKey()) && this.getRegion() == lre.getRegion();
+    return this.keyInfo.getKey().equals(lre.keyInfo.getKey())
+        && this.getRegion() == lre.getRegion();
   }
 
   @Override
@@ -224,11 +230,8 @@ public class TXEntry implements Region.Entry {
     }
   }
 
-  /**
-   * @since GemFire 5.0
-   */
+  /** @since GemFire 5.0 */
   public Object setValue(Object arg0) {
     return this.localRegion.put(this.getKey(), arg0);
   }
-
 }

@@ -33,10 +33,7 @@ import org.apache.geode.cache.execute.FunctionContext;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class FetchRegionAttributesFunction extends FunctionAdapter {
   private static final Logger logger = LogService.getLogger();
 
@@ -56,7 +53,8 @@ public class FetchRegionAttributesFunction extends FunctionAdapter {
     try {
       String regionPath = (String) context.getArguments();
       if (regionPath == null) {
-        throw new IllegalArgumentException(CliStrings.CREATE_REGION__MSG__SPECIFY_VALID_REGION_PATH);
+        throw new IllegalArgumentException(
+            CliStrings.CREATE_REGION__MSG__SPECIFY_VALID_REGION_PATH);
       }
       FetchRegionAttributesFunctionResult<?, ?> result = getRegionAttributes(regionPath);
       context.getResultSender().lastResult(result);
@@ -69,18 +67,23 @@ public class FetchRegionAttributesFunction extends FunctionAdapter {
   }
 
   @SuppressWarnings("deprecation")
-  public static <K, V> FetchRegionAttributesFunctionResult<K, V> getRegionAttributes(String regionPath) {
+  public static <K, V> FetchRegionAttributesFunctionResult<K, V> getRegionAttributes(
+      String regionPath) {
     Cache cache = CacheFactory.getAnyInstance();
     Region<K, V> foundRegion = cache.getRegion(regionPath);
 
     if (foundRegion == null) {
-      throw new IllegalArgumentException(CliStrings.format(CliStrings.CREATE_REGION__MSG__SPECIFY_VALID_REGION_PATH_FOR_0_REGIONPATH_1_NOT_FOUND, new Object[] { CliStrings.CREATE_REGION__USEATTRIBUTESFROM, regionPath }));
+      throw new IllegalArgumentException(
+          CliStrings.format(
+              CliStrings.CREATE_REGION__MSG__SPECIFY_VALID_REGION_PATH_FOR_0_REGIONPATH_1_NOT_FOUND,
+              new Object[] {CliStrings.CREATE_REGION__USEATTRIBUTESFROM, regionPath}));
     }
 
-    // Using AttributesFactory to get the serializable RegionAttributes 
+    // Using AttributesFactory to get the serializable RegionAttributes
     // Is there a better way?
     AttributesFactory<K, V> afactory = new AttributesFactory<K, V>(foundRegion.getAttributes());
-    FetchRegionAttributesFunctionResult<K, V> result = new FetchRegionAttributesFunctionResult<K, V>(afactory);
+    FetchRegionAttributesFunctionResult<K, V> result =
+        new FetchRegionAttributesFunctionResult<K, V>(afactory);
     return result;
   }
 

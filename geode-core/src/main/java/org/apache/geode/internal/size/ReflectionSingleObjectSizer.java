@@ -25,17 +25,15 @@ import org.apache.geode.internal.SharedLibrary;
 import org.apache.geode.pdx.internal.unsafe.UnsafeWrapper;
 
 /**
- * Figure out the size of an object using reflection. This class
- * does not follow any object references, it just calculates the size
- * of a flat object.
- * 
- *
+ * Figure out the size of an object using reflection. This class does not follow any object
+ * references, it just calculates the size of a flat object.
  */
 public class ReflectionSingleObjectSizer implements SingleObjectSizer {
   public static final int REFERENCE_SIZE = SharedLibrary.getReferenceSize();
   public static final int OBJECT_SIZE = SharedLibrary.getObjectHeaderSize();
 
   private static final UnsafeWrapper unsafe;
+
   static {
     UnsafeWrapper tmp = null;
     try {
@@ -88,9 +86,8 @@ public class ReflectionSingleObjectSizer implements SingleObjectSizer {
   }
 
   /**
-   * Since unsafe.fieldOffset(Field) will give us the offset to the first byte
-   * of that field all we need to do is find which of the non-static declared
-   * fields has the greatest offset.
+   * Since unsafe.fieldOffset(Field) will give us the offset to the first byte of that field all we
+   * need to do is find which of the non-static declared fields has the greatest offset.
    */
   public static long sizeof(Class clazz, boolean roundResult) {
     Assert.assertTrue(!clazz.isArray());
@@ -157,26 +154,15 @@ public class ReflectionSingleObjectSizer implements SingleObjectSizer {
 
   private static int sizeType(Class<?> t) {
 
-    if (t == Boolean.TYPE)
-      return 1;
-    else if (t == Byte.TYPE)
-      return 1;
-    else if (t == Character.TYPE)
-      return 2;
-    else if (t == Short.TYPE)
-      return 2;
-    else if (t == Integer.TYPE)
-      return 4;
-    else if (t == Long.TYPE)
-      return 8;
-    else if (t == Float.TYPE)
-      return 4;
-    else if (t == Double.TYPE)
-      return 8;
-    else if (t == Void.TYPE)
-      return 0;
-    else
-      return REFERENCE_SIZE;
+    if (t == Boolean.TYPE) return 1;
+    else if (t == Byte.TYPE) return 1;
+    else if (t == Character.TYPE) return 2;
+    else if (t == Short.TYPE) return 2;
+    else if (t == Integer.TYPE) return 4;
+    else if (t == Long.TYPE) return 8;
+    else if (t == Float.TYPE) return 4;
+    else if (t == Double.TYPE) return 8;
+    else if (t == Void.TYPE) return 0;
+    else return REFERENCE_SIZE;
   }
-
 }

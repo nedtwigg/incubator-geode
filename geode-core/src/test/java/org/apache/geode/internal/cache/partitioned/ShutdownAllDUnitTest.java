@@ -61,15 +61,15 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * Tests the basic use cases for PR persistence.
- */
+/** Tests the basic use cases for PR persistence. */
 @Category(DistributedTest.class)
 public class ShutdownAllDUnitTest extends JUnit4CacheTestCase {
 
   private static HangingCacheListener listener;
 
-  private static final String expectedExceptions = InternalGemFireError.class.getName() + "||ShutdownAllRequest: disconnect distributed without response";
+  private static final String expectedExceptions =
+      InternalGemFireError.class.getName()
+          + "||ShutdownAllRequest: disconnect distributed without response";
 
   private static final int MAX_WAIT = 600 * 1000;
 
@@ -133,20 +133,22 @@ public class ShutdownAllDUnitTest extends JUnit4CacheTestCase {
     createData(vm0, 0, numBuckets, "a", "region");
 
     vm0.invoke(addExceptionTag1(expectedExceptions));
-    Invoke.invokeInEveryVM(new SerializableRunnable("set TestInternalGemFireError") {
-      public void run() {
-        System.setProperty("TestInternalGemFireError", "true");
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("set TestInternalGemFireError") {
+          public void run() {
+            System.setProperty("TestInternalGemFireError", "true");
+          }
+        });
     shutDownAllMembers(vm0, 1);
 
     assertTrue(InternalDistributedSystem.getExistingSystems().isEmpty());
 
-    Invoke.invokeInEveryVM(new SerializableRunnable("reset TestInternalGemFireError") {
-      public void run() {
-        System.setProperty("TestInternalGemFireError", "false");
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("reset TestInternalGemFireError") {
+          public void run() {
+            System.setProperty("TestInternalGemFireError", "false");
+          }
+        });
     vm0.invoke(removeExceptionTag1(expectedExceptions));
   }
 
@@ -170,20 +172,22 @@ public class ShutdownAllDUnitTest extends JUnit4CacheTestCase {
 
     vm0.invoke(addExceptionTag1(expectedExceptions));
     vm1.invoke(addExceptionTag1(expectedExceptions));
-    Invoke.invokeInEveryVM(new SerializableRunnable("set TestInternalGemFireError") {
-      public void run() {
-        System.setProperty("TestInternalGemFireError", "true");
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("set TestInternalGemFireError") {
+          public void run() {
+            System.setProperty("TestInternalGemFireError", "true");
+          }
+        });
     shutDownAllMembers(vm2, 0);
 
     assertTrue(InternalDistributedSystem.getExistingSystems().isEmpty());
 
-    Invoke.invokeInEveryVM(new SerializableRunnable("reset TestInternalGemFireError") {
-      public void run() {
-        System.setProperty("TestInternalGemFireError", "false");
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("reset TestInternalGemFireError") {
+          public void run() {
+            System.setProperty("TestInternalGemFireError", "false");
+          }
+        });
     vm0.invoke(removeExceptionTag1(expectedExceptions));
     vm1.invoke(removeExceptionTag1(expectedExceptions));
   }
@@ -290,7 +294,7 @@ public class ShutdownAllDUnitTest extends JUnit4CacheTestCase {
 
     AsyncInvocation a0 = createRegionAsync(vm0, "region", "disk", true, 1);
     //[dsmith] Make sure that vm0 is waiting for vm1 to recover
-    //If VM(0) recovers early, that is a problem, because we 
+    //If VM(0) recovers early, that is a problem, because we
     //are no longer doing a clean recovery.
     Thread.sleep(500);
     assertTrue(a0.isAlive());
@@ -340,7 +344,7 @@ public class ShutdownAllDUnitTest extends JUnit4CacheTestCase {
 
     AsyncInvocation a0 = createRegionAsync(vm0, "region", "disk", true, 1);
     //[dsmith] Make sure that vm0 is waiting for vm1 to recover
-    //If VM(0) recovers early, that is a problem, because we 
+    //If VM(0) recovers early, that is a problem, because we
     //are no longer doing a clean recovery.
     Thread.sleep(500);
     assertTrue(a0.isAlive());
@@ -367,18 +371,18 @@ public class ShutdownAllDUnitTest extends JUnit4CacheTestCase {
     VM vm2 = host.getVM(2);
     createRegion(vm0, "region", null, true, 1);
     createRegion(vm1, "region", "disk", true, 1);
-    
+
     createData(vm0, 0, 1, "a", "region");
-    
+
     shutDownAllMembers(vm2, 2);
-  
+
     // restart vms, and let vm0 to do GII from vm0
     createRegion(vm1, "region", "disk", true, 1);
     createRegion(vm0, "region", null, true, 1);
-    
+
     checkData(vm0, 0, 1, "a", "region");
     checkData(vm1, 0, 1, "a", "region");
-    
+
     checkPRRecoveredFromDisk(vm1, "region", 0, true);
     checkPRRecoveredFromDisk(vm0, "region", 0, false);
   }
@@ -444,18 +448,20 @@ public class ShutdownAllDUnitTest extends JUnit4CacheTestCase {
 
     //Add a cache listener that will cause the system to hang up.
     //Then do some puts to get us stuck in a put.
-    AsyncInvocation async1 = vm0.invokeAsync(new SerializableRunnable() {
-      public void run() {
-        Region<Object, Object> region = getCache().getRegion("region");
-        listener = new HangingCacheListener();
-        region.getAttributesMutator().addCacheListener(listener);
+    AsyncInvocation async1 =
+        vm0.invokeAsync(
+            new SerializableRunnable() {
+              public void run() {
+                Region<Object, Object> region = getCache().getRegion("region");
+                listener = new HangingCacheListener();
+                region.getAttributesMutator().addCacheListener(listener);
 
-        //get us stuck doing a put.
-        for (int i = 0; i < numBuckets; i++) {
-          region.put(i, "a");
-        }
-      }
-    });
+                //get us stuck doing a put.
+                for (int i = 0; i < numBuckets; i++) {
+                  region.put(i, "a");
+                }
+              }
+            });
 
     //Make sure the we do get stuck
     async1.join(1000);
@@ -472,12 +478,13 @@ public class ShutdownAllDUnitTest extends JUnit4CacheTestCase {
     assertTrue(end - start > TimeUnit.MILLISECONDS.toNanos(1500));
 
     //clean up our stuck thread
-    vm0.invoke(new SerializableRunnable() {
-      public void run() {
-        listener.latch.countDown();
-        listener = null;
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            listener.latch.countDown();
+            listener = null;
+          }
+        });
 
     //wait for shutdown to finish
     Wait.pause(10000);
@@ -513,8 +520,8 @@ public class ShutdownAllDUnitTest extends JUnit4CacheTestCase {
   //  }
 
   /**
-   * Test for 43551. Do a shutdown all with some
-   * members waiting on recovery.
+   * Test for 43551. Do a shutdown all with some members waiting on recovery.
+   *
    * @throws Throwable
    */
   @Test
@@ -581,69 +588,80 @@ public class ShutdownAllDUnitTest extends JUnit4CacheTestCase {
   // test create a new bucket by put async
 
   private void shutDownAllMembers(VM vm, final int expnum) {
-    vm.invoke(new SerializableRunnable("Shutdown all the members") {
+    vm.invoke(
+        new SerializableRunnable("Shutdown all the members") {
 
-      public void run() {
-        DistributedSystemConfig config;
-        AdminDistributedSystemImpl adminDS = null;
-        try {
-          config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
-          adminDS = (AdminDistributedSystemImpl) AdminDistributedSystemFactory.getDistributedSystem(config);
-          adminDS.connect();
-          Set members = adminDS.shutDownAllMembers();
-          int num = members == null ? 0 : members.size();
-          assertEquals(expnum, num);
-        } catch (AdminException e) {
-          throw new RuntimeException(e);
-        } finally {
-          if (adminDS != null) {
-            adminDS.disconnect();
+          public void run() {
+            DistributedSystemConfig config;
+            AdminDistributedSystemImpl adminDS = null;
+            try {
+              config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
+              adminDS =
+                  (AdminDistributedSystemImpl)
+                      AdminDistributedSystemFactory.getDistributedSystem(config);
+              adminDS.connect();
+              Set members = adminDS.shutDownAllMembers();
+              int num = members == null ? 0 : members.size();
+              assertEquals(expnum, num);
+            } catch (AdminException e) {
+              throw new RuntimeException(e);
+            } finally {
+              if (adminDS != null) {
+                adminDS.disconnect();
+              }
+            }
           }
-        }
-      }
-    });
+        });
 
     // clean up for this vm
     System.setProperty("TestInternalGemFireError", "false");
   }
 
-  private SerializableRunnable getCreateDRRunnable(final String regionName, final String diskStoreName) {
-    SerializableRunnable createDR = new SerializableRunnable("create DR") {
-      Cache cache;
+  private SerializableRunnable getCreateDRRunnable(
+      final String regionName, final String diskStoreName) {
+    SerializableRunnable createDR =
+        new SerializableRunnable("create DR") {
+          Cache cache;
 
-      public void run() {
-        cache = getCache();
+          public void run() {
+            cache = getCache();
 
-        DiskStore ds = cache.findDiskStore(diskStoreName);
-        if (ds == null) {
-          ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create(diskStoreName);
-        }
-        AttributesFactory af = new AttributesFactory();
-        af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+            DiskStore ds = cache.findDiskStore(diskStoreName);
+            if (ds == null) {
+              ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create(diskStoreName);
+            }
+            AttributesFactory af = new AttributesFactory();
+            af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
 
-        af.setDiskStoreName(diskStoreName);
-        cache.createRegion(regionName, af.create());
-      }
-    };
+            af.setDiskStoreName(diskStoreName);
+            cache.createRegion(regionName, af.create());
+          }
+        };
     return createDR;
   }
 
   protected void addCacheServer(VM vm, final int port) {
-    vm.invoke(new SerializableRunnable("add Cache Server") {
-      public void run() {
-        Cache cache = getCache();
-        CacheServer cs = cache.addCacheServer();
-        cs.setPort(port);
-        try {
-          cs.start();
-        } catch (IOException e) {
-          System.out.println("Received expected " + e.getMessage());
-        }
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable("add Cache Server") {
+          public void run() {
+            Cache cache = getCache();
+            CacheServer cs = cache.addCacheServer();
+            cs.setPort(port);
+            try {
+              cs.start();
+            } catch (IOException e) {
+              System.out.println("Received expected " + e.getMessage());
+            }
+          }
+        });
   }
 
-  protected void createRegion(VM vm, final String regionName, final String diskStoreName, final boolean isPR, final int redundancy) {
+  protected void createRegion(
+      VM vm,
+      final String regionName,
+      final String diskStoreName,
+      final boolean isPR,
+      final int redundancy) {
     if (isPR) {
       SerializableRunnable createPR = getCreatePRRunnable(regionName, diskStoreName, redundancy);
       vm.invoke(createPR);
@@ -653,7 +671,12 @@ public class ShutdownAllDUnitTest extends JUnit4CacheTestCase {
     }
   }
 
-  protected AsyncInvocation createRegionAsync(VM vm, final String regionName, final String diskStoreName, final boolean isPR, final int redundancy) {
+  protected AsyncInvocation createRegionAsync(
+      VM vm,
+      final String regionName,
+      final String diskStoreName,
+      final boolean isPR,
+      final int redundancy) {
     if (isPR) {
       SerializableRunnable createPR = getCreatePRRunnable(regionName, diskStoreName, redundancy);
       return vm.invokeAsync(createPR);
@@ -663,158 +686,174 @@ public class ShutdownAllDUnitTest extends JUnit4CacheTestCase {
     }
   }
 
-  private SerializableRunnable getCreatePRRunnable(final String regionName, final String diskStoreName, final int redundancy) {
-    SerializableRunnable createPR = new SerializableRunnable("create pr") {
+  private SerializableRunnable getCreatePRRunnable(
+      final String regionName, final String diskStoreName, final int redundancy) {
+    SerializableRunnable createPR =
+        new SerializableRunnable("create pr") {
 
-      public void run() {
-        final CountDownLatch recoveryDone;
-        if (redundancy > 0) {
-          recoveryDone = new CountDownLatch(1);
+          public void run() {
+            final CountDownLatch recoveryDone;
+            if (redundancy > 0) {
+              recoveryDone = new CountDownLatch(1);
 
-          ResourceObserver observer = new InternalResourceManager.ResourceObserverAdapter() {
-            @Override
-            public void recoveryFinished(Region region) {
-              recoveryDone.countDown();
+              ResourceObserver observer =
+                  new InternalResourceManager.ResourceObserverAdapter() {
+                    @Override
+                    public void recoveryFinished(Region region) {
+                      recoveryDone.countDown();
+                    }
+                  };
+              InternalResourceManager.setResourceObserver(observer);
+            } else {
+              recoveryDone = null;
             }
-          };
-          InternalResourceManager.setResourceObserver(observer);
-        } else {
-          recoveryDone = null;
-        }
 
-        Cache cache = getCache();
+            Cache cache = getCache();
 
-        if (diskStoreName != null) {
-          DiskStore ds = cache.findDiskStore(diskStoreName);
-          if (ds == null) {
-            ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create(diskStoreName);
+            if (diskStoreName != null) {
+              DiskStore ds = cache.findDiskStore(diskStoreName);
+              if (ds == null) {
+                ds =
+                    cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create(diskStoreName);
+              }
+            }
+            AttributesFactory af = new AttributesFactory();
+            af.setDiskSynchronous(false); // use async to trigger flush
+            af.setEvictionAttributes(
+                EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(redundancy);
+            af.setPartitionAttributes(paf.create());
+            if (diskStoreName != null) {
+              af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+              af.setDiskStoreName(diskStoreName);
+            } else {
+              af.setDataPolicy(DataPolicy.PARTITION);
+            }
+            cache.createRegion(regionName, af.create());
+            if (recoveryDone != null) {
+              try {
+                recoveryDone.await();
+              } catch (InterruptedException e) {
+                Assert.fail("Interrupted", e);
+              }
+            }
           }
-        }
-        AttributesFactory af = new AttributesFactory();
-        af.setDiskSynchronous(false); // use async to trigger flush
-        af.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(100, EvictionAction.OVERFLOW_TO_DISK));
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(redundancy);
-        af.setPartitionAttributes(paf.create());
-        if (diskStoreName != null) {
-          af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-          af.setDiskStoreName(diskStoreName);
-        } else {
-          af.setDataPolicy(DataPolicy.PARTITION);
-        }
-        cache.createRegion(regionName, af.create());
-        if (recoveryDone != null) {
-          try {
-            recoveryDone.await();
-          } catch (InterruptedException e) {
-            Assert.fail("Interrupted", e);
-          }
-        }
-      }
-    };
+        };
     return createPR;
   }
 
-  protected void createData(VM vm, final int startKey, final int endKey, final String value, final String regionName) {
-    SerializableRunnable createData = new SerializableRunnable() {
+  protected void createData(
+      VM vm, final int startKey, final int endKey, final String value, final String regionName) {
+    SerializableRunnable createData =
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(regionName);
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(regionName);
 
-        for (int i = startKey; i < endKey; i++) {
-          region.put(i, value);
-        }
-      }
-    };
+            for (int i = startKey; i < endKey; i++) {
+              region.put(i, value);
+            }
+          }
+        };
     vm.invoke(createData);
   }
 
   protected Set<Integer> getBucketList(VM vm, final String regionName) {
-    SerializableCallable getBuckets = new SerializableCallable("get buckets") {
+    SerializableCallable getBuckets =
+        new SerializableCallable("get buckets") {
 
-      public Object call() throws Exception {
-        Cache cache = getCache();
-        Region region = cache.getRegion(regionName);
-        if (region instanceof PartitionedRegion) {
-          PartitionedRegion pr = (PartitionedRegion) region;
-          return new TreeSet<Integer>(pr.getDataStore().getAllLocalBucketIds());
-        } else {
-          return null;
-        }
-      }
-    };
+          public Object call() throws Exception {
+            Cache cache = getCache();
+            Region region = cache.getRegion(regionName);
+            if (region instanceof PartitionedRegion) {
+              PartitionedRegion pr = (PartitionedRegion) region;
+              return new TreeSet<Integer>(pr.getDataStore().getAllLocalBucketIds());
+            } else {
+              return null;
+            }
+          }
+        };
 
     return (Set<Integer>) vm.invoke(getBuckets);
   }
 
-  protected void checkData(VM vm, final int startKey, final int endKey, final String value, final String regionName) {
-    SerializableRunnable checkData = new SerializableRunnable() {
+  protected void checkData(
+      VM vm, final int startKey, final int endKey, final String value, final String regionName) {
+    SerializableRunnable checkData =
+        new SerializableRunnable() {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(regionName);
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(regionName);
 
-        for (int i = startKey; i < endKey; i++) {
-          assertEquals(value, region.get(i));
-        }
-      }
-    };
+            for (int i = startKey; i < endKey; i++) {
+              assertEquals(value, region.get(i));
+            }
+          }
+        };
 
     vm.invoke(checkData);
   }
 
-  protected void checkPRRecoveredFromDisk(VM vm, final String regionName, final int bucketId, final boolean recoveredLocally) {
-    vm.invoke(new SerializableRunnable("check PR recovered from disk") {
-      public void run() {
-        Cache cache = getCache();
-        PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
-        DiskRegion disk = region.getRegionAdvisor().getBucket(bucketId).getDiskRegion();
-        if (recoveredLocally) {
-          assertEquals(0, disk.getStats().getRemoteInitializations());
-          assertEquals(1, disk.getStats().getLocalInitializations());
-        } else {
-          assertEquals(1, disk.getStats().getRemoteInitializations());
-          assertEquals(0, disk.getStats().getLocalInitializations());
-        }
-      }
-    });
+  protected void checkPRRecoveredFromDisk(
+      VM vm, final String regionName, final int bucketId, final boolean recoveredLocally) {
+    vm.invoke(
+        new SerializableRunnable("check PR recovered from disk") {
+          public void run() {
+            Cache cache = getCache();
+            PartitionedRegion region = (PartitionedRegion) cache.getRegion(regionName);
+            DiskRegion disk = region.getRegionAdvisor().getBucket(bucketId).getDiskRegion();
+            if (recoveredLocally) {
+              assertEquals(0, disk.getStats().getRemoteInitializations());
+              assertEquals(1, disk.getStats().getLocalInitializations());
+            } else {
+              assertEquals(1, disk.getStats().getRemoteInitializations());
+              assertEquals(0, disk.getStats().getLocalInitializations());
+            }
+          }
+        });
   }
 
   protected void closeRegion(VM vm, final String regionName) {
-    SerializableRunnable close = new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(regionName);
-        region.close();
-      }
-    };
+    SerializableRunnable close =
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(regionName);
+            region.close();
+          }
+        };
 
     vm.invoke(close);
   }
 
   private void shutDownAllMembers(VM vm, final int expnum, final long timeout) {
-    vm.invoke(new SerializableRunnable("Shutdown all the members") {
+    vm.invoke(
+        new SerializableRunnable("Shutdown all the members") {
 
-      public void run() {
-        DistributedSystemConfig config;
-        AdminDistributedSystemImpl adminDS = null;
-        try {
-          config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
-          adminDS = (AdminDistributedSystemImpl) AdminDistributedSystemFactory.getDistributedSystem(config);
-          adminDS.connect();
-          Set members = adminDS.shutDownAllMembers(timeout);
-          int num = members == null ? 0 : members.size();
-          assertEquals(expnum, num);
-        } catch (AdminException e) {
-          throw new RuntimeException(e);
-        } finally {
-          if (adminDS != null) {
-            adminDS.disconnect();
+          public void run() {
+            DistributedSystemConfig config;
+            AdminDistributedSystemImpl adminDS = null;
+            try {
+              config = AdminDistributedSystemFactory.defineDistributedSystem(getSystem(), "");
+              adminDS =
+                  (AdminDistributedSystemImpl)
+                      AdminDistributedSystemFactory.getDistributedSystem(config);
+              adminDS.connect();
+              Set members = adminDS.shutDownAllMembers(timeout);
+              int num = members == null ? 0 : members.size();
+              assertEquals(expnum, num);
+            } catch (AdminException e) {
+              throw new RuntimeException(e);
+            } finally {
+              if (adminDS != null) {
+                adminDS.disconnect();
+              }
+            }
           }
-        }
-      }
-    });
+        });
   }
 
   private static class HangingCacheListener extends CacheListenerAdapter {

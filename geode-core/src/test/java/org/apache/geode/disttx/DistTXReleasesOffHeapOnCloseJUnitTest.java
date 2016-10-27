@@ -33,11 +33,10 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
  * Same tests as that of {@link TxReleasesOffHeapOnCloseJUnitTest} after setting
  * "distributed-transactions" property to true
  */
-@Category({ IntegrationTest.class, DistributedTransactionsTest.class })
+@Category({IntegrationTest.class, DistributedTransactionsTest.class})
 public class DistTXReleasesOffHeapOnCloseJUnitTest extends TxReleasesOffHeapOnCloseJUnitTest {
 
-  public DistTXReleasesOffHeapOnCloseJUnitTest() {
-  }
+  public DistTXReleasesOffHeapOnCloseJUnitTest() {}
 
   @Override
   protected void createCache() {
@@ -50,5 +49,4 @@ public class DistTXReleasesOffHeapOnCloseJUnitTest extends TxReleasesOffHeapOnCl
     CacheTransactionManager txmgr = cache.getCacheTransactionManager();
     assert (txmgr.isDistributed());
   }
-
 }

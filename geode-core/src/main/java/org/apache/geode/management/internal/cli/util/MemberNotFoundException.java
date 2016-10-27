@@ -20,9 +20,9 @@ package org.apache.geode.management.internal.cli.util;
 import org.apache.geode.GemFireException;
 
 /**
- * The MemberNotFoundException is a GemFirException indicating that a member by name could not be found in the GemFire
- * distributed system.
- * </p>
+ * The MemberNotFoundException is a GemFirException indicating that a member by name could not be
+ * found in the GemFire distributed system.
+ *
  * @see org.apache.geode.GemFireException
  * @since GemFire 7.0
  */
@@ -30,8 +30,7 @@ import org.apache.geode.GemFireException;
 @SuppressWarnings("unused")
 public class MemberNotFoundException extends GemFireException {
 
-  public MemberNotFoundException() {
-  }
+  public MemberNotFoundException() {}
 
   public MemberNotFoundException(final String message) {
     super(message);
@@ -44,5 +43,4 @@ public class MemberNotFoundException extends GemFireException {
   public MemberNotFoundException(final String message, final Throwable cause) {
     super(message, cause);
   }
-
 }

@@ -19,48 +19,34 @@ package org.apache.geode.internal.statistics;
 import java.io.File;
 
 /**
- * Defines the contract enabling the {@link StatArchiveHandler} to retrieve
- * configuration details (some of which may change at runtime).
- * <p/>
- * Implemented by {@link HostStatSampler}.
-
+ * Defines the contract enabling the {@link StatArchiveHandler} to retrieve configuration details
+ * (some of which may change at runtime).
+ *
+ * <p>Implemented by {@link HostStatSampler}.
+ *
  * @since GemFire 7.0
  * @see org.apache.geode.distributed.internal.RuntimeDistributionConfigImpl
  */
 public interface StatArchiveHandlerConfig {
 
-  /**
-   * Gets the name of the archive file.
-   */
+  /** Gets the name of the archive file. */
   public File getArchiveFileName();
 
-  /**
-   * Gets the archive size limit in bytes.
-   */
+  /** Gets the archive size limit in bytes. */
   public long getArchiveFileSizeLimit();
 
-  /**
-   * Gets the archive disk space limit in bytes.
-   */
+  /** Gets the archive disk space limit in bytes. */
   public long getArchiveDiskSpaceLimit();
 
-  /**
-   * Returns a unique id for the sampler's system.
-   */
+  /** Returns a unique id for the sampler's system. */
   public long getSystemId();
 
-  /**
-   * Returns the time this sampler's system was started.
-   */
+  /** Returns the time this sampler's system was started. */
   public long getSystemStartTime();
 
-  /**
-   * Returns the path to this sampler's system directory; if it has one.
-   */
+  /** Returns the path to this sampler's system directory; if it has one. */
   public String getSystemDirectoryPath();
 
-  /**
-   * Returns a description of the product that the stats are on
-   */
+  /** Returns a description of the product that the stats are on */
   public String getProductDescription();
 }

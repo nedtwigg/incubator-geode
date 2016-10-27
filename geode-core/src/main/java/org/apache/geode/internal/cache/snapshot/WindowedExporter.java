@@ -49,21 +49,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.apache.geode.distributed.internal.InternalDistributedSystem.getLoggerI18n;
 
 /**
- * Exports snapshot data using a sliding window to prevent the nodes in a 
- * partitioned region from overrunning the exporter.  When a {@link SnapshotPacket}
- * is written to the {@link ExportSink}, an ACK is sent back to the source
- * node.  The source node will continue to send data until it runs out of permits;
- * it must then wait for ACK's to resume.
- * 
+ * Exports snapshot data using a sliding window to prevent the nodes in a partitioned region from
+ * overrunning the exporter. When a {@link SnapshotPacket} is written to the {@link ExportSink}, an
+ * ACK is sent back to the source node. The source node will continue to send data until it runs out
+ * of permits; it must then wait for ACK's to resume.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
 public class WindowedExporter<K, V> implements Exporter<K, V> {
-  private static final int WINDOW_SIZE = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "WindowedExporter.WINDOW_SIZE", 10);
+  private static final int WINDOW_SIZE =
+      Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "WindowedExporter.WINDOW_SIZE", 10);
 
   @Override
-  public long export(Region<K, V> region, ExportSink sink, SnapshotOptions<K, V> options) throws IOException {
+  public long export(Region<K, V> region, ExportSink sink, SnapshotOptions<K, V> options)
+      throws IOException {
     long count = 0;
     boolean error = true;
     LocalRegion local = RegionSnapshotServiceImpl.getLocalRegion(region);
@@ -75,10 +75,12 @@ public class WindowedExporter<K, V> implements Exporter<K, V> {
     WindowedExportCollector results = new WindowedExportCollector(local, last);
     try {
       // Since the ExportCollector already is a LocalResultsCollector it's ok not
-      // to keep the reference to the ResultsCollector returned from execute().  
-      // Normally discarding the reference can cause issues if GC causes the 
+      // to keep the reference to the ResultsCollector returned from execute().
+      // Normally discarding the reference can cause issues if GC causes the
       // weak ref in ProcessorKeeper21 to be collected!!
-      InternalExecution exec = (InternalExecution) FunctionService.onRegion(region).withArgs(args).withCollector(results);
+      InternalExecution exec =
+          (InternalExecution)
+              FunctionService.onRegion(region).withArgs(args).withCollector(results);
 
       // Ensure that our collector gets all exceptions so we can shut down the
       // queue properly.
@@ -141,14 +143,12 @@ public class WindowedExporter<K, V> implements Exporter<K, V> {
   }
 
   /**
-   * Gathers the local data on the region and sends it back to the
-   * {@link ResultCollector} in serialized form as {@link SnapshotPacket}s.  Uses
-   * a sliding window provided by the {@link FlowController} to avoid over-running
-   * the exporting member.
-   * 
+   * Gathers the local data on the region and sends it back to the {@link ResultCollector} in
+   * serialized form as {@link SnapshotPacket}s. Uses a sliding window provided by the {@link
+   * FlowController} to avoid over-running the exporting member.
+   *
    * @param <K> the key type
    * @param <V> the value type
-   * 
    * @see FlowController
    */
   private static class WindowedExportFunction<K, V> implements Function {
@@ -183,7 +183,9 @@ public class WindowedExporter<K, V> implements Exporter<K, V> {
         int bufferSize = 0;
         List<SnapshotRecord> buffer = new ArrayList<SnapshotRecord>();
         DistributedMember me = region.getCache().getDistributedSystem().getDistributedMember();
-        for (Iterator<Entry<K, V>> iter = region.entrySet().iterator(); iter.hasNext() && !window.isAborted();) {
+        for (Iterator<Entry<K, V>> iter = region.entrySet().iterator();
+            iter.hasNext() && !window.isAborted();
+            ) {
           Entry<K, V> entry = iter.next();
           try {
             SnapshotOptions<K, V> options = args.getOptions();
@@ -237,11 +239,9 @@ public class WindowedExporter<K, V> implements Exporter<K, V> {
     }
   }
 
-  /**
-   * Collects export results and places them in a queue for processing by the
-   * function invoker.
-   */
-  private static class WindowedExportCollector implements LocalResultCollector<Object, BlockingQueue<SnapshotPacket>> {
+  /** Collects export results and places them in a queue for processing by the function invoker. */
+  private static class WindowedExportCollector
+      implements LocalResultCollector<Object, BlockingQueue<SnapshotPacket>> {
     /** the region being exported */
     private final LocalRegion region;
 
@@ -280,12 +280,14 @@ public class WindowedExporter<K, V> implements Exporter<K, V> {
     }
 
     @Override
-    public BlockingQueue<SnapshotPacket> getResult(long timeout, TimeUnit unit) throws FunctionException, InterruptedException {
+    public BlockingQueue<SnapshotPacket> getResult(long timeout, TimeUnit unit)
+        throws FunctionException, InterruptedException {
       return getResult();
     }
 
     /**
      * Returns an exception that occurred during function exception.
+     *
      * @return the exception, or null
      */
     public FunctionException getException() {
@@ -293,14 +295,13 @@ public class WindowedExporter<K, V> implements Exporter<K, V> {
     }
 
     /**
-     * Aborts any further collection of results and forwards the cancellation to 
-     * the members involved in the export.
+     * Aborts any further collection of results and forwards the cancellation to the members
+     * involved in the export.
      */
     public void abort() {
       try {
         if (done.compareAndSet(false, true)) {
-          if (getLoggerI18n().fineEnabled())
-            getLoggerI18n().fine("SNP: Aborting export of region");
+          if (getLoggerI18n().fineEnabled()) getLoggerI18n().fine("SNP: Aborting export of region");
 
           entries.clear();
           entries.put(end);
@@ -315,7 +316,12 @@ public class WindowedExporter<K, V> implements Exporter<K, V> {
     }
 
     public void ack(SnapshotPacket packet) {
-      FlowController.getInstance().sendAck(region.getDistributionManager(), packet.getSender(), packet.getWindowId(), packet.getPacketId());
+      FlowController.getInstance()
+          .sendAck(
+              region.getDistributionManager(),
+              packet.getSender(),
+              packet.getWindowId(),
+              packet.getPacketId());
     }
 
     @Override
@@ -352,7 +358,8 @@ public class WindowedExporter<K, V> implements Exporter<K, V> {
       try {
         if (done.compareAndSet(false, true)) {
           if (getLoggerI18n().fineEnabled())
-            getLoggerI18n().fine("SNP: All results received for export of region " + region.getName());
+            getLoggerI18n()
+                .fine("SNP: All results received for export of region " + region.getName());
 
           entries.put(end);
         }
@@ -370,7 +377,8 @@ public class WindowedExporter<K, V> implements Exporter<K, V> {
 
     @Override
     public void setException(Throwable ex) {
-      exception = (ex instanceof FunctionException) ? (FunctionException) ex : new FunctionException(ex);
+      exception =
+          (ex instanceof FunctionException) ? (FunctionException) ex : new FunctionException(ex);
     }
 
     @Override

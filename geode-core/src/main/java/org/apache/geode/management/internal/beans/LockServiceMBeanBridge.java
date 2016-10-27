@@ -26,31 +26,21 @@ import org.apache.geode.distributed.internal.locks.DLockService;
 import org.apache.geode.distributed.internal.locks.DLockToken;
 import org.apache.geode.management.internal.ManagementConstants;
 
-/**
- * This class acts as a Bridge between JMX layer and GemFire layer
- * 
- * 
- */
+/** This class acts as a Bridge between JMX layer and GemFire layer */
 public class LockServiceMBeanBridge {
 
   private DLockService lockService;
 
   public LockServiceMBeanBridge(DLockService lockService) {
     this.lockService = lockService;
-
   }
 
-  /** Operations **/
+  /** Operations * */
   public void becomeLockGrantor() {
     lockService.becomeLockGrantor();
-
   }
 
-  /**
-   * 
-   * @return currently held lock by this lock Service
-   */
-
+  /** @return currently held lock by this lock Service */
   public String[] listHeldLocks() {
     Map<Object, DLockToken> tokenMap = lockService.snapshotService();
     Iterator<Object> it = tokenMap.keySet().iterator();
@@ -74,8 +64,7 @@ public class LockServiceMBeanBridge {
     return ManagementConstants.NO_DATA_STRING;
   }
 
-  /** Config Data **/
-
+  /** Config Data * */
   public boolean isDistributed() {
     return lockService.isDistributed();
   }
@@ -85,7 +74,9 @@ public class LockServiceMBeanBridge {
   }
 
   public String fetchGrantorMember() {
-    return lockService.peekLockGrantorId() != null ? lockService.peekLockGrantorId().getLockGrantorMember().getId() : null;
+    return lockService.peekLockGrantorId() != null
+        ? lockService.peekLockGrantorId().getLockGrantorMember().getId()
+        : null;
   }
 
   public int getMemberCount() {
@@ -102,7 +93,7 @@ public class LockServiceMBeanBridge {
 
   /**
    * Returns a list of thread which are blocked on some Object
-   * 
+   *
    * @return map of object Name and thread holding lock on that object
    */
   public Map<String, String> listThreadsHoldingLock() {
@@ -120,7 +111,5 @@ public class LockServiceMBeanBridge {
     }
 
     return listOfLocks;
-
   }
-
 }

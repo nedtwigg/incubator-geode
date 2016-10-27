@@ -54,16 +54,20 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
 
   private ProxyCache proxyCache = null;
 
-  /** To queue the CQ Events arriving during CQ execution with 
-   * initial Results.
-   */
+  /** To queue the CQ Events arriving during CQ execution with initial Results. */
   private volatile ConcurrentLinkedQueue<CqEventImpl> queuedEvents = null;
 
   public final Object queuedEventsSynchObject = new Object();
 
   private boolean connected = false;
 
-  public ClientCQImpl(CqServiceImpl cqService, String cqName, String queryString, CqAttributes cqAttributes, ServerCQProxyImpl serverProxy, boolean isDurable) {
+  public ClientCQImpl(
+      CqServiceImpl cqService,
+      String cqName,
+      String queryString,
+      CqAttributes cqAttributes,
+      ServerCQProxyImpl serverProxy,
+      boolean isDurable) {
     super(cqService, cqName, queryString, isDurable);
     this.cqAttributes = cqAttributes;
     this.cqProxy = serverProxy;
@@ -82,8 +86,9 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
   }
 
   /**
-   * Initializes the connection using the pool from the client region.
-   * Also sets the cqBaseRegion value of this CQ.
+   * Initializes the connection using the pool from the client region. Also sets the cqBaseRegion
+   * value of this CQ.
+   *
    * @throws CqException
    */
   public void initConnectionProxy() throws CqException, RegionNotFoundException {
@@ -92,7 +97,10 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
     // In the current implementation of 5.1 the Server Connection is (ConnectionProxyImpl)
     // is obtained by the Bridge Client/writer/loader on the local region.
     if (cqBaseRegion == null) {
-      throw new RegionNotFoundException(LocalizedStrings.CqQueryImpl_REGION_ON_WHICH_QUERY_IS_SPECIFIED_NOT_FOUND_LOCALLY_REGIONNAME_0.toLocalizedString(regionName));
+      throw new RegionNotFoundException(
+          LocalizedStrings
+              .CqQueryImpl_REGION_ON_WHICH_QUERY_IS_SPECIFIED_NOT_FOUND_LOCALLY_REGIONNAME_0
+              .toLocalizedString(regionName));
     }
 
     ServerRegionProxy srp = cqBaseRegion.getServerProxy();
@@ -102,10 +110,14 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
       }
       this.cqProxy = new ServerCQProxyImpl(srp);
       if (!srp.getPool().getSubscriptionEnabled()) {
-        throw new CqException("The 'queueEnabled' flag on Pool installed on Region " + regionName + " is set to false.");
+        throw new CqException(
+            "The 'queueEnabled' flag on Pool installed on Region "
+                + regionName
+                + " is set to false.");
       }
     } else {
-      throw new CqException("Unable to get the connection pool. The Region does not have a pool configured.");
+      throw new CqException(
+          "Unable to get the connection pool. The Region does not have a pool configured.");
     }
 
     //    if (proxy == null) {
@@ -124,7 +136,8 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
   public void close(boolean sendRequestToServer) throws CqClosedException, CqException {
     final boolean isDebugEnabled = logger.isDebugEnabled();
     if (isDebugEnabled) {
-      logger.debug("Started closing CQ CqName: {} SendRequestToServer: {}", cqName, sendRequestToServer);
+      logger.debug(
+          "Started closing CQ CqName: {} SendRequestToServer: {}", cqName, sendRequestToServer);
     }
     // Synchronize with stop and execute CQ commands
     synchronized (this.cqState) {
@@ -143,7 +156,7 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
 
       // Client Close. Proxy is null in case of server.
       // Check if this has been sent to server, if so send
-      // Close request to server.    
+      // Close request to server.
       Exception exception = null;
       if (this.cqProxy != null && sendRequestToServer) {
         try {
@@ -182,17 +195,23 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
         this.cqState.setState(CqStateImpl.CLOSED);
         cqService.stats.incCqsClosed();
         cqService.stats.decCqsOnClient();
-        if (this.stats != null)
-          this.stats.close();
+        if (this.stats != null) this.stats.close();
       } else {
         if (shutdownInProgress()) {
           return;
         }
         // Hasn't able to send close request to any server.
         if (exception != null) {
-          throw new CqException(LocalizedStrings.CqQueryImpl_FAILED_TO_CLOSE_THE_CQ_CQNAME_0_ERROR_FROM_LAST_ENDPOINT_1.toLocalizedString(new Object[] { this.cqName, exception.getLocalizedMessage() }), exception.getCause());
+          throw new CqException(
+              LocalizedStrings
+                  .CqQueryImpl_FAILED_TO_CLOSE_THE_CQ_CQNAME_0_ERROR_FROM_LAST_ENDPOINT_1
+                  .toLocalizedString(new Object[] {this.cqName, exception.getLocalizedMessage()}),
+              exception.getCause());
         } else {
-          throw new CqException(LocalizedStrings.CqQueryImpl_FAILED_TO_CLOSE_THE_CQ_CQNAME_0_THE_SERVER_ENDPOINTS_ON_WHICH_THIS_CQ_WAS_REGISTERED_WERE_NOT_FOUND.toLocalizedString(this.cqName));
+          throw new CqException(
+              LocalizedStrings
+                  .CqQueryImpl_FAILED_TO_CLOSE_THE_CQ_CQNAME_0_THE_SERVER_ENDPOINTS_ON_WHICH_THIS_CQ_WAS_REGISTERED_WERE_NOT_FOUND
+                  .toLocalizedString(this.cqName));
         }
       }
     }
@@ -203,14 +222,21 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
 
       if (cqListeners != null) {
         if (isDebugEnabled) {
-          logger.debug("Invoking CqListeners close() api for the CQ, CqName: {} Number of CqListeners: {}", cqName, cqListeners.length);
+          logger.debug(
+              "Invoking CqListeners close() api for the CQ, CqName: {} Number of CqListeners: {}",
+              cqName,
+              cqListeners.length);
         }
         for (int lCnt = 0; lCnt < cqListeners.length; lCnt++) {
           try {
             cqListeners[lCnt].close();
             // Handle client side exceptions.
           } catch (Exception ex) {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.CqQueryImpl_EXCEPTION_OCCOURED_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR_1, new Object[] { cqName, ex.getLocalizedMessage() }));
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings
+                        .CqQueryImpl_EXCEPTION_OCCOURED_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR_1,
+                    new Object[] {cqName, ex.getLocalizedMessage()}));
             if (isDebugEnabled) {
               logger.debug(ex.getMessage(), ex);
             }
@@ -226,7 +252,11 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
             // error condition, so you also need to check to see if the JVM
             // is still usable:
             SystemFailure.checkFailure();
-            logger.warn(LocalizedMessage.create(LocalizedStrings.CqQueryImpl_RUNTIMEEXCEPTION_OCCOURED_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR_1, new Object[] { cqName, t.getLocalizedMessage() }));
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings
+                        .CqQueryImpl_RUNTIMEEXCEPTION_OCCOURED_IN_THE_CQLISTENER_OF_THE_CQ_CQNAME_0_ERROR_1,
+                    new Object[] {cqName, t.getLocalizedMessage()}));
             if (isDebugEnabled) {
               logger.debug(t.getMessage(), t);
             }
@@ -241,6 +271,7 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
 
   /**
    * Clears the resource used by CQ.
+   *
    * @throws CqException
    */
   protected void cleanup() throws CqException {
@@ -251,31 +282,25 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
     return cqAttributes;
   }
 
-  /**
-   * @return Returns the cqListeners.
-   */
+  /** @return Returns the cqListeners. */
   public CqListener[] getCqListeners() {
 
     return cqAttributes.getCqListeners();
   }
 
-  /**
-   * Start or resume executing the query.
-   */
+  /** Start or resume executing the query. */
   public void execute() throws CqClosedException, RegionNotFoundException, CqException {
     executeCqOnRedundantsAndPrimary(false);
   }
 
-  /**
-   * Start or resume executing the query.
-   * Gets or updates the CQ results and returns them.
-   */
-  public CqResults executeWithInitialResults() throws CqClosedException, RegionNotFoundException, CqException {
+  /** Start or resume executing the query. Gets or updates the CQ results and returns them. */
+  public CqResults executeWithInitialResults()
+      throws CqClosedException, RegionNotFoundException, CqException {
 
     synchronized (queuedEventsSynchObject) {
       //Prevents multiple calls to executeWithInitialResults from squishing
       //each others queuedEvents.  Forces the second call to wait
-      //until first call is completed.      
+      //until first call is completed.
       while (queuedEvents != null) {
         try {
           queuedEventsSynchObject.wait();
@@ -291,7 +316,7 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
       testHook.pauseUntilReady();
     }
     // Send CQ request to servers.
-    //If an exception is thrown, we need to clean up the queuedEvents 
+    //If an exception is thrown, we need to clean up the queuedEvents
     //or else client will hang on next executeWithInitialResults
     CqResults initialResults;
     try {
@@ -310,7 +335,7 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
       throw e;
     }
 
-    //lock was released earlier so that events that are received while executing 
+    //lock was released earlier so that events that are received while executing
     //initial results can be added to the queue.
     synchronized (queuedEventsSynchObject) {
       // Check if any CQ Events are received during query execution.
@@ -318,32 +343,35 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
       try {
         if (!this.queuedEvents.isEmpty()) {
           try {
-            Runnable r = new Runnable() {
-              public void run() {
-                Object[] eventArray = null;
-                if (CqQueryImpl.testHook != null) {
-                  testHook.setEventCount(queuedEvents.size());
-                }
-                // Synchronization for the executer thread.
-                synchronized (queuedEventsSynchObject) {
-                  try {
-                    eventArray = queuedEvents.toArray();
-
-                    //Process through the events
-                    for (Object cqEvent : eventArray) {
-                      cqService.invokeListeners(cqName, ClientCQImpl.this, (CqEventImpl) cqEvent);
-                      stats.decQueuedCqListenerEvents();
+            Runnable r =
+                new Runnable() {
+                  public void run() {
+                    Object[] eventArray = null;
+                    if (CqQueryImpl.testHook != null) {
+                      testHook.setEventCount(queuedEvents.size());
                     }
-                  } finally {
-                    //Make sure that we notify waiting threads or else possible dead lock
-                    queuedEvents.clear();
-                    queuedEvents = null;
-                    queuedEventsSynchObject.notify();
+                    // Synchronization for the executer thread.
+                    synchronized (queuedEventsSynchObject) {
+                      try {
+                        eventArray = queuedEvents.toArray();
+
+                        //Process through the events
+                        for (Object cqEvent : eventArray) {
+                          cqService.invokeListeners(
+                              cqName, ClientCQImpl.this, (CqEventImpl) cqEvent);
+                          stats.decQueuedCqListenerEvents();
+                        }
+                      } finally {
+                        //Make sure that we notify waiting threads or else possible dead lock
+                        queuedEvents.clear();
+                        queuedEvents = null;
+                        queuedEventsSynchObject.notify();
+                      }
+                    }
                   }
-                }
-              }
-            };
-            final LoggingThreadGroup group = LoggingThreadGroup.createThreadGroup("CQEventHandler", logger);
+                };
+            final LoggingThreadGroup group =
+                LoggingThreadGroup.createThreadGroup("CQEventHandler", logger);
             Thread thread = new Thread(group, r, "CQEventHandler For " + cqName);
             thread.setDaemon(true);
             thread.start();
@@ -363,26 +391,34 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
   }
 
   /**
-   * This executes the CQ first on the redundant server and then on the primary server.
-   * This is required to keep the redundancy behavior in accordance with the HAQueue
-   * expectation (wherein the events are delivered only from the primary).
+   * This executes the CQ first on the redundant server and then on the primary server. This is
+   * required to keep the redundancy behavior in accordance with the HAQueue expectation (wherein
+   * the events are delivered only from the primary).
+   *
    * @param executeWithInitialResults boolean
    * @return Object SelectResults in case of executeWithInitialResults
    */
-  public Object executeCqOnRedundantsAndPrimary(boolean executeWithInitialResults) throws CqClosedException, RegionNotFoundException, CqException {
+  public Object executeCqOnRedundantsAndPrimary(boolean executeWithInitialResults)
+      throws CqClosedException, RegionNotFoundException, CqException {
 
     Object initialResults = null;
 
     synchronized (this.cqState) {
       if (this.isClosed()) {
-        throw new CqClosedException(LocalizedStrings.CqQueryImpl_CQ_IS_CLOSED_CQNAME_0.toLocalizedString(this.cqName));
+        throw new CqClosedException(
+            LocalizedStrings.CqQueryImpl_CQ_IS_CLOSED_CQNAME_0.toLocalizedString(this.cqName));
       }
       if (this.isRunning()) {
-        throw new IllegalStateException(LocalizedStrings.CqQueryImpl_CQ_IS_IN_RUNNING_STATE_CQNAME_0.toLocalizedString(this.cqName));
+        throw new IllegalStateException(
+            LocalizedStrings.CqQueryImpl_CQ_IS_IN_RUNNING_STATE_CQNAME_0.toLocalizedString(
+                this.cqName));
       }
 
       if (logger.isDebugEnabled()) {
-        logger.debug("Performing Execute {} request for CQ. CqName: {}", ((executeWithInitialResults) ? "WithInitialResult" : ""), this.cqName);
+        logger.debug(
+            "Performing Execute {} request for CQ. CqName: {}",
+            ((executeWithInitialResults) ? "WithInitialResult" : ""),
+            this.cqName);
       }
       this.cqBaseRegion = (LocalRegion) cqService.getCache().getRegion(this.regionName);
 
@@ -391,7 +427,7 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
         // Send execute request to the server.
 
         // If CqService is initialized using the pool, the connection proxy is set using the
-        // pool that initializes the CQ. Else its set using the Region proxy. 
+        // pool that initializes the CQ. Else its set using the Region proxy.
         if (this.cqProxy == null) {
           initConnectionProxy();
         }
@@ -407,7 +443,11 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
           if (executeWithInitialResults) {
             initialResults = cqProxy.createWithIR(this);
             if (initialResults == null) {
-              String errMsg = "Failed to execute the CQ.  CqName: " + this.cqName + ", Query String is: " + this.queryString;
+              String errMsg =
+                  "Failed to execute the CQ.  CqName: "
+                      + this.cqName
+                      + ", Query String is: "
+                      + this.queryString;
               throw new CqException(errMsg);
             }
           } else {
@@ -421,13 +461,18 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
           }
           if (ex.getCause() instanceof GemFireSecurityException) {
             if (securityLogWriter.warningEnabled()) {
-              securityLogWriter.warning(LocalizedStrings.CqQueryImpl_EXCEPTION_WHILE_EXECUTING_CQ_EXCEPTION_0, ex, null);
+              securityLogWriter.warning(
+                  LocalizedStrings.CqQueryImpl_EXCEPTION_WHILE_EXECUTING_CQ_EXCEPTION_0, ex, null);
             }
             throw new CqException(ex.getCause().getMessage(), ex.getCause());
           } else if (ex instanceof CqException) {
             throw (CqException) ex;
           } else {
-            String errMsg = LocalizedStrings.CqQueryImpl_FAILED_TO_EXECUTE_THE_CQ_CQNAME_0_QUERY_STRING_IS_1_ERROR_FROM_LAST_SERVER_2.toLocalizedString(new Object[] { this.cqName, this.queryString, ex.getLocalizedMessage() });
+            String errMsg =
+                LocalizedStrings
+                    .CqQueryImpl_FAILED_TO_EXECUTE_THE_CQ_CQNAME_0_QUERY_STRING_IS_1_ERROR_FROM_LAST_SERVER_2
+                    .toLocalizedString(
+                        new Object[] {this.cqName, this.queryString, ex.getLocalizedMessage()});
             if (logger.isDebugEnabled()) {
               logger.debug(errMsg, ex);
             }
@@ -470,6 +515,7 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
 
   /**
    * Check to see if shutdown in progress.
+   *
    * @return true if shutdown in progress else false.
    */
   private boolean shutdownInProgress() {
@@ -483,21 +529,21 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
       return true;
     }
     return false;
-
   }
 
-  /**
-   * Stop or pause executing the query.
-   */
+  /** Stop or pause executing the query. */
   public void stop() throws CqClosedException, CqException {
     boolean isStopped = false;
     synchronized (this.cqState) {
       if (this.isClosed()) {
-        throw new CqClosedException(LocalizedStrings.CqQueryImpl_CQ_IS_CLOSED_CQNAME_0.toLocalizedString(this.cqName));
+        throw new CqClosedException(
+            LocalizedStrings.CqQueryImpl_CQ_IS_CLOSED_CQNAME_0.toLocalizedString(this.cqName));
       }
 
       if (!(this.isRunning())) {
-        throw new IllegalStateException(LocalizedStrings.CqQueryImpl_CQ_IS_NOT_IN_RUNNING_STATE_STOP_CQ_DOES_NOT_APPLY_CQNAME_0.toLocalizedString(this.cqName));
+        throw new IllegalStateException(
+            LocalizedStrings.CqQueryImpl_CQ_IS_NOT_IN_RUNNING_STATE_STOP_CQ_DOES_NOT_APPLY_CQNAME_0
+                .toLocalizedString(this.cqName));
       }
 
       Exception exception = null;
@@ -526,9 +572,15 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
       } else {
         // Hasn't able to send stop request to any server.
         if (exception != null) {
-          throw new CqException(LocalizedStrings.CqQueryImpl_FAILED_TO_STOP_THE_CQ_CQNAME_0_ERROR_FROM_LAST_SERVER_1.toLocalizedString(new Object[] { this.cqName, exception.getLocalizedMessage() }), exception.getCause());
+          throw new CqException(
+              LocalizedStrings.CqQueryImpl_FAILED_TO_STOP_THE_CQ_CQNAME_0_ERROR_FROM_LAST_SERVER_1
+                  .toLocalizedString(new Object[] {this.cqName, exception.getLocalizedMessage()}),
+              exception.getCause());
         } else {
-          throw new CqException(LocalizedStrings.CqQueryImpl_FAILED_TO_STOP_THE_CQ_CQNAME_0_THE_SERVER_ENDPOINTS_ON_WHICH_THIS_CQ_WAS_REGISTERED_WERE_NOT_FOUND.toLocalizedString(this.cqName));
+          throw new CqException(
+              LocalizedStrings
+                  .CqQueryImpl_FAILED_TO_STOP_THE_CQ_CQNAME_0_THE_SERVER_ENDPOINTS_ON_WHICH_THIS_CQ_WAS_REGISTERED_WERE_NOT_FOUND
+                  .toLocalizedString(this.cqName));
         }
       }
     }
@@ -561,10 +613,13 @@ public class ClientCQImpl extends CqQueryImpl implements ClientCQ {
   @Override
   public void createOn(Connection conn, boolean isDurable) {
 
-    byte regionDataPolicyOrdinal = getCqBaseRegion() == null ? (byte) 0 : getCqBaseRegion().getAttributes().getDataPolicy().ordinal;
+    byte regionDataPolicyOrdinal =
+        getCqBaseRegion() == null
+            ? (byte) 0
+            : getCqBaseRegion().getAttributes().getDataPolicy().ordinal;
 
     int state = this.cqState.getState();
-    this.cqProxy.createOn(getName(), conn, getQueryString(), state, isDurable, regionDataPolicyOrdinal);
+    this.cqProxy.createOn(
+        getName(), conn, getQueryString(), state, isDurable, regionDataPolicyOrdinal);
   }
-
 }

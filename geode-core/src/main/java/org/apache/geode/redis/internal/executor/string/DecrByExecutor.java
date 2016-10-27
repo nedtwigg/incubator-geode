@@ -27,9 +27,11 @@ import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 
 public class DecrByExecutor extends StringExecutor {
 
-  private final String ERROR_VALUE_NOT_USABLE = "The value at this key cannot be decremented numerically";
+  private final String ERROR_VALUE_NOT_USABLE =
+      "The value at this key cannot be decremented numerically";
 
-  private final String ERROR_DECREMENT_NOT_USABLE = "The decrementation on this key must be numeric";
+  private final String ERROR_DECREMENT_NOT_USABLE =
+      "The decrementation on this key must be numeric";
 
   private final String ERROR_OVERFLOW = "This decrementation cannot be performed due to overflow";
 
@@ -60,7 +62,8 @@ public class DecrByExecutor extends StringExecutor {
     try {
       decrement = Long.parseLong(decrString);
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_DECREMENT_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_DECREMENT_NOT_USABLE));
       return;
     }
 
@@ -69,7 +72,8 @@ public class DecrByExecutor extends StringExecutor {
      */
 
     if (valueWrapper == null) {
-      String negativeDecrString = decrString.charAt(0) == Coder.HYPHEN_ID ? decrString.substring(1) : "-" + decrString;
+      String negativeDecrString =
+          decrString.charAt(0) == Coder.HYPHEN_ID ? decrString.substring(1) : "-" + decrString;
       r.put(key, new ByteArrayWrapper(Coder.stringToBytes(negativeDecrString)));
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), -decrement));
       return;
@@ -85,7 +89,8 @@ public class DecrByExecutor extends StringExecutor {
     try {
       value = Long.parseLong(stringValue);
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_VALUE_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_VALUE_NOT_USABLE));
       return;
     }
 
@@ -104,7 +109,5 @@ public class DecrByExecutor extends StringExecutor {
     r.put(key, new ByteArrayWrapper(Coder.stringToBytes(stringValue)));
 
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), value));
-
   }
-
 }

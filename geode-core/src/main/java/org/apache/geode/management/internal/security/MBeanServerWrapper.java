@@ -53,16 +53,15 @@ import org.apache.geode.security.ResourcePermission;
 /**
  * This class intercepts all MBean requests for GemFire MBeans and passed it to
  * ManagementInterceptor for authorization
- * @since Geode 1.0
  *
+ * @since Geode 1.0
  */
 public class MBeanServerWrapper implements MBeanServerForwarder {
   private MBeanServer mbs;
 
   private SecurityService securityService = IntegratedSecurityService.getSecurityService();
 
-  public MBeanServerWrapper() {
-  }
+  public MBeanServerWrapper() {}
 
   private void checkDomain(ObjectName name) {
     if (ManagementConstants.OBJECTNAME__DEFAULTDOMAIN.equals(name.getDomain()))
@@ -70,37 +69,50 @@ public class MBeanServerWrapper implements MBeanServerForwarder {
   }
 
   @Override
-  public ObjectInstance createMBean(String className, ObjectName name) throws ReflectionException, InstanceAlreadyExistsException, MBeanException, NotCompliantMBeanException {
+  public ObjectInstance createMBean(String className, ObjectName name)
+      throws ReflectionException, InstanceAlreadyExistsException, MBeanException,
+          NotCompliantMBeanException {
     checkDomain(name);
     return mbs.createMBean(className, name);
   }
 
   @Override
-  public ObjectInstance createMBean(String className, ObjectName name, ObjectName loaderName) throws ReflectionException, InstanceAlreadyExistsException, MBeanException, NotCompliantMBeanException, InstanceNotFoundException {
+  public ObjectInstance createMBean(String className, ObjectName name, ObjectName loaderName)
+      throws ReflectionException, InstanceAlreadyExistsException, MBeanException,
+          NotCompliantMBeanException, InstanceNotFoundException {
     checkDomain(name);
     return mbs.createMBean(className, name, loaderName);
   }
 
   @Override
-  public ObjectInstance createMBean(String className, ObjectName name, Object[] params, String[] signature) throws ReflectionException, InstanceAlreadyExistsException, MBeanException, NotCompliantMBeanException {
+  public ObjectInstance createMBean(
+      String className, ObjectName name, Object[] params, String[] signature)
+      throws ReflectionException, InstanceAlreadyExistsException, MBeanException,
+          NotCompliantMBeanException {
     checkDomain(name);
     return mbs.createMBean(className, name, params, signature);
   }
 
   @Override
-  public ObjectInstance createMBean(String className, ObjectName name, ObjectName loaderName, Object[] params, String[] signature) throws ReflectionException, InstanceAlreadyExistsException, MBeanException, NotCompliantMBeanException, InstanceNotFoundException {
+  public ObjectInstance createMBean(
+      String className, ObjectName name, ObjectName loaderName, Object[] params, String[] signature)
+      throws ReflectionException, InstanceAlreadyExistsException, MBeanException,
+          NotCompliantMBeanException, InstanceNotFoundException {
     checkDomain(name);
     return mbs.createMBean(className, name, loaderName, params, signature);
   }
 
   @Override
-  public ObjectInstance registerMBean(Object object, ObjectName name) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {
+  public ObjectInstance registerMBean(Object object, ObjectName name)
+      throws InstanceAlreadyExistsException, MBeanRegistrationException,
+          NotCompliantMBeanException {
     checkDomain(name);
     return mbs.registerMBean(object, name);
   }
 
   @Override
-  public void unregisterMBean(ObjectName name) throws InstanceNotFoundException, MBeanRegistrationException {
+  public void unregisterMBean(ObjectName name)
+      throws InstanceNotFoundException, MBeanRegistrationException {
     checkDomain(name);
     mbs.unregisterMBean(name);
   }
@@ -110,23 +122,20 @@ public class MBeanServerWrapper implements MBeanServerForwarder {
     return mbs.getObjectInstance(name);
   }
 
-  private static QueryExp notAccessControlMBean = Query.not(Query.isInstanceOf(Query.value(AccessControlMXBean.class.getName())));
+  private static QueryExp notAccessControlMBean =
+      Query.not(Query.isInstanceOf(Query.value(AccessControlMXBean.class.getName())));
 
   @Override
   public Set<ObjectInstance> queryMBeans(ObjectName name, QueryExp query) {
     // We need to filter out the AccessControlMXBean so that the clients wouldn't see it
-    if (query != null)
-      return mbs.queryMBeans(name, Query.and(query, notAccessControlMBean));
-    else
-      return mbs.queryMBeans(name, notAccessControlMBean);
+    if (query != null) return mbs.queryMBeans(name, Query.and(query, notAccessControlMBean));
+    else return mbs.queryMBeans(name, notAccessControlMBean);
   }
 
   @Override
   public Set<ObjectName> queryNames(ObjectName name, QueryExp query) {
-    if (query != null)
-      return mbs.queryNames(name, Query.and(query, notAccessControlMBean));
-    else
-      return mbs.queryNames(name, notAccessControlMBean);
+    if (query != null) return mbs.queryNames(name, Query.and(query, notAccessControlMBean));
+    else return mbs.queryNames(name, notAccessControlMBean);
   }
 
   @Override
@@ -140,7 +149,8 @@ public class MBeanServerWrapper implements MBeanServerForwarder {
   }
 
   @Override
-  public Object getAttribute(ObjectName name, String attribute) throws MBeanException, InstanceNotFoundException, ReflectionException {
+  public Object getAttribute(ObjectName name, String attribute)
+      throws MBeanException, InstanceNotFoundException, ReflectionException {
     ResourcePermission ctx = getOperationContext(name, attribute, false);
     this.securityService.authorize(ctx);
     Object result;
@@ -153,7 +163,8 @@ public class MBeanServerWrapper implements MBeanServerForwarder {
   }
 
   @Override
-  public AttributeList getAttributes(ObjectName name, String[] attributes) throws InstanceNotFoundException, ReflectionException {
+  public AttributeList getAttributes(ObjectName name, String[] attributes)
+      throws InstanceNotFoundException, ReflectionException {
     AttributeList results = new AttributeList();
     for (String attribute : attributes) {
       try {
@@ -161,34 +172,40 @@ public class MBeanServerWrapper implements MBeanServerForwarder {
         Attribute att = new Attribute(attribute, value);
         results.add(att);
       } catch (Exception e) {
-        throw new GemFireSecurityException("error getting value of " + attribute + " from " + name, e);
+        throw new GemFireSecurityException(
+            "error getting value of " + attribute + " from " + name, e);
       }
     }
     return results;
   }
 
   @Override
-  public void setAttribute(ObjectName name, Attribute attribute) throws InstanceNotFoundException, AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException {
+  public void setAttribute(ObjectName name, Attribute attribute)
+      throws InstanceNotFoundException, AttributeNotFoundException, InvalidAttributeValueException,
+          MBeanException, ReflectionException {
     ResourcePermission ctx = getOperationContext(name, attribute.getName(), false);
     this.securityService.authorize(ctx);
     mbs.setAttribute(name, attribute);
   }
 
   @Override
-  public AttributeList setAttributes(ObjectName name, AttributeList attributes) throws InstanceNotFoundException, ReflectionException {
+  public AttributeList setAttributes(ObjectName name, AttributeList attributes)
+      throws InstanceNotFoundException, ReflectionException {
     // call setAttribute instead to use the authorization logic
     for (Attribute attribute : attributes.asList()) {
       try {
         setAttribute(name, attribute);
       } catch (Exception e) {
-        throw new GemFireSecurityException("error setting attribute " + attribute + " of " + name, e);
+        throw new GemFireSecurityException(
+            "error setting attribute " + attribute + " of " + name, e);
       }
     }
     return attributes;
   }
 
   @Override
-  public Object invoke(ObjectName name, String operationName, Object[] params, String[] signature) throws InstanceNotFoundException, MBeanException, ReflectionException {
+  public Object invoke(ObjectName name, String operationName, Object[] params, String[] signature)
+      throws InstanceNotFoundException, MBeanException, ReflectionException {
 
     ResourcePermission ctx = getOperationContext(name, operationName, true);
     this.securityService.authorize(ctx);
@@ -199,7 +216,9 @@ public class MBeanServerWrapper implements MBeanServerForwarder {
   }
 
   // TODO: cache this
-  private ResourcePermission getOperationContext(ObjectName objectName, String featureName, boolean isOp) throws InstanceNotFoundException, ReflectionException {
+  private ResourcePermission getOperationContext(
+      ObjectName objectName, String featureName, boolean isOp)
+      throws InstanceNotFoundException, ReflectionException {
     MBeanInfo beanInfo = null;
     try {
       beanInfo = mbs.getMBeanInfo(objectName);
@@ -229,7 +248,8 @@ public class MBeanServerWrapper implements MBeanServerForwarder {
     return result;
   }
 
-  private ResourcePermission getOperationContext(Descriptor descriptor, ResourcePermission defaultValue) {
+  private ResourcePermission getOperationContext(
+      Descriptor descriptor, ResourcePermission defaultValue) {
     String resource = (String) descriptor.getFieldValue("resource");
     String operationCode = (String) descriptor.getFieldValue("operation");
     if (resource != null && operationCode != null) {
@@ -249,38 +269,48 @@ public class MBeanServerWrapper implements MBeanServerForwarder {
   }
 
   @Override
-  public void addNotificationListener(ObjectName name, NotificationListener listener, NotificationFilter filter, Object handback) throws InstanceNotFoundException {
+  public void addNotificationListener(
+      ObjectName name, NotificationListener listener, NotificationFilter filter, Object handback)
+      throws InstanceNotFoundException {
     mbs.addNotificationListener(name, listener, filter, handback);
   }
 
   @Override
-  public void addNotificationListener(ObjectName name, ObjectName listener, NotificationFilter filter, Object handback) throws InstanceNotFoundException {
+  public void addNotificationListener(
+      ObjectName name, ObjectName listener, NotificationFilter filter, Object handback)
+      throws InstanceNotFoundException {
     mbs.addNotificationListener(name, listener, filter, handback);
   }
 
   @Override
-  public void removeNotificationListener(ObjectName name, ObjectName listener) throws InstanceNotFoundException, ListenerNotFoundException {
+  public void removeNotificationListener(ObjectName name, ObjectName listener)
+      throws InstanceNotFoundException, ListenerNotFoundException {
     mbs.removeNotificationListener(name, listener);
   }
 
   @Override
-  public void removeNotificationListener(ObjectName name, ObjectName listener, NotificationFilter filter, Object handback) throws InstanceNotFoundException, ListenerNotFoundException {
+  public void removeNotificationListener(
+      ObjectName name, ObjectName listener, NotificationFilter filter, Object handback)
+      throws InstanceNotFoundException, ListenerNotFoundException {
     mbs.removeNotificationListener(name, listener, filter, handback);
-
   }
 
   @Override
-  public void removeNotificationListener(ObjectName name, NotificationListener listener) throws InstanceNotFoundException, ListenerNotFoundException {
+  public void removeNotificationListener(ObjectName name, NotificationListener listener)
+      throws InstanceNotFoundException, ListenerNotFoundException {
     mbs.removeNotificationListener(name, listener);
   }
 
   @Override
-  public void removeNotificationListener(ObjectName name, NotificationListener listener, NotificationFilter filter, Object handback) throws InstanceNotFoundException, ListenerNotFoundException {
+  public void removeNotificationListener(
+      ObjectName name, NotificationListener listener, NotificationFilter filter, Object handback)
+      throws InstanceNotFoundException, ListenerNotFoundException {
     mbs.removeNotificationListener(name, listener, filter, handback);
   }
 
   @Override
-  public MBeanInfo getMBeanInfo(ObjectName name) throws InstanceNotFoundException, IntrospectionException, ReflectionException {
+  public MBeanInfo getMBeanInfo(ObjectName name)
+      throws InstanceNotFoundException, IntrospectionException, ReflectionException {
     return mbs.getMBeanInfo(name);
   }
 
@@ -295,34 +325,41 @@ public class MBeanServerWrapper implements MBeanServerForwarder {
   }
 
   @Override
-  public Object instantiate(String className, ObjectName loaderName) throws ReflectionException, MBeanException, InstanceNotFoundException {
+  public Object instantiate(String className, ObjectName loaderName)
+      throws ReflectionException, MBeanException, InstanceNotFoundException {
     return mbs.instantiate(className, loaderName);
   }
 
   @Override
-  public Object instantiate(String className, Object[] params, String[] signature) throws ReflectionException, MBeanException {
+  public Object instantiate(String className, Object[] params, String[] signature)
+      throws ReflectionException, MBeanException {
     return mbs.instantiate(className, params, signature);
   }
 
   @Override
-  public Object instantiate(String className, ObjectName loaderName, Object[] params, String[] signature) throws ReflectionException, MBeanException, InstanceNotFoundException {
+  public Object instantiate(
+      String className, ObjectName loaderName, Object[] params, String[] signature)
+      throws ReflectionException, MBeanException, InstanceNotFoundException {
     return mbs.instantiate(className, params, signature);
   }
 
   @SuppressWarnings("deprecation")
   @Override
-  public ObjectInputStream deserialize(ObjectName name, byte[] data) throws InstanceNotFoundException, OperationsException {
+  public ObjectInputStream deserialize(ObjectName name, byte[] data)
+      throws InstanceNotFoundException, OperationsException {
     return mbs.deserialize(name, data);
   }
 
   @Override
-  public ObjectInputStream deserialize(String className, byte[] data) throws OperationsException, ReflectionException {
+  public ObjectInputStream deserialize(String className, byte[] data)
+      throws OperationsException, ReflectionException {
     return deserialize(className, data);
   }
 
   @SuppressWarnings("deprecation")
   @Override
-  public ObjectInputStream deserialize(String className, ObjectName loaderName, byte[] data) throws InstanceNotFoundException, OperationsException, ReflectionException {
+  public ObjectInputStream deserialize(String className, ObjectName loaderName, byte[] data)
+      throws InstanceNotFoundException, OperationsException, ReflectionException {
     return mbs.deserialize(className, loaderName, data);
   }
 
@@ -350,5 +387,4 @@ public class MBeanServerWrapper implements MBeanServerForwarder {
   public void setMBeanServer(MBeanServer mbs) {
     this.mbs = mbs;
   }
-
 }

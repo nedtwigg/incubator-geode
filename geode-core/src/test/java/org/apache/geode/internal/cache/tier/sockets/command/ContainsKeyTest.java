@@ -46,21 +46,14 @@ public class ContainsKeyTest {
   private static final String REGION_NAME = "region1";
   private static final String KEY = "key1";
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private Message replyMessage;
-  @Mock
-  private Message errorResponseMessage;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private AuthorizeRequest authzRequest;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private Message replyMessage;
+  @Mock private Message errorResponseMessage;
+  @Mock private ServerConnection serverConnection;
+  @Mock private AuthorizeRequest authzRequest;
 
-  @InjectMocks
-  private ContainsKey containsKey;
+  @InjectMocks private ContainsKey containsKey;
 
   @Before
   public void setUp() throws Exception {
@@ -113,7 +106,9 @@ public class ContainsKeyTest {
   public void integratedSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(true);
-    doThrow(new NotAuthorizedException("")).when(this.securityService).authorizeRegionRead(eq(REGION_NAME), eq(KEY));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.securityService)
+        .authorizeRegionRead(eq(REGION_NAME), eq(KEY));
 
     containsKey.cmdExecute(this.message, this.serverConnection, 0);
 
@@ -136,12 +131,13 @@ public class ContainsKeyTest {
   public void oldSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
-    doThrow(new NotAuthorizedException("")).when(this.authzRequest).containsKeyAuthorize(eq(REGION_NAME), eq(KEY));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.authzRequest)
+        .containsKeyAuthorize(eq(REGION_NAME), eq(KEY));
 
     containsKey.cmdExecute(this.message, this.serverConnection, 0);
 
     verify(this.authzRequest).containsKeyAuthorize(eq(REGION_NAME), eq(KEY));
     verify(this.errorResponseMessage).send(eq(this.serverConnection));
   }
-
 }

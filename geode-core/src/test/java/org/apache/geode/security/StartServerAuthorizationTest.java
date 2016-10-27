@@ -34,11 +34,10 @@ import org.apache.geode.test.dunit.rules.LocatorServerConfigurationRule;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class StartServerAuthorizationTest extends JUnit4DistributedTestCase {
 
-  @Rule
-  public LocatorServerConfigurationRule lsRule = new LocatorServerConfigurationRule(this);
+  @Rule public LocatorServerConfigurationRule lsRule = new LocatorServerConfigurationRule(this);
 
   @Before
   public void before() throws Exception {
@@ -59,9 +58,13 @@ public class StartServerAuthorizationTest extends JUnit4DistributedTestCase {
     props.setProperty("security-password", "wrongPswd");
 
     VM server = lsRule.getNodeVM(1);
-    server.invoke(() -> {
-      assertThatThrownBy(() -> lsRule.getSystem(props)).isInstanceOf(GemFireSecurityException.class).hasMessageContaining("Security check failed. Authentication error. Please check your credentials");
-    });
+    server.invoke(
+        () -> {
+          assertThatThrownBy(() -> lsRule.getSystem(props))
+              .isInstanceOf(GemFireSecurityException.class)
+              .hasMessageContaining(
+                  "Security check failed. Authentication error. Please check your credentials");
+        });
   }
 
   @Test
@@ -73,10 +76,12 @@ public class StartServerAuthorizationTest extends JUnit4DistributedTestCase {
     props.setProperty("security-password", "user");
 
     VM server = lsRule.getNodeVM(1);
-    server.invoke(() -> {
-      assertThatThrownBy(() -> lsRule.getSystem(props)).isInstanceOf(GemFireSecurityException.class).hasMessageContaining("user not authorized for CLUSTER:MANAGE");
-    });
-
+    server.invoke(
+        () -> {
+          assertThatThrownBy(() -> lsRule.getSystem(props))
+              .isInstanceOf(GemFireSecurityException.class)
+              .hasMessageContaining("user not authorized for CLUSTER:MANAGE");
+        });
   }
 
   @Test
@@ -89,5 +94,4 @@ public class StartServerAuthorizationTest extends JUnit4DistributedTestCase {
 
     lsRule.getServerVM(1, props);
   }
-
 }

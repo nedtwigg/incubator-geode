@@ -47,32 +47,19 @@ public class ContainsKey66Test {
   private static final String REGION_NAME = "region1";
   private static final String KEY = "key1";
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private AuthorizeRequest authzRequest;
-  @Mock
-  private LocalRegion region;
-  @Mock
-  private Cache cache;
-  @Mock
-  private CacheServerStats cacheServerStats;
-  @Mock
-  private Message responseMessage;
-  @Mock
-  private Message errorResponseMessage;
-  @Mock
-  private Part regionNamePart;
-  @Mock
-  private Part keyPart;
-  @Mock
-  private Part modePart;
-  @InjectMocks
-  private ContainsKey66 containsKey66;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private ServerConnection serverConnection;
+  @Mock private AuthorizeRequest authzRequest;
+  @Mock private LocalRegion region;
+  @Mock private Cache cache;
+  @Mock private CacheServerStats cacheServerStats;
+  @Mock private Message responseMessage;
+  @Mock private Message errorResponseMessage;
+  @Mock private Part regionNamePart;
+  @Mock private Part keyPart;
+  @Mock private Part modePart;
+  @InjectMocks private ContainsKey66 containsKey66;
 
   @Before
   public void setUp() throws Exception {
@@ -124,7 +111,9 @@ public class ContainsKey66Test {
   public void integratedSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(true);
-    doThrow(new NotAuthorizedException("")).when(this.securityService).authorizeRegionRead(eq(REGION_NAME), eq(KEY));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.securityService)
+        .authorizeRegionRead(eq(REGION_NAME), eq(KEY));
 
     this.containsKey66.cmdExecute(this.message, this.serverConnection, 0);
 
@@ -147,12 +136,13 @@ public class ContainsKey66Test {
   public void oldSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
-    doThrow(new NotAuthorizedException("")).when(this.authzRequest).containsKeyAuthorize(eq(REGION_NAME), eq(KEY));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.authzRequest)
+        .containsKeyAuthorize(eq(REGION_NAME), eq(KEY));
 
     this.containsKey66.cmdExecute(this.message, this.serverConnection, 0);
 
     verify(this.authzRequest).containsKeyAuthorize(eq(REGION_NAME), eq(KEY));
     verify(this.errorResponseMessage).send(eq(this.serverConnection));
   }
-
 }

@@ -29,9 +29,7 @@ import org.junit.runner.Result;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Unit tests for {@link RuleList}.
- */
+/** Unit tests for {@link RuleList}. */
 @Category(UnitTest.class)
 public class RuleListTest {
 
@@ -41,7 +39,10 @@ public class RuleListTest {
   @BeforeClass
   public static void setUpClass() {
     counter = new AtomicInteger();
-    invocations = new Invocations[] { new Invocations(counter), new Invocations(counter), new Invocations(counter) };
+    invocations =
+        new Invocations[] {
+          new Invocations(counter), new Invocations(counter), new Invocations(counter)
+        };
   }
 
   @AfterClass
@@ -72,9 +73,7 @@ public class RuleListTest {
     assertThat(invocations[0].afterInvocation).isEqualTo(9);
   }
 
-  /**
-   * Used by test {@link #firstShouldBeFirstBeforeLastAfter()}
-   */
+  /** Used by test {@link #firstShouldBeFirstBeforeLastAfter()} */
   public static class ThreeRules {
 
     static RuleList ruleListStatic;
@@ -83,8 +82,7 @@ public class RuleListTest {
     public SpyRule ruleTwo = new SpyRule("ruleTwo", invocations[1]);
     public SpyRule ruleThree = new SpyRule("ruleThree", invocations[2]);
 
-    @Rule
-    public RuleList ruleList = new RuleList().add(ruleThree).add(ruleTwo).add(ruleOne);
+    @Rule public RuleList ruleList = new RuleList().add(ruleThree).add(ruleTwo).add(ruleOne);
 
     @Test
     public void doTest() throws Exception {
@@ -95,9 +93,7 @@ public class RuleListTest {
     }
   }
 
-  /**
-   * Structure of rule callback and test invocations
-   */
+  /** Structure of rule callback and test invocations */
   public static class Invocations {
 
     private final AtomicInteger counter;
@@ -123,13 +119,22 @@ public class RuleListTest {
 
     @Override
     public String toString() {
-      return "Invocations{" + "counter=" + counter + ", beforeInvocation=" + beforeInvocation + ", testInvocation=" + testInvocation + ", afterInvocation=" + afterInvocation + '}';
+      return "Invocations{"
+          + "counter="
+          + counter
+          + ", beforeInvocation="
+          + beforeInvocation
+          + ", testInvocation="
+          + testInvocation
+          + ", afterInvocation="
+          + afterInvocation
+          + '}';
     }
   }
 
   /**
-   * Implementation of TestRule that records the order of callbacks invoked on
-   * it. Used by {@link RuleListTest}.
+   * Implementation of TestRule that records the order of callbacks invoked on it. Used by {@link
+   * RuleListTest}.
    */
   public static class SpyRule extends ExternalResource {
 
@@ -180,9 +185,7 @@ public class RuleListTest {
     }
   }
 
-  /**
-   * Builder for more control of constructing an instance of {@link SpyRule}
-   */
+  /** Builder for more control of constructing an instance of {@link SpyRule} */
   public static class SpyRuleBuilder {
 
     String name;

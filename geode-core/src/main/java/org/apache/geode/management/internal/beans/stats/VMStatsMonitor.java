@@ -25,12 +25,7 @@ import org.apache.geode.internal.statistics.StatisticNotFoundException;
 import org.apache.geode.internal.statistics.StatisticsNotification;
 import org.apache.geode.management.internal.MBeanJMXAdapter;
 
-/**
- * This class acts as a monitor and listen for VM stats update on behalf of
- * MemberMBean.
- * 
- * 
- */
+/** This class acts as a monitor and listen for VM stats update on behalf of MemberMBean. */
 public final class VMStatsMonitor extends MBeanStatsMonitor {
 
   private volatile float cpuUsage = 0;
@@ -45,11 +40,12 @@ public final class VMStatsMonitor extends MBeanStatsMonitor {
 
   public VMStatsMonitor(String name) {
     super(name);
-    processCPUTimeAvailable = MBeanJMXAdapter.isAttributeAvailable(processCPUTimeAttr, ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME);
+    processCPUTimeAvailable =
+        MBeanJMXAdapter.isAttributeAvailable(
+            processCPUTimeAttr, ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME);
     if (!processCPUTimeAvailable) {
       cpuUsage = MBeanJMXAdapter.VALUE_NOT_AVAILABLE;
     }
-
   }
 
   @Override
@@ -71,13 +67,12 @@ public final class VMStatsMonitor extends MBeanStatsMonitor {
   }
 
   /**
-   * Right now it only refreshes CPU usage in terms of percentage. This method
-   * can be used for any other computation based on Stats in future.
-   * 
-   * Returns the time (as a percentage) that this member's process time with
-   * respect to Statistics sample time interval. If process time between two
-   * sample time t1 & t2 is p1 and p2 cpuUsage = ((p2-p1) * 100) / ((t2-t1)
-   *  
+   * Right now it only refreshes CPU usage in terms of percentage. This method can be used for any
+   * other computation based on Stats in future.
+   *
+   * <p>Returns the time (as a percentage) that this member's process time with respect to
+   * Statistics sample time interval. If process time between two sample time t1 & t2 is p1 and p2
+   * cpuUsage = ((p2-p1) * 100) / ((t2-t1)
    */
   private void refreshStats() {
 
@@ -112,11 +107,9 @@ public final class VMStatsMonitor extends MBeanStatsMonitor {
       lastProcessCpuTime = cpuTime;
       cpuUsage = processCpuUsage;
     }
-
   }
 
   public float getCpuUsage() {
     return cpuUsage;
   }
-
 }

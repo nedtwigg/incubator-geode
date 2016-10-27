@@ -27,7 +27,7 @@ import org.apache.geode.pdx.internal.EnumInfo;
 
 /**
  * Retrieve all known PDX types.
- * 
+ *
  * @since GemFire 7.0
  */
 public class GetPDXEnumsOp {
@@ -63,7 +63,8 @@ public class GetPDXEnumsOp {
           throw new ServerOperationException(part.getString());
 
         } else {
-          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
+          throw new InternalGemFireError(
+              "Unexpected message type " + MessageType.getString(msgType));
         }
       }
     }
@@ -79,16 +80,13 @@ public class GetPDXEnumsOp {
     }
 
     @Override
-    protected void endSendAttempt(ConnectionStats stats, long start) {
-    }
+    protected void endSendAttempt(ConnectionStats stats, long start) {}
 
     @Override
-    protected void endAttempt(ConnectionStats stats, long start) {
-    }
+    protected void endAttempt(ConnectionStats stats, long start) {}
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

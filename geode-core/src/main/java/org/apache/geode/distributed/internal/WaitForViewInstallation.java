@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.distributed.internal;
 
 import java.io.DataInput;
@@ -28,10 +26,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.geode.CancelException;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- *
- */
-public class WaitForViewInstallation extends HighPriorityDistributionMessage implements MessageWithReply {
+/** */
+public class WaitForViewInstallation extends HighPriorityDistributionMessage
+    implements MessageWithReply {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -70,8 +67,7 @@ public class WaitForViewInstallation extends HighPriorityDistributionMessage imp
   private int processorId;
 
   /** for deserialization */
-  public WaitForViewInstallation() {
-  }
+  public WaitForViewInstallation() {}
 
   private WaitForViewInstallation(long viewId, int processorId) {
     this.viewId = viewId;

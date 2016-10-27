@@ -38,8 +38,8 @@ import static org.apache.geode.test.dunit.LogWriterUtils.getLogWriter;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * The ListAndDescribeDiskStoreCommandsDUnitTest class is a test suite of functional tests cases testing the proper
- * functioning of the 'list disk-store' and 'describe disk-store' commands. </p>
+ * The ListAndDescribeDiskStoreCommandsDUnitTest class is a test suite of functional tests cases
+ * testing the proper functioning of the 'list disk-store' and 'describe disk-store' commands.
  *
  * @see org.apache.geode.management.internal.cli.commands.CliCommandTestBase
  * @see org.apache.geode.management.internal.cli.commands.DiskStoreCommands
@@ -65,7 +65,9 @@ public class ListAndDescribeDiskStoreCommandsDUnitTest extends CliCommandTestBas
 
   @Test
   public void testDescribeDiskStore() throws Exception {
-    final Result result = executeCommand(CliStrings.DESCRIBE_DISK_STORE + " --member=producerServer --name=producerData");
+    final Result result =
+        executeCommand(
+            CliStrings.DESCRIBE_DISK_STORE + " --member=producerServer --name=producerData");
 
     assertNotNull(result);
     getLogWriter().info(toString(result));
@@ -74,20 +76,28 @@ public class ListAndDescribeDiskStoreCommandsDUnitTest extends CliCommandTestBas
 
   @Test
   public void testDescribeDiskStoreWithInvalidMemberName() throws Exception {
-    final Result commandResult = executeCommand(CliStrings.DESCRIBE_DISK_STORE + " --member=badMemberName --name=producerData");
+    final Result commandResult =
+        executeCommand(
+            CliStrings.DESCRIBE_DISK_STORE + " --member=badMemberName --name=producerData");
 
     assertNotNull(commandResult);
     assertEquals(Result.Status.ERROR, commandResult.getStatus());
-    assertEquals(CliStrings.format(CliStrings.MEMBER_NOT_FOUND_ERROR_MESSAGE, "badMemberName"), toString(commandResult));
+    assertEquals(
+        CliStrings.format(CliStrings.MEMBER_NOT_FOUND_ERROR_MESSAGE, "badMemberName"),
+        toString(commandResult));
   }
 
   @Test
   public void testDescribeDiskStoreWithInvalidDiskStoreName() {
-    final Result commandResult = executeCommand(CliStrings.DESCRIBE_DISK_STORE + " --member=producerServer --name=badDiskStoreName");
+    final Result commandResult =
+        executeCommand(
+            CliStrings.DESCRIBE_DISK_STORE + " --member=producerServer --name=badDiskStoreName");
 
     assertNotNull(commandResult);
     assertEquals(Result.Status.ERROR, commandResult.getStatus());
-    assertEquals("A disk store with name (badDiskStoreName) was not found on member (producerServer).", toString(commandResult));
+    assertEquals(
+        "A disk store with name (badDiskStoreName) was not found on member (producerServer).",
+        toString(commandResult));
   }
 
   private static String toString(final Result result) {
@@ -129,30 +139,32 @@ public class ListAndDescribeDiskStoreCommandsDUnitTest extends CliCommandTestBas
     return distributedSystemProperties;
   }
 
-  private void createPersistentRegion(final Peer peer, final String regionName, final String diskStoreName) throws Exception {
-    peer.run(new SerializableRunnable("Creating Persistent Region for Member " + peer.getName()) {
-      @Override
-      public void run() {
-        getSystem(peer.getDistributedSystemConfiguration());
+  private void createPersistentRegion(
+      final Peer peer, final String regionName, final String diskStoreName) throws Exception {
+    peer.run(
+        new SerializableRunnable("Creating Persistent Region for Member " + peer.getName()) {
+          @Override
+          public void run() {
+            getSystem(peer.getDistributedSystemConfiguration());
 
-        final Cache cache = getCache();
+            final Cache cache = getCache();
 
-        DiskStore diskStore = cache.findDiskStore(diskStoreName);
+            DiskStore diskStore = cache.findDiskStore(diskStoreName);
 
-        if (diskStore == null) {
-          final DiskStoreFactory diskStoreFactory = cache.createDiskStoreFactory();
-          diskStoreFactory.setDiskDirs(getDiskDirs());
-          diskStore = diskStoreFactory.create(diskStoreName);
-        }
+            if (diskStore == null) {
+              final DiskStoreFactory diskStoreFactory = cache.createDiskStoreFactory();
+              diskStoreFactory.setDiskDirs(getDiskDirs());
+              diskStore = diskStoreFactory.create(diskStoreName);
+            }
 
-        final RegionFactory regionFactory = cache.createRegionFactory();
+            final RegionFactory regionFactory = cache.createRegionFactory();
 
-        regionFactory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-        regionFactory.setDiskStoreName(diskStore.getName());
-        regionFactory.setScope(Scope.DISTRIBUTED_NO_ACK);
-        regionFactory.create(regionName);
-      }
-    });
+            regionFactory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+            regionFactory.setDiskStoreName(diskStore.getName());
+            regionFactory.setScope(Scope.DISTRIBUTED_NO_ACK);
+            regionFactory.create(regionName);
+          }
+        });
   }
 
   private static class Peer implements Serializable {
@@ -161,7 +173,8 @@ public class ListAndDescribeDiskStoreCommandsDUnitTest extends CliCommandTestBas
     private final VM vm;
 
     protected Peer(final Properties distributedSystemConfiguration, final VM vm) {
-      assert distributedSystemConfiguration != null : "The GemFire distributed system configuration properties cannot be null!";
+      assert distributedSystemConfiguration != null
+          : "The GemFire distributed system configuration properties cannot be null!";
       this.distributedSystemConfiguration = distributedSystemConfiguration;
       this.vm = vm;
     }

@@ -25,10 +25,7 @@ import java.io.*;
 import org.apache.geode.distributed.internal.locks.LockGrantorId;
 import org.apache.geode.distributed.internal.membership.*;
 
-/** 
- * Identifies a group of transaction locks.
- *
- */
+/** Identifies a group of transaction locks. */
 public final class TXLockIdImpl implements TXLockId, DataSerializableFixedID {
 
   private static final long serialVersionUID = 8579214625084490134L;
@@ -81,19 +78,16 @@ public final class TXLockIdImpl implements TXLockId, DataSerializableFixedID {
 
   @Override
   public boolean equals(Object other) {
-    if (other == this)
-      return true;
-    if (other == null)
-      return false;
-    if (!(other instanceof TXLockIdImpl))
-      return false;
+    if (other == this) return true;
+    if (other == null) return false;
+    if (!(other instanceof TXLockIdImpl)) return false;
     final TXLockIdImpl that = (TXLockIdImpl) other;
 
-    if (this.memberId != that.memberId && !(this.memberId != null && this.memberId.equals(that.memberId))) {
+    if (this.memberId != that.memberId
+        && !(this.memberId != null && this.memberId.equals(that.memberId))) {
       return false;
     }
-    if (this.id != that.id)
-      return false;
+    if (this.id != that.id) return false;
 
     return true;
   }
@@ -107,8 +101,7 @@ public final class TXLockIdImpl implements TXLockId, DataSerializableFixedID {
   //   DataSerializable support
   // -------------------------------------------------------------------------
 
-  public TXLockIdImpl() {
-  }
+  public TXLockIdImpl() {}
 
   public int getDSFID() {
     return TRANSACTION_LOCK_ID;
@@ -124,7 +117,8 @@ public final class TXLockIdImpl implements TXLockId, DataSerializableFixedID {
     out.writeInt(this.id);
   }
 
-  public static final TXLockIdImpl createFromData(DataInput in) throws IOException, ClassNotFoundException {
+  public static final TXLockIdImpl createFromData(DataInput in)
+      throws IOException, ClassNotFoundException {
     TXLockIdImpl result = new TXLockIdImpl();
     result.fromData(in);
     return result;

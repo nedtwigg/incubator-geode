@@ -20,9 +20,7 @@ import org.apache.geode.cache.AttributesFactory;
 import org.apache.geode.cache.PartitionAttributesFactory;
 import org.apache.geode.cache.RegionAttributes;
 
-/**
- * subclass of UpdatePropagationDUnitTest to exercise partitioned regions
- */
+/** subclass of UpdatePropagationDUnitTest to exercise partitioned regions */
 public class UpdatePropagationPRDUnitTest extends UpdatePropagationDUnitTest {
 
   @Override

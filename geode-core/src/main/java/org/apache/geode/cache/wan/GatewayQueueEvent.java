@@ -21,60 +21,55 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.cache.asyncqueue.AsyncEventListener;
 
 /**
- * Represents <code>Cache</code> events going through 
- * <code>GatewaySender</code>s.
- * 
- * 
+ * Represents <code>Cache</code> events going through <code>GatewaySender</code>s.
+ *
  * @since GemFire 7.0
  */
 public interface GatewayQueueEvent<K, V> {
   /**
    * Returns the <code>Region</code> associated with this AsyncEvent
-   * 
-   * @return the <code>Region</code> associated with this AsyncEvent
-   *         OR null if <code>Region</code> not found (e.g. this can happen 
-   *         if it is destroyed).
+   *
+   * @return the <code>Region</code> associated with this AsyncEvent OR null if <code>Region</code>
+   *     not found (e.g. this can happen if it is destroyed).
    */
   public Region<K, V> getRegion();
 
   /**
    * Returns the <code>Operation</code> that triggered this event.
-   * 
+   *
    * @return the <code>Operation</code> that triggered this event
    */
   public Operation getOperation();
 
   /**
    * Returns the callbackArgument associated with this event.
-   * 
+   *
    * @return the callbackArgument associated with this event
    */
   public Object getCallbackArgument();
 
   /**
    * Returns the key associated with this event.
-   * 
+   *
    * @return the key associated with this event
    */
   public K getKey();
 
   /**
    * Returns the deserialized value associated with this event.
-   * 
+   *
    * @return the deserialized value associated with this event
-   * 
-   * @throws IllegalStateException may be thrown if the event's value was stored off-heap
-   * and {@link AsyncEventListener#processEvents(java.util.List)} has already returned.
+   * @throws IllegalStateException may be thrown if the event's value was stored off-heap and {@link
+   *     AsyncEventListener#processEvents(java.util.List)} has already returned.
    */
   public V getDeserializedValue();
 
   /**
    * Returns the serialized form of the value associated with this event.
-   * 
+   *
    * @return the serialized form of the value associated with this event
-   * 
-   * @throws IllegalStateException may be thrown if the event's value was stored off-heap
-   * and {@link AsyncEventListener#processEvents(java.util.List)} has already returned.
+   * @throws IllegalStateException may be thrown if the event's value was stored off-heap and {@link
+   *     AsyncEventListener#processEvents(java.util.List)} has already returned.
    */
   public byte[] getSerializedValue();
 }

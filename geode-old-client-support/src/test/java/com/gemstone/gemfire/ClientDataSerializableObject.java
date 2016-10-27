@@ -24,17 +24,11 @@ import org.apache.geode.DataSerializable;
 
 public class ClientDataSerializableObject implements DataSerializable {
 
-  public ClientDataSerializableObject() {
-
-  }
+  public ClientDataSerializableObject() {}
 
   @Override
-  public void toData(final DataOutput out) throws IOException {
-
-  }
+  public void toData(final DataOutput out) throws IOException {}
 
   @Override
-  public void fromData(final DataInput in) throws IOException, ClassNotFoundException {
-
-  }
+  public void fromData(final DataInput in) throws IOException, ClassNotFoundException {}
 }

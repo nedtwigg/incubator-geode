@@ -27,10 +27,7 @@ import org.apache.geode.internal.cache.wan.AbstractGatewaySender;
 import org.apache.geode.internal.cache.wan.GatewaySenderEventImpl;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * @since GemFire 7.0
- *
- */
+/** @since GemFire 7.0 */
 public class SerialSecondaryGatewayListener extends CacheListenerAdapter {
 
   private static final Logger logger = LogService.getLogger();
@@ -55,7 +52,7 @@ public class SerialSecondaryGatewayListener extends CacheListenerAdapter {
       // being sent.
       return;
     }
-    // There is a small window where queue has not been created fully yet. 
+    // There is a small window where queue has not been created fully yet.
     // The underlying region of the queue is created, and it receives afterDestroy callback
     final Set<RegionQueue> queues = this.sender.getQueues();
     if (queues != null && !queues.isEmpty()) {
@@ -86,7 +83,10 @@ public class SerialSecondaryGatewayListener extends CacheListenerAdapter {
     if (oldValue instanceof GatewaySenderEventImpl) {
       GatewaySenderEventImpl senderEvent = (GatewaySenderEventImpl) oldValue;
       if (logger.isDebugEnabled()) {
-        logger.debug("Received after Destroy for Secondary event {} the key was {}", senderEvent, event.getKey());
+        logger.debug(
+            "Received after Destroy for Secondary event {} the key was {}",
+            senderEvent,
+            event.getKey());
       }
       this.processor.handlePrimaryDestroy(senderEvent);
     }

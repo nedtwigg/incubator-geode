@@ -49,9 +49,7 @@ import org.apache.geode.cache.query.internal.QueryObserverAdapter;
 import org.apache.geode.cache.query.internal.QueryObserverHolder;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class IndexedMergeEquiJoinScenariosJUnitTest {
 
@@ -114,23 +112,22 @@ public class IndexedMergeEquiJoinScenariosJUnitTest {
       int temp;
       temp = i % 3;
       switch (temp) {
-      case 1:
-        region4.put(new Integer(i), c1);
-        region5.put(new Integer(i), c1);
-        region6.put(new Integer(i), c1);
-        break;
+        case 1:
+          region4.put(new Integer(i), c1);
+          region5.put(new Integer(i), c1);
+          region6.put(new Integer(i), c1);
+          break;
 
-      case 2:
-        region4.put(new Integer(i), c2);
-        region5.put(new Integer(i), c2);
-        region6.put(new Integer(i), c2);
-        break;
+        case 2:
+          region4.put(new Integer(i), c2);
+          region5.put(new Integer(i), c2);
+          region6.put(new Integer(i), c2);
+          break;
 
-      default:
-        CacheUtils.log("Nothing to add in region for: " + temp);
-        break;
-
-      }//end of switch
+        default:
+          CacheUtils.log("Nothing to add in region for: " + temp);
+          break;
+      } //end of switch
     } //end of for
     CacheUtils.log("Country regions created and populated");
   }
@@ -140,41 +137,345 @@ public class IndexedMergeEquiJoinScenariosJUnitTest {
     CacheUtils.getQueryService();
     IndexManager.TEST_RANGEINDEX_ONLY = true;
     try {
-      String queries[] = { /*1*  "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " +
-                           		"where pf1.status = pf2.status and c1.name = c2.name",
-                           /*2 */ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM'", /*3*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name", /*4*/ "Select distinct * " + "from /Portfolios1 pfos, pfos.positions.values Pos1, /Countries1 c1, /Countries2 c2, /Countries3 c3, /Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' and c1.name = c2.name or c3.name = 'INDIA' and pfo3.status != 'inactive' or pfo3.\"type\" = 'type1' and pfo3.status = pfos.status ",
-          /*5*/ "Select distinct * " + "from /Portfolios1 pfos, pfos.positions.values Pos1, /Countries1 c1, /Countries2 c2, /Countries3 c3, /Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' or c1.name = c2.name or c3.name = 'INDIA' and pfo3.status != 'inactive' or pfo3.\"type\" = 'type1' and pfo3.status = pfos.status ", /*6*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' or " + "c1.name = c2.name or " + "pfo3.status != 'inactive' or " + "pfo3.status = pfos.status ", /*7*/ "Select distinct * " + "from /Countries1 c1, c1.states sts1, sts1.districts dists, dists.cities ct1, dists.villages villgs1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where " + "c1.name = c2.name or " + "ct1.name != 'PUNE' or " + "villgs1.name = 'MAHARASHTRA_VILLAGE1'",
-          /*8*/ "Select distinct * " + "from /Countries1 c1, c1.states sts1, sts1.districts dists, dists.cities ct1, dists.villages villgs1, " + "/Countries2 c2, " + "/Countries3 c3 " + "where " + "c1.name = c2.name and " + "ct1.name != 'PUNE' and " + "villgs1.name = 'MAHARASHTRA_VILLAGE1'",
+      String queries[] = {
+        /*1*  "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " +
+        		"where pf1.status = pf2.status and c1.name = c2.name",
+        /*2 */
+        "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM'", /*3*/
+        "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name", /*4*/
+        "Select distinct * "
+            + "from /Portfolios1 pfos, pfos.positions.values Pos1, /Countries1 c1, /Countries2 c2, /Countries3 c3, /Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' and c1.name = c2.name or c3.name = 'INDIA' and pfo3.status != 'inactive' or pfo3.\"type\" = 'type1' and pfo3.status = pfos.status ",
+        /*5*/ "Select distinct * "
+            + "from /Portfolios1 pfos, pfos.positions.values Pos1, /Countries1 c1, /Countries2 c2, /Countries3 c3, /Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' or c1.name = c2.name or c3.name = 'INDIA' and pfo3.status != 'inactive' or pfo3.\"type\" = 'type1' and pfo3.status = pfos.status ", /*6*/
+        "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' or "
+            + "c1.name = c2.name or "
+            + "pfo3.status != 'inactive' or "
+            + "pfo3.status = pfos.status ", /*7*/
+        "Select distinct * "
+            + "from /Countries1 c1, c1.states sts1, sts1.districts dists, dists.cities ct1, dists.villages villgs1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where "
+            + "c1.name = c2.name or "
+            + "ct1.name != 'PUNE' or "
+            + "villgs1.name = 'MAHARASHTRA_VILLAGE1'",
+        /*8*/ "Select distinct * "
+            + "from /Countries1 c1, c1.states sts1, sts1.districts dists, dists.cities ct1, dists.villages villgs1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3 "
+            + "where "
+            + "c1.name = c2.name and "
+            + "ct1.name != 'PUNE' and "
+            + "villgs1.name = 'MAHARASHTRA_VILLAGE1'",
 
-          /*9*/ "Select distinct * " + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, c2.states s2, " + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 " + "where " + "c1.name = c2.name and " + "ct1.name != 'PUNE' and " + "villgs1.name = 'MAHARASHTRA_VILLAGE1' or " + "villgs1.name = villgs3.name or " + "s2.name = 'PUNJAB' or " + "ct1.name = ct3.name and " + "dists3.name = 'MUMBAIDIST'",
-          /*10*/ "Select distinct * " + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, c2.states s2, " + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 " + "where " + "c1.name = c2.name or " + "ct1.name != 'PUNE' and " + "villgs1.name = 'MAHARASHTRA_VILLAGE1' or " + "villgs1.name = villgs3.name or " + "s2.name = 'PUNJAB' or " + "ct1.name = ct3.name and " + "dists3.name = 'MUMBAIDIST'",
-          /*11*/ "Select distinct * " + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, c2.states s2, " + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 " + "where " + "c1.name = c2.name and " + "ct1.name != 'PUNE' or " + "villgs1.name = 'MAHARASHTRA_VILLAGE1' or " + "villgs1.name = villgs3.name or " + "s2.name = 'PUNJAB' or " + "ct1.name = ct3.name and " + "dists3.name = 'MUMBAIDIST'",
-          /*12*/ "Select distinct * " + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, c2.states s2, " + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 " + "where " + "c1.name = c2.name and " + "ct1.name != 'PUNE' or " + "villgs1.name = 'MAHARASHTRA_VILLAGE1' and " + "villgs1.name = villgs3.name or " + "s2.name = 'PUNJAB' or " + "ct1.name = ct3.name or " + "dists3.name = 'MUMBAIDIST'",
-          /*13*/ "Select distinct * " + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, c2.states s2, " + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 " + "where " + "c1.name = c2.name and " + "ct1.name != 'PUNE' and " + "villgs1.name = 'MAHARASHTRA_VILLAGE1' and " + "villgs1.name = villgs3.name or " + "s2.name = 'PUNJAB' and " + "ct1.name = ct3.name and " + "dists3.name = 'MUMBAIDIST'",
-          /*14*/ "Select distinct * " + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, c2.states s2, " + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 " + "where " + "c1.name = c2.name or " + "ct1.name != 'PUNE' or " + "villgs1.name = 'MAHARASHTRA_VILLAGE1' or " + "villgs1.name = villgs3.name or " + "s2.name = 'PUNJAB' or " + "ct1.name = ct3.name or " + "dists3.name = 'MUMBAIDIST'",
-          /*15*/ "Select distinct * " + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, c2.states s2, " + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 " + "where " + "c1.name = c2.name and " + "ct1.name != 'PUNE' and " + "villgs1.name = 'MAHARASHTRA_VILLAGE1' and " + "villgs1.name = villgs3.name and " + "s2.name = 'PUNJAB' and " + "ct1.name = ct3.name and " + "dists3.name = 'MUMBAIDIST'",
+        /*9*/ "Select distinct * "
+            + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, c2.states s2, "
+            + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 "
+            + "where "
+            + "c1.name = c2.name and "
+            + "ct1.name != 'PUNE' and "
+            + "villgs1.name = 'MAHARASHTRA_VILLAGE1' or "
+            + "villgs1.name = villgs3.name or "
+            + "s2.name = 'PUNJAB' or "
+            + "ct1.name = ct3.name and "
+            + "dists3.name = 'MUMBAIDIST'",
+        /*10*/ "Select distinct * "
+            + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, c2.states s2, "
+            + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 "
+            + "where "
+            + "c1.name = c2.name or "
+            + "ct1.name != 'PUNE' and "
+            + "villgs1.name = 'MAHARASHTRA_VILLAGE1' or "
+            + "villgs1.name = villgs3.name or "
+            + "s2.name = 'PUNJAB' or "
+            + "ct1.name = ct3.name and "
+            + "dists3.name = 'MUMBAIDIST'",
+        /*11*/ "Select distinct * "
+            + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, c2.states s2, "
+            + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 "
+            + "where "
+            + "c1.name = c2.name and "
+            + "ct1.name != 'PUNE' or "
+            + "villgs1.name = 'MAHARASHTRA_VILLAGE1' or "
+            + "villgs1.name = villgs3.name or "
+            + "s2.name = 'PUNJAB' or "
+            + "ct1.name = ct3.name and "
+            + "dists3.name = 'MUMBAIDIST'",
+        /*12*/ "Select distinct * "
+            + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, c2.states s2, "
+            + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 "
+            + "where "
+            + "c1.name = c2.name and "
+            + "ct1.name != 'PUNE' or "
+            + "villgs1.name = 'MAHARASHTRA_VILLAGE1' and "
+            + "villgs1.name = villgs3.name or "
+            + "s2.name = 'PUNJAB' or "
+            + "ct1.name = ct3.name or "
+            + "dists3.name = 'MUMBAIDIST'",
+        /*13*/ "Select distinct * "
+            + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, c2.states s2, "
+            + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 "
+            + "where "
+            + "c1.name = c2.name and "
+            + "ct1.name != 'PUNE' and "
+            + "villgs1.name = 'MAHARASHTRA_VILLAGE1' and "
+            + "villgs1.name = villgs3.name or "
+            + "s2.name = 'PUNJAB' and "
+            + "ct1.name = ct3.name and "
+            + "dists3.name = 'MUMBAIDIST'",
+        /*14*/ "Select distinct * "
+            + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, c2.states s2, "
+            + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 "
+            + "where "
+            + "c1.name = c2.name or "
+            + "ct1.name != 'PUNE' or "
+            + "villgs1.name = 'MAHARASHTRA_VILLAGE1' or "
+            + "villgs1.name = villgs3.name or "
+            + "s2.name = 'PUNJAB' or "
+            + "ct1.name = ct3.name or "
+            + "dists3.name = 'MUMBAIDIST'",
+        /*15*/ "Select distinct * "
+            + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, c2.states s2, "
+            + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 "
+            + "where "
+            + "c1.name = c2.name and "
+            + "ct1.name != 'PUNE' and "
+            + "villgs1.name = 'MAHARASHTRA_VILLAGE1' and "
+            + "villgs1.name = villgs3.name and "
+            + "s2.name = 'PUNJAB' and "
+            + "ct1.name = ct3.name and "
+            + "dists3.name = 'MUMBAIDIST'",
 
-          /*16*/ "Select distinct * " + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, c2.states s2, " + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 " + "where " + "c1.name = c2.name and " + "sts1.name != 'PUNJAB' and " + "ct1.name != 'PUNE' and " + "villgs1.name = 'MAHARASHTRA_VILLAGE1' and " + "villgs1.name = villgs3.name and " + "sts3.name != sts1.name and " + "s2.name = 'PUNJAB' and " + "ct1.name = ct3.name and " + "dists3.name = 'MUMBAIDIST' and dists3.name != s2.name", /*17*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' and " + "c1.name = c2.name or " + "pfo3.status != 'inactive' and " + "pfo3.status = pfos.status ",
-          /*18*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' and " + "c1.name = c2.name or " + "pfo3.status != 'inactive' and " + "pfo3.status = pfos.status ", /*19*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' and " + "c1.name = c2.name or " + "pfo3.status != 'inactive' and " + "pfo3.status = pfos.status and villgs1.name = 'MAHARASHTRA_VILLAGE1' ",
-          /*20*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' and " + "c1.name = c2.name or " + "pfo3.status != 'inactive' and " + "pfo3.status = pfos.status and villgs1.name = 'MAHARASHTRA_VILLAGE1' or pfos.ID != 0", /*21*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' and " + "c1.name = c2.name or " + "pfo3.status != 'inactive' and " + "pfo3.status = pfos.status and villgs1.name = 'MAHARASHTRA_VILLAGE1' or pfos.ID != 0",
-          /*22*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' and " + "c1.name = c2.name or " + "pfo3.status != 'inactive' and " + "pfo3.status = pfos.status and villgs1.name = 'MAHARASHTRA_VILLAGE1' or pfos.ID != 0",
+        /*16*/ "Select distinct * "
+            + "from /Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, c2.states s2, "
+            + "/Countries3 c3, c3.states sts3, sts3.districts dists3, dists3.cities ct3, dists3.villages villgs3 "
+            + "where "
+            + "c1.name = c2.name and "
+            + "sts1.name != 'PUNJAB' and "
+            + "ct1.name != 'PUNE' and "
+            + "villgs1.name = 'MAHARASHTRA_VILLAGE1' and "
+            + "villgs1.name = villgs3.name and "
+            + "sts3.name != sts1.name and "
+            + "s2.name = 'PUNJAB' and "
+            + "ct1.name = ct3.name and "
+            + "dists3.name = 'MUMBAIDIST' and dists3.name != s2.name", /*17*/
+        "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' and "
+            + "c1.name = c2.name or "
+            + "pfo3.status != 'inactive' and "
+            + "pfo3.status = pfos.status ",
+        /*18*/ "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' and "
+            + "c1.name = c2.name or "
+            + "pfo3.status != 'inactive' and "
+            + "pfo3.status = pfos.status ", /*19*/
+        "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' and "
+            + "c1.name = c2.name or "
+            + "pfo3.status != 'inactive' and "
+            + "pfo3.status = pfos.status and villgs1.name = 'MAHARASHTRA_VILLAGE1' ",
+        /*20*/ "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' and "
+            + "c1.name = c2.name or "
+            + "pfo3.status != 'inactive' and "
+            + "pfo3.status = pfos.status and villgs1.name = 'MAHARASHTRA_VILLAGE1' or pfos.ID != 0", /*21*/
+        "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' and "
+            + "c1.name = c2.name or "
+            + "pfo3.status != 'inactive' and "
+            + "pfo3.status = pfos.status and villgs1.name = 'MAHARASHTRA_VILLAGE1' or pfos.ID != 0",
+        /*22*/ "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' and "
+            + "c1.name = c2.name or "
+            + "pfo3.status != 'inactive' and "
+            + "pfo3.status = pfos.status and villgs1.name = 'MAHARASHTRA_VILLAGE1' or pfos.ID != 0",
 
-          /*23*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' and " + "(c1.name = c2.name or " + "pfo3.status != 'inactive') and " + "pfo3.status = pfos.status ", /*24*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, c1.states s1, " + "/Countries2 c2, c2.states s2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' and " + "((c1.name = c2.name or " + "pfo3.status != 'inactive') and " + "pfo3.status = pfos.status) or s1.name = 'MAHARASHTRA' and s2.name != 'MAHARASHTRA'",
-          /*25*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where (Pos1.secId = 'YHOO' and " + "c1.name = c2.name or " + "pfo3.status != 'inactive') and " + "pfo3.status = pfos.status and villgs1.name = 'MAHARASHTRA_VILLAGE1' ", /*26*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' and " + "c1.name = c2.name or " + "pfo3.status != 'inactive' and " + "pfo3.status = pfos.status and (villgs1.name = 'MAHARASHTRA_VILLAGE1' or pfos.ID != 0)",
-          /*27*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' and " + "(c1.name = c2.name or " + "pfo3.status != 'inactive') and " + "pfo3.status = pfos.status and (villgs1.name = 'MAHARASHTRA_VILLAGE1' or pfos.ID != 0)", /*28*/ "Select distinct * " + "from /Portfolios1 pfos, " + "pfos.positions.values Pos1, " + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, " + "/Countries2 c2, " + "/Countries3 c3, " + "/Portfolios3 pfo3 " + "where Pos1.secId = 'YHOO' and " + "(c1.name = c2.name or " + "pfo3.status != 'inactive' and " + "pfo3.status = pfos.status and (villgs1.name = 'MAHARASHTRA_VILLAGE1' or pfos.ID != 0))",
-          /*29*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or false or c1.name = c2.name", /*30*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and pos1.secId = 'IBM' and true", /*31*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and true", /*32*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM'", /*33*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and false",
-          /*34*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or false or c1.name = c2.name or pf2.ID = 1 or c1.name = 'INDIA'", /*35*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and pos1.secId = 'IBM' and true or pf1.ID != 3", /*36*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and true or pf1.ID = pf2.ID", /*37*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM' or false and pf1.ID = pf2.ID",
-          /*38*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and false and pf1.ID = pf2.ID",
+        /*23*/ "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' and "
+            + "(c1.name = c2.name or "
+            + "pfo3.status != 'inactive') and "
+            + "pfo3.status = pfos.status ", /*24*/
+        "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, c1.states s1, "
+            + "/Countries2 c2, c2.states s2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' and "
+            + "((c1.name = c2.name or "
+            + "pfo3.status != 'inactive') and "
+            + "pfo3.status = pfos.status) or s1.name = 'MAHARASHTRA' and s2.name != 'MAHARASHTRA'",
+        /*25*/ "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where (Pos1.secId = 'YHOO' and "
+            + "c1.name = c2.name or "
+            + "pfo3.status != 'inactive') and "
+            + "pfo3.status = pfos.status and villgs1.name = 'MAHARASHTRA_VILLAGE1' ", /*26*/
+        "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' and "
+            + "c1.name = c2.name or "
+            + "pfo3.status != 'inactive' and "
+            + "pfo3.status = pfos.status and (villgs1.name = 'MAHARASHTRA_VILLAGE1' or pfos.ID != 0)",
+        /*27*/ "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' and "
+            + "(c1.name = c2.name or "
+            + "pfo3.status != 'inactive') and "
+            + "pfo3.status = pfos.status and (villgs1.name = 'MAHARASHTRA_VILLAGE1' or pfos.ID != 0)", /*28*/
+        "Select distinct * "
+            + "from /Portfolios1 pfos, "
+            + "pfos.positions.values Pos1, "
+            + "/Countries1 c1, c1.states sts1, sts1.districts dists1, dists1.cities ct1, dists1.villages villgs1, "
+            + "/Countries2 c2, "
+            + "/Countries3 c3, "
+            + "/Portfolios3 pfo3 "
+            + "where Pos1.secId = 'YHOO' and "
+            + "(c1.name = c2.name or "
+            + "pfo3.status != 'inactive' and "
+            + "pfo3.status = pfos.status and (villgs1.name = 'MAHARASHTRA_VILLAGE1' or pfos.ID != 0))",
+        /*29*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or false or c1.name = c2.name", /*30*/
+        "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and pos1.secId = 'IBM' and true", /*31*/
+        "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and true", /*32*/
+        "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM'", /*33*/
+        "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and false",
+        /*34*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or false or c1.name = c2.name or pf2.ID = 1 or c1.name = 'INDIA'", /*35*/
+        "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and pos1.secId = 'IBM' and true or pf1.ID != 3", /*36*/
+        "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and true or pf1.ID = pf2.ID", /*37*/
+        "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM' or false and pf1.ID = pf2.ID",
+        /*38*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and false and pf1.ID = pf2.ID",
 
-          /*39*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or false or c1.name = c2.name or c1.name = 'INDIA' or pf1.ID = 2", /*40*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and pos1.secId = 'IBM' and true", /*41*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and true or c1.name = 'INDIA' or pf1.ID = 2", /*42*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM' or c1.name = 'INDIA' or pf2.ID = 2",
-          /*43*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and false or c1.name = 'INDIA' or pf2.ID = 2",
-          //FAILING    /*44*/ 
-          "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or false or c1.name = c2.name or pf2.ID = 1 or c1.name = 'INDIA' or c1.name = 'INDIA' or pf1.ID = 2", /*45*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and pos1.secId = 'IBM' and true or pf1.ID != 3 or c1.name = 'INDIA' or pf1.ID = 2", /*46*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and true or pf1.ID = pf2.ID or c1.name = 'INDIA' or pf2.ID = 2", /*47*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM' or false and pf1.ID = pf2.ID or c1.name = 'INDIA' or pf1.ID = 2",
-          /*48*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and false and pf1.ID = pf2.ID or c1.name = 'INDIA' or pf2.ID = 2",
+        /*39*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or false or c1.name = c2.name or c1.name = 'INDIA' or pf1.ID = 2", /*40*/
+        "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and pos1.secId = 'IBM' and true", /*41*/
+        "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and true or c1.name = 'INDIA' or pf1.ID = 2", /*42*/
+        "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM' or c1.name = 'INDIA' or pf2.ID = 2",
+        /*43*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and false or c1.name = 'INDIA' or pf2.ID = 2",
+        //FAILING    /*44*/
+        "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or false or c1.name = c2.name or pf2.ID = 1 or c1.name = 'INDIA' or c1.name = 'INDIA' or pf1.ID = 2", /*45*/
+        "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and pos1.secId = 'IBM' and true or pf1.ID != 3 or c1.name = 'INDIA' or pf1.ID = 2", /*46*/
+        "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and true or pf1.ID = pf2.ID or c1.name = 'INDIA' or pf2.ID = 2", /*47*/
+        "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM' or false and pf1.ID = pf2.ID or c1.name = 'INDIA' or pf1.ID = 2",
+        /*48*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and false and pf1.ID = pf2.ID or c1.name = 'INDIA' or pf2.ID = 2",
 
-          /*49*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or false or c1.name = c2.name and c1.name = 'INDIA' and pf1.ID = 2", /*50*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and pos1.secId = 'IBM' and true and c1.name = 'INDIA' and pf2.ID = 2", /*51*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and true and c1.name = 'INDIA' and pf2.ID = 2", /*52*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM' and c1.name = 'INDIA' and pf2.ID = 2",
-          /*53*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and false and c1.name = 'INDIA' and pf2.ID = 2", /*54*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or false or c1.name = c2.name or pf2.ID = 1 or c1.name = 'INDIA' and c1.name = 'INDIA' and pf2.ID = 2", /*55*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and pos1.secId = 'IBM' and true or pf1.ID != 3 and c1.name = 'INDIA' and pf2.ID = 2", /*56*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and true or pf1.ID = pf2.ID and c1.name = 'INDIA' and pf2.ID = 2",
-          /*57*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM' or false and pf1.ID = pf2.ID and c1.name = 'INDIA' and pf2.ID = 2", /*58*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 " + "where pf1.status = pf2.status or c1.name = c2.name and false and pf1.ID = pf2.ID and c1.name = 'INDIA' and pf2.ID = 2", };
+        /*49*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or false or c1.name = c2.name and c1.name = 'INDIA' and pf1.ID = 2", /*50*/
+        "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and pos1.secId = 'IBM' and true and c1.name = 'INDIA' and pf2.ID = 2", /*51*/
+        "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and true and c1.name = 'INDIA' and pf2.ID = 2", /*52*/
+        "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM' and c1.name = 'INDIA' and pf2.ID = 2",
+        /*53*/ "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and false and c1.name = 'INDIA' and pf2.ID = 2", /*54*/
+        "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or false or c1.name = c2.name or pf2.ID = 1 or c1.name = 'INDIA' and c1.name = 'INDIA' and pf2.ID = 2", /*55*/
+        "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and pos1.secId = 'IBM' and true or pf1.ID != 3 and c1.name = 'INDIA' and pf2.ID = 2", /*56*/
+        "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and true or pf1.ID = pf2.ID and c1.name = 'INDIA' and pf2.ID = 2",
+        /*57*/ "select distinct * from /Portfolios1 pf1, pf1.positions.values pos1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status and c1.name = c2.name or pos1.secId = 'IBM' or false and pf1.ID = pf2.ID and c1.name = 'INDIA' and pf2.ID = 2", /*58*/
+        "select distinct * from /Portfolios1 pf1, /Portfolios2 pf2, /Countries1 c1, /Countries2 c2 "
+            + "where pf1.status = pf2.status or c1.name = c2.name and false and pf1.ID = pf2.ID and c1.name = 'INDIA' and pf2.ID = 2",
+      };
 
       SelectResults rs[][] = new SelectResults[queries.length][2];
 
@@ -204,7 +505,8 @@ public class IndexedMergeEquiJoinScenariosJUnitTest {
           }
 
         } catch (Exception e) {
-          System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!CAUGHT EXCPETION AT QUERY NO: " + (j + 1));
+          System.out.println(
+              "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!CAUGHT EXCPETION AT QUERY NO: " + (j + 1));
           e.printStackTrace();
           fail();
         }
@@ -220,41 +522,108 @@ public class IndexedMergeEquiJoinScenariosJUnitTest {
     QueryService qs;
     qs = CacheUtils.getQueryService();
 
-    qs.createIndex("Portfolio1secIdIdx", IndexType.FUNCTIONAL, "b.secId", "/Portfolios1 pf, pf.positions.values b");
-    qs.createIndex("Portfolio1IdIdx1", IndexType.FUNCTIONAL, "pf.ID", "/Portfolios1 pf, pf.positions.values b");
+    qs.createIndex(
+        "Portfolio1secIdIdx",
+        IndexType.FUNCTIONAL,
+        "b.secId",
+        "/Portfolios1 pf, pf.positions.values b");
+    qs.createIndex(
+        "Portfolio1IdIdx1",
+        IndexType.FUNCTIONAL,
+        "pf.ID",
+        "/Portfolios1 pf, pf.positions.values b");
     qs.createIndex("Portfolio1Idindex2", IndexType.FUNCTIONAL, "pf.ID", "/Portfolios1 pf");
-    qs.createIndex("Portfolio1statusIdx1", IndexType.FUNCTIONAL, "pf.status", "/Portfolios1 pf, pf.positions.values b");
+    qs.createIndex(
+        "Portfolio1statusIdx1",
+        IndexType.FUNCTIONAL,
+        "pf.status",
+        "/Portfolios1 pf, pf.positions.values b");
     qs.createIndex("Portfolio1statusIdx2", IndexType.FUNCTIONAL, "pf.status", "/Portfolios1 pf");
 
-    qs.createIndex("Portfolio2secIdIdx", IndexType.FUNCTIONAL, "b.secId", "/Portfolios2 pf, pf.positions.values b");
-    qs.createIndex("Portfolio2IdIdx1", IndexType.FUNCTIONAL, "pf.ID", "/Portfolios2 pf, pf.positions.values b");
+    qs.createIndex(
+        "Portfolio2secIdIdx",
+        IndexType.FUNCTIONAL,
+        "b.secId",
+        "/Portfolios2 pf, pf.positions.values b");
+    qs.createIndex(
+        "Portfolio2IdIdx1",
+        IndexType.FUNCTIONAL,
+        "pf.ID",
+        "/Portfolios2 pf, pf.positions.values b");
     qs.createIndex("Portfolio2Idindex2", IndexType.FUNCTIONAL, "pf.ID", "/Portfolios2 pf");
-    qs.createIndex("Portfolio2statusIdx1", IndexType.FUNCTIONAL, "pf.status", "/Portfolios2 pf, pf.positions.values b");
+    qs.createIndex(
+        "Portfolio2statusIdx1",
+        IndexType.FUNCTIONAL,
+        "pf.status",
+        "/Portfolios2 pf, pf.positions.values b");
     qs.createIndex("Portfolio2statusIdx2", IndexType.FUNCTIONAL, "pf.status", "/Portfolios2 pf");
 
-    qs.createIndex("Portfolio3secIdIdx", IndexType.FUNCTIONAL, "b.secId", "/Portfolios3 pf, pf.positions.values b");
-    qs.createIndex("Portfolio3IdIdx1", IndexType.FUNCTIONAL, "pf.ID", "/Portfolios3 pf, pf.positions.values b");
+    qs.createIndex(
+        "Portfolio3secIdIdx",
+        IndexType.FUNCTIONAL,
+        "b.secId",
+        "/Portfolios3 pf, pf.positions.values b");
+    qs.createIndex(
+        "Portfolio3IdIdx1",
+        IndexType.FUNCTIONAL,
+        "pf.ID",
+        "/Portfolios3 pf, pf.positions.values b");
     qs.createIndex("Portfolio3Idindex2", IndexType.FUNCTIONAL, "pf.ID", "/Portfolios3 pf");
-    qs.createIndex("Portfolio3statusIdx1", IndexType.FUNCTIONAL, "pf.status", "/Portfolios3 pf, pf.positions.values b");
+    qs.createIndex(
+        "Portfolio3statusIdx1",
+        IndexType.FUNCTIONAL,
+        "pf.status",
+        "/Portfolios3 pf, pf.positions.values b");
     qs.createIndex("Portfolio3statusIdx2", IndexType.FUNCTIONAL, "pf.status", "/Portfolios3 pf");
 
     /*Indices on region1*/
-    qs.createIndex("villageName1", IndexType.FUNCTIONAL, "v.name", "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("cityName1", IndexType.FUNCTIONAL, "ct.name", "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("countryNameA", IndexType.FUNCTIONAL, "c.name", "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "villageName1",
+        IndexType.FUNCTIONAL,
+        "v.name",
+        "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "cityName1",
+        IndexType.FUNCTIONAL,
+        "ct.name",
+        "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "countryNameA",
+        IndexType.FUNCTIONAL,
+        "c.name",
+        "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
     qs.createIndex("countryNameB", IndexType.FUNCTIONAL, "c.name", "/Countries1 c");
 
     /*Indices on region2*/
-    qs.createIndex("stateName2", IndexType.FUNCTIONAL, "s.name", "/Countries2 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("cityName2", IndexType.FUNCTIONAL, "ct.name", "/Countries2 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "stateName2",
+        IndexType.FUNCTIONAL,
+        "s.name",
+        "/Countries2 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "cityName2",
+        IndexType.FUNCTIONAL,
+        "ct.name",
+        "/Countries2 c, c.states s, s.districts d, d.cities ct, d.villages v");
     qs.createIndex("countryNameB", IndexType.FUNCTIONAL, "c.name", "/Countries2 c");
 
     /*Indices on region3*/
-    qs.createIndex("districtName3", IndexType.FUNCTIONAL, "d.name", "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("villageName3", IndexType.FUNCTIONAL, "v.name", "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("cityName3", IndexType.FUNCTIONAL, "ct.name", "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
-
-  }//end of createIndex
+    qs.createIndex(
+        "districtName3",
+        IndexType.FUNCTIONAL,
+        "d.name",
+        "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "villageName3",
+        IndexType.FUNCTIONAL,
+        "v.name",
+        "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "cityName3",
+        IndexType.FUNCTIONAL,
+        "ct.name",
+        "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
+  } //end of createIndex
 
   @After
   public void tearDown() throws Exception {

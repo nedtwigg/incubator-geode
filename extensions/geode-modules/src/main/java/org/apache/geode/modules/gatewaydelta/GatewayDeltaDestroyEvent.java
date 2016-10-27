@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.geode.modules.gatewaydelta;
 
 import org.apache.geode.DataSerializable;
@@ -30,8 +30,7 @@ import java.io.IOException;
 @SuppressWarnings("serial")
 public class GatewayDeltaDestroyEvent extends AbstractGatewayDeltaEvent {
 
-  public GatewayDeltaDestroyEvent() {
-  }
+  public GatewayDeltaDestroyEvent() {}
 
   public GatewayDeltaDestroyEvent(String regionName, String key) {
     super(regionName, key);
@@ -62,14 +61,22 @@ public class GatewayDeltaDestroyEvent extends AbstractGatewayDeltaEvent {
   }
 
   public static void registerInstantiator(int id) {
-    Instantiator.register(new Instantiator(GatewayDeltaDestroyEvent.class, id) {
-      public DataSerializable newInstance() {
-        return new GatewayDeltaDestroyEvent();
-      }
-    });
+    Instantiator.register(
+        new Instantiator(GatewayDeltaDestroyEvent.class, id) {
+          public DataSerializable newInstance() {
+            return new GatewayDeltaDestroyEvent();
+          }
+        });
   }
 
   public String toString() {
-    return new StringBuilder().append("GatewayDeltaDestroyEvent[").append("regionName=").append(this.regionName).append("; key=").append(this.key).append("]").toString();
+    return new StringBuilder()
+        .append("GatewayDeltaDestroyEvent[")
+        .append("regionName=")
+        .append(this.regionName)
+        .append("; key=")
+        .append(this.key)
+        .append("]")
+        .toString();
   }
 }

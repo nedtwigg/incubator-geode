@@ -50,9 +50,7 @@ import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.FailureMode;
 import net.spy.memcached.MemcachedClient;
 
-/**
- * Test for binary protocol
- */
+/** Test for binary protocol */
 @Category(IntegrationTest.class)
 public class GemcachedBinaryClientJUnitTest extends GemcachedDevelopmentJUnitTest {
 
@@ -77,21 +75,24 @@ public class GemcachedBinaryClientJUnitTest extends GemcachedDevelopmentJUnitTes
 
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
     Region region = cache.getRegion(GemFireMemcachedServer.REGION_NAME);
-    region.getAttributesMutator().setCacheWriter(new CacheWriterAdapter() {
-      @Override
-      public void beforeCreate(EntryEvent event) throws CacheWriterException {
-        if (event.getKey().equals(KeyWrapper.getWrappedKey("exceptionkey".getBytes()))) {
-          throw new RuntimeException("ExpectedStrings: Cache writer exception");
-        }
-      }
+    region
+        .getAttributesMutator()
+        .setCacheWriter(
+            new CacheWriterAdapter() {
+              @Override
+              public void beforeCreate(EntryEvent event) throws CacheWriterException {
+                if (event.getKey().equals(KeyWrapper.getWrappedKey("exceptionkey".getBytes()))) {
+                  throw new RuntimeException("ExpectedStrings: Cache writer exception");
+                }
+              }
 
-      @Override
-      public void beforeUpdate(EntryEvent event) throws CacheWriterException {
-        if (event.getKey().equals(KeyWrapper.getWrappedKey("exceptionkey".getBytes()))) {
-          throw new RuntimeException("ExpectedStrings: Cache writer exception");
-        }
-      }
-    });
+              @Override
+              public void beforeUpdate(EntryEvent event) throws CacheWriterException {
+                if (event.getKey().equals(KeyWrapper.getWrappedKey("exceptionkey".getBytes()))) {
+                  throw new RuntimeException("ExpectedStrings: Cache writer exception");
+                }
+              }
+            });
     long start = System.nanoTime();
     try {
       client.set("exceptionkey", 0, "exceptionvalue").get();
@@ -109,19 +110,21 @@ public class GemcachedBinaryClientJUnitTest extends GemcachedDevelopmentJUnitTes
 
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
     Region region = cache.getRegion(GemFireMemcachedServer.REGION_NAME);
-    region.getAttributesMutator().setCacheLoader(new CacheLoader() {
-      @Override
-      public void close() {
-      }
+    region
+        .getAttributesMutator()
+        .setCacheLoader(
+            new CacheLoader() {
+              @Override
+              public void close() {}
 
-      @Override
-      public Object load(LoaderHelper helper) throws CacheLoaderException {
-        if (helper.getKey().equals(KeyWrapper.getWrappedKey("exceptionkey".getBytes()))) {
-          throw new RuntimeException("ExpectedStrings: Cache loader exception");
-        }
-        return null;
-      }
-    });
+              @Override
+              public Object load(LoaderHelper helper) throws CacheLoaderException {
+                if (helper.getKey().equals(KeyWrapper.getWrappedKey("exceptionkey".getBytes()))) {
+                  throw new RuntimeException("ExpectedStrings: Cache loader exception");
+                }
+                return null;
+              }
+            });
     long start = System.nanoTime();
     try {
       client.get("exceptionkey");

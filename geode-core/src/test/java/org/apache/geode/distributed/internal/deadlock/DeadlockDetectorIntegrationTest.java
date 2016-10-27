@@ -38,9 +38,7 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * TODO: can we get rid of the Thread.sleep calls?
- */
+/** TODO: can we get rid of the Thread.sleep calls? */
 @Category(IntegrationTest.class)
 public class DeadlockDetectorIntegrationTest {
 
@@ -51,9 +49,7 @@ public class DeadlockDetectorIntegrationTest {
     stuckThreads = Collections.synchronizedSet(new HashSet<Thread>());
   }
 
-  /**
-   * IntegrationTests are forkEvery 1 so cleanup is not necessary
-   */
+  /** IntegrationTests are forkEvery 1 so cleanup is not necessary */
   @After
   public void tearDown() throws Exception {
     for (Thread thread : stuckThreads) {
@@ -63,42 +59,42 @@ public class DeadlockDetectorIntegrationTest {
     stuckThreads.clear();
   }
 
-  /**
-   * must be IntegrationTest because: "we can't clean up the threads deadlocked on monitors"
-   */
+  /** must be IntegrationTest because: "we can't clean up the threads deadlocked on monitors" */
   @Test
   public void testMonitorDeadlock() throws Exception {
     final Object lock1 = new Object();
     final Object lock2 = new Object();
 
-    Thread thread1 = new Thread() {
-      public void run() {
-        stuckThreads.add(Thread.currentThread());
+    Thread thread1 =
+        new Thread() {
+          public void run() {
+            stuckThreads.add(Thread.currentThread());
 
-        synchronized (lock1) {
-          Thread thread2 = new Thread() {
-            public void run() {
-              stuckThreads.add(Thread.currentThread());
-              synchronized (lock2) {
-                synchronized (lock1) {
-                  System.out.println("we won't get here");
+            synchronized (lock1) {
+              Thread thread2 =
+                  new Thread() {
+                    public void run() {
+                      stuckThreads.add(Thread.currentThread());
+                      synchronized (lock2) {
+                        synchronized (lock1) {
+                          System.out.println("we won't get here");
+                        }
+                      }
+                    }
+                  };
+
+              thread2.start();
+
+              try {
+                Thread.sleep(1000);
+                synchronized (lock2) {
+                  System.out.println("We won't get here");
                 }
+              } catch (InterruptedException ignore) {
               }
             }
-          };
-
-          thread2.start();
-
-          try {
-            Thread.sleep(1000);
-            synchronized (lock2) {
-              System.out.println("We won't get here");
-            }
-          } catch (InterruptedException ignore) {
           }
-        }
-      }
-    };
+        };
 
     thread1.start();
 
@@ -114,44 +110,46 @@ public class DeadlockDetectorIntegrationTest {
   }
 
   /**
-   * Make sure that we can detect a deadlock between two threads
-   * that are trying to acquire a two different syncs in the different orders.
+   * Make sure that we can detect a deadlock between two threads that are trying to acquire a two
+   * different syncs in the different orders.
    */
   @Test
   public void testSyncDeadlock() throws Exception {
     final Lock lock1 = new ReentrantLock();
     final Lock lock2 = new ReentrantLock();
 
-    Thread thread1 = new Thread() {
-      public void run() {
-        stuckThreads.add(Thread.currentThread());
-
-        lock1.lock();
-
-        Thread thread2 = new Thread() {
+    Thread thread1 =
+        new Thread() {
           public void run() {
             stuckThreads.add(Thread.currentThread());
-            lock2.lock();
+
+            lock1.lock();
+
+            Thread thread2 =
+                new Thread() {
+                  public void run() {
+                    stuckThreads.add(Thread.currentThread());
+                    lock2.lock();
+                    try {
+                      lock1.tryLock(10, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                      //ignore
+                    }
+                    lock2.unlock();
+                  }
+                };
+
+            thread2.start();
+
             try {
-              lock1.tryLock(10, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-              //ignore
+              Thread.sleep(1000);
+              lock2.tryLock(10, TimeUnit.SECONDS);
+            } catch (InterruptedException ignore) {
             }
-            lock2.unlock();
+
+            lock1.unlock();
           }
         };
-
-        thread2.start();
-
-        try {
-          Thread.sleep(1000);
-          lock2.tryLock(10, TimeUnit.SECONDS);
-        } catch (InterruptedException ignore) {
-        }
-
-        lock1.unlock();
-      }
-    };
 
     thread1.start();
 
@@ -172,39 +170,41 @@ public class DeadlockDetectorIntegrationTest {
     final Semaphore lock1 = new Semaphore(1);
     final Semaphore lock2 = new Semaphore(1);
 
-    Thread thread1 = new Thread() {
-      public void run() {
-        stuckThreads.add(Thread.currentThread());
-
-        try {
-          lock1.acquire();
-        } catch (InterruptedException e1) {
-          e1.printStackTrace();
-        }
-
-        Thread thread2 = new Thread() {
+    Thread thread1 =
+        new Thread() {
           public void run() {
             stuckThreads.add(Thread.currentThread());
+
             try {
-              lock2.acquire();
-              lock1.tryAcquire(10, TimeUnit.SECONDS);
+              lock1.acquire();
+            } catch (InterruptedException e1) {
+              e1.printStackTrace();
+            }
+
+            Thread thread2 =
+                new Thread() {
+                  public void run() {
+                    stuckThreads.add(Thread.currentThread());
+                    try {
+                      lock2.acquire();
+                      lock1.tryAcquire(10, TimeUnit.SECONDS);
+                    } catch (InterruptedException ignore) {
+                    }
+                    lock2.release();
+                  }
+                };
+
+            thread2.start();
+
+            try {
+              Thread.sleep(1000);
+              lock2.tryAcquire(10, TimeUnit.SECONDS);
             } catch (InterruptedException ignore) {
             }
-            lock2.release();
+
+            lock1.release();
           }
         };
-
-        thread2.start();
-
-        try {
-          Thread.sleep(1000);
-          lock2.tryAcquire(10, TimeUnit.SECONDS);
-        } catch (InterruptedException ignore) {
-        }
-
-        lock1.release();
-      }
-    };
 
     thread1.start();
 
@@ -225,37 +225,39 @@ public class DeadlockDetectorIntegrationTest {
     final ReadWriteLock lock1 = new ReentrantReadWriteLock();
     final ReadWriteLock lock2 = new ReentrantReadWriteLock();
 
-    Thread thread1 = new Thread() {
-      @Override
-      public void run() {
-        stuckThreads.add(Thread.currentThread());
-
-        lock1.readLock().lock();
-
-        Thread thread2 = new Thread() {
+    Thread thread1 =
+        new Thread() {
           @Override
           public void run() {
             stuckThreads.add(Thread.currentThread());
-            lock2.readLock().lock();
+
+            lock1.readLock().lock();
+
+            Thread thread2 =
+                new Thread() {
+                  @Override
+                  public void run() {
+                    stuckThreads.add(Thread.currentThread());
+                    lock2.readLock().lock();
+                    try {
+                      lock1.writeLock().tryLock(10, TimeUnit.SECONDS);
+                    } catch (InterruptedException ignore) {
+                    }
+                    lock2.readLock().unlock();
+                  }
+                };
+
+            thread2.start();
+
             try {
-              lock1.writeLock().tryLock(10, TimeUnit.SECONDS);
+              Thread.sleep(1000);
+              lock2.writeLock().tryLock(10, TimeUnit.SECONDS);
             } catch (InterruptedException ignore) {
             }
-            lock2.readLock().unlock();
+
+            lock1.readLock().unlock();
           }
         };
-
-        thread2.start();
-
-        try {
-          Thread.sleep(1000);
-          lock2.writeLock().tryLock(10, TimeUnit.SECONDS);
-        } catch (InterruptedException ignore) {
-        }
-
-        lock1.readLock().unlock();
-      }
-    };
 
     thread1.start();
 
@@ -270,9 +272,7 @@ public class DeadlockDetectorIntegrationTest {
     assertEquals(4, detector.findDeadlock().size());
   }
 
-  /**
-   * A fake dependency monitor.
-   */
+  /** A fake dependency monitor. */
   private static class MockDependencyMonitor implements DependencyMonitor {
 
     Set<Dependency<Thread, Serializable>> blockedThreads = new HashSet<>();

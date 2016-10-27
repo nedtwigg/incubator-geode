@@ -20,21 +20,19 @@
 package org.apache.geode.tools.pulse.internal.util;
 
 /**
- * Class TimeUtils 
- * 
- * This is utility class used for conversions of time.
- * 
- * 
+ * Class TimeUtils
+ *
+ * <p>This is utility class used for conversions of time.
+ *
  * @since GemFire version 7.0.1
  */
 public class TimeUtils {
 
   /**
-   * Method to converts time given in milliseconds to string representation in
-   * days, hours, minutes and seconds
-   * 
-   * @param longMilliSecs
-   *          Time in milliseconds.
+   * Method to converts time given in milliseconds to string representation in days, hours, minutes
+   * and seconds
+   *
+   * @param longMilliSecs Time in milliseconds.
    * @return String
    */
   public static String convertTimeMillisecondsToHMS(long longMilliSecs) {
@@ -74,11 +72,10 @@ public class TimeUtils {
   }
 
   /**
-   * Method to converts time given in seconds to string representation in days,
-   * hours, minutes and seconds
-   * 
-   * @param longSecs
-   *          Time in seconds.
+   * Method to converts time given in seconds to string representation in days, hours, minutes and
+   * seconds
+   *
+   * @param longSecs Time in seconds.
    * @return String
    */
   public static String convertTimeSecondsToHMS(long longSecs) {
@@ -116,5 +113,4 @@ public class TimeUtils {
 
     return strDaysHrsMinsSecs;
   }
-
 }

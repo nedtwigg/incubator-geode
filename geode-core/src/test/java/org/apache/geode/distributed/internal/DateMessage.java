@@ -24,9 +24,7 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 
-/**
- * This message simply contains a date
- */
+/** This message simply contains a date */
 public class DateMessage extends SerialDistributionMessage {
 
   /** Formats a data */
@@ -39,23 +37,17 @@ public class DateMessage extends SerialDistributionMessage {
 
   /////////////////////  Instance Methods  /////////////////////
 
-  /**
-   * Sets the date associated with this <code>DateMessage</code>
-   */
+  /** Sets the date associated with this <code>DateMessage</code> */
   public void setDate(Date date) {
     this.date = date;
   }
 
-  /**
-   * Returns the date associated with this message.
-   */
+  /** Returns the date associated with this message. */
   public Date getDate() {
     return this.date;
   }
 
-  /**
-   * Just prints out the date
-   */
+  /** Just prints out the date */
   public void process(DistributionManager dm) {
     // Make sure that message state is what we expect
     Assert.assertTrue(this.date != null);
@@ -92,5 +84,4 @@ public class DateMessage extends SerialDistributionMessage {
   public Version[] getSerializationVersions() {
     return dsfidVersions;
   }
-
 }

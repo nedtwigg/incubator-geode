@@ -21,9 +21,8 @@ import org.apache.geode.cache.execute.ResultCollector;
 import org.apache.geode.distributed.internal.ReplyProcessor21;
 
 /**
- * Extends {@link ResultCollector} interface to provide for methods that are
- * required internally by the product.
- * 
+ * Extends {@link ResultCollector} interface to provide for methods that are required internally by
+ * the product.
  */
 public interface LocalResultCollector<T, S> extends ResultCollector<T, S> {
 
@@ -34,8 +33,8 @@ public interface LocalResultCollector<T, S> extends ResultCollector<T, S> {
   void setProcessor(ReplyProcessor21 processor);
 
   /**
-   * get the {@link ReplyProcessor21}, if any, set in the collector by a
-   * previous call to {@link #setProcessor(ReplyProcessor21)}
+   * get the {@link ReplyProcessor21}, if any, set in the collector by a previous call to {@link
+   * #setProcessor(ReplyProcessor21)}
    */
   ReplyProcessor21 getProcessor();
 }

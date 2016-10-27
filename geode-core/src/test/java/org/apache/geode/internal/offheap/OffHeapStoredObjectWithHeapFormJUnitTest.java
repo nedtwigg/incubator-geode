@@ -31,7 +31,8 @@ public class OffHeapStoredObjectWithHeapFormJUnitTest extends OffHeapStoredObjec
     OffHeapStoredObject chunk = createValueAsUnserializedStoredObject(getValue());
 
     byte[] valueInBytes = getValueAsByteArray();
-    OffHeapStoredObjectWithHeapForm heapForm = new OffHeapStoredObjectWithHeapForm(chunk, valueInBytes);
+    OffHeapStoredObjectWithHeapForm heapForm =
+        new OffHeapStoredObjectWithHeapForm(chunk, valueInBytes);
 
     assertNotNull(heapForm);
 
@@ -43,9 +44,11 @@ public class OffHeapStoredObjectWithHeapFormJUnitTest extends OffHeapStoredObjec
     OffHeapStoredObject chunk = createValueAsSerializedStoredObject(getValue());
 
     byte[] valueInBytes = getValueAsByteArray();
-    OffHeapStoredObjectWithHeapForm heapForm = new OffHeapStoredObjectWithHeapForm(chunk, valueInBytes);
+    OffHeapStoredObjectWithHeapForm heapForm =
+        new OffHeapStoredObjectWithHeapForm(chunk, valueInBytes);
 
-    OffHeapStoredObject chunkWithOutHeapForm = (OffHeapStoredObject) heapForm.getStoredObjectWithoutHeapForm();
+    OffHeapStoredObject chunkWithOutHeapForm =
+        (OffHeapStoredObject) heapForm.getStoredObjectWithoutHeapForm();
 
     assertNotNull(chunkWithOutHeapForm);
     assertEquals(OffHeapStoredObject.class, chunkWithOutHeapForm.getClass());

@@ -36,11 +36,10 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * A processor for telling the old grantor that he is deposed by a new grantor. 
- * Processor waits for ack before completing.
+ * A processor for telling the old grantor that he is deposed by a new grantor. Processor waits for
+ * ack before completing.
  *
- * @since GemFire 4.0
- * (renamed from ExpectTransferProcessor)
+ * @since GemFire 4.0 (renamed from ExpectTransferProcessor)
  */
 public class DeposeGrantorProcessor extends ReplyProcessor21 {
 
@@ -49,17 +48,30 @@ public class DeposeGrantorProcessor extends ReplyProcessor21 {
   ////////// Public static entry point /////////
 
   /**
-   * Send a message to oldGrantor telling him that he is deposed by newGrantor. 
-   * Send does not complete until an ack is received or the oldGrantor leaves
-   *  the system.
+   * Send a message to oldGrantor telling him that he is deposed by newGrantor. Send does not
+   * complete until an ack is received or the oldGrantor leaves the system.
    */
-  static void send(String serviceName, InternalDistributedMember oldGrantor, InternalDistributedMember newGrantor, long newGrantorVersion, int newGrantorSerialNumber, DM dm) {
+  static void send(
+      String serviceName,
+      InternalDistributedMember oldGrantor,
+      InternalDistributedMember newGrantor,
+      long newGrantorVersion,
+      int newGrantorSerialNumber,
+      DM dm) {
     final InternalDistributedMember elder = dm.getId();
     if (elder.equals(oldGrantor)) {
-      doOldGrantorWork(serviceName, elder, newGrantor, newGrantorVersion, newGrantorSerialNumber, dm, null);
+      doOldGrantorWork(
+          serviceName, elder, newGrantor, newGrantorVersion, newGrantorSerialNumber, dm, null);
     } else {
       DeposeGrantorProcessor processor = new DeposeGrantorProcessor(dm, oldGrantor);
-      DeposeGrantorMessage.send(serviceName, oldGrantor, newGrantor, newGrantorVersion, newGrantorSerialNumber, dm, processor);
+      DeposeGrantorMessage.send(
+          serviceName,
+          oldGrantor,
+          newGrantor,
+          newGrantorVersion,
+          newGrantorSerialNumber,
+          dm,
+          processor);
       try {
         processor.waitForRepliesUninterruptibly();
       } catch (ReplyException e) {
@@ -68,11 +80,19 @@ public class DeposeGrantorProcessor extends ReplyProcessor21 {
     }
   }
 
-  static protected void doOldGrantorWork(final String serviceName, final InternalDistributedMember elder, final InternalDistributedMember youngTurk, final long newGrantorVersion, final int newGrantorSerialNumber, final DM dm, final DeposeGrantorMessage msg) {
+  protected static void doOldGrantorWork(
+      final String serviceName,
+      final InternalDistributedMember elder,
+      final InternalDistributedMember youngTurk,
+      final long newGrantorVersion,
+      final int newGrantorSerialNumber,
+      final DM dm,
+      final DeposeGrantorMessage msg) {
     try {
       DLockService svc = DLockService.getInternalServiceNamed(serviceName);
       if (svc != null) {
-        LockGrantorId newLockGrantorId = new LockGrantorId(dm, youngTurk, newGrantorVersion, newGrantorSerialNumber);
+        LockGrantorId newLockGrantorId =
+            new LockGrantorId(dm, youngTurk, newGrantorVersion, newGrantorSerialNumber);
         svc.deposeOlderLockGrantorId(newLockGrantorId);
       }
     } finally {
@@ -84,22 +104,29 @@ public class DeposeGrantorProcessor extends ReplyProcessor21 {
 
   ////////////  Instance methods //////////////
 
-  /** Creates a new instance of DeposeGrantorProcessor
-   */
+  /** Creates a new instance of DeposeGrantorProcessor */
   private DeposeGrantorProcessor(DM dm, InternalDistributedMember oldGrantor) {
     super(dm, oldGrantor);
   }
 
   ///////////////   Inner message classes  //////////////////
 
-  public static final class DeposeGrantorMessage extends PooledDistributionMessage implements MessageWithReply {
+  public static final class DeposeGrantorMessage extends PooledDistributionMessage
+      implements MessageWithReply {
     private int processorId;
     private String serviceName;
     private InternalDistributedMember newGrantor;
     private long newGrantorVersion;
     private int newGrantorSerialNumber;
 
-    protected static void send(String serviceName, InternalDistributedMember oldGrantor, InternalDistributedMember newGrantor, long newGrantorVersion, int newGrantorSerialNumber, DM dm, ReplyProcessor21 proc) {
+    protected static void send(
+        String serviceName,
+        InternalDistributedMember oldGrantor,
+        InternalDistributedMember newGrantor,
+        long newGrantorVersion,
+        int newGrantorSerialNumber,
+        DM dm,
+        ReplyProcessor21 proc) {
       DeposeGrantorMessage msg = new DeposeGrantorMessage();
       msg.serviceName = serviceName;
       msg.newGrantor = newGrantor;
@@ -131,7 +158,14 @@ public class DeposeGrantorProcessor extends ReplyProcessor21 {
       InternalDistributedMember elder = this.getSender();
       InternalDistributedMember youngTurk = this.newGrantor;
 
-      doOldGrantorWork(this.serviceName, elder, youngTurk, this.newGrantorVersion, this.newGrantorSerialNumber, dm, this);
+      doOldGrantorWork(
+          this.serviceName,
+          elder,
+          youngTurk,
+          this.newGrantorVersion,
+          this.newGrantorSerialNumber,
+          dm,
+          this);
     }
 
     public int getDSFID() {
@@ -161,7 +195,17 @@ public class DeposeGrantorProcessor extends ReplyProcessor21 {
     @Override
     public String toString() {
       StringBuffer buff = new StringBuffer();
-      buff.append("DeposeGrantorMessage (serviceName='").append(this.serviceName).append("' processorId=").append(this.processorId).append(" newGrantor=").append(this.newGrantor).append(" newGrantorVersion=").append(this.newGrantorVersion).append(" newGrantorSerialNumber=").append(this.newGrantorSerialNumber).append(")");
+      buff.append("DeposeGrantorMessage (serviceName='")
+          .append(this.serviceName)
+          .append("' processorId=")
+          .append(this.processorId)
+          .append(" newGrantor=")
+          .append(this.newGrantor)
+          .append(" newGrantorVersion=")
+          .append(this.newGrantorVersion)
+          .append(" newGrantorSerialNumber=")
+          .append(this.newGrantorSerialNumber)
+          .append(")");
       return buff.toString();
     }
   }

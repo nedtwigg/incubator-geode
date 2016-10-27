@@ -19,9 +19,11 @@ package org.apache.geode.security;
 import org.apache.shiro.authz.permission.WildcardPermission;
 
 /**
- * ResourcePermission defines the resource, the operation, the region and the key involved in the action to be authorized.
+ * ResourcePermission defines the resource, the operation, the region and the key involved in the
+ * action to be authorized.
  *
- * It is passed to the SecurityManager for the implementation to decide whether to grant a user this permission or not.
+ * <p>It is passed to the SecurityManager for the implementation to decide whether to grant a user
+ * this permission or not.
  */
 public class ResourcePermission extends WildcardPermission {
 
@@ -29,11 +31,16 @@ public class ResourcePermission extends WildcardPermission {
   public static String ALL_KEYS = "*";
 
   public enum Resource {
-    NULL, CLUSTER, DATA
+    NULL,
+    CLUSTER,
+    DATA
   }
 
   public enum Operation {
-    NULL, MANAGE, WRITE, READ
+    NULL,
+    MANAGE,
+    WRITE,
+    READ
   }
 
   // these default values are used when creating a lock around an operation
@@ -55,7 +62,11 @@ public class ResourcePermission extends WildcardPermission {
   }
 
   public ResourcePermission(String resource, String operation, String regionName, String key) {
-    this((resource == null) ? Resource.NULL : Resource.valueOf(resource.toUpperCase()), (operation == null) ? Operation.NULL : Operation.valueOf(operation.toUpperCase()), regionName, key);
+    this(
+        (resource == null) ? Resource.NULL : Resource.valueOf(resource.toUpperCase()),
+        (operation == null) ? Operation.NULL : Operation.valueOf(operation.toUpperCase()),
+        regionName,
+        key);
   }
 
   public ResourcePermission(Resource resource, Operation operation) {
@@ -67,42 +78,30 @@ public class ResourcePermission extends WildcardPermission {
   }
 
   public ResourcePermission(Resource resource, Operation operation, String regionName, String key) {
-    if (resource != null)
-      this.resource = resource;
-    if (operation != null)
-      this.operation = operation;
-    if (regionName != null)
-      this.regionName = regionName;
-    if (key != null)
-      this.key = key;
+    if (resource != null) this.resource = resource;
+    if (operation != null) this.operation = operation;
+    if (regionName != null) this.regionName = regionName;
+    if (key != null) this.key = key;
 
     setParts(this.resource + ":" + this.operation + ":" + this.regionName + ":" + this.key, true);
   }
 
-  /**
-   * Returns the resource, could be either DATA or CLUSTER
-   */
+  /** Returns the resource, could be either DATA or CLUSTER */
   public Resource getResource() {
     return resource;
   }
 
-  /**
-   * Returns the operation, could be either MANAGE, WRITE or READ
-   */
+  /** Returns the operation, could be either MANAGE, WRITE or READ */
   public Operation getOperation() {
     return operation;
   }
 
-  /**
-   * returns the regionName, could be "*", meaning all regions
-   */
+  /** returns the regionName, could be "*", meaning all regions */
   public String getRegionName() {
     return regionName;
   }
 
-  /**
-   * returns the key, could be "*" meaning all keys.
-   */
+  /** returns the key, could be "*" meaning all keys. */
   public String getKey() {
     return key;
   }
@@ -117,5 +116,4 @@ public class ResourcePermission extends WildcardPermission {
       return resource + ":" + operation + ":" + regionName + ":" + key;
     }
   }
-
 }

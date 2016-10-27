@@ -32,9 +32,8 @@ import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 import java.io.IOException;
 
 /**
- * Used for bootstrapping txState/PeerTXStateStub on the server.
- * This command is send when in client in a transaction is about
- * to failover to this server
+ * Used for bootstrapping txState/PeerTXStateStub on the server. This command is send when in client
+ * in a transaction is about to failover to this server
  */
 public class TXFailoverCommand extends BaseCommand {
 
@@ -44,21 +43,23 @@ public class TXFailoverCommand extends BaseCommand {
     return singleton;
   }
 
-  private TXFailoverCommand() {
-  }
+  private TXFailoverCommand() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException, InterruptedException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     // Build the TXId for the transaction
-    InternalDistributedMember client = (InternalDistributedMember) servConn.getProxyID().getDistributedMember();
+    InternalDistributedMember client =
+        (InternalDistributedMember) servConn.getProxyID().getDistributedMember();
     int uniqId = msg.getTransactionId();
     if (logger.isDebugEnabled()) {
       logger.debug("TX: Transaction {} from {} is failing over to this server", uniqId, client);
     }
     TXId txId = new TXId(client, uniqId);
     TXManagerImpl mgr = (TXManagerImpl) servConn.getCache().getCacheTransactionManager();
-    mgr.waitForCompletingTransaction(txId); // in case it's already completing here in another thread
+    mgr.waitForCompletingTransaction(
+        txId); // in case it's already completing here in another thread
     if (mgr.isHostedTxRecentlyCompleted(txId)) {
       writeReply(msg, servConn);
       servConn.setAsTrue(RESPONDED);
@@ -70,7 +71,8 @@ public class TXFailoverCommand extends BaseCommand {
     Assert.assertTrue(tx != null);
     if (!tx.isRealDealLocal()) {
       // send message to all peers to find out who hosts the transaction
-      FindRemoteTXMessageReplyProcessor processor = FindRemoteTXMessage.send(servConn.getCache(), txId);
+      FindRemoteTXMessageReplyProcessor processor =
+          FindRemoteTXMessage.send(servConn.getCache(), txId);
       try {
         processor.waitForRepliesUninterruptibly();
       } catch (ReplyException e) {
@@ -81,7 +83,9 @@ public class TXFailoverCommand extends BaseCommand {
       InternalDistributedMember hostingMember = processor.getHostingMember();
       if (hostingMember != null) {
         if (logger.isDebugEnabled()) {
-          logger.debug("TX: txState is not local, bootstrapping PeerTXState stub for targetNode: {}", hostingMember);
+          logger.debug(
+              "TX: txState is not local, bootstrapping PeerTXState stub for targetNode: {}",
+              hostingMember);
         }
         // inject the real deal
         tx.setLocalTXState(new PeerTXStateStub(tx, hostingMember, client));
@@ -103,7 +107,12 @@ public class TXFailoverCommand extends BaseCommand {
           }
           mgr.saveTXCommitMessageForClientFailover(txId, processor.getTxCommitMessage());
         } else {
-          writeException(msg, new TransactionDataNodeHasDepartedException("Could not find transaction host for " + txId), false, servConn);
+          writeException(
+              msg,
+              new TransactionDataNodeHasDepartedException(
+                  "Could not find transaction host for " + txId),
+              false,
+              servConn);
           servConn.setAsTrue(RESPONDED);
           mgr.removeHostedTXState(txId);
           return;
@@ -116,5 +125,4 @@ public class TXFailoverCommand extends BaseCommand {
     writeReply(msg, servConn);
     servConn.setAsTrue(RESPONDED);
   }
-
 }

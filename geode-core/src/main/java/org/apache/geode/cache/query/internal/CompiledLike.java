@@ -34,15 +34,12 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.pdx.internal.PdxString;
 
-/**
- * 
- *
- */
+/** */
 public class CompiledLike extends CompiledComparison {
 
-  final static int WILDCARD_PERCENT = 0;
+  static final int WILDCARD_PERCENT = 0;
 
-  final static int WILDCARD_UNDERSCORE = 1;
+  static final int WILDCARD_UNDERSCORE = 1;
 
   private Object wildcardTypeKey = new Object();
 
@@ -50,15 +47,15 @@ public class CompiledLike extends CompiledComparison {
 
   private Object patternLengthKey = new Object();
 
-  final static String LOWEST_STRING = "";
+  static final String LOWEST_STRING = "";
 
-  final static char BOUNDARY_CHAR = (char) 255;
+  static final char BOUNDARY_CHAR = (char) 255;
 
-  final static char UNDERSCORE = '_';
+  static final char UNDERSCORE = '_';
 
-  final static char PERCENT = '%';
+  static final char PERCENT = '%';
 
-  final static char BACKSLASH = '\\';
+  static final char BACKSLASH = '\\';
 
   private final CompiledValue var;
 
@@ -89,7 +86,10 @@ public class CompiledLike extends CompiledComparison {
     return (Boolean) context.cacheGet(isIndexEvaluatedKey, false);
   }
 
-  OrganizedOperands organizeOperands(ExecutionContext context, boolean completeExpansionNeeded, RuntimeIterator[] indpndntItrs) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  OrganizedOperands organizeOperands(
+      ExecutionContext context, boolean completeExpansionNeeded, RuntimeIterator[] indpndntItrs)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     CompiledComparison[] cvs = getExpandedOperandsWithIndexInfoSetIfAny(context);
     Filter filter = null;
     if (cvs.length == 1) {
@@ -97,17 +97,23 @@ public class CompiledLike extends CompiledComparison {
       filter = cvs[0];
     } else {
       // 2 or 3 conditions; create junctions
-      if ((getOperator() == OQLLexerTokenTypes.TOK_NE) && (getWildcardPosition(context) == getPatternLength(context) - 1) && (getWildcardType(context) == WILDCARD_PERCENT)) {
+      if ((getOperator() == OQLLexerTokenTypes.TOK_NE)
+          && (getWildcardPosition(context) == getPatternLength(context) - 1)
+          && (getWildcardType(context) == WILDCARD_PERCENT)) {
         // negation supported only for trailing %
         // GroupJunction is created since the boundary conditions go out of
         // range and will be evaluated as false if a RangeJunction was used
         // For example, for NOT LIKE a%, the CCs generated would be < A OR >= B
         // which would cause the checkForRangeBoundednessAndTrimNotEqualKeyset
         // method of RangeJunction to return false
-        filter = new GroupJunction(OQLLexerTokenTypes.LITERAL_or, indpndntItrs, completeExpansionNeeded, cvs);
+        filter =
+            new GroupJunction(
+                OQLLexerTokenTypes.LITERAL_or, indpndntItrs, completeExpansionNeeded, cvs);
 
       } else {
-        filter = new RangeJunction(OQLLexerTokenTypes.LITERAL_and, indpndntItrs, completeExpansionNeeded, cvs);
+        filter =
+            new RangeJunction(
+                OQLLexerTokenTypes.LITERAL_and, indpndntItrs, completeExpansionNeeded, cvs);
       }
     }
 
@@ -118,8 +124,8 @@ public class CompiledLike extends CompiledComparison {
   }
 
   /**
-   * Expands the CompiledLike operands based on sargability into 
-   * multiple CompiledComparisons
+   * Expands the CompiledLike operands based on sargability into multiple CompiledComparisons
+   *
    * @param context
    * @return The generated CompiledComparisons
    * @throws AmbiguousNameException
@@ -128,14 +134,18 @@ public class CompiledLike extends CompiledComparison {
    * @throws FunctionDomainException
    * @throws QueryInvocationTargetException
    */
-  CompiledComparison[] getExpandedOperandsWithIndexInfoSetIfAny(ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException, FunctionDomainException, QueryInvocationTargetException {
+  CompiledComparison[] getExpandedOperandsWithIndexInfoSetIfAny(ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException,
+          FunctionDomainException, QueryInvocationTargetException {
     String pattern = (String) this.bindArg.evaluate(context);
     // check if it is filter evaluatable
     CompiledComparison[] cvs = getRangeIfSargable(context, this.var, pattern);
 
     for (CompiledComparison cc : cvs) {
       // negation supported only for trailing %
-      if ((getOperator() == OQLLexerTokenTypes.TOK_NE) && (getWildcardPosition(context) == getPatternLength(context) - 1) && (getWildcardType(context) == WILDCARD_PERCENT)) {
+      if ((getOperator() == OQLLexerTokenTypes.TOK_NE)
+          && (getWildcardPosition(context) == getPatternLength(context) - 1)
+          && (getWildcardType(context) == WILDCARD_PERCENT)) {
         cc.negate();
       }
       cc.computeDependencies(context);
@@ -143,16 +153,25 @@ public class CompiledLike extends CompiledComparison {
       // CompiledLike object
       IndexInfo[] thisIndexInfo = ((IndexInfo[]) context.cacheGet(this));
       if (thisIndexInfo != null && thisIndexInfo.length > 0) {
-        // set the index key in the indexinfo of the CC since the index key 
+        // set the index key in the indexinfo of the CC since the index key
         // in the indexinfo of this object might have been modified in the
         // checkIfSargableAndRemoveEscapeChars method
-        IndexInfo indexInfo = new IndexInfo(cc.getKey(context), thisIndexInfo[0]._path, thisIndexInfo[0]._index, thisIndexInfo[0]._matchLevel, thisIndexInfo[0].mapping, cc.getOperator());
-        context.cachePut(cc, new IndexInfo[] { indexInfo });
+        IndexInfo indexInfo =
+            new IndexInfo(
+                cc.getKey(context),
+                thisIndexInfo[0]._path,
+                thisIndexInfo[0]._index,
+                thisIndexInfo[0]._matchLevel,
+                thisIndexInfo[0].mapping,
+                cc.getOperator());
+        context.cachePut(cc, new IndexInfo[] {indexInfo});
       }
     }
     if (IndexManager.testHook != null) {
       if (GemFireCacheImpl.getInstance().getLogger().fineEnabled()) {
-        GemFireCacheImpl.getInstance().getLogger().fine("IndexManager TestHook is set in getExpandedOperandsWithIndexInfoSetIfAny.");
+        GemFireCacheImpl.getInstance()
+            .getLogger()
+            .fine("IndexManager TestHook is set in getExpandedOperandsWithIndexInfoSetIfAny.");
       }
       IndexManager.testHook.hook(12);
     }
@@ -161,19 +180,46 @@ public class CompiledLike extends CompiledComparison {
   }
 
   @Override
-  public SelectResults filterEvaluate(ExecutionContext context, SelectResults intermediateResults, boolean completeExpansionNeeded, CompiledValue iterOperands, RuntimeIterator[] indpndntItrs, boolean isIntersection, boolean conditioningNeeded, boolean evaluateProjection) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
-    OrganizedOperands newOperands = organizeOperands(context, completeExpansionNeeded, indpndntItrs);
+  public SelectResults filterEvaluate(
+      ExecutionContext context,
+      SelectResults intermediateResults,
+      boolean completeExpansionNeeded,
+      CompiledValue iterOperands,
+      RuntimeIterator[] indpndntItrs,
+      boolean isIntersection,
+      boolean conditioningNeeded,
+      boolean evaluateProjection)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
+    OrganizedOperands newOperands =
+        organizeOperands(context, completeExpansionNeeded, indpndntItrs);
     assert newOperands.iterateOperand == null;
     SelectResults result = intermediateResults;
-    result = (newOperands.filterOperand).filterEvaluate(context, intermediateResults, completeExpansionNeeded, iterOperands, indpndntItrs, isIntersection, conditioningNeeded, evaluateProjection);
+    result =
+        (newOperands.filterOperand)
+            .filterEvaluate(
+                context,
+                intermediateResults,
+                completeExpansionNeeded,
+                iterOperands,
+                indpndntItrs,
+                isIntersection,
+                conditioningNeeded,
+                evaluateProjection);
 
     return result;
   }
 
   @Override
-  public SelectResults filterEvaluate(ExecutionContext context, SelectResults intermediateResults) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
-    RuntimeIterator grpItr = (RuntimeIterator) QueryUtils.getCurrentScopeUltimateRuntimeIteratorsIfAny(this, context).iterator().next();
-    OrganizedOperands newOperands = organizeOperands(context, true, new RuntimeIterator[] { grpItr });
+  public SelectResults filterEvaluate(ExecutionContext context, SelectResults intermediateResults)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
+    RuntimeIterator grpItr =
+        (RuntimeIterator)
+            QueryUtils.getCurrentScopeUltimateRuntimeIteratorsIfAny(this, context)
+                .iterator()
+                .next();
+    OrganizedOperands newOperands = organizeOperands(context, true, new RuntimeIterator[] {grpItr});
     assert newOperands.iterateOperand == null;
     SelectResults result = intermediateResults;
     result = (newOperands.filterOperand).filterEvaluate(context, intermediateResults);
@@ -181,14 +227,15 @@ public class CompiledLike extends CompiledComparison {
   }
 
   /**
-   * Breaks down the like predicate (if sargable) into 2 or 3
-   * CompiledComparisons based on the presence of wildcard
-   * 
+   * Breaks down the like predicate (if sargable) into 2 or 3 CompiledComparisons based on the
+   * presence of wildcard
+   *
    * @param var
    * @param pattern
    * @return The generated CompiledComparisons
    */
-  CompiledComparison[] getRangeIfSargable(ExecutionContext context, CompiledValue var, String pattern) {
+  CompiledComparison[] getRangeIfSargable(
+      ExecutionContext context, CompiledValue var, String pattern) {
     CompiledComparison[] cv = null;
     StringBuffer buffer = new StringBuffer(pattern);
     // check if the string has a % or _ anywhere
@@ -203,7 +250,12 @@ public class CompiledLike extends CompiledComparison {
       if (wildcardPosition == 0) {
         // wildcard is the leading char
         // change the like predicate to >= "" and like
-        cv = new CompiledComparison[] { new CompiledComparison(var, new CompiledLiteral(LOWEST_STRING), OQLLexerTokenTypes.TOK_GE), this };
+        cv =
+            new CompiledComparison[] {
+              new CompiledComparison(
+                  var, new CompiledLiteral(LOWEST_STRING), OQLLexerTokenTypes.TOK_GE),
+              this
+            };
 
       } else {
         // the wildcard is not the first char
@@ -228,8 +280,10 @@ public class CompiledLike extends CompiledComparison {
         buffer.delete(upperBoundPosition, len);
         buffer.append(upperBoundChar);
         String upperBound = buffer.toString();
-        CompiledComparison c1 = new CompiledComparison(var, new CompiledLiteral(lowerBound), OQLLexerTokenTypes.TOK_GE);
-        CompiledComparison c2 = new CompiledComparison(var, new CompiledLiteral(upperBound), OQLLexerTokenTypes.TOK_LT);
+        CompiledComparison c1 =
+            new CompiledComparison(var, new CompiledLiteral(lowerBound), OQLLexerTokenTypes.TOK_GE);
+        CompiledComparison c2 =
+            new CompiledComparison(var, new CompiledLiteral(upperBound), OQLLexerTokenTypes.TOK_LT);
 
         // if % is not the last char in the string.
         // or the wildchar is _ which could be anywhere
@@ -237,22 +291,30 @@ public class CompiledLike extends CompiledComparison {
           // negation not supported if % is not the last char and also for a _
           // anywhere
           if (getOperator() == OQLLexerTokenTypes.TOK_NE) {
-            cv = new CompiledComparison[] { new CompiledComparison(var, new CompiledLiteral(LOWEST_STRING), OQLLexerTokenTypes.TOK_GE), this };
+            cv =
+                new CompiledComparison[] {
+                  new CompiledComparison(
+                      var, new CompiledLiteral(LOWEST_STRING), OQLLexerTokenTypes.TOK_GE),
+                  this
+                };
           } else {
             // the like predicate is broken into 3 compiled comparisons
-            cv = new CompiledComparison[] { c1, c2, this };
+            cv = new CompiledComparison[] {c1, c2, this};
           }
 
         } else {
           // % is at the end of the string
           // the like predicate is broken down to 2 compile comparisons
-          cv = new CompiledComparison[] { c1, c2 };
+          cv = new CompiledComparison[] {c1, c2};
         }
       }
     } else {
       // not sargable
       // Change the like predicate to equality
-      cv = new CompiledComparison[] { new CompiledComparison(var, new CompiledLiteral(buffer.toString()), getOperator()) };
+      cv =
+          new CompiledComparison[] {
+            new CompiledComparison(var, new CompiledLiteral(buffer.toString()), getOperator())
+          };
     }
 
     return cv;
@@ -266,90 +328,89 @@ public class CompiledLike extends CompiledComparison {
     for (int i = 0; i < len; i++) {
       char ch = pattern.charAt(i);
       switch (ch) {
-      // meta chars: \ ^ * . + ? ( ) | [ ]
-      case ']':
-      case '[':
-      case '^':
-      case '*':
-      case '.':
-      case '+':
-      case '?':
-      case '(':
-      case ')':
-      case '|':
-      case '{':
-      case '}':
-      case '\\':
-        //if ((ch == '\\') && (i+1) < len && (pattern.charAt(i+1) == '_' || pattern.charAt(i+1) == '%')) {
-        if ((ch == '\\')) {
-          if (!((i + 1) < len && (pattern.charAt(i + 1) == '\\'))) {
-            break;
+          // meta chars: \ ^ * . + ? ( ) | [ ]
+        case ']':
+        case '[':
+        case '^':
+        case '*':
+        case '.':
+        case '+':
+        case '?':
+        case '(':
+        case ')':
+        case '|':
+        case '{':
+        case '}':
+        case '\\':
+          //if ((ch == '\\') && (i+1) < len && (pattern.charAt(i+1) == '_' || pattern.charAt(i+1) == '%')) {
+          if ((ch == '\\')) {
+            if (!((i + 1) < len && (pattern.charAt(i + 1) == '\\'))) {
+              break;
+            }
+            i++;
           }
-          i++;
-        }
-        // Check if subsequent chars are meta chars.
-        // \Q is used for start of string literal 
-        // \E for end of string literal. E.g. \Q+*\E to escape +*
-        if (!prevMetaChar) {
-          sb.append('\\');
-          sb.append('Q');
-          prevMetaChar = true;
-        }
-        sb.append(ch);
-        break;
-      case '_': // replace with .
-      case '%': // replace with .*
-        if (prevMetaChar) {
-          sb.append('\\');
-          sb.append('E');
-          prevMetaChar = false;
-        }
-
-        // Check if the % has a valid escape. Backtrack to check for \.
-        // If the number of \ on back track is odd, then % is escaped.
-        int numConsecutiveBackSlash = 0;
-        for (int j = i - 1; j > -1; --j) {
-          if (pattern.charAt(j) == '\\') {
-            ++numConsecutiveBackSlash;
-          } else {
-            break;
+          // Check if subsequent chars are meta chars.
+          // \Q is used for start of string literal
+          // \E for end of string literal. E.g. \Q+*\E to escape +*
+          if (!prevMetaChar) {
+            sb.append('\\');
+            sb.append('Q');
+            prevMetaChar = true;
           }
-        }
+          sb.append(ch);
+          break;
+        case '_': // replace with .
+        case '%': // replace with .*
+          if (prevMetaChar) {
+            sb.append('\\');
+            sb.append('E');
+            prevMetaChar = false;
+          }
 
-        if ((numConsecutiveBackSlash % 2) == 0) {
-          if (ch == '%') {
-            sb.append(".*");
-            // ignore successive '%'
-            while ((i + 1) < len && pattern.charAt(i + 1) == '%') {
-              i++;
+          // Check if the % has a valid escape. Backtrack to check for \.
+          // If the number of \ on back track is odd, then % is escaped.
+          int numConsecutiveBackSlash = 0;
+          for (int j = i - 1; j > -1; --j) {
+            if (pattern.charAt(j) == '\\') {
+              ++numConsecutiveBackSlash;
+            } else {
+              break;
+            }
+          }
+
+          if ((numConsecutiveBackSlash % 2) == 0) {
+            if (ch == '%') {
+              sb.append(".*");
+              // ignore successive '%'
+              while ((i + 1) < len && pattern.charAt(i + 1) == '%') {
+                i++;
+              }
+            } else {
+              sb.append(".");
             }
           } else {
-            sb.append(".");
+            // The percentage or underscore sign is escaped. Hence it is to be un-escaped now
+            // So remove the backslash
+            // sb.deleteCharAt(sb.length() - 1);
+            sb.append(ch);
           }
-        } else {
-          // The percentage or underscore sign is escaped. Hence it is to be un-escaped now
-          // So remove the backslash
-          // sb.deleteCharAt(sb.length() - 1);
+          break;
+        default:
+          if (prevMetaChar) {
+            sb.append('\\');
+            sb.append('E');
+            prevMetaChar = false;
+          }
           sb.append(ch);
-        }
-        break;
-      default:
-        if (prevMetaChar) {
-          sb.append('\\');
-          sb.append('E');
-          prevMetaChar = false;
-        }
-        sb.append(ch);
       }
     }
     return sb.toString();
   }
 
   /**
-   * Checks if index can be used for Strings with wildcards. Two wild cards are
-   * supported % and _. The wildcard could be at any index position of the
-   * string.
-   * 
+   * Checks if index can be used for Strings with wildcards. Two wild cards are supported % and _.
+   * The wildcard could be at any index position of the string.
+   *
    * @param buffer
    * @return position of wildcard if sargable otherwise -1
    */
@@ -389,33 +450,37 @@ public class CompiledLike extends CompiledComparison {
     if(iterEvaluator == null) {
       String pattern = (String)this.bindArg.evaluate(context);
       CompiledComparison[] cvs = getRangeIfSargable(this.var, pattern);
-  
+
       for (CompiledComparison cp : cvs) {
         cp.computeDependencies(context);
-  
+
       }
       if(cvs.length ==2 ) {
-        iterEvaluator = new CompiledJunction(cvs, OQLLexerTokenTypes.LITERAL_and);   
+        iterEvaluator = new CompiledJunction(cvs, OQLLexerTokenTypes.LITERAL_and);
       }else {
         iterEvaluator = cvs[0];
       }
       context.cachePut(this.bindArg, iterEvaluator);
-      
+
     }
-    return iterEvaluator.evaluate(context);   
+    return iterEvaluator.evaluate(context);
   }
   */
 
   @Override
-  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     //reset the isIndexEvaluated flag here since index is not being used here
     context.cachePut(isIndexEvaluatedKey, false);
 
     Pattern pattern = (Pattern) context.cacheGet(this.bindArg);
     if (pattern == null) {
-      String strPattern = this.bindArg.evaluate(context).toString(); // handles both Strings and PdxStrings
+      String strPattern =
+          this.bindArg.evaluate(context).toString(); // handles both Strings and PdxStrings
       if (strPattern == null) {
-        throw new UnsupportedOperationException("Null values are not supported with LIKE predicate.");
+        throw new UnsupportedOperationException(
+            "Null values are not supported with LIKE predicate.");
       }
       pattern = Pattern.compile(getRegexPattern(strPattern), Pattern.MULTILINE | Pattern.DOTALL);
       //GemFireCacheImpl.getInstance().getLogger().fine("### DEBUG : string :" + strPattern + " pattern :" + pattern.toString());
@@ -426,7 +491,9 @@ public class CompiledLike extends CompiledComparison {
       return null;
     }
 
-    if (!((value instanceof String) || (value instanceof PdxString) || (value == QueryService.UNDEFINED))) {
+    if (!((value instanceof String)
+        || (value instanceof PdxString)
+        || (value == QueryService.UNDEFINED))) {
       //      throw new TypeMismatchException(
       //          LocalizedStrings.TypeUtils_UNABLE_TO_COMPARE_OBJECT_OF_TYPE_0_WITH_OBJECT_OF_TYPE_1
       //              .toLocalizedString("java.lang.String", value.getClass().getName()));
@@ -444,11 +511,10 @@ public class CompiledLike extends CompiledComparison {
     return isMatched;
   }
 
-  /**
-   * @since GemFire 6.6
-   */
+  /** @since GemFire 6.6 */
   @Override
-  protected PlanInfo protGetPlanInfo(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  protected PlanInfo protGetPlanInfo(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     /*
      * During filterevaluation, CompiledLike is converted to 2 or 3
      * CompiledComparisons. One of the CCs could be a CompiledLike itself. For
@@ -483,7 +549,10 @@ public class CompiledLike extends CompiledComparison {
   }
 
   @Override
-  public boolean isOrderByApplicableAtIndexLevel(ExecutionContext context, String canonicalizedOrderByClause) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public boolean isOrderByApplicableAtIndexLevel(
+      ExecutionContext context, String canonicalizedOrderByClause)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
 
     if (this.getPlanInfo(context).evalAsFilter) {
       PlanInfo pi = this.getPlanInfo(context);
@@ -496,5 +565,4 @@ public class CompiledLike extends CompiledComparison {
     }
     return false;
   }
-
 }

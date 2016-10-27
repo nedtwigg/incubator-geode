@@ -48,10 +48,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Class PulseController
- * 
- * This class contains the implementations for all http Ajax requests needs to
- * be served in Pulse.
- * 
+ *
+ * <p>This class contains the implementations for all http Ajax requests needs to be served in
+ * Pulse.
+ *
  * @since GemFire version 7.5
  */
 @Controller
@@ -82,11 +82,11 @@ public class PulseController {
 
   private final ObjectMapper mapper = new ObjectMapper();
 
-  @Autowired
-  PulseServiceFactory pulseServiceFactory;
+  @Autowired PulseServiceFactory pulseServiceFactory;
 
   @RequestMapping(value = "/pulseUpdate", method = RequestMethod.POST)
-  public void getPulseUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void getPulseUpdate(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
     String pulseData = request.getParameter("pulseData");
 
     ObjectNode responseMap = mapper.createObjectNode();
@@ -104,7 +104,11 @@ public class PulseController {
           PulseService pulseService = pulseServiceFactory.getPulseServiceInstance(serviceName);
           responseMap.put(serviceName, pulseService.execute(request));
         } catch (Exception serviceException) {
-          LOGGER.warning("serviceException [for service " + serviceName + "] = " + serviceException.getMessage());
+          LOGGER.warning(
+              "serviceException [for service "
+                  + serviceName
+                  + "] = "
+                  + serviceException.getMessage());
           responseMap.put(serviceName, EMPTY_JSON);
         }
       }
@@ -119,7 +123,8 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/authenticateUser", method = RequestMethod.GET)
-  public void authenticateUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void authenticateUser(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
     // json object to be sent as response
     ObjectNode responseJSON = mapper.createObjectNode();
 
@@ -136,7 +141,7 @@ public class PulseController {
 
   /**
    * Method isUserLoggedIn Check whether user is logged in or not.
-   * 
+   *
    * @param request
    * @return boolean
    */
@@ -145,7 +150,8 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/pulseVersion", method = RequestMethod.GET)
-  public void pulseVersion(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void pulseVersion(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
 
     // json object to be sent as response
     ObjectNode responseJSON = mapper.createObjectNode();
@@ -154,7 +160,13 @@ public class PulseController {
       // Reference to repository
       Repository repository = Repository.get();
       // set pulse web app url
-      String pulseWebAppUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+      String pulseWebAppUrl =
+          request.getScheme()
+              + "://"
+              + request.getServerName()
+              + ":"
+              + request.getServerPort()
+              + request.getContextPath();
 
       repository.setPulseWebAppUrl(pulseWebAppUrl);
 
@@ -177,7 +189,8 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/clearAlerts", method = RequestMethod.GET)
-  public void clearAlerts(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void clearAlerts(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
     int alertType;
     ObjectNode responseJSON = mapper.createObjectNode();
 
@@ -198,7 +211,9 @@ public class PulseController {
       Cluster cluster = Repository.get().getCluster();
       cluster.clearAlerts(alertType, isClearAll);
       responseJSON.put("status", "deleted");
-      responseJSON.put("systemAlerts", SystemAlertsService.getAlertsJson(cluster, cluster.getNotificationPageNumber()));
+      responseJSON.put(
+          "systemAlerts",
+          SystemAlertsService.getAlertsJson(cluster, cluster.getNotificationPageNumber()));
       responseJSON.put("pageNumber", cluster.getNotificationPageNumber());
 
       boolean isGFConnected = cluster.isConnectedFlag();
@@ -219,7 +234,8 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/acknowledgeAlert", method = RequestMethod.GET)
-  public void acknowledgeAlert(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void acknowledgeAlert(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
     int alertId;
     ObjectNode responseJSON = mapper.createObjectNode();
 
@@ -252,7 +268,8 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/dataBrowserRegions", method = RequestMethod.GET)
-  public void dataBrowserRegions(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void dataBrowserRegions(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
     // get cluster object
     Cluster cluster = Repository.get().getCluster();
 
@@ -279,7 +296,7 @@ public class PulseController {
 
   /**
    * This method creates json for list of cluster regions
-   * 
+   *
    * @param cluster
    * @return ArrayNode JSON array
    */
@@ -323,7 +340,8 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/dataBrowserQuery", method = RequestMethod.GET)
-  public void dataBrowserQuery(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void dataBrowserQuery(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
     // get query string
     String query = request.getParameter("query");
     String members = request.getParameter("members");
@@ -366,7 +384,8 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/dataBrowserQueryHistory", method = RequestMethod.GET)
-  public void dataBrowserQueryHistory(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void dataBrowserQueryHistory(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
     ObjectNode responseJSON = mapper.createObjectNode();
     ArrayNode queryResult = null;
     String action = "";
@@ -411,7 +430,8 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/dataBrowserExport", method = RequestMethod.POST)
-  public void dataBrowserExport(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void dataBrowserExport(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
 
     // get query string
     String filename = request.getParameter("filename");
@@ -433,7 +453,8 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/pulseProductSupport", method = RequestMethod.GET)
-  public void getConfiguredPulseProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void getConfiguredPulseProduct(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
     ObjectNode responseJSON = mapper.createObjectNode();
 
     try {
@@ -449,7 +470,8 @@ public class PulseController {
   }
 
   @RequestMapping(value = "/getQueryStatisticsGridModel", method = RequestMethod.GET)
-  public void getQueryStatisticsGridModel(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void getQueryStatisticsGridModel(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
 
     ObjectNode responseJSON = mapper.createObjectNode();
     // get cluster object
@@ -491,17 +513,12 @@ public class PulseController {
     }
   }
 
-  /**
-   * @return the pulseProductSupport
-   */
+  /** @return the pulseProductSupport */
   public static String getPulseProductSupport() {
     return pulseProductSupport;
   }
 
-  /**
-   * @param pulseProductSupport
-   *          the pulseProductSupport to set
-   */
+  /** @param pulseProductSupport the pulseProductSupport to set */
   public static void setPulseProductSupport(String pulseProductSupport) {
     PulseController.pulseProductSupport = pulseProductSupport;
   }

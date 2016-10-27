@@ -59,8 +59,7 @@ public class EnumInfo implements DataSerializableFixedID {
     this.ordinal = enumOrdinal;
   }
 
-  public EnumInfo() {
-  }
+  public EnumInfo() {}
 
   public int getDSFID() {
     return ENUM_INFO;
@@ -142,7 +141,12 @@ public class EnumInfo implements DataSerializableFixedID {
     try {
       return Enum.valueOf(c, this.name);
     } catch (IllegalArgumentException ex) {
-      throw new PdxSerializationException("PDX enum field could not be read because \"" + this.name + "\" is not a valid name in enum class " + c, ex);
+      throw new PdxSerializationException(
+          "PDX enum field could not be read because \""
+              + this.name
+              + "\" is not a valid name in enum class "
+              + c,
+          ex);
     }
   }
 
@@ -162,25 +166,23 @@ public class EnumInfo implements DataSerializableFixedID {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     EnumInfo other = (EnumInfo) obj;
     if (clazz == null) {
-      if (other.clazz != null)
-        return false;
-    } else if (!clazz.equals(other.clazz))
-      return false;
+      if (other.clazz != null) return false;
+    } else if (!clazz.equals(other.clazz)) return false;
     if (name == null) {
-      if (other.name != null)
-        return false;
-    } else if (!name.equals(other.name))
-      return false;
+      if (other.name != null) return false;
+    } else if (!name.equals(other.name)) return false;
     if (this.ordinal != other.ordinal) {
-      throw new PdxSerializationException("The ordinal value for the enum " + this.name + " on class " + this.clazz + " can not be changed. Pdx only allows new enum constants to be added to the end of the enum.");
+      throw new PdxSerializationException(
+          "The ordinal value for the enum "
+              + this.name
+              + " on class "
+              + this.clazz
+              + " can not be changed. Pdx only allows new enum constants to be added to the end of the enum.");
     }
     return true;
   }
@@ -189,7 +191,8 @@ public class EnumInfo implements DataSerializableFixedID {
     return new PdxInstanceEnumInfo(enumId, this);
   }
 
-  public static class PdxInstanceEnumInfo implements PdxInstance, Sendable, ConvertableToBytes, ComparableEnum {
+  public static class PdxInstanceEnumInfo
+      implements PdxInstance, Sendable, ConvertableToBytes, ComparableEnum {
     private static final long serialVersionUID = 7907582104525106416L;
     private final int enumId;
     private final EnumInfo ei;
@@ -219,7 +222,10 @@ public class EnumInfo implements DataSerializableFixedID {
       try {
         return this.ei.getEnum();
       } catch (ClassNotFoundException ex) {
-        throw new PdxSerializationException(LocalizedStrings.DataSerializer_COULD_NOT_CREATE_AN_INSTANCE_OF_A_CLASS_0.toLocalizedString(getClassName()), ex);
+        throw new PdxSerializationException(
+            LocalizedStrings.DataSerializer_COULD_NOT_CREATE_AN_INSTANCE_OF_A_CLASS_0
+                .toLocalizedString(getClassName()),
+            ex);
       }
     }
 
@@ -227,7 +233,8 @@ public class EnumInfo implements DataSerializableFixedID {
       return getFieldNames().contains(fieldName);
     }
 
-    static private final List<String> fieldNames;
+    private static final List<String> fieldNames;
+
     static {
       ArrayList<String> tmp = new ArrayList<String>(2);
       tmp.add("name");
@@ -274,25 +281,18 @@ public class EnumInfo implements DataSerializableFixedID {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (!(obj instanceof ComparableEnum))
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (!(obj instanceof ComparableEnum)) return false;
       ComparableEnum other = (ComparableEnum) obj;
       String className = getClassName();
       if (className == null) {
-        if (other.getClassName() != null)
-          return false;
-      } else if (!className.equals(other.getClassName()))
-        return false;
+        if (other.getClassName() != null) return false;
+      } else if (!className.equals(other.getClassName())) return false;
       String enumName = getName();
       if (enumName == null) {
-        if (other.getName() != null)
-          return false;
-      } else if (!enumName.equals(other.getName()))
-        return false;
+        if (other.getName() != null) return false;
+      } else if (!enumName.equals(other.getName())) return false;
       return true;
     }
 
@@ -311,11 +311,13 @@ public class EnumInfo implements DataSerializableFixedID {
       if (o instanceof ComparableEnum) {
         ComparableEnum other = (ComparableEnum) o;
         if (!getClassName().equals(other.getClassName())) {
-          throw new ClassCastException("Can not compare a " + getClassName() + " to a " + other.getClassName());
+          throw new ClassCastException(
+              "Can not compare a " + getClassName() + " to a " + other.getClassName());
         }
         return getOrdinal() - other.getOrdinal();
       } else {
-        throw new ClassCastException("Can not compare an instance of " + o.getClass() + " to a " + this.getClass());
+        throw new ClassCastException(
+            "Can not compare an instance of " + o.getClass() + " to a " + this.getClass());
       }
     }
   }

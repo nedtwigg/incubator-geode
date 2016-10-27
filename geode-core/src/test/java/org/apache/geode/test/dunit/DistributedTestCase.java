@@ -21,10 +21,7 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * This class is the superclass of all distributed unit tests.
- */
+/** This class is the superclass of all distributed unit tests. */
 @Category(DistributedTest.class)
 @SuppressWarnings("serial")
-public abstract class DistributedTestCase extends JUnit4DistributedTestCase {
-}
+public abstract class DistributedTestCase extends JUnit4DistributedTestCase {}

@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 /**
- * This test verifies that stats are collected properly for the SingleNode and Single PartitionedRegion
- *
+ * This test verifies that stats are collected properly for the SingleNode and Single
+ * PartitionedRegion
  */
 package org.apache.geode.internal.cache;
 
@@ -47,9 +47,7 @@ import org.apache.geode.cache.RegionExistsException;
 import org.apache.geode.internal.FileUtil;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *  
- */
+/** */
 @Category(IntegrationTest.class)
 public class PartitionedRegionStatsJUnitTest {
   private static final File DISK_DIR = new File("PRStatsTest");
@@ -68,7 +66,9 @@ public class PartitionedRegionStatsJUnitTest {
 
   private PartitionedRegion createPR(String name, int lmax, int redundancy) {
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
-    paf.setLocalMaxMemory(lmax).setRedundantCopies(redundancy).setTotalNumBuckets(13); // set low to reduce logging
+    paf.setLocalMaxMemory(lmax)
+        .setRedundantCopies(redundancy)
+        .setTotalNumBuckets(13); // set low to reduce logging
     AttributesFactory af = new AttributesFactory();
     af.setPartitionAttributes(paf.create());
     Cache cache = PartitionedRegionTestHelper.createCache();
@@ -81,20 +81,29 @@ public class PartitionedRegionStatsJUnitTest {
     return pr;
   }
 
-  private PartitionedRegion createPRWithEviction(String name, int lmax, int redundancy, int evictionCount, boolean diskSync, boolean persistent) {
+  private PartitionedRegion createPRWithEviction(
+      String name,
+      int lmax,
+      int redundancy,
+      int evictionCount,
+      boolean diskSync,
+      boolean persistent) {
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
-    paf.setLocalMaxMemory(lmax).setRedundantCopies(redundancy).setTotalNumBuckets(13); // set low to reduce logging
+    paf.setLocalMaxMemory(lmax)
+        .setRedundantCopies(redundancy)
+        .setTotalNumBuckets(13); // set low to reduce logging
     AttributesFactory af = new AttributesFactory();
     af.setPartitionAttributes(paf.create());
     if (persistent) {
       af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
     }
-    af.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
+    af.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
     af.setDiskStoreName("diskstore");
     af.setDiskSynchronous(diskSync);
     Cache cache = PartitionedRegionTestHelper.createCache();
     DISK_DIR.mkdir();
-    cache.createDiskStoreFactory().setDiskDirs(new File[] { DISK_DIR }).create("diskstore");
+    cache.createDiskStoreFactory().setDiskDirs(new File[] {DISK_DIR}).create("diskstore");
     PartitionedRegion pr = null;
     try {
       pr = (PartitionedRegion) cache.createRegion(name, af.create());
@@ -105,9 +114,9 @@ public class PartitionedRegionStatsJUnitTest {
   }
 
   /**
-   * This test verifies that PR statistics are working properly for
-   * single/multiple PartitionedRegions on single node.
-   * 
+   * This test verifies that PR statistics are working properly for single/multiple
+   * PartitionedRegions on single node.
+   *
    * @throws Exception
    */
   @Test
@@ -125,12 +134,10 @@ public class PartitionedRegionStatsJUnitTest {
   }
 
   /**
-   * This method verifies that PR statistics are working properly for a
-   * PartitionedRegion. putsCompleted, getsCompleted, createsCompleted,
-   * destroysCompleted, containsKeyCompleted, containsValueForKeyCompleted,
-   * invalidatesCompleted, totalBucketSize
-   * and temporarily commented avgRedundantCopies,
-   * maxRedundantCopies, minRedundantCopies are validated in this method.
+   * This method verifies that PR statistics are working properly for a PartitionedRegion.
+   * putsCompleted, getsCompleted, createsCompleted, destroysCompleted, containsKeyCompleted,
+   * containsValueForKeyCompleted, invalidatesCompleted, totalBucketSize and temporarily commented
+   * avgRedundantCopies, maxRedundantCopies, minRedundantCopies are validated in this method.
    */
   private void validateStats(PartitionedRegion pr) throws Exception {
     Statistics stats = pr.getPrStats().getStats();
@@ -243,7 +250,7 @@ public class PartitionedRegionStatsJUnitTest {
      * int maxRedundantCopies = stats.get("maxRedundantCopies").intValue();
      * int minRedundantCopies = stats.get("minRedundantCopies").intValue();
      * int avgRedundantCopies = stats.get("avgRedundantCopies").intValue();
-     * 
+     *
      * assertIndexDetailsEquals(minRedundantCopies, 2); assertIndexDetailsEquals(maxRedundantCopies,
      * 2); assertIndexDetailsEquals(avgRedundantCopies, 2);
      */
@@ -258,9 +265,9 @@ public class PartitionedRegionStatsJUnitTest {
   }
 
   /**
-   * This test verifies that PR statistics are working properly for
-   * single/multiple PartitionedRegions on single node.
-   * 
+   * This test verifies that PR statistics are working properly for single/multiple
+   * PartitionedRegions on single node.
+   *
    * @throws Exception
    */
   @Test
@@ -280,9 +287,9 @@ public class PartitionedRegionStatsJUnitTest {
   }
 
   /**
-   * This test verifies that PR statistics are working properly for
-   * single/multiple PartitionedRegions on single node.
-   * 
+   * This test verifies that PR statistics are working properly for single/multiple
+   * PartitionedRegions on single node.
+   *
    * @throws Exception
    */
   @Test
@@ -346,7 +353,7 @@ public class PartitionedRegionStatsJUnitTest {
     assertEquals(stats.getLong("dataStoreBytesInUse"), getMemBytes(pr));
     assertEquals(diskStats.getNumOverflowBytesOnDisk(), getDiskBytes(pr));
 
-    //Update some entries 
+    //Update some entries
     for (int i = 0; i < numEntries / 2; i++) {
       pr.put(i, i * 2);
     }
@@ -412,7 +419,8 @@ public class PartitionedRegionStatsJUnitTest {
 
     assertEquals(singleEntryMemSize * entriesInMem, stats.getLong("dataStoreBytesInUse"));
     assertEquals(numEntries, stats.getInt("dataStoreEntryCount"));
-    assertEquals((numEntries - entriesInMem) * entryOverflowSize, diskStats.getNumOverflowBytesOnDisk());
+    assertEquals(
+        (numEntries - entriesInMem) * entryOverflowSize, diskStats.getNumOverflowBytesOnDisk());
     assertEquals(entriesInMem, diskStats.getNumEntriesInVM());
     assertEquals((numEntries - entriesInMem), diskStats.getNumOverflowOnDisk());
     assertEquals(stats.getLong("dataStoreBytesInUse"), getMemBytes(pr));
@@ -426,15 +434,15 @@ public class PartitionedRegionStatsJUnitTest {
       int key = rand.nextInt(numEntries);
       int op = rand.nextInt(3);
       switch (op) {
-      case 0:
-        pr.put(key, rand.nextInt());
-        break;
-      case 1:
-        pr.get(key);
-        break;
-      case 2:
-        pr.remove(key);
-        break;
+        case 0:
+          pr.put(key, rand.nextInt());
+          break;
+        case 1:
+          pr.get(key);
+          break;
+        case 2:
+          pr.remove(key);
+          break;
       }
     }
 
@@ -446,7 +454,8 @@ public class PartitionedRegionStatsJUnitTest {
 
     assertEquals(singleEntryMemSize * entriesInMem, stats.getLong("dataStoreBytesInUse"));
     assertEquals(numEntries, stats.getInt("dataStoreEntryCount"));
-    assertEquals((numEntries - entriesInMem) * entryOverflowSize, diskStats.getNumOverflowBytesOnDisk());
+    assertEquals(
+        (numEntries - entriesInMem) * entryOverflowSize, diskStats.getNumOverflowBytesOnDisk());
     assertEquals(entriesInMem, diskStats.getNumEntriesInVM());
     assertEquals((numEntries - entriesInMem), diskStats.getNumOverflowOnDisk());
     assertEquals(stats.getLong("dataStoreBytesInUse"), getMemBytes(pr));
@@ -457,7 +466,7 @@ public class PartitionedRegionStatsJUnitTest {
     Set<BucketRegion> brs = pr.getDataStore().getAllLocalBucketRegions();
 
     long bytes = 0;
-    for (Iterator<BucketRegion> itr = brs.iterator(); itr.hasNext();) {
+    for (Iterator<BucketRegion> itr = brs.iterator(); itr.hasNext(); ) {
       BucketRegion br = itr.next();
       bytes += br.getNumOverflowBytesOnDisk();
     }
@@ -469,7 +478,7 @@ public class PartitionedRegionStatsJUnitTest {
     Set<BucketRegion> brs = pr.getDataStore().getAllLocalBucketRegions();
 
     long bytes = 0;
-    for (Iterator<BucketRegion> itr = brs.iterator(); itr.hasNext();) {
+    for (Iterator<BucketRegion> itr = brs.iterator(); itr.hasNext(); ) {
       BucketRegion br = itr.next();
       bytes += br.getBytesInMemory();
     }

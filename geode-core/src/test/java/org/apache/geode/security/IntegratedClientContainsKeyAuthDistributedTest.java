@@ -27,29 +27,33 @@ import org.apache.geode.test.dunit.AsyncInvocation;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class IntegratedClientContainsKeyAuthDistributedTest extends AbstractSecureServerDUnitTest {
 
   @Test
   public void testContainsKey() throws InterruptedException {
-    AsyncInvocation ai1 = client1.invokeAsync(() -> {
-      ClientCache cache = createClientCache("key1User", "1234567", serverPort);
-      final Region region = cache.getRegion(REGION_NAME);
-      assertTrue(region.containsKeyOnServer("key1"));
-      assertNotAuthorized(() -> region.containsKeyOnServer("key3"), "DATA:READ:AuthRegion:key3");
-    });
+    AsyncInvocation ai1 =
+        client1.invokeAsync(
+            () -> {
+              ClientCache cache = createClientCache("key1User", "1234567", serverPort);
+              final Region region = cache.getRegion(REGION_NAME);
+              assertTrue(region.containsKeyOnServer("key1"));
+              assertNotAuthorized(
+                  () -> region.containsKeyOnServer("key3"), "DATA:READ:AuthRegion:key3");
+            });
 
-    AsyncInvocation ai2 = client2.invokeAsync(() -> {
-      ClientCache cache = createClientCache("authRegionReader", "1234567", serverPort);
-      final Region region = cache.getRegion(REGION_NAME);
-      region.containsKeyOnServer("key3");
-      assertTrue(region.containsKeyOnServer("key1"));
-    });
+    AsyncInvocation ai2 =
+        client2.invokeAsync(
+            () -> {
+              ClientCache cache = createClientCache("authRegionReader", "1234567", serverPort);
+              final Region region = cache.getRegion(REGION_NAME);
+              region.containsKeyOnServer("key3");
+              assertTrue(region.containsKeyOnServer("key1"));
+            });
 
     ai1.join();
     ai2.join();
     ai1.checkException();
     ai2.checkException();
   }
-
 }

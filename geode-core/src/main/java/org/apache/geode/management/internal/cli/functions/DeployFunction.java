@@ -52,7 +52,9 @@ public class DeployFunction implements Function, InternalEntity {
       final byte[][] jarBytes = (byte[][]) args[1];
       Cache cache = CacheFactory.getAnyInstance();
 
-      final JarDeployer jarDeployer = new JarDeployer(((GemFireCacheImpl) cache).getDistributedSystem().getConfig().getDeployWorkingDir());
+      final JarDeployer jarDeployer =
+          new JarDeployer(
+              ((GemFireCacheImpl) cache).getDistributedSystem().getConfig().getDeployWorkingDir());
 
       DistributedMember member = cache.getDistributedSystem().getDistributedMember();
 
@@ -73,7 +75,8 @@ public class DeployFunction implements Function, InternalEntity {
         }
       }
 
-      CliFunctionResult result = new CliFunctionResult(memberId, deployedList.toArray(new String[0]));
+      CliFunctionResult result =
+          new CliFunctionResult(memberId, deployedList.toArray(new String[0]));
       context.getResultSender().lastResult(result);
 
     } catch (CacheClosedException cce) {

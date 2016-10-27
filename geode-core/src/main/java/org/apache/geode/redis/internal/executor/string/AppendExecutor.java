@@ -48,14 +48,14 @@ public class AppendExecutor extends StringExecutor {
     byte[] stringByteArray = commandElems.get(VALUE_INDEX);
     if (string == null) {
       r.put(key, new ByteArrayWrapper(stringByteArray));
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), stringByteArray.length));
+      command.setResponse(
+          Coder.getIntegerResponse(context.getByteBufAllocator(), stringByteArray.length));
     } else {
       byte[] newValue = concatArrays(string.toBytes(), stringByteArray);
       string.setBytes(newValue);
       r.put(key, string);
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), newValue.length));
     }
-
   }
 
   private byte[] concatArrays(byte[] o, byte[] n) {
@@ -66,5 +66,4 @@ public class AppendExecutor extends StringExecutor {
     System.arraycopy(n, 0, combined, oLen, nLen);
     return combined;
   }
-
 }

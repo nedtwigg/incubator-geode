@@ -23,9 +23,7 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Test for Preprocessor
- */
+/** Test for Preprocessor */
 @Category(UnitTest.class)
 public class PreprocessorJUnitTest {
 
@@ -184,7 +182,8 @@ public class PreprocessorJUnitTest {
     String[] split = Preprocessor.split(input);
     assertEquals("Size of the split", 2, split.length);
     assertEquals("First string", "--option1", split[0]);
-    assertEquals("Second string", "\"   \'  value1  \'   \",moreData,\"  even more data\"", split[1]);
+    assertEquals(
+        "Second string", "\"   \'  value1  \'   \",moreData,\"  even more data\"", split[1]);
   }
 
   @Test

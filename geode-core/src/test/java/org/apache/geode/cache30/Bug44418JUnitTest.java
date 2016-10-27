@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache30;
 
 import org.apache.geode.cache.*;
@@ -41,15 +39,14 @@ import static org.junit.Assert.fail;
 
 /**
  * Test for Bug 44418.
- * 
- * If a new expiration time is specified
- * that is shorter than an existing one,
- * ensure the new shorter time is honored.
- * 
+ *
+ * <p>If a new expiration time is specified that is shorter than an existing one, ensure the new
+ * shorter time is honored.
+ *
  * @since GemFire 7.0
  */
 @Category(IntegrationTest.class)
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class Bug44418JUnitTest { // TODO: rename this test to non-ticket descriptive name
 
   DistributedSystem ds;
@@ -67,7 +64,12 @@ public class Bug44418JUnitTest { // TODO: rename this test to non-ticket descrip
 
     System.setProperty(LocalRegion.EXPIRY_MS_PROPERTY, "true");
     try {
-      final Region r = this.cache.createRegionFactory(RegionShortcut.LOCAL).setStatisticsEnabled(true).setCustomEntryTimeToLive(new CustomExpiryTestClass()).create("bug44418");
+      final Region r =
+          this.cache
+              .createRegionFactory(RegionShortcut.LOCAL)
+              .setStatisticsEnabled(true)
+              .setCustomEntryTimeToLive(new CustomExpiryTestClass())
+              .create("bug44418");
 
       r.put(TEST_KEY, "longExpire");
       // should take LONG_WAIT_MS to expire.
@@ -89,7 +91,12 @@ public class Bug44418JUnitTest { // TODO: rename this test to non-ticket descrip
 
     System.setProperty(LocalRegion.EXPIRY_MS_PROPERTY, "true");
     try {
-      final Region r = this.cache.createRegionFactory(RegionShortcut.LOCAL).setStatisticsEnabled(true).setCustomEntryIdleTimeout(new CustomExpiryTestClass()).create("bug44418");
+      final Region r =
+          this.cache
+              .createRegionFactory(RegionShortcut.LOCAL)
+              .setStatisticsEnabled(true)
+              .setCustomEntryIdleTimeout(new CustomExpiryTestClass())
+              .create("bug44418");
 
       r.put(TEST_KEY, "longExpire");
       // should take LONG_WAIT_MS to expire.
@@ -111,7 +118,11 @@ public class Bug44418JUnitTest { // TODO: rename this test to non-ticket descrip
     // a SHORT_WAIT_MS to expire then the expiration
     // is probably still set at LONG_WAIT_MS.
     try {
-      with().pollInterval(POLL_INTERVAL_MS, TimeUnit.MILLISECONDS).await().atMost(TEST_WAIT_MS, TimeUnit.MILLISECONDS).until(() -> !r.containsValueForKey(key));
+      with()
+          .pollInterval(POLL_INTERVAL_MS, TimeUnit.MILLISECONDS)
+          .await()
+          .atMost(TEST_WAIT_MS, TimeUnit.MILLISECONDS)
+          .until(() -> !r.containsValueForKey(key));
     } catch (ConditionTimeoutException toe) {
       return false;
     }
@@ -143,17 +154,20 @@ public class Bug44418JUnitTest { // TODO: rename this test to non-ticket descrip
     private boolean secondTime;
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 
     @Override
     public ExpirationAttributes getExpiry(Entry entry) {
       ExpirationAttributes result;
       if (!this.secondTime) {
-        result = new ExpirationAttributes(LONG_WAIT_MS); // Set long expiration first time entry referenced
+        result =
+            new ExpirationAttributes(
+                LONG_WAIT_MS); // Set long expiration first time entry referenced
         this.secondTime = true;
       } else {
-        result = new ExpirationAttributes(SHORT_WAIT_MS); // Set short expiration second time entry referenced
+        result =
+            new ExpirationAttributes(
+                SHORT_WAIT_MS); // Set short expiration second time entry referenced
       }
       return result;
     }

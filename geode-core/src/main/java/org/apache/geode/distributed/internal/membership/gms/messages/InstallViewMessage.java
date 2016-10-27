@@ -31,7 +31,9 @@ import org.apache.geode.internal.InternalDataSerializer;
 
 public class InstallViewMessage extends HighPriorityDistributionMessage {
   enum messageType {
-    INSTALL, PREPARE, SYNC
+    INSTALL,
+    PREPARE,
+    SYNC
   }
 
   private NetView view;
@@ -45,7 +47,8 @@ public class InstallViewMessage extends HighPriorityDistributionMessage {
     this.credentials = credentials;
   }
 
-  public InstallViewMessage(NetView view, Object credentials, int previousViewId, boolean preparing) {
+  public InstallViewMessage(
+      NetView view, Object credentials, int previousViewId, boolean preparing) {
     this.view = view;
     this.kind = preparing ? messageType.PREPARE : messageType.INSTALL;
     this.credentials = credentials;
@@ -106,32 +109,33 @@ public class InstallViewMessage extends HighPriorityDistributionMessage {
 
   @Override
   public String toString() {
-    return "InstallViewMessage(type=" + this.kind + "; Current ViewID=" + view.getViewId() + "; Previous View ID=" + previousViewId + "; " + this.view + "; cred=" + (credentials == null ? "null" : "not null") + ")";
+    return "InstallViewMessage(type="
+        + this.kind
+        + "; Current ViewID="
+        + view.getViewId()
+        + "; Previous View ID="
+        + previousViewId
+        + "; "
+        + this.view
+        + "; cred="
+        + (credentials == null ? "null" : "not null")
+        + ")";
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     InstallViewMessage other = (InstallViewMessage) obj;
     if (credentials == null) {
-      if (other.credentials != null)
-        return false;
-    } else if (!credentials.equals(other.credentials))
-      return false;
-    if (kind != other.kind)
-      return false;
-    if (previousViewId != other.previousViewId)
-      return false;
+      if (other.credentials != null) return false;
+    } else if (!credentials.equals(other.credentials)) return false;
+    if (kind != other.kind) return false;
+    if (previousViewId != other.previousViewId) return false;
     if (view == null) {
-      if (other.view != null)
-        return false;
-    } else if (!view.equals(other.view))
-      return false;
+      if (other.view != null) return false;
+    } else if (!view.equals(other.view)) return false;
     return true;
   }
 }

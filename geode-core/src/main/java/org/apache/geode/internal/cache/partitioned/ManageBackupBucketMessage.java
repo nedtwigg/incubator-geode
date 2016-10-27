@@ -48,7 +48,6 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
  * A request to manage a particular bucket
  *
  * @since GemFire 5.0
- *
  */
 public final class ManageBackupBucketMessage extends PartitionMessage {
   private static final Logger logger = LogService.getLogger();
@@ -66,13 +65,18 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
 
   private boolean forceCreation = true;
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public ManageBackupBucketMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public ManageBackupBucketMessage() {}
 
-  private ManageBackupBucketMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, int bucketId, boolean isRebalance, boolean replaceOfflineData, InternalDistributedMember moveSource, boolean forceCreation) {
+  private ManageBackupBucketMessage(
+      InternalDistributedMember recipient,
+      int regionId,
+      ReplyProcessor21 processor,
+      int bucketId,
+      boolean isRebalance,
+      boolean replaceOfflineData,
+      InternalDistributedMember moveSource,
+      boolean forceCreation) {
     super(recipient, regionId, processor);
     this.bucketId = bucketId;
     this.isRebalance = isRebalance;
@@ -86,27 +90,45 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
   }
 
   @Override
-  final public int getProcessorType() {
+  public final int getProcessorType() {
     return DistributionManager.WAITING_POOL_EXECUTOR;
   }
 
   /**
    * Sends a PartitionedRegion manage bucket request to the recipient
-   * @param recipient the member to which the bucket manage request is sent 
-   * @param r  the PartitionedRegion to which the bucket belongs
+   *
+   * @param recipient the member to which the bucket manage request is sent
+   * @param r the PartitionedRegion to which the bucket belongs
    * @param bucketId the unique identifier of the bucket
    * @param isRebalance true if directed by full rebalance operation
-   * @param replaceOfflineData 
-   * @param moveSource If this is a bucket move.  
-   * @param forceCreation ignore checks which may cause the bucket not to be created  
+   * @param replaceOfflineData
+   * @param moveSource If this is a bucket move.
+   * @param forceCreation ignore checks which may cause the bucket not to be created
    * @return the processor used to fetch the returned Node if any
    * @throws ForceReattemptException if the peer is no longer available
    */
-  public static NodeResponse send(InternalDistributedMember recipient, PartitionedRegion r, int bucketId, boolean isRebalance, boolean replaceOfflineData, InternalDistributedMember moveSource, boolean forceCreation) throws ForceReattemptException {
+  public static NodeResponse send(
+      InternalDistributedMember recipient,
+      PartitionedRegion r,
+      int bucketId,
+      boolean isRebalance,
+      boolean replaceOfflineData,
+      InternalDistributedMember moveSource,
+      boolean forceCreation)
+      throws ForceReattemptException {
 
     Assert.assertTrue(recipient != null, "ManageBucketMessage NULL recipient");
     NodeResponse p = new NodeResponse(r.getSystem(), recipient);
-    ManageBackupBucketMessage m = new ManageBackupBucketMessage(recipient, r.getPRId(), p, bucketId, isRebalance, replaceOfflineData, moveSource, forceCreation);
+    ManageBackupBucketMessage m =
+        new ManageBackupBucketMessage(
+            recipient,
+            r.getPRId(),
+            p,
+            bucketId,
+            isRebalance,
+            replaceOfflineData,
+            moveSource,
+            forceCreation);
 
     p.enableSevereAlertProcessing();
 
@@ -119,17 +141,18 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
   }
 
   /**
-   * This method is called upon receipt and make the desired changes to the
-   * PartitionedRegion
-   * Note: It is very important that this message does NOT cause any deadlocks as the sender will wait indefinitely for the acknowledgement
+   * This method is called upon receipt and make the desired changes to the PartitionedRegion Note:
+   * It is very important that this message does NOT cause any deadlocks as the sender will wait
+   * indefinitely for the acknowledgement
    */
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime) {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion r, long startTime) {
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace(LogMarker.DM, "ManageBucketMessage operateOnRegion: {}", r.getFullPath());
     }
 
-    // This is to ensure that initialization is complete before bucket creation request is 
+    // This is to ensure that initialization is complete before bucket creation request is
     // serviced. BUGFIX for 35888
     if (!r.isInitialized()) {
       // This VM is NOT ready to manage a new bucket, refuse operation
@@ -137,9 +160,19 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
       return false;
     }
 
-    r.checkReadiness(); //  Don't allow closed PartitionedRegions that have datastores to host buckets
+    r
+        .checkReadiness(); //  Don't allow closed PartitionedRegions that have datastores to host buckets
     PartitionedRegionDataStore prDs = r.getDataStore();
-    boolean managingBucket = prDs.grabBucket(this.bucketId, this.moveSource, this.forceCreation, replaceOfflineData, this.isRebalance, null, false) == CreateBucketResult.CREATED;
+    boolean managingBucket =
+        prDs.grabBucket(
+                this.bucketId,
+                this.moveSource,
+                this.forceCreation,
+                replaceOfflineData,
+                this.isRebalance,
+                null,
+                false)
+            == CreateBucketResult.CREATED;
 
     r.getPrStats().endPartitionMessagesProcessing(startTime);
     if (managingBucket) {
@@ -183,7 +216,7 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
 
   /**
    * Assists the toString method in reporting the contents of this message
-   * 
+   *
    * @see PartitionMessage#toString()
    */
   @Override
@@ -204,8 +237,9 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
   }
 
   /**
-   * A class that contains the reply to a {@link ManageBackupBucketMessage} message
-   * which contains the {@link Node} that has accepted to manage the bucket. 
+   * A class that contains the reply to a {@link ManageBackupBucketMessage} message which contains
+   * the {@link Node} that has accepted to manage the bucket.
+   *
    * @since GemFire 5.0
    */
   public static final class ManageBackupBucketReplyMessage extends ReplyMessage {
@@ -215,11 +249,8 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
     /** true if the vm refused because it was still in initialization */
     protected boolean notYetInitialized;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface 
-     */
-    public ManageBackupBucketReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public ManageBackupBucketReplyMessage() {}
 
     public ManageBackupBucketReplyMessage(DataInput in) throws IOException, ClassNotFoundException {
       fromData(in);
@@ -232,53 +263,63 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
     }
 
     /**
-     * Refuse the request to manage the bucket 
+     * Refuse the request to manage the bucket
+     *
      * @param recipient the requesting node
      * @param processorId the identity of the processor the requesting node is waiting on
      * @param dm the distribution manager used to send the refusal
      */
     public static void sendRefusal(InternalDistributedMember recipient, int processorId, DM dm) {
       Assert.assertTrue(recipient != null, "ManageBackupBucketReplyMessage NULL reply message");
-      ManageBackupBucketReplyMessage m = new ManageBackupBucketReplyMessage(processorId, false, false);
+      ManageBackupBucketReplyMessage m =
+          new ManageBackupBucketReplyMessage(processorId, false, false);
       m.setRecipient(recipient);
       dm.putOutgoing(m);
     }
 
     /**
      * Refuse the request to manage the bucket because the region is still being initialized
+     *
      * @param recipient the requesting node
      * @param processorId the identity of the processor the requesting node is waiting on
      * @param dm the distribution manager used to send the acceptance message
      */
-    public static void sendStillInitializing(InternalDistributedMember recipient, int processorId, DM dm) {
-      ManageBackupBucketReplyMessage m = new ManageBackupBucketReplyMessage(processorId, false, true);
+    public static void sendStillInitializing(
+        InternalDistributedMember recipient, int processorId, DM dm) {
+      ManageBackupBucketReplyMessage m =
+          new ManageBackupBucketReplyMessage(processorId, false, true);
       m.setRecipient(recipient);
       dm.putOutgoing(m);
     }
 
     /**
      * Accept the request to manage the bucket
+     *
      * @param recipient the requesting node
      * @param processorId the identity of the processor the requesting node is waiting on
      * @param dm the distribution manager used to send the acceptance message
      */
     public static void sendAcceptance(InternalDistributedMember recipient, int processorId, DM dm) {
       Assert.assertTrue(recipient != null, "ManageBackupBucketReplyMessage NULL reply message");
-      ManageBackupBucketReplyMessage m = new ManageBackupBucketReplyMessage(processorId, true, false);
+      ManageBackupBucketReplyMessage m =
+          new ManageBackupBucketReplyMessage(processorId, true, false);
       m.setRecipient(recipient);
       dm.putOutgoing(m);
     }
 
     /**
-     * Processes this message.  This method is invoked by the receiver
-     * of the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
      * @param dm the distribution manager that is processing the message.
      */
     @Override
     public void process(final DM dm, final ReplyProcessor21 processor) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "ManageBackupBucketReplyMessage process invoking reply processor with processorId: {}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "ManageBackupBucketReplyMessage process invoking reply processor with processorId: {}",
+            this.processorId);
       }
 
       if (processor == null) {
@@ -316,18 +357,27 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
 
     @Override
     public String toString() {
-      return new StringBuffer().append("ManageBucketReplyMessage ").append("processorid=").append(this.processorId).append(" accepted bucket=").append(this.acceptedBucket).append(" isInitializing=").append(this.notYetInitialized).toString();
+      return new StringBuffer()
+          .append("ManageBucketReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" accepted bucket=")
+          .append(this.acceptedBucket)
+          .append(" isInitializing=")
+          .append(this.notYetInitialized)
+          .toString();
     }
   }
 
   /**
    * A processor to capture the {@link Node} returned by {@link ManageBackupBucketMessage}
+   *
    * @since GemFire 5.0
    */
-  static public class NodeResponse extends ReplyProcessor21 {
+  public static class NodeResponse extends ReplyProcessor21 {
     /**
-     * the message that triggers return from waitForAcceptance.  This will
-     * be null if the target member exited
+     * the message that triggers return from waitForAcceptance. This will be null if the target
+     * member exited
      */
     private volatile ManageBackupBucketReplyMessage msg;
 
@@ -342,7 +392,11 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
           ManageBackupBucketReplyMessage reply = (ManageBackupBucketReplyMessage) m;
           this.msg = reply;
           if (logger.isTraceEnabled(LogMarker.DM)) {
-            logger.trace(LogMarker.DM, "NodeResponse return value is {} isInitializng={}", reply.acceptedBucket, reply.notYetInitialized);
+            logger.trace(
+                LogMarker.DM,
+                "NodeResponse return value is {} isInitializng={}",
+                reply.acceptedBucket,
+                reply.notYetInitialized);
           }
         } else {
           Assert.assertTrue(m instanceof ReplyMessage);
@@ -359,9 +413,12 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
     }
 
     /**
-     * Wait for the response to a {@link ManageBackupBucketMessage} request. 
+     * Wait for the response to a {@link ManageBackupBucketMessage} request.
+     *
      * @return true if the node sent the request is managing the bucket
-     * @see org.apache.geode.internal.cache.PartitionedRegionDataStore#handleManageBucketRequest(int, int, InternalDistributedMember, boolean)
+     * @see
+     *     org.apache.geode.internal.cache.PartitionedRegionDataStore#handleManageBucketRequest(int,
+     *     int, InternalDistributedMember, boolean)
      * @throws ForceReattemptException if the peer is no longer available
      */
     public boolean waitForAcceptance() throws ForceReattemptException {
@@ -370,17 +427,20 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
       } catch (ReplyException e) {
         Throwable t = e.getCause();
         if (t instanceof CacheClosedException) {
-          String m = "NodeResponse got remote CacheClosedException, throwing PartitionedRegionCommunication Exception";
+          String m =
+              "NodeResponse got remote CacheClosedException, throwing PartitionedRegionCommunication Exception";
           logger.debug(m, t);
           throw new ForceReattemptException(m, t);
         }
         if (t instanceof PRLocallyDestroyedException) {
-          String m = "NodeResponse got local destroy on the PartitionRegion , throwing ForceReattemptException";
+          String m =
+              "NodeResponse got local destroy on the PartitionRegion , throwing ForceReattemptException";
           logger.debug(m, t);
           throw new ForceReattemptException(m, t);
         }
         if (t instanceof ForceReattemptException) {
-          String m = "NodeResponse got ForceReattemptException due to local destroy on the PartitionRegion";
+          String m =
+              "NodeResponse got ForceReattemptException due to local destroy on the PartitionRegion";
           logger.debug(m, t);
           throw (ForceReattemptException) t;
         }
@@ -390,13 +450,11 @@ public final class ManageBackupBucketMessage extends PartitionMessage {
     }
 
     /**
-     * After a response has been returned from waitForAcceptance, this method
-     * may be used to see if the other vm rejected the bucket because it was
-     * still initializing.
+     * After a response has been returned from waitForAcceptance, this method may be used to see if
+     * the other vm rejected the bucket because it was still initializing.
      */
     public boolean rejectedDueToInitialization() {
       return (this.msg != null) && this.msg.notYetInitialized;
     }
   }
-
 }

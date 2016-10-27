@@ -20,12 +20,7 @@ import java.io.File;
 
 import org.apache.geode.cache.*;
 
-/**
- * 
- * A testing helper factory to get a disk region with the desired configuration
- * 
- *  
- */
+/** A testing helper factory to get a disk region with the desired configuration */
 public class DiskRegionHelperFactory {
 
   public static Region getRegion(Cache cache, DiskRegionProperties diskProps, Scope regionScope) {
@@ -36,8 +31,8 @@ public class DiskRegionHelperFactory {
       File dir = new File("testingDirectoryDefault");
       dir.mkdir();
       dir.deleteOnExit();
-      File[] dirs = { dir };
-      dsf.setDiskDirsAndSizes(dirs, new int[] { Integer.MAX_VALUE });
+      File[] dirs = {dir};
+      dsf.setDiskDirsAndSizes(dirs, new int[] {Integer.MAX_VALUE});
     } else if (diskProps.getDiskDirSizes() == null) {
       int[] ints = new int[diskProps.getDiskDirs().length];
       for (int i = 0; i < ints.length; i++) {
@@ -75,8 +70,8 @@ public class DiskRegionHelperFactory {
 
     if (diskProps.isOverflow()) {
       int capacity = diskProps.getOverFlowCapacity();
-      factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(capacity, EvictionAction.OVERFLOW_TO_DISK));
-
+      factory.setEvictionAttributes(
+          EvictionAttributes.createLRUEntryAttributes(capacity, EvictionAction.OVERFLOW_TO_DISK));
     }
 
     factory.setConcurrencyLevel(diskProps.getConcurrencyLevel());
@@ -94,17 +89,18 @@ public class DiskRegionHelperFactory {
     return region;
   }
 
-  public static Region getSyncPersistOnlyRegion(Cache cache, DiskRegionProperties diskRegionProperties, Scope regionScope) {
+  public static Region getSyncPersistOnlyRegion(
+      Cache cache, DiskRegionProperties diskRegionProperties, Scope regionScope) {
     if (diskRegionProperties == null) {
       diskRegionProperties = new DiskRegionProperties();
     }
     diskRegionProperties.setPersistBackup(true);
     diskRegionProperties.setSynchronous(true);
     return getRegion(cache, diskRegionProperties, regionScope);
-
   }
 
-  public static Region getAsyncPersistOnlyRegion(Cache cache, DiskRegionProperties diskRegionProperties) {
+  public static Region getAsyncPersistOnlyRegion(
+      Cache cache, DiskRegionProperties diskRegionProperties) {
     if (diskRegionProperties == null) {
       diskRegionProperties = new DiskRegionProperties();
     }
@@ -113,7 +109,8 @@ public class DiskRegionHelperFactory {
     return getRegion(cache, diskRegionProperties, Scope.LOCAL);
   }
 
-  public static Region getSyncOverFlowOnlyRegion(Cache cache, DiskRegionProperties diskRegionProperties) {
+  public static Region getSyncOverFlowOnlyRegion(
+      Cache cache, DiskRegionProperties diskRegionProperties) {
     if (diskRegionProperties == null) {
       diskRegionProperties = new DiskRegionProperties();
     }
@@ -123,7 +120,8 @@ public class DiskRegionHelperFactory {
     return getRegion(cache, diskRegionProperties, Scope.LOCAL);
   }
 
-  public static Region getAsyncOverFlowOnlyRegion(Cache cache, DiskRegionProperties diskRegionProperties) {
+  public static Region getAsyncOverFlowOnlyRegion(
+      Cache cache, DiskRegionProperties diskRegionProperties) {
     if (diskRegionProperties == null) {
       diskRegionProperties = new DiskRegionProperties();
     }
@@ -133,7 +131,8 @@ public class DiskRegionHelperFactory {
     return getRegion(cache, diskRegionProperties, Scope.LOCAL);
   }
 
-  public static Region getSyncOverFlowAndPersistRegion(Cache cache, DiskRegionProperties diskRegionProperties) {
+  public static Region getSyncOverFlowAndPersistRegion(
+      Cache cache, DiskRegionProperties diskRegionProperties) {
     if (diskRegionProperties == null) {
       diskRegionProperties = new DiskRegionProperties();
     }
@@ -143,7 +142,8 @@ public class DiskRegionHelperFactory {
     return getRegion(cache, diskRegionProperties, Scope.LOCAL);
   }
 
-  public static Region getAsyncOverFlowAndPersistRegion(Cache cache, DiskRegionProperties diskRegionProperties) {
+  public static Region getAsyncOverFlowAndPersistRegion(
+      Cache cache, DiskRegionProperties diskRegionProperties) {
     if (diskRegionProperties == null) {
       diskRegionProperties = new DiskRegionProperties();
     }
@@ -153,7 +153,8 @@ public class DiskRegionHelperFactory {
     return getRegion(cache, diskRegionProperties, Scope.LOCAL);
   }
 
-  public static Region getSyncPersistOnlyRegionInfiniteOplog(Cache cache, DiskRegionProperties diskRegionProperties, String regionName) {
+  public static Region getSyncPersistOnlyRegionInfiniteOplog(
+      Cache cache, DiskRegionProperties diskRegionProperties, String regionName) {
     if (diskRegionProperties == null) {
       diskRegionProperties = new DiskRegionProperties();
     }
@@ -162,10 +163,10 @@ public class DiskRegionHelperFactory {
     diskRegionProperties.setPersistBackup(true);
     diskRegionProperties.setSynchronous(true);
     return getRegion(cache, diskRegionProperties, Scope.LOCAL);
-
   }
 
-  public static Region getAsyncPersistOnlyRegionInfiniteOplog(Cache cache, DiskRegionProperties diskRegionProperties) {
+  public static Region getAsyncPersistOnlyRegionInfiniteOplog(
+      Cache cache, DiskRegionProperties diskRegionProperties) {
     if (diskRegionProperties == null) {
       diskRegionProperties = new DiskRegionProperties();
     }
@@ -176,7 +177,8 @@ public class DiskRegionHelperFactory {
     return getRegion(cache, diskRegionProperties, Scope.LOCAL);
   }
 
-  public static Region getSyncOverFlowOnlyRegionInfiniteOplog(Cache cache, DiskRegionProperties diskRegionProperties) {
+  public static Region getSyncOverFlowOnlyRegionInfiniteOplog(
+      Cache cache, DiskRegionProperties diskRegionProperties) {
     if (diskRegionProperties == null) {
       diskRegionProperties = new DiskRegionProperties();
     }
@@ -188,7 +190,8 @@ public class DiskRegionHelperFactory {
     return getRegion(cache, diskRegionProperties, Scope.LOCAL);
   }
 
-  public static Region getAsyncOverFlowOnlyRegionInfiniteOplog(Cache cache, DiskRegionProperties diskRegionProperties) {
+  public static Region getAsyncOverFlowOnlyRegionInfiniteOplog(
+      Cache cache, DiskRegionProperties diskRegionProperties) {
     if (diskRegionProperties == null) {
       diskRegionProperties = new DiskRegionProperties();
     }
@@ -200,7 +203,8 @@ public class DiskRegionHelperFactory {
     return getRegion(cache, diskRegionProperties, Scope.LOCAL);
   }
 
-  public static Region getSyncOverFlowAndPersistRegionInfiniteOplog(Cache cache, DiskRegionProperties diskRegionProperties) {
+  public static Region getSyncOverFlowAndPersistRegionInfiniteOplog(
+      Cache cache, DiskRegionProperties diskRegionProperties) {
     if (diskRegionProperties == null) {
       diskRegionProperties = new DiskRegionProperties();
     }
@@ -212,7 +216,8 @@ public class DiskRegionHelperFactory {
     return getRegion(cache, diskRegionProperties, Scope.LOCAL);
   }
 
-  public static Region getAsyncOverFlowAndPersistRegionInfiniteOplog(Cache cache, DiskRegionProperties diskRegionProperties) {
+  public static Region getAsyncOverFlowAndPersistRegionInfiniteOplog(
+      Cache cache, DiskRegionProperties diskRegionProperties) {
     if (diskRegionProperties == null) {
       diskRegionProperties = new DiskRegionProperties();
     }
@@ -223,5 +228,4 @@ public class DiskRegionHelperFactory {
     diskRegionProperties.setOverflow(true);
     return getRegion(cache, diskRegionProperties, Scope.LOCAL);
   }
-
 }

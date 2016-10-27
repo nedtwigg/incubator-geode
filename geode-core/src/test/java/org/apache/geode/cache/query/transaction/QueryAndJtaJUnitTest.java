@@ -268,7 +268,7 @@ public class QueryAndJtaJUnitTest {
 
   /**
    * verify that queries on indexes work with transaction
-   * 
+   *
    * @throws Exception
    */
   @Test
@@ -329,7 +329,20 @@ public class QueryAndJtaJUnitTest {
       region.put(i, new Portfolio(i));
     }
 
-    String[] queries = { "select * from /sample where ID = 5", "select ID from /sample where ID < 5", "select ID from /sample where ID > 5", "select ID from /sample where ID != 5", "select status from /sample where status = 'active'", "select status from /sample where status > 'active'", "select status from /sample where status < 'active'", "select status from /sample where status != 'active'", "select pos.secId from /sample p, p.positions.values pos where pos.secId = 'IBM'", "select pos.secId from /sample p, p.positions.values pos where pos.secId < 'VMW'", "select pos.secId from /sample p, p.positions.values pos where pos.secId > 'IBM'", "select pos.secId from /sample p, p.positions.values pos where pos.secId != 'IBM'" };
+    String[] queries = {
+      "select * from /sample where ID = 5",
+      "select ID from /sample where ID < 5",
+      "select ID from /sample where ID > 5",
+      "select ID from /sample where ID != 5",
+      "select status from /sample where status = 'active'",
+      "select status from /sample where status > 'active'",
+      "select status from /sample where status < 'active'",
+      "select status from /sample where status != 'active'",
+      "select pos.secId from /sample p, p.positions.values pos where pos.secId = 'IBM'",
+      "select pos.secId from /sample p, p.positions.values pos where pos.secId < 'VMW'",
+      "select pos.secId from /sample p, p.positions.values pos where pos.secId > 'IBM'",
+      "select pos.secId from /sample p, p.positions.values pos where pos.secId != 'IBM'"
+    };
 
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
@@ -453,6 +466,5 @@ public class QueryAndJtaJUnitTest {
       // TODO Auto-generated method stub
       updates++;
     }
-
   }
 }

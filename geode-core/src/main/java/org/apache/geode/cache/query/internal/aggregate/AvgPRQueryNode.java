@@ -17,18 +17,16 @@
 package org.apache.geode.cache.query.internal.aggregate;
 
 /**
- * Computes the final non distinct average for a partitioned region based query.
- * This aggregator is instantiated on the PR query node.
- * 
- *
+ * Computes the final non distinct average for a partitioned region based query. This aggregator is
+ * instantiated on the PR query node.
  */
 public class AvgPRQueryNode extends Sum {
   private int count = 0;
 
   /**
-   * Takes the input of data received from bucket nodes. The data is of the form
-   * of two element array. The first element is the number of values, while the
-   * second element is the sum of the values.
+   * Takes the input of data received from bucket nodes. The data is of the form of two element
+   * array. The first element is the number of values, while the second element is the sum of the
+   * values.
    */
   @Override
   public void accumulate(Object value) {

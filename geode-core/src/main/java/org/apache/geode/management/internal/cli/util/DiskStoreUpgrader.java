@@ -45,14 +45,18 @@ public class DiskStoreUpgrader {
     long maxOplogSize = -1;
 
     if (args.length < 3) {
-      throw new IllegalArgumentException("Requires 3 arguments : <diskStoreName> <diskDirs> <maxOpLogSize>");
+      throw new IllegalArgumentException(
+          "Requires 3 arguments : <diskStoreName> <diskDirs> <maxOpLogSize>");
     }
 
     Properties prop = new Properties();
     try {
-      prop.load(new StringReader(args[0] + GfshParser.LINE_SEPARATOR + args[1] + GfshParser.LINE_SEPARATOR + args[2]));
+      prop.load(
+          new StringReader(
+              args[0] + GfshParser.LINE_SEPARATOR + args[1] + GfshParser.LINE_SEPARATOR + args[2]));
     } catch (IOException e) {
-      throw new IllegalArgumentException("Requires 3 arguments : <diskStoreName> <diskDirs> <maxOpLogSize>");
+      throw new IllegalArgumentException(
+          "Requires 3 arguments : <diskStoreName> <diskDirs> <maxOpLogSize>");
     }
 
     try {
@@ -67,8 +71,14 @@ public class DiskStoreUpgrader {
       Throwable cause = e.getCause();
       if (cause instanceof IllegalStateException) {
         String message = cause.getMessage();
-        if (stringMatches(LocalizedStrings.DiskInitFile_THE_INIT_FILE_0_DOES_NOT_EXIST.toLocalizedString("(.*)"), message)) {
-          errorString = CliStrings.format(CliStrings.UPGRADE_OFFLINE_DISK_STORE__MSG__CANNOT_LOCATE_0_DISKSTORE_IN_1, diskStoreName, CliUtil.arrayToString(diskDirs));
+        if (stringMatches(
+            LocalizedStrings.DiskInitFile_THE_INIT_FILE_0_DOES_NOT_EXIST.toLocalizedString("(.*)"),
+            message)) {
+          errorString =
+              CliStrings.format(
+                  CliStrings.UPGRADE_OFFLINE_DISK_STORE__MSG__CANNOT_LOCATE_0_DISKSTORE_IN_1,
+                  diskStoreName,
+                  CliUtil.arrayToString(diskDirs));
         } else {
           errorString = message;
         }
@@ -77,13 +87,22 @@ public class DiskStoreUpgrader {
         Throwable nestedCause = cause.getCause();
         if (nestedCause instanceof IOException) {
           String message = nestedCause.getMessage();
-          if (stringMatches(LocalizedStrings.Oplog_THE_FILE_0_IS_BEING_USED_BY_ANOTHER_PROCESS.toLocalizedString("(.*)"), message)) {
-            errorString = CliStrings.UPGRADE_OFFLINE_DISK_STORE__MSG__DISKSTORE_IN_USE_COMPACT_DISKSTORE_CAN_BE_USED;
+          if (stringMatches(
+              LocalizedStrings.Oplog_THE_FILE_0_IS_BEING_USED_BY_ANOTHER_PROCESS.toLocalizedString(
+                  "(.*)"),
+              message)) {
+            errorString =
+                CliStrings
+                    .UPGRADE_OFFLINE_DISK_STORE__MSG__DISKSTORE_IN_USE_COMPACT_DISKSTORE_CAN_BE_USED;
             isKnownCause = true;
           }
         }
         if (!isKnownCause) {
-          errorString = CliStrings.format(CliStrings.UPGRADE_OFFLINE_DISK_STORE__MSG__CANNOT_ACCESS_DISKSTORE_0_FROM_1_CHECK_GFSH_LOGS, new Object[] { diskStoreName, CliUtil.arrayToString(diskDirs) });
+          errorString =
+              CliStrings.format(
+                  CliStrings
+                      .UPGRADE_OFFLINE_DISK_STORE__MSG__CANNOT_ACCESS_DISKSTORE_0_FROM_1_CHECK_GFSH_LOGS,
+                  new Object[] {diskStoreName, CliUtil.arrayToString(diskDirs)});
         }
       } else {
         errorString = e.getMessage(); // which are other known exceptions?
@@ -114,9 +133,17 @@ public class DiskStoreUpgrader {
     try {
       DiskStoreImpl.offlineCompact(diskStoreName, dirs, true, maxOplogSize);
     } catch (Exception ex) {
-      String fieldsMessage = (maxOplogSize != -1 ? CliStrings.UPGRADE_OFFLINE_DISK_STORE__MAXOPLOGSIZE + "=" + maxOplogSize + "," : "");
+      String fieldsMessage =
+          (maxOplogSize != -1
+              ? CliStrings.UPGRADE_OFFLINE_DISK_STORE__MAXOPLOGSIZE + "=" + maxOplogSize + ","
+              : "");
       fieldsMessage += CliUtil.arrayToString(dirs);
-      throw new GemFireIOException(CliStrings.format(CliStrings.UPGRADE_OFFLINE_DISK_STORE__MSG__ERROR_WHILE_COMPACTING_DISKSTORE_0_WITH_1_REASON_2, new Object[] { diskStoreName, fieldsMessage, ex.getMessage() }), ex);
+      throw new GemFireIOException(
+          CliStrings.format(
+              CliStrings
+                  .UPGRADE_OFFLINE_DISK_STORE__MSG__ERROR_WHILE_COMPACTING_DISKSTORE_0_WITH_1_REASON_2,
+              new Object[] {diskStoreName, fieldsMessage, ex.getMessage()}),
+          ex);
     }
   }
 

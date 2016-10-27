@@ -56,8 +56,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * This test verifies the per-client queue conflation override functionality
- * Taken from the existing ConflationDUnitTest.java and modified.
+ * This test verifies the per-client queue conflation override functionality Taken from the existing
+ * ConflationDUnitTest.java and modified.
  *
  * @since GemFire 5.7
  */
@@ -95,10 +95,7 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     return cache;
   }
 
-  /**
-   * set the boolean for starting the dispatcher thread a bit later.
-   *
-   */
+  /** set the boolean for starting the dispatcher thread a bit later. */
   public static void setIsSlowStart() {
     CacheClientProxy.isSlowStartForTesting = true;
     System.setProperty("slowStartTimeForTesting", "15000");
@@ -133,7 +130,10 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
 
   private void performSteps(String conflation) throws Exception {
     createClientCacheFeeder(NetworkUtils.getServerHostName(Host.getHost(0)), new Integer(PORT));
-    vm1.invoke(() -> ClientConflationDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm1.getHost()), new Integer(PORT), conflation));
+    vm1.invoke(
+        () ->
+            ClientConflationDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(vm1.getHost()), new Integer(PORT), conflation));
     vm1.invoke(() -> ClientConflationDUnitTest.setClientServerObserverForBeforeInterestRecovery());
     vm1.invoke(() -> ClientConflationDUnitTest.setAllCountersZero());
     vm1.invoke(() -> ClientConflationDUnitTest.assertAllCountersZero());
@@ -147,9 +147,7 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     vm1.invoke(() -> ClientConflationDUnitTest.assertValue());
   }
 
-  /**
-   * create properties for a loner VM
-   */
+  /** create properties for a loner VM */
   private static Properties createProperties1(String conflation) {
     Properties props = new Properties();
     props.setProperty(DELTA_PROPAGATION, "false");
@@ -161,59 +159,71 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
 
   private static void createPool2(String host, AttributesFactory factory, Integer port) {
     PoolFactory pf = PoolManager.createFactory();
-    pf.addServer(host, port.intValue()).setSubscriptionEnabled(true).setThreadLocalConnections(true).setReadTimeout(10000).setSocketBufferSize(32768).setPingInterval(1000).setMinConnections(3).setSubscriptionRedundancy(-1);
+    pf.addServer(host, port.intValue())
+        .setSubscriptionEnabled(true)
+        .setThreadLocalConnections(true)
+        .setReadTimeout(10000)
+        .setSocketBufferSize(32768)
+        .setPingInterval(1000)
+        .setMinConnections(3)
+        .setSubscriptionRedundancy(-1);
     Pool pool = pf.create("superpoolish" + (poolNameCounter++));
     factory.setPoolName(pool.getName());
   }
 
   /**
-   * create client 2 with 2 regions each with a unique writer
-   * and unique listeners
+   * create client 2 with 2 regions each with a unique writer and unique listeners
+   *
    * @throws Exception
    */
-  public static void createClientCache(String host, Integer port, String conflation) throws Exception {
+  public static void createClientCache(String host, Integer port, String conflation)
+      throws Exception {
     ClientConflationDUnitTest test = new ClientConflationDUnitTest();
     cacheClient = test.createCache(createProperties1(conflation));
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     createPool2(host, factory, port);
-    factory.setCacheListener(new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent event) {
-        synchronized (ClientConflationDUnitTest.class) {
-          counterCreate1++;
-        }
-      }
+    factory.setCacheListener(
+        new CacheListenerAdapter() {
+          public void afterCreate(EntryEvent event) {
+            synchronized (ClientConflationDUnitTest.class) {
+              counterCreate1++;
+            }
+          }
 
-      public void afterUpdate(EntryEvent event) {
-        //        getLogWriter().info("afterUpdate event = " + event, new Exception());
-        synchronized (this) {
-          counterUpdate1++;
-        }
-      }
-    });
+          public void afterUpdate(EntryEvent event) {
+            //        getLogWriter().info("afterUpdate event = " + event, new Exception());
+            synchronized (this) {
+              counterUpdate1++;
+            }
+          }
+        });
     RegionAttributes attrs = factory.create();
     cacheClient.createRegion(REGION_NAME1, attrs);
     createPool2(host, factory, port);
-    factory.setCacheListener(new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent event) {
-        synchronized (ClientConflationDUnitTest.class) {
-          counterCreate2++;
-        }
-      }
+    factory.setCacheListener(
+        new CacheListenerAdapter() {
+          public void afterCreate(EntryEvent event) {
+            synchronized (ClientConflationDUnitTest.class) {
+              counterCreate2++;
+            }
+          }
 
-      public void afterUpdate(EntryEvent event) {
-        synchronized (this) {
-          counterUpdate2++;
-        }
-      }
-    });
+          public void afterUpdate(EntryEvent event) {
+            synchronized (this) {
+              counterUpdate2++;
+            }
+          }
+        });
     attrs = factory.create();
     cacheClient.createRegion(REGION_NAME2, attrs);
   }
 
   public static void createClientCacheFeeder(String host, Integer port) throws Exception {
     ClientConflationDUnitTest test = new ClientConflationDUnitTest();
-    cacheFeeder = test.createCache(createProperties1(DistributionConfig.CLIENT_CONFLATION_PROP_VALUE_DEFAULT));
+    cacheFeeder =
+        test.createCache(
+            createProperties1(DistributionConfig.CLIENT_CONFLATION_PROP_VALUE_DEFAULT));
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     createPool2(host, factory, port);
@@ -223,22 +233,18 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     cacheFeeder.createRegion(REGION_NAME2, attrs);
   }
 
-  /**
-   * variables to count operations (messages received on client from server)
-   */
+  /** variables to count operations (messages received on client from server) */
 
   // For first region with server conflation setting on
-  volatile static int counterCreate1 = 0;
-  volatile static int counterUpdate1 = 0;
+  static volatile int counterCreate1 = 0;
+
+  static volatile int counterUpdate1 = 0;
 
   //For first region with server conflation setting off
-  volatile static int counterCreate2 = 0;
-  volatile static int counterUpdate2 = 0;
+  static volatile int counterCreate2 = 0;
+  static volatile int counterUpdate2 = 0;
 
-  /**
-   * assert all the counters are zero
-   *
-   */
+  /** assert all the counters are zero */
   public static void assertAllCountersZero() {
     assertEquals(counterCreate1, 0);
     assertEquals(counterUpdate1, 0);
@@ -246,10 +252,7 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     assertEquals(counterUpdate2, 0);
   }
 
-  /**
-   * set all the counters to zero
-   *
-   */
+  /** set all the counters to zero */
   public static void setAllCountersZero() {
     counterCreate1 = 0;
     counterUpdate1 = 0;
@@ -257,26 +260,27 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     counterUpdate2 = 0;
   }
 
-  /**
-   * reset all counters to zero before interest recovery
-   *
-   */
+  /** reset all counters to zero before interest recovery */
   public static void setClientServerObserverForBeforeInterestRecovery() {
     PoolImpl.BEFORE_RECOVER_INTEREST_CALLBACK_FLAG = true;
-    ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-      public void beforeInterestRecovery() {
-        setAllCountersZero();
-      }
-    });
+    ClientServerObserverHolder.setInstance(
+        new ClientServerObserverAdapter() {
+          public void beforeInterestRecovery() {
+            setAllCountersZero();
+          }
+        });
   }
 
-  /**
-   * Assert all queues are empty to aid later assertion for listener event counts.
-   */
+  /** Assert all queues are empty to aid later assertion for listener event counts. */
   public static void assertAllQueuesEmpty() {
     Iterator servers = cacheServer.getCacheServers().iterator();
     while (servers.hasNext()) {
-      Iterator proxies = ((CacheServerImpl) servers.next()).getAcceptor().getCacheClientNotifier().getClientProxies().iterator();
+      Iterator proxies =
+          ((CacheServerImpl) servers.next())
+              .getAcceptor()
+              .getCacheClientNotifier()
+              .getClientProxies()
+              .iterator();
       while (proxies.hasNext()) {
         int qsize = ((CacheClientProxy) proxies.next()).getQueueSize();
         assertTrue("Queue size expected to be zero but is " + qsize, qsize == 0);
@@ -284,14 +288,11 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * assert the listener counters size are as expected
-   *
-   */
+  /** assert the listener counters size are as expected */
   public static void assertCounterSizes(String conflation) {
     // we do 5 puts on each key, so:
 
-    // for writer 1 default conflation is on 
+    // for writer 1 default conflation is on
     final int create1 = 1;
     int update1 = 1;
     // for writer 2 default conflation is off
@@ -306,61 +307,62 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
       update1 = 4;
     }
 
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        Thread.yield(); // TODO is this necessary?
-        return counterCreate1 == create1;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            Thread.yield(); // TODO is this necessary?
+            return counterCreate1 == create1;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
 
     final int u1 = update1;
-    ev = new WaitCriterion() {
-      public boolean done() {
-        Thread.yield(); // TODO is this necessary?
-        return counterUpdate1 == u1;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            Thread.yield(); // TODO is this necessary?
+            return counterUpdate1 == u1;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
 
-    ev = new WaitCriterion() {
-      public boolean done() {
-        Thread.yield(); // TODO is this necessary?
-        return counterCreate2 == create2;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            Thread.yield(); // TODO is this necessary?
+            return counterCreate2 == create2;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
 
     final int u2 = update2;
-    ev = new WaitCriterion() {
-      public boolean done() {
-        Thread.yield(); // TODO is this necessary?
-        return counterUpdate2 == u2;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            Thread.yield(); // TODO is this necessary?
+            return counterUpdate2 == u2;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
   }
 
-  /**
-   * assert that the final value is 55
-   *
-   */
+  /** assert that the final value is 55 */
   public static void assertValue() {
     try {
       Region r1 = cacheClient.getRegion(Region.SEPARATOR + REGION_NAME1);
@@ -401,10 +403,7 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     return new Integer(server.getPort());
   }
 
-  /**
-   * close the client cache
-   *
-   */
+  /** close the client cache */
   public static void closeCacheClient() {
     if (cacheClient != null && !cacheClient.isClosed()) {
       cacheClient.close();
@@ -412,10 +411,7 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * close the feeder cache
-   *
-   */
+  /** close the feeder cache */
   public static void closeCacheFeeder() {
     if (cacheFeeder != null && !cacheFeeder.isClosed()) {
       cacheFeeder.close();
@@ -423,10 +419,7 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * close the server cache
-   *
-   */
+  /** close the server cache */
   public static void closeCacheServer() {
     if (cacheServer != null && !cacheServer.isClosed()) {
       cacheServer.close();
@@ -434,10 +427,7 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * register interest with the server on ALL_KEYS
-   *
-   */
+  /** register interest with the server on ALL_KEYS */
   public static void registerInterest() {
     try {
       Region region1 = cacheClient.getRegion(Region.SEPARATOR + REGION_NAME1);
@@ -451,11 +441,7 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * register interest with the server on ALL_KEYS
-   *
-   */
-
+  /** register interest with the server on ALL_KEYS */
   public static void unregisterInterest() {
     try {
       Region region1 = cacheClient.getRegion(Region.SEPARATOR + REGION_NAME1);
@@ -467,10 +453,7 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * do 5 puts on key-1
-   *
-   */
+  /** do 5 puts on key-1 */
   public static void putEntries() {
     try {
       LogWriterUtils.getLogWriter().info("Putting entries...");
@@ -492,9 +475,7 @@ public class ClientConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * close the cache in tearDown
-   */
+  /** close the cache in tearDown */
   @Override
   public final void preTearDown() throws Exception {
     // close client

@@ -22,9 +22,8 @@ import org.apache.geode.internal.tcp.ByteBufferInputStream.ByteSource;
 import org.apache.geode.internal.tcp.ByteBufferInputStream.ByteSourceFactory;
 
 /**
- * Used by {@link PdxInstanceImpl#equals(Object)} to act as if it has
- * a field whose value is always the default.
- *
+ * Used by {@link PdxInstanceImpl#equals(Object)} to act as if it has a field whose value is always
+ * the default.
  */
 public class DefaultPdxField extends PdxField {
 
@@ -35,5 +34,4 @@ public class DefaultPdxField extends PdxField {
   public ByteSource getDefaultBytes() {
     return ByteSourceFactory.create(getFieldType().getDefaultBytes());
   }
-
 }

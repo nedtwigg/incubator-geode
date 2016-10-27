@@ -17,7 +17,7 @@
 /*
  * Created on Oct 13, 2005
  *
- * 
+ *
  */
 package org.apache.geode.cache.query.internal;
 
@@ -46,10 +46,7 @@ import org.apache.geode.cache.query.data.Portfolio;
 import org.apache.geode.cache.query.internal.types.ObjectTypeImpl;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- *  
- */
+/** */
 @Category(IntegrationTest.class)
 public class QueryUtilsJUnitTest {
 
@@ -83,7 +80,8 @@ public class QueryUtilsJUnitTest {
   public void testCutDownAndExpandIndexResultsWithNoCutDownAndTwoFinalIters() {
     try {
       region = CacheUtils.createRegion("portfolio", Portfolio.class);
-      Portfolio[] po = new Portfolio[] { new Portfolio(0), new Portfolio(1), new Portfolio(2), new Portfolio(3) };
+      Portfolio[] po =
+          new Portfolio[] {new Portfolio(0), new Portfolio(1), new Portfolio(2), new Portfolio(3)};
       region.put("0", new Portfolio(0));
       region.put("1", new Portfolio(1));
       region.put("2", new Portfolio(2));
@@ -115,8 +113,7 @@ public class QueryUtilsJUnitTest {
       finalList.add(indexToItrMappping[0]);
       finalList.add(expand);
       ResultsSet indexResult = new ResultsSet(new ObjectTypeImpl(Portfolio.class));
-      for (int i = 0; i < po.length; ++i)
-        indexResult.add(po[i]);
+      for (int i = 0; i < po.length; ++i) indexResult.add(po[i]);
       List expandList = new LinkedList();
       expandList.add(expand);
       List dataList = new ArrayList();
@@ -144,7 +141,8 @@ public class QueryUtilsJUnitTest {
   public void testCutDownAndExpandIndexResultsWithNoCutDownAndThreeFinalIters() {
     try {
       region = CacheUtils.createRegion("portfolio", Portfolio.class);
-      Portfolio[] po = new Portfolio[] { new Portfolio(0), new Portfolio(1), new Portfolio(2), new Portfolio(3) };
+      Portfolio[] po =
+          new Portfolio[] {new Portfolio(0), new Portfolio(1), new Portfolio(2), new Portfolio(3)};
       region.put("0", new Portfolio(0));
       region.put("1", new Portfolio(1));
       region.put("2", new Portfolio(2));
@@ -185,8 +183,7 @@ public class QueryUtilsJUnitTest {
       finalList.add(indexToItrMappping[0]);
 
       ResultsSet indexResult = new ResultsSet(new ObjectTypeImpl(Portfolio.class));
-      for (int i = 0; i < po.length; ++i)
-        indexResult.add(po[i]);
+      for (int i = 0; i < po.length; ++i) indexResult.add(po[i]);
       List expandList = new LinkedList();
       expandList.add(expand[0]);
       expandList.add(expand[1]);
@@ -219,7 +216,7 @@ public class QueryUtilsJUnitTest {
     region.put("1", new Portfolio(1));
     region.put("2", new Portfolio(2));
     region.put("3", new Portfolio(3));
-    
+
     Region r3 = CacheUtils.createRegion("employees", Employee.class);
     Set add1 = new HashSet();
     add1.add(new Address("411045", "Baner"));
@@ -255,7 +252,7 @@ public class QueryUtilsJUnitTest {
       }
       List finalList = new ArrayList();
       finalList.add(indexToItrMappping[0]);
-     
+
       //ResultsSet indexResult = new ResultsSet(new ObjectTypeImpl( Portfolio.class));
       ResultsSet indexResult = new ResultsSet(new ObjectTypeImpl( Portfolio.class));
       for (int i = 0; i < po.length; ++i)

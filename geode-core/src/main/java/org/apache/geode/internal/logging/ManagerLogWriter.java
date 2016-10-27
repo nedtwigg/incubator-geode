@@ -32,15 +32,15 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
-  * Implementation of {@link LogWriterI18n} for distributed system members.
-  * Its just like {@link LocalLogWriter} except it has support for rolling
-  * and alerts. 
-  *
-  * @since Geode 1.0
-  */
+ * Implementation of {@link LogWriterI18n} for distributed system members. Its just like {@link
+ * LocalLogWriter} except it has support for rolling and alerts.
+ *
+ * @since Geode 1.0
+ */
 public class ManagerLogWriter extends LocalLogWriter {
 
-  public static final String TEST_FILE_SIZE_LIMIT_IN_KB_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "logging.test.fileSizeLimitInKB";
+  public static final String TEST_FILE_SIZE_LIMIT_IN_KB_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "logging.test.fileSizeLimitInKB";
 
   private final boolean fileSizeLimitInKB;
 
@@ -50,6 +50,7 @@ public class ManagerLogWriter extends LocalLogWriter {
   // Constructors
   /**
    * Creates a writer that logs to <code>System.out</code>.
+   *
    * @param level only messages greater than or equal to this value will be logged.
    * @throws IllegalArgumentException if level is not in legal range
    */
@@ -60,14 +61,9 @@ public class ManagerLogWriter extends LocalLogWriter {
   /**
    * Creates a writer that logs to <code>System.out</code>.
    *
-   * @param level 
-   *        only messages greater than or equal to this value will
-   *        be logged. 
-   * @param connectionName
-   *        Name of the connection associated with this logger
-   *
+   * @param level only messages greater than or equal to this value will be logged.
+   * @param connectionName Name of the connection associated with this logger
    * @throws IllegalArgumentException if level is not in legal range
-   *
    * @since GemFire 3.5
    */
   public ManagerLogWriter(int level, PrintStream out, String connectionName) {
@@ -78,36 +74,33 @@ public class ManagerLogWriter extends LocalLogWriter {
   private LocalLogWriter mainLogger = this;
 
   /**
-   * Gets the logger that writes to the main log file.
-   * This logger may differ from the current logger when rolling
-   * logs are used.
+   * Gets the logger that writes to the main log file. This logger may differ from the current
+   * logger when rolling logs are used.
    */
   public LogWriterI18n getMainLogger() {
     return this.mainLogger;
   }
 
-  /**
-   * Sets the config that should be used by this manager to decide
-   * how to manage its logging.
-   */
+  /** Sets the config that should be used by this manager to decide how to manage its logging. */
   public void setConfig(LogConfig cfg) {
     this.cfg = cfg;
     configChanged();
   }
 
-  /**
-   * Call when the config changes at runtime.
-   */
+  /** Call when the config changes at runtime. */
   public void configChanged() {
     setLevel(cfg.getLogLevel());
-    useChildLogging = cfg.getLogFile() != null && !cfg.getLogFile().equals(new File("")) && cfg.getLogFileSizeLimit() != 0;
+    useChildLogging =
+        cfg.getLogFile() != null
+            && !cfg.getLogFile().equals(new File(""))
+            && cfg.getLogFileSizeLimit() != 0;
 
     if (useChildLogging()) {
       childLogPattern = getLogPattern(this.cfg.getLogFile().getName());
       logDir = getParentFile(this.cfg.getLogFile());
       // let archive id always follow main log id, not the vice versa
       // e.g. in getArchiveName(), it's using mainArchiveId = calcNextMainId(archiveDir);
-      // This is the only place we assign mainLogId. 
+      // This is the only place we assign mainLogId.
       // mainLogId is only referenced when useChildLogging==true
       mainLogId = calcNextMainId(logDir, true);
     }
@@ -174,10 +167,9 @@ public class ManagerLogWriter extends LocalLogWriter {
     return this.useChildLogging;
   }
 
-  /**
-   * Set to true when roll is in progress
-   */
+  /** Set to true when roll is in progress */
   private boolean rolling = false;
+
   private boolean mainLog = true;
 
   private long getLogFileSizeLimit() {
@@ -231,10 +223,14 @@ public class ManagerLogWriter extends LocalLogWriter {
             // this is the first child. Save the current output stream
             // so we can log special messages to the main log instead
             // of the current child log.
-            String metaLogFile = getMetaLogFileName(this.cfg.getLogFile().getPath(), this.mainLogId);
-            mainLogger = new LocalLogWriter(INFO_LEVEL, new PrintStream(new FileOutputStream(metaLogFile, true), true));
+            String metaLogFile =
+                getMetaLogFileName(this.cfg.getLogFile().getPath(), this.mainLogId);
+            mainLogger =
+                new LocalLogWriter(
+                    INFO_LEVEL, new PrintStream(new FileOutputStream(metaLogFile, true), true));
             if (activeLogFile == null) {
-              mainLogger.info(LocalizedStrings.ManagerLogWriter_SWITCHING_TO_LOG__0, this.cfg.getLogFile());
+              mainLogger.info(
+                  LocalizedStrings.ManagerLogWriter_SWITCHING_TO_LOG__0, this.cfg.getLogFile());
             }
           } else {
             mainLogger.info(LocalizedStrings.ManagerLogWriter_ROLLING_CURRENT_LOG_TO_0, newLog);
@@ -261,7 +257,9 @@ public class ManagerLogWriter extends LocalLogWriter {
               File tmpLogDir = getParentFile(this.cfg.getLogFile());
               tmpFile = File.createTempFile("mlw", null, tmpLogDir);
               // close the old guy down before we do the rename
-              PrintStream tmpps = OSProcess.redirectOutput(tmpFile, AlertAppender.getInstance().isAlertingDisabled()/* See #49492 */);
+              PrintStream tmpps =
+                  OSProcess.redirectOutput(
+                      tmpFile, AlertAppender.getInstance().isAlertingDisabled() /* See #49492 */);
               PrintWriter oldPW = this.setTarget(new PrintWriter(tmpps, true));
               if (oldPW != null) {
                 oldPW.close();
@@ -270,7 +268,12 @@ public class ManagerLogWriter extends LocalLogWriter {
             File oldFile = this.activeLogFile;
             renameOK = LogFileUtils.renameAggressively(oldFile, newLog.getAbsoluteFile());
             if (!renameOK) {
-              mainLogger.warning("Could not delete original file '" + oldFile + "' after copying to '" + newLog.getAbsoluteFile() + "'. Continuing without rolling.");
+              mainLogger.warning(
+                  "Could not delete original file '"
+                      + oldFile
+                      + "' after copying to '"
+                      + newLog.getAbsoluteFile()
+                      + "'. Continuing without rolling.");
             } else {
               renameOK = true;
             }
@@ -279,7 +282,9 @@ public class ManagerLogWriter extends LocalLogWriter {
         this.activeLogFile = new File(oldName);
         // Don't redirect sysouts/syserrs to client log file. See #49492.
         // IMPORTANT: This assumes that only a loner would have sendAlert set to false.
-        PrintStream ps = OSProcess.redirectOutput(activeLogFile, AlertAppender.getInstance().isAlertingDisabled());
+        PrintStream ps =
+            OSProcess.redirectOutput(
+                activeLogFile, AlertAppender.getInstance().isAlertingDisabled());
         PrintWriter oldPW = this.setTarget(new PrintWriter(ps, true), this.activeLogFile.length());
         if (oldPW != null) {
           oldPW.close();
@@ -292,7 +297,12 @@ public class ManagerLogWriter extends LocalLogWriter {
           mainLogger = this;
         }
         if (!renameOK) {
-          mainLogger.warning("Could not rename \"" + this.activeLogFile + "\" to \"" + newLog + "\". Continuing without rolling.");
+          mainLogger.warning(
+              "Could not rename \""
+                  + this.activeLogFile
+                  + "\" to \""
+                  + newLog
+                  + "\". Continuing without rolling.");
         }
       } catch (IOException ex) {
         mainLogger.warning("Could not open log \"" + newLog + "\" because " + ex);
@@ -305,12 +315,13 @@ public class ManagerLogWriter extends LocalLogWriter {
 
   /** notification from manager that the output file is being closed */
   public void closingLogFile() {
-    OutputStream out = new OutputStream() {
-      @Override
-      public void write(int b) throws IOException {
-        // --> /dev/null
-      }
-    };
+    OutputStream out =
+        new OutputStream() {
+          @Override
+          public void write(int b) throws IOException {
+            // --> /dev/null
+          }
+        };
     close();
     if (mainLogger != null) {
       mainLogger.close();
@@ -321,9 +332,7 @@ public class ManagerLogWriter extends LocalLogWriter {
     }
   }
 
-  /**
-   * as a fix for bug #41474 we use "." if getParentFile returns null
-   */
+  /** as a fix for bug #41474 we use "." if getParentFile returns null */
   private static File getParentFile(File f) {
     File tmp = f.getAbsoluteFile().getParentFile();
     if (tmp == null) {
@@ -336,7 +345,7 @@ public class ManagerLogWriter extends LocalLogWriter {
     /*
      * this is just searching for the existing logfile name
      * we need to search for meta log file name
-     * 
+     *
      */
     File dir = getParentFile(log.getAbsoluteFile());
     int previousMainId = calcNextMainId(dir, true);
@@ -383,11 +392,14 @@ public class ManagerLogWriter extends LocalLogWriter {
 
   public static int calcNextMainId(File dir, boolean toCreateNew) {
     int result = 0;
-    File[] childLogs = FileUtil.listFiles(dir, new FilenameFilter() {
-      public boolean accept(File d, String name) {
-        return mainIdPattern.matcher(name).matches();
-      }
-    });
+    File[] childLogs =
+        FileUtil.listFiles(
+            dir,
+            new FilenameFilter() {
+              public boolean accept(File d, String name) {
+                return mainIdPattern.matcher(name).matches();
+              }
+            });
 
     /* Search child logs */
     for (File childLog : childLogs) {
@@ -406,11 +418,14 @@ public class ManagerLogWriter extends LocalLogWriter {
 
     /* And search meta logs */
     if (toCreateNew) {
-      File[] metaLogs = FileUtil.listFiles(dir, new FilenameFilter() {
-        public boolean accept(File d, String name) {
-          return metaIdPattern.matcher(name).matches();
-        }
-      });
+      File[] metaLogs =
+          FileUtil.listFiles(
+              dir,
+              new FilenameFilter() {
+                public boolean accept(File d, String name) {
+                  return metaIdPattern.matcher(name).matches();
+                }
+              });
       for (File metaLog : metaLogs) {
         String name = metaLog.getName();
         int endIdIdx = name.lastIndexOf('.');
@@ -443,11 +458,14 @@ public class ManagerLogWriter extends LocalLogWriter {
     } else {
       baseName = log.getName().substring(0, endidx2);
     }
-    File[] childLogs = FileUtil.listFiles(dir, new FilenameFilter() {
-      public boolean accept(File d, String name) {
-        return childIdPattern.matcher(name).matches();
-      }
-    });
+    File[] childLogs =
+        FileUtil.listFiles(
+            dir,
+            new FilenameFilter() {
+              public boolean accept(File d, String name) {
+                return childIdPattern.matcher(name).matches();
+              }
+            });
 
     /* Search child logs */
 
@@ -496,44 +514,64 @@ public class ManagerLogWriter extends LocalLogWriter {
 
   public static void removeOldLogs(LogConfig cfg, File logFile) {
     LogWriterI18n log = new LocalLogWriter(INFO_LEVEL, System.err);
-    checkDiskSpace("log", null, ((long) cfg.getLogDiskSpaceLimit()) * (1024 * 1024), getParentFile(logFile), getLogPattern(logFile.getName()), log);
+    checkDiskSpace(
+        "log",
+        null,
+        ((long) cfg.getLogDiskSpaceLimit()) * (1024 * 1024),
+        getParentFile(logFile),
+        getLogPattern(logFile.getName()),
+        log);
   }
 
-  public static void checkDiskSpace(String type, File newLog, long spaceLimit, File dir, final Pattern logPattern, LogWriterI18n logger) {
+  public static void checkDiskSpace(
+      String type,
+      File newLog,
+      long spaceLimit,
+      File dir,
+      final Pattern logPattern,
+      LogWriterI18n logger) {
     if (spaceLimit == 0 || logPattern == null) {
       return;
     }
     final String newLogName = (newLog == null) ? null : newLog.getName();
-    File[] childLogs = FileUtil.listFiles(dir, new FilenameFilter() {
-      public boolean accept(File d, String name) {
-        if (name.equals(newLogName)) {
-          return false;
-        } else {
-          boolean result = logPattern.matcher(name).matches();
-          return result;
-        }
-      }
-    });
+    File[] childLogs =
+        FileUtil.listFiles(
+            dir,
+            new FilenameFilter() {
+              public boolean accept(File d, String name) {
+                if (name.equals(newLogName)) {
+                  return false;
+                } else {
+                  boolean result = logPattern.matcher(name).matches();
+                  return result;
+                }
+              }
+            });
     if (childLogs == null) {
       if (dir.isDirectory()) {
-        logger.warning(LocalizedStrings.ManagerLogWriter_COULD_NOT_CHECK_DISK_SPACE_ON_0_BECAUSE_JAVAIOFILELISTFILES_RETURNED_NULL_THIS_COULD_BE_CAUSED_BY_A_LACK_OF_FILE_DESCRIPTORS, dir);
+        logger.warning(
+            LocalizedStrings
+                .ManagerLogWriter_COULD_NOT_CHECK_DISK_SPACE_ON_0_BECAUSE_JAVAIOFILELISTFILES_RETURNED_NULL_THIS_COULD_BE_CAUSED_BY_A_LACK_OF_FILE_DESCRIPTORS,
+            dir);
       }
       return;
     }
-    Arrays.sort(childLogs, new Comparator() {
-      public int compare(Object o1, Object o2) {
-        File f1 = (File) o1;
-        File f2 = (File) o2;
-        long diff = f1.lastModified() - f2.lastModified();
-        if (diff < 0) {
-          return -1;
-        } else if (diff > 0) {
-          return 1;
-        } else {
-          return 0;
-        }
-      }
-    });
+    Arrays.sort(
+        childLogs,
+        new Comparator() {
+          public int compare(Object o1, Object o2) {
+            File f1 = (File) o1;
+            File f2 = (File) o2;
+            long diff = f1.lastModified() - f2.lastModified();
+            if (diff < 0) {
+              return -1;
+            } else if (diff > 0) {
+              return 1;
+            } else {
+              return 0;
+            }
+          }
+        });
     long spaceUsed = 0;
     for (File childLog : childLogs) {
       spaceUsed += childLog.length();
@@ -543,14 +581,21 @@ public class ManagerLogWriter extends LocalLogWriter {
       long childSize = childLogs[fIdx].length();
       if (childLogs[fIdx].delete()) {
         spaceUsed -= childSize;
-        logger.info(LocalizedStrings.ManagerLogWriter_DELETED_INACTIVE__0___1_, new Object[] { type, childLogs[fIdx] });
+        logger.info(
+            LocalizedStrings.ManagerLogWriter_DELETED_INACTIVE__0___1_,
+            new Object[] {type, childLogs[fIdx]});
       } else {
-        logger.warning(LocalizedStrings.ManagerLogWriter_COULD_NOT_DELETE_INACTIVE__0___1_, new Object[] { type, childLogs[fIdx] });
+        logger.warning(
+            LocalizedStrings.ManagerLogWriter_COULD_NOT_DELETE_INACTIVE__0___1_,
+            new Object[] {type, childLogs[fIdx]});
       }
       fIdx++;
     }
     if (spaceUsed > spaceLimit) {
-      logger.warning(LocalizedStrings.ManagerLogWriter_COULD_NOT_FREE_SPACE_IN_0_DIRECTORY_THE_SPACE_USED_IS_1_WHICH_EXCEEDS_THE_CONFIGURED_LIMIT_OF_2, new Object[] { type, Long.valueOf(spaceUsed), Long.valueOf(spaceLimit) });
+      logger.warning(
+          LocalizedStrings
+              .ManagerLogWriter_COULD_NOT_FREE_SPACE_IN_0_DIRECTORY_THE_SPACE_USED_IS_1_WHICH_EXCEEDS_THE_CONFIGURED_LIMIT_OF_2,
+          new Object[] {type, Long.valueOf(spaceUsed), Long.valueOf(spaceLimit)});
     }
   }
 
@@ -582,8 +627,8 @@ public class ManagerLogWriter extends LocalLogWriter {
   private boolean started = false;
 
   /**
-   * Called when manager is done starting up.
-   * This is when a child log will be started if rolling is configured.
+   * Called when manager is done starting up. This is when a child log will be started if rolling is
+   * configured.
    */
   public void startupComplete() {
     started = true;
@@ -591,9 +636,8 @@ public class ManagerLogWriter extends LocalLogWriter {
   }
 
   /**
-   * Called when manager starts shutting down.
-   * This is when any current child log needs to be closed and the
-   * rest of the logging reverted to the main.
+   * Called when manager starts shutting down. This is when any current child log needs to be closed
+   * and the rest of the logging reverted to the main.
    */
   public void shuttingDown() {
     if (useChildLogging()) {
@@ -611,7 +655,14 @@ public class ManagerLogWriter extends LocalLogWriter {
   }
 
   @Override
-  public String put(int msgLevel, Date msgDate, String connectionName, String threadName, long tid, String msg, String exceptionText) {
+  public String put(
+      int msgLevel,
+      Date msgDate,
+      String connectionName,
+      String threadName,
+      long tid,
+      String msg,
+      String exceptionText) {
 
     String result = null; // This seems to workaround a javac bug
     result = super.put(msgLevel, msgDate, connectionName, threadName, tid, msg, exceptionText);

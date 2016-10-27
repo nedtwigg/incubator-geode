@@ -46,31 +46,29 @@ import org.apache.geode.test.junit.rules.ExpectedTimeoutRule;
 
 /**
  * Unit tests the PidFile class.
- * 
+ *
  * @since GemFire 8.2
  */
 @Category(IntegrationTest.class)
 public class PidFileJUnitTest {
 
-  @Rule
-  public TemporaryFolder testFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder testFolder = new TemporaryFolder();
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @Rule public ExpectedException thrown = ExpectedException.none();
 
-  @Rule
-  public ExpectedTimeoutRule timeout = ExpectedTimeoutRule.none();
+  @Rule public ExpectedTimeoutRule timeout = ExpectedTimeoutRule.none();
 
   protected Mockery mockContext;
   private ExecutorService futures;
 
   @Before
   public void before() {
-    mockContext = new Mockery() {
-      {
-        setImposteriser(ClassImposteriser.INSTANCE);
-      }
-    };
+    mockContext =
+        new Mockery() {
+          {
+            setImposteriser(ClassImposteriser.INSTANCE);
+          }
+        };
     this.futures = Executors.newFixedThreadPool(2);
   }
 
@@ -160,24 +158,28 @@ public class PidFileJUnitTest {
     final String value = "42";
 
     // start Future to write the pid later but before timeout
-    Future<Boolean> futureWritePid = this.futures.submit(new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        writePidLatch.await(AWAIT_LATCH_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
-        writeToFile(file, value);
-        return true;
-      }
-    });
+    Future<Boolean> futureWritePid =
+        this.futures.submit(
+            new Callable<Boolean>() {
+              @Override
+              public Boolean call() throws Exception {
+                writePidLatch.await(AWAIT_LATCH_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+                writeToFile(file, value);
+                return true;
+              }
+            });
 
     // start Future to sleep and release the delay
-    Future<Boolean> futureOpenLatch = this.futures.submit(new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        Thread.sleep(OPEN_LATCH_DELAY_MILLIS);
-        writePidLatch.countDown();
-        return true;
-      }
-    });
+    Future<Boolean> futureOpenLatch =
+        this.futures.submit(
+            new Callable<Boolean>() {
+              @Override
+              public Boolean call() throws Exception {
+                Thread.sleep(OPEN_LATCH_DELAY_MILLIS);
+                writePidLatch.countDown();
+                return true;
+              }
+            });
 
     StopWatch stopWatch = new StopWatch(true);
     final int readValue = new PidFile(file).readPid(READ_PID_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
@@ -196,7 +198,7 @@ public class PidFileJUnitTest {
   public void findsCorrectFile() throws Exception {
     final File directory = testFolder.getRoot();
 
-    final String fileNames[] = new String[] { "other.txt", "my.txt", "a.log", "b.log" };
+    final String fileNames[] = new String[] {"other.txt", "my.txt", "a.log", "b.log"};
     for (String fileName : fileNames) {
       testFolder.newFile(fileName);
     }
@@ -247,7 +249,7 @@ public class PidFileJUnitTest {
   public void missingFileInFullDirectoryThrowsFileNotFoundException() throws Exception {
     final File directory = testFolder.getRoot();
 
-    final String fileNames[] = new String[] { "other.txt", "my.txt", "a.log", "b.log" };
+    final String fileNames[] = new String[] {"other.txt", "my.txt", "a.log", "b.log"};
     for (String fileName : fileNames) {
       testFolder.newFile(fileName);
     }

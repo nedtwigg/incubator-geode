@@ -35,9 +35,12 @@ public class ClientUserAuths {
   private int m_seed;
   private long m_firstId;
 
-  private ConcurrentHashMap<Long, UserAuthAttributes> uniqueIdVsUserAuth = new ConcurrentHashMap<Long, UserAuthAttributes>();
-  private ConcurrentHashMap<String, UserAuthAttributes> cqNameVsUserAuth = new ConcurrentHashMap<String, UserAuthAttributes>();
-  private ConcurrentHashMap<Long, Subject> uniqueIdVsSubject = new ConcurrentHashMap<Long, Subject>();
+  private ConcurrentHashMap<Long, UserAuthAttributes> uniqueIdVsUserAuth =
+      new ConcurrentHashMap<Long, UserAuthAttributes>();
+  private ConcurrentHashMap<String, UserAuthAttributes> cqNameVsUserAuth =
+      new ConcurrentHashMap<String, UserAuthAttributes>();
+  private ConcurrentHashMap<Long, Subject> uniqueIdVsSubject =
+      new ConcurrentHashMap<Long, Subject>();
 
   public long putUserAuth(UserAuthAttributes userAuthAttr) {
     //TODO:hitesh should we do random here
@@ -59,7 +62,7 @@ public class ClientUserAuths {
     m_firstId = uniqueIdGenerator.nextLong();
   }
 
-  synchronized private long getNextID() {
+  private synchronized long getNextID() {
     long uniqueId = uniqueIdGenerator.nextLong();
     if (uniqueId == m_firstId) {
       uniqueIdGenerator = new Random(m_seed + System.currentTimeMillis());
@@ -82,8 +85,7 @@ public class ClientUserAuths {
 
   public boolean removeSubject(long userId) {
     Subject subject = uniqueIdVsSubject.remove(userId);
-    if (subject == null)
-      return false;
+    if (subject == null) return false;
 
     subject.logout();
     return true;
@@ -99,12 +101,11 @@ public class ClientUserAuths {
     UserAuthAttributes uaa = this.uniqueIdVsUserAuth.get(uniqueId);
 
     if (uaa != null) {
-      if (!isDurable)
-        this.cqNameVsUserAuth.put(cqName, uaa);
+      if (!isDurable) this.cqNameVsUserAuth.put(cqName, uaa);
       else {
         UserAuthAttributes oldUaa = this.cqNameVsUserAuth.put(cqName, uaa);
         if (oldUaa != null) {
-          if (oldUaa != uaa)//clean earlier one
+          if (oldUaa != uaa) //clean earlier one
           {
             this.cleanUserAuth(oldUaa);
             //add durable(increment)
@@ -121,8 +122,7 @@ public class ClientUserAuths {
 
   public void removeUserAuthAttributesForCq(String cqName, boolean isDurable) {
     UserAuthAttributes uaa = this.cqNameVsUserAuth.remove(cqName);
-    if (uaa != null && isDurable)
-      uaa.unsetDurable();
+    if (uaa != null && isDurable) uaa.unsetDurable();
   }
 
   public boolean removeUserId(long userId, boolean keepAlive) {
@@ -168,22 +168,24 @@ public class ClientUserAuths {
         }*/
       }
     }
-
   }
 
   public void cleanup(boolean fromCacheClientProxy) {
     for (UserAuthAttributes userAuth : this.uniqueIdVsUserAuth.values()) {
-      //isDurable is checked for multiuser in CQ 
-      if (!fromCacheClientProxy && !userAuth.isDurable()) {//from serverConnection class
+      //isDurable is checked for multiuser in CQ
+      if (!fromCacheClientProxy && !userAuth.isDurable()) { //from serverConnection class
         cleanUserAuth(userAuth);
-      } else if (fromCacheClientProxy && userAuth.isDurable()) {//from cacheclientProxy class
+      } else if (fromCacheClientProxy && userAuth.isDurable()) { //from cacheclientProxy class
         cleanUserAuth(userAuth);
       }
     }
   }
 
   public void fillPreviousCQAuth(ClientUserAuths previousClientUserAuths) {
-    for (Iterator<Map.Entry<String, UserAuthAttributes>> iter = previousClientUserAuths.cqNameVsUserAuth.entrySet().iterator(); iter.hasNext();) {
+    for (Iterator<Map.Entry<String, UserAuthAttributes>> iter =
+            previousClientUserAuths.cqNameVsUserAuth.entrySet().iterator();
+        iter.hasNext();
+        ) {
       Map.Entry<String, UserAuthAttributes> ent = iter.next();
       String cqName = ent.getKey();
       UserAuthAttributes prevUaa = ent.getValue();

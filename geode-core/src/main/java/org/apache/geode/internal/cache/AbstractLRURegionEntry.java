@@ -20,12 +20,9 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.internal.cache.lru.LRUEntry;
 
 /**
- * Abstract implementation class of RegionEntry interface.
- * This adds LRU support behaviour
+ * Abstract implementation class of RegionEntry interface. This adds LRU support behaviour
  *
  * @since GemFire 3.5.1
- *
- *
  */
 public abstract class AbstractLRURegionEntry extends AbstractRegionEntry implements LRUEntry {
   protected AbstractLRURegionEntry(RegionEntryContext context, Object value) {

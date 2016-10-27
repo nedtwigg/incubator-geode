@@ -18,30 +18,21 @@ package org.apache.geode.cache.query.internal.aggregate;
 
 import org.apache.geode.cache.query.Aggregator;
 
-/**
- * Computes the count of the rows on the PR query node
- * 
- *
- */
+/** Computes the count of the rows on the PR query node */
 public class CountPRQueryNode implements Aggregator {
   private int count = 0;
 
-  /**
-   * Recieves the input of the individual counts from the bucket nodes.
-   */
+  /** Recieves the input of the individual counts from the bucket nodes. */
   @Override
   public void accumulate(Object value) {
     this.count += ((Integer) value).intValue();
   }
 
   @Override
-  public void init() {
-
-  }
+  public void init() {}
 
   @Override
   public Object terminate() {
     return Integer.valueOf(count);
   }
-
 }

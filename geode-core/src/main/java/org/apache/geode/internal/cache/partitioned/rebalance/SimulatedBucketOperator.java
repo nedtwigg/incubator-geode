@@ -20,29 +20,35 @@ import java.util.Map;
 
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
-/**
- * A BucketOperator which does nothing. Used for simulations.
- *
- */
+/** A BucketOperator which does nothing. Used for simulations. */
 public class SimulatedBucketOperator implements BucketOperator {
 
-  public void createRedundantBucket(InternalDistributedMember targetMember, int i, Map<String, Long> colocatedRegionBytes, BucketOperator.Completion completion) {
+  public void createRedundantBucket(
+      InternalDistributedMember targetMember,
+      int i,
+      Map<String, Long> colocatedRegionBytes,
+      BucketOperator.Completion completion) {
     completion.onSuccess();
   }
 
-  public boolean moveBucket(InternalDistributedMember source, InternalDistributedMember target, int id, Map<String, Long> colocatedRegionBytes) {
+  public boolean moveBucket(
+      InternalDistributedMember source,
+      InternalDistributedMember target,
+      int id,
+      Map<String, Long> colocatedRegionBytes) {
     return true;
   }
 
-  public boolean movePrimary(InternalDistributedMember source, InternalDistributedMember target, int bucketId) {
+  public boolean movePrimary(
+      InternalDistributedMember source, InternalDistributedMember target, int bucketId) {
     return true;
   }
 
-  public boolean removeBucket(InternalDistributedMember memberId, int id, Map<String, Long> colocatedRegionSizes) {
+  public boolean removeBucket(
+      InternalDistributedMember memberId, int id, Map<String, Long> colocatedRegionSizes) {
     return true;
   }
 
   @Override
-  public void waitForOperations() {
-  }
+  public void waitForOperations() {}
 }

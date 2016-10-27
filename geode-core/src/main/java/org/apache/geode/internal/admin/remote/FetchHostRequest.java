@@ -22,14 +22,9 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 
 import java.io.*;
 
-/**
- * A message that is sent to a particular distribution manager to
- * get its current information
- */
+/** A message that is sent to a particular distribution manager to get its current information */
 public final class FetchHostRequest extends AdminRequest {
-  /**
-   * Returns a <code>FetchHostRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>FetchHostRequest</code> to be sent to the specified recipient. */
   public static FetchHostRequest create() {
     FetchHostRequest m = new FetchHostRequest();
     return m;
@@ -39,9 +34,7 @@ public final class FetchHostRequest extends AdminRequest {
     friendlyName = LocalizedStrings.FetchHostRequest_FETCH_REMOTE_HOST.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return FetchHostResponse.create(dm, this.getSender());
@@ -63,6 +56,7 @@ public final class FetchHostRequest extends AdminRequest {
 
   @Override
   public String toString() {
-    return LocalizedStrings.FetchHostRequest_FETCHHOSTREQUEST_FOR_0.toLocalizedString(this.getRecipient());
+    return LocalizedStrings.FetchHostRequest_FETCHHOSTREQUEST_FOR_0.toLocalizedString(
+        this.getRecipient());
   }
 }

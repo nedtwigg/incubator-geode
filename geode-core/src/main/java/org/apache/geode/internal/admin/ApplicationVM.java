@@ -21,14 +21,13 @@ package org.apache.geode.internal.admin;
 //import java.util.Set;
 
 /**
- * Represents one application vm (as opposed to a GemFire system
- * manager) connected to a GemFire distributed system
+ * Represents one application vm (as opposed to a GemFire system manager) connected to a GemFire
+ * distributed system
  */
 public interface ApplicationVM extends GemFireVM {
 
   /**
-   * Returns whether or not this "application" VM is a dedicated cache
-   * server.
+   * Returns whether or not this "application" VM is a dedicated cache server.
    *
    * @see org.apache.geode.internal.cache.CacheServerLauncher
    */

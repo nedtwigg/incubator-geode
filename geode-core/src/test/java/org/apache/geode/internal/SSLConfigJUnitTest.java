@@ -30,10 +30,8 @@ import org.apache.geode.distributed.internal.DistributionConfigImpl;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-/**
- * Test that DistributionConfigImpl handles SSL options correctly.
- */
-@Category({ IntegrationTest.class, SecurityTest.class })
+/** Test that DistributionConfigImpl handles SSL options correctly. */
+@Category({IntegrationTest.class, SecurityTest.class})
 public class SSLConfigJUnitTest {
 
   private static final Properties SSL_PROPS_MAP = new Properties();
@@ -47,7 +45,6 @@ public class SSLConfigJUnitTest {
   private static final Properties GATEWAY_PROPS_SUBSET_MAP = new Properties();
 
   static {
-
     SSL_PROPS_MAP.put("javax.net.ssl.keyStoreType", "jks");
     SSL_PROPS_MAP.put("javax.net.ssl.keyStore", "/export/gemfire-configs/gemfire.keystore");
     SSL_PROPS_MAP.put("javax.net.ssl.keyStorePassword", "gemfire-key-password");
@@ -62,8 +59,10 @@ public class SSLConfigJUnitTest {
     CLUSTER_SSL_PROPS_MAP.put(CLUSTER_SSL_TRUSTSTORE_PASSWORD, "gemfire-trust-password");
 
     // Partially over-ridden SSL Properties for cluster
-    CLUSTER_SSL_PROPS_SUBSET_MAP.put(CLUSTER_SSL_KEYSTORE, "/export/gemfire-configs/gemfire.keystore");
-    CLUSTER_SSL_PROPS_SUBSET_MAP.put(CLUSTER_SSL_TRUSTSTORE, "/export/gemfire-configs/gemfire.truststore");
+    CLUSTER_SSL_PROPS_SUBSET_MAP.put(
+        CLUSTER_SSL_KEYSTORE, "/export/gemfire-configs/gemfire.keystore");
+    CLUSTER_SSL_PROPS_SUBSET_MAP.put(
+        CLUSTER_SSL_TRUSTSTORE, "/export/gemfire-configs/gemfire.truststore");
 
     // SSL Properties for GemFire JMX Manager connections
     JMX_SSL_PROPS_MAP.put(JMX_MANAGER_SSL_KEYSTORE_TYPE, "jks");
@@ -76,7 +75,8 @@ public class SSLConfigJUnitTest {
     SERVER_SSL_PROPS_MAP.put(SERVER_SSL_KEYSTORE_TYPE, "jks");
     SERVER_SSL_PROPS_MAP.put(SERVER_SSL_KEYSTORE, "/export/gemfire-configs/cacheserver.keystore");
     SERVER_SSL_PROPS_MAP.put(SERVER_SSL_KEYSTORE_PASSWORD, "cacheserver-key-password");
-    SERVER_SSL_PROPS_MAP.put(SERVER_SSL_TRUSTSTORE, "/export/gemfire-configs/cacheserver.truststore");
+    SERVER_SSL_PROPS_MAP.put(
+        SERVER_SSL_TRUSTSTORE, "/export/gemfire-configs/cacheserver.truststore");
     SERVER_SSL_PROPS_MAP.put(SERVER_SSL_TRUSTSTORE_PASSWORD, "cacheserver-trust-password");
 
     // SSL Properties for GemFire gateway connections
@@ -87,17 +87,21 @@ public class SSLConfigJUnitTest {
     GATEWAY_SSL_PROPS_MAP.put(GATEWAY_SSL_TRUSTSTORE_PASSWORD, "gateway-trust-password");
 
     // Partially over-ridden SSL Properties for GemFire JMX Manager connections
-    JMX_SSL_PROPS_SUBSET_MAP.put(JMX_MANAGER_SSL_KEYSTORE, "/export/gemfire-configs/manager.keystore");
-    JMX_SSL_PROPS_SUBSET_MAP.put(JMX_MANAGER_SSL_TRUSTSTORE, "/export/gemfire-configs/manager.truststore");
+    JMX_SSL_PROPS_SUBSET_MAP.put(
+        JMX_MANAGER_SSL_KEYSTORE, "/export/gemfire-configs/manager.keystore");
+    JMX_SSL_PROPS_SUBSET_MAP.put(
+        JMX_MANAGER_SSL_TRUSTSTORE, "/export/gemfire-configs/manager.truststore");
 
     // Partially over-ridden SSL Properties for GemFire JMX Manager connections
-    SERVER_PROPS_SUBSET_MAP.put(SERVER_SSL_KEYSTORE, "/export/gemfire-configs/cacheserver.keystore");
-    SERVER_PROPS_SUBSET_MAP.put(SERVER_SSL_TRUSTSTORE, "/export/gemfire-configs/cacheserver.truststore");
+    SERVER_PROPS_SUBSET_MAP.put(
+        SERVER_SSL_KEYSTORE, "/export/gemfire-configs/cacheserver.keystore");
+    SERVER_PROPS_SUBSET_MAP.put(
+        SERVER_SSL_TRUSTSTORE, "/export/gemfire-configs/cacheserver.truststore");
 
     // Partially over-ridden SSL Properties for GemFire JMX Manager connections
     GATEWAY_PROPS_SUBSET_MAP.put(GATEWAY_SSL_KEYSTORE, "/export/gemfire-configs/gateway.keystore");
-    GATEWAY_PROPS_SUBSET_MAP.put(GATEWAY_SSL_TRUSTSTORE, "/export/gemfire-configs/gateway.truststore");
-
+    GATEWAY_PROPS_SUBSET_MAP.put(
+        GATEWAY_SSL_TRUSTSTORE, "/export/gemfire-configs/gateway.truststore");
   }
 
   @Test
@@ -324,11 +328,14 @@ public class SSLConfigJUnitTest {
     gemFireProps.put(JMX_MANAGER_SSL_ENABLED, String.valueOf(jmxManagerSslenabled));
     gemFireProps.put(JMX_MANAGER_SSL_PROTOCOLS, jmxManagerSslprotocols);
     gemFireProps.put(JMX_MANAGER_SSL_CIPHERS, jmxManagerSslciphers);
-    gemFireProps.put(JMX_MANAGER_SSL_REQUIRE_AUTHENTICATION, String.valueOf(jmxManagerSslRequireAuth));
+    gemFireProps.put(
+        JMX_MANAGER_SSL_REQUIRE_AUTHENTICATION, String.valueOf(jmxManagerSslRequireAuth));
     try {
       DistributionConfigImpl config = new DistributionConfigImpl(gemFireProps);
     } catch (IllegalArgumentException e) {
-      if (!e.toString().contains("GemFire properties \'jmx-manager-ssl\' and \'jmx-manager-ssl-enabled\' can not be used at the same time")) {
+      if (!e.toString()
+          .contains(
+              "GemFire properties \'jmx-manager-ssl\' and \'jmx-manager-ssl-enabled\' can not be used at the same time")) {
         throw new Exception("did not get expected exception, got this instead...", e);
       }
     }
@@ -342,7 +349,8 @@ public class SSLConfigJUnitTest {
     gemFireProps.put(JMX_MANAGER_SSL_ENABLED, String.valueOf(jmxManagerSslenabled));
     gemFireProps.put(JMX_MANAGER_SSL_PROTOCOLS, jmxManagerSslprotocols);
     gemFireProps.put(JMX_MANAGER_SSL_CIPHERS, jmxManagerSslciphers);
-    gemFireProps.put(JMX_MANAGER_SSL_REQUIRE_AUTHENTICATION, String.valueOf(jmxManagerSslRequireAuth));
+    gemFireProps.put(
+        JMX_MANAGER_SSL_REQUIRE_AUTHENTICATION, String.valueOf(jmxManagerSslRequireAuth));
 
     DistributionConfigImpl config = new DistributionConfigImpl(gemFireProps);
     isEqual(config.getClusterSSLEnabled(), sslenabled);
@@ -447,7 +455,8 @@ public class SSLConfigJUnitTest {
     gemFireProps.put(JMX_MANAGER_SSL_ENABLED, String.valueOf(jmxManagerSslenabled));
     gemFireProps.put(JMX_MANAGER_SSL_PROTOCOLS, jmxManagerSslprotocols);
     gemFireProps.put(JMX_MANAGER_SSL_CIPHERS, jmxManagerSslciphers);
-    gemFireProps.put(JMX_MANAGER_SSL_REQUIRE_AUTHENTICATION, String.valueOf(jmxManagerSslRequireAuth));
+    gemFireProps.put(
+        JMX_MANAGER_SSL_REQUIRE_AUTHENTICATION, String.valueOf(jmxManagerSslRequireAuth));
 
     gemFireProps.putAll(getGfSecurityPropertiesJMX(false /*partialJmxSslConfigOverride*/));
 
@@ -463,10 +472,16 @@ public class SSLConfigJUnitTest {
     isEqual(config.getJmxManagerSSLRequireAuthentication(), jmxManagerSslRequireAuth);
 
     isEqual(JMX_SSL_PROPS_MAP.get(JMX_MANAGER_SSL_KEYSTORE), config.getJmxManagerSSLKeyStore());
-    isEqual(JMX_SSL_PROPS_MAP.get(JMX_MANAGER_SSL_KEYSTORE_TYPE), config.getJmxManagerSSLKeyStoreType());
-    isEqual(JMX_SSL_PROPS_MAP.get(JMX_MANAGER_SSL_KEYSTORE_PASSWORD), config.getJmxManagerSSLKeyStorePassword());
+    isEqual(
+        JMX_SSL_PROPS_MAP.get(JMX_MANAGER_SSL_KEYSTORE_TYPE),
+        config.getJmxManagerSSLKeyStoreType());
+    isEqual(
+        JMX_SSL_PROPS_MAP.get(JMX_MANAGER_SSL_KEYSTORE_PASSWORD),
+        config.getJmxManagerSSLKeyStorePassword());
     isEqual(JMX_SSL_PROPS_MAP.get(JMX_MANAGER_SSL_TRUSTSTORE), config.getJmxManagerSSLTrustStore());
-    isEqual(JMX_SSL_PROPS_MAP.get(JMX_MANAGER_SSL_TRUSTSTORE_PASSWORD), config.getJmxManagerSSLTrustStorePassword());
+    isEqual(
+        JMX_SSL_PROPS_MAP.get(JMX_MANAGER_SSL_TRUSTSTORE_PASSWORD),
+        config.getJmxManagerSSLTrustStorePassword());
   }
 
   @Test
@@ -507,9 +522,13 @@ public class SSLConfigJUnitTest {
 
     isEqual(SERVER_SSL_PROPS_MAP.get(SERVER_SSL_KEYSTORE), config.getServerSSLKeyStore());
     isEqual(SERVER_SSL_PROPS_MAP.get(SERVER_SSL_KEYSTORE_TYPE), config.getServerSSLKeyStoreType());
-    isEqual(SERVER_SSL_PROPS_MAP.get(SERVER_SSL_KEYSTORE_PASSWORD), config.getServerSSLKeyStorePassword());
+    isEqual(
+        SERVER_SSL_PROPS_MAP.get(SERVER_SSL_KEYSTORE_PASSWORD),
+        config.getServerSSLKeyStorePassword());
     isEqual(SERVER_SSL_PROPS_MAP.get(SERVER_SSL_TRUSTSTORE), config.getServerSSLTrustStore());
-    isEqual(SERVER_SSL_PROPS_MAP.get(SERVER_SSL_TRUSTSTORE_PASSWORD), config.getServerSSLTrustStorePassword());
+    isEqual(
+        SERVER_SSL_PROPS_MAP.get(SERVER_SSL_TRUSTSTORE_PASSWORD),
+        config.getServerSSLTrustStorePassword());
   }
 
   @Test
@@ -549,10 +568,15 @@ public class SSLConfigJUnitTest {
     isEqual(config.getGatewaySSLRequireAuthentication(), gatewaySslRequireAuth);
 
     isEqual(GATEWAY_SSL_PROPS_MAP.get(GATEWAY_SSL_KEYSTORE), config.getGatewaySSLKeyStore());
-    isEqual(GATEWAY_SSL_PROPS_MAP.get(GATEWAY_SSL_KEYSTORE_TYPE), config.getGatewaySSLKeyStoreType());
-    isEqual(GATEWAY_SSL_PROPS_MAP.get(GATEWAY_SSL_KEYSTORE_PASSWORD), config.getGatewaySSLKeyStorePassword());
+    isEqual(
+        GATEWAY_SSL_PROPS_MAP.get(GATEWAY_SSL_KEYSTORE_TYPE), config.getGatewaySSLKeyStoreType());
+    isEqual(
+        GATEWAY_SSL_PROPS_MAP.get(GATEWAY_SSL_KEYSTORE_PASSWORD),
+        config.getGatewaySSLKeyStorePassword());
     isEqual(GATEWAY_SSL_PROPS_MAP.get(GATEWAY_SSL_TRUSTSTORE), config.getGatewaySSLTrustStore());
-    isEqual(GATEWAY_SSL_PROPS_MAP.get(GATEWAY_SSL_TRUSTSTORE_PASSWORD), config.getGatewaySSLTrustStorePassword());
+    isEqual(
+        GATEWAY_SSL_PROPS_MAP.get(GATEWAY_SSL_TRUSTSTORE_PASSWORD),
+        config.getGatewaySSLTrustStorePassword());
   }
 
   @Test
@@ -576,7 +600,8 @@ public class SSLConfigJUnitTest {
     gemFireProps.put(JMX_MANAGER_SSL_ENABLED, String.valueOf(jmxManagerSslenabled));
     gemFireProps.put(JMX_MANAGER_SSL_PROTOCOLS, jmxManagerSslprotocols);
     gemFireProps.put(JMX_MANAGER_SSL_CIPHERS, jmxManagerSslciphers);
-    gemFireProps.put(JMX_MANAGER_SSL_REQUIRE_AUTHENTICATION, String.valueOf(jmxManagerSslRequireAuth));
+    gemFireProps.put(
+        JMX_MANAGER_SSL_REQUIRE_AUTHENTICATION, String.valueOf(jmxManagerSslRequireAuth));
 
     gemFireProps.putAll(getGfSecurityPropertiesJMX(true /*partialJmxSslConfigOverride*/));
 
@@ -592,16 +617,30 @@ public class SSLConfigJUnitTest {
     isEqual(config.getJmxManagerSSLRequireAuthentication(), jmxManagerSslRequireAuth);
 
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE), config.getClusterSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getClusterSSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getClusterSSLKeyStorePassword());
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE), config.getClusterSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getClusterSSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getClusterSSLTrustStorePassword());
 
-    isEqual(JMX_SSL_PROPS_SUBSET_MAP.get(JMX_MANAGER_SSL_KEYSTORE), config.getJmxManagerSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getJmxManagerSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getJmxManagerSSLKeyStorePassword());
-    isEqual(JMX_SSL_PROPS_SUBSET_MAP.get(JMX_MANAGER_SSL_TRUSTSTORE), config.getJmxManagerSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getJmxManagerSSLTrustStorePassword());
+    isEqual(
+        JMX_SSL_PROPS_SUBSET_MAP.get(JMX_MANAGER_SSL_KEYSTORE), config.getJmxManagerSSLKeyStore());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE),
+        config.getJmxManagerSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getJmxManagerSSLKeyStorePassword());
+    isEqual(
+        JMX_SSL_PROPS_SUBSET_MAP.get(JMX_MANAGER_SSL_TRUSTSTORE),
+        config.getJmxManagerSSLTrustStore());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getJmxManagerSSLTrustStorePassword());
   }
 
   @Test
@@ -641,16 +680,26 @@ public class SSLConfigJUnitTest {
     isEqual(config.getServerSSLRequireAuthentication(), cacheServerSslRequireAuth);
 
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE), config.getClusterSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getClusterSSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getClusterSSLKeyStorePassword());
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE), config.getClusterSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getClusterSSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getClusterSSLTrustStorePassword());
 
     isEqual(SERVER_PROPS_SUBSET_MAP.get(SERVER_SSL_KEYSTORE), config.getServerSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getServerSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getServerSSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getServerSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getServerSSLKeyStorePassword());
     isEqual(SERVER_PROPS_SUBSET_MAP.get(SERVER_SSL_TRUSTSTORE), config.getServerSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getServerSSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getServerSSLTrustStorePassword());
   }
 
   @Test
@@ -690,16 +739,26 @@ public class SSLConfigJUnitTest {
     isEqual(config.getGatewaySSLRequireAuthentication(), gatewaySslRequireAuth);
 
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE), config.getClusterSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getClusterSSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getClusterSSLKeyStorePassword());
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE), config.getClusterSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getClusterSSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getClusterSSLTrustStorePassword());
 
     isEqual(GATEWAY_PROPS_SUBSET_MAP.get(GATEWAY_SSL_KEYSTORE), config.getGatewaySSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getGatewaySSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getGatewaySSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getGatewaySSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getGatewaySSLKeyStorePassword());
     isEqual(GATEWAY_PROPS_SUBSET_MAP.get(GATEWAY_SSL_TRUSTSTORE), config.getGatewaySSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getGatewaySSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getGatewaySSLTrustStorePassword());
   }
 
   @Test
@@ -742,16 +801,26 @@ public class SSLConfigJUnitTest {
     System.out.println(config.toLoggerString());
 
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE), config.getClusterSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getClusterSSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getClusterSSLKeyStorePassword());
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE), config.getClusterSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getClusterSSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getClusterSSLTrustStorePassword());
 
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE), config.getServerSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getServerSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getServerSSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getServerSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getServerSSLKeyStorePassword());
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE), config.getServerSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getServerSSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getServerSSLTrustStorePassword());
   }
 
   @Test
@@ -799,16 +868,26 @@ public class SSLConfigJUnitTest {
     System.out.println(config.toLoggerString());
 
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE), config.getClusterSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getClusterSSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getClusterSSLKeyStorePassword());
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE), config.getClusterSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getClusterSSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getClusterSSLTrustStorePassword());
 
     isEqual(SERVER_PROPS_SUBSET_MAP.get(SERVER_SSL_KEYSTORE), config.getServerSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getServerSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getServerSSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getServerSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getServerSSLKeyStorePassword());
     isEqual(SERVER_PROPS_SUBSET_MAP.get(SERVER_SSL_TRUSTSTORE), config.getServerSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getServerSSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getServerSSLTrustStorePassword());
   }
 
   @Test
@@ -851,16 +930,26 @@ public class SSLConfigJUnitTest {
     System.out.println(config.toLoggerString());
 
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE), config.getClusterSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getClusterSSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getClusterSSLKeyStorePassword());
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE), config.getClusterSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getClusterSSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getClusterSSLTrustStorePassword());
 
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE), config.getGatewaySSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getGatewaySSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getGatewaySSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getGatewaySSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getGatewaySSLKeyStorePassword());
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE), config.getGatewaySSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getGatewaySSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getGatewaySSLTrustStorePassword());
   }
 
   @Test
@@ -885,7 +974,8 @@ public class SSLConfigJUnitTest {
     gemFireProps.put(GATEWAY_SSL_ENABLED, String.valueOf(gatewayServerSslenabled));
     gemFireProps.put(GATEWAY_SSL_PROTOCOLS, gatewayServerSslprotocols);
     gemFireProps.put(GATEWAY_SSL_CIPHERS, gatewayServerSslciphers);
-    gemFireProps.put(GATEWAY_SSL_REQUIRE_AUTHENTICATION, String.valueOf(gatewayServerSslRequireAuth));
+    gemFireProps.put(
+        GATEWAY_SSL_REQUIRE_AUTHENTICATION, String.valueOf(gatewayServerSslRequireAuth));
 
     gemFireProps.putAll(getGfSecurityPropertiesForGateway(true));
 
@@ -903,16 +993,26 @@ public class SSLConfigJUnitTest {
     System.out.println(config.toLoggerString());
 
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE), config.getClusterSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getClusterSSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getClusterSSLKeyStorePassword());
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE), config.getClusterSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getClusterSSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getClusterSSLTrustStorePassword());
 
     isEqual(GATEWAY_PROPS_SUBSET_MAP.get(GATEWAY_SSL_KEYSTORE), config.getGatewaySSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getGatewaySSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getGatewaySSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getGatewaySSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getGatewaySSLKeyStorePassword());
     isEqual(GATEWAY_PROPS_SUBSET_MAP.get(GATEWAY_SSL_TRUSTSTORE), config.getGatewaySSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getGatewaySSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getGatewaySSLTrustStorePassword());
   }
 
   @Test
@@ -955,16 +1055,27 @@ public class SSLConfigJUnitTest {
     System.out.println(config.toLoggerString());
 
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE), config.getClusterSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getClusterSSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getClusterSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getClusterSSLKeyStorePassword());
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE), config.getClusterSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getClusterSSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getClusterSSLTrustStorePassword());
 
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE), config.getJmxManagerSSLKeyStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE), config.getJmxManagerSSLKeyStoreType());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD), config.getJmxManagerSSLKeyStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_TYPE),
+        config.getJmxManagerSSLKeyStoreType());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_KEYSTORE_PASSWORD),
+        config.getJmxManagerSSLKeyStorePassword());
     isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE), config.getJmxManagerSSLTrustStore());
-    isEqual(CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD), config.getJmxManagerSSLTrustStorePassword());
+    isEqual(
+        CLUSTER_SSL_PROPS_MAP.get(CLUSTER_SSL_TRUSTSTORE_PASSWORD),
+        config.getJmxManagerSSLTrustStorePassword());
   }
 
   private static Properties getGfSecurityPropertiesSSL() {
@@ -978,7 +1089,8 @@ public class SSLConfigJUnitTest {
     return gfSecurityProps;
   }
 
-  private static Properties getGfSecurityPropertiesCluster(boolean partialClusterSslConfigOverride) {
+  private static Properties getGfSecurityPropertiesCluster(
+      boolean partialClusterSslConfigOverride) {
     Properties gfSecurityProps = new Properties();
 
     Set<Entry<Object, Object>> entrySet = SSL_PROPS_MAP.entrySet();
@@ -1039,7 +1151,8 @@ public class SSLConfigJUnitTest {
     return gfSecurityProps;
   }
 
-  private static Properties getGfSecurityPropertiesForGateway(boolean partialGatewaySslConfigOverride) {
+  private static Properties getGfSecurityPropertiesForGateway(
+      boolean partialGatewaySslConfigOverride) {
     Properties gfSecurityProps = new Properties();
 
     Set<Entry<Object, Object>> entrySet = CLUSTER_SSL_PROPS_MAP.entrySet();
@@ -1066,5 +1179,4 @@ public class SSLConfigJUnitTest {
   private void isEqual(Object a, Object e) {
     assertEquals(a, e);
   }
-
 }

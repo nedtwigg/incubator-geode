@@ -57,7 +57,8 @@ public class LTrimExecutor extends ListExecutor {
     Region keyRegion = getRegion(context, key);
 
     if (keyRegion == null) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_KEY_NOT_EXISTS));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_KEY_NOT_EXISTS));
       return;
     }
 
@@ -107,10 +108,12 @@ public class LTrimExecutor extends ListExecutor {
     command.setResponse(Coder.getSimpleStringResponse(context.getByteBufAllocator(), SUCCESS));
   }
 
-  private List<Integer> getRange(ExecutionHandlerContext context, ByteArrayWrapper key, int start, int stop, Region r) throws Exception {
+  private List<Integer> getRange(
+      ExecutionHandlerContext context, ByteArrayWrapper key, int start, int stop, Region r)
+      throws Exception {
     Query query = getQuery(key, ListQuery.LTRIM, context);
 
-    Object[] params = { Integer.valueOf(stop + 1) };
+    Object[] params = {Integer.valueOf(stop + 1)};
 
     SelectResults<Integer> results = (SelectResults<Integer>) query.execute(params);
     if (results == null || results.size() <= start) {

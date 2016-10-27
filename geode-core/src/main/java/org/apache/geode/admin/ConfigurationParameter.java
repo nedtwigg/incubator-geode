@@ -18,11 +18,12 @@
 package org.apache.geode.admin;
 
 /**
-* A single configuration parameter of a {@link SystemMember}.
+ * A single configuration parameter of a {@link SystemMember}.
  *
- * @since GemFire     3.5
- *
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @since GemFire 3.5
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public interface ConfigurationParameter {
 
@@ -62,11 +63,10 @@ public interface ConfigurationParameter {
   /**
    * Sets a new value for this configuration parameter.
    *
-   * @param value   the new value which must be of type {@link #getValueType}
-   * @throws IllegalArgumentException
-   *         if value type does not match {@link #getValueType}
-   * @throws UnmodifiableConfigurationException
-   *         if attempting to set value when isModifiable is false
+   * @param value the new value which must be of type {@link #getValueType}
+   * @throws IllegalArgumentException if value type does not match {@link #getValueType}
+   * @throws UnmodifiableConfigurationException if attempting to set value when isModifiable is
+   *     false
    */
   public void setValue(Object value) throws UnmodifiableConfigurationException;
 }

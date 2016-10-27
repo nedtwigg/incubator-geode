@@ -38,6 +38,7 @@ import org.apache.geode.internal.logging.LogService;
 
 /**
  * Does a region get on a server
+ *
  * @since GemFire 5.7
  */
 public class GetOp {
@@ -49,8 +50,9 @@ public class GetOp {
   public static final int VALUE_IS_INVALID = 0x08; // Token.INVALID
 
   /**
-   * Does a region get on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region get on a server using connections from the given pool to communicate with the
+   * server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the region to do the get on
    * @param key the entry key to do the get on
@@ -58,7 +60,13 @@ public class GetOp {
    * @param clientEvent holder for returning version information
    * @return the entry value found by the get if any
    */
-  public static Object execute(ExecutablePool pool, LocalRegion region, Object key, Object callbackArg, boolean prSingleHopEnabled, EntryEventImpl clientEvent) {
+  public static Object execute(
+      ExecutablePool pool,
+      LocalRegion region,
+      Object key,
+      Object callbackArg,
+      boolean prSingleHopEnabled,
+      EntryEventImpl clientEvent) {
     ClientMetadataService cms = ((GemFireCacheImpl) region.getCache()).getClientMetadataService();
     GetOpImpl op = new GetOpImpl(region, key, callbackArg, prSingleHopEnabled, clientEvent);
 
@@ -66,13 +74,22 @@ public class GetOp {
       logger.debug("GetOp invoked for key {}", key);
     }
     if (prSingleHopEnabled) {
-      ServerLocation server = cms.getBucketServerLocation(region, Operation.GET, key, null, callbackArg);
+      ServerLocation server =
+          cms.getBucketServerLocation(region, Operation.GET, key, null, callbackArg);
       if (server != null) {
         try {
           PoolImpl poolImpl = (PoolImpl) pool;
-          boolean onlyUseExistingCnx = ((poolImpl.getMaxConnections() != -1 && poolImpl.getConnectionCount() >= poolImpl.getMaxConnections()) ? true : false);
+          boolean onlyUseExistingCnx =
+              ((poolImpl.getMaxConnections() != -1
+                      && poolImpl.getConnectionCount() >= poolImpl.getMaxConnections())
+                  ? true
+                  : false);
           op.setAllowDuplicateMetadataRefresh(!onlyUseExistingCnx);
-          return pool.executeOn(new ServerLocation(server.getHostName(), server.getPort()), op, true, onlyUseExistingCnx);
+          return pool.executeOn(
+              new ServerLocation(server.getHostName(), server.getPort()),
+              op,
+              true,
+              onlyUseExistingCnx);
         } catch (AllConnectionsInUseException e) {
         } catch (ServerConnectivityException e) {
           if (e instanceof ServerOperationException) {
@@ -108,13 +125,16 @@ public class GetOp {
       return "GetOpImpl(key=" + key + ")";
     }
 
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
-    public GetOpImpl(LocalRegion region, Object key, Object callbackArg, boolean prSingleHopEnabled, EntryEventImpl clientEvent) {
+    /** @throws org.apache.geode.SerializationException if serialization fails */
+    public GetOpImpl(
+        LocalRegion region,
+        Object key,
+        Object callbackArg,
+        boolean prSingleHopEnabled,
+        EntryEventImpl clientEvent) {
       super(MessageType.REQUEST, callbackArg != null ? 3 : 2);
       if (logger.isDebugEnabled()) {
-        logger.debug("constructing a GetOp for key {}", key/*, new Exception("stack trace")*/);
+        logger.debug("constructing a GetOp for key {}", key /*, new Exception("stack trace")*/);
       }
       this.region = region;
       this.prSingleHopEnabled = prSingleHopEnabled;
@@ -166,10 +186,12 @@ public class GetOp {
             Part part = msg.getPart(partIdx++);
             if (part.isBytes()) {
               byte[] bytesReceived = part.getSerializedForm();
-              if (bytesReceived[0] != ClientMetadataService.INITIAL_VERSION && bytesReceived.length == ClientMetadataService.SIZE_BYTES_ARRAY_RECEIVED) {
+              if (bytesReceived[0] != ClientMetadataService.INITIAL_VERSION
+                  && bytesReceived.length == ClientMetadataService.SIZE_BYTES_ARRAY_RECEIVED) {
                 try {
                   ClientMetadataService cms = region.getCache().getClientMetadataService();
-                  int myVersion = cms.getMetaDataVersion(region, Operation.UPDATE, key, null, callbackArg);
+                  int myVersion =
+                      cms.getMetaDataVersion(region, Operation.UPDATE, key, null, callbackArg);
                   if (myVersion != bytesReceived[0] || isAllowDuplicateMetadataRefresh()) {
                     cms.scheduleGetPRMetaData(region, false, bytesReceived[1]);
                   }
@@ -183,11 +205,13 @@ public class GetOp {
             Part part = msg.getPart(partIdx++);
             if (part.isBytes()) {
               byte[] bytesReceived = part.getSerializedForm();
-              if (this.region != null && bytesReceived.length == ClientMetadataService.SIZE_BYTES_ARRAY_RECEIVED) {
+              if (this.region != null
+                  && bytesReceived.length == ClientMetadataService.SIZE_BYTES_ARRAY_RECEIVED) {
                 ClientMetadataService cms;
                 try {
                   cms = region.getCache().getClientMetadataService();
-                  version = cms.getMetaDataVersion(region, Operation.UPDATE, key, null, callbackArg);
+                  version =
+                      cms.getMetaDataVersion(region, Operation.UPDATE, key, null, callbackArg);
                 } catch (CacheClosedException e) {
                   return null;
                 }

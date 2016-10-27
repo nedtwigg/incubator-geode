@@ -26,22 +26,18 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
 /**
- * Stores information about a PartitionedRegion singleton instance running
- * inside a virtual machine. This Node is said to be a participant, cooperating
- * with other Nodes to physically manage a logically named PartitionedRegion.
- * <p>
- * Nodes are stored in a list within PartitionedRegionConfig which is stored
- * globally as the value of an named entry in the
- * <code>DistributedHashMap.PARTITIONED_REGION_NAME</code>. Node must be
- * Serializable and have a no args Constructor. Since Nodes are used as keys in
- * each Thread's ThreadLocal map of Nodes to Connections, Node must implement
- * hashCode and equals.
- * <p>
- * Node maintains a field for maxMemory (fixed) to enable other Nodes to
- * determine whether the Node should be the target of a canRebalance request. If
- * the Node's maxMemory is 0, then the Node is advertising that it never should
- * receive a request to rebalance.
- * 
+ * Stores information about a PartitionedRegion singleton instance running inside a virtual machine.
+ * This Node is said to be a participant, cooperating with other Nodes to physically manage a
+ * logically named PartitionedRegion.
+ *
+ * <p>Nodes are stored in a list within PartitionedRegionConfig which is stored globally as the
+ * value of an named entry in the <code>DistributedHashMap.PARTITIONED_REGION_NAME</code>. Node must
+ * be Serializable and have a no args Constructor. Since Nodes are used as keys in each Thread's
+ * ThreadLocal map of Nodes to Connections, Node must implement hashCode and equals.
+ *
+ * <p>Node maintains a field for maxMemory (fixed) to enable other Nodes to determine whether the
+ * Node should be the target of a canRebalance request. If the Node's maxMemory is 0, then the Node
+ * is advertising that it never should receive a request to rebalance.
  */
 public final class Node extends ExternalizableDSFID {
   private InternalDistributedMember memberId;
@@ -76,8 +72,7 @@ public final class Node extends ExternalizableDSFID {
   }
 
   // for Externalizable
-  public Node() {
-  }
+  public Node() {}
 
   public InternalDistributedMember getMemberId() {
     return this.memberId;
@@ -93,7 +88,13 @@ public final class Node extends ExternalizableDSFID {
 
   @Override
   public String toString() {
-    return ("Node=[memberId=" + this.memberId + "; prType=" + prType + "; isPersistent=" + isPersistent + "]");
+    return ("Node=[memberId="
+        + this.memberId
+        + "; prType="
+        + prType
+        + "; isPersistent="
+        + isPersistent
+        + "]");
   }
 
   @Override

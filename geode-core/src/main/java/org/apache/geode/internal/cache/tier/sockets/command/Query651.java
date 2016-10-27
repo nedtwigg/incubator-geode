@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import org.apache.geode.internal.cache.GemFireCacheImpl;
@@ -33,17 +31,17 @@ import java.util.Set;
 
 public class Query651 extends BaseCommandQuery {
 
-  private final static Query651 singleton = new Query651();
+  private static final Query651 singleton = new Query651();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private Query651() {
-  }
+  private Query651() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, InterruptedException {
 
     // Based on MessageType.DESTROY
     // Added by gregp 10/18/05
@@ -59,7 +57,11 @@ public class Query651 extends BaseCommandQuery {
         int params = msg.getPart(1).getInt(); // Number of parameters.
         // In case of native client there will be extra two parameters at 2 and 3 index.
         int paramStartIndex = 2;
-        if (msg.getNumberOfParts() > (1 /* type */ + 1 /* query string */ + 1 /* params length */ + params /* number of params*/)) {
+        if (msg.getNumberOfParts()
+            > (1 /* type */
+                + 1 /* query string */
+                + 1 /* params length */
+                + params /* number of params*/)) {
           int timeout = msg.getPart(3).getInt();
           servConn.setRequestSpecificTimeout(timeout);
           paramStartIndex = 4;
@@ -82,11 +84,17 @@ public class Query651 extends BaseCommandQuery {
     }
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received query request from {} queryString: {}{}", servConn.getName(), servConn.getSocketString(), queryString, (queryParams != null ? (" with num query parameters :" + queryParams.length) : ""));
+      logger.debug(
+          "{}: Received query request from {} queryString: {}{}",
+          servConn.getName(),
+          servConn.getSocketString(),
+          queryString,
+          (queryParams != null ? (" with num query parameters :" + queryParams.length) : ""));
     }
     try {
       // Create query
-      QueryService queryService = ((GemFireCacheImpl) servConn.getCachedRegionHelper().getCache()).getLocalQueryService();
+      QueryService queryService =
+          ((GemFireCacheImpl) servConn.getCachedRegionHelper().getCache()).getLocalQueryService();
       org.apache.geode.cache.query.Query query = null;
 
       if (queryParams != null) {
@@ -122,10 +130,19 @@ public class Query651 extends BaseCommandQuery {
         }
       }
 
-      processQueryUsingParams(msg, query, queryString, regionNames, start, null, queryContext, servConn, true, queryParams);
+      processQueryUsingParams(
+          msg,
+          query,
+          queryString,
+          regionNames,
+          start,
+          null,
+          queryContext,
+          servConn,
+          true,
+          queryParams);
     } catch (QueryInvalidException e) {
       throw new QueryInvalidException(e.getMessage() + queryString);
     }
   }
-
 }

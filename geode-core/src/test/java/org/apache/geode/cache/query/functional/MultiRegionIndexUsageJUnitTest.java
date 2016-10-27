@@ -42,8 +42,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 //TODO:TEST clean this up and add assertions
-/**
- */
+/** */
 @Category(IntegrationTest.class)
 public class MultiRegionIndexUsageJUnitTest {
 
@@ -71,31 +70,43 @@ public class MultiRegionIndexUsageJUnitTest {
 
   // ////////////// queries ////////////////
   private static final String queries[] = {
-      // Query 1
-      "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d," + " d.villages v, d.cities ct WHERE v.name = 'MAHARASHTRA_VILLAGE1'",
-      // Query 2
-      "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.villages v," + " d.cities ct WHERE v.name='MAHARASHTRA_VILLAGE1' AND ct.name = 'PUNE'",
-      // Query 3
-      "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.villages v, " + "d.cities ct WHERE ct.name = 'PUNE' AND s.name = 'MAHARASHTRA'",
-      // Query 4a & 4b
-      "SELECT DISTINCT * FROM /Countries c WHERE c.name = 'INDIA'", "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.cities ct, d.villages v WHERE c.name = 'INDIA'",
-      // Query 5
-      "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d WHERE d.name = 'PUNEDIST' AND s.name = 'GUJARAT'",
-      // Query 6
-      "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.cities ct WHERE ct.name = 'MUMBAI'",
-      // Query 7
-      "SELECT DISTINCT c.name, s.name, d.name, ct.name FROM /Countries c, c.states s, s.districts d, d.cities ct WHERE ct.name = 'MUMBAI' OR ct.name = 'CHENNAI'",
-      // Query 8
-      "SELECT DISTINCT c.name, s.name FROM /Countries c, c.states s, s.districts d, d.cities ct WHERE ct.name = 'MUMBAI' OR s.name = 'GUJARAT'",
-      // Query 9a & 9b
-      "SELECT DISTINCT c.name, s.name, ct.name FROM /Countries c, c.states s, (SELECT DISTINCT * FROM " + "/Countries c, c.states s, s.districts d, d.cities ct WHERE s.name = 'PUNJAB') itr1, " + "s.districts d, d.cities ct WHERE ct.name = 'CHANDIGARH'", "SELECT DISTINCT c.name, s.name, ct.name FROM /Countries c, c.states s, s.districts d," + " d.cities ct WHERE ct.name = (SELECT DISTINCT ct.name FROM /Countries c, c.states s, " + "s.districts d, d.cities ct WHERE s.name = 'MAHARASHTRA' AND ct.name = 'PUNE')",
-      // Query 10
-      "SELECT DISTINCT c.name, s.name, ct.name FROM /Countries c, c.states s, s.districts d, " + "d.cities ct, d.getVillages() v WHERE v.getName() = 'PUNJAB_VILLAGE1'",
-      // Query 11
-      "SELECT DISTINCT s.name, s.getDistricts(), ct.getName() FROM /Countries c, c.getStates() s, " + "s.getDistricts() d, d.getCities() ct WHERE ct.getName() = 'PUNE' OR ct.name = 'CHANDIGARH' " + "OR s.getName() = 'GUJARAT'",
-      // Query 12
-      "SELECT DISTINCT d.getName(), d.getCities(), d.getVillages() FROM /Countries c, " + "c.states s, s.districts d WHERE d.name = 'MUMBAIDIST'",
-
+    // Query 1
+    "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d,"
+        + " d.villages v, d.cities ct WHERE v.name = 'MAHARASHTRA_VILLAGE1'",
+    // Query 2
+    "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.villages v,"
+        + " d.cities ct WHERE v.name='MAHARASHTRA_VILLAGE1' AND ct.name = 'PUNE'",
+    // Query 3
+    "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.villages v, "
+        + "d.cities ct WHERE ct.name = 'PUNE' AND s.name = 'MAHARASHTRA'",
+    // Query 4a & 4b
+    "SELECT DISTINCT * FROM /Countries c WHERE c.name = 'INDIA'",
+    "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.cities ct, d.villages v WHERE c.name = 'INDIA'",
+    // Query 5
+    "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d WHERE d.name = 'PUNEDIST' AND s.name = 'GUJARAT'",
+    // Query 6
+    "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.cities ct WHERE ct.name = 'MUMBAI'",
+    // Query 7
+    "SELECT DISTINCT c.name, s.name, d.name, ct.name FROM /Countries c, c.states s, s.districts d, d.cities ct WHERE ct.name = 'MUMBAI' OR ct.name = 'CHENNAI'",
+    // Query 8
+    "SELECT DISTINCT c.name, s.name FROM /Countries c, c.states s, s.districts d, d.cities ct WHERE ct.name = 'MUMBAI' OR s.name = 'GUJARAT'",
+    // Query 9a & 9b
+    "SELECT DISTINCT c.name, s.name, ct.name FROM /Countries c, c.states s, (SELECT DISTINCT * FROM "
+        + "/Countries c, c.states s, s.districts d, d.cities ct WHERE s.name = 'PUNJAB') itr1, "
+        + "s.districts d, d.cities ct WHERE ct.name = 'CHANDIGARH'",
+    "SELECT DISTINCT c.name, s.name, ct.name FROM /Countries c, c.states s, s.districts d,"
+        + " d.cities ct WHERE ct.name = (SELECT DISTINCT ct.name FROM /Countries c, c.states s, "
+        + "s.districts d, d.cities ct WHERE s.name = 'MAHARASHTRA' AND ct.name = 'PUNE')",
+    // Query 10
+    "SELECT DISTINCT c.name, s.name, ct.name FROM /Countries c, c.states s, s.districts d, "
+        + "d.cities ct, d.getVillages() v WHERE v.getName() = 'PUNJAB_VILLAGE1'",
+    // Query 11
+    "SELECT DISTINCT s.name, s.getDistricts(), ct.getName() FROM /Countries c, c.getStates() s, "
+        + "s.getDistricts() d, d.getCities() ct WHERE ct.getName() = 'PUNE' OR ct.name = 'CHANDIGARH' "
+        + "OR s.getName() = 'GUJARAT'",
+    // Query 12
+    "SELECT DISTINCT d.getName(), d.getCities(), d.getVillages() FROM /Countries c, "
+        + "c.states s, s.districts d WHERE d.name = 'MUMBAIDIST'",
   };
 
   @Before
@@ -114,21 +125,25 @@ public class MultiRegionIndexUsageJUnitTest {
     region3 = cache.createRegion("Countries3", factory.create());
 
     populateData();
-  }// end of setUp
+  } // end of setUp
 
   @After
   public void tearDown() throws Exception {
     if (ds != null) {
       ds.disconnect();
     }
-  }// end of tearDown
+  } // end of tearDown
 
   @Test
   public void testChangedFormClauseOrder1() throws Exception {
     CacheUtils.log("------------- testChangedFormClauseOrder1 start------------- ");
     SelectResults rs[][] = new SelectResults[1][2];
     // Test Case No. IUMR003
-    String sqlStr = "SELECT DISTINCT * FROM " + "/Countries1 c1, c1.states s1, s1.districts d1, d1.villages v1, d1.cities ct1, " + "/Countries2 c2, c2.states s2, s2.districts d2, d2.villages v2, d2.cities ct2 " + "WHERE v1.name = 'MAHARASHTRA_VILLAGE1' AND ct2.name = 'MUMBAI' ";
+    String sqlStr =
+        "SELECT DISTINCT * FROM "
+            + "/Countries1 c1, c1.states s1, s1.districts d1, d1.villages v1, d1.cities ct1, "
+            + "/Countries2 c2, c2.states s2, s2.districts d2, d2.villages v2, d2.cities ct2 "
+            + "WHERE v1.name = 'MAHARASHTRA_VILLAGE1' AND ct2.name = 'MUMBAI' ";
 
     // query execution without Index.
     Query q = null;
@@ -141,7 +156,7 @@ public class MultiRegionIndexUsageJUnitTest {
       CacheUtils.log("11111111111111111111111111111");
       createIndex();
       CacheUtils.log("22222222222222222222222");
-      QueryService qs2 = cache.getQueryService();// ????
+      QueryService qs2 = cache.getQueryService(); // ????
       q = qs2.newQuery(sqlStr);
       CacheUtils.log("333333333333333333");
       QueryObserverImpl observer = new QueryObserverImpl();
@@ -161,7 +176,10 @@ public class MultiRegionIndexUsageJUnitTest {
         } else if (temp.equals("cityName2")) {
           break;
         } else {
-          fail("indices used do not match with those which are expected to be used" + "<villageName1> and <cityName2> were expected but found " + itr.next());
+          fail(
+              "indices used do not match with those which are expected to be used"
+                  + "<villageName1> and <cityName2> were expected but found "
+                  + itr.next());
         }
       }
 
@@ -171,7 +189,7 @@ public class MultiRegionIndexUsageJUnitTest {
       // }
 
       CacheUtils.log("5555555555555555555555555555");
-      areResultsMatching(rs, new String[] { sqlStr });
+      areResultsMatching(rs, new String[] {sqlStr});
 
       CacheUtils.log("------------- testChangedFormClauseOrder1 end------------- ");
 
@@ -179,8 +197,7 @@ public class MultiRegionIndexUsageJUnitTest {
       e.printStackTrace();
       fail(q.getQueryString());
     }
-
-  }// end of test
+  } // end of test
 
   @Ignore
   @Test
@@ -188,7 +205,11 @@ public class MultiRegionIndexUsageJUnitTest {
     CacheUtils.log("------------- testChangedFormClauseOrder2 start------------- ");
     SelectResults rs[][] = new SelectResults[1][2];
     // Test Case No. IUMR008
-    String sqlStr = "SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.villages v1, d1.cities ct1, " + "/Countries2 c2, c2.states s2, s2.districts d2, d2.villages v2, d2.cities ct2, " + "/Countries3 c3, c3.states s3, s3.districts d3, d3.villages v3, d3.cities ct3 " + " WHERE v1.name='MAHARASHTRA_VILLAGE1' AND ct3.name = 'PUNE'";
+    String sqlStr =
+        "SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.villages v1, d1.cities ct1, "
+            + "/Countries2 c2, c2.states s2, s2.districts d2, d2.villages v2, d2.cities ct2, "
+            + "/Countries3 c3, c3.states s3, s3.districts d3, d3.villages v3, d3.cities ct3 "
+            + " WHERE v1.name='MAHARASHTRA_VILLAGE1' AND ct3.name = 'PUNE'";
 
     // query execution without Index.
     Query q = null;
@@ -198,7 +219,7 @@ public class MultiRegionIndexUsageJUnitTest {
       rs[0][0] = (SelectResults) q.execute();
 
       createIndex();
-      QueryService qs2 = cache.getQueryService();// ????
+      QueryService qs2 = cache.getQueryService(); // ????
       q = qs2.newQuery(sqlStr);
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
@@ -218,29 +239,32 @@ public class MultiRegionIndexUsageJUnitTest {
         } else if (temp.equals("cityName3")) {
           break;
         } else {
-          fail("indices used do not match with those which are expected to be used" + "<villageName1> and <cityName3> were expected but found " + itr.next());
+          fail(
+              "indices used do not match with those which are expected to be used"
+                  + "<villageName1> and <cityName3> were expected but found "
+                  + itr.next());
         }
       }
 
       // assertIndexDetailsEquals("villageName1", itr.next().toString());
       // assertIndexDetailsEquals("cityName3", itr.next().toString());
 
-      areResultsMatching(rs, new String[] { sqlStr });
+      areResultsMatching(rs, new String[] {sqlStr});
 
       CacheUtils.log("------------- testChangedFormClauseOrder2 end------------- ");
     } catch (Exception e) {
       e.printStackTrace();
       fail(q.getQueryString());
     }
-
-  }// end of test
+  } // end of test
 
   @Test
   public void testSelectBestIndex1() throws Exception {
     CacheUtils.log("------------- testSelectBestIndex1 start------------- ");
     SelectResults rs[][] = new SelectResults[1][2];
     // Test Case No. IUMR010
-    String sqlStr = "SELECT DISTINCT * FROM /Countries1 c1, /Countries2 c2 WHERE c1.name = 'INDIA' AND c2.name = 'ISRAEL'";
+    String sqlStr =
+        "SELECT DISTINCT * FROM /Countries1 c1, /Countries2 c2 WHERE c1.name = 'INDIA' AND c2.name = 'ISRAEL'";
 
     // query execution without Index.
     Query q = null;
@@ -250,7 +274,7 @@ public class MultiRegionIndexUsageJUnitTest {
       rs[0][0] = (SelectResults) q.execute();
 
       createIndex();
-      QueryService qs2 = cache.getQueryService();// ????
+      QueryService qs2 = cache.getQueryService(); // ????
       q = qs2.newQuery(sqlStr);
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
@@ -262,22 +286,24 @@ public class MultiRegionIndexUsageJUnitTest {
       Iterator itr = observer.indexesUsed.iterator();
       assertEquals("countryNameB", itr.next().toString());
 
-      areResultsMatching(rs, new String[] { sqlStr });
+      areResultsMatching(rs, new String[] {sqlStr});
 
       CacheUtils.log("------------- testSelectBestIndex1 end------------- ");
     } catch (Exception e) {
       e.printStackTrace();
       fail(q.getQueryString());
     }
-
-  }// end of test
+  } // end of test
 
   @Test
   public void testSelectBestIndex2() throws Exception {
     CacheUtils.log("------------- testSelectBestIndex2 start------------- ");
     SelectResults rs[][] = new SelectResults[1][2];
     // Test Case No. IUMR011
-    String sqlStr = "SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.cities ct1, d1.villages v1, " + "/Countries2 c2, c2.states s2, s2.districts d2, d2.cities ct2, d2.villages v2 " + "WHERE c1.name = 'INDIA' AND c2.name = 'ISRAEL'";
+    String sqlStr =
+        "SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.cities ct1, d1.villages v1, "
+            + "/Countries2 c2, c2.states s2, s2.districts d2, d2.cities ct2, d2.villages v2 "
+            + "WHERE c1.name = 'INDIA' AND c2.name = 'ISRAEL'";
 
     // query execution without Index.
     Query q = null;
@@ -287,7 +313,7 @@ public class MultiRegionIndexUsageJUnitTest {
       rs[0][0] = (SelectResults) q.execute();
 
       createIndex();
-      QueryService qs2 = cache.getQueryService();// ????
+      QueryService qs2 = cache.getQueryService(); // ????
       q = qs2.newQuery(sqlStr);
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
@@ -299,21 +325,24 @@ public class MultiRegionIndexUsageJUnitTest {
       Iterator itr = observer.indexesUsed.iterator();
       assertEquals("countryNameA", itr.next().toString());
 
-      areResultsMatching(rs, new String[] { sqlStr });
+      areResultsMatching(rs, new String[] {sqlStr});
       CacheUtils.log("------------- testSelectBestIndex2 end------------- ");
     } catch (Exception e) {
       e.printStackTrace();
       // fail(q.getQueryString());
     }
-
-  }// end of test
+  } // end of test
 
   @Test
   public void testProjectionAttr1() throws Exception {
     CacheUtils.log("------------- testProjectionAttr1 start------------- ");
     SelectResults rs[][] = new SelectResults[1][2];
     // Test Case No. IUMR012
-    String sqlStr = "SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, " + "/Countries2 c2, c2.states s2, s2.districts d2, " + "/Countries3 c3, c3.states s3, s3.districts d3 " + "WHERE d3.name = 'PUNEDIST' AND s2.name = 'GUJARAT'";
+    String sqlStr =
+        "SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, "
+            + "/Countries2 c2, c2.states s2, s2.districts d2, "
+            + "/Countries3 c3, c3.states s3, s3.districts d3 "
+            + "WHERE d3.name = 'PUNEDIST' AND s2.name = 'GUJARAT'";
 
     // query execution without Index.
     Query q = null;
@@ -323,7 +352,7 @@ public class MultiRegionIndexUsageJUnitTest {
       rs[0][0] = (SelectResults) q.execute();
 
       createIndex();
-      QueryService qs2 = cache.getQueryService();// ????
+      QueryService qs2 = cache.getQueryService(); // ????
       q = qs2.newQuery(sqlStr);
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
@@ -342,29 +371,35 @@ public class MultiRegionIndexUsageJUnitTest {
         } else if (temp.equals("stateName2")) {
           break;
         } else {
-          fail("indices used do not match with those which are expected to be used" + "<districtName3> and <stateName2> were expected but found " + itr.next());
+          fail(
+              "indices used do not match with those which are expected to be used"
+                  + "<districtName3> and <stateName2> were expected but found "
+                  + itr.next());
         }
       }
 
       // assertIndexDetailsEquals("districtName3", itr.next().toString());
       // assertIndexDetailsEquals("stateName2", itr.next().toString());
 
-      areResultsMatching(rs, new String[] { sqlStr });
+      areResultsMatching(rs, new String[] {sqlStr});
 
       CacheUtils.log("------------- testProjectionAttr1 end------------- ");
     } catch (Exception e) {
       e.printStackTrace();
       // fail(q.getQueryString());
     }
-
-  }// end of test
+  } // end of test
 
   @Test
   public void testCutDown1() throws Exception {
     CacheUtils.log("------------- testCutDown1 start------------- ");
     SelectResults rs[][] = new SelectResults[1][2];
     // Test Case No. IUMR014
-    String sqlStr = "SELECT DISTINCT c1.name, s1.name, d2.name, ct2.name " + "FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.cities ct1," + "/Countries2 c2, c2.states s2, s2.districts d2, d2.cities ct2" + " WHERE ct1.name = 'MUMBAI' OR ct2.name = 'CHENNAI'";
+    String sqlStr =
+        "SELECT DISTINCT c1.name, s1.name, d2.name, ct2.name "
+            + "FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.cities ct1,"
+            + "/Countries2 c2, c2.states s2, s2.districts d2, d2.cities ct2"
+            + " WHERE ct1.name = 'MUMBAI' OR ct2.name = 'CHENNAI'";
 
     // query execution without Index.
     Query q = null;
@@ -374,7 +409,7 @@ public class MultiRegionIndexUsageJUnitTest {
       rs[0][0] = (SelectResults) q.execute();
 
       createIndex();
-      QueryService qs2 = cache.getQueryService();// ????
+      QueryService qs2 = cache.getQueryService(); // ????
       q = qs2.newQuery(sqlStr);
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
@@ -393,28 +428,33 @@ public class MultiRegionIndexUsageJUnitTest {
         } else if (temp.equals("cityName2")) {
           break;
         } else {
-          fail("indices used do not match with those which are expected to be used" + "<cityName1> and <cityName2> were expected but found " + itr.next());
+          fail(
+              "indices used do not match with those which are expected to be used"
+                  + "<cityName1> and <cityName2> were expected but found "
+                  + itr.next());
         }
       }
 
       // assertIndexDetailsEquals("cityName1", itr.next().toString());
       // assertIndexDetailsEquals("cityName2", itr.next().toString());
 
-      areResultsMatching(rs, new String[] { sqlStr });
+      areResultsMatching(rs, new String[] {sqlStr});
       CacheUtils.log("------------- testCutDown1 end------------- ");
     } catch (Exception e) {
       e.printStackTrace();
       fail(q.getQueryString());
     }
-
-  }// end of test
+  } // end of test
 
   @Test
   public void testSelectAsFromClause() throws Exception {
     CacheUtils.log("------------- testSelectAsFromClause start------------- ");
     SelectResults rs[][] = new SelectResults[1][2];
     // Test Case No. IUMR016
-    String sqlStr = "SELECT DISTINCT c1.name, s1.name, ct1.name FROM /Countries1 c1, c1.states s1, (SELECT DISTINCT * FROM " + "/Countries2 c2, c2.states s2, s2.districts d2, d2.cities ct2 WHERE s2.name = 'PUNJAB') itr1, " + "s1.districts d1, d1.cities ct1 WHERE ct1.name = 'CHANDIGARH'";
+    String sqlStr =
+        "SELECT DISTINCT c1.name, s1.name, ct1.name FROM /Countries1 c1, c1.states s1, (SELECT DISTINCT * FROM "
+            + "/Countries2 c2, c2.states s2, s2.districts d2, d2.cities ct2 WHERE s2.name = 'PUNJAB') itr1, "
+            + "s1.districts d1, d1.cities ct1 WHERE ct1.name = 'CHANDIGARH'";
 
     // query execution without Index.
     Query q = null;
@@ -424,7 +464,7 @@ public class MultiRegionIndexUsageJUnitTest {
       rs[0][0] = (SelectResults) q.execute();
 
       createIndex();
-      QueryService qs2 = cache.getQueryService();// ????
+      QueryService qs2 = cache.getQueryService(); // ????
       q = qs2.newQuery(sqlStr);
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
@@ -443,28 +483,33 @@ public class MultiRegionIndexUsageJUnitTest {
         } else if (temp.equals("cityName1")) {
           break;
         } else {
-          fail("indices used do not match with those which are expected to be used" + "<stateName2> and <cityName1> were expected but found " + itr.next());
+          fail(
+              "indices used do not match with those which are expected to be used"
+                  + "<stateName2> and <cityName1> were expected but found "
+                  + itr.next());
         }
       }
 
       // assertIndexDetailsEquals("stateName2", itr.next().toString());
       // assertIndexDetailsEquals("cityName1", itr.next().toString());
 
-      areResultsMatching(rs, new String[] { sqlStr });
+      areResultsMatching(rs, new String[] {sqlStr});
       CacheUtils.log("------------- testSelectAsFromClause end------------- ");
     } catch (Exception e) {
       e.printStackTrace();
       fail(q.getQueryString());
     }
-
-  }// end of test
+  } // end of test
 
   @Test
   public void testSelectAsWhereClause() throws Exception {
     CacheUtils.log("------------- testSelectAsWhereClause start------------- ");
     SelectResults rs[][] = new SelectResults[1][2];
     // Test Case No. IUMR017
-    String sqlStr = "SELECT DISTINCT c1.name, s1.name, ct1.name FROM /Countries1 c1, c1.states s1, s1.districts d1," + " d1.cities ct1 WHERE ct1.name = element (SELECT DISTINCT ct3.name FROM /Countries3 c3, c3.states s3, " + "s3.districts d3, d3.cities ct3 WHERE s3.name = 'MAHARASHTRA' AND ct3.name = 'PUNE')";
+    String sqlStr =
+        "SELECT DISTINCT c1.name, s1.name, ct1.name FROM /Countries1 c1, c1.states s1, s1.districts d1,"
+            + " d1.cities ct1 WHERE ct1.name = element (SELECT DISTINCT ct3.name FROM /Countries3 c3, c3.states s3, "
+            + "s3.districts d3, d3.cities ct3 WHERE s3.name = 'MAHARASHTRA' AND ct3.name = 'PUNE')";
 
     // query execution without Index.
     Query q = null;
@@ -474,7 +519,7 @@ public class MultiRegionIndexUsageJUnitTest {
       rs[0][0] = (SelectResults) q.execute();
 
       createIndex();
-      QueryService qs2 = cache.getQueryService();// ????
+      QueryService qs2 = cache.getQueryService(); // ????
       q = qs2.newQuery(sqlStr);
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
@@ -493,7 +538,10 @@ public class MultiRegionIndexUsageJUnitTest {
         } else if (temp.equals("cityName1")) {
           break;
         } else {
-          fail("indices used do not match with those which are expected to be used" + "<cityName3> and <cityName1> were expected but found " + itr.next());
+          fail(
+              "indices used do not match with those which are expected to be used"
+                  + "<cityName3> and <cityName1> were expected but found "
+                  + itr.next());
         }
       }
 
@@ -501,21 +549,22 @@ public class MultiRegionIndexUsageJUnitTest {
       // assertIndexDetailsEquals("cityName1", itr.next().toString());
       // assertIndexDetailsEquals("stateName1", itr.next().toString());
 
-      areResultsMatching(rs, new String[] { sqlStr });
+      areResultsMatching(rs, new String[] {sqlStr});
       CacheUtils.log("------------- testSelectAsWhereClause end------------- ");
     } catch (Exception e) {
       e.printStackTrace();
       // fail(q.getQueryString());
     }
-
-  }// end of test
+  } // end of test
 
   @Test
   public void testFunctionUse1() throws Exception {
     CacheUtils.log("------------- testFunctionUse1 start------------- ");
     SelectResults rs[][] = new SelectResults[1][2];
     // Test Case No. IUMR018
-    String sqlStr = "SELECT DISTINCT c1.name, s1.name, ct1.name FROM /Countries1 c1, c1.states s1, s1.districts d1, " + "d1.cities ct1, d1.getVillages() v1 WHERE v1.getName() = 'PUNJAB_VILLAGE1'";
+    String sqlStr =
+        "SELECT DISTINCT c1.name, s1.name, ct1.name FROM /Countries1 c1, c1.states s1, s1.districts d1, "
+            + "d1.cities ct1, d1.getVillages() v1 WHERE v1.getName() = 'PUNJAB_VILLAGE1'";
 
     // query execution without Index.
     Query q = null;
@@ -525,7 +574,7 @@ public class MultiRegionIndexUsageJUnitTest {
       rs[0][0] = (SelectResults) q.execute();
 
       createIndex();
-      QueryService qs2 = cache.getQueryService();// ????
+      QueryService qs2 = cache.getQueryService(); // ????
       q = qs2.newQuery(sqlStr);
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
@@ -537,14 +586,13 @@ public class MultiRegionIndexUsageJUnitTest {
       Iterator itr = observer.indexesUsed.iterator();
       assertEquals("villageName1", itr.next().toString());
 
-      areResultsMatching(rs, new String[] { sqlStr });
+      areResultsMatching(rs, new String[] {sqlStr});
       CacheUtils.log("------------- testFunctionUse1 end------------- ");
     } catch (Exception e) {
       e.printStackTrace();
       // fail(q.getQueryString());
     }
-
-  }// end of test
+  } // end of test
 
   @Ignore
   @Test
@@ -552,7 +600,10 @@ public class MultiRegionIndexUsageJUnitTest {
     CacheUtils.log("------------- testFunctionUse2 start------------- ");
     SelectResults rs[][] = new SelectResults[1][2];
     // Test Case No. IUMR019
-    String sqlStr = "SELECT DISTINCT s.name, s.getDistricts(), ct.getName() FROM /Countries1 c, c.states s, " + "s.getDistricts() d, d.getCities() ct WHERE ct.name = 'PUNE' OR ct.name = 'CHANDIGARH' " + "OR s.name = 'GUJARAT'";
+    String sqlStr =
+        "SELECT DISTINCT s.name, s.getDistricts(), ct.getName() FROM /Countries1 c, c.states s, "
+            + "s.getDistricts() d, d.getCities() ct WHERE ct.name = 'PUNE' OR ct.name = 'CHANDIGARH' "
+            + "OR s.name = 'GUJARAT'";
 
     // query execution without Index.
     Query q = null;
@@ -562,7 +613,7 @@ public class MultiRegionIndexUsageJUnitTest {
       rs[0][0] = (SelectResults) q.execute();
 
       createIndex();
-      QueryService qs2 = cache.getQueryService();// ????
+      QueryService qs2 = cache.getQueryService(); // ????
       q = qs2.newQuery(sqlStr);
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
@@ -581,29 +632,33 @@ public class MultiRegionIndexUsageJUnitTest {
         } else if (temp.equals("stateName1")) {
           break;
         } else {
-          fail("indices used do not match with those which are expected to be used" + "<villageName1> and <cityName2> were expected but found " + itr.next());
+          fail(
+              "indices used do not match with those which are expected to be used"
+                  + "<villageName1> and <cityName2> were expected but found "
+                  + itr.next());
         }
       }
 
       // assertIndexDetailsEquals("cityName", itr.next().toString());
       // assertIndexDetailsEquals("stateName", itr.next().toString());
 
-      areResultsMatching(rs, new String[] { sqlStr });
+      areResultsMatching(rs, new String[] {sqlStr});
       CacheUtils.log("------------- testFunctionUse2 end------------- ");
 
     } catch (Exception e) {
       e.printStackTrace();
       fail(q.getQueryString());
     }
-
-  }// end of test
+  } // end of test
 
   @Test
   public void testFunctionUse3() throws Exception {
     CacheUtils.log("------------- testFunctionUse3 start------------- ");
     SelectResults rs[][] = new SelectResults[1][2];
     // Test Case No. IUMR020
-    String sqlStr = "SELECT DISTINCT d.getName(), d.getCities(), d.getVillages() FROM /Countries3 c, " + "c.states s, s.districts d WHERE d.name = 'MUMBAIDIST'";
+    String sqlStr =
+        "SELECT DISTINCT d.getName(), d.getCities(), d.getVillages() FROM /Countries3 c, "
+            + "c.states s, s.districts d WHERE d.name = 'MUMBAIDIST'";
 
     // query execution without Index.
     Query q = null;
@@ -613,7 +668,7 @@ public class MultiRegionIndexUsageJUnitTest {
       rs[0][0] = (SelectResults) q.execute();
 
       createIndex();
-      QueryService qs2 = cache.getQueryService();// ????
+      QueryService qs2 = cache.getQueryService(); // ????
       q = qs2.newQuery(sqlStr);
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
@@ -625,21 +680,23 @@ public class MultiRegionIndexUsageJUnitTest {
       Iterator itr = observer.indexesUsed.iterator();
       assertEquals("districtName3", itr.next().toString());
 
-      areResultsMatching(rs, new String[] { sqlStr });
+      areResultsMatching(rs, new String[] {sqlStr});
       CacheUtils.log("------------- testFunctionUse3 end------------- ");
     } catch (Exception e) {
       e.printStackTrace();
       fail(q.getQueryString());
     }
-
-  }// end of test
+  } // end of test
 
   @Test
   public void testFunctionUse4() throws Exception {
     CacheUtils.log("------------- testFunctionUse4 start------------- ");
     SelectResults rs[][] = new SelectResults[1][2];
     // Test Case No. IUMR020
-    String sqlStr = "SELECT DISTINCT * FROM /Countries1 c1, /Countries3 c3, c1.states s1, c3.states s3, " + "s1.districts d1, s3.getDistrictsWithSameName(d1) d3 WHERE c1.name = 'INDIA' OR c3.name = 'ISRAEL' " + "OR d3.name = 'MUMBAIDIST' OR d3.name = 'PUNEDIST'";
+    String sqlStr =
+        "SELECT DISTINCT * FROM /Countries1 c1, /Countries3 c3, c1.states s1, c3.states s3, "
+            + "s1.districts d1, s3.getDistrictsWithSameName(d1) d3 WHERE c1.name = 'INDIA' OR c3.name = 'ISRAEL' "
+            + "OR d3.name = 'MUMBAIDIST' OR d3.name = 'PUNEDIST'";
     // s3.getDistrictsWithSameName(d1) d3
     // s3.districts d3
 
@@ -651,7 +708,7 @@ public class MultiRegionIndexUsageJUnitTest {
       rs[0][0] = (SelectResults) q.execute();
 
       createIndex();
-      QueryService qs2 = cache.getQueryService();// ????
+      QueryService qs2 = cache.getQueryService(); // ????
       q = qs2.newQuery(sqlStr);
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
@@ -659,20 +716,18 @@ public class MultiRegionIndexUsageJUnitTest {
 
       // assertIndexDetailsEquals("districtName3", itr.next().toString());
 
-      areResultsMatching(rs, new String[] { sqlStr });
+      areResultsMatching(rs, new String[] {sqlStr});
       CacheUtils.log("------------- testFunctionUse4 end------------- ");
     } catch (Exception e) {
       e.printStackTrace();
       fail(q.getQueryString());
     }
-
-  }// end of test
+  } // end of test
 
   private static void areResultsMatching(SelectResults rs[][], String[] queries) {
     StructSetOrResultsSet ssORrs = new StructSetOrResultsSet();
     ssORrs.CompareQueryResultsWithoutAndWithIndexes(rs, 1, queries);
-
-  }// end of areResultsMatching
+  } // end of areResultsMatching
 
   // ////////////// function to pupualte data in single region //////////////
   private void populateData() throws Exception {
@@ -729,65 +784,94 @@ public class MultiRegionIndexUsageJUnitTest {
       int temp;
       temp = i % 5;
       switch (temp) {
-      case 1:
-        region1.put(new Integer(i), c1);
-        region2.put(new Integer(i), c1);
-        region3.put(new Integer(i), c1);
-        break;
+        case 1:
+          region1.put(new Integer(i), c1);
+          region2.put(new Integer(i), c1);
+          region3.put(new Integer(i), c1);
+          break;
 
-      case 2:
-        region1.put(new Integer(i), c2);
-        region2.put(new Integer(i), c2);
-        region3.put(new Integer(i), c2);
-        break;
+        case 2:
+          region1.put(new Integer(i), c2);
+          region2.put(new Integer(i), c2);
+          region3.put(new Integer(i), c2);
+          break;
 
-      case 3:
-        region1.put(new Integer(i), c3);
-        region2.put(new Integer(i), c3);
-        region3.put(new Integer(i), c3);
-        break;
+        case 3:
+          region1.put(new Integer(i), c3);
+          region2.put(new Integer(i), c3);
+          region3.put(new Integer(i), c3);
+          break;
 
-      case 4:
-        region1.put(new Integer(i), c4);
-        region2.put(new Integer(i), c4);
-        region3.put(new Integer(i), c4);
-        break;
+        case 4:
+          region1.put(new Integer(i), c4);
+          region2.put(new Integer(i), c4);
+          region3.put(new Integer(i), c4);
+          break;
 
-      case 0:
-        region1.put(new Integer(i), c5);
-        region2.put(new Integer(i), c5);
-        region3.put(new Integer(i), c5);
-        break;
+        case 0:
+          region1.put(new Integer(i), c5);
+          region2.put(new Integer(i), c5);
+          region3.put(new Integer(i), c5);
+          break;
 
-      default:
-        CacheUtils.log("Nothing to add in region for: " + temp);
-        break;
-
-      }// end of switch
+        default:
+          CacheUtils.log("Nothing to add in region for: " + temp);
+          break;
+      } // end of switch
     } // end of for
-
-  }// end of populateData
+  } // end of populateData
 
   // //////////////// function to create index ///////////////////
   private void createIndex() throws Exception {
     QueryService qs;
     qs = cache.getQueryService();
     /* Indices on region1 */
-    qs.createIndex("villageName1", IndexType.FUNCTIONAL, "v.name", "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("cityName1", IndexType.FUNCTIONAL, "ct.name", "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("countryNameA", IndexType.FUNCTIONAL, "c.name", "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "villageName1",
+        IndexType.FUNCTIONAL,
+        "v.name",
+        "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "cityName1",
+        IndexType.FUNCTIONAL,
+        "ct.name",
+        "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "countryNameA",
+        IndexType.FUNCTIONAL,
+        "c.name",
+        "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
     qs.createIndex("countryNameB", IndexType.FUNCTIONAL, "c.name", "/Countries1 c");
 
     /* Indices on region2 */
-    qs.createIndex("stateName2", IndexType.FUNCTIONAL, "s.name", "/Countries2 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("cityName2", IndexType.FUNCTIONAL, "ct.name", "/Countries2 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "stateName2",
+        IndexType.FUNCTIONAL,
+        "s.name",
+        "/Countries2 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "cityName2",
+        IndexType.FUNCTIONAL,
+        "ct.name",
+        "/Countries2 c, c.states s, s.districts d, d.cities ct, d.villages v");
 
     /* Indices on region3 */
-    qs.createIndex("districtName3", IndexType.FUNCTIONAL, "d.name", "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("villageName3", IndexType.FUNCTIONAL, "v.name", "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("cityName3", IndexType.FUNCTIONAL, "ct.name", "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
-
-  }// end of createIndex
+    qs.createIndex(
+        "districtName3",
+        IndexType.FUNCTIONAL,
+        "d.name",
+        "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "villageName3",
+        IndexType.FUNCTIONAL,
+        "v.name",
+        "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "cityName3",
+        IndexType.FUNCTIONAL,
+        "ct.name",
+        "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
+  } // end of createIndex
 
   private static class QueryObserverImpl extends QueryObserverAdapter {
     boolean isIndexesUsed = false;
@@ -804,6 +888,5 @@ public class MultiRegionIndexUsageJUnitTest {
         isIndexesUsed = true;
       }
     }
-  }// end of QueryObserverImpl
-
-}// end of the class
+  } // end of QueryObserverImpl
+} // end of the class

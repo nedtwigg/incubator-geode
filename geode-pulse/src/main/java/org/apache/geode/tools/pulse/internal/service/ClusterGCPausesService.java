@@ -32,13 +32,12 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Class ClusterGCPausesService
- * 
- * This class contains implementations of getting Cluster's GC Pauses (JVM
- * Pauses) Details and its trend over the time.
- * 
+ *
+ * <p>This class contains implementations of getting Cluster's GC Pauses (JVM Pauses) Details and
+ * its trend over the time.
+ *
  * @since GemFire version 7.5
  */
-
 @Component
 @Service("ClusterJVMPauses")
 @Scope("singleton")

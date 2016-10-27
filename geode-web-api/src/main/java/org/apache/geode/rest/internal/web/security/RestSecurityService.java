@@ -47,8 +47,7 @@ public class RestSecurityService {
     boolean authorized = false;
     for (String key : keys) {
       authorized = authorize("DATA", operation, region, key);
-      if (!authorized)
-        return false;
+      if (!authorized) return false;
     }
     return true;
   }

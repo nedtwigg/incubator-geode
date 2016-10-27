@@ -19,29 +19,28 @@ package org.apache.geode.internal;
 import java.io.*;
 import java.util.*;
 
-/**
- * Used to exec a java main class in its own vm
- *
- *
- */
+/** Used to exec a java main class in its own vm */
 public class JavaExec {
   /**
-   * Creates a java process that executes the given main class
-   * and waits for the process to terminate.
-   * @return a {@link ProcessOutputReader} that can be used to
-   * get the exit code and stdout+stderr of the terminated process. 
+   * Creates a java process that executes the given main class and waits for the process to
+   * terminate.
+   *
+   * @return a {@link ProcessOutputReader} that can be used to get the exit code and stdout+stderr
+   *     of the terminated process.
    */
   public static ProcessOutputReader fg(Class main) throws IOException {
     return fg(main, null, null);
   }
 
   /**
-   * Creates a java process that executes the given main class
-   * and waits for the process to terminate.
-   * @return a {@link ProcessOutputReader} that can be used to
-   * get the exit code and stdout+stderr of the terminated process. 
+   * Creates a java process that executes the given main class and waits for the process to
+   * terminate.
+   *
+   * @return a {@link ProcessOutputReader} that can be used to get the exit code and stdout+stderr
+   *     of the terminated process.
    */
-  public static ProcessOutputReader fg(Class main, String[] vmArgs, String[] mainArgs) throws IOException {
+  public static ProcessOutputReader fg(Class main, String[] vmArgs, String[] mainArgs)
+      throws IOException {
     File javabindir = new File(System.getProperty("java.home"), "bin");
     File javaexe = new File(javabindir, "java");
 

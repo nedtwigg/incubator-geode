@@ -22,9 +22,9 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- * Places various objects that use {@link org.apache.geode.DataSerializer}s 
- * and {@link org.apache.geode.Instantiator}s into a cache {@link Region}.  
- * Among other things, this is used to test bug 31573.
+ * Places various objects that use {@link org.apache.geode.DataSerializer}s and {@link
+ * org.apache.geode.Instantiator}s into a cache {@link Region}. Among other things, this is used to
+ * test bug 31573.
  *
  * @since GemFire 3.5
  */
@@ -47,5 +47,4 @@ public class PutDataSerializables {
 
     Thread.sleep(60 * 1000);
   }
-
 }

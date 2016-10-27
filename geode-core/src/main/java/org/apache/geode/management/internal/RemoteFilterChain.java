@@ -30,19 +30,19 @@ public class RemoteFilterChain extends FilterChain {
 
     /*String remoteMBeanExcludeFilter = managementConfig.getRemoteMBeanExcludeFilter();
     String remoteMBeanIncludeFilter = managementConfig.getRemoteMBeanIncludeFilter();
-    
+
     FilterParam remoteMBeanParam = createFilterParam(remoteMBeanIncludeFilter, remoteMBeanExcludeFilter);
     remoteMBeanFilter = new StringBasedFilter(remoteMBeanParam);
-    
+
     String memberNodeExcludeFilter = managementConfig.getMemberNodeExcludeFilter();
     String memberNodeIncludeFilter = managementConfig.getMemberNodeIncludeFilter();
-    
+
     FilterParam memberNodeParam = createFilterParam(memberNodeIncludeFilter, memberNodeExcludeFilter);
     managedMemberFilter = new StringBasedFilter(memberNodeParam);
-    
+
     String serverGroupExcludeFilter = managementConfig.getServerGroupExcludeFilter();
     String serverGroupIncludeFilter = managementConfig.getServerGroupIncludeFilter();
-    
+
     FilterParam serverGroupParam = createFilterParam(serverGroupIncludeFilter, serverGroupExcludeFilter);
     serverGroupFilter = new StringBasedFilter(serverGroupParam);*/
 
@@ -63,7 +63,7 @@ public class RemoteFilterChain extends FilterChain {
     // <For future use>
     /*boolean isExcluded = remoteMBeanFilter.isExcluded(objectName.getCanonicalName());
     boolean isIncluded = remoteMBeanFilter.isIncluded(objectName.getCanonicalName());
-    
+
     return isFiltered(isIncluded, isExcluded);*/
 
   }
@@ -73,7 +73,7 @@ public class RemoteFilterChain extends FilterChain {
     // <For future use>
     /*boolean isExcluded = managedMemberFilter.isExcluded(member.getId());
     boolean isIncluded = managedMemberFilter.isIncluded(member.getId());
-    
+
     return isFiltered(isIncluded, isExcluded);*/
 
   }
@@ -83,9 +83,8 @@ public class RemoteFilterChain extends FilterChain {
     // <For future use>
     /*boolean isExcluded = serverGroupFilter.isExcluded(serverGroup);
     boolean isIncluded = serverGroupFilter.isIncluded(serverGroup);
-    
+
     return isFiltered(isIncluded, isExcluded);
     */
   }
-
 }

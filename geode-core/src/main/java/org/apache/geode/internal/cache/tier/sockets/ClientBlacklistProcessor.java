@@ -37,11 +37,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A processor for sending client black list message to all nodes from primary.
- * This adds client to the blacklist and destroy it's queue if available on node.
- * 
- * @since GemFire 6.0
+ * A processor for sending client black list message to all nodes from primary. This adds client to
+ * the blacklist and destroy it's queue if available on node.
  *
+ * @since GemFire 6.0
  */
 public class ClientBlacklistProcessor extends ReplyProcessor21 {
 
@@ -63,20 +62,21 @@ public class ClientBlacklistProcessor extends ReplyProcessor21 {
     super.process(msg);
   }
 
-  /** Creates a new instance of ClientBlacklistProcessor
-   */
+  /** Creates a new instance of ClientBlacklistProcessor */
   private ClientBlacklistProcessor(DM dm, Set members) {
     super(dm, members);
   }
 
   ///////////////   Inner message classes  //////////////////
 
-  public static class ClientBlacklistMessage extends PooledDistributionMessage implements MessageWithReply {
+  public static class ClientBlacklistMessage extends PooledDistributionMessage
+      implements MessageWithReply {
     private int processorId;
 
     private ClientProxyMembershipID proxyId;
 
-    protected static void send(ClientProxyMembershipID proxyId, DM dm, ClientBlacklistProcessor proc, Set members) {
+    protected static void send(
+        ClientProxyMembershipID proxyId, DM dm, ClientBlacklistProcessor proc, Set members) {
       ClientBlacklistMessage msg = new ClientBlacklistMessage();
       msg.processorId = proc.getProcessorId();
       msg.proxyId = proxyId;
@@ -154,12 +154,14 @@ public class ClientBlacklistProcessor extends ReplyProcessor21 {
     @Override
     public String toString() {
       StringBuffer buff = new StringBuffer();
-      buff.append("ClientBlacklistMessage (proxyId='").append(this.proxyId).append("' processorId=").append(this.processorId).append(")");
+      buff.append("ClientBlacklistMessage (proxyId='")
+          .append(this.proxyId)
+          .append("' processorId=")
+          .append(this.processorId)
+          .append(")");
       return buff.toString();
     }
   }
 
-  public static class ClientBlacklistReply extends ReplyMessage {
-  }
-
+  public static class ClientBlacklistReply extends ReplyMessage {}
 }

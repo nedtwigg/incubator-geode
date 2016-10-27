@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -28,16 +28,13 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.pdx.PdxInstance;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit test of the PdxFieldMapperJUnitTest. Tests that 
- * all field types are mapped correctly. 
- */
+/** Unit test of the PdxFieldMapperJUnitTest. Tests that all field types are mapped correctly. */
 @Category(UnitTest.class)
 public class PdxFieldMapperJUnitTest {
 
   @Test
   public void testWriteFields() {
-    String[] fields = new String[] { "s", "i" };
+    String[] fields = new String[] {"s", "i"};
     PdxLuceneSerializer mapper = new PdxLuceneSerializer(fields);
 
     PdxInstance i = mock(PdxInstance.class);
@@ -57,7 +54,7 @@ public class PdxFieldMapperJUnitTest {
 
   @Test
   public void testIgnoreMissing() {
-    String[] fields = new String[] { "s", "i", "s2", "o" };
+    String[] fields = new String[] {"s", "i", "s2", "o"};
     PdxLuceneSerializer mapper = new PdxLuceneSerializer(fields);
 
     PdxInstance i = mock(PdxInstance.class);
@@ -81,7 +78,7 @@ public class PdxFieldMapperJUnitTest {
 
   @Test
   public void testNullField() {
-    String[] fields = new String[] { "s", "i" };
+    String[] fields = new String[] {"s", "i"};
     PdxLuceneSerializer mapper = new PdxLuceneSerializer(fields);
 
     PdxInstance i = mock(PdxInstance.class);

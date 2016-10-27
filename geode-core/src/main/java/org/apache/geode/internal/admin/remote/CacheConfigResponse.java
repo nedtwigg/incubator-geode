@@ -30,22 +30,29 @@ import org.apache.geode.distributed.internal.membership.*;
 
 /**
  * A message that is sent in response to a {@link CacheConfigRequest}.
+ *
  * @since GemFire 3.5
  */
 public final class CacheConfigResponse extends AdminResponse {
   // instance variables
   private RemoteCacheInfo info;
 
-  /** An exception thrown while configuring the cache
+  /**
+   * An exception thrown while configuring the cache
    *
-   * @since GemFire 4.0 */
+   * @since GemFire 4.0
+   */
   private Exception exception;
 
   /**
-   * Returns a <code>CacheConfigResponse</code> that will be returned to the
-   * specified recipient.
+   * Returns a <code>CacheConfigResponse</code> that will be returned to the specified recipient.
    */
-  public static CacheConfigResponse create(DistributionManager dm, InternalDistributedMember recipient, int cacheId, byte attributeCode, int newValue) {
+  public static CacheConfigResponse create(
+      DistributionManager dm,
+      InternalDistributedMember recipient,
+      int cacheId,
+      byte attributeCode,
+      int newValue) {
     CacheConfigResponse m = new CacheConfigResponse();
     m.setRecipient(recipient);
     try {
@@ -54,17 +61,17 @@ public final class CacheConfigResponse extends AdminResponse {
         m.info = null;
       } else {
         switch (attributeCode) {
-        case RemoteGemFireVM.LOCK_TIMEOUT_CODE:
-          c.setLockTimeout(newValue);
-          break;
-        case RemoteGemFireVM.LOCK_LEASE_CODE:
-          c.setLockLease(newValue);
-          break;
-        case RemoteGemFireVM.SEARCH_TIMEOUT_CODE:
-          c.setSearchTimeout(newValue);
-          break;
-        default:
-          Assert.assertTrue(false, "Unknown config code: " + attributeCode);
+          case RemoteGemFireVM.LOCK_TIMEOUT_CODE:
+            c.setLockTimeout(newValue);
+            break;
+          case RemoteGemFireVM.LOCK_LEASE_CODE:
+            c.setLockLease(newValue);
+            break;
+          case RemoteGemFireVM.SEARCH_TIMEOUT_CODE:
+            c.setSearchTimeout(newValue);
+            break;
+          default:
+            Assert.assertTrue(false, "Unknown config code: " + attributeCode);
         }
       }
       m.info = new RemoteCacheInfo(c);
@@ -82,10 +89,7 @@ public final class CacheConfigResponse extends AdminResponse {
     return this.info;
   }
 
-  /**
-   * Returns the exception that was thrown while changing the cache
-   * configuration.
-   */
+  /** Returns the exception that was thrown while changing the cache configuration. */
   public Exception getException() {
     return this.exception;
   }

@@ -39,16 +39,16 @@ import org.powermock.modules.junit4.*;
 
 /*
  * This test simply verifies the static class delegates properly to the impl
- * 
+ *
  * PowerMock used in this test to inject mocked impl into static class
- * The PowerMockRule bootstraps PowerMock without the need for 
+ * The PowerMockRule bootstraps PowerMock without the need for
  * the @RunWith(PowerMockRunner.class) annotation, which was interfering with jacoco
- * 
+ *
  */
 @Category(UnitTest.class)
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({ "*.UnitTest" })
-@PrepareForTest({ ReferenceCountHelper.class })
+@PowerMockIgnore({"*.UnitTest"})
+@PrepareForTest({ReferenceCountHelper.class})
 public class ReferenceCountHelperJUnitTest {
 
   private ReferenceCountHelperImpl prepareInstance() {

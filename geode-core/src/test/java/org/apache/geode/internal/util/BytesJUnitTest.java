@@ -38,7 +38,7 @@ public class BytesJUnitTest {
 
   @Test
   public void testShort() {
-    short[] val = { 666, -1, Short.MIN_VALUE, 0, 12, Short.MAX_VALUE };
+    short[] val = {666, -1, Short.MIN_VALUE, 0, 12, Short.MAX_VALUE};
     for (int i = 0; i < val.length; i++) {
       buf.putShort(val[i]).flip();
       assertEquals(val[i], Bytes.toShort(buf.get(), buf.get()));
@@ -49,7 +49,7 @@ public class BytesJUnitTest {
 
   @Test
   public void testChar() {
-    char[] val = { 'a', 'b', 'c' };
+    char[] val = {'a', 'b', 'c'};
     for (int i = 0; i < val.length; i++) {
       buf.putChar(val[i]).flip();
       assertEquals(val[i], Bytes.toChar(buf.get(), buf.get()));
@@ -60,7 +60,7 @@ public class BytesJUnitTest {
 
   @Test
   public void testUnsignedShort() {
-    int[] val = { 0, 1, Short.MAX_VALUE + 1, 2 * Short.MAX_VALUE };
+    int[] val = {0, 1, Short.MAX_VALUE + 1, 2 * Short.MAX_VALUE};
     for (int i = 0; i < val.length; i++) {
       buf.put(Bytes.int2(val[i])).put(Bytes.int3(val[i])).flip();
       assertEquals(val[i], Bytes.toUnsignedShort(buf.get(), buf.get()));
@@ -71,7 +71,7 @@ public class BytesJUnitTest {
 
   @Test
   public void testInt() {
-    int[] val = { 666, -1, Integer.MIN_VALUE, 0, 1, Integer.MAX_VALUE };
+    int[] val = {666, -1, Integer.MIN_VALUE, 0, 1, Integer.MAX_VALUE};
     for (int i = 0; i < val.length; i++) {
       buf.putInt(val[i]).flip();
       assertEquals(val[i], Bytes.toInt(buf.get(), buf.get(), buf.get(), buf.get()));
@@ -86,10 +86,14 @@ public class BytesJUnitTest {
 
   @Test
   public void testLong() {
-    long[] val = { 666, -1, Long.MIN_VALUE, 0, 1, Long.MAX_VALUE };
+    long[] val = {666, -1, Long.MIN_VALUE, 0, 1, Long.MAX_VALUE};
     for (int i = 0; i < val.length; i++) {
       buf.putLong(val[i]).flip();
-      assertEquals(val[i], Bytes.toLong(buf.get(), buf.get(), buf.get(), buf.get(), buf.get(), buf.get(), buf.get(), buf.get()));
+      assertEquals(
+          val[i],
+          Bytes.toLong(
+              buf.get(), buf.get(), buf.get(), buf.get(), buf.get(), buf.get(), buf.get(),
+              buf.get()));
 
       buf.rewind();
     }

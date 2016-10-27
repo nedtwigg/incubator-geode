@@ -28,14 +28,15 @@ import org.apache.geode.security.GemFireSecurityException;
 
 public class RemoveUserAuth extends BaseCommand {
 
-  private final static RemoveUserAuth singleton = new RemoveUserAuth();
+  private static final RemoveUserAuth singleton = new RemoveUserAuth();
 
   public static Command getCommand() {
     return singleton;
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException, InterruptedException {
     boolean isSecureMode = msg.isSecureMode();
 
     if (!isSecureMode) {
@@ -53,18 +54,26 @@ public class RemoveUserAuth extends BaseCommand {
       writeReply(msg, servConn);
     } catch (GemFireSecurityException gfse) {
       if (servConn.getSecurityLogWriter().warningEnabled()) {
-        servConn.getSecurityLogWriter().warning(LocalizedStrings.ONE_ARG, servConn.getName() + ": Security exception: " + gfse.getMessage());
+        servConn
+            .getSecurityLogWriter()
+            .warning(
+                LocalizedStrings.ONE_ARG,
+                servConn.getName() + ": Security exception: " + gfse.getMessage());
       }
       writeException(msg, gfse, false, servConn);
     } catch (Exception ex) {
       // TODO Auto-generated catch block
       if (servConn.getLogWriter().warningEnabled()) {
-        servConn.getLogWriter().warning(LocalizedStrings.CacheClientNotifier_AN_EXCEPTION_WAS_THROWN_FOR_CLIENT_0_1, new Object[] { servConn.getProxyID(), "" }, ex);
+        servConn
+            .getLogWriter()
+            .warning(
+                LocalizedStrings.CacheClientNotifier_AN_EXCEPTION_WAS_THROWN_FOR_CLIENT_0_1,
+                new Object[] {servConn.getProxyID(), ""},
+                ex);
       }
       writeException(msg, ex, false, servConn);
     } finally {
       servConn.setAsTrue(RESPONDED);
     }
   }
-
 }

@@ -52,34 +52,20 @@ public class Get70Test {
   private static final Object CALLBACK_ARG = "arg";
   private static final byte[] EVENT = new byte[8];
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private AuthorizeRequest authzRequest;
-  @Mock
-  private LocalRegion region;
-  @Mock
-  private Cache cache;
-  @Mock
-  private CacheServerStats cacheServerStats;
-  @Mock
-  private Message responseMessage;
-  @Mock
-  private Message errorResponseMessage;
-  @Mock
-  private Part regionNamePart;
-  @Mock
-  private Part keyPart;
-  @Mock
-  private Part valuePart;
-  @Mock
-  private GetOperationContext getOperationContext;
-  @InjectMocks
-  private Get70 get70;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private ServerConnection serverConnection;
+  @Mock private AuthorizeRequest authzRequest;
+  @Mock private LocalRegion region;
+  @Mock private Cache cache;
+  @Mock private CacheServerStats cacheServerStats;
+  @Mock private Message responseMessage;
+  @Mock private Message errorResponseMessage;
+  @Mock private Part regionNamePart;
+  @Mock private Part keyPart;
+  @Mock private Part valuePart;
+  @Mock private GetOperationContext getOperationContext;
+  @InjectMocks private Get70 get70;
 
   @Before
   public void setUp() throws Exception {
@@ -136,7 +122,9 @@ public class Get70Test {
   public void integratedSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(true);
-    doThrow(new NotAuthorizedException("")).when(this.securityService).authorizeRegionRead(eq(REGION_NAME), eq(KEY));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.securityService)
+        .authorizeRegionRead(eq(REGION_NAME), eq(KEY));
 
     this.get70.cmdExecute(this.message, this.serverConnection, 0);
 
@@ -159,12 +147,13 @@ public class Get70Test {
   public void oldSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
-    doThrow(new NotAuthorizedException("")).when(this.authzRequest).getAuthorize(eq(REGION_NAME), eq(KEY), eq(CALLBACK_ARG));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.authzRequest)
+        .getAuthorize(eq(REGION_NAME), eq(KEY), eq(CALLBACK_ARG));
 
     this.get70.cmdExecute(this.message, this.serverConnection, 0);
 
     verify(this.authzRequest).getAuthorize(eq(REGION_NAME), eq(KEY), eq(CALLBACK_ARG));
     verify(this.errorResponseMessage).send(eq(this.serverConnection));
   }
-
 }

@@ -16,19 +16,13 @@
  */
 package org.apache.geode.management.internal.cli.result;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class ResultDataException extends RuntimeException {
 
   private static final long serialVersionUID = 3851919811942980944L;
 
-  /**
-   * @param message
-   */
+  /** @param message */
   public ResultDataException(String message) {
     super(message);
   }
-
 }

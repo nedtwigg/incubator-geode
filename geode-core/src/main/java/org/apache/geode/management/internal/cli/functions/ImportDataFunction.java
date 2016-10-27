@@ -28,10 +28,9 @@ import org.apache.geode.cache.snapshot.SnapshotOptions.SnapshotFormat;
 import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
-/****
- * Function which carries out the import of a region to a file on a member.
- * Uses the RegionSnapshotService to import the data
- *
+/**
+ * ** Function which carries out the import of a region to a file on a member. Uses the
+ * RegionSnapshotService to import the data
  */
 public class ImportDataFunction extends FunctionAdapter implements InternalEntity {
 
@@ -50,10 +49,16 @@ public class ImportDataFunction extends FunctionAdapter implements InternalEntit
         RegionSnapshotService<?, ?> snapshotService = region.getSnapshotService();
         File importFile = new File(importFileName);
         snapshotService.load(new File(importFileName), SnapshotFormat.GEMFIRE);
-        String successMessage = CliStrings.format(CliStrings.IMPORT_DATA__SUCCESS__MESSAGE, importFile.getCanonicalPath(), hostName, regionName);
+        String successMessage =
+            CliStrings.format(
+                CliStrings.IMPORT_DATA__SUCCESS__MESSAGE,
+                importFile.getCanonicalPath(),
+                hostName,
+                regionName);
         context.getResultSender().lastResult(successMessage);
       } else {
-        throw new IllegalArgumentException(CliStrings.format(CliStrings.REGION_NOT_FOUND, regionName));
+        throw new IllegalArgumentException(
+            CliStrings.format(CliStrings.REGION_NOT_FOUND, regionName));
       }
 
     } catch (Exception e) {
@@ -64,5 +69,4 @@ public class ImportDataFunction extends FunctionAdapter implements InternalEntit
   public String getId() {
     return ImportDataFunction.class.getName();
   }
-
 }

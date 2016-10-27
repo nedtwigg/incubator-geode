@@ -25,8 +25,7 @@ public class TestObject implements PdxSerializable {
   public int id;
   public String owner;
 
-  public TestObject() {
-  }
+  public TestObject() {}
 
   public TestObject(final int id, final String owner) {
     this.id = id;
@@ -48,7 +47,6 @@ public class TestObject implements PdxSerializable {
       return false;
     }
     return owner != null ? owner.equals(that.owner) : that.owner == null;
-
   }
 
   @Override

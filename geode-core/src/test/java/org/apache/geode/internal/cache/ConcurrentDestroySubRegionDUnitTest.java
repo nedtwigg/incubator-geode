@@ -38,9 +38,7 @@ import org.apache.geode.test.dunit.Host;
 import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
-/**
- *
- */
+/** */
 @Category(DistributedTest.class)
 public class ConcurrentDestroySubRegionDUnitTest extends JUnit4CacheTestCase {
 
@@ -52,9 +50,7 @@ public class ConcurrentDestroySubRegionDUnitTest extends JUnit4CacheTestCase {
     disconnectAllFromDS();
   }
 
-  /**
-   * @param name
-   */
+  /** @param name */
   public ConcurrentDestroySubRegionDUnitTest() {
     super();
   }
@@ -66,44 +62,46 @@ public class ConcurrentDestroySubRegionDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
 
     for (int i = 0; i < 200; i++) {
-      final SerializableRunnable createParent = new SerializableRunnable() {
+      final SerializableRunnable createParent =
+          new SerializableRunnable() {
 
-        public void run() {
-          Cache cache = getCache();
-          AttributesFactory af = new AttributesFactory();
-          af.setScope(Scope.DISTRIBUTED_ACK);
-          af.setDataPolicy(DataPolicy.REPLICATE);
-          Region region = cache.createRegion("region", af.create());
-        }
-      };
+            public void run() {
+              Cache cache = getCache();
+              AttributesFactory af = new AttributesFactory();
+              af.setScope(Scope.DISTRIBUTED_ACK);
+              af.setDataPolicy(DataPolicy.REPLICATE);
+              Region region = cache.createRegion("region", af.create());
+            }
+          };
 
       vm0.invoke(createParent);
       vm1.invoke(createParent);
 
-      final SerializableRunnable createChild = new SerializableRunnable() {
+      final SerializableRunnable createChild =
+          new SerializableRunnable() {
 
-        public void run() {
-          Cache cache = getCache();
-          Region region = cache.getRegion("region");
-          if (region != null) {
-            AttributesFactory af = new AttributesFactory();
-            af.setScope(Scope.DISTRIBUTED_ACK);
-            af.setDataPolicy(DataPolicy.REPLICATE);
-            Region subregion = region.createSubregion("subregion", af.create());
-          }
-
-        }
-      };
+            public void run() {
+              Cache cache = getCache();
+              Region region = cache.getRegion("region");
+              if (region != null) {
+                AttributesFactory af = new AttributesFactory();
+                af.setScope(Scope.DISTRIBUTED_ACK);
+                af.setDataPolicy(DataPolicy.REPLICATE);
+                Region subregion = region.createSubregion("subregion", af.create());
+              }
+            }
+          };
       vm0.invoke(createChild);
 
-      final SerializableRunnable destroyParent = new SerializableRunnable() {
+      final SerializableRunnable destroyParent =
+          new SerializableRunnable() {
 
-        public void run() {
-          Cache cache = getCache();
-          Region region = cache.getRegion("/region");
-          region.destroyRegion();
-        }
-      };
+            public void run() {
+              Cache cache = getCache();
+              Region region = cache.getRegion("/region");
+              region.destroyRegion();
+            }
+          };
 
       AsyncInvocation future = vm0.invokeAsync(destroyParent);
       try {
@@ -126,43 +124,45 @@ public class ConcurrentDestroySubRegionDUnitTest extends JUnit4CacheTestCase {
     VM vm1 = host.getVM(1);
 
     for (int i = 0; i < 50; i++) {
-      final SerializableRunnable createParent = new SerializableRunnable() {
+      final SerializableRunnable createParent =
+          new SerializableRunnable() {
 
-        public void run() {
-          Cache cache = getCache();
-          AttributesFactory af = new AttributesFactory();
-          af.setScope(Scope.DISTRIBUTED_ACK);
-          af.setDataPolicy(DataPolicy.REPLICATE);
-          Region region = cache.createRegion("region", af.create());
-        }
-      };
+            public void run() {
+              Cache cache = getCache();
+              AttributesFactory af = new AttributesFactory();
+              af.setScope(Scope.DISTRIBUTED_ACK);
+              af.setDataPolicy(DataPolicy.REPLICATE);
+              Region region = cache.createRegion("region", af.create());
+            }
+          };
 
       vm0.invoke(createParent);
       vm1.invoke(createParent);
 
-      final SerializableRunnable createChild = new SerializableRunnable() {
+      final SerializableRunnable createChild =
+          new SerializableRunnable() {
 
-        public void run() {
-          Cache cache = getCache();
-          Region region = cache.getRegion("region");
-          if (region != null) {
-            AttributesFactory af = new AttributesFactory();
-            af.setDataPolicy(DataPolicy.PARTITION);
-            Region subregion = region.createSubregion("subregion", af.create());
-          }
-
-        }
-      };
+            public void run() {
+              Cache cache = getCache();
+              Region region = cache.getRegion("region");
+              if (region != null) {
+                AttributesFactory af = new AttributesFactory();
+                af.setDataPolicy(DataPolicy.PARTITION);
+                Region subregion = region.createSubregion("subregion", af.create());
+              }
+            }
+          };
       vm0.invoke(createChild);
 
-      final SerializableRunnable destroyParent = new SerializableRunnable() {
+      final SerializableRunnable destroyParent =
+          new SerializableRunnable() {
 
-        public void run() {
-          Cache cache = getCache();
-          Region region = cache.getRegion("/region");
-          region.destroyRegion();
-        }
-      };
+            public void run() {
+              Cache cache = getCache();
+              Region region = cache.getRegion("/region");
+              region.destroyRegion();
+            }
+          };
 
       AsyncInvocation future = vm0.invokeAsync(destroyParent);
       try {
@@ -177,5 +177,4 @@ public class ConcurrentDestroySubRegionDUnitTest extends JUnit4CacheTestCase {
       future.getResult(60 * 1000);
     }
   }
-
 }

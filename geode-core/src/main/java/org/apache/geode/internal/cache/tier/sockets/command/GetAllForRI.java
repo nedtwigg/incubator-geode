@@ -21,29 +21,23 @@ import org.apache.geode.internal.cache.tier.sockets.ObjectPartList651;
 import org.apache.geode.internal.cache.tier.sockets.SerializedObjectPartList;
 
 /**
- * A version of GetAll which in which the response contains the objects in
- * serialized byte array form, so that they can be separated into individual
- * values without being deserialized. The standard GetAll requires us to
- * deserialize the value of every object.
- * 
- * [bruce] this class is superceded by GetAll70, which merges GetAll651 and
- * GetAllForRI
- * 
- * 
+ * A version of GetAll which in which the response contains the objects in serialized byte array
+ * form, so that they can be separated into individual values without being deserialized. The
+ * standard GetAll requires us to deserialize the value of every object.
+ *
+ * <p>[bruce] this class is superceded by GetAll70, which merges GetAll651 and GetAllForRI
  */
 public class GetAllForRI extends GetAll651 {
-  private final static GetAllForRI singleton = new GetAllForRI();
+  private static final GetAllForRI singleton = new GetAllForRI();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  protected GetAllForRI() {
-  }
+  protected GetAllForRI() {}
 
   @Override
   protected ObjectPartList651 getObjectPartsList(boolean includeKeys) {
     return new SerializedObjectPartList(maximumChunkSize, includeKeys);
   }
-
 }

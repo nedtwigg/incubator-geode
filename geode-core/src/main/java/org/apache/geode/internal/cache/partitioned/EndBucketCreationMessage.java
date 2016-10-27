@@ -31,24 +31,24 @@ import org.apache.geode.internal.cache.ForceReattemptException;
 import org.apache.geode.internal.cache.PartitionedRegion;
 
 /**
- * This message is sent to a member to make it attempt to become
- * primary. This message is sent at the end of PRHARedundancyProvider
- * .createBucketAtomically, because the buckets created during that
- * time do not volunteer for primary until receiving this message.
- * 
+ * This message is sent to a member to make it attempt to become primary. This message is sent at
+ * the end of PRHARedundancyProvider .createBucketAtomically, because the buckets created during
+ * that time do not volunteer for primary until receiving this message.
  */
 public class EndBucketCreationMessage extends PartitionMessage {
 
   private int bucketId;
   private InternalDistributedMember newPrimary;
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public EndBucketCreationMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public EndBucketCreationMessage() {}
 
-  private EndBucketCreationMessage(Collection<InternalDistributedMember> recipients, int regionId, ReplyProcessor21 processor, int bucketId, InternalDistributedMember newPrimary) {
+  private EndBucketCreationMessage(
+      Collection<InternalDistributedMember> recipients,
+      int regionId,
+      ReplyProcessor21 processor,
+      int bucketId,
+      InternalDistributedMember newPrimary) {
     super(recipients, regionId, processor);
     this.bucketId = bucketId;
     this.newPrimary = newPrimary;
@@ -56,18 +56,23 @@ public class EndBucketCreationMessage extends PartitionMessage {
 
   /**
    * Sends a message to make the recipient primary for the bucket.
-   * @param acceptedMembers 
-   * 
+   *
+   * @param acceptedMembers
    * @param newPrimary the member to to become primary
    * @param pr the PartitionedRegion of the bucket
    * @param bid the bucket to become primary for
    */
-  public static void send(Collection<InternalDistributedMember> acceptedMembers, InternalDistributedMember newPrimary, PartitionedRegion pr, int bid) {
+  public static void send(
+      Collection<InternalDistributedMember> acceptedMembers,
+      InternalDistributedMember newPrimary,
+      PartitionedRegion pr,
+      int bid) {
 
     Assert.assertTrue(newPrimary != null, "VolunteerPrimaryBucketMessage NULL recipient");
 
     ReplyProcessor21 response = new ReplyProcessor21(pr.getSystem(), acceptedMembers);
-    EndBucketCreationMessage msg = new EndBucketCreationMessage(acceptedMembers, pr.getPRId(), response, bid, newPrimary);
+    EndBucketCreationMessage msg =
+        new EndBucketCreationMessage(acceptedMembers, pr.getPRId(), response, bid, newPrimary);
 
     pr.getDistributionManager().putOutgoing(msg);
   }
@@ -78,7 +83,7 @@ public class EndBucketCreationMessage extends PartitionMessage {
 
   @Override
   public int getProcessorType() {
-    // use the waiting pool because operateOnPartitionedRegion will 
+    // use the waiting pool because operateOnPartitionedRegion will
     // try to get a dlock
     return DistributionManager.WAITING_POOL_EXECUTOR;
   }
@@ -90,7 +95,9 @@ public class EndBucketCreationMessage extends PartitionMessage {
   }
 
   @Override
-  protected final boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion region, long startTime) throws ForceReattemptException {
+  protected final boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion region, long startTime)
+      throws ForceReattemptException {
 
     // this is executing in the WAITING_POOL_EXECUTOR
 
@@ -102,7 +109,6 @@ public class EndBucketCreationMessage extends PartitionMessage {
     }
 
     return false;
-
   }
 
   @Override

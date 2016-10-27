@@ -34,9 +34,7 @@ import org.apache.geode.management.internal.cli.json.GfJsonException;
 import org.apache.geode.management.internal.cli.json.GfJsonObject;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit tests for LocatorLauncher.LocatorState
- */
+/** Unit tests for LocatorLauncher.LocatorState */
 @Category(UnitTest.class)
 public class LocatorStateTest {
 
@@ -65,7 +63,9 @@ public class LocatorStateTest {
     verifyException(this).fromJson(emptyString);
 
     // then: throws IllegalArgumentException with cause of GfJsonException
-    assertThat((Exception) caughtException()).isInstanceOf(IllegalArgumentException.class).hasCauseInstanceOf(GfJsonException.class);
+    assertThat((Exception) caughtException())
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasCauseInstanceOf(GfJsonException.class);
 
     assertThat(caughtException().getCause()).isInstanceOf(GfJsonException.class).hasNoCause();
   }
@@ -79,7 +79,9 @@ public class LocatorStateTest {
     verifyException(this).fromJson(whiteSpaceString);
 
     // then: throws IllegalArgumentException with cause of GfJsonException
-    assertThat((Exception) caughtException()).isInstanceOf(IllegalArgumentException.class).hasCauseInstanceOf(GfJsonException.class);
+    assertThat((Exception) caughtException())
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasCauseInstanceOf(GfJsonException.class);
 
     assertThat(caughtException().getCause()).isInstanceOf(GfJsonException.class).hasNoCause();
   }

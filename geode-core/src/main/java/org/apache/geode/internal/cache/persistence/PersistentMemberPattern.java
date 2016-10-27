@@ -27,13 +27,11 @@ import org.apache.geode.cache.persistence.PersistentID;
 import org.apache.geode.internal.net.SocketCreator;
 
 /**
- * Implementation of the public PersistentID. It holds the region,
- * host, directory, and timestamp.
- * 
- * This class also is also used to describe members that the user
- * has revoked. Any fields that are null will be considered a wildcard
- * matching any members.
- * 
+ * Implementation of the public PersistentID. It holds the region, host, directory, and timestamp.
+ *
+ * <p>This class also is also used to describe members that the user has revoked. Any fields that
+ * are null will be considered a wildcard matching any members.
+ *
  * @since GemFire prPersistSprint1
  */
 public class PersistentMemberPattern implements PersistentID, Comparable<PersistentMemberPattern> {
@@ -58,7 +56,8 @@ public class PersistentMemberPattern implements PersistentID, Comparable<Persist
     this(null, null, id, -1);
   }
 
-  public PersistentMemberPattern(InetAddress host, String directory, UUID diskStoreID, long revokedTime) {
+  public PersistentMemberPattern(
+      InetAddress host, String directory, UUID diskStoreID, long revokedTime) {
     this.host = host;
     this.directory = directory;
     this.revokedTime = revokedTime;
@@ -66,8 +65,7 @@ public class PersistentMemberPattern implements PersistentID, Comparable<Persist
   }
 
   //Used for deserialization only
-  public PersistentMemberPattern() {
-  }
+  public PersistentMemberPattern() {}
 
   public boolean matches(PersistentMemberID id) {
     boolean matches = true;
@@ -76,7 +74,11 @@ public class PersistentMemberPattern implements PersistentID, Comparable<Persist
     }
     matches &= host == null || host.equals(id.host);
     matches &= directory == null || directory.equals(id.directory);
-    matches &= diskStoreID == null || id.diskStoreId.getMostSignificantBits() == diskStoreID.getMostSignificantBits() && id.diskStoreId.getLeastSignificantBits() == diskStoreID.getLeastSignificantBits();
+    matches &=
+        diskStoreID == null
+            || id.diskStoreId.getMostSignificantBits() == diskStoreID.getMostSignificantBits()
+                && id.diskStoreId.getLeastSignificantBits()
+                    == diskStoreID.getLeastSignificantBits();
 
     //Safety measure. Id's which are generated after this pattern was revoked
     //should not be revoked. For example, if someone loses the disk for server A
@@ -117,30 +119,20 @@ public class PersistentMemberPattern implements PersistentID, Comparable<Persist
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     PersistentMemberPattern other = (PersistentMemberPattern) obj;
     if (directory == null) {
-      if (other.directory != null)
-        return false;
-    } else if (!directory.equals(other.directory))
-      return false;
+      if (other.directory != null) return false;
+    } else if (!directory.equals(other.directory)) return false;
     if (diskStoreID == null) {
-      if (other.diskStoreID != null)
-        return false;
-    } else if (!diskStoreID.equals(other.diskStoreID))
-      return false;
+      if (other.diskStoreID != null) return false;
+    } else if (!diskStoreID.equals(other.diskStoreID)) return false;
     if (host == null) {
-      if (other.host != null)
-        return false;
-    } else if (!host.equals(other.host))
-      return false;
-    if (revokedTime != other.revokedTime)
-      return false;
+      if (other.host != null) return false;
+    } else if (!host.equals(other.host)) return false;
+    if (revokedTime != other.revokedTime) return false;
     return true;
   }
 
@@ -188,7 +180,10 @@ public class PersistentMemberPattern implements PersistentID, Comparable<Persist
     if (result != 0) {
       return result;
     }
-    result = compare(host == null ? null : host.getCanonicalHostName(), o.host == null ? null : o.host.getCanonicalHostName());
+    result =
+        compare(
+            host == null ? null : host.getCanonicalHostName(),
+            o.host == null ? null : o.host.getCanonicalHostName());
     if (result != 0) {
       return result;
     }

@@ -40,8 +40,10 @@ public class OverflowOplogSet implements OplogSet {
 
   private final AtomicInteger overflowOplogId = new AtomicInteger(0);
   private OverflowOplog lastOverflowWrite = null;
-  private final ConcurrentMap<Integer, OverflowOplog> overflowMap = new ConcurrentHashMap<Integer, OverflowOplog>();
-  private final Map<Integer, OverflowOplog> compactableOverflowMap = new LinkedHashMap<Integer, OverflowOplog>();
+  private final ConcurrentMap<Integer, OverflowOplog> overflowMap =
+      new ConcurrentHashMap<Integer, OverflowOplog>();
+  private final Map<Integer, OverflowOplog> compactableOverflowMap =
+      new LinkedHashMap<Integer, OverflowOplog>();
 
   private int lastOverflowDir = 0;
 
@@ -81,9 +83,7 @@ public class OverflowOplogSet implements OplogSet {
     return parent.directories;
   }
 
-  /**
-   * @param minSize the minimum size this oplog can be
-   */
+  /** @param minSize the minimum size this oplog can be */
   private OverflowOplog createOverflowOplog(long minSize) {
     lastOverflowDir++;
     if (lastOverflowDir >= getDirectories().length) {
@@ -138,10 +138,21 @@ public class OverflowOplogSet implements OplogSet {
       if (parent.isCompactionEnabled()) { // fix for bug 41835
         idx = lastOverflowDir;
         if (getDirectories()[idx].getAvailableSpace() < minSize) {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.DiskRegion_COMPLEXDISKREGIONGETNEXTDIR_MAX_DIRECTORY_SIZE_WILL_GET_VIOLATED__GOING_AHEAD_WITH_THE_SWITCHING_OF_OPLOG_ANY_WAYS_CURRENTLY_AVAILABLE_SPACE_IN_THE_DIRECTORY_IS__0__THE_CAPACITY_OF_DIRECTORY_IS___1, new Object[] { Long.valueOf(getDirectories()[idx].getUsedSpace()), Long.valueOf(getDirectories()[idx].getCapacity()) }));
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .DiskRegion_COMPLEXDISKREGIONGETNEXTDIR_MAX_DIRECTORY_SIZE_WILL_GET_VIOLATED__GOING_AHEAD_WITH_THE_SWITCHING_OF_OPLOG_ANY_WAYS_CURRENTLY_AVAILABLE_SPACE_IN_THE_DIRECTORY_IS__0__THE_CAPACITY_OF_DIRECTORY_IS___1,
+                  new Object[] {
+                    Long.valueOf(getDirectories()[idx].getUsedSpace()),
+                    Long.valueOf(getDirectories()[idx].getCapacity())
+                  }));
         }
       } else {
-        throw new DiskAccessException(LocalizedStrings.Oplog_DIRECTORIES_ARE_FULL_NOT_ABLE_TO_ACCOMODATE_THIS_OPERATIONSWITCHING_PROBLEM_FOR_ENTRY_HAVING_DISKID_0.toLocalizedString("needed " + minSize + " bytes"), parent);
+        throw new DiskAccessException(
+            LocalizedStrings
+                .Oplog_DIRECTORIES_ARE_FULL_NOT_ABLE_TO_ACCOMODATE_THIS_OPERATIONSWITCHING_PROBLEM_FOR_ENTRY_HAVING_DISKID_0
+                .toLocalizedString("needed " + minSize + " bytes"),
+            parent);
       }
     }
     int id = this.overflowOplogId.incrementAndGet();
@@ -179,7 +190,7 @@ public class OverflowOplogSet implements OplogSet {
     }
   }
 
-  final private void removeOverflow(DiskRegion dr, DiskEntry entry) {
+  private final void removeOverflow(DiskRegion dr, DiskEntry entry) {
     // find the overflow oplog that it is currently in and remove the entry from it
     DiskId id = entry.getDiskId();
     synchronized (id) {
@@ -198,7 +209,8 @@ public class OverflowOplogSet implements OplogSet {
   void copyForwardForOverflowCompact(DiskEntry de, byte[] valueBytes, int length, byte userBits) {
     synchronized (this.overflowMap) {
       if (this.lastOverflowWrite != null) {
-        if (this.lastOverflowWrite.copyForwardForOverflowCompact(de, valueBytes, length, userBits)) {
+        if (this.lastOverflowWrite.copyForwardForOverflowCompact(
+            de, valueBytes, length, userBits)) {
           return;
         }
       }

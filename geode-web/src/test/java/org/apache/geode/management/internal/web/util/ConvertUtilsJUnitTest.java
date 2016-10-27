@@ -35,8 +35,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * The ConvertUtilsJUnitTest class is a test suite testing the contract and functionality of the ConvertUtilsJUnitTest class.
- * <p/>
+ * The ConvertUtilsJUnitTest class is a test suite testing the contract and functionality of the
+ * ConvertUtilsJUnitTest class.
+ *
+ * <p>
+ *
  * @see org.apache.geode.management.internal.web.util.ConvertUtils
  * @see org.junit.Assert
  * @see org.junit.Test
@@ -85,8 +88,10 @@ public class ConvertUtilsJUnitTest {
 
   @Test
   public void testConvertFileData() throws IOException {
-    final String[] filenames = { "/path/to/file1.ext", "/path/to/another/file2.ext" };
-    final String[] fileContent = { "This is the contents of file 1.", "This is the contents of file 2." };
+    final String[] filenames = {"/path/to/file1.ext", "/path/to/another/file2.ext"};
+    final String[] fileContent = {
+      "This is the contents of file 1.", "This is the contents of file 2."
+    };
 
     final List<byte[]> fileData = new ArrayList<byte[]>(2);
 
@@ -95,14 +100,16 @@ public class ConvertUtilsJUnitTest {
       fileData.add(fileContent[index].getBytes());
     }
 
-    final Resource[] resources = ConvertUtils.convert(fileData.toArray(new byte[fileData.size()][]));
+    final Resource[] resources =
+        ConvertUtils.convert(fileData.toArray(new byte[fileData.size()][]));
 
     assertNotNull(resources);
     assertEquals(filenames.length, resources.length);
 
     for (int index = 0; index < resources.length; index++) {
       assertEquals(filenames[index], resources[index].getFilename());
-      assertEquals(fileContent[index], new String(IOUtils.toByteArray(resources[index].getInputStream())));
+      assertEquals(
+          fileContent[index], new String(IOUtils.toByteArray(resources[index].getInputStream())));
     }
   }
 
@@ -116,7 +123,12 @@ public class ConvertUtilsJUnitTest {
 
   @Test
   public void testConvertMultipartFile() throws IOException {
-    final MultipartFile[] files = { createMultipartFile("/path/to/multi-part/file1.txt", "The contents of multi-part file1.".getBytes()), createMultipartFile("/path/to/multi-part/file2.txt", "The contents of multi-part file2.".getBytes()) };
+    final MultipartFile[] files = {
+      createMultipartFile(
+          "/path/to/multi-part/file1.txt", "The contents of multi-part file1.".getBytes()),
+      createMultipartFile(
+          "/path/to/multi-part/file2.txt", "The contents of multi-part file2.".getBytes())
+    };
 
     final byte[][] fileData = ConvertUtils.convert(files);
 
@@ -131,7 +143,10 @@ public class ConvertUtilsJUnitTest {
 
   @Test
   public void testConvertResource() throws IOException {
-    final Resource[] resources = { createResource("/path/to/file1.txt", "Contents of file1.".getBytes()), createResource("/path/to/file2.txt", "Contents of file2.".getBytes()) };
+    final Resource[] resources = {
+      createResource("/path/to/file1.txt", "Contents of file1.".getBytes()),
+      createResource("/path/to/file2.txt", "Contents of file2.".getBytes())
+    };
 
     final byte[][] fileData = ConvertUtils.convert(resources);
 
@@ -140,7 +155,9 @@ public class ConvertUtilsJUnitTest {
 
     for (int index = 0; index < fileData.length; index += 2) {
       assertEquals(resources[index / 2].getFilename(), new String(fileData[index]));
-      assertEquals(new String(IOUtils.toByteArray(resources[index / 2].getInputStream())), new String(fileData[index + 1]));
+      assertEquals(
+          new String(IOUtils.toByteArray(resources[index / 2].getInputStream())),
+          new String(fileData[index + 1]));
     }
   }
 
@@ -149,7 +166,9 @@ public class ConvertUtilsJUnitTest {
     try {
       ConvertUtils.convert(createResource(null, "test".getBytes()));
     } catch (IllegalArgumentException expected) {
-      assertEquals("The filename of Resource (Byte array resource [Content of file (null).]) must be specified!", expected.getMessage());
+      assertEquals(
+          "The filename of Resource (Byte array resource [Content of file (null).]) must be specified!",
+          expected.getMessage());
       throw expected;
     }
   }
@@ -169,5 +188,4 @@ public class ConvertUtilsJUnitTest {
     assertNotNull(fileData);
     assertEquals(0, fileData.length);
   }
-
 }

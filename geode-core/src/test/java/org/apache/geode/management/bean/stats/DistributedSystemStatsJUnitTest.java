@@ -38,10 +38,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * 
- * @since GemFire  1.4
- */
+/** @since GemFire 1.4 */
 @Category(IntegrationTest.class)
 public class DistributedSystemStatsJUnitTest {
 
@@ -73,12 +70,12 @@ public class DistributedSystemStatsJUnitTest {
     assertNotNull(this.system.getStatSampler().waitForSampleCollector(TIMEOUT));
 
     this.cache = new CacheFactory().create();
-
   }
 
   @Test
   public void testIssue51048() throws InterruptedException {
-    SystemManagementService service = (SystemManagementService) ManagementService.getExistingManagementService(cache);
+    SystemManagementService service =
+        (SystemManagementService) ManagementService.getExistingManagementService(cache);
     DistributedSystemMXBean dsmbean = service.getDistributedSystemMXBean();
 
     CachePerfStats cachePerfStats = ((GemFireCacheImpl) cache).getCachePerfStats();
@@ -97,7 +94,6 @@ public class DistributedSystemStatsJUnitTest {
     service.getLocalManager().runManagementTaskAdhoc();
 
     assertTrue(dsmbean.getAverageWrites() == 0);
-
   }
 
   @After
@@ -116,5 +112,4 @@ public class DistributedSystemStatsJUnitTest {
     this.system.getStatSampler().getSampleCollector().sample(NanoTimer.getTime());
     Thread.sleep(SLEEP);
   }
-
 }

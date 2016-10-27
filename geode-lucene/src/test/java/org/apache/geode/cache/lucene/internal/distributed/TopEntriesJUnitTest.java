@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -116,7 +116,8 @@ public class TopEntriesJUnitTest {
   }
 
   // TODO: extract to lucene test util class
-  public static void verifyResultOrder(Collection<EntryScore<String>> list, EntryScore<String>... expectedEntries) {
+  public static void verifyResultOrder(
+      Collection<EntryScore<String>> list, EntryScore<String>... expectedEntries) {
     Iterator<EntryScore<String>> iter = list.iterator();
     for (EntryScore expectedEntry : expectedEntries) {
       if (!iter.hasNext()) {
@@ -130,12 +131,13 @@ public class TopEntriesJUnitTest {
 
   @Before
   public void setupMock() {
-    mockContext = new Mockery() {
-      {
-        setImposteriser(ClassImposteriser.INSTANCE);
-        setThreadingPolicy(new Synchroniser());
-      }
-    };
+    mockContext =
+        new Mockery() {
+          {
+            setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
+          }
+        };
   }
 
   @After

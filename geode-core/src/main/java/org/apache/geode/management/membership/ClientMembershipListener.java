@@ -17,31 +17,29 @@
 package org.apache.geode.management.membership;
 
 /**
- * A listener whose callback methods are invoked when this process detects
- * connection changes to CacheServers or clients.
+ * A listener whose callback methods are invoked when this process detects connection changes to
+ * CacheServers or clients.
  *
  * @see ClientMembership#registerClientMembershipListener
- *
  * @since GemFire 8.0
  */
 public interface ClientMembershipListener {
 
   /**
-   * Invoked when a client has connected to this process or when this process
-   * has connected to a CacheServer.
+   * Invoked when a client has connected to this process or when this process has connected to a
+   * CacheServer.
    */
   public void memberJoined(ClientMembershipEvent event);
 
   /**
-   * Invoked when a client has gracefully disconnected from this process or when
-   * this process has gracefully disconnected from a CacheServer.
+   * Invoked when a client has gracefully disconnected from this process or when this process has
+   * gracefully disconnected from a CacheServer.
    */
   public void memberLeft(ClientMembershipEvent event);
 
   /**
-   * Invoked when a client has unexpectedly disconnected from this process or
-   * when this process has unexpectedly disconnected from a CacheServer.
+   * Invoked when a client has unexpectedly disconnected from this process or when this process has
+   * unexpectedly disconnected from a CacheServer.
    */
   public void memberCrashed(ClientMembershipEvent event);
-
 }

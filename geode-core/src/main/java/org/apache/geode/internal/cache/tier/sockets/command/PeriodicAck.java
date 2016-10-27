@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import org.apache.geode.internal.cache.EventID;
@@ -26,20 +24,24 @@ import java.io.IOException;
 
 public class PeriodicAck extends BaseCommand {
 
-  private final static PeriodicAck singleton = new PeriodicAck();
+  private static final PeriodicAck singleton = new PeriodicAck();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private PeriodicAck() {
-  }
+  private PeriodicAck() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received periodic ack request ({} bytes) from {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString());
+      logger.debug(
+          "{}: Received periodic ack request ({} bytes) from {}",
+          servConn.getName(),
+          msg.getPayloadLength(),
+          servConn.getSocketString());
     }
     try {
       int numEvents = msg.getNumberOfParts();
@@ -53,8 +55,7 @@ public class PeriodicAck extends BaseCommand {
           eventIdPart.setVersion(servConn.getClientVersion());
           EventID eid = (EventID) eventIdPart.getObject();
           success = ccn.processDispatchedMessage(servConn.getProxyID(), eid);
-          if (!success)
-            break;
+          if (!success) break;
         }
       }
       if (success) {
@@ -69,9 +70,8 @@ public class PeriodicAck extends BaseCommand {
     }
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Sent periodic ack response for {}", servConn.getName(), servConn.getSocketString());
+      logger.debug(
+          "{}: Sent periodic ack response for {}", servConn.getName(), servConn.getSocketString());
     }
-
   }
-
 }

@@ -25,32 +25,25 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.Assert;
 
 /**
- * Used to create subclasses that wrap another callback argument by having
- * a reference to the original and adding some data of their own.
- * Customers should never see a callback arg that is an instance of this class.
- * It is for internal purposes only.
- *
+ * Used to create subclasses that wrap another callback argument by having a reference to the
+ * original and adding some data of their own. Customers should never see a callback arg that is an
+ * instance of this class. It is for internal purposes only.
  *
  * @since GemFire 5.7
  */
 public abstract class WrappedCallbackArgument {
 
-  /**
-   * The original callbackArg
-   */
+  /** The original callbackArg */
   private Object _originalCallbackArg;
 
-  /**
-   * No arg constructor for DataSerializable.
-   */
-  public WrappedCallbackArgument() {
-  }
+  /** No arg constructor for DataSerializable. */
+  public WrappedCallbackArgument() {}
 
   /**
    * Constructor.
    *
-   * @param originalCallbackArg The original callback argument set by the
-   * caller or null if there was not callback arg
+   * @param originalCallbackArg The original callback argument set by the caller or null if there
+   *     was not callback arg
    */
   public WrappedCallbackArgument(Object originalCallbackArg) {
     this._originalCallbackArg = originalCallbackArg;
@@ -58,6 +51,7 @@ public abstract class WrappedCallbackArgument {
 
   /**
    * Returns the original callback argument.
+   *
    * @return the original callback argument
    */
   public Object getOriginalCallbackArg() {

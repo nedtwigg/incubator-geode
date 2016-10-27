@@ -21,42 +21,36 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * This interface defines a contract between the application and GemFire that
- * allows GemFire to determine whether an application object contains a delta,
- * allows GemFire to extract the delta from an application object, and generate
- * a new application object by applying a delta to an existing application
- * object. The difference in object state is contained in the {@link DataOutput}
- * and {@link DataInput} parameters.
- * 
+ * This interface defines a contract between the application and GemFire that allows GemFire to
+ * determine whether an application object contains a delta, allows GemFire to extract the delta
+ * from an application object, and generate a new application object by applying a delta to an
+ * existing application object. The difference in object state is contained in the {@link
+ * DataOutput} and {@link DataInput} parameters.
+ *
  * @since GemFire 6.1
- * 
  */
 public interface Delta {
 
-  /**
-   * Returns true if this object has pending changes it can write out.
-   */
+  /** Returns true if this object has pending changes it can write out. */
   boolean hasDelta();
 
   /**
-   * This method is invoked on an application object at the delta sender, if
-   * GemFire determines the presence of a delta by calling
-   * {@link Delta#hasDelta()} on the object. The delta is written to the
-   * {@link DataOutput} object provided by GemFire.
-   * 
-   * Any delta state should be reset in this method.
-   * 
+   * This method is invoked on an application object at the delta sender, if GemFire determines the
+   * presence of a delta by calling {@link Delta#hasDelta()} on the object. The delta is written to
+   * the {@link DataOutput} object provided by GemFire.
+   *
+   * <p>Any delta state should be reset in this method.
+   *
    * @throws IOException
    */
   void toDelta(DataOutput out) throws IOException;
 
   /**
-   * This method is invoked on an existing application object when an update is
-   * received as a delta. This method throws an {@link InvalidDeltaException}
-   * when the delta in the {@link DataInput} cannot be applied to the object.
-   * GemFire automatically handles an {@link InvalidDeltaException} by
-   * reattempting the update by sending the full application object.
-   * 
+   * This method is invoked on an existing application object when an update is received as a delta.
+   * This method throws an {@link InvalidDeltaException} when the delta in the {@link DataInput}
+   * cannot be applied to the object. GemFire automatically handles an {@link InvalidDeltaException}
+   * by reattempting the update by sending the full application object.
+   *
    * @throws IOException
    * @throws InvalidDeltaException
    */

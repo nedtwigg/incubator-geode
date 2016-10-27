@@ -32,9 +32,7 @@ import org.apache.geode.distributed.internal.DistributionConfigImpl;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.util.test.TestUtil;
 
-/**
- * @since GemFire 8.1
- */
+/** @since GemFire 8.1 */
 @Category(IntegrationTest.class)
 public class HTTPServiceSSLSupportJUnitTest {
 
@@ -55,7 +53,8 @@ public class HTTPServiceSSLSupportJUnitTest {
   }
 
   private static File findTrustedJKS() {
-    return new File(TestUtil.getResourcePath(HTTPServiceSSLSupportJUnitTest.class, "/ssl/trusted.keystore"));
+    return new File(
+        TestUtil.getResourcePath(HTTPServiceSSLSupportJUnitTest.class, "/ssl/trusted.keystore"));
   }
 
   public static String makePath(String[] strings) {
@@ -100,13 +99,17 @@ public class HTTPServiceSSLSupportJUnitTest {
     Properties localProps = new Properties();
     localProps.setProperty(MCAST_PORT, "0");
     localProps.setProperty(CLUSTER_SSL_ENABLED, "true");
-    System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "javax.net.ssl.keyStore", jks.getCanonicalPath());
-    System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "javax.net.ssl.keyStorePassword", "password");
+    System.setProperty(
+        DistributionConfig.GEMFIRE_PREFIX + "javax.net.ssl.keyStore", jks.getCanonicalPath());
+    System.setProperty(
+        DistributionConfig.GEMFIRE_PREFIX + "javax.net.ssl.keyStorePassword", "password");
 
     localProps.setProperty(CLUSTER_SSL_PROTOCOLS, "SSL");
     localProps.setProperty(CLUSTER_SSL_REQUIRE_AUTHENTICATION, "true");
-    System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "javax.net.ssl.trustStore", jks.getCanonicalPath());
-    System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "javax.net.ssl.trustStorePassword", "password");
+    System.setProperty(
+        DistributionConfig.GEMFIRE_PREFIX + "javax.net.ssl.trustStore", jks.getCanonicalPath());
+    System.setProperty(
+        DistributionConfig.GEMFIRE_PREFIX + "javax.net.ssl.trustStorePassword", "password");
 
     DistributionConfigImpl config = new DistributionConfigImpl(localProps);
 
@@ -114,12 +117,16 @@ public class HTTPServiceSSLSupportJUnitTest {
     assertEquals("SSL", config.getHttpServiceSSLProtocols());
     assertEquals(true, config.getHttpServiceSSLRequireAuthentication());
 
-    assertEquals(jks.getCanonicalPath(), config.getHttpServiceSSLProperties().get("javax.net.ssl.keyStore"));
-    assertEquals("password", config.getHttpServiceSSLProperties().get("javax.net.ssl.keyStorePassword"));
+    assertEquals(
+        jks.getCanonicalPath(), config.getHttpServiceSSLProperties().get("javax.net.ssl.keyStore"));
+    assertEquals(
+        "password", config.getHttpServiceSSLProperties().get("javax.net.ssl.keyStorePassword"));
     // assertIndexDetailsEquals(system.getConfig().getHttpServiceSSLKeyStoreType(),"JKS");
-    assertEquals(jks.getCanonicalPath(), config.getHttpServiceSSLProperties().get("javax.net.ssl.trustStore"));
-    assertEquals("password", config.getHttpServiceSSLProperties().get("javax.net.ssl.trustStorePassword"));
-
+    assertEquals(
+        jks.getCanonicalPath(),
+        config.getHttpServiceSSLProperties().get("javax.net.ssl.trustStore"));
+    assertEquals(
+        "password", config.getHttpServiceSSLProperties().get("javax.net.ssl.trustStorePassword"));
   }
 
   @Test
@@ -146,11 +153,14 @@ public class HTTPServiceSSLSupportJUnitTest {
     assertEquals(config.getHttpServiceSSLProtocols(), "SSL");
     assertEquals(config.getHttpServiceSSLRequireAuthentication(), true);
 
-    assertEquals(jks.getCanonicalPath(), config.getHttpServiceSSLProperties().get("javax.net.ssl.keyStore"));
-    assertEquals("password", config.getHttpServiceSSLProperties().get("javax.net.ssl.keyStorePassword"));
-    assertEquals(jks.getCanonicalPath(), config.getHttpServiceSSLProperties().get("javax.net.ssl.trustStore"));
-    assertEquals("password", config.getHttpServiceSSLProperties().get("javax.net.ssl.trustStorePassword"));
-
+    assertEquals(
+        jks.getCanonicalPath(), config.getHttpServiceSSLProperties().get("javax.net.ssl.keyStore"));
+    assertEquals(
+        "password", config.getHttpServiceSSLProperties().get("javax.net.ssl.keyStorePassword"));
+    assertEquals(
+        jks.getCanonicalPath(),
+        config.getHttpServiceSSLProperties().get("javax.net.ssl.trustStore"));
+    assertEquals(
+        "password", config.getHttpServiceSSLProperties().get("javax.net.ssl.trustStorePassword"));
   }
-
 }

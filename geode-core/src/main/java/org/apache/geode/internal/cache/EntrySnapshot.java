@@ -32,32 +32,35 @@ import org.apache.geode.internal.cache.versions.VersionTag;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
-   * A Region.Entry implementation for remote entries and all PR entries
-   * 
-   * @since GemFire 5.1
-   */
+ * A Region.Entry implementation for remote entries and all PR entries
+ *
+ * @since GemFire 5.1
+ */
 public class EntrySnapshot implements Region.Entry, DataSerializable {
   private static final long serialVersionUID = -2139749921655693280L;
   /**
-   * True if at the time this entry was created it represented a local data store.
-   * False if it was fetched remotely.
-   * This field is used by unit tests.
+   * True if at the time this entry was created it represented a local data store. False if it was
+   * fetched remotely. This field is used by unit tests.
    */
   private boolean startedLocal;
   /** whether this entry has been destroyed */
   private boolean entryDestroyed;
+
   public transient LocalRegion region = null;
-  /**
-   * the internal entry for this Entry's key
-   */
-  public transient NonLocalRegionEntry regionEntry; // would be final except for serialization needing default constructor
+  /** the internal entry for this Entry's key */
+  public transient NonLocalRegionEntry
+      regionEntry; // would be final except for serialization needing default constructor
 
   /**
-   * creates a new Entry that wraps the given RegionEntry object for the given
-   * storage Region
+   * creates a new Entry that wraps the given RegionEntry object for the given storage Region
+   *
    * @param allowTombstones TODO
    */
-  public EntrySnapshot(RegionEntry regionEntry, LocalRegion dataRegion, LocalRegion region, boolean allowTombstones) {
+  public EntrySnapshot(
+      RegionEntry regionEntry,
+      LocalRegion dataRegion,
+      LocalRegion region,
+      boolean allowTombstones) {
     this.region = region;
     if (regionEntry instanceof NonLocalRegionEntry) {
       this.regionEntry = (NonLocalRegionEntry) regionEntry;
@@ -67,7 +70,8 @@ public class EntrySnapshot implements Region.Entry, DataSerializable {
       // note we always make these non-local now to handle PR buckets moving
       // out from under this Region.Entry.
       if (regionEntry.hasStats()) {
-        this.regionEntry = new NonLocalRegionEntryWithStats(regionEntry, dataRegion, allowTombstones);
+        this.regionEntry =
+            new NonLocalRegionEntryWithStats(regionEntry, dataRegion, allowTombstones);
       } else {
         this.regionEntry = new NonLocalRegionEntry(regionEntry, dataRegion, allowTombstones);
       }
@@ -75,9 +79,9 @@ public class EntrySnapshot implements Region.Entry, DataSerializable {
   }
 
   /**
-   * Used by unit tests. Only available on PR.
-   * If, at the time this entry was created, it was initialized from a local data store
-   * then this method returns true.
+   * Used by unit tests. Only available on PR. If, at the time this entry was created, it was
+   * initialized from a local data store then this method returns true.
+   *
    * @since GemFire 6.0
    */
   public boolean wasInitiallyLocal() {
@@ -128,7 +132,7 @@ public class EntrySnapshot implements Region.Entry, DataSerializable {
 
   /**
    * Makes a copy, if copy-on-get is enabled, of the specified object.
-   * 
+   *
    * @since GemFire 4.0
    */
   private Object conditionalCopy(Object o) {
@@ -173,7 +177,9 @@ public class EntrySnapshot implements Region.Entry, DataSerializable {
   public CacheStatistics getStatistics() throws StatisticsDisabledException {
     checkEntryDestroyed();
     if (!regionEntry.hasStats() || !region.statisticsEnabled) {
-      throw new StatisticsDisabledException(LocalizedStrings.PartitionedRegion_STATISTICS_DISABLED_FOR_REGION_0.toLocalizedString(region.getFullPath()));
+      throw new StatisticsDisabledException(
+          LocalizedStrings.PartitionedRegion_STATISTICS_DISABLED_FOR_REGION_0.toLocalizedString(
+              region.getFullPath()));
     }
     return new CacheStatisticsImpl(this.regionEntry, region);
   }
@@ -211,16 +217,20 @@ public class EntrySnapshot implements Region.Entry, DataSerializable {
   @Override
   public String toString() {
     if (this.isDestroyed()) {
-      return "EntrySnapshot(#destroyed#" + regionEntry.getKey() + "; version=" + this.getVersionTag() + ")";
+      return "EntrySnapshot(#destroyed#"
+          + regionEntry.getKey()
+          + "; version="
+          + this.getVersionTag()
+          + ")";
     } else {
       return "EntrySnapshot(" + this.regionEntry + ")";
     }
   }
 
   /**
-   * get the underlying RegionEntry object, which will not be fully functional
-   * if isLocal() returns false
-   * 
+   * get the underlying RegionEntry object, which will not be fully functional if isLocal() returns
+   * false
+   *
    * @return the underlying RegionEntry for this Entry
    */
   public RegionEntry getRegionEntry() {
@@ -233,15 +243,16 @@ public class EntrySnapshot implements Region.Entry, DataSerializable {
 
   private void checkEntryDestroyed() throws EntryDestroyedException {
     if (isDestroyed()) {
-      throw new EntryDestroyedException(LocalizedStrings.PartitionedRegion_ENTRY_DESTROYED.toLocalizedString());
+      throw new EntryDestroyedException(
+          LocalizedStrings.PartitionedRegion_ENTRY_DESTROYED.toLocalizedString());
     }
   }
 
   // for deserialization
-  public EntrySnapshot() {
-  }
+  public EntrySnapshot() {}
 
-  public EntrySnapshot(DataInput in, LocalRegion region) throws IOException, ClassNotFoundException {
+  public EntrySnapshot(DataInput in, LocalRegion region)
+      throws IOException, ClassNotFoundException {
     this.fromData(in);
     this.region = region;
   }
@@ -272,5 +283,4 @@ public class EntrySnapshot implements Region.Entry, DataSerializable {
     }
     this.regionEntry.fromData(in);
   }
-
 }

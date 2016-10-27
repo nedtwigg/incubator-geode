@@ -14,16 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier;
 
 import org.apache.geode.internal.cache.tier.sockets.*;
 
-/**
- * 
- */
+/** */
 public interface Command {
   public void execute(Message msg, ServerConnection servConn);
 

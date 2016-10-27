@@ -17,21 +17,19 @@
 package org.apache.geode.admin;
 
 /**
- * A dedicated cache server VM that is managed by the administration
- * API.
- * <p>Note that this may not represent an instance of
- * {@link org.apache.geode.cache.server.CacheServer}. It is possible for
- * a cache VM to be started but for it not to listen for client connections
- * in which case it is not a 
- * {@link org.apache.geode.cache.server.CacheServer}
- * but is an instance of this interface.
+ * A dedicated cache server VM that is managed by the administration API.
+ *
+ * <p>Note that this may not represent an instance of {@link
+ * org.apache.geode.cache.server.CacheServer}. It is possible for a cache VM to be started but for
+ * it not to listen for client connections in which case it is not a {@link
+ * org.apache.geode.cache.server.CacheServer} but is an instance of this interface.
  *
  * @since GemFire 5.7
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public interface CacheVm extends SystemMember, ManagedEntity {
-  /**
-   * Returns the configuration of this cache vm
-   */
+  /** Returns the configuration of this cache vm */
   public CacheVmConfig getVmConfig();
 }

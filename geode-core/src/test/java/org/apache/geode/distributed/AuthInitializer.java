@@ -29,15 +29,15 @@ public class AuthInitializer implements AuthInitialize {
     return new AuthInitializer();
   }
 
-  public void init(LogWriter systemLogger, LogWriter securityLogger) throws AuthenticationFailedException {
-  }
+  public void init(LogWriter systemLogger, LogWriter securityLogger)
+      throws AuthenticationFailedException {}
 
-  public Properties getCredentials(Properties p, DistributedMember server, boolean isPeer) throws AuthenticationFailedException {
+  public Properties getCredentials(Properties p, DistributedMember server, boolean isPeer)
+      throws AuthenticationFailedException {
     p.put("UserName", "bruce");
     p.put("Password", "bruce");
     return p;
   }
 
-  public void close() {
-  }
+  public void close() {}
 }

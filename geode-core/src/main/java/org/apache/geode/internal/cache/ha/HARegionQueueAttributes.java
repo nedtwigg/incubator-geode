@@ -14,43 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.ha;
 
 import org.apache.geode.distributed.internal.DistributionConfig;
 
-/**
- * 
- * This class defines the user specified attributes of the HARegion which are
- * configurable.
- * 
- *  
- */
+/** This class defines the user specified attributes of the HARegion which are configurable. */
 public class HARegionQueueAttributes {
-  /**
-   * default expiry time for region entries in seconds
-   */
-
+  /** default expiry time for region entries in seconds */
   private static final int DEFAULT_EXPIRY_TIME = 180;
+
   private static final int DEFAULT_BLOCKING_QUEUE_CAPACITY = 230000;
 
-  /**
-   * String storing the System Property key representing the blocking queue capacity 
-   */
-  private static final String BLOCKING_QUEUE_CAPACITY = DistributionConfig.GEMFIRE_PREFIX + "Capacity";
+  /** String storing the System Property key representing the blocking queue capacity */
+  private static final String BLOCKING_QUEUE_CAPACITY =
+      DistributionConfig.GEMFIRE_PREFIX + "Capacity";
 
-  /**
-   * expiry time for region entries in seconds
-   */
-
+  /** expiry time for region entries in seconds */
   private int expiryTime = DEFAULT_EXPIRY_TIME;
 
-  /**
-   * 
-   */
-  private int blockingQueueCapacity = Integer.getInteger(BLOCKING_QUEUE_CAPACITY, DEFAULT_BLOCKING_QUEUE_CAPACITY).intValue();
+  /** */
+  private int blockingQueueCapacity =
+      Integer.getInteger(BLOCKING_QUEUE_CAPACITY, DEFAULT_BLOCKING_QUEUE_CAPACITY).intValue();
 
   //TODO:Asif: We shoudl prevent modification of this object by using
   // HARegionAttributesFactory instead of directly
@@ -58,16 +43,14 @@ public class HARegionQueueAttributes {
   // immutable
   static final HARegionQueueAttributes DEFAULT_HARQ_ATTRIBUTES = new HARegionQueueAttributes();
 
-  /**
-   * Default constructor
-   */
+  /** Default constructor */
   public HARegionQueueAttributes() {
     // this.blockingQueueCapacity = Integer.getInteger(BLOCKING_QUEUE_CAPACITY,DEFAULT_BLOCKING_QUEUE_CAPACITY).intValue();
   }
 
   /**
    * Gets the expiration time for the region entries
-   * 
+   *
    * @return the expiry time in seconds
    */
   public int getExpiryTime() {
@@ -76,9 +59,8 @@ public class HARegionQueueAttributes {
 
   /**
    * Sets the expiration time for the region entries
-   * 
-   * @param expiryTime
-   *          expiry time in seconds
+   *
+   * @param expiryTime expiry time in seconds
    */
   public void setExpiryTime(int expiryTime) {
     this.expiryTime = expiryTime;
@@ -86,7 +68,7 @@ public class HARegionQueueAttributes {
 
   /**
    * Gets the blocking queue capacity
-   * 
+   *
    * @return the blocking queue capacity
    */
   public int getBlockingQueueCapacity() {
@@ -95,12 +77,10 @@ public class HARegionQueueAttributes {
 
   /**
    * Sets the capacity of the queue
-   * 
-   * @param cap
-   *          number of items allowed in the queue
+   *
+   * @param cap number of items allowed in the queue
    */
   public void setBlockingQueueCapacity(int cap) {
     this.blockingQueueCapacity = cap;
   }
-
 }

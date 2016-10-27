@@ -20,25 +20,23 @@ import javax.management.ObjectName;
 import javax.management.modelmbean.ModelMBean;
 
 /**
- * Represents a component or resource that is managed by a 
- * {@link javax.management.modelmbean.ModelMBean}.
+ * Represents a component or resource that is managed by a {@link
+ * javax.management.modelmbean.ModelMBean}.
  *
- * @since GemFire     3.5
- *
+ * @since GemFire 3.5
  */
 public interface ManagedResource {
 
-  /** 
-   * The prefix of MBean names. Note: this is NOT used by Members, Stats, or
-   * any other MBean that has it's own domain.
+  /**
+   * The prefix of MBean names. Note: this is NOT used by Members, Stats, or any other MBean that
+   * has it's own domain.
    *
-   * @see #getMBeanName 
+   * @see #getMBeanName
    */
   public static final String MBEAN_NAME_PREFIX = "GemFire:type=";
 
-  /** 
-   * Returns the name of the ModelMBean that will manage this
-   * resource.  They [some] are of the form
+  /**
+   * Returns the name of the ModelMBean that will manage this resource. They [some] are of the form
    *
    * <PRE>
    * MBEAN_NAME_PREFIX + typeName + ",id=" + id
@@ -54,7 +52,7 @@ public interface ManagedResource {
   /** Sets the ModelMBean that is configured to manage this resource */
   public void setModelMBean(ModelMBean modelMBean);
 
-  /** 
+  /**
    * Returns the enumerated ManagedResourceType of this resource.
    *
    * @see ManagedResourceType
@@ -68,9 +66,6 @@ public interface ManagedResource {
    */
   public ObjectName getObjectName();
 
-  /**
-   * Perform any cleanup necessary before stopping management of this resource.
-   */
+  /** Perform any cleanup necessary before stopping management of this resource. */
   public void cleanupResource();
-
 }

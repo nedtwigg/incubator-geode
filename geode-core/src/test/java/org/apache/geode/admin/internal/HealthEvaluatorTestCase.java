@@ -26,10 +26,8 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * Superclass of tests for the {@linkplain
- * org.apache.geode.admin.internal.AbstractHealthEvaluator health
- * evaluator} classes.
- *
+ * Superclass of tests for the {@linkplain org.apache.geode.admin.internal.AbstractHealthEvaluator
+ * health evaluator} classes.
  *
  * @since GemFire 3.5
  */
@@ -38,18 +36,14 @@ public abstract class HealthEvaluatorTestCase {
   /** The DistributedSystem used for this test */
   protected InternalDistributedSystem system;
 
-  /**
-   * Creates a "loner" <code>DistributedSystem</code> for this test.
-   */
+  /** Creates a "loner" <code>DistributedSystem</code> for this test. */
   @Before
   public void setUp() {
     Properties props = getProperties();
     system = (InternalDistributedSystem) DistributedSystem.connect(props);
   }
 
-  /**
-   * Closes the "loner" <code>DistributedSystem</code>
-   */
+  /** Closes the "loner" <code>DistributedSystem</code> */
   @After
   public void tearDown() {
     if (this.system != null) {
@@ -59,10 +53,7 @@ public abstract class HealthEvaluatorTestCase {
     this.system = null;
   }
 
-  /**
-   * Creates the <code>Properties</code> objects used to connect to
-   * the distributed system.
-   */
+  /** Creates the <code>Properties</code> objects used to connect to the distributed system. */
   protected Properties getProperties() {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
@@ -71,5 +62,4 @@ public abstract class HealthEvaluatorTestCase {
 
     return props;
   }
-
 }

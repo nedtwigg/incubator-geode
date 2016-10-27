@@ -30,10 +30,8 @@ import org.apache.geode.internal.SystemFailureTestHook;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Extracted from TXWriterJUnitTest. The OOME is problematic and causes the
- * test suite to fail due to suspect strings from SystemFailure Watchdog sending
- * output to STDERR.
- * 
+ * Extracted from TXWriterJUnitTest. The OOME is problematic and causes the test suite to fail due
+ * to suspect strings from SystemFailure Watchdog sending output to STDERR.
  */
 @Category(IntegrationTest.class)
 public class TXWriterOOMEJUnitTest extends TXWriterTestCase {
@@ -43,14 +41,15 @@ public class TXWriterOOMEJUnitTest extends TXWriterTestCase {
     installCacheListenerAndWriter();
 
     // install TransactionWriter
-    ((CacheTransactionManager) this.txMgr).setWriter(new TransactionWriter() {
-      public void beforeCommit(TransactionEvent event) throws TransactionWriterException {
-        throw new OutOfMemoryError("this is expected!");
-      }
+    ((CacheTransactionManager) this.txMgr)
+        .setWriter(
+            new TransactionWriter() {
+              public void beforeCommit(TransactionEvent event) throws TransactionWriterException {
+                throw new OutOfMemoryError("this is expected!");
+              }
 
-      public void close() {
-      }
-    });
+              public void close() {}
+            });
 
     installTransactionListener();
 

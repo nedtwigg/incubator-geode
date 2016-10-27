@@ -18,13 +18,12 @@
 package com.gemstone.gemfire;
 
 /**
- * This is the abstract superclass of exceptions that are thrown to
- * indicate incorrect usage of GemFire.
+ * This is the abstract superclass of exceptions that are thrown to indicate incorrect usage of
+ * GemFire.
  *
- * Since these exceptions are unchecked, this class really
- * <em>ought</em> to be called <code>GemFireRuntimeException</code>;
- * however, the current name is retained for compatibility's sake.
- * 
+ * <p>Since these exceptions are unchecked, this class really <em>ought</em> to be called <code>
+ * GemFireRuntimeException</code>; however, the current name is retained for compatibility's sake.
+ *
  * @see org.apache.geode.GemFireCheckedException
  * @see org.apache.geode.cache.CacheRuntimeException
  * @deprecated use org.apache.geode exceptions, not com.gemstone.gemfire exceptions
@@ -41,34 +40,23 @@ public abstract class GemFireException extends RuntimeException {
 
   //////////////////////  Constructors  //////////////////////
 
-  /**
-   * Creates a new <code>GemFireException</code> with no detailed message.
-   */
+  /** Creates a new <code>GemFireException</code> with no detailed message. */
   public GemFireException() {
     super();
   }
 
-  /**
-   * Creates a new <code>GemFireException</code> with the given detail
-   * message.
-   */
+  /** Creates a new <code>GemFireException</code> with the given detail message. */
   public GemFireException(String message) {
     super(message);
   }
 
-  /**
-   * Creates a new <code>GemFireException</code> with the given detail
-   * message and cause.
-   */
+  /** Creates a new <code>GemFireException</code> with the given detail message and cause. */
   public GemFireException(String message, Throwable cause) {
     super(message, cause);
     //    this.cause = cause;
   }
 
-  /**
-   * Creates a new <code>GemFireException</code> with the given cause and
-   * no detail message
-   */
+  /** Creates a new <code>GemFireException</code> with the given cause and no detail message */
   public GemFireException(Throwable cause) {
     super(cause);
     //    this.cause = cause;
@@ -77,16 +65,16 @@ public abstract class GemFireException extends RuntimeException {
   ////////////////////  Instance Methods  ////////////////////
 
   /**
-   * Returns the cause of this <code>GemFireException</code> or
-   * <code>null</code> if the cause is nonexistent or unknown.
+   * Returns the cause of this <code>GemFireException</code> or <code>null</code> if the cause is
+   * nonexistent or unknown.
    */
   //  public Throwable getCause() {
   //    return this.cause;
   //  }
 
   /**
-   * Returns the root cause of this <code>GemFireException</code> or
-   * <code>null</code> if the cause is nonexistent or unknown.
+   * Returns the root cause of this <code>GemFireException</code> or <code>null</code> if the cause
+   * is nonexistent or unknown.
    */
   public Throwable getRootCause() {
     if (this.getCause() == null) {
@@ -115,7 +103,7 @@ public abstract class GemFireException extends RuntimeException {
   //      this.cause.printStackTrace(pw);
   //    }
   //  }
-  //  
+  //
   //  public String getMessage() {
   //    if (this.cause != null) {
   //      String ourMsg = super.getMessage();
@@ -136,9 +124,7 @@ public abstract class GemFireException extends RuntimeException {
   //    }
   //  }
 
-  /**
-   * Represent the receiver as well as the cause
-   */
+  /** Represent the receiver as well as the cause */
   //  public String toString() {
   //    String result = super.toString();
   //    if (cause != null) {

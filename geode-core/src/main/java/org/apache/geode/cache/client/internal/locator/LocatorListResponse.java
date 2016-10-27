@@ -25,18 +25,16 @@ import java.util.List;
 import org.apache.geode.distributed.internal.ServerLocation;
 import org.apache.geode.internal.DataSerializableFixedID;
 
-/**
- *
- */
+/** */
 public class LocatorListResponse extends ServerLocationResponse {
   /** ArrayList of ServerLocations for controllers */
   private List<ServerLocation> controllers;
+
   private boolean isBalanced;
   private boolean locatorsFound = false;
 
   /** Used by DataSerializer */
-  public LocatorListResponse() {
-  }
+  public LocatorListResponse() {}
 
   public LocatorListResponse(List<ServerLocation> locators, boolean isBalanced) {
     this.controllers = locators;
@@ -61,6 +59,7 @@ public class LocatorListResponse extends ServerLocationResponse {
 
   /**
    * Returns an array list of type ServerLocation containing controllers.
+   *
    * @return list of controllers
    */
   public List<ServerLocation> getLocators() {
@@ -68,8 +67,9 @@ public class LocatorListResponse extends ServerLocationResponse {
   }
 
   /**
-   * Returns whether or not the locator thinks that the servers 
-   * in this group are currently balanced.
+   * Returns whether or not the locator thinks that the servers in this group are currently
+   * balanced.
+   *
    * @return true if the servers are balanced.
    */
   public boolean isBalanced() {
@@ -89,5 +89,4 @@ public class LocatorListResponse extends ServerLocationResponse {
   public boolean hasResult() {
     return this.locatorsFound;
   }
-
 }

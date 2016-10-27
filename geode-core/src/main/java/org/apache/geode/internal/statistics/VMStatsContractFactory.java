@@ -19,13 +19,9 @@ package org.apache.geode.internal.statistics;
 import org.apache.geode.*;
 import org.apache.geode.internal.stats50.VMStats50;
 
-/**
- * Factory used to produce an instance of VMStatsContract.
- */
+/** Factory used to produce an instance of VMStatsContract. */
 public class VMStatsContractFactory {
-  /**
-   * Create and return a VMStatsContract.
-   */
+  /** Create and return a VMStatsContract. */
   public static VMStatsContract create(StatisticsFactory f, long id) {
     VMStatsContract result;
     try {

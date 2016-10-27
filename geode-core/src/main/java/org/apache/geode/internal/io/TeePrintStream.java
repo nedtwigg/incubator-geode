@@ -18,9 +18,7 @@ package org.apache.geode.internal.io;
 
 import java.io.PrintStream;
 
-/**
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class TeePrintStream extends PrintStream {
 
   private final TeeOutputStream teeOut;

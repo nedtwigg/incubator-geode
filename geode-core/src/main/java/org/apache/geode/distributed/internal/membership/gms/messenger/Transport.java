@@ -31,9 +31,7 @@ import org.jgroups.util.Util;
 
 public class Transport extends UDP {
 
-  /**
-   * This is the initial part of the name of all JGroups threads that deliver messages
-   */
+  /** This is the initial part of the name of all JGroups threads that deliver messages */
   public static final String THREAD_POOL_NAME_PREFIX = "Geode UDP";
 
   private JGroupsMessenger messenger;
@@ -63,7 +61,7 @@ public class Transport extends UDP {
       //                  local_addr, (dest == null? "cluster" : dest), msg.size(), e.toString(), msg.printHeaders());
     } catch (IOException e) {
       if (messenger != null
-      /*&& e.getMessage().contains("Operation not permitted")*/) { // this is the english Oracle JDK exception condition we really want to catch
+      /*&& e.getMessage().contains("Operation not permitted")*/ ) { // this is the english Oracle JDK exception condition we really want to catch
         messenger.handleJGroupsIOException(e, dest);
       }
     } catch (Throwable e) {
@@ -79,7 +77,8 @@ public class Transport extends UDP {
    * is a network partition
    */
   @Override
-  protected void doSend(AsciiString cluster_name, byte[] buf, int offset, int length, Address dest) throws Exception {
+  protected void doSend(AsciiString cluster_name, byte[] buf, int offset, int length, Address dest)
+      throws Exception {
     try {
       super.doSend(cluster_name, buf, offset, length, dest);
     } catch (SocketException sock_ex) {
@@ -88,7 +87,7 @@ public class Transport extends UDP {
       }
     } catch (IOException e) {
       if (messenger != null
-      /*&& e.getMessage().contains("Operation not permitted")*/) { // this is the english Oracle JDK exception condition we really want to catch
+      /*&& e.getMessage().contains("Operation not permitted")*/ ) { // this is the english Oracle JDK exception condition we really want to catch
         messenger.handleJGroupsIOException(e, dest);
       }
     } catch (Throwable e) {
@@ -107,9 +106,11 @@ public class Transport extends UDP {
   public void init() throws Exception {
     global_thread_factory = new DefaultThreadFactory("Geode ", true);
     timer_thread_factory = new LazyThreadFactory(THREAD_POOL_NAME_PREFIX + " Timer", true, true);
-    default_thread_factory = new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX + " Incoming", true, true);
+    default_thread_factory =
+        new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX + " Incoming", true, true);
     oob_thread_factory = new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX + " OOB", true, true);
-    internal_thread_factory = new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX + " INT", true, true);
+    internal_thread_factory =
+        new DefaultThreadFactory(THREAD_POOL_NAME_PREFIX + " INT", true, true);
     super.init();
   }
 
@@ -135,10 +136,13 @@ public class Transport extends UDP {
     }
 
     // drop message from self; it has already been looped back up (https://issues.jboss.org/browse/JGRP-1765)
-    if (local_physical_addr != null && local_physical_addr.equals(sender))
-      return;
+    if (local_physical_addr != null && local_physical_addr.equals(sender)) return;
 
-    if (length - offset == 4 && data[offset] == 'p' && data[offset + 1] == 'i' && data[offset + 2] == 'n' && data[offset + 3] == 'g') {
+    if (length - offset == 4
+        && data[offset] == 'p'
+        && data[offset + 1] == 'i'
+        && data[offset + 2] == 'n'
+        && data[offset + 3] == 'g') {
       // AvailablePort check
       data[offset + 1] = 'o';
       try {
@@ -151,5 +155,4 @@ public class Transport extends UDP {
 
     super.receive(sender, data, offset, length);
   }
-
 }

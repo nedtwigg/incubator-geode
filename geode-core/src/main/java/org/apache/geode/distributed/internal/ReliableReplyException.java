@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.distributed.internal;
 
 /**
- * thrown by {@linkplain ReliableReplyProcessor21} when a message has not been delivered
- * to at least one member in the original recipient list.
+ * thrown by {@linkplain ReliableReplyProcessor21} when a message has not been delivered to at least
+ * one member in the original recipient list.
  */
 public class ReliableReplyException extends ReplyException {
   private static final long serialVersionUID = 472566058783450438L;

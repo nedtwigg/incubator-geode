@@ -16,11 +16,7 @@
  */
 package org.apache.geode.redis.internal;
 
-/**
- * Exception thrown by CommandParser (non-existent class) when a command has illegal syntax
- * 
- *
- */
+/** Exception thrown by CommandParser (non-existent class) when a command has illegal syntax */
 public class RedisCommandParserException extends Exception {
 
   private static final long serialVersionUID = 4707944288714910949L;
@@ -40,5 +36,4 @@ public class RedisCommandParserException extends Exception {
   public RedisCommandParserException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

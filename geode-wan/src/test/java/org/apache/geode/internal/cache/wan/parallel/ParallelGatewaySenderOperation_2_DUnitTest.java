@@ -29,7 +29,8 @@ import org.apache.geode.internal.cache.wan.concurrent.ConcurrentParallelGatewayS
 import org.apache.geode.test.dunit.VM;
 
 @Category(DistributedTest.class)
-public class ParallelGatewaySenderOperation_2_DUnitTest extends ConcurrentParallelGatewaySenderOperation_2_DUnitTest {
+public class ParallelGatewaySenderOperation_2_DUnitTest
+    extends ConcurrentParallelGatewaySenderOperation_2_DUnitTest {
 
   private static final long serialVersionUID = 1L;
 

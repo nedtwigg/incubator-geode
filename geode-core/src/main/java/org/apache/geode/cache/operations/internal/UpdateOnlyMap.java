@@ -32,11 +32,9 @@ import org.apache.geode.internal.cache.CachedDeserializable;
 import org.apache.geode.internal.cache.Token;
 
 /**
- * This map only allows updates. No creates or removes.
- * It was adapted from UnmodifiableMap in the jdk's Collections class.
- * It was added to fix bug 51604.
- * It also make sure that customers do not see Token.INVALID and
- * CachedDeserializable to fix bug 51625.
+ * This map only allows updates. No creates or removes. It was adapted from UnmodifiableMap in the
+ * jdk's Collections class. It was added to fix bug 51604. It also make sure that customers do not
+ * see Token.INVALID and CachedDeserializable to fix bug 51625.
  */
 public class UpdateOnlyMap implements Map, Serializable {
   private static final long serialVersionUID = -1034234728574286014L;
@@ -51,8 +49,8 @@ public class UpdateOnlyMap implements Map, Serializable {
   }
 
   /**
-   * Only called by internal code
-   * to bypass exportValue() method
+   * Only called by internal code to bypass exportValue() method
+   *
    * @return internal map
    */
   public Map getInternalMap() {
@@ -247,8 +245,8 @@ public class UpdateOnlyMap implements Map, Serializable {
   }
 
   /**
-   * equals is over-ridden to make sure it is based on
-   * the objects we expose and not the internal CachedDeserializables.
+   * equals is over-ridden to make sure it is based on the objects we expose and not the internal
+   * CachedDeserializables.
    */
   @Override
   public boolean equals(Object o) {
@@ -290,8 +288,8 @@ public class UpdateOnlyMap implements Map, Serializable {
   }
 
   /**
-   * hashCode is over-ridden to make sure it is based on
-   * the objects we expose and not the internal CachedDeserializables.
+   * hashCode is over-ridden to make sure it is based on the objects we expose and not the internal
+   * CachedDeserializables.
    */
   @Override
   public int hashCode() {
@@ -311,7 +309,7 @@ public class UpdateOnlyMap implements Map, Serializable {
     }
     StringBuilder sb = new StringBuilder();
     sb.append('{');
-    for (;;) {
+    for (; ; ) {
       Entry e = i.next();
       Object key = e.getKey();
       Object value = e.getValue();

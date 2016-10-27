@@ -45,7 +45,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class MultiUserDUnitTest extends CliCommandTestBase {
 
   @Category(FlakyTest.class) // GEODE-1579
@@ -56,80 +56,118 @@ public class MultiUserDUnitTest extends CliCommandTestBase {
     properties.put(SECURITY_MANAGER, SampleSecurityManager.class.getName());
 
     // set up vm_0 the secure jmx manager
-    Object[] results = setUpJMXManagerOnVM(0, properties, "org/apache/geode/management/internal/security/cacheServer.json");
+    Object[] results =
+        setUpJMXManagerOnVM(
+            0, properties, "org/apache/geode/management/internal/security/cacheServer.json");
     String gfshDir = this.gfshDir;
 
     // set up vm_1 as a gfsh vm, data-reader will login and log out constantly in this vm until the test is done.
     VM vm1 = Host.getHost(0).getVM(1);
-    AsyncInvocation vm1Invoke = vm1.invokeAsync("run as data-reader", () -> {
-      String shellId = getClass().getSimpleName() + "_vm1";
-      HeadlessGfsh shell = new HeadlessGfsh(shellId, 30, gfshDir);
-      while (true) {
-        connect((String) results[0], (Integer) results[1], (Integer) results[2], shell, "data-reader", "1234567");
-        Awaitility.waitAtMost(5, TimeUnit.MILLISECONDS);
-        shell.executeCommand("disconnect");
-      }
-    });
+    AsyncInvocation vm1Invoke =
+        vm1.invokeAsync(
+            "run as data-reader",
+            () -> {
+              String shellId = getClass().getSimpleName() + "_vm1";
+              HeadlessGfsh shell = new HeadlessGfsh(shellId, 30, gfshDir);
+              while (true) {
+                connect(
+                    (String) results[0],
+                    (Integer) results[1],
+                    (Integer) results[2],
+                    shell,
+                    "data-reader",
+                    "1234567");
+                Awaitility.waitAtMost(5, TimeUnit.MILLISECONDS);
+                shell.executeCommand("disconnect");
+              }
+            });
 
     VM vm2 = Host.getHost(0).getVM(2);
     // set up vm_2 as a gfsh vm,  and then connect as "stranger" and try to execute the commands and assert errors comes back are NotAuthorized
-    AsyncInvocation vm2Invoke = vm2.invokeAsync("run as guest", () -> {
-      String shellId = getClass().getSimpleName() + "_vm2";
-      HeadlessGfsh shell = new HeadlessGfsh(shellId, 30, gfshDir);
-      connect((String) results[0], (Integer) results[1], (Integer) results[2], shell, "stranger", "1234567");
+    AsyncInvocation vm2Invoke =
+        vm2.invokeAsync(
+            "run as guest",
+            () -> {
+              String shellId = getClass().getSimpleName() + "_vm2";
+              HeadlessGfsh shell = new HeadlessGfsh(shellId, 30, gfshDir);
+              connect(
+                  (String) results[0],
+                  (Integer) results[1],
+                  (Integer) results[2],
+                  shell,
+                  "stranger",
+                  "1234567");
 
-      List<TestCommand> allCommands = TestCommand.getCommands();
-      for (TestCommand command : allCommands) {
-        LogService.getLogger().info("executing: " + command.getCommand());
-        if (command.getPermission() == null) {
-          continue;
-        }
+              List<TestCommand> allCommands = TestCommand.getCommands();
+              for (TestCommand command : allCommands) {
+                LogService.getLogger().info("executing: " + command.getCommand());
+                if (command.getPermission() == null) {
+                  continue;
+                }
 
-        CommandResult result = executeCommand(shell, command.getCommand());
+                CommandResult result = executeCommand(shell, command.getCommand());
 
-        int errorCode = ((ErrorResultData) result.getResultData()).getErrorCode();
+                int errorCode = ((ErrorResultData) result.getResultData()).getErrorCode();
 
-        // for some commands there are pre execution checks to check for user input error, will skip those commands
-        if (errorCode == ResultBuilder.ERRORCODE_USER_ERROR) {
-          LogService.getLogger().info("Skip user error: " + result.getContent());
-          continue;
-        }
+                // for some commands there are pre execution checks to check for user input error, will skip those commands
+                if (errorCode == ResultBuilder.ERRORCODE_USER_ERROR) {
+                  LogService.getLogger().info("Skip user error: " + result.getContent());
+                  continue;
+                }
 
-        assertEquals("Not an expected result: " + result.toString(), ResultBuilder.ERRORCODE_UNAUTHORIZED, ((ErrorResultData) result.getResultData()).getErrorCode());
-        String resultMessage = result.getContent().toString();
-        String permString = command.getPermission().toString();
-        assertTrue(resultMessage + " does not contain " + permString, resultMessage.contains(permString));
-      }
-      LogService.getLogger().info("vm 2 done!");
-    });
+                assertEquals(
+                    "Not an expected result: " + result.toString(),
+                    ResultBuilder.ERRORCODE_UNAUTHORIZED,
+                    ((ErrorResultData) result.getResultData()).getErrorCode());
+                String resultMessage = result.getContent().toString();
+                String permString = command.getPermission().toString();
+                assertTrue(
+                    resultMessage + " does not contain " + permString,
+                    resultMessage.contains(permString));
+              }
+              LogService.getLogger().info("vm 2 done!");
+            });
 
     VM vm3 = Host.getHost(0).getVM(3);
-    IgnoredException.addIgnoredException("java.lang.IllegalArgumentException: Region doesnt exist: {0}", vm3);
+    IgnoredException.addIgnoredException(
+        "java.lang.IllegalArgumentException: Region doesnt exist: {0}", vm3);
     IgnoredException.addIgnoredException("java.lang.ClassNotFoundException: myApp.myListener", vm3);
 
     // set up vm_3 as another gfsh vm, and then connect as "super-user" and try to execute the commands and assert we don't get a NotAuthorized Exception
-    AsyncInvocation vm3Invoke = vm3.invokeAsync("run as superUser", () -> {
-      String shellId = getClass().getSimpleName() + "_vm3";
-      HeadlessGfsh shell = new HeadlessGfsh(shellId, 30, gfshDir);
-      connect((String) results[0], (Integer) results[1], (Integer) results[2], shell, "super-user", "1234567");
+    AsyncInvocation vm3Invoke =
+        vm3.invokeAsync(
+            "run as superUser",
+            () -> {
+              String shellId = getClass().getSimpleName() + "_vm3";
+              HeadlessGfsh shell = new HeadlessGfsh(shellId, 30, gfshDir);
+              connect(
+                  (String) results[0],
+                  (Integer) results[1],
+                  (Integer) results[2],
+                  shell,
+                  "super-user",
+                  "1234567");
 
-      List<TestCommand> allCommands = TestCommand.getCommands();
-      for (TestCommand command : allCommands) {
-        LogService.getLogger().info("executing: " + command.getCommand());
-        if (command.getPermission() == null) {
-          continue;
-        }
+              List<TestCommand> allCommands = TestCommand.getCommands();
+              for (TestCommand command : allCommands) {
+                LogService.getLogger().info("executing: " + command.getCommand());
+                if (command.getPermission() == null) {
+                  continue;
+                }
 
-        CommandResult result = executeCommand(shell, command.getCommand());
-        if (result.getResultData().getStatus() == Status.OK) {
-          continue;
-        }
+                CommandResult result = executeCommand(shell, command.getCommand());
+                if (result.getResultData().getStatus() == Status.OK) {
+                  continue;
+                }
 
-        assertNotEquals("Did not expect an Unauthorized exception: " + result.toString(), ResultBuilder.ERRORCODE_UNAUTHORIZED, ((ErrorResultData) result.getResultData()).getErrorCode());
-      }
+                assertNotEquals(
+                    "Did not expect an Unauthorized exception: " + result.toString(),
+                    ResultBuilder.ERRORCODE_UNAUTHORIZED,
+                    ((ErrorResultData) result.getResultData()).getErrorCode());
+              }
 
-      LogService.getLogger().info("vm 3 done!");
-    });
+              LogService.getLogger().info("vm 3 done!");
+            });
 
     // only wait until vm2 and vm3 are done. vm1 will close when test finishes
     vm2Invoke.join();
@@ -140,5 +178,4 @@ public class MultiUserDUnitTest extends CliCommandTestBase {
 
     IgnoredException.removeAllExpectedExceptions();
   }
-
 }

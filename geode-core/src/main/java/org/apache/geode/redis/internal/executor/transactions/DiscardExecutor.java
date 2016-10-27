@@ -38,5 +38,4 @@ public class DiscardExecutor extends TransactionExecutor {
 
     command.setResponse(Coder.getSimpleStringResponse(context.getByteBufAllocator(), "OK"));
   }
-
 }

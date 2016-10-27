@@ -35,8 +35,9 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * Does a Execution of function on server region
- * It does not get the resul from the server (follows Fire&Forget approch)
+ * Does a Execution of function on server region It does not get the resul from the server (follows
+ * Fire&Forget approch)
+ *
  * @since GemFire 5.8Beta
  */
 public class ExecuteRegionFunctionNoAckOp {
@@ -48,64 +49,94 @@ public class ExecuteRegionFunctionNoAckOp {
   }
 
   /**
-   * Does a execute Function on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a execute Function on a server using connections from the given pool to communicate with
+   * the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the put on
    * @param function to be executed
    * @param serverRegionExecutor which will return argument and filter
    */
-  public static void execute(ExecutablePool pool, String region, Function function, ServerRegionFunctionExecutor serverRegionExecutor, byte hasResult) {
-    AbstractOp op = new ExecuteRegionFunctionNoAckOpImpl(region, function, serverRegionExecutor, hasResult);
+  public static void execute(
+      ExecutablePool pool,
+      String region,
+      Function function,
+      ServerRegionFunctionExecutor serverRegionExecutor,
+      byte hasResult) {
+    AbstractOp op =
+        new ExecuteRegionFunctionNoAckOpImpl(region, function, serverRegionExecutor, hasResult);
     try {
       if (logger.isDebugEnabled()) {
-        logger.debug("ExecuteRegionFunctionNoAckOp#execute : Sending Function Execution Message: {} to Server using pool: {}", op.getMessage(), pool);
+        logger.debug(
+            "ExecuteRegionFunctionNoAckOp#execute : Sending Function Execution Message: {} to Server using pool: {}",
+            op.getMessage(),
+            pool);
       }
       pool.execute(op);
     } catch (Exception ex) {
       if (logger.isDebugEnabled()) {
-        logger.debug("ExecuteRegionFunctionNoAckOp#execute : Exception occured while Sending Function Execution Message: {} to server using pool: {}", op.getMessage(), pool, ex);
+        logger.debug(
+            "ExecuteRegionFunctionNoAckOp#execute : Exception occured while Sending Function Execution Message: {} to server using pool: {}",
+            op.getMessage(),
+            pool,
+            ex);
       }
-      if (ex.getMessage() != null)
-        throw new FunctionException(ex.getMessage(), ex);
-      else
-        throw new FunctionException("Unexpected exception during function execution:", ex);
+      if (ex.getMessage() != null) throw new FunctionException(ex.getMessage(), ex);
+      else throw new FunctionException("Unexpected exception during function execution:", ex);
     }
   }
 
-  public static void execute(ExecutablePool pool, String region, String functionId, ServerRegionFunctionExecutor serverRegionExecutor, byte hasResult, boolean isHA, boolean optimizeForWrite) {
-    AbstractOp op = new ExecuteRegionFunctionNoAckOpImpl(region, functionId, serverRegionExecutor, hasResult, isHA, optimizeForWrite);
+  public static void execute(
+      ExecutablePool pool,
+      String region,
+      String functionId,
+      ServerRegionFunctionExecutor serverRegionExecutor,
+      byte hasResult,
+      boolean isHA,
+      boolean optimizeForWrite) {
+    AbstractOp op =
+        new ExecuteRegionFunctionNoAckOpImpl(
+            region, functionId, serverRegionExecutor, hasResult, isHA, optimizeForWrite);
     try {
       if (logger.isDebugEnabled()) {
-        logger.debug("ExecuteRegionFunctionNoAckOp#execute : Sending Function Execution Message: {} to Server using pool: {}", op.getMessage(), pool);
+        logger.debug(
+            "ExecuteRegionFunctionNoAckOp#execute : Sending Function Execution Message: {} to Server using pool: {}",
+            op.getMessage(),
+            pool);
       }
       pool.execute(op);
     } catch (Exception ex) {
       if (logger.isDebugEnabled()) {
-        logger.debug("ExecuteRegionFunctionNoAckOp#execute : Exception occured while Sending Function Execution Message: {} to server using pool: {}", op.getMessage(), pool, ex);
+        logger.debug(
+            "ExecuteRegionFunctionNoAckOp#execute : Exception occured while Sending Function Execution Message: {} to server using pool: {}",
+            op.getMessage(),
+            pool,
+            ex);
       }
-      if (ex.getMessage() != null)
-        throw new FunctionException(ex.getMessage(), ex);
-      else
-        throw new FunctionException("Unexpected exception during function execution:", ex);
+      if (ex.getMessage() != null) throw new FunctionException(ex.getMessage(), ex);
+      else throw new FunctionException("Unexpected exception during function execution:", ex);
     }
   }
 
   private static class ExecuteRegionFunctionNoAckOpImpl extends AbstractOp {
     private final boolean executeOnBucketSet;
 
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
-    public ExecuteRegionFunctionNoAckOpImpl(String region, Function function, ServerRegionFunctionExecutor serverRegionExecutor, byte hasResult) {
+    /** @throws org.apache.geode.SerializationException if serialization fails */
+    public ExecuteRegionFunctionNoAckOpImpl(
+        String region,
+        Function function,
+        ServerRegionFunctionExecutor serverRegionExecutor,
+        byte hasResult) {
       super(MessageType.EXECUTE_REGION_FUNCTION, 8 + serverRegionExecutor.getFilter().size());
       byte isReExecute = 0;
       int removedNodesSize = 0;
-      byte functionState = AbstractExecution.getFunctionState(function.isHA(), function.hasResult(), function.optimizeForWrite());
+      byte functionState =
+          AbstractExecution.getFunctionState(
+              function.isHA(), function.hasResult(), function.optimizeForWrite());
       Set routingObjects = serverRegionExecutor.getFilter();
       Object args = serverRegionExecutor.getArguments();
       MemberMappedArgument memberMappedArg = serverRegionExecutor.getMemberMappedArgument();
-      getMessage().addBytesPart(new byte[] { functionState });
+      getMessage().addBytesPart(new byte[] {functionState});
       getMessage().addStringPart(region);
       if (serverRegionExecutor.isFnSerializationReqd()) {
         getMessage().addStringOrObjPart(function);
@@ -121,7 +152,7 @@ public class ExecuteRegionFunctionNoAckOp {
       //      flags = isReExecute == 1? (byte)(flags | Op.IS_REXECUTE_MASK) : flags;
       byte flags = ExecuteFunctionHelper.createFlags(executeOnBucketSet, isReExecute);
 
-      getMessage().addBytesPart(new byte[] { flags });
+      getMessage().addBytesPart(new byte[] {flags});
       getMessage().addIntPart(routingObjects.size());
       for (Object key : routingObjects) {
         getMessage().addStringOrObjPart(key);
@@ -129,16 +160,24 @@ public class ExecuteRegionFunctionNoAckOp {
       getMessage().addIntPart(removedNodesSize);
     }
 
-    public ExecuteRegionFunctionNoAckOpImpl(String region, String functionId, ServerRegionFunctionExecutor serverRegionExecutor, byte hasResult, boolean isHA, boolean optimizeForWrite) {
+    public ExecuteRegionFunctionNoAckOpImpl(
+        String region,
+        String functionId,
+        ServerRegionFunctionExecutor serverRegionExecutor,
+        byte hasResult,
+        boolean isHA,
+        boolean optimizeForWrite) {
       super(MessageType.EXECUTE_REGION_FUNCTION, 8 + serverRegionExecutor.getFilter().size());
       byte isReExecute = 0;
       int removedNodesSize = 0;
-      byte functionState = AbstractExecution.getFunctionState(isHA, hasResult == (byte) 1 ? true : false, optimizeForWrite);
+      byte functionState =
+          AbstractExecution.getFunctionState(
+              isHA, hasResult == (byte) 1 ? true : false, optimizeForWrite);
 
       Set routingObjects = serverRegionExecutor.getFilter();
       Object args = serverRegionExecutor.getArguments();
       MemberMappedArgument memberMappedArg = serverRegionExecutor.getMemberMappedArgument();
-      getMessage().addBytesPart(new byte[] { functionState });
+      getMessage().addBytesPart(new byte[] {functionState});
       getMessage().addStringPart(region);
       getMessage().addStringOrObjPart(functionId);
       getMessage().addObjPart(args);
@@ -149,7 +188,7 @@ public class ExecuteRegionFunctionNoAckOp {
       //      flags = isReExecute == 1? (byte)(flags | Op.IS_REXECUTE_MASK) : flags;
       byte flags = ExecuteFunctionHelper.createFlags(executeOnBucketSet, isReExecute);
 
-      getMessage().addBytesPart(new byte[] { flags });
+      getMessage().addBytesPart(new byte[] {flags});
       getMessage().addIntPart(routingObjects.size());
       for (Object key : routingObjects) {
         getMessage().addStringOrObjPart(key);
@@ -166,15 +205,20 @@ public class ExecuteRegionFunctionNoAckOp {
         Part part = msg.getPart(0);
         if (msgType == MessageType.EXCEPTION) {
           Throwable t = (Throwable) part.getObject();
-          logger.warn(LocalizedMessage.create(LocalizedStrings.EXECUTE_FUNCTION_NO_HAS_RESULT_RECEIVED_EXCEPTION), t);
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings.EXECUTE_FUNCTION_NO_HAS_RESULT_RECEIVED_EXCEPTION),
+              t);
         } else if (isErrorResponse(msgType)) {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.EXECUTE_FUNCTION_NO_HAS_RESULT_RECEIVED_EXCEPTION));
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings.EXECUTE_FUNCTION_NO_HAS_RESULT_RECEIVED_EXCEPTION));
         } else {
-          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
+          throw new InternalGemFireError(
+              "Unexpected message type " + MessageType.getString(msgType));
         }
         return null;
       }
-
     }
 
     @Override

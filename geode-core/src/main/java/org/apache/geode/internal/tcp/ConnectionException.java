@@ -18,10 +18,7 @@ package org.apache.geode.internal.tcp;
 
 import org.apache.geode.GemFireException;
 
-/**
-    @since GemFire 3.0
-   
- */
+/** @since GemFire 3.0 */
 public class ConnectionException extends GemFireException {
   private static final long serialVersionUID = -1977443644277412122L;
 
@@ -32,5 +29,4 @@ public class ConnectionException extends GemFireException {
   public ConnectionException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

@@ -31,7 +31,8 @@ public class GetExecutor extends StringExecutor {
     Region<ByteArrayWrapper, ByteArrayWrapper> r = context.getRegionProvider().getStringsRegion();
 
     if (command.getProcessedCommand().size() < 2) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.GETEXECUTOR));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.GETEXECUTOR));
       return;
     }
 
@@ -43,9 +44,8 @@ public class GetExecutor extends StringExecutor {
       command.setResponse(Coder.getNilResponse(context.getByteBufAllocator()));
       return;
     } else {
-      command.setResponse(Coder.getBulkStringResponse(context.getByteBufAllocator(), wrapper.toBytes()));
+      command.setResponse(
+          Coder.getBulkStringResponse(context.getByteBufAllocator(), wrapper.toBytes()));
     }
-
   }
-
 }

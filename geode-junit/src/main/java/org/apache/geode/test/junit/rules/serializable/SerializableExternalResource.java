@@ -18,8 +18,6 @@ package org.apache.geode.test.junit.rules.serializable;
 
 import org.junit.rules.ExternalResource;
 
-/**
- * Serializable subclass of {@link org.junit.rules.ExternalResource ExternalResource}.
- */
-public abstract class SerializableExternalResource extends ExternalResource implements SerializableTestRule {
-}
+/** Serializable subclass of {@link org.junit.rules.ExternalResource ExternalResource}. */
+public abstract class SerializableExternalResource extends ExternalResource
+    implements SerializableTestRule {}

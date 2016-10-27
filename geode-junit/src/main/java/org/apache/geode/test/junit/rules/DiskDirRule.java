@@ -24,10 +24,7 @@ import java.nio.file.Files;
 
 import org.junit.rules.ExternalResource;
 
-/**
- * A rule that creates a temporary directory and
- * cleans it up after the test.
- */
+/** A rule that creates a temporary directory and cleans it up after the test. */
 public class DiskDirRule extends ExternalResource {
   private File diskDir;
 
@@ -43,13 +40,15 @@ public class DiskDirRule extends ExternalResource {
     }
 
     try {
-      Files.walk(diskDir.toPath()).forEach((path) -> {
-        try {
-          Files.delete(path);
-        } catch (IOException e) {
-          //Ignore
-        }
-      });
+      Files.walk(diskDir.toPath())
+          .forEach(
+              (path) -> {
+                try {
+                  Files.delete(path);
+                } catch (IOException e) {
+                  //Ignore
+                }
+              });
     } catch (IOException e) {
       throw new RuntimeException("Could not delete disk dir: " + diskDir, e);
     }

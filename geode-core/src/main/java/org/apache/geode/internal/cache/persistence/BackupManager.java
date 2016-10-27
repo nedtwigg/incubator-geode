@@ -37,12 +37,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
-/**
- * This class manages the state an logic to backup a single
- * cache.
- * 
- *
- */
+/** This class manages the state an logic to backup a single cache. */
 public class BackupManager implements MembershipListener {
 
   //TODO prpersist internationalize this.
@@ -98,8 +93,9 @@ public class BackupManager implements MembershipListener {
   }
 
   /**
-   * Returns the memberId directory for this member in the baseline.  The memberId may have changed if this
-   * member has been restarted since the last backup.
+   * Returns the memberId directory for this member in the baseline. The memberId may have changed
+   * if this member has been restarted since the last backup.
+   *
    * @param baselineParentDir parent directory of last backup.
    * @return null if the baseline for this member could not be located.
    */
@@ -127,11 +123,14 @@ public class BackupManager implements MembershipListener {
   }
 
   /**
-   * Performs a sanity check on the baseline directory for incremental backups. If a baseline directory
-   * exists for the member and there is no INCOMPLETE_BACKUP file then return the data stores directory
-   * for this member.
-   * @param baselineParentDir a previous backup directory.  This is used with the incremental backup option.  May be null if the user specified a full backup.
-   * @return null if the backup is to be a full backup otherwise return the data store directory in the previous backup for this member (if incremental).
+   * Performs a sanity check on the baseline directory for incremental backups. If a baseline
+   * directory exists for the member and there is no INCOMPLETE_BACKUP file then return the data
+   * stores directory for this member.
+   *
+   * @param baselineParentDir a previous backup directory. This is used with the incremental backup
+   *     option. May be null if the user specified a full backup.
+   * @return null if the backup is to be a full backup otherwise return the data store directory in
+   *     the previous backup for this member (if incremental).
    * @throws IOException
    */
   private File checkBaseline(File baselineParentDir) throws IOException {
@@ -159,7 +158,8 @@ public class BackupManager implements MembershipListener {
     return baselineDir;
   }
 
-  public HashSet<PersistentID> finishBackup(File targetDir, File baselineDir, boolean abort) throws IOException {
+  public HashSet<PersistentID> finishBackup(File targetDir, File baselineDir, boolean abort)
+      throws IOException {
     try {
       if (abort) {
         return new HashSet<PersistentID>();
@@ -171,15 +171,17 @@ public class BackupManager implements MembershipListener {
       baselineDir = checkBaseline(baselineDir);
 
       // Create an inspector for the baseline backup
-      BackupInspector inspector = (baselineDir == null ? null : BackupInspector.createInspector(baselineDir));
+      BackupInspector inspector =
+          (baselineDir == null ? null : BackupInspector.createInspector(baselineDir));
 
       File storesDir = new File(backupDir, DATA_STORES);
       RestoreScript restoreScript = new RestoreScript();
       HashSet<PersistentID> persistentIds = new HashSet<PersistentID>();
-      Collection<DiskStoreImpl> diskStores = new ArrayList<DiskStoreImpl>(cache.listDiskStoresIncludingRegionOwned());
+      Collection<DiskStoreImpl> diskStores =
+          new ArrayList<DiskStoreImpl>(cache.listDiskStoresIncludingRegionOwned());
 
       boolean foundPersistentData = false;
-      for (Iterator<DiskStoreImpl> itr = diskStores.iterator(); itr.hasNext();) {
+      for (Iterator<DiskStoreImpl> itr = diskStores.iterator(); itr.hasNext(); ) {
         DiskStoreImpl store = itr.next();
         if (store.hasPersistedData()) {
           if (!foundPersistentData) {
@@ -230,13 +232,15 @@ public class BackupManager implements MembershipListener {
     FileUtil.mkdirs(configBackupDir);
     URL url = cache.getCacheXmlURL();
     if (url != null) {
-      File cacheXMLBackup = new File(configBackupDir, DistributionConfig.DEFAULT_CACHE_XML_FILE.getName());
+      File cacheXMLBackup =
+          new File(configBackupDir, DistributionConfig.DEFAULT_CACHE_XML_FILE.getName());
       FileUtil.copy(url, cacheXMLBackup);
     }
 
     URL propertyURL = DistributedSystem.getPropertyFileURL();
     if (propertyURL != null) {
-      File propertyBackup = new File(configBackupDir, DistributionConfig.GEMFIRE_PREFIX + "properties");
+      File propertyBackup =
+          new File(configBackupDir, DistributionConfig.GEMFIRE_PREFIX + "properties");
       FileUtil.copy(propertyURL, propertyBackup);
     }
 
@@ -262,9 +266,10 @@ public class BackupManager implements MembershipListener {
 
   /**
    * Copies user deployed jars to the backup directory.
+   *
    * @param restoreScript Used to restore from this backup.
    * @param backupDir The backup directory for this member.
-   * @throws IOException one or more of the jars did not successfully copy. 
+   * @throws IOException one or more of the jars did not successfully copy.
    */
   private void backupDeployedJars(RestoreScript restoreScript, File backupDir) throws IOException {
     JarDeployer deployer = null;
@@ -344,14 +349,13 @@ public class BackupManager implements MembershipListener {
     cleanup();
   }
 
-  public void memberJoined(InternalDistributedMember id) {
-  }
+  public void memberJoined(InternalDistributedMember id) {}
 
-  public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
-  }
+  public void quorumLost(
+      Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {}
 
-  public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
-  }
+  public void memberSuspect(
+      InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {}
 
   public void waitForBackup() {
     try {

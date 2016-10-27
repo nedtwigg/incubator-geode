@@ -20,15 +20,12 @@ import java.util.List;
 
 /**
  * A locator discovery callback that does nothing.
- * @since GemFire 5.7
  *
+ * @since GemFire 5.7
  */
 public class LocatorDiscoveryCallbackAdapter implements LocatorDiscoveryCallback {
 
-  public void locatorsDiscovered(List locators) {
-  }
+  public void locatorsDiscovered(List locators) {}
 
-  public void locatorsRemoved(List locators) {
-  }
-
+  public void locatorsRemoved(List locators) {}
 }

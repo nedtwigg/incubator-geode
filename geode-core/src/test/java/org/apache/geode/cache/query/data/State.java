@@ -27,9 +27,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.io.*;
 
-/**
- *
- */
+/** */
 public class State implements Serializable {
   public String name;
   public String zone;
@@ -40,16 +38,16 @@ public class State implements Serializable {
     this.name = name;
     this.zone = zone;
     this.districts = districts;
-  }//end of contructor 1
+  } //end of contructor 1
 
   public State(int i, Set districts) {
-    String arr1[] = { "MAHARASHTRA", "GUJARAT", "PUNJAB", "KERALA", "AASAM" };
-    String arr2[] = { "WEST", "WEST", "NORTH", "SOUTH", "EAST" };
+    String arr1[] = {"MAHARASHTRA", "GUJARAT", "PUNJAB", "KERALA", "AASAM"};
+    String arr2[] = {"WEST", "WEST", "NORTH", "SOUTH", "EAST"};
     /*this is for the test to have 33.33% of the objects belonging to one state*/
     this.name = arr1[i % 3];
     this.zone = arr2[i % 3];
     this.districts = districts;
-  }//end of contructor 2
+  } //end of contructor 2
 
   //////////////////////////////
 
@@ -76,6 +74,5 @@ public class State implements Serializable {
       }
     }
     return districtsWithSameName;
-  }//end of   getDistrictsWithSameName
-
-}//end of class
+  } //end of   getDistrictsWithSameName
+} //end of class

@@ -40,7 +40,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 /**
  * Test ResultsBag Limit behaviour
  *
- * TODO: Test for null behaviour in various functions
+ * <p>TODO: Test for null behaviour in various functions
  */
 @Category(UnitTest.class)
 public class ResultsBagLimitBehaviourJUnitTest {
@@ -139,9 +139,13 @@ public class ResultsBagLimitBehaviourJUnitTest {
     assertEquals(6, bag.size());
     for (int i = 1; i < 17; ++i) {
       Integer intg = new Integer(i);
-      assertTrue(temp.contains(wrap(intg, bag.getCollectionType().getElementType())) == bag.contains(wrap(intg, bag.getCollectionType().getElementType())));
+      assertTrue(
+          temp.contains(wrap(intg, bag.getCollectionType().getElementType()))
+              == bag.contains(wrap(intg, bag.getCollectionType().getElementType())));
     }
-    assertTrue(temp.contains(wrap(null, bag.getCollectionType().getElementType())) == bag.contains(wrap(null, bag.getCollectionType().getElementType())));
+    assertTrue(
+        temp.contains(wrap(null, bag.getCollectionType().getElementType()))
+            == bag.contains(wrap(null, bag.getCollectionType().getElementType())));
   }
 
   @Test
@@ -166,15 +170,35 @@ public class ResultsBagLimitBehaviourJUnitTest {
     ResultsBag bag = getBagObject(String.class);
     bag = getBagObject(String.class);
     ObjectType elementType = bag.getCollectionType().getElementType();
-    assertEquals(1, bag.addAndGetOccurence(elementType instanceof StructType ? ((Struct) wrap("one", elementType)).getFieldValues() : wrap("one", elementType)));
+    assertEquals(
+        1,
+        bag.addAndGetOccurence(
+            elementType instanceof StructType
+                ? ((Struct) wrap("one", elementType)).getFieldValues()
+                : wrap("one", elementType)));
     bag.add(wrap("two", elementType));
-    assertEquals(2, bag.addAndGetOccurence(elementType instanceof StructType ? ((Struct) wrap("two", elementType)).getFieldValues() : wrap("two", bag.getCollectionType().getElementType())));
+    assertEquals(
+        2,
+        bag.addAndGetOccurence(
+            elementType instanceof StructType
+                ? ((Struct) wrap("two", elementType)).getFieldValues()
+                : wrap("two", bag.getCollectionType().getElementType())));
     bag.add(wrap("three", bag.getCollectionType().getElementType()));
     bag.add(wrap("three", bag.getCollectionType().getElementType()));
-    assertEquals(3, bag.addAndGetOccurence(elementType instanceof StructType ? ((Struct) wrap("three", elementType)).getFieldValues() : wrap("three", elementType)));
+    assertEquals(
+        3,
+        bag.addAndGetOccurence(
+            elementType instanceof StructType
+                ? ((Struct) wrap("three", elementType)).getFieldValues()
+                : wrap("three", elementType)));
     bag.add(wrap(null, bag.getCollectionType().getElementType()));
     bag.add(wrap(null, bag.getCollectionType().getElementType()));
-    assertEquals(3, bag.addAndGetOccurence(elementType instanceof StructType ? ((Struct) wrap(null, elementType)).getFieldValues() : wrap(null, elementType)));
+    assertEquals(
+        3,
+        bag.addAndGetOccurence(
+            elementType instanceof StructType
+                ? ((Struct) wrap(null, elementType)).getFieldValues()
+                : wrap(null, elementType)));
   }
 
   @Test
@@ -243,7 +267,8 @@ public class ResultsBagLimitBehaviourJUnitTest {
       if (temp.contains(wrap(intg, bag.getCollectionType().getElementType()))) {
         int occurence = bag.occurrences(wrap(intg, bag.getCollectionType().getElementType()));
         assertTrue(bag.remove(wrap(intg, bag.getCollectionType().getElementType())));
-        assertEquals(--occurence, bag.occurrences(wrap(intg, bag.getCollectionType().getElementType())));
+        assertEquals(
+            --occurence, bag.occurrences(wrap(intg, bag.getCollectionType().getElementType())));
         --currSize;
         assertEquals(currSize, bag.size());
       } else {
@@ -253,7 +278,8 @@ public class ResultsBagLimitBehaviourJUnitTest {
     if (temp.contains(wrap(null, bag.getCollectionType().getElementType()))) {
       int occurence = bag.occurrences(wrap(null, bag.getCollectionType().getElementType()));
       assertTrue(bag.remove(wrap(null, bag.getCollectionType().getElementType())));
-      assertEquals(--occurence, bag.occurrences(wrap(null, bag.getCollectionType().getElementType())));
+      assertEquals(
+          --occurence, bag.occurrences(wrap(null, bag.getCollectionType().getElementType())));
       --currSize;
       assertEquals(currSize, bag.size());
     }
@@ -279,7 +305,6 @@ public class ResultsBagLimitBehaviourJUnitTest {
     assertFalse(bag.contains(wrap(null, bag.getCollectionType().getElementType())));
     itr = bag.iterator();
     assertFalse(itr.hasNext());
-
   }
 
   @Test
@@ -323,12 +348,24 @@ public class ResultsBagLimitBehaviourJUnitTest {
     ResultsBag fromBag = getBagObject(String.class);
     fromBag.fromData(dis);
     assertEquals(toBag.size(), fromBag.size());
-    assertEquals(toBag.occurrences(wrap(null, toBag.getCollectionType().getElementType())), fromBag.occurrences(wrap(null, fromBag.getCollectionType().getElementType())));
-    assertEquals(toBag.occurrences(wrap("one", toBag.getCollectionType().getElementType())), fromBag.occurrences(wrap("one", fromBag.getCollectionType().getElementType())));
-    assertEquals(toBag.occurrences(wrap("two", toBag.getCollectionType().getElementType())), fromBag.occurrences(wrap("two", fromBag.getCollectionType().getElementType())));
-    assertEquals(toBag.occurrences(wrap("three", toBag.getCollectionType().getElementType())), fromBag.occurrences(wrap("three", fromBag.getCollectionType().getElementType())));
-    assertEquals(toBag.occurrences(wrap("four", toBag.getCollectionType().getElementType())), fromBag.occurrences(wrap("four", fromBag.getCollectionType().getElementType())));
-    assertEquals(toBag.occurrences(wrap(null, toBag.getCollectionType().getElementType())), fromBag.occurrences(wrap(null, fromBag.getCollectionType().getElementType())));
+    assertEquals(
+        toBag.occurrences(wrap(null, toBag.getCollectionType().getElementType())),
+        fromBag.occurrences(wrap(null, fromBag.getCollectionType().getElementType())));
+    assertEquals(
+        toBag.occurrences(wrap("one", toBag.getCollectionType().getElementType())),
+        fromBag.occurrences(wrap("one", fromBag.getCollectionType().getElementType())));
+    assertEquals(
+        toBag.occurrences(wrap("two", toBag.getCollectionType().getElementType())),
+        fromBag.occurrences(wrap("two", fromBag.getCollectionType().getElementType())));
+    assertEquals(
+        toBag.occurrences(wrap("three", toBag.getCollectionType().getElementType())),
+        fromBag.occurrences(wrap("three", fromBag.getCollectionType().getElementType())));
+    assertEquals(
+        toBag.occurrences(wrap("four", toBag.getCollectionType().getElementType())),
+        fromBag.occurrences(wrap("four", fromBag.getCollectionType().getElementType())));
+    assertEquals(
+        toBag.occurrences(wrap(null, toBag.getCollectionType().getElementType())),
+        fromBag.occurrences(wrap(null, fromBag.getCollectionType().getElementType())));
     assertFalse(toBag.asList().retainAll(fromBag.asList()));
   }
 
@@ -586,5 +623,4 @@ public class ResultsBagLimitBehaviourJUnitTest {
   private Object wrap(Object obj, ObjectType elementType) {
     return obj;
   }
-
 }

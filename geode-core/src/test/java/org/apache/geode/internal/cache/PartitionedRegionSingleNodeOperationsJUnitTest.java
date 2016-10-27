@@ -54,13 +54,9 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Test for Partitioned Region operations on a single node. Following tests are
- * included:
- * <P>
- * (1) testPut() - Tests teh put() functionality for the partitioned region.
- * </P>
- * 
- *  
+ * Test for Partitioned Region operations on a single node. Following tests are included:
+ *
+ * <p>(1) testPut() - Tests teh put() functionality for the partitioned region.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Category(IntegrationTest.class)
@@ -82,27 +78,26 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
 
   /**
    * This isa test for PartitionedRegion put() operation.
-   * <p>
-   * Following functionalities are tested:
-   * </p>
-   * <p>
-   * 1) put() on PR with localMaxMemory = 0. PartitionedRegionException
-   * expected.
-   * </p>
-   * <p>
-   * 2)test the put() operation and validate that old values are returned in
-   * case of PR with scope D_ACK.
-   * </p>
-   * 
-   *  
+   *
+   * <p>Following functionalities are tested:
+   *
+   * <p>1) put() on PR with localMaxMemory = 0. PartitionedRegionException expected.
+   *
+   * <p>2)test the put() operation and validate that old values are returned in case of PR with
+   * scope D_ACK.
    */
   @Test
   public void test000Put() throws Exception {
     String regionname = "testPut";
     int localMaxMemory = 0;
     System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, "20000");
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionname, String.valueOf(localMaxMemory), 0);
-    System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, Integer.toString(PartitionedRegionHelper.DEFAULT_TOTAL_WAIT_RETRY_ITERATION));
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                regionname, String.valueOf(localMaxMemory), 0);
+    System.setProperty(
+        PartitionedRegion.RETRY_TIMEOUT_PROPERTY,
+        Integer.toString(PartitionedRegionHelper.DEFAULT_TOTAL_WAIT_RETRY_ITERATION));
     final String expectedExceptions = PartitionedRegionStorageException.class.getName();
     logger.info("<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
     try {
@@ -110,15 +105,17 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       fail("testPut()- Expected PartitionedRegionException not thrown for localMaxMemory = 0");
     } catch (PartitionedRegionStorageException ex) {
       if (logWriter.fineEnabled()) {
-        logWriter.fine("testPut() - Got a correct exception-PartitionedRegionStorageException for localMaxMemory=0 ");
+        logWriter.fine(
+            "testPut() - Got a correct exception-PartitionedRegionStorageException for localMaxMemory=0 ");
       }
     }
     logger.info("<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>");
 
-    if (!pr.isDestroyed())
-      pr.destroyRegion();
+    if (!pr.isDestroyed()) pr.destroyRegion();
 
-    pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionname, String.valueOf(400), 0);
+    pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(regionname, String.valueOf(400), 0);
     final int maxEntries = 3;
     for (int num = 0; num < maxEntries; num++) {
       final Integer key = new Integer(num);
@@ -140,10 +137,11 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       assertEquals((num + 1) * 2, ((GemFireCacheImpl) pr.getCache()).getCachePerfStats().getPuts());
     }
 
-    if (!pr.isDestroyed())
-      pr.destroyRegion();
+    if (!pr.isDestroyed()) pr.destroyRegion();
 
-    pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionname, String.valueOf(400), 0);
+    pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(regionname, String.valueOf(400), 0);
 
     for (int num = 0; num < maxEntries; num++) {
       pr.put(new Integer(num), this.val);
@@ -164,31 +162,38 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       final Object getObj = pr.get(new Integer(num));
       final Object oldPut = pr.put(new Integer(num), dummyVal);
       if (((EntrySnapshot) pr.getEntry(new Integer(num))).wasInitiallyLocal()) {
-        assertEquals("Returned value from put operation is not same as the old value", getObj, oldPut);
+        assertEquals(
+            "Returned value from put operation is not same as the old value", getObj, oldPut);
 
       } else {
         assertEquals(null, oldPut);
       }
-      assertEquals("testPut()- error in putting the value in the Partitioned Region", dummyVal, pr.get(new Integer(num)));
+      assertEquals(
+          "testPut()- error in putting the value in the Partitioned Region",
+          dummyVal,
+          pr.get(new Integer(num)));
     }
   }
 
-  /**
-   * This is a test for PartitionedRegion destroy(key) operation.
-   *  
-   */
+  /** This is a test for PartitionedRegion destroy(key) operation. */
   @Test
   public void test001Destroy() throws Exception {
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testDestroy", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testDestroy", String.valueOf(200), 0);
 
     final String expectedExceptions = EntryNotFoundException.class.getName();
-    final String addExpected = "<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>";
-    final String removeExpected = "<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>";
+    final String addExpected =
+        "<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>";
+    final String removeExpected =
+        "<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>";
     logger.info(addExpected);
     for (int num = 0; num < 3; num++) {
       try {
         pr.destroy(new Integer(num));
-        fail("Destroy doesn't throw EntryNotFoundException for the entry which never existed in the system");
+        fail(
+            "Destroy doesn't throw EntryNotFoundException for the entry which never existed in the system");
       } catch (EntryNotFoundException expected) {
       }
     }
@@ -203,22 +208,23 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
 
     for (int num = 0; num < 3; num++) {
       Object retval = pr.get(new Integer(num));
-      if (retval != null)
-        fail("testDestroy()- entry not destroyed  properly in destroy(key)");
+      if (retval != null) fail("testDestroy()- entry not destroyed  properly in destroy(key)");
     }
 
     logger.info(addExpected);
     for (int num = 0; num < 3; num++) {
       try {
         pr.destroy(new Integer(num));
-        fail("Destroy doesn't throw EntryNotFoundException for the entry which is already deleted from the system");
+        fail(
+            "Destroy doesn't throw EntryNotFoundException for the entry which is already deleted from the system");
       } catch (EntryNotFoundException enf) {
       }
     }
     logger.info(removeExpected);
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testDestroy() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testDestroy() Completed successfully ... ");
     }
   }
 
@@ -230,13 +236,12 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
     return ((GemFireCacheImpl) pr.getCache()).getCachePerfStats().getCreates();
   }
 
-  /**
-   * This is a test for PartitionedRegion get(key) operation.
-   *  
-   */
+  /** This is a test for PartitionedRegion get(key) operation. */
   @Test
   public void test002Get() throws Exception {
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testGet", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion("testGet", String.valueOf(200), 0);
     for (int num = 0; num < 3; num++) {
       pr.put(new Integer(num), val);
       Object retval = pr.get(new Integer(num));
@@ -245,23 +250,24 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       }
     }
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testGet() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testGet() Completed successfully ... ");
     }
   }
 
-  /**
-   * This is a test for PartitionedRegion destroyRegion() operation.
-   */
-
+  /** This is a test for PartitionedRegion destroyRegion() operation. */
   @Test
   public void test003DestroyRegion() throws Exception {
     String regionName = "testDestroyRegion";
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
     pr.put(new Integer(1), new Integer(1));
     pr.get(new Integer(1));
 
     if (pr.isDestroyed()) {
-      fail("PartitionedRegionSingleNodeOperationsJUnitTest:testDestroyRegion(): Returns true in isDestroyed method, before the region is destroyed");
+      fail(
+          "PartitionedRegionSingleNodeOperationsJUnitTest:testDestroyRegion(): Returns true in isDestroyed method, before the region is destroyed");
     }
 
     logWriter.info("JDEBUG 1");
@@ -279,11 +285,15 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
     while (regItr.hasNext()) {
       Region rg = (Region) regItr.next();
       // System.out.println("Region = " + rg.getName());
-      assertEquals(rg.getName().indexOf(PartitionedRegionHelper.BUCKET_REGION_PREFIX + pr.getPRId() + "_"), -1);
+      assertEquals(
+          rg.getName().indexOf(PartitionedRegionHelper.BUCKET_REGION_PREFIX + pr.getPRId() + "_"),
+          -1);
     }
 
     if (!pr.isDestroyed()) {
-      fail("testDestroyRegion(): " + "Returns false in isDestroyed method, after the region is destroyed");
+      fail(
+          "testDestroyRegion(): "
+              + "Returns false in isDestroyed method, after the region is destroyed");
     }
     logWriter.info("JDEBUG 3");
     try {
@@ -291,7 +301,8 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       fail("testdestroyRegion() Expected RegionDestroyedException not thrown");
     } catch (RegionDestroyedException ex) {
       if (logWriter.fineEnabled()) {
-        logWriter.fine("testDestroyRegion() got a corect RegionDestroyedException for put() after destroyRegion()");
+        logWriter.fine(
+            "testDestroyRegion() got a corect RegionDestroyedException for put() after destroyRegion()");
       }
     }
     logWriter.info("JDEBUG 4");
@@ -300,7 +311,9 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       fail("testdestroyRegion() - Expected RegionDestroyedException not thrown");
     } catch (RegionDestroyedException ex) {
       if (logWriter.fineEnabled()) {
-        logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - " + "testDestroyRegion() got a correct RegionDestroyedException for get() after destroyRegion()");
+        logWriter.fine(
+            "PartitionedRegionSingleNodeOperationsJUnitTest - "
+                + "testDestroyRegion() got a correct RegionDestroyedException for get() after destroyRegion()");
       }
     }
     logWriter.info("JDEBUG 5");
@@ -310,30 +323,36 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       fail("testdestroyRegion() Expected RegionDestroyedException not thrown");
     } catch (RegionDestroyedException ex) {
       if (logWriter.fineEnabled()) {
-        logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - " + "testDestroyRegion() got a correct RegionDestroyedException for destroy() after destroyRegion()");
+        logWriter.fine(
+            "PartitionedRegionSingleNodeOperationsJUnitTest - "
+                + "testDestroyRegion() got a correct RegionDestroyedException for destroy() after destroyRegion()");
       }
     }
     logWriter.info("JDEBUG 6");
 
-    pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
+    pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testDestroyRegion():" + " PartitionedRegion with same name as the destroyed region, can be created.");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testDestroyRegion():"
+              + " PartitionedRegion with same name as the destroyed region, can be created.");
     }
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testDestroyRegion(): Completed Successfully ...");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testDestroyRegion(): Completed Successfully ...");
     }
   }
 
-  /**
-   * Tests getCache() API of PR. This should return same value as the cache
-   * used.
-   *  
-   */
+  /** Tests getCache() API of PR. This should return same value as the cache used. */
   @Test
   public void test004GetCache() throws Exception {
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testGetCache", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testGetCache", String.valueOf(200), 0);
 
     GemFireCacheImpl ca = (GemFireCacheImpl) pr.getCache();
     if (!PartitionedRegionTestHelper.createCache().equals(ca)) {
@@ -341,68 +360,71 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
     }
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testGetCache() Completed Successfully");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testGetCache() Completed Successfully");
     }
   }
 
-  /**
-   * Tests getFullPath() API of PartitionedRegion.
-   *  
-   */
+  /** Tests getFullPath() API of PartitionedRegion. */
   @Test
   public void test005GetFullPath() throws Exception {
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testGetFullPath", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testGetFullPath", String.valueOf(200), 0);
     String fullPath = pr.getFullPath();
     if (!(Region.SEPARATOR + "testGetFullPath").equals(fullPath)) {
       fail("testGetFullPath() - getFullPath method is not returning proper fullPath");
     }
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testGetFullPath() Completed Successfully");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testGetFullPath() Completed Successfully");
     }
   }
 
-  /**
-   * Tests getParentRegion() API of PR. This should return null as PR doesnt
-   * have a parentRegion
-   *  
-   */
+  /** Tests getParentRegion() API of PR. This should return null as PR doesnt have a parentRegion */
   @Test
   public void test006GetParentRegion() throws Exception {
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testGetParentRegion", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testGetParentRegion", String.valueOf(200), 0);
     Region parentRegion = pr.getParentRegion();
     if (parentRegion != null) {
       fail("getParentRegion method is not returning null as parent region for a PartitionedRegion");
     }
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testGetParentRegion() Completed Successfully");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testGetParentRegion() Completed Successfully");
     }
   }
 
-  /**
-   * Tests getName() API of PR. Name returned should be same as the one used to
-   * create PR.
-   *  
-   */
+  /** Tests getName() API of PR. Name returned should be same as the one used to create PR. */
   @Test
   public void test007GetName() throws Exception {
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testGetName", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testGetName", String.valueOf(200), 0);
     String name = pr.getName();
     if (!("testGetName").equals(name)) {
       fail("getName() method is not returning proper region name");
     }
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testGetName() Completed Successfully");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testGetName() Completed Successfully");
     }
   }
 
-  /**
-   * This method validates containsKey() operations.
-   */
+  /** This method validates containsKey() operations. */
   @Test
   public void test008ContainsKey() throws Exception {
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testContainsKey", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testContainsKey", String.valueOf(200), 0);
     for (int num = 0; num < 3; num++) {
       pr.put(new Integer(num), val);
       boolean retval = pr.containsKey(new Integer(num));
@@ -412,41 +434,52 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
     }
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testContainsKey() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testContainsKey() Completed successfully ... ");
     }
   }
 
-  /**
-   * This method validates containsKey() operations.
-   */
+  /** This method validates containsKey() operations. */
   @Test
   public void test009ContainsValueForKey() throws Exception {
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testContainsValueForKey", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testContainsValueForKey", String.valueOf(200), 0);
     for (int num = 0; num < 3; num++) {
       pr.put(new Integer(num), val);
       boolean retval = pr.containsValueForKey(new Integer(num));
       if (!retval) {
-        fail("PartitionedRegionSingleNodeOperationTest:testContainsValueForKey()  operation failed");
+        fail(
+            "PartitionedRegionSingleNodeOperationTest:testContainsValueForKey()  operation failed");
       }
     }
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testContainsValueForKey() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testContainsValueForKey() Completed successfully ... ");
     }
   }
 
   /**
-   * Tests close() API of PR. It should close the accessor and delete the data-store and related meta-data information.
-   *  
+   * Tests close() API of PR. It should close the accessor and delete the data-store and related
+   * meta-data information.
    */
   @Test
   public void test010Close() throws Exception {
     logWriter.fine("Getting inside testClose method");
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testClose", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testClose", String.valueOf(200), 0);
     pr.put("K1", "V1");
     pr.get("K1");
     pr.close();
     if (!pr.isClosed || !pr.isDestroyed())
-      fail("testClose(): After close isClosed = " + pr.isClosed + " and isDestroyed = " + pr.isDestroyed());
+      fail(
+          "testClose(): After close isClosed = "
+              + pr.isClosed
+              + " and isDestroyed = "
+              + pr.isDestroyed());
     try {
       pr.put("K2", "V2");
       fail("testClose(): put operation completed on a closed PartitionedRegion. ");
@@ -464,22 +497,30 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
     }
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testClose() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testClose() Completed successfully ... ");
     }
   }
 
   /**
-   * Tests localDestroyRegion() API of PR. It should locallyDestroy the accessor, data store and meta-data.
-   *  
+   * Tests localDestroyRegion() API of PR. It should locallyDestroy the accessor, data store and
+   * meta-data.
    */
   @Test
   public void test011LocalDestroyRegion() throws Exception {
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testClose", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testClose", String.valueOf(200), 0);
     pr.put("K1", "V1");
     pr.get("K1");
     pr.localDestroyRegion();
     if (pr.isClosed || !pr.isDestroyed())
-      fail("testClose(): After close isClosed = " + pr.isClosed + " and isDestroyed = " + pr.isDestroyed());
+      fail(
+          "testClose(): After close isClosed = "
+              + pr.isClosed
+              + " and isDestroyed = "
+              + pr.isDestroyed());
     try {
       pr.put("K2", "V2");
       fail("testClose(): put operation completed on a closed PartitionedRegion. ");
@@ -495,50 +536,50 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
     }
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testClose() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testClose() Completed successfully ... ");
     }
   }
 
-  /**
-   * This method is used to test the isDestroyed() functionality.
-   *  
-   */
+  /** This method is used to test the isDestroyed() functionality. */
   @Test
   public void test012IsDestroyed() throws Exception {
     String regionName = "testIsDestroyed";
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
     pr.put(new Integer(1), new Integer(1));
     pr.get(new Integer(1));
 
     if (pr.isDestroyed()) {
-      fail("PartitionedRegionSingleNodeOperationsJUnitTest:testIsDestroyed(): Returns true in isDestroyed method, before the region is destroyed");
+      fail(
+          "PartitionedRegionSingleNodeOperationsJUnitTest:testIsDestroyed(): Returns true in isDestroyed method, before the region is destroyed");
     }
 
     pr.destroyRegion();
 
     if (!pr.isDestroyed()) {
-      fail("PartitionedRegionSingleNodeOperationsJUnitTest:testIsDestroyed(): " + "Returns false in isDestroyed method, after the region is destroyed");
+      fail(
+          "PartitionedRegionSingleNodeOperationsJUnitTest:testIsDestroyed(): "
+              + "Returns false in isDestroyed method, after the region is destroyed");
     }
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testIsDestroyed() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testIsDestroyed() Completed successfully ... ");
     }
   }
 
-  /**
-   * This method validates that PR closed behavior matches that of local region
-   * closed behavior.
-   *  
-   */
+  /** This method validates that PR closed behavior matches that of local region closed behavior. */
   /*
    * public void xxNoTestValidateCloseFunction() throws Exception { String
    * partitionRegionName = "testValidateCloseFunction"; PartitionedRegion pr =
    * (PartitionedRegion)PartitionedRegionTestHelper
    * .createPartitionedRegion(partitionRegionName, String.valueOf(200), 2,
    * Scope.DISTRIBUTED_ACK); String diRegion = "diRegion";
-   * 
+   *
    * Region distRegion = null;
-   * 
+   *
    * AttributesFactory af = new AttributesFactory(); RegionAttributes ra; //
    * setting property af.setScope(Scope.DISTRIBUTED_ACK); // creating region
    * attributes ra = af.create(); try { distRegion =
@@ -546,7 +587,7 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
    * catch (RegionExistsException rex) { distRegion =
    * PartitionedRegionTestHelper.createCache() .getRegion(diRegion); } //
    * Closing the regions distRegion.close(); pr.close();
-   * 
+   *
    * if (!pr.getCache().equals(distRegion.getCache())) {
    * fail("testValidateCloseFunction: getCache is not matching. "); } else { if
    * (logger.fineEnabled()) { logger.fine("getCache() matched on closed PR and
@@ -554,12 +595,12 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
    * pr.getName().length()) { fail("testValidateCloseFunction: getName behavior
    * not matching. "); } else { if (logger.fineEnabled()) {
    * logger.fine("getName) matched on closed PR and distributed region "); } }
-   * 
+   *
    * if (distRegion.getFullPath().length() != pr.getFullPath().length()) {
    * fail("testValidateCloseFunction: getFullPath behavior not matching. "); }
    * else { if (logger.fineEnabled()) { logger .fine("getFullPath) matched on
    * closed PR and distributed region "); } }
-   * 
+   *
    * if (logger.fineEnabled()) { logger
    * .fine("PartitionedRegionSingleNodeOperationsJUnitTest -
    * testValidateCloseFunction() Completed successfully ... "); } }
@@ -568,7 +609,7 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
   //  /**
   //   * This method is used to test the entrySet method. It verifies that it throws
   //   * UnsupportedOperationException.
-  //   *  
+  //   *
   //   */
   //  public void xxNoTestEntrySet() throws Exception
   //  {
@@ -607,9 +648,7 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
   //    }
   //  }
 
-  /**
-   * Test either the keySet() or keys() methods, which logically are expected to be the same
-   */
+  /** Test either the keySet() or keys() methods, which logically are expected to be the same */
   private void keysSetTester(Region pr, boolean keySet) {
     assertEquals(Collections.EMPTY_SET, (keySet ? pr.keySet() : pr.keys()));
     pr.put(new Integer(1), "won");
@@ -630,7 +669,7 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
     } catch (Exception expected) {
     }
     try {
-      ks.addAll(Arrays.asList(new String[] { "one", "two", "three" }));
+      ks.addAll(Arrays.asList(new String[] {"one", "two", "three"}));
       fail("Expected key set to be read only");
     } catch (Exception expected) {
     }
@@ -640,12 +679,12 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
     } catch (Exception expected) {
     }
     try {
-      ks.removeAll(Arrays.asList(new Integer[] { new Integer(1), new Integer(2) }));
+      ks.removeAll(Arrays.asList(new Integer[] {new Integer(1), new Integer(2)}));
       fail("Expected key set to be read only");
     } catch (Exception expected) {
     }
     try {
-      ks.retainAll(Arrays.asList(new Integer[] { new Integer(3), new Integer(5) }));
+      ks.retainAll(Arrays.asList(new Integer[] {new Integer(3), new Integer(5)}));
       fail("Expected key set to be read only");
     } catch (Exception expected) {
     }
@@ -676,21 +715,25 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
   @Test
   public void test013Keys() throws Exception {
     final String regionName = "testKeys";
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
     keysSetTester(pr, false);
   }
 
   @Test
   public void test014KeySet() throws Exception {
     String regionName = "testKeysSet";
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
     keysSetTester(pr, true);
   }
 
   //  /**
   //   * This method is used to test the keySet method. It verifies that it throws
   //   * UnsupportedOperationException.
-  //   *  
+  //   *
   //   */
   //  public void xxNoTestKeySet() throws Exception
   //  {
@@ -733,7 +776,7 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
   //  /**
   //   * This method is used to test the putAll method. It verifies that it throws
   //   * UnsupportedOperationException.
-  //   *  
+  //   *
   //   */
   //  public void xxNoTestPutAll() throws Exception
   //  {
@@ -776,7 +819,7 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
   //  /**
   //   * This method is used to test the values functionality. It verifies that it
   //   * throws UnsupportedOperationException.
-  //   *  
+  //   *
   //   */
   //  public void xxNoTestValues() throws Exception
   //  {
@@ -847,16 +890,16 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
   //  }
 
   /**
-   * This method is used to test the setUserAttributes functionality. It
-   * verifies that it sets the UserAttributes on an open PR without throwing any
-   * exception. It also verifies that it throws RegionDestroyedException on a
-   * closed PR.
-   *  
+   * This method is used to test the setUserAttributes functionality. It verifies that it sets the
+   * UserAttributes on an open PR without throwing any exception. It also verifies that it throws
+   * RegionDestroyedException on a closed PR.
    */
   @Test
   public void test015SetUserAttributes() throws Exception {
     String regionName = "testSetUserAttributes";
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
     String s = "DUMMY";
     pr.setUserAttribute(s);
 
@@ -865,30 +908,33 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
 
     try {
       pr.setUserAttribute(s);
-      fail("testSetUserAttributes() doesnt throw RegionDestroyedException on a closed PartitionedRegion.");
+      fail(
+          "testSetUserAttributes() doesnt throw RegionDestroyedException on a closed PartitionedRegion.");
     } catch (RegionDestroyedException rde) {
 
       if (logWriter.fineEnabled()) {
-        logWriter.fine("testSetUserAttributes(): setUserAttributes() throws RegionDestroyedException on a closed PartitionedRegion. ");
+        logWriter.fine(
+            "testSetUserAttributes(): setUserAttributes() throws RegionDestroyedException on a closed PartitionedRegion. ");
       }
     }
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testSetUserAttributes() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testSetUserAttributes() Completed successfully ... ");
     }
   }
 
   /**
-   * This method is used to test the getUserAttributes functionality. It
-   * verifies that it gets the UserAttributes on an open PR without throwing any
-   * exception. It also verifies that it throws RegionDestroyedException on a
-   * closed PR.
-   *  
+   * This method is used to test the getUserAttributes functionality. It verifies that it gets the
+   * UserAttributes on an open PR without throwing any exception. It also verifies that it throws
+   * RegionDestroyedException on a closed PR.
    */
   @Test
   public void test016GetUserAttributes() throws Exception {
     String regionName = "testGetUserAttributes";
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
 
     String s = "DUMMY";
     pr.setUserAttribute(s);
@@ -903,21 +949,22 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
     assertEquals(s, pr.getUserAttribute());
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testGetUserAttributes() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testGetUserAttributes() Completed successfully ... ");
     }
   }
 
   /**
-   * This method is used to test the getAttributesMutator functionality. It
-   * verifies that it gets the handle for attributes mutator on an open PR
-   * without throwing any exception. It also verifies that it throws
-   * RegionDestroyedException on a closed PR.
-   *  
+   * This method is used to test the getAttributesMutator functionality. It verifies that it gets
+   * the handle for attributes mutator on an open PR without throwing any exception. It also
+   * verifies that it throws RegionDestroyedException on a closed PR.
    */
   @Test
   public void test017GetAttributesMutator() throws Exception {
     String regionName = "testGetAttributesMutator";
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
 
     Object o = pr.getAttributesMutator();
     if (o == null) {
@@ -929,23 +976,25 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
 
     try {
       o = pr.getAttributesMutator();
-      fail("testGetAttributesMutator() does not throw RegionDestroyedException on a closed PartitionedRegion.");
+      fail(
+          "testGetAttributesMutator() does not throw RegionDestroyedException on a closed PartitionedRegion.");
     } catch (RegionDestroyedException rde) {
       if (logWriter.fineEnabled()) {
-        logWriter.fine("testGetAttributesMutator(): getAttributesMutator() throws RegionDestroyedException on a closed PartitionedRegion. ");
+        logWriter.fine(
+            "testGetAttributesMutator(): getAttributesMutator() throws RegionDestroyedException on a closed PartitionedRegion. ");
       }
     }
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testGetAttributesMutator() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testGetAttributesMutator() Completed successfully ... ");
     }
   }
 
   /**
-   * Test to check local-cache property. Creates PR with default local-cache
-   * setting. TODO Enable this when we have local caching properly implemented --
-   * mthomas 2/23/2006
+   * Test to check local-cache property. Creates PR with default local-cache setting. TODO Enable
+   * this when we have local caching properly implemented -- mthomas 2/23/2006
    */
-  //  
+  //
   //  public void xxNoTestLoalCache() throws Exception
   //  {
   //    String regionName = "testLocalCache";
@@ -966,18 +1015,20 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
   //
   //  }
   /**
-   * Test to verify the scope of the Bucket Regions created. Scope is Local for
-   * redundantCopies 0. Scope is DISTRIBUTED_ACK if redundantCopies > 0 and
-   * Region scope is DISTRIBUTED_ACK.Scope is DISTRIBUTED_NO_ACK if
-   * redundantCopies > 0 and Region scope is DISTRIBUTED_NO_ACK
+   * Test to verify the scope of the Bucket Regions created. Scope is Local for redundantCopies 0.
+   * Scope is DISTRIBUTED_ACK if redundantCopies > 0 and Region scope is DISTRIBUTED_ACK.Scope is
+   * DISTRIBUTED_NO_ACK if redundantCopies > 0 and Region scope is DISTRIBUTED_NO_ACK
    */
   @Test
   public void test018BucketScope() throws Exception {
     String regionName = "testBucketScope";
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(200), 0);
     putSomeValues(pr);
 
-    java.util.Iterator buckRegionIterator = pr.getDataStore().localBucket2RegionMap.values().iterator();
+    java.util.Iterator buckRegionIterator =
+        pr.getDataStore().localBucket2RegionMap.values().iterator();
     while (buckRegionIterator.hasNext()) {
       Region bucket = (Region) buckRegionIterator.next();
       //      assertIndexDetailsEquals(Scope.LOCAL, bucket.getAttributes().getScope());
@@ -991,20 +1042,20 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
      * PartitionedRegion pr1 = (PartitionedRegion)PartitionedRegionTestHelper
      * .createPartitionedRegion(regionName + 2, String.valueOf(200), 0,
      * Scope.DISTRIBUTED_ACK);
-     * 
+     *
      * putSomeValues(pr1); java.util.Iterator buckRegionIterator1 =
      * pr1.getDataStore().localBucket2RegionMap .values().iterator(); while
      * (buckRegionIterator1.hasNext()) { Region bucket =
      * (Region)buckRegionIterator1.next(); assertIndexDetailsEquals(Scope.DISTRIBUTED_ACK,
      * bucket.getAttributes().getScope()); assertIndexDetailsEquals(MirrorType.KEYS_VALUES,
      * bucket.getAttributes() .getMirrorType()); }
-     * 
+     *
      * pr1.destroyRegion();
-     * 
+     *
      * PartitionedRegion pr2 = (PartitionedRegion)PartitionedRegionTestHelper
      * .createPartitionedRegion(regionName + 2, String.valueOf(200), 0,
      * Scope.DISTRIBUTED_NO_ACK);
-     * 
+     *
      * putSomeValues(pr2); java.util.Iterator buckRegionIterator2 =
      * pr2.getDataStore().localBucket2RegionMap .values().iterator(); while
      * (buckRegionIterator2.hasNext()) { Region bucket =
@@ -1022,13 +1073,16 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
   }
 
   /**
-   * This method validates create operations. It verfies that entries are
-   * created and if entry already exists, it throws EntryExistsException.
+   * This method validates create operations. It verfies that entries are created and if entry
+   * already exists, it throws EntryExistsException.
    */
   @Test
   public void test019Create() throws EntryExistsException {
     int key = 0;
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testCreate", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testCreate", String.valueOf(200), 0);
 
     // testing if the create is working fine.
     // It checks that it throws EntryExistsException for an already existing key
@@ -1044,13 +1098,18 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       if (!getObj1.equals(val + num)) {
         fail("Create could not create an entry");
       }
-      pr.getCache().getLogger().info("<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
+      pr.getCache()
+          .getLogger()
+          .info("<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
       try {
         pr.create(new Integer(key), val + num + "Added number");
-        fail("create doesnt throw EntryExistsException subsequent create on an already existing key");
+        fail(
+            "create doesnt throw EntryExistsException subsequent create on an already existing key");
       } catch (EntryExistsException eee) {
       }
-      pr.getCache().getLogger().info("<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>");
+      pr.getCache()
+          .getLogger()
+          .info("<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>");
 
       final Object getObj2 = pr.get(new Integer(key));
 
@@ -1071,19 +1130,26 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       if (dummyObj != null) {
         fail("Create can not create an entry with null value");
       }
-      pr.getCache().getLogger().info("<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
+      pr.getCache()
+          .getLogger()
+          .info("<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
       try {
         pr.create(nonNullKey, nonNullVal);
         fail("Create does not throw EntryExistsException with for an existing null value as well");
       } catch (EntryExistsException eee) {
       }
-      pr.getCache().getLogger().info("<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>");
+      pr.getCache()
+          .getLogger()
+          .info("<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>");
     }
   }
 
   @Test
   public void test020CreateWriter() {
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testCreateWriter", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testCreateWriter", String.valueOf(200), 0);
     MyCacheWriter writer = new MyCacheWriter();
     pr.getAttributesMutator().setCacheWriter(writer);
     writer.setExpectedKeyAndValue("key1", "value1");
@@ -1129,11 +1195,9 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       this.validationSuccessful = true;
     }
 
-    public void beforeRegionClear(RegionEvent event) throws CacheWriterException {
-    }
+    public void beforeRegionClear(RegionEvent event) throws CacheWriterException {}
 
-    public void beforeRegionDestroy(RegionEvent event) throws CacheWriterException {
-    }
+    public void beforeRegionDestroy(RegionEvent event) throws CacheWriterException {}
 
     public void beforeUpdate(EntryEvent event) throws CacheWriterException {
       assertTrue(event.getOperation().isUpdate());
@@ -1144,20 +1208,20 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       this.validationSuccessful = true;
     }
 
-    public void close() {
-    }
-
+    public void close() {}
   }
 
   /**
-   * This method validates invalidate operations. It verfies that if entry
-   * exists, it is invalidated. If entry does not exist, it throws
-   * EntryNotFoundException.
+   * This method validates invalidate operations. It verfies that if entry exists, it is
+   * invalidated. If entry does not exist, it throws EntryNotFoundException.
    */
   @Test
   public void test021Invalidate() throws Exception {
     int key = 0;
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testInvalidate", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testInvalidate", String.valueOf(200), 0);
 
     // testing if the create is working fine.
     // It checks that it throws EntryExistsException for an already existing key
@@ -1208,11 +1272,12 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       } catch (Exception e) {
         fail("testInvalidate(): Invalidate throws exception other than EntryNotFoundException");
       }
-      assertEquals(num + 1, ((GemFireCacheImpl) pr.getCache()).getCachePerfStats().getInvalidates());
-
+      assertEquals(
+          num + 1, ((GemFireCacheImpl) pr.getCache()).getCachePerfStats().getInvalidates());
     }
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testInvalidate() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testInvalidate() Completed successfully ... ");
     }
   }
 
@@ -1220,7 +1285,9 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
   public void test022GetEntry() throws Exception {
     Region pr = null;
     try {
-      pr = PartitionedRegionTestHelper.createPartitionedRegion("testGetEntry", String.valueOf(200), 0);
+      pr =
+          PartitionedRegionTestHelper.createPartitionedRegion(
+              "testGetEntry", String.valueOf(200), 0);
       final Integer one = new Integer(1);
       pr.put(one, "one");
       final Region.Entry re = pr.getEntry(one);
@@ -1243,7 +1310,9 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
   public void test023UnsupportedOps() throws Exception {
     Region pr = null;
     try {
-      pr = PartitionedRegionTestHelper.createPartitionedRegion("testUnsupportedOps", String.valueOf(200), 0);
+      pr =
+          PartitionedRegionTestHelper.createPartitionedRegion(
+              "testUnsupportedOps", String.valueOf(200), 0);
 
       pr.put(new Integer(1), "one");
       pr.put(new Integer(2), "two");
@@ -1252,7 +1321,8 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
 
       try {
         pr.clear();
-        fail("PartitionedRegionSingleNodeOperationTest:testUnSupportedOps() operation failed on a blank PartitionedRegion");
+        fail(
+            "PartitionedRegionSingleNodeOperationTest:testUnSupportedOps() operation failed on a blank PartitionedRegion");
       } catch (UnsupportedOperationException expected) {
       }
 
@@ -1301,13 +1371,15 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
   }
 
   /**
-   * This method validates size operations. It verifies that it returns correct
-   * size of the PartitionedRegion.
+   * This method validates size operations. It verifies that it returns correct size of the
+   * PartitionedRegion.
    */
   @Test
   public void test024Size() throws Exception {
     int key = 0;
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testSize", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion("testSize", String.valueOf(200), 0);
     int size = 0;
     size = pr.size();
 
@@ -1339,23 +1411,28 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       pr.size();
     } catch (RegionDestroyedException rde) {
       if (logWriter.fineEnabled()) {
-        logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testSize() returns RegionDestroyedException on a closed PartitionedRegion.");
+        logWriter.fine(
+            "PartitionedRegionSingleNodeOperationsJUnitTest - testSize() returns RegionDestroyedException on a closed PartitionedRegion.");
       }
     }
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testSize() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testSize() Completed successfully ... ");
     }
   }
 
   /**
-   * This method validates isEmpty operation. It verifies that it returns true
-   * if PartitionedRegion is empty.
+   * This method validates isEmpty operation. It verifies that it returns true if PartitionedRegion
+   * is empty.
    */
   @Test
   public void test025IsEmpty() throws Exception {
     int key = 0;
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testIsEmpty", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testIsEmpty", String.valueOf(200), 0);
 
     boolean isEmpty = pr.isEmpty();
     assertEquals(isEmpty, true);
@@ -1384,30 +1461,41 @@ public class PartitionedRegionSingleNodeOperationsJUnitTest {
       pr.isEmpty();
     } catch (RegionDestroyedException rde) {
       if (logWriter.fineEnabled()) {
-        logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testIsEmpty() returns RegionDestroyedException on a closed PartitionedRegion.");
+        logWriter.fine(
+            "PartitionedRegionSingleNodeOperationsJUnitTest - testIsEmpty() returns RegionDestroyedException on a closed PartitionedRegion.");
       }
     }
 
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testIsEmpty() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testIsEmpty() Completed successfully ... ");
     }
   }
 
   @Test
   public void test026CloseDestroy() throws Exception {
     logWriter.fine("Getting inside testCloseDestroy");
-    PartitionedRegion pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testCloseDestroy", String.valueOf(200), 0);
+    PartitionedRegion pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testCloseDestroy", String.valueOf(200), 0);
     pr.close();
-    pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testCloseDestroy", String.valueOf(200), 0);
+    pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testCloseDestroy", String.valueOf(200), 0);
     try {
       pr.destroyRegion();
     } catch (RegionDestroyedException expected) {
       fail("testCloseDestroy(): Can not destroy a newly created region.");
     }
-    pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion("testCloseDestroy", String.valueOf(200), 0);
+    pr =
+        (PartitionedRegion)
+            PartitionedRegionTestHelper.createPartitionedRegion(
+                "testCloseDestroy", String.valueOf(200), 0);
     if (logWriter.fineEnabled()) {
-      logWriter.fine("PartitionedRegionSingleNodeOperationsJUnitTest - testCloseDestroy() Completed successfully ... ");
+      logWriter.fine(
+          "PartitionedRegionSingleNodeOperationsJUnitTest - testCloseDestroy() Completed successfully ... ");
     }
   }
-
 }

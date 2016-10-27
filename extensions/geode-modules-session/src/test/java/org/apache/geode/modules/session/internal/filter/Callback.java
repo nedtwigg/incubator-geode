@@ -26,5 +26,6 @@ import java.io.IOException;
  * Interface which, when implemented, can be put into a servlet context and executed by the servlet.
  */
 public interface Callback {
-  void call(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+  void call(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException;
 }

@@ -27,43 +27,37 @@ import java.util.Properties;
 
 /**
  * Implementation of DiskWriteAttributes
- * 
+ *
  * @see AttributesFactory#setDiskWriteAttributes
  * @see RegionAttributes#getDiskWriteAttributes
  * @see Region#writeToDisk
- * 
- * 
  * @since GemFire 5.1
  */
-@SuppressWarnings({ "deprecation", "unused" })
+@SuppressWarnings({"deprecation", "unused"})
 public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
   private static final long serialVersionUID = -4269181954992768424L;
 
   /** Are writes synchronous? */
   private final boolean isSynchronous;
 
-  /**
-   * The the number of milliseconds that can elapse before unwritten data is
-   * written to disk.
-   */
+  /** The the number of milliseconds that can elapse before unwritten data is written to disk. */
   private final long timeInterval;
 
-  /**
-   * The number of bytes of region entry data to queue up before writing to
-   * disk.
-   */
+  /** The number of bytes of region entry data to queue up before writing to disk. */
   private final long bytesThreshold;
 
   /** Whether compaction is to be permitted or not. Defaults to true * */
   private final boolean compactOplogs;
 
-  /** stored in bytes as a long but specified in megabytes by client applications**/
+  /** stored in bytes as a long but specified in megabytes by client applications* */
   private final long maxOplogSize;
 
-  /** default max in bytes **/
-  private static final long DEFAULT_MAX_OPLOG_SIZE = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "DEFAULT_MAX_OPLOG_SIZE", 1024L).longValue() * (1024 * 1024); // 1 GB
+  /** default max in bytes * */
+  private static final long DEFAULT_MAX_OPLOG_SIZE =
+      Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "DEFAULT_MAX_OPLOG_SIZE", 1024L).longValue()
+          * (1024 * 1024); // 1 GB
 
-  /** default max limit in bytes **/
+  /** default max limit in bytes * */
   private static final long DEFAULT_MAX_OPLOG_SIZE_LIMIT = (long) Integer.MAX_VALUE * (1024 * 1024);
 
   private static final boolean DEFAULT_ROLL_OPLOGS = true;
@@ -82,12 +76,13 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
 
   /**
    * Default disk directory size in megabytes
-   * 
+   *
    * @since GemFire 5.1
    */
   public static final int DEFAULT_DISK_DIR_SIZE = DiskStoreFactory.DEFAULT_DISK_DIR_SIZE;
 
   private static final DiskWriteAttributes DEFAULT_ASYNC_DWA;
+
   static {
     Properties props = new Properties();
     props.setProperty(SYNCHRONOUS_PROPERTY, "false");
@@ -95,6 +90,7 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
   }
 
   private static final DiskWriteAttributes DEFAULT_SYNC_DWA;
+
   static {
     Properties props = new Properties();
     props.setProperty(SYNCHRONOUS_PROPERTY, "true");
@@ -104,48 +100,45 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
   /////////////////////// Constructors ///////////////////////
 
   /**
-   * 
-   * Creates a new <code>DiskWriteAttributes</code> object using the
-   * properties specified. The properties that can be specified are:
+   * Creates a new <code>DiskWriteAttributes</code> object using the properties specified. The
+   * properties that can be specified are:
+   *
    * <ul>
-   * <li>synchronous : boolean to specify whether DiskWrites will be
-   * synchronous (true)/asynchronous (false)
-   * <li>auto-compact : boolean to specify whether to automatically compact
-   * disk files so they use less disk space (true)
-   * <li>allow-force-compaction : boolean to specify whether to manual compaction
-   * of disk files is allowed (false)
-   * <li>compaction-threshold: The threshold at which an oplog becomes compactable.
-   *   Must be in the range 0..100 inclusive. (50)
-   * <li>max-oplog-size: The maximum size of an oplog. 0 would mean infinity
-   * <li>time-interval: The number of milliseconds that can elapse before
-   * unwritten data is written to disk.
-   * <li>bytes-threshold: The number of unwritten bytes of data that can be
-   * enqueued before being written to disk
+   *   <li>synchronous : boolean to specify whether DiskWrites will be synchronous
+   *       (true)/asynchronous (false)
+   *   <li>auto-compact : boolean to specify whether to automatically compact disk files so they use
+   *       less disk space (true)
+   *   <li>allow-force-compaction : boolean to specify whether to manual compaction of disk files is
+   *       allowed (false)
+   *   <li>compaction-threshold: The threshold at which an oplog becomes compactable. Must be in the
+   *       range 0..100 inclusive. (50)
+   *   <li>max-oplog-size: The maximum size of an oplog. 0 would mean infinity
+   *   <li>time-interval: The number of milliseconds that can elapse before unwritten data is
+   *       written to disk.
+   *   <li>bytes-threshold: The number of unwritten bytes of data that can be enqueued before being
+   *       written to disk
    * </ul>
-   * The above properties are case sensitive and if a propery which is not in
-   * the list above is passed no action is taken. If a property which is present
-   * above is not specified then the following default values will be uses
-   * 
+   *
+   * The above properties are case sensitive and if a propery which is not in the list above is
+   * passed no action is taken. If a property which is present above is not specified then the
+   * following default values will be uses
+   *
    * <ul>
-   * <li>synchronous = false
-   * <li>auto-compact = true
-   * <li>allow-force-compaction = false
-   * <li>compaction-threshold = 50 %
-   * <li>max-oplog-size = 1 GB
-   * <li>time-interval = 1000 milliseconds
-   * <li>byte-threshold = 0 bytes
+   *   <li>synchronous = false
+   *   <li>auto-compact = true
+   *   <li>allow-force-compaction = false
+   *   <li>compaction-threshold = 50 %
+   *   <li>max-oplog-size = 1 GB
+   *   <li>time-interval = 1000 milliseconds
+   *   <li>byte-threshold = 0 bytes
    * </ul>
-   * 
+   *
    * @param properties
-   * 
-   * @throws IllegalArgumentException
-   *           If any of the properties specified are not in the expected
-   *           format.
-   * @throws IllegalStateException
-   *           if max-oplog-size is set to infinity(0) and compaction is set to
-   *           true
+   * @throws IllegalArgumentException If any of the properties specified are not in the expected
+   *     format.
+   * @throws IllegalStateException if max-oplog-size is set to infinity(0) and compaction is set to
+   *     true
    */
-
   public DiskWriteAttributesImpl(Properties properties) {
 
     String isSynchronousString = properties.getProperty(SYNCHRONOUS_PROPERTY);
@@ -193,12 +186,17 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
     if (maxOplogSizeString != null) {
       long opSize = verifyLongInString(maxOplogSizeString, CacheXml.MAX_OPLOG_SIZE);
       if (opSize == 0 && this.compactOplogs == true) {
-        throw new IllegalStateException(LocalizedStrings.DiskWriteAttributesImpl_COMPACTION_CANNOT_BE_SET_TO_TRUE_IF_MAXOPLOGSIZE_IS_SET_TO_INFINITE_INFINITE_IS_REPRESENTED_BY_SIZE_ZERO_0.toLocalizedString());
-
+        throw new IllegalStateException(
+            LocalizedStrings
+                .DiskWriteAttributesImpl_COMPACTION_CANNOT_BE_SET_TO_TRUE_IF_MAXOPLOGSIZE_IS_SET_TO_INFINITE_INFINITE_IS_REPRESENTED_BY_SIZE_ZERO_0
+                .toLocalizedString());
       }
       if (opSize == 0 || opSize == DEFAULT_MAX_OPLOG_SIZE_LIMIT) {
         if (this.compactOplogs) {
-          throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_CANNOT_SET_MAXOPLOGS_SIZE_TO_INFINITY_0_IF_COMPACTION_IS_SET_TO_TRUE.toLocalizedString());
+          throw new IllegalArgumentException(
+              LocalizedStrings
+                  .DiskWriteAttributesImpl_CANNOT_SET_MAXOPLOGS_SIZE_TO_INFINITY_0_IF_COMPACTION_IS_SET_TO_TRUE
+                  .toLocalizedString());
         } else {
           this.maxOplogSize = DEFAULT_MAX_OPLOG_SIZE_LIMIT; // infinity
         }
@@ -211,26 +209,27 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
   }
 
   /**
-   * Verifys if the propertyString passed is a valid boolean value or null else
-   * throws an IllegalArgument exception
-   * 
+   * Verifys if the propertyString passed is a valid boolean value or null else throws an
+   * IllegalArgument exception
+   *
    * @param propertyString
    * @param property
-   * @throws IllegalArgumentException
-   *           if the property string passed does not represent a boolean or
-   *           null
-   *  
+   * @throws IllegalArgumentException if the property string passed does not represent a boolean or
+   *     null
    */
   private void verifyBooleanString(String propertyString, String property) {
     if (!(propertyString.equalsIgnoreCase("true") || propertyString.equalsIgnoreCase("false"))) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_PROPERTY_HAS_TO_BE_TRUE_OR_FALSE_OR_NULL_AND_CANNOT_BE_1.toLocalizedString(new Object[] { property, propertyString }));
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .DiskWriteAttributesImpl_0_PROPERTY_HAS_TO_BE_TRUE_OR_FALSE_OR_NULL_AND_CANNOT_BE_1
+              .toLocalizedString(new Object[] {property, propertyString}));
     }
   }
 
   /**
-   * Verifys if the string passed, is in a number format which is acceptable and
-   * returns the long value of the string.
-   * 
+   * Verifys if the string passed, is in a number format which is acceptable and returns the long
+   * value of the string.
+   *
    * @param propertyString
    * @param property
    * @return the long value of the string
@@ -240,20 +239,25 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
     try {
       returnValue = Long.valueOf(propertyString).longValue();
     } catch (NumberFormatException e) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_A_VALID_NUMBER_AND_NOT_1.toLocalizedString(new Object[] { property, propertyString }));
+      throw new IllegalArgumentException(
+          LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_A_VALID_NUMBER_AND_NOT_1
+              .toLocalizedString(new Object[] {property, propertyString}));
     }
 
     if (returnValue < 0) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_POSITIVE_NUMBER_AND_THE_VALUE_GIVEN_1_IS_NOT_ACCEPTABLE.toLocalizedString(new Object[] { property, Long.valueOf(returnValue) }));
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .DiskWriteAttributesImpl_0_HAS_TO_BE_POSITIVE_NUMBER_AND_THE_VALUE_GIVEN_1_IS_NOT_ACCEPTABLE
+              .toLocalizedString(new Object[] {property, Long.valueOf(returnValue)}));
     }
 
     return returnValue;
   }
 
   /**
-   * Verifys if the string passed, is in a number format which is acceptable and
-   * returns the int value of the string.
-   * 
+   * Verifys if the string passed, is in a number format which is acceptable and returns the int
+   * value of the string.
+   *
    * @param propertyString
    * @param property
    * @return the int value of the string
@@ -263,13 +267,21 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
     try {
       returnValue = Integer.valueOf(propertyString).intValue();
     } catch (NumberFormatException e) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_A_VALID_NUMBER_AND_NOT_1.toLocalizedString(new Object[] { property, propertyString }));
+      throw new IllegalArgumentException(
+          LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_A_VALID_NUMBER_AND_NOT_1
+              .toLocalizedString(new Object[] {property, propertyString}));
     }
 
     if (returnValue < 0) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_POSITIVE_NUMBER_AND_THE_VALUE_GIVEN_1_IS_NOT_ACCEPTABLE.toLocalizedString(new Object[] { property, Integer.valueOf(returnValue) }));
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .DiskWriteAttributesImpl_0_HAS_TO_BE_POSITIVE_NUMBER_AND_THE_VALUE_GIVEN_1_IS_NOT_ACCEPTABLE
+              .toLocalizedString(new Object[] {property, Integer.valueOf(returnValue)}));
     } else if (returnValue > 100) {
-      throw new IllegalArgumentException(LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_LESS_THAN_2_BUT_WAS_1.toLocalizedString(new Object[] { property, Integer.valueOf(returnValue), Integer.valueOf(100) }));
+      throw new IllegalArgumentException(
+          LocalizedStrings.DiskWriteAttributesImpl_0_HAS_TO_BE_LESS_THAN_2_BUT_WAS_1
+              .toLocalizedString(
+                  new Object[] {property, Integer.valueOf(returnValue), Integer.valueOf(100)}));
     }
 
     return returnValue;
@@ -277,54 +289,49 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
 
   // //////////////////// Instance Methods //////////////////////
 
-  /**
-   * Returns whether or not this <code>DiskWriteAttributes</code> configures
-   * synchronous writes.
-   */
+  /** Returns whether or not this <code>DiskWriteAttributes</code> configures synchronous writes. */
   public boolean isSynchronous() {
     return this.isSynchronous;
   }
 
-  /**
-   * Returns true if the oplogs is to be rolled
-   */
+  /** Returns true if the oplogs is to be rolled */
   public boolean isRollOplogs() {
     return this.compactOplogs;
   }
 
-  /** Get the max Oplog Size in megabytes. The value is stored in bytes so division is necessary **/
+  /**
+   * Get the max Oplog Size in megabytes. The value is stored in bytes so division is necessary *
+   */
   public int getMaxOplogSize() {
     return (int) (maxOplogSize / (1024 * 1024));
   }
 
-  /** Get the max Oplog Size in bytes **/
+  /** Get the max Oplog Size in bytes * */
   long getMaxOplogSizeInBytes() {
     return maxOplogSize;
   }
 
   /**
-   * Returns the number of milliseconds that can elapse before unwritten data is
-   * written to disk. If this <code>DiskWriteAttributes</code> configures
-   * synchronous writing, then <code>timeInterval</code> has no meaning.
+   * Returns the number of milliseconds that can elapse before unwritten data is written to disk. If
+   * this <code>DiskWriteAttributes</code> configures synchronous writing, then <code>timeInterval
+   * </code> has no meaning.
    */
   public long getTimeInterval() {
     return this.timeInterval;
   }
 
   /**
-   * Returns the number of unwritten bytes of data that can be enqueued before
-   * being written to disk. If this <code>DiskWriteAttributes</code>
-   * configures synchronous writing, then <code>bytesThreshold</code> has no
-   * meaning.
+   * Returns the number of unwritten bytes of data that can be enqueued before being written to
+   * disk. If this <code>DiskWriteAttributes</code> configures synchronous writing, then <code>
+   * bytesThreshold</code> has no meaning.
    */
   public long getBytesThreshold() {
     return this.bytesThreshold;
   }
 
   /**
-   * Two <code>DiskWriteAttributes</code> are equal if the both specify the
-   * synchronous writes, or they both specify asynchronous writes with the same
-   * time interval and bytes threshold.
+   * Two <code>DiskWriteAttributes</code> are equal if the both specify the synchronous writes, or
+   * they both specify asynchronous writes with the same time interval and bytes threshold.
    */
   @Override
   public boolean equals(Object o) {
@@ -336,9 +343,13 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
     if (other.isSynchronous() != isSynchronous()) {
       return false;
     }
-    boolean result = other.isRollOplogs() == isRollOplogs() && other.getMaxOplogSize() == getMaxOplogSize();
+    boolean result =
+        other.isRollOplogs() == isRollOplogs() && other.getMaxOplogSize() == getMaxOplogSize();
     if (!isSynchronous()) {
-      result = result && other.getTimeInterval() == getTimeInterval() && other.getBytesThreshold() == getBytesThreshold();
+      result =
+          result
+              && other.getTimeInterval() == getTimeInterval()
+              && other.getBytesThreshold() == getBytesThreshold();
     }
     return result;
   }
@@ -346,7 +357,7 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
   /*
    * (non-Javadoc)
    * @see java.lang.Object#hashCode()
-   * 
+   *
    * Note that we just need to make sure that equal objects return equal
    * hashcodes; nothing really elaborate is done here.
    */
@@ -387,6 +398,7 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
 
   /**
    * Get the default max oplog size limit in megabytes
+   *
    * @return the default max oplog size limit in megabytes
    */
   public static int getDefaultMaxOplogSizeLimit() {
@@ -394,9 +406,8 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
   }
 
   /**
-   * 
    * Returns the default compaction oplog value
-   * 
+   *
    * @return the default compaction oplog value
    */
   public static boolean getDefaultRollOplogsValue() {
@@ -404,9 +415,8 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
   }
 
   /**
-   * 
    * Gets the default max oplog size in megabytes
-   * 
+   *
    * @return the default max oplog size in megabytes
    */
   public static int getDefaultMaxOplogSize() {
@@ -414,7 +424,8 @@ public final class DiskWriteAttributesImpl implements DiskWriteAttributes {
   }
 
   /**
-   * Returns a default instance of  DiskWriteAttributes
+   * Returns a default instance of DiskWriteAttributes
+   *
    * @return the default DiskWriteAttributes instance
    */
   public static DiskWriteAttributes getDefaultAsyncInstance() {

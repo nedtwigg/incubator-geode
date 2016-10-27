@@ -35,8 +35,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 /**
- * Make sure that create are distributed and done in
- * remote regions that are CACHED_ALL_EVENTS*.
+ * Make sure that create are distributed and done in remote regions that are CACHED_ALL_EVENTS*.
  *
  * @since GemFire 5.0
  */
@@ -50,24 +49,26 @@ public class CachedAllEventsDUnitTest extends JUnit4CacheTestCase {
 
   private void initOtherId() {
     VM vm = getOtherVm();
-    vm.invoke(new CacheSerializableRunnable("Connect") {
-      public void run2() throws CacheException {
-        getCache();
-      }
-    });
+    vm.invoke(
+        new CacheSerializableRunnable("Connect") {
+          public void run2() throws CacheException {
+            getCache();
+          }
+        });
     vm.invoke(() -> CachedAllEventsDUnitTest.getVMDistributedMember());
   }
 
   private void doCreateOtherVm() {
     VM vm = getOtherVm();
-    vm.invoke(new CacheSerializableRunnable("create root") {
-      public void run2() throws CacheException {
-        AttributesFactory af = new AttributesFactory();
-        af.setScope(Scope.DISTRIBUTED_ACK);
-        Region r1 = createRootRegion("r1", af.create());
-        r1.create("key", "value");
-      }
-    });
+    vm.invoke(
+        new CacheSerializableRunnable("create root") {
+          public void run2() throws CacheException {
+            AttributesFactory af = new AttributesFactory();
+            af.setScope(Scope.DISTRIBUTED_ACK);
+            Region r1 = createRootRegion("r1", af.create());
+            r1.create("key", "value");
+          }
+        });
   }
 
   public static DistributedMember getVMDistributedMember() {
@@ -76,9 +77,11 @@ public class CachedAllEventsDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * make sure a remote create will be done in a NORMAL+ALL region
+   *
    * @param rmtCreate is true if create should happen in remote region
    */
-  private void remoteCreate(DataPolicy dp, InterestPolicy ip, boolean rmtCreate) throws CacheException {
+  private void remoteCreate(DataPolicy dp, InterestPolicy ip, boolean rmtCreate)
+      throws CacheException {
     initOtherId();
     AttributesFactory af = new AttributesFactory();
     af.setDataPolicy(dp);

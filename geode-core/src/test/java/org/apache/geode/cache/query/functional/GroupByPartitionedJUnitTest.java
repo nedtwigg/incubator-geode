@@ -24,10 +24,7 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.cache.query.CacheUtils;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class GroupByPartitionedJUnitTest extends GroupByTestImpl {
 
@@ -44,6 +41,5 @@ public class GroupByPartitionedJUnitTest extends GroupByTestImpl {
     af.setValueConstraint(valueConstraint);
     Region r1 = CacheUtils.createRegion(regionName, af.create(), false);
     return r1;
-
   }
 }

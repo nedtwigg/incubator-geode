@@ -32,8 +32,8 @@ import org.apache.geode.test.junit.categories.UnitTest;
 import org.apache.geode.test.junit.rules.RepeatRule;
 
 /**
- * The RepeatingTestCasesExampleTest class is a test suite of test cases testing the contract and functionality
- * of the JUnit {@literal @}Repeat annotation on a test suite class test case methods.
+ * The RepeatingTestCasesExampleTest class is a test suite of test cases testing the contract and
+ * functionality of the JUnit {@literal @}Repeat annotation on a test suite class test case methods.
  *
  * @see org.junit.Test
  * @see org.apache.geode.test.junit.Repeat
@@ -47,8 +47,7 @@ public class RepeatingTestCasesExampleTest {
   private static final AtomicInteger repeatTenTimesCounter = new AtomicInteger(0);
   private static final AtomicInteger repeatTwiceCounter = new AtomicInteger(0);
 
-  @Rule
-  public RepeatRule repeatRule = new RepeatRule();
+  @Rule public RepeatRule repeatRule = new RepeatRule();
 
   @BeforeClass
   public static void setupBeforeClass() {

@@ -25,12 +25,9 @@ import org.apache.geode.distributed.internal.PoolStatHelper;
 import org.apache.geode.distributed.internal.QueueStatHelper;
 import org.apache.geode.internal.statistics.StatisticsTypeFactoryImpl;
 
-/**
- * Contains methods for manipulating resource manager statistics.
- *
- */
+/** Contains methods for manipulating resource manager statistics. */
 public class ResourceManagerStats {
-  // static fields 
+  // static fields
   private static final StatisticsType type;
 
   private static final int rebalancesInProgressId;
@@ -76,18 +73,178 @@ public class ResourceManagerStats {
 
   static {
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
-    type = f.createType("ResourceManagerStats", "Statistics about resource management", new StatisticDescriptor[] { f.createIntGauge("rebalancesInProgress", "Current number of cache rebalance operations being directed by this process.", "operations"), f.createIntCounter("rebalancesCompleted", "Total number of cache rebalance operations directed by this process.", "operations"), f.createIntCounter("autoRebalanceAttempts", "Total number of cache auto-rebalance attempts.", "operations"), f.createLongCounter("rebalanceTime", "Total time spent directing cache rebalance operations.", "nanoseconds", false),
-
-        f.createIntGauge("rebalanceBucketCreatesInProgress", "Current number of bucket create operations being directed for rebalancing.", "operations"), f.createIntCounter("rebalanceBucketCreatesCompleted", "Total number of bucket create operations directed for rebalancing.", "operations"), f.createIntCounter("rebalanceBucketCreatesFailed", "Total number of bucket create operations directed for rebalancing that failed.", "operations"), f.createLongCounter("rebalanceBucketCreateTime", "Total time spent directing bucket create operations for rebalancing.", "nanoseconds", false), f.createLongCounter("rebalanceBucketCreateBytes", "Total bytes created while directing bucket create operations for rebalancing.", "bytes", false),
-
-        f.createIntGauge("rebalanceBucketRemovesInProgress", "Current number of bucket remove operations being directed for rebalancing.", "operations"), f.createIntCounter("rebalanceBucketRemovesCompleted", "Total number of bucket remove operations directed for rebalancing.", "operations"), f.createIntCounter("rebalanceBucketRemovesFailed", "Total number of bucket remove operations directed for rebalancing that failed.", "operations"), f.createLongCounter("rebalanceBucketRemovesTime", "Total time spent directing bucket remove operations for rebalancing.", "nanoseconds", false), f.createLongCounter("rebalanceBucketRemovesBytes", "Total bytes removed while directing bucket remove operations for rebalancing.", "bytes", false),
-
-        f.createIntGauge("rebalanceBucketTransfersInProgress", "Current number of bucket transfer operations being directed for rebalancing.", "operations"), f.createIntCounter("rebalanceBucketTransfersCompleted", "Total number of bucket transfer operations directed for rebalancing.", "operations"), f.createIntCounter("rebalanceBucketTransfersFailed", "Total number of bucket transfer operations directed for rebalancing that failed.", "operations"), f.createLongCounter("rebalanceBucketTransfersTime", "Total time spent directing bucket transfer operations for rebalancing.", "nanoseconds", false), f.createLongCounter("rebalanceBucketTransfersBytes", "Total bytes transfered while directing bucket transfer operations for rebalancing.", "bytes", false),
-
-        f.createIntGauge("rebalancePrimaryTransfersInProgress", "Current number of primary transfer operations being directed for rebalancing.", "operations"), f.createIntCounter("rebalancePrimaryTransfersCompleted", "Total number of primary transfer operations directed for rebalancing.", "operations"), f.createIntCounter("rebalancePrimaryTransfersFailed", "Total number of primary transfer operations directed for rebalancing that failed.", "operations"), f.createLongCounter("rebalancePrimaryTransferTime", "Total time spent directing primary transfer operations for rebalancing.", "nanoseconds", false), f.createIntCounter("rebalanceMembershipChanges", "The number of times that membership has changed during a rebalance", "events"),
-
-        f.createIntGauge("heapCriticalEvents", "Total number of times the heap usage went over critical threshold.", "events"), f.createIntGauge("offHeapCriticalEvents", "Total number of times off-heap usage went over critical threshold.", "events"), f.createIntGauge("heapSafeEvents", "Total number of times the heap usage fell below critical threshold.", "events"), f.createIntGauge("offHeapSafeEvents", "Total number of times off-heap usage fell below critical threshold.", "events"), f.createIntGauge("evictionStartEvents", "Total number of times heap usage went over eviction threshold.", "events"), f.createIntGauge("offHeapEvictionStartEvents", "Total number of times off-heap usage went over eviction threshold.", "events"), f.createIntGauge("evictionStopEvents", "Total number of times heap usage fell below eviction threshold.", "events"), f.createIntGauge("offHeapEvictionStopEvents", "Total number of times off-heap usage fell below eviction threshold.", "events"),
-        f.createLongGauge("criticalThreshold", "The currently set heap critical threshold value in bytes", "bytes"), f.createLongGauge("offHeapCriticalThreshold", "The currently set off-heap critical threshold value in bytes", "bytes"), f.createLongGauge("evictionThreshold", "The currently set heap eviction threshold value in bytes", "bytes"), f.createLongGauge("offHeapEvictionThreshold", "The currently set off-heap eviction threshold value in bytes", "bytes"), f.createLongGauge("tenuredHeapUsed", "Total memory used in the tenured/old space", "bytes"), f.createIntCounter("resourceEventsDelivered", "Total number of resource events delivered to listeners", "events"), f.createIntGauge("resourceEventQueueSize", "Pending events for thresholdEventProcessor thread", "events"), f.createIntGauge("thresholdEventProcessorThreadJobs", "Number of jobs currently being processed by the thresholdEventProcessorThread", "jobs") });
+    type =
+        f.createType(
+            "ResourceManagerStats",
+            "Statistics about resource management",
+            new StatisticDescriptor[] {
+              f.createIntGauge(
+                  "rebalancesInProgress",
+                  "Current number of cache rebalance operations being directed by this process.",
+                  "operations"),
+              f.createIntCounter(
+                  "rebalancesCompleted",
+                  "Total number of cache rebalance operations directed by this process.",
+                  "operations"),
+              f.createIntCounter(
+                  "autoRebalanceAttempts",
+                  "Total number of cache auto-rebalance attempts.",
+                  "operations"),
+              f.createLongCounter(
+                  "rebalanceTime",
+                  "Total time spent directing cache rebalance operations.",
+                  "nanoseconds",
+                  false),
+              f.createIntGauge(
+                  "rebalanceBucketCreatesInProgress",
+                  "Current number of bucket create operations being directed for rebalancing.",
+                  "operations"),
+              f.createIntCounter(
+                  "rebalanceBucketCreatesCompleted",
+                  "Total number of bucket create operations directed for rebalancing.",
+                  "operations"),
+              f.createIntCounter(
+                  "rebalanceBucketCreatesFailed",
+                  "Total number of bucket create operations directed for rebalancing that failed.",
+                  "operations"),
+              f.createLongCounter(
+                  "rebalanceBucketCreateTime",
+                  "Total time spent directing bucket create operations for rebalancing.",
+                  "nanoseconds",
+                  false),
+              f.createLongCounter(
+                  "rebalanceBucketCreateBytes",
+                  "Total bytes created while directing bucket create operations for rebalancing.",
+                  "bytes",
+                  false),
+              f.createIntGauge(
+                  "rebalanceBucketRemovesInProgress",
+                  "Current number of bucket remove operations being directed for rebalancing.",
+                  "operations"),
+              f.createIntCounter(
+                  "rebalanceBucketRemovesCompleted",
+                  "Total number of bucket remove operations directed for rebalancing.",
+                  "operations"),
+              f.createIntCounter(
+                  "rebalanceBucketRemovesFailed",
+                  "Total number of bucket remove operations directed for rebalancing that failed.",
+                  "operations"),
+              f.createLongCounter(
+                  "rebalanceBucketRemovesTime",
+                  "Total time spent directing bucket remove operations for rebalancing.",
+                  "nanoseconds",
+                  false),
+              f.createLongCounter(
+                  "rebalanceBucketRemovesBytes",
+                  "Total bytes removed while directing bucket remove operations for rebalancing.",
+                  "bytes",
+                  false),
+              f.createIntGauge(
+                  "rebalanceBucketTransfersInProgress",
+                  "Current number of bucket transfer operations being directed for rebalancing.",
+                  "operations"),
+              f.createIntCounter(
+                  "rebalanceBucketTransfersCompleted",
+                  "Total number of bucket transfer operations directed for rebalancing.",
+                  "operations"),
+              f.createIntCounter(
+                  "rebalanceBucketTransfersFailed",
+                  "Total number of bucket transfer operations directed for rebalancing that failed.",
+                  "operations"),
+              f.createLongCounter(
+                  "rebalanceBucketTransfersTime",
+                  "Total time spent directing bucket transfer operations for rebalancing.",
+                  "nanoseconds",
+                  false),
+              f.createLongCounter(
+                  "rebalanceBucketTransfersBytes",
+                  "Total bytes transfered while directing bucket transfer operations for rebalancing.",
+                  "bytes",
+                  false),
+              f.createIntGauge(
+                  "rebalancePrimaryTransfersInProgress",
+                  "Current number of primary transfer operations being directed for rebalancing.",
+                  "operations"),
+              f.createIntCounter(
+                  "rebalancePrimaryTransfersCompleted",
+                  "Total number of primary transfer operations directed for rebalancing.",
+                  "operations"),
+              f.createIntCounter(
+                  "rebalancePrimaryTransfersFailed",
+                  "Total number of primary transfer operations directed for rebalancing that failed.",
+                  "operations"),
+              f.createLongCounter(
+                  "rebalancePrimaryTransferTime",
+                  "Total time spent directing primary transfer operations for rebalancing.",
+                  "nanoseconds",
+                  false),
+              f.createIntCounter(
+                  "rebalanceMembershipChanges",
+                  "The number of times that membership has changed during a rebalance",
+                  "events"),
+              f.createIntGauge(
+                  "heapCriticalEvents",
+                  "Total number of times the heap usage went over critical threshold.",
+                  "events"),
+              f.createIntGauge(
+                  "offHeapCriticalEvents",
+                  "Total number of times off-heap usage went over critical threshold.",
+                  "events"),
+              f.createIntGauge(
+                  "heapSafeEvents",
+                  "Total number of times the heap usage fell below critical threshold.",
+                  "events"),
+              f.createIntGauge(
+                  "offHeapSafeEvents",
+                  "Total number of times off-heap usage fell below critical threshold.",
+                  "events"),
+              f.createIntGauge(
+                  "evictionStartEvents",
+                  "Total number of times heap usage went over eviction threshold.",
+                  "events"),
+              f.createIntGauge(
+                  "offHeapEvictionStartEvents",
+                  "Total number of times off-heap usage went over eviction threshold.",
+                  "events"),
+              f.createIntGauge(
+                  "evictionStopEvents",
+                  "Total number of times heap usage fell below eviction threshold.",
+                  "events"),
+              f.createIntGauge(
+                  "offHeapEvictionStopEvents",
+                  "Total number of times off-heap usage fell below eviction threshold.",
+                  "events"),
+              f.createLongGauge(
+                  "criticalThreshold",
+                  "The currently set heap critical threshold value in bytes",
+                  "bytes"),
+              f.createLongGauge(
+                  "offHeapCriticalThreshold",
+                  "The currently set off-heap critical threshold value in bytes",
+                  "bytes"),
+              f.createLongGauge(
+                  "evictionThreshold",
+                  "The currently set heap eviction threshold value in bytes",
+                  "bytes"),
+              f.createLongGauge(
+                  "offHeapEvictionThreshold",
+                  "The currently set off-heap eviction threshold value in bytes",
+                  "bytes"),
+              f.createLongGauge(
+                  "tenuredHeapUsed", "Total memory used in the tenured/old space", "bytes"),
+              f.createIntCounter(
+                  "resourceEventsDelivered",
+                  "Total number of resource events delivered to listeners",
+                  "events"),
+              f.createIntGauge(
+                  "resourceEventQueueSize",
+                  "Pending events for thresholdEventProcessor thread",
+                  "events"),
+              f.createIntGauge(
+                  "thresholdEventProcessorThreadJobs",
+                  "Number of jobs currently being processed by the thresholdEventProcessorThread",
+                  "jobs")
+            });
 
     rebalancesInProgressId = type.nameToId("rebalancesInProgress");
     rebalancesCompletedId = type.nameToId("rebalancesCompleted");
@@ -425,8 +582,8 @@ public class ResourceManagerStats {
   }
 
   /**
-   * @return a {@link QueueStatHelper} so that we can record number of events
-   * in the thresholdEventProcessor queue.
+   * @return a {@link QueueStatHelper} so that we can record number of events in the
+   *     thresholdEventProcessor queue.
    */
   public QueueStatHelper getResourceEventQueueStatHelper() {
     return new QueueStatHelper() {

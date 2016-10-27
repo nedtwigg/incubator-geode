@@ -39,7 +39,6 @@ public class MyDate2 extends Date implements PartitionResolver {
     cal.setTime(date);
     int month = cal.get(Calendar.MONTH);
     return month;
-
   }
 
   public void close() {

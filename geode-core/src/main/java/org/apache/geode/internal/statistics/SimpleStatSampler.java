@@ -27,13 +27,11 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * SimpleStatSampler is a functional implementation of HostStatSampler
- * that samples statistics stored in local java memory and does not
- * require any native code or additional GemFire features.
- * <p>
- * The StatisticsManager may be implemented by LocalStatisticsFactory and does
- * not require a GemFire connection.
-
+ * SimpleStatSampler is a functional implementation of HostStatSampler that samples statistics
+ * stored in local java memory and does not require any native code or additional GemFire features.
+ *
+ * <p>The StatisticsManager may be implemented by LocalStatisticsFactory and does not require a
+ * GemFire connection.
  */
 public class SimpleStatSampler extends HostStatSampler {
 
@@ -49,17 +47,24 @@ public class SimpleStatSampler extends HostStatSampler {
   public static final long DEFAULT_DISK_SPACE_LIMIT = 0;
   public static final int DEFAULT_SAMPLE_RATE = 1000;
 
-  private final File archiveFileName = new File(System.getProperty(ARCHIVE_FILE_NAME_PROPERTY, DEFAULT_ARCHIVE_FILE_NAME));
-  private final long archiveFileSizeLimit = Long.getLong(FILE_SIZE_LIMIT_PROPERTY, DEFAULT_FILE_SIZE_LIMIT).longValue() * (1024 * 1024);
-  private final long archiveDiskSpaceLimit = Long.getLong(DISK_SPACE_LIMIT_PROPERTY, DEFAULT_DISK_SPACE_LIMIT).longValue() * (1024 * 1024);
-  private final int sampleRate = Integer.getInteger(SAMPLE_RATE_PROPERTY, DEFAULT_SAMPLE_RATE).intValue();
+  private final File archiveFileName =
+      new File(System.getProperty(ARCHIVE_FILE_NAME_PROPERTY, DEFAULT_ARCHIVE_FILE_NAME));
+  private final long archiveFileSizeLimit =
+      Long.getLong(FILE_SIZE_LIMIT_PROPERTY, DEFAULT_FILE_SIZE_LIMIT).longValue() * (1024 * 1024);
+  private final long archiveDiskSpaceLimit =
+      Long.getLong(DISK_SPACE_LIMIT_PROPERTY, DEFAULT_DISK_SPACE_LIMIT).longValue() * (1024 * 1024);
+  private final int sampleRate =
+      Integer.getInteger(SAMPLE_RATE_PROPERTY, DEFAULT_SAMPLE_RATE).intValue();
 
   private final StatisticsManager sm;
 
   public SimpleStatSampler(CancelCriterion stopper, StatisticsManager sm) {
     super(stopper, new StatSamplerStats(sm, sm.getId()));
     this.sm = sm;
-    logger.info(LogMarker.STATISTICS, LocalizedMessage.create(LocalizedStrings.SimpleStatSampler_STATSSAMPLERATE_0, getSampleRate()));
+    logger.info(
+        LogMarker.STATISTICS,
+        LocalizedMessage.create(
+            LocalizedStrings.SimpleStatSampler_STATSSAMPLERATE_0, getSampleRate()));
   }
 
   @Override

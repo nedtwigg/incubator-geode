@@ -37,7 +37,11 @@ public class LocatorJoinMessage extends ServerLocationRequest {
     super();
   }
 
-  public LocatorJoinMessage(int distributedSystemId, DistributionLocatorId locator, DistributionLocatorId sourceLocator, String serverGroup) {
+  public LocatorJoinMessage(
+      int distributedSystemId,
+      DistributionLocatorId locator,
+      DistributionLocatorId sourceLocator,
+      String serverGroup) {
     super(serverGroup);
     this.locator = locator;
     this.distributedSystemId = distributedSystemId;
@@ -76,17 +80,22 @@ public class LocatorJoinMessage extends ServerLocationRequest {
 
   @Override
   public String toString() {
-    return "LocatorJoinMessage{distributedSystemId=" + distributedSystemId + " locators=" + locator + " Source Locator : " + sourceLocator + "}";
+    return "LocatorJoinMessage{distributedSystemId="
+        + distributedSystemId
+        + " locators="
+        + locator
+        + " Source Locator : "
+        + sourceLocator
+        + "}";
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (!(obj instanceof LocatorJoinMessage))
-      return false;
+    if (this == obj) return true;
+    if (!(obj instanceof LocatorJoinMessage)) return false;
     LocatorJoinMessage myObject = (LocatorJoinMessage) obj;
-    if ((this.distributedSystemId == myObject.getDistributedSystemId()) && this.locator.equals(myObject.getLocator())) {
+    if ((this.distributedSystemId == myObject.getDistributedSystemId())
+        && this.locator.equals(myObject.getLocator())) {
       return true;
     }
     return false;
@@ -101,5 +110,4 @@ public class LocatorJoinMessage extends ServerLocationRequest {
       return this.locator.hashCode();
     }
   }
-
 }

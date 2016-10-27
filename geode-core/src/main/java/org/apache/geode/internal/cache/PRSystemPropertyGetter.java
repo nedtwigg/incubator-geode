@@ -21,9 +21,8 @@
 package org.apache.geode.internal.cache;
 
 /**
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * TODO To change the template for this generated type comment go to Window - Preferences - Java -
+ * Code Style - Code Templates
  */
 public class PRSystemPropertyGetter {
   public static int parseInt(String i, int defaultValue) {
@@ -57,6 +56,5 @@ public class PRSystemPropertyGetter {
     } catch (NumberFormatException nfe) {
       return defaultValue;
     }
-
   }
 }

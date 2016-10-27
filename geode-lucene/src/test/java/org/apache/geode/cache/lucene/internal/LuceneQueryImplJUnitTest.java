@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -70,12 +70,13 @@ public class LuceneQueryImplJUnitTest {
     when(execution.withCollector(any())).thenReturn(execution);
     when(execution.execute(anyString())).thenReturn((ResultCollector) collector);
 
-    query = new LuceneQueryImpl<Object, Object>("index", region, provider, null, LIMIT, 20) {
-      @Override
-      protected Execution onRegion() {
-        return execution;
-      }
-    };
+    query =
+        new LuceneQueryImpl<Object, Object>("index", region, provider, null, LIMIT, 20) {
+          @Override
+          protected Execution onRegion() {
+            return execution;
+          }
+        };
   }
 
   private void addValueToResults() {
@@ -132,7 +133,8 @@ public class LuceneQueryImplJUnitTest {
     PageableLuceneQueryResults<Object, Object> results = query.findPages();
 
     verify(execution).execute(eq(LuceneFunction.ID));
-    ArgumentCaptor<LuceneFunctionContext> captor = ArgumentCaptor.forClass(LuceneFunctionContext.class);
+    ArgumentCaptor<LuceneFunctionContext> captor =
+        ArgumentCaptor.forClass(LuceneFunctionContext.class);
     verify(execution).withArgs(captor.capture());
     LuceneFunctionContext context = captor.getValue();
     assertEquals(LIMIT, context.getLimit());

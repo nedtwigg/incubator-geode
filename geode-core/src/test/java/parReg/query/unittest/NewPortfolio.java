@@ -19,9 +19,7 @@ package parReg.query.unittest;
 import java.io.Serializable;
 import java.util.*;
 
-/**
- * A version of the Portfolio Object used for query. 
- */
+/** A version of the Portfolio Object used for query. */
 public class NewPortfolio implements Serializable {
 
   protected String myVersion;
@@ -31,7 +29,7 @@ public class NewPortfolio implements Serializable {
   protected int NUM_OF_TYPES = 10;
   protected int MAX_NUM_OF_POSITIONS = 5;
   protected int NUM_OF_SECURITIES = 200;
-  private int MAX_QTY = 100; //max is 100*100 
+  private int MAX_QTY = 100; //max is 100*100
   private int MAX_PRICE = 100;
   protected int id = 0;
   protected String name = "name"; //key value, needs to be unique
@@ -47,6 +45,7 @@ public class NewPortfolio implements Serializable {
 
   /**
    * Constructor to randomly populate the portfolio.
+   *
    * @param name
    * @param id
    */
@@ -100,13 +99,11 @@ public class NewPortfolio implements Serializable {
     this.type = "type" + (i % NUM_OF_TYPES);
 
     setPositions();
-
   }
 
   private void setPositions() {
     int numOfPositions = rng.nextInt(MAX_NUM_OF_POSITIONS);
-    if (numOfPositions == 0)
-      numOfPositions++;
+    if (numOfPositions == 0) numOfPositions++;
 
     int secId = rng.nextInt(NUM_OF_SECURITIES);
 
@@ -115,8 +112,7 @@ public class NewPortfolio implements Serializable {
 
       //    secId needs to be UNIQUE in one portfolio, keep track MAX_NUM_OF_POSITIONS and NUM_OF_SECURITIES
       secId += i * 7;
-      if (secId > NUM_OF_SECURITIES)
-        secId -= NUM_OF_SECURITIES;
+      if (secId > NUM_OF_SECURITIES) secId -= NUM_OF_SECURITIES;
       props.setProperty("secId", Integer.toString(secId));
 
       Position pos = new Position();
@@ -139,6 +135,7 @@ public class NewPortfolio implements Serializable {
 
   /**
    * To provide random values to populate a position.
+   *
    * @return
    */
   protected Properties getProps() {
@@ -152,18 +149,22 @@ public class NewPortfolio implements Serializable {
     return props;
   }
 
-  /**
-   * To enable the comparison.
-   */
+  /** To enable the comparison. */
   public boolean equals(Object anObj) {
 
     if (anObj == null) {
       return false;
     }
 
-    if (anObj.getClass().getName().equals(this.getClass().getName())) { // cannot do class identity check for pdx tets
+    if (anObj
+        .getClass()
+        .getName()
+        .equals(this.getClass().getName())) { // cannot do class identity check for pdx tets
       NewPortfolio np = (NewPortfolio) anObj;
-      if (!np.name.equals(this.name) || (np.id != this.id) || !np.type.equals(this.type) || !np.status.equals(this.status)) {
+      if (!np.name.equals(this.name)
+          || (np.id != this.id)
+          || !np.type.equals(this.type)
+          || !np.status.equals(this.status)) {
         return false;
       }
 
@@ -203,10 +204,10 @@ public class NewPortfolio implements Serializable {
     return result;
   }
 
-  /** Create a map of fields and field values to use to write to the blackboard
-   *  since PdxSerialiables cannot be put on the blackboard since the MasterController
-   *  does not have pdx objects on its classpath. For PdxSerializables
-   *  we put this Map on the blackboard instead.
+  /**
+   * Create a map of fields and field values to use to write to the blackboard since PdxSerialiables
+   * cannot be put on the blackboard since the MasterController does not have pdx objects on its
+   * classpath. For PdxSerializables we put this Map on the blackboard instead.
    */
   public Map createPdxHelperMap() {
     Map fieldMap = new HashMap();
@@ -236,5 +237,4 @@ public class NewPortfolio implements Serializable {
     sb.append("] ]");
     return sb.toString();
   }
-
 }

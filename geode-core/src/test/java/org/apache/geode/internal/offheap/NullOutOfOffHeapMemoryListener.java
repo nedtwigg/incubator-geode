@@ -18,16 +18,12 @@ package org.apache.geode.internal.offheap;
 
 import org.apache.geode.OutOfOffHeapMemoryException;
 
-/**
- * Null implementation of NullOutOfOffHeapMemoryListener for testing.
- *  
- */
+/** Null implementation of NullOutOfOffHeapMemoryListener for testing. */
 public class NullOutOfOffHeapMemoryListener implements OutOfOffHeapMemoryListener {
   private boolean isClosed;
 
   @Override
-  public void outOfOffHeapMemory(OutOfOffHeapMemoryException cause) {
-  }
+  public void outOfOffHeapMemory(OutOfOffHeapMemoryException cause) {}
 
   @Override
   public void close() {

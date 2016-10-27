@@ -102,7 +102,9 @@ public class FilterProfileJUnitTest {
     assertTrue(isClientInterested);
     fprofile.unregisterClientInterest(clientId, "Object1234", InterestType.KEY);
     fprofile.unregisterClientInterest(clientId, "Object4567", InterestType.KEY);
-    assertFalse("still has this interest: " + fprofile.getKeysOfInterestFor(clientId), fprofile.hasKeysOfInterestFor(clientId, inv));
+    assertFalse(
+        "still has this interest: " + fprofile.getKeysOfInterestFor(clientId),
+        fprofile.hasKeysOfInterestFor(clientId, inv));
   }
 
   @Test
@@ -129,7 +131,8 @@ public class FilterProfileJUnitTest {
     }
     boolean isClientInterested = fprofile.hasKeysOfInterestFor(clientId, inv);
     assertTrue(isClientInterested);
-    fprofile.unregisterClientInterest(clientId, UnregisterAllInterest.singleton(), InterestType.KEY);
+    fprofile.unregisterClientInterest(
+        clientId, UnregisterAllInterest.singleton(), InterestType.KEY);
     assertFalse(fprofile.hasKeysOfInterestFor(clientId, inv));
   }
 
@@ -188,7 +191,8 @@ public class FilterProfileJUnitTest {
     }
     boolean isClientInterested = fprofile.hasRegexInterestFor(clientId, inv);
     assertTrue(isClientInterested);
-    fprofile.unregisterClientInterest(clientId, UnregisterAllInterest.singleton(), InterestType.REGULAR_EXPRESSION);
+    fprofile.unregisterClientInterest(
+        clientId, UnregisterAllInterest.singleton(), InterestType.REGULAR_EXPRESSION);
     assertFalse(fprofile.hasRegexInterestFor(clientId, inv));
   }
 
@@ -236,13 +240,24 @@ public class FilterProfileJUnitTest {
 
   private void unregisterFilterClass(boolean inv, boolean twoClients) {
     String clientId = "client";
-    fprofile.registerClientInterest(clientId, "org.apache.geode.internal.cache.tier.sockets.TestFilter", InterestType.FILTER_CLASS, inv);
+    fprofile.registerClientInterest(
+        clientId,
+        "org.apache.geode.internal.cache.tier.sockets.TestFilter",
+        InterestType.FILTER_CLASS,
+        inv);
     if (twoClients) {
-      fprofile.registerClientInterest("client2", "org.apache.geode.internal.cache.tier.sockets.TestFilter", InterestType.FILTER_CLASS, inv);
+      fprofile.registerClientInterest(
+          "client2",
+          "org.apache.geode.internal.cache.tier.sockets.TestFilter",
+          InterestType.FILTER_CLASS,
+          inv);
     }
     boolean isClientInterested = fprofile.hasFilterInterestFor(clientId, inv);
     assertTrue(isClientInterested);
-    fprofile.unregisterClientInterest(clientId, "org.apache.geode.internal.cache.tier.sockets.TestFilter", InterestType.FILTER_CLASS);
+    fprofile.unregisterClientInterest(
+        clientId,
+        "org.apache.geode.internal.cache.tier.sockets.TestFilter",
+        InterestType.FILTER_CLASS);
     assertFalse(fprofile.hasFilterInterestFor(clientId, inv));
   }
 
@@ -263,15 +278,23 @@ public class FilterProfileJUnitTest {
 
   private void unregisterAllFilterClass(boolean inv, boolean twoClients) {
     String clientId = "client";
-    fprofile.registerClientInterest(clientId, "org.apache.geode.internal.cache.tier.sockets.TestFilter", InterestType.FILTER_CLASS, inv);
+    fprofile.registerClientInterest(
+        clientId,
+        "org.apache.geode.internal.cache.tier.sockets.TestFilter",
+        InterestType.FILTER_CLASS,
+        inv);
     if (twoClients) {
-      fprofile.registerClientInterest("client2", "org.apache.geode.internal.cache.tier.sockets.TestFilter", InterestType.FILTER_CLASS, inv);
+      fprofile.registerClientInterest(
+          "client2",
+          "org.apache.geode.internal.cache.tier.sockets.TestFilter",
+          InterestType.FILTER_CLASS,
+          inv);
     }
     boolean isClientInterested = fprofile.hasFilterInterestFor(clientId, inv);
     assertTrue(isClientInterested);
-    fprofile.unregisterClientInterest(clientId, UnregisterAllInterest.singleton(), InterestType.FILTER_CLASS);
+    fprofile.unregisterClientInterest(
+        clientId, UnregisterAllInterest.singleton(), InterestType.FILTER_CLASS);
     assertFalse(fprofile.hasFilterInterestFor(clientId, inv));
-
   }
 
   @Test
@@ -345,9 +368,17 @@ public class FilterProfileJUnitTest {
 
   private void unregisterFilterNotRegistered(boolean inv, boolean twoClients) {
     String clientId = "client";
-    fprofile.registerClientInterest(clientId, "org.apache.geode.internal.cache.tier.sockets.TestFilter", InterestType.FILTER_CLASS, inv);
+    fprofile.registerClientInterest(
+        clientId,
+        "org.apache.geode.internal.cache.tier.sockets.TestFilter",
+        InterestType.FILTER_CLASS,
+        inv);
     if (twoClients) {
-      fprofile.registerClientInterest("client2", "org.apache.geode.internal.cache.tier.sockets.TestFilter", InterestType.FILTER_CLASS, inv);
+      fprofile.registerClientInterest(
+          "client2",
+          "org.apache.geode.internal.cache.tier.sockets.TestFilter",
+          InterestType.FILTER_CLASS,
+          inv);
     }
     boolean isClientInterested = fprofile.hasFilterInterestFor(clientId, inv);
     assertTrue(isClientInterested);
@@ -399,11 +430,18 @@ public class FilterProfileJUnitTest {
   private void unregisterAllFilterNotRegistered(boolean inv, boolean twoClients) {
     String clientId = "client";
     if (twoClients) {
-      fprofile.registerClientInterest("client2", "org.apache.geode.internal.cache.tier.sockets.TestFilter", InterestType.FILTER_CLASS, inv);
+      fprofile.registerClientInterest(
+          "client2",
+          "org.apache.geode.internal.cache.tier.sockets.TestFilter",
+          InterestType.FILTER_CLASS,
+          inv);
     }
     boolean isClientInterested = fprofile.hasFilterInterestFor(clientId, inv);
     assertFalse(isClientInterested);
-    fprofile.unregisterClientInterest(clientId, "org.apache.geode.internal.cache.tier.sockets.TestFilter", InterestType.FILTER_CLASS);
+    fprofile.unregisterClientInterest(
+        clientId,
+        "org.apache.geode.internal.cache.tier.sockets.TestFilter",
+        InterestType.FILTER_CLASS);
     assertFalse(fprofile.hasFilterInterestFor(clientId, inv));
   }
 
@@ -417,25 +455,35 @@ public class FilterProfileJUnitTest {
     registerUnregisterClientInterestListAndVerifyKeysRegistered(true);
   }
 
-  private void registerUnregisterClientInterestListAndVerifyKeysRegistered(boolean updatesAsInvalidates) {
+  private void registerUnregisterClientInterestListAndVerifyKeysRegistered(
+      boolean updatesAsInvalidates) {
     String clientId = "client";
     List<String> keys = Arrays.asList("K1", "K2");
 
     Set registeredKeys = fprofile.registerClientInterestList(clientId, keys, updatesAsInvalidates);
-    int numKeys = updatesAsInvalidates ? fprofile.getKeysOfInterestInv(clientId).size() : fprofile.getKeysOfInterest(clientId).size();
+    int numKeys =
+        updatesAsInvalidates
+            ? fprofile.getKeysOfInterestInv(clientId).size()
+            : fprofile.getKeysOfInterest(clientId).size();
     assertEquals(2, numKeys);
     assertTrue("Expected key not found in registered list.", registeredKeys.containsAll(keys));
 
     // Re-register same keys. The return should be empty.
     registeredKeys = fprofile.registerClientInterestList(clientId, keys, updatesAsInvalidates);
-    numKeys = updatesAsInvalidates ? fprofile.getKeysOfInterestInv(clientId).size() : fprofile.getKeysOfInterest(clientId).size();
+    numKeys =
+        updatesAsInvalidates
+            ? fprofile.getKeysOfInterestInv(clientId).size()
+            : fprofile.getKeysOfInterest(clientId).size();
     assertEquals(2, numKeys);
     assertEquals(0, registeredKeys.size());
 
     // Register one old key and new. It should return only the new key.
     keys = Arrays.asList("K2", "K3");
     registeredKeys = fprofile.registerClientInterestList(clientId, keys, updatesAsInvalidates);
-    numKeys = updatesAsInvalidates ? fprofile.getKeysOfInterestInv(clientId).size() : fprofile.getKeysOfInterest(clientId).size();
+    numKeys =
+        updatesAsInvalidates
+            ? fprofile.getKeysOfInterestInv(clientId).size()
+            : fprofile.getKeysOfInterest(clientId).size();
     assertEquals(3, numKeys);
     assertEquals(1, registeredKeys.size());
     assertTrue("Expected key not found in registered list.", registeredKeys.contains("K3"));
@@ -443,7 +491,10 @@ public class FilterProfileJUnitTest {
     // Keys Registered are K1, K2, K3
     keys = Arrays.asList("K1", "K2");
     registeredKeys = fprofile.unregisterClientInterestList(clientId, keys);
-    numKeys = updatesAsInvalidates ? fprofile.getKeysOfInterestInv(clientId).size() : fprofile.getKeysOfInterest(clientId).size();
+    numKeys =
+        updatesAsInvalidates
+            ? fprofile.getKeysOfInterestInv(clientId).size()
+            : fprofile.getKeysOfInterest(clientId).size();
     assertEquals(1, numKeys);
     assertTrue("Expected keys not found in unregistered list.", keys.containsAll(registeredKeys));
 
@@ -451,7 +502,10 @@ public class FilterProfileJUnitTest {
     keys = Arrays.asList("K2", "K3");
     registeredKeys = fprofile.unregisterClientInterestList(clientId, keys);
     // Once all the interest for client is removed, the client id is removed from the interest list map.
-    Set keySet = updatesAsInvalidates ? fprofile.getKeysOfInterestInv(clientId) : fprofile.getKeysOfInterest(clientId);
+    Set keySet =
+        updatesAsInvalidates
+            ? fprofile.getKeysOfInterestInv(clientId)
+            : fprofile.getKeysOfInterest(clientId);
     assertNull(keySet);
     assertEquals(1, registeredKeys.size());
     assertTrue("Expected key not found in unregistered list.", registeredKeys.contains("K3"));

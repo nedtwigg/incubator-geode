@@ -46,13 +46,14 @@ public class ExecExecutor extends TransactionExecutor {
 
     boolean hasError = hasError(context.getTransactionQueue());
 
-    if (hasError)
-      txm.rollback();
+    if (hasError) txm.rollback();
     else {
       try {
         txm.commit();
       } catch (CommitConflictException e) {
-        command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_COMMIT_CONFLICT));
+        command.setResponse(
+            Coder.getErrorResponse(
+                context.getByteBufAllocator(), RedisConstants.ERROR_COMMIT_CONFLICT));
         context.clearTransaction();
         return;
       }
@@ -80,8 +81,7 @@ public class ExecExecutor extends TransactionExecutor {
 
   private boolean hasError(Queue<Command> queue) {
     for (Command c : queue) {
-      if (c.hasError())
-        return true;
+      if (c.hasError()) return true;
     }
     return false;
   }

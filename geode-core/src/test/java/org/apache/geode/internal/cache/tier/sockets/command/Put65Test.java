@@ -58,56 +58,38 @@ public class Put65Test {
   private static final Object CALLBACK_ARG = "arg";
   private static final byte[] EVENT = new byte[8];
   private static final byte[] VALUE = new byte[8];
-  private static final byte[] OK_BYTES = new byte[] { 0 };
+  private static final byte[] OK_BYTES = new byte[] {0};
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private AuthorizeRequest authzRequest;
-  @Mock
-  private Cache cache;
-  @Mock
-  private LocalRegion localRegion;
-  @Mock
-  private Part regionNamePart;
-  @Mock
-  private Part keyPart;
-  @Mock
-  private Part valuePart;
-  @Mock
-  private Part oldValuePart;
-  @Mock
-  private Part deltaPart;
-  @Mock
-  private Part operationPart;
-  @Mock
-  private Part flagsPart;
-  @Mock
-  private Part eventPart;
-  @Mock
-  private Part callbackArgsPart;
-  @Mock
-  private PutOperationContext putOperationContext;
-  @Mock
-  private Object object;
-  @Mock
-  private Message errorResponseMessage;
-  @Mock
-  private Message replyMessage;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private ServerConnection serverConnection;
+  @Mock private AuthorizeRequest authzRequest;
+  @Mock private Cache cache;
+  @Mock private LocalRegion localRegion;
+  @Mock private Part regionNamePart;
+  @Mock private Part keyPart;
+  @Mock private Part valuePart;
+  @Mock private Part oldValuePart;
+  @Mock private Part deltaPart;
+  @Mock private Part operationPart;
+  @Mock private Part flagsPart;
+  @Mock private Part eventPart;
+  @Mock private Part callbackArgsPart;
+  @Mock private PutOperationContext putOperationContext;
+  @Mock private Object object;
+  @Mock private Message errorResponseMessage;
+  @Mock private Message replyMessage;
 
-  @InjectMocks
-  private Put65 put65;
+  @InjectMocks private Put65 put65;
 
   @Before
   public void setUp() throws Exception {
     this.put65 = new Put65();
     MockitoAnnotations.initMocks(this);
 
-    when(this.authzRequest.putAuthorize(eq(REGION_NAME), eq(KEY), any(), eq(true), eq(CALLBACK_ARG))).thenReturn(this.putOperationContext);
+    when(this.authzRequest.putAuthorize(
+            eq(REGION_NAME), eq(KEY), any(), eq(true), eq(CALLBACK_ARG)))
+        .thenReturn(this.putOperationContext);
 
     when(this.cache.getRegion(isA(String.class))).thenReturn(this.localRegion);
     when(this.cache.getCancelCriterion()).thenReturn(mock(CancelCriterion.class));
@@ -123,7 +105,16 @@ public class Put65Test {
 
     when(this.keyPart.getStringOrObject()).thenReturn(KEY);
 
-    when(this.localRegion.basicBridgePut(eq(KEY), eq(VALUE), eq(null), eq(true), eq(CALLBACK_ARG), any(ClientProxyMembershipID.class), eq(true), any(EntryEventImpl.class))).thenReturn(true);
+    when(this.localRegion.basicBridgePut(
+            eq(KEY),
+            eq(VALUE),
+            eq(null),
+            eq(true),
+            eq(CALLBACK_ARG),
+            any(ClientProxyMembershipID.class),
+            eq(true),
+            any(EntryEventImpl.class)))
+        .thenReturn(true);
 
     when(this.message.getNumberOfParts()).thenReturn(8);
     when(this.message.getPart(eq(0))).thenReturn(this.regionNamePart);
@@ -181,7 +172,9 @@ public class Put65Test {
   public void integratedSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(true);
-    doThrow(new NotAuthorizedException("")).when(this.securityService).authorizeRegionWrite(eq(REGION_NAME), eq(KEY));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.securityService)
+        .authorizeRegionWrite(eq(REGION_NAME), eq(KEY));
 
     this.put65.cmdExecute(this.message, this.serverConnection, 0);
 
@@ -201,7 +194,8 @@ public class Put65Test {
 
     assertThat(argument.getValue()).isEqualTo(OK_BYTES);
 
-    verify(this.authzRequest).putAuthorize(eq(REGION_NAME), eq(KEY), eq(VALUE), eq(true), eq(CALLBACK_ARG));
+    verify(this.authzRequest)
+        .putAuthorize(eq(REGION_NAME), eq(KEY), eq(VALUE), eq(true), eq(CALLBACK_ARG));
     verify(this.replyMessage).send(this.serverConnection);
   }
 
@@ -209,17 +203,20 @@ public class Put65Test {
   public void oldSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
-    doThrow(new NotAuthorizedException("")).when(this.authzRequest).putAuthorize(eq(REGION_NAME), eq(KEY), eq(VALUE), eq(true), eq(CALLBACK_ARG));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.authzRequest)
+        .putAuthorize(eq(REGION_NAME), eq(KEY), eq(VALUE), eq(true), eq(CALLBACK_ARG));
 
     this.put65.cmdExecute(this.message, this.serverConnection, 0);
 
-    verify(this.authzRequest).putAuthorize(eq(REGION_NAME), eq(KEY), eq(VALUE), eq(true), eq(CALLBACK_ARG));
+    verify(this.authzRequest)
+        .putAuthorize(eq(REGION_NAME), eq(KEY), eq(VALUE), eq(true), eq(CALLBACK_ARG));
 
-    ArgumentCaptor<NotAuthorizedException> argument = ArgumentCaptor.forClass(NotAuthorizedException.class);
+    ArgumentCaptor<NotAuthorizedException> argument =
+        ArgumentCaptor.forClass(NotAuthorizedException.class);
     verify(this.errorResponseMessage).addObjPart(argument.capture());
 
     assertThat(argument.getValue()).isExactlyInstanceOf(NotAuthorizedException.class);
     verify(this.errorResponseMessage).send(this.serverConnection);
   }
-
 }

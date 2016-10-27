@@ -18,7 +18,7 @@ package org.apache.geode.internal.offheap;
 
 /**
  * Implements the Slab interface using AddressableMemoryManager.
- * 
+ *
  * @since Geode 1.0
  */
 public class SlabImpl implements Slab {
@@ -30,9 +30,8 @@ public class SlabImpl implements Slab {
   }
 
   /**
-   * This constructor is used by unit test to add padding
-   * to prevent intermittent combining of fragments during
-   * defragmentation.
+   * This constructor is used by unit test to add padding to prevent intermittent combining of
+   * fragments during defragmentation.
    */
   public SlabImpl(int size, boolean withPadding) {
     this(AddressableMemoryManager.allocate(size + (withPadding ? 4 : 0)), size);

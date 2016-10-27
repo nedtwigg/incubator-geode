@@ -18,32 +18,27 @@ package org.apache.geode.internal.cache;
 
 import org.apache.geode.distributed.internal.DistributionConfig;
 
-/**
- * No instances of this class. Just some static method having to do with inline keys.
- *
- */
+/** No instances of this class. Just some static method having to do with inline keys. */
 public class InlineKeyHelper {
-  public static boolean INLINE_REGION_KEYS = !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "DISABLE_INLINE_REGION_KEYS");
+  public static boolean INLINE_REGION_KEYS =
+      !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "DISABLE_INLINE_REGION_KEYS");
 
   /**
-   * The maximum number of longs any of region entry subclasses use
-   * to store the string key inline.
+   * The maximum number of longs any of region entry subclasses use to store the string key inline.
    */
   public static final int MAX_LONGS_USED_FOR_STRING_KEY = 2;
 
   /**
-   * Given the number of longs used to encode the inline string
-   * return the maximum number of characters that can be encoded
-   * into that many longs.
+   * Given the number of longs used to encode the inline string return the maximum number of
+   * characters that can be encoded into that many longs.
    */
   public static final int getMaxInlineStringKey(int longCount, boolean byteEncoded) {
     return (longCount * (byteEncoded ? 8 : 4)) - 1;
   }
 
   /**
-   * Return null if the given string can not be encoded inline.
-   * Return true if the given string can be encoded inline as bytes.
-   * Return false if the given string can be encoded inline as chars.
+   * Return null if the given string can not be encoded inline. Return true if the given string can
+   * be encoded inline as bytes. Return false if the given string can be encoded inline as chars.
    */
   public static Boolean canStringBeInlineEncoded(String skey) {
     if (skey.length() > getMaxInlineStringKey(MAX_LONGS_USED_FOR_STRING_KEY, true)) {
@@ -68,5 +63,4 @@ public class InlineKeyHelper {
     }
     return true;
   }
-
 }

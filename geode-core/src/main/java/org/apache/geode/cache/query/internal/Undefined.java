@@ -23,16 +23,13 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
 /**
- * An UNDEFINED value is the result of accessing an attribute of a null-valued
- * attribute. If you access an attribute that has an explicit value of null,
- * then it is not undefined. For example, if a query accesses the attribute
- * address.city and address is null, then the result is undefined. If the query
- * accesses address, then the result is not undefined, it is null.
- * 
+ * An UNDEFINED value is the result of accessing an attribute of a null-valued attribute. If you
+ * access an attribute that has an explicit value of null, then it is not undefined. For example, if
+ * a query accesses the attribute address.city and address is null, then the result is undefined. If
+ * the query accesses address, then the result is not undefined, it is null.
+ *
  * @version $Revision: 1.1 $
- * 
  */
-
 public final class Undefined implements DataSerializableFixedID, Comparable, Serializable {
 
   private static final long serialVersionUID = 6643107525908324141L;
@@ -59,8 +56,7 @@ public final class Undefined implements DataSerializableFixedID, Comparable, Ser
     // DataSerializer
   }
 
-  public void toData(DataOutput out) throws IOException {
-  }
+  public void toData(DataOutput out) throws IOException {}
 
   @Override
   public int compareTo(Object o) {
@@ -81,5 +77,4 @@ public final class Undefined implements DataSerializableFixedID, Comparable, Ser
   public Version[] getSerializationVersions() {
     return null;
   }
-
 }

@@ -22,34 +22,33 @@ import org.apache.geode.distributed.internal.DistributionConfig;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * Support for correctness assertions.
- * "An assertion is a statement containing a boolean expression that the
- *  programmer believes to be true at the time the statement is executed.
- * For example, after unmarshalling all of the arguments from a data
- * buffer, a programmer might assert that the number of bytes of data
- * remaining in the buffer is zero. The system executes the assertion by
- * evaluating the boolean expression and reporting an error if it evaluates to
- * false. By verifying that the boolean expression is indeed true, the system
- * corroborates the programmer's knowledge of the program and increases his
- * confidence that the program is free of bugs.Assertion checking may be
- * disabled for increased performance. Typically, assertion-checking is enabled
- * during program development and testing, and disabled during deployment."
- *     - from http://java.sun.com/aboutJava/communityprocess/jsr/asrt_prop.html
+ * Support for correctness assertions. "An assertion is a statement containing a boolean expression
+ * that the programmer believes to be true at the time the statement is executed. For example, after
+ * unmarshalling all of the arguments from a data buffer, a programmer might assert that the number
+ * of bytes of data remaining in the buffer is zero. The system executes the assertion by evaluating
+ * the boolean expression and reporting an error if it evaluates to false. By verifying that the
+ * boolean expression is indeed true, the system corroborates the programmer's knowledge of the
+ * program and increases his confidence that the program is free of bugs.Assertion checking may be
+ * disabled for increased performance. Typically, assertion-checking is enabled during program
+ * development and testing, and disabled during deployment." - from
+ * http://java.sun.com/aboutJava/communityprocess/jsr/asrt_prop.html
  *
- * This class does not provide a way to disable assertions for increased performance,
- * since we cannot prevent the arguments from being evaluated in any case without
- * changes to the Java language itself.
+ * <p>This class does not provide a way to disable assertions for increased performance, since we
+ * cannot prevent the arguments from being evaluated in any case without changes to the Java
+ * language itself.
  *
- * The interface to this class was designed for easy migration to the new assert
- * facility that is currently proposed for the Java language in JSR-000041
+ * <p>The interface to this class was designed for easy migration to the new assert facility that is
+ * currently proposed for the Java language in JSR-000041
  *
- * @see <a href="http://java.sun.com/aboutJava/communityprocess/jsr/jsr_041_asrt.html">JSR-000041 A Simple Assertion Facility</a>
- * @see <a href="http://java.sun.com/aboutJava/communityprocess/jsr/asrt_prop.html">Proposal: A Simple Assertion Facility For the Java[tm] Programming Language</a>
+ * @see <a href="http://java.sun.com/aboutJava/communityprocess/jsr/jsr_041_asrt.html">JSR-000041 A
+ *     Simple Assertion Facility</a>
+ * @see <a href="http://java.sun.com/aboutJava/communityprocess/jsr/asrt_prop.html">Proposal: A
+ *     Simple Assertion Facility For the Java[tm] Programming Language</a>
  */
-
 public class Assert {
   /**
    * Assert that a boolean value is true.
+   *
    * @param b the boolean value to check
    * @throws InternalGemFireError if false
    */
@@ -59,7 +58,8 @@ public class Assert {
     }
   }
 
-  private static boolean debug = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "haltOnAssertFailure");
+  private static boolean debug =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "haltOnAssertFailure");
 
   public static boolean waitForDebuggerOnError() {
     return debug;
@@ -106,9 +106,8 @@ public class Assert {
   }
 
   /**
-   * Assert that a boolean value is true.The
-   * message object will be sent toString()
-   * and used for an error message.
+   * Assert that a boolean value is true.The message object will be sent toString() and used for an
+   * error message.
    *
    * @param b the boolean value to check
    * @param message used for error message
@@ -157,15 +156,16 @@ public class Assert {
   }
 
   /**
-   * This is a workaround for X bug 38288. JRockit can throw a NullPointerException
-   * from Thread.holdsLock, so we catch the NullPointerException if it happens.
-   * 
-   * This method returns true, unless it throws an exception. This is so we can disable
-   * these tests for performance reasons with a java assertion, eg
-   * <code>assert Assert.assertHoldLock(lock, true);</code>
+   * This is a workaround for X bug 38288. JRockit can throw a NullPointerException from
+   * Thread.holdsLock, so we catch the NullPointerException if it happens.
+   *
+   * <p>This method returns true, unless it throws an exception. This is so we can disable these
+   * tests for performance reasons with a java assertion, eg <code>
+   * assert Assert.assertHoldLock(lock, true);</code>
+   *
    * @param lock The lock to test
    * @param shouldBeHeld true if this thread should hold this lock.
-   * @return true, unless the method throws an exception. 
+   * @return true, unless the method throws an exception.
    */
   public static boolean assertHoldsLock(Object lock, boolean shouldBeHeld) {
     try {

@@ -78,17 +78,17 @@ import jline.console.ConsoleReader;
 /**
  * Extends an interactive shell provided by <a
  * href="https://github.com/SpringSource/spring-shell">Spring Shell</a> library.
- * <p />
- * This class is used to plug-in implementations of the following Spring (Roo)
- * Shell components customized to suite GemFire Command Line Interface (CLI)
- * requirements:<ul>
- * <li> <code>org.springframework.roo.shell.ExecutionStrategy</code>
- * <li> <code>org.springframework.roo.shell.Parser</code>
- * </ul>
- * <p />
- * Additionally, this class is used to maintain GemFire SHell (gfsh) specific
- * information like: environment TODO
  *
+ * <p>This class is used to plug-in implementations of the following Spring (Roo) Shell components
+ * customized to suite GemFire Command Line Interface (CLI) requirements:
+ *
+ * <ul>
+ *   <li> <code>org.springframework.roo.shell.ExecutionStrategy</code>
+ *   <li> <code>org.springframework.roo.shell.Parser</code>
+ * </ul>
+ *
+ * <p>Additionally, this class is used to maintain GemFire SHell (gfsh) specific information like:
+ * environment TODO
  *
  * @since GemFire 7.0
  */
@@ -185,8 +185,7 @@ public class Gfsh extends JLineShell {
   /**
    * Create a GemFire shell with console using the specified arguments.
    *
-   * @param args
-   *          arguments to be used to create a GemFire shell instance
+   * @param args arguments to be used to create a GemFire shell instance
    * @throws IOException
    * @throws ClassNotFoundException
    */
@@ -195,19 +194,16 @@ public class Gfsh extends JLineShell {
   }
 
   /**
-   * Create a GemFire shell using the specified arguments. Console for user
-   * inputs is made available if <code>launchShell</code> is set to
-   * <code>true</code>.
+   * Create a GemFire shell using the specified arguments. Console for user inputs is made available
+   * if <code>launchShell</code> is set to <code>true</code>.
    *
-   * @param launchShell
-   *          whether to make Console available
-   * @param args
-   *          arguments to be used to create a GemFire shell instance or execute
-   *          command
+   * @param launchShell whether to make Console available
+   * @param args arguments to be used to create a GemFire shell instance or execute command
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  protected Gfsh(boolean launchShell, String[] args, GfshConfig gfshConfig) throws ClassNotFoundException, IOException {
+  protected Gfsh(boolean launchShell, String[] args, GfshConfig gfshConfig)
+      throws ClassNotFoundException, IOException {
     //1. Disable suppressing of duplicate messages
     JLineLogHandler.setSuppressDuplicateMessages(false);
 
@@ -215,7 +211,10 @@ public class Gfsh extends JLineShell {
     this.gfshConfig = gfshConfig;
     this.gfshFileLogger = LogWrapper.getInstance();
     this.gfshFileLogger.configure(this.gfshConfig);
-    this.ansiHandler = ANSIHandler.getInstance(this.gfshConfig.isANSISupported()); //TODO - Abhishek : should take it from ConsoleReader.terminal??
+    this.ansiHandler =
+        ANSIHandler.getInstance(
+            this.gfshConfig
+                .isANSISupported()); //TODO - Abhishek : should take it from ConsoleReader.terminal??
 
     /*3. log system properties & gfsh environment */
     this.gfshFileLogger.info(Banner.getString(args));
@@ -248,12 +247,16 @@ public class Gfsh extends JLineShell {
 
     // Setup signal handler for various signals (such as CTRL-C)...
     try {
-      ClassUtils.forName("sun.misc.Signal", new SunAPINotFoundException("WARNING!!! Not running a Sun JVM.  Could not find the sun.misc.Signal class; Signal handling disabled."));
-      signalHandler = (CliUtil.isGfshVM() ? new GfshSignalHandler() : new AbstractSignalNotificationHandler() {
-      });
+      ClassUtils.forName(
+          "sun.misc.Signal",
+          new SunAPINotFoundException(
+              "WARNING!!! Not running a Sun JVM.  Could not find the sun.misc.Signal class; Signal handling disabled."));
+      signalHandler =
+          (CliUtil.isGfshVM()
+              ? new GfshSignalHandler()
+              : new AbstractSignalNotificationHandler() {});
     } catch (SunAPINotFoundException e) {
-      signalHandler = new AbstractSignalNotificationHandler() {
-      };
+      signalHandler = new AbstractSignalNotificationHandler() {};
       this.gfshFileLogger.warning(e.getMessage());
     }
 
@@ -275,9 +278,7 @@ public class Gfsh extends JLineShell {
     }
   }
 
-  /**
-   * Initializes default environment variables to default values
-   */
+  /** Initializes default environment variables to default values */
   private void initializeEnvironment() {
     env.put(ENV_SYS_USER, System.getProperty("user.name"));
     env.put(ENV_SYS_USER_HOME, System.getProperty("user.home"));
@@ -290,7 +291,8 @@ public class Gfsh extends JLineShell {
 
     env.put(ENV_APP_NAME, org.apache.geode.management.internal.cli.shell.Gfsh.GFSH_APP_NAME);
     readonlyAppEnv.add(ENV_APP_NAME);
-    env.put(ENV_APP_LOGGING_ENABLED, String.valueOf(!Level.OFF.equals(this.gfshConfig.getLogLevel())));
+    env.put(
+        ENV_APP_LOGGING_ENABLED, String.valueOf(!Level.OFF.equals(this.gfshConfig.getLogLevel())));
     readonlyAppEnv.add(ENV_APP_LOGGING_ENABLED);
     env.put(ENV_APP_LOG_FILE, this.gfshConfig.getLogFilePath());
     readonlyAppEnv.add(ENV_APP_LOG_FILE);
@@ -305,7 +307,8 @@ public class Gfsh extends JLineShell {
     env.put(ENV_APP_RESULT_VIEWER, String.valueOf(DEFAULT_APP_RESULT_VIEWER));
   }
 
-  public static Gfsh getInstance(boolean launchShell, String[] args, GfshConfig gfshConfig) throws ClassNotFoundException, IOException {
+  public static Gfsh getInstance(boolean launchShell, String[] args, GfshConfig gfshConfig)
+      throws ClassNotFoundException, IOException {
     if (instance == null) {
       synchronized (INSTANCE_LOCK) {
         if (instance == null) {
@@ -322,9 +325,7 @@ public class Gfsh extends JLineShell {
     return signalHandler;
   }
 
-  /**
-   * Starts this GemFire Shell with console.
-   */
+  /** Starts this GemFire Shell with console. */
   public void start() {
     runner = new Thread(this, getShellName());
     runner.start();
@@ -334,9 +335,7 @@ public class Gfsh extends JLineShell {
     return "Gfsh Launcher";
   }
 
-  /**
-   * Stops this GemFire Shell.
-   */
+  /** Stops this GemFire Shell. */
   public void stop() {
     //    flashMessage("\b"); // see 46072
     closeShell();
@@ -367,23 +366,19 @@ public class Gfsh extends JLineShell {
         setLastExecutionStatus(-1);
       }
     }
-
   }
 
   //////////////////// JLineShell Class Methods Start //////////////////////////
   //////////////////////// Implemented Methods ////////////////////////////////
-  /**
-   * See findResources in {@link AbstractShell}
-   */
+  /** See findResources in {@link AbstractShell} */
   protected Collection<URL> findResources(String resourceName) {
     //    return Collections.singleton(ClassPathLoader.getLatest().getResource(resourceName));
     return null;
   }
 
   /**
-   * Returns the {@link ExecutionStrategy} implementation used by this
-   * implementation of {@link AbstractShell}. {@link Gfsh} uses
-   * {@link GfshExecutionStrategy}.
+   * Returns the {@link ExecutionStrategy} implementation used by this implementation of {@link
+   * AbstractShell}. {@link Gfsh} uses {@link GfshExecutionStrategy}.
    *
    * @return ExecutionStrategy used by Gfsh
    */
@@ -393,8 +388,8 @@ public class Gfsh extends JLineShell {
   }
 
   /**
-   * Returns the {@link Parser} implementation used by this implementation of
-   * {@link AbstractShell}.{@link Gfsh} uses {@link GfshParser}.
+   * Returns the {@link Parser} implementation used by this implementation of {@link
+   * AbstractShell}.{@link Gfsh} uses {@link GfshParser}.
    *
    * @return Parser used by Gfsh
    */
@@ -405,12 +400,10 @@ public class Gfsh extends JLineShell {
 
   //////////////////////// Overridden Behavior /////////////////////////////////
   /**
-   * Executes the given command string. We have over-ridden the behavior to
-   * extend the original implementation to store the 'last command execution
-   * status'.
+   * Executes the given command string. We have over-ridden the behavior to extend the original
+   * implementation to store the 'last command execution status'.
    *
-   * @param line
-   *          command string to be executed
+   * @param line command string to be executed
    * @return true if execution is successful; false otherwise
    */
   @Override
@@ -478,7 +471,10 @@ public class Gfsh extends JLineShell {
     sb.append("   / _____/ ______/ ______/ /____/ /").append(LINE_SEPARATOR);
     sb.append("  / /  __/ /___  /_____  / _____  / ").append(LINE_SEPARATOR);
     sb.append(" / /__/ / ____/  _____/ / /    / /  ").append(LINE_SEPARATOR);
-    sb.append("/______/_/      /______/_/    /_/   ").append(" ").append(this.getVersion()).append(LINE_SEPARATOR);
+    sb.append("/______/_/      /______/_/    /_/   ")
+        .append(" ")
+        .append(this.getVersion())
+        .append(LINE_SEPARATOR);
     return ansiHandler.decorateString(sb.toString(), ANSIStyle.BLUE);
   }
 
@@ -501,7 +497,8 @@ public class Gfsh extends JLineShell {
   }
 
   public String getWelcomeMessage() {
-    return ansiHandler.decorateString("Monitor and Manage " + GemFireVersion.getProductName(), ANSIStyle.CYAN);
+    return ansiHandler.decorateString(
+        "Monitor and Manage " + GemFireVersion.getProductName(), ANSIStyle.CYAN);
   }
 
   //Over-ridden to avoid default behavior which is:
@@ -547,7 +544,7 @@ public class Gfsh extends JLineShell {
             if (!isAlreadySaved) {
               cmdResult.saveIncomingFiles(null);
             }
-            Gfsh.println();// Empty line
+            Gfsh.println(); // Empty line
           }
         }
       }
@@ -561,18 +558,17 @@ public class Gfsh extends JLineShell {
   }
 
   private boolean useExternalViewer(Result result) {
-    boolean flag = EXTERNAL_RESULT_VIEWER.equals(getEnvProperty(Gfsh.ENV_APP_RESULT_VIEWER)) && isUnix();
+    boolean flag =
+        EXTERNAL_RESULT_VIEWER.equals(getEnvProperty(Gfsh.ENV_APP_RESULT_VIEWER)) && isUnix();
     if (result instanceof CommandResult) {
       CommandResult commandResult = (CommandResult) result;
       resultTypeTL.set(commandResult.getType().equals("info"));
       return flag && !commandResult.getType().equals("info");
-    } else
-      return false;
+    } else return false;
   }
 
   public static boolean isInfoResult() {
-    if (resultTypeTL.get() == null)
-      return false;
+    if (resultTypeTL.get() == null) return false;
     return resultTypeTL.get();
   }
 
@@ -660,9 +656,7 @@ public class Gfsh extends JLineShell {
     gfsherr.println(toPrint);
   }
 
-  /**
-   * @return the lastExecutionStatus
-   */
+  /** @return the lastExecutionStatus */
   public int getLastExecutionStatus() {
     //APP_LAST_EXIT_STATUS
     return lastExecutionStatus;
@@ -671,8 +665,7 @@ public class Gfsh extends JLineShell {
   /**
    * Set the last command execution status
    *
-   * @param lastExecutionStatus
-   *          last command execution status
+   * @param lastExecutionStatus last command execution status
    */
   public void setLastExecutionStatus(int lastExecutionStatus) {
     this.lastExecutionStatus = lastExecutionStatus;
@@ -768,11 +761,13 @@ public class Gfsh extends JLineShell {
         BufferedReader reader = new BufferedReader(new FileReader(scriptFile));
         String lineRead = "";
         StringBuilder linesBuffer = new StringBuilder();
-        String linesBufferString = ""; // used to check whether the string in a buffer contains a ";".
+        String linesBufferString =
+            ""; // used to check whether the string in a buffer contains a ";".
         int commandSrNum = 0;
         CommentSkipHelper commentSkipper = new CommentSkipHelper();
 
-        LINEREAD_LOOP: while (exitShellRequest == null && (lineRead = reader.readLine()) != null) {
+        LINEREAD_LOOP:
+        while (exitShellRequest == null && (lineRead = reader.readLine()) != null) {
           if (linesBuffer == null) {
             linesBuffer = new StringBuilder();
           }
@@ -781,7 +776,7 @@ public class Gfsh extends JLineShell {
             continue;
           }
 
-          if (linesBuffer.length() != 0) {// add " " between lines
+          if (linesBuffer.length() != 0) { // add " " between lines
             linesBuffer.append(" ");
           }
           linesBuffer.append(lineWithoutComments);
@@ -801,8 +796,13 @@ public class Gfsh extends JLineShell {
                 if (!executeSuccess) {
                   setLastExecutionStatus(-1);
                 }
-                scriptInfo.addCommandAndStatus(cmdLet, getLastExecutionStatus() == -1 || getLastExecutionStatus() == -2 ? "FAILED" : "PASSED");
-                if ((getLastExecutionStatus() == -1 || getLastExecutionStatus() == -2) && !continueOnError) {
+                scriptInfo.addCommandAndStatus(
+                    cmdLet,
+                    getLastExecutionStatus() == -1 || getLastExecutionStatus() == -2
+                        ? "FAILED"
+                        : "PASSED");
+                if ((getLastExecutionStatus() == -1 || getLastExecutionStatus() == -2)
+                    && !continueOnError) {
                   break LINEREAD_LOOP;
                 }
               }
@@ -817,7 +817,10 @@ public class Gfsh extends JLineShell {
         }
         reader.close();
       } else {
-        throw new CommandProcessingException(scriptFile.getPath() + " doesn't exist.", CommandProcessingException.ARGUMENT_INVALID, scriptFile);
+        throw new CommandProcessingException(
+            scriptFile.getPath() + " doesn't exist.",
+            CommandProcessingException.ARGUMENT_INVALID,
+            scriptFile);
       }
       result = scriptInfo.getResult();
       scriptInfo.logScriptExecutionInfo(gfshFileLogger, result);
@@ -826,7 +829,10 @@ public class Gfsh extends JLineShell {
         result = ResultBuilder.createInfoResult("");
       }
     } catch (IOException e) {
-      throw new CommandProcessingException("Error while reading file " + scriptFile, CommandProcessingException.RESOURCE_ACCESS_ERROR, e);
+      throw new CommandProcessingException(
+          "Error while reading file " + scriptFile,
+          CommandProcessingException.RESOURCE_ACCESS_ERROR,
+          e);
     } finally {
       // reset to original Quiet Execution value
       setEnvProperty(ENV_APP_QUIET_EXECUTION, initialIsQuiet);
@@ -839,7 +845,8 @@ public class Gfsh extends JLineShell {
   /////////////// For setting shell environment properties START ///////////////
   public String setEnvProperty(String propertyName, String propertyValue) {
     if (propertyName == null || propertyValue == null) {
-      throw new IllegalArgumentException("Environment Property name and/or value can not be set to null.");
+      throw new IllegalArgumentException(
+          "Environment Property name and/or value can not be set to null.");
     }
     if (propertyName.startsWith("SYS") || readonlyAppEnv.contains(propertyName)) {
       throw new IllegalArgumentException("The Property " + propertyName + " can not be modified.");
@@ -878,7 +885,7 @@ public class Gfsh extends JLineShell {
       gfshHistory.setAutoFlush(false);
       // NOTE: Similar code is in executeScript()
       while (exitShellRequest == null && (line = readLine(reader, prompt)) != null) {
-        if (!line.endsWith(SyntaxConstants.CONTINUATION_CHARACTER)) { // see 45893                   
+        if (!line.endsWith(SyntaxConstants.CONTINUATION_CHARACTER)) { // see 45893
           List<String> commandList = MultiCommandHelper.getMultipleCommands(line);
           for (String cmdLet : commandList) {
             String trimmedCommand = cmdLet.trim();
@@ -943,16 +950,12 @@ public class Gfsh extends JLineShell {
     return operationInvoker != null && operationInvoker.isConnected() && operationInvoker.isReady();
   }
 
-  /**
-   * @return the operationInvoker
-   */
+  /** @return the operationInvoker */
   public OperationInvoker getOperationInvoker() {
     return operationInvoker;
   }
 
-  /**
-   * @param operationInvoker the operationInvoker to set
-   */
+  /** @param operationInvoker the operationInvoker to set */
   public void setOperationInvoker(final OperationInvoker operationInvoker) {
     this.operationInvoker = operationInvoker;
   }
@@ -1059,18 +1062,21 @@ public class Gfsh extends JLineShell {
       //      contextPath = "." + CliConstants.DEFAULT_APP_CONTEXT_PATH;
     }
 
-    defaultPrompt = MessageFormat.format(defaultPrompt, new Object[] { clusterString, contextPath });
+    defaultPrompt = MessageFormat.format(defaultPrompt, new Object[] {clusterString, contextPath});
 
     return ansiHandler.decorateString(defaultPrompt, ANSIStyle.YELLOW);
   }
 
   public void notifyDisconnect(String endPoints) {
-    String message = CliStrings.format(CliStrings.GFSH__MSG__NO_LONGER_CONNECTED_TO_0, new Object[] { endPoints });
+    String message =
+        CliStrings.format(CliStrings.GFSH__MSG__NO_LONGER_CONNECTED_TO_0, new Object[] {endPoints});
     printAsSevere(LINE_SEPARATOR + message);
     if (gfshFileLogger.severeEnabled()) {
       gfshFileLogger.severe(message);
     }
-    setPromptPath(org.apache.geode.management.internal.cli.converters.RegionPathConverter.DEFAULT_APP_CONTEXT_PATH);
+    setPromptPath(
+        org.apache.geode.management.internal.cli.converters.RegionPathConverter
+            .DEFAULT_APP_CONTEXT_PATH);
   }
 
   public boolean getDebug() {
@@ -1111,18 +1117,20 @@ public class Gfsh extends JLineShell {
   }
 
   /**
-   * Take a string and wrap it into multiple lines separated by CliConstants.LINE_SEPARATOR.
-   * Lines are separated based upon the terminal width, separated on word boundaries and may have
-   * extra spaces added to provide indentation.
+   * Take a string and wrap it into multiple lines separated by CliConstants.LINE_SEPARATOR. Lines
+   * are separated based upon the terminal width, separated on word boundaries and may have extra
+   * spaces added to provide indentation.
    *
-   * For example: if the terminal width were 5 and the string "123 456789 01234" were passed in with
-   * an indentation level of 2, then the returned string would be:
+   * <p>For example: if the terminal width were 5 and the string "123 456789 01234" were passed in
+   * with an indentation level of 2, then the returned string would be:
+   *
    * <pre>
    *         123
    *         45678
    *         9
    *         01234
    * </pre>
+   *
    * @param string String to wrap (add breakpoints and indent)
    * @param indentationLevel The number of indentation levels to use.
    * @return The wrapped string.
@@ -1148,7 +1156,9 @@ public class Gfsh extends JLineShell {
       //   1. If the end of string is reached
       //   2. If the width of the terminal has been reached
       //   3. If a newline character was found in the string
-      while (index < string.length() && currentLineLength < maxLineLength && string.charAt(index) != '\n') {
+      while (index < string.length()
+          && currentLineLength < maxLineLength
+          && string.charAt(index) != '\n') {
         index++;
         currentLineLength++;
       }
@@ -1177,7 +1187,9 @@ public class Gfsh extends JLineShell {
 
           // Else split the string cleanly between words
         } else {
-          stringBuf.append(string.substring(startOfCurrentLine, spaceCharIndex)).append(LINE_SEPARATOR);
+          stringBuf
+              .append(string.substring(startOfCurrentLine, spaceCharIndex))
+              .append(LINE_SEPARATOR);
           index = spaceCharIndex + 1;
         }
       }
@@ -1217,7 +1229,9 @@ class ScriptExecutionDetails {
 
   Result getResult() {
     CompositeResultData compositeResultData = ResultBuilder.createCompositeResultData();
-    compositeResultData.setHeader("************************* Execution Summary ***********************\nScript file: " + filePath);
+    compositeResultData.setHeader(
+        "************************* Execution Summary ***********************\nScript file: "
+            + filePath);
 
     for (int i = 0; i < this.commandAndStatusList.size(); i++) {
       int commandSrNo = i + 1;

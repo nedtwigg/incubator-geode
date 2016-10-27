@@ -43,23 +43,26 @@ public class HashIndexDUnitTest extends JUnit4DistributedTestCase {
   @Override
   public final void postSetUp() throws Exception {
     getSystem();
-    Invoke.invokeInEveryVM(new SerializableRunnable("getSystem") {
-      public void run() {
-        getSystem();
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("getSystem") {
+          public void run() {
+            getSystem();
+          }
+        });
     Host host = Host.getHost(0);
     vm0 = host.getVM(0);
     utils = new QueryTestUtils();
     utils.initializeQueryMap();
-    utils.createServer(vm0, DistributedTestUtils.getAllDistributedSystemProperties(new Properties()));
+    utils.createServer(
+        vm0, DistributedTestUtils.getAllDistributedSystemProperties(new Properties()));
     utils.createReplicateRegion("exampleRegion", vm0);
     utils.createHashIndex(vm0, "ID", "r.ID", "/exampleRegion r");
   }
 
   @Test
   public void testHashIndexForIndexElemArray() throws Exception {
-    doPut(200);// around 66 entries for a key in the index (< 100 so does not create a ConcurrentHashSet)
+    doPut(
+        200); // around 66 entries for a key in the index (< 100 so does not create a ConcurrentHashSet)
     doQuery();
     doUpdate(200);
     doQuery();
@@ -79,60 +82,62 @@ public class HashIndexDUnitTest extends JUnit4DistributedTestCase {
   }
 
   public void doPut(final int entries) {
-    vm0.invokeAsync(new CacheSerializableRunnable("Putting values") {
-      public void run2() {
-        putPortfolios("exampleRegion", entries);
-      }
-    });
+    vm0.invokeAsync(
+        new CacheSerializableRunnable("Putting values") {
+          public void run2() {
+            putPortfolios("exampleRegion", entries);
+          }
+        });
   }
 
   public void doUpdate(final int entries) {
-    vm0.invokeAsync(new CacheSerializableRunnable("Updating values") {
-      public void run2() {
-        putOffsetPortfolios("exampleRegion", entries);
-      }
-    });
+    vm0.invokeAsync(
+        new CacheSerializableRunnable("Updating values") {
+          public void run2() {
+            putOffsetPortfolios("exampleRegion", entries);
+          }
+        });
   }
 
   public void doQuery() throws Exception {
-    final String[] qarr = { "173", "174", "176", "180" };
-    vm0.invokeAsync(new CacheSerializableRunnable("Executing query") {
-      public void run2() throws CacheException {
-        try {
-          for (int i = 0; i < 50; i++) {
-            utils.executeQueries(qarr);
+    final String[] qarr = {"173", "174", "176", "180"};
+    vm0.invokeAsync(
+        new CacheSerializableRunnable("Executing query") {
+          public void run2() throws CacheException {
+            try {
+              for (int i = 0; i < 50; i++) {
+                utils.executeQueries(qarr);
+              }
+            } catch (Exception e) {
+              throw new CacheException(e) {};
+            }
           }
-        } catch (Exception e) {
-          throw new CacheException(e) {
-          };
-        }
-      }
-    });
+        });
   }
 
   public void doDestroy(final int entries) {
-    vm0.invokeAsync(new CacheSerializableRunnable("Destroying values") {
-      public void run2() throws CacheException {
-        try {
-          Thread.sleep(500);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        try {
-          Region region = utils.getRegion("exampleRegion");
-          for (int i = 1; i <= entries; i++) {
+    vm0.invokeAsync(
+        new CacheSerializableRunnable("Destroying values") {
+          public void run2() throws CacheException {
             try {
-              region.destroy("KEY-" + i);
+              Thread.sleep(500);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+            try {
+              Region region = utils.getRegion("exampleRegion");
+              for (int i = 1; i <= entries; i++) {
+                try {
+                  region.destroy("KEY-" + i);
+                } catch (Exception e) {
+                  throw new Exception(e);
+                }
+              }
             } catch (Exception e) {
-              throw new Exception(e);
+              throw new CacheException(e) {};
             }
           }
-        } catch (Exception e) {
-          throw new CacheException(e) {
-          };
-        }
-      }
-    });
+        });
   }
 
   @Override

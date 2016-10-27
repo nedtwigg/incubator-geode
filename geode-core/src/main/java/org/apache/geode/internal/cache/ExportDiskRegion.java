@@ -26,9 +26,9 @@ import org.apache.geode.internal.cache.DiskEntry.RecoveredEntry;
 import org.apache.geode.internal.cache.persistence.DiskRegionView;
 
 /**
- * An implementation if DiskRegion used for offline export. After each oplog
- * is recovered this disk region passes the contents recovered from the oplog
- * to an ExportWriter, which can export those entries.
+ * An implementation if DiskRegion used for offline export. After each oplog is recovered this disk
+ * region passes the contents recovered from the oplog to an ExportWriter, which can export those
+ * entries.
  */
 public class ExportDiskRegion extends ValidatingDiskRegion {
 
@@ -72,12 +72,12 @@ public class ExportDiskRegion extends ValidatingDiskRegion {
   }
 
   public static interface ExportWriter {
-    /** Write a batch of entries to the export system. The value
-     * in RecoveredEntry is will not be null, so there
-     * is no need to fault in the value in the implementor
-     * @throws IOException 
+    /**
+     * Write a batch of entries to the export system. The value in RecoveredEntry is will not be
+     * null, so there is no need to fault in the value in the implementor
+     *
+     * @throws IOException
      */
     public void writeBatch(Map<Object, RecoveredEntry> entries) throws IOException;
   }
-
 }

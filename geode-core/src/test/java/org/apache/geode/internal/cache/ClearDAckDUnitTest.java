@@ -84,11 +84,12 @@ public class ClearDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: ref
     vm1.invoke(() -> ClearDAckDUnitTest.closeCache());
     vm2.invoke(() -> ClearDAckDUnitTest.closeCache());
     cache = null;
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        cache = null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            cache = null;
+          }
+        });
   }
 
   public static long getRegionVersion(DistributedMember memberID) {
@@ -210,7 +211,6 @@ public class ClearDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: ref
     for (int i = 1; i < 4; i++) {
       objArr[0] = "" + i;
       vm0.invoke(ClearDAckDUnitTest.class, "putMethod", objArr);
-
     }
     LogWriterUtils.getLogWriter().info("Did all puts successfully");
 
@@ -224,7 +224,10 @@ public class ClearDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: ref
     assertTrue(flag);
 
     long newRegionVersion = (Long) vm1.invoke(() -> ClearDAckDUnitTest.getRegionVersion(vm0ID));
-    assertEquals("expected clear() to increment region version by 1 for " + vm0ID, regionVersion + 1, newRegionVersion);
+    assertEquals(
+        "expected clear() to increment region version by 1 for " + vm0ID,
+        regionVersion + 1,
+        newRegionVersion);
 
     // test that localClear does not distribute
     VM vm2 = host.getVM(2);
@@ -233,8 +236,7 @@ public class ClearDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: ref
     flag = vm1.invoke(() -> ClearDAckDUnitTest.getVM1Flag());
     LogWriterUtils.getLogWriter().fine("Flag in VM1=" + flag);
     assertFalse(flag);
-
-  }//end of test case
+  } //end of test case
 
   public static Object putMethod(Object ob) {
     Object obj = null;
@@ -259,12 +261,14 @@ public class ClearDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: ref
       long end = System.currentTimeMillis();
 
       long diff = end - start;
-      LogWriterUtils.getLogWriter().info("Clear Thread proceeded before receiving the ack message in (milli seconds): " + diff);
+      LogWriterUtils.getLogWriter()
+          .info(
+              "Clear Thread proceeded before receiving the ack message in (milli seconds): "
+                  + diff);
 
     } catch (Exception e) {
       e.printStackTrace();
     }
-
   }
 
   public static class CacheObserverImpl extends CacheObserverAdapter {
@@ -272,7 +276,6 @@ public class ClearDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: ref
     public void afterRegionClear(RegionEvent event) {
       IsAfterClear = true;
     }
-
   }
 
   public static boolean getVM1Flag() {
@@ -280,5 +283,4 @@ public class ClearDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: ref
     IsAfterClear = false;
     return result;
   }
-
-}// end of test class
+} // end of test class

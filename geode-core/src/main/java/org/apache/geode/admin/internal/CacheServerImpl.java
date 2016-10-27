@@ -42,11 +42,11 @@ public class CacheServerImpl extends ManagedSystemMemberImpl implements CacheVm,
   /////////////////////////  Constructors  ////////////////////////
 
   /**
-   * Creates a new <code>CacheServerImpl</code> that represents a
-   * non-existsing (unstarted) cache server in a given distributed
-   * system.
+   * Creates a new <code>CacheServerImpl</code> that represents a non-existsing (unstarted) cache
+   * server in a given distributed system.
    */
-  public CacheServerImpl(AdminDistributedSystemImpl system, CacheVmConfig config) throws AdminException {
+  public CacheServerImpl(AdminDistributedSystemImpl system, CacheVmConfig config)
+      throws AdminException {
 
     super(system, config);
 
@@ -55,8 +55,8 @@ public class CacheServerImpl extends ManagedSystemMemberImpl implements CacheVm,
   }
 
   /**
-   * Creates a new <code>CacheServerImpl</code> that represents an
-   * existing dedicated cache server in a given distributed system.
+   * Creates a new <code>CacheServerImpl</code> that represents an existing dedicated cache server
+   * in a given distributed system.
    */
   public CacheServerImpl(AdminDistributedSystemImpl system, GemFireVM vm) throws AdminException {
 
@@ -106,7 +106,9 @@ public class CacheServerImpl extends ManagedSystemMemberImpl implements CacheVm,
         return false;
       }
     }
-    return ((DistributionManager) dm).getDistributionManagerIdsIncludingAdmin().contains(getDistributedMember());
+    return ((DistributionManager) dm)
+        .getDistributionManagerIdsIncludingAdmin()
+        .contains(getDistributedMember());
   }
 
   public CacheServerConfig getConfig() {
@@ -173,11 +175,9 @@ public class CacheServerImpl extends ManagedSystemMemberImpl implements CacheVm,
 
   /**
    * Find whether this server is primary for given client (durableClientId)
-   * 
-   * @param durableClientId -
-   *                durable-id of the client
+   *
+   * @param durableClientId - durable-id of the client
    * @return true if the server is primary for given client
-   * 
    * @since GemFire 5.6
    */
   public boolean isPrimaryForDurableClient(String durableClientId) {
@@ -188,5 +188,4 @@ public class CacheServerImpl extends ManagedSystemMemberImpl implements CacheVm,
     }
     return isPrimary;
   }
-
 }

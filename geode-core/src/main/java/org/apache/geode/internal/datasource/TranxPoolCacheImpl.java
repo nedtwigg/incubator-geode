@@ -16,8 +16,7 @@
  */
 package org.apache.geode.internal.datasource;
 
-/**
- */
+/** */
 import java.sql.SQLException;
 
 import javax.sql.ConnectionEventListener;
@@ -30,9 +29,8 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * This class models a connection pool for transactional database connection.
- * Extends the AbstractPoolCache to inherit the pool bahavior.
- * 
+ * This class models a connection pool for transactional database connection. Extends the
+ * AbstractPoolCache to inherit the pool bahavior.
  */
 public class TranxPoolCacheImpl extends AbstractPoolCache {
   private static final long serialVersionUID = 3295652525163658888L;
@@ -41,34 +39,37 @@ public class TranxPoolCacheImpl extends AbstractPoolCache {
 
   private XADataSource m_xads;
 
-  /**
-   * Constructor initializes the ConnectionPoolCacheImpl properties.
-   */
-  public TranxPoolCacheImpl(XADataSource xads, ConnectionEventListener eventListner, ConfiguredDataSourceProperties configs) throws PoolException {
+  /** Constructor initializes the ConnectionPoolCacheImpl properties. */
+  public TranxPoolCacheImpl(
+      XADataSource xads,
+      ConnectionEventListener eventListner,
+      ConfiguredDataSourceProperties configs)
+      throws PoolException {
     super(eventListner, configs);
     m_xads = xads;
     initializePool();
   }
 
-  /**
-   *  
-   */
+  /** */
   @Override
   void destroyPooledConnection(Object connectionObject) {
     try {
-      ((PooledConnection) connectionObject).removeConnectionEventListener((javax.sql.ConnectionEventListener) connEventListner);
+      ((PooledConnection) connectionObject)
+          .removeConnectionEventListener((javax.sql.ConnectionEventListener) connEventListner);
       ((PooledConnection) connectionObject).close();
       connectionObject = null;
     } catch (Exception ex) {
       if (logger.isTraceEnabled())
-        logger.trace("AbstractPoolcache::destroyPooledConnection:Exception in closing the connection.Ignoring it. The exeption is {}", ex.getMessage(), ex);
+        logger.trace(
+            "AbstractPoolcache::destroyPooledConnection:Exception in closing the connection.Ignoring it. The exeption is {}",
+            ex.getMessage(),
+            ex);
     }
   }
 
   /**
-   * Creates a new connection for the pool. This connection can participate in
-   * the transactions.
-   * 
+   * Creates a new connection for the pool. This connection can participate in the transactions.
+   *
    * @return the connection from the database as PooledConnection object.
    */
   @Override
@@ -78,15 +79,23 @@ public class TranxPoolCacheImpl extends AbstractPoolCache {
       try {
         poolConn = m_xads.getXAConnection(configProps.getUser(), configProps.getPassword());
       } catch (SQLException sqx) {
-        throw new PoolException(LocalizedStrings.TranxPoolCacheImpl_TRANXPOOLCACHEIMPLGETNEWCONNECTION_EXCEPTION_IN_CREATING_NEW_TRANSACTION_POOLEDCONNECTION.toLocalizedString(), sqx);
+        throw new PoolException(
+            LocalizedStrings
+                .TranxPoolCacheImpl_TRANXPOOLCACHEIMPLGETNEWCONNECTION_EXCEPTION_IN_CREATING_NEW_TRANSACTION_POOLEDCONNECTION
+                .toLocalizedString(),
+            sqx);
       }
       poolConn.addConnectionEventListener((javax.sql.ConnectionEventListener) connEventListner);
       return poolConn;
     } else {
       if (logger.isDebugEnabled()) {
-        logger.debug("TranxPoolCacheImpl::getNewConnection: ConnectionPoolCache not intialized with XADatasource");
+        logger.debug(
+            "TranxPoolCacheImpl::getNewConnection: ConnectionPoolCache not intialized with XADatasource");
       }
-      throw new PoolException(LocalizedStrings.TranxPoolCacheImpl_TRANXPOOLCACHEIMPLGETNEWCONNECTION_CONNECTIONPOOLCACHE_NOT_INTIALIZED_WITH_XADATASOURCE.toLocalizedString());
+      throw new PoolException(
+          LocalizedStrings
+              .TranxPoolCacheImpl_TRANXPOOLCACHEIMPLGETNEWCONNECTION_CONNECTIONPOOLCACHE_NOT_INTIALIZED_WITH_XADATASOURCE
+              .toLocalizedString());
     }
   }
 }

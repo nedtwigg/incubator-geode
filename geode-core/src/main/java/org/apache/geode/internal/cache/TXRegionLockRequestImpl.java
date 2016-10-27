@@ -31,14 +31,13 @@ import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
-/** TXRegionLockRequest represents all the locks that need to be made
- * for a single region.
+/**
+ * TXRegionLockRequest represents all the locks that need to be made for a single region.
  *
- * 
  * @since GemFire 4.0
- * 
  */
-public class TXRegionLockRequestImpl implements org.apache.geode.internal.cache.locks.TXRegionLockRequest {
+public class TXRegionLockRequestImpl
+    implements org.apache.geode.internal.cache.locks.TXRegionLockRequest {
   private static final long serialVersionUID = 5840033961584078082L;
   private static final Logger logger = LogService.getLogger();
 
@@ -56,9 +55,7 @@ public class TXRegionLockRequestImpl implements org.apache.geode.internal.cache.
     this.entryKeys = null;
   }
 
-  /**
-   * Used by unit tests
-   */
+  /** Used by unit tests */
   public TXRegionLockRequestImpl(String regionPath, Set<Object> entryKeys) {
     this.regionPath = regionPath;
     this.entryKeys = entryKeys;
@@ -110,7 +107,8 @@ public class TXRegionLockRequestImpl implements org.apache.geode.internal.cache.
     }
   }
 
-  private final Set<Object> readEntryKeySet(final int size, final DataInput in) throws IOException, ClassNotFoundException {
+  private final Set<Object> readEntryKeySet(final int size, final DataInput in)
+      throws IOException, ClassNotFoundException {
 
     if (logger.isDebugEnabled()) {
       logger.trace(LogMarker.SERIALIZER, "Reading HashSet with size {}", size);
@@ -135,7 +133,8 @@ public class TXRegionLockRequestImpl implements org.apache.geode.internal.cache.
     InternalDataSerializer.writeSet(this.entryKeys, out);
   }
 
-  public static final TXRegionLockRequestImpl createFromData(DataInput in) throws IOException, ClassNotFoundException {
+  public static final TXRegionLockRequestImpl createFromData(DataInput in)
+      throws IOException, ClassNotFoundException {
     TXRegionLockRequestImpl result = new TXRegionLockRequestImpl();
     InternalDataSerializer.invokeFromData(result, in);
     return result;
@@ -171,8 +170,8 @@ public class TXRegionLockRequestImpl implements org.apache.geode.internal.cache.
   }
 
   /**
-   * Only safe to call in the vm that creates this request.
-   * Once it is serialized this method will return null.
+   * Only safe to call in the vm that creates this request. Once it is serialized this method will
+   * return null.
    */
   public final LocalRegion getLocalRegion() {
     return this.r;
@@ -181,7 +180,11 @@ public class TXRegionLockRequestImpl implements org.apache.geode.internal.cache.
   @Override
   public String toString() {
     final StringBuilder result = new StringBuilder(256);
-    result.append("regionPath=").append(getRegionFullPath()).append(" keys=").append(this.entryKeys);
+    result
+        .append("regionPath=")
+        .append(getRegionFullPath())
+        .append(" keys=")
+        .append(this.entryKeys);
     return result.toString();
   }
 }

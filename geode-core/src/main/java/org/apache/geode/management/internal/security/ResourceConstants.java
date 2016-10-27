@@ -36,7 +36,8 @@ public class ResourceConstants {
   public static final String REGISTER_MBEAN = "registerMBean";
   public static final String PROCESS_COMMAND = "processCommand";
   public static final String ACCESS_DENIED_MESSAGE = "Access Denied";
-  public static final String MISSING_CREDENTIALS_MESSAGE = "Missing Credentials. Please supply username/password.";
+  public static final String MISSING_CREDENTIALS_MESSAGE =
+      "Missing Credentials. Please supply username/password.";
 
   public static final String ALTER_REGION = "ALTER_REGION";
   public static final String ALTER_RUNTIME = "ALTER_RUNTIME";
@@ -114,7 +115,8 @@ public class ResourceConstants {
   public static final String MONITOR = "MONITOR";
   public static final String ADMIN = "ADMIN";
 
-  public static final String OBJECT_NAME_ACCESSCONTROL = "GemFire:service=AccessControl,type=Distributed";
+  public static final String OBJECT_NAME_ACCESSCONTROL =
+      "GemFire:service=AccessControl,type=Distributed";
   public static final String USER_NAME = "security-username";
   public static final String PASSWORD = "security-password";
 
@@ -146,5 +148,4 @@ public class ResourceConstants {
   public static final String GETTER_STATUS = "status";
 
   public static final String MANAGEMENT_PACKAGE = "org.apache.geode.management";
-
 }

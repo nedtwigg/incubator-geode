@@ -28,17 +28,16 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * A message used for debugging purposes.  For example if a test
- * fails it can call {@link org.apache.geode.internal.cache.PartitionedRegion#sendDumpAllPartitionedRegions()} 
- * which sends this message to all VMs that have that PartitionedRegion defined.
- * 
+ * A message used for debugging purposes. For example if a test fails it can call {@link
+ * org.apache.geode.internal.cache.PartitionedRegion#sendDumpAllPartitionedRegions()} which sends
+ * this message to all VMs that have that PartitionedRegion defined.
+ *
  * @see org.apache.geode.internal.cache.PartitionedRegion#sendDumpAllPartitionedRegions()
  */
 public final class DumpAllPRConfigMessage extends PartitionMessage {
   private static final Logger logger = LogService.getLogger();
 
-  public DumpAllPRConfigMessage() {
-  }
+  public DumpAllPRConfigMessage() {}
 
   private DumpAllPRConfigMessage(Set recipients, int regionId, ReplyProcessor21 processor) {
     super(recipients, regionId, processor);
@@ -48,7 +47,7 @@ public final class DumpAllPRConfigMessage extends PartitionMessage {
     PartitionResponse p = new PartitionResponse(r.getSystem(), recipients);
     DumpAllPRConfigMessage m = new DumpAllPRConfigMessage(recipients, r.getPRId(), p);
 
-    /*Set failures = */r.getDistributionManager().putOutgoing(m);
+    /*Set failures = */ r.getDistributionManager().putOutgoing(m);
     //    if (failures != null && failures.size() > 0) {
     //      throw new PartitionedRegionCommunicationException("Failed sending ", m);
     //    }
@@ -56,7 +55,8 @@ public final class DumpAllPRConfigMessage extends PartitionMessage {
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion pr, long startTime) throws CacheException {
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.trace(LogMarker.DM, "DumpAllPRConfigMessage operateOnRegion: {}", pr.getFullPath());
     }

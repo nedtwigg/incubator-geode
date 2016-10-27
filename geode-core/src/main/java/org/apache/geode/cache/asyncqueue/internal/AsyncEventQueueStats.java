@@ -31,14 +31,103 @@ public class AsyncEventQueueStats extends GatewaySenderStats {
   private static final StatisticsType type;
 
   static {
-
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    type = f.createType(typeName, "Stats for activity in the AsyncEventQueue",
-        new StatisticDescriptor[] { f.createIntCounter(EVENTS_RECEIVED, "Number of events received by this queue.", "operations"), f.createIntCounter(EVENTS_QUEUED, "Number of events added to the event queue.", "operations"), f.createLongCounter(EVENT_QUEUE_TIME, "Total time spent queueing events.", "nanoseconds"), f.createIntGauge(EVENT_QUEUE_SIZE, "Size of the event queue.", "operations", false), f.createIntGauge(TMP_EVENT_QUEUE_SIZE, "Size of the temporary events queue.", "operations", false), f.createIntCounter(EVENTS_NOT_QUEUED_CONFLATED, "Number of events received but not added to the event queue because the queue already contains an event with the event's key.", "operations"), f.createIntCounter(EVENTS_CONFLATED_FROM_BATCHES, "Number of events conflated from batches.", "operations"), f.createIntCounter(EVENTS_DISTRIBUTED, "Number of events removed from the event queue and sent.", "operations"),
-            f.createIntCounter(EVENTS_EXCEEDING_ALERT_THRESHOLD, "Number of events exceeding the alert threshold.", "operations", false), f.createLongCounter(BATCH_DISTRIBUTION_TIME, "Total time spent distributing batches of events to receivers.", "nanoseconds"), f.createIntCounter(BATCHES_DISTRIBUTED, "Number of batches of events removed from the event queue and sent.", "operations"), f.createIntCounter(BATCHES_REDISTRIBUTED, "Number of batches of events removed from the event queue and resent.", "operations", false), f.createIntCounter(UNPROCESSED_TOKENS_ADDED_BY_PRIMARY, "Number of tokens added to the secondary's unprocessed token map by the primary (though a listener).", "tokens"), f.createIntCounter(UNPROCESSED_EVENTS_ADDED_BY_SECONDARY, "Number of events added to the secondary's unprocessed event map by the secondary.", "events"),
-            f.createIntCounter(UNPROCESSED_EVENTS_REMOVED_BY_PRIMARY, "Number of events removed from the secondary's unprocessed event map by the primary (though a listener).", "events"), f.createIntCounter(UNPROCESSED_TOKENS_REMOVED_BY_SECONDARY, "Number of tokens removed from the secondary's unprocessed token map by the secondary.", "tokens"), f.createIntCounter(UNPROCESSED_EVENTS_REMOVED_BY_TIMEOUT, "Number of events removed from the secondary's unprocessed event map by a timeout.", "events"), f.createIntCounter(UNPROCESSED_TOKENS_REMOVED_BY_TIMEOUT, "Number of tokens removed from the secondary's unprocessed token map by a timeout.", "tokens"), f.createIntGauge(UNPROCESSED_EVENT_MAP_SIZE, "Current number of entries in the secondary's unprocessed event map.", "events", false), f.createIntGauge(UNPROCESSED_TOKEN_MAP_SIZE, "Current number of entries in the secondary's unprocessed token map.", "tokens", false),
-            f.createIntGauge(CONFLATION_INDEXES_MAP_SIZE, "Current number of entries in the conflation indexes map.", "events"), f.createIntCounter(NOT_QUEUED_EVENTS, "Number of events not added to queue.", "events"), f.createIntCounter(EVENTS_FILTERED, "Number of events filtered through GatewayEventFilter.", "events"), f.createIntCounter(LOAD_BALANCES_COMPLETED, "Number of load balances completed", "operations"), f.createIntGauge(LOAD_BALANCES_IN_PROGRESS, "Number of load balances in progress", "operations"), f.createLongCounter(LOAD_BALANCE_TIME, "Total time spent load balancing this sender", "nanoseconds"), });
+    type =
+        f.createType(
+            typeName,
+            "Stats for activity in the AsyncEventQueue",
+            new StatisticDescriptor[] {
+              f.createIntCounter(
+                  EVENTS_RECEIVED, "Number of events received by this queue.", "operations"),
+              f.createIntCounter(
+                  EVENTS_QUEUED, "Number of events added to the event queue.", "operations"),
+              f.createLongCounter(
+                  EVENT_QUEUE_TIME, "Total time spent queueing events.", "nanoseconds"),
+              f.createIntGauge(EVENT_QUEUE_SIZE, "Size of the event queue.", "operations", false),
+              f.createIntGauge(
+                  TMP_EVENT_QUEUE_SIZE, "Size of the temporary events queue.", "operations", false),
+              f.createIntCounter(
+                  EVENTS_NOT_QUEUED_CONFLATED,
+                  "Number of events received but not added to the event queue because the queue already contains an event with the event's key.",
+                  "operations"),
+              f.createIntCounter(
+                  EVENTS_CONFLATED_FROM_BATCHES,
+                  "Number of events conflated from batches.",
+                  "operations"),
+              f.createIntCounter(
+                  EVENTS_DISTRIBUTED,
+                  "Number of events removed from the event queue and sent.",
+                  "operations"),
+              f.createIntCounter(
+                  EVENTS_EXCEEDING_ALERT_THRESHOLD,
+                  "Number of events exceeding the alert threshold.",
+                  "operations",
+                  false),
+              f.createLongCounter(
+                  BATCH_DISTRIBUTION_TIME,
+                  "Total time spent distributing batches of events to receivers.",
+                  "nanoseconds"),
+              f.createIntCounter(
+                  BATCHES_DISTRIBUTED,
+                  "Number of batches of events removed from the event queue and sent.",
+                  "operations"),
+              f.createIntCounter(
+                  BATCHES_REDISTRIBUTED,
+                  "Number of batches of events removed from the event queue and resent.",
+                  "operations",
+                  false),
+              f.createIntCounter(
+                  UNPROCESSED_TOKENS_ADDED_BY_PRIMARY,
+                  "Number of tokens added to the secondary's unprocessed token map by the primary (though a listener).",
+                  "tokens"),
+              f.createIntCounter(
+                  UNPROCESSED_EVENTS_ADDED_BY_SECONDARY,
+                  "Number of events added to the secondary's unprocessed event map by the secondary.",
+                  "events"),
+              f.createIntCounter(
+                  UNPROCESSED_EVENTS_REMOVED_BY_PRIMARY,
+                  "Number of events removed from the secondary's unprocessed event map by the primary (though a listener).",
+                  "events"),
+              f.createIntCounter(
+                  UNPROCESSED_TOKENS_REMOVED_BY_SECONDARY,
+                  "Number of tokens removed from the secondary's unprocessed token map by the secondary.",
+                  "tokens"),
+              f.createIntCounter(
+                  UNPROCESSED_EVENTS_REMOVED_BY_TIMEOUT,
+                  "Number of events removed from the secondary's unprocessed event map by a timeout.",
+                  "events"),
+              f.createIntCounter(
+                  UNPROCESSED_TOKENS_REMOVED_BY_TIMEOUT,
+                  "Number of tokens removed from the secondary's unprocessed token map by a timeout.",
+                  "tokens"),
+              f.createIntGauge(
+                  UNPROCESSED_EVENT_MAP_SIZE,
+                  "Current number of entries in the secondary's unprocessed event map.",
+                  "events",
+                  false),
+              f.createIntGauge(
+                  UNPROCESSED_TOKEN_MAP_SIZE,
+                  "Current number of entries in the secondary's unprocessed token map.",
+                  "tokens",
+                  false),
+              f.createIntGauge(
+                  CONFLATION_INDEXES_MAP_SIZE,
+                  "Current number of entries in the conflation indexes map.",
+                  "events"),
+              f.createIntCounter(
+                  NOT_QUEUED_EVENTS, "Number of events not added to queue.", "events"),
+              f.createIntCounter(
+                  EVENTS_FILTERED,
+                  "Number of events filtered through GatewayEventFilter.",
+                  "events"),
+              f.createIntCounter(
+                  LOAD_BALANCES_COMPLETED, "Number of load balances completed", "operations"),
+              f.createIntGauge(
+                  LOAD_BALANCES_IN_PROGRESS, "Number of load balances in progress", "operations"),
+              f.createLongCounter(
+                  LOAD_BALANCE_TIME, "Total time spent load balancing this sender", "nanoseconds"),
+            });
 
     // Initialize id fields
     eventsReceivedId = type.nameToId(EVENTS_RECEIVED);
@@ -72,10 +161,9 @@ public class AsyncEventQueueStats extends GatewaySenderStats {
   /**
    * Constructor.
    *
-   * @param f The <code>StatisticsFactory</code> which creates the
-   * <code>Statistics</code> instance
-   * @param asyncQueueId The id of the <code>AsyncEventQueue</code> used to
-   * generate the name of the <code>Statistics</code>
+   * @param f The <code>StatisticsFactory</code> which creates the <code>Statistics</code> instance
+   * @param asyncQueueId The id of the <code>AsyncEventQueue</code> used to generate the name of the
+   *     <code>Statistics</code>
    */
   public AsyncEventQueueStats(StatisticsFactory f, String asyncQueueId) {
     super(f, asyncQueueId, type);

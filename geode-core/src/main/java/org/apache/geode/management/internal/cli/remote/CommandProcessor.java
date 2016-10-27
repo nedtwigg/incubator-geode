@@ -37,11 +37,7 @@ import org.apache.geode.security.NotAuthorizedException;
 import org.springframework.shell.core.Parser;
 import org.springframework.shell.event.ParseResult;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class CommandProcessor {
   protected RemoteExecutionStrategy executionStrategy;
   protected Parser parser;
@@ -80,7 +76,8 @@ public class CommandProcessor {
   }
 
   ////stripped down AbstractShell.executeCommand
-  public ParseResult parseCommand(String commentLessLine) throws CommandProcessingException, IllegalStateException {
+  public ParseResult parseCommand(String commentLessLine)
+      throws CommandProcessingException, IllegalStateException {
     if (commentLessLine != null) {
       return getParser().parse(commentLessLine);
     }
@@ -103,7 +100,7 @@ public class CommandProcessor {
 
         if (parseResult == null) {
           parseResult = parseCommand(commentLessLine);
-          if (parseResult == null) {//TODO-Abhishek: Handle this in GfshParser Implementation
+          if (parseResult == null) { //TODO-Abhishek: Handle this in GfshParser Implementation
             setLastExecutionStatus(1);
             return ResultBuilder.createParsingErrorResult(cmdStmt.getCommandString());
           }
@@ -142,13 +139,21 @@ public class CommandProcessor {
         if (logWrapper.infoEnabled()) {
           logWrapper.info("Could not execute \"" + cmdStmt.getCommandString() + "\".", e);
         }
-        return ResultBuilder.createGemFireErrorResult("Error while processing command <" + cmdStmt.getCommandString() + "> Reason : " + e.getMessage());
+        return ResultBuilder.createGemFireErrorResult(
+            "Error while processing command <"
+                + cmdStmt.getCommandString()
+                + "> Reason : "
+                + e.getMessage());
       } catch (Exception e) {
         setLastExecutionStatus(1);
         if (logWrapper.warningEnabled()) {
           logWrapper.warning("Could not execute \"" + cmdStmt.getCommandString() + "\".", e);
         }
-        return ResultBuilder.createGemFireErrorResult("Unexpected error while processing command <" + cmdStmt.getCommandString() + "> Reason : " + e.getMessage());
+        return ResultBuilder.createGemFireErrorResult(
+            "Unexpected error while processing command <"
+                + cmdStmt.getCommandString()
+                + "> Reason : "
+                + e.getMessage());
       }
       if (logWrapper.fineEnabled()) {
         logWrapper.fine("Executed " + commentLessLine);

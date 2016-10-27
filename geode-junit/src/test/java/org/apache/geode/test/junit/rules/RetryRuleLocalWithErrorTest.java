@@ -32,9 +32,8 @@ import org.apache.geode.test.junit.Retry;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * Unit tests for {@link RetryRule} involving local scope (ie rule affects
- * only the test methods annotated with {@code @Retry}) with failures due to
- * an {@code Error}.
+ * Unit tests for {@link RetryRule} involving local scope (ie rule affects only the test methods
+ * annotated with {@code @Retry}) with failures due to an {@code Error}.
  */
 @Category(UnitTest.class)
 public class RetryRuleLocalWithErrorTest {
@@ -49,7 +48,9 @@ public class RetryRuleLocalWithErrorTest {
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
     Failure failure = failures.get(0);
-    assertThat(failure.getException()).isExactlyInstanceOf(AssertionError.class).hasMessage(FailsUnused.message);
+    assertThat(failure.getException())
+        .isExactlyInstanceOf(AssertionError.class)
+        .hasMessage(FailsUnused.message);
     assertThat(FailsUnused.count).isEqualTo(1);
   }
 
@@ -71,7 +72,9 @@ public class RetryRuleLocalWithErrorTest {
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
     Failure failure = failures.get(0);
-    assertThat(failure.getException()).isExactlyInstanceOf(AssertionError.class).hasMessage(FailsOnSecondAttempt.message);
+    assertThat(failure.getException())
+        .isExactlyInstanceOf(AssertionError.class)
+        .hasMessage(FailsOnSecondAttempt.message);
     assertThat(FailsOnSecondAttempt.count).isEqualTo(2);
   }
 
@@ -93,7 +96,9 @@ public class RetryRuleLocalWithErrorTest {
     assertThat(failures.size()).as("Failures: " + failures).isEqualTo(1);
 
     Failure failure = failures.get(0);
-    assertThat(failure.getException()).isExactlyInstanceOf(AssertionError.class).hasMessage(FailsOnThirdAttempt.message);
+    assertThat(failure.getException())
+        .isExactlyInstanceOf(AssertionError.class)
+        .hasMessage(FailsOnThirdAttempt.message);
     assertThat(FailsOnThirdAttempt.count).isEqualTo(3);
   }
 
@@ -105,9 +110,7 @@ public class RetryRuleLocalWithErrorTest {
     assertThat(PassesOnThirdAttempt.count).isEqualTo(3);
   }
 
-  /**
-   * Used by test {@link #failsUnused()}
-   */
+  /** Used by test {@link #failsUnused()} */
   public static class FailsUnused {
 
     static int count = 0;
@@ -119,8 +122,7 @@ public class RetryRuleLocalWithErrorTest {
       message = null;
     }
 
-    @Rule
-    public RetryRule retryRule = new RetryRule();
+    @Rule public RetryRule retryRule = new RetryRule();
 
     @Test
     public void doTest() throws Exception {
@@ -130,9 +132,7 @@ public class RetryRuleLocalWithErrorTest {
     }
   }
 
-  /**
-   * Used by test {@link #passesUnused()}
-   */
+  /** Used by test {@link #passesUnused()} */
   public static class PassesUnused {
 
     static int count = 0;
@@ -144,8 +144,7 @@ public class RetryRuleLocalWithErrorTest {
       message = null;
     }
 
-    @Rule
-    public RetryRule retryRule = new RetryRule();
+    @Rule public RetryRule retryRule = new RetryRule();
 
     @Test
     public void doTest() throws Exception {
@@ -153,9 +152,7 @@ public class RetryRuleLocalWithErrorTest {
     }
   }
 
-  /**
-   * Used by test {@link #failsOnSecondAttempt()}
-   */
+  /** Used by test {@link #failsOnSecondAttempt()} */
   public static class FailsOnSecondAttempt {
 
     static int count = 0;
@@ -167,8 +164,7 @@ public class RetryRuleLocalWithErrorTest {
       message = null;
     }
 
-    @Rule
-    public RetryRule retryRule = new RetryRule();
+    @Rule public RetryRule retryRule = new RetryRule();
 
     @Test
     @Retry(2)
@@ -179,9 +175,7 @@ public class RetryRuleLocalWithErrorTest {
     }
   }
 
-  /**
-   * Used by test {@link #passesOnSecondAttempt()}
-   */
+  /** Used by test {@link #passesOnSecondAttempt()} */
   public static class PassesOnSecondAttempt {
 
     static int count = 0;
@@ -193,8 +187,7 @@ public class RetryRuleLocalWithErrorTest {
       message = null;
     }
 
-    @Rule
-    public RetryRule retryRule = new RetryRule();
+    @Rule public RetryRule retryRule = new RetryRule();
 
     @Test
     @Retry(2)
@@ -207,9 +200,7 @@ public class RetryRuleLocalWithErrorTest {
     }
   }
 
-  /**
-   * Used by test {@link #failsOnThirdAttempt()}
-   */
+  /** Used by test {@link #failsOnThirdAttempt()} */
   public static class FailsOnThirdAttempt {
 
     static int count = 0;
@@ -221,8 +212,7 @@ public class RetryRuleLocalWithErrorTest {
       message = null;
     }
 
-    @Rule
-    public RetryRule retryRule = new RetryRule();
+    @Rule public RetryRule retryRule = new RetryRule();
 
     @Test
     @Retry(3)
@@ -234,9 +224,7 @@ public class RetryRuleLocalWithErrorTest {
     }
   }
 
-  /**
-   * Used by test {@link #passesOnThirdAttempt()}
-   */
+  /** Used by test {@link #passesOnThirdAttempt()} */
   public static class PassesOnThirdAttempt {
 
     static int count = 0;
@@ -248,8 +236,7 @@ public class RetryRuleLocalWithErrorTest {
       message = null;
     }
 
-    @Rule
-    public RetryRule retryRule = new RetryRule();
+    @Rule public RetryRule retryRule = new RetryRule();
 
     @Test
     @Retry(3)

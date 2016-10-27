@@ -18,12 +18,14 @@ package org.apache.geode.internal.cache;
 
 import java.util.UUID;
 
-public abstract class VersionedThinDiskLRURegionEntryOffHeap extends VersionedThinDiskLRURegionEntry implements OffHeapRegionEntry {
+public abstract class VersionedThinDiskLRURegionEntryOffHeap extends VersionedThinDiskLRURegionEntry
+    implements OffHeapRegionEntry {
   public VersionedThinDiskLRURegionEntryOffHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
 
-  private static final VersionedThinDiskLRURegionEntryOffHeapFactory factory = new VersionedThinDiskLRURegionEntryOffHeapFactory();
+  private static final VersionedThinDiskLRURegionEntryOffHeapFactory factory =
+      new VersionedThinDiskLRURegionEntryOffHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;
@@ -43,9 +45,11 @@ public abstract class VersionedThinDiskLRURegionEntryOffHeap extends VersionedTh
           if (info != null) {
             final boolean byteEncoded = info;
             if (skey.length() <= InlineKeyHelper.getMaxInlineStringKey(1, byteEncoded)) {
-              return new VersionedThinDiskLRURegionEntryOffHeapStringKey1(context, skey, value, byteEncoded);
+              return new VersionedThinDiskLRURegionEntryOffHeapStringKey1(
+                  context, skey, value, byteEncoded);
             } else {
-              return new VersionedThinDiskLRURegionEntryOffHeapStringKey2(context, skey, value, byteEncoded);
+              return new VersionedThinDiskLRURegionEntryOffHeapStringKey2(
+                  context, skey, value, byteEncoded);
             }
           }
         } else if (keyClass == UUID.class) {

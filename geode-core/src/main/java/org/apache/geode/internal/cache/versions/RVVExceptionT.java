@@ -26,12 +26,8 @@ import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.internal.cache.versions.RVVException.ReceivedVersionsIterator;
 
 /**
- * This subclass of RVVException is the original class that
- * uses TreeSets to hold received versions.  It is now only
- * used if the exception represents a large gap.
- * 
- * 
- *
+ * This subclass of RVVException is the original class that uses TreeSets to hold received versions.
+ * It is now only used if the exception represents a large gap.
  */
 public class RVVExceptionT extends RVVException {
 
@@ -67,12 +63,11 @@ public class RVVExceptionT extends RVVException {
   }
 
   /**
-   * checks to see if any of the received versions can be merged into the
-   * start/end version numbers
+   * checks to see if any of the received versions can be merged into the start/end version numbers
    */
   private void consumeReceivedVersions() {
     //Iterate in forward order
-    for (Iterator<Long> it = this.received.iterator(); it.hasNext();) {
+    for (Iterator<Long> it = this.received.iterator(); it.hasNext(); ) {
       long v = it.next();
       if (v <= this.previousVersion + 1) {
         //if the received version is less than the previous + 1, remove it.
@@ -88,7 +83,7 @@ public class RVVExceptionT extends RVVException {
     }
 
     //Iterate in reverse order
-    for (Iterator<Long> it = this.received.descendingIterator(); it.hasNext();) {
+    for (Iterator<Long> it = this.received.descendingIterator(); it.hasNext(); ) {
       long v = it.next();
       if (v >= this.nextVersion - 1) {
         //if the received version is greater than the next - 1, remove it.
@@ -135,7 +130,12 @@ public class RVVExceptionT extends RVVException {
   @Override
   public String toString() {
     if (this.received != null) {
-      return "e(n=" + this.nextVersion + " p=" + +this.previousVersion + (this.received.size() == 0 ? "" : "; rs=" + this.received) + ")";
+      return "e(n="
+          + this.nextVersion
+          + " p="
+          + +this.previousVersion
+          + (this.received.size() == 0 ? "" : "; rs=" + this.received)
+          + ")";
     }
     return "et(n=" + this.nextVersion + " p=" + this.previousVersion + "; rs=[])";
   }
@@ -151,12 +151,10 @@ public class RVVExceptionT extends RVVException {
   //    return result;
   //  }
 
-  /** For test purposes only. This
-   * isn't quite accurate, because I think two
-   * RVVs that have effectively same exceptions
-   * may represent the exceptions differently. This
-   * method is testing for an exact match of exception format.
-   * <br>
+  /**
+   * For test purposes only. This isn't quite accurate, because I think two RVVs that have
+   * effectively same exceptions may represent the exceptions differently. This method is testing
+   * for an exact match of exception format. <br>
    */
   @Override
   public boolean sameAs(RVVException ex) {
@@ -178,12 +176,12 @@ public class RVVExceptionT extends RVVException {
     if (!super.sameAs(ex)) {
       return false;
     }
-    for (ReceivedVersionsIterator it = receivedVersionsIterator(); it.hasNext();) {
+    for (ReceivedVersionsIterator it = receivedVersionsIterator(); it.hasNext(); ) {
       if (!ex.contains(it.next())) {
         return false;
       }
     }
-    for (ReceivedVersionsIterator it = ex.receivedVersionsIterator(); it.hasNext();) {
+    for (ReceivedVersionsIterator it = ex.receivedVersionsIterator(); it.hasNext(); ) {
       if (!contains(it.next())) {
         return false;
       }
@@ -224,14 +222,15 @@ public class RVVExceptionT extends RVVException {
     //to using bitset instead because that will use less memory.
     //A bit set using 1 bit for each *possible* entry
     //A treeset uses approximately 64 bytes for each *actual* entry
-    return this.received != null && this.received.size() * 512 > this.nextVersion - this.previousVersion;
+    return this.received != null
+        && this.received.size() * 512 > this.nextVersion - this.previousVersion;
   }
 
   @Override
   public RVVException changeForm() {
     //Convert the exception to a bitset exception
     RVVExceptionB ex = new RVVExceptionB(previousVersion, nextVersion);
-    for (ReceivedVersionsIterator it = this.receivedVersionsIterator(); it.hasNext();) {
+    for (ReceivedVersionsIterator it = this.receivedVersionsIterator(); it.hasNext(); ) {
       long next = it.next();
       ex.add(next);
     }
@@ -267,6 +266,5 @@ public class RVVExceptionT extends RVVException {
         this.treeSetIterator.remove();
       }
     }
-
   }
 }

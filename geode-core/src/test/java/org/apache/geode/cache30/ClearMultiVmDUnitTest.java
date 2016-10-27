@@ -80,11 +80,12 @@ public class ClearMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO: 
     vm0.invoke(() -> ClearMultiVmDUnitTest.closeCache());
     vm1.invoke(() -> ClearMultiVmDUnitTest.closeCache());
     cache = null;
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        cache = null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            cache = null;
+          }
+        });
   }
 
   public static void createCache() {
@@ -127,75 +128,77 @@ public class ClearMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO: 
     VM vm1 = host.getVM(1);
 
     //verifying Single VM clear functionalities
-    vm0.invoke(new CacheSerializableRunnable("temp1") {
-      public void run2() throws CacheException {
-        region.put(new Integer(1), new String("first"));
-        region.put(new Integer(2), new String("second"));
-        region.put(new Integer(3), new String("third"));
-        region.clear();
-        assertEquals(0, region.size());
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("temp1") {
+          public void run2() throws CacheException {
+            region.put(new Integer(1), new String("first"));
+            region.put(new Integer(2), new String("second"));
+            region.put(new Integer(3), new String("third"));
+            region.clear();
+            assertEquals(0, region.size());
+          }
+        });
 
-    vm1.invoke(new CacheSerializableRunnable("temp1vm1") {
-      public void run2() throws CacheException {
-        assertEquals(0, region.size());
-      }
-    });
+    vm1.invoke(
+        new CacheSerializableRunnable("temp1vm1") {
+          public void run2() throws CacheException {
+            assertEquals(0, region.size());
+          }
+        });
 
     //verifying Single VM and single transaction clear functionalities
-    vm1.invoke(new CacheSerializableRunnable("temp2") {
-      public void run2() throws CacheException {
-        try {
-          region.put(new Integer(1), new String("first"));
-          region.put(new Integer(2), new String("second"));
-          region.put(new Integer(3), new String("third"));
-          cacheTxnMgr = cache.getCacheTransactionManager();
-          cacheTxnMgr.begin();
-          region.put(new Integer(4), new String("forth"));
-          try {
-            region.clear();
-            fail("expected exception not thrown");
-          } catch (UnsupportedOperationInTransactionException e) {
-            // expected
-          }
-          region.put(new Integer(5), new String("fifth"));
-          cacheTxnMgr.commit();
-          assertEquals(5, region.size());
-          assertEquals("fifth", region.get(new Integer(5)).toString());
-        } catch (CacheException ce) {
-          ce.printStackTrace();
-        } finally {
-          if (cacheTxnMgr.exists()) {
+    vm1.invoke(
+        new CacheSerializableRunnable("temp2") {
+          public void run2() throws CacheException {
             try {
+              region.put(new Integer(1), new String("first"));
+              region.put(new Integer(2), new String("second"));
+              region.put(new Integer(3), new String("third"));
+              cacheTxnMgr = cache.getCacheTransactionManager();
+              cacheTxnMgr.begin();
+              region.put(new Integer(4), new String("forth"));
+              try {
+                region.clear();
+                fail("expected exception not thrown");
+              } catch (UnsupportedOperationInTransactionException e) {
+                // expected
+              }
+              region.put(new Integer(5), new String("fifth"));
               cacheTxnMgr.commit();
-            } catch (Exception cce) {
-              cce.printStackTrace();
+              assertEquals(5, region.size());
+              assertEquals("fifth", region.get(new Integer(5)).toString());
+            } catch (CacheException ce) {
+              ce.printStackTrace();
+            } finally {
+              if (cacheTxnMgr.exists()) {
+                try {
+                  cacheTxnMgr.commit();
+                } catch (Exception cce) {
+                  cce.printStackTrace();
+                }
+              }
             }
           }
-        }
-
-      }
-    });
+        });
 
     //verifying that region.clear does not clear the entries from sub region
-    vm0.invoke(new CacheSerializableRunnable("temp3") {
-      public void run2() throws CacheException {
-        region.put(new Integer(1), new String("first"));
-        region.put(new Integer(2), new String("second"));
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        RegionAttributes attr = factory.create();
-        Region subRegion = region.createSubregion("subr", attr);
-        subRegion.put(new Integer(3), new String("third"));
-        subRegion.put(new Integer(4), new String("forth"));
-        region.clear();
-        assertEquals(0, region.size());
-        assertEquals(2, subRegion.size());
-      }
-    });
-
-  }//end of test case
+    vm0.invoke(
+        new CacheSerializableRunnable("temp3") {
+          public void run2() throws CacheException {
+            region.put(new Integer(1), new String("first"));
+            region.put(new Integer(2), new String("second"));
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            RegionAttributes attr = factory.create();
+            Region subRegion = region.createSubregion("subr", attr);
+            subRegion.put(new Integer(3), new String("third"));
+            subRegion.put(new Integer(4), new String("forth"));
+            region.clear();
+            assertEquals(0, region.size());
+            assertEquals(2, subRegion.size());
+          }
+        });
+  } //end of test case
 
   @Test
   public void testClearMultiVM() throws Throwable {
@@ -238,8 +241,7 @@ public class ClearMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO: 
 
     boolean val = vm1.invoke(() -> containsValueMethod("secondVM"));
     assertEquals(true, val);
-
-  }//end of testClearMultiVM
+  } //end of testClearMultiVM
 
   @Test
   public void testClearExceptions() {
@@ -248,28 +250,29 @@ public class ClearMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO: 
     VM vm1 = host.getVM(1);
 
     vm1.invoke(() -> ClearMultiVmDUnitTest.localDestroyRegionMethod());
-    vm0.invoke(new CacheSerializableRunnable("exception in vm0") {
-      public void run2() throws CacheException {
-        try {
-          region.clear();
-        } catch (RegionDestroyedException rdex) {
-          fail("Should NOT have thrown RegionDestroyedException");
-        }
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("exception in vm0") {
+          public void run2() throws CacheException {
+            try {
+              region.clear();
+            } catch (RegionDestroyedException rdex) {
+              fail("Should NOT have thrown RegionDestroyedException");
+            }
+          }
+        });
 
-    vm1.invoke(new CacheSerializableRunnable("exception in vm1") {
-      public void run2() throws CacheException {
-        try {
-          region.clear();
-          fail("Should have thrown RegionDestroyedException");
-        } catch (RegionDestroyedException rdex) {
-          //pass
-        }
-      }
-    });
-
-  }//end of testClearExceptions
+    vm1.invoke(
+        new CacheSerializableRunnable("exception in vm1") {
+          public void run2() throws CacheException {
+            try {
+              region.clear();
+              fail("Should have thrown RegionDestroyedException");
+            } catch (RegionDestroyedException rdex) {
+              //pass
+            }
+          }
+        });
+  } //end of testClearExceptions
 
   @Test
   public void testGiiandClear() throws Throwable {
@@ -280,70 +283,74 @@ public class ClearMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO: 
       VM vm0 = host.getVM(0);
       VM vm1 = host.getVM(1);
 
-      SerializableRunnable create = new CacheSerializableRunnable("create mirrored region") {
-        public void run2() throws CacheException {
-          AttributesFactory factory1 = new AttributesFactory();
-          factory1.setScope(Scope.DISTRIBUTED_ACK);
-          factory1.setDataPolicy(DataPolicy.REPLICATE);
-          RegionAttributes attr1 = factory1.create();
-          mirroredRegion = cache.createRegion("mirrored", attr1);
-          // reset slow
-          org.apache.geode.internal.cache.InitialImageOperation.slowImageProcessing = 0;
-        }
-      };
+      SerializableRunnable create =
+          new CacheSerializableRunnable("create mirrored region") {
+            public void run2() throws CacheException {
+              AttributesFactory factory1 = new AttributesFactory();
+              factory1.setScope(Scope.DISTRIBUTED_ACK);
+              factory1.setDataPolicy(DataPolicy.REPLICATE);
+              RegionAttributes attr1 = factory1.create();
+              mirroredRegion = cache.createRegion("mirrored", attr1);
+              // reset slow
+              org.apache.geode.internal.cache.InitialImageOperation.slowImageProcessing = 0;
+            }
+          };
 
       vm0.invoke(create);
 
-      vm0.invoke(new CacheSerializableRunnable("put initial data") {
-        public void run2() throws CacheException {
-          for (int i = 0; i < 1000; i++) {
-            mirroredRegion.put(new Integer(i), (new Integer(i)).toString());
-          }
-        }
-      });
+      vm0.invoke(
+          new CacheSerializableRunnable("put initial data") {
+            public void run2() throws CacheException {
+              for (int i = 0; i < 1000; i++) {
+                mirroredRegion.put(new Integer(i), (new Integer(i)).toString());
+              }
+            }
+          });
 
       // slow down image processing to make it more likely to get async updates
-      vm1.invoke(new SerializableRunnable("set slow image processing") {
-        public void run() {
-          // if this is a no_ack test, then we need to slow down more because of the
-          // pauses in the nonblocking operations
-          int pause = 50;
-          org.apache.geode.internal.cache.InitialImageOperation.slowImageProcessing = pause;
-        }
-      });
+      vm1.invoke(
+          new SerializableRunnable("set slow image processing") {
+            public void run() {
+              // if this is a no_ack test, then we need to slow down more because of the
+              // pauses in the nonblocking operations
+              int pause = 50;
+              org.apache.geode.internal.cache.InitialImageOperation.slowImageProcessing = pause;
+            }
+          });
 
       // now do the get initial image in vm1
       AsyncInvocation async1 = vm1.invokeAsync(create);
 
       // try to time a distributed clear to happen in the middle of gii
-      vm0.invoke(new SerializableRunnable("call clear when gii") {
-        public void run() {
-          try {
-            Thread.sleep(3 * 1000);
-          } catch (InterruptedException ex) {
-            fail("interrupted");
-          }
-          mirroredRegion.clear();
-          assertEquals(0, mirroredRegion.size());
-        }
-      });
+      vm0.invoke(
+          new SerializableRunnable("call clear when gii") {
+            public void run() {
+              try {
+                Thread.sleep(3 * 1000);
+              } catch (InterruptedException ex) {
+                fail("interrupted");
+              }
+              mirroredRegion.clear();
+              assertEquals(0, mirroredRegion.size());
+            }
+          });
 
       ThreadUtils.join(async1, 30 * 1000);
       if (async1.exceptionOccurred()) {
         Assert.fail("async1 failed", async1.getException());
       }
 
-      SerializableRunnable validate = new CacheSerializableRunnable("validate for region size") {
-        public void run2() throws CacheException {
-          assertEquals(0, mirroredRegion.size());
-        }
-      };
+      SerializableRunnable validate =
+          new CacheSerializableRunnable("validate for region size") {
+            public void run2() throws CacheException {
+              assertEquals(0, mirroredRegion.size());
+            }
+          };
 
       vm0.invoke(validate);
       vm1.invoke(validate);
     }
-
-  }//end of testGiiandClear
+  } //end of testGiiandClear
 
   //remote vm methods
 
@@ -374,8 +381,7 @@ public class ClearMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO: 
     while (!val) {
       val = paperWork.containsKey("clearVerified");
     }
-
-  }//end of firstVM
+  } //end of firstVM
 
   public static void secondVM() {
     // verify that localClear on the other VM does not affect size on this VM
@@ -396,7 +402,7 @@ public class ClearMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO: 
 
     paperWork.put("clearVerified", "value");
     region.put("" + 6, "secondVM");
-  }//end of secondVM
+  } //end of secondVM
 
   //helper methods
 
@@ -450,7 +456,7 @@ public class ClearMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO: 
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-  }//end of localDestroyRegionMethod
+  } //end of localDestroyRegionMethod
 
   public static void clearExceptions() {
     try {
@@ -459,6 +465,5 @@ public class ClearMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO: 
     } catch (RegionDestroyedException rdex) {
       //pass
     }
-  }//end of clearExceptions
-
-}//end of class
+  } //end of clearExceptions
+} //end of class

@@ -25,9 +25,7 @@ import org.apache.geode.distributed.internal.DistributionConfig;
 import org.apache.geode.internal.security.SecurableCommunicationChannel;
 import org.apache.geode.management.internal.SSLUtil;
 
-/**
- * The SSL configuration settings for a GemFire distributed system.
- */
+/** The SSL configuration settings for a GemFire distributed system. */
 public class SSLConfig {
 
   private boolean enabled = DistributionConfig.DEFAULT_SSL_ENABLED;
@@ -44,13 +42,12 @@ public class SSLConfig {
   private SecurableCommunicationChannel securableCommunicationChannel = null;
 
   /**
-   * SSL implementation-specific key-value pairs. Each key should be prefixed
-   * with <code>javax.net.ssl.</code>
+   * SSL implementation-specific key-value pairs. Each key should be prefixed with <code>
+   * javax.net.ssl.</code>
    */
   private Properties properties = new Properties();
 
-  public SSLConfig() {
-  }
+  public SSLConfig() {}
 
   public String getAlias() {
     return alias;
@@ -154,7 +151,7 @@ public class SSLConfig {
 
   public void setProperties(Properties newProps) {
     this.properties = new Properties();
-    for (Iterator iter = newProps.keySet().iterator(); iter.hasNext();) {
+    for (Iterator iter = newProps.keySet().iterator(); iter.hasNext(); ) {
       String key = (String) iter.next();
       //            String value = newProps.getProperty(key);
       this.properties.setProperty(key, newProps.getProperty(key));
@@ -165,19 +162,56 @@ public class SSLConfig {
     return securableCommunicationChannel;
   }
 
-  public void setSecurableCommunicationChannel(final SecurableCommunicationChannel securableCommunicationChannel) {
+  public void setSecurableCommunicationChannel(
+      final SecurableCommunicationChannel securableCommunicationChannel) {
     this.securableCommunicationChannel = securableCommunicationChannel;
   }
 
   @Override
   public String toString() {
-    return "SSLConfig{" + "enabled=" + enabled + ", protocols='" + protocols + '\'' + ", ciphers='" + ciphers + '\'' + ", requireAuth=" + requireAuth + ", keystore='" + keystore + '\'' + ", keystoreType='" + keystoreType + '\'' + ", keystorePassword='" + keystorePassword + '\'' + ", truststore='" + truststore + '\'' + ", truststorePassword='" + truststorePassword + '\'' + ", truststoreType='" + truststoreType + '\'' + ", alias='" + alias + '\'' + ", securableCommunicationChannel=" + securableCommunicationChannel + ", properties=" + properties + '}';
+    return "SSLConfig{"
+        + "enabled="
+        + enabled
+        + ", protocols='"
+        + protocols
+        + '\''
+        + ", ciphers='"
+        + ciphers
+        + '\''
+        + ", requireAuth="
+        + requireAuth
+        + ", keystore='"
+        + keystore
+        + '\''
+        + ", keystoreType='"
+        + keystoreType
+        + '\''
+        + ", keystorePassword='"
+        + keystorePassword
+        + '\''
+        + ", truststore='"
+        + truststore
+        + '\''
+        + ", truststorePassword='"
+        + truststorePassword
+        + '\''
+        + ", truststoreType='"
+        + truststoreType
+        + '\''
+        + ", alias='"
+        + alias
+        + '\''
+        + ", securableCommunicationChannel="
+        + securableCommunicationChannel
+        + ", properties="
+        + properties
+        + '}';
   }
 
   /**
-   * Populates a <code>Properties</code> object with the SSL-related
-   * configuration information used by {@link
-   * org.apache.geode.distributed.DistributedSystem#connect}.
+   * Populates a <code>Properties</code> object with the SSL-related configuration information used
+   * by {@link org.apache.geode.distributed.DistributedSystem#connect}.
+   *
    * @since GemFire 4.0
    */
   public void toDSProperties(Properties props) {
@@ -189,5 +223,4 @@ public class SSLConfig {
       props.setProperty(CLUSTER_SSL_REQUIRE_AUTHENTICATION, String.valueOf(this.requireAuth));
     }
   }
-
 }

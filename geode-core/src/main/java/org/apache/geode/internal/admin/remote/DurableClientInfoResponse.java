@@ -29,22 +29,22 @@ import org.apache.geode.distributed.internal.membership.*;
 
 /**
  * A message that is sent in response to a {@link DurableClientInfoRequest}.
- * 
+ *
  * @since GemFire 5.6
  */
 public class DurableClientInfoResponse extends AdminResponse {
   // instance variables
-  /**
-   * The result for the query made the request (hasDurableClient or
-   * isPrimaryForDurableClient).
-   */
+  /** The result for the query made the request (hasDurableClient or isPrimaryForDurableClient). */
   private boolean returnVal = false;
 
   /**
-   * Returns a <code>DurableClientInfoResponse</code> that will be returned to
-   * the specified recipient.
+   * Returns a <code>DurableClientInfoResponse</code> that will be returned to the specified
+   * recipient.
    */
-  public static DurableClientInfoResponse create(DistributionManager dm, InternalDistributedMember recipient, DurableClientInfoRequest request) {
+  public static DurableClientInfoResponse create(
+      DistributionManager dm,
+      InternalDistributedMember recipient,
+      DurableClientInfoRequest request) {
     DurableClientInfoResponse m = new DurableClientInfoResponse();
     m.setRecipient(recipient);
     try {
@@ -53,14 +53,21 @@ public class DurableClientInfoResponse extends AdminResponse {
 
         CacheServerImpl server = (CacheServerImpl) c.getCacheServers().iterator().next();
         switch (request.action) {
-        case DurableClientInfoRequest.HAS_DURABLE_CLIENT_REQUEST: {
-          m.returnVal = server.getAcceptor().getCacheClientNotifier().hasDurableClient(request.durableId);
-          break;
-        }
-        case DurableClientInfoRequest.IS_PRIMARY_FOR_DURABLE_CLIENT_REQUEST: {
-          m.returnVal = server.getAcceptor().getCacheClientNotifier().hasPrimaryForDurableClient(request.durableId);
-          break;
-        }
+          case DurableClientInfoRequest.HAS_DURABLE_CLIENT_REQUEST:
+            {
+              m.returnVal =
+                  server.getAcceptor().getCacheClientNotifier().hasDurableClient(request.durableId);
+              break;
+            }
+          case DurableClientInfoRequest.IS_PRIMARY_FOR_DURABLE_CLIENT_REQUEST:
+            {
+              m.returnVal =
+                  server
+                      .getAcceptor()
+                      .getCacheClientNotifier()
+                      .hasPrimaryForDurableClient(request.durableId);
+              break;
+            }
         }
       }
     } catch (CacheClosedException ex) {

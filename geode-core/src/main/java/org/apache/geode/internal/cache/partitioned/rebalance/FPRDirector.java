@@ -17,16 +17,11 @@
 package org.apache.geode.internal.cache.partitioned.rebalance;
 
 /**
- * The FPR director performs rebalancing operations for a fixed partitioned
- * region. There two things a fixed partitioned region does during
- * rebalancing:
- *  - Create redundant buckets in a known location
- *  - move primaries to the appropriate member.
- *  
- *  Note that unlike other directors, this director performs all the work in
- *  a call to nextStep.
- *  
+ * The FPR director performs rebalancing operations for a fixed partitioned region. There two things
+ * a fixed partitioned region does during rebalancing: - Create redundant buckets in a known
+ * location - move primaries to the appropriate member.
  *
+ * <p>Note that unlike other directors, this director performs all the work in a call to nextStep.
  */
 public class FPRDirector extends RebalanceDirectorAdapter {
 
@@ -73,5 +68,4 @@ public class FPRDirector extends RebalanceDirectorAdapter {
 
     return false;
   }
-
 }

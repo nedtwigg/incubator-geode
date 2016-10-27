@@ -17,16 +17,13 @@
 package org.apache.geode.internal.memcached.commands;
 
 /**
- * thrown when there is some sort of error in input line
- * when this exception is thrown "CLIENT_ERROR <error>\r\n"
- * is sent to the client 
- * 
+ * thrown when there is some sort of error in input line when this exception is thrown "CLIENT_ERROR
+ * <error>\r\n" is sent to the client
  */
 public class ClientError extends RuntimeException {
   private static final long serialVersionUID = -2426928000696680541L;
 
-  public ClientError() {
-  }
+  public ClientError() {}
 
   public ClientError(String message) {
     super(message);

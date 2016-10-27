@@ -29,20 +29,15 @@ import org.apache.geode.internal.cache.partitioned.rebalance.PartitionedRegionLo
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * Move buckets from one node to another, up to a certain
- * percentage of the source node. Each call to nextStep
- * attempts to move a single bucket.
- * 
- * This uses a  first fit decreasing strategy to choose which buckets to
- * move. It sorts the buckets by size, and then moves the largest bucket
- * that is below the load we are trying to move.
- * 
- * An improvement would be find the bucket that can be moved with the least
- * cost for the most load change, but because the load probe currently
- * use the same value for load and cost, there's no need to complicate things
- * now.
- * 
+ * Move buckets from one node to another, up to a certain percentage of the source node. Each call
+ * to nextStep attempts to move a single bucket.
  *
+ * <p>This uses a first fit decreasing strategy to choose which buckets to move. It sorts the
+ * buckets by size, and then moves the largest bucket that is below the load we are trying to move.
+ *
+ * <p>An improvement would be find the bucket that can be moved with the least cost for the most
+ * load change, but because the load probe currently use the same value for load and cost, there's
+ * no need to complicate things now.
  */
 public class PercentageMoveDirector extends RebalanceDirectorAdapter {
 
@@ -54,7 +49,8 @@ public class PercentageMoveDirector extends RebalanceDirectorAdapter {
   private float loadToMove;
   private NavigableSet<Bucket> orderedBuckets;
 
-  public PercentageMoveDirector(DistributedMember source, DistributedMember target, float percentage) {
+  public PercentageMoveDirector(
+      DistributedMember source, DistributedMember target, float percentage) {
     this.source = (InternalDistributedMember) source;
     this.target = (InternalDistributedMember) target;
     this.percentage = percentage;
@@ -64,7 +60,9 @@ public class PercentageMoveDirector extends RebalanceDirectorAdapter {
   public void initialize(PartitionedRegionLoadModel model) {
     Member sourceMember = model.getMember(source);
     if (sourceMember == null) {
-      throw new IllegalStateException(LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_SOURCE_NOT_DATA_STORE.toLocalizedString(model.getName(), source));
+      throw new IllegalStateException(
+          LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_SOURCE_NOT_DATA_STORE.toLocalizedString(
+              model.getName(), source));
     }
 
     //Figure out how much load we are moving, based on the percentage.
@@ -81,7 +79,9 @@ public class PercentageMoveDirector extends RebalanceDirectorAdapter {
     this.model = model;
     Member sourceMember = model.getMember(source);
     if (sourceMember == null) {
-      throw new IllegalStateException(LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_SOURCE_NOT_DATA_STORE.toLocalizedString(model.getName(), source));
+      throw new IllegalStateException(
+          LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_SOURCE_NOT_DATA_STORE.toLocalizedString(
+              model.getName(), source));
     }
 
     //Build the set of of buckets
@@ -99,11 +99,15 @@ public class PercentageMoveDirector extends RebalanceDirectorAdapter {
     Member targetMember = model.getMember(target);
     Member sourceMember = model.getMember(source);
     if (targetMember == null) {
-      throw new IllegalStateException(LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_TARGET_NOT_DATA_STORE.toLocalizedString(model.getName(), target));
+      throw new IllegalStateException(
+          LocalizedStrings.PERCENTAGE_MOVE_DIRECTORY_TARGET_NOT_DATA_STORE.toLocalizedString(
+              model.getName(), target));
     }
 
     if (targetMember.equals(sourceMember)) {
-      throw new IllegalStateException(LocalizedStrings.PERCENTAGE_MOVE_TARGET_SAME_AS_SOURCE.toLocalizedString(model.getName(), target));
+      throw new IllegalStateException(
+          LocalizedStrings.PERCENTAGE_MOVE_TARGET_SAME_AS_SOURCE.toLocalizedString(
+              model.getName(), target));
     }
 
     //if there is no largest bucket that we can move, we are done.
@@ -116,7 +120,9 @@ public class PercentageMoveDirector extends RebalanceDirectorAdapter {
     float load = bucket.getLoad();
 
     //See if we can move this bucket to the taret node.
-    if (targetMember.willAcceptBucket(bucket, sourceMember, model.enforceUniqueZones()).willAccept()) {
+    if (targetMember
+        .willAcceptBucket(bucket, sourceMember, model.enforceUniqueZones())
+        .willAccept()) {
 
       if (model.moveBucket(new Move(sourceMember, targetMember, bucket))) {
         //If we had a successful move, decrement the load we should move.
@@ -142,9 +148,7 @@ public class PercentageMoveDirector extends RebalanceDirectorAdapter {
     return true;
   }
 
-  /**
-   * A comparator that compares buckets by load, and then by bucket id.
-   */
+  /** A comparator that compares buckets by load, and then by bucket id. */
   private static class LoadComparator implements Comparator<Bucket> {
 
     @Override
@@ -155,6 +159,5 @@ public class PercentageMoveDirector extends RebalanceDirectorAdapter {
       }
       return result;
     }
-
   }
 }

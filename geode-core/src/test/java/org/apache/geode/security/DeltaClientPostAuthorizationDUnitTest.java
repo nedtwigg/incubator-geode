@@ -43,10 +43,8 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-/**
- * @since GemFire 6.1
- */
-@Category({ DistributedTest.class, SecurityTest.class })
+/** @since GemFire 6.1 */
+@Category({DistributedTest.class, SecurityTest.class})
 public class DeltaClientPostAuthorizationDUnitTest extends ClientAuthorizationTestCase {
 
   private static final int PAUSE = 5 * 1000; // TODO: replace with Awaitility
@@ -85,7 +83,8 @@ public class DeltaClientPostAuthorizationDUnitTest extends ClientAuthorizationTe
     getLogWriter().info("testAllOpsNotifications: Using accessor: " + accessor);
 
     // Start servers with all required properties
-    Properties serverProps = buildProperties(authenticator, accessor, true, extraAuthProps, extraAuthzProps);
+    Properties serverProps =
+        buildProperties(authenticator, accessor, true, extraAuthProps, extraAuthzProps);
 
     // Get ports for the servers
     int[] randomAvailableTCPPorts = AvailablePortHelper.getRandomAvailableTCPPorts(2);
@@ -99,22 +98,31 @@ public class DeltaClientPostAuthorizationDUnitTest extends ClientAuthorizationTe
     for (int opNum = 0; opNum < allOps.length; ++opNum) {
       // Start client with valid credentials as specified in OperationWithAction
       OperationWithAction currentOp = allOps[opNum];
-      if (currentOp.equals(OperationWithAction.OPBLOCK_END) || currentOp.equals(OperationWithAction.OPBLOCK_NO_FAILOVER)) {
+      if (currentOp.equals(OperationWithAction.OPBLOCK_END)
+          || currentOp.equals(OperationWithAction.OPBLOCK_NO_FAILOVER)) {
 
         // End of current operation block; execute all the operations on the servers with failover
         if (opBlock.size() > 0) {
           // Start the first server and execute the operation block
-          server1.invoke(() -> ClientAuthorizationTestCase.createCacheServer(getLocatorPort(), port1, serverProps, javaProps));
+          server1.invoke(
+              () ->
+                  ClientAuthorizationTestCase.createCacheServer(
+                      getLocatorPort(), port1, serverProps, javaProps));
           server2.invoke(() -> closeCache());
 
-          executeOpBlock(opBlock, port1, port2, authInit, extraAuthProps, extraAuthzProps, tgen, rnd);
+          executeOpBlock(
+              opBlock, port1, port2, authInit, extraAuthProps, extraAuthzProps, tgen, rnd);
 
           if (!currentOp.equals(OperationWithAction.OPBLOCK_NO_FAILOVER)) {
             // Failover to the second server and run the block again
-            server2.invoke(() -> ClientAuthorizationTestCase.createCacheServer(getLocatorPort(), port2, serverProps, javaProps));
+            server2.invoke(
+                () ->
+                    ClientAuthorizationTestCase.createCacheServer(
+                        getLocatorPort(), port2, serverProps, javaProps));
             server1.invoke(() -> closeCache());
 
-            executeOpBlock(opBlock, port1, port2, authInit, extraAuthProps, extraAuthzProps, tgen, rnd);
+            executeOpBlock(
+                opBlock, port1, port2, authInit, extraAuthProps, extraAuthzProps, tgen, rnd);
           }
 
           opBlock.clear();
@@ -128,8 +136,17 @@ public class DeltaClientPostAuthorizationDUnitTest extends ClientAuthorizationTe
   }
 
   @Override
-  protected final void executeOpBlock(final List<OperationWithAction> opBlock, final int port1, final int port2, final String authInit, final Properties extraAuthProps, final Properties extraAuthzProps, final TestCredentialGenerator credentialGenerator, final Random random) throws InterruptedException {
-    for (Iterator<OperationWithAction> opIter = opBlock.iterator(); opIter.hasNext();) {
+  protected final void executeOpBlock(
+      final List<OperationWithAction> opBlock,
+      final int port1,
+      final int port2,
+      final String authInit,
+      final Properties extraAuthProps,
+      final Properties extraAuthzProps,
+      final TestCredentialGenerator credentialGenerator,
+      final Random random)
+      throws InterruptedException {
+    for (Iterator<OperationWithAction> opIter = opBlock.iterator(); opIter.hasNext(); ) {
       // Start client with valid credentials as specified in OperationWithAction
       OperationWithAction currentOp = opIter.next();
       OperationCode opCode = currentOp.getOperationCode();
@@ -139,21 +156,26 @@ public class DeltaClientPostAuthorizationDUnitTest extends ClientAuthorizationTe
       boolean useThisVM = false;
 
       switch (clientNum) {
-      case 1:
-        clientVM = client1;
-        break;
-      case 2:
-        clientVM = client2;
-        break;
-      case 3:
-        useThisVM = true;
-        break;
-      default:
-        fail("executeOpBlock: Unknown client number " + clientNum);
-        break;
+        case 1:
+          clientVM = client1;
+          break;
+        case 2:
+          clientVM = client2;
+          break;
+        case 3:
+          useThisVM = true;
+          break;
+        default:
+          fail("executeOpBlock: Unknown client number " + clientNum);
+          break;
       }
 
-      getLogWriter().info("executeOpBlock: performing operation number [" + currentOp.getOpNum() + "]: " + currentOp);
+      getLogWriter()
+          .info(
+              "executeOpBlock: performing operation number ["
+                  + currentOp.getOpNum()
+                  + "]: "
+                  + currentOp);
 
       if ((opFlags & OpFlags.USE_OLDCONN) == 0) {
         Properties opCredentials;
@@ -170,24 +192,57 @@ public class DeltaClientPostAuthorizationDUnitTest extends ClientAuthorizationTe
         final Properties javaProps = cGen == null ? null : cGen.getJavaProperties();
 
         if ((opFlags & OpFlags.CHECK_NOTAUTHZ) > 0 || (opFlags & OpFlags.USE_NOTAUTHZ) > 0) {
-          opCredentials = credentialGenerator.getDisallowedCredentials(new OperationCode[] { authOpCode }, new String[] { currentRegionName }, indices, newRnd);
+          opCredentials =
+              credentialGenerator.getDisallowedCredentials(
+                  new OperationCode[] {authOpCode},
+                  new String[] {currentRegionName},
+                  indices,
+                  newRnd);
           credentialsTypeStr = " unauthorized " + authOpCode;
 
         } else {
-          opCredentials = credentialGenerator.getAllowedCredentials(new OperationCode[] { opCode, authOpCode }, new String[] { currentRegionName }, indices, newRnd);
+          opCredentials =
+              credentialGenerator.getAllowedCredentials(
+                  new OperationCode[] {opCode, authOpCode},
+                  new String[] {currentRegionName},
+                  indices,
+                  newRnd);
           credentialsTypeStr = " authorized " + authOpCode;
         }
 
-        Properties clientProps = concatProperties(new Properties[] { opCredentials, extraAuthProps, extraAuthzProps });
+        Properties clientProps =
+            concatProperties(new Properties[] {opCredentials, extraAuthProps, extraAuthzProps});
 
         // Start the client with valid credentials but allowed or disallowed to perform an operation
-        getLogWriter().info("executeOpBlock: For client" + clientNum + credentialsTypeStr + " credentials: " + opCredentials);
+        getLogWriter()
+            .info(
+                "executeOpBlock: For client"
+                    + clientNum
+                    + credentialsTypeStr
+                    + " credentials: "
+                    + opCredentials);
         boolean setupDynamicRegionFactory = (opFlags & OpFlags.ENABLE_DRF) > 0;
         if (useThisVM) {
-          createCacheClient(authInit, clientProps, javaProps, new int[] { port1, port2 }, 0, setupDynamicRegionFactory, NO_EXCEPTION);
+          createCacheClient(
+              authInit,
+              clientProps,
+              javaProps,
+              new int[] {port1, port2},
+              0,
+              setupDynamicRegionFactory,
+              NO_EXCEPTION);
 
         } else {
-          clientVM.invoke(() -> createCacheClient(authInit, clientProps, javaProps, new int[] { port1, port2 }, 0, setupDynamicRegionFactory, NO_EXCEPTION));
+          clientVM.invoke(
+              () ->
+                  createCacheClient(
+                      authInit,
+                      clientProps,
+                      javaProps,
+                      new int[] {port1, port2},
+                      0,
+                      setupDynamicRegionFactory,
+                      NO_EXCEPTION));
         }
       }
 
@@ -205,14 +260,23 @@ public class DeltaClientPostAuthorizationDUnitTest extends ClientAuthorizationTe
         doOp(opCode, currentOp.getIndices(), new Integer(opFlags), new Integer(expectedResult));
       } else {
         int[] indices = currentOp.getIndices();
-        clientVM.invoke(() -> DeltaClientPostAuthorizationDUnitTest.doOp(opCode, indices, new Integer(opFlags), new Integer(expectedResult)));
+        clientVM.invoke(
+            () ->
+                DeltaClientPostAuthorizationDUnitTest.doOp(
+                    opCode, indices, new Integer(opFlags), new Integer(expectedResult)));
       }
     }
   }
 
   private void setUpDeltas() {
     for (int i = 0; i < 8; i++) {
-      deltas[i] = new DeltaTestImpl(0, "0", new Double(0), new byte[0], new PartitionedRegionLocalMaxMemoryDUnitTest.TestObject1("0", 0));
+      deltas[i] =
+          new DeltaTestImpl(
+              0,
+              "0",
+              new Double(0),
+              new byte[0],
+              new PartitionedRegionLocalMaxMemoryDUnitTest.TestObject1("0", 0));
     }
     deltas[1].setIntVar(5);
     deltas[2].setIntVar(5);
@@ -223,10 +287,10 @@ public class DeltaClientPostAuthorizationDUnitTest extends ClientAuthorizationTe
     deltas[7].setIntVar(5);
 
     deltas[2].resetDeltaStatus();
-    deltas[2].setByteArr(new byte[] { 1, 2, 3, 4, 5 });
-    deltas[3].setByteArr(new byte[] { 1, 2, 3, 4, 5 });
-    deltas[4].setByteArr(new byte[] { 1, 2, 3, 4, 5 });
-    deltas[5].setByteArr(new byte[] { 1, 2, 3, 4, 5 });
+    deltas[2].setByteArr(new byte[] {1, 2, 3, 4, 5});
+    deltas[3].setByteArr(new byte[] {1, 2, 3, 4, 5});
+    deltas[4].setByteArr(new byte[] {1, 2, 3, 4, 5});
+    deltas[5].setByteArr(new byte[] {1, 2, 3, 4, 5});
     //deltas[6].setByteArr(new byte[] { 1, 2, 3, 4, 5 });
     //deltas[7].setByteArr(new byte[] { 1, 2, 3, 4, 5 });
 
@@ -250,8 +314,8 @@ public class DeltaClientPostAuthorizationDUnitTest extends ClientAuthorizationTe
     deltas[7].setTestObj(new PartitionedRegionLocalMaxMemoryDUnitTest.TestObject1("CHANGED", 100));
 
     deltas[6].resetDeltaStatus();
-    deltas[6].setByteArr(new byte[] { 1, 2, 3 });
-    deltas[7].setByteArr(new byte[] { 1, 2, 3 });
+    deltas[6].setByteArr(new byte[] {1, 2, 3});
+    deltas[7].setByteArr(new byte[] {1, 2, 3});
 
     deltas[7].resetDeltaStatus();
     deltas[7].setStr("delta string");
@@ -259,15 +323,49 @@ public class DeltaClientPostAuthorizationDUnitTest extends ClientAuthorizationTe
 
   private OperationWithAction[] allOps() {
     return new OperationWithAction[] {
-        // Test CREATE and verify with a GET
-        new OperationWithAction(OperationCode.REGISTER_INTEREST, OperationCode.GET, 2, OpFlags.USE_REGEX | OpFlags.REGISTER_POLICY_NONE, 8), new OperationWithAction(OperationCode.REGISTER_INTEREST, OperationCode.GET, 3, OpFlags.USE_REGEX | OpFlags.REGISTER_POLICY_NONE | OpFlags.USE_NOTAUTHZ, 8), new OperationWithAction(OperationCode.PUT), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4), new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP | OpFlags.CHECK_FAIL, 4),
+      // Test CREATE and verify with a GET
+      new OperationWithAction(
+          OperationCode.REGISTER_INTEREST,
+          OperationCode.GET,
+          2,
+          OpFlags.USE_REGEX | OpFlags.REGISTER_POLICY_NONE,
+          8),
+      new OperationWithAction(
+          OperationCode.REGISTER_INTEREST,
+          OperationCode.GET,
+          3,
+          OpFlags.USE_REGEX | OpFlags.REGISTER_POLICY_NONE | OpFlags.USE_NOTAUTHZ,
+          8),
+      new OperationWithAction(OperationCode.PUT),
+      new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP, 4),
+      new OperationWithAction(
+          OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP | OpFlags.CHECK_FAIL, 4),
 
-        // OPBLOCK_END indicates end of an operation block that needs to be executed on each server when doing failover
-        OperationWithAction.OPBLOCK_END,
+      // OPBLOCK_END indicates end of an operation block that needs to be executed on each server when doing failover
+      OperationWithAction.OPBLOCK_END,
 
-        // Test UPDATE and verify with a GET
-        new OperationWithAction(OperationCode.REGISTER_INTEREST, OperationCode.GET, 2, OpFlags.USE_REGEX | OpFlags.REGISTER_POLICY_NONE, 8), new OperationWithAction(OperationCode.REGISTER_INTEREST, OperationCode.GET, 3, OpFlags.USE_REGEX | OpFlags.REGISTER_POLICY_NONE | OpFlags.USE_NOTAUTHZ, 8), new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4), new OperationWithAction(OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP | OpFlags.USE_NEWVAL, 4), new OperationWithAction(OperationCode.GET, 3, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP | OpFlags.USE_NEWVAL | OpFlags.CHECK_FAIL, 4),
-
-        OperationWithAction.OPBLOCK_END };
+      // Test UPDATE and verify with a GET
+      new OperationWithAction(
+          OperationCode.REGISTER_INTEREST,
+          OperationCode.GET,
+          2,
+          OpFlags.USE_REGEX | OpFlags.REGISTER_POLICY_NONE,
+          8),
+      new OperationWithAction(
+          OperationCode.REGISTER_INTEREST,
+          OperationCode.GET,
+          3,
+          OpFlags.USE_REGEX | OpFlags.REGISTER_POLICY_NONE | OpFlags.USE_NOTAUTHZ,
+          8),
+      new OperationWithAction(OperationCode.PUT, 1, OpFlags.USE_OLDCONN | OpFlags.USE_NEWVAL, 4),
+      new OperationWithAction(
+          OperationCode.GET, 2, OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP | OpFlags.USE_NEWVAL, 4),
+      new OperationWithAction(
+          OperationCode.GET,
+          3,
+          OpFlags.USE_OLDCONN | OpFlags.LOCAL_OP | OpFlags.USE_NEWVAL | OpFlags.CHECK_FAIL,
+          4),
+      OperationWithAction.OPBLOCK_END
+    };
   }
 }

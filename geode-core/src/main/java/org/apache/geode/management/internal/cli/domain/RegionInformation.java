@@ -23,10 +23,9 @@ import org.apache.geode.cache.Scope;
 import java.io.Serializable;
 import java.util.*;
 
-/***
- * Gives the most basic common information of a region
- * Used by the GetRegionsFunction for 'list region' command
- *	since 7.0
+/**
+ * * Gives the most basic common information of a region Used by the GetRegionsFunction for 'list
+ * region' command since 7.0
  */
 public class RegionInformation implements Serializable {
 
@@ -106,7 +105,11 @@ public class RegionInformation implements Serializable {
   public boolean equals(Object obj) {
     if (obj instanceof RegionInformation) {
       RegionInformation regionInfoObj = (RegionInformation) obj;
-      return this.name.equals(regionInfoObj.getName()) && this.path.equals(regionInfoObj.getPath()) && this.isRoot == regionInfoObj.isRoot && this.dataPolicy.equals(regionInfoObj.getDataPolicy()) && this.scope.equals(regionInfoObj.getScope());
+      return this.name.equals(regionInfoObj.getName())
+          && this.path.equals(regionInfoObj.getPath())
+          && this.isRoot == regionInfoObj.isRoot
+          && this.dataPolicy.equals(regionInfoObj.getDataPolicy())
+          && this.scope.equals(regionInfoObj.getScope());
     } else {
       return false;
     }
@@ -114,7 +117,10 @@ public class RegionInformation implements Serializable {
 
   @Override
   public int hashCode() {
-    return this.name.hashCode() ^ this.path.hashCode() ^ this.dataPolicy.hashCode() ^ this.scope.hashCode();
+    return this.name.hashCode()
+        ^ this.path.hashCode()
+        ^ this.dataPolicy.hashCode()
+        ^ this.scope.hashCode();
   }
 
   public String toString() {

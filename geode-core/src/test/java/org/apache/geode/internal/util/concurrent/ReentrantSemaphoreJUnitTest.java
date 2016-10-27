@@ -39,8 +39,7 @@ public class ReentrantSemaphoreJUnitTest {
   private CountDownLatch done;
   private CountDownLatch acquired;
 
-  @Rule
-  public Timeout timeout = new Timeout(30, TimeUnit.SECONDS);
+  @Rule public Timeout timeout = new Timeout(30, TimeUnit.SECONDS);
 
   @Before
   public void setUp() throws Exception {
@@ -71,53 +70,56 @@ public class ReentrantSemaphoreJUnitTest {
 
     final AtomicReference<Throwable> failure = new AtomicReference<>();
 
-    Thread t1 = new Thread() {
-      public void run() {
-        try {
-          sem.acquire();
-          sem.acquire();
-          sem.acquire();
-          acquired.countDown();
-          assertTrue(done.await(OPERATION_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS));
-          sem.release();
-          sem.release();
-          sem.release();
-        } catch (Exception e) {
-          failure.compareAndSet(null, e);
-        }
-      }
-    };
+    Thread t1 =
+        new Thread() {
+          public void run() {
+            try {
+              sem.acquire();
+              sem.acquire();
+              sem.acquire();
+              acquired.countDown();
+              assertTrue(done.await(OPERATION_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS));
+              sem.release();
+              sem.release();
+              sem.release();
+            } catch (Exception e) {
+              failure.compareAndSet(null, e);
+            }
+          }
+        };
     t1.start();
 
-    Thread t2 = new Thread() {
-      public void run() {
-        try {
-          sem.acquire();
-          sem.acquire();
-          sem.acquire();
-          acquired.countDown();
-          assertTrue(done.await(OPERATION_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS));
-          sem.release();
-          sem.release();
-          sem.release();
-        } catch (Exception e) {
-          failure.compareAndSet(null, e);
-        }
-      }
-    };
+    Thread t2 =
+        new Thread() {
+          public void run() {
+            try {
+              sem.acquire();
+              sem.acquire();
+              sem.acquire();
+              acquired.countDown();
+              assertTrue(done.await(OPERATION_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS));
+              sem.release();
+              sem.release();
+              sem.release();
+            } catch (Exception e) {
+              failure.compareAndSet(null, e);
+            }
+          }
+        };
     t2.start();
 
-    Thread t3 = new Thread() {
-      public void run() {
-        try {
-          assertTrue(acquired.await(OPERATION_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS));
-          assertEquals(0, sem.availablePermits());
-          assertFalse(sem.tryAcquire(1, TimeUnit.SECONDS));
-        } catch (Exception e) {
-          failure.compareAndSet(null, e);
-        }
-      }
-    };
+    Thread t3 =
+        new Thread() {
+          public void run() {
+            try {
+              assertTrue(acquired.await(OPERATION_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS));
+              assertEquals(0, sem.availablePermits());
+              assertFalse(sem.tryAcquire(1, TimeUnit.SECONDS));
+            } catch (Exception e) {
+              failure.compareAndSet(null, e);
+            }
+          }
+        };
     t3.start();
 
     t3.join(OPERATION_TIMEOUT_MILLIS);
@@ -137,5 +139,4 @@ public class ReentrantSemaphoreJUnitTest {
 
     assertEquals(2, sem.availablePermits());
   }
-
 }

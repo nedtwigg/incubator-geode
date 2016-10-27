@@ -18,18 +18,14 @@
 package org.apache.geode.internal.cache;
 
 /**
- * Internal implementation of {@link RegionMap} for regions stored
- * in normal VM memory.
+ * Internal implementation of {@link RegionMap} for regions stored in normal VM memory.
  *
  * @since GemFire 3.5.1
- *
- *
  */
 final class VMRegionMap extends AbstractRegionMap {
 
   VMRegionMap(Object owner, Attributes attr, InternalRegionArguments internalRegionArgs) {
     super(internalRegionArgs);
-    initialize(owner, attr, internalRegionArgs, false/*isLRU*/);
+    initialize(owner, attr, internalRegionArgs, false /*isLRU*/);
   }
-
 }

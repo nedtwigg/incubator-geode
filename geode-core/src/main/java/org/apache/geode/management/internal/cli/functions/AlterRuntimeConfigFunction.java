@@ -32,10 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-/****
- * 
- *
- */
+/** ** */
 public class AlterRuntimeConfigFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
@@ -82,7 +79,8 @@ public class AlterRuntimeConfigFunction extends FunctionAdapter implements Inter
       context.getResultSender().lastResult(result);
 
     } catch (Exception e) {
-      CliFunctionResult cliFuncResult = new CliFunctionResult(memberId, e, CliUtil.stackTraceAsString(e));
+      CliFunctionResult cliFuncResult =
+          new CliFunctionResult(memberId, e, CliUtil.stackTraceAsString(e));
       context.getResultSender().lastResult(cliFuncResult);
     }
   }

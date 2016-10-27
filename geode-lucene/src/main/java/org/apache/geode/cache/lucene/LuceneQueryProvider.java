@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -27,11 +27,12 @@ import org.apache.geode.annotations.Experimental;
 import org.apache.geode.cache.query.QueryException;
 
 /**
- * The instances of this class will be used for distributing Lucene Query objects and re-constructing the Query object.
- * If necessary the implementation needs to take care of serializing and de-serializing Lucene Query object. Geode
- * respects the DataSerializable contract to provide optimal object serialization. For instance,
- * {@link LuceneQueryProvider}'s toData method will be used to serialize it when it is sent to another member of the
- * distributed system. Implementation of DataSerializable can provide a zero-argument constructor that will be invoked
+ * The instances of this class will be used for distributing Lucene Query objects and
+ * re-constructing the Query object. If necessary the implementation needs to take care of
+ * serializing and de-serializing Lucene Query object. Geode respects the DataSerializable contract
+ * to provide optimal object serialization. For instance, {@link LuceneQueryProvider}'s toData
+ * method will be used to serialize it when it is sent to another member of the distributed system.
+ * Implementation of DataSerializable can provide a zero-argument constructor that will be invoked
  * when they are read with DataSerializer.readObject.
  */
 @Experimental
@@ -41,7 +42,5 @@ public interface LuceneQueryProvider extends Serializable {
    * @param index local lucene index the query is being constructed against.
    * @throws LuceneQueryException if the provider fails to construct the query object
    */
-
   public Query getQuery(LuceneIndex index) throws LuceneQueryException;
-
 }

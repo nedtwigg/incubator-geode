@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import java.util.Collections;
@@ -33,28 +31,31 @@ import org.apache.geode.distributed.internal.ReplyProcessor21;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- *
- */
+/** */
 public class JtaBeforeCompletionMessage extends TXMessage {
   private static final Logger logger = LogService.getLogger();
 
-  public JtaBeforeCompletionMessage() {
-  }
+  public JtaBeforeCompletionMessage() {}
 
-  public JtaBeforeCompletionMessage(int txUniqId, InternalDistributedMember onBehalfOfClientMember, ReplyProcessor21 processor) {
+  public JtaBeforeCompletionMessage(
+      int txUniqId, InternalDistributedMember onBehalfOfClientMember, ReplyProcessor21 processor) {
     super(txUniqId, onBehalfOfClientMember, processor);
   }
 
-  public static ReliableReplyProcessor21 send(Cache cache, int txUniqId, InternalDistributedMember onBehalfOfClientMember, DistributedMember recipient) {
-    final InternalDistributedSystem system = (InternalDistributedSystem) cache.getDistributedSystem();
+  public static ReliableReplyProcessor21 send(
+      Cache cache,
+      int txUniqId,
+      InternalDistributedMember onBehalfOfClientMember,
+      DistributedMember recipient) {
+    final InternalDistributedSystem system =
+        (InternalDistributedSystem) cache.getDistributedSystem();
     final Set recipients = Collections.singleton(recipient);
     ReliableReplyProcessor21 response = new ReliableReplyProcessor21(system, recipients);
-    JtaBeforeCompletionMessage msg = new JtaBeforeCompletionMessage(txUniqId, onBehalfOfClientMember, response);
+    JtaBeforeCompletionMessage msg =
+        new JtaBeforeCompletionMessage(txUniqId, onBehalfOfClientMember, response);
     msg.setRecipients(recipients);
     system.getDistributionManager().putOutgoing(msg);
     return response;
-
   }
 
   /* (non-Javadoc)

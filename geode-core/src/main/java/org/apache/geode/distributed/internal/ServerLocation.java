@@ -27,11 +27,8 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.net.SocketCreator;
 
 /**
- * Represents the location of a bridge server. This class is 
- * preferable to InetSocketAddress because it doesn't do
- * any name resolution.
- * 
- *
+ * Represents the location of a bridge server. This class is preferable to InetSocketAddress because
+ * it doesn't do any name resolution.
  */
 public class ServerLocation implements DataSerializable, Comparable {
   private static final long serialVersionUID = -5850116974987640560L;
@@ -39,17 +36,15 @@ public class ServerLocation implements DataSerializable, Comparable {
   private String hostName;
   private int port;
   /**
-   * Used exclusively in case of single user authentication mode. Client sends
-   * this userId to the server with each operation to identify itself at the
-   * server.
+   * Used exclusively in case of single user authentication mode. Client sends this userId to the
+   * server with each operation to identify itself at the server.
    */
   private long userId = -1;
 
   /**
-   * If its value is two, it lets the client know that it need not send the
-   * security part (connection-id, user-id) with each operation to the server.
-   * Also, that the client should not expect the security part in the server's
-   * response.
+   * If its value is two, it lets the client know that it need not send the security part
+   * (connection-id, user-id) with each operation to the server. Also, that the client should not
+   * expect the security part in the server's response.
    */
   private final AtomicInteger requiresCredentials = new AtomicInteger(INITIAL_REQUIRES_CREDENTIALS);
 
@@ -59,12 +54,8 @@ public class ServerLocation implements DataSerializable, Comparable {
 
   public static final int REQUIRES_NO_CREDENTIALS = 2;
 
-  /**
-   * For DataSerializer
-   */
-  public ServerLocation() {
-
-  }
+  /** For DataSerializer */
+  public ServerLocation() {}
 
   public ServerLocation(String hostName, int port) {
     this.hostName = hostName;
@@ -100,16 +91,12 @@ public class ServerLocation implements DataSerializable, Comparable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (!(obj instanceof ServerLocation))
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (!(obj instanceof ServerLocation)) return false;
     final ServerLocation other = (ServerLocation) obj;
     if (hostName == null) {
-      if (other.hostName != null)
-        return false;
+      if (other.hostName != null) return false;
     } else if (other.hostName == null) {
       return false;
     } else if (!hostName.equals(other.hostName)) {
@@ -131,8 +118,7 @@ public class ServerLocation implements DataSerializable, Comparable {
         return false; // fix for bug 42040
       }
     }
-    if (port != other.port)
-      return false;
+    if (port != other.port) return false;
     return true;
   }
 
@@ -171,5 +157,4 @@ public class ServerLocation implements DataSerializable, Comparable {
   public boolean getRequiresCredentials() {
     return this.requiresCredentials.get() == REQUIRES_CREDENTIALS ? true : false;
   }
-
 }

@@ -34,7 +34,7 @@ import org.apache.geode.management.LockServiceMXBean;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class LockServiceMBeanAuthorizationJUnitTest {
 
   private static int jmxManagerPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
@@ -42,7 +42,9 @@ public class LockServiceMBeanAuthorizationJUnitTest {
   private LockServiceMXBean lockServiceMBean;
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
+  public static JsonAuthorizationCacheStartRule serverRule =
+      new JsonAuthorizationCacheStartRule(
+          jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
 
   @Rule
   public MBeanServerConnectionRule connectionRule = new MBeanServerConnectionRule(jmxManagerPort);
@@ -50,7 +52,12 @@ public class LockServiceMBeanAuthorizationJUnitTest {
   @BeforeClass
   public static void beforeClassSetUp() {
     Cache cache = serverRule.getCache();
-    DLockService.create("test-lock-service", (InternalDistributedSystem) cache.getDistributedSystem(), false, true, true);
+    DLockService.create(
+        "test-lock-service",
+        (InternalDistributedSystem) cache.getDistributedSystem(),
+        false,
+        true,
+        true);
   }
 
   @Before
@@ -83,10 +90,15 @@ public class LockServiceMBeanAuthorizationJUnitTest {
   @Test
   @JMXConnectionConfiguration(user = "data-user", password = "1234567")
   public void testNoAccess() throws Exception {
-    assertThatThrownBy(() -> lockServiceMBean.becomeLockGrantor()).hasMessageContaining(TestCommand.dataManage.toString());
-    assertThatThrownBy(() -> lockServiceMBean.fetchGrantorMember()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> lockServiceMBean.getMemberCount()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> lockServiceMBean.isDistributed()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> lockServiceMBean.listThreadsHoldingLock()).hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> lockServiceMBean.becomeLockGrantor())
+        .hasMessageContaining(TestCommand.dataManage.toString());
+    assertThatThrownBy(() -> lockServiceMBean.fetchGrantorMember())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> lockServiceMBean.getMemberCount())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> lockServiceMBean.isDistributed())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> lockServiceMBean.listThreadsHoldingLock())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
   }
 }

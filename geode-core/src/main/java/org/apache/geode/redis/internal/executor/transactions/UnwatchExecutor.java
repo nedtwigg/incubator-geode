@@ -25,7 +25,7 @@ public class UnwatchExecutor extends TransactionExecutor {
 
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
-    command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_UNWATCH));
+    command.setResponse(
+        Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_UNWATCH));
   }
-
 }

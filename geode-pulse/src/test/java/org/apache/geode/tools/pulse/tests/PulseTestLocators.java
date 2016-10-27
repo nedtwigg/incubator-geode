@@ -33,9 +33,7 @@ public class PulseTestLocators {
     public static final String clusterViewLinkXpath = "//a[text()='Cluster View']";
   }
 
-  public static class ClusterStatus {
-
-  }
+  public static class ClusterStatus {}
 
   public static class MemberDetailsView {
     public static final String gridButtonXpath = "//a[@id='btngridIcon']";
@@ -56,20 +54,31 @@ public class PulseTestLocators {
 
     // Host tootips
     public static final String hostNameTTXpath = ".//*[@id='_tooltip']/div/div/div[1]";
-    public static final String cpuUsageTTXpath = ".//*[@id='_tooltip']/div/div/div[2]/div[1]/div[2]/div";
-    public static final String memoryUsageTTXpath = ".//*[@id='_tooltip']/div/div/div[2]/div[2]/div[2]/div";
-    public static final String loadAvgTTXpath = ".//*[@id='_tooltip']/div/div/div[2]/div[3]/div[2]/div";
-    public static final String soketsTTXpath = ".//*[@id='_tooltip']/div/div/div[2]/div[4]/div[2]/div";
+    public static final String cpuUsageTTXpath =
+        ".//*[@id='_tooltip']/div/div/div[2]/div[1]/div[2]/div";
+    public static final String memoryUsageTTXpath =
+        ".//*[@id='_tooltip']/div/div/div[2]/div[2]/div[2]/div";
+    public static final String loadAvgTTXpath =
+        ".//*[@id='_tooltip']/div/div/div[2]/div[3]/div[2]/div";
+    public static final String soketsTTXpath =
+        ".//*[@id='_tooltip']/div/div/div[2]/div[4]/div[2]/div";
 
     // Member tooltips
     public static final String memNameTTXpath = ".//*[@id='_tooltip']/div/div/div[1]";
-    public static final String memCpuUsageTTXpath = ".//*[@id='_tooltip']/div/div/div[2]/div[1]/div[2]/div";
-    public static final String threadsTTXpath = ".//*[@id='_tooltip']/div/div/div[2]/div[2]/div[2]/div/text()";
-    public static final String jvmPausesTTXpath = ".//*[@id='_tooltip']/div/div/div[2]/div[3]/div[2]/div";
-    public static final String regionsTTXpath = ".//*[@id='_tooltip']/div/div/div[2]/div[4]/div[2]/div";
-    public static final String clientsTTXpath = ".//*[@id='_tooltip']/div/div/div[2]/div[5]/div[2]/div";
-    public static final String gatewaySenderTtXpath = ".//*[@id='_tooltip']/div/div/div[2]/div[6]/div[2]/div";
-    public static final String portTTXpath = ".//*[@id='_tooltip']/div/div/div[2]/div[7]/div[2]/div";
+    public static final String memCpuUsageTTXpath =
+        ".//*[@id='_tooltip']/div/div/div[2]/div[1]/div[2]/div";
+    public static final String threadsTTXpath =
+        ".//*[@id='_tooltip']/div/div/div[2]/div[2]/div[2]/div/text()";
+    public static final String jvmPausesTTXpath =
+        ".//*[@id='_tooltip']/div/div/div[2]/div[3]/div[2]/div";
+    public static final String regionsTTXpath =
+        ".//*[@id='_tooltip']/div/div/div[2]/div[4]/div[2]/div";
+    public static final String clientsTTXpath =
+        ".//*[@id='_tooltip']/div/div/div[2]/div[5]/div[2]/div";
+    public static final String gatewaySenderTtXpath =
+        ".//*[@id='_tooltip']/div/div/div[2]/div[6]/div[2]/div";
+    public static final String portTTXpath =
+        ".//*[@id='_tooltip']/div/div/div[2]/div[7]/div[2]/div";
 
     // Grid view
     public static final String idM1Xpath = ".//*[@id='M1&M1']/td[1]";
@@ -82,13 +91,12 @@ public class PulseTestLocators {
     public static final String nameM3Xpath = ".//*[@id='M3&M3']/td[2]";
     public static final String hostH3Xpath = ".//*[@id='M3&M3']/td[3]";
 
-    // HotSpot locators 
+    // HotSpot locators
     public static final String hotSpotId = "currentHotSpot";
     public static final String hotspotListDivId = "hotspotList";
     public static final String heapUsageXpath = "//a[text()='Heap Usage']";
     public static final String cpuUsageXpath = "//a[text()='CPU Usage']";
     public static final String graphTreeMapLblId = "//div[@id='GraphTreeMap-label']/child::node()";
-
   }
 
   public static class ServerGroups {
@@ -131,7 +139,6 @@ public class PulseTestLocators {
     public static final String heapUsageXpath = "//a[text()='Heap Usage']";
     public static final String cpuUsageXpath = "//a[text()='CPU Usage']";
     public static final String graphTreeMapLblId = "//div[@id='GraphTreeMap-label']/child::node()";
-
   }
 
   public static class RedundancyZone {
@@ -176,7 +183,8 @@ public class PulseTestLocators {
 
     public static final String regionNameDivId = "regionNameText";
     public static final String regionPathId = "regionPath";
-    public static final String treeMapCanvasXpath = "//canvas[@id='GraphTreeMapClusterData-canvas']";
+    public static final String treeMapCanvasXpath =
+        "//canvas[@id='GraphTreeMapClusterData-canvas']";
     public static final String regionTypeId = "regionType";
     public static final String regionMembersTextId = "regionMembersText";
     public static final String regionEmptyNodesId = "regionEmptyNodes";
@@ -194,13 +202,14 @@ public class PulseTestLocators {
     public static final String diskWritesId = "currentDiskWritesPerSec";
 
     public static final String memberNameId = "memberName";
-
   }
 
   public static class DataBrowser {
     public static final String rgnFilterTxtBoxId = "filterTextRegion";
-    public static final String rgnNameSpanXpath = "//span[starts-with(@ID,'treeDemo_')][contains(@id,'_span')]";
-    public static final String rgnNameTxtBoxXpath = "//span[starts-with(@ID,'treeDemo_')][contains(@id,'_span')]";
+    public static final String rgnNameSpanXpath =
+        "//span[starts-with(@ID,'treeDemo_')][contains(@id,'_span')]";
+    public static final String rgnNameTxtBoxXpath =
+        "//span[starts-with(@ID,'treeDemo_')][contains(@id,'_span')]";
     public static final String rgnSpanFirstPart = "//span[@id='treeDemo_";
     public static final String rgnSpanSecondPart = "_span']";
     public static final String rgn1ChkBoxId = "treeDemo_1_check";
@@ -209,16 +218,14 @@ public class PulseTestLocators {
 
     public static final String divDataRegions = "//div/ul[@id='treeDemo']/li";
 
-    // History section		
+    // History section
     public static final String historyIcon = "historyIcon";
     public static final String historyLst = "//div[@id='detailsHistoryList']/div/div";
     public static final String queryText = ".wrapHistoryContent";
     public static final String historyDateTime = ".dateTimeHistory";
 
-    //Clear button 
+    //Clear button
 
     public static final String btnClearXpath = "//input[@value='Clear']";
-
   }
-
 }

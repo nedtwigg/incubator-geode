@@ -19,21 +19,17 @@ package org.apache.geode.internal.statistics.platform;
 import org.apache.geode.Statistics;
 
 /**
- * Abstracts the process statistics that are common on all platforms.
- * This is necessary for monitoring the health of GemFire components.
- *
+ * Abstracts the process statistics that are common on all platforms. This is necessary for
+ * monitoring the health of GemFire components.
  *
  * @since GemFire 3.5
- * */
+ */
 public abstract class ProcessStats {
 
   /** The underlying statistics */
   private final Statistics stats;
 
-  /**
-   * Creates a new <code>ProcessStats</code> that wraps the given
-   * <code>Statistics</code>. 
-   */
+  /** Creates a new <code>ProcessStats</code> that wraps the given <code>Statistics</code>. */
   ProcessStats(Statistics stats) {
     this.stats = stats;
   }
@@ -52,9 +48,7 @@ public abstract class ProcessStats {
   }
 
   /**
-   * Returns the size of this process (resident set on UNIX or working
-   * set on Windows) in megabytes
+   * Returns the size of this process (resident set on UNIX or working set on Windows) in megabytes
    */
   public abstract long getProcessSize();
-
 }

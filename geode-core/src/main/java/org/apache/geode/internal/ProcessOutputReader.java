@@ -23,12 +23,9 @@ import java.util.*;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * A ProcessOutputReader will read both stdout and stderr
- * from a {@link java.lang.Process} process. The constructor
- * does not return until all output from the process has been
- * read and the process has exited.
- *
- *
+ * A ProcessOutputReader will read both stdout and stderr from a {@link java.lang.Process} process.
+ * The constructor does not return until all output from the process has been read and the process
+ * has exited.
  */
 public class ProcessOutputReader {
   private int exitCode;
@@ -36,6 +33,7 @@ public class ProcessOutputReader {
 
   /**
    * Creates a process output reader for the given process.
+   *
    * @param p the process whose output should be read.
    */
   public ProcessOutputReader(final Process p) {
@@ -61,8 +59,7 @@ public class ProcessOutputReader {
         } catch (Exception e) {
         }
       }
-    }
-    ;
+    };
 
     ProcessStreamReader stdout = new ProcessStreamReader(p.getInputStream());
     ProcessStreamReader stderr = new ProcessStreamReader(p.getErrorStream());
@@ -93,7 +90,10 @@ public class ProcessOutputReader {
           if (stderr.linecount > 0) {
             // The process wrote to stderr so manufacture
             // an error exist code
-            lines.add(LocalizedStrings.ProcessOutputReader_FAILED_TO_GET_EXIT_STATUS_AND_IT_WROTE_TO_STDERR_SO_SETTING_EXIT_STATUS_TO_1.toLocalizedString());
+            lines.add(
+                LocalizedStrings
+                    .ProcessOutputReader_FAILED_TO_GET_EXIT_STATUS_AND_IT_WROTE_TO_STDERR_SO_SETTING_EXIT_STATUS_TO_1
+                    .toLocalizedString());
             exitCode = 1;
           }
         } else {
@@ -128,17 +128,12 @@ public class ProcessOutputReader {
     }
   }
 
-  /**
-   * Gets the process's exit status code. A code equal to 0 indicates
-   * all is well.
-   */
+  /** Gets the process's exit status code. A code equal to 0 indicates all is well. */
   public int getExitCode() {
     return exitCode;
   }
 
-  /**
-   * Gets everything the process wrote to both stdout and stderr.
-   */
+  /** Gets everything the process wrote to both stdout and stderr. */
   public String getOutput() {
     return output;
   }

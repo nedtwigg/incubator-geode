@@ -29,20 +29,16 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.cache.EventID;
 
 /**
- * Class identifying a Thread uniquely across the distributed system. It is
- * composed of two fields 1) A byte array uniquely identifying the distributed
- * system 2) A long value unqiuely identifying the thread in the distributed
- * system
- * 
- * The application thread while operating on the Region gets an EventID object (
- * contained in EntryEventImpl) This EventID object contains a ThreadLocal field
- * which uniquely identifies the thread by storing the Object of this class.
- * 
+ * Class identifying a Thread uniquely across the distributed system. It is composed of two fields
+ * 1) A byte array uniquely identifying the distributed system 2) A long value unqiuely identifying
+ * the thread in the distributed system
+ *
+ * <p>The application thread while operating on the Region gets an EventID object ( contained in
+ * EntryEventImpl) This EventID object contains a ThreadLocal field which uniquely identifies the
+ * thread by storing the Object of this class.
+ *
  * @see EventID
- * 
- *  
  */
-
 public class ThreadIdentifier implements DataSerializable {
   private static final long serialVersionUID = 3366884860834823186L;
 
@@ -54,9 +50,7 @@ public class ThreadIdentifier implements DataSerializable {
   public static final int MAX_BUCKET_PER_PR = 1000;
   public static final long WAN_BITS_MASK = 0xFFFFFFFF00000000L;
 
-  /**
-   * Generates thread ids for parallel wan usage.
-   */
+  /** Generates thread ids for parallel wan usage. */
   public enum WanType {
     RESERVED, // original thread id incl putAll (or old format)
     PRIMARY, // parallel new wan
@@ -65,6 +59,7 @@ public class ThreadIdentifier implements DataSerializable {
 
     /**
      * Generates a new thread id for usage in a parallel wan context.
+     *
      * @param threadId the original thread id
      * @param offset the thread offset
      * @param gatewayIndex the index of the gateway
@@ -72,11 +67,15 @@ public class ThreadIdentifier implements DataSerializable {
      */
     public long generateWanId(long threadId, long offset, int gatewayIndex) {
       assert this != RESERVED;
-      return Bits.WAN_TYPE.shift(ordinal()) | Bits.WAN.shift(offset) | Bits.GATEWAY_ID.shift(gatewayIndex) | threadId;
+      return Bits.WAN_TYPE.shift(ordinal())
+          | Bits.WAN.shift(offset)
+          | Bits.GATEWAY_ID.shift(gatewayIndex)
+          | threadId;
     }
 
     /**
      * Returns true if the supplied value is a wan thread identifier.
+     *
      * @param tid the thread
      * @return true if the thread id is one of the wan types
      */
@@ -86,8 +85,8 @@ public class ThreadIdentifier implements DataSerializable {
   }
 
   /**
-   * Provides type-safe bitwise access to the threadID when dealing with generated
-   * values for wan id generation.
+   * Provides type-safe bitwise access to the threadID when dealing with generated values for wan id
+   * generation.
    */
   protected enum Bits {
     THREAD_ID(0, 32), // bits  0-31 thread id (including fake putAll bits)
@@ -109,14 +108,16 @@ public class ThreadIdentifier implements DataSerializable {
 
     /**
      * Returns the field bitmask.
+     *
      * @return the mask
      */
     public long mask() {
       return (1L << width) - 1;
     }
 
-    /** 
+    /**
      * Returns the value shifted into the field position.
+     *
      * @param val the value to shift
      * @return the shifted value
      */
@@ -126,7 +127,8 @@ public class ThreadIdentifier implements DataSerializable {
     }
 
     /**
-     * Extracts the field bits from the value. 
+     * Extracts the field bits from the value.
+     *
      * @param val the value
      * @return the field
      */
@@ -135,8 +137,7 @@ public class ThreadIdentifier implements DataSerializable {
     }
   }
 
-  public ThreadIdentifier() {
-  }
+  public ThreadIdentifier() {}
 
   public ThreadIdentifier(final byte[] mid, long threadId) {
     this.membershipID = mid;
@@ -148,7 +149,8 @@ public class ThreadIdentifier implements DataSerializable {
     if ((obj == null) || !(obj instanceof ThreadIdentifier)) {
       return false;
     }
-    return (this.threadID == ((ThreadIdentifier) obj).threadID && Arrays.equals(this.membershipID, ((ThreadIdentifier) obj).membershipID));
+    return (this.threadID == ((ThreadIdentifier) obj).threadID
+        && Arrays.equals(this.membershipID, ((ThreadIdentifier) obj).membershipID));
   }
 
   // TODO: Asif : Check this implementation
@@ -203,7 +205,9 @@ public class ThreadIdentifier implements DataSerializable {
   public String expensiveToString() {
     Object mbr;
     try {
-      mbr = InternalDistributedMember.readEssentialData(new DataInputStream(new ByteArrayInputStream(membershipID)));
+      mbr =
+          InternalDistributedMember.readEssentialData(
+              new DataInputStream(new ByteArrayInputStream(membershipID)));
     } catch (Exception e) {
       mbr = membershipID; // punt and use the bytes
     }
@@ -215,7 +219,7 @@ public class ThreadIdentifier implements DataSerializable {
    * convert fake thread id into real thread id
    *
    * @param tid thread id
-   * @return real thread id 
+   * @return real thread id
    */
   public static long getRealThreadID(long tid) {
     return Bits.THREAD_ID.extract(tid) % MAX_THREAD_PER_CLIENT;
@@ -253,6 +257,7 @@ public class ThreadIdentifier implements DataSerializable {
 
   /**
    * Checks if the input thread id is a WAN_TYPE thread id
+   *
    * @param tid
    * @return whether the input thread id is a WAN_TYPE thread id
    */
@@ -262,6 +267,7 @@ public class ThreadIdentifier implements DataSerializable {
 
   /**
    * create a fake id for an operation on the given bucket
+   *
    * @return the fake id
    */
   public static long createFakeThreadIDForBulkOp(int bucketNumber, long originatingThreadId) {
@@ -270,31 +276,37 @@ public class ThreadIdentifier implements DataSerializable {
 
   /**
    * create a fake id for an operation on the given bucket
+   *
    * @return the fake id
    */
-  public static long createFakeThreadIDForParallelGSPrimaryBucket(int bucketId, long originatingThreadId, int gatewayIndex) {
+  public static long createFakeThreadIDForParallelGSPrimaryBucket(
+      int bucketId, long originatingThreadId, int gatewayIndex) {
     return WanType.PRIMARY.generateWanId(originatingThreadId, bucketId, gatewayIndex);
   }
 
   /**
    * create a fake id for an operation on the given bucket
+   *
    * @return the fake id
    */
-  public static long createFakeThreadIDForParallelGSSecondaryBucket(int bucketId, long originatingThreadId, int gatewayIndex) {
+  public static long createFakeThreadIDForParallelGSSecondaryBucket(
+      int bucketId, long originatingThreadId, int gatewayIndex) {
     return WanType.SECONDARY.generateWanId(originatingThreadId, bucketId, gatewayIndex);
   }
 
   /**
    * create a fake id for an operation on the given bucket
+   *
    * @return the fake id
    */
-  public static long createFakeThreadIDForParallelGateway(int index, long originatingThreadId, int gatewayIndex) {
+  public static long createFakeThreadIDForParallelGateway(
+      int index, long originatingThreadId, int gatewayIndex) {
     return WanType.PARALLEL.generateWanId(originatingThreadId, index, gatewayIndex);
   }
 
   /**
-   * checks to see if the membership id of this identifier is the same
-   * as in the argument
+   * checks to see if the membership id of this identifier is the same as in the argument
+   *
    * @param other
    * @return whether the two IDs are from the same member
    */

@@ -25,11 +25,13 @@ public class CliCommandNotAvailableException extends CliCommandException {
     this(commandTarget, null, null);
   }
 
-  public CliCommandNotAvailableException(final CommandTarget commandTarget, final OptionSet optionSet) {
+  public CliCommandNotAvailableException(
+      final CommandTarget commandTarget, final OptionSet optionSet) {
     this(commandTarget, optionSet, null);
   }
 
-  public CliCommandNotAvailableException(final CommandTarget commandTarget, final OptionSet optionSet, final Throwable cause) {
+  public CliCommandNotAvailableException(
+      final CommandTarget commandTarget, final OptionSet optionSet, final Throwable cause) {
     super(commandTarget, optionSet, cause);
   }
 }

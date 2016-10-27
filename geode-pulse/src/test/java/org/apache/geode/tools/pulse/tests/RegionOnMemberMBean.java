@@ -18,11 +18,7 @@
  */
 package org.apache.geode.tools.pulse.tests;
 
-/**
- * Region on members mbean
- *
- *
- */
+/** Region on members mbean */
 public interface RegionOnMemberMBean {
 
   String getName();

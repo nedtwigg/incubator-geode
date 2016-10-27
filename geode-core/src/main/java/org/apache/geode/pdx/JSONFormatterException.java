@@ -19,16 +19,16 @@ package org.apache.geode.pdx;
 import org.apache.geode.GemFireException;
 
 /**
- * This exception will be thrown, when  {link @JSONFormatter} is unable to parse the 
- * JSON document or {link @PdxInstance}.
+ * This exception will be thrown, when {link @JSONFormatter} is unable to parse the JSON document or
+ * {link @PdxInstance}.
  */
-
 public class JSONFormatterException extends GemFireException {
 
   private static final long serialVersionUID = 1L;
 
   /**
    * Create the exception with the given message.
+   *
    * @param message the message of the new exception
    */
   public JSONFormatterException(String message) {
@@ -37,11 +37,11 @@ public class JSONFormatterException extends GemFireException {
 
   /**
    * Create the exception with the given message and cause.
+   *
    * @param message the message of the new exception
    * @param cause the cause of the new exception
    */
   public JSONFormatterException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

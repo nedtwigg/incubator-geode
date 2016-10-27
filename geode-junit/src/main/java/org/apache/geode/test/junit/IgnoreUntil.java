@@ -25,9 +25,9 @@ import java.lang.annotation.Target;
 import org.apache.geode.test.junit.support.DefaultIgnoreCondition;
 
 /**
- * The IgnoreUntil class is a Java Annotation used to annotated a test suite class test case method in order to
- * conditionally ignore the test case for a fixed amount of time, or based on a predetermined condition provided by
- * the IgnoreCondition interface.
+ * The IgnoreUntil class is a Java Annotation used to annotated a test suite class test case method
+ * in order to conditionally ignore the test case for a fixed amount of time, or based on a
+ * predetermined condition provided by the IgnoreCondition interface.
  *
  * @see java.lang.annotation.Annotation
  * @see org.apache.geode.test.junit.IgnoreCondition
@@ -35,7 +35,7 @@ import org.apache.geode.test.junit.support.DefaultIgnoreCondition;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @SuppressWarnings("unused")
 public @interface IgnoreUntil {
 
@@ -44,5 +44,4 @@ public @interface IgnoreUntil {
   String until() default "1970-01-01";
 
   String value() default "";
-
 }

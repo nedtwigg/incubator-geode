@@ -17,8 +17,8 @@
 
 package org.apache.geode.cache;
 
-/** Thrown when a commit operation of a JTA enlisted cache transaction fails
- *
+/**
+ * Thrown when a commit operation of a JTA enlisted cache transaction fails
  *
  * @see javax.transaction.UserTransaction#commit
  * @since GemFire 4.0
@@ -27,9 +27,9 @@ public class SynchronizationCommitConflictException extends CacheRuntimeExceptio
   private static final long serialVersionUID = 2619806460255259492L;
 
   /**
-   * Constructs an instance of
-   * <code>SynchronizationCommitConflictException</code> with the
+   * Constructs an instance of <code>SynchronizationCommitConflictException</code> with the
    * specified detail message.
+   *
    * @param msg the detail message
    */
   public SynchronizationCommitConflictException(String msg) {
@@ -37,9 +37,9 @@ public class SynchronizationCommitConflictException extends CacheRuntimeExceptio
   }
 
   /**
-   * Constructs an instance of
-   * <code>SynchronizationCommitConflictException</code> with the
+   * Constructs an instance of <code>SynchronizationCommitConflictException</code> with the
    * specified detail message and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */

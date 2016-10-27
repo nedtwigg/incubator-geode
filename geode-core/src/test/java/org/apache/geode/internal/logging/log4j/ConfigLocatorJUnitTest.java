@@ -36,7 +36,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
  * UnitTest for ConfigLocator which is used to find the Log4J 2 configuration file.
- * 
+ *
  * @since GemFire 8.2
  */
 @Category(IntegrationTest.class)
@@ -45,8 +45,7 @@ public class ConfigLocatorJUnitTest {
   private static Set<String> suffixesNotFoundTested = new HashSet<String>();
   private static Set<String> suffixesFoundTested = new HashSet<String>();
 
-  @Rule
-  public TemporaryFolder folder = new TemporaryFolder();
+  @Rule public TemporaryFolder folder = new TemporaryFolder();
 
   @AfterClass
   public static void afterClass() {
@@ -200,10 +199,10 @@ public class ConfigLocatorJUnitTest {
     assertNull(ConfigLocator.findConfigInClasspath());
 
     // create class loader
-    ClassLoader customLoader = new URLClassLoader(new URL[] { folder.getRoot().toURI().toURL() });
+    ClassLoader customLoader = new URLClassLoader(new URL[] {folder.getRoot().toURI().toURL()});
     assertNotNull(customLoader.getResource(fileName));
 
-    // temporarily add class loader to the classpath searched by ConfigLocator 
+    // temporarily add class loader to the classpath searched by ConfigLocator
     ClassLoader tccl = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(customLoader);

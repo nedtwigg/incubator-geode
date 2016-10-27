@@ -54,9 +54,7 @@ import org.apache.geode.cache.query.internal.index.IndexManager.TestHook;
 import org.apache.geode.internal.cache.LocalRegion;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- */
+/** */
 @Category(IntegrationTest.class)
 public class IndexUseJUnitTest {
 
@@ -85,20 +83,27 @@ public class IndexUseJUnitTest {
   public void tearDown() throws Exception {
     CacheUtils.closeCache();
     IndexManager indexManager = ((LocalRegion) region).getIndexManager();
-    if (indexManager != null)
-      indexManager.destroy();
+    if (indexManager != null) indexManager.destroy();
     IndexManager.TEST_RANGEINDEX_ONLY = false;
-
   }
 
   @Test
   public void testIndexUseSingleCondition() throws Exception {
-    String testData[][] = { { "status", "'active'" }, { "ID", "2" }, { "P1.secId", "'IBM'" }, };
-    String operators[] = { "=", "<>", "!=", "<", "<=", ">", ">=" };
+    String testData[][] = {
+      {"status", "'active'"}, {"ID", "2"}, {"P1.secId", "'IBM'"},
+    };
+    String operators[] = {"=", "<>", "!=", "<", "<=", ">", ">="};
     for (int i = 0; i < operators.length; i++) {
       String operator = operators[i];
       for (int j = 0; j < testData.length; j++) {
-        Query q = qs.newQuery("SELECT DISTINCT * FROM /pos where " + testData[j][0] + " " + operator + " " + testData[j][1]);
+        Query q =
+            qs.newQuery(
+                "SELECT DISTINCT * FROM /pos where "
+                    + testData[j][0]
+                    + " "
+                    + operator
+                    + " "
+                    + testData[j][1]);
         QueryObserverImpl observer = new QueryObserverImpl();
         QueryObserverHolder.setInstance(observer);
         q.execute();
@@ -111,8 +116,30 @@ public class IndexUseJUnitTest {
 
   @Test
   public void testIndexUseMultipleConditions() throws Exception {
-    String testData[][] = { { "P1.secType = 'a'", "0" }, { "status = 'active' AND ID = 2", "1" }, { "status = 'active' AND ID = 2 AND P1.secId  = 'IBM'", "1" }, { "status = 'active' OR ID = 2", "2" }, { "status = 'active' OR ID = 2 OR P1.secId  = 'IBM'", "3" }, { "status = 'active' AND ID = 2 OR P1.secId  = 'IBM'", "2" }, { "status = 'active' AND ( ID = 2 OR P1.secId  = 'IBM')", "1" }, { "status = 'active' OR ID = 2 AND P1.secId  = 'IBM'", "2" }, { "(status = 'active' OR ID = 2) AND P1.secId  = 'IBM'", "1" }, { "NOT (status = 'active') AND ID = 2", "1" }, { "status = 'active' AND NOT( ID = 2 )", "1" }, { "NOT (status = 'active') OR ID = 2", "2" }, { "status = 'active' OR NOT( ID = 2 )", "2" }, { "status = 'active' AND P1.secType = 'a'", "1" }, { "status = 'active' OR P1.secType = 'a'", "0" }, { "status = 'active' AND ID =1 AND P1.secType = 'a'", "1" }, { "status = 'active' AND ID = 1 OR P1.secType = 'a'", "0" }, { "status = 'active' OR ID = 1 AND P1.secType = 'a'", "2" },
-        { "P2.secId = null", "1" }, { "IS_UNDEFINED(P2.secId)", "1" }, { "IS_DEFINED(P2.secId)", "1" }, { "P2.secId = UNDEFINED", "0" }, };
+    String testData[][] = {
+      {"P1.secType = 'a'", "0"},
+      {"status = 'active' AND ID = 2", "1"},
+      {"status = 'active' AND ID = 2 AND P1.secId  = 'IBM'", "1"},
+      {"status = 'active' OR ID = 2", "2"},
+      {"status = 'active' OR ID = 2 OR P1.secId  = 'IBM'", "3"},
+      {"status = 'active' AND ID = 2 OR P1.secId  = 'IBM'", "2"},
+      {"status = 'active' AND ( ID = 2 OR P1.secId  = 'IBM')", "1"},
+      {"status = 'active' OR ID = 2 AND P1.secId  = 'IBM'", "2"},
+      {"(status = 'active' OR ID = 2) AND P1.secId  = 'IBM'", "1"},
+      {"NOT (status = 'active') AND ID = 2", "1"},
+      {"status = 'active' AND NOT( ID = 2 )", "1"},
+      {"NOT (status = 'active') OR ID = 2", "2"},
+      {"status = 'active' OR NOT( ID = 2 )", "2"},
+      {"status = 'active' AND P1.secType = 'a'", "1"},
+      {"status = 'active' OR P1.secType = 'a'", "0"},
+      {"status = 'active' AND ID =1 AND P1.secType = 'a'", "1"},
+      {"status = 'active' AND ID = 1 OR P1.secType = 'a'", "0"},
+      {"status = 'active' OR ID = 1 AND P1.secType = 'a'", "2"},
+      {"P2.secId = null", "1"},
+      {"IS_UNDEFINED(P2.secId)", "1"},
+      {"IS_DEFINED(P2.secId)", "1"},
+      {"P2.secId = UNDEFINED", "0"},
+    };
     for (int j = 0; j < testData.length; j++) {
       Query q = qs.newQuery("SELECT DISTINCT * FROM /pos where " + testData[j][0]);
       QueryObserverImpl observer = new QueryObserverImpl();
@@ -125,21 +152,29 @@ public class IndexUseJUnitTest {
   }
 
   /**
-   * Test to check if Region object is passed as bind argument, the index
-   * utilization occurs or not
+   * Test to check if Region object is passed as bind argument, the index utilization occurs or not
    */
   @Test
   public void testBug36421_part1() {
     try {
-      String testData[][] = { { "status", "'active'" }, };
-      String operators[] = { "=" };
+      String testData[][] = {
+        {"status", "'active'"},
+      };
+      String operators[] = {"="};
       for (int i = 0; i < operators.length; i++) {
         String operator = operators[i];
         for (int j = 0; j < testData.length; j++) {
-          Query q = qs.newQuery("SELECT DISTINCT * FROM $1 where " + testData[j][0] + " " + operator + " " + testData[j][1]);
+          Query q =
+              qs.newQuery(
+                  "SELECT DISTINCT * FROM $1 where "
+                      + testData[j][0]
+                      + " "
+                      + operator
+                      + " "
+                      + testData[j][1]);
           QueryObserverImpl observer = new QueryObserverImpl();
           QueryObserverHolder.setInstance(observer);
-          q.execute(new Object[] { CacheUtils.getRegion("/pos") });
+          q.execute(new Object[] {CacheUtils.getRegion("/pos")});
           if (!observer.isIndexesUsed) {
             fail("Index not used for operator '" + operator + "'");
           }
@@ -152,21 +187,24 @@ public class IndexUseJUnitTest {
   }
 
   /**
-   * Test to check if Region short cut method is used for querying, the index
-   * utilization occurs or not
+   * Test to check if Region short cut method is used for querying, the index utilization occurs or
+   * not
    */
   @Test
   public void testBug36421_part2() {
     try {
-      String testData[][] = { { "status", "'active'" }, };
-      String operators[] = { "=" };
+      String testData[][] = {
+        {"status", "'active'"},
+      };
+      String operators[] = {"="};
       for (int i = 0; i < operators.length; i++) {
         String operator = operators[i];
         for (int j = 0; j < testData.length; j++) {
 
           QueryObserverImpl observer = new QueryObserverImpl();
           QueryObserverHolder.setInstance(observer);
-          CacheUtils.getRegion("/pos").query(testData[j][0] + " " + operator + " " + testData[j][1]);
+          CacheUtils.getRegion("/pos")
+              .query(testData[j][0] + " " + operator + " " + testData[j][1]);
           if (!observer.isIndexesUsed) {
             fail("Index not used for operator '" + operator + "'");
           }
@@ -179,8 +217,8 @@ public class IndexUseJUnitTest {
   }
 
   /**
-   * Test to check if a parametrized query when using different bind arguments
-   * of Region uses the index correctly
+   * Test to check if a parametrized query when using different bind arguments of Region uses the
+   * index correctly
    */
   @Test
   public void testBug36421_part3() {
@@ -190,7 +228,7 @@ public class IndexUseJUnitTest {
       q = qs.newQuery("SELECT DISTINCT * FROM $1 z where z.status = 'active'");
       QueryObserverImpl observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
-      q.execute(new Object[] { CacheUtils.getRegion("/pos") });
+      q.execute(new Object[] {CacheUtils.getRegion("/pos")});
       if (!observer.isIndexesUsed) {
         fail("Index not uesd for operator '='");
       }
@@ -204,7 +242,7 @@ public class IndexUseJUnitTest {
       region.put("4", new Portfolio(4));
       observer = new QueryObserverImpl();
       QueryObserverHolder.setInstance(observer);
-      q.execute(new Object[] { CacheUtils.getRegion("/pos1") });
+      q.execute(new Object[] {CacheUtils.getRegion("/pos1")});
       if (!observer.isIndexesUsed) {
         fail("Index not used for operator'='");
       }
@@ -217,8 +255,8 @@ public class IndexUseJUnitTest {
   }
 
   /**
-   * Test to check if Region short cut method is used for querying, the Primary
-   * key index utilization occurs or not 
+   * Test to check if Region short cut method is used for querying, the Primary key index
+   * utilization occurs or not
    */
   @Test
   public void testBug36421_part4() {
@@ -277,10 +315,12 @@ public class IndexUseJUnitTest {
       }
       testRgn.put(ID, mkid);
     }
-    String queries[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 16"
-        /* "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap.get('key2') >= 16" ,*/
+    String queries[] = {"SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 16"
+      /* "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap.get('key2') >= 16" ,*/
     };
-    String queriesIndexNotUsed[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap.get('key2') >= 16" };
+    String queriesIndexNotUsed[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap.get('key2') >= 16"
+    };
     Object r[][] = new Object[queries.length][2];
 
     qs = CacheUtils.getQueryService();
@@ -346,13 +386,14 @@ public class IndexUseJUnitTest {
         fail(q.getQueryString());
       }
     }
-
   }
 
   @Test
   public void testCompactMapIndexUsageWithIndexOnSingleKey() throws Exception {
-    String queries[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3" };
-    String queriesIndexNotUsed[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap.get('key2') >= 3" };
+    String queries[] = {"SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3"};
+    String queriesIndexNotUsed[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap.get('key2') >= 3"
+    };
 
     LocalRegion testRgn = (LocalRegion) CacheUtils.createRegion("testRgn", null);
     int ID = 1;
@@ -369,7 +410,12 @@ public class IndexUseJUnitTest {
       testRgn.put(ID, mkid);
     }
 
-    evaluateMapTypeIndexUsage("objs.maap['key2']", "/testRgn objs", queries, queriesIndexNotUsed, CompactRangeIndex.class);
+    evaluateMapTypeIndexUsage(
+        "objs.maap['key2']",
+        "/testRgn objs",
+        queries,
+        queriesIndexNotUsed,
+        CompactRangeIndex.class);
 
     String query = "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.liist[0] >= 2";
     SelectResults withoutIndex, withIndex;
@@ -394,14 +440,20 @@ public class IndexUseJUnitTest {
     assertEquals(temp, "Index2");
 
     StructSetOrResultsSet ssOrrs = new StructSetOrResultsSet();
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(new Object[][] { { withoutIndex, withIndex } }, 1, queries);
-
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(
+        new Object[][] {{withoutIndex, withIndex}}, 1, queries);
   }
 
   @Test
   public void testCompactMapIndexUsageWithIndexOnMultipleKeys() throws Exception {
-    String queries[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key3'] >= 3" };
-    String queriesIndexNotUsed[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap.get('key2') >= 16", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key4'] >= 16", };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key3'] >= 3"
+    };
+    String queriesIndexNotUsed[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap.get('key2') >= 16",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key4'] >= 16",
+    };
 
     LocalRegion testRgn = (LocalRegion) CacheUtils.createRegion("testRgn", null);
     int ID = 1;
@@ -417,15 +469,26 @@ public class IndexUseJUnitTest {
       }
       testRgn.put(ID, mkid);
     }
-    evaluateMapTypeIndexUsage("objs.maap['key2','key3']", "/testRgn objs", queries, queriesIndexNotUsed, CompactMapRangeIndex.class);
+    evaluateMapTypeIndexUsage(
+        "objs.maap['key2','key3']",
+        "/testRgn objs",
+        queries,
+        queriesIndexNotUsed,
+        CompactMapRangeIndex.class);
   }
 
   @Test
   public void testMapIndexUsageWithIndexOnMultipleKeys() throws Exception {
     try {
       IndexManager.TEST_RANGEINDEX_ONLY = true;
-      String queries[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key3'] >= 3" };
-      String queriesIndexNotUsed[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap.get('key2') >= 16", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key4'] >= 16", };
+      String queries[] = {
+        "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3",
+        "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key3'] >= 3"
+      };
+      String queriesIndexNotUsed[] = {
+        "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap.get('key2') >= 16",
+        "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key4'] >= 16",
+      };
 
       LocalRegion testRgn = (LocalRegion) CacheUtils.createRegion("testRgn", null);
       int ID = 1;
@@ -442,13 +505,24 @@ public class IndexUseJUnitTest {
         testRgn.put(ID, mkid);
       }
 
-      evaluateMapTypeIndexUsage("objs.maap['key2','key3']", "/testRgn objs", queries, queriesIndexNotUsed, MapRangeIndex.class);
+      evaluateMapTypeIndexUsage(
+          "objs.maap['key2','key3']",
+          "/testRgn objs",
+          queries,
+          queriesIndexNotUsed,
+          MapRangeIndex.class);
     } finally {
       IndexManager.TEST_RANGEINDEX_ONLY = false;
     }
   }
 
-  private void evaluateMapTypeIndexUsage(String indexExpression, String fromClause, String[] queries, String[] queriesIndexNotUsed, Class expectedIndexClass) throws Exception {
+  private void evaluateMapTypeIndexUsage(
+      String indexExpression,
+      String fromClause,
+      String[] queries,
+      String[] queriesIndexNotUsed,
+      Class expectedIndexClass)
+      throws Exception {
     QueryService qs = CacheUtils.getQueryService();
 
     Object r[][] = new Object[queries.length][2];
@@ -534,7 +608,10 @@ public class IndexUseJUnitTest {
     }
 
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /testRgn p  WHERE p.ID <= 10 order by p.pkid asc limit 1", "SELECT DISTINCT * FROM /testRgn p  WHERE p.ID <= 10 order by p.pkid desc limit 1", };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /testRgn p  WHERE p.ID <= 10 order by p.pkid asc limit 1",
+      "SELECT DISTINCT * FROM /testRgn p  WHERE p.ID <= 10 order by p.pkid desc limit 1",
+    };
 
     Object r[][] = new Object[queries.length][2];
 
@@ -599,9 +676,7 @@ public class IndexUseJUnitTest {
         assertTrue(itr.hasNext());
         String temp = itr.next().toString();
         assertEquals(temp, "Index1");
-      }
-
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
       }
@@ -627,7 +702,10 @@ public class IndexUseJUnitTest {
     }
 
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /testRgn p  WHERE p.ID <= 10 order by ID asc limit 1", "SELECT DISTINCT * FROM /testRgn p  WHERE p.ID <= 10 order by p.ID desc limit 1", };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /testRgn p  WHERE p.ID <= 10 order by ID asc limit 1",
+      "SELECT DISTINCT * FROM /testRgn p  WHERE p.ID <= 10 order by p.ID desc limit 1",
+    };
 
     Object r[][] = new Object[queries.length][2];
 
@@ -651,7 +729,6 @@ public class IndexUseJUnitTest {
 
           } else if (i == 1) {
             assertEquals(p.getID(), 10);
-
           }
         }
         r[i][1] = sr;
@@ -664,14 +741,11 @@ public class IndexUseJUnitTest {
         assertTrue(itr.hasNext());
         String temp = itr.next().toString();
         assertEquals(temp, "Index1");
-      }
-
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
       }
     }
-
   }
 
   @Test
@@ -691,7 +765,10 @@ public class IndexUseJUnitTest {
     }
 
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT p.key, p.value FROM /testRgn.entrySet p  WHERE p.value.ID <= 10 order by p.value.createTime asc limit 1", "SELECT DISTINCT p.key, p.value FROM /testRgn.entrySet p  WHERE p.value.ID <= 10 order by p.value.createTime desc limit 1", };
+    String queries[] = {
+      "SELECT DISTINCT p.key, p.value FROM /testRgn.entrySet p  WHERE p.value.ID <= 10 order by p.value.createTime asc limit 1",
+      "SELECT DISTINCT p.key, p.value FROM /testRgn.entrySet p  WHERE p.value.ID <= 10 order by p.value.createTime desc limit 1",
+    };
 
     Object r[][] = new Object[queries.length][2];
 
@@ -754,9 +831,7 @@ public class IndexUseJUnitTest {
         assertTrue(itr.hasNext());
         String temp = itr.next().toString();
         assertEquals(temp, "Index1");
-      }
-
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
       }
@@ -786,19 +861,23 @@ public class IndexUseJUnitTest {
 
     qs = CacheUtils.getQueryService();
     try {
-      Query q = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap[*] >= 3");
+      Query q =
+          CacheUtils.getQueryService()
+              .newQuery("SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap[*] >= 3");
       fail("Should have thrown exception");
     } catch (QueryInvalidException qe) {
-      //ok      
+      //ok
     }
 
     try {
-      Query q = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key1','key2'] >= 3");
+      Query q =
+          CacheUtils.getQueryService()
+              .newQuery(
+                  "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key1','key2'] >= 3");
       fail("Should have thrown exception");
     } catch (QueryInvalidException qe) {
-      //ok      
+      //ok
     }
-
   }
 
   @Test
@@ -821,8 +900,11 @@ public class IndexUseJUnitTest {
     }
 
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3 and itr1.maap['key2'] <=18", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key3'] >= 3  and  itr1.maap['key3'] >= 13 ", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3  and  itr1.maap['key3'] >= 13 ", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3  and  itr1.maap['key3'] < 18 "
-
+    String queries[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3 and itr1.maap['key2'] <=18",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key3'] >= 3  and  itr1.maap['key3'] >= 13 ",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3  and  itr1.maap['key3'] >= 13 ",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3  and  itr1.maap['key3'] < 18 "
     };
 
     Object r[][] = new Object[queries.length][2];
@@ -841,7 +923,8 @@ public class IndexUseJUnitTest {
       }
     }
 
-    Index i1 = qs.createIndex("Index1", IndexType.FUNCTIONAL, "objs.maap['key2','key3']", "/testRgn objs");
+    Index i1 =
+        qs.createIndex("Index1", IndexType.FUNCTIONAL, "objs.maap['key2','key3']", "/testRgn objs");
     assertTrue(i1 instanceof CompactMapRangeIndex);
     // Execute Queries with Indexes
     for (int i = 0; i < queries.length; i++) {
@@ -868,7 +951,6 @@ public class IndexUseJUnitTest {
     }
     StructSetOrResultsSet ssOrrs = new StructSetOrResultsSet();
     ssOrrs.CompareQueryResultsWithoutAndWithIndexes(r, queries.length, queries);
-
   }
 
   @Test
@@ -892,8 +974,11 @@ public class IndexUseJUnitTest {
     }
 
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3 and itr1.maap['key2'] <=18", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key3'] >= 3  and  itr1.maap['key3'] >= 13 ", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3  and  itr1.maap['key3'] >= 13 ", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3  and  itr1.maap['key3'] < 18 "
-
+    String queries[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3 and itr1.maap['key2'] <=18",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key3'] >= 3  and  itr1.maap['key3'] >= 13 ",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3  and  itr1.maap['key3'] >= 13 ",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3  and  itr1.maap['key3'] < 18 "
     };
 
     Object r[][] = new Object[queries.length][2];
@@ -912,7 +997,8 @@ public class IndexUseJUnitTest {
       }
     }
 
-    Index i1 = qs.createIndex("Index1", IndexType.FUNCTIONAL, "objs.maap['key2','key3']", "/testRgn objs");
+    Index i1 =
+        qs.createIndex("Index1", IndexType.FUNCTIONAL, "objs.maap['key2','key3']", "/testRgn objs");
     assertTrue(i1 instanceof MapRangeIndex);
     // Execute Queries with Indexes
     for (int i = 0; i < queries.length; i++) {
@@ -939,7 +1025,6 @@ public class IndexUseJUnitTest {
     }
     StructSetOrResultsSet ssOrrs = new StructSetOrResultsSet();
     ssOrrs.CompareQueryResultsWithoutAndWithIndexes(r, queries.length, queries);
-
   }
 
   @Test
@@ -948,13 +1033,15 @@ public class IndexUseJUnitTest {
     QueryService qs;
     qs = CacheUtils.getQueryService();
     LocalRegion testRgn = (LocalRegion) CacheUtils.createRegion("testRgn", null);
-    Index i1 = qs.createIndex("Index1", IndexType.FUNCTIONAL, "objs.maap['key2','key3']", "/testRgn objs");
+    Index i1 =
+        qs.createIndex("Index1", IndexType.FUNCTIONAL, "objs.maap['key2','key3']", "/testRgn objs");
     qs = CacheUtils.getQueryService();
     // Execute Queries without Indexes
-    Query q = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3 ");
+    Query q =
+        CacheUtils.getQueryService()
+            .newQuery("SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.maap['key2'] >= 3 ");
     SelectResults sr = (SelectResults) q.execute();
     assertTrue(sr.isEmpty());
-
   }
 
   @Test
@@ -962,7 +1049,8 @@ public class IndexUseJUnitTest {
     QueryService qs = CacheUtils.getQueryService();
     LocalRegion testRgn = (LocalRegion) CacheUtils.createRegion("testRgn", null);
     //Create indexes
-    Index i1 = qs.createIndex("Index1", IndexType.FUNCTIONAL, "p.status", "/testRgn p, p.positions");
+    Index i1 =
+        qs.createIndex("Index1", IndexType.FUNCTIONAL, "p.status", "/testRgn p, p.positions");
     Index i2 = qs.createIndex("Index2", IndexType.FUNCTIONAL, "p.ID", "/testRgn p, p.positions");
 
     //put values
@@ -973,12 +1061,16 @@ public class IndexUseJUnitTest {
     TestHook hook = new RangeIndexTestHook();
     RangeIndex.setTestHook(hook);
     // Execute Queries without Indexes
-    Query q = CacheUtils.getQueryService().newQuery("<trace> SELECT * FROM /testRgn p, p.positions where p.status = 'active' AND p.ID > 0 ");
+    Query q =
+        CacheUtils.getQueryService()
+            .newQuery(
+                "<trace> SELECT * FROM /testRgn p, p.positions where p.status = 'active' AND p.ID > 0 ");
 
     //Following should throw NullPointerException.
     SelectResults sr = (SelectResults) q.execute();
 
-    assertTrue("RangeIndexTestHook was not hooked for spot 2", ((RangeIndexTestHook) hook).isHooked(2));
+    assertTrue(
+        "RangeIndexTestHook was not hooked for spot 2", ((RangeIndexTestHook) hook).isHooked(2));
     RangeIndex.setTestHook(null);
   }
 
@@ -987,7 +1079,8 @@ public class IndexUseJUnitTest {
     QueryService qs = CacheUtils.getQueryService();
     LocalRegion testRgn = (LocalRegion) CacheUtils.createRegion("testRgn", null);
     //Create indexes
-    Index i1 = qs.createIndex("Index1", IndexType.FUNCTIONAL, "p.status", "/testRgn p, p.positions");
+    Index i1 =
+        qs.createIndex("Index1", IndexType.FUNCTIONAL, "p.status", "/testRgn p, p.positions");
     Index i2 = qs.createIndex("Index2", IndexType.FUNCTIONAL, "p.ID", "/testRgn p, p.positions");
 
     //put values
@@ -998,12 +1091,16 @@ public class IndexUseJUnitTest {
     TestHook hook = new RangeIndexTestHook();
     RangeIndex.setTestHook(hook);
     // Execute Queries without Indexes
-    Query q = CacheUtils.getQueryService().newQuery("<trace> SELECT * FROM /testRgn p, p.positions where p.status = 'active' AND p.ID < 0 ");
+    Query q =
+        CacheUtils.getQueryService()
+            .newQuery(
+                "<trace> SELECT * FROM /testRgn p, p.positions where p.status = 'active' AND p.ID < 0 ");
 
     //Following should throw NullPointerException.
     SelectResults sr = (SelectResults) q.execute();
 
-    assertTrue("RangeIndexTestHook was not hooked for spot 1", ((RangeIndexTestHook) hook).isHooked(1));
+    assertTrue(
+        "RangeIndexTestHook was not hooked for spot 1", ((RangeIndexTestHook) hook).isHooked(1));
     RangeIndex.setTestHook(null);
   }
 
@@ -1023,12 +1120,15 @@ public class IndexUseJUnitTest {
     TestHook hook = new RangeIndexTestHook();
     CompactRangeIndex.setTestHook(hook);
     // Execute Queries without Indexes
-    Query q = CacheUtils.getQueryService().newQuery("<trace> SELECT * FROM /testRgn p where p.status = 'active' AND p.ID > 0 ");
+    Query q =
+        CacheUtils.getQueryService()
+            .newQuery("<trace> SELECT * FROM /testRgn p where p.status = 'active' AND p.ID > 0 ");
 
     //Following should throw NullPointerException.
     SelectResults sr = (SelectResults) q.execute();
 
-    assertTrue("RangeIndexTestHook was not hooked for spot 2", ((RangeIndexTestHook) hook).isHooked(2));
+    assertTrue(
+        "RangeIndexTestHook was not hooked for spot 2", ((RangeIndexTestHook) hook).isHooked(2));
     CompactRangeIndex.setTestHook(null);
   }
 
@@ -1048,12 +1148,15 @@ public class IndexUseJUnitTest {
     TestHook hook = new RangeIndexTestHook();
     CompactRangeIndex.setTestHook(hook);
     // Execute Queries without Indexes
-    Query q = CacheUtils.getQueryService().newQuery("<trace> SELECT * FROM /testRgn p where p.status = 'active' AND p.ID < 0 ");
+    Query q =
+        CacheUtils.getQueryService()
+            .newQuery("<trace> SELECT * FROM /testRgn p where p.status = 'active' AND p.ID < 0 ");
 
     //Following should throw NullPointerException.
     SelectResults sr = (SelectResults) q.execute();
 
-    assertTrue("RangeIndexTestHook was not hooked for spot 1", ((RangeIndexTestHook) hook).isHooked(1));
+    assertTrue(
+        "RangeIndexTestHook was not hooked for spot 1", ((RangeIndexTestHook) hook).isHooked(1));
     CompactRangeIndex.setTestHook(null);
   }
 
@@ -1067,9 +1170,24 @@ public class IndexUseJUnitTest {
       TestObject object = new TestObject(ID);
       testRgn.put(ID, object);
     }
-    String queries[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['string'] = '1'", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['double'] > 1D", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['integer'] > 1", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['long'] > 1L" };
-    String queriesIndexNotUsed[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('string') = '1'", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('double') > 1D", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('integer') > 1", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('long') > 1L" };
-    this.evaluateMapTypeIndexUsage("itr1.testFields[*]", "/testRgn itr1", queries, queriesIndexNotUsed, CompactMapRangeIndex.class);
+    String queries[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['string'] = '1'",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['double'] > 1D",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['integer'] > 1",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['long'] > 1L"
+    };
+    String queriesIndexNotUsed[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('string') = '1'",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('double') > 1D",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('integer') > 1",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('long') > 1L"
+    };
+    this.evaluateMapTypeIndexUsage(
+        "itr1.testFields[*]",
+        "/testRgn itr1",
+        queries,
+        queriesIndexNotUsed,
+        CompactMapRangeIndex.class);
   }
 
   @Test
@@ -1082,9 +1200,24 @@ public class IndexUseJUnitTest {
       TestObject object = new TestObject(ID);
       testRgn.put(ID, object);
     }
-    String queries[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['string'] = '1'", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['double'] > 1D", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['integer'] > 1", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['long'] > 1L" };
-    String queriesIndexNotUsed[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('string') = '1'", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('double') > 1D", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('integer') > 1", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('long') > 1L" };
-    evaluateMapTypeIndexUsage("itr1.testFields['string','double','integer','long']", "/testRgn itr1", queries, queriesIndexNotUsed, CompactMapRangeIndex.class);
+    String queries[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['string'] = '1'",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['double'] > 1D",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['integer'] > 1",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['long'] > 1L"
+    };
+    String queriesIndexNotUsed[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('string') = '1'",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('double') > 1D",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('integer') > 1",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('long') > 1L"
+    };
+    evaluateMapTypeIndexUsage(
+        "itr1.testFields['string','double','integer','long']",
+        "/testRgn itr1",
+        queries,
+        queriesIndexNotUsed,
+        CompactMapRangeIndex.class);
   }
 
   @Test
@@ -1097,8 +1230,18 @@ public class IndexUseJUnitTest {
       TestObject object = new TestObject(ID);
       testRgn.put(ID, object);
     }
-    String queries[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('string') = '1'", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('double') > 1D", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('integer') > 1", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('long') > 1L" };
-    String queriesIndexNotUsed[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['string'] = '1'", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['double'] > 1D", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['integer'] > 1", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['long'] > 1L" };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('string') = '1'",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('double') > 1D",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('integer') > 1",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('long') > 1L"
+    };
+    String queriesIndexNotUsed[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['string'] = '1'",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['double'] > 1D",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['integer'] > 1",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['long'] > 1L"
+    };
     Object r[][] = new Object[queries.length][2];
 
     qs = CacheUtils.getQueryService();
@@ -1117,11 +1260,21 @@ public class IndexUseJUnitTest {
       }
     }
 
-    Index i1 = qs.createIndex("Index1", IndexType.FUNCTIONAL, "itr1.testFields.get('string')", "/testRgn itr1");
-    Index i2 = qs.createIndex("Index2", IndexType.FUNCTIONAL, "itr1.testFields.get('double')", "/testRgn itr1");
-    Index i3 = qs.createIndex("Index3", IndexType.FUNCTIONAL, "itr1.testFields.get('integer')", "/testRgn itr1");
-    Index i4 = qs.createIndex("Index4", IndexType.FUNCTIONAL, "itr1.testFields.get('long')", "/testRgn itr1");
-    Index i5 = qs.createIndex("Index5", IndexType.FUNCTIONAL, "itr1.testFields.get('complex')", "/testRgn itr1");
+    Index i1 =
+        qs.createIndex(
+            "Index1", IndexType.FUNCTIONAL, "itr1.testFields.get('string')", "/testRgn itr1");
+    Index i2 =
+        qs.createIndex(
+            "Index2", IndexType.FUNCTIONAL, "itr1.testFields.get('double')", "/testRgn itr1");
+    Index i3 =
+        qs.createIndex(
+            "Index3", IndexType.FUNCTIONAL, "itr1.testFields.get('integer')", "/testRgn itr1");
+    Index i4 =
+        qs.createIndex(
+            "Index4", IndexType.FUNCTIONAL, "itr1.testFields.get('long')", "/testRgn itr1");
+    Index i5 =
+        qs.createIndex(
+            "Index5", IndexType.FUNCTIONAL, "itr1.testFields.get('complex')", "/testRgn itr1");
 
     assertTrue(i1 instanceof CompactRangeIndex);
 
@@ -1182,8 +1335,18 @@ public class IndexUseJUnitTest {
       TestObject object = new TestObject(ID);
       testRgn.put(ID, object);
     }
-    String queries[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['string'] = '1'", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['double'] > 1D", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['integer'] > 1", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['long'] > 1L" };
-    String queriesIndexNotUsed[] = { "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('string') = '1'", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('double') > 1D", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('integer') > 1", "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('long') > 1L" };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['string'] = '1'",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['double'] > 1D",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['integer'] > 1",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields['long'] > 1L"
+    };
+    String queriesIndexNotUsed[] = {
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('string') = '1'",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('double') > 1D",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('integer') > 1",
+      "SELECT DISTINCT * FROM /testRgn itr1  WHERE itr1.testFields.get('long') > 1L"
+    };
     Object r[][] = new Object[queries.length][2];
 
     qs = CacheUtils.getQueryService();
@@ -1202,11 +1365,20 @@ public class IndexUseJUnitTest {
       }
     }
 
-    Index i1 = qs.createIndex("Index1", IndexType.FUNCTIONAL, "itr1.testFields['string']", "/testRgn itr1");
-    Index i2 = qs.createIndex("Index2", IndexType.FUNCTIONAL, "itr1.testFields['double']", "/testRgn itr1");
-    Index i3 = qs.createIndex("Index3", IndexType.FUNCTIONAL, "itr1.testFields['integer']", "/testRgn itr1");
-    Index i4 = qs.createIndex("Index4", IndexType.FUNCTIONAL, "itr1.testFields['long']", "/testRgn itr1");
-    Index i5 = qs.createIndex("Index5", IndexType.FUNCTIONAL, "itr1.testFields['complex']", "/testRgn itr1");
+    Index i1 =
+        qs.createIndex(
+            "Index1", IndexType.FUNCTIONAL, "itr1.testFields['string']", "/testRgn itr1");
+    Index i2 =
+        qs.createIndex(
+            "Index2", IndexType.FUNCTIONAL, "itr1.testFields['double']", "/testRgn itr1");
+    Index i3 =
+        qs.createIndex(
+            "Index3", IndexType.FUNCTIONAL, "itr1.testFields['integer']", "/testRgn itr1");
+    Index i4 =
+        qs.createIndex("Index4", IndexType.FUNCTIONAL, "itr1.testFields['long']", "/testRgn itr1");
+    Index i5 =
+        qs.createIndex(
+            "Index5", IndexType.FUNCTIONAL, "itr1.testFields['complex']", "/testRgn itr1");
 
     assertTrue(i1 instanceof CompactRangeIndex);
 
@@ -1259,7 +1431,17 @@ public class IndexUseJUnitTest {
 
   @Test
   public void testIndexUseSelfJoin() throws Exception {
-    String[] queries = { "SELECT DISTINCT * FROM /pos p1, /pos p2 where p1.status = p2.status", "SELECT DISTINCT * FROM /pos p1, /pos p2 where p1.ID = p2.ID", "SELECT DISTINCT * FROM /pos p1, /pos p2 where p1.P1.secId = p2.P1.secId", "SELECT DISTINCT * FROM /pos p1, /pos p2 where p1.status = p2.status and p1.status = 'active'", "SELECT DISTINCT * FROM /pos p1, /pos p2 where p1.ID = p2.ID and p1.ID < 2", "SELECT * FROM /pos p1, /pos p2 where p1.ID = p2.ID", "SELECT * FROM /pos p1, /pos p2 where p1.P1.secId = p2.P1.secId", "SELECT * FROM /pos p1, /pos p2 where p1.status = p2.status and p1.status = 'active'", "SELECT * FROM /pos p1, /pos p2 where p1.ID = p2.ID and p1.ID < 2" };
+    String[] queries = {
+      "SELECT DISTINCT * FROM /pos p1, /pos p2 where p1.status = p2.status",
+      "SELECT DISTINCT * FROM /pos p1, /pos p2 where p1.ID = p2.ID",
+      "SELECT DISTINCT * FROM /pos p1, /pos p2 where p1.P1.secId = p2.P1.secId",
+      "SELECT DISTINCT * FROM /pos p1, /pos p2 where p1.status = p2.status and p1.status = 'active'",
+      "SELECT DISTINCT * FROM /pos p1, /pos p2 where p1.ID = p2.ID and p1.ID < 2",
+      "SELECT * FROM /pos p1, /pos p2 where p1.ID = p2.ID",
+      "SELECT * FROM /pos p1, /pos p2 where p1.P1.secId = p2.P1.secId",
+      "SELECT * FROM /pos p1, /pos p2 where p1.status = p2.status and p1.status = 'active'",
+      "SELECT * FROM /pos p1, /pos p2 where p1.ID = p2.ID and p1.ID < 2"
+    };
 
     SelectResults[][] sr = new SelectResults[queries.length][2];
     for (int j = 0; j < queries.length; j++) {
@@ -1315,10 +1497,12 @@ public class IndexUseJUnitTest {
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
     AttributesFactory af = new AttributesFactory();
     af.setPartitionAttributes(paf.create());
-    Region region = CacheUtils.createRegion("testIndexesRemainInUseAfterARebalance", af.create(), false);
+    Region region =
+        CacheUtils.createRegion("testIndexesRemainInUseAfterARebalance", af.create(), false);
 
     // Add index
-    PartitionedIndex index = (PartitionedIndex) qs.createIndex("statusIndex", "status", region.getFullPath());
+    PartitionedIndex index =
+        (PartitionedIndex) qs.createIndex("statusIndex", "status", region.getFullPath());
 
     // Do puts
     for (int i = 0; i < 200; i++) {
@@ -1339,7 +1523,8 @@ public class IndexUseJUnitTest {
     // Get the first index entry in the PartitionedIndex bucketIndexes and delete the index from it (to simulate what happens when a bucket is moved)
     Map.Entry<Region, List<Index>> firstIndexEntry = index.getFirstBucketIndex();
     assertTrue(!firstIndexEntry.getValue().isEmpty());
-    index.removeFromBucketIndexes(firstIndexEntry.getKey(), firstIndexEntry.getValue().iterator().next());
+    index.removeFromBucketIndexes(
+        firstIndexEntry.getKey(), firstIndexEntry.getValue().iterator().next());
 
     // Verify the index was removed from the entry and the entry was removed from the bucket indexes
     assertTrue(firstIndexEntry.getValue().isEmpty());
@@ -1364,7 +1549,8 @@ public class IndexUseJUnitTest {
     evaluatePKIndexUsetest(RegionShortcut.REPLICATE, "pkTest");
   }
 
-  private void evaluatePKIndexUsetest(RegionShortcut regionShortcut, String regionName) throws Exception {
+  private void evaluatePKIndexUsetest(RegionShortcut regionShortcut, String regionName)
+      throws Exception {
     Cache cache = CacheUtils.getCache();
     Region r = cache.createRegionFactory(regionShortcut).create(regionName);
     Map map0 = new HashMap();
@@ -1376,7 +1562,9 @@ public class IndexUseJUnitTest {
     qs.createIndex("pkIndex", IndexType.PRIMARY_KEY, "p.pk", "/" + regionName + " p");
     QueryObserverImpl observer = new QueryObserverImpl();
     QueryObserverHolder.setInstance(observer);
-    SelectResults sr = (SelectResults) qs.newQuery("select * from /" + regionName + " p where p.pk = 'A1'").execute();
+    SelectResults sr =
+        (SelectResults)
+            qs.newQuery("select * from /" + regionName + " p where p.pk = 'A1'").execute();
     assertEquals(1, sr.size());
 
     if (!observer.isIndexesUsed) {
@@ -1476,7 +1664,5 @@ public class IndexUseJUnitTest {
       }
       throw new ClassCastException("Could not cast " + o.getClass().getName() + " to compObject");
     }
-
   }
-
 }

@@ -20,11 +20,8 @@ import java.awt.*;
 import java.awt.geom.GeneralPath;
 
 /**
- * Created by IntelliJ IDEA.
- * User: dsmith
- * Date: Nov 12, 2010
- * Time: 12:02:20 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: dsmith Date: Nov 12, 2010 Time: 12:02:20 PM To change this
+ * template use File | Settings | File Templates.
  */
 public class Arrow {
   private static int ARROW_WIDTH = 10;
@@ -73,7 +70,13 @@ public class Arrow {
     int x = startingLine.getX();
     int y = endingState.getStartY();
 
-    g.drawArc(x + startingLine.getWidth() - ARROW_WIDTH / 2, y - ARROW_WIDTH, ARROW_WIDTH, ARROW_WIDTH, 90, -180);
+    g.drawArc(
+        x + startingLine.getWidth() - ARROW_WIDTH / 2,
+        y - ARROW_WIDTH,
+        ARROW_WIDTH,
+        ARROW_WIDTH,
+        90,
+        -180);
     g.drawString(label, x + startingLine.getWidth() + LABEL_OFFSET, y);
     //        GeneralPath path = new GeneralPath();
     //        path.moveTo(x, y - ARROW_WIDTH);
@@ -112,7 +115,8 @@ public class Arrow {
       path.lineTo(endX + ARROW_WIDTH, y + ARROW_WIDTH);
       g.draw(path);
       int labelWidth = g.getFontMetrics().stringWidth(label);
-      g.fillArc(startX - CIRCLE_WIDTH / 2, y - CIRCLE_WIDTH / 2, CIRCLE_WIDTH, CIRCLE_WIDTH, 0, 360);
+      g.fillArc(
+          startX - CIRCLE_WIDTH / 2, y - CIRCLE_WIDTH / 2, CIRCLE_WIDTH, CIRCLE_WIDTH, 0, 360);
       g.drawString(label, startX - LABEL_OFFSET - labelWidth, y - LABEL_OFFSET);
     }
   }

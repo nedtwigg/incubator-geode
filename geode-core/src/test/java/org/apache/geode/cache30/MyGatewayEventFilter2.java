@@ -26,9 +26,7 @@ import org.apache.geode.internal.cache.xmlcache.Declarable2;
 
 public class MyGatewayEventFilter2 implements GatewayEventFilter, Declarable2 {
 
-  public void close() {
-
-  }
+  public void close() {}
 
   public Properties getConfig() {
     // TODO Auto-generated method stub

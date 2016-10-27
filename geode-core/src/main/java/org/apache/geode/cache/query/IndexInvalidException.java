@@ -29,12 +29,12 @@ import org.apache.geode.GemFireException;
  *
  * @since GemFire 4.0
  */
-
 public class IndexInvalidException extends GemFireException {
   private static final long serialVersionUID = 3285601274732772770L;
 
   /**
    * Construct an instance of IndexInvalidException
+   *
    * @param msg the error message
    */
   public IndexInvalidException(String msg) {
@@ -43,6 +43,7 @@ public class IndexInvalidException extends GemFireException {
 
   /**
    * Construct an instance of IndexInvalidException
+   *
    * @param msg the error message
    * @param cause a Throwable cause
    */
@@ -53,11 +54,11 @@ public class IndexInvalidException extends GemFireException {
 
   /**
    * Construct an instance of IndexInvalidException
+   *
    * @param cause a Throwable cause
    */
   public IndexInvalidException(Throwable cause) {
     super(cause.getCause() != null ? cause.getCause().getMessage() : cause.getMessage());
     initCause(cause);
   }
-
 }

@@ -25,10 +25,7 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.geode.internal.lang.StringUtils;
 
-/**
- * 
- * @since GemFire  8.1
- */
+/** @since GemFire 8.1 */
 public class SSLUtil {
 
   public static String getSSLAlgo(String[] protocols) {
@@ -51,7 +48,7 @@ public class SSLUtil {
       return c;
     }
     // lookup known algorithms
-    String[] knownAlgorithms = { "SSL", "SSLv2", "SSLv3", "TLS", "TLSv1", "TLSv1.1", "TLSv1.2" };
+    String[] knownAlgorithms = {"SSL", "SSLv2", "SSLv3", "TLS", "TLSv1", "TLSv1.1", "TLSv1.2"};
     for (String algo : knownAlgorithms) {
       try {
         SSLContext.getInstance(algo);
@@ -77,5 +74,4 @@ public class SSLUtil {
     }
     return v.toArray(new String[v.size()]);
   }
-
 }

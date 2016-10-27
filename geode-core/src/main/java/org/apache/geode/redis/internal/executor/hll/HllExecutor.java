@@ -33,6 +33,7 @@ public abstract class HllExecutor extends AbstractExecutor {
     if (oldVal == RedisDataType.REDIS_PROTECTED)
       throw new RedisDataTypeMismatchException("The key name \"" + key + "\" is protected");
     if (oldVal != null && oldVal != RedisDataType.REDIS_HLL)
-      throw new RedisDataTypeMismatchException("The key name \"" + key + "\" is already used by a " + oldVal.toString());
+      throw new RedisDataTypeMismatchException(
+          "The key name \"" + key + "\" is already used by a " + oldVal.toString());
   }
 }

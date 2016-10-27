@@ -29,17 +29,16 @@ import org.apache.geode.cache.execute.ResultSender;
 import org.apache.geode.internal.cache.LocalDataSet;
 
 /**
- * Context available to data dependent functions. When function is executed
- * using {@link FunctionService#onRegion(Region)}, the FunctionContext can be
- * type casted to RegionFunctionContext. Methods provided to retrieve the Region
- * and filter passed to the function execution
- * 
- * 
+ * Context available to data dependent functions. When function is executed using {@link
+ * FunctionService#onRegion(Region)}, the FunctionContext can be type casted to
+ * RegionFunctionContext. Methods provided to retrieve the Region and filter passed to the function
+ * execution
+ *
  * @since GemFire 6.0
- * 
  * @see FunctionContextImpl
  */
-public class RegionFunctionContextImpl extends FunctionContextImpl implements InternalRegionFunctionContext {
+public class RegionFunctionContextImpl extends FunctionContextImpl
+    implements InternalRegionFunctionContext {
 
   private final Region dataSet;
 
@@ -51,7 +50,15 @@ public class RegionFunctionContextImpl extends FunctionContextImpl implements In
 
   private final boolean isPossibleDuplicate;
 
-  public RegionFunctionContextImpl(final String functionId, final Region dataSet, final Object args, final Set<?> routingObjects, final Map<String, LocalDataSet> colocatedLocalDataMap, Set<Integer> localBucketSet, ResultSender<?> resultSender, boolean isPossibleDuplicate) {
+  public RegionFunctionContextImpl(
+      final String functionId,
+      final Region dataSet,
+      final Object args,
+      final Set<?> routingObjects,
+      final Map<String, LocalDataSet> colocatedLocalDataMap,
+      Set<Integer> localBucketSet,
+      ResultSender<?> resultSender,
+      boolean isPossibleDuplicate) {
     super(functionId, args, resultSender);
     this.dataSet = dataSet;
     this.filter = routingObjects;
@@ -71,9 +78,8 @@ public class RegionFunctionContextImpl extends FunctionContextImpl implements In
 
   /**
    * Returns the Region on which function is executed
-   * 
+   *
    * @see FunctionService#onRegion(Region)
-   * 
    * @return Returns the Region on which function is executed
    */
   public <K, V> Region<K, V> getDataSet() {
@@ -81,11 +87,10 @@ public class RegionFunctionContextImpl extends FunctionContextImpl implements In
   }
 
   /**
-   * Returns subset of keys provided by the invoking thread (aka routing
-   * objects) which may exist in the local data set.
-   * 
+   * Returns subset of keys provided by the invoking thread (aka routing objects) which may exist in
+   * the local data set.
+   *
    * @see Execution#withFilter(Set)
-   * 
    * @return the objects should be local to this context
    */
   public Set<?> getFilter() {
@@ -116,7 +121,8 @@ public class RegionFunctionContextImpl extends FunctionContextImpl implements In
 
   public Map<String, LocalDataSet> getColocatedLocalDataSets() {
     if (this.colocatedLocalDataMap != null) {
-      HashMap<String, LocalDataSet> ret = new HashMap<String, LocalDataSet>(this.colocatedLocalDataMap);
+      HashMap<String, LocalDataSet> ret =
+          new HashMap<String, LocalDataSet>(this.colocatedLocalDataMap);
       ret.remove(this.dataSet.getFullPath());
       return Collections.unmodifiableMap(ret);
     } else {

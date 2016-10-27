@@ -43,21 +43,14 @@ public class GetClientPartitionAttributesCommand66Test {
 
   private static final String REGION_NAME = "region1";
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private Cache cache;
-  @Mock
-  private Part regionNamePart;
-  @Mock
-  private Message responseMessage;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private ServerConnection serverConnection;
+  @Mock private Cache cache;
+  @Mock private Part regionNamePart;
+  @Mock private Message responseMessage;
 
-  @InjectMocks
-  private GetClientPartitionAttributesCommand66 getClientPartitionAttributesCommand66;
+  @InjectMocks private GetClientPartitionAttributesCommand66 getClientPartitionAttributesCommand66;
 
   @Before
   public void setUp() throws Exception {
@@ -82,5 +75,4 @@ public class GetClientPartitionAttributesCommand66Test {
 
     verify(this.responseMessage).send();
   }
-
 }

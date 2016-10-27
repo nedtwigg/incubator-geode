@@ -31,15 +31,13 @@ import org.apache.geode.cache.query.types.ObjectType;
 import org.apache.geode.cache.query.types.StructType;
 
 /**
- * An object of this class gets created during the organization of operands in a
- * CompiledJunction. It gets created if there exists multiple filter evaluable
- * conditions in where clause of the query with those conditions dependent on
- * more than one group of independent iterators. Thus presence of more than one
- * region in a query is a prerequisite for the creation of this object. However,
- * actual creation will occur iff there exists more than one GroupJunction or
- * more than one CompositeGroupJunction or a combination of one or more
- * GroupJunctions & one or more CompositeGroupJunctions
- * 
+ * An object of this class gets created during the organization of operands in a CompiledJunction.
+ * It gets created if there exists multiple filter evaluable conditions in where clause of the query
+ * with those conditions dependent on more than one group of independent iterators. Thus presence of
+ * more than one region in a query is a prerequisite for the creation of this object. However,
+ * actual creation will occur iff there exists more than one GroupJunction or more than one
+ * CompositeGroupJunction or a combination of one or more GroupJunctions & one or more
+ * CompositeGroupJunctions
  */
 public class AllGroupJunction extends AbstractCompiledValue implements Filter, OQLLexerTokenTypes {
 
@@ -51,7 +49,8 @@ public class AllGroupJunction extends AbstractCompiledValue implements Filter, O
     this.operator = operator;
     this.abstractGroupOrRangeJunctions = abstractGroupOrRangeJunctions;
     if (operator != LITERAL_and) {
-      Support.Assert(iterOperands.size() == 0, "For OR Junction all operands need to be filterOperands");
+      Support.Assert(
+          iterOperands.size() == 0, "For OR Junction all operands need to be filterOperands");
     }
     this.iterOperands = iterOperands;
   }
@@ -74,7 +73,9 @@ public class AllGroupJunction extends AbstractCompiledValue implements Filter, O
   }
 
   @Override
-  public SelectResults filterEvaluate(ExecutionContext context, SelectResults intermediateResults) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public SelectResults filterEvaluate(ExecutionContext context, SelectResults intermediateResults)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     if (this.operator == LITERAL_and) {
       return evaluateAndJunction(context);
     } else {
@@ -83,13 +84,12 @@ public class AllGroupJunction extends AbstractCompiledValue implements Filter, O
   }
 
   /**
-   * Asif:Evaluates the individual GroupJunctions and CompositeGroupJunctions
-   * and does a cartesian of the results so obtained and simultaneously
-   * expanding it to the query from clause level as well as evaluating any iter
-   * evaluatable conditions. The evaluated result of an AllGroupJunction will
-   * always be of the query from clause level which can be ORed or ANDd with
-   * filter evaluatable subtree CompiledJunction
-   * 
+   * Asif:Evaluates the individual GroupJunctions and CompositeGroupJunctions and does a cartesian
+   * of the results so obtained and simultaneously expanding it to the query from clause level as
+   * well as evaluating any iter evaluatable conditions. The evaluated result of an AllGroupJunction
+   * will always be of the query from clause level which can be ORed or ANDd with filter evaluatable
+   * subtree CompiledJunction
+   *
    * @param context ExecutionContext object
    * @return SelectResults
    * @throws FunctionDomainException
@@ -100,7 +100,9 @@ public class AllGroupJunction extends AbstractCompiledValue implements Filter, O
   // Asif : For doing the Cartesian first evaluate the result of all Group
   // Junction. Doing Cartesian of all the Results together is better than doing
   // in pair
-  private SelectResults evaluateAndJunction(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  private SelectResults evaluateAndJunction(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     int len = this.abstractGroupOrRangeJunctions.size();
     // Asif : Create an array of SelectResults for each of the GroupJunction
     // For each Group Junction there will be a corresponding array of
@@ -133,7 +135,12 @@ public class AllGroupJunction extends AbstractCompiledValue implements Filter, O
         }
       } else {
         results[j] = filterResults;
-        grpItrs = (gj instanceof CompositeGroupJunction) ? QueryUtils.getDependentItrChainForIndpndntItrs(((CompositeGroupJunction) gj).getIndependentIteratorsOfCJ(), context) : context.getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(((AbstractGroupOrRangeJunction) gj).getIndependentIteratorForGroup()[0]);
+        grpItrs =
+            (gj instanceof CompositeGroupJunction)
+                ? QueryUtils.getDependentItrChainForIndpndntItrs(
+                    ((CompositeGroupJunction) gj).getIndependentIteratorsOfCJ(), context)
+                : context.getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(
+                    ((AbstractGroupOrRangeJunction) gj).getIndependentIteratorForGroup()[0]);
         itrsForResultFields[j] = new RuntimeIterator[grpItrs.size()];
         Iterator grpItr = grpItrs.iterator();
         int k = 0;
@@ -164,21 +171,21 @@ public class AllGroupJunction extends AbstractCompiledValue implements Filter, O
     }
     QueryObserver observer = QueryObserverHolder.getInstance();
     observer.beforeCartesianOfGroupJunctionsInAnAllGroupJunctionOfType_AND(results);
-    resultsSet = QueryUtils.cartesian(results, itrsForResultFields, expansionList, finalList, context, iterOperandsToSend);
+    resultsSet =
+        QueryUtils.cartesian(
+            results, itrsForResultFields, expansionList, finalList, context, iterOperandsToSend);
     observer.afterCartesianOfGroupJunctionsInAnAllGroupJunctionOfType_AND();
     Support.Assert(resultsSet != null, "ResultsSet obtained was NULL in AllGroupJunction");
     return resultsSet;
   }
 
   /**
-   * Evaluates the individual GroupJunctions and CompositeGroupJunctions and
-   * expands the individual results so obtained to the query from clause
-   * iterator level ( i.e top level iterators). The expanded results so obtained
-   * are then merged (union) to get the ORed results.The evaluated result of an
-   * AllGroupJunction will always be of the query from clause iterator level 
-   * (top level) which can be ORed or ANDd with filter evaluable subtree
-   * CompiledJunction.
-   * 
+   * Evaluates the individual GroupJunctions and CompositeGroupJunctions and expands the individual
+   * results so obtained to the query from clause iterator level ( i.e top level iterators). The
+   * expanded results so obtained are then merged (union) to get the ORed results.The evaluated
+   * result of an AllGroupJunction will always be of the query from clause iterator level (top
+   * level) which can be ORed or ANDd with filter evaluable subtree CompiledJunction.
+   *
    * @param context ExecutionContext object
    * @return SelectResults object
    * @throws FunctionDomainException
@@ -186,7 +193,9 @@ public class AllGroupJunction extends AbstractCompiledValue implements Filter, O
    * @throws NameResolutionException
    * @throws QueryInvocationTargetException
    */
-  private SelectResults evaluateOrJunction(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  private SelectResults evaluateOrJunction(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     // int len = this.abstractGroupOrRangeJunctions.size();
     // Asif : Create an array of SelectResults for each of the GroupJunction
     // For each Group Junction there will be a corresponding array of
@@ -204,7 +213,12 @@ public class AllGroupJunction extends AbstractCompiledValue implements Filter, O
       List expansionList = new LinkedList(finalList);
       gj = (CompiledValue) junctionItr.next();
       grpResults[0] = ((Filter) gj).filterEvaluate(context, null);
-      grpItrs = (gj instanceof CompositeGroupJunction) ? QueryUtils.getDependentItrChainForIndpndntItrs(((CompositeGroupJunction) gj).getIndependentIteratorsOfCJ(), context) : context.getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(((AbstractGroupOrRangeJunction) gj).getIndependentIteratorForGroup()[0]);
+      grpItrs =
+          (gj instanceof CompositeGroupJunction)
+              ? QueryUtils.getDependentItrChainForIndpndntItrs(
+                  ((CompositeGroupJunction) gj).getIndependentIteratorsOfCJ(), context)
+              : context.getCurrScopeDpndntItrsBasedOnSingleIndpndntItr(
+                  ((AbstractGroupOrRangeJunction) gj).getIndependentIteratorForGroup()[0]);
       itrsForResultFields[0] = new RuntimeIterator[grpItrs.size()];
       Iterator grpItr = grpItrs.iterator();
       int k = 0;
@@ -213,7 +227,9 @@ public class AllGroupJunction extends AbstractCompiledValue implements Filter, O
         itrsForResultFields[0][k++] = tempItr;
         expansionList.remove(tempItr);
       }
-      SelectResults expandedResult = QueryUtils.cartesian(grpResults, itrsForResultFields, expansionList, finalList, context, null/*
+      SelectResults expandedResult =
+          QueryUtils.cartesian(
+              grpResults, itrsForResultFields, expansionList, finalList, context, null /*
                                                                                                                                    * Iter
                                                                                                                                    * oprenad
                                                                                                                                    * for OR
@@ -222,7 +238,10 @@ public class AllGroupJunction extends AbstractCompiledValue implements Filter, O
                                                                                                                                    * should
                                                                                                                                    * be null
                                                                                                                                    */);
-      intermediateResults = (intermediateResults == null) ? expandedResult : QueryUtils.union(expandedResult, intermediateResults, context);
+      intermediateResults =
+          (intermediateResults == null)
+              ? expandedResult
+              : QueryUtils.union(expandedResult, intermediateResults, context);
     }
     return intermediateResults;
   }
@@ -237,7 +256,9 @@ public class AllGroupJunction extends AbstractCompiledValue implements Filter, O
     return Collections.unmodifiableList(this.iterOperands);
   }
 
-  public int getSizeEstimate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public int getSizeEstimate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     return 1;
   }
 }

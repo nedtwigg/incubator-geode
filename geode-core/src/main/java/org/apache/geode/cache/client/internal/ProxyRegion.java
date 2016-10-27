@@ -49,9 +49,9 @@ import org.apache.geode.cache.snapshot.RegionSnapshotService;
 import org.apache.geode.internal.cache.snapshot.RegionSnapshotServiceImpl;
 
 /**
- * A wrapper class over an actual Region instance. This is used when the
- * multiuser-authentication attribute is set to true.
- * 
+ * A wrapper class over an actual Region instance. This is used when the multiuser-authentication
+ * attribute is set to true.
+ *
  * @see ProxyCache
  * @since GemFire 6.5
  */
@@ -123,7 +123,8 @@ public class ProxyRegion implements Region {
     }
   }
 
-  public void create(Object key, Object value) throws TimeoutException, EntryExistsException, CacheWriterException {
+  public void create(Object key, Object value)
+      throws TimeoutException, EntryExistsException, CacheWriterException {
     try {
       preOp();
       this.realRegion.create(key, value);
@@ -132,7 +133,8 @@ public class ProxyRegion implements Region {
     }
   }
 
-  public void create(Object key, Object value, Object callbackArgument) throws TimeoutException, EntryExistsException, CacheWriterException {
+  public void create(Object key, Object value, Object callbackArgument)
+      throws TimeoutException, EntryExistsException, CacheWriterException {
     try {
       preOp();
       this.realRegion.create(key, value, callbackArgument);
@@ -141,11 +143,13 @@ public class ProxyRegion implements Region {
     }
   }
 
-  public Region createSubregion(String subregionName, RegionAttributes regionAttributes) throws RegionExistsException, TimeoutException {
+  public Region createSubregion(String subregionName, RegionAttributes regionAttributes)
+      throws RegionExistsException, TimeoutException {
     throw new UnsupportedOperationException();
   }
 
-  public Object destroy(Object key) throws TimeoutException, EntryNotFoundException, CacheWriterException {
+  public Object destroy(Object key)
+      throws TimeoutException, EntryNotFoundException, CacheWriterException {
     try {
       preOp();
       return this.realRegion.destroy(key);
@@ -154,7 +158,8 @@ public class ProxyRegion implements Region {
     }
   }
 
-  public Object destroy(Object key, Object callbackArgument) throws TimeoutException, EntryNotFoundException, CacheWriterException {
+  public Object destroy(Object key, Object callbackArgument)
+      throws TimeoutException, EntryNotFoundException, CacheWriterException {
     try {
       preOp();
       return this.realRegion.destroy(key, callbackArgument);
@@ -208,7 +213,9 @@ public class ProxyRegion implements Region {
     }
   }
 
-  public boolean existsValue(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public boolean existsValue(String queryPredicate)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     try {
       preOp();
       return this.realRegion.existsValue(queryPredicate);
@@ -230,7 +237,8 @@ public class ProxyRegion implements Region {
     }
   }
 
-  public Object get(Object key, Object callbackArgument) throws TimeoutException, CacheLoaderException {
+  public Object get(Object key, Object callbackArgument)
+      throws TimeoutException, CacheLoaderException {
     try {
       preOp();
       return this.realRegion.get(key, callbackArgument);
@@ -331,7 +339,8 @@ public class ProxyRegion implements Region {
     }
   }
 
-  public void invalidate(Object key, Object callbackArgument) throws TimeoutException, EntryNotFoundException {
+  public void invalidate(Object key, Object callbackArgument)
+      throws TimeoutException, EntryNotFoundException {
     try {
       preOp();
       this.realRegion.invalidate(key, callbackArgument);
@@ -388,44 +397,54 @@ public class ProxyRegion implements Region {
     }
   }
 
-  public void loadSnapshot(InputStream inputStream) throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException {
+  public void loadSnapshot(InputStream inputStream)
+      throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException {
     throw new UnsupportedOperationException();
   }
 
   public void localClear() {
-    throw new UnsupportedOperationException("Local operations are not supported when multiuser-authentication is true.");
+    throw new UnsupportedOperationException(
+        "Local operations are not supported when multiuser-authentication is true.");
   }
 
   public void localDestroy(Object key) throws EntryNotFoundException {
-    throw new UnsupportedOperationException("Local operations are not supported when multiuser-authentication is true.");
+    throw new UnsupportedOperationException(
+        "Local operations are not supported when multiuser-authentication is true.");
   }
 
   public void localDestroy(Object key, Object callbackArgument) throws EntryNotFoundException {
-    throw new UnsupportedOperationException("Local operations are not supported when multiuser-authentication is true.");
+    throw new UnsupportedOperationException(
+        "Local operations are not supported when multiuser-authentication is true.");
   }
 
   public void localDestroyRegion() {
-    throw new UnsupportedOperationException("Local operations are not supported when multiuser-authentication is true.");
+    throw new UnsupportedOperationException(
+        "Local operations are not supported when multiuser-authentication is true.");
   }
 
   public void localDestroyRegion(Object callbackArgument) {
-    throw new UnsupportedOperationException("Local operations are not supported when multiuser-authentication is true.");
+    throw new UnsupportedOperationException(
+        "Local operations are not supported when multiuser-authentication is true.");
   }
 
   public void localInvalidate(Object key) throws EntryNotFoundException {
-    throw new UnsupportedOperationException("Local operations are not supported when multiuser-authentication is true.");
+    throw new UnsupportedOperationException(
+        "Local operations are not supported when multiuser-authentication is true.");
   }
 
   public void localInvalidate(Object key, Object callbackArgument) throws EntryNotFoundException {
-    throw new UnsupportedOperationException("Local operations are not supported when multiuser-authentication is true.");
+    throw new UnsupportedOperationException(
+        "Local operations are not supported when multiuser-authentication is true.");
   }
 
   public void localInvalidateRegion() {
-    throw new UnsupportedOperationException("Local operations are not supported when multiuser-authentication is true.");
+    throw new UnsupportedOperationException(
+        "Local operations are not supported when multiuser-authentication is true.");
   }
 
   public void localInvalidateRegion(Object callbackArgument) {
-    throw new UnsupportedOperationException("Local operations are not supported when multiuser-authentication is true.");
+    throw new UnsupportedOperationException(
+        "Local operations are not supported when multiuser-authentication is true.");
   }
 
   public Object put(Object key, Object value) throws TimeoutException, CacheWriterException {
@@ -437,7 +456,8 @@ public class ProxyRegion implements Region {
     }
   }
 
-  public Object put(Object key, Object value, Object callbackArgument) throws TimeoutException, CacheWriterException {
+  public Object put(Object key, Object value, Object callbackArgument)
+      throws TimeoutException, CacheWriterException {
     try {
       preOp();
       return this.realRegion.put(key, value, callbackArgument);
@@ -460,7 +480,9 @@ public class ProxyRegion implements Region {
     }
   }
 
-  public SelectResults query(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public SelectResults query(String queryPredicate)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     try {
       preOp();
       return this.realRegion.query(queryPredicate);
@@ -485,7 +507,8 @@ public class ProxyRegion implements Region {
     throw new UnsupportedOperationException();
   }
 
-  public void registerInterest(Object key, InterestResultPolicy policy, boolean isDurable, boolean receiveValues) {
+  public void registerInterest(
+      Object key, InterestResultPolicy policy, boolean isDurable, boolean receiveValues) {
     throw new UnsupportedOperationException();
   }
 
@@ -513,7 +536,8 @@ public class ProxyRegion implements Region {
     throw new UnsupportedOperationException();
   }
 
-  public void registerInterestRegex(String regex, InterestResultPolicy policy, boolean isDurable, boolean receiveValues) {
+  public void registerInterestRegex(
+      String regex, InterestResultPolicy policy, boolean isDurable, boolean receiveValues) {
     throw new UnsupportedOperationException();
   }
 
@@ -530,7 +554,9 @@ public class ProxyRegion implements Region {
     throw new UnsupportedOperationException();
   }
 
-  public Object selectValue(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object selectValue(String queryPredicate)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     try {
       preOp();
       return this.realRegion.selectValue(queryPredicate);

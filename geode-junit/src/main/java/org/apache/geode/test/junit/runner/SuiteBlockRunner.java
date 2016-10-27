@@ -21,19 +21,19 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 
-/**
- * used by SuiteRunner to override the test method name
- */
+/** used by SuiteRunner to override the test method name */
 public class SuiteBlockRunner extends BlockJUnit4ClassRunner {
 
   private Class<?> suiteClass;
 
   /**
    * Creates a BlockJUnit4ClassRunner to run {@code klass}
+   *
    * @param klass
    * @throws InitializationError if the test class is malformed.
    */
-  public SuiteBlockRunner(final Class parentClass, final Class<?> klass) throws InitializationError {
+  public SuiteBlockRunner(final Class parentClass, final Class<?> klass)
+      throws InitializationError {
     super(klass);
     this.suiteClass = parentClass;
   }
@@ -42,5 +42,4 @@ public class SuiteBlockRunner extends BlockJUnit4ClassRunner {
   protected String testName(FrameworkMethod method) {
     return method.getName() + "@" + suiteClass.getName();
   }
-
 }

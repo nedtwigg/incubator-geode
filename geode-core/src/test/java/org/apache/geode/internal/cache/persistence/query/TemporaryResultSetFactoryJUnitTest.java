@@ -78,7 +78,8 @@ public class TemporaryResultSetFactoryJUnitTest {
   @Test
   public void testIndexMap() {
     IndexMap map = new IndexMapImpl();
-    TreeMap expected = new TreeMap(new PairComparator(new NaturalComparator(), new NaturalComparator()));
+    TreeMap expected =
+        new TreeMap(new PairComparator(new NaturalComparator(), new NaturalComparator()));
     put("i1", "r1", "v1", map, expected);
     put("i2", "r2", "v4", map, expected);
     put("i4", "r4", "v4", map, expected);

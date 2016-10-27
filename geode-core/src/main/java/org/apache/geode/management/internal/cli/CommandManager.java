@@ -39,25 +39,24 @@ import java.util.Map.Entry;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class CommandManager {
   //1. Load Commands, availability indicators - Take from GfshParser
   //2. Load Converters - Take from GfshParser
-  //3. Load Result Converters - Add  
+  //3. Load Result Converters - Add
 
   private static final Object INSTANCE_LOCK = new Object();
   private static CommandManager INSTANCE = null;
-  public static final String USER_CMD_PACKAGES_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + USER_COMMAND_PACKAGES;
+  public static final String USER_CMD_PACKAGES_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + USER_COMMAND_PACKAGES;
   public static final String USER_CMD_PACKAGES_ENV_VARIABLE = "GEMFIRE_USER_COMMAND_PACKAGES";
 
   private Properties cacheProperties;
 
   private LogWrapper logWrapper;
 
-  private CommandManager(final boolean loadDefaultCommands, final Properties cacheProperties) throws ClassNotFoundException, IOException {
+  private CommandManager(final boolean loadDefaultCommands, final Properties cacheProperties)
+      throws ClassNotFoundException, IOException {
     if (cacheProperties != null) {
       this.cacheProperties = cacheProperties;
     }
@@ -68,7 +67,8 @@ public class CommandManager {
 
       if (logWrapper.fineEnabled()) {
         logWrapper.fine("Commands Loaded: " + commands.keySet());
-        logWrapper.fine("Command Availability Indicators Loaded: " + availabilityIndicators.keySet());
+        logWrapper.fine(
+            "Command Availability Indicators Loaded: " + availabilityIndicators.keySet());
         logWrapper.fine("Converters Loaded: " + converters);
       }
     }
@@ -79,7 +79,8 @@ public class CommandManager {
 
     // Find by packages specified by the system property
     if (System.getProperty(USER_CMD_PACKAGES_PROPERTY) != null) {
-      StringTokenizer tokenizer = new StringTokenizer(System.getProperty(USER_CMD_PACKAGES_PROPERTY), ",");
+      StringTokenizer tokenizer =
+          new StringTokenizer(System.getProperty(USER_CMD_PACKAGES_PROPERTY), ",");
       while (tokenizer.hasMoreTokens()) {
         userCommandPackages.add(tokenizer.nextToken());
       }
@@ -87,7 +88,8 @@ public class CommandManager {
 
     // Find by packages specified by the environment variable
     if (System.getenv().containsKey(USER_CMD_PACKAGES_ENV_VARIABLE)) {
-      StringTokenizer tokenizer = new StringTokenizer(System.getenv().get(USER_CMD_PACKAGES_ENV_VARIABLE), ",");
+      StringTokenizer tokenizer =
+          new StringTokenizer(System.getenv().get(USER_CMD_PACKAGES_ENV_VARIABLE), ",");
       while (tokenizer.hasMoreTokens()) {
         userCommandPackages.add(tokenizer.nextToken());
       }
@@ -95,7 +97,8 @@ public class CommandManager {
 
     // Find by  packages specified in the distribution config
     if (this.cacheProperties != null) {
-      String cacheUserCmdPackages = this.cacheProperties.getProperty(ConfigurationProperties.USER_COMMAND_PACKAGES);
+      String cacheUserCmdPackages =
+          this.cacheProperties.getProperty(ConfigurationProperties.USER_COMMAND_PACKAGES);
       if (cacheUserCmdPackages != null && !cacheUserCmdPackages.isEmpty()) {
         StringTokenizer tokenizer = new StringTokenizer(cacheUserCmdPackages, ",");
         while (tokenizer.hasMoreTokens()) {
@@ -107,12 +110,17 @@ public class CommandManager {
     // Load commands found in all of the packages
     for (String userCommandPackage : userCommandPackages) {
       try {
-        Set<Class<?>> foundClasses = ClasspathScanLoadHelper.loadAndGet(userCommandPackage, CommandMarker.class, true);
+        Set<Class<?>> foundClasses =
+            ClasspathScanLoadHelper.loadAndGet(userCommandPackage, CommandMarker.class, true);
         for (Class<?> klass : foundClasses) {
           try {
             add((CommandMarker) klass.newInstance());
           } catch (Exception e) {
-            logWrapper.warning("Could not load User Commands from: " + klass + " due to " + e.getLocalizedMessage()); // continue
+            logWrapper.warning(
+                "Could not load User Commands from: "
+                    + klass
+                    + " due to "
+                    + e.getLocalizedMessage()); // continue
           }
         }
         raiseExceptionIfEmpty(foundClasses, "User Command");
@@ -130,19 +138,26 @@ public class CommandManager {
   }
 
   /**
-   * Loads commands via {@link ServiceLoader} from {@link ClassPathLoader}. 
-   * 
+   * Loads commands via {@link ServiceLoader} from {@link ClassPathLoader}.
+   *
    * @since GemFire 8.1
    */
   private void loadPluginCommands() {
-    final Iterator<CommandMarker> iterator = ServiceLoader.load(CommandMarker.class, ClassPathLoader.getLatest().asClassLoader()).iterator();
+    final Iterator<CommandMarker> iterator =
+        ServiceLoader.load(CommandMarker.class, ClassPathLoader.getLatest().asClassLoader())
+            .iterator();
     while (iterator.hasNext()) {
       try {
         final CommandMarker commandMarker = iterator.next();
         try {
           add(commandMarker);
         } catch (Exception e) {
-          logWrapper.warning("Could not load Command from: " + commandMarker.getClass() + " due to " + e.getLocalizedMessage(), e); // continue
+          logWrapper.warning(
+              "Could not load Command from: "
+                  + commandMarker.getClass()
+                  + " due to "
+                  + e.getLocalizedMessage(),
+              e); // continue
         }
       } catch (ServiceConfigurationError e) {
         logWrapper.severe("Could not load Command: " + e.getLocalizedMessage(), e); // continue
@@ -158,12 +173,18 @@ public class CommandManager {
     //CommandMarkers
     Set<Class<?>> foundClasses = null;
     try {
-      foundClasses = ClasspathScanLoadHelper.loadAndGet("org.apache.geode.management.internal.cli.commands", CommandMarker.class, true);
+      foundClasses =
+          ClasspathScanLoadHelper.loadAndGet(
+              "org.apache.geode.management.internal.cli.commands", CommandMarker.class, true);
       for (Class<?> klass : foundClasses) {
         try {
           add((CommandMarker) klass.newInstance());
         } catch (Exception e) {
-          logWrapper.warning("Could not load Command from: " + klass + " due to " + e.getLocalizedMessage()); // continue
+          logWrapper.warning(
+              "Could not load Command from: "
+                  + klass
+                  + " due to "
+                  + e.getLocalizedMessage()); // continue
         }
       }
       raiseExceptionIfEmpty(foundClasses, "Commands");
@@ -180,12 +201,18 @@ public class CommandManager {
 
     //Converters
     try {
-      foundClasses = ClasspathScanLoadHelper.loadAndGet("org.apache.geode.management.internal.cli.converters", Converter.class, true);
+      foundClasses =
+          ClasspathScanLoadHelper.loadAndGet(
+              "org.apache.geode.management.internal.cli.converters", Converter.class, true);
       for (Class<?> klass : foundClasses) {
         try {
           add((Converter<?>) klass.newInstance());
         } catch (Exception e) {
-          logWrapper.warning("Could not load Converter from: " + klass + " due to " + e.getLocalizedMessage()); // continue
+          logWrapper.warning(
+              "Could not load Converter from: "
+                  + klass
+                  + " due to "
+                  + e.getLocalizedMessage()); // continue
         }
       }
       raiseExceptionIfEmpty(foundClasses, "Converters");
@@ -202,22 +229,34 @@ public class CommandManager {
 
     //Roo's Converters
     try {
-      foundClasses = ClasspathScanLoadHelper.loadAndGet("org.springframework.shell.converters", Converter.class, true);
+      foundClasses =
+          ClasspathScanLoadHelper.loadAndGet(
+              "org.springframework.shell.converters", Converter.class, true);
       for (Class<?> klass : foundClasses) {
         try {
           if (!SHL_CONVERTERS_TOSKIP.contains(klass.getName())) {
             add((Converter<?>) klass.newInstance());
           }
         } catch (Exception e) {
-          logWrapper.warning("Could not load Converter from: " + klass + " due to " + e.getLocalizedMessage()); // continue
+          logWrapper.warning(
+              "Could not load Converter from: "
+                  + klass
+                  + " due to "
+                  + e.getLocalizedMessage()); // continue
         }
       }
       raiseExceptionIfEmpty(foundClasses, "Basic Converters");
     } catch (ClassNotFoundException e) {
-      logWrapper.warning("Could not load Default Converters due to " + e.getLocalizedMessage());//TODO - Abhishek: Should these converters be moved in GemFire?
+      logWrapper.warning(
+          "Could not load Default Converters due to "
+              + e
+                  .getLocalizedMessage()); //TODO - Abhishek: Should these converters be moved in GemFire?
       throw e;
     } catch (IOException e) {
-      logWrapper.warning("Could not load Default Converters due to " + e.getLocalizedMessage());//TODO - Abhishek: Should these converters be moved in GemFire?
+      logWrapper.warning(
+          "Could not load Default Converters due to "
+              + e
+                  .getLocalizedMessage()); //TODO - Abhishek: Should these converters be moved in GemFire?
       throw e;
     } catch (IllegalStateException e) {
       logWrapper.warning(e.getMessage(), e);
@@ -225,9 +264,11 @@ public class CommandManager {
     }
   }
 
-  private static void raiseExceptionIfEmpty(Set<Class<?>> foundClasses, String errorFor) throws IllegalStateException {
+  private static void raiseExceptionIfEmpty(Set<Class<?>> foundClasses, String errorFor)
+      throws IllegalStateException {
     if (foundClasses == null || foundClasses.isEmpty()) {
-      throw new IllegalStateException("Required " + errorFor + " classes were not loaded. Check logs for errors.");
+      throw new IllegalStateException(
+          "Required " + errorFor + " classes were not loaded. Check logs for errors.");
     }
   }
 
@@ -235,7 +276,8 @@ public class CommandManager {
     return getInstance(true);
   }
 
-  public static CommandManager getInstance(Properties cacheProperties) throws ClassNotFoundException, IOException {
+  public static CommandManager getInstance(Properties cacheProperties)
+      throws ClassNotFoundException, IOException {
     return getInstance(true, cacheProperties);
   }
 
@@ -247,11 +289,13 @@ public class CommandManager {
   }
 
   //This method exists for test code use only ...
-  /*package*/static CommandManager getInstance(boolean loadDefaultCommands) throws ClassNotFoundException, IOException {
+  /*package*/ static CommandManager getInstance(boolean loadDefaultCommands)
+      throws ClassNotFoundException, IOException {
     return getInstance(loadDefaultCommands, null);
   }
 
-  private static CommandManager getInstance(boolean loadDefaultCommands, Properties cacheProperties) throws ClassNotFoundException, IOException {
+  private static CommandManager getInstance(boolean loadDefaultCommands, Properties cacheProperties)
+      throws ClassNotFoundException, IOException {
     synchronized (INSTANCE_LOCK) {
       if (INSTANCE == null) {
         INSTANCE = new CommandManager(loadDefaultCommands, cacheProperties);
@@ -267,8 +311,9 @@ public class CommandManager {
     return INSTANCE;
   }
 
-  /** Skip some of the Converters from Spring Shell for our customization  */
+  /** Skip some of the Converters from Spring Shell for our customization */
   private static List<String> SHL_CONVERTERS_TOSKIP = new ArrayList<String>();
+
   static {
     //Over-ridden by cggm.internal.cli.converters.BooleanConverter
     SHL_CONVERTERS_TOSKIP.add("org.springframework.shell.converters.BooleanConverter");
@@ -276,31 +321,26 @@ public class CommandManager {
     SHL_CONVERTERS_TOSKIP.add("org.springframework.shell.converters.EnumConverter");
   }
 
-  /**
-   * List of converters which should be populated first before any command can
-   * be added
-   */
+  /** List of converters which should be populated first before any command can be added */
   private final List<Converter<?>> converters = new ArrayList<Converter<?>>();
 
   /**
    * Map of command string and actual CommandTarget object
-   * 
-   * This map can also be implemented as a trie to support command abbreviation
+   *
+   * <p>This map can also be implemented as a trie to support command abbreviation
    */
   private final Map<String, CommandTarget> commands = new TreeMap<String, CommandTarget>();
 
-  /**
-   * This method will store the all the availabilityIndicators
-   */
-  private final Map<String, AvailabilityTarget> availabilityIndicators = new HashMap<String, AvailabilityTarget>();
+  /** This method will store the all the availabilityIndicators */
+  private final Map<String, AvailabilityTarget> availabilityIndicators =
+      new HashMap<String, AvailabilityTarget>();
 
-  /**
-   */
+  /** */
   private final Map<String, CliTopic> topics = new TreeMap<String, CliTopic>();
 
   /**
    * Method to add new Converter
-   * 
+   *
    * @param converter
    */
   public void add(Converter<?> converter) {
@@ -309,7 +349,7 @@ public class CommandManager {
 
   /**
    * Method to add new Commands to the parser
-   * 
+   *
    * @param commandMarker
    */
   public void add(CommandMarker commandMarker) {
@@ -347,12 +387,15 @@ public class CommandManager {
           for (Annotation annotation : annotations) {
             if (annotation instanceof CliArgument) {
               // Here we need to create the argument Object
-              Argument argumentToAdd = createArgument((CliArgument) annotation, parameterType, parameterNo);
+              Argument argumentToAdd =
+                  createArgument((CliArgument) annotation, parameterType, parameterNo);
               arguments.add(argumentToAdd);
               parameterNo++;
             } else if (annotation instanceof CliOption) {
-              Option createdOption = createOption((CliOption) annotation, parameterType, parameterNo);
-              if (!CliMetaData.ANNOTATION_NULL_VALUE.equals(valueSeparator)) { // CliMetaData was found earlier
+              Option createdOption =
+                  createOption((CliOption) annotation, parameterType, parameterNo);
+              if (!CliMetaData.ANNOTATION_NULL_VALUE.equals(
+                  valueSeparator)) { // CliMetaData was found earlier
                 createdOption.setValueSeparator(valueSeparator);
 
                 // reset valueSeparator back to null
@@ -407,7 +450,9 @@ public class CommandManager {
         }
 
         // Create the commandTarget object
-        CommandTarget commandTarget = new CommandTarget(commandName, synonyms, gfshMethodTarget, optionParser, null, cliCommand.help());
+        CommandTarget commandTarget =
+            new CommandTarget(
+                commandName, synonyms, gfshMethodTarget, optionParser, null, cliCommand.help());
 
         // Now for each string in values put an entry in the commands
         // map
@@ -439,7 +484,8 @@ public class CommandManager {
       } else if (method.getAnnotation(CliAvailabilityIndicator.class) != null) {
         // Now add this availability Indicator to the list of
         // availability Indicators
-        CliAvailabilityIndicator cliAvailabilityIndicator = method.getAnnotation(CliAvailabilityIndicator.class);
+        CliAvailabilityIndicator cliAvailabilityIndicator =
+            method.getAnnotation(CliAvailabilityIndicator.class);
 
         // Create a AvailabilityTarget for this availability Indicator
         AvailabilityTarget availabilityIndicator = new AvailabilityTarget(commandMarker, method);
@@ -448,7 +494,6 @@ public class CommandManager {
         for (String string : value) {
           availabilityIndicators.put(string, availabilityIndicator);
         }
-
       }
     }
     // Now we must update all the existing CommandTargets to add
@@ -456,10 +501,7 @@ public class CommandManager {
     updateAvailabilityIndicators();
   }
 
-  /**
-   * Will update all the references to availability Indicators for commands
-   * 
-   */
+  /** Will update all the references to availability Indicators for commands */
   public void updateAvailabilityIndicators() {
     for (String string : availabilityIndicators.keySet()) {
       CommandTarget commandTarget = commands.get(string);
@@ -471,7 +513,7 @@ public class CommandManager {
 
   /**
    * Creates a new {@link Option} instance
-   * 
+   *
    * @param cliOption
    * @param parameterType
    * @param parameterNo
@@ -515,7 +557,7 @@ public class CommandManager {
 
   /**
    * Creates a new {@link Argument} instance
-   * 
+   *
    * @param cliArgument
    * @param parameterType
    * @param parameterNo
@@ -537,7 +579,7 @@ public class CommandManager {
 
   /**
    * Looks for a matching {@link Converter}
-   * 
+   *
    * @param parameterType
    * @param context
    * @return {@link Converter}
@@ -552,18 +594,16 @@ public class CommandManager {
   }
 
   /**
-   * For the time being this method returns a {@link JoptOptionParser} object
-   * but in the future we can change which optionParser should be returned.
-   * 
+   * For the time being this method returns a {@link JoptOptionParser} object but in the future we
+   * can change which optionParser should be returned.
+   *
    * @return {@link GfshOptionParser}
    */
   private GfshOptionParser getOptionParser() {
     return new JoptOptionParser();
   }
 
-  /**
-   * @return the commands
-   */
+  /** @return the commands */
   public Map<String, CommandTarget> getCommands() {
     return Collections.unmodifiableMap(commands);
   }

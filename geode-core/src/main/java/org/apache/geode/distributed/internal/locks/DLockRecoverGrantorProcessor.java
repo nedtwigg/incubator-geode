@@ -43,36 +43,40 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * Handles messaging to all members of a lock service for the purposes of
- * recoverying from the loss of the lock grantor. The 
- * <code>DLockRecoverGrantorMessage</code> is sent out by the new lock grantor
- * and all members reply with details on held and pending locks.
- *
+ * Handles messaging to all members of a lock service for the purposes of recoverying from the loss
+ * of the lock grantor. The <code>DLockRecoverGrantorMessage</code> is sent out by the new lock
+ * grantor and all members reply with details on held and pending locks.
  */
 public class DLockRecoverGrantorProcessor extends ReplyProcessor21 {
   private static final Logger logger = LogService.getLogger();
 
-  protected final static DefaultMessageProcessor nullServiceProcessor = new DefaultMessageProcessor();
+  protected static final DefaultMessageProcessor nullServiceProcessor =
+      new DefaultMessageProcessor();
 
   private DM dm;
 
   private DLockGrantor newGrantor;
 
-  // ------------------------------------------------------------------------- 
+  // -------------------------------------------------------------------------
   //   Static operations for recovering from loss of the lock grantor
-  // -------------------------------------------------------------------------  
+  // -------------------------------------------------------------------------
 
   /**
-   * Sends DLockRecoverGrantorMessage to all participants of the DLockService
-   * in order to recover from the loss of the previous lock grantor.  Each
-   * member will reply with details on currently held locks, pending locks,
-   * and known stuck locks.
-   * <p>
-   * This method should block until transfer of lock grantor has completed.
+   * Sends DLockRecoverGrantorMessage to all participants of the DLockService in order to recover
+   * from the loss of the previous lock grantor. Each member will reply with details on currently
+   * held locks, pending locks, and known stuck locks.
+   *
+   * <p>This method should block until transfer of lock grantor has completed.
    */
-  static boolean recoverLockGrantor(Set members, DLockService service, DLockGrantor newGrantor, DM dm, InternalDistributedMember elder) {
+  static boolean recoverLockGrantor(
+      Set members,
+      DLockService service,
+      DLockGrantor newGrantor,
+      DM dm,
+      InternalDistributedMember elder) {
     // proc will wait for replies from everyone including THIS member...
-    DLockRecoverGrantorProcessor processor = new DLockRecoverGrantorProcessor(dm, members, newGrantor);
+    DLockRecoverGrantorProcessor processor =
+        new DLockRecoverGrantorProcessor(dm, members, newGrantor);
 
     DLockRecoverGrantorMessage msg = new DLockRecoverGrantorMessage();
     msg.serviceName = service.getName();
@@ -90,8 +94,7 @@ public class DLockRecoverGrantorProcessor extends ReplyProcessor21 {
     }
 
     // process msg and reply from this VM...
-    if (msg.getSender() == null)
-      msg.setSender(dm.getId());
+    if (msg.getSender() == null) msg.setSender(dm.getId());
     msg.processMessage(dm);
 
     // keep waiting even if interrupted
@@ -108,9 +111,9 @@ public class DLockRecoverGrantorProcessor extends ReplyProcessor21 {
     return true;
   }
 
-  // ------------------------------------------------------------------------- 
+  // -------------------------------------------------------------------------
   //   Constructors
-  // -------------------------------------------------------------------------  
+  // -------------------------------------------------------------------------
 
   /** Creates a new instance of DLockRecoverGrantorProcessor */
   private DLockRecoverGrantorProcessor(DM dm, Set members, DLockGrantor newGrantor) {
@@ -119,7 +122,7 @@ public class DLockRecoverGrantorProcessor extends ReplyProcessor21 {
     this.newGrantor = newGrantor;
   }
 
-  // ------------------------------------------------------------------------- 
+  // -------------------------------------------------------------------------
   //   Instance methods
   // -------------------------------------------------------------------------
 
@@ -133,44 +136,51 @@ public class DLockRecoverGrantorProcessor extends ReplyProcessor21 {
   @Override
   public void process(DistributionMessage msg) {
     try {
-      Assert.assertTrue(msg instanceof DLockRecoverGrantorReplyMessage, "DLockRecoverGrantorProcessor is unable to process message of type " + msg.getClass());
+      Assert.assertTrue(
+          msg instanceof DLockRecoverGrantorReplyMessage,
+          "DLockRecoverGrantorProcessor is unable to process message of type " + msg.getClass());
 
       DLockRecoverGrantorReplyMessage reply = (DLockRecoverGrantorReplyMessage) msg;
       // build grantTokens from each reply...
       switch (reply.replyCode) {
-      case DLockRecoverGrantorReplyMessage.GRANTOR_DISPUTE:
-        if (logger.isTraceEnabled(LogMarker.DLS)) {
-          logger.trace(LogMarker.DLS, "Failed DLockRecoverGrantorReplyMessage: '{}'", reply);
-        }
-        this.error = true;
-        break;
-      case DLockRecoverGrantorReplyMessage.OK:
-        // collect results...
-        if (logger.isTraceEnabled(LogMarker.DLS)) {
-          logger.trace(LogMarker.DLS, "Processing DLockRecoverGrantorReplyMessage: '{}'", reply);
-        }
+        case DLockRecoverGrantorReplyMessage.GRANTOR_DISPUTE:
+          if (logger.isTraceEnabled(LogMarker.DLS)) {
+            logger.trace(LogMarker.DLS, "Failed DLockRecoverGrantorReplyMessage: '{}'", reply);
+          }
+          this.error = true;
+          break;
+        case DLockRecoverGrantorReplyMessage.OK:
+          // collect results...
+          if (logger.isTraceEnabled(LogMarker.DLS)) {
+            logger.trace(LogMarker.DLS, "Processing DLockRecoverGrantorReplyMessage: '{}'", reply);
+          }
 
-        Set lockSet = new HashSet();
-        DLockRemoteToken[] heldLocks = reply.heldLocks;
-        if (heldLocks.length > 0) {
-          for (int i = 0; i < heldLocks.length; i++) {
-            lockSet.add(heldLocks[i]);
+          Set lockSet = new HashSet();
+          DLockRemoteToken[] heldLocks = reply.heldLocks;
+          if (heldLocks.length > 0) {
+            for (int i = 0; i < heldLocks.length; i++) {
+              lockSet.add(heldLocks[i]);
+            }
+            try {
+              this.newGrantor.initializeHeldLocks(msg.getSender(), lockSet);
+            } catch (InterruptedException e) {
+              Thread.currentThread().interrupt();
+              dm.getCancelCriterion().checkCancelInProgress(e);
+            }
           }
-          try {
-            this.newGrantor.initializeHeldLocks(msg.getSender(), lockSet);
-          } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            dm.getCancelCriterion().checkCancelInProgress(e);
-          }
-        }
-        break;
-      default:
-        throw new IllegalStateException("Invalid reply.replyCode " + reply.replyCode);
+          break;
+        default:
+          throw new IllegalStateException("Invalid reply.replyCode " + reply.replyCode);
       }
       // maybe build up another reply to indicate lock recovery status?
     } catch (IllegalStateException e) {
       if (logger.isTraceEnabled(LogMarker.DLS)) {
-        logger.trace(LogMarker.DLS, "Processing of DLockRecoverGrantorReplyMessage {} resulted in {}", msg, e.getMessage(), e);
+        logger.trace(
+            LogMarker.DLS,
+            "Processing of DLockRecoverGrantorReplyMessage {} resulted in {}",
+            msg,
+            e.getMessage(),
+            e);
       }
     } finally {
       super.process(msg);
@@ -182,10 +192,11 @@ public class DLockRecoverGrantorProcessor extends ReplyProcessor21 {
     return true;
   }
 
-  // ------------------------------------------------------------------------- 
+  // -------------------------------------------------------------------------
   //   DLockRecoverGrantorMessage
-  // -------------------------------------------------------------------------  
-  public static final class DLockRecoverGrantorMessage extends PooledDistributionMessage implements MessageWithReply {
+  // -------------------------------------------------------------------------
+  public static final class DLockRecoverGrantorMessage extends PooledDistributionMessage
+      implements MessageWithReply {
 
     /** The name of the DistributedLockService */
     protected String serviceName;
@@ -292,9 +303,9 @@ public class DLockRecoverGrantorProcessor extends ReplyProcessor21 {
     }
   }
 
-  // ------------------------------------------------------------------------- 
+  // -------------------------------------------------------------------------
   //   DLockRecoverGrantorReplyMessage
-  // -------------------------------------------------------------------------  
+  // -------------------------------------------------------------------------
   public static final class DLockRecoverGrantorReplyMessage extends ReplyMessage {
 
     public static final int OK = 0;
@@ -302,10 +313,7 @@ public class DLockRecoverGrantorProcessor extends ReplyProcessor21 {
 
     protected int replyCode;
 
-    /**
-     * Locks that are currently held...
-     * Serializable owner, Object name, long leaseTime
-     */
+    /** Locks that are currently held... Serializable owner, Object name, long leaseTime */
     protected DLockRemoteToken[] heldLocks;
 
     //    /** Identifies who the responder believes the lock grantor currently is */
@@ -350,17 +358,27 @@ public class DLockRecoverGrantorProcessor extends ReplyProcessor21 {
     public String toString() {
       String response = null;
       switch (this.replyCode) {
-      case OK:
-        response = "OK";
-        break;
-      case GRANTOR_DISPUTE:
-        response = "GRANTOR_DISPUTE";
-        break;
-      default:
-        response = String.valueOf(this.replyCode);
-        break;
+        case OK:
+          response = "OK";
+          break;
+        case GRANTOR_DISPUTE:
+          response = "GRANTOR_DISPUTE";
+          break;
+        default:
+          response = String.valueOf(this.replyCode);
+          break;
       }
-      return "DLockRecoverGrantorReplyMessage (processorId=" + processorId + "; replyCode=" + this.replyCode + "=" + response + "; heldLocks=" + Arrays.asList(this.heldLocks) + "; sender=" + getSender() + ")";
+      return "DLockRecoverGrantorReplyMessage (processorId="
+          + processorId
+          + "; replyCode="
+          + this.replyCode
+          + "="
+          + response
+          + "; heldLocks="
+          + Arrays.asList(this.heldLocks)
+          + "; sender="
+          + getSender()
+          + ")";
     }
   }
 
@@ -381,18 +399,25 @@ public class DLockRecoverGrantorProcessor extends ReplyProcessor21 {
         if (svc != null) {
           replyCode = DLockRecoverGrantorReplyMessage.OK;
 
-          LockGrantorId lockGrantorId = new LockGrantorId(dm, msg.getSender(), msg.getGrantorVersion(), msg.getGrantorSerialNumber());
+          LockGrantorId lockGrantorId =
+              new LockGrantorId(
+                  dm, msg.getSender(), msg.getGrantorVersion(), msg.getGrantorSerialNumber());
 
           Set heldLockSet = svc.getLockTokensForRecovery(lockGrantorId);
 
           if (heldLockSet == null) {
             replyCode = DLockRecoverGrantorReplyMessage.GRANTOR_DISPUTE;
           } else {
-            heldLocks = (DLockRemoteToken[]) heldLockSet.toArray(new DLockRemoteToken[heldLockSet.size()]);
+            heldLocks =
+                (DLockRemoteToken[]) heldLockSet.toArray(new DLockRemoteToken[heldLockSet.size()]);
           }
         }
       } catch (RuntimeException e) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.DLOCKRECOVERGRANTORPROCESSOR_DLOCKRECOVERGRANTORMESSAGE_PROCESS_THROWABLE), e);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .DLOCKRECOVERGRANTORPROCESSOR_DLOCKRECOVERGRANTORMESSAGE_PROCESS_THROWABLE),
+            e);
         replyException = new ReplyException(e);
       }
       //      catch (VirtualMachineError err) {
@@ -421,7 +446,8 @@ public class DLockRecoverGrantorProcessor extends ReplyProcessor21 {
         if (msg.getSender().equals(dm.getId())) {
           // process in-line in this VM
           if (logger.isTraceEnabled(LogMarker.DLS)) {
-            logger.trace(LogMarker.DLS, "[DLockRecoverGrantorMessage.process] locally process reply");
+            logger.trace(
+                LogMarker.DLS, "[DLockRecoverGrantorMessage.process] locally process reply");
           }
           replyMsg.setSender(dm.getId());
           replyMsg.dmProcess(dm);

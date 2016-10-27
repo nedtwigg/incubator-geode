@@ -35,8 +35,11 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 /**
- * The LinkIndexJUnitTest class is a test suite of test cases testing the contract and functionality of the LinkIndex class.
- * <p/>
+ * The LinkIndexJUnitTest class is a test suite of test cases testing the contract and functionality
+ * of the LinkIndex class.
+ *
+ * <p>
+ *
  * @see java.net.URI
  * @see org.apache.geode.management.internal.web.AbstractWebTestCase
  * @see org.apache.geode.management.internal.web.domain.LinkIndex
@@ -49,7 +52,8 @@ public class LinkIndexJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testAdd() throws Exception {
-    final Link link = new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
+    final Link link =
+        new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
 
     final LinkIndex linkIndex = new LinkIndex();
 
@@ -78,10 +82,23 @@ public class LinkIndexJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testAddAll() throws Exception {
-    final Link create = new Link("create-resource", toUri("http://host.domain.com:port/service/v1/resources"), HttpMethod.POST);
-    final Link retrieve = new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
-    final Link update = new Link("update-resource", toUri("http://host.domain.com:port/service/v1/resources"), HttpMethod.PUT);
-    final Link delete = new Link("delete-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"), HttpMethod.DELETE);
+    final Link create =
+        new Link(
+            "create-resource",
+            toUri("http://host.domain.com:port/service/v1/resources"),
+            HttpMethod.POST);
+    final Link retrieve =
+        new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
+    final Link update =
+        new Link(
+            "update-resource",
+            toUri("http://host.domain.com:port/service/v1/resources"),
+            HttpMethod.PUT);
+    final Link delete =
+        new Link(
+            "delete-resource",
+            toUri("http://host.domain.com:port/service/v1/resources/{id}"),
+            HttpMethod.DELETE);
 
     final LinkIndex linkIndex = new LinkIndex();
 
@@ -106,11 +123,25 @@ public class LinkIndexJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testFind() throws Exception {
-    final Link list = new Link("get-resources", toUri("http://host.domain.com:port/service/v1/resources"));
-    final Link create = new Link("create-resource", toUri("http://host.domain.com:port/service/v1/resources"), HttpMethod.POST);
-    final Link retrieve = new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
-    final Link update = new Link("update-resource", toUri("http://host.domain.com:port/service/v1/resources"), HttpMethod.PUT);
-    final Link delete = new Link("delete-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"), HttpMethod.DELETE);
+    final Link list =
+        new Link("get-resources", toUri("http://host.domain.com:port/service/v1/resources"));
+    final Link create =
+        new Link(
+            "create-resource",
+            toUri("http://host.domain.com:port/service/v1/resources"),
+            HttpMethod.POST);
+    final Link retrieve =
+        new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
+    final Link update =
+        new Link(
+            "update-resource",
+            toUri("http://host.domain.com:port/service/v1/resources"),
+            HttpMethod.PUT);
+    final Link delete =
+        new Link(
+            "delete-resource",
+            toUri("http://host.domain.com:port/service/v1/resources/{id}"),
+            HttpMethod.DELETE);
 
     final LinkIndex linkIndex = new LinkIndex();
 
@@ -128,17 +159,33 @@ public class LinkIndexJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testFindAll() throws Exception {
-    final Link list = new Link("get-resources", toUri("http://host.domain.com:port/service/v1/resources"));
-    final Link create = new Link("create-resource", toUri("http://host.domain.com:port/service/v1/resources"), HttpMethod.POST);
-    final Link retrieveById = new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
-    final Link retrieveByName = new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{name}"));
-    final Link update = new Link("update-resource", toUri("http://host.domain.com:port/service/v1/resources"), HttpMethod.PUT);
-    final Link delete = new Link("delete-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"), HttpMethod.DELETE);
+    final Link list =
+        new Link("get-resources", toUri("http://host.domain.com:port/service/v1/resources"));
+    final Link create =
+        new Link(
+            "create-resource",
+            toUri("http://host.domain.com:port/service/v1/resources"),
+            HttpMethod.POST);
+    final Link retrieveById =
+        new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
+    final Link retrieveByName =
+        new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{name}"));
+    final Link update =
+        new Link(
+            "update-resource",
+            toUri("http://host.domain.com:port/service/v1/resources"),
+            HttpMethod.PUT);
+    final Link delete =
+        new Link(
+            "delete-resource",
+            toUri("http://host.domain.com:port/service/v1/resources/{id}"),
+            HttpMethod.DELETE);
 
     final LinkIndex linkIndex = new LinkIndex();
 
     assertTrue(linkIndex.isEmpty());
-    assertEquals(linkIndex, linkIndex.addAll(list, create, retrieveById, retrieveByName, update, delete));
+    assertEquals(
+        linkIndex, linkIndex.addAll(list, create, retrieveById, retrieveByName, update, delete));
     assertFalse(linkIndex.isEmpty());
     assertEquals(6, linkIndex.size());
 
@@ -146,7 +193,8 @@ public class LinkIndexJUnitTest extends AbstractWebTestCase {
 
     assertNotNull(retrieveLinks);
     assertEquals(2, retrieveLinks.length);
-    assertTrue(Arrays.asList(retrieveLinks).containsAll(Arrays.asList(retrieveById, retrieveByName)));
+    assertTrue(
+        Arrays.asList(retrieveLinks).containsAll(Arrays.asList(retrieveById, retrieveByName)));
 
     final Link[] saveLinks = linkIndex.findAll("save-resource");
 
@@ -156,21 +204,38 @@ public class LinkIndexJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testIterator() throws Exception {
-    final Link list = new Link("get-resources", toUri("http://host.domain.com:port/service/v1/resources"));
-    final Link create = new Link("create-resource", toUri("http://host.domain.com:port/service/v1/resources"), HttpMethod.POST);
-    final Link retrieveById = new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
-    final Link retrieveByName = new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{name}"));
-    final Link update = new Link("update-resource", toUri("http://host.domain.com:port/service/v1/resources"), HttpMethod.PUT);
-    final Link delete = new Link("delete-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"), HttpMethod.DELETE);
+    final Link list =
+        new Link("get-resources", toUri("http://host.domain.com:port/service/v1/resources"));
+    final Link create =
+        new Link(
+            "create-resource",
+            toUri("http://host.domain.com:port/service/v1/resources"),
+            HttpMethod.POST);
+    final Link retrieveById =
+        new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
+    final Link retrieveByName =
+        new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{name}"));
+    final Link update =
+        new Link(
+            "update-resource",
+            toUri("http://host.domain.com:port/service/v1/resources"),
+            HttpMethod.PUT);
+    final Link delete =
+        new Link(
+            "delete-resource",
+            toUri("http://host.domain.com:port/service/v1/resources/{id}"),
+            HttpMethod.DELETE);
 
     final LinkIndex linkIndex = new LinkIndex();
 
     assertTrue(linkIndex.isEmpty());
-    assertEquals(linkIndex, linkIndex.addAll(list, create, retrieveById, retrieveByName, update, delete));
+    assertEquals(
+        linkIndex, linkIndex.addAll(list, create, retrieveById, retrieveByName, update, delete));
     assertFalse(linkIndex.isEmpty());
     assertEquals(6, linkIndex.size());
 
-    final Collection<Link> expectedLinks = Arrays.asList(list, create, retrieveById, retrieveByName, update, delete);
+    final Collection<Link> expectedLinks =
+        Arrays.asList(list, create, retrieveById, retrieveByName, update, delete);
 
     final Collection<Link> actualLinks = new ArrayList<Link>(linkIndex.size());
 
@@ -183,21 +248,38 @@ public class LinkIndexJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testToList() throws Exception {
-    final Link list = new Link("get-resources", toUri("http://host.domain.com:port/service/v1/resources"));
-    final Link create = new Link("create-resource", toUri("http://host.domain.com:port/service/v1/resources"), HttpMethod.POST);
-    final Link retrieveById = new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
-    final Link retrieveByName = new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{name}"));
-    final Link update = new Link("update-resource", toUri("http://host.domain.com:port/service/v1/resources"), HttpMethod.PUT);
-    final Link delete = new Link("delete-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"), HttpMethod.DELETE);
+    final Link list =
+        new Link("get-resources", toUri("http://host.domain.com:port/service/v1/resources"));
+    final Link create =
+        new Link(
+            "create-resource",
+            toUri("http://host.domain.com:port/service/v1/resources"),
+            HttpMethod.POST);
+    final Link retrieveById =
+        new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
+    final Link retrieveByName =
+        new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{name}"));
+    final Link update =
+        new Link(
+            "update-resource",
+            toUri("http://host.domain.com:port/service/v1/resources"),
+            HttpMethod.PUT);
+    final Link delete =
+        new Link(
+            "delete-resource",
+            toUri("http://host.domain.com:port/service/v1/resources/{id}"),
+            HttpMethod.DELETE);
 
     final LinkIndex linkIndex = new LinkIndex();
 
     assertTrue(linkIndex.isEmpty());
-    assertEquals(linkIndex, linkIndex.addAll(list, create, retrieveById, retrieveByName, update, delete));
+    assertEquals(
+        linkIndex, linkIndex.addAll(list, create, retrieveById, retrieveByName, update, delete));
     assertFalse(linkIndex.isEmpty());
     assertEquals(6, linkIndex.size());
 
-    final List<Link> expectedList = CollectionUtils.asList(list, create, retrieveById, retrieveByName, update, delete);
+    final List<Link> expectedList =
+        CollectionUtils.asList(list, create, retrieveById, retrieveByName, update, delete);
 
     Collections.sort(expectedList);
 
@@ -206,17 +288,33 @@ public class LinkIndexJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testToMap() throws Exception {
-    final Link list = new Link("get-resources", toUri("http://host.domain.com:port/service/v1/resources"));
-    final Link create = new Link("create-resource", toUri("http://host.domain.com:port/service/v1/resources"), HttpMethod.POST);
-    final Link retrieveById = new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
-    final Link retrieveByName = new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{name}"));
-    final Link update = new Link("update-resource", toUri("http://host.domain.com:port/service/v1/resources"), HttpMethod.PUT);
-    final Link delete = new Link("delete-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"), HttpMethod.DELETE);
+    final Link list =
+        new Link("get-resources", toUri("http://host.domain.com:port/service/v1/resources"));
+    final Link create =
+        new Link(
+            "create-resource",
+            toUri("http://host.domain.com:port/service/v1/resources"),
+            HttpMethod.POST);
+    final Link retrieveById =
+        new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
+    final Link retrieveByName =
+        new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{name}"));
+    final Link update =
+        new Link(
+            "update-resource",
+            toUri("http://host.domain.com:port/service/v1/resources"),
+            HttpMethod.PUT);
+    final Link delete =
+        new Link(
+            "delete-resource",
+            toUri("http://host.domain.com:port/service/v1/resources/{id}"),
+            HttpMethod.DELETE);
 
     final LinkIndex linkIndex = new LinkIndex();
 
     assertTrue(linkIndex.isEmpty());
-    assertEquals(linkIndex, linkIndex.addAll(list, create, retrieveById, retrieveByName, update, delete));
+    assertEquals(
+        linkIndex, linkIndex.addAll(list, create, retrieveById, retrieveByName, update, delete));
     assertFalse(linkIndex.isEmpty());
     assertEquals(6, linkIndex.size());
 
@@ -230,5 +328,4 @@ public class LinkIndexJUnitTest extends AbstractWebTestCase {
 
     assertEquals(expectedMap, linkIndex.toMap());
   }
-
 }

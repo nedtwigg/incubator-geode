@@ -24,31 +24,28 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class DistributedLockBlackboardImpl extends UnicastRemoteObject implements DistributedLockBlackboard {
+public class DistributedLockBlackboardImpl extends UnicastRemoteObject
+    implements DistributedLockBlackboard {
   public static int Count;
   public static int IsLocked;
 
   public static DistributedLockBlackboard blackboard;
 
-  /**
-   *  Zero-arg constructor for remote method invocations.
-   */
+  /** Zero-arg constructor for remote method invocations. */
   public DistributedLockBlackboardImpl() throws RemoteException {
     super();
   }
 
-  /**
-   *  Creates a singleton event listeners blackboard.
-   */
+  /** Creates a singleton event listeners blackboard. */
   public static DistributedLockBlackboard getInstance() throws Exception {
-    if (blackboard == null)
-      initialize();
+    if (blackboard == null) initialize();
     return blackboard;
   }
 
   private static synchronized void initialize() throws Exception {
     if (blackboard == null) {
-      System.out.println(DUnitLauncher.RMI_PORT_PARAM + "=" + System.getProperty(DUnitLauncher.RMI_PORT_PARAM));
+      System.out.println(
+          DUnitLauncher.RMI_PORT_PARAM + "=" + System.getProperty(DUnitLauncher.RMI_PORT_PARAM));
       int namingPort = Integer.getInteger(DUnitLauncher.RMI_PORT_PARAM).intValue();
       String name = "//localhost:" + namingPort + "/" + "DistributedLockBlackboard";
       try {
@@ -79,19 +76,18 @@ public class DistributedLockBlackboardImpl extends UnicastRemoteObject implement
   @Override
   public synchronized void setIsLocked(boolean isLocked) {
     if (isLocked) {
-      if (IsLocked < 1)
-        IsLocked = 1;
+      if (IsLocked < 1) IsLocked = 1;
     } else {
-      if (IsLocked > 0)
-        IsLocked = 0;
+      if (IsLocked > 0) IsLocked = 0;
     }
   }
 
   @Override
   public synchronized boolean getIsLocked() {
     long isLocked = IsLocked;
-    Assert.assertTrue(isLocked == 0 || isLocked == 1, "DistributedLockBlackboard internal error - IsLocked is " + isLocked);
+    Assert.assertTrue(
+        isLocked == 0 || isLocked == 1,
+        "DistributedLockBlackboard internal error - IsLocked is " + isLocked);
     return isLocked == 1;
   }
-
 }

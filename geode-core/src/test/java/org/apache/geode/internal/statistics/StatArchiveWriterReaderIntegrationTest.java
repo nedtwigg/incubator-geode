@@ -58,7 +58,7 @@ import org.apache.geode.util.test.TestUtil;
  * @since GemFire 7.0
  */
 @Category(IntegrationTest.class)
-@SuppressWarnings({ "rawtypes", "unused" })
+@SuppressWarnings({"rawtypes", "unused"})
 public class StatArchiveWriterReaderIntegrationTest {
 
   private static final Logger logger = LogManager.getLogger();
@@ -68,18 +68,17 @@ public class StatArchiveWriterReaderIntegrationTest {
   private Map<String, Map<String, Number>> allStatistics;
   private String archiveFileName;
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
     this.statisticTypes = new HashMap<>();
     this.allStatistics = new HashMap<>();
     this.dir = this.temporaryFolder.getRoot();
-    this.archiveFileName = this.dir.getAbsolutePath() + File.separator + this.testName.getMethodName() + ".gfs";
+    this.archiveFileName =
+        this.dir.getAbsolutePath() + File.separator + this.testName.getMethodName() + ".gfs";
   }
 
   @After
@@ -91,16 +90,25 @@ public class StatArchiveWriterReaderIntegrationTest {
 
   @Test
   public void testDoubleCounterOneSample() throws Exception {
-    final TestStatisticsManager manager = new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
+    final TestStatisticsManager manager =
+        new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
 
     final TestStatisticsSampler sampler = new TestStatisticsSampler(manager);
     final SampleCollector sampleCollector = new SampleCollector(sampler);
 
-    final StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS).setSystemDirectoryPath(this.testName.getMethodName()).setProductDescription(getClass().getSimpleName()).build();
+    final StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS)
+            .setSystemDirectoryPath(this.testName.getMethodName())
+            .setProductDescription(getClass().getSimpleName())
+            .build();
     final StatArchiveWriter writer = new TestStatArchiveWriter(archiveDescriptor);
     sampleCollector.addSampleHandler(writer);
 
-    final StatisticDescriptor[] statsST1 = new StatisticDescriptor[] { manager.createDoubleCounter("long_double_1", "d1", "u1") };
+    final StatisticDescriptor[] statsST1 =
+        new StatisticDescriptor[] {manager.createDoubleCounter("long_double_1", "d1", "u1")};
 
     final StatisticsType ST1 = manager.createType("ST1", "ST1", statsST1);
     final Statistics st1_1 = manager.createAtomicStatistics(ST1, "st1_1", 1);
@@ -118,7 +126,8 @@ public class StatArchiveWriterReaderIntegrationTest {
       assertEquals(value, st1_1.get(sds[i].getName()));
     }
 
-    final StatArchiveReader reader = new StatArchiveReader(new File[] { new File(this.archiveFileName) }, null, false);
+    final StatArchiveReader reader =
+        new StatArchiveReader(new File[] {new File(this.archiveFileName)}, null, false);
 
     // compare all resourceInst values against what was printed above
 
@@ -148,7 +157,8 @@ public class StatArchiveWriterReaderIntegrationTest {
     assertNotNull(timeStampsMillis);
     assertEquals(1, timeStampsMillis.length);
 
-    final long initPreviousTimeStampMillis = NanoTimer.nanosToMillis(WRITER_PREVIOUS_TIMESTAMP_NANOS);
+    final long initPreviousTimeStampMillis =
+        NanoTimer.nanosToMillis(WRITER_PREVIOUS_TIMESTAMP_NANOS);
     final long timeStampMillis = NanoTimer.nanosToMillis(sampleTimeNanos);
     final long deltaMillis = timeStampMillis - initPreviousTimeStampMillis;
     assertEquals(NanoTimer.nanosToMillis(sampleIncNanos), deltaMillis);
@@ -164,16 +174,25 @@ public class StatArchiveWriterReaderIntegrationTest {
 
   @Test
   public void testIntCounterOneSample() throws Exception {
-    final TestStatisticsManager manager = new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
+    final TestStatisticsManager manager =
+        new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
 
     final TestStatisticsSampler sampler = new TestStatisticsSampler(manager);
     final SampleCollector sampleCollector = new SampleCollector(sampler);
 
-    final StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS).setSystemDirectoryPath(this.testName.getMethodName()).setProductDescription(getClass().getSimpleName()).build();
+    final StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS)
+            .setSystemDirectoryPath(this.testName.getMethodName())
+            .setProductDescription(getClass().getSimpleName())
+            .build();
     final StatArchiveWriter writer = new TestStatArchiveWriter(archiveDescriptor);
     sampleCollector.addSampleHandler(writer);
 
-    final StatisticDescriptor[] statsST1 = new StatisticDescriptor[] { manager.createIntCounter("int_counter_1", "d1", "u1") };
+    final StatisticDescriptor[] statsST1 =
+        new StatisticDescriptor[] {manager.createIntCounter("int_counter_1", "d1", "u1")};
 
     final StatisticsType ST1 = manager.createType("ST1", "ST1", statsST1);
     final Statistics st1_1 = manager.createAtomicStatistics(ST1, "st1_1", 1);
@@ -191,7 +210,8 @@ public class StatArchiveWriterReaderIntegrationTest {
       assertEquals(value, st1_1.get(sds[i].getName()));
     }
 
-    final StatArchiveReader reader = new StatArchiveReader(new File[] { new File(this.archiveFileName) }, null, false);
+    final StatArchiveReader reader =
+        new StatArchiveReader(new File[] {new File(this.archiveFileName)}, null, false);
 
     // compare all resourceInst values against what was printed above
 
@@ -221,7 +241,8 @@ public class StatArchiveWriterReaderIntegrationTest {
     assertNotNull(timeStampsMillis);
     assertEquals(1, timeStampsMillis.length);
 
-    final long initPreviousTimeStampMillis = NanoTimer.nanosToMillis(WRITER_PREVIOUS_TIMESTAMP_NANOS);
+    final long initPreviousTimeStampMillis =
+        NanoTimer.nanosToMillis(WRITER_PREVIOUS_TIMESTAMP_NANOS);
     final long timeStampMillis = NanoTimer.nanosToMillis(sampleTimeNanos);
     final long deltaMillis = timeStampMillis - initPreviousTimeStampMillis;
     assertEquals(NanoTimer.nanosToMillis(sampleIncNanos), deltaMillis);
@@ -237,16 +258,25 @@ public class StatArchiveWriterReaderIntegrationTest {
 
   @Test
   public void testIntGaugeOneSample() throws Exception {
-    final TestStatisticsManager manager = new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
+    final TestStatisticsManager manager =
+        new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
 
     final TestStatisticsSampler sampler = new TestStatisticsSampler(manager);
     final SampleCollector sampleCollector = new SampleCollector(sampler);
 
-    final StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS).setSystemDirectoryPath(this.testName.getMethodName()).setProductDescription(getClass().getSimpleName()).build();
+    final StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS)
+            .setSystemDirectoryPath(this.testName.getMethodName())
+            .setProductDescription(getClass().getSimpleName())
+            .build();
     final StatArchiveWriter writer = new TestStatArchiveWriter(archiveDescriptor);
     sampleCollector.addSampleHandler(writer);
 
-    final StatisticDescriptor[] statsST1 = new StatisticDescriptor[] { manager.createIntGauge("int_gauge_1", "d1", "u1") };
+    final StatisticDescriptor[] statsST1 =
+        new StatisticDescriptor[] {manager.createIntGauge("int_gauge_1", "d1", "u1")};
 
     final StatisticsType ST1 = manager.createType("ST1", "ST1", statsST1);
     final Statistics st1_1 = manager.createAtomicStatistics(ST1, "st1_1", 1);
@@ -264,7 +294,8 @@ public class StatArchiveWriterReaderIntegrationTest {
       assertEquals(value, st1_1.get(sds[i].getName()));
     }
 
-    final StatArchiveReader reader = new StatArchiveReader(new File[] { new File(this.archiveFileName) }, null, false);
+    final StatArchiveReader reader =
+        new StatArchiveReader(new File[] {new File(this.archiveFileName)}, null, false);
 
     // compare all resourceInst values against what was printed above
 
@@ -294,7 +325,8 @@ public class StatArchiveWriterReaderIntegrationTest {
     assertNotNull(timeStampsMillis);
     assertEquals(1, timeStampsMillis.length);
 
-    final long initialPreviousTimeStampMillis = NanoTimer.nanosToMillis(WRITER_PREVIOUS_TIMESTAMP_NANOS);
+    final long initialPreviousTimeStampMillis =
+        NanoTimer.nanosToMillis(WRITER_PREVIOUS_TIMESTAMP_NANOS);
     final long timeStampMillis = NanoTimer.nanosToMillis(sampleTimeNanos);
     final long deltaMillis = timeStampMillis - initialPreviousTimeStampMillis;
     assertEquals(NanoTimer.nanosToMillis(sampleIncNanos), deltaMillis);
@@ -310,16 +342,25 @@ public class StatArchiveWriterReaderIntegrationTest {
 
   @Test
   public void testLongCounterOneSample() throws Exception {
-    final TestStatisticsManager manager = new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
+    final TestStatisticsManager manager =
+        new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
 
     final TestStatisticsSampler sampler = new TestStatisticsSampler(manager);
     final SampleCollector sampleCollector = new SampleCollector(sampler);
 
-    final StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS).setSystemDirectoryPath(this.testName.getMethodName()).setProductDescription(getClass().getSimpleName()).build();
+    final StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS)
+            .setSystemDirectoryPath(this.testName.getMethodName())
+            .setProductDescription(getClass().getSimpleName())
+            .build();
     final StatArchiveWriter writer = new TestStatArchiveWriter(archiveDescriptor);
     sampleCollector.addSampleHandler(writer);
 
-    final StatisticDescriptor[] statsST1 = new StatisticDescriptor[] { manager.createLongCounter("long_counter_1", "d1", "u1") };
+    final StatisticDescriptor[] statsST1 =
+        new StatisticDescriptor[] {manager.createLongCounter("long_counter_1", "d1", "u1")};
 
     final StatisticsType ST1 = manager.createType("ST1", "ST1", statsST1);
     final Statistics st1_1 = manager.createAtomicStatistics(ST1, "st1_1", 1);
@@ -337,7 +378,8 @@ public class StatArchiveWriterReaderIntegrationTest {
       assertEquals(value, st1_1.get(sds[i].getName()));
     }
 
-    final StatArchiveReader reader = new StatArchiveReader(new File[] { new File(this.archiveFileName) }, null, false);
+    final StatArchiveReader reader =
+        new StatArchiveReader(new File[] {new File(this.archiveFileName)}, null, false);
 
     // compare all resourceInst values against what was printed above
 
@@ -367,7 +409,8 @@ public class StatArchiveWriterReaderIntegrationTest {
     assertNotNull(timeStampsMillis);
     assertEquals(1, timeStampsMillis.length);
 
-    final long initialPreviousTimeStampMillis = NanoTimer.nanosToMillis(WRITER_PREVIOUS_TIMESTAMP_NANOS);
+    final long initialPreviousTimeStampMillis =
+        NanoTimer.nanosToMillis(WRITER_PREVIOUS_TIMESTAMP_NANOS);
     final long timeStampMillis = NanoTimer.nanosToMillis(sampleTimeNanos);
     final long deltaMillis = timeStampMillis - initialPreviousTimeStampMillis;
     assertEquals(NanoTimer.nanosToMillis(sampleIncNanos), deltaMillis);
@@ -383,16 +426,25 @@ public class StatArchiveWriterReaderIntegrationTest {
 
   @Test
   public void testLongGaugeOneSample() throws Exception {
-    final TestStatisticsManager manager = new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
+    final TestStatisticsManager manager =
+        new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
 
     final TestStatisticsSampler sampler = new TestStatisticsSampler(manager);
     final SampleCollector sampleCollector = new SampleCollector(sampler);
 
-    final StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS).setSystemDirectoryPath(this.testName.getMethodName()).setProductDescription(getClass().getSimpleName()).build();
+    final StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS)
+            .setSystemDirectoryPath(this.testName.getMethodName())
+            .setProductDescription(getClass().getSimpleName())
+            .build();
     final StatArchiveWriter writer = new TestStatArchiveWriter(archiveDescriptor);
     sampleCollector.addSampleHandler(writer);
 
-    final StatisticDescriptor[] statsST1 = new StatisticDescriptor[] { manager.createLongGauge("long_gauge_1", "d1", "u1") };
+    final StatisticDescriptor[] statsST1 =
+        new StatisticDescriptor[] {manager.createLongGauge("long_gauge_1", "d1", "u1")};
 
     final StatisticsType ST1 = manager.createType("ST1", "ST1", statsST1);
     final Statistics st1_1 = manager.createAtomicStatistics(ST1, "st1_1", 1);
@@ -408,7 +460,8 @@ public class StatArchiveWriterReaderIntegrationTest {
       assertEquals(5L, st1_1.get(sds[i].getName()));
     }
 
-    final StatArchiveReader reader = new StatArchiveReader(new File[] { new File(this.archiveFileName) }, null, false);
+    final StatArchiveReader reader =
+        new StatArchiveReader(new File[] {new File(this.archiveFileName)}, null, false);
 
     // compare all resourceInst values against what was printed above
 
@@ -438,7 +491,8 @@ public class StatArchiveWriterReaderIntegrationTest {
     assertNotNull(timeStampsMillis);
     assertEquals(1, timeStampsMillis.length);
 
-    final long initialPreviousTimeStampMillis = NanoTimer.nanosToMillis(WRITER_PREVIOUS_TIMESTAMP_NANOS);
+    final long initialPreviousTimeStampMillis =
+        NanoTimer.nanosToMillis(WRITER_PREVIOUS_TIMESTAMP_NANOS);
     final long timeStampMillis = NanoTimer.nanosToMillis(sampleTimeNanos);
     final long deltaMillis = timeStampMillis - initialPreviousTimeStampMillis;
     assertEquals(2, deltaMillis);
@@ -454,16 +508,25 @@ public class StatArchiveWriterReaderIntegrationTest {
 
   @Test
   public void testLongCounterTwoSamples() throws Exception {
-    final TestStatisticsManager manager = new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
+    final TestStatisticsManager manager =
+        new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
 
     final TestStatisticsSampler sampler = new TestStatisticsSampler(manager);
     final SampleCollector sampleCollector = new SampleCollector(sampler);
 
-    final StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS).setSystemDirectoryPath(this.testName.getMethodName()).setProductDescription(getClass().getSimpleName()).build();
+    final StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS)
+            .setSystemDirectoryPath(this.testName.getMethodName())
+            .setProductDescription(getClass().getSimpleName())
+            .build();
     final StatArchiveWriter writer = new TestStatArchiveWriter(archiveDescriptor);
     sampleCollector.addSampleHandler(writer);
 
-    final StatisticDescriptor[] statsST1 = new StatisticDescriptor[] { manager.createLongCounter("long_counter_1", "d1", "u1") };
+    final StatisticDescriptor[] statsST1 =
+        new StatisticDescriptor[] {manager.createLongCounter("long_counter_1", "d1", "u1")};
 
     final StatisticsType ST1 = manager.createType("ST1", "ST1", statsST1);
     final Statistics st1_1 = manager.createAtomicStatistics(ST1, "st1_1", 1);
@@ -486,7 +549,8 @@ public class StatArchiveWriterReaderIntegrationTest {
       assertEquals(value1 + value2, st1_1.get(sds[i].getName()));
     }
 
-    final StatArchiveReader reader = new StatArchiveReader(new File[] { new File(this.archiveFileName) }, null, false);
+    final StatArchiveReader reader =
+        new StatArchiveReader(new File[] {new File(this.archiveFileName)}, null, false);
 
     // compare all resourceInst values against what was printed above
 
@@ -518,7 +582,8 @@ public class StatArchiveWriterReaderIntegrationTest {
     assertNotNull(timeStampsMillis);
     assertEquals(2, timeStampsMillis.length);
 
-    final long initialPreviousTimeStampMillis = NanoTimer.nanosToMillis(WRITER_PREVIOUS_TIMESTAMP_NANOS);
+    final long initialPreviousTimeStampMillis =
+        NanoTimer.nanosToMillis(WRITER_PREVIOUS_TIMESTAMP_NANOS);
     final long timeStampMillis = NanoTimer.nanosToMillis(sampleTimeNanos);
     final long deltaMillis = timeStampMillis - initialPreviousTimeStampMillis;
     assertEquals(NanoTimer.nanosToMillis(sampleIncNanos * 2), deltaMillis);
@@ -526,7 +591,10 @@ public class StatArchiveWriterReaderIntegrationTest {
     long expectedTimeStampMillis = WRITER_INITIAL_DATE_MILLIS;
     for (int i = 0; i < timeStampsMillis.length; i++) {
       expectedTimeStampMillis += 1000;
-      assertEquals("expectedTimeStampMillis for " + i + " is wrong", expectedTimeStampMillis, timeStampsMillis[i]);
+      assertEquals(
+          "expectedTimeStampMillis for " + i + " is wrong",
+          expectedTimeStampMillis,
+          timeStampsMillis[i]);
     }
 
     final double[] snapshots = statValues[0].getRawSnapshots();
@@ -536,17 +604,23 @@ public class StatArchiveWriterReaderIntegrationTest {
     assertEquals((double) (value1 + value2), snapshots[1], 0.01);
   }
 
-  /**
-   * Tests the stat archive file written by StatArchiveWriter.
-   */
+  /** Tests the stat archive file written by StatArchiveWriter. */
   @Test
   public void testWriteAfterSamplingBegins() throws Exception {
-    final TestStatisticsManager manager = new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
+    final TestStatisticsManager manager =
+        new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
 
     final TestStatisticsSampler sampler = new TestStatisticsSampler(manager);
     final SampleCollector sampleCollector = new SampleCollector(sampler);
 
-    final StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS - 2000).setSystemDirectoryPath(this.testName.getMethodName()).setProductDescription(getClass().getSimpleName()).build();
+    final StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS - 2000)
+            .setSystemDirectoryPath(this.testName.getMethodName())
+            .setProductDescription(getClass().getSimpleName())
+            .build();
     final StatArchiveWriter writer = new TestStatArchiveWriter(archiveDescriptor);
     sampleCollector.addSampleHandler(writer);
 
@@ -555,7 +629,21 @@ public class StatArchiveWriterReaderIntegrationTest {
 
     // 1) create ST1 and st1_1
 
-    final StatisticDescriptor[] statsST1 = new StatisticDescriptor[] { manager.createDoubleCounter("double_counter_1", "d1", "u1"), manager.createDoubleCounter("double_counter_2", "d2", "u2", true), manager.createDoubleGauge("double_gauge_3", "d3", "u3"), manager.createDoubleGauge("double_gauge_4", "d4", "u4", false), manager.createIntCounter("int_counter_5", "d5", "u5"), manager.createIntCounter("int_counter_6", "d6", "u6", true), manager.createIntGauge("int_gauge_7", "d7", "u7"), manager.createIntGauge("int_gauge_8", "d8", "u8", false), manager.createLongCounter("long_counter_9", "d9", "u9"), manager.createLongCounter("long_counter_10", "d10", "u10", true), manager.createLongGauge("long_gauge_11", "d11", "u11"), manager.createLongGauge("long_gauge_12", "d12", "u12", false) };
+    final StatisticDescriptor[] statsST1 =
+        new StatisticDescriptor[] {
+          manager.createDoubleCounter("double_counter_1", "d1", "u1"),
+          manager.createDoubleCounter("double_counter_2", "d2", "u2", true),
+          manager.createDoubleGauge("double_gauge_3", "d3", "u3"),
+          manager.createDoubleGauge("double_gauge_4", "d4", "u4", false),
+          manager.createIntCounter("int_counter_5", "d5", "u5"),
+          manager.createIntCounter("int_counter_6", "d6", "u6", true),
+          manager.createIntGauge("int_gauge_7", "d7", "u7"),
+          manager.createIntGauge("int_gauge_8", "d8", "u8", false),
+          manager.createLongCounter("long_counter_9", "d9", "u9"),
+          manager.createLongCounter("long_counter_10", "d10", "u10", true),
+          manager.createLongGauge("long_gauge_11", "d11", "u11"),
+          manager.createLongGauge("long_gauge_12", "d12", "u12", false)
+        };
     final StatisticsType ST1 = manager.createType("ST1", "ST1", statsST1);
     final Statistics st1_1 = manager.createAtomicStatistics(ST1, "st1_1", 1);
 
@@ -667,11 +755,27 @@ public class StatArchiveWriterReaderIntegrationTest {
 
     // 8) create ST2 and ST3 and st2_1 and st3_1 and st3_2
 
-    final StatisticDescriptor[] statsST2 = new StatisticDescriptor[] { manager.createIntGauge("int_gauge_7", "d7", "u7"), manager.createIntGauge("int_gauge_8", "d8", "u8", false), manager.createLongCounter("long_counter_9", "d9", "u9"), manager.createLongCounter("long_counter_10", "d10", "u10", true), manager.createLongGauge("long_gauge_11", "d11", "u11"), manager.createLongGauge("long_gauge_12", "d12", "u12", false) };
+    final StatisticDescriptor[] statsST2 =
+        new StatisticDescriptor[] {
+          manager.createIntGauge("int_gauge_7", "d7", "u7"),
+          manager.createIntGauge("int_gauge_8", "d8", "u8", false),
+          manager.createLongCounter("long_counter_9", "d9", "u9"),
+          manager.createLongCounter("long_counter_10", "d10", "u10", true),
+          manager.createLongGauge("long_gauge_11", "d11", "u11"),
+          manager.createLongGauge("long_gauge_12", "d12", "u12", false)
+        };
     final StatisticsType ST2 = manager.createType("ST2", "ST2", statsST2);
     final Statistics st2_1 = manager.createAtomicStatistics(ST2, "st2_1", 1);
 
-    final StatisticDescriptor[] statsST3 = new StatisticDescriptor[] { manager.createDoubleCounter("double_counter_1", "d1", "u1"), manager.createDoubleCounter("double_counter_2", "d2", "u2", true), manager.createDoubleGauge("double_gauge_3", "d3", "u3"), manager.createDoubleGauge("double_gauge_4", "d4", "u4", false), manager.createIntCounter("int_counter_5", "d5", "u5"), manager.createIntCounter("int_counter_6", "d6", "u6", true), };
+    final StatisticDescriptor[] statsST3 =
+        new StatisticDescriptor[] {
+          manager.createDoubleCounter("double_counter_1", "d1", "u1"),
+          manager.createDoubleCounter("double_counter_2", "d2", "u2", true),
+          manager.createDoubleGauge("double_gauge_3", "d3", "u3"),
+          manager.createDoubleGauge("double_gauge_4", "d4", "u4", false),
+          manager.createIntCounter("int_counter_5", "d5", "u5"),
+          manager.createIntCounter("int_counter_6", "d6", "u6", true),
+        };
     final StatisticsType ST3 = manager.createType("ST3", "ST3", statsST3);
     final Statistics st3_1 = manager.createAtomicStatistics(ST3, "st3_1", 1);
     final Statistics st3_2 = manager.createAtomicStatistics(ST3, "st3_2", 2);
@@ -835,23 +939,43 @@ public class StatArchiveWriterReaderIntegrationTest {
     if (false) {
       StatisticDescriptor[] sds = ST1.getStatistics();
       for (int i = 0; i < sds.length; i++) {
-        logger.info("testWriteAfterSamplingBegins#st1_1#" + sds[i].getName() + "=" + st1_1.get(sds[i].getName()));
+        logger.info(
+            "testWriteAfterSamplingBegins#st1_1#"
+                + sds[i].getName()
+                + "="
+                + st1_1.get(sds[i].getName()));
       }
       for (int i = 0; i < sds.length; i++) {
-        logger.info("testWriteAfterSamplingBegins#st1_2#" + sds[i].getName() + "=" + st1_2.get(sds[i].getName()));
+        logger.info(
+            "testWriteAfterSamplingBegins#st1_2#"
+                + sds[i].getName()
+                + "="
+                + st1_2.get(sds[i].getName()));
       }
 
       sds = ST2.getStatistics();
       for (int i = 0; i < sds.length; i++) {
-        logger.info("testWriteAfterSamplingBegins#st2_1#" + sds[i].getName() + "=" + st2_1.get(sds[i].getName()));
+        logger.info(
+            "testWriteAfterSamplingBegins#st2_1#"
+                + sds[i].getName()
+                + "="
+                + st2_1.get(sds[i].getName()));
       }
 
       sds = ST3.getStatistics();
       for (int i = 0; i < sds.length; i++) {
-        logger.info("testWriteAfterSamplingBegins#st3_1#" + sds[i].getName() + "=" + st3_1.get(sds[i].getName()));
+        logger.info(
+            "testWriteAfterSamplingBegins#st3_1#"
+                + sds[i].getName()
+                + "="
+                + st3_1.get(sds[i].getName()));
       }
       for (int i = 0; i < sds.length; i++) {
-        logger.info("testWriteAfterSamplingBegins#st3_2#" + sds[i].getName() + "=" + st3_2.get(sds[i].getName()));
+        logger.info(
+            "testWriteAfterSamplingBegins#st3_2#"
+                + sds[i].getName()
+                + "="
+                + st3_2.get(sds[i].getName()));
       }
     }
 
@@ -862,12 +986,12 @@ public class StatArchiveWriterReaderIntegrationTest {
 
     // validate content of stat archive file using StatArchiveReader
 
-    final StatArchiveReader reader = new StatArchiveReader(new File[] { actual }, null, false);
+    final StatArchiveReader reader = new StatArchiveReader(new File[] {actual}, null, false);
 
     // compare all resourceInst values against what was printed above
 
     final List resources = reader.getResourceInstList();
-    for (final Iterator iter = resources.iterator(); iter.hasNext();) {
+    for (final Iterator iter = resources.iterator(); iter.hasNext(); ) {
       final StatArchiveReader.ResourceInst ri = (StatArchiveReader.ResourceInst) iter.next();
       final String resourceName = ri.getName();
       assertNotNull(resourceName);
@@ -892,30 +1016,48 @@ public class StatArchiveWriterReaderIntegrationTest {
         //for (int j = 0; j < rawSnapshots.length; j++) {
         //  logger.info("DEBUG " + ri.getName() + " " + statName + " rawSnapshots[" + j + "] = " + rawSnapshots[j]);
         //}
-        assertEquals("Value " + i + " for " + statName + " is wrong: " + expectedStatValues, expectedStatValues.get(statName).doubleValue(), statValues[i].getSnapshotsMostRecent(), 0.01);
+        assertEquals(
+            "Value " + i + " for " + statName + " is wrong: " + expectedStatValues,
+            expectedStatValues.get(statName).doubleValue(),
+            statValues[i].getSnapshotsMostRecent(),
+            0.01);
       }
     }
 
     // validate byte content of stat archive file against saved expected file
 
-    final File expected = new File(TestUtil.getResourcePath(getClass(), "StatArchiveWriterReaderJUnitTest_" + this.testName.getMethodName() + "_expected.gfs"));
+    final File expected =
+        new File(
+            TestUtil.getResourcePath(
+                getClass(),
+                "StatArchiveWriterReaderJUnitTest_"
+                    + this.testName.getMethodName()
+                    + "_expected.gfs"));
     assertTrue(expected + " does not exist!", expected.exists());
     assertEquals(expected.length(), actual.length());
 
-    assertTrue("Actual stat archive file bytes differ from expected stat archive file bytes!", Arrays.equals(readBytes(expected), readBytes(actual)));
+    assertTrue(
+        "Actual stat archive file bytes differ from expected stat archive file bytes!",
+        Arrays.equals(readBytes(expected), readBytes(actual)));
   }
 
-  /**
-   * Tests the stat archive file written by StatArchiveWriter.
-   */
+  /** Tests the stat archive file written by StatArchiveWriter. */
   @Test
   public void testWriteWhenSamplingBegins() throws Exception {
-    final TestStatisticsManager manager = new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
+    final TestStatisticsManager manager =
+        new TestStatisticsManager(1, getUniqueName(), WRITER_INITIAL_DATE_MILLIS);
 
     final TestStatisticsSampler sampler = new TestStatisticsSampler(manager);
     final SampleCollector sampleCollector = new SampleCollector(sampler);
 
-    final StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS - 2000).setSystemDirectoryPath(this.testName.getMethodName()).setProductDescription(getClass().getSimpleName()).build();
+    final StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS - 2000)
+            .setSystemDirectoryPath(this.testName.getMethodName())
+            .setProductDescription(getClass().getSimpleName())
+            .build();
     final StatArchiveWriter writer = new TestStatArchiveWriter(archiveDescriptor);
     sampleCollector.addSampleHandler(writer);
 
@@ -923,7 +1065,21 @@ public class StatArchiveWriterReaderIntegrationTest {
 
     // 1) create ST1 and st1_1
 
-    final StatisticDescriptor[] statsST1 = new StatisticDescriptor[] { manager.createDoubleCounter("double_counter_1", "d1", "u1"), manager.createDoubleCounter("double_counter_2", "d2", "u2", true), manager.createDoubleGauge("double_gauge_3", "d3", "u3"), manager.createDoubleGauge("double_gauge_4", "d4", "u4", false), manager.createIntCounter("int_counter_5", "d5", "u5"), manager.createIntCounter("int_counter_6", "d6", "u6", true), manager.createIntGauge("int_gauge_7", "d7", "u7"), manager.createIntGauge("int_gauge_8", "d8", "u8", false), manager.createLongCounter("long_counter_9", "d9", "u9"), manager.createLongCounter("long_counter_10", "d10", "u10", true), manager.createLongGauge("long_gauge_11", "d11", "u11"), manager.createLongGauge("long_gauge_12", "d12", "u12", false) };
+    final StatisticDescriptor[] statsST1 =
+        new StatisticDescriptor[] {
+          manager.createDoubleCounter("double_counter_1", "d1", "u1"),
+          manager.createDoubleCounter("double_counter_2", "d2", "u2", true),
+          manager.createDoubleGauge("double_gauge_3", "d3", "u3"),
+          manager.createDoubleGauge("double_gauge_4", "d4", "u4", false),
+          manager.createIntCounter("int_counter_5", "d5", "u5"),
+          manager.createIntCounter("int_counter_6", "d6", "u6", true),
+          manager.createIntGauge("int_gauge_7", "d7", "u7"),
+          manager.createIntGauge("int_gauge_8", "d8", "u8", false),
+          manager.createLongCounter("long_counter_9", "d9", "u9"),
+          manager.createLongCounter("long_counter_10", "d10", "u10", true),
+          manager.createLongGauge("long_gauge_11", "d11", "u11"),
+          manager.createLongGauge("long_gauge_12", "d12", "u12", false)
+        };
     final StatisticsType ST1 = manager.createType("ST1", "ST1", statsST1);
     final Statistics st1_1 = manager.createAtomicStatistics(ST1, "st1_1", 1);
 
@@ -1033,11 +1189,27 @@ public class StatArchiveWriterReaderIntegrationTest {
 
     // 8) create ST2 and ST3 and st2_1 and st3_1 and st3_2
 
-    final StatisticDescriptor[] statsST2 = new StatisticDescriptor[] { manager.createIntGauge("int_gauge_7", "d7", "u7"), manager.createIntGauge("int_gauge_8", "d8", "u8", false), manager.createLongCounter("long_counter_9", "d9", "u9"), manager.createLongCounter("long_counter_10", "d10", "u10", true), manager.createLongGauge("long_gauge_11", "d11", "u11"), manager.createLongGauge("long_gauge_12", "d12", "u12", false) };
+    final StatisticDescriptor[] statsST2 =
+        new StatisticDescriptor[] {
+          manager.createIntGauge("int_gauge_7", "d7", "u7"),
+          manager.createIntGauge("int_gauge_8", "d8", "u8", false),
+          manager.createLongCounter("long_counter_9", "d9", "u9"),
+          manager.createLongCounter("long_counter_10", "d10", "u10", true),
+          manager.createLongGauge("long_gauge_11", "d11", "u11"),
+          manager.createLongGauge("long_gauge_12", "d12", "u12", false)
+        };
     final StatisticsType ST2 = manager.createType("ST2", "ST2", statsST2);
     final Statistics st2_1 = manager.createAtomicStatistics(ST2, "st2_1", 1);
 
-    final StatisticDescriptor[] statsST3 = new StatisticDescriptor[] { manager.createDoubleCounter("double_counter_1", "d1", "u1"), manager.createDoubleCounter("double_counter_2", "d2", "u2", true), manager.createDoubleGauge("double_gauge_3", "d3", "u3"), manager.createDoubleGauge("double_gauge_4", "d4", "u4", false), manager.createIntCounter("int_counter_5", "d5", "u5"), manager.createIntCounter("int_counter_6", "d6", "u6", true), };
+    final StatisticDescriptor[] statsST3 =
+        new StatisticDescriptor[] {
+          manager.createDoubleCounter("double_counter_1", "d1", "u1"),
+          manager.createDoubleCounter("double_counter_2", "d2", "u2", true),
+          manager.createDoubleGauge("double_gauge_3", "d3", "u3"),
+          manager.createDoubleGauge("double_gauge_4", "d4", "u4", false),
+          manager.createIntCounter("int_counter_5", "d5", "u5"),
+          manager.createIntCounter("int_counter_6", "d6", "u6", true),
+        };
     final StatisticsType ST3 = manager.createType("ST3", "ST3", statsST3);
     final Statistics st3_1 = manager.createAtomicStatistics(ST3, "st3_1", 1);
     final Statistics st3_2 = manager.createAtomicStatistics(ST3, "st3_2", 2);
@@ -1201,23 +1373,43 @@ public class StatArchiveWriterReaderIntegrationTest {
     if (false) {
       StatisticDescriptor[] sds = ST1.getStatistics();
       for (int i = 0; i < sds.length; i++) {
-        logger.info("testWriteAfterSamplingBegins#st1_1#" + sds[i].getName() + "=" + st1_1.get(sds[i].getName()));
+        logger.info(
+            "testWriteAfterSamplingBegins#st1_1#"
+                + sds[i].getName()
+                + "="
+                + st1_1.get(sds[i].getName()));
       }
       for (int i = 0; i < sds.length; i++) {
-        logger.info("testWriteAfterSamplingBegins#st1_2#" + sds[i].getName() + "=" + st1_2.get(sds[i].getName()));
+        logger.info(
+            "testWriteAfterSamplingBegins#st1_2#"
+                + sds[i].getName()
+                + "="
+                + st1_2.get(sds[i].getName()));
       }
 
       sds = ST2.getStatistics();
       for (int i = 0; i < sds.length; i++) {
-        logger.info("testWriteAfterSamplingBegins#st2_1#" + sds[i].getName() + "=" + st2_1.get(sds[i].getName()));
+        logger.info(
+            "testWriteAfterSamplingBegins#st2_1#"
+                + sds[i].getName()
+                + "="
+                + st2_1.get(sds[i].getName()));
       }
 
       sds = ST3.getStatistics();
       for (int i = 0; i < sds.length; i++) {
-        logger.info("testWriteAfterSamplingBegins#st3_1#" + sds[i].getName() + "=" + st3_1.get(sds[i].getName()));
+        logger.info(
+            "testWriteAfterSamplingBegins#st3_1#"
+                + sds[i].getName()
+                + "="
+                + st3_1.get(sds[i].getName()));
       }
       for (int i = 0; i < sds.length; i++) {
-        logger.info("testWriteAfterSamplingBegins#st3_2#" + sds[i].getName() + "=" + st3_2.get(sds[i].getName()));
+        logger.info(
+            "testWriteAfterSamplingBegins#st3_2#"
+                + sds[i].getName()
+                + "="
+                + st3_2.get(sds[i].getName()));
       }
     }
 
@@ -1228,12 +1420,12 @@ public class StatArchiveWriterReaderIntegrationTest {
 
     // validate content of stat archive file using StatArchiveReader
 
-    final StatArchiveReader reader = new StatArchiveReader(new File[] { actual }, null, false);
+    final StatArchiveReader reader = new StatArchiveReader(new File[] {actual}, null, false);
 
     // compare all resourceInst values against what was printed above
 
     final List resources = reader.getResourceInstList();
-    for (final Iterator iter = resources.iterator(); iter.hasNext();) {
+    for (final Iterator iter = resources.iterator(); iter.hasNext(); ) {
       final StatArchiveReader.ResourceInst ri = (StatArchiveReader.ResourceInst) iter.next();
       final String resourceName = ri.getName();
       assertNotNull(resourceName);
@@ -1258,33 +1450,53 @@ public class StatArchiveWriterReaderIntegrationTest {
         //for (int j = 0; j < rawSnapshots.length; j++) {
         //  logger.info("DEBUG " + ri.getName() + " " + statName + " rawSnapshots[" + j + "] = " + rawSnapshots[j]);
         //}
-        assertEquals("Value " + i + " for " + statName + " is wrong: " + expectedStatValues, expectedStatValues.get(statName).doubleValue(), statValues[i].getSnapshotsMostRecent(), 0.01);
+        assertEquals(
+            "Value " + i + " for " + statName + " is wrong: " + expectedStatValues,
+            expectedStatValues.get(statName).doubleValue(),
+            statValues[i].getSnapshotsMostRecent(),
+            0.01);
       }
     }
 
     // validate byte content of stat archive file against saved expected file
 
-    final File expected = new File(TestUtil.getResourcePath(getClass(), "StatArchiveWriterReaderJUnitTest_" + this.testName.getMethodName() + "_expected.gfs"));
+    final File expected =
+        new File(
+            TestUtil.getResourcePath(
+                getClass(),
+                "StatArchiveWriterReaderJUnitTest_"
+                    + this.testName.getMethodName()
+                    + "_expected.gfs"));
     assertTrue(expected + " does not exist!", expected.exists());
     assertEquals(expected.length(), actual.length());
 
-    assertTrue("Actual stat archive file bytes differ from expected stat archive file bytes!", Arrays.equals(readBytes(expected), readBytes(actual)));
+    assertTrue(
+        "Actual stat archive file bytes differ from expected stat archive file bytes!",
+        Arrays.equals(readBytes(expected), readBytes(actual)));
   }
 
   /**
-   * Validates that IllegalArgumentException is thrown if sample time stamp is
-   * before the previous time stamp. Tests the fix for cause of bug #45268.
+   * Validates that IllegalArgumentException is thrown if sample time stamp is before the previous
+   * time stamp. Tests the fix for cause of bug #45268.
    */
   @Test
   public void testNegativeSampleTimeStamp() throws Exception {
-    final StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS).setSystemDirectoryPath(this.testName.getMethodName()).setProductDescription(getClass().getSimpleName()).build();
+    final StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS)
+            .setSystemDirectoryPath(this.testName.getMethodName())
+            .setProductDescription(getClass().getSimpleName())
+            .build();
     final StatArchiveWriter writer = new TestStatArchiveWriter(archiveDescriptor);
 
     final long sampleIncNanos = NANOS_PER_MILLI * 1000;
 
     try {
       writer.sampled(WRITER_PREVIOUS_TIMESTAMP_NANOS - sampleIncNanos, Collections.emptyList());
-      fail("Expected IllegalArgumentException to be thrown from StatArchiveWriter#writeTimeStamp(long)");
+      fail(
+          "Expected IllegalArgumentException to be thrown from StatArchiveWriter#writeTimeStamp(long)");
     } catch (IllegalArgumentException expected) {
       // test passed
     } finally {
@@ -1293,17 +1505,25 @@ public class StatArchiveWriterReaderIntegrationTest {
   }
 
   /**
-   * Validates that IllegalArgumentException is thrown if sample time stamp is
-   * same as the previous time stamp. Tests the fix for cause of bug #45268.
+   * Validates that IllegalArgumentException is thrown if sample time stamp is same as the previous
+   * time stamp. Tests the fix for cause of bug #45268.
    */
   @Test
   public void testPreviousSampleTimeStamp() throws Exception {
-    final StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS).setSystemDirectoryPath(this.testName.getMethodName()).setProductDescription(getClass().getSimpleName()).build();
+    final StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS)
+            .setSystemDirectoryPath(this.testName.getMethodName())
+            .setProductDescription(getClass().getSimpleName())
+            .build();
     final StatArchiveWriter writer = new TestStatArchiveWriter(archiveDescriptor);
 
     try {
       writer.sampled(WRITER_PREVIOUS_TIMESTAMP_NANOS, Collections.emptyList());
-      fail("Expected IllegalArgumentException to be thrown from StatArchiveWriter#writeTimeStamp(long)");
+      fail(
+          "Expected IllegalArgumentException to be thrown from StatArchiveWriter#writeTimeStamp(long)");
     } catch (IllegalArgumentException expected) {
       // test passed
     } finally {
@@ -1313,12 +1533,17 @@ public class StatArchiveWriterReaderIntegrationTest {
     writer.close();
   }
 
-  /**
-   * Verifies fix for bug #45377.
-   */
+  /** Verifies fix for bug #45377. */
   @Test
   public void testDestroyClosedStatistics() throws Exception {
-    final StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS - 2000).setSystemDirectoryPath(this.testName.getMethodName()).setProductDescription(getClass().getSimpleName()).build();
+    final StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS - 2000)
+            .setSystemDirectoryPath(this.testName.getMethodName())
+            .setProductDescription(getClass().getSimpleName())
+            .build();
     final StatArchiveWriter writer = new TestStatArchiveWriter(archiveDescriptor);
 
     final StatisticsType statsType = createDummyStatisticsType();
@@ -1331,12 +1556,17 @@ public class StatArchiveWriterReaderIntegrationTest {
     writer.destroyedResourceInstance(ri);
   }
 
-  /**
-   * Control which helps verify fix for bug #45377.
-   */
+  /** Control which helps verify fix for bug #45377. */
   @Test
   public void testDestroyUnallocatedStatistics() throws Exception {
-    final StatArchiveDescriptor archiveDescriptor = new StatArchiveDescriptor.Builder().setArchiveName(this.archiveFileName).setSystemId(1).setSystemStartTime(WRITER_INITIAL_DATE_MILLIS - 2000).setSystemDirectoryPath(this.testName.getMethodName()).setProductDescription(getClass().getSimpleName()).build();
+    final StatArchiveDescriptor archiveDescriptor =
+        new StatArchiveDescriptor.Builder()
+            .setArchiveName(this.archiveFileName)
+            .setSystemId(1)
+            .setSystemStartTime(WRITER_INITIAL_DATE_MILLIS - 2000)
+            .setSystemDirectoryPath(this.testName.getMethodName())
+            .setProductDescription(getClass().getSimpleName())
+            .build();
     final StatArchiveWriter writer = new TestStatArchiveWriter(archiveDescriptor);
 
     final StatisticsType statsType = createDummyStatisticsType();
@@ -1350,7 +1580,8 @@ public class StatArchiveWriterReaderIntegrationTest {
     writer.close();
 
     // Verify StatArchiveReader.update returns cleanly, without throwing an exception
-    final StatArchiveReader reader = new StatArchiveReader(new File[] { new File(this.archiveFileName) }, null, false);
+    final StatArchiveReader reader =
+        new StatArchiveReader(new File[] {new File(this.archiveFileName)}, null, false);
     reader.update();
     reader.close();
   }
@@ -1455,7 +1686,7 @@ public class StatArchiveWriterReaderIntegrationTest {
   assertNotNull(clazz);
   URL url = clazz.getResource("StatArchiveWriterReaderIntegrationTest.gfs.expected");
   assertNotNull(url);
-  
+
   File expected;
   try {
     expected = new File(url.toURI());

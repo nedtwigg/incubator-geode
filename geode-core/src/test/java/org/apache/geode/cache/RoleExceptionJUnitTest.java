@@ -27,15 +27,11 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.distributed.internal.membership.InternalRole;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Tests the subclasses of RoleException to make sure they are Serializable
- */
+/** Tests the subclasses of RoleException to make sure they are Serializable */
 @Category(UnitTest.class)
 public class RoleExceptionJUnitTest {
 
-  /**
-   * Assert that RegionAccessException is serializable.
-   */
+  /** Assert that RegionAccessException is serializable. */
   @Test
   public void testRegionAccessExceptionIsSerializable() throws Exception {
     RegionAccessException out = createRegionAccessException();
@@ -54,9 +50,7 @@ public class RoleExceptionJUnitTest {
     assertEquals(out.getRegionFullPath(), in.getRegionFullPath());
   }
 
-  /**
-   * Assert that RegionDistributionException is serializable.
-   */
+  /** Assert that RegionDistributionException is serializable. */
   @Test
   public void testRegionDistributionExceptionIsSerializable() throws Exception {
     RegionDistributionException out = createRegionDistributionException();
@@ -75,9 +69,7 @@ public class RoleExceptionJUnitTest {
     assertEquals(out.getRegionFullPath(), in.getRegionFullPath());
   }
 
-  /**
-   * Assert that CommitDistributionException is serializable.
-   */
+  /** Assert that CommitDistributionException is serializable. */
   @Test
   public void testCommitDistributionExceptionIsSerializable() throws Exception {
     String s = "MyString";
@@ -127,5 +119,4 @@ public class RoleExceptionJUnitTest {
     Set missingRoles = createSetOfRoles();
     return new RegionDistributionException(s, regionFullPath, missingRoles);
   }
-
 }

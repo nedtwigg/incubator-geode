@@ -28,7 +28,9 @@ public class LogWriterImplJUnitTest {
 
   @Test
   public void testAllowedLogLevels() {
-    assertEquals("all|finest|finer|fine|config|info|warning|error|severe|none", LogWriterImpl.allowedLogLevels());
+    assertEquals(
+        "all|finest|finer|fine|config|info|warning|error|severe|none",
+        LogWriterImpl.allowedLogLevels());
   }
 
   @Test

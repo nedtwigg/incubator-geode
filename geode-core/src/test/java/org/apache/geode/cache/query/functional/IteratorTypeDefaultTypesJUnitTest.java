@@ -20,9 +20,7 @@
  * Created on April 12, 2005, 3:52 PM
  */
 
-/**
- *
- */
+/** */
 package org.apache.geode.cache.query.functional;
 
 import static org.junit.Assert.fail;
@@ -48,7 +46,6 @@ public class IteratorTypeDefaultTypesJUnitTest {
   @Before
   public void setUp() throws java.lang.Exception {
     CacheUtils.startCache();
-
   }
 
   @After
@@ -65,16 +62,15 @@ public class IteratorTypeDefaultTypesJUnitTest {
     Object params[] = new Object[1];
     params[0] = a;
 
-    String queries[] = { "Select distinct intValue from $1 TYPE int", "Select distinct intValue from (array<int>) $1 "
-
+    String queries[] = {
+      "Select distinct intValue from $1 TYPE int", "Select distinct intValue from (array<int>) $1 "
     };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         SelectResults rs = (SelectResults) q.execute(params);
-        if (rs.size() < 1)
-          fail("testIteratorDefIntegerArray: Query fetched zero results ");
+        if (rs.size() < 1) fail("testIteratorDefIntegerArray: Query fetched zero results ");
         CacheUtils.log(Utils.printResult(rs));
 
       } catch (Exception e) {
@@ -94,21 +90,21 @@ public class IteratorTypeDefaultTypesJUnitTest {
     Object params[] = new Object[1];
     params[0] = Arlist;
 
-    String queries[] = { "Select distinct intValue from $1 TYPE int", "Select distinct intValue from (list<int>) $1" };
+    String queries[] = {
+      "Select distinct intValue from $1 TYPE int", "Select distinct intValue from (list<int>) $1"
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         SelectResults rs = (SelectResults) q.execute(params);
-        if (rs.size() < 1)
-          fail("testIteratorDefIntegerArrayList: Query fetched zero results ");
+        if (rs.size() < 1) fail("testIteratorDefIntegerArrayList: Query fetched zero results ");
         CacheUtils.log(Utils.printResult(rs));
       } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
       }
     }
-
   }
 
   @Test
@@ -120,14 +116,15 @@ public class IteratorTypeDefaultTypesJUnitTest {
     C1.add(s2);
     Object params[] = new Object[1];
     params[0] = C1;
-    String queries[] = { "SELECT DISTINCT intern from (set<string>) $1", "SELECT DISTINCT intern from $1 TYPE string" };
+    String queries[] = {
+      "SELECT DISTINCT intern from (set<string>) $1", "SELECT DISTINCT intern from $1 TYPE string"
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         SelectResults rs = (SelectResults) q.execute(params);
-        if (rs.size() < 1)
-          fail("testIteratorDefString: Query fetched zero results ");
+        if (rs.size() < 1) fail("testIteratorDefString: Query fetched zero results ");
         CacheUtils.log(Utils.printResult(rs));
 
       } catch (Exception e) {
@@ -146,21 +143,22 @@ public class IteratorTypeDefaultTypesJUnitTest {
     C1.add(new Boolean(b2));
     Object params[] = new Object[1];
     params[0] = C1;
-    String queries[] = { "SELECT DISTINCT booleanValue from (set<boolean>) $1", "SELECT DISTINCT booleanValue from $1 TYPE boolean" };
+    String queries[] = {
+      "SELECT DISTINCT booleanValue from (set<boolean>) $1",
+      "SELECT DISTINCT booleanValue from $1 TYPE boolean"
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         SelectResults rs = (SelectResults) q.execute(params);
-        if (rs.size() < 1)
-          fail("testIteratorDefBoolean: Query fetched zero results ");
+        if (rs.size() < 1) fail("testIteratorDefBoolean: Query fetched zero results ");
         CacheUtils.log(Utils.printResult(rs));
       } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
       }
     }
-
   }
 
   @Test
@@ -172,14 +170,15 @@ public class IteratorTypeDefaultTypesJUnitTest {
     C1.add(new Byte(b2));
     Object params[] = new Object[1];
     params[0] = C1;
-    String queries[] = { "SELECT DISTINCT byteValue from (set<byte>) $1", "SELECT DISTINCT byteValue from $1 TYPE byte" };
+    String queries[] = {
+      "SELECT DISTINCT byteValue from (set<byte>) $1", "SELECT DISTINCT byteValue from $1 TYPE byte"
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         SelectResults rs = (SelectResults) q.execute(params);
-        if (rs.size() < 1)
-          fail("testIteratorDefByte: Query fetched zero results ");
+        if (rs.size() < 1) fail("testIteratorDefByte: Query fetched zero results ");
         CacheUtils.log(Utils.printResult(rs));
       } catch (Exception e) {
         e.printStackTrace();
@@ -197,14 +196,16 @@ public class IteratorTypeDefaultTypesJUnitTest {
     C1.add(new Short(sh2));
     Object params[] = new Object[1];
     params[0] = C1;
-    String queries[] = { "SELECT DISTINCT shortValue from (set<short>) $1", "SELECT DISTINCT shortValue from $1 TYPE short" };
+    String queries[] = {
+      "SELECT DISTINCT shortValue from (set<short>) $1",
+      "SELECT DISTINCT shortValue from $1 TYPE short"
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         SelectResults rs = (SelectResults) q.execute(params);
-        if (rs.size() < 1)
-          fail("testIteratorDefShort: Query fetched zero results ");
+        if (rs.size() < 1) fail("testIteratorDefShort: Query fetched zero results ");
         CacheUtils.log(Utils.printResult(rs));
       } catch (Exception e) {
         e.printStackTrace();
@@ -222,14 +223,15 @@ public class IteratorTypeDefaultTypesJUnitTest {
     C1.add(new Long(lg2));
     Object params[] = new Object[1];
     params[0] = C1;
-    String queries[] = { "SELECT DISTINCT longValue from (set<long>) $1", "SELECT DISTINCT longValue from $1 TYPE long" };
+    String queries[] = {
+      "SELECT DISTINCT longValue from (set<long>) $1", "SELECT DISTINCT longValue from $1 TYPE long"
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         SelectResults rs = (SelectResults) q.execute(params);
-        if (rs.size() < 1)
-          fail("testIteratorDefLong: Query fetched zero results ");
+        if (rs.size() < 1) fail("testIteratorDefLong: Query fetched zero results ");
         CacheUtils.log(Utils.printResult(rs));
       } catch (Exception e) {
         e.printStackTrace();
@@ -247,14 +249,16 @@ public class IteratorTypeDefaultTypesJUnitTest {
     C1.add(new Double(d2));
     Object params[] = new Object[1];
     params[0] = C1;
-    String queries[] = { "SELECT DISTINCT doubleValue from (set<double>) $1", "SELECT DISTINCT doubleValue from $1 TYPE double" };
+    String queries[] = {
+      "SELECT DISTINCT doubleValue from (set<double>) $1",
+      "SELECT DISTINCT doubleValue from $1 TYPE double"
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         SelectResults rs = (SelectResults) q.execute(params);
-        if (rs.size() < 1)
-          fail("testIteratorDefDouble: Query fetched zero results ");
+        if (rs.size() < 1) fail("testIteratorDefDouble: Query fetched zero results ");
         CacheUtils.log(Utils.printResult(rs));
       } catch (Exception e) {
         e.printStackTrace();
@@ -272,14 +276,16 @@ public class IteratorTypeDefaultTypesJUnitTest {
     C1.add(new Float(fl2));
     Object params[] = new Object[1];
     params[0] = C1;
-    String queries[] = { "SELECT DISTINCT floatValue from (set<float>) $1", "SELECT DISTINCT floatValue from $1 TYPE float" };
+    String queries[] = {
+      "SELECT DISTINCT floatValue from (set<float>) $1",
+      "SELECT DISTINCT floatValue from $1 TYPE float"
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         SelectResults rs = (SelectResults) q.execute(params);
-        if (rs.size() < 1)
-          fail("testIteratorDefFloat: Query fetched zero results ");
+        if (rs.size() < 1) fail("testIteratorDefFloat: Query fetched zero results ");
         CacheUtils.log(Utils.printResult(rs));
       } catch (Exception e) {
         e.printStackTrace();
@@ -297,14 +303,15 @@ public class IteratorTypeDefaultTypesJUnitTest {
     C1.add(new Character(ch2));
     Object params[] = new Object[1];
     params[0] = C1;
-    String queries[] = { "SELECT DISTINCT charValue from (set<char>) $1", "SELECT DISTINCT charValue from $1 TYPE char" };
+    String queries[] = {
+      "SELECT DISTINCT charValue from (set<char>) $1", "SELECT DISTINCT charValue from $1 TYPE char"
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         SelectResults rs = (SelectResults) q.execute(params);
-        if (rs.size() < 1)
-          fail("testIteratorDefChar: Query fetched zero results ");
+        if (rs.size() < 1) fail("testIteratorDefChar: Query fetched zero results ");
         CacheUtils.log(Utils.printResult(rs));
       } catch (Exception e) {
         e.printStackTrace();
@@ -324,8 +331,16 @@ public class IteratorTypeDefaultTypesJUnitTest {
     params[0] = Arlist;
 
     String queries[] = {
-
-        "IMPORT org.apache.geode.cache.\"query\".data.Student;" + "IMPORT org.apache.geode.cache.\"query\".data.Student$Subject;" + "Select distinct * from  $1 as it1 ,  it1.subjects x  type Student$Subject  where x.subject='Hindi' ", "IMPORT org.apache.geode.cache.\"query\".data.Student;" + "IMPORT org.apache.geode.cache.\"query\".data.Student$Subject;" + "Select distinct * from  $1 as it1 ,  it1.subjects  type Student$Subject  where subject='Hindi' ", "IMPORT org.apache.geode.cache.\"query\".data.Student;" + "IMPORT org.apache.geode.cache.\"query\".data.Student$Subject;" + "Select distinct * from  $1 as it1 , (list<Student$Subject>) it1.subjects   where subject='Hindi' " };
+      "IMPORT org.apache.geode.cache.\"query\".data.Student;"
+          + "IMPORT org.apache.geode.cache.\"query\".data.Student$Subject;"
+          + "Select distinct * from  $1 as it1 ,  it1.subjects x  type Student$Subject  where x.subject='Hindi' ",
+      "IMPORT org.apache.geode.cache.\"query\".data.Student;"
+          + "IMPORT org.apache.geode.cache.\"query\".data.Student$Subject;"
+          + "Select distinct * from  $1 as it1 ,  it1.subjects  type Student$Subject  where subject='Hindi' ",
+      "IMPORT org.apache.geode.cache.\"query\".data.Student;"
+          + "IMPORT org.apache.geode.cache.\"query\".data.Student$Subject;"
+          + "Select distinct * from  $1 as it1 , (list<Student$Subject>) it1.subjects   where subject='Hindi' "
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
@@ -333,7 +348,11 @@ public class IteratorTypeDefaultTypesJUnitTest {
         SelectResults rs = (SelectResults) q.execute(params);
         CacheUtils.log(Utils.printResult(rs));
         if (rs.size() != 1)
-          fail("testNonStaticInnerClassTypeDef: Query fetched results with size =" + rs.size() + " FOr Query number = " + (i + 1));
+          fail(
+              "testNonStaticInnerClassTypeDef: Query fetched results with size ="
+                  + rs.size()
+                  + " FOr Query number = "
+                  + (i + 1));
 
       } catch (Exception e) {
         e.printStackTrace();
@@ -353,8 +372,16 @@ public class IteratorTypeDefaultTypesJUnitTest {
     params[0] = Arlist;
 
     String queries[] = {
-
-        "IMPORT org.apache.geode.cache.\"query\".data.Student;" + "IMPORT org.apache.geode.cache.\"query\".data.Student$Teacher;" + "Select distinct * from  $1 as it1 ,  it1.teachers x  type Student$Teacher  where x.teacher='Y' ", "IMPORT org.apache.geode.cache.\"query\".data.Student;" + "IMPORT org.apache.geode.cache.\"query\".data.Student$Teacher;" + "Select distinct * from  $1 as it1 ,  it1.teachers  type Student$Teacher  where teacher='Y' ", "IMPORT org.apache.geode.cache.\"query\".data.Student;" + "IMPORT org.apache.geode.cache.\"query\".data.Student$Teacher;" + "Select distinct * from  $1 as it1 , (list<Student$Teacher>) it1.teachers  where teacher='Y' " };
+      "IMPORT org.apache.geode.cache.\"query\".data.Student;"
+          + "IMPORT org.apache.geode.cache.\"query\".data.Student$Teacher;"
+          + "Select distinct * from  $1 as it1 ,  it1.teachers x  type Student$Teacher  where x.teacher='Y' ",
+      "IMPORT org.apache.geode.cache.\"query\".data.Student;"
+          + "IMPORT org.apache.geode.cache.\"query\".data.Student$Teacher;"
+          + "Select distinct * from  $1 as it1 ,  it1.teachers  type Student$Teacher  where teacher='Y' ",
+      "IMPORT org.apache.geode.cache.\"query\".data.Student;"
+          + "IMPORT org.apache.geode.cache.\"query\".data.Student$Teacher;"
+          + "Select distinct * from  $1 as it1 , (list<Student$Teacher>) it1.teachers  where teacher='Y' "
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       try {
@@ -362,7 +389,11 @@ public class IteratorTypeDefaultTypesJUnitTest {
         SelectResults rs = (SelectResults) q.execute(params);
         CacheUtils.log(Utils.printResult(rs));
         if (rs.size() != 1)
-          fail("testStaticInnerClassTypeDef: Query fetched results with size =" + rs.size() + " FOr Query number = " + (i + 1));
+          fail(
+              "testStaticInnerClassTypeDef: Query fetched results with size ="
+                  + rs.size()
+                  + " FOr Query number = "
+                  + (i + 1));
 
       } catch (Exception e) {
         e.printStackTrace();

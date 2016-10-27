@@ -17,34 +17,22 @@
 package org.apache.geode.internal.jta;
 
 /**
- * <p>
  * XidImpl: A JTA compatible implementation of Xid
- * </p>
- * 
+ *
  * @since GemFire 4.0
  */
 import javax.transaction.xa.*;
 
 public class XidImpl implements Xid {
 
-  /**
-   * The format id will be a constant
-   */
+  /** The format id will be a constant */
   private int formatId;
-  /**
-   * This will be the global transaction identifier;
-   */
+  /** This will be the global transaction identifier; */
   protected byte gtrid[];
-  /**
-   * bqual will be a constant since we are only supporting one resource manager
-   * presently
-   */
+  /** bqual will be a constant since we are only supporting one resource manager presently */
   private byte bqual[];
 
-  /**
-   * Construct a new XidImpl
-   *  //Asif .: Constructor is made private
-   */
+  /** Construct a new XidImpl //Asif .: Constructor is made private */
   private XidImpl(int formatId, byte gtrid[], byte bqual[]) {
     this.formatId = formatId;
     this.gtrid = gtrid;
@@ -53,7 +41,7 @@ public class XidImpl implements Xid {
 
   /**
    * Returns the FormatId
-   * 
+   *
    * @see javax.transaction.xa.Xid#getFormatId()
    */
   public int getFormatId() {
@@ -62,7 +50,7 @@ public class XidImpl implements Xid {
 
   /**
    * Returns the BranchQualifier
-   * 
+   *
    * @see javax.transaction.xa.Xid#getBranchQualifier()
    */
   public byte[] getBranchQualifier() {
@@ -71,16 +59,14 @@ public class XidImpl implements Xid {
 
   /**
    * Returns the GlobalTransactionId
-   * 
+   *
    * @see javax.transaction.xa.Xid#getGlobalTransactionId()
    */
   public byte[] getGlobalTransactionId() {
     return gtrid;
   }
 
-  /**
-   * A function to create a new Xid.
-   */
+  /** A function to create a new Xid. */
   public static Xid createXid(byte[] GTid) throws XAException {
     byte[] globalID = new byte[GTid.length];
     byte[] branchID = new byte[1];

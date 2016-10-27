@@ -25,11 +25,7 @@ import org.apache.geode.internal.cache.versions.RegionVersionVector;
 import org.apache.geode.internal.cache.versions.VersionSource;
 import org.apache.geode.internal.cache.versions.VersionTag;
 
-/**
- * State object used during getInitialImage Locked during clean up of destroyed
- * tokens.
- * 
- */
+/** State object used during getInitialImage Locked during clean up of destroyed tokens. */
 public interface ImageState /* extends Lock */ {
 
   public boolean getRegionInvalidated();
@@ -49,8 +45,7 @@ public interface ImageState /* extends Lock */ {
   public java.util.Iterator getDestroyedEntries();
 
   /**
-   *  returns count of entries that have been destroyed by concurrent operations
-   *  while in token mode
+   * returns count of entries that have been destroyed by concurrent operations while in token mode
    */
   public int getDestroyedEntriesCount();
 
@@ -97,5 +92,4 @@ public interface ImageState /* extends Lock */ {
 
     public long getRegionVersion();
   }
-
 }

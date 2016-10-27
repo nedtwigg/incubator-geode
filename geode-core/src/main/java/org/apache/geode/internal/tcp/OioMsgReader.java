@@ -21,11 +21,7 @@ import java.nio.ByteBuffer;
 
 import org.apache.geode.internal.Version;
 
-/**
- * A message reader which reads from the socket using
- * the old io.
- *
- */
+/** A message reader which reads from the socket using the old io. */
 public class OioMsgReader extends MsgReader {
 
   public OioMsgReader(Connection conn, Version version) {
@@ -38,5 +34,4 @@ public class OioMsgReader extends MsgReader {
     conn.readFully(conn.getSocket().getInputStream(), buffer, bytes);
     return ByteBuffer.wrap(buffer);
   }
-
 }

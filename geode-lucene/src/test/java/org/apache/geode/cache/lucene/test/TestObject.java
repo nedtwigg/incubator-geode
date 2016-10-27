@@ -25,9 +25,7 @@ public class TestObject implements Serializable {
   private String field1 = "hello world";
   private String field2 = "this is a field";
 
-  public TestObject() {
-
-  }
+  public TestObject() {}
 
   public TestObject(final String field1, final String field2) {
     this.field1 = field1;
@@ -55,5 +53,4 @@ public class TestObject implements Serializable {
     TestObject testObject = (TestObject) obj;
     return (testObject.field1.equals(field1) && testObject.field2.equals(field2));
   }
-
 }

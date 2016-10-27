@@ -19,34 +19,31 @@ package org.apache.geode.internal.cache.tier.sockets;
 import org.apache.geode.distributed.DistributedMember;
 
 /**
- * Status of HARegionQueue on server when the client is sonnecting/reconnecting.
- * This holds the information abt HARegionQueue and this gets populated as a
- * response of Handshake to server. This wrapper object is used to hold the
- * various info retrurned from Handshake. such as endpoint type and queue size.
- * 
+ * Status of HARegionQueue on server when the client is sonnecting/reconnecting. This holds the
+ * information abt HARegionQueue and this gets populated as a response of Handshake to server. This
+ * wrapper object is used to hold the various info retrurned from Handshake. such as endpoint type
+ * and queue size.
+ *
  * @since GemFire 5.5
- * 
  */
 public class ServerQueueStatus {
   /** queueSize of HARegionQueue for this client */
   private int qSize = 0;
-  /** Endpoint type for this endpoint*/
+  /** Endpoint type for this endpoint */
   private byte epType = (byte) 0;
+
   private DistributedMember memberId = null;
-  /** size of the PDX  registry on the server. Currently only set for gateways */
+  /** size of the PDX registry on the server. Currently only set for gateways */
   private int pdxSize = 0;
 
-  /**
-   * Default constructor 
-   * Called when connectionsPerServer=0
-   */
+  /** Default constructor Called when connectionsPerServer=0 */
   public ServerQueueStatus(DistributedMember memberId) {
     this((byte) 0, 0, memberId);
   }
 
   /**
-   * Constructor 
-   * Called when connectionsPerServer is nto equal to 0
+   * Constructor Called when connectionsPerServer is nto equal to 0
+   *
    * @param epType
    * @param qSize
    */
@@ -54,11 +51,11 @@ public class ServerQueueStatus {
     this.qSize = qSize;
     this.epType = epType;
     this.memberId = memberId;
-
   }
 
   /**
    * returns true if the endpoint is primary
+   *
    * @return epType
    */
   public boolean isPrimary() {
@@ -67,6 +64,7 @@ public class ServerQueueStatus {
 
   /**
    * returns true if the endpoint is redundant
+   *
    * @return epType
    */
   public boolean isRedundant() {
@@ -75,6 +73,7 @@ public class ServerQueueStatus {
 
   /**
    * returns true if the endpoint is Non redundant
+   *
    * @return epType
    */
   public boolean isNonRedundant() {
@@ -82,7 +81,8 @@ public class ServerQueueStatus {
   }
 
   /**
-   * returns qSize of the HARegionQueue for this client 
+   * returns qSize of the HARegionQueue for this client
+   *
    * @return qSize
    */
   public int getServerQueueSize() {
@@ -91,7 +91,13 @@ public class ServerQueueStatus {
 
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("ServerQueueStatus [").append("qSize=").append(this.qSize).append("; epType=").append(getTypeAsString()).append("]");
+    buffer
+        .append("ServerQueueStatus [")
+        .append("qSize=")
+        .append(this.qSize)
+        .append("; epType=")
+        .append(getTypeAsString())
+        .append("]");
     return buffer.toString();
   }
 
@@ -117,7 +123,7 @@ public class ServerQueueStatus {
 
   /**
    * The member id of the server we connected to.
-   * 
+   *
    * @return the memberid
    */
   public DistributedMember getMemberId() {

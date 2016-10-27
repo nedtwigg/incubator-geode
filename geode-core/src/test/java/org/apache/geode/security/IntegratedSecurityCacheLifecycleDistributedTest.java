@@ -41,7 +41,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Ignore("This is broken but fixed on feature/GEODE-1673")
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class IntegratedSecurityCacheLifecycleDistributedTest extends JUnit4CacheTestCase {
 
   private String locators;
@@ -61,22 +61,25 @@ public class IntegratedSecurityCacheLifecycleDistributedTest extends JUnit4Cache
 
     locators = NetworkUtils.getServerHostName(host) + "[" + locatorPort + "]";
 
-    locator.invoke(() -> {
-      DistributedTestUtils.deleteLocatorStateFile(locatorPort);
+    locator.invoke(
+        () -> {
+          DistributedTestUtils.deleteLocatorStateFile(locatorPort);
 
-      final Properties properties = new Properties();
-      properties.setProperty(SampleSecurityManager.SECURITY_JSON, "org/apache/geode/management/internal/security/clientServer.json");
-      properties.setProperty(LOCATORS, locators);
-      properties.setProperty(MCAST_PORT, "0");
-      properties.setProperty(SECURITY_MANAGER, SpySecurityManager.class.getName());
-      properties.setProperty(START_LOCATOR, locators);
-      properties.setProperty(JMX_MANAGER, "true");
-      properties.setProperty(JMX_MANAGER_START, "true");
-      properties.setProperty(JMX_MANAGER_PORT, String.valueOf(managerPort));
-      properties.setProperty(USE_CLUSTER_CONFIGURATION, "false");
-      getSystem(properties);
-      getCache();
-    });
+          final Properties properties = new Properties();
+          properties.setProperty(
+              SampleSecurityManager.SECURITY_JSON,
+              "org/apache/geode/management/internal/security/clientServer.json");
+          properties.setProperty(LOCATORS, locators);
+          properties.setProperty(MCAST_PORT, "0");
+          properties.setProperty(SECURITY_MANAGER, SpySecurityManager.class.getName());
+          properties.setProperty(START_LOCATOR, locators);
+          properties.setProperty(JMX_MANAGER, "true");
+          properties.setProperty(JMX_MANAGER_START, "true");
+          properties.setProperty(JMX_MANAGER_PORT, String.valueOf(managerPort));
+          properties.setProperty(USE_CLUSTER_CONFIGURATION, "false");
+          getSystem(properties);
+          getCache();
+        });
   }
 
   @Category(FlakyTest.class) // GEODE-1662
@@ -92,18 +95,21 @@ public class IntegratedSecurityCacheLifecycleDistributedTest extends JUnit4Cache
       verifyInitCloseInvoked();
     }
 
-    locator.invoke(() -> {
-      ManagementService ms = ManagementService.getExistingManagementService(getCache());
-      assertThat(ms).isNotNull();
-      assertThat(ms.isManager()).isTrue();
+    locator.invoke(
+        () -> {
+          ManagementService ms = ManagementService.getExistingManagementService(getCache());
+          assertThat(ms).isNotNull();
+          assertThat(ms.isManager()).isTrue();
 
-      verifyInitCloseInvoked();
-    });
+          verifyInitCloseInvoked();
+        });
   }
 
   private void connect() throws IOException {
     final Properties properties = new Properties();
-    properties.setProperty(SampleSecurityManager.SECURITY_JSON, "org/apache/geode/management/internal/security/clientServer.json");
+    properties.setProperty(
+        SampleSecurityManager.SECURITY_JSON,
+        "org/apache/geode/management/internal/security/clientServer.json");
     properties.setProperty(LOCATORS, locators);
     properties.setProperty(MCAST_PORT, "0");
     properties.setProperty(SECURITY_MANAGER, SpySecurityManager.class.getName());

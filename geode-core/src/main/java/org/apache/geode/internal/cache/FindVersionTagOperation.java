@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import java.io.DataInput;
@@ -40,9 +38,7 @@ import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.internal.cache.versions.VersionTag;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- *
- */
+/** */
 public class FindVersionTagOperation {
   private static final Logger logger = LogService.getLogger();
 
@@ -55,7 +51,9 @@ public class FindVersionTagOperation {
       recipients = ((PartitionedRegion) r).getRegionAdvisor().adviseDataStore();
     }
     ResultReplyProcessor processor = new ResultReplyProcessor(dm, recipients);
-    FindVersionTagMessage msg = new FindVersionTagMessage(recipients, processor.getProcessorId(), r.getFullPath(), eventId, isBulkOp);
+    FindVersionTagMessage msg =
+        new FindVersionTagMessage(
+            recipients, processor.getProcessorId(), r.getFullPath(), eventId, isBulkOp);
     dm.putOutgoing(msg);
     try {
       processor.waitForReplies();
@@ -95,23 +93,28 @@ public class FindVersionTagOperation {
     public boolean stillWaiting() {
       return this.versionTag == null && super.stillWaiting();
     }
-
   }
 
   /**
    * FindVersionTagOperation searches other members for version information for a replayed
-   * operation.  If we don't have version information the op may be applied by
-   * this cache as a new event.  When the event is then propagated to other servers
-   * that have already seen the event it will be ignored, causing an inconsistency.
+   * operation. If we don't have version information the op may be applied by this cache as a new
+   * event. When the event is then propagated to other servers that have already seen the event it
+   * will be ignored, causing an inconsistency.
    */
-  public static class FindVersionTagMessage extends HighPriorityDistributionMessage implements MessageWithReply {
+  public static class FindVersionTagMessage extends HighPriorityDistributionMessage
+      implements MessageWithReply {
 
     int processorId;
     String regionName;
     EventID eventId;
     private boolean isBulkOp;
 
-    protected FindVersionTagMessage(Collection recipients, int processorId, String regionName, EventID eventId, boolean isBulkOp) {
+    protected FindVersionTagMessage(
+        Collection recipients,
+        int processorId,
+        String regionName,
+        EventID eventId,
+        boolean isBulkOp) {
       super();
       setRecipients(recipients);
       this.processorId = processorId;
@@ -121,8 +124,7 @@ public class FindVersionTagOperation {
     }
 
     /** for deserialization */
-    public FindVersionTagMessage() {
-    }
+    public FindVersionTagMessage() {}
 
     /* (non-Javadoc)
      * @see org.apache.geode.distributed.internal.DistributionMessage#process(org.apache.geode.distributed.internal.DistributionManager)
@@ -203,7 +205,16 @@ public class FindVersionTagOperation {
 
     @Override
     public String toString() {
-      return this.getShortClassName() + "(processorId=" + this.processorId + ";region=" + this.regionName + ";eventId=" + this.eventId + ";isBulkOp=" + this.isBulkOp + ")";
+      return this.getShortClassName()
+          + "(processorId="
+          + this.processorId
+          + ";region="
+          + this.regionName
+          + ";eventId="
+          + this.eventId
+          + ";isBulkOp="
+          + this.isBulkOp
+          + ")";
     }
   }
 
@@ -215,8 +226,7 @@ public class FindVersionTagOperation {
     }
 
     /** for deserialization */
-    public VersionTagReply() {
-    }
+    public VersionTagReply() {}
 
     @Override
     public String toString() {
@@ -240,5 +250,4 @@ public class FindVersionTagOperation {
       return VERSION_TAG_REPLY;
     }
   }
-
 }

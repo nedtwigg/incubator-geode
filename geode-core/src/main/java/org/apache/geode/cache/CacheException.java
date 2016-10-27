@@ -19,11 +19,9 @@ package org.apache.geode.cache;
 import org.apache.geode.GemFireException;
 
 /**
- * A generic exception, which indicates
- * a cache error has occurred. All the other cache exceptions are 
- * subclasses of this class. This class is abstract and therefore only
- * subclasses are instantiated.
- *
+ * A generic exception, which indicates a cache error has occurred. All the other cache exceptions
+ * are subclasses of this class. This class is abstract and therefore only subclasses are
+ * instantiated.
  *
  * @since GemFire 2.0
  */
@@ -40,9 +38,7 @@ public abstract class CacheException extends GemFireException {
     super(s);
   }
 
-  /** Constructs a <code>CacheException</code> with a message string and
-   * a base exception
-   */
+  /** Constructs a <code>CacheException</code> with a message string and a base exception */
   public CacheException(String s, Throwable cause) {
     super(s, cause);
   }

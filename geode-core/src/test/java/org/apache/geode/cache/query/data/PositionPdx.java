@@ -68,8 +68,7 @@ public class PositionPdx implements Serializable, PdxSerializable, Comparable {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof PositionPdx))
-      return false;
+    if (!(o instanceof PositionPdx)) return false;
     return this.secId.equals(((PositionPdx) o).secId);
   }
 
@@ -99,7 +98,17 @@ public class PositionPdx implements Serializable, PdxSerializable, Comparable {
   }
 
   public String toString() {
-    return "PositionPdx [secId=" + this.secId + " out=" + this.sharesOutstanding + " type=" + this.secType + " id=" + this.pid + " mktValue=" + this.mktValue + "]";
+    return "PositionPdx [secId="
+        + this.secId
+        + " out="
+        + this.sharesOutstanding
+        + " type="
+        + this.secType
+        + " id="
+        + this.pid
+        + " mktValue="
+        + this.mktValue
+        + "]";
   }
 
   public Set getSet(int size) {
@@ -140,7 +149,7 @@ public class PositionPdx implements Serializable, PdxSerializable, Comparable {
     this.volatility = in.readLong("volatility");
     this.pid = in.readInt("pid");
     this.portfolioId = in.readInt("portfolioId");
-    //GemFireCacheImpl.getInstance().getLoggerI18n().fine(new Exception("DEBUG fromData() " + this.secId));    
+    //GemFireCacheImpl.getInstance().getLoggerI18n().fine(new Exception("DEBUG fromData() " + this.secId));
   }
 
   public void toData(PdxWriter out) {
@@ -171,7 +180,5 @@ public class PositionPdx implements Serializable, PdxSerializable, Comparable {
     } else {
       return this.pid < ((PositionPdx) o).pid ? -1 : 1;
     }
-
   }
-
 }

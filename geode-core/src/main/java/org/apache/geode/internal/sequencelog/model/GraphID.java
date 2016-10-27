@@ -20,9 +20,7 @@ import java.io.Serializable;
 
 import org.apache.geode.internal.sequencelog.GraphType;
 
-/**
- *
- */
+/** */
 public class GraphID implements Comparable<GraphID>, Serializable {
 
   public final GraphType type;
@@ -57,23 +55,16 @@ public class GraphID implements Comparable<GraphID>, Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (!(obj instanceof GraphID))
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (!(obj instanceof GraphID)) return false;
     GraphID other = (GraphID) obj;
     if (graphName == null) {
-      if (other.graphName != null)
-        return false;
-    } else if (!graphName.equals(other.graphName))
-      return false;
+      if (other.graphName != null) return false;
+    } else if (!graphName.equals(other.graphName)) return false;
     if (type == null) {
-      if (other.type != null)
-        return false;
-    } else if (!type.equals(other.type))
-      return false;
+      if (other.type != null) return false;
+    } else if (!type.equals(other.type)) return false;
     return true;
   }
 
@@ -87,5 +78,4 @@ public class GraphID implements Comparable<GraphID>, Serializable {
     }
     return graphName.compareTo(o.getGraphName());
   }
-
 }

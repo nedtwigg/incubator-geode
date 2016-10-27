@@ -27,9 +27,7 @@ import org.apache.geode.cache.query.internal.ExecutionContext;
 import org.apache.geode.cache.query.types.ObjectType;
 import org.apache.geode.internal.cache.RegionEntry;
 
-/**
- * 
- */
+/** */
 public interface IndexedExpressionEvaluator {
 
   public String getIndexedExpression();
@@ -45,7 +43,14 @@ public interface IndexedExpressionEvaluator {
 
   public ObjectType getIndexResultSetType();
 
-  public void expansion(List expandedResults, Object lowerBoundKey, Object upperBoundKey, int lowerBoundOperator, int upperBoundOperator, Object value) throws IMQException;
+  public void expansion(
+      List expandedResults,
+      Object lowerBoundKey,
+      Object upperBoundKey,
+      int lowerBoundOperator,
+      int upperBoundOperator,
+      Object value)
+      throws IMQException;
 
   public List getAllDependentIterators();
 }

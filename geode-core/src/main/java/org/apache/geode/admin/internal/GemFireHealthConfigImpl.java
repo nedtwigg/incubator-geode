@@ -24,8 +24,6 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 /**
  * The implementation of <code>GemFireHealthConfig</code>
  *
- *
- *
  * @since GemFire 3.5
  */
 public class GemFireHealthConfigImpl extends CacheHealthConfigImpl implements GemFireHealthConfig {
@@ -35,20 +33,17 @@ public class GemFireHealthConfigImpl extends CacheHealthConfigImpl implements Ge
   /** The name of the host to which this configuration applies. */
   private String hostName;
 
-  /** The number of seconds to wait between evaluating the health of
-   * GemFire. */
+  /** The number of seconds to wait between evaluating the health of GemFire. */
   private int interval = DEFAULT_HEALTH_EVALUATION_INTERVAL;
 
   ////////////////////////  Constructors  ////////////////////////
 
   /**
-   * Creates a new <code>GemFireHealthConfigImpl</code> that applies
-   * to the host with the given name.
+   * Creates a new <code>GemFireHealthConfigImpl</code> that applies to the host with the given
+   * name.
    *
-   * @param hostName
-   *        The name of the host to which this configuration applies.
-   *        If <code>null</code>, then this is the "default"
-   *        configuration. 
+   * @param hostName The name of the host to which this configuration applies. If <code>null</code>,
+   *     then this is the "default" configuration.
    */
   public GemFireHealthConfigImpl(String hostName) {
     this.hostName = hostName;
@@ -71,11 +66,12 @@ public class GemFireHealthConfigImpl extends CacheHealthConfigImpl implements Ge
   @Override
   public String toString() {
     if (this.hostName == null) {
-      return LocalizedStrings.GemFireHealthConfigImpl_DEFAULT_GEMFIRE_HEALTH_CONFIGURATION.toLocalizedString();
+      return LocalizedStrings.GemFireHealthConfigImpl_DEFAULT_GEMFIRE_HEALTH_CONFIGURATION
+          .toLocalizedString();
 
     } else {
-      return LocalizedStrings.GemFireHealthConfigImpl_GEMFIRE_HEALTH_CONFIGURATION_FOR_HOST_0.toLocalizedString(this.hostName);
+      return LocalizedStrings.GemFireHealthConfigImpl_GEMFIRE_HEALTH_CONFIGURATION_FOR_HOST_0
+          .toLocalizedString(this.hostName);
     }
   }
-
 }

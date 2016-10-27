@@ -120,15 +120,12 @@ import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 
-/**
- *
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class MiscellaneousCommands implements CommandMarker {
   public static final String NETSTAT_FILE_REQUIRED_EXTENSION = ".txt";
-  public final static String FORMAT = "yyyy/MM/dd/HH/mm/ss/SSS/z";
-  public final static String ONLY_DATE_FORMAT = "yyyy/MM/dd";
-  public final static String DEFAULT_TIME_OUT = "10";
+  public static final String FORMAT = "yyyy/MM/dd/HH/mm/ss/SSS/z";
+  public static final String ONLY_DATE_FORMAT = "yyyy/MM/dd";
+  public static final String DEFAULT_TIME_OUT = "10";
 
   private final GetStackTracesFunction getStackTracesFunction = new GetStackTracesFunction();
 
@@ -136,7 +133,8 @@ public class MiscellaneousCommands implements CommandMarker {
     return Gfsh.getCurrentInstance();
   }
 
-  public void shutdownNode(final long timeout, final Set<DistributedMember> includeMembers) throws TimeoutException, InterruptedException, ExecutionException {
+  public void shutdownNode(final long timeout, final Set<DistributedMember> includeMembers)
+      throws TimeoutException, InterruptedException, ExecutionException {
     Cache cache = CacheFactory.getAnyInstance();
     LogWriter logger = cache.getLogger();
     ExecutorService exec = Executors.newSingleThreadExecutor();
@@ -145,20 +143,20 @@ public class MiscellaneousCommands implements CommandMarker {
 
       logger.info("Gfsh executing shutdown on members " + includeMembers);
 
-      Callable<String> shutdownNodes = new Callable<String>() {
+      Callable<String> shutdownNodes =
+          new Callable<String>() {
 
-        @Override
-        public String call() {
-          try {
-            Execution execution = FunctionService.onMembers(includeMembers);
-            execution.execute(shutDownFunction);
-          } catch (FunctionException functionEx) {
-            //Expected Exception as the function is shutting down the target members and the result collector will get member departed exception
-          }
-          return "SUCCESS";
-        }
-
-      };
+            @Override
+            public String call() {
+              try {
+                Execution execution = FunctionService.onMembers(includeMembers);
+                execution.execute(shutDownFunction);
+              } catch (FunctionException functionEx) {
+                //Expected Exception as the function is shutting down the target members and the result collector will get member departed exception
+              }
+              return "SUCCESS";
+            }
+          };
 
       Future<String> result = exec.submit(shutdownNodes);
       result.get(timeout, TimeUnit.MILLISECONDS);
@@ -175,13 +173,28 @@ public class MiscellaneousCommands implements CommandMarker {
     } finally {
       exec.shutdownNow();
     }
-
   }
 
   @CliCommand(value = CliStrings.SHUTDOWN, help = CliStrings.SHUTDOWN__HELP)
-  @CliMetaData(relatedTopic = { CliStrings.TOPIC_GEODE_LIFECYCLE }, interceptor = "org.apache.geode.management.internal.cli.commands.MiscellaneousCommands$Interceptor")
+  @CliMetaData(
+    relatedTopic = {CliStrings.TOPIC_GEODE_LIFECYCLE},
+    interceptor =
+        "org.apache.geode.management.internal.cli.commands.MiscellaneousCommands$Interceptor"
+  )
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.MANAGE)
-  public Result shutdown(@CliOption(key = CliStrings.SHUTDOWN__TIMEOUT, unspecifiedDefaultValue = DEFAULT_TIME_OUT, help = CliStrings.SHUTDOWN__TIMEOUT__HELP) int userSpecifiedTimeout, @CliOption(key = CliStrings.INCLUDE_LOCATORS, unspecifiedDefaultValue = "false", help = CliStrings.INCLUDE_LOCATORS_HELP) boolean shutdownLocators) {
+  public Result shutdown(
+      @CliOption(
+            key = CliStrings.SHUTDOWN__TIMEOUT,
+            unspecifiedDefaultValue = DEFAULT_TIME_OUT,
+            help = CliStrings.SHUTDOWN__TIMEOUT__HELP
+          )
+          int userSpecifiedTimeout,
+      @CliOption(
+            key = CliStrings.INCLUDE_LOCATORS,
+            unspecifiedDefaultValue = "false",
+            help = CliStrings.INCLUDE_LOCATORS_HELP
+          )
+          boolean shutdownLocators) {
     try {
 
       if (userSpecifiedTimeout < Integer.parseInt(DEFAULT_TIME_OUT)) {
@@ -206,7 +219,8 @@ public class MiscellaneousCommands implements CommandMarker {
       }
 
       GemFireCacheImpl gemFireCache = (GemFireCacheImpl) cache;
-      String managerName = gemFireCache.getJmxManagerAdvisor().getDistributionManager().getId().getId();
+      String managerName =
+          gemFireCache.getJmxManagerAdvisor().getDistributionManager().getId().getId();
 
       final DistributedMember manager = CliUtil.getDistributedMemberByNameOrId(managerName);
 
@@ -235,7 +249,8 @@ public class MiscellaneousCommands implements CommandMarker {
         }
       }
 
-      if (locators.contains(manager) && !shutdownLocators) { // This means manager is a locator and shutdownLocators is false. Hence we should not stop the manager
+      if (locators.contains(manager)
+          && !shutdownLocators) { // This means manager is a locator and shutdownLocators is false. Hence we should not stop the manager
         return ResultBuilder.createInfoResult("Shutdown is triggered");
       }
       // now shut down this manager
@@ -254,20 +269,17 @@ public class MiscellaneousCommands implements CommandMarker {
 
     //@TODO. List all the nodes which could be successfully shutdown
     return ResultBuilder.createInfoResult("Shutdown is triggered");
-
   }
 
   /**
-   * 
-   * @param timeout
-   *          user specified timeout
-   * @param nodesToBeStopped
-   *          list of nodes to be stopped
+   * @param timeout user specified timeout
+   * @param nodesToBeStopped list of nodes to be stopped
    * @return Elapsed time to shutdown the given nodes;
    * @throws ExecutionException
    * @throws InterruptedException
    */
-  private long shutDownNodeWithTimeOut(long timeout, Set<DistributedMember> nodesToBeStopped) throws TimeoutException, InterruptedException, ExecutionException {
+  private long shutDownNodeWithTimeOut(long timeout, Set<DistributedMember> nodesToBeStopped)
+      throws TimeoutException, InterruptedException, ExecutionException {
 
     long shutDownTimeStart = System.currentTimeMillis();
     shutdownNode(timeout, nodesToBeStopped);
@@ -276,15 +288,15 @@ public class MiscellaneousCommands implements CommandMarker {
 
     long timeElapsed = shutDownTimeEnd - shutDownTimeStart;
 
-    if (timeElapsed > timeout || Boolean.getBoolean("ThrowTimeoutException")) { //The second check for ThrowTimeoutException is a test hook
+    if (timeElapsed > timeout
+        || Boolean.getBoolean(
+            "ThrowTimeoutException")) { //The second check for ThrowTimeoutException is a test hook
       throw new TimeoutException();
     }
     return timeElapsed;
   }
 
-  /**
-   * Interceptor used by gfsh to intercept execution of shutdownall.
-   */
+  /** Interceptor used by gfsh to intercept execution of shutdownall. */
   public static class Interceptor extends AbstractCliAroundInterceptor {
     @Override
     public Result preExecution(GfshParseResult parseResult) {
@@ -296,7 +308,8 @@ public class MiscellaneousCommands implements CommandMarker {
 
       Response response = readYesNo(CliStrings.SHUTDOWN__MSG__WARN_USER, Response.YES);
       if (response == Response.NO) {
-        return ResultBuilder.createShellClientAbortOperationResult(CliStrings.SHUTDOWN__MSG__ABORTING_SHUTDOWN);
+        return ResultBuilder.createShellClientAbortOperationResult(
+            CliStrings.SHUTDOWN__MSG__ABORTING_SHUTDOWN);
       } else {
         return ResultBuilder.createInfoResult(CliStrings.SHUTDOWN__MSG__SHUTDOWN_ENTIRE_DS);
       }
@@ -309,9 +322,22 @@ public class MiscellaneousCommands implements CommandMarker {
   }
 
   @CliCommand(value = CliStrings.GC, help = CliStrings.GC__HELP)
-  @CliMetaData(relatedTopic = { CliStrings.TOPIC_GEODE_DEBUG_UTIL })
+  @CliMetaData(relatedTopic = {CliStrings.TOPIC_GEODE_DEBUG_UTIL})
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.MANAGE)
-  public Result gc(@CliOption(key = CliStrings.GC__GROUP, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.GC__GROUP__HELP) String[] groups, @CliOption(key = CliStrings.GC__MEMBER, optionContext = ConverterHint.ALL_MEMBER_IDNAME, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.GC__MEMBER__HELP) String memberId) {
+  public Result gc(
+      @CliOption(
+            key = CliStrings.GC__GROUP,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            help = CliStrings.GC__GROUP__HELP
+          )
+          String[] groups,
+      @CliOption(
+            key = CliStrings.GC__MEMBER,
+            optionContext = ConverterHint.ALL_MEMBER_IDNAME,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            help = CliStrings.GC__MEMBER__HELP
+          )
+          String memberId) {
     Cache cache = CacheFactory.getAnyInstance();
     Result result = null;
     CompositeResultData gcResultTable = ResultBuilder.createCompositeResultData();
@@ -322,7 +348,8 @@ public class MiscellaneousCommands implements CommandMarker {
     if (memberId != null && memberId.length() > 0) {
       DistributedMember member = CliUtil.getDistributedMemberByNameOrId(memberId);
       if (member == null) {
-        return ResultBuilder.createGemFireErrorResult(memberId + CliStrings.GC__MSG__MEMBER_NOT_FOUND);
+        return ResultBuilder.createGemFireErrorResult(
+            memberId + CliStrings.GC__MSG__MEMBER_NOT_FOUND);
       }
       dsMembers.add(member);
       result = executeAndBuildResult(cache, resultTable, dsMembers);
@@ -337,24 +364,27 @@ public class MiscellaneousCommands implements CommandMarker {
       //exclude locators
       dsMembers = CliUtil.getAllNormalMembers(cache);
       result = executeAndBuildResult(cache, resultTable, dsMembers);
-
     }
     return result;
   }
 
-  Result executeAndBuildResult(Cache cache, TabularResultData resultTable, Set<DistributedMember> dsMembers) {
+  Result executeAndBuildResult(
+      Cache cache, TabularResultData resultTable, Set<DistributedMember> dsMembers) {
     try {
       List<?> resultList = null;
       Function garbageCollectionFunction = new GarbageCollectionFunction();
-      resultList = (List<?>) CliUtil.executeFunction(garbageCollectionFunction, null, dsMembers).getResult();
+      resultList =
+          (List<?>) CliUtil.executeFunction(garbageCollectionFunction, null, dsMembers).getResult();
 
       for (int i = 0; i < resultList.size(); i++) {
         Object object = resultList.get(i);
         if (object instanceof Exception) {
-          LogWrapper.getInstance().fine("Exception in GC " + ((Throwable) object).getMessage(), ((Throwable) object));
+          LogWrapper.getInstance()
+              .fine("Exception in GC " + ((Throwable) object).getMessage(), ((Throwable) object));
           continue;
         } else if (object instanceof Throwable) {
-          LogWrapper.getInstance().fine("Exception in GC " + ((Throwable) object).getMessage(), ((Throwable) object));
+          LogWrapper.getInstance()
+              .fine("Exception in GC " + ((Throwable) object).getMessage(), ((Throwable) object));
           continue;
         }
 
@@ -364,7 +394,12 @@ public class MiscellaneousCommands implements CommandMarker {
             return ResultBuilder.createUserErrorResult((String) object);
           } else {
             Map<String, String> resultMap = (Map<String, String>) object;
-            toTabularResultData(resultTable, (String) resultMap.get("MemberId"), (String) resultMap.get("HeapSizeBeforeGC"), (String) resultMap.get("HeapSizeAfterGC"), (String) resultMap.get("TimeSpentInGC"));
+            toTabularResultData(
+                resultTable,
+                (String) resultMap.get("MemberId"),
+                (String) resultMap.get("HeapSizeBeforeGC"),
+                (String) resultMap.get("HeapSizeAfterGC"),
+                (String) resultMap.get("TimeSpentInGC"));
           }
         } else {
           LogWrapper.getInstance().fine("ResultMap was null ");
@@ -378,7 +413,12 @@ public class MiscellaneousCommands implements CommandMarker {
     return ResultBuilder.buildResult(resultTable);
   }
 
-  protected void toTabularResultData(TabularResultData table, String memberId, String heapSizeBefore, String heapSizeAfter, String timeTaken) {
+  protected void toTabularResultData(
+      TabularResultData table,
+      String memberId,
+      String heapSizeBefore,
+      String heapSizeAfter,
+      String timeTaken) {
     table.accumulate(CliStrings.GC__MSG__MEMBER_NAME, memberId);
     table.accumulate(CliStrings.GC__MSG__HEAP_SIZE_BEFORE_GC, heapSizeBefore);
     table.accumulate(CliStrings.GC__MSG__HEAP_SIZE_AFTER_GC, heapSizeAfter);
@@ -386,10 +426,41 @@ public class MiscellaneousCommands implements CommandMarker {
   }
 
   @CliCommand(value = CliStrings.NETSTAT, help = CliStrings.NETSTAT__HELP)
-  @CliMetaData(relatedTopic = { CliStrings.TOPIC_GEODE_DEBUG_UTIL })
+  @CliMetaData(relatedTopic = {CliStrings.TOPIC_GEODE_DEBUG_UTIL})
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
   //TODO : Verify the auto-completion for multiple values.
-  public Result netstat(@CliOption(key = CliStrings.NETSTAT__MEMBER, mandatory = false, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.ALL_MEMBER_IDNAME, help = CliStrings.NETSTAT__MEMBER__HELP) @CliMetaData(valueSeparator = ",") String[] members, @CliOption(key = CliStrings.NETSTAT__GROUP, mandatory = false, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.MEMBERGROUP, help = CliStrings.NETSTAT__GROUP__HELP) String group, @CliOption(key = CliStrings.NETSTAT__FILE, optionContext = ConverterHint.FILE, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.NETSTAT__FILE__HELP) String saveAs, @CliOption(key = CliStrings.NETSTAT__WITHLSOF, specifiedDefaultValue = "true", unspecifiedDefaultValue = "false", help = CliStrings.NETSTAT__WITHLSOF__HELP) boolean withlsof) {
+  public Result netstat(
+      @CliOption(
+            key = CliStrings.NETSTAT__MEMBER,
+            mandatory = false,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            optionContext = ConverterHint.ALL_MEMBER_IDNAME,
+            help = CliStrings.NETSTAT__MEMBER__HELP
+          )
+          @CliMetaData(valueSeparator = ",")
+          String[] members,
+      @CliOption(
+            key = CliStrings.NETSTAT__GROUP,
+            mandatory = false,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            optionContext = ConverterHint.MEMBERGROUP,
+            help = CliStrings.NETSTAT__GROUP__HELP
+          )
+          String group,
+      @CliOption(
+            key = CliStrings.NETSTAT__FILE,
+            optionContext = ConverterHint.FILE,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            help = CliStrings.NETSTAT__FILE__HELP
+          )
+          String saveAs,
+      @CliOption(
+            key = CliStrings.NETSTAT__WITHLSOF,
+            specifiedDefaultValue = "true",
+            unspecifiedDefaultValue = "false",
+            help = CliStrings.NETSTAT__WITHLSOF__HELP
+          )
+          boolean withlsof) {
     Result result = null;
 
     Map<String, DistributedMember> hostMemberMap = new HashMap<String, DistributedMember>();
@@ -397,7 +468,8 @@ public class MiscellaneousCommands implements CommandMarker {
 
     try {
       if (members != null && members.length > 0 && group != null) {
-        throw new IllegalArgumentException(CliStrings.NETSTAT__MSG__ONLY_ONE_OF_MEMBER_OR_GROUP_SHOULD_BE_SPECIFIED);
+        throw new IllegalArgumentException(
+            CliStrings.NETSTAT__MSG__ONLY_ONE_OF_MEMBER_OR_GROUP_SHOULD_BE_SPECIFIED);
       }
       StringBuilder resultInfo = new StringBuilder();
 
@@ -425,7 +497,10 @@ public class MiscellaneousCommands implements CommandMarker {
         }
         // if there are not found members, it's probably unknown member or member has departed
         if (!notFoundMembers.isEmpty()) {
-          throw new IllegalArgumentException(CliStrings.format(CliStrings.NETSTAT__MSG__COULD_NOT_FIND_MEMBERS_0, new Object[] { CliUtil.collectionToString(notFoundMembers, -1) }));
+          throw new IllegalArgumentException(
+              CliStrings.format(
+                  CliStrings.NETSTAT__MSG__COULD_NOT_FIND_MEMBERS_0,
+                  new Object[] {CliUtil.collectionToString(notFoundMembers, -1)}));
         }
       } else {
         Set<DistributedMember> membersToExecuteOn = null;
@@ -439,7 +514,8 @@ public class MiscellaneousCommands implements CommandMarker {
         for (DistributedMember distributedMember : membersToExecuteOn) {
           String memberName = distributedMember.getName();
           String memberId = distributedMember.getId();
-          String memberIdOrName = memberName != null && !memberName.isEmpty() ? memberName : memberId;
+          String memberIdOrName =
+              memberName != null && !memberName.isEmpty() ? memberName : memberId;
 
           buildMaps(hostMemberMap, hostMemberListMap, memberIdOrName, distributedMember);
         }
@@ -453,8 +529,10 @@ public class MiscellaneousCommands implements CommandMarker {
       NetstatFunctionArgument nfa = new NetstatFunctionArgument(lineSeparatorToUse, withlsof);
 
       if (!hostMemberMap.isEmpty()) {
-        Set<DistributedMember> membersToExecuteOn = new HashSet<DistributedMember>(hostMemberMap.values());
-        ResultCollector<?, ?> netstatResult = CliUtil.executeFunction(NetstatFunction.INSTANCE, nfa, membersToExecuteOn);
+        Set<DistributedMember> membersToExecuteOn =
+            new HashSet<DistributedMember>(hostMemberMap.values());
+        ResultCollector<?, ?> netstatResult =
+            CliUtil.executeFunction(NetstatFunction.INSTANCE, nfa, membersToExecuteOn);
         List<?> resultList = (List<?>) netstatResult.getResult();
         for (int i = 0; i < resultList.size(); i++) {
           NetstatFunctionResult netstatFunctionResult = (NetstatFunctionResult) resultList.get(i);
@@ -462,8 +540,13 @@ public class MiscellaneousCommands implements CommandMarker {
           try {
             String remoteHost = netstatFunctionResult.getHost();
             List<String> membersList = hostMemberListMap.get(remoteHost);
-            resultInfo.append(MessageFormat.format(netstatFunctionResult.getHeaderInfo(), CliUtil.collectionToString(membersList, 120)));
-            DeflaterInflaterData uncompressedBytes = CliUtil.uncompressBytes(deflaterInflaterData.getData(), deflaterInflaterData.getDataLength());
+            resultInfo.append(
+                MessageFormat.format(
+                    netstatFunctionResult.getHeaderInfo(),
+                    CliUtil.collectionToString(membersList, 120)));
+            DeflaterInflaterData uncompressedBytes =
+                CliUtil.uncompressBytes(
+                    deflaterInflaterData.getData(), deflaterInflaterData.getDataLength());
             resultInfo.append(new String(uncompressedBytes.getData()));
           } catch (DataFormatException e) {
             resultInfo.append("Error in some data. Reason : " + e.getMessage());
@@ -477,17 +560,34 @@ public class MiscellaneousCommands implements CommandMarker {
         if (!saveAs.endsWith(NETSTAT_FILE_REQUIRED_EXTENSION)) {
           saveToFile = saveAs + NETSTAT_FILE_REQUIRED_EXTENSION;
         }
-        resultData.addAsFile(saveToFile, resultInfo.toString(), CliStrings.NETSTAT__MSG__SAVED_OUTPUT_IN_0, false); // Note: substitution for {0} will happen on client side.
+        resultData.addAsFile(
+            saveToFile,
+            resultInfo.toString(),
+            CliStrings.NETSTAT__MSG__SAVED_OUTPUT_IN_0,
+            false); // Note: substitution for {0} will happen on client side.
       } else {
         resultData.addLine(resultInfo.toString());
       }
       result = ResultBuilder.buildResult(resultData);
     } catch (IllegalArgumentException e) {
-      LogWrapper.getInstance().info(CliStrings.format(CliStrings.NETSTAT__MSG__ERROR_OCCURRED_WHILE_EXECUTING_NETSTAT_ON_0, new Object[] { Arrays.toString(members) }));
+      LogWrapper.getInstance()
+          .info(
+              CliStrings.format(
+                  CliStrings.NETSTAT__MSG__ERROR_OCCURRED_WHILE_EXECUTING_NETSTAT_ON_0,
+                  new Object[] {Arrays.toString(members)}));
       result = ResultBuilder.createUserErrorResult(e.getMessage());
     } catch (RuntimeException e) {
-      LogWrapper.getInstance().info(CliStrings.format(CliStrings.NETSTAT__MSG__ERROR_OCCURRED_WHILE_EXECUTING_NETSTAT_ON_0, new Object[] { Arrays.toString(members) }), e);
-      result = ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.NETSTAT__MSG__ERROR_OCCURRED_WHILE_EXECUTING_NETSTAT_ON_0, new Object[] { Arrays.toString(members) }));
+      LogWrapper.getInstance()
+          .info(
+              CliStrings.format(
+                  CliStrings.NETSTAT__MSG__ERROR_OCCURRED_WHILE_EXECUTING_NETSTAT_ON_0,
+                  new Object[] {Arrays.toString(members)}),
+              e);
+      result =
+          ResultBuilder.createGemFireErrorResult(
+              CliStrings.format(
+                  CliStrings.NETSTAT__MSG__ERROR_OCCURRED_WHILE_EXECUTING_NETSTAT_ON_0,
+                  new Object[] {Arrays.toString(members)}));
     } finally {
       hostMemberMap.clear();
       hostMemberListMap.clear();
@@ -495,7 +595,11 @@ public class MiscellaneousCommands implements CommandMarker {
     return result;
   }
 
-  private void buildMaps(Map<String, DistributedMember> hostMemberMap, Map<String, List<String>> hostMemberListMap, String memberIdOrName, DistributedMember distributedMember) {
+  private void buildMaps(
+      Map<String, DistributedMember> hostMemberMap,
+      Map<String, List<String>> hostMemberListMap,
+      String memberIdOrName,
+      DistributedMember distributedMember) {
     String host = distributedMember.getHost();
 
     // Maintain one member for a host - function execution purpose - once only for a host
@@ -515,14 +619,24 @@ public class MiscellaneousCommands implements CommandMarker {
   }
 
   @CliCommand(value = CliStrings.SHOW_DEADLOCK, help = CliStrings.SHOW_DEADLOCK__HELP)
-  @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_DEBUG_UTIL })
+  @CliMetaData(
+    shellOnly = false,
+    relatedTopic = {CliStrings.TOPIC_GEODE_DEBUG_UTIL}
+  )
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result showDeadlock(@CliOption(key = CliStrings.SHOW_DEADLOCK__DEPENDENCIES__FILE, help = CliStrings.SHOW_DEADLOCK__DEPENDENCIES__FILE__HELP, mandatory = true) String filename) {
+  public Result showDeadlock(
+      @CliOption(
+            key = CliStrings.SHOW_DEADLOCK__DEPENDENCIES__FILE,
+            help = CliStrings.SHOW_DEADLOCK__DEPENDENCIES__FILE__HELP,
+            mandatory = true
+          )
+          String filename) {
 
     Result result = null;
     try {
       if (!filename.endsWith(".txt")) {
-        return ResultBuilder.createUserErrorResult(CliStrings.format(CliStrings.INVALID_FILE_EXTENTION, ".txt"));
+        return ResultBuilder.createUserErrorResult(
+            CliStrings.format(CliStrings.INVALID_FILE_EXTENTION, ".txt"));
       }
       Cache cache = CacheFactory.getAnyInstance();
 
@@ -551,23 +665,48 @@ public class MiscellaneousCommands implements CommandMarker {
       } else {
         resultData.addLine(CliStrings.SHOW_DEADLOCK__NO__DEADLOCK);
       }
-      resultData.addAsFile(filename, DeadlockDetector.prettyFormat(dependencies), MessageFormat.format(CliStrings.SHOW_DEADLOCK__DEPENDENCIES__REVIEW, filename), false);
+      resultData.addAsFile(
+          filename,
+          DeadlockDetector.prettyFormat(dependencies),
+          MessageFormat.format(CliStrings.SHOW_DEADLOCK__DEPENDENCIES__REVIEW, filename),
+          false);
       result = ResultBuilder.buildResult(resultData);
 
     } catch (Exception e) {
-      result = ResultBuilder.createGemFireErrorResult(CliStrings.SHOW_DEADLOCK__ERROR + " : " + e.getMessage());
+      result =
+          ResultBuilder.createGemFireErrorResult(
+              CliStrings.SHOW_DEADLOCK__ERROR + " : " + e.getMessage());
     }
     return result;
   }
 
   @CliCommand(value = CliStrings.SHOW_LOG, help = CliStrings.SHOW_LOG_HELP)
-  @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_DEBUG_UTIL })
+  @CliMetaData(
+    shellOnly = false,
+    relatedTopic = {CliStrings.TOPIC_GEODE_DEBUG_UTIL}
+  )
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result showLog(@CliOption(key = CliStrings.SHOW_LOG_MEMBER, optionContext = ConverterHint.ALL_MEMBER_IDNAME, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.SHOW_LOG_MEMBER_HELP, mandatory = true) String memberNameOrId, @CliOption(key = CliStrings.SHOW_LOG_LINE_NUM, unspecifiedDefaultValue = "0", help = CliStrings.SHOW_LOG_LINE_NUM_HELP, mandatory = false) int numberOfLines) {
+  public Result showLog(
+      @CliOption(
+            key = CliStrings.SHOW_LOG_MEMBER,
+            optionContext = ConverterHint.ALL_MEMBER_IDNAME,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            help = CliStrings.SHOW_LOG_MEMBER_HELP,
+            mandatory = true
+          )
+          String memberNameOrId,
+      @CliOption(
+            key = CliStrings.SHOW_LOG_LINE_NUM,
+            unspecifiedDefaultValue = "0",
+            help = CliStrings.SHOW_LOG_LINE_NUM_HELP,
+            mandatory = false
+          )
+          int numberOfLines) {
     Result result = null;
     try {
       Cache cache = CacheFactory.getAnyInstance();
-      SystemManagementService service = (SystemManagementService) ManagementService.getExistingManagementService(cache);
+      SystemManagementService service =
+          (SystemManagementService) ManagementService.getExistingManagementService(cache);
       MemberMXBean bean = null;
       DistributedMember memberToBeInvoked = CliUtil.getDistributedMemberByNameOrId(memberNameOrId);
       if (memberToBeInvoked != null) {
@@ -595,25 +734,40 @@ public class MiscellaneousCommands implements CommandMarker {
             resultData.addLine(CliStrings.SHOW_LOG_NO_LOG);
           }
         } else {
-          ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(memberNameOrId + CliStrings.SHOW_LOG_MSG_MEMBER_NOT_FOUND);
+          ErrorResultData errorResultData =
+              ResultBuilder.createErrorResultData()
+                  .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+                  .addLine(memberNameOrId + CliStrings.SHOW_LOG_MSG_MEMBER_NOT_FOUND);
           return (ResultBuilder.buildResult(errorResultData));
-
         }
 
         result = ResultBuilder.buildResult(resultData);
       } else {
-        ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(memberNameOrId + CliStrings.SHOW_LOG_MSG_MEMBER_NOT_FOUND);
+        ErrorResultData errorResultData =
+            ResultBuilder.createErrorResultData()
+                .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+                .addLine(memberNameOrId + CliStrings.SHOW_LOG_MSG_MEMBER_NOT_FOUND);
         return (ResultBuilder.buildResult(errorResultData));
-
       }
 
     } catch (Exception e) {
-      result = ResultBuilder.createGemFireErrorResult(CliStrings.SHOW_LOG_ERROR + CliUtil.stackTraceAsString(e));
+      result =
+          ResultBuilder.createGemFireErrorResult(
+              CliStrings.SHOW_LOG_ERROR + CliUtil.stackTraceAsString(e));
     }
     return result;
   }
 
-  Result exportLogsPreprocessing(String dirName, String[] groups, String memberId, String logLevel, boolean onlyLogLevel, boolean mergeLog, String start, String end, int numOfLogFilesForTesting) {
+  Result exportLogsPreprocessing(
+      String dirName,
+      String[] groups,
+      String memberId,
+      String logLevel,
+      boolean onlyLogLevel,
+      boolean mergeLog,
+      String start,
+      String end,
+      int numOfLogFilesForTesting) {
     Result result = null;
     try {
       LogWrapper.getInstance().fine("Exporting logs");
@@ -638,7 +792,8 @@ public class MiscellaneousCommands implements CommandMarker {
         startTime = parseDate(start);
         endTime = parseDate(end);
         if (endTime.getTime() - startTime.getTime() <= 0) {
-          result = ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__INVALID_TIMERANGE);
+          result =
+              ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__INVALID_TIMERANGE);
         }
       }
       if (end == null && start == null) {
@@ -646,10 +801,17 @@ public class MiscellaneousCommands implements CommandMarker {
         endTime = new Time(System.currentTimeMillis());
         startTime = new Time(endTime.getTime() - 24 * 60 * 60 * 1000);
       }
-      LogWrapper.getInstance().fine("Exporting logs startTime=" + startTime.toGMTString() + " " + startTime.toLocaleString());
-      LogWrapper.getInstance().fine("Exporting logs endTime=" + endTime.toGMTString() + " " + endTime.toLocaleString());
+      LogWrapper.getInstance()
+          .fine(
+              "Exporting logs startTime="
+                  + startTime.toGMTString()
+                  + " "
+                  + startTime.toLocaleString());
+      LogWrapper.getInstance()
+          .fine("Exporting logs endTime=" + endTime.toGMTString() + " " + endTime.toLocaleString());
       if (groups != null && memberId != null) {
-        result = ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__SPECIFY_ONE_OF_OPTION);
+        result =
+            ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__SPECIFY_ONE_OF_OPTION);
       } else if (groups != null && groups.length > 0) {
         for (String group : groups) {
           Set<DistributedMember> groupMembers = cache.getDistributedSystem().getGroupMembers(group);
@@ -658,20 +820,54 @@ public class MiscellaneousCommands implements CommandMarker {
           }
         }
         if (dsMembers.size() == 0) {
-          result = ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__NO_GROUPMEMBER_FOUND);
+          result =
+              ResultBuilder.createUserErrorResult(
+                  CliStrings.EXPORT_LOGS__MSG__NO_GROUPMEMBER_FOUND);
         }
-        result = export(cache, dsMembers, dirName, logLevel, onlyLogLevel ? "true" : "false", mergeLog, startTime, endTime, numOfLogFilesForTesting);
+        result =
+            export(
+                cache,
+                dsMembers,
+                dirName,
+                logLevel,
+                onlyLogLevel ? "true" : "false",
+                mergeLog,
+                startTime,
+                endTime,
+                numOfLogFilesForTesting);
       } else if (memberId != null) {
         DistributedMember member = CliUtil.getDistributedMemberByNameOrId(memberId);
         if (member == null) {
-          result = ResultBuilder.createUserErrorResult(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__INVALID_MEMBERID, memberId));
+          result =
+              ResultBuilder.createUserErrorResult(
+                  CliStrings.format(CliStrings.EXPORT_LOGS__MSG__INVALID_MEMBERID, memberId));
         }
         dsMembers.add(member);
-        result = export(cache, dsMembers, dirName, logLevel, onlyLogLevel ? "true" : "false", mergeLog, startTime, endTime, numOfLogFilesForTesting);
+        result =
+            export(
+                cache,
+                dsMembers,
+                dirName,
+                logLevel,
+                onlyLogLevel ? "true" : "false",
+                mergeLog,
+                startTime,
+                endTime,
+                numOfLogFilesForTesting);
       } else {
         // run in entire DS members and get all including locators
         dsMembers.addAll(CliUtil.getAllMembers(cache));
-        result = export(cache, dsMembers, dirName, logLevel, onlyLogLevel ? "true" : "false", mergeLog, startTime, endTime, numOfLogFilesForTesting);
+        result =
+            export(
+                cache,
+                dsMembers,
+                dirName,
+                logLevel,
+                onlyLogLevel ? "true" : "false",
+                mergeLog,
+                startTime,
+                endTime,
+                numOfLogFilesForTesting);
       }
     } catch (ParseException ex) {
       LogWrapper.getInstance().fine(ex.getMessage());
@@ -684,13 +880,68 @@ public class MiscellaneousCommands implements CommandMarker {
   }
 
   @CliCommand(value = CliStrings.EXPORT_LOGS, help = CliStrings.EXPORT_LOGS__HELP)
-  @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_SERVER, CliStrings.TOPIC_GEODE_DEBUG_UTIL })
+  @CliMetaData(
+    shellOnly = false,
+    relatedTopic = {CliStrings.TOPIC_GEODE_SERVER, CliStrings.TOPIC_GEODE_DEBUG_UTIL}
+  )
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result exportLogs(@CliOption(key = CliStrings.EXPORT_LOGS__DIR, help = CliStrings.EXPORT_LOGS__DIR__HELP, mandatory = true) String dirName, @CliOption(key = CliStrings.EXPORT_LOGS__GROUP, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.MEMBERGROUP, help = CliStrings.EXPORT_LOGS__GROUP__HELP) String[] groups, @CliOption(key = CliStrings.EXPORT_LOGS__MEMBER, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.ALL_MEMBER_IDNAME, help = CliStrings.EXPORT_LOGS__MEMBER__HELP) String memberId, @CliOption(key = CliStrings.EXPORT_LOGS__LOGLEVEL, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.LOG_LEVEL, help = CliStrings.EXPORT_LOGS__LOGLEVEL__HELP) String logLevel, @CliOption(key = CliStrings.EXPORT_LOGS__UPTO_LOGLEVEL, unspecifiedDefaultValue = "false", help = CliStrings.EXPORT_LOGS__UPTO_LOGLEVEL__HELP) boolean onlyLogLevel,
-      @CliOption(key = CliStrings.EXPORT_LOGS__MERGELOG, unspecifiedDefaultValue = "false", help = CliStrings.EXPORT_LOGS__MERGELOG__HELP) boolean mergeLog, @CliOption(key = CliStrings.EXPORT_LOGS__STARTTIME, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.EXPORT_LOGS__STARTTIME__HELP) String start, @CliOption(key = CliStrings.EXPORT_LOGS__ENDTIME, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.EXPORT_LOGS__ENDTIME__HELP) String end) {
+  public Result exportLogs(
+      @CliOption(
+            key = CliStrings.EXPORT_LOGS__DIR,
+            help = CliStrings.EXPORT_LOGS__DIR__HELP,
+            mandatory = true
+          )
+          String dirName,
+      @CliOption(
+            key = CliStrings.EXPORT_LOGS__GROUP,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            optionContext = ConverterHint.MEMBERGROUP,
+            help = CliStrings.EXPORT_LOGS__GROUP__HELP
+          )
+          String[] groups,
+      @CliOption(
+            key = CliStrings.EXPORT_LOGS__MEMBER,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            optionContext = ConverterHint.ALL_MEMBER_IDNAME,
+            help = CliStrings.EXPORT_LOGS__MEMBER__HELP
+          )
+          String memberId,
+      @CliOption(
+            key = CliStrings.EXPORT_LOGS__LOGLEVEL,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            optionContext = ConverterHint.LOG_LEVEL,
+            help = CliStrings.EXPORT_LOGS__LOGLEVEL__HELP
+          )
+          String logLevel,
+      @CliOption(
+            key = CliStrings.EXPORT_LOGS__UPTO_LOGLEVEL,
+            unspecifiedDefaultValue = "false",
+            help = CliStrings.EXPORT_LOGS__UPTO_LOGLEVEL__HELP
+          )
+          boolean onlyLogLevel,
+      @CliOption(
+            key = CliStrings.EXPORT_LOGS__MERGELOG,
+            unspecifiedDefaultValue = "false",
+            help = CliStrings.EXPORT_LOGS__MERGELOG__HELP
+          )
+          boolean mergeLog,
+      @CliOption(
+            key = CliStrings.EXPORT_LOGS__STARTTIME,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            help = CliStrings.EXPORT_LOGS__STARTTIME__HELP
+          )
+          String start,
+      @CliOption(
+            key = CliStrings.EXPORT_LOGS__ENDTIME,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            help = CliStrings.EXPORT_LOGS__ENDTIME__HELP
+          )
+          String end) {
     Result result = null;
     try {
-      result = exportLogsPreprocessing(dirName, groups, memberId, logLevel, onlyLogLevel, mergeLog, start, end, 0);
+      result =
+          exportLogsPreprocessing(
+              dirName, groups, memberId, logLevel, onlyLogLevel, mergeLog, start, end, 0);
     } catch (Exception ex) {
       LogWrapper.getInstance().fine(ex.getMessage());
       result = ResultBuilder.createUserErrorResult(ex.getMessage());
@@ -711,8 +962,32 @@ public class MiscellaneousCommands implements CommandMarker {
     return time;
   }
 
-  Result export(Cache cache, Set<DistributedMember> dsMembers, String dirName, String logLevel, String onlyLogLevel, boolean mergeLog, Time startTime, Time endTime, int numOfLogFilesForTesting) {
-    LogWrapper.getInstance().fine("Exporting logs in export membersize = " + dsMembers.size() + " dirname=" + dirName + " logLevel=" + logLevel + " onlyLogLevel=" + onlyLogLevel + " mergeLog=" + mergeLog + " startTime=" + startTime.toGMTString() + "endTime=" + endTime.toGMTString());
+  Result export(
+      Cache cache,
+      Set<DistributedMember> dsMembers,
+      String dirName,
+      String logLevel,
+      String onlyLogLevel,
+      boolean mergeLog,
+      Time startTime,
+      Time endTime,
+      int numOfLogFilesForTesting) {
+    LogWrapper.getInstance()
+        .fine(
+            "Exporting logs in export membersize = "
+                + dsMembers.size()
+                + " dirname="
+                + dirName
+                + " logLevel="
+                + logLevel
+                + " onlyLogLevel="
+                + onlyLogLevel
+                + " mergeLog="
+                + mergeLog
+                + " startTime="
+                + startTime.toGMTString()
+                + "endTime="
+                + endTime.toGMTString());
     Function function = new LogFileFunction();
     FunctionService.registerFunction(function);
     try {
@@ -736,7 +1011,12 @@ public class MiscellaneousCommands implements CommandMarker {
         try {
           resultList = (ArrayList<?>) CliUtil.executeFunction(function, args, member).getResult();
         } catch (Exception ex) {
-          LogWrapper.getInstance().fine(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0, member.getId()), ex);
+          LogWrapper.getInstance()
+              .fine(
+                  CliStrings.format(
+                      CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0,
+                      member.getId()),
+                  ex);
           //try for other members
           continue;
         }
@@ -745,42 +1025,91 @@ public class MiscellaneousCommands implements CommandMarker {
           for (int i = 0; i < resultList.size(); i++) {
             Object object = resultList.get(i);
             if (object instanceof Exception) {
-              ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0, member.getId()));
-              LogWrapper.getInstance().fine("Exporting logs for member=" + member.getId() + " exception=" + ((Throwable) object).getMessage(), ((Throwable) object));
+              ResultBuilder.createGemFireErrorResult(
+                  CliStrings.format(
+                      CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0,
+                      member.getId()));
+              LogWrapper.getInstance()
+                  .fine(
+                      "Exporting logs for member="
+                          + member.getId()
+                          + " exception="
+                          + ((Throwable) object).getMessage(),
+                      ((Throwable) object));
               toContinueForRestOfmembers = true;
               break;
             } else if (object instanceof Throwable) {
-              ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0, member.getId()));
+              ResultBuilder.createGemFireErrorResult(
+                  CliStrings.format(
+                      CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0,
+                      member.getId()));
 
               Throwable th = (Throwable) object;
               LogWrapper.getInstance().fine(CliUtil.stackTraceAsString((th)));
-              LogWrapper.getInstance().fine("Exporting logs for member=" + member.getId() + " exception=" + ((Throwable) object).getMessage(), ((Throwable) object));
+              LogWrapper.getInstance()
+                  .fine(
+                      "Exporting logs for member="
+                          + member.getId()
+                          + " exception="
+                          + ((Throwable) object).getMessage(),
+                      ((Throwable) object));
               toContinueForRestOfmembers = true;
               break;
             }
           }
         } else {
-          LogWrapper.getInstance().fine("Exporting logs for member=" + member.getId() + " resultList is either null or empty");
+          LogWrapper.getInstance()
+              .fine(
+                  "Exporting logs for member="
+                      + member.getId()
+                      + " resultList is either null or empty");
           continue;
         }
 
         if (toContinueForRestOfmembers == true) {
-          LogWrapper.getInstance().fine("Exporting logs for member=" + member.getId() + " toContinueForRestOfmembers=" + toContinueForRestOfmembers);
+          LogWrapper.getInstance()
+              .fine(
+                  "Exporting logs for member="
+                      + member.getId()
+                      + " toContinueForRestOfmembers="
+                      + toContinueForRestOfmembers);
           //proceed for rest of the member
           continue;
         }
 
         String rstList = (String) resultList.get(0);
-        LogWrapper.getInstance().fine("for member=" + member.getId() + "Successfully exported to directory=" + dirName + " rstList=" + rstList);
+        LogWrapper.getInstance()
+            .fine(
+                "for member="
+                    + member.getId()
+                    + "Successfully exported to directory="
+                    + dirName
+                    + " rstList="
+                    + rstList);
         if (rstList == null || rstList.length() == 0) {
-          ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0, member.getId()));
+          ResultBuilder.createGemFireErrorResult(
+              CliStrings.format(
+                  CliStrings.EXPORT_LOGS__MSG__FAILED_TO_EXPORT_LOG_FILES_FOR_MEMBER_0,
+                  member.getId()));
           LogWrapper.getInstance().fine("for member=" + member.getId() + "rstList is null");
           continue;
         } else if (rstList.contains("does not exist or cannot be created")) {
-          LogWrapper.getInstance().fine("for member=" + member.getId() + " does not exist or cannot be created");
-          return ResultBuilder.createInfoResult(CliStrings.format(CliStrings.EXPORT_LOGS__MSG__TARGET_DIR_CANNOT_BE_CREATED, dirName));
-        } else if (rstList.contains(LocalizedStrings.InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED.toLocalizedString())) {
-          LogWrapper.getInstance().fine("for member=" + member.getId() + LocalizedStrings.InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED.toLocalizedString());
+          LogWrapper.getInstance()
+              .fine("for member=" + member.getId() + " does not exist or cannot be created");
+          return ResultBuilder.createInfoResult(
+              CliStrings.format(
+                  CliStrings.EXPORT_LOGS__MSG__TARGET_DIR_CANNOT_BE_CREATED, dirName));
+        } else if (rstList.contains(
+            LocalizedStrings
+                .InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED
+                .toLocalizedString())) {
+          LogWrapper.getInstance()
+              .fine(
+                  "for member="
+                      + member.getId()
+                      + LocalizedStrings
+                          .InternalDistributedSystem_THIS_CONNECTION_TO_A_DISTRIBUTED_SYSTEM_HAS_BEEN_DISCONNECTED
+                          .toLocalizedString());
           //proceed for rest of the members
           continue;
         }
@@ -795,15 +1124,22 @@ public class MiscellaneousCommands implements CommandMarker {
       }
       //merge log files
       if (mergeLog == true) {
-        LogWrapper.getInstance().fine("Successfully exported to directory=" + dirName + " and now merging logsToMerge=" + logsToMerge.size());
+        LogWrapper.getInstance()
+            .fine(
+                "Successfully exported to directory="
+                    + dirName
+                    + " and now merging logsToMerge="
+                    + logsToMerge.size());
         mergeLogs(logsToMerge);
-        return ResultBuilder.createInfoResult("Successfully exported and merged in directory " + dirName);
+        return ResultBuilder.createInfoResult(
+            "Successfully exported and merged in directory " + dirName);
       }
       LogWrapper.getInstance().fine("Successfully exported to directory without merging" + dirName);
       return ResultBuilder.createInfoResult("Successfully exported to directory " + dirName);
     } catch (Exception ex) {
       LogWrapper.getInstance().info(ex.getMessage(), ex);
-      return ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__FUNCTION_EXCEPTION + ((LogFileFunction) function).getId());
+      return ResultBuilder.createUserErrorResult(
+          CliStrings.EXPORT_LOGS__MSG__FUNCTION_EXCEPTION + ((LogFileFunction) function).getId());
     }
   }
 
@@ -812,12 +1148,18 @@ public class MiscellaneousCommands implements CommandMarker {
     LogWrapper.getInstance().fine("Exporting logs merging logs" + logsToMerge.size());
     if (logsToMerge.size() > 1) {
       List<String> commandList = new ArrayList<String>();
-      commandList.add(System.getProperty("java.home") + File.separatorChar + "bin" + File.separatorChar + "java");
+      commandList.add(
+          System.getProperty("java.home")
+              + File.separatorChar
+              + "bin"
+              + File.separatorChar
+              + "java");
       commandList.add("-classpath");
       commandList.add(System.getProperty("java.class.path", "."));
       commandList.add(MergeLogs.class.getName());
 
-      commandList.add(logsToMerge.get(0).substring(0, logsToMerge.get(0).lastIndexOf(File.separator) + 1));
+      commandList.add(
+          logsToMerge.get(0).substring(0, logsToMerge.get(0).lastIndexOf(File.separator) + 1));
 
       ProcessBuilder procBuilder = new ProcessBuilder(commandList);
       StringBuilder output = new StringBuilder();
@@ -838,7 +1180,8 @@ public class MiscellaneousCommands implements CommandMarker {
         mergeProcess.destroy();
       } catch (Exception e) {
         LogWrapper.getInstance().fine(e.getMessage());
-        return ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__FUNCTION_EXCEPTION + "Could not merge");
+        return ResultBuilder.createUserErrorResult(
+            CliStrings.EXPORT_LOGS__MSG__FUNCTION_EXCEPTION + "Could not merge");
       } finally {
         if (errorString != null) {
           output.append(errorString).append(GfshParser.LINE_SEPARATOR);
@@ -850,26 +1193,44 @@ public class MiscellaneousCommands implements CommandMarker {
         return ResultBuilder.createInfoResult("Successfully merged");
       } else {
         LogWrapper.getInstance().fine("Could not merge");
-        return ResultBuilder.createUserErrorResult(CliStrings.EXPORT_LOGS__MSG__FUNCTION_EXCEPTION + "Could not merge");
+        return ResultBuilder.createUserErrorResult(
+            CliStrings.EXPORT_LOGS__MSG__FUNCTION_EXCEPTION + "Could not merge");
       }
     }
     return ResultBuilder.createInfoResult("Only one log file, nothing to merge");
   }
 
-  /****
-   * Current implementation supports writing it to a file and returning the location of the file
+  /**
+   * ** Current implementation supports writing it to a file and returning the location of the file
    *
    * @param memberNameOrId
    * @return Stack Trace
    */
   @CliCommand(value = CliStrings.EXPORT_STACKTRACE, help = CliStrings.EXPORT_STACKTRACE__HELP)
-  @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_DEBUG_UTIL })
+  @CliMetaData(
+    shellOnly = false,
+    relatedTopic = {CliStrings.TOPIC_GEODE_DEBUG_UTIL}
+  )
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result exportStackTrace(@CliOption(key = CliStrings.EXPORT_STACKTRACE__MEMBER, optionContext = ConverterHint.ALL_MEMBER_IDNAME, help = CliStrings.EXPORT_STACKTRACE__HELP) String memberNameOrId,
-
-      @CliOption(key = CliStrings.EXPORT_STACKTRACE__GROUP, optionContext = ConverterHint.ALL_MEMBER_IDNAME, help = CliStrings.EXPORT_STACKTRACE__GROUP) String group,
-
-      @CliOption(key = CliStrings.EXPORT_STACKTRACE__FILE, mandatory = true, help = CliStrings.EXPORT_STACKTRACE__FILE__HELP) String fileName) {
+  public Result exportStackTrace(
+      @CliOption(
+            key = CliStrings.EXPORT_STACKTRACE__MEMBER,
+            optionContext = ConverterHint.ALL_MEMBER_IDNAME,
+            help = CliStrings.EXPORT_STACKTRACE__HELP
+          )
+          String memberNameOrId,
+      @CliOption(
+            key = CliStrings.EXPORT_STACKTRACE__GROUP,
+            optionContext = ConverterHint.ALL_MEMBER_IDNAME,
+            help = CliStrings.EXPORT_STACKTRACE__GROUP
+          )
+          String group,
+      @CliOption(
+            key = CliStrings.EXPORT_STACKTRACE__FILE,
+            mandatory = true,
+            help = CliStrings.EXPORT_STACKTRACE__FILE__HELP
+          )
+          String fileName) {
 
     Result result = null;
     try {
@@ -880,19 +1241,22 @@ public class MiscellaneousCommands implements CommandMarker {
       InfoResultData resultData = ResultBuilder.createInfoResultData();
 
       if (!fileName.endsWith(".txt")) {
-        return ResultBuilder.createUserErrorResult(CliStrings.format(CliStrings.INVALID_FILE_EXTENTION, ".txt"));
+        return ResultBuilder.createUserErrorResult(
+            CliStrings.format(CliStrings.INVALID_FILE_EXTENTION, ".txt"));
       }
 
       Map<String, byte[]> dumps = new HashMap<String, byte[]>();
       Set<DistributedMember> targetMembers = null;
 
-      if ((group == null || group.isEmpty()) && (memberNameOrId == null || memberNameOrId.isEmpty())) {
+      if ((group == null || group.isEmpty())
+          && (memberNameOrId == null || memberNameOrId.isEmpty())) {
         targetMembers = CliUtil.getAllMembers(cache);
       } else {
         targetMembers = CliUtil.findAllMatchingMembers(group, memberNameOrId);
       }
 
-      ResultCollector<?, ?> rc = CliUtil.executeFunction(getStackTracesFunction, null, targetMembers);
+      ResultCollector<?, ?> rc =
+          CliUtil.executeFunction(getStackTracesFunction, null, targetMembers);
       ArrayList<Object> resultList = (ArrayList<Object>) rc.getResult();
 
       for (Object resultObj : resultList) {
@@ -910,13 +1274,16 @@ public class MiscellaneousCommands implements CommandMarker {
     } catch (CommandResultException crex) {
       return crex.getResult();
     } catch (Exception ex) {
-      result = ResultBuilder.createGemFireErrorResult(CliStrings.EXPORT_STACKTRACE__ERROR + ex.getMessage());
+      result =
+          ResultBuilder.createGemFireErrorResult(
+              CliStrings.EXPORT_STACKTRACE__ERROR + ex.getMessage());
     }
     return result;
   }
 
-  /***
-   * Writes the Stack traces member-wise to a text file
+  /**
+   * * Writes the Stack traces member-wise to a text file
+   *
    * @param dumps - Map containing key : member , value : zipped stack traces
    * @param fileName - Name of the file to which the stack-traces are written to
    * @return Canonical path of the file which contains the stack-traces
@@ -956,22 +1323,55 @@ public class MiscellaneousCommands implements CommandMarker {
   }
 
   @CliCommand(value = CliStrings.SHOW_METRICS, help = CliStrings.SHOW_METRICS__HELP)
-  @CliMetaData(shellOnly = false, relatedTopic = { CliStrings.TOPIC_GEODE_STATISTICS })
+  @CliMetaData(
+    shellOnly = false,
+    relatedTopic = {CliStrings.TOPIC_GEODE_STATISTICS}
+  )
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result showMetrics(@CliOption(key = { CliStrings.SHOW_METRICS__MEMBER }, optionContext = ConverterHint.ALL_MEMBER_IDNAME, help = CliStrings.SHOW_METRICS__MEMBER__HELP) String memberNameOrId, @CliOption(key = { CliStrings.SHOW_METRICS__REGION }, optionContext = ConverterHint.REGIONPATH, help = CliStrings.SHOW_METRICS__REGION__HELP) String regionName, @CliOption(key = { CliStrings.SHOW_METRICS__FILE }, help = CliStrings.SHOW_METRICS__FILE__HELP) String export_to_report_to, @CliOption(key = { CliStrings.SHOW_METRICS__CACHESERVER__PORT }, help = CliStrings.SHOW_METRICS__CACHESERVER__PORT__HELP) String cacheServerPortString, @CliOption(key = { CliStrings.SHOW_METRICS__CATEGORY }, help = CliStrings.SHOW_METRICS__CATEGORY__HELP) @CliMetaData(valueSeparator = ",") String[] categories) {
+  public Result showMetrics(
+      @CliOption(
+            key = {CliStrings.SHOW_METRICS__MEMBER},
+            optionContext = ConverterHint.ALL_MEMBER_IDNAME,
+            help = CliStrings.SHOW_METRICS__MEMBER__HELP
+          )
+          String memberNameOrId,
+      @CliOption(
+            key = {CliStrings.SHOW_METRICS__REGION},
+            optionContext = ConverterHint.REGIONPATH,
+            help = CliStrings.SHOW_METRICS__REGION__HELP
+          )
+          String regionName,
+      @CliOption(
+            key = {CliStrings.SHOW_METRICS__FILE},
+            help = CliStrings.SHOW_METRICS__FILE__HELP
+          )
+          String export_to_report_to,
+      @CliOption(
+            key = {CliStrings.SHOW_METRICS__CACHESERVER__PORT},
+            help = CliStrings.SHOW_METRICS__CACHESERVER__PORT__HELP
+          )
+          String cacheServerPortString,
+      @CliOption(
+            key = {CliStrings.SHOW_METRICS__CATEGORY},
+            help = CliStrings.SHOW_METRICS__CATEGORY__HELP
+          )
+          @CliMetaData(valueSeparator = ",")
+          String[] categories) {
 
     Result result = null;
     try {
 
       if (export_to_report_to != null && !export_to_report_to.isEmpty()) {
         if (!export_to_report_to.endsWith(".csv")) {
-          return ResultBuilder.createUserErrorResult(CliStrings.format(CliStrings.INVALID_FILE_EXTENTION, ".csv"));
+          return ResultBuilder.createUserErrorResult(
+              CliStrings.format(CliStrings.INVALID_FILE_EXTENTION, ".csv"));
         }
       }
       if (regionName != null && !regionName.isEmpty()) {
 
         if (!org.apache.geode.internal.lang.StringUtils.isBlank(cacheServerPortString)) {
-          return ResultBuilder.createUserErrorResult(CliStrings.SHOW_METRICS__CANNOT__USE__CACHESERVERPORT);
+          return ResultBuilder.createUserErrorResult(
+              CliStrings.SHOW_METRICS__CANNOT__USE__CACHESERVERPORT);
         }
 
         //MBean names contain the forward slash
@@ -980,15 +1380,21 @@ public class MiscellaneousCommands implements CommandMarker {
         }
 
         if (memberNameOrId == null || memberNameOrId.isEmpty()) {
-          result = ResultBuilder.buildResult(getDistributedRegionMetrics(regionName, export_to_report_to, categories));
+          result =
+              ResultBuilder.buildResult(
+                  getDistributedRegionMetrics(regionName, export_to_report_to, categories));
         } else {
           DistributedMember member = CliUtil.getDistributedMemberByNameOrId(memberNameOrId);
 
           if (member != null) {
-            result = ResultBuilder.buildResult(getRegionMetricsFromMember(regionName, member, export_to_report_to, categories));
+            result =
+                ResultBuilder.buildResult(
+                    getRegionMetricsFromMember(
+                        regionName, member, export_to_report_to, categories));
           } else {
             ErrorResultData erd = ResultBuilder.createErrorResultData();
-            erd.addLine(CliStrings.format(CliStrings.MEMBER_NOT_FOUND_ERROR_MESSAGE, memberNameOrId));
+            erd.addLine(
+                CliStrings.format(CliStrings.MEMBER_NOT_FOUND_ERROR_MESSAGE, memberNameOrId));
             result = ResultBuilder.buildResult(erd);
           }
         }
@@ -1005,7 +1411,9 @@ public class MiscellaneousCommands implements CommandMarker {
               return ResultBuilder.createUserErrorResult("Invalid port");
             }
           }
-          result = ResultBuilder.buildResult(getMemberMetrics(member, export_to_report_to, categories, cacheServerPort));
+          result =
+              ResultBuilder.buildResult(
+                  getMemberMetrics(member, export_to_report_to, categories, cacheServerPort));
         } else {
           ErrorResultData erd = ResultBuilder.createErrorResultData();
           erd.addLine(CliStrings.format(CliStrings.MEMBER_NOT_FOUND_ERROR_MESSAGE, memberNameOrId));
@@ -1014,7 +1422,8 @@ public class MiscellaneousCommands implements CommandMarker {
       } else {
 
         if (!org.apache.geode.internal.lang.StringUtils.isBlank(cacheServerPortString)) {
-          return ResultBuilder.createUserErrorResult(CliStrings.SHOW_METRICS__CANNOT__USE__CACHESERVERPORT);
+          return ResultBuilder.createUserErrorResult(
+              CliStrings.SHOW_METRICS__CANNOT__USE__CACHESERVERPORT);
         }
 
         result = ResultBuilder.buildResult(getSystemWideMetrics(export_to_report_to, categories));
@@ -1025,15 +1434,16 @@ public class MiscellaneousCommands implements CommandMarker {
     return result;
   }
 
-  /****
-   * Gets the system wide metrics
+  /**
+   * ** Gets the system wide metrics
    *
    * @param export_to_report_to
-   * @return ResultData with required System wide statistics or ErrorResultData
-   *         if DS MBean is not found to gather metrics
+   * @return ResultData with required System wide statistics or ErrorResultData if DS MBean is not
+   *     found to gather metrics
    * @throws Exception
    */
-  private ResultData getSystemWideMetrics(String export_to_report_to, String[] categoriesArr) throws Exception {
+  private ResultData getSystemWideMetrics(String export_to_report_to, String[] categoriesArr)
+      throws Exception {
     final Cache cache = CacheFactory.getAnyInstance();
     final ManagementService managmentService = ManagementService.getManagementService(cache);
     DistributedSystemMXBean dsMxBean = managmentService.getDistributedSystemMXBean();
@@ -1083,68 +1493,107 @@ public class MiscellaneousCommands implements CommandMarker {
       metricsTable.setHeader("Cluster-wide Metrics");
 
       if (categoriesMap.get("cluster").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "cluster", "totalHeapSize", dsMxBean.getTotalHeapSize(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "cluster", "totalHeapSize", dsMxBean.getTotalHeapSize(), csvBuilder);
       }
 
       if (categoriesMap.get("cache").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "cache", "totalRegionEntryCount", dsMxBean.getTotalRegionEntryCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalRegionCount", dsMxBean.getTotalRegionCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalMissCount", dsMxBean.getTotalMissCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalHitCount", dsMxBean.getTotalHitCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "cache",
+            "totalRegionEntryCount",
+            dsMxBean.getTotalRegionEntryCount(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "totalRegionCount", dsMxBean.getTotalRegionCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "totalMissCount", dsMxBean.getTotalMissCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "totalHitCount", dsMxBean.getTotalHitCount(), csvBuilder);
       }
 
       if (categoriesMap.get("diskstore").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "diskstore", "totalDiskUsage", dsMxBean.getTotalDiskUsage(), csvBuilder); // deadcoded to workaround bug 46397
-        writeToTableAndCsv(metricsTable, ""/*46608*/, "diskReadsRate", dsMxBean.getDiskReadsRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "diskWritesRate", dsMxBean.getDiskWritesRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "flushTimeAvgLatency", dsMxBean.getDiskFlushAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalBackupInProgress", dsMxBean.getTotalBackupInProgress(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "diskstore",
+            "totalDiskUsage",
+            dsMxBean.getTotalDiskUsage(),
+            csvBuilder); // deadcoded to workaround bug 46397
+        writeToTableAndCsv(
+            metricsTable, "" /*46608*/, "diskReadsRate", dsMxBean.getDiskReadsRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "diskWritesRate", dsMxBean.getDiskWritesRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "flushTimeAvgLatency", dsMxBean.getDiskFlushAvgLatency(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "totalBackupInProgress",
+            dsMxBean.getTotalBackupInProgress(),
+            csvBuilder);
       }
 
       if (categoriesMap.get("query").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "query", "activeCQCount", dsMxBean.getActiveCQCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "queryRequestRate", dsMxBean.getQueryRequestRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "query", "activeCQCount", dsMxBean.getActiveCQCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "queryRequestRate", dsMxBean.getQueryRequestRate(), csvBuilder);
       }
       if (export_to_report_to != null && !export_to_report_to.isEmpty()) {
-        crd.addAsFile(export_to_report_to, csvBuilder.toString(), "Cluster wide metrics exported to {0}.", false);
+        crd.addAsFile(
+            export_to_report_to,
+            csvBuilder.toString(),
+            "Cluster wide metrics exported to {0}.",
+            false);
       }
 
       return crd;
     } else {
-      String errorMessage = CliStrings.format(CliStrings.SHOW_METRICS__ERROR, "Distributed System MBean not found");
+      String errorMessage =
+          CliStrings.format(CliStrings.SHOW_METRICS__ERROR, "Distributed System MBean not found");
       return ResultBuilder.createErrorResultData().addLine(errorMessage);
     }
-
   }
 
-  /***
-   * Gets the Cluster wide metrics for a given member
+  /**
+   * * Gets the Cluster wide metrics for a given member
    *
    * @param distributedMember
    * @param export_to_report_to
-   * @return ResultData with required Member statistics or ErrorResultData if
-   *         MemberMbean is not found to gather metrics
-   * @throws ResultDataException
-   *           if building result fails
+   * @return ResultData with required Member statistics or ErrorResultData if MemberMbean is not
+   *     found to gather metrics
+   * @throws ResultDataException if building result fails
    */
-  private ResultData getMemberMetrics(DistributedMember distributedMember, String export_to_report_to, String[] categoriesArr, int cacheServerPort) throws ResultDataException {
+  private ResultData getMemberMetrics(
+      DistributedMember distributedMember,
+      String export_to_report_to,
+      String[] categoriesArr,
+      int cacheServerPort)
+      throws ResultDataException {
     final Cache cache = CacheFactory.getAnyInstance();
-    final SystemManagementService managementService = (SystemManagementService) ManagementService.getManagementService(cache);
+    final SystemManagementService managementService =
+        (SystemManagementService) ManagementService.getManagementService(cache);
 
     ObjectName memberMBeanName = managementService.getMemberMBeanName(distributedMember);
-    MemberMXBean memberMxBean = managementService.getMBeanInstance(memberMBeanName, MemberMXBean.class);
+    MemberMXBean memberMxBean =
+        managementService.getMBeanInstance(memberMBeanName, MemberMXBean.class);
     ObjectName csMxBeanName = null;
     CacheServerMXBean csMxBean = null;
 
     if (memberMxBean != null) {
 
       if (cacheServerPort != -1) {
-        csMxBeanName = managementService.getCacheServerMBeanName(cacheServerPort, distributedMember);
+        csMxBeanName =
+            managementService.getCacheServerMBeanName(cacheServerPort, distributedMember);
         csMxBean = managementService.getMBeanInstance(csMxBeanName, CacheServerMXBean.class);
 
         if (csMxBean == null) {
           ErrorResultData erd = ResultBuilder.createErrorResultData();
-          erd.addLine(CliStrings.format(CliStrings.SHOW_METRICS__CACHE__SERVER__NOT__FOUND, cacheServerPort, MBeanJMXAdapter.getMemberNameOrId(distributedMember)));
+          erd.addLine(
+              CliStrings.format(
+                  CliStrings.SHOW_METRICS__CACHE__SERVER__NOT__FOUND,
+                  cacheServerPort,
+                  MBeanJMXAdapter.getMemberNameOrId(distributedMember)));
           return erd;
         }
       }
@@ -1194,34 +1643,48 @@ public class MiscellaneousCommands implements CommandMarker {
         }
       }
 
-      /****
-       * Member Metrics
-       */
+      /** ** Member Metrics */
       //member, jvm, region, serialization, communication, function, transaction, diskstore, lock, eviction, distribution
       if (categoriesMap.get("member").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "member", "upTime", memberMxBean.getMemberUpTime(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "member", "upTime", memberMxBean.getMemberUpTime(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "cpuUsage", memberMxBean.getCpuUsage(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "currentHeapSize", memberMxBean.getCurrentHeapSize(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "maximumHeapSize", memberMxBean.getMaximumHeapSize(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "currentHeapSize", memberMxBean.getCurrentHeapSize(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "maximumHeapSize", memberMxBean.getMaximumHeapSize(), csvBuilder);
       }
-      /****
-       * JVM Metrics
-       */
+      /** ** JVM Metrics */
       if (categoriesMap.get("jvm").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "jvm ", "jvmThreads ", jvmMetrics.getTotalThreads(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "fileDescriptorLimit", memberMxBean.getFileDescriptorLimit(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalFileDescriptorOpen", memberMxBean.getTotalFileDescriptorOpen(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "jvm ", "jvmThreads ", jvmMetrics.getTotalThreads(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "fileDescriptorLimit",
+            memberMxBean.getFileDescriptorLimit(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "totalFileDescriptorOpen",
+            memberMxBean.getTotalFileDescriptorOpen(),
+            csvBuilder);
       }
-      /***
-      Member wide region metrics
-       */
+      /** * Member wide region metrics */
       if (categoriesMap.get("region").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "region ", "totalRegionCount ", memberMxBean.getTotalRegionCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "region ",
+            "totalRegionCount ",
+            memberMxBean.getTotalRegionCount(),
+            csvBuilder);
         String[] regionNames = memberMxBean.listRegions();
         if (regionNames != null) {
           for (int i = 0; i < regionNames.length; i++) {
             if (i == 0) {
-              writeToTableAndCsv(metricsTable, "", "listOfRegions", regionNames[i].substring(1), csvBuilder);
+              writeToTableAndCsv(
+                  metricsTable, "", "listOfRegions", regionNames[i].substring(1), csvBuilder);
             } else {
               writeToTableAndCsv(metricsTable, "", "", regionNames[i].substring(1), csvBuilder);
             }
@@ -1238,189 +1701,401 @@ public class MiscellaneousCommands implements CommandMarker {
             }
           }
         }
-        writeToTableAndCsv(metricsTable, "", "totalRegionEntryCount", memberMxBean.getTotalRegionEntryCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalBucketCount", memberMxBean.getTotalBucketCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalPrimaryBucketCount", memberMxBean.getTotalPrimaryBucketCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "getsAvgLatency", memberMxBean.getGetsAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "putsAvgLatency", memberMxBean.getPutsAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "createsRate", memberMxBean.getCreatesRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "destroyRate", memberMxBean.getDestroysRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "putAllAvgLatency", memberMxBean.getPutAllAvgLatency(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "totalRegionEntryCount",
+            memberMxBean.getTotalRegionEntryCount(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "totalBucketCount", memberMxBean.getTotalBucketCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "totalPrimaryBucketCount",
+            memberMxBean.getTotalPrimaryBucketCount(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "getsAvgLatency", memberMxBean.getGetsAvgLatency(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "putsAvgLatency", memberMxBean.getPutsAvgLatency(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "createsRate", memberMxBean.getCreatesRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "destroyRate", memberMxBean.getDestroysRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "putAllAvgLatency", memberMxBean.getPutAllAvgLatency(), csvBuilder);
         //Not available from stats. After Stats re-org it will be avaialble
         // writeToTableAndCsv(metricsTable, "", "getAllAvgLatency", memberMxBean.getGetAllAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalMissCount", memberMxBean.getTotalMissCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalHitCount", memberMxBean.getTotalHitCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "totalMissCount", memberMxBean.getTotalMissCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "totalHitCount", memberMxBean.getTotalHitCount(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "getsRate", memberMxBean.getGetsRate(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "putsRate", memberMxBean.getPutsRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "cacheWriterCallsAvgLatency", memberMxBean.getCacheWriterCallsAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "cacheListenerCallsAvgLatency", memberMxBean.getCacheListenerCallsAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalLoadsCompleted", memberMxBean.getTotalLoadsCompleted(), csvBuilder);
-
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "cacheWriterCallsAvgLatency",
+            memberMxBean.getCacheWriterCallsAvgLatency(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "cacheListenerCallsAvgLatency",
+            memberMxBean.getCacheListenerCallsAvgLatency(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "totalLoadsCompleted",
+            memberMxBean.getTotalLoadsCompleted(),
+            csvBuilder);
       }
 
-      /******
-       * SERIALIZATION
-       */
+      /** **** SERIALIZATION */
       if (categoriesMap.get("serialization").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "serialization", "serializationRate", memberMxBean.getSerializationRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "serializationLatency", memberMxBean.getSerializationRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "deserializationRate", memberMxBean.getDeserializationRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "deserializationLatency", memberMxBean.getDeserializationLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "deserializationAvgLatency", memberMxBean.getDeserializationAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "PDXDeserializationAvgLatency", memberMxBean.getPDXDeserializationAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "PDXDeserializationRate", memberMxBean.getPDXDeserializationRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "serialization",
+            "serializationRate",
+            memberMxBean.getSerializationRate(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "serializationLatency",
+            memberMxBean.getSerializationRate(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "deserializationRate",
+            memberMxBean.getDeserializationRate(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "deserializationLatency",
+            memberMxBean.getDeserializationLatency(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "deserializationAvgLatency",
+            memberMxBean.getDeserializationAvgLatency(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "PDXDeserializationAvgLatency",
+            memberMxBean.getPDXDeserializationAvgLatency(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "PDXDeserializationRate",
+            memberMxBean.getPDXDeserializationRate(),
+            csvBuilder);
       }
 
-      /*** Communication Metrics
-       *
-       */
+      /** * Communication Metrics */
       if (categoriesMap.get("communication").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "communication", "bytesSentRate", memberMxBean.getBytesSentRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "bytesReceivedRate", memberMxBean.getBytesReceivedRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "communication",
+            "bytesSentRate",
+            memberMxBean.getBytesSentRate(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "bytesReceivedRate", memberMxBean.getBytesReceivedRate(), csvBuilder);
         String[] connectedGatewayReceivers = memberMxBean.listConnectedGatewayReceivers();
-        writeToTableAndCsv(metricsTable, "", "connectedGatewayReceivers", connectedGatewayReceivers, csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "connectedGatewayReceivers", connectedGatewayReceivers, csvBuilder);
 
         String[] connectedGatewaySenders = memberMxBean.listConnectedGatewaySenders();
-        writeToTableAndCsv(metricsTable, "", "connectedGatewaySenders", connectedGatewaySenders, csvBuilder);
-
+        writeToTableAndCsv(
+            metricsTable, "", "connectedGatewaySenders", connectedGatewaySenders, csvBuilder);
       }
 
-      /***
-       * Member wide function metrics
-       *
-       */
+      /** * Member wide function metrics */
       if (categoriesMap.get("function").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "function", "numRunningFunctions", memberMxBean.getNumRunningFunctions(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "functionExecutionRate", memberMxBean.getFunctionExecutionRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "numRunningFunctionsHavingResults", memberMxBean.getNumRunningFunctionsHavingResults(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "function",
+            "numRunningFunctions",
+            memberMxBean.getNumRunningFunctions(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "functionExecutionRate",
+            memberMxBean.getFunctionExecutionRate(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "numRunningFunctionsHavingResults",
+            memberMxBean.getNumRunningFunctionsHavingResults(),
+            csvBuilder);
         //Not Avaialble from Stats
         //writeToTableAndCsv(metricsTable, "", "funcExecutionQueueSize", memberMxBean.getFuncExecutionQueueSize(), csvBuilder);
       }
 
-      /***
-       * totalTransactionsCount
-         currentTransactionalThreadIds
-         transactionCommitsAvgLatency
-         transactionCommittedTotalCount
-         transactionRolledBackTotalCount
-         transactionCommitsRate
+      /**
+       * * totalTransactionsCount currentTransactionalThreadIds transactionCommitsAvgLatency
+       * transactionCommittedTotalCount transactionRolledBackTotalCount transactionCommitsRate
        */
       if (categoriesMap.get("transaction").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "transaction", "totalTransactionsCount", memberMxBean.getTotalTransactionsCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "transaction",
+            "totalTransactionsCount",
+            memberMxBean.getTotalTransactionsCount(),
+            csvBuilder);
 
-        writeToTableAndCsv(metricsTable, "", "transactionCommitsAvgLatency", memberMxBean.getTransactionCommitsAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "transactionCommittedTotalCount", memberMxBean.getTransactionCommittedTotalCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "transactionRolledBackTotalCount", memberMxBean.getTransactionRolledBackTotalCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "transactionCommitsRate", memberMxBean.getTransactionCommitsRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "transactionCommitsAvgLatency",
+            memberMxBean.getTransactionCommitsAvgLatency(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "transactionCommittedTotalCount",
+            memberMxBean.getTransactionCommittedTotalCount(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "transactionRolledBackTotalCount",
+            memberMxBean.getTransactionRolledBackTotalCount(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "transactionCommitsRate",
+            memberMxBean.getTransactionCommitsRate(),
+            csvBuilder);
       }
-      /***
-       * Member wide disk metrics
-       */
+      /** * Member wide disk metrics */
       if (categoriesMap.get("diskstore").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "diskstore", "totalDiskUsage", memberMxBean.getTotalDiskUsage(), csvBuilder); // deadcoded to workaround bug 46397
-        writeToTableAndCsv(metricsTable, ""/*46608*/, "diskReadsRate", memberMxBean.getDiskReadsRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "diskWritesRate", memberMxBean.getDiskWritesRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "flushTimeAvgLatency", memberMxBean.getDiskFlushAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalQueueSize", memberMxBean.getTotalDiskTasksWaiting(), csvBuilder); // deadcoded to workaround bug 46397
-        writeToTableAndCsv(metricsTable, "", "totalBackupInProgress", memberMxBean.getTotalBackupInProgress(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "diskstore",
+            "totalDiskUsage",
+            memberMxBean.getTotalDiskUsage(),
+            csvBuilder); // deadcoded to workaround bug 46397
+        writeToTableAndCsv(
+            metricsTable,
+            "" /*46608*/,
+            "diskReadsRate",
+            memberMxBean.getDiskReadsRate(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "diskWritesRate", memberMxBean.getDiskWritesRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "flushTimeAvgLatency",
+            memberMxBean.getDiskFlushAvgLatency(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "totalQueueSize",
+            memberMxBean.getTotalDiskTasksWaiting(),
+            csvBuilder); // deadcoded to workaround bug 46397
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "totalBackupInProgress",
+            memberMxBean.getTotalBackupInProgress(),
+            csvBuilder);
       }
-      /***
-       * Member wide Lock
-       */
+      /** * Member wide Lock */
       if (categoriesMap.get("lock").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "lock", "lockWaitsInProgress", memberMxBean.getLockWaitsInProgress(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalLockWaitTime", memberMxBean.getTotalLockWaitTime(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalNumberOfLockService", memberMxBean.getTotalNumberOfLockService(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "requestQueues", memberMxBean.getLockRequestQueues(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "lock",
+            "lockWaitsInProgress",
+            memberMxBean.getLockWaitsInProgress(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "totalLockWaitTime", memberMxBean.getTotalLockWaitTime(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "totalNumberOfLockService",
+            memberMxBean.getTotalNumberOfLockService(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "requestQueues", memberMxBean.getLockRequestQueues(), csvBuilder);
       }
-      /****
-       * Eviction
-       */
+      /** ** Eviction */
       if (categoriesMap.get("eviction").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "eviction", "lruEvictionRate", memberMxBean.getLruEvictionRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "lruDestroyRate", memberMxBean.getLruDestroyRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "eviction",
+            "lruEvictionRate",
+            memberMxBean.getLruEvictionRate(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "lruDestroyRate", memberMxBean.getLruDestroyRate(), csvBuilder);
       }
-      /***
-       * Distribution
-       */
+      /** * Distribution */
       if (categoriesMap.get("distribution").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "distribution", "getInitialImagesInProgress", memberMxBean.getInitialImagesInProgres(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "getInitialImageTime", memberMxBean.getInitialImageTime(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "getInitialImageKeysReceived", memberMxBean.getInitialImageKeysReceived(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "distribution",
+            "getInitialImagesInProgress",
+            memberMxBean.getInitialImagesInProgres(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "getInitialImageTime",
+            memberMxBean.getInitialImageTime(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "getInitialImageKeysReceived",
+            memberMxBean.getInitialImageKeysReceived(),
+            csvBuilder);
       }
 
-      /***
-       * OffHeap
-       */
+      /** * OffHeap */
       if (categoriesMap.get("offheap").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "offheap", "maxMemory", memberMxBean.getOffHeapMaxMemory(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "freeMemory", memberMxBean.getOffHeapFreeMemory(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "usedMemory", memberMxBean.getOffHeapUsedMemory(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "objects", memberMxBean.getOffHeapObjects(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "fragmentation", memberMxBean.getOffHeapFragmentation(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "compactionTime", memberMxBean.getOffHeapCompactionTime(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "offheap", "maxMemory", memberMxBean.getOffHeapMaxMemory(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "freeMemory", memberMxBean.getOffHeapFreeMemory(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "usedMemory", memberMxBean.getOffHeapUsedMemory(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "objects", memberMxBean.getOffHeapObjects(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "fragmentation", memberMxBean.getOffHeapFragmentation(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "compactionTime",
+            memberMxBean.getOffHeapCompactionTime(),
+            csvBuilder);
       }
 
-      /***
-       * CacheServer stats
-       */
+      /** * CacheServer stats */
       if (csMxBean != null) {
-        writeToTableAndCsv(metricsTable, "cache-server", "clientConnectionCount", csMxBean.getClientConnectionCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "hostnameForClients", csMxBean.getHostNameForClients(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "getRequestAvgLatency", csMxBean.getGetRequestAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "putRequestAvgLatency", csMxBean.getPutRequestAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalConnectionsTimedOut", csMxBean.getTotalConnectionsTimedOut(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "threadQueueSize", csMxBean.getPutRequestAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "connectionThreads", csMxBean.getConnectionThreads(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "connectionLoad", csMxBean.getConnectionLoad(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "loadPerConnection", csMxBean.getLoadPerConnection(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "cache-server",
+            "clientConnectionCount",
+            csMxBean.getClientConnectionCount(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "hostnameForClients", csMxBean.getHostNameForClients(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "getRequestAvgLatency",
+            csMxBean.getGetRequestAvgLatency(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "putRequestAvgLatency",
+            csMxBean.getPutRequestAvgLatency(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "totalConnectionsTimedOut",
+            csMxBean.getTotalConnectionsTimedOut(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "threadQueueSize", csMxBean.getPutRequestAvgLatency(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "connectionThreads", csMxBean.getConnectionThreads(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "connectionLoad", csMxBean.getConnectionLoad(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "loadPerConnection", csMxBean.getLoadPerConnection(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "queueLoad", csMxBean.getQueueLoad(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "loadPerQueue", csMxBean.getLoadPerQueue(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "getRequestRate", csMxBean.getGetRequestRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "putRequestRate", csMxBean.getPutRequestRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "loadPerQueue", csMxBean.getLoadPerQueue(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "getRequestRate", csMxBean.getGetRequestRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "putRequestRate", csMxBean.getPutRequestRate(), csvBuilder);
 
-        /*****
-         * Notification
-         */
-        writeToTableAndCsv(metricsTable, "notification", "numClientNotificationRequests", csMxBean.getNumClientNotificationRequests(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "clientNotificationRate", csMxBean.getClientNotificationRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "clientNotificationAvgLatency", csMxBean.getClientNotificationAvgLatency(), csvBuilder);
+        /** *** Notification */
+        writeToTableAndCsv(
+            metricsTable,
+            "notification",
+            "numClientNotificationRequests",
+            csMxBean.getNumClientNotificationRequests(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "clientNotificationRate",
+            csMxBean.getClientNotificationRate(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "clientNotificationAvgLatency",
+            csMxBean.getClientNotificationAvgLatency(),
+            csvBuilder);
 
-        /***
-         * Query
-         */
-        writeToTableAndCsv(metricsTable, "query", "activeCQCount", csMxBean.getActiveCQCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "query", "queryRequestRate", csMxBean.getQueryRequestRate(), csvBuilder);
+        /** * Query */
+        writeToTableAndCsv(
+            metricsTable, "query", "activeCQCount", csMxBean.getActiveCQCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "query", "queryRequestRate", csMxBean.getQueryRequestRate(), csvBuilder);
 
         writeToTableAndCsv(metricsTable, "", "indexCount", csMxBean.getIndexCount(), csvBuilder);
 
         String[] indexList = csMxBean.getIndexList();
         writeToTableAndCsv(metricsTable, "", "index list", indexList, csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalIndexMaintenanceTime", csMxBean.getTotalIndexMaintenanceTime(), csvBuilder);
-
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "totalIndexMaintenanceTime",
+            csMxBean.getTotalIndexMaintenanceTime(),
+            csvBuilder);
       }
 
       if (export_to_report_to != null && !export_to_report_to.isEmpty()) {
-        crd.addAsFile(export_to_report_to, csvBuilder.toString(), "Member metrics exported to {0}.", false);
+        crd.addAsFile(
+            export_to_report_to, csvBuilder.toString(), "Member metrics exported to {0}.", false);
       }
       return crd;
 
     } else {
       ErrorResultData erd = ResultBuilder.createErrorResultData();
-      String errorMessage = CliStrings.format(CliStrings.SHOW_METRICS__ERROR, "Member MBean for " + MBeanJMXAdapter.getMemberNameOrId(distributedMember) + " not found");
+      String errorMessage =
+          CliStrings.format(
+              CliStrings.SHOW_METRICS__ERROR,
+              "Member MBean for "
+                  + MBeanJMXAdapter.getMemberNameOrId(distributedMember)
+                  + " not found");
       return ResultBuilder.createErrorResultData().addLine(errorMessage);
     }
   }
 
-  /****
-   * Gets the Cluster-wide metrics for a region
+  /**
+   * ** Gets the Cluster-wide metrics for a region
    *
    * @param regionName
    * @return ResultData containing the table
-   * @throws ResultDataException
-   *           if building result fails
+   * @throws ResultDataException if building result fails
    */
-  private ResultData getDistributedRegionMetrics(String regionName, String export_to_report_to, String[] categoriesArr) throws ResultDataException {
+  private ResultData getDistributedRegionMetrics(
+      String regionName, String export_to_report_to, String[] categoriesArr)
+      throws ResultDataException {
 
     final Cache cache = CacheFactory.getAnyInstance();
     final ManagementService managementService = ManagementService.getManagementService(cache);
@@ -1470,105 +2145,178 @@ public class MiscellaneousCommands implements CommandMarker {
           return ResultBuilder.createErrorResultData().addLine(sb.toString());
         }
       }
-      /***
-       * General System metrics
-       */
+      /** * General System metrics */
       //cluster, region, partition , diskstore, callback, eviction
       if (categoriesMap.get("cluster").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "cluster", "member count", regionMxBean.getMemberCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "region entry count", regionMxBean.getSystemRegionEntryCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "cluster", "member count", regionMxBean.getMemberCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "region entry count",
+            regionMxBean.getSystemRegionEntryCount(),
+            csvBuilder);
       }
 
       if (categoriesMap.get("region").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "region", "lastModifiedTime", regionMxBean.getLastModifiedTime(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "lastAccessedTime", regionMxBean.getLastAccessedTime(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "region",
+            "lastModifiedTime",
+            regionMxBean.getLastModifiedTime(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "lastAccessedTime", regionMxBean.getLastAccessedTime(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "missCount", regionMxBean.getMissCount(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "hitCount", regionMxBean.getHitCount(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "hitRatio", regionMxBean.getHitRatio(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "getsRate", regionMxBean.getGetsRate(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "putsRate", regionMxBean.getPutsRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "createsRate", regionMxBean.getCreatesRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "destroyRate", regionMxBean.getDestroyRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "putAllRate", regionMxBean.getPutAllRate(), csvBuilder);
-
+        writeToTableAndCsv(
+            metricsTable, "", "createsRate", regionMxBean.getCreatesRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "destroyRate", regionMxBean.getDestroyRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "putAllRate", regionMxBean.getPutAllRate(), csvBuilder);
       }
 
       if (categoriesMap.get("partition").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "partition", "putLocalRate", regionMxBean.getPutLocalRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "putRemoteRate", regionMxBean.getPutRemoteRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "putRemoteLatency", regionMxBean.getPutRemoteLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "putRemoteAvgLatency", regionMxBean.getPutRemoteAvgLatency(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "partition", "putLocalRate", regionMxBean.getPutLocalRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "putRemoteRate", regionMxBean.getPutRemoteRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "putRemoteLatency", regionMxBean.getPutRemoteLatency(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "putRemoteAvgLatency",
+            regionMxBean.getPutRemoteAvgLatency(),
+            csvBuilder);
 
-        writeToTableAndCsv(metricsTable, "", "bucketCount", regionMxBean.getBucketCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "primaryBucketCount", regionMxBean.getPrimaryBucketCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "numBucketsWithoutRedundancy", regionMxBean.getNumBucketsWithoutRedundancy(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalBucketSize", regionMxBean.getTotalBucketSize(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "averageBucketSize", regionMxBean.getAvgBucketSize(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "bucketCount", regionMxBean.getBucketCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "primaryBucketCount",
+            regionMxBean.getPrimaryBucketCount(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "numBucketsWithoutRedundancy",
+            regionMxBean.getNumBucketsWithoutRedundancy(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "totalBucketSize", regionMxBean.getTotalBucketSize(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "averageBucketSize", regionMxBean.getAvgBucketSize(), csvBuilder);
       }
-      /*****
-       * Disk store
-       */
+      /** *** Disk store */
       if (categoriesMap.get("diskstore").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "diskstore", "totalEntriesOnlyOnDisk", regionMxBean.getTotalEntriesOnlyOnDisk(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "diskReadsRate", regionMxBean.getDiskReadsRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "diskWritesRate", regionMxBean.getDiskWritesRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalDiskWriteInProgress", regionMxBean.getTotalDiskWritesProgress(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "diskTaskWaiting", regionMxBean.getDiskTaskWaiting(), csvBuilder);
-
+        writeToTableAndCsv(
+            metricsTable,
+            "diskstore",
+            "totalEntriesOnlyOnDisk",
+            regionMxBean.getTotalEntriesOnlyOnDisk(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "diskReadsRate", regionMxBean.getDiskReadsRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "diskWritesRate", regionMxBean.getDiskWritesRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "totalDiskWriteInProgress",
+            regionMxBean.getTotalDiskWritesProgress(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "diskTaskWaiting", regionMxBean.getDiskTaskWaiting(), csvBuilder);
       }
-      /*****
-       * LISTENER
-       */
+      /** *** LISTENER */
       if (categoriesMap.get("callback").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "callback", "cacheWriterCallsAvgLatency", regionMxBean.getCacheWriterCallsAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "cacheListenerCallsAvgLatency", regionMxBean.getCacheListenerCallsAvgLatency(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "callback",
+            "cacheWriterCallsAvgLatency",
+            regionMxBean.getCacheWriterCallsAvgLatency(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "cacheListenerCallsAvgLatency",
+            regionMxBean.getCacheListenerCallsAvgLatency(),
+            csvBuilder);
       }
 
-      /****
-       * Eviction
-       */
+      /** ** Eviction */
       if (categoriesMap.get("eviction").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "eviction", "lruEvictionRate", regionMxBean.getLruEvictionRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "lruDestroyRate", regionMxBean.getLruDestroyRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "eviction",
+            "lruEvictionRate",
+            regionMxBean.getLruEvictionRate(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "lruDestroyRate", regionMxBean.getLruDestroyRate(), csvBuilder);
       }
 
       if (export_to_report_to != null && !export_to_report_to.isEmpty()) {
-        crd.addAsFile(export_to_report_to, csvBuilder.toString(), "Aggregate Region Metrics exported to {0}.", false);
+        crd.addAsFile(
+            export_to_report_to,
+            csvBuilder.toString(),
+            "Aggregate Region Metrics exported to {0}.",
+            false);
       }
 
       return crd;
     } else {
       ErrorResultData erd = ResultBuilder.createErrorResultData();
-      String errorMessage = CliStrings.format(CliStrings.SHOW_METRICS__ERROR, "Distributed Region MBean for " + regionName + " not found");
+      String errorMessage =
+          CliStrings.format(
+              CliStrings.SHOW_METRICS__ERROR,
+              "Distributed Region MBean for " + regionName + " not found");
       erd.addLine(errorMessage);
       return erd;
     }
   }
 
-  /***
-   * Gets the metrics of region on a given member
+  /**
+   * * Gets the metrics of region on a given member
    *
    * @param regionName
    * @param distributedMember
    * @param export_to_report_to
-   * @return ResultData with required Region statistics or ErrorResultData if
-   *         Region MBean is not found to gather metrics
-   * @throws ResultDataException
-   *           if building result fails
+   * @return ResultData with required Region statistics or ErrorResultData if Region MBean is not
+   *     found to gather metrics
+   * @throws ResultDataException if building result fails
    */
-  private ResultData getRegionMetricsFromMember(String regionName, DistributedMember distributedMember, String export_to_report_to, String[] categoriesArr) throws ResultDataException {
+  private ResultData getRegionMetricsFromMember(
+      String regionName,
+      DistributedMember distributedMember,
+      String export_to_report_to,
+      String[] categoriesArr)
+      throws ResultDataException {
 
     final Cache cache = CacheFactory.getAnyInstance();
-    final SystemManagementService managementService = (SystemManagementService) ManagementService.getManagementService(cache);
+    final SystemManagementService managementService =
+        (SystemManagementService) ManagementService.getManagementService(cache);
 
-    ObjectName regionMBeanName = managementService.getRegionMBeanName(distributedMember, regionName);
-    RegionMXBean regionMxBean = managementService.getMBeanInstance(regionMBeanName, RegionMXBean.class);
+    ObjectName regionMBeanName =
+        managementService.getRegionMBeanName(distributedMember, regionName);
+    RegionMXBean regionMxBean =
+        managementService.getMBeanInstance(regionMBeanName, RegionMXBean.class);
 
     if (regionMxBean != null) {
       CompositeResultData crd = ResultBuilder.createCompositeResultData();
       SectionResultData section = crd.addSection();
       TabularResultData metricsTable = section.addTable();
-      metricsTable.setHeader("Metrics for region:" + regionName + " On Member " + MBeanJMXAdapter.getMemberNameOrId(distributedMember));
+      metricsTable.setHeader(
+          "Metrics for region:"
+              + regionName
+              + " On Member "
+              + MBeanJMXAdapter.getMemberNameOrId(distributedMember));
       StringBuilder csvBuilder = null;
 
       if (export_to_report_to != null && !export_to_report_to.isEmpty()) {
@@ -1581,9 +2329,7 @@ public class MiscellaneousCommands implements CommandMarker {
         csvBuilder.append('\n');
       }
 
-      /****
-       * Region Metrics
-       */
+      /** ** Region Metrics */
       Map<String, Boolean> categoriesMap = getRegionMetricsCategories();
 
       if (categoriesArr != null && categoriesArr.length != 0) {
@@ -1612,79 +2358,151 @@ public class MiscellaneousCommands implements CommandMarker {
       }
 
       if (categoriesMap.get("region").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "region", "lastModifiedTime", regionMxBean.getLastModifiedTime(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "lastAccessedTime", regionMxBean.getLastAccessedTime(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "region",
+            "lastModifiedTime",
+            regionMxBean.getLastModifiedTime(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "lastAccessedTime", regionMxBean.getLastAccessedTime(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "missCount", regionMxBean.getMissCount(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "hitCount", regionMxBean.getHitCount(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "hitRatio", regionMxBean.getHitRatio(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "getsRate", regionMxBean.getGetsRate(), csvBuilder);
         writeToTableAndCsv(metricsTable, "", "putsRate", regionMxBean.getPutsRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "createsRate", regionMxBean.getCreatesRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "destroyRate", regionMxBean.getDestroyRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "putAllRate", regionMxBean.getPutAllRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "createsRate", regionMxBean.getCreatesRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "destroyRate", regionMxBean.getDestroyRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "putAllRate", regionMxBean.getPutAllRate(), csvBuilder);
       }
 
       if (categoriesMap.get("partition").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "partition", "putLocalRate", regionMxBean.getPutLocalRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "putRemoteRate", regionMxBean.getPutRemoteRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "putRemoteLatency", regionMxBean.getPutRemoteLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "putRemoteAvgLatency", regionMxBean.getPutRemoteAvgLatency(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "partition", "putLocalRate", regionMxBean.getPutLocalRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "putRemoteRate", regionMxBean.getPutRemoteRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "putRemoteLatency", regionMxBean.getPutRemoteLatency(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "putRemoteAvgLatency",
+            regionMxBean.getPutRemoteAvgLatency(),
+            csvBuilder);
 
-        writeToTableAndCsv(metricsTable, "", "bucketCount", regionMxBean.getBucketCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "primaryBucketCount", regionMxBean.getPrimaryBucketCount(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "configuredRedundancy", regionMxBean.getConfiguredRedundancy(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "actualRedundancy", regionMxBean.getActualRedundancy(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "numBucketsWithoutRedundancy", regionMxBean.getNumBucketsWithoutRedundancy(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalBucketSize", regionMxBean.getTotalBucketSize(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "bucketCount", regionMxBean.getBucketCount(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "primaryBucketCount",
+            regionMxBean.getPrimaryBucketCount(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "configuredRedundancy",
+            regionMxBean.getConfiguredRedundancy(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "actualRedundancy", regionMxBean.getActualRedundancy(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "numBucketsWithoutRedundancy",
+            regionMxBean.getNumBucketsWithoutRedundancy(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "totalBucketSize", regionMxBean.getTotalBucketSize(), csvBuilder);
         //writeToTableAndCsv(metricsTable, "", "averageBucketSize", regionMxBean.getAvgBucketSize(), csvBuilder);
       }
-      /*****
-       * Disk store
-       */
+      /** *** Disk store */
       if (categoriesMap.get("diskstore").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "diskstore", "totalEntriesOnlyOnDisk", regionMxBean.getTotalEntriesOnlyOnDisk(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "diskReadsRate", "" + regionMxBean.getDiskReadsRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "diskWritesRate", regionMxBean.getDiskWritesRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "totalDiskWriteInProgress", regionMxBean.getTotalDiskWritesProgress(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "diskTaskWaiting", regionMxBean.getDiskTaskWaiting(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "diskstore",
+            "totalEntriesOnlyOnDisk",
+            regionMxBean.getTotalEntriesOnlyOnDisk(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "diskReadsRate", "" + regionMxBean.getDiskReadsRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "diskWritesRate", regionMxBean.getDiskWritesRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "totalDiskWriteInProgress",
+            regionMxBean.getTotalDiskWritesProgress(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "diskTaskWaiting", regionMxBean.getDiskTaskWaiting(), csvBuilder);
       }
-      /*****
-       * LISTENER
-       */
+      /** *** LISTENER */
       if (categoriesMap.get("callback").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "callback", "cacheWriterCallsAvgLatency", regionMxBean.getCacheWriterCallsAvgLatency(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "cacheListenerCallsAvgLatency", regionMxBean.getCacheListenerCallsAvgLatency(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "callback",
+            "cacheWriterCallsAvgLatency",
+            regionMxBean.getCacheWriterCallsAvgLatency(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "",
+            "cacheListenerCallsAvgLatency",
+            regionMxBean.getCacheListenerCallsAvgLatency(),
+            csvBuilder);
       }
 
-      /****
-       * Eviction
-       */
+      /** ** Eviction */
       if (categoriesMap.get("eviction").booleanValue()) {
-        writeToTableAndCsv(metricsTable, "eviction", "lruEvictionRate", regionMxBean.getLruEvictionRate(), csvBuilder);
-        writeToTableAndCsv(metricsTable, "", "lruDestroyRate", regionMxBean.getLruDestroyRate(), csvBuilder);
+        writeToTableAndCsv(
+            metricsTable,
+            "eviction",
+            "lruEvictionRate",
+            regionMxBean.getLruEvictionRate(),
+            csvBuilder);
+        writeToTableAndCsv(
+            metricsTable, "", "lruDestroyRate", regionMxBean.getLruDestroyRate(), csvBuilder);
       }
       if (export_to_report_to != null && !export_to_report_to.isEmpty()) {
-        crd.addAsFile(export_to_report_to, csvBuilder.toString(), "Region Metrics exported to {0}.", false);
+        crd.addAsFile(
+            export_to_report_to, csvBuilder.toString(), "Region Metrics exported to {0}.", false);
       }
 
       return crd;
     } else {
       ErrorResultData erd = ResultBuilder.createErrorResultData();
-      String errorMessage = CliStrings.format(CliStrings.SHOW_METRICS__ERROR, "Region MBean for " + regionName + " on member " + MBeanJMXAdapter.getMemberNameOrId(distributedMember) + " not found");
+      String errorMessage =
+          CliStrings.format(
+              CliStrings.SHOW_METRICS__ERROR,
+              "Region MBean for "
+                  + regionName
+                  + " on member "
+                  + MBeanJMXAdapter.getMemberNameOrId(distributedMember)
+                  + " not found");
       erd.addLine(errorMessage);
       return erd;
     }
-
   }
 
-  /*** Writes an entry to a TabularResultData and writes a comma separated entry to a string builder
+  /**
+   * * Writes an entry to a TabularResultData and writes a comma separated entry to a string builder
+   *
    * @param metricsTable
    * @param type
    * @param metricName
    * @param metricValue
    * @param csvBuilder
    */
-  private void writeToTableAndCsv(TabularResultData metricsTable, String type, String metricName, long metricValue, StringBuilder csvBuilder) {
+  private void writeToTableAndCsv(
+      TabularResultData metricsTable,
+      String type,
+      String metricName,
+      long metricValue,
+      StringBuilder csvBuilder) {
     metricsTable.accumulate(CliStrings.SHOW_METRICS__TYPE__HEADER, type);
     metricsTable.accumulate(CliStrings.SHOW_METRICS__METRIC__HEADER, metricName);
     metricsTable.accumulate(CliStrings.SHOW_METRICS__VALUE__HEADER, metricValue);
@@ -1699,7 +2517,8 @@ public class MiscellaneousCommands implements CommandMarker {
     }
   }
 
-  /***
+  /**
+   * *
    *
    * @param metricsTable
    * @param type
@@ -1707,7 +2526,12 @@ public class MiscellaneousCommands implements CommandMarker {
    * @param metricValue
    * @param csvBuilder
    */
-  private void writeToTableAndCsv(TabularResultData metricsTable, String type, String metricName, double metricValue, StringBuilder csvBuilder) {
+  private void writeToTableAndCsv(
+      TabularResultData metricsTable,
+      String type,
+      String metricName,
+      double metricValue,
+      StringBuilder csvBuilder) {
     metricsTable.accumulate(CliStrings.SHOW_METRICS__TYPE__HEADER, type);
     metricsTable.accumulate(CliStrings.SHOW_METRICS__METRIC__HEADER, metricName);
     metricsTable.accumulate(CliStrings.SHOW_METRICS__VALUE__HEADER, Double.valueOf(metricValue));
@@ -1730,8 +2554,9 @@ public class MiscellaneousCommands implements CommandMarker {
     return categoriesSet;
   }
 
-  /****
-   * Defines and returns map of categories for System metrics.
+  /**
+   * ** Defines and returns map of categories for System metrics.
+   *
    * @return map with categories for system metrics and display flag set to true
    */
   private Map<String, Boolean> getSystemMetricsCategories() {
@@ -1743,8 +2568,9 @@ public class MiscellaneousCommands implements CommandMarker {
     return categories;
   }
 
-  /****
-   * Defines and returns map of categories for Region Metrics
+  /**
+   * ** Defines and returns map of categories for Region Metrics
+   *
    * @return map with categories for region metrics and display flag set to true
    */
   private Map<String, Boolean> getRegionMetricsCategories() {
@@ -1761,8 +2587,9 @@ public class MiscellaneousCommands implements CommandMarker {
     return categories;
   }
 
-  /****
-   * Defines and returns map of categories for system-wide region metrics
+  /**
+   * ** Defines and returns map of categories for system-wide region metrics
+   *
    * @return map with categories for system wide region metrics and display flag set to true
    */
   private Map<String, Boolean> getSystemRegionMetricsCategories() {
@@ -1771,8 +2598,9 @@ public class MiscellaneousCommands implements CommandMarker {
     return categories;
   }
 
-  /*****
-   * Defines and returns map of categories for member metrics
+  /**
+   * *** Defines and returns map of categories for member metrics
+   *
    * @return map with categories for member metrics and display flag set to true
    */
   private Map<String, Boolean> getMemberMetricsCategories() {
@@ -1792,9 +2620,9 @@ public class MiscellaneousCommands implements CommandMarker {
     return categories;
   }
 
-  /***
-   * Converts an array of strings to a String delimited by a new line character
-   * for display purposes
+  /**
+   * * Converts an array of strings to a String delimited by a new line character for display
+   * purposes
    *
    * @param names
    * @param startIndex
@@ -1812,7 +2640,12 @@ public class MiscellaneousCommands implements CommandMarker {
     return sb.toString();
   }
 
-  private void writeToTableAndCsv(TabularResultData metricsTable, String type, String metricName, String metricValue[], StringBuilder csvBuilder) {
+  private void writeToTableAndCsv(
+      TabularResultData metricsTable,
+      String type,
+      String metricName,
+      String metricValue[],
+      StringBuilder csvBuilder) {
     if (metricValue != null) {
       for (int i = 0; i < metricValue.length; i++) {
         if (i == 0) {
@@ -1824,15 +2657,21 @@ public class MiscellaneousCommands implements CommandMarker {
     }
   }
 
-  /***
-   * Writes to a TabularResultData and also appends a CSV string to a String builder
+  /**
+   * * Writes to a TabularResultData and also appends a CSV string to a String builder
+   *
    * @param metricsTable
    * @param type
    * @param metricName
    * @param metricValue
    * @param csvBuilder
    */
-  private void writeToTableAndCsv(TabularResultData metricsTable, String type, String metricName, String metricValue, StringBuilder csvBuilder) {
+  private void writeToTableAndCsv(
+      TabularResultData metricsTable,
+      String type,
+      String metricName,
+      String metricValue,
+      StringBuilder csvBuilder) {
     metricsTable.accumulate(CliStrings.SHOW_METRICS__TYPE__HEADER, type);
     metricsTable.accumulate(CliStrings.SHOW_METRICS__METRIC__HEADER, metricName);
     metricsTable.accumulate(CliStrings.SHOW_METRICS__VALUE__HEADER, metricValue);
@@ -1848,16 +2687,38 @@ public class MiscellaneousCommands implements CommandMarker {
   }
 
   @CliCommand(value = CliStrings.CHANGE_LOGLEVEL, help = CliStrings.CHANGE_LOGLEVEL__HELP)
-  @CliMetaData(relatedTopic = { CliStrings.TOPIC_CHANGELOGLEVEL })
+  @CliMetaData(relatedTopic = {CliStrings.TOPIC_CHANGELOGLEVEL})
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.WRITE)
-  public Result changeLogLevel(@CliOption(key = CliStrings.CHANGE_LOGLEVEL__MEMBER, unspecifiedDefaultValue = "", help = CliStrings.CHANGE_LOGLEVEL__MEMBER__HELP) String[] memberIds, @CliOption(key = CliStrings.CHANGE_LOGLEVEL__GROUPS, unspecifiedDefaultValue = "", help = CliStrings.CHANGE_LOGLEVEL__GROUPS__HELP) String[] grps, @CliOption(key = CliStrings.CHANGE_LOGLEVEL__LOGLEVEL, optionContext = ConverterHint.LOG_LEVEL, mandatory = true, unspecifiedDefaultValue = "", help = CliStrings.CHANGE_LOGLEVEL__LOGLEVEL__HELP) String logLevel) {
+  public Result changeLogLevel(
+      @CliOption(
+            key = CliStrings.CHANGE_LOGLEVEL__MEMBER,
+            unspecifiedDefaultValue = "",
+            help = CliStrings.CHANGE_LOGLEVEL__MEMBER__HELP
+          )
+          String[] memberIds,
+      @CliOption(
+            key = CliStrings.CHANGE_LOGLEVEL__GROUPS,
+            unspecifiedDefaultValue = "",
+            help = CliStrings.CHANGE_LOGLEVEL__GROUPS__HELP
+          )
+          String[] grps,
+      @CliOption(
+            key = CliStrings.CHANGE_LOGLEVEL__LOGLEVEL,
+            optionContext = ConverterHint.LOG_LEVEL,
+            mandatory = true,
+            unspecifiedDefaultValue = "",
+            help = CliStrings.CHANGE_LOGLEVEL__LOGLEVEL__HELP
+          )
+          String logLevel) {
     try {
       if ((memberIds == null || memberIds.length == 0) && (grps == null || grps.length == 0)) {
-        return ResultBuilder.createUserErrorResult(CliStrings.CHANGE_LOGLEVEL__MSG__SPECIFY_GRP_OR_MEMBER);
+        return ResultBuilder.createUserErrorResult(
+            CliStrings.CHANGE_LOGLEVEL__MSG__SPECIFY_GRP_OR_MEMBER);
       }
 
       if (logLevel == null || logLevel.length() == 0) {
-        return ResultBuilder.createUserErrorResult(CliStrings.CHANGE_LOGLEVEL__MSG__SPECIFY_LOG_LEVEL);
+        return ResultBuilder.createUserErrorResult(
+            CliStrings.CHANGE_LOGLEVEL__MSG__SPECIFY_LOG_LEVEL);
       }
 
       Cache cache = GemFireCacheImpl.getInstance();
@@ -1873,7 +2734,8 @@ public class MiscellaneousCommands implements CommandMarker {
       }
 
       if (!validLogLevel) {
-        return ResultBuilder.createUserErrorResult(CliStrings.CHANGE_LOGLEVEL__MSG__INVALID_LOG_LEVEL);
+        return ResultBuilder.createUserErrorResult(
+            CliStrings.CHANGE_LOGLEVEL__MSG__INVALID_LOG_LEVEL);
       }
 
       Set<DistributedMember> dsMembers = new HashSet<DistributedMember>();
@@ -1890,7 +2752,9 @@ public class MiscellaneousCommands implements CommandMarker {
           Iterator<DistributedMember> it = ds.iterator();
           while (it.hasNext()) {
             DistributedMember mem = it.next();
-            if (mem.getName() == null ? false : mem.getName().equals(member) || mem.getId().equals(member)) {
+            if (mem.getName() == null
+                ? false
+                : mem.getName().equals(member) || mem.getId().equals(member)) {
               dsMembers.add(mem);
               break;
             }
@@ -1921,7 +2785,9 @@ public class MiscellaneousCommands implements CommandMarker {
       for (Object object : resultList) {
         try {
           if (object instanceof Throwable) {
-            logger.warning("Exception in ChangeLogLevelFunction " + ((Throwable) object).getMessage(), ((Throwable) object));
+            logger.warning(
+                "Exception in ChangeLogLevelFunction " + ((Throwable) object).getMessage(),
+                ((Throwable) object));
             continue;
           }
 
@@ -1936,7 +2802,6 @@ public class MiscellaneousCommands implements CommandMarker {
               resultTable.accumulate(CliStrings.CHANGE_LOGLEVEL__COLUMN_MEMBER, entry.getKey());
               resultTable.accumulate(CliStrings.CHANGE_LOGLEVEL__COLUMN_STATUS, "true");
             }
-
           }
         } catch (Exception ex) {
           LogWrapper.getInstance().warning("change log level command exception " + ex);
@@ -1953,7 +2818,17 @@ public class MiscellaneousCommands implements CommandMarker {
     }
   }
 
-  @CliAvailabilityIndicator({ CliStrings.SHUTDOWN, CliStrings.GC, CliStrings.SHOW_DEADLOCK, CliStrings.SHOW_METRICS, CliStrings.SHOW_LOG, CliStrings.EXPORT_STACKTRACE, CliStrings.NETSTAT, CliStrings.EXPORT_LOGS, CliStrings.CHANGE_LOGLEVEL })
+  @CliAvailabilityIndicator({
+    CliStrings.SHUTDOWN,
+    CliStrings.GC,
+    CliStrings.SHOW_DEADLOCK,
+    CliStrings.SHOW_METRICS,
+    CliStrings.SHOW_LOG,
+    CliStrings.EXPORT_STACKTRACE,
+    CliStrings.NETSTAT,
+    CliStrings.EXPORT_LOGS,
+    CliStrings.CHANGE_LOGLEVEL
+  })
   public boolean shutdownCommandAvailable() {
     boolean isAvailable = true; // always available on server
     if (CliUtil.isGfshVM()) { // in gfsh check if connected

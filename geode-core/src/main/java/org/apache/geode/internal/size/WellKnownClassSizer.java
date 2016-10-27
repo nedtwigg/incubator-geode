@@ -17,12 +17,9 @@
 package org.apache.geode.internal.size;
 
 /**
- * An efficient sizer for some commonly used
- * classes.
- * 
- * This will return 0 if it does not know
- * how to size the object
+ * An efficient sizer for some commonly used classes.
  *
+ * <p>This will return 0 if it does not know how to size the object
  */
 public class WellKnownClassSizer {
 
@@ -33,7 +30,10 @@ public class WellKnownClassSizer {
     try {
       ReflectionSingleObjectSizer objSizer = new ReflectionSingleObjectSizer();
       BYTE_ARRAY_OVERHEAD = (int) objSizer.sizeof(new byte[0], false);
-      STRING_OVERHEAD = (int) (ReflectionSingleObjectSizer.sizeof(String.class) + objSizer.sizeof(new char[0], false));
+      STRING_OVERHEAD =
+          (int)
+              (ReflectionSingleObjectSizer.sizeof(String.class)
+                  + objSizer.sizeof(new char[0], false));
     } catch (Exception e) {
       throw new ExceptionInInitializerError(e);
     }
@@ -53,5 +53,4 @@ public class WellKnownClassSizer {
     size = (int) ReflectionSingleObjectSizer.roundUpSize(size);
     return size;
   }
-
 }

@@ -32,11 +32,7 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.*;
 
-/**
- * Test for simluating the deadLock condition as in bug#37244
- * 
- * 
- */
+/** Test for simluating the deadLock condition as in bug#37244 */
 @Category(IntegrationTest.class)
 public class Bug37244JUnitTest {
 
@@ -46,9 +42,7 @@ public class Bug37244JUnitTest {
 
   protected static String regionName = "TestRegion";
 
-  /**
-   * Method for intializing the VM
-   */
+  /** Method for intializing the VM */
   private static void initializeVM() throws Exception {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
@@ -64,8 +58,8 @@ public class Bug37244JUnitTest {
     File dir = new File("testingDirectoryDefault");
     dir.mkdir();
     dir.deleteOnExit();
-    File[] dirs = { dir };
-    dsf.setDiskDirsAndSizes(dirs, new int[] { Integer.MAX_VALUE });
+    File[] dirs = {dir};
+    dsf.setDiskDirsAndSizes(dirs, new int[] {Integer.MAX_VALUE});
 
     dsf.setAutoCompact(false);
     DirectoryHolder.SET_DIRECTORY_SIZE_IN_BYTES_FOR_TESTING_PURPOSES = true;
@@ -77,13 +71,34 @@ public class Bug37244JUnitTest {
     factory.setDiskSynchronous(true);
     factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
 
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
     RegionAttributes attr = factory.create();
-    DistributedRegion distRegion = new DistributedRegion(regionName, attr, null, (GemFireCacheImpl) cache, new InternalRegionArguments().setDestroyLockFlag(true).setRecreateFlag(false).setSnapshotInputStream(null).setImageTarget(null));
+    DistributedRegion distRegion =
+        new DistributedRegion(
+            regionName,
+            attr,
+            null,
+            (GemFireCacheImpl) cache,
+            new InternalRegionArguments()
+                .setDestroyLockFlag(true)
+                .setRecreateFlag(false)
+                .setSnapshotInputStream(null)
+                .setImageTarget(null));
     assertNotNull(distRegion);
-    ((AbstractLRURegionMap) distRegion.entries)._setLruList((new TestLRUClockHand(distRegion, ((AbstractLRURegionMap) distRegion.entries)._getCCHelper())));
-    ((GemFireCacheImpl) cache).createVMRegion(regionName, attr, new InternalRegionArguments().setInternalMetaRegion(distRegion).setDestroyLockFlag(true).setSnapshotInputStream(null).setImageTarget(null));
-
+    ((AbstractLRURegionMap) distRegion.entries)
+        ._setLruList(
+            (new TestLRUClockHand(
+                distRegion, ((AbstractLRURegionMap) distRegion.entries)._getCCHelper())));
+    ((GemFireCacheImpl) cache)
+        .createVMRegion(
+            regionName,
+            attr,
+            new InternalRegionArguments()
+                .setInternalMetaRegion(distRegion)
+                .setDestroyLockFlag(true)
+                .setSnapshotInputStream(null)
+                .setImageTarget(null));
   }
 
   @Test
@@ -95,12 +110,12 @@ public class Bug37244JUnitTest {
       Region rgn = cache.getRegion(regionName);
       assertNotNull(rgn);
 
-      //put two entries into the region 
+      //put two entries into the region
       for (int i = 0; i < 2; i++) {
         rgn.put(new Long(i), new Long(i));
       }
 
-      //get an entry back 
+      //get an entry back
       Long value = (Long) rgn.get(new Long(0));
 
       //check for entry value
@@ -116,19 +131,11 @@ public class Bug37244JUnitTest {
       assertNotNull(rgn);
       rgn.localDestroyRegion();
       cache.close();
-
     }
-
   }
 
-  /**
-   * Test Implementation class of NewLRUClockHand for bug37244.
-   * 
-   * 
-   * 
-   */
-
-  static public class TestLRUClockHand extends NewLRUClockHand {
+  /** Test Implementation class of NewLRUClockHand for bug37244. */
+  public static class TestLRUClockHand extends NewLRUClockHand {
 
     protected static Object mutex = new Object();
 
@@ -138,18 +145,15 @@ public class Bug37244JUnitTest {
 
     /**
      * Constructor
-     * 
+     *
      * @param region
      * @param ccHelper
      */
     public TestLRUClockHand(Region region, EnableLRU ccHelper) {
       super(region, ccHelper, new InternalRegionArguments());
-
     }
 
-    /**
-     * Overridden getLRUEntry method
-     */
+    /** Overridden getLRUEntry method */
     public LRUClockNode getLRUEntry() {
       if (EXECUTE_AFTER_GET_CALL) {
         Cache cache = CacheFactory.getAnyInstance();
@@ -174,18 +178,13 @@ public class Bug37244JUnitTest {
       return aNode;
     }
 
-    /**
-     * 
-     * clearThread
-     * 
-     */
+    /** clearThread */
     protected static class clearThread implements Runnable {
       LocalRegion region = null;
 
       clearThread(LocalRegion rgn) {
         super();
         this.region = rgn;
-
       }
 
       public void run() {
@@ -211,28 +210,20 @@ public class Bug37244JUnitTest {
         } finally {
           region.getDiskRegion().releaseWriteLock();
         }
-
       }
     }
 
-    /**
-     * 
-     * putThread
-     * 
-     */
-
+    /** putThread */
     protected static class putThread implements Runnable {
       LocalRegion region = null;
 
       putThread(LocalRegion rgn) {
         super();
         this.region = rgn;
-
       }
 
       public void run() {
         region.put(new Long(1), "2");
-
       }
     }
   }

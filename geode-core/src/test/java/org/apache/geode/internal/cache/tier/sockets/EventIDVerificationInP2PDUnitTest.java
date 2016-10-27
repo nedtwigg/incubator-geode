@@ -44,11 +44,10 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Test to verify EventID generated from a peer is correctly passed on to the
- * other peer for create, update and destroy operations. In case of D-ACK or
- * GLOBAL scope the EventIDs should be same in P2P for a propagation of given
- * operation. In case of NO-ACK EventIDs should be different.Currently this test
- * is commented because of a bug.
+ * Test to verify EventID generated from a peer is correctly passed on to the other peer for create,
+ * update and destroy operations. In case of D-ACK or GLOBAL scope the EventIDs should be same in
+ * P2P for a propagation of given operation. In case of NO-ACK EventIDs should be
+ * different.Currently this test is commented because of a bug.
  */
 @Category(DistributedTest.class)
 public class EventIDVerificationInP2PDUnitTest extends JUnit4DistributedTestCase {
@@ -57,7 +56,8 @@ public class EventIDVerificationInP2PDUnitTest extends JUnit4DistributedTestCase
 
   static VM vm0 = null;
 
-  private static final String REGION_NAME = EventIDVerificationInP2PDUnitTest.class.getSimpleName() + "_region";
+  private static final String REGION_NAME =
+      EventIDVerificationInP2PDUnitTest.class.getSimpleName() + "_region";
 
   protected static EventID eventId;
 
@@ -79,7 +79,8 @@ public class EventIDVerificationInP2PDUnitTest extends JUnit4DistributedTestCase
   @Test
   public void testEventIDsDACK() throws Exception {
     createServerCache(new Integer(DISTRIBUTED_ACK));
-    vm0.invoke(() -> EventIDVerificationInP2PDUnitTest.createServerCache(new Integer(DISTRIBUTED_ACK)));
+    vm0.invoke(
+        () -> EventIDVerificationInP2PDUnitTest.createServerCache(new Integer(DISTRIBUTED_ACK)));
     verifyOperations();
   }
 
@@ -97,7 +98,8 @@ public class EventIDVerificationInP2PDUnitTest extends JUnit4DistributedTestCase
     vm0.invoke(() -> EventIDVerificationInP2PDUnitTest.createServerCache(new Integer(0)));
 
     createEntry();
-    Boolean pass = (Boolean) vm0.invoke(() -> EventIDVerificationInP2PDUnitTest.verifyResult(eventId));
+    Boolean pass =
+        (Boolean) vm0.invoke(() -> EventIDVerificationInP2PDUnitTest.verifyResult(eventId));
     assertFalse(pass.booleanValue());
     put();
     pass = (Boolean) vm0.invoke(() -> EventIDVerificationInP2PDUnitTest.verifyResult(eventId));
@@ -122,70 +124,67 @@ public class EventIDVerificationInP2PDUnitTest extends JUnit4DistributedTestCase
   public static void createServerCache(Integer type) throws Exception {
     new EventIDVerificationInP2PDUnitTest().createCache(new Properties());
     AttributesFactory factory = new AttributesFactory();
-    if (type.intValue() == DISTRIBUTED_ACK)
-      factory.setScope(Scope.DISTRIBUTED_ACK);
-    if (type.intValue() == GLOBAL)
-      factory.setScope(Scope.GLOBAL);
-    else
-      factory.setScope(Scope.DISTRIBUTED_NO_ACK);
+    if (type.intValue() == DISTRIBUTED_ACK) factory.setScope(Scope.DISTRIBUTED_ACK);
+    if (type.intValue() == GLOBAL) factory.setScope(Scope.GLOBAL);
+    else factory.setScope(Scope.DISTRIBUTED_NO_ACK);
 
     factory.setDataPolicy(DataPolicy.REPLICATE);
-    factory.addCacheListener(new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent event) {
+    factory.addCacheListener(
+        new CacheListenerAdapter() {
+          public void afterCreate(EntryEvent event) {
 
-        eventId = ((InternalCacheEvent) event).getEventId();
-        if (receiver) {
-          synchronized (EventIDVerificationInP2PDUnitTest.class) {
-            gotCallback = true;
-            EventIDVerificationInP2PDUnitTest.class.notify();
+            eventId = ((InternalCacheEvent) event).getEventId();
+            if (receiver) {
+              synchronized (EventIDVerificationInP2PDUnitTest.class) {
+                gotCallback = true;
+                EventIDVerificationInP2PDUnitTest.class.notify();
+              }
+            }
           }
-        }
-      }
 
-      public void afterUpdate(EntryEvent event) {
-        eventId = ((InternalCacheEvent) event).getEventId();
-        if (receiver) {
-          synchronized (EventIDVerificationInP2PDUnitTest.class) {
-            gotCallback = true;
-            EventIDVerificationInP2PDUnitTest.class.notify();
+          public void afterUpdate(EntryEvent event) {
+            eventId = ((InternalCacheEvent) event).getEventId();
+            if (receiver) {
+              synchronized (EventIDVerificationInP2PDUnitTest.class) {
+                gotCallback = true;
+                EventIDVerificationInP2PDUnitTest.class.notify();
+              }
+            }
           }
-        }
-      }
 
-      public void afterDestroy(EntryEvent event) {
-        eventId = ((InternalCacheEvent) event).getEventId();
-        if (receiver) {
-          synchronized (EventIDVerificationInP2PDUnitTest.class) {
-            gotCallback = true;
-            EventIDVerificationInP2PDUnitTest.class.notify();
+          public void afterDestroy(EntryEvent event) {
+            eventId = ((InternalCacheEvent) event).getEventId();
+            if (receiver) {
+              synchronized (EventIDVerificationInP2PDUnitTest.class) {
+                gotCallback = true;
+                EventIDVerificationInP2PDUnitTest.class.notify();
+              }
+            }
           }
-        }
-      }
 
-      public void afterRegionDestroy(RegionEvent event) {
-        eventId = ((InternalCacheEvent) event).getEventId();
-        if (receiver) {
-          synchronized (EventIDVerificationInP2PDUnitTest.class) {
-            gotCallback = true;
-            EventIDVerificationInP2PDUnitTest.class.notify();
+          public void afterRegionDestroy(RegionEvent event) {
+            eventId = ((InternalCacheEvent) event).getEventId();
+            if (receiver) {
+              synchronized (EventIDVerificationInP2PDUnitTest.class) {
+                gotCallback = true;
+                EventIDVerificationInP2PDUnitTest.class.notify();
+              }
+            }
           }
-        }
-      }
 
-      public void afterRegionInvalidate(RegionEvent event) {
-        eventId = ((InternalCacheEvent) event).getEventId();
-        if (receiver) {
-          synchronized (EventIDVerificationInP2PDUnitTest.class) {
-            gotCallback = true;
-            EventIDVerificationInP2PDUnitTest.class.notify();
+          public void afterRegionInvalidate(RegionEvent event) {
+            eventId = ((InternalCacheEvent) event).getEventId();
+            if (receiver) {
+              synchronized (EventIDVerificationInP2PDUnitTest.class) {
+                gotCallback = true;
+                EventIDVerificationInP2PDUnitTest.class.notify();
+              }
+            }
           }
-        }
-      }
-    });
+        });
 
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
-
   }
 
   public static void createEntry() {

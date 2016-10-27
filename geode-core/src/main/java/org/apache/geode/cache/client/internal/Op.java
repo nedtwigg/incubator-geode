@@ -17,11 +17,10 @@
 package org.apache.geode.cache.client.internal;
 
 /**
- * An operation to perform on a server. Used by
- * {@link ExecutablePool} to attempt the operation on 
+ * An operation to perform on a server. Used by {@link ExecutablePool} to attempt the operation on
  * multiple servers until the retryAttempts is exceeded.
- * @since GemFire 5.7
  *
+ * @since GemFire 5.7
  */
 public interface Op {
 
@@ -35,8 +34,6 @@ public interface Op {
    */
   Object attempt(Connection cnx) throws Exception;
 
-  /**
-   * @return true if this Op should use a threadLocalConnection, false otherwise
-   */
+  /** @return true if this Op should use a threadLocalConnection, false otherwise */
   boolean useThreadLocalConnection();
 }

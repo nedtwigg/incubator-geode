@@ -44,10 +44,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
-/**
- * 
- *  
- */
+/** */
 @Category(IntegrationTest.class)
 public class ConnectionPoolingJUnitTest {
   private static final Logger logger = LogService.getLogger();
@@ -84,7 +81,8 @@ public class ConnectionPoolingJUnitTest {
     GemFireBasicDataSource ds = (GemFireBasicDataSource) ctx.lookup("java:/SimpleDataSource");
     Connection conn = ds.getConnection();
     if (conn == null) {
-      fail("DataSourceFactoryTest-testGetSimpleDataSource() Error in creating the GemFireBasicDataSource");
+      fail(
+          "DataSourceFactoryTest-testGetSimpleDataSource() Error in creating the GemFireBasicDataSource");
     }
   }
 
@@ -94,7 +92,7 @@ public class ConnectionPoolingJUnitTest {
    * test.testGetSimpleDataSource(); } catch (Exception e) { // TODO
    * Auto-generated catch block e.printStackTrace(); fail(); }
    * test.testConnectionPoolFunctions(); test.teardown();
-   *  
+   *
    */
   @Test
   public void testConnectionPoolFunctions() throws Exception {
@@ -126,7 +124,12 @@ public class ConnectionPoolingJUnitTest {
       // name varchar2(50))";
       //String sql = "create table " + tableName + " (id integer primary key,
       // name varchar(50))";
-      String sql = "create table " + tableName + " (id varchar(50) NOT NULL, name varchar(50), CONSTRAINT " + tableName + "_key PRIMARY KEY(id))";
+      String sql =
+          "create table "
+              + tableName
+              + " (id varchar(50) NOT NULL, name varchar(50), CONSTRAINT "
+              + tableName
+              + "_key PRIMARY KEY(id))";
       logger.debug(sql);
       Connection conn = ds.getConnection();
       Statement sm = conn.createStatement();
@@ -136,58 +139,69 @@ public class ConnectionPoolingJUnitTest {
       Thread th[] = new Thread[numThreads];
       for (int i = 0; i < numThreads; ++i) {
         final int threadID = i;
-        th[i] = new Thread(new Runnable() {
-          private int key = threadID;
+        th[i] =
+            new Thread(
+                new Runnable() {
+                  private int key = threadID;
 
-          public void run() {
-            try {
-              Context ctx = cache.getJNDIContext();
-              //          Operation with first XA Resource
-              DataSource da1 = (DataSource) ctx.lookup("java:/XAMultiThreadedDataSource");
-              int val = 0;
-              for (int j = 0; j < LOOP_COUNT; ++j) {
-                UserTransaction ta = null;
-                try {
-                  ta = (UserTransaction) ctx.lookup("java:/UserTransaction");
+                  public void run() {
+                    try {
+                      Context ctx = cache.getJNDIContext();
+                      //          Operation with first XA Resource
+                      DataSource da1 = (DataSource) ctx.lookup("java:/XAMultiThreadedDataSource");
+                      int val = 0;
+                      for (int j = 0; j < LOOP_COUNT; ++j) {
+                        UserTransaction ta = null;
+                        try {
+                          ta = (UserTransaction) ctx.lookup("java:/UserTransaction");
 
-                } catch (NamingException e) {
-                  encounteredException = true;
-                  break;
-                }
+                        } catch (NamingException e) {
+                          encounteredException = true;
+                          break;
+                        }
 
-                try {
-                  //Begin the user transaction
-                  ta.begin();
-                  for (int i = 1; i <= 50; i++) {
-                    Connection conn = da1.getConnection();
-                    Statement sm = conn.createStatement();
+                        try {
+                          //Begin the user transaction
+                          ta.begin();
+                          for (int i = 1; i <= 50; i++) {
+                            Connection conn = da1.getConnection();
+                            Statement sm = conn.createStatement();
 
-                    String sql = "insert into " + tableName + " values (" + "'" + key + "X" + ++val + "','name" + i + "')";
-                    sm.execute(sql);
+                            String sql =
+                                "insert into "
+                                    + tableName
+                                    + " values ("
+                                    + "'"
+                                    + key
+                                    + "X"
+                                    + ++val
+                                    + "','name"
+                                    + i
+                                    + "')";
+                            sm.execute(sql);
 
-                    sm.close();
-                    conn.close();
+                            sm.close();
+                            conn.close();
+                          }
+                          if (j % 2 == 0) {
+                            ta.commit();
+                            logger.debug("Committed successfully for thread with id =" + key);
+                          } else {
+                            ta.rollback();
+                            logger.debug("Rolled back successfully for thread with id =" + key);
+                          }
+                        } catch (Exception e) {
+                          e.printStackTrace();
+                          encounteredException = true;
+                          break;
+                        }
+                      }
+                    } catch (Exception e) {
+                      e.printStackTrace();
+                      encounteredException = true;
+                    }
                   }
-                  if (j % 2 == 0) {
-                    ta.commit();
-                    logger.debug("Committed successfully for thread with id =" + key);
-                  } else {
-                    ta.rollback();
-                    logger.debug("Rolled back successfully for thread with id =" + key);
-                  }
-                } catch (Exception e) {
-                  e.printStackTrace();
-                  encounteredException = true;
-                  break;
-                }
-
-              }
-            } catch (Exception e) {
-              e.printStackTrace();
-              encounteredException = true;
-            }
-          }
-        });
+                });
       }
 
       for (int i = 0; i < th.length; ++i) {
@@ -265,7 +279,9 @@ public class ConnectionPoolingJUnitTest {
           logger.debug(" Returning connection " + display + "from " + threadName);
           conn = (Connection) connections[numC];
           logger.debug(" ************************************" + conn);
-          logger.debug(" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! The connection is of type " + conn.getClass());
+          logger.debug(
+              " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! The connection is of type "
+                  + conn.getClass());
           //   goahead = false;
           // conn.close();
           logger.debug(" Returned connection " + display + "from " + threadName);
@@ -293,7 +309,8 @@ public class ConnectionPoolingJUnitTest {
         Object[] connections = new Object[maxPoolSize];
         while (numConn2 < maxPoolSize) {
           try {
-            logger.debug(" _______________________________________________________________ " + numConn2);
+            logger.debug(
+                " _______________________________________________________________ " + numConn2);
             numConn2++;
             logger.debug(" ********** Before getting " + numConn2 + "from" + threadName);
             connections[numConn2 - 1] = ds.getConnection();

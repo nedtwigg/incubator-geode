@@ -76,42 +76,57 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 @Category(DistributedTest.class)
 public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
 
-  final protected String CUSTOMER = "custRegion";
-  final protected String ORDER = "orderRegion";
-  final protected String D_REFERENCE = "distrReference";
+  protected final String CUSTOMER = "custRegion";
+  protected final String ORDER = "orderRegion";
+  protected final String D_REFERENCE = "distrReference";
 
   final CustId expectedCustId = new CustId(6);
   final Customer expectedCustomer = new Customer("customer6", "address6");
 
-  private final SerializableCallable getNumberOfTXInProgress = new SerializableCallable() {
-    @Override
-    public Object call() throws Exception {
-      TXManagerImpl mgr = getGemfireCache().getTxManager();
-      return mgr.hostedTransactionsInProgressForTest();
-    }
-  };
-
-  private final SerializableCallable verifyNoTxState = new SerializableCallable() {
-    @Override
-    public Object call() throws Exception {
-      final TXManagerImpl mgr = getGemfireCache().getTxManager();
-      Wait.waitForCriterion(new WaitCriterion() {
+  private final SerializableCallable getNumberOfTXInProgress =
+      new SerializableCallable() {
         @Override
-        public boolean done() {
-          return mgr.hostedTransactionsInProgressForTest() == 0;
+        public Object call() throws Exception {
+          TXManagerImpl mgr = getGemfireCache().getTxManager();
+          return mgr.hostedTransactionsInProgressForTest();
         }
+      };
 
+  private final SerializableCallable verifyNoTxState =
+      new SerializableCallable() {
         @Override
-        public String description() {
-          return "";
+        public Object call() throws Exception {
+          final TXManagerImpl mgr = getGemfireCache().getTxManager();
+          Wait.waitForCriterion(
+              new WaitCriterion() {
+                @Override
+                public boolean done() {
+                  return mgr.hostedTransactionsInProgressForTest() == 0;
+                }
+
+                @Override
+                public String description() {
+                  return "";
+                }
+              },
+              30 * 1000,
+              500,
+              true /*throwOnTimeout*/);
+          return null;
         }
-      }, 30 * 1000, 500, true/*throwOnTimeout*/);
-      return null;
-    }
-  };
+      };
 
   protected enum OP {
-    PUT, GET, DESTROY, INVALIDATE, KEYS, VALUES, ENTRIES, PUTALL, GETALL, REMOVEALL
+    PUT,
+    GET,
+    DESTROY,
+    INVALIDATE,
+    KEYS,
+    VALUES,
+    ENTRIES,
+    PUTALL,
+    GETALL,
+    REMOVEALL
   }
 
   @Override
@@ -134,9 +149,22 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     if (interestPolicy != null) {
       af.setSubscriptionAttributes(new SubscriptionAttributes(interestPolicy));
     }
-    af.setPartitionAttributes(new PartitionAttributesFactory<CustId, Customer>().setTotalNumBuckets(4).setLocalMaxMemory(accessor ? 0 : 1).setPartitionResolver(new CustomerIDPartitionResolver("resolver1")).setRedundantCopies(redundantCopies).create());
+    af.setPartitionAttributes(
+        new PartitionAttributesFactory<CustId, Customer>()
+            .setTotalNumBuckets(4)
+            .setLocalMaxMemory(accessor ? 0 : 1)
+            .setPartitionResolver(new CustomerIDPartitionResolver("resolver1"))
+            .setRedundantCopies(redundantCopies)
+            .create());
     getCache().createRegion(CUSTOMER, af.create());
-    af.setPartitionAttributes(new PartitionAttributesFactory<OrderId, Order>().setTotalNumBuckets(4).setLocalMaxMemory(accessor ? 0 : 1).setPartitionResolver(new CustomerIDPartitionResolver("resolver2")).setRedundantCopies(redundantCopies).setColocatedWith(CUSTOMER).create());
+    af.setPartitionAttributes(
+        new PartitionAttributesFactory<OrderId, Order>()
+            .setTotalNumBuckets(4)
+            .setLocalMaxMemory(accessor ? 0 : 1)
+            .setPartitionResolver(new CustomerIDPartitionResolver("resolver2"))
+            .setRedundantCopies(redundantCopies)
+            .setColocatedWith(CUSTOMER)
+            .create());
     getCache().createRegion(ORDER, af.create());
   }
 
@@ -160,44 +188,50 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
   }
 
   protected void initAccessorAndDataStore(VM accessor, VM datastore, final int redundantCopies) {
-    accessor.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        createRegion(true/*accessor*/, redundantCopies, null);
-        return null;
-      }
-    });
+    accessor.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            createRegion(true /*accessor*/, redundantCopies, null);
+            return null;
+          }
+        });
 
-    datastore.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        createRegion(false/*accessor*/, redundantCopies, null);
-        populateData();
-        return null;
-      }
-    });
+    datastore.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            createRegion(false /*accessor*/, redundantCopies, null);
+            populateData();
+            return null;
+          }
+        });
   }
 
-  protected void initAccessorAndDataStore(VM accessor, VM datastore1, VM datastore2, final int redundantCopies) {
-    datastore2.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        createRegion(false/*accessor*/, redundantCopies, null);
-        return null;
-      }
-    });
+  protected void initAccessorAndDataStore(
+      VM accessor, VM datastore1, VM datastore2, final int redundantCopies) {
+    datastore2.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            createRegion(false /*accessor*/, redundantCopies, null);
+            return null;
+          }
+        });
 
     initAccessorAndDataStore(accessor, datastore1, redundantCopies);
   }
 
-  private void initAccessorAndDataStoreWithInterestPolicy(VM accessor, VM datastore1, VM datastore2, final int redundantCopies) {
-    datastore2.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        createRegion(false/*accessor*/, redundantCopies, InterestPolicy.ALL);
-        return null;
-      }
-    });
+  private void initAccessorAndDataStoreWithInterestPolicy(
+      VM accessor, VM datastore1, VM datastore2, final int redundantCopies) {
+    datastore2.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            createRegion(false /*accessor*/, redundantCopies, InterestPolicy.ALL);
+            return null;
+          }
+        });
 
     initAccessorAndDataStore(accessor, datastore1, redundantCopies);
   }
@@ -206,14 +240,17 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     validateContains(custId, orderId, doesIt, doesIt);
   }
 
-  void validateContains(CustId custId, Set<OrderId> ordersSet, boolean containsKey, boolean containsValue) {
+  void validateContains(
+      CustId custId, Set<OrderId> ordersSet, boolean containsKey, boolean containsValue) {
     Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
     Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
     Region<CustId, Order> refRegion = getCache().getRegion(D_REFERENCE);
     boolean rContainsKC = custRegion.containsKey(custId);
     boolean rContainsKO = containsKey;
     for (OrderId o : ordersSet) {
-      getGemfireCache().getLoggerI18n().fine("SWAP:rContainsKO:" + rContainsKO + " containsKey:" + orderRegion.containsKey(o));
+      getGemfireCache()
+          .getLoggerI18n()
+          .fine("SWAP:rContainsKO:" + rContainsKO + " containsKey:" + orderRegion.containsKey(o));
       rContainsKO = rContainsKO && orderRegion.containsKey(o);
     }
     boolean rContainsKR = refRegion.containsKey(custId);
@@ -251,7 +288,9 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
       }
       try {
         for (OrderId o : ordersSet) {
-          assertNull("should have had an EntryNotFoundException:" + orderRegion.getEntry(o), orderRegion.getEntry(o));
+          assertNull(
+              "should have had an EntryNotFoundException:" + orderRegion.getEntry(o),
+              orderRegion.getEntry(o));
         }
 
       } catch (EntryNotFoundException enfe) {
@@ -280,45 +319,45 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     Order expectedOrder3;
     Customer expectedRef;
     switch (op) {
-    case PUT:
-      expectedCust = new Customer("foo", "bar");
-      expectedOrder = new Order("fooOrder");
-      expectedOrder2 = new Order("fooOrder2");
-      expectedOrder3 = new Order("fooOrder3");
-      expectedRef = expectedCust;
-      assertNotNull(custRegion.getEntry(custId));
-      assertEquals(expectedCust, custRegion.getEntry(custId).getValue());
+      case PUT:
+        expectedCust = new Customer("foo", "bar");
+        expectedOrder = new Order("fooOrder");
+        expectedOrder2 = new Order("fooOrder2");
+        expectedOrder3 = new Order("fooOrder3");
+        expectedRef = expectedCust;
+        assertNotNull(custRegion.getEntry(custId));
+        assertEquals(expectedCust, custRegion.getEntry(custId).getValue());
 
-      assertNotNull(refRegion.getEntry(custId));
-      assertEquals(expectedRef, refRegion.getEntry(custId).getValue());
+        assertNotNull(refRegion.getEntry(custId));
+        assertEquals(expectedRef, refRegion.getEntry(custId).getValue());
 
-      break;
-    case GET:
-      expectedCust = custRegion.get(custId);
-      expectedOrder = orderRegion.get(orderId);
-      expectedRef = refRegion.get(custId);
-      validateContains(custId, Collections.singleton(orderId), true);
-      break;
-    case DESTROY:
-      assertTrue(!custRegion.containsKey(custId));
-      assertTrue(!orderRegion.containsKey(orderId));
-      assertTrue(!refRegion.containsKey(custId));
-      validateContains(custId, Collections.singleton(orderId), false);
-      break;
-    case INVALIDATE:
-      boolean validateContainsKey = true;
-      if (!((GemFireCacheImpl) custRegion.getCache()).isClient()) {
-        assertTrue(custRegion.containsKey(custId));
-        assertTrue(orderRegion.containsKey(orderId));
-        assertTrue(refRegion.containsKey(custId));
-      }
-      assertNull(custRegion.get(custId));
-      assertNull(orderRegion.get(orderId));
-      assertNull(refRegion.get(custId));
-      validateContains(custId, Collections.singleton(orderId), validateContainsKey, false);
-      break;
-    default:
-      throw new IllegalStateException();
+        break;
+      case GET:
+        expectedCust = custRegion.get(custId);
+        expectedOrder = orderRegion.get(orderId);
+        expectedRef = refRegion.get(custId);
+        validateContains(custId, Collections.singleton(orderId), true);
+        break;
+      case DESTROY:
+        assertTrue(!custRegion.containsKey(custId));
+        assertTrue(!orderRegion.containsKey(orderId));
+        assertTrue(!refRegion.containsKey(custId));
+        validateContains(custId, Collections.singleton(orderId), false);
+        break;
+      case INVALIDATE:
+        boolean validateContainsKey = true;
+        if (!((GemFireCacheImpl) custRegion.getCache()).isClient()) {
+          assertTrue(custRegion.containsKey(custId));
+          assertTrue(orderRegion.containsKey(orderId));
+          assertTrue(refRegion.containsKey(custId));
+        }
+        assertNull(custRegion.get(custId));
+        assertNull(orderRegion.get(orderId));
+        assertNull(refRegion.get(custId));
+        validateContains(custId, Collections.singleton(orderId), validateContainsKey, false);
+        break;
+      default:
+        throw new IllegalStateException();
     }
   }
 
@@ -338,49 +377,49 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     Order expectedOrder;
     Customer expectedRef;
     switch (op) {
-    case PUT:
-      expectedCust = new Customer("customer1", "address1");
-      expectedOrder = new Order("order1");
-      expectedRef = new Customer("customer1", "address1");
-      assertEquals(expectedCust, custRegion.getEntry(custId).getValue());
-      assertEquals(expectedOrder, orderRegion.getEntry(orderId).getValue());
-      getCache().getLogger().info("SWAP:verifyRollback:" + orderRegion);
-      getCache().getLogger().info("SWAP:verifyRollback:" + orderRegion.getEntry(orderId2));
-      assertNull(getGemfireCache().getTXMgr().getTXState());
-      assertNull("" + orderRegion.getEntry(orderId2), orderRegion.getEntry(orderId2));
-      assertNull(orderRegion.getEntry(orderId3));
-      assertNull(orderRegion.get(orderId2));
-      assertNull(orderRegion.get(orderId3));
-      assertEquals(expectedRef, refRegion.getEntry(custId).getValue());
-      validateContains(custId, Collections.singleton(orderId), true);
-      break;
-    case GET:
-      expectedCust = custRegion.getEntry(custId).getValue();
-      expectedOrder = orderRegion.getEntry(orderId).getValue();
-      expectedRef = refRegion.getEntry(custId).getValue();
-      validateContains(custId, Collections.singleton(orderId), true);
-      break;
-    case DESTROY:
-      assertTrue(!custRegion.containsKey(custId));
-      assertTrue(!orderRegion.containsKey(orderId));
-      assertTrue(!refRegion.containsKey(custId));
-      validateContains(custId, Collections.singleton(orderId), true);
-      break;
-    case INVALIDATE:
-      assertTrue(custRegion.containsKey(custId));
-      assertTrue(orderRegion.containsKey(orderId));
-      assertTrue(refRegion.containsKey(custId));
-      assertNull(custRegion.get(custId));
-      assertNull(orderRegion.get(orderId));
-      assertNull(refRegion.get(custId));
-      validateContains(custId, Collections.singleton(orderId), true, true);
-      break;
-    default:
-      throw new IllegalStateException();
+      case PUT:
+        expectedCust = new Customer("customer1", "address1");
+        expectedOrder = new Order("order1");
+        expectedRef = new Customer("customer1", "address1");
+        assertEquals(expectedCust, custRegion.getEntry(custId).getValue());
+        assertEquals(expectedOrder, orderRegion.getEntry(orderId).getValue());
+        getCache().getLogger().info("SWAP:verifyRollback:" + orderRegion);
+        getCache().getLogger().info("SWAP:verifyRollback:" + orderRegion.getEntry(orderId2));
+        assertNull(getGemfireCache().getTXMgr().getTXState());
+        assertNull("" + orderRegion.getEntry(orderId2), orderRegion.getEntry(orderId2));
+        assertNull(orderRegion.getEntry(orderId3));
+        assertNull(orderRegion.get(orderId2));
+        assertNull(orderRegion.get(orderId3));
+        assertEquals(expectedRef, refRegion.getEntry(custId).getValue());
+        validateContains(custId, Collections.singleton(orderId), true);
+        break;
+      case GET:
+        expectedCust = custRegion.getEntry(custId).getValue();
+        expectedOrder = orderRegion.getEntry(orderId).getValue();
+        expectedRef = refRegion.getEntry(custId).getValue();
+        validateContains(custId, Collections.singleton(orderId), true);
+        break;
+      case DESTROY:
+        assertTrue(!custRegion.containsKey(custId));
+        assertTrue(!orderRegion.containsKey(orderId));
+        assertTrue(!refRegion.containsKey(custId));
+        validateContains(custId, Collections.singleton(orderId), true);
+        break;
+      case INVALIDATE:
+        assertTrue(custRegion.containsKey(custId));
+        assertTrue(orderRegion.containsKey(orderId));
+        assertTrue(refRegion.containsKey(custId));
+        assertNull(custRegion.get(custId));
+        assertNull(orderRegion.get(orderId));
+        assertNull(refRegion.get(custId));
+        validateContains(custId, Collections.singleton(orderId), true, true);
+        break;
+      default:
+        throw new IllegalStateException();
     }
   }
 
-  static abstract class CacheCallback {
+  abstract static class CacheCallback {
 
     protected boolean isAccessor;
     protected Exception ex = null;
@@ -435,28 +474,22 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     }
 
     @Override
-    public void afterRegionClear(RegionEvent event) {
-    }
+    public void afterRegionClear(RegionEvent event) {}
 
     @Override
-    public void afterRegionCreate(RegionEvent event) {
-    }
+    public void afterRegionCreate(RegionEvent event) {}
 
     @Override
-    public void afterRegionDestroy(RegionEvent event) {
-    }
+    public void afterRegionDestroy(RegionEvent event) {}
 
     @Override
-    public void afterRegionInvalidate(RegionEvent event) {
-    }
+    public void afterRegionInvalidate(RegionEvent event) {}
 
     @Override
-    public void afterRegionLive(RegionEvent event) {
-    }
+    public void afterRegionLive(RegionEvent event) {}
 
     @Override
-    public void close() {
-    }
+    public void close() {}
   }
 
   class TestCacheWriter extends CacheCallback implements CacheWriter {
@@ -469,7 +502,9 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
 
     @Override
     public void beforeCreate(EntryEvent event) throws CacheWriterException {
-      getGemfireCache().getLogger().info("SWAP:beforeCreate:" + event + " op:" + event.getOperation());
+      getGemfireCache()
+          .getLogger()
+          .info("SWAP:beforeCreate:" + event + " op:" + event.getOperation());
       verifyOrigin(event);
       verifyPutAll(event);
       setFired(event);
@@ -481,7 +516,9 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
 
     @Override
     public void beforeUpdate(EntryEvent event) throws CacheWriterException {
-      getGemfireCache().getLogger().info("SWAP:beforeCreate:" + event + " op:" + event.getOperation());
+      getGemfireCache()
+          .getLogger()
+          .info("SWAP:beforeCreate:" + event + " op:" + event.getOperation());
       verifyOrigin(event);
       verifyPutAll(event);
       setFired(event);
@@ -504,11 +541,10 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
   }
 
-  static abstract class txCallback {
+  abstract static class txCallback {
 
     protected boolean isAccessor;
     protected Exception ex = null;
@@ -576,8 +612,7 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
   }
 
   static class TestTxWriter extends txCallback implements TransactionWriter {
@@ -591,8 +626,7 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
   }
 
   class TXFunction implements Function {
@@ -631,12 +665,11 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
   }
 
   enum Executions {
-    OnRegion, OnMember
+    OnRegion,
+    OnMember
   }
 
-  /**
-   * @return first key found on the given member
-   */
+  /** @return first key found on the given member */
   CustId getKeyOnMember(final DistributedMember owner, PartitionedRegion pr) {
     CustId retVal = null;
     for (int i = 0; i < 5; i++) {
@@ -743,51 +776,56 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
         }
       }
     }
-
   }
 
   protected Integer startServer(VM vm) {
-    return (Integer) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
-        CacheServer s = getCache().addCacheServer();
-        s.setPort(port);
-        s.start();
-        return port;
-      }
-    });
+    return (Integer)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
+                CacheServer s = getCache().addCacheServer();
+                s.setPort(port);
+                s.start();
+                return port;
+              }
+            });
   }
 
-  protected void createClientRegion(VM vm, final int port, final boolean isEmpty, final boolean ri, final boolean CQ) {
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        ClientCacheFactory ccf = new ClientCacheFactory();
-        ccf.addPoolServer("localhost"/*getServerHostName(Host.getHost(0))*/, port);
-        ccf.setPoolSubscriptionEnabled(true);
-        ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-        ClientCache cCache = getClientCache(ccf);
-        ClientRegionFactory<Integer, String> crf = cCache.createClientRegionFactory(isEmpty ? ClientRegionShortcut.PROXY : ClientRegionShortcut.CACHING_PROXY);
-        crf.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
-        crf.addCacheListener(new ClientListener());
-        Region r = crf.create(D_REFERENCE);
-        Region cust = crf.create(CUSTOMER);
-        Region order = crf.create(ORDER);
-        if (ri) {
-          r.registerInterestRegex(".*");
-          cust.registerInterestRegex(".*");
-          order.registerInterestRegex(".*");
-        }
-        if (CQ) {
-          CqAttributesFactory cqf = new CqAttributesFactory();
-          cqf.addCqListener(new ClientCQListener());
-          CqAttributes ca = cqf.create();
-          cCache.getQueryService().newCq("SELECT * FROM " + cust.getFullPath(), ca).execute();
-        }
-        return null;
-      }
-    });
+  protected void createClientRegion(
+      VM vm, final int port, final boolean isEmpty, final boolean ri, final boolean CQ) {
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            ClientCacheFactory ccf = new ClientCacheFactory();
+            ccf.addPoolServer("localhost" /*getServerHostName(Host.getHost(0))*/, port);
+            ccf.setPoolSubscriptionEnabled(true);
+            ccf.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
+            ClientCache cCache = getClientCache(ccf);
+            ClientRegionFactory<Integer, String> crf =
+                cCache.createClientRegionFactory(
+                    isEmpty ? ClientRegionShortcut.PROXY : ClientRegionShortcut.CACHING_PROXY);
+            crf.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
+            crf.addCacheListener(new ClientListener());
+            Region r = crf.create(D_REFERENCE);
+            Region cust = crf.create(CUSTOMER);
+            Region order = crf.create(ORDER);
+            if (ri) {
+              r.registerInterestRegex(".*");
+              cust.registerInterestRegex(".*");
+              order.registerInterestRegex(".*");
+            }
+            if (CQ) {
+              CqAttributesFactory cqf = new CqAttributesFactory();
+              cqf.addCqListener(new ClientCQListener());
+              CqAttributes ca = cqf.create();
+              cCache.getQueryService().newCq("SELECT * FROM " + cust.getFullPath(), ca).execute();
+            }
+            return null;
+          }
+        });
   }
 
   protected static class ClientCQListener implements CqListener {
@@ -795,8 +833,7 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     boolean invoked = false;
 
     @Override
-    public void onError(CqEvent aCqEvent) {
-    }
+    public void onError(CqEvent aCqEvent) {}
 
     @Override
     public void onEvent(CqEvent aCqEvent) {
@@ -804,8 +841,7 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
   }
 
   protected static class ClientListener extends CacheListenerAdapter {
@@ -826,14 +862,34 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
       invokeCount++;
       putCount++;
       creates++;
-      event.getRegion().getCache().getLogger().warning("ZZZ AFTER CREATE:" + event.getKey() + " isPutAll:" + event.getOperation().isPutAll() + " op:" + event.getOperation());
+      event
+          .getRegion()
+          .getCache()
+          .getLogger()
+          .warning(
+              "ZZZ AFTER CREATE:"
+                  + event.getKey()
+                  + " isPutAll:"
+                  + event.getOperation().isPutAll()
+                  + " op:"
+                  + event.getOperation());
       putAllOp = event.getOperation().isPutAll();
       isOriginRemote = event.isOriginRemote();
     }
 
     @Override
     public void afterUpdate(EntryEvent event) {
-      event.getRegion().getCache().getLogger().warning("ZZZ AFTER UPDATE:" + event.getKey() + " isPutAll:" + event.getOperation().isPutAll() + " op:" + event.getOperation());
+      event
+          .getRegion()
+          .getCache()
+          .getLogger()
+          .warning(
+              "ZZZ AFTER UPDATE:"
+                  + event.getKey()
+                  + " isPutAll:"
+                  + event.getOperation().isPutAll()
+                  + " op:"
+                  + event.getOperation());
       putAllOp = event.getOperation().isPutAll();
       invoked = true;
       invokeCount++;
@@ -902,37 +958,44 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     int port = startServer(datastore);
 
     createClientRegion(client, port, false, true, true);
-    datastore.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
-        Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
-        Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
-        CustId custId = new CustId(1);
-        OrderId orderId = new OrderId(1, custId);
-        getCache().getCacheTransactionManager().begin();
-        custRegion.put(custId, new Customer("foo", "bar"));
-        orderRegion.put(orderId, new Order("fooOrder"));
-        refRegion.put(custId, new Customer("foo", "bar"));
-        getCache().getCacheTransactionManager().commit();
-        return null;
-      }
-    });
+    datastore.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
+            Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
+            Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
+            CustId custId = new CustId(1);
+            OrderId orderId = new OrderId(1, custId);
+            getCache().getCacheTransactionManager().begin();
+            custRegion.put(custId, new Customer("foo", "bar"));
+            orderRegion.put(orderId, new Order("fooOrder"));
+            refRegion.put(custId, new Customer("foo", "bar"));
+            getCache().getCacheTransactionManager().commit();
+            return null;
+          }
+        });
 
     Thread.sleep(10000);
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
-        Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
-        Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
-        ClientListener cl = (ClientListener) custRegion.getAttributes().getCacheListeners()[0];
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
+            Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
+            Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
+            ClientListener cl = (ClientListener) custRegion.getAttributes().getCacheListeners()[0];
 
-        assertTrue(((ClientCQListener) custRegion.getCache().getQueryService().getCqs()[0].getCqAttributes().getCqListener()).invoked);
-        assertTrue(cl.invoked);
-        return null;
-      }
-    });
+            assertTrue(
+                ((ClientCQListener)
+                        custRegion.getCache().getQueryService().getCqs()[0]
+                            .getCqAttributes()
+                            .getCqListener())
+                    .invoked);
+            assertTrue(cl.invoked);
+            return null;
+          }
+        });
   }
 
   @Test
@@ -946,34 +1009,41 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     int port = startServer(accessor);
 
     createClientRegion(client, port, false, true, true);
-    datastore.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
-        Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
-        Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
-        CustId custId = new CustId(1);
-        OrderId orderId = new OrderId(1, custId);
-        getCache().getCacheTransactionManager().begin();
-        custRegion.put(custId, new Customer("foo", "bar"));
-        getCache().getCacheTransactionManager().commit();
-        return null;
-      }
-    });
+    datastore.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
+            Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
+            Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
+            CustId custId = new CustId(1);
+            OrderId orderId = new OrderId(1, custId);
+            getCache().getCacheTransactionManager().begin();
+            custRegion.put(custId, new Customer("foo", "bar"));
+            getCache().getCacheTransactionManager().commit();
+            return null;
+          }
+        });
 
     Thread.sleep(10000);
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
-        Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
-        Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
-        ClientListener cl = (ClientListener) custRegion.getAttributes().getCacheListeners()[0];
-        assertTrue(cl.invoked);
-        assertTrue(((ClientCQListener) custRegion.getCache().getQueryService().getCqs()[0].getCqAttributes().getCqListener()).invoked);
-        return null;
-      }
-    });
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
+            Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
+            Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
+            ClientListener cl = (ClientListener) custRegion.getAttributes().getCacheListeners()[0];
+            assertTrue(cl.invoked);
+            assertTrue(
+                ((ClientCQListener)
+                        custRegion.getCache().getQueryService().getCqs()[0]
+                            .getCqAttributes()
+                            .getCqListener())
+                    .invoked);
+            return null;
+          }
+        });
   }
 
   @Test
@@ -987,34 +1057,41 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     int port = startServer(datastore);
 
     createClientRegion(client, port, false, true, true);
-    datastore.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
-        Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
-        Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
-        CustId custId = new CustId(1);
-        OrderId orderId = new OrderId(1, custId);
-        getCache().getCacheTransactionManager().begin();
-        custRegion.put(custId, new Customer("foo", "bar"));
-        getCache().getCacheTransactionManager().commit();
-        return null;
-      }
-    });
+    datastore.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
+            Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
+            Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
+            CustId custId = new CustId(1);
+            OrderId orderId = new OrderId(1, custId);
+            getCache().getCacheTransactionManager().begin();
+            custRegion.put(custId, new Customer("foo", "bar"));
+            getCache().getCacheTransactionManager().commit();
+            return null;
+          }
+        });
 
     Thread.sleep(10000);
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
-        Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
-        Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
-        ClientListener cl = (ClientListener) custRegion.getAttributes().getCacheListeners()[0];
-        assertTrue(cl.invoked);
-        assertTrue(((ClientCQListener) custRegion.getCache().getQueryService().getCqs()[0].getCqAttributes().getCqListener()).invoked);
-        return null;
-      }
-    });
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
+            Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
+            Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
+            ClientListener cl = (ClientListener) custRegion.getAttributes().getCacheListeners()[0];
+            assertTrue(cl.invoked);
+            assertTrue(
+                ((ClientCQListener)
+                        custRegion.getCache().getQueryService().getCqs()[0]
+                            .getCqAttributes()
+                            .getCqListener())
+                    .invoked);
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1028,34 +1105,41 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     int port = startServer(datastore);
 
     createClientRegion(client, port, false, true, true);
-    accessor.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
-        Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
-        Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
-        CustId custId = new CustId(1);
-        OrderId orderId = new OrderId(1, custId);
-        getCache().getCacheTransactionManager().begin();
-        custRegion.put(custId, new Customer("foo", "bar"));
-        getCache().getCacheTransactionManager().commit();
-        return null;
-      }
-    });
+    accessor.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
+            Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
+            Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
+            CustId custId = new CustId(1);
+            OrderId orderId = new OrderId(1, custId);
+            getCache().getCacheTransactionManager().begin();
+            custRegion.put(custId, new Customer("foo", "bar"));
+            getCache().getCacheTransactionManager().commit();
+            return null;
+          }
+        });
 
     Thread.sleep(10000);
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
-        Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
-        Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
-        ClientListener cl = (ClientListener) custRegion.getAttributes().getCacheListeners()[0];
-        assertTrue(cl.invoked);
-        assertTrue(((ClientCQListener) custRegion.getCache().getQueryService().getCqs()[0].getCqAttributes().getCqListener()).invoked);
-        return null;
-      }
-    });
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
+            Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
+            Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
+            ClientListener cl = (ClientListener) custRegion.getAttributes().getCacheListeners()[0];
+            assertTrue(cl.invoked);
+            assertTrue(
+                ((ClientCQListener)
+                        custRegion.getCache().getQueryService().getCqs()[0]
+                            .getCqAttributes()
+                            .getCqListener())
+                    .invoked);
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1069,34 +1153,41 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     int port = startServer(accessor);
 
     createClientRegion(client, port, false, true, true);
-    accessor.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
-        Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
-        Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
-        CustId custId = new CustId(1);
-        OrderId orderId = new OrderId(1, custId);
-        getCache().getCacheTransactionManager().begin();
-        custRegion.put(custId, new Customer("foo", "bar"));
-        getCache().getCacheTransactionManager().commit();
-        return null;
-      }
-    });
+    accessor.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
+            Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
+            Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
+            CustId custId = new CustId(1);
+            OrderId orderId = new OrderId(1, custId);
+            getCache().getCacheTransactionManager().begin();
+            custRegion.put(custId, new Customer("foo", "bar"));
+            getCache().getCacheTransactionManager().commit();
+            return null;
+          }
+        });
 
     Thread.sleep(10000);
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
-        Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
-        Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
-        ClientListener cl = (ClientListener) custRegion.getAttributes().getCacheListeners()[0];
-        assertTrue(cl.invoked);
-        assertTrue(((ClientCQListener) custRegion.getCache().getQueryService().getCqs()[0].getCqAttributes().getCqListener()).invoked);
-        return null;
-      }
-    });
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
+            Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
+            Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
+            ClientListener cl = (ClientListener) custRegion.getAttributes().getCacheListeners()[0];
+            assertTrue(cl.invoked);
+            assertTrue(
+                ((ClientCQListener)
+                        custRegion.getCache().getQueryService().getCqs()[0]
+                            .getCqAttributes()
+                            .getCqListener())
+                    .invoked);
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1110,34 +1201,40 @@ public class RemoteCQTransactionDUnitTest extends JUnit4CacheTestCase {
     int port = startServer(accessor);
 
     createClientRegion(client, port, false, true, true);
-    datastore.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
-        Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
-        Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
-        CustId custId = new CustId(1);
-        OrderId orderId = new OrderId(1, custId);
-        getCache().getCacheTransactionManager().begin();
-        custRegion.put(custId, new Customer("foo", "bar"));
-        getCache().getCacheTransactionManager().commit();
-        return null;
-      }
-    });
+    datastore.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
+            Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
+            Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
+            CustId custId = new CustId(1);
+            OrderId orderId = new OrderId(1, custId);
+            getCache().getCacheTransactionManager().begin();
+            custRegion.put(custId, new Customer("foo", "bar"));
+            getCache().getCacheTransactionManager().commit();
+            return null;
+          }
+        });
 
     Thread.sleep(10000);
-    client.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
-        Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
-        Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
-        ClientListener cl = (ClientListener) custRegion.getAttributes().getCacheListeners()[0];
-        assertTrue(cl.invoked);
-        assertTrue(((ClientCQListener) custRegion.getCache().getQueryService().getCqs()[0].getCqAttributes().getCqListener()).invoked);
-        return null;
-      }
-    });
+    client.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER);
+            Region<OrderId, Order> orderRegion = getCache().getRegion(ORDER);
+            Region<CustId, Customer> refRegion = getCache().getRegion(D_REFERENCE);
+            ClientListener cl = (ClientListener) custRegion.getAttributes().getCacheListeners()[0];
+            assertTrue(cl.invoked);
+            assertTrue(
+                ((ClientCQListener)
+                        custRegion.getCache().getQueryService().getCqs()[0]
+                            .getCqAttributes()
+                            .getCqListener())
+                    .invoked);
+            return null;
+          }
+        });
   }
-
 }

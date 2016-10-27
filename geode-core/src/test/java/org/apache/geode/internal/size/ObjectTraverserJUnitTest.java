@@ -74,12 +74,13 @@ public class ObjectTraverserJUnitTest {
     set2.add(object3);
 
     TestVisitor visitor = new TestVisitor();
-    visitor = new TestVisitor() {
-      public boolean visit(Object parent, Object object) {
-        super.visit(parent, object);
-        return object != set2;
-      }
-    };
+    visitor =
+        new TestVisitor() {
+          public boolean visit(Object parent, Object object) {
+            super.visit(parent, object);
+            return object != set2;
+          }
+        };
 
     ObjectTraverser.breadthFirstSearch(set1, visitor, true);
 
@@ -98,7 +99,9 @@ public class ObjectTraverserJUnitTest {
     set1.add(set2);
     set2.add(object3);
 
-    System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "ObjectSizer.SIZE_OF_CLASS", "org.apache.geode.internal.size.SizeOfUtil0");
+    System.setProperty(
+        DistributionConfig.GEMFIRE_PREFIX + "ObjectSizer.SIZE_OF_CLASS",
+        "org.apache.geode.internal.size.SizeOfUtil0");
     System.out.println(ObjectGraphSizer.histogram(set1, true));
   }
 
@@ -116,5 +119,4 @@ public class ObjectTraverserJUnitTest {
   private static class TestObject1 {
     protected static Object test2;
   }
-
 }

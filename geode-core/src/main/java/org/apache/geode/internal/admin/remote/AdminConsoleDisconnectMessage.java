@@ -34,8 +34,8 @@ import org.apache.geode.internal.logging.log4j.AlertAppender;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * A message that is sent to a particular distribution manager to let
- * it know that the sender is an administation console that just disconnected.
+ * A message that is sent to a particular distribution manager to let it know that the sender is an
+ * administation console that just disconnected.
  */
 public final class AdminConsoleDisconnectMessage extends PooledDistributionMessage {
   private static final Logger logger = LogService.getLogger();
@@ -53,8 +53,8 @@ public final class AdminConsoleDisconnectMessage extends PooledDistributionMessa
   }
 
   /**
-   * This is called by a dm when it sends this message to itself as a result
-   * of the console dropping out of the view (ie. crashing)
+   * This is called by a dm when it sends this message to itself as a result of the console dropping
+   * out of the view (ie. crashing)
    */
   public void setCrashed(boolean crashed) {
     this.crashed = crashed;
@@ -70,7 +70,6 @@ public final class AdminConsoleDisconnectMessage extends PooledDistributionMessa
 
   /**
    * @param reason the reason for getting disconnected
-   * 
    * @since GemFire 6.5
    */
   public void setReason(String reason) {
@@ -82,15 +81,24 @@ public final class AdminConsoleDisconnectMessage extends PooledDistributionMessa
     InternalDistributedSystem sys = dm.getSystem();
     //    DistributionConfig config = sys.getConfig();
     if (alertListenerExpected) {
-      if (!AlertAppender.getInstance().removeAlertListener(this.getSender()) && !this.ignoreAlertListenerRemovalFailure) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.ManagerLogWriter_UNABLE_TO_REMOVE_CONSOLE_WITH_ID_0_FROM_ALERT_LISTENERS, this.getSender()));
+      if (!AlertAppender.getInstance().removeAlertListener(this.getSender())
+          && !this.ignoreAlertListenerRemovalFailure) {
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .ManagerLogWriter_UNABLE_TO_REMOVE_CONSOLE_WITH_ID_0_FROM_ALERT_LISTENERS,
+                this.getSender()));
       }
     }
     GemFireStatSampler sampler = sys.getStatSampler();
     if (sampler != null) {
       sampler.removeListenersByRecipient(this.getSender());
     }
-    dm.handleConsoleShutdown(this.getSender(), crashed, LocalizedStrings.AdminConsoleDisconnectMessage_AUTOMATIC_ADMIN_DISCONNECT_0.toLocalizedString(reason));
+    dm.handleConsoleShutdown(
+        this.getSender(),
+        crashed,
+        LocalizedStrings.AdminConsoleDisconnectMessage_AUTOMATIC_ADMIN_DISCONNECT_0
+            .toLocalizedString(reason));
     //     AppCacheSnapshotMessage.flushSnapshots(this.getSender());
   }
 

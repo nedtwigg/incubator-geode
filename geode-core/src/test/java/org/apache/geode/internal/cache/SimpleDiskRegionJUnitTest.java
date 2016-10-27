@@ -16,7 +16,7 @@
  */
 /*
  * Created on Feb 15, 2006
- * 
+ *
  * TODO To change the template for this generated file go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
@@ -38,7 +38,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
  * Testing methods for SimpleDiskRegion.java api's
- * 
+ *
  * @since GemFire 5.1
  */
 @Category(IntegrationTest.class)
@@ -102,7 +102,6 @@ public class SimpleDiskRegionJUnitTest extends DiskRegionTestingBase {
       logWriter.error("Exception occured", e);
       fail(" Exception in createOverflowandPersist due to " + e);
     }
-
   }
 
   void checkIfContainsFileWithSubstring(String substr) {
@@ -193,7 +192,6 @@ public class SimpleDiskRegionJUnitTest extends DiskRegionTestingBase {
       checkIfContainsFileWithExt("drf");
       checkIfContainsFileWithSubstring("OVERFLOW");
     }
-
   }
 
   //   /*
@@ -212,7 +210,7 @@ public class SimpleDiskRegionJUnitTest extends DiskRegionTestingBase {
   //     int id = oplog.getOplogId();
   //     StatisticsFactory factory = dr.getOwner().getCache().getDistributedSystem();
   //     Oplog newOplog = new Oplog(id + 1, dr.getDiskStore(), new DirectoryHolder(factory,
-  //         dirs[0], 1000000, 0));    
+  //         dirs[0], 1000000, 0));
   //     dr.setChild(newOplog);
   //     region.clear();
   //     newOplog = dr.getChild();
@@ -248,7 +246,8 @@ public class SimpleDiskRegionJUnitTest extends DiskRegionTestingBase {
     long id = oplog.getOplogId();
 
     StatisticsFactory factory = region.getCache().getDistributedSystem();
-    Oplog newOplog = new Oplog(id, dr.getOplogSet(), new DirectoryHolder(factory, dirs[0], 1000000, 0));
+    Oplog newOplog =
+        new Oplog(id, dr.getOplogSet(), new DirectoryHolder(factory, dirs[0], 1000000, 0));
     dr.getDiskStore().persistentOplogs.setChild(newOplog);
     assertEquals(newOplog, dr.testHook_getChild());
     dr.setChild(oplog);

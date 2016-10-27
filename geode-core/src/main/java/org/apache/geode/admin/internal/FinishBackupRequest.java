@@ -47,10 +47,8 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * A request send from an admin VM to all of the peers to indicate
- * that that should complete the backup operation.
- * 
- *
+ * A request send from an admin VM to all of the peers to indicate that that should complete the
+ * backup operation.
  */
 public class FinishBackupRequest extends CliLegacyMessage {
   private static final Logger logger = LogService.getLogger();
@@ -69,7 +67,8 @@ public class FinishBackupRequest extends CliLegacyMessage {
     this.abort = abort;
   }
 
-  public static Map<DistributedMember, Set<PersistentID>> send(DM dm, Set recipients, File targetDir, File baselineDir, boolean abort) {
+  public static Map<DistributedMember, Set<PersistentID>> send(
+      DM dm, Set recipients, File targetDir, File baselineDir, boolean abort) {
     FinishBackupRequest request = new FinishBackupRequest(targetDir, baselineDir, abort);
     request.setRecipients(recipients);
 
@@ -101,7 +100,8 @@ public class FinishBackupRequest extends CliLegacyMessage {
       try {
         persistentIds = cache.getBackupManager().finishBackup(targetDir, baselineDir, abort);
       } catch (IOException e) {
-        logger.error(LocalizedMessage.create(LocalizedStrings.CliLegacyMessage_ERROR, this.getClass()), e);
+        logger.error(
+            LocalizedMessage.create(LocalizedStrings.CliLegacyMessage_ERROR, this.getClass()), e);
         return AdminFailureResponse.create(dm, getSender(), e);
       }
     }
@@ -130,7 +130,8 @@ public class FinishBackupRequest extends CliLegacyMessage {
   }
 
   private static class FinishBackupReplyProcessor extends AdminMultipleReplyProcessor {
-    Map<DistributedMember, Set<PersistentID>> results = Collections.synchronizedMap(new HashMap<DistributedMember, Set<PersistentID>>());
+    Map<DistributedMember, Set<PersistentID>> results =
+        Collections.synchronizedMap(new HashMap<DistributedMember, Set<PersistentID>>());
 
     public FinishBackupReplyProcessor(DM dm, Collection initMembers) {
       super(dm, initMembers);
@@ -163,6 +164,5 @@ public class FinishBackupRequest extends CliLegacyMessage {
       }
       super.process(msg, warn);
     }
-
   }
 }

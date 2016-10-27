@@ -30,11 +30,9 @@ import org.apache.geode.internal.cache.PartitionedRegionTestHelper;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Class verifies Region#query(Select Query) API for PartitionedRegion on a
- * single VM.,As region#query doesn't support Select Query for Local Querying it
- * should throw QueryInvalidException
- * 
- * 
+ * Class verifies Region#query(Select Query) API for PartitionedRegion on a single VM.,As
+ * region#query doesn't support Select Query for Local Querying it should throw
+ * QueryInvalidException
  */
 @Category(IntegrationTest.class)
 public class PRInvalidQueryJUnitTest {
@@ -56,9 +54,9 @@ public class PRInvalidQueryJUnitTest {
    * 1. Creates a PR with redundancy=0 on a single VM.<br>
    * 2. Puts some test Objects in cache.<br>
    * 3. Fires querie on the data and verifies the result.<br>
-   * 4. Since region#query() doesn't support this type of query syntax it should
-   * throw QueryInvalidException <br>
-   * 
+   * 4. Since region#query() doesn't support this type of query syntax it should throw
+   * QueryInvalidException <br>
+   *
    * @throws Exception
    */
   @Test
@@ -66,7 +64,8 @@ public class PRInvalidQueryJUnitTest {
     logger.info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Test Started  ");
     Region region = PartitionedRegionTestHelper.createPartitionedRegion(regionName, "100", 0);
 
-    logger.info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: creating portfolioData objects");
+    logger.info(
+        "PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: creating portfolioData objects");
     PortfolioData[] portfolios = new PortfolioData[100];
     for (int j = 0; j < 100; j++) {
       portfolios[j] = new PortfolioData(j);
@@ -78,24 +77,33 @@ public class PRInvalidQueryJUnitTest {
     String queryString = "SELECT DISTINCT * FROM /Portfolios WHERE pkid < '5'";
 
     final String expectedQueryInvalidException = QueryInvalidException.class.getName();
-    logger.info("<ExpectedException action=add>" + expectedQueryInvalidException + "</ExpectedException>");
+    logger.info(
+        "<ExpectedException action=add>" + expectedQueryInvalidException + "</ExpectedException>");
     try {
       region.query(queryString);
-      fail("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Expected an Invalid Query Exception for the query :" + queryString + " this is not supported for region#query()");
+      fail(
+          "PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Expected an Invalid Query Exception for the query :"
+              + queryString
+              + " this is not supported for region#query()");
     } catch (QueryInvalidException qe) {
 
-      logger.info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Caught an Invalid Query Exception for the query :" + queryString + " this is not supported for region#query()");
-
+      logger.info(
+          "PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Caught an Invalid Query Exception for the query :"
+              + queryString
+              + " this is not supported for region#query()");
     }
 
     logger.info("PRInvalidQueryJUnitTest#testInvalidQueryOnSingleDS: Test Ended");
 
-    logger.info("<ExpectedException action=remove>" + expectedQueryInvalidException + "</ExpectedException>");
+    logger.info(
+        "<ExpectedException action=remove>"
+            + expectedQueryInvalidException
+            + "</ExpectedException>");
   }
 
   /**
    * Populates the region with the Objects stores in the data Object array.
-   * 
+   *
    * @param region
    * @param data
    */

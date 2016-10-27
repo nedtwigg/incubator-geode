@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import java.io.IOException;
@@ -32,20 +30,24 @@ import org.apache.geode.pdx.internal.TypeRegistry;
 
 public class GetPDXTypeById extends BaseCommand {
 
-  private final static GetPDXTypeById singleton = new GetPDXTypeById();
+  private static final GetPDXTypeById singleton = new GetPDXTypeById();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private GetPDXTypeById() {
-  }
+  private GetPDXTypeById() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received get pdx type by id request ({} parts) from {}", servConn.getName(), msg.getNumberOfParts(), servConn.getSocketString());
+      logger.debug(
+          "{}: Received get pdx type by id request ({} parts) from {}",
+          servConn.getName(),
+          msg.getNumberOfParts(),
+          servConn.getSocketString());
     }
     int pdxId = msg.getPart(0).getInt();
 

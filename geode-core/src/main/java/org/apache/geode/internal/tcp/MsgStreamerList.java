@@ -27,27 +27,22 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * Encapsulates a set of {@link MsgStreamer}s and {@link VersionedMsgStreamer}s
- * requiring possibly different serializations for different versions of
- * product.
- * 
+ * Encapsulates a set of {@link MsgStreamer}s and {@link VersionedMsgStreamer}s requiring possibly
+ * different serializations for different versions of product.
+ *
  * @since GemFire 7.1
  */
 public final class MsgStreamerList implements BaseMsgStreamer {
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * List of {@link MsgStreamer}s encapsulated by this MsgStreamerList.
-   */
+  /** List of {@link MsgStreamer}s encapsulated by this MsgStreamerList. */
   private final List<MsgStreamer> streamers;
 
   MsgStreamerList(List<MsgStreamer> streamers) {
     this.streamers = streamers;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void reserveConnections(long startTime, long ackTimeout, long ackSDTimeout) {
     for (MsgStreamer streamer : this.streamers) {
@@ -55,9 +50,7 @@ public final class MsgStreamerList implements BaseMsgStreamer {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int writeMessage() throws IOException {
     int result = 0;
@@ -96,9 +89,7 @@ public final class MsgStreamerList implements BaseMsgStreamer {
     return result;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @SuppressWarnings("unchecked")
   @Override
   public List<?> getSentConnections() {
@@ -113,9 +104,7 @@ public final class MsgStreamerList implements BaseMsgStreamer {
     return sentCons;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public ConnectExceptions getConnectExceptions() {
     ConnectExceptions ce = null;
@@ -137,9 +126,7 @@ public final class MsgStreamerList implements BaseMsgStreamer {
     return ce;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void close() throws IOException {
     // only throw the first exception and try to close all

@@ -40,16 +40,15 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.i18n.StringId;
 
 /**
- * This class keeps track of how many InitialImageMessages are in flight between the
- * initial image provider and the image target.
- * 
- * The provider is responsible for calling acquirePermit before sending an initial image
- * chunk. The acquire will block if two many messages are in flight.
- * 
- * The initial image target sends FlowControlPermitMessage to the image provider after
- * each processed chunk. Upon receiving the FlowControlPermit message, the provider
- * will increase the number of permits available.
+ * This class keeps track of how many InitialImageMessages are in flight between the initial image
+ * provider and the image target.
  *
+ * <p>The provider is responsible for calling acquirePermit before sending an initial image chunk.
+ * The acquire will block if two many messages are in flight.
+ *
+ * <p>The initial image target sends FlowControlPermitMessage to the image provider after each
+ * processed chunk. Upon receiving the FlowControlPermit message, the provider will increase the
+ * number of permits available.
  */
 public class InitialImageFlowControl implements MembershipListener {
   private static final Logger logger = LogService.getLogger();
@@ -88,9 +87,7 @@ public class InitialImageFlowControl implements MembershipListener {
     dm.getStats().incInitialImageMessagesInFlight(val);
   }
 
-  /**
-   * Acquire a permit to send another message
-   */
+  /** Acquire a permit to send another message */
   public void acquirePermit() {
     long startWaitTime = System.currentTimeMillis();
     while (!aborted.get()) {
@@ -124,21 +121,26 @@ public class InitialImageFlowControl implements MembershipListener {
       checkCancellation();
 
       Set activeMembers = dm.getDistributionManagerIds();
-      final Object[] msgArgs = new Object[] { getAckWaitThreshold(), this, dm.getId(), activeMembers };
-      final StringId msg = LocalizedStrings.ReplyProcessor21_0_SEC_HAVE_ELAPSED_WHILE_WAITING_FOR_REPLIES_1_ON_2_WHOSE_CURRENT_MEMBERSHIP_LIST_IS_3;
+      final Object[] msgArgs =
+          new Object[] {getAckWaitThreshold(), this, dm.getId(), activeMembers};
+      final StringId msg =
+          LocalizedStrings
+              .ReplyProcessor21_0_SEC_HAVE_ELAPSED_WHILE_WAITING_FOR_REPLIES_1_ON_2_WHOSE_CURRENT_MEMBERSHIP_LIST_IS_3;
       logger.warn(LocalizedMessage.create(msg, msgArgs));
 
       permits.acquire();
 
       // Give an info message since timeout gave a warning.
-      logger.info(LocalizedMessage.create(LocalizedStrings.ReplyProcessor21_WAIT_FOR_REPLIES_COMPLETED_1, "InitialImageFlowControl"));
+      logger.info(
+          LocalizedMessage.create(
+              LocalizedStrings.ReplyProcessor21_WAIT_FOR_REPLIES_COMPLETED_1,
+              "InitialImageFlowControl"));
     }
   }
 
   /**
-   * Return the time in sec to wait before sending an alert while
-   * waiting for ack replies.  Note that the ack wait threshold may
-   * change at runtime, so we have to consult the system every time.
+   * Return the time in sec to wait before sending an alert while waiting for ack replies. Note that
+   * the ack wait threshold may change at runtime, so we have to consult the system every time.
    */
   private int getAckWaitThreshold() {
     return dm.getConfig().getAckWaitThreshold();
@@ -162,7 +164,6 @@ public class InitialImageFlowControl implements MembershipListener {
     if (id.equals(target)) {
       abort();
     }
-
   }
 
   private void abort() {
@@ -178,27 +179,32 @@ public class InitialImageFlowControl implements MembershipListener {
     //Do nothing
   }
 
-  public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
-  }
+  public void quorumLost(
+      Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {}
 
-  public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
+  public void memberSuspect(
+      InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
     //Do nothing
   }
 
   @Override
   public String toString() {
-    return "<InitialImageFlowControl for GII to " + target + " with " + permits.availablePermits() + " available permits>";
+    return "<InitialImageFlowControl for GII to "
+        + target
+        + " with "
+        + permits.availablePermits()
+        + " available permits>";
   }
 
-  public static class FlowControlPermitMessage extends DistributionMessage implements DataSerializableFixedID {
+  public static class FlowControlPermitMessage extends DistributionMessage
+      implements DataSerializableFixedID {
     private int keeperId;
 
     private FlowControlPermitMessage(int keeperId2) {
       this.keeperId = keeperId2;
     }
 
-    public FlowControlPermitMessage() {
-    }
+    public FlowControlPermitMessage() {}
 
     public static void send(DM dm, InternalDistributedMember recipient, int keeperId) {
       FlowControlPermitMessage message = new FlowControlPermitMessage(keeperId);
@@ -239,6 +245,5 @@ public class InitialImageFlowControl implements MembershipListener {
       super.toData(out);
       out.writeInt(keeperId);
     }
-
   }
 }

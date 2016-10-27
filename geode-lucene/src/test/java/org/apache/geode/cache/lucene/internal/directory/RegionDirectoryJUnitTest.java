@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -36,17 +36,15 @@ import org.apache.geode.cache.lucene.internal.filesystem.FileSystemStats;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * A unit test of the RegionDirectory class that uses the Directory test
- * case from the lucene code base.
- * 
- * This test is still mocking out the underlying cache, rather than using
- * a real region.
+ * A unit test of the RegionDirectory class that uses the Directory test case from the lucene code
+ * base.
+ *
+ * <p>This test is still mocking out the underlying cache, rather than using a real region.
  */
 @Category(UnitTest.class)
 public class RegionDirectoryJUnitTest extends BaseDirectoryTestCase {
 
-  @Rule
-  public SystemPropertiesRestoreRule restoreProps = new SystemPropertiesRestoreRule();
+  @Rule public SystemPropertiesRestoreRule restoreProps = new SystemPropertiesRestoreRule();
 
   @Override
   protected Directory getDirectory(Path path) throws IOException {
@@ -56,6 +54,7 @@ public class RegionDirectoryJUnitTest extends BaseDirectoryTestCase {
     //test asserts that no system properties have changed. Unfortunately, there is no
     //way to control the order of rules, so we can't clear this property with a rule
     //or @After method. Instead, do it in the close method of the directory.
-    return new RegionDirectory(new ConcurrentHashMap<String, File>(), new ConcurrentHashMap<ChunkKey, byte[]>(), stats);
+    return new RegionDirectory(
+        new ConcurrentHashMap<String, File>(), new ConcurrentHashMap<ChunkKey, byte[]>(), stats);
   }
 }

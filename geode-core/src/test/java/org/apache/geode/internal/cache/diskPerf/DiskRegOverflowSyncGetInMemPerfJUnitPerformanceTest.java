@@ -28,8 +28,8 @@ import org.apache.geode.internal.cache.DiskRegionTestingBase;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Disk region Perf test for Overflow only with Sync writes. 1) Performance of
- * get operation for entry in memory.
+ * Disk region Perf test for Overflow only with Sync writes. 1) Performance of get operation for
+ * entry in memory.
  */
 @Category(IntegrationTest.class)
 public class DiskRegOverflowSyncGetInMemPerfJUnitPerformanceTest extends DiskRegionTestingBase {
@@ -84,7 +84,6 @@ public class DiskRegOverflowSyncGetInMemPerfJUnitPerformanceTest extends DiskReg
     long startTimeGet = System.currentTimeMillis();
     for (int i = 0; i < OP_COUNT; i++) {
       region.get("" + (i + 10000));
-
     }
     long endTimeGet = System.currentTimeMillis();
     System.out.println(" done with getting");

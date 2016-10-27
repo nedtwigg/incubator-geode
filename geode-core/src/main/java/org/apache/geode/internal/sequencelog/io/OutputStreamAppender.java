@@ -29,10 +29,7 @@ import java.util.regex.Pattern;
 
 import org.apache.geode.internal.sequencelog.Transition;
 
-/**
- * Appends events logged using the SequenceLogger to a binary stream.
- *
- */
+/** Appends events logged using the SequenceLogger to a binary stream. */
 public class OutputStreamAppender {
   private IdentityHashMap<Object, Integer> writtenObjects = new IdentityHashMap<Object, Integer>();
   private HashMap<String, Integer> writtenStrings = new HashMap<String, Integer>();

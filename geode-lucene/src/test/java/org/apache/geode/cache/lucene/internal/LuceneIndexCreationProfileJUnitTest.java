@@ -55,53 +55,111 @@ public class LuceneIndexCreationProfileJUnitTest {
   }
 
   private final Object[] getSerializationProfiles() {
-    return $(new Object[] { getOneFieldLuceneIndexCreationProfile() }, new Object[] { getTwoFieldLuceneIndexCreationProfile() }, new Object[] { getTwoAnalyzersLuceneIndexCreationProfile() }, new Object[] { getNullField1AnalyzerLuceneIndexCreationProfile() });
+    return $(
+        new Object[] {getOneFieldLuceneIndexCreationProfile()},
+        new Object[] {getTwoFieldLuceneIndexCreationProfile()},
+        new Object[] {getTwoAnalyzersLuceneIndexCreationProfile()},
+        new Object[] {getNullField1AnalyzerLuceneIndexCreationProfile()});
   }
 
   @Test
   @Parameters(method = "getCheckCompatibilityProfiles")
-  public void testCheckCompatibility(LuceneIndexCreationProfile myProfile, LuceneIndexCreationProfile otherProfile, String expectedResult) {
+  public void testCheckCompatibility(
+      LuceneIndexCreationProfile myProfile,
+      LuceneIndexCreationProfile otherProfile,
+      String expectedResult) {
     assertEquals(expectedResult, otherProfile.checkCompatibility("/" + REGION_NAME, myProfile));
   }
 
   private final Object[] getCheckCompatibilityProfiles() {
-    return $(new Object[] { getOneFieldLuceneIndexCreationProfile(), getTwoFieldLuceneIndexCreationProfile(), CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_FIELDS }, new Object[] { getTwoAnalyzersLuceneIndexCreationProfile(), getOneAnalyzerLuceneIndexCreationProfile(new KeywordAnalyzer()), CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS }, new Object[] { getOneAnalyzerLuceneIndexCreationProfile(new KeywordAnalyzer()), getTwoAnalyzersLuceneIndexCreationProfile(), CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_3 }, new Object[] { getOneAnalyzerLuceneIndexCreationProfile(new StandardAnalyzer()), getOneAnalyzerLuceneIndexCreationProfile(new KeywordAnalyzer()), CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_2 }, new Object[] { getNullField2AnalyzerLuceneIndexCreationProfile(), getNullField1AnalyzerLuceneIndexCreationProfile(), CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_1 },
-        new Object[] { getNullField1AnalyzerLuceneIndexCreationProfile(), getNullField2AnalyzerLuceneIndexCreationProfile(), LuceneTestUtilities.CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_2 });
+    return $(
+        new Object[] {
+          getOneFieldLuceneIndexCreationProfile(),
+          getTwoFieldLuceneIndexCreationProfile(),
+          CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_FIELDS
+        },
+        new Object[] {
+          getTwoAnalyzersLuceneIndexCreationProfile(),
+          getOneAnalyzerLuceneIndexCreationProfile(new KeywordAnalyzer()),
+          CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS
+        },
+        new Object[] {
+          getOneAnalyzerLuceneIndexCreationProfile(new KeywordAnalyzer()),
+          getTwoAnalyzersLuceneIndexCreationProfile(),
+          CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_3
+        },
+        new Object[] {
+          getOneAnalyzerLuceneIndexCreationProfile(new StandardAnalyzer()),
+          getOneAnalyzerLuceneIndexCreationProfile(new KeywordAnalyzer()),
+          CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_2
+        },
+        new Object[] {
+          getNullField2AnalyzerLuceneIndexCreationProfile(),
+          getNullField1AnalyzerLuceneIndexCreationProfile(),
+          CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_1
+        },
+        new Object[] {
+          getNullField1AnalyzerLuceneIndexCreationProfile(),
+          getNullField2AnalyzerLuceneIndexCreationProfile(),
+          LuceneTestUtilities.CANNOT_CREATE_LUCENE_INDEX_DIFFERENT_ANALYZERS_2
+        });
   }
 
   private LuceneIndexCreationProfile getOneFieldLuceneIndexCreationProfile() {
-    return new LuceneIndexCreationProfile(INDEX_NAME, REGION_NAME, new String[] { "field1" }, new StandardAnalyzer(), null);
+    return new LuceneIndexCreationProfile(
+        INDEX_NAME, REGION_NAME, new String[] {"field1"}, new StandardAnalyzer(), null);
   }
 
   private LuceneIndexCreationProfile getTwoFieldLuceneIndexCreationProfile() {
-    return new LuceneIndexCreationProfile(INDEX_NAME, REGION_NAME, new String[] { "field1", "field2" }, new StandardAnalyzer(), null);
+    return new LuceneIndexCreationProfile(
+        INDEX_NAME, REGION_NAME, new String[] {"field1", "field2"}, new StandardAnalyzer(), null);
   }
 
   private LuceneIndexCreationProfile getOneAnalyzerLuceneIndexCreationProfile(Analyzer analyzer) {
     Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
     fieldAnalyzers.put("field1", analyzer);
-    return new LuceneIndexCreationProfile(INDEX_NAME, REGION_NAME, new String[] { "field1", "field2" }, getPerFieldAnalyzerWrapper(fieldAnalyzers), fieldAnalyzers);
+    return new LuceneIndexCreationProfile(
+        INDEX_NAME,
+        REGION_NAME,
+        new String[] {"field1", "field2"},
+        getPerFieldAnalyzerWrapper(fieldAnalyzers),
+        fieldAnalyzers);
   }
 
   private LuceneIndexCreationProfile getTwoAnalyzersLuceneIndexCreationProfile() {
     Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
     fieldAnalyzers.put("field1", new KeywordAnalyzer());
     fieldAnalyzers.put("field2", new KeywordAnalyzer());
-    return new LuceneIndexCreationProfile(INDEX_NAME, REGION_NAME, new String[] { "field1", "field2" }, getPerFieldAnalyzerWrapper(fieldAnalyzers), fieldAnalyzers);
+    return new LuceneIndexCreationProfile(
+        INDEX_NAME,
+        REGION_NAME,
+        new String[] {"field1", "field2"},
+        getPerFieldAnalyzerWrapper(fieldAnalyzers),
+        fieldAnalyzers);
   }
 
   private LuceneIndexCreationProfile getNullField1AnalyzerLuceneIndexCreationProfile() {
     Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
     fieldAnalyzers.put("field1", null);
     fieldAnalyzers.put("field2", new KeywordAnalyzer());
-    return new LuceneIndexCreationProfile(INDEX_NAME, REGION_NAME, new String[] { "field1", "field2" }, getPerFieldAnalyzerWrapper(fieldAnalyzers), fieldAnalyzers);
+    return new LuceneIndexCreationProfile(
+        INDEX_NAME,
+        REGION_NAME,
+        new String[] {"field1", "field2"},
+        getPerFieldAnalyzerWrapper(fieldAnalyzers),
+        fieldAnalyzers);
   }
 
   private LuceneIndexCreationProfile getNullField2AnalyzerLuceneIndexCreationProfile() {
     Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
     fieldAnalyzers.put("field1", new KeywordAnalyzer());
     fieldAnalyzers.put("field2", null);
-    return new LuceneIndexCreationProfile(INDEX_NAME, REGION_NAME, new String[] { "field1", "field2" }, getPerFieldAnalyzerWrapper(fieldAnalyzers), fieldAnalyzers);
+    return new LuceneIndexCreationProfile(
+        INDEX_NAME,
+        REGION_NAME,
+        new String[] {"field1", "field2"},
+        getPerFieldAnalyzerWrapper(fieldAnalyzers),
+        fieldAnalyzers);
   }
 
   private Analyzer getPerFieldAnalyzerWrapper(Map<String, Analyzer> fieldAnalyzers) {

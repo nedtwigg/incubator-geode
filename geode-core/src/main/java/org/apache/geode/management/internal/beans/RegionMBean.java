@@ -26,17 +26,14 @@ import org.apache.geode.management.RegionAttributesData;
 import org.apache.geode.management.RegionMXBean;
 
 /**
- * Concrete implementation of RegionMXBean which exposes various configuration
- * and runtime statistics about the region instance.
- * 
- * It extends NotificationBroadcasterSupport for any future implementation of
- * notification.
- * 
- * 
+ * Concrete implementation of RegionMXBean which exposes various configuration and runtime
+ * statistics about the region instance.
+ *
+ * <p>It extends NotificationBroadcasterSupport for any future implementation of notification.
  */
 public class RegionMBean<K, V> extends NotificationBroadcasterSupport implements RegionMXBean {
 
-  /** Bridge is responsible for extracting data from GemFire Layer **/
+  /** Bridge is responsible for extracting data from GemFire Layer * */
   private RegionMBeanBridge<K, V> bridge;
 
   public RegionMBean(RegionMBeanBridge<K, V> bridge) {
@@ -311,5 +308,4 @@ public class RegionMBean<K, V> extends NotificationBroadcasterSupport implements
   public int getLocalMaxMemory() {
     return bridge.getLocalMaxMemory();
   }
-
 }

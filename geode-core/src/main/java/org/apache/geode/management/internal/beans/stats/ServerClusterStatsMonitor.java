@@ -21,10 +21,7 @@ import java.util.Map;
 
 import org.apache.geode.management.internal.FederationComponent;
 
-/**
- *
- *
- */
+/** */
 public class ServerClusterStatsMonitor {
 
   private static final String NUM_CLIENTS = "CurrentClients";
@@ -43,7 +40,6 @@ public class ServerClusterStatsMonitor {
 
   public void aggregate(FederationComponent newState, FederationComponent oldState) {
     aggregator.aggregate(newState, oldState);
-
   }
 
   public ServerClusterStatsMonitor() {
@@ -58,7 +54,6 @@ public class ServerClusterStatsMonitor {
     typeMap.put(QUERY_REQUEST_RATE, Float.TYPE);
     typeMap.put(REGISTERED_QUERY_COUNT, Long.TYPE);
     typeMap.put(NUM_SUBSCRIPTIONS, Integer.TYPE);
-
   }
 
   public int getNumClients() {
@@ -80,5 +75,4 @@ public class ServerClusterStatsMonitor {
   public int getNumSubscriptions() {
     return aggregator.getIntValue(NUM_SUBSCRIPTIONS);
   }
-
 }

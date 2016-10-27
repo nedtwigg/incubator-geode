@@ -16,7 +16,7 @@
  */
 /*
  * IndexTest.java JUnit based test
- * 
+ *
  * Created on March 9, 2005, 3:30 PM
  */
 package org.apache.geode.cache.query.internal;
@@ -41,17 +41,20 @@ import org.apache.geode.cache.query.QueryService;
 import org.apache.geode.cache.query.data.Portfolio;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- */
+/** */
 @Category(IntegrationTest.class)
 public class QueryFromClauseCanonicalizationJUnitTest {
   Region region = null;
 
   QueryService qs = null;
 
-  static String queries[] = { "SELECT DISTINCT ID, value.secId FROM /pos, getPositions where status = 'active' and ID = 0", "SELECT DISTINCT ID, value.secId FROM /pos, positions where status = 'active' and ID = 0", "SELECT DISTINCT ID, value.secId FROM /pos, getPositions() where status = 'active' and ID = 0", "SELECT DISTINCT ID, p.value.secId FROM /pos, getPositions('true') p where status = 'active' and ID = 0", "SELECT DISTINCT * FROM /pos as a, a.collectionHolderMap['0'].arr as b where a.status = 'active' and a.ID = 0",
-      /* "SELECT DISTINCT * FROM /pos as a, a.positions[a.collectionHolderMap['0'][1]] as b where a.status = 'active' and a.ID = 0",*/
+  static String queries[] = {
+    "SELECT DISTINCT ID, value.secId FROM /pos, getPositions where status = 'active' and ID = 0",
+    "SELECT DISTINCT ID, value.secId FROM /pos, positions where status = 'active' and ID = 0",
+    "SELECT DISTINCT ID, value.secId FROM /pos, getPositions() where status = 'active' and ID = 0",
+    "SELECT DISTINCT ID, p.value.secId FROM /pos, getPositions('true') p where status = 'active' and ID = 0",
+    "SELECT DISTINCT * FROM /pos as a, a.collectionHolderMap['0'].arr as b where a.status = 'active' and a.ID = 0",
+    /* "SELECT DISTINCT * FROM /pos as a, a.positions[a.collectionHolderMap['0'][1]] as b where a.status = 'active' and a.ID = 0",*/
 
   };
 
@@ -86,61 +89,78 @@ public class QueryFromClauseCanonicalizationJUnitTest {
         QueryObserverHolder.setInstance(observer);
         q.execute();
       } catch (Exception e) {
-        System.err.println("QueryFromClauseCanonicalizationJUnitTest::testCanonicalizedFromClause.Exception in running query number=" + j + "  Exception=" + e);
+        System.err.println(
+            "QueryFromClauseCanonicalizationJUnitTest::testCanonicalizedFromClause.Exception in running query number="
+                + j
+                + "  Exception="
+                + e);
         e.printStackTrace();
         overallTestFailed = true;
         continue;
       }
 
       switch (j) {
-      case 0:
-      case 1:
-      case 2:
-        if (observer.clauses.get(0).toString().equals("/pos") && observer.clauses.get(1).toString().equals("iter1.positions")) {
-          assertTrue(true);
-        } else {
-          overallTestFailed = true;
-          System.err.println("QueryFromClauseCanonicalizationJUnitTest::testCanonicalizedFromClause.Failure in query number=" + j);
-        }
-        break;
-      case 3:
-        if (observer.clauses.get(0).toString().equals("/pos") && observer.clauses.get(1).toString().equals("iter1.getPositions('true')")) {
-          assertTrue(true);
-        } else {
-          overallTestFailed = true;
-          System.err.println("QueryFromClauseCanonicalizationJUnitTest::testCanonicalizedFromClause.Failure in query number=" + j);
-        }
-        break;
-      case 5:
-        if (observer.clauses.get(0).toString().equals("/pos") && observer.clauses.get(1).toString().equals("iter1.positions[iter1.collectionHolderMap[][]]")) {
-          assertTrue(true);
-        } else {
-          overallTestFailed = true;
-          System.err.println("QueryFromClauseCanonicalizationJUnitTest::testCanonicalizedFromClause.Failure in query number=" + j);
-        }
-        break;
-      case 4:
-        if (observer.clauses.get(0).toString().equals("/pos") && observer.clauses.get(1).toString().equals("iter1.collectionHolderMap['0'].arr")) {
-          assertTrue(true);
-        } else {
-          overallTestFailed = true;
-          System.err.println("QueryFromClauseCanonicalizationJUnitTest::testCanonicalizedFromClause.Failure in query number=" + j);
-        }
-        break;
-
+        case 0:
+        case 1:
+        case 2:
+          if (observer.clauses.get(0).toString().equals("/pos")
+              && observer.clauses.get(1).toString().equals("iter1.positions")) {
+            assertTrue(true);
+          } else {
+            overallTestFailed = true;
+            System.err.println(
+                "QueryFromClauseCanonicalizationJUnitTest::testCanonicalizedFromClause.Failure in query number="
+                    + j);
+          }
+          break;
+        case 3:
+          if (observer.clauses.get(0).toString().equals("/pos")
+              && observer.clauses.get(1).toString().equals("iter1.getPositions('true')")) {
+            assertTrue(true);
+          } else {
+            overallTestFailed = true;
+            System.err.println(
+                "QueryFromClauseCanonicalizationJUnitTest::testCanonicalizedFromClause.Failure in query number="
+                    + j);
+          }
+          break;
+        case 5:
+          if (observer.clauses.get(0).toString().equals("/pos")
+              && observer
+                  .clauses
+                  .get(1)
+                  .toString()
+                  .equals("iter1.positions[iter1.collectionHolderMap[][]]")) {
+            assertTrue(true);
+          } else {
+            overallTestFailed = true;
+            System.err.println(
+                "QueryFromClauseCanonicalizationJUnitTest::testCanonicalizedFromClause.Failure in query number="
+                    + j);
+          }
+          break;
+        case 4:
+          if (observer.clauses.get(0).toString().equals("/pos")
+              && observer.clauses.get(1).toString().equals("iter1.collectionHolderMap['0'].arr")) {
+            assertTrue(true);
+          } else {
+            overallTestFailed = true;
+            System.err.println(
+                "QueryFromClauseCanonicalizationJUnitTest::testCanonicalizedFromClause.Failure in query number="
+                    + j);
+          }
+          break;
       }
-
     }
-    if (overallTestFailed)
-      Assert.fail();
-
+    if (overallTestFailed) Assert.fail();
   }
 
   @Test
   public void testCanonicalizationOfMethod() throws Exception {
     QCompiler compiler = new QCompiler();
     List list = compiler.compileFromClause("/pos pf");
-    ExecutionContext context = new ExecutionContext(new Object[] { "bindkey" }, CacheUtils.getCache());
+    ExecutionContext context =
+        new ExecutionContext(new Object[] {"bindkey"}, CacheUtils.getCache());
     context.newScope(context.assosciateScopeID());
 
     Iterator iter = list.iterator();
@@ -169,7 +189,7 @@ public class QueryFromClauseCanonicalizationJUnitTest {
     //    sbuff = new StringBuffer();
     //    cop.generateCanonicalizedExpression(sbuff, context);
     //    assertIndexDetailsEquals(sbuff.toString(),"iter1.positions.get('bindkey')");
-    //    
+    //
 
     //    cp = new CompiledPath(new CompiledID("pf"), "getPositions()");
     //    cb = new CompiledBindArgument(1);
@@ -179,8 +199,8 @@ public class QueryFromClauseCanonicalizationJUnitTest {
     //    sbuff = new StringBuffer();
     //    cop.generateCanonicalizedExpression(sbuff, context);
     //    assertIndexDetailsEquals(sbuff.toString(),"iter1.positions().get('bindkey')");
-    //    
-    //    
+    //
+    //
     //    cp = new CompiledPath(new CompiledID("pf"), "getPositions");
     //    cb = new CompiledBindArgument(1);
     //    args = new ArrayList();
@@ -212,7 +232,6 @@ public class QueryFromClauseCanonicalizationJUnitTest {
 
     public void beforeIterationEvaluation(CompiledValue executer, Object currentObject) {
       clauses.add(((RuntimeIterator) executer).getDefinition());
-
     }
   }
 }

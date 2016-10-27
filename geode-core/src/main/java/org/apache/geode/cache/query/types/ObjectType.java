@@ -20,26 +20,24 @@ package org.apache.geode.cache.query.types;
 import org.apache.geode.DataSerializable;
 
 /**
- * An ObjectType represents the type of an object in a query.
- * An ObjectType is similar to a Class, except unlike a Class it can be
- * extended to add more information such as a subtype for collection Classes,
- * a key type for a map class, or a field information for structs.
+ * An ObjectType represents the type of an object in a query. An ObjectType is similar to a Class,
+ * except unlike a Class it can be extended to add more information such as a subtype for collection
+ * Classes, a key type for a map class, or a field information for structs.
  *
- * Note that multiple instances of are allowed of the same type, so ObjectTypes
- * should always be compared using equals.
+ * <p>Note that multiple instances of are allowed of the same type, so ObjectTypes should always be
+ * compared using equals.
  *
  * @see StructType
  * @see CollectionType
  * @see MapType
- *
  * @since GemFire 4.0
  */
 public interface ObjectType extends DataSerializable {
 
   /**
-   * Return true if this is a CollectionType. Note that MapTypes, Region types,
-   * and array types are also considered CollectionTypes in the context of the
-   * query language and therefore return true to this method.
+   * Return true if this is a CollectionType. Note that MapTypes, Region types, and array types are
+   * also considered CollectionTypes in the context of the query language and therefore return true
+   * to this method.
    */
   public boolean isCollectionType();
 
@@ -49,11 +47,9 @@ public interface ObjectType extends DataSerializable {
   /** Return true if this is a StructType */
   public boolean isStructType();
 
-  /** @return the simple name for the class this resolves to without including
-    * the package */
+  /** @return the simple name for the class this resolves to without including the package */
   public String getSimpleClassName();
 
-  /** @return the Class that this type corresponds to.
-   */
+  /** @return the Class that this type corresponds to. */
   public Class resolveClass();
 }

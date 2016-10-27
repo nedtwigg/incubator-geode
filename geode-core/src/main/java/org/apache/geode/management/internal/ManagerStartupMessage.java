@@ -70,5 +70,4 @@ public class ManagerStartupMessage extends PooledDistributionMessage {
   public String toString() {
     return "ManagerStartupMessage from " + this.getSender() + " level=" + alertLevel;
   }
-
 }

@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * File comment
- */
+/** File comment */
 package org.apache.geode.internal.cache;
 
 import org.apache.geode.cache.client.internal.ServerRegionDataAccess;
@@ -25,9 +23,8 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.cache.tx.TransactionalOperation.ServerRegionOperation;
 
 /**
- * This interface extends {@link TXStateInterface} providing for a proxy for the
- * real transaction on a remote data store node.
- * 
+ * This interface extends {@link TXStateInterface} providing for a proxy for the real transaction on
+ * a remote data store node.
  */
 public interface TXStateProxy extends TXStateInterface {
 
@@ -56,8 +53,9 @@ public interface TXStateProxy extends TXStateInterface {
   public void setJCATransaction();
 
   /**
-   * establishes the synchronization thread used for client/server
-   * beforeCompletion/afterCompletion processing
+   * establishes the synchronization thread used for client/server beforeCompletion/afterCompletion
+   * processing
+   *
    * @param sync
    */
   public void setSynchronizationRunnable(TXSynchronizationRunnable sync);
@@ -65,33 +63,29 @@ public interface TXStateProxy extends TXStateInterface {
   public TXSynchronizationRunnable getSynchronizationRunnable();
 
   /**
-   * Called by {@link TXManagerImpl#internalSuspend()} to perform additional
-   * tasks required to suspend a transaction
+   * Called by {@link TXManagerImpl#internalSuspend()} to perform additional tasks required to
+   * suspend a transaction
    */
   public void suspend();
 
   /**
-   * Called by {@link TXManagerImpl#resume(TXStateProxy)} to
-   * perform additional tasks required to resume a transaction
+   * Called by {@link TXManagerImpl#resume(TXStateProxy)} to perform additional tasks required to
+   * resume a transaction
    */
   public void resume();
 
-  /**
-   * record a client-side transactional operation for possible later replay
-   */
-  public void recordTXOperation(ServerRegionDataAccess proxy, ServerRegionOperation op, Object key, Object[] arguments);
+  /** record a client-side transactional operation for possible later replay */
+  public void recordTXOperation(
+      ServerRegionDataAccess proxy, ServerRegionOperation op, Object key, Object[] arguments);
 
-  /**
-   * @return the number of operations performed in this transaction
-   */
+  /** @return the number of operations performed in this transaction */
   public int operationCount();
 
   /**
-   * During client transaction failover, it is possible
-   * to get two Commit (rollback) requests for a single transaction.
-   * It becomes necessary to set the progress flag when the second
-   * request arrives. When the requeset is processed, progress flag
-   * must be reset. see bug 43350
+   * During client transaction failover, it is possible to get two Commit (rollback) requests for a
+   * single transaction. It becomes necessary to set the progress flag when the second request
+   * arrives. When the requeset is processed, progress flag must be reset. see bug 43350
+   *
    * @param progress
    */
   public void setInProgress(boolean progress);

@@ -20,16 +20,12 @@ package org.apache.geode;
 //import org.apache.geode.internal.FieldInfo;
 
 /**
- * Describes an individual statistic whose value is updated by an
- * application and may be archived by GemFire.  These descriptions are
- * gathered together in a {@link StatisticsType}.
+ * Describes an individual statistic whose value is updated by an application and may be archived by
+ * GemFire. These descriptions are gathered together in a {@link StatisticsType}.
  *
- * <P>
- * To get an instance of this interface use an instance of
- * {@link StatisticsFactory}.
- * <P>
- * <code>StatisticDescriptor</code>s are naturally ordered by their name.
+ * <p>To get an instance of this interface use an instance of {@link StatisticsFactory}.
  *
+ * <p><code>StatisticDescriptor</code>s are naturally ordered by their name.
  *
  * @since GemFire 3.0
  */
@@ -38,44 +34,31 @@ public interface StatisticDescriptor extends Comparable<StatisticDescriptor> {
   ////////////////////  Instance Methods  ////////////////////
 
   /**
-   * Returns the id of this statistic in a {@link StatisticsType
-   * statistics type}.  The id is initialized when its statistics
-   * type is created.
+   * Returns the id of this statistic in a {@link StatisticsType statistics type}. The id is
+   * initialized when its statistics type is created.
    *
-   * @throws IllegalStateException
-   *         The id has not been initialized yet
+   * @throws IllegalStateException The id has not been initialized yet
    */
   public int getId();
 
-  /**
-   * Returns the name of this statistic
-   */
+  /** Returns the name of this statistic */
   public String getName();
 
-  /**
-   * Returns a description of this statistic
-   */
+  /** Returns a description of this statistic */
   public String getDescription();
 
-  /**
-   * Returns the type of this statistic
-   */
+  /** Returns the type of this statistic */
   public Class<?> getType();
 
   /**
-   * Returns true if this statistic is a counter; false if its a gauge.
-   * Counter statistics have values that always increase.
-   * Gauge statistics have unconstrained values.
+   * Returns true if this statistic is a counter; false if its a gauge. Counter statistics have
+   * values that always increase. Gauge statistics have unconstrained values.
    */
   public boolean isCounter();
 
-  /**
-   * Returns true if a larger statistic value indicates better performance.
-   */
+  /** Returns true if a larger statistic value indicates better performance. */
   public boolean isLargerBetter();
 
-  /**
-   * Returns the unit in which this statistic is measured
-   */
+  /** Returns the unit in which this statistic is measured */
   public String getUnit();
 }

@@ -24,21 +24,17 @@ import org.apache.geode.test.dunit.standalone.DUnitLauncher.MasterRemote;
 
 import org.apache.logging.log4j.Logger;
 
-/**
- *
- */
+/** */
 public class ChildVM {
 
   private static boolean stopMainLoop = false;
 
-  /**
-   * tells the main() loop to exit
-   */
+  /** tells the main() loop to exit */
   public static void stopVM() {
     stopMainLoop = true;
   }
 
-  private final static Logger logger = LogService.getLogger();
+  private static final Logger logger = LogService.getLogger();
 
   public static void main(String[] args) throws Throwable {
     try {
@@ -46,7 +42,9 @@ public class ChildVM {
       int vmNum = Integer.getInteger(DUnitLauncher.VM_NUM_PARAM);
       int pid = OSProcess.getId();
       logger.info("VM" + vmNum + " is launching" + (pid > 0 ? " with PID " + pid : ""));
-      MasterRemote holder = (MasterRemote) Naming.lookup("//localhost:" + namingPort + "/" + DUnitLauncher.MASTER_PARAM);
+      MasterRemote holder =
+          (MasterRemote)
+              Naming.lookup("//localhost:" + namingPort + "/" + DUnitLauncher.MASTER_PARAM);
       DUnitLauncher.init(holder);
       DUnitLauncher.locatorPort = holder.getLocatorPort();
       final RemoteDUnitVM dunitVM = new RemoteDUnitVM();

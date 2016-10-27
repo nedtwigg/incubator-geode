@@ -52,21 +52,20 @@ public class MyAsyncEventListener2 implements AsyncEventListener {
     return bucketToEventsMap;
   }
 
-  public void close() {
-  }
+  public void close() {}
 
   //  protected void addExceptionTag(final String expectedException)
   //  {
-  //        
+  //
   //          SerializableRunnable addExceptionTag = new CacheSerializableRunnable("addExceptionTag")
   //          {
   //                 public void run2()
   //                 {
-  //                         getCache().getLogger().info("<ExpectedException action=add>" + 
-  //                                                expectedException + "</ExpectedException>"); 
+  //                         getCache().getLogger().info("<ExpectedException action=add>" +
+  //                                                expectedException + "</ExpectedException>");
   //                 }
   //          };
-  //          
+  //
   //         vm2.invoke(addExceptionTag);
   //         vm3.invoke(addExceptionTag);
   //         vm4.invoke(addExceptionTag);
@@ -74,16 +73,16 @@ public class MyAsyncEventListener2 implements AsyncEventListener {
   //         vm6.invoke(addExceptionTag);
   //         vm7.invoke(addExceptionTag);
   //  }
-  // 
+  //
   //  protected void removeExceptionTag(final String expectedException)
-  //  {     
-  //        
+  //  {
+  //
   //          SerializableRunnable removeExceptionTag = new CacheSerializableRunnable("removeExceptionTag")
   //          {
   //                public void run2() throws CacheException
   //                {
-  //                          getCache().getLogger().info("<ExpectedException action=remove>" + 
-  //                                                 expectedException + "</ExpectedException>");   
+  //                          getCache().getLogger().info("<ExpectedException action=remove>" +
+  //                                                 expectedException + "</ExpectedException>");
   //                }
   //          };
   //          vm2.invoke(removeExceptionTag);

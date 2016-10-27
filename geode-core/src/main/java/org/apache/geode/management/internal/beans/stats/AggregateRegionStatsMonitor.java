@@ -28,10 +28,7 @@ import org.apache.geode.internal.statistics.StatisticsNotification;
 import org.apache.geode.internal.statistics.ValueMonitor;
 import org.apache.geode.management.internal.beans.stats.MBeanStatsMonitor.DefaultHashMap;
 
-/**
- * 
- *
- */
+/** */
 public class AggregateRegionStatsMonitor extends MBeanStatsMonitor {
 
   private volatile int primaryBucketCount = 0;
@@ -155,16 +152,15 @@ public class AggregateRegionStatsMonitor extends MBeanStatsMonitor {
           // fix for bug 46604
         }
       }
-
     }
 
     /**
-     * Only decrease those values which can both increase and decrease and not
-     * values which can only increase like read/writes
-     * 
-     * Remove last sample value from the aggregate. Last Sampled value can be
-     * obtained from the DefaultHashMap for the disk
-     * 
+     * Only decrease those values which can both increase and decrease and not values which can only
+     * increase like read/writes
+     *
+     * <p>Remove last sample value from the aggregate. Last Sampled value can be obtained from the
+     * DefaultHashMap for the disk
+     *
      * @param stats
      */
     public void decreaseParStats(Statistics stats) {
@@ -174,9 +170,7 @@ public class AggregateRegionStatsMonitor extends MBeanStatsMonitor {
         totalBucketSize -= statsMap.get(StatsKey.TOTAL_BUCKET_SIZE).intValue();
         removed = true;
       }
-
     }
-
   };
 
   private Number computeDelta(DefaultHashMap statsMap, String name, Number currentValue) {
@@ -246,7 +240,6 @@ public class AggregateRegionStatsMonitor extends MBeanStatsMonitor {
       diskSpace += value.longValue();
       return;
     }
-
   }
 
   public int getTotalPrimaryBucketCount() {
@@ -278,5 +271,4 @@ public class AggregateRegionStatsMonitor extends MBeanStatsMonitor {
     // TODO Auto-generated method stub
 
   }
-
 }

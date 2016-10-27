@@ -23,22 +23,21 @@ import org.apache.geode.management.internal.cli.CommandResponseWriter;
 import org.apache.geode.management.internal.cli.GfshParser;
 import org.apache.geode.management.internal.cli.shell.Gfsh;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class CommandExecutionContext {
   // ThreadLocal variables that can be uses by commands
-  private static final ThreadLocal<Map<String, String>> ENV = new ThreadLocal<Map<String, String>>();
+  private static final ThreadLocal<Map<String, String>> ENV =
+      new ThreadLocal<Map<String, String>>();
   private static final ThreadLocal<Boolean> FROM_SHELL = new ThreadLocal<Boolean>();
   private static final ThreadLocal<byte[][]> SHELL_BYTES_DATA = new ThreadLocal<byte[][]>();
 
-  private static final WrapperThreadLocal<CommandResponseWriter> WRITER_WRAPPER = new WrapperThreadLocal<CommandResponseWriter>() {
-    @Override
-    protected CommandResponseWriter createWrapped() {
-      return new CommandResponseWriter();
-    }
-  };
+  private static final WrapperThreadLocal<CommandResponseWriter> WRITER_WRAPPER =
+      new WrapperThreadLocal<CommandResponseWriter>() {
+        @Override
+        protected CommandResponseWriter createWrapped() {
+          return new CommandResponseWriter();
+        }
+      };
 
   public static String getShellEnvProperty(String propertyName, String defaultValue) {
     String propertyValue = null;
@@ -75,7 +74,7 @@ public class CommandExecutionContext {
     }
   }
 
-  // TODO - Abhishek make this protected & move caller code of this method 
+  // TODO - Abhishek make this protected & move caller code of this method
   // from MemberMBeanBridge to MemberCommandService
   public static void setShellEnv(Map<String, String> env) {
     ENV.set(env);
@@ -93,7 +92,7 @@ public class CommandExecutionContext {
     return FROM_SHELL.get() != null && FROM_SHELL.get();
   }
 
-  // TODO - Abhishek make this protected & move caller code of this method 
+  // TODO - Abhishek make this protected & move caller code of this method
   // from MemberMBeanBridge to MemberCommandService
   public static void setShellRequest() {
     FROM_SHELL.set(true);

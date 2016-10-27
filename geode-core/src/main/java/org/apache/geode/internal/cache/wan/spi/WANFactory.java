@@ -33,5 +33,4 @@ public interface WANFactory {
   LocatorMembershipListener createLocatorMembershipListener();
 
   void initialize();
-
 }

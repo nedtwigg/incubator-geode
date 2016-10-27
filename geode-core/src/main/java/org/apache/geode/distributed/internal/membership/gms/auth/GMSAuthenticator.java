@@ -51,63 +51,53 @@ public class GMSAuthenticator implements Authenticator {
   }
 
   @Override
-  public void start() {
-  }
+  public void start() {}
 
   @Override
-  public void started() {
-  }
+  public void started() {}
 
   @Override
-  public void stop() {
-  }
+  public void stop() {}
 
   @Override
-  public void stopped() {
-  }
+  public void stopped() {}
 
   @Override
-  public void installView(NetView v) {
-  }
+  public void installView(NetView v) {}
 
   @Override
-  public void beSick() {
-  }
+  public void beSick() {}
 
   @Override
-  public void playDead() {
-  }
+  public void playDead() {}
 
   @Override
-  public void beHealthy() {
-  }
+  public void beHealthy() {}
 
   @Override
-  public void memberSuspected(InternalDistributedMember initiator, InternalDistributedMember suspect, String reason) {
-  }
+  public void memberSuspected(
+      InternalDistributedMember initiator, InternalDistributedMember suspect, String reason) {}
 
   /**
    * Authenticate peer member with authenticator class defined by property
    * "security-peer-authenticator".
    *
-   * @param  member
-   *         the member to be authenticated
-   * @param  credentials
-   *         the credentials used in authentication
-   * @return null if authentication succeed (including no authenticator case),
-   *         otherwise, return failure message
-   * @throws AuthenticationFailedException
-   *         this will be removed since return string is used for failure
+   * @param member the member to be authenticated
+   * @param credentials the credentials used in authentication
+   * @return null if authentication succeed (including no authenticator case), otherwise, return
+   *     failure message
+   * @throws AuthenticationFailedException this will be removed since return string is used for
+   *     failure
    */
   @Override
-  public String authenticate(InternalDistributedMember member, Properties credentials) throws AuthenticationFailedException {
+  public String authenticate(InternalDistributedMember member, Properties credentials)
+      throws AuthenticationFailedException {
     return authenticate(member, credentials, this.securityProps);
   }
 
-  /**
-   * Method is package protected to be used in testing.
-   */
-  String authenticate(DistributedMember member, Properties credentials, Properties secProps) throws AuthenticationFailedException {
+  /** Method is package protected to be used in testing. */
+  String authenticate(DistributedMember member, Properties credentials, Properties secProps)
+      throws AuthenticationFailedException {
     // For older systems, locator might be started without cache, so secureService may not be initialized here. We need to check
     // if the passed in secProps has peer authenticator or not
     String authMethod = secProps.getProperty(SECURITY_PEER_AUTHENTICATOR);
@@ -132,44 +122,51 @@ public class GMSAuthenticator implements Authenticator {
         invokeAuthenticator(secProps, member, credentials);
       }
     } catch (Exception ex) {
-      securityLogWriter.warning(AUTH_PEER_AUTHENTICATION_FAILED_WITH_EXCEPTION, new Object[] { member, ex.getLocalizedMessage() }, ex);
+      securityLogWriter.warning(
+          AUTH_PEER_AUTHENTICATION_FAILED_WITH_EXCEPTION,
+          new Object[] {member, ex.getLocalizedMessage()},
+          ex);
       failMsg = AUTH_PEER_AUTHENTICATION_FAILED.toLocalizedString(ex.getLocalizedMessage());
     }
 
     return failMsg;
   }
 
-  /**
-   * Method is package protected to be used in testing.
-   */
-  Principal invokeAuthenticator(Properties securityProps, DistributedMember member, Properties credentials) throws AuthenticationFailedException {
+  /** Method is package protected to be used in testing. */
+  Principal invokeAuthenticator(
+      Properties securityProps, DistributedMember member, Properties credentials)
+      throws AuthenticationFailedException {
     String authMethod = securityProps.getProperty(SECURITY_PEER_AUTHENTICATOR);
     org.apache.geode.security.Authenticator auth = null;
     try {
-      auth = SecurityService.getObjectOfType(authMethod, org.apache.geode.security.Authenticator.class);
+      auth =
+          SecurityService.getObjectOfType(
+              authMethod, org.apache.geode.security.Authenticator.class);
 
       LogWriter logWriter = this.services.getLogWriter();
       LogWriter securityLogWriter = this.services.getSecurityLogWriter();
-      auth.init(this.securityProps, logWriter, securityLogWriter); // this.securityProps contains security-ldap-basedn but security-ldap-baseDomainName is expected
+      auth.init(
+          this.securityProps,
+          logWriter,
+          securityLogWriter); // this.securityProps contains security-ldap-basedn but security-ldap-baseDomainName is expected
       return auth.authenticate(credentials, member);
 
     } catch (GemFireSecurityException gse) {
       throw gse;
 
     } catch (Exception ex) {
-      throw new AuthenticationFailedException(HandShake_FAILED_TO_ACQUIRE_AUTHENTICATOR_OBJECT.toLocalizedString(), ex);
+      throw new AuthenticationFailedException(
+          HandShake_FAILED_TO_ACQUIRE_AUTHENTICATOR_OBJECT.toLocalizedString(), ex);
 
     } finally {
-      if (auth != null)
-        auth.close();
+      if (auth != null) auth.close();
     }
   }
 
   /**
    * Get credential object for the given GemFire distributed member.
    *
-   * @param  member
-   *         the target distributed member
+   * @param member the target distributed member
    * @return the credentials
    */
   @Override
@@ -179,27 +176,32 @@ public class GMSAuthenticator implements Authenticator {
 
     } catch (Exception e) {
       String authMethod = securityProps.getProperty(SECURITY_PEER_AUTH_INIT);
-      services.getSecurityLogWriter().warning(LocalizedStrings.AUTH_FAILED_TO_OBTAIN_CREDENTIALS_IN_0_USING_AUTHINITIALIZE_1_2, new Object[] { authMethod, e.getLocalizedMessage() });
+      services
+          .getSecurityLogWriter()
+          .warning(
+              LocalizedStrings.AUTH_FAILED_TO_OBTAIN_CREDENTIALS_IN_0_USING_AUTHINITIALIZE_1_2,
+              new Object[] {authMethod, e.getLocalizedMessage()});
       return null;
     }
   }
 
-  /**
-   * For testing only.
-   */
+  /** For testing only. */
   Properties getCredentials(DistributedMember member, Properties secProps) {
     String authMethod = secProps.getProperty(SECURITY_PEER_AUTH_INIT);
-    return HandShake.getCredentials(authMethod, secProps, member, true, services.getLogWriter(), services.getSecurityLogWriter());
+    return HandShake.getCredentials(
+        authMethod,
+        secProps,
+        member,
+        true,
+        services.getLogWriter(),
+        services.getSecurityLogWriter());
   }
 
-  /**
-   * For testing only.
-   */
+  /** For testing only. */
   Properties getSecurityProps() {
     return this.securityProps;
   }
 
   @Override
-  public void emergencyClose() {
-  }
+  public void emergencyClose() {}
 }

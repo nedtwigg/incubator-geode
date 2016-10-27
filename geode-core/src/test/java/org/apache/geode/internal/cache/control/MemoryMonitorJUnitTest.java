@@ -80,19 +80,24 @@ public class MemoryMonitorJUnitTest {
     }
   }
 
-  final static String expectedEx = LocalizedStrings.MemoryMonitor_MEMBER_ABOVE_CRITICAL_THRESHOLD.getRawText().replaceAll("\\{[0-9]+\\}", ".*?");
-  public static final String addExpectedAbove = "<ExpectedException action=add>" + expectedEx + "</ExpectedException>";
-  public static final String removeExpectedAbove = "<ExpectedException action=remove>" + expectedEx + "</ExpectedException>";
-  final static String expectedBelow = LocalizedStrings.MemoryMonitor_MEMBER_BELOW_CRITICAL_THRESHOLD.getRawText().replaceAll("\\{[0-9]+\\}", ".*?");
-  public final static String addExpectedBelow = "<ExpectedException action=add>" + expectedBelow + "</ExpectedException>";
-  public final static String removeExpectedBelow = "<ExpectedException action=remove>" + expectedBelow + "</ExpectedException>";
+  static final String expectedEx =
+      LocalizedStrings.MemoryMonitor_MEMBER_ABOVE_CRITICAL_THRESHOLD.getRawText()
+          .replaceAll("\\{[0-9]+\\}", ".*?");
+  public static final String addExpectedAbove =
+      "<ExpectedException action=add>" + expectedEx + "</ExpectedException>";
+  public static final String removeExpectedAbove =
+      "<ExpectedException action=remove>" + expectedEx + "</ExpectedException>";
+  static final String expectedBelow =
+      LocalizedStrings.MemoryMonitor_MEMBER_BELOW_CRITICAL_THRESHOLD.getRawText()
+          .replaceAll("\\{[0-9]+\\}", ".*?");
+  public static final String addExpectedBelow =
+      "<ExpectedException action=add>" + expectedBelow + "</ExpectedException>";
+  public static final String removeExpectedBelow =
+      "<ExpectedException action=remove>" + expectedBelow + "</ExpectedException>";
 
   /**
-   * Test:
-   * 1. safe events are not delivered before critical
-   * 2. listeners are invoked
-   * 3. duplicate safe and critical events are not delivered
-   * 4. stats are updated
+   * Test: 1. safe events are not delivered before critical 2. listeners are invoked 3. duplicate
+   * safe and critical events are not delivered 4. stats are updated
    */
   @Test
   public void testInvokeListeners() throws Exception {
@@ -113,7 +118,8 @@ public class MemoryMonitorJUnitTest {
       ResourceListener listener = new TestMemoryThresholdListener();
       internalManager.addResourceListener(ResourceType.HEAP_MEMORY, listener);
     }
-    Set<ResourceListener> heapListeners = internalManager.getResourceListeners(ResourceType.HEAP_MEMORY);
+    Set<ResourceListener> heapListeners =
+        internalManager.getResourceListeners(ResourceType.HEAP_MEMORY);
     assertEquals(10 + SYSTEM_LISTENERS, heapListeners.size());
 
     heapMonitor.updateStateAndSendEvent(700);
@@ -150,8 +156,8 @@ public class MemoryMonitorJUnitTest {
   }
 
   /**
-   * By default both thresholds are disabled. make sure no event goes through.
-   * Enable thresholds and verify that events are delivered
+   * By default both thresholds are disabled. make sure no event goes through. Enable thresholds and
+   * verify that events are delivered
    */
   //TODO: write a converse of this test when default values are enabled
   @Test
@@ -210,30 +216,38 @@ public class MemoryMonitorJUnitTest {
     Region parent = cache.createRegion("parent", factory.create());
     parent.createSubregion("sub", factory.create());
     parent.close();
-    assertEquals(0 + SYSTEM_LISTENERS, cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
+    assertEquals(
+        0 + SYSTEM_LISTENERS,
+        cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
 
     //test nested local region
     parent = cache.createRegion("parent2", factory.create());
     parent.createSubregion("sub", factory.create()).createSubregion("subsub", factory.create());
     parent.close();
-    assertEquals(0 + SYSTEM_LISTENERS, cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
+    assertEquals(
+        0 + SYSTEM_LISTENERS,
+        cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
 
     //test distributed sub region
     factory.setScope(Scope.DISTRIBUTED_ACK);
     parent = cache.createRegion("parent3", factory.create());
     parent.createSubregion("sub", factory.create());
     parent.close();
-    assertEquals(0 + SYSTEM_LISTENERS, cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
+    assertEquals(
+        0 + SYSTEM_LISTENERS,
+        cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
     //test nested distributed region
     parent = cache.createRegion("parent4", factory.create());
     parent.createSubregion("sub", factory.create()).createSubregion("subsub", factory.create());
     parent.close();
-    assertEquals(0 + SYSTEM_LISTENERS, cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
+    assertEquals(
+        0 + SYSTEM_LISTENERS,
+        cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
   }
 
   /**
-   * creates a distributed region and invokes criticalThresholdReached
-   * then does a put to verify that the put is rejected
+   * creates a distributed region and invokes criticalThresholdReached then does a put to verify
+   * that the put is rejected
    */
   @Test
   public void testPutsRejectionDistributedRegion() throws Exception {
@@ -242,7 +256,9 @@ public class MemoryMonitorJUnitTest {
     Region region = cache.createRegion("DistributedRegion", attr.create());
     checkOpRejection(region, false, true);
     region.close();
-    assertEquals(0 + SYSTEM_LISTENERS, cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
+    assertEquals(
+        0 + SYSTEM_LISTENERS,
+        cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
   }
 
   @Test
@@ -252,7 +268,9 @@ public class MemoryMonitorJUnitTest {
     Region region = cache.createRegion("DistributedRegion", attr.create());
     checkOpRejection(region, true, true);
     region.close();
-    assertEquals(0 + SYSTEM_LISTENERS, cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
+    assertEquals(
+        0 + SYSTEM_LISTENERS,
+        cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
   }
 
   @Test
@@ -262,7 +280,9 @@ public class MemoryMonitorJUnitTest {
     Region region = cache.createRegion("localRegion", attr.create());
     checkOpRejection(region, false, true);
     region.close();
-    assertEquals(0 + SYSTEM_LISTENERS, cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
+    assertEquals(
+        0 + SYSTEM_LISTENERS,
+        cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
   }
 
   @Test
@@ -272,39 +292,57 @@ public class MemoryMonitorJUnitTest {
     Region region = cache.createRegion("localRegion", attr.create());
     checkOpRejection(region, true, true);
     region.close();
-    assertEquals(0 + SYSTEM_LISTENERS, cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
+    assertEquals(
+        0 + SYSTEM_LISTENERS,
+        cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
   }
 
   @Test
   public void testPutsRejectedSubRegion() throws Exception {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    Region subRegion = cache.createRegion("local1", factory.create()).createSubregion("sub1", factory.create());
+    Region subRegion =
+        cache.createRegion("local1", factory.create()).createSubregion("sub1", factory.create());
     checkOpRejection(subRegion, false, true);
     subRegion.close();
-    assertEquals(1 + SYSTEM_LISTENERS, cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size()); //root region is still present
+    assertEquals(
+        1 + SYSTEM_LISTENERS,
+        cache
+            .getResourceManager(false)
+            .getResourceListeners(ResourceType.HEAP_MEMORY)
+            .size()); //root region is still present
   }
 
   @Test
   public void testTxSubRegion() throws Exception {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    Region subRegion = cache.createRegion("local1", factory.create()).createSubregion("sub1", factory.create());
+    Region subRegion =
+        cache.createRegion("local1", factory.create()).createSubregion("sub1", factory.create());
     checkOpRejection(subRegion, true, true);
     subRegion.close();
-    assertEquals(1 + SYSTEM_LISTENERS, cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size()); //root region is still present
+    assertEquals(
+        1 + SYSTEM_LISTENERS,
+        cache
+            .getResourceManager(false)
+            .getResourceListeners(ResourceType.HEAP_MEMORY)
+            .size()); //root region is still present
   }
 
   @Test
   public void testPutsPartitionedRegion() throws Exception {
-    PartitionAttributes pa = new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(3).create();
+    PartitionAttributes pa =
+        new PartitionAttributesFactory().setRedundantCopies(0).setTotalNumBuckets(3).create();
     Region region = new RegionFactory().setPartitionAttributes(pa).create("parReg");
     checkOpRejection(region, false, true);
     region.close();
-    assertEquals(0 + SYSTEM_LISTENERS, cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
+    assertEquals(
+        0 + SYSTEM_LISTENERS,
+        cache.getResourceManager(false).getResourceListeners(ResourceType.HEAP_MEMORY).size());
   }
 
-  private void checkOpRejection(Region region, boolean useTransaction, boolean expectLowMemEx) throws Exception {
+  private void checkOpRejection(Region region, boolean useTransaction, boolean expectLowMemEx)
+      throws Exception {
     if (useTransaction) {
       cache.getCacheTransactionManager().begin();
     }
@@ -323,8 +361,12 @@ public class MemoryMonitorJUnitTest {
     internalManager.setCriticalHeapPercentage(95.0f);
 
     //make sure that the region is added as a memory event listener
-    assertEquals(2 + addSubregion + SYSTEM_LISTENERS, internalManager.getResourceListeners(ResourceType.HEAP_MEMORY).size());
-    assertEquals(2 + addSubregion + SYSTEM_LISTENERS, internalManager.getResourceListeners(ResourceType.HEAP_MEMORY).size());
+    assertEquals(
+        2 + addSubregion + SYSTEM_LISTENERS,
+        internalManager.getResourceListeners(ResourceType.HEAP_MEMORY).size());
+    assertEquals(
+        2 + addSubregion + SYSTEM_LISTENERS,
+        internalManager.getResourceListeners(ResourceType.HEAP_MEMORY).size());
 
     heapMonitor.updateStateAndSendEvent(97);
     assertEquals(1, listener.getCriticalThresholdCalls());
@@ -371,10 +413,12 @@ public class MemoryMonitorJUnitTest {
     assertEquals("Expected only one pool to be assigned", 1, once);
 
     // Default test, current default is disabled
-    assertEquals(rm.getCriticalHeapPercentage(), MemoryThresholds.DEFAULT_CRITICAL_PERCENTAGE, 0.01);
+    assertEquals(
+        rm.getCriticalHeapPercentage(), MemoryThresholds.DEFAULT_CRITICAL_PERCENTAGE, 0.01);
     NotificationEmitter emitter = (NotificationEmitter) ManagementFactory.getMemoryMXBean();
     try {
-      emitter.removeNotificationListener(InternalResourceManager.getInternalResourceManager(cache).getHeapMonitor());
+      emitter.removeNotificationListener(
+          InternalResourceManager.getInternalResourceManager(cache).getHeapMonitor());
       assertTrue("Expected that the resource manager was not registered", false);
     } catch (ListenerNotFoundException expected) {
     }
@@ -405,7 +449,8 @@ public class MemoryMonitorJUnitTest {
     assertEquals(rm.getCriticalHeapPercentage(), disabled, 0.01);
     emitter = (NotificationEmitter) ManagementFactory.getMemoryMXBean();
     try {
-      emitter.removeNotificationListener(InternalResourceManager.getInternalResourceManager(cache).getHeapMonitor());
+      emitter.removeNotificationListener(
+          InternalResourceManager.getInternalResourceManager(cache).getHeapMonitor());
       assertTrue("Expected that the resource manager was not registered", false);
     } catch (ListenerNotFoundException expected) {
     }
@@ -434,28 +479,28 @@ public class MemoryMonitorJUnitTest {
     assertEquals(0, listener.getAllCalls());
     //test EVICTION, CRITICAL, EVICTION, NORMAL cycle
     for (int i = 0; i < 3; i++) {
-      hmm.updateStateAndSendEvent(82); //EVICTION  
+      hmm.updateStateAndSendEvent(82); //EVICTION
       assertEquals(i * 4 + 1, listener.getAllCalls());
       assertEquals((i * 3) + 1, listener.getEvictionThresholdCalls());
       assertEquals(i + 1, irm.getStats().getEvictionStartEvents());
       assertEquals(82, listener.getCurrentHeapPercentage());
       assertEquals(2, listener.getBytesFromThreshold());
 
-      hmm.updateStateAndSendEvent(92); //CRITICAL 
+      hmm.updateStateAndSendEvent(92); //CRITICAL
       assertEquals(i * 4 + 2, listener.getAllCalls());
       assertEquals(i + 1, listener.getCriticalThresholdCalls());
       assertEquals(i + 1, irm.getStats().getHeapCriticalEvents());
       assertEquals(92, listener.getCurrentHeapPercentage());
       assertEquals(2, listener.getBytesFromThreshold());
 
-      hmm.updateStateAndSendEvent(85); //EVICTION 
+      hmm.updateStateAndSendEvent(85); //EVICTION
       assertEquals(i * 4 + 3, listener.getAllCalls());
       assertEquals((i * 3) + 3, listener.getEvictionThresholdCalls());
       assertEquals(i + 1, irm.getStats().getHeapSafeEvents());
       assertEquals(85, listener.getCurrentHeapPercentage());
       assertEquals(5, listener.getBytesFromThreshold());
 
-      hmm.updateStateAndSendEvent(76); //NORMAL 
+      hmm.updateStateAndSendEvent(76); //NORMAL
       assertEquals(i * 4 + 4, listener.getAllCalls());
       assertEquals(i + 1, listener.getNormalCalls());
       assertEquals(i + 1, irm.getStats().getEvictionStopEvents());
@@ -465,7 +510,7 @@ public class MemoryMonitorJUnitTest {
     listener.resetThresholdCalls();
 
     //test EVICTION to CRITICAL back to EVICTION
-    hmm.updateStateAndSendEvent(95); //CRITICAL 
+    hmm.updateStateAndSendEvent(95); //CRITICAL
     assertEquals(1, listener.getEvictionThresholdCalls());
     assertEquals(1, listener.getCriticalThresholdCalls());
     assertEquals(4, irm.getStats().getHeapCriticalEvents());
@@ -484,17 +529,17 @@ public class MemoryMonitorJUnitTest {
 
     //generate many events in threshold thickness for eviction threshold
     for (int i = 0; i < 5; i++) {
-      hmm.updateStateAndSendEvent(82); //EVICTION 
+      hmm.updateStateAndSendEvent(82); //EVICTION
       assertEquals(1, listener.getEvictionThresholdCalls());
       assertEquals((i * 2) + 1, listener.getAllCalls());
       assertEquals(82, listener.getCurrentHeapPercentage());
       assertEquals(2, listener.getBytesFromThreshold());
-      hmm.updateStateAndSendEvent(79); //EVICTION THICKNESS 
+      hmm.updateStateAndSendEvent(79); //EVICTION THICKNESS
     }
     listener.resetThresholdCalls();
     //generate many events in threshold thickness for critical threshold
     for (int i = 0; i < 5; i++) {
-      hmm.updateStateAndSendEvent(92); //CRITICAL 
+      hmm.updateStateAndSendEvent(92); //CRITICAL
       assertEquals(1, listener.getCriticalThresholdCalls());
       assertEquals((i * 2) + 1, listener.getAllCalls());
       assertEquals(92, listener.getCurrentHeapPercentage());
@@ -567,7 +612,7 @@ public class MemoryMonitorJUnitTest {
     listener.resetThresholdCalls();
     assertEquals(0, listener.getAllCalls());
 
-    //make sure that both thresholds are enabled, disable one threshold, make sure 
+    //make sure that both thresholds are enabled, disable one threshold, make sure
     //events for the other are delivered, enable the threshold
     //eviction threshold
     hmm.updateStateAndSendEvent(82); //EVICTION
@@ -589,12 +634,12 @@ public class MemoryMonitorJUnitTest {
     assertEquals(0, irm.getStats().getEvictionThreshold());
     assertEquals(1, irm.getStats().getEvictionStopEvents());
 
-    hmm.updateStateAndSendEvent(75); //EVICTION_DISABLED  
+    hmm.updateStateAndSendEvent(75); //EVICTION_DISABLED
     assertEquals(1, listener.getNormalCalls());
     assertEquals(0, listener.getEvictionThresholdCalls());
     assertEquals(1, irm.getStats().getEvictionStopEvents());
     assertEquals(1, irm.getStats().getHeapSafeEvents());
-    hmm.updateStateAndSendEvent(85); //EVICTION_DISABLED  
+    hmm.updateStateAndSendEvent(85); //EVICTION_DISABLED
     assertEquals(0, listener.getEvictionThresholdCalls());
     assertEquals(1, irm.getStats().getEvictionStartEvents());
     assertEquals(2, listener.getAllCalls());
@@ -673,9 +718,9 @@ public class MemoryMonitorJUnitTest {
     irm.setEvictionHeapPercentage(0f);
     assertEquals(1, listener.getEvictionDisabledCalls());
 
-    hmm.updateStateAndSendEvent(95); //NO EVENT   
-    hmm.updateStateAndSendEvent(87); //NO EVENT 
-    hmm.updateStateAndSendEvent(77); //NO EVENT 
+    hmm.updateStateAndSendEvent(95); //NO EVENT
+    hmm.updateStateAndSendEvent(87); //NO EVENT
+    hmm.updateStateAndSendEvent(77); //NO EVENT
     assertEquals(5, listener.getAllCalls()); //the two DISABLE calls
     listener.resetThresholdCalls();
 
@@ -697,9 +742,9 @@ public class MemoryMonitorJUnitTest {
     irm.setEvictionHeapPercentage(0f); //resets old state
     listener.resetThresholdCalls();
 
-    hmm.updateStateAndSendEvent(87); //NO EVENT   
-    hmm.updateStateAndSendEvent(77); //NO EVENT 
-    hmm.updateStateAndSendEvent(85); //NO EVENT 
+    hmm.updateStateAndSendEvent(87); //NO EVENT
+    hmm.updateStateAndSendEvent(77); //NO EVENT
+    hmm.updateStateAndSendEvent(85); //NO EVENT
     assertEquals(3, listener.getAllCalls());
 
     //enable critical, verify that forced event is not generated
@@ -722,13 +767,16 @@ public class MemoryMonitorJUnitTest {
   @Test
   public void testAddListeners() {
     final InternalResourceManager internalManager = this.cache.getResourceManager();
-    ResourceListener<MemoryEvent> memoryListener = new ResourceListener<MemoryEvent>() {
-      public void onEvent(MemoryEvent event) {
-        cache.getLogger().info("Received MemoryEvent");
-      }
-    };
+    ResourceListener<MemoryEvent> memoryListener =
+        new ResourceListener<MemoryEvent>() {
+          public void onEvent(MemoryEvent event) {
+            cache.getLogger().info("Received MemoryEvent");
+          }
+        };
     internalManager.addResourceListener(ResourceType.HEAP_MEMORY, memoryListener);
 
-    assertEquals(1 + SYSTEM_LISTENERS, internalManager.getResourceListeners(ResourceType.HEAP_MEMORY).size());
+    assertEquals(
+        1 + SYSTEM_LISTENERS,
+        internalManager.getResourceListeners(ResourceType.HEAP_MEMORY).size());
   }
 }

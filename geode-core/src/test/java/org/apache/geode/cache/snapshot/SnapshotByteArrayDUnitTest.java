@@ -50,67 +50,71 @@ public class SnapshotByteArrayDUnitTest extends JUnit4CacheTestCase {
 
   @Test
   public void testImportByteArray() throws Exception {
-    SerializableCallable load = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region region = getCache().getRegion("snapshot-ops");
-        for (int i = 0; i < 1000; i++) {
-          region.put(i, new byte[] { 0xf });
-        }
+    SerializableCallable load =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region region = getCache().getRegion("snapshot-ops");
+            for (int i = 0; i < 1000; i++) {
+              region.put(i, new byte[] {0xf});
+            }
 
-        region.getSnapshotService().save(snap, SnapshotFormat.GEMFIRE);
-        region.getSnapshotService().load(snap, SnapshotFormat.GEMFIRE);
+            region.getSnapshotService().save(snap, SnapshotFormat.GEMFIRE);
+            region.getSnapshotService().load(snap, SnapshotFormat.GEMFIRE);
 
-        return null;
-      }
-    };
+            return null;
+          }
+        };
 
     Host.getHost(0).getVM(1).invoke(load);
 
-    SerializableCallable callback = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region region = getCache().getRegion("snapshot-ops");
-        region.getAttributesMutator().addCacheListener(new CacheListenerAdapter<Integer, Object>() {
+    SerializableCallable callback =
+        new SerializableCallable() {
           @Override
-          public void afterUpdate(EntryEvent<Integer, Object> event) {
-            dump(event);
+          public Object call() throws Exception {
+            Region region = getCache().getRegion("snapshot-ops");
+            region
+                .getAttributesMutator()
+                .addCacheListener(
+                    new CacheListenerAdapter<Integer, Object>() {
+                      @Override
+                      public void afterUpdate(EntryEvent<Integer, Object> event) {
+                        dump(event);
+                      }
+
+                      @Override
+                      public void afterInvalidate(EntryEvent<Integer, Object> event) {
+                        dump(event);
+                      }
+
+                      @Override
+                      public void afterDestroy(EntryEvent<Integer, Object> event) {
+                        dump(event);
+                      }
+
+                      @Override
+                      public void afterCreate(EntryEvent<Integer, Object> event) {}
+
+                      private void dump(EntryEvent<Integer, Object> event) {
+                        LogWriterUtils.getLogWriter().info("op = " + event.getOperation());
+
+                        Object obj1 = event.getNewValue();
+                        LogWriterUtils.getLogWriter().info("new = " + obj1);
+
+                        Object obj2 = event.getOldValue();
+                        LogWriterUtils.getLogWriter().info("old = " + obj2);
+                      }
+                    });
+
+            return null;
           }
-
-          @Override
-          public void afterInvalidate(EntryEvent<Integer, Object> event) {
-            dump(event);
-          }
-
-          @Override
-          public void afterDestroy(EntryEvent<Integer, Object> event) {
-            dump(event);
-          }
-
-          @Override
-          public void afterCreate(EntryEvent<Integer, Object> event) {
-          }
-
-          private void dump(EntryEvent<Integer, Object> event) {
-            LogWriterUtils.getLogWriter().info("op = " + event.getOperation());
-
-            Object obj1 = event.getNewValue();
-            LogWriterUtils.getLogWriter().info("new = " + obj1);
-
-            Object obj2 = event.getOldValue();
-            LogWriterUtils.getLogWriter().info("old = " + obj2);
-          }
-        });
-
-        return null;
-      }
-    };
+        };
 
     SnapshotDUnitTest.forEachVm(callback, true);
     Region region = getCache().getRegion("snapshot-ops");
 
     for (int i = 0; i < 1000; i++) {
-      region.put(i, new byte[] { 0x0, 0x1, 0x3 });
+      region.put(i, new byte[] {0x0, 0x1, 0x3});
       region.invalidate(i);
       region.destroy(i);
     }
@@ -129,18 +133,20 @@ public class SnapshotByteArrayDUnitTest extends JUnit4CacheTestCase {
   }
 
   public void loadCache() throws Exception {
-    SerializableCallable setup = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer()).setPdxPersistent(true);
+    SerializableCallable setup =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheFactory cf =
+                new CacheFactory().setPdxSerializer(new MyPdxSerializer()).setPdxPersistent(true);
 
-        Cache cache = getCache(cf);
-        RegionGenerator rgen = new RegionGenerator();
-        rgen.createRegion(cache, null, RegionType.REPLICATE, "snapshot-ops");
+            Cache cache = getCache(cf);
+            RegionGenerator rgen = new RegionGenerator();
+            rgen.createRegion(cache, null, RegionType.REPLICATE, "snapshot-ops");
 
-        return null;
-      }
-    };
+            return null;
+          }
+        };
 
     SnapshotDUnitTest.forEachVm(setup, true);
   }

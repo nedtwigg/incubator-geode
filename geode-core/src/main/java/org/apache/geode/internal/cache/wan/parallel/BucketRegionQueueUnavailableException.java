@@ -19,17 +19,15 @@ package org.apache.geode.internal.cache.wan.parallel;
 import org.apache.geode.GemFireException;
 
 /**
- * The exception could be thrown if the BucketRegionQueue on which the operation
- * is happening is unavailable for some reason such as the BucketRegionQueue is 
- * being destroyed and hence getting cleaned up.
+ * The exception could be thrown if the BucketRegionQueue on which the operation is happening is
+ * unavailable for some reason such as the BucketRegionQueue is being destroyed and hence getting
+ * cleaned up.
  */
 public class BucketRegionQueueUnavailableException extends GemFireException {
 
-  public BucketRegionQueueUnavailableException() {
-  }
+  public BucketRegionQueueUnavailableException() {}
 
   public BucketRegionQueueUnavailableException(String msg) {
     super(msg);
   }
-
 }

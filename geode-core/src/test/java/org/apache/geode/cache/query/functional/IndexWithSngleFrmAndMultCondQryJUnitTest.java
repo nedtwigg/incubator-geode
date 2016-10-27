@@ -20,9 +20,7 @@
  * Created on April 26, 2005, 6:03 PM
  */
 
-/**
- *
- */
+/** */
 package org.apache.geode.cache.query.functional;
 
 import static org.junit.Assert.assertEquals;
@@ -106,7 +104,9 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     }
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.status='active' and pos.secId= 'IBM' and ID = 0" };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.status='active' and pos.secId= 'IBM' and ID = 0"
+    };
     SelectResults sr[][] = new SelectResults[queries.length][2];
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -133,7 +133,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           valPf1 = stc1.get(strg1[0]);
           valPos1 = stc1.get(strg1[1]);
           isActive1 = ((Portfolio) stc1.get(strg1[0])).isActive();
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -173,7 +172,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           valPf2 = stc2.get(strg2[0]);
           valPos2 = stc2.get(strg2[1]);
           isActive2 = ((Portfolio) stc2.get(strg2[0])).isActive();
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -187,7 +185,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       fail("FAILED:Search result Type is different in both the cases");
     }
     if (resSize1 == resSize2 || resSize1 != 0) {
-      CacheUtils.log("Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
+      CacheUtils.log(
+          "Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
     } else {
       fail("FAILED:Search result size is different in both the cases");
     }
@@ -197,12 +196,15 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       Struct stc2 = (Struct) itert2.next();
       Struct stc1 = (Struct) itert1.next();
       if (stc2.get(strg2[0]) != stc1.get(strg1[0]))
-        fail("FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
+        fail(
+            "FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
       if (stc2.get(strg2[1]) != stc1.get(strg1[1]))
         fail("FAILED: In both the cases Positions are different");
-      if (!StringUtils.equals(((Position) stc2.get(strg2[1])).secId, ((Position) stc1.get(strg1[1])).secId))
+      if (!StringUtils.equals(
+          ((Position) stc2.get(strg2[1])).secId, ((Position) stc1.get(strg1[1])).secId))
         fail("FAILED: In both the cases Positions secIds are different");
-      if (((Portfolio) stc2.get(strg2[0])).isActive() != ((Portfolio) stc1.get(strg1[0])).isActive())
+      if (((Portfolio) stc2.get(strg2[0])).isActive()
+          != ((Portfolio) stc1.get(strg1[0])).isActive())
         fail("FAILED: Status of the Portfolios found are different");
       if (((Portfolio) stc2.get(strg2[0])).getID() != ((Portfolio) stc1.get(strg1[0])).getID())
         fail("FAILED: IDs of the Portfolios found are different");
@@ -218,7 +220,9 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     }
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.ID > 0 and pf.ID < 3  and pf.status='active' and  pos.secId != null " };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.ID > 0 and pf.ID < 3  and pf.status='active' and  pos.secId != null "
+    };
     SelectResults sr[][] = new SelectResults[queries.length][2];
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -245,7 +249,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           valPf1 = stc1.get(strg1[0]);
           valPos1 = stc1.get(strg1[1]);
           isActive1 = ((Portfolio) stc1.get(strg1[0])).isActive();
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -257,7 +260,13 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
 
     qs = CacheUtils.getQueryService();
     Index index1 = qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "pf.status", "/pos pf");
-    Index index2 = (Index) qs.createIndex("secIdIndex", IndexType.FUNCTIONAL, "pos.secId", "/pos pf, pf.positions.values pos");
+    Index index2 =
+        (Index)
+            qs.createIndex(
+                "secIdIndex",
+                IndexType.FUNCTIONAL,
+                "pos.secId",
+                "/pos pf, pf.positions.values pos");
     Index index3 = qs.createIndex("IDIndex", IndexType.FUNCTIONAL, "pf.ID", "/pos pf");
 
     for (int i = 0; i < queries.length; i++) {
@@ -287,7 +296,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           valPf2 = stc2.get(strg2[0]);
           valPos2 = stc2.get(strg2[1]);
           isActive2 = ((Portfolio) stc2.get(strg2[0])).isActive();
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -301,7 +309,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       fail("FAILED:Search result Type is different in both the cases");
     }
     if (resSize1 == resSize2 || resSize1 != 0) {
-      CacheUtils.log("Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
+      CacheUtils.log(
+          "Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
     } else {
       fail("FAILED:Search result size is different in both the cases");
     }
@@ -311,12 +320,15 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       Struct stc2 = (Struct) itert2.next();
       Struct stc1 = (Struct) itert1.next();
       if (stc2.get(strg2[0]) != stc1.get(strg1[0]))
-        fail("FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
+        fail(
+            "FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
       if (stc2.get(strg2[1]) != stc1.get(strg1[1]))
         fail("FAILED: In both the cases Positions are different");
-      if (!StringUtils.equals(((Position) stc2.get(strg2[1])).secId, ((Position) stc1.get(strg1[1])).secId))
+      if (!StringUtils.equals(
+          ((Position) stc2.get(strg2[1])).secId, ((Position) stc1.get(strg1[1])).secId))
         fail("FAILED: In both the cases Positions secIds are different");
-      if (((Portfolio) stc2.get(strg2[0])).isActive() != ((Portfolio) stc1.get(strg1[0])).isActive())
+      if (((Portfolio) stc2.get(strg2[0])).isActive()
+          != ((Portfolio) stc1.get(strg1[0])).isActive())
         fail("FAILED: Status of the Portfolios found are different");
       if (((Portfolio) stc2.get(strg2[0])).getID() != ((Portfolio) stc1.get(strg1[0])).getID())
         fail("FAILED: IDs of the Portfolios found are different");
@@ -333,7 +345,9 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     }
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.ID > 0 and pf.ID < 250  and pf.status='active' and  pos.secId != null " };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /pos pf,  positions.values pos where pf.ID > 0 and pf.ID < 250  and pf.status='active' and  pos.secId != null "
+    };
     SelectResults sr[][] = new SelectResults[queries.length][2];
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -360,7 +374,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           valPf1 = stc1.get(strg1[0]);
           valPos1 = stc1.get(strg1[1]);
           isActive1 = ((Portfolio) stc1.get(strg1[0])).isActive();
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -372,7 +385,13 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
 
     qs = CacheUtils.getQueryService();
     Index index1 = qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "pf.status", "/pos pf");
-    Index index2 = (Index) qs.createIndex("secIdIndex", IndexType.FUNCTIONAL, "pos.secId", "/pos pf, pf.positions.values pos");
+    Index index2 =
+        (Index)
+            qs.createIndex(
+                "secIdIndex",
+                IndexType.FUNCTIONAL,
+                "pos.secId",
+                "/pos pf, pf.positions.values pos");
     Index index3 = qs.createIndex("IDIndex", IndexType.FUNCTIONAL, "pf.ID", "/pos pf");
 
     for (int i = 0; i < queries.length; i++) {
@@ -402,7 +421,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           valPf2 = stc2.get(strg2[0]);
           valPos2 = stc2.get(strg2[1]);
           isActive2 = ((Portfolio) stc2.get(strg2[0])).isActive();
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -416,7 +434,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       fail("FAILED:Search result Type is different in both the cases");
     }
     if (resSize1 == resSize2 || resSize1 != 0) {
-      CacheUtils.log("Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
+      CacheUtils.log(
+          "Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
     } else {
       fail("FAILED:Search result size is different in both the cases");
     }
@@ -431,7 +450,13 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       indexesUsed.add(index.getName());
     }
 
-    public void beforeIndexLookup(Index index, int lowerBoundOperator, Object lowerBoundKey, int upperBoundOperator, Object upperBoundKey, Set NotEqualKeys) {
+    public void beforeIndexLookup(
+        Index index,
+        int lowerBoundOperator,
+        Object lowerBoundKey,
+        int upperBoundOperator,
+        Object upperBoundKey,
+        Set NotEqualKeys) {
       indexesUsed.add(index.getName());
     }
 
@@ -443,12 +468,13 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
   }
 
   /**
-   * Test index usage on PR region & Local region if the total number of indexes 
-   * created are more than the fields used in the where clause of the
-   * query and the number of from clause iterators are two
+   * Test index usage on PR region & Local region if the total number of indexes created are more
+   * than the fields used in the where clause of the query and the number of from clause iterators
+   * are two
    */
   @Test
-  public void testIndexUsageIfIndexesGreaterThanFieldsInQueryWhereClauseWithTwoIterators() throws Exception {
+  public void testIndexUsageIfIndexesGreaterThanFieldsInQueryWhereClauseWithTwoIterators()
+      throws Exception {
     AttributesFactory af = new AttributesFactory();
     af.setValueConstraint(Portfolio.class);
     RegionAttributes ra = af.createRegionAttributes();
@@ -475,15 +501,16 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       Portfolio x = new Portfolio(i);
       region.put("" + i, x);
     }
-    executeQuery(region, false/*chcek referential integrity*/);
+    executeQuery(region, false /*chcek referential integrity*/);
     region.destroyRegion();
-
   }
 
   private void executeQuery(Region region, boolean checkReferentialIntegrity) throws Exception {
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT pf FROM /pos pf,  positions.values pos where pf.description = 'XXXX'  and pos.secId= 'IBM' " };
+    String queries[] = {
+      "SELECT DISTINCT pf FROM /pos pf,  positions.values pos where pf.description = 'XXXX'  and pos.secId= 'IBM' "
+    };
     SelectResults sr[][] = new SelectResults[queries.length][2];
 
     ObjectType resType1 = null, resType2 = null;
@@ -508,7 +535,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
         while (iter.hasNext()) {
           valPf1 = iter.next();
           isActive1 = ((Portfolio) valPf1).isActive();
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -520,8 +546,15 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
 
     qs = CacheUtils.getQueryService();
     Index index1 = qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "pf.status", "/pos pf");
-    Index index2 = (Index) qs.createIndex("secIdIndex", IndexType.FUNCTIONAL, "pos.secId", "/pos pf, pf.positions.values pos");
-    Index index3 = qs.createIndex("descriptionIndex", IndexType.FUNCTIONAL, "pf.description", "/pos pf");
+    Index index2 =
+        (Index)
+            qs.createIndex(
+                "secIdIndex",
+                IndexType.FUNCTIONAL,
+                "pos.secId",
+                "/pos pf, pf.positions.values pos");
+    Index index3 =
+        qs.createIndex("descriptionIndex", IndexType.FUNCTIONAL, "pf.description", "/pos pf");
 
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -550,7 +583,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           //valPf2=stc2.get(strg2[0]);
           //valPos2=stc2.get(strg2[1]);
           isActive2 = ((Portfolio) valPf2).isActive();
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -564,7 +596,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       fail("FAILED:Search result Type is different in both the cases");
     }
     if (resSize1 == resSize2 || resSize1 != 0) {
-      CacheUtils.log("Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
+      CacheUtils.log(
+          "Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
     } else {
       fail("FAILED:Search result size is different in both the cases");
     }
@@ -575,7 +608,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       Object pos1 = itert1.next();
       Object posFromRegion = region.get(((Portfolio) pos1).getPk());
       if (!pos1.equals(pos2))
-        fail("FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
+        fail(
+            "FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
       if (checkReferentialIntegrity) {
         assertTrue(pos2 == pos1);
         assertTrue(pos2 == posFromRegion);
@@ -586,16 +620,16 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
         fail("FAILED: IDs of the Portfolios found are different");
     }
     CacheUtils.compareResultsOfWithAndWithoutIndex(sr, this);
-
   }
 
   /**
-   * Test index usage on PR region & Local region if the total number of indexes 
-   * created are more than the fields used in the where clause of the
-   * query and the number of from clause iterators is One
+   * Test index usage on PR region & Local region if the total number of indexes created are more
+   * than the fields used in the where clause of the query and the number of from clause iterators
+   * is One
    */
   @Test
-  public void testIndexUsageIfIndexesGreaterThanFieldsInQueryWhereClauseWithOneIterator() throws Exception {
+  public void testIndexUsageIfIndexesGreaterThanFieldsInQueryWhereClauseWithOneIterator()
+      throws Exception {
     AttributesFactory af = new AttributesFactory();
     af.setValueConstraint(Portfolio.class);
     RegionAttributes ra = af.createRegionAttributes();
@@ -622,9 +656,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       Portfolio x = new Portfolio(i);
       region.put("" + i, x);
     }
-    executeQuery_1(region, false/*chcek referential integrity*/);
+    executeQuery_1(region, false /*chcek referential integrity*/);
     region.destroyRegion();
-
   }
 
   private void executeQuery_1(Region region, boolean checkReferentialIntegrity) throws Exception {
@@ -632,7 +665,9 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
 
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /pos pf where pf.description = 'XXXX'  and pf.status='active' " };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /pos pf where pf.description = 'XXXX'  and pf.status='active' "
+    };
     SelectResults sr[][] = new SelectResults[queries.length][2];
 
     ObjectType resType1 = null, resType2 = null;
@@ -662,7 +697,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           // valPf1 = stc1.get(strg1[0]);
           //valPos1 = stc1.get(strg1[1]);
           isActive1 = ((Portfolio) valPf1).isActive();
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -675,7 +709,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     qs = CacheUtils.getQueryService();
     Index index1 = qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "pf.status", "/pos pf");
     Index index2 = (Index) qs.createIndex("IdIndex", IndexType.FUNCTIONAL, "pf.iD", "/pos pf");
-    Index index3 = qs.createIndex("descriptionIndex", IndexType.FUNCTIONAL, "pf.description", "/pos pf");
+    Index index3 =
+        qs.createIndex("descriptionIndex", IndexType.FUNCTIONAL, "pf.description", "/pos pf");
 
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -704,7 +739,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           //valPf2=stc2.get(strg2[0]);
           //valPos2=stc2.get(strg2[1]);
           isActive2 = ((Portfolio) valPf2).isActive();
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -718,7 +752,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       fail("FAILED:Search result Type is different in both the cases");
     }
     if (resSize1 == resSize2 || resSize1 != 0) {
-      CacheUtils.log("Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
+      CacheUtils.log(
+          "Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
     } else {
       fail("FAILED:Search result size is different in both the cases");
     }
@@ -729,32 +764,31 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       Object pos1 = itert1.next();
       Object posFromRegion = region.get(((Portfolio) pos1).getPk());
       if (!pos1.equals(pos2))
-        fail("FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
+        fail(
+            "FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
       if (checkReferentialIntegrity) {
         assertTrue(pos2 == pos1);
         assertTrue(pos2 == posFromRegion);
       }
       /*if( pos1 != pos2  )
-              fail("FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");*/
+      fail("FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");*/
 
       /*  if(stc2.get(strg2[1]) != stc1.get(strg1[1]))
-              fail("FAILED: In both the cases Positions are different");
-          if(((Position)stc2.get(strg2[1])).secId != ((Position)stc1.get(strg1[1])).secId)
-              fail("FAILED: In both the cases Positions secIds are different");*/
+          fail("FAILED: In both the cases Positions are different");
+      if(((Position)stc2.get(strg2[1])).secId != ((Position)stc1.get(strg1[1])).secId)
+          fail("FAILED: In both the cases Positions secIds are different");*/
       if (((Portfolio) pos2).isActive() != ((Portfolio) pos1).isActive())
         fail("FAILED: Status of the Portfolios found are different");
       if (((Portfolio) pos2).getID() != ((Portfolio) pos1).getID())
         fail("FAILED: IDs of the Portfolios found are different");
     }
     CacheUtils.compareResultsOfWithAndWithoutIndex(sr, this);
-
   }
 
   /**
-   * BugTest for Bug # 38032
-   * Test index usage on PR region & Local region if the where clause contains three conditions but 
-   * only one condition is indexed & the total number of from clause iterators is 1.
-   *  
+   * BugTest for Bug # 38032 Test index usage on PR region & Local region if the where clause
+   * contains three conditions but only one condition is indexed & the total number of from clause
+   * iterators is 1.
    */
   @Test
   public void testIndexUsageIfOneFieldIndexedAndMoreThanOneUnindexed_Bug38032() throws Exception {
@@ -769,7 +803,7 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     //As default generation of Portfolio objects
     //The status is active for key =0 & key =2 & key =4
     //The description is XXXX for key =1, key =3
-    //Let us make explitly 
+    //Let us make explitly
     //Set createTime as 5 for three Portfolio objects of key =0 & key =1 & key=2;
     // Description as XXXX for key  =2  only.
 
@@ -783,7 +817,10 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     int numSatisfyingOurCond = 0;
     for (int i = 0; i < 5; i++) {
       Portfolio pf = (Portfolio) region.get("" + i);
-      if (pf.description != null && pf.description.equals("XXXX") && pf.getCreateTime() == 5 && pf.isActive()) {
+      if (pf.description != null
+          && pf.description.equals("XXXX")
+          && pf.getCreateTime() == 5
+          && pf.isActive()) {
         ++numSatisfyingOurCond;
       }
     }
@@ -810,7 +847,7 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     //As default generation of Portfolio objects
     //The status is active for key =0 & key =2 & key =4
     //The description is XXXX for key =1, key =3
-    //Let us make explitly 
+    //Let us make explitly
     //Set createTime as 5 for three Portfolio objects of key =0 & key =1 & key=2;
     // Description as XXXX for key  =2  only.
 
@@ -830,15 +867,17 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     numSatisfyingOurCond = 0;
     for (int i = 0; i < 5; i++) {
       Portfolio pf = (Portfolio) region.get("" + i);
-      if (pf.description != null && pf.description.equals("XXXX") && pf.getCreateTime() == 5 && pf.isActive()) {
+      if (pf.description != null
+          && pf.description.equals("XXXX")
+          && pf.getCreateTime() == 5
+          && pf.isActive()) {
         ++numSatisfyingOurCond;
       }
     }
 
     assertEquals(1, numSatisfyingOurCond);
-    executeQuery_2(region, false/*chcek referential integrity*/);
+    executeQuery_2(region, false /*chcek referential integrity*/);
     region.destroyRegion();
-
   }
 
   private void executeQuery_2(Region region, boolean checkReferentialIntegrity) throws Exception {
@@ -846,7 +885,9 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
 
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /pos pf where pf.description = 'XXXX'  and pf.status='active' and pf.createTime = 5 " };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /pos pf where pf.description = 'XXXX'  and pf.status='active' and pf.createTime = 5 "
+    };
     SelectResults sr[][] = new SelectResults[queries.length][2];
     ObjectType resType1 = null, resType2 = null;
     for (int i = 0; i < queries.length; i++) {
@@ -874,7 +915,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           assertTrue(isActive1);
           assertEquals("XXXX", ((Portfolio) valPf1).description);
           assertEquals(5, ((Portfolio) valPf1).getCreateTime());
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -919,7 +959,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           assertTrue(isActive2);
           assertEquals("XXXX", ((Portfolio) valPf2).description);
           assertEquals(5, ((Portfolio) valPf2).getCreateTime());
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -933,7 +972,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       fail("FAILED:Search result Type is different in both the cases");
     }
     if (resSize1 == resSize2 || resSize1 != 0) {
-      CacheUtils.log("Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
+      CacheUtils.log(
+          "Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
     } else {
       fail("FAILED:Search result size is different in both the cases");
     }
@@ -944,7 +984,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       Object pos1 = itert1.next();
       Object posFromRegion = region.get(((Portfolio) pos1).getPk());
       if (!pos1.equals(pos2))
-        fail("FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
+        fail(
+            "FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
       if (checkReferentialIntegrity) {
         assertTrue(pos2 == pos1);
         assertTrue(pos2 == posFromRegion);
@@ -955,12 +996,11 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
         fail("FAILED: IDs of the Portfolios found are different");
     }
     CacheUtils.compareResultsOfWithAndWithoutIndex(sr, this);
-
   }
 
   /**
-   * Test index usage on PR region & Local region if the where clause contains three conditions with 
-   * two conditions  indexed & the total number of from clause iterators is 1.
+   * Test index usage on PR region & Local region if the where clause contains three conditions with
+   * two conditions indexed & the total number of from clause iterators is 1.
    */
   @Test
   public void testIndexUsageIfTwoFieldsIndexedAndOneUnindexed() throws Exception {
@@ -975,7 +1015,7 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     //As default generation of Portfolio objects
     //The status is active for key =0 & key =2 & key =4
     //The description is XXXX for key =1, key =3
-    //Let us make explitly 
+    //Let us make explitly
     //Set createTime as 5 for three Portfolio objects of key =0 & key =1 & key=2;
     // Description as XXXX for key  =2  only.
 
@@ -989,7 +1029,10 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     int numSatisfyingOurCond = 0;
     for (int i = 0; i < 5; i++) {
       Portfolio pf = (Portfolio) region.get("" + i);
-      if (pf.description != null && pf.description.equals("XXXX") && pf.getCreateTime() == 5 && pf.isActive()) {
+      if (pf.description != null
+          && pf.description.equals("XXXX")
+          && pf.getCreateTime() == 5
+          && pf.isActive()) {
         ++numSatisfyingOurCond;
       }
     }
@@ -1016,7 +1059,7 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     //As default generation of Portfolio objects
     //The status is active for key =0 & key =2 & key =4
     //The description is XXXX for key =1, key =3
-    //Let us make explitly 
+    //Let us make explitly
     //Set createTime as 5 for three Portfolio objects of key =0 & key =1 & key=2;
     // Description as XXXX for key  =2  only.
 
@@ -1036,15 +1079,17 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     numSatisfyingOurCond = 0;
     for (int i = 0; i < 5; i++) {
       Portfolio pf = (Portfolio) region.get("" + i);
-      if (pf.description != null && pf.description.equals("XXXX") && pf.getCreateTime() == 5 && pf.isActive()) {
+      if (pf.description != null
+          && pf.description.equals("XXXX")
+          && pf.getCreateTime() == 5
+          && pf.isActive()) {
         ++numSatisfyingOurCond;
       }
     }
 
     assertEquals(1, numSatisfyingOurCond);
-    executeQuery_3(region, false/*chcek referential integrity*/);
+    executeQuery_3(region, false /*chcek referential integrity*/);
     region.destroyRegion();
-
   }
 
   private void executeQuery_3(Region region, boolean checkReferentialIntegrity) throws Exception {
@@ -1052,7 +1097,9 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
 
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * FROM /pos pf where pf.description = 'XXXX'  and pf.status='active' and pf.createTime = 5 " };
+    String queries[] = {
+      "SELECT DISTINCT * FROM /pos pf where pf.description = 'XXXX'  and pf.status='active' and pf.createTime = 5 "
+    };
     ObjectType resType1 = null, resType2 = null;
     SelectResults sr[][] = new SelectResults[queries.length][2];
     for (int i = 0; i < queries.length; i++) {
@@ -1078,7 +1125,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           assertTrue(isActive1);
           assertEquals("XXXX", ((Portfolio) valPf1).description);
           assertEquals(5, ((Portfolio) valPf1).getCreateTime());
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -1091,7 +1137,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     qs = CacheUtils.getQueryService();
     Index index1 = qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "pf.status", "/pos pf");
     Index index2 = (Index) qs.createIndex("IdIndex", IndexType.FUNCTIONAL, "pf.iD", "/pos pf");
-    Index index3 = qs.createIndex("descriptionIndex", IndexType.FUNCTIONAL, "pf.description", "/pos pf");
+    Index index3 =
+        qs.createIndex("descriptionIndex", IndexType.FUNCTIONAL, "pf.description", "/pos pf");
 
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -1123,7 +1170,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
           assertTrue(isActive2);
           assertEquals("XXXX", ((Portfolio) valPf2).description);
           assertEquals(5, ((Portfolio) valPf2).getCreateTime());
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -1137,7 +1183,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       fail("FAILED:Search result Type is different in both the cases");
     }
     if (resSize1 == resSize2 || resSize1 != 0) {
-      CacheUtils.log("Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
+      CacheUtils.log(
+          "Search Results size is Non Zero and equal in both cases i.e.  Size= " + resSize1);
     } else {
       fail("FAILED:Search result size is different in both the cases");
     }
@@ -1148,7 +1195,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
       Object pos1 = itert1.next();
       Object posFromRegion = region.get(((Portfolio) pos1).getPk());
       if (!pos1.equals(pos2))
-        fail("FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
+        fail(
+            "FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
       if (checkReferentialIntegrity) {
         assertTrue(pos2 == pos1);
         assertTrue(pos2 == posFromRegion);
@@ -1159,7 +1207,6 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
         fail("FAILED: IDs of the Portfolios found are different");
     }
     CacheUtils.compareResultsOfWithAndWithoutIndex(sr, this);
-
   }
 
   @Test
@@ -1179,7 +1226,12 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     }
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT * FROM /pos pf,  positions.values pos where pf.ID > 0 OR pf.status='active' OR  pos.secId != 'IBM'", "SELECT * FROM /pos pf where pf.ID > 0 OR pf.status='active'", "SELECT * FROM /pos pf where pf.ID > 0 OR pf.status LIKE 'act%'", "SELECT * FROM /pos pf where pf.ID > 0 OR pf.status IN SET('active', 'inactive')", };
+    String queries[] = {
+      "SELECT * FROM /pos pf,  positions.values pos where pf.ID > 0 OR pf.status='active' OR  pos.secId != 'IBM'",
+      "SELECT * FROM /pos pf where pf.ID > 0 OR pf.status='active'",
+      "SELECT * FROM /pos pf where pf.ID > 0 OR pf.status LIKE 'act%'",
+      "SELECT * FROM /pos pf where pf.ID > 0 OR pf.status IN SET('active', 'inactive')",
+    };
 
     SelectResults sr[] = new SelectResults[queries.length];
     for (int i = 0; i < queries.length; i++) {
@@ -1204,29 +1256,57 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
 
       //Check Element Type
       if (queries[i].contains("values")) {
-        assertTrue("Checking Element type for Query: [" + queries[i] + "] results", sr[i].getCollectionType().getElementType().toString().equals("struct<pf:org.apache.geode.cache.query.data.Portfolio,pos:java.lang.Object>"));
+        assertTrue(
+            "Checking Element type for Query: [" + queries[i] + "] results",
+            sr[i]
+                .getCollectionType()
+                .getElementType()
+                .toString()
+                .equals(
+                    "struct<pf:org.apache.geode.cache.query.data.Portfolio,pos:java.lang.Object>"));
         //Check Size of results
-        assertEquals("Checking Element type for Query: [" + queries[i] + "] results", 40, resultSet.size());
+        assertEquals(
+            "Checking Element type for Query: [" + queries[i] + "] results", 40, resultSet.size());
       } else {
-        assertTrue("Checking Element type for Query: [" + queries[i] + "] results", sr[i].getCollectionType().getElementType().toString().equals("org.apache.geode.cache.query.data.Portfolio"));
+        assertTrue(
+            "Checking Element type for Query: [" + queries[i] + "] results",
+            sr[i]
+                .getCollectionType()
+                .getElementType()
+                .toString()
+                .equals("org.apache.geode.cache.query.data.Portfolio"));
         //Check Size of results
-        assertEquals("Checking Element type for Query: [" + queries[i] + "] results", 20, resultSet.size());
+        assertEquals(
+            "Checking Element type for Query: [" + queries[i] + "] results", 20, resultSet.size());
       }
 
       Iterator itr = resultSet.iterator();
       while (itr.hasNext()) {
         Object obj = itr.next();
-        if (sr[i].getCollectionType().getElementType().toString().equals("struct<pf:org.apache.geode.cache.query.data.Portfolio,pos:java.lang.Object>")) {
+        if (sr[i]
+            .getCollectionType()
+            .getElementType()
+            .toString()
+            .equals(
+                "struct<pf:org.apache.geode.cache.query.data.Portfolio,pos:java.lang.Object>")) {
           Object[] values = ((Struct) obj).getFieldValues();
           Portfolio port = (Portfolio) values[0];
           Position pos = (Position) values[1];
           if (!(port.getID() > 0 || port.status.equals("active") || pos.secId.equals("IBM"))) {
-            fail("Result object" + obj + " failed to satisfy all OR conditions of where clause of query " + queries[i]);
+            fail(
+                "Result object"
+                    + obj
+                    + " failed to satisfy all OR conditions of where clause of query "
+                    + queries[i]);
           }
         } else {
           Portfolio port = (Portfolio) obj;
           if (!(port.getID() > 0 || port.status.equals("active"))) {
-            fail("Result object" + port + " failed to satisfy all OR conditions of where clause of query " + queries[i]);
+            fail(
+                "Result object"
+                    + port
+                    + " failed to satisfy all OR conditions of where clause of query "
+                    + queries[i]);
           }
         }
       }
@@ -1234,9 +1314,8 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
   }
 
   /**
-   * Test verifies the result of query with 'OR' conditions when
-   * separate indexes are used for two comparisons of OR clause.
-   * Like, "select * from /portfolio where ID > 0 OR status = 'active'"
+   * Test verifies the result of query with 'OR' conditions when separate indexes are used for two
+   * comparisons of OR clause. Like, "select * from /portfolio where ID > 0 OR status = 'active'"
    * and we have indexes on ID and status both. Both indexes must be used.
    */
   @Test
@@ -1256,7 +1335,13 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
     }
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT * FROM /pos pf,  positions.values pos where pf.ID > 0 OR pf.status='active' OR  pos.secId != 'IBM'", "SELECT * FROM /pos pf where pf.ID > 0 OR pf.status='active'", "SELECT * FROM /pos pf where pf.ID > 0 OR pf.status LIKE 'act%'", "SELECT DISTINCT * FROM /pos pf where pf.ID > 0 OR pf.status='active' ORDER BY pf.status desc LIMIT 10", "SELECT * FROM /pos pf where pf.ID > 0 OR pf.status IN SET('active', 'inactive')", };
+    String queries[] = {
+      "SELECT * FROM /pos pf,  positions.values pos where pf.ID > 0 OR pf.status='active' OR  pos.secId != 'IBM'",
+      "SELECT * FROM /pos pf where pf.ID > 0 OR pf.status='active'",
+      "SELECT * FROM /pos pf where pf.ID > 0 OR pf.status LIKE 'act%'",
+      "SELECT DISTINCT * FROM /pos pf where pf.ID > 0 OR pf.status='active' ORDER BY pf.status desc LIMIT 10",
+      "SELECT * FROM /pos pf where pf.ID > 0 OR pf.status IN SET('active', 'inactive')",
+    };
 
     SelectResults sr[][] = new SelectResults[queries.length][2];
     for (int i = 0; i < queries.length; i++) {
@@ -1279,7 +1364,9 @@ public class IndexWithSngleFrmAndMultCondQryJUnitTest {
 
     qs = CacheUtils.getQueryService();
     Index index1 = qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "pf.status", "/pos pf");
-    Index index2 = qs.createIndex("secIdIndex", IndexType.FUNCTIONAL, "pos.secId", "/pos pf, pf.positions.values pos");
+    Index index2 =
+        qs.createIndex(
+            "secIdIndex", IndexType.FUNCTIONAL, "pos.secId", "/pos pf, pf.positions.values pos");
     Index index3 = qs.createIndex("IDIndex", IndexType.FUNCTIONAL, "pf.ID", "/pos pf");
 
     for (int i = 0; i < queries.length; i++) {

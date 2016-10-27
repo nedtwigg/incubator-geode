@@ -82,7 +82,7 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
   /** Maximum millis allowed for bridge client to fully connect before test fails */
   private static final int JOIN_FAIL_MILLIS = 120000;
 
-  // the following wait millis are max wait time until notify occurs 
+  // the following wait millis are max wait time until notify occurs
 
   /** Millis to wait for connection to AdminDS */
   private static final int CONNECT_WAIT_MILLIS = 5000;
@@ -103,9 +103,7 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     return result;
   }
 
-  /**
-   * Tests wrapping of BridgeMembershipEvent fired as MembershipEvent.
-   */
+  /** Tests wrapping of BridgeMembershipEvent fired as MembershipEvent. */
   @Test
   public void testAdaptedBridgeEvents() throws Exception {
     getSystem();
@@ -114,26 +112,25 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     final DistributedMember[] member = new DistributedMember[1];
     final String[] memberId = new String[1];
 
-    UniversalMembershipListenerAdapter listener = new UniversalMembershipListenerAdapter() {
-      @Override
-      public synchronized void memberJoined(MembershipEvent event) {
-        assertFalse(fired[0]); // assures no dupes
-        assertNull(member[0]);
-        assertNull(memberId[0]);
-        fired[0] = true;
-        member[0] = event.getDistributedMember();
-        memberId[0] = event.getMemberId();
-        notify();
-      }
+    UniversalMembershipListenerAdapter listener =
+        new UniversalMembershipListenerAdapter() {
+          @Override
+          public synchronized void memberJoined(MembershipEvent event) {
+            assertFalse(fired[0]); // assures no dupes
+            assertNull(member[0]);
+            assertNull(memberId[0]);
+            fired[0] = true;
+            member[0] = event.getDistributedMember();
+            memberId[0] = event.getMemberId();
+            notify();
+          }
 
-      @Override
-      public void memberLeft(MembershipEvent event) {
-      }
+          @Override
+          public void memberLeft(MembershipEvent event) {}
 
-      @Override
-      public void memberCrashed(MembershipEvent event) {
-      }
-    };
+          @Override
+          public void memberCrashed(MembershipEvent event) {}
+        };
 
     DistributedMember clientJoined = new TestDistributedMember("clientJoined");
     InternalClientMembership.notifyJoined(clientJoined, true);
@@ -147,9 +144,7 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     assertEquals(clientJoined.getId(), memberId[0]);
   }
 
-  /**
-   * Tests use of history to prevent duplicate events.
-   */
+  /** Tests use of history to prevent duplicate events. */
   @Test
   public void testNoDuplicates() throws Exception {
     getSystem();
@@ -158,40 +153,41 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     final DistributedMember[] member = new DistributedMember[3];
     final String[] memberId = new String[3];
 
-    UniversalMembershipListenerAdapter listener = new UniversalMembershipListenerAdapter() {
-      @Override
-      public synchronized void memberJoined(MembershipEvent event) {
-        assertFalse(fired[JOINED]);
-        assertNull(member[JOINED]);
-        assertNull(memberId[JOINED]);
-        fired[JOINED] = true;
-        member[JOINED] = event.getDistributedMember();
-        memberId[JOINED] = event.getMemberId();
-        notify();
-      }
+    UniversalMembershipListenerAdapter listener =
+        new UniversalMembershipListenerAdapter() {
+          @Override
+          public synchronized void memberJoined(MembershipEvent event) {
+            assertFalse(fired[JOINED]);
+            assertNull(member[JOINED]);
+            assertNull(memberId[JOINED]);
+            fired[JOINED] = true;
+            member[JOINED] = event.getDistributedMember();
+            memberId[JOINED] = event.getMemberId();
+            notify();
+          }
 
-      @Override
-      public synchronized void memberLeft(MembershipEvent event) {
-        assertFalse(fired[LEFT]);
-        assertNull(member[LEFT]);
-        assertNull(memberId[LEFT]);
-        fired[LEFT] = true;
-        member[LEFT] = event.getDistributedMember();
-        memberId[LEFT] = event.getMemberId();
-        notify();
-      }
+          @Override
+          public synchronized void memberLeft(MembershipEvent event) {
+            assertFalse(fired[LEFT]);
+            assertNull(member[LEFT]);
+            assertNull(memberId[LEFT]);
+            fired[LEFT] = true;
+            member[LEFT] = event.getDistributedMember();
+            memberId[LEFT] = event.getMemberId();
+            notify();
+          }
 
-      @Override
-      public synchronized void memberCrashed(MembershipEvent event) {
-        assertFalse(fired[CRASHED]); // assures no dupes
-        assertNull(member[CRASHED]);
-        assertNull(memberId[CRASHED]);
-        fired[CRASHED] = true;
-        member[CRASHED] = event.getDistributedMember();
-        memberId[CRASHED] = event.getMemberId();
-        notify();
-      }
-    };
+          @Override
+          public synchronized void memberCrashed(MembershipEvent event) {
+            assertFalse(fired[CRASHED]); // assures no dupes
+            assertNull(member[CRASHED]);
+            assertNull(memberId[CRASHED]);
+            fired[CRASHED] = true;
+            member[CRASHED] = event.getDistributedMember();
+            memberId[CRASHED] = event.getMemberId();
+            notify();
+          }
+        };
 
     DistributedMember memberA = new TestDistributedMember("memberA");
 
@@ -249,9 +245,7 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     assertEquals(memberA.getId(), memberId[JOINED]);
   }
 
-  /**
-   * Tests notification of events for loner bridge clients in server process.
-   */
+  /** Tests notification of events for loner bridge clients in server process. */
   @Test
   public void testLonerClientEventsInServer() throws Exception {
     try {
@@ -277,122 +271,128 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     final String[] memberIdBridge = new String[3];
     final boolean[] isClientBridge = new boolean[3];
 
-    MembershipListener systemListener = new MembershipListener() {
-      @Override
-      public synchronized void memberJoined(MembershipEvent event) {
-        assertFalse(firedSystem[JOINED]);
-        assertNull(memberSystem[JOINED]);
-        assertNull(memberIdSystem[JOINED]);
-        firedSystem[JOINED] = true;
-        memberSystem[JOINED] = event.getDistributedMember();
-        memberIdSystem[JOINED] = event.getMemberId();
-        notify();
-      }
+    MembershipListener systemListener =
+        new MembershipListener() {
+          @Override
+          public synchronized void memberJoined(MembershipEvent event) {
+            assertFalse(firedSystem[JOINED]);
+            assertNull(memberSystem[JOINED]);
+            assertNull(memberIdSystem[JOINED]);
+            firedSystem[JOINED] = true;
+            memberSystem[JOINED] = event.getDistributedMember();
+            memberIdSystem[JOINED] = event.getMemberId();
+            notify();
+          }
 
-      @Override
-      public synchronized void memberLeft(MembershipEvent event) {
-        assertFalse(firedSystem[LEFT]);
-        assertNull(memberSystem[LEFT]);
-        assertNull(memberIdSystem[LEFT]);
-        firedSystem[LEFT] = true;
-        memberSystem[LEFT] = event.getDistributedMember();
-        memberIdSystem[LEFT] = event.getMemberId();
-        notify();
-      }
+          @Override
+          public synchronized void memberLeft(MembershipEvent event) {
+            assertFalse(firedSystem[LEFT]);
+            assertNull(memberSystem[LEFT]);
+            assertNull(memberIdSystem[LEFT]);
+            firedSystem[LEFT] = true;
+            memberSystem[LEFT] = event.getDistributedMember();
+            memberIdSystem[LEFT] = event.getMemberId();
+            notify();
+          }
 
-      @Override
-      public synchronized void memberCrashed(MembershipEvent event) {
-        assertFalse(firedSystem[CRASHED]);
-        assertNull(memberSystem[CRASHED]);
-        assertNull(memberIdSystem[CRASHED]);
-        firedSystem[CRASHED] = true;
-        memberSystem[CRASHED] = event.getDistributedMember();
-        memberIdSystem[CRASHED] = event.getMemberId();
-        notify();
-      }
-    };
+          @Override
+          public synchronized void memberCrashed(MembershipEvent event) {
+            assertFalse(firedSystem[CRASHED]);
+            assertNull(memberSystem[CRASHED]);
+            assertNull(memberIdSystem[CRASHED]);
+            firedSystem[CRASHED] = true;
+            memberSystem[CRASHED] = event.getDistributedMember();
+            memberIdSystem[CRASHED] = event.getMemberId();
+            notify();
+          }
+        };
 
-    UniversalMembershipListenerAdapter adapter = new UniversalMembershipListenerAdapter() {
-      @Override
-      public synchronized void memberJoined(MembershipEvent event) {
-        assertFalse(firedAdapter[JOINED]);
-        assertNull(memberAdapter[JOINED]);
-        assertNull(memberIdAdapter[JOINED]);
-        assertFalse(isClientAdapter[JOINED]);
-        firedAdapter[JOINED] = true;
-        memberAdapter[JOINED] = event.getDistributedMember();
-        memberIdAdapter[JOINED] = event.getMemberId();
-        isClientAdapter[JOINED] = ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
-        notify();
-      }
+    UniversalMembershipListenerAdapter adapter =
+        new UniversalMembershipListenerAdapter() {
+          @Override
+          public synchronized void memberJoined(MembershipEvent event) {
+            assertFalse(firedAdapter[JOINED]);
+            assertNull(memberAdapter[JOINED]);
+            assertNull(memberIdAdapter[JOINED]);
+            assertFalse(isClientAdapter[JOINED]);
+            firedAdapter[JOINED] = true;
+            memberAdapter[JOINED] = event.getDistributedMember();
+            memberIdAdapter[JOINED] = event.getMemberId();
+            isClientAdapter[JOINED] =
+                ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
+            notify();
+          }
 
-      @Override
-      public synchronized void memberLeft(MembershipEvent event) {
-        assertFalse(firedAdapter[LEFT]);
-        assertNull(memberAdapter[LEFT]);
-        assertNull(memberIdAdapter[LEFT]);
-        assertFalse(isClientAdapter[LEFT]);
-        firedAdapter[LEFT] = true;
-        memberAdapter[LEFT] = event.getDistributedMember();
-        memberIdAdapter[LEFT] = event.getMemberId();
-        isClientAdapter[LEFT] = ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
-        notify();
-      }
+          @Override
+          public synchronized void memberLeft(MembershipEvent event) {
+            assertFalse(firedAdapter[LEFT]);
+            assertNull(memberAdapter[LEFT]);
+            assertNull(memberIdAdapter[LEFT]);
+            assertFalse(isClientAdapter[LEFT]);
+            firedAdapter[LEFT] = true;
+            memberAdapter[LEFT] = event.getDistributedMember();
+            memberIdAdapter[LEFT] = event.getMemberId();
+            isClientAdapter[LEFT] =
+                ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
+            notify();
+          }
 
-      @Override
-      public synchronized void memberCrashed(MembershipEvent event) {
-        assertFalse(firedAdapter[CRASHED]);
-        assertNull(memberAdapter[CRASHED]);
-        assertNull(memberIdAdapter[CRASHED]);
-        assertFalse(isClientAdapter[CRASHED]);
-        firedAdapter[CRASHED] = true;
-        memberAdapter[CRASHED] = event.getDistributedMember();
-        memberIdAdapter[CRASHED] = event.getMemberId();
-        isClientAdapter[CRASHED] = ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
-        notify();
-      }
-    };
+          @Override
+          public synchronized void memberCrashed(MembershipEvent event) {
+            assertFalse(firedAdapter[CRASHED]);
+            assertNull(memberAdapter[CRASHED]);
+            assertNull(memberIdAdapter[CRASHED]);
+            assertFalse(isClientAdapter[CRASHED]);
+            firedAdapter[CRASHED] = true;
+            memberAdapter[CRASHED] = event.getDistributedMember();
+            memberIdAdapter[CRASHED] = event.getMemberId();
+            isClientAdapter[CRASHED] =
+                ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
+            notify();
+          }
+        };
 
-    ClientMembershipListener bridgeListener = new ClientMembershipListener() {
-      @Override
-      public synchronized void memberJoined(ClientMembershipEvent event) {
-        assertFalse(firedBridge[JOINED]);
-        assertNull(memberBridge[JOINED]);
-        assertNull(memberIdBridge[JOINED]);
-        assertFalse(isClientBridge[JOINED]);
-        firedBridge[JOINED] = true;
-        memberBridge[JOINED] = event.getMember();
-        memberIdBridge[JOINED] = event.getMemberId();
-        isClientBridge[JOINED] = event.isClient();
-        notify();
-      }
+    ClientMembershipListener bridgeListener =
+        new ClientMembershipListener() {
+          @Override
+          public synchronized void memberJoined(ClientMembershipEvent event) {
+            assertFalse(firedBridge[JOINED]);
+            assertNull(memberBridge[JOINED]);
+            assertNull(memberIdBridge[JOINED]);
+            assertFalse(isClientBridge[JOINED]);
+            firedBridge[JOINED] = true;
+            memberBridge[JOINED] = event.getMember();
+            memberIdBridge[JOINED] = event.getMemberId();
+            isClientBridge[JOINED] = event.isClient();
+            notify();
+          }
 
-      @Override
-      public synchronized void memberLeft(ClientMembershipEvent event) {
-        assertFalse(firedBridge[LEFT]);
-        assertNull(memberBridge[LEFT]);
-        assertNull(memberIdBridge[LEFT]);
-        assertFalse(isClientBridge[LEFT]);
-        firedBridge[LEFT] = true;
-        memberBridge[LEFT] = event.getMember();
-        memberIdBridge[LEFT] = event.getMemberId();
-        isClientBridge[LEFT] = event.isClient();
-        notify();
-      }
+          @Override
+          public synchronized void memberLeft(ClientMembershipEvent event) {
+            assertFalse(firedBridge[LEFT]);
+            assertNull(memberBridge[LEFT]);
+            assertNull(memberIdBridge[LEFT]);
+            assertFalse(isClientBridge[LEFT]);
+            firedBridge[LEFT] = true;
+            memberBridge[LEFT] = event.getMember();
+            memberIdBridge[LEFT] = event.getMemberId();
+            isClientBridge[LEFT] = event.isClient();
+            notify();
+          }
 
-      @Override
-      public synchronized void memberCrashed(ClientMembershipEvent event) {
-        assertFalse(firedBridge[CRASHED]);
-        assertNull(memberBridge[CRASHED]);
-        assertNull(memberIdBridge[CRASHED]);
-        assertFalse(isClientBridge[CRASHED]);
-        firedBridge[CRASHED] = true;
-        memberBridge[CRASHED] = event.getMember();
-        memberIdBridge[CRASHED] = event.getMemberId();
-        isClientBridge[CRASHED] = event.isClient();
-        notify();
-      }
-    };
+          @Override
+          public synchronized void memberCrashed(ClientMembershipEvent event) {
+            assertFalse(firedBridge[CRASHED]);
+            assertNull(memberBridge[CRASHED]);
+            assertNull(memberIdBridge[CRASHED]);
+            assertFalse(isClientBridge[CRASHED]);
+            firedBridge[CRASHED] = true;
+            memberBridge[CRASHED] = event.getMember();
+            memberIdBridge[CRASHED] = event.getMemberId();
+            isClientBridge[CRASHED] = event.isClient();
+            notify();
+          }
+        };
 
     final Host host = Host.getHost(0);
     final VM vm0 = host.getVM(0);
@@ -430,23 +430,25 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     // register the universal adapter. Not required as this test is only for BridgeClient test
     adapter.registerMembershipListener(service);
 
-    SerializableCallable createBridgeClient = new SerializableCallable("Create bridge client") {
-      @Override
-      public Object call() {
-        getLogWriter().info("[testLonerClientEventsInServer] create bridge client");
-        Properties config = new Properties();
-        config.setProperty(MCAST_PORT, "0");
-        config.setProperty(LOCATORS, "");
-        config.setProperty(ENABLE_NETWORK_PARTITION_DETECTION, "false");
-        getSystem(config);
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        ClientServerTestCase.configureConnectionPool(factory, NetworkUtils.getServerHostName(host), ports, false, -1, -1, null);
-        createRegion(name, factory.create());
-        assertNotNull(getRootRegion().getSubregion(name));
-        return getMemberId();
-      }
-    };
+    SerializableCallable createBridgeClient =
+        new SerializableCallable("Create bridge client") {
+          @Override
+          public Object call() {
+            getLogWriter().info("[testLonerClientEventsInServer] create bridge client");
+            Properties config = new Properties();
+            config.setProperty(MCAST_PORT, "0");
+            config.setProperty(LOCATORS, "");
+            config.setProperty(ENABLE_NETWORK_PARTITION_DETECTION, "false");
+            getSystem(config);
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            ClientServerTestCase.configureConnectionPool(
+                factory, NetworkUtils.getServerHostName(host), ports, false, -1, -1, null);
+            createRegion(name, factory.create());
+            assertNotNull(getRootRegion().getSubregion(name));
+            return getMemberId();
+          }
+        };
 
     // create bridge client in vm0...
     DistributedMember clientMember = (DistributedMember) vm0.invoke(createBridgeClient);
@@ -508,22 +510,24 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     assertFalse(isClientAdapter[CRASHED]);
     resetArraysForTesting(firedAdapter, memberAdapter, memberIdAdapter, isClientAdapter);
 
-    vm0.invoke(new SerializableRunnable("Wait for client to fully connect") {
-      public void run() {
-        getLogWriter().info("[testLonerClientEventsInServer] wait for client to fully connect");
-        final String pl = getRootRegion().getSubregion(name).getAttributes().getPoolName();
-        PoolImpl pi = (PoolImpl) PoolManager.find(pl);
-        waitForClientToFullyConnect(pi);
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable("Wait for client to fully connect") {
+          public void run() {
+            getLogWriter().info("[testLonerClientEventsInServer] wait for client to fully connect");
+            final String pl = getRootRegion().getSubregion(name).getAttributes().getPoolName();
+            PoolImpl pi = (PoolImpl) PoolManager.find(pl);
+            waitForClientToFullyConnect(pi);
+          }
+        });
 
-    vm0.invoke(new SerializableRunnable("Close bridge client region") {
-      public void run() {
-        getLogWriter().info("[testLonerClientEventsInServer] close bridge client region");
-        getRootRegion().getSubregion(name).close();
-        PoolManager.close();
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable("Close bridge client region") {
+          public void run() {
+            getLogWriter().info("[testLonerClientEventsInServer] close bridge client region");
+            getRootRegion().getSubregion(name).close();
+            PoolManager.close();
+          }
+        });
 
     synchronized (adapter) {
       if (!firedAdapter[LEFT]) {
@@ -638,24 +642,26 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     assertFalse(isClientAdapter[CRASHED]);
     resetArraysForTesting(firedAdapter, memberAdapter, memberIdAdapter, isClientAdapter);
 
-    vm0.invoke(new SerializableRunnable("Wait for client to fully connect") {
-      public void run() {
-        getLogWriter().info("[testLonerClientEventsInServer] wait for client to fully connect");
-        final String pl = getRootRegion().getSubregion(name).getAttributes().getPoolName();
-        PoolImpl pi = (PoolImpl) PoolManager.find(pl);
-        waitForClientToFullyConnect(pi);
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable("Wait for client to fully connect") {
+          public void run() {
+            getLogWriter().info("[testLonerClientEventsInServer] wait for client to fully connect");
+            final String pl = getRootRegion().getSubregion(name).getAttributes().getPoolName();
+            PoolImpl pi = (PoolImpl) PoolManager.find(pl);
+            waitForClientToFullyConnect(pi);
+          }
+        });
 
     ServerConnection.setForceClientCrashEvent(true);
     try {
-      vm0.invoke(new SerializableRunnable("Stop bridge client") {
-        public void run() {
-          getLogWriter().info("[testLonerClientEventsInServer] Stop bridge client");
-          getRootRegion().getSubregion(name).close();
-          PoolManager.close();
-        }
-      });
+      vm0.invoke(
+          new SerializableRunnable("Stop bridge client") {
+            public void run() {
+              getLogWriter().info("[testLonerClientEventsInServer] Stop bridge client");
+              getRootRegion().getSubregion(name).close();
+              PoolManager.close();
+            }
+          });
 
       synchronized (adapter) {
         if (!firedAdapter[CRASHED]) {
@@ -715,9 +721,7 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     }
   }
 
-  /**
-   * Tests notification of events for loner bridge clients in server process.
-   */
+  /** Tests notification of events for loner bridge clients in server process. */
   @Test
   public void testSystemClientEventsInServer() throws Exception {
     try {
@@ -747,101 +751,117 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     final boolean[] firedAdapterDuplicate = new boolean[3];
     final boolean[] firedBridgeDuplicate = new boolean[3];
 
-    MembershipListener systemListener = new MembershipListener() {
-      public synchronized void memberJoined(MembershipEvent event) {
-        firedSystemDuplicate[JOINED] = firedSystem[JOINED];
-        firedSystem[JOINED] = true;
-        memberSystem[JOINED] = event.getDistributedMember();
-        memberIdSystem[JOINED] = event.getMemberId();
-        notify();
-      }
+    MembershipListener systemListener =
+        new MembershipListener() {
+          public synchronized void memberJoined(MembershipEvent event) {
+            firedSystemDuplicate[JOINED] = firedSystem[JOINED];
+            firedSystem[JOINED] = true;
+            memberSystem[JOINED] = event.getDistributedMember();
+            memberIdSystem[JOINED] = event.getMemberId();
+            notify();
+          }
 
-      public synchronized void memberLeft(MembershipEvent event) {
-        firedSystemDuplicate[LEFT] = firedSystem[LEFT];
-        firedSystem[LEFT] = true;
-        memberSystem[LEFT] = event.getDistributedMember();
-        memberIdSystem[LEFT] = event.getMemberId();
-        notify();
-      }
+          public synchronized void memberLeft(MembershipEvent event) {
+            firedSystemDuplicate[LEFT] = firedSystem[LEFT];
+            firedSystem[LEFT] = true;
+            memberSystem[LEFT] = event.getDistributedMember();
+            memberIdSystem[LEFT] = event.getMemberId();
+            notify();
+          }
 
-      public synchronized void memberCrashed(MembershipEvent event) {
-        firedSystemDuplicate[CRASHED] = firedSystem[CRASHED];
-        firedSystem[CRASHED] = true;
-        memberSystem[CRASHED] = event.getDistributedMember();
-        memberIdSystem[CRASHED] = event.getMemberId();
-        notify();
-      }
-    };
+          public synchronized void memberCrashed(MembershipEvent event) {
+            firedSystemDuplicate[CRASHED] = firedSystem[CRASHED];
+            firedSystem[CRASHED] = true;
+            memberSystem[CRASHED] = event.getDistributedMember();
+            memberIdSystem[CRASHED] = event.getMemberId();
+            notify();
+          }
+        };
 
-    UniversalMembershipListenerAdapter adapter = new UniversalMembershipListenerAdapter() {
-      @Override
-      public synchronized void memberJoined(MembershipEvent event) {
-        getLogWriter().info("[doTestSystemClientEventsInServer] memberJoined >" + event.getMemberId() + "<");
-        firedAdapterDuplicate[JOINED] = firedAdapter[JOINED];
-        firedAdapter[JOINED] = true;
-        memberAdapter[JOINED] = event.getDistributedMember();
-        memberIdAdapter[JOINED] = event.getMemberId();
-        if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
-          isClientAdapter[JOINED] = ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
-        }
-        notify();
-      }
+    UniversalMembershipListenerAdapter adapter =
+        new UniversalMembershipListenerAdapter() {
+          @Override
+          public synchronized void memberJoined(MembershipEvent event) {
+            getLogWriter()
+                .info(
+                    "[doTestSystemClientEventsInServer] memberJoined >"
+                        + event.getMemberId()
+                        + "<");
+            firedAdapterDuplicate[JOINED] = firedAdapter[JOINED];
+            firedAdapter[JOINED] = true;
+            memberAdapter[JOINED] = event.getDistributedMember();
+            memberIdAdapter[JOINED] = event.getMemberId();
+            if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
+              isClientAdapter[JOINED] =
+                  ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
+            }
+            notify();
+          }
 
-      @Override
-      public synchronized void memberLeft(MembershipEvent event) {
-        getLogWriter().info("[doTestSystemClientEventsInServer] memberLeft >" + event.getMemberId() + "<");
-        firedAdapterDuplicate[LEFT] = firedAdapter[LEFT];
-        firedAdapter[LEFT] = true;
-        memberAdapter[LEFT] = event.getDistributedMember();
-        memberIdAdapter[LEFT] = event.getMemberId();
-        if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
-          isClientAdapter[LEFT] = ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
-        }
-        notify();
-      }
+          @Override
+          public synchronized void memberLeft(MembershipEvent event) {
+            getLogWriter()
+                .info(
+                    "[doTestSystemClientEventsInServer] memberLeft >" + event.getMemberId() + "<");
+            firedAdapterDuplicate[LEFT] = firedAdapter[LEFT];
+            firedAdapter[LEFT] = true;
+            memberAdapter[LEFT] = event.getDistributedMember();
+            memberIdAdapter[LEFT] = event.getMemberId();
+            if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
+              isClientAdapter[LEFT] =
+                  ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
+            }
+            notify();
+          }
 
-      @Override
-      public synchronized void memberCrashed(MembershipEvent event) {
-        getLogWriter().info("[doTestSystemClientEventsInServer] memberCrashed >" + event.getMemberId() + "<");
-        firedAdapterDuplicate[CRASHED] = firedAdapter[CRASHED];
-        firedAdapter[CRASHED] = true;
-        memberAdapter[CRASHED] = event.getDistributedMember();
-        memberIdAdapter[CRASHED] = event.getMemberId();
-        if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
-          isClientAdapter[CRASHED] = ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
-        }
-        notify();
-      }
-    };
+          @Override
+          public synchronized void memberCrashed(MembershipEvent event) {
+            getLogWriter()
+                .info(
+                    "[doTestSystemClientEventsInServer] memberCrashed >"
+                        + event.getMemberId()
+                        + "<");
+            firedAdapterDuplicate[CRASHED] = firedAdapter[CRASHED];
+            firedAdapter[CRASHED] = true;
+            memberAdapter[CRASHED] = event.getDistributedMember();
+            memberIdAdapter[CRASHED] = event.getMemberId();
+            if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
+              isClientAdapter[CRASHED] =
+                  ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
+            }
+            notify();
+          }
+        };
 
-    ClientMembershipListener bridgeListener = new ClientMembershipListener() {
-      public synchronized void memberJoined(ClientMembershipEvent event) {
-        firedBridgeDuplicate[JOINED] = firedBridge[JOINED];
-        firedBridge[JOINED] = true;
-        memberBridge[JOINED] = event.getMember();
-        memberIdBridge[JOINED] = event.getMemberId();
-        isClientBridge[JOINED] = event.isClient();
-        notify();
-      }
+    ClientMembershipListener bridgeListener =
+        new ClientMembershipListener() {
+          public synchronized void memberJoined(ClientMembershipEvent event) {
+            firedBridgeDuplicate[JOINED] = firedBridge[JOINED];
+            firedBridge[JOINED] = true;
+            memberBridge[JOINED] = event.getMember();
+            memberIdBridge[JOINED] = event.getMemberId();
+            isClientBridge[JOINED] = event.isClient();
+            notify();
+          }
 
-      public synchronized void memberLeft(ClientMembershipEvent event) {
-        firedBridgeDuplicate[LEFT] = firedBridge[LEFT];
-        firedBridge[LEFT] = true;
-        memberBridge[LEFT] = event.getMember();
-        memberIdBridge[LEFT] = event.getMemberId();
-        isClientBridge[LEFT] = event.isClient();
-        notify();
-      }
+          public synchronized void memberLeft(ClientMembershipEvent event) {
+            firedBridgeDuplicate[LEFT] = firedBridge[LEFT];
+            firedBridge[LEFT] = true;
+            memberBridge[LEFT] = event.getMember();
+            memberIdBridge[LEFT] = event.getMemberId();
+            isClientBridge[LEFT] = event.isClient();
+            notify();
+          }
 
-      public synchronized void memberCrashed(ClientMembershipEvent event) {
-        firedBridgeDuplicate[CRASHED] = firedBridge[CRASHED];
-        firedBridge[CRASHED] = true;
-        memberBridge[CRASHED] = event.getMember();
-        memberIdBridge[CRASHED] = event.getMemberId();
-        isClientBridge[CRASHED] = event.isClient();
-        notify();
-      }
-    };
+          public synchronized void memberCrashed(ClientMembershipEvent event) {
+            firedBridgeDuplicate[CRASHED] = firedBridge[CRASHED];
+            firedBridge[CRASHED] = true;
+            memberBridge[CRASHED] = event.getMember();
+            memberIdBridge[CRASHED] = event.getMemberId();
+            isClientBridge[CRASHED] = event.isClient();
+            notify();
+          }
+        };
 
     final Host host = Host.getHost(0);
     final VM vm0 = host.getVM(0);
@@ -863,7 +883,7 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     final String serverMemberId = serverMember.toString();
     final Properties serverProperties = getSystem().getProperties();
 
-    //Below removed properties are already got copied as cluster SSL properties 
+    //Below removed properties are already got copied as cluster SSL properties
     serverProperties.remove(CLUSTER_SSL_ENABLED);
     serverProperties.remove(CLUSTER_SSL_CIPHERS);
     serverProperties.remove(CLUSTER_SSL_PROTOCOLS);
@@ -882,23 +902,25 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     // register the system listener
     service.addMembershipListener(systemListener);
 
-    // register the universal adapter. 
+    // register the universal adapter.
     adapter.registerMembershipListener(service);
 
-    SerializableCallable createBridgeClient = new SerializableCallable("Create bridge client") {
-      @Override
-      public Object call() {
-        getLogWriter().info("[doTestSystemClientEventsInServer] create system bridge client");
-        assertTrue(getSystem(serverProperties).isConnected());
-        assertFalse(getCache().isClosed());
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        ClientServerTestCase.configureConnectionPool(factory, NetworkUtils.getServerHostName(host), ports, false, -1, -1, null);
-        createRegion(name, factory.create());
-        assertNotNull(getRootRegion().getSubregion(name));
-        return getMemberId();
-      }
-    };
+    SerializableCallable createBridgeClient =
+        new SerializableCallable("Create bridge client") {
+          @Override
+          public Object call() {
+            getLogWriter().info("[doTestSystemClientEventsInServer] create system bridge client");
+            assertTrue(getSystem(serverProperties).isConnected());
+            assertFalse(getCache().isClosed());
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            ClientServerTestCase.configureConnectionPool(
+                factory, NetworkUtils.getServerHostName(host), ports, false, -1, -1, null);
+            createRegion(name, factory.create());
+            assertNotNull(getRootRegion().getSubregion(name));
+            return getMemberId();
+          }
+        };
 
     // create bridge client in vm0...
     DistributedMember clientMember = (DistributedMember) vm0.invoke(createBridgeClient);
@@ -968,23 +990,26 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     assertFalse(isClientAdapter[CRASHED]);
     resetArraysForTesting(firedAdapter, memberAdapter, memberIdAdapter, isClientAdapter);
 
-    vm0.invoke(new SerializableRunnable("Wait for client to fully connect") {
-      public void run() {
-        getLogWriter().info("[doTestSystemClientEventsInServer] wait for client to fully connect");
-        final String pl = getRootRegion().getSubregion(name).getAttributes().getPoolName();
-        PoolImpl pi = (PoolImpl) PoolManager.find(pl);
-        waitForClientToFullyConnect(pi);
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable("Wait for client to fully connect") {
+          public void run() {
+            getLogWriter()
+                .info("[doTestSystemClientEventsInServer] wait for client to fully connect");
+            final String pl = getRootRegion().getSubregion(name).getAttributes().getPoolName();
+            PoolImpl pi = (PoolImpl) PoolManager.find(pl);
+            waitForClientToFullyConnect(pi);
+          }
+        });
 
     // close bridge client region
-    vm0.invoke(new SerializableRunnable("Close bridge client region") {
-      public void run() {
-        getLogWriter().info("[doTestSystemClientEventsInServer] close bridge client region");
-        getRootRegion().getSubregion(name).close();
-        PoolManager.close();
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable("Close bridge client region") {
+          public void run() {
+            getLogWriter().info("[doTestSystemClientEventsInServer] close bridge client region");
+            getRootRegion().getSubregion(name).close();
+            PoolManager.close();
+          }
+        });
 
     synchronized (adapter) {
       if (!firedAdapter[LEFT]) {
@@ -1106,23 +1131,26 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     assertFalse(isClientAdapter[CRASHED]);
     resetArraysForTesting(firedAdapter, memberAdapter, memberIdAdapter, isClientAdapter);
 
-    vm0.invoke(new SerializableRunnable("Wait for client to fully connect") {
-      public void run() {
-        getLogWriter().info("[doTestSystemClientEventsInServer] wait for client to fully connect");
-        final String pl = getRootRegion().getSubregion(name).getAttributes().getPoolName();
-        PoolImpl pi = (PoolImpl) PoolManager.find(pl);
-        waitForClientToFullyConnect(pi);
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable("Wait for client to fully connect") {
+          public void run() {
+            getLogWriter()
+                .info("[doTestSystemClientEventsInServer] wait for client to fully connect");
+            final String pl = getRootRegion().getSubregion(name).getAttributes().getPoolName();
+            PoolImpl pi = (PoolImpl) PoolManager.find(pl);
+            waitForClientToFullyConnect(pi);
+          }
+        });
 
     // have bridge client disconnect from system
-    vm0.invoke(new SerializableRunnable("Disconnect bridge client") {
-      public void run() {
-        getLogWriter().info("[doTestSystemClientEventsInServer] disconnect bridge client");
-        closeCache();
-        disconnectFromDS();
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable("Disconnect bridge client") {
+          public void run() {
+            getLogWriter().info("[doTestSystemClientEventsInServer] disconnect bridge client");
+            closeCache();
+            disconnectFromDS();
+          }
+        });
 
     synchronized (adapter) {
       if (!firedAdapter[LEFT]) {
@@ -1254,25 +1282,28 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     assertFalse(isClientAdapter[CRASHED]);
     resetArraysForTesting(firedAdapter, memberAdapter, memberIdAdapter, isClientAdapter);
 
-    vm0.invoke(new SerializableRunnable("Wait for client to fully connect") {
-      public void run() {
-        getLogWriter().info("[doTestSystemClientEventsInServer] wait for client to fully connect");
-        final String pl = getRootRegion().getSubregion(name).getAttributes().getPoolName();
-        PoolImpl pi = (PoolImpl) PoolManager.find(pl);
-        waitForClientToFullyConnect(pi);
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable("Wait for client to fully connect") {
+          public void run() {
+            getLogWriter()
+                .info("[doTestSystemClientEventsInServer] wait for client to fully connect");
+            final String pl = getRootRegion().getSubregion(name).getAttributes().getPoolName();
+            PoolImpl pi = (PoolImpl) PoolManager.find(pl);
+            waitForClientToFullyConnect(pi);
+          }
+        });
 
     // close bridge client region with test hook for crash
     ServerConnection.setForceClientCrashEvent(true);
     try {
-      vm0.invoke(new SerializableRunnable("Close bridge client region") {
-        public void run() {
-          getLogWriter().info("[doTestSystemClientEventsInServer] close bridge client region");
-          getRootRegion().getSubregion(name).close();
-          PoolManager.close();
-        }
-      });
+      vm0.invoke(
+          new SerializableRunnable("Close bridge client region") {
+            public void run() {
+              getLogWriter().info("[doTestSystemClientEventsInServer] close bridge client region");
+              getRootRegion().getSubregion(name).close();
+              PoolManager.close();
+            }
+          });
 
       synchronized (adapter) {
         if (!firedAdapter[CRASHED]) {
@@ -1285,7 +1316,8 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
         }
       }
 
-      getLogWriter().info("[doTestSystemClientEventsInServer] assert server detected client crashed");
+      getLogWriter()
+          .info("[doTestSystemClientEventsInServer] assert server detected client crashed");
       assertArrayFalse(firedSystemDuplicate);
       assertArrayFalse(firedAdapterDuplicate);
       assertArrayFalse(firedBridgeDuplicate);
@@ -1334,8 +1366,8 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
   }
 
   /**
-   * Waits for client to create an expected number of connections. 
-   * Note: This probably won't work if the pool has more than one Endpoint.
+   * Waits for client to create an expected number of connections. Note: This probably won't work if
+   * the pool has more than one Endpoint.
    */
   protected void waitForClientToFullyConnect(final PoolImpl pool) {
     getLogWriter().info("[waitForClientToFullyConnect]");
@@ -1344,16 +1376,25 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     while (!fullyConnected) {
       Wait.pause(100);
       fullyConnected = pool.getConnectionCount() >= pool.getMinConnections();
-      assertTrue("Client failed to create " + pool.getMinConnections() + " connections within " + JOIN_FAIL_MILLIS + " milliseconds. Only " + pool.getConnectionCount() + " connections were created.", System.currentTimeMillis() < failMillis);
+      assertTrue(
+          "Client failed to create "
+              + pool.getMinConnections()
+              + " connections within "
+              + JOIN_FAIL_MILLIS
+              + " milliseconds. Only "
+              + pool.getConnectionCount()
+              + " connections were created.",
+          System.currentTimeMillis() < failMillis);
     }
     getLogWriter().info("[waitForClientToFullyConnect] fullyConnected=" + fullyConnected);
   }
 
   /**
-   * Resets all elements of arrays used for listener testing. Boolean values
-   * are reset to false. String values are reset to null.
+   * Resets all elements of arrays used for listener testing. Boolean values are reset to false.
+   * String values are reset to null.
    */
-  private void resetArraysForTesting(boolean[] fired, DistributedMember[] member, String[] memberId, boolean[] isClient) {
+  private void resetArraysForTesting(
+      boolean[] fired, DistributedMember[] member, String[] memberId, boolean[] isClient) {
     for (int i = 0; i < fired.length; i++) {
       fired[i] = false;
       member[i] = null;
@@ -1362,9 +1403,7 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     }
   }
 
-  /**
-   * Asserts all elements in the array are false.
-   */
+  /** Asserts all elements in the array are false. */
   private void assertArrayFalse(boolean[] array) {
     assertArrayFalse(null, array);
   }
@@ -1393,10 +1432,7 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     }
   }
 
-  /**
-   * Tests notification of events for bridge server in system bridge client
-   * process.
-   */
+  /** Tests notification of events for bridge server in system bridge client process. */
   @Category(FlakyTest.class) // GEODE-1879
   @Test
   public void testServerEventsInPeerSystem() throws Exception {
@@ -1434,106 +1470,117 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     final boolean[] firedAdapterDuplicate = new boolean[3];
     final boolean[] firedBridgeDuplicate = new boolean[3];
 
-    MembershipListener systemListener = new MembershipListener() {
-      public synchronized void memberJoined(MembershipEvent event) {
-        firedSystemDuplicate[JOINED] = firedSystem[JOINED];
-        firedSystem[JOINED] = true;
-        memberSystem[JOINED] = event.getDistributedMember();
-        memberIdSystem[JOINED] = event.getMemberId();
-        notify();
-      }
+    MembershipListener systemListener =
+        new MembershipListener() {
+          public synchronized void memberJoined(MembershipEvent event) {
+            firedSystemDuplicate[JOINED] = firedSystem[JOINED];
+            firedSystem[JOINED] = true;
+            memberSystem[JOINED] = event.getDistributedMember();
+            memberIdSystem[JOINED] = event.getMemberId();
+            notify();
+          }
 
-      public synchronized void memberLeft(MembershipEvent event) {
-        firedSystemDuplicate[LEFT] = firedSystem[LEFT];
-        firedSystem[LEFT] = true;
-        memberSystem[LEFT] = event.getDistributedMember();
-        memberIdSystem[LEFT] = event.getMemberId();
-        notify();
-      }
+          public synchronized void memberLeft(MembershipEvent event) {
+            firedSystemDuplicate[LEFT] = firedSystem[LEFT];
+            firedSystem[LEFT] = true;
+            memberSystem[LEFT] = event.getDistributedMember();
+            memberIdSystem[LEFT] = event.getMemberId();
+            notify();
+          }
 
-      public synchronized void memberCrashed(MembershipEvent event) {
-        firedSystemDuplicate[CRASHED] = firedSystem[CRASHED];
-        firedSystem[CRASHED] = true;
-        memberSystem[CRASHED] = event.getDistributedMember();
-        memberIdSystem[CRASHED] = event.getMemberId();
-        notify();
-      }
-    };
+          public synchronized void memberCrashed(MembershipEvent event) {
+            firedSystemDuplicate[CRASHED] = firedSystem[CRASHED];
+            firedSystem[CRASHED] = true;
+            memberSystem[CRASHED] = event.getDistributedMember();
+            memberIdSystem[CRASHED] = event.getMemberId();
+            notify();
+          }
+        };
 
-    UniversalMembershipListenerAdapter adapter = new UniversalMembershipListenerAdapter() {
-      @Override
-      public synchronized void memberJoined(MembershipEvent event) {
-        getLogWriter().info("[testServerEventsInSystemClient] memberJoined >" + event.getMemberId() + "<");
-        firedAdapterDuplicate[JOINED] = firedAdapter[JOINED];
-        firedAdapter[JOINED] = true;
-        memberAdapter[JOINED] = event.getDistributedMember();
-        memberIdAdapter[JOINED] = event.getMemberId();
-        if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
-          isClientAdapter[JOINED] = ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
-        }
-        notify();
-      }
+    UniversalMembershipListenerAdapter adapter =
+        new UniversalMembershipListenerAdapter() {
+          @Override
+          public synchronized void memberJoined(MembershipEvent event) {
+            getLogWriter()
+                .info(
+                    "[testServerEventsInSystemClient] memberJoined >" + event.getMemberId() + "<");
+            firedAdapterDuplicate[JOINED] = firedAdapter[JOINED];
+            firedAdapter[JOINED] = true;
+            memberAdapter[JOINED] = event.getDistributedMember();
+            memberIdAdapter[JOINED] = event.getMemberId();
+            if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
+              isClientAdapter[JOINED] =
+                  ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
+            }
+            notify();
+          }
 
-      @Override
-      public synchronized void memberLeft(MembershipEvent event) {
-        getLogWriter().info("[testServerEventsInSystemClient] memberLeft >" + event.getMemberId() + "<");
-        firedAdapterDuplicate[LEFT] = firedAdapter[LEFT];
-        firedAdapter[LEFT] = true;
-        memberAdapter[LEFT] = event.getDistributedMember();
-        memberIdAdapter[LEFT] = event.getMemberId();
-        if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
-          isClientAdapter[LEFT] = ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
-        }
-        notify();
-      }
+          @Override
+          public synchronized void memberLeft(MembershipEvent event) {
+            getLogWriter()
+                .info("[testServerEventsInSystemClient] memberLeft >" + event.getMemberId() + "<");
+            firedAdapterDuplicate[LEFT] = firedAdapter[LEFT];
+            firedAdapter[LEFT] = true;
+            memberAdapter[LEFT] = event.getDistributedMember();
+            memberIdAdapter[LEFT] = event.getMemberId();
+            if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
+              isClientAdapter[LEFT] =
+                  ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
+            }
+            notify();
+          }
 
-      @Override
-      public synchronized void memberCrashed(MembershipEvent event) {
-        getLogWriter().info("[testServerEventsInSystemClient] memberCrashed >" + event.getMemberId() + "<");
-        firedAdapterDuplicate[CRASHED] = firedAdapter[CRASHED];
-        firedAdapter[CRASHED] = true;
-        memberAdapter[CRASHED] = event.getDistributedMember();
-        memberIdAdapter[CRASHED] = event.getMemberId();
-        if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
-          isClientAdapter[CRASHED] = ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
-        }
-        notify();
-      }
-    };
+          @Override
+          public synchronized void memberCrashed(MembershipEvent event) {
+            getLogWriter()
+                .info(
+                    "[testServerEventsInSystemClient] memberCrashed >" + event.getMemberId() + "<");
+            firedAdapterDuplicate[CRASHED] = firedAdapter[CRASHED];
+            firedAdapter[CRASHED] = true;
+            memberAdapter[CRASHED] = event.getDistributedMember();
+            memberIdAdapter[CRASHED] = event.getMemberId();
+            if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
+              isClientAdapter[CRASHED] =
+                  ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
+            }
+            notify();
+          }
+        };
 
-    ClientMembershipListener bridgeListener = new ClientMembershipListener() {
-      public synchronized void memberJoined(ClientMembershipEvent event) {
-        firedBridgeDuplicate[JOINED] = firedBridge[JOINED];
-        firedBridge[JOINED] = true;
-        memberBridge[JOINED] = event.getMember();
-        memberIdBridge[JOINED] = event.getMemberId();
-        isClientBridge[JOINED] = event.isClient();
-        notify();
-      }
+    ClientMembershipListener bridgeListener =
+        new ClientMembershipListener() {
+          public synchronized void memberJoined(ClientMembershipEvent event) {
+            firedBridgeDuplicate[JOINED] = firedBridge[JOINED];
+            firedBridge[JOINED] = true;
+            memberBridge[JOINED] = event.getMember();
+            memberIdBridge[JOINED] = event.getMemberId();
+            isClientBridge[JOINED] = event.isClient();
+            notify();
+          }
 
-      public synchronized void memberLeft(ClientMembershipEvent event) {
-        firedBridgeDuplicate[LEFT] = firedBridge[LEFT];
-        firedBridge[LEFT] = true;
-        memberBridge[LEFT] = event.getMember();
-        memberIdBridge[LEFT] = event.getMemberId();
-        isClientBridge[LEFT] = event.isClient();
-        notify();
-      }
+          public synchronized void memberLeft(ClientMembershipEvent event) {
+            firedBridgeDuplicate[LEFT] = firedBridge[LEFT];
+            firedBridge[LEFT] = true;
+            memberBridge[LEFT] = event.getMember();
+            memberIdBridge[LEFT] = event.getMemberId();
+            isClientBridge[LEFT] = event.isClient();
+            notify();
+          }
 
-      public synchronized void memberCrashed(ClientMembershipEvent event) {
-        firedBridgeDuplicate[CRASHED] = firedBridge[CRASHED];
-        firedBridge[CRASHED] = true;
-        memberBridge[CRASHED] = event.getMember();
-        memberIdBridge[CRASHED] = event.getMemberId();
-        isClientBridge[CRASHED] = event.isClient();
-        notify();
-      }
-    };
+          public synchronized void memberCrashed(ClientMembershipEvent event) {
+            firedBridgeDuplicate[CRASHED] = firedBridge[CRASHED];
+            firedBridge[CRASHED] = true;
+            memberBridge[CRASHED] = event.getMember();
+            memberIdBridge[CRASHED] = event.getMemberId();
+            isClientBridge[CRASHED] = event.isClient();
+            notify();
+          }
+        };
 
     final Host host = Host.getHost(0);
     final VM vm0 = host.getVM(0);
     final String name = this.getUniqueName();
-    final int[] ports = new int[] { AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET) };
+    final int[] ports = new int[] {AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET)};
     assertTrue(ports[0] != 0);
 
     // create BridgeServer in controller vm...
@@ -1566,23 +1613,24 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     // register the system listener
     service.addMembershipListener(systemListener);
 
-    // register the universal adapter. 
+    // register the universal adapter.
     adapter.registerMembershipListener(service);
 
     // create BridgeServer in vm0...
-    SerializableCallable createPeerCache = new SerializableCallable("Create Peer Cache") {
-      @Override
-      public Object call() {
-        getLogWriter().info("[testServerEventsInPeerSystem] Create Peer cache");
-        getSystem(serverProperties);
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        Region region = createRegion(name, factory.create());
-        assertNotNull(region);
-        assertNotNull(getRootRegion().getSubregion(name));
-        return basicGetSystem().getDistributedMember();
-      }
-    };
+    SerializableCallable createPeerCache =
+        new SerializableCallable("Create Peer Cache") {
+          @Override
+          public Object call() {
+            getLogWriter().info("[testServerEventsInPeerSystem] Create Peer cache");
+            getSystem(serverProperties);
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            Region region = createRegion(name, factory.create());
+            assertNotNull(region);
+            assertNotNull(getRootRegion().getSubregion(name));
+            return basicGetSystem().getDistributedMember();
+          }
+        };
 
     DistributedMember peerMember = (DistributedMember) vm0.invoke(createPeerCache);
     String peerMemberId = peerMember.toString();
@@ -1640,16 +1688,19 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     resetArraysForTesting(firedAdapter, memberAdapter, memberIdAdapter, isClientAdapter);
 
     LogWriter bgexecLogger = new LocalLogWriter(InternalLogWriter.ALL_LEVEL, System.out);
-    bgexecLogger.info("<ExpectedException action=add>" + "java.io.IOException" + "</ExpectedException>");
-    final IgnoredException ex = IgnoredException.addIgnoredException(ServerConnectivityException.class.getName());
+    bgexecLogger.info(
+        "<ExpectedException action=add>" + "java.io.IOException" + "</ExpectedException>");
+    final IgnoredException ex =
+        IgnoredException.addIgnoredException(ServerConnectivityException.class.getName());
     try {
-      vm0.invoke(new SerializableRunnable("Disconnect Peer server") {
-        public void run() {
-          getLogWriter().info("[testServerEventsInPeerSystem] disconnect peer server");
-          closeCache();
-          disconnectFromDS();
-        }
-      });
+      vm0.invoke(
+          new SerializableRunnable("Disconnect Peer server") {
+            public void run() {
+              getLogWriter().info("[testServerEventsInPeerSystem] disconnect peer server");
+              closeCache();
+              disconnectFromDS();
+            }
+          });
 
       synchronized (systemListener) {
         if (!firedSystem[LEFT]) {
@@ -1658,11 +1709,13 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
       }
       synchronized (adapter) {
         if (!firedAdapter[LEFT]) {
-          adapter.wait(ASYNC_EVENT_WAIT_MILLIS); // KIRK: did increasing this solve problem on balrog?
+          adapter.wait(
+              ASYNC_EVENT_WAIT_MILLIS); // KIRK: did increasing this solve problem on balrog?
         }
       }
     } finally {
-      bgexecLogger.info("<ExpectedException action=remove>" + "java.io.IOException" + "</ExpectedException>");
+      bgexecLogger.info(
+          "<ExpectedException action=remove>" + "java.io.IOException" + "</ExpectedException>");
       ex.remove();
     }
 
@@ -1689,7 +1742,9 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     assertFalse(isClientSystem[CRASHED]);
     resetArraysForTesting(firedSystem, memberSystem, memberIdSystem, isClientSystem);
 
-    assertFalse("this intermittently fails", firedAdapter[JOINED]); // KIRK --> this fails on balrog occasionally
+    assertFalse(
+        "this intermittently fails",
+        firedAdapter[JOINED]); // KIRK --> this fails on balrog occasionally
     assertNull(memberIdAdapter[JOINED]);
     assertFalse(isClientAdapter[JOINED]);
     // LEFT fired by System listener
@@ -1702,20 +1757,16 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     // are in the same distributed system, and the server's real member
     // id is used now. In this case, two events are sent - one from
     // jgroups (memberDeparted), and one from the server (a memberCrshed).
-    // The memberCrashed event is deemed a duplicate and not sent - see 
+    // The memberCrashed event is deemed a duplicate and not sent - see
     // UniversalMembershipListenerAdapter.MembershipListener.isDuplicate
     assertFalse(firedAdapter[CRASHED]);
     assertNull(memberAdapter[CRASHED]);
     assertNull(memberIdAdapter[CRASHED]);
     assertFalse(isClientAdapter[CRASHED]);
     resetArraysForTesting(firedAdapter, memberAdapter, memberIdAdapter, isClientAdapter);
-
   }
 
-  /**
-   * Tests notification of events for bridge server in system bridge client
-   * process.
-   */
+  /** Tests notification of events for bridge server in system bridge client process. */
   @Test
   public void testServerEventsInLonerClient() throws Exception {
     try {
@@ -1745,80 +1796,89 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     final boolean[] firedAdapterDuplicate = new boolean[3];
     final boolean[] firedBridgeDuplicate = new boolean[3];
 
-    UniversalMembershipListenerAdapter adapter = new UniversalMembershipListenerAdapter() {
-      @Override
-      public synchronized void memberJoined(MembershipEvent event) {
-        getLogWriter().info("[testServerEventsInLonerClient] memberJoined >" + event.getMemberId() + "<");
-        firedAdapterDuplicate[JOINED] = firedAdapter[JOINED];
-        firedAdapter[JOINED] = true;
-        memberAdapter[JOINED] = event.getDistributedMember();
-        memberIdAdapter[JOINED] = event.getMemberId();
-        if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
-          isClientAdapter[JOINED] = ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
-        }
-        notify();
-      }
+    UniversalMembershipListenerAdapter adapter =
+        new UniversalMembershipListenerAdapter() {
+          @Override
+          public synchronized void memberJoined(MembershipEvent event) {
+            getLogWriter()
+                .info("[testServerEventsInLonerClient] memberJoined >" + event.getMemberId() + "<");
+            firedAdapterDuplicate[JOINED] = firedAdapter[JOINED];
+            firedAdapter[JOINED] = true;
+            memberAdapter[JOINED] = event.getDistributedMember();
+            memberIdAdapter[JOINED] = event.getMemberId();
+            if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
+              isClientAdapter[JOINED] =
+                  ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
+            }
+            notify();
+          }
 
-      @Override
-      public synchronized void memberLeft(MembershipEvent event) {
-        getLogWriter().info("[testServerEventsInLonerClient] memberLeft >" + event.getMemberId() + "<");
-        firedAdapterDuplicate[LEFT] = firedAdapter[LEFT];
-        firedAdapter[LEFT] = true;
-        memberAdapter[LEFT] = event.getDistributedMember();
-        memberIdAdapter[LEFT] = event.getMemberId();
-        if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
-          isClientAdapter[LEFT] = ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
-        }
-        notify();
-      }
+          @Override
+          public synchronized void memberLeft(MembershipEvent event) {
+            getLogWriter()
+                .info("[testServerEventsInLonerClient] memberLeft >" + event.getMemberId() + "<");
+            firedAdapterDuplicate[LEFT] = firedAdapter[LEFT];
+            firedAdapter[LEFT] = true;
+            memberAdapter[LEFT] = event.getDistributedMember();
+            memberIdAdapter[LEFT] = event.getMemberId();
+            if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
+              isClientAdapter[LEFT] =
+                  ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
+            }
+            notify();
+          }
 
-      @Override
-      public synchronized void memberCrashed(MembershipEvent event) {
-        getLogWriter().info("[testServerEventsInLonerClient] memberCrashed >" + event.getMemberId() + "<");
-        firedAdapterDuplicate[CRASHED] = firedAdapter[CRASHED];
-        firedAdapter[CRASHED] = true;
-        memberAdapter[CRASHED] = event.getDistributedMember();
-        memberIdAdapter[CRASHED] = event.getMemberId();
-        if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
-          isClientAdapter[CRASHED] = ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
-        }
-        notify();
-      }
-    };
+          @Override
+          public synchronized void memberCrashed(MembershipEvent event) {
+            getLogWriter()
+                .info(
+                    "[testServerEventsInLonerClient] memberCrashed >" + event.getMemberId() + "<");
+            firedAdapterDuplicate[CRASHED] = firedAdapter[CRASHED];
+            firedAdapter[CRASHED] = true;
+            memberAdapter[CRASHED] = event.getDistributedMember();
+            memberIdAdapter[CRASHED] = event.getMemberId();
+            if (event instanceof UniversalMembershipListenerAdapter.AdaptedMembershipEvent) {
+              isClientAdapter[CRASHED] =
+                  ((UniversalMembershipListenerAdapter.AdaptedMembershipEvent) event).isClient();
+            }
+            notify();
+          }
+        };
 
-    ClientMembershipListener bridgeListener = new ClientMembershipListener() {
-      public synchronized void memberJoined(ClientMembershipEvent event) {
-        firedBridgeDuplicate[JOINED] = firedBridge[JOINED];
-        firedBridge[JOINED] = true;
-        memberBridge[JOINED] = event.getMember();
-        memberIdBridge[JOINED] = event.getMemberId();
-        isClientBridge[JOINED] = event.isClient();
-        notify();
-      }
+    ClientMembershipListener bridgeListener =
+        new ClientMembershipListener() {
+          public synchronized void memberJoined(ClientMembershipEvent event) {
+            firedBridgeDuplicate[JOINED] = firedBridge[JOINED];
+            firedBridge[JOINED] = true;
+            memberBridge[JOINED] = event.getMember();
+            memberIdBridge[JOINED] = event.getMemberId();
+            isClientBridge[JOINED] = event.isClient();
+            notify();
+          }
 
-      public synchronized void memberLeft(ClientMembershipEvent event) {
-        firedBridgeDuplicate[LEFT] = firedBridge[LEFT];
-        firedBridge[LEFT] = true;
-        memberBridge[LEFT] = event.getMember();
-        memberIdBridge[LEFT] = event.getMemberId();
-        isClientBridge[LEFT] = event.isClient();
-        notify();
-      }
+          public synchronized void memberLeft(ClientMembershipEvent event) {
+            firedBridgeDuplicate[LEFT] = firedBridge[LEFT];
+            firedBridge[LEFT] = true;
+            memberBridge[LEFT] = event.getMember();
+            memberIdBridge[LEFT] = event.getMemberId();
+            isClientBridge[LEFT] = event.isClient();
+            notify();
+          }
 
-      public synchronized void memberCrashed(ClientMembershipEvent event) {
-        firedBridgeDuplicate[CRASHED] = firedBridge[CRASHED];
-        firedBridge[CRASHED] = true;
-        memberBridge[CRASHED] = event.getMember();
-        memberIdBridge[CRASHED] = event.getMemberId();
-        isClientBridge[CRASHED] = event.isClient();
-        notify();
-      }
-    };
+          public synchronized void memberCrashed(ClientMembershipEvent event) {
+            firedBridgeDuplicate[CRASHED] = firedBridge[CRASHED];
+            firedBridge[CRASHED] = true;
+            memberBridge[CRASHED] = event.getMember();
+            memberIdBridge[CRASHED] = event.getMemberId();
+            isClientBridge[CRASHED] = event.isClient();
+            notify();
+          }
+        };
 
     final Host host = Host.getHost(0);
     final VM vm0 = host.getVM(0);
     final String name = this.getUniqueName();
-    final int[] ports = new int[] { AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET) };
+    final int[] ports = new int[] {AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET)};
     assertTrue(ports[0] != 0);
 
     getLogWriter().info("[testServerEventsInLonerClient] create loner bridge client");
@@ -1840,31 +1900,39 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     //    DistributedMember clientMember = getDistributedMember();
 
     // create BridgeServer in vm0...
-    SerializableCallable createBridgeServer = new SerializableCallable("Create BridgeServer") {
-      @Override
-      public Object call() {
-        getLogWriter().info("[testServerEventsInLonerClient] Create BridgeServer");
-        getSystem();
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        Region region = createRegion(name, factory.create());
-        assertNotNull(region);
-        assertNotNull(getRootRegion().getSubregion(name));
-        try {
-          testServerEventsInLonerClient_port = startBridgeServer(ports[0]);
-        } catch (IOException e) {
-          getLogWriter().error(e);
-          fail(e.getMessage());
-        }
-        return basicGetSystem().getDistributedMember();
-      }
-    };
+    SerializableCallable createBridgeServer =
+        new SerializableCallable("Create BridgeServer") {
+          @Override
+          public Object call() {
+            getLogWriter().info("[testServerEventsInLonerClient] Create BridgeServer");
+            getSystem();
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            Region region = createRegion(name, factory.create());
+            assertNotNull(region);
+            assertNotNull(getRootRegion().getSubregion(name));
+            try {
+              testServerEventsInLonerClient_port = startBridgeServer(ports[0]);
+            } catch (IOException e) {
+              getLogWriter().error(e);
+              fail(e.getMessage());
+            }
+            return basicGetSystem().getDistributedMember();
+          }
+        };
 
     DistributedMember serverMember = (DistributedMember) vm0.invoke(createBridgeServer);
     String serverMemberId = serverMember.toString();
 
     // gather details for later creation of pool...
-    assertEquals(ports[0], (int) vm0.invoke("getServerPort", () -> UniversalMembershipListenerAdapterDUnitTest.getTestServerEventsInLonerClient_port()));
+    assertEquals(
+        ports[0],
+        (int)
+            vm0.invoke(
+                "getServerPort",
+                () ->
+                    UniversalMembershipListenerAdapterDUnitTest
+                        .getTestServerEventsInLonerClient_port()));
 
     getLogWriter().info("[testServerEventsInLonerClient] ports[0]=" + ports[0]);
     getLogWriter().info("[testServerEventsInLonerClient] serverMemberId=" + serverMemberId);
@@ -1873,7 +1941,8 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     // create region which connects to bridge server
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
-    ClientServerTestCase.configureConnectionPool(factory, NetworkUtils.getServerHostName(host), ports, false, -1, -1, null);
+    ClientServerTestCase.configureConnectionPool(
+        factory, NetworkUtils.getServerHostName(host), ports, false, -1, -1, null);
     createRegion(name, factory.create());
     assertNotNull(getRootRegion().getSubregion(name));
 
@@ -1939,7 +2008,8 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
 
     String expected2 = "java.net.ConnectException";
     String addExpected2 = "<ExpectedException action=add>" + expected2 + "</ExpectedException>";
-    String removeExpected2 = "<ExpectedException action=remove>" + expected2 + "</ExpectedException>";
+    String removeExpected2 =
+        "<ExpectedException action=remove>" + expected2 + "</ExpectedException>";
 
     //LogWriter bgexecLogger =
     //      new LocalLogWriter(LocalLogWriter.ALL_LEVEL, System.out);
@@ -1950,12 +2020,13 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     lw.info(addExpected2);
 
     try {
-      vm0.invoke(new SerializableRunnable("Disconnect bridge server") {
-        public void run() {
-          getLogWriter().info("[testServerEventsInLonerClient] disconnect bridge server");
-          closeCache();
-        }
-      });
+      vm0.invoke(
+          new SerializableRunnable("Disconnect bridge server") {
+            public void run() {
+              getLogWriter().info("[testServerEventsInLonerClient] disconnect bridge server");
+              closeCache();
+            }
+          });
 
       synchronized (adapter) {
         if (!firedAdapter[LEFT]) {
@@ -1988,7 +2059,9 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     assertNull(memberIdBridge[JOINED]);
     assertNull(memberBridge[JOINED]);
     assertFalse(isClientBridge[JOINED]);
-    assertFalse("Please update testServerEventsInLonerClient to handle memberLeft for BridgeServer.", firedBridge[LEFT]);
+    assertFalse(
+        "Please update testServerEventsInLonerClient to handle memberLeft for BridgeServer.",
+        firedBridge[LEFT]);
     assertNull(memberBridge[LEFT]);
     assertNull(memberIdBridge[LEFT]);
     assertFalse(isClientBridge[LEFT]);
@@ -2004,7 +2077,9 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     assertNull(memberAdapter[JOINED]);
     assertNull(memberIdAdapter[JOINED]);
     assertFalse(isClientAdapter[JOINED]);
-    assertFalse("Please update testServerEventsInLonerClient to handle BridgeServer LEFT", firedAdapter[LEFT]);
+    assertFalse(
+        "Please update testServerEventsInLonerClient to handle BridgeServer LEFT",
+        firedAdapter[LEFT]);
     assertNull(memberAdapter[LEFT]);
     assertNull(memberIdAdapter[LEFT]);
     assertFalse(isClientAdapter[LEFT]);
@@ -2022,8 +2097,16 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
     serverMemberId = serverMember.toString();
 
     // gather details for later creation of pool...
-    assertEquals(ports[0], (int) vm0.invoke(() -> UniversalMembershipListenerAdapterDUnitTest.getTestServerEventsInLonerClient_port()));
-    serverMember = (DistributedMember) vm0.invoke(() -> UniversalMembershipListenerAdapterDUnitTest.getDistributedMember());
+    assertEquals(
+        ports[0],
+        (int)
+            vm0.invoke(
+                () ->
+                    UniversalMembershipListenerAdapterDUnitTest
+                        .getTestServerEventsInLonerClient_port()));
+    serverMember =
+        (DistributedMember)
+            vm0.invoke(() -> UniversalMembershipListenerAdapterDUnitTest.getDistributedMember());
 
     getLogWriter().info("[testServerEventsInLonerClient] ports[0]=" + ports[0]);
     getLogWriter().info("[testServerEventsInLonerClient] serverMemberId=" + serverMemberId);
@@ -2141,5 +2224,4 @@ public class UniversalMembershipListenerAdapterDUnitTest extends ClientServerTes
       return Collections.emptyList();
     }
   }
-
 }

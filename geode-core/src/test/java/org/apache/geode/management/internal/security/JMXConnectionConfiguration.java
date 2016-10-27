@@ -22,11 +22,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is intended to be used with {@link MBeanServerConnectionRule} in order to configure a per-test JMX
- * connection with a specific user and password.
+ * This annotation is intended to be used with {@link MBeanServerConnectionRule} in order to
+ * configure a per-test JMX connection with a specific user and password.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 public @interface JMXConnectionConfiguration {
   String user();
 

@@ -30,12 +30,12 @@ import org.apache.geode.cache.partition.PartitionRegionHelper;
 
 public class PerformanceTestFunction extends FunctionAdapter {
 
-  public PerformanceTestFunction() {
-  }
+  public PerformanceTestFunction() {}
 
   /**
-   *  Application execution implementation
-   *  @since GemFire 5.8Beta
+   * Application execution implementation
+   *
+   * @since GemFire 5.8Beta
    */
   public void execute(FunctionContext context) {
     if (context instanceof RegionFunctionContext) {
@@ -44,7 +44,7 @@ public class PerformanceTestFunction extends FunctionAdapter {
 
       ArrayList vals = new ArrayList();
       Region fcd = PartitionRegionHelper.getLocalDataForContext(prContext);
-      for (Iterator i = allKeysSet.iterator(); i.hasNext();) {
+      for (Iterator i = allKeysSet.iterator(); i.hasNext(); ) {
         Object val = fcd.get(i.next());
         assertNotNull(val);
         vals.add(val);
@@ -57,6 +57,7 @@ public class PerformanceTestFunction extends FunctionAdapter {
 
   /**
    * Get the function identifier, used by clients to invoke this function
+   *
    * @return an object identifying this function
    * @since GemFire 5.8Beta
    */

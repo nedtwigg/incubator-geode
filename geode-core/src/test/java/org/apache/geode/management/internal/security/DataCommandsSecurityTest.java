@@ -30,7 +30,7 @@ import org.apache.geode.security.GemFireSecurityException;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class DataCommandsSecurityTest {
 
   private static int jmxManagerPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
@@ -38,7 +38,9 @@ public class DataCommandsSecurityTest {
   private MemberMXBean bean;
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
+  public static JsonAuthorizationCacheStartRule serverRule =
+      new JsonAuthorizationCacheStartRule(
+          jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
 
   @Rule
   public MBeanServerConnectionRule connectionRule = new MBeanServerConnectionRule(jmxManagerPort);
@@ -54,7 +56,8 @@ public class DataCommandsSecurityTest {
     bean.processCommand("locate entry --key=k1 --region=region1");
 
     // can't operate on secureRegion
-    assertThatThrownBy(() -> bean.processCommand("locate entry --key=k1 --region=secureRegion")).isInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(() -> bean.processCommand("locate entry --key=k1 --region=secureRegion"))
+        .isInstanceOf(GemFireSecurityException.class);
   }
 
   @JMXConnectionConfiguration(user = "secure-user", password = "1234567")
@@ -69,14 +72,23 @@ public class DataCommandsSecurityTest {
   @JMXConnectionConfiguration(user = "region1-user", password = "1234567")
   @Test
   public void testRegionAccess() {
-    assertThatThrownBy(() -> bean.processCommand("rebalance --include-region=region2")).isInstanceOf(GemFireSecurityException.class).hasMessageContaining(TestCommand.dataManage.toString());
+    assertThatThrownBy(() -> bean.processCommand("rebalance --include-region=region2"))
+        .isInstanceOf(GemFireSecurityException.class)
+        .hasMessageContaining(TestCommand.dataManage.toString());
 
-    assertThatThrownBy(() -> bean.processCommand("export data --region=region2 --file=foo.txt --member=value")).isInstanceOf(GemFireSecurityException.class);
-    assertThatThrownBy(() -> bean.processCommand("import data --region=region2 --file=foo.txt --member=value")).isInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(
+            () -> bean.processCommand("export data --region=region2 --file=foo.txt --member=value"))
+        .isInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(
+            () -> bean.processCommand("import data --region=region2 --file=foo.txt --member=value"))
+        .isInstanceOf(GemFireSecurityException.class);
 
-    assertThatThrownBy(() -> bean.processCommand("put --key=key1 --value=value1 --region=region2")).isInstanceOf(GemFireSecurityException.class).hasMessageContaining("DATA:WRITE:region2");
+    assertThatThrownBy(() -> bean.processCommand("put --key=key1 --value=value1 --region=region2"))
+        .isInstanceOf(GemFireSecurityException.class)
+        .hasMessageContaining("DATA:WRITE:region2");
 
-    assertThatThrownBy(() -> bean.processCommand("get --key=key1 --region=region2")).isInstanceOf(GemFireSecurityException.class).hasMessageContaining("DATA:READ:region2");
+    assertThatThrownBy(() -> bean.processCommand("get --key=key1 --region=region2"))
+        .isInstanceOf(GemFireSecurityException.class)
+        .hasMessageContaining("DATA:READ:region2");
   }
-
 }

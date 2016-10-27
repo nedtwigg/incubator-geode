@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
@@ -48,14 +46,17 @@ import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Tests that if a node doing GII experiences DiskAccessException, it should
- * also not try to recover from the disk
+ * Tests that if a node doing GII experiences DiskAccessException, it should also not try to recover
+ * from the disk
  */
 @Category(DistributedTest.class)
 public class Bug39079DUnitTest extends JUnit4CacheTestCase {
 
-  private static final String REGION_NAME_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase = "IGNORE_EXCEPTION_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase";
-  private static final String REGION_NAME_testGIIDiskAccessException = "IGNORE_EXCEPTION_testGIIDiskAccessException";
+  private static final String
+      REGION_NAME_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase =
+          "IGNORE_EXCEPTION_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase";
+  private static final String REGION_NAME_testGIIDiskAccessException =
+      "IGNORE_EXCEPTION_testGIIDiskAccessException";
 
   private VM vm0;
   private VM vm1;
@@ -81,8 +82,8 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * If the node experiences disk access exception during GII, it should
-   * get destroyed & not attempt to recover from the disk
+   * If the node experiences disk access exception during GII, it should get destroyed & not attempt
+   * to recover from the disk
    */
   @Test
   public void testGIIDiskAccessException() throws Exception {
@@ -97,7 +98,12 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     factory.setDiskSynchronous(false);
-    factory.setDiskStoreName(getCache().createDiskStoreFactory().setDiskDirs(getDiskDirs()).create(getClass().getSimpleName()).getName());
+    factory.setDiskStoreName(
+        getCache()
+            .createDiskStoreFactory()
+            .setDiskDirs(getDiskDirs())
+            .create(getClass().getSimpleName())
+            .getName());
     RegionAttributes attr = factory.create();
     Region region = getCache().createRegion(REGION_NAME_testGIIDiskAccessException, attr);
 
@@ -112,23 +118,44 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
     //Now recreate the region but set the factory such that disk region entry object
     //used is customized by us to throw exception while writing to disk
 
-    DistributedRegion distRegion = new DistributedRegion(REGION_NAME_testGIIDiskAccessException, attr, null, (GemFireCacheImpl) getCache(), new InternalRegionArguments().setDestroyLockFlag(true).setRecreateFlag(false).setSnapshotInputStream(null).setImageTarget(null));
+    DistributedRegion distRegion =
+        new DistributedRegion(
+            REGION_NAME_testGIIDiskAccessException,
+            attr,
+            null,
+            (GemFireCacheImpl) getCache(),
+            new InternalRegionArguments()
+                .setDestroyLockFlag(true)
+                .setRecreateFlag(false)
+                .setSnapshotInputStream(null)
+                .setImageTarget(null));
 
     distRegion.entries.setEntryFactory(TestAbstractDiskRegionEntry.getEntryFactory());
     region = null;
 
     try {
-      region = ((GemFireCacheImpl) getCache()).createVMRegion(REGION_NAME_testGIIDiskAccessException, attr, new InternalRegionArguments().setInternalMetaRegion(distRegion).setDestroyLockFlag(true).setSnapshotInputStream(null).setImageTarget(null));
+      region =
+          ((GemFireCacheImpl) getCache())
+              .createVMRegion(
+                  REGION_NAME_testGIIDiskAccessException,
+                  attr,
+                  new InternalRegionArguments()
+                      .setInternalMetaRegion(distRegion)
+                      .setDestroyLockFlag(true)
+                      .setSnapshotInputStream(null)
+                      .setImageTarget(null));
       fail("Expected DiskAccessException");
     } catch (DiskAccessException expected) {
     }
 
-    assertTrue(region == null || region.isDestroyed()); // TODO: why is this an OR instead of deterministic?
+    assertTrue(
+        region == null
+            || region.isDestroyed()); // TODO: why is this an OR instead of deterministic?
   }
 
   /**
-   * If IOException occurs while updating an entry in an already initialized
-   * DiskRegion ,then the bridge servers should be stopped , if any running 
+   * If IOException occurs while updating an entry in an already initialized DiskRegion ,then the
+   * bridge servers should be stopped , if any running
    */
   @Test
   public void testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase() throws Exception {
@@ -157,7 +184,8 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
     props.setDiskDirs(getDiskDirs());
     props.setPersistBackup(true);
 
-    Region region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(getCache(), props, Scope.DISTRIBUTED_ACK);
+    Region region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(getCache(), props, Scope.DISTRIBUTED_ACK);
     assertNotNull(region);
     CacheServer bs1 = getCache().addCacheServer();
     int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
@@ -177,13 +205,16 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
   }
 
   private void validateRunningBridgeServerList() throws IOException {
-    Region region = getCache().getRegion(REGION_NAME_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase);
+    Region region =
+        getCache()
+            .getRegion(REGION_NAME_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase);
     try {
       region.create("key1", new byte[16]);
       region.create("key2", new byte[16]);
 
       // Get the oplog handle & hence the underlying file & close it
-      UninterruptibleFileChannel oplogFileChannel = ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
+      UninterruptibleFileChannel oplogFileChannel =
+          ((LocalRegion) region).getDiskRegion().testHook_getChild().getFileChannel();
 
       try {
         oplogFileChannel.close();
@@ -211,20 +242,31 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
     props.setProperty(LOCATORS, "");
     createCache(props);
 
-    PoolImpl pool = (PoolImpl) PoolManager.createFactory().addServer(host, port1.intValue()).setSubscriptionEnabled(true).setSubscriptionRedundancy(0).setThreadLocalConnections(true).setMinConnections(0).setReadTimeout(20000).setRetryAttempts(1).create(getClass().getSimpleName());
+    PoolImpl pool =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(host, port1.intValue())
+                .setSubscriptionEnabled(true)
+                .setSubscriptionRedundancy(0)
+                .setThreadLocalConnections(true)
+                .setMinConnections(0)
+                .setReadTimeout(20000)
+                .setRetryAttempts(1)
+                .create(getClass().getSimpleName());
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setPoolName(pool.getName());
 
     RegionAttributes attrs = factory.create();
-    Region region = getCache().createRegion(REGION_NAME_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase, attrs);
+    Region region =
+        getCache()
+            .createRegion(
+                REGION_NAME_testBridgeServerStoppingInSynchPersistOnlyForIOExceptionCase, attrs);
     region.registerInterest("ALL_KEYS");
   }
 
-  /**
-   * This method is used to create Cache in VM0
-   */
+  /** This method is used to create Cache in VM0 */
   private CacheSerializableRunnable createCacheForVM0() {
     return new CacheSerializableRunnable("createCache") {
       @Override
@@ -237,7 +279,12 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
           factory.setScope(Scope.DISTRIBUTED_ACK);
           factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
           factory.setDiskSynchronous(false);
-          factory.setDiskStoreName(getCache().createDiskStoreFactory().setDiskDirs(getDiskDirs()).create(getClass().getSimpleName()).getName());
+          factory.setDiskStoreName(
+              getCache()
+                  .createDiskStoreFactory()
+                  .setDiskDirs(getDiskDirs())
+                  .create(getClass().getSimpleName())
+                  .getName());
 
           RegionAttributes attr = factory.create();
           getCache().createRegion(REGION_NAME_testGIIDiskAccessException, attr);
@@ -248,9 +295,7 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
     };
   }
 
-  /**
-   * This method is used to create Cache in VM1
-   */
+  /** This method is used to create Cache in VM1 */
   private CacheSerializableRunnable createCacheForVM1() {
     return new CacheSerializableRunnable("createCache") {
       @Override
@@ -263,7 +308,12 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
           factory.setScope(Scope.DISTRIBUTED_ACK);
           factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
           factory.setDiskSynchronous(false);
-          factory.setDiskStoreName(getCache().createDiskStoreFactory().setDiskDirs(getDiskDirs()).create(getClass().getSimpleName()).getName());
+          factory.setDiskStoreName(
+              getCache()
+                  .createDiskStoreFactory()
+                  .setDiskDirs(getDiskDirs())
+                  .create(getClass().getSimpleName())
+                  .getName());
 
           RegionAttributes attr = factory.create();
           getCache().createRegion(REGION_NAME_testGIIDiskAccessException, attr);
@@ -284,32 +334,31 @@ public class Bug39079DUnitTest extends JUnit4CacheTestCase {
       super(r, key, value);
     }
 
-    private static RegionEntryFactory factory = new RegionEntryFactory() {
+    private static RegionEntryFactory factory =
+        new RegionEntryFactory() {
 
-      @Override
-      public final RegionEntry createEntry(RegionEntryContext r, Object key, Object value) {
-        throw new DiskAccessException(new IOException("Test Exception"));
-      }
+          @Override
+          public final RegionEntry createEntry(RegionEntryContext r, Object key, Object value) {
+            throw new DiskAccessException(new IOException("Test Exception"));
+          }
 
-      @Override
-      public final Class getEntryClass() {
-        return getClass();
-      }
+          @Override
+          public final Class getEntryClass() {
+            return getClass();
+          }
 
-      @Override
-      public RegionEntryFactory makeVersioned() {
-        return this;
-      }
+          @Override
+          public RegionEntryFactory makeVersioned() {
+            return this;
+          }
 
-      @Override
-      public RegionEntryFactory makeOnHeap() {
-        return this;
-      }
-    };
+          @Override
+          public RegionEntryFactory makeOnHeap() {
+            return this;
+          }
+        };
 
-    /**
-     * Overridden setValue method to throw exception
-     */
+    /** Overridden setValue method to throw exception */
     @Override
     protected void setValueField(Object v) {
       throw new DiskAccessException(new IOException("Test Exception"));

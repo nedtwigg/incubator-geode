@@ -38,17 +38,17 @@ import org.apache.geode.test.dunit.rules.LocatorServerConfigurationRule;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
-
+@Category({DistributedTest.class, SecurityTest.class})
 public class SecurityWithoutClusterConfigDUnitTest extends JUnit4DistributedTestCase {
 
-  @Rule
-  public LocatorServerConfigurationRule lsRule = new LocatorServerConfigurationRule(this);
+  @Rule public LocatorServerConfigurationRule lsRule = new LocatorServerConfigurationRule(this);
 
   @Before
   public void before() throws Exception {
-    IgnoredException.addIgnoredException(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toString());
-    IgnoredException.addIgnoredException(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION_2.toString());
+    IgnoredException.addIgnoredException(
+        LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toString());
+    IgnoredException.addIgnoredException(
+        LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION_2.toString());
     Properties props = new Properties();
     props.setProperty(SECURITY_MANAGER, SimpleSecurityManager.class.getName());
     props.setProperty(SECURITY_POST_PROCESSOR, PDXPostProcessor.class.getName());

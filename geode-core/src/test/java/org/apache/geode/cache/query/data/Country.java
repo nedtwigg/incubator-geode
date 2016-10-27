@@ -25,34 +25,31 @@ package org.apache.geode.cache.query.data;
 import java.util.*;
 import java.io.*;
 
-/**
- *
- */
+/** */
 public class Country implements Serializable {
   public String name;
   public String continent;
   public Set states;
 
   /** Creates a new instance of Country */
-
   public Country(String name, String continent, Set states) {
     this.name = name;
     this.continent = continent;
     this.states = states;
-  }//end of constructor 1
+  } //end of constructor 1
 
   public Country(int i, Set states) {
-    String arr1[] = { "USA", "INDIA", "ISRAEL", "CANADA", "AUSTRALIA" };
-    String arr2[] = { "AMERICA", "ASIA", "AFRICA", "AMERICA", "AUSTRALIA" };
+    String arr1[] = {"USA", "INDIA", "ISRAEL", "CANADA", "AUSTRALIA"};
+    String arr2[] = {"AMERICA", "ASIA", "AFRICA", "AMERICA", "AUSTRALIA"};
     /*this is for the test to have 20% of the objects belonging to one country*/
     this.name = arr1[i % 5];
     this.continent = arr2[i % 5];
     this.states = states;
-  }//end of constructor 2
+  } //end of constructor 2
 
   public Country(int i, int numStates, int numDistricts, int numCities, int numVillages) {
-    String arr1[] = { "USA", "INDIA", "ISRAEL", "CANADA", "AUSTRALIA" };
-    String arr2[] = { "AMERICA", "ASIA", "AFRICA", "AMERICA", "AUSTRALIA" };
+    String arr1[] = {"USA", "INDIA", "ISRAEL", "CANADA", "AUSTRALIA"};
+    String arr2[] = {"AMERICA", "ASIA", "AFRICA", "AMERICA", "AUSTRALIA"};
     /*this is for the test to have 20% of the objects belonging to one country*/
     this.name = arr1[i % 5];
     this.continent = arr2[i % 5];
@@ -82,7 +79,7 @@ public class Country implements Serializable {
     }
 
     this.states = states;
-  }//end of constructor 3
+  } //end of constructor 3
 
   //////////////////////////////////
   public String getName() {
@@ -97,4 +94,4 @@ public class Country implements Serializable {
     return states;
   }
   //////////////////////////////////
-}//end of class
+} //end of class

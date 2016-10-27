@@ -19,11 +19,10 @@ package org.apache.geode.internal.logging;
 import org.apache.geode.i18n.StringId;
 
 /**
- * A log writer that logs all types of log messages as a warning.
- * Intended usage was for individual classes that had their
- * own logger reference and switched it for debugging purposes.
- * e.g.
- *  <pre>
+ * A log writer that logs all types of log messages as a warning. Intended usage was for individual
+ * classes that had their own logger reference and switched it for debugging purposes. e.g.
+ *
+ * <pre>
  *  Foo() { // constructor for class Foo
  *    if (Boolean.getBoolean(getClass().getName() + "-logging")) {
  *      this.logger = new DebugLogWriter((LogWriterImpl) getCache().getLogger(), getClass());
@@ -32,10 +31,10 @@ import org.apache.geode.i18n.StringId;
  *    }
  *  }
  *  </pre>
- * 
+ *
  * @since GemFire 5.0
  */
-final public class DebugLogWriter extends LogWriterImpl {
+public final class DebugLogWriter extends LogWriterImpl {
   private final LogWriterImpl realLogWriter;
   private final String prefix;
 
@@ -57,18 +56,33 @@ final public class DebugLogWriter extends LogWriterImpl {
 
   @Override
   public void put(int level, String msg, Throwable exception) {
-    this.realLogWriter.put(WARNING_LEVEL, new StringBuilder(this.prefix).append(" level ").append(levelToString(level)).append(" ").append(msg).toString(), exception);
+    this.realLogWriter.put(
+        WARNING_LEVEL,
+        new StringBuilder(this.prefix)
+            .append(" level ")
+            .append(levelToString(level))
+            .append(" ")
+            .append(msg)
+            .toString(),
+        exception);
   }
 
   /**
    * Handles internationalized log messages.
+   *
    * @param params each Object has toString() called and substituted into the msg
    * @see org.apache.geode.i18n.StringId
    * @since GemFire 6.0
    */
   @Override
   public void put(int msgLevel, StringId msgId, Object[] params, Throwable exception) {
-    String msg = new StringBuilder(this.prefix).append(" level ").append(levelToString(msgLevel)).append(" ").append(msgId.toLocalizedString(params)).toString();
+    String msg =
+        new StringBuilder(this.prefix)
+            .append(" level ")
+            .append(levelToString(msgLevel))
+            .append(" ")
+            .append(msgId.toLocalizedString(params))
+            .toString();
     this.realLogWriter.put(WARNING_LEVEL, msg, exception);
   }
 
@@ -111,5 +125,4 @@ final public class DebugLogWriter extends LogWriterImpl {
   public String getConnectionName() {
     return null;
   }
-
 }

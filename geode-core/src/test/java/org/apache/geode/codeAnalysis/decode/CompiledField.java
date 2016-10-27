@@ -47,29 +47,19 @@ public class CompiledField implements Comparable {
     }
   }
 
-  /**
-   * return a string describing the access modifiers for this class
-   */
+  /** return a string describing the access modifiers for this class */
   public String accessString() {
     StringBuffer result;
 
-    if (accessString != null)
-      return accessString;
+    if (accessString != null) return accessString;
     result = new StringBuffer();
-    if ((access_flags & 0x0001) != 0)
-      result.append("public ");
-    if ((access_flags & 0x0002) != 0)
-      result.append("private ");
-    if ((access_flags & 0x0004) != 0)
-      result.append("protected ");
-    if ((access_flags & 0x0008) != 0)
-      result.append("static ");
-    if ((access_flags & 0x0010) != 0)
-      result.append("final ");
-    if ((access_flags & 0x0040) != 0)
-      result.append("volatile ");
-    if ((access_flags & 0x0080) != 0)
-      result.append("transient ");
+    if ((access_flags & 0x0001) != 0) result.append("public ");
+    if ((access_flags & 0x0002) != 0) result.append("private ");
+    if ((access_flags & 0x0004) != 0) result.append("protected ");
+    if ((access_flags & 0x0008) != 0) result.append("static ");
+    if ((access_flags & 0x0010) != 0) result.append("final ");
+    if ((access_flags & 0x0040) != 0) result.append("volatile ");
+    if ((access_flags & 0x0080) != 0) result.append("transient ");
 
     accessString = result.toString();
     return accessString;
@@ -83,9 +73,7 @@ public class CompiledField implements Comparable {
     return (access_flags & 0x80) != 0;
   }
 
-  /**
-   * the descriptor is just the type string for the field
-   */
+  /** the descriptor is just the type string for the field */
   public String descriptor() {
     if (descriptor == null) {
       descriptor = ((CpUtf8) myclass.constant_pool[descriptor_index]).decodeClassName(0);
@@ -101,8 +89,7 @@ public class CompiledField implements Comparable {
   }
 
   public String signature() {
-    if (signature == null)
-      signature = accessString() + descriptor() + " " + name() + ";";
+    if (signature == null) signature = accessString() + descriptor() + " " + name() + ";";
     return signature;
   }
 

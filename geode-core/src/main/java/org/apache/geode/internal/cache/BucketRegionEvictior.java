@@ -20,12 +20,10 @@ import java.util.concurrent.Callable;
 import org.apache.geode.cache.Region;
 
 /**
- * 
- * Takes delta to be evicted and tries to evict the least no of LRU entry which
- * would make evictedBytes more than or equal to the delta
- * 
+ * Takes delta to be evicted and tries to evict the least no of LRU entry which would make
+ * evictedBytes more than or equal to the delta
+ *
  * @since GemFire 6.0
- * 
  */
 public class BucketRegionEvictior implements Callable<Object> {
   private LocalRegion region;
@@ -57,5 +55,4 @@ public class BucketRegionEvictior implements Callable<Object> {
     ((AbstractLRURegionMap) region.entries).lruUpdateCallback(bytesToEvict);
     return null;
   }
-
 }

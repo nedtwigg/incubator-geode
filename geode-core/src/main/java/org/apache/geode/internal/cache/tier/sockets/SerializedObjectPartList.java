@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets;
 
 import java.io.DataInput;
@@ -28,12 +26,10 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.DataSerializableFixedID;
 
 /**
- * A variant of the ObjectPartList which deserializes
- * the values as byte arrays of serialized objects,
- * rather than as deserialized objects.
+ * A variant of the ObjectPartList which deserializes the values as byte arrays of serialized
+ * objects, rather than as deserialized objects.
  *
- * [bruce] THIS CLASS IS OBSOLETE AS OF V7.0.  It is replaced with VersionedObjectList
- *  
+ * <p>[bruce] THIS CLASS IS OBSOLETE AS OF V7.0. It is replaced with VersionedObjectList
  */
 public class SerializedObjectPartList extends ObjectPartList651 {
 

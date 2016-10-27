@@ -21,12 +21,9 @@ import javax.management.NotificationBroadcasterSupport;
 import org.apache.geode.management.DiskStoreMXBean;
 
 /**
- * DiskStore MBean represent a DiskStore which provides disk storage for one or
- * more regions. The regions in the same disk store will share the same disk
- * persistence attributes. A region without a disk store name belongs to the
- * default disk store.
- * 
- * 
+ * DiskStore MBean represent a DiskStore which provides disk storage for one or more regions. The
+ * regions in the same disk store will share the same disk persistence attributes. A region without
+ * a disk store name belongs to the default disk store.
  */
 public class DiskStoreMBean extends NotificationBroadcasterSupport implements DiskStoreMXBean {
 
@@ -39,13 +36,11 @@ public class DiskStoreMBean extends NotificationBroadcasterSupport implements Di
   @Override
   public boolean forceCompaction() {
     return bridge.forceCompaction();
-
   }
 
   @Override
   public void forceRoll() {
     bridge.forceRoll();
-
   }
 
   @Override
@@ -141,7 +136,6 @@ public class DiskStoreMBean extends NotificationBroadcasterSupport implements Di
   @Override
   public void flush() {
     bridge.flush();
-
   }
 
   @Override
@@ -176,5 +170,4 @@ public class DiskStoreMBean extends NotificationBroadcasterSupport implements Di
   public void stopMonitor() {
     bridge.stopMonitor();
   }
-
 }

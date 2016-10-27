@@ -30,17 +30,16 @@ import org.apache.geode.distributed.internal.membership.*;
 
 /**
  * A message that is sent in response to a {@link CacheInfoRequest}.
+ *
  * @since GemFire 3.5
  */
 public final class CacheInfoResponse extends AdminResponse {
   // instance variables
   private RemoteCacheInfo info;
 
-  /**
-   * Returns a <code>CacheInfoResponse</code> that will be returned to the
-   * specified recipient.
-   */
-  public static CacheInfoResponse create(DistributionManager dm, InternalDistributedMember recipient) {
+  /** Returns a <code>CacheInfoResponse</code> that will be returned to the specified recipient. */
+  public static CacheInfoResponse create(
+      DistributionManager dm, InternalDistributedMember recipient) {
     CacheInfoResponse m = new CacheInfoResponse();
     m.setRecipient(recipient);
     try {

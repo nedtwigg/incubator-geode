@@ -25,15 +25,10 @@ import java.util.logging.LogRecord;
 import org.apache.geode.LogWriter;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * Implementation of the standard JDK formatter that formats a message
- * in GemFire's log format.
- */
+/** Implementation of the standard JDK formatter that formats a message in GemFire's log format. */
 public class GemFireFormatter extends Formatter {
 
-  /**
-   * Use the log writer to use some of its formatting code.
-   */
+  /** Use the log writer to use some of its formatting code. */
   private final LogWriter logWriter;
 
   private final DateFormat dateFormat = DateFormatter.createDateFormat();
@@ -85,7 +80,8 @@ public class GemFireFormatter extends Formatter {
         LogWriterImpl.formatText(pw, msg, 40);
       } catch (RuntimeException e) {
         pw.println(msg);
-        pw.println(LocalizedStrings.GemFireFormatter_IGNORING_THE_FOLLOWING_EXCEPTION.toLocalizedString());
+        pw.println(
+            LocalizedStrings.GemFireFormatter_IGNORING_THE_FOLLOWING_EXCEPTION.toLocalizedString());
         e.printStackTrace(pw);
       }
     } else {

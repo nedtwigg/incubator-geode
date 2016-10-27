@@ -32,9 +32,7 @@ import org.apache.geode.codeAnalysis.decode.CompiledClass;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.util.test.TestUtil;
 
-/**
- * 
- */
+/** */
 @Category(IntegrationTest.class)
 public class AnalyzeWANSerializablesJUnitTest extends AnalyzeSerializablesJUnitTest {
 
@@ -44,15 +42,29 @@ public class AnalyzeWANSerializablesJUnitTest extends AnalyzeSerializablesJUnitT
       return;
     }
     System.out.println("loadClasses starting");
-    List<String> excludedClasses = loadExcludedClasses(new File(TestUtil.getResourcePath(AnalyzeWANSerializablesJUnitTest.class, "excludedClasses.txt")));
-    List<String> openBugs = loadOpenBugs(new File(TestUtil.getResourcePath(AnalyzeWANSerializablesJUnitTest.class, "openBugs.txt")));
+    List<String> excludedClasses =
+        loadExcludedClasses(
+            new File(
+                TestUtil.getResourcePath(
+                    AnalyzeWANSerializablesJUnitTest.class, "excludedClasses.txt")));
+    List<String> openBugs =
+        loadOpenBugs(
+            new File(
+                TestUtil.getResourcePath(AnalyzeWANSerializablesJUnitTest.class, "openBugs.txt")));
     excludedClasses.addAll(openBugs);
 
     String cp = System.getProperty("java.class.path");
     System.out.println("java classpath is " + cp);
     System.out.flush();
     String[] entries = cp.split(File.pathSeparator);
-    String buildDirName = "geode-wan" + File.separatorChar + "build" + File.separatorChar + "classes" + File.separatorChar + "main";
+    String buildDirName =
+        "geode-wan"
+            + File.separatorChar
+            + "build"
+            + File.separatorChar
+            + "classes"
+            + File.separatorChar
+            + "main";
     String buildDir = null;
 
     for (int i = 0; i < entries.length && buildDir == null; i++) {
@@ -68,7 +80,12 @@ public class AnalyzeWANSerializablesJUnitTest extends AnalyzeSerializablesJUnitT
       long start = System.currentTimeMillis();
       loadClassesFromBuild(new File(buildDir), excludedClasses);
       long finish = System.currentTimeMillis();
-      System.out.println("done loading " + classes.size() + " classes.  elapsed time = " + (finish - start) / 1000 + " seconds");
+      System.out.println(
+          "done loading "
+              + classes.size()
+              + " classes.  elapsed time = "
+              + (finish - start) / 1000
+              + " seconds");
     } else {
       fail("unable to find WAN classes");
     }
@@ -80,5 +97,4 @@ public class AnalyzeWANSerializablesJUnitTest extends AnalyzeSerializablesJUnitT
       classes.clear();
     }
   }
-
 }

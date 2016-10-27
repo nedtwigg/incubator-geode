@@ -28,26 +28,22 @@ public class Support {
   private static final int ARG = 2;
 
   public static void assertArg(boolean b, String message) {
-    if (!ASSERTIONS_ENABLED)
-      return;
+    if (!ASSERTIONS_ENABLED) return;
     Assert(b, message, ARG);
   }
 
   public static void assertState(boolean b, String message) {
-    if (!ASSERTIONS_ENABLED)
-      return;
+    if (!ASSERTIONS_ENABLED) return;
     Assert(b, message, STATE);
   }
 
   public static void Assert(boolean b) {
-    if (!ASSERTIONS_ENABLED)
-      return;
+    if (!ASSERTIONS_ENABLED) return;
     Assert(b, "", OTHER);
   }
 
   public static void Assert(boolean b, String message) {
-    if (!ASSERTIONS_ENABLED)
-      return;
+    if (!ASSERTIONS_ENABLED) return;
     Assert(b, message, OTHER);
   }
 
@@ -60,21 +56,20 @@ public class Support {
   }
 
   private static void Assert(boolean b, String message, int type) {
-    if (!b)
-      assertionFailed(message, type);
+    if (!b) assertionFailed(message, type);
   }
 
   private static void assertionFailed(String message, int type) {
     switch (type) {
-    case ARG:
-      throw new IllegalArgumentException(message);
-    case STATE:
-      throw new IllegalStateException(message);
-    default:
-      throw new InternalGemFireError(LocalizedStrings.Support_ERROR_ASSERTION_FAILED_0.toLocalizedString(message));
+      case ARG:
+        throw new IllegalArgumentException(message);
+      case STATE:
+        throw new IllegalStateException(message);
+      default:
+        throw new InternalGemFireError(
+            LocalizedStrings.Support_ERROR_ASSERTION_FAILED_0.toLocalizedString(message));
     }
 
     // org.apache.persistence.jdo.GsRuntime.notifyCDebugger(null);
   }
-
 }

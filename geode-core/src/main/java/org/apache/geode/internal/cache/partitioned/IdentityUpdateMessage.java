@@ -42,11 +42,8 @@ public final class IdentityUpdateMessage extends DistributionMessage implements 
 
   private int newId;
 
-  /**
-   * Empty constructor to support DataSerializable instantiation
-   */
-  public IdentityUpdateMessage() {
-  }
+  /** Empty constructor to support DataSerializable instantiation */
+  public IdentityUpdateMessage() {}
 
   public IdentityUpdateMessage(Set recipients, int processorId, int newId) {
     setRecipients(recipients);
@@ -90,11 +87,13 @@ public final class IdentityUpdateMessage extends DistributionMessage implements 
     return this.processorId;
   }
 
-  public static IdentityUpdateResponse send(Set recipients, InternalDistributedSystem is, int currentPRId) {
+  public static IdentityUpdateResponse send(
+      Set recipients, InternalDistributedSystem is, int currentPRId) {
     Assert.assertTrue(recipients != null, "IdentityUpdateMessage NULL recipients set");
-    IdentityRequestMessage.setLatestId(currentPRId); // set local value 
+    IdentityRequestMessage.setLatestId(currentPRId); // set local value
     IdentityUpdateResponse p = new IdentityUpdateResponse(is, recipients);
-    IdentityUpdateMessage m = new IdentityUpdateMessage(recipients, p.getProcessorId(), currentPRId);
+    IdentityUpdateMessage m =
+        new IdentityUpdateMessage(recipients, p.getProcessorId(), currentPRId);
     is.getDistributionManager().putOutgoing(m); // set remote values
     return p;
   }
@@ -119,11 +118,21 @@ public final class IdentityUpdateMessage extends DistributionMessage implements 
 
   @Override
   public String toString() {
-    return new StringBuffer().append(getClass().getName()).append("(sender=").append(getSender()).append("; processorId=").append(this.processorId).append("; newPRId=").append(this.newId).append(")").toString();
+    return new StringBuffer()
+        .append(getClass().getName())
+        .append("(sender=")
+        .append(getSender())
+        .append("; processorId=")
+        .append(this.processorId)
+        .append("; newPRId=")
+        .append(this.newId)
+        .append(")")
+        .toString();
   }
 
   /**
    * A processor that ignores exceptions, silently removing those nodes that reply with problems
+   *
    * @since GemFire 5.0
    */
   public static class IdentityUpdateResponse extends ReplyProcessor21 {
@@ -132,9 +141,10 @@ public final class IdentityUpdateMessage extends DistributionMessage implements 
       super(ds, recipients);
     }
 
-    /** 
-     * The IdentityResponse processor ignores remote exceptions by implmenting this method.  Ignoring remote exceptions is acceptable
-     * since the response is only meant to wait for all healthy recipients to receive their {@link IdentityUpdateMessage}
+    /**
+     * The IdentityResponse processor ignores remote exceptions by implmenting this method. Ignoring
+     * remote exceptions is acceptable since the response is only meant to wait for all healthy
+     * recipients to receive their {@link IdentityUpdateMessage}
      */
     @Override
     protected synchronized void processException(ReplyException ex) {

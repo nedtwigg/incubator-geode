@@ -62,18 +62,16 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.util.BlobHelper;
 
 /**
- * StreamingOperation is an abstraction for sending messages to multiple (or single)
- * recipient requesting a potentially large amount of data and receiving the reply
- * with data chunked into several messages.
- *
+ * StreamingOperation is an abstraction for sending messages to multiple (or single) recipient
+ * requesting a potentially large amount of data and receiving the reply with data chunked into
+ * several messages.
  */
 public abstract class StreamingOperation {
   private static final Logger logger = LogService.getLogger();
 
   /**
-   * This is the number of bytes that need to be allowed in addition to
-   * data chunk to prevent overflowing the socket buffer size in one message.
-   * For now, this is just an estimate
+   * This is the number of bytes that need to be allowed in addition to data chunk to prevent
+   * overflowing the socket buffer size in one message. For now, this is just an estimate
    */
   public static final int MSG_OVERHEAD = 200; // seems to need to be greater than 100
 
@@ -86,14 +84,13 @@ public abstract class StreamingOperation {
 
   /**
    * Returns normally if succeeded to get data, otherwise throws an exception
-   * 
+   *
    * @throws InterruptedException TODO-javadocs
    */
-  public void getDataFromAll(Set recipients) throws org.apache.geode.cache.TimeoutException, InterruptedException {
-    if (Thread.interrupted())
-      throw new InterruptedException();
-    if (recipients.isEmpty())
-      return;
+  public void getDataFromAll(Set recipients)
+      throws org.apache.geode.cache.TimeoutException, InterruptedException {
+    if (Thread.interrupted()) throw new InterruptedException();
+    if (recipients.isEmpty()) return;
 
     StreamingProcessor processor = new StreamingProcessor(this.sys, recipients);
     DistributionMessage m = createRequestMessage(recipients, processor);
@@ -115,22 +112,28 @@ public abstract class StreamingOperation {
   }
 
   /** Override in subclass to instantiate request message */
-  protected abstract DistributionMessage createRequestMessage(Set recipients, ReplyProcessor21 processor);
+  protected abstract DistributionMessage createRequestMessage(
+      Set recipients, ReplyProcessor21 processor);
 
-  /** Called from separate thread when reply is processed.
+  /**
+   * Called from separate thread when reply is processed.
+   *
    * @return false if should abort (region was destroyed or cache was closed)
    */
-  public boolean processChunk(List objects, InternalDistributedMember sender, int sequenceNum, boolean lastInSequence) {
+  public boolean processChunk(
+      List objects, InternalDistributedMember sender, int sequenceNum, boolean lastInSequence) {
     return processData(objects, sender, sequenceNum, lastInSequence);
   }
 
-  /** Override in subclass to do something useful with the data.
-    * @param sequenceNum the sequence of this data (0-based), in case ordering matters
-    * @param lastInSequence true if this is the last chunk in the sequence
-    * @return false to abort  
-    */
-
-  protected abstract boolean processData(List objects, InternalDistributedMember sender, int sequenceNum, boolean lastInSequence);
+  /**
+   * Override in subclass to do something useful with the data.
+   *
+   * @param sequenceNum the sequence of this data (0-based), in case ordering matters
+   * @param lastInSequence true if this is the last chunk in the sequence
+   * @return false to abort
+   */
+  protected abstract boolean processData(
+      List objects, InternalDistributedMember sender, int sequenceNum, boolean lastInSequence);
 
   public class StreamingProcessor extends ReplyProcessor21 {
     protected volatile boolean abort = false;
@@ -150,7 +153,12 @@ public abstract class StreamingOperation {
           this.numMsgs = m.msgNum + 1;
         }
         if (logger.isDebugEnabled()) {
-          logger.debug("Streaming Message Tracking Status: Processor id: {}; Sender: {}; Messages Processed: {}; NumMsgs: {}", getProcessorId(), m.getSender(), this.msgsProcessed, this.numMsgs);
+          logger.debug(
+              "Streaming Message Tracking Status: Processor id: {}; Sender: {}; Messages Processed: {}; NumMsgs: {}",
+              getProcessorId(),
+              m.getSender(),
+              this.msgsProcessed,
+              this.numMsgs);
         }
 
         // this.numMsgs starts out as zero and gets initialized
@@ -162,7 +170,8 @@ public abstract class StreamingOperation {
       }
     }
 
-    public StreamingProcessor(final InternalDistributedSystem system, InternalDistributedMember member) {
+    public StreamingProcessor(
+        final InternalDistributedSystem system, InternalDistributedMember member) {
       super(system, member);
     }
 
@@ -201,7 +210,7 @@ public abstract class StreamingOperation {
         }
         if (isLast) {
           super.process(msg, false); // removes from members and cause us to
-                                     // ignore future messages received from that member
+          // ignore future messages received from that member
         }
       } finally {
         this.msgsBeingProcessed.decrementAndGet();
@@ -210,14 +219,14 @@ public abstract class StreamingOperation {
     }
 
     /**
-     * Contract of {@link ReplyProcessor21#stillWaiting()} is to never return true
-     * after returning false.
+     * Contract of {@link ReplyProcessor21#stillWaiting()} is to never return true after returning
+     * false.
      */
     private volatile boolean finishedWaiting = false;
 
-    /** Overridden to wait for messages being currently processed:
-     *  This situation can come about if a member departs while we
-     *  are still processing data from that member
+    /**
+     * Overridden to wait for messages being currently processed: This situation can come about if a
+     * member departs while we are still processing data from that member
      */
     @Override
     protected boolean stillWaiting() {
@@ -236,7 +245,20 @@ public abstract class StreamingOperation {
 
     @Override
     public String toString() {
-      return "<" + this.getClass().getName() + " " + this.getProcessorId() + " waiting for " + numMembers() + " replies" + (exception == null ? "" : (" exception: " + exception)) + " from " + membersToString() + "; waiting for " + this.msgsBeingProcessed.get() + " messages in the process of being processed" + ">";
+      return "<"
+          + this.getClass().getName()
+          + " "
+          + this.getProcessorId()
+          + " waiting for "
+          + numMembers()
+          + " replies"
+          + (exception == null ? "" : (" exception: " + exception))
+          + " from "
+          + membersToString()
+          + "; waiting for "
+          + this.msgsBeingProcessed.get()
+          + " messages in the process of being processed"
+          + ">";
     }
 
     protected boolean trackMessage(StreamingReplyMessage m) {
@@ -250,10 +272,10 @@ public abstract class StreamingOperation {
       }
       return status.trackMessage(m);
     }
-
   }
 
-  public static abstract class RequestStreamingMessage extends PooledDistributionMessage implements MessageWithReply {
+  public abstract static class RequestStreamingMessage extends PooledDistributionMessage
+      implements MessageWithReply {
 
     protected int processorId;
 
@@ -270,7 +292,8 @@ public abstract class StreamingOperation {
       Object failedObject = null;
       int socketBufferSize = dm.getSystem().getConfig().getSocketBufferSize();
       int chunkSize = socketBufferSize - MSG_OVERHEAD;
-      HeapDataOutputStream outStream = new HeapDataOutputStream(chunkSize, getSender().getVersionObject());
+      HeapDataOutputStream outStream =
+          new HeapDataOutputStream(chunkSize, getSender().getVersionObject());
       boolean sentFinalMessage = false;
       boolean receiverCacheClosed = false;
       int msgNum = 0;
@@ -296,7 +319,8 @@ public abstract class StreamingOperation {
 
             // for the next objects, disallow stream from allocating more storage
             do {
-              outStream.disallowExpansion(CHUNK_FULL); // sets the mark where rollback occurs on CHUNK_FULL
+              outStream.disallowExpansion(
+                  CHUNK_FULL); // sets the mark where rollback occurs on CHUNK_FULL
 
               nextObject = getNextReplyObject();
 
@@ -315,7 +339,8 @@ public abstract class StreamingOperation {
           }
 
           try {
-            replyWithData(dm, outStream, numObjectsInChunk, msgNum++, nextObject == Token.END_OF_STREAM);
+            replyWithData(
+                dm, outStream, numObjectsInChunk, msgNum++, nextObject == Token.END_OF_STREAM);
             if (nextObject == Token.END_OF_STREAM) {
               sentFinalMessage = true;
             }
@@ -324,8 +349,8 @@ public abstract class StreamingOperation {
             break; // receiver no longer cares
           }
           outStream.reset(); // ready for reuse, assumes replyWithData
-                             // does not queue the message but outStream has
-                             // already been used
+          // does not queue the message but outStream has
+          // already been used
         } while (nextObject != Token.END_OF_STREAM);
         //      } catch (CancelException e) {
         //        // if cache is closed, we cannot send a reply (correct?)
@@ -348,22 +373,27 @@ public abstract class StreamingOperation {
         rex = new ReplyException(thr);
         replyWithException(dm, rex);
       } else if (!sentFinalMessage && !receiverCacheClosed) {
-        throw new InternalGemFireError(LocalizedStrings.StreamingOperation_THIS_SHOULDNT_HAPPEN.toLocalizedString());
+        throw new InternalGemFireError(
+            LocalizedStrings.StreamingOperation_THIS_SHOULDNT_HAPPEN.toLocalizedString());
         //        replyNoData(dm);
       }
     }
 
-    /** override in subclass to provide reply data.
-      *  terminate by returning Token.END_OF_STREAM
-      */
+    /** override in subclass to provide reply data. terminate by returning Token.END_OF_STREAM */
     protected abstract Object getNextReplyObject() throws InterruptedException;
 
     //    private void replyNoData(DistributionManager dm) {
     //      StreamingReplyMessage.send(getSender(), this.processorId, null, dm, null, 0, 0, true);
     //    }
 
-    protected void replyWithData(DistributionManager dm, HeapDataOutputStream outStream, int numObjects, int msgNum, boolean lastMsg) {
-      StreamingReplyMessage.send(getSender(), this.processorId, null, dm, outStream, numObjects, msgNum, lastMsg);
+    protected void replyWithData(
+        DistributionManager dm,
+        HeapDataOutputStream outStream,
+        int numObjects,
+        int msgNum,
+        boolean lastMsg) {
+      StreamingReplyMessage.send(
+          getSender(), this.processorId, null, dm, outStream, numObjects, msgNum, lastMsg);
     }
 
     protected void replyWithException(DistributionManager dm, ReplyException rex) {
@@ -403,27 +433,44 @@ public abstract class StreamingOperation {
     /** whether this message is the last one in this series */
     protected boolean lastMsg;
 
-    private transient HeapDataOutputStream chunkStream; // used only on sending side, null means abort
+    private transient HeapDataOutputStream
+        chunkStream; // used only on sending side, null means abort
     private transient int numObjects; // used only on sending side
     private transient List objectList = null; // used only on receiving side
 
     private boolean pdxReadSerialized = false; // used to read PDX types in serialized form.
-    private transient boolean isCanceled = false; //used only on receiving side and if messageProcessor is of type PartitionedRegionQueryEvaluator.StreamingQueryPartitionResponse
+    private transient boolean isCanceled =
+        false; //used only on receiving side and if messageProcessor is of type PartitionedRegionQueryEvaluator.StreamingQueryPartitionResponse
 
     /**
-     * @param chunkStream the data to send back, if null then all the following
-     * parameters are ignored and any future replies from this member will
-     * be ignored, and the streaming of chunks is considered aborted by the
-     * receiver.
-     *
+     * @param chunkStream the data to send back, if null then all the following parameters are
+     *     ignored and any future replies from this member will be ignored, and the streaming of
+     *     chunks is considered aborted by the receiver.
      * @param msgNum message number in this series (0-based)
      * @param lastMsg if this is the last message in this series
      */
-    public static void send(InternalDistributedMember recipient, int processorId, ReplyException exception, DM dm, HeapDataOutputStream chunkStream, int numObjects, int msgNum, boolean lastMsg) {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        ReplyException exception,
+        DM dm,
+        HeapDataOutputStream chunkStream,
+        int numObjects,
+        int msgNum,
+        boolean lastMsg) {
       send(recipient, processorId, exception, dm, chunkStream, numObjects, msgNum, lastMsg, false);
     }
 
-    public static void send(InternalDistributedMember recipient, int processorId, ReplyException exception, DM dm, HeapDataOutputStream chunkStream, int numObjects, int msgNum, boolean lastMsg, boolean pdxReadSerialized) {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        ReplyException exception,
+        DM dm,
+        HeapDataOutputStream chunkStream,
+        int numObjects,
+        int msgNum,
+        boolean lastMsg,
+        boolean pdxReadSerialized) {
       StreamingReplyMessage m = new StreamingReplyMessage();
       m.processorId = processorId;
 
@@ -479,16 +526,20 @@ public abstract class StreamingOperation {
         this.numObjects = n; // for benefit of toString()
         this.objectList = new ArrayList(n);
         // Check if the PDX types needs to be kept in serialized form.
-        // This will make readObject() to return PdxInstance form.       
+        // This will make readObject() to return PdxInstance form.
         if (this.pdxReadSerialized) {
           DefaultQuery.setPdxReadSerialized(true);
         }
         try {
           ReplyProcessor21 messageProcessor = ReplyProcessor21.getProcessor(processorId);
-          boolean isQueryMessageProcessor = messageProcessor instanceof PartitionedRegionQueryEvaluator.StreamingQueryPartitionResponse;
+          boolean isQueryMessageProcessor =
+              messageProcessor
+                  instanceof PartitionedRegionQueryEvaluator.StreamingQueryPartitionResponse;
           ObjectType elementType = null;
           if (isQueryMessageProcessor) {
-            elementType = ((PartitionedRegionQueryEvaluator.StreamingQueryPartitionResponse) messageProcessor).getResultType();
+            elementType =
+                ((PartitionedRegionQueryEvaluator.StreamingQueryPartitionResponse) messageProcessor)
+                    .getResultType();
           }
 
           boolean lowMemoryDetected = false;
@@ -575,7 +626,6 @@ public abstract class StreamingOperation {
       buff.append(")");
       return buff.toString();
     }
-
   }
 
   public static final GemFireRethrowable CHUNK_FULL = new GemFireRethrowable();

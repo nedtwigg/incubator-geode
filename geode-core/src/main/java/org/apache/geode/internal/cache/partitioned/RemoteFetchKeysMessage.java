@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.partitioned;
 
 import java.io.ByteArrayInputStream;
@@ -58,17 +56,15 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 import org.apache.geode.internal.util.ObjectIntProcedure;
 
-/**
- * TODO this class should be moved to a different package
- */
+/** TODO this class should be moved to a different package */
 public class RemoteFetchKeysMessage extends RemoteOperationMessage {
 
   private static final Logger logger = LogService.getLogger();
 
-  public RemoteFetchKeysMessage() {
-  }
+  public RemoteFetchKeysMessage() {}
 
-  private RemoteFetchKeysMessage(InternalDistributedMember recipient, String regionPath, ReplyProcessor21 processor) {
+  private RemoteFetchKeysMessage(
+      InternalDistributedMember recipient, String regionPath, ReplyProcessor21 processor) {
     super(recipient, regionPath, processor);
   }
 
@@ -76,7 +72,8 @@ public class RemoteFetchKeysMessage extends RemoteOperationMessage {
    * @see org.apache.geode.internal.cache.RemoteOperationMessage#operateOnRegion(org.apache.geode.distributed.internal.DistributionManager, org.apache.geode.internal.cache.LocalRegion, long)
    */
   @Override
-  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime) throws RemoteOperationException {
+  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime)
+      throws RemoteOperationException {
     if (!(r instanceof PartitionedRegion)) { // prs already wait on initialization
       r.waitOnInitialization(); // bug #43371 - accessing a region before it's initialized
     }
@@ -104,8 +101,12 @@ public class RemoteFetchKeysMessage extends RemoteOperationMessage {
    * @return the response
    */
   public static FetchKeysResponse send(LocalRegion currRegion, DistributedMember target) {
-    FetchKeysResponse response = new FetchKeysResponse(currRegion.getSystem(), currRegion, (InternalDistributedMember) target);
-    RemoteFetchKeysMessage msg = new RemoteFetchKeysMessage((InternalDistributedMember) target, currRegion.getFullPath(), response);
+    FetchKeysResponse response =
+        new FetchKeysResponse(
+            currRegion.getSystem(), currRegion, (InternalDistributedMember) target);
+    RemoteFetchKeysMessage msg =
+        new RemoteFetchKeysMessage(
+            (InternalDistributedMember) target, currRegion.getFullPath(), response);
     currRegion.getSystem().getDistributionManager().putOutgoing(msg);
     return response;
   }
@@ -140,13 +141,17 @@ public class RemoteFetchKeysMessage extends RemoteOperationMessage {
     /** the array holding data received */
     transient byte[] chunk;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface 
-     */
-    public RemoteFetchKeysReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public RemoteFetchKeysReplyMessage() {}
 
-    private RemoteFetchKeysReplyMessage(InternalDistributedMember recipient, int processorId, HeapDataOutputStream chunk, int seriesNum, int msgNum, int numSeries, boolean lastInSeries) {
+    private RemoteFetchKeysReplyMessage(
+        InternalDistributedMember recipient,
+        int processorId,
+        HeapDataOutputStream chunk,
+        int seriesNum,
+        int msgNum,
+        int numSeries,
+        boolean lastInSeries) {
       super();
       setRecipient(recipient);
       setProcessorId(processorId);
@@ -157,11 +162,14 @@ public class RemoteFetchKeysMessage extends RemoteOperationMessage {
       this.chunkStream = chunk;
     }
 
-    /** 
-     * Send an ack 
+    /**
+     * Send an ack
+     *
      * @throws ForceReattemptException if the peer is no longer available
      */
-    public static void send(final InternalDistributedMember recipient, final int processorId, final DM dm, Set keys) throws ForceReattemptException {
+    public static void send(
+        final InternalDistributedMember recipient, final int processorId, final DM dm, Set keys)
+        throws ForceReattemptException {
 
       Assert.assertTrue(recipient != null, "FetchKeysReplyMessage NULL reply message");
 
@@ -173,70 +181,106 @@ public class RemoteFetchKeysMessage extends RemoteOperationMessage {
         logger.debug("Starting pr keys chunking for {} keys to member {}", keys.size(), recipient);
       }
       try {
-        boolean finished = chunkSet(recipient, keys, InitialImageOperation.CHUNK_SIZE_IN_BYTES, false, new ObjectIntProcedure() {
-          int msgNum = 0;
+        boolean finished =
+            chunkSet(
+                recipient,
+                keys,
+                InitialImageOperation.CHUNK_SIZE_IN_BYTES,
+                false,
+                new ObjectIntProcedure() {
+                  int msgNum = 0;
 
-          boolean last = false;
+                  boolean last = false;
 
-          /**
-            * @param a byte[] chunk
-            * @param b positive if last chunk
-            * @return true to continue to next chunk
-            */
-          public boolean executeWith(Object a, int b) {
-            //              if (this.last)
-            //                throw new InternalGemFireError(LocalizedStrings.FetchKeysMessage_ALREADY_PROCESSED_LAST_CHUNK.toLocalizedString());
-            HeapDataOutputStream chunk = (HeapDataOutputStream) a;
-            this.last = b > 0;
-            try {
-              boolean okay = sendChunk(recipient, processorId, dm, chunk, seriesNum, msgNum++, numSeries, this.last);
-              return okay;
-            } catch (CancelException e) {
-              return false;
-            }
-          }
-        });
+                  /**
+                   * @param a byte[] chunk
+                   * @param b positive if last chunk
+                   * @return true to continue to next chunk
+                   */
+                  public boolean executeWith(Object a, int b) {
+                    //              if (this.last)
+                    //                throw new InternalGemFireError(LocalizedStrings.FetchKeysMessage_ALREADY_PROCESSED_LAST_CHUNK.toLocalizedString());
+                    HeapDataOutputStream chunk = (HeapDataOutputStream) a;
+                    this.last = b > 0;
+                    try {
+                      boolean okay =
+                          sendChunk(
+                              recipient,
+                              processorId,
+                              dm,
+                              chunk,
+                              seriesNum,
+                              msgNum++,
+                              numSeries,
+                              this.last);
+                      return okay;
+                    } catch (CancelException e) {
+                      return false;
+                    }
+                  }
+                });
 
         if (logger.isDebugEnabled()) {
           logger.debug("{} pr keys chunking", (finished ? "Finished" : "DID NOT complete"));
         }
       } catch (IOException io) {
-        throw new ForceReattemptException(LocalizedStrings.FetchKeysMessage_UNABLE_TO_SEND_RESPONSE_TO_FETCH_KEYS_REQUEST.toLocalizedString(), io);
+        throw new ForceReattemptException(
+            LocalizedStrings.FetchKeysMessage_UNABLE_TO_SEND_RESPONSE_TO_FETCH_KEYS_REQUEST
+                .toLocalizedString(),
+            io);
       }
       // TODO [bruce] pass a reference to the cache or region down here so we can do this test
       //Assert.assertTrue(!cache is closed, "chunking interrupted but cache is still open");
     }
 
-    static boolean sendChunk(InternalDistributedMember recipient, int processorId, DM dm, HeapDataOutputStream chunk, int seriesNum, int msgNum, int numSeries, boolean lastInSeries) {
-      RemoteFetchKeysReplyMessage reply = new RemoteFetchKeysReplyMessage(recipient, processorId, chunk, seriesNum, msgNum, numSeries, lastInSeries);
+    static boolean sendChunk(
+        InternalDistributedMember recipient,
+        int processorId,
+        DM dm,
+        HeapDataOutputStream chunk,
+        int seriesNum,
+        int msgNum,
+        int numSeries,
+        boolean lastInSeries) {
+      RemoteFetchKeysReplyMessage reply =
+          new RemoteFetchKeysReplyMessage(
+              recipient, processorId, chunk, seriesNum, msgNum, numSeries, lastInSeries);
       Set failures = dm.putOutgoing(reply);
       return (failures == null) || (failures.size() == 0);
     }
 
     /**
-     * Serialize the given set's elments into byte[] chunks, calling proc for each
-     * one. proc args: the byte[] chunk and an int indicating whether it
-     * is the last chunk (positive means last chunk, zero othewise).
-     * The return value of proc indicates whether to continue to the next
+     * Serialize the given set's elments into byte[] chunks, calling proc for each one. proc args:
+     * the byte[] chunk and an int indicating whether it is the last chunk (positive means last
+     * chunk, zero othewise). The return value of proc indicates whether to continue to the next
      * chunk (true) or abort (false).
      *
      * @return true if finished all chunks, false if stopped early
      */
-    static boolean chunkSet(InternalDistributedMember recipient, Set set, int CHUNK_SIZE_IN_BYTES, boolean includeValues, ObjectIntProcedure proc) throws IOException {
+    static boolean chunkSet(
+        InternalDistributedMember recipient,
+        Set set,
+        int CHUNK_SIZE_IN_BYTES,
+        boolean includeValues,
+        ObjectIntProcedure proc)
+        throws IOException {
       Iterator it = set.iterator();
 
       boolean keepGoing = true;
       boolean sentLastChunk = false;
 
       // always write at least one chunk
-      final HeapDataOutputStream mos = new HeapDataOutputStream(InitialImageOperation.CHUNK_SIZE_IN_BYTES + 2048, recipient.getVersionObject());
+      final HeapDataOutputStream mos =
+          new HeapDataOutputStream(
+              InitialImageOperation.CHUNK_SIZE_IN_BYTES + 2048, recipient.getVersionObject());
       do {
         mos.reset();
 
         int avgItemSize = 0;
         int itemCount = 0;
 
-        while ((mos.size() + avgItemSize) < InitialImageOperation.CHUNK_SIZE_IN_BYTES && it.hasNext()) {
+        while ((mos.size() + avgItemSize) < InitialImageOperation.CHUNK_SIZE_IN_BYTES
+            && it.hasNext()) {
           Object key = it.next();
           DataSerializer.writeObject(key, mos);
 
@@ -247,7 +291,6 @@ public class RemoteFetchKeysMessage extends RemoteOperationMessage {
           // the ByteBuffer that the chunk is stored in resulting in a copy
           // of the data.
           avgItemSize = mos.size() / itemCount;
-
         }
 
         // Write "end of chunk" entry to indicate end of chunk
@@ -266,8 +309,8 @@ public class RemoteFetchKeysMessage extends RemoteOperationMessage {
     }
 
     /**
-     * Processes this message.  This method is invoked by the receiver
-     * of the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
      * @param dm the distribution manager that is processing the message.
      */
     @Override
@@ -323,7 +366,14 @@ public class RemoteFetchKeysMessage extends RemoteOperationMessage {
       if (getSender() != null) {
         sb.append(",sender=").append(this.getSender());
       }
-      sb.append(",seriesNum=").append(seriesNum).append(",msgNum=").append(msgNum).append(",numSeries=").append(numSeries).append(",lastInSeries=").append(lastInSeries);
+      sb.append(",seriesNum=")
+          .append(seriesNum)
+          .append(",msgNum=")
+          .append(msgNum)
+          .append(",numSeries=")
+          .append(numSeries)
+          .append(",lastInSeries=")
+          .append(lastInSeries);
       if (chunkStream != null) {
         sb.append(",size=").append(chunkStream.size());
       } else if (chunk != null) {
@@ -334,7 +384,6 @@ public class RemoteFetchKeysMessage extends RemoteOperationMessage {
       }
       return sb.toString();
     }
-
   }
 
   public static class FetchKeysResponse extends ReplyProcessor21 {
@@ -354,7 +403,8 @@ public class RemoteFetchKeysMessage extends RemoteOperationMessage {
     /** whether the last chunk has been processed */
     private volatile boolean lastChunkReceived;
 
-    public FetchKeysResponse(InternalDistributedSystem system, LocalRegion region, InternalDistributedMember member) {
+    public FetchKeysResponse(
+        InternalDistributedSystem system, LocalRegion region, InternalDistributedMember member) {
       super(system, member);
       this.region = region;
       returnValue = new HashSet();
@@ -420,11 +470,20 @@ public class RemoteFetchKeysMessage extends RemoteOperationMessage {
             doneProcessing = true;
           }
           if (logger.isTraceEnabled(LogMarker.DM)) {
-            logger.trace(LogMarker.DM, "{} chunksProcessed={},lastChunkReceived={},chunksExpected={},done={}", this, chunksProcessed, lastChunkReceived, chunksExpected, doneProcessing);
+            logger.trace(
+                LogMarker.DM,
+                "{} chunksProcessed={},lastChunkReceived={},chunksExpected={},done={}",
+                this,
+                chunksProcessed,
+                lastChunkReceived,
+                chunksExpected,
+                doneProcessing);
           }
         }
       } catch (Exception e) {
-        processException(new ReplyException(LocalizedStrings.FetchKeysMessage_ERROR_DESERIALIZING_KEYS.toLocalizedString(), e));
+        processException(
+            new ReplyException(
+                LocalizedStrings.FetchKeysMessage_ERROR_DESERIALIZING_KEYS.toLocalizedString(), e));
       }
       return doneProcessing;
     }
@@ -435,10 +494,16 @@ public class RemoteFetchKeysMessage extends RemoteOperationMessage {
       } catch (ReplyException e) {
         Throwable t = e.getCause();
         if (t instanceof CancelException) {
-          logger.debug("RemoteFetchKeysResponse got remote CacheClosedException; forcing reattempt. {}", t.getMessage(), t);
+          logger.debug(
+              "RemoteFetchKeysResponse got remote CacheClosedException; forcing reattempt. {}",
+              t.getMessage(),
+              t);
         }
         if (t instanceof ForceReattemptException) {
-          logger.debug("RemoteFetchKeysResponse got remote ForceReattemptException; rethrowing. {}", e.getMessage(), e);
+          logger.debug(
+              "RemoteFetchKeysResponse got remote ForceReattemptException; rethrowing. {}",
+              e.getMessage(),
+              e);
         }
         if (t instanceof RegionDestroyedException) {
           RegionDestroyedException rde = (RegionDestroyedException) t;

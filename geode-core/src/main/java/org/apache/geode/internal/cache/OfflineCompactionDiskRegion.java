@@ -22,13 +22,39 @@ import org.apache.geode.internal.cache.persistence.DiskExceptionHandler;
 import org.apache.geode.internal.cache.persistence.DiskRecoveryStore;
 import org.apache.geode.internal.cache.persistence.DiskRegionView;
 
-/**
- * A disk region that is created when doing offline compaction.
- */
+/** A disk region that is created when doing offline compaction. */
 public class OfflineCompactionDiskRegion extends DiskRegion implements DiskRecoveryStore {
   private OfflineCompactionDiskRegion(DiskStoreImpl ds, DiskRegionView drv) {
-    super(ds, drv.getName(), drv.isBucket(), true, false, true, new DiskRegionStats(ds.getCache().getDistributedSystem(), drv.getName()), new DummyCancelCriterion(), new DummyDiskExceptionHandler(), null, drv.getFlags(), drv.getPartitionName(), drv.getStartingBucketId(), drv.getCompressorClassName(), drv.getOffHeap());
-    setConfig(drv.getLruAlgorithm(), drv.getLruAction(), drv.getLruLimit(), drv.getConcurrencyLevel(), drv.getInitialCapacity(), drv.getLoadFactor(), drv.getStatisticsEnabled(), drv.isBucket(), drv.getFlags(), drv.getPartitionName(), drv.getStartingBucketId(), drv.getCompressorClassName(), drv.getOffHeap());
+    super(
+        ds,
+        drv.getName(),
+        drv.isBucket(),
+        true,
+        false,
+        true,
+        new DiskRegionStats(ds.getCache().getDistributedSystem(), drv.getName()),
+        new DummyCancelCriterion(),
+        new DummyDiskExceptionHandler(),
+        null,
+        drv.getFlags(),
+        drv.getPartitionName(),
+        drv.getStartingBucketId(),
+        drv.getCompressorClassName(),
+        drv.getOffHeap());
+    setConfig(
+        drv.getLruAlgorithm(),
+        drv.getLruAction(),
+        drv.getLruLimit(),
+        drv.getConcurrencyLevel(),
+        drv.getInitialCapacity(),
+        drv.getLoadFactor(),
+        drv.getStatisticsEnabled(),
+        drv.isBucket(),
+        drv.getFlags(),
+        drv.getPartitionName(),
+        drv.getStartingBucketId(),
+        drv.getCompressorClassName(),
+        drv.getOffHeap());
   }
 
   static OfflineCompactionDiskRegion create(DiskStoreImpl dsi, DiskRegionView drv) {
@@ -48,18 +74,20 @@ public class OfflineCompactionDiskRegion extends DiskRegion implements DiskRecov
   }
 
   public DiskEntry initializeRecoveredEntry(Object key, DiskEntry.RecoveredEntry re) {
-    throw new IllegalStateException("updateRecoveredEntry should not be called when offline compacting");
+    throw new IllegalStateException(
+        "updateRecoveredEntry should not be called when offline compacting");
   }
 
   public DiskEntry updateRecoveredEntry(Object key, DiskEntry.RecoveredEntry re) {
-    throw new IllegalStateException("updateRecoveredEntry should not be called when offline compacting");
+    throw new IllegalStateException(
+        "updateRecoveredEntry should not be called when offline compacting");
   }
 
-  public void destroyRecoveredEntry(Object key) {
-  }
+  public void destroyRecoveredEntry(Object key) {}
 
   public void foreachRegionEntry(LocalRegion.RegionEntryCallback callback) {
-    throw new IllegalStateException("foreachRegionEntry should not be called when offline compacting");
+    throw new IllegalStateException(
+        "foreachRegionEntry should not be called when offline compacting");
   }
 
   public boolean lruLimitExceeded() {
@@ -67,11 +95,13 @@ public class OfflineCompactionDiskRegion extends DiskRegion implements DiskRecov
   }
 
   public void copyRecoveredEntries(RegionMap rm) {
-    throw new IllegalStateException("copyRecoveredEntries should not be called on OfflineCompactionDiskRegion");
+    throw new IllegalStateException(
+        "copyRecoveredEntries should not be called on OfflineCompactionDiskRegion");
   }
 
   public void updateSizeOnFaultIn(Object key, int newSize, int bytesOnDisk) {
-    throw new IllegalStateException("updateSizeOnFaultIn should not be called on OfflineCompactionDiskRegion");
+    throw new IllegalStateException(
+        "updateSizeOnFaultIn should not be called on OfflineCompactionDiskRegion");
   }
 
   @Override
@@ -85,15 +115,19 @@ public class OfflineCompactionDiskRegion extends DiskRegion implements DiskRecov
   }
 
   public RegionMap getRegionMap() {
-    throw new IllegalStateException("getRegionMap should not be called on OfflineCompactionDiskRegion");
+    throw new IllegalStateException(
+        "getRegionMap should not be called on OfflineCompactionDiskRegion");
   }
 
   public void handleDiskAccessException(DiskAccessException dae) {
-    throw new IllegalStateException("handleDiskAccessException should not be called on OfflineCompactionDiskRegion");
+    throw new IllegalStateException(
+        "handleDiskAccessException should not be called on OfflineCompactionDiskRegion");
   }
 
-  public void initializeStats(long numEntriesInVM, long numOverflowOnDisk, long numOverflowBytesOnDisk) {
-    throw new IllegalStateException("initializeStats should not be called on OfflineCompactionDiskRegion");
+  public void initializeStats(
+      long numEntriesInVM, long numOverflowOnDisk, long numOverflowBytesOnDisk) {
+    throw new IllegalStateException(
+        "initializeStats should not be called on OfflineCompactionDiskRegion");
   }
 
   public static class DummyDiskExceptionHandler implements DiskExceptionHandler {
@@ -117,6 +151,5 @@ public class OfflineCompactionDiskRegion extends DiskRegion implements DiskRecov
     public RuntimeException generateCancelledException(Throwable e) {
       return new RuntimeException(e);
     }
-
   }
 }

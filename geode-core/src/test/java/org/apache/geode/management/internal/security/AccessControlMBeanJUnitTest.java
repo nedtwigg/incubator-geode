@@ -28,7 +28,7 @@ import org.apache.geode.internal.AvailablePort;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class AccessControlMBeanJUnitTest {
 
   private static int jmxManagerPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
@@ -36,7 +36,9 @@ public class AccessControlMBeanJUnitTest {
   private AccessControlMXBean bean;
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
+  public static JsonAuthorizationCacheStartRule serverRule =
+      new JsonAuthorizationCacheStartRule(
+          jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
 
   @Rule
   public MBeanServerConnectionRule connectionRule = new MBeanServerConnectionRule(jmxManagerPort);
@@ -46,9 +48,7 @@ public class AccessControlMBeanJUnitTest {
     bean = connectionRule.getAccessControlMBean();
   }
 
-  /**
-   * Test that any authenticated user can access this method
-   */
+  /** Test that any authenticated user can access this method */
   @Test
   @JMXConnectionConfiguration(user = "stranger", password = "1234567")
   public void testAnyAccess() throws Exception {

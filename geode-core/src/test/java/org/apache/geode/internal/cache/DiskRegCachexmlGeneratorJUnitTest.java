@@ -35,9 +35,8 @@ import org.apache.geode.internal.cache.xmlcache.CacheXmlGenerator;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * This test is for testing Disk attributes set programmatically
- * The generated cacheXml is used to create a cache and teh region
- * properties retested.
+ * This test is for testing Disk attributes set programmatically The generated cacheXml is used to
+ * create a cache and teh region properties retested.
  */
 @Category(IntegrationTest.class)
 public class DiskRegCachexmlGeneratorJUnitTest extends DiskRegionTestingBase {
@@ -69,13 +68,17 @@ public class DiskRegCachexmlGeneratorJUnitTest extends DiskRegionTestingBase {
     diskRegionProperties[0].setRolling(true);
     diskRegionProperties[0].setMaxOplogSize(1073741824L);
     diskRegionProperties[0].setRegionName("regions1");
-    regions[0] = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties[0], Scope.LOCAL);
+    regions[0] =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(
+            cache, diskRegionProperties[0], Scope.LOCAL);
 
     // create the regions[1] which is SyncPersistOnly and set DiskWriteAttibutes
 
     diskRegionProperties[1].setRolling(false);
     diskRegionProperties[1].setRegionName("regions2");
-    regions[1] = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties[1], Scope.LOCAL);
+    regions[1] =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(
+            cache, diskRegionProperties[1], Scope.LOCAL);
 
     // create the regions[2] which AsyncPersistOnly, No buffer and Rolling oplog
     diskRegionProperties[2].setRolling(true);
@@ -120,12 +123,14 @@ public class DiskRegCachexmlGeneratorJUnitTest extends DiskRegionTestingBase {
     diskRegionProperties[8].setRolling(true);
     diskRegionProperties[8].setMaxOplogSize(1073741824L);
     diskRegionProperties[8].setRegionName("regions9");
-    regions[8] = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskRegionProperties[8]);
+    regions[8] =
+        DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskRegionProperties[8]);
 
     // create the regions[9] which is Sync PersistOverflow, fixed oplog
     diskRegionProperties[9].setRolling(false);
     diskRegionProperties[9].setRegionName("regions10");
-    regions[9] = DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskRegionProperties[9]);
+    regions[9] =
+        DiskRegionHelperFactory.getSyncOverFlowAndPersistRegion(cache, diskRegionProperties[9]);
     // create the regions[10] which is Async Overflow Persist ,with buffer and
     // rollong
     // oplog
@@ -134,7 +139,8 @@ public class DiskRegCachexmlGeneratorJUnitTest extends DiskRegionTestingBase {
     diskRegionProperties[10].setBytesThreshold(10000l);
     diskRegionProperties[10].setTimeInterval(15l);
     diskRegionProperties[10].setRegionName("regions11");
-    regions[10] = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, diskRegionProperties[10]);
+    regions[10] =
+        DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, diskRegionProperties[10]);
 
     // create the regions[11] which is Async Persist Overflow with time based
     // buffer
@@ -143,7 +149,8 @@ public class DiskRegCachexmlGeneratorJUnitTest extends DiskRegionTestingBase {
     diskRegionProperties[11].setBytesThreshold(0l);
     diskRegionProperties[11].setTimeInterval(15l);
     diskRegionProperties[11].setRegionName("regions12");
-    regions[11] = DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, diskRegionProperties[11]);
+    regions[11] =
+        DiskRegionHelperFactory.getAsyncOverFlowAndPersistRegion(cache, diskRegionProperties[11]);
 
     //cacheXmlGenerator: generates cacheXml file
     FileWriter fw = new FileWriter(new File(getClass().getSimpleName() + ".xml"));
@@ -201,5 +208,4 @@ public class DiskRegCachexmlGeneratorJUnitTest extends DiskRegionTestingBase {
     // Get the regions[11]
     verify((LocalRegion) cache.getRegion("regions12"), diskRegionProperties[11]);
   }
-
 }

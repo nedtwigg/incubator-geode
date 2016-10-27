@@ -35,10 +35,9 @@ import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * 1) Performance of Get Operation for Entry faulting in from current Op Log 2)
- * Performance of Get operation for Entry faulting in from previous Op Log 3)
- * Performance of Get operation for Entry faulting in from H Tree
- *  
+ * 1) Performance of Get Operation for Entry faulting in from current Op Log 2) Performance of Get
+ * operation for Entry faulting in from previous Op Log 3) Performance of Get operation for Entry
+ * faulting in from H Tree
  */
 @Category(IntegrationTest.class)
 public class DiskRegionOverflowSyncRollingOpLogJUnitTest extends DiskRegionTestingBase {
@@ -63,7 +62,6 @@ public class DiskRegionOverflowSyncRollingOpLogJUnitTest extends DiskRegionTesti
   public void testGetPerfRollingOpog() {
     populateFirst0k_10Kbwrites();
     populateSecond10kto20kwrites();
-
   }
 
   public void populateFirst0k_10Kbwrites() {
@@ -94,10 +92,10 @@ public class DiskRegionOverflowSyncRollingOpLogJUnitTest extends DiskRegionTesti
     float opPerSecGet = etSecsGet == 0 ? 0 : (10000 / (etGet / 1000f));
     float bytesPerSecGet = etSecsGet == 0 ? 0 : ((10000 * ENTRY_SIZE) / (etGet / 1000f));
 
-    String statsGet = "etGet=" + etGet + "ms gets/sec=" + opPerSecGet + " bytes/sec=" + bytesPerSecGet;
+    String statsGet =
+        "etGet=" + etGet + "ms gets/sec=" + opPerSecGet + " bytes/sec=" + bytesPerSecGet;
     log.info(statsGet);
     System.out.println("Perf Stats of get which is fauting in from current Oplog :" + statsGet);
-
   }
 
   protected volatile boolean afterHavingCompacted = false;
@@ -110,11 +108,12 @@ public class DiskRegionOverflowSyncRollingOpLogJUnitTest extends DiskRegionTesti
 
     DiskRegionTestingBase.setCacheObserverCallBack();
 
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      public void afterHavingCompacted() {
-        afterHavingCompacted = true;
-      }
-    });
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
+          public void afterHavingCompacted() {
+            afterHavingCompacted = true;
+          }
+        });
 
     // put another 10000-19999 entries
     //    final String key = "K";
@@ -133,15 +132,16 @@ public class DiskRegionOverflowSyncRollingOpLogJUnitTest extends DiskRegionTesti
     System.out.println(" done with getting 10000-19999 which will fault in from second oplog");
 
     if (((LocalRegion) region).getDiskRegion().isBackup()) {
-      WaitCriterion ev = new WaitCriterion() {
-        public boolean done() {
-          return afterHavingCompacted;
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            public boolean done() {
+              return afterHavingCompacted;
+            }
 
-        public String description() {
-          return null;
-        }
-      };
+            public String description() {
+              return null;
+            }
+          };
       Wait.waitForCriterion(ev, 30 * 1000, 200, true);
     }
 
@@ -161,7 +161,8 @@ public class DiskRegionOverflowSyncRollingOpLogJUnitTest extends DiskRegionTesti
     float opPerSecGet1 = etSecsGet1 == 0 ? 0 : (10000 / (etGet1 / 1000f));
     float bytesPerSecGet1 = etSecsGet1 == 0 ? 0 : ((10000 * ENTRY_SIZE) / (etGet1 / 1000f));
 
-    String statsGet1 = "etGet=" + etGet1 + "ms gets/sec=" + opPerSecGet1 + " bytes/sec=" + bytesPerSecGet1;
+    String statsGet1 =
+        "etGet=" + etGet1 + "ms gets/sec=" + opPerSecGet1 + " bytes/sec=" + bytesPerSecGet1;
     log.info(statsGet1);
     System.out.println("Perf Stats of get which is fauting in from H-tree  :" + statsGet1);
 
@@ -171,22 +172,19 @@ public class DiskRegionOverflowSyncRollingOpLogJUnitTest extends DiskRegionTesti
     float opPerSecGet2 = etSecsGet2 == 0 ? 0 : (10000 / (etGet2 / 1000f));
     float bytesPerSecGet2 = etSecsGet2 == 0 ? 0 : ((10000 * ENTRY_SIZE) / (etGet2 / 1000f));
 
-    String statsGet2 = "etGet=" + etGet2 + "ms gets/sec=" + opPerSecGet2 + " bytes/sec=" + bytesPerSecGet2;
+    String statsGet2 =
+        "etGet=" + etGet2 + "ms gets/sec=" + opPerSecGet2 + " bytes/sec=" + bytesPerSecGet2;
     log.info(statsGet2);
     System.out.println("Perf Stats of get which is fauting in from Second OpLog  :" + statsGet2);
 
     DiskRegionTestingBase.unSetCacheObserverCallBack();
-
   }
 
   /**
-   * 
    * @param region1
    * @return
    */
   protected LRUStatistics getLRUStats(Region region1) {
     return ((LocalRegion) region1).getEvictionController().getLRUHelper().getStats();
-
   }
-
 }

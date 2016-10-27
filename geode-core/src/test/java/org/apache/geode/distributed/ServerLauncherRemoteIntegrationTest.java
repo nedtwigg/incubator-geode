@@ -71,7 +71,8 @@ import org.junit.experimental.categories.Category;
  * @since GemFire 8.0
  */
 @Category(IntegrationTest.class)
-public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherRemoteIntegrationTestCase {
+public class ServerLauncherRemoteIntegrationTest
+    extends AbstractServerLauncherRemoteIntegrationTestCase {
 
   @Test
   public void testIsAttachAPIFound() throws Exception {
@@ -96,14 +97,18 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     //    processErrReader = new ProcessStreamReader(process.getErrorStream(), createListener("syserr", getUniqueName() + "#syserr")).start();
 
     @SuppressWarnings("unused")
-    File file = new File(this.temporaryFolder.getRoot(), ServerLauncherForkingProcess.class.getSimpleName().concat(".log"));
+    File file =
+        new File(
+            this.temporaryFolder.getRoot(),
+            ServerLauncherForkingProcess.class.getSimpleName().concat(".log"));
     //-logger.info("log file is " + file);
 
-    final ProcessWrapper pw = new ProcessWrapper.Builder().mainClass(ServerLauncherForkingProcess.class).build();
+    final ProcessWrapper pw =
+        new ProcessWrapper.Builder().mainClass(ServerLauncherForkingProcess.class).build();
     pw.execute(null, this.temporaryFolder.getRoot()).waitFor(true);
     //logger.info("[testRunningServerOutlivesForkingProcess] ServerLauncherForkingProcess output is:\n\n"+pw.getOutput());
 
-    //    // create waiting thread since waitFor does not have a timeout 
+    //    // create waiting thread since waitFor does not have a timeout
     //    Thread waiting = new Thread(new Runnable() {
     //      @Override
     //      public void run() {
@@ -120,7 +125,7 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     //      waiting.start();
     //      waiting.join(TIMEOUT_MILLISECONDS);
     //      assertFalse("ServerLauncherForkingProcess took too long and caused timeout", waiting.isAlive());
-    //      
+    //
     //    } catch (Throwable e) {
     //      logger.error(e);
     //      if (failure == null) {
@@ -135,7 +140,10 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     // wait for server to start
     int pid = 0;
     final String serverName = ServerLauncherForkingProcess.class.getSimpleName() + "_server";
-    final ServerLauncher dirLauncher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    final ServerLauncher dirLauncher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart(dirLauncher);
 
@@ -148,7 +156,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
       // validate log file was created
       final String logFileName = serverName + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // validate the status
       final ServerState actualStatus = dirLauncher.status();
@@ -156,12 +166,16 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
       assertEquals(Status.ONLINE, actualStatus.getStatus());
       assertEquals(pid, actualStatus.getPid().intValue());
       assertTrue(actualStatus.getUptime() > 0);
-      assertEquals(this.temporaryFolder.getRoot().getCanonicalPath(), actualStatus.getWorkingDirectory());
+      assertEquals(
+          this.temporaryFolder.getRoot().getCanonicalPath(), actualStatus.getWorkingDirectory());
       assertEquals(getJvmArguments(), actualStatus.getJvmArguments());
-      assertEquals(ManagementFactory.getRuntimeMXBean().getClassPath(), actualStatus.getClasspath());
+      assertEquals(
+          ManagementFactory.getRuntimeMXBean().getClassPath(), actualStatus.getClasspath());
       assertEquals(GemFireVersion.getGemFireVersion(), actualStatus.getGemFireVersion());
       assertEquals(System.getProperty("java.version"), actualStatus.getJavaVersion());
-      assertEquals(this.temporaryFolder.getRoot().getCanonicalPath() + File.separator + serverName + ".log", actualStatus.getLogFile());
+      assertEquals(
+          this.temporaryFolder.getRoot().getCanonicalPath() + File.separator + serverName + ".log",
+          actualStatus.getLogFile());
       assertEquals(InetAddress.getLocalHost().getCanonicalHostName(), actualStatus.getHost());
       assertEquals(serverName, actualStatus.getMemberName());
 
@@ -184,7 +198,8 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -197,11 +212,22 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build()
+            .start();
 
     int pid = 0;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -213,7 +239,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
       assertTrue(ProcessUtils.isProcessAlive(pid));
 
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // check the status
       final ServerState serverState = this.launcher.status();
@@ -236,15 +264,18 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
   @Test
   public void testStartDeletesStaleControlFiles() throws Throwable {
     // create existing control files
-    this.stopRequestFile = new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getStopRequestFileName());
+    this.stopRequestFile =
+        new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getStopRequestFileName());
     this.stopRequestFile.createNewFile();
     assertTrue(this.stopRequestFile.exists());
 
-    this.statusRequestFile = new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getStatusRequestFileName());
+    this.statusRequestFile =
+        new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getStatusRequestFileName());
     this.statusRequestFile.createNewFile();
     assertTrue(this.statusRequestFile.exists());
 
-    this.statusFile = new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getStatusFileName());
+    this.statusFile =
+        new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getStatusFileName());
     this.statusFile.createNewFile();
     assertTrue(this.statusFile.exists());
 
@@ -252,7 +283,8 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -265,12 +297,23 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build()
+            .start();
 
     // wait for server to start
     int pid = 0;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -288,7 +331,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
     } catch (Throwable e) {
       this.errorCollector.addError(e);
@@ -303,7 +348,8 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     }
   }
 
-  @Category(FlakyTest.class) // GEODE-721: random ports (setup overriding default port), TemporaryFolder
+  @Category(
+      FlakyTest.class) // GEODE-721: random ports (setup overriding default port), TemporaryFolder
   @Test
   public void testStartOverwritesStalePidFile() throws Throwable {
     // create existing pid file
@@ -314,7 +360,8 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -327,11 +374,22 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build()
+            .start();
 
     int pid = 0;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -343,7 +401,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
       assertFalse(pid == Integer.MAX_VALUE);
 
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
     } catch (Throwable e) {
       this.errorCollector.addError(e);
@@ -358,19 +418,19 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     }
   }
 
-  /**
-   * Confirms fix for #47778.
-   */
+  /** Confirms fix for #47778. */
   @Test
   public void testStartUsingDisableDefaultServerLeavesPortFree() throws Throwable {
     assertTrue(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET));
 
     // build and start the server
     final List<String> jvmArguments = getJvmArguments();
-    jvmArguments.add("-D" + AbstractCacheServer.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY + "=" + this.serverPort);
+    jvmArguments.add(
+        "-D" + AbstractCacheServer.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY + "=" + this.serverPort);
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -383,12 +443,23 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build()
+            .start();
 
     // wait for server to start
     int pid = 0;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -401,7 +472,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // verify server did not a port
       assertTrue(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET));
@@ -426,15 +499,20 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
   @Test
   public void testStartUsingDisableDefaultServerSkipsPortCheck() throws Throwable {
     // make serverPort in use
-    this.socket = SocketCreatorFactory.createNonDefaultInstance(false, false, null, null, System.getProperties()).createServerSocket(this.serverPort, 50, null, -1);
+    this.socket =
+        SocketCreatorFactory.createNonDefaultInstance(
+                false, false, null, null, System.getProperties())
+            .createServerSocket(this.serverPort, 50, null, -1);
     assertFalse(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET));
 
     // build and start the server
     final List<String> jvmArguments = getJvmArguments();
-    jvmArguments.add("-D" + AbstractCacheServer.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY + "=" + this.serverPort);
+    jvmArguments.add(
+        "-D" + AbstractCacheServer.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY + "=" + this.serverPort);
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -447,18 +525,31 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build()
+            .start();
 
     // wait for server to start
     int pid = 0;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       final ServerState status = this.launcher.status();
       final String portString = status.getPort();
@@ -477,10 +568,12 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     }
 
     // verify port is still in use
-    this.errorCollector.checkThat(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET), is(equalTo(false)));
+    this.errorCollector.checkThat(
+        AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET), is(equalTo(false)));
   }
 
-  @Category(FlakyTest.class) // GEODE-764: random ports, BindException, forks JVM, uses ErrorCollector
+  @Category(
+      FlakyTest.class) // GEODE-764: random ports, BindException, forks JVM, uses ErrorCollector
   @Test
   public void testStartUsingForceOverwritesExistingPidFile() throws Throwable {
     // create existing pid file
@@ -493,7 +586,8 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -507,12 +601,23 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     command.add("--force");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build()
+            .start();
 
     // wait for server to start
     int pid = 0;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -525,7 +630,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
     } catch (Throwable e) {
       this.errorCollector.addError(e);
@@ -540,19 +647,21 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     }
   }
 
-  /**
-   * Confirms fix for #47665.
-   */
+  /** Confirms fix for #47665. */
   @Test
   public void testStartUsingServerPortInUseFails() throws Throwable {
     // make serverPort in use
-    this.socket = SocketCreatorFactory.createNonDefaultInstance(false, false, null, null, System.getProperties()).createServerSocket(this.serverPort, 50, null, -1);
+    this.socket =
+        SocketCreatorFactory.createNonDefaultInstance(
+                false, false, null, null, System.getProperties())
+            .createServerSocket(this.serverPort, 50, null, -1);
     assertFalse(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET));
 
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -568,11 +677,34 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     AtomicBoolean outputContainedExpectedString = new AtomicBoolean();
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(createExpectedListener("sysout", getUniqueName() + "#sysout", expectedString, outputContainedExpectedString)).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(createExpectedListener("syserr", getUniqueName() + "#syserr", expectedString, outputContainedExpectedString)).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .inputListener(
+                createExpectedListener(
+                    "sysout",
+                    getUniqueName() + "#sysout",
+                    expectedString,
+                    outputContainedExpectedString))
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .inputListener(
+                createExpectedListener(
+                    "syserr",
+                    getUniqueName() + "#syserr",
+                    expectedString,
+                    outputContainedExpectedString))
+            .build()
+            .start();
 
     // wait for server to start and fail
-    final ServerLauncher dirLauncher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    final ServerLauncher dirLauncher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       int code = this.process.waitFor();
       assertEquals("Expected exit code 1 but was " + code, 1, code);
@@ -587,7 +719,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
       assertEquals(Status.NOT_RESPONDING, serverState.getStatus());
 
       final String logFileName = getUniqueName() + ".log";
-      assertFalse("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertFalse(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
     } catch (Throwable e) {
       this.errorCollector.addError(e);
@@ -596,7 +730,7 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     // if the following fails, then the SHORTER_TIMEOUT is too short for slow machines
     // or this test needs to use MainLauncher in ProcessWrapper
 
-    // validate that output contained BindException 
+    // validate that output contained BindException
     this.errorCollector.checkThat(outputContainedExpectedString.get(), is(equalTo(true)));
 
     // just in case the launcher started...
@@ -614,9 +748,7 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     }
   }
 
-  /**
-   * Confirms part of fix for #47664
-   */
+  /** Confirms part of fix for #47664 */
   @Test
   public void testStartUsingServerPortOverridesCacheXml() throws Throwable {
     // generate two free ports
@@ -637,10 +769,17 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
     // launch server and specify a different port
     final List<String> jvmArguments = getJvmArguments();
-    jvmArguments.add("-D" + DistributionConfig.GEMFIRE_PREFIX + "" + CACHE_XML_FILE + "=" + cacheXmlFile.getCanonicalPath());
+    jvmArguments.add(
+        "-D"
+            + DistributionConfig.GEMFIRE_PREFIX
+            + ""
+            + CACHE_XML_FILE
+            + "="
+            + cacheXmlFile.getCanonicalPath());
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -656,12 +795,35 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     AtomicBoolean outputContainedExpectedString = new AtomicBoolean();
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(createExpectedListener("sysout", getUniqueName() + "#sysout", expectedString, outputContainedExpectedString)).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(createExpectedListener("syserr", getUniqueName() + "#syserr", expectedString, outputContainedExpectedString)).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .inputListener(
+                createExpectedListener(
+                    "sysout",
+                    getUniqueName() + "#sysout",
+                    expectedString,
+                    outputContainedExpectedString))
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .inputListener(
+                createExpectedListener(
+                    "syserr",
+                    getUniqueName() + "#syserr",
+                    expectedString,
+                    outputContainedExpectedString))
+            .build()
+            .start();
 
     // wait for server to start up
     int pid = 0;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -674,7 +836,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // verify server used --server-port instead of default or port in cache.xml
       assertTrue(AvailablePort.isPortAvailable(freeTCPPorts[0], AvailablePort.SOCKET));
@@ -683,7 +847,8 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
       ServerState status = this.launcher.status();
       String portString = status.getPort();
       int port = Integer.valueOf(portString);
-      assertEquals("Port should be " + freeTCPPorts[1] + " instead of " + port, freeTCPPorts[1], port);
+      assertEquals(
+          "Port should be " + freeTCPPorts[1] + " instead of " + port, freeTCPPorts[1], port);
 
     } catch (Throwable e) {
       this.errorCollector.addError(e);
@@ -700,9 +865,7 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     }
   }
 
-  /**
-   * Confirms part of fix for #47664
-   */
+  /** Confirms part of fix for #47664 */
   @Test
   public void testStartUsingServerPortUsedInsteadOfDefaultCacheXml() throws Throwable {
     // write out cache.xml with one port
@@ -720,10 +883,17 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
     // launch server and specify a different port
     final List<String> jvmArguments = getJvmArguments();
-    jvmArguments.add("-D" + DistributionConfig.GEMFIRE_PREFIX + "" + CACHE_XML_FILE + "=" + cacheXmlFile.getCanonicalPath());
+    jvmArguments.add(
+        "-D"
+            + DistributionConfig.GEMFIRE_PREFIX
+            + ""
+            + CACHE_XML_FILE
+            + "="
+            + cacheXmlFile.getCanonicalPath());
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -739,12 +909,35 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     final AtomicBoolean outputContainedExpectedString = new AtomicBoolean();
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(createExpectedListener("sysout", getUniqueName() + "#sysout", expectedString, outputContainedExpectedString)).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(createExpectedListener("syserr", getUniqueName() + "#syserr", expectedString, outputContainedExpectedString)).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .inputListener(
+                createExpectedListener(
+                    "sysout",
+                    getUniqueName() + "#sysout",
+                    expectedString,
+                    outputContainedExpectedString))
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .inputListener(
+                createExpectedListener(
+                    "syserr",
+                    getUniqueName() + "#syserr",
+                    expectedString,
+                    outputContainedExpectedString))
+            .build()
+            .start();
 
     // wait for server to start up
     int pid = 0;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -757,7 +950,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // verify server used --server-port instead of default or port in cache.xml
       assertFalse(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET));
@@ -765,7 +960,8 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
       final ServerState status = this.launcher.status();
       final String portString = status.getPort();
       int port = Integer.valueOf(portString);
-      assertEquals("Port should be " + this.serverPort + " instead of " + port, this.serverPort, port);
+      assertEquals(
+          "Port should be " + this.serverPort + " instead of " + port, this.serverPort, port);
 
     } catch (Throwable e) {
       this.errorCollector.addError(e);
@@ -787,15 +983,20 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     AtomicBoolean outputContainedExpectedString = new AtomicBoolean();
 
     // make serverPort in use
-    this.socket = SocketCreatorFactory.createNonDefaultInstance(false, false, null, null, System.getProperties()).createServerSocket(this.serverPort, 50, null, -1);
+    this.socket =
+        SocketCreatorFactory.createNonDefaultInstance(
+                false, false, null, null, System.getProperties())
+            .createServerSocket(this.serverPort, 50, null, -1);
     assertFalse(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET));
 
     // launch server
     final List<String> jvmArguments = getJvmArguments();
-    jvmArguments.add("-D" + AbstractCacheServer.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY + "=" + this.serverPort);
+    jvmArguments.add(
+        "-D" + AbstractCacheServer.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY + "=" + this.serverPort);
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -807,11 +1008,34 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(createExpectedListener("sysout", getUniqueName() + "#sysout", expectedString, outputContainedExpectedString)).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(createExpectedListener("syserr", getUniqueName() + "#syserr", expectedString, outputContainedExpectedString)).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .inputListener(
+                createExpectedListener(
+                    "sysout",
+                    getUniqueName() + "#sysout",
+                    expectedString,
+                    outputContainedExpectedString))
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .inputListener(
+                createExpectedListener(
+                    "syserr",
+                    getUniqueName() + "#syserr",
+                    expectedString,
+                    outputContainedExpectedString))
+            .build()
+            .start();
 
     // wait for server to start up
-    final ServerLauncher dirLauncher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    final ServerLauncher dirLauncher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       int code = this.process.waitFor();
       assertEquals("Expected exit code 1 but was " + code, 1, code);
@@ -827,7 +1051,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
       // creation of log file seems to be random -- look into why sometime
       final String logFileName = getUniqueName() + ".log";
-      assertFalse("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertFalse(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
     } catch (Throwable e) {
       this.errorCollector.addError(e);
@@ -836,7 +1062,7 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     // if the following fails, then the SHORTER_TIMEOUT might be too short for slow machines
     // or this test needs to use MainLauncher in ProcessWrapper
 
-    // validate that output contained BindException 
+    // validate that output contained BindException
     this.errorCollector.checkThat(outputContainedExpectedString.get(), is(equalTo(true)));
 
     // just in case the launcher started...
@@ -856,21 +1082,20 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
   @Test
   @Ignore("Need to rewrite this without using dunit.Host")
-  public void testStartWithExistingPidFileFails() throws Throwable {
-  }/*
+  public void testStartWithExistingPidFileFails() throws Throwable {} /*
     this.temporaryFolder.getRoot() = new File(getUniqueName());
     this.temporaryFolder.getRoot().mkdir();
     assertTrue(this.temporaryFolder.getRoot().isDirectory() && this.temporaryFolder.getRoot().canWrite());
-   
+
     // create existing pid file
     this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getPidFileName());
     final int realPid = Host.getHost(0).getVM(3).invoke(() -> ProcessUtils.identifyPid());
     assertFalse("Remote pid shouldn't be the same as local pid " + realPid, realPid == ProcessUtils.identifyPid());
     writePid(this.pidFile, realPid);
-    
+
     // build and start the server
     final List<String> jvmArguments = getJvmArguments();
-    
+
     final List<String> command = new ArrayList<String>();
     command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
@@ -883,14 +1108,14 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     command.add(getUniqueName());
     command.add("--disable-default-server");
     command.add("--redirect-output");
-   
+
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
     this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
     this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
-   
+
     // collect and throw the FIRST failure
     Throwable failure = null;
-    
+
     final ServerLauncher dirLauncher = new ServerLauncher.Builder()
         .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
         .build();
@@ -902,31 +1127,31 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
         failure = e;
       }
     }
-      
+
     try {
       // check the status
       final ServerState serverState = dirLauncher.status();
       assertNotNull(serverState);
       assertIndexDetailsEquals(Status.NOT_RESPONDING, serverState.getStatus());
-      
+
       final String logFileName = getUniqueName()+".log";
       assertFalse("Log file should not exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
-      
+
     } catch (Throwable e) {
       logger.error(e);
       if (failure == null) {
         failure = e;
       }
     }
-   
+
     // just in case the launcher started...
     ServerState status = null;
     try {
       status = dirLauncher.stop();
-    } catch (Throwable t) { 
+    } catch (Throwable t) {
       // ignore
     }
-    
+
     try {
       final Status theStatus = status.getStatus();
       assertFalse(theStatus == Status.STARTING);
@@ -937,7 +1162,7 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
         failure = e;
       }
     }
-    
+
     if (failure != null) {
       throw failure;
     }
@@ -950,7 +1175,8 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -963,13 +1189,24 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build()
+            .start();
 
     // wait for server to start
     int pid = 0;
     ServerLauncher pidLauncher = null;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -982,7 +1219,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // use launcher with pid
       pidLauncher = new Builder().setPid(pid).build();
@@ -996,12 +1235,19 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
       assertEquals(Status.ONLINE, actualStatus.getStatus());
       assertEquals(pid, actualStatus.getPid().intValue());
       assertTrue(actualStatus.getUptime() > 0);
-      assertEquals(this.temporaryFolder.getRoot().getCanonicalPath(), actualStatus.getWorkingDirectory());
+      assertEquals(
+          this.temporaryFolder.getRoot().getCanonicalPath(), actualStatus.getWorkingDirectory());
       assertEquals(jvmArguments, actualStatus.getJvmArguments());
-      assertEquals(ManagementFactory.getRuntimeMXBean().getClassPath(), actualStatus.getClasspath());
+      assertEquals(
+          ManagementFactory.getRuntimeMXBean().getClassPath(), actualStatus.getClasspath());
       assertEquals(GemFireVersion.getGemFireVersion(), actualStatus.getGemFireVersion());
       assertEquals(System.getProperty("java.version"), actualStatus.getJavaVersion());
-      assertEquals(this.temporaryFolder.getRoot().getCanonicalPath() + File.separator + getUniqueName() + ".log", actualStatus.getLogFile());
+      assertEquals(
+          this.temporaryFolder.getRoot().getCanonicalPath()
+              + File.separator
+              + getUniqueName()
+              + ".log",
+          actualStatus.getLogFile());
       assertEquals(InetAddress.getLocalHost().getCanonicalHostName(), actualStatus.getHost());
       assertEquals(getUniqueName(), actualStatus.getMemberName());
 
@@ -1029,7 +1275,8 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -1042,12 +1289,23 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build()
+            .start();
 
     // wait for server to start
     int pid = 0;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -1060,7 +1318,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       assertNotNull(this.launcher);
       assertFalse(this.launcher.isRunning());
@@ -1071,12 +1331,19 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
       assertEquals(Status.ONLINE, actualStatus.getStatus());
       assertEquals(pid, actualStatus.getPid().intValue());
       assertTrue(actualStatus.getUptime() > 0);
-      assertEquals(this.temporaryFolder.getRoot().getCanonicalPath(), actualStatus.getWorkingDirectory());
+      assertEquals(
+          this.temporaryFolder.getRoot().getCanonicalPath(), actualStatus.getWorkingDirectory());
       assertEquals(jvmArguments, actualStatus.getJvmArguments());
-      assertEquals(ManagementFactory.getRuntimeMXBean().getClassPath(), actualStatus.getClasspath());
+      assertEquals(
+          ManagementFactory.getRuntimeMXBean().getClassPath(), actualStatus.getClasspath());
       assertEquals(GemFireVersion.getGemFireVersion(), actualStatus.getGemFireVersion());
       assertEquals(System.getProperty("java.version"), actualStatus.getJavaVersion());
-      assertEquals(this.temporaryFolder.getRoot().getCanonicalPath() + File.separator + getUniqueName() + ".log", actualStatus.getLogFile());
+      assertEquals(
+          this.temporaryFolder.getRoot().getCanonicalPath()
+              + File.separator
+              + getUniqueName()
+              + ".log",
+          actualStatus.getLogFile());
       assertEquals(InetAddress.getLocalHost().getCanonicalHostName(), actualStatus.getHost());
       assertEquals(getUniqueName(), actualStatus.getMemberName());
 
@@ -1098,13 +1365,18 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getPidFileName());
     assertTrue(this.pidFile + " already exists", this.pidFile.createNewFile());
 
-    final ServerLauncher dirLauncher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    final ServerLauncher dirLauncher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     final ServerState actualStatus = dirLauncher.status();
     assertThat(actualStatus, is(notNullValue()));
     assertThat(actualStatus.getStatus(), is(equalTo(Status.NOT_RESPONDING)));
     assertThat(actualStatus.getPid(), is(nullValue()));
     assertThat(actualStatus.getUptime().intValue(), is(equalTo(0)));
-    assertThat(actualStatus.getWorkingDirectory(), is(equalTo(this.temporaryFolder.getRoot().getCanonicalPath())));
+    assertThat(
+        actualStatus.getWorkingDirectory(),
+        is(equalTo(this.temporaryFolder.getRoot().getCanonicalPath())));
     assertThat(actualStatus.getClasspath(), is(nullValue()));
     assertThat(actualStatus.getGemFireVersion(), is(equalTo(GemFireVersion.getGemFireVersion())));
     assertThat(actualStatus.getJavaVersion(), is(nullValue()));
@@ -1115,7 +1387,10 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
   @Test
   public void testStatusWithNoPidFile() throws Exception {
-    final ServerLauncher dirLauncher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    final ServerLauncher dirLauncher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     ServerState serverState = dirLauncher.status();
     assertEquals(Status.NOT_RESPONDING, serverState.getStatus());
   }
@@ -1127,13 +1402,18 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     assertFalse(ProcessUtils.isProcessAlive(pid));
     writePid(this.pidFile, pid);
 
-    final ServerLauncher dirLauncher = new ServerLauncher.Builder().setWorkingDirectory(temporaryFolder.getRoot().getCanonicalPath()).build();
+    final ServerLauncher dirLauncher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     final ServerState actualStatus = dirLauncher.status();
     assertThat(actualStatus, is(notNullValue()));
     assertThat(actualStatus.getStatus(), is(equalTo(Status.NOT_RESPONDING)));
     assertThat(actualStatus.getPid(), is(nullValue()));
     assertThat(actualStatus.getUptime().intValue(), is(equalTo(0)));
-    assertThat(actualStatus.getWorkingDirectory(), is(equalTo(this.temporaryFolder.getRoot().getCanonicalPath())));
+    assertThat(
+        actualStatus.getWorkingDirectory(),
+        is(equalTo(this.temporaryFolder.getRoot().getCanonicalPath())));
     assertThat(actualStatus.getClasspath(), is(nullValue()));
     assertThat(actualStatus.getGemFireVersion(), is(equalTo(GemFireVersion.getGemFireVersion())));
     assertThat(actualStatus.getJavaVersion(), is(nullValue()));
@@ -1147,7 +1427,8 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -1160,13 +1441,26 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(createLoggingListener("sysout", getUniqueName() + "#sysout")).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(createLoggingListener("syserr", getUniqueName() + "#syserr")).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .inputListener(createLoggingListener("sysout", getUniqueName() + "#sysout"))
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .inputListener(createLoggingListener("syserr", getUniqueName() + "#syserr"))
+            .build()
+            .start();
 
     // wait for server to start
     int pid = 0;
     ServerLauncher pidLauncher = null;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -1179,7 +1473,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
       // use launcher with pid
       pidLauncher = new Builder().setPid(pid).build();
@@ -1217,7 +1513,8 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     final List<String> jvmArguments = getJvmArguments();
 
     final List<String> command = new ArrayList<String>();
-    command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+    command.add(
+        new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
     for (String jvmArgument : jvmArguments) {
       command.add(jvmArgument);
     }
@@ -1230,12 +1527,23 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
     command.add("--redirect-output");
 
     this.process = new ProcessBuilder(command).directory(this.temporaryFolder.getRoot()).start();
-    this.processOutReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build().start();
-    this.processErrReader = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build().start();
+    this.processOutReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build()
+            .start();
+    this.processErrReader =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build()
+            .start();
 
     // wait for server to start
     int pid = 0;
-    this.launcher = new ServerLauncher.Builder().setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath()).build();
+    this.launcher =
+        new ServerLauncher.Builder()
+            .setWorkingDirectory(this.temporaryFolder.getRoot().getCanonicalPath())
+            .build();
     try {
       waitForServerToStart();
 
@@ -1248,7 +1556,9 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
 
       // validate log file was created
       final String logFileName = getUniqueName() + ".log";
-      assertTrue("Log file should exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertTrue(
+          "Log file should exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
     } catch (Throwable e) {
       this.errorCollector.addError(e);
@@ -1268,30 +1578,40 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
   @Override
   protected List<String> getJvmArguments() {
     final List<String> jvmArguments = new ArrayList<String>();
-    jvmArguments.add("-D" + DistributionConfig.GEMFIRE_PREFIX + ConfigurationProperties.LOG_LEVEL + "=config");
-    jvmArguments.add("-D" + DistributionConfig.GEMFIRE_PREFIX + ConfigurationProperties.MCAST_PORT + "=0");
+    jvmArguments.add(
+        "-D" + DistributionConfig.GEMFIRE_PREFIX + ConfigurationProperties.LOG_LEVEL + "=config");
+    jvmArguments.add(
+        "-D" + DistributionConfig.GEMFIRE_PREFIX + ConfigurationProperties.MCAST_PORT + "=0");
     return jvmArguments;
   }
 
   /**
-   * Used only by {@link ServerLauncherRemoteIntegrationTest#testRunningServerOutlivesForkingProcess}
+   * Used only by {@link
+   * ServerLauncherRemoteIntegrationTest#testRunningServerOutlivesForkingProcess}
    */
   public static class ServerLauncherForkingProcess {
 
     public static void main(final String... args) throws IOException, PidUnavailableException {
       //-System.out.println("inside main");
-      File file = new File(System.getProperty("user.dir"), ServerLauncherForkingProcess.class.getSimpleName().concat(".log"));
+      File file =
+          new File(
+              System.getProperty("user.dir"),
+              ServerLauncherForkingProcess.class.getSimpleName().concat(".log"));
       file.createNewFile();
-      LocalLogWriter logWriter = new LocalLogWriter(InternalLogWriter.ALL_LEVEL, new PrintStream(new FileOutputStream(file, true)));
+      LocalLogWriter logWriter =
+          new LocalLogWriter(
+              InternalLogWriter.ALL_LEVEL, new PrintStream(new FileOutputStream(file, true)));
       //LogWriter logWriter = new PureLogWriter(LogWriterImpl.ALL_LEVEL);
-      logWriter.info(ServerLauncherForkingProcess.class.getSimpleName() + "#main PID is " + getPid());
+      logWriter.info(
+          ServerLauncherForkingProcess.class.getSimpleName() + "#main PID is " + getPid());
 
       try {
         // launch ServerLauncher
-        final List<String> jvmArguments = null;//getJvmArguments();
+        final List<String> jvmArguments = null; //getJvmArguments();
         assertTrue(jvmArguments.size() == 2);
         final List<String> command = new ArrayList<String>();
-        command.add(new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
+        command.add(
+            new File(new File(System.getProperty("java.home"), "bin"), "java").getCanonicalPath());
         for (String jvmArgument : jvmArguments) {
           command.add(jvmArgument);
         }
@@ -1303,7 +1623,8 @@ public class ServerLauncherRemoteIntegrationTest extends AbstractServerLauncherR
         command.add("--disable-default-server");
         command.add("--redirect-output");
 
-        logWriter.info(ServerLauncherForkingProcess.class.getSimpleName() + "#main command: " + command);
+        logWriter.info(
+            ServerLauncherForkingProcess.class.getSimpleName() + "#main command: " + command);
         logWriter.info(ServerLauncherForkingProcess.class.getSimpleName() + "#main starting...");
 
         //-System.out.println("launching " + command);

@@ -46,7 +46,8 @@ import org.apache.geode.test.junit.categories.FlakyTest;
 @Category(DistributedTest.class)
 public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
 
-  private void logAndRollAndVerify(String baseLogName, DistributedSystem ds, String mainId) throws FileNotFoundException, IOException {
+  private void logAndRollAndVerify(String baseLogName, DistributedSystem ds, String mainId)
+      throws FileNotFoundException, IOException {
     String logfile = baseLogName + ".log";
     String metaLogFile = "meta-" + baseLogName + "-" + mainId + ".log";
     String rolledLogFile1 = baseLogName + "-" + mainId + "-01.log";
@@ -56,12 +57,13 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
     String META_MARKER_3 = "Rolling current log to " + baseLogName + "-" + mainId + "-02.log";
 
     String FIRST_CHILD_MARKER = "hey guys im the first child whatsup";
-    String LOG_NONSENSE = "what is your story what are you doing hey whatsup i can't believe it wow";
+    String LOG_NONSENSE =
+        "what is your story what are you doing hey whatsup i can't believe it wow";
     System.out.println("LOGNAME:" + logfile);
     /*
      * 1. Lets assert that the logfile exists and that it is a proper normal logfile
      * 2. Asser that the meta logfile exists and has good stuff in it
-     * 3. Let's log a bunch and show that we rolled, 
+     * 3. Let's log a bunch and show that we rolled,
      * 4. Show that old file has right old stuff in it
      * 5. Show that new file has right new stuff in it
      * 6. Show that meta has right stuff in it
@@ -82,10 +84,14 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
     assertTrue("child-log-file2 :" + rolledLogFile2 + " should'nt exist yet", !f2.exists());
 
     String metalog = getLogContents(metaLogFile);
-    assertTrue("metalog(" + metaLogFile + ") should have " + META_MARKER_1 + " in it:\n" + metalog, metalog.indexOf(META_MARKER_1) != -1);
+    assertTrue(
+        "metalog(" + metaLogFile + ") should have " + META_MARKER_1 + " in it:\n" + metalog,
+        metalog.indexOf(META_MARKER_1) != -1);
 
     String mainlog = getLogContents(logfile);
-    assertTrue("log(" + logfile + ") should have " + FIRST_CHILD_MARKER + " in it:\n" + mainlog, mainlog.indexOf(FIRST_CHILD_MARKER) != -1);
+    assertTrue(
+        "log(" + logfile + ") should have " + FIRST_CHILD_MARKER + " in it:\n" + mainlog,
+        mainlog.indexOf(FIRST_CHILD_MARKER) != -1);
 
     int i = 0;
     while (i < 100000 && !f2.exists()) {
@@ -98,27 +104,40 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
 
     metalog = getLogContents(metaLogFile);
 
-    assertTrue("log(" + metaLogFile + ") should have " + META_MARKER_2 + " in it:\n" + metalog, metalog.indexOf(META_MARKER_2) != -1);
-    assertTrue("log(" + metaLogFile + ") should have " + META_MARKER_3 + " in it:\n" + metalog, metalog.indexOf(META_MARKER_3) != -1);
-    assertTrue("log(" + metaLogFile + ") should'nt have " + LOG_NONSENSE + " in it:\n" + metalog, metalog.indexOf(LOG_NONSENSE) == -1);
+    assertTrue(
+        "log(" + metaLogFile + ") should have " + META_MARKER_2 + " in it:\n" + metalog,
+        metalog.indexOf(META_MARKER_2) != -1);
+    assertTrue(
+        "log(" + metaLogFile + ") should have " + META_MARKER_3 + " in it:\n" + metalog,
+        metalog.indexOf(META_MARKER_3) != -1);
+    assertTrue(
+        "log(" + metaLogFile + ") should'nt have " + LOG_NONSENSE + " in it:\n" + metalog,
+        metalog.indexOf(LOG_NONSENSE) == -1);
 
     {
       String logChild2 = getLogContents(logfile);
-      assertTrue("log(" + logfile + ") should have " + LOG_NONSENSE + " in it:\n" + logChild2, logChild2.indexOf(LOG_NONSENSE) != -1);
+      assertTrue(
+          "log(" + logfile + ") should have " + LOG_NONSENSE + " in it:\n" + logChild2,
+          logChild2.indexOf(LOG_NONSENSE) != -1);
     }
 
     {
       String logChild2 = getLogContents(rolledLogFile1);
-      assertTrue("log(" + rolledLogFile1 + ") should have " + LOG_NONSENSE + " in it:\n" + logChild2, logChild2.indexOf(LOG_NONSENSE) != -1);
+      assertTrue(
+          "log(" + rolledLogFile1 + ") should have " + LOG_NONSENSE + " in it:\n" + logChild2,
+          logChild2.indexOf(LOG_NONSENSE) != -1);
     }
 
     {
       String logChild2 = getLogContents(rolledLogFile2);
-      assertTrue("log(" + rolledLogFile2 + ") should have " + LOG_NONSENSE + " in it:\n" + logChild2, logChild2.indexOf(LOG_NONSENSE) != -1);
+      assertTrue(
+          "log(" + rolledLogFile2 + ") should have " + LOG_NONSENSE + " in it:\n" + logChild2,
+          logChild2.indexOf(LOG_NONSENSE) != -1);
     }
   }
 
-  private void SecurityLogAndRollAndVerify(String baseLogName, DistributedSystem ds, String mainId) throws FileNotFoundException, IOException {
+  private void SecurityLogAndRollAndVerify(String baseLogName, DistributedSystem ds, String mainId)
+      throws FileNotFoundException, IOException {
     String logfile = baseLogName + ".log";
     String sec_logfile = "sec_" + logfile;
     String metaLogFile = "meta-" + baseLogName + "-" + mainId + ".log";
@@ -131,12 +150,13 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
     String META_MARKER_3 = "Rolling current log to " + baseLogName + "-" + mainId + "-02.log";
 
     String FIRST_CHILD_MARKER = "hey guys im the first child whatsup";
-    String LOG_NONSENSE = "what is your story what are you doing hey whatsup i can't believe it wow";
+    String LOG_NONSENSE =
+        "what is your story what are you doing hey whatsup i can't believe it wow";
     System.out.println("LOGNAME:" + logfile + ", SECLOGNAME:" + sec_logfile);
     /*
      * 1. Lets assert that the logfile exists and that it is a proper normal logfile
      * 2. Asser that the meta logfile exists and has good stuff in it
-     * 3. Let's log a bunch and show that we rolled, 
+     * 3. Let's log a bunch and show that we rolled,
      * 4. Show that old file has right old stuff in it
      * 5. Show that new file has right new stuff in it
      * 6. Show that meta has right stuff in it
@@ -161,15 +181,23 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
     File f2 = new File(rolledLogFile2);
     File sec_f2 = new File(rolledSecLogFile2);
     assertTrue("child-log-file2 :" + rolledLogFile2 + " should'nt exist yet", !f2.exists());
-    assertTrue("security-child-log-file2 :" + rolledSecLogFile2 + " should'nt exist yet", !sec_f2.exists());
+    assertTrue(
+        "security-child-log-file2 :" + rolledSecLogFile2 + " should'nt exist yet",
+        !sec_f2.exists());
 
     String metalog = getLogContents(metaLogFile);
-    assertTrue("metalog(" + metaLogFile + ") should have " + META_MARKER_1 + " in it:\n" + metalog, metalog.indexOf(META_MARKER_1) != -1);
+    assertTrue(
+        "metalog(" + metaLogFile + ") should have " + META_MARKER_1 + " in it:\n" + metalog,
+        metalog.indexOf(META_MARKER_1) != -1);
 
     String mainlog = getLogContents(logfile);
-    assertTrue("log(" + logfile + ") should have " + FIRST_CHILD_MARKER + " in it:\n" + mainlog, mainlog.indexOf(FIRST_CHILD_MARKER) != -1);
+    assertTrue(
+        "log(" + logfile + ") should have " + FIRST_CHILD_MARKER + " in it:\n" + mainlog,
+        mainlog.indexOf(FIRST_CHILD_MARKER) != -1);
     String sec_mainlog = getLogContents(sec_logfile);
-    assertTrue("log(" + sec_logfile + ") should have " + FIRST_CHILD_MARKER + " in it:\n" + sec_mainlog, sec_mainlog.indexOf(FIRST_CHILD_MARKER) != -1);
+    assertTrue(
+        "log(" + sec_logfile + ") should have " + FIRST_CHILD_MARKER + " in it:\n" + sec_mainlog,
+        sec_mainlog.indexOf(FIRST_CHILD_MARKER) != -1);
 
     int i = 0;
     while (i < 100000 && !f2.exists()) {
@@ -185,34 +213,64 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
 
     assertTrue("child-log-file1 :" + rolledLogFile1 + " should exist now", f1.exists());
     assertTrue("child-log-file2 :" + rolledLogFile2 + " should exist now", f2.exists());
-    assertTrue("security-child-log-file1 :" + rolledSecLogFile1 + " should exist now", sec_f1.exists());
-    assertTrue("security-child-log-file2 :" + rolledSecLogFile2 + " should exist now", sec_f2.exists());
+    assertTrue(
+        "security-child-log-file1 :" + rolledSecLogFile1 + " should exist now", sec_f1.exists());
+    assertTrue(
+        "security-child-log-file2 :" + rolledSecLogFile2 + " should exist now", sec_f2.exists());
 
     metalog = getLogContents(metaLogFile);
 
-    assertTrue("log(" + metaLogFile + ") should have " + META_MARKER_2 + " in it:\n" + metalog, metalog.indexOf(META_MARKER_2) != -1);
-    assertTrue("log(" + metaLogFile + ") should have " + META_MARKER_3 + " in it:\n" + metalog, metalog.indexOf(META_MARKER_3) != -1);
-    assertTrue("log(" + metaLogFile + ") should'nt have " + LOG_NONSENSE + " in it:\n" + metalog, metalog.indexOf(LOG_NONSENSE) == -1);
+    assertTrue(
+        "log(" + metaLogFile + ") should have " + META_MARKER_2 + " in it:\n" + metalog,
+        metalog.indexOf(META_MARKER_2) != -1);
+    assertTrue(
+        "log(" + metaLogFile + ") should have " + META_MARKER_3 + " in it:\n" + metalog,
+        metalog.indexOf(META_MARKER_3) != -1);
+    assertTrue(
+        "log(" + metaLogFile + ") should'nt have " + LOG_NONSENSE + " in it:\n" + metalog,
+        metalog.indexOf(LOG_NONSENSE) == -1);
 
     {
       String logChild2 = getLogContents(logfile);
-      assertTrue("log(" + logfile + ") should have " + LOG_NONSENSE + " in it:\n" + logChild2, logChild2.indexOf(LOG_NONSENSE) != -1);
+      assertTrue(
+          "log(" + logfile + ") should have " + LOG_NONSENSE + " in it:\n" + logChild2,
+          logChild2.indexOf(LOG_NONSENSE) != -1);
       String sec_logChild2 = getLogContents(sec_logfile);
-      assertTrue("log(" + sec_logfile + ") should have " + LOG_NONSENSE + " in it:\n" + sec_logChild2, sec_logChild2.indexOf(LOG_NONSENSE) != -1);
+      assertTrue(
+          "log(" + sec_logfile + ") should have " + LOG_NONSENSE + " in it:\n" + sec_logChild2,
+          sec_logChild2.indexOf(LOG_NONSENSE) != -1);
     }
 
     {
       String logChild2 = getLogContents(rolledLogFile1);
-      assertTrue("log(" + rolledLogFile1 + ") should have " + LOG_NONSENSE + " in it:\n" + logChild2, logChild2.indexOf(LOG_NONSENSE) != -1);
+      assertTrue(
+          "log(" + rolledLogFile1 + ") should have " + LOG_NONSENSE + " in it:\n" + logChild2,
+          logChild2.indexOf(LOG_NONSENSE) != -1);
       String sec_logChild2 = getLogContents(rolledSecLogFile1);
-      assertTrue("log(" + rolledSecLogFile1 + ") should have " + LOG_NONSENSE + " in it:\n" + sec_logChild2, sec_logChild2.indexOf(LOG_NONSENSE) != -1);
+      assertTrue(
+          "log("
+              + rolledSecLogFile1
+              + ") should have "
+              + LOG_NONSENSE
+              + " in it:\n"
+              + sec_logChild2,
+          sec_logChild2.indexOf(LOG_NONSENSE) != -1);
     }
 
     {
       String logChild2 = getLogContents(rolledLogFile2);
-      assertTrue("log(" + rolledLogFile2 + ") should have " + LOG_NONSENSE + " in it:\n" + logChild2, logChild2.indexOf(LOG_NONSENSE) != -1);
+      assertTrue(
+          "log(" + rolledLogFile2 + ") should have " + LOG_NONSENSE + " in it:\n" + logChild2,
+          logChild2.indexOf(LOG_NONSENSE) != -1);
       String sec_logChild2 = getLogContents(rolledSecLogFile2);
-      assertTrue("log(" + rolledSecLogFile2 + ") should have " + LOG_NONSENSE + " in it:\n" + sec_logChild2, sec_logChild2.indexOf(LOG_NONSENSE) != -1);
+      assertTrue(
+          "log("
+              + rolledSecLogFile2
+              + ") should have "
+              + LOG_NONSENSE
+              + " in it:\n"
+              + sec_logChild2,
+          sec_logChild2.indexOf(LOG_NONSENSE) != -1);
     }
   }
 
@@ -231,8 +289,8 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
     }
 
     /*
-    * This was throwing NPEs until my fix...
-    */
+     * This was throwing NPEs until my fix...
+     */
   }
 
   @Category(FlakyTest.class) // GEODE-674: possible disk pollution, file size sensitive
@@ -246,16 +304,20 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
     props.put(LOG_DISK_SPACE_LIMIT, "200");
     props.put(LOG_LEVEL, "config");
     InternalDistributedSystem ids = getSystem(props);
-    assertEquals(InternalLogWriter.INFO_LEVEL, ((InternalLogWriter) ids.getLogWriter()).getLogWriterLevel());
+    assertEquals(
+        InternalLogWriter.INFO_LEVEL, ((InternalLogWriter) ids.getLogWriter()).getLogWriterLevel());
     ids.disconnect();
     String mainId;
     {
       final Pattern mainIdPattern = Pattern.compile("meta-" + baseLogName + "-\\d\\d.log");
-      File[] metaLogs = new File(".").listFiles(new FilenameFilter() {
-        public boolean accept(File d, String name) {
-          return mainIdPattern.matcher(name).matches();
-        }
-      });
+      File[] metaLogs =
+          new File(".")
+              .listFiles(
+                  new FilenameFilter() {
+                    public boolean accept(File d, String name) {
+                      return mainIdPattern.matcher(name).matches();
+                    }
+                  });
       assertEquals(1, metaLogs.length);
       String f = metaLogs[0].getName();
       int idx = f.lastIndexOf("-");
@@ -281,7 +343,19 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
       }
       String lfold = "meta-" + baseLogName + "-" + (oldMain) + ".log";
       File fold = new File(lfold);
-      assertTrue("before we even get going here[" + i + "] mainInt:" + mainInt + " myid:" + myid + " " + lfold + " should exist the metaname was :" + metaName + " and it should match that", fold.exists());
+      assertTrue(
+          "before we even get going here["
+              + i
+              + "] mainInt:"
+              + mainInt
+              + " myid:"
+              + myid
+              + " "
+              + lfold
+              + " should exist the metaname was :"
+              + metaName
+              + " and it should match that",
+          fold.exists());
       String lf = "meta-" + baseLogName + "-" + myid + ".log";
       String lfl = baseLogName + "-" + (oldMain) + "-01.log";
       File f1m = new File(lf);
@@ -306,17 +380,21 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
     props.put(LOG_LEVEL, "config");
     DistributedSystem ds = getSystem(props);
     InternalDistributedSystem ids = (InternalDistributedSystem) ds;
-    assertEquals(InternalLogWriter.INFO_LEVEL, ((InternalLogWriter) ids.getLogWriter()).getLogWriterLevel());
+    assertEquals(
+        InternalLogWriter.INFO_LEVEL, ((InternalLogWriter) ids.getLogWriter()).getLogWriterLevel());
 
     // Lets figure out the mainId we start with
     String mainId;
     {
       final Pattern mainIdPattern = Pattern.compile("meta-" + baseLogName + "-\\d\\d\\d*.log");
-      File[] metaLogs = new File(".").listFiles(new FilenameFilter() {
-        public boolean accept(File d, String name) {
-          return mainIdPattern.matcher(name).matches();
-        }
-      });
+      File[] metaLogs =
+          new File(".")
+              .listFiles(
+                  new FilenameFilter() {
+                    public boolean accept(File d, String name) {
+                      return mainIdPattern.matcher(name).matches();
+                    }
+                  });
       assertEquals(1, metaLogs.length);
       String f = metaLogs[0].getName();
       int idx = f.lastIndexOf("-");
@@ -361,7 +439,7 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
     int dsId2 = System.identityHashCode(ds);
     assertTrue("This should be a new ds!", dsId != dsId2);
     /* creating the new system should have rolled the old rolling log (biscuits.log->biscuits-02-01.log)
-     * 
+     *
      */
     // The following assert does not work on Windows because
     // we can't rename the last biscuits.log because it is still open
@@ -384,17 +462,21 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
 
     DistributedSystem ds = getSystem(props);
     InternalDistributedSystem ids = (InternalDistributedSystem) ds;
-    assertEquals(InternalLogWriter.INFO_LEVEL, ((InternalLogWriter) ids.getLogWriter()).getLogWriterLevel());
+    assertEquals(
+        InternalLogWriter.INFO_LEVEL, ((InternalLogWriter) ids.getLogWriter()).getLogWriterLevel());
 
     // Lets figure out the mainId we start with
     String mainId;
     {
       final Pattern mainIdPattern = Pattern.compile("meta-" + baseLogName + "-\\d+.log");
-      File[] metaLogs = new File(".").listFiles(new FilenameFilter() {
-        public boolean accept(File d, String name) {
-          return mainIdPattern.matcher(name).matches();
-        }
-      });
+      File[] metaLogs =
+          new File(".")
+              .listFiles(
+                  new FilenameFilter() {
+                    public boolean accept(File d, String name) {
+                      return mainIdPattern.matcher(name).matches();
+                    }
+                  });
       assertEquals(1, metaLogs.length);
       String f = metaLogs[0].getName();
       int idx = f.lastIndexOf("-");
@@ -421,18 +503,24 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
 
     DistributedSystem ds = getSystem(props);
     InternalDistributedSystem ids = (InternalDistributedSystem) ds;
-    assertEquals(InternalLogWriter.INFO_LEVEL, ((InternalLogWriter) ids.getLogWriter()).getLogWriterLevel());
-    assertEquals(InternalLogWriter.INFO_LEVEL, ((InternalLogWriter) ids.getSecurityLogWriter()).getLogWriterLevel());
+    assertEquals(
+        InternalLogWriter.INFO_LEVEL, ((InternalLogWriter) ids.getLogWriter()).getLogWriterLevel());
+    assertEquals(
+        InternalLogWriter.INFO_LEVEL,
+        ((InternalLogWriter) ids.getSecurityLogWriter()).getLogWriterLevel());
 
     // Lets figure out the mainId we start with
     String mainId;
     {
       final Pattern mainIdPattern = Pattern.compile("meta-" + baseLogName + "-\\d+.log");
-      File[] metaLogs = new File(".").listFiles(new FilenameFilter() {
-        public boolean accept(File d, String name) {
-          return mainIdPattern.matcher(name).matches();
-        }
-      });
+      File[] metaLogs =
+          new File(".")
+              .listFiles(
+                  new FilenameFilter() {
+                    public boolean accept(File d, String name) {
+                      return mainIdPattern.matcher(name).matches();
+                    }
+                  });
       assertEquals(1, metaLogs.length);
       String f = metaLogs[0].getName();
       int idx = f.lastIndexOf("-");
@@ -456,5 +544,4 @@ public class CacheLogRollDUnitTest extends JUnit4CacheTestCase {
     }
     return fileData.toString();
   }
-
 }

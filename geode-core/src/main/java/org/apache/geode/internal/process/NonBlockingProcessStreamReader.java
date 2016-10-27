@@ -26,17 +26,19 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.util.StopWatch;
 
 /**
- * Reads the InputStream per-byte instead of per-line. Uses BufferedReader.ready() 
- * to ensure that calls to read() will not block. Uses continueReadingMillis to
- * continue reading after the Process terminates in order to fully read the last
- * of that Process' output (such as a stack trace).
- * 
+ * Reads the InputStream per-byte instead of per-line. Uses BufferedReader.ready() to ensure that
+ * calls to read() will not block. Uses continueReadingMillis to continue reading after the Process
+ * terminates in order to fully read the last of that Process' output (such as a stack trace).
+ *
  * @since GemFire 8.2
  */
 public final class NonBlockingProcessStreamReader extends ProcessStreamReader {
   private static final Logger logger = LogService.getLogger();
 
-  /** millis to continue reading after Process terminates in order to fully read the last of its output */
+  /**
+   * millis to continue reading after Process terminates in order to fully read the last of its
+   * output
+   */
   private final long continueReadingMillis;
 
   protected NonBlockingProcessStreamReader(final Builder builder) {

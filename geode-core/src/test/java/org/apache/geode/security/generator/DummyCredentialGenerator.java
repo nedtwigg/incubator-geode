@@ -46,8 +46,8 @@ public class DummyCredentialGenerator extends CredentialGenerator {
 
   @Override
   public Properties getValidCredentials(final int index) {
-    final String[] validGroups = new String[] { "admin", "user", "reader", "writer" };
-    final String[] admins = new String[] { "root", "admin", "administrator" };
+    final String[] validGroups = new String[] {"admin", "user", "reader", "writer"};
+    final String[] admins = new String[] {"root", "admin", "administrator"};
 
     final Properties props = new Properties();
     final int groupNum = index % validGroups.length;

@@ -41,22 +41,30 @@ public class StartupOperation {
     this.transport = transport;
   }
 
-  /** send the startup message and wait for responses.  If timeout is zero,
-      this waits forever for all responses to come back.  This method may
-      throw jgroups and other io exceptions since it interacts with the
-      distribution manager at a low level to send the startup messages.  It
-      does this to ensure it knows which recipients didn't receive the message.
-      @return whether all recipients could be contacted.  The failure set can be fetched with getFailureSet??
-    */
-  boolean sendStartupMessage(Set recipients, long timeout, Set interfaces, String redundancyZone, boolean enforceUniqueZone) throws InterruptedException, ReplyException, java.net.UnknownHostException, IOException {
-    if (Thread.interrupted())
-      throw new InterruptedException();
+  /**
+   * send the startup message and wait for responses. If timeout is zero, this waits forever for all
+   * responses to come back. This method may throw jgroups and other io exceptions since it
+   * interacts with the distribution manager at a low level to send the startup messages. It does
+   * this to ensure it knows which recipients didn't receive the message.
+   *
+   * @return whether all recipients could be contacted. The failure set can be fetched with
+   *     getFailureSet??
+   */
+  boolean sendStartupMessage(
+      Set recipients,
+      long timeout,
+      Set interfaces,
+      String redundancyZone,
+      boolean enforceUniqueZone)
+      throws InterruptedException, ReplyException, java.net.UnknownHostException, IOException {
+    if (Thread.interrupted()) throw new InterruptedException();
     StartupMessageReplyProcessor proc = new StartupMessageReplyProcessor(dm, recipients);
     boolean isSharedConfigurationEnabled = false;
     if (InternalLocator.hasLocator()) {
       isSharedConfigurationEnabled = InternalLocator.getLocator().isSharedConfigurationEnabled();
     }
-    StartupMessage msg = new StartupMessage(InternalLocator.getLocatorStrings(), isSharedConfigurationEnabled);
+    StartupMessage msg =
+        new StartupMessage(InternalLocator.getLocatorStrings(), isSharedConfigurationEnabled);
 
     msg.setInterfaces(interfaces);
     msg.setDistributedSystemId(dm.getConfig().getDistributedSystemId());
@@ -74,9 +82,12 @@ public class StartupOperation {
       // tell the reply processor not to wait for the recipients that didn't
       // get the message
       //      Vector viewMembers = dm.getViewMembers();
-      for (Iterator it = this.newlyDeparted.iterator(); it.hasNext();) {
+      for (Iterator it = this.newlyDeparted.iterator(); it.hasNext(); ) {
         InternalDistributedMember id = (InternalDistributedMember) it.next();
-        this.dm.handleManagerDeparture(id, false, LocalizedStrings.StartupOperation_LEFT_THE_MEMBERSHIP_VIEW.toLocalizedString());
+        this.dm.handleManagerDeparture(
+            id,
+            false,
+            LocalizedStrings.StartupOperation_LEFT_THE_MEMBERSHIP_VIEW.toLocalizedString());
         proc.memberDeparted(id, true);
       }
     }
@@ -93,16 +104,24 @@ public class StartupOperation {
         unresponsive = new HashSet();
         proc.collectUnresponsiveMembers(unresponsive);
         if (!unresponsive.isEmpty()) {
-          for (Iterator it = unresponsive.iterator(); it.hasNext();) {
+          for (Iterator it = unresponsive.iterator(); it.hasNext(); ) {
             InternalDistributedMember um = (InternalDistributedMember) it.next();
             if (!dm.getViewMembers().contains(um)) {
               // Member slipped away and we didn't notice.
               it.remove();
-              dm.handleManagerDeparture(um, true, LocalizedStrings.StartupOperation_DISAPPEARED_DURING_STARTUP_HANDSHAKE.toLocalizedString());
+              dm.handleManagerDeparture(
+                  um,
+                  true,
+                  LocalizedStrings.StartupOperation_DISAPPEARED_DURING_STARTUP_HANDSHAKE
+                      .toLocalizedString());
             } else if (dm.isCurrentMember(um)) {
               // he must have connected back to us and now we just
               // need to get his startup response
-              logger.warn(LocalizedMessage.create(LocalizedStrings.StartupOperation_MEMBERSHIP_RECEIVED_CONNECTION_FROM_0_BUT_RECEIVED_NO_STARTUP_RESPONSE_AFTER_1_MS, new Object[] { um, Long.valueOf(timeout) }));
+              logger.warn(
+                  LocalizedMessage.create(
+                      LocalizedStrings
+                          .StartupOperation_MEMBERSHIP_RECEIVED_CONNECTION_FROM_0_BUT_RECEIVED_NO_STARTUP_RESPONSE_AFTER_1_MS,
+                      new Object[] {um, Long.valueOf(timeout)}));
             }
           } // for
 
@@ -111,7 +130,11 @@ public class StartupOperation {
 
           // Re-examine list now that we have elided the startup problems....
           if (!unresponsive.isEmpty()) {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.StartupOperation_MEMBERSHIP_STARTUP_TIMED_OUT_AFTER_WAITING_0_MILLISECONDS_FOR_RESPONSES_FROM_1, new Object[] { Long.valueOf(timeout), unresponsive }));
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings
+                        .StartupOperation_MEMBERSHIP_STARTUP_TIMED_OUT_AFTER_WAITING_0_MILLISECONDS_FOR_RESPONSES_FROM_1,
+                    new Object[] {Long.valueOf(timeout), unresponsive}));
           }
         } // !isEmpty
       } // timedOut
@@ -119,7 +142,7 @@ public class StartupOperation {
 
     boolean problems;
     problems = this.newlyDeparted != null && this.newlyDeparted.size() > 0;
-    //    problems = problems || 
+    //    problems = problems ||
     //        (unresponsive != null && unresponsive.size() > 0);
     return !problems;
   }

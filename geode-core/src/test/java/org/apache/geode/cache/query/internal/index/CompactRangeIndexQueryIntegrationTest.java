@@ -51,7 +51,8 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 public class CompactRangeIndexQueryIntegrationTest {
 
   @Test
-  public void multipleNotEqualsClausesOnAPartitionedRegionShouldReturnCorrectResults() throws Exception {
+  public void multipleNotEqualsClausesOnAPartitionedRegionShouldReturnCorrectResults()
+      throws Exception {
     Cache cache = CacheUtils.getCache();
     Region region = cache.createRegionFactory(RegionShortcut.PARTITION).create("portfolios");
     int numMatching = 10;
@@ -65,13 +66,16 @@ public class CompactRangeIndexQueryIntegrationTest {
       region.put("KEY-" + i, p);
     }
 
-    Query q = qs.newQuery("select * from /portfolios p where p.pk <> '0' and p.status <> '0' and p.status <> '1' and p.status <> '2'");
+    Query q =
+        qs.newQuery(
+            "select * from /portfolios p where p.pk <> '0' and p.status <> '0' and p.status <> '1' and p.status <> '2'");
     SelectResults rs = (SelectResults) q.execute();
     assertEquals(numMatching, rs.size());
   }
 
   @Test
-  public void whenAuxFilterWithAnIterableFilterShouldNotCombineFiltersIntoAndJunction() throws Exception {
+  public void whenAuxFilterWithAnIterableFilterShouldNotCombineFiltersIntoAndJunction()
+      throws Exception {
     CacheUtils.startCache();
     Cache cache = CacheUtils.getCache();
     Region region = cache.createRegionFactory(RegionShortcut.PARTITION).create("ExampleRegion");
@@ -92,7 +96,9 @@ public class CompactRangeIndexQueryIntegrationTest {
       region.put(String.valueOf(i), data);
     }
 
-    Query q = qs.newQuery("select * from /ExampleRegion E where E['codeNumber']=1 and E['origin']='src_common' and (E['country']='JPY' or E['ccountrycy']='USD')");
+    Query q =
+        qs.newQuery(
+            "select * from /ExampleRegion E where E['codeNumber']=1 and E['origin']='src_common' and (E['country']='JPY' or E['ccountrycy']='USD')");
     SelectResults rs = (SelectResults) q.execute();
     assertEquals(4, rs.size());
   }

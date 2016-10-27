@@ -28,17 +28,17 @@ import org.apache.logging.log4j.Logger;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * ExpirationScheduler uses a single instance of java.util.Timer (and
- * therefore a single thread) per VM to schedule and execute region and 
- * entry expiration tasks.
+ * ExpirationScheduler uses a single instance of java.util.Timer (and therefore a single thread) per
+ * VM to schedule and execute region and entry expiration tasks.
  */
-
 public class ExpirationScheduler {
   private static final Logger logger = LogService.getLogger();
 
   private final SystemTimer timer;
   private final AtomicInteger pendingCancels = new AtomicInteger();
-  private static final int MAX_PENDING_CANCELS = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "MAX_PENDING_CANCELS", 10000).intValue();
+  private static final int MAX_PENDING_CANCELS =
+      Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "MAX_PENDING_CANCELS", 10000)
+          .intValue();
 
   public ExpirationScheduler(InternalDistributedSystem ds) {
     this.timer = new SystemTimer(ds, true);
@@ -50,8 +50,7 @@ public class ExpirationScheduler {
   }
 
   /**
-   * Called when we have cancelled a scheduled timer task.
-   * Do work, if possible to fix bug 37574.
+   * Called when we have cancelled a scheduled timer task. Do work, if possible to fix bug 37574.
    */
   public void incCancels() {
     int pc = pendingCancels.incrementAndGet();
@@ -77,7 +76,10 @@ public class ExpirationScheduler {
   public ExpiryTask addExpiryTask(ExpiryTask task) {
     try {
       if (logger.isTraceEnabled()) {
-        logger.trace(LocalizedMessage.create(LocalizedStrings.ExpirationScheduler_SCHEDULING__0__TO_FIRE_IN__1__MS, new Object[] { task, Long.valueOf(task.getExpiryMillis()) }));
+        logger.trace(
+            LocalizedMessage.create(
+                LocalizedStrings.ExpirationScheduler_SCHEDULING__0__TO_FIRE_IN__1__MS,
+                new Object[] {task, Long.valueOf(task.getExpiryMillis())}));
       }
       // To fix bug 52267 do not create a Date here; instead calculate the relative duration.
       timer.schedule(task, task.getExpiryMillis());

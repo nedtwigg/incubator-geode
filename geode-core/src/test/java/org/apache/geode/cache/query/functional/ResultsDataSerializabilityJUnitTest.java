@@ -60,10 +60,7 @@ import org.apache.geode.cache.query.internal.types.StructTypeImpl;
 import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Test whether query results are DataSerializable
- *
- */
+/** Test whether query results are DataSerializable */
 @Category(IntegrationTest.class)
 public class ResultsDataSerializabilityJUnitTest {
 
@@ -83,9 +80,21 @@ public class ResultsDataSerializabilityJUnitTest {
    */
   @Test
   public void testImplementsDataSerializable() throws Exception {
-    Class[] classes = new Class[] { SortedResultSet.class, ResultsCollectionWrapper.class, ResultsSet.class, SortedStructSet.class, StructImpl.class, StructSet.class, Undefined.class,
-        //      QRegion.class, // QRegions remain unserializable
-        CollectionTypeImpl.class, MapTypeImpl.class, ObjectTypeImpl.class, StructTypeImpl.class, };
+    Class[] classes =
+        new Class[] {
+          SortedResultSet.class,
+          ResultsCollectionWrapper.class,
+          ResultsSet.class,
+          SortedStructSet.class,
+          StructImpl.class,
+          StructSet.class,
+          Undefined.class,
+          //      QRegion.class, // QRegions remain unserializable
+          CollectionTypeImpl.class,
+          MapTypeImpl.class,
+          ObjectTypeImpl.class,
+          StructTypeImpl.class,
+        };
 
     List list = new ArrayList();
     for (int i = 0; i < classes.length; i++) {
@@ -130,5 +139,4 @@ public class ResultsDataSerializabilityJUnitTest {
 
     assertEquals(res2.size(), res1.size());
   }
-
 }

@@ -20,8 +20,7 @@ import java.io.IOException;
 
 public class SimpleClass1 implements PdxSerializable {
 
-  public SimpleClass1() {
-  }
+  public SimpleClass1() {}
 
   private boolean myFlag;
   private short myShort;
@@ -32,7 +31,15 @@ public class SimpleClass1 implements PdxSerializable {
   private int myInt;
   private float myFloat;
 
-  public SimpleClass1(boolean myFlag, short myShort, String str1, long myLong, String str2, String str3, int myInt, float myFloat) {
+  public SimpleClass1(
+      boolean myFlag,
+      short myShort,
+      String str1,
+      long myLong,
+      String str2,
+      String str3,
+      int myInt,
+      float myFloat) {
     this.myFlag = myFlag;
     this.myShort = myShort;
     this.myString1 = str1;
@@ -66,7 +73,23 @@ public class SimpleClass1 implements PdxSerializable {
   }
 
   public String toString() {
-    return "SimpleClass1 [myFlag=" + myFlag + ", myShort=" + myShort + ", myString1=" + myString1 + ", myLong=" + myLong + ", myString2=" + myString2 + ", myString3=" + myString3 + ", myInt=" + myInt + ", myFloat=" + myFloat + "]";
+    return "SimpleClass1 [myFlag="
+        + myFlag
+        + ", myShort="
+        + myShort
+        + ", myString1="
+        + myString1
+        + ", myLong="
+        + myLong
+        + ", myString2="
+        + myString2
+        + ", myString3="
+        + myString3
+        + ", myInt="
+        + myInt
+        + ", myFloat="
+        + myFloat
+        + "]";
   }
 
   @Override
@@ -86,38 +109,24 @@ public class SimpleClass1 implements PdxSerializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     SimpleClass1 other = (SimpleClass1) obj;
-    if (myFlag != other.myFlag)
-      return false;
-    if (Float.floatToIntBits(myFloat) != Float.floatToIntBits(other.myFloat))
-      return false;
-    if (myInt != other.myInt)
-      return false;
-    if (myLong != other.myLong)
-      return false;
-    if (myShort != other.myShort)
-      return false;
+    if (myFlag != other.myFlag) return false;
+    if (Float.floatToIntBits(myFloat) != Float.floatToIntBits(other.myFloat)) return false;
+    if (myInt != other.myInt) return false;
+    if (myLong != other.myLong) return false;
+    if (myShort != other.myShort) return false;
     if (myString1 == null) {
-      if (other.myString1 != null)
-        return false;
-    } else if (!myString1.equals(other.myString1))
-      return false;
+      if (other.myString1 != null) return false;
+    } else if (!myString1.equals(other.myString1)) return false;
     if (myString2 == null) {
-      if (other.myString2 != null)
-        return false;
-    } else if (!myString2.equals(other.myString2))
-      return false;
+      if (other.myString2 != null) return false;
+    } else if (!myString2.equals(other.myString2)) return false;
     if (myString3 == null) {
-      if (other.myString3 != null)
-        return false;
-    } else if (!myString3.equals(other.myString3))
-      return false;
+      if (other.myString3 != null) return false;
+    } else if (!myString3.equals(other.myString3)) return false;
     return true;
   }
 

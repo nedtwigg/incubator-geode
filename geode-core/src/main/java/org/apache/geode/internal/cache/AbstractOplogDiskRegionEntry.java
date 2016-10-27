@@ -25,12 +25,9 @@ import org.apache.geode.internal.cache.versions.VersionTag;
 import org.apache.geode.internal.offheap.annotations.Retained;
 
 /**
- * Abstract implementation class of RegionEntry interface.
- * This is adds Disk support behavior
+ * Abstract implementation class of RegionEntry interface. This is adds Disk support behavior
  *
  * @since GemFire 3.5.1
- *
- *
  */
 public abstract class AbstractOplogDiskRegionEntry extends AbstractDiskRegionEntry {
   protected AbstractOplogDiskRegionEntry(RegionEntryContext context, Object value) {
@@ -59,7 +56,8 @@ public abstract class AbstractOplogDiskRegionEntry extends AbstractDiskRegionEnt
   }
 
   @Override
-  public final boolean fillInValue(LocalRegion r, InitialImageOperation.Entry entry, ByteArrayDataInput in, DM mgr) {
+  public final boolean fillInValue(
+      LocalRegion r, InitialImageOperation.Entry entry, ByteArrayDataInput in, DM mgr) {
     return Helper.fillInValue(this, entry, r.getDiskRegion(), mgr, in, r);
   }
 
@@ -123,7 +121,7 @@ public abstract class AbstractOplogDiskRegionEntry extends AbstractDiskRegionEnt
     getDiskId().setNext(v);
   }
 
-  /* 
+  /*
    * If detected a conflict event, persist region needs to persist both the
    * golden copy and conflict tag
    */
@@ -135,9 +133,8 @@ public abstract class AbstractOplogDiskRegionEntry extends AbstractDiskRegionEnt
   }
 
   /**
-   * Process a version tag. This overrides AbtractRegionEntry so
-   * we can check to see if the old value was recovered from disk.
-   * If so, we don't check for conflicts.
+   * Process a version tag. This overrides AbtractRegionEntry so we can check to see if the old
+   * value was recovered from disk. If so, we don't check for conflicts.
    */
   @Override
   public void processVersionTag(EntryEvent cacheEvent) {
@@ -156,7 +153,8 @@ public abstract class AbstractOplogDiskRegionEntry extends AbstractDiskRegionEnt
   }
 
   /**
-   * Returns true if the DiskEntry value is equal to {@link Token#DESTROYED}, {@link Token#REMOVED_PHASE1}, or {@link Token#REMOVED_PHASE2}.
+   * Returns true if the DiskEntry value is equal to {@link Token#DESTROYED}, {@link
+   * Token#REMOVED_PHASE1}, or {@link Token#REMOVED_PHASE2}.
    */
   @Override
   public boolean isRemovedFromDisk() {

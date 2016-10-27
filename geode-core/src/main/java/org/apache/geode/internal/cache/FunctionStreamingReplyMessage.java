@@ -47,7 +47,14 @@ public class FunctionStreamingReplyMessage extends ReplyMessage {
    * @param msgNum message number in this series (0-based)
    * @param lastMsg if this is the last message in this series
    */
-  public static void send(InternalDistributedMember recipient, int processorId, ReplyException exception, DM dm, Object result, int msgNum, boolean lastMsg) {
+  public static void send(
+      InternalDistributedMember recipient,
+      int processorId,
+      ReplyException exception,
+      DM dm,
+      Object result,
+      int msgNum,
+      boolean lastMsg) {
     FunctionStreamingReplyMessage m = new FunctionStreamingReplyMessage();
     m.processorId = processorId;
     if (exception != null) {
@@ -111,7 +118,8 @@ public class FunctionStreamingReplyMessage extends ReplyMessage {
       if (ex instanceof CancelException) {
         throw new DistributedSystemDisconnectedException(ex);
       }
-      NotSerializableException ioEx = new NotSerializableException(this.result.getClass().getName());
+      NotSerializableException ioEx =
+          new NotSerializableException(this.result.getClass().getName());
       ioEx.initCause(ex);
       throw ioEx;
     }

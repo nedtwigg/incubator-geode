@@ -64,5 +64,4 @@ public class MyDate3 extends Date implements FixedPartitionResolver {
     // TODO Auto-generated method stub
 
   }
-
 }

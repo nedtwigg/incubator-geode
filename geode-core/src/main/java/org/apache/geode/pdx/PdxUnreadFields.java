@@ -14,28 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.pdx;
 
 /**
- * Marker interface for an object that GemFire creates and returns
- * from {@link PdxReader#readUnreadFields() readUnreadFields}.
- * If you call readUnreadFields then you must also call
- * {@link PdxWriter#writeUnreadFields(PdxUnreadFields) writeUnreadFields} when
- * that object is reserialized. If you do not call {@link PdxWriter#writeUnreadFields(PdxUnreadFields) writeUnreadFields}
- * but you did call {@link PdxReader#readUnreadFields() readUnreadFields} the unread fields will not be written.
+ * Marker interface for an object that GemFire creates and returns from {@link
+ * PdxReader#readUnreadFields() readUnreadFields}. If you call readUnreadFields then you must also
+ * call {@link PdxWriter#writeUnreadFields(PdxUnreadFields) writeUnreadFields} when that object is
+ * reserialized. If you do not call {@link PdxWriter#writeUnreadFields(PdxUnreadFields)
+ * writeUnreadFields} but you did call {@link PdxReader#readUnreadFields() readUnreadFields} the
+ * unread fields will not be written.
+ *
  * <p>Unread fields are those that are not explicitly read with a {@link PdxReader} readXXX method.
  * This should only happen when a domain class has changed by adding or removing one or more fields.
- * Unread fields will be preserved automatically (unless you turn this feature off using
- * {@link org.apache.geode.cache.CacheFactory#setPdxIgnoreUnreadFields(boolean) setPdxIgnoreUnreadFields}
- * or {@link org.apache.geode.cache.client.ClientCacheFactory#setPdxIgnoreUnreadFields(boolean) client setPdxIgnoreUnreadFields})
- * but to reduce the performance and memory overhead of automatic preservation it is recommended
- * that use {@link PdxReader#readUnreadFields() readUnreadFields} if possible.
- * 
- * @since GemFire 6.6
+ * Unread fields will be preserved automatically (unless you turn this feature off using {@link
+ * org.apache.geode.cache.CacheFactory#setPdxIgnoreUnreadFields(boolean) setPdxIgnoreUnreadFields}
+ * or {@link org.apache.geode.cache.client.ClientCacheFactory#setPdxIgnoreUnreadFields(boolean)
+ * client setPdxIgnoreUnreadFields}) but to reduce the performance and memory overhead of automatic
+ * preservation it is recommended that use {@link PdxReader#readUnreadFields() readUnreadFields} if
+ * possible.
  *
+ * @since GemFire 6.6
  */
-public interface PdxUnreadFields {
-}
+public interface PdxUnreadFields {}

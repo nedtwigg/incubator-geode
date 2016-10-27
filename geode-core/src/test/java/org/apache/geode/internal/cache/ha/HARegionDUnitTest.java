@@ -40,9 +40,9 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
  * Test to verify :
- * 
- * 1)put() on a mirrored HARegion does not propagate 2)localDestroy() allowed on
- * a mirrored region 3) GII happens normally
+ *
+ * <p>1)put() on a mirrored HARegion does not propagate 2)localDestroy() allowed on a mirrored
+ * region 3) GII happens normally
  */
 @Category(DistributedTest.class)
 public class HARegionDUnitTest extends JUnit4DistributedTestCase {
@@ -59,9 +59,7 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
     super();
   }
 
-  /**
-   * get the VM's
-   */
+  /** get the VM's */
   @Override
   public final void postSetUp() throws Exception {
     final Host host = Host.getHost(0);
@@ -69,9 +67,7 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
     vm1 = host.getVM(1);
   }
 
-  /**
-   * close the cache in tearDown
-   */
+  /** close the cache in tearDown */
   @Override
   public final void preTearDown() throws Exception {
     vm0.invoke(() -> HARegionDUnitTest.closeCache());
@@ -80,7 +76,7 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
 
   /**
    * create cache
-   * 
+   *
    * @return
    * @throws Exception
    */
@@ -98,11 +94,9 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * 1) Create mirrored HARegion region1 in VM1 and VM2 2) do a put in VM1 3)
-   * assert that the put has not propagated from VM1 to VM2 4) do a put in VM2
-   * 5) assert that the value in VM1 has not changed to due to put in VM2 6)
-   * assert put in VM2 was successful by doing a get
-   * 
+   * 1) Create mirrored HARegion region1 in VM1 and VM2 2) do a put in VM1 3) assert that the put
+   * has not propagated from VM1 to VM2 4) do a put in VM2 5) assert that the value in VM1 has not
+   * changed to due to put in VM2 6) assert put in VM2 was successful by doing a get
    */
   @Test
   public void testLocalPut() {
@@ -113,17 +107,14 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
     vm1.invoke(() -> HARegionDUnitTest.putValue2());
     vm0.invoke(() -> HARegionDUnitTest.getValue1());
     vm1.invoke(() -> HARegionDUnitTest.getValue2());
-
   }
 
   /**
-   * 1) Create mirrored HARegion region1 in VM1 and VM2 2) do a put in VM1 3)
-   * assert that the put has not propagated from VM1 to VM2 4) do a put in VM2
-   * 5) assert that the value in VM1 has not changed to due to put in VM2 6)
-   * assert respective puts the VMs were successful by doing a get 7)
-   * localDestroy key in VM1 8) assert key has been destroyed in VM1 9) assert
-   * key has not been destroyed in VM2
-   * 
+   * 1) Create mirrored HARegion region1 in VM1 and VM2 2) do a put in VM1 3) assert that the put
+   * has not propagated from VM1 to VM2 4) do a put in VM2 5) assert that the value in VM1 has not
+   * changed to due to put in VM2 6) assert respective puts the VMs were successful by doing a get
+   * 7) localDestroy key in VM1 8) assert key has been destroyed in VM1 9) assert key has not been
+   * destroyed in VM2
    */
   @Test
   public void testLocalDestroy() {
@@ -140,11 +131,9 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * 1) Create mirrored HARegion region1 in VM1 2) do a put in VM1 3) get teh
-   * value in VM1 to assert put has happened successfully 4) Create mirrored
-   * HARegion region1 in VM2 5) do a get in VM2 to verify that value was got
-   * through GII 6) do a put in VM2 7) assert put in VM2 was successful
-   * 
+   * 1) Create mirrored HARegion region1 in VM1 2) do a put in VM1 3) get teh value in VM1 to assert
+   * put has happened successfully 4) Create mirrored HARegion region1 in VM2 5) do a get in VM2 to
+   * verify that value was got through GII 6) do a put in VM2 7) assert put in VM2 was successful
    */
   @Test
   public void testGII() {
@@ -155,15 +144,12 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
     vm1.invoke(() -> HARegionDUnitTest.getValue1());
     vm1.invoke(() -> HARegionDUnitTest.putValue2());
     vm1.invoke(() -> HARegionDUnitTest.getValue2());
-
   }
 
   /**
-   * 1) Create mirrored HARegion region1 in VM1 2) do a put in VM1 3) get teh
-   * value in VM1 to assert put has happened successfully 4) Create mirrored
-   * HARegion region1 in VM2 5) do a get in VM2 to verify that value was got
-   * through GII 6) do a put in VM2 7) assert put in VM2 was successful
-   * 
+   * 1) Create mirrored HARegion region1 in VM1 2) do a put in VM1 3) get teh value in VM1 to assert
+   * put has happened successfully 4) Create mirrored HARegion region1 in VM2 5) do a get in VM2 to
+   * verify that value was got through GII 6) do a put in VM2 7) assert put in VM2 was successful
    */
   @Test
   public void testLocalDestroyRegion() {
@@ -171,31 +157,22 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
     vm1.invoke(() -> HARegionDUnitTest.createRegion());
     vm0.invoke(() -> HARegionDUnitTest.destroyRegion());
     vm1.invoke(() -> HARegionDUnitTest.verifyRegionNotDestroyed());
-
   }
 
-  /**
-   * Destroy the region
-   * 
-   */
+  /** Destroy the region */
   public static void destroyRegion() {
     cache.getRegion(REGION_NAME).localDestroyRegion(null);
   }
 
-  /**
-   * Verify Region exists
-   *
-   */
+  /** Verify Region exists */
   public static void verifyRegionNotDestroyed() {
     assertTrue(cache.getRegion(REGION_NAME) != null);
   }
 
   /**
-   * 1) Create mirrored HARegion region1 in VM1 2) do a put in VM1 3) get teh
-   * value in VM1 to assert put has happened successfully 4) Create mirrored
-   * HARegion region1 in VM2 5) do a get in VM2 to verify that value was got
-   * through GII 6) do a put in VM2 7) assert put in VM2 was successful
-   * 
+   * 1) Create mirrored HARegion region1 in VM1 2) do a put in VM1 3) get teh value in VM1 to assert
+   * put has happened successfully 4) Create mirrored HARegion region1 in VM2 5) do a get in VM2 to
+   * verify that value was got through GII 6) do a put in VM2 7) assert put in VM2 was successful
    */
   @Test
   public void testQRM() {
@@ -212,10 +189,9 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
 
   /**
    * create a client with 2 regions sharing a common writer
-   * 
+   *
    * @throws Exception
    */
-
   public static void createRegion() throws Exception {
     HARegionDUnitTest test = new HARegionDUnitTest();
     cache = test.createCache();
@@ -229,26 +205,22 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
 
   //  private static int counter = 0;
 
-  /**
-   * 
-   * 
-   * @throws Exception
-   */
-
+  /** @throws Exception */
   public static void createRegionQueue() throws Exception {
     HARegionDUnitTest test = new HARegionDUnitTest();
     cache = test.createCache();
     /*AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);*/
-    hrq = HARegionQueue.getHARegionQueueInstance(REGION_NAME, cache, HARegionQueue.NON_BLOCKING_HA_QUEUE, false);
-    EventID id1 = new EventID(new byte[] { 1 }, 1, 1);
-    EventID id2 = new EventID(new byte[] { 1 }, 1, 2);
+    hrq =
+        HARegionQueue.getHARegionQueueInstance(
+            REGION_NAME, cache, HARegionQueue.NON_BLOCKING_HA_QUEUE, false);
+    EventID id1 = new EventID(new byte[] {1}, 1, 1);
+    EventID id2 = new EventID(new byte[] {1}, 1, 2);
     ConflatableObject c1 = new ConflatableObject("1", "1", id1, false, REGION_NAME);
     ConflatableObject c2 = new ConflatableObject("2", "2", id2, false, REGION_NAME);
     hrq.put(c1);
     hrq.put(c2);
-
   }
 
   public static void verifyAddingDispatchMesgs() {
@@ -272,10 +244,7 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * close the cache
-   * 
-   */
+  /** close the cache */
   public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
@@ -283,10 +252,7 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * do three puts on key-1
-   * 
-   */
+  /** do three puts on key-1 */
   public static void putValue1() {
     try {
       Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -297,10 +263,7 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * do three puts on key-1
-   * 
-   */
+  /** do three puts on key-1 */
   public static void putValue2() {
     try {
       Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -311,10 +274,7 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * do a get on region1
-   * 
-   */
+  /** do a get on region1 */
   public static void getValue1() {
     try {
       Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -328,10 +288,7 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * do a get on region1
-   * 
-   */
+  /** do a get on region1 */
   public static void getNull() {
     try {
       Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -345,10 +302,7 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * do a get on region1
-   * 
-   */
+  /** do a get on region1 */
   public static void getValue2() {
     try {
       Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -362,10 +316,7 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * destroy key-1
-   * 
-   */
+  /** destroy key-1 */
   public static void destroy() {
     try {
       Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -375,5 +326,4 @@ public class HARegionDUnitTest extends JUnit4DistributedTestCase {
       fail("test failed due to exception in destroy ");
     }
   }
-
 }

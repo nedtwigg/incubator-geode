@@ -45,12 +45,11 @@ public class FailWithTimeoutOfWaitForOutputToMatchJUnitTest extends FailOutputTe
     System.out.println(message);
   }
 
-  /**
-   * Process output has an extra line and should fail
-   */
+  /** Process output has an extra line and should fail */
   @Test
   public void testFailWithTimeoutOfWaitForOutputToMatch() throws Exception {
-    this.process = createProcessWrapper(new ProcessWrapper.Builder().timeoutMillis(timeoutMillis), getClass());
+    this.process =
+        createProcessWrapper(new ProcessWrapper.Builder().timeoutMillis(timeoutMillis), getClass());
     this.process.execute(createProperties());
     this.process.waitForOutputToMatch("Begin " + name() + "\\.main");
 

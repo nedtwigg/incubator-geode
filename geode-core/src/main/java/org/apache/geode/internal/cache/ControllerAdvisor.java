@@ -29,9 +29,8 @@ import org.apache.geode.distributed.internal.ServerLocator;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
 /**
- * Used to give advise to a connection controller.
- * Bridge server currently need to know about controller's
- *
+ * Used to give advise to a connection controller. Bridge server currently need to know about
+ * controller's
  */
 public class ControllerAdvisor extends GridAdvisor {
 
@@ -85,14 +84,11 @@ public class ControllerAdvisor extends GridAdvisor {
     return new ControllerProfile(memberId, version);
   }
 
-  /**
-   * Describes a bridge server for distribution purposes.
-   */
+  /** Describes a bridge server for distribution purposes. */
   public static class ControllerProfile extends GridAdvisor.GridProfile {
 
     /** for internal use, required for DataSerializer.readObject */
-    public ControllerProfile() {
-    }
+    public ControllerProfile() {}
 
     public ControllerProfile(InternalDistributedMember memberId, int version) {
       super(memberId, version);
@@ -103,15 +99,19 @@ public class ControllerAdvisor extends GridAdvisor {
     }
 
     /**
-     * Used to process an incoming connection controller profile. Any controller
-     * or bridge server in this vm needs to be told about this incoming new
-     * controller. The reply needs to contain any controller(s) that exist in
-     * this vm and any bridge servers that exist in this vm.
-     * 
+     * Used to process an incoming connection controller profile. Any controller or bridge server in
+     * this vm needs to be told about this incoming new controller. The reply needs to contain any
+     * controller(s) that exist in this vm and any bridge servers that exist in this vm.
+     *
      * @since GemFire 5.7
      */
     @Override
-    public void processIncoming(DistributionManager dm, String adviseePath, boolean removeProfile, boolean exchangeProfiles, final List<Profile> replyProfiles) {
+    public void processIncoming(
+        DistributionManager dm,
+        String adviseePath,
+        boolean removeProfile,
+        boolean exchangeProfiles,
+        final List<Profile> replyProfiles) {
       // tell local controllers about this remote controller
       tellLocalControllers(removeProfile, exchangeProfiles, replyProfiles);
       // tell local bridge servers about this remote controller

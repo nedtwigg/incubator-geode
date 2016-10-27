@@ -20,7 +20,7 @@ import org.springframework.shell.core.JLineLogHandler;
 
 /**
  * Overrides jline.History to add History without newline characters.
- * 
+ *
  * @since GemFire 7.0
  */
 public class ANSIHandler {
@@ -51,41 +51,41 @@ public class ANSIHandler {
 
       for (ANSIStyle ansiStyle : styles) {
         switch (ansiStyle) {
-        case RED:
-          ansiBuffer.red(input);
-          break;
-        case BLUE:
-          ansiBuffer.blue(input);
-          break;
-        case GREEN:
-          ansiBuffer.green(input);
-          break;
-        case BLACK:
-          ansiBuffer.black(input);
-          break;
-        case YELLOW:
-          ansiBuffer.yellow(input);
-          break;
-        case MAGENTA:
-          ansiBuffer.magenta(input);
-          break;
-        case CYAN:
-          ansiBuffer.cyan(input);
-          break;
-        case BOLD:
-          ansiBuffer.bold(input);
-          break;
-        case UNDERSCORE:
-          ansiBuffer.underscore(input);
-          break;
-        case BLINK:
-          ansiBuffer.blink(input);
-          break;
-        case REVERSE:
-          ansiBuffer.reverse(input);
-          break;
-        default:
-          break;
+          case RED:
+            ansiBuffer.red(input);
+            break;
+          case BLUE:
+            ansiBuffer.blue(input);
+            break;
+          case GREEN:
+            ansiBuffer.green(input);
+            break;
+          case BLACK:
+            ansiBuffer.black(input);
+            break;
+          case YELLOW:
+            ansiBuffer.yellow(input);
+            break;
+          case MAGENTA:
+            ansiBuffer.magenta(input);
+            break;
+          case CYAN:
+            ansiBuffer.cyan(input);
+            break;
+          case BOLD:
+            ansiBuffer.bold(input);
+            break;
+          case UNDERSCORE:
+            ansiBuffer.underscore(input);
+            break;
+          case BLINK:
+            ansiBuffer.blink(input);
+            break;
+          case REVERSE:
+            ansiBuffer.reverse(input);
+            break;
+          default:
+            break;
         }
       }
 
@@ -96,6 +96,16 @@ public class ANSIHandler {
   }
 
   public static enum ANSIStyle {
-    RED, BLUE, GREEN, BLACK, YELLOW, MAGENTA, CYAN, BOLD, UNDERSCORE, BLINK, REVERSE;
+    RED,
+    BLUE,
+    GREEN,
+    BLACK,
+    YELLOW,
+    MAGENTA,
+    CYAN,
+    BOLD,
+    UNDERSCORE,
+    BLINK,
+    REVERSE;
   }
 }

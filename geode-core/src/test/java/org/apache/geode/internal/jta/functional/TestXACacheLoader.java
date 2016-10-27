@@ -27,9 +27,7 @@ import org.apache.geode.internal.jta.CacheUtils;
 import javax.transaction.*;
 
 /**
- * A <code>CacheLoader</code> used in testing.  Users should override
- * the "2" method.
- *
+ * A <code>CacheLoader</code> used in testing. Users should override the "2" method.
  *
  * @since GemFire 3.0
  */
@@ -49,7 +47,13 @@ public class TestXACacheLoader implements CacheLoader {
       DataSource ds = (DataSource) ctx.lookup("java:/XAPooledDataSource");
       Connection conn = ds.getConnection();
       Statement stm = conn.createStatement();
-      ResultSet rs = stm.executeQuery("select name from " + tableName + " where id = (" + (new Integer(ob.toString())).intValue() + ")");
+      ResultSet rs =
+          stm.executeQuery(
+              "select name from "
+                  + tableName
+                  + " where id = ("
+                  + (new Integer(ob.toString())).intValue()
+                  + ")");
       rs.next();
       obj = rs.getString(1);
       stm.close();
@@ -96,5 +100,4 @@ public class TestXACacheLoader implements CacheLoader {
     // TODO Auto-generated method stub
 
   }
-
 }

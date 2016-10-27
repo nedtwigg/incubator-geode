@@ -40,7 +40,8 @@ public final class TailLogResponse extends AdminResponse {
   private String tail;
   private String childTail;
 
-  public static TailLogResponse create(DistributionManager dm, InternalDistributedMember recipient) {
+  public static TailLogResponse create(
+      DistributionManager dm, InternalDistributedMember recipient) {
     TailLogResponse m = new TailLogResponse();
     m.setRecipient(recipient);
     try {
@@ -50,18 +51,26 @@ public final class TailLogResponse extends AdminResponse {
         m.childTail = tailSystemLog(lwa.getChildLogFile());
         m.tail = tailSystemLog(sys.getConfig());
         if (m.tail == null) {
-          m.tail = LocalizedStrings.TailLogResponse_NO_LOG_FILE_WAS_SPECIFIED_IN_THE_CONFIGURATION_MESSAGES_WILL_BE_DIRECTED_TO_STDOUT.toLocalizedString();
+          m.tail =
+              LocalizedStrings
+                  .TailLogResponse_NO_LOG_FILE_WAS_SPECIFIED_IN_THE_CONFIGURATION_MESSAGES_WILL_BE_DIRECTED_TO_STDOUT
+                  .toLocalizedString();
         }
       } else {
         //Assert.assertTrue(false, "TailLogRequest/Response processed in application vm with shared logging.");
         m.childTail = tailSystemLog((File) null);
         m.tail = tailSystemLog(sys.getConfig());
         if (m.tail == null) {
-          m.tail = LocalizedStrings.TailLogResponse_NO_LOG_FILE_WAS_SPECIFIED_IN_THE_CONFIGURATION_MESSAGES_WILL_BE_DIRECTED_TO_STDOUT.toLocalizedString();
+          m.tail =
+              LocalizedStrings
+                  .TailLogResponse_NO_LOG_FILE_WAS_SPECIFIED_IN_THE_CONFIGURATION_MESSAGES_WILL_BE_DIRECTED_TO_STDOUT
+                  .toLocalizedString();
         }
       }
     } catch (IOException e) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.TailLogResponse_ERROR_OCCURRED_WHILE_READING_SYSTEM_LOG__0, e));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.TailLogResponse_ERROR_OCCURRED_WHILE_READING_SYSTEM_LOG__0, e));
       m.tail = "";
     }
     return m;
@@ -115,8 +124,7 @@ public final class TailLogResponse extends AdminResponse {
     String messageString = new String(buffer);
     char[] text = messageString.toCharArray();
     for (int i = text.length - 1, j = 0; i >= 0; i--) {
-      if (text[i] == '[')
-        j++;
+      if (text[i] == '[') j++;
       if (j == numLines) {
         messageString = messageString.substring(i);
         break;
@@ -143,9 +151,9 @@ public final class TailLogResponse extends AdminResponse {
   //    }
   //    if (!logFile.isAbsolute()) {
   //      logFile = new File(logFile.getAbsolutePath());
-  //    }    
+  //    }
   //    return readSystemLog(logFile);
-  //  }  
+  //  }
 
   private static String tailSystemLog(DistributionConfig sc) throws IOException {
     File logFile = sc.getLogFile();
@@ -157,5 +165,4 @@ public final class TailLogResponse extends AdminResponse {
     }
     return tailSystemLog(logFile);
   }
-
 }

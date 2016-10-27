@@ -26,10 +26,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 public class EnumListenerEventJUnitTest {
 
-  /**
-   * tests whether EnumListenerEvent.getEnumListenerEvent(int cCode) returns the
-   * right result
-   */
+  /** tests whether EnumListenerEvent.getEnumListenerEvent(int cCode) returns the right result */
   @Test
   public void testGetEnumListEvent() {
     checkAndAssert(0, null);

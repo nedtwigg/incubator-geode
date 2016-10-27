@@ -20,11 +20,7 @@ import java.util.Map;
 
 import org.apache.geode.management.DistributedLockServiceMXBean;
 
-/**
- * It represents a distributed view of a LockService
- * 
- * 
- */
+/** It represents a distributed view of a LockService */
 public class DistributedLockServiceMBean implements DistributedLockServiceMXBean {
 
   private DistributedLockServiceBridge bridge;
@@ -62,5 +58,4 @@ public class DistributedLockServiceMBean implements DistributedLockServiceMXBean
   public Map<String, String> listThreadsHoldingLock() {
     return bridge.listThreadsHoldingLock();
   }
-
 }

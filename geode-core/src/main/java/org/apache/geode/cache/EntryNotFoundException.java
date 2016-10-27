@@ -17,11 +17,10 @@
 
 package org.apache.geode.cache;
 
-/** Thrown when an operation is invoked on <code>Region</code> for an entry that
- * doesn't exist in the <code>Region</code>. This exception is <i>not</i>
- * thrown by {@link org.apache.geode.cache.Region#get(Object)} or {@link Region#getEntry}.
- *
- *
+/**
+ * Thrown when an operation is invoked on <code>Region</code> for an entry that doesn't exist in the
+ * <code>Region</code>. This exception is <i>not</i> thrown by {@link
+ * org.apache.geode.cache.Region#get(Object)} or {@link Region#getEntry}.
  *
  * @see org.apache.geode.cache.Region#invalidate(Object)
  * @see org.apache.geode.cache.Region#destroy(Object)
@@ -32,7 +31,9 @@ public class EntryNotFoundException extends CacheException {
   private static final long serialVersionUID = -2404101631744605659L;
 
   /**
-   * Constructs an instance of <code>EntryNotFoundException</code> with the specified detail message.
+   * Constructs an instance of <code>EntryNotFoundException</code> with the specified detail
+   * message.
+   *
    * @param msg the detail message
    */
   public EntryNotFoundException(String msg) {
@@ -42,6 +43,7 @@ public class EntryNotFoundException extends CacheException {
   /**
    * Constructs an instance of <code>EntryNotFoundException</code> with the specified detail message
    * and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */

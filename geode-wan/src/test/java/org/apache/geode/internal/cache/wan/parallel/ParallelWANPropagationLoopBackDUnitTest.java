@@ -38,8 +38,7 @@ public class ParallelWANPropagationLoopBackDUnitTest extends WANTestBase {
   }
 
   /**
-   * Test loop back issue between 2 WAN sites (LN & NY). LN -> NY -> LN.
-   * Site1 (LN): vm2, vm4, vm5
+   * Test loop back issue between 2 WAN sites (LN & NY). LN -> NY -> LN. Site1 (LN): vm2, vm4, vm5
    * Site2 (NY): vm3, vm6, vm7
    */
   @Test
@@ -64,14 +63,32 @@ public class ParallelWANPropagationLoopBackDUnitTest extends WANTestBase {
     vm7.invoke(() -> WANTestBase.createSender("ny", 1, true, 100, 10, false, false, null, true));
 
     //create PR on site1
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 0, 100, isOffHeap()));
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 0, 100, isOffHeap()));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 0, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 0, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 0, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 0, 100, isOffHeap()));
 
     //create PR on site2
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ny", 0, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ny", 0, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ny", 0, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ny", 0, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ny", 0, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ny", 0, 100, isOffHeap()));
 
     //start sender on site1
     startSenderInVMs("ln", vm2, vm4, vm5);
@@ -131,10 +148,8 @@ public class ParallelWANPropagationLoopBackDUnitTest extends WANTestBase {
   }
 
   /**
-   * Test loop back issue among 3 WAN sites with Ring topology i.e. LN -> NY -> TK -> LN
-   * Site1 (LN): vm3, vm6
-   * Site2 (NY): vm4, vm7
-   * Site3 (TK): vm5
+   * Test loop back issue among 3 WAN sites with Ring topology i.e. LN -> NY -> TK -> LN Site1 (LN):
+   * vm3, vm6 Site2 (NY): vm4, vm7 Site3 (TK): vm5
    */
   @Test
   public void testParallelPropagationLoopBack3Sites() {
@@ -161,15 +176,30 @@ public class ParallelWANPropagationLoopBackDUnitTest extends WANTestBase {
     vm5.invoke(() -> WANTestBase.createSender("tk", 1, true, 100, 10, false, false, null, true));
 
     //create PR on the 3 sites
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 0, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 0, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 0, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 0, 100, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ny", 0, 100, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ny", 0, 100, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ny", 0, 100, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ny", 0, 100, isOffHeap()));
 
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "tk", 0, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "tk", 0, 100, isOffHeap()));
 
-    //start senders on all the sites 
+    //start senders on all the sites
     startSenderInVMs("ln", vm3, vm6);
 
     startSenderInVMs("ny", vm4, vm7);
@@ -217,12 +247,8 @@ public class ParallelWANPropagationLoopBackDUnitTest extends WANTestBase {
   }
 
   /**
-   * Test loop back issue among 3 WAN sites with N to N topology 
-   * i.e. each site connected to all other sites.
-   * Puts are done to only one DS.
-   * LN site: vm3, vm6
-   * NY site: vm4, vm7
-   * TK site: vm5
+   * Test loop back issue among 3 WAN sites with N to N topology i.e. each site connected to all
+   * other sites. Puts are done to only one DS. LN site: vm3, vm6 NY site: vm4, vm7 TK site: vm5
    */
   @Test
   public void testParallelPropagationLoopBack3SitesNtoNTopologyPutFromOneDS() {
@@ -256,13 +282,28 @@ public class ParallelWANPropagationLoopBackDUnitTest extends WANTestBase {
     vm5.invoke(() -> WANTestBase.createSender("tk2", 2, true, 100, 10, false, false, null, true));
 
     //create PR
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln1,ln2", 0, 1, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln1,ln2", 0, 1, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln1,ln2", 0, 1, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln1,ln2", 0, 1, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ny1,ny2", 0, 1, isOffHeap()));
-    vm7.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ny1,ny2", 0, 1, isOffHeap()));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ny1,ny2", 0, 1, isOffHeap()));
+    vm7.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ny1,ny2", 0, 1, isOffHeap()));
 
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "tk1,tk2", 0, 1, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "tk1,tk2", 0, 1, isOffHeap()));
 
     //start all the senders
     vm3.invoke(() -> WANTestBase.startSender("ln1"));
@@ -314,7 +355,7 @@ public class ParallelWANPropagationLoopBackDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.verifyQueueSize("ny1", 0));
 
     //verify queue size on site2 (sender 2 to 3)
-    //should remain at 0 as events from site1 will reach site3 directly..site2 need not send to site3 again  
+    //should remain at 0 as events from site1 will reach site3 directly..site2 need not send to site3 again
     vm4.invoke(() -> WANTestBase.verifyQueueSize("ny2", 0));
 
     //do more puts on site3
@@ -331,7 +372,7 @@ public class ParallelWANPropagationLoopBackDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.verifyQueueSize("ny2", 0));
 
     //verify queue size on site2 (sender 2 to 1)
-    //should remain at 0 as events from site3 will reach site1 directly..site2 need not send to site1 again  
+    //should remain at 0 as events from site3 will reach site1 directly..site2 need not send to site1 again
     vm4.invoke(() -> WANTestBase.verifyQueueSize("ny1", 0));
 
     //resume all senders
@@ -350,5 +391,4 @@ public class ParallelWANPropagationLoopBackDUnitTest extends WANTestBase {
     vm4.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 200));
     vm5.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 200));
   }
-
 }

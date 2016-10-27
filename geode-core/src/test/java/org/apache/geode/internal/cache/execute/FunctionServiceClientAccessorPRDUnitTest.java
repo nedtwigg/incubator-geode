@@ -33,8 +33,7 @@ import org.junit.Before;
 import org.junit.experimental.categories.Category;
 
 /**
- * Tests function execution with a client accessing a single member with a PR
- * using onRegion calls.
+ * Tests function execution with a client accessing a single member with a PR using onRegion calls.
  */
 @Category(DistributedTest.class)
 public class FunctionServiceClientAccessorPRDUnitTest extends FunctionServiceClientAccessorPRBase {

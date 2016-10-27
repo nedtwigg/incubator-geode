@@ -41,7 +41,8 @@ import org.junit.experimental.categories.Category;
  * using onRegion calls.
  */
 @Category(DistributedTest.class)
-public class FunctionServiceClientAccessorPRMultipleMembersDUnitTest extends FunctionServiceClientAccessorPRBase {
+public class FunctionServiceClientAccessorPRMultipleMembersDUnitTest
+    extends FunctionServiceClientAccessorPRBase {
 
   @Override
   public void createRegions() {

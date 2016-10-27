@@ -37,8 +37,7 @@ public class PRQueryTraceInfo implements DataSerializableFixedID {
   private float timeInMillis;
   private int numResults;
 
-  public PRQueryTraceInfo() {
-  }
+  public PRQueryTraceInfo() {}
 
   @Override
   public void toData(DataOutput out) throws IOException {
@@ -77,9 +76,11 @@ public class PRQueryTraceInfo implements DataSerializableFixedID {
 
   public String createLogLine(DistributedMember me) {
     if (sender.equals(me)) {
-      return LocalizedStrings.PartitionedRegion_QUERY_TRACE_LOCAL_NODE_LOG.toLocalizedString(sender, timeInMillis, numResults, indexesUsed);
+      return LocalizedStrings.PartitionedRegion_QUERY_TRACE_LOCAL_NODE_LOG.toLocalizedString(
+          sender, timeInMillis, numResults, indexesUsed);
     } else {
-      return LocalizedStrings.PartitionedRegion_QUERY_TRACE_REMOTE_NODE_LOG.toLocalizedString(sender, timeInMillis, numResults, indexesUsed);
+      return LocalizedStrings.PartitionedRegion_QUERY_TRACE_REMOTE_NODE_LOG.toLocalizedString(
+          sender, timeInMillis, numResults, indexesUsed);
     }
   }
 
@@ -102,5 +103,4 @@ public class PRQueryTraceInfo implements DataSerializableFixedID {
   public void setIndexesUsed(String indexesUsed) {
     this.indexesUsed = indexesUsed;
   }
-
 }

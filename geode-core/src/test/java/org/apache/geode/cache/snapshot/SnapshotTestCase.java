@@ -54,7 +54,12 @@ public class SnapshotTestCase {
     CacheFactory cf = new CacheFactory().set(MCAST_PORT, "0").set(LOG_LEVEL, "error");
     cache = cf.create();
 
-    ds = cache.createDiskStoreFactory().setMaxOplogSize(1).setDiskDirs(new File[] { store }).create("snapshotTest");
+    ds =
+        cache
+            .createDiskStoreFactory()
+            .setMaxOplogSize(1)
+            .setDiskDirs(new File[] {store})
+            .create("snapshotTest");
   }
 
   @After
@@ -73,12 +78,14 @@ public class SnapshotTestCase {
   }
 
   public static void deleteFiles(File dir) {
-    File[] deletes = dir.listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(File dir, String name) {
-        return true;
-      }
-    });
+    File[] deletes =
+        dir.listFiles(
+            new FilenameFilter() {
+              @Override
+              public boolean accept(File dir, String name) {
+                return true;
+              }
+            });
 
     if (deletes != null) {
       for (File f : deletes) {

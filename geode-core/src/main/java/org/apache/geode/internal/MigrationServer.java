@@ -38,70 +38,71 @@ import static org.apache.geode.distributed.ConfigurationProperties.LOCATORS;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 
 /**
- * MigrationServer creates a cache using a supplied cache.xml and then
- * opens a server socket that a MigrationClient connects to and requests
- * the data from a Region.  MigrationServer sends the data to
- * the MigrationClient using normal java serialization in
- * order to allow migration from incompatible versions of DataSerializer.
- * Keys and values stored in the cache must serialize and deserialize correctly.
- * <p>
- * Command line arguments are<br>
+ * MigrationServer creates a cache using a supplied cache.xml and then opens a server socket that a
+ * MigrationClient connects to and requests the data from a Region. MigrationServer sends the data
+ * to the MigrationClient using normal java serialization in order to allow migration from
+ * incompatible versions of DataSerializer. Keys and values stored in the cache must serialize and
+ * deserialize correctly.
+ *
+ * <p>Command line arguments are<br>
  * &nbsp;&nbsp;cache-xml-file-name (required)<br>
  * &nbsp;&nbsp;listen port (defaults to 10553)<br>
  * &nbsp;&nbsp;bind address (defaults to listing on all interfaces)<br>
- * <p>
- * Both the MigrationClient and MigrationServer must be configured to have
- * the appropriate domain classes in their CLASSPATH, or errors will be
- * encountered during deserialization.
- * <P>
- * Details of the transfers can be viewed by setting the system property
- * Migration.VERBOSE=true.
- * <p>
- * For example,
+ *
+ * <p>Both the MigrationClient and MigrationServer must be configured to have the appropriate domain
+ * classes in their CLASSPATH, or errors will be encountered during deserialization.
+ *
+ * <p>Details of the transfers can be viewed by setting the system property Migration.VERBOSE=true.
+ *
+ * <p>For example,
+ *
  * <pre>
  * java -cp $MYCLASSES:migration.jar:$GEMFIRE/lib/geode-dependencies.jar \
  *   org.apache.geode.internal.MigrationServer cacheDescription.xml
- * </pre><p>
- * Where the cacheDescription.xml file might look like this:
+ * </pre>
+ *
+ * <p>Where the cacheDescription.xml file might look like this:
+ *
  * <pre>
  * &lt!DOCTYPE cache PUBLIC
-  "-//GemStone Systems, Inc.//GemFire Declarative Caching 5.7//EN"
-  "http://www.gemstone.com/dtd/cache5_7.dtd"&gt
-&ltcache is-server="false"&gt
-  &ltregion name="root"&gt
-    &ltregion-attributes scope="distributed-no-ack"&gt
-    &lt/region-attributes&gt
-
-    &ltregion name="Test"&gt
-      &ltregion-attributes data-policy="persistent-replicate"&gt
-
-        &ltdisk-write-attributes&gt
-          &ltsynchronous-writes/&gt
-        &lt/disk-write-attributes&gt
-
-        &ltdisk-dirs&gt
-          &ltdisk-dir&gtdiskfiles&lt/disk-dir&gt
-        &lt/disk-dirs&gt
-
-        &lteviction-attributes&gt
-          &ltlru-memory-size maximum="100" action="overflow-to-disk"/&gt
-        &lt/eviction-attributes&gt
-
-      &lt/region-attributes&gt
-    &lt/region&gt &lt!-- Test region --&gt
-  &lt/region&gt &lt!-- root region --&gt
-&lt/cache&gt
-
- * </pre><p>
- * The client is then run with a different cache description having different
- * disk-dirs to hold the migrated information.
- * 
+ * "-//GemStone Systems, Inc.//GemFire Declarative Caching 5.7//EN"
+ * "http://www.gemstone.com/dtd/cache5_7.dtd"&gt
+ * &ltcache is-server="false"&gt
+ * &ltregion name="root"&gt
+ * &ltregion-attributes scope="distributed-no-ack"&gt
+ * &lt/region-attributes&gt
+ *
+ * &ltregion name="Test"&gt
+ * &ltregion-attributes data-policy="persistent-replicate"&gt
+ *
+ * &ltdisk-write-attributes&gt
+ * &ltsynchronous-writes/&gt
+ * &lt/disk-write-attributes&gt
+ *
+ * &ltdisk-dirs&gt
+ * &ltdisk-dir&gtdiskfiles&lt/disk-dir&gt
+ * &lt/disk-dirs&gt
+ *
+ * &lteviction-attributes&gt
+ * &ltlru-memory-size maximum="100" action="overflow-to-disk"/&gt
+ * &lt/eviction-attributes&gt
+ *
+ * &lt/region-attributes&gt
+ * &lt/region&gt &lt!-- Test region --&gt
+ * &lt/region&gt &lt!-- root region --&gt
+ * &lt/cache&gt
+ *
+ * </pre>
+ *
+ * <p>The client is then run with a different cache description having different disk-dirs to hold
+ * the migrated information.
+ *
  * @since GemFire 6.0.1
  */
 public class MigrationServer {
-  final static boolean VERBOSE = Boolean.getBoolean("Migration.VERBOSE");
+  static final boolean VERBOSE = Boolean.getBoolean("Migration.VERBOSE");
 
-  final static int VERSION = 551; // version for backward communications compatibility
+  static final int VERSION = 551; // version for backward communications compatibility
 
   protected static final int CODE_ERROR = 0;
   protected static final int CODE_ENTRY = 1; /* serialized key, serialized value */
@@ -145,8 +146,9 @@ public class MigrationServer {
   private Cache cache;
 
   /**
-   * Create a MigrationServer to be used with a DistributedSystem and Cache
-   * that are created using GemFire APIs
+   * Create a MigrationServer to be used with a DistributedSystem and Cache that are created using
+   * GemFire APIs
+   *
    * @param bindAddressName the NIC to bind to, or null to use all interfaces
    * @param listenPort the port to listen on
    */
@@ -154,12 +156,14 @@ public class MigrationServer {
     this.listenPort = listenPort;
     if (bindAddressName != null) {
       if (!isLocalHost(bindAddressName)) {
-        throw new IllegalArgumentException("Error - bind address is not an address of this machine: '" + bindAddressName + "'");
+        throw new IllegalArgumentException(
+            "Error - bind address is not an address of this machine: '" + bindAddressName + "'");
       }
       try {
         this.bindAddress = InetAddress.getByName(bindAddressName);
       } catch (IOException e) {
-        throw new IllegalArgumentException("Error - bind address cannot be resolved: '" + bindAddressName + "'");
+        throw new IllegalArgumentException(
+            "Error - bind address cannot be resolved: '" + bindAddressName + "'");
       }
     }
     try {
@@ -180,7 +184,7 @@ public class MigrationServer {
 
   /**
    * this is for use by main()
-   * 
+   *
    * @param cacheXmlFileName the name of the xml file describing the cache, or null
    * @param bindAddressName the name of the NIC to bind to, or null
    * @param listenPort the port to listen on (must not be zero)
@@ -195,16 +199,16 @@ public class MigrationServer {
   }
 
   /**
-   * Create a distributed system.  If this method is not invoked before running
-   * the MigrationServer, an existing distributed system must exist for the
-   * server to use.
-   * 
+   * Create a distributed system. If this method is not invoked before running the MigrationServer,
+   * an existing distributed system must exist for the server to use.
+   *
    * @throws Exception if there are any problems
    */
   private void createDistributedSystem() throws Exception {
     Properties dsProps = new Properties();
-    // if no discovery information has been explicitly given, use a loner ds 
-    if (System.getProperty(DistributionConfig.GEMFIRE_PREFIX + MCAST_PORT) == null && System.getProperty(DistributionConfig.GEMFIRE_PREFIX + LOCATORS) == null) {
+    // if no discovery information has been explicitly given, use a loner ds
+    if (System.getProperty(DistributionConfig.GEMFIRE_PREFIX + MCAST_PORT) == null
+        && System.getProperty(DistributionConfig.GEMFIRE_PREFIX + LOCATORS) == null) {
       dsProps.put(MCAST_PORT, "0");
     }
     dsProps.put(LOG_FILE, "migrationServer.log");
@@ -219,6 +223,7 @@ public class MigrationServer {
 
   /**
    * create the cache to be used by this migration server
+   *
    * @throws Exception if there are any problems
    */
   private void createCache() throws Exception {
@@ -232,9 +237,9 @@ public class MigrationServer {
   }
 
   /**
-   * This locates the distributed system and cache, if they have not been
-   * created by this server, and then listens for requests from MigrationClient
-   * processes.
+   * This locates the distributed system and cache, if they have not been created by this server,
+   * and then listens for requests from MigrationClient processes.
+   *
    * @throws IllegalStateException if an attempt is made to reuse a server that has been stopped
    */
   public void serve() throws Exception {
@@ -249,11 +254,17 @@ public class MigrationServer {
         this.cache = GemFireCacheImpl.getInstance();
       }
       if (this.bindAddress != null) {
-        System.out.println("Migration server on port " + this.listenPort + " bound to " + this.bindAddress + " is ready for client requets");
+        System.out.println(
+            "Migration server on port "
+                + this.listenPort
+                + " bound to "
+                + this.bindAddress
+                + " is ready for client requets");
       } else {
-        System.out.println("Migration server on port " + this.listenPort + " is ready for client requests");
+        System.out.println(
+            "Migration server on port " + this.listenPort + " is ready for client requests");
       }
-      for (;;) {
+      for (; ; ) {
         if (Thread.interrupted() || this.serverSocket.isClosed()) {
           return;
         }
@@ -276,8 +287,9 @@ public class MigrationServer {
   }
 
   /**
-   * this causes the migration server to stop serving after it finishes dispatching
-   * any in-process requests
+   * this causes the migration server to stop serving after it finishes dispatching any in-process
+   * requests
+   *
    * @throws IOException if there is a problem closing the server socket
    */
   public void stop() throws IOException {
@@ -288,6 +300,7 @@ public class MigrationServer {
 
   /**
    * get the cache being used by this migration server
+   *
    * @return the cache, or null if a cache has not yet been associated with this server
    */
   public Cache getCache() {
@@ -296,7 +309,9 @@ public class MigrationServer {
 
   /**
    * get the distributed system being used by this migration server
-   * @return the distributed system, or null if a system has not yet been associated with this server
+   *
+   * @return the distributed system, or null if a system has not yet been associated with this
+   *     server
    */
   public DistributedSystem getDistributedSystem() {
     return this.distributedSystem;
@@ -312,7 +327,7 @@ public class MigrationServer {
           Enumeration en = NetworkInterface.getNetworkInterfaces();
           while (en.hasMoreElements()) {
             NetworkInterface i = (NetworkInterface) en.nextElement();
-            for (Enumeration en2 = i.getInetAddresses(); en2.hasMoreElements();) {
+            for (Enumeration en2 = i.getInetAddresses(); en2.hasMoreElements(); ) {
               InetAddress addr = (InetAddress) en2.nextElement();
               if (host.equals(addr)) {
                 return true;
@@ -321,7 +336,10 @@ public class MigrationServer {
           }
           return false;
         } catch (SocketException e) {
-          throw new IllegalArgumentException(LocalizedStrings.InetAddressUtil_UNABLE_TO_QUERY_NETWORK_INTERFACE.toLocalizedString(), e);
+          throw new IllegalArgumentException(
+              LocalizedStrings.InetAddressUtil_UNABLE_TO_QUERY_NETWORK_INTERFACE
+                  .toLocalizedString(),
+              e);
         }
       }
     } else {
@@ -393,6 +411,7 @@ public class MigrationServer {
 
     /**
      * read and dispatch a single request on client socket
+     *
      * @param clientVersion
      */
     private void handleRequest(int clientVersion) {
@@ -402,7 +421,8 @@ public class MigrationServer {
       try {
         ClientRequest req = ClientRequest.readRequest(this.clientSocket, dis, dos);
         if (req != null) {
-          System.out.println("Processing " + req + " from " + this.clientSocket.getInetAddress().getHostAddress());
+          System.out.println(
+              "Processing " + req + " from " + this.clientSocket.getInetAddress().getHostAddress());
           req.process(MigrationServer.this);
           dos.flush();
         }
@@ -410,26 +430,27 @@ public class MigrationServer {
         e.printStackTrace();
       }
     }
-
   }
 
   //           R E Q U E S T   C L A S S E S
 
-  static abstract class ClientRequest {
+  abstract static class ClientRequest {
     Socket clientSocket;
     DataInputStream dsi;
     DataOutputStream dso;
 
-    final static int REGION_REQUEST = 1;
+    static final int REGION_REQUEST = 1;
 
     /**
-     * Use readRequest to create a new request object, not this constructor.
-     * Subclasses may refine this constructor to perform other initialization
+     * Use readRequest to create a new request object, not this constructor. Subclasses may refine
+     * this constructor to perform other initialization
+     *
      * @param dsi socket's input stream
      * @param dso socket's output stream
      * @throws IOException if there are any problems reading initialization information
      */
-    ClientRequest(Socket clientSocket, DataInputStream dsi, DataOutputStream dso) throws IOException {
+    ClientRequest(Socket clientSocket, DataInputStream dsi, DataOutputStream dso)
+        throws IOException {
       this.clientSocket = clientSocket;
       this.dsi = dsi;
       this.dso = dso;
@@ -437,22 +458,28 @@ public class MigrationServer {
 
     /**
      * Read and return a request from a client
+     *
      * @param clientSocket
      * @param dsi socket input stream
      * @param dso socket output stream
      * @return the new request
      * @throws IOException
      */
-    static ClientRequest readRequest(Socket clientSocket, DataInputStream dsi, DataOutputStream dso) throws IOException {
+    static ClientRequest readRequest(Socket clientSocket, DataInputStream dsi, DataOutputStream dso)
+        throws IOException {
       int requestType = dsi.readShort();
       switch (requestType) {
-      case REGION_REQUEST:
-        return new RegionRequest(clientSocket, dsi, dso);
+        case REGION_REQUEST:
+          return new RegionRequest(clientSocket, dsi, dso);
       }
       String errorMessage = "Type of request is not implemented in this server";
       dso.writeShort(CODE_ERROR);
       dso.writeUTF(errorMessage);
-      System.err.println("Migration server received unknown type of request (" + requestType + ") from " + clientSocket.getInetAddress().getHostAddress());
+      System.err.println(
+          "Migration server received unknown type of request ("
+              + requestType
+              + ") from "
+              + clientSocket.getInetAddress().getHostAddress());
       return null;
     }
 
@@ -462,17 +489,14 @@ public class MigrationServer {
     }
 
     abstract void process(MigrationServer server) throws IOException;
-
   }
 
-  /**
-   * RegionRequest represents a request for the keys and values of a Region
-   * from a client.
-   */
+  /** RegionRequest represents a request for the keys and values of a Region from a client. */
   static class RegionRequest extends ClientRequest {
     String regionName;
 
-    RegionRequest(Socket clientSocket, DataInputStream dsi, DataOutputStream dso) throws IOException {
+    RegionRequest(Socket clientSocket, DataInputStream dsi, DataOutputStream dso)
+        throws IOException {
       super(clientSocket, dsi, dso);
       regionName = dsi.readUTF();
     }
@@ -499,7 +523,7 @@ public class MigrationServer {
         writeErrorResponse(errorMessage);
       }
       try {
-        for (Iterator it = region.entrySet().iterator(); it.hasNext();) {
+        for (Iterator it = region.entrySet().iterator(); it.hasNext(); ) {
           sendEntry((Region.Entry) it.next());
         }
         this.dso.writeShort(CODE_COMPLETED);
@@ -525,5 +549,4 @@ public class MigrationServer {
       (new ObjectOutputStream(clientSocket.getOutputStream())).writeObject(value);
     }
   }
-
 }

@@ -37,6 +37,7 @@ import org.apache.geode.internal.logging.LogService;
 
 /**
  * Does a region destroy on a server
+ *
  * @since GemFire 5.7
  */
 public class DestroyOp {
@@ -48,26 +49,42 @@ public class DestroyOp {
   public static final int HAS_ENTRY_NOT_FOUND_PART = 0x02;
 
   /**
-   * Does a region entry destroy on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region entry destroy on a server using connections from the given pool to communicate
+   * with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the region to do the entry destroy on
    * @param key the entry key to do the destroy on
    * @param event the event for this destroy operation
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    */
-  public static Object execute(ExecutablePool pool, LocalRegion region, Object key, Object expectedOldValue, Operation operation, EntryEventImpl event, Object callbackArg, boolean prSingleHopEnabled) {
+  public static Object execute(
+      ExecutablePool pool,
+      LocalRegion region,
+      Object key,
+      Object expectedOldValue,
+      Operation operation,
+      EntryEventImpl event,
+      Object callbackArg,
+      boolean prSingleHopEnabled) {
     if (logger.isDebugEnabled()) {
       logger.debug("Preparing DestroyOp for {} operation={}", key, operation);
     }
-    DestroyOpImpl op = new DestroyOpImpl(region, key, expectedOldValue, operation, event, callbackArg, prSingleHopEnabled);
+    DestroyOpImpl op =
+        new DestroyOpImpl(
+            region, key, expectedOldValue, operation, event, callbackArg, prSingleHopEnabled);
     if (prSingleHopEnabled) {
       ClientMetadataService cms = region.getCache().getClientMetadataService();
-      ServerLocation server = cms.getBucketServerLocation(region, Operation.DESTROY, key, null, callbackArg);
+      ServerLocation server =
+          cms.getBucketServerLocation(region, Operation.DESTROY, key, null, callbackArg);
       if (server != null) {
         try {
           PoolImpl poolImpl = (PoolImpl) pool;
-          boolean onlyUseExistingCnx = ((poolImpl.getMaxConnections() != -1 && poolImpl.getConnectionCount() >= poolImpl.getMaxConnections()) ? true : false);
+          boolean onlyUseExistingCnx =
+              ((poolImpl.getMaxConnections() != -1
+                      && poolImpl.getConnectionCount() >= poolImpl.getMaxConnections())
+                  ? true
+                  : false);
           op.setAllowDuplicateMetadataRefresh(!onlyUseExistingCnx);
           return pool.executeOn(server, op, true, onlyUseExistingCnx);
         } catch (AllConnectionsInUseException e) {
@@ -83,23 +100,25 @@ public class DestroyOp {
   }
 
   /**
-   * Does a region entry destroy on a server using the given connection to
-   * communicate with the server.
-   * 
-   * @param con
-   *                the connection to use to send to the server
-   * @param pool
-   *                the pool to use to communicate with the server.
-   * @param region
-   *                the region to do the entry destroy on
-   * @param key
-   *                the entry key to do the destroy on
-   * @param event
-   *                the event for this destroy operation
-   * @param callbackArg
-   *                an optional callback arg to pass to any cache callbacks
+   * Does a region entry destroy on a server using the given connection to communicate with the
+   * server.
+   *
+   * @param con the connection to use to send to the server
+   * @param pool the pool to use to communicate with the server.
+   * @param region the region to do the entry destroy on
+   * @param key the entry key to do the destroy on
+   * @param event the event for this destroy operation
+   * @param callbackArg an optional callback arg to pass to any cache callbacks
    */
-  public static void execute(Connection con, ExecutablePool pool, String region, Object key, Object expectedOldValue, Operation operation, EntryEventImpl event, Object callbackArg) {
+  public static void execute(
+      Connection con,
+      ExecutablePool pool,
+      String region,
+      Object key,
+      Object expectedOldValue,
+      Operation operation,
+      EntryEventImpl event,
+      Object callbackArg) {
     AbstractOp op = new DestroyOpImpl(region, key, expectedOldValue, operation, event, callbackArg);
     pool.executeOn(con, op);
   }
@@ -125,10 +144,15 @@ public class DestroyOp {
 
     private Object callbackArg;
 
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
-    public DestroyOpImpl(LocalRegion region, Object key, Object expectedOldValue, Operation operation, EntryEventImpl event, Object callbackArg, boolean prSingleHopEnabled) {
+    /** @throws org.apache.geode.SerializationException if serialization fails */
+    public DestroyOpImpl(
+        LocalRegion region,
+        Object key,
+        Object expectedOldValue,
+        Operation operation,
+        EntryEventImpl event,
+        Object callbackArg,
+        boolean prSingleHopEnabled) {
       super(MessageType.DESTROY, callbackArg != null ? 6 : 5);
       this.key = key;
       this.region = region;
@@ -139,14 +163,24 @@ public class DestroyOp {
       getMessage().addStringPart(region.getFullPath());
       getMessage().addStringOrObjPart(key);
       getMessage().addObjPart(expectedOldValue);
-      getMessage().addObjPart(operation == Operation.DESTROY ? null : operation); // server interprets null as DESTROY
+      getMessage()
+          .addObjPart(
+              operation == Operation.DESTROY
+                  ? null
+                  : operation); // server interprets null as DESTROY
       getMessage().addBytesPart(event.getEventId().calcBytes());
       if (callbackArg != null) {
         getMessage().addObjPart(callbackArg);
       }
     }
 
-    public DestroyOpImpl(String region, Object key, Object expectedOldValue, Operation operation, EntryEventImpl event, Object callbackArg) {
+    public DestroyOpImpl(
+        String region,
+        Object key,
+        Object expectedOldValue,
+        Operation operation,
+        EntryEventImpl event,
+        Object callbackArg) {
       super(MessageType.DESTROY, callbackArg != null ? 6 : 5);
       this.key = key;
       this.event = event;
@@ -154,7 +188,11 @@ public class DestroyOp {
       getMessage().addStringPart(region);
       getMessage().addStringOrObjPart(key);
       getMessage().addObjPart(expectedOldValue);
-      getMessage().addObjPart(operation == Operation.DESTROY ? null : operation); // server interprets null as DESTROY
+      getMessage()
+          .addObjPart(
+              operation == Operation.DESTROY
+                  ? null
+                  : operation); // server interprets null as DESTROY
       getMessage().addBytesPart(event.getEventId().calcBytes());
       if (callbackArg != null) {
         getMessage().addObjPart(callbackArg);
@@ -192,11 +230,13 @@ public class DestroyOp {
         //        }
         Part part = msg.getPart(partIdx++);
         byte[] bytesReceived = part.getSerializedForm();
-        if (bytesReceived[0] != ClientMetadataService.INITIAL_VERSION && bytesReceived.length == ClientMetadataService.SIZE_BYTES_ARRAY_RECEIVED) {
+        if (bytesReceived[0] != ClientMetadataService.INITIAL_VERSION
+            && bytesReceived.length == ClientMetadataService.SIZE_BYTES_ARRAY_RECEIVED) {
           if (this.region != null) {
             try {
               ClientMetadataService cms = region.getCache().getClientMetadataService();
-              int myVersion = cms.getMetaDataVersion(region, Operation.UPDATE, key, null, callbackArg);
+              int myVersion =
+                  cms.getMetaDataVersion(region, Operation.UPDATE, key, null, callbackArg);
               if (myVersion != bytesReceived[0] || isAllowDuplicateMetadataRefresh()) {
                 cms.scheduleGetPRMetaData(region, false, bytesReceived[1]);
               }
@@ -222,7 +262,9 @@ public class DestroyOp {
         if (logger.isDebugEnabled()) {
           logger.debug("received REMOVE response from server with entryNotFound={}", entryNotFound);
         }
-        return new EntryNotFoundException(LocalizedStrings.AbstractRegionMap_ENTRY_NOT_FOUND_WITH_EXPECTED_VALUE.toLocalizedString());
+        return new EntryNotFoundException(
+            LocalizedStrings.AbstractRegionMap_ENTRY_NOT_FOUND_WITH_EXPECTED_VALUE
+                .toLocalizedString());
       }
       return null;
     }

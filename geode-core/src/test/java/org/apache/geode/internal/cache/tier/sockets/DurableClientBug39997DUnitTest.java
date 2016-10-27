@@ -59,64 +59,76 @@ public class DurableClientBug39997DUnitTest extends JUnit4CacheTestCase {
 
     final String hostName = NetworkUtils.getServerHostName(host);
     final int port = AvailablePortHelper.getRandomAvailableTCPPort();
-    vm0.invoke(new SerializableRunnable("create cache") {
-      public void run() {
-        getSystem(getClientProperties());
-        PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(hostName, port).setSubscriptionEnabled(true).setSubscriptionRedundancy(0).create("DurableClientReconnectDUnitTestPool");
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.LOCAL);
-        factory.setPoolName(p.getName());
-        Cache cache = getCache();
-        Region region1 = cache.createRegion("region", factory.create());
-        cache.readyForEvents();
+    vm0.invoke(
+        new SerializableRunnable("create cache") {
+          public void run() {
+            getSystem(getClientProperties());
+            PoolImpl p =
+                (PoolImpl)
+                    PoolManager.createFactory()
+                        .addServer(hostName, port)
+                        .setSubscriptionEnabled(true)
+                        .setSubscriptionRedundancy(0)
+                        .create("DurableClientReconnectDUnitTestPool");
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.LOCAL);
+            factory.setPoolName(p.getName());
+            Cache cache = getCache();
+            Region region1 = cache.createRegion("region", factory.create());
+            cache.readyForEvents();
 
-        try {
-          region1.registerInterest("ALL_KEYS");
-          fail("Should have received an exception trying to register interest");
-        } catch (NoSubscriptionServersAvailableException expected) {
-          //this is expected
-        }
-      }
-    });
-
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        cache.createRegion("region", factory.create());
-        CacheServer server = cache.addCacheServer();
-        server.setPort(port);
-        try {
-          server.start();
-        } catch (IOException e) {
-          Assert.fail("couldn't start server", e);
-        }
-      }
-    });
-
-    vm0.invoke(new SerializableRunnable() {
-      public void run() {
-        Cache cache = getCache();
-        final Region region = cache.getRegion("region");
-        Wait.waitForCriterion(new WaitCriterion() {
-
-          public String description() {
-            return "Wait for register interest to succeed";
-          }
-
-          public boolean done() {
             try {
-              region.registerInterest("ALL_KEYS");
-            } catch (NoSubscriptionServersAvailableException e) {
-              return false;
+              region1.registerInterest("ALL_KEYS");
+              fail("Should have received an exception trying to register interest");
+            } catch (NoSubscriptionServersAvailableException expected) {
+              //this is expected
             }
-            return true;
           }
+        });
 
-        }, 30000, 1000, true);
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            cache.createRegion("region", factory.create());
+            CacheServer server = cache.addCacheServer();
+            server.setPort(port);
+            try {
+              server.start();
+            } catch (IOException e) {
+              Assert.fail("couldn't start server", e);
+            }
+          }
+        });
+
+    vm0.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Cache cache = getCache();
+            final Region region = cache.getRegion("region");
+            Wait.waitForCriterion(
+                new WaitCriterion() {
+
+                  public String description() {
+                    return "Wait for register interest to succeed";
+                  }
+
+                  public boolean done() {
+                    try {
+                      region.registerInterest("ALL_KEYS");
+                    } catch (NoSubscriptionServersAvailableException e) {
+                      return false;
+                    }
+                    return true;
+                  }
+                },
+                30000,
+                1000,
+                true);
+          }
+        });
   }
 
   public Properties getClientProperties() {

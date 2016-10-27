@@ -24,10 +24,7 @@ import java.io.*;
 
 import org.apache.commons.lang.StringUtils;
 
-/** 
- * Represents one transaction lock.
- *
- */
+/** Represents one transaction lock. */
 public class TXLockToken implements DataSerializable {
   private static final long serialVersionUID = 8172108573123093776L;
 
@@ -53,18 +50,13 @@ public class TXLockToken implements DataSerializable {
 
   @Override
   public boolean equals(Object other) {
-    if (other == this)
-      return true;
-    if (other == null)
-      return false;
-    if (!(other instanceof TXLockToken))
-      return false;
+    if (other == this) return true;
+    if (other == null) return false;
+    if (!(other instanceof TXLockToken)) return false;
     final TXLockToken that = (TXLockToken) other;
 
-    if (!StringUtils.equals(this.regionFullPath, that.regionFullPath))
-      return false;
-    if (this.name != that.name && !(this.name != null && this.name.equals(that.name)))
-      return false;
+    if (!StringUtils.equals(this.regionFullPath, that.regionFullPath)) return false;
+    if (this.name != that.name && !(this.name != null && this.name.equals(that.name))) return false;
 
     return true;
   }
@@ -78,8 +70,7 @@ public class TXLockToken implements DataSerializable {
   //   DataSerializable support
   // -------------------------------------------------------------------------
 
-  public TXLockToken() {
-  }
+  public TXLockToken() {}
 
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.regionFullPath = DataSerializer.readString(in);
@@ -90,5 +81,4 @@ public class TXLockToken implements DataSerializable {
     DataSerializer.writeString(this.regionFullPath, out);
     DataSerializer.writeObject(this.name, out);
   }
-
 }

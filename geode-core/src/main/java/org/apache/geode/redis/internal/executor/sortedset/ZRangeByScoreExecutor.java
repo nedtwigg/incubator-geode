@@ -75,7 +75,8 @@ public class ZRangeByScoreExecutor extends SortedSetExecutor implements Extendab
             offset = Coder.bytesToInt(offsetArray);
             limit = Coder.bytesToInt(limitArray);
           } catch (NumberFormatException e) {
-            command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_NUMERIC));
+            command.setResponse(
+                Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_NUMERIC));
             return;
           }
         }
@@ -93,7 +94,6 @@ public class ZRangeByScoreExecutor extends SortedSetExecutor implements Extendab
           }
         }
       }
-
     }
 
     ByteArrayWrapper key = command.getKey();
@@ -137,20 +137,34 @@ public class ZRangeByScoreExecutor extends SortedSetExecutor implements Extendab
 
     Collection<?> list;
     try {
-      list = getKeys(key, keyRegion, context, start, stop, startInclusive, stopInclusive, offset, limit);
+      list =
+          getKeys(
+              key, keyRegion, context, start, stop, startInclusive, stopInclusive, offset, limit);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
 
     if (list == null)
       command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
-    else
-      command.setResponse(Coder.zRangeResponse(context.getByteBufAllocator(), list, withScores));
+    else command.setResponse(Coder.zRangeResponse(context.getByteBufAllocator(), list, withScores));
   }
 
-  private Collection<?> getKeys(ByteArrayWrapper key, Region<ByteArrayWrapper, DoubleWrapper> keyRegion, ExecutionHandlerContext context, double start, double stop, boolean startInclusive, boolean stopInclusive, int offset, int limit) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
-    if (start == Double.POSITIVE_INFINITY || stop == Double.NEGATIVE_INFINITY || start > stop || (start == stop && (!startInclusive || !stopInclusive)))
-      return null;
+  private Collection<?> getKeys(
+      ByteArrayWrapper key,
+      Region<ByteArrayWrapper, DoubleWrapper> keyRegion,
+      ExecutionHandlerContext context,
+      double start,
+      double stop,
+      boolean startInclusive,
+      boolean stopInclusive,
+      int offset,
+      int limit)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
+    if (start == Double.POSITIVE_INFINITY
+        || stop == Double.NEGATIVE_INFINITY
+        || start > stop
+        || (start == stop && (!startInclusive || !stopInclusive))) return null;
     if (start == Double.NEGATIVE_INFINITY && stop == Double.POSITIVE_INFINITY)
       return new HashSet(keyRegion.entrySet());
 
@@ -170,7 +184,7 @@ public class ZRangeByScoreExecutor extends SortedSetExecutor implements Extendab
           query = getQuery(key, SortedSetQuery.ZREVRBS, context);
         }
       }
-      params = new Object[] { start, stop, INFINITY_LIMIT };
+      params = new Object[] {start, stop, INFINITY_LIMIT};
     } else {
       if (startInclusive) {
         if (stopInclusive) {
@@ -185,16 +199,14 @@ public class ZRangeByScoreExecutor extends SortedSetExecutor implements Extendab
           query = getQuery(key, SortedSetQuery.ZRBS, context);
         }
       }
-      params = new Object[] { start, stop, INFINITY_LIMIT };
+      params = new Object[] {start, stop, INFINITY_LIMIT};
     }
-    if (limit > 0)
-      params[params.length - 1] = (limit + offset);
+    if (limit > 0) params[params.length - 1] = (limit + offset);
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
     if (offset < results.size())
       return (Collection<Struct>) results.asList().subList(offset, results.size());
-    else
-      return null;
+    else return null;
   }
 
   protected boolean isReverse() {
@@ -205,5 +217,4 @@ public class ZRangeByScoreExecutor extends SortedSetExecutor implements Extendab
   public String getArgsError() {
     return ArityDef.ZRANGEBYSCORE;
   }
-
 }

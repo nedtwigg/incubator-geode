@@ -69,14 +69,13 @@ public class EvictionDUnitTest extends EvictionTestBase {
   }
 
   /**
-   * Test Case Description: 2 VM's. 2 PR's. 4 buckets each PR. PR1 has action
-   * -Local destroy and PR2 has action - Overflow To Disk.
-   * 
-   * Test Case verifies:If naturally Eviction up and eviction Down events are
-   * raised. Centralized and Inline eviction are happening.All this verificatio
-   * is done thorugh logs. It also verifies that during eviction, if one node
-   * goes down and then comes up again causing GII to take place, the system
-   * doesnot throw an OOME.
+   * Test Case Description: 2 VM's. 2 PR's. 4 buckets each PR. PR1 has action -Local destroy and PR2
+   * has action - Overflow To Disk.
+   *
+   * <p>Test Case verifies:If naturally Eviction up and eviction Down events are raised. Centralized
+   * and Inline eviction are happening.All this verificatio is done thorugh logs. It also verifies
+   * that during eviction, if one node goes down and then comes up again causing GII to take place,
+   * the system doesnot throw an OOME.
    */
   @Test
   public void testEvictionWithNodeDown() {
@@ -104,7 +103,8 @@ public class EvictionDUnitTest extends EvictionTestBase {
       pr.put(new Integer(counter), new byte[1 * 1024 * 1024]);
     }
 
-    assertEquals(extraEntries, ((AbstractLRURegionMap) pr.entries)._getLruList().stats().getEvictions());
+    assertEquals(
+        extraEntries, ((AbstractLRURegionMap) pr.entries)._getLruList().stats().getEvictions());
   }
 
   @Test
@@ -143,15 +143,23 @@ public class EvictionDUnitTest extends EvictionTestBase {
       pr.put(new Integer(counter), new byte[1 * 1024 * 1024]);
     }
 
-    assertEquals(extraEntries, ((AbstractLRURegionMap) pr.entries)._getLruList().stats().getEvictions());
+    assertEquals(
+        extraEntries, ((AbstractLRURegionMap) pr.entries)._getLruList().stats().getEvictions());
 
-    for (final Iterator i = pr.getDataStore().getAllLocalBuckets().iterator(); i.hasNext();) {
+    for (final Iterator i = pr.getDataStore().getAllLocalBuckets().iterator(); i.hasNext(); ) {
       final Map.Entry entry = (Map.Entry) i.next();
       final BucketRegion bucketRegion = (BucketRegion) entry.getValue();
       if (bucketRegion == null) {
         continue;
       }
-      LogWriterUtils.getLogWriter().info("FINAL bucket= " + bucketRegion.getFullPath() + "size= " + bucketRegion.size() + "  count= " + bucketRegion.entryCount());
+      LogWriterUtils.getLogWriter()
+          .info(
+              "FINAL bucket= "
+                  + bucketRegion.getFullPath()
+                  + "size= "
+                  + bucketRegion.size()
+                  + "  count= "
+                  + bucketRegion.entryCount());
       assertEquals(4, bucketRegion.size());
     }
   }
@@ -173,7 +181,9 @@ public class EvictionDUnitTest extends EvictionTestBase {
     DistributedRegion dr = (DistributedRegion) cache.getRegion("DR1");
 
     assertEquals(pr.getLocalMaxMemory(), pr.getEvictionAttributes().getMaximum());
-    assertEquals(MemLRUCapacityController.DEFAULT_MAXIMUM_MEGABYTES, dr.getEvictionAttributes().getMaximum());
+    assertEquals(
+        MemLRUCapacityController.DEFAULT_MAXIMUM_MEGABYTES,
+        dr.getEvictionAttributes().getMaximum());
 
     for (int i = 0; i < 41; i++) {
       pr.put(new Integer(i), new byte[1 * 1024 * 1024]);

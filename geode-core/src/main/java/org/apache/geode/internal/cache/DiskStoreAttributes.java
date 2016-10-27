@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import java.io.File;
@@ -28,7 +26,7 @@ import org.apache.geode.cache.DiskStoreFactory;
 
 /**
  * Creates an attribute object for DiskStore.
- * </p>
+ *
  * @since GemFire prPersistSprint2
  */
 public class DiskStoreAttributes implements Serializable, DiskStore {
@@ -73,8 +71,8 @@ public class DiskStoreAttributes implements Serializable, DiskStore {
   }
 
   /* (non-Javadoc)
-  * @see org.apache.geode.cache.DiskStore#getAllowForceCompaction()
-  */
+   * @see org.apache.geode.cache.DiskStore#getAllowForceCompaction()
+   */
   public boolean getAllowForceCompaction() {
     return this.allowForceCompaction;
   }
@@ -119,9 +117,7 @@ public class DiskStoreAttributes implements Serializable, DiskStore {
     return this.maxOplogSizeInBytes / (1024 * 1024);
   }
 
-  /**
-   * Used by unit tests
-   */
+  /** Used by unit tests */
   public long getMaxOplogSizeInBytes() {
     return this.maxOplogSizeInBytes;
   }

@@ -31,7 +31,8 @@ public class DistTXStateProxyImplOnDatanode extends DistTXStateProxyImpl {
   private DistTXPrecommitMessage preCommitMessage = null;
   private boolean preCommitResponse = false;
 
-  public DistTXStateProxyImplOnDatanode(TXManagerImpl managerImpl, TXId id, InternalDistributedMember clientMember) {
+  public DistTXStateProxyImplOnDatanode(
+      TXManagerImpl managerImpl, TXId id, InternalDistributedMember clientMember) {
     super(managerImpl, id, clientMember);
   }
 
@@ -49,7 +50,8 @@ public class DistTXStateProxyImplOnDatanode extends DistTXStateProxyImpl {
         target = r.getOwnerForKey(key);
       }
       if (logger.isDebugEnabled()) {
-        logger.debug("Built a new DistTXState: {} me:{}", this.realDeal, this.txMgr.getDM().getId());
+        logger.debug(
+            "Built a new DistTXState: {} me:{}", this.realDeal, this.txMgr.getDM().getId());
       }
     }
     return this.realDeal;
@@ -62,24 +64,35 @@ public class DistTXStateProxyImplOnDatanode extends DistTXStateProxyImpl {
       this.target = t;
       this.realDeal = new DistTXState(this, false);
       if (logger.isDebugEnabled()) {
-        logger.debug("Built a new DistTXState: {} me:{}", this.realDeal, this.txMgr.getDM().getId());
+        logger.debug(
+            "Built a new DistTXState: {} me:{}", this.realDeal, this.txMgr.getDM().getId());
       }
     }
     return this.realDeal;
   }
 
   private DistTXState getRealDeal() throws UnsupportedOperationInTransactionException {
-    if (this.realDeal == null || !this.realDeal.isDistTx() || !this.realDeal.isTxState() || this.realDeal.isCreatedOnDistTxCoordinator()) {
-      throw new UnsupportedOperationInTransactionException(LocalizedStrings.DISTTX_TX_EXPECTED.toLocalizedString("DistTXStateOnDatanode", this.realDeal != null ? this.realDeal.getClass().getSimpleName() : "null"));
+    if (this.realDeal == null
+        || !this.realDeal.isDistTx()
+        || !this.realDeal.isTxState()
+        || this.realDeal.isCreatedOnDistTxCoordinator()) {
+      throw new UnsupportedOperationInTransactionException(
+          LocalizedStrings.DISTTX_TX_EXPECTED.toLocalizedString(
+              "DistTXStateOnDatanode",
+              this.realDeal != null ? this.realDeal.getClass().getSimpleName() : "null"));
     }
     return (DistTXState) this.realDeal;
   }
 
   @Override
-  public void precommit() throws CommitConflictException, UnsupportedOperationInTransactionException {
+  public void precommit()
+      throws CommitConflictException, UnsupportedOperationInTransactionException {
     try {
       DistTXState txState = getRealDeal();
-      boolean retVal = txState.applyOpsOnRedundantCopy(this.preCommitMessage.getSender(), this.preCommitMessage.getSecondaryTransactionalOperations());
+      boolean retVal =
+          txState.applyOpsOnRedundantCopy(
+              this.preCommitMessage.getSender(),
+              this.preCommitMessage.getSecondaryTransactionalOperations());
       if (retVal) {
         setCommitOnBehalfOfRemoteStub(true);
         txState.precommit();
@@ -103,7 +116,8 @@ public class DistTXStateProxyImplOnDatanode extends DistTXStateProxyImpl {
   /*
    * Populate list of versions for each region while replying precommit
    */
-  public boolean populateDistTxEntryStateList(TreeMap<String, ArrayList<DistTxThinEntryState>> entryStateSortedMap) {
+  public boolean populateDistTxEntryStateList(
+      TreeMap<String, ArrayList<DistTxThinEntryState>> entryStateSortedMap) {
     return getRealDeal().populateDistTxEntryStateList(entryStateSortedMap);
   }
 

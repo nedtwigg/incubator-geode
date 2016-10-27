@@ -43,13 +43,12 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
  * Test methods to ensure that disk Clear is apparently atomic to region clear.
- * 
- * Data on disk should reflect data in memory. A put while clear is going on should
- * wait for clear and if it is successfully recorded in memory than it should
- * be recorded on disk. Else if not successfully recorded in memory than should not be
- * recorded on disk
  *
- * TODO: use DiskRegionTestingBase and DiskRegionHelperFactory
+ * <p>Data on disk should reflect data in memory. A put while clear is going on should wait for
+ * clear and if it is successfully recorded in memory than it should be recorded on disk. Else if
+ * not successfully recorded in memory than should not be recorded on disk
+ *
+ * <p>TODO: use DiskRegionTestingBase and DiskRegionHelperFactory
  */
 @Category(IntegrationTest.class)
 public class DiskRegionClearJUnitTest {
@@ -79,7 +78,7 @@ public class DiskRegionClearJUnitTest {
   public void tearDown() throws Exception {
     try {
       if (cache != null && !cache.isClosed()) {
-        for (Iterator itr = cache.rootRegions().iterator(); itr.hasNext();) {
+        for (Iterator itr = cache.rootRegions().iterator(); itr.hasNext(); ) {
           Region root = (Region) itr.next();
           //          String name = root.getName();
           if (root.isDestroyed() || root instanceof HARegion) {
@@ -103,14 +102,11 @@ public class DiskRegionClearJUnitTest {
         throw e;
       } catch (Throwable t) {
         cache.getLogger().error("Error in closing the cache ", t);
-
       }
     }
   }
 
-  /**
-   * Make sure the disk region stats are set to zero when the region is cleared.
-   */
+  /** Make sure the disk region stats are set to zero when the region is cleared. */
   @Test
   public void testClearAndStats() throws Exception {
     DiskRegion dr = ((LocalRegion) testRegion).getDiskRegion();
@@ -123,7 +119,7 @@ public class DiskRegionClearJUnitTest {
   }
 
   /** Close the cache */
-  private static synchronized final void closeCache() {
+  private static final synchronized void closeCache() {
     if (cache != null) {
       try {
         if (!cache.isClosed()) {
@@ -165,8 +161,7 @@ public class DiskRegionClearJUnitTest {
     }
     ThreadUtils.join(thread, 10 * 60 * 1000);
     assertTrue(counter == 3);
-    if (!cleared)
-      fail("clear not done although puts have been done");
+    if (!cleared) fail("clear not done although puts have been done");
   }
 
   @Test
@@ -253,6 +248,5 @@ public class DiskRegionClearJUnitTest {
     }
   }
 
-  private static class CacheObserver extends CacheObserverAdapter {
-  }
+  private static class CacheObserver extends CacheObserverAdapter {}
 }

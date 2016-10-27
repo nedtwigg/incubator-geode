@@ -51,8 +51,8 @@ import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 
-/***
- *
+/**
+ * *
  *
  * @since GemFire 7.0
  */
@@ -61,12 +61,23 @@ public class MemberCommands implements CommandMarker {
     return Gfsh.getCurrentInstance();
   }
 
-  private static final GetMemberInformationFunction getMemberInformation = new GetMemberInformationFunction();
+  private static final GetMemberInformationFunction getMemberInformation =
+      new GetMemberInformationFunction();
 
-  @CliCommand(value = { CliStrings.LIST_MEMBER }, help = CliStrings.LIST_MEMBER__HELP)
+  @CliCommand(
+    value = {CliStrings.LIST_MEMBER},
+    help = CliStrings.LIST_MEMBER__HELP
+  )
   @CliMetaData(shellOnly = false, relatedTopic = CliStrings.TOPIC_GEODE_SERVER)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result listMember(@CliOption(key = { CliStrings.LIST_MEMBER__GROUP }, unspecifiedDefaultValue = "", optionContext = ConverterHint.MEMBERGROUP, help = CliStrings.LIST_MEMBER__GROUP__HELP) String group) {
+  public Result listMember(
+      @CliOption(
+            key = {CliStrings.LIST_MEMBER__GROUP},
+            unspecifiedDefaultValue = "",
+            optionContext = ConverterHint.MEMBERGROUP,
+            help = CliStrings.LIST_MEMBER__GROUP__HELP
+          )
+          String group) {
     Result result = null;
 
     //TODO: Add the code for identifying the system services
@@ -96,27 +107,41 @@ public class MemberCommands implements CommandMarker {
       }
     } catch (Exception e) {
 
-      result = ResultBuilder.createGemFireErrorResult("Could not fetch the list of members. " + e.getMessage());
+      result =
+          ResultBuilder.createGemFireErrorResult(
+              "Could not fetch the list of members. " + e.getMessage());
       LogWrapper.getInstance().warning(e.getMessage(), e);
     }
 
     return result;
   }
 
-  @CliCommand(value = { CliStrings.DESCRIBE_MEMBER }, help = CliStrings.DESCRIBE_MEMBER__HELP)
+  @CliCommand(
+    value = {CliStrings.DESCRIBE_MEMBER},
+    help = CliStrings.DESCRIBE_MEMBER__HELP
+  )
   @CliMetaData(shellOnly = false, relatedTopic = CliStrings.TOPIC_GEODE_SERVER)
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result describeMember(@CliOption(key = CliStrings.DESCRIBE_MEMBER__IDENTIFIER, optionContext = ConverterHint.ALL_MEMBER_IDNAME, help = CliStrings.DESCRIBE_MEMBER__HELP, mandatory = true) String memberNameOrId) {
+  public Result describeMember(
+      @CliOption(
+            key = CliStrings.DESCRIBE_MEMBER__IDENTIFIER,
+            optionContext = ConverterHint.ALL_MEMBER_IDNAME,
+            help = CliStrings.DESCRIBE_MEMBER__HELP,
+            mandatory = true
+          )
+          String memberNameOrId) {
     Result result = null;
 
     try {
-      DistributedMember memberToBeDescribed = CliUtil.getDistributedMemberByNameOrId(memberNameOrId);
+      DistributedMember memberToBeDescribed =
+          CliUtil.getDistributedMemberByNameOrId(memberNameOrId);
 
       if (memberToBeDescribed != null) {
         //Abhishek - This information should be available through the MBeans too. We might not need the function.
         //Sourabh - Yes, but then the command is subject to Mbean availability, which would be affected once MBean filters are used.
 
-        ResultCollector<?, ?> rc = CliUtil.executeFunction(getMemberInformation, null, memberToBeDescribed);
+        ResultCollector<?, ?> rc =
+            CliUtil.executeFunction(getMemberInformation, null, memberToBeDescribed);
 
         ArrayList<?> output = (ArrayList<?>) rc.getResult();
         Object obj = output.get(0);
@@ -135,7 +160,9 @@ public class MemberCommands implements CommandMarker {
           section.addData("Name", memberInformation.getName());
           section.addData("Id", memberInformation.getId());
           section.addData("Host", memberInformation.getHost());
-          section.addData("Regions", CliUtil.convertStringSetToString(memberInformation.getHostedRegions(), '\n'));
+          section.addData(
+              "Regions",
+              CliUtil.convertStringSetToString(memberInformation.getHostedRegions(), '\n'));
           section.addData("PID", memberInformation.getProcessId());
           section.addData("Groups", memberInformation.getGroups());
           section.addData("Used Heap", memberInformation.getHeapUsage() + "M");
@@ -166,16 +193,24 @@ public class MemberCommands implements CommandMarker {
                 clientServiceSection.addData("Running", cacheServerInfo.isRunning());
               }
 
-              clientServiceSection.addData("Client Connections", memberInformation.getClientCount());
+              clientServiceSection.addData(
+                  "Client Connections", memberInformation.getClientCount());
             }
           }
           result = ResultBuilder.buildResult(crd);
 
         } else {
-          result = ResultBuilder.createInfoResult(CliStrings.format(CliStrings.DESCRIBE_MEMBER__MSG__INFO_FOR__0__COULD_NOT_BE_RETRIEVED, new Object[] { memberNameOrId }));
+          result =
+              ResultBuilder.createInfoResult(
+                  CliStrings.format(
+                      CliStrings.DESCRIBE_MEMBER__MSG__INFO_FOR__0__COULD_NOT_BE_RETRIEVED,
+                      new Object[] {memberNameOrId}));
         }
       } else {
-        result = ResultBuilder.createInfoResult(CliStrings.format(CliStrings.DESCRIBE_MEMBER__MSG__NOT_FOUND, new Object[] { memberNameOrId }));
+        result =
+            ResultBuilder.createInfoResult(
+                CliStrings.format(
+                    CliStrings.DESCRIBE_MEMBER__MSG__NOT_FOUND, new Object[] {memberNameOrId}));
       }
     } catch (CacheClosedException e) {
 
@@ -187,7 +222,7 @@ public class MemberCommands implements CommandMarker {
     return result;
   }
 
-  @CliAvailabilityIndicator({ CliStrings.LIST_MEMBER, CliStrings.DESCRIBE_MEMBER })
+  @CliAvailabilityIndicator({CliStrings.LIST_MEMBER, CliStrings.DESCRIBE_MEMBER})
   public boolean isListMemberAvailable() {
     boolean isAvailable = true;
     if (CliUtil.isGfshVM()) {
@@ -195,5 +230,4 @@ public class MemberCommands implements CommandMarker {
     }
     return isAvailable;
   }
-
 }

@@ -30,13 +30,14 @@ import org.apache.geode.internal.util.BlobHelper;
 
 /**
  * Register a bunch of instantiators on a server
+ *
  * @since GemFire 5.7
  */
 public class RegisterInstantiatorsOp {
   /**
-   * Register a bunch of instantiators on a server
-   * using connections from the given pool
-   * to communicate with the server.
+   * Register a bunch of instantiators on a server using connections from the given pool to
+   * communicate with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param instantiators the instantiators to register
    * @param eventId the id of this event
@@ -47,16 +48,13 @@ public class RegisterInstantiatorsOp {
   }
 
   /**
-   * Register a bunch of instantiators on a server using connections from the
-   * given pool to communicate with the server.
-   * 
-   * @param pool
-   *          the pool to use to communicate with the server.
-   * @param holders
-   *          the {@link InstantiatorAttributesHolder}s containing info about
-   *          the instantiators to register
-   * @param eventId
-   *          the id of this event
+   * Register a bunch of instantiators on a server using connections from the given pool to
+   * communicate with the server.
+   *
+   * @param pool the pool to use to communicate with the server.
+   * @param holders the {@link InstantiatorAttributesHolder}s containing info about the
+   *     instantiators to register
+   * @param eventId the id of this event
    */
   public static void execute(ExecutablePool pool, Object[] holders, EventID eventId) {
     AbstractOp op = new RegisterInstantiatorsOpImpl(holders, eventId);
@@ -68,9 +66,7 @@ public class RegisterInstantiatorsOp {
   }
 
   private static class RegisterInstantiatorsOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public RegisterInstantiatorsOpImpl(Instantiator[] instantiators, EventID eventId) {
       super(MessageType.REGISTER_INSTANTIATORS, instantiators.length * 3 + 1);
       for (int i = 0; i < instantiators.length; i++) {
@@ -94,10 +90,7 @@ public class RegisterInstantiatorsOp {
       }
     }
 
-    /**
-     * @throws org.apache.geode.SerializationException
-     *           if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public RegisterInstantiatorsOpImpl(Object[] holders, EventID eventId) {
       super(MessageType.REGISTER_INSTANTIATORS, holders.length * 3 + 1);
       for (Object obj : holders) {
@@ -156,8 +149,7 @@ public class RegisterInstantiatorsOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

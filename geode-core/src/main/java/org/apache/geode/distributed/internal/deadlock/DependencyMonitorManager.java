@@ -24,18 +24,13 @@ import java.util.Set;
 import org.apache.geode.internal.CopyOnWriteHashSet;
 
 /**
- * A singleton which keeps track of all of the dependency monitors registered in
- * this VM.
- * 
- * Dependency monitors track dependencies between threads that may not be known
- * to the JVM. For example, a thread in one VM may be waiting for a response to
- * a thread in another VM.
- * 
- * {@link DependencyMonitor}s should register themselves with this class. Then, the 
- * {@link DeadlockDetector} will be able to query them for dependencies when finding
- * deadlocks.
- * 
- * 
+ * A singleton which keeps track of all of the dependency monitors registered in this VM.
+ *
+ * <p>Dependency monitors track dependencies between threads that may not be known to the JVM. For
+ * example, a thread in one VM may be waiting for a response to a thread in another VM.
+ *
+ * <p>{@link DependencyMonitor}s should register themselves with this class. Then, the {@link
+ * DeadlockDetector} will be able to query them for dependencies when finding deadlocks.
  */
 public class DependencyMonitorManager {
 
@@ -46,26 +41,23 @@ public class DependencyMonitorManager {
     addMonitor(DLockDependencyMonitor.INSTANCE);
   }
 
-  /**
-   * Register a dependency monitor.
-   */
+  /** Register a dependency monitor. */
   public static void addMonitor(DependencyMonitor monitor) {
     monitors.add(monitor);
   }
 
-  /**
-   * Unregister a dependency monitor.
-   */
+  /** Unregister a dependency monitor. */
   public static void removeMonitor(DependencyMonitor monitor) {
     monitors.remove(monitor);
   }
 
   /**
-   * Get the set of all blocked threads and their dependencies in this VM, as reported
-   * by the dependency monitors registered with this manager.
+   * Get the set of all blocked threads and their dependencies in this VM, as reported by the
+   * dependency monitors registered with this manager.
    */
   public static Set<Dependency<Thread, Serializable>> getBlockedThreads() {
-    Set<Dependency<Thread, Serializable>> blockedThreads = new HashSet<Dependency<Thread, Serializable>>();
+    Set<Dependency<Thread, Serializable>> blockedThreads =
+        new HashSet<Dependency<Thread, Serializable>>();
     Thread[] allThreads = getAllThreads();
     for (DependencyMonitor monitor : monitors) {
       blockedThreads.addAll(monitor.getBlockedThreads(allThreads));
@@ -75,12 +67,13 @@ public class DependencyMonitorManager {
   }
 
   /**
-   * Get the set of all resources which are held by threads in this VM, as reported
-   * by the dependency monitors registered with this manager. 
+   * Get the set of all resources which are held by threads in this VM, as reported by the
+   * dependency monitors registered with this manager.
    */
   public static Set<Dependency<Serializable, Thread>> getHeldResources() {
     Thread[] allThreads = getAllThreads();
-    Set<Dependency<Serializable, Thread>> heldResources = new HashSet<Dependency<Serializable, Thread>>();
+    Set<Dependency<Serializable, Thread>> heldResources =
+        new HashSet<Dependency<Serializable, Thread>>();
     for (DependencyMonitor monitor : monitors) {
       heldResources.addAll(monitor.getHeldResources(allThreads));
     }
@@ -89,9 +82,8 @@ public class DependencyMonitorManager {
   }
 
   /**
-   * Get all of the threads in this VM.
-   * TODO - do this more efficiently.
-   * TODO - move this to a more appropriate location.
+   * Get all of the threads in this VM. TODO - do this more efficiently. TODO - move this to a more
+   * appropriate location.
    */
   public static Thread[] getAllThreads() {
 
@@ -102,5 +94,4 @@ public class DependencyMonitorManager {
     results = allStacks.keySet().toArray(results);
     return results;
   }
-
 }

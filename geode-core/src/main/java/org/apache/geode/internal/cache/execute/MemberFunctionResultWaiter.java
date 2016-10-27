@@ -27,18 +27,31 @@ import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.internal.cache.MemberFunctionStreamingMessage;
 
-/**
- * 
- *
- */
+/** */
 public class MemberFunctionResultWaiter extends StreamingFunctionOperation {
 
-  public MemberFunctionResultWaiter(InternalDistributedSystem sys, ResultCollector rc, final Function function, final HashMap<InternalDistributedMember, Object> memberArgs, Set recipients, ResultSender rs) {
+  public MemberFunctionResultWaiter(
+      InternalDistributedSystem sys,
+      ResultCollector rc,
+      final Function function,
+      final HashMap<InternalDistributedMember, Object> memberArgs,
+      Set recipients,
+      ResultSender rs) {
     super(sys, rc, function, memberArgs, recipients, rs);
   }
 
-  protected DistributionMessage createRequestMessage(Set recipients, FunctionStreamingResultCollector processor, boolean isReExecute, boolean isFnSerializationReqd) {
-    MemberFunctionStreamingMessage msg = new MemberFunctionStreamingMessage(this.functionObject, processor.getProcessorId(), memberArgs.get(recipients.toArray()[0]), isFnSerializationReqd, isReExecute);
+  protected DistributionMessage createRequestMessage(
+      Set recipients,
+      FunctionStreamingResultCollector processor,
+      boolean isReExecute,
+      boolean isFnSerializationReqd) {
+    MemberFunctionStreamingMessage msg =
+        new MemberFunctionStreamingMessage(
+            this.functionObject,
+            processor.getProcessorId(),
+            memberArgs.get(recipients.toArray()[0]),
+            isFnSerializationReqd,
+            isReExecute);
     msg.setRecipients(recipients);
     return msg;
   }

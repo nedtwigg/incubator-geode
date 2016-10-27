@@ -16,8 +16,5 @@
  */
 package org.apache.geode.test.junit.categories;
 
-/**
- * JUnit Test Category that specifies a test involving a browser present to test the UI
- */
-public interface UITest {
-}
+/** JUnit Test Category that specifies a test involving a browser present to test the UI */
+public interface UITest {}

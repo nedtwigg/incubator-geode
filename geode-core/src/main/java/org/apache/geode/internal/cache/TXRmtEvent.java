@@ -32,13 +32,10 @@ import org.apache.geode.internal.offheap.annotations.Released;
 import org.apache.geode.internal.offheap.annotations.Retained;
 
 /**
- * <p>
- * The internal implementation of the {@link TransactionEvent}interface used by
- * the remote commit code.
- * 
- * 
+ * The internal implementation of the {@link TransactionEvent}interface used by the remote commit
+ * code.
+ *
  * @since GemFire 4.0
- *  
  */
 public class TXRmtEvent implements TransactionEvent {
   private final TransactionId txId;
@@ -46,8 +43,7 @@ public class TXRmtEvent implements TransactionEvent {
   private Cache cache;
 
   // This list of EntryEventImpls are released by calling freeOffHeapResources
-  @Released
-  private List events;
+  @Released private List events;
 
   TXRmtEvent(TransactionId txId, Cache cache) {
     this.txId = txId;
@@ -60,7 +56,8 @@ public class TXRmtEvent implements TransactionEvent {
   }
 
   private boolean isEventUserVisible(CacheEvent ce) {
-    return BucketRegion.FORCE_LOCAL_LISTENERS_INVOCATION || !(ce.getRegion() instanceof PartitionedRegion);
+    return BucketRegion.FORCE_LOCAL_LISTENERS_INVOCATION
+        || !(ce.getRegion() instanceof PartitionedRegion);
   }
 
   public List getEvents() {
@@ -84,9 +81,8 @@ public class TXRmtEvent implements TransactionEvent {
   }
 
   /**
-   * Do all operations touch internal regions?
-   * Returns false if the transaction is empty
-   * or if any events touch non-internal regions.
+   * Do all operations touch internal regions? Returns false if the transaction is empty or if any
+   * events touch non-internal regions.
    */
   public boolean hasOnlyInternalEvents() {
     if (events == null || events.isEmpty()) {
@@ -190,7 +186,13 @@ public class TXRmtEvent implements TransactionEvent {
   }
 
   @Retained
-  private EntryEventImpl createEvent(LocalRegion r, Operation op, RegionEntry re, Object key, Object newValue, Object aCallbackArgument) {
+  private EntryEventImpl createEvent(
+      LocalRegion r,
+      Operation op,
+      RegionEntry re,
+      Object key,
+      Object newValue,
+      Object aCallbackArgument) {
     DistributedMember originator = ((TXId) this.txId).getMemberId();
     //TODO:ASIF :EventID will not be generated with this constructor . Check if
     // this is correct
@@ -199,17 +201,21 @@ public class TXRmtEvent implements TransactionEvent {
       eventRegion = r.getPartitionedRegion();
     }
     @Retained
-    EntryEventImpl event = EntryEventImpl.create(eventRegion, op, key, newValue, aCallbackArgument, // callbackArg
-        true, // originRemote
-        originator);
+    EntryEventImpl event =
+        EntryEventImpl.create(
+            eventRegion,
+            op,
+            key,
+            newValue,
+            aCallbackArgument, // callbackArg
+            true, // originRemote
+            originator);
     event.setOldValue(re.getValueInVM(r)); // OFFHEAP: copy into heap cd
     event.setTransactionId(getTransactionId());
     return event;
   }
 
-  /**
-   * Add an event to our internal list
-   */
+  /** Add an event to our internal list */
   private void addEvent(EntryEventImpl e) {
     synchronized (this) {
       if (this.events == null) {
@@ -223,11 +229,18 @@ public class TXRmtEvent implements TransactionEvent {
     addEvent(createEvent(r, Operation.DESTROY, re, key, null, aCallbackArgument));
   }
 
-  void addInvalidate(LocalRegion r, RegionEntry re, Object key, Object newValue, Object aCallbackArgument) {
+  void addInvalidate(
+      LocalRegion r, RegionEntry re, Object key, Object newValue, Object aCallbackArgument) {
     addEvent(createEvent(r, Operation.INVALIDATE, re, key, newValue, aCallbackArgument));
   }
 
-  void addPut(Operation putOp, LocalRegion r, RegionEntry re, Object key, Object newValue, Object aCallbackArgument) {
+  void addPut(
+      Operation putOp,
+      LocalRegion r,
+      RegionEntry re,
+      Object key,
+      Object newValue,
+      Object aCallbackArgument) {
     addEvent(createEvent(r, putOp, re, key, newValue, aCallbackArgument));
   }
 

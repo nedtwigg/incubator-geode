@@ -19,21 +19,22 @@ package org.apache.geode.admin;
 import org.apache.geode.distributed.DistributedMember;
 
 /**
- * An event that describes the distributed member originated this event.
- * Instances of this are delivered to a {@link SystemMembershipListener} when a
- * member has joined or left the distributed system.
+ * An event that describes the distributed member originated this event. Instances of this are
+ * delivered to a {@link SystemMembershipListener} when a member has joined or left the distributed
+ * system.
  *
  * @since GemFire 3.5
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public interface SystemMembershipEvent {
-  /**
-   * Returns the distributed member as a String.
-   */
+  /** Returns the distributed member as a String. */
   public String getMemberId();
 
   /**
    * Returns the {@link DistributedMember} that this event originated in.
+   *
    * @return the member that performed the operation that originated this event.
    * @since GemFire 5.0
    */

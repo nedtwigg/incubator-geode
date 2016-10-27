@@ -26,8 +26,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Just like CacheServerTransactionsDUnitTest but configures bridge server
- * with thread pool (i.e. selector).
+ * Just like CacheServerTransactionsDUnitTest but configures bridge server with thread pool (i.e.
+ * selector).
  */
 @Category(DistributedTest.class)
 public class CacheServerTransactionsSelectorDUnitTest extends CacheServerTransactionsDUnitTest {

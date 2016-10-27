@@ -24,8 +24,8 @@ import org.apache.geode.admin.GemFireHealth;
 import java.io.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * fetch its health diagnosis
+ * A message that is sent to a particular distribution manager to fetch its health diagnosis
+ *
  * @since GemFire 3.5
  */
 public final class FetchHealthDiagnosisRequest extends AdminRequest {
@@ -34,9 +34,7 @@ public final class FetchHealthDiagnosisRequest extends AdminRequest {
 
   private GemFireHealth.Health healthCode = null;
 
-  /**
-   * Returns a <code>FetchHealthDiagnosisRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>FetchHealthDiagnosisRequest</code> to be sent to the specified recipient. */
   public static FetchHealthDiagnosisRequest create(int id, GemFireHealth.Health healthCode) {
     FetchHealthDiagnosisRequest m = new FetchHealthDiagnosisRequest();
     m.init_(id, healthCode);
@@ -47,9 +45,7 @@ public final class FetchHealthDiagnosisRequest extends AdminRequest {
     init_(0, null);
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return FetchHealthDiagnosisResponse.create(dm, this.getSender(), this.id, this.healthCode);
@@ -76,12 +72,17 @@ public final class FetchHealthDiagnosisRequest extends AdminRequest {
 
   @Override
   public String toString() {
-    return LocalizedStrings.FetchHealthDiagnosisRequest_FETCHHEALTHDIAGNOSISREQUEST_FROM_ID_1_HEALTHCODE_2.toLocalizedString(new Object[] { this.getRecipient(), Integer.valueOf(this.id), this.healthCode });
+    return LocalizedStrings
+        .FetchHealthDiagnosisRequest_FETCHHEALTHDIAGNOSISREQUEST_FROM_ID_1_HEALTHCODE_2
+        .toLocalizedString(
+            new Object[] {this.getRecipient(), Integer.valueOf(this.id), this.healthCode});
   }
 
   private void init_(int i, GemFireHealth.Health oHC) {
     this.id = i;
     this.healthCode = oHC;
-    this.friendlyName = LocalizedStrings.FetchHealthDiagnosisRequest_FETCH_HEALTH_DIAGNOSIS_FOR_HEALTH_CODE_0.toLocalizedString(this.healthCode);
+    this.friendlyName =
+        LocalizedStrings.FetchHealthDiagnosisRequest_FETCH_HEALTH_DIAGNOSIS_FOR_HEALTH_CODE_0
+            .toLocalizedString(this.healthCode);
   }
 }

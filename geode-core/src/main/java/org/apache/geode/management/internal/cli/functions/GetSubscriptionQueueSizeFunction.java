@@ -30,10 +30,7 @@ import org.apache.geode.management.internal.cli.CliUtil;
 import org.apache.geode.management.internal.cli.domain.SubscriptionQueueSizeResult;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
-/***
- * Function to get subscription-queue-size
- *
- */
+/** * Function to get subscription-queue-size */
 public class GetSubscriptionQueueSizeFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
@@ -41,7 +38,8 @@ public class GetSubscriptionQueueSizeFunction extends FunctionAdapter implements
   @Override
   public void execute(FunctionContext context) {
     final Cache cache = CliUtil.getCacheIfExists();
-    final String memberNameOrId = CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
+    final String memberNameOrId =
+        CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
     String args[] = (String[]) context.getArguments();
     String durableClientId = null, cqName = null;
     SubscriptionQueueSizeResult result = new SubscriptionQueueSizeResult(memberNameOrId);
@@ -59,7 +57,8 @@ public class GetSubscriptionQueueSizeFunction extends FunctionAdapter implements
           if (cqName != null && !cqName.isEmpty()) {
             CqService cqService = cacheClientProxy.getCache().getCqService();
             if (cqService != null) {
-              CqQuery cqQuery = cqService.getClientCqFromServer(cacheClientProxy.getProxyID(), cqName);
+              CqQuery cqQuery =
+                  cqService.getClientCqFromServer(cacheClientProxy.getProxyID(), cqName);
               if (cqQuery != null) {
                 CqQueryVsdStats cqVsdStats = ((InternalCqQuery) cqQuery).getVsdStats();
 
@@ -67,19 +66,29 @@ public class GetSubscriptionQueueSizeFunction extends FunctionAdapter implements
                   long queueSize = cqVsdStats.getNumHAQueuedEvents();
                   result.setSubscriptionQueueSize(queueSize);
                 } else {
-                  result.setErrorMessage(CliStrings.format(CliStrings.COUNT_DURABLE_CQ_EVENTS__DURABLE_CQ_STATS_NOT_FOUND, durableClientId, cqName));
+                  result.setErrorMessage(
+                      CliStrings.format(
+                          CliStrings.COUNT_DURABLE_CQ_EVENTS__DURABLE_CQ_STATS_NOT_FOUND,
+                          durableClientId,
+                          cqName));
                 }
               } else {
-                result.setErrorMessage(CliStrings.format(CliStrings.COUNT_DURABLE_CQ_EVENTS__DURABLE_CQ_NOT_FOUND, durableClientId, cqName));
+                result.setErrorMessage(
+                    CliStrings.format(
+                        CliStrings.COUNT_DURABLE_CQ_EVENTS__DURABLE_CQ_NOT_FOUND,
+                        durableClientId,
+                        cqName));
               }
             } else {
               result.setErrorMessage(CliStrings.COUNT_DURABLE_CQ_EVENTS__NO__CQS__REGISTERED);
             }
           } else {
-            result.setSubscriptionQueueSize(cacheClientNotifier.getDurableClientHAQueueSize(durableClientId));
+            result.setSubscriptionQueueSize(
+                cacheClientNotifier.getDurableClientHAQueueSize(durableClientId));
           }
         } else {
-          result.setErrorMessage(CliStrings.format(CliStrings.NO_CLIENT_FOUND_WITH_CLIENT_ID, durableClientId));
+          result.setErrorMessage(
+              CliStrings.format(CliStrings.NO_CLIENT_FOUND_WITH_CLIENT_ID, durableClientId));
         }
       } else {
         result.setErrorMessage(CliStrings.NO_CLIENT_FOUND);
@@ -95,5 +104,4 @@ public class GetSubscriptionQueueSizeFunction extends FunctionAdapter implements
   public String getId() {
     return GetSubscriptionQueueSizeFunction.class.getName();
   }
-
 }

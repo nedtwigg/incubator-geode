@@ -35,50 +35,38 @@ public class InterestRegistrationEventImpl implements InterestRegistrationEvent,
 
   private static final long serialVersionUID = -5791294858933070049L;
 
-  /**
-   * The name of the region to which this interest event belongs
-   */
+  /** The name of the region to which this interest event belongs */
   private String regionName;
 
-  /**
-   * The Set of keys being registered or unregistered
-   */
+  /** The Set of keys being registered or unregistered */
   private Set keysOfInterest;
 
-  /**
-   * The type of interest
-   */
+  /** The type of interest */
   private int interestType;
 
-  /**
-   * Whether this interest event represents an interest registration
-   */
+  /** Whether this interest event represents an interest registration */
   private boolean isRegister;
 
-  /** 
-   * The <code>ClientSession</code> initiating this interest event 
-   */
+  /** The <code>ClientSession</code> initiating this interest event */
   private transient ClientSession clientSession;
 
-  /**
-   * The GemFire <code>Cache</code>
-   */
+  /** The GemFire <code>Cache</code> */
   private transient Cache cache;
 
-  /**
-   * Constructor. No-arg constructor for data serialization.
-   */
-  public InterestRegistrationEventImpl() {
-  }
+  /** Constructor. No-arg constructor for data serialization. */
+  public InterestRegistrationEventImpl() {}
 
   /**
    * Constructor.
    *
-   * @param regionName
-   *          The name of the region to which this interest event belongs
+   * @param regionName The name of the region to which this interest event belongs
    */
-
-  public InterestRegistrationEventImpl(CacheClientProxy clientSession, String regionName, Set keysOfInterest, int interestType, boolean isRegister) {
+  public InterestRegistrationEventImpl(
+      CacheClientProxy clientSession,
+      String regionName,
+      Set keysOfInterest,
+      int interestType,
+      boolean isRegister) {
     this.cache = clientSession.getCache();
     this.clientSession = clientSession;
     this.regionName = regionName;
@@ -120,8 +108,8 @@ public class InterestRegistrationEventImpl implements InterestRegistrationEvent,
   }
 
   public void toData(DataOutput out) throws IOException {
-    // The proxy isn't being serialized right now, but if it needs to be 
-    // then the proxyId would probably be the best way to do it. 
+    // The proxy isn't being serialized right now, but if it needs to be
+    // then the proxyId would probably be the best way to do it.
     DataSerializer.writeString(this.regionName, out);
     DataSerializer.writeHashSet((HashSet) this.keysOfInterest, out);
     DataSerializer.writePrimitiveInt(this.interestType, out);
@@ -138,7 +126,20 @@ public class InterestRegistrationEventImpl implements InterestRegistrationEvent,
   @Override // GemStoneAddition
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("InterestRegistrationEvent [").append("isRegister=").append(this.isRegister).append("clientSession=").append(this.clientSession).append("; isRegister=").append("; regionName=").append(this.regionName).append("; keysOfInterest=").append(this.keysOfInterest).append("; interestType=").append(InterestType.getString(this.interestType)).append("]");
+    buffer
+        .append("InterestRegistrationEvent [")
+        .append("isRegister=")
+        .append(this.isRegister)
+        .append("clientSession=")
+        .append(this.clientSession)
+        .append("; isRegister=")
+        .append("; regionName=")
+        .append(this.regionName)
+        .append("; keysOfInterest=")
+        .append(this.keysOfInterest)
+        .append("; interestType=")
+        .append(InterestType.getString(this.interestType))
+        .append("]");
     return buffer.toString();
   }
 }

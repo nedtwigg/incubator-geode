@@ -47,9 +47,7 @@ import org.apache.geode.cache.query.QueryService;
 import org.apache.geode.cache.query.data.Portfolio;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class ParameterBindingJUnitTest {
   String regionName = "Portfolios";
@@ -63,15 +61,19 @@ public class ParameterBindingJUnitTest {
     return CacheUtils.createRegion(regionName, Portfolio.class);
   }
 
-  private Index createIndex(String indexName, String indexedExpression, String regionPath) throws Exception {
+  private Index createIndex(String indexName, String indexedExpression, String regionPath)
+      throws Exception {
     QueryService qs = CacheUtils.getQueryService();
     return qs.createIndex(indexName, indexedExpression, regionPath);
   }
 
   private void populateRegion(Region region, int numEntries) {
-    IntStream.range(0, numEntries).parallel().forEach(i -> {
-      region.put("" + i, new Portfolio(i));
-    });
+    IntStream.range(0, numEntries)
+        .parallel()
+        .forEach(
+            i -> {
+              region.put("" + i, new Portfolio(i));
+            });
   }
 
   private Region createAndPopulateRegion(String regionName, int numEntries) {
@@ -85,7 +87,8 @@ public class ParameterBindingJUnitTest {
     CacheUtils.closeCache();
   }
 
-  private void validateQueryWithBindParameter(String queryString, Object[] bindParameters, int expectedSize) throws Exception {
+  private void validateQueryWithBindParameter(
+      String queryString, Object[] bindParameters, int expectedSize) throws Exception {
     Query query = CacheUtils.getQueryService().newQuery(queryString);
     Object result = query.execute(bindParameters);
     assertEquals(expectedSize, ((Collection) result).size());
@@ -95,7 +98,7 @@ public class ParameterBindingJUnitTest {
   public void testBindCollectionInFromClause() throws Exception {
     int numEntries = 4;
     Region region = createAndPopulateRegion(regionName, numEntries);
-    Object params[] = new Object[] { region.values() };
+    Object params[] = new Object[] {region.values()};
     validateQueryWithBindParameter("SELECT DISTINCT * FROM $1 ", params, numEntries);
   }
 
@@ -103,7 +106,7 @@ public class ParameterBindingJUnitTest {
   public void testBindArrayInFromClause() throws Exception {
     int numEntries = 4;
     Region region = createAndPopulateRegion(regionName, numEntries);
-    Object params[] = new Object[] { region.values().toArray() };
+    Object params[] = new Object[] {region.values().toArray()};
     validateQueryWithBindParameter("SELECT DISTINCT * FROM $1 ", params, numEntries);
   }
 
@@ -117,7 +120,7 @@ public class ParameterBindingJUnitTest {
       Region.Entry entry = (Region.Entry) iter.next();
       map.put(entry.getKey(), entry.getValue());
     }
-    Object params[] = new Object[] { map };
+    Object params[] = new Object[] {map};
     validateQueryWithBindParameter("SELECT DISTINCT * FROM $1 ", params, numEntries);
   }
 
@@ -125,7 +128,7 @@ public class ParameterBindingJUnitTest {
   public void testBindRegionInFromClause() throws Exception {
     int numEntries = 4;
     Region region = createAndPopulateRegion(regionName, numEntries);
-    Object params[] = new Object[] { region };
+    Object params[] = new Object[] {region};
     validateQueryWithBindParameter("SELECT DISTINCT * FROM $1 ", params, numEntries);
   }
 
@@ -133,25 +136,31 @@ public class ParameterBindingJUnitTest {
   public void testStringBindValueAsMethodParameter() throws Exception {
     int numEntries = 4;
     Region region = createAndPopulateRegion(regionName, numEntries);
-    Query query = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Portfolios where status.equals($1)");
-    Object params[] = new Object[] { "active" };
-    validateQueryWithBindParameter("SELECT DISTINCT * FROM /Portfolios where status.equals($1)", params, 2);
+    Query query =
+        CacheUtils.getQueryService()
+            .newQuery("SELECT DISTINCT * FROM /Portfolios where status.equals($1)");
+    Object params[] = new Object[] {"active"};
+    validateQueryWithBindParameter(
+        "SELECT DISTINCT * FROM /Portfolios where status.equals($1)", params, 2);
   }
 
   @Test
   public void testBindStringAsBindParameter() throws Exception {
     int numEntries = 4;
     Region region = createAndPopulateRegion(regionName, numEntries);
-    Query query = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Portfolios where status = $1");
-    Object params[] = new Object[] { "active" };
-    validateQueryWithBindParameter("SELECT DISTINCT * FROM /Portfolios where status = $1", params, 2);
+    Query query =
+        CacheUtils.getQueryService()
+            .newQuery("SELECT DISTINCT * FROM /Portfolios where status = $1");
+    Object params[] = new Object[] {"active"};
+    validateQueryWithBindParameter(
+        "SELECT DISTINCT * FROM /Portfolios where status = $1", params, 2);
   }
 
   @Test
   public void testBindInt() throws Exception {
     int numEntries = 4;
     Region region = createAndPopulateRegion(regionName, numEntries);
-    Object params[] = new Object[] { new Integer(1) };
+    Object params[] = new Object[] {new Integer(1)};
     validateQueryWithBindParameter("SELECT DISTINCT * FROM /Portfolios where ID = $1", params, 1);
   }
 
@@ -160,18 +169,26 @@ public class ParameterBindingJUnitTest {
     int numObjects = 10000;
     Region region = createAndPopulateRegion("Portfolios", numObjects);
     createIndex("Status Index", "status", "/Portfolios");
-    final Query query = CacheUtils.getQueryService().newQuery("SELECT * FROM /Portfolios where status like $1");
-    final Object[] bindParam = new Object[] { "%a%" };
+    final Query query =
+        CacheUtils.getQueryService().newQuery("SELECT * FROM /Portfolios where status like $1");
+    final Object[] bindParam = new Object[] {"%a%"};
     Collection<Callable> callables = new ConcurrentLinkedQueue<>();
-    IntStream.range(0, 1000).parallel().forEach(i -> {
-      callables.add(() -> {
-        return query.execute(bindParam);
-      });
-    });
+    IntStream.range(0, 1000)
+        .parallel()
+        .forEach(
+            i -> {
+              callables.add(
+                  () -> {
+                    return query.execute(bindParam);
+                  });
+            });
     Collection<Object> results = MultithreadedTester.runMultithreaded(callables);
-    results.forEach(result -> {
-      assertTrue(result.getClass().getName() + " was not an expected result", result instanceof Collection);
-      assertEquals(numObjects, ((Collection) result).size());
-    });
+    results.forEach(
+        result -> {
+          assertTrue(
+              result.getClass().getName() + " was not an expected result",
+              result instanceof Collection);
+          assertEquals(numObjects, ((Collection) result).size());
+        });
   }
 }

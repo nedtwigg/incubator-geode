@@ -68,8 +68,7 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
     postSetUpCacheMapTxnDUnitTest();
   }
 
-  protected void postSetUpCacheMapTxnDUnitTest() throws Exception {
-  }
+  protected void postSetUpCacheMapTxnDUnitTest() throws Exception {}
 
   @Override
   public final void preTearDown() throws Exception {
@@ -112,7 +111,7 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     vm0.invoke(() -> CacheMapTxnDUnitTest.commitTxn());
-  }//end of testCommitTxn
+  } //end of testCommitTxn
 
   @Test
   public void testRollbackTxn() {
@@ -120,7 +119,7 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     vm0.invoke(() -> CacheMapTxnDUnitTest.rollbackTxn());
-  }//end of testRollbackTxn
+  } //end of testRollbackTxn
 
   @Test
   public void testRollbackTxnClear() {
@@ -146,7 +145,7 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
     if (ob2 != null) {
       fail("failed in testRollbackTxnClear");
     }
-  }//end of testRollbackTxnClear
+  } //end of testRollbackTxnClear
 
   @Test
   public void testMiscMethods() throws Throwable {
@@ -154,8 +153,13 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     vm0.invoke(() -> CacheMapTxnDUnitTest.miscMethodsOwner());
-    AsyncInvocation o2 = vm0.invokeAsync(() -> CacheMapTxnDUnitTest.miscMethodsNotOwner());//invoke in same vm but in seperate thread
-    AsyncInvocation o3 = vm1.invokeAsync(() -> CacheMapTxnDUnitTest.miscMethodsNotOwner());//invoke in another vm
+    AsyncInvocation o2 =
+        vm0.invokeAsync(
+            () ->
+                CacheMapTxnDUnitTest
+                    .miscMethodsNotOwner()); //invoke in same vm but in seperate thread
+    AsyncInvocation o3 =
+        vm1.invokeAsync(() -> CacheMapTxnDUnitTest.miscMethodsNotOwner()); //invoke in another vm
     ThreadUtils.join(o2, 30 * 1000);
     ThreadUtils.join(o3, 30 * 1000);
 
@@ -166,15 +170,14 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
     if (o3.exceptionOccurred()) {
       Assert.fail("o3 failed", o3.getException());
     }
-
-  }//end of testMiscMethods
+  } //end of testMiscMethods
 
   //methods to be executed in remote vms...and called through vm.invoke
 
   public static void commitTxn() {
     try {
       cacheTxnMgr = cache.getCacheTransactionManager();
-      int[] i = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+      int[] i = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
       Object o3;
       o3 = "init";
       region.put("" + i[0], "zero");
@@ -272,13 +275,12 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
         }
       }
     }
-
-  }//end of commitTxn
+  } //end of commitTxn
 
   public static void rollbackTxn() {
     try {
       cacheTxnMgr = cache.getCacheTransactionManager();
-      int[] i = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+      int[] i = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
       Object o3;
       o3 = "init";
       region.put("" + i[0], "zero");
@@ -376,13 +378,12 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
         }
       }
     }
-
-  }//end of rollbackTxn
+  } //end of rollbackTxn
 
   public static void rollbackTxnClear() {
     try {
       cacheTxnMgr = cache.getCacheTransactionManager();
-      int[] i = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+      int[] i = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
       region.put("" + i[0], "zero");
       //begin transaction
       cacheTxnMgr.begin();
@@ -414,13 +415,12 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
       cacheTxnMgr = null;
       throw new AssertionError(ex);
     }
-
-  }//end of rollbackTxnClear
+  } //end of rollbackTxnClear
 
   public static void miscMethodsOwner() {
     try {
       cacheTxnMgr = cache.getCacheTransactionManager();
-      int[] i = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+      int[] i = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
       region.clear();
       region.put("" + i[0], "zero");
       region.put("" + i[1], "first");
@@ -472,8 +472,7 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
         }
       }
     }
-
-  }//end of miscMethodsOwner
+  } //end of miscMethodsOwner
 
   public static void miscMethodsNotOwner() {
     try {
@@ -482,7 +481,10 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
       //test size method
       int j = region.size();
       if (j != 4) {
-        fail("region.size for not owner of transaction returns incorrect results, size is " + j + " but expected 4");
+        fail(
+            "region.size for not owner of transaction returns incorrect results, size is "
+                + j
+                + " but expected 4");
       }
 
       //test entrySet method
@@ -506,7 +508,7 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
     } catch (Exception ex) {
       throw new AssertionError(ex);
     }
-  }//end of miscMethodsNotOwner
+  } //end of miscMethodsNotOwner
 
   //helper methods
   public static Object putMethod(Object ob) {
@@ -531,5 +533,4 @@ public class CacheMapTxnDUnitTest extends JUnit4DistributedTestCase { // TODO: r
     }
     return obj;
   }
-
-}//end of test class
+} //end of test class

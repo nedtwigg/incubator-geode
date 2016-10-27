@@ -35,7 +35,7 @@ public abstract class EnumListenerEvent {
 
   /**
    * Invoke the correct listener method for this event.
-   * 
+   *
    * @since GemFire 5.0
    */
   public abstract void dispatchEvent(CacheEvent event, CacheListener listener);
@@ -50,33 +50,60 @@ public abstract class EnumListenerEvent {
 
   public static final EnumListenerEvent AFTER_REGION_CREATE = new AFTER_REGION_CREATE(); // 5
 
-  public static final EnumListenerEvent AFTER_REGION_INVALIDATE = new AFTER_REGION_INVALIDATE(); // 6
+  public static final EnumListenerEvent AFTER_REGION_INVALIDATE =
+      new AFTER_REGION_INVALIDATE(); // 6
 
   public static final EnumListenerEvent AFTER_REGION_CLEAR = new AFTER_REGION_CLEAR(); // 7
 
   public static final EnumListenerEvent AFTER_REGION_DESTROY = new AFTER_REGION_DESTROY(); // 8
 
-  public static final EnumListenerEvent AFTER_REMOTE_REGION_CREATE = new AFTER_REMOTE_REGION_CREATE();// 9
+  public static final EnumListenerEvent AFTER_REMOTE_REGION_CREATE =
+      new AFTER_REMOTE_REGION_CREATE(); // 9
 
-  public static final EnumListenerEvent AFTER_REMOTE_REGION_DEPARTURE = new AFTER_REMOTE_REGION_DEPARTURE(); // 10
+  public static final EnumListenerEvent AFTER_REMOTE_REGION_DEPARTURE =
+      new AFTER_REMOTE_REGION_DEPARTURE(); // 10
 
-  public static final EnumListenerEvent AFTER_REMOTE_REGION_CRASH = new AFTER_REMOTE_REGION_CRASH();// 11
+  public static final EnumListenerEvent AFTER_REMOTE_REGION_CRASH =
+      new AFTER_REMOTE_REGION_CRASH(); // 11
 
-  public static final EnumListenerEvent AFTER_ROLE_GAIN = new AFTER_ROLE_GAIN();// 12
+  public static final EnumListenerEvent AFTER_ROLE_GAIN = new AFTER_ROLE_GAIN(); // 12
 
-  public static final EnumListenerEvent AFTER_ROLE_LOSS = new AFTER_ROLE_LOSS();// 13
+  public static final EnumListenerEvent AFTER_ROLE_LOSS = new AFTER_ROLE_LOSS(); // 13
 
-  public static final EnumListenerEvent AFTER_REGION_LIVE = new AFTER_REGION_LIVE();// 14  
+  public static final EnumListenerEvent AFTER_REGION_LIVE = new AFTER_REGION_LIVE(); // 14
 
-  public static final EnumListenerEvent AFTER_REGISTER_INSTANTIATOR = new AFTER_REGISTER_INSTANTIATOR();// 15  
+  public static final EnumListenerEvent AFTER_REGISTER_INSTANTIATOR =
+      new AFTER_REGISTER_INSTANTIATOR(); // 15
 
-  public static final EnumListenerEvent AFTER_REGISTER_DATASERIALIZER = new AFTER_REGISTER_DATASERIALIZER();// 16
+  public static final EnumListenerEvent AFTER_REGISTER_DATASERIALIZER =
+      new AFTER_REGISTER_DATASERIALIZER(); // 16
 
-  public static final EnumListenerEvent AFTER_TOMBSTONE_EXPIRATION = new AFTER_TOMBSTONE_EXPIRATION(); // 17
+  public static final EnumListenerEvent AFTER_TOMBSTONE_EXPIRATION =
+      new AFTER_TOMBSTONE_EXPIRATION(); // 17
 
   public static final EnumListenerEvent TIMESTAMP_UPDATE = new TIMESTAMP_UPDATE(); // 18
 
-  private static EnumListenerEvent[] instances = new EnumListenerEvent[] { AFTER_CREATE, AFTER_UPDATE, AFTER_INVALIDATE, AFTER_DESTROY, AFTER_REGION_CREATE, AFTER_REGION_INVALIDATE, AFTER_REGION_CLEAR, AFTER_REGION_DESTROY, AFTER_REMOTE_REGION_CREATE, AFTER_REMOTE_REGION_DEPARTURE, AFTER_REMOTE_REGION_CRASH, AFTER_ROLE_GAIN, AFTER_ROLE_LOSS, AFTER_REGION_LIVE, AFTER_REGISTER_INSTANTIATOR, AFTER_REGISTER_DATASERIALIZER, AFTER_TOMBSTONE_EXPIRATION, TIMESTAMP_UPDATE };
+  private static EnumListenerEvent[] instances =
+      new EnumListenerEvent[] {
+        AFTER_CREATE,
+        AFTER_UPDATE,
+        AFTER_INVALIDATE,
+        AFTER_DESTROY,
+        AFTER_REGION_CREATE,
+        AFTER_REGION_INVALIDATE,
+        AFTER_REGION_CLEAR,
+        AFTER_REGION_DESTROY,
+        AFTER_REMOTE_REGION_CREATE,
+        AFTER_REMOTE_REGION_DEPARTURE,
+        AFTER_REMOTE_REGION_CRASH,
+        AFTER_ROLE_GAIN,
+        AFTER_ROLE_LOSS,
+        AFTER_REGION_LIVE,
+        AFTER_REGISTER_INSTANTIATOR,
+        AFTER_REGISTER_DATASERIALIZER,
+        AFTER_TOMBSTONE_EXPIRATION,
+        TIMESTAMP_UPDATE
+      };
 
   static {
     for (int i = 0; i < instances.length; i++) {
@@ -326,8 +353,7 @@ public abstract class EnumListenerEvent {
     }
 
     @Override
-    public void dispatchEvent(CacheEvent event, CacheListener listener) {
-    }
+    public void dispatchEvent(CacheEvent event, CacheListener listener) {}
 
     @Override
     public byte getEventCode() {
@@ -341,8 +367,7 @@ public abstract class EnumListenerEvent {
     }
 
     @Override
-    public void dispatchEvent(CacheEvent event, CacheListener listener) {
-    }
+    public void dispatchEvent(CacheEvent event, CacheListener listener) {}
 
     @Override
     public byte getEventCode() {
@@ -356,8 +381,7 @@ public abstract class EnumListenerEvent {
     }
 
     @Override
-    public void dispatchEvent(CacheEvent event, CacheListener listener) {
-    }
+    public void dispatchEvent(CacheEvent event, CacheListener listener) {}
 
     @Override
     public byte getEventCode() {
@@ -372,8 +396,7 @@ public abstract class EnumListenerEvent {
     }
 
     @Override
-    public void dispatchEvent(CacheEvent event, CacheListener listener) {
-    }
+    public void dispatchEvent(CacheEvent event, CacheListener listener) {}
 
     @Override
     public byte getEventCode() {
@@ -382,34 +405,31 @@ public abstract class EnumListenerEvent {
   }
 
   /**
-   * 
-   * This method returns the EnumListenerEvent object corresponding to the cCode
-   * given.
-   * 
-   * The mapping of cCode to EnumListenerEvent is :
+   * This method returns the EnumListenerEvent object corresponding to the cCode given.
+   *
+   * <p>The mapping of cCode to EnumListenerEvent is :
+   *
    * <ul>
-   * <li>1 - AFTER_CREATE
-   * <li>2 - AFTER_UPDATE
-   * <li>3 - AFTER_INVALIDATE
-   * <li>4 - AFTER_DESTROY
-   * <li>5 - AFTER_REGION_CREATE
-   * <li>6 - AFTER_REGION_INVALIDATE
-   * <li>7 - AFTER_REGION_CLEAR
-   * <li>8 - AFTER_REGION_DESTROY
-   * <li>9 - AFTER_REMOTE_REGION_CREATE
-   * <li>10 - AFTER_REMOTE_REGION_DEPARTURE
-   * <li>11 - AFTER_REMOTE_REGION_CRASH
-   * <li>12 - AFTER_ROLE_GAIN
-   * <li>13 - AFTER_ROLE_LOSS
-   * <li>14 - AFTER_REGION_LIVE
-   * <li>15 - AFTER_REGISTER_INSTANTIATOR
-   * <li>16 - AFTER_REGISTER_DATASERIALIZER
-   * <li>17 - AFTER_TOMBSTONE_EXPIRATION
+   *   <li>1 - AFTER_CREATE
+   *   <li>2 - AFTER_UPDATE
+   *   <li>3 - AFTER_INVALIDATE
+   *   <li>4 - AFTER_DESTROY
+   *   <li>5 - AFTER_REGION_CREATE
+   *   <li>6 - AFTER_REGION_INVALIDATE
+   *   <li>7 - AFTER_REGION_CLEAR
+   *   <li>8 - AFTER_REGION_DESTROY
+   *   <li>9 - AFTER_REMOTE_REGION_CREATE
+   *   <li>10 - AFTER_REMOTE_REGION_DEPARTURE
+   *   <li>11 - AFTER_REMOTE_REGION_CRASH
+   *   <li>12 - AFTER_ROLE_GAIN
+   *   <li>13 - AFTER_ROLE_LOSS
+   *   <li>14 - AFTER_REGION_LIVE
+   *   <li>15 - AFTER_REGISTER_INSTANTIATOR
+   *   <li>16 - AFTER_REGISTER_DATASERIALIZER
+   *   <li>17 - AFTER_TOMBSTONE_EXPIRATION
    * </ul>
-   * 
-   * @param eventCode
-   *          the eventCode corresponding to the EnumListenerEvent object
-   *          desired
+   *
+   * @param eventCode the eventCode corresponding to the EnumListenerEvent object desired
    * @return the EnumListenerEvent object corresponding to the cCode
    */
   public static EnumListenerEvent getEnumListenerEvent(int eventCode) {

@@ -29,8 +29,8 @@ import org.apache.geode.cache30.TXOrderDUnitTest;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Same tests as that of {@link TXOrderDUnitTest} after setting
- * "distributed-transactions" property to true
+ * Same tests as that of {@link TXOrderDUnitTest} after setting "distributed-transactions" property
+ * to true
  */
 @Category(DistributedTest.class)
 public class DistTXOrderDUnitTest extends TXOrderDUnitTest {
@@ -47,7 +47,7 @@ public class DistTXOrderDUnitTest extends TXOrderDUnitTest {
   @Test
   public void testFarSideOrder() throws CacheException {
     // [DISTTX] TODO test overridden intentionally and left blank as it fails
-    // fix this 
+    // fix this
   }
 
   @Ignore("TODO: test is disabled for Dist TX")
@@ -55,6 +55,6 @@ public class DistTXOrderDUnitTest extends TXOrderDUnitTest {
   @Test
   public void testInternalRegionNotExposed() {
     // [DISTTX] TODO test overridden intentionally and left blank as it fails
-    // fix this 
+    // fix this
   }
 }

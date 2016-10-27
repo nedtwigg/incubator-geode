@@ -27,11 +27,10 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
 /**
- * Sent to a locator to request it to find (and possibly start)
- * a jmx manager for us. It returns a JmxManagerLocatorResponse.
- * 
- * @since GemFire 7.0
+ * Sent to a locator to request it to find (and possibly start) a jmx manager for us. It returns a
+ * JmxManagerLocatorResponse.
  *
+ * @since GemFire 7.0
  */
 public class JmxManagerLocatorResponse implements DataSerializableFixedID {
   private String host;
@@ -46,8 +45,7 @@ public class JmxManagerLocatorResponse implements DataSerializableFixedID {
     this.ex = ex;
   }
 
-  public JmxManagerLocatorResponse() {
-  }
+  public JmxManagerLocatorResponse() {}
 
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.host = DataSerializer.readString(in);
@@ -69,7 +67,15 @@ public class JmxManagerLocatorResponse implements DataSerializableFixedID {
 
   @Override
   public String toString() {
-    return "JmxManagerLocatorResponse [host=" + host + ", port=" + port + ", ssl=" + ssl + ", ex=" + ex + "]";
+    return "JmxManagerLocatorResponse [host="
+        + host
+        + ", port="
+        + port
+        + ", ssl="
+        + ssl
+        + ", ex="
+        + ex
+        + "]";
   }
 
   public String getHost() {

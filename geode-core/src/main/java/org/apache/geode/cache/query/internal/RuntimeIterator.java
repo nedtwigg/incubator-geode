@@ -25,17 +25,15 @@ import org.apache.geode.cache.query.internal.types.TypeUtils;
 import org.apache.geode.cache.query.types.*;
 
 /**
- * Value representing a current iteration element. This is the representation
- * used during evaluation.
- * 
- * A RuntimeIterator can be in one of two states. If it is independent of the
- * current context scope then its collection is evaluated lazily, in which case
- * collection is initialized and knows its elementType. The elementType field is
- * the same value as in the collection. Otherwise, collection is UNINITIALIZED
- * and the elementType is set in any case.
- * 
- * A RuntimeIterator can also be named or anonymous (name is null).
- * 
+ * Value representing a current iteration element. This is the representation used during
+ * evaluation.
+ *
+ * <p>A RuntimeIterator can be in one of two states. If it is independent of the current context
+ * scope then its collection is evaluated lazily, in which case collection is initialized and knows
+ * its elementType. The elementType field is the same value as in the collection. Otherwise,
+ * collection is UNINITIALIZED and the elementType is set in any case.
+ *
+ * <p>A RuntimeIterator can also be named or anonymous (name is null).
  */
 public class RuntimeIterator extends AbstractCompiledValue {
 
@@ -63,7 +61,9 @@ public class RuntimeIterator extends AbstractCompiledValue {
 
   RuntimeIterator(CompiledIteratorDef cmpIteratorDefn, ObjectType elementType) {
     if (elementType == null || cmpIteratorDefn == null) {
-      throw new IllegalArgumentException(LocalizedStrings.RuntimeIterator_ELEMENTTYPE_ANDOR_CMPITERATORDEFN_SHOULD_NOT_BE_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.RuntimeIterator_ELEMENTTYPE_ANDOR_CMPITERATORDEFN_SHOULD_NOT_BE_NULL
+              .toLocalizedString());
     }
     this.name = cmpIteratorDefn.getName();
     this.elementType = elementType;
@@ -73,7 +73,7 @@ public class RuntimeIterator extends AbstractCompiledValue {
   //  public RuntimeIterator(String name, SelectResults collection) {
   //    if (collection == null)
   //      throw new IllegalArgumentException("base collection must not be null");
-  //    
+  //
   //    this.name = name; // may be null
   //    this.collection = collection;
   //    this.cmpIteratorDefn = null;
@@ -95,13 +95,16 @@ public class RuntimeIterator extends AbstractCompiledValue {
   }
 
   /**
-   * (Re)evaluate in the context of the current iterations through the
-   * cross-product. If this iterator is not dependent on the current iteration,
-   * then just return the previously evaluated collection. Otherwise,
-   * re-evaluate. Returns null if the collection itself is null or UNDEFINED
+   * (Re)evaluate in the context of the current iterations through the cross-product. If this
+   * iterator is not dependent on the current iteration, then just return the previously evaluated
+   * collection. Otherwise, re-evaluate. Returns null if the collection itself is null or UNDEFINED
    */
-  public SelectResults evaluateCollection(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
-    if (this.collection != UNINITIALIZED && !this.cmpIteratorDefn.isDependentOnAnyIteratorOfScopeLessThanItsOwn(context) && this.scopeID != IndexCreationHelper.INDEX_QUERY_SCOPE_ID) {
+  public SelectResults evaluateCollection(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
+    if (this.collection != UNINITIALIZED
+        && !this.cmpIteratorDefn.isDependentOnAnyIteratorOfScopeLessThanItsOwn(context)
+        && this.scopeID != IndexCreationHelper.INDEX_QUERY_SCOPE_ID) {
       return this.collection;
     }
     // limit the scope for evaluation to this RuntimeIterator:
@@ -130,8 +133,7 @@ public class RuntimeIterator extends AbstractCompiledValue {
 
   @Override
   public boolean isDependentOnIterator(RuntimeIterator itr, ExecutionContext context) {
-    if (itr == this)
-      return true; // never true(?)
+    if (itr == this) return true; // never true(?)
     return this.cmpIteratorDefn.isDependentOnIterator(itr, context);
   }
 
@@ -145,11 +147,14 @@ public class RuntimeIterator extends AbstractCompiledValue {
   }
 
   public Object evaluate(ExecutionContext context) {
-    Support.Assert(current != UNINITIALIZED, "error to evaluate RuntimeIterator without setting current first");
+    Support.Assert(
+        current != UNINITIALIZED,
+        "error to evaluate RuntimeIterator without setting current first");
     return this.current;
   }
 
-  boolean containsProperty(String name, int numArgs, boolean mustBeMethod) throws AmbiguousNameException {
+  boolean containsProperty(String name, int numArgs, boolean mustBeMethod)
+      throws AmbiguousNameException {
     // first handle structs
     if ((this.elementType instanceof StructType) && !mustBeMethod) {
       //check field names
@@ -179,8 +184,7 @@ public class RuntimeIterator extends AbstractCompiledValue {
       Method[] methods = clazz.getMethods();
       for (int i = 0; i < methods.length; i++) {
         Method m = methods[i];
-        if (m.getName().equals(name) && m.getParameterTypes().length == numArgs)
-          return true;
+        if (m.getName().equals(name) && m.getParameterTypes().length == numArgs) return true;
       }
       return false;
     }
@@ -308,7 +312,8 @@ public class RuntimeIterator extends AbstractCompiledValue {
   }
 
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException {
     //Asif: prepend the internal iterator variable name for this
     // RunTimeIterator
     //
@@ -316,7 +321,8 @@ public class RuntimeIterator extends AbstractCompiledValue {
     if (currScopeID == this.scopeID) {
       // Support.Assert(this.index_internal_id != null, "Index_Internal_ID
       // should have been set at this point");
-      clauseBuffer.insert(0, this.index_internal_id == null ? this.internalId : this.index_internal_id);
+      clauseBuffer.insert(
+          0, this.index_internal_id == null ? this.internalId : this.index_internal_id);
     } else {
       clauseBuffer.insert(0, internalId).insert(0, '_').insert(0, this.scopeID).insert(0, "scope");
     }

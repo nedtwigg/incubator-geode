@@ -28,32 +28,50 @@ import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
-public class IntegratedClientDestroyRegionAuthDistributedTest extends AbstractSecureServerDUnitTest {
+@Category({DistributedTest.class, SecurityTest.class})
+public class IntegratedClientDestroyRegionAuthDistributedTest
+    extends AbstractSecureServerDUnitTest {
 
   @Test
   public void testDestroyRegion() throws InterruptedException {
-    client1.invoke(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("dataWriter", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    client1.invoke(
+        () -> {
+          ClientCache cache =
+              new ClientCacheFactory(createClientProperties("dataWriter", "1234567"))
+                  .setPoolSubscriptionEnabled(true)
+                  .addPoolServer("localhost", serverPort)
+                  .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      assertNotAuthorized(() -> region.destroyRegion(), "DATA:MANAGE");
-    });
+          Region region =
+              cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+          assertNotAuthorized(() -> region.destroyRegion(), "DATA:MANAGE");
+        });
 
-    client2.invoke(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionManager", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    client2.invoke(
+        () -> {
+          ClientCache cache =
+              new ClientCacheFactory(createClientProperties("authRegionManager", "1234567"))
+                  .setPoolSubscriptionEnabled(true)
+                  .addPoolServer("localhost", serverPort)
+                  .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      assertNotAuthorized(() -> region.destroyRegion(), "DATA:MANAGE");
-    });
+          Region region =
+              cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+          assertNotAuthorized(() -> region.destroyRegion(), "DATA:MANAGE");
+        });
 
-    client3.invoke(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    client3.invoke(
+        () -> {
+          ClientCache cache =
+              new ClientCacheFactory(createClientProperties("super-user", "1234567"))
+                  .setPoolSubscriptionEnabled(true)
+                  .addPoolServer("localhost", serverPort)
+                  .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      region.destroyRegion();
-      assertThat(region.isDestroyed()).isTrue();
-    });
+          Region region =
+              cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+          region.destroyRegion();
+          assertThat(region.isDestroyed()).isTrue();
+        });
   }
-
 }

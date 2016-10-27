@@ -38,9 +38,7 @@ import org.apache.geode.test.dunit.AsyncInvocation;
 import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
-/**
- *
- */
+/** */
 @Category(DistributedTest.class)
 public class PersistentRecoveryOrderOldConfigDUnitTest extends PersistentRecoveryOrderDUnitTest {
 
@@ -51,24 +49,24 @@ public class PersistentRecoveryOrderOldConfigDUnitTest extends PersistentRecover
 
   @Override
   protected AsyncInvocation createPersistentRegionAsync(final VM vm) {
-    SerializableRunnable createRegion = new SerializableRunnable("Create persistent region") {
-      public void run() {
-        Cache cache = getCache();
-        File dir = getDiskDirForVM(vm);
-        dir.mkdirs();
-        RegionFactory rf = new RegionFactory();
-        //        rf.setDiskSynchronous(true);
-        rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-        rf.setScope(Scope.DISTRIBUTED_ACK);
-        rf.setDiskDirs(new File[] { dir });
-        DiskWriteAttributesFactory dwf = new DiskWriteAttributesFactory();
-        dwf.setMaxOplogSize(1);
-        dwf.setSynchronous(true);
-        rf.setDiskWriteAttributes(dwf.create());
-        rf.create(REGION_NAME);
-      }
-    };
+    SerializableRunnable createRegion =
+        new SerializableRunnable("Create persistent region") {
+          public void run() {
+            Cache cache = getCache();
+            File dir = getDiskDirForVM(vm);
+            dir.mkdirs();
+            RegionFactory rf = new RegionFactory();
+            //        rf.setDiskSynchronous(true);
+            rf.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+            rf.setScope(Scope.DISTRIBUTED_ACK);
+            rf.setDiskDirs(new File[] {dir});
+            DiskWriteAttributesFactory dwf = new DiskWriteAttributesFactory();
+            dwf.setMaxOplogSize(1);
+            dwf.setSynchronous(true);
+            rf.setDiskWriteAttributes(dwf.create());
+            rf.create(REGION_NAME);
+          }
+        };
     return vm.invokeAsync(createRegion);
   }
-
 }

@@ -48,13 +48,11 @@ import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
 
-/**
- * StatArchiveReader provides APIs to read statistic snapshots from an archive
- * file.
- */
+/** StatArchiveReader provides APIs to read statistic snapshots from an archive file. */
 public class StatArchiveReader implements StatArchiveFormat {
 
   protected static final NumberFormat nf = NumberFormat.getNumberInstance();
+
   static {
     nf.setMaximumFractionDigits(2);
     nf.setGroupingUsed(false);
@@ -66,12 +64,13 @@ public class StatArchiveReader implements StatArchiveFormat {
 
   /**
    * Creates a StatArchiveReader that will read the named archive file.
-   * @param autoClose if its <code>true</code> then the reader will close
-   *   input files as soon as it finds their end.
-   * @throws IOException if <code>archiveName</code> could not be opened
-   * read, or closed.
+   *
+   * @param autoClose if its <code>true</code> then the reader will close input files as soon as it
+   *     finds their end.
+   * @throws IOException if <code>archiveName</code> could not be opened read, or closed.
    */
-  public StatArchiveReader(File[] archiveNames, ValueFilter[] filters, boolean autoClose) throws IOException {
+  public StatArchiveReader(File[] archiveNames, ValueFilter[] filters, boolean autoClose)
+      throws IOException {
     this.archives = new StatArchiveFile[archiveNames.length];
     this.dump = Boolean.getBoolean("StatArchiveReader.dumpall");
     for (int i = 0; i < archiveNames.length; i++) {
@@ -87,16 +86,16 @@ public class StatArchiveReader implements StatArchiveFormat {
 
   /**
    * Creates a StatArchiveReader that will read the named archive file.
-   * @throws IOException if <code>archiveName</code> could not be opened
-   * read, or closed.
+   *
+   * @throws IOException if <code>archiveName</code> could not be opened read, or closed.
    */
   public StatArchiveReader(String archiveName) throws IOException {
-    this(new File[] { new File(archiveName) }, null, false);
+    this(new File[] {new File(archiveName)}, null, false);
   }
 
   /**
-   * Returns an array of stat values that match the specified spec.
-   * If nothing matches then an empty array is returned.
+   * Returns an array of stat values that match the specified spec. If nothing matches then an empty
+   * array is returned.
    */
   public StatValue[] matchSpec(StatSpec spec) {
     if (spec.getCombineType() == StatSpec.GLOBAL) {
@@ -106,7 +105,7 @@ public class StatArchiveReader implements StatArchiveFormat {
       } else {
         ComboValue cv = new ComboValue(allValues);
         // need to save this in reader's combo value list
-        return new StatValue[] { cv };
+        return new StatValue[] {cv};
       }
     } else {
       List l = new ArrayList();
@@ -123,14 +122,14 @@ public class StatArchiveReader implements StatArchiveFormat {
   }
 
   /**
-   * Checks to see if any archives have changed since the StatArchiverReader
-   * instance was created or last updated. If an archive has additional
-   * samples then those are read the resource instances maintained by the
-   * reader are updated.
+   * Checks to see if any archives have changed since the StatArchiverReader instance was created or
+   * last updated. If an archive has additional samples then those are read the resource instances
+   * maintained by the reader are updated.
+   *
    * <p>Once closed a reader can no longer be updated.
+   *
    * @return true if update read some new data.
-   * @throws IOException if an archive could not be opened
-   * read, or closed.
+   * @throws IOException if an archive could not be opened read, or closed.
    */
   public boolean update() throws IOException {
     return update(true, false);
@@ -154,10 +153,7 @@ public class StatArchiveReader implements StatArchiveFormat {
     return result;
   }
 
-  /**
-   * Returns an unmodifiable list of all the {@link ResourceInst}
-   * this reader contains.
-   */
+  /** Returns an unmodifiable list of all the {@link ResourceInst} this reader contains. */
   public List getResourceInstList() {
     return new ResourceInstList();
   }
@@ -166,9 +162,7 @@ public class StatArchiveReader implements StatArchiveFormat {
     return this.archives;
   }
 
-  /**
-   * Closes all archives.
-   */
+  /** Closes all archives. */
   public void close() throws IOException {
     if (!this.closed) {
       StatArchiveReader.StatArchiveFile[] archives = getArchives();
@@ -200,26 +194,26 @@ public class StatArchiveReader implements StatArchiveFormat {
 
   protected static double bitsToDouble(int type, long bits) {
     switch (type) {
-    case BOOLEAN_CODE:
-    case BYTE_CODE:
-    case CHAR_CODE:
-    case WCHAR_CODE:
-    case SHORT_CODE:
-    case INT_CODE:
-    case LONG_CODE:
-      return bits;
-    case FLOAT_CODE:
-      return Float.intBitsToFloat((int) bits);
-    case DOUBLE_CODE:
-      return Double.longBitsToDouble(bits);
-    default:
-      throw new InternalGemFireException(LocalizedStrings.StatArchiveReader_UNEXPECTED_TYPECODE_0.toLocalizedString(Integer.valueOf(type)));
+      case BOOLEAN_CODE:
+      case BYTE_CODE:
+      case CHAR_CODE:
+      case WCHAR_CODE:
+      case SHORT_CODE:
+      case INT_CODE:
+      case LONG_CODE:
+        return bits;
+      case FLOAT_CODE:
+        return Float.intBitsToFloat((int) bits);
+      case DOUBLE_CODE:
+        return Double.longBitsToDouble(bits);
+      default:
+        throw new InternalGemFireException(
+            LocalizedStrings.StatArchiveReader_UNEXPECTED_TYPECODE_0.toLocalizedString(
+                Integer.valueOf(type)));
     }
   }
 
-  /**
-   * Simple utility to read and dump statistic archive.
-   */
+  /** Simple utility to read and dump statistic archive. */
   public static void main(String args[]) throws IOException {
     String archiveName = null;
     if (args.length > 1) {
@@ -235,9 +229,7 @@ public class StatArchiveReader implements StatArchiveFormat {
     reader.close();
   }
 
-  /**
-   * Wraps an instance of StatSpec but alwasy returns a combine type of NONE.
-   */
+  /** Wraps an instance of StatSpec but alwasy returns a combine type of NONE. */
   private static class RawStatSpec implements StatSpec {
     private final StatSpec spec;
 
@@ -296,9 +288,7 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
   }
 
-  /**
-   * Describes a single statistic.
-   */
+  /** Describes a single statistic. */
   public static class StatDescriptor {
     private boolean loaded;
     private String name;
@@ -310,10 +300,30 @@ public class StatArchiveReader implements StatArchiveFormat {
     private String desc;
 
     protected void dump(PrintWriter stream) {
-      stream.println("  " + name + ": type=" + typeCode + " offset=" + offset + (isCounter ? " counter" : "") + " units=" + units + " largerBetter=" + largerBetter + " desc=" + desc);
+      stream.println(
+          "  "
+              + name
+              + ": type="
+              + typeCode
+              + " offset="
+              + offset
+              + (isCounter ? " counter" : "")
+              + " units="
+              + units
+              + " largerBetter="
+              + largerBetter
+              + " desc="
+              + desc);
     }
 
-    protected StatDescriptor(String name, int offset, boolean isCounter, boolean largerBetter, byte typeCode, String units, String desc) {
+    protected StatDescriptor(
+        String name,
+        int offset,
+        boolean isCounter,
+        boolean largerBetter,
+        byte typeCode,
+        String units,
+        String desc) {
       this.loaded = true;
       this.name = name;
       this.offset = offset;
@@ -336,62 +346,50 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     /**
-     * Returns the type code of this statistic.
-     * It will be one of the following values:
+     * Returns the type code of this statistic. It will be one of the following values:
+     *
      * <ul>
-     * <li> {@link #BOOLEAN_CODE}
-     * <li> {@link #WCHAR_CODE}
-     * <li> {@link #CHAR_CODE}
-     * <li> {@link #BYTE_CODE}
-     * <li> {@link #SHORT_CODE}
-     * <li> {@link #INT_CODE}
-     * <li> {@link #LONG_CODE}
-     * <li> {@link #FLOAT_CODE}
-     * <li> {@link #DOUBLE_CODE}
+     *   <li> {@link #BOOLEAN_CODE}
+     *   <li> {@link #WCHAR_CODE}
+     *   <li> {@link #CHAR_CODE}
+     *   <li> {@link #BYTE_CODE}
+     *   <li> {@link #SHORT_CODE}
+     *   <li> {@link #INT_CODE}
+     *   <li> {@link #LONG_CODE}
+     *   <li> {@link #FLOAT_CODE}
+     *   <li> {@link #DOUBLE_CODE}
      * </ul>
      */
     public byte getTypeCode() {
       return this.typeCode;
     }
 
-    /**
-     * Returns the name of this statistic.
-     */
+    /** Returns the name of this statistic. */
     public String getName() {
       return this.name;
     }
 
-    /**
-     * Returns true if this statistic's value will always increase.
-     */
+    /** Returns true if this statistic's value will always increase. */
     public boolean isCounter() {
       return this.isCounter;
     }
 
-    /**
-     * Returns true if larger values indicate better performance.
-     */
+    /** Returns true if larger values indicate better performance. */
     public boolean isLargerBetter() {
       return this.largerBetter;
     }
 
-    /**
-     * Returns a string that describes the units this statistic measures.
-     */
+    /** Returns a string that describes the units this statistic measures. */
     public String getUnits() {
       return this.units;
     }
 
-    /**
-     * Returns a textual description of this statistic.
-     */
+    /** Returns a textual description of this statistic. */
     public String getDescription() {
       return this.desc;
     }
 
-    /**
-     * Returns the offset of this stat in its type.
-     */
+    /** Returns the offset of this stat in its type. */
     public int getOffset() {
       return this.offset;
     }
@@ -399,159 +397,135 @@ public class StatArchiveReader implements StatArchiveFormat {
 
   public static interface StatValue {
     /**
-     * {@link StatArchiveReader.StatValue} filter that causes the
-     * statistic values to be unfiltered. This causes the raw values
-     * written to the archive to be used.
-     * <p>This is the default filter for non-counter statistics.
-     * To determine if a statistic is not a counter use {@link StatArchiveReader.StatDescriptor#isCounter}.  */
+     * {@link StatArchiveReader.StatValue} filter that causes the statistic values to be unfiltered.
+     * This causes the raw values written to the archive to be used.
+     *
+     * <p>This is the default filter for non-counter statistics. To determine if a statistic is not
+     * a counter use {@link StatArchiveReader.StatDescriptor#isCounter}.
+     */
     public static final int FILTER_NONE = 0;
     /**
-     * {@link StatArchiveReader.StatValue} filter that causes the
-     * statistic values to be filtered to reflect how often they
-     * change per second.  Since the difference between two samples is
-     * used to calculate the value this causes the {@link StatArchiveReader.StatValue}
-     * to have one less sample than {@link #FILTER_NONE}. The instance
-     * time stamp that does not have a per second value is the
-     * instance's first time stamp {@link
+     * {@link StatArchiveReader.StatValue} filter that causes the statistic values to be filtered to
+     * reflect how often they change per second. Since the difference between two samples is used to
+     * calculate the value this causes the {@link StatArchiveReader.StatValue} to have one less
+     * sample than {@link #FILTER_NONE}. The instance time stamp that does not have a per second
+     * value is the instance's first time stamp {@link
      * StatArchiveReader.ResourceInst#getFirstTimeMillis}.
-     * <p>This is the default filter for counter statistics.
-     * To determine if a statistic is a counter use {@link StatArchiveReader.StatDescriptor#isCounter}.  */
+     *
+     * <p>This is the default filter for counter statistics. To determine if a statistic is a
+     * counter use {@link StatArchiveReader.StatDescriptor#isCounter}.
+     */
     public static final int FILTER_PERSEC = 1;
     /**
-     * {@link StatArchiveReader.StatValue} filter that causes the
-     * statistic values to be filtered to reflect how much they
-     * changed between sample periods.  Since the difference between
-     * two samples is used to calculate the value this causes the
-     * {@link StatArchiveReader.StatValue} to have one less sample than {@link
-     * #FILTER_NONE}. The instance time stamp that does not have a per
-     * second value is the instance's first time stamp {@link
+     * {@link StatArchiveReader.StatValue} filter that causes the statistic values to be filtered to
+     * reflect how much they changed between sample periods. Since the difference between two
+     * samples is used to calculate the value this causes the {@link StatArchiveReader.StatValue} to
+     * have one less sample than {@link #FILTER_NONE}. The instance time stamp that does not have a
+     * per second value is the instance's first time stamp {@link
      * StatArchiveReader.ResourceInst#getFirstTimeMillis}.
      */
     public static final int FILTER_PERSAMPLE = 2;
 
     /**
-     * Creates and returns a trimmed version of this stat value.
-     * Any samples taken before <code>startTime</code> and after
-     * <code>endTime</code> are discarded from the resulting value.
-     * Set a time parameter to <code>-1</code> to not trim that side.
+     * Creates and returns a trimmed version of this stat value. Any samples taken before <code>
+     * startTime</code> and after <code>endTime</code> are discarded from the resulting value. Set a
+     * time parameter to <code>-1</code> to not trim that side.
      */
     public StatValue createTrimmed(long startTime, long endTime);
 
-    /**
-     * Returns true if value has data that has been trimmed off it
-     * by a start timestamp.
-     */
+    /** Returns true if value has data that has been trimmed off it by a start timestamp. */
     public boolean isTrimmedLeft();
 
     /**
-     * Gets the {@link StatArchiveReader.ResourceType type} of the
-     * resources that this value belongs to.
+     * Gets the {@link StatArchiveReader.ResourceType type} of the resources that this value belongs
+     * to.
      */
     public ResourceType getType();
 
-    /**
-     * Gets the {@link StatArchiveReader.ResourceInst resources} that this value
-     * belongs to.
-     */
+    /** Gets the {@link StatArchiveReader.ResourceInst resources} that this value belongs to. */
     public ResourceInst[] getResources();
 
     /**
-     * Returns an array of timestamps for each unfiltered snapshot in this value.
-     * Each returned time stamp is the number of millis since
-     * midnight, Jan 1, 1970 UTC.
+     * Returns an array of timestamps for each unfiltered snapshot in this value. Each returned time
+     * stamp is the number of millis since midnight, Jan 1, 1970 UTC.
      */
     public long[] getRawAbsoluteTimeStamps();
 
     /**
-     * Returns an array of timestamps for each unfiltered snapshot in this value.
-     * Each returned time stamp is the number of millis since
-     * midnight, Jan 1, 1970 UTC.
-     * The resolution is seconds.
+     * Returns an array of timestamps for each unfiltered snapshot in this value. Each returned time
+     * stamp is the number of millis since midnight, Jan 1, 1970 UTC. The resolution is seconds.
      */
     public long[] getRawAbsoluteTimeStampsWithSecondRes();
 
     /**
-     * Returns an array of doubles containing the unfiltered value of this
-     * statistic for each point in time that it was sampled.
+     * Returns an array of doubles containing the unfiltered value of this statistic for each point
+     * in time that it was sampled.
      */
     public double[] getRawSnapshots();
 
     /**
-     * Returns an array of doubles containing the filtered value of this
-     * statistic for each point in time that it was sampled.
+     * Returns an array of doubles containing the filtered value of this statistic for each point in
+     * time that it was sampled.
      */
     public double[] getSnapshots();
 
-    /**
-     * Returns the number of samples taken of this statistic's value.
-     */
+    /** Returns the number of samples taken of this statistic's value. */
     public int getSnapshotsSize();
 
-    /**
-     * Returns the smallest of all the samples taken of this statistic's value.
-     */
+    /** Returns the smallest of all the samples taken of this statistic's value. */
     public double getSnapshotsMinimum();
 
-    /**
-     * Returns the largest of all the samples taken of this statistic's value.
-     */
+    /** Returns the largest of all the samples taken of this statistic's value. */
     public double getSnapshotsMaximum();
 
-    /**
-     * Returns the average of all the samples taken of this statistic's value.
-     */
+    /** Returns the average of all the samples taken of this statistic's value. */
     public double getSnapshotsAverage();
 
-    /**
-     * Returns the standard deviation of all the samples taken of this statistic's value.
-     */
+    /** Returns the standard deviation of all the samples taken of this statistic's value. */
     public double getSnapshotsStandardDeviation();
 
-    /**
-     * Returns the most recent value of all the samples taken of this statistic's value.
-     */
+    /** Returns the most recent value of all the samples taken of this statistic's value. */
     public double getSnapshotsMostRecent();
 
     /**
-     * Returns true if sample whose value was different from previous values
-     * has been added to this StatValue since the last time this method was
-     * called.
+     * Returns true if sample whose value was different from previous values has been added to this
+     * StatValue since the last time this method was called.
      */
     public boolean hasValueChanged();
 
     /**
-     * Returns the current filter used to calculate this statistic's values.
-     * It will be one of these values:
+     * Returns the current filter used to calculate this statistic's values. It will be one of these
+     * values:
+     *
      * <ul>
-     * <li> {@link #FILTER_NONE}
-     * <li> {@link #FILTER_PERSAMPLE}
-     * <li> {@link #FILTER_PERSEC}
+     *   <li> {@link #FILTER_NONE}
+     *   <li> {@link #FILTER_PERSAMPLE}
+     *   <li> {@link #FILTER_PERSEC}
      * </ul>
      */
     public int getFilter();
 
     /**
-     * Sets the current filter used to calculate this statistic's values.
-     * The default filter is {@link #FILTER_NONE} unless the statistic
-     * is a counter, {@link StatArchiveReader.StatDescriptor#isCounter},
-     * in which case its {@link #FILTER_PERSEC}.
+     * Sets the current filter used to calculate this statistic's values. The default filter is
+     * {@link #FILTER_NONE} unless the statistic is a counter, {@link
+     * StatArchiveReader.StatDescriptor#isCounter}, in which case its {@link #FILTER_PERSEC}.
+     *
      * @param filter It must be one of these values:
-     * <ul>
-     * <li> {@link #FILTER_NONE}
-     * <li> {@link #FILTER_PERSAMPLE}
-     * <li> {@link #FILTER_PERSEC}
-     * </ul>
+     *     <ul>
+     *       <li> {@link #FILTER_NONE}
+     *       <li> {@link #FILTER_PERSAMPLE}
+     *       <li> {@link #FILTER_PERSEC}
+     *     </ul>
+     *
      * @throws IllegalArgumentException if <code>filter</code> is not a valid filter constant.
      */
     public void setFilter(int filter);
 
-    /**
-     * Returns a description of this statistic.
-     */
+    /** Returns a description of this statistic. */
     public StatDescriptor getDescriptor();
   }
 
-  protected static abstract class AbstractValue implements StatValue {
+  protected abstract static class AbstractValue implements StatValue {
     protected StatDescriptor descriptor;
     protected int filter;
 
@@ -613,16 +587,21 @@ public class StatArchiveReader implements StatArchiveFormat {
     public void setFilter(int filter) {
       if (filter != this.filter) {
         if (filter != FILTER_NONE && filter != FILTER_PERSEC && filter != FILTER_PERSAMPLE) {
-          throw new IllegalArgumentException(LocalizedStrings.StatArchiveReader_FILTER_VALUE_0_MUST_BE_1_2_OR_3.toLocalizedString(new Object[] { Integer.valueOf(filter), Integer.valueOf(FILTER_NONE), Integer.valueOf(FILTER_PERSEC), Integer.valueOf(FILTER_PERSAMPLE) }));
+          throw new IllegalArgumentException(
+              LocalizedStrings.StatArchiveReader_FILTER_VALUE_0_MUST_BE_1_2_OR_3.toLocalizedString(
+                  new Object[] {
+                    Integer.valueOf(filter),
+                    Integer.valueOf(FILTER_NONE),
+                    Integer.valueOf(FILTER_PERSEC),
+                    Integer.valueOf(FILTER_PERSAMPLE)
+                  }));
         }
         this.filter = filter;
         this.statsValid = false;
       }
     }
 
-    /**
-     * Calculates each stat given the result of calling getSnapshots
-     */
+    /** Calculates each stat given the result of calling getSnapshots */
     protected void calcStats(double[] values) {
       if (statsValid) {
         return;
@@ -661,9 +640,7 @@ public class StatArchiveReader implements StatArchiveFormat {
       statsValid = true;
     }
 
-    /**
-     * Returns a string representation of this object.
-     */
+    /** Returns a string representation of this object. */
     @Override
     public String toString() {
       calcStats();
@@ -689,32 +666,28 @@ public class StatArchiveReader implements StatArchiveFormat {
       result.append(" max=").append(nf.format(max));
       result.append(" average=").append(nf.format(avg));
       result.append(" stddev=").append(nf.format(stddev));
-      result.append(" last=") // for bug 42532
+      result
+          .append(" last=") // for bug 42532
           .append(nf.format(mostRecent));
       return result.toString();
     }
   }
 
   /**
-   * A ComboValue is a value that is the logical combination of
-   * a set of other stat values.
-   * <p> For now ComboValue has a simple implementation that does not
-   * suppport updates.
+   * A ComboValue is a value that is the logical combination of a set of other stat values.
+   *
+   * <p>For now ComboValue has a simple implementation that does not suppport updates.
    */
   private static class ComboValue extends AbstractValue {
     private final ResourceType type;
     private final StatValue[] values;
 
-    /**
-     * Creates a ComboValue by adding all the specified values together.
-     */
+    /** Creates a ComboValue by adding all the specified values together. */
     ComboValue(List valueList) {
       this((StatValue[]) valueList.toArray(new StatValue[valueList.size()]));
     }
 
-    /**
-     * Creates a ComboValue by adding all the specified values together.
-     */
+    /** Creates a ComboValue by adding all the specified values together. */
     ComboValue(StatValue[] values) {
       this.values = values;
       this.filter = this.values[0].getFilter();
@@ -728,20 +701,26 @@ public class StatArchiveReader implements StatArchiveFormat {
            * the filter since a client has no way to select values
            * based on the filter.
            */
-          throw new IllegalArgumentException(LocalizedStrings.StatArchiveReader_CANT_COMBINE_VALUES_WITH_DIFFERENT_FILTERS.toLocalizedString());
+          throw new IllegalArgumentException(
+              LocalizedStrings.StatArchiveReader_CANT_COMBINE_VALUES_WITH_DIFFERENT_FILTERS
+                  .toLocalizedString());
         }
         if (!typeName.equals(this.values[i].getType().getName())) {
-          throw new IllegalArgumentException(LocalizedStrings.StatArchiveReader_CANT_COMBINE_VALUES_WITH_DIFFERENT_TYPES.toLocalizedString());
+          throw new IllegalArgumentException(
+              LocalizedStrings.StatArchiveReader_CANT_COMBINE_VALUES_WITH_DIFFERENT_TYPES
+                  .toLocalizedString());
         }
         if (!statName.equals(this.values[i].getDescriptor().getName())) {
-          throw new IllegalArgumentException(LocalizedStrings.StatArchiveReader_CANT_COMBINE_DIFFERENT_STATS.toLocalizedString());
+          throw new IllegalArgumentException(
+              LocalizedStrings.StatArchiveReader_CANT_COMBINE_DIFFERENT_STATS.toLocalizedString());
         }
         if (this.values[i].getDescriptor().isCounter()) {
           // its a counter which is not the default
           if (!this.values[i].getDescriptor().isLargerBetter()) {
             // this guy has non-defaults for both use him
             bestTypeIdx = i;
-          } else if (this.values[bestTypeIdx].getDescriptor().isCounter() == this.values[bestTypeIdx].getDescriptor().isLargerBetter()) {
+          } else if (this.values[bestTypeIdx].getDescriptor().isCounter()
+              == this.values[bestTypeIdx].getDescriptor().isLargerBetter()) {
             // as long as we haven't already found a guy with defaults
             // make this guy the best type
             bestTypeIdx = i;
@@ -750,7 +729,8 @@ public class StatArchiveReader implements StatArchiveFormat {
           // its a gauge, see if it has a non-default largerBetter
           if (this.values[i].getDescriptor().isLargerBetter()) {
             // as long as we haven't already found a guy with defaults
-            if (this.values[bestTypeIdx].getDescriptor().isCounter() == this.values[bestTypeIdx].getDescriptor().isLargerBetter()) {
+            if (this.values[bestTypeIdx].getDescriptor().isCounter()
+                == this.values[bestTypeIdx].getDescriptor().isLargerBetter()) {
               // make this guy the best type
               bestTypeIdx = i;
             }
@@ -803,17 +783,15 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     /**
-     * Return true if v is closer to prev.
-     * Return false if v is closer to next.
-     * Return true if v is the same distance from both.
+     * Return true if v is closer to prev. Return false if v is closer to next. Return true if v is
+     * the same distance from both.
      */
     public static boolean closer(long v, long prev, long next) {
       return Math.abs(v - prev) <= Math.abs(v - next);
     }
 
     /**
-     * Return true if the current ts must be inserted instead of
-     * being mapped to the tsAtInsertPoint
+     * Return true if the current ts must be inserted instead of being mapped to the tsAtInsertPoint
      */
     private static boolean mustInsert(int nextIdx, long[] valueTimeStamps, long tsAtInsertPoint) {
       return (nextIdx < valueTimeStamps.length) && (valueTimeStamps[nextIdx] <= tsAtInsertPoint);
@@ -855,16 +833,19 @@ public class StatArchiveReader implements StatArchiveFormat {
           long timeDelta = (valueTimeStamps[j] - tsToInsert) / 2;
           tsToInsert = valueTimeStamps[j];
           long tsAtInsertPoint = ourTimeStamps[ourIdx];
-          while (tsToInsert > tsAtInsertPoint && !closeEnough(tsToInsert, tsAtInsertPoint, timeDelta)) {
+          while (tsToInsert > tsAtInsertPoint
+              && !closeEnough(tsToInsert, tsAtInsertPoint, timeDelta)) {
             //             System.out.println("DEBUG: skipping " + ourIdx + " because it was not closeEnough");
             ourIdx++;
             tsAtInsertPoint = ourTimeStamps[ourIdx];
           }
-          if (closeEnough(tsToInsert, tsAtInsertPoint, timeDelta) && !mustInsert(j + 1, valueTimeStamps, tsAtInsertPoint)) {
+          if (closeEnough(tsToInsert, tsAtInsertPoint, timeDelta)
+              && !mustInsert(j + 1, valueTimeStamps, tsAtInsertPoint)) {
             // It was already in our list so just go to the next one
             j++;
             ourIdx++; // never put the next timestamp at this index
-            while (!closer(tsToInsert, ourTimeStamps[ourIdx - 1], ourTimeStamps[ourIdx]) && !mustInsert(j, valueTimeStamps, ourTimeStamps[ourIdx])) {
+            while (!closer(tsToInsert, ourTimeStamps[ourIdx - 1], ourTimeStamps[ourIdx])
+                && !mustInsert(j, valueTimeStamps, ourTimeStamps[ourIdx])) {
               //               System.out.println("DEBUG: skipping mergeTs[" + (ourIdx-1) + "]="
               //                                  + tsAtInsertPoint + " because it was closer to the next one");
               ourIdx++; // it is closer to the next one so skip forward on more
@@ -872,7 +853,9 @@ public class StatArchiveReader implements StatArchiveFormat {
           } else {
             // its not in our list so add it
             int endRunIdx = j + 1;
-            while (endRunIdx < valueTimeStamps.length && valueTimeStamps[endRunIdx] < tsAtInsertPoint && !closeEnough(valueTimeStamps[endRunIdx], tsAtInsertPoint, timeDelta)) {
+            while (endRunIdx < valueTimeStamps.length
+                && valueTimeStamps[endRunIdx] < tsAtInsertPoint
+                && !closeEnough(valueTimeStamps[endRunIdx], tsAtInsertPoint, timeDelta)) {
               endRunIdx++;
             }
             int numToCopy = endRunIdx - j;
@@ -898,7 +881,8 @@ public class StatArchiveReader implements StatArchiveFormat {
               ourTimeStamps = tmp;
             }
             // make room for insert
-            System.arraycopy(ourTimeStamps, ourIdx, ourTimeStamps, ourIdx + numToCopy, tsCount - ourIdx);
+            System.arraycopy(
+                ourTimeStamps, ourIdx, ourTimeStamps, ourIdx + numToCopy, tsCount - ourIdx);
             // insert the elements
             if (numToCopy == 1) {
               ourTimeStamps[ourIdx] = valueTimeStamps[j];
@@ -907,7 +891,7 @@ public class StatArchiveReader implements StatArchiveFormat {
             }
             ourIdx += numToCopy;
             tsCount += numToCopy;
-            // skip over all inserted elements 
+            // skip over all inserted elements
             j += numToCopy;
           }
           //           System.out.println("DEBUG: inst #" + i
@@ -1003,9 +987,8 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     /**
-     * Returns true if the timeStamp at curIdx is the one that ts is
-     * the closest to.
-     * We know that timeStamps[curIdx-1], if it exists, was not the closest.
+     * Returns true if the timeStamp at curIdx is the one that ts is the closest to. We know that
+     * timeStamps[curIdx-1], if it exists, was not the closest.
      */
     private static boolean isClosest(long ts, long[] timeStamps, int curIdx) {
       if (curIdx >= (timeStamps.length - 1)) {
@@ -1114,9 +1097,7 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
   }
 
-  /**
-   * Provides the value series related to a single statistics.
-   */
+  /** Provides the value series related to a single statistics. */
   private static class SimpleValue extends AbstractValue {
     private final ResourceInst resource;
 
@@ -1163,7 +1144,7 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     public ResourceInst[] getResources() {
-      return new ResourceInst[] { this.resource };
+      return new ResourceInst[] {this.resource};
     }
 
     public boolean isTrimmedLeft() {
@@ -1175,7 +1156,9 @@ public class StatArchiveReader implements StatArchiveFormat {
       if (startTime != -1) {
         long startTimeStamp = startTime - resource.getTimeBase();
         long[] timestamps = resource.getAllRawTimeStamps();
-        for (int i = resource.getFirstTimeStampIdx(); i < resource.getFirstTimeStampIdx() + series.getSize(); i++) {
+        for (int i = resource.getFirstTimeStampIdx();
+            i < resource.getFirstTimeStampIdx() + series.getSize();
+            i++) {
           if (timestamps[i] >= startTimeStamp) {
             break;
           }
@@ -1191,7 +1174,9 @@ public class StatArchiveReader implements StatArchiveFormat {
         long endTimeStamp = endTime - resource.getTimeBase();
         long[] timestamps = resource.getAllRawTimeStamps();
         endIdx = startIdx - 1;
-        for (int i = resource.getFirstTimeStampIdx() + startIdx; i < resource.getFirstTimeStampIdx() + series.getSize(); i++) {
+        for (int i = resource.getFirstTimeStampIdx() + startIdx;
+            i < resource.getFirstTimeStampIdx() + series.getSize();
+            i++) {
           if (timestamps[i] >= endTimeStamp) {
             break;
           }
@@ -1286,7 +1271,18 @@ public class StatArchiveReader implements StatArchiveFormat {
     protected void dump(PrintWriter stream) {
       calcStats();
       stream.print("  " + descriptor.getName() + "=");
-      stream.print("[size=" + getSnapshotsSize() + " min=" + nf.format(min) + " max=" + nf.format(max) + " avg=" + nf.format(avg) + " stddev=" + nf.format(stddev) + "]");
+      stream.print(
+          "[size="
+              + getSnapshotsSize()
+              + " min="
+              + nf.format(min)
+              + " max="
+              + nf.format(max)
+              + " avg="
+              + nf.format(avg)
+              + " stddev="
+              + nf.format(stddev)
+              + "]");
       if (Boolean.getBoolean("StatArchiveReader.dumpall")) {
         series.dump(stream);
       } else {
@@ -1319,7 +1315,7 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
   }
 
-  private static abstract class BitInterval {
+  private abstract static class BitInterval {
     /** Returns number of items added to values */
     abstract int fill(double[] values, int valueOffset, int typeCode, int skipCount);
 
@@ -1380,7 +1376,7 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
   }
 
-  private static abstract class BitNonZeroInterval extends BitInterval {
+  private abstract static class BitNonZeroInterval extends BitInterval {
     @Override
     int getMemoryUsed() {
       return super.getMemoryUsed() + 4;
@@ -1540,7 +1536,7 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
   }
 
-  private static abstract class BitZeroInterval extends BitInterval {
+  private abstract static class BitZeroInterval extends BitInterval {
     @Override
     int getMemoryUsed() {
       return super.getMemoryUsed() + 4;
@@ -1937,9 +1933,7 @@ public class StatArchiveReader implements StatArchiveFormat {
     int intervalIdx; // index of most recent BitInterval
     BitInterval intervals[];
 
-    /**
-     * Returns the amount of memory used to implement this series.
-     */
+    /** Returns the amount of memory used to implement this series. */
     protected int getMemoryUsed() {
       int result = 4 + 8 + 8 + 8 + 4 + 4 + 4;
       if (intervals != null) {
@@ -1956,16 +1950,17 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     /**
-     * Gets the first "resultSize" values of this series
-     * skipping over the first "samplesToSkip" ones.
-     * The first value in a series is at index 0.
-     * The maximum result size can be obtained by calling "getSize()".
+     * Gets the first "resultSize" values of this series skipping over the first "samplesToSkip"
+     * ones. The first value in a series is at index 0. The maximum result size can be obtained by
+     * calling "getSize()".
      */
     public double[] getValuesEx(int typeCode, int samplesToSkip, int resultSize) {
       double[] result = new double[resultSize];
       int firstInterval = 0;
       int idx = 0;
-      while (samplesToSkip > 0 && firstInterval <= intervalIdx && intervals[firstInterval].getSampleCount() <= samplesToSkip) {
+      while (samplesToSkip > 0
+          && firstInterval <= intervalIdx
+          && intervals[firstInterval].getSampleCount() <= samplesToSkip) {
         samplesToSkip -= intervals[firstInterval].getSampleCount();
         firstInterval++;
       }
@@ -1974,17 +1969,29 @@ public class StatArchiveReader implements StatArchiveFormat {
         samplesToSkip = 0;
       }
       if (currentCount != 0) {
-        idx += BitInterval.create(currentStartBits, currentInterval, currentCount).fill(result, idx, typeCode, samplesToSkip);
+        idx +=
+            BitInterval.create(currentStartBits, currentInterval, currentCount)
+                .fill(result, idx, typeCode, samplesToSkip);
       }
       // assert
       if (idx != resultSize) {
-        throw new InternalGemFireException(LocalizedStrings.StatArchiveReader_GETVALUESEX_DIDNT_FILL_THE_LAST_0_ENTRIES_OF_ITS_RESULT.toLocalizedString(Integer.valueOf(resultSize - idx)));
+        throw new InternalGemFireException(
+            LocalizedStrings
+                .StatArchiveReader_GETVALUESEX_DIDNT_FILL_THE_LAST_0_ENTRIES_OF_ITS_RESULT
+                .toLocalizedString(Integer.valueOf(resultSize - idx)));
       }
       return result;
     }
 
     void dump(PrintWriter stream) {
-      stream.print("[size=" + count + " intervals=" + (intervalIdx + 1) + " memused=" + getMemoryUsed() + " ");
+      stream.print(
+          "[size="
+              + count
+              + " intervals="
+              + (intervalIdx + 1)
+              + " memused="
+              + getMemoryUsed()
+              + " ");
       for (int i = 0; i <= intervalIdx; i++) {
         if (i != 0) {
           stream.print(", ");
@@ -2043,7 +2050,8 @@ public class StatArchiveReader implements StatArchiveFormat {
               System.arraycopy(intervals, 0, tmp, 0, intervals.length);
               intervals = tmp;
             }
-            intervals[intervalIdx] = BitInterval.create(currentStartBits, currentInterval, currentCount);
+            intervals[intervalIdx] =
+                BitInterval.create(currentStartBits, currentInterval, currentCount);
           }
         }
         // now start a new currentBits
@@ -2054,9 +2062,7 @@ public class StatArchiveReader implements StatArchiveFormat {
       count++;
     }
 
-    /**
-     * Free up any unused memory
-     */
+    /** Free up any unused memory */
     void shrink() {
       if (intervals != null) {
         int currentSize = intervalIdx + 1;
@@ -2070,7 +2076,7 @@ public class StatArchiveReader implements StatArchiveFormat {
   }
 
   private static class TimeStampSeries {
-    static private final int GROW_SIZE = 256;
+    private static final int GROW_SIZE = 256;
     int count; // number of items in this series
     long base; // millis since midnight, Jan 1, 1970 UTC.
     long[] timeStamps = new long[GROW_SIZE]; // elapsed millis from base
@@ -2127,9 +2133,9 @@ public class StatArchiveReader implements StatArchiveFormat {
       return this.base;
     }
 
-    /** Provides direct access to underlying data.
-     * Do not modify contents and use getSize() to keep from reading
-     * past end of array.
+    /**
+     * Provides direct access to underlying data. Do not modify contents and use getSize() to keep
+     * from reading past end of array.
      */
     long[] getRawTimeStamps() {
       return this.timeStamps;
@@ -2140,10 +2146,8 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     /**
-     * Returns an array of time stamp values the first of which
-     * has the specified index.
-     * Each returned time stamp is the number of millis since
-     * midnight, Jan 1, 1970 UTC.
+     * Returns an array of time stamp values the first of which has the specified index. Each
+     * returned time stamp is the number of millis since midnight, Jan 1, 1970 UTC.
      */
     double[] getTimeValuesSinceIdx(int idx) {
       int resultSize = this.count - idx;
@@ -2156,9 +2160,9 @@ public class StatArchiveReader implements StatArchiveFormat {
   }
 
   /**
-   * Defines a statistic resource type. Each resource instance must be
-   * of a single type. The type defines what statistics each instance
-   * of it will support. The type also has a description of itself.
+   * Defines a statistic resource type. Each resource instance must be of a single type. The type
+   * defines what statistics each instance of it will support. The type also has a description of
+   * itself.
    */
   public static class ResourceType {
     private boolean loaded;
@@ -2200,8 +2204,8 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     /**
-     * Frees up any resources no longer needed after the archive file is closed.
-     * Returns true if this guy is no longer needed.
+     * Frees up any resources no longer needed after the archive file is closed. Returns true if
+     * this guy is no longer needed.
      */
     protected boolean close() {
       if (isLoaded()) {
@@ -2228,8 +2232,17 @@ public class StatArchiveReader implements StatArchiveFormat {
       this.descriptorMap = null;
     }
 
-    protected void addStatDescriptor(StatArchiveFile archive, int offset, String name, boolean isCounter, boolean largerBetter, byte typeCode, String units, String desc) {
-      StatDescriptor descriptor = new StatDescriptor(name, offset, isCounter, largerBetter, typeCode, units, desc);
+    protected void addStatDescriptor(
+        StatArchiveFile archive,
+        int offset,
+        String name,
+        boolean isCounter,
+        boolean largerBetter,
+        byte typeCode,
+        String units,
+        String desc) {
+      StatDescriptor descriptor =
+          new StatDescriptor(name, offset, isCounter, largerBetter, typeCode, units, desc);
       this.stats[offset] = descriptor;
       if (archive.loadStatDescriptor(descriptor, this)) {
         descriptorMap.put(name, descriptor);
@@ -2239,34 +2252,28 @@ public class StatArchiveReader implements StatArchiveFormat {
     //    private int getId() {
     //      return this.id;
     //    }
-    /**
-     * Returns the name of this resource type.
-     */
+    /** Returns the name of this resource type. */
     public String getName() {
       return this.name;
     }
 
-    /**
-     * Returns an array of descriptors for each statistic this resource
-     * type supports.
-     */
+    /** Returns an array of descriptors for each statistic this resource type supports. */
     public StatDescriptor[] getStats() {
       return this.stats;
     }
 
     /**
      * Gets a stat descriptor contained in this type given the stats name.
+     *
      * @param name the name of the stat to find in the current type
-     * @return the descriptor that matches the name or null if the type
-     * does not have a stat of the given name
+     * @return the descriptor that matches the name or null if the type does not have a stat of the
+     *     given name
      */
     public StatDescriptor getStat(String name) {
       return (StatDescriptor) descriptorMap.get(name);
     }
 
-    /**
-     * Returns a description of this resource type.
-     */
+    /** Returns a description of this resource type. */
     public String getDescription() {
       return this.desc;
     }
@@ -2281,25 +2288,18 @@ public class StatArchiveReader implements StatArchiveFormat {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
       ResourceType other = (ResourceType) obj;
       if (name == null) {
-        if (other.name != null)
-          return false;
-      } else if (!name.equals(other.name))
-        return false;
+        if (other.name != null) return false;
+      } else if (!name.equals(other.name)) return false;
       return true;
     }
   }
 
-  /**
-   * Describes some global information about the archive.
-   */
+  /** Describes some global information about the archive. */
   public static class ArchiveInfo {
     private final StatArchiveFile archive;
     private final byte archiveVersion;
@@ -2313,7 +2313,18 @@ public class StatArchiveReader implements StatArchiveFormat {
     private final String os;
     private final String machine;
 
-    public ArchiveInfo(StatArchiveFile archive, byte archiveVersion, long startTimeStamp, long systemStartTimeStamp, int timeZoneOffset, String timeZoneName, String systemDirectory, long systemId, String productVersion, String os, String machine) {
+    public ArchiveInfo(
+        StatArchiveFile archive,
+        byte archiveVersion,
+        long startTimeStamp,
+        long systemStartTimeStamp,
+        int timeZoneOffset,
+        String timeZoneName,
+        String systemDirectory,
+        long systemId,
+        String productVersion,
+        String os,
+        String machine) {
       this.archive = archive;
       this.archiveVersion = archiveVersion;
       this.startTimeStamp = startTimeStamp;
@@ -2329,50 +2340,42 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     /**
-     * Returns the difference, measured in milliseconds, between the time
-     * the archive file was create and midnight, January 1, 1970 UTC.
+     * Returns the difference, measured in milliseconds, between the time the archive file was
+     * create and midnight, January 1, 1970 UTC.
      */
     public long getStartTimeMillis() {
       return this.startTimeStamp;
     }
 
     /**
-     * Returns the difference, measured in milliseconds, between the time
-     * the archived system was started and midnight, January 1, 1970 UTC.
+     * Returns the difference, measured in milliseconds, between the time the archived system was
+     * started and midnight, January 1, 1970 UTC.
      */
     public long getSystemStartTimeMillis() {
       return this.systemStartTimeStamp;
     }
 
     /**
-     * Returns a numeric id of the archived system.  It can be used in
-     * conjunction with the {@link #getSystemStartTimeMillis} to
-     * uniquely identify an archived system.
+     * Returns a numeric id of the archived system. It can be used in conjunction with the {@link
+     * #getSystemStartTimeMillis} to uniquely identify an archived system.
      */
     public long getSystemId() {
       return this.systemId;
     }
 
-    /**
-     * Returns a string describing the operating system the archive was
-     * written on.
-     */
+    /** Returns a string describing the operating system the archive was written on. */
     public String getOs() {
       return this.os;
     }
 
-    /**
-     * Returns a string describing the machine the archive was
-     * written on.
-     */
+    /** Returns a string describing the machine the archive was written on. */
     public String getMachine() {
       return this.machine;
     }
 
     /**
-     * Returns  the time zone used when the archive was created.
-     * This can be used to print timestamps in the same time zone
-     * that was in effect when the archive was created.
+     * Returns the time zone used when the archive was created. This can be used to print timestamps
+     * in the same time zone that was in effect when the archive was created.
      */
     public TimeZone getTimeZone() {
       TimeZone result = TimeZone.getTimeZone(this.timeZoneName);
@@ -2382,32 +2385,27 @@ public class StatArchiveReader implements StatArchiveFormat {
       return result;
     }
 
-    /**
-     * Returns a string containing the version of the product that wrote
-     * this archive.
-     */
+    /** Returns a string containing the version of the product that wrote this archive. */
     public String getProductVersion() {
       return this.productVersion;
     }
 
     /**
-     * Returns a numeric code that represents the format version used to
-     * encode the archive as a stream of bytes.
+     * Returns a numeric code that represents the format version used to encode the archive as a
+     * stream of bytes.
      */
     public int getArchiveFormatVersion() {
       return this.archiveVersion;
     }
 
-    /**
-     * Returns a string describing the system that this archive recorded.
-     */
+    /** Returns a string describing the system that this archive recorded. */
     public String getSystem() {
       return this.systemDirectory;
     }
 
     /**
-     * Return the name of the file this archive was stored in or
-     * an empty string if the archive was not stored in a file.
+     * Return the name of the file this archive was stored in or an empty string if the archive was
+     * not stored in a file.
      */
     public String getArchiveFileName() {
       if (this.archive != null) {
@@ -2417,9 +2415,7 @@ public class StatArchiveReader implements StatArchiveFormat {
       }
     }
 
-    /**
-     * Returns a string representation of this object.
-     */
+    /** Returns a string representation of this object. */
     @Override
     public String toString() {
       StringWriter sw = new StringWriter();
@@ -2448,9 +2444,7 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
   }
 
-  /**
-   * Defines a single instance of a resource type.
-   */
+  /** Defines a single instance of a resource type. */
   public static class ResourceInst {
     private final boolean loaded;
     private final StatArchiveFile archive;
@@ -2463,9 +2457,7 @@ public class StatArchiveReader implements StatArchiveFormat {
     private int firstTSidx = -1;
     private int lastTSidx = -1;
 
-    /**
-     * Returns the approximate amount of memory used to implement this object.
-     */
+    /** Returns the approximate amount of memory used to implement this object. */
     protected int getMemoryUsed() {
       int result = 0;
       if (values != null) {
@@ -2480,13 +2472,19 @@ public class StatArchiveReader implements StatArchiveFormat {
       return archive.getReader();
     }
 
-    /**
-     * Returns a string representation of this object.
-     */
+    /** Returns a string representation of this object. */
     @Override
     public String toString() {
       StringBuffer result = new StringBuffer();
-      result.append(name).append(", ").append(id).append(", ").append(type.getName()).append(": \"").append(archive.formatTimeMillis(getFirstTimeMillis())).append('\"');
+      result
+          .append(name)
+          .append(", ")
+          .append(id)
+          .append(", ")
+          .append(type.getName())
+          .append(": \"")
+          .append(archive.formatTimeMillis(getFirstTimeMillis()))
+          .append('\"');
       if (!active) {
         result.append(" inactive");
       }
@@ -2494,9 +2492,7 @@ public class StatArchiveReader implements StatArchiveFormat {
       return result.toString();
     }
 
-    /**
-     * Returns the number of times this resource instance has been sampled.
-     */
+    /** Returns the number of times this resource instance has been sampled. */
     public int getSampleCount() {
       if (active) {
         return archive.getTimeStamps().getSize() - firstTSidx;
@@ -2510,13 +2506,28 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     protected void dump(PrintWriter stream) {
-      stream.println(name + ":" + " file=" + getArchive().getFile() + " id=" + id + (active ? "" : " deleted") + " start=" + archive.formatTimeMillis(getFirstTimeMillis()));
+      stream.println(
+          name
+              + ":"
+              + " file="
+              + getArchive().getFile()
+              + " id="
+              + id
+              + (active ? "" : " deleted")
+              + " start="
+              + archive.formatTimeMillis(getFirstTimeMillis()));
       for (int i = 0; i < values.length; i++) {
         values[i].dump(stream);
       }
     }
 
-    protected ResourceInst(StatArchiveFile archive, int uniqueId, String name, long id, ResourceType type, boolean loaded) {
+    protected ResourceInst(
+        StatArchiveFile archive,
+        int uniqueId,
+        String name,
+        long id,
+        ResourceType type,
+        boolean loaded) {
       this.loaded = loaded;
       this.archive = archive;
       //      this.uniqueId = uniqueId;
@@ -2559,9 +2570,7 @@ public class StatArchiveReader implements StatArchiveFormat {
       }
     }
 
-    /**
-     * Returns true if sample was added.
-     */
+    /** Returns true if sample was added. */
     protected boolean addValueSample(int statOffset, long statDeltaBits) {
       if (this.values != null && this.values[statOffset] != null) {
         this.values[statOffset].prepareNextBits(statDeltaBits);
@@ -2576,8 +2585,8 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     /**
-     * Frees up any resources no longer needed after the archive file is closed.
-     * Returns true if this guy is no longer needed.
+     * Frees up any resources no longer needed after the archive file is closed. Returns true if
+     * this guy is no longer needed.
      */
     protected boolean close() {
       if (isLoaded()) {
@@ -2605,22 +2614,19 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     /**
-     * Returns an array of doubles containing the timestamps at which
-     * this instances samples where taken. Each of these timestamps
-     * is the difference, measured in milliseconds, between the sample
-     * time and midnight, January 1, 1970 UTC.
-     * Although these values are double they can safely be converted
-     * to <code>long</code> with no loss of information.
+     * Returns an array of doubles containing the timestamps at which this instances samples where
+     * taken. Each of these timestamps is the difference, measured in milliseconds, between the
+     * sample time and midnight, January 1, 1970 UTC. Although these values are double they can
+     * safely be converted to <code>long</code> with no loss of information.
      */
     public double[] getSnapshotTimesMillis() {
       return archive.getTimeStamps().getTimeValuesSinceIdx(firstTSidx);
     }
 
     /**
-     * Returns an array of statistic value descriptors. Each element
-     * of the array describes the corresponding statistic this instance
-     * supports. The <code>StatValue</code> instances can be used to
-     * obtain the actual sampled values of the instances statistics.
+     * Returns an array of statistic value descriptors. Each element of the array describes the
+     * corresponding statistic this instance supports. The <code>StatValue</code> instances can be
+     * used to obtain the actual sampled values of the instances statistics.
      */
     public StatValue[] getStatValues() {
       return this.values;
@@ -2628,10 +2634,10 @@ public class StatArchiveReader implements StatArchiveFormat {
 
     /**
      * Gets the value of the stat in the current instance given the stat name.
-     * @param name the name of the stat to find in the current instance
-     * @return the value that matches the name or null if the instance
-     * does not have a stat of the given name
      *
+     * @param name the name of the stat to find in the current instance
+     * @return the value that matches the name or null if the instance does not have a stat of the
+     *     given name
      */
     public StatValue getStatValue(String name) {
       StatValue result = null;
@@ -2642,31 +2648,25 @@ public class StatArchiveReader implements StatArchiveFormat {
       return result;
     }
 
-    /**
-     * Returns the name of this instance.
-     */
+    /** Returns the name of this instance. */
     public String getName() {
       return this.name;
     }
 
-    /**
-     * Returns the id of this instance.
-     */
+    /** Returns the id of this instance. */
     public long getId() {
       return this.id;
     }
 
     /**
-     * Returns the difference, measured in milliseconds, between the time
-     * of the instance's first sample and midnight, January 1, 1970 UTC.
+     * Returns the difference, measured in milliseconds, between the time of the instance's first
+     * sample and midnight, January 1, 1970 UTC.
      */
     public long getFirstTimeMillis() {
       return archive.getTimeStamps().getMilliTimeStamp(firstTSidx);
     }
 
-    /**
-     * Returns resource type of this instance.
-     */
+    /** Returns resource type of this instance. */
     public ResourceType getType() {
       return this.type;
     }
@@ -2677,9 +2677,7 @@ public class StatArchiveReader implements StatArchiveFormat {
       close(); // this frees up unused memory now that no more samples
     }
 
-    /**
-     * Returns true if archive might still have future samples for this instance.
-     */
+    /** Returns true if archive might still have future samples for this instance. */
     public boolean isActive() {
       return this.active;
     }
@@ -2709,25 +2707,17 @@ public class StatArchiveReader implements StatArchiveFormat {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
       ResourceInst other = (ResourceInst) obj;
-      if (id != other.id)
-        return false;
+      if (id != other.id) return false;
       if (name == null) {
-        if (other.name != null)
-          return false;
-      } else if (!name.equals(other.name))
-        return false;
+        if (other.name != null) return false;
+      } else if (!name.equals(other.name)) return false;
       if (type == null) {
-        if (other.type != null)
-          return false;
-      } else if (!type.equals(other.type))
-        return false;
+        if (other.type != null) return false;
+      } else if (!type.equals(other.type)) return false;
       if (this.firstTSidx != other.firstTSidx) {
         return false;
       }
@@ -2737,59 +2727,49 @@ public class StatArchiveReader implements StatArchiveFormat {
 
   public static interface StatSpec extends ValueFilter {
     /**
-     * Causes all stats that matches this spec, in all archive files,
-     * to be combined into a single global stat value.
+     * Causes all stats that matches this spec, in all archive files, to be combined into a single
+     * global stat value.
      */
     public static final int GLOBAL = 2;
     /**
-     * Causes all stats that matches this spec, in each archive file,
-     * to be combined into a single stat value for each file.
+     * Causes all stats that matches this spec, in each archive file, to be combined into a single
+     * stat value for each file.
      */
     public static final int FILE = 1;
-    /**
-     * No combination is done.
-     */
+    /** No combination is done. */
     public final int NONE = 0;
 
-    /**
-     * Returns one of the following values:
-     * {@link #GLOBAL}, {@link #FILE}, {@link #NONE}.
-     */
+    /** Returns one of the following values: {@link #GLOBAL}, {@link #FILE}, {@link #NONE}. */
     public int getCombineType();
   }
 
   /**
-   * Specifies what data from a statistic archive will be of interest
-   * to the reader. This is used when loading a statistic archive file
-   * to reduce the memory footprint. Only statistic data that matches
-   * all four will be selected for loading.
+   * Specifies what data from a statistic archive will be of interest to the reader. This is used
+   * when loading a statistic archive file to reduce the memory footprint. Only statistic data that
+   * matches all four will be selected for loading.
    */
   public static interface ValueFilter {
     /**
-     * Returns true if the specified archive file matches this spec.
-     * Any archives whose name does not match this spec will
-     * not be selected for loading by this spec.
+     * Returns true if the specified archive file matches this spec. Any archives whose name does
+     * not match this spec will not be selected for loading by this spec.
      */
     public boolean archiveMatches(File archive);
 
     /**
-     * Returns true if the specified type name matches this spec.
-     * Any types whose name does not match this spec will
-     * not be selected for loading by this spec.
+     * Returns true if the specified type name matches this spec. Any types whose name does not
+     * match this spec will not be selected for loading by this spec.
      */
     public boolean typeMatches(String typeName);
 
     /**
-     * Returns true if the specified statistic name matches this spec.
-     * Any stats whose name does not match this spec will
-     * not be selected for loading by this spec.
+     * Returns true if the specified statistic name matches this spec. Any stats whose name does not
+     * match this spec will not be selected for loading by this spec.
      */
     public boolean statMatches(String statName);
 
     /**
-     * Returns true if the specified instance matches this spec.
-     * Any instance whose text id and numeric id do not match this spec will
-     * not be selected for loading by this spec.
+     * Returns true if the specified instance matches this spec. Any instance whose text id and
+     * numeric id do not match this spec will not be selected for loading by this spec.
      */
     public boolean instanceMatches(String textId, long numericId);
   }
@@ -2811,17 +2791,21 @@ public class StatArchiveReader implements StatArchiveFormat {
     private ResourceType[] resourceTypeTable = null;
     private final TimeStampSeries timeSeries = new TimeStampSeries();
     private final DateFormat timeFormatter = new SimpleDateFormat(DateFormatter.FORMAT_STRING);
-    private final static int BUFFER_SIZE = 1024 * 1024;
+    private static final int BUFFER_SIZE = 1024 * 1024;
     private final ArrayList fileComboValues = new ArrayList();
 
-    public StatArchiveFile(StatArchiveReader reader, File archiveName, boolean dump, ValueFilter[] filters) throws IOException {
+    public StatArchiveFile(
+        StatArchiveReader reader, File archiveName, boolean dump, ValueFilter[] filters)
+        throws IOException {
       this.reader = reader;
       this.archiveName = archiveName;
       this.dump = dump;
       this.compressed = archiveName.getPath().endsWith(".gz");
       this.is = new FileInputStream(this.archiveName);
       if (this.compressed) {
-        this.dataIn = new DataInputStream(new BufferedInputStream(new GZIPInputStream(this.is, BUFFER_SIZE), BUFFER_SIZE));
+        this.dataIn =
+            new DataInputStream(
+                new BufferedInputStream(new GZIPInputStream(this.is, BUFFER_SIZE), BUFFER_SIZE));
       } else {
         this.dataIn = new DataInputStream(new BufferedInputStream(this.is, BUFFER_SIZE));
       }
@@ -2889,11 +2873,11 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     /**
-     * Formats an archive timestamp in way consistent with GemFire log
-     * dates. It will also be formatted to reflect the time zone the
-     * archive was created in.
-     * @param ts The difference, measured in milliseconds, between the time
-     * marked by this time stamp and midnight, January 1, 1970 UTC.
+     * Formats an archive timestamp in way consistent with GemFire log dates. It will also be
+     * formatted to reflect the time zone the archive was created in.
+     *
+     * @param ts The difference, measured in milliseconds, between the time marked by this time
+     *     stamp and midnight, January 1, 1970 UTC.
      */
     public String formatTimeMillis(long ts) {
       synchronized (timeFormatter) {
@@ -2901,36 +2885,34 @@ public class StatArchiveReader implements StatArchiveFormat {
       }
     }
 
-    /**
-     * sets the time zone this archive was written in.
-     */
+    /** sets the time zone this archive was written in. */
     void setTimeZone(TimeZone z) {
       timeFormatter.setTimeZone(z);
     }
 
-    /**
-     * Returns the time series for this archive.
-     */
+    /** Returns the time series for this archive. */
     TimeStampSeries getTimeStamps() {
       return timeSeries;
     }
 
     /**
-     * Checks to see if the archive has changed since the StatArchiverReader
-     * instance was created or last updated. If the archive has additional
-     * samples then those are read the resource instances maintained by the
-     * reader are updated.
+     * Checks to see if the archive has changed since the StatArchiverReader instance was created or
+     * last updated. If the archive has additional samples then those are read the resource
+     * instances maintained by the reader are updated.
+     *
      * <p>Once closed a reader can no longer be updated.
+     *
      * @return true if update read some new data.
-     * @throws IOException if <code>archiveName</code> could not be opened
-     * read, or closed.
+     * @throws IOException if <code>archiveName</code> could not be opened read, or closed.
      */
     public boolean update(boolean doReset) throws IOException {
       if (this.closed) {
         return false;
       }
       if (!this.updateOK) {
-        throw new InternalGemFireException(LocalizedStrings.StatArchiveReader_UPDATE_OF_THIS_TYPE_OF_FILE_IS_NOT_SUPPORTED.toLocalizedString());
+        throw new InternalGemFireException(
+            LocalizedStrings.StatArchiveReader_UPDATE_OF_THIS_TYPE_OF_FILE_IS_NOT_SUPPORTED
+                .toLocalizedString());
       }
 
       if (doReset) {
@@ -2967,9 +2949,7 @@ public class StatArchiveReader implements StatArchiveFormat {
       return this.archiveName;
     }
 
-    /**
-     * Closes the archive.
-     */
+    /** Closes the archive. */
     public void close() throws IOException {
       if (!this.closed) {
         this.closed = true;
@@ -3029,8 +3009,8 @@ public class StatArchiveReader implements StatArchiveFormat {
     }
 
     /**
-     * Returns global information about the read archive.
-     * Returns null if no information is available.
+     * Returns global information about the read archive. Returns null if no information is
+     * available.
      */
     public ArchiveInfo getArchiveInfo() {
       return this.info;
@@ -3048,13 +3028,33 @@ public class StatArchiveReader implements StatArchiveFormat {
       String os = dataIn.readUTF();
       String machine = dataIn.readUTF();
       if (archiveVersion <= 1) {
-        throw new GemFireIOException(LocalizedStrings.StatArchiveReader_ARCHIVE_VERSION_0_IS_NO_LONGER_SUPPORTED.toLocalizedString(Byte.valueOf(archiveVersion)), null);
+        throw new GemFireIOException(
+            LocalizedStrings.StatArchiveReader_ARCHIVE_VERSION_0_IS_NO_LONGER_SUPPORTED
+                .toLocalizedString(Byte.valueOf(archiveVersion)),
+            null);
       }
       if (archiveVersion > ARCHIVE_VERSION) {
-        throw new GemFireIOException(LocalizedStrings.StatArchiveReader_UNSUPPORTED_ARCHIVE_VERSION_0_THE_SUPPORTED_VERSION_IS_1.toLocalizedString(new Object[] { Byte.valueOf(archiveVersion), Byte.valueOf(ARCHIVE_VERSION) }), null);
+        throw new GemFireIOException(
+            LocalizedStrings
+                .StatArchiveReader_UNSUPPORTED_ARCHIVE_VERSION_0_THE_SUPPORTED_VERSION_IS_1
+                .toLocalizedString(
+                    new Object[] {Byte.valueOf(archiveVersion), Byte.valueOf(ARCHIVE_VERSION)}),
+            null);
       }
       this.archiveVersion = archiveVersion;
-      this.info = new ArchiveInfo(this, archiveVersion, startTimeStamp, systemStartTimeStamp, timeZoneOffset, timeZoneName, systemDirectory, systemId, productVersion, os, machine);
+      this.info =
+          new ArchiveInfo(
+              this,
+              archiveVersion,
+              startTimeStamp,
+              systemStartTimeStamp,
+              timeZoneOffset,
+              timeZoneName,
+              systemDirectory,
+              systemId,
+              productVersion,
+              os,
+              machine);
       // Clear all previously read types and instances
       this.resourceInstSize = 0;
       this.resourceInstTable = new ResourceInst[1024];
@@ -3137,7 +3137,9 @@ public class StatArchiveReader implements StatArchiveFormat {
         String textId = resource.getName();
         long numericId = resource.getId();
         for (int i = 0; i < filters.length; i++) {
-          if (filters[i].statMatches(stat.getName()) && filters[i].typeMatches(type.getName()) && filters[i].instanceMatches(textId, numericId)) {
+          if (filters[i].statMatches(stat.getName())
+              && filters[i].typeMatches(type.getName())
+              && filters[i].instanceMatches(textId, numericId)) {
             return true;
           }
         }
@@ -3161,12 +3163,21 @@ public class StatArchiveReader implements StatArchiveFormat {
       if (loadType(resourceTypeName)) {
         rt = new ResourceType(resourceTypeId, resourceTypeName, resourceTypeDesc, statCount);
         if (dump) {
-          System.out.println("ResourceType id=" + resourceTypeId + " name=" + resourceTypeName + " statCount=" + statCount + " desc=" + resourceTypeDesc);
+          System.out.println(
+              "ResourceType id="
+                  + resourceTypeId
+                  + " name="
+                  + resourceTypeName
+                  + " statCount="
+                  + statCount
+                  + " desc="
+                  + resourceTypeDesc);
         }
       } else {
         rt = new ResourceType(resourceTypeId, resourceTypeName, statCount);
         if (dump) {
-          System.out.println("Not loading ResourceType id=" + resourceTypeId + " name=" + resourceTypeName);
+          System.out.println(
+              "Not loading ResourceType id=" + resourceTypeId + " name=" + resourceTypeName);
         }
       }
       resourceTypeTable[resourceTypeId] = rt;
@@ -3182,7 +3193,21 @@ public class StatArchiveReader implements StatArchiveFormat {
         String desc = dataIn.readUTF();
         rt.addStatDescriptor(this, i, statName, isCounter, largerBetter, typeCode, units, desc);
         if (dump) {
-          System.out.println("  " + i + "=" + statName + " isCtr=" + isCounter + " largerBetter=" + largerBetter + " typeCode=" + typeCode + " units=" + units + " desc=" + desc);
+          System.out.println(
+              "  "
+                  + i
+                  + "="
+                  + statName
+                  + " isCtr="
+                  + isCounter
+                  + " largerBetter="
+                  + largerBetter
+                  + " typeCode="
+                  + typeCode
+                  + " units="
+                  + units
+                  + " desc="
+                  + desc);
         }
       }
     }
@@ -3202,9 +3227,12 @@ public class StatArchiveReader implements StatArchiveFormat {
         this.resourceInstSize = resourceInstId + 1;
       }
       boolean loadInstance = loadInstance(name, id, resourceTypeTable[resourceTypeId]);
-      resourceInstTable[resourceInstId] = new ResourceInst(this, resourceInstId, name, id, resourceTypeTable[resourceTypeId], loadInstance);
+      resourceInstTable[resourceInstId] =
+          new ResourceInst(
+              this, resourceInstId, name, id, resourceTypeTable[resourceTypeId], loadInstance);
       if (dump) {
-        System.out.println((loadInstance ? "Loaded" : "Did not load") + " resource instance " + resourceInstId);
+        System.out.println(
+            (loadInstance ? "Loaded" : "Did not load") + " resource instance " + resourceInstId);
         System.out.println("  name=" + name + " id=" + id + " typeId=" + resourceTypeId);
       }
       if (initialize) {
@@ -3212,27 +3240,29 @@ public class StatArchiveReader implements StatArchiveFormat {
         for (int i = 0; i < stats.length; i++) {
           long v;
           switch (stats[i].getTypeCode()) {
-          case BOOLEAN_CODE:
-            v = dataIn.readByte();
-            break;
-          case BYTE_CODE:
-          case CHAR_CODE:
-            v = dataIn.readByte();
-            break;
-          case WCHAR_CODE:
-            v = dataIn.readUnsignedShort();
-            break;
-          case SHORT_CODE:
-            v = dataIn.readShort();
-            break;
-          case INT_CODE:
-          case FLOAT_CODE:
-          case LONG_CODE:
-          case DOUBLE_CODE:
-            v = readCompactValue();
-            break;
-          default:
-            throw new IOException(LocalizedStrings.StatArchiveReader_UNEXPECTED_TYPECODE_VALUE_0.toLocalizedString(Byte.valueOf(stats[i].getTypeCode())));
+            case BOOLEAN_CODE:
+              v = dataIn.readByte();
+              break;
+            case BYTE_CODE:
+            case CHAR_CODE:
+              v = dataIn.readByte();
+              break;
+            case WCHAR_CODE:
+              v = dataIn.readUnsignedShort();
+              break;
+            case SHORT_CODE:
+              v = dataIn.readShort();
+              break;
+            case INT_CODE:
+            case FLOAT_CODE:
+            case LONG_CODE:
+            case DOUBLE_CODE:
+              v = readCompactValue();
+              break;
+            default:
+              throw new IOException(
+                  LocalizedStrings.StatArchiveReader_UNEXPECTED_TYPECODE_VALUE_0.toLocalizedString(
+                      Byte.valueOf(stats[i].getTypeCode())));
           }
           resourceInstTable[resourceInstId].initialValue(i, v);
         }
@@ -3261,7 +3291,8 @@ public class StatArchiveReader implements StatArchiveFormat {
         return ILLEGAL_RESOURCE_INST_ID;
       } else if (token == SHORT_RESOURCE_INST_ID_TOKEN) {
         return dataIn.readUnsignedShort();
-      } else { /* token == INT_RESOURCE_INST_ID_TOKEN */
+      } else {
+        /* token == INT_RESOURCE_INST_ID_TOKEN */
         return dataIn.readInt();
       }
     }
@@ -3293,27 +3324,29 @@ public class StatArchiveReader implements StatArchiveFormat {
         while (statOffset != ILLEGAL_STAT_OFFSET) {
           long statDeltaBits;
           switch (stats[statOffset].getTypeCode()) {
-          case BOOLEAN_CODE:
-            statDeltaBits = dataIn.readByte();
-            break;
-          case BYTE_CODE:
-          case CHAR_CODE:
-            statDeltaBits = dataIn.readByte();
-            break;
-          case WCHAR_CODE:
-            statDeltaBits = dataIn.readUnsignedShort();
-            break;
-          case SHORT_CODE:
-            statDeltaBits = dataIn.readShort();
-            break;
-          case INT_CODE:
-          case FLOAT_CODE:
-          case LONG_CODE:
-          case DOUBLE_CODE:
-            statDeltaBits = readCompactValue();
-            break;
-          default:
-            throw new IOException(LocalizedStrings.StatArchiveReader_UNEXPECTED_TYPECODE_VALUE_0.toLocalizedString(Byte.valueOf(stats[statOffset].getTypeCode())));
+            case BOOLEAN_CODE:
+              statDeltaBits = dataIn.readByte();
+              break;
+            case BYTE_CODE:
+            case CHAR_CODE:
+              statDeltaBits = dataIn.readByte();
+              break;
+            case WCHAR_CODE:
+              statDeltaBits = dataIn.readUnsignedShort();
+              break;
+            case SHORT_CODE:
+              statDeltaBits = dataIn.readShort();
+              break;
+            case INT_CODE:
+            case FLOAT_CODE:
+            case LONG_CODE:
+            case DOUBLE_CODE:
+              statDeltaBits = readCompactValue();
+              break;
+            default:
+              throw new IOException(
+                  LocalizedStrings.StatArchiveReader_UNEXPECTED_TYPECODE_VALUE_0.toLocalizedString(
+                      Byte.valueOf(stats[statOffset].getTypeCode())));
           }
           if (resourceInstTable[resourceInstId].addValueSample(statOffset, statDeltaBits)) {
             if (dump) {
@@ -3336,9 +3369,7 @@ public class StatArchiveReader implements StatArchiveFormat {
       }
     }
 
-    /**
-     * Returns true if token read, false if eof.
-     */
+    /** Returns true if token read, false if eof. */
     private boolean readToken() throws IOException {
       byte token;
       try {
@@ -3347,26 +3378,28 @@ public class StatArchiveReader implements StatArchiveFormat {
         }
         token = this.dataIn.readByte();
         switch (token) {
-        case HEADER_TOKEN:
-          readHeaderToken();
-          break;
-        case RESOURCE_TYPE_TOKEN:
-          readResourceTypeToken();
-          break;
-        case RESOURCE_INSTANCE_CREATE_TOKEN:
-          readResourceInstanceCreateToken(false);
-          break;
-        case RESOURCE_INSTANCE_INITIALIZE_TOKEN:
-          readResourceInstanceCreateToken(true);
-          break;
-        case RESOURCE_INSTANCE_DELETE_TOKEN:
-          readResourceInstanceDeleteToken();
-          break;
-        case SAMPLE_TOKEN:
-          readSampleToken();
-          break;
-        default:
-          throw new IOException(LocalizedStrings.StatArchiveReader_UNEXPECTED_TOKEN_BYTE_VALUE_0.toLocalizedString(Byte.valueOf(token)));
+          case HEADER_TOKEN:
+            readHeaderToken();
+            break;
+          case RESOURCE_TYPE_TOKEN:
+            readResourceTypeToken();
+            break;
+          case RESOURCE_INSTANCE_CREATE_TOKEN:
+            readResourceInstanceCreateToken(false);
+            break;
+          case RESOURCE_INSTANCE_INITIALIZE_TOKEN:
+            readResourceInstanceCreateToken(true);
+            break;
+          case RESOURCE_INSTANCE_DELETE_TOKEN:
+            readResourceInstanceDeleteToken();
+            break;
+          case SAMPLE_TOKEN:
+            readSampleToken();
+            break;
+          default:
+            throw new IOException(
+                LocalizedStrings.StatArchiveReader_UNEXPECTED_TOKEN_BYTE_VALUE_0.toLocalizedString(
+                    Byte.valueOf(token)));
         }
         return true;
       } catch (EOFException ignore) {
@@ -3374,9 +3407,7 @@ public class StatArchiveReader implements StatArchiveFormat {
       }
     }
 
-    /**
-     * Returns the approximate amount of memory used to implement this object.
-     */
+    /** Returns the approximate amount of memory used to implement this object. */
     protected int getMemoryUsed() {
       int result = 0;
       for (int i = 0; i < resourceInstTable.length; i++) {

@@ -34,10 +34,10 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Class MemberAsynchEventQueuesService
- * 
- * This class contains implementations of getting Asynchronous Event Queues
- * details of Cluster Member.
- * 
+ *
+ * <p>This class contains implementations of getting Asynchronous Event Queues details of Cluster
+ * Member.
+ *
  * @since GemFire version 7.5
  */
 @Component
@@ -56,7 +56,8 @@ public class MemberAsynchEventQueuesService implements PulseService {
     ObjectNode responseJSON = mapper.createObjectNode();
 
     JsonNode requestDataJSON = mapper.readTree(request.getParameter("pulseData"));
-    String memberName = requestDataJSON.get("MemberAsynchEventQueues").get("memberName").textValue();
+    String memberName =
+        requestDataJSON.get("MemberAsynchEventQueues").get("memberName").textValue();
 
     Cluster.Member clusterMember = cluster.getMember(StringUtils.makeCompliantName(memberName));
 
@@ -75,7 +76,8 @@ public class MemberAsynchEventQueuesService implements PulseService {
           asyncEventQueueJSON.put("senderType", asyncEventQueue.isParallel());
           asyncEventQueueJSON.put("batchSize", asyncEventQueue.getBatchSize());
           asyncEventQueueJSON.put("batchTimeInterval", asyncEventQueue.getBatchTimeInterval());
-          asyncEventQueueJSON.put("batchConflationEnabled", asyncEventQueue.isBatchConflationEnabled());
+          asyncEventQueueJSON.put(
+              "batchConflationEnabled", asyncEventQueue.isBatchConflationEnabled());
           asyncEventQueueJSON.put("asyncEventListener", asyncEventQueue.getAsyncEventListener());
           asyncEventQueueJSON.put("queueSize", asyncEventQueue.getEventQueueSize());
 
@@ -85,7 +87,6 @@ public class MemberAsynchEventQueuesService implements PulseService {
       } else {
         responseJSON.put("isAsyncEventQueuesPresent", false);
       }
-
     }
     // Send json response
     return responseJSON;

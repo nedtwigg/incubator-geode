@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.ha;
 
 import org.apache.geode.cache.Cache;
@@ -37,18 +35,15 @@ import static org.apache.geode.distributed.ConfigurationProperties.LOCATORS;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.fail;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class HARegionQueueStartStopJUnitTest {
 
   /**
    * Creates the cache instance for the test
-   * 
+   *
    * @return the cache instance
-   * @throws CacheException -
-   *           thrown if any exception occurs in cache creation
+   * @throws CacheException - thrown if any exception occurs in cache creation
    */
   private Cache createCache() throws CacheException {
     final Properties props = new Properties();
@@ -59,15 +54,18 @@ public class HARegionQueueStartStopJUnitTest {
 
   /**
    * Creates HA region-queue object
-   * 
+   *
    * @return HA region-queue object
    * @throws IOException
    * @throws ClassNotFoundException
    * @throws CacheException
    * @throws InterruptedException
    */
-  private RegionQueue createHARegionQueue(String name, Cache cache) throws IOException, ClassNotFoundException, CacheException, InterruptedException {
-    RegionQueue regionqueue = HARegionQueue.getHARegionQueueInstance(name, cache, HARegionQueue.NON_BLOCKING_HA_QUEUE, false);
+  private RegionQueue createHARegionQueue(String name, Cache cache)
+      throws IOException, ClassNotFoundException, CacheException, InterruptedException {
+    RegionQueue regionqueue =
+        HARegionQueue.getHARegionQueueInstance(
+            name, cache, HARegionQueue.NON_BLOCKING_HA_QUEUE, false);
     return regionqueue;
   }
 
@@ -114,7 +112,5 @@ public class HARegionQueueStartStopJUnitTest {
       e.printStackTrace();
       fail("Test failed due to " + e);
     }
-
   }
-
 }

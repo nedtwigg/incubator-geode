@@ -19,10 +19,9 @@ package org.apache.geode.cache.persistence;
 import org.apache.geode.GemFireException;
 
 /**
- * Thrown when a member tries to revoke a persistent ID, but the member
- * with that persistent ID is currently running. You can only revoke
- * members which is not running.
- * 
+ * Thrown when a member tries to revoke a persistent ID, but the member with that persistent ID is
+ * currently running. You can only revoke members which is not running.
+ *
  * @since GemFire 6.6.2
  */
 public class RevokeFailedException extends GemFireException {
@@ -44,5 +43,4 @@ public class RevokeFailedException extends GemFireException {
   public RevokeFailedException(Throwable cause) {
     super(cause);
   }
-
 }

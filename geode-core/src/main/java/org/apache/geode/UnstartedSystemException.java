@@ -17,15 +17,17 @@
 package org.apache.geode;
 
 /**
- * An <code>UnstartedSystemException</code> is thrown when the specified
- * locator exists but is not running or could not be connected to.
- * <p>
- * The most likely reasons for this are:
+ * An <code>UnstartedSystemException</code> is thrown when the specified locator exists but is not
+ * running or could not be connected to.
+ *
+ * <p>The most likely reasons for this are:
+ *
  * <ul>
- * <li> The locator has not completely started.
- * <li> The locator is stopping.
- * <li> The locator died or was killed.
+ *   <li> The locator has not completely started.
+ *   <li> The locator is stopping.
+ *   <li> The locator died or was killed.
  * </ul>
+ *
  * <p>As of GemFire 5.0 this exception should be named UnstartedLocatorException.
  */
 public class UnstartedSystemException extends NoSystemException {
@@ -33,17 +35,12 @@ public class UnstartedSystemException extends NoSystemException {
 
   //////////////////////  Constructors  //////////////////////
 
-  /**
-   * Creates a new <code>UnstartedSystemException</code>.
-   */
+  /** Creates a new <code>UnstartedSystemException</code>. */
   public UnstartedSystemException(String message) {
     super(message);
   }
 
-  /**
-   * Creates a new <code>UnstartedSystemException</code> with the given message
-   * and cause.
-   */
+  /** Creates a new <code>UnstartedSystemException</code> with the given message and cause. */
   public UnstartedSystemException(String message, Throwable cause) {
     super(message, cause);
   }

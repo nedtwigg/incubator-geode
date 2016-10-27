@@ -23,15 +23,11 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Test verifies the setting and getting of disk id values are correctly
- */
+/** Test verifies the setting and getting of disk id values are correctly */
 @Category(UnitTest.class)
 public class DiskIdJUnitTest {
 
-  /**
-   * Test the getOplogId returns what has been set
-   */
+  /** Test the getOplogId returns what has been set */
   @Test
   public void testGetSetOplogId() throws Exception {
     DiskId did = getDiskId();
@@ -45,9 +41,7 @@ public class DiskIdJUnitTest {
     assertEquals(-1024, did.getOplogId());
   }
 
-  /**
-   * Test the getUserbits returns what has been set
-   */
+  /** Test the getUserbits returns what has been set */
   @Test
   public void testGetSetUserBits() throws Exception {
     DiskId did = getDiskId();
@@ -108,9 +102,7 @@ public class DiskIdJUnitTest {
     assertTrue(EntryBits.isWithVersions(userBits));
   }
 
-  /**
-   * Test the whether setting of one set of values does not affect another set of values
-   */
+  /** Test the whether setting of one set of values does not affect another set of values */
   @Test
   public void testAllOperationsValidatingResult1() {
     DiskId did = getDiskId();
@@ -119,98 +111,105 @@ public class DiskIdJUnitTest {
       did.setOplogId(i);
       // set true for even, set false for odd
       switch ((i % 3)) {
-      case 0:
-        boolValuePerIteration = true;
-        break;
-      case 1:
-      case 2:
-        boolValuePerIteration = false;
-        break;
+        case 0:
+          boolValuePerIteration = true;
+          break;
+        case 1:
+        case 2:
+          boolValuePerIteration = false;
+          break;
       }
       byte userbits = 0;
       switch (i % 4) {
-      case 0:
-        break;
-      case 1:
-        did.setUserBits(EntryBits.setSerialized(userbits, boolValuePerIteration));
-        break;
-      case 2:
-        did.setUserBits(EntryBits.setInvalid(userbits, boolValuePerIteration));
-        break;
-      case 3:
-        did.setUserBits(EntryBits.setLocalInvalid(userbits, boolValuePerIteration));
-        break;
+        case 0:
+          break;
+        case 1:
+          did.setUserBits(EntryBits.setSerialized(userbits, boolValuePerIteration));
+          break;
+        case 2:
+          did.setUserBits(EntryBits.setInvalid(userbits, boolValuePerIteration));
+          break;
+        case 3:
+          did.setUserBits(EntryBits.setLocalInvalid(userbits, boolValuePerIteration));
+          break;
       }
       assertEquals(did.getOplogId(), i);
       byte userBits2 = did.getUserBits();
       switch (i % 4) {
-      case 0:
-        break;
-      case 1:
-        assertEquals(EntryBits.isSerialized(userBits2), boolValuePerIteration);
-        break;
-      case 2:
-        assertEquals(EntryBits.isInvalid(userBits2), boolValuePerIteration);
-        break;
-      case 3:
-        assertEquals(EntryBits.isLocalInvalid(userBits2), boolValuePerIteration);
-        break;
+        case 0:
+          break;
+        case 1:
+          assertEquals(EntryBits.isSerialized(userBits2), boolValuePerIteration);
+          break;
+        case 2:
+          assertEquals(EntryBits.isInvalid(userBits2), boolValuePerIteration);
+          break;
+        case 3:
+          assertEquals(EntryBits.isLocalInvalid(userBits2), boolValuePerIteration);
+          break;
       }
     }
   }
 
   /**
-   * Tests that an instance of 'PersistenceIntOplogOffsetDiskId' is created when
-   * max-oplog-size (in bytes) passed is smaller than Integer.MAX_VALUE
+   * Tests that an instance of 'PersistenceIntOplogOffsetDiskId' is created when max-oplog-size (in
+   * bytes) passed is smaller than Integer.MAX_VALUE
    */
   @Test
   public void testPersistIntDiskIdInstance() {
     int maxOplogSizeinMB = 2;
 
     DiskId diskId = DiskId.createDiskId(maxOplogSizeinMB, true /*is persistence type*/, true);
-    assertTrue("Instance of 'PersistIntOplogOffsetDiskId' was not created though max oplog size (in bytes) was smaller than Integer.MAX_VALUE", DiskId.isInstanceofPersistIntOplogOffsetDiskId(diskId));
+    assertTrue(
+        "Instance of 'PersistIntOplogOffsetDiskId' was not created though max oplog size (in bytes) was smaller than Integer.MAX_VALUE",
+        DiskId.isInstanceofPersistIntOplogOffsetDiskId(diskId));
   }
 
   /**
-   * Tests that an instance of 'LongOplogOffsetDiskId' is created when
-   * max-oplog-size (in bytes) passed is greater than Integer.MAX_VALUE
+   * Tests that an instance of 'LongOplogOffsetDiskId' is created when max-oplog-size (in bytes)
+   * passed is greater than Integer.MAX_VALUE
    */
   @Test
   public void testPersistLongDiskIdInstance() {
     long maxOplogSizeInBytes = (long) Integer.MAX_VALUE + 1;
     int maxOplogSizeinMB = (int) (maxOplogSizeInBytes / (1024 * 1024));
 
-    DiskId diskId = DiskId.createDiskId(maxOplogSizeinMB, true/* is persistence type */, true);
-    assertTrue("Instance of 'PersistLongOplogOffsetDiskId' was not created though max oplog size (in bytes) was greater than Integer.MAX_VALUE", DiskId.isInstanceofPersistLongOplogOffsetDiskId(diskId));
+    DiskId diskId = DiskId.createDiskId(maxOplogSizeinMB, true /* is persistence type */, true);
+    assertTrue(
+        "Instance of 'PersistLongOplogOffsetDiskId' was not created though max oplog size (in bytes) was greater than Integer.MAX_VALUE",
+        DiskId.isInstanceofPersistLongOplogOffsetDiskId(diskId));
   }
 
   /**
-   * Tests that an instance of 'PersistenceIntOplogOffsetDiskId' is created when
-   * max-oplog-size (in bytes) passed is smaller than Integer.MAX_VALUE
+   * Tests that an instance of 'PersistenceIntOplogOffsetDiskId' is created when max-oplog-size (in
+   * bytes) passed is smaller than Integer.MAX_VALUE
    */
   @Test
   public void testOverflowIntDiskIdInstance() {
     int maxOplogSizeinMB = 2;
 
     DiskId diskId = DiskId.createDiskId(maxOplogSizeinMB, false /*is overflow type*/, true);
-    assertTrue("Instance of 'OverflowIntOplogOffsetDiskId' was not created though max oplog size (in bytes) was smaller than Integer.MAX_VALUE", DiskId.isInstanceofOverflowIntOplogOffsetDiskId(diskId));
+    assertTrue(
+        "Instance of 'OverflowIntOplogOffsetDiskId' was not created though max oplog size (in bytes) was smaller than Integer.MAX_VALUE",
+        DiskId.isInstanceofOverflowIntOplogOffsetDiskId(diskId));
   }
 
   /**
-   * Tests that an instance of 'LongOplogOffsetDiskId' is created when
-   * max-oplog-size (in bytes) passed is greater than Integer.MAX_VALUE
+   * Tests that an instance of 'LongOplogOffsetDiskId' is created when max-oplog-size (in bytes)
+   * passed is greater than Integer.MAX_VALUE
    */
   @Test
   public void testOverflowLongDiskIdInstance() {
     long maxOplogSizeInBytes = (long) Integer.MAX_VALUE + 1;
     int maxOplogSizeinMB = (int) (maxOplogSizeInBytes / (1024 * 1024));
 
-    DiskId diskId = DiskId.createDiskId(maxOplogSizeinMB, false/* is overflow type */, true);
-    assertTrue("Instance of 'OverflowLongOplogOffsetDiskId' was not created though max oplog size (in bytes) was greater than Integer.MAX_VALUE", DiskId.isInstanceofOverflowOnlyWithLongOffset(diskId));
+    DiskId diskId = DiskId.createDiskId(maxOplogSizeinMB, false /* is overflow type */, true);
+    assertTrue(
+        "Instance of 'OverflowLongOplogOffsetDiskId' was not created though max oplog size (in bytes) was greater than Integer.MAX_VALUE",
+        DiskId.isInstanceofOverflowOnlyWithLongOffset(diskId));
   }
 
   private DiskId getDiskId() {
     return DiskId.createDiskId(1024, true /* is persistence type*/, true);
   }
-
 }

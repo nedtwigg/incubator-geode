@@ -30,13 +30,10 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * 
- * Retrieves {@link ClientPartitionAdvisor} related information for the
- * specified PartitionedRegion from one of the servers
- * 
- * 
+ * Retrieves {@link ClientPartitionAdvisor} related information for the specified PartitionedRegion
+ * from one of the servers
+ *
  * @since GemFire 6.5
- * 
  */
 public class GetClientPartitionAttributesOp {
 
@@ -50,7 +47,11 @@ public class GetClientPartitionAttributesOp {
   public static ClientPartitionAdvisor execute(ExecutablePool pool, String regionFullPath) {
     AbstractOp op = new GetClientPartitionAttributesOpImpl(regionFullPath);
     if (logger.isDebugEnabled()) {
-      logger.debug("GetClientPartitionAttributesOp#execute : Sending GetClientPartitionAttributesOp Message: {} for region: {} to server using pool: {}", op.getMessage(), regionFullPath, pool);
+      logger.debug(
+          "GetClientPartitionAttributesOp#execute : Sending GetClientPartitionAttributesOp Message: {} for region: {} to server using pool: {}",
+          op.getMessage(),
+          regionFullPath,
+          pool);
     }
 
     ClientPartitionAdvisor advisor = (ClientPartitionAdvisor) pool.execute(op);
@@ -73,8 +74,7 @@ public class GetClientPartitionAttributesOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {
@@ -91,52 +91,60 @@ public class GetClientPartitionAttributesOp {
     @Override
     protected Object processResponse(Message msg) throws Exception {
       switch (msg.getMessageType()) {
-      case MessageType.GET_CLIENT_PARTITION_ATTRIBUTES_ERROR:
-        String errorMsg = msg.getPart(0).getString();
-        if (logger.isDebugEnabled()) {
-          logger.debug(errorMsg);
-        }
-        throw new ServerOperationException(errorMsg);
-      case MessageType.RESPONSE_CLIENT_PARTITION_ATTRIBUTES:
-        final boolean isDebugEnabled = logger.isDebugEnabled();
-        if (isDebugEnabled) {
-          logger.debug("GetClientPartitionAttributesOpImpl#processResponse: received message of type : {}", MessageType.getString(msg.getMessageType()));
-        }
-        int bucketCount;
-        String colocatedWith;
-        String partitionResolverName = null;
-        Set<FixedPartitionAttributes> fpaSet = null;
-        bucketCount = (Integer) msg.getPart(0).getObject();
-        colocatedWith = (String) msg.getPart(1).getObject();
-        if (msg.getNumberOfParts() == 4) {
-          partitionResolverName = (String) msg.getPart(2).getObject();
-          fpaSet = (Set<FixedPartitionAttributes>) msg.getPart(3).getObject();
-        } else if (msg.getNumberOfParts() == 3) {
-          Object obj = msg.getPart(2).getObject();
-          if (obj instanceof String) {
-            partitionResolverName = (String) obj;
-          } else {
-            fpaSet = (Set<FixedPartitionAttributes>) obj;
+        case MessageType.GET_CLIENT_PARTITION_ATTRIBUTES_ERROR:
+          String errorMsg = msg.getPart(0).getString();
+          if (logger.isDebugEnabled()) {
+            logger.debug(errorMsg);
           }
-        } else if (bucketCount == -1) {
-          return null;
-        }
-        if (isDebugEnabled) {
-          logger.debug("GetClientPartitionAttributesOpImpl#processResponse: received all the results from server successfully.");
-        }
-        ClientPartitionAdvisor advisor = new ClientPartitionAdvisor(bucketCount, colocatedWith, partitionResolverName, fpaSet);
-        return advisor;
+          throw new ServerOperationException(errorMsg);
+        case MessageType.RESPONSE_CLIENT_PARTITION_ATTRIBUTES:
+          final boolean isDebugEnabled = logger.isDebugEnabled();
+          if (isDebugEnabled) {
+            logger.debug(
+                "GetClientPartitionAttributesOpImpl#processResponse: received message of type : {}",
+                MessageType.getString(msg.getMessageType()));
+          }
+          int bucketCount;
+          String colocatedWith;
+          String partitionResolverName = null;
+          Set<FixedPartitionAttributes> fpaSet = null;
+          bucketCount = (Integer) msg.getPart(0).getObject();
+          colocatedWith = (String) msg.getPart(1).getObject();
+          if (msg.getNumberOfParts() == 4) {
+            partitionResolverName = (String) msg.getPart(2).getObject();
+            fpaSet = (Set<FixedPartitionAttributes>) msg.getPart(3).getObject();
+          } else if (msg.getNumberOfParts() == 3) {
+            Object obj = msg.getPart(2).getObject();
+            if (obj instanceof String) {
+              partitionResolverName = (String) obj;
+            } else {
+              fpaSet = (Set<FixedPartitionAttributes>) obj;
+            }
+          } else if (bucketCount == -1) {
+            return null;
+          }
+          if (isDebugEnabled) {
+            logger.debug(
+                "GetClientPartitionAttributesOpImpl#processResponse: received all the results from server successfully.");
+          }
+          ClientPartitionAdvisor advisor =
+              new ClientPartitionAdvisor(bucketCount, colocatedWith, partitionResolverName, fpaSet);
+          return advisor;
 
-      case MessageType.EXCEPTION:
-        if (logger.isDebugEnabled()) {
-          logger.debug("GetClientPartitionAttributesOpImpl#processResponse: received message of type EXCEPTION");
-        }
-        Part part = msg.getPart(0);
-        Object obj = part.getObject();
-        String s = "While performing  GetClientPartitionAttributesOp " + ((Throwable) obj).getMessage();
-        throw new ServerOperationException(s, (Throwable) obj);
-      default:
-        throw new InternalGemFireError(LocalizedStrings.Op_UNKNOWN_MESSAGE_TYPE_0.toLocalizedString(Integer.valueOf(msg.getMessageType())));
+        case MessageType.EXCEPTION:
+          if (logger.isDebugEnabled()) {
+            logger.debug(
+                "GetClientPartitionAttributesOpImpl#processResponse: received message of type EXCEPTION");
+          }
+          Part part = msg.getPart(0);
+          Object obj = part.getObject();
+          String s =
+              "While performing  GetClientPartitionAttributesOp " + ((Throwable) obj).getMessage();
+          throw new ServerOperationException(s, (Throwable) obj);
+        default:
+          throw new InternalGemFireError(
+              LocalizedStrings.Op_UNKNOWN_MESSAGE_TYPE_0.toLocalizedString(
+                  Integer.valueOf(msg.getMessageType())));
       }
     }
 
@@ -163,7 +171,5 @@ public class GetClientPartitionAttributesOp {
     protected boolean isErrorResponse(int msgType) {
       return false;
     }
-
   }
-
 }

@@ -30,7 +30,7 @@ public interface TXRegionLockRequest extends DataSerializable {
   /** The entries to try-lock. Returns a set of <code>Object</code> names */
   public Set getKeys();
 
-  /** add the key to be locked*/
+  /** add the key to be locked */
   public void addEntryKey(Object key);
 
   /** add the set of keys to be locked */

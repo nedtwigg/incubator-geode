@@ -39,9 +39,8 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 
 /**
- * This is the abstract superclass of tests that validate the
- * functionality of GemFire's distributed caches.  It provides a
- * number of convenient helper classes.
+ * This is the abstract superclass of tests that validate the functionality of GemFire's distributed
+ * caches. It provides a number of convenient helper classes.
  */
 public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase {
 
@@ -54,8 +53,8 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
   }
 
   /**
-   * Creates the {@link Cache} and root region in each remote VM
-   * and, if createLocalCache, in this VM.
+   * Creates the {@link Cache} and root region in each remote VM and, if createLocalCache, in this
+   * VM.
    */
   private final void setUpDistributedCacheTestCase(boolean createLocalCache) throws Exception {
     if (createLocalCache) {
@@ -81,15 +80,12 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
     }
   }
 
-  /** 
-   * Creates the root region in a remote VM
-   */
+  /** Creates the root region in a remote VM */
   private static void remoteCreateCache() throws Exception {
 
     Assert.assertTrue(cache == null, "cache should be null");
 
-    DistributedCacheTestCase x = new DistributedCacheTestCase() {
-    };
+    DistributedCacheTestCase x = new DistributedCacheTestCase() {};
     cache = CacheFactory.create(x.getSystem());
 
     AttributesFactory factory = new AttributesFactory();
@@ -97,9 +93,7 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
     cache.createRegion("root", factory.create());
   }
 
-  /**
-   * Closes the cache in this VM and each remote VM
-   */
+  /** Closes the cache in this VM and each remote VM */
   @Override
   public final void preTearDown() throws Exception {
     StringBuffer problems = new StringBuffer();
@@ -135,10 +129,9 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
   }
 
   /**
-   * Closes the Cache for the current VM.  Returns whether or not an
-   * exception occurred in the distribution manager to which this VM
-   * is attached.  Note that the exception flag is cleared by this
-   * method.
+   * Closes the Cache for the current VM. Returns whether or not an exception occurred in the
+   * distribution manager to which this VM is attached. Note that the exception flag is cleared by
+   * this method.
    *
    * @see DistributionManager#exceptionInThreads()
    */
@@ -146,7 +139,8 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
     Assert.assertTrue(cache != null, "No cache on this VM?");
     Assert.assertTrue(!cache.isClosed(), "Who closed my cache?");
 
-    InternalDistributedSystem system = (InternalDistributedSystem) ((GemFireCacheImpl) cache).getDistributedSystem();
+    InternalDistributedSystem system =
+        (InternalDistributedSystem) ((GemFireCacheImpl) cache).getDistributedSystem();
     DistributionManager dm = (DistributionManager) system.getDistributionManager();
     boolean exceptionInThreads = dm.exceptionInThreads();
     DistributionManagerDUnitTest.clearExceptionInThreads(dm);
@@ -158,8 +152,8 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
   }
 
   /**
-   * Returns the root region of the cache.  We assume that the {@link
-   * Cache} and the root region have already been created.
+   * Returns the root region of the cache. We assume that the {@link Cache} and the root region have
+   * already been created.
    */
   protected static Region getRootRegion() throws CacheException {
     if (cache == null) {
@@ -181,18 +175,16 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
       throw new IllegalStateException(s);
     }
 
-    InternalDistributedSystem system = (InternalDistributedSystem) ((GemFireCacheImpl) cache).getDistributedSystem();
+    InternalDistributedSystem system =
+        (InternalDistributedSystem) ((GemFireCacheImpl) cache).getDistributedSystem();
     return (DistributionManager) system.getDistributionManager();
   }
 
   /**
-   * Creates a new sub-Region of the root Region in a remote VM with
-   * default scope, SCOPE_LOCAL.
+   * Creates a new sub-Region of the root Region in a remote VM with default scope, SCOPE_LOCAL.
    *
-   * @param name
-   *        The name of the newly-created sub-Region.  It is
-   *        recommended that the name of the Region be the {@link
-   *        #getUniqueName()} of the test.
+   * @param name The name of the newly-created sub-Region. It is recommended that the name of the
+   *     Region be the {@link #getUniqueName()} of the test.
    */
   protected static void remoteCreateRegion(String name) throws CacheException {
 
@@ -202,10 +194,8 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
   /**
    * Creates a new sub-Region of the root Region in a remote VM.
    *
-   * @param name
-   *        The name of the newly-created sub-Region.  It is
-   *        recommended that the name of the Region be the {@link
-   *        #getUniqueName()} of the test.
+   * @param name The name of the newly-created sub-Region. It is recommended that the name of the
+   *     Region be the {@link #getUniqueName()} of the test.
    * @param scope create the region attributes with this scope
    */
   protected static void remoteCreateRegion(String name, Scope scope) throws CacheException {
@@ -219,38 +209,32 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
   }
 
   /**
-   * Defines an entry in the Region with the given
-   * name and scope. 
+   * Defines an entry in the Region with the given name and scope.
    *
-   * @param regionName
-   *        The name of a region that is a sub-region of the root
-   *        region, or a global name 
-   * @param entryName
-   *        Must be {@link java.io.Serializable}
+   * @param regionName The name of a region that is a sub-region of the root region, or a global
+   *     name
+   * @param entryName Must be {@link java.io.Serializable}
    */
-  protected static void remoteDefineEntry(String regionName, String entryName, Scope scope) throws CacheException {
+  protected static void remoteDefineEntry(String regionName, String entryName, Scope scope)
+      throws CacheException {
 
     remoteDefineEntry(regionName, entryName, scope, true);
   }
 
   /**
-   * Defines an entry in the Region with the given name and scope.  In
-   * 3.0 this method create a subregion named <code>entryName</code>
-   * (with the appropriate attributes) that contains an entry named
-   * <code>entryName</code>.
+   * Defines an entry in the Region with the given name and scope. In 3.0 this method create a
+   * subregion named <code>entryName</code> (with the appropriate attributes) that contains an entry
+   * named <code>entryName</code>.
    *
-   * @param regionName
-   *        The name of a region that is a sub-region of the root
-   *        region, or a global name 
-   * @param entryName
-   *        Must be {@link java.io.Serializable}
-   * @param doNetSearch
-   *        Will the distributed region perform a netSearch when
-   *        looking for objects?  If <code>false</code> a {@link
-   *        CacheException} will be thrown if an entry in the region
-   *        is asked for and it not there.
+   * @param regionName The name of a region that is a sub-region of the root region, or a global
+   *     name
+   * @param entryName Must be {@link java.io.Serializable}
+   * @param doNetSearch Will the distributed region perform a netSearch when looking for objects? If
+   *     <code>false</code> a {@link CacheException} will be thrown if an entry in the region is
+   *     asked for and it not there.
    */
-  protected static void remoteDefineEntry(String regionName, String entryName, Scope scope, boolean doNetSearch) throws CacheException {
+  protected static void remoteDefineEntry(
+      String regionName, String entryName, Scope scope, boolean doNetSearch) throws CacheException {
 
     Region root = getRootRegion();
     Region region = root.getSubregion(regionName);
@@ -259,28 +243,34 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
     factory.setScope(scope);
 
     if (!doNetSearch) {
-      factory.setCacheLoader(new CacheLoader() {
-        public Object load(LoaderHelper helper) throws CacheLoaderException {
-          String s = "Should not be loading \"" + helper.getKey() + "\" in \"" + helper.getRegion().getFullPath() + "\"";
-          throw new CacheLoaderException(s);
-        }
+      factory.setCacheLoader(
+          new CacheLoader() {
+            public Object load(LoaderHelper helper) throws CacheLoaderException {
+              String s =
+                  "Should not be loading \""
+                      + helper.getKey()
+                      + "\" in \""
+                      + helper.getRegion().getFullPath()
+                      + "\"";
+              throw new CacheLoaderException(s);
+            }
 
-        public void close() {
-        }
-      });
+            public void close() {}
+          });
     }
 
     Region sub = region.createSubregion(entryName, factory.create());
     sub.create(entryName, null);
 
-    LogWriterUtils.getLogWriter().info("Defined Entry named '" + entryName + "' in region '" + sub.getFullPath() + "'");
+    LogWriterUtils.getLogWriter()
+        .info("Defined Entry named '" + entryName + "' in region '" + sub.getFullPath() + "'");
   }
 
   /**
-   * Puts (or creates) a value in a subregion of <code>region</code>
-   * named <code>entryName</code>.
+   * Puts (or creates) a value in a subregion of <code>region</code> named <code>entryName</code>.
    */
-  protected static void remotePut(String regionName, String entryName, Object value, Scope scope) throws CacheException {
+  protected static void remotePut(String regionName, String entryName, Object value, Scope scope)
+      throws CacheException {
 
     Region root = getRootRegion();
     Region region = root.getSubregion(regionName);
@@ -293,35 +283,39 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
 
     sub.put(entryName, value);
 
-    LogWriterUtils.getLogWriter().info("Put value " + value + " in entry " + entryName + " in region '" + region.getFullPath() + "'");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Put value "
+                + value
+                + " in entry "
+                + entryName
+                + " in region '"
+                + region.getFullPath()
+                + "'");
   }
 
   /**
-   * Does a put with the given value, defining a DISTRIBUTED_NO_ACK entry
-   * in the Region with the given name.
+   * Does a put with the given value, defining a DISTRIBUTED_NO_ACK entry in the Region with the
+   * given name.
    *
-   * @param regionName
-   *        The name of a region that is a sub-region of the root
-   *        region, or a global name 
-   * @param entryName
-   *        Must be {@link java.io.Serializable}
+   * @param regionName The name of a region that is a sub-region of the root region, or a global
+   *     name
+   * @param entryName Must be {@link java.io.Serializable}
    */
-  protected static void remotePutDistributed(String regionName, String entryName, Object value) throws CacheException {
+  protected static void remotePutDistributed(String regionName, String entryName, Object value)
+      throws CacheException {
     remotePut(regionName, entryName, value, Scope.DISTRIBUTED_NO_ACK);
   }
 
   /**
    * Replaces the value of an entry in a region in a remote VM
    *
-   * @param regionName
-   *        The name of a region that is a sub-region of the root
-   *        region 
-   * @param entryName
-   *        Must be {@link java.io.Serializable}
-   * @param value
-   *        The value used to replace
+   * @param regionName The name of a region that is a sub-region of the root region
+   * @param entryName Must be {@link java.io.Serializable}
+   * @param value The value used to replace
    */
-  protected static void remoteReplace(String regionName, String entryName, Object value) throws CacheException {
+  protected static void remoteReplace(String regionName, String entryName, Object value)
+      throws CacheException {
 
     Region root = getRootRegion();
     Region region = root.getSubregion(regionName);
@@ -333,19 +327,25 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
 
     sub.put(entryName, value);
 
-    LogWriterUtils.getLogWriter().info("Replaced value " + value + "in entry " + entryName + " in region '" + region.getFullPath() + "'");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Replaced value "
+                + value
+                + "in entry "
+                + entryName
+                + " in region '"
+                + region.getFullPath()
+                + "'");
   }
 
   /**
    * Invalidates the value of an entry in a region in a remote VM
    *
-   * @param regionName
-   *        The name of a region that is a sub-region of the root
-   *        region 
-   * @param entryName
-   *        Must be {@link java.io.Serializable}
+   * @param regionName The name of a region that is a sub-region of the root region
+   * @param entryName Must be {@link java.io.Serializable}
    */
-  protected static void remoteInvalidate(String regionName, String entryName) throws CacheException {
+  protected static void remoteInvalidate(String regionName, String entryName)
+      throws CacheException {
 
     Region root = getRootRegion();
     Region region = root.getSubregion(regionName);
@@ -361,11 +361,8 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
   /**
    * Destroys the value of an entry in a region in a remote VM
    *
-   * @param regionName
-   *        The name of a region that is a sub-region of the root
-   *        region 
-   * @param entryName
-   *        Must be {@link java.io.Serializable}
+   * @param regionName The name of a region that is a sub-region of the root region
+   * @param entryName Must be {@link java.io.Serializable}
    */
   protected static void remoteDestroy(String regionName, String entryName) throws CacheException {
 
@@ -383,16 +380,13 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
   }
 
   /**
-   * Asserts that the value of an entry in a region is what we expect
-   * it to be.
+   * Asserts that the value of an entry in a region is what we expect it to be.
    *
-   * @param regionName
-   *        The name of a region that is a sub-region of the root
-   *        region 
-   * @param entryName
-   *        Must be {@link java.io.Serializable}
+   * @param regionName The name of a region that is a sub-region of the root region
+   * @param entryName Must be {@link java.io.Serializable}
    */
-  protected static void remoteAssertEntryValue(String regionName, String entryName, Object expected) throws CacheException {
+  protected static void remoteAssertEntryValue(String regionName, String entryName, Object expected)
+      throws CacheException {
 
     Region root = getRootRegion();
     Region region = root.getSubregion(regionName);
@@ -406,16 +400,14 @@ public abstract class DistributedCacheTestCase extends JUnit4DistributedTestCase
   }
 
   /**
-   * Assumes there is only one host, and invokes the given method in
-   * every VM that host knows about.
+   * Assumes there is only one host, and invokes the given method in every VM that host knows about.
    */
   public void forEachVMInvoke(String methodName, Object[] args) {
     forEachVMInvoke(getClass(), methodName, args);
   }
 
   /**
-   * Assumes there is only one host, and invokes the given method in
-   * every VM that host knows about.
+   * Assumes there is only one host, and invokes the given method in every VM that host knows about.
    */
   public void forEachVMInvoke(Class<?> targetClass, String methodName, Object[] args) {
     Host host = Host.getHost(0);

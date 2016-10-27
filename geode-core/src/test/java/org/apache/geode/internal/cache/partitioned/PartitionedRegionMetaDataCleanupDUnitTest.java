@@ -38,9 +38,7 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 
-/**
- *
- */
+/** */
 @Category(DistributedTest.class)
 public class PartitionedRegionMetaDataCleanupDUnitTest extends JUnit4CacheTestCase {
 
@@ -119,86 +117,92 @@ public class PartitionedRegionMetaDataCleanupDUnitTest extends JUnit4CacheTestCa
   }
 
   private void closeCache(VM vm0) {
-    vm0.invoke(new SerializableRunnable() {
-      public void run() {
-        closeCache();
-
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            closeCache();
+          }
+        });
   }
 
   private void fakeCrash(VM vm0) {
-    vm0.invoke(new SerializableRunnable() {
-      public void run() {
-        InternalDistributedSystem ds = (InternalDistributedSystem) getCache().getDistributedSystem();
-        //Shutdown without closing the cache.
-        ds.getDistributionManager().close();
+    vm0.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            InternalDistributedSystem ds =
+                (InternalDistributedSystem) getCache().getDistributedSystem();
+            //Shutdown without closing the cache.
+            ds.getDistributionManager().close();
 
-        //now cleanup the cache and ds.
-        disconnectFromDS();
-
-      }
-    });
+            //now cleanup the cache and ds.
+            disconnectFromDS();
+          }
+        });
   }
 
   private void closePr(VM vm0, final String regionName) {
-    vm0.invoke(new SerializableRunnable() {
-      public void run() {
-        getCache().getRegion(regionName).close();
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            getCache().getRegion(regionName).close();
+          }
+        });
   }
 
   private void createPR(VM vm0, final String regionName, final int expirationTime) {
-    vm0.invoke(new SerializableRunnable() {
-      public void run() {
-        getCache().createRegionFactory(RegionShortcut.PARTITION)
-            //          .setEvictionAttributes(EvictionAttributes.createLIFOEntryAttributes(evictionEntries, EvictionAction.LOCAL_DESTROY))
-            .setEntryTimeToLive(new ExpirationAttributes(expirationTime)).create(regionName);
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            getCache()
+                .createRegionFactory(RegionShortcut.PARTITION)
+                //          .setEvictionAttributes(EvictionAttributes.createLIFOEntryAttributes(evictionEntries, EvictionAction.LOCAL_DESTROY))
+                .setEntryTimeToLive(new ExpirationAttributes(expirationTime))
+                .create(regionName);
+          }
+        });
   }
 
   /**
-   * Try to create the region with the given attributes.
-   * This will try 20 times to create the region until
-   * the region can be successfully created without an illegal state exception.
-   * 
-   * This is a workaround for bug 47125, because the metadata cleanup happens
-   * asynchronously.
+   * Try to create the region with the given attributes. This will try 20 times to create the region
+   * until the region can be successfully created without an illegal state exception.
+   *
+   * <p>This is a workaround for bug 47125, because the metadata cleanup happens asynchronously.
    */
   private void waitForCreate(VM vm0, final String regionName, final int expirationTime) {
-    vm0.invoke(new SerializableRunnable() {
-      public void run() {
-        RegionFactory<Object, Object> rf = getCache().createRegionFactory(RegionShortcut.PARTITION)
-            //          .setEvictionAttributes(EvictionAttributes.createLIFOEntryAttributes(evictionEntries, EvictionAction.LOCAL_DESTROY))
-            .setEntryTimeToLive(new ExpirationAttributes(expirationTime));
+    vm0.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            RegionFactory<Object, Object> rf =
+                getCache()
+                    .createRegionFactory(RegionShortcut.PARTITION)
+                    //          .setEvictionAttributes(EvictionAttributes.createLIFOEntryAttributes(evictionEntries, EvictionAction.LOCAL_DESTROY))
+                    .setEntryTimeToLive(new ExpirationAttributes(expirationTime));
 
-        //We may log an exception if the create fails. Ignore thse.
-        IgnoredException ex = IgnoredException.addIgnoredException("IllegalStateException");
-        try {
-          int i = 0;
-          //Loop until a successful create
-          while (true) {
+            //We may log an exception if the create fails. Ignore thse.
+            IgnoredException ex = IgnoredException.addIgnoredException("IllegalStateException");
             try {
-              i++;
-              rf.create(regionName);
-              //if the create was succesfull, we're done
-              return;
-            } catch (IllegalStateException expected) {
-              //give up if we can't create the region in 20 tries
-              if (i == 20) {
-                Assert.fail("Metadata was never cleaned up in 20 tries", expected);
-              }
+              int i = 0;
+              //Loop until a successful create
+              while (true) {
+                try {
+                  i++;
+                  rf.create(regionName);
+                  //if the create was succesfull, we're done
+                  return;
+                } catch (IllegalStateException expected) {
+                  //give up if we can't create the region in 20 tries
+                  if (i == 20) {
+                    Assert.fail("Metadata was never cleaned up in 20 tries", expected);
+                  }
 
-              //wait a bit before the next attempt.
-              Wait.pause(500);
+                  //wait a bit before the next attempt.
+                  Wait.pause(500);
+                }
+              }
+            } finally {
+              ex.remove();
             }
           }
-        } finally {
-          ex.remove();
-        }
-      }
-    });
+        });
   }
 }

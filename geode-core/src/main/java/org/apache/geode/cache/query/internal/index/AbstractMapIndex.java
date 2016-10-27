@@ -45,7 +45,7 @@ import org.apache.geode.internal.cache.BucketRegion;
 import org.apache.geode.internal.cache.RegionEntry;
 
 public abstract class AbstractMapIndex extends AbstractIndex {
-  final protected boolean isAllKeys;
+  protected final boolean isAllKeys;
 
   final String[] patternStr;
 
@@ -53,14 +53,40 @@ public abstract class AbstractMapIndex extends AbstractIndex {
 
   protected final Object[] mapKeys;
 
-  AbstractMapIndex(String indexName, Region region, String fromClause, String indexedExpression, String projectionAttributes, String origFromClause, String origIndxExpr, String[] defintions, boolean isAllKeys, String[] multiIndexingKeysPattern, Object[] mapKeys, IndexStatistics stats) {
-    super(indexName, region, fromClause, indexedExpression, projectionAttributes, origFromClause, origIndxExpr, defintions, stats);
+  AbstractMapIndex(
+      String indexName,
+      Region region,
+      String fromClause,
+      String indexedExpression,
+      String projectionAttributes,
+      String origFromClause,
+      String origIndxExpr,
+      String[] defintions,
+      boolean isAllKeys,
+      String[] multiIndexingKeysPattern,
+      Object[] mapKeys,
+      IndexStatistics stats) {
+    super(
+        indexName,
+        region,
+        fromClause,
+        indexedExpression,
+        projectionAttributes,
+        origFromClause,
+        origIndxExpr,
+        defintions,
+        stats);
     this.mapKeyToValueIndex = new ConcurrentHashMap<Object, AbstractIndex>(2, 0.75f, 1);
     RegionAttributes ra = region.getAttributes();
     this.isAllKeys = isAllKeys;
     this.mapKeys = mapKeys;
     if (this.isAllKeys) {
-      this.patternStr = new String[] { new StringBuilder(indexedExpression).deleteCharAt(indexedExpression.length() - 2).toString() };
+      this.patternStr =
+          new String[] {
+            new StringBuilder(indexedExpression)
+                .deleteCharAt(indexedExpression.length() - 2)
+                .toString()
+          };
 
     } else {
       this.patternStr = multiIndexingKeysPattern;
@@ -77,8 +103,7 @@ public abstract class AbstractMapIndex extends AbstractIndex {
     if (!(this.region instanceof BucketRegion)) {
       return new MapIndexStatistics(indexName);
     } else {
-      return new InternalIndexStatistics() {
-      };
+      return new InternalIndexStatistics() {};
     }
   }
 
@@ -89,9 +114,7 @@ public abstract class AbstractMapIndex extends AbstractIndex {
       this.vsdStats = new IndexStats(getRegion().getCache().getDistributedSystem(), indexName);
     }
 
-    /**
-     * Return the total number of times this index has been updated
-     */
+    /** Return the total number of times this index has been updated */
     public long getNumUpdates() {
       return this.vsdStats.getNumUpdates();
     }
@@ -144,47 +167,32 @@ public abstract class AbstractMapIndex extends AbstractIndex {
       this.vsdStats.incReadLockCount(delta);
     }
 
-    /**
-     * Returns the total amount of time (in nanoseconds) spent updating this
-     * index.
-     */
+    /** Returns the total amount of time (in nanoseconds) spent updating this index. */
     public long getTotalUpdateTime() {
       return this.vsdStats.getTotalUpdateTime();
     }
 
-    /**
-     * Returns the total number of times this index has been accessed by a
-     * query.
-     */
+    /** Returns the total number of times this index has been accessed by a query. */
     public long getTotalUses() {
       return this.vsdStats.getTotalUses();
     }
 
-    /**
-     * Returns the number of keys in this index
-     * at the highest level
-     */
+    /** Returns the number of keys in this index at the highest level */
     public long getNumberOfMapIndexKeys() {
       return this.vsdStats.getNumberOfMapIndexKeys();
     }
 
-    /**
-     * Returns the number of keys in this index.
-     */
+    /** Returns the number of keys in this index. */
     public long getNumberOfKeys() {
       return this.vsdStats.getNumberOfKeys();
     }
 
-    /**
-     * Returns the number of values in this index.
-     */
+    /** Returns the number of values in this index. */
     public long getNumberOfValues() {
       return this.vsdStats.getNumberOfValues();
     }
 
-    /**
-     * Return the number of values for the specified key in this index.
-     */
+    /** Return the number of values for the specified key in this index. */
     public long getNumberOfValues(Object key) {
       long numValues = 0;
       for (Object ind : mapKeyToValueIndex.values()) {
@@ -193,9 +201,7 @@ public abstract class AbstractMapIndex extends AbstractIndex {
       return numValues;
     }
 
-    /**
-     * Return the number of read locks taken on this index
-     */
+    /** Return the number of read locks taken on this index */
     public int getReadLockCount() {
       return this.vsdStats.getReadLockCount();
     }
@@ -232,22 +238,54 @@ public abstract class AbstractMapIndex extends AbstractIndex {
   }
 
   @Override
-  void lockedQuery(Object key, int operator, Collection results, CompiledValue iterOps, RuntimeIterator runtimeItr, ExecutionContext context, List projAttrib, SelectResults intermediateResults, boolean isIntersection) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+  void lockedQuery(
+      Object key,
+      int operator,
+      Collection results,
+      CompiledValue iterOps,
+      RuntimeIterator runtimeItr,
+      ExecutionContext context,
+      List projAttrib,
+      SelectResults intermediateResults,
+      boolean isIntersection)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
     Object[] mapKeyAndVal = (Object[]) key;
     AbstractIndex ri = this.mapKeyToValueIndex.get(mapKeyAndVal[1]);
     if (ri != null) {
-      ri.lockedQuery(mapKeyAndVal[0], operator, results, iterOps, runtimeItr, context, projAttrib, intermediateResults, isIntersection);
+      ri.lockedQuery(
+          mapKeyAndVal[0],
+          operator,
+          results,
+          iterOps,
+          runtimeItr,
+          context,
+          projAttrib,
+          intermediateResults,
+          isIntersection);
     }
   }
 
   @Override
-  void lockedQuery(Object lowerBoundKey, int lowerBoundOperator, Object upperBoundKey, int upperBoundOperator, Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
-    throw new UnsupportedOperationException("Range grouping for MapIndex condition is not supported");
-
+  void lockedQuery(
+      Object lowerBoundKey,
+      int lowerBoundOperator,
+      Object upperBoundKey,
+      int upperBoundOperator,
+      Collection results,
+      Set keysToRemove,
+      ExecutionContext context)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
+    throw new UnsupportedOperationException(
+        "Range grouping for MapIndex condition is not supported");
   }
 
   @Override
-  void lockedQuery(Object key, int operator, Collection results, Set keysToRemove, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+  void lockedQuery(
+      Object key, int operator, Collection results, Set keysToRemove, ExecutionContext context)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
     Object[] mapKeyAndVal = (Object[]) key;
     AbstractIndex ri = this.mapKeyToValueIndex.get(mapKeyAndVal[1]);
     if (ri != null) {
@@ -334,9 +372,11 @@ public abstract class AbstractMapIndex extends AbstractIndex {
     }
   }
 
-  protected abstract void doIndexAddition(Object mapKey, Object indexKey, Object value, RegionEntry entry) throws IMQException;
+  protected abstract void doIndexAddition(
+      Object mapKey, Object indexKey, Object value, RegionEntry entry) throws IMQException;
 
-  protected abstract void saveIndexAddition(Object mapKey, Object indexKey, Object value, RegionEntry entry) throws IMQException;
+  protected abstract void saveIndexAddition(
+      Object mapKey, Object indexKey, Object value, RegionEntry entry) throws IMQException;
 
   public Map<Object, AbstractIndex> getRangeIndexHolderForTesting() {
     return Collections.unmodifiableMap(this.mapKeyToValueIndex);
@@ -353,7 +393,9 @@ public abstract class AbstractMapIndex extends AbstractIndex {
   public abstract boolean containsEntry(RegionEntry entry);
 
   @Override
-  public boolean isMatchingWithIndexExpression(CompiledValue condnExpr, String conditionExprStr, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  public boolean isMatchingWithIndexExpression(
+      CompiledValue condnExpr, String conditionExprStr, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     if (this.isAllKeys) {
       // check if the conditionExps is of type MapIndexable.If yes then check
       // the canonicalized string
@@ -383,5 +425,4 @@ public abstract class AbstractMapIndex extends AbstractIndex {
   public boolean isEmpty() {
     return mapKeyToValueIndex.size() == 0 ? true : false;
   }
-
 }

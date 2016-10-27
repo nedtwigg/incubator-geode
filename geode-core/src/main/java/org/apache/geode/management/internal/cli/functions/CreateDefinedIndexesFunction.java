@@ -64,11 +64,16 @@ public class CreateDefinedIndexesFunction extends FunctionAdapter implements Int
       StringBuffer sb = new StringBuffer();
       sb.append("Index creation failed for indexes: ").append("\n");
       for (Map.Entry<String, Exception> failedIndex : e.getExceptionsMap().entrySet()) {
-        sb.append(failedIndex.getKey()).append(" : ").append(failedIndex.getValue().getMessage()).append("\n");
+        sb.append(failedIndex.getKey())
+            .append(" : ")
+            .append(failedIndex.getValue().getMessage())
+            .append("\n");
       }
       context.getResultSender().lastResult(new CliFunctionResult(memberId, e, sb.toString()));
     } catch (Exception e) {
-      String exceptionMessage = CliStrings.format(CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(), e.getMessage());
+      String exceptionMessage =
+          CliStrings.format(
+              CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(), e.getMessage());
       context.getResultSender().lastResult(new CliFunctionResult(memberId, e, exceptionMessage));
     }
   }
@@ -82,5 +87,4 @@ public class CreateDefinedIndexesFunction extends FunctionAdapter implements Int
   public String getId() {
     return CreateDefinedIndexesFunction.class.getName();
   }
-
 }

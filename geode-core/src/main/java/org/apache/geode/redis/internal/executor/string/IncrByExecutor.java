@@ -27,7 +27,8 @@ import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 
 public class IncrByExecutor extends StringExecutor {
 
-  private final String ERROR_VALUE_NOT_USABLE = "The value at this key cannot be incremented numerically";
+  private final String ERROR_VALUE_NOT_USABLE =
+      "The value at this key cannot be incremented numerically";
 
   private final String ERROR_INCREMENT_NOT_USABLE = "The increment on this key must be numeric";
 
@@ -60,7 +61,8 @@ public class IncrByExecutor extends StringExecutor {
     try {
       increment = Coder.bytesToLong(incrArray);
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_INCREMENT_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_INCREMENT_NOT_USABLE));
       return;
     }
 
@@ -83,7 +85,8 @@ public class IncrByExecutor extends StringExecutor {
     try {
       value = Long.parseLong(stringValue);
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_VALUE_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_VALUE_NOT_USABLE));
       return;
     }
 
@@ -101,7 +104,5 @@ public class IncrByExecutor extends StringExecutor {
     r.put(key, new ByteArrayWrapper(Coder.stringToBytes(stringValue)));
 
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), value));
-
   }
-
 }

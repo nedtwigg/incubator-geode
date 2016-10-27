@@ -27,7 +27,13 @@ public class DomainObjectPdxAutoNoDefaultConstructor extends DomainObject {
   public Integer anInteger;
 
   public enum Day {
-    SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY
+    SUNDAY,
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY
   }
 
   public char aChar;

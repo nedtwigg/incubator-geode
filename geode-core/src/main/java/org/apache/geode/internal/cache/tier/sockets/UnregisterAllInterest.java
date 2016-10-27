@@ -19,25 +19,18 @@ package org.apache.geode.internal.cache.tier.sockets;
 
 import java.io.*;
 
-/**
- * Singleton token indicating that all interest registrations should be removed.
- *
- *
- */
+/** Singleton token indicating that all interest registrations should be removed. */
 public class UnregisterAllInterest implements Serializable {
   private static final long serialVersionUID = 5026160621257178459L;
   private static final UnregisterAllInterest SINGLETON = new UnregisterAllInterest();
 
-  /**
-   * Return the only instance of this class.
-   */
+  /** Return the only instance of this class. */
   public static final UnregisterAllInterest singleton() {
     return SINGLETON;
   }
 
   /** Creates a new instance of UnregisterAllInterest */
-  private UnregisterAllInterest() {
-  }
+  private UnregisterAllInterest() {}
 
   @Override
   public String toString() {

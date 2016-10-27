@@ -31,18 +31,22 @@ import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 
 public class RegisterDataSerializers extends BaseCommand {
 
-  private final static RegisterDataSerializers singleton = new RegisterDataSerializers();
+  private static final RegisterDataSerializers singleton = new RegisterDataSerializers();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private RegisterDataSerializers() {
-  }
+  private RegisterDataSerializers() {}
 
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException {
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received register dataserializer request ({} parts) from {}", servConn.getName(), msg.getNumberOfParts(), servConn.getSocketString());
+      logger.debug(
+          "{}: Received register dataserializer request ({} parts) from {}",
+          servConn.getName(),
+          msg.getNumberOfParts(),
+          servConn.getSocketString());
     }
     int noOfParts = msg.getNumberOfParts();
 
@@ -63,7 +67,8 @@ public class RegisterDataSerializers extends BaseCommand {
 
         Part dataSerializerClassNamePart = msg.getPart(i);
         serializedDataSerializers[i] = dataSerializerClassNamePart.getSerializedForm();
-        String dataSerializerClassName = (String) CacheServerHelper.deserialize(serializedDataSerializers[i]);
+        String dataSerializerClassName =
+            (String) CacheServerHelper.deserialize(serializedDataSerializers[i]);
 
         Part idPart = msg.getPart(i + 1);
         serializedDataSerializers[i + 1] = idPart.getSerializedForm();
@@ -72,7 +77,8 @@ public class RegisterDataSerializers extends BaseCommand {
         Class dataSerializerClass = null;
         try {
           dataSerializerClass = InternalDataSerializer.getCachedClass(dataSerializerClassName);
-          InternalDataSerializer.register(dataSerializerClass, true, eventId, servConn.getProxyID());
+          InternalDataSerializer.register(
+              dataSerializerClass, true, eventId, servConn.getProxyID());
         } catch (ClassNotFoundException e) {
           // If a ClassNotFoundException is caught, store it, but continue
           // processing other instantiators

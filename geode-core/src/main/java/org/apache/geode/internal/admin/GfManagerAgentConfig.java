@@ -20,18 +20,21 @@ package org.apache.geode.internal.admin;
 import org.apache.geode.distributed.internal.InternalDistributedSystem.DisconnectListener;
 import org.apache.geode.internal.logging.InternalLogWriter;
 
-/**
- * Used to create and configure a {@link GfManagerAgent}.
- */
+/** Used to create and configure a {@link GfManagerAgent}. */
 public class GfManagerAgentConfig {
 
-  /** 
-   * Constructs a GfManagerAgentConfig given the transport it should
-   * use to connect to the remote systems and the LogWriterI18n to use for
-   * logging messages.
+  /**
+   * Constructs a GfManagerAgentConfig given the transport it should use to connect to the remote
+   * systems and the LogWriterI18n to use for logging messages.
    */
   // LOG: saves LogWriterLogger from AdminDistributedSystemImpl for RemoteGfManagerAgentConfig
-  public GfManagerAgentConfig(String displayName, TransportConfig transport, InternalLogWriter logWriter, int level, AlertListener listener, DisconnectListener disconnectListener) {
+  public GfManagerAgentConfig(
+      String displayName,
+      TransportConfig transport,
+      InternalLogWriter logWriter,
+      int level,
+      AlertListener listener,
+      DisconnectListener disconnectListener) {
     this.displayName = displayName;
     this.transport = transport;
     this.logWriter = logWriter;
@@ -40,38 +43,28 @@ public class GfManagerAgentConfig {
     this.disconnectListener = disconnectListener;
   }
 
-  /**
-   * Returns the communication transport configuration.
-   */
+  /** Returns the communication transport configuration. */
   public TransportConfig getTransport() {
     return this.transport;
   }
 
-  /**
-   * Returns the log writer
-   */
+  /** Returns the log writer */
   // LOG: get LogWriter from the AdminDistributedSystemImpl -- used by RemoteGfManagerAgent for AuthenticationFailedException
   public InternalLogWriter getLogWriter() {
     return logWriter;
   }
 
-  /**
-   * Returns the alert level
-   */
+  /** Returns the alert level */
   public int getAlertLevel() {
     return this.alertLevel;
   }
 
-  /**
-   * Returns the alert listener
-   */
+  /** Returns the alert listener */
   public AlertListener getAlertListener() {
     return this.alertListener;
   }
 
-  /**
-   * Returns the display name
-   */
+  /** Returns the display name */
   public String getDisplayName() {
     return this.displayName;
   }

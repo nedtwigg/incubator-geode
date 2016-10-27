@@ -21,12 +21,9 @@ import org.apache.geode.cache.*;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * TXEntryUserAttrState is the entity that tracks transactional changes
- * to an entry user attribute.
+ * TXEntryUserAttrState is the entity that tracks transactional changes to an entry user attribute.
  *
- * 
  * @since GemFire 4.0
- * 
  */
 public class TXEntryUserAttrState {
   private final Object originalValue;
@@ -54,7 +51,10 @@ public class TXEntryUserAttrState {
   void checkForConflict(LocalRegion r, Object key) throws CommitConflictException {
     Object curCmtValue = r.basicGetEntryUserAttribute(key);
     if (this.originalValue != curCmtValue) {
-      throw new CommitConflictException(LocalizedStrings.TXEntryUserAttrState_ENTRY_USER_ATTRIBUTE_FOR_KEY_0_ON_REGION_1_HAD_ALREADY_BEEN_CHANGED_TO_2.toLocalizedString(new Object[] { key, r.getFullPath(), curCmtValue }));
+      throw new CommitConflictException(
+          LocalizedStrings
+              .TXEntryUserAttrState_ENTRY_USER_ATTRIBUTE_FOR_KEY_0_ON_REGION_1_HAD_ALREADY_BEEN_CHANGED_TO_2
+              .toLocalizedString(new Object[] {key, r.getFullPath(), curCmtValue}));
     }
   }
 

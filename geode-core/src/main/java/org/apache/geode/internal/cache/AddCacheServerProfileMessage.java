@@ -32,11 +32,11 @@ import org.apache.geode.distributed.internal.SerialDistributionMessage;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * OperationMessage synchronously propagates a change in the profile to
- * another member.  It is a serial message so that there is no chance
- * of out-of-order execution.
+ * OperationMessage synchronously propagates a change in the profile to another member. It is a
+ * serial message so that there is no chance of out-of-order execution.
  */
-public class AddCacheServerProfileMessage extends SerialDistributionMessage implements MessageWithReply {
+public class AddCacheServerProfileMessage extends SerialDistributionMessage
+    implements MessageWithReply {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -68,20 +68,24 @@ public class AddCacheServerProfileMessage extends SerialDistributionMessage impl
 
     for (DistributedRegion r : this.getDistributedRegions(cache)) {
       CacheDistributionAdvisor cda = (CacheDistributionAdvisor) r.getDistributionAdvisor();
-      CacheDistributionAdvisor.CacheProfile cp = (CacheDistributionAdvisor.CacheProfile) cda.getProfile(getSender());
+      CacheDistributionAdvisor.CacheProfile cp =
+          (CacheDistributionAdvisor.CacheProfile) cda.getProfile(getSender());
       if (cp != null) {
         if (isDebugEnabled) {
-          logger.debug("Setting hasCacheServer flag on region \"{}\" for {}", r.getFullPath(), getSender());
+          logger.debug(
+              "Setting hasCacheServer flag on region \"{}\" for {}", r.getFullPath(), getSender());
         }
         cp.hasCacheServer = true;
       }
     }
     for (PartitionedRegion r : this.getPartitionedRegions(cache)) {
       CacheDistributionAdvisor cda = (CacheDistributionAdvisor) r.getDistributionAdvisor();
-      CacheDistributionAdvisor.CacheProfile cp = (CacheDistributionAdvisor.CacheProfile) cda.getProfile(getSender());
+      CacheDistributionAdvisor.CacheProfile cp =
+          (CacheDistributionAdvisor.CacheProfile) cda.getProfile(getSender());
       if (cp != null) {
         if (isDebugEnabled) {
-          logger.debug("Setting hasCacheServer flag on region \"{}\" for {}", r.getFullPath(), getSender());
+          logger.debug(
+              "Setting hasCacheServer flag on region \"{}\" for {}", r.getFullPath(), getSender());
         }
         cp.hasCacheServer = true;
       }
@@ -129,8 +133,7 @@ public class AddCacheServerProfileMessage extends SerialDistributionMessage impl
   }
 
   /** for deserialization only */
-  public AddCacheServerProfileMessage() {
-  }
+  public AddCacheServerProfileMessage() {}
 
   public int getDSFID() {
     return ADD_CACHESERVER_PROFILE_UPDATE;

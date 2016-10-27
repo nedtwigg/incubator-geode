@@ -44,54 +44,59 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
  * A message used to determine the number of bytes a Bucket consumes.
+ *
  * @since GemFire 5.0
  */
-
 public final class BucketSizeMessage extends PartitionMessage {
   private static final Logger logger = LogService.getLogger();
 
   /** The list of buckets whose size is needed, if null, then all buckets */
   private int bucketId;
 
-  /**
-   * Empty contstructor provided for {@link org.apache.geode.DataSerializer}
-   */
+  /** Empty contstructor provided for {@link org.apache.geode.DataSerializer} */
   public BucketSizeMessage() {
     super();
   }
 
-  private BucketSizeMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, int bucketId) {
+  private BucketSizeMessage(
+      InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, int bucketId) {
     super(recipient, regionId, processor);
     this.bucketId = bucketId;
   }
 
   @Override
-  final public int getProcessorType() {
+  public final int getProcessorType() {
     return DistributionManager.STANDARD_EXECUTOR;
   }
 
   /**
-   * Sends a BucketSize message to determine the number of bytes the bucket consumes 
-   * @param recipient the member that the contains keys/value message is sent to 
-   * @param r  the PartitionedRegion that contains the bucket
+   * Sends a BucketSize message to determine the number of bytes the bucket consumes
+   *
+   * @param recipient the member that the contains keys/value message is sent to
+   * @param r the PartitionedRegion that contains the bucket
    * @param bucketId the identity of the bucket whose size should be returned.
    * @return the processor used to read the returned size
    * @throws ForceReattemptException if the peer is no longer available
    */
-  public static BucketSizeResponse send(InternalDistributedMember recipient, PartitionedRegion r, int bucketId) throws ForceReattemptException {
+  public static BucketSizeResponse send(
+      InternalDistributedMember recipient, PartitionedRegion r, int bucketId)
+      throws ForceReattemptException {
     Assert.assertTrue(recipient != null, "BucketSizeMessage NULL reply message");
     BucketSizeResponse p = new BucketSizeResponse(r.getSystem(), Collections.singleton(recipient));
     BucketSizeMessage m = new BucketSizeMessage(recipient, r.getPRId(), p, bucketId);
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new ForceReattemptException(LocalizedStrings.BucketSizeMessage_FAILED_SENDING_0.toLocalizedString(m));
+      throw new ForceReattemptException(
+          LocalizedStrings.BucketSizeMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
 
     return p;
   }
 
   @Override
-  protected boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime) throws CacheException, ForceReattemptException {
+  protected boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion r, long startTime)
+      throws CacheException, ForceReattemptException {
 
     PartitionedRegionDataStore ds = r.getDataStore();
     final long size;
@@ -99,7 +104,9 @@ public final class BucketSizeMessage extends PartitionMessage {
       size = ds.getBucketSize(bucketId);
     } else {
       // sender thought this member had a data store, but it doesn't
-      throw new ForceReattemptException(LocalizedStrings.BucketSizeMessage_NO_DATASTORE_IN_0.toLocalizedString(dm.getDistributionManagerId()));
+      throw new ForceReattemptException(
+          LocalizedStrings.BucketSizeMessage_NO_DATASTORE_IN_0.toLocalizedString(
+              dm.getDistributionManagerId()));
     }
 
     r.getPrStats().endPartitionMessagesProcessing(startTime);
@@ -137,11 +144,8 @@ public final class BucketSizeMessage extends PartitionMessage {
     /** Propagated exception from remote node to operation initiator */
     private long size;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface 
-     */
-    public BucketSizeReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public BucketSizeReplyMessage() {}
 
     private BucketSizeReplyMessage(int processorId, long size) {
       this.processorId = processorId;
@@ -149,7 +153,8 @@ public final class BucketSizeMessage extends PartitionMessage {
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient, int processorId, DM dm, long size) {
+    public static void send(
+        InternalDistributedMember recipient, int processorId, DM dm, long size) {
       Assert.assertTrue(recipient != null, "PRDistribuedGetReplyMessage NULL reply message");
       BucketSizeReplyMessage m = new BucketSizeReplyMessage(processorId, size);
       m.setRecipient(recipient);
@@ -157,15 +162,18 @@ public final class BucketSizeMessage extends PartitionMessage {
     }
 
     /**
-     * Processes this message.  This method is invoked by the receiver
-     * of the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
      * @param dm the distribution manager that is processing the message.
      */
     @Override
     protected void process(final DistributionManager dm) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "PRDistributedBucketSizeReplyMessage process invoking reply processor with processorId: {}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "PRDistributedBucketSizeReplyMessage process invoking reply processor with processorId: {}",
+            this.processorId);
       }
 
       ReplyProcessor21 processor = ReplyProcessor21.getProcessor(this.processorId);
@@ -205,7 +213,13 @@ public final class BucketSizeMessage extends PartitionMessage {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("PRDistributedBucketSizeReplyMessage ").append("processorid=").append(this.processorId).append(" reply to sender ").append(this.getSender()).append(" returning numEntries=").append(getSize());
+      sb.append("PRDistributedBucketSizeReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" reply to sender ")
+          .append(this.getSender())
+          .append(" returning numEntries=")
+          .append(getSize());
       return sb.toString();
     }
 
@@ -215,8 +229,9 @@ public final class BucketSizeMessage extends PartitionMessage {
   }
 
   /**
-   * A processor to capture the value returned by {@link 
+   * A processor to capture the value returned by {@link
    * org.apache.geode.internal.cache.partitioned.GetMessage.GetReplyMessage}
+   *
    * @since GemFire 5.0
    */
   public static class BucketSizeResponse extends ReplyProcessor21 {
@@ -251,17 +266,30 @@ public final class BucketSizeMessage extends PartitionMessage {
       } catch (ReplyException e) {
         Throwable t = e.getCause();
         if (t instanceof org.apache.geode.CancelException) {
-          logger.debug("BucketSizeResponse got remote cancellation; forcing reattempt. {}", t.getMessage(), t);
-          throw new ForceReattemptException(LocalizedStrings.BucketSizeMessage_BUCKETSIZERESPONSE_GOT_REMOTE_CACHECLOSEDEXCEPTION_FORCING_REATTEMPT.toLocalizedString(), t);
+          logger.debug(
+              "BucketSizeResponse got remote cancellation; forcing reattempt. {}",
+              t.getMessage(),
+              t);
+          throw new ForceReattemptException(
+              LocalizedStrings
+                  .BucketSizeMessage_BUCKETSIZERESPONSE_GOT_REMOTE_CACHECLOSEDEXCEPTION_FORCING_REATTEMPT
+                  .toLocalizedString(),
+              t);
         }
         if (t instanceof ForceReattemptException) {
-          logger.debug("BucketSizeResponse got remote Region destroyed; forcing reattempt. {}", t.getMessage(), t);
-          throw new ForceReattemptException(LocalizedStrings.BucketSizeMessage_BUCKETSIZERESPONSE_GOT_REMOTE_REGION_DESTROYED_FORCING_REATTEMPT.toLocalizedString(), t);
+          logger.debug(
+              "BucketSizeResponse got remote Region destroyed; forcing reattempt. {}",
+              t.getMessage(),
+              t);
+          throw new ForceReattemptException(
+              LocalizedStrings
+                  .BucketSizeMessage_BUCKETSIZERESPONSE_GOT_REMOTE_REGION_DESTROYED_FORCING_REATTEMPT
+                  .toLocalizedString(),
+              t);
         }
         e.handleAsUnexpected();
       }
       return this.returnValue;
     }
   }
-
 }

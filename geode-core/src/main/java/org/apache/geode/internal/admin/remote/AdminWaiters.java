@@ -31,18 +31,14 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * Used by {@link AdminRequest} to wait for a {@link AdminResponse}.
- * Prior to GemFire 4.0, a singleton instance of this would keep track
- * of <code>AdminRequest</code>s that were waiting for replies and
- * would cancel them, if desired.  However, in order to fix bug 31562,
- * <code>AdminRequest</code> were modified to use an {@link
- * AdminReplyProcessor} and this class was refactored to be more
- * static. 
+ * Used by {@link AdminRequest} to wait for a {@link AdminResponse}. Prior to GemFire 4.0, a
+ * singleton instance of this would keep track of <code>AdminRequest</code>s that were waiting for
+ * replies and would cancel them, if desired. However, in order to fix bug 31562, <code>AdminRequest
+ * </code> were modified to use an {@link AdminReplyProcessor} and this class was refactored to be
+ * more static.
  *
- * <P>
- *
- * Eventually, the waiting/cancelling code can be factored into
- * <code>AdminRequest</code> and this class can go away.
+ * <p>Eventually, the waiting/cancelling code can be factored into <code>AdminRequest</code> and
+ * this class can go away.
  */
 public class AdminWaiters {
   private static final Logger logger = LogService.getLogger();
@@ -51,8 +47,10 @@ public class AdminWaiters {
 
   /**
    * Sends <code>msg</code> using <code>dm</code> and waits for the response.
+   *
    * @return the response.
-   * @throws RuntimeAdminException if this method is interrupted, times out, cancelled ({@link #cancelWaiters}), or failed with an exception on the server side.
+   * @throws RuntimeAdminException if this method is interrupted, times out, cancelled ({@link
+   *     #cancelWaiters}), or failed with an exception on the server side.
    */
   public static AdminResponse sendAndWait(AdminRequest msg, DistributionManager dm) {
 
@@ -79,9 +77,12 @@ public class AdminWaiters {
             if (logger.isTraceEnabled(LogMarker.DM)) {
               s += " (" + msg + ")";
             }
-            throw new RuntimeAdminException(LocalizedStrings.AdminWaiters_COULD_NOT_SEND_REQUEST_0.toLocalizedString(s));
+            throw new RuntimeAdminException(
+                LocalizedStrings.AdminWaiters_COULD_NOT_SEND_REQUEST_0.toLocalizedString(s));
           }
-          throw new OperationCancelledException(LocalizedStrings.AdminWaiters_REQUEST_SENT_TO_0_FAILED_SINCE_MEMBER_DEPARTED_1.toLocalizedString(new Object[] { msg.getRecipient(), "" }));
+          throw new OperationCancelledException(
+              LocalizedStrings.AdminWaiters_REQUEST_SENT_TO_0_FAILED_SINCE_MEMBER_DEPARTED_1
+                  .toLocalizedString(new Object[] {msg.getRecipient(), ""}));
         }
         // sent it
 
@@ -105,7 +106,9 @@ public class AdminWaiters {
           if (logger.isTraceEnabled(LogMarker.DM)) {
             s = " (" + msg + ")";
           }
-          throw new OperationCancelledException(LocalizedStrings.AdminWaiters_REQUEST_SENT_TO_0_FAILED_SINCE_MEMBER_DEPARTED_1.toLocalizedString(new Object[] { msg.getRecipient(), s }));
+          throw new OperationCancelledException(
+              LocalizedStrings.AdminWaiters_REQUEST_SENT_TO_0_FAILED_SINCE_MEMBER_DEPARTED_1
+                  .toLocalizedString(new Object[] {msg.getRecipient(), s}));
         } // !gotResponse
 
         result = msg.getResponse();
@@ -125,17 +128,19 @@ public class AdminWaiters {
       if (logger.isTraceEnabled(LogMarker.DM)) {
         s += " (" + msg + ")";
       }
-      throw new OperationCancelledException(LocalizedStrings.AdminWaiters_REQUEST_SEND_TO_0_WAS_CANCELLED_1.toLocalizedString(new Object[] { msg.getRecipient(), s }));
+      throw new OperationCancelledException(
+          LocalizedStrings.AdminWaiters_REQUEST_SEND_TO_0_WAS_CANCELLED_1.toLocalizedString(
+              new Object[] {msg.getRecipient(), s}));
 
     } else if (result instanceof AdminFailureResponse) {
-      throw new RuntimeAdminException(LocalizedStrings.AdminWaiters_REQUEST_FAILED.toLocalizedString(), ((AdminFailureResponse) result).getCause());
+      throw new RuntimeAdminException(
+          LocalizedStrings.AdminWaiters_REQUEST_FAILED.toLocalizedString(),
+          ((AdminFailureResponse) result).getCause());
     }
     return result;
   }
 
-  /**
-   * Call to send a {@link AdminResponse} and notify the thread waiting for it.
-   */
+  /** Call to send a {@link AdminResponse} and notify the thread waiting for it. */
   public static void sendResponse(AdminResponse msg) {
     int id = msg.getMsgId();
     ReplyProcessor21 processor = (ReplyProcessor21) ReplyProcessor21.getProcessor(id);
@@ -149,8 +154,8 @@ public class AdminWaiters {
   }
 
   /**
-   * Call with the id of a RemoteGfManager that no longer exists.
-   * All outstanding requests to that manager will be cancelled.
+   * Call with the id of a RemoteGfManager that no longer exists. All outstanding requests to that
+   * manager will be cancelled.
    */
   public static void cancelWaiters(InternalDistributedMember id) {
     // Now that AdminRequests use a ReplyProcessor, we don't need to
@@ -176,5 +181,4 @@ public class AdminWaiters {
       return 1800 * 1000L;
     }
   }
-
 }

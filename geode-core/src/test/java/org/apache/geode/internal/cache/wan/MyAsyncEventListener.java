@@ -37,11 +37,15 @@ public class MyAsyncEventListener implements AsyncEventListener, Declarable {
   public boolean processEvents(List<AsyncEvent> events) {
     for (AsyncEvent event : events) {
       if (this.eventsMap.containsKey(event.getKey())) {
-        InternalDistributedSystem.getConnectedInstance().getLogWriter().fine("This is a duplicate event --> " + event.getKey());
+        InternalDistributedSystem.getConnectedInstance()
+            .getLogWriter()
+            .fine("This is a duplicate event --> " + event.getKey());
       }
       this.eventsMap.put(event.getKey(), event.getDeserializedValue());
 
-      InternalDistributedSystem.getConnectedInstance().getLogWriter().fine("Received an event --> " + event.getKey());
+      InternalDistributedSystem.getConnectedInstance()
+          .getLogWriter()
+          .fine("Received an event --> " + event.getKey());
     }
     return true;
   }
@@ -50,10 +54,8 @@ public class MyAsyncEventListener implements AsyncEventListener, Declarable {
     return eventsMap;
   }
 
-  public void close() {
-  }
+  public void close() {}
 
   @Override
-  public void init(Properties props) {
-  }
+  public void init(Properties props) {}
 }

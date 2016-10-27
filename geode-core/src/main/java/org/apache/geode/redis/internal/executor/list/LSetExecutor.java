@@ -33,7 +33,8 @@ public class LSetExecutor extends ListExecutor {
 
   private final String ERROR_NOT_NUMERIC = "The index provided is not numeric";
 
-  private final String ERROR_INDEX = "The index provided is not within range of this list or the key does not exist";
+  private final String ERROR_INDEX =
+      "The index provided is not within range of this list or the key does not exist";
 
   private final String SUCCESS = "OK";
 
@@ -68,8 +69,7 @@ public class LSetExecutor extends ListExecutor {
     }
 
     int listSize = keyRegion.size() - LIST_EMPTY_SIZE;
-    if (index < 0)
-      index += listSize;
+    if (index < 0) index += listSize;
     if (index < 0 || index > listSize) {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_INDEX));
       return;
@@ -85,16 +85,16 @@ public class LSetExecutor extends ListExecutor {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_INDEX));
       return;
     }
-    if (index == listSize)
-      indexKey++;
+    if (index == listSize) indexKey++;
     keyRegion.put(indexKey, new ByteArrayWrapper(value));
     command.setResponse(Coder.getSimpleStringResponse(context.getByteBufAllocator(), SUCCESS));
   }
 
-  private Integer getIndexKey(ExecutionHandlerContext context, ByteArrayWrapper key, int index) throws Exception {
+  private Integer getIndexKey(ExecutionHandlerContext context, ByteArrayWrapper key, int index)
+      throws Exception {
     Query query = getQuery(key, ListQuery.LSET, context);
 
-    Object[] params = { Integer.valueOf(index + 1) };
+    Object[] params = {Integer.valueOf(index + 1)};
 
     SelectResults<Integer> results = (SelectResults<Integer>) query.execute(params);
     int size = results.size();

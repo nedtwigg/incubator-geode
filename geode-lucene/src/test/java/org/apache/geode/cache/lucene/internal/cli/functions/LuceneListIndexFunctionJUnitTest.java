@@ -46,7 +46,6 @@ import org.apache.geode.test.fake.Fakes;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 @Category(UnitTest.class)
-
 public class LuceneListIndexFunctionJUnitTest {
 
   @Test
@@ -86,7 +85,7 @@ public class LuceneListIndexFunctionJUnitTest {
   }
 
   private LuceneIndexImpl getMockLuceneIndex(final String indexName) {
-    String[] searchableFields = { "field1", "field2" };
+    String[] searchableFields = {"field1", "field2"};
     Map<String, Analyzer> fieldAnalyzers = new HashMap<>();
     fieldAnalyzers.put("field1", new StandardAnalyzer());
     fieldAnalyzers.put("field2", new KeywordAnalyzer());
@@ -98,5 +97,4 @@ public class LuceneListIndexFunctionJUnitTest {
     when(index.getFieldAnalyzers()).thenReturn(fieldAnalyzers);
     return index;
   }
-
 }

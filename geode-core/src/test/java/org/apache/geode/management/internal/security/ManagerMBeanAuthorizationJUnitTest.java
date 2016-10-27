@@ -36,7 +36,7 @@ import org.apache.geode.management.internal.beans.ManagerMBean;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class ManagerMBeanAuthorizationJUnitTest {
 
   private static int jmxManagerPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
@@ -44,7 +44,9 @@ public class ManagerMBeanAuthorizationJUnitTest {
   private ManagerMXBean managerMXBean;
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
+  public static JsonAuthorizationCacheStartRule serverRule =
+      new JsonAuthorizationCacheStartRule(
+          jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
 
   @Rule
   public MBeanServerConnectionRule connectionRule = new MBeanServerConnectionRule(jmxManagerPort);
@@ -74,8 +76,10 @@ public class ManagerMBeanAuthorizationJUnitTest {
   @Test
   @JMXConnectionConfiguration(user = "data-admin", password = "1234567")
   public void testSomeAccess() throws Exception {
-    assertThatThrownBy(() -> managerMXBean.start()).hasMessageContaining(TestCommand.clusterManage.toString());
-    assertThatThrownBy(() -> managerMXBean.getPulseURL()).hasMessageContaining(TestCommand.clusterWrite.toString());
+    assertThatThrownBy(() -> managerMXBean.start())
+        .hasMessageContaining(TestCommand.clusterManage.toString());
+    assertThatThrownBy(() -> managerMXBean.getPulseURL())
+        .hasMessageContaining(TestCommand.clusterWrite.toString());
     managerMXBean.isRunning();
   }
 }

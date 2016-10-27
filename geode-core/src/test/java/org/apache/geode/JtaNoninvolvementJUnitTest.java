@@ -87,23 +87,27 @@ public class JtaNoninvolvementJUnitTest {
       if (cache == null) {
         createCache(false);
       }
-      javax.transaction.UserTransaction ut = (javax.transaction.UserTransaction) cache.getJNDIContext().lookup("java:/UserTransaction");
+      javax.transaction.UserTransaction ut =
+          (javax.transaction.UserTransaction)
+              cache.getJNDIContext().lookup("java:/UserTransaction");
       {
         ut.begin();
         txRegion.put("transactionalPut", "xxx");
-        assertTrue("expect cache to be in a transaction", cache.getCacheTransactionManager().exists());
+        assertTrue(
+            "expect cache to be in a transaction", cache.getCacheTransactionManager().exists());
         ut.commit();
       }
-      assertFalse("ensure there is no transaction before testing non-involvement", cache.getCacheTransactionManager().exists());
+      assertFalse(
+          "ensure there is no transaction before testing non-involvement",
+          cache.getCacheTransactionManager().exists());
       {
         ut.begin();
         nonTxRegion.put("nontransactionalPut", "xxx");
-        assertFalse("expect cache to not be in a transaction", cache.getCacheTransactionManager().exists());
+        assertFalse(
+            "expect cache to not be in a transaction", cache.getCacheTransactionManager().exists());
         ut.commit();
       }
-    }
-
-    finally {
+    } finally {
       closeCache();
       cache = null;
     }
@@ -122,18 +126,20 @@ public class JtaNoninvolvementJUnitTest {
       ut.begin();
       txRegion.put("key", "value");
       nonTxRegion.put("key", "value");
-      Thread t = new Thread(new Runnable() {
-        @Override
-        public void run() {
-          if (txRegion.get("key") != null) {
-            exceptionOccured.set(true);
-          }
-          if (nonTxRegion.get("key") != null) {
-            exceptionOccured.set(true);
-          }
-          l.countDown();
-        }
-      });
+      Thread t =
+          new Thread(
+              new Runnable() {
+                @Override
+                public void run() {
+                  if (txRegion.get("key") != null) {
+                    exceptionOccured.set(true);
+                  }
+                  if (nonTxRegion.get("key") != null) {
+                    exceptionOccured.set(true);
+                  }
+                  l.countDown();
+                }
+              });
       t.start();
       l.await();
       assertFalse(exceptionOccured.get());
@@ -146,9 +152,7 @@ public class JtaNoninvolvementJUnitTest {
     }
   }
 
-  /**
-   * test for gemfire.ignoreJTA flag
-   */
+  /** test for gemfire.ignoreJTA flag */
   @Test
   public void test002IgnoreJTASysProp() throws Exception {
     javax.transaction.UserTransaction ut = null;

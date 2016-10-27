@@ -87,7 +87,6 @@ public class PutAllGlobalLockJUnitTest { // TODO: reformat
         thread.start();
       } else if (event.getKey().equals(new Long(999))) {
         PutAllGlobalLockJUnitTest.this.done = true;
-
       }
     }
   }

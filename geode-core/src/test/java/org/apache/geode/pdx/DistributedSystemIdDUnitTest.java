@@ -110,43 +110,48 @@ public class DistributedSystemIdDUnitTest extends JUnit4DistributedTestCase {
 
   private void createSystem(VM vm, final String dsId, final int locatorPort) {
 
-    SerializableCallable createSystem = new SerializableCallable() {
-      public Object call() throws Exception {
-        Properties props = new Properties();
-        props.setProperty(DISTRIBUTED_SYSTEM_ID, dsId);
-        props.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
-        getSystem(props);
-        return null;
-      }
-    };
+    SerializableCallable createSystem =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Properties props = new Properties();
+            props.setProperty(DISTRIBUTED_SYSTEM_ID, dsId);
+            props.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
+            getSystem(props);
+            return null;
+          }
+        };
     vm.invoke(createSystem);
   }
 
   private int createLocator(VM vm, final String dsId) {
-    SerializableCallable createSystem = new SerializableCallable() {
-      public Object call() throws Exception {
-        int port = AvailablePortHelper.getRandomAvailableTCPPort();
-        Properties props = new Properties();
-        props.setProperty(DISTRIBUTED_SYSTEM_ID, dsId);
-        props.setProperty(MCAST_PORT, "0");
-        props.setProperty(LOCATORS, "localhost[" + port + "]");
-        props.setProperty(START_LOCATOR, "localhost[" + port + "]");
-        getSystem(props);
-        return port;
-      }
-    };
+    SerializableCallable createSystem =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            int port = AvailablePortHelper.getRandomAvailableTCPPort();
+            Properties props = new Properties();
+            props.setProperty(DISTRIBUTED_SYSTEM_ID, dsId);
+            props.setProperty(MCAST_PORT, "0");
+            props.setProperty(LOCATORS, "localhost[" + port + "]");
+            props.setProperty(START_LOCATOR, "localhost[" + port + "]");
+            getSystem(props);
+            return port;
+          }
+        };
     return (Integer) vm.invoke(createSystem);
   }
 
   private void checkId(VM vm, final int dsId) {
 
-    SerializableCallable createSystem = new SerializableCallable() {
-      public Object call() throws Exception {
-        DistributionManager dm = (DistributionManager) InternalDistributedSystem.getAnyInstance().getDistributionManager();
-        assertEquals(dsId, dm.getDistributedSystemId());
-        return null;
-      }
-    };
+    SerializableCallable createSystem =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            DistributionManager dm =
+                (DistributionManager)
+                    InternalDistributedSystem.getAnyInstance().getDistributionManager();
+            assertEquals(dsId, dm.getDistributedSystemId());
+            return null;
+          }
+        };
     vm.invoke(createSystem);
   }
 }

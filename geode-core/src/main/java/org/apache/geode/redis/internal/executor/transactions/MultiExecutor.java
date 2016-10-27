@@ -41,7 +41,5 @@ public class MultiExecutor extends TransactionExecutor {
     TransactionId id = txm.suspend();
 
     context.setTransactionID(id);
-
   }
-
 }

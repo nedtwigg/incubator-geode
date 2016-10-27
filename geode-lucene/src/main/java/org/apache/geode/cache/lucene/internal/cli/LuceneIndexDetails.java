@@ -38,7 +38,13 @@ public class LuceneIndexDetails implements Comparable<LuceneIndexDetails>, Seria
   private final Map<String, Integer> indexStats;
   private boolean initialized;
 
-  public LuceneIndexDetails(final String indexName, final String regionPath, final String[] searchableFieldNames, final Map<String, Analyzer> fieldAnalyzers, LuceneIndexStats indexStats, boolean initialized) {
+  public LuceneIndexDetails(
+      final String indexName,
+      final String regionPath,
+      final String[] searchableFieldNames,
+      final Map<String, Analyzer> fieldAnalyzers,
+      LuceneIndexStats indexStats,
+      boolean initialized) {
     this.indexName = indexName;
     this.regionPath = regionPath;
     this.searchableFieldNames = searchableFieldNames;
@@ -48,11 +54,23 @@ public class LuceneIndexDetails implements Comparable<LuceneIndexDetails>, Seria
   }
 
   public LuceneIndexDetails(LuceneIndexImpl index) {
-    this(index.getName(), index.getRegionPath(), index.getFieldNames(), index.getFieldAnalyzers(), index.getIndexStats(), true);
+    this(
+        index.getName(),
+        index.getRegionPath(),
+        index.getFieldNames(),
+        index.getFieldAnalyzers(),
+        index.getIndexStats(),
+        true);
   }
 
   public LuceneIndexDetails(LuceneIndexCreationProfile indexProfile) {
-    this(indexProfile.getIndexName(), indexProfile.getRegionPath(), indexProfile.getFieldNames(), null, null, false);
+    this(
+        indexProfile.getIndexName(),
+        indexProfile.getRegionPath(),
+        indexProfile.getFieldNames(),
+        null,
+        null,
+        false);
     this.fieldAnalyzers = getFieldAnalyzerStringsFromProfile(indexProfile.getFieldAnalyzers());
   }
 
@@ -62,8 +80,7 @@ public class LuceneIndexDetails implements Comparable<LuceneIndexDetails>, Seria
 
   private Map<String, Integer> getIndexStatsMap(LuceneIndexStats indexStats) {
     Map<String, Integer> statsMap = new HashMap<>();
-    if (indexStats == null)
-      return statsMap;
+    if (indexStats == null) return statsMap;
     statsMap.put("queryExecutions", indexStats.getQueryExecutions());
     statsMap.put("updates", indexStats.getUpdates());
     statsMap.put("commits", indexStats.getCommits());
@@ -91,10 +108,10 @@ public class LuceneIndexDetails implements Comparable<LuceneIndexDetails>, Seria
     return results;
   }
 
-  private Map<String, String> getFieldAnalyzerStringsFromProfile(Map<String, String> fieldAnalyzers) {
+  private Map<String, String> getFieldAnalyzerStringsFromProfile(
+      Map<String, String> fieldAnalyzers) {
     if (fieldAnalyzers == null) {
       return Collections.emptyMap();
-
     }
 
     Map<String, String> results = new HashMap<>();
@@ -142,13 +159,16 @@ public class LuceneIndexDetails implements Comparable<LuceneIndexDetails>, Seria
   }
 
   private static <T extends Comparable<T>> int compare(final T obj1, final T obj2) {
-    return (obj1 == null && obj2 == null ? 0 : (obj1 == null ? 1 : (obj2 == null ? -1 : obj1.compareTo(obj2))));
+    return (obj1 == null && obj2 == null
+        ? 0
+        : (obj1 == null ? 1 : (obj2 == null ? -1 : obj1.compareTo(obj2))));
   }
 
   @Override
   public int compareTo(final LuceneIndexDetails indexDetails) {
     int comparisonValue = compare(getIndexName(), indexDetails.getIndexName());
-    return (comparisonValue != 0 ? comparisonValue : compare(getRegionPath(), indexDetails.getRegionPath()));
+    return (comparisonValue != 0
+        ? comparisonValue
+        : compare(getRegionPath(), indexDetails.getRegionPath()));
   }
-
 }

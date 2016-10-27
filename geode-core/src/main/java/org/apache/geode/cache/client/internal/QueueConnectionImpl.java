@@ -33,17 +33,14 @@ import org.apache.geode.internal.cache.tier.sockets.ServerQueueStatus;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * A wrapper that holds a client to server connection and
- * a server to client connection.
- * 
- *  The clientToServerConnection should not
- *  be used outside of this class.
+ * A wrapper that holds a client to server connection and a server to client connection.
  *
+ * <p>The clientToServerConnection should not be used outside of this class.
  */
 public class QueueConnectionImpl implements Connection {
   private static final Logger logger = LogService.getLogger();
 
-  private final AtomicReference/*<Connection>*/ clientToServerConn = new AtomicReference();
+  private final AtomicReference /*<Connection>*/ clientToServerConn = new AtomicReference();
   private final Endpoint endpoint;
   private volatile ClientUpdater updater;
   private boolean shouldDestroy;
@@ -51,7 +48,11 @@ public class QueueConnectionImpl implements Connection {
   private final AtomicBoolean sentClientReady = new AtomicBoolean();
   private FailureTracker failureTracker;
 
-  public QueueConnectionImpl(QueueManagerImpl manager, Connection clientToServer, ClientUpdater updater, FailureTracker failureTracker) {
+  public QueueConnectionImpl(
+      QueueManagerImpl manager,
+      Connection clientToServer,
+      ClientUpdater updater,
+      FailureTracker failureTracker) {
     this.manager = manager;
     this.clientToServerConn.set(clientToServer);
     this.endpoint = clientToServer.getEndpoint();
@@ -60,7 +61,8 @@ public class QueueConnectionImpl implements Connection {
   }
 
   public void close(boolean keepAlive) throws Exception {
-    throw new UnsupportedOperationException("Subscription connections should only be closed by subscription manager");
+    throw new UnsupportedOperationException(
+        "Subscription connections should only be closed by subscription manager");
   }
 
   public void emergencyClose() {
@@ -96,7 +98,8 @@ public class QueueConnectionImpl implements Connection {
         currentConn.destroy();
       } catch (Exception e) {
         if (logger.isDebugEnabled()) {
-          logger.debug("SubscriptionConnectionImpl - error destroying client to server connection", e);
+          logger.debug(
+              "SubscriptionConnectionImpl - error destroying client to server connection", e);
         }
       }
     }
@@ -114,9 +117,7 @@ public class QueueConnectionImpl implements Connection {
     updater = null;
   }
 
-  /**
-   * test hook
-   */
+  /** test hook */
   public ClientUpdater getUpdater() {
     return this.updater;
   }
@@ -178,9 +179,8 @@ public class QueueConnectionImpl implements Connection {
   }
 
   /**
-   * Indicate that we have, or are about to send
-   * the client create message on this connection.
-   * 
+   * Indicate that we have, or are about to send the client create message on this connection.
+   *
    * @return true if we have not yet sent client ready.
    */
   public boolean sendClientReady() {

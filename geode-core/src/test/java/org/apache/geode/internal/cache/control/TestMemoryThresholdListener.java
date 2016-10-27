@@ -100,7 +100,17 @@ public class TestMemoryThresholdListener implements ResourceListener<MemoryEvent
 
   @Override
   public String toString() {
-    return new StringBuilder("TestListenerStatus:").append(" normalCalls :" + this.normalCalls).append(" allCalls :" + this.allCalls).append(" criticalThresholdCalls :" + this.criticalThresholdCalls).append(" evictionThresholdCalls :" + this.evictionThresholdCalls).append(" previousNormalCalls :" + this.normalCalls).append(" bytesFromThreshold :" + this.bytesFromThreshold).append(" currentHeapPercentage :" + this.currentHeapPercentage).append(" evictionDisabledCalls :" + this.evictionDisabledCalls).append(" criticalDisabledCalls :" + this.criticalDisabledCalls).toString();
+    return new StringBuilder("TestListenerStatus:")
+        .append(" normalCalls :" + this.normalCalls)
+        .append(" allCalls :" + this.allCalls)
+        .append(" criticalThresholdCalls :" + this.criticalThresholdCalls)
+        .append(" evictionThresholdCalls :" + this.evictionThresholdCalls)
+        .append(" previousNormalCalls :" + this.normalCalls)
+        .append(" bytesFromThreshold :" + this.bytesFromThreshold)
+        .append(" currentHeapPercentage :" + this.currentHeapPercentage)
+        .append(" evictionDisabledCalls :" + this.evictionDisabledCalls)
+        .append(" criticalDisabledCalls :" + this.criticalDisabledCalls)
+        .toString();
   }
 
   /* (non-Javadoc)
@@ -109,7 +119,9 @@ public class TestMemoryThresholdListener implements ResourceListener<MemoryEvent
   @Override
   public void onEvent(MemoryEvent event) {
     if (this.logOnEventCalls) {
-      InternalDistributedSystem.getAnyInstance().getLogWriter().info("TestMemoryThresholdListener onEvent " + event);
+      InternalDistributedSystem.getAnyInstance()
+          .getLogWriter()
+          .info("TestMemoryThresholdListener onEvent " + event);
     }
     synchronized (this) {
       if (event.getState().isNormal()) {
@@ -131,15 +143,19 @@ public class TestMemoryThresholdListener implements ResourceListener<MemoryEvent
       this.allCalls++;
 
       if (event.getState().isCritical()) {
-        this.bytesFromThreshold = event.getBytesUsed() - event.getThresholds().getCriticalThresholdBytes();
+        this.bytesFromThreshold =
+            event.getBytesUsed() - event.getThresholds().getCriticalThresholdBytes();
       } else if (event.getState().isEviction()) {
         if (event.getPreviousState().isCritical()) {
-          this.bytesFromThreshold = event.getThresholds().getCriticalThresholdBytes() - event.getBytesUsed();
+          this.bytesFromThreshold =
+              event.getThresholds().getCriticalThresholdBytes() - event.getBytesUsed();
         } else {
-          this.bytesFromThreshold = event.getBytesUsed() - event.getThresholds().getEvictionThresholdBytes();
+          this.bytesFromThreshold =
+              event.getBytesUsed() - event.getThresholds().getEvictionThresholdBytes();
         }
       } else {
-        this.bytesFromThreshold = event.getThresholds().getEvictionThresholdBytes() - event.getBytesUsed();
+        this.bytesFromThreshold =
+            event.getThresholds().getEvictionThresholdBytes() - event.getBytesUsed();
       }
 
       if (event.getThresholds().getMaxMemoryBytes() == 0) {
@@ -147,14 +163,16 @@ public class TestMemoryThresholdListener implements ResourceListener<MemoryEvent
       } else if (event.getBytesUsed() > event.getThresholds().getMaxMemoryBytes()) {
         this.currentHeapPercentage = 1;
       } else {
-        this.currentHeapPercentage = convertToIntPercent((double) event.getBytesUsed() / event.getThresholds().getMaxMemoryBytes());
+        this.currentHeapPercentage =
+            convertToIntPercent(
+                (double) event.getBytesUsed() / event.getThresholds().getMaxMemoryBytes());
       }
     }
   }
 
   /**
-   * Convert a percentage as a double to an integer e.g. 0.09 => 9
-   * also legal is 0.095 => 9
+   * Convert a percentage as a double to an integer e.g. 0.09 => 9 also legal is 0.095 => 9
+   *
    * @param percentHeap a percentage value expressed as a double e.g. 9.5% => 0.095
    * @return the calculated percent as an integer >= 0 and <= 100
    */

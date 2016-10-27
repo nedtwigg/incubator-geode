@@ -38,9 +38,9 @@ public class LongStatsDeltaAggregator {
   }
 
   public void aggregate(FederationComponent newState, FederationComponent oldState) {
-    incData(newState, oldState);// Only increase the value. No need to decrease
-                                // when a
-                                // member goes away.
+    incData(newState, oldState); // Only increase the value. No need to decrease
+    // when a
+    // member goes away.
   }
 
   private void incData(FederationComponent newComp, FederationComponent oldComp) {
@@ -69,7 +69,6 @@ public class LongStatsDeltaAggregator {
           if (val != null) {
             oldVal = (Long) val;
           }
-
         }
         currCounters.addAndGet(index, newVal - oldVal);
       }

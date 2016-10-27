@@ -22,11 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-/**
- * A copy on write hash map that uses weak references for keys.
- * 
- *
- */
+/** A copy on write hash map that uses weak references for keys. */
 public class CopyOnWriteWeakHashMap<K, V> extends AbstractMap<K, V> {
   private volatile Map<K, V> map = Collections.emptyMap();
 

@@ -34,12 +34,16 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.process.ProcessLauncherContext;
 import org.apache.geode.internal.util.LogFileUtils;
 
-/**
- * Creates LogWriter instances for testing.
- */
+/** Creates LogWriter instances for testing. */
 public class TestLogWriterFactory extends Assert {
 
-  public static LogWriter createLogWriter(final boolean appendToFile, final boolean isLoner, final boolean isSecurityLog, final DistributionConfig config, final boolean logConfig, final FileOutputStream[] FOSHolder) {
+  public static LogWriter createLogWriter(
+      final boolean appendToFile,
+      final boolean isLoner,
+      final boolean isSecurityLog,
+      final DistributionConfig config,
+      final boolean logConfig,
+      final FileOutputStream[] FOSHolder) {
 
     assertFalse(isSecurityLog);
     LogWriter logger = null;
@@ -55,16 +59,31 @@ public class TestLogWriterFactory extends Assert {
       out = System.out;
     } else {
       if (logFile.exists()) {
-        boolean useChildLogging = config.getLogFile() != null && !config.getLogFile().equals(new File("")) && config.getLogFileSizeLimit() != 0;
-        boolean statArchivesRolling = config.getStatisticArchiveFile() != null && !config.getStatisticArchiveFile().equals(new File("")) && config.getArchiveFileSizeLimit() != 0 && config.getStatisticSamplingEnabled();
-        if (!appendToFile || useChildLogging || statArchivesRolling) { // check useChildLogging for bug 50659
-          File oldMain = ManagerLogWriter.getLogNameForOldMainLog(logFile, isSecurityLog || useChildLogging || statArchivesRolling);
+        boolean useChildLogging =
+            config.getLogFile() != null
+                && !config.getLogFile().equals(new File(""))
+                && config.getLogFileSizeLimit() != 0;
+        boolean statArchivesRolling =
+            config.getStatisticArchiveFile() != null
+                && !config.getStatisticArchiveFile().equals(new File(""))
+                && config.getArchiveFileSizeLimit() != 0
+                && config.getStatisticSamplingEnabled();
+        if (!appendToFile
+            || useChildLogging
+            || statArchivesRolling) { // check useChildLogging for bug 50659
+          File oldMain =
+              ManagerLogWriter.getLogNameForOldMainLog(
+                  logFile, isSecurityLog || useChildLogging || statArchivesRolling);
           boolean succeeded = LogFileUtils.renameAggressively(logFile, oldMain);
           if (succeeded) {
-            firstMsg = LocalizedStrings.InternalDistributedSystem_RENAMED_OLD_LOG_FILE_TO_0.toLocalizedString(oldMain);
+            firstMsg =
+                LocalizedStrings.InternalDistributedSystem_RENAMED_OLD_LOG_FILE_TO_0
+                    .toLocalizedString(oldMain);
           } else {
             firstMsgWarning = true;
-            firstMsg = LocalizedStrings.InternalDistributedSystem_COULD_NOT_RENAME_0_TO_1.toLocalizedString(new Object[] { logFile, oldMain });
+            firstMsg =
+                LocalizedStrings.InternalDistributedSystem_COULD_NOT_RENAME_0_TO_1
+                    .toLocalizedString(new Object[] {logFile, oldMain});
           }
         }
       }
@@ -73,7 +92,9 @@ public class TestLogWriterFactory extends Assert {
       try {
         fos = new FileOutputStream(logFile, true);
       } catch (FileNotFoundException ex) {
-        String s = LocalizedStrings.InternalDistributedSystem_COULD_NOT_OPEN_LOG_FILE_0.toLocalizedString(logFile);
+        String s =
+            LocalizedStrings.InternalDistributedSystem_COULD_NOT_OPEN_LOG_FILE_0.toLocalizedString(
+                logFile);
         throw new GemFireIOException(s, ex);
       }
       out = new PrintStream(fos);
@@ -90,8 +111,9 @@ public class TestLogWriterFactory extends Assert {
     }
 
     if (mlw.infoEnabled()) {
-      if (!isLoner || /* do this on a loner to fix bug 35602 */
-          !Boolean.getBoolean(InternalLocator.INHIBIT_DM_BANNER)) {
+      if (!isLoner
+          || /* do this on a loner to fix bug 35602 */ !Boolean.getBoolean(
+              InternalLocator.INHIBIT_DM_BANNER)) {
         mlw.info(Banner.getString(null));
       }
     }
@@ -105,7 +127,11 @@ public class TestLogWriterFactory extends Assert {
       }
     }
     if (logConfig && logger.configEnabled()) {
-      logger.convertToLogWriterI18n().config(LocalizedStrings.InternalDistributedSystem_STARTUP_CONFIGURATIONN_0, config.toLoggerString());
+      logger
+          .convertToLogWriterI18n()
+          .config(
+              LocalizedStrings.InternalDistributedSystem_STARTUP_CONFIGURATIONN_0,
+              config.toLoggerString());
     }
 
     // fix #46493 by moving redirectOutput invocation here
@@ -120,5 +146,4 @@ public class TestLogWriterFactory extends Assert {
 
     return logger;
   }
-
 }

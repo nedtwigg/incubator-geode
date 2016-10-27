@@ -31,31 +31,47 @@ import org.apache.geode.test.dunit.AsyncInvocation;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class IntegratedClientRemoveAllAuthDistributedTest extends AbstractSecureServerDUnitTest {
 
   @Test
   public void testRemoveAll() throws InterruptedException {
 
-    AsyncInvocation ai1 = client1.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionReader", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai1 =
+        client1.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("authRegionReader", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      assertNotAuthorized(() -> region.removeAll(Arrays.asList("key1", "key2", "key3", "key4")), "DATA:WRITE:AuthRegion");
-    });
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              assertNotAuthorized(
+                  () -> region.removeAll(Arrays.asList("key1", "key2", "key3", "key4")),
+                  "DATA:WRITE:AuthRegion");
+            });
 
-    AsyncInvocation ai2 = client2.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionWriter", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai2 =
+        client2.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("authRegionWriter", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      region.removeAll(Arrays.asList("key1", "key2", "key3", "key4"));
-      assertFalse(region.containsKey("key1"));
-      assertNotAuthorized(() -> region.containsKeyOnServer("key1"), "DATA:READ:AuthRegion:key1");
-    });
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              region.removeAll(Arrays.asList("key1", "key2", "key3", "key4"));
+              assertFalse(region.containsKey("key1"));
+              assertNotAuthorized(
+                  () -> region.containsKeyOnServer("key1"), "DATA:READ:AuthRegion:key1");
+            });
     ai1.join();
     ai2.join();
     ai1.checkException();
     ai2.checkException();
   }
-
 }

@@ -56,22 +56,23 @@ public class DiskRegionAsyncRecoveryJUnitTest extends DiskRegionTestingBase {
 
     final CountDownLatch suspendRecovery = new CountDownLatch(1);
     final CountDownLatch recoveryDone = new CountDownLatch(1);
-    DiskStoreObserver.setInstance(new DiskStoreObserver() {
+    DiskStoreObserver.setInstance(
+        new DiskStoreObserver() {
 
-      @Override
-      public void beforeAsyncValueRecovery(DiskStoreImpl store) {
-        try {
-          suspendRecovery.await();
-        } catch (InterruptedException e) {
-          fail("interrupted");
-        }
-      }
+          @Override
+          public void beforeAsyncValueRecovery(DiskStoreImpl store) {
+            try {
+              suspendRecovery.await();
+            } catch (InterruptedException e) {
+              fail("interrupted");
+            }
+          }
 
-      @Override
-      public void afterAsyncValueRecovery(DiskStoreImpl store) {
-        recoveryDone.countDown();
-      }
-    });
+          @Override
+          public void afterAsyncValueRecovery(DiskStoreImpl store) {
+            recoveryDone.countDown();
+          }
+        });
     try {
       region = createRegion();
 
@@ -122,22 +123,23 @@ public class DiskRegionAsyncRecoveryJUnitTest extends DiskRegionTestingBase {
 
     final CountDownLatch suspendRecovery = new CountDownLatch(1);
     final CountDownLatch recoveryDone = new CountDownLatch(1);
-    DiskStoreObserver.setInstance(new DiskStoreObserver() {
+    DiskStoreObserver.setInstance(
+        new DiskStoreObserver() {
 
-      @Override
-      public void beforeAsyncValueRecovery(DiskStoreImpl store) {
-        try {
-          suspendRecovery.await();
-        } catch (InterruptedException e) {
-          fail("interrupted");
-        }
-      }
+          @Override
+          public void beforeAsyncValueRecovery(DiskStoreImpl store) {
+            try {
+              suspendRecovery.await();
+            } catch (InterruptedException e) {
+              fail("interrupted");
+            }
+          }
 
-      @Override
-      public void afterAsyncValueRecovery(DiskStoreImpl store) {
-        recoveryDone.countDown();
-      }
-    });
+          @Override
+          public void afterAsyncValueRecovery(DiskStoreImpl store) {
+            recoveryDone.countDown();
+          }
+        });
     try {
       region = createRegion();
 
@@ -160,9 +162,7 @@ public class DiskRegionAsyncRecoveryJUnitTest extends DiskRegionTestingBase {
     }
   }
 
-  /**
-   * Test to make sure that we create missing krfs when we restart the system.
-   */
+  /** Test to make sure that we create missing krfs when we restart the system. */
   @Test
   public void testKrfCreatedAfterRestart() throws InterruptedException, IOException {
     LocalRegion region = (LocalRegion) createRegion();
@@ -184,7 +184,8 @@ public class DiskRegionAsyncRecoveryJUnitTest extends DiskRegionTestingBase {
     region = (LocalRegion) createRegion();
 
     putEntries(region, 5, 10, "A");
-    DiskStoreImpl store = (DiskStoreImpl) cache.findDiskStore(region.getAttributes().getDiskStoreName());
+    DiskStoreImpl store =
+        (DiskStoreImpl) cache.findDiskStore(region.getAttributes().getDiskStoreName());
     //Create a new oplog, to make sure we still create a krf for the old oplog.
     store.forceRoll();
     putEntries(region, 10, 15, "A");
@@ -238,13 +239,14 @@ public class DiskRegionAsyncRecoveryJUnitTest extends DiskRegionTestingBase {
     cache = createCache();
 
     final CountDownLatch recoveryDone = new CountDownLatch(1);
-    DiskStoreObserver.setInstance(new DiskStoreObserver() {
+    DiskStoreObserver.setInstance(
+        new DiskStoreObserver() {
 
-      @Override
-      public void afterAsyncValueRecovery(DiskStoreImpl store) {
-        recoveryDone.countDown();
-      }
-    });
+          @Override
+          public void afterAsyncValueRecovery(DiskStoreImpl store) {
+            recoveryDone.countDown();
+          }
+        });
     region = createRegion();
     recoveryDone.await();
 
@@ -266,22 +268,23 @@ public class DiskRegionAsyncRecoveryJUnitTest extends DiskRegionTestingBase {
 
     final CountDownLatch suspendRecovery = new CountDownLatch(1);
     final CountDownLatch recoveryDone = new CountDownLatch(1);
-    DiskStoreObserver.setInstance(new DiskStoreObserver() {
+    DiskStoreObserver.setInstance(
+        new DiskStoreObserver() {
 
-      @Override
-      public void beforeAsyncValueRecovery(DiskStoreImpl store) {
-        try {
-          suspendRecovery.await();
-        } catch (InterruptedException e) {
-          fail("interrupted");
-        }
-      }
+          @Override
+          public void beforeAsyncValueRecovery(DiskStoreImpl store) {
+            try {
+              suspendRecovery.await();
+            } catch (InterruptedException e) {
+              fail("interrupted");
+            }
+          }
 
-      @Override
-      public void afterAsyncValueRecovery(DiskStoreImpl store) {
-        recoveryDone.countDown();
-      }
-    });
+          @Override
+          public void afterAsyncValueRecovery(DiskStoreImpl store) {
+            recoveryDone.countDown();
+          }
+        });
     try {
       region = createRegion();
       region2 = createRegion("region2");
@@ -327,13 +330,14 @@ public class DiskRegionAsyncRecoveryJUnitTest extends DiskRegionTestingBase {
     putEntries(region, 0, 50, "A");
 
     final CountDownLatch recoveryDone1 = new CountDownLatch(1);
-    DiskStoreObserver.setInstance(new DiskStoreObserver() {
+    DiskStoreObserver.setInstance(
+        new DiskStoreObserver() {
 
-      @Override
-      public void afterAsyncValueRecovery(DiskStoreImpl store) {
-        recoveryDone1.countDown();
-      }
-    });
+          @Override
+          public void afterAsyncValueRecovery(DiskStoreImpl store) {
+            recoveryDone1.countDown();
+          }
+        });
     //This will trigger krf creation. Region close doesn't cut it.
     cache.close();
     cache = createCache();
@@ -347,22 +351,23 @@ public class DiskRegionAsyncRecoveryJUnitTest extends DiskRegionTestingBase {
 
     final CountDownLatch suspendRecovery = new CountDownLatch(1);
     final CountDownLatch recoveryDone = new CountDownLatch(1);
-    DiskStoreObserver.setInstance(new DiskStoreObserver() {
+    DiskStoreObserver.setInstance(
+        new DiskStoreObserver() {
 
-      @Override
-      public void beforeAsyncValueRecovery(DiskStoreImpl store) {
-        try {
-          suspendRecovery.await();
-        } catch (InterruptedException e) {
-          fail("interrupted");
-        }
-      }
+          @Override
+          public void beforeAsyncValueRecovery(DiskStoreImpl store) {
+            try {
+              suspendRecovery.await();
+            } catch (InterruptedException e) {
+              fail("interrupted");
+            }
+          }
 
-      @Override
-      public void afterAsyncValueRecovery(DiskStoreImpl store) {
-        recoveryDone.countDown();
-      }
-    });
+          @Override
+          public void afterAsyncValueRecovery(DiskStoreImpl store) {
+            recoveryDone.countDown();
+          }
+        });
     try {
       region = createRegion();
 
@@ -398,21 +403,21 @@ public class DiskRegionAsyncRecoveryJUnitTest extends DiskRegionTestingBase {
     cache = createCache();
 
     final CountDownLatch suspendRecovery = new CountDownLatch(1);
-    DiskStoreObserver.setInstance(new DiskStoreObserver() {
+    DiskStoreObserver.setInstance(
+        new DiskStoreObserver() {
 
-      @Override
-      public void beforeAsyncValueRecovery(DiskStoreImpl store) {
-        try {
-          suspendRecovery.await();
-        } catch (InterruptedException e) {
-          fail("interrupted");
-        }
-      }
+          @Override
+          public void beforeAsyncValueRecovery(DiskStoreImpl store) {
+            try {
+              suspendRecovery.await();
+            } catch (InterruptedException e) {
+              fail("interrupted");
+            }
+          }
 
-      @Override
-      public void afterAsyncValueRecovery(DiskStoreImpl store) {
-      }
-    });
+          @Override
+          public void afterAsyncValueRecovery(DiskStoreImpl store) {}
+        });
     try {
       region = createRegion();
 
@@ -442,10 +447,9 @@ public class DiskRegionAsyncRecoveryJUnitTest extends DiskRegionTestingBase {
     checkEntries(region, 0, 50, "A");
   }
 
-  /**
-   * Validate that values are, or are not, in memory
-   */
-  private void checkEntriesInMemory(Region r, int start, int end, Object invalid, boolean inMemory) {
+  /** Validate that values are, or are not, in memory */
+  private void checkEntriesInMemory(
+      Region r, int start, int end, Object invalid, boolean inMemory) {
     LocalRegion region = (LocalRegion) r;
     for (int i = start; i < end; i++) {
       Object inMemoryValue = region.getValueInVM(i);
@@ -483,7 +487,12 @@ public class DiskRegionAsyncRecoveryJUnitTest extends DiskRegionTestingBase {
     if (cache.findDiskStore("store") == null) {
       cache.createDiskStoreFactory().setMaxOplogSize(1).setDiskDirs(dirs).create("store");
     }
-    Region region = cache.createRegionFactory().setDiskStoreName("store").setDataPolicy(DataPolicy.PERSISTENT_REPLICATE).create(regionName);
+    Region region =
+        cache
+            .createRegionFactory()
+            .setDiskStoreName("store")
+            .setDataPolicy(DataPolicy.PERSISTENT_REPLICATE)
+            .create(regionName);
     return region;
   }
 

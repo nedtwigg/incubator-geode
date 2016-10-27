@@ -19,9 +19,7 @@ package org.apache.geode.internal.sequencelog;
 import org.apache.geode.distributed.internal.DistributionMessage;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
-/**
- *
- */
+/** */
 public class MessageLogger {
 
   public static final SequenceLogger LOGGER = SequenceLoggerImpl.getInstance();
@@ -30,10 +28,13 @@ public class MessageLogger {
     return LOGGER.isEnabled(GraphType.MESSAGE);
   }
 
-  public static void logMessage(DistributionMessage message, InternalDistributedMember source, InternalDistributedMember dest) {
+  public static void logMessage(
+      DistributionMessage message,
+      InternalDistributedMember source,
+      InternalDistributedMember dest) {
     if (isEnabled()) {
-      LOGGER.logTransition(GraphType.MESSAGE, message.getClass().getSimpleName(), "", "received", source, dest);
+      LOGGER.logTransition(
+          GraphType.MESSAGE, message.getClass().getSimpleName(), "", "received", source, dest);
     }
   }
-
 }

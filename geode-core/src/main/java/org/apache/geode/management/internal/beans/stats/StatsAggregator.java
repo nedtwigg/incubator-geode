@@ -26,10 +26,7 @@ import org.apache.geode.i18n.LogWriterI18n;
 import org.apache.geode.management.internal.FederationComponent;
 import org.apache.geode.management.internal.ManagementConstants;
 
-/**
- *
- *
- */
+/** */
 public class StatsAggregator {
 
   private Map<String, Class<?>> typeMap;
@@ -45,9 +42,7 @@ public class StatsAggregator {
     initAggregateMap();
   }
 
-  /**
-   * Initialize all counters to 0;
-   */
+  /** Initialize all counters to 0; */
   private void initAggregateMap() {
     Iterator<String> it = typeMap.keySet().iterator();
     while (it.hasNext()) {
@@ -62,7 +57,6 @@ public class StatsAggregator {
         ref = new AtomicReference<Number>(new Float(0F));
       } else if (classzz == Double.TYPE) {
         ref = new AtomicReference<Number>(new Double(0D));
-
       }
 
       aggregateMap.put(attribute, ref);
@@ -115,7 +109,6 @@ public class StatsAggregator {
                 oldVal = new Double(0D);
               }
               incDouble(attribute, (Double) newVal, (Double) oldVal);
-
             }
 
           } else if (oldState != null && newState == null) {
@@ -130,14 +123,10 @@ public class StatsAggregator {
                 decFloat(attribute, (Float) oldVal);
               } else if (classzz == Double.TYPE) {
                 decDouble(attribute, (Double) oldVal);
-
               }
             }
-
           }
-
         }
-
       }
     } catch (Exception e) {
       if (logger.fineEnabled()) {
@@ -145,7 +134,6 @@ public class StatsAggregator {
         logger.fine(e);
       }
     }
-
   }
 
   public Integer getIntValue(String attributeName) {
@@ -173,7 +161,7 @@ public class StatsAggregator {
       return;
     }
     AtomicReference<Number> ar = aggregateMap.get(attributeName);
-    for (;;) {
+    for (; ; ) {
       Number expectedVal = ar.get();
       Number curVal = expectedVal.longValue() + (newVal - oldVal);
       if (ar.compareAndSet(expectedVal, curVal)) {
@@ -187,7 +175,7 @@ public class StatsAggregator {
       return;
     }
     AtomicReference<Number> ar = aggregateMap.get(attributeName);
-    for (;;) {
+    for (; ; ) {
       Number expectedVal = ar.get();
       Number curVal = expectedVal.intValue() + (newVal - oldVal);
       if (ar.compareAndSet(expectedVal, curVal)) {
@@ -201,7 +189,7 @@ public class StatsAggregator {
       return;
     }
     AtomicReference<Number> ar = aggregateMap.get(attributeName);
-    for (;;) {
+    for (; ; ) {
       Number expectedVal = ar.get();
       Number curVal = expectedVal.floatValue() + (newVal - oldVal);
       if (ar.compareAndSet(expectedVal, curVal)) {
@@ -215,7 +203,7 @@ public class StatsAggregator {
       return;
     }
     AtomicReference<Number> ar = aggregateMap.get(attributeName);
-    for (;;) {
+    for (; ; ) {
       Number expectedVal = ar.get();
       Number curVal = expectedVal.doubleValue() + (newVal - oldVal);
       if (ar.compareAndSet(expectedVal, curVal)) {
@@ -230,7 +218,7 @@ public class StatsAggregator {
     }
     AtomicReference<Number> ar = aggregateMap.get(attributeName);
     Number curVal;
-    for (;;) {
+    for (; ; ) {
       Number expectedVal = ar.get();
       if (expectedVal.longValue() != 0) {
         curVal = expectedVal.longValue() - oldVal;
@@ -249,7 +237,7 @@ public class StatsAggregator {
     }
     AtomicReference<Number> ar = aggregateMap.get(attributeName);
     Number curVal;
-    for (;;) {
+    for (; ; ) {
       Number expectedVal = ar.get();
       if (expectedVal.intValue() != 0) {
         curVal = expectedVal.intValue() - oldVal;
@@ -268,7 +256,7 @@ public class StatsAggregator {
     }
     AtomicReference<Number> ar = aggregateMap.get(attributeName);
     Number curVal;
-    for (;;) {
+    for (; ; ) {
       Number expectedVal = ar.get();
       if (expectedVal.floatValue() != 0) {
         curVal = expectedVal.floatValue() - oldVal;
@@ -287,7 +275,7 @@ public class StatsAggregator {
     }
     AtomicReference<Number> ar = aggregateMap.get(attributeName);
     Number curVal;
-    for (;;) {
+    for (; ; ) {
       Number expectedVal = ar.get();
       if (expectedVal.doubleValue() != 0) {
         curVal = expectedVal.doubleValue() - oldVal;

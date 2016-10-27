@@ -27,5 +27,4 @@ public interface GemFireXDMemberMBean {
   public boolean getDataStore();
 
   public CompositeData getNetworkServerClientConnectionStats();
-
 }

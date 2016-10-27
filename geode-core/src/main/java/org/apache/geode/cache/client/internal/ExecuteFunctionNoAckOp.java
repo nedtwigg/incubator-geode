@@ -37,8 +37,9 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * Does a Execution of function on server (possibly without region/cache) 
- * It does not get the resulf from the server (follows Fire&Forget approch)
+ * Does a Execution of function on server (possibly without region/cache) It does not get the resulf
+ * from the server (follows Fire&Forget approch)
+ *
  * @since GemFire 5.8Beta
  */
 public class ExecuteFunctionNoAckOp {
@@ -50,25 +51,36 @@ public class ExecuteFunctionNoAckOp {
   }
 
   /**
-   * Does a execute Function on a server using connections from the given pool
-   * to communicate with the server.
-   * 
-   * @param pool
-   *                the pool to use to communicate with the server.
-   * @param function
-   *                of the function to be executed
-   * @param args
-   *                specified arguments to the application function
+   * Does a execute Function on a server using connections from the given pool to communicate with
+   * the server.
+   *
+   * @param pool the pool to use to communicate with the server.
+   * @param function of the function to be executed
+   * @param args specified arguments to the application function
    */
-  public static void execute(PoolImpl pool, Function function, Object args, MemberMappedArgument memberMappedArg, boolean allServers, byte hasResult, boolean isFnSerializationReqd, String[] groups) {
+  public static void execute(
+      PoolImpl pool,
+      Function function,
+      Object args,
+      MemberMappedArgument memberMappedArg,
+      boolean allServers,
+      byte hasResult,
+      boolean isFnSerializationReqd,
+      String[] groups) {
     List servers = null;
-    AbstractOp op = new ExecuteFunctionNoAckOpImpl(function, args, memberMappedArg, hasResult, isFnSerializationReqd, groups, allServers);
+    AbstractOp op =
+        new ExecuteFunctionNoAckOpImpl(
+            function, args, memberMappedArg, hasResult, isFnSerializationReqd, groups, allServers);
     try {
       // In case of allServers getCurrentServers and call
       // executeOn(ServerLocation server, Op op)
       if (allServers && groups.length == 0) {
         if (logger.isDebugEnabled()) {
-          logger.debug("ExecuteFunctionNoAckOp#execute : Sending Function Execution Message:" + op.getMessage() + " to all servers using pool: " + pool);
+          logger.debug(
+              "ExecuteFunctionNoAckOp#execute : Sending Function Execution Message:"
+                  + op.getMessage()
+                  + " to all servers using pool: "
+                  + pool);
         }
         servers = pool.getCurrentServers();
         Iterator i = servers.iterator();
@@ -77,30 +89,65 @@ public class ExecuteFunctionNoAckOp {
         }
       } else {
         if (logger.isDebugEnabled()) {
-          logger.debug("ExecuteFunctionNoAckOp#execute : Sending Function Execution Message:" + op.getMessage() + " to server using pool: " + pool + " with groups:" + Arrays.toString(groups) + " all members:" + allServers);
+          logger.debug(
+              "ExecuteFunctionNoAckOp#execute : Sending Function Execution Message:"
+                  + op.getMessage()
+                  + " to server using pool: "
+                  + pool
+                  + " with groups:"
+                  + Arrays.toString(groups)
+                  + " all members:"
+                  + allServers);
         }
         pool.execute(op, 0);
       }
     } catch (Exception ex) {
       if (logger.isDebugEnabled()) {
-        logger.debug("ExecuteFunctionNoAckOp#execute : Exception occured while Sending Function Execution Message:" + op.getMessage() + " to server using pool: " + pool, ex);
+        logger.debug(
+            "ExecuteFunctionNoAckOp#execute : Exception occured while Sending Function Execution Message:"
+                + op.getMessage()
+                + " to server using pool: "
+                + pool,
+            ex);
       }
-      if (ex.getMessage() != null)
-        throw new FunctionException(ex.getMessage(), ex);
-      else
-        throw new FunctionException("Unexpected exception during function execution:", ex);
+      if (ex.getMessage() != null) throw new FunctionException(ex.getMessage(), ex);
+      else throw new FunctionException("Unexpected exception during function execution:", ex);
     }
   }
 
-  public static void execute(PoolImpl pool, String functionId, Object args, MemberMappedArgument memberMappedArg, boolean allServers, byte hasResult, boolean isFnSerializationReqd, boolean isHA, boolean optimizeForWrite, String[] groups) {
+  public static void execute(
+      PoolImpl pool,
+      String functionId,
+      Object args,
+      MemberMappedArgument memberMappedArg,
+      boolean allServers,
+      byte hasResult,
+      boolean isFnSerializationReqd,
+      boolean isHA,
+      boolean optimizeForWrite,
+      String[] groups) {
     List servers = null;
-    AbstractOp op = new ExecuteFunctionNoAckOpImpl(functionId, args, memberMappedArg, hasResult, isFnSerializationReqd, isHA, optimizeForWrite, groups, allServers);
+    AbstractOp op =
+        new ExecuteFunctionNoAckOpImpl(
+            functionId,
+            args,
+            memberMappedArg,
+            hasResult,
+            isFnSerializationReqd,
+            isHA,
+            optimizeForWrite,
+            groups,
+            allServers);
     try {
       // In case of allServers getCurrentServers and call
       // executeOn(ServerLocation server, Op op)
       if (allServers && groups.length == 0) {
         if (logger.isDebugEnabled()) {
-          logger.debug("ExecuteFunctionNoAckOp#execute : Sending Function Execution Message:" + op.getMessage() + " to all servers using pool: " + pool);
+          logger.debug(
+              "ExecuteFunctionNoAckOp#execute : Sending Function Execution Message:"
+                  + op.getMessage()
+                  + " to all servers using pool: "
+                  + pool);
         }
         servers = pool.getCurrentServers();
         Iterator i = servers.iterator();
@@ -109,36 +156,51 @@ public class ExecuteFunctionNoAckOp {
         }
       } else {
         if (logger.isDebugEnabled()) {
-          logger.debug("ExecuteFunctionNoAckOp#execute : Sending Function Execution Message:" + op.getMessage() + " to server using pool: " + pool + " with groups:" + Arrays.toString(groups) + " all members:" + allServers);
+          logger.debug(
+              "ExecuteFunctionNoAckOp#execute : Sending Function Execution Message:"
+                  + op.getMessage()
+                  + " to server using pool: "
+                  + pool
+                  + " with groups:"
+                  + Arrays.toString(groups)
+                  + " all members:"
+                  + allServers);
         }
         pool.execute(op, 0);
       }
     } catch (Exception ex) {
       if (logger.isDebugEnabled()) {
-        logger.debug("ExecuteFunctionNoAckOp#execute : Exception occured while Sending Function Execution Message:" + op.getMessage() + " to server using pool: " + pool, ex);
+        logger.debug(
+            "ExecuteFunctionNoAckOp#execute : Exception occured while Sending Function Execution Message:"
+                + op.getMessage()
+                + " to server using pool: "
+                + pool,
+            ex);
       }
-      if (ex.getMessage() != null)
-        throw new FunctionException(ex.getMessage(), ex);
-      else
-        throw new FunctionException("Unexpected exception during function execution:", ex);
+      if (ex.getMessage() != null) throw new FunctionException(ex.getMessage(), ex);
+      else throw new FunctionException("Unexpected exception during function execution:", ex);
     }
   }
 
   private static class ExecuteFunctionNoAckOpImpl extends AbstractOp {
 
-    /**
-     * number of parts in the request message
-     */
+    /** number of parts in the request message */
     private static final int MSG_PARTS = 6;
 
-    /**
-     * @throws org.apache.geode.SerializationException
-     *                 if serialization fails
-     */
-    public ExecuteFunctionNoAckOpImpl(Function function, Object args, MemberMappedArgument memberMappedArg, byte hasResult, boolean isFnSerializationReqd, String[] groups, boolean allMembers) {
+    /** @throws org.apache.geode.SerializationException if serialization fails */
+    public ExecuteFunctionNoAckOpImpl(
+        Function function,
+        Object args,
+        MemberMappedArgument memberMappedArg,
+        byte hasResult,
+        boolean isFnSerializationReqd,
+        String[] groups,
+        boolean allMembers) {
       super(MessageType.EXECUTE_FUNCTION, MSG_PARTS);
-      byte functionState = AbstractExecution.getFunctionState(function.isHA(), function.hasResult(), function.optimizeForWrite());
-      getMessage().addBytesPart(new byte[] { functionState });
+      byte functionState =
+          AbstractExecution.getFunctionState(
+              function.isHA(), function.hasResult(), function.optimizeForWrite());
+      getMessage().addBytesPart(new byte[] {functionState});
       if (isFnSerializationReqd) {
         getMessage().addStringOrObjPart(function);
       } else {
@@ -159,9 +221,23 @@ public class ExecuteFunctionNoAckOp {
      * @param isHA
      * @param optimizeForWrite
      */
-    public ExecuteFunctionNoAckOpImpl(String functionId, Object args, MemberMappedArgument memberMappedArg, byte hasResult, boolean isFnSerializationReqd, boolean isHA, boolean optimizeForWrite, String[] groups, boolean allMembers) {
+    public ExecuteFunctionNoAckOpImpl(
+        String functionId,
+        Object args,
+        MemberMappedArgument memberMappedArg,
+        byte hasResult,
+        boolean isFnSerializationReqd,
+        boolean isHA,
+        boolean optimizeForWrite,
+        String[] groups,
+        boolean allMembers) {
       super(MessageType.EXECUTE_FUNCTION, MSG_PARTS);
-      getMessage().addBytesPart(new byte[] { AbstractExecution.getFunctionState(isHA, hasResult == (byte) 1 ? true : false, optimizeForWrite) });
+      getMessage()
+          .addBytesPart(
+              new byte[] {
+                AbstractExecution.getFunctionState(
+                    isHA, hasResult == (byte) 1 ? true : false, optimizeForWrite)
+              });
       getMessage().addStringOrObjPart(functionId);
       getMessage().addObjPart(args);
       getMessage().addObjPart(memberMappedArg);
@@ -178,11 +254,17 @@ public class ExecuteFunctionNoAckOp {
         Part part = msg.getPart(0);
         if (msgType == MessageType.EXCEPTION) {
           Throwable t = (Throwable) part.getObject();
-          logger.warn(LocalizedMessage.create(LocalizedStrings.EXECUTE_FUNCTION_NO_HAS_RESULT_RECEIVED_EXCEPTION), t);
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings.EXECUTE_FUNCTION_NO_HAS_RESULT_RECEIVED_EXCEPTION),
+              t);
         } else if (isErrorResponse(msgType)) {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.EXECUTE_FUNCTION_NO_HAS_RESULT_RECEIVED_EXCEPTION));
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings.EXECUTE_FUNCTION_NO_HAS_RESULT_RECEIVED_EXCEPTION));
         } else {
-          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
+          throw new InternalGemFireError(
+              "Unexpected message type " + MessageType.getString(msgType));
         }
         return null;
       }
@@ -213,5 +295,4 @@ public class ExecuteFunctionNoAckOp {
       return new Message(1, Version.CURRENT);
     }
   }
-
 }

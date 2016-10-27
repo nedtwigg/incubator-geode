@@ -30,42 +30,33 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.internal.cache.EntriesSet;
 
 /**
- * Handles messages that consist of a format string containing '{}' to represent each replaceable token, and
- * the parameters.
- * <p/>
- * This class was originally written for <a href="http://lilithapp.com/">Lilith</a> by Joern Huxhorn where it is
- * licensed under the LGPL. It has been relicensed here with his permission providing that this attribution remain.
- * <p/>
- * Copied into Geode from org.apache.logging.log4j.message.ParameterizedMessage (http://logging.apache.org/log4j/2.x/license.html)
- * <p/>
- * Geode changes include changing class name and package. Additional changes are commented with "// GEODE: note"
+ * Handles messages that consist of a format string containing '{}' to represent each replaceable
+ * token, and the parameters.
+ *
+ * <p>This class was originally written for <a href="http://lilithapp.com/">Lilith</a> by Joern
+ * Huxhorn where it is licensed under the LGPL. It has been relicensed here with his permission
+ * providing that this attribution remain.
+ *
+ * <p>Copied into Geode from org.apache.logging.log4j.message.ParameterizedMessage
+ * (http://logging.apache.org/log4j/2.x/license.html)
+ *
+ * <p>Geode changes include changing class name and package. Additional changes are commented with
+ * "// GEODE: note"
  */
 public class GemFireParameterizedMessage implements Message {
 
-  /**
-   * Prefix for recursion.
-   */
+  /** Prefix for recursion. */
   public static final String RECURSION_PREFIX = "[...";
-  /**
-   * Suffix for recursion.
-   */
+  /** Suffix for recursion. */
   public static final String RECURSION_SUFFIX = "...]";
 
-  /**
-   * Prefix for errors.
-   */
+  /** Prefix for errors. */
   public static final String ERROR_PREFIX = "[!!!";
-  /**
-   * Separator for errors.
-   */
+  /** Separator for errors. */
   public static final String ERROR_SEPARATOR = "=>";
-  /**
-   * Separator for error messages.
-   */
+  /** Separator for error messages. */
   public static final String ERROR_MSG_SEPARATOR = ":";
-  /**
-   * Suffix for errors.
-   */
+  /** Suffix for errors. */
   public static final String ERROR_SUFFIX = "!!!]";
 
   private static final long serialVersionUID = -665975803997290697L;
@@ -84,12 +75,14 @@ public class GemFireParameterizedMessage implements Message {
 
   /**
    * Creates a parameterized message.
-   * @param messagePattern The message "format" string. This will be a String containing "{}" placeholders
-   * where parameters should be substituted.
+   *
+   * @param messagePattern The message "format" string. This will be a String containing "{}"
+   *     placeholders where parameters should be substituted.
    * @param stringArgs The arguments for substitution.
    * @param throwable A Throwable.
    */
-  public GemFireParameterizedMessage(final String messagePattern, final String[] stringArgs, final Throwable throwable) {
+  public GemFireParameterizedMessage(
+      final String messagePattern, final String[] stringArgs, final Throwable throwable) {
     this.messagePattern = messagePattern;
     this.stringArgs = stringArgs;
     this.throwable = throwable;
@@ -97,27 +90,30 @@ public class GemFireParameterizedMessage implements Message {
 
   /**
    * Creates a parameterized message.
-   * @param messagePattern The message "format" string. This will be a String containing "{}" placeholders
-   * where parameters should be substituted.
+   *
+   * @param messagePattern The message "format" string. This will be a String containing "{}"
+   *     placeholders where parameters should be substituted.
    * @param objectArgs The arguments for substitution.
    * @param throwable A Throwable.
    */
-  public GemFireParameterizedMessage(final String messagePattern, final Object[] objectArgs, final Throwable throwable) {
+  public GemFireParameterizedMessage(
+      final String messagePattern, final Object[] objectArgs, final Throwable throwable) {
     this.messagePattern = messagePattern;
     this.throwable = throwable;
     this.stringArgs = parseArguments(objectArgs);
   }
 
   /**
-   * Constructs a ParameterizedMessage which contains the arguments converted to String as well as an optional
-   * Throwable.
+   * Constructs a ParameterizedMessage which contains the arguments converted to String as well as
+   * an optional Throwable.
    *
-   * <p>If the last argument is a Throwable and is NOT used up by a placeholder in the message pattern it is returned
-   * in {@link #getThrowable()} and won't be contained in the created String[].
-   * If it is used up {@link #getThrowable()} will return null even if the last argument was a Throwable!</p>
+   * <p>If the last argument is a Throwable and is NOT used up by a placeholder in the message
+   * pattern it is returned in {@link #getThrowable()} and won't be contained in the created
+   * String[]. If it is used up {@link #getThrowable()} will return null even if the last argument
+   * was a Throwable!
    *
    * @param messagePattern the message pattern that to be checked for placeholders.
-   * @param arguments      the argument array to be converted.
+   * @param arguments the argument array to be converted.
    */
   public GemFireParameterizedMessage(final String messagePattern, final Object[] arguments) {
     this.messagePattern = messagePattern;
@@ -126,21 +122,24 @@ public class GemFireParameterizedMessage implements Message {
 
   /**
    * Constructor with a pattern and a single parameter.
+   *
    * @param messagePattern The message pattern.
    * @param arg The parameter.
    */
   public GemFireParameterizedMessage(final String messagePattern, final Object arg) {
-    this(messagePattern, new Object[] { arg });
+    this(messagePattern, new Object[] {arg});
   }
 
   /**
    * Constructor with a pattern and two parameters.
+   *
    * @param messagePattern The message pattern.
    * @param arg1 The first parameter.
    * @param arg2 The second parameter.
    */
-  public GemFireParameterizedMessage(final String messagePattern, final Object arg1, final Object arg2) {
-    this(messagePattern, new Object[] { arg1, arg2 });
+  public GemFireParameterizedMessage(
+      final String messagePattern, final Object arg1, final Object arg2) {
+    this(messagePattern, new Object[] {arg1, arg2});
   }
 
   private String[] parseArguments(final Object[] arguments) {
@@ -149,7 +148,9 @@ public class GemFireParameterizedMessage implements Message {
     }
     final int argsCount = countArgumentPlaceholders(messagePattern);
     int resultArgCount = arguments.length;
-    if (argsCount < arguments.length && throwable == null && arguments[arguments.length - 1] instanceof Throwable) {
+    if (argsCount < arguments.length
+        && throwable == null
+        && arguments[arguments.length - 1] instanceof Throwable) {
       throwable = (Throwable) arguments[arguments.length - 1];
       resultArgCount--;
     }
@@ -172,6 +173,7 @@ public class GemFireParameterizedMessage implements Message {
 
   /**
    * Returns the formatted message.
+   *
    * @return the formatted message.
    */
   @Override
@@ -184,6 +186,7 @@ public class GemFireParameterizedMessage implements Message {
 
   /**
    * Returns the message pattern.
+   *
    * @return the message pattern.
    */
   @Override
@@ -193,6 +196,7 @@ public class GemFireParameterizedMessage implements Message {
 
   /**
    * Returns the message parameters.
+   *
    * @return the message parameters.
    */
   @Override
@@ -204,11 +208,10 @@ public class GemFireParameterizedMessage implements Message {
   }
 
   /**
-   * Returns the Throwable that was given as the last argument, if any.
-   * It will not survive serialization. The Throwable exists as part of the message
-   * primarily so that it can be extracted from the end of the list of parameters
-   * and then be added to the LogEvent. As such, the Throwable in the event should
-   * not be used once the LogEvent has been constructed.
+   * Returns the Throwable that was given as the last argument, if any. It will not survive
+   * serialization. The Throwable exists as part of the message primarily so that it can be
+   * extracted from the end of the list of parameters and then be added to the LogEvent. As such,
+   * the Throwable in the event should not be used once the LogEvent has been constructed.
    *
    * @return the Throwable, if any.
    */
@@ -232,7 +235,9 @@ public class GemFireParameterizedMessage implements Message {
 
     final GemFireParameterizedMessage that = (GemFireParameterizedMessage) o;
 
-    if (messagePattern != null ? !messagePattern.equals(that.messagePattern) : that.messagePattern != null) {
+    if (messagePattern != null
+        ? !messagePattern.equals(that.messagePattern)
+        : that.messagePattern != null) {
       return false;
     }
     if (!Arrays.equals(stringArgs, that.stringArgs)) {
@@ -254,7 +259,7 @@ public class GemFireParameterizedMessage implements Message {
    * Replace placeholders in the given messagePattern with arguments.
    *
    * @param messagePattern the message pattern containing placeholders.
-   * @param arguments      the arguments to be used to replace placeholders.
+   * @param arguments the arguments to be used to replace placeholders.
    * @return the formatted message.
    */
   public static String format(final String messagePattern, final Object[] arguments) {
@@ -270,7 +275,9 @@ public class GemFireParameterizedMessage implements Message {
       if (curChar == ESCAPE_CHAR) {
         escapeCounter++;
       } else {
-        if (curChar == DELIM_START && i < messagePattern.length() - 1 && messagePattern.charAt(i + 1) == DELIM_STOP) {
+        if (curChar == DELIM_START
+            && i < messagePattern.length() - 1
+            && messagePattern.charAt(i + 1) == DELIM_STOP) {
           // write escaped escape chars
           final int escapedEscapes = escapeCounter / 2;
           for (int j = 0; j < escapedEscapes; j++) {
@@ -333,7 +340,9 @@ public class GemFireParameterizedMessage implements Message {
       if (curChar == ESCAPE_CHAR) {
         isEscaped = !isEscaped;
       } else if (curChar == DELIM_START) {
-        if (!isEscaped && i < messagePattern.length() - 1 && messagePattern.charAt(i + 1) == DELIM_STOP) {
+        if (!isEscaped
+            && i < messagePattern.length() - 1
+            && messagePattern.charAt(i + 1) == DELIM_STOP) {
           result++;
           i++;
         }
@@ -346,20 +355,19 @@ public class GemFireParameterizedMessage implements Message {
   }
 
   /**
-   * This method performs a deep toString of the given Object.
-   * Primitive arrays are converted using their respective Arrays.toString methods while
-   * special handling is implemented for "container types", i.e. Object[], Map and Collection because those could
-   * contain themselves.
-   * <p>
-   * It should be noted that neither AbstractMap.toString() nor AbstractCollection.toString() implement such a
-   * behavior. They only check if the container is directly contained in itself, but not if a contained container
-   * contains the original one. Because of that, Arrays.toString(Object[]) isn't safe either.
-   * Confusing? Just read the last paragraph again and check the respective toString() implementation.
-   * </p>
-   * <p>
-   * This means, in effect, that logging would produce a usable output even if an ordinary System.out.println(o)
-   * would produce a relatively hard-to-debug StackOverflowError.
-   * </p>
+   * This method performs a deep toString of the given Object. Primitive arrays are converted using
+   * their respective Arrays.toString methods while special handling is implemented for "container
+   * types", i.e. Object[], Map and Collection because those could contain themselves.
+   *
+   * <p>It should be noted that neither AbstractMap.toString() nor AbstractCollection.toString()
+   * implement such a behavior. They only check if the container is directly contained in itself,
+   * but not if a contained container contains the original one. Because of that,
+   * Arrays.toString(Object[]) isn't safe either. Confusing? Just read the last paragraph again and
+   * check the respective toString() implementation.
+   *
+   * <p>This means, in effect, that logging would produce a usable output even if an ordinary
+   * System.out.println(o) would produce a relatively hard-to-debug StackOverflowError.
+   *
    * @param o The object.
    * @return The String representation.
    */
@@ -377,30 +385,27 @@ public class GemFireParameterizedMessage implements Message {
   }
 
   /**
-   * This method performs a deep toString of the given Object.
-   * Primitive arrays are converted using their respective Arrays.toString methods while
-   * special handling is implemented for "container types", i.e. Object[], Map and Collection because those could
-   * contain themselves.
-   * <p>
-   * dejaVu is used in case of those container types to prevent an endless recursion.
-   * </p>
-   * <p>
-   * It should be noted that neither AbstractMap.toString() nor AbstractCollection.toString() implement such a
-   * behavior.
-   * They only check if the container is directly contained in itself, but not if a contained container contains the
-   * original one. Because of that, Arrays.toString(Object[]) isn't safe either.
-   * Confusing? Just read the last paragraph again and check the respective toString() implementation.
-   * </p>
-   * <p>
-   * This means, in effect, that logging would produce a usable output even if an ordinary System.out.println(o)
-   * would produce a relatively hard-to-debug StackOverflowError.
-   * </p>
+   * This method performs a deep toString of the given Object. Primitive arrays are converted using
+   * their respective Arrays.toString methods while special handling is implemented for "container
+   * types", i.e. Object[], Map and Collection because those could contain themselves.
    *
-   * @param o      the Object to convert into a String
-   * @param str    the StringBuilder that o will be appended to
+   * <p>dejaVu is used in case of those container types to prevent an endless recursion.
+   *
+   * <p>It should be noted that neither AbstractMap.toString() nor AbstractCollection.toString()
+   * implement such a behavior. They only check if the container is directly contained in itself,
+   * but not if a contained container contains the original one. Because of that,
+   * Arrays.toString(Object[]) isn't safe either. Confusing? Just read the last paragraph again and
+   * check the respective toString() implementation.
+   *
+   * <p>This means, in effect, that logging would produce a usable output even if an ordinary
+   * System.out.println(o) would produce a relatively hard-to-debug StackOverflowError.
+   *
+   * @param o the Object to convert into a String
+   * @param str the StringBuilder that o will be appended to
    * @param dejaVu a list of container identities that were already used.
    */
-  private static void recursiveDeepToString(final Object o, final StringBuilder str, final Set<String> dejaVu) {
+  private static void recursiveDeepToString(
+      final Object o, final StringBuilder str, final Set<String> dejaVu) {
     if (o == null) {
       str.append("null");
       return;
@@ -450,7 +455,8 @@ public class GemFireParameterizedMessage implements Message {
         }
         //str.append(Arrays.deepToString((Object[]) o));
       }
-    } else if (o instanceof Map && !(o instanceof Region)) { // GEODE: do NOT use Map handling if instanceof Geode Region
+    } else if (o instanceof Map
+        && !(o instanceof Region)) { // GEODE: do NOT use Map handling if instanceof Geode Region
       // special handling of container Map
       final String id = identityToString(o);
       if (dejaVu.contains(id)) {
@@ -475,7 +481,10 @@ public class GemFireParameterizedMessage implements Message {
         }
         str.append('}');
       }
-    } else if (o instanceof Collection && !(o instanceof EntriesSet)) { // GEODE: do NOT use Colleciton handling if instanceof Geode EntriesSet
+    } else if (o instanceof Collection
+        && !(o
+            instanceof
+            EntriesSet)) { // GEODE: do NOT use Colleciton handling if instanceof Geode EntriesSet
       // special handling of container Collection
       final String id = identityToString(o);
       if (dejaVu.contains(id)) {
@@ -521,20 +530,19 @@ public class GemFireParameterizedMessage implements Message {
   }
 
   /**
-   * This method returns the same as if Object.toString() would not have been
-   * overridden in obj.
-   * <p>
-   * Note that this isn't 100% secure as collisions can always happen with hash codes.
-   * </p>
-   * <p>
-   * Copied from Object.hashCode():
-   * </p>
+   * This method returns the same as if Object.toString() would not have been overridden in obj.
+   *
+   * <p>Note that this isn't 100% secure as collisions can always happen with hash codes.
+   *
+   * <p>Copied from Object.hashCode():
+   *
    * <blockquote>
-   * As much as is reasonably practical, the hashCode method defined by
-   * class {@code Object} does return distinct integers for distinct
-   * objects. (This is typically implemented by converting the internal
-   * address of the object into an integer, but this implementation
-   * technique is not required by the Java&#8482; programming language.)
+   *
+   * As much as is reasonably practical, the hashCode method defined by class {@code Object} does
+   * return distinct integers for distinct objects. (This is typically implemented by converting the
+   * internal address of the object into an integer, but this implementation technique is not
+   * required by the Java&#8482; programming language.)
+   *
    * </blockquote>
    *
    * @param obj the Object that is to be converted into an identity string.
@@ -549,6 +557,12 @@ public class GemFireParameterizedMessage implements Message {
 
   @Override
   public String toString() {
-    return "GemFireParameterizedMessage[messagePattern=" + messagePattern + ", stringArgs=" + Arrays.toString(stringArgs) + ", throwable=" + throwable + ']'; // GEODE: adjust toString to GemFireParameterizedMessage
+    return "GemFireParameterizedMessage[messagePattern="
+        + messagePattern
+        + ", stringArgs="
+        + Arrays.toString(stringArgs)
+        + ", throwable="
+        + throwable
+        + ']'; // GEODE: adjust toString to GemFireParameterizedMessage
   }
 }

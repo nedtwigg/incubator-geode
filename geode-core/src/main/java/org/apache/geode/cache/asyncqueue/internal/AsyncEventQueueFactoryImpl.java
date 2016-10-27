@@ -45,16 +45,14 @@ public class AsyncEventQueueFactoryImpl implements AsyncEventQueueFactory {
   private static final Logger logger = LogService.getLogger();
 
   /**
-   * Used internally to pass the attributes from this factory to the real
-   * GatewaySender it is creating.
+   * Used internally to pass the attributes from this factory to the real GatewaySender it is
+   * creating.
    */
   private GatewaySenderAttributes attrs = new GatewaySenderAttributes();
 
   private Cache cache;
 
-  /**
-   * The default batchTimeInterval for AsyncEventQueue in milliseconds.
-   */
+  /** The default batchTimeInterval for AsyncEventQueue in milliseconds. */
   public static final int DEFAULT_BATCH_TIME_INTERVAL = 5;
 
   public AsyncEventQueueFactoryImpl(Cache cache) {
@@ -130,12 +128,14 @@ public class AsyncEventQueueFactoryImpl implements AsyncEventQueueFactory {
   }
 
   @Override
-  public AsyncEventQueueFactory setGatewayEventSubstitutionListener(GatewayEventSubstitutionFilter filter) {
+  public AsyncEventQueueFactory setGatewayEventSubstitutionListener(
+      GatewayEventSubstitutionFilter filter) {
     this.attrs.eventSubstitutionFilter = filter;
     return this;
   }
 
-  public AsyncEventQueueFactory removeGatewayEventAlternateValueProvider(GatewayEventSubstitutionFilter provider) {
+  public AsyncEventQueueFactory removeGatewayEventAlternateValueProvider(
+      GatewayEventSubstitutionFilter provider) {
     return this;
   }
 
@@ -146,7 +146,8 @@ public class AsyncEventQueueFactoryImpl implements AsyncEventQueueFactory {
 
   public AsyncEventQueue create(String asyncQueueId, AsyncEventListener listener) {
     if (listener == null) {
-      throw new IllegalArgumentException(LocalizedStrings.AsyncEventQueue_ASYNC_EVENT_LISTENER_CANNOT_BE_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.AsyncEventQueue_ASYNC_EVENT_LISTENER_CANNOT_BE_NULL.toLocalizedString());
     }
 
     AsyncEventQueue asyncEventQueue = null;
@@ -176,19 +177,20 @@ public class AsyncEventQueueFactoryImpl implements AsyncEventQueueFactory {
       //senderFactory.addGatewayEventFilter(filter);
       //}
       //senderFactory.setGatewayEventSubstitutionFilter(attrs.getGatewayEventSubstitutionFilter());
-      //Type cast to GatewaySenderFactory implementation impl to add the async event listener 
+      //Type cast to GatewaySenderFactory implementation impl to add the async event listener
       //and set the isForInternalUse to true. These methods are not exposed on GatewaySenderFactory
       //GatewaySenderFactory factoryImpl = (GatewaySenderFactoryImpl) senderFactory;
       //senderFactory.setForInternalUse(true);
       //senderFactory.addAsyncEventListener(listener);
       //senderFactory.setBucketSorted(attrs.isBucketSorted());
-      // add member id to differentiate between this region and the redundant bucket 
-      // region created for this queue. 
-      //GatewaySender sender = 
+      // add member id to differentiate between this region and the redundant bucket
+      // region created for this queue.
+      //GatewaySender sender =
       //  senderFactory.create(
       //  AsyncEventQueueImpl.getSenderIdFromAsyncEventQueueId(asyncQueueId));
       addAsyncEventListener(listener);
-      GatewaySender sender = create(AsyncEventQueueImpl.getSenderIdFromAsyncEventQueueId(asyncQueueId));
+      GatewaySender sender =
+          create(AsyncEventQueueImpl.getSenderIdFromAsyncEventQueueId(asyncQueueId));
       AsyncEventQueueImpl queue = new AsyncEventQueueImpl(sender, listener);
       asyncEventQueue = queue;
       ((GemFireCacheImpl) cache).addAsyncEventQueue(queue);
@@ -207,12 +209,17 @@ public class AsyncEventQueueFactoryImpl implements AsyncEventQueueFactory {
     GatewaySender sender = null;
 
     if (this.attrs.getDispatcherThreads() <= 0) {
-      throw new AsyncEventQueueConfigurationException(LocalizedStrings.AsyncEventQueue_0_CANNOT_HAVE_DISPATCHER_THREADS_LESS_THAN_1.toLocalizedString(id));
+      throw new AsyncEventQueueConfigurationException(
+          LocalizedStrings.AsyncEventQueue_0_CANNOT_HAVE_DISPATCHER_THREADS_LESS_THAN_1
+              .toLocalizedString(id));
     }
 
     if (this.attrs.isParallel()) {
-      if ((this.attrs.getOrderPolicy() != null) && this.attrs.getOrderPolicy().equals(OrderPolicy.THREAD)) {
-        throw new AsyncEventQueueConfigurationException(LocalizedStrings.AsyncEventQueue_0_CANNOT_BE_CREATED_WITH_ORDER_POLICY_1.toLocalizedString(id, this.attrs.getOrderPolicy()));
+      if ((this.attrs.getOrderPolicy() != null)
+          && this.attrs.getOrderPolicy().equals(OrderPolicy.THREAD)) {
+        throw new AsyncEventQueueConfigurationException(
+            LocalizedStrings.AsyncEventQueue_0_CANNOT_BE_CREATED_WITH_ORDER_POLICY_1
+                .toLocalizedString(id, this.attrs.getOrderPolicy()));
       }
 
       if (this.cache instanceof GemFireCacheImpl) {

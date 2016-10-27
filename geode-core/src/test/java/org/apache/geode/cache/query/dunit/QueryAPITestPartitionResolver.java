@@ -21,19 +21,16 @@ import java.io.Serializable;
 import org.apache.geode.cache.EntryOperation;
 import org.apache.geode.cache.PartitionResolver;
 
-/**
- * This resolver is used in QueryUsingFunctionContextDUnitTest.
- *
- */
+/** This resolver is used in QueryUsingFunctionContextDUnitTest. */
 public class QueryAPITestPartitionResolver implements PartitionResolver {
 
   @Override
-  public void close() {
-  }
+  public void close() {}
 
   @Override
   public Serializable getRoutingObject(EntryOperation opDetails) {
-    return (((Integer) opDetails.getKey()).intValue() % QueryUsingFunctionContextDUnitTest.numOfBuckets);
+    return (((Integer) opDetails.getKey()).intValue()
+        % QueryUsingFunctionContextDUnitTest.numOfBuckets);
   }
 
   @Override

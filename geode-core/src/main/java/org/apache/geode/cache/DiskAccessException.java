@@ -21,8 +21,6 @@ import java.io.IOException;
 /**
  * Indicates that an <code>IOException</code> during a disk region operation.
  *
- *
- *
  * @since GemFire 3.2
  */
 public class DiskAccessException extends CacheRuntimeException {
@@ -30,9 +28,7 @@ public class DiskAccessException extends CacheRuntimeException {
 
   private transient boolean isRemote;
 
-  /**
-   * Constructs a new <code>DiskAccessException</code>.
-   */
+  /** Constructs a new <code>DiskAccessException</code>. */
   public DiskAccessException() {
     super();
   }
@@ -70,8 +66,7 @@ public class DiskAccessException extends CacheRuntimeException {
   }
 
   /**
-   * Constructs a new <code>DiskAccessException</code> with a message string
-   * and a cause.
+   * Constructs a new <code>DiskAccessException</code> with a message string and a cause.
    *
    * @param msg the message string
    * @param cause a causal Throwable
@@ -83,8 +78,7 @@ public class DiskAccessException extends CacheRuntimeException {
   }
 
   /**
-   * Constructs a new <code>DiskAccessException</code> with a message string
-   * and a cause.
+   * Constructs a new <code>DiskAccessException</code> with a message string and a cause.
    *
    * @param msg the message string
    * @param cause a causal Throwable
@@ -105,8 +99,7 @@ public class DiskAccessException extends CacheRuntimeException {
   }
 
   /**
-   * Constructs a new <code>DiskAccessException</code> with a message string
-   * and a cause.
+   * Constructs a new <code>DiskAccessException</code> with a message string and a cause.
    *
    * @param msg the message string
    * @param cause a causal Throwable
@@ -116,9 +109,7 @@ public class DiskAccessException extends CacheRuntimeException {
     super(msg, cause);
   }
 
-  /**
-   * Returns true if this exception originated from a remote node.
-   */
+  /** Returns true if this exception originated from a remote node. */
   public final boolean isRemote() {
     return this.isRemote;
   }
@@ -130,7 +121,8 @@ public class DiskAccessException extends CacheRuntimeException {
     out.defaultWriteObject();
   }
 
-  private void readObject(final java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readObject(final java.io.ObjectInputStream in)
+      throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     this.isRemote = true;
   }

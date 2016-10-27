@@ -30,9 +30,9 @@ import org.apache.geode.cache.query.SelectResults;
 import org.apache.geode.pdx.internal.PdxString;
 
 /**
- * This ExecutionContext will be used ONLY for querying because this
- * is a bit heavt-weight context whose life is longer in JVM than
- * {@link ExecutionContext} which will be used ONLY for index updates.
+ * This ExecutionContext will be used ONLY for querying because this is a bit heavt-weight context
+ * whose life is longer in JVM than {@link ExecutionContext} which will be used ONLY for index
+ * updates.
  *
  * @since GemFire 7.0
  */
@@ -48,26 +48,19 @@ public class QueryExecutionContext extends ExecutionContext {
 
   private boolean indexUsed = false;
 
-  /**
-   * stack used to determine which execCache to currently be using
-   */
+  /** stack used to determine which execCache to currently be using */
   private final Stack execCacheStack = new Stack();
 
   /**
-   * a map that stores general purpose maps for caching data that is valid 
-   * for one query execution only
+   * a map that stores general purpose maps for caching data that is valid for one query execution
+   * only
    */
   private final Map execCaches = new HashMap();
 
-  /**
-   * This map stores PdxString corresponding to the bind argument
-   */
+  /** This map stores PdxString corresponding to the bind argument */
   private Map<Integer, PdxString> bindArgumentToPdxStringMap;
 
-  /**
-   * List of query index names that the user has hinted on using
-   */
-
+  /** List of query index names that the user has hinted on using */
   private ArrayList<String> hints = null;
 
   /**
@@ -138,9 +131,7 @@ public class QueryExecutionContext extends ExecutionContext {
     execCacheStack.pop();
   }
 
-  /**
-   * Added to reset the state from the last execution. This is added for CQs only.
-   */
+  /** Added to reset the state from the last execution. This is added for CQs only. */
   public void reset() {
     super.reset();
     this.execCacheStack.clear();
@@ -179,9 +170,7 @@ public class QueryExecutionContext extends ExecutionContext {
     return this.successfulBuckets.toIntArray();
   }
 
-  /**
-   * creates new PdxString from String and caches it
-   */
+  /** creates new PdxString from String and caches it */
   public PdxString getSavedPdxString(int index) {
     if (bindArgumentToPdxStringMap == null) {
       bindArgumentToPdxStringMap = new HashMap<Integer, PdxString>();
@@ -193,7 +182,6 @@ public class QueryExecutionContext extends ExecutionContext {
       bindArgumentToPdxStringMap.put(index - 1, pdxString);
     }
     return pdxString;
-
   }
 
   public boolean isIndexUsed() {
@@ -217,10 +205,7 @@ public class QueryExecutionContext extends ExecutionContext {
     return hints != null ? hints.contains(indexName) : false;
   }
 
-  /**
-   * Hint size is used for filter ordering.
-   * Smaller values have preference
-   */
+  /** Hint size is used for filter ordering. Smaller values have preference */
   public int getHintSize(String indexName) {
     return -(hints.size() - hints.indexOf(indexName));
   }

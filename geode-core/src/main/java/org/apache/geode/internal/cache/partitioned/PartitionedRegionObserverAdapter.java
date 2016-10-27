@@ -20,27 +20,18 @@ import org.apache.geode.internal.cache.PartitionedRegion;
 import org.apache.geode.internal.cache.ProxyBucketRegion;
 
 /**
- * This class provides 'do-nothing' implementations of all of the methods of
- * interface PartitionedRegionObserver. See the documentation for class
- * PartitionedRegionObserverHolder for details.
- * 
+ * This class provides 'do-nothing' implementations of all of the methods of interface
+ * PartitionedRegionObserver. See the documentation for class PartitionedRegionObserverHolder for
+ * details.
  */
-
 public class PartitionedRegionObserverAdapter implements PartitionedRegionObserver {
 
-  /**
-   * This callback is called just before calculating starting bucket id on
-   * datastore
-   */
-
-  public void beforeCalculatingStartingBucketId() {
-  }
+  /** This callback is called just before calculating starting bucket id on datastore */
+  public void beforeCalculatingStartingBucketId() {}
 
   @Override
-  public void beforeBucketCreation(PartitionedRegion region, int bucketId) {
-  }
+  public void beforeBucketCreation(PartitionedRegion region, int bucketId) {}
 
   @Override
-  public void beforeAssignBucket(PartitionedRegion partitionedRegion, int bucketId) {
-  }
+  public void beforeAssignBucket(PartitionedRegion partitionedRegion, int bucketId) {}
 }

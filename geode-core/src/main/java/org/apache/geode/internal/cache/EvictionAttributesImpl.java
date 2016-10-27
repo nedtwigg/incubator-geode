@@ -34,23 +34,22 @@ import org.apache.geode.internal.cache.lru.LRUCapacityController;
 import org.apache.geode.internal.cache.lru.MemLRUCapacityController;
 
 /**
- * Defines the attributes for configuring the eviction controller associated
- * with a <code>Region</code>. EvictionAttributesImpl were born out of the
- * previoulsy deprecated CapacityController interface. Eviction, as defined
- * here, is the process of removing an Entry from the Region and potentially
- * placing it elsewhere, as defined by the
- * {@link org.apache.geode.cache.EvictionAction}. The algorithms used to
- * determine when to perform the <code>EvictionAction</code> are enumerated in
- * the {@link org.apache.geode.cache.EvictionAlgorithm} class.
- * 
+ * Defines the attributes for configuring the eviction controller associated with a <code>Region
+ * </code>. EvictionAttributesImpl were born out of the previoulsy deprecated CapacityController
+ * interface. Eviction, as defined here, is the process of removing an Entry from the Region and
+ * potentially placing it elsewhere, as defined by the {@link
+ * org.apache.geode.cache.EvictionAction}. The algorithms used to determine when to perform the
+ * <code>EvictionAction</code> are enumerated in the {@link
+ * org.apache.geode.cache.EvictionAlgorithm} class.
+ *
  * @see org.apache.geode.cache.EvictionAlgorithm
  * @see org.apache.geode.cache.AttributesFactory
  * @see org.apache.geode.cache.RegionAttributes
  * @see org.apache.geode.cache.AttributesMutator
- * 
  * @since GemFire 5.0
  */
-public final class EvictionAttributesImpl extends EvictionAttributes implements EvictionAttributesMutator {
+public final class EvictionAttributesImpl extends EvictionAttributes
+    implements EvictionAttributesMutator {
   private static final long serialVersionUID = -6404395520499379715L;
 
   private EvictionAlgorithm algorithm = EvictionAlgorithm.NONE;
@@ -61,17 +60,17 @@ public final class EvictionAttributesImpl extends EvictionAttributes implements 
 
   private EvictionAction action = EvictionAction.NONE;
 
-  /** The Eviction Controller instance generated as a result of processing this instance 
-  * Typically used for any mutation operations
-  */
+  /**
+   * The Eviction Controller instance generated as a result of processing this instance Typically
+   * used for any mutation operations
+   */
   private volatile LRUAlgorithm evictionController;
 
-  public EvictionAttributesImpl() {
-  }
+  public EvictionAttributesImpl() {}
 
   /**
-   * construct a new EvictionAttributes with the same characteristics
-   * as the given attributes, but not sharing the same evictionController.
+   * construct a new EvictionAttributes with the same characteristics as the given attributes, but
+   * not sharing the same evictionController.
    *
    * <p>author bruce
    */
@@ -118,8 +117,7 @@ public final class EvictionAttributesImpl extends EvictionAttributes implements 
 
   /**
    * @param maximum parameter for the given {@link EvictionAlgorithm}
-   * @return the instance of {@link EvictionAttributesImpl} on which this method was
-   *         called
+   * @return the instance of {@link EvictionAttributesImpl} on which this method was called
    */
   public EvictionAttributesImpl internalSetMaximum(int maximum) {
     this.maximum = maximum;
@@ -138,13 +136,11 @@ public final class EvictionAttributesImpl extends EvictionAttributes implements 
   }
 
   /**
-   * Sets the {@link EvictionAction} on the {@link EvictionAttributesImpl} that the
-   * given {@link EvictionAlgorithm} uses to perform the eviction.
-   * 
-   * @param action
-   *          the {@link EvictionAction} used by the {@link EvictionAction}
-   * @return the instance of {@link EvictionAttributesMutator} on which this
-   *         method was called
+   * Sets the {@link EvictionAction} on the {@link EvictionAttributesImpl} that the given {@link
+   * EvictionAlgorithm} uses to perform the eviction.
+   *
+   * @param action the {@link EvictionAction} used by the {@link EvictionAction}
+   * @return the instance of {@link EvictionAttributesMutator} on which this method was called
    */
   public EvictionAttributesImpl setAction(EvictionAction action) {
     if (action != null) {
@@ -163,12 +159,10 @@ public final class EvictionAttributesImpl extends EvictionAttributes implements 
     return this.action;
   }
 
-  /** 
+  /**
    * Build the appropriate eviction controller using the attributes provided.
-   * 
-   * @return the super of the eviction controller or null if no {@link EvictionAction} 
-   * is set.
-   * 
+   *
+   * @return the super of the eviction controller or null if no {@link EvictionAction} is set.
    * @see EvictionAttributes
    */
   public LRUAlgorithm createEvictionController(Region region, boolean isOffHeap) {
@@ -177,11 +171,13 @@ public final class EvictionAttributesImpl extends EvictionAttributes implements 
     } else if (this.algorithm == EvictionAlgorithm.LRU_HEAP) {
       this.evictionController = new HeapLRUCapacityController(this.sizer, this.action, region);
     } else if (this.algorithm == EvictionAlgorithm.LRU_MEMORY) {
-      this.evictionController = new MemLRUCapacityController(this.maximum, this.sizer, this.action, region, isOffHeap);
+      this.evictionController =
+          new MemLRUCapacityController(this.maximum, this.sizer, this.action, region, isOffHeap);
     } else if (this.algorithm == EvictionAlgorithm.LIFO_ENTRY) {
       this.evictionController = new LRUCapacityController(this.maximum, this.action, region);
     } else if (this.algorithm == EvictionAlgorithm.LIFO_MEMORY) {
-      this.evictionController = new MemLRUCapacityController(this.maximum, this.sizer, this.action, region, isOffHeap);
+      this.evictionController =
+          new MemLRUCapacityController(this.maximum, this.sizer, this.action, region, isOffHeap);
     } else {
       // for all other algorithms, return null
       this.evictionController = null;
@@ -201,7 +197,8 @@ public final class EvictionAttributesImpl extends EvictionAttributes implements 
     this.algorithm = (EvictionAlgorithm) DataSerializer.readObject(in);
   }
 
-  public static EvictionAttributesImpl createFromData(DataInput in) throws IOException, ClassNotFoundException {
+  public static EvictionAttributesImpl createFromData(DataInput in)
+      throws IOException, ClassNotFoundException {
     EvictionAttributesImpl result = new EvictionAttributesImpl();
     InternalDataSerializer.invokeFromData(result, in);
     return result;
@@ -209,7 +206,7 @@ public final class EvictionAttributesImpl extends EvictionAttributes implements 
 
   /**
    * Returns true if this object uses a LIFO algorithm
-   * 
+   *
    * @since GemFire 5.7
    */
   public boolean isLIFO() {
@@ -223,5 +220,4 @@ public final class EvictionAttributesImpl extends EvictionAttributes implements 
   public final boolean isLIFOMemory() {
     return this.algorithm == EvictionAlgorithm.LIFO_MEMORY;
   }
-
 }

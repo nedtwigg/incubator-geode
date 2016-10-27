@@ -82,7 +82,5 @@ public class MSetNXExecutor extends StringExecutor {
     } else {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_SET));
     }
-
   }
-
 }

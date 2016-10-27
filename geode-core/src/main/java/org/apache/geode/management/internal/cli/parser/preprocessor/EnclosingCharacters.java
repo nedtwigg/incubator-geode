@@ -18,9 +18,8 @@ package org.apache.geode.management.internal.cli.parser.preprocessor;
 
 /**
  * Used for Supporting enclosed input
- * 
- * @since GemFire 7.0
  *
+ * @since GemFire 7.0
  */
 public final class EnclosingCharacters {
   public static final Character DOUBLE_QUOTATION = '\"';

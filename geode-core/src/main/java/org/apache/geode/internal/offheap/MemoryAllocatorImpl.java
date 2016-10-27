@@ -30,21 +30,21 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * This allocator is somewhat like an Arena allocator.
- * We start out with an array of multiple large chunks of memory.
- * We also keep lists of any chunk that have been allocated and freed.
- * An allocation will always try to find a chunk in a free list that is a close fit to the requested size.
- * If no close fits exist then it allocates the next slice from the front of one the original large chunks.
- * If we can not find enough free memory then all the existing free memory is defragmented.
- * If we still do not have enough to make the allocation an exception is thrown.
- * 
+ * This allocator is somewhat like an Arena allocator. We start out with an array of multiple large
+ * chunks of memory. We also keep lists of any chunk that have been allocated and freed. An
+ * allocation will always try to find a chunk in a free list that is a close fit to the requested
+ * size. If no close fits exist then it allocates the next slice from the front of one the original
+ * large chunks. If we can not find enough free memory then all the existing free memory is
+ * defragmented. If we still do not have enough to make the allocation an exception is thrown.
+ *
  * @since Geode 1.0
  */
 public class MemoryAllocatorImpl implements MemoryAllocator {
 
   static final Logger logger = LogService.getLogger();
 
-  public static final String FREE_OFF_HEAP_MEMORY_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "free-off-heap-memory";
+  public static final String FREE_OFF_HEAP_MEMORY_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "free-off-heap-memory";
 
   private volatile OffHeapMemoryStats stats;
 
@@ -70,30 +70,56 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
     return result;
   }
 
-  private static final boolean DO_EXPENSIVE_VALIDATION = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "OFF_HEAP_DO_EXPENSIVE_VALIDATION");
+  private static final boolean DO_EXPENSIVE_VALIDATION =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "OFF_HEAP_DO_EXPENSIVE_VALIDATION");
 
-  public static MemoryAllocator create(OutOfOffHeapMemoryListener ooohml, OffHeapMemoryStats stats, int slabCount, long offHeapMemorySize, long maxSlabSize) {
-    return create(ooohml, stats, slabCount, offHeapMemorySize, maxSlabSize, null, new SlabFactory() {
-      @Override
-      public Slab create(int size) {
-        return new SlabImpl(size);
-      }
-    });
+  public static MemoryAllocator create(
+      OutOfOffHeapMemoryListener ooohml,
+      OffHeapMemoryStats stats,
+      int slabCount,
+      long offHeapMemorySize,
+      long maxSlabSize) {
+    return create(
+        ooohml,
+        stats,
+        slabCount,
+        offHeapMemorySize,
+        maxSlabSize,
+        null,
+        new SlabFactory() {
+          @Override
+          public Slab create(int size) {
+            return new SlabImpl(size);
+          }
+        });
   }
 
-  private static MemoryAllocatorImpl create(OutOfOffHeapMemoryListener ooohml, OffHeapMemoryStats stats, int slabCount, long offHeapMemorySize, long maxSlabSize, Slab[] slabs, SlabFactory slabFactory) {
+  private static MemoryAllocatorImpl create(
+      OutOfOffHeapMemoryListener ooohml,
+      OffHeapMemoryStats stats,
+      int slabCount,
+      long offHeapMemorySize,
+      long maxSlabSize,
+      Slab[] slabs,
+      SlabFactory slabFactory) {
     MemoryAllocatorImpl result = singleton;
     boolean created = false;
     try {
       if (result != null) {
         result.reuse(ooohml, stats, offHeapMemorySize, slabs);
-        logger.info("Reusing {}  bytes of off-heap memory. The maximum size of a single off-heap object is {}  bytes.", result.getTotalMemory(), result.freeList.getLargestSlabSize());
+        logger.info(
+            "Reusing {}  bytes of off-heap memory. The maximum size of a single off-heap object is {}  bytes.",
+            result.getTotalMemory(),
+            result.freeList.getLargestSlabSize());
         created = true;
         LifecycleListener.invokeAfterReuse(result);
       } else {
         if (slabs == null) {
           // allocate memory chunks
-          logger.info("Allocating {} bytes of off-heap memory. The maximum size of a single off-heap object is {} bytes.", offHeapMemorySize, maxSlabSize);
+          logger.info(
+              "Allocating {} bytes of off-heap memory. The maximum size of a single off-heap object is {} bytes.",
+              offHeapMemorySize,
+              maxSlabSize);
           slabs = new SlabImpl[slabCount];
           long uncreatedMemory = offHeapMemorySize;
           for (int i = 0; i < slabCount; i++) {
@@ -107,7 +133,9 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
               }
             } catch (OutOfMemoryError err) {
               if (i > 0) {
-                logger.error("Off-heap memory creation failed after successfully allocating {} bytes of off-heap memory.", (i * maxSlabSize));
+                logger.error(
+                    "Off-heap memory creation failed after successfully allocating {} bytes of off-heap memory.",
+                    (i * maxSlabSize));
               }
               for (int j = 0; j < i; j++) {
                 if (slabs[j] != null) {
@@ -137,11 +165,18 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
     return result;
   }
 
-  static MemoryAllocatorImpl createForUnitTest(OutOfOffHeapMemoryListener ooohml, OffHeapMemoryStats stats, int slabCount, long offHeapMemorySize, long maxSlabSize, SlabFactory memChunkFactory) {
+  static MemoryAllocatorImpl createForUnitTest(
+      OutOfOffHeapMemoryListener ooohml,
+      OffHeapMemoryStats stats,
+      int slabCount,
+      long offHeapMemorySize,
+      long maxSlabSize,
+      SlabFactory memChunkFactory) {
     return create(ooohml, stats, slabCount, offHeapMemorySize, maxSlabSize, null, memChunkFactory);
   }
 
-  public static MemoryAllocatorImpl createForUnitTest(OutOfOffHeapMemoryListener oooml, OffHeapMemoryStats stats, Slab[] slabs) {
+  public static MemoryAllocatorImpl createForUnitTest(
+      OutOfOffHeapMemoryListener oooml, OffHeapMemoryStats stats, Slab[] slabs) {
     int slabCount = 0;
     long offHeapMemorySize = 0;
     long maxSlabSize = 0;
@@ -158,7 +193,11 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
     return create(oooml, stats, slabCount, offHeapMemorySize, maxSlabSize, slabs, null);
   }
 
-  private void reuse(OutOfOffHeapMemoryListener oooml, OffHeapMemoryStats newStats, long offHeapMemorySize, Slab[] slabs) {
+  private void reuse(
+      OutOfOffHeapMemoryListener oooml,
+      OffHeapMemoryStats newStats,
+      long offHeapMemorySize,
+      Slab[] slabs) {
     if (isClosed()) {
       throw new IllegalStateException("Can not reuse a closed off-heap memory manager.");
     }
@@ -166,17 +205,22 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
       throw new IllegalArgumentException("OutOfOffHeapMemoryListener is null");
     }
     if (getTotalMemory() != offHeapMemorySize) {
-      logger.warn("Using {} bytes of existing off-heap memory instead of the requested {}.", getTotalMemory(), offHeapMemorySize);
+      logger.warn(
+          "Using {} bytes of existing off-heap memory instead of the requested {}.",
+          getTotalMemory(),
+          offHeapMemorySize);
     }
     if (!this.freeList.okToReuse(slabs)) {
-      throw new IllegalStateException("attempted to reuse existing off-heap memory even though new off-heap memory was allocated");
+      throw new IllegalStateException(
+          "attempted to reuse existing off-heap memory even though new off-heap memory was allocated");
     }
     this.ooohml = oooml;
     newStats.initialize(this.stats);
     this.stats = newStats;
   }
 
-  private MemoryAllocatorImpl(final OutOfOffHeapMemoryListener oooml, final OffHeapMemoryStats stats, final Slab[] slabs) {
+  private MemoryAllocatorImpl(
+      final OutOfOffHeapMemoryListener oooml, final OffHeapMemoryStats stats, final Slab[] slabs) {
     if (oooml == null) {
       throw new IllegalArgumentException("OutOfOffHeapMemoryListener is null");
     }
@@ -203,9 +247,7 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
     return new ArrayList<OffHeapStoredObject>(liveChunksSet);
   }
 
-  /**
-   * Returns a possibly empty list that contains all the Chunks used by regions.
-   */
+  /** Returns a possibly empty list that contains all the Chunks used by regions. */
   private List<OffHeapStoredObject> getRegionLiveChunks() {
     ArrayList<OffHeapStoredObject> result = new ArrayList<OffHeapStoredObject>();
     RegionService gfc = GemFireCacheImpl.getInstance();
@@ -235,25 +277,20 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
               if (br != null && !br.isDestroyed()) {
                 this.basicGetRegionLiveChunks(br, result);
               }
-
             }
           }
         }
       } else {
         this.basicGetRegionLiveChunks((LocalRegion) r, result);
       }
-
     }
-
   }
 
   private void basicGetRegionLiveChunks(LocalRegion r, List<OffHeapStoredObject> result) {
     for (Object key : r.keySet()) {
       RegionEntry re = ((LocalRegion) r).getRegionEntry(key);
       if (re != null) {
-        /**
-         * value could be GATEWAY_SENDER_EVENT_IMPL_VALUE or region entry value.
-         */
+        /** value could be GATEWAY_SENDER_EVENT_IMPL_VALUE or region entry value. */
         @Unretained(OffHeapIdentifier.GATEWAY_SENDER_EVENT_IMPL_VALUE)
         Object value = re._getValue();
         if (value instanceof OffHeapStoredObject) {
@@ -298,7 +335,8 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
   }
 
   @Override
-  public StoredObject allocateAndInitialize(byte[] v, boolean isSerialized, boolean isCompressed, byte[] originalHeapData) {
+  public StoredObject allocateAndInitialize(
+      byte[] v, boolean isSerialized, boolean isCompressed, byte[] originalHeapData) {
     long addr = OffHeapRegionEntryHelper.encodeDataAsAddress(v, isSerialized, isCompressed);
     if (addr != 0L) {
       return new TinyStoredObject(addr);
@@ -365,8 +403,8 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
   }
 
   /**
-   * Returns true if caller is the one who should close; false if some other thread
-   * is already closing.
+   * Returns true if caller is the one who should close; false if some other thread is already
+   * closing.
    */
   private boolean setClosed() {
     return this.closed.compareAndSet(false, true);
@@ -376,9 +414,7 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
     return this.freeList;
   }
 
-  /**
-   * Return the slabId of the slab that contains the given addr.
-   */
+  /** Return the slabId of the slab that contains the given addr. */
   int findSlab(long addr) {
     return this.freeList.findSlab(addr);
   }
@@ -390,7 +426,8 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
   @Override
   public void addMemoryUsageListener(final MemoryUsageListener listener) {
     synchronized (this.memoryUsageListeners) {
-      final MemoryUsageListener[] newMemoryUsageListeners = Arrays.copyOf(this.memoryUsageListeners, this.memoryUsageListeners.length + 1);
+      final MemoryUsageListener[] newMemoryUsageListeners =
+          Arrays.copyOf(this.memoryUsageListeners, this.memoryUsageListeners.length + 1);
       newMemoryUsageListeners[this.memoryUsageListeners.length] = listener;
       this.memoryUsageListeners = newMemoryUsageListeners;
     }
@@ -408,9 +445,15 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
       }
 
       if (listenerIndex != -1) {
-        final MemoryUsageListener[] newMemoryUsageListeners = new MemoryUsageListener[this.memoryUsageListeners.length - 1];
+        final MemoryUsageListener[] newMemoryUsageListeners =
+            new MemoryUsageListener[this.memoryUsageListeners.length - 1];
         System.arraycopy(this.memoryUsageListeners, 0, newMemoryUsageListeners, 0, listenerIndex);
-        System.arraycopy(this.memoryUsageListeners, listenerIndex + 1, newMemoryUsageListeners, listenerIndex, this.memoryUsageListeners.length - listenerIndex - 1);
+        System.arraycopy(
+            this.memoryUsageListeners,
+            listenerIndex + 1,
+            newMemoryUsageListeners,
+            listenerIndex,
+            this.memoryUsageListeners.length - listenerIndex - 1);
         this.memoryUsageListeners = newMemoryUsageListeners;
       }
     }
@@ -456,7 +499,10 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
       MemoryAllocatorImpl ma = MemoryAllocatorImpl.singleton;
       if (ma != null) {
         if (!ma.freeList.validateAddressAndSizeWithinSlab(addr, size)) {
-          throw new IllegalStateException(" address 0x" + Long.toString(addr, 16) + " does not address the original slab memory");
+          throw new IllegalStateException(
+              " address 0x"
+                  + Long.toString(addr, 16)
+                  + " does not address the original slab memory");
         }
       }
     }
@@ -470,12 +516,14 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
     for (OffHeapStoredObject chunk : liveChunks) {
       orphans.add(new MemoryBlockNode(this, chunk));
     }
-    Collections.sort(orphans, new Comparator<MemoryBlock>() {
-      @Override
-      public int compare(MemoryBlock o1, MemoryBlock o2) {
-        return Long.valueOf(o1.getAddress()).compareTo(o2.getAddress());
-      }
-    });
+    Collections.sort(
+        orphans,
+        new Comparator<MemoryBlock>() {
+          @Override
+          public int compare(MemoryBlock o1, MemoryBlock o2) {
+            return Long.valueOf(o1.getAddress()).compareTo(o2.getAddress());
+          }
+        });
     //this.memoryBlocks = new WeakReference<List<MemoryBlock>>(orphans);
     return orphans;
   }
@@ -484,5 +532,4 @@ public class MemoryAllocatorImpl implements MemoryAllocator {
   public MemoryInspector getMemoryInspector() {
     return this.memoryInspector;
   }
-
 }

@@ -22,12 +22,10 @@ import org.apache.geode.distributed.internal.*; // import
 import java.io.*;
 
 /**
- * A message that is sent to a particular distribution manager to get
- * information about a durable client's proxy in the bridge-servers of its
- * current cache.
- * 
+ * A message that is sent to a particular distribution manager to get information about a durable
+ * client's proxy in the bridge-servers of its current cache.
+ *
  * @since GemFire 5.6
- * 
  */
 public class DurableClientInfoRequest extends AdminRequest {
   static final int HAS_DURABLE_CLIENT_REQUEST = 10;
@@ -40,9 +38,7 @@ public class DurableClientInfoRequest extends AdminRequest {
   /** The action to be taken by this request */
   int action = 0;
 
-  /**
-   * Returns a <code>DurableClientInfoRequest</code>.
-   */
+  /** Returns a <code>DurableClientInfoRequest</code>. */
   public static DurableClientInfoRequest create(String id, int operation) {
     DurableClientInfoRequest m = new DurableClientInfoRequest();
     m.durableId = id;
@@ -55,9 +51,7 @@ public class DurableClientInfoRequest extends AdminRequest {
     setFriendlyName(this);
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   protected AdminResponse createResponse(DistributionManager dm) {
     return DurableClientInfoResponse.create(dm, this.getSender(), this);
   }
@@ -89,15 +83,15 @@ public class DurableClientInfoRequest extends AdminRequest {
   private static void setFriendlyName(DurableClientInfoRequest o) {
     // TODO MGh - these should be localized?
     switch (o.action) {
-    case HAS_DURABLE_CLIENT_REQUEST:
-      o.friendlyName = "Find whether the server has durable-queue for this client";
-      break;
-    case IS_PRIMARY_FOR_DURABLE_CLIENT_REQUEST:
-      o.friendlyName = "Find whether the server is primary for this durable-client";
-      break;
-    default:
-      o.friendlyName = "Unknown operation " + o.action;
-      break;
+      case HAS_DURABLE_CLIENT_REQUEST:
+        o.friendlyName = "Find whether the server has durable-queue for this client";
+        break;
+      case IS_PRIMARY_FOR_DURABLE_CLIENT_REQUEST:
+        o.friendlyName = "Find whether the server is primary for this durable-client";
+        break;
+      default:
+        o.friendlyName = "Unknown operation " + o.action;
+        break;
     }
   }
 }

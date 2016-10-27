@@ -19,11 +19,7 @@ package org.apache.geode.admin.internal;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.internal.admin.remote.AdminResponse;
 
-/**
- * The response to the {@link FlushToDiskRequest}
- * 
- *
- */
+/** The response to the {@link FlushToDiskRequest} */
 public class FlushToDiskResponse extends AdminResponse {
 
   public FlushToDiskResponse() {

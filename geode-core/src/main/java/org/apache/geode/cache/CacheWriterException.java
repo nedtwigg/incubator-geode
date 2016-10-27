@@ -18,10 +18,9 @@
 package org.apache.geode.cache;
 
 /**
- * An exception thrown by a <code>CacheWriter</code> method. This exception
- * is propagated back to the caller that initiated modification of the
- * cache, even if the caller is not in the same cache VM.
- *
+ * An exception thrown by a <code>CacheWriter</code> method. This exception is propagated back to
+ * the caller that initiated modification of the cache, even if the caller is not in the same cache
+ * VM.
  *
  * @see CacheWriter
  * @see org.apache.geode.cache.Region#put(Object, Object)
@@ -34,14 +33,12 @@ package org.apache.geode.cache;
 public class CacheWriterException extends OperationAbortedException {
   private static final long serialVersionUID = -2872212342970454458L;
 
-  /**
-   * Creates a new instance of <code>CacheWriterException</code>.
-   */
-  public CacheWriterException() {
-  }
+  /** Creates a new instance of <code>CacheWriterException</code>. */
+  public CacheWriterException() {}
 
   /**
    * Constructs an instance of <code>CacheWriterException</code> with the specified detail message.
+   *
    * @param msg the detail message
    */
   public CacheWriterException(String msg) {
@@ -51,6 +48,7 @@ public class CacheWriterException extends OperationAbortedException {
   /**
    * Constructs an instance of <code>CacheWriterException</code> with the specified detail message
    * and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */
@@ -60,6 +58,7 @@ public class CacheWriterException extends OperationAbortedException {
 
   /**
    * Constructs an instance of <code>CacheWriterException</code> with the specified cause.
+   *
    * @param cause the causal Throwable
    */
   public CacheWriterException(Throwable cause) {

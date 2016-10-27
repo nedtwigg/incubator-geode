@@ -32,7 +32,8 @@ import org.apache.geode.distributed.internal.ReplyProcessor21;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.pdx.PdxInitializationException;
 
-public class CheckTypeRegistryState extends HighPriorityDistributionMessage implements MessageWithReply {
+public class CheckTypeRegistryState extends HighPriorityDistributionMessage
+    implements MessageWithReply {
   private int processorId;
 
   public CheckTypeRegistryState() {
@@ -54,7 +55,9 @@ public class CheckTypeRegistryState extends HighPriorityDistributionMessage impl
       replyProcessor.waitForReplies();
     } catch (ReplyException e) {
       if (e.getCause() instanceof PdxInitializationException) {
-        throw new PdxInitializationException("Bad PDX configuration on member " + e.getSender() + ": " + e.getCause().getMessage(), e.getCause());
+        throw new PdxInitializationException(
+            "Bad PDX configuration on member " + e.getSender() + ": " + e.getCause().getMessage(),
+            e.getCause());
       } else {
         throw new InternalGemFireError("Unexpected exception", e);
       }

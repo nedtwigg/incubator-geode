@@ -23,15 +23,13 @@ import java.util.Map;
 import static java.lang.Math.random;
 
 /**
- * Created by IntelliJ IDEA.
- * User: dsmith
- * Date: Nov 12, 2010
- * Time: 5:05:49 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: dsmith Date: Nov 12, 2010 Time: 5:05:49 PM To change this
+ * template use File | Settings | File Templates.
  */
 public class StateColorMap {
   private Map<Object, Color> colors = new HashMap<Object, Color>();
-  private static Color[] PREDEFINED_COLORS = new Color[] { Color.BLUE, Color.BLACK, Color.PINK, Color.CYAN, Color.ORANGE, Color.GREEN };
+  private static Color[] PREDEFINED_COLORS =
+      new Color[] {Color.BLUE, Color.BLACK, Color.PINK, Color.CYAN, Color.ORANGE, Color.GREEN};
 
   private ColorList colorList = new ColorList();
 

@@ -43,9 +43,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * To verify that new events get generated on the node by get operation for key
- * that is not present in the node's region.
- * Currently test is commented because of the bug.
+ * To verify that new events get generated on the node by get operation for key that is not present
+ * in the node's region. Currently test is commented because of the bug.
  */
 @Category(DistributedTest.class)
 public class VerifyEventIDGenerationInP2PDUnitTest extends JUnit4DistributedTestCase {
@@ -106,21 +105,23 @@ public class VerifyEventIDGenerationInP2PDUnitTest extends JUnit4DistributedTest
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setMirrorType(MirrorType.NONE);
-    factory.setCacheListener(new CacheListenerAdapter() {
+    factory.setCacheListener(
+        new CacheListenerAdapter() {
 
-      public void afterCreate(EntryEvent event) {
-        if (!receiver) {
-          vm0.invoke(() -> VerifyEventIDGenerationInP2PDUnitTest.setEventIDData(((EntryEventImpl) event).getEventId()));
-        } else {
-          testEventIDResult = ((EntryEventImpl) event).getEventId().equals(eventId);
-        }
-      }
-
-    });
+          public void afterCreate(EntryEvent event) {
+            if (!receiver) {
+              vm0.invoke(
+                  () ->
+                      VerifyEventIDGenerationInP2PDUnitTest.setEventIDData(
+                          ((EntryEventImpl) event).getEventId()));
+            } else {
+              testEventIDResult = ((EntryEventImpl) event).getEventId().equals(eventId);
+            }
+          }
+        });
 
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
-
   }
 
   public static void createEntry() {

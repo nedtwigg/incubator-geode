@@ -36,14 +36,15 @@ import org.apache.geode.management.internal.cli.CliUtil;
 
 /**
  * Utility class to scan class-path & load classes.
- * 
- * 
+ *
  * @since GemFire 7.0
  */
 public class ClasspathScanLoadHelper {
   private static final String CLASSFILE_EXTENSION = ".class";
 
-  public static Set<Class<?>> loadAndGet(String commandPackageName, Class<?> requiredInterfaceToLoad, boolean onlyInstantiable) throws ClassNotFoundException, IOException {
+  public static Set<Class<?>> loadAndGet(
+      String commandPackageName, Class<?> requiredInterfaceToLoad, boolean onlyInstantiable)
+      throws ClassNotFoundException, IOException {
 
     Set<Class<?>> classSet = new HashSet<Class<?>>();
     Class<?> classes[] = getClasses(commandPackageName);
@@ -66,7 +67,10 @@ public class ClasspathScanLoadHelper {
   public static boolean isInstantiable(Class<?> klass) {
     int modifiers = klass.getModifiers();
 
-    boolean isInstantiable = !Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers) && Modifier.isPublic(modifiers);
+    boolean isInstantiable =
+        !Modifier.isAbstract(modifiers)
+            && !Modifier.isInterface(modifiers)
+            && Modifier.isPublic(modifiers);
 
     return isInstantiable;
   }
@@ -79,7 +83,8 @@ public class ClasspathScanLoadHelper {
     }
   }
 
-  public static Class<?>[] getClasses(String packageName) throws ClassNotFoundException, IOException {
+  public static Class<?>[] getClasses(String packageName)
+      throws ClassNotFoundException, IOException {
     String packagePath = packageName.replace('.', '/');
 
     List<File> dirs = new ArrayList<File>();
@@ -96,7 +101,7 @@ public class ClasspathScanLoadHelper {
         String jarPath = actualPackagePath.substring(0, jarIndex + ".jar".length());
 
         if (jarPath.startsWith("file:")) {
-          if (File.separatorChar == '/') {//whether Unix or Windows system
+          if (File.separatorChar == '/') { //whether Unix or Windows system
             // On Unix, to get actual path, we remove "file:" from the Path
             jarPath = jarPath.substring("file:".length());
           } else {
@@ -105,8 +110,8 @@ public class ClasspathScanLoadHelper {
             // Network Path: file://stinger.pune.gemstone.com/shared/where/java/spring/spring-shell/1.0.0/spring-shell-1.0.0.RELEASE.jar
             // To get actual path, we remove "file:/" from the Path
             jarPath = jarPath.substring("file:/".length());
-            // If the path still starts with a "/", then it's a network path. 
-            // Hence, add one "/". 
+            // If the path still starts with a "/", then it's a network path.
+            // Hence, add one "/".
             if (jarPath.startsWith("/") && !jarPath.startsWith("//")) {
               jarPath = "/" + jarPath;
             }
@@ -127,7 +132,8 @@ public class ClasspathScanLoadHelper {
     return (Class[]) classesList.toArray(new Class[classesList.size()]);
   }
 
-  public static List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
+  public static List<Class<?>> findClasses(File directory, String packageName)
+      throws ClassNotFoundException {
     List<Class<?>> classes = new ArrayList<Class<?>>();
     if (!directory.exists()) {
       return classes;
@@ -141,12 +147,13 @@ public class ClasspathScanLoadHelper {
     File file = null;
     for (int i = 0; i < files.length; i++) {
       file = files[i];
-      if (file.isDirectory()) {//sub-package
+      if (file.isDirectory()) { //sub-package
         // assert !file.getName().contains(".");
         classes.addAll(findClasses(file, packageName + "." + file.getName()));
       } else {
         //remove .class from the file name
-        String classSimpleName = file.getName().substring(0, file.getName().length() - CLASSFILE_EXTENSION.length());
+        String classSimpleName =
+            file.getName().substring(0, file.getName().length() - CLASSFILE_EXTENSION.length());
         classes.add(cpLoader.forName(packageName + '.' + classSimpleName));
       }
     }
@@ -155,18 +162,15 @@ public class ClasspathScanLoadHelper {
 
   /**
    * Returns all classes that are in the specified jar and package name.
-   * 
-   * @param jarPath
-   *          The absolute or relative jar path.
-   * @param packageName
-   *          The package name.
+   *
+   * @param jarPath The absolute or relative jar path.
+   * @param packageName The package name.
    * @return Returns all classes that are in the specified jar and package name.
-   * @throws ClassNotFoundException
-   *           Thrown if unable to load a class
-   * @throws IOException
-   *           Thrown if error occurs while reading the jar file
+   * @throws ClassNotFoundException Thrown if unable to load a class
+   * @throws IOException Thrown if error occurs while reading the jar file
    */
-  public static Class<?>[] getClasses(String jarPath, String packageName) throws ClassNotFoundException, IOException {
+  public static Class<?>[] getClasses(String jarPath, String packageName)
+      throws ClassNotFoundException, IOException {
     ClassPathLoader cpLoader = ClassPathLoader.getLatest();
 
     String[] classNames = getClassNames(jarPath, packageName);
@@ -179,17 +183,12 @@ public class ClasspathScanLoadHelper {
   }
 
   /**
-   * Returns all names of classes that are defined in the specified jar and
-   * package name.
-   * 
-   * @param jarPath
-   *          The absolute or relative jar path.
-   * @param packageName
-   *          The package name.
-   * @return Returns all names of classes that are defined in the specified jar
-   *         and package name.
-   * @throws IOException
-   *           Thrown if error occurs while reading the jar file
+   * Returns all names of classes that are defined in the specified jar and package name.
+   *
+   * @param jarPath The absolute or relative jar path.
+   * @param packageName The package name.
+   * @return Returns all names of classes that are defined in the specified jar and package name.
+   * @throws IOException Thrown if error occurs while reading the jar file
    */
   public static String[] getClassNames(String jarPath, String packageName) throws IOException {
     if (jarPath == null) {
@@ -197,8 +196,8 @@ public class ClasspathScanLoadHelper {
     }
 
     File file;
-    //Path is absolute on Unix if it starts with '/' 
-    //or path contains colon on Windows 
+    //Path is absolute on Unix if it starts with '/'
+    //or path contains colon on Windows
     if (jarPath.startsWith("/") || (jarPath.indexOf(':') >= 0 && File.separatorChar == '\\')) {
       // absolute path
       file = new File(jarPath);
@@ -232,7 +231,7 @@ public class ClasspathScanLoadHelper {
 
   /**
    * FileFilter to filter out GemFire Test Code.
-   * 
+   *
    * @since GemFire 7.0
    */
   static class TestClassFilter implements FileFilter {
@@ -241,7 +240,8 @@ public class ClasspathScanLoadHelper {
     @Override
     public boolean accept(File pathname) {
       String pathToCheck = pathname.getName();
-      return !pathToCheck.contains(TESTS_CODE_INDICATOR) && pathToCheck.endsWith(CLASSFILE_EXTENSION);
+      return !pathToCheck.contains(TESTS_CODE_INDICATOR)
+          && pathToCheck.endsWith(CLASSFILE_EXTENSION);
     }
   }
 }

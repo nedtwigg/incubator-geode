@@ -21,7 +21,7 @@ import java.util.EventObject;
 
 /**
  * The SignalEvent class...
- * </p>
+ *
  * @see java.util.EventObject
  * @since GemFire 7.0
  */
@@ -48,5 +48,4 @@ public class SignalEvent extends EventObject {
     buffer.append("}");
     return buffer.toString();
   }
-
 }

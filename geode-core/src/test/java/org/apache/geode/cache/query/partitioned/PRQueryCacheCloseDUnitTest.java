@@ -28,13 +28,10 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 
 /**
- * This test tests the PR query behaviour with respect to cache closure
- * happening on one of the data stores. PR is configured with redundantCopies =
- * 1, and cache close is done randomly on one of the data stores and then
- * recreated, thus avoiding any data loss.
- * 
+ * This test tests the PR query behaviour with respect to cache closure happening on one of the data
+ * stores. PR is configured with redundantCopies = 1, and cache close is done randomly on one of the
+ * data stores and then recreated, thus avoiding any data loss.
  */
-
 import static org.apache.geode.cache.query.Utils.createPortfolioData;
 
 import java.util.LinkedList;
@@ -59,10 +56,9 @@ public class PRQueryCacheCloseDUnitTest extends PartitionedRegionDUnitTestCase {
 
   /**
    * constructor *
-   * 
+   *
    * @param name
    */
-
   public PRQueryCacheCloseDUnitTest() {
 
     super();
@@ -90,13 +86,11 @@ public class PRQueryCacheCloseDUnitTest extends PartitionedRegionDUnitTestCase {
 
   /**
    * This test <br>
-   * 1. Creates PR regions across with scope = DACK, one accessor node & 2
-   * datastores <br>
+   * 1. Creates PR regions across with scope = DACK, one accessor node & 2 datastores <br>
    * 2. Creates a Local region on one of the VM's <br>
    * 3. Puts in the same data both in PR region & the Local Region <br>
    * 4. Queries the data both in local & PR <br>
-   * 5. Also calls cache.close() randomly on one of the datastore VM's with
-   * delay <br>
+   * 5. Also calls cache.close() randomly on one of the datastore VM's with delay <br>
    * 6. then recreates the PR on the same VM <br>
    * 7. Verfies the size , type , contents of both the resultSets Obtained <br>
    */
@@ -104,7 +98,9 @@ public class PRQueryCacheCloseDUnitTest extends PartitionedRegionDUnitTestCase {
   @Test
   public void testPRWithCacheCloseInOneDatastoreWithDelay() throws Exception {
 
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Querying PR Test with cache Close PR operation*****");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Querying PR Test with cache Close PR operation*****");
     Host host = Host.getHost(0);
 
     VM accessor = host.getVM(0);
@@ -117,19 +113,36 @@ public class PRQueryCacheCloseDUnitTest extends PartitionedRegionDUnitTestCase {
     // Creting PR's on the participating VM's
 
     // Creting Accessor PR's on the participating VM's
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Creating Accessor node on VM0");
-    accessor.invoke(PRQHelp.getCacheSerializableRunnableForPRAccessorCreate(name, redundancy, PortfolioData.class));
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Successfully Created Accessor node on VM0");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Creating Accessor node on VM0");
+    accessor.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRAccessorCreate(
+            name, redundancy, PortfolioData.class));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Successfully Created Accessor node on VM0");
 
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Creating PR's across all VM1 , VM2");
-    datastore1.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
-    datastore2.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Successfully Created PR on VM1 , VM2");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Creating PR's across all VM1 , VM2");
+    datastore1.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
+    datastore2.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Successfully Created PR on VM1 , VM2");
 
     // creating a local region on one of the JVM's
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Creating Local Region on VM0");
-    accessor.invoke(PRQHelp.getCacheSerializableRunnableForLocalRegionCreation(localName, PortfolioData.class));
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Successfully Created Local Region on VM0");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Creating Local Region on VM0");
+    accessor.invoke(
+        PRQHelp.getCacheSerializableRunnableForLocalRegionCreation(localName, PortfolioData.class));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Successfully Created Local Region on VM0");
 
     // Generating portfolio object array to be populated across the PR's & Local
     // Regions
@@ -137,29 +150,51 @@ public class PRQueryCacheCloseDUnitTest extends PartitionedRegionDUnitTestCase {
     final PortfolioData[] portfolio = createPortfolioData(cnt, cntDest);
 
     // Putting the data into the accessor node
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Inserting Portfolio data through the accessor node");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Inserting Portfolio data through the accessor node");
     accessor.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(name, portfolio, cnt, cntDest));
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Successfully Inserted Portfolio data through the accessor node");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Successfully Inserted Portfolio data through the accessor node");
 
     // Putting the same data in the local region created
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Inserting Portfolio data on local node  VM0 for result Set Comparison");
-    accessor.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(localName, portfolio, cnt, cntDest));
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Successfully Inserted Portfolio data on local node  VM0 for result Set Comparison");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Inserting Portfolio data on local node  VM0 for result Set Comparison");
+    accessor.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRPuts(localName, portfolio, cnt, cntDest));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Successfully Inserted Portfolio data on local node  VM0 for result Set Comparison");
 
     Random random = new Random();
     AsyncInvocation async0;
     // querying the VM for data
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Querying on VM0 both on PR Region & local ,also  Comparing the Results sets from both");
-    async0 = accessor.invokeAsync(PRQHelp.getCacheSerializableRunnableForPRQueryAndCompareResults(name, localName));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Querying on VM0 both on PR Region & local ,also  Comparing the Results sets from both");
+    async0 =
+        accessor.invokeAsync(
+            PRQHelp.getCacheSerializableRunnableForPRQueryAndCompareResults(name, localName));
 
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Calling for cache close on either of the Datastores VM1 , VM2 at random and then recreating the cache, with a predefined Delay ");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Calling for cache close on either of the Datastores VM1 , VM2 at random and then recreating the cache, with a predefined Delay ");
     for (int j = 0; j < queryTestCycle; j++) {
       int k = (random.nextInt(vmList.size()));
-      LogWriterUtils.getLogWriter().info("PROperationWithQueryDUnitTest#getCacheSerializableRunnableForCacheClose: Closing cache");
+      LogWriterUtils.getLogWriter()
+          .info(
+              "PROperationWithQueryDUnitTest#getCacheSerializableRunnableForCacheClose: Closing cache");
       ((VM) vmList.get(k)).invoke(() -> closeCache());
-      LogWriterUtils.getLogWriter().info("PROperationWithQueryDUnitTest#getCacheSerializableRunnableForCacheClose: Cache Closed");
+      LogWriterUtils.getLogWriter()
+          .info(
+              "PROperationWithQueryDUnitTest#getCacheSerializableRunnableForCacheClose: Cache Closed");
       setCacheInVMs(((VM) vmList.get(k)));
-      ((VM) (vmList.get(k))).invoke(PRQHelp.getCacheSerializableRunnableForCacheClose(name, redundancy, PortfolioData.class));
+      ((VM) (vmList.get(k)))
+          .invoke(
+              PRQHelp.getCacheSerializableRunnableForCacheClose(
+                  name, redundancy, PortfolioData.class));
       Wait.pause(threadSleepTime);
     }
     ThreadUtils.join(async0, 5 * 60 * 1000);
@@ -182,25 +217,27 @@ public class PRQueryCacheCloseDUnitTest extends PartitionedRegionDUnitTestCase {
       }
     }
 
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Querying with PR Operations ENDED*****");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithDelay: Querying with PR Operations ENDED*****");
   }
 
   /**
    * This test <br>
-   * 1. Creates PR regions across with scope = DACK, one accessor node & 2
-   * datastores <br>
+   * 1. Creates PR regions across with scope = DACK, one accessor node & 2 datastores <br>
    * 2. Creates a Local region on one of the VM's <br>
    * 3. Puts in the same data both in PR region & the Local Region <br>
    * 4. Queries the data both in local & PR <br>
-   * 5. Also calls cache.close() randomly on one of the datastore VM's without
-   * Delay<br>
+   * 5. Also calls cache.close() randomly on one of the datastore VM's without Delay<br>
    * 6. then recreates the PR on the same VM <br>
    * 7. Verfies the size , type , contents of both the resultSets Obtained <br>
    */
   @Category(FlakyTest.class) // GEODE-1239
   @Test
   public void testPRWithCacheCloseInOneDatastoreWithoutDelay() throws Exception {
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Querying PR Test with cache Close PR operation without delay*****");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Querying PR Test with cache Close PR operation without delay*****");
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
@@ -211,53 +248,93 @@ public class PRQueryCacheCloseDUnitTest extends PartitionedRegionDUnitTestCase {
     vmList.add(vm2);
 
     // Creting PR's on the participating VM's
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Creating Accessor node on VM0");
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRAccessorCreate(name, redundancy, PortfolioData.class));
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Successfully Created Accessor node on VM0");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Creating Accessor node on VM0");
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRAccessorCreate(
+            name, redundancy, PortfolioData.class));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Successfully Created Accessor node on VM0");
 
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Creating PR's across all VM1 , VM2");
-    vm1.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
-    vm2.invoke(PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Successfully Created PR on VM1 , VM2");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Creating PR's across all VM1 , VM2");
+    vm1.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
+    vm2.invoke(
+        PRQHelp.getCacheSerializableRunnableForPRCreate(name, redundancy, PortfolioData.class));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Successfully Created PR on VM1 , VM2");
 
     // creating a local region on one of the JVM's
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Creating Local Region on VM0");
-    vm0.invoke(PRQHelp.getCacheSerializableRunnableForLocalRegionCreation(localName, PortfolioData.class));
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Successfully Created Local Region on VM0");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Creating Local Region on VM0");
+    vm0.invoke(
+        PRQHelp.getCacheSerializableRunnableForLocalRegionCreation(localName, PortfolioData.class));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Successfully Created Local Region on VM0");
 
     LogWriterUtils.getLogWriter().info("Successfully Created PR's across all VM's");
     // creating a local region on one of the JVM's
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Successfully Created Local Region on VM0");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Successfully Created Local Region on VM0");
 
     // Generating portfolio object array to be populated across the PR's & Local
     // Regions
 
     final PortfolioData[] portfolio = createPortfolioData(cnt, cntDest);
     // Putting the data into the accessor node
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Inserting Portfolio data through the accessor node");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Inserting Portfolio data through the accessor node");
     vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(name, portfolio, cnt, cntDest));
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Successfully Inserted Portfolio data through the accessor node");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Successfully Inserted Portfolio data through the accessor node");
 
     // Putting the same data in the local region created
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Inserting Portfolio data on local node  VM0 for result Set Comparison");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Inserting Portfolio data on local node  VM0 for result Set Comparison");
     vm0.invoke(PRQHelp.getCacheSerializableRunnableForPRPuts(localName, portfolio, cnt, cntDest));
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Successfully Inserted Portfolio data on local node  VM0 for result Set Comparison");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Successfully Inserted Portfolio data on local node  VM0 for result Set Comparison");
 
     Random random = new Random();
 
     AsyncInvocation async0;
     // querying the VM for data
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Querying on VM0 both on PR Region & local ,also  Comparing the Results sets from both");
-    async0 = vm0.invokeAsync(PRQHelp.getCacheSerializableRunnableForPRQueryAndCompareResults(name, localName));
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Querying on VM0 both on PR Region & local ,also  Comparing the Results sets from both");
+    async0 =
+        vm0.invokeAsync(
+            PRQHelp.getCacheSerializableRunnableForPRQueryAndCompareResults(name, localName));
 
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Calling for cache close on either of the Datastores VM1 , VM2 at random and then recreating the cache, with no delay ");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Calling for cache close on either of the Datastores VM1 , VM2 at random and then recreating the cache, with no delay ");
     for (int j = 0; j < queryTestCycle; j++) {
       int k = (random.nextInt(vmList.size()));
-      LogWriterUtils.getLogWriter().info("PROperationWithQueryDUnitTest#getCacheSerializableRunnableForCacheClose: Closing cache");
+      LogWriterUtils.getLogWriter()
+          .info(
+              "PROperationWithQueryDUnitTest#getCacheSerializableRunnableForCacheClose: Closing cache");
       ((VM) vmList.get(k)).invoke(() -> closeCache());
-      LogWriterUtils.getLogWriter().info("PROperationWithQueryDUnitTest#getCacheSerializableRunnableForCacheClose: Cache Closed");
+      LogWriterUtils.getLogWriter()
+          .info(
+              "PROperationWithQueryDUnitTest#getCacheSerializableRunnableForCacheClose: Cache Closed");
       setCacheInVMs(((VM) vmList.get(k)));
-      ((VM) (vmList.get(k))).invoke(PRQHelp.getCacheSerializableRunnableForCacheClose(name, redundancy, PortfolioData.class));
+      ((VM) (vmList.get(k)))
+          .invoke(
+              PRQHelp.getCacheSerializableRunnableForCacheClose(
+                  name, redundancy, PortfolioData.class));
     }
 
     ThreadUtils.join(async0, 5 * 60 * 1000);
@@ -280,7 +357,8 @@ public class PRQueryCacheCloseDUnitTest extends PartitionedRegionDUnitTestCase {
       }
     }
 
-    LogWriterUtils.getLogWriter().info("PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Querying with PR Operations  without delay ENDED*****");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "PRQueryCacheCloseDUnitTest#testPRWithCacheCloseInOneDatastoreWithoutDelay: Querying with PR Operations  without delay ENDED*****");
   }
-
 }

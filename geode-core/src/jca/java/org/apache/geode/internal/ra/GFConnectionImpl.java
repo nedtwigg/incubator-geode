@@ -23,10 +23,7 @@ import javax.resource.ResourceException;
 import org.apache.geode.internal.ra.spi.JCAManagedConnection;
 import org.apache.geode.ra.GFConnection;
 
-/**
- * 
- *
- */
+/** */
 public class GFConnectionImpl implements GFConnection {
   private JCAManagedConnection mc;
 
@@ -54,11 +51,9 @@ public class GFConnectionImpl implements GFConnection {
 
   public void setReference(Reference ref) {
     this.ref = ref;
-
   }
 
   public Reference getReference() throws NamingException {
     return this.ref;
   }
-
 }

@@ -21,12 +21,14 @@ import org.apache.geode.internal.cache.tier.sockets.Message;
 
 /**
  * Does a region containsKey on a server
+ *
  * @since GemFire 5.7
  */
 public class ContainsKeyOp {
   /**
-   * Does a region entry containsKey on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region entry containsKey on a server using connections from the given pool to
+   * communicate with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the entry containsKey on
    * @param key the entry key to do the containsKey on
@@ -48,9 +50,7 @@ public class ContainsKeyOp {
     private Object key;
     private final MODE mode;
 
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public ContainsKeyOpImpl(String region, Object key, MODE mode) {
       super(MessageType.CONTAINS_KEY, 3);
       getMessage().addStringPart(region);
@@ -93,6 +93,8 @@ public class ContainsKeyOp {
   }
 
   public enum MODE {
-    KEY, VALUE_FOR_KEY, VALUE;
+    KEY,
+    VALUE_FOR_KEY,
+    VALUE;
   }
 }

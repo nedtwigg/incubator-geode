@@ -45,20 +45,16 @@ import java.util.Properties;
 
 /**
  * Implementation of PoolFactory.
+ *
  * @since GemFire 5.7
  */
 public class PoolFactoryImpl implements PoolFactory {
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * Used internally to pass the attributes from this factory to
-   * the real pool it is creating.
-   */
+  /** Used internally to pass the attributes from this factory to the real pool it is creating. */
   private PoolAttributes attributes = new PoolAttributes();
 
-  /**
-   * The cache that created this factory
-   */
+  /** The cache that created this factory */
   private final PoolManagerImpl pm;
 
   public PoolFactoryImpl(PoolManagerImpl pm) {
@@ -104,10 +100,14 @@ public class PoolFactoryImpl implements PoolFactory {
 
   public PoolFactory setMaxConnections(int maxConnections) {
     if (maxConnections < this.attributes.minConnections && maxConnections != -1) {
-      throw new IllegalArgumentException("maxConnections must be greater than or equal to minConnections (" + attributes.minConnections + ")");
+      throw new IllegalArgumentException(
+          "maxConnections must be greater than or equal to minConnections ("
+              + attributes.minConnections
+              + ")");
     }
     if (maxConnections <= 0 && maxConnections != -1) {
-      throw new IllegalArgumentException("maxConnections must be greater than 0, or set to -1 (no max)");
+      throw new IllegalArgumentException(
+          "maxConnections must be greater than 0, or set to -1 (no max)");
     }
     this.attributes.maxConnections = maxConnections;
     return this;
@@ -115,7 +115,8 @@ public class PoolFactoryImpl implements PoolFactory {
 
   public PoolFactory setMinConnections(int minConnections) {
     if (minConnections > attributes.maxConnections && attributes.maxConnections != -1) {
-      throw new IllegalArgumentException("must be less than or equal to maxConnections (" + attributes.maxConnections + ")");
+      throw new IllegalArgumentException(
+          "must be less than or equal to maxConnections (" + attributes.maxConnections + ")");
     }
     if (minConnections < 0) {
       throw new IllegalArgumentException("must be greater than or equal to 0");
@@ -191,7 +192,8 @@ public class PoolFactoryImpl implements PoolFactory {
 
   public PoolFactory setSubscriptionRedundancy(int redundancyLevel) {
     if (redundancyLevel < -1) {
-      throw new IllegalArgumentException("queueRedundancyLevel must be greater than or equal to -1");
+      throw new IllegalArgumentException(
+          "queueRedundancyLevel must be greater than or equal to -1");
     }
     this.attributes.queueRedundancyLevel = redundancyLevel;
     return this;
@@ -237,14 +239,16 @@ public class PoolFactoryImpl implements PoolFactory {
 
   public PoolFactory addLocator(String host, int port) {
     if (this.attributes.servers.size() > 0) {
-      throw new IllegalStateException("A server has already been added. You can only add locators or servers; not both.");
+      throw new IllegalStateException(
+          "A server has already been added. You can only add locators or servers; not both.");
     }
     return add(host, port, this.attributes.locators);
   }
 
   public PoolFactory addServer(String host, int port) {
     if (this.attributes.locators.size() > 0) {
-      throw new IllegalStateException("A locator has already been added. You can only add locators or servers; not both.");
+      throw new IllegalStateException(
+          "A locator has already been added. You can only add locators or servers; not both.");
     }
     return add(host, port, this.attributes.servers);
   }
@@ -257,9 +261,7 @@ public class PoolFactoryImpl implements PoolFactory {
     return this;
   }
 
-  /**
-   * Initializes the state of this factory for the given pool's state.
-   */
+  /** Initializes the state of this factory for the given pool's state. */
   public void init(Pool cp) {
     setFreeConnectionTimeout(cp.getFreeConnectionTimeout());
     setLoadConditioningInterval(cp.getLoadConditioningInterval());
@@ -294,9 +296,9 @@ public class PoolFactoryImpl implements PoolFactory {
   }
 
   /**
-   * Create a new Pool for connecting a client to a set of GemFire Cache Servers.
-   * using this factory's settings for attributes.
-   * 
+   * Create a new Pool for connecting a client to a set of GemFire Cache Servers. using this
+   * factory's settings for attributes.
+   *
    * @param name the name of the connection pool, used when connecting regions to it
    * @throws IllegalStateException if the connection pool name already exists
    * @throws IllegalStateException if this factory does not have any locators or servers
@@ -314,17 +316,12 @@ public class PoolFactoryImpl implements PoolFactory {
     return PoolImpl.create(this.pm, name, this.attributes);
   }
 
-  /**
-   * Needed by test framework.
-   */
+  /** Needed by test framework. */
   public PoolAttributes getPoolAttributes() {
     return this.attributes;
   }
 
-  /**
-   * Not a true pool just the attributes.
-   * Serialization is used by unit tests
-   */
+  /** Not a true pool just the attributes. Serialization is used by unit tests */
   public static class PoolAttributes implements Pool, DataSerializable {
 
     private static final long serialVersionUID = 1L; // for findbugs
@@ -347,14 +344,12 @@ public class PoolFactoryImpl implements PoolFactory {
     public int queueAckInterval = DEFAULT_SUBSCRIPTION_ACK_INTERVAL;
     public String serverGroup = DEFAULT_SERVER_GROUP;
     public boolean multiuserSecureModeEnabled = DEFAULT_MULTIUSER_AUTHENTICATION;
-    public ArrayList/*<InetSocketAddress>*/ locators = new ArrayList();
-    public ArrayList/*<InetSocketAddress>*/ servers = new ArrayList();
+    public ArrayList /*<InetSocketAddress>*/ locators = new ArrayList();
+    public ArrayList /*<InetSocketAddress>*/ servers = new ArrayList();
     public transient boolean startDisabled = false; // only used by junit tests
     public transient LocatorDiscoveryCallback locatorCallback = null; //only used by tests
     public GatewaySender gatewaySender = null;
-    /**
-     * True if the pool is used by a Gateway.
-     */
+    /** True if the pool is used by a Gateway. */
     public boolean gateway = false;
 
     public int getFreeConnectionTimeout() {
@@ -449,17 +444,19 @@ public class PoolFactoryImpl implements PoolFactory {
       this.multiuserSecureModeEnabled = v;
     }
 
-    public List/*<InetSocketAddress>*/ getLocators() {
+    public List /*<InetSocketAddress>*/ getLocators() {
       if (this.locators.size() == 0 && this.servers.size() == 0) {
-        throw new IllegalStateException("At least one locator or server must be added before a connection pool can be created.");
+        throw new IllegalStateException(
+            "At least one locator or server must be added before a connection pool can be created.");
       }
       // needs to return a copy.
       return Collections.unmodifiableList(new ArrayList(this.locators));
     }
 
-    public List/*<InetSocketAddress>*/ getServers() {
+    public List /*<InetSocketAddress>*/ getServers() {
       if (this.locators.size() == 0 && this.servers.size() == 0) {
-        throw new IllegalStateException("At least one locator or server must be added before a connection pool can be created.");
+        throw new IllegalStateException(
+            "At least one locator or server must be added before a connection pool can be created.");
       }
       // needs to return a copy.
       return Collections.unmodifiableList(new ArrayList(this.servers));

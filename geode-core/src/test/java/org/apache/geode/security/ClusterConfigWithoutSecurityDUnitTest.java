@@ -40,17 +40,17 @@ import org.apache.geode.test.dunit.rules.LocatorServerConfigurationRule;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
-
+@Category({DistributedTest.class, SecurityTest.class})
 public class ClusterConfigWithoutSecurityDUnitTest extends JUnit4DistributedTestCase {
 
-  @Rule
-  public LocatorServerConfigurationRule lsRule = new LocatorServerConfigurationRule(this);
+  @Rule public LocatorServerConfigurationRule lsRule = new LocatorServerConfigurationRule(this);
 
   @Before
   public void before() throws Exception {
-    IgnoredException.addIgnoredException(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toString());
-    IgnoredException.addIgnoredException(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION_2.toString());
+    IgnoredException.addIgnoredException(
+        LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toString());
+    IgnoredException.addIgnoredException(
+        LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION_2.toString());
     lsRule.getLocatorVM(new Properties());
   }
 
@@ -92,8 +92,8 @@ public class ClusterConfigWithoutSecurityDUnitTest extends JUnit4DistributedTest
 
     InternalDistributedSystem ds = lsRule.getSystem(props);
 
-    assertThatThrownBy(() -> CacheFactory.create(ds)).isInstanceOf(GemFireConfigException.class).hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toLocalizedString());
-
+    assertThatThrownBy(() -> CacheFactory.create(ds))
+        .isInstanceOf(GemFireConfigException.class)
+        .hasMessage(LocalizedStrings.GEMFIRE_CACHE_SECURITY_MISCONFIGURATION.toLocalizedString());
   }
-
 }

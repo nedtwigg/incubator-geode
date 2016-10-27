@@ -87,7 +87,16 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
   public void testBuilderSetProperties() throws Throwable {
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
-    this.launcher = new Builder().setDisableDefaultServer(true).setForce(true).setMemberName(getUniqueName()).setWorkingDirectory(rootFolder).set(DISABLE_AUTO_RECONNECT, "true").set(LOG_LEVEL, "config").set(MCAST_PORT, "0").build();
+    this.launcher =
+        new Builder()
+            .setDisableDefaultServer(true)
+            .setForce(true)
+            .setMemberName(getUniqueName())
+            .setWorkingDirectory(rootFolder)
+            .set(DISABLE_AUTO_RECONNECT, "true")
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0")
+            .build();
 
     assertNotNull(this.launcher);
 
@@ -130,7 +139,14 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
     // build and start the Server locally
-    final Builder builder = new Builder().setDisableDefaultServer(true).setMemberName(getUniqueName()).setRedirectOutput(true).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setDisableDefaultServer(true)
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     this.launcher = builder.build();
     assertNotNull(this.launcher);
@@ -167,20 +183,30 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
     // create existing control files
-    this.stopRequestFile = new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getStopRequestFileName());
+    this.stopRequestFile =
+        new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getStopRequestFileName());
     this.stopRequestFile.createNewFile();
     assertTrue(this.stopRequestFile.exists());
 
-    this.statusRequestFile = new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getStatusRequestFileName());
+    this.statusRequestFile =
+        new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getStatusRequestFileName());
     this.statusRequestFile.createNewFile();
     assertTrue(this.statusRequestFile.exists());
 
-    this.statusFile = new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getStatusFileName());
+    this.statusFile =
+        new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getStatusFileName());
     this.statusFile.createNewFile();
     assertTrue(this.statusFile.exists());
 
     // build and start the server
-    final Builder builder = new Builder().setDisableDefaultServer(true).setMemberName(getUniqueName()).setRedirectOutput(true).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setDisableDefaultServer(true)
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     assertFalse(builder.getForce());
     this.launcher = builder.build();
@@ -225,11 +251,20 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
 
     // create existing pid file
     this.pidFile = new File(this.temporaryFolder.getRoot(), ProcessType.SERVER.getPidFileName());
-    assertFalse("Integer.MAX_VALUE shouldn't be the same as local pid " + Integer.MAX_VALUE, Integer.MAX_VALUE == ProcessUtils.identifyPid());
+    assertFalse(
+        "Integer.MAX_VALUE shouldn't be the same as local pid " + Integer.MAX_VALUE,
+        Integer.MAX_VALUE == ProcessUtils.identifyPid());
     writePid(this.pidFile, Integer.MAX_VALUE);
 
     // build and start the server
-    final Builder builder = new Builder().setDisableDefaultServer(true).setMemberName(getUniqueName()).setRedirectOutput(true).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setDisableDefaultServer(true)
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     assertFalse(builder.getForce());
     this.launcher = builder.build();
@@ -261,9 +296,7 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     }
   }
 
-  /**
-   * Confirms fix for #47778.
-   */
+  /** Confirms fix for #47778. */
   @Test
   public void testStartUsingDisableDefaultServerLeavesPortFree() throws Throwable {
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
@@ -272,7 +305,14 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     assertTrue(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET));
 
     // build and start the server
-    final Builder builder = new Builder().setDisableDefaultServer(true).setMemberName(getUniqueName()).setRedirectOutput(true).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setDisableDefaultServer(true)
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     this.launcher = builder.build();
 
@@ -310,19 +350,27 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     }
   }
 
-  /**
-   * Confirms fix for #47778.
-   */
+  /** Confirms fix for #47778. */
   @Test
   public void testStartUsingDisableDefaultServerSkipsPortCheck() throws Throwable {
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
     // generate one free port and then use TEST_OVERRIDE_DEFAULT_PORT_PROPERTY
-    this.socket = SocketCreatorFactory.createNonDefaultInstance(false, false, null, null, System.getProperties()).createServerSocket(this.serverPort, 50, null, -1);
+    this.socket =
+        SocketCreatorFactory.createNonDefaultInstance(
+                false, false, null, null, System.getProperties())
+            .createServerSocket(this.serverPort, 50, null, -1);
     assertFalse(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET));
 
     // build and start the server
-    final Builder builder = new Builder().setDisableDefaultServer(true).setMemberName(getUniqueName()).setRedirectOutput(true).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setDisableDefaultServer(true)
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     this.launcher = builder.build();
 
@@ -357,21 +405,21 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     }
 
     // verify port is still in use
-    this.errorCollector.checkThat(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET), is(equalTo(false)));
+    this.errorCollector.checkThat(
+        AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET), is(equalTo(false)));
   }
 
   @Test
   @Ignore("Need to rewrite this without using dunit.Host")
-  public void testStartUsingForceOverwritesExistingPidFile() throws Throwable {
-  }/*
+  public void testStartUsingForceOverwritesExistingPidFile() throws Throwable {} /*
     assertTrue(getUniqueName() + " is broken if PID == Integer.MAX_VALUE", ProcessUtils.identifyPid() != Integer.MAX_VALUE);
-    
+
     // create existing pid file
     this.pidFile = new File(ProcessType.SERVER.getPidFileName());
     final int realPid = Host.getHost(0).getVM(3).invoke(() -> ProcessUtils.identifyPid());
     assertFalse(realPid == ProcessUtils.identifyPid());
     writePid(this.pidFile, realPid);
-   
+
     // build and start the server
     final Builder builder = new Builder()
         .setDisableDefaultServer(true)
@@ -379,36 +427,36 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
         .setMemberName(getUniqueName())
         .setRedirectOutput(true)
         .set(DistributionConfig.ConfigurationProperties.MCAST_PORT, "0");
-   
+
     assertTrue(builder.getForce());
     this.launcher = builder.build();
     assertTrue(this.launcher.isForcing());
     this.launcher.start();
-   
+
     // collect and throw the FIRST failure
     Throwable failure = null;
-   
+
     try {
       waitForServerToStart(this.launcher);
-   
+
       // validate the pid file and its contents
       assertTrue(this.pidFile.exists());
       final int pid = readPid(this.pidFile);
       assertTrue(pid > 0);
       assertTrue(ProcessUtils.isProcessAlive(pid));
       assertIndexDetailsEquals(getPid(), pid);
-      
+
       // validate log file was created
       final String logFileName = getUniqueName()+".log";
       assertTrue("Log file should exist: " + logFileName, new File(logFileName).exists());
-      
+
     } catch (Throwable e) {
       logger.error(e);
       if (failure == null) {
         failure = e;
       }
     }
-   
+
     try {
       assertIndexDetailsEquals(Status.STOPPED, this.launcher.stop().getStatus());
       waitForFileToDelete(this.pidFile);
@@ -418,16 +466,14 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
         failure = e;
       }
     }
-    
+
     if (failure != null) {
       throw failure;
     }
    } // testStartUsingForceOverwritesExistingPidFile
    */
 
-  /**
-   * Confirms part of fix for #47664
-   */
+  /** Confirms part of fix for #47664 */
   @Test
   public void testStartUsingServerPortOverridesCacheXml() throws Throwable {
     // verifies part of the fix for #47664
@@ -455,7 +501,14 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     System.setProperty(CACHE_XML_FILE, cacheXmlFile.getCanonicalPath());
 
     // start server
-    final Builder builder = new Builder().setMemberName(getUniqueName()).setRedirectOutput(true).setServerPort(freeTCPPorts[1]).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setServerPort(freeTCPPorts[1])
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     this.launcher = builder.build();
     this.launcher.start();
@@ -479,7 +532,8 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
       final ServerState status = this.launcher.status();
       final String portString = status.getPort();
       final int port = Integer.valueOf(portString);
-      assertEquals("Port should be " + freeTCPPorts[1] + " instead of " + port, freeTCPPorts[1], port);
+      assertEquals(
+          "Port should be " + freeTCPPorts[1] + " instead of " + port, freeTCPPorts[1], port);
 
     } catch (Throwable e) {
       this.errorCollector.addError(e);
@@ -495,9 +549,7 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     }
   }
 
-  /**
-   * Confirms part of fix for #47664
-   */
+  /** Confirms part of fix for #47664 */
   @Test
   public void testStartUsingServerPortUsedInsteadOfDefaultCacheXml() throws Throwable {
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
@@ -518,7 +570,14 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     System.setProperty(CACHE_XML_FILE, cacheXmlFile.getCanonicalPath());
 
     // start server
-    final Builder builder = new Builder().setMemberName(getUniqueName()).setRedirectOutput(true).setServerPort(this.serverPort).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setServerPort(this.serverPort)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     this.launcher = builder.build();
     this.launcher.start();
@@ -539,7 +598,8 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
       assertFalse(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET));
 
       final int port = Integer.valueOf(this.launcher.status().getPort());
-      assertEquals("Port should be " + this.serverPort + " instead of " + port, this.serverPort, port);
+      assertEquals(
+          "Port should be " + this.serverPort + " instead of " + port, this.serverPort, port);
 
     } catch (Throwable e) {
       this.errorCollector.addError(e);
@@ -559,11 +619,19 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
     // generate one free port and then use TEST_OVERRIDE_DEFAULT_PORT_PROPERTY
-    this.socket = SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.CLUSTER).createServerSocket(this.serverPort, 50, null, -1);
+    this.socket =
+        SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.CLUSTER)
+            .createServerSocket(this.serverPort, 50, null, -1);
     assertFalse(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET));
 
     // build and start the server
-    final Builder builder = new Builder().setMemberName(getUniqueName()).setRedirectOutput(true).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     this.launcher = builder.build();
 
@@ -572,7 +640,8 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
       this.launcher.start();
 
       // why did it not fail like it's supposed to?
-      final String property = System.getProperty(AbstractCacheServer.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY);
+      final String property =
+          System.getProperty(AbstractCacheServer.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY);
       assertNotNull(property);
       assertEquals(this.serverPort, Integer.valueOf(property).intValue());
       assertFalse(AvailablePort.isPortAvailable(this.serverPort, AvailablePort.SOCKET));
@@ -603,7 +672,9 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
 
       // creation of log file seems to be random -- look into why sometime
       final String logFileName = getUniqueName() + ".log";
-      assertFalse("Log file should not exist: " + logFileName, new File(this.temporaryFolder.getRoot(), logFileName).exists());
+      assertFalse(
+          "Log file should not exist: " + logFileName,
+          new File(this.temporaryFolder.getRoot(), logFileName).exists());
 
     } catch (Throwable e) {
       this.errorCollector.addError(e);
@@ -627,15 +698,14 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
 
   @Test
   @Ignore("Need to rewrite this without using dunit.Host")
-  public void testStartWithExistingPidFileFails() throws Throwable {
-  }/*
+  public void testStartWithExistingPidFileFails() throws Throwable {} /*
     // create existing pid file
     final int realPid = Host.getHost(0).getVM(3).invoke(() -> ProcessUtils.identifyPid());
     assertFalse("Remote pid shouldn't be the same as local pid " + realPid, realPid == ProcessUtils.identifyPid());
-   
+
     this.pidFile = new File(ProcessType.SERVER.getPidFileName());
     writePid(this.pidFile, realPid);
-    
+
     // build and start the server
     final Builder builder = new Builder()
         .setDisableDefaultServer(true)
@@ -643,15 +713,15 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
         .setRedirectOutput(true)
         .set(logLevel, "config")
         .set(DistributionConfig.ConfigurationProperties.MCAST_PORT, "0");
-   
+
     assertFalse(builder.getForce());
     this.launcher = builder.build();
     assertFalse(this.launcher.isForcing());
-   
+
     // collect and throw the FIRST failure
     Throwable failure = null;
     RuntimeException expected = null;
-    
+
     try {
       this.launcher.start();
       fail("ServerLauncher start should have thrown RuntimeException caused by FileAlreadyExistsException");
@@ -665,15 +735,15 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
         failure = e;
       }
     }
-   
+
     // just in case the launcher started...
     ServerState status = null;
     try {
       status = this.launcher.stop();
-    } catch (Throwable t) { 
+    } catch (Throwable t) {
       // ignore
     }
-    
+
     try {
       assertNotNull(expected);
       final Throwable cause = expected.getCause();
@@ -687,7 +757,7 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
         failure = e;
       }
     }
-    
+
     try {
       delete(this.pidFile);
       final Status theStatus = status.getStatus();
@@ -699,26 +769,33 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
         failure = e;
       }
     }
-    
+
     if (failure != null) {
       throw failure;
     }
    } // testStartWithExistingPidFileFails
    */
 
-  /**
-   * Confirms fix for #47665.
-   */
+  /** Confirms fix for #47665. */
   @Test
   public void testStartUsingServerPortInUseFails() throws Throwable {
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
     // generate one free port and then use TEST_OVERRIDE_DEFAULT_PORT_PROPERTY
     final int freeTCPPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
-    this.socket = SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.CLUSTER).createServerSocket(freeTCPPort, 50, null, -1);
+    this.socket =
+        SocketCreatorFactory.getSocketCreatorForComponent(SecurableCommunicationChannel.CLUSTER)
+            .createServerSocket(freeTCPPort, 50, null, -1);
 
     // build and start the server
-    final Builder builder = new Builder().setMemberName(getUniqueName()).setRedirectOutput(true).setServerPort(freeTCPPort).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setServerPort(freeTCPPort)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     this.launcher = builder.build();
 
@@ -772,7 +849,14 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
     // build and start the server
-    final Builder builder = new Builder().setDisableDefaultServer(true).setMemberName(getUniqueName()).setRedirectOutput(true).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setDisableDefaultServer(true)
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     assertFalse(builder.getForce());
     this.launcher = builder.build();
@@ -799,7 +883,8 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
       assertEquals(pid, actualStatus.getPid().intValue());
       assertTrue(actualStatus.getUptime() > 0);
       // getWorkingDirectory returns user.dir instead of rootFolder because test is starting Server in this process (to move logFile and pidFile into temp dir)
-      assertEquals(ManagementFactory.getRuntimeMXBean().getClassPath(), actualStatus.getClasspath());
+      assertEquals(
+          ManagementFactory.getRuntimeMXBean().getClassPath(), actualStatus.getClasspath());
       assertEquals(GemFireVersion.getGemFireVersion(), actualStatus.getGemFireVersion());
       assertEquals(System.getProperty("java.version"), actualStatus.getJavaVersion());
       assertEquals(InetAddress.getLocalHost().getCanonicalHostName(), actualStatus.getHost());
@@ -832,7 +917,14 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
     // build and start the server
-    final Builder builder = new Builder().setDisableDefaultServer(true).setMemberName(getUniqueName()).setRedirectOutput(true).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setDisableDefaultServer(true)
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     assertFalse(builder.getForce());
     this.launcher = builder.build();
@@ -859,7 +951,8 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
       assertEquals(pid, actualStatus.getPid().intValue());
       assertTrue(actualStatus.getUptime() > 0);
       // getWorkingDirectory returns user.dir instead of rootFolder because test is starting Server in this process (to move logFile and pidFile into temp dir)
-      assertEquals(ManagementFactory.getRuntimeMXBean().getClassPath(), actualStatus.getClasspath());
+      assertEquals(
+          ManagementFactory.getRuntimeMXBean().getClassPath(), actualStatus.getClasspath());
       assertEquals(GemFireVersion.getGemFireVersion(), actualStatus.getGemFireVersion());
       assertEquals(System.getProperty("java.version"), actualStatus.getJavaVersion());
       assertEquals(InetAddress.getLocalHost().getCanonicalHostName(), actualStatus.getHost());
@@ -892,7 +985,14 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
     // build and start the server
-    final Builder builder = new Builder().setDisableDefaultServer(true).setMemberName(getUniqueName()).setRedirectOutput(true).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setDisableDefaultServer(true)
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     assertFalse(builder.getForce());
     this.launcher = builder.build();
@@ -943,7 +1043,14 @@ public class ServerLauncherLocalIntegrationTest extends AbstractServerLauncherIn
     String rootFolder = this.temporaryFolder.getRoot().getCanonicalPath();
 
     // build and start the server
-    final Builder builder = new Builder().setDisableDefaultServer(true).setMemberName(getUniqueName()).setRedirectOutput(true).setWorkingDirectory(rootFolder).set(LOG_LEVEL, "config").set(MCAST_PORT, "0");
+    final Builder builder =
+        new Builder()
+            .setDisableDefaultServer(true)
+            .setMemberName(getUniqueName())
+            .setRedirectOutput(true)
+            .setWorkingDirectory(rootFolder)
+            .set(LOG_LEVEL, "config")
+            .set(MCAST_PORT, "0");
 
     assertFalse(builder.getForce());
     this.launcher = builder.build();

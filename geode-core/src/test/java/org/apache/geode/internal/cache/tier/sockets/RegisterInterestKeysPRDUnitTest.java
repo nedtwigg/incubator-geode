@@ -27,10 +27,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 import org.apache.geode.cache.*;
 
-/**
- * subclass of UpdatePropagationDUnitTest to exercise partitioned regions
- *
- */
+/** subclass of UpdatePropagationDUnitTest to exercise partitioned regions */
 @Category(DistributedTest.class)
 public class RegisterInterestKeysPRDUnitTest extends RegisterInterestKeysDUnitTest {
 

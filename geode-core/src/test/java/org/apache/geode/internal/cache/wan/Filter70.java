@@ -39,25 +39,21 @@ public class Filter70 implements GatewayEventFilter, Serializable {
     return true;
   }
 
-  public void close() {
-
-  }
+  public void close() {}
 
   @Override
   public String toString() {
     return Id;
   }
 
-  public void afterAcknowledgement(GatewayQueueEvent event) {
-  }
+  public void afterAcknowledgement(GatewayQueueEvent event) {}
 
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
-    if (!(obj instanceof Filter70))
-      return false;
+    if (!(obj instanceof Filter70)) return false;
     Filter70 filter = (Filter70) obj;
     return this.Id.equals(filter.Id);
   }

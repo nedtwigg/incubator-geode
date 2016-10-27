@@ -59,10 +59,8 @@ import org.apache.geode.test.dunit.LogWriterUtils;
 import org.apache.geode.test.dunit.SerializableCallable;
 
 /**
- * Test for co-located PR transactions.
- * the test creates two data hosts and uses function execution to 
- * execute transactions.  
- *
+ * Test for co-located PR transactions. the test creates two data hosts and uses function execution
+ * to execute transactions.
  */
 @Category(DistributedTest.class)
 public class PRTransactionDUnitTest extends PRColocationDUnitTest {
@@ -124,9 +122,9 @@ public class PRTransactionDUnitTest extends PRColocationDUnitTest {
   }
 
   /**
-   * Test all the basic functionality of colocated transactions.
-   * This method invokes {@link MyTransactionFunction} and tells it what to
-   * test, using different arguments.
+   * Test all the basic functionality of colocated transactions. This method invokes {@link
+   * MyTransactionFunction} and tells it what to test, using different arguments.
+   *
    * @param redundantBuckets redundant buckets for colocated PRs
    * @param populateData if false tests are carried out on empty colocated PRs
    */
@@ -138,78 +136,93 @@ public class PRTransactionDUnitTest extends PRColocationDUnitTest {
       createColocatedPRs(redundantBuckets);
     }
 
-    SerializableCallable registerFunction = new SerializableCallable("register Fn") {
-      public Object call() throws Exception {
-        Function txFunction = new MyTransactionFunction();
-        FunctionService.registerFunction(txFunction);
-        return Boolean.TRUE;
-      }
-    };
+    SerializableCallable registerFunction =
+        new SerializableCallable("register Fn") {
+          public Object call() throws Exception {
+            Function txFunction = new MyTransactionFunction();
+            FunctionService.registerFunction(txFunction);
+            return Boolean.TRUE;
+          }
+        };
 
     dataStore1.invoke(registerFunction);
     dataStore2.invoke(registerFunction);
     dataStore3.invoke(registerFunction);
 
-    accessor.invoke(new SerializableCallable("run function") {
-      public Object call() throws Exception {
-        PartitionedRegion pr = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
-        PartitionedRegion orderpr = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + OrderPartitionedRegionName);
-        CustId custId = new CustId(2);
-        Customer newCus = new Customer("foo", "bar");
-        Order order = new Order("fooOrder");
-        OrderId orderId = new OrderId(22, custId);
-        ArrayList args = new ArrayList();
-        Function txFunction = new MyTransactionFunction();
-        FunctionService.registerFunction(txFunction);
-        Execution e = FunctionService.onRegion(pr);
-        Set filter = new HashSet();
-        // test transaction non-coLocated operations
-        filter.clear();
-        args.clear();
-        args.add(new Integer(VERIFY_NON_COLOCATION));
-        LogWriterUtils.getLogWriter().info("VERIFY_NON_COLOCATION");
-        args.add(custId);
-        args.add(newCus);
-        args.add(orderId);
-        args.add(order);
-        filter.add(custId);
-        try {
-          e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
-          fail("Expected exception was not thrown");
-        } catch (FunctionException fe) {
-          LogWriterUtils.getLogWriter().info("Caught Expected exception");
-          if (fe.getCause() instanceof TransactionDataNotColocatedException) {
-          } else {
-            throw new TestException("Expected to catch FunctionException with cause TransactionDataNotColocatedException" + " but cause is  " + fe.getCause(), fe.getCause());
+    accessor.invoke(
+        new SerializableCallable("run function") {
+          public Object call() throws Exception {
+            PartitionedRegion pr =
+                (PartitionedRegion)
+                    basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
+            PartitionedRegion orderpr =
+                (PartitionedRegion)
+                    basicGetCache().getRegion(Region.SEPARATOR + OrderPartitionedRegionName);
+            CustId custId = new CustId(2);
+            Customer newCus = new Customer("foo", "bar");
+            Order order = new Order("fooOrder");
+            OrderId orderId = new OrderId(22, custId);
+            ArrayList args = new ArrayList();
+            Function txFunction = new MyTransactionFunction();
+            FunctionService.registerFunction(txFunction);
+            Execution e = FunctionService.onRegion(pr);
+            Set filter = new HashSet();
+            // test transaction non-coLocated operations
+            filter.clear();
+            args.clear();
+            args.add(new Integer(VERIFY_NON_COLOCATION));
+            LogWriterUtils.getLogWriter().info("VERIFY_NON_COLOCATION");
+            args.add(custId);
+            args.add(newCus);
+            args.add(orderId);
+            args.add(order);
+            filter.add(custId);
+            try {
+              e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
+              fail("Expected exception was not thrown");
+            } catch (FunctionException fe) {
+              LogWriterUtils.getLogWriter().info("Caught Expected exception");
+              if (fe.getCause() instanceof TransactionDataNotColocatedException) {
+              } else {
+                throw new TestException(
+                    "Expected to catch FunctionException with cause TransactionDataNotColocatedException"
+                        + " but cause is  "
+                        + fe.getCause(),
+                    fe.getCause());
+              }
+            }
+            // verify that the transaction modifications are applied
+            args.set(0, new Integer(VERIFY_TX));
+            LogWriterUtils.getLogWriter().info("VERIFY_TX");
+            orderpr.put(orderId, order);
+            assertNotNull(orderpr.get(orderId));
+            e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
+            assertTrue("Unexpected customer value after commit", newCus.equals(pr.get(custId)));
+            Order commitedOrder = (Order) orderpr.get(orderId);
+            assertTrue(
+                "Unexpected order value after commit. Expected:"
+                    + order
+                    + " Found:"
+                    + commitedOrder,
+                order.equals(commitedOrder));
+            //verify conflict detection
+            args.set(0, new Integer(VERIFY_TXSTATE_CONFLICT));
+            e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
+            // verify that the transaction is rolled back
+            args.set(0, new Integer(VERIFY_ROLLBACK));
+            LogWriterUtils.getLogWriter().info("VERIFY_ROLLBACK");
+            e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
+            // verify destroy
+            args.set(0, new Integer(VERIFY_DESTROY));
+            LogWriterUtils.getLogWriter().info("VERIFY_DESTROY");
+            e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
+            // verify invalidate
+            args.set(0, new Integer(VERIFY_INVALIDATE));
+            LogWriterUtils.getLogWriter().info("VERIFY_INVALIDATE");
+            e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
+            return Boolean.TRUE;
           }
-        }
-        // verify that the transaction modifications are applied        
-        args.set(0, new Integer(VERIFY_TX));
-        LogWriterUtils.getLogWriter().info("VERIFY_TX");
-        orderpr.put(orderId, order);
-        assertNotNull(orderpr.get(orderId));
-        e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
-        assertTrue("Unexpected customer value after commit", newCus.equals(pr.get(custId)));
-        Order commitedOrder = (Order) orderpr.get(orderId);
-        assertTrue("Unexpected order value after commit. Expected:" + order + " Found:" + commitedOrder, order.equals(commitedOrder));
-        //verify conflict detection
-        args.set(0, new Integer(VERIFY_TXSTATE_CONFLICT));
-        e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
-        // verify that the transaction is rolled back        
-        args.set(0, new Integer(VERIFY_ROLLBACK));
-        LogWriterUtils.getLogWriter().info("VERIFY_ROLLBACK");
-        e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
-        // verify destroy
-        args.set(0, new Integer(VERIFY_DESTROY));
-        LogWriterUtils.getLogWriter().info("VERIFY_DESTROY");
-        e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
-        // verify invalidate
-        args.set(0, new Integer(VERIFY_INVALIDATE));
-        LogWriterUtils.getLogWriter().info("VERIFY_INVALIDATE");
-        e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
-        return Boolean.TRUE;
-      }
-    });
+        });
   }
 
   protected void createColocatedPRs(int redundantBuckets) {
@@ -230,7 +243,10 @@ public class PRTransactionDUnitTest extends PRColocationDUnitTest {
     createPRWithCoLocation(ShipmentPartitionedRegionName, OrderPartitionedRegionName);
 
     // Initial Validation for the number of data stores and number of profiles
-    accessor.invoke(() -> PRColocationDUnitTest.validateBeforePutCustomerPartitionedRegion(CustomerPartitionedRegionName));
+    accessor.invoke(
+        () ->
+            PRColocationDUnitTest.validateBeforePutCustomerPartitionedRegion(
+                CustomerPartitionedRegionName));
   }
 
   @Override
@@ -241,44 +257,76 @@ public class PRTransactionDUnitTest extends PRColocationDUnitTest {
     accessor.invoke(runGetCache);
   }
 
-  private SerializableCallable runGetCache = new SerializableCallable("runGetCache") {
-    public Object call() throws Exception {
-      getCache();
-      return null;
-    }
-  };
+  private SerializableCallable runGetCache =
+      new SerializableCallable("runGetCache") {
+        public Object call() throws Exception {
+          getCache();
+          return null;
+        }
+      };
 
   protected void populateAndVerifyColocatedPRs(int redundantBuckets) {
     // Put the customer 1-10 in CustomerPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
 
     // Put the order 1-10 for each Customer in OrderPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putOrderPartitionedRegion(OrderPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putOrderPartitionedRegion(OrderPartitionedRegionName));
 
     // Put the shipment 1-10 for each order in ShipmentPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putShipmentPartitionedRegion(ShipmentPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putShipmentPartitionedRegion(ShipmentPartitionedRegionName));
 
     // for VM0 DataStore check the number of buckets created and the size of
     // bucket for all partitionedRegion
-    Integer totalBucketsInDataStore1 = (Integer) dataStore1.invoke(() -> PRColocationDUnitTest.validateDataStore(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+    Integer totalBucketsInDataStore1 =
+        (Integer)
+            dataStore1.invoke(
+                () ->
+                    PRColocationDUnitTest.validateDataStore(
+                        CustomerPartitionedRegionName,
+                        OrderPartitionedRegionName,
+                        ShipmentPartitionedRegionName));
 
     // for VM1 DataStore check the number of buckets created and the size of
     // bucket for all partitionedRegion
-    Integer totalBucketsInDataStore2 = (Integer) dataStore2.invoke(() -> PRColocationDUnitTest.validateDataStore(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+    Integer totalBucketsInDataStore2 =
+        (Integer)
+            dataStore2.invoke(
+                () ->
+                    PRColocationDUnitTest.validateDataStore(
+                        CustomerPartitionedRegionName,
+                        OrderPartitionedRegionName,
+                        ShipmentPartitionedRegionName));
 
     // for VM3 Datastore check the number of buckets created and the size of
     // bucket for all partitionedRegion
-    Integer totalBucketsInDataStore3 = (Integer) dataStore3.invoke(() -> PRColocationDUnitTest.validateDataStore(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
+    Integer totalBucketsInDataStore3 =
+        (Integer)
+            dataStore3.invoke(
+                () ->
+                    PRColocationDUnitTest.validateDataStore(
+                        CustomerPartitionedRegionName,
+                        OrderPartitionedRegionName,
+                        ShipmentPartitionedRegionName));
 
     // Check the total number of buckets created in all three Vms are equalto 30
-    totalNumBucketsInTest = totalBucketsInDataStore1.intValue() + totalBucketsInDataStore2.intValue() + totalBucketsInDataStore3.intValue();
+    totalNumBucketsInTest =
+        totalBucketsInDataStore1.intValue()
+            + totalBucketsInDataStore2.intValue()
+            + totalBucketsInDataStore3.intValue();
     assertEquals(30 + (redundantBuckets * 30), totalNumBucketsInTest);
 
     // This is the importatnt check. Checks that the colocated Customer,Order
     // and Shipment are in the same VM
 
-    accessor.invoke(() -> PRColocationDUnitTest.validateAfterPutPartitionedRegion(CustomerPartitionedRegionName, OrderPartitionedRegionName, ShipmentPartitionedRegionName));
-
+    accessor.invoke(
+        () ->
+            PRColocationDUnitTest.validateAfterPutPartitionedRegion(
+                CustomerPartitionedRegionName,
+                OrderPartitionedRegionName,
+                ShipmentPartitionedRegionName));
   }
 
   protected void createPopulateAndVerifyCoLocatedPRs(int redundantBuckets) {
@@ -291,7 +339,16 @@ public class PRTransactionDUnitTest extends PRColocationDUnitTest {
     this.regionName = prName;
     this.colocatedWith = coLocatedWith;
     this.isPartitionResolver = new Boolean(true);
-    this.attributeObjects = new Object[] { regionName, redundancy, localMaxmemory, totalNumBuckets, colocatedWith, isPartitionResolver, getEnableConcurrency() };
+    this.attributeObjects =
+        new Object[] {
+          regionName,
+          redundancy,
+          localMaxmemory,
+          totalNumBuckets,
+          colocatedWith,
+          isPartitionResolver,
+          getEnableConcurrency()
+        };
     createPartitionedRegion(attributeObjects);
   }
 
@@ -316,6 +373,7 @@ public class PRTransactionDUnitTest extends PRColocationDUnitTest {
 
   /**
    * This method executes a transaction inside a cache listener
+   *
    * @param bucketRedundancy redundancy for the colocated PRs
    */
   protected void basicPRTXInCacheListener(int bucketRedundancy) {
@@ -327,37 +385,44 @@ public class PRTransactionDUnitTest extends PRColocationDUnitTest {
     createPRWithCoLocation(CustomerPartitionedRegionName, null);
     createPRWithCoLocation(OrderPartitionedRegionName, CustomerPartitionedRegionName);
     // register Cache Listeners
-    SerializableCallable registerListeners = new SerializableCallable() {
-      public Object call() throws Exception {
-        Region custRegion = basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
-        custRegion.getAttributesMutator().addCacheListener(new TransactionListener());
-        return null;
-      }
-    };
+    SerializableCallable registerListeners =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Region custRegion =
+                basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
+            custRegion.getAttributesMutator().addCacheListener(new TransactionListener());
+            return null;
+          }
+        };
 
     dataStore1.invoke(registerListeners);
     dataStore2.invoke(registerListeners);
     dataStore3.invoke(registerListeners);
 
     // Put the customer 1-10 in CustomerPartitionedRegion
-    accessor.invoke(() -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
+    accessor.invoke(
+        () -> PRColocationDUnitTest.putCustomerPartitionedRegion(CustomerPartitionedRegionName));
 
     dataStore1.invoke(() -> PRTransactionDUnitTest.validatePRTXInCacheListener());
     dataStore2.invoke(() -> PRTransactionDUnitTest.validatePRTXInCacheListener());
     dataStore3.invoke(() -> PRTransactionDUnitTest.validatePRTXInCacheListener());
-
   }
 
   /**
    * verify that 10 orders are created for each customer
+   *
    * @throws ClassNotFoundException
    */
   public static void validatePRTXInCacheListener() throws ClassNotFoundException {
     PartitionedRegion customerPartitionedregion = null;
     PartitionedRegion orderPartitionedregion = null;
     try {
-      customerPartitionedregion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
-      orderPartitionedregion = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + OrderPartitionedRegionName);
+      customerPartitionedregion =
+          (PartitionedRegion)
+              basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
+      orderPartitionedregion =
+          (PartitionedRegion)
+              basicGetCache().getRegion(Region.SEPARATOR + OrderPartitionedRegionName);
     } catch (Exception e) {
       Assert.fail("validateAfterPutPartitionedRegion : failed while getting the region", e);
     }
@@ -367,14 +432,22 @@ public class PRTransactionDUnitTest extends PRColocationDUnitTest {
     customerPartitionedregion.getDataStore().dumpEntries(false);
     orderPartitionedregion.getDataStore().dumpEntries(false);
     Iterator custIterator = customerPartitionedregion.getDataStore().getEntries().iterator();
-    LogWriterUtils.getLogWriter().info("Found " + customerPartitionedregion.getDataStore().getEntries().size() + " Customer entries in the partition");
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Found "
+                + customerPartitionedregion.getDataStore().getEntries().size()
+                + " Customer entries in the partition");
     Region.Entry custEntry = null;
     while (custIterator.hasNext()) {
       custEntry = (Entry) custIterator.next();
       CustId custid = (CustId) custEntry.getKey();
       Customer cust = (Customer) custEntry.getValue();
       Iterator orderIterator = orderPartitionedregion.getDataStore().getEntries().iterator();
-      LogWriterUtils.getLogWriter().info("Found " + orderPartitionedregion.getDataStore().getEntries().size() + " Order entries in the partition");
+      LogWriterUtils.getLogWriter()
+          .info(
+              "Found "
+                  + orderPartitionedregion.getDataStore().getEntries().size()
+                  + " Order entries in the partition");
       int orderPerCustomer = 0;
       Region.Entry orderEntry = null;
       while (orderIterator.hasNext()) {
@@ -394,94 +467,105 @@ public class PRTransactionDUnitTest extends PRColocationDUnitTest {
   public void testCacheListenerCallbacks() {
     createPopulateAndVerifyCoLocatedPRs(1);
 
-    SerializableCallable registerListeners = new SerializableCallable() {
-      public Object call() throws Exception {
-        Region custRegion = basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
-        custRegion.getAttributesMutator().addCacheListener(new TransactionListener2());
-        return null;
-      }
-    };
+    SerializableCallable registerListeners =
+        new SerializableCallable() {
+          public Object call() throws Exception {
+            Region custRegion =
+                basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
+            custRegion.getAttributesMutator().addCacheListener(new TransactionListener2());
+            return null;
+          }
+        };
 
     accessor.invoke(registerListeners);
     dataStore1.invoke(registerListeners);
     dataStore2.invoke(registerListeners);
     dataStore3.invoke(registerListeners);
 
-    accessor.invoke(new SerializableCallable("run function") {
-      public Object call() throws Exception {
-        PartitionedRegion pr = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
-        PartitionedRegion orderpr = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + OrderPartitionedRegionName);
-        CustId custId = new CustId(2);
-        Customer newCus = new Customer("foo", "bar");
-        Order order = new Order("fooOrder");
-        OrderId orderId = new OrderId(22, custId);
-        ArrayList args = new ArrayList();
-        Function txFunction = new MyTransactionFunction();
-        FunctionService.registerFunction(txFunction);
-        Execution e = FunctionService.onRegion(pr);
-        Set filter = new HashSet();
-        boolean caughtException = false;
-        // test transaction non-coLocated operations
-        filter.clear();
-        args.clear();
-        args.add(new Integer(VERIFY_LISTENER_CALLBACK));
-        LogWriterUtils.getLogWriter().info("VERIFY_LISTENER_CALLBACK");
-        args.add(custId);
-        args.add(newCus);
-        args.add(orderId);
-        args.add(order);
-        filter.add(custId);
-        caughtException = false;
-        e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
-        return null;
-      }
-    });
-
+    accessor.invoke(
+        new SerializableCallable("run function") {
+          public Object call() throws Exception {
+            PartitionedRegion pr =
+                (PartitionedRegion)
+                    basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
+            PartitionedRegion orderpr =
+                (PartitionedRegion)
+                    basicGetCache().getRegion(Region.SEPARATOR + OrderPartitionedRegionName);
+            CustId custId = new CustId(2);
+            Customer newCus = new Customer("foo", "bar");
+            Order order = new Order("fooOrder");
+            OrderId orderId = new OrderId(22, custId);
+            ArrayList args = new ArrayList();
+            Function txFunction = new MyTransactionFunction();
+            FunctionService.registerFunction(txFunction);
+            Execution e = FunctionService.onRegion(pr);
+            Set filter = new HashSet();
+            boolean caughtException = false;
+            // test transaction non-coLocated operations
+            filter.clear();
+            args.clear();
+            args.add(new Integer(VERIFY_LISTENER_CALLBACK));
+            LogWriterUtils.getLogWriter().info("VERIFY_LISTENER_CALLBACK");
+            args.add(custId);
+            args.add(newCus);
+            args.add(orderId);
+            args.add(order);
+            filter.add(custId);
+            caughtException = false;
+            e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
+            return null;
+          }
+        });
   }
 
   @Test
   public void testRepeatableRead() throws Exception {
     createColocatedPRs(1);
-    SerializableCallable registerFunction = new SerializableCallable("register Fn") {
-      public Object call() throws Exception {
-        Function txFunction = new MyTransactionFunction();
-        FunctionService.registerFunction(txFunction);
-        return Boolean.TRUE;
-      }
-    };
+    SerializableCallable registerFunction =
+        new SerializableCallable("register Fn") {
+          public Object call() throws Exception {
+            Function txFunction = new MyTransactionFunction();
+            FunctionService.registerFunction(txFunction);
+            return Boolean.TRUE;
+          }
+        };
 
     dataStore1.invoke(registerFunction);
     dataStore2.invoke(registerFunction);
     dataStore3.invoke(registerFunction);
 
-    accessor.invoke(new SerializableCallable("run function") {
-      public Object call() throws Exception {
-        PartitionedRegion pr = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
-        PartitionedRegion orderpr = (PartitionedRegion) basicGetCache().getRegion(Region.SEPARATOR + OrderPartitionedRegionName);
-        CustId custId = new CustId(2);
-        Customer newCus = new Customer("foo", "bar");
-        Order order = new Order("fooOrder");
-        OrderId orderId = new OrderId(22, custId);
-        ArrayList args = new ArrayList();
-        Function txFunction = new MyTransactionFunction();
-        FunctionService.registerFunction(txFunction);
-        Execution e = FunctionService.onRegion(pr);
-        Set filter = new HashSet();
-        filter.clear();
-        args.clear();
-        args.add(new Integer(VERIFY_REP_READ));
-        LogWriterUtils.getLogWriter().info("VERIFY_REP_READ");
-        args.add(custId);
-        args.add(newCus);
-        args.add(orderId);
-        args.add(order);
-        filter.add(custId);
-        e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
+    accessor.invoke(
+        new SerializableCallable("run function") {
+          public Object call() throws Exception {
+            PartitionedRegion pr =
+                (PartitionedRegion)
+                    basicGetCache().getRegion(Region.SEPARATOR + CustomerPartitionedRegionName);
+            PartitionedRegion orderpr =
+                (PartitionedRegion)
+                    basicGetCache().getRegion(Region.SEPARATOR + OrderPartitionedRegionName);
+            CustId custId = new CustId(2);
+            Customer newCus = new Customer("foo", "bar");
+            Order order = new Order("fooOrder");
+            OrderId orderId = new OrderId(22, custId);
+            ArrayList args = new ArrayList();
+            Function txFunction = new MyTransactionFunction();
+            FunctionService.registerFunction(txFunction);
+            Execution e = FunctionService.onRegion(pr);
+            Set filter = new HashSet();
+            filter.clear();
+            args.clear();
+            args.add(new Integer(VERIFY_REP_READ));
+            LogWriterUtils.getLogWriter().info("VERIFY_REP_READ");
+            args.add(custId);
+            args.add(newCus);
+            args.add(orderId);
+            args.add(order);
+            filter.add(custId);
+            e.withFilter(filter).withArgs(args).execute(txFunction.getId()).getResult();
 
-        return null;
-      }
-    });
-
+            return null;
+          }
+        });
   }
 
   @Test
@@ -491,166 +575,170 @@ public class PRTransactionDUnitTest extends PRColocationDUnitTest {
     createPopulateAndVerifyCoLocatedPRs(1);
 
     // register functions
-    SerializableCallable registerPerfFunctions = new SerializableCallable("register Fn") {
-      public Object call() throws Exception {
-        Function perfFunction = new PerfFunction();
-        FunctionService.registerFunction(perfFunction);
-        Function perfTxFunction = new PerfTxFunction();
-        FunctionService.registerFunction(perfTxFunction);
-        return Boolean.TRUE;
-      }
-    };
+    SerializableCallable registerPerfFunctions =
+        new SerializableCallable("register Fn") {
+          public Object call() throws Exception {
+            Function perfFunction = new PerfFunction();
+            FunctionService.registerFunction(perfFunction);
+            Function perfTxFunction = new PerfTxFunction();
+            FunctionService.registerFunction(perfTxFunction);
+            return Boolean.TRUE;
+          }
+        };
 
     dataStore1.invoke(registerPerfFunctions);
     dataStore2.invoke(registerPerfFunctions);
     dataStore3.invoke(registerPerfFunctions);
     accessor.invoke(registerPerfFunctions);
 
-    SerializableCallable runPerfFunction = new SerializableCallable("runPerfFunction") {
-      public Object call() throws Exception {
-        long perfTime = 0;
-        Region customerPR = basicGetCache().getRegion(CustomerPartitionedRegionName);
-        Execution e = FunctionService.onRegion(customerPR);
-        // for each customer, update order and shipment
-        for (int iterations = 1; iterations <= totalIterations; iterations++) {
-          LogWriterUtils.getLogWriter().info("running perfFunction");
-          long startTime = 0;
-          ArrayList args = new ArrayList();
-          CustId custId = new CustId(iterations % 10);
-          for (int i = 1; i <= perfOrderShipmentPairs; i++) {
-            OrderId orderId = new OrderId(custId.getCustId().intValue() * 10 + i, custId);
-            Order order = new Order("NewOrder" + i + iterations);
-            ShipmentId shipmentId = new ShipmentId(orderId.getOrderId().intValue() * 10 + i, orderId);
-            Shipment shipment = new Shipment("newShipment" + i + iterations);
-            args.add(orderId);
-            args.add(order);
-            args.add(shipmentId);
-            args.add(shipment);
+    SerializableCallable runPerfFunction =
+        new SerializableCallable("runPerfFunction") {
+          public Object call() throws Exception {
+            long perfTime = 0;
+            Region customerPR = basicGetCache().getRegion(CustomerPartitionedRegionName);
+            Execution e = FunctionService.onRegion(customerPR);
+            // for each customer, update order and shipment
+            for (int iterations = 1; iterations <= totalIterations; iterations++) {
+              LogWriterUtils.getLogWriter().info("running perfFunction");
+              long startTime = 0;
+              ArrayList args = new ArrayList();
+              CustId custId = new CustId(iterations % 10);
+              for (int i = 1; i <= perfOrderShipmentPairs; i++) {
+                OrderId orderId = new OrderId(custId.getCustId().intValue() * 10 + i, custId);
+                Order order = new Order("NewOrder" + i + iterations);
+                ShipmentId shipmentId =
+                    new ShipmentId(orderId.getOrderId().intValue() * 10 + i, orderId);
+                Shipment shipment = new Shipment("newShipment" + i + iterations);
+                args.add(orderId);
+                args.add(order);
+                args.add(shipmentId);
+                args.add(shipment);
+              }
+              Set filter = new HashSet();
+              filter.add(custId);
+              if (iterations > warmupIterations) {
+                startTime = NanoTimer.getTime();
+              }
+              e.withFilter(filter).withArgs(args).execute("perfFunction").getResult();
+              if (startTime > 0) {
+                perfTime += NanoTimer.getTime() - startTime;
+              }
+            }
+            return new Long(perfTime);
           }
-          Set filter = new HashSet();
-          filter.add(custId);
-          if (iterations > warmupIterations) {
-            startTime = NanoTimer.getTime();
-          }
-          e.withFilter(filter).withArgs(args).execute("perfFunction").getResult();
-          if (startTime > 0) {
-            perfTime += NanoTimer.getTime() - startTime;
-          }
-        }
-        return new Long(perfTime);
-      }
-    };
+        };
 
     Long perfTime = (Long) accessor.invoke(runPerfFunction);
 
-    SerializableCallable runPerfTxFunction = new SerializableCallable("runPerfTxFunction") {
-      public Object call() throws Exception {
-        long perfTime = 0;
-        Region customerPR = basicGetCache().getRegion(CustomerPartitionedRegionName);
-        Execution e = FunctionService.onRegion(customerPR);
-        // for each customer, update order and shipment
-        for (int iterations = 1; iterations <= totalIterations; iterations++) {
-          LogWriterUtils.getLogWriter().info("Running perfFunction");
-          long startTime = 0;
-          ArrayList args = new ArrayList();
-          CustId custId = new CustId(iterations % 10);
-          for (int i = 1; i <= perfOrderShipmentPairs; i++) {
-            OrderId orderId = new OrderId(custId.getCustId().intValue() * 10 + i, custId);
-            Order order = new Order("NewOrder" + i + iterations);
-            ShipmentId shipmentId = new ShipmentId(orderId.getOrderId().intValue() * 10 + i, orderId);
-            Shipment shipment = new Shipment("newShipment" + i + iterations);
-            args.add(orderId);
-            args.add(order);
-            args.add(shipmentId);
-            args.add(shipment);
+    SerializableCallable runPerfTxFunction =
+        new SerializableCallable("runPerfTxFunction") {
+          public Object call() throws Exception {
+            long perfTime = 0;
+            Region customerPR = basicGetCache().getRegion(CustomerPartitionedRegionName);
+            Execution e = FunctionService.onRegion(customerPR);
+            // for each customer, update order and shipment
+            for (int iterations = 1; iterations <= totalIterations; iterations++) {
+              LogWriterUtils.getLogWriter().info("Running perfFunction");
+              long startTime = 0;
+              ArrayList args = new ArrayList();
+              CustId custId = new CustId(iterations % 10);
+              for (int i = 1; i <= perfOrderShipmentPairs; i++) {
+                OrderId orderId = new OrderId(custId.getCustId().intValue() * 10 + i, custId);
+                Order order = new Order("NewOrder" + i + iterations);
+                ShipmentId shipmentId =
+                    new ShipmentId(orderId.getOrderId().intValue() * 10 + i, orderId);
+                Shipment shipment = new Shipment("newShipment" + i + iterations);
+                args.add(orderId);
+                args.add(order);
+                args.add(shipmentId);
+                args.add(shipment);
+              }
+              Set filter = new HashSet();
+              filter.add(custId);
+              if (iterations > warmupIterations) {
+                startTime = NanoTimer.getTime();
+              }
+              e.withFilter(filter).withArgs(args).execute("perfTxFunction").getResult();
+              if (startTime > 0) {
+                perfTime += NanoTimer.getTime() - startTime;
+              }
+            }
+            return new Long(perfTime);
           }
-          Set filter = new HashSet();
-          filter.add(custId);
-          if (iterations > warmupIterations) {
-            startTime = NanoTimer.getTime();
-          }
-          e.withFilter(filter).withArgs(args).execute("perfTxFunction").getResult();
-          if (startTime > 0) {
-            perfTime += NanoTimer.getTime() - startTime;
-          }
-        }
-        return new Long(perfTime);
-      }
-    };
+        };
 
     Long perfTxTime = (Long) accessor.invoke(runPerfTxFunction);
 
     double diff = (perfTime.longValue() - perfTxTime.longValue()) * 1.0;
     double percentDiff = (diff / perfTime.longValue()) * 100;
 
-    LogWriterUtils.getLogWriter().info((totalIterations - warmupIterations) + " iterations of function took:" + +perfTime.longValue() + " Nanos, and transaction function took:" + perfTxTime.longValue() + " Nanos, difference :" + diff + " percentDifference:" + percentDiff);
-
+    LogWriterUtils.getLogWriter()
+        .info(
+            (totalIterations - warmupIterations)
+                + " iterations of function took:"
+                + +perfTime.longValue()
+                + " Nanos, and transaction function took:"
+                + perfTxTime.longValue()
+                + " Nanos, difference :"
+                + diff
+                + " percentDifference:"
+                + percentDiff);
   }
 
   // Don't want to run the test twice
   @Test
-  public void testColocatedPartitionedRegion() throws Throwable {
-  }
+  public void testColocatedPartitionedRegion() throws Throwable {}
 
   @Test
-  public void testColocationPartitionedRegion() throws Throwable {
-  }
+  public void testColocationPartitionedRegion() throws Throwable {}
 
   @Test
-  public void testColocationPartitionedRegionWithRedundancy() throws Throwable {
-  }
+  public void testColocationPartitionedRegionWithRedundancy() throws Throwable {}
 
   @Test
-  public void testPartitionResolverPartitionedRegion() throws Throwable {
-  }
+  public void testPartitionResolverPartitionedRegion() throws Throwable {}
 
   @Test
-  public void testColocationPartitionedRegionWithNullColocationSpecifiedOnOneNode() {
-  }
+  public void testColocationPartitionedRegionWithNullColocationSpecifiedOnOneNode() {}
 
   @Override
   @Test
-  public void testColocatedPRRedundancyRecovery() throws Throwable {
-  }
+  public void testColocatedPRRedundancyRecovery() throws Throwable {}
 
   @Override
   @Test
-  public void testColocatedPRWithAccessorOnDifferentNode1() throws Throwable {
-  }
+  public void testColocatedPRWithAccessorOnDifferentNode1() throws Throwable {}
 
   @Override
   @Test
-  public void testColocatedPRWithAccessorOnDifferentNode2() throws Throwable {
-  }
+  public void testColocatedPRWithAccessorOnDifferentNode2() throws Throwable {}
 
   @Override
   @Test
-  public void testColocatedPRWithDestroy() throws Throwable {
-  }
+  public void testColocatedPRWithDestroy() throws Throwable {}
 
   @Override
   @Test
-  public void testColocatedPRWithLocalDestroy() throws Throwable {
-  }
+  public void testColocatedPRWithLocalDestroy() throws Throwable {}
 
   @Override
   @Test
-  public void testColocatedPRWithPROnDifferentNode1() throws Throwable {
-  }
+  public void testColocatedPRWithPROnDifferentNode1() throws Throwable {}
 
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
     Invoke.invokeInEveryVM(verifyNoTxState);
   }
 
-  SerializableCallable verifyNoTxState = new SerializableCallable() {
-    @Override
-    public Object call() throws Exception {
-      TXManagerImpl mgr = getGemfireCache().getTxManager();
-      assertEquals(0, mgr.hostedTransactionsInProgressForTest());
-      return null;
-    }
-  };
+  SerializableCallable verifyNoTxState =
+      new SerializableCallable() {
+        @Override
+        public Object call() throws Exception {
+          TXManagerImpl mgr = getGemfireCache().getTxManager();
+          assertEquals(0, mgr.hostedTransactionsInProgressForTest());
+          return null;
+        }
+      };
 
   class TransactionListener extends CacheListenerAdapter {
 

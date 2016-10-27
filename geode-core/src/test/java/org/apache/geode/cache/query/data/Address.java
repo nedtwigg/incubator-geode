@@ -24,9 +24,7 @@ package org.apache.geode.cache.query.data;
 
 import java.util.*;
 
-/**
- *
- */
+/** */
 public class Address {
   public String zipCode;
   public String city;
@@ -46,5 +44,4 @@ public class Address {
     this.street = street;
     this.phoneNo = phoneNo;
   }
-
-}//end of class
+} //end of class

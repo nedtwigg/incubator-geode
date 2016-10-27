@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode;
 
 import java.io.DataInput;
@@ -25,9 +23,7 @@ import java.io.IOException;
 
 import org.apache.geode.internal.cache.tier.sockets.DataSerializerPropogationDUnitTest;
 
-/**
- *
- */
+/** */
 public class TestDataSerializer extends DataSerializer {
 
   static {
@@ -37,8 +33,7 @@ public class TestDataSerializer extends DataSerializer {
   private String name;
   private int age;
 
-  public TestDataSerializer() {
-  }
+  public TestDataSerializer() {}
 
   public TestDataSerializer(String str, int val) {
     this.name = str;
@@ -50,7 +45,9 @@ public class TestDataSerializer extends DataSerializer {
    */
   @Override
   public Class<?>[] getSupportedClasses() {
-    return new Class[] { TestSupportedClass1.class, TestSupportedClass2.class, TestSupportedClass3.class };
+    return new Class[] {
+      TestSupportedClass1.class, TestSupportedClass2.class, TestSupportedClass3.class
+    };
   }
 
   /* (non-Javadoc)
@@ -78,7 +75,6 @@ public class TestDataSerializer extends DataSerializer {
   public int getId() {
     return 91;
   }
-
 }
 
 class TestSupportedClass1 {

@@ -17,8 +17,7 @@
  * under the License.
  */
 /**
- * Classes for parsing lucene index elements a cache.xml file. See the lucene-1.0.xsd file for
- * the schema.
+ * Classes for parsing lucene index elements a cache.xml file. See the lucene-1.0.xsd file for the
+ * schema.
  */
-
 package org.apache.geode.cache.lucene.internal.xml;

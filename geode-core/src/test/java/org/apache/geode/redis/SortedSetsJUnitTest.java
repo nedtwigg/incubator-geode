@@ -67,13 +67,11 @@ public class SortedSetsJUnitTest {
     String key = randString();
     Map<String, Double> scoreMembers = new HashMap<String, Double>();
 
-    for (int i = 0; i < numMembers; i++)
-      scoreMembers.put(randString(), rand.nextDouble());
+    for (int i = 0; i < numMembers; i++) scoreMembers.put(randString(), rand.nextDouble());
 
     jedis.zadd(key, scoreMembers);
     int k = 0;
-    for (String entry : scoreMembers.keySet())
-      assertNotNull(jedis.zscore(key, entry));
+    for (String entry : scoreMembers.keySet()) assertNotNull(jedis.zscore(key, entry));
 
     Set<Tuple> results = jedis.zrangeWithScores(key, 0, -1);
     Map<String, Double> resultMap = new HashMap<String, Double>();
@@ -94,7 +92,8 @@ public class SortedSetsJUnitTest {
       List<Entry<String, Double>> resultList = new ArrayList<Entry<String, Double>>();
       for (Tuple t : results)
         resultList.add(new AbstractMap.SimpleEntry<String, Double>(t.getElement(), t.getScore()));
-      List<Entry<String, Double>> list = new ArrayList<Entry<String, Double>>(scoreMembers.entrySet());
+      List<Entry<String, Double>> list =
+          new ArrayList<Entry<String, Double>>(scoreMembers.entrySet());
       Collections.sort(list, new EntryCmp());
       list = list.subList(start, stop + 1);
       assertEquals(list, resultList);
@@ -108,8 +107,7 @@ public class SortedSetsJUnitTest {
 
     Map<String, Double> scoreMembers = new HashMap<String, Double>();
 
-    for (int i = 0; i < numMembers; i++)
-      scoreMembers.put(randString(), rand.nextDouble());
+    for (int i = 0; i < numMembers; i++) scoreMembers.put(randString(), rand.nextDouble());
 
     jedis.zadd(key, scoreMembers);
 
@@ -126,7 +124,8 @@ public class SortedSetsJUnitTest {
       List<Entry<String, Double>> resultList = new ArrayList<Entry<String, Double>>();
       for (Tuple t : results)
         resultList.add(new AbstractMap.SimpleEntry<String, Double>(t.getElement(), t.getScore()));
-      List<Entry<String, Double>> list = new ArrayList<Entry<String, Double>>(scoreMembers.entrySet());
+      List<Entry<String, Double>> list =
+          new ArrayList<Entry<String, Double>>(scoreMembers.entrySet());
       Collections.sort(list, new EntryRevCmp());
       list = list.subList(start, stop + 1);
       assertEquals(list, resultList);
@@ -152,8 +151,7 @@ public class SortedSetsJUnitTest {
 
       for (int j = 0; j < num; j++) {
         Double nextDouble = rand.nextDouble();
-        if (nextDouble >= min && nextDouble <= max)
-          count++;
+        if (nextDouble >= min && nextDouble <= max) count++;
         scoreMembers.put(randString(), nextDouble);
       }
 
@@ -161,7 +159,6 @@ public class SortedSetsJUnitTest {
       Long countResult = jedis.zcount(key, min, max);
       assertTrue(count == countResult);
     }
-
   }
 
   @Test
@@ -198,8 +195,7 @@ public class SortedSetsJUnitTest {
         String s = randString();
         Double d = rand.nextDouble();
         scoreMembers.put(s, d);
-        if (d > min && d < max)
-          expected.add(new AbstractMap.SimpleEntry<String, Double>(s, d));
+        if (d > min && d < max) expected.add(new AbstractMap.SimpleEntry<String, Double>(s, d));
       }
       jedis.zadd(key, scoreMembers);
       Set<Tuple> results = jedis.zrangeByScoreWithScores(key, min, max);
@@ -229,8 +225,7 @@ public class SortedSetsJUnitTest {
         String s = randString();
         Double d = rand.nextDouble();
         scoreMembers.put(s, d);
-        if (d > min && d < max)
-          expected.add(new AbstractMap.SimpleEntry<String, Double>(s, d));
+        if (d > min && d < max) expected.add(new AbstractMap.SimpleEntry<String, Double>(s, d));
       }
       jedis.zadd(key, scoreMembers);
       Set<Tuple> results = jedis.zrevrangeByScoreWithScores(key, max, min);
@@ -261,8 +256,7 @@ public class SortedSetsJUnitTest {
         String s = randString();
         Double d = rand.nextDouble();
         scoreMembers.put(s, d);
-        if (d > min && d < max)
-          expected.add(new AbstractMap.SimpleEntry<String, Double>(s, d));
+        if (d > min && d < max) expected.add(new AbstractMap.SimpleEntry<String, Double>(s, d));
       }
       jedis.zadd(key, scoreMembers);
       Collections.sort(expected, new EntryCmp());
@@ -275,8 +269,7 @@ public class SortedSetsJUnitTest {
         assertTrue(jedis.zrem(key, rem) == 1);
       }
       String s = randString();
-      if (!expected.contains(s))
-        assertTrue(jedis.zrem(key, s) == 0);
+      if (!expected.contains(s)) assertTrue(jedis.zrem(key, s) == 0);
       jedis.del(key);
     }
   }
@@ -303,8 +296,7 @@ public class SortedSetsJUnitTest {
         assertEquals(new Long(i), rank);
       }
       String field = randString();
-      if (!expected.contains(field))
-        assertNull(jedis.zrank(key, field));
+      if (!expected.contains(field)) assertNull(jedis.zrank(key, field));
       jedis.del(key);
     }
   }
@@ -331,8 +323,7 @@ public class SortedSetsJUnitTest {
         assertEquals(new Long(i), rank);
       }
       String field = randString();
-      if (!expected.contains(field))
-        assertNull(jedis.zrank(key, field));
+      if (!expected.contains(field)) assertNull(jedis.zrank(key, field));
       jedis.del(key);
     }
   }
@@ -342,12 +333,9 @@ public class SortedSetsJUnitTest {
     @Override
     public int compare(Entry<String, Double> o1, Entry<String, Double> o2) {
       Double diff = o1.getValue() - o2.getValue();
-      if (diff == 0)
-        return o2.getKey().compareTo(o1.getKey());
-      else
-        return diff > 0 ? 1 : -1;
+      if (diff == 0) return o2.getKey().compareTo(o1.getKey());
+      else return diff > 0 ? 1 : -1;
     }
-
   }
 
   private class EntryRevCmp implements Comparator<Entry<String, Double>> {
@@ -355,12 +343,9 @@ public class SortedSetsJUnitTest {
     @Override
     public int compare(Entry<String, Double> o1, Entry<String, Double> o2) {
       Double diff = o2.getValue() - o1.getValue();
-      if (diff == 0)
-        return o1.getKey().compareTo(o2.getKey());
-      else
-        return diff > 0 ? 1 : -1;
+      if (diff == 0) return o1.getKey().compareTo(o2.getKey());
+      else return diff > 0 ? 1 : -1;
     }
-
   }
 
   @Test
@@ -382,8 +367,7 @@ public class SortedSetsJUnitTest {
         Double d = rand.nextDouble();
         scoreMembers.put(s, d);
         fullList.add(new AbstractMap.SimpleEntry<String, Double>(s, d));
-        if (d > min && d < max)
-          toRemoveList.add(new AbstractMap.SimpleEntry<String, Double>(s, d));
+        if (d > min && d < max) toRemoveList.add(new AbstractMap.SimpleEntry<String, Double>(s, d));
       }
       jedis.zadd(key, scoreMembers);
       Long numRemoved = jedis.zremrangeByScore(key, min, max);

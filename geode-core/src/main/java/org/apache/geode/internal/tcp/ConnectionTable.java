@@ -58,12 +58,12 @@ import org.apache.geode.internal.logging.LoggingThreadGroup;
 import org.apache.geode.internal.logging.log4j.AlertAppender;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
-/** <p>ConnectionTable holds all of the Connection objects in a conduit.
-    Connections represent a pipe between two endpoints represented
-    by generic DistributedMembers.</p>
-
-    @since GemFire 2.1
-*/
+/**
+ * ConnectionTable holds all of the Connection objects in a conduit. Connections represent a pipe
+ * between two endpoints represented by generic DistributedMembers.
+ *
+ * @since GemFire 2.1
+ */
 /*
     Note: We no longer use InputMultiplexer
     If InputMux is reinstated then the manager needs to be
@@ -79,114 +79,98 @@ public class ConnectionTable {
   /** warning when descriptor limit reached */
   private static boolean ulimitWarningIssued;
 
-  /**
-   * true if the current thread wants non-shared resources
-   */
+  /** true if the current thread wants non-shared resources */
   private static ThreadLocal threadWantsOwnResources = new ThreadLocal();
   /**
-   * Used for messages whose order must be preserved
-   * Only connections used for sending messages,
-   * and receiving acks, will be put in this map.
+   * Used for messages whose order must be preserved Only connections used for sending messages, and
+   * receiving acks, will be put in this map.
    */
   protected final Map orderedConnectionMap = new ConcurrentHashMap();
 
   /**
-   * ordered connections local to this thread.  Note that accesses to
-   * the resulting map must be synchronized because of static cleanup.
+   * ordered connections local to this thread. Note that accesses to the resulting map must be
+   * synchronized because of static cleanup.
    */
   // ThreadLocal<Map>
   private final ThreadLocal threadOrderedConnMap;
 
   /**
    * List of thread-owned ordered connection maps, for cleanup
-   * 
-   * Accesses to the maps in this list need to be synchronized on their instance.
+   *
+   * <p>Accesses to the maps in this list need to be synchronized on their instance.
    */
   private final List threadConnMaps;
 
   /**
    * Timer to kill idle threads
-   * 
-   * guarded.By this
+   *
+   * <p>guarded.By this
    */
   private SystemTimer idleConnTimer;
 
   /**
-   * Used to find connections owned by threads.
-   * The key is the same one used in threadOrderedConnMap.
-   * The value is an ArrayList since we can have any number of connections
+   * Used to find connections owned by threads. The key is the same one used in
+   * threadOrderedConnMap. The value is an ArrayList since we can have any number of connections
    * with the same key.
    */
   private ConcurrentMap threadConnectionMap;
 
   /**
-   * Used for all non-ordered messages.
-   * Only connections used for sending messages,
-   * and receiving acks, will be put in this map.
+   * Used for all non-ordered messages. Only connections used for sending messages, and receiving
+   * acks, will be put in this map.
    */
   protected final Map unorderedConnectionMap = new ConcurrentHashMap();
   /**
-   * Used for all accepted connections. These connections are read only;
-   * we never send messages, except for acks; only receive.
-   * 
-   * Consists of a list of Connection
+   * Used for all accepted connections. These connections are read only; we never send messages,
+   * except for acks; only receive.
+   *
+   * <p>Consists of a list of Connection
    */
   private final List receivers = new ArrayList();
 
-  /**
-   * the conduit for this table
-   */
+  /** the conduit for this table */
   protected final TCPConduit owner;
   // ARB: temp making this protected to provide access to Connection.
   //private final TCPConduit owner;
 
-  /**
-   * true if this table is no longer in use
-   */
+  /** true if this table is no longer in use */
   private volatile boolean closed = false;
 
-  /**
-   * Executor used by p2p reader and p2p handshaker threads.
-   */
+  /** Executor used by p2p reader and p2p handshaker threads. */
   private final Executor p2pReaderThreadPool;
-  /** Number of seconds to wait before timing out an unused p2p reader thread. Default is 120 (2 minutes). */
-  private final static long READER_POOL_KEEP_ALIVE_TIME = Long.getLong("p2p.READER_POOL_KEEP_ALIVE_TIME", 120).longValue();
+  /**
+   * Number of seconds to wait before timing out an unused p2p reader thread. Default is 120 (2
+   * minutes).
+   */
+  private static final long READER_POOL_KEEP_ALIVE_TIME =
+      Long.getLong("p2p.READER_POOL_KEEP_ALIVE_TIME", 120).longValue();
 
   private final SocketCloser socketCloser;
 
   /**
    * The most recent instance to be created
-   * 
-   * TODO this assumes no more than one instance is created at a time?
+   *
+   * <p>TODO this assumes no more than one instance is created at a time?
    */
   private static final AtomicReference lastInstance = new AtomicReference();
 
-  /**
-   * A set of sockets that are in the process of being connected
-   */
+  /** A set of sockets that are in the process of being connected */
   private Map connectingSockets = new HashMap();
 
-  /**
-   * Cause calling thread to share communication
-   * resources with other threads.
-   */
+  /** Cause calling thread to share communication resources with other threads. */
   public static void threadWantsSharedResources() {
     threadWantsOwnResources.set(Boolean.FALSE);
   }
 
   /**
-   * Cause calling thread to acquire exclusive access to
-   * communication resources.
-   * Exclusive access may not be available in which
-   * case this call is ignored.
+   * Cause calling thread to acquire exclusive access to communication resources. Exclusive access
+   * may not be available in which case this call is ignored.
    */
   public static void threadWantsOwnResources() {
     threadWantsOwnResources.set(Boolean.TRUE);
   }
 
-  /**
-   * Returns true if calling thread owns its own communication resources.
-   */
+  /** Returns true if calling thread owns its own communication resources. */
   boolean threadOwnsResources() {
     DM d = getDM();
     if (d != null) {
@@ -222,7 +206,10 @@ public class ConnectionTable {
 
   private ConnectionTable(TCPConduit c) throws IOException {
     this.owner = c;
-    this.idleConnTimer = (this.owner.idleConnectionTimeout != 0) ? new SystemTimer(c.getDM().getSystem(), true) : null;
+    this.idleConnTimer =
+        (this.owner.idleConnectionTimeout != 0)
+            ? new SystemTimer(c.getDM().getSystem(), true)
+            : null;
     this.threadOrderedConnMap = new ThreadLocal();
     this.threadConnMaps = new ArrayList();
     this.threadConnectionMap = new ConcurrentHashMap();
@@ -236,26 +223,36 @@ public class ConnectionTable {
 
   private Executor createThreadPoolForIO(boolean conserveSockets) {
     Executor executor = null;
-    final ThreadGroup connectionRWGroup = LoggingThreadGroup.createThreadGroup("P2P Reader Threads", logger);
+    final ThreadGroup connectionRWGroup =
+        LoggingThreadGroup.createThreadGroup("P2P Reader Threads", logger);
     if (conserveSockets) {
-      executor = new Executor() {
-        @Override
-        public void execute(Runnable command) {
-          Thread th = new Thread(connectionRWGroup, command);
-          th.setDaemon(true);
-          th.start();
-        }
-      };
+      executor =
+          new Executor() {
+            @Override
+            public void execute(Runnable command) {
+              Thread th = new Thread(connectionRWGroup, command);
+              th.setDaemon(true);
+              th.start();
+            }
+          };
     } else {
       BlockingQueue synchronousQueue = new SynchronousQueue();
-      ThreadFactory tf = new ThreadFactory() {
-        public Thread newThread(final Runnable command) {
-          Thread thread = new Thread(connectionRWGroup, command);
-          thread.setDaemon(true);
-          return thread;
-        }
-      };
-      executor = new ThreadPoolExecutor(1, Integer.MAX_VALUE, READER_POOL_KEEP_ALIVE_TIME, TimeUnit.SECONDS, synchronousQueue, tf);
+      ThreadFactory tf =
+          new ThreadFactory() {
+            public Thread newThread(final Runnable command) {
+              Thread thread = new Thread(connectionRWGroup, command);
+              thread.setDaemon(true);
+              return thread;
+            }
+          };
+      executor =
+          new ThreadPoolExecutor(
+              1,
+              Integer.MAX_VALUE,
+              READER_POOL_KEEP_ALIVE_TIME,
+              TimeUnit.SECONDS,
+              synchronousQueue,
+              tf);
     }
     return executor;
   }
@@ -283,12 +280,18 @@ public class ConnectionTable {
     } catch (IOException ex) {
       // check for shutdown...
       this.owner.getCancelCriterion().checkCancelInProgress(ex);
-      logger.warn(LocalizedMessage.create(LocalizedStrings.ConnectionTable_FAILED_TO_ACCEPT_CONNECTION_FROM_0_BECAUSE_1, new Object[] { (connAddress != null ? connAddress : "unavailable address"), ex }));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.ConnectionTable_FAILED_TO_ACCEPT_CONNECTION_FROM_0_BECAUSE_1,
+              new Object[] {(connAddress != null ? connAddress : "unavailable address"), ex}));
       throw ex;
     } catch (ConnectionException ex) {
       // check for shutdown...
       this.owner.getCancelCriterion().checkCancelInProgress(ex);
-      logger.warn(LocalizedMessage.create(LocalizedStrings.ConnectionTable_FAILED_TO_ACCEPT_CONNECTION_FROM_0_BECAUSE_1, new Object[] { (connAddress != null ? connAddress : "unavailable address"), ex }));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.ConnectionTable_FAILED_TO_ACCEPT_CONNECTION_FROM_0_BECAUSE_1,
+              new Object[] {(connAddress != null ? connAddress : "unavailable address"), ex}));
       throw ex;
     } finally {
       // note: no need to call incFailedAccept here because it will be done
@@ -307,13 +310,20 @@ public class ConnectionTable {
       synchronized (this.receivers) {
         this.owner.stats.incReceivers();
         if (this.closed) {
-          closeCon(LocalizedStrings.ConnectionTable_CONNECTION_TABLE_NO_LONGER_IN_USE.toLocalizedString(), conn);
+          closeCon(
+              LocalizedStrings.ConnectionTable_CONNECTION_TABLE_NO_LONGER_IN_USE
+                  .toLocalizedString(),
+              conn);
           return;
         }
         this.receivers.add(conn);
       }
       if (logger.isDebugEnabled()) {
-        logger.debug("Accepted {} myAddr={} theirAddr={}", conn, getConduit().getLocalAddress(), conn.remoteAddr);
+        logger.debug(
+            "Accepted {} myAddr={} theirAddr={}",
+            conn,
+            getConduit().getLocalAddress(),
+            conn.remoteAddr);
       }
     }
     // cleanupHighWater();
@@ -333,7 +343,7 @@ public class ConnectionTable {
 
   /**
    * Process a newly created PendingConnection
-   * 
+   *
    * @param id DistributedMember on which the connection is created
    * @param sharedResource whether the connection is used by multiple threads
    * @param preserveOrder whether to preserve order
@@ -346,11 +356,29 @@ public class ConnectionTable {
    * @throws IOException if unable to connect
    * @throws DistributedSystemDisconnectedException
    */
-  private Connection handleNewPendingConnection(DistributedMember id, boolean sharedResource, boolean preserveOrder, Map m, PendingConnection pc, long startTime, long ackThreshold, long ackSAThreshold) throws IOException, DistributedSystemDisconnectedException {
+  private Connection handleNewPendingConnection(
+      DistributedMember id,
+      boolean sharedResource,
+      boolean preserveOrder,
+      Map m,
+      PendingConnection pc,
+      long startTime,
+      long ackThreshold,
+      long ackSAThreshold)
+      throws IOException, DistributedSystemDisconnectedException {
     // handle new pending connection
     Connection con = null;
     try {
-      con = Connection.createSender(owner.getMembershipManager(), this, preserveOrder, id, sharedResource, startTime, ackThreshold, ackSAThreshold);
+      con =
+          Connection.createSender(
+              owner.getMembershipManager(),
+              this,
+              preserveOrder,
+              id,
+              sharedResource,
+              startTime,
+              ackThreshold,
+              ackSAThreshold);
       this.owner.stats.incSenders(sharedResource, preserveOrder);
     } finally {
       // our connection failed to notify anyone waiting for our pending con
@@ -380,7 +408,8 @@ public class ConnectionTable {
       } else if (e == null) {
         // someone closed our pending connection
         // so cleanup the connection we created
-        con.requestClose(LocalizedStrings.ConnectionTable_PENDING_CONNECTION_CANCELLED.toLocalizedString());
+        con.requestClose(
+            LocalizedStrings.ConnectionTable_PENDING_CONNECTION_CANCELLED.toLocalizedString());
         con = null;
       } else {
         if (e instanceof Connection) {
@@ -390,7 +419,8 @@ public class ConnectionTable {
             // someone closed our pending connect
             // so cleanup the connection we created
             if (con != null) {
-              con.requestClose(LocalizedStrings.ConnectionTable_PENDING_CONNECTION_CLOSED.toLocalizedString());
+              con.requestClose(
+                  LocalizedStrings.ConnectionTable_PENDING_CONNECTION_CLOSED.toLocalizedString());
               con = null;
             }
           } else {
@@ -401,7 +431,9 @@ public class ConnectionTable {
             // The above assertion was commented out to try the
             // following with bug 32680
             if (con != null) {
-              con.requestClose(LocalizedStrings.ConnectionTable_SOMEONE_ELSE_CREATED_THE_CONNECTION.toLocalizedString());
+              con.requestClose(
+                  LocalizedStrings.ConnectionTable_SOMEONE_ELSE_CREATED_THE_CONNECTION
+                      .toLocalizedString());
             }
             con = newCon;
           }
@@ -410,16 +442,19 @@ public class ConnectionTable {
     }
     pc.notifyWaiters(con);
     if (con != null && logger.isDebugEnabled()) {
-      logger.debug("handleNewPendingConnection {} myAddr={} theirAddr={}", con, getConduit().getLocalAddress(), con.remoteAddr);
+      logger.debug(
+          "handleNewPendingConnection {} myAddr={} theirAddr={}",
+          con,
+          getConduit().getLocalAddress(),
+          con.remoteAddr);
     }
 
     return con;
   }
 
   /**
-   * unordered or conserve-sockets
-   * note that unordered connections are currently always shared
-   * 
+   * unordered or conserve-sockets note that unordered connections are currently always shared
+   *
    * @param id the DistributedMember on which we are creating a connection
    * @param threadOwnsResources whether unordered conn is owned by the current thread
    * @param preserveOrder whether to preserve order
@@ -430,7 +465,14 @@ public class ConnectionTable {
    * @throws IOException if unable to create the connection
    * @throws DistributedSystemDisconnectedException
    */
-  private Connection getUnorderedOrConserveSockets(DistributedMember id, boolean threadOwnsResources, boolean preserveOrder, long startTime, long ackTimeout, long ackSATimeout) throws IOException, DistributedSystemDisconnectedException {
+  private Connection getUnorderedOrConserveSockets(
+      DistributedMember id,
+      boolean threadOwnsResources,
+      boolean preserveOrder,
+      long startTime,
+      long ackTimeout,
+      long ackSATimeout)
+      throws IOException, DistributedSystemDisconnectedException {
     Connection result = null;
 
     final Map m = preserveOrder ? this.orderedConnectionMap : this.unorderedConnectionMap;
@@ -454,7 +496,16 @@ public class ConnectionTable {
     } // synchronized
 
     if (pc != null) {
-      result = handleNewPendingConnection(id, true /* fixes bug 43386 */, preserveOrder, m, pc, startTime, ackTimeout, ackSATimeout);
+      result =
+          handleNewPendingConnection(
+              id,
+              true /* fixes bug 43386 */,
+              preserveOrder,
+              m,
+              pc,
+              startTime,
+              ackTimeout,
+              ackSATimeout);
       if (!preserveOrder && threadOwnsResources) {
         scheduleIdleTimeout(result);
       }
@@ -466,10 +517,17 @@ public class ConnectionTable {
           throw new IOException("Cannot form connection to alert listener " + id);
         }
 
-        result = ((PendingConnection) mEntry).waitForConnect(this.owner.getMembershipManager(), startTime, ackTimeout, ackSATimeout);
+        result =
+            ((PendingConnection) mEntry)
+                .waitForConnect(
+                    this.owner.getMembershipManager(), startTime, ackTimeout, ackSATimeout);
         if (logger.isDebugEnabled()) {
           if (result != null) {
-            logger.debug("getUnorderedOrConserveSockets {} myAddr={} theirAddr={}", result, getConduit().getLocalAddress(), result.remoteAddr);
+            logger.debug(
+                "getUnorderedOrConserveSockets {} myAddr={} theirAddr={}",
+                result,
+                getConduit().getLocalAddress(),
+                result.remoteAddr);
           } else {
             logger.debug("getUnorderedOrConserveSockets: Connect failed");
           }
@@ -484,7 +542,7 @@ public class ConnectionTable {
 
   /**
    * Must be looking for an ordered connection that this thread owns
-   * 
+   *
    * @param id stub on which to create the connection
    * @param startTime the ms clock start time for the operation
    * @param ackTimeout the ms ack-wait-threshold, or zero
@@ -493,7 +551,9 @@ public class ConnectionTable {
    * @throws IOException if the connection could not be created
    * @throws DistributedSystemDisconnectedException
    */
-  Connection getOrderedAndOwned(DistributedMember id, long startTime, long ackTimeout, long ackSATimeout) throws IOException, DistributedSystemDisconnectedException {
+  Connection getOrderedAndOwned(
+      DistributedMember id, long startTime, long ackTimeout, long ackSATimeout)
+      throws IOException, DistributedSystemDisconnectedException {
     Connection result = null;
 
     // Look for result in the thread local
@@ -504,10 +564,11 @@ public class ConnectionTable {
       synchronized (this.threadConnMaps) {
         if (this.closed) {
           owner.getCancelCriterion().checkCancelInProgress(null);
-          throw new DistributedSystemDisconnectedException(LocalizedStrings.ConnectionTable_CONNECTION_TABLE_IS_CLOSED.toLocalizedString());
+          throw new DistributedSystemDisconnectedException(
+              LocalizedStrings.ConnectionTable_CONNECTION_TABLE_IS_CLOSED.toLocalizedString());
         }
         // check for stale references and remove them.
-        for (Iterator it = this.threadConnMaps.iterator(); it.hasNext();) {
+        for (Iterator it = this.threadConnMaps.iterator(); it.hasNext(); ) {
           Reference r = (Reference) it.next();
           if (r.get() == null) {
             it.remove();
@@ -525,21 +586,31 @@ public class ConnectionTable {
         result = null;
       }
     }
-    if (result != null)
-      return result;
+    if (result != null) return result;
 
     // OK, we have to create a new connection.
-    result = Connection.createSender(owner.getMembershipManager(), this, true /* preserveOrder */, id, false /* shared */, startTime, ackTimeout, ackSATimeout);
+    result =
+        Connection.createSender(
+            owner.getMembershipManager(),
+            this,
+            true /* preserveOrder */,
+            id,
+            false /* shared */,
+            startTime,
+            ackTimeout,
+            ackSATimeout);
     if (logger.isDebugEnabled()) {
       logger.debug("ConnectionTable: created an ordered connection: {}", result);
     }
-    this.owner.stats.incSenders(false/*shared*/, true /* preserveOrder */);
+    this.owner.stats.incSenders(false /*shared*/, true /* preserveOrder */);
 
     // Update the list of connections owned by this thread....
 
     if (this.threadConnectionMap == null) {
       // This instance is being destroyed; fail the operation
-      closeCon(LocalizedStrings.ConnectionTable_CONNECTION_TABLE_BEING_DESTROYED.toLocalizedString(), result);
+      closeCon(
+          LocalizedStrings.ConnectionTable_CONNECTION_TABLE_BEING_DESTROYED.toLocalizedString(),
+          result);
       return null;
     }
 
@@ -584,7 +655,9 @@ public class ConnectionTable {
           if (!this.closed) {
             IdleConnTT task = new IdleConnTT(conn);
             conn.setIdleTimeoutTask(task);
-            this.getIdleConnTimer().scheduleAtFixedRate(task, this.owner.idleConnectionTimeout, this.owner.idleConnectionTimeout);
+            this.getIdleConnTimer()
+                .scheduleAtFixedRate(
+                    task, this.owner.idleConnectionTimeout, this.owner.idleConnectionTimeout);
           }
         }
       } catch (IllegalStateException e) {
@@ -602,13 +675,17 @@ public class ConnectionTable {
         if (cause == null) {
           cause = e;
         }
-        throw new DistributedSystemDisconnectedException(LocalizedStrings.ConnectionTable_THE_DISTRIBUTED_SYSTEM_IS_SHUTTING_DOWN.toLocalizedString(), cause);
+        throw new DistributedSystemDisconnectedException(
+            LocalizedStrings.ConnectionTable_THE_DISTRIBUTED_SYSTEM_IS_SHUTTING_DOWN
+                .toLocalizedString(),
+            cause);
       }
     }
   }
 
   /**
    * Get a new connection
+   *
    * @param id the DistributedMember on which to create the connection
    * @param preserveOrder whether order should be preserved
    * @param startTime the ms clock start time
@@ -618,15 +695,24 @@ public class ConnectionTable {
    * @throws java.io.IOException if the connection could not be created
    * @throws DistributedSystemDisconnectedException
    */
-  protected Connection get(DistributedMember id, boolean preserveOrder, long startTime, long ackTimeout, long ackSATimeout) throws java.io.IOException, DistributedSystemDisconnectedException {
+  protected Connection get(
+      DistributedMember id,
+      boolean preserveOrder,
+      long startTime,
+      long ackTimeout,
+      long ackSATimeout)
+      throws java.io.IOException, DistributedSystemDisconnectedException {
     if (this.closed) {
       this.owner.getCancelCriterion().checkCancelInProgress(null);
-      throw new DistributedSystemDisconnectedException(LocalizedStrings.ConnectionTable_CONNECTION_TABLE_IS_CLOSED.toLocalizedString());
+      throw new DistributedSystemDisconnectedException(
+          LocalizedStrings.ConnectionTable_CONNECTION_TABLE_IS_CLOSED.toLocalizedString());
     }
     Connection result = null;
     boolean threadOwnsResources = threadOwnsResources();
     if (!preserveOrder || !threadOwnsResources) {
-      result = getUnorderedOrConserveSockets(id, threadOwnsResources, preserveOrder, startTime, ackTimeout, ackSATimeout);
+      result =
+          getUnorderedOrConserveSockets(
+              id, threadOwnsResources, preserveOrder, startTime, ackTimeout, ackSATimeout);
     } else {
       result = getOrderedAndOwned(id, startTime, ackTimeout, ackSATimeout);
     }
@@ -639,7 +725,9 @@ public class ConnectionTable {
   protected synchronized void fileDescriptorsExhausted() {
     if (!ulimitWarningIssued) {
       ulimitWarningIssued = true;
-      logger.fatal(LocalizedMessage.create(LocalizedStrings.ConnectionTable_OUT_OF_FILE_DESCRIPTORS_USING_SHARED_CONNECTION));
+      logger.fatal(
+          LocalizedMessage.create(
+              LocalizedStrings.ConnectionTable_OUT_OF_FILE_DESCRIPTORS_USING_SHARED_CONNECTION));
       InternalDistributedSystem.getAnyInstance().setShareSockets(true);
       threadWantsOwnResources = new ThreadLocal();
     }
@@ -669,8 +757,8 @@ public class ConnectionTable {
   }
 
   /**
-   * returns the idle connection timer, or null if the connection table is closed.
-   * guarded by a sync on the connection table
+   * returns the idle connection timer, or null if the connection table is closed. guarded by a sync
+   * on the connection table
    */
   protected synchronized SystemTimer getIdleConnTimer() {
     if (this.closed) {
@@ -696,14 +784,18 @@ public class ConnectionTable {
       }
     }
     synchronized (this.orderedConnectionMap) {
-      for (Iterator it = this.orderedConnectionMap.values().iterator(); it.hasNext();) {
-        closeCon(LocalizedStrings.ConnectionTable_CONNECTION_TABLE_BEING_DESTROYED.toLocalizedString(), it.next());
+      for (Iterator it = this.orderedConnectionMap.values().iterator(); it.hasNext(); ) {
+        closeCon(
+            LocalizedStrings.ConnectionTable_CONNECTION_TABLE_BEING_DESTROYED.toLocalizedString(),
+            it.next());
       }
       this.orderedConnectionMap.clear();
     }
     synchronized (this.unorderedConnectionMap) {
-      for (Iterator it = this.unorderedConnectionMap.values().iterator(); it.hasNext();) {
-        closeCon(LocalizedStrings.ConnectionTable_CONNECTION_TABLE_BEING_DESTROYED.toLocalizedString(), it.next());
+      for (Iterator it = this.unorderedConnectionMap.values().iterator(); it.hasNext(); ) {
+        closeCon(
+            LocalizedStrings.ConnectionTable_CONNECTION_TABLE_BEING_DESTROYED.toLocalizedString(),
+            it.next());
       }
       this.unorderedConnectionMap.clear();
     }
@@ -712,13 +804,16 @@ public class ConnectionTable {
     }
     if (this.threadConnMaps != null) {
       synchronized (this.threadConnMaps) {
-        for (Iterator it = this.threadConnMaps.iterator(); it.hasNext();) {
+        for (Iterator it = this.threadConnMaps.iterator(); it.hasNext(); ) {
           Reference r = (Reference) it.next();
           Map m = (Map) r.get();
           if (m != null) {
             synchronized (m) {
-              for (Iterator mit = m.values().iterator(); mit.hasNext();) {
-                closeCon(LocalizedStrings.ConnectionTable_CONNECTION_TABLE_BEING_DESTROYED.toLocalizedString(), mit.next());
+              for (Iterator mit = m.values().iterator(); mit.hasNext(); ) {
+                closeCon(
+                    LocalizedStrings.ConnectionTable_CONNECTION_TABLE_BEING_DESTROYED
+                        .toLocalizedString(),
+                    mit.next());
               }
             }
           }
@@ -753,22 +848,26 @@ public class ConnectionTable {
   }
 
   /**
-   * Close all receiving threads.  This is used during shutdown and is also
-   * used by a test hook that makes us deaf to incoming messages.
+   * Close all receiving threads. This is used during shutdown and is also used by a test hook that
+   * makes us deaf to incoming messages.
+   *
    * @param beingSick a test hook to simulate a sick process
    */
   protected void closeReceivers(boolean beingSick) {
     synchronized (this.receivers) {
-      for (Iterator it = this.receivers.iterator(); it.hasNext();) {
+      for (Iterator it = this.receivers.iterator(); it.hasNext(); ) {
         Connection con = (Connection) it.next();
         if (!beingSick || con.preserveOrder) {
-          closeCon(LocalizedStrings.ConnectionTable_CONNECTION_TABLE_BEING_DESTROYED.toLocalizedString(), con, beingSick);
+          closeCon(
+              LocalizedStrings.ConnectionTable_CONNECTION_TABLE_BEING_DESTROYED.toLocalizedString(),
+              con,
+              beingSick);
           it.remove();
         }
       }
       // now close any sockets being formed
       synchronized (connectingSockets) {
-        for (Iterator it = connectingSockets.entrySet().iterator(); it.hasNext();) {
+        for (Iterator it = connectingSockets.entrySet().iterator(); it.hasNext(); ) {
           Map.Entry entry = (Map.Entry) it.next();
           //          ConnectingSocketInfo info = (ConnectingSocketInfo)entry.getValue();
           try {
@@ -788,9 +887,7 @@ public class ConnectionTable {
     }
   }
 
-  /**
-   * Return true if our owner already knows that this endpoint is departing 
-   */
+  /** Return true if our owner already knows that this endpoint is departing */
   protected boolean isEndpointShuttingDown(DistributedMember id) {
     return giveUpOnMember(owner.getDM().getMembershipManager(), id);
   }
@@ -804,19 +901,18 @@ public class ConnectionTable {
     removeEndpoint(stub, reason, true);
   }
 
-  protected void removeEndpoint(DistributedMember memberID, String reason, boolean notifyDisconnect) {
+  protected void removeEndpoint(
+      DistributedMember memberID, String reason, boolean notifyDisconnect) {
     if (this.closed) {
       return;
     }
     boolean needsRemoval = false;
     synchronized (this.orderedConnectionMap) {
-      if (this.orderedConnectionMap.get(memberID) != null)
-        needsRemoval = true;
+      if (this.orderedConnectionMap.get(memberID) != null) needsRemoval = true;
     }
     if (!needsRemoval) {
       synchronized (this.unorderedConnectionMap) {
-        if (this.unorderedConnectionMap.get(memberID) != null)
-          needsRemoval = true;
+        if (this.unorderedConnectionMap.get(memberID) != null) needsRemoval = true;
       }
     }
     if (!needsRemoval) {
@@ -850,7 +946,7 @@ public class ConnectionTable {
           ArrayList al = (ArrayList) cm.remove(memberID);
           if (al != null) {
             synchronized (al) {
-              for (Iterator it = al.iterator(); it.hasNext();) {
+              for (Iterator it = al.iterator(); it.hasNext(); ) {
                 Object c = it.next();
                 if (remoteAddress == null && (c instanceof Connection)) {
                   remoteAddress = ((Connection) c).getRemoteAddress();
@@ -866,7 +962,7 @@ public class ConnectionTable {
       // close any sockets that are in the process of being connected
       Set toRemove = new HashSet();
       synchronized (connectingSockets) {
-        for (Iterator it = connectingSockets.entrySet().iterator(); it.hasNext();) {
+        for (Iterator it = connectingSockets.entrySet().iterator(); it.hasNext(); ) {
           Map.Entry entry = (Map.Entry) it.next();
           ConnectingSocketInfo info = (ConnectingSocketInfo) entry.getValue();
           if (info.peerAddress.equals(((InternalDistributedMember) memberID).getInetAddress())) {
@@ -875,13 +971,14 @@ public class ConnectionTable {
           }
         }
       }
-      for (Iterator it = toRemove.iterator(); it.hasNext();) {
+      for (Iterator it = toRemove.iterator(); it.hasNext(); ) {
         Socket sock = (Socket) it.next();
         try {
           sock.close();
         } catch (IOException e) {
           if (logger.isDebugEnabled()) {
-            logger.debug("caught exception while trying to close connecting socket for {}", memberID, e);
+            logger.debug(
+                "caught exception while trying to close connecting socket for {}", memberID, e);
           }
         }
       }
@@ -891,7 +988,7 @@ public class ConnectionTable {
       // of the receivers sync (bug 38731)
       toRemove.clear();
       synchronized (this.receivers) {
-        for (Iterator it = receivers.iterator(); it.hasNext();) {
+        for (Iterator it = receivers.iterator(); it.hasNext(); ) {
           Connection con = (Connection) it.next();
           if (memberID.equals(con.getRemoteAddress())) {
             it.remove();
@@ -899,7 +996,7 @@ public class ConnectionTable {
           }
         }
       }
-      for (Iterator it = toRemove.iterator(); it.hasNext();) {
+      for (Iterator it = toRemove.iterator(); it.hasNext(); ) {
         Connection con = (Connection) it.next();
         closeCon(reason, con);
       }
@@ -908,7 +1005,8 @@ public class ConnectionTable {
         // to call MembershipManager.getMemberForStub, which checked
         // for a shutdown in progress and threw this exception:
         if (owner.getDM().shutdownInProgress()) {
-          throw new DistributedSystemDisconnectedException("Shutdown in progress", owner.getDM().getMembershipManager().getShutdownCause());
+          throw new DistributedSystemDisconnectedException(
+              "Shutdown in progress", owner.getDM().getMembershipManager().getShutdownCause());
         }
       }
 
@@ -925,7 +1023,7 @@ public class ConnectionTable {
   /** check to see if there are still any receiver threads for the given end-point */
   protected boolean hasReceiversFor(DistributedMember endPoint) {
     synchronized (this.receivers) {
-      for (Iterator it = receivers.iterator(); it.hasNext();) {
+      for (Iterator it = receivers.iterator(); it.hasNext(); ) {
         Connection con = (Connection) it.next();
         if (endPoint.equals(con.getRemoteAddress())) {
           return true;
@@ -935,7 +1033,8 @@ public class ConnectionTable {
     return false;
   }
 
-  private static void removeFromThreadConMap(ConcurrentMap cm, DistributedMember stub, Connection c) {
+  private static void removeFromThreadConMap(
+      ConcurrentMap cm, DistributedMember stub, Connection c) {
     if (cm != null) {
       ArrayList al = (ArrayList) cm.get(stub);
       if (al != null) {
@@ -962,7 +1061,8 @@ public class ConnectionTable {
     } // m != null
   }
 
-  void removeSharedConnection(String reason, DistributedMember stub, boolean ordered, Connection c) {
+  void removeSharedConnection(
+      String reason, DistributedMember stub, boolean ordered, Connection c) {
     if (this.closed) {
       return;
     }
@@ -983,7 +1083,7 @@ public class ConnectionTable {
 
   /**
    * Just ensure that this class gets loaded.
-   * 
+   *
    * @see SystemFailure#loadEmergencyClasses()
    */
   public static void loadEmergencyClasses() {
@@ -991,9 +1091,9 @@ public class ConnectionTable {
   }
 
   /**
-   * Clears lastInstance.  Does not yet close underlying sockets, but
-   * probably not strictly necessary.
-   * 
+   * Clears lastInstance. Does not yet close underlying sockets, but probably not strictly
+   * necessary.
+   *
    * @see SystemFailure#emergencyClose()
    */
   public static void emergencyClose() {
@@ -1028,13 +1128,13 @@ public class ConnectionTable {
       return;
     }
     ct.removeAndCloseThreadOwnedSockets();
-    //    lastInstance = null; 
+    //    lastInstance = null;
   }
 
   /**
-   * records the current outgoing message count on all thread-owned
-   * ordered connections.  This does not synchronize or stop new connections
-   * from being formed or new messages from being sent
+   * records the current outgoing message count on all thread-owned ordered connections. This does
+   * not synchronize or stop new connections from being formed or new messages from being sent
+   *
    * @since GemFire 5.1
    */
   protected void getThreadOwnedOrderedConnectionState(DistributedMember member, Map result) {
@@ -1047,7 +1147,7 @@ public class ConnectionTable {
           al = new ArrayList(al);
         }
 
-        for (Iterator it = al.iterator(); it.hasNext();) {
+        for (Iterator it = al.iterator(); it.hasNext(); ) {
           Connection conn = (Connection) it.next();
           if (!conn.isSharedResource() && conn.getOriginatedHere() && conn.getPreserveOrder()) {
             result.put(Long.valueOf(conn.getUniqueId()), Long.valueOf(conn.getMessagesSent()));
@@ -1058,25 +1158,34 @@ public class ConnectionTable {
   }
 
   /**
-   * wait for the given incoming connections to receive at least the associated
-   * number of messages
+   * wait for the given incoming connections to receive at least the associated number of messages
    */
-  protected void waitForThreadOwnedOrderedConnectionState(DistributedMember member, Map connectionStates) throws InterruptedException {
+  protected void waitForThreadOwnedOrderedConnectionState(
+      DistributedMember member, Map connectionStates) throws InterruptedException {
     if (Thread.interrupted())
       throw new InterruptedException(); // wisest to do this before the synchronize below
     List r = null;
     synchronized (receivers) {
       r = new ArrayList(receivers);
     }
-    for (Iterator it = r.iterator(); it.hasNext();) {
+    for (Iterator it = r.iterator(); it.hasNext(); ) {
       Connection con = (Connection) it.next();
-      if (!con.stopped && !con.isClosing() && !con.getOriginatedHere() && con.getPreserveOrder() && member.equals(con.getRemoteAddress())) {
+      if (!con.stopped
+          && !con.isClosing()
+          && !con.getOriginatedHere()
+          && con.getPreserveOrder()
+          && member.equals(con.getRemoteAddress())) {
         Long state = (Long) connectionStates.remove(Long.valueOf(con.getUniqueId()));
         if (state != null) {
           long count = state.longValue();
           while (!con.stopped && !con.isClosing() && con.getMessagesReceived() < count) {
             if (logger.isDebugEnabled()) {
-              logger.debug("Waiting for connection {}/{} currently={} need={}", con.getRemoteAddress(), con.getUniqueId(), con.getMessagesReceived(), count);
+              logger.debug(
+                  "Waiting for connection {}/{} currently={} need={}",
+                  con.getRemoteAddress(),
+                  con.getUniqueId(),
+                  con.getMessagesReceived(),
+                  count);
             }
             Thread.sleep(100);
           }
@@ -1089,7 +1198,7 @@ public class ConnectionTable {
         sb.append("These connections from ");
         sb.append(member);
         sb.append("could not be located during waitForThreadOwnedOrderedConnectionState: ");
-        for (Iterator it = connectionStates.entrySet().iterator(); it.hasNext();) {
+        for (Iterator it = connectionStates.entrySet().iterator(); it.hasNext(); ) {
           Map.Entry entry = (Map.Entry) it.next();
           sb.append(entry.getKey()).append('(').append(entry.getValue()).append(')');
           if (it.hasNext()) {
@@ -1119,37 +1228,37 @@ public class ConnectionTable {
 
   //private void cleanup(int maxConnections) {
   /*  if (maxConnections == 0 || maxConnections >= connections.size()) {
-      return;
+    return;
+  }
+  while (connections.size() > maxConnections) {
+    Connection oldest = null;
+    synchronized(connections) {
+      for (Iterator iter = connections.values().iterator(); iter.hasNext(); ) {
+        Connection c = (Connection)iter.next();
+        if (oldest == null || c.getTimeStamp() < oldest.getTimeStamp()) {
+          oldest = c;
+        }
+      }
     }
-    while (connections.size() > maxConnections) {
-      Connection oldest = null;
-      synchronized(connections) {
-        for (Iterator iter = connections.values().iterator(); iter.hasNext(); ) {
-          Connection c = (Connection)iter.next();
-          if (oldest == null || c.getTimeStamp() < oldest.getTimeStamp()) {
-            oldest = c;
-          }
-        }
+    // sanity check - don't close anything fresher than 10 seconds or
+    // we'll start thrashing
+    if (oldest.getTimeStamp() > (System.currentTimeMillis() - 10000)) {
+      if (owner.lowWaterConnectionCount > 0) {
+        owner.lowWaterConnectionCount += 10;
       }
-      // sanity check - don't close anything fresher than 10 seconds or
-      // we'll start thrashing
-      if (oldest.getTimeStamp() > (System.currentTimeMillis() - 10000)) {
-        if (owner.lowWaterConnectionCount > 0) {
-          owner.lowWaterConnectionCount += 10;
-        }
-        if (owner.highWaterConnectionCount > 0) {
-          owner.highWaterConnectionCount += 10;
-        }
-          new Object[] {
-            owner.lowWaterConnectionCount,
-            owner.highWaterConnectionCount
-          });
-        break;
+      if (owner.highWaterConnectionCount > 0) {
+        owner.highWaterConnectionCount += 10;
       }
-      if (oldest != null) {
-        oldest.close();
-      }
-    }*/
+        new Object[] {
+          owner.lowWaterConnectionCount,
+          owner.highWaterConnectionCount
+        });
+      break;
+    }
+    if (oldest != null) {
+      oldest.close();
+    }
+  }*/
   //}
 
   /*
@@ -1162,24 +1271,16 @@ public class ConnectionTable {
   }
   */
   private /*static*/ class PendingConnection {
-    /**
-     * true if this connection is still pending
-     */
+    /** true if this connection is still pending */
     private boolean pending = true;
 
-    /**
-     * the connection we are waiting on
-     */
+    /** the connection we are waiting on */
     private Connection conn = null;
 
-    /**
-     * whether the connection preserves message ordering
-     */
+    /** whether the connection preserves message ordering */
     private final boolean preserveOrder;
 
-    /**
-     * the stub we are connecting to
-     */
+    /** the stub we are connecting to */
     private final DistributedMember id;
 
     private final Thread connectingThread;
@@ -1192,31 +1293,37 @@ public class ConnectionTable {
 
     /**
      * Synchronously set the connection and notify waiters that we are ready.
-     * 
+     *
      * @param c the new connection
      */
     public synchronized void notifyWaiters(Connection c) {
-      if (!this.pending)
-        return; // already done.
+      if (!this.pending) return; // already done.
 
       this.conn = c;
       this.pending = false;
       if (logger.isDebugEnabled()) {
-        logger.debug("Notifying waiters that pending {} connection to {} is ready; {}", ((this.preserveOrder) ? "ordered" : "unordered"), this.id, this);
+        logger.debug(
+            "Notifying waiters that pending {} connection to {} is ready; {}",
+            ((this.preserveOrder) ? "ordered" : "unordered"),
+            this.id,
+            this);
       }
       this.notifyAll();
     }
 
     /**
      * Wait for a connection
+     *
      * @param mgr the membership manager that can instigate suspect processing if necessary
      * @param startTime the ms clock start time for the operation
      * @param ackTimeout the ms ack-wait-threshold, or zero
      * @param ackSATimeout the ms ack-severe-alert-threshold, or zero
      * @return the new connection
-     * @throws IOException 
+     * @throws IOException
      */
-    public synchronized Connection waitForConnect(MembershipManager mgr, long startTime, long ackTimeout, long ackSATimeout) throws IOException {
+    public synchronized Connection waitForConnect(
+        MembershipManager mgr, long startTime, long ackTimeout, long ackSATimeout)
+        throws IOException {
       if (connectingThread == Thread.currentThread()) {
         throw new ReenteredConnectException("This thread is already trying to connect");
       }
@@ -1230,9 +1337,8 @@ public class ConnectionTable {
         targetMember = this.id;
       }
 
-      for (;;) {
-        if (!this.pending)
-          break;
+      for (; ; ) {
+        if (!this.pending) break;
         getConduit().getCancelCriterion().checkCancelInProgress(null);
 
         // wait a little bit...
@@ -1248,18 +1354,28 @@ public class ConnectionTable {
           }
         }
 
-        if (!this.pending)
-          break;
+        if (!this.pending) break;
 
         // Still pending...
         long now = System.currentTimeMillis();
         if (!severeAlertIssued && ackSATimeout > 0 && startTime + ackTimeout < now) {
           if (startTime + ackTimeout + ackSATimeout < now) {
-            logger.fatal(LocalizedMessage.create(LocalizedStrings.ConnectionTable_UNABLE_TO_FORM_A_TCPIP_CONNECTION_TO_0_IN_OVER_1_SECONDS, new Object[] { targetMember, (ackSATimeout + ackTimeout) / 1000 }));
+            logger.fatal(
+                LocalizedMessage.create(
+                    LocalizedStrings
+                        .ConnectionTable_UNABLE_TO_FORM_A_TCPIP_CONNECTION_TO_0_IN_OVER_1_SECONDS,
+                    new Object[] {targetMember, (ackSATimeout + ackTimeout) / 1000}));
             severeAlertIssued = true;
           } else if (!suspected) {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.ConnectionTable_UNABLE_TO_FORM_A_TCPIP_CONNECTION_TO_0_IN_OVER_1_SECONDS, new Object[] { this.id, (ackTimeout) / 1000 }));
-            ((GMSMembershipManager) mgr).suspectMember(targetMember, "Unable to form a TCP/IP connection in a reasonable amount of time");
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings
+                        .ConnectionTable_UNABLE_TO_FORM_A_TCPIP_CONNECTION_TO_0_IN_OVER_1_SECONDS,
+                    new Object[] {this.id, (ackTimeout) / 1000}));
+            ((GMSMembershipManager) mgr)
+                .suspectMember(
+                    targetMember,
+                    "Unable to form a TCP/IP connection in a reasonable amount of time");
             suspected = true;
           }
         }
@@ -1270,7 +1386,11 @@ public class ConnectionTable {
         //}
         if (e == this) {
           if (logger.isDebugEnabled()) {
-            logger.debug("Waiting for pending connection to complete: {} connection to {}; {}", ((this.preserveOrder) ? "ordered" : "unordered"), this.id, this);
+            logger.debug(
+                "Waiting for pending connection to complete: {} connection to {}; {}",
+                ((this.preserveOrder) ? "ordered" : "unordered"),
+                this.id,
+                this);
           }
           continue;
         }
@@ -1291,10 +1411,8 @@ public class ConnectionTable {
           // defer to the new instance
           return ((PendingConnection) e).waitForConnect(mgr, startTime, ackTimeout, ackSATimeout);
         }
-
       } // for
       return this.conn;
-
     }
   }
 
@@ -1336,7 +1454,7 @@ public class ConnectionTable {
     }
   }
 
-  /** remove a socket from the tracked set.  It should be connected at this point */
+  /** remove a socket from the tracked set. It should be connected at this point */
   public void removeConnectingSocket(Socket socket) {
     synchronized (connectingSockets) {
       connectingSockets.remove(socket);
@@ -1352,5 +1470,4 @@ public class ConnectionTable {
       this.connectingThread = Thread.currentThread();
     }
   }
-
 }

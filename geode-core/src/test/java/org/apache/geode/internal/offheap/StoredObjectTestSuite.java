@@ -20,8 +20,11 @@ package org.apache.geode.internal.offheap;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-@Suite.SuiteClasses({ TinyStoredObjectJUnitTest.class, OffHeapStoredObjectJUnitTest.class, OffHeapStoredObjectWithHeapFormJUnitTest.class, OffHeapStoredObjectSliceJUnitTest.class, })
+@Suite.SuiteClasses({
+  TinyStoredObjectJUnitTest.class,
+  OffHeapStoredObjectJUnitTest.class,
+  OffHeapStoredObjectWithHeapFormJUnitTest.class,
+  OffHeapStoredObjectSliceJUnitTest.class,
+})
 @RunWith(Suite.class)
-public class StoredObjectTestSuite {
-
-}
+public class StoredObjectTestSuite {}

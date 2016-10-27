@@ -20,25 +20,15 @@ import java.util.Set;
 
 import org.apache.geode.internal.cache.LocalRegion;
 
-/**
- * This interface is used by testing/debugging code to be notified of different
- * events.
- */
-
+/** This interface is used by testing/debugging code to be notified of different events. */
 public interface VMotionObserver {
 
-  /**
-   * This callback is called just before CQ registration on the server
-   */
+  /** This callback is called just before CQ registration on the server */
   public void vMotionBeforeCQRegistration();
 
-  /**
-   * This callback is called just before register Interest on the server
-   */
+  /** This callback is called just before register Interest on the server */
   public void vMotionBeforeRegisterInterest();
 
-  /**
-   * This callback is called before a request for GII is sent.
-   */
+  /** This callback is called before a request for GII is sent. */
   public void vMotionDuringGII(Set recipientSet, LocalRegion region);
 }

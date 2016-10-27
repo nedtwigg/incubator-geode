@@ -22,9 +22,8 @@ import org.apache.geode.cache.*;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * Presents an amalgam snapshot of all the {@linkplain
- * org.apache.geode.cache.Region regions} in a distributed
- * system. 
+ * Presents an amalgam snapshot of all the {@linkplain org.apache.geode.cache.Region regions} in a
+ * distributed system.
  */
 public class CompoundRegionSnapshot implements RegionSnapshot {
   private static final long serialVersionUID = 6295026394298398004L;
@@ -63,31 +62,25 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
   private Set allKeyConstraints = new HashSet();
   private Set allValueConstraints = new HashSet();
 
-  /**
-   * Creates a new <code>CompoundRegionSnapshot</code> for the region
-   * with the given name.
-   */
+  /** Creates a new <code>CompoundRegionSnapshot</code> for the region with the given name. */
   public CompoundRegionSnapshot(String regionName) {
     this.name = regionName;
   }
 
   /**
-   * Amalgamates a <code>RegionSnapshot</code> into this
-   * <code>CompoundRegionSnapshot</code>. 
+   * Amalgamates a <code>RegionSnapshot</code> into this <code>CompoundRegionSnapshot</code>.
    *
-   * @param systemEntity
-   *        The member of the distributed system that sent the
-   *        snapshot
-   * @param snap
-   *        The snapshot to be amalgamated
-   *
-   * @throws IllegalArgumentException
-   *         If <code>snap</code> is for a <code>Region</code> other
-   *         than the one amalgamated by this snapshot.
+   * @param systemEntity The member of the distributed system that sent the snapshot
+   * @param snap The snapshot to be amalgamated
+   * @throws IllegalArgumentException If <code>snap</code> is for a <code>Region</code> other than
+   *     the one amalgamated by this snapshot.
    */
   public void addCache(GemFireVM systemEntity, RegionSnapshot snap) {
     if (!snap.getName().equals(this.name)) {
-      throw new IllegalArgumentException(LocalizedStrings.CompoundRegionSnapshot_ALL_SNAPSHOTS_IN_A_COMPOUND_SNAPSHOT_MUST_HAVE_THE_SAME_NAME.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .CompoundRegionSnapshot_ALL_SNAPSHOTS_IN_A_COMPOUND_SNAPSHOT_MUST_HAVE_THE_SAME_NAME
+              .toLocalizedString());
     }
     //individuals.put(systemEntity, snap);
 
@@ -161,16 +154,14 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
   }
 
   /**
-   * Returns the name of the <code>Region</code> whose information is
-   * amalgamated in this snapshot.
+   * Returns the name of the <code>Region</code> whose information is amalgamated in this snapshot.
    */
   public Object getName() {
     return this.name;
   }
 
   /**
-   * Since a compound snapshot does not have
-   * <code>RegionAttributes</code>, this method returns
+   * Since a compound snapshot does not have <code>RegionAttributes</code>, this method returns
    * <code>null</code>.
    */
   public RegionAttributes getAttributes() {
@@ -178,8 +169,7 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
   }
 
   /**
-   * Since a compound snapshot does not have a
-   * <code>userAttributes</code>, this method returns
+   * Since a compound snapshot does not have a <code>userAttributes</code>, this method returns
    * <code>null</code>.
    */
   public Object getUserAttribute() {
@@ -187,48 +177,40 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
   }
 
   /**
-   * Since a compound snapshot does not really represent a
-   * <code>Region</code>, this method returns <code>false</code>.
+   * Since a compound snapshot does not really represent a <code>Region</code>, this method returns
+   * <code>false</code>.
    */
   public boolean isShared() {
     return false;
   }
 
-  /**
-   * Returns an {@link java.util.Iterator} of {@link java.lang.String}
-   */
+  /** Returns an {@link java.util.Iterator} of {@link java.lang.String} */
   public Iterator getAllCapacityControllers() {
     return allCapControllers.iterator();
   }
 
-  /**
-   * Returns an {@link java.util.Iterator} of {@link java.lang.String}
-   */
+  /** Returns an {@link java.util.Iterator} of {@link java.lang.String} */
   public Iterator getAllListeners() {
     return allListeners.iterator();
   }
 
   /**
-   * Returns an <code>Iterator</code> containing the
-   * <code>toString</code> of the <code>CacheWriter</code>s of each
-   * instance of this snapshot's <code>region</code>
+   * Returns an <code>Iterator</code> containing the <code>toString</code> of the <code>CacheWriter
+   * </code>s of each instance of this snapshot's <code>region</code>
    */
   public Iterator getAllCacheWriters() {
     return allCacheWriters.iterator();
   }
 
   /**
-   * Returns an <code>Iterator</code> containing the
-   * <code>toString</code> of the <code>CacheLoader</code>s of each
-   * instance of this snapshot's <code>region</code>
+   * Returns an <code>Iterator</code> containing the <code>toString</code> of the <code>CacheLoader
+   * </code>s of each instance of this snapshot's <code>region</code>
    */
   public Iterator getAllCacheLoaders() {
     return allCacheLoaders.iterator();
   }
 
-  /**
-   * Returns an  {@link java.util.Iterator} of {@link org.apache.geode.cache.DataPolicy}
-   */
+  /** Returns an {@link java.util.Iterator} of {@link org.apache.geode.cache.DataPolicy} */
   public Iterator getAllDataPolicies() {
     return allDataPolicies.iterator();
   }
@@ -248,9 +230,8 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
   }
 
   /**
-   * Returns an <code>Iterator</code> containing the
-   * <code>toString</code> of the custom TTL CustomExpiry's of each
-   * instance of this snapshot's <code>region</code>
+   * Returns an <code>Iterator</code> containing the <code>toString</code> of the custom TTL
+   * CustomExpiry's of each instance of this snapshot's <code>region</code>
    */
   public Iterator getAllCustomTtl() {
     return allCustomTtl.iterator();
@@ -271,117 +252,98 @@ public class CompoundRegionSnapshot implements RegionSnapshot {
   }
 
   /**
-   * Returns an <code>Iterator</code> containing the
-   * <code>toString</code> of the custom idleTimeout CustomExpiry's of each
-   * instance of this snapshot's <code>region</code>
+   * Returns an <code>Iterator</code> containing the <code>toString</code> of the custom idleTimeout
+   * CustomExpiry's of each instance of this snapshot's <code>region</code>
    */
   public Iterator getAllCustomIdleTimeout() {
     return allCustomIdle.iterator();
   }
 
-  /**
-   * Returns an {@link java.util.Iterator} of {@link org.apache.geode.cache.Scope}
-   */
+  /** Returns an {@link java.util.Iterator} of {@link org.apache.geode.cache.Scope} */
   public Iterator getAllScopes() {
     return allScopes.iterator();
   }
 
-  /**
-   * Returns an {@link java.util.Iterator} of float
-   */
+  /** Returns an {@link java.util.Iterator} of float */
   public Iterator getAllLoadFactors() {
     return allLoadFactors.iterator();
   }
 
-  /**
-   * Returns an {@link java.util.Iterator} of int
-   */
+  /** Returns an {@link java.util.Iterator} of int */
   public Iterator getAllInitialCapacities() {
     return allInitialCaps.iterator();
   }
 
-  /**
-   * Returns an {@link java.util.Iterator} of int
-   */
+  /** Returns an {@link java.util.Iterator} of int */
   public Iterator getAllConcurrencyLevels() {
     return allConcLevels.iterator();
   }
 
-  /**
-   * Returns an {@link java.util.Iterator} of <code>Boolean</code> -
-   * which may be silly
-   */
+  /** Returns an {@link java.util.Iterator} of <code>Boolean</code> - which may be silly */
   public Iterator getAllStatsEnabled() {
     return allStatsEnabled.iterator();
   }
 
   /**
-   * Returns an <code>Iterator</code> of the
-   * <code>userAttribute</code>s (as <code>Objects</code>s) over all
-   * instances of this snapshot's <code>Region</code>.
+   * Returns an <code>Iterator</code> of the <code>userAttribute</code>s (as <code>Objects</code>s)
+   * over all instances of this snapshot's <code>Region</code>.
    */
   public Iterator getAllUserAttributes() {
     return allUserAttributes.iterator();
   }
 
   /**
-   * Returns an <code>Iterator</code> of the
-   * <code>keyConstraint</code>s (as <code>String</code>s) over all
-   * instances of this snapshot's <code>Region</code>.
+   * Returns an <code>Iterator</code> of the <code>keyConstraint</code>s (as <code>String</code>s)
+   * over all instances of this snapshot's <code>Region</code>.
    */
   public Iterator getAllKeyConstraint() {
     return allKeyConstraints.iterator();
   }
 
   /**
-   * Returns an <code>Iterator</code> of the
-   * <code>valueConstraint</code>s (as <code>String</code>s) over all
-   * instances of this snapshot's <code>Region</code>.
+   * Returns an <code>Iterator</code> of the <code>valueConstraint</code>s (as <code>String</code>s)
+   * over all instances of this snapshot's <code>Region</code>.
    */
   public Iterator getAllValueConstraint() {
     return allValueConstraints.iterator();
   }
 
   /**
-   * Returns the most recent <code>lastModifiedTime</code> of any
-   * instance of this snapshot's <code>Region</code> across the
-   * distributed system.
+   * Returns the most recent <code>lastModifiedTime</code> of any instance of this snapshot's <code>
+   * Region</code> across the distributed system.
    */
   public long getLastModifiedTime() {
     return this.lastModifiedTime;
   }
 
   /**
-   * Returns the most recent <code>lastAccessTime</code> of any
-   * instance of this snapshot's <code>Region</code> across the
-   * distributed system.
+   * Returns the most recent <code>lastAccessTime</code> of any instance of this snapshot's <code>
+   * Region</code> across the distributed system.
    */
   public long getLastAccessTime() {
     return this.lastAccessTime;
   }
 
   /**
-   * Returns the cumulative number of hits across all instances of the
-   * snapshot's <code>Region</code>.
+   * Returns the cumulative number of hits across all instances of the snapshot's <code>Region
+   * </code>.
    */
   public long getNumberOfHits() {
     return this.numHits;
   }
 
   /**
-   * Returns the cumulative number of misses across all instances of
-   * this snapshot's <code>Region</code>.
+   * Returns the cumulative number of misses across all instances of this snapshot's <code>Region
+   * </code>.
    */
   public long getNumberOfMisses() {
     return this.numMisses;
   }
 
   /**
-   * Returns the aggregate hit ratio across all instances of this
-   * snapshot's <code>Region</code>.
+   * Returns the aggregate hit ratio across all instances of this snapshot's <code>Region</code>.
    */
   public float getHitRatio() {
     return this.hitRatio;
   }
-
 }

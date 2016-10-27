@@ -29,11 +29,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class HelpUtils {
-  public static final String EXE_PREFIX_FOR_EXTERNAL_HELP = org.apache.geode.management.internal.cli.shell.Gfsh.GFSH_APP_NAME + " ";
+  public static final String EXE_PREFIX_FOR_EXTERNAL_HELP =
+      org.apache.geode.management.internal.cli.shell.Gfsh.GFSH_APP_NAME + " ";
   public static final String HELP__COMMAND_AVAILABLE = "Available";
   public static final String HELP__COMMAND_NOTAVAILABLE = "Not Available";
 
@@ -49,8 +48,10 @@ public class HelpUtils {
   private static final String REQUIRED_SUB_NAME = "Required: ";
   private static final String DEFAULTVALUE_SUB_NAME = "Default value: ";
   private static final String SYNONYMS_SUB_NAME = "Synonyms: ";
-  private static final String SPECIFIEDDEFAULTVALUE_SUB_NAME = "Default (if the parameter is specified without value): ";
-  private static final String UNSPECIFIEDDEFAULTVALUE_VALUE_SUB_NAME = "Default (if the parameter is not specified): ";
+  private static final String SPECIFIEDDEFAULTVALUE_SUB_NAME =
+      "Default (if the parameter is specified without value): ";
+  private static final String UNSPECIFIEDDEFAULTVALUE_VALUE_SUB_NAME =
+      "Default (if the parameter is not specified): ";
 
   private static final String VALUE_FIELD = "value";
   private static final String TRUE_TOKEN = "true";
@@ -105,8 +106,9 @@ public class HelpUtils {
         //      String temp = SyntaxConstants.OPTION_VALUE_SPECIFIER + VALUE_TOKEN + "("
         //      + SyntaxConstants.OPTION_VALUE_SEPARATOR + VALUE_TOKEN + ")*";
         String temp = buildOptionHelpText(option);
-        //  
-        if (option.getSpecifiedDefaultValue() != null && !option.getSpecifiedDefaultValue().equals("")) {
+        //
+        if (option.getSpecifiedDefaultValue() != null
+            && !option.getSpecifiedDefaultValue().equals("")) {
           buffer.append("(");
           buffer.append(temp);
           buffer.append(")?");
@@ -123,7 +125,8 @@ public class HelpUtils {
       //    + SyntaxConstants.OPTION_VALUE_SEPARATOR + VALUE_TOKEN + ")*";
       String temp = buildOptionHelpText(option);
       //
-      if (option.getSpecifiedDefaultValue() != null && !option.getSpecifiedDefaultValue().equals("")) {
+      if (option.getSpecifiedDefaultValue() != null
+          && !option.getSpecifiedDefaultValue().equals("")) {
         buffer.append("(");
         buffer.append(temp);
         buffer.append(")?");
@@ -137,7 +140,12 @@ public class HelpUtils {
     if (commandTarget.getOptionParser().getArguments().size() > 0) {
       List<Row> rows = new ArrayList<Row>();
       for (Argument argument : commandTarget.getOptionParser().getArguments()) {
-        rows.add(row(argument.getArgumentName() + ((argument.getHelp() != null && !argument.getHelp().equals("")) ? ":" + argument.getHelp() : "")));
+        rows.add(
+            row(
+                argument.getArgumentName()
+                    + ((argument.getHelp() != null && !argument.getHelp().equals(""))
+                        ? ":" + argument.getHelp()
+                        : "")));
       }
       Row[] rowsArray = new Row[rows.size()];
       blocks.add(block(ARGUMENTS_NAME, rows.toArray(rowsArray)));
@@ -147,7 +155,12 @@ public class HelpUtils {
     if (commandTarget.getOptionParser().getOptions().size() > 0) {
       List<Row> rows = new ArrayList<Row>();
       for (Option option : commandTarget.getOptionParser().getOptions()) {
-        rows.add(row(option.getLongOption() + ((option.getHelp() != null && !option.getHelp().equals("")) ? ":" + option.getHelp() : "")));
+        rows.add(
+            row(
+                option.getLongOption()
+                    + ((option.getHelp() != null && !option.getHelp().equals(""))
+                        ? ":" + option.getHelp()
+                        : "")));
       }
       Row[] rowsArray = new Row[rows.size()];
       blocks.add(block(OPTIONS_NAME, rows.toArray(rowsArray)));
@@ -161,12 +174,9 @@ public class HelpUtils {
 
   /**
    * Builds help for the specified command.
-   * 
-   * @param commandTarget
-   *          command specific target to use to generate help
-   * @param withinShell
-   *          if <code>true</code> includes availabilty & doesn't include
-   *          application name
+   *
+   * @param commandTarget command specific target to use to generate help
+   * @param withinShell if <code>true</code> includes availabilty & doesn't include application name
    * @return built NewHelp object for the given command target
    */
   public static NewHelp getNewHelp(CommandTarget commandTarget, boolean withinShell) {
@@ -175,7 +185,7 @@ public class HelpUtils {
     DataNode name = new DataNode(NAME_NAME, new ArrayList<DataNode>());
     name.addChild(new DataNode(commandTarget.getCommandName(), null));
     root.addChild(name);
-    if (withinShell) {// include availabilty info
+    if (withinShell) { // include availabilty info
       DataNode availability = new DataNode(IS_AVAILABLE_NAME, new ArrayList<DataNode>());
       boolean isAvailable = false;
       try {
@@ -220,10 +230,18 @@ public class HelpUtils {
       DataNode arguments = new DataNode(ARGUMENTS_NAME, new ArrayList<DataNode>());
       for (Argument argument : commandTarget.getOptionParser().getArguments()) {
         DataNode argumentNode = new DataNode(argument.getArgumentName(), new ArrayList<DataNode>());
-        argumentNode.addChild(new DataNode(((argument.getHelp() != null && !argument.getHelp().equals("")) ? argument.getHelp() : ""), null));
-        argumentNode.addChild(new DataNode(REQUIRED_SUB_NAME + ((argument.isRequired()) ? TRUE_TOKEN : FALSE_TOKEN), null));
+        argumentNode.addChild(
+            new DataNode(
+                ((argument.getHelp() != null && !argument.getHelp().equals(""))
+                    ? argument.getHelp()
+                    : ""),
+                null));
+        argumentNode.addChild(
+            new DataNode(
+                REQUIRED_SUB_NAME + ((argument.isRequired()) ? TRUE_TOKEN : FALSE_TOKEN), null));
         if (argument.getUnspecifiedDefaultValue() != null) {
-          argumentNode.addChild(new DataNode(DEFAULTVALUE_SUB_NAME + argument.getUnspecifiedDefaultValue(), null));
+          argumentNode.addChild(
+              new DataNode(DEFAULTVALUE_SUB_NAME + argument.getUnspecifiedDefaultValue(), null));
         }
         arguments.addChild(argumentNode);
       }
@@ -248,13 +266,11 @@ public class HelpUtils {
               Option option = getOption(commandTarget, opt);
               if (option.isRequired()) {
                 appendRequiredOption(sb, option);
-              } else
-                optionalOptions.add(option);
+              } else optionalOptions.add(option);
             }
           }
 
-          for (Option optOpt : optionalOptions)
-            appendOption(sb, optOpt);
+          for (Option optOpt : optionalOptions) appendOption(sb, optOpt);
 
           DataNode modeDN = new DataNode(cmd.text, new ArrayList<DataNode>());
           modeDN.addChild(new DataNode(sb.toString(), null));
@@ -276,7 +292,12 @@ public class HelpUtils {
       DataNode options = new DataNode(OPTIONS_NAME, new ArrayList<DataNode>());
       for (Option option : commandTarget.getOptionParser().getOptions()) {
         DataNode optionNode = new DataNode(option.getLongOption(), new ArrayList<DataNode>());
-        optionNode.addChild(new DataNode(((option.getHelp() != null && !option.getHelp().equals("")) ? option.getHelp() : ""), null));
+        optionNode.addChild(
+            new DataNode(
+                ((option.getHelp() != null && !option.getHelp().equals(""))
+                    ? option.getHelp()
+                    : ""),
+                null));
         if (option.getSynonyms() != null && option.getSynonyms().size() > 0) {
           StringBuilder builder = new StringBuilder();
           for (String string : option.getSynonyms()) {
@@ -287,12 +308,21 @@ public class HelpUtils {
           }
           optionNode.addChild(new DataNode(SYNONYMS_SUB_NAME + builder.toString(), null));
         }
-        optionNode.addChild(new DataNode(REQUIRED_SUB_NAME + ((option.isRequired()) ? TRUE_TOKEN : FALSE_TOKEN), null));
-        if (option.getSpecifiedDefaultValue() != null && !option.getSpecifiedDefaultValue().equals("")) {
-          optionNode.addChild(new DataNode(SPECIFIEDDEFAULTVALUE_SUB_NAME + option.getSpecifiedDefaultValue(), null));
+        optionNode.addChild(
+            new DataNode(
+                REQUIRED_SUB_NAME + ((option.isRequired()) ? TRUE_TOKEN : FALSE_TOKEN), null));
+        if (option.getSpecifiedDefaultValue() != null
+            && !option.getSpecifiedDefaultValue().equals("")) {
+          optionNode.addChild(
+              new DataNode(
+                  SPECIFIEDDEFAULTVALUE_SUB_NAME + option.getSpecifiedDefaultValue(), null));
         }
-        if (option.getUnspecifiedDefaultValue() != null && !option.getUnspecifiedDefaultValue().equals("")) {
-          optionNode.addChild(new DataNode(UNSPECIFIEDDEFAULTVALUE_VALUE_SUB_NAME + option.getUnspecifiedDefaultValue(), null));
+        if (option.getUnspecifiedDefaultValue() != null
+            && !option.getUnspecifiedDefaultValue().equals("")) {
+          optionNode.addChild(
+              new DataNode(
+                  UNSPECIFIEDDEFAULTVALUE_VALUE_SUB_NAME + option.getUnspecifiedDefaultValue(),
+                  null));
         }
         options.addChild(optionNode);
       }
@@ -303,8 +333,7 @@ public class HelpUtils {
 
   private static Option getOption(CommandTarget commandTarget, String opt) {
     for (Option option : commandTarget.getOptionParser().getOptions()) {
-      if (option.getLongOption().equals(opt))
-        return option;
+      if (option.getLongOption().equals(opt)) return option;
     }
     return null;
   }
@@ -326,7 +355,8 @@ public class HelpUtils {
   private static void appendRequiredOption(StringBuffer buffer, Option option) {
     buffer.append(" " + SyntaxConstants.LONG_OPTION_SPECIFIER + option.getLongOption());
     String temp = buildOptionHelpText(option);
-    if (option.getSpecifiedDefaultValue() != null && !option.getSpecifiedDefaultValue().equals("")) {
+    if (option.getSpecifiedDefaultValue() != null
+        && !option.getSpecifiedDefaultValue().equals("")) {
       buffer.append("(").append(temp).append(")?");
     } else {
       buffer.append(temp);
@@ -336,7 +366,8 @@ public class HelpUtils {
   private static void appendOption(StringBuffer buffer, Option option) {
     buffer.append(" " + "[" + SyntaxConstants.LONG_OPTION_SPECIFIER + option.getLongOption());
     String temp = buildOptionHelpText(option);
-    if (option.getSpecifiedDefaultValue() != null && !option.getSpecifiedDefaultValue().equals("")) {
+    if (option.getSpecifiedDefaultValue() != null
+        && !option.getSpecifiedDefaultValue().equals("")) {
       buffer.append("(").append(temp).append(")?");
     } else {
       buffer.append(temp);
@@ -361,13 +392,17 @@ public class HelpUtils {
 
   public static String buildOptionHelpText(Option option) {
     String temp = SyntaxConstants.OPTION_VALUE_SPECIFIER + VALUE_FIELD;
-    if ((option.getValueSeparator() != null && !CliMetaData.ANNOTATION_NULL_VALUE.equals(option.getValueSeparator()) && !option.getValueSeparator().equals("")) || isCollectionOrArrayType(option.getDataType())) {
+    if ((option.getValueSeparator() != null
+            && !CliMetaData.ANNOTATION_NULL_VALUE.equals(option.getValueSeparator())
+            && !option.getValueSeparator().equals(""))
+        || isCollectionOrArrayType(option.getDataType())) {
       temp += "(" + option.getValueSeparator() + VALUE_FIELD + ")*";
     }
     return temp;
   }
 
   private static boolean isCollectionOrArrayType(Class<?> typeToCheck) {
-    return typeToCheck != null && (typeToCheck.isArray() || Collection.class.isAssignableFrom(typeToCheck));
+    return typeToCheck != null
+        && (typeToCheck.isArray() || Collection.class.isAssignableFrom(typeToCheck));
   }
 }

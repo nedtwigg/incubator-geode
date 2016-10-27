@@ -74,7 +74,8 @@ public class LuceneManagementDUnitTest extends ManagementTestBase {
     }
 
     // Verify MBean proxies are created in the managing node
-    getManagingNode().invoke(() -> verifyAllMBeanProxyIndexMetrics(regionName, numIndexes, numIndexes));
+    getManagingNode()
+        .invoke(() -> verifyAllMBeanProxyIndexMetrics(regionName, numIndexes, numIndexes));
   }
 
   @Test
@@ -93,14 +94,18 @@ public class LuceneManagementDUnitTest extends ManagementTestBase {
       // Verify index metrics in the managed VM
       for (int i = 0; i < numRegions; i++) {
         String regionName = baseRegionName + i;
-        vm.invoke(() -> verifyAllMBeanIndexMetrics(regionName, numIndexes, numIndexes * numRegions));
+        vm.invoke(
+            () -> verifyAllMBeanIndexMetrics(regionName, numIndexes, numIndexes * numRegions));
       }
     }
 
     // Verify index metrics in the managing node
     for (int i = 0; i < numRegions; i++) {
       String regionName = baseRegionName + i;
-      getManagingNode().invoke(() -> verifyAllMBeanProxyIndexMetrics(regionName, numIndexes, numIndexes * numRegions));
+      getManagingNode()
+          .invoke(
+              () ->
+                  verifyAllMBeanProxyIndexMetrics(regionName, numIndexes, numIndexes * numRegions));
     }
   }
 
@@ -126,11 +131,18 @@ public class LuceneManagementDUnitTest extends ManagementTestBase {
     getManagingNode().invoke(() -> waitForMemberProxiesToRefresh(2));
 
     // Verify index metrics
-    getManagingNode().invoke(() -> verifyMBeanIndexMetricsValues(regionName, indexName, numPuts, 113/*1 query per bucket*/, 1/*1 result*/));
+    getManagingNode()
+        .invoke(
+            () ->
+                verifyMBeanIndexMetricsValues(
+                    regionName, indexName, numPuts, 113 /*1 query per bucket*/, 1 /*1 result*/));
   }
 
   private static void waitForMemberProxiesToRefresh(int refreshCount) {
-    Set<DistributedMember> members = GemFireCacheImpl.getInstance().getDistributionManager().getOtherNormalDistributionManagerIds();
+    Set<DistributedMember> members =
+        GemFireCacheImpl.getInstance()
+            .getDistributionManager()
+            .getOtherNormalDistributionManagerIds();
     // Currently, the LuceneServiceMBean is not updated in the manager since it has no getters,
     // so use the MemberMBean instead.
     for (DistributedMember member : members) {
@@ -147,13 +159,17 @@ public class LuceneManagementDUnitTest extends ManagementTestBase {
   }
 
   private static LuceneServiceMXBean getMBean() {
-    ObjectName objectName = MBeanJMXAdapter.getCacheServiceMBeanName(ds.getDistributedMember(), "LuceneService");
+    ObjectName objectName =
+        MBeanJMXAdapter.getCacheServiceMBeanName(ds.getDistributedMember(), "LuceneService");
     assertNotNull(getManagementService().getMBeanInstance(objectName, LuceneServiceMXBean.class));
     return getManagementService().getMBeanInstance(objectName, LuceneServiceMXBean.class);
   }
 
   private static void verifyMBeanProxies() {
-    Set<DistributedMember> members = GemFireCacheImpl.getInstance().getDistributionManager().getOtherNormalDistributionManagerIds();
+    Set<DistributedMember> members =
+        GemFireCacheImpl.getInstance()
+            .getDistributionManager()
+            .getOtherNormalDistributionManagerIds();
     for (DistributedMember member : members) {
       getMBeanProxy(member);
     }
@@ -162,7 +178,9 @@ public class LuceneManagementDUnitTest extends ManagementTestBase {
   private static LuceneServiceMXBean getMBeanProxy(DistributedMember member) {
     SystemManagementService service = (SystemManagementService) getManagementService();
     ObjectName objectName = MBeanJMXAdapter.getCacheServiceMBeanName(member, "LuceneService");
-    Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> assertNotNull(service.getMBeanProxy(objectName, LuceneServiceMXBean.class)));
+    Awaitility.await()
+        .atMost(5, TimeUnit.SECONDS)
+        .until(() -> assertNotNull(service.getMBeanProxy(objectName, LuceneServiceMXBean.class)));
     return service.getMBeanProxy(objectName, LuceneServiceMXBean.class);
   }
 
@@ -181,20 +199,26 @@ public class LuceneManagementDUnitTest extends ManagementTestBase {
     }
   }
 
-  private static void verifyAllMBeanIndexMetrics(String regionName, int numRegionIndexes, int numTotalIndexes) {
+  private static void verifyAllMBeanIndexMetrics(
+      String regionName, int numRegionIndexes, int numTotalIndexes) {
     LuceneServiceMXBean mbean = getMBean();
     verifyMBeanIndexMetrics(mbean, regionName, numRegionIndexes, numTotalIndexes);
   }
 
-  private static void verifyAllMBeanProxyIndexMetrics(String regionName, int numRegionIndexes, int numTotalIndexes) {
-    Set<DistributedMember> members = GemFireCacheImpl.getInstance().getDistributionManager().getOtherNormalDistributionManagerIds();
+  private static void verifyAllMBeanProxyIndexMetrics(
+      String regionName, int numRegionIndexes, int numTotalIndexes) {
+    Set<DistributedMember> members =
+        GemFireCacheImpl.getInstance()
+            .getDistributionManager()
+            .getOtherNormalDistributionManagerIds();
     for (DistributedMember member : members) {
       LuceneServiceMXBean mbean = getMBeanProxy(member);
       verifyMBeanIndexMetrics(mbean, regionName, numRegionIndexes, numTotalIndexes);
     }
   }
 
-  private static void verifyMBeanIndexMetrics(LuceneServiceMXBean mbean, String regionName, int numRegionIndexes, int numTotalIndexes) {
+  private static void verifyMBeanIndexMetrics(
+      LuceneServiceMXBean mbean, String regionName, int numRegionIndexes, int numTotalIndexes) {
     assertEquals(numTotalIndexes, mbean.listIndexMetrics().length);
     assertEquals(numRegionIndexes, mbean.listIndexMetrics(regionName).length);
     for (int i = 0; i < numRegionIndexes; i++) {
@@ -211,15 +235,25 @@ public class LuceneManagementDUnitTest extends ManagementTestBase {
     }
   }
 
-  private static void queryEntries(String regionName, String indexName) throws LuceneQueryException {
+  private static void queryEntries(String regionName, String indexName)
+      throws LuceneQueryException {
     LuceneService service = LuceneServiceProvider.get(cache);
-    LuceneQuery query = service.createLuceneQueryFactory().create(indexName, regionName, "field0:0", null);
+    LuceneQuery query =
+        service.createLuceneQueryFactory().create(indexName, regionName, "field0:0", null);
     query.findValues();
   }
 
-  private void verifyMBeanIndexMetricsValues(String regionName, String indexName, int expectedPuts, int expectedQueries, int expectedHits) {
+  private void verifyMBeanIndexMetricsValues(
+      String regionName,
+      String indexName,
+      int expectedPuts,
+      int expectedQueries,
+      int expectedHits) {
     // Get index metrics from all members
-    Set<DistributedMember> members = GemFireCacheImpl.getInstance().getDistributionManager().getOtherNormalDistributionManagerIds();
+    Set<DistributedMember> members =
+        GemFireCacheImpl.getInstance()
+            .getDistributionManager()
+            .getOtherNormalDistributionManagerIds();
     int totalCommits = 0, totalUpdates = 0, totalDocuments = 0, totalQueries = 0, totalHits = 0;
     for (DistributedMember member : members) {
       LuceneServiceMXBean mbean = getMBeanProxy(member);
@@ -249,7 +283,13 @@ public class LuceneManagementDUnitTest extends ManagementTestBase {
     }
 
     public String toString() {
-      return new StringBuilder().append(getClass().getSimpleName()).append("[").append("field0=").append(this.field0).append("]").toString();
+      return new StringBuilder()
+          .append(getClass().getSimpleName())
+          .append("[")
+          .append("field0=")
+          .append(this.field0)
+          .append("]")
+          .toString();
     }
   }
 }

@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
+/** */
 package org.apache.geode.cache.query.functional;
 
 import org.apache.geode.cache.*;
@@ -61,12 +59,53 @@ public class SelectToDateJUnitTest {
     CacheUtils.closeCache();
   }
 
-  private static String[] toDateQueries = new String[] { "select * from /test p where p.createDate = to_date('" + mayDate + "', '" + format + "')", "select * from /test p where p.createDate < to_date('" + mayDate + "', '" + format + "')", "select * from /test p where p.createDate > to_date('" + mayDate + "', '" + format + "')", "select * from /test p where p.createDate <= to_date('" + mayDate + "', '" + format + "')", "select * from /test p where p.createDate >= to_date('" + mayDate + "', '" + format + "')" };
+  private static String[] toDateQueries =
+      new String[] {
+        "select * from /test p where p.createDate = to_date('" + mayDate + "', '" + format + "')",
+        "select * from /test p where p.createDate < to_date('" + mayDate + "', '" + format + "')",
+        "select * from /test p where p.createDate > to_date('" + mayDate + "', '" + format + "')",
+        "select * from /test p where p.createDate <= to_date('" + mayDate + "', '" + format + "')",
+        "select * from /test p where p.createDate >= to_date('" + mayDate + "', '" + format + "')"
+      };
 
   //the test will be validating against the May date, so expected values revolve around month of May
-  private static int[] toDateExpectedResults = new int[] { numElementsExpectedPerMonth, numMonthsBeforeMay * numElementsExpectedPerMonth, numMonthsAfterMay * numElementsExpectedPerMonth, (numMonthsBeforeMay + 1) * numElementsExpectedPerMonth, (numMonthsAfterMay + 1) * numElementsExpectedPerMonth };
+  private static int[] toDateExpectedResults =
+      new int[] {
+        numElementsExpectedPerMonth,
+        numMonthsBeforeMay * numElementsExpectedPerMonth,
+        numMonthsAfterMay * numElementsExpectedPerMonth,
+        (numMonthsBeforeMay + 1) * numElementsExpectedPerMonth,
+        (numMonthsAfterMay + 1) * numElementsExpectedPerMonth
+      };
 
-  private static String[] projectionQueries = new String[] { "select p.createDate from /test p where p.createDate = to_date('" + mayDate + "', '" + format + "')", "select p.createDate from /test p where p.createDate < to_date('" + mayDate + "', '" + format + "')", "select p.createDate from /test p where p.createDate > to_date('" + mayDate + "', '" + format + "')", "select p.createDate from /test p where p.createDate <= to_date('" + mayDate + "', '" + format + "')", "select p.createDate from /test p where p.createDate >= to_date('" + mayDate + "', '" + format + "')", };
+  private static String[] projectionQueries =
+      new String[] {
+        "select p.createDate from /test p where p.createDate = to_date('"
+            + mayDate
+            + "', '"
+            + format
+            + "')",
+        "select p.createDate from /test p where p.createDate < to_date('"
+            + mayDate
+            + "', '"
+            + format
+            + "')",
+        "select p.createDate from /test p where p.createDate > to_date('"
+            + mayDate
+            + "', '"
+            + format
+            + "')",
+        "select p.createDate from /test p where p.createDate <= to_date('"
+            + mayDate
+            + "', '"
+            + format
+            + "')",
+        "select p.createDate from /test p where p.createDate >= to_date('"
+            + mayDate
+            + "', '"
+            + format
+            + "')",
+      };
 
   private void executeQueryTest(Cache cache, String[] queries, int[] expectedResults) {
     CacheUtils.log("********Execute Query Test********");
@@ -99,9 +138,7 @@ public class SelectToDateJUnitTest {
     }
   }
 
-  /**
-   * Test on Local Region data
-   */
+  /** Test on Local Region data */
   @Test
   public void testQueriesOnLocalRegion() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -111,9 +148,7 @@ public class SelectToDateJUnitTest {
     executeQueryTest(cache, toDateQueries, toDateExpectedResults);
   }
 
-  /**
-   * Test on Replicated Region data
-   */
+  /** Test on Replicated Region data */
   @Test
   public void testQueriesOnReplicatedRegion() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -123,9 +158,7 @@ public class SelectToDateJUnitTest {
     executeQueryTest(cache, toDateQueries, toDateExpectedResults);
   }
 
-  /**
-   * Test on Partitioned Region data
-   */
+  /** Test on Partitioned Region data */
   @Test
   public void testQueriesOnPartitionedRegion() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -135,9 +168,7 @@ public class SelectToDateJUnitTest {
     executeQueryTest(cache, toDateQueries, toDateExpectedResults);
   }
 
-  /**
-   * Test on Replicated Region data
-   */
+  /** Test on Replicated Region data */
   @Test
   public void testQueriesOnReplicatedRegionWithSameProjAttr() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -147,9 +178,7 @@ public class SelectToDateJUnitTest {
     executeQueryTest(cache, projectionQueries, toDateExpectedResults);
   }
 
-  /**
-   * Test on Partitioned Region data
-   */
+  /** Test on Partitioned Region data */
   @Test
   public void testQueriesOnPartitionedRegionWithSameProjAttr() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -159,11 +188,10 @@ public class SelectToDateJUnitTest {
     executeQueryTest(cache, projectionQueries, toDateExpectedResults);
   }
 
-  /******** Region Creation Helper Methods *********/
+  /** ****** Region Creation Helper Methods ******** */
   /**
-   * Each month will have exactly 20 entries with a matching date Code borrowed
-   * from shobhit's test
-   * 
+   * Each month will have exactly 20 entries with a matching date Code borrowed from shobhit's test
+   *
    * @throws ParseException
    */
   private void createLocalRegion() throws ParseException {
@@ -226,5 +254,4 @@ public class SelectToDateJUnitTest {
     SimpleDateFormat sdf = new SimpleDateFormat(format);
     return sdf.parse(dateString);
   }
-
 }

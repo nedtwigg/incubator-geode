@@ -32,10 +32,7 @@ import org.apache.geode.management.internal.cli.domain.IndexInfo;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
-/***
- * Function to create index in a member, based on different arguments passed to it
- *
- */
+/** * Function to create index in a member, based on different arguments passed to it */
 public class CreateIndexFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
@@ -57,34 +54,41 @@ public class CreateIndexFunction extends FunctionAdapter implements InternalEnti
       String regionPath = regionPathTokens[0];
 
       switch (indexInfo.getIndexType()) {
-      case IndexInfo.RANGE_INDEX:
-        queryService.createIndex(indexName, indexedExpression, fromClause);
-        break;
-      case IndexInfo.KEY_INDEX:
-        queryService.createKeyIndex(indexName, indexedExpression, fromClause);
-        break;
-      case IndexInfo.HASH_INDEX:
-        queryService.createHashIndex(indexName, indexedExpression, fromClause);
-        break;
-      default:
-        queryService.createIndex(indexName, indexedExpression, fromClause);
+        case IndexInfo.RANGE_INDEX:
+          queryService.createIndex(indexName, indexedExpression, fromClause);
+          break;
+        case IndexInfo.KEY_INDEX:
+          queryService.createKeyIndex(indexName, indexedExpression, fromClause);
+          break;
+        case IndexInfo.HASH_INDEX:
+          queryService.createHashIndex(indexName, indexedExpression, fromClause);
+          break;
+        default:
+          queryService.createIndex(indexName, indexedExpression, fromClause);
       }
 
-      XmlEntity xmlEntity = new XmlEntity(CacheXml.REGION, "name", cache.getRegion(regionPath).getName());
+      XmlEntity xmlEntity =
+          new XmlEntity(CacheXml.REGION, "name", cache.getRegion(regionPath).getName());
       context.getResultSender().lastResult(new CliFunctionResult(memberId, xmlEntity));
     } catch (IndexExistsException e) {
-      String message = CliStrings.format(CliStrings.CREATE_INDEX__INDEX__EXISTS, indexInfo.getIndexName());
+      String message =
+          CliStrings.format(CliStrings.CREATE_INDEX__INDEX__EXISTS, indexInfo.getIndexName());
       context.getResultSender().lastResult(new CliFunctionResult(memberId, false, message));
     } catch (IndexNameConflictException e) {
-      String message = CliStrings.format(CliStrings.CREATE_INDEX__NAME__CONFLICT, indexInfo.getIndexName());
+      String message =
+          CliStrings.format(CliStrings.CREATE_INDEX__NAME__CONFLICT, indexInfo.getIndexName());
       context.getResultSender().lastResult(new CliFunctionResult(memberId, false, message));
     } catch (RegionNotFoundException e) {
-      String message = CliStrings.format(CliStrings.CREATE_INDEX__INVALID__REGIONPATH, indexInfo.getRegionPath());
+      String message =
+          CliStrings.format(
+              CliStrings.CREATE_INDEX__INVALID__REGIONPATH, indexInfo.getRegionPath());
       context.getResultSender().lastResult(new CliFunctionResult(memberId, false, message));
     } catch (IndexInvalidException e) {
       context.getResultSender().lastResult(new CliFunctionResult(memberId, e, e.getMessage()));
     } catch (Exception e) {
-      String exceptionMessage = CliStrings.format(CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(), e.getMessage());
+      String exceptionMessage =
+          CliStrings.format(
+              CliStrings.EXCEPTION_CLASS_AND_MESSAGE, e.getClass().getName(), e.getMessage());
       context.getResultSender().lastResult(new CliFunctionResult(memberId, e, e.getMessage()));
     }
   }

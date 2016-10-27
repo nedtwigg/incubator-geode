@@ -52,7 +52,9 @@ public class UndeployFunction implements Function, InternalEntity {
       final String jarFilenameList = (String) args[0]; // Comma separated
       Cache cache = CacheFactory.getAnyInstance();
 
-      final JarDeployer jarDeployer = new JarDeployer(((GemFireCacheImpl) cache).getDistributedSystem().getConfig().getDeployWorkingDir());
+      final JarDeployer jarDeployer =
+          new JarDeployer(
+              ((GemFireCacheImpl) cache).getDistributedSystem().getConfig().getDeployWorkingDir());
 
       DistributedMember member = cache.getDistributedSystem().getDistributedMember();
 

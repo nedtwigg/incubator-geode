@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Provides monitoring of a statistic resource.
  *
- * @since GemFire     3.5
+ * @since GemFire 3.5
  */
 public class StatisticResourceImpl implements org.apache.geode.admin.StatisticResource {
 
@@ -56,12 +56,13 @@ public class StatisticResourceImpl implements org.apache.geode.admin.StatisticRe
   /**
    * Constructs an instance of StatisticResourceImpl.
    *
-   * @param statResource  the admin StatResource to manage/monitor
-   * @param member        the SystemMember owning this resource
-   * @exception org.apache.geode.admin.AdminException 
-   *            if unable to create this StatisticResource for administration
+   * @param statResource the admin StatResource to manage/monitor
+   * @param member the SystemMember owning this resource
+   * @exception org.apache.geode.admin.AdminException if unable to create this StatisticResource for
+   *     administration
    */
-  public StatisticResourceImpl(StatResource statResource, SystemMember member) throws org.apache.geode.admin.AdminException {
+  public StatisticResourceImpl(StatResource statResource, SystemMember member)
+      throws org.apache.geode.admin.AdminException {
     this.statResource = statResource;
     this.member = member;
     this.name = this.statResource.getName();
@@ -114,7 +115,9 @@ public class StatisticResourceImpl implements org.apache.geode.admin.StatisticRe
       stats = this.statResource.getStats();
     }
     if (stats == null || stats.length < 1) {
-      throw new AdminException(LocalizedStrings.StatisticResourceImpl_FAILED_TO_REFRESH_STATISTICS_0_FOR_1.toLocalizedString(getType() + "-" + getName(), getOwner()));
+      throw new AdminException(
+          LocalizedStrings.StatisticResourceImpl_FAILED_TO_REFRESH_STATISTICS_0_FOR_1
+              .toLocalizedString(getType() + "-" + getName(), getOwner()));
     }
 
     if (this.statistics == null || this.statistics.length < 1) {
@@ -137,10 +140,10 @@ public class StatisticResourceImpl implements org.apache.geode.admin.StatisticRe
   // -------------------------------------------------------------------------
 
   /**
-   * Updates the value of the {@link Statistic} corresponding to the internal 
-   * {@link org.apache.geode.internal.admin.Stat}
+   * Updates the value of the {@link Statistic} corresponding to the internal {@link
+   * org.apache.geode.internal.admin.Stat}
    *
-   * @param stat  the internal stat to use in updating the matching statistic
+   * @param stat the internal stat to use in updating the matching statistic
    */
   private void updateStatistic(Stat stat) {
     for (int i = 0; i < this.statistics.length; i++) {
@@ -153,10 +156,10 @@ public class StatisticResourceImpl implements org.apache.geode.admin.StatisticRe
   }
 
   /**
-   * Creates a new {@link StatisticImpl} to represent the internal {@link 
+   * Creates a new {@link StatisticImpl} to represent the internal {@link
    * org.apache.geode.internal.admin.Stat}
    *
-   * @param stat  the internal stat to wrap in a new statistic
+   * @param stat the internal stat to wrap in a new statistic
    */
   protected Statistic createStatistic(Stat stat) {
     return new StatisticImpl(stat);
@@ -164,12 +167,11 @@ public class StatisticResourceImpl implements org.apache.geode.admin.StatisticRe
 
   /**
    * Returns a string representation of the object.
-   * 
+   *
    * @return a string representation of the object
    */
   @Override
   public String toString() {
     return getName();
   }
-
 }

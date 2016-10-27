@@ -19,9 +19,7 @@ package org.apache.geode.management.internal.cli.functions;
 import java.io.Serializable;
 import java.util.Properties;
 
-/**
- * This class stores the arguments provided for create async event queue command.
- */
+/** This class stores the arguments provided for create async event queue command. */
 public class AsyncEventQueueFunctionArgs implements Serializable {
 
   private static final long serialVersionUID = -6524494645663740872L;
@@ -43,7 +41,23 @@ public class AsyncEventQueueFunctionArgs implements Serializable {
   private Properties listenerProperties;
   private boolean forwardExpirationDestroy;
 
-  public AsyncEventQueueFunctionArgs(String asyncEventQueueId, boolean isParallel, boolean enableBatchConflation, int batchSize, int batchTimeInterval, boolean persistent, String diskStoreName, boolean diskSynchronous, int maxQueueMemory, int dispatcherThreads, String orderPolicy, String[] gatewayEventFilters, String gatewaySubstitutionFilter, String listenerClassName, Properties listenerProperties, boolean forwardExpirationDestroy) {
+  public AsyncEventQueueFunctionArgs(
+      String asyncEventQueueId,
+      boolean isParallel,
+      boolean enableBatchConflation,
+      int batchSize,
+      int batchTimeInterval,
+      boolean persistent,
+      String diskStoreName,
+      boolean diskSynchronous,
+      int maxQueueMemory,
+      int dispatcherThreads,
+      String orderPolicy,
+      String[] gatewayEventFilters,
+      String gatewaySubstitutionFilter,
+      String listenerClassName,
+      Properties listenerProperties,
+      boolean forwardExpirationDestroy) {
     this.asyncEventQueueId = asyncEventQueueId;
     this.isParallel = isParallel;
     this.enableBatchConflation = enableBatchConflation;

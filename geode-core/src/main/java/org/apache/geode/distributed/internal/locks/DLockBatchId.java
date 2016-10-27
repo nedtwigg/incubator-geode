@@ -20,9 +20,7 @@ package org.apache.geode.distributed.internal.locks;
 import org.apache.geode.DataSerializable;
 import org.apache.geode.distributed.internal.locks.LockGrantorId;
 
-/** 
- * Identifies a {@link DLockBatch}.
- */
+/** Identifies a {@link DLockBatch}. */
 public interface DLockBatchId extends DataSerializable {
   /** Gets the lock grantor id that granted this lock */
   public LockGrantorId getLockGrantorId();

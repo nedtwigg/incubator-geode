@@ -24,14 +24,14 @@ import org.junit.runners.model.Statement;
 import org.apache.geode.test.junit.Repeat;
 
 /**
- * The RepeatRule class is a JUnit TestRule that enables an appropriately {@literal @}Repeat annotated test case method
- * to be repeated a specified number of times.
+ * The RepeatRule class is a JUnit TestRule that enables an appropriately {@literal @}Repeat
+ * annotated test case method to be repeated a specified number of times.
  *
  * @see org.junit.rules.TestRule
  * @see org.junit.runner.Description
  * @see org.junit.runners.model.Statement
  */
-@SuppressWarnings({ "serial", "unused" })
+@SuppressWarnings({"serial", "unused"})
 public class RepeatRule implements TestRule, Serializable {
 
   protected static final int DEFAULT_REPETITIONS = 1;
@@ -46,7 +46,8 @@ public class RepeatRule implements TestRule, Serializable {
     };
   }
 
-  protected void evaluate(final Statement statement, final Description description) throws Throwable {
+  protected void evaluate(final Statement statement, final Description description)
+      throws Throwable {
     if (isTest(description)) {
       Repeat repeat = description.getAnnotation(Repeat.class);
 
@@ -77,5 +78,4 @@ public class RepeatRule implements TestRule, Serializable {
   private boolean isTest(final Description description) {
     return (description.isSuite() || description.isTest());
   }
-
 }

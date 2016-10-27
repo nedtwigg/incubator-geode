@@ -20,11 +20,12 @@ import org.apache.geode.internal.admin.Alert;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * Type-safe enumeration for {@link org.apache.geode.admin.Alert
- * Alert} level.
+ * Type-safe enumeration for {@link org.apache.geode.admin.Alert Alert} level.
  *
- * @since GemFire     3.5
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @since GemFire 3.5
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public class AlertLevel implements java.io.Serializable {
   private static final long serialVersionUID = -4752438966587392126L;
@@ -47,7 +48,7 @@ public class AlertLevel implements java.io.Serializable {
 
   private static int nextOrdinal = 0;
 
-  private static final AlertLevel[] VALUES = { WARNING, ERROR, SEVERE, OFF };
+  private static final AlertLevel[] VALUES = {WARNING, ERROR, SEVERE, OFF};
 
   private Object readResolve() throws java.io.ObjectStreamException {
     return VALUES[ordinal]; // Canonicalize
@@ -67,30 +68,30 @@ public class AlertLevel implements java.io.Serializable {
   /**
    * Returns the <code>AlertLevel</code> for the given severity
    *
-   * @throws IllegalArgumentException
-   *         If there is no alert level with the given
-   *         <code>severity</code> 
+   * @throws IllegalArgumentException If there is no alert level with the given <code>severity
+   *     </code>
    */
   public static AlertLevel forSeverity(int severity) {
     switch (severity) {
-    case Alert.WARNING:
-      return AlertLevel.WARNING;
-    case Alert.ERROR:
-      return AlertLevel.ERROR;
-    case Alert.SEVERE:
-      return AlertLevel.SEVERE;
-    case Alert.OFF:
-      return AlertLevel.OFF;
-    default:
-      throw new IllegalArgumentException(LocalizedStrings.AlertLevel_UNKNOWN_ALERT_SEVERITY_0.toLocalizedString(Integer.valueOf(severity)));
+      case Alert.WARNING:
+        return AlertLevel.WARNING;
+      case Alert.ERROR:
+        return AlertLevel.ERROR;
+      case Alert.SEVERE:
+        return AlertLevel.SEVERE;
+      case Alert.OFF:
+        return AlertLevel.OFF;
+      default:
+        throw new IllegalArgumentException(
+            LocalizedStrings.AlertLevel_UNKNOWN_ALERT_SEVERITY_0.toLocalizedString(
+                Integer.valueOf(severity)));
     }
   }
 
   /**
    * Returns the <code>AlertLevel</code> with the given name
    *
-   * @throws IllegalArgumentException
-   *         If there is no alert level named <code>name</code>
+   * @throws IllegalArgumentException If there is no alert level named <code>name</code>
    */
   public static AlertLevel forName(String name) {
     for (int i = 0; i < VALUES.length; i++) {
@@ -100,7 +101,8 @@ public class AlertLevel implements java.io.Serializable {
       }
     }
 
-    throw new IllegalArgumentException(LocalizedStrings.AlertLevel_THERE_IS_NO_ALERT_LEVEL_0.toLocalizedString(name));
+    throw new IllegalArgumentException(
+        LocalizedStrings.AlertLevel_THERE_IS_NO_ALERT_LEVEL_0.toLocalizedString(name));
   }
 
   public int getSeverity() {
@@ -115,7 +117,7 @@ public class AlertLevel implements java.io.Serializable {
     return VALUES;
   }
 
-  /** 
+  /**
    * Returns a string representation for this alert level.
    *
    * @return the name of this alert level
@@ -128,31 +130,25 @@ public class AlertLevel implements java.io.Serializable {
   /**
    * Indicates whether some other object is "equal to" this one.
    *
-   * @param  other  the reference object with which to compare.
-   * @return true if this object is the same as the obj argument;
-   *         false otherwise.
+   * @param other the reference object with which to compare.
+   * @return true if this object is the same as the obj argument; false otherwise.
    */
   @Override
   public boolean equals(Object other) {
-    if (other == this)
-      return true;
-    if (other == null)
-      return false;
-    if (!(other instanceof AlertLevel))
-      return false;
+    if (other == this) return true;
+    if (other == null) return false;
+    if (!(other instanceof AlertLevel)) return false;
     final AlertLevel that = (AlertLevel) other;
 
-    if (this.severity != that.severity)
-      return false;
-    if (this.name != null && !this.name.equals(that.name))
-      return false;
+    if (this.severity != that.severity) return false;
+    if (this.name != null && !this.name.equals(that.name)) return false;
 
     return true;
   }
 
   /**
-   * Returns a hash code for the object. This method is supported for the
-   * benefit of hashtables such as those provided by java.util.Hashtable.
+   * Returns a hash code for the object. This method is supported for the benefit of hashtables such
+   * as those provided by java.util.Hashtable.
    *
    * @return the integer 0 if description is null; otherwise a unique integer.
    */
@@ -166,5 +162,4 @@ public class AlertLevel implements java.io.Serializable {
 
     return result;
   }
-
 }

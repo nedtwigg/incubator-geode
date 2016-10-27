@@ -86,8 +86,8 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Test the execution of function on all memebers
-   * haveResults = true 
+   * Test the execution of function on all memebers haveResults = true
+   *
    * @throws Exception
    */
   @Test
@@ -99,42 +99,48 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
   @Test
   public void testRemoteMultiKeyExecution_SendException1() throws Exception {
     createDistributedSystemAndRegisterFunction();
-    member1.invoke(() -> MemberFunctionExecutionDUnitTest.excuteOnMembers_SendException(new Integer(1)));
+    member1.invoke(
+        () -> MemberFunctionExecutionDUnitTest.excuteOnMembers_SendException(new Integer(1)));
   }
 
   @Test
   public void testRemoteMultiKeyExecution_SendException2() throws Exception {
     createDistributedSystemAndRegisterFunction();
-    member1.invoke(() -> MemberFunctionExecutionDUnitTest.excuteOnMembers_SendException(new Integer(4)));
+    member1.invoke(
+        () -> MemberFunctionExecutionDUnitTest.excuteOnMembers_SendException(new Integer(4)));
   }
 
   @Test
   public void testRemoteMultiKeyExecution_SendException3() throws Exception {
     createDistributedSystemAndRegisterFunction();
-    member1.invoke(() -> MemberFunctionExecutionDUnitTest.excuteOnMembers_SendException(new Integer(5)));
+    member1.invoke(
+        () -> MemberFunctionExecutionDUnitTest.excuteOnMembers_SendException(new Integer(5)));
   }
 
   @Test
   public void testRemoteMultiKeyExecution_NoLastResult() throws Exception {
     createDistributedSystemAndRegisterFunction();
-    member1.invoke(() -> MemberFunctionExecutionDUnitTest.excuteOnMembers_NoLastResult(new Integer(5)));
+    member1.invoke(
+        () -> MemberFunctionExecutionDUnitTest.excuteOnMembers_NoLastResult(new Integer(5)));
   }
 
   @Test
   public void testLocalMultiKeyExecution_NoLastResult() throws Exception {
     createDistributedSystemAndRegisterFunction();
-    member1.invoke(() -> MemberFunctionExecutionDUnitTest.excuteOnMembers_NoLastResult(new Integer(1)));
+    member1.invoke(
+        () -> MemberFunctionExecutionDUnitTest.excuteOnMembers_NoLastResult(new Integer(1)));
   }
 
   /**
-   * Test the execution of function on all memebers
-   * haveResults = true 
+   * Test the execution of function on all memebers haveResults = true
+   *
    * @throws Exception
    */
   @Test
   public void testRemoteMultiKeyExecution_InlineFunction() throws Exception {
     createDistributedSystemAndRegisterFunction();
-    member1.invoke(() -> MemberFunctionExecutionDUnitTest.excuteOnMembers_InlineFunction(new Integer(5)));
+    member1.invoke(
+        () -> MemberFunctionExecutionDUnitTest.excuteOnMembers_InlineFunction(new Integer(5)));
   }
 
   @Test
@@ -150,15 +156,21 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
     stringBuffer.append("import org.apache.geode.cache.CacheFactory;");
     stringBuffer.append("import org.apache.geode.cache.execute.Function;");
     stringBuffer.append("import org.apache.geode.cache.execute.FunctionContext;");
-    stringBuffer.append("public class ").append(functionId).append(" implements Function, Declarable {");
+    stringBuffer
+        .append("public class ")
+        .append(functionId)
+        .append(" implements Function, Declarable {");
     stringBuffer.append("public void init(Properties props) {}");
     stringBuffer.append("public boolean hasResult() {return true;}");
-    stringBuffer.append("public void execute(FunctionContext context) {context.getResultSender().lastResult(\"GOOD\");}");
+    stringBuffer.append(
+        "public void execute(FunctionContext context) {context.getResultSender().lastResult(\"GOOD\");}");
     stringBuffer.append("public String getId() {return \"MemberFunctionExecutionDUnitFunction\";}");
     stringBuffer.append("public boolean optimizeForWrite() {return false;}");
     stringBuffer.append("public boolean isHA() {return false;}}");
 
-    ClassLoader classLoader = classBuilder.createClassLoaderFromContent("MemberFunctionExecutionDUnitFunction", stringBuffer.toString());
+    ClassLoader classLoader =
+        classBuilder.createClassLoaderFromContent(
+            "MemberFunctionExecutionDUnitFunction", stringBuffer.toString());
     @SuppressWarnings("unchecked")
     Class<Function> clazz = (Class<Function>) Class.forName(functionId, true, classLoader);
     Constructor<Function> constructor = clazz.getConstructor();
@@ -183,7 +195,8 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
     member2.invoke(() -> MemberFunctionExecutionDUnitTest.registerFunction());
     member3.invoke(() -> MemberFunctionExecutionDUnitTest.registerFunction());
     member4.invoke(() -> MemberFunctionExecutionDUnitTest.registerFunction());
-    member1.invoke(() -> MemberFunctionExecutionDUnitTest.excuteOnMembers_InlineFunction(new Integer(5)));
+    member1.invoke(
+        () -> MemberFunctionExecutionDUnitTest.excuteOnMembers_InlineFunction(new Integer(5)));
   }
 
   @Test
@@ -196,26 +209,28 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
     connectToDistributedSystem(props);
     AbstractExecution exe = (AbstractExecution) FunctionService.onMembers(getSystem());
     exe.setIgnoreDepartedMembers(true);
-    ResultCollector rs = exe.execute(new FunctionAdapter() {
-      @Override
-      public void execute(FunctionContext context) {
-        try {
-          Object arg = context.getArguments();
-          if (arg != null && arg instanceof Map) {
-            context.getResultSender().lastResult("ok");
-          } else {
-            throw new IllegalArgumentException("dummy");
-          }
-        } catch (Exception e) {
-          context.getResultSender().sendException(e);
-        }
-      }
+    ResultCollector rs =
+        exe.execute(
+            new FunctionAdapter() {
+              @Override
+              public void execute(FunctionContext context) {
+                try {
+                  Object arg = context.getArguments();
+                  if (arg != null && arg instanceof Map) {
+                    context.getResultSender().lastResult("ok");
+                  } else {
+                    throw new IllegalArgumentException("dummy");
+                  }
+                } catch (Exception e) {
+                  context.getResultSender().sendException(e);
+                }
+              }
 
-      @Override
-      public String getId() {
-        return "testBug46129";
-      }
-    });
+              @Override
+              public String getId() {
+                return "testBug46129";
+              }
+            });
     List resultList = (List) rs.getResult();
     Exception e = (Exception) resultList.get(0);
     assertTrue(e instanceof IllegalArgumentException);
@@ -224,31 +239,32 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
   }
 
   public static void registerFunction() {
-    FunctionService.registerFunction(new FunctionAdapter() {
-      @Override
-      public void execute(FunctionContext context) {
-        if (context.getArguments() instanceof String) {
-          context.getResultSender().lastResult("Failure");
-        } else if (context.getArguments() instanceof Boolean) {
-          context.getResultSender().lastResult(Boolean.FALSE);
-        }
-      }
+    FunctionService.registerFunction(
+        new FunctionAdapter() {
+          @Override
+          public void execute(FunctionContext context) {
+            if (context.getArguments() instanceof String) {
+              context.getResultSender().lastResult("Failure");
+            } else if (context.getArguments() instanceof Boolean) {
+              context.getResultSender().lastResult(Boolean.FALSE);
+            }
+          }
 
-      @Override
-      public String getId() {
-        return "Function";
-      }
+          @Override
+          public String getId() {
+            return "Function";
+          }
 
-      @Override
-      public boolean hasResult() {
-        return true;
-      }
-    });
+          @Override
+          public boolean hasResult() {
+            return true;
+          }
+        });
   }
 
   /**
-   * Test the execution of function on all memebers
-   * haveResults = false 
+   * Test the execution of function on all memebers haveResults = false
+   *
    * @throws Exception
    */
   @Test
@@ -258,8 +274,8 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Test the execution of function on local memebers
-   * haveResults = true 
+   * Test the execution of function on local memebers haveResults = true
+   *
    * @throws Exception
    */
   @Test
@@ -269,19 +285,20 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Test the execution of function on local memebers
-   * haveResults = true 
+   * Test the execution of function on local memebers haveResults = true
+   *
    * @throws Exception
    */
   @Test
   public void testRemoteMultiKeyExecutiononLocalMember_InlineFunction() throws Exception {
     createDistributedSystemAndRegisterFunction();
-    member1.invoke(() -> MemberFunctionExecutionDUnitTest.excuteOnMembers_InlineFunction(new Integer(1)));
+    member1.invoke(
+        () -> MemberFunctionExecutionDUnitTest.excuteOnMembers_InlineFunction(new Integer(1)));
   }
 
   /**
-   * Test the execution of function on other memebers
-   * haveResults = true 
+   * Test the execution of function on other memebers haveResults = true
+   *
    * @throws Exception
    */
   @Test
@@ -291,14 +308,15 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Test the execution of function on other memebers
-   * haveResults = true 
+   * Test the execution of function on other memebers haveResults = true
+   *
    * @throws Exception
    */
   @Test
   public void testRemoteMultiKeyExecutiononOtherMembers_InlineFunction() throws Exception {
     createDistributedSystemAndRegisterFunction();
-    member1.invoke(() -> MemberFunctionExecutionDUnitTest.excuteOnMembers_InlineFunction(new Integer(4)));
+    member1.invoke(
+        () -> MemberFunctionExecutionDUnitTest.excuteOnMembers_InlineFunction(new Integer(4)));
   }
 
   /**
@@ -312,45 +330,51 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
 
   @Test
   public void testOnMembersWithoutCache() throws Exception {
-    DistributedMember member1Id = (DistributedMember) member1.invoke(new SerializableCallable() {
+    DistributedMember member1Id =
+        (DistributedMember)
+            member1.invoke(
+                new SerializableCallable() {
 
-      @Override
-      public Object call() {
-        disconnectFromDS();
-        return getSystem().getDistributedMember();
-      }
-    });
+                  @Override
+                  public Object call() {
+                    disconnectFromDS();
+                    return getSystem().getDistributedMember();
+                  }
+                });
 
-    member2.invoke(new SerializableRunnable() {
-
-      @Override
-      public void run() {
-        getSystem();
-        ResultCollector<?, ?> rc = FunctionService.onMember(member1Id).execute(new FunctionAdapter() {
-
-          @Override
-          public String getId() {
-            return getClass().getName();
-          }
+    member2.invoke(
+        new SerializableRunnable() {
 
           @Override
-          public void execute(FunctionContext context) {
-            //This will throw an exception because the cache is not yet created.
-            CacheFactory.getAnyInstance();
+          public void run() {
+            getSystem();
+            ResultCollector<?, ?> rc =
+                FunctionService.onMember(member1Id)
+                    .execute(
+                        new FunctionAdapter() {
+
+                          @Override
+                          public String getId() {
+                            return getClass().getName();
+                          }
+
+                          @Override
+                          public void execute(FunctionContext context) {
+                            //This will throw an exception because the cache is not yet created.
+                            CacheFactory.getAnyInstance();
+                          }
+                        });
+
+            try {
+              rc.getResult(30, TimeUnit.SECONDS);
+              fail("Should have seen an exception");
+            } catch (Exception e) {
+              if (!(e.getCause() instanceof FunctionInvocationTargetException)) {
+                Assert.fail("failed", e);
+              }
+            }
           }
         });
-
-        try {
-          rc.getResult(30, TimeUnit.SECONDS);
-          fail("Should have seen an exception");
-        } catch (Exception e) {
-          if (!(e.getCause() instanceof FunctionInvocationTargetException)) {
-            Assert.fail("failed", e);
-          }
-        }
-
-      }
-    });
   }
 
   public static void bug41118() {
@@ -369,28 +393,31 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
     memberExcution = FunctionService.onMember(ds, localmember);
     Execution executor = memberExcution.withArgs("Key");
     try {
-      ResultCollector rc = executor.execute(new FunctionAdapter() {
-        @Override
-        public void execute(FunctionContext context) {
-          if (context.getArguments() instanceof String) {
-            context.getResultSender().lastResult("Success");
-          } else {
-            context.getResultSender().lastResult("Failure");
-          }
-        }
+      ResultCollector rc =
+          executor.execute(
+              new FunctionAdapter() {
+                @Override
+                public void execute(FunctionContext context) {
+                  if (context.getArguments() instanceof String) {
+                    context.getResultSender().lastResult("Success");
+                  } else {
+                    context.getResultSender().lastResult("Failure");
+                  }
+                }
 
-        @Override
-        public String getId() {
-          return getClass().getName();
-        }
+                @Override
+                public String getId() {
+                  return getClass().getName();
+                }
 
-        @Override
-        public boolean hasResult() {
-          return true;
-        }
-      });
+                @Override
+                public boolean hasResult() {
+                  return true;
+                }
+              });
       List li = (ArrayList) rc.getResult();
-      LogWriterUtils.getLogWriter().info("MemberFunctionExecutionDUnitTest#excuteOnMembers: Result : " + li);
+      LogWriterUtils.getLogWriter()
+          .info("MemberFunctionExecutionDUnitTest#excuteOnMembers: Result : " + li);
       assertEquals(li.size(), 1);
       for (Object obj : li) {
         assertEquals(obj, "Success");
@@ -444,7 +471,8 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
     try {
       ResultCollector rc = executor.execute(function.getId());
       List li = (ArrayList) rc.getResult();
-      LogWriterUtils.getLogWriter().info("MemberFunctionExecutionDUnitTest#excuteOnMembers: Result : " + li);
+      LogWriterUtils.getLogWriter()
+          .info("MemberFunctionExecutionDUnitTest#excuteOnMembers: Result : " + li);
       assertEquals(li.size(), noOfMembers.intValue());
       for (Object obj : li) {
         assertEquals(obj, "Success");
@@ -480,7 +508,8 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
     try {
       ResultCollector rc = memberExcution.withArgs(Boolean.TRUE).execute(function);
       List li = (ArrayList) rc.getResult();
-      LogWriterUtils.getLogWriter().info("MemberFunctionExecutionDUnitTest#excuteOnMembers: Result : " + li);
+      LogWriterUtils.getLogWriter()
+          .info("MemberFunctionExecutionDUnitTest#excuteOnMembers: Result : " + li);
       assertEquals(noOfMembers.intValue(), li.size());
       for (Object obj : li) {
         assertTrue(obj instanceof MyFunctionExecutionException);
@@ -532,7 +561,9 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
       rc.getResult();
       fail("Expcted FunctionException : Function did not send last result");
     } catch (Exception ex) {
-      assertTrue(ex.getMessage().contains("did not send last result") || ex.getCause().getMessage().contains("did not send last result"));
+      assertTrue(
+          ex.getMessage().contains("did not send last result")
+              || ex.getCause().getMessage().contains("did not send last result"));
     }
   }
 
@@ -555,28 +586,31 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
     }
     Execution executor = memberExcution.withArgs("Key");
     try {
-      ResultCollector rc = executor.execute(new FunctionAdapter() {
-        @Override
-        public void execute(FunctionContext context) {
-          if (context.getArguments() instanceof String) {
-            context.getResultSender().lastResult("Success");
-          } else {
-            context.getResultSender().lastResult("Failure");
-          }
-        }
+      ResultCollector rc =
+          executor.execute(
+              new FunctionAdapter() {
+                @Override
+                public void execute(FunctionContext context) {
+                  if (context.getArguments() instanceof String) {
+                    context.getResultSender().lastResult("Success");
+                  } else {
+                    context.getResultSender().lastResult("Failure");
+                  }
+                }
 
-        @Override
-        public String getId() {
-          return getClass().getName();
-        }
+                @Override
+                public String getId() {
+                  return getClass().getName();
+                }
 
-        @Override
-        public boolean hasResult() {
-          return true;
-        }
-      });
+                @Override
+                public boolean hasResult() {
+                  return true;
+                }
+              });
       List li = (ArrayList) rc.getResult();
-      LogWriterUtils.getLogWriter().info("MemberFunctionExecutionDUnitTest#excuteOnMembers: Result : " + li);
+      LogWriterUtils.getLogWriter()
+          .info("MemberFunctionExecutionDUnitTest#excuteOnMembers: Result : " + li);
       assertEquals(li.size(), noOfMembers.intValue());
       for (Object obj : li) {
         assertEquals(obj, "Success");
@@ -603,12 +637,17 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
     } catch (Exception expected) {
       LogWriterUtils.getLogWriter().info("Exception Occured : " + expected.getMessage());
       //      boolean check = expected.getMessage().equals("Cannot return any result, as Function.hasResult() is false");
-      assertTrue(expected.getMessage().equals(LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("return any")));
+      assertTrue(
+          expected
+              .getMessage()
+              .equals(
+                  LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE
+                      .toLocalizedString("return any")));
     }
   }
 
   /*
-   * Create Disturbued System and Register the Function 
+   * Create Disturbued System and Register the Function
    */
   private void createDistributedSystemAndRegisterFunction() {
     Properties props = new Properties();
@@ -620,7 +659,8 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
     members.add(member4);
     for (VM member : members) {
       member.invoke(() -> MemberFunctionExecutionDUnitTest.connectToDistributedSystem(props));
-      member.invoke(() -> MemberFunctionExecutionDUnitTest.registerExpectedExceptions(Boolean.TRUE));
+      member.invoke(
+          () -> MemberFunctionExecutionDUnitTest.registerExpectedExceptions(Boolean.TRUE));
     }
   }
 
@@ -628,7 +668,11 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
     final String action = add ? "add" : "remove";
     LogWriterI18n log = InternalDistributedSystem.getLoggerI18n();
     if (log != null) {
-      log.convertToLogWriter().info("<ExpectedException action=" + action + ">ClassNotFoundException</ExpectedException>");
+      log.convertToLogWriter()
+          .info(
+              "<ExpectedException action="
+                  + action
+                  + ">ClassNotFoundException</ExpectedException>");
     }
   }
 
@@ -643,7 +687,8 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
       FunctionService.registerFunction(new TestFunction(true, TEST_FUNCTION5));
       FunctionService.registerFunction(new TestFunction(false, TEST_FUNCTION6));
       FunctionService.registerFunction(new TestFunction(true, TestFunction.MEMBER_FUNCTION));
-      FunctionService.registerFunction(new TestFunction(true, TestFunction.TEST_FUNCTION_NO_LASTRESULT));
+      FunctionService.registerFunction(
+          new TestFunction(true, TestFunction.TEST_FUNCTION_NO_LASTRESULT));
     } catch (Exception e) {
       Assert.fail("Failed while creating the Distribued System", e);
     }
@@ -658,7 +703,8 @@ public class MemberFunctionExecutionDUnitTest extends JUnit4CacheTestCase {
     members.add(member3);
     members.add(member4);
     for (VM member : members) {
-      member.invoke(() -> MemberFunctionExecutionDUnitTest.registerExpectedExceptions(Boolean.FALSE));
+      member.invoke(
+          () -> MemberFunctionExecutionDUnitTest.registerExpectedExceptions(Boolean.FALSE));
     }
   }
 

@@ -25,8 +25,8 @@ import org.apache.geode.DataSerializable;
 import org.apache.geode.DataSerializer;
 
 /**
- * Class <code>DynamicRegionAttributes</code> encapsulates the
- * <code>RegionAttributes</code> for dynamically-created regions.
+ * Class <code>DynamicRegionAttributes</code> encapsulates the <code>RegionAttributes</code> for
+ * dynamically-created regions.
  */
 public class DynamicRegionAttributes implements DataSerializable {
   private static final long serialVersionUID = 1787461488256727050L;
@@ -48,5 +48,4 @@ public class DynamicRegionAttributes implements DataSerializable {
     //     this.scope = ( Scope ) DataSerializer.readObject( in );
     //     this.mirror_type = ( MirrorType ) DataSerializer.readObject( in );
   }
-
 }

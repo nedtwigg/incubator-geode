@@ -52,14 +52,23 @@ public class GatewaySenderCreateFunction extends FunctionAdapter implements Inte
     ResultSender<Object> resultSender = context.getResultSender();
 
     Cache cache = CacheFactory.getAnyInstance();
-    String memberNameOrId = CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
+    String memberNameOrId =
+        CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
 
-    GatewaySenderFunctionArgs gatewaySenderCreateArgs = (GatewaySenderFunctionArgs) context.getArguments();
+    GatewaySenderFunctionArgs gatewaySenderCreateArgs =
+        (GatewaySenderFunctionArgs) context.getArguments();
 
     try {
       GatewaySender createdGatewaySender = createGatewaySender(cache, gatewaySenderCreateArgs);
-      XmlEntity xmlEntity = new XmlEntity(CacheXml.GATEWAY_SENDER, "id", gatewaySenderCreateArgs.getId());
-      resultSender.lastResult(new CliFunctionResult(memberNameOrId, xmlEntity, CliStrings.format(CliStrings.CREATE_GATEWAYSENDER__MSG__GATEWAYSENDER_0_CREATED_ON_1, new Object[] { createdGatewaySender.getId(), memberNameOrId })));
+      XmlEntity xmlEntity =
+          new XmlEntity(CacheXml.GATEWAY_SENDER, "id", gatewaySenderCreateArgs.getId());
+      resultSender.lastResult(
+          new CliFunctionResult(
+              memberNameOrId,
+              xmlEntity,
+              CliStrings.format(
+                  CliStrings.CREATE_GATEWAYSENDER__MSG__GATEWAYSENDER_0_CREATED_ON_1,
+                  new Object[] {createdGatewaySender.getId(), memberNameOrId})));
     } catch (GatewaySenderException e) {
       resultSender.lastResult(handleException(memberNameOrId, e.getMessage(), e));
     } catch (Exception e) {
@@ -71,7 +80,8 @@ public class GatewaySenderCreateFunction extends FunctionAdapter implements Inte
     }
   }
 
-  private CliFunctionResult handleException(final String memberNameOrId, final String exceptionMsg, final Exception e) {
+  private CliFunctionResult handleException(
+      final String memberNameOrId, final String exceptionMsg, final Exception e) {
     if (e != null && logger.isDebugEnabled()) {
       logger.debug(e.getMessage(), e);
     }
@@ -84,12 +94,13 @@ public class GatewaySenderCreateFunction extends FunctionAdapter implements Inte
 
   /**
    * Creates the GatewaySender with given configuration.
-   * 
-   * @param     cache
-   * @param     gatewaySenderCreateArgs
-   * @return    GatewaySender
+   *
+   * @param cache
+   * @param gatewaySenderCreateArgs
+   * @return GatewaySender
    */
-  private static GatewaySender createGatewaySender(Cache cache, GatewaySenderFunctionArgs gatewaySenderCreateArgs) {
+  private static GatewaySender createGatewaySender(
+      Cache cache, GatewaySenderFunctionArgs gatewaySenderCreateArgs) {
     GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
 
     Boolean isParallel = gatewaySenderCreateArgs.isParallel();
@@ -163,19 +174,30 @@ public class GatewaySenderCreateFunction extends FunctionAdapter implements Inte
     String[] gatewayEventFilters = gatewaySenderCreateArgs.getGatewayEventFilter();
     if (gatewayEventFilters != null) {
       for (String gatewayEventFilter : gatewayEventFilters) {
-        Class gatewayEventFilterKlass = forName(gatewayEventFilter, CliStrings.CREATE_GATEWAYSENDER__GATEWAYEVENTFILTER);
-        gateway.addGatewayEventFilter((GatewayEventFilter) newInstance(gatewayEventFilterKlass, CliStrings.CREATE_GATEWAYSENDER__GATEWAYEVENTFILTER));
+        Class gatewayEventFilterKlass =
+            forName(gatewayEventFilter, CliStrings.CREATE_GATEWAYSENDER__GATEWAYEVENTFILTER);
+        gateway.addGatewayEventFilter(
+            (GatewayEventFilter)
+                newInstance(
+                    gatewayEventFilterKlass, CliStrings.CREATE_GATEWAYSENDER__GATEWAYEVENTFILTER));
       }
     }
 
     String[] gatewayTransportFilters = gatewaySenderCreateArgs.getGatewayTransportFilter();
     if (gatewayTransportFilters != null) {
       for (String gatewayTransportFilter : gatewayTransportFilters) {
-        Class gatewayTransportFilterKlass = forName(gatewayTransportFilter, CliStrings.CREATE_GATEWAYSENDER__GATEWAYTRANSPORTFILTER);
-        gateway.addGatewayTransportFilter((GatewayTransportFilter) newInstance(gatewayTransportFilterKlass, CliStrings.CREATE_GATEWAYSENDER__GATEWAYTRANSPORTFILTER));
+        Class gatewayTransportFilterKlass =
+            forName(
+                gatewayTransportFilter, CliStrings.CREATE_GATEWAYSENDER__GATEWAYTRANSPORTFILTER);
+        gateway.addGatewayTransportFilter(
+            (GatewayTransportFilter)
+                newInstance(
+                    gatewayTransportFilterKlass,
+                    CliStrings.CREATE_GATEWAYSENDER__GATEWAYTRANSPORTFILTER));
       }
     }
-    return gateway.create(gatewaySenderCreateArgs.getId(), gatewaySenderCreateArgs.getRemoteDistributedSystemId());
+    return gateway.create(
+        gatewaySenderCreateArgs.getId(), gatewaySenderCreateArgs.getRemoteDistributedSystemId());
   }
 
   @SuppressWarnings("unchecked")
@@ -188,9 +210,18 @@ public class GatewaySenderCreateFunction extends FunctionAdapter implements Inte
         loadedClass = classPathLoader.forName(classToLoadName);
       }
     } catch (ClassNotFoundException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_REGION__MSG__COULDNOT_FIND_CLASS_0_SPECIFIED_FOR_1, new Object[] { classToLoadName, neededFor }), e);
+      throw new RuntimeException(
+          CliStrings.format(
+              CliStrings.CREATE_REGION__MSG__COULDNOT_FIND_CLASS_0_SPECIFIED_FOR_1,
+              new Object[] {classToLoadName, neededFor}),
+          e);
     } catch (ClassCastException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_REGION__MSG__CLASS_SPECIFIED_FOR_0_SPECIFIED_FOR_1_IS_NOT_OF_EXPECTED_TYPE, new Object[] { classToLoadName, neededFor }), e);
+      throw new RuntimeException(
+          CliStrings.format(
+              CliStrings
+                  .CREATE_REGION__MSG__CLASS_SPECIFIED_FOR_0_SPECIFIED_FOR_1_IS_NOT_OF_EXPECTED_TYPE,
+              new Object[] {classToLoadName, neededFor}),
+          e);
     }
 
     return loadedClass;
@@ -201,9 +232,17 @@ public class GatewaySenderCreateFunction extends FunctionAdapter implements Inte
     try {
       instance = klass.newInstance();
     } catch (InstantiationException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_GATEWAYSENDER__MSG__COULDNOT_INSTANTIATE_CLASS_0_SPECIFIED_FOR_1, new Object[] { klass, neededFor }), e);
+      throw new RuntimeException(
+          CliStrings.format(
+              CliStrings.CREATE_GATEWAYSENDER__MSG__COULDNOT_INSTANTIATE_CLASS_0_SPECIFIED_FOR_1,
+              new Object[] {klass, neededFor}),
+          e);
     } catch (IllegalAccessException e) {
-      throw new RuntimeException(CliStrings.format(CliStrings.CREATE_GATEWAYSENDER__MSG__COULDNOT_ACCESS_CLASS_0_SPECIFIED_FOR_1, new Object[] { klass, neededFor }), e);
+      throw new RuntimeException(
+          CliStrings.format(
+              CliStrings.CREATE_GATEWAYSENDER__MSG__COULDNOT_ACCESS_CLASS_0_SPECIFIED_FOR_1,
+              new Object[] {klass, neededFor}),
+          e);
     }
     return instance;
   }
@@ -212,5 +251,4 @@ public class GatewaySenderCreateFunction extends FunctionAdapter implements Inte
   public String getId() {
     return ID;
   }
-
 }

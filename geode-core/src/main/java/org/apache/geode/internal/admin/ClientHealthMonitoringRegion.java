@@ -29,27 +29,25 @@ import org.apache.geode.internal.cache.InternalRegionArguments;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * This is an admin (meta) region used by the client health monitoring service
- * to publish the client health details to the cache-server.
- * 
+ * This is an admin (meta) region used by the client health monitoring service to publish the client
+ * health details to the cache-server.
  */
-
 public class ClientHealthMonitoringRegion {
-  public final static String ADMIN_REGION_NAME = "__ADMIN_CLIENT_HEALTH_MONITORING__";
+  public static final String ADMIN_REGION_NAME = "__ADMIN_CLIENT_HEALTH_MONITORING__";
 
-  public final static int ADMIN_REGION_EXPIRY_INTERVAL = 20;
+  public static final int ADMIN_REGION_EXPIRY_INTERVAL = 20;
 
   /**
    * Instance for current cache
-   * 
+   *
    * @guarded.By ClientHealthMonitoringRegion.class
    */
   static Region currentInstance;
 
   /**
-   * This is an accessor method used to get the reference of this region. If
-   * this region is not yet initialized, then it attempts to create it.
-   * 
+   * This is an accessor method used to get the reference of this region. If this region is not yet
+   * initialized, then it attempts to create it.
+   *
    * @param c the Cache we are currently using
    * @return ClientHealthMonitoringRegion reference.
    */
@@ -66,16 +64,16 @@ public class ClientHealthMonitoringRegion {
 
   /**
    * This method creates the client health monitoring region.
-   * 
-   * @param cache
-   *                The current GemFire Cache
+   *
+   * @param cache The current GemFire Cache
    * @guarded.By ClientHealthMonitoringRegion.class
    */
   private static void initialize(GemFireCacheImpl cache) {
     try {
       AttributesFactory factory = new AttributesFactory();
       factory.setScope(Scope.LOCAL);
-      factory.setEntryTimeToLive(new ExpirationAttributes(ADMIN_REGION_EXPIRY_INTERVAL, ExpirationAction.DESTROY));
+      factory.setEntryTimeToLive(
+          new ExpirationAttributes(ADMIN_REGION_EXPIRY_INTERVAL, ExpirationAction.DESTROY));
       cache.getLogger().fine("ClientHealthMonitoringRegion, setting TTL for entry....");
       factory.addCacheListener(prepareCacheListener());
       factory.setStatisticsEnabled(true);
@@ -87,14 +85,18 @@ public class ClientHealthMonitoringRegion {
 
       currentInstance = cache.createVMRegion(ADMIN_REGION_NAME, regionAttrs, internalArgs);
     } catch (Exception ex) {
-      cache.getLoggerI18n().error(LocalizedStrings.ClientHealthMonitoringRegion_ERROR_WHILE_CREATING_AN_ADMIN_REGION, ex);
+      cache
+          .getLoggerI18n()
+          .error(
+              LocalizedStrings.ClientHealthMonitoringRegion_ERROR_WHILE_CREATING_AN_ADMIN_REGION,
+              ex);
     }
   }
 
   /**
-   * This method prepares a CacheListener, responsible for the cleanup of
-   * reference of admin region, upon the cache closure.
-   * 
+   * This method prepares a CacheListener, responsible for the cleanup of reference of admin region,
+   * upon the cache closure.
+   *
    * @return CacheListener.
    */
   private static CacheListener prepareCacheListener() {

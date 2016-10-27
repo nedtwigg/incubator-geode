@@ -31,52 +31,44 @@ import org.apache.geode.management.ManagementService;
 
 /**
  * Super class to all Management Service
- * 
+ *
  * @since GemFire 7.0
  */
 public abstract class BaseManagementService extends ManagementService {
 
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * The main mapping between different resources and Service instance Object
-   * can be Cache
-   */
-  protected static final Map<Object, BaseManagementService> instances = new HashMap<Object, BaseManagementService>();
+  /** The main mapping between different resources and Service instance Object can be Cache */
+  protected static final Map<Object, BaseManagementService> instances =
+      new HashMap<Object, BaseManagementService>();
 
   /** List of connected <code>DistributedSystem</code>s */
-  private static final List<InternalDistributedSystem> systems = new ArrayList<InternalDistributedSystem>(1);
+  private static final List<InternalDistributedSystem> systems =
+      new ArrayList<InternalDistributedSystem>(1);
 
   /** Protected constructor. */
-  protected BaseManagementService() {
-  }
+  protected BaseManagementService() {}
 
   // Static block to initialize the ConnectListener on the System
 
   static {
     initInternalDistributedSystem();
-
   }
 
   /**
-   * This method will close the service. Any operation on the service instance
-   * will throw exception
+   * This method will close the service. Any operation on the service instance will throw exception
    */
-
   protected abstract void close();
 
   /**
-   * This method will close the service. Any operation on the service instance
-   * will throw exception
+   * This method will close the service. Any operation on the service instance will throw exception
    */
-
   protected abstract boolean isClosed();
 
   /**
    * Returns a ManagementService to use for the specified Cache.
-   * 
-   * @param cache
-   *          defines the scope of resources to be managed
+   *
+   * @param cache defines the scope of resources to be managed
    */
   public static ManagementService getManagementService(Cache cache) {
     synchronized (instances) {
@@ -84,7 +76,6 @@ public abstract class BaseManagementService extends ManagementService {
       if (service == null) {
         service = SystemManagementService.newSystemManagementService(cache);
         instances.put(cache, service);
-
       }
       return service;
     }
@@ -97,18 +88,18 @@ public abstract class BaseManagementService extends ManagementService {
     }
   }
 
-  /**
-   * Initialises the distributed system listener
-   */
+  /** Initialises the distributed system listener */
   private static void initInternalDistributedSystem() {
     synchronized (instances) {
       // Initialize our own list of distributed systems via a connect listener
       @SuppressWarnings("unchecked")
-      List<InternalDistributedSystem> existingSystems = InternalDistributedSystem.addConnectListener(new InternalDistributedSystem.ConnectListener() {
-        public void onConnect(InternalDistributedSystem sys) {
-          addInternalDistributedSystem(sys);
-        }
-      });
+      List<InternalDistributedSystem> existingSystems =
+          InternalDistributedSystem.addConnectListener(
+              new InternalDistributedSystem.ConnectListener() {
+                public void onConnect(InternalDistributedSystem sys) {
+                  addInternalDistributedSystem(sys);
+                }
+              });
 
       // While still holding the lock on systems, add all currently known
       // systems to our own list
@@ -128,29 +119,30 @@ public abstract class BaseManagementService extends ManagementService {
 
   /**
    * Add an Distributed System and adds a Discon Listener
-   * 
+   *
    * @param sys
    */
   private static void addInternalDistributedSystem(InternalDistributedSystem sys) {
     synchronized (instances) {
-      sys.addDisconnectListener(new InternalDistributedSystem.DisconnectListener() {
-        @Override
-        public String toString() {
-          return "Disconnect listener for BaseManagementService";
-        }
+      sys.addDisconnectListener(
+          new InternalDistributedSystem.DisconnectListener() {
+            @Override
+            public String toString() {
+              return "Disconnect listener for BaseManagementService";
+            }
 
-        public void onDisconnect(InternalDistributedSystem ss) {
-          removeInternalDistributedSystem(ss);
-        }
-      });
+            public void onDisconnect(InternalDistributedSystem ss) {
+              removeInternalDistributedSystem(ss);
+            }
+          });
       systems.add(sys);
     }
   }
 
   /**
-   * Remove a Distributed System from the system lists. If list is empty it
-   * closes down all the services if not closed
-   * 
+   * Remove a Distributed System from the system lists. If list is empty it closes down all the
+   * services if not closed
+   *
    * @param sys
    */
   private static void removeInternalDistributedSystem(InternalDistributedSystem sys) {
@@ -168,13 +160,15 @@ public abstract class BaseManagementService extends ManagementService {
 
           } catch (Exception e) {
             if (logger.isDebugEnabled()) {
-              logger.debug("ManagementException while removing InternalDistributedSystem {}", e.getMessage(), e);
+              logger.debug(
+                  "ManagementException while removing InternalDistributedSystem {}",
+                  e.getMessage(),
+                  e);
             }
           }
         }
         instances.clear();
       }
-
     }
   }
 }

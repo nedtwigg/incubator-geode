@@ -41,14 +41,11 @@ import org.apache.geode.internal.cache.lru.LRUStatistics;
 /**
  * A little test program for testing (and debugging) disk regions.
  *
- *
  * @since GemFire 3.2
  */
 public class TestDiskRegion {
 
-  /**
-   * Returns the <code>LRUStatistics</code> for the given region
-   */
+  /** Returns the <code>LRUStatistics</code> for the given region */
   private static LRUStatistics getLRUStats(Region region) {
     final LocalRegion l = (LocalRegion) region;
     return l.getEvictionController().getLRUHelper().getStats();
@@ -58,13 +55,15 @@ public class TestDiskRegion {
     DistributedSystem system = DistributedSystem.connect(new java.util.Properties());
     Cache cache = CacheFactory.create(system);
     AttributesFactory factory = new AttributesFactory();
-    factory.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(2, (ObjectSizer) null, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUMemoryAttributes(
+            2, (ObjectSizer) null, EvictionAction.OVERFLOW_TO_DISK));
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
     File user_dir = new File(System.getProperty("user.dir"));
     if (!user_dir.exists()) {
       user_dir.mkdir();
     }
-    File[] dirs1 = new File[] { user_dir };
+    File[] dirs1 = new File[] {user_dir};
     DiskStore ds1 = dsf.setDiskDirs(dirs1).create("TestDiskRegion");
     factory.setDiskStoreName("TestDiskRegion");
     LocalRegion region = (LocalRegion) cache.createRegion("TestDiskRegion", factory.create());
@@ -94,7 +93,13 @@ public class TestDiskRegion {
     // Put in larger stuff until we start evicting
     int total;
     for (total = 0; lruStats.getEvictions() <= 0; total++) {
-      System.out.println("total puts " + total + ", evictions " + lruStats.getEvictions() + ", total entry size " + lruStats.getCounter());
+      System.out.println(
+          "total puts "
+              + total
+              + ", evictions "
+              + lruStats.getEvictions()
+              + ", total entry size "
+              + lruStats.getCounter());
       int[] array = new int[250];
       array[0] = total;
       region.put(new Integer(total), array);
@@ -117,7 +122,13 @@ public class TestDiskRegion {
     System.out.println("----------  Getting ALL -------------");
 
     for (int i = 0; i < total; i++) {
-      System.out.println("total gets " + i + ", evictions " + lruStats.getEvictions() + ", total entry size " + lruStats.getCounter());
+      System.out.println(
+          "total gets "
+              + i
+              + ", evictions "
+              + lruStats.getEvictions()
+              + ", total entry size "
+              + lruStats.getCounter());
 
       int[] array = (int[]) region.get(new Integer(i));
       Assert.assertTrue(array != null);
@@ -131,7 +142,8 @@ public class TestDiskRegion {
       region.put(new Integer(i), new int[251]);
       long expected = startEvictions + 1 + i;
       long actual = lruStats.getEvictions();
-      Assert.assertTrue(expected == actual, "For " + i + " expected " + expected + ", got " + actual);
+      Assert.assertTrue(
+          expected == actual, "For " + i + " expected " + expected + ", got " + actual);
     }
 
     System.out.println("Done.  Waiting for stats to be written...");
@@ -142,12 +154,22 @@ public class TestDiskRegion {
     DistributedSystem system = DistributedSystem.connect(new java.util.Properties());
     Cache cache = CacheFactory.create(system);
     AttributesFactory factory = new AttributesFactory();
-    factory.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(2, (ObjectSizer) null, EvictionAction.OVERFLOW_TO_DISK));
-    factory.setCacheListener(new CacheListenerAdapter() {
-      public void afterUpdate(EntryEvent event) {
-        System.out.println("UPDATE: " + event.getKey() + " -> (" + event.getOldValue() + " -> " + event.getNewValue() + ")");
-      }
-    });
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUMemoryAttributes(
+            2, (ObjectSizer) null, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setCacheListener(
+        new CacheListenerAdapter() {
+          public void afterUpdate(EntryEvent event) {
+            System.out.println(
+                "UPDATE: "
+                    + event.getKey()
+                    + " -> ("
+                    + event.getOldValue()
+                    + " -> "
+                    + event.getNewValue()
+                    + ")");
+          }
+        });
 
     LocalRegion region = (LocalRegion) cache.createRegion("TestDiskRegion", factory.create());
     DiskRegion dr = region.getDiskRegion();
@@ -162,18 +184,25 @@ public class TestDiskRegion {
       Object key = new Integer(i);
       Object value = new byte[200000];
       region.put(key, value);
-      System.out.println(key + " -> " + value + " evictions = " + lruStats.getEvictions() + ", writes = " + diskStats.getWrites());
+      System.out.println(
+          key
+              + " -> "
+              + value
+              + " evictions = "
+              + lruStats.getEvictions()
+              + ", writes = "
+              + diskStats.getWrites());
     }
   }
 
-  /**
-   * Byte arrays
-   */
+  /** Byte arrays */
   public static void main4(String[] args) throws Exception {
     DistributedSystem system = DistributedSystem.connect(new java.util.Properties());
     Cache cache = CacheFactory.create(system);
     AttributesFactory factory = new AttributesFactory();
-    factory.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(2, (ObjectSizer) null, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUMemoryAttributes(
+            2, (ObjectSizer) null, EvictionAction.OVERFLOW_TO_DISK));
     LocalRegion region = (LocalRegion) cache.createRegion("TestDiskRegion", factory.create());
     //    DiskRegion dr = region.getDiskRegion();
     //    DiskRegionStats diskStats = dr.getStats();
@@ -195,14 +224,14 @@ public class TestDiskRegion {
     }
   }
 
-  /**
-   * Filling up the region with keys and values
-   */
+  /** Filling up the region with keys and values */
   public static void main5(String[] args) throws Exception {
     DistributedSystem system = DistributedSystem.connect(new java.util.Properties());
     Cache cache = CacheFactory.create(system);
     AttributesFactory factory = new AttributesFactory();
-    factory.setEvictionAttributes(EvictionAttributes.createLRUMemoryAttributes(2, (ObjectSizer) null, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUMemoryAttributes(
+            2, (ObjectSizer) null, EvictionAction.OVERFLOW_TO_DISK));
     LocalRegion region = (LocalRegion) cache.createRegion("TestDiskRegion", factory.create());
     //    DiskRegion dr = region.getDiskRegion();
     //    DiskRegionStats diskStats = dr.getStats();
@@ -223,5 +252,4 @@ public class TestDiskRegion {
     String s = "Limit is " + lruStats.getLimit() + " evictions are " + lruStats.getEvictions();
     throw new RuntimeException(s);
   }
-
 }

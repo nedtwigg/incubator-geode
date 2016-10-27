@@ -18,9 +18,8 @@
 package org.apache.geode.internal.admin;
 
 /**
- * A snapshot ("segment") of a entity (either a {@linkplain
- * RegionSnapshot region} or an {@linkplain EntrySnapshot entry} in a
- * cache.
+ * A snapshot ("segment") of a entity (either a {@linkplain RegionSnapshot region} or an {@linkplain
+ * EntrySnapshot entry} in a cache.
  */
 public interface CacheSnapshot extends java.io.Serializable {
   public Object getName();

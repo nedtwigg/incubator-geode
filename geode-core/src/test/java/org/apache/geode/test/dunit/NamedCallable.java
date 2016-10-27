@@ -37,5 +37,4 @@ public class NamedCallable<T> implements SerializableCallableIF<T> {
   public String toString() {
     return ("callable(" + name + ")");
   }
-
 }

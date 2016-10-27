@@ -20,23 +20,18 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
- * This interface defines the contract between the {@link DependencyMonitorManager} class
- * and classes that monitor a particular type of dependency. Classes implementing
- * this interface should register themselves with the dependency monitor using
- * the {@link DependencyMonitorManager#addMonitor(DependencyMonitor)} method.
- * 
+ * This interface defines the contract between the {@link DependencyMonitorManager} class and
+ * classes that monitor a particular type of dependency. Classes implementing this interface should
+ * register themselves with the dependency monitor using the {@link
+ * DependencyMonitorManager#addMonitor(DependencyMonitor)} method.
  */
 public interface DependencyMonitor {
   /**
-   * Return a map of resource identifiers to the threads that are blocked
-   * waiting for those resources.
+   * Return a map of resource identifiers to the threads that are blocked waiting for those
+   * resources.
    */
   public Set<Dependency<Thread, Serializable>> getBlockedThreads(Thread[] allThreads);
 
-  /**
-   * Return a map of resource indentifiers to the threads that hold that
-   * particular resource.
-   */
+  /** Return a map of resource indentifiers to the threads that hold that particular resource. */
   public Set<Dependency<Serializable, Thread>> getHeldResources(Thread[] allThreads);
-
 }

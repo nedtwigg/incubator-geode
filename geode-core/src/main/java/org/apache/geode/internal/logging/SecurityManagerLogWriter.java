@@ -21,15 +21,14 @@ import org.apache.geode.distributed.internal.DistributionConfig;
 import java.io.PrintStream;
 
 /**
- * A log writer for security related logs. This will prefix all messages with
- * "security-" in the level part of log-line for easy recognition and filtering
- * if required. Intended usage is in all places where security related logging
- * (authentication, authorization success and failure of clients and peers) as
- * well as for security callbacks.
- * 
- * This class extends the {@link ManagerLogWriter} to add the security prefix
- * feature mentioned above.
- * 
+ * A log writer for security related logs. This will prefix all messages with "security-" in the
+ * level part of log-line for easy recognition and filtering if required. Intended usage is in all
+ * places where security related logging (authentication, authorization success and failure of
+ * clients and peers) as well as for security callbacks.
+ *
+ * <p>This class extends the {@link ManagerLogWriter} to add the security prefix feature mentioned
+ * above.
+ *
  * @since GemFire 5.5
  */
 public final class SecurityManagerLogWriter extends ManagerLogWriter {
@@ -59,11 +58,18 @@ public final class SecurityManagerLogWriter extends ManagerLogWriter {
   }
 
   /**
-   * Adds the {@link SecurityLogWriter#SECURITY_PREFIX} prefix to the log-level
-   * to distinguish security related log-lines.
+   * Adds the {@link SecurityLogWriter#SECURITY_PREFIX} prefix to the log-level to distinguish
+   * security related log-lines.
    */
   @Override
   public void put(int msgLevel, String msg, Throwable exception) {
-    super.put(msgLevel, new StringBuilder(SecurityLogWriter.SECURITY_PREFIX).append(levelToString(msgLevel)).append(" ").append(msg).toString(), exception);
+    super.put(
+        msgLevel,
+        new StringBuilder(SecurityLogWriter.SECURITY_PREFIX)
+            .append(levelToString(msgLevel))
+            .append(" ")
+            .append(msg)
+            .toString(),
+        exception);
   }
 }

@@ -17,11 +17,10 @@
 
 package org.apache.geode.cache;
 
-/** Thrown from the {@link CacheLoader#load} method indicating that an error
- * occurred when a CacheLoader was attempting to load a value. This
- * exception is propagated back to the caller of <code>Region.get</code>.
- *
- *
+/**
+ * Thrown from the {@link CacheLoader#load} method indicating that an error occurred when a
+ * CacheLoader was attempting to load a value. This exception is propagated back to the caller of
+ * <code>Region.get</code>.
  *
  * @see org.apache.geode.cache.Region#get(Object)
  * @see CacheLoader#load
@@ -30,14 +29,12 @@ package org.apache.geode.cache;
 public class CacheLoaderException extends OperationAbortedException {
   private static final long serialVersionUID = -3383072059406642140L;
 
-  /**
-   * Creates a new instance of <code>CacheLoaderException</code>.
-   */
-  public CacheLoaderException() {
-  }
+  /** Creates a new instance of <code>CacheLoaderException</code>. */
+  public CacheLoaderException() {}
 
   /**
    * Constructs an instance of <code>CacheLoaderException</code> with the specified detail message.
+   *
    * @param msg the detail message
    */
   public CacheLoaderException(String msg) {
@@ -47,6 +44,7 @@ public class CacheLoaderException extends OperationAbortedException {
   /**
    * Constructs an instance of <code>CacheLoaderException</code> with the specified detail message
    * and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */
@@ -56,6 +54,7 @@ public class CacheLoaderException extends OperationAbortedException {
 
   /**
    * Constructs an instance of <code>CacheLoaderException</code> with the specified cause.
+   *
    * @param cause the causal Throwable
    */
   public CacheLoaderException(Throwable cause) {

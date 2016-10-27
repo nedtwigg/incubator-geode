@@ -32,11 +32,7 @@ import org.apache.geode.internal.cache.tier.sockets.CacheClientProxy;
 import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 
-/**
- * 
- * @since GemFire 8.0
- */
-
+/** @since GemFire 8.0 */
 public class ContunuousQueryFunction implements Function, InternalEntity {
   public static final String ID = ContunuousQueryFunction.class.getName();
   private static final long serialVersionUID = 1L;
@@ -53,7 +49,8 @@ public class ContunuousQueryFunction implements Function, InternalEntity {
           if (acceptorImpl != null) {
             CacheClientNotifier cacheClientNotifier = acceptorImpl.getCacheClientNotifier();
             if (cacheClientNotifier != null) {
-              Collection<CacheClientProxy> cacheClientProxySet = cacheClientNotifier.getClientProxies();
+              Collection<CacheClientProxy> cacheClientProxySet =
+                  cacheClientNotifier.getClientProxies();
               ClientInfo clientInfo = null;
               boolean foundClientinCCP = false;
               Iterator<CacheClientProxy> it = cacheClientProxySet.iterator();
@@ -66,9 +63,16 @@ public class ContunuousQueryFunction implements Function, InternalEntity {
                     foundClientinCCP = true;
                     String durableId = ccp.getProxyID().getDurableId();
                     boolean isPrimary = ccp.isPrimary();
-                    clientInfo = new ClientInfo((durableId != null && durableId.length() > 0 ? "Yes" : "No"), (isPrimary == true ? cache.getDistributedSystem().getDistributedMember().getId() : ""), (isPrimary == false ? cache.getDistributedSystem().getDistributedMember().getId() : ""));
+                    clientInfo =
+                        new ClientInfo(
+                            (durableId != null && durableId.length() > 0 ? "Yes" : "No"),
+                            (isPrimary == true
+                                ? cache.getDistributedSystem().getDistributedMember().getId()
+                                : ""),
+                            (isPrimary == false
+                                ? cache.getDistributedSystem().getDistributedMember().getId()
+                                : ""));
                     break;
-
                   }
                 }
               }
@@ -82,9 +86,12 @@ public class ContunuousQueryFunction implements Function, InternalEntity {
 
                   if (clientID.equals(cliIdFrmProxy.getDSMembership())) {
                     String durableId = cliIdFrmProxy.getDurableId();
-                    clientInfo = new ClientInfo((durableId != null && durableId.length() > 0 ? "Yes" : "No"), "N.A.", "N.A.");
+                    clientInfo =
+                        new ClientInfo(
+                            (durableId != null && durableId.length() > 0 ? "Yes" : "No"),
+                            "N.A.",
+                            "N.A.");
                   }
-
                 }
               }
               context.getResultSender().lastResult(clientInfo);
@@ -93,16 +100,16 @@ public class ContunuousQueryFunction implements Function, InternalEntity {
         }
       }
     } catch (Exception e) {
-      context.getResultSender().lastResult("Exception in ContunuousQueryFunction =" + e.getMessage());
+      context
+          .getResultSender()
+          .lastResult("Exception in ContunuousQueryFunction =" + e.getMessage());
     }
     context.getResultSender().lastResult(null);
-
   }
 
   @Override
   public String getId() {
     return ContunuousQueryFunction.ID;
-
   }
 
   @Override
@@ -134,9 +141,13 @@ public class ContunuousQueryFunction implements Function, InternalEntity {
 
     @Override
     public String toString() {
-      return "ClientInfo [isDurable=" + isDurable + ", primaryServer=" + primaryServer + ", secondaryServer=" + secondaryServer + "]";
+      return "ClientInfo [isDurable="
+          + isDurable
+          + ", primaryServer="
+          + primaryServer
+          + ", secondaryServer="
+          + secondaryServer
+          + "]";
     }
-
   }
-
 }

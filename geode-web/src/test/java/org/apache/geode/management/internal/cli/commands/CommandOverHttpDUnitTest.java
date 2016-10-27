@@ -26,10 +26,34 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 import org.apache.geode.test.junit.runner.SuiteRunner;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 @RunWith(SuiteRunner.class)
-@Suite.SuiteClasses({ ConfigCommandsDUnitTest.class, DeployCommandsDUnitTest.class, DiskStoreCommandsDUnitTest.class, FunctionCommandsDUnitTest.class, GemfireDataCommandsDUnitTest.class, GetCommandOnRegionWithCacheLoaderDuringCacheMissDUnitTest.class, IndexCommandsDUnitTest.class, ListAndDescribeDiskStoreCommandsDUnitTest.class, ListIndexCommandDUnitTest.class, MemberCommandsDUnitTest.class, MiscellaneousCommandsDUnitTest.class, MiscellaneousCommandsExportLogsPart1DUnitTest.class, MiscellaneousCommandsExportLogsPart2DUnitTest.class, MiscellaneousCommandsExportLogsPart3DUnitTest.class, MiscellaneousCommandsExportLogsPart4DUnitTest.class, QueueCommandsDUnitTest.class, SharedConfigurationCommandsDUnitTest.class, ShellCommandsDUnitTest.class, ShowDeadlockDUnitTest.class, ShowMetricsDUnitTest.class, ShowStackTraceDUnitTest.class, UserCommandsDUnitTest.class })
+@Suite.SuiteClasses({
+  ConfigCommandsDUnitTest.class,
+  DeployCommandsDUnitTest.class,
+  DiskStoreCommandsDUnitTest.class,
+  FunctionCommandsDUnitTest.class,
+  GemfireDataCommandsDUnitTest.class,
+  GetCommandOnRegionWithCacheLoaderDuringCacheMissDUnitTest.class,
+  IndexCommandsDUnitTest.class,
+  ListAndDescribeDiskStoreCommandsDUnitTest.class,
+  ListIndexCommandDUnitTest.class,
+  MemberCommandsDUnitTest.class,
+  MiscellaneousCommandsDUnitTest.class,
+  MiscellaneousCommandsExportLogsPart1DUnitTest.class,
+  MiscellaneousCommandsExportLogsPart2DUnitTest.class,
+  MiscellaneousCommandsExportLogsPart3DUnitTest.class,
+  MiscellaneousCommandsExportLogsPart4DUnitTest.class,
+  QueueCommandsDUnitTest.class,
+  SharedConfigurationCommandsDUnitTest.class,
+  ShellCommandsDUnitTest.class,
+  ShowDeadlockDUnitTest.class,
+  ShowMetricsDUnitTest.class,
+  ShowStackTraceDUnitTest.class,
+  UserCommandsDUnitTest.class
+})
 public class CommandOverHttpDUnitTest {
   @ClassRule
-  public static ProvideSystemProperty provideSystemProperty = new ProvideSystemProperty(CliCommandTestBase.USE_HTTP_SYSTEM_PROPERTY, "true");
+  public static ProvideSystemProperty provideSystemProperty =
+      new ProvideSystemProperty(CliCommandTestBase.USE_HTTP_SYSTEM_PROPERTY, "true");
 }

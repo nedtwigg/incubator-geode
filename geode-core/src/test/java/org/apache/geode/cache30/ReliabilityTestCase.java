@@ -39,7 +39,7 @@ public abstract class ReliabilityTestCase extends JUnit4CacheTestCase {
     Set missingRoles = RequiredRoles.checkForRequiredRoles(region);
     assertNotNull(missingRoles);
     assertEquals(roles.length, missingRoles.size());
-    for (Iterator iter = missingRoles.iterator(); iter.hasNext();) {
+    for (Iterator iter = missingRoles.iterator(); iter.hasNext(); ) {
       Role role = (Role) iter.next();
       boolean found = false;
       for (int i = 0; i < roles.length; i++) {
@@ -52,6 +52,5 @@ public abstract class ReliabilityTestCase extends JUnit4CacheTestCase {
     }
   }
 
-  protected void waitForMemberTimeout() {
-  }
+  protected void waitForMemberTimeout() {}
 }

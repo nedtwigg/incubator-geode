@@ -28,18 +28,14 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Tests MembershipAttributes and SubscriptionAttributes to  make sure they are Serializable
- */
+/** Tests MembershipAttributes and SubscriptionAttributes to make sure they are Serializable */
 @Category(UnitTest.class)
 public class MembershipAttributesAreSerializableTest {
 
-  /**
-   * Assert that MembershipAttributes are serializable.
-   */
+  /** Assert that MembershipAttributes are serializable. */
   @Test
   public void testMembershipAttributesAreSerializable() throws Exception {
-    String[] roles = { "a", "b", "c" };
+    String[] roles = {"a", "b", "c"};
     MembershipAttributes outMA = new MembershipAttributes(roles);
     ByteArrayOutputStream baos = new ByteArrayOutputStream(1000);
     ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -53,9 +49,7 @@ public class MembershipAttributesAreSerializableTest {
     assertEquals(outMA, inMA);
   }
 
-  /**
-   * Assert that SubscriptionAttributes are serializable.
-   */
+  /** Assert that SubscriptionAttributes are serializable. */
   @Test
   public void testSubscriptionAttributesAreSerializable() throws Exception {
     SubscriptionAttributes outSA = new SubscriptionAttributes();

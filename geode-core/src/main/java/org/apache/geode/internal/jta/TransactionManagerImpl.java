@@ -17,10 +17,8 @@
 package org.apache.geode.internal.jta;
 
 /**
- * <p>
  * TransactionManager: A JTA compatible Transaction Manager.
- * </p>
- * 
+ *
  * @since GemFire 4.1.1
  */
 import java.io.Serializable;
@@ -52,38 +50,25 @@ import org.apache.geode.internal.logging.LoggingThreadGroup;
 public class TransactionManagerImpl implements TransactionManager, Serializable {
   private static final long serialVersionUID = 5033392316185449821L;
 
-  /**
-   * A mapping of Thread - Transaction Objects
-   */
+  /** A mapping of Thread - Transaction Objects */
   private Map transactionMap = new ConcurrentHashMap();
-  /**
-   * A mapping of Transaction - Global Transaction
-   */
+  /** A mapping of Transaction - Global Transaction */
   private Map globalTransactionMap = Collections.synchronizedMap(new HashMap());
-  /**
-   * Ordered set of active global transactions - Used for timeOut
-   */
-  protected SortedSet gtxSet = Collections.synchronizedSortedSet(new TreeSet(new GlobalTransactionComparator()));
-  /**
-   * Transaction TimeOut Class
-   */
-  transient private TransactionTimeOutThread cleaner;
-  /**
-   * Singleton transactionManager
-   */
+  /** Ordered set of active global transactions - Used for timeOut */
+  protected SortedSet gtxSet =
+      Collections.synchronizedSortedSet(new TreeSet(new GlobalTransactionComparator()));
+  /** Transaction TimeOut Class */
+  private transient TransactionTimeOutThread cleaner;
+  /** Singleton transactionManager */
   private static TransactionManagerImpl transactionManager = null;
-  /**
-   * Transaction TimeOut thread
-   */
-  transient private Thread cleanUpThread = null;
-  /**
-   * Default Transaction Time Out
-   */
-  static final int DEFAULT_TRANSACTION_TIMEOUT = Integer.getInteger("jta.defaultTimeout", 600).intValue();
-  /**
-   * Asif: The integers identifying the cause of Rollback
-   */
+  /** Transaction TimeOut thread */
+  private transient Thread cleanUpThread = null;
+  /** Default Transaction Time Out */
+  static final int DEFAULT_TRANSACTION_TIMEOUT =
+      Integer.getInteger("jta.defaultTimeout", 600).intValue();
+  /** Asif: The integers identifying the cause of Rollback */
   private static final int MARKED_ROLLBACK = 1;
+
   private static final int EXCEPTION_IN_NOTIFY_BEFORE_COMPLETION = 2;
   private static final int COMMIT_FAILED_SO_ROLLEDBAK = 3;
   private static final int COMMIT_FAILED_ROLLBAK_ALSO_FAILED = 4;
@@ -92,28 +77,26 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
   //  private static final int EXCEPTION_IN_NOTIFY_AFTER_COMPLETION = 6;
   /*
    * to enable VERBOSE = true pass System parameter jta.VERBOSE = true
-   * while running the test. 
+   * while running the test.
    */
   private static boolean VERBOSE = Boolean.getBoolean("jta.VERBOSE");
   /*
-   * checks if the TransactionManager is active 
+   * checks if the TransactionManager is active
    */
   private boolean isActive = true;
 
-  /**
-   * Constructs a new TransactionManagerImpl
-   */
+  /** Constructs a new TransactionManagerImpl */
   private TransactionManagerImpl() {
     cleaner = this.new TransactionTimeOutThread();
-    ThreadGroup group = LoggingThreadGroup.createThreadGroup(LocalizedStrings.TransactionManagerImpl_CLEAN_UP_THREADS.toLocalizedString());
+    ThreadGroup group =
+        LoggingThreadGroup.createThreadGroup(
+            LocalizedStrings.TransactionManagerImpl_CLEAN_UP_THREADS.toLocalizedString());
     cleanUpThread = new Thread(group, cleaner, "GlobalTXTimeoutMonitor");
     cleanUpThread.setDaemon(true);
     cleanUpThread.start();
   }
 
-  /**
-   * Returns the singleton TransactionManagerImpl Object
-   */
+  /** Returns the singleton TransactionManagerImpl Object */
   public static TransactionManagerImpl getTransactionManager() {
     if (transactionManager == null) {
       createTransactionManager();
@@ -121,33 +104,28 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
     return transactionManager;
   }
 
-  /**
-   * Creates an instance of TransactionManagerImpl if none exists
-   */
+  /** Creates an instance of TransactionManagerImpl if none exists */
   private static synchronized void createTransactionManager() {
-    if (transactionManager == null)
-      transactionManager = new TransactionManagerImpl();
+    if (transactionManager == null) transactionManager = new TransactionManagerImpl();
   }
 
   /**
-   * Create a new transaction and associate it with the current thread if none
-   * exists with the current thread else throw an exception since nested
-   * transactions are not supported
-   * 
-   * Create a global transaction and associate the transaction created with the
-   * global transaction
-   * 
-   * @throws NotSupportedException - Thrown if the thread is already associated
-   *             with a transaction and the Transaction Manager implementation
-   *             does not support nested transactions.
-   * @throws SystemException - Thrown if the transaction manager encounters an
-   *             unexpected error condition.
-   * 
+   * Create a new transaction and associate it with the current thread if none exists with the
+   * current thread else throw an exception since nested transactions are not supported
+   *
+   * <p>Create a global transaction and associate the transaction created with the global
+   * transaction
+   *
+   * @throws NotSupportedException - Thrown if the thread is already associated with a transaction
+   *     and the Transaction Manager implementation does not support nested transactions.
+   * @throws SystemException - Thrown if the transaction manager encounters an unexpected error
+   *     condition.
    * @see javax.transaction.TransactionManager#begin()
    */
   public void begin() throws NotSupportedException, SystemException {
     if (!isActive) {
-      throw new SystemException(LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
+      throw new SystemException(
+          LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
     }
     LogWriterI18n log = TransactionUtils.getLogWriterI18n();
     if (log.fineEnabled()) {
@@ -155,9 +133,11 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
     }
     Thread thread = Thread.currentThread();
     if (transactionMap.get(thread) != null) {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_BEGIN_NESTED_TRANSACTION_IS_NOT_SUPPORTED.toLocalizedString();
-      if (VERBOSE)
-        log.fine(exception);
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_BEGIN_NESTED_TRANSACTION_IS_NOT_SUPPORTED
+              .toLocalizedString();
+      if (VERBOSE) log.fine(exception);
       throw new NotSupportedException(exception);
     }
     try {
@@ -168,61 +148,70 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
       globalTransaction.addTransaction(transaction);
       globalTransaction.setStatus(Status.STATUS_ACTIVE);
     } catch (Exception e) {
-      String exception = LocalizedStrings.TransactionManagerImpl_BEGIN__SYSTEMEXCEPTION_DUE_TO_0.toLocalizedString(new Object[] { e });
+      String exception =
+          LocalizedStrings.TransactionManagerImpl_BEGIN__SYSTEMEXCEPTION_DUE_TO_0.toLocalizedString(
+              new Object[] {e});
       if (log.severeEnabled())
-        log.severe(LocalizedStrings.TransactionManagerImpl_BEGIN__SYSTEMEXCEPTION_DUE_TO_0, new Object[] { e });
+        log.severe(
+            LocalizedStrings.TransactionManagerImpl_BEGIN__SYSTEMEXCEPTION_DUE_TO_0,
+            new Object[] {e});
       throw new SystemException(exception);
     }
   }
 
   /**
    * Complete the transaction associated with the current thread by calling the
-   * GlobalTransaction.commit(). When this method completes, the thread is no
-   * longer associated with a transaction.
-   * 
-   * @throws RollbackException - Thrown to indicate that the transaction has
-   *             been rolled back rather than committed.
-   * @throws HeuristicMixedException - Thrown to indicate that a heuristic
-   *             decision was made and that some relevant updates have been
-   *             committed while others have been rolled back.
-   * @throws HeuristicRollbackException - Thrown to indicate that a heuristic
-   *             decision was made and that all relevant updates have been
-   *             rolled back.
-   * @throws java.lang.SecurityException - Thrown to indicate that the thread
-   *             is not allowed to commit the transaction.
-   * @throws java.lang.IllegalStateException - Thrown if the current thread is
-   *             not associated with a transaction.
-   * @throws SystemException - Thrown if the transaction manager encounters an
-   *             unexpected error condition.
-   * 
+   * GlobalTransaction.commit(). When this method completes, the thread is no longer associated with
+   * a transaction.
+   *
+   * @throws RollbackException - Thrown to indicate that the transaction has been rolled back rather
+   *     than committed.
+   * @throws HeuristicMixedException - Thrown to indicate that a heuristic decision was made and
+   *     that some relevant updates have been committed while others have been rolled back.
+   * @throws HeuristicRollbackException - Thrown to indicate that a heuristic decision was made and
+   *     that all relevant updates have been rolled back.
+   * @throws java.lang.SecurityException - Thrown to indicate that the thread is not allowed to
+   *     commit the transaction.
+   * @throws java.lang.IllegalStateException - Thrown if the current thread is not associated with a
+   *     transaction.
+   * @throws SystemException - Thrown if the transaction manager encounters an unexpected error
+   *     condition.
    * @see javax.transaction.TransactionManager#commit()
    */
-  public void commit() throws HeuristicRollbackException, RollbackException, HeuristicMixedException, SystemException {
+  public void commit()
+      throws HeuristicRollbackException, RollbackException, HeuristicMixedException,
+          SystemException {
     if (!isActive) {
-      throw new SystemException(LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
+      throw new SystemException(
+          LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
     }
     int cozOfException = -1;
     Transaction transactionImpl = getTransaction();
     if (transactionImpl == null) {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_COMMIT_TRANSACTION_IS_NULL_CANNOT_COMMIT_A_NULL_TRANSACTION.toLocalizedString();
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_COMMIT_TRANSACTION_IS_NULL_CANNOT_COMMIT_A_NULL_TRANSACTION
+              .toLocalizedString();
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (VERBOSE)
-        writer.fine(exception);
+      if (VERBOSE) writer.fine(exception);
       throw new IllegalStateException(exception);
     }
     GlobalTransaction gtx = getGlobalTransaction(transactionImpl);
     if (gtx == null) {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_COMMIT_GLOBAL_TRANSACTION_IS_NULL_CANNOT_COMMIT_A_NULL_GLOBAL_TRANSACTION.toLocalizedString();
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_COMMIT_GLOBAL_TRANSACTION_IS_NULL_CANNOT_COMMIT_A_NULL_GLOBAL_TRANSACTION
+              .toLocalizedString();
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (VERBOSE)
-        writer.fine(exception);
+      if (VERBOSE) writer.fine(exception);
       throw new SystemException(exception);
     }
     boolean isCommit = false;
     //ensure only one thread can commit. Use a synchronized block
     //Asif
     int status = -1;
-    if (((status = gtx.getStatus()) == Status.STATUS_ACTIVE) || status == Status.STATUS_MARKED_ROLLBACK) {
+    if (((status = gtx.getStatus()) == Status.STATUS_ACTIVE)
+        || status == Status.STATUS_MARKED_ROLLBACK) {
       synchronized (gtx) {
         if ((status = gtx.getStatus()) == Status.STATUS_ACTIVE) {
           gtx.setStatus(Status.STATUS_COMMITTING);
@@ -231,18 +220,22 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
           gtx.setStatus(Status.STATUS_ROLLING_BACK);
           cozOfException = MARKED_ROLLBACK;
         } else {
-          String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_COMMIT_TRANSACTION_NOT_ACTIVE_CANNOT_BE_COMMITTED_TRANSACTION_STATUS_0.toLocalizedString(Integer.valueOf(status));
+          String exception =
+              LocalizedStrings
+                  .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_COMMIT_TRANSACTION_NOT_ACTIVE_CANNOT_BE_COMMITTED_TRANSACTION_STATUS_0
+                  .toLocalizedString(Integer.valueOf(status));
           LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-          if (VERBOSE)
-            writer.fine(exception);
+          if (VERBOSE) writer.fine(exception);
           throw new IllegalStateException(exception);
         }
       }
     } else {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_COMMIT_TRANSACTION_IS_NOT_ACTIVE_AND_CANNOT_BE_COMMITTED.toLocalizedString();
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_COMMIT_TRANSACTION_IS_NOT_ACTIVE_AND_CANNOT_BE_COMMITTED
+              .toLocalizedString();
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (VERBOSE)
-        writer.fine(exception);
+      if (VERBOSE) writer.fine(exception);
       throw new IllegalStateException(exception);
     }
     //Only one thread can call commit (the first thread to do reach the block
@@ -289,8 +282,7 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
         } else if (status == Status.STATUS_ROLLING_BACK) {
           try {
             gtx.rollback();
-            if (isClean)
-              cozOfException = MARKED_ROLLBACK;
+            if (isClean) cozOfException = MARKED_ROLLBACK;
           } catch (SystemException se) {
             e = se;
             cozOfException = ROLLBAK_FAILED;
@@ -310,102 +302,121 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
     } catch (Exception ge) {
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
       if (writer.infoEnabled())
-        writer.info(LocalizedStrings.TransactionManagerImpl_EXCEPTION_IN_NOTIFY_AFTER_COMPLETION_DUE_TO__0, ge.getMessage(), ge);
+        writer.info(
+            LocalizedStrings.TransactionManagerImpl_EXCEPTION_IN_NOTIFY_AFTER_COMPLETION_DUE_TO__0,
+            ge.getMessage(),
+            ge);
     }
     Thread thread = Thread.currentThread();
     transactionMap.remove(thread);
     this.gtxSet.remove(gtx);
     if (status != Status.STATUS_COMMITTED) {
       switch (cozOfException) {
-      case EXCEPTION_IN_NOTIFY_BEFORE_COMPLETION: {
-        String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_COMMIT_TRANSACTION_ROLLED_BACK_BECAUSE_OF_EXCEPTION_IN_NOTIFYBEFORECOMPLETION_FUNCTION_CALL_ACTUAL_EXCEPTION_0.toLocalizedString();
-        LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-        if (VERBOSE)
-          writer.fine(exception, e);
-        RollbackException re = new RollbackException(exception);
-        re.initCause(e);
-        throw re;
-      }
-      case MARKED_ROLLBACK: {
-        String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_COMMIT_TRANSACTION_ROLLED_BACK_BECAUSE_A_USER_MARKED_IT_FOR_ROLLBACK.toLocalizedString();
-        LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-        if (VERBOSE)
-          writer.fine(exception, e);
-        throw new RollbackException(exception);
-      }
-      case COMMIT_FAILED_SO_ROLLEDBAK: {
-        LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-        if (VERBOSE)
-          writer.fine(e);
-        throw (RollbackException) e;
-      }
-      case COMMIT_FAILED_ROLLBAK_ALSO_FAILED:
-      case ROLLBAK_FAILED: {
-        LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-        if (VERBOSE)
-          writer.fine(e);
-        throw (SystemException) e;
-      }
+        case EXCEPTION_IN_NOTIFY_BEFORE_COMPLETION:
+          {
+            String exception =
+                LocalizedStrings
+                    .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_COMMIT_TRANSACTION_ROLLED_BACK_BECAUSE_OF_EXCEPTION_IN_NOTIFYBEFORECOMPLETION_FUNCTION_CALL_ACTUAL_EXCEPTION_0
+                    .toLocalizedString();
+            LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
+            if (VERBOSE) writer.fine(exception, e);
+            RollbackException re = new RollbackException(exception);
+            re.initCause(e);
+            throw re;
+          }
+        case MARKED_ROLLBACK:
+          {
+            String exception =
+                LocalizedStrings
+                    .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_COMMIT_TRANSACTION_ROLLED_BACK_BECAUSE_A_USER_MARKED_IT_FOR_ROLLBACK
+                    .toLocalizedString();
+            LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
+            if (VERBOSE) writer.fine(exception, e);
+            throw new RollbackException(exception);
+          }
+        case COMMIT_FAILED_SO_ROLLEDBAK:
+          {
+            LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
+            if (VERBOSE) writer.fine(e);
+            throw (RollbackException) e;
+          }
+        case COMMIT_FAILED_ROLLBAK_ALSO_FAILED:
+        case ROLLBAK_FAILED:
+          {
+            LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
+            if (VERBOSE) writer.fine(e);
+            throw (SystemException) e;
+          }
       }
     }
     gtx.setStatus(Status.STATUS_NO_TRANSACTION);
   }
 
   /**
-   * Rolls back the transaction associated with the current thread by calling
-   * the GlobalTransaction.rollback(). When this method completes, the thread
-   * is no longer associated with a transaction.
-   * 
-   * @throws java.lang.SecurityException - Thrown to indicate that the thread
-   *             is not allowed to commit the transaction.
-   * @throws java.lang.IllegalStateException - Thrown if the current thread is
-   *             not associated with a transaction.
-   * @throws SystemException - Thrown if the transaction manager encounters an
-   *             unexpected error condition.
-   * 
+   * Rolls back the transaction associated with the current thread by calling the
+   * GlobalTransaction.rollback(). When this method completes, the thread is no longer associated
+   * with a transaction.
+   *
+   * @throws java.lang.SecurityException - Thrown to indicate that the thread is not allowed to
+   *     commit the transaction.
+   * @throws java.lang.IllegalStateException - Thrown if the current thread is not associated with a
+   *     transaction.
+   * @throws SystemException - Thrown if the transaction manager encounters an unexpected error
+   *     condition.
    * @see javax.transaction.TransactionManager#commit()
    */
   public void rollback() throws IllegalStateException, SecurityException, SystemException {
     if (!isActive) {
-      throw new SystemException(LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
+      throw new SystemException(
+          LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
     }
     //    boolean isRollingBack = false;
     LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
     Transaction transactionImpl = getTransaction();
     if (transactionImpl == null) {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_ROLLBACK_NO_TRANSACTION_EXISTS.toLocalizedString();
-      if (VERBOSE)
-        writer.fine(exception);
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_ROLLBACK_NO_TRANSACTION_EXISTS
+              .toLocalizedString();
+      if (VERBOSE) writer.fine(exception);
       throw new IllegalStateException(exception);
     }
     GlobalTransaction gtx = getGlobalTransaction(transactionImpl);
     if (gtx == null) {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_ROLLBACK_NO_GLOBAL_TRANSACTION_EXISTS.toLocalizedString();
-      if (VERBOSE)
-        writer.fine(exception);
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_ROLLBACK_NO_GLOBAL_TRANSACTION_EXISTS
+              .toLocalizedString();
+      if (VERBOSE) writer.fine(exception);
       throw new SystemException(exception);
     }
     int status = gtx.getStatus();
     if (!(status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK)) {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_ROLLBACK_TRANSACTION_STATUS_DOES_NOT_ALLOW_ROLLBACK_TRANSACTIONAL_STATUS_0.toLocalizedString(Integer.valueOf(status));
-      if (VERBOSE)
-        writer.fine(exception);
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_ROLLBACK_TRANSACTION_STATUS_DOES_NOT_ALLOW_ROLLBACK_TRANSACTIONAL_STATUS_0
+              .toLocalizedString(Integer.valueOf(status));
+      if (VERBOSE) writer.fine(exception);
       throw new IllegalStateException(exception);
     }
     //ensure only one thread proceeds from here
     status = -1;
     synchronized (gtx) {
-      if ((status = gtx.getStatus()) == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK)
-        gtx.setStatus(Status.STATUS_ROLLING_BACK);
+      if ((status = gtx.getStatus()) == Status.STATUS_ACTIVE
+          || status == Status.STATUS_MARKED_ROLLBACK) gtx.setStatus(Status.STATUS_ROLLING_BACK);
       else if (gtx.getStatus() == Status.STATUS_ROLLING_BACK) {
-        String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_ROLLBACK_TRANSACTION_ALREADY_IN_A_ROLLING_BACK_STATE_TRANSACTIONAL_STATUS_0.toLocalizedString(Integer.valueOf(status));
-        if (VERBOSE)
-          writer.fine(exception);
+        String exception =
+            LocalizedStrings
+                .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_ROLLBACK_TRANSACTION_ALREADY_IN_A_ROLLING_BACK_STATE_TRANSACTIONAL_STATUS_0
+                .toLocalizedString(Integer.valueOf(status));
+        if (VERBOSE) writer.fine(exception);
         throw new IllegalStateException(exception);
       } else {
-        String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_ROLLBACK_TRANSACTION_STATUS_DOES_NOT_ALLOW_ROLLBACK.toLocalizedString();
-        if (VERBOSE)
-          writer.fine(exception);
+        String exception =
+            LocalizedStrings
+                .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_ROLLBACK_TRANSACTION_STATUS_DOES_NOT_ALLOW_ROLLBACK
+                .toLocalizedString();
+        if (VERBOSE) writer.fine(exception);
         throw new IllegalStateException(exception);
       }
     }
@@ -431,70 +442,72 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
       ((TransactionImpl) transactionImpl).notifyAfterCompletion(gtx.getStatus());
     } catch (Exception e1) {
       if (writer.infoEnabled())
-        writer.info(LocalizedStrings.TransactionManagerImpl_EXCEPTION_IN_NOTIFY_AFTER_COMPLETION_DUE_TO__0, e1.getMessage(), e1);
+        writer.info(
+            LocalizedStrings.TransactionManagerImpl_EXCEPTION_IN_NOTIFY_AFTER_COMPLETION_DUE_TO__0,
+            e1.getMessage(),
+            e1);
     }
     Thread thread = Thread.currentThread();
     transactionMap.remove(thread);
     this.gtxSet.remove(gtx);
     if (se != null) {
-      if (VERBOSE)
-        writer.fine(se);
+      if (VERBOSE) writer.fine(se);
       throw se;
     }
     gtx.setStatus(Status.STATUS_NO_TRANSACTION);
   }
 
   /**
-   * Set the Global Transaction status (Associated with the current thread) to
-   * be RollBackOnly
-   * 
-   * Becauce we are using one phase commit, we are not considering Prepared and
-   * preparing states.
-   * 
+   * Set the Global Transaction status (Associated with the current thread) to be RollBackOnly
+   *
+   * <p>Becauce we are using one phase commit, we are not considering Prepared and preparing states.
+   *
    * @see javax.transaction.TransactionManager#setRollbackOnly()
    */
   public void setRollbackOnly() throws IllegalStateException, SystemException {
     if (!isActive) {
-      throw new SystemException(LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
+      throw new SystemException(
+          LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
     }
     GlobalTransaction gtx = getGlobalTransaction();
     if (gtx == null) {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_SETROLLBACKONLY_NO_GLOBAL_TRANSACTION_EXISTS.toLocalizedString();
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_SETROLLBACKONLY_NO_GLOBAL_TRANSACTION_EXISTS
+              .toLocalizedString();
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (VERBOSE)
-        writer.fine(exception);
+      if (VERBOSE) writer.fine(exception);
       throw new SystemException(exception);
     }
     synchronized (gtx) {
       int status = gtx.getStatus();
-      if (status == Status.STATUS_ACTIVE)
-        gtx.setRollbackOnly();
-      else if (status == Status.STATUS_COMMITTING)
-        gtx.setStatus(Status.STATUS_ROLLING_BACK);
-      else if (status == Status.STATUS_ROLLING_BACK)
-        ; //Dont do anything
+      if (status == Status.STATUS_ACTIVE) gtx.setRollbackOnly();
+      else if (status == Status.STATUS_COMMITTING) gtx.setStatus(Status.STATUS_ROLLING_BACK);
+      else if (status == Status.STATUS_ROLLING_BACK) ; //Dont do anything
       else {
-        String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_SETROLLBACKONLY_TRANSACTION_CANNOT_BE_MARKED_FOR_ROLLBACK_TRANSCATION_STATUS_0.toLocalizedString(Integer.valueOf(status));
+        String exception =
+            LocalizedStrings
+                .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_SETROLLBACKONLY_TRANSACTION_CANNOT_BE_MARKED_FOR_ROLLBACK_TRANSCATION_STATUS_0
+                .toLocalizedString(Integer.valueOf(status));
         LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-        if (VERBOSE)
-          writer.fine(exception);
+        if (VERBOSE) writer.fine(exception);
         throw new IllegalStateException(exception);
       }
     }
     //Asif : Log after exiting synch block
     LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-    if (VERBOSE)
-      writer.fine("Transaction Set to Rollback only");
+    if (VERBOSE) writer.fine("Transaction Set to Rollback only");
   }
 
   /**
    * Get the status of the global transaction associated with this thread
-   * 
+   *
    * @see javax.transaction.TransactionManager#getStatus()
    */
   public int getStatus() throws SystemException {
     if (!isActive) {
-      throw new SystemException(LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
+      throw new SystemException(
+          LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
     }
     GlobalTransaction gtx = getGlobalTransaction();
     if (gtx == null) {
@@ -505,19 +518,22 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
 
   /**
    * not supported
-   * 
+   *
    * @see javax.transaction.TransactionManager#setTransactionTimeout(int)
    */
   public void setTransactionTimeout(int seconds) throws SystemException {
     if (!isActive) {
-      throw new SystemException(LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
+      throw new SystemException(
+          LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
     }
     GlobalTransaction gtx = getGlobalTransaction();
     if (gtx == null) {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_SETTRANSACTIONTIMEOUT_NO_GLOBAL_TRANSACTION_EXISTS.toLocalizedString();
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_SETTRANSACTIONTIMEOUT_NO_GLOBAL_TRANSACTION_EXISTS
+              .toLocalizedString();
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (VERBOSE)
-        writer.fine(exception);
+      if (VERBOSE) writer.fine(exception);
       throw new SystemException(exception);
     }
     long newExpiry = gtx.setTransactionTimeoutForXARes(seconds);
@@ -531,7 +547,10 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
       // cleaning up .so we
       //don't add it
       int status = gtx.getStatus();
-      if (status != Status.STATUS_NO_TRANSACTION && status != Status.STATUS_COMMITTED && status != Status.STATUS_ROLLEDBACK && !gtx.isExpired()) {
+      if (status != Status.STATUS_NO_TRANSACTION
+          && status != Status.STATUS_COMMITTED
+          && status != Status.STATUS_ROLLEDBACK
+          && !gtx.isExpired()) {
         //Asif : Take a lock on GTX while setting the new Transaction timeout
         // value,
         // so that cleaner thread sees the new value immediately else due to
@@ -559,21 +578,22 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
           }
         }
       } else {
-        String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_SETTRANSACTIONTIMEOUT_TRANSACTION_HAS_EITHER_EXPIRED_OR_ROLLEDBACK_OR_COMITTED.toLocalizedString();
+        String exception =
+            LocalizedStrings
+                .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_SETTRANSACTIONTIMEOUT_TRANSACTION_HAS_EITHER_EXPIRED_OR_ROLLEDBACK_OR_COMITTED
+                .toLocalizedString();
         LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-        if (VERBOSE)
-          writer.fine(exception);
+        if (VERBOSE) writer.fine(exception);
         throw new SystemException(exception);
       }
     }
   }
 
-  /**
-   * @see javax.transaction.TransactionManager#suspend()
-   */
+  /** @see javax.transaction.TransactionManager#suspend() */
   public Transaction suspend() throws SystemException {
     if (!isActive) {
-      throw new SystemException(LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
+      throw new SystemException(
+          LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
     }
     Transaction txn = getTransaction();
 
@@ -583,32 +603,38 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
       transactionMap.remove(Thread.currentThread());
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
       if (writer.infoEnabled())
-        writer.info(LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPLSUSPENDTRANSACTION_SUSPENDED);
+        writer.info(
+            LocalizedStrings
+                .TransactionManagerImpl_TRANSACTIONMANAGERIMPLSUSPENDTRANSACTION_SUSPENDED);
     }
 
     return txn;
   }
 
-  /**
-   * @see javax.transaction.TransactionManager#resume(javax.transaction.Transaction)
-   */
-  public void resume(Transaction txn) throws InvalidTransactionException, IllegalStateException, SystemException {
+  /** @see javax.transaction.TransactionManager#resume(javax.transaction.Transaction) */
+  public void resume(Transaction txn)
+      throws InvalidTransactionException, IllegalStateException, SystemException {
     if (!isActive) {
-      throw new SystemException(LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
+      throw new SystemException(
+          LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
     }
     if (txn == null) {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_RESUME_CANNOT_RESUME_A_NULL_TRANSACTION.toLocalizedString();
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_RESUME_CANNOT_RESUME_A_NULL_TRANSACTION
+              .toLocalizedString();
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (VERBOSE)
-        writer.fine(exception);
+      if (VERBOSE) writer.fine(exception);
       throw new InvalidTransactionException(exception);
     }
     GlobalTransaction gtx = getGlobalTransaction(txn);
     if (gtx == null) {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_RESUME_CANNOT_RESUME_A_NULL_TRANSACTION.toLocalizedString();
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_RESUME_CANNOT_RESUME_A_NULL_TRANSACTION
+              .toLocalizedString();
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (VERBOSE)
-        writer.fine(exception);
+      if (VERBOSE) writer.fine(exception);
       throw new InvalidTransactionException(exception);
     }
     gtx.resume();
@@ -617,33 +643,36 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
       transactionMap.put(thread, txn);
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
       if (writer.infoEnabled())
-        writer.info(LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPLRESUMETRANSACTION_RESUMED);
+        writer.info(
+            LocalizedStrings
+                .TransactionManagerImpl_TRANSACTIONMANAGERIMPLRESUMETRANSACTION_RESUMED);
     } catch (Exception e) {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_RESUME_ERROR_IN_LISTING_THREAD_TO_TRANSACTION_MAP_DUE_TO_0.toLocalizedString(e);
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_RESUME_ERROR_IN_LISTING_THREAD_TO_TRANSACTION_MAP_DUE_TO_0
+              .toLocalizedString(e);
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (VERBOSE)
-        writer.fine(exception);
+      if (VERBOSE) writer.fine(exception);
       throw new SystemException(exception);
     }
   }
 
   /**
    * Get the transaction associated with the calling thread
-   * 
+   *
    * @see javax.transaction.TransactionManager#getTransaction()
    */
   public Transaction getTransaction() throws SystemException {
     if (!isActive) {
-      throw new SystemException(LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
+      throw new SystemException(
+          LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGER_INVALID.toLocalizedString());
     }
     Thread thread = Thread.currentThread();
     Transaction txn = (Transaction) transactionMap.get(thread);
     return txn;
   }
 
-  /**
-   * Get the Global Transaction associated with the calling thread
-   */
+  /** Get the Global Transaction associated with the calling thread */
   GlobalTransaction getGlobalTransaction() throws SystemException {
     Transaction txn = getTransaction();
     if (txn == null) {
@@ -653,15 +682,15 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
     return gtx;
   }
 
-  /**
-   * Get the Global Transaction associated with the calling thread
-   */
+  /** Get the Global Transaction associated with the calling thread */
   GlobalTransaction getGlobalTransaction(Transaction txn) throws SystemException {
     if (txn == null) {
-      String exception = LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPL_GETGLOBALTRANSACTION_NO_TRANSACTION_EXISTS.toLocalizedString();
+      String exception =
+          LocalizedStrings
+              .TransactionManagerImpl_TRANSACTIONMANAGERIMPL_GETGLOBALTRANSACTION_NO_TRANSACTION_EXISTS
+              .toLocalizedString();
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
-      if (VERBOSE)
-        writer.fine(exception);
+      if (VERBOSE) writer.fine(exception);
       throw new SystemException(exception);
     }
     GlobalTransaction gtx = (GlobalTransaction) globalTransactionMap.get(txn);
@@ -721,8 +750,7 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
             while (gtxSet.isEmpty() && toContinueRunning) {
               gtxSet.wait();
             }
-            if (!toContinueRunning)
-              continue;
+            if (!toContinueRunning) continue;
             currentGtx = (GlobalTransaction) gtxSet.first();
           }
           //Asif : Check whether current GTX has timed out or not
@@ -816,7 +844,10 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
           return;
         } catch (Exception e) {
           if (logger.severeEnabled() && toContinueRunning) {
-            logger.severe(LocalizedStrings.TransactionManagerImpl_TRANSACTIONTIMEOUTTHREAD__RUN_EXCEPTION_OCCURRED_WHILE_INSPECTING_GTX_FOR_EXPIRY, e);
+            logger.severe(
+                LocalizedStrings
+                    .TransactionManagerImpl_TRANSACTIONTIMEOUTTHREAD__RUN_EXCEPTION_OCCURRED_WHILE_INSPECTING_GTX_FOR_EXPIRY,
+                e);
           }
         }
       }
@@ -825,27 +856,21 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
 
   static class GlobalTransactionComparator implements Comparator {
 
-    /**
-     * Sort the array in ascending order of expiration times
-     */
+    /** Sort the array in ascending order of expiration times */
     public int compare(Object obj1, Object obj2) {
       GlobalTransaction gtx1 = (GlobalTransaction) obj1;
       GlobalTransaction gtx2 = (GlobalTransaction) obj2;
       return gtx1.compare(gtx2);
     }
 
-    /**
-     * Overwrite default equals implementation
-     */
+    /** Overwrite default equals implementation */
     @Override
     public boolean equals(Object o1) {
       return this == o1;
     }
   }
 
-  /**
-   * Shutdown the transactionManager and threads associated with this.
-   */
+  /** Shutdown the transactionManager and threads associated with this. */
   public static void refresh() {
     getTransactionManager();
     transactionManager.isActive = false;
@@ -855,7 +880,9 @@ public class TransactionManagerImpl implements TransactionManager, Serializable 
     } catch (Exception e) {
       LogWriterI18n writer = TransactionUtils.getLogWriterI18n();
       if (writer.infoEnabled())
-        writer.info(LocalizedStrings.TransactionManagerImpl_TRANSACTIONMANAGERIMPLCLEANUPEXCEPTION_WHILE_CLEANING_THREAD_BEFORE_RE_STATRUP);
+        writer.info(
+            LocalizedStrings
+                .TransactionManagerImpl_TRANSACTIONMANAGERIMPLCLEANUPEXCEPTION_WHILE_CLEANING_THREAD_BEFORE_RE_STATRUP);
     }
     /*    try {
       transactionManager.cleanUpThread.join();

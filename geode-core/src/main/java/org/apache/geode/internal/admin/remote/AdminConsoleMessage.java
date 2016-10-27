@@ -32,8 +32,8 @@ import org.apache.geode.internal.logging.log4j.AlertAppender;
 import org.apache.geode.internal.logging.log4j.LogWriterLogger;
 
 /**
- * A message that is sent to a particular distribution manager to let
- * it know that the sender is an administation console that just connected.
+ * A message that is sent to a particular distribution manager to let it know that the sender is an
+ * administation console that just connected.
  */
 public final class AdminConsoleMessage extends PooledDistributionMessage {
   //instance variables
@@ -77,5 +77,4 @@ public final class AdminConsoleMessage extends PooledDistributionMessage {
   public String toString() {
     return "AdminConsoleMessage from " + this.getSender() + " level=" + level;
   }
-
 }

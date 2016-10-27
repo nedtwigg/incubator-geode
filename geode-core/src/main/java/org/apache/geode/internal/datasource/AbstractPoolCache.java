@@ -37,17 +37,15 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.LoggingThreadGroup;
 
 /**
- * AbstractPoolCache implements the ConnectionPoolCache interface. This is base
- * class for the all connection pools. The class also implements the
- * Serializable interface. The pool maintain a list for keeping the available
- * connections(not assigned to user) and the active connections(assigned to
- * user) This is a thread safe class.
- * 
- *         Second Version .Modified the synchronization code & objects on
- *         which locks were being taken. Changed the logic of retrieval of
- *         connection & returning of connection. The beahviour of cleaner thread
- *         has been modified such that it waits on activeCache if it is empty.
- *         Prevention of deadlocks & optmization of code.
+ * AbstractPoolCache implements the ConnectionPoolCache interface. This is base class for the all
+ * connection pools. The class also implements the Serializable interface. The pool maintain a list
+ * for keeping the available connections(not assigned to user) and the active connections(assigned
+ * to user) This is a thread safe class.
+ *
+ * <p>Second Version .Modified the synchronization code & objects on which locks were being taken.
+ * Changed the logic of retrieval of connection & returning of connection. The beahviour of cleaner
+ * thread has been modified such that it waits on activeCache if it is empty. Prevention of
+ * deadlocks & optmization of code.
  */
 public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializable {
 
@@ -74,18 +72,23 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
   private int activeConnections = 0;
   private List expiredConns = null;
   protected long sleepTime = -1;
-  private Thread th = null;//cleaner thread
+  private Thread th = null; //cleaner thread
 
   /**
    * Constructor initializes the AbstractPoolCache properties.
-   * 
+   *
    * @param eventListner The event listner for the database connections.
-   * @param configs The ConfiguredDataSourceProperties object containing the
-   *          configuration for the pool.
+   * @param configs The ConfiguredDataSourceProperties object containing the configuration for the
+   *     pool.
    * @throws PoolException
    */
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "SC_START_IN_CTOR", justification = "the thread started is a cleanup thread and is not active until there is a timeout tx")
-  public AbstractPoolCache(EventListener eventListner, ConfiguredDataSourceProperties configs) throws PoolException {
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "SC_START_IN_CTOR",
+    justification =
+        "the thread started is a cleanup thread and is not active until there is a timeout tx"
+  )
+  public AbstractPoolCache(EventListener eventListner, ConfiguredDataSourceProperties configs)
+      throws PoolException {
     availableCache = new HashMap();
     activeCache = Collections.synchronizedMap(new LinkedHashMap());
     connEventListner = eventListner;
@@ -112,7 +115,8 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
           ++totalConnections;
         } catch (Exception ex) {
           if (logger.isDebugEnabled()) {
-            logger.debug("AbstractPoolCache::initializePool:Error in creating connection", ex.getCause());
+            logger.debug(
+                "AbstractPoolCache::initializePool:Error in creating connection", ex.getCause());
           }
         }
       }
@@ -121,12 +125,11 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
 
   /**
    * Authenticates the username and password for the database connection.
-   * 
+   *
    * @param user The username for the database connection
    * @param pass The password for the database connection
    * @throws SQLException
-   * 
-   * public abstract void checkCredentials(String user, String pass)
+   *     <p>public abstract void checkCredentials(String user, String pass)
    */
   /**
    * @throws PoolException
@@ -135,12 +138,11 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
   public abstract Object getNewPoolConnection() throws PoolException;
 
   /**
-   * Returns the connection to the available pool Asif: When the connection is
-   * returned to the pool, notify any one thread waiting on availableCache so
-   * that it can go into connection seeking state.
-   * 
+   * Returns the connection to the available pool Asif: When the connection is returned to the pool,
+   * notify any one thread waiting on availableCache so that it can go into connection seeking
+   * state.
+   *
    * @param connectionObject PooledConnection object for return.
-   *  
    */
   public void returnPooledConnectionToPool(Object connectionObject) {
     boolean returnedHappened = false;
@@ -180,14 +182,14 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
 
   /**
    * Expires connection in the available pool.
-   * 
+   *
    * @param connectionObject
    */
   abstract void destroyPooledConnection(Object connectionObject);
 
   /**
    * Returns number of connections currently in use.
-   * 
+   *
    * @return int Number of active connections
    */
   public int getActiveCacheSize() {
@@ -196,7 +198,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
 
   /**
    * Returns number of connections available for use
-   * 
+   *
    * @return Size of available cache.
    */
   public int getAvailableCacheSize() {
@@ -205,14 +207,11 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
 
   /**
    * @see org.apache.geode.internal.datasource.ConnectionPoolCache#expirePooledConnection(Object)
-   * @param connectionObject Asif: This function will set the timestamp
-   *          associated with the Connection object such that it will get timed
-   *          out by the cleaner thread. Normally when this function is called,
-   *          the connection object will be present in activeCache as there is
-   *          no way client can return the object. But it is possible that the
-   *          cleaner thread may have already picked it up ,so we still have to
-   *          check whether it is contained in the map or not
-   *  
+   * @param connectionObject Asif: This function will set the timestamp associated with the
+   *     Connection object such that it will get timed out by the cleaner thread. Normally when this
+   *     function is called, the connection object will be present in activeCache as there is no way
+   *     client can return the object. But it is possible that the cleaner thread may have already
+   *     picked it up ,so we still have to check whether it is contained in the map or not
    */
   public void expirePooledConnection(Object connectionObject) {
     synchronized (connectionObject) {
@@ -226,24 +225,21 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
   }
 
   /**
-   * Gets the connection from the pool. The specified user and password are
-   * used. If the available pool is not empty a connection is fetched from the
-   * available pool. If the available pool is empty and the total connections in
-   * the pool(available + active) are less then the Max limit, a new connection
-   * is created and returned to the client. If the Max limit is reached the
-   * client waits for the connection to be available.
-   * 
-   * Asif: The client thread checks if the total number of active connections
-   * have exhausted the limit. If yes it waits on the availableCache. When
-   * another thread returns the connection to the pool, the waiting thread gets
-   * notified. If a thread experiences timeout while waiting , a SQLException
-   * will be thrown. Other case is that there are available connections in map.
-   * Now while getting connection from avaialbel map , we may or may not obtain
-   * connetion bcoz the connection in available map may have expired. But if the
-   * checkOutConnection() returns null , this iteslf guarantees that atleast one
-   * connection expired so the current thread can safely demand one new
-   * connection.
-   * 
+   * Gets the connection from the pool. The specified user and password are used. If the available
+   * pool is not empty a connection is fetched from the available pool. If the available pool is
+   * empty and the total connections in the pool(available + active) are less then the Max limit, a
+   * new connection is created and returned to the client. If the Max limit is reached the client
+   * waits for the connection to be available.
+   *
+   * <p>Asif: The client thread checks if the total number of active connections have exhausted the
+   * limit. If yes it waits on the availableCache. When another thread returns the connection to the
+   * pool, the waiting thread gets notified. If a thread experiences timeout while waiting , a
+   * SQLException will be thrown. Other case is that there are available connections in map. Now
+   * while getting connection from avaialbel map , we may or may not obtain connetion bcoz the
+   * connection in available map may have expired. But if the checkOutConnection() returns null ,
+   * this iteslf guarantees that atleast one connection expired so the current thread can safely
+   * demand one new connection.
+   *
    * @throws PoolException
    * @return Object connection object from the pool.
    */
@@ -265,14 +261,21 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
           long newtime = System.currentTimeMillis();
           long duration = newtime - now;
           if (duration > loginTimeOut)
-            throw new PoolException(LocalizedStrings.AbstractPoolCache_ABSTRACTPOOLEDCACHEGETPOOLEDCONNECTIONFROMPOOLLOGIN_TIMEOUT_EXCEEDED.toLocalizedString());
+            throw new PoolException(
+                LocalizedStrings
+                    .AbstractPoolCache_ABSTRACTPOOLEDCACHEGETPOOLEDCONNECTIONFROMPOOLLOGIN_TIMEOUT_EXCEEDED
+                    .toLocalizedString());
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
           // TODO add a cancellation check?
           if (logger.isDebugEnabled()) {
-            logger.debug("AbstractPooledCache::getPooledConnectionFromPool:InterruptedException in waiting thread");
+            logger.debug(
+                "AbstractPooledCache::getPooledConnectionFromPool:InterruptedException in waiting thread");
           }
-          throw new PoolException(LocalizedStrings.AbstractPoolCache_ABSTRACTPOOLEDCACHEGETPOOLEDCONNECTIONFROMPOOLINTERRUPTEDEXCEPTION_IN_WAITING_THREAD.toLocalizedString());
+          throw new PoolException(
+              LocalizedStrings
+                  .AbstractPoolCache_ABSTRACTPOOLEDCACHEGETPOOLEDCONNECTIONFROMPOOLINTERRUPTEDEXCEPTION_IN_WAITING_THREAD
+                  .toLocalizedString());
         }
       }
       if ((totalConnections - activeConnections) > 0) {
@@ -299,7 +302,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
 
   /**
    * Returns the max pool limit.
-   * 
+   *
    * @return int
    */
   public int getMaxLimit() {
@@ -307,9 +310,9 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
   }
 
   /**
-   * Remove a connection from the pool. Modified by Asif : This function is
-   * called from a synch block where the lock is taken on this.availableCache
-   * 
+   * Remove a connection from the pool. Modified by Asif : This function is called from a synch
+   * block where the lock is taken on this.availableCache
+   *
    * @param now Current time in milliseconds
    * @throws PoolException
    * @return Object Connection object from the pool.
@@ -349,14 +352,13 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
 
   //Code for Clean up thread
   /**
-   * Asif: The Cleaner thread calls this function periodically to clear the
-   * expired connection list & also to add those connections to expiry list ,
-   * which have timed out while being active. The thread first iterates over the
-   * map of active connections. It does by getting array of keys contained in
-   * the map so that there is no backing of Map. It collects all the actiev
-   * connections timeout & if there is atleast one such connection , it will
-   * issue a notify or notify all ( if more than one connections have timed
-   * out). After that it will just clear the list of expired connections *
+   * Asif: The Cleaner thread calls this function periodically to clear the expired connection list
+   * & also to add those connections to expiry list , which have timed out while being active. The
+   * thread first iterates over the map of active connections. It does by getting array of keys
+   * contained in the map so that there is no backing of Map. It collects all the actiev connections
+   * timeout & if there is atleast one such connection , it will issue a notify or notify all ( if
+   * more than one connections have timed out). After that it will just clear the list of expired
+   * connections *
    */
   protected void cleanUp() {
     //Asif Get an array of keys in the activeConnection map
@@ -426,10 +428,8 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
       synchronized (this.availableCache) {
         this.activeConnections -= numConnTimedOut;
         this.totalConnections -= numConnTimedOut;
-        if (numConnTimedOut == 1)
-          this.availableCache.notify();
-        else
-          this.availableCache.notifyAll();
+        if (numConnTimedOut == 1) this.availableCache.notify();
+        else this.availableCache.notifyAll();
       }
     }
     //Asif : Create a temp list which copies the connections in
@@ -450,9 +450,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
     temp.clear();
   }
 
-  /**
-   * It will clean all the thread
-   */
+  /** It will clean all the thread */
   public void clearUp() {
     cleaner.toContinueRunning = false;
     try {
@@ -474,7 +472,8 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
       }
     } catch (Exception e) {
       if (logger.isDebugEnabled()) {
-        logger.debug("AbstractPoolCache::clearUp: Exception in closing connections. Ignoring this exception)");
+        logger.debug(
+            "AbstractPoolCache::clearUp: Exception in closing connections. Ignoring this exception)");
       }
     }
     /*
@@ -482,9 +481,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
      */
   }
 
-  /**
-   * Inner class for Clean up thread. Asif: The inner class implements Runnable
-   */
+  /** Inner class for Clean up thread. Asif: The inner class implements Runnable */
   class ConnectionCleanUpThread implements Runnable {
 
     // private AbstractPoolCache poolCache;
@@ -500,8 +497,7 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
         SystemFailure.checkFailure();
         try {
           cleanUp();
-          if (sleepTime != -1)
-            Thread.sleep(sleepTime);
+          if (sleepTime != -1) Thread.sleep(sleepTime);
           //Asif : The cleaner thread will wait on activeCache if it is
           // empty . Else it will sleep for a while & again do the
           // clean up. If the activeMap is empty cleaner thread will
@@ -526,11 +522,13 @@ public abstract class AbstractPoolCache implements ConnectionPoolCache, Serializ
           break;
         } catch (Exception e) {
           if (logger.isDebugEnabled() && toContinueRunning) {
-            logger.debug("ConnectionCleanUpThread::run: Thread encountered Exception. e={}. Ignoring the exception", e.getMessage(), e);
+            logger.debug(
+                "ConnectionCleanUpThread::run: Thread encountered Exception. e={}. Ignoring the exception",
+                e.getMessage(),
+                e);
           }
         }
       } // while
     } // method
-
   } // CleanupThread
 }

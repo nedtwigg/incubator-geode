@@ -21,9 +21,9 @@ import org.apache.geode.GemFireException;
 import org.apache.geode.distributed.DistributedMember;
 
 /**
- * MemberShunnedException may be thrown to prevent ack-ing a message
- * received from a member that has been removed from membership.  It
- * is currently only thrown by JGroupMembershipManager.processMessage()
+ * MemberShunnedException may be thrown to prevent ack-ing a message received from a member that has
+ * been removed from membership. It is currently only thrown by
+ * JGroupMembershipManager.processMessage()
  */
 public class MemberShunnedException extends GemFireException {
   private static final long serialVersionUID = -8453126202477831557L;
@@ -31,6 +31,7 @@ public class MemberShunnedException extends GemFireException {
 
   /**
    * constructor
+   *
    * @param member the member that was shunned
    */
   public MemberShunnedException(DistributedMember member) {
@@ -38,11 +39,8 @@ public class MemberShunnedException extends GemFireException {
     this.member = member;
   }
 
-  /**
-   * @return the member that was shunned
-   */
+  /** @return the member that was shunned */
   public DistributedMember getShunnedMember() {
     return this.member;
   }
-
 }

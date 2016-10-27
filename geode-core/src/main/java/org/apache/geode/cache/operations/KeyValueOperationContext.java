@@ -22,35 +22,29 @@ import org.apache.geode.SerializationException;
 import org.apache.geode.internal.cache.EntryEventImpl;
 
 /**
- * Encapsulates a region operation that requires both key and serialized value
- * for the pre-operation and post-operation cases.
- * 
+ * Encapsulates a region operation that requires both key and serialized value for the pre-operation
+ * and post-operation cases.
+ *
  * @since GemFire 5.5
  */
 public abstract class KeyValueOperationContext extends KeyOperationContext {
 
   /**
    * The value of the create/update operation.
+   *
    * @since GemFire 6.5
    */
   private Object value;
 
-  /**
-   * True when the serialized object is a normal object; false when it is a raw
-   * byte array.
-   */
+  /** True when the serialized object is a normal object; false when it is a raw byte array. */
   private boolean isObject;
 
   /**
    * Constructor for the operation.
-   * 
-   * @param key
-   *                the key for this operation
-   * @param value
-   *                the value for this operation
-   * @param isObject
-   *                true when the value is an object; false when it is a raw
-   *                byte array
+   *
+   * @param key the key for this operation
+   * @param value the value for this operation
+   * @param isObject true when the value is an object; false when it is a raw byte array
    * @since GemFire 6.5
    */
   public KeyValueOperationContext(Object key, Object value, boolean isObject) {
@@ -62,19 +56,15 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
 
   /**
    * Constructor for the operation.
-   * 
-   * @param key
-   *                the key for this operation
-   * @param value
-   *                the value for this operation
-   * @param isObject
-   *                true when the value is an object; false when it is a raw
-   *                byte array
-   * @param postOperation
-   *                true if the context is at the time of sending updates
+   *
+   * @param key the key for this operation
+   * @param value the value for this operation
+   * @param isObject true when the value is an object; false when it is a raw byte array
+   * @param postOperation true if the context is at the time of sending updates
    * @since GemFire 6.5
    */
-  public KeyValueOperationContext(Object key, Object value, boolean isObject, boolean postOperation) {
+  public KeyValueOperationContext(
+      Object key, Object value, boolean isObject, boolean postOperation) {
     super(key, postOperation);
     setValue(value, isObject);
     //this.value = value;
@@ -83,7 +73,7 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
 
   /**
    * Get the serialized value for this operation.
-   * 
+   *
    * @return the serialized value for this operation or null if the value is not serialized
    */
   public byte[] getSerializedValue() {
@@ -97,11 +87,10 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
   }
 
   /**
-   * Get the deserialized value for this operation.
-   * Note that if the value is serialized this method will attempt to deserialize it.
-   * If PDX read-serialized is set to true and the value was serialized with PDX
-   * then this method will return a PdxInstance.
-   * 
+   * Get the deserialized value for this operation. Note that if the value is serialized this method
+   * will attempt to deserialize it. If PDX read-serialized is set to true and the value was
+   * serialized with PDX then this method will return a PdxInstance.
+   *
    * @return the deserialized value for this operation
    * @throws SerializationException if deserialization of the value fails
    * @since Geode 1.0
@@ -115,15 +104,12 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
   }
 
   /**
-   * Get the value for this operation.
-   * Note that if the value is serialized then a byte array
-   * will be returned that contains the serialized bytes.
-   * To figure out if the returned byte array contains serialized bytes
-   * or is the deserialized value call {@link #isObject()}.
-   * If you need to deserialize the serialized bytes use 
-   * {@link DataSerializer#readObject(java.io.DataInput)}
-   * or you can just call {@link #getDeserializedValue()}.
-   * 
+   * Get the value for this operation. Note that if the value is serialized then a byte array will
+   * be returned that contains the serialized bytes. To figure out if the returned byte array
+   * contains serialized bytes or is the deserialized value call {@link #isObject()}. If you need to
+   * deserialize the serialized bytes use {@link DataSerializer#readObject(java.io.DataInput)} or
+   * you can just call {@link #getDeserializedValue()}.
+   *
    * @return the value for this operation
    * @since GemFire 6.5
    */
@@ -133,7 +119,7 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
 
   /**
    * Return true when the value is an object and not a raw byte array.
-   * 
+   *
    * @return true when the value is an object; false when it is a raw byte array
    */
   public boolean isObject() {
@@ -142,12 +128,9 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
 
   /**
    * Set the serialized value object for this operation.
-   * 
-   * @param serializedValue
-   *                the serialized value for this operation
-   * @param isObject
-   *                true when the value is an object; false when it is a raw
-   *                byte array
+   *
+   * @param serializedValue the serialized value for this operation
+   * @param isObject true when the value is an object; false when it is a raw byte array
    */
   public void setSerializedValue(byte[] serializedValue, boolean isObject) {
     setValue(serializedValue, isObject);
@@ -155,18 +138,15 @@ public abstract class KeyValueOperationContext extends KeyOperationContext {
 
   /**
    * Set the result value of the object for this operation.
-   * 
-   * @param value
-   *                the result of this operation; can be a serialized byte array
-   *                or a deserialized object
-   * @param isObject
-   *                true when the value is an object (either serialized or
-   *                deserialized); false when it is a raw byte array
+   *
+   * @param value the result of this operation; can be a serialized byte array or a deserialized
+   *     object
+   * @param isObject true when the value is an object (either serialized or deserialized); false
+   *     when it is a raw byte array
    * @since GemFire 6.5
    */
   public void setValue(Object value, boolean isObject) {
     this.value = value;
     this.isObject = isObject;
   }
-
 }

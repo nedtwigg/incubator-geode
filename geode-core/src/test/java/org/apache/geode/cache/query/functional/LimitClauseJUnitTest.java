@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.functional;
 
 import static org.junit.Assert.assertEquals;
@@ -54,9 +52,7 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.cache.LocalRegion;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- */
+/** */
 @Category(IntegrationTest.class)
 public class LimitClauseJUnitTest {
 
@@ -88,13 +84,13 @@ public class LimitClauseJUnitTest {
   public void tearDown() throws Exception {
     CacheUtils.closeCache();
     IndexManager indexManager = ((LocalRegion) region).getIndexManager();
-    if (indexManager != null)
-      indexManager.destroy();
+    if (indexManager != null) indexManager.destroy();
   }
 
   @Test
   public void testLikeWithLimitWithParameter() throws Exception {
-    String queryString = "SELECT DISTINCT entry FROM $1 entry WHERE entry.key like $2 ORDER BY entry.key LIMIT $3 ";
+    String queryString =
+        "SELECT DISTINCT entry FROM $1 entry WHERE entry.key like $2 ORDER BY entry.key LIMIT $3 ";
     SelectResults result;
     Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
     for (int i = 0; i < 100; i++) {
@@ -204,7 +200,7 @@ public class LimitClauseJUnitTest {
 
     Object[] params = new Object[2];
     params[0] = 5;
-    int[] limits = { 1, 5, 0, 10 };
+    int[] limits = {1, 5, 0, 10};
     for (int i = 0; i < limits.length; i++) {
       params[1] = limits[i];
 
@@ -213,15 +209,13 @@ public class LimitClauseJUnitTest {
       //clear out indexes for next query.
       qs.removeIndexes();
     }
-
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for ResultBag wrapped by a
-   * SelectResults
-   * 
-   * Tests ResultBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for ResultBag wrapped by a SelectResults
+   *
+   * <p>Tests ResultBag behaviour
    */
   @Test
   public void testLimitDistinctIterEvaluatedQueryForResultBag() {
@@ -232,11 +226,13 @@ public class LimitClauseJUnitTest {
       query = qs.newQuery(queryString);
       final int[] num = new int[1];
       num[0] = 0;
-      QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-        public void afterIterationEvaluation(Object result) {
-          num[0] += 1;
-        }
-      });
+      QueryObserver old =
+          QueryObserverHolder.setInstance(
+              new QueryObserverAdapter() {
+                public void afterIterationEvaluation(Object result) {
+                  num[0] += 1;
+                }
+              });
       result = (SelectResults) query.execute();
       assertEquals(5, num[0]);
       assertTrue(result instanceof SelectResults);
@@ -252,14 +248,12 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for ResultBag wrapped by a
-   * SelectResults . This test contains projection attributes. Since
-   * the attribute is unique every time, the limit will be satisfied with first
-   * 5 iterations
-   * 
-   * Tests ResultBag behaviour
-   * 
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for ResultBag wrapped by a SelectResults . This test contains
+   * projection attributes. Since the attribute is unique every time, the limit will be satisfied
+   * with first 5 iterations
+   *
+   * <p>Tests ResultBag behaviour
    */
   @Test
   public void testLimitDistinctIterEvaluatedQueryForResultBagWithProjectionAttribute() {
@@ -270,11 +264,13 @@ public class LimitClauseJUnitTest {
       query = qs.newQuery(queryString);
       final int[] num = new int[1];
       num[0] = 0;
-      QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-        public void afterIterationEvaluation(Object result) {
-          num[0] += 1;
-        }
-      });
+      QueryObserver old =
+          QueryObserverHolder.setInstance(
+              new QueryObserverAdapter() {
+                public void afterIterationEvaluation(Object result) {
+                  num[0] += 1;
+                }
+              });
       result = (SelectResults) query.execute();
       assertEquals(5, num[0]);
       assertTrue(result instanceof SelectResults);
@@ -290,21 +286,20 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for ResultBag wrapped by a
-   * SelectResults if the iteration included duplicate elements. If
-   * the distinct clause is present then duplicate elements even if satisfying
-   * the where clause should not be considered as part of the resultset as
-   * distinct will eliminate them
-   * 
-   * Tests ResultBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for ResultBag wrapped by a SelectResults if the iteration included
+   * duplicate elements. If the distinct clause is present then duplicate elements even if
+   * satisfying the where clause should not be considered as part of the resultset as distinct will
+   * eliminate them
+   *
+   * <p>Tests ResultBag behaviour
    */
   @Test
   public void testLimitDistinctIterEvaluatedQueryWithDuplicatesInIterationForResultBag() {
     try {
       Region region1 = CacheUtils.createRegion("portfolios1", Portfolio.class);
       // Add 5 pairs of same Object starting from 11 to 20
-      for (int i = 11; i < 21;) {
+      for (int i = 11; i < 21; ) {
         region1.put(Integer.toString(i), new Portfolio(i));
         region1.put(Integer.toString(i + 1), new Portfolio(i));
         i += 2;
@@ -319,20 +314,21 @@ public class LimitClauseJUnitTest {
       // In the worst possible case all the unique values come in
       // consecutive order & hence only 5 iterations will yield the
       // result
-      QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-        public void afterIterationEvaluation(Object result) {
-          num[0] += 1;
-        }
+      QueryObserver old =
+          QueryObserverHolder.setInstance(
+              new QueryObserverAdapter() {
+                public void afterIterationEvaluation(Object result) {
+                  num[0] += 1;
+                }
 
-        public void beforeIterationEvaluation(CompiledValue ritr, Object currObject) {
-          if (data.contains(currObject)) {
-            numRepeat[0] += 1;
-          } else {
-            data.add(currObject);
-          }
-        }
-
-      });
+                public void beforeIterationEvaluation(CompiledValue ritr, Object currObject) {
+                  if (data.contains(currObject)) {
+                    numRepeat[0] += 1;
+                  } else {
+                    data.add(currObject);
+                  }
+                }
+              });
       String queryString = "SELECT DISTINCT * FROM /portfolios1  pf WHERE pf.ID > 10 limit 5";
       query = qs.newQuery(queryString);
       result = (SelectResults) query.execute();
@@ -351,22 +347,22 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for ResultBag wrapped by a
-   * SelectResults if the iteration included duplicate elements. If
-   * the distinct clause is present then duplicate elements even if satisfying
-   * the where clause should not be considered as part as distinct will
-   * eliminate them. This test validates the above behaviour if projection
-   * sttribute is present and the projection attribute may be duplicate
-   * 
-   * Tests ResultBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for ResultBag wrapped by a SelectResults if the iteration included
+   * duplicate elements. If the distinct clause is present then duplicate elements even if
+   * satisfying the where clause should not be considered as part as distinct will eliminate them.
+   * This test validates the above behaviour if projection sttribute is present and the projection
+   * attribute may be duplicate
+   *
+   * <p>Tests ResultBag behaviour
    */
   @Test
-  public void testLimitDistinctIterEvaluatedQueryWithDuplicatesInIterationWithProjectionAttributeForResultBag() {
+  public void
+      testLimitDistinctIterEvaluatedQueryWithDuplicatesInIterationWithProjectionAttributeForResultBag() {
     try {
       Region region1 = CacheUtils.createRegion("portfolios1", Portfolio.class);
       // Add 5 pairs of same Object starting from 11 to 20
-      for (int i = 11; i < 21;) {
+      for (int i = 11; i < 21; ) {
         region1.put(Integer.toString(i), new Portfolio(i));
         region1.put(Integer.toString(i + 1), new Portfolio(i));
         i += 2;
@@ -378,19 +374,21 @@ public class LimitClauseJUnitTest {
       final int[] numRepeat = new int[1];
       numRepeat[0] = 0;
       final Set data = new HashSet();
-      QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-        public void afterIterationEvaluation(Object result) {
-          num[0] += 1;
-        }
+      QueryObserver old =
+          QueryObserverHolder.setInstance(
+              new QueryObserverAdapter() {
+                public void afterIterationEvaluation(Object result) {
+                  num[0] += 1;
+                }
 
-        public void beforeIterationEvaluation(CompiledValue ritr, Object currObject) {
-          if (data.contains(currObject)) {
-            numRepeat[0] += 1;
-          } else {
-            data.add(currObject);
-          }
-        }
-      });
+                public void beforeIterationEvaluation(CompiledValue ritr, Object currObject) {
+                  if (data.contains(currObject)) {
+                    numRepeat[0] += 1;
+                  } else {
+                    data.add(currObject);
+                  }
+                }
+              });
       String queryString = "SELECT DISTINCT pf.ID FROM /portfolios1  pf WHERE pf.ID > 10 limit 5";
       query = qs.newQuery(queryString);
       result = (SelectResults) query.execute();
@@ -409,28 +407,30 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for StructBag wrapped by a
-   * SelectResults . This test contains projection attributes. Since
-   * the attribute is unique every time, the limit will be satisfied with first
-   * 5 iterations
-   * 
-   * Tests StructBag behaviour
-   * 
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for StructBag wrapped by a SelectResults . This test contains
+   * projection attributes. Since the attribute is unique every time, the limit will be satisfied
+   * with first 5 iterations
+   *
+   * <p>Tests StructBag behaviour
    */
   @Test
   public void testLimitDistinctIterEvaluatedQueryForStructBagWithProjectionAttribute() {
     try {
       Query query;
       SelectResults result;
-      query = qs.newQuery("SELECT DISTINCT pf.ID, pf.createTime FROM /portfolios pf WHERE pf.ID > 0 limit 5");
+      query =
+          qs.newQuery(
+              "SELECT DISTINCT pf.ID, pf.createTime FROM /portfolios pf WHERE pf.ID > 0 limit 5");
       final int[] num = new int[1];
       num[0] = 0;
-      QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-        public void afterIterationEvaluation(Object result) {
-          num[0] += 1;
-        }
-      });
+      QueryObserver old =
+          QueryObserverHolder.setInstance(
+              new QueryObserverAdapter() {
+                public void afterIterationEvaluation(Object result) {
+                  num[0] += 1;
+                }
+              });
       result = (SelectResults) query.execute();
       assertEquals(5, num[0]);
       assertTrue(result instanceof SelectResults);
@@ -447,26 +447,28 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for StructBag wrapped by a
-   * SelectResults
-   * 
-   * Tests StructBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for StructBag wrapped by a SelectResults
+   *
+   * <p>Tests StructBag behaviour
    */
   @Test
   public void testLimitDistinctIterEvaluatedQueryForStructBag() {
     try {
       Query query;
       SelectResults result;
-      String queryString = "SELECT DISTINCT * FROM /portfolios pf, pf.positions.values WHERE pf.ID > 0 limit 5";
+      String queryString =
+          "SELECT DISTINCT * FROM /portfolios pf, pf.positions.values WHERE pf.ID > 0 limit 5";
       query = qs.newQuery(queryString);
       final int[] num = new int[1];
       num[0] = 0;
-      QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-        public void afterIterationEvaluation(Object result) {
-          num[0] += 1;
-        }
-      });
+      QueryObserver old =
+          QueryObserverHolder.setInstance(
+              new QueryObserverAdapter() {
+                public void afterIterationEvaluation(Object result) {
+                  num[0] += 1;
+                }
+              });
       result = (SelectResults) query.execute();
       assertEquals(5, num[0]);
       assertTrue(result instanceof SelectResults);
@@ -482,11 +484,10 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for StructBag wrapped by a
-   * SelectResults
-   * 
-   * Tests StructBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for StructBag wrapped by a SelectResults
+   *
+   * <p>Tests StructBag behaviour
    */
   @Ignore
   @Test
@@ -494,14 +495,16 @@ public class LimitClauseJUnitTest {
     try {
       Query query;
       SelectResults result;
-      String queryString = "SELECT * FROM /portfolios pf, pf.positions.values pos WHERE pf.ID > 1  AND pos.secId = 'GOOG' limit 1";
+      String queryString =
+          "SELECT * FROM /portfolios pf, pf.positions.values pos WHERE pf.ID > 1  AND pos.secId = 'GOOG' limit 1";
       query = qs.newQuery(queryString);
 
       MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
       QueryObserver old = QueryObserverHolder.setInstance(observer);
 
       Index index = qs.createIndex("idIndex", "pf.ID", "/portfolios pf");
-      Index posindex = qs.createIndex("posIndex", "pos.secId", "/portfolios pf, pf.positions.values pos");
+      Index posindex =
+          qs.createIndex("posIndex", "pos.secId", "/portfolios pf, pf.positions.values pos");
       assertNotNull(index);
       assertNotNull(posindex);
       result = (SelectResults) query.execute();
@@ -516,22 +519,22 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for StructBag wrapped by a
-   * SelectResults if the iteration included duplicate elements. If
-   * the distinct clause is present then duplicate elements even if satisfying
-   * the where clause should not be considered as part as distinct will
-   * eliminate them. This test validates the above behaviour if projection
-   * attribute is present and the projection attribute may be duplicate
-   * 
-   * Tests StructBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for StructBag wrapped by a SelectResults if the iteration included
+   * duplicate elements. If the distinct clause is present then duplicate elements even if
+   * satisfying the where clause should not be considered as part as distinct will eliminate them.
+   * This test validates the above behaviour if projection attribute is present and the projection
+   * attribute may be duplicate
+   *
+   * <p>Tests StructBag behaviour
    */
   @Test
-  public void testLimitDistinctIterEvaluatedQueryWithDuplicatesInIterationWithProjectionAttributeForStructBag() {
+  public void
+      testLimitDistinctIterEvaluatedQueryWithDuplicatesInIterationWithProjectionAttributeForStructBag() {
     try {
       Region region1 = CacheUtils.createRegion("portfolios1", Portfolio.class);
       // Add 5 pairs of same Object starting from 11 to 20
-      for (int i = 11; i < 21;) {
+      for (int i = 11; i < 21; ) {
         region1.put(Integer.toString(i), new Portfolio(i));
         region1.put(Integer.toString(i + 1), new Portfolio(i));
         i += 2;
@@ -544,20 +547,23 @@ public class LimitClauseJUnitTest {
       numRepeat[0] = 0;
       final Set data = new HashSet();
 
-      QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-        public void afterIterationEvaluation(Object result) {
-          num[0] += 1;
-        }
+      QueryObserver old =
+          QueryObserverHolder.setInstance(
+              new QueryObserverAdapter() {
+                public void afterIterationEvaluation(Object result) {
+                  num[0] += 1;
+                }
 
-        public void beforeIterationEvaluation(CompiledValue ritr, Object currObject) {
-          if (data.contains(currObject)) {
-            numRepeat[0] += 1;
-          } else {
-            data.add(currObject);
-          }
-        }
-      });
-      String queryString = "SELECT DISTINCT pf.ID , pf.createTime FROM /portfolios1  pf WHERE pf.ID > 10 limit 5";
+                public void beforeIterationEvaluation(CompiledValue ritr, Object currObject) {
+                  if (data.contains(currObject)) {
+                    numRepeat[0] += 1;
+                  } else {
+                    data.add(currObject);
+                  }
+                }
+              });
+      String queryString =
+          "SELECT DISTINCT pf.ID , pf.createTime FROM /portfolios1  pf WHERE pf.ID > 10 limit 5";
       query = qs.newQuery(queryString);
       result = (SelectResults) query.execute();
       assertEquals((5 + numRepeat[0]), num[0]);
@@ -575,21 +581,20 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for StructBag wrapped by a
-   * SelectResults if the iteration included duplicate elements. If
-   * the distinct clause is present then duplicate elements even if satisfying
-   * the where clause should not be considered as part of the resultset as
-   * distinct will eliminate them
-   * 
-   * Tests StructBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for StructBag wrapped by a SelectResults if the iteration included
+   * duplicate elements. If the distinct clause is present then duplicate elements even if
+   * satisfying the where clause should not be considered as part of the resultset as distinct will
+   * eliminate them
+   *
+   * <p>Tests StructBag behaviour
    */
   @Test
   public void testLimitDistinctIterEvaluatedQueryWithDuplicatesInIterationForStructBag() {
     try {
       Region region1 = CacheUtils.createRegion("portfolios1", Portfolio.class);
       // Add 5 pairs of same Object starting from 11 to 20
-      for (int i = 11; i < 21;) {
+      for (int i = 11; i < 21; ) {
         region1.put(Integer.toString(i), new Portfolio(i));
         region1.put(Integer.toString(i + 1), new Portfolio(i));
         i += 2;
@@ -601,20 +606,23 @@ public class LimitClauseJUnitTest {
       final int[] numRepeat = new int[1];
       numRepeat[0] = 0;
       final Set data = new HashSet();
-      QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-        public void afterIterationEvaluation(Object result) {
-          num[0] += 1;
-        }
+      QueryObserver old =
+          QueryObserverHolder.setInstance(
+              new QueryObserverAdapter() {
+                public void afterIterationEvaluation(Object result) {
+                  num[0] += 1;
+                }
 
-        public void beforeIterationEvaluation(CompiledValue ritr, Object currObject) {
-          if (data.contains(currObject)) {
-            numRepeat[0] += 1;
-          } else if (currObject instanceof Portfolio) {
-            data.add(currObject);
-          }
-        }
-      });
-      String queryString = "SELECT DISTINCT * FROM /portfolios1  pf, pf.collectionHolderMap.keySet  WHERE pf.ID > 10 limit 20";
+                public void beforeIterationEvaluation(CompiledValue ritr, Object currObject) {
+                  if (data.contains(currObject)) {
+                    numRepeat[0] += 1;
+                  } else if (currObject instanceof Portfolio) {
+                    data.add(currObject);
+                  }
+                }
+              });
+      String queryString =
+          "SELECT DISTINCT * FROM /portfolios1  pf, pf.collectionHolderMap.keySet  WHERE pf.ID > 10 limit 20";
       query = qs.newQuery(queryString);
       result = (SelectResults) query.execute();
       assertEquals((20 + 4 * numRepeat[0]), num[0]);
@@ -636,11 +644,10 @@ public class LimitClauseJUnitTest {
   //Shobhit: Testing the Limit behavior now with indexes for all above test cases.
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for ResultBag wrapped by a
-   * SelectResults
-   * 
-   * Tests ResultBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for ResultBag wrapped by a SelectResults
+   *
+   * <p>Tests ResultBag behaviour
    */
   @Test
   public void testLimitDistinctIterEvaluatedQueryForResultBagWithIndex() {
@@ -668,14 +675,12 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for ResultBag wrapped by a
-   * SelectResults . This test contains projection attributes. Since
-   * the attribute is unique every time, the limit will be satisfied with first
-   * 5 iterations
-   * 
-   * Tests ResultBag behaviour
-   * 
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for ResultBag wrapped by a SelectResults . This test contains
+   * projection attributes. Since the attribute is unique every time, the limit will be satisfied
+   * with first 5 iterations
+   *
+   * <p>Tests ResultBag behaviour
    */
   @Test
   public void testLimitDistinctIterEvaluatedQueryForResultBagWithProjectionAttributeWithIndex() {
@@ -705,21 +710,20 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for ResultBag wrapped by a
-   * SelectResults if the iteration included duplicate elements. If
-   * the distinct clause is present then duplicate elements even if satisfying
-   * the where clause should not be considered as part of the resultset as
-   * distinct will eliminate them
-   * 
-   * Tests ResultBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for ResultBag wrapped by a SelectResults if the iteration included
+   * duplicate elements. If the distinct clause is present then duplicate elements even if
+   * satisfying the where clause should not be considered as part of the resultset as distinct will
+   * eliminate them
+   *
+   * <p>Tests ResultBag behaviour
    */
   @Test
   public void testLimitDistinctIterEvaluatedQueryWithDuplicatesInIterationForResultBagWithIndex() {
     try {
       Region region1 = CacheUtils.createRegion("portfolios1", Portfolio.class);
       // Add 5 pairs of same Object starting from 11 to 20
-      for (int i = 11; i < 21;) {
+      for (int i = 11; i < 21; ) {
         region1.put(Integer.toString(i), new Portfolio(i));
         region1.put(Integer.toString(i + 1), new Portfolio(i));
         i += 2;
@@ -749,22 +753,22 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for ResultBag wrapped by a
-   * SelectResults if the iteration included duplicate elements. If
-   * the distinct clause is present then duplicate elements even if satisfying
-   * the where clause should not be considered as part as distinct will
-   * eliminate them. This test validates the above behaviour if projection
-   * sttribute is present and the projection attribute may be duplicate
-   * 
-   * Tests ResultBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for ResultBag wrapped by a SelectResults if the iteration included
+   * duplicate elements. If the distinct clause is present then duplicate elements even if
+   * satisfying the where clause should not be considered as part as distinct will eliminate them.
+   * This test validates the above behaviour if projection sttribute is present and the projection
+   * attribute may be duplicate
+   *
+   * <p>Tests ResultBag behaviour
    */
   @Test
-  public void testLimitDistinctIterEvaluatedQueryWithDuplicatesInIterationWithProjectionAttributeForResultBagWithIndex() {
+  public void
+      testLimitDistinctIterEvaluatedQueryWithDuplicatesInIterationWithProjectionAttributeForResultBagWithIndex() {
     try {
       Region region1 = CacheUtils.createRegion("portfolios1", Portfolio.class);
       // Add 5 pairs of same Object starting from 11 to 20
-      for (int i = 11; i < 21;) {
+      for (int i = 11; i < 21; ) {
         region1.put(Integer.toString(i), new Portfolio(i));
         region1.put(Integer.toString(i + 1), new Portfolio(i));
         i += 2;
@@ -794,21 +798,21 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for StructBag wrapped by a
-   * SelectResults . This test contains projection attributes. Since
-   * the attribute is unique every time, the limit will be satisfied with first
-   * 5 iterations
-   * 
-   * Tests StructBag behaviour
-   * 
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for StructBag wrapped by a SelectResults . This test contains
+   * projection attributes. Since the attribute is unique every time, the limit will be satisfied
+   * with first 5 iterations
+   *
+   * <p>Tests StructBag behaviour
    */
   @Test
   public void testLimitDistinctIterEvaluatedQueryForStructBagWithProjectionAttributeWithIndex() {
     try {
       Query query;
       SelectResults result;
-      query = qs.newQuery("SELECT DISTINCT pf.ID, pf.createTime FROM /portfolios pf WHERE pf.ID > 0 limit 5");
+      query =
+          qs.newQuery(
+              "SELECT DISTINCT pf.ID, pf.createTime FROM /portfolios pf WHERE pf.ID > 0 limit 5");
 
       MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
       QueryObserver old = QueryObserverHolder.setInstance(observer);
@@ -831,18 +835,18 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for StructBag wrapped by a
-   * SelectResults
-   * 
-   * Tests StructBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for StructBag wrapped by a SelectResults
+   *
+   * <p>Tests StructBag behaviour
    */
   @Test
   public void testLimitDistinctIterEvaluatedQueryForStructBagWithIndex() {
     try {
       Query query;
       SelectResults result;
-      String queryString = "SELECT DISTINCT * FROM /portfolios pf, pf.positions.values WHERE pf.ID > 0 limit 5";
+      String queryString =
+          "SELECT DISTINCT * FROM /portfolios pf, pf.positions.values WHERE pf.ID > 0 limit 5";
       query = qs.newQuery(queryString);
 
       MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
@@ -866,22 +870,22 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for StructBag wrapped by a
-   * SelectResults if the iteration included duplicate elements. If
-   * the distinct clause is present then duplicate elements even if satisfying
-   * the where clause should not be considered as part as distinct will
-   * eliminate them. This test validates the above behaviour if projection
-   * attribute is present and the projection attribute may be duplicate
-   * 
-   * Tests StructBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for StructBag wrapped by a SelectResults if the iteration included
+   * duplicate elements. If the distinct clause is present then duplicate elements even if
+   * satisfying the where clause should not be considered as part as distinct will eliminate them.
+   * This test validates the above behaviour if projection attribute is present and the projection
+   * attribute may be duplicate
+   *
+   * <p>Tests StructBag behaviour
    */
   @Test
-  public void testLimitDistinctIterEvaluatedQueryWithDuplicatesInIterationWithProjectionAttributeForStructBagWithIndex() {
+  public void
+      testLimitDistinctIterEvaluatedQueryWithDuplicatesInIterationWithProjectionAttributeForStructBagWithIndex() {
     try {
       Region region1 = CacheUtils.createRegion("portfolios1", Portfolio.class);
       // Add 5 pairs of same Object starting from 11 to 20
-      for (int i = 11; i < 21;) {
+      for (int i = 11; i < 21; ) {
         region1.put(Integer.toString(i), new Portfolio(i));
         region1.put(Integer.toString(i + 1), new Portfolio(i));
         i += 2;
@@ -893,7 +897,8 @@ public class LimitClauseJUnitTest {
       QueryObserver old = QueryObserverHolder.setInstance(observer);
       Index index = qs.createIndex("idIndex", "pf.ID", "/portfolios1  pf");
       assertNotNull(index);
-      String queryString = "SELECT DISTINCT pf.ID , pf.createTime FROM /portfolios1  pf WHERE pf.ID > 10 limit 5";
+      String queryString =
+          "SELECT DISTINCT pf.ID , pf.createTime FROM /portfolios1  pf WHERE pf.ID > 10 limit 5";
       query = qs.newQuery(queryString);
       result = (SelectResults) query.execute();
       assertTrue(result instanceof SelectResults);
@@ -910,21 +915,20 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for Iter evaluated query with distinct clause
-   * This tests the basic limit functionality for StructBag wrapped by a
-   * SelectResults if the iteration included duplicate elements. If
-   * the distinct clause is present then duplicate elements even if satisfying
-   * the where clause should not be considered as part of the resultset as
-   * distinct will eliminate them
-   * 
-   * Tests StructBag behaviour
+   * Tests the limit functionality for Iter evaluated query with distinct clause This tests the
+   * basic limit functionality for StructBag wrapped by a SelectResults if the iteration included
+   * duplicate elements. If the distinct clause is present then duplicate elements even if
+   * satisfying the where clause should not be considered as part of the resultset as distinct will
+   * eliminate them
+   *
+   * <p>Tests StructBag behaviour
    */
   @Test
   public void testLimitDistinctIterEvaluatedQueryWithDuplicatesInIterationForStructBagWithIndex() {
     try {
       Region region1 = CacheUtils.createRegion("portfolios1", Portfolio.class);
       // Add 5 pairs of same Object starting from 11 to 20
-      for (int i = 11; i < 21;) {
+      for (int i = 11; i < 21; ) {
         region1.put(Integer.toString(i), new Portfolio(i));
         region1.put(Integer.toString(i + 1), new Portfolio(i));
         i += 2;
@@ -935,10 +939,12 @@ public class LimitClauseJUnitTest {
       MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
       QueryObserver old = QueryObserverHolder.setInstance(observer);
 
-      Index index = qs.createIndex("idIndex", "pf.ID", "/portfolios1  pf, pf.collectionHolderMap.keySet");
+      Index index =
+          qs.createIndex("idIndex", "pf.ID", "/portfolios1  pf, pf.collectionHolderMap.keySet");
       assertNotNull(index);
 
-      String queryString = "SELECT DISTINCT * FROM /portfolios1  pf, pf.collectionHolderMap.keySet  WHERE pf.ID > 10 limit 20";
+      String queryString =
+          "SELECT DISTINCT * FROM /portfolios1  pf, pf.collectionHolderMap.keySet  WHERE pf.ID > 10 limit 20";
       query = qs.newQuery(queryString);
       result = (SelectResults) query.execute();
       assertTrue(result instanceof SelectResults);
@@ -956,12 +962,11 @@ public class LimitClauseJUnitTest {
   }
 
   /**
-   * Tests the limit functionality for query which has three conditions with AND
-   * operator and two conditions can be evaluated using index but not the 3rd one.
-   * 
-   * This tests the limit application on intermediate results from Index which should not
-   * be true in this test.
-   * 
+   * Tests the limit functionality for query which has three conditions with AND operator and two
+   * conditions can be evaluated using index but not the 3rd one.
+   *
+   * <p>This tests the limit application on intermediate results from Index which should not be true
+   * in this test.
    */
   @Test
   public void testLimitDistinctQueryWithTwoCondButOneIndex() {
@@ -971,15 +976,15 @@ public class LimitClauseJUnitTest {
       Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
       for (int i = 1; i < 100; i++) {
         Portfolio p = new Portfolio(i);
-        if (i < 50)
-          p.status = "active";
+        if (i < 50) p.status = "active";
         region.put(Integer.toString(i), p);
       }
 
       //Create Index on ID
       Index index = qs.createIndex("idIndex", "ID", "/portfolios1");
       assertNotNull(index);
-      String queryString = "select DISTINCT * from /portfolios1 where status ='inactive' AND (ID > 0 AND ID < 100) limit 10";
+      String queryString =
+          "select DISTINCT * from /portfolios1 where status ='inactive' AND (ID > 0 AND ID < 100) limit 10";
       query = qs.newQuery(queryString);
       result = (SelectResults) query.execute();
       assertTrue(result instanceof SelectResults);
@@ -1002,8 +1007,7 @@ public class LimitClauseJUnitTest {
       Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
       for (int i = 1; i < 100; i++) {
         Portfolio p = new Portfolio(i);
-        if (i < 50)
-          p.status = "active";
+        if (i < 50) p.status = "active";
         region.put(Integer.toString(i), p);
       }
 
@@ -1015,7 +1019,8 @@ public class LimitClauseJUnitTest {
       MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
       QueryObserver old = QueryObserverHolder.setInstance(observer);
 
-      String queryString = "select DISTINCT * from /portfolios1 where status ='inactive' AND (ID > 0 AND ID < 100) limit 10";
+      String queryString =
+          "select DISTINCT * from /portfolios1 where status ='inactive' AND (ID > 0 AND ID < 100) limit 10";
       query = qs.newQuery(queryString);
       result = (SelectResults) query.execute();
       assertTrue(result instanceof SelectResults);
@@ -1040,8 +1045,7 @@ public class LimitClauseJUnitTest {
       Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
       for (int i = 1; i < 100; i++) {
         Portfolio p = new Portfolio(i);
-        if (i < 50)
-          p.status = "active";
+        if (i < 50) p.status = "active";
         region.put(Integer.toString(i), p);
       }
 
@@ -1051,7 +1055,12 @@ public class LimitClauseJUnitTest {
       //Create Index on ID
       Index index = qs.createIndex("idIndex", "ID", "/portfolios1");
       assertNotNull(index);
-      String[] queryString = new String[] { "select * from /portfolios1 where status ='inactive' AND (ID > 0 AND ID < 100) limit 10", "select * from /portfolios1 where (status > 'inactiva' AND status < 'xyz') AND (ID > 0 AND ID < 100) limit 10", "select * from /portfolios1 where (status > 'inactiva' AND status < 'xyz') AND (ID > 0 AND ID < 100) AND (\"type\"='type1' OR \"type\"='type2') limit 10", };
+      String[] queryString =
+          new String[] {
+            "select * from /portfolios1 where status ='inactive' AND (ID > 0 AND ID < 100) limit 10",
+            "select * from /portfolios1 where (status > 'inactiva' AND status < 'xyz') AND (ID > 0 AND ID < 100) limit 10",
+            "select * from /portfolios1 where (status > 'inactiva' AND status < 'xyz') AND (ID > 0 AND ID < 100) AND (\"type\"='type1' OR \"type\"='type2') limit 10",
+          };
       for (String qstr : queryString) {
         query = qs.newQuery(qstr);
         result = (SelectResults) query.execute();
@@ -1074,8 +1083,7 @@ public class LimitClauseJUnitTest {
       Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
       for (int i = 1; i < 100; i++) {
         Portfolio p = new Portfolio(i);
-        if (i < 50)
-          p.status = "active";
+        if (i < 50) p.status = "active";
         region.put(Integer.toString(i), p);
       }
 
@@ -1087,7 +1095,10 @@ public class LimitClauseJUnitTest {
       assertNotNull(index);
       index = qs.createIndex("statusIndex", "status", "/portfolios1");
       assertNotNull(index);
-      String[] queryString = new String[] { "select * from /portfolios1 where status ='inactive' AND (ID > 0 AND ID < 100) limit 10", };
+      String[] queryString =
+          new String[] {
+            "select * from /portfolios1 where status ='inactive' AND (ID > 0 AND ID < 100) limit 10",
+          };
       for (String qstr : queryString) {
         query = qs.newQuery(qstr);
         result = (SelectResults) query.execute();
@@ -1110,8 +1121,7 @@ public class LimitClauseJUnitTest {
       Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
       for (int i = 1; i < 100; i++) {
         Portfolio p = new Portfolio(i);
-        if (i < 50)
-          p.status = "active";
+        if (i < 50) p.status = "active";
         region.put(Integer.toString(i), p);
       }
 
@@ -1123,7 +1133,11 @@ public class LimitClauseJUnitTest {
       assertNotNull(index);
       index = qs.createIndex("statusIndex", "status", "/portfolios1");
       assertNotNull(index);
-      String[] queryString = new String[] { "select * from /portfolios1 where (status > 'inactiva' AND status < 'xyz') AND (ID > 70 AND ID < 100) limit 10", "select * from /portfolios1 where (status > 'inactiva' AND status < 'xyz') AND (ID > 60 AND ID < 100) AND (\"type\"='type1' OR \"type\"='type2') limit 10", };
+      String[] queryString =
+          new String[] {
+            "select * from /portfolios1 where (status > 'inactiva' AND status < 'xyz') AND (ID > 70 AND ID < 100) limit 10",
+            "select * from /portfolios1 where (status > 'inactiva' AND status < 'xyz') AND (ID > 60 AND ID < 100) AND (\"type\"='type1' OR \"type\"='type2') limit 10",
+          };
       for (String qstr : queryString) {
         query = qs.newQuery(qstr);
         result = (SelectResults) query.execute();
@@ -1146,15 +1160,15 @@ public class LimitClauseJUnitTest {
       Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
       for (int i = 1; i < 10; i++) {
         Portfolio p = new Portfolio(i);
-        if (i == 2)
-          p = new Portfolio(1);
+        if (i == 2) p = new Portfolio(1);
         region.put(Integer.toString(i), p);
       }
 
       //Create Index on ID
       Index index = qs.createIndex("idIndex", "ID", "/portfolios1");
       assertNotNull(index);
-      String queryString = "select DISTINCT * from /portfolios1 where status ='inactive' AND ID > 0 limit 2";
+      String queryString =
+          "select DISTINCT * from /portfolios1 where status ='inactive' AND ID > 0 limit 2";
       query = qs.newQuery(queryString);
       result = (SelectResults) query.execute();
       assertEquals(2, result.size());
@@ -1180,12 +1194,14 @@ public class LimitClauseJUnitTest {
       region.put("KEY" + i, p);
     }
 
-    String queryString = "<trace>SELECT * FROM /portfolios1 P, P.positions.values POS WHERE P.ID > 5 AND POS.secId = 'IBM' LIMIT 5";
+    String queryString =
+        "<trace>SELECT * FROM /portfolios1 P, P.positions.values POS WHERE P.ID > 5 AND POS.secId = 'IBM' LIMIT 5";
     query = qs.newQuery(queryString);
     SelectResults resultsNoIndex = (SelectResults) query.execute();
 
     //Create Index on ID and secId
-    Index secIndex = qs.createIndex("secIdIndex", "pos.secId", "/portfolios1 p, p.positions.values pos");
+    Index secIndex =
+        qs.createIndex("secIdIndex", "pos.secId", "/portfolios1 p, p.positions.values pos");
     Index idIndex = qs.createIndex("idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P");
 
     assertNotNull(secIndex);
@@ -1211,37 +1227,37 @@ public class LimitClauseJUnitTest {
         p.positions.put("IBM", new Position("IBM", i));
         region.put("KEY" + i, p);
       }
-      
+
       String queryString = "<trace>SELECT distinct P FROM /portfolios1 P, P.positions.values POS WHERE P.ID > 5 AND POS.secId = 'IBM' ORDER BY P.ID";
       query = qs.newQuery(queryString);
       SelectResults resultsNoIndex = (SelectResults) query.execute();
-      
+
       //Create Index on ID and secId
       //Index secIndex = qs.createIndex("secIdIndex", "pos.secId", "/portfolios1 p, p.positions.values pos");
       Index idIndex = qs.createIndex("idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P");
-  
+
       //assertNotNull(secIndex);
       assertNotNull(idIndex);
       assertTrue(idIndex instanceof CompactRangeIndex);
       SelectResults resultsWithIndex = (SelectResults) query.execute();
-  
+
       assertIndexDetailsEquals(resultsNoIndex.size(), resultsWithIndex.size());
       assertIndexDetailsEquals(limit, resultsWithIndex.size());
-      
+
       int expectedId = 6;
       Iterator iterator = resultsNoIndex.iterator();
       while (iterator.hasNext()) {
         Portfolio p = (Portfolio) iterator.next();
         assertIndexDetailsEquals(expectedId++, p.ID);
       }
-      
+
       //check order by results
       expectedId = 6;
       iterator = resultsWithIndex.iterator();
       while (iterator.hasNext()) {
         Portfolio p = (Portfolio) iterator.next();
         assertIndexDetailsEquals(expectedId++, p.ID);
-      }      
+      }
   }
    */
 
@@ -1259,13 +1275,17 @@ public class LimitClauseJUnitTest {
       region.put("KEY" + i, p);
     }
 
-    String queryString = "<trace>SELECT * FROM /portfolios1 P, P.positions.values POS WHERE P.ID > 4 and P.ID < 11 AND P.ID != 8 LIMIT 5";
+    String queryString =
+        "<trace>SELECT * FROM /portfolios1 P, P.positions.values POS WHERE P.ID > 4 and P.ID < 11 AND P.ID != 8 LIMIT 5";
     query = qs.newQuery(queryString);
     SelectResults resultsNoIndex = (SelectResults) query.execute();
 
     //Create Index on ID and secId
-    Index secIndex = qs.createIndex("secIdIndex", "pos.secId", "/portfolios1 p, p.positions.values pos");
-    Index idIndex = qs.createIndex("idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P, P.positions.values pos");
+    Index secIndex =
+        qs.createIndex("secIdIndex", "pos.secId", "/portfolios1 p, p.positions.values pos");
+    Index idIndex =
+        qs.createIndex(
+            "idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P, P.positions.values pos");
 
     //assertNotNull(secIndex);
     assertNotNull(idIndex);
@@ -1288,13 +1308,17 @@ public class LimitClauseJUnitTest {
       region.put("KEY" + i, p);
     }
 
-    String queryString = "<trace>SELECT * FROM /portfolios1 P, P.positions.values POS WHERE P.ID < 4 OR P.ID > 11 AND P.ID != 13 LIMIT 5";
+    String queryString =
+        "<trace>SELECT * FROM /portfolios1 P, P.positions.values POS WHERE P.ID < 4 OR P.ID > 11 AND P.ID != 13 LIMIT 5";
     query = qs.newQuery(queryString);
     SelectResults resultsNoIndex = (SelectResults) query.execute();
 
     //Create Index on ID and secId
-    Index secIndex = qs.createIndex("secIdIndex", "pos.secId", "/portfolios1 p, p.positions.values pos");
-    Index idIndex = qs.createIndex("idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P, P.positions.values pos");
+    Index secIndex =
+        qs.createIndex("secIdIndex", "pos.secId", "/portfolios1 p, p.positions.values pos");
+    Index idIndex =
+        qs.createIndex(
+            "idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P, P.positions.values pos");
 
     //assertNotNull(secIndex);
     assertNotNull(idIndex);
@@ -1304,7 +1328,8 @@ public class LimitClauseJUnitTest {
   }
 
   @Test
-  public void testLimitJunctionOnCompactRangeIndexedFieldWithAndClauseOnNonIndexedField() throws Exception {
+  public void testLimitJunctionOnCompactRangeIndexedFieldWithAndClauseOnNonIndexedField()
+      throws Exception {
     Query query;
     SelectResults result;
     Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
@@ -1325,10 +1350,11 @@ public class LimitClauseJUnitTest {
     MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
     QueryObserver old = QueryObserverHolder.setInstance(observer);
 
-    //Create Index on ID 
+    //Create Index on ID
     Index idIndex = qs.createIndex("idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P");
 
-    String queryString = "SELECT * FROM /portfolios1 P, P.positions.values POS WHERE P.ID > 9 AND P.ID < 21 AND POS.secId = 'VMW' LIMIT 5";
+    String queryString =
+        "SELECT * FROM /portfolios1 P, P.positions.values POS WHERE P.ID > 9 AND P.ID < 21 AND POS.secId = 'VMW' LIMIT 5";
     query = qs.newQuery(queryString);
 
     assertNotNull(idIndex);
@@ -1338,7 +1364,8 @@ public class LimitClauseJUnitTest {
   }
 
   @Test
-  public void testLimitJunctionOnRangeIndexedFieldWithAndClauseOnNonIndexedField() throws Exception {
+  public void testLimitJunctionOnRangeIndexedFieldWithAndClauseOnNonIndexedField()
+      throws Exception {
     Query query;
     SelectResults result;
     Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
@@ -1359,10 +1386,13 @@ public class LimitClauseJUnitTest {
     MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
     QueryObserver old = QueryObserverHolder.setInstance(observer);
 
-    //Create Index on ID 
-    Index idIndex = qs.createIndex("idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P, P.positions.values POS");
+    //Create Index on ID
+    Index idIndex =
+        qs.createIndex(
+            "idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P, P.positions.values POS");
 
-    String queryString = "SELECT * FROM /portfolios1 P, P.positions.values POS WHERE P.ID > 9 AND P.ID < 21 AND POS.secId = 'VMW' LIMIT 5";
+    String queryString =
+        "SELECT * FROM /portfolios1 P, P.positions.values POS WHERE P.ID > 9 AND P.ID < 21 AND POS.secId = 'VMW' LIMIT 5";
     query = qs.newQuery(queryString);
 
     assertNotNull(idIndex);
@@ -1373,7 +1403,8 @@ public class LimitClauseJUnitTest {
 
   //This is one where we are no longer applying index due to multiple index usage but old code would. should take a look and see how/ or why old code can
   @Test
-  public void testLimitJunctionOnRangeIndexedFieldWithAndClauseCompactRangeIndexedField() throws Exception {
+  public void testLimitJunctionOnRangeIndexedFieldWithAndClauseCompactRangeIndexedField()
+      throws Exception {
     Query query;
     SelectResults result;
     Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
@@ -1403,11 +1434,15 @@ public class LimitClauseJUnitTest {
     //MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
     //QueryObserver old = QueryObserverHolder.setInstance(observer);
 
-    //Create Index on ID 
-    Index idIndex = qs.createIndex("idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P, P.positions.values POS");
-    Index shortIdIndex = qs.createIndex("shortIdIndex", IndexType.FUNCTIONAL, "P.shortID", "/portfolios1 P");
+    //Create Index on ID
+    Index idIndex =
+        qs.createIndex(
+            "idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P, P.positions.values POS");
+    Index shortIdIndex =
+        qs.createIndex("shortIdIndex", IndexType.FUNCTIONAL, "P.shortID", "/portfolios1 P");
 
-    String queryString = "<trace>SELECT * FROM /portfolios1 P WHERE P.ID > 9 AND P.ID < 21 AND P.shortID = 2 LIMIT 5";
+    String queryString =
+        "<trace>SELECT * FROM /portfolios1 P WHERE P.ID > 9 AND P.ID < 21 AND P.shortID = 2 LIMIT 5";
     query = qs.newQuery(queryString);
 
     assertNotNull(idIndex);
@@ -1417,7 +1452,8 @@ public class LimitClauseJUnitTest {
   }
 
   @Test
-  public void testLimitJunctionOnRangeIndexedFieldWithAndClauseRangeIndexedField() throws Exception {
+  public void testLimitJunctionOnRangeIndexedFieldWithAndClauseRangeIndexedField()
+      throws Exception {
     Query query;
     SelectResults result;
     Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
@@ -1448,11 +1484,19 @@ public class LimitClauseJUnitTest {
     MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
     QueryObserver old = QueryObserverHolder.setInstance(observer);
 
-    //Create Index on ID 
-    Index idIndex = qs.createIndex("idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P, P.positions.values POS");
-    Index shortIdIndex = qs.createIndex("shortIdIndex", IndexType.FUNCTIONAL, "P.shortID", "/portfolios1 P, P.positions.values POS");
+    //Create Index on ID
+    Index idIndex =
+        qs.createIndex(
+            "idIndex", IndexType.FUNCTIONAL, "P.ID", "/portfolios1 P, P.positions.values POS");
+    Index shortIdIndex =
+        qs.createIndex(
+            "shortIdIndex",
+            IndexType.FUNCTIONAL,
+            "P.shortID",
+            "/portfolios1 P, P.positions.values POS");
 
-    String queryString = "SELECT * FROM /portfolios1 P WHERE P.ID > 9 AND P.ID < 21 AND P.shortID = 2 LIMIT 5";
+    String queryString =
+        "SELECT * FROM /portfolios1 P WHERE P.ID > 9 AND P.ID < 21 AND P.shortID = 2 LIMIT 5";
     query = qs.newQuery(queryString);
 
     assertNotNull(idIndex);
@@ -1462,7 +1506,8 @@ public class LimitClauseJUnitTest {
   }
 
   @Test
-  public void testLimitOnEqualsCompactRangeIndexedFieldWithAndClauseNonIndexedField() throws Exception {
+  public void testLimitOnEqualsCompactRangeIndexedFieldWithAndClauseNonIndexedField()
+      throws Exception {
     Query query;
     SelectResults result;
     Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
@@ -1485,7 +1530,7 @@ public class LimitClauseJUnitTest {
     MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
     QueryObserver old = QueryObserverHolder.setInstance(observer);
 
-    //Create Index on ID 
+    //Create Index on ID
     Index idIndex = qs.createIndex("idIndex", "P.ID", "/portfolios1 P");
 
     String queryString = "SELECT * FROM /portfolios1 P WHERE P.ID = 10 AND P.shortID = 2 LIMIT 5";
@@ -1499,7 +1544,8 @@ public class LimitClauseJUnitTest {
 
   //This is one where the old code could apply limit but we do not.  Should investigate... index being used is on ShortId
   @Test
-  public void testLimitOnEqualsCompactRangeIndexedFieldWithAndClauseCompactRangeIndexedField() throws Exception {
+  public void testLimitOnEqualsCompactRangeIndexedFieldWithAndClauseCompactRangeIndexedField()
+      throws Exception {
     Query query;
     SelectResults result;
     Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
@@ -1543,11 +1589,12 @@ public class LimitClauseJUnitTest {
     //MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
     // QueryObserver old = QueryObserverHolder.setInstance(observer);
 
-    //Create Index on ID 
+    //Create Index on ID
     Index idIndex = qs.createIndex("idIndex", "P.ID", "/portfolios1 P");
     Index shortIdIndex = qs.createIndex("shortIdIndex", "P.shortID", "/portfolios1 P");
 
-    String queryString = "<trace>SELECT * FROM /portfolios1 P WHERE P.ID = 10 AND P.shortID = 2 LIMIT 5";
+    String queryString =
+        "<trace>SELECT * FROM /portfolios1 P WHERE P.ID = 10 AND P.shortID = 2 LIMIT 5";
     query = qs.newQuery(queryString);
 
     assertNotNull(idIndex);
@@ -1556,9 +1603,10 @@ public class LimitClauseJUnitTest {
     assertEquals(5, resultsWithIndex.size());
   }
 
-  //This is one where limit is applied at index for old code but we do not apply 
+  //This is one where limit is applied at index for old code but we do not apply
   @Test
-  public void testLimitOnEqualsRangeIndexedFieldWithAndClauseCompactRangeIndexedField() throws Exception {
+  public void testLimitOnEqualsRangeIndexedFieldWithAndClauseCompactRangeIndexedField()
+      throws Exception {
     Query query;
     SelectResults result;
     Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
@@ -1581,7 +1629,7 @@ public class LimitClauseJUnitTest {
     MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
     QueryObserver old = QueryObserverHolder.setInstance(observer);
 
-    //Create Index on ID 
+    //Create Index on ID
     Index idIndex = qs.createIndex("idIndex", "P.ID", "/portfolios1 P, P.positions.values POS");
     Index shortIdIndex = qs.createIndex("shortIdIndex", "P.shortID", "/portfolios1 P");
 
@@ -1596,7 +1644,9 @@ public class LimitClauseJUnitTest {
 
   // This is one where we do not apply limit at index but old code does
   @Test
-  public void testLimitOnJunctionWithCompactRangeIndexedFieldWithAndClauseJunctionCompactRangeIndexedField() throws Exception {
+  public void
+      testLimitOnJunctionWithCompactRangeIndexedFieldWithAndClauseJunctionCompactRangeIndexedField()
+          throws Exception {
     Query query;
     SelectResults result;
     Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
@@ -1623,7 +1673,8 @@ public class LimitClauseJUnitTest {
     Index idIndex = qs.createIndex("idIndex", "P.ID", "/portfolios1 P");
     Index shortIdIndex = qs.createIndex("shortIdIndex", "P.shortID", "/portfolios1 P");
 
-    String queryString = "SELECT * FROM /portfolios1 P WHERE P.ID > 9 AND P.ID < 20 AND P.shortID > 1 AND P.shortID < 3 LIMIT 5";
+    String queryString =
+        "SELECT * FROM /portfolios1 P WHERE P.ID > 9 AND P.ID < 20 AND P.shortID > 1 AND P.shortID < 3 LIMIT 5";
     query = qs.newQuery(queryString);
 
     assertNotNull(idIndex);
@@ -1633,7 +1684,8 @@ public class LimitClauseJUnitTest {
   }
 
   @Test
-  public void testLimitOnJunctionWithCompactRangeIndexedFieldWithAndClauseJunctionNonIndexedField() throws Exception {
+  public void testLimitOnJunctionWithCompactRangeIndexedFieldWithAndClauseJunctionNonIndexedField()
+      throws Exception {
     Query query;
     SelectResults result;
     Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
@@ -1659,7 +1711,8 @@ public class LimitClauseJUnitTest {
     // Create Index on ID
     Index idIndex = qs.createIndex("idIndex", "P.ID", "/portfolios1 P");
 
-    String queryString = "SELECT * FROM /portfolios1 P WHERE P.ID > 9 AND P.ID < 20 AND P.shortID > 1 AND P.shortID < 3 LIMIT 5";
+    String queryString =
+        "SELECT * FROM /portfolios1 P WHERE P.ID > 9 AND P.ID < 20 AND P.shortID > 1 AND P.shortID < 3 LIMIT 5";
     query = qs.newQuery(queryString);
 
     assertNotNull(idIndex);
@@ -1669,7 +1722,8 @@ public class LimitClauseJUnitTest {
   }
 
   @Test
-  public void testLimitOnCompactRangeIndexedFieldWithAndClauseJunctionNonIndexedField() throws Exception {
+  public void testLimitOnCompactRangeIndexedFieldWithAndClauseJunctionNonIndexedField()
+      throws Exception {
     Query query;
     SelectResults result;
     Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
@@ -1692,10 +1746,11 @@ public class LimitClauseJUnitTest {
     MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
     QueryObserver old = QueryObserverHolder.setInstance(observer);
 
-    //Create Index on ID 
+    //Create Index on ID
     Index idIndex = qs.createIndex("idIndex", "P.ID", "/portfolios1 P");
 
-    String queryString = "SELECT * FROM /portfolios1 P WHERE P.ID = 10 AND P.shortID > 1 AND P.shortID < 3 LIMIT 5";
+    String queryString =
+        "SELECT * FROM /portfolios1 P WHERE P.ID = 10 AND P.shortID > 1 AND P.shortID < 3 LIMIT 5";
     query = qs.newQuery(queryString);
 
     assertNotNull(idIndex);
@@ -1705,7 +1760,8 @@ public class LimitClauseJUnitTest {
   }
 
   @Test
-  public void testLimitOnJunctionWithCompactRangeIndexedFieldWithAndOnCompactRangeIndexedField() throws Exception {
+  public void testLimitOnJunctionWithCompactRangeIndexedFieldWithAndOnCompactRangeIndexedField()
+      throws Exception {
     Query query;
     SelectResults result;
     Region region = CacheUtils.createRegion("portfolios1", Portfolio.class);
@@ -1728,11 +1784,12 @@ public class LimitClauseJUnitTest {
     MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
     QueryObserver old = QueryObserverHolder.setInstance(observer);
 
-    //Create Index on ID 
+    //Create Index on ID
     Index idIndex = qs.createIndex("idIndex", "P.ID", "/portfolios1 P");
     Index shortIdIndex = qs.createIndex("shortIdIndex", "P.shortID", "/portfolios1 P");
 
-    String queryString = "SELECT * FROM /portfolios1 P WHERE P.ID > 9 AND P.ID < 20 AND P.shortID = 2 LIMIT 5";
+    String queryString =
+        "SELECT * FROM /portfolios1 P WHERE P.ID > 9 AND P.ID < 20 AND P.shortID = 2 LIMIT 5";
     query = qs.newQuery(queryString);
 
     assertNotNull(idIndex);
@@ -1746,7 +1803,8 @@ public class LimitClauseJUnitTest {
    * @param query
    * @throws Exception
    */
-  private SelectResults helpTestIndexForQuery(String query, String indexedExpression, String regionPath, Object[] params) throws Exception {
+  private SelectResults helpTestIndexForQuery(
+      String query, String indexedExpression, String regionPath, Object[] params) throws Exception {
     QueryService qs = CacheUtils.getQueryService();
     MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
     QueryObserverHolder.setInstance(observer);

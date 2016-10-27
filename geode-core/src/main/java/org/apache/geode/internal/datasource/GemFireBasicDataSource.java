@@ -32,9 +32,8 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.i18n.StringId;
 
 /**
- * GemFireBasicDataSource extends AbstractDataSource. This is a datasource class
- * which provides connections. fromthe databse without any pooling.
- * 
+ * GemFireBasicDataSource extends AbstractDataSource. This is a datasource class which provides
+ * connections. fromthe databse without any pooling.
  */
 public class GemFireBasicDataSource extends AbstractDataSource {
   private static final Logger logger = LogService.getLogger();
@@ -45,12 +44,11 @@ public class GemFireBasicDataSource extends AbstractDataSource {
   protected transient Driver driverObject = null;
 
   /**
-   * Place holder for abstract method 
-   * isWrapperFor(java.lang.Class) in java.sql.Wrapper
-   * required by jdk 1.6
+   * Place holder for abstract method isWrapperFor(java.lang.Class) in java.sql.Wrapper required by
+   * jdk 1.6
    *
-   * @param iface - a Class defining an interface. 
-   * @throws SQLException 
+   * @param iface - a Class defining an interface.
+   * @throws SQLException
    * @return boolean
    */
   public boolean isWrapperFor(Class iface) throws SQLException {
@@ -58,8 +56,7 @@ public class GemFireBasicDataSource extends AbstractDataSource {
   }
 
   /**
-   * Place holder for abstract method 
-   * java.lang Object unwrap(java.lang.Class) in java.sql.Wrapper
+   * Place holder for abstract method java.lang Object unwrap(java.lang.Class) in java.sql.Wrapper
    * required by jdk 1.6
    *
    * @param iface - a Class defining an interface.
@@ -72,9 +69,8 @@ public class GemFireBasicDataSource extends AbstractDataSource {
 
   /**
    * Creates a new instance of GemFireBasicDataSource
-   * 
-   * @param configs The ConfiguredDataSourceProperties containing the datasource
-   *          properties.
+   *
+   * @param configs The ConfiguredDataSourceProperties containing the datasource properties.
    * @throws SQLException
    */
   public GemFireBasicDataSource(ConfiguredDataSourceProperties configs) throws SQLException {
@@ -83,10 +79,9 @@ public class GemFireBasicDataSource extends AbstractDataSource {
   }
 
   /**
-   * Implementation of datasource interface function. This method is used to get
-   * the connection from the database. Default user name and password will be
-   * used.
-   * 
+   * Implementation of datasource interface function. This method is used to get the connection from
+   * the database. Default user name and password will be used.
+   *
    * @throws SQLException
    * @return ???
    */
@@ -98,8 +93,7 @@ public class GemFireBasicDataSource extends AbstractDataSource {
     Connection connection = null;
     if (driverObject == null) {
       synchronized (this) {
-        if (driverObject == null)
-          loadDriver();
+        if (driverObject == null) loadDriver();
       }
     }
     if (url != null) {
@@ -108,7 +102,9 @@ public class GemFireBasicDataSource extends AbstractDataSource {
       props.put("password", password);
       connection = driverObject.connect(url, props);
     } else {
-      StringId exception = LocalizedStrings.GemFireBasicDataSource_GEMFIREBASICDATASOURCE_GETCONNECTION_URL_FOR_THE_DATASOURCE_NOT_AVAILABLE;
+      StringId exception =
+          LocalizedStrings
+              .GemFireBasicDataSource_GEMFIREBASICDATASOURCE_GETCONNECTION_URL_FOR_THE_DATASOURCE_NOT_AVAILABLE;
       logger.info(LocalizedMessage.create(exception));
       throw new SQLException(exception.toLocalizedString());
     }
@@ -116,9 +112,9 @@ public class GemFireBasicDataSource extends AbstractDataSource {
   }
 
   /**
-   * Implementation of datasource function. This method is used to get the
-   * connection. The specified user name and passowrd will be used.
-   * 
+   * Implementation of datasource function. This method is used to get the connection. The specified
+   * user name and passowrd will be used.
+   *
    * @param clUsername The username for the database connection.
    * @param clPassword The password for the database connection.
    * @throws SQLException
@@ -136,7 +132,9 @@ public class GemFireBasicDataSource extends AbstractDataSource {
       Class driverClass = ClassPathLoader.getLatest().forName(jdbcDriver);
       driverObject = (Driver) driverClass.newInstance();
     } catch (Exception ex) {
-      StringId msg = LocalizedStrings.GemFireBasicDataSource_AN_EXCEPTION_WAS_CAUGHT_WHILE_TRYING_TO_LOAD_THE_DRIVER;
+      StringId msg =
+          LocalizedStrings
+              .GemFireBasicDataSource_AN_EXCEPTION_WAS_CAUGHT_WHILE_TRYING_TO_LOAD_THE_DRIVER;
       String msgArg = ex.getLocalizedMessage();
       logger.error(LocalizedMessage.create(msg, msgArg), ex);
       throw new SQLException(msg.toLocalizedString(msgArg));

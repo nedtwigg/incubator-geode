@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import java.io.IOException;
@@ -40,17 +38,17 @@ import org.apache.geode.internal.security.AuthorizeRequest;
 
 public class ClearRegion extends BaseCommand {
 
-  private final static ClearRegion singleton = new ClearRegion();
+  private static final ClearRegion singleton = new ClearRegion();
 
-  private ClearRegion() {
-  }
+  private ClearRegion() {}
 
   public static Command getCommand() {
     return singleton;
   }
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, InterruptedException {
     Part regionNamePart = null, callbackArgPart = null;
     String regionName = null;
     Object callbackArg = null;
@@ -80,13 +78,26 @@ public class ClearRegion extends BaseCommand {
     }
     regionName = regionNamePart.getString();
     if (logger.isDebugEnabled()) {
-      logger.debug(servConn.getName() + ": Received clear region request (" + msg.getPayloadLength() + " bytes) from " + servConn.getSocketString() + " for region " + regionName);
+      logger.debug(
+          servConn.getName()
+              + ": Received clear region request ("
+              + msg.getPayloadLength()
+              + " bytes) from "
+              + servConn.getSocketString()
+              + " for region "
+              + regionName);
     }
 
     // Process the clear region request
     if (regionName == null) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.ClearRegion_0_THE_INPUT_REGION_NAME_FOR_THE_CLEAR_REGION_REQUEST_IS_NULL, servConn.getName()));
-      String errMessage = LocalizedStrings.ClearRegion_THE_INPUT_REGION_NAME_FOR_THE_CLEAR_REGION_REQUEST_IS_NULL.toLocalizedString();
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .ClearRegion_0_THE_INPUT_REGION_NAME_FOR_THE_CLEAR_REGION_REQUEST_IS_NULL,
+              servConn.getName()));
+      String errMessage =
+          LocalizedStrings.ClearRegion_THE_INPUT_REGION_NAME_FOR_THE_CLEAR_REGION_REQUEST_IS_NULL
+              .toLocalizedString();
 
       writeErrorResponse(msg, MessageType.CLEAR_REGION_DATA_ERROR, errMessage, servConn);
       servConn.setAsTrue(RESPONDED);
@@ -95,7 +106,9 @@ public class ClearRegion extends BaseCommand {
 
     LocalRegion region = (LocalRegion) crHelper.getRegion(regionName);
     if (region == null) {
-      String reason = LocalizedStrings.ClearRegion_WAS_NOT_FOUND_DURING_CLEAR_REGION_REGUEST.toLocalizedString();
+      String reason =
+          LocalizedStrings.ClearRegion_WAS_NOT_FOUND_DURING_CLEAR_REGION_REGUEST
+              .toLocalizedString();
       writeRegionDestroyedEx(msg, regionName, reason, servConn);
       servConn.setAsTrue(RESPONDED);
       return;
@@ -112,10 +125,12 @@ public class ClearRegion extends BaseCommand {
 
       AuthorizeRequest authzRequest = servConn.getAuthzRequest();
       if (authzRequest != null) {
-        RegionClearOperationContext clearContext = authzRequest.clearAuthorize(regionName, callbackArg);
+        RegionClearOperationContext clearContext =
+            authzRequest.clearAuthorize(regionName, callbackArg);
         callbackArg = clearContext.getCallbackArg();
       }
-      region.basicBridgeClear(callbackArg, servConn.getProxyID(), true /* boolean from cache Client */, eventId);
+      region.basicBridgeClear(
+          callbackArg, servConn.getProxyID(), true /* boolean from cache Client */, eventId);
     } catch (Exception e) {
       // If an interrupted exception is thrown , rethrow it
       checkForInterrupt(servConn, e);
@@ -139,5 +154,4 @@ public class ClearRegion extends BaseCommand {
     }
     stats.incWriteClearRegionResponseTime(DistributionStats.getStatTime() - start);
   }
-
 }

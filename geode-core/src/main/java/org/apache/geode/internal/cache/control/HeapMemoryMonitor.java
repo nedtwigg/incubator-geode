@@ -49,26 +49,28 @@ import java.util.Set;
 import java.util.concurrent.*;
 
 /**
- * Allows for the setting of eviction and critical thresholds. These thresholds
- * are compared against current heap usage and, with the help of {#link
- * InternalResourceManager}, dispatches events when the thresholds are crossed.
- * Gathering memory usage information from the JVM is done using a listener on
- * the MemoryMXBean, by polling the JVM and as a listener on GemFire Statistics
- * output in order to accommodate differences in the various JVMs.
- * 
+ * Allows for the setting of eviction and critical thresholds. These thresholds are compared against
+ * current heap usage and, with the help of {#link InternalResourceManager}, dispatches events when
+ * the thresholds are crossed. Gathering memory usage information from the JVM is done using a
+ * listener on the MemoryMXBean, by polling the JVM and as a listener on GemFire Statistics output
+ * in order to accommodate differences in the various JVMs.
+ *
  * @since Geode 1.0
  */
 public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor {
   private static final Logger logger = LogService.getLogger();
 
   // Allow for an unknown heap pool for VMs we may support in the future.
-  private static final String HEAP_POOL = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "ResourceManager.HEAP_POOL");
+  private static final String HEAP_POOL =
+      System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "ResourceManager.HEAP_POOL");
 
   // Property for setting the JVM polling interval (below)
-  public static final String POLLER_INTERVAL_PROP = DistributionConfig.GEMFIRE_PREFIX + "heapPollerInterval";
+  public static final String POLLER_INTERVAL_PROP =
+      DistributionConfig.GEMFIRE_PREFIX + "heapPollerInterval";
 
   // Internal for polling the JVM for changes in heap memory usage.
-  private static final int POLLER_INTERVAL = Integer.getInteger(POLLER_INTERVAL_PROP, 500).intValue();
+  private static final int POLLER_INTERVAL =
+      Integer.getInteger(POLLER_INTERVAL_PROP, 500).intValue();
 
   // This holds a new event as it transitions from updateStateAndSendEvent(...) to fillInProfile()
   private ThreadLocal<MemoryEvent> upcomingEvent = new ThreadLocal<MemoryEvent>();
@@ -84,17 +86,21 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
    * spikes in jrockit VM.
    */
   private static final int memoryStateChangeTolerance;
+
   static {
     String vendor = System.getProperty("java.vendor");
     if (vendor.contains("Sun") || vendor.contains("Oracle")) {
-      memoryStateChangeTolerance = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "memoryEventTolerance", 1);
+      memoryStateChangeTolerance =
+          Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "memoryEventTolerance", 1);
     } else {
-      memoryStateChangeTolerance = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "memoryEventTolerance", 5);
+      memoryStateChangeTolerance =
+          Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "memoryEventTolerance", 5);
     }
   }
 
   // JVM MXBean used to report changes in heap memory usage
   private static final MemoryPoolMXBean tenuredMemoryPoolMXBean;
+
   static {
     MemoryPoolMXBean matchingMemoryPoolMXBean = null;
     for (MemoryPoolMXBean memoryPoolMXBean : ManagementFactory.getMemoryPoolMXBeans()) {
@@ -107,7 +113,9 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
     tenuredMemoryPoolMXBean = matchingMemoryPoolMXBean;
 
     if (tenuredMemoryPoolMXBean == null) {
-      logger.error(LocalizedMessage.create(LocalizedStrings.HeapMemoryMonitor_NO_POOL_FOUND_POOLS_0, getAllMemoryPoolNames()));
+      logger.error(
+          LocalizedMessage.create(
+              LocalizedStrings.HeapMemoryMonitor_NO_POOL_FOUND_POOLS_0, getAllMemoryPoolNames()));
     }
   }
 
@@ -134,7 +142,15 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
   }
 
   private volatile MemoryThresholds thresholds = new MemoryThresholds(tenuredPoolMaxMemory);
-  private volatile MemoryEvent mostRecentEvent = new MemoryEvent(ResourceType.HEAP_MEMORY, MemoryState.DISABLED, MemoryState.DISABLED, null, 0L, true, this.thresholds);
+  private volatile MemoryEvent mostRecentEvent =
+      new MemoryEvent(
+          ResourceType.HEAP_MEMORY,
+          MemoryState.DISABLED,
+          MemoryState.DISABLED,
+          null,
+          0L,
+          true,
+          this.thresholds);
   private volatile MemoryState currentState = MemoryState.DISABLED;
 
   //Set when startMonitoring() and stopMonitoring() are called
@@ -156,15 +172,13 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
   private static long testBytesUsedForThresholdSet = -1;
 
   /**
-   * Determines if the name of the memory pool MXBean provided matches a list of
-   * known tenured pool names.
-   * 
-   * Package private for testing.
-   * 
-   * @param memoryPoolMXBean
-   *          The memory pool MXBean to check.
-   * @return True if the pool name matches a known tenured pool name, false
-   *         otherwise.
+   * Determines if the name of the memory pool MXBean provided matches a list of known tenured pool
+   * names.
+   *
+   * <p>Package private for testing.
+   *
+   * @param memoryPoolMXBean The memory pool MXBean to check.
+   * @return True if the pool name matches a known tenured pool name, false otherwise.
    */
   static boolean isTenured(MemoryPoolMXBean memoryPoolMXBean) {
     if (memoryPoolMXBean.getType() != MemoryType.HEAP) {
@@ -185,7 +199,10 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
         || (HEAP_POOL != null && name.equals(HEAP_POOL));
   }
 
-  HeapMemoryMonitor(final InternalResourceManager resourceManager, final GemFireCacheImpl cache, final ResourceManagerStats stats) {
+  HeapMemoryMonitor(
+      final InternalResourceManager resourceManager,
+      final GemFireCacheImpl cache,
+      final ResourceManagerStats stats) {
     this.resourceManager = resourceManager;
     this.resourceAdvisor = (ResourceAdvisor) cache.getDistributionAdvisor();
     this.cache = cache;
@@ -193,25 +210,31 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
   }
 
   /**
-   * Returns the tenured pool MXBean or throws an IllegaleStateException if one
-   * couldn't be found.
+   * Returns the tenured pool MXBean or throws an IllegaleStateException if one couldn't be found.
    */
   public static MemoryPoolMXBean getTenuredMemoryPoolMXBean() {
     if (tenuredMemoryPoolMXBean != null) {
       return tenuredMemoryPoolMXBean;
     }
 
-    throw new IllegalStateException(LocalizedStrings.HeapMemoryMonitor_NO_POOL_FOUND_POOLS_0.toLocalizedString(getAllMemoryPoolNames()));
+    throw new IllegalStateException(
+        LocalizedStrings.HeapMemoryMonitor_NO_POOL_FOUND_POOLS_0.toLocalizedString(
+            getAllMemoryPoolNames()));
   }
 
-  /**
-   * Returns the names of all available memory pools as a single string.
-   */
+  /** Returns the names of all available memory pools as a single string. */
   private static String getAllMemoryPoolNames() {
     StringBuilder builder = new StringBuilder("[");
 
     for (MemoryPoolMXBean memoryPoolBean : ManagementFactory.getMemoryPoolMXBeans()) {
-      builder.append("(Name=").append(memoryPoolBean.getName()).append(";Type=").append(memoryPoolBean.getType()).append(";UsageThresholdSupported=").append(memoryPoolBean.isUsageThresholdSupported()).append("), ");
+      builder
+          .append("(Name=")
+          .append(memoryPoolBean.getName())
+          .append(";Type=")
+          .append(memoryPoolBean.getType())
+          .append(";UsageThresholdSupported=")
+          .append(memoryPoolBean.isUsageThresholdSupported())
+          .append("), ");
     }
 
     if (builder.length() > 1) {
@@ -223,13 +246,12 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
   }
 
   /**
-   * Monitoring is done using a combination of data from the JVM and statistics
-   * collected from the cache. A usage threshold is set on the MemoryMXBean of
-   * the JVM to get notifications when the JVM crosses the eviction or critical
-   * thresholds. A separate usage collection is done either by setting up a
-   * listener on the cache stats or polling of the JVM, depending on whether
-   * stats have been enabled. This separate collection is done to return the
-   * state of the heap memory back to a normal state when memory has been freed.
+   * Monitoring is done using a combination of data from the JVM and statistics collected from the
+   * cache. A usage threshold is set on the MemoryMXBean of the JVM to get notifications when the
+   * JVM crosses the eviction or critical thresholds. A separate usage collection is done either by
+   * setting up a listener on the cache stats or polling of the JVM, depending on whether stats have
+   * been enabled. This separate collection is done to return the state of the heap memory back to a
+   * normal state when memory has been freed.
    */
   private void startMonitoring() {
     synchronized (this) {
@@ -249,9 +271,7 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
     }
   }
 
-  /**
-   * Stops all three mechanisms from monitoring heap usage.
-   */
+  /** Stops all three mechanisms from monitoring heap usage. */
   @Override
   public void stopMonitoring() {
     synchronized (this) {
@@ -268,7 +288,12 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
         emitter.removeNotificationListener(this, null, null);
         this.cache.getLoggerI18n().fine("Removed Memory MXBean notification listener" + this);
       } catch (ListenerNotFoundException e) {
-        this.cache.getLoggerI18n().fine("This instance '" + toString() + "' was not registered as a Memory MXBean listener");
+        this.cache
+            .getLoggerI18n()
+            .fine(
+                "This instance '"
+                    + toString()
+                    + "' was not registered as a Memory MXBean listener");
       }
 
       // Stop the stats listener
@@ -283,7 +308,7 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
 
   /**
    * Start a listener on the cache stats to monitor memory usage.
-   * 
+   *
    * @return True of the listener was correctly started, false otherwise.
    */
   private boolean startCacheStatListener() {
@@ -299,7 +324,8 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
       for (Object o : list) {
         if (o instanceof StatisticsImpl) {
           StatisticsImpl si = (StatisticsImpl) o;
-          if (si.getTextId().contains(tenuredPoolName) && si.getType().getName().contains("PoolStats")) {
+          if (si.getTextId().contains(tenuredPoolName)
+              && si.getType().getName().contains("PoolStats")) {
             sampler.addLocalStatListener(this.statListener, si, "currentUsedMemory");
             if (this.cache.getLoggerI18n().fineEnabled()) {
               this.cache.getLoggerI18n().fine("Registered stat listener for " + si.getTextId());
@@ -317,29 +343,34 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
     return false;
   }
 
-  /**
-   * Start a separate thread for polling the JVM for heap memory usage.
-   */
+  /** Start a separate thread for polling the JVM for heap memory usage. */
   private void startMemoryPoolPoller() {
     if (tenuredMemoryPoolMXBean == null) {
       return;
     }
 
     final ThreadGroup threadGroup = LoggingThreadGroup.createThreadGroup("HeapPoller", logger);
-    final ThreadFactory threadFactory = new ThreadFactory() {
-      @Override
-      public Thread newThread(Runnable r) {
-        Thread thread = new Thread(threadGroup, r, "GemfireHeapPoller");
-        thread.setDaemon(true);
-        return thread;
-      }
-    };
+    final ThreadFactory threadFactory =
+        new ThreadFactory() {
+          @Override
+          public Thread newThread(Runnable r) {
+            Thread thread = new Thread(threadGroup, r, "GemfireHeapPoller");
+            thread.setDaemon(true);
+            return thread;
+          }
+        };
 
     this.pollerExecutor = Executors.newScheduledThreadPool(1, threadFactory);
-    this.pollerExecutor.scheduleAtFixedRate(new HeapPoller(), POLLER_INTERVAL, POLLER_INTERVAL, TimeUnit.MILLISECONDS);
+    this.pollerExecutor.scheduleAtFixedRate(
+        new HeapPoller(), POLLER_INTERVAL, POLLER_INTERVAL, TimeUnit.MILLISECONDS);
 
     if (this.cache.getLoggerI18n().fineEnabled()) {
-      this.cache.getLoggerI18n().fine("Started GemfireHeapPoller to poll the heap every " + POLLER_INTERVAL + " milliseconds");
+      this.cache
+          .getLoggerI18n()
+          .fine(
+              "Started GemfireHeapPoller to poll the heap every "
+                  + POLLER_INTERVAL
+                  + " milliseconds");
     }
   }
 
@@ -352,25 +383,39 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
 
       // Do some basic sanity checking on the new threshold
       if (criticalThreshold > 100.0f || criticalThreshold < 0.0f) {
-        throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_CRITICAL_PERCENTAGE_GT_ZERO_AND_LTE_100.toLocalizedString());
+        throw new IllegalArgumentException(
+            LocalizedStrings.MemoryThresholds_CRITICAL_PERCENTAGE_GT_ZERO_AND_LTE_100
+                .toLocalizedString());
       }
       if (getTenuredMemoryPoolMXBean() == null) {
-        throw new IllegalStateException(LocalizedStrings.HeapMemoryMonitor_NO_POOL_FOUND_POOLS_0.toLocalizedString(getAllMemoryPoolNames()));
+        throw new IllegalStateException(
+            LocalizedStrings.HeapMemoryMonitor_NO_POOL_FOUND_POOLS_0.toLocalizedString(
+                getAllMemoryPoolNames()));
       }
-      if (criticalThreshold != 0 && this.thresholds.isEvictionThresholdEnabled() && criticalThreshold <= this.thresholds.getEvictionThreshold()) {
-        throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_CRITICAL_PERCENTAGE_GTE_EVICTION_PERCENTAGE.toLocalizedString());
+      if (criticalThreshold != 0
+          && this.thresholds.isEvictionThresholdEnabled()
+          && criticalThreshold <= this.thresholds.getEvictionThreshold()) {
+        throw new IllegalArgumentException(
+            LocalizedStrings.MemoryThresholds_CRITICAL_PERCENTAGE_GTE_EVICTION_PERCENTAGE
+                .toLocalizedString());
       }
 
       this.cache.setQueryMonitorRequiredForResourceManager(criticalThreshold != 0);
 
-      this.thresholds = new MemoryThresholds(this.thresholds.getMaxMemoryBytes(), criticalThreshold, this.thresholds.getEvictionThreshold());
+      this.thresholds =
+          new MemoryThresholds(
+              this.thresholds.getMaxMemoryBytes(),
+              criticalThreshold,
+              this.thresholds.getEvictionThreshold());
 
       updateStateAndSendEvent();
 
       // Start or stop monitoring based upon whether a threshold has been set
-      if (this.thresholds.isEvictionThresholdEnabled() || this.thresholds.isCriticalThresholdEnabled()) {
+      if (this.thresholds.isEvictionThresholdEnabled()
+          || this.thresholds.isCriticalThresholdEnabled()) {
         startMonitoring();
-      } else if (!this.thresholds.isEvictionThresholdEnabled() && !this.thresholds.isCriticalThresholdEnabled()) {
+      } else if (!this.thresholds.isEvictionThresholdEnabled()
+          && !this.thresholds.isCriticalThresholdEnabled()) {
         stopMonitoring();
       }
 
@@ -397,23 +442,37 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
 
       // Do some basic sanity checking on the new threshold
       if (evictionThreshold > 100.0f || evictionThreshold < 0.0f) {
-        throw new IllegalArgumentException(LocalizedStrings.MemoryThresholds_EVICTION_PERCENTAGE_GT_ZERO_AND_LTE_100.toLocalizedString());
+        throw new IllegalArgumentException(
+            LocalizedStrings.MemoryThresholds_EVICTION_PERCENTAGE_GT_ZERO_AND_LTE_100
+                .toLocalizedString());
       }
       if (getTenuredMemoryPoolMXBean() == null) {
-        throw new IllegalStateException(LocalizedStrings.HeapMemoryMonitor_NO_POOL_FOUND_POOLS_0.toLocalizedString(getAllMemoryPoolNames()));
+        throw new IllegalStateException(
+            LocalizedStrings.HeapMemoryMonitor_NO_POOL_FOUND_POOLS_0.toLocalizedString(
+                getAllMemoryPoolNames()));
       }
-      if (evictionThreshold != 0 && this.thresholds.isCriticalThresholdEnabled() && evictionThreshold >= this.thresholds.getCriticalThreshold()) {
-        throw new IllegalArgumentException(LocalizedStrings.MemoryMonitor_EVICTION_PERCENTAGE_LTE_CRITICAL_PERCENTAGE.toLocalizedString());
+      if (evictionThreshold != 0
+          && this.thresholds.isCriticalThresholdEnabled()
+          && evictionThreshold >= this.thresholds.getCriticalThreshold()) {
+        throw new IllegalArgumentException(
+            LocalizedStrings.MemoryMonitor_EVICTION_PERCENTAGE_LTE_CRITICAL_PERCENTAGE
+                .toLocalizedString());
       }
 
-      this.thresholds = new MemoryThresholds(this.thresholds.getMaxMemoryBytes(), this.thresholds.getCriticalThreshold(), evictionThreshold);
+      this.thresholds =
+          new MemoryThresholds(
+              this.thresholds.getMaxMemoryBytes(),
+              this.thresholds.getCriticalThreshold(),
+              evictionThreshold);
 
       updateStateAndSendEvent();
 
       // Start or stop monitoring based upon whether a threshold has been set
-      if (this.thresholds.isEvictionThresholdEnabled() || this.thresholds.isCriticalThresholdEnabled()) {
+      if (this.thresholds.isEvictionThresholdEnabled()
+          || this.thresholds.isCriticalThresholdEnabled()) {
         startMonitoring();
-      } else if (!this.thresholds.isEvictionThresholdEnabled() && !this.thresholds.isCriticalThresholdEnabled()) {
+      } else if (!this.thresholds.isEvictionThresholdEnabled()
+          && !this.thresholds.isCriticalThresholdEnabled()) {
         stopMonitoring();
       }
 
@@ -426,19 +485,20 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
   }
 
   /**
-   * Compare the number of bytes used (fetched from the JVM) to the thresholds.
-   * If necessary, change the state and send an event for the state change.
+   * Compare the number of bytes used (fetched from the JVM) to the thresholds. If necessary, change
+   * the state and send an event for the state change.
    */
   public void updateStateAndSendEvent() {
-    updateStateAndSendEvent(testBytesUsedForThresholdSet != -1 ? testBytesUsedForThresholdSet : getBytesUsed());
+    updateStateAndSendEvent(
+        testBytesUsedForThresholdSet != -1 ? testBytesUsedForThresholdSet : getBytesUsed());
   }
 
   /**
-   * Compare the number of bytes used to the thresholds.  If necessary, change the state
-   * and send an event for the state change.
-   * 
-   * Public for testing.
-   * 
+   * Compare the number of bytes used to the thresholds. If necessary, change the state and send an
+   * event for the state change.
+   *
+   * <p>Public for testing.
+   *
    * @param bytesUsed Number of bytes of heap memory currently used.
    */
   public void updateStateAndSendEvent(long bytesUsed) {
@@ -452,7 +512,15 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
         if (!skipEventDueToToleranceLimits(oldState, newState)) {
           this.currentState = newState;
 
-          MemoryEvent event = new MemoryEvent(ResourceType.HEAP_MEMORY, oldState, newState, this.cache.getMyId(), bytesUsed, true, this.thresholds);
+          MemoryEvent event =
+              new MemoryEvent(
+                  ResourceType.HEAP_MEMORY,
+                  oldState,
+                  newState,
+                  this.cache.getMyId(),
+                  bytesUsed,
+                  true,
+                  this.thresholds);
 
           this.upcomingEvent.set(event);
           processLocalEvent(event);
@@ -463,7 +531,15 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
         // number of bytes used changed, then go ahead and send the event
         // again with an updated number of bytes used.
       } else if (!oldState.isNormal() && bytesUsed != this.mostRecentEvent.getBytesUsed()) {
-        MemoryEvent event = new MemoryEvent(ResourceType.HEAP_MEMORY, oldState, newState, this.cache.getMyId(), bytesUsed, true, this.thresholds);
+        MemoryEvent event =
+            new MemoryEvent(
+                ResourceType.HEAP_MEMORY,
+                oldState,
+                newState,
+                this.cache.getMyId(),
+                bytesUsed,
+                true,
+                this.thresholds);
         this.upcomingEvent.set(event);
         processLocalEvent(event);
       }
@@ -472,9 +548,8 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
 
   /**
    * Update resource manager stats based upon the given event.
-   * 
-   * @param event
-   *          Event from which to derive data for updating stats.
+   *
+   * @param event Event from which to derive data for updating stats.
    */
   private void updateStatsFromEvent(MemoryEvent event) {
     if (event.isLocal()) {
@@ -494,9 +569,8 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
 
   /**
    * Populate heap memory data in the given profile.
-   * 
-   * @param profile
-   *          Profile to populate.
+   *
+   * @param profile Profile to populate.
    */
   @Override
   public void fillInProfile(final ResourceManagerProfile profile) {
@@ -506,7 +580,10 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
       this.upcomingEvent.set(null);
     }
     final MemoryEvent eventToPopulate = this.mostRecentEvent;
-    profile.setHeapData(eventToPopulate.getBytesUsed(), eventToPopulate.getState(), eventToPopulate.getThresholds());
+    profile.setHeapData(
+        eventToPopulate.getBytesUsed(),
+        eventToPopulate.getState(),
+        eventToPopulate.getThresholds());
   }
 
   public MemoryState getState() {
@@ -516,25 +593,26 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
   public MemoryThresholds getThresholds() {
     MemoryThresholds saveThresholds = this.thresholds;
 
-    return new MemoryThresholds(saveThresholds.getMaxMemoryBytes(), saveThresholds.getCriticalThreshold(), saveThresholds.getEvictionThreshold());
+    return new MemoryThresholds(
+        saveThresholds.getMaxMemoryBytes(),
+        saveThresholds.getCriticalThreshold(),
+        saveThresholds.getEvictionThreshold());
   }
 
   /**
-   * Sets the usage threshold on the tenured pool to either the eviction
-   * threshold or the critical threshold depending on the current number of
-   * bytes used
-   * 
-   * @param bytesUsed
-   *          Number of bytes of heap memory currently used.
+   * Sets the usage threshold on the tenured pool to either the eviction threshold or the critical
+   * threshold depending on the current number of bytes used
+   *
+   * @param bytesUsed Number of bytes of heap memory currently used.
    */
   private void setUsageThresholdOnMXBean(final long bytesUsed) {
-    //// this method has been made a no-op to fix bug 49064 
+    //// this method has been made a no-op to fix bug 49064
   }
 
   /**
    * Register with the JVM to get threshold events.
-   * 
-   * Package private for testing.
+   *
+   * <p>Package private for testing.
    */
   void startJVMThresholdListener() {
     final MemoryPoolMXBean memoryPoolMXBean = getTenuredMemoryPoolMXBean();
@@ -548,7 +626,11 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
     }
 
     final long usageThreshold = memoryPoolMXBean.getUsageThreshold();
-    this.cache.getLoggerI18n().info(LocalizedStrings.HeapMemoryMonitor_OVERRIDDING_MEMORYPOOLMXBEAN_HEAP_0_NAME_1, new Object[] { Long.valueOf(usageThreshold), memoryPoolMXBean.getName() });
+    this.cache
+        .getLoggerI18n()
+        .info(
+            LocalizedStrings.HeapMemoryMonitor_OVERRIDDING_MEMORYPOOLMXBEAN_HEAP_0_NAME_1,
+            new Object[] {Long.valueOf(usageThreshold), memoryPoolMXBean.getName()});
 
     MemoryMXBean mbean = ManagementFactory.getMemoryMXBean();
     NotificationEmitter emitter = (NotificationEmitter) mbean;
@@ -556,10 +638,9 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
   }
 
   /**
-   * To avoid memory spikes in jrockit, we only deliver events if we receive
-   * more than {@link HeapMemoryMonitor#memoryStateChangeTolerance} of the same
-   * state change.
-   * 
+   * To avoid memory spikes in jrockit, we only deliver events if we receive more than {@link
+   * HeapMemoryMonitor#memoryStateChangeTolerance} of the same state change.
+   *
    * @return True if an event should be skipped, false otherwise.
    */
   private boolean skipEventDueToToleranceLimits(MemoryState oldState, MemoryState newState) {
@@ -572,7 +653,15 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
       this.criticalToleranceCounter = 0;
       if (this.evictionToleranceCounter <= memoryStateChangeTolerance) {
         if (this.cache.getLoggerI18n().fineEnabled()) {
-          this.cache.getLoggerI18n().fine("State " + newState + " ignored. toleranceCounter:" + this.evictionToleranceCounter + " MEMORY_EVENT_TOLERANCE:" + memoryStateChangeTolerance);
+          this.cache
+              .getLoggerI18n()
+              .fine(
+                  "State "
+                      + newState
+                      + " ignored. toleranceCounter:"
+                      + this.evictionToleranceCounter
+                      + " MEMORY_EVENT_TOLERANCE:"
+                      + memoryStateChangeTolerance);
         }
         return true;
       }
@@ -581,7 +670,15 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
       this.evictionToleranceCounter = 0;
       if (this.criticalToleranceCounter <= memoryStateChangeTolerance) {
         if (this.cache.getLoggerI18n().fineEnabled()) {
-          this.cache.getLoggerI18n().fine("State " + newState + " ignored. toleranceCounter:" + this.criticalToleranceCounter + " MEMORY_EVENT_TOLERANCE:" + memoryStateChangeTolerance);
+          this.cache
+              .getLoggerI18n()
+              .fine(
+                  "State "
+                      + newState
+                      + " ignored. toleranceCounter:"
+                      + this.criticalToleranceCounter
+                      + " MEMORY_EVENT_TOLERANCE:"
+                      + memoryStateChangeTolerance);
         }
         return true;
       }
@@ -595,10 +692,7 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
     return false;
   }
 
-  /**
-   * Returns the number of bytes of memory reported by the tenured pool as
-   * currently in use.
-   */
+  /** Returns the number of bytes of memory reported by the tenured pool as currently in use. */
   public long getBytesUsed() {
     return getTenuredMemoryPoolMXBean().getUsage().getUsed();
   }
@@ -608,14 +702,13 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
   }
 
   /**
-   * Deliver a memory event from one of the monitors to both local listeners and
-   * remote resource managers. Also, if a critical event is received and a query
-   * monitor has been enabled, then the query monitor will be notified.
-   * 
-   * Package private for testing.
-   * 
-   * @param event
-   *          Event to process.
+   * Deliver a memory event from one of the monitors to both local listeners and remote resource
+   * managers. Also, if a critical event is received and a query monitor has been enabled, then the
+   * query monitor will be notified.
+   *
+   * <p>Package private for testing.
+   *
+   * @param event Event to process.
    */
   synchronized void processLocalEvent(MemoryEvent event) {
     assert event.isLocal();
@@ -625,23 +718,39 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
     }
 
     if (event.getState().isCritical() && !event.getPreviousState().isCritical()) {
-      this.cache.getLoggerI18n().error(LocalizedStrings.MemoryMonitor_MEMBER_ABOVE_CRITICAL_THRESHOLD, new Object[] { event.getMember(), "heap" });
+      this.cache
+          .getLoggerI18n()
+          .error(
+              LocalizedStrings.MemoryMonitor_MEMBER_ABOVE_CRITICAL_THRESHOLD,
+              new Object[] {event.getMember(), "heap"});
       if (!this.cache.isQueryMonitorDisabledForLowMemory()) {
         QueryMonitor.setLowMemory(true, event.getBytesUsed());
         this.cache.getQueryMonitor().cancelAllQueriesDueToMemory();
       }
 
     } else if (!event.getState().isCritical() && event.getPreviousState().isCritical()) {
-      this.cache.getLoggerI18n().error(LocalizedStrings.MemoryMonitor_MEMBER_BELOW_CRITICAL_THRESHOLD, new Object[] { event.getMember(), "heap" });
+      this.cache
+          .getLoggerI18n()
+          .error(
+              LocalizedStrings.MemoryMonitor_MEMBER_BELOW_CRITICAL_THRESHOLD,
+              new Object[] {event.getMember(), "heap"});
       if (!this.cache.isQueryMonitorDisabledForLowMemory()) {
         QueryMonitor.setLowMemory(false, event.getBytesUsed());
       }
     }
 
     if (event.getState().isEviction() && !event.getPreviousState().isEviction()) {
-      this.cache.getLoggerI18n().info(LocalizedStrings.MemoryMonitor_MEMBER_ABOVE_HIGH_THRESHOLD, new Object[] { event.getMember(), "heap" });
+      this.cache
+          .getLoggerI18n()
+          .info(
+              LocalizedStrings.MemoryMonitor_MEMBER_ABOVE_HIGH_THRESHOLD,
+              new Object[] {event.getMember(), "heap"});
     } else if (!event.getState().isEviction() && event.getPreviousState().isEviction()) {
-      this.cache.getLoggerI18n().info(LocalizedStrings.MemoryMonitor_MEMBER_BELOW_HIGH_THRESHOLD, new Object[] { event.getMember(), "heap" });
+      this.cache
+          .getLoggerI18n()
+          .info(
+              LocalizedStrings.MemoryMonitor_MEMBER_BELOW_HIGH_THRESHOLD,
+              new Object[] {event.getMember(), "heap"});
     }
 
     if (this.cache.getLoggerI18n().fineEnabled()) {
@@ -673,7 +782,9 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
         // error condition, so you also need to check to see if the JVM
         // is still usable:
         SystemFailure.checkFailure();
-        this.cache.getLoggerI18n().error(LocalizedStrings.MemoryMonitor_EXCEPTION_OCCURED_WHEN_NOTIFYING_LISTENERS, t);
+        this.cache
+            .getLoggerI18n()
+            .error(LocalizedStrings.MemoryMonitor_EXCEPTION_OCCURED_WHEN_NOTIFYING_LISTENERS, t);
       }
     }
   }
@@ -682,27 +793,25 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
   // See ((NotificationEmitter) MemoryMXBean).addNoticiationListener(...).
   @Override
   public void handleNotification(final Notification notification, final Object callback) {
-    this.resourceManager.runWithNotifyExecutor(new Runnable() {
-      @SuppressWarnings("synthetic-access")
-      @Override
-      public void run() {
-        // Not using the information given by the notification in favor
-        // of constructing fresh information ourselves.
-        if (!testDisableMemoryUpdates) {
-          updateStateAndSendEvent();
-        }
-      }
-    });
+    this.resourceManager.runWithNotifyExecutor(
+        new Runnable() {
+          @SuppressWarnings("synthetic-access")
+          @Override
+          public void run() {
+            // Not using the information given by the notification in favor
+            // of constructing fresh information ourselves.
+            if (!testDisableMemoryUpdates) {
+              updateStateAndSendEvent();
+            }
+          }
+        });
   }
 
   /**
-   * Given a set of members, determine if any member in the set is above
-   * critical threshold.
-   * 
-   * @param members
-   *          The set of members to check.
-   * @return True if the set contains a member above critical threshold, false
-   *         otherwise
+   * Given a set of members, determine if any member in the set is above critical threshold.
+   *
+   * @param members The set of members to check.
+   * @return True if the set contains a member above critical threshold, false otherwise
    */
   public boolean containsHeapCriticalMembers(final Set<InternalDistributedMember> members) {
     if (members.contains(this.cache.getMyId()) && this.mostRecentEvent.getState().isCritical()) {
@@ -714,12 +823,9 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
 
   /**
    * Determines if the given member is in a heap critical state.
-   * 
-   * @param member
-   *          Member to check.
-   * 
-   * @return True if the member's heap memory is in a critical state, false
-   *         otherwise.
+   *
+   * @param member Member to check.
+   * @return True if the member's heap memory is in a critical state, false otherwise.
    */
   public final boolean isMemberHeapCritical(final InternalDistributedMember member) {
     if (member.equals(this.cache.getMyId())) {
@@ -737,20 +843,33 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
     public void statValueChanged(double value) {
       final long usedBytes = (long) value;
       try {
-        HeapMemoryMonitor.this.resourceManager.runWithNotifyExecutor(new Runnable() {
-          @Override
-          public void run() {
-            if (!testDisableMemoryUpdates) {
-              updateStateAndSendEvent(usedBytes);
-            }
-          }
-        });
+        HeapMemoryMonitor.this.resourceManager.runWithNotifyExecutor(
+            new Runnable() {
+              @Override
+              public void run() {
+                if (!testDisableMemoryUpdates) {
+                  updateStateAndSendEvent(usedBytes);
+                }
+              }
+            });
         if (HeapMemoryMonitor.this.cache.getLoggerI18n().fineEnabled()) {
-          HeapMemoryMonitor.this.cache.getLoggerI18n().fine("StatSampler scheduled a " + "handleNotification call with " + usedBytes + " bytes");
+          HeapMemoryMonitor
+              .this
+              .cache
+              .getLoggerI18n()
+              .fine(
+                  "StatSampler scheduled a "
+                      + "handleNotification call with "
+                      + usedBytes
+                      + " bytes");
         }
       } catch (RejectedExecutionException e) {
         if (!HeapMemoryMonitor.this.resourceManager.isClosed()) {
-          HeapMemoryMonitor.this.cache.getLoggerI18n().warning(LocalizedStrings.ResourceManager_REJECTED_EXECUTION_CAUSE_NOHEAP_EVENTS);
+          HeapMemoryMonitor
+              .this
+              .cache
+              .getLoggerI18n()
+              .warning(LocalizedStrings.ResourceManager_REJECTED_EXECUTION_CAUSE_NOHEAP_EVENTS);
         }
       } catch (CacheClosedException e) {
         // nothing to do
@@ -760,13 +879,18 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
 
   @Override
   public String toString() {
-    return "HeapMemoryMonitor [thresholds=" + this.thresholds + ", mostRecentEvent=" + this.mostRecentEvent + ", criticalToleranceCounter=" + this.criticalToleranceCounter + ", evictionToleranceCounter=" + this.evictionToleranceCounter + "]";
+    return "HeapMemoryMonitor [thresholds="
+        + this.thresholds
+        + ", mostRecentEvent="
+        + this.mostRecentEvent
+        + ", criticalToleranceCounter="
+        + this.criticalToleranceCounter
+        + ", evictionToleranceCounter="
+        + this.evictionToleranceCounter
+        + "]";
   }
 
-  /**
-   * Polls the heap if stat sampling is disabled.
-   * 
-   */
+  /** Polls the heap if stat sampling is disabled. */
   class HeapPoller implements Runnable {
     @SuppressWarnings("synthetic-access")
     @Override
@@ -784,12 +908,9 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
   }
 
   /**
-   * Overrides the value returned by the JVM as the number of bytes of available
-   * memory.
-   * 
-   * @param testMaxMemoryBytes
-   *          The value to use as the maximum number of bytes of memory
-   *          available.
+   * Overrides the value returned by the JVM as the number of bytes of available memory.
+   *
+   * @param testMaxMemoryBytes The value to use as the maximum number of bytes of memory available.
    */
   public void setTestMaxMemoryBytes(final long testMaxMemoryBytes) {
     synchronized (this) {
@@ -798,7 +919,11 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
       if (testMaxMemoryBytes == 0) {
         newThresholds = new MemoryThresholds(getTenuredPoolMaxMemory());
       } else {
-        newThresholds = new MemoryThresholds(testMaxMemoryBytes, this.thresholds.getCriticalThreshold(), this.thresholds.getEvictionThreshold());
+        newThresholds =
+            new MemoryThresholds(
+                testMaxMemoryBytes,
+                this.thresholds.getCriticalThreshold(),
+                this.thresholds.getEvictionThreshold());
       }
 
       this.thresholds = newThresholds;
@@ -815,15 +940,13 @@ public class HeapMemoryMonitor implements NotificationListener, ResourceMonitor 
   }
 
   /**
-   * Since the setter methods for the eviction and critical thresholds
-   * immediately update state based upon the new threshold value and the number
-   * of bytes currently used by the JVM, there needs to be a way to override the
-   * number of bytes of memory reported as in use for testing. That's what this
-   * method and the value it sets are for.
-   * 
-   * @param newTestBytesUsedForThresholdSet
-   *          Value to use as the amount of memory in use when calling the
-   *          setEvictionThreshold or setCriticalThreshold methods are called.
+   * Since the setter methods for the eviction and critical thresholds immediately update state
+   * based upon the new threshold value and the number of bytes currently used by the JVM, there
+   * needs to be a way to override the number of bytes of memory reported as in use for testing.
+   * That's what this method and the value it sets are for.
+   *
+   * @param newTestBytesUsedForThresholdSet Value to use as the amount of memory in use when calling
+   *     the setEvictionThreshold or setCriticalThreshold methods are called.
    */
   public static void setTestBytesUsedForThresholdSet(final long newTestBytesUsedForThresholdSet) {
     testBytesUsedForThresholdSet = newTestBytesUsedForThresholdSet;

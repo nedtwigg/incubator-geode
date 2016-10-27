@@ -36,10 +36,7 @@ import org.apache.geode.internal.AvailablePortHelper;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.test.dunit.*;
 
-/**
- * Test class for testing {@link CqServiceImpl#EXECUTE_QUERY_DURING_INIT} flag
- *
- */
+/** Test class for testing {@link CqServiceImpl#EXECUTE_QUERY_DURING_INIT} flag */
 @Category(DistributedTest.class)
 public class CqQueryOptimizedExecuteDUnitTest extends CqQueryDUnitTest {
 
@@ -49,21 +46,23 @@ public class CqQueryOptimizedExecuteDUnitTest extends CqQueryDUnitTest {
 
   @Override
   protected final void postSetUpCqQueryDUnitTest() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableRunnable("getSystem") {
-      public void run() {
-        CqServiceImpl.EXECUTE_QUERY_DURING_INIT = false;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("getSystem") {
+          public void run() {
+            CqServiceImpl.EXECUTE_QUERY_DURING_INIT = false;
+          }
+        });
   }
 
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableRunnable("getSystem") {
-      public void run() {
-        CqServiceImpl.EXECUTE_QUERY_DURING_INIT = true;
-        CqServiceProvider.MAINTAIN_KEYS = true;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("getSystem") {
+          public void run() {
+            CqServiceImpl.EXECUTE_QUERY_DURING_INIT = true;
+            CqServiceProvider.MAINTAIN_KEYS = true;
+          }
+        });
   }
 
   @Test
@@ -91,28 +90,49 @@ public class CqQueryOptimizedExecuteDUnitTest extends CqQueryDUnitTest {
 
     executeCQ(client, cqName, false, null);
 
-    server.invoke(new CacheSerializableRunnable("execute cq") {
-      public void run2() throws CacheException {
-        assertFalse("CqServiceImpl.EXECUTE_QUERY_DURING_INIT flag should be false ", CqServiceImpl.EXECUTE_QUERY_DURING_INIT);
-        int numOfQueryExecutions = (Integer) ((GemFireCacheImpl) getCache()).getCachePerfStats().getStats().get("queryExecutions");
-        assertEquals("Number of query executions for cq.execute should be 0 ", 0, numOfQueryExecutions);
-      }
-    });
+    server.invoke(
+        new CacheSerializableRunnable("execute cq") {
+          public void run2() throws CacheException {
+            assertFalse(
+                "CqServiceImpl.EXECUTE_QUERY_DURING_INIT flag should be false ",
+                CqServiceImpl.EXECUTE_QUERY_DURING_INIT);
+            int numOfQueryExecutions =
+                (Integer)
+                    ((GemFireCacheImpl) getCache())
+                        .getCachePerfStats()
+                        .getStats()
+                        .get("queryExecutions");
+            assertEquals(
+                "Number of query executions for cq.execute should be 0 ", 0, numOfQueryExecutions);
+          }
+        });
 
     // Create more values.
-    server.invoke(new CacheSerializableRunnable("Create values") {
-      public void run2() throws CacheException {
-        Region region1 = getRootRegion().getSubregion(regions[0]);
-        for (int i = numOfEntries + 1; i <= numOfEntries * 2; i++) {
-          region1.put(KEY + i, new Portfolio(i));
-        }
-        LogWriterUtils.getLogWriter().info("### Number of Entries in Region :" + region1.keys().size());
-      }
-    });
+    server.invoke(
+        new CacheSerializableRunnable("Create values") {
+          public void run2() throws CacheException {
+            Region region1 = getRootRegion().getSubregion(regions[0]);
+            for (int i = numOfEntries + 1; i <= numOfEntries * 2; i++) {
+              region1.put(KEY + i, new Portfolio(i));
+            }
+            LogWriterUtils.getLogWriter()
+                .info("### Number of Entries in Region :" + region1.keys().size());
+          }
+        });
 
     waitForCreated(client, cqName, KEY + numOfEntries * 2);
 
-    validateCQ(client, cqName, /* resultSize: */ noTest, /* creates: */ numOfEntries, /* updates: */ 0, /* deletes; */ 0, /* queryInserts: */ numOfEntries, /* queryUpdates: */ 0, /* queryDeletes: */ 0, /* totalEvents: */ numOfEntries);
+    validateCQ(
+        client,
+        cqName, /* resultSize: */
+        noTest, /* creates: */
+        numOfEntries, /* updates: */
+        0, /* deletes; */
+        0, /* queryInserts: */
+        numOfEntries, /* queryUpdates: */
+        0, /* queryDeletes: */
+        0, /* totalEvents: */
+        numOfEntries);
 
     // Update values.
     createValues(server, regions[0], 5);
@@ -121,13 +141,33 @@ public class CqQueryOptimizedExecuteDUnitTest extends CqQueryDUnitTest {
     waitForUpdated(client, cqName, KEY + numOfEntries);
 
     // validate Update events.
-    validateCQ(client, cqName, /* resultSize: */ noTest, /* creates: */ numOfEntries, /* updates: */ 15, /* deletes; */ 0, /* queryInserts: */ numOfEntries, /* queryUpdates: */ 15, /* queryDeletes: */ 0, /* totalEvents: */ numOfEntries + 15);
+    validateCQ(
+        client,
+        cqName, /* resultSize: */
+        noTest, /* creates: */
+        numOfEntries, /* updates: */
+        15, /* deletes; */
+        0, /* queryInserts: */
+        numOfEntries, /* queryUpdates: */
+        15, /* queryDeletes: */
+        0, /* totalEvents: */
+        numOfEntries + 15);
 
     // Validate delete events.
     deleteValues(server, regions[0], 5);
     waitForDestroyed(client, cqName, KEY + 5);
 
-    validateCQ(client, cqName, /* resultSize: */ noTest, /* creates: */ numOfEntries, /* updates: */ 15, /* deletes; */5, /* queryInserts: */ numOfEntries, /* queryUpdates: */ 15, /* queryDeletes: */ 5, /* totalEvents: */ numOfEntries + 15 + 5);
+    validateCQ(
+        client,
+        cqName, /* resultSize: */
+        noTest, /* creates: */
+        numOfEntries, /* updates: */
+        15, /* deletes; */
+        5, /* queryInserts: */
+        numOfEntries, /* queryUpdates: */
+        15, /* queryDeletes: */
+        5, /* totalEvents: */
+        numOfEntries + 15 + 5);
 
     closeClient(client);
     closeServer(server);
@@ -141,11 +181,12 @@ public class CqQueryOptimizedExecuteDUnitTest extends CqQueryDUnitTest {
     final int numOfEntries = 10;
     final String cqName = "testCqExecuteWithoutQueryExecution_1";
 
-    server.invoke(new CacheSerializableRunnable("execute cq") {
-      public void run2() throws CacheException {
-        CqServiceProvider.MAINTAIN_KEYS = false;
-      }
-    });
+    server.invoke(
+        new CacheSerializableRunnable("execute cq") {
+          public void run2() throws CacheException {
+            CqServiceProvider.MAINTAIN_KEYS = false;
+          }
+        });
 
     createServer(server);
     // Create values.
@@ -164,29 +205,52 @@ public class CqQueryOptimizedExecuteDUnitTest extends CqQueryDUnitTest {
 
     executeCQ(client, cqName, false, null);
 
-    server.invoke(new CacheSerializableRunnable("execute cq") {
-      public void run2() throws CacheException {
-        assertFalse("CqServiceImpl.EXECUTE_QUERY_DURING_INIT flag should be false ", CqServiceImpl.EXECUTE_QUERY_DURING_INIT);
-        assertFalse(DistributionConfig.GEMFIRE_PREFIX + "cq.MAINTAIN_KEYS flag should be false ", CqServiceProvider.MAINTAIN_KEYS);
-        int numOfQueryExecutions = (Integer) ((GemFireCacheImpl) getCache()).getCachePerfStats().getStats().get("queryExecutions");
-        assertEquals("Number of query executions for cq.execute should be 0 ", 0, numOfQueryExecutions);
-      }
-    });
+    server.invoke(
+        new CacheSerializableRunnable("execute cq") {
+          public void run2() throws CacheException {
+            assertFalse(
+                "CqServiceImpl.EXECUTE_QUERY_DURING_INIT flag should be false ",
+                CqServiceImpl.EXECUTE_QUERY_DURING_INIT);
+            assertFalse(
+                DistributionConfig.GEMFIRE_PREFIX + "cq.MAINTAIN_KEYS flag should be false ",
+                CqServiceProvider.MAINTAIN_KEYS);
+            int numOfQueryExecutions =
+                (Integer)
+                    ((GemFireCacheImpl) getCache())
+                        .getCachePerfStats()
+                        .getStats()
+                        .get("queryExecutions");
+            assertEquals(
+                "Number of query executions for cq.execute should be 0 ", 0, numOfQueryExecutions);
+          }
+        });
 
     // Create more values.
-    server.invoke(new CacheSerializableRunnable("Create values") {
-      public void run2() throws CacheException {
-        Region region1 = getRootRegion().getSubregion(regions[0]);
-        for (int i = numOfEntries + 1; i <= numOfEntries * 2; i++) {
-          region1.put(KEY + i, new Portfolio(i));
-        }
-        LogWriterUtils.getLogWriter().info("### Number of Entries in Region :" + region1.keys().size());
-      }
-    });
+    server.invoke(
+        new CacheSerializableRunnable("Create values") {
+          public void run2() throws CacheException {
+            Region region1 = getRootRegion().getSubregion(regions[0]);
+            for (int i = numOfEntries + 1; i <= numOfEntries * 2; i++) {
+              region1.put(KEY + i, new Portfolio(i));
+            }
+            LogWriterUtils.getLogWriter()
+                .info("### Number of Entries in Region :" + region1.keys().size());
+          }
+        });
 
     waitForCreated(client, cqName, KEY + numOfEntries * 2);
 
-    validateCQ(client, cqName, /* resultSize: */ noTest, /* creates: */ numOfEntries, /* updates: */ 0, /* deletes; */ 0, /* queryInserts: */ numOfEntries, /* queryUpdates: */ 0, /* queryDeletes: */ 0, /* totalEvents: */ numOfEntries);
+    validateCQ(
+        client,
+        cqName, /* resultSize: */
+        noTest, /* creates: */
+        numOfEntries, /* updates: */
+        0, /* deletes; */
+        0, /* queryInserts: */
+        numOfEntries, /* queryUpdates: */
+        0, /* queryDeletes: */
+        0, /* totalEvents: */
+        numOfEntries);
 
     // Update values.
     createValues(server, regions[0], 5);
@@ -195,13 +259,33 @@ public class CqQueryOptimizedExecuteDUnitTest extends CqQueryDUnitTest {
     waitForUpdated(client, cqName, KEY + numOfEntries);
 
     // validate Update events.
-    validateCQ(client, cqName, /* resultSize: */ noTest, /* creates: */ numOfEntries, /* updates: */ 15, /* deletes; */ 0, /* queryInserts: */ numOfEntries, /* queryUpdates: */ 15, /* queryDeletes: */ 0, /* totalEvents: */ numOfEntries + 15);
+    validateCQ(
+        client,
+        cqName, /* resultSize: */
+        noTest, /* creates: */
+        numOfEntries, /* updates: */
+        15, /* deletes; */
+        0, /* queryInserts: */
+        numOfEntries, /* queryUpdates: */
+        15, /* queryDeletes: */
+        0, /* totalEvents: */
+        numOfEntries + 15);
 
     // Validate delete events.
     deleteValues(server, regions[0], 5);
     waitForDestroyed(client, cqName, KEY + 5);
 
-    validateCQ(client, cqName, /* resultSize: */ noTest, /* creates: */ numOfEntries, /* updates: */ 15, /* deletes; */5, /* queryInserts: */ numOfEntries, /* queryUpdates: */ 15, /* queryDeletes: */ 5, /* totalEvents: */ numOfEntries + 15 + 5);
+    validateCQ(
+        client,
+        cqName, /* resultSize: */
+        noTest, /* creates: */
+        numOfEntries, /* updates: */
+        15, /* deletes; */
+        5, /* queryInserts: */
+        numOfEntries, /* queryUpdates: */
+        15, /* queryDeletes: */
+        5, /* totalEvents: */
+        numOfEntries + 15 + 5);
 
     closeClient(client);
     closeServer(server);
@@ -230,7 +314,7 @@ public class CqQueryOptimizedExecuteDUnitTest extends CqQueryDUnitTest {
     Wait.pause(8 * 1000);
 
     // Create client
-    createClientWith2Pools(client, new int[] { port1 }, new int[] { thePort2 }, host0, "-1");
+    createClientWith2Pools(client, new int[] {port1}, new int[] {thePort2}, host0, "-1");
 
     // Create CQs.
     createCQ(client, "testCQAllServersLeave_" + 11, cqs[11], true);
@@ -262,5 +346,4 @@ public class CqQueryOptimizedExecuteDUnitTest extends CqQueryDUnitTest {
     // Close.
     closeClient(client);
   }
-
 }

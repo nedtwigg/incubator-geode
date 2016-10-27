@@ -47,10 +47,7 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.fail;
 
-/**
- * @since GemFire 8.1
- *
- */
+/** @since GemFire 8.1 */
 @Category(IntegrationTest.class)
 public class DataBrowserJSONValidationJUnitTest {
 
@@ -65,14 +62,12 @@ public class DataBrowserJSONValidationJUnitTest {
 
   private static final String REPLICATED_REGION = "exampleRegion";
 
-  /**
-   * Number of rows queryData operation will return. By default it will be 1000
-   */
+  /** Number of rows queryData operation will return. By default it will be 1000 */
   private int queryResultSetLimit = ManagementConstants.DEFAULT_QUERY_LIMIT;
 
   /**
-   * NUmber of elements to be shown in queryData operation if query results
-   * contain collections like Map, List etc.
+   * NUmber of elements to be shown in queryData operation if query results contain collections like
+   * Map, List etc.
    */
   private int queryCollectionsDepth = TypedJson.DEFAULT_COLLECTION_ELEMENT_LIMIT;
 
@@ -104,31 +99,30 @@ public class DataBrowserJSONValidationJUnitTest {
     this.cache = new CacheFactory().create();
     RegionFactory replicatedRegionFac = cache.createRegionFactory(RegionShortcut.REPLICATE);
     replicatedRegion = replicatedRegionFac.create(REPLICATED_REGION);
-
   }
 
   private void queryData(String query, String members, int limit) {
 
     try {
-      Object result = QueryDataFunction.queryData(query, members, limit, false, queryResultSetLimit, queryCollectionsDepth);
+      Object result =
+          QueryDataFunction.queryData(
+              query, members, limit, false, queryResultSetLimit, queryCollectionsDepth);
       String queryResult = (String) result;
 
       System.out.println("Query Result :" + queryResult.toString());
-      JSONObject jobj = new JSONObject(queryResult);// If not correct JSON
-                                                    // format this will throw a
-                                                    // JSONException
+      JSONObject jobj = new JSONObject(queryResult); // If not correct JSON
+      // format this will throw a
+      // JSONException
       System.out.println("Query Result :" + jobj.toString());
 
     } catch (Exception e) {
       fail(e.getLocalizedMessage());
     }
-
   }
 
   /**
-   * #Issue 51048 Tests a model where Objects have a circular reference with
-   * object reference. e.g. Order1-- Has--> Items each Item --Has --> OrderN
-   * where (OrderN == Order1)
+   * #Issue 51048 Tests a model where Objects have a circular reference with object reference. e.g.
+   * Order1-- Has--> Items each Item --Has --> OrderN where (OrderN == Order1)
    */
   @Test
   public void testCyclicWithNestedObjectReference() {
@@ -144,13 +138,11 @@ public class DataBrowserJSONValidationJUnitTest {
     replicatedRegion.put("oreder1", order);
 
     queryData(QUERY_1, "", 0);
-
   }
 
   /**
-   * Tests a model where Objects have a circular reference with their class
-   * types. e.g. Order1-- Has--> Items each Item --Has --> OrderN where (OrderN
-   * != Order1)
+   * Tests a model where Objects have a circular reference with their class types. e.g. Order1--
+   * Has--> Items each Item --Has --> OrderN where (OrderN != Order1)
    */
   @Test
   public void testCyclicWithNestedClasses() {
@@ -168,13 +160,11 @@ public class DataBrowserJSONValidationJUnitTest {
     replicatedRegion.put("oreder1", order);
 
     queryData(QUERY_1, "", 0);
-
   }
 
   /**
-   * Tests a model where Objects have a circular reference with their class
-   * types. e.g. Order1-- Has--> Items each Item --Has --> OrderN where (OrderN
-   * != Order1)
+   * Tests a model where Objects have a circular reference with their class types. e.g. Order1--
+   * Has--> Items each Item --Has --> OrderN where (OrderN != Order1)
    */
   @Test
   public void testCyclicWithNestedRefernce2ndLayer() {
@@ -188,12 +178,10 @@ public class DataBrowserJSONValidationJUnitTest {
       ord.setItems(items);
       Item item = new Item(ord, "ID_" + i, "Book");
       order.addItem(item);
-
     }
 
     replicatedRegion.put("oreder1", order);
     queryData(QUERY_1, "", 0);
-
   }
 
   @Test
@@ -208,12 +196,10 @@ public class DataBrowserJSONValidationJUnitTest {
       ord.setItems(items);
       Item item = new Item(ord, "ID_" + i, "Book");
       order.addItem(item);
-
     }
 
     replicatedRegion.put("items", items);
     queryData(QUERY_1, "", 0);
-
   }
 
   @Test
@@ -234,7 +220,6 @@ public class DataBrowserJSONValidationJUnitTest {
     }
 
     queryData(QUERY_1, "", 0);
-
   }
 
   @Test
@@ -255,7 +240,6 @@ public class DataBrowserJSONValidationJUnitTest {
     }
 
     queryData(QUERY_1, "", 0);
-
   }
 
   public Portfolio[] createPortfoliosAndPositions(int count) {
@@ -277,8 +261,12 @@ public class DataBrowserJSONValidationJUnitTest {
       i++;
     }
 
-    queryData(QUERY_1, cache.getDistributedSystem().getMemberId() + "," + cache.getDistributedSystem().getMemberId(), 0);
-
+    queryData(
+        QUERY_1,
+        cache.getDistributedSystem().getMemberId()
+            + ","
+            + cache.getDistributedSystem().getMemberId(),
+        0);
   }
 
   @Test
@@ -289,7 +277,6 @@ public class DataBrowserJSONValidationJUnitTest {
     replicatedRegion.put("port", p);
 
     queryData(QUERY_1, "", 0);
-
   }
 
   @Test
@@ -300,7 +287,6 @@ public class DataBrowserJSONValidationJUnitTest {
     replicatedRegion.put("port", so);
 
     queryData(QUERY_1, "", 0);
-
   }
 
   @Test
@@ -315,7 +301,6 @@ public class DataBrowserJSONValidationJUnitTest {
 
     replicatedRegion.put("port", pi);
     queryData(QUERY_1, "", 0);
-
   }
 
   @Test
@@ -327,7 +312,6 @@ public class DataBrowserJSONValidationJUnitTest {
 
     replicatedRegion.put("p1", soArr);
     queryData(QUERY_1, "", 0);
-
   }
 
   @Test
@@ -339,7 +323,5 @@ public class DataBrowserJSONValidationJUnitTest {
 
     replicatedRegion.put("p1", soArr);
     queryData(QUERY_1, "", 0);
-
   }
-
 }

@@ -35,41 +35,29 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.management.ManagementException;
 
 /**
- * Central component for federation It consists of an Object State as well as
- * some meta data for the Object being federated.
- * 
- * 
+ * Central component for federation It consists of an Object State as well as some meta data for the
+ * Object being federated.
  */
-
-public class FederationComponent implements java.io.Serializable, DataSerializable, DataSerializableFixedID {
+public class FederationComponent
+    implements java.io.Serializable, DataSerializable, DataSerializableFixedID {
   private static final Logger logger = LogService.getLogger();
 
   private static final String THIS_COMPONENT = FederationComponent.class.getName();
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 3123549507449088591L;
 
-  /**
-   * Name of the MBean. This name will be replicated at Managing Node
-   */
+  /** Name of the MBean. This name will be replicated at Managing Node */
   private String objectName;
 
   /**
-   * Name if the interface class . It will determine the interface for MBean at
-   * Managing Node side
+   * Name if the interface class . It will determine the interface for MBean at Managing Node side
    */
   private String interfaceClassName;
 
-  /**
-   * Flag to determine if MBean emits notification or not.
-   */
+  /** Flag to determine if MBean emits notification or not. */
   private boolean notificationEmitter;
 
-  /**
-   * This Map holds the object state as property-value Every component should be
-   * serializable
-   */
+  /** This Map holds the object state as property-value Every component should be serializable */
   private Map<String, Object> objectState = new HashMap<String, Object>();
 
   private transient Map<String, Method> getterMethodMap;
@@ -80,20 +68,17 @@ public class FederationComponent implements java.io.Serializable, DataSerializab
 
   private transient Map<String, Object> oldObjectState = new HashMap<String, Object>();
 
-  private transient final Map<Method, OpenMethod> methodHandlerMap = OpenTypeUtil.newMap();
+  private final transient Map<Method, OpenMethod> methodHandlerMap = OpenTypeUtil.newMap();
 
   private transient boolean prevRefreshChangeDetected = false;
 
   /**
-   * 
-   * @param objectName
-   *          ObjectName of the MBean
-   * @param interfaceClass
-   *          interface class of the MBean
-   * @param notificationEmitter
-   *          specifies whether this MBean is going to emit notifications
-    */
-  public FederationComponent(Object object, ObjectName objectName, Class interfaceClass, boolean notificationEmitter) {
+   * @param objectName ObjectName of the MBean
+   * @param interfaceClass interface class of the MBean
+   * @param notificationEmitter specifies whether this MBean is going to emit notifications
+   */
+  public FederationComponent(
+      Object object, ObjectName objectName, Class interfaceClass, boolean notificationEmitter) {
     this.objectName = objectName.toString();
     this.interfaceClassName = interfaceClass.getCanonicalName();
     this.mbeanInterfaceClass = interfaceClass;
@@ -101,11 +86,9 @@ public class FederationComponent implements java.io.Serializable, DataSerializab
     this.mbeanObject = object;
     getterMethodMap = new HashMap<String, Method>();
     initGetters(interfaceClass);
-
   }
 
-  public FederationComponent() {
-  }
+  public FederationComponent() {}
 
   // Introspect the mbeanInterface and initialize this object's maps.
   //
@@ -122,7 +105,9 @@ public class FederationComponent implements java.io.Serializable, DataSerializab
         attrName = name.substring(2);
       }
 
-      if (attrName.length() != 0 && m.getParameterTypes().length == 0 && m.getReturnType() != void.class) { // For Getters
+      if (attrName.length() != 0
+          && m.getParameterTypes().length == 0
+          && m.getReturnType() != void.class) { // For Getters
         m.setAccessible(true);
         getterMethodMap.put(attrName, m);
         methodHandlerMap.put(m, OpenMethod.from(m));
@@ -132,37 +117,33 @@ public class FederationComponent implements java.io.Serializable, DataSerializab
 
   /**
    * gets the Canonical name of the MBean interface
-   * 
+   *
    * @return mbean interface class name
    */
-
   public String getMBeanInterfaceClass() {
     return interfaceClassName;
   }
 
   /**
    * True if this MBean is a notification emitter.
-   * 
+   *
    * @return whether its a notification emitter or not
    */
-
   public boolean isNotificationEmitter() {
     return notificationEmitter;
   }
 
   /**
-   * This method will get called from Management Thread. This will dynamically
-   * invoke the MBeans getter methods and set them in ObjectState Map.
-   * 
-   * In Future releases we can implement the delta propagation here
-   * 
-   * @return true if the refresh detects that the state changed. It will return
-   *         false if two consecutive refresh calls results in no state change.
-   *         This indicates to the LocalManager whether to send the MBean state
-   *         to Manager or not.
+   * This method will get called from Management Thread. This will dynamically invoke the MBeans
+   * getter methods and set them in ObjectState Map.
+   *
+   * <p>In Future releases we can implement the delta propagation here
+   *
+   * @return true if the refresh detects that the state changed. It will return false if two
+   *     consecutive refresh calls results in no state change. This indicates to the LocalManager
+   *     whether to send the MBean state to Manager or not.
    * @throws ManagementException
    */
-
   public boolean refreshObjectState(boolean keepOldState) {
     boolean changeDetected = false;
     Object[] args = null;
@@ -186,7 +167,6 @@ public class FederationComponent implements java.io.Serializable, DataSerializab
         if (logger.isTraceEnabled()) {
           logger.trace(e.getMessage());
         }
-
       }
 
       Object oldValue = objectState.put(property, propertyValue);
@@ -214,8 +194,10 @@ public class FederationComponent implements java.io.Serializable, DataSerializab
     }
     if (anObject instanceof FederationComponent) {
       FederationComponent anotherFedComp = (FederationComponent) anObject;
-      if (anotherFedComp.interfaceClassName.equals(this.interfaceClassName) && anotherFedComp.notificationEmitter == this.notificationEmitter && anotherFedComp.objectState.equals(this.objectState) && anotherFedComp.objectName.equals(this.objectName))
-        return true;
+      if (anotherFedComp.interfaceClassName.equals(this.interfaceClassName)
+          && anotherFedComp.notificationEmitter == this.notificationEmitter
+          && anotherFedComp.objectState.equals(this.objectState)
+          && anotherFedComp.objectName.equals(this.objectName)) return true;
     }
 
     return false;
@@ -227,7 +209,7 @@ public class FederationComponent implements java.io.Serializable, DataSerializab
 
   /**
    * Managing node will get Object state by calling this method
-   * 
+   *
    * @param propertyName
    * @return value of the given property
    */
@@ -237,7 +219,14 @@ public class FederationComponent implements java.io.Serializable, DataSerializab
 
   public String toString() {
     if (Boolean.getBoolean("debug.Management")) {
-      return " ObjectName = " + objectName + ",InterfaceClassName = " + interfaceClassName + ", NotificationEmitter = " + notificationEmitter + ", ObjectState = " + objectState.toString();
+      return " ObjectName = "
+          + objectName
+          + ",InterfaceClassName = "
+          + interfaceClassName
+          + ", NotificationEmitter = "
+          + notificationEmitter
+          + ", ObjectState = "
+          + objectState.toString();
     } else {
       return "ObjectName = " + objectName;
     }
@@ -286,5 +275,4 @@ public class FederationComponent implements java.io.Serializable, DataSerializab
     // TODO Auto-generated method stub
     return null;
   }
-
 }

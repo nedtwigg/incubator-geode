@@ -24,19 +24,19 @@ import java.io.*;
 import org.apache.geode.distributed.internal.membership.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * modify its current {@link org.apache.geode.internal.Config}.
+ * A message that is sent to a particular distribution manager to modify its current {@link
+ * org.apache.geode.internal.Config}.
  */
 public final class StoreSysCfgResponse extends AdminResponse {
   // instance variables
 
   // static methods
   /**
-   * Returns a <code>StoreSysCfgResponse</code> that states that a
-   * given set of distribution managers are known by <code>dm</code>
-   * to be started.
+   * Returns a <code>StoreSysCfgResponse</code> that states that a given set of distribution
+   * managers are known by <code>dm</code> to be started.
    */
-  public static StoreSysCfgResponse create(DistributionManager dm, InternalDistributedMember recipient, Config sc) {
+  public static StoreSysCfgResponse create(
+      DistributionManager dm, InternalDistributedMember recipient, Config sc) {
     StoreSysCfgResponse m = new StoreSysCfgResponse();
     m.setRecipient(recipient);
     InternalDistributedSystem sys = dm.getSystem();

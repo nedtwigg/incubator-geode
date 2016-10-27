@@ -28,13 +28,12 @@ public class InstrumentationSingleObjectSizer implements SingleObjectSizer {
 
   public InstrumentationSingleObjectSizer() {
     if (instrumentation == null) {
-      throw new RuntimeException("SizeOfUtil50 must be used as an instrumentation agent by specifying -javaagent:/path/to/sizeagent.jar to java on the command line");
+      throw new RuntimeException(
+          "SizeOfUtil50 must be used as an instrumentation agent by specifying -javaagent:/path/to/sizeagent.jar to java on the command line");
     }
-
   }
 
   public long sizeof(Object object) {
     return instrumentation.getObjectSize(object);
   }
-
 }

@@ -26,17 +26,15 @@ import org.apache.geode.internal.cache.LocalRegion;
 
 public interface InternalCqQuery extends CqQuery {
 
-  /** 
-   * sets the CqName.
-   */
+  /** sets the CqName. */
   public abstract void setName(String cqName);
 
   public String getName();
 
   /**
-   * Closes the Query.
-   *        On Client side, sends the cq close request to server.
-   *        On Server side, takes care of repository cleanup.
+   * Closes the Query. On Client side, sends the cq close request to server. On Server side, takes
+   * care of repository cleanup.
+   *
    * @param sendRequestToServer true to send the request to server.
    * @throws CqException
    */
@@ -44,26 +42,20 @@ public interface InternalCqQuery extends CqQuery {
 
   public abstract LocalRegion getCqBaseRegion();
 
-  /**
-   * @return Returns the serverCqName.
-   */
+  /** @return Returns the serverCqName. */
   public abstract String getServerCqName();
 
-  /**
-   * Sets the state of the cq.
-   * Server side method. Called during cq registration time.
-   */
+  /** Sets the state of the cq. Server side method. Called during cq registration time. */
   public abstract void setCqState(int state);
 
-  /**
-   * get the region name in CQ query
-   */
+  /** get the region name in CQ query */
   public String getRegionName();
 
   public abstract void setCqService(CqService cqService);
 
   /**
    * Returns a reference to VSD stats of the CQ
+   *
    * @return VSD stats of the CQ
    */
   public CqQueryVsdStats getVsdStats();

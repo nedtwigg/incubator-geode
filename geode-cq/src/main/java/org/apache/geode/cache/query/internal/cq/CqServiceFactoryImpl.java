@@ -47,11 +47,20 @@ public class CqServiceFactoryImpl implements CqServiceFactory {
       CommandInitializer.registerCommand(MessageType.EXECUTECQ_WITH_IR_MSG_TYPE, versions);
     }
 
-    CommandInitializer.registerCommand(MessageType.GETCQSTATS_MSG_TYPE, Collections.singletonMap(Version.GFE_57, GetCQStats.getCommand()));
-    CommandInitializer.registerCommand(MessageType.MONITORCQ_MSG_TYPE, Collections.singletonMap(Version.GFE_57, MonitorCQ.getCommand()));
-    CommandInitializer.registerCommand(MessageType.STOPCQ_MSG_TYPE, Collections.singletonMap(Version.GFE_57, StopCQ.getCommand()));
-    CommandInitializer.registerCommand(MessageType.CLOSECQ_MSG_TYPE, Collections.singletonMap(Version.GFE_57, CloseCQ.getCommand()));
-    CommandInitializer.registerCommand(MessageType.GETDURABLECQS_MSG_TYPE, Collections.singletonMap(Version.GFE_70, GetDurableCQs.getCommand()));
+    CommandInitializer.registerCommand(
+        MessageType.GETCQSTATS_MSG_TYPE,
+        Collections.singletonMap(Version.GFE_57, GetCQStats.getCommand()));
+    CommandInitializer.registerCommand(
+        MessageType.MONITORCQ_MSG_TYPE,
+        Collections.singletonMap(Version.GFE_57, MonitorCQ.getCommand()));
+    CommandInitializer.registerCommand(
+        MessageType.STOPCQ_MSG_TYPE, Collections.singletonMap(Version.GFE_57, StopCQ.getCommand()));
+    CommandInitializer.registerCommand(
+        MessageType.CLOSECQ_MSG_TYPE,
+        Collections.singletonMap(Version.GFE_57, CloseCQ.getCommand()));
+    CommandInitializer.registerCommand(
+        MessageType.GETDURABLECQS_MSG_TYPE,
+        Collections.singletonMap(Version.GFE_70, GetDurableCQs.getCommand()));
   }
 
   @Override
@@ -65,5 +74,4 @@ public class CqServiceFactoryImpl implements CqServiceFactory {
     cq.fromData(in);
     return cq;
   }
-
 }

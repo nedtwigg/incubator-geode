@@ -43,8 +43,7 @@ public class Position implements Serializable, DataSerializable, Comparable {
   public int portfolioId = 0;
 
   /* public no-arg constructor required for DataSerializable */
-  public Position() {
-  }
+  public Position() {}
 
   public Position(String id, double out) {
     secId = id;
@@ -56,8 +55,7 @@ public class Position implements Serializable, DataSerializable, Comparable {
   }
 
   public boolean equals(Object o) {
-    if (!(o instanceof Position))
-      return false;
+    if (!(o instanceof Position)) return false;
     return this.secId.equals(((Position) o).secId);
   }
 
@@ -86,7 +84,17 @@ public class Position implements Serializable, DataSerializable, Comparable {
   }
 
   public String toString() {
-    return "Position [secId=" + this.secId + " out=" + this.sharesOutstanding + " type=" + this.secType + " id=" + this.pid + " mktValue=" + this.mktValue + "]";
+    return "Position [secId="
+        + this.secId
+        + " out="
+        + this.sharesOutstanding
+        + " type="
+        + this.secType
+        + " id="
+        + this.pid
+        + " mktValue="
+        + this.mktValue
+        + "]";
   }
 
   public Set getSet(int size) {
@@ -153,12 +161,8 @@ public class Position implements Serializable, DataSerializable, Comparable {
     if (o == this) {
       return 0;
     } else {
-      if (this.pid == ((Position) o).pid)
-        return 0;
-      else
-        return this.pid < ((Position) o).pid ? -1 : 1;
+      if (this.pid == ((Position) o).pid) return 0;
+      else return this.pid < ((Position) o).pid ? -1 : 1;
     }
-
   }
-
 }

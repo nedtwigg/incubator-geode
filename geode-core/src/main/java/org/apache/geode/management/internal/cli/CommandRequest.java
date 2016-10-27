@@ -23,8 +23,11 @@ import java.util.Map;
 import org.apache.geode.internal.lang.StringUtils;
 
 /**
- * The CommandRequest class encapsulates information pertaining to the command the user entered in Gfsh.
- * <p/>
+ * The CommandRequest class encapsulates information pertaining to the command the user entered in
+ * Gfsh.
+ *
+ * <p>
+ *
  * @see org.apache.geode.management.internal.cli.GfshParseResult
  * @since GemFire 8.0
  */
@@ -58,7 +61,8 @@ public class CommandRequest {
     this(parseResult, env, null);
   }
 
-  public CommandRequest(final GfshParseResult parseResult, final Map<String, String> env, final byte[][] fileData) {
+  public CommandRequest(
+      final GfshParseResult parseResult, final Map<String, String> env, final byte[][] fileData) {
     assert parseResult != null : "The Gfsh ParseResult cannot be null!";
     assert env != null : "The reference to the Gfsh CLI environment cannot be null!";
     this.env = env;
@@ -147,5 +151,4 @@ public class CommandRequest {
       return value.startsWith("\"") && value.endsWith("\"") && value.matches("\"-[0-9]+\"");
     }
   }
-
 }

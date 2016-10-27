@@ -39,9 +39,7 @@ import org.apache.geode.internal.admin.Alert;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Tests the AlertAppender.
- */
+/** Tests the AlertAppender. */
 @Category(UnitTest.class)
 public class AlertAppenderJUnitTest {
 
@@ -68,9 +66,7 @@ public class AlertAppenderJUnitTest {
     return new TestDistributedMember(name);
   }
 
-  /**
-   * Verify that adding/removing/replacing listeners works correctly.
-   */
+  /** Verify that adding/removing/replacing listeners works correctly. */
   @Test
   public final void testListenerHandling() throws Exception {
     DistributedMember member1 = createTestDistributedMember("Member1");
@@ -93,7 +89,9 @@ public class AlertAppenderJUnitTest {
     listenersField.setAccessible(true);
 
     @SuppressWarnings("unchecked")
-    final CopyOnWriteArrayList<AlertAppender.Listener> listeners = (CopyOnWriteArrayList<AlertAppender.Listener>) listenersField.get(AlertAppender.getInstance());
+    final CopyOnWriteArrayList<AlertAppender.Listener> listeners =
+        (CopyOnWriteArrayList<AlertAppender.Listener>)
+            listenersField.get(AlertAppender.getInstance());
 
     // Verify add
     assertSame(member5, listeners.get(0).getMember());
@@ -142,9 +140,8 @@ public class AlertAppenderJUnitTest {
   }
 
   /**
-   * Verifies that the appender is correctly added and removed from the Log4j
-   * configuration and that when the configuration is changed the appender is
-   * still there.
+   * Verifies that the appender is correctly added and removed from the Log4j configuration and that
+   * when the configuration is changed the appender is still there.
    */
   @Test
   public final void testAppenderToConfigHandling() throws Exception {
@@ -161,7 +158,10 @@ public class AlertAppenderJUnitTest {
     // Add a listener and verify that the appender was added to log4j
     DistributedMember member1 = createTestDistributedMember("Member1");
     AlertAppender.getInstance().addAlertListener(member1, Alert.SEVERE);
-    assertEquals(loggerConfig.getAppenders().values().toString(), startingSize + 1, loggerConfig.getAppenders().size());
+    assertEquals(
+        loggerConfig.getAppenders().values().toString(),
+        startingSize + 1,
+        loggerConfig.getAppenders().size());
     assertTrue(loggerConfig.getAppenders().containsKey(appenderName));
 
     // Add another listener and verify that there's still only 1 alert appender

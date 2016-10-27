@@ -30,10 +30,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * TODO: Add additional tests for all methods in DataCommandFunction.
- *
- */
+/** TODO: Add additional tests for all methods in DataCommandFunction. */
 @Category(IntegrationTest.class)
 public class DataCommandFunctionJUnitTest {
 
@@ -103,7 +100,13 @@ public class DataCommandFunctionJUnitTest {
   public void testLocateKeyIsObject() throws Exception {
     DataCommandFunction dataCmdFn = new DataCommandFunction();
 
-    DataCommandResult result = dataCmdFn.locateEntry("{'cheese': 'key_1'}", StringCheese.class.getName(), String.class.getName(), PARTITIONED_REGION, false);
+    DataCommandResult result =
+        dataCmdFn.locateEntry(
+            "{'cheese': 'key_1'}",
+            StringCheese.class.getName(),
+            String.class.getName(),
+            PARTITIONED_REGION,
+            false);
 
     assertNotNull(result);
     result.aggregate(null);
@@ -115,7 +118,9 @@ public class DataCommandFunctionJUnitTest {
   public void testLocateKeyIsString() throws Exception {
     DataCommandFunction dataCmdFn = new DataCommandFunction();
 
-    DataCommandResult result = dataCmdFn.locateEntry("key_2", String.class.getName(), String.class.getName(), PARTITIONED_REGION, false);
+    DataCommandResult result =
+        dataCmdFn.locateEntry(
+            "key_2", String.class.getName(), String.class.getName(), PARTITIONED_REGION, false);
 
     assertNotNull(result);
     result.aggregate(null);

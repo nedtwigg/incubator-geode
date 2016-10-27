@@ -30,24 +30,22 @@ import java.util.concurrent.CopyOnWriteArrayList; // don't use backport here!
 import java.util.*;
 
 /**
- * An implementation of {@link Statistics} that stores its statistics
- * in local java memory.
+ * An implementation of {@link Statistics} that stores its statistics in local java memory.
  *
  * @see <A href="package-summary.html#statistics">Package introduction</A>
- *
- *
  * @since GemFire 3.0
- *
  */
 public class Atomic50StatisticsImpl extends StatisticsImpl {
 
   /** In JOM Statistics, the values of the int statistics */
   private final AtomicIntegerArray intStorage;
+
   private final AtomicIntegerArray intDirty;
   private final Object[] intReadPrepLock;
 
   /** In JOM Statistics, the values of the long statistics */
   private final AtomicLongArray longStorage;
+
   private final AtomicIntegerArray longDirty;
   private final Object[] longReadPrepLock;
 
@@ -59,26 +57,23 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
   /**
    * Creates a new statistics instance of the given type
    *
-   * @param type
-   *        A description of the statistics
-   * @param textId
-   *        Text that identifies this statistic when it is monitored
-   * @param numericId
-   *        A number that displayed when this statistic is monitored
-   * @param uniqueId
-   *        A number that uniquely identifies this instance
-   * @param system
-   *        The distributed system that determines whether or not these
-   *        statistics are stored (and collected) in GemFire shared
-   *        memory or in the local VM
+   * @param type A description of the statistics
+   * @param textId Text that identifies this statistic when it is monitored
+   * @param numericId A number that displayed when this statistic is monitored
+   * @param uniqueId A number that uniquely identifies this instance
+   * @param system The distributed system that determines whether or not these statistics are stored
+   *     (and collected) in GemFire shared memory or in the local VM
    */
-  public Atomic50StatisticsImpl(StatisticsType type, String textId, long numericId, long uniqueId, StatisticsManager system) {
+  public Atomic50StatisticsImpl(
+      StatisticsType type, String textId, long numericId, long uniqueId, StatisticsManager system) {
     super(type, calcTextId(system, textId), calcNumericId(system, numericId), uniqueId, 0);
     this.dSystem = system;
 
     StatisticsTypeImpl realType = (StatisticsTypeImpl) type;
     if (realType.getDoubleStatCount() > 0) {
-      throw new IllegalArgumentException(LocalizedStrings.Atomic50StatisticsImpl_ATOMICS_DO_NOT_SUPPORT_DOUBLE_STATS.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.Atomic50StatisticsImpl_ATOMICS_DO_NOT_SUPPORT_DOUBLE_STATS
+              .toLocalizedString());
     }
     int intCount = realType.getIntStatCount();
     int longCount = realType.getLongStatCount();
@@ -153,20 +148,17 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
     }
   }
 
+  /** Queue of new ThreadStorage instances. */
+  private final ConcurrentLinkedQueue<ThreadStorage> threadStoreQ =
+      new ConcurrentLinkedQueue<ThreadStorage>();
   /**
-   * Queue of new ThreadStorage instances.
+   * List of ThreadStorage instances that will be used to roll up stat values on this instance. They
+   * come from the threadStoreQ.
    */
-  private final ConcurrentLinkedQueue<ThreadStorage> threadStoreQ = new ConcurrentLinkedQueue<ThreadStorage>();
-  /**
-   * List of ThreadStorage instances that will be used to roll up stat values
-   * on this instance. They come from the threadStoreQ.
-   */
-  private final CopyOnWriteArrayList<ThreadStorage> threadStoreList = new CopyOnWriteArrayList<ThreadStorage>();
+  private final CopyOnWriteArrayList<ThreadStorage> threadStoreList =
+      new CopyOnWriteArrayList<ThreadStorage>();
 
-  /**
-   * The workspace each thread that modifies statistics will use to do the
-   * mods locally.
-   */
+  /** The workspace each thread that modifies statistics will use to do the mods locally. */
   private static class ThreadStorage {
     private final Thread owner;
     public volatile boolean dirty = false;
@@ -214,8 +206,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
 
   private ThreadStorage getThreadStorageForWrite() {
     ThreadStorage result = getThreadStorage();
-    if (!result.dirty)
-      result.dirty = true;
+    if (!result.dirty) result.dirty = true;
     return result;
   }
 
@@ -241,7 +232,8 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
 
   @Override
   protected final void _setDouble(int offset, double value) {
-    throw new IllegalStateException(LocalizedStrings.Atomic50StatisticsImpl_DOUBLE_STATS_NOT_ON_ATOMIC50.toLocalizedString());
+    throw new IllegalStateException(
+        LocalizedStrings.Atomic50StatisticsImpl_DOUBLE_STATS_NOT_ON_ATOMIC50.toLocalizedString());
   }
 
   ///////////////////////  get() Methods  ///////////////////////
@@ -258,7 +250,8 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
 
   @Override
   protected final double _getDouble(int offset) {
-    throw new IllegalStateException(LocalizedStrings.Atomic50StatisticsImpl_DOUBLE_STATS_NOT_ON_ATOMIC50.toLocalizedString());
+    throw new IllegalStateException(
+        LocalizedStrings.Atomic50StatisticsImpl_DOUBLE_STATS_NOT_ON_ATOMIC50.toLocalizedString());
   }
 
   ////////////////////////  inc() Methods  ////////////////////////
@@ -277,15 +270,18 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
 
   @Override
   protected final void _incDouble(int offset, double delta) {
-    throw new IllegalStateException(LocalizedStrings.Atomic50StatisticsImpl_DOUBLE_STATS_NOT_ON_ATOMIC50.toLocalizedString());
+    throw new IllegalStateException(
+        LocalizedStrings.Atomic50StatisticsImpl_DOUBLE_STATS_NOT_ON_ATOMIC50.toLocalizedString());
   }
 
   private static final ThreadLocal samplerThread = new ThreadLocal();
 
-  /**
-   * Prepare the threadStoreList by moving into it all the new instances in Q.
-   */
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "JLM_JSR166_UTILCONCURRENT_MONITORENTER", justification = "findbugs complains about this synchronize. It could be changed to a sync on a dedicated Object instance to make findbugs happy. see comments below")
+  /** Prepare the threadStoreList by moving into it all the new instances in Q. */
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "JLM_JSR166_UTILCONCURRENT_MONITORENTER",
+    justification =
+        "findbugs complains about this synchronize. It could be changed to a sync on a dedicated Object instance to make findbugs happy. see comments below"
+  )
   private void prepareThreadStoreList() {
     // The following sync is for the rare case when this method is called concurrently.
     // In that case it would be sub-optimal for both threads to concurrently create their
@@ -293,8 +289,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
     // findbugs complains about this synchronize. It could be changed to a sync on a dedicated Object instance to make findbugs happy.
     synchronized (threadStoreList) {
       ThreadStorage ts = this.threadStoreQ.poll();
-      if (ts == null)
-        return;
+      if (ts == null) return;
       ArrayList<ThreadStorage> tmp = new ArrayList<ThreadStorage>(64);
       do {
         tmp.add(ts);
@@ -307,15 +302,14 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
   }
 
   /**
-   * Used to take striped thread stats and "roll them up" into a single
-   * shared stat.
+   * Used to take striped thread stats and "roll them up" into a single shared stat.
+   *
    * @since GemFire 5.1
    */
   @Override
   public void prepareForSample() {
     // mark this thread as the sampler
-    if (samplerThread.get() == null)
-      samplerThread.set(Boolean.TRUE);
+    if (samplerThread.get() == null) samplerThread.set(Boolean.TRUE);
     prepareThreadStoreList();
     ArrayList<ThreadStorage> removed = null;
     for (ThreadStorage ts : this.threadStoreList) {
@@ -363,21 +357,21 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
   }
 
   private final boolean clearIntDirty(final int idx) {
-    if (!this.intDirty.weakCompareAndSet(idx, 1/*expected*/, 0/*update*/)) {
-      return this.intDirty.compareAndSet(idx, 1/*expected*/, 0/*update*/);
+    if (!this.intDirty.weakCompareAndSet(idx, 1 /*expected*/, 0 /*update*/)) {
+      return this.intDirty.compareAndSet(idx, 1 /*expected*/, 0 /*update*/);
     }
     return true;
   }
 
   private final boolean clearLongDirty(final int idx) {
-    if (!this.longDirty.weakCompareAndSet(idx, 1/*expected*/, 0/*update*/)) {
-      return this.longDirty.compareAndSet(idx, 1/*expected*/, 0/*update*/);
+    if (!this.longDirty.weakCompareAndSet(idx, 1 /*expected*/, 0 /*update*/)) {
+      return this.longDirty.compareAndSet(idx, 1 /*expected*/, 0 /*update*/);
     }
     return true;
   }
 
   private final void setIntDirty(final int idx) {
-    if (!this.intDirty.weakCompareAndSet(idx, 0/*expected*/, 1/*update*/)) {
+    if (!this.intDirty.weakCompareAndSet(idx, 0 /*expected*/, 1 /*update*/)) {
       if (!isIntDirty(idx)) {
         this.intDirty.set(idx, 1);
       }
@@ -385,7 +379,7 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
   }
 
   private final void setLongDirty(final int idx) {
-    if (!this.longDirty.weakCompareAndSet(idx, 0/*expected*/, 1/*update*/)) {
+    if (!this.longDirty.weakCompareAndSet(idx, 0 /*expected*/, 1 /*update*/)) {
       if (!isLongDirty(idx)) {
         this.longDirty.set(idx, 1);
       }
@@ -497,14 +491,17 @@ public class Atomic50StatisticsImpl extends StatisticsImpl {
   /////////////////// internal package methods //////////////////
 
   final int[] _getIntStorage() {
-    throw new IllegalStateException(LocalizedStrings.Atomic50StatisticsImpl_DIRECT_ACCESS_NOT_ON_ATOMIC50.toLocalizedString());
+    throw new IllegalStateException(
+        LocalizedStrings.Atomic50StatisticsImpl_DIRECT_ACCESS_NOT_ON_ATOMIC50.toLocalizedString());
   }
 
   final long[] _getLongStorage() {
-    throw new IllegalStateException(LocalizedStrings.Atomic50StatisticsImpl_DIRECT_ACCESS_NOT_ON_ATOMIC50.toLocalizedString());
+    throw new IllegalStateException(
+        LocalizedStrings.Atomic50StatisticsImpl_DIRECT_ACCESS_NOT_ON_ATOMIC50.toLocalizedString());
   }
 
   final double[] _getDoubleStorage() {
-    throw new IllegalStateException(LocalizedStrings.Atomic50StatisticsImpl_DIRECT_ACCESS_NOT_ON_ATOMIC50.toLocalizedString());
+    throw new IllegalStateException(
+        LocalizedStrings.Atomic50StatisticsImpl_DIRECT_ACCESS_NOT_ON_ATOMIC50.toLocalizedString());
   }
 }

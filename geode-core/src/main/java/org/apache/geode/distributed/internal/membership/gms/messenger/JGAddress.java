@@ -30,25 +30,23 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 
 /**
- * This is a copy of JGroups 3.6.4 IpAddress (Apache 2.0 License)
- * that is repurposed to be a Logical address so that we can
- * quickly pull a physical address out of the logical address set
- * in a message by JGroupsMessenger.
+ * This is a copy of JGroups 3.6.4 IpAddress (Apache 2.0 License) that is repurposed to be a Logical
+ * address so that we can quickly pull a physical address out of the logical address set in a
+ * message by JGroupsMessenger.
  */
-
 public class JGAddress extends UUID {
   private static final long serialVersionUID = -1818672332115113291L;
 
   // whether to show UUID info in toString()
-  private final static boolean SHOW_UUIDS = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "show_UUIDs");
+  private static final boolean SHOW_UUIDS =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "show_UUIDs");
 
   private InetAddress ip_addr;
   private int port;
   private int vmViewId;
 
   // Used only by Externalization
-  public JGAddress() {
-  }
+  public JGAddress() {}
 
   public JGAddress(InternalDistributedMember idm) {
     super();
@@ -96,8 +94,7 @@ public class JGAddress extends UUID {
   public String toString() {
     StringBuilder sb = new StringBuilder();
 
-    if (ip_addr == null)
-      sb.append("<null>");
+    if (ip_addr == null) sb.append("<null>");
     else {
       if (SocketCreator.resolve_dns) {
         sb.append(SocketCreator.getHostName(ip_addr));
@@ -141,8 +138,7 @@ public class JGAddress extends UUID {
       byte[] address = ip_addr.getAddress(); // 4 bytes (IPv4) or 16 bytes (IPv6)
       out.writeByte(address.length); // 1 byte
       out.write(address, 0, address.length);
-      if (ip_addr instanceof Inet6Address)
-        out.writeInt(((Inet6Address) ip_addr).getScopeId());
+      if (ip_addr instanceof Inet6Address) out.writeInt(((Inet6Address) ip_addr).getScopeId());
     } else {
       out.writeByte(0);
     }
@@ -164,7 +160,14 @@ public class JGAddress extends UUID {
   public void readFrom(DataInput in) throws Exception {
     int len = in.readByte();
     if (len > 0 && (len != Global.IPV4_SIZE && len != Global.IPV6_SIZE))
-      throw new IOException("length has to be " + Global.IPV4_SIZE + " or " + Global.IPV6_SIZE + " bytes (was " + len + " bytes)");
+      throw new IOException(
+          "length has to be "
+              + Global.IPV4_SIZE
+              + " or "
+              + Global.IPV6_SIZE
+              + " bytes (was "
+              + len
+              + " bytes)");
     byte[] a = new byte[len]; // 4 bytes (IPv4) or 16 bytes (IPv6)
     in.readFully(a);
     if (len == Global.IPV6_SIZE) {
@@ -184,7 +187,8 @@ public class JGAddress extends UUID {
   @Override
   public int size() {
     // length (1 bytes) + 4 bytes for port
-    int tmp_size = Global.BYTE_SIZE + Global.SHORT_SIZE + Global.SHORT_SIZE + (2 * Global.LONG_SIZE);
+    int tmp_size =
+        Global.BYTE_SIZE + Global.SHORT_SIZE + Global.SHORT_SIZE + (2 * Global.LONG_SIZE);
     if (ip_addr != null) {
       // 4 bytes for IPv4, 20 for IPv6 (16 + 4 for scope-id)
       tmp_size += (ip_addr instanceof Inet4Address) ? 4 : 20;
@@ -206,5 +210,4 @@ public class JGAddress extends UUID {
   public IpAddress asIpAddress() {
     return new IpAddress(ip_addr, port);
   }
-
 }

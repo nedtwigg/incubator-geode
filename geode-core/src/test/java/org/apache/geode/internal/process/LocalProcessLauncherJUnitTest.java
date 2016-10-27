@@ -35,17 +35,15 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
  * Unit tests for ProcessLauncher.
- * 
+ *
  * @since GemFire 7.0
  */
 @Category(IntegrationTest.class)
 public class LocalProcessLauncherJUnitTest {
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   private File pidFile;
 
@@ -141,7 +139,9 @@ public class LocalProcessLauncherJUnitTest {
 
   @Test
   public void testForceReplacesExistingPidFile() throws Exception {
-    assertTrue("testForceReplacesExistingPidFile is broken if PID == Integer.MAX_VALUE", ProcessUtils.identifyPid() != Integer.MAX_VALUE);
+    assertTrue(
+        "testForceReplacesExistingPidFile is broken if PID == Integer.MAX_VALUE",
+        ProcessUtils.identifyPid() != Integer.MAX_VALUE);
 
     assertTrue(pidFile.createNewFile());
     assertTrue(pidFile.exists());

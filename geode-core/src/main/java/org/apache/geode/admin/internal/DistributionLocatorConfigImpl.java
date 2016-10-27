@@ -27,12 +27,12 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 
 /**
- * Provides an implementation of
- * <code>DistributionLocatorConfig</code>.
+ * Provides an implementation of <code>DistributionLocatorConfig</code>.
  *
  * @since GemFire 4.0
  */
-public class DistributionLocatorConfigImpl extends ManagedEntityConfigImpl implements DistributionLocatorConfig {
+public class DistributionLocatorConfigImpl extends ManagedEntityConfigImpl
+    implements DistributionLocatorConfig {
 
   /** The minimum networking port (0) */
   public static final int MIN_PORT = 0;
@@ -48,8 +48,7 @@ public class DistributionLocatorConfigImpl extends ManagedEntityConfigImpl imple
   /** The address to bind to on a multi-homed host */
   private String bindAddress;
 
-  /** The properties used to configure the DistributionLocator's
-      DistributedSystem */
+  /** The properties used to configure the DistributionLocator's DistributedSystem */
   private Properties dsProperties;
 
   /** The DistributionLocator that was created with this config */
@@ -58,11 +57,10 @@ public class DistributionLocatorConfigImpl extends ManagedEntityConfigImpl imple
   //////////////////////  Static Methods  //////////////////////
 
   /**
-   * Contacts a distribution locator on the given host and port and
-   * creates a <code>DistributionLocatorConfig</code> for it.
+   * Contacts a distribution locator on the given host and port and creates a <code>
+   * DistributionLocatorConfig</code> for it.
    *
    * @see TcpClient#getLocatorInfo
-   *
    * @return <code>null</code> if the locator cannot be contacted
    */
   static DistributionLocatorConfig createConfigFor(String host, int port, InetAddress bindAddress) {
@@ -91,10 +89,7 @@ public class DistributionLocatorConfigImpl extends ManagedEntityConfigImpl imple
 
   ///////////////////////  Constructors  ///////////////////////
 
-  /**
-   * Creates a new <code>DistributionLocatorConfigImpl</code> with the
-   * default settings.
-   */
+  /** Creates a new <code>DistributionLocatorConfigImpl</code> with the default settings. */
   public DistributionLocatorConfigImpl() {
     this.port = 0;
     this.bindAddress = null;
@@ -105,10 +100,7 @@ public class DistributionLocatorConfigImpl extends ManagedEntityConfigImpl imple
 
   /////////////////////  Instance Methods  /////////////////////
 
-  /**
-   * Sets the locator that was configured with this
-   * <Code>DistributionLocatorConfigImpl</code>. 
-   */
+  /** Sets the locator that was configured with this <Code>DistributionLocatorConfigImpl</code>. */
   void setLocator(DistributionLocator locator) {
     this.locator = locator;
   }
@@ -151,21 +143,24 @@ public class DistributionLocatorConfigImpl extends ManagedEntityConfigImpl imple
     super.validate();
 
     if (port < MIN_PORT || port > MAX_PORT) {
-      throw new IllegalArgumentException(LocalizedStrings.DistributionLocatorConfigImpl_PORT_0_MUST_BE_AN_INTEGER_BETWEEN_1_AND_2.toLocalizedString(new Object[] { Integer.valueOf(port), Integer.valueOf(MIN_PORT), Integer.valueOf(MAX_PORT) }));
+      throw new IllegalArgumentException(
+          LocalizedStrings.DistributionLocatorConfigImpl_PORT_0_MUST_BE_AN_INTEGER_BETWEEN_1_AND_2
+              .toLocalizedString(
+                  new Object[] {
+                    Integer.valueOf(port), Integer.valueOf(MIN_PORT), Integer.valueOf(MAX_PORT)
+                  }));
     }
 
     if (this.bindAddress != null && InetAddressUtil.validateHost(this.bindAddress) == null) {
-      throw new IllegalArgumentException(LocalizedStrings.DistributionLocatorConfigImpl_INVALID_HOST_0.toLocalizedString(this.bindAddress));
+      throw new IllegalArgumentException(
+          LocalizedStrings.DistributionLocatorConfigImpl_INVALID_HOST_0.toLocalizedString(
+              this.bindAddress));
     }
   }
 
-  /**
-   * Currently, listeners are not supported on the locator config.
-   */
+  /** Currently, listeners are not supported on the locator config. */
   @Override
-  protected void configChanged() {
-
-  }
+  protected void configChanged() {}
 
   @Override
   public Object clone() throws CloneNotSupportedException {

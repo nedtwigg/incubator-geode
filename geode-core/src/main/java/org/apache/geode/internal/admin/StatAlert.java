@@ -22,11 +22,10 @@ import java.util.Date;
 /**
  * This class defines the Alert sent by the AlertManager to the Alert
  * Aggregator. This class includes the information about the
- * <code>AlertDefinition<code> for which this alert being raised 
- * & the value of the statistic. 
- * 
+ * <code>AlertDefinition<code> for which this alert being raised
+ * & the value of the statistic.
+ *
  */
-
 public class StatAlert implements Serializable {
   private static final long serialVersionUID = 5725457607122449170L;
 
@@ -53,9 +52,7 @@ public class StatAlert implements Serializable {
     return sb.toString();
   }
 
-  /**
-   * The default constructor.
-   */
+  /** The default constructor. */
   public StatAlert() {
 
     definitionId = -1;
@@ -65,11 +62,9 @@ public class StatAlert implements Serializable {
 
   /**
    * The non default constructor.
-   * 
-   * @param definitionId
-   *                StatAlertDefinition identifer value
-   * @param values
-   *                actual value of the statistic.
+   *
+   * @param definitionId StatAlertDefinition identifer value
+   * @param values actual value of the statistic.
    */
   public StatAlert(int definitionId, Number[] values) {
     this.definitionId = definitionId;
@@ -78,7 +73,7 @@ public class StatAlert implements Serializable {
 
   /**
    * This function returns the definition identifier for this StatAlert.
-   * 
+   *
    * @return StatAlertDefinition identifier.
    */
   public int getDefinitionId() {
@@ -87,19 +82,17 @@ public class StatAlert implements Serializable {
 
   /**
    * This function sets the definition identifier for this alert.
-   * 
-   * @param definitionId
-   *                StatAlertDefinition identifier.
+   *
+   * @param definitionId StatAlertDefinition identifier.
    */
   public void setDefinitionId(int definitionId) {
     this.definitionId = definitionId;
   }
 
   /**
-   * This method returns the statistic value for this alert. This can either be
-   * the latest value for the statistic or the delta between the last two
-   * readings, depending on the alert definition.
-   * 
+   * This method returns the statistic value for this alert. This can either be the latest value for
+   * the statistic or the delta between the last two readings, depending on the alert definition.
+   *
    * @return the value.
    */
   public Number[] getValues() {
@@ -107,12 +100,11 @@ public class StatAlert implements Serializable {
   }
 
   /**
-   * This method sets the value of the statistic for this alert. This can either
-   * be the latest value for the statistic or the delta between the last two
-   * readings, depending on the alert definition.
-   * 
-   * @param values
-   *                value to be set.
+   * This method sets the value of the statistic for this alert. This can either be the latest value
+   * for the statistic or the delta between the last two readings, depending on the alert
+   * definition.
+   *
+   * @param values value to be set.
    */
   public void setValues(Number[] values) {
     this.values = values;
@@ -120,7 +112,7 @@ public class StatAlert implements Serializable {
 
   /**
    * This method returns the timestamp when this alert was created.
-   * 
+   *
    * @return timestamp when this alert was created.
    */
   public Date getTime() {
@@ -129,12 +121,10 @@ public class StatAlert implements Serializable {
 
   /**
    * This method sets the timestamp when this alert was created.
-   * 
-   * @param time
-   *                timestamp when this alert was created.
+   *
+   * @param time timestamp when this alert was created.
    */
   public void setTime(Date time) {
     this.time = time;
   }
-
 }

@@ -26,11 +26,7 @@ import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.distributed.internal.locks.DLockService;
 import org.apache.geode.distributed.internal.locks.DLockToken;
 
-/**
- * Report dependencies on dlocks that exist in theis VM.
- * 
- *
- */
+/** Report dependencies on dlocks that exist in theis VM. */
 public class DLockDependencyMonitor implements DependencyMonitor {
   static final DLockDependencyMonitor INSTANCE;
 
@@ -53,7 +49,9 @@ public class DLockDependencyMonitor implements DependencyMonitor {
       for (Thread thread : allThreads) {
         Object lockName = blockedThreadLocal.get(thread);
         if (lockName != null) {
-          results.add(new Dependency<Thread, Serializable>(thread, new LockId(serviceName, (Serializable) lockName)));
+          results.add(
+              new Dependency<Thread, Serializable>(
+                  thread, new LockId(serviceName, (Serializable) lockName)));
         }
       }
     }
@@ -80,7 +78,8 @@ public class DLockDependencyMonitor implements DependencyMonitor {
         synchronized (token) {
           Thread holdingThread = token.getThread();
           if (holdingThread != null) {
-            results.add(new Dependency(new LockId(serviceName, (Serializable) tokenName), holdingThread));
+            results.add(
+                new Dependency(new LockId(serviceName, (Serializable) tokenName), holdingThread));
           }
         }
       }
@@ -109,23 +108,16 @@ public class DLockDependencyMonitor implements DependencyMonitor {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (!(obj instanceof LockId))
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (!(obj instanceof LockId)) return false;
       LockId other = (LockId) obj;
       if (serviceName == null) {
-        if (other.serviceName != null)
-          return false;
-      } else if (!serviceName.equals(other.serviceName))
-        return false;
+        if (other.serviceName != null) return false;
+      } else if (!serviceName.equals(other.serviceName)) return false;
       if (tokenName == null) {
-        if (other.tokenName != null)
-          return false;
-      } else if (!tokenName.equals(other.tokenName))
-        return false;
+        if (other.tokenName != null) return false;
+      } else if (!tokenName.equals(other.tokenName)) return false;
       return true;
     }
 
@@ -134,5 +126,4 @@ public class DLockDependencyMonitor implements DependencyMonitor {
       return "DLock(" + serviceName + ", " + tokenName + ")";
     }
   }
-
 }

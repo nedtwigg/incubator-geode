@@ -44,5 +44,4 @@ public class ConnectionCountProbeJUnitTest {
     load = probe.getLoad(metrics);
     assertEquals(0.125, load.getConnectionLoad(), .0001f);
   }
-
 }

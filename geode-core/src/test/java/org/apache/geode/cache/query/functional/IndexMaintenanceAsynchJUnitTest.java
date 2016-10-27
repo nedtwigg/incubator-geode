@@ -49,9 +49,7 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class IndexMaintenanceAsynchJUnitTest {
 
@@ -63,8 +61,7 @@ public class IndexMaintenanceAsynchJUnitTest {
   }
 
   @After
-  public void tearDown() throws Exception {
-  }
+  public void tearDown() throws Exception {}
 
   static QueryService qs;
   static boolean isInitDone = false;
@@ -82,7 +79,9 @@ public class IndexMaintenanceAsynchJUnitTest {
         region.put("" + i, new Portfolio(i));
       }
       qs = cache.getQueryService();
-      index = (IndexProtocol) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
+      index =
+          (IndexProtocol)
+              qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
       IndexStatistics stats = index.getStatistics();
       assertEquals(4, stats.getNumUpdates());
 
@@ -130,15 +129,16 @@ public class IndexMaintenanceAsynchJUnitTest {
           region.put("" + i, new Portfolio(i));
         }
         final IndexStatistics st = stats;
-        WaitCriterion ev = new WaitCriterion() {
-          public boolean done() {
-            return st.getNumUpdates() == 8;
-          }
+        WaitCriterion ev =
+            new WaitCriterion() {
+              public boolean done() {
+                return st.getNumUpdates() == 8;
+              }
 
-          public String description() {
-            return "index updates never became 8";
-          }
-        };
+              public String description() {
+                return "index updates never became 8";
+              }
+            };
         Wait.waitForCriterion(ev, 5000, 200, true);
 
         //queryString= "SELECT DISTINCT * FROM /portfolios p, p.positions.values pos where pos.secId='IBM'";
@@ -159,7 +159,6 @@ public class IndexMaintenanceAsynchJUnitTest {
 
       } catch (Exception e) {
         e.printStackTrace();
-
       }
     }
   }

@@ -40,5 +40,4 @@ public class PartitionedRegionHelperJUnitTest {
       assertEquals("/root/region_one", PartitionedRegionHelper.getPRPath(bucketName));
     }
   }
-
 }

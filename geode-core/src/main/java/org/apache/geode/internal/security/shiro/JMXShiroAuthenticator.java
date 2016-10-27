@@ -33,10 +33,7 @@ import org.apache.geode.internal.security.SecurityService;
 import org.apache.geode.management.internal.security.ResourceConstants;
 import org.apache.geode.security.AuthenticationFailedException;
 
-/**
- * this will make JMX authentication to use Shiro for Authentication
- */
-
+/** this will make JMX authentication to use Shiro for Authentication */
 public class JMXShiroAuthenticator implements JMXAuthenticator, NotificationListener {
 
   private SecurityService securityService = IntegratedSecurityService.getSecurityService();
@@ -66,7 +63,8 @@ public class JMXShiroAuthenticator implements JMXAuthenticator, NotificationList
       principal = new ShiroPrincipal(shiroSubject);
     }
 
-    return new Subject(true, Collections.singleton(principal), Collections.EMPTY_SET, Collections.EMPTY_SET);
+    return new Subject(
+        true, Collections.singleton(principal), Collections.EMPTY_SET, Collections.EMPTY_SET);
   }
 
   @Override

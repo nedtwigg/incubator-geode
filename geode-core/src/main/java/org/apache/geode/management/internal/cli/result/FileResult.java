@@ -22,11 +22,7 @@ import java.io.IOException;
 import org.apache.geode.management.cli.Result;
 import org.apache.geode.management.internal.cli.CliUtil;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class FileResult implements Result {
   private String[] filePaths;
   private int fileIndex;
@@ -46,8 +42,7 @@ public class FileResult implements Result {
   }
 
   @Override
-  public void resetToFirstLine() {
-  }
+  public void resetToFirstLine() {}
 
   @Override
   public boolean hasNextLine() {
@@ -65,7 +60,7 @@ public class FileResult implements Result {
 
   /**
    * Calculates the total file size of all files associated with this result.
-   * 
+   *
    * @return Total file size.
    */
   public long computeFileSizeTotal() {
@@ -78,7 +73,7 @@ public class FileResult implements Result {
 
   /**
    * Get a comma separated list of all files associated with this result.
-   * 
+   *
    * @return Comma separated list of files.
    */
   public String getFormattedFileList() {
@@ -98,7 +93,8 @@ public class FileResult implements Result {
   }
 
   @Override
-  public void saveIncomingFiles(String directory) throws UnsupportedOperationException, IOException {
+  public void saveIncomingFiles(String directory)
+      throws UnsupportedOperationException, IOException {
     // dump file data if any
     CliUtil.bytesToFiles(localFileData, directory, true);
   }

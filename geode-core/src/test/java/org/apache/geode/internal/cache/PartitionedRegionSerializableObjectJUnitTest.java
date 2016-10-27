@@ -17,12 +17,9 @@
 package org.apache.geode.internal.cache;
 
 /**
- * Following test create a region and threads which perform get and put
- * operations simutaneously on that single region. Object used while putting in
- * region is serializable.
- * 
+ * Following test create a region and threads which perform get and put operations simutaneously on
+ * that single region. Object used while putting in region is serializable.
  */
-
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -46,10 +43,7 @@ public class PartitionedRegionSerializableObjectJUnitTest {
   /** It is common region for all the threads */
   private Region root;
 
-  /**
-   * It is map to store thread name and list of objects which are created by
-   * that thread.
-   */
+  /** It is map to store thread name and list of objects which are created by that thread. */
   private static Map thread2List = new HashMap();
 
   private static int MAX_COUNT = 10;
@@ -57,16 +51,17 @@ public class PartitionedRegionSerializableObjectJUnitTest {
   private static int MAX_THREADS = 10;
 
   /**
-   * This test creates a region and threads. This Region is common to all the
-   * threads which perform get, put operations on that region. Object used
-   * during these operations are serializable. key and value in the partition
-   * region are same.
+   * This test creates a region and threads. This Region is common to all the threads which perform
+   * get, put operations on that region. Object used during these operations are serializable. key
+   * and value in the partition region are same.
    */
   @Test
   public void testOperationsWithSerializableObject() {
     int localMaxMemory = 50;
     Thread threadArr[] = new Thread[10];
-    root = PartitionedRegionTestHelper.createPartitionedRegion(regionName, String.valueOf(localMaxMemory), 0);
+    root =
+        PartitionedRegionTestHelper.createPartitionedRegion(
+            regionName, String.valueOf(localMaxMemory), 0);
     System.out.println("*******testOperationsWithSerializableObject started*********");
     for (int i = 0; i < MAX_THREADS; i++) {
       putThread putObj = new putThread("PRSerializableObjectJUnitTest" + i);
@@ -88,13 +83,14 @@ public class PartitionedRegionSerializableObjectJUnitTest {
       root.getCache().getLogger().warning("Got Interrupted Exception in sleep.", e);
       fail("interrupted");
     }
-    System.out.println("********testOperationsWithSerializableObject complited successfully********");
+    System.out.println(
+        "********testOperationsWithSerializableObject complited successfully********");
   }
 
   /**
-   * This class creates thread that take list of the objects from thread2List
-   * Map and performs get operation with these objects as key and verifying
-   * result with itself because key and values are same in the partition Region
+   * This class creates thread that take list of the objects from thread2List Map and performs get
+   * operation with these objects as key and verifying result with itself because key and values are
+   * same in the partition Region
    */
   private class getThread extends Thread {
 
@@ -117,7 +113,8 @@ public class PartitionedRegionSerializableObjectJUnitTest {
           Object retObj = pr.get(listObj);
           assertNotNull(retObj);
           if (!listObj.equals(retObj)) {
-            fail("PRSerializableObjectJUniTest:getThread() Object from the region is not equal to Object from the list");
+            fail(
+                "PRSerializableObjectJUniTest:getThread() Object from the region is not equal to Object from the list");
           }
         } catch (Exception ex) {
           fail("PRSerializableObjectJUniTest:getThread() failed ");
@@ -127,9 +124,8 @@ public class PartitionedRegionSerializableObjectJUnitTest {
   }
 
   /**
-   * This class create threads that put the serializable objects in the partion
-   * region and also add the the list of the serializable objects to the
-   * thread2List map
+   * This class create threads that put the serializable objects in the partion region and also add
+   * the the list of the serializable objects to the thread2List map
    */
   private class putThread extends Thread {
 
@@ -150,7 +146,11 @@ public class PartitionedRegionSerializableObjectJUnitTest {
           pr.put(obj, obj);
           list.add(obj);
         } catch (Exception ex) {
-          fail("PRSerializableObjectJUnitTest:putThread Got an incorrect exception for localMaxMemory=0 at count = " + key + ". Exception stack = " + ex);
+          fail(
+              "PRSerializableObjectJUnitTest:putThread Got an incorrect exception for localMaxMemory=0 at count = "
+                  + key
+                  + ". Exception stack = "
+                  + ex);
         }
       }
       thread2List.put(this.getName(), list);

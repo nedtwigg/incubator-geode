@@ -68,10 +68,7 @@ import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 @SuppressWarnings("unused")
 public class FunctionCommands implements CommandMarker {
   private final ListFunctionFunction listFunctionFunction = new ListFunctionFunction();
@@ -81,12 +78,55 @@ public class FunctionCommands implements CommandMarker {
   }
 
   @CliCommand(value = CliStrings.EXECUTE_FUNCTION, help = CliStrings.EXECUTE_FUNCTION__HELP)
-  @CliMetaData(relatedTopic = { CliStrings.TOPIC_GEODE_FUNCTION })
+  @CliMetaData(relatedTopic = {CliStrings.TOPIC_GEODE_FUNCTION})
   @ResourceOperation(resource = Resource.DATA, operation = Operation.WRITE)
   public Result executeFunction(
       //TODO: Add optioncontext for functionID
-      @CliOption(key = CliStrings.EXECUTE_FUNCTION__ID, mandatory = true, help = CliStrings.EXECUTE_FUNCTION__ID__HELP) String functionId, @CliOption(key = CliStrings.EXECUTE_FUNCTION__ONGROUPS, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.MEMBERGROUP, help = CliStrings.EXECUTE_FUNCTION__ONGROUPS__HELP) String[] onGroups, @CliOption(key = CliStrings.EXECUTE_FUNCTION__ONMEMBER, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.MEMBERIDNAME, help = CliStrings.EXECUTE_FUNCTION__ONMEMBER__HELP) String onMember, @CliOption(key = CliStrings.EXECUTE_FUNCTION__ONREGION, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.REGIONPATH, help = CliStrings.EXECUTE_FUNCTION__ONREGION__HELP) String onRegion,
-      @CliOption(key = CliStrings.EXECUTE_FUNCTION__ARGUMENTS, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.EXECUTE_FUNCTION__ARGUMENTS__HELP) String[] arguments, @CliOption(key = CliStrings.EXECUTE_FUNCTION__RESULTCOLLECTOR, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.EXECUTE_FUNCTION__RESULTCOLLECTOR__HELP) String resultCollector, @CliOption(key = CliStrings.EXECUTE_FUNCTION__FILTER, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, help = CliStrings.EXECUTE_FUNCTION__FILTER__HELP) String filterString) {
+      @CliOption(
+            key = CliStrings.EXECUTE_FUNCTION__ID,
+            mandatory = true,
+            help = CliStrings.EXECUTE_FUNCTION__ID__HELP
+          )
+          String functionId,
+      @CliOption(
+            key = CliStrings.EXECUTE_FUNCTION__ONGROUPS,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            optionContext = ConverterHint.MEMBERGROUP,
+            help = CliStrings.EXECUTE_FUNCTION__ONGROUPS__HELP
+          )
+          String[] onGroups,
+      @CliOption(
+            key = CliStrings.EXECUTE_FUNCTION__ONMEMBER,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            optionContext = ConverterHint.MEMBERIDNAME,
+            help = CliStrings.EXECUTE_FUNCTION__ONMEMBER__HELP
+          )
+          String onMember,
+      @CliOption(
+            key = CliStrings.EXECUTE_FUNCTION__ONREGION,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            optionContext = ConverterHint.REGIONPATH,
+            help = CliStrings.EXECUTE_FUNCTION__ONREGION__HELP
+          )
+          String onRegion,
+      @CliOption(
+            key = CliStrings.EXECUTE_FUNCTION__ARGUMENTS,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            help = CliStrings.EXECUTE_FUNCTION__ARGUMENTS__HELP
+          )
+          String[] arguments,
+      @CliOption(
+            key = CliStrings.EXECUTE_FUNCTION__RESULTCOLLECTOR,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            help = CliStrings.EXECUTE_FUNCTION__RESULTCOLLECTOR__HELP
+          )
+          String resultCollector,
+      @CliOption(
+            key = CliStrings.EXECUTE_FUNCTION__FILTER,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            help = CliStrings.EXECUTE_FUNCTION__FILTER__HELP
+          )
+          String filterString) {
 
     Result result = null;
     CompositeResultData executeFunctionResultTable = ResultBuilder.createCompositeResultData();
@@ -113,33 +153,55 @@ public class FunctionCommands implements CommandMarker {
     try {
       // validate otherwise return right away. no need to process anything
       if (functionId == null || functionId.length() == 0) {
-        ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(CliStrings.EXECUTE_FUNCTION__MSG__MISSING_FUNCTIONID);
+        ErrorResultData errorResultData =
+            ResultBuilder.createErrorResultData()
+                .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+                .addLine(CliStrings.EXECUTE_FUNCTION__MSG__MISSING_FUNCTIONID);
         result = ResultBuilder.buildResult(errorResultData);
         return result;
       }
 
       if (onRegion != null && onMember != null && onGroups != null) {
-        ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(CliStrings.EXECUTE_FUNCTION__MSG__OPTIONS);
+        ErrorResultData errorResultData =
+            ResultBuilder.createErrorResultData()
+                .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+                .addLine(CliStrings.EXECUTE_FUNCTION__MSG__OPTIONS);
         result = ResultBuilder.buildResult(errorResultData);
         return result;
       } else if (onRegion != null && onMember != null) {
-        ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(CliStrings.EXECUTE_FUNCTION__MSG__OPTIONS);
+        ErrorResultData errorResultData =
+            ResultBuilder.createErrorResultData()
+                .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+                .addLine(CliStrings.EXECUTE_FUNCTION__MSG__OPTIONS);
         result = ResultBuilder.buildResult(errorResultData);
         return result;
       } else if (onMember != null && onGroups != null) {
-        ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(CliStrings.EXECUTE_FUNCTION__MSG__OPTIONS);
+        ErrorResultData errorResultData =
+            ResultBuilder.createErrorResultData()
+                .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+                .addLine(CliStrings.EXECUTE_FUNCTION__MSG__OPTIONS);
         result = ResultBuilder.buildResult(errorResultData);
         return result;
       } else if (onRegion != null && onGroups != null) {
-        ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(CliStrings.EXECUTE_FUNCTION__MSG__OPTIONS);
+        ErrorResultData errorResultData =
+            ResultBuilder.createErrorResultData()
+                .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+                .addLine(CliStrings.EXECUTE_FUNCTION__MSG__OPTIONS);
         result = ResultBuilder.buildResult(errorResultData);
         return result;
       } else if (onRegion != null && onMember != null && onGroups != null) {
-        ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(CliStrings.EXECUTE_FUNCTION__MSG__OPTIONS);
+        ErrorResultData errorResultData =
+            ResultBuilder.createErrorResultData()
+                .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+                .addLine(CliStrings.EXECUTE_FUNCTION__MSG__OPTIONS);
         result = ResultBuilder.buildResult(errorResultData);
         return result;
       } else if ((onRegion == null || onRegion.length() == 0) && (filterString != null)) {
-        ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(CliStrings.EXECUTE_FUNCTION__MSG__MEMBER_SHOULD_NOT_HAVE_FILTER_FOR_EXECUTION);
+        ErrorResultData errorResultData =
+            ResultBuilder.createErrorResultData()
+                .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+                .addLine(
+                    CliStrings.EXECUTE_FUNCTION__MSG__MEMBER_SHOULD_NOT_HAVE_FILTER_FOR_EXECUTION);
         result = ResultBuilder.buildResult(errorResultData);
         return result;
       }
@@ -147,7 +209,8 @@ public class FunctionCommands implements CommandMarker {
       Cache cache = CacheFactory.getAnyInstance();
 
       if (resultCollector != null) {
-        resultCollectorInstance = (ResultCollector) ClassPathLoader.getLatest().forName(resultCollector).newInstance();
+        resultCollectorInstance =
+            (ResultCollector) ClassPathLoader.getLatest().forName(resultCollector).newInstance();
       }
 
       if (filterString != null && filterString.length() > 0) {
@@ -160,23 +223,41 @@ public class FunctionCommands implements CommandMarker {
         Set<DistributedMember> dsMembers = CliUtil.getAllNormalMembers(cache);
         if (dsMembers.size() > 0) {
           function = new UserFunctionExecution();
-          LogWrapper.getInstance().info(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__EXECUTING_0_ON_ENTIRE_DS, functionId));
+          LogWrapper.getInstance()
+              .info(
+                  CliStrings.format(
+                      CliStrings.EXECUTE_FUNCTION__MSG__EXECUTING_0_ON_ENTIRE_DS, functionId));
           for (DistributedMember member : dsMembers) {
-            executeAndGetResults(functionId, filterString, resultCollector, arguments, cache, member, resultTable, onRegion);
+            executeAndGetResults(
+                functionId,
+                filterString,
+                resultCollector,
+                arguments,
+                cache,
+                member,
+                resultTable,
+                onRegion);
           }
           return ResultBuilder.buildResult(resultTable);
         } else {
-          return ResultBuilder.createUserErrorResult(CliStrings.EXECUTE_FUNCTION__MSG__DS_HAS_NO_MEMBERS);
+          return ResultBuilder.createUserErrorResult(
+              CliStrings.EXECUTE_FUNCTION__MSG__DS_HAS_NO_MEMBERS);
         }
       } else if (onRegion != null && onRegion.length() > 0) {
         if (cache.getRegion(onRegion) == null) {
           // find a member where region is present
-          DistributedRegionMXBean bean = ManagementService.getManagementService(GemFireCacheImpl.getInstance()).getDistributedRegionMXBean(onRegion);
+          DistributedRegionMXBean bean =
+              ManagementService.getManagementService(GemFireCacheImpl.getInstance())
+                  .getDistributedRegionMXBean(onRegion);
           if (bean == null) {
-            bean = ManagementService.getManagementService(GemFireCacheImpl.getInstance()).getDistributedRegionMXBean(Region.SEPARATOR + onRegion);
+            bean =
+                ManagementService.getManagementService(GemFireCacheImpl.getInstance())
+                    .getDistributedRegionMXBean(Region.SEPARATOR + onRegion);
 
             if (bean == null) {
-              return ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__MXBEAN_0_FOR_NOT_FOUND, onRegion));
+              return ResultBuilder.createGemFireErrorResult(
+                  CliStrings.format(
+                      CliStrings.EXECUTE_FUNCTION__MSG__MXBEAN_0_FOR_NOT_FOUND, onRegion));
             }
           }
 
@@ -199,10 +280,20 @@ public class FunctionCommands implements CommandMarker {
             }
           }
           if (matchFound == true) {
-            executeAndGetResults(functionId, filterString, resultCollector, arguments, cache, member, resultTable, onRegion);
+            executeAndGetResults(
+                functionId,
+                filterString,
+                resultCollector,
+                arguments,
+                cache,
+                member,
+                resultTable,
+                onRegion);
             return ResultBuilder.buildResult(resultTable);
           } else {
-            return ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__NO_ASSOCIATED_MEMBER_REGION, " " + onRegion));
+            return ResultBuilder.createGemFireErrorResult(
+                CliStrings.format(
+                    CliStrings.EXECUTE_FUNCTION__MSG__NO_ASSOCIATED_MEMBER_REGION, " " + onRegion));
           }
         } else {
           execution = FunctionService.onRegion(cache.getRegion(onRegion));
@@ -224,14 +315,27 @@ public class FunctionCommands implements CommandMarker {
                 for (Object obj : results) {
                   strResult.append(obj);
                 }
-                toTabularResultData(resultTable, cache.getDistributedSystem().getDistributedMember().getId(), strResult.toString());
+                toTabularResultData(
+                    resultTable,
+                    cache.getDistributedSystem().getDistributedMember().getId(),
+                    strResult.toString());
               }
               return ResultBuilder.buildResult(resultTable);
             } catch (FunctionException e) {
-              return ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_0_ON_REGION_1_DETAILS_2, functionId, onRegion, e.getMessage()));
+              return ResultBuilder.createGemFireErrorResult(
+                  CliStrings.format(
+                      CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_0_ON_REGION_1_DETAILS_2,
+                      functionId,
+                      onRegion,
+                      e.getMessage()));
             }
           } else {
-            return ResultBuilder.createGemFireErrorResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_0_ON_REGION_1_DETAILS_2, functionId, onRegion, CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_RETRIEVING_EXECUTOR));
+            return ResultBuilder.createGemFireErrorResult(
+                CliStrings.format(
+                    CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_0_ON_REGION_1_DETAILS_2,
+                    functionId,
+                    onRegion,
+                    CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_RETRIEVING_EXECUTOR));
           }
         }
       } else if (onGroups != null) {
@@ -244,7 +348,15 @@ public class FunctionCommands implements CommandMarker {
         StringBuilder successMessage = new StringBuilder();
         if (dsMembers.size() > 0) {
           for (DistributedMember member : dsMembers) {
-            executeAndGetResults(functionId, filterString, resultCollector, arguments, cache, member, resultTable, onRegion);
+            executeAndGetResults(
+                functionId,
+                filterString,
+                resultCollector,
+                arguments,
+                cache,
+                member,
+                resultTable,
+                onRegion);
           }
           return ResultBuilder.buildResult(resultTable);
         } else {
@@ -253,35 +365,66 @@ public class FunctionCommands implements CommandMarker {
             grps.append(grp);
             grps.append(", ");
           }
-          return ResultBuilder.createUserErrorResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__GROUPS_0_HAS_NO_MEMBERS, grps.toString().substring(0, grps.toString().length() - 1)));
+          return ResultBuilder.createUserErrorResult(
+              CliStrings.format(
+                  CliStrings.EXECUTE_FUNCTION__MSG__GROUPS_0_HAS_NO_MEMBERS,
+                  grps.toString().substring(0, grps.toString().length() - 1)));
         }
       } else if (onMember != null && onMember.length() > 0) {
-        DistributedMember member = CliUtil.getDistributedMemberByNameOrId(onMember); // fix for bug 45658
+        DistributedMember member =
+            CliUtil.getDistributedMemberByNameOrId(onMember); // fix for bug 45658
         if (member != null) {
-          executeAndGetResults(functionId, filterString, resultCollector, arguments, cache, member, resultTable, onRegion);
+          executeAndGetResults(
+              functionId,
+              filterString,
+              resultCollector,
+              arguments,
+              cache,
+              member,
+              resultTable,
+              onRegion);
         } else {
-          toTabularResultData(resultTable, onMember, CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__NO_ASSOCIATED_MEMBER + " " + onMember));
+          toTabularResultData(
+              resultTable,
+              onMember,
+              CliStrings.format(
+                  CliStrings.EXECUTE_FUNCTION__MSG__NO_ASSOCIATED_MEMBER + " " + onMember));
         }
         return ResultBuilder.buildResult(resultTable);
       }
     } catch (InstantiationException e) {
-      ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(e.getMessage());
+      ErrorResultData errorResultData =
+          ResultBuilder.createErrorResultData()
+              .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+              .addLine(e.getMessage());
       result = ResultBuilder.buildResult(errorResultData);
       return result;
     } catch (IllegalAccessException e) {
-      ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(e.getMessage());
+      ErrorResultData errorResultData =
+          ResultBuilder.createErrorResultData()
+              .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+              .addLine(e.getMessage());
       result = ResultBuilder.buildResult(errorResultData);
       return result;
     } catch (IllegalArgumentException e) {
-      ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(e.getMessage());
+      ErrorResultData errorResultData =
+          ResultBuilder.createErrorResultData()
+              .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+              .addLine(e.getMessage());
       result = ResultBuilder.buildResult(errorResultData);
       return result;
     } catch (SecurityException e) {
-      ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(e.getMessage());
+      ErrorResultData errorResultData =
+          ResultBuilder.createErrorResultData()
+              .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+              .addLine(e.getMessage());
       result = ResultBuilder.buildResult(errorResultData);
       return result;
     } catch (Exception e) {
-      ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(e.getMessage());
+      ErrorResultData errorResultData =
+          ResultBuilder.createErrorResultData()
+              .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+              .addLine(e.getMessage());
       result = ResultBuilder.buildResult(errorResultData);
       return result;
     }
@@ -295,14 +438,23 @@ public class FunctionCommands implements CommandMarker {
     Iterator<DistributedMember> it = dsMembers.iterator();
     while (it.hasNext()) {
       DistributedMember tempMember = (DistributedMember) it.next();
-      if (memberNameOrId.equals(tempMember.getId()) || memberNameOrId.equals(tempMember.getName())) {
+      if (memberNameOrId.equals(tempMember.getId())
+          || memberNameOrId.equals(tempMember.getName())) {
         return tempMember;
       }
     }
     return member;
   }
 
-  void executeAndGetResults(String functionId, String filterString, String resultCollector, String[] arguments, Cache cache, DistributedMember member, TabularResultData resultTable, String onRegion) {
+  void executeAndGetResults(
+      String functionId,
+      String filterString,
+      String resultCollector,
+      String[] arguments,
+      Cache cache,
+      DistributedMember member,
+      TabularResultData resultTable,
+      String onRegion) {
     StringBuilder resultMessege = new StringBuilder();
     try {
       Function function = new UserFunctionExecution();
@@ -317,7 +469,7 @@ public class FunctionCommands implements CommandMarker {
       if (arguments != null && arguments.length > 0) {
         args[3] = new String();
         for (String str : arguments) {
-          // send via CSV separated value format          
+          // send via CSV separated value format
           if (str != null) {
             args[3] = args[3] + str + ",";
           }
@@ -343,34 +495,72 @@ public class FunctionCommands implements CommandMarker {
         }
         toTabularResultData(resultTable, member.getId(), resultMessege.toString());
       } else {
-        toTabularResultData(resultTable, member.getId(), CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_RETRIEVING_EXECUTOR);
+        toTabularResultData(
+            resultTable,
+            member.getId(),
+            CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_RETRIEVING_EXECUTOR);
       }
     } catch (FunctionException e) {
-      resultMessege.append(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__COULD_NOT_EXECUTE_FUNCTION_0_ON_MEMBER_1_ERROR_2, functionId, member.getId(), e.getMessage()));
+      resultMessege.append(
+          CliStrings.format(
+              CliStrings.EXECUTE_FUNCTION__MSG__COULD_NOT_EXECUTE_FUNCTION_0_ON_MEMBER_1_ERROR_2,
+              functionId,
+              member.getId(),
+              e.getMessage()));
       toTabularResultData(resultTable, member.getId(), resultMessege.toString());
     } catch (Exception e) {
-      resultMessege.append(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__COULD_NOT_EXECUTE_FUNCTION_0_ON_MEMBER_1_ERROR_2, functionId, member.getId(), e.getMessage()));
+      resultMessege.append(
+          CliStrings.format(
+              CliStrings.EXECUTE_FUNCTION__MSG__COULD_NOT_EXECUTE_FUNCTION_0_ON_MEMBER_1_ERROR_2,
+              functionId,
+              member.getId(),
+              e.getMessage()));
       toTabularResultData(resultTable, member.getId(), resultMessege.toString());
     }
   }
 
-  protected void toTabularResultData(TabularResultData table, String memberId, String memberResult) {
+  protected void toTabularResultData(
+      TabularResultData table, String memberId, String memberResult) {
     String newLine = System.getProperty("line.separator");
     table.accumulate("Member ID/Name", memberId);
     table.accumulate("Function Execution Result", memberResult);
   }
 
   @CliCommand(value = CliStrings.DESTROY_FUNCTION, help = CliStrings.DESTROY_FUNCTION__HELP)
-  @CliMetaData(relatedTopic = { CliStrings.TOPIC_GEODE_FUNCTION }, interceptor = "org.apache.geode.management.internal.cli.commands.FunctionCommands$Interceptor")
+  @CliMetaData(
+    relatedTopic = {CliStrings.TOPIC_GEODE_FUNCTION},
+    interceptor = "org.apache.geode.management.internal.cli.commands.FunctionCommands$Interceptor"
+  )
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
   //TODO: Add optioncontext for functionId
-  public Result destroyFunction(@CliOption(key = CliStrings.DESTROY_FUNCTION__ID, mandatory = true, help = CliStrings.DESTROY_FUNCTION__HELP) String functionId, @CliOption(key = CliStrings.DESTROY_FUNCTION__ONGROUPS, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.MEMBERGROUP, help = CliStrings.DESTROY_FUNCTION__ONGROUPS__HELP) String[] groups, @CliOption(key = CliStrings.DESTROY_FUNCTION__ONMEMBER, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE, optionContext = ConverterHint.MEMBERIDNAME, help = CliStrings.DESTROY_FUNCTION__ONMEMBER__HELP) String memberId) {
+  public Result destroyFunction(
+      @CliOption(
+            key = CliStrings.DESTROY_FUNCTION__ID,
+            mandatory = true,
+            help = CliStrings.DESTROY_FUNCTION__HELP
+          )
+          String functionId,
+      @CliOption(
+            key = CliStrings.DESTROY_FUNCTION__ONGROUPS,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            optionContext = ConverterHint.MEMBERGROUP,
+            help = CliStrings.DESTROY_FUNCTION__ONGROUPS__HELP
+          )
+          String[] groups,
+      @CliOption(
+            key = CliStrings.DESTROY_FUNCTION__ONMEMBER,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE,
+            optionContext = ConverterHint.MEMBERIDNAME,
+            help = CliStrings.DESTROY_FUNCTION__ONMEMBER__HELP
+          )
+          String memberId) {
     Result result = null;
     try {
       Cache cache = CacheFactory.getAnyInstance();
       Set<DistributedMember> dsMembers = new HashSet<DistributedMember>();
       if (groups != null && memberId != null) {
-        return ResultBuilder.createUserErrorResult(CliStrings.DESTROY_FUNCTION__MSG__PROVIDE_OPTION);
+        return ResultBuilder.createUserErrorResult(
+            CliStrings.DESTROY_FUNCTION__MSG__PROVIDE_OPTION);
       } else if (groups != null && groups.length > 0) {
         //execute on group members
         for (String grp : groups) {
@@ -386,22 +576,22 @@ public class FunctionCommands implements CommandMarker {
         Result results = executeFunction(cache, dsMembers, functionId);
         return results;
       } else {
-        //no option provided. 
+        //no option provided.
         @SuppressWarnings("unchecked")
         Result results = executeFunction(cache, cache.getMembers(), functionId);
         return results;
       }
     } catch (Exception e) {
-      ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(e.getMessage());
+      ErrorResultData errorResultData =
+          ResultBuilder.createErrorResultData()
+              .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+              .addLine(e.getMessage());
       result = ResultBuilder.buildResult(errorResultData);
       return result;
     }
-
   }
 
-  /**
-   * Interceptor used by gfsh to intercept execution of destroy.
-   */
+  /** Interceptor used by gfsh to intercept execution of destroy. */
   public static class Interceptor extends AbstractCliAroundInterceptor {
     @Override
     public Result preExecution(GfshParseResult parseResult) {
@@ -411,14 +601,22 @@ public class FunctionCommands implements CommandMarker {
       String onMember = paramValueMap.get(CliStrings.DESTROY_FUNCTION__ONMEMBER);
 
       if ((onGroup == null && onMember == null)) {
-        Response response = readYesNo("Do you really want to destroy " + paramValueMap.get(CliStrings.DESTROY_FUNCTION__ID) + " on entire DS?", Response.NO);
+        Response response =
+            readYesNo(
+                "Do you really want to destroy "
+                    + paramValueMap.get(CliStrings.DESTROY_FUNCTION__ID)
+                    + " on entire DS?",
+                Response.NO);
         if (response == Response.NO) {
-          return ResultBuilder.createShellClientAbortOperationResult("Aborted destroy of " + paramValueMap.get(CliStrings.DESTROY_FUNCTION__ID));
+          return ResultBuilder.createShellClientAbortOperationResult(
+              "Aborted destroy of " + paramValueMap.get(CliStrings.DESTROY_FUNCTION__ID));
         } else {
-          return ResultBuilder.createInfoResult("Destroying " + paramValueMap.get(CliStrings.DESTROY_FUNCTION__ID));
+          return ResultBuilder.createInfoResult(
+              "Destroying " + paramValueMap.get(CliStrings.DESTROY_FUNCTION__ID));
         }
       } else {
-        return ResultBuilder.createInfoResult("Destroying " + paramValueMap.get(CliStrings.DESTROY_FUNCTION__ID));
+        return ResultBuilder.createInfoResult(
+            "Destroying " + paramValueMap.get(CliStrings.DESTROY_FUNCTION__ID));
       }
     }
 
@@ -444,13 +642,19 @@ public class FunctionCommands implements CommandMarker {
 
     if (execution == null) {
       cache.getLogger().error("executeUnregister execution is null");
-      ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(CliStrings.DESTROY_FUNCTION__MSG__CANNOT_EXECUTE);
+      ErrorResultData errorResultData =
+          ResultBuilder.createErrorResultData()
+              .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+              .addLine(CliStrings.DESTROY_FUNCTION__MSG__CANNOT_EXECUTE);
       return (ResultBuilder.buildResult(errorResultData));
     }
     try {
       resultList = (ArrayList) execution.execute(unregisterFunction).getResult();
     } catch (FunctionException ex) {
-      ErrorResultData errorResultData = ResultBuilder.createErrorResultData().setErrorCode(ResultBuilder.ERRORCODE_DEFAULT).addLine(ex.getMessage());
+      ErrorResultData errorResultData =
+          ResultBuilder.createErrorResultData()
+              .setErrorCode(ResultBuilder.ERRORCODE_DEFAULT)
+              .addLine(ex.getMessage());
       return (ResultBuilder.buildResult(errorResultData));
     }
     String resultStr = ((String) resultList.get(0));
@@ -460,16 +664,39 @@ public class FunctionCommands implements CommandMarker {
         members.append(member.getId());
         members.append(",");
       }
-      return ResultBuilder.createInfoResult("Destroyed " + functionId + " Successfully on " + members.toString().substring(0, members.toString().length() - 1));
+      return ResultBuilder.createInfoResult(
+          "Destroyed "
+              + functionId
+              + " Successfully on "
+              + members.toString().substring(0, members.toString().length() - 1));
     } else {
       return ResultBuilder.createInfoResult("Failed in unregistering");
     }
   }
 
   @CliCommand(value = CliStrings.LIST_FUNCTION, help = CliStrings.LIST_FUNCTION__HELP)
-  @CliMetaData(relatedTopic = { CliStrings.TOPIC_GEODE_FUNCTION })
+  @CliMetaData(relatedTopic = {CliStrings.TOPIC_GEODE_FUNCTION})
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public Result listFunction(@CliOption(key = CliStrings.LIST_FUNCTION__MATCHES, help = CliStrings.LIST_FUNCTION__MATCHES__HELP) String matches, @CliOption(key = CliStrings.LIST_FUNCTION__GROUP, optionContext = ConverterHint.MEMBERGROUP, help = CliStrings.LIST_FUNCTION__GROUP__HELP) @CliMetaData(valueSeparator = ",") String groups, @CliOption(key = CliStrings.LIST_FUNCTION__MEMBER, optionContext = ConverterHint.MEMBERIDNAME, help = CliStrings.LIST_FUNCTION__MEMBER__HELP) @CliMetaData(valueSeparator = ",") String members) {
+  public Result listFunction(
+      @CliOption(
+            key = CliStrings.LIST_FUNCTION__MATCHES,
+            help = CliStrings.LIST_FUNCTION__MATCHES__HELP
+          )
+          String matches,
+      @CliOption(
+            key = CliStrings.LIST_FUNCTION__GROUP,
+            optionContext = ConverterHint.MEMBERGROUP,
+            help = CliStrings.LIST_FUNCTION__GROUP__HELP
+          )
+          @CliMetaData(valueSeparator = ",")
+          String groups,
+      @CliOption(
+            key = CliStrings.LIST_FUNCTION__MEMBER,
+            optionContext = ConverterHint.MEMBERIDNAME,
+            help = CliStrings.LIST_FUNCTION__MEMBER__HELP
+          )
+          @CliMetaData(valueSeparator = ",")
+          String members) {
     TabularResultData tabularData = ResultBuilder.createTabularResultData();
     boolean accumulatedData = false;
 
@@ -483,7 +710,8 @@ public class FunctionCommands implements CommandMarker {
     }
 
     try {
-      ResultCollector<?, ?> rc = CliUtil.executeFunction(this.listFunctionFunction, new Object[] { matches }, targetMembers);
+      ResultCollector<?, ?> rc =
+          CliUtil.executeFunction(this.listFunctionFunction, new Object[] {matches}, targetMembers);
       List<CliFunctionResult> results = CliFunctionResult.cleanResults((List<?>) rc.getResult());
 
       for (CliFunctionResult result : results) {
@@ -504,7 +732,8 @@ public class FunctionCommands implements CommandMarker {
       }
 
       if (!accumulatedData) {
-        return ResultBuilder.createInfoResult(CliStrings.LIST_FUNCTION__NO_FUNCTIONS_FOUND_ERROR_MESSAGE);
+        return ResultBuilder.createInfoResult(
+            CliStrings.LIST_FUNCTION__NO_FUNCTIONS_FOUND_ERROR_MESSAGE);
       }
       return ResultBuilder.buildResult(tabularData);
     } catch (VirtualMachineError e) {
@@ -512,11 +741,16 @@ public class FunctionCommands implements CommandMarker {
       throw e;
     } catch (Throwable th) {
       SystemFailure.checkFailure();
-      return ResultBuilder.createGemFireErrorResult("Exception while attempting to list functions: " + th.getMessage());
+      return ResultBuilder.createGemFireErrorResult(
+          "Exception while attempting to list functions: " + th.getMessage());
     }
   }
 
-  @CliAvailabilityIndicator({ CliStrings.EXECUTE_FUNCTION, CliStrings.DESTROY_FUNCTION, CliStrings.LIST_FUNCTION })
+  @CliAvailabilityIndicator({
+    CliStrings.EXECUTE_FUNCTION,
+    CliStrings.DESTROY_FUNCTION,
+    CliStrings.LIST_FUNCTION
+  })
   public boolean functionCommandsAvailable() {
     boolean isAvailable = true; //always available on server
     if (CliUtil.isGfshVM()) { //in gfsh check if connected

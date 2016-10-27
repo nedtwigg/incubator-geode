@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.partitioned;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
@@ -54,13 +52,11 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * The test creates two datastores with a partitioned region, and also running a
- * cache server each. A publisher client is connected to one server while a
- * subscriber client is connected to both the servers. The partitioned region
- * has entry expiry set with ttl of 3 seconds and action as DESTROY. The test
- * ensures that the EXPIRE_DESTROY events are propagated to the subscriber
- * client and the secondary server does process the QRMs for the EXPIRE_DESTROY
- * events.
+ * The test creates two datastores with a partitioned region, and also running a cache server each.
+ * A publisher client is connected to one server while a subscriber client is connected to both the
+ * servers. The partitioned region has entry expiry set with ttl of 3 seconds and action as DESTROY.
+ * The test ensures that the EXPIRE_DESTROY events are propagated to the subscriber client and the
+ * secondary server does process the QRMs for the EXPIRE_DESTROY events.
  */
 @Category(DistributedTest.class)
 @SuppressWarnings("serial")
@@ -90,9 +86,14 @@ public class Bug47388DUnitTest extends JUnit4DistributedTestCase {
     int port0 = (Integer) vm0.invoke(() -> Bug47388DUnitTest.createCacheServerWithPRDatastore());
     int port1 = (Integer) vm1.invoke(() -> Bug47388DUnitTest.createCacheServerWithPRDatastore());
 
-    vm2.invoke(Bug47388DUnitTest.class, "createClientCache", new Object[] { vm2.getHost(), new Integer[] { port0, port1 }, Boolean.TRUE });
-    vm3.invoke(Bug47388DUnitTest.class, "createClientCache", new Object[] { vm3.getHost(), new Integer[] { port0 }, Boolean.FALSE });
-
+    vm2.invoke(
+        Bug47388DUnitTest.class,
+        "createClientCache",
+        new Object[] {vm2.getHost(), new Integer[] {port0, port1}, Boolean.TRUE});
+    vm3.invoke(
+        Bug47388DUnitTest.class,
+        "createClientCache",
+        new Object[] {vm3.getHost(), new Integer[] {port0}, Boolean.FALSE});
   }
 
   @Override
@@ -123,7 +124,13 @@ public class Bug47388DUnitTest extends JUnit4DistributedTestCase {
 
     RegionFactory<String, String> rf = cache.createRegionFactory(RegionShortcut.PARTITION);
 
-    rf.setEntryTimeToLive(new ExpirationAttributes(3, ExpirationAction.DESTROY)).setPartitionAttributes(new PartitionAttributesFactory<String, String>().setRedundantCopies(1).setTotalNumBuckets(4).create()).setConcurrencyChecksEnabled(false);
+    rf.setEntryTimeToLive(new ExpirationAttributes(3, ExpirationAction.DESTROY))
+        .setPartitionAttributes(
+            new PartitionAttributesFactory<String, String>()
+                .setRedundantCopies(1)
+                .setTotalNumBuckets(4)
+                .create())
+        .setConcurrencyChecksEnabled(false);
 
     rf.create(REGION_NAME);
 
@@ -150,17 +157,19 @@ public class Bug47388DUnitTest extends JUnit4DistributedTestCase {
     }
     cache = (GemFireCacheImpl) ccf.create();
 
-    ClientRegionFactory<String, String> crf = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
+    ClientRegionFactory<String, String> crf =
+        cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
 
     if (doRI) {
-      crf.addCacheListener(new CacheListenerAdapter<String, String>() {
-        @Override
-        public void afterDestroy(EntryEvent<String, String> event) {
-          if (event.getKey().equalsIgnoreCase("LAST_KEY")) {
-            lastKeyDestroyed = true;
-          }
-        }
-      });
+      crf.addCacheListener(
+          new CacheListenerAdapter<String, String>() {
+            @Override
+            public void afterDestroy(EntryEvent<String, String> event) {
+              if (event.getKey().equalsIgnoreCase("LAST_KEY")) {
+                lastKeyDestroyed = true;
+              }
+            }
+          });
     }
 
     Region<String, String> region = crf.create(REGION_NAME);
@@ -184,60 +193,72 @@ public class Bug47388DUnitTest extends JUnit4DistributedTestCase {
   }
 
   public static Boolean isPrimaryServer() {
-    return ((CacheClientProxy) CacheClientNotifier.getInstance().getClientProxies().toArray()[0]).isPrimary();
+    return ((CacheClientProxy) CacheClientNotifier.getInstance().getClientProxies().toArray()[0])
+        .isPrimary();
   }
 
-  public static void verifyClientSubscriptionStats(final Boolean isPrimary, final Integer events) throws Exception {
+  public static void verifyClientSubscriptionStats(final Boolean isPrimary, final Integer events)
+      throws Exception {
 
-    WaitCriterion wc = new WaitCriterion() {
-      private long dispatched;
-      private long qrmed;
+    WaitCriterion wc =
+        new WaitCriterion() {
+          private long dispatched;
+          private long qrmed;
 
-      @Override
-      public boolean done() {
-        HARegionQueueStats stats = ((CacheClientProxy) CacheClientNotifier.getInstance().getClientProxies().toArray()[0]).getHARegionQueue().getStatistics();
+          @Override
+          public boolean done() {
+            HARegionQueueStats stats =
+                ((CacheClientProxy)
+                        CacheClientNotifier.getInstance().getClientProxies().toArray()[0])
+                    .getHARegionQueue()
+                    .getStatistics();
 
-        final int numOfEvents;
-        if (!isPrimary) {
-          numOfEvents = events - 1; // No marker
-        } else {
-          numOfEvents = events;
-        }
+            final int numOfEvents;
+            if (!isPrimary) {
+              numOfEvents = events - 1; // No marker
+            } else {
+              numOfEvents = events;
+            }
 
-        if (isPrimary) {
-          this.dispatched = stats.getEventsDispatched();
-          return numOfEvents == this.dispatched;
-        } else {
-          this.qrmed = stats.getEventsRemovedByQrm();
-          return this.qrmed == numOfEvents || (this.qrmed + 1) == numOfEvents;
-          // Why +1 above? Because sometimes(TODO: explain further) there may
-          // not be any QRM sent to the secondary for the last event dispatched
-          // at primary.
-        }
-      }
+            if (isPrimary) {
+              this.dispatched = stats.getEventsDispatched();
+              return numOfEvents == this.dispatched;
+            } else {
+              this.qrmed = stats.getEventsRemovedByQrm();
+              return this.qrmed == numOfEvents || (this.qrmed + 1) == numOfEvents;
+              // Why +1 above? Because sometimes(TODO: explain further) there may
+              // not be any QRM sent to the secondary for the last event dispatched
+              // at primary.
+            }
+          }
 
-      @Override
-      public String description() {
-        return "Expected events: " + events + " but actual eventsDispatched: " + this.dispatched + " and actual eventsRemovedByQrm: " + this.qrmed;
-      }
-    };
+          @Override
+          public String description() {
+            return "Expected events: "
+                + events
+                + " but actual eventsDispatched: "
+                + this.dispatched
+                + " and actual eventsRemovedByQrm: "
+                + this.qrmed;
+          }
+        };
 
     Wait.waitForCriterion(wc, 60 * 1000, 500, true);
   }
 
   public static void waitForLastKeyDestroyed() throws Exception {
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return lastKeyDestroyed;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return lastKeyDestroyed;
+          }
 
-      @Override
-      public String description() {
-        return "Last key's destroy not received";
-      }
-
-    };
+          @Override
+          public String description() {
+            return "Last key's destroy not received";
+          }
+        };
 
     Wait.waitForCriterion(wc, 60 * 1000, 500, true);
   }
@@ -247,8 +268,8 @@ public class Bug47388DUnitTest extends JUnit4DistributedTestCase {
   public void testQRMOfExpiredEventsProcessedSuccessfully() throws Exception {
     int numOfSets = 2, numOfPuts = 5;
     int totalEvents = 23; // = (numOfSets * numOfPuts) * 2 [eviction-destroys] +
-                          // 2 [last key's put and eviction-destroy] + 1 [marker
-                          // message]
+    // 2 [last key's put and eviction-destroy] + 1 [marker
+    // message]
     vm3.invoke(() -> Bug47388DUnitTest.doPuts(numOfSets, numOfPuts));
 
     boolean isvm0Primary = (Boolean) vm0.invoke(() -> Bug47388DUnitTest.isPrimaryServer());

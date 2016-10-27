@@ -17,25 +17,19 @@
 package org.apache.geode.internal.offheap;
 
 /**
- * A "slab" of memory.
- * Slabs can be created by calling {@link AddressableMemoryManager#allocateSlab(int)}.
- * Slabs have an address, a size, and can be freed.
+ * A "slab" of memory. Slabs can be created by calling {@link
+ * AddressableMemoryManager#allocateSlab(int)}. Slabs have an address, a size, and can be freed.
  */
 public interface Slab {
-  /**
-   * Return the address of the memory of this slab.
-   */
+  /** Return the address of the memory of this slab. */
   public long getMemoryAddress();
 
-  /**
-   * Returns the size of this memory chunk in bytes.
-   */
+  /** Returns the size of this memory chunk in bytes. */
   public int getSize();
 
   /**
-   * Returns any memory allocated for this slab.
-   * Note that after free is called the address of
-   * this slab should no longer be used.
+   * Returns any memory allocated for this slab. Note that after free is called the address of this
+   * slab should no longer be used.
    */
   public void free();
 }

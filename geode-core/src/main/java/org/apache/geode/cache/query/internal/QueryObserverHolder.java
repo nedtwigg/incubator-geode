@@ -17,46 +17,34 @@
 package org.apache.geode.cache.query.internal;
 
 /**
- * This class is intended to hold a single 'observer' which will receive
- * callbacks from the query subsystem when various events take place. There can
- * be only one such observer at a time. If no observer is needed, this member
- * variable should point to an object with 'do-nothing' methods, such as
- * QueryObserverAdapter.
- * 
- * Code which wishes to observe events during a query should do so using the
- * following technique:
- * 
- * class MyQueryObserver extends QueryObserverAdapter { // ... override methods
- * of interest ... }
- * 
- * QueryObserver old = QueryObserverHolder.setInstance(new MyQueryObserver());
- * try { //... call query methods here ... } finally { // reset to the original
- * QueryObserver. QueryObserverHolder.setInstance(old); }
- * 
- * The query code will call methods on this static member using the following
- * technique:
- * 
- * QueryObserver observer = QueryObserverHolder.getInstance(); try {
- * observer.startMethod(arguments); doSomething(); } finally {
- * observer.stopMethod(arguments); }
- * 
+ * This class is intended to hold a single 'observer' which will receive callbacks from the query
+ * subsystem when various events take place. There can be only one such observer at a time. If no
+ * observer is needed, this member variable should point to an object with 'do-nothing' methods,
+ * such as QueryObserverAdapter.
+ *
+ * <p>Code which wishes to observe events during a query should do so using the following technique:
+ *
+ * <p>class MyQueryObserver extends QueryObserverAdapter { // ... override methods of interest ... }
+ *
+ * <p>QueryObserver old = QueryObserverHolder.setInstance(new MyQueryObserver()); try { //... call
+ * query methods here ... } finally { // reset to the original QueryObserver.
+ * QueryObserverHolder.setInstance(old); }
+ *
+ * <p>The query code will call methods on this static member using the following technique:
+ *
+ * <p>QueryObserver observer = QueryObserverHolder.getInstance(); try {
+ * observer.startMethod(arguments); doSomething(); } finally { observer.stopMethod(arguments); }
+ *
  * @version $Revision: 1.1 $
  */
 public final class QueryObserverHolder {
 
-  /**
-   * The default 'do-nothing' query observer *
-   */
+  /** The default 'do-nothing' query observer * */
   private static final QueryObserver NO_OBSERVER = new QueryObserverAdapter();
-  /**
-   * The current observer which will be notified of all query events.
-   */
+  /** The current observer which will be notified of all query events. */
   private static QueryObserver _instance = NO_OBSERVER;
 
-  /**
-   * Set the given observer to be notified of query events. Returns the current
-   * observer.
-   */
+  /** Set the given observer to be notified of query events. Returns the current observer. */
   public static final QueryObserver setInstance(QueryObserver observer) {
     Support.assertArg(observer != null, "setInstance expects a non-null argument!");
     QueryObserver oldObserver = _instance;
@@ -73,9 +61,7 @@ public final class QueryObserverHolder {
     return _instance;
   }
 
-  /**
-   * Only for test purposes.
-   */
+  /** Only for test purposes. */
   public static final void reset() {
     _instance = NO_OBSERVER;
   }

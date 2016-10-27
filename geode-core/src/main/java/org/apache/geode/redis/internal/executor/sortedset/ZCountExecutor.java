@@ -96,11 +96,19 @@ public class ZCountExecutor extends SortedSetExecutor {
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), count));
   }
 
-  private int getCount(ByteArrayWrapper key, Region<ByteArrayWrapper, DoubleWrapper> keyRegion, ExecutionHandlerContext context, double start, double stop, boolean startInclusive, boolean stopInclusive) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  private int getCount(
+      ByteArrayWrapper key,
+      Region<ByteArrayWrapper, DoubleWrapper> keyRegion,
+      ExecutionHandlerContext context,
+      double start,
+      double stop,
+      boolean startInclusive,
+      boolean stopInclusive)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     if (start == Double.NEGATIVE_INFINITY && stop == Double.POSITIVE_INFINITY)
       return keyRegion.size();
-    else if (start == Double.POSITIVE_INFINITY || stop == Double.NEGATIVE_INFINITY)
-      return 0;
+    else if (start == Double.POSITIVE_INFINITY || stop == Double.NEGATIVE_INFINITY) return 0;
 
     Query query;
     Object[] params;
@@ -110,14 +118,14 @@ public class ZCountExecutor extends SortedSetExecutor {
       } else {
         query = getQuery(key, SortedSetQuery.ZCOUNTNINF, context);
       }
-      params = new Object[] { stop };
+      params = new Object[] {stop};
     } else if (stop == Double.POSITIVE_INFINITY) {
       if (startInclusive) {
         query = getQuery(key, SortedSetQuery.ZCOUNTPINFI, context);
       } else {
         query = getQuery(key, SortedSetQuery.ZCOUNTPINF, context);
       }
-      params = new Object[] { start };
+      params = new Object[] {start};
     } else {
       if (startInclusive) {
         if (stopInclusive) {
@@ -132,12 +140,11 @@ public class ZCountExecutor extends SortedSetExecutor {
           query = getQuery(key, SortedSetQuery.ZCOUNT, context);
         }
       }
-      params = new Object[] { start, stop };
+      params = new Object[] {start, stop};
     }
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
 
     return (Integer) results.asList().get(0);
   }
-
 }

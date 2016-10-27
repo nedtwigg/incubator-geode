@@ -28,10 +28,9 @@ import org.apache.geode.experimental.nonexperimentalpackage.ClassInNonExperiment
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * Unit tests for the <tt>Experimental</tt> annotation. Verifies that the
- * annotation can be applied to Interfaces, Classes, Public and Protected
- * Fields, Enums, Enum Constants, Public and Protected Methods, Packages,
- * and Constructors.
+ * Unit tests for the <tt>Experimental</tt> annotation. Verifies that the annotation can be applied
+ * to Interfaces, Classes, Public and Protected Fields, Enums, Enum Constants, Public and Protected
+ * Methods, Packages, and Constructors.
  */
 @Category(UnitTest.class)
 public class ExperimentalJUnitTest {
@@ -60,7 +59,8 @@ public class ExperimentalJUnitTest {
   @Test
   public void shouldIdentifyExperimentalProtectedField() throws Exception {
     assertThat(isExperimental(RegularProtectedField.class.getDeclaredField(FIELD_NAME))).isFalse();
-    assertThat(isExperimental(ExperimentalProtectedField.class.getDeclaredField(FIELD_NAME))).isTrue();
+    assertThat(isExperimental(ExperimentalProtectedField.class.getDeclaredField(FIELD_NAME)))
+        .isTrue();
   }
 
   @Test
@@ -71,8 +71,12 @@ public class ExperimentalJUnitTest {
 
   @Test
   public void shouldIdentifyExperimentalEnumConstant() throws Exception {
-    assertThat(isExperimental(RegularEnumInstance.class.getField(RegularEnumInstance.THREE.name()))).isFalse();
-    assertThat(isExperimental(ExperimentalEnumInstance.class.getField(ExperimentalEnumInstance.THREE.name()))).isTrue();
+    assertThat(isExperimental(RegularEnumInstance.class.getField(RegularEnumInstance.THREE.name())))
+        .isFalse();
+    assertThat(
+            isExperimental(
+                ExperimentalEnumInstance.class.getField(ExperimentalEnumInstance.THREE.name())))
+        .isTrue();
   }
 
   @Test
@@ -83,8 +87,10 @@ public class ExperimentalJUnitTest {
 
   @Test
   public void shouldIdentifyExperimentalProtectedMethod() throws Exception {
-    assertThat(isExperimental(RegularProtectedMethod.class.getDeclaredMethod(METHOD_NAME))).isFalse();
-    assertThat(isExperimental(ExperimentalProtectedMethod.class.getDeclaredMethod(METHOD_NAME))).isTrue();
+    assertThat(isExperimental(RegularProtectedMethod.class.getDeclaredMethod(METHOD_NAME)))
+        .isFalse();
+    assertThat(isExperimental(ExperimentalProtectedMethod.class.getDeclaredMethod(METHOD_NAME)))
+        .isTrue();
   }
 
   @Test
@@ -109,19 +115,15 @@ public class ExperimentalJUnitTest {
     return element.getAnnotation(Experimental.class) != null;
   }
 
-  public static interface RegularInterface {
-  }
+  public static interface RegularInterface {}
 
   @Experimental("This is an experimental interface")
-  public static interface ExperimentalInterface {
-  }
+  public static interface ExperimentalInterface {}
 
-  public static class RegularClass {
-  }
+  public static class RegularClass {}
 
   @Experimental("This is an experimental class")
-  public static class ExperimentalClass {
-  }
+  public static class ExperimentalClass {}
 
   public static class RegularPublicField {
     public final boolean field = false;
@@ -142,63 +144,64 @@ public class ExperimentalJUnitTest {
   }
 
   public static enum RegularEnum {
-    ONE, TWO, THREE
+    ONE,
+    TWO,
+    THREE
   }
 
   @Experimental("This is an experimental enum")
   public static enum ExperimentalEnum {
-    ONE, TWO, THREE
+    ONE,
+    TWO,
+    THREE
   }
 
   public static enum RegularEnumInstance {
-    ONE, TWO, THREE
+    ONE,
+    TWO,
+    THREE
   }
 
   public static enum ExperimentalEnumInstance {
-    ONE, TWO, @Experimental("This is an experimental enum constant") THREE
+    ONE,
+    TWO,
+    @Experimental("This is an experimental enum constant")
+    THREE
   }
 
   public static class RegularPublicMethod {
-    public void method() {
-    }
+    public void method() {}
   }
 
   public static class ExperimentalPublicMethod {
     @Experimental("This is an experimental public method")
-    public void method() {
-    }
+    public void method() {}
   }
 
   public static class RegularProtectedMethod {
-    public void method() {
-    }
+    public void method() {}
   }
 
   public static class ExperimentalProtectedMethod {
     @Experimental("This is an experimental protected method")
-    protected void method() {
-    }
+    protected void method() {}
   }
 
   public static class RegularPublicConstructor {
-    public RegularPublicConstructor() {
-    }
+    public RegularPublicConstructor() {}
   }
 
   public static class ExperimentalPublicConstructor {
     @Experimental("This is an experimental public constructor")
-    public ExperimentalPublicConstructor() {
-    }
+    public ExperimentalPublicConstructor() {}
   }
 
   public static class RegularProtectedConstructor {
-    public RegularProtectedConstructor() {
-    }
+    public RegularProtectedConstructor() {}
   }
 
   public static class ExperimentalProtectedConstructor {
     @Experimental("This is an experimental protected constructor")
-    public ExperimentalProtectedConstructor() {
-    }
+    public ExperimentalProtectedConstructor() {}
   }
 }

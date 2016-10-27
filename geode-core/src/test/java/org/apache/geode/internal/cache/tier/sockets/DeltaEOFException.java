@@ -25,8 +25,9 @@ import org.apache.geode.InvalidDeltaException;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 /**
- * Faulty delta implementation, raising EndOfFile exception as
- * fromDelta reads more fields then wrote by toDelta
+ * Faulty delta implementation, raising EndOfFile exception as fromDelta reads more fields then
+ * wrote by toDelta
+ *
  * @since GemFire 6.1
  */
 public class DeltaEOFException extends FaultyDelta {
@@ -38,19 +39,29 @@ public class DeltaEOFException extends FaultyDelta {
       if (deltaBits != 0) {
         if ((deltaBits & INT_MASK) == INT_MASK) {
           this.intVal = DataSerializer.readPrimitiveInt(in);
-          GemFireCacheImpl.getInstance().getLogger().fine(" Applied delta on DeltaImpl's field 'intVal' = " + this.intVal);
+          GemFireCacheImpl.getInstance()
+              .getLogger()
+              .fine(" Applied delta on DeltaImpl's field 'intVal' = " + this.intVal);
         }
         if ((deltaBits & BIG_OBJECT_MASK) == BIG_OBJECT_MASK) {
           this.bigObj = DataSerializer.readByteArray(in);
-          GemFireCacheImpl.getInstance().getLogger().fine(" Applied delta on DeltaImpl's field 'bigObj' = {" + this.bigObj[0] + " " + this.bigObj[1] + "}");
+          GemFireCacheImpl.getInstance()
+              .getLogger()
+              .fine(
+                  " Applied delta on DeltaImpl's field 'bigObj' = {"
+                      + this.bigObj[0]
+                      + " "
+                      + this.bigObj[1]
+                      + "}");
         }
         if ((deltaBits | COMPLETE_MASK) != COMPLETE_MASK) {
           GemFireCacheImpl.getInstance().getLogger().fine(" <unknown field code>");
-          throw new IllegalArgumentException("DeltaImpl.fromDelta(): Unknown field code, " + deltaBits);
+          throw new IllegalArgumentException(
+              "DeltaImpl.fromDelta(): Unknown field code, " + deltaBits);
         }
       }
       /* we are reading addition field here. Its is done
-       intentionly to produce faulty fromDelta implementation*/
+      intentionly to produce faulty fromDelta implementation*/
       DataSerializer.readByte(in);
 
       GemFireCacheImpl.getInstance().getLogger().fine(" Reading extra DeltaObj's field 'byte' ");
@@ -68,11 +79,20 @@ public class DeltaEOFException extends FaultyDelta {
       DataSerializer.writeByte(this.deltaBits, out);
       GemFireCacheImpl.getInstance().getLogger().fine("Extracting delta from " + this.toString());
       if ((deltaBits & INT_MASK) == INT_MASK) {
-        GemFireCacheImpl.getInstance().getLogger().fine(" Extracted delta from DeltaObj's field 'intVal' = " + this.intVal);
+        GemFireCacheImpl.getInstance()
+            .getLogger()
+            .fine(" Extracted delta from DeltaObj's field 'intVal' = " + this.intVal);
         DataSerializer.writePrimitiveInt(this.intVal, out);
       }
       if ((deltaBits & BIG_OBJECT_MASK) == BIG_OBJECT_MASK) {
-        GemFireCacheImpl.getInstance().getLogger().fine(" Extracted delta from DeltaObj's field 'bigObj' = {" + this.bigObj[0] + " " + this.bigObj[1] + "}");
+        GemFireCacheImpl.getInstance()
+            .getLogger()
+            .fine(
+                " Extracted delta from DeltaObj's field 'bigObj' = {"
+                    + this.bigObj[0]
+                    + " "
+                    + this.bigObj[1]
+                    + "}");
         DataSerializer.writeByteArray(this.bigObj, out);
       }
       if ((deltaBits | COMPLETE_MASK) != COMPLETE_MASK) {
@@ -88,6 +108,5 @@ public class DeltaEOFException extends FaultyDelta {
       GemFireCacheImpl.getInstance().getLogger().warning("DeltaObj.toDelta(): " + iae);
       throw new InvalidDeltaException(iae);
     }
-
   }
 }

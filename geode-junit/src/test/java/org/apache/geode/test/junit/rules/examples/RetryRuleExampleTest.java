@@ -25,16 +25,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-/**
- * Example usage of {@link RetryRule} with global scope.
- */
+/** Example usage of {@link RetryRule} with global scope. */
 @Category(UnitTest.class)
 public class RetryRuleExampleTest {
 
   private static int count = 0;
 
-  @Rule
-  public RetryRule retry = new RetryRule(2);
+  @Rule public RetryRule retry = new RetryRule(2);
 
   @BeforeClass
   public static void beforeClass() {

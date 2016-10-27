@@ -21,7 +21,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.geode.internal.cache.wan.AbstractGatewaySender;
 import org.apache.geode.internal.logging.LogService;
 
-public class RemoteConcurrentSerialGatewaySenderEventProcessor extends ConcurrentSerialGatewaySenderEventProcessor {
+public class RemoteConcurrentSerialGatewaySenderEventProcessor
+    extends ConcurrentSerialGatewaySenderEventProcessor {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -38,5 +39,4 @@ public class RemoteConcurrentSerialGatewaySenderEventProcessor extends Concurren
       }
     }
   }
-
 }

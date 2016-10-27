@@ -46,9 +46,7 @@ import org.apache.geode.internal.cache.PartitionedRegion;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.cache.query.data.TestData.MyValue;
 
-/**
- * Tests reported bugs
- */
+/** Tests reported bugs */
 @Category(IntegrationTest.class)
 public class BugJUnitTest {
   Region region;
@@ -56,8 +54,7 @@ public class BugJUnitTest {
   QueryService qs;
   Cache cache;
 
-  public BugJUnitTest() {
-  }
+  public BugJUnitTest() {}
 
   @Before
   public void setUp() throws Exception {
@@ -87,7 +84,8 @@ public class BugJUnitTest {
   public void testBug41509() throws Exception {
     // Create Index.
     try {
-      this.qs.createIndex("pos1_secIdIndex", IndexType.FUNCTIONAL, "p1.position1.secId", "/pos1 p1");
+      this.qs.createIndex(
+          "pos1_secIdIndex", IndexType.FUNCTIONAL, "p1.position1.secId", "/pos1 p1");
       this.qs.createIndex("pos1_IdIndex", IndexType.FUNCTIONAL, "p1.position1.Id", "/pos1 p1");
       this.qs.createIndex("pos_IdIndex", IndexType.FUNCTIONAL, "p.position1.Id", "/pos p");
     } catch (Exception ex) {
@@ -95,7 +93,9 @@ public class BugJUnitTest {
     }
     // Execute Query.
     try {
-      String queryStr = "select distinct * from /pos p, /pos1 p1 where " + "p.position1.Id = p1.position1.Id and p1.position1.secId in set('MSFT')";
+      String queryStr =
+          "select distinct * from /pos p, /pos1 p1 where "
+              + "p.position1.Id = p1.position1.Id and p1.position1.secId in set('MSFT')";
       Query q = qs.newQuery(queryStr);
       CacheUtils.getLogger().fine("Executing:" + queryStr);
       q.execute();
@@ -109,7 +109,16 @@ public class BugJUnitTest {
    */
   @Test
   public void testBug32429() throws Exception {
-    String[] queries = new String[] { "SELECT DISTINCT * FROM /pos where NOT(SELECT DISTINCT * FROM /pos p where p.ID = 0).isEmpty", "-- AMBIGUOUS\n" + "import org.apache.geode.cache.\"query\".data.Portfolio; " + "SELECT DISTINCT * FROM /pos TYPE Portfolio where status = ELEMENT(SELECT DISTINCT * FROM /pos p TYPE Portfolio where ID = 0).status", "SELECT DISTINCT * FROM /pos where status = ELEMENT(SELECT DISTINCT * FROM /pos p where p.ID = 0).status", "SELECT DISTINCT * FROM /pos x where status = ELEMENT(SELECT DISTINCT * FROM /pos p where p.ID = x.ID).status", "SELECT DISTINCT * FROM /pos x where status = ELEMENT(SELECT DISTINCT * FROM /pos p where p.ID = 0).status", };
+    String[] queries =
+        new String[] {
+          "SELECT DISTINCT * FROM /pos where NOT(SELECT DISTINCT * FROM /pos p where p.ID = 0).isEmpty",
+          "-- AMBIGUOUS\n"
+              + "import org.apache.geode.cache.\"query\".data.Portfolio; "
+              + "SELECT DISTINCT * FROM /pos TYPE Portfolio where status = ELEMENT(SELECT DISTINCT * FROM /pos p TYPE Portfolio where ID = 0).status",
+          "SELECT DISTINCT * FROM /pos where status = ELEMENT(SELECT DISTINCT * FROM /pos p where p.ID = 0).status",
+          "SELECT DISTINCT * FROM /pos x where status = ELEMENT(SELECT DISTINCT * FROM /pos p where p.ID = x.ID).status",
+          "SELECT DISTINCT * FROM /pos x where status = ELEMENT(SELECT DISTINCT * FROM /pos p where p.ID = 0).status",
+        };
 
     for (int i = 0; i < queries.length; i++) {
       Object r = null;
@@ -118,14 +127,11 @@ public class BugJUnitTest {
       CacheUtils.getLogger().fine("Executing:" + queryStr);
       try {
         r = q.execute();
-        if (i == 1)
-          fail("should have thrown an AmbiguousNameException");
+        if (i == 1) fail("should have thrown an AmbiguousNameException");
       } catch (AmbiguousNameException e) {
-        if (i != 1)
-          throw e; // if it's 1 then pass 
+        if (i != 1) throw e; // if it's 1 then pass
       }
-      if (r != null)
-        CacheUtils.getLogger().fine(Utils.printResult(r));
+      if (r != null) CacheUtils.getLogger().fine(Utils.printResult(r));
     }
   }
 
@@ -137,7 +143,9 @@ public class BugJUnitTest {
     Query q;
     Object r;
 
-    queryStr = "import org.apache.geode.cache.\"query\".data.Portfolio; " + "select distinct * from /pos, (select distinct * from /pos p TYPE Portfolio, p.positions where value!=null)";
+    queryStr =
+        "import org.apache.geode.cache.\"query\".data.Portfolio; "
+            + "select distinct * from /pos, (select distinct * from /pos p TYPE Portfolio, p.positions where value!=null)";
     q = qs.newQuery(queryStr);
     //    DebuggerSupport.waitForJavaDebugger(cache.getLogger());
     CacheUtils.getLogger().fine(queryStr);
@@ -166,7 +174,7 @@ public class BugJUnitTest {
     assertEquals(expectedSet, ((SelectResults) r).asSet());
 
     // the following queries still fail because there is more than one
-    // untyped iterator:    
+    // untyped iterator:
     queryStr = "Select distinct value.secId from /pos , positions";
     q = qs.newQuery(queryStr);
     try {
@@ -192,7 +200,7 @@ public class BugJUnitTest {
     queryStr = "Select distinct value.secId from /pos , getPositions($1)";
     q = qs.newQuery(queryStr);
     try {
-      r = q.execute(new Object[] { new Integer(23) });
+      r = q.execute(new Object[] {new Integer(23)});
       fail("Expected a TypeMismatchException due to bug 32251");
       CacheUtils.getLogger().fine(queryStr);
       CacheUtils.getLogger().fine(Utils.printResult(r));
@@ -208,20 +216,23 @@ public class BugJUnitTest {
     CacheUtils.getLogger().fine(queryStr);
     CacheUtils.getLogger().fine(Utils.printResult(r));
 
-    queryStr = "import org.apache.geode.cache.\"query\".data.Position;" + "select distinct value.secId from /pos, (map<string, Position>)getPositions(23)";
+    queryStr =
+        "import org.apache.geode.cache.\"query\".data.Position;"
+            + "select distinct value.secId from /pos, (map<string, Position>)getPositions(23)";
     q = qs.newQuery(queryStr);
     //    DebuggerSupport.waitForJavaDebugger(cache.getLogger());
     r = q.execute();
     CacheUtils.getLogger().fine(queryStr);
     CacheUtils.getLogger().fine(Utils.printResult(r));
 
-    queryStr = "import java.util.Map$Entry as Entry;" + "select distinct value.secId from /pos, getPositions(23) type Entry";
+    queryStr =
+        "import java.util.Map$Entry as Entry;"
+            + "select distinct value.secId from /pos, getPositions(23) type Entry";
     //    DebuggerSupport.waitForJavaDebugger(cache.getLogger());
     q = qs.newQuery(queryStr);
     r = q.execute();
     CacheUtils.getLogger().fine(queryStr);
     CacheUtils.getLogger().fine(Utils.printResult(r));
-
   }
 
   @Test
@@ -231,9 +242,7 @@ public class BugJUnitTest {
     this.region.put("0", new Portfolio(0));
   }
 
-  /**
-   * This bug was occuring in simulation of Outer Join query for Schwab
-   */
+  /** This bug was occuring in simulation of Outer Join query for Schwab */
   @Test
   public void testBugResultMismatch() {
     try {
@@ -244,8 +253,11 @@ public class BugJUnitTest {
       region.put("2", new Portfolio(2));
       region.put("3", new Portfolio(3));
       qs.createIndex("index1", IndexType.FUNCTIONAL, "status", "/portfolios pf");
-      String query1 = "SELECT   DISTINCT iD as portfolio_id, pos.secId as sec_id from /portfolios p , p.positions.values pos  where p.status= 'active'";
-      String query2 = "select  DISTINCT * from  " + "( SELECT   DISTINCT iD as portfolio_id, pos.secId as sec_id from /portfolios p , p.positions.values pos where p.status= 'active')";
+      String query1 =
+          "SELECT   DISTINCT iD as portfolio_id, pos.secId as sec_id from /portfolios p , p.positions.values pos  where p.status= 'active'";
+      String query2 =
+          "select  DISTINCT * from  "
+              + "( SELECT   DISTINCT iD as portfolio_id, pos.secId as sec_id from /portfolios p , p.positions.values pos where p.status= 'active')";
 
       Query q1 = CacheUtils.getQueryService().newQuery(query1);
       Query q2 = CacheUtils.getQueryService().newQuery(query2);
@@ -257,14 +269,14 @@ public class BugJUnitTest {
       e.printStackTrace();
       fail("Test failed due to exception= " + e);
     }
-
   }
 
   @Test
   public void testBug36659() throws Exception {
     // Task ID: NQIU 9
     CacheUtils.getQueryService();
-    String queries = "select distinct p.x from (select distinct x, pos from /pos x, x.positions.values pos) p, (select distinct * from /pos/positions rtPos where rtPos.secId = p.pos.secId)";
+    String queries =
+        "select distinct p.x from (select distinct x, pos from /pos x, x.positions.values pos) p, (select distinct * from /pos/positions rtPos where rtPos.secId = p.pos.secId)";
     Region r = CacheUtils.getRegion("/pos");
     Region r1 = r.createSubregion("positions", new AttributesFactory().createRegionAttributes());
 
@@ -286,10 +298,7 @@ public class BugJUnitTest {
     }
   }
 
-  /**
-   * Tests the Bug 38422 where the index results intersection results in
-   * incorrect size
-   */
+  /** Tests the Bug 38422 where the index results intersection results in incorrect size */
   @Test
   public void testBug38422() {
     try {
@@ -298,7 +307,7 @@ public class BugJUnitTest {
       Region rgn = CacheUtils.getRegion("/pos");
       //The region already contains 3 Portfolio object. The 4th Portfolio object
       // has its status field explictly made null.  Thus the query below will result
-      // in intersection of two non empty sets. One which contains 4th Portfolio 
+      // in intersection of two non empty sets. One which contains 4th Portfolio
       //object containing null status & the second condition does not contain the
       // 4th portfolio object
       Portfolio pf = new Portfolio(4);
@@ -329,42 +338,49 @@ public class BugJUnitTest {
   public void testEquijoinPRColocatedQuery_1() throws Exception {
 
     AttributesFactory factory = new AttributesFactory();
-    factory.setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(1).setTotalNumBuckets(40).setPartitionResolver(new PartitionResolver() {
+    factory.setPartitionAttributes(
+        new PartitionAttributesFactory()
+            .setRedundantCopies(1)
+            .setTotalNumBuckets(40)
+            .setPartitionResolver(
+                new PartitionResolver() {
 
-      public String getName() {
-        return "blah";
-      }
+                  public String getName() {
+                    return "blah";
+                  }
 
-      public Serializable getRoutingObject(EntryOperation opDetails) {
-        return (Serializable) opDetails.getKey();
-      }
+                  public Serializable getRoutingObject(EntryOperation opDetails) {
+                    return (Serializable) opDetails.getKey();
+                  }
 
-      public void close() {
-
-      }
-
-    }).create());
-    PartitionedRegion pr1 = (PartitionedRegion) CacheUtils.getCache().createRegion("pr1", factory.create());
+                  public void close() {}
+                })
+            .create());
+    PartitionedRegion pr1 =
+        (PartitionedRegion) CacheUtils.getCache().createRegion("pr1", factory.create());
     factory = new AttributesFactory();
-    factory.setPartitionAttributes(new PartitionAttributesFactory()
+    factory.setPartitionAttributes(
+        new PartitionAttributesFactory()
+            .setRedundantCopies(1)
+            .setTotalNumBuckets(40)
+            .setPartitionResolver(
+                new PartitionResolver() {
 
-        .setRedundantCopies(1).setTotalNumBuckets(40).setPartitionResolver(new PartitionResolver() {
+                  public String getName() {
+                    return "blah";
+                  }
 
-          public String getName() {
-            return "blah";
-          }
+                  public Serializable getRoutingObject(EntryOperation opDetails) {
+                    return (Serializable) opDetails.getKey();
+                  }
 
-          public Serializable getRoutingObject(EntryOperation opDetails) {
-            return (Serializable) opDetails.getKey();
-          }
+                  public void close() {}
+                })
+            .setColocatedWith(pr1.getName())
+            .create());
 
-          public void close() {
-
-          }
-
-        }).setColocatedWith(pr1.getName()).create());
-
-    final PartitionedRegion pr2 = (PartitionedRegion) CacheUtils.getCache().createRegion("pr2", factory.create());
+    final PartitionedRegion pr2 =
+        (PartitionedRegion) CacheUtils.getCache().createRegion("pr2", factory.create());
 
     createAllNumPRAndEvenNumPR(pr1, pr2, 80);
     Set<Integer> set = createAndPopulateSet(15);
@@ -376,56 +392,63 @@ public class BugJUnitTest {
 
     qs.createIndex("valueIndex", IndexType.FUNCTIONAL, "e.value", "/pr1 e");
     qs.createIndex("valueIndex", IndexType.FUNCTIONAL, "e.value", "/pr2 e");
-    String query = "select distinct e1.value from /pr1 e1, " + "/pr2  e2" + " where e1.value=e2.value";
+    String query =
+        "select distinct e1.value from /pr1 e1, " + "/pr2  e2" + " where e1.value=e2.value";
     DefaultQuery cury = (DefaultQuery) CacheUtils.getQueryService().newQuery(query);
     SelectResults r = (SelectResults) lds.executeQuery(cury, null, set);
 
     if (!observer.isIndexesUsed) {
       fail("Indexes should have been used");
     }
-
   }
 
   @Test
   public void testEquijoinPRColocatedQuery_2() throws Exception {
 
     AttributesFactory factory = new AttributesFactory();
-    factory.setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(1).setTotalNumBuckets(40).setPartitionResolver(new PartitionResolver() {
+    factory.setPartitionAttributes(
+        new PartitionAttributesFactory()
+            .setRedundantCopies(1)
+            .setTotalNumBuckets(40)
+            .setPartitionResolver(
+                new PartitionResolver() {
 
-      public String getName() {
-        return "blah";
-      }
+                  public String getName() {
+                    return "blah";
+                  }
 
-      public Serializable getRoutingObject(EntryOperation opDetails) {
-        return (Serializable) opDetails.getKey();
-      }
+                  public Serializable getRoutingObject(EntryOperation opDetails) {
+                    return (Serializable) opDetails.getKey();
+                  }
 
-      public void close() {
-
-      }
-
-    }).create());
-    PartitionedRegion pr1 = (PartitionedRegion) CacheUtils.getCache().createRegion("pr1", factory.create());
+                  public void close() {}
+                })
+            .create());
+    PartitionedRegion pr1 =
+        (PartitionedRegion) CacheUtils.getCache().createRegion("pr1", factory.create());
     factory = new AttributesFactory();
-    factory.setPartitionAttributes(new PartitionAttributesFactory()
+    factory.setPartitionAttributes(
+        new PartitionAttributesFactory()
+            .setRedundantCopies(1)
+            .setTotalNumBuckets(40)
+            .setPartitionResolver(
+                new PartitionResolver() {
 
-        .setRedundantCopies(1).setTotalNumBuckets(40).setPartitionResolver(new PartitionResolver() {
+                  public String getName() {
+                    return "blah";
+                  }
 
-          public String getName() {
-            return "blah";
-          }
+                  public Serializable getRoutingObject(EntryOperation opDetails) {
+                    return (Serializable) opDetails.getKey();
+                  }
 
-          public Serializable getRoutingObject(EntryOperation opDetails) {
-            return (Serializable) opDetails.getKey();
-          }
+                  public void close() {}
+                })
+            .setColocatedWith(pr1.getName())
+            .create());
 
-          public void close() {
-
-          }
-
-        }).setColocatedWith(pr1.getName()).create());
-
-    final PartitionedRegion pr2 = (PartitionedRegion) CacheUtils.getCache().createRegion("pr2", factory.create());
+    final PartitionedRegion pr2 =
+        (PartitionedRegion) CacheUtils.getCache().createRegion("pr2", factory.create());
 
     createAllNumPRAndEvenNumPR(pr1, pr2, 80);
     Set<Integer> set = createAndPopulateSet(15);
@@ -437,23 +460,26 @@ public class BugJUnitTest {
 
     qs.createIndex("valueIndex", IndexType.FUNCTIONAL, "e.value", "/pr1.entries e");
     qs.createIndex("valueIndex", IndexType.FUNCTIONAL, "e.value", "/pr2.entries e");
-    String query = "select distinct e1.key from /pr1.entries e1,/pr2.entries  e2" + " where e1.value=e2.value";
+    String query =
+        "select distinct e1.key from /pr1.entries e1,/pr2.entries  e2" + " where e1.value=e2.value";
     DefaultQuery cury = (DefaultQuery) CacheUtils.getQueryService().newQuery(query);
     SelectResults r = (SelectResults) lds.executeQuery(cury, null, set);
 
     if (!observer.isIndexesUsed) {
       fail("Indexes should have been used");
     }
-
   }
 
-  private void createAllNumPRAndEvenNumPR(final PartitionedRegion pr1, final PartitionedRegion pr2, final int range) {
-    IntStream.rangeClosed(1, range).forEach(i -> {
-      pr1.put(i, new MyValue(i));
-      if (i % 2 == 0) {
-        pr2.put(i, new MyValue(i));
-      }
-    });
+  private void createAllNumPRAndEvenNumPR(
+      final PartitionedRegion pr1, final PartitionedRegion pr2, final int range) {
+    IntStream.rangeClosed(1, range)
+        .forEach(
+            i -> {
+              pr1.put(i, new MyValue(i));
+              if (i % 2 == 0) {
+                pr2.put(i, new MyValue(i));
+              }
+            });
   }
 
   class QueryObserverImpl extends QueryObserverAdapter {
@@ -475,5 +501,4 @@ public class BugJUnitTest {
       }
     }
   }
-
 }

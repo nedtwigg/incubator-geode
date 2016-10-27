@@ -28,5 +28,4 @@ public class VMVersionTagTest extends AbstractVersionTagTestBase {
   protected VersionTag createVersionTag() {
     return new VMVersionTag();
   }
-
 }

@@ -20,28 +20,25 @@ import org.apache.geode.management.internal.security.ResourceOperation;
 import org.apache.geode.security.ResourcePermission.Operation;
 import org.apache.geode.security.ResourcePermission.Resource;
 
-/**
- * MBean that provides access to the {@link org.apache.geode.cache.lucene.LuceneService}.
- */
+/** MBean that provides access to the {@link org.apache.geode.cache.lucene.LuceneService}. */
 @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
 public interface LuceneServiceMXBean {
 
   /**
-   * Returns an array of {@link LuceneIndexMetrics} for the {@link org.apache.geode.cache.lucene.LuceneIndex}
-   * instances defined in this member
+   * Returns an array of {@link LuceneIndexMetrics} for the {@link
+   * org.apache.geode.cache.lucene.LuceneIndex} instances defined in this member
    *
    * @return an array of LuceneIndexMetrics for the LuceneIndexes defined in this member
    */
   public LuceneIndexMetrics[] listIndexMetrics();
 
   /**
-   * Returns an array of {@link LuceneIndexMetrics} for the {@link org.apache.geode.cache.lucene.LuceneIndex}
-   * instances defined on the input region in this member
+   * Returns an array of {@link LuceneIndexMetrics} for the {@link
+   * org.apache.geode.cache.lucene.LuceneIndex} instances defined on the input region in this member
    *
    * @param regionPath The full path of the region to retrieve
-   *
-   * @return an array of LuceneIndexMetrics for the LuceneIndex instances defined on the input region
-   * in this member
+   * @return an array of LuceneIndexMetrics for the LuceneIndex instances defined on the input
+   *     region in this member
    */
   public LuceneIndexMetrics[] listIndexMetrics(String regionPath);
 
@@ -51,9 +48,8 @@ public interface LuceneServiceMXBean {
    *
    * @param regionPath The full path of the region to retrieve
    * @param indexName The name of the index to retrieve
-   *
-   * @return a LuceneIndexMetrics for the LuceneIndex with the input index name defined on the input region
-   * in this member.
+   * @return a LuceneIndexMetrics for the LuceneIndex with the input index name defined on the input
+   *     region in this member.
    */
   public LuceneIndexMetrics listIndexMetrics(String regionPath, String indexName);
 }

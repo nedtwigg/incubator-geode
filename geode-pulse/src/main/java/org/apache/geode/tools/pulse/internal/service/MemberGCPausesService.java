@@ -33,13 +33,12 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Class MemberGCPausesService
- * 
- * This class contains implementations of getting Memeber's GC Pauses (JVM
- * Pauses) details and its trend over the time.
- * 
+ *
+ * <p>This class contains implementations of getting Memeber's GC Pauses (JVM Pauses) details and
+ * its trend over the time.
+ *
  * @since GemFire version 7.5
  */
-
 @Component
 @Service("MemberGCPauses")
 @Scope("singleton")
@@ -62,7 +61,11 @@ public class MemberGCPausesService implements PulseService {
 
     if (clusterMember != null) {
       // response
-      responseJSON.put("gcPausesTrend", mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_GARBAGE_COLLECTION)));
+      responseJSON.put(
+          "gcPausesTrend",
+          mapper.valueToTree(
+              clusterMember.getMemberStatisticTrend(
+                  Cluster.Member.MEMBER_STAT_GARBAGE_COLLECTION)));
       responseJSON.put("gcPausesCount", clusterMember.getGarbageCollectionCount());
     }
 

@@ -22,11 +22,7 @@ import java.util.Map;
 import org.apache.geode.management.EvictionAttributesData;
 import org.apache.geode.management.internal.FederationComponent;
 
-/**
- * Not only statistics we can set different attributes also
- *
- *
- */
+/** Not only statistics we can set different attributes also */
 public class RegionClusterStatsMonitor {
 
   private static final String CACHE_LISTENER_CALLS_AVG_LATENCY = "CacheListenerCallsAvgLatency";
@@ -131,9 +127,7 @@ public class RegionClusterStatsMonitor {
 
   private volatile int numBucketsWithoutRedundancy = 0;
 
-  /**
-   * Eviction attributes
-   */
+  /** Eviction attributes */
   private EvictionAttributesData evictionAttributesData; // unused
 
   private StatsAggregator aggregator;
@@ -189,7 +183,6 @@ public class RegionClusterStatsMonitor {
     typeMap.put(AVERAGE_READS, Float.TYPE);
     typeMap.put(AVERAGE_WRITES, Float.TYPE);
     typeMap.put(ENTRY_SIZE, Long.TYPE);
-
   }
 
   private void incLastAccessedTime(FederationComponent newState, FederationComponent oldState) {
@@ -197,16 +190,15 @@ public class RegionClusterStatsMonitor {
       if (newState.getValue(LAST_ACCESSED_TIME) != null) {
         lastAccessedTime = (Long) newState.getValue(LAST_ACCESSED_TIME);
       }
-
     }
   }
 
-  private void incNumBucketsWithoutRedundancy(FederationComponent newState, FederationComponent oldState) {
+  private void incNumBucketsWithoutRedundancy(
+      FederationComponent newState, FederationComponent oldState) {
     if (newState != null) {
       if (newState.getValue(NUM_BUCKESTS_WITHOUT_REDUNDANCY) != null) {
         numBucketsWithoutRedundancy = (Integer) newState.getValue(NUM_BUCKESTS_WITHOUT_REDUNDANCY);
       }
-
     }
   }
 
@@ -215,7 +207,6 @@ public class RegionClusterStatsMonitor {
       if (newState.getValue(LAST_MODIFIED_TIME) != null) {
         lastModifiedTime = (Long) newState.getValue(LAST_MODIFIED_TIME);
       }
-
     }
   }
 
@@ -224,7 +215,6 @@ public class RegionClusterStatsMonitor {
       if (newState.getValue(ENTRY_COUNT) != null) {
         entryCount = (Long) newState.getValue(ENTRY_COUNT);
       }
-
     }
   }
 
@@ -379,7 +369,6 @@ public class RegionClusterStatsMonitor {
         if (newState.getValue(REGION_NAME) != null) {
           regionName = (String) newState.getValue(REGION_NAME);
         }
-
       }
     }
     if (parentRegion == null) {
@@ -387,7 +376,6 @@ public class RegionClusterStatsMonitor {
         if (newState.getValue(PARENT_REGION_NAME) != null) {
           parentRegion = (String) newState.getValue(PARENT_REGION_NAME);
         }
-
       }
     }
 
@@ -396,7 +384,6 @@ public class RegionClusterStatsMonitor {
         if (newState.getValue(REGION_TYPE) != null) {
           regionType = (String) newState.getValue(REGION_TYPE);
         }
-
       }
     }
 
@@ -405,7 +392,6 @@ public class RegionClusterStatsMonitor {
         if (newState.getValue(FULL_PATH) != null) {
           fullPath = (String) newState.getValue(FULL_PATH);
         }
-
       }
     }
     if (gatewayEnabled == null) {
@@ -413,9 +399,7 @@ public class RegionClusterStatsMonitor {
         if (newState.getValue(GATEWAY_ENABLED) != null) {
           gatewayEnabled = (Boolean) newState.getValue(GATEWAY_ENABLED);
         }
-
       }
-
     }
 
     if (persistentEnabled == null) {
@@ -423,9 +407,7 @@ public class RegionClusterStatsMonitor {
         if (newState.getValue(PERSISTENT_ENABLED) != null) {
           persistentEnabled = (Boolean) newState.getValue(PERSISTENT_ENABLED);
         }
-
       }
-
     }
   }
 
@@ -456,5 +438,4 @@ public class RegionClusterStatsMonitor {
   public long getEntryCount() {
     return this.entryCount;
   }
-
 }

@@ -82,12 +82,14 @@ public class TXExpiryJUnitTest {
 
   @Test
   public void testEntryTTLExpiration() throws CacheException {
-    generalEntryExpirationTest(createRegion("TXEntryTTL"), new ExpirationAttributes(1, ExpirationAction.DESTROY), true);
+    generalEntryExpirationTest(
+        createRegion("TXEntryTTL"), new ExpirationAttributes(1, ExpirationAction.DESTROY), true);
   }
 
   @Test
   public void testEntryIdleExpiration() throws CacheException {
-    generalEntryExpirationTest(createRegion("TXEntryIdle"), new ExpirationAttributes(1, ExpirationAction.DESTROY), false);
+    generalEntryExpirationTest(
+        createRegion("TXEntryIdle"), new ExpirationAttributes(1, ExpirationAction.DESTROY), false);
   }
 
   private Region<String, String> createRegion(String name) {
@@ -102,9 +104,11 @@ public class TXExpiryJUnitTest {
     }
   }
 
-  public void generalEntryExpirationTest(final Region<String, String> exprReg, ExpirationAttributes exprAtt, boolean useTTL) throws CacheException {
+  public void generalEntryExpirationTest(
+      final Region<String, String> exprReg, ExpirationAttributes exprAtt, boolean useTTL)
+      throws CacheException {
     final LocalRegion lr = (LocalRegion) exprReg;
-    final boolean wasDestroyed[] = { false };
+    final boolean wasDestroyed[] = {false};
     AttributesMutator<String, String> mutator = exprReg.getAttributesMutator();
     final AtomicInteger ac = new AtomicInteger();
     final AtomicInteger au = new AtomicInteger();
@@ -116,39 +120,40 @@ public class TXExpiryJUnitTest {
     } else {
       mutator.setEntryIdleTimeout(exprAtt);
     }
-    final CacheListener<String, String> cl = new CacheListenerAdapter<String, String>() {
-      public void afterCreate(EntryEvent<String, String> e) {
-        ac.incrementAndGet();
-      }
-
-      public void afterUpdate(EntryEvent<String, String> e) {
-        au.incrementAndGet();
-      }
-
-      public void afterInvalidate(EntryEvent<String, String> e) {
-        ai.incrementAndGet();
-      }
-
-      public void afterDestroy(EntryEvent<String, String> e) {
-        ad.incrementAndGet();
-        if (e.getKey().equals("key0")) {
-          synchronized (wasDestroyed) {
-            wasDestroyed[0] = true;
-            wasDestroyed.notifyAll();
+    final CacheListener<String, String> cl =
+        new CacheListenerAdapter<String, String>() {
+          public void afterCreate(EntryEvent<String, String> e) {
+            ac.incrementAndGet();
           }
-        }
-      }
 
-      public void afterRegionInvalidate(RegionEvent<String, String> event) {
-        fail("Unexpected invocation of afterRegionInvalidate");
-      }
+          public void afterUpdate(EntryEvent<String, String> e) {
+            au.incrementAndGet();
+          }
 
-      public void afterRegionDestroy(RegionEvent<String, String> event) {
-        if (!event.getOperation().isClose()) {
-          fail("Unexpected invocation of afterRegionDestroy");
-        }
-      }
-    };
+          public void afterInvalidate(EntryEvent<String, String> e) {
+            ai.incrementAndGet();
+          }
+
+          public void afterDestroy(EntryEvent<String, String> e) {
+            ad.incrementAndGet();
+            if (e.getKey().equals("key0")) {
+              synchronized (wasDestroyed) {
+                wasDestroyed[0] = true;
+                wasDestroyed.notifyAll();
+              }
+            }
+          }
+
+          public void afterRegionInvalidate(RegionEvent<String, String> event) {
+            fail("Unexpected invocation of afterRegionInvalidate");
+          }
+
+          public void afterRegionDestroy(RegionEvent<String, String> event) {
+            if (!event.getOperation().isClose()) {
+              fail("Unexpected invocation of afterRegionDestroy");
+            }
+          }
+        };
     mutator.addCacheListener(cl);
     try {
 
@@ -221,15 +226,16 @@ public class TXExpiryJUnitTest {
   }
 
   private void waitForEntryToBeDestroyed(final Region r, final String key) {
-    WaitCriterion waitForExpire = new WaitCriterion() {
-      public boolean done() {
-        return r.getEntry(key) == null;
-      }
+    WaitCriterion waitForExpire =
+        new WaitCriterion() {
+          public boolean done() {
+            return r.getEntry(key) == null;
+          }
 
-      public String description() {
-        return "never saw entry destroy of " + key;
-      }
-    };
+          public String description() {
+            return "never saw entry destroy of " + key;
+          }
+        };
     Wait.waitForCriterion(waitForExpire, 3000, 10, true);
   }
 
@@ -251,7 +257,9 @@ public class TXExpiryJUnitTest {
     try {
       ExpirationDetector detector;
       do {
-        detector = new ExpirationDetector(ttl ? lr.getRegionTTLExpiryTask() : lr.getRegionIdleExpiryTask());
+        detector =
+            new ExpirationDetector(
+                ttl ? lr.getRegionTTLExpiryTask() : lr.getRegionIdleExpiryTask());
         ExpiryTask.expiryTaskListener = detector;
         ExpiryTask.permitExpiration();
         Wait.waitForCriterion(detector, 3000, 2, true);
@@ -261,9 +269,7 @@ public class TXExpiryJUnitTest {
     }
   }
 
-  /**
-   * Used to detect that a particular ExpiryTask has expired.
-   */
+  /** Used to detect that a particular ExpiryTask has expired. */
   public static class ExpirationDetector implements ExpiryTaskListener, WaitCriterion {
     private volatile boolean ran = false;
     private volatile boolean expired = false;
@@ -276,12 +282,10 @@ public class TXExpiryJUnitTest {
     }
 
     @Override
-    public void afterCancel(ExpiryTask et) {
-    }
+    public void afterCancel(ExpiryTask et) {}
 
     @Override
-    public void afterSchedule(ExpiryTask et) {
-    }
+    public void afterSchedule(ExpiryTask et) {}
 
     @Override
     public void afterReschedule(ExpiryTask et) {
@@ -326,43 +330,52 @@ public class TXExpiryJUnitTest {
     }
   }
 
-  @Category(FlakyTest.class) // GEODE-845: time sensitive, expiration, eats exceptions (1 fixed), waitForCriterion, 3 second timeout
+  @Category(
+      FlakyTest
+          .class) // GEODE-845: time sensitive, expiration, eats exceptions (1 fixed), waitForCriterion, 3 second timeout
   @Test
   public void testRegionIdleExpiration() throws CacheException {
     Region<String, String> exprReg = createRegion("TXRegionIdle");
-    generalRegionExpirationTest(exprReg, new ExpirationAttributes(1, ExpirationAction.INVALIDATE), false);
-    generalRegionExpirationTest(exprReg, new ExpirationAttributes(1, ExpirationAction.DESTROY), false);
+    generalRegionExpirationTest(
+        exprReg, new ExpirationAttributes(1, ExpirationAction.INVALIDATE), false);
+    generalRegionExpirationTest(
+        exprReg, new ExpirationAttributes(1, ExpirationAction.DESTROY), false);
   }
 
   @Test
   public void testRegionTTLExpiration() throws CacheException {
     Region<String, String> exprReg = createRegion("TXRegionTTL");
-    generalRegionExpirationTest(exprReg, new ExpirationAttributes(1, ExpirationAction.INVALIDATE), true);
-    generalRegionExpirationTest(exprReg, new ExpirationAttributes(1, ExpirationAction.DESTROY), true);
+    generalRegionExpirationTest(
+        exprReg, new ExpirationAttributes(1, ExpirationAction.INVALIDATE), true);
+    generalRegionExpirationTest(
+        exprReg, new ExpirationAttributes(1, ExpirationAction.DESTROY), true);
   }
 
-  private void generalRegionExpirationTest(final Region<String, String> exprReg, ExpirationAttributes exprAtt, boolean useTTL) throws CacheException {
+  private void generalRegionExpirationTest(
+      final Region<String, String> exprReg, ExpirationAttributes exprAtt, boolean useTTL)
+      throws CacheException {
     final LocalRegion lr = (LocalRegion) exprReg;
     final ExpirationAction action = exprAtt.getAction();
-    final boolean regionExpiry[] = { false };
+    final boolean regionExpiry[] = {false};
     AttributesMutator<String, String> mutator = exprReg.getAttributesMutator();
-    final CacheListener<String, String> cl = new CacheListenerAdapter<String, String>() {
-      public void afterRegionInvalidate(RegionEvent<String, String> event) {
-        synchronized (regionExpiry) {
-          regionExpiry[0] = true;
-          regionExpiry.notifyAll();
-        }
-      }
-
-      public void afterRegionDestroy(RegionEvent<String, String> event) {
-        if (!event.getOperation().isClose()) {
-          synchronized (regionExpiry) {
-            regionExpiry[0] = true;
-            regionExpiry.notifyAll();
+    final CacheListener<String, String> cl =
+        new CacheListenerAdapter<String, String>() {
+          public void afterRegionInvalidate(RegionEvent<String, String> event) {
+            synchronized (regionExpiry) {
+              regionExpiry[0] = true;
+              regionExpiry.notifyAll();
+            }
           }
-        }
-      }
-    };
+
+          public void afterRegionDestroy(RegionEvent<String, String> event) {
+            if (!event.getOperation().isClose()) {
+              synchronized (regionExpiry) {
+                regionExpiry[0] = true;
+                regionExpiry.notifyAll();
+              }
+            }
+          }
+        };
     mutator.addCacheListener(cl);
     // Suspend before enabling region expiration to prevent
     // it from happening before we do the put.
@@ -381,7 +394,7 @@ public class TXExpiryJUnitTest {
       }
 
       String regName = exprReg.getName();
-      // Test to ensure a region expiration does not cause a conflict    
+      // Test to ensure a region expiration does not cause a conflict
       this.txMgr.begin();
       exprReg.put("key0", "value");
       waitForRegionExpiration(lr, useTTL);
@@ -398,9 +411,13 @@ public class TXExpiryJUnitTest {
         assertEquals(true, regionExpiry[0]);
       }
       if (action == ExpirationAction.DESTROY) {
-        assertNull("listener saw Region expiration, expected a destroy operation!", this.cache.getRegion(regName));
+        assertNull(
+            "listener saw Region expiration, expected a destroy operation!",
+            this.cache.getRegion(regName));
       } else {
-        assertTrue("listener saw Region expiration, expected invalidation", !exprReg.containsValueForKey("key0"));
+        assertTrue(
+            "listener saw Region expiration, expected invalidation",
+            !exprReg.containsValueForKey("key0"));
       }
 
     } finally {

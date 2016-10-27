@@ -29,8 +29,7 @@ public class FlushAllExecutor extends AbstractExecutor {
 
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
-    if (context.hasTransaction())
-      throw new UnsupportedOperationInTransactionException();
+    if (context.hasTransaction()) throw new UnsupportedOperationInTransactionException();
 
     for (Entry<String, RedisDataType> e : context.getRegionProvider().metaEntrySet()) {
       try {
@@ -40,10 +39,8 @@ public class FlushAllExecutor extends AbstractExecutor {
       } catch (EntryDestroyedException e1) {
         continue;
       }
-
     }
 
     command.setResponse(Coder.getSimpleStringResponse(context.getByteBufAllocator(), "OK"));
   }
-
 }

@@ -19,14 +19,11 @@ package org.apache.geode.cache.query.internal.parse;
 import antlr.*;
 import org.apache.geode.cache.query.internal.QCompiler;
 
-/**
- *
- */
+/** */
 public class ASTSortCriterion extends GemFireAST {
   private static final long serialVersionUID = -3654854374157753771L;
 
-  public ASTSortCriterion() {
-  }
+  public ASTSortCriterion() {}
 
   /** Creates a new instance of ASTSortCriterion */
   public ASTSortCriterion(Token t) {
@@ -38,5 +35,4 @@ public class ASTSortCriterion extends GemFireAST {
     super.compile(compiler);
     compiler.compileSortCriteria(this.getText());
   }
-
 }

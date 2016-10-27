@@ -64,7 +64,10 @@ public class BitPosExecutor extends StringExecutor {
     }
 
     if (string == null || string.length() == 0) {
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), -bit)); // Redis returns 0 when key does not exists for this command
+      command.setResponse(
+          Coder.getIntegerResponse(
+              context.getByteBufAllocator(),
+              -bit)); // Redis returns 0 when key does not exists for this command
       return;
     }
     byte[] bytes = string.toBytes();
@@ -91,27 +94,22 @@ public class BitPosExecutor extends StringExecutor {
       }
     }
 
-    if (start < 0)
-      start += bytes.length;
-    if (end < 0)
-      end += bytes.length;
+    if (start < 0) start += bytes.length;
+    if (end < 0) end += bytes.length;
 
-    if (start < 0)
-      start = 0;
-    if (end < 0)
-      end = 0;
+    if (start < 0) start = 0;
+    if (end < 0) end = 0;
 
-    if (start > bytes.length)
-      start = bytes.length - 1;
-    if (end > bytes.length)
-      end = bytes.length - 1;
+    if (start > bytes.length) start = bytes.length - 1;
+    if (end > bytes.length) end = bytes.length - 1;
 
     if (end < start) {
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), -1));
       return;
     }
 
-    outerLoop: for (int i = start; i <= end; i++) {
+    outerLoop:
+    for (int i = start; i <= end; i++) {
       int cBit;
       byte cByte = bytes[i];
       for (int j = 0; j < 8; j++) {
@@ -123,10 +121,8 @@ public class BitPosExecutor extends StringExecutor {
       }
     }
 
-    if (bit == 0 && bitPosition == -1 && !endSet)
-      bitPosition = bytes.length * 8;
+    if (bit == 0 && bitPosition == -1 && !endSet) bitPosition = bytes.length * 8;
 
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), bitPosition));
   }
-
 }

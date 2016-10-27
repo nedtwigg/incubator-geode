@@ -29,5 +29,4 @@ public class RPopExecutor extends PopExecutor {
   public String getArgsError() {
     return ArityDef.RPOP;
   }
-
 }

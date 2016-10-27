@@ -39,11 +39,10 @@ import org.apache.geode.test.dunit.Assert;
 import org.apache.geode.test.dunit.Wait;
 
 /**
- * An abstract class whose test methods test the functionality of
- * {@link CacheLoader}s that are invoked locally.
+ * An abstract class whose test methods test the functionality of {@link CacheLoader}s that are
+ * invoked locally.
  *
  * @see MultiVMRegionTestCase#testRemoteCacheLoader
- *
  * @since GemFire 3.0
  */
 public abstract class CacheLoaderTestCase extends CacheWriterTestCase {
@@ -62,37 +61,38 @@ public abstract class CacheLoaderTestCase extends CacheWriterTestCase {
     final Object arg = "ARG";
     final String exception = "EXCEPTION";
 
-    TestCacheLoader loader = new TestCacheLoader() {
-      public Object load2(LoaderHelper helper) throws CacheLoaderException {
+    TestCacheLoader loader =
+        new TestCacheLoader() {
+          public Object load2(LoaderHelper helper) throws CacheLoaderException {
 
-        assertEquals(key, helper.getKey());
-        assertEquals(name, helper.getRegion().getName());
+            assertEquals(key, helper.getKey());
+            assertEquals(name, helper.getRegion().getName());
 
-        try {
-          RegionAttributes attrs = helper.getRegion().getAttributes();
-          if (attrs.getScope().isDistributed()) {
-            assertNull(helper.netSearch(false));
-            assertNull(helper.netSearch(true));
+            try {
+              RegionAttributes attrs = helper.getRegion().getAttributes();
+              if (attrs.getScope().isDistributed()) {
+                assertNull(helper.netSearch(false));
+                assertNull(helper.netSearch(true));
+              }
+
+            } catch (TimeoutException ex) {
+              Assert.fail("Why did I time out?", ex);
+            }
+
+            Object argument = helper.getArgument();
+            if (argument != null) {
+              if (argument.equals(exception)) {
+                String s = "Test Exception";
+                throw new CacheLoaderException(s);
+
+              } else {
+                assertEquals(arg, argument);
+              }
+            }
+
+            return value;
           }
-
-        } catch (TimeoutException ex) {
-          Assert.fail("Why did I time out?", ex);
-        }
-
-        Object argument = helper.getArgument();
-        if (argument != null) {
-          if (argument.equals(exception)) {
-            String s = "Test Exception";
-            throw new CacheLoaderException(s);
-
-          } else {
-            assertEquals(arg, argument);
-          }
-        }
-
-        return value;
-      }
-    };
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheLoader(loader);
@@ -153,7 +153,7 @@ public abstract class CacheLoaderTestCase extends CacheWriterTestCase {
   //    entry = region.getEntry(key);
   //    assertNotNull(entry);
   //    assertNull(entry.getValue());
-  //   
+  //
   //    Host host = Host.getHost(0);
   //    VM vm0 = host.getVM(0);
   //    vm0.invoke(new CacheSerializableRunnable("set remote value") {
@@ -167,7 +167,7 @@ public abstract class CacheLoaderTestCase extends CacheWriterTestCase {
   ////              return value;
   ////            }
   ////          };
-  ////        
+  ////
   ////        AttributesFactory factory =
   ////          new AttributesFactory(getRegionAttributes());
   ////        factory.setCacheLoader(remoteloader);
@@ -184,17 +184,18 @@ public abstract class CacheLoaderTestCase extends CacheWriterTestCase {
   //  }
 
   /**
-   * Tests what happens when a {@link CacheLoader} returns
-   * <code>null</code> from its {@link CacheLoader#load load} method.
+   * Tests what happens when a {@link CacheLoader} returns <code>null</code> from its {@link
+   * CacheLoader#load load} method.
    */
   @Test
   public void testCacheLoaderNull() throws CacheException {
-    TestCacheLoader loader = new TestCacheLoader() {
-      public Object load2(LoaderHelper helper) throws CacheLoaderException {
+    TestCacheLoader loader =
+        new TestCacheLoader() {
+          public Object load2(LoaderHelper helper) throws CacheLoaderException {
 
-        return null;
-      }
-    };
+            return null;
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheLoader(loader);
@@ -206,10 +207,7 @@ public abstract class CacheLoaderTestCase extends CacheWriterTestCase {
     assertTrue(loader.wasInvoked());
   }
 
-  /**
-   * Tests that a <code>CacheWriter</code> gets invoked on a
-   * <code>load</code>.
-   */
+  /** Tests that a <code>CacheWriter</code> gets invoked on a <code>load</code>. */
   @Test
   public void testCacheWriterOnLoad() throws CacheException {
     final String name = this.getUniqueName();
@@ -217,22 +215,24 @@ public abstract class CacheLoaderTestCase extends CacheWriterTestCase {
     final Object oldValue = new Integer(42);
     final Object newValue = new Integer(43);
 
-    TestCacheLoader loader = new TestCacheLoader() {
-      public Object load2(LoaderHelper helper) throws CacheLoaderException {
-        return oldValue;
-      }
-    };
+    TestCacheLoader loader =
+        new TestCacheLoader() {
+          public Object load2(LoaderHelper helper) throws CacheLoaderException {
+            return oldValue;
+          }
+        };
 
-    TestCacheWriter writer = new TestCacheWriter() {
-      public void beforeCreate2(EntryEvent event) throws CacheWriterException {
+    TestCacheWriter writer =
+        new TestCacheWriter() {
+          public void beforeCreate2(EntryEvent event) throws CacheWriterException {
 
-        assertEquals(oldValue, event.getNewValue());
-        assertTrue(event.isLoad());
-        assertTrue(event.isLocalLoad());
-        assertFalse(event.isNetLoad());
-        assertFalse(event.isNetSearch());
-      }
-    };
+            assertEquals(oldValue, event.getNewValue());
+            assertTrue(event.isLoad());
+            assertTrue(event.isLocalLoad());
+            assertFalse(event.isNetLoad());
+            assertFalse(event.isNetSearch());
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheLoader(loader);
@@ -244,17 +244,18 @@ public abstract class CacheLoaderTestCase extends CacheWriterTestCase {
     assertTrue(loader.wasInvoked());
     assertTrue(writer.wasInvoked());
 
-    writer = new TestCacheWriter() {
-      public void beforeUpdate2(EntryEvent event) throws CacheWriterException {
+    writer =
+        new TestCacheWriter() {
+          public void beforeUpdate2(EntryEvent event) throws CacheWriterException {
 
-        assertEquals(oldValue, event.getOldValue());
-        assertEquals(newValue, event.getNewValue());
-        assertFalse(event.isLoad());
-        assertFalse(event.isLocalLoad());
-        assertFalse(event.isNetLoad());
-        assertFalse(event.isNetSearch());
-      }
-    };
+            assertEquals(oldValue, event.getOldValue());
+            assertEquals(newValue, event.getNewValue());
+            assertFalse(event.isLoad());
+            assertFalse(event.isLocalLoad());
+            assertFalse(event.isNetLoad());
+            assertFalse(event.isNetSearch());
+          }
+        };
 
     region.getAttributesMutator().setCacheWriter(writer);
 
@@ -263,10 +264,7 @@ public abstract class CacheLoaderTestCase extends CacheWriterTestCase {
     assertTrue(writer.wasInvoked());
   }
 
-  /**
-   * Tests that a <code>CacheListener</code> gets invoked on a
-   * <code>load</code>.
-   */
+  /** Tests that a <code>CacheListener</code> gets invoked on a <code>load</code>. */
   @Test
   public void testCacheListenerOnLoad() throws CacheException, InterruptedException {
 
@@ -275,21 +273,23 @@ public abstract class CacheLoaderTestCase extends CacheWriterTestCase {
     final Object oldValue = new Integer(42);
     final Object newValue = new Integer(43);
 
-    TestCacheLoader loader = new TestCacheLoader() {
-      public Object load2(LoaderHelper helper) throws CacheLoaderException {
-        return oldValue;
-      }
-    };
+    TestCacheLoader loader =
+        new TestCacheLoader() {
+          public Object load2(LoaderHelper helper) throws CacheLoaderException {
+            return oldValue;
+          }
+        };
 
-    TestCacheListener listener = new TestCacheListener() {
-      public void afterCreate2(EntryEvent event) {
-        assertEquals(oldValue, event.getNewValue());
-        assertTrue(event.isLoad());
-        assertTrue(event.isLocalLoad());
-        assertFalse(event.isNetLoad());
-        assertFalse(event.isNetSearch());
-      }
-    };
+    TestCacheListener listener =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent event) {
+            assertEquals(oldValue, event.getNewValue());
+            assertTrue(event.isLoad());
+            assertTrue(event.isLocalLoad());
+            assertFalse(event.isNetLoad());
+            assertFalse(event.isNetSearch());
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheLoader(loader);
@@ -302,16 +302,17 @@ public abstract class CacheLoaderTestCase extends CacheWriterTestCase {
     Wait.pause(500);
     assertTrue(listener.wasInvoked());
 
-    listener = new TestCacheListener() {
-      public void afterUpdate2(EntryEvent event) {
-        assertEquals(oldValue, event.getOldValue());
-        assertEquals(newValue, event.getNewValue());
-        assertFalse(event.isLoad());
-        assertFalse(event.isLocalLoad());
-        assertFalse(event.isNetLoad());
-        assertFalse(event.isNetSearch());
-      }
-    };
+    listener =
+        new TestCacheListener() {
+          public void afterUpdate2(EntryEvent event) {
+            assertEquals(oldValue, event.getOldValue());
+            assertEquals(newValue, event.getNewValue());
+            assertFalse(event.isLoad());
+            assertFalse(event.isLocalLoad());
+            assertFalse(event.isNetLoad());
+            assertFalse(event.isNetSearch());
+          }
+        };
 
     region.getAttributesMutator().setCacheListener(listener);
 
@@ -320,5 +321,4 @@ public abstract class CacheLoaderTestCase extends CacheWriterTestCase {
     assertFalse(loader.wasInvoked());
     assertTrue(listener.wasInvoked());
   }
-
 }

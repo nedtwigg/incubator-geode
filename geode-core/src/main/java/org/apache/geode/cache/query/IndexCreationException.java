@@ -16,16 +16,13 @@
  */
 package org.apache.geode.cache.query;
 
-/**
- * This class is used to represent any partitioned index creation exceptions.
- * 
- */
+/** This class is used to represent any partitioned index creation exceptions. */
 public class IndexCreationException extends QueryException {
   private static final long serialVersionUID = -2218359458870240534L;
 
   /**
    * Constructor with a string message representing the problem.
-   * 
+   *
    * @param msg message representing the cause of exception
    */
   public IndexCreationException(String msg) {
@@ -33,13 +30,12 @@ public class IndexCreationException extends QueryException {
   }
 
   /**
-   * Constructor with a string message representing the problem and also the 
-   * throwable.
+   * Constructor with a string message representing the problem and also the throwable.
+   *
    * @param msg representing the cause of exception
    * @param cause the actual exception.
    */
   public IndexCreationException(String msg, Throwable cause) {
     super(msg, cause);
   }
-
 }

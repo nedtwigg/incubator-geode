@@ -18,10 +18,7 @@ package org.apache.geode.distributed.internal.direct;
 
 import org.apache.geode.GemFireCheckedException;
 
-/**
- * Exception thrown when a member is no longer in the distributed system
- * 
- */
+/** Exception thrown when a member is no longer in the distributed system */
 public class ShunnedMemberException extends GemFireCheckedException {
 
   private static final long serialVersionUID = -6455664684151074915L;
@@ -29,5 +26,4 @@ public class ShunnedMemberException extends GemFireCheckedException {
   public ShunnedMemberException(String msg) {
     super(msg);
   }
-
 }

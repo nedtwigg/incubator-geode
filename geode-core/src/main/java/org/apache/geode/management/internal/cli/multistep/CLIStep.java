@@ -18,15 +18,10 @@ package org.apache.geode.management.internal.cli.multistep;
 
 import org.apache.geode.management.cli.Result;
 
-/**
- * 
- * 
- *
- */
+/** */
 public interface CLIStep {
 
   public Result exec();
 
   public String getName();
-
 }

@@ -23,9 +23,7 @@ import org.apache.geode.internal.memcached.RequestReader;
 import org.apache.geode.internal.memcached.ResponseStatus;
 import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 
-/**
- * 
- */
+/** */
 public class NotSupportedCommand extends AbstractCommand {
 
   @Override
@@ -35,5 +33,4 @@ public class NotSupportedCommand extends AbstractCommand {
     response.putShort(POSITION_RESPONSE_STATUS, ResponseStatus.NOT_SUPPORTED.asShort());
     return response;
   }
-
 }

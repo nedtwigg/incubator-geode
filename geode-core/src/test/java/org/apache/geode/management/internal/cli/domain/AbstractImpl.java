@@ -16,6 +16,4 @@
  */
 package org.apache.geode.management.internal.cli.domain;
 
-public abstract class AbstractImpl implements Interface1 {
-
-}
+public abstract class AbstractImpl implements Interface1 {}

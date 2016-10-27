@@ -14,36 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode;
 
 /**
- * This exception wraps any checked exception encountered during invocation of
- * {@link Delta#fromDelta(java.io.DataInput)} or
- * {@link Delta#toDelta(java.io.DataOutput)} in GemFire.
- * 
+ * This exception wraps any checked exception encountered during invocation of {@link
+ * Delta#fromDelta(java.io.DataInput)} or {@link Delta#toDelta(java.io.DataOutput)} in GemFire.
+ *
  * @since GemFire 6.5
  */
 public class DeltaSerializationException extends RuntimeException {
 
-  /**
-   * Default constructor
-   */
-  public DeltaSerializationException() {
-  }
+  /** Default constructor */
+  public DeltaSerializationException() {}
 
-  /**
-   * @param message
-   */
+  /** @param message */
   public DeltaSerializationException(String message) {
     super(message);
   }
 
-  /**
-   * @param cause
-   */
+  /** @param cause */
   public DeltaSerializationException(Throwable cause) {
     super(cause);
   }
@@ -55,5 +45,4 @@ public class DeltaSerializationException extends RuntimeException {
   public DeltaSerializationException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

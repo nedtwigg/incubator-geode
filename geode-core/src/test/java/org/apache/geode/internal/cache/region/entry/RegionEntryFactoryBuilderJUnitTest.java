@@ -39,15 +39,57 @@ public class RegionEntryFactoryBuilderJUnitTest {
   }
 
   /**
-   * This method will test that the correct RegionEntryFactory is created
-   * dependent on the 5 conditionals:
-   * enableStats, enableLRU, enableDisk, enableVersion, enableOffHeap
+   * This method will test that the correct RegionEntryFactory is created dependent on the 5
+   * conditionals: enableStats, enableLRU, enableDisk, enableVersion, enableOffHeap
    */
   @Test
-  @Parameters({ "VMThinRegionEntryHeapFactory,false,false,false,false,false", "VMThinRegionEntryOffHeapFactory,false,false,false,false,true", "VersionedThinRegionEntryHeapFactory,false,false,false,true,false", "VersionedThinRegionEntryOffHeapFactory,false,false,false,true,true", "VMThinDiskRegionEntryHeapFactory,false,false,true,false,false", "VMThinDiskRegionEntryOffHeapFactory,false,false,true,false,true", "VersionedThinDiskRegionEntryHeapFactory,false,false,true,true,false", "VersionedThinDiskRegionEntryOffHeapFactory,false,false,true,true,true", "VMThinLRURegionEntryHeapFactory,false,true,false,false,false", "VMThinLRURegionEntryOffHeapFactory,false,true,false,false,true", "VersionedThinLRURegionEntryHeapFactory,false,true,false,true,false", "VersionedThinLRURegionEntryOffHeapFactory,false,true,false,true,true", "VMThinDiskLRURegionEntryHeapFactory,false,true,true,false,false", "VMThinDiskLRURegionEntryOffHeapFactory,false,true,true,false,true",
-      "VersionedThinDiskLRURegionEntryHeapFactory,false,true,true,true,false", "VersionedThinDiskLRURegionEntryOffHeapFactory,false,true,true,true,true", "VMStatsRegionEntryHeapFactory,true,false,false,false,false", "VMStatsRegionEntryOffHeapFactory,true,false,false,false,true", "VersionedStatsRegionEntryHeapFactory,true,false,false,true,false", "VersionedStatsRegionEntryOffHeapFactory,true,false,false,true,true", "VMStatsDiskRegionEntryHeapFactory,true,false,true,false,false", "VMStatsDiskRegionEntryOffHeapFactory,true,false,true,false,true", "VersionedStatsDiskRegionEntryHeapFactory,true,false,true,true,false", "VersionedStatsDiskRegionEntryOffHeapFactory,true,false,true,true,true", "VMStatsLRURegionEntryHeapFactory,true,true,false,false,false", "VMStatsLRURegionEntryOffHeapFactory,true,true,false,false,true", "VersionedStatsLRURegionEntryHeapFactory,true,true,false,true,false", "VersionedStatsLRURegionEntryOffHeapFactory,true,true,false,true,true",
-      "VMStatsDiskLRURegionEntryHeapFactory,true,true,true,false,false", "VMStatsDiskLRURegionEntryOffHeapFactory,true,true,true,false,true", "VersionedStatsDiskLRURegionEntryHeapFactory,true,true,true,true,false", "VersionedStatsDiskLRURegionEntryOffHeapFactory,true,true,true,true,true" })
-  public void testRegionEntryFactoryUnitTest(String factoryName, boolean enableStats, boolean enableLRU, boolean enableDisk, boolean enableVersioning, boolean enableOffHeap) {
-    assertEquals(factoryName, regionEntryFactoryBuilder.getRegionEntryFactoryOrNull(enableStats, enableLRU, enableDisk, enableVersioning, enableOffHeap).getClass().getSimpleName());
+  @Parameters({
+    "VMThinRegionEntryHeapFactory,false,false,false,false,false",
+    "VMThinRegionEntryOffHeapFactory,false,false,false,false,true",
+    "VersionedThinRegionEntryHeapFactory,false,false,false,true,false",
+    "VersionedThinRegionEntryOffHeapFactory,false,false,false,true,true",
+    "VMThinDiskRegionEntryHeapFactory,false,false,true,false,false",
+    "VMThinDiskRegionEntryOffHeapFactory,false,false,true,false,true",
+    "VersionedThinDiskRegionEntryHeapFactory,false,false,true,true,false",
+    "VersionedThinDiskRegionEntryOffHeapFactory,false,false,true,true,true",
+    "VMThinLRURegionEntryHeapFactory,false,true,false,false,false",
+    "VMThinLRURegionEntryOffHeapFactory,false,true,false,false,true",
+    "VersionedThinLRURegionEntryHeapFactory,false,true,false,true,false",
+    "VersionedThinLRURegionEntryOffHeapFactory,false,true,false,true,true",
+    "VMThinDiskLRURegionEntryHeapFactory,false,true,true,false,false",
+    "VMThinDiskLRURegionEntryOffHeapFactory,false,true,true,false,true",
+    "VersionedThinDiskLRURegionEntryHeapFactory,false,true,true,true,false",
+    "VersionedThinDiskLRURegionEntryOffHeapFactory,false,true,true,true,true",
+    "VMStatsRegionEntryHeapFactory,true,false,false,false,false",
+    "VMStatsRegionEntryOffHeapFactory,true,false,false,false,true",
+    "VersionedStatsRegionEntryHeapFactory,true,false,false,true,false",
+    "VersionedStatsRegionEntryOffHeapFactory,true,false,false,true,true",
+    "VMStatsDiskRegionEntryHeapFactory,true,false,true,false,false",
+    "VMStatsDiskRegionEntryOffHeapFactory,true,false,true,false,true",
+    "VersionedStatsDiskRegionEntryHeapFactory,true,false,true,true,false",
+    "VersionedStatsDiskRegionEntryOffHeapFactory,true,false,true,true,true",
+    "VMStatsLRURegionEntryHeapFactory,true,true,false,false,false",
+    "VMStatsLRURegionEntryOffHeapFactory,true,true,false,false,true",
+    "VersionedStatsLRURegionEntryHeapFactory,true,true,false,true,false",
+    "VersionedStatsLRURegionEntryOffHeapFactory,true,true,false,true,true",
+    "VMStatsDiskLRURegionEntryHeapFactory,true,true,true,false,false",
+    "VMStatsDiskLRURegionEntryOffHeapFactory,true,true,true,false,true",
+    "VersionedStatsDiskLRURegionEntryHeapFactory,true,true,true,true,false",
+    "VersionedStatsDiskLRURegionEntryOffHeapFactory,true,true,true,true,true"
+  })
+  public void testRegionEntryFactoryUnitTest(
+      String factoryName,
+      boolean enableStats,
+      boolean enableLRU,
+      boolean enableDisk,
+      boolean enableVersioning,
+      boolean enableOffHeap) {
+    assertEquals(
+        factoryName,
+        regionEntryFactoryBuilder
+            .getRegionEntryFactoryOrNull(
+                enableStats, enableLRU, enableDisk, enableVersioning, enableOffHeap)
+            .getClass()
+            .getSimpleName());
   }
 }

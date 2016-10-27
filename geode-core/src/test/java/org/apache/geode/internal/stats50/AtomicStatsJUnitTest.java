@@ -34,15 +34,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.assertEquals;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class AtomicStatsJUnitTest {
 
   /**
-   * Test for bug 41340. Do two gets at the same time of a dirty
-   * stat, and make sure we get the correct value for the stat.
+   * Test for bug 41340. Do two gets at the same time of a dirty stat, and make sure we get the
+   * correct value for the stat.
+   *
    * @throws Throwable
    */
   @Test
@@ -61,7 +60,13 @@ public class AtomicStatsJUnitTest {
 
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    StatisticsType type = f.createType(statName, statDescription, new StatisticDescriptor[] { f.createIntGauge("stat", statDesc, "bottles of beer on the wall"), });
+    StatisticsType type =
+        f.createType(
+            statName,
+            statDescription,
+            new StatisticDescriptor[] {
+              f.createIntGauge("stat", statDesc, "bottles of beer on the wall"),
+            });
 
     final int statId = type.nameToId("stat");
 
@@ -70,40 +75,42 @@ public class AtomicStatsJUnitTest {
       final AtomicReference<Statistics> statsRef = new AtomicReference<Statistics>();
       final CyclicBarrier beforeIncrement = new CyclicBarrier(3);
       final CyclicBarrier afterIncrement = new CyclicBarrier(3);
-      Thread thread1 = new Thread("thread1") {
-        public void run() {
-          try {
-            while (true) {
-              beforeIncrement.await();
-              statsRef.get().incInt(statId, 1);
-              afterIncrement.await();
+      Thread thread1 =
+          new Thread("thread1") {
+            public void run() {
+              try {
+                while (true) {
+                  beforeIncrement.await();
+                  statsRef.get().incInt(statId, 1);
+                  afterIncrement.await();
+                }
+              } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              } catch (BrokenBarrierException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              }
             }
-          } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          } catch (BrokenBarrierException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
-        }
-      };
-      Thread thread3 = new Thread("thread1") {
-        public void run() {
-          try {
-            while (true) {
-              beforeIncrement.await();
-              afterIncrement.await();
-              statsRef.get().getInt(statId);
+          };
+      Thread thread3 =
+          new Thread("thread1") {
+            public void run() {
+              try {
+                while (true) {
+                  beforeIncrement.await();
+                  afterIncrement.await();
+                  statsRef.get().getInt(statId);
+                }
+              } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              } catch (BrokenBarrierException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              }
             }
-          } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          } catch (BrokenBarrierException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
-        }
-      };
+          };
       thread1.start();
       thread3.start();
       for (int i = 0; i < 5000; i++) {

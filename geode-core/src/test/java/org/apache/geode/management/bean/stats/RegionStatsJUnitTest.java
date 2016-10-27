@@ -30,10 +30,7 @@ import org.apache.geode.management.internal.beans.PartitionedRegionBridge;
 import org.apache.geode.management.internal.beans.RegionMBeanBridge;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Implementing RegionMXBean to ensure test coverage
- * 
- */
+/** Implementing RegionMXBean to ensure test coverage */
 @Category(IntegrationTest.class)
 public class RegionStatsJUnitTest extends MBeanStatsTestCase {
 

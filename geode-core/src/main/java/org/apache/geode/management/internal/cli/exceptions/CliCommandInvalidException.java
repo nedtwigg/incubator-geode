@@ -33,7 +33,8 @@ public class CliCommandInvalidException extends CliCommandException {
     this(null, null, cause);
   }
 
-  public CliCommandInvalidException(final CommandTarget commandTarget, OptionSet optionSet, Throwable cause) {
+  public CliCommandInvalidException(
+      final CommandTarget commandTarget, OptionSet optionSet, Throwable cause) {
     super(commandTarget, optionSet, cause);
   }
 }

@@ -36,17 +36,13 @@ public class HeartbeatRequestMessage extends HighPriorityDistributionMessage {
     this.target = neighbour;
   }
 
-  public HeartbeatRequestMessage() {
-  }
+  public HeartbeatRequestMessage() {}
 
   public InternalDistributedMember getTarget() {
     return target;
   }
 
-  /**
-   * If no response is desired the requestId can be reset by invoking
-   * this method
-   */
+  /** If no response is desired the requestId can be reset by invoking this method */
   public void clearRequestId() {
     requestId = -1;
   }

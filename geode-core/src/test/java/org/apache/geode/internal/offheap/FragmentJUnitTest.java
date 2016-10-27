@@ -36,17 +36,15 @@ public class FragmentJUnitTest {
 
   private SlabImpl[] slabs;
 
-  @Rule
-  public ExpectedException expectedException = ExpectedException.none();
+  @Rule public ExpectedException expectedException = ExpectedException.none();
 
-  @Rule
-  public JUnitSoftAssertions softly = new JUnitSoftAssertions();
+  @Rule public JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
   @Before
   public void setUp() throws Exception {
     SlabImpl slab1 = new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE);
     SlabImpl slab2 = new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE);
-    slabs = new SlabImpl[] { slab1, slab2 };
+    slabs = new SlabImpl[] {slab1, slab2};
   }
 
   @After
@@ -81,7 +79,9 @@ public class FragmentJUnitTest {
   @Test
   public void allocatingFromFragmentReducesFreeSpace() {
     Fragment fragment = new Fragment(slabs[0].getMemoryAddress(), slabs[0].getSize());
-    softly.assertThat(fragment.allocate(fragment.getFreeIndex(), fragment.getFreeIndex() + 256)).isEqualTo(true);
+    softly
+        .assertThat(fragment.allocate(fragment.getFreeIndex(), fragment.getFreeIndex() + 256))
+        .isEqualTo(true);
     softly.assertThat(fragment.freeSpace()).isEqualTo(768);
     softly.assertThat(fragment.getFreeIndex()).isEqualTo(256);
   }
@@ -89,14 +89,21 @@ public class FragmentJUnitTest {
   @Test
   public void fragementAllocationIsUnsafeWithRespectToAllocationSize() {
     Fragment fragment = new Fragment(slabs[0].getMemoryAddress(), slabs[0].getSize());
-    softly.assertThat(fragment.allocate(fragment.getFreeIndex(), fragment.getFreeIndex() + (int) OffHeapStorage.MIN_SLAB_SIZE + 8)).isEqualTo(true);
+    softly
+        .assertThat(
+            fragment.allocate(
+                fragment.getFreeIndex(),
+                fragment.getFreeIndex() + (int) OffHeapStorage.MIN_SLAB_SIZE + 8))
+        .isEqualTo(true);
     softly.assertThat(fragment.freeSpace()).isEqualTo(-8);
   }
 
   @Test
   public void getBlockSizeReturnsFreeSpace() {
     Fragment fragment = new Fragment(slabs[0].getMemoryAddress(), slabs[0].getSize());
-    softly.assertThat(fragment.allocate(fragment.getFreeIndex(), fragment.getFreeIndex() + 256)).isEqualTo(true);
+    softly
+        .assertThat(fragment.allocate(fragment.getFreeIndex(), fragment.getFreeIndex() + 256))
+        .isEqualTo(true);
     softly.assertThat(fragment.getBlockSize()).isEqualTo(fragment.freeSpace());
   }
 
@@ -184,7 +191,10 @@ public class FragmentJUnitTest {
     Fragment fragment0 = new Fragment(slabs[0].getMemoryAddress(), slabs[0].getSize());
     Fragment fragment1 = new Fragment(slabs[1].getMemoryAddress(), slabs[1].getSize());
     Long fragmentAddress = fragment0.getAddress();
-    softly.assertThat(fragment0.hashCode()).isEqualTo(fragmentAddress.hashCode()).isNotEqualTo(fragment1.hashCode());
+    softly
+        .assertThat(fragment0.hashCode())
+        .isEqualTo(fragmentAddress.hashCode())
+        .isNotEqualTo(fragment1.hashCode());
   }
 
   @Test
@@ -196,7 +206,8 @@ public class FragmentJUnitTest {
     Arrays.fill(expectedBytes, OffHeapStoredObject.FILL_BYTE);
     ;
     fragment.fill();
-    AddressableMemoryManager.readBytes(fragmentAddress, bytes, 0, (int) OffHeapStorage.MIN_SLAB_SIZE);
+    AddressableMemoryManager.readBytes(
+        fragmentAddress, bytes, 0, (int) OffHeapStorage.MIN_SLAB_SIZE);
     assertThat(bytes, is(equalTo(expectedBytes)));
   }
 
@@ -217,5 +228,4 @@ public class FragmentJUnitTest {
     fragment.getSlabId();
     fail("getSlabId failed to throw UnsupportedOperationException");
   }
-
 }

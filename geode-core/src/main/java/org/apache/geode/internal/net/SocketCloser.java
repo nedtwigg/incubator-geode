@@ -35,33 +35,41 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.LoggingThreadGroup;
 
 /**
- * This class allows sockets to be closed without blocking.
- * In some cases we have seen a call of socket.close block for minutes.
- * This class maintains a thread pool for every other member we have
- * connected sockets to. Any request to close by default returns immediately
- * to the caller while the close is called by a background thread.
- * The requester can wait for a configured amount of time by setting
- * the "p2p.ASYNC_CLOSE_WAIT_MILLISECONDS" system property.
- * Idle threads that are not doing a close will timeout after 2 minutes.
- * This can be configured by setting the
- * "p2p.ASYNC_CLOSE_POOL_KEEP_ALIVE_SECONDS" system property.
- * A pool exists for each remote address that we have a socket connected to.
- * That way if close is taking a long time to one address we can still get closes
- * done to another address.
- * Each address pool by default has at most 8 threads. This max threads can be
- * configured using the "p2p.ASYNC_CLOSE_POOL_MAX_THREADS" system property.
+ * This class allows sockets to be closed without blocking. In some cases we have seen a call of
+ * socket.close block for minutes. This class maintains a thread pool for every other member we have
+ * connected sockets to. Any request to close by default returns immediately to the caller while the
+ * close is called by a background thread. The requester can wait for a configured amount of time by
+ * setting the "p2p.ASYNC_CLOSE_WAIT_MILLISECONDS" system property. Idle threads that are not doing
+ * a close will timeout after 2 minutes. This can be configured by setting the
+ * "p2p.ASYNC_CLOSE_POOL_KEEP_ALIVE_SECONDS" system property. A pool exists for each remote address
+ * that we have a socket connected to. That way if close is taking a long time to one address we can
+ * still get closes done to another address. Each address pool by default has at most 8 threads.
+ * This max threads can be configured using the "p2p.ASYNC_CLOSE_POOL_MAX_THREADS" system property.
  */
 public class SocketCloser {
   private static final Logger logger = LogService.getLogger();
-  /** Number of seconds to wait before timing out an unused async close thread. Default is 120 (2 minutes). */
-  static final long ASYNC_CLOSE_POOL_KEEP_ALIVE_SECONDS = Long.getLong("p2p.ASYNC_CLOSE_POOL_KEEP_ALIVE_SECONDS", 120).longValue();
-  /** Maximum number of threads that can be doing a socket close. Any close requests over this max will queue up waiting for a thread. */
-  static final int ASYNC_CLOSE_POOL_MAX_THREADS = Integer.getInteger("p2p.ASYNC_CLOSE_POOL_MAX_THREADS", 8).intValue();
-  /** How many milliseconds the synchronous requester waits for the async close to happen. Default is 0. Prior releases waited 50ms. */
-  static final long ASYNC_CLOSE_WAIT_MILLISECONDS = Long.getLong("p2p.ASYNC_CLOSE_WAIT_MILLISECONDS", 0).longValue();
+  /**
+   * Number of seconds to wait before timing out an unused async close thread. Default is 120 (2
+   * minutes).
+   */
+  static final long ASYNC_CLOSE_POOL_KEEP_ALIVE_SECONDS =
+      Long.getLong("p2p.ASYNC_CLOSE_POOL_KEEP_ALIVE_SECONDS", 120).longValue();
+  /**
+   * Maximum number of threads that can be doing a socket close. Any close requests over this max
+   * will queue up waiting for a thread.
+   */
+  static final int ASYNC_CLOSE_POOL_MAX_THREADS =
+      Integer.getInteger("p2p.ASYNC_CLOSE_POOL_MAX_THREADS", 8).intValue();
+  /**
+   * How many milliseconds the synchronous requester waits for the async close to happen. Default is
+   * 0. Prior releases waited 50ms.
+   */
+  static final long ASYNC_CLOSE_WAIT_MILLISECONDS =
+      Long.getLong("p2p.ASYNC_CLOSE_WAIT_MILLISECONDS", 0).longValue();
 
   /** map of thread pools of async close threads */
   private final HashMap<String, ThreadPoolExecutor> asyncCloseExecutors = new HashMap<>();
+
   private final long asyncClosePoolKeepAliveSeconds;
   private final int asyncClosePoolMaxThreads;
   private final long asyncCloseWaitTime;
@@ -69,14 +77,26 @@ public class SocketCloser {
   private boolean closed;
 
   public SocketCloser() {
-    this(ASYNC_CLOSE_POOL_KEEP_ALIVE_SECONDS, ASYNC_CLOSE_POOL_MAX_THREADS, ASYNC_CLOSE_WAIT_MILLISECONDS, TimeUnit.MILLISECONDS);
+    this(
+        ASYNC_CLOSE_POOL_KEEP_ALIVE_SECONDS,
+        ASYNC_CLOSE_POOL_MAX_THREADS,
+        ASYNC_CLOSE_WAIT_MILLISECONDS,
+        TimeUnit.MILLISECONDS);
   }
 
   public SocketCloser(int asyncClosePoolMaxThreads, long asyncCloseWaitMillis) {
-    this(ASYNC_CLOSE_POOL_KEEP_ALIVE_SECONDS, asyncClosePoolMaxThreads, asyncCloseWaitMillis, TimeUnit.MILLISECONDS);
+    this(
+        ASYNC_CLOSE_POOL_KEEP_ALIVE_SECONDS,
+        asyncClosePoolMaxThreads,
+        asyncCloseWaitMillis,
+        TimeUnit.MILLISECONDS);
   }
 
-  public SocketCloser(long asyncClosePoolKeepAliveSeconds, int asyncClosePoolMaxThreads, long asyncCloseWaitTime, TimeUnit asyncCloseWaitUnits) {
+  public SocketCloser(
+      long asyncClosePoolKeepAliveSeconds,
+      int asyncClosePoolMaxThreads,
+      long asyncCloseWaitTime,
+      TimeUnit asyncCloseWaitUnits) {
     this.asyncClosePoolKeepAliveSeconds = asyncClosePoolKeepAliveSeconds;
     this.asyncClosePoolMaxThreads = asyncClosePoolMaxThreads;
     this.asyncCloseWaitTime = asyncCloseWaitTime;
@@ -92,15 +112,23 @@ public class SocketCloser {
       ThreadPoolExecutor pool = asyncCloseExecutors.get(address);
       if (pool == null) {
         final ThreadGroup tg = LoggingThreadGroup.createThreadGroup("Socket asyncClose", logger);
-        ThreadFactory tf = new ThreadFactory() {
-          public Thread newThread(final Runnable command) {
-            Thread thread = new Thread(tg, command);
-            thread.setDaemon(true);
-            return thread;
-          }
-        };
+        ThreadFactory tf =
+            new ThreadFactory() {
+              public Thread newThread(final Runnable command) {
+                Thread thread = new Thread(tg, command);
+                thread.setDaemon(true);
+                return thread;
+              }
+            };
         BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>();
-        pool = new ThreadPoolExecutor(this.asyncClosePoolMaxThreads, this.asyncClosePoolMaxThreads, this.asyncClosePoolKeepAliveSeconds, TimeUnit.SECONDS, workQueue, tf);
+        pool =
+            new ThreadPoolExecutor(
+                this.asyncClosePoolMaxThreads,
+                this.asyncClosePoolMaxThreads,
+                this.asyncClosePoolKeepAliveSeconds,
+                TimeUnit.SECONDS,
+                workQueue,
+                tf);
         pool.allowCoreThreadTimeOut(true);
         asyncCloseExecutors.put(address, pool);
       }
@@ -109,11 +137,9 @@ public class SocketCloser {
   }
 
   /**
-   * Call this method if you know all the resources in the closer
-   * for the given address are no longer needed.
-   * Currently a thread pool is kept for each address and if you
-   * know that an address no longer needs its pool then you should
-   * call this method.
+   * Call this method if you know all the resources in the closer for the given address are no
+   * longer needed. Currently a thread pool is kept for each address and if you know that an address
+   * no longer needs its pool then you should call this method.
    */
   public void releaseResourcesForAddress(String address) {
     synchronized (asyncCloseExecutors) {
@@ -132,9 +158,8 @@ public class SocketCloser {
   }
 
   /**
-   * Call close when you are all done with your socket closer.
-   * If you call asyncClose after close is called then the
-   * asyncClose will be done synchronously.
+   * Call close when you are all done with your socket closer. If you call asyncClose after close is
+   * called then the asyncClose will be done synchronously.
    */
   public void close() {
     synchronized (asyncCloseExecutors) {
@@ -169,12 +194,11 @@ public class SocketCloser {
   }
 
   /**
-   * Closes the specified socket in a background thread.
-   * In some cases we see close hang (see bug 33665).
-   * Depending on how the SocketCloser is configured (see ASYNC_CLOSE_WAIT_MILLISECONDS)
-   * this method may block for a certain amount of time.
-   * If it is called after the SocketCloser is closed then a normal
-   * synchronous close is done.
+   * Closes the specified socket in a background thread. In some cases we see close hang (see bug
+   * 33665). Depending on how the SocketCloser is configured (see ASYNC_CLOSE_WAIT_MILLISECONDS)
+   * this method may block for a certain amount of time. If it is called after the SocketCloser is
+   * closed then a normal synchronous close is done.
+   *
    * @param sock the socket to close
    * @param address identifies who the socket is connected to
    * @param extra an optional Runnable with stuff to execute in the async thread
@@ -190,19 +214,21 @@ public class SocketCloser {
           // this SocketCloser has been closed so do a synchronous, inline, close
           doItInline = true;
         } else {
-          asyncExecute(address, new Runnable() {
-            public void run() {
-              Thread.currentThread().setName("AsyncSocketCloser for " + address);
-              try {
-                if (extra != null) {
-                  extra.run();
+          asyncExecute(
+              address,
+              new Runnable() {
+                public void run() {
+                  Thread.currentThread().setName("AsyncSocketCloser for " + address);
+                  try {
+                    if (extra != null) {
+                      extra.run();
+                    }
+                    inlineClose(sock);
+                  } finally {
+                    Thread.currentThread().setName("unused AsyncSocketCloser");
+                  }
                 }
-                inlineClose(sock);
-              } finally {
-                Thread.currentThread().setName("unused AsyncSocketCloser");
-              }
-            }
-          });
+              });
         }
       }
     } catch (OutOfMemoryError ignore) {
@@ -220,6 +246,7 @@ public class SocketCloser {
 
   /**
    * Closes the specified socket
+   *
    * @param sock the socket to close
    */
   private static void inlineClose(final Socket sock) {

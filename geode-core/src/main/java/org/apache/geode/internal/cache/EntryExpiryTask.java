@@ -17,10 +17,7 @@
 
 package org.apache.geode.internal.cache;
 
-/**
- * EntryExpiryTask represents a timeout event for a region entry.
- */
-
+/** EntryExpiryTask represents a timeout event for a region entry. */
 import org.apache.geode.cache.*;
 import org.apache.geode.distributed.internal.DistributionConfig;
 import org.apache.geode.internal.InternalStatisticsDisabledException;
@@ -33,9 +30,7 @@ import java.util.concurrent.locks.Lock;
 public class EntryExpiryTask extends ExpiryTask {
 
   private static final Logger logger = LogService.getLogger();
-  /**
-   * The region entry we are working with
-   */
+  /** The region entry we are working with */
   private RegionEntry re; // not final so cancel can null it out see bug 37574
 
   /*
@@ -46,7 +41,8 @@ public class EntryExpiryTask extends ExpiryTask {
    * This field is nether private nor final so that dunits can manipulate it as
    * necessary.
    */
-  public static boolean expireSendsEntryAsCallback = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "EXPIRE_SENDS_ENTRY_AS_CALLBACK");
+  public static boolean expireSendsEntryAsCallback =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "EXPIRE_SENDS_ENTRY_AS_CALLBACK");
 
   protected EntryExpiryTask(LocalRegion region, RegionEntry re) {
     super(region);
@@ -68,10 +64,11 @@ public class EntryExpiryTask extends ExpiryTask {
   }
 
   /**
-   * Returns the tasks region entry if it "checks" out. The check is to
-   * see if the region entry still exists.
-   * @throws EntryNotFoundException if the task no longer has a region entry or
-   * if the region entry it has is removed.
+   * Returns the tasks region entry if it "checks" out. The check is to see if the region entry
+   * still exists.
+   *
+   * @throws EntryNotFoundException if the task no longer has a region entry or if the region entry
+   *     it has is removed.
    */
   protected RegionEntry getCheckedRegionEntry() throws EntryNotFoundException {
     RegionEntry result = this.re;
@@ -111,7 +108,15 @@ public class EntryExpiryTask extends ExpiryTask {
     Object key = re.getKey();
     LocalRegion lr = getLocalRegion();
     @Released
-    EntryEventImpl event = EntryEventImpl.create(lr, Operation.EXPIRE_DESTROY, key, null, createExpireEntryCallback(lr, key), false, lr.getMyId());
+    EntryEventImpl event =
+        EntryEventImpl.create(
+            lr,
+            Operation.EXPIRE_DESTROY,
+            key,
+            null,
+            createExpireEntryCallback(lr, key),
+            false,
+            lr.getMyId());
     try {
       event.setPendingSecondaryExpireDestroy(isPending);
       if (lr.generateEventID()) {
@@ -130,7 +135,15 @@ public class EntryExpiryTask extends ExpiryTask {
     Object key = re.getKey();
     LocalRegion lr = getLocalRegion();
     @Released
-    EntryEventImpl event = EntryEventImpl.create(lr, Operation.EXPIRE_INVALIDATE, key, null, createExpireEntryCallback(lr, key), false, lr.getMyId());
+    EntryEventImpl event =
+        EntryEventImpl.create(
+            lr,
+            Operation.EXPIRE_INVALIDATE,
+            key,
+            null,
+            createExpireEntryCallback(lr, key),
+            false,
+            lr.getMyId());
     try {
       if (lr.generateEventID()) {
         event.setNewEventId(lr.getCache().getDistributedSystem());
@@ -148,7 +161,15 @@ public class EntryExpiryTask extends ExpiryTask {
     Object key = re.getKey();
     LocalRegion lr = getLocalRegion();
     @Released
-    EntryEventImpl event = EntryEventImpl.create(lr, Operation.EXPIRE_LOCAL_DESTROY, key, null, createExpireEntryCallback(lr, key), false, lr.getMyId());
+    EntryEventImpl event =
+        EntryEventImpl.create(
+            lr,
+            Operation.EXPIRE_LOCAL_DESTROY,
+            key,
+            null,
+            createExpireEntryCallback(lr, key),
+            false,
+            lr.getMyId());
     try {
       if (lr.generateEventID()) {
         event.setNewEventId(lr.getCache().getDistributedSystem());
@@ -166,7 +187,15 @@ public class EntryExpiryTask extends ExpiryTask {
     Object key = re.getKey();
     LocalRegion lr = getLocalRegion();
     @Released
-    EntryEventImpl event = EntryEventImpl.create(lr, Operation.EXPIRE_LOCAL_INVALIDATE, key, null, createExpireEntryCallback(lr, key), false, lr.getMyId());
+    EntryEventImpl event =
+        EntryEventImpl.create(
+            lr,
+            Operation.EXPIRE_LOCAL_INVALIDATE,
+            key,
+            null,
+            createExpireEntryCallback(lr, key),
+            false,
+            lr.getMyId());
     try {
       if (lr.generateEventID()) {
         event.setNewEventId(lr.getCache().getDistributedSystem());
@@ -179,8 +208,11 @@ public class EntryExpiryTask extends ExpiryTask {
   }
 
   @Override
-  final protected void reschedule() throws CacheException {
-    if (isCacheClosing() || getLocalRegion().isClosed() || getLocalRegion().isDestroyed() || !isExpirationAllowed()) {
+  protected final void reschedule() throws CacheException {
+    if (isCacheClosing()
+        || getLocalRegion().isClosed()
+        || getLocalRegion().isDestroyed()
+        || !isExpirationAllowed()) {
       return;
     }
     if (getExpirationTime() > 0) {
@@ -250,9 +282,7 @@ public class EntryExpiryTask extends ExpiryTask {
     return action;
   }
 
-  /**
-   * Called by LocalRegion#performExpiryTimeout
-   */
+  /** Called by LocalRegion#performExpiryTimeout */
   @Override
   protected void basicPerformTimeout(boolean isPending) throws CacheException {
     if (!isExpirationAllowed()) {
@@ -285,7 +315,16 @@ public class EntryExpiryTask extends ExpiryTask {
         if (getNow() >= expTime) {
           if (logger.isTraceEnabled()) {
             // NOTE: original finer message used this.toString() twice
-            logger.trace("{}.performTimeout().getExpirationTime() is {}; {}.expire({}). ttlExpiration: {}, idleExpiration: {}, ttlAttrs: {}, idleAttrs: {} action is: {}", this, expTime, this, action, ttl, idle, getTTLAttributes(), getIdleAttributes());
+            logger.trace(
+                "{}.performTimeout().getExpirationTime() is {}; {}.expire({}). ttlExpiration: {}, idleExpiration: {}, ttlAttrs: {}, idleAttrs: {} action is: {}",
+                this,
+                expTime,
+                this,
+                action,
+                ttl,
+                idle,
+                getTTLAttributes(),
+                getIdleAttributes());
           }
           expire(action, isPending);
           return;
@@ -323,5 +362,4 @@ public class EntryExpiryTask extends ExpiryTask {
     }
     return superCancel;
   }
-
 }

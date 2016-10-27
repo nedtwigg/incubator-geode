@@ -32,8 +32,11 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 /**
- * The LinkJUnitTest class is a test suite of test cases testing the contract and functionality of the Link class.
- * <p/>
+ * The LinkJUnitTest class is a test suite of test cases testing the contract and functionality of
+ * the Link class.
+ *
+ * <p>
+ *
  * @see java.net.URI
  * @see org.apache.geode.management.internal.web.AbstractWebTestCase
  * @see org.apache.geode.management.internal.web.domain.Link
@@ -66,7 +69,9 @@ public class LinkJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testConstructLinkWithRelationHrefAndMethod() throws Exception {
-    final Link link = new Link("create-resource", toUri("http://host:port/service/v1/resources"), HttpMethod.POST);
+    final Link link =
+        new Link(
+            "create-resource", toUri("http://host:port/service/v1/resources"), HttpMethod.POST);
 
     assertNotNull(link);
     assertEquals("http://host:port/service/v1/resources", toString(link.getHref()));
@@ -93,12 +98,16 @@ public class LinkJUnitTest extends AbstractWebTestCase {
   @Test
   public void testCompareTo() throws Exception {
     final Link link0 = new Link("resources", toUri("http://host:port/service/v1/resources"));
-    final Link link1 = new Link("resource", toUri("http://host:port/service/v1/resources"), HttpMethod.POST);
+    final Link link1 =
+        new Link("resource", toUri("http://host:port/service/v1/resources"), HttpMethod.POST);
     final Link link2 = new Link("resource", toUri("http://host:port/service/v1/resources/{id}"));
     final Link link3 = new Link("resource", toUri("http://host:port/service/v1/resources/{name}"));
-    final Link link4 = new Link("resource", toUri("http://host:port/service/v1/resources/{id}"), HttpMethod.DELETE);
+    final Link link4 =
+        new Link(
+            "resource", toUri("http://host:port/service/v1/resources/{id}"), HttpMethod.DELETE);
 
-    final List<Link> expectedList = new ArrayList<Link>(Arrays.asList(link1, link4, link2, link3, link0));
+    final List<Link> expectedList =
+        new ArrayList<Link>(Arrays.asList(link1, link4, link2, link3, link0));
 
     final List<Link> actualList = CollectionUtils.asList(link0, link1, link2, link3, link4);
 
@@ -112,12 +121,14 @@ public class LinkJUnitTest extends AbstractWebTestCase {
 
   @Test
   public void testToHttpRequestLine() throws Exception {
-    final Link link = new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
+    final Link link =
+        new Link("get-resource", toUri("http://host.domain.com:port/service/v1/resources/{id}"));
 
     assertNotNull(link);
     assertEquals(HttpMethod.GET, link.getMethod());
     assertEquals("http://host.domain.com:port/service/v1/resources/{id}", toString(link.getHref()));
-    assertEquals("GET ".concat("http://host.domain.com:port/service/v1/resources/{id}"), link.toHttpRequestLine());
+    assertEquals(
+        "GET ".concat("http://host.domain.com:port/service/v1/resources/{id}"),
+        link.toHttpRequestLine());
   }
-
 }

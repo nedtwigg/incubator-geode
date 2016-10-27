@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.execute.data;
 
 import org.apache.geode.DataSerializable;
@@ -30,9 +28,7 @@ import java.io.IOException;
 public class Shipment implements DataSerializable {
   String shipmentName;
 
-  public Shipment() {
-
-  }
+  public Shipment() {}
 
   public Shipment(String shipmentName) {
     this.shipmentName = shipmentName + PRColocationDUnitTest.getDefaultAddOnString();
@@ -51,8 +47,7 @@ public class Shipment implements DataSerializable {
   }
 
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
+    if (this == obj) return true;
 
     if (obj instanceof Shipment) {
       Shipment other = (Shipment) obj;

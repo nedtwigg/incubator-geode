@@ -28,9 +28,8 @@ public class InternalFunctionInvocationTargetException extends FunctionInvocatio
 
   /**
    * Construct an instance of InternalFunctionInvocationTargetException
-   * 
-   * @param cause
-   *                a Throwable cause of this exception
+   *
+   * @param cause a Throwable cause of this exception
    */
   public InternalFunctionInvocationTargetException(Throwable cause) {
     super(cause);
@@ -38,9 +37,8 @@ public class InternalFunctionInvocationTargetException extends FunctionInvocatio
 
   /**
    * Construct an instance of InternalFunctionInvocationTargetException
-   * 
-   * @param msg
-   *                the error message
+   *
+   * @param msg the error message
    */
   public InternalFunctionInvocationTargetException(String msg) {
     super(msg);
@@ -48,11 +46,9 @@ public class InternalFunctionInvocationTargetException extends FunctionInvocatio
 
   /**
    * Construct an instance of InternalFunctionInvocationTargetException
-   * 
-   * @param msg
-   *                the error message
-   * @param failedNode
-   *                the failed node member
+   *
+   * @param msg the error message
+   * @param failedNode the failed node member
    */
   public InternalFunctionInvocationTargetException(String msg, DistributedMember failedNode) {
     super(msg, failedNode);
@@ -61,11 +57,9 @@ public class InternalFunctionInvocationTargetException extends FunctionInvocatio
 
   /**
    * Construct an instance of InternalFunctionInvocationTargetException
-   * 
-   * @param msg  
-   *           the error message
-   * @param failedNodeSet 
-   *           set of the failed node member id
+   *
+   * @param msg the error message
+   * @param failedNodeSet set of the failed node member id
    */
   public InternalFunctionInvocationTargetException(String msg, Set<String> failedNodeSet) {
     super(msg);
@@ -74,11 +68,9 @@ public class InternalFunctionInvocationTargetException extends FunctionInvocatio
 
   /**
    * Construct an instance of InternalFunctionInvocationTargetException
-   * 
-   * @param msg
-   *                the error message
-   * @param cause
-   *                a Throwable cause of this exception
+   *
+   * @param msg the error message
+   * @param cause a Throwable cause of this exception
    */
   public InternalFunctionInvocationTargetException(String msg, Throwable cause) {
     super(msg, cause);

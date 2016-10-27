@@ -47,8 +47,8 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 @Category(IntegrationTest.class)
 public class TcpServerJUnitTest {
 
-  private/*GemStoneAddition*/ InetAddress localhost;
-  private/*GemStoneAddition*/ int port;
+  private /*GemStoneAddition*/ InetAddress localhost;
+  private /*GemStoneAddition*/ int port;
   private SimpleStats stats;
   private TcpServer server;
 
@@ -67,7 +67,16 @@ public class TcpServerJUnitTest {
     port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
 
     stats = new SimpleStats();
-    server = new TcpServer(port, localhost, new Properties(), null, handler, stats, Thread.currentThread().getThreadGroup(), "server thread");
+    server =
+        new TcpServer(
+            port,
+            localhost,
+            new Properties(),
+            null,
+            handler,
+            stats,
+            Thread.currentThread().getThreadGroup(),
+            "server thread");
     server.start();
   }
 
@@ -78,7 +87,8 @@ public class TcpServerJUnitTest {
 
     TestObject test = new TestObject();
     test.id = 5;
-    TestObject result = (TestObject) new TcpClient().requestToServer(localhost, port, test, 60 * 1000);
+    TestObject result =
+        (TestObject) new TcpClient().requestToServer(localhost, port, test, 60 * 1000);
     assertEquals(test.id, result.id);
 
     String[] info = new TcpClient().getInfo(localhost, port);
@@ -88,7 +98,7 @@ public class TcpServerJUnitTest {
     try {
       new TcpClient().stop(localhost, port);
     } catch (ConnectException ignore) {
-      // must not be running 
+      // must not be running
     }
     server.join(60 * 1000);
     assertFalse(server.isAlive());
@@ -96,7 +106,6 @@ public class TcpServerJUnitTest {
 
     assertEquals(4, stats.started.get());
     assertEquals(4, stats.ended.get());
-
   }
 
   @Test
@@ -106,19 +115,20 @@ public class TcpServerJUnitTest {
     start(handler);
 
     final AtomicBoolean done = new AtomicBoolean();
-    Thread delayedThread = new Thread() {
-      public void run() {
-        Boolean delay = Boolean.valueOf(true);
-        try {
-          new TcpClient().requestToServer(localhost, port, delay, 60 * 1000);
-        } catch (IOException e) {
-          e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-          e.printStackTrace();
-        }
-        done.set(true);
-      }
-    };
+    Thread delayedThread =
+        new Thread() {
+          public void run() {
+            Boolean delay = Boolean.valueOf(true);
+            try {
+              new TcpClient().requestToServer(localhost, port, delay, 60 * 1000);
+            } catch (IOException e) {
+              e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+              e.printStackTrace();
+            }
+            done.set(true);
+          }
+        };
     delayedThread.start();
     try {
       Thread.sleep(500);
@@ -136,7 +146,7 @@ public class TcpServerJUnitTest {
       try {
         new TcpClient().stop(localhost, port);
       } catch (ConnectException ignore) {
-        // must not be running 
+        // must not be running
       }
       server.join(60 * 1000);
     }
@@ -145,9 +155,7 @@ public class TcpServerJUnitTest {
   private static class TestObject implements DataSerializable {
     int id;
 
-    public TestObject() {
-
-    }
+    public TestObject() {}
 
     public void fromData(DataInput in) throws IOException {
       id = in.readInt();
@@ -156,12 +164,11 @@ public class TcpServerJUnitTest {
     public void toData(DataOutput out) throws IOException {
       out.writeInt(id);
     }
-
   }
 
-  private/*GemStoneAddition*/ static class EchoHandler implements TcpHandler {
+  private /*GemStoneAddition*/ static class EchoHandler implements TcpHandler {
 
-    protected/*GemStoneAddition*/ boolean shutdown;
+    protected /*GemStoneAddition*/ boolean shutdown;
 
     public void init(TcpServer tcpServer) {
       // TODO Auto-generated method stub
@@ -176,15 +183,12 @@ public class TcpServerJUnitTest {
       shutdown = true;
     }
 
-    public void restarting(DistributedSystem ds, GemFireCache cache, SharedConfiguration sharedConfig) {
-    }
+    public void restarting(
+        DistributedSystem ds, GemFireCache cache, SharedConfiguration sharedConfig) {}
 
-    public void endRequest(Object request, long startTime) {
-    }
+    public void endRequest(Object request, long startTime) {}
 
-    public void endResponse(Object request, long startTime) {
-    }
-
+    public void endResponse(Object request, long startTime) {}
   }
 
   private static class DelayHandler implements TcpHandler {
@@ -195,8 +199,7 @@ public class TcpServerJUnitTest {
       this.latch = latch;
     }
 
-    public void init(TcpServer tcpServer) {
-    }
+    public void init(TcpServer tcpServer) {}
 
     public Object processRequest(Object request) throws IOException {
       Boolean delay = (Boolean) request;
@@ -212,20 +215,17 @@ public class TcpServerJUnitTest {
       }
     }
 
-    public void shutDown() {
-    }
+    public void shutDown() {}
 
-    public void restarting(DistributedSystem ds, GemFireCache cache, SharedConfiguration sharedConfig) {
-    }
+    public void restarting(
+        DistributedSystem ds, GemFireCache cache, SharedConfiguration sharedConfig) {}
 
-    public void endRequest(Object request, long startTime) {
-    }
+    public void endRequest(Object request, long startTime) {}
 
-    public void endResponse(Object request, long startTime) {
-    }
+    public void endResponse(Object request, long startTime) {}
   }
 
-  private/*GemStoneAddition*/ static class SimpleStats implements PoolStatHelper {
+  private /*GemStoneAddition*/ static class SimpleStats implements PoolStatHelper {
     AtomicInteger started = new AtomicInteger();
     AtomicInteger ended = new AtomicInteger();
 

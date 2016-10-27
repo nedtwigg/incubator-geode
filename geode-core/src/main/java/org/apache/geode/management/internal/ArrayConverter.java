@@ -24,13 +24,13 @@ import java.lang.reflect.Type;
 import javax.management.openmbean.ArrayType;
 import javax.management.openmbean.OpenDataException;
 
-/**
- * Converting an Array of Composite types
- * 
- * 
- */
+/** Converting an Array of Composite types */
 public final class ArrayConverter extends OpenTypeConverter {
-  ArrayConverter(Type targetType, ArrayType openArrayType, Class openArrayClass, OpenTypeConverter elementConverter) {
+  ArrayConverter(
+      Type targetType,
+      ArrayType openArrayType,
+      Class openArrayClass,
+      OpenTypeConverter elementConverter) {
     super(targetType, openArrayType, openArrayClass);
     this.elementConverter = elementConverter;
   }
@@ -69,9 +69,8 @@ public final class ArrayConverter extends OpenTypeConverter {
   }
 
   /**
-   * OpenTypeConverter for the elements of this array. If this is an array of
-   * arrays, the converter converts the second-level arrays, not the deepest
-   * elements.
+   * OpenTypeConverter for the elements of this array. If this is an array of arrays, the converter
+   * converts the second-level arrays, not the deepest elements.
    */
   private final OpenTypeConverter elementConverter;
 }

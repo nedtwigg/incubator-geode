@@ -18,12 +18,14 @@ package org.apache.geode.internal.cache;
 
 import java.util.UUID;
 
-public abstract class VMStatsDiskLRURegionEntryOffHeap extends VMStatsDiskLRURegionEntry implements OffHeapRegionEntry {
+public abstract class VMStatsDiskLRURegionEntryOffHeap extends VMStatsDiskLRURegionEntry
+    implements OffHeapRegionEntry {
   public VMStatsDiskLRURegionEntryOffHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
 
-  private static final VMStatsDiskLRURegionEntryOffHeapFactory factory = new VMStatsDiskLRURegionEntryOffHeapFactory();
+  private static final VMStatsDiskLRURegionEntryOffHeapFactory factory =
+      new VMStatsDiskLRURegionEntryOffHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;
@@ -43,9 +45,11 @@ public abstract class VMStatsDiskLRURegionEntryOffHeap extends VMStatsDiskLRUReg
           if (info != null) {
             final boolean byteEncoded = info;
             if (skey.length() <= InlineKeyHelper.getMaxInlineStringKey(1, byteEncoded)) {
-              return new VMStatsDiskLRURegionEntryOffHeapStringKey1(context, skey, value, byteEncoded);
+              return new VMStatsDiskLRURegionEntryOffHeapStringKey1(
+                  context, skey, value, byteEncoded);
             } else {
-              return new VMStatsDiskLRURegionEntryOffHeapStringKey2(context, skey, value, byteEncoded);
+              return new VMStatsDiskLRURegionEntryOffHeapStringKey2(
+                  context, skey, value, byteEncoded);
             }
           }
         } else if (keyClass == UUID.class) {

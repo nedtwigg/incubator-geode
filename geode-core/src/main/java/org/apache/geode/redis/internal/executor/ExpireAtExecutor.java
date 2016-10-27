@@ -52,12 +52,12 @@ public class ExpireAtExecutor extends AbstractExecutor implements Extendable {
     try {
       timestamp = Coder.bytesToLong(timestampByteArray);
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_TIMESTAMP_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_TIMESTAMP_NOT_USABLE));
       return;
     }
 
-    if (!timeUnitMillis())
-      timestamp = timestamp * millisInSecond;
+    if (!timeUnitMillis()) timestamp = timestamp * millisInSecond;
 
     long currentTimeMillis = System.currentTimeMillis();
 
@@ -70,15 +70,12 @@ public class ExpireAtExecutor extends AbstractExecutor implements Extendable {
 
     boolean expirationSet = false;
 
-    if (rC.hasExpiration(wKey))
-      expirationSet = rC.modifyExpiration(wKey, delayMillis);
-    else
-      expirationSet = rC.setExpiration(wKey, delayMillis);
+    if (rC.hasExpiration(wKey)) expirationSet = rC.modifyExpiration(wKey, delayMillis);
+    else expirationSet = rC.setExpiration(wKey, delayMillis);
 
     if (expirationSet)
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), SET));
-    else
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_SET));
+    else command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_SET));
   }
 
   protected boolean timeUnitMillis() {
@@ -89,5 +86,4 @@ public class ExpireAtExecutor extends AbstractExecutor implements Extendable {
   public String getArgsError() {
     return ArityDef.EXPIREAT;
   }
-
 }

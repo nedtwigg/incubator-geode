@@ -28,10 +28,8 @@ import org.apache.geode.internal.cache.tier.MessageType;
 import java.io.*;
 
 /**
- * Class <code>ClientInterestMessageImpl</code> represents an update to the
- * a client's interest registrations made by the server on behalf of the
- * client.
- *
+ * Class <code>ClientInterestMessageImpl</code> represents an update to the a client's interest
+ * registrations made by the server on behalf of the client.
  *
  * @since GemFire 5.6
  */
@@ -39,67 +37,56 @@ public class ClientInterestMessageImpl implements ClientMessage {
 
   private static final long serialVersionUID = -797925585426839008L;
 
-  /**
-   * This <code>ClientMessage</code>'s <code>EventID</code>
-   */
+  /** This <code>ClientMessage</code>'s <code>EventID</code> */
   private EventID eventId;
 
-  /**
-   * This <code>ClientMessage</code>'s key
-   */
+  /** This <code>ClientMessage</code>'s key */
   private Object keyOfInterest;
 
-  /**
-   * This <code>ClientMessage</code>'s region name
-   */
+  /** This <code>ClientMessage</code>'s region name */
   private String regionName;
 
-  /**
-   * Whether the interest represented by this <code>ClientMessage</code>
-   * is durable
-   */
+  /** Whether the interest represented by this <code>ClientMessage</code> is durable */
   private boolean isDurable;
 
   /**
-   * Whether the create or update events for this <code>ClientMessage</code>
-   * is sent as an invalidate
+   * Whether the create or update events for this <code>ClientMessage</code> is sent as an
+   * invalidate
+   *
    * @since GemFire 6.0.3
    */
   private boolean forUpdatesAsInvalidates;
 
-  /**
-   * This <code>ClientMessage</code>'s interest type (key or regex)
-   */
+  /** This <code>ClientMessage</code>'s interest type (key or regex) */
   private int interestType;
 
-  /**
-   * This <code>ClientMessage</code>'s interest result policy (none, key, key-value)
-   */
+  /** This <code>ClientMessage</code>'s interest result policy (none, key, key-value) */
   private byte interestResultPolicy;
 
-  /**
-   * This <code>ClientMessage</code>'s action (add or remove interest)
-   */
+  /** This <code>ClientMessage</code>'s action (add or remove interest) */
   private byte action;
 
-  /**
-   * A byte representing a register interest message
-   */
+  /** A byte representing a register interest message */
   protected static final byte REGISTER = (byte) 0;
 
-  /**
-   * A byte representing an unregister interest message
-   */
+  /** A byte representing an unregister interest message */
   protected static final byte UNREGISTER = (byte) 1;
 
   /**
-   * 
    * @param eventId The EventID of this message
    * @param regionName The name of the region whose interest is changing
    * @param keyOfInterest The key in the region whose interest is changing
    * @param action The action (add or remove interest)
    */
-  public ClientInterestMessageImpl(EventID eventId, String regionName, Object keyOfInterest, int interestType, byte interestResultPolicy, boolean isDurable, boolean sendUpdatesAsInvalidates, byte action) {
+  public ClientInterestMessageImpl(
+      EventID eventId,
+      String regionName,
+      Object keyOfInterest,
+      int interestType,
+      byte interestResultPolicy,
+      boolean isDurable,
+      boolean sendUpdatesAsInvalidates,
+      byte action) {
     this.eventId = eventId;
     this.regionName = regionName;
     this.keyOfInterest = keyOfInterest;
@@ -121,11 +108,8 @@ public class ClientInterestMessageImpl implements ClientMessage {
     this.action = message.action;
   }
 
-  /**
-   * Default constructor.
-   */
-  public ClientInterestMessageImpl() {
-  }
+  /** Default constructor. */
+  public ClientInterestMessageImpl() {}
 
   public Message getMessage(CacheClientProxy proxy, boolean notify) throws IOException {
     Version clientVersion = proxy.getVersion();
@@ -133,7 +117,8 @@ public class ClientInterestMessageImpl implements ClientMessage {
     if (clientVersion.compareTo(Version.GFE_57) >= 0) {
       message = getGFEMessage();
     } else {
-      throw new IOException("Unsupported client version for server-to-client message creation: " + clientVersion);
+      throw new IOException(
+          "Unsupported client version for server-to-client message creation: " + clientVersion);
     }
 
     return message;
@@ -145,15 +130,15 @@ public class ClientInterestMessageImpl implements ClientMessage {
 
     // Set the message type
     switch (this.action) {
-    case REGISTER:
-      message.setMessageType(MessageType.CLIENT_REGISTER_INTEREST);
-      break;
-    case UNREGISTER:
-      message.setMessageType(MessageType.CLIENT_UNREGISTER_INTEREST);
-      break;
-    default:
-      String s = "Unknown action: " + this.action;
-      throw new IOException(s);
+      case REGISTER:
+        message.setMessageType(MessageType.CLIENT_REGISTER_INTEREST);
+        break;
+      case UNREGISTER:
+        message.setMessageType(MessageType.CLIENT_UNREGISTER_INTEREST);
+        break;
+      default:
+        String s = "Unknown action: " + this.action;
+        throw new IOException(s);
     }
 
     // Add the region name
@@ -272,11 +257,30 @@ public class ClientInterestMessageImpl implements ClientMessage {
     return "interest";
   }
 
-  public void setLatestValue(Object value) {
-  }
+  public void setLatestValue(Object value) {}
 
   public String toString() {
-    return new StringBuilder().append(getClass().getSimpleName()).append("[").append("eventId=").append(this.eventId).append("; regionName=").append(this.regionName).append("; keyOfInterest=").append(this.keyOfInterest).append("; isDurable=").append(this.isDurable).append("; forUpdatesAsInvalidates=").append(this.forUpdatesAsInvalidates).append("; interestType=").append(this.interestType).append("; interestResultPolicy=").append(this.interestResultPolicy).append("; action=").append(this.action).append("]").toString();
+    return new StringBuilder()
+        .append(getClass().getSimpleName())
+        .append("[")
+        .append("eventId=")
+        .append(this.eventId)
+        .append("; regionName=")
+        .append(this.regionName)
+        .append("; keyOfInterest=")
+        .append(this.keyOfInterest)
+        .append("; isDurable=")
+        .append(this.isDurable)
+        .append("; forUpdatesAsInvalidates=")
+        .append(this.forUpdatesAsInvalidates)
+        .append("; interestType=")
+        .append(this.interestType)
+        .append("; interestResultPolicy=")
+        .append(this.interestResultPolicy)
+        .append("; action=")
+        .append(this.action)
+        .append("]")
+        .toString();
   }
 
   @Override

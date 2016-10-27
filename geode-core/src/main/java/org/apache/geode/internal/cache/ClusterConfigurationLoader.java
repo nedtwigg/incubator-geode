@@ -53,25 +53,26 @@ public class ClusterConfigurationLoader {
   private static final Logger logger = LogService.getLogger();
 
   /**
-   * Deploys the jars received from shared configuration, it undeploys any other jars that were not part of shared configuration 
+   * Deploys the jars received from shared configuration, it undeploys any other jars that were not
+   * part of shared configuration
+   *
    * @param cache Cache of this member
-   * @param response {@link ConfigurationResponse} received from the locators 
-   * @throws IOException 
-   * @throws ClassNotFoundException 
+   * @param response {@link ConfigurationResponse} received from the locators
+   * @throws IOException
+   * @throws ClassNotFoundException
    */
-  public static void deployJarsReceivedFromClusterConfiguration(Cache cache, ConfigurationResponse response) throws IOException, ClassNotFoundException {
-    if (response == null)
-      return;
+  public static void deployJarsReceivedFromClusterConfiguration(
+      Cache cache, ConfigurationResponse response) throws IOException, ClassNotFoundException {
+    if (response == null) return;
 
     String[] jarFileNames = response.getJarNames();
     byte[][] jarBytes = response.getJars();
 
-    final JarDeployer jarDeployer = new JarDeployer(((GemFireCacheImpl) cache).getDistributedSystem().getConfig().getDeployWorkingDir());
+    final JarDeployer jarDeployer =
+        new JarDeployer(
+            ((GemFireCacheImpl) cache).getDistributedSystem().getConfig().getDeployWorkingDir());
 
-    /******
-     * Un-deploy the existing jars, deployed during cache creation, do not delete anything
-     */
-
+    /** **** Un-deploy the existing jars, deployed during cache creation, do not delete anything */
     if (jarFileNames != null && jarBytes != null) {
       JarClassLoader[] jarClassLoaders = jarDeployer.deploy(jarFileNames, jarBytes);
       for (int i = 0; i < jarFileNames.length; i++) {
@@ -82,15 +83,16 @@ public class ClusterConfigurationLoader {
     }
   }
 
-  /***
-   * Apply the cache-xml cluster configuration on this member
+  /**
+   * * Apply the cache-xml cluster configuration on this member
+   *
    * @param cache Cache created for this member
    * @param response {@link ConfigurationResponse} containing the requested {@link Configuration}
    * @param config this member's config.
    */
-  public static void applyClusterXmlConfiguration(Cache cache, ConfigurationResponse response, DistributionConfig config) {
-    if (response == null || response.getRequestedConfiguration().isEmpty())
-      return;
+  public static void applyClusterXmlConfiguration(
+      Cache cache, ConfigurationResponse response, DistributionConfig config) {
+    if (response == null || response.getRequestedConfiguration().isEmpty()) return;
 
     List<String> groups = getGroups(config);
     Map<String, Configuration> requestedConfiguration = response.getRequestedConfiguration();
@@ -98,7 +100,8 @@ public class ClusterConfigurationLoader {
     List<String> cacheXmlContentList = new LinkedList<String>();
 
     // apply the cluster config first
-    Configuration clusterConfiguration = requestedConfiguration.get(SharedConfiguration.CLUSTER_CONFIG);
+    Configuration clusterConfiguration =
+        requestedConfiguration.get(SharedConfiguration.CLUSTER_CONFIG);
     if (clusterConfiguration != null) {
       String cacheXmlContent = clusterConfiguration.getCacheXmlContent();
       if (!StringUtils.isBlank(cacheXmlContent)) {
@@ -131,15 +134,16 @@ public class ClusterConfigurationLoader {
     }
   }
 
-  /***
-   * Apply the gemfire properties cluster configuration on this member
+  /**
+   * * Apply the gemfire properties cluster configuration on this member
+   *
    * @param cache Cache created for this member
    * @param response {@link ConfigurationResponse} containing the requested {@link Configuration}
    * @param config this member's config
    */
-  public static void applyClusterPropertiesConfiguration(Cache cache, ConfigurationResponse response, DistributionConfig config) {
-    if (response == null || response.getRequestedConfiguration().isEmpty())
-      return;
+  public static void applyClusterPropertiesConfiguration(
+      Cache cache, ConfigurationResponse response, DistributionConfig config) {
+    if (response == null || response.getRequestedConfiguration().isEmpty()) return;
 
     List<String> groups = getGroups(config);
     Map<String, Configuration> requestedConfiguration = response.getRequestedConfiguration();
@@ -147,7 +151,8 @@ public class ClusterConfigurationLoader {
     final Properties runtimeProps = new Properties();
 
     // apply the cluster config first
-    Configuration clusterConfiguration = requestedConfiguration.get(SharedConfiguration.CLUSTER_CONFIG);
+    Configuration clusterConfiguration =
+        requestedConfiguration.get(SharedConfiguration.CLUSTER_CONFIG);
     if (clusterConfiguration != null) {
       runtimeProps.putAll(clusterConfiguration.getGemfireProperties());
     }
@@ -175,13 +180,16 @@ public class ClusterConfigurationLoader {
   }
 
   /**
-   * Request the shared configuration for group(s) from locator(s) this member is bootstrapped with. 
+   * Request the shared configuration for group(s) from locator(s) this member is bootstrapped with.
+   *
    * @param config this member's configuration.
    * @return {@link ConfigurationResponse}
-   * @throws ClusterConfigurationNotAvailableException 
-   * @throws UnknownHostException 
+   * @throws ClusterConfigurationNotAvailableException
+   * @throws UnknownHostException
    */
-  public static ConfigurationResponse requestConfigurationFromLocators(DistributionConfig config, List<String> locatorList) throws ClusterConfigurationNotAvailableException, UnknownHostException {
+  public static ConfigurationResponse requestConfigurationFromLocators(
+      DistributionConfig config, List<String> locatorList)
+      throws ClusterConfigurationNotAvailableException, UnknownHostException {
     List<String> groups = ClusterConfigurationLoader.getGroups(config);
     ConfigurationRequest request = new ConfigurationRequest();
 
@@ -212,7 +220,9 @@ public class ClusterConfigurationLoader {
       int port = dlId.getPort();
 
       try {
-        response = (ConfigurationResponse) client.requestToServer(locatorInetAddress, port, request, 10000);
+        response =
+            (ConfigurationResponse)
+                client.requestToServer(locatorInetAddress, port, request, 10000);
       } catch (UnknownHostException e) {
         e.printStackTrace();
       } catch (IOException e) {
@@ -226,7 +236,8 @@ public class ClusterConfigurationLoader {
     // and hence it returns null
 
     if (response == null || response.failedToGetSharedConfig()) {
-      throw new ClusterConfigurationNotAvailableException(LocalizedStrings.Launcher_Command_FAILED_TO_GET_SHARED_CONFIGURATION.toLocalizedString());
+      throw new ClusterConfigurationNotAvailableException(
+          LocalizedStrings.Launcher_Command_FAILED_TO_GET_SHARED_CONFIGURATION.toLocalizedString());
     }
 
     return response;
@@ -241,10 +252,11 @@ public class ClusterConfigurationLoader {
     return groups;
   }
 
-  /***
-  * Get the host and port information of the locators 
-  * @return List made up of a String array containing host and port 
-  */
+  /**
+   * * Get the host and port information of the locators
+   *
+   * @return List made up of a String array containing host and port
+   */
   public static List<String[]> getLocatorsInfo(String locatorsString) {
 
     List<String[]> locatorList = new ArrayList<String[]>();
@@ -266,5 +278,4 @@ public class ClusterConfigurationLoader {
     }
     return locatorList;
   }
-
 }

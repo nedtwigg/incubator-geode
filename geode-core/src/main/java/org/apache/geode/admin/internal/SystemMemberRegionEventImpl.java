@@ -21,25 +21,20 @@ import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.cache.Operation;
 
 /**
- * An event that describes an operation on a region.
- * Instances of this are delivered to a {@link SystemMemberCacheListener} when a
- * a region comes or goes.
+ * An event that describes an operation on a region. Instances of this are delivered to a {@link
+ * SystemMemberCacheListener} when a a region comes or goes.
  *
  * @since GemFire 5.0
  */
-public class SystemMemberRegionEventImpl extends SystemMemberCacheEventImpl implements SystemMemberRegionEvent {
+public class SystemMemberRegionEventImpl extends SystemMemberCacheEventImpl
+    implements SystemMemberRegionEvent {
 
-  /** 
-   * The path of region created/destroyed 
-   */
+  /** The path of region created/destroyed */
   private final String regionPath;
 
   ///////////////////////  Constructors  ///////////////////////
 
-  /**
-   * Creates a new <code>SystemMemberRegionEvent</code> for the member
-   * with the given id.
-   */
+  /** Creates a new <code>SystemMemberRegionEvent</code> for the member with the given id. */
   protected SystemMemberRegionEventImpl(DistributedMember id, Operation op, String regionPath) {
     super(id, op);
     this.regionPath = regionPath;
@@ -55,5 +50,4 @@ public class SystemMemberRegionEventImpl extends SystemMemberCacheEventImpl impl
   public String toString() {
     return super.toString() + " region=" + this.regionPath;
   }
-
 }

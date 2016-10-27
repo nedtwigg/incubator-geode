@@ -24,10 +24,7 @@ import java.io.*;
 //import java.util.*;
 import java.util.zip.*;
 
-/**
- * ArchiveSplitter provides APIs to read statistic snapshots from an archive
- * file.
- */
+/** ArchiveSplitter provides APIs to read statistic snapshots from an archive file. */
 public class ArchiveSplitter implements StatArchiveFormat {
   private final File archiveName;
   private InputStream is;
@@ -35,7 +32,7 @@ public class ArchiveSplitter implements StatArchiveFormat {
   private DataInputStream dataIn;
   private DataOutputStream dataOut;
   private OutputStream output;
-  private final static int BUFFER_SIZE = 1024 * 1024;
+  private static final int BUFFER_SIZE = 1024 * 1024;
   private long splitDuration; // in millis
   private byte[][] resourceTypes = new byte[256][];
   private byte[][] resourceInstanceTypeCodes = new byte[256][];
@@ -69,7 +66,9 @@ public class ArchiveSplitter implements StatArchiveFormat {
     this.is = new FileInputStream(archiveName);
     boolean compressed = archiveName.getPath().endsWith(".gz");
     if (compressed) {
-      this.myIs = new MyFilterInputStream(new BufferedInputStream(new GZIPInputStream(this.is, BUFFER_SIZE), BUFFER_SIZE));
+      this.myIs =
+          new MyFilterInputStream(
+              new BufferedInputStream(new GZIPInputStream(this.is, BUFFER_SIZE), BUFFER_SIZE));
     } else {
       this.myIs = new MyFilterInputStream(new BufferedInputStream(this.is, BUFFER_SIZE));
     }
@@ -79,10 +78,17 @@ public class ArchiveSplitter implements StatArchiveFormat {
   private void readHeaderToken() throws IOException {
     byte archiveVersion = dataIn.readByte();
     if (archiveVersion <= 1) {
-      throw new GemFireIOException(LocalizedStrings.ArchiveSplitter_ARCHIVE_VERSION_0_IS_NO_LONGER_SUPPORTED.toLocalizedString(new Byte(archiveVersion)), null);
+      throw new GemFireIOException(
+          LocalizedStrings.ArchiveSplitter_ARCHIVE_VERSION_0_IS_NO_LONGER_SUPPORTED
+              .toLocalizedString(new Byte(archiveVersion)),
+          null);
     }
     if (archiveVersion > ARCHIVE_VERSION) {
-      throw new GemFireIOException(LocalizedStrings.ArchiveSplitter_UNSUPPORTED_ARCHIVE_VERSION_0_THE_SUPPORTED_VERSION_IS_1.toLocalizedString(new Object[] { new Byte(archiveVersion), new Byte(ARCHIVE_VERSION) }), null);
+      throw new GemFireIOException(
+          LocalizedStrings.ArchiveSplitter_UNSUPPORTED_ARCHIVE_VERSION_0_THE_SUPPORTED_VERSION_IS_1
+              .toLocalizedString(
+                  new Object[] {new Byte(archiveVersion), new Byte(ARCHIVE_VERSION)}),
+          null);
     }
 
     this.archiveVersion = archiveVersion;
@@ -189,7 +195,8 @@ public class ArchiveSplitter implements StatArchiveFormat {
       resourceInstanceBits = tmpBits;
 
       byte[][] tmpTypeCodes = new byte[resourceInstId + 128][];
-      System.arraycopy(resourceInstanceTypeCodes, 0, tmpTypeCodes, 0, resourceInstanceTypeCodes.length);
+      System.arraycopy(
+          resourceInstanceTypeCodes, 0, tmpTypeCodes, 0, resourceInstanceTypeCodes.length);
       resourceInstanceTypeCodes = tmpTypeCodes;
 
       byte[][] tmpTokens = new byte[resourceInstId + 128][];
@@ -205,25 +212,27 @@ public class ArchiveSplitter implements StatArchiveFormat {
     if (initialize) {
       for (int i = 0; i < instBits.length; i++) {
         switch (instTypeCodes[i]) {
-        case BOOLEAN_CODE:
-        case BYTE_CODE:
-        case CHAR_CODE:
-          instBits[i] = dataIn.readByte();
-          break;
-        case WCHAR_CODE:
-          instBits[i] = dataIn.readUnsignedShort();
-          break;
-        case SHORT_CODE:
-          instBits[i] = dataIn.readShort();
-          break;
-        case INT_CODE:
-        case FLOAT_CODE:
-        case LONG_CODE:
-        case DOUBLE_CODE:
-          instBits[i] = readCompactValue();
-          break;
-        default:
-          throw new IOException(LocalizedStrings.ArchiveSplitter_UNEXPECTED_TYPECODE_VALUE_0.toLocalizedString(new Byte(instTypeCodes[i])));
+          case BOOLEAN_CODE:
+          case BYTE_CODE:
+          case CHAR_CODE:
+            instBits[i] = dataIn.readByte();
+            break;
+          case WCHAR_CODE:
+            instBits[i] = dataIn.readUnsignedShort();
+            break;
+          case SHORT_CODE:
+            instBits[i] = dataIn.readShort();
+            break;
+          case INT_CODE:
+          case FLOAT_CODE:
+          case LONG_CODE:
+          case DOUBLE_CODE:
+            instBits[i] = readCompactValue();
+            break;
+          default:
+            throw new IOException(
+                LocalizedStrings.ArchiveSplitter_UNEXPECTED_TYPECODE_VALUE_0.toLocalizedString(
+                    new Byte(instTypeCodes[i])));
         }
       }
     }
@@ -244,7 +253,8 @@ public class ArchiveSplitter implements StatArchiveFormat {
       return ILLEGAL_RESOURCE_INST_ID;
     } else if (token == SHORT_RESOURCE_INST_ID_TOKEN) {
       return dataIn.readUnsignedShort();
-    } else { /* token == INT_RESOURCE_INST_ID_TOKEN */
+    } else {
+      /* token == INT_RESOURCE_INST_ID_TOKEN */
       return dataIn.readInt();
     }
   }
@@ -287,25 +297,27 @@ public class ArchiveSplitter implements StatArchiveFormat {
       while (statOffset != ILLEGAL_STAT_OFFSET) {
         long statDeltaBits;
         switch (typeCodes[statOffset]) {
-        case BOOLEAN_CODE:
-        case BYTE_CODE:
-        case CHAR_CODE:
-          statDeltaBits = dataIn.readByte();
-          break;
-        case WCHAR_CODE:
-          statDeltaBits = dataIn.readUnsignedShort();
-          break;
-        case SHORT_CODE:
-          statDeltaBits = dataIn.readShort();
-          break;
-        case INT_CODE:
-        case FLOAT_CODE:
-        case LONG_CODE:
-        case DOUBLE_CODE:
-          statDeltaBits = readCompactValue();
-          break;
-        default:
-          throw new IOException(LocalizedStrings.ArchiveSplitter_UNEXPECTED_TYPECODE_VALUE_0.toLocalizedString(new Byte(typeCodes[statOffset])));
+          case BOOLEAN_CODE:
+          case BYTE_CODE:
+          case CHAR_CODE:
+            statDeltaBits = dataIn.readByte();
+            break;
+          case WCHAR_CODE:
+            statDeltaBits = dataIn.readUnsignedShort();
+            break;
+          case SHORT_CODE:
+            statDeltaBits = dataIn.readShort();
+            break;
+          case INT_CODE:
+          case FLOAT_CODE:
+          case LONG_CODE:
+          case DOUBLE_CODE:
+            statDeltaBits = readCompactValue();
+            break;
+          default:
+            throw new IOException(
+                LocalizedStrings.ArchiveSplitter_UNEXPECTED_TYPECODE_VALUE_0.toLocalizedString(
+                    new Byte(typeCodes[statOffset])));
         }
         bits[statOffset] += statDeltaBits;
         statOffset = dataIn.readUnsignedByte();
@@ -314,37 +326,37 @@ public class ArchiveSplitter implements StatArchiveFormat {
     }
   }
 
-  /**
-     * Returns true if token read, false if eof.
-     */
+  /** Returns true if token read, false if eof. */
   private boolean readToken() throws IOException {
     byte token;
     try {
       token = this.dataIn.readByte();
       switch (token) {
-      case HEADER_TOKEN:
-        readHeaderToken();
-        this.myIs.putBytes(this.dataOut);
-        break;
-      case RESOURCE_TYPE_TOKEN:
-        readResourceTypeToken();
-        this.myIs.putBytes(this.dataOut);
-        break;
-      case RESOURCE_INSTANCE_CREATE_TOKEN:
-      case RESOURCE_INSTANCE_INITIALIZE_TOKEN:
-        readResourceInstanceCreateToken(token == RESOURCE_INSTANCE_INITIALIZE_TOKEN);
-        this.myIs.putBytes(this.dataOut);
-        break;
-      case RESOURCE_INSTANCE_DELETE_TOKEN:
-        readResourceInstanceDeleteToken();
-        this.myIs.putBytes(this.dataOut);
-        break;
-      case SAMPLE_TOKEN:
-        readSampleToken();
-        this.myIs.putBytes(this.dataOut);
-        break;
-      default:
-        throw new IOException(LocalizedStrings.ArchiveSplitter_UNEXPECTED_TOKEN_BYTE_VALUE_0.toLocalizedString(new Byte(token)));
+        case HEADER_TOKEN:
+          readHeaderToken();
+          this.myIs.putBytes(this.dataOut);
+          break;
+        case RESOURCE_TYPE_TOKEN:
+          readResourceTypeToken();
+          this.myIs.putBytes(this.dataOut);
+          break;
+        case RESOURCE_INSTANCE_CREATE_TOKEN:
+        case RESOURCE_INSTANCE_INITIALIZE_TOKEN:
+          readResourceInstanceCreateToken(token == RESOURCE_INSTANCE_INITIALIZE_TOKEN);
+          this.myIs.putBytes(this.dataOut);
+          break;
+        case RESOURCE_INSTANCE_DELETE_TOKEN:
+          readResourceInstanceDeleteToken();
+          this.myIs.putBytes(this.dataOut);
+          break;
+        case SAMPLE_TOKEN:
+          readSampleToken();
+          this.myIs.putBytes(this.dataOut);
+          break;
+        default:
+          throw new IOException(
+              LocalizedStrings.ArchiveSplitter_UNEXPECTED_TOKEN_BYTE_VALUE_0.toLocalizedString(
+                  new Byte(token)));
       }
       return true;
     } catch (EOFException ignore) {
@@ -442,9 +454,7 @@ public class ArchiveSplitter implements StatArchiveFormat {
       super(in);
     }
 
-    /**
-     * Returns all the bytes, read or skipped, since the last reset.
-     */
+    /** Returns all the bytes, read or skipped, since the last reset. */
     public byte[] getBytes() {
       byte[] result = new byte[idx];
       System.arraycopy(readBytes, 0, result, 0, result.length);
@@ -452,8 +462,7 @@ public class ArchiveSplitter implements StatArchiveFormat {
     }
 
     /**
-     * Writes all the bytes, read or skipped, since the last reset
-     * to the specified output stream.
+     * Writes all the bytes, read or skipped, since the last reset to the specified output stream.
      * Does a mark and reset after the write.
      */
     public void putBytes(DataOutputStream dataOut) throws IOException {
@@ -523,11 +532,12 @@ public class ArchiveSplitter implements StatArchiveFormat {
 
   public static void main(String args[]) throws IOException {
     if (args.length != 1) {
-      System.err.println(LocalizedStrings.ArchiveSplitter_USAGE.toLocalizedString() + ": org.apache.geode.internal.statistics.ArchiveSplitter <archive.gfs>");
+      System.err.println(
+          LocalizedStrings.ArchiveSplitter_USAGE.toLocalizedString()
+              + ": org.apache.geode.internal.statistics.ArchiveSplitter <archive.gfs>");
       System.exit(1);
     }
     ArchiveSplitter as = new ArchiveSplitter(new File(args[0]));
     as.split();
   }
-
 }

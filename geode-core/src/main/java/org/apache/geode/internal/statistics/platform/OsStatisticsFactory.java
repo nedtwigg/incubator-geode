@@ -19,23 +19,23 @@ package org.apache.geode.internal.statistics.platform;
 import org.apache.geode.*;
 
 /**
- * Instances of this interface provide methods that create operating system
- * instances of {@link org.apache.geode.Statistics}. Its for internal use 
- * only.
+ * Instances of this interface provide methods that create operating system instances of {@link
+ * org.apache.geode.Statistics}. Its for internal use only.
  *
- * {@link org.apache.geode.distributed.DistributedSystem} is an OS 
- * statistics factory.
- * <P>
+ * <p>{@link org.apache.geode.distributed.DistributedSystem} is an OS statistics factory.
+ *
+ * <p>
+ *
  * @see <A href="package-summary.html#statistics">Package introduction</A>
- *
- *
  * @since GemFire 3.0
  */
 public interface OsStatisticsFactory {
   /**
-   * Creates and returns a OS {@link Statistics} instance of the given {@link StatisticsType type}, <code>textId</code>, <code>numericId</code>, and <code>osStatFlags</code>..
-   * <p>
-   * The created instance may not be {@link Statistics#isAtomic atomic}.
+   * Creates and returns a OS {@link Statistics} instance of the given {@link StatisticsType type},
+   * <code>textId</code>, <code>numericId</code>, and <code>osStatFlags</code>..
+   *
+   * <p>The created instance may not be {@link Statistics#isAtomic atomic}.
    */
-  public Statistics createOsStatistics(StatisticsType type, String textId, long numericId, int osStatFlags);
+  public Statistics createOsStatistics(
+      StatisticsType type, String textId, long numericId, int osStatFlags);
 }

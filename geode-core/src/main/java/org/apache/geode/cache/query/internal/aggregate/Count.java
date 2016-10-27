@@ -19,12 +19,7 @@ package org.apache.geode.cache.query.internal.aggregate;
 import org.apache.geode.cache.query.Aggregator;
 import org.apache.geode.cache.query.QueryService;
 
-/**
- * Computes the count of the non distinct rows for replicated & PR based
- * queries.
- * 
- *
- */
+/** Computes the count of the non distinct rows for replicated & PR based queries. */
 public class Count implements Aggregator {
   private int count = 0;
 
@@ -36,13 +31,10 @@ public class Count implements Aggregator {
   }
 
   @Override
-  public void init() {
-
-  }
+  public void init() {}
 
   @Override
   public Object terminate() {
     return Integer.valueOf(count);
   }
-
 }

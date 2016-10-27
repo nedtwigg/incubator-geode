@@ -25,11 +25,12 @@ public class User implements DataSerializable {
   private int userId;
 
   static {
-    Instantiator.register(new Instantiator(User.class, (byte) 45) {
-      public DataSerializable newInstance() {
-        return new User();
-      }
-    });
+    Instantiator.register(
+        new Instantiator(User.class, (byte) 45) {
+          public DataSerializable newInstance() {
+            return new User();
+          }
+        });
   }
 
   public User(String name, int userId) {
@@ -37,13 +38,8 @@ public class User implements DataSerializable {
     this.userId = userId;
   }
 
-  /**
-   * Creates an "empty" User whose contents are filled in by
-   * invoking its toData() method
-   */
-  protected User() {
-
-  }
+  /** Creates an "empty" User whose contents are filled in by invoking its toData() method */
+  protected User() {}
 
   public void toData(DataOutput out) throws IOException {
     out.writeUTF(this.name);

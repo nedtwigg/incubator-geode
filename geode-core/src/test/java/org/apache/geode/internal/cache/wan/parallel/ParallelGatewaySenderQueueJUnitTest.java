@@ -74,7 +74,9 @@ public class ParallelGatewaySenderQueueJUnitTest {
   }
 
   @Test
-  public void whenGatewayEventUnableToResolveFromOffHeapTheStatForNotQueuedConflatedShouldBeIncremented() throws Exception {
+  public void
+      whenGatewayEventUnableToResolveFromOffHeapTheStatForNotQueuedConflatedShouldBeIncremented()
+          throws Exception {
     GatewaySenderStats stats = mockGatewaySenderStats();
 
     GatewaySenderEventImpl event = mock(GatewaySenderEventImpl.class);
@@ -87,7 +89,9 @@ public class ParallelGatewaySenderQueueJUnitTest {
 
     BucketRegionQueue bucketRegionQueue = mockBucketRegionQueue(backingList);
 
-    TestableParallelGatewaySenderQueue queue = new TestableParallelGatewaySenderQueue(sender, Collections.emptySet(), 0, 1, metaRegionFactory);
+    TestableParallelGatewaySenderQueue queue =
+        new TestableParallelGatewaySenderQueue(
+            sender, Collections.emptySet(), 0, 1, metaRegionFactory);
     queue.setMockedAbstractBucketRegionQueue(bucketRegionQueue);
 
     List peeked = queue.peek(1, 1000);
@@ -102,7 +106,9 @@ public class ParallelGatewaySenderQueueJUnitTest {
   }
 
   @Test
-  public void whenNullPeekedEventFromBucketRegionQueueTheStatForNotQueuedConflatedShouldBeIncremented() throws Exception {
+  public void
+      whenNullPeekedEventFromBucketRegionQueueTheStatForNotQueuedConflatedShouldBeIncremented()
+          throws Exception {
     GatewaySenderStats stats = mockGatewaySenderStats();
 
     GatewaySenderEventImpl eventResolvesFromOffHeap = mock(GatewaySenderEventImpl.class);
@@ -113,7 +119,9 @@ public class ParallelGatewaySenderQueueJUnitTest {
 
     BucketRegionQueue bucketRegionQueue = mockBucketRegionQueue(backingList);
 
-    TestableParallelGatewaySenderQueue queue = new TestableParallelGatewaySenderQueue(sender, Collections.emptySet(), 0, 1, metaRegionFactory);
+    TestableParallelGatewaySenderQueue queue =
+        new TestableParallelGatewaySenderQueue(
+            sender, Collections.emptySet(), 0, 1, metaRegionFactory);
     queue.setMockedAbstractBucketRegionQueue(bucketRegionQueue);
 
     List peeked = queue.peek(1, 1000);
@@ -123,7 +131,8 @@ public class ParallelGatewaySenderQueueJUnitTest {
 
   @Test
   public void testLocalSize() throws Exception {
-    ParallelGatewaySenderQueueMetaRegion mockMetaRegion = mock(ParallelGatewaySenderQueueMetaRegion.class);
+    ParallelGatewaySenderQueueMetaRegion mockMetaRegion =
+        mock(ParallelGatewaySenderQueueMetaRegion.class);
     PartitionedRegionDataStore dataStore = mock(PartitionedRegionDataStore.class);
     when(mockMetaRegion.getDataStore()).thenReturn(dataStore);
     when(dataStore.getSizeOfLocalPrimaryBuckets()).thenReturn(3);
@@ -160,11 +169,20 @@ public class ParallelGatewaySenderQueueJUnitTest {
 
     private BucketRegionQueue mockedAbstractBucketRegionQueue;
 
-    public TestableParallelGatewaySenderQueue(final AbstractGatewaySender sender, final Set<Region> userRegions, final int idx, final int nDispatcher) {
+    public TestableParallelGatewaySenderQueue(
+        final AbstractGatewaySender sender,
+        final Set<Region> userRegions,
+        final int idx,
+        final int nDispatcher) {
       super(sender, userRegions, idx, nDispatcher);
     }
 
-    public TestableParallelGatewaySenderQueue(final AbstractGatewaySender sender, final Set<Region> userRegions, final int idx, final int nDispatcher, final MetaRegionFactory metaRegionFactory) {
+    public TestableParallelGatewaySenderQueue(
+        final AbstractGatewaySender sender,
+        final Set<Region> userRegions,
+        final int idx,
+        final int nDispatcher,
+        final MetaRegionFactory metaRegionFactory) {
       super(sender, userRegions, idx, nDispatcher, metaRegionFactory);
     }
 
@@ -172,7 +190,8 @@ public class ParallelGatewaySenderQueueJUnitTest {
       this.mockedAbstractBucketRegionQueue = mocked;
     }
 
-    public AbstractBucketRegionQueue getBucketRegion(final PartitionedRegion prQ, final int bucketId) {
+    public AbstractBucketRegionQueue getBucketRegion(
+        final PartitionedRegion prQ, final int bucketId) {
       return mockedAbstractBucketRegionQueue;
     }
 
@@ -192,7 +211,8 @@ public class ParallelGatewaySenderQueueJUnitTest {
     }
 
     @Override
-    protected BucketRegionQueue getBucketRegionQueueByBucketId(PartitionedRegion prQ, int bucketId) {
+    protected BucketRegionQueue getBucketRegionQueueByBucketId(
+        PartitionedRegion prQ, int bucketId) {
       return mockedAbstractBucketRegionQueue;
     }
 
@@ -201,5 +221,4 @@ public class ParallelGatewaySenderQueueJUnitTest {
     //      return 1;
     //    }
   }
-
 }

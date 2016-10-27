@@ -43,10 +43,8 @@ import org.springframework.shell.event.ParseResult;
 import org.springframework.util.ReflectionUtils;
 
 /**
- * Utility class to abstract CompositeResultData for Multi-step commands
- * Also contain execution strategy for multi-step commands
- * 
- * 
+ * Utility class to abstract CompositeResultData for Multi-step commands Also contain execution
+ * strategy for multi-step commands
  */
 public class CLIMultiStepHelper {
 
@@ -60,7 +58,10 @@ public class CLIMultiStepHelper {
   public static final int DEFAULT_PAGE_SIZE = 20;
 
   public static Object execCLISteps(LogWrapper logWrapper, Gfsh shell, ParseResult parseResult) {
-    CLIStep[] steps = (CLIStep[]) ReflectionUtils.invokeMethod(parseResult.getMethod(), parseResult.getInstance(), parseResult.getArguments());
+    CLIStep[] steps =
+        (CLIStep[])
+            ReflectionUtils.invokeMethod(
+                parseResult.getMethod(), parseResult.getInstance(), parseResult.getArguments());
     if (steps != null) {
       boolean endStepReached = false;
       int stepNumber = 0;
@@ -82,7 +83,9 @@ public class CLIMultiStepHelper {
                 stepFound = true;
               }
             if (!stepFound) {
-              return ResultBuilder.buildResult(ResultBuilder.createErrorResultData().addLine("Wrong step name returned by previous step : " + step));
+              return ResultBuilder.buildResult(
+                  ResultBuilder.createErrorResultData()
+                      .addLine("Wrong step name returned by previous step : " + step));
             }
           } else {
             lastResult = result;
@@ -97,11 +100,18 @@ public class CLIMultiStepHelper {
       return lastResult;
     } else {
       Gfsh.println("Command returned null steps");
-      return ResultBuilder.buildResult(ResultBuilder.createErrorResultData().addLine("Multi-step command Return NULL STEP Array"));
+      return ResultBuilder.buildResult(
+          ResultBuilder.createErrorResultData()
+              .addLine("Multi-step command Return NULL STEP Array"));
     }
   }
 
-  private static Result executeStep(final LogWrapper logWrapper, final Gfsh shell, final CLIStep nextStep, final ParseResult parseResult, final SectionResultData nextStepArgs) {
+  private static Result executeStep(
+      final LogWrapper logWrapper,
+      final Gfsh shell,
+      final CLIStep nextStep,
+      final ParseResult parseResult,
+      final SectionResultData nextStepArgs) {
     try {
       if (nextStep instanceof CLIRemoteStep) {
         if (shell.isConnectedAndReady()) {
@@ -113,8 +123,11 @@ public class CLIMultiStepHelper {
               shell.setEnvProperty(CLIMultiStepHelper.STEP_ARGS, argsJSon.toString());
             }
             CommandRequest commandRequest = new CommandRequest(gfshParseResult, shell.getEnv());
-            commandRequest.setCustomInput(changeStepName(gfshParseResult.getUserInput(), nextStep.getName()));
-            commandRequest.getCustomParameters().put(CliStrings.QUERY__STEPNAME, nextStep.getName());
+            commandRequest.setCustomInput(
+                changeStepName(gfshParseResult.getUserInput(), nextStep.getName()));
+            commandRequest
+                .getCustomParameters()
+                .put(CliStrings.QUERY__STEPNAME, nextStep.getName());
 
             String json = (String) shell.getOperationInvoker().processCommand(commandRequest);
 
@@ -128,7 +141,8 @@ public class CLIMultiStepHelper {
           } catch (Exception ex) {
             ex.printStackTrace();
           }
-          throw new IllegalStateException("Can't execute a remote command without connection. Use 'connect' first to connect.");
+          throw new IllegalStateException(
+              "Can't execute a remote command without connection. Use 'connect' first to connect.");
         }
       } else {
         Map<String, String> args = CommandExecutionContext.getShellEnv();
@@ -138,7 +152,8 @@ public class CLIMultiStepHelper {
         }
         if (nextStepArgs != null) {
           GfJsonObject argsJSon = nextStepArgs.getSectionGfJsonObject();
-          Gfsh.getCurrentInstance().setEnvProperty(CLIMultiStepHelper.STEP_ARGS, argsJSon.toString());
+          Gfsh.getCurrentInstance()
+              .setEnvProperty(CLIMultiStepHelper.STEP_ARGS, argsJSon.toString());
         }
         return nextStep.exec();
       }
@@ -169,7 +184,11 @@ public class CLIMultiStepHelper {
       if (ResultData.TYPE_ERROR.equals(cResult.getType())) {
         throw new CLIStepExecption(cResult);
       } else {
-        throw new StepExecutionException("Step returned result of type other than " + ResultData.TYPE_COMPOSITE + " Type " + cResult.getType());
+        throw new StepExecutionException(
+            "Step returned result of type other than "
+                + ResultData.TYPE_COMPOSITE
+                + " Type "
+                + cResult.getType());
       }
     }
   }
@@ -185,7 +204,11 @@ public class CLIMultiStepHelper {
       if (ResultData.TYPE_ERROR.equals(cResult.getType())) {
         throw new CLIStepExecption(cResult);
       } else {
-        throw new RuntimeException("Step returned result of type other than " + ResultData.TYPE_COMPOSITE + " Type " + cResult.getType());
+        throw new RuntimeException(
+            "Step returned result of type other than "
+                + ResultData.TYPE_COMPOSITE
+                + " Type "
+                + cResult.getType());
       }
     }
   }
@@ -204,11 +227,9 @@ public class CLIMultiStepHelper {
     } else {
       args = CommandExecutionContext.getShellEnv();
     }
-    if (args == null)
-      return null;
+    if (args == null) return null;
     String stepArg = args.get(CLIMultiStepHelper.STEP_ARGS);
-    if (stepArg == null)
-      return null;
+    if (stepArg == null) return null;
     GfJsonObject object;
     try {
       object = new GfJsonObject(stepArg);
@@ -256,7 +277,8 @@ public class CLIMultiStepHelper {
     return ResultBuilder.buildResult(result);
   }
 
-  public static Result createPageResult(String fields[], Object values[], String step, String[] header, Object[][] table) {
+  public static Result createPageResult(
+      String fields[], Object values[], String step, String[] header, Object[][] table) {
     CompositeResultData result = ResultBuilder.createCompositeResultData();
     SectionResultData section = result.addSection(STEP_SECTION);
     section.addData(NEXT_STEP_NAME, step);
@@ -271,7 +293,12 @@ public class CLIMultiStepHelper {
     return ResultBuilder.buildResult(result);
   }
 
-  public static Result createPageResult(List<String> fields, @SuppressWarnings("rawtypes") List values, String step, String[] header, Object[][] table) {
+  public static Result createPageResult(
+      List<String> fields,
+      @SuppressWarnings("rawtypes") List values,
+      String step,
+      String[] header,
+      Object[][] table) {
     CompositeResultData result = ResultBuilder.createCompositeResultData();
     SectionResultData section = result.addSection(STEP_SECTION);
     section.addData(NEXT_STEP_NAME, step);
@@ -286,7 +313,8 @@ public class CLIMultiStepHelper {
     return ResultBuilder.buildResult(result);
   }
 
-  private static void createPageTableAndBanner(SectionResultData page, String[] header, Object[][] table) {
+  private static void createPageTableAndBanner(
+      SectionResultData page, String[] header, Object[][] table) {
     TabularResultData resultData = page.addTable();
     int columns = header.length;
     for (int i = 0; i < table.length; i++) {
@@ -316,7 +344,8 @@ public class CLIMultiStepHelper {
     return ResultBuilder.buildResult(result);
   }
 
-  public static Result createBannerResult(List<String> fields, @SuppressWarnings("rawtypes") List values, String step) {
+  public static Result createBannerResult(
+      List<String> fields, @SuppressWarnings("rawtypes") List values, String step) {
     CompositeResultData result = ResultBuilder.createCompositeResultData();
     SectionResultData section = result.addSection(STEP_SECTION);
     section.addData(NEXT_STEP_NAME, step);
@@ -335,7 +364,7 @@ public class CLIMultiStepHelper {
     // TODO Use gemfire Logging for code path running on manager
   }
 
-  public static abstract class LocalStep implements CLIStep {
+  public abstract static class LocalStep implements CLIStep {
     private String name = null;
     protected Object[] commandArguments = null;
 
@@ -350,7 +379,7 @@ public class CLIMultiStepHelper {
   }
 
   @SuppressWarnings("serial")
-  public static abstract class RemoteStep implements CLIRemoteStep {
+  public abstract static class RemoteStep implements CLIRemoteStep {
     private String name = null;
     protected Object[] commandArguments = null;
 
@@ -382,7 +411,5 @@ public class CLIMultiStepHelper {
     public String getStepExecutionExceptionMessage() {
       return message;
     }
-
   }
-
 }

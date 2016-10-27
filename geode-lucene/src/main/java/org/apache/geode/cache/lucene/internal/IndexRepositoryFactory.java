@@ -31,10 +31,14 @@ import org.apache.lucene.index.IndexWriterConfig;
 
 public class IndexRepositoryFactory {
 
-  public IndexRepositoryFactory() {
-  }
+  public IndexRepositoryFactory() {}
 
-  public IndexRepository createIndexRepository(final Integer bucketId, LuceneSerializer serializer, LuceneIndexImpl index, PartitionedRegion userRegion) throws IOException {
+  public IndexRepository createIndexRepository(
+      final Integer bucketId,
+      LuceneSerializer serializer,
+      LuceneIndexImpl index,
+      PartitionedRegion userRegion)
+      throws IOException {
     final IndexRepository repo;
     LuceneIndexForPartitionedRegion indexForPR = (LuceneIndexForPartitionedRegion) index;
     BucketRegion fileBucket = getMatchingBucket(indexForPR.getFileRegion(), bucketId);
@@ -43,16 +47,17 @@ public class IndexRepositoryFactory {
     if (fileBucket == null || chunkBucket == null) {
       return null;
     }
-    RegionDirectory dir = new RegionDirectory(fileBucket, chunkBucket, indexForPR.getFileSystemStats());
+    RegionDirectory dir =
+        new RegionDirectory(fileBucket, chunkBucket, indexForPR.getFileSystemStats());
     IndexWriterConfig config = new IndexWriterConfig(indexForPR.getAnalyzer());
     IndexWriter writer = new IndexWriter(dir, config);
-    repo = new IndexRepositoryImpl(fileBucket, writer, serializer, indexForPR.getIndexStats(), dataBucket);
+    repo =
+        new IndexRepositoryImpl(
+            fileBucket, writer, serializer, indexForPR.getIndexStats(), dataBucket);
     return repo;
   }
 
-  /**
-   * Find the bucket in region2 that matches the bucket id from region1.
-   */
+  /** Find the bucket in region2 that matches the bucket id from region1. */
   protected BucketRegion getMatchingBucket(PartitionedRegion region, Integer bucketId) {
     //Force the bucket to be created if it is not already
     region.getOrCreateNodeForBucketWrite(bucketId, null);

@@ -38,25 +38,33 @@ public class LogConsumer {
   HashMap individalErrorCount = new HashMap();
   private final int repeatLimit;
 
-  private static final Pattern ExpectedExceptionPattern = Pattern.compile("<ExpectedException action=(add|remove)>(.*)</ExpectedException>");
-  private static final Pattern logPattern = Pattern.compile("^\\[(?:fatal|error|warn|info|debug|trace|severe|warning|fine|finer|finest)");
+  private static final Pattern ExpectedExceptionPattern =
+      Pattern.compile("<ExpectedException action=(add|remove)>(.*)</ExpectedException>");
+  private static final Pattern logPattern =
+      Pattern.compile("^\\[(?:fatal|error|warn|info|debug|trace|severe|warning|fine|finer|finest)");
   private static final Pattern blankPattern = Pattern.compile("^\\s*$");
-  /**
-   * Any messages at these levels will be skipped
-   */
-  private static final Pattern skipLevelPattern = Pattern.compile("^\\[(?:warn|warning|info|debug|trace|fine|finer|finest)");
+  /** Any messages at these levels will be skipped */
+  private static final Pattern skipLevelPattern =
+      Pattern.compile("^\\[(?:warn|warning|info|debug|trace|fine|finer|finest)");
+
   private static final Pattern fatalOrErrorPattern = Pattern.compile("^\\[(?:fatal|error|severe)");
   private static final Pattern causedByPattern = Pattern.compile("Caused by");
-  private static final Pattern shortErrPattern = Pattern.compile("^\\[[^\\]]+\\](.*)$", Pattern.MULTILINE | Pattern.DOTALL);
-  private static final Pattern wroteExceptionPattern = Pattern.compile("\\[debug.*Wrote exception:");
-  private static final Pattern rmiWarnPattern = Pattern.compile("^WARNING: Failed to .*java.rmi.ConnectException: Connection refused to host: .*; nested exception is:");
+  private static final Pattern shortErrPattern =
+      Pattern.compile("^\\[[^\\]]+\\](.*)$", Pattern.MULTILINE | Pattern.DOTALL);
+  private static final Pattern wroteExceptionPattern =
+      Pattern.compile("\\[debug.*Wrote exception:");
+  private static final Pattern rmiWarnPattern =
+      Pattern.compile(
+          "^WARNING: Failed to .*java.rmi.ConnectException: Connection refused to host: .*; nested exception is:");
   private static final Pattern javaLangErrorPattern = Pattern.compile("^java\\.lang\\.\\S+Error$");
   private static final Pattern exceptionPattern = Pattern.compile("Exception:");
-  private static final Pattern exceptionPattern2 = Pattern.compile("( [\\w\\.]+Exception: (([\\S]+ ){0,6}))");
+  private static final Pattern exceptionPattern2 =
+      Pattern.compile("( [\\w\\.]+Exception: (([\\S]+ ){0,6}))");
   private static final Pattern exceptionPattern3 = Pattern.compile("( [\\w\\.]+Exception)$");
   private static final Pattern exceptionPattern4 = Pattern.compile("^([^:]+: (([\\w\"]+ ){0,6}))");
   private static final Pattern misformatedI18nMessagePattern = Pattern.compile("[^\\d]\\{\\d+\\}");
-  private static final Pattern rvvBitSetMessagePattern = Pattern.compile("RegionVersionVector.+bsv\\d+.+bs=\\{\\d+\\}");
+  private static final Pattern rvvBitSetMessagePattern =
+      Pattern.compile("RegionVersionVector.+bsv\\d+.+bs=\\{\\d+\\}");
   /** Limit long errors to this many lines */
   private static int ERROR_BUFFER_LIMIT = 128;
 
@@ -126,7 +134,7 @@ public class LogConsumer {
             // The main thing is we do not want to call checkExpectedStrs
             // with this "caused by" line.
           } else if (checkExpectedStrs(line, expectedExceptions)) {
-            // reset the counters and throw it all away if it matches 
+            // reset the counters and throw it all away if it matches
             // one of the registered expected strings
             tmpErrFlag = false;
             tmpErrLines = 0;
@@ -145,9 +153,12 @@ public class LogConsumer {
               Integer i = (Integer) individalErrorCount.get(shortName);
               Integer occurances = new Integer((i == null) ? 1 : i.intValue() + 1);
               individalErrorCount.put(shortName, occurances);
-              return enforceErrorLimit(occurances.intValue(), all.toString(),
+              return enforceErrorLimit(
+                  occurances.intValue(),
+                  all.toString(),
                   //reader.getLineNumber(),
-                  savelinenum, fileName);
+                  savelinenum,
+                  fileName);
 
             } else {
               //error in determining shortName, wing it
@@ -156,7 +167,7 @@ public class LogConsumer {
           }
 
           // we're still saving lines to append them on to all which contains
-          // all the lines we're trying to save          
+          // all the lines we're trying to save
           if (tmpErrFlag) {
             if (tmpErrLines < ERROR_BUFFER_LIMIT) {
               tmpErrLines++;
@@ -164,24 +175,29 @@ public class LogConsumer {
             }
             if (tmpErrLines == ERROR_BUFFER_LIMIT) {
               tmpErrLines++; //increment to prevent this line from repeating
-              all.append("GrepLogs: ERROR_BUFFER_LIMIT limit reached,").append(" the error was too long to display completely.\n");
+              all.append("GrepLogs: ERROR_BUFFER_LIMIT limit reached,")
+                  .append(" the error was too long to display completely.\n");
             }
-
           }
         }
-        // unique condition for when bridge server see log exception and      
+        // unique condition for when bridge server see log exception and
         // logging level is set to fine. Message looks like this:
         //[fine 2005/10/25 17:53:13.586 PDT gemfire2 Server connection from hobbes.gemstone.com:34466-0xf4 nid=0x23e40f1] Server connection from hobbes.gemstone.com:34466: Wrote exception:
         //org.apache.geode.cache.EntryNotFoundException: remote-destroy-key
         // also now handles a JMX WARNING
-      } else if (wroteExceptionPattern.matcher(line).find() || rmiWarnPattern.matcher(line).find()) {
+      } else if (wroteExceptionPattern.matcher(line).find()
+          || rmiWarnPattern.matcher(line).find()) {
         //Eat only the single EntryNotFound Exception
         eatLines = 1;
-        // if we are here then the line didn't have severe or error in it and      
-        // didn't meet any special cases that require eating lines      
-        // Check for other kinds of exceptions. This is by no means inclusive      
-        //of all types of exceptions that could occur and some ARE missed.               
-      } else if (exceptionPattern.matcher(line).find() || javaLangErrorPattern.matcher(line).find() || (misformatedI18nMessagePattern.matcher(line).find() && !(skipLevelPattern.matcher(line).find() && rvvBitSetMessagePattern.matcher(line).find()))) {
+        // if we are here then the line didn't have severe or error in it and
+        // didn't meet any special cases that require eating lines
+        // Check for other kinds of exceptions. This is by no means inclusive
+        //of all types of exceptions that could occur and some ARE missed.
+      } else if (exceptionPattern.matcher(line).find()
+          || javaLangErrorPattern.matcher(line).find()
+          || (misformatedI18nMessagePattern.matcher(line).find()
+              && !(skipLevelPattern.matcher(line).find()
+                  && rvvBitSetMessagePattern.matcher(line).find()))) {
         if (!checkExpectedStrs(line, expectedExceptions)) {
           // it's the Exception colon that we want to find
           // along with the next six words and define to shortline
@@ -231,13 +247,11 @@ public class LogConsumer {
   private boolean checkExpectedStrs(CharSequence line, List expectedExceptions) {
     for (int i = 0; i < expectedExceptions.size(); i++) {
       Pattern p = (Pattern) expectedExceptions.get(i);
-      if (p.matcher(line).find())
-        return true;
+      if (p.matcher(line).find()) return true;
     }
     for (int i = 0; i < testExpectStrs.size(); i++) {
       Pattern p = (Pattern) testExpectStrs.get(i);
-      if (p.matcher(line).find())
-        return true;
+      if (p.matcher(line).find()) return true;
     }
     return false;
   }
@@ -245,15 +259,26 @@ public class LogConsumer {
   private StringBuilder enforceErrorLimit(int hits, String line, int linenum, String filename) {
     if (hits <= repeatLimit) {
       StringBuilder buffer = new StringBuilder();
-      buffer.append("-----------------------------------------------------------------------\n").append("Found suspect string in ").append(filename).append(" at line ").append(linenum).append("\n\n").append(line).append("\n");
+      buffer
+          .append("-----------------------------------------------------------------------\n")
+          .append("Found suspect string in ")
+          .append(filename)
+          .append(" at line ")
+          .append(linenum)
+          .append("\n\n")
+          .append(line)
+          .append("\n");
       return buffer;
     }
     if (hits == repeatLimit) {
       StringBuilder buffer = new StringBuilder();
-      buffer.append("\n\nHit occurrence limit of ").append(hits).append(" for this string.\n").append("Further reporting of this type of error will be suppressed.\n");
+      buffer
+          .append("\n\nHit occurrence limit of ")
+          .append(hits)
+          .append(" for this string.\n")
+          .append("Further reporting of this type of error will be suppressed.\n");
       return buffer;
     }
     return null;
   }
-
 }

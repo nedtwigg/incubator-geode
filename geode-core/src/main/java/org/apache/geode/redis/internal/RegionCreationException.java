@@ -17,14 +17,12 @@
 package org.apache.geode.redis.internal;
 
 /**
- * This exception is used when an error happens while creating a {@link org.apache.geode.cache.Region} globally
- * 
- *
+ * This exception is used when an error happens while creating a {@link
+ * org.apache.geode.cache.Region} globally
  */
 public class RegionCreationException extends RuntimeException {
 
-  public RegionCreationException() {
-  }
+  public RegionCreationException() {}
 
   public RegionCreationException(String err) {
     super(err);
@@ -35,5 +33,4 @@ public class RegionCreationException extends RuntimeException {
   }
 
   private static final long serialVersionUID = 8416820139078312997L;
-
 }

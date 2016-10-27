@@ -22,13 +22,11 @@ import javax.naming.NamingException;
 import javax.naming.CompoundName;
 import java.util.Properties;
 
-/**
- * ContextImpl name parser.
- * 
- */
+/** ContextImpl name parser. */
 class NameParserImpl implements NameParser {
 
   private static final Properties syntax = new Properties();
+
   static {
     syntax.put("jndi.syntax.direction", "left_to_right");
     syntax.put("jndi.syntax.separator", "/");
@@ -38,13 +36,13 @@ class NameParserImpl implements NameParser {
 
   /**
    * Parses name into CompoundName using the following CompoundName properties:
-   * <p>
-   * jndi.syntax.direction = "left_to_right" jndi.syntax.separator = "/"
-   * jndi.syntax.ignorecase = "false" jndi.syntax.trimblanks = "yes"
-   * <p>
-   * Any characters '.' in the name <code>name</code> will be replaced with
-   * the separator character specified above, before parsing.
-   * 
+   *
+   * <p>jndi.syntax.direction = "left_to_right" jndi.syntax.separator = "/" jndi.syntax.ignorecase =
+   * "false" jndi.syntax.trimblanks = "yes"
+   *
+   * <p>Any characters '.' in the name <code>name</code> will be replaced with the separator
+   * character specified above, before parsing.
+   *
    * @param name name to parse
    * @throws NamingException if naming error occurrs
    */

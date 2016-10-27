@@ -38,10 +38,10 @@ import org.springframework.stereotype.Service;
 
 /**
  * Class MemberGatewayHubService
- * 
- * This class contains implementations of getting Gateway Receivers and Senders
- * details of Cluster Member.
- * 
+ *
+ * <p>This class contains implementations of getting Gateway Receivers and Senders details of
+ * Cluster Member.
+ *
  * @since GemFire version 7.5
  */
 @Component
@@ -100,7 +100,8 @@ public class MemberGatewayHubService implements PulseService {
         gatewaySenderJSON.put("batchSize", gatewaySender.getBatchSize());
         gatewaySenderJSON.put("PersistenceEnabled", gatewaySender.getPersistenceEnabled());
         gatewaySenderJSON.put("remoteDSId", gatewaySender.getRemoteDSId());
-        gatewaySenderJSON.put("eventsExceedingAlertThreshold", gatewaySender.getEventsExceedingAlertThreshold());
+        gatewaySenderJSON.put(
+            "eventsExceedingAlertThreshold", gatewaySender.getEventsExceedingAlertThreshold());
 
         gatewaySendersJsonList.add(gatewaySenderJSON);
       }
@@ -118,7 +119,8 @@ public class MemberGatewayHubService implements PulseService {
         asyncEventQueueJSON.put("senderType", asyncEventQueue.isParallel());
         asyncEventQueueJSON.put("batchSize", asyncEventQueue.getBatchSize());
         asyncEventQueueJSON.put("batchTimeInterval", asyncEventQueue.getBatchTimeInterval());
-        asyncEventQueueJSON.put("batchConflationEnabled", asyncEventQueue.isBatchConflationEnabled());
+        asyncEventQueueJSON.put(
+            "batchConflationEnabled", asyncEventQueue.isBatchConflationEnabled());
         asyncEventQueueJSON.put("asyncEventListener", asyncEventQueue.getAsyncEventListener());
         asyncEventQueueJSON.put("queueSize", asyncEventQueue.getEventQueueSize());
 

@@ -21,10 +21,7 @@ import java.text.DateFormat;
 import org.apache.geode.internal.GemFireVersion;
 import org.apache.geode.management.internal.cli.json.GfJsonObject;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class CommandResponse {
 
   private final String sender;
@@ -38,7 +35,17 @@ public class CommandResponse {
   private final Data data;
   private final boolean failedToPersist;
 
-  CommandResponse(String sender, String contentType, int status, String page, String tokenAccessor, String debugInfo, String header, GfJsonObject content, String footer, boolean failedToPersist) {
+  CommandResponse(
+      String sender,
+      String contentType,
+      int status,
+      String page,
+      String tokenAccessor,
+      String debugInfo,
+      String header,
+      GfJsonObject content,
+      String footer,
+      boolean failedToPersist) {
     this.sender = sender;
     this.contentType = contentType;
     this.status = status;
@@ -65,65 +72,47 @@ public class CommandResponse {
     this.failedToPersist = jsonObject.getBoolean("failedToPersist");
   }
 
-  /**
-   * @return the sender
-   */
+  /** @return the sender */
   public String getSender() {
     return sender;
   }
 
-  /**
-   * @return the version
-   */
+  /** @return the version */
   public String getVersion() {
     return version;
   }
 
-  /**
-   * @return the status
-   */
+  /** @return the status */
   public int getStatus() {
     return status;
   }
 
-  /**
-   * @return the contentType
-   */
+  /** @return the contentType */
   public String getContentType() {
     return contentType;
   }
 
-  /**
-   * @return the page
-   */
+  /** @return the page */
   public String getPage() {
     return page;
   }
 
-  /**
-   * @return the when
-   */
+  /** @return the when */
   public String getWhen() {
     return when;
   }
 
-  /**
-   * @return the tokenAccessor
-   */
+  /** @return the tokenAccessor */
   public String getTokenAccessor() {
     return tokenAccessor;
   }
 
-  /**
-   * @return the data
-   */
+  /** @return the data */
   public Data getData() {
     return data;
   }
 
-  /**
-   * @return the debugInfo
-   */
+  /** @return the debugInfo */
   public String getDebugInfo() {
     return debugInfo;
   }
@@ -149,30 +138,31 @@ public class CommandResponse {
       this.footer = dataJsonObject.getString("footer");
     }
 
-    /**
-     * @return the header
-     */
+    /** @return the header */
     public String getHeader() {
       return header;
     }
 
-    /**
-     * @return the content
-     */
+    /** @return the content */
     public Object getContent() {
       return content.getInternalJsonObject();
     }
 
-    /**
-     * @return the footer
-     */
+    /** @return the footer */
     public String getFooter() {
       return footer;
     }
 
     public String toString() {
       StringBuilder builder = new StringBuilder();
-      builder.append("Data [header=").append(header).append(", content=").append(content).append(", footer=").append(footer).append("]");
+      builder
+          .append("Data [header=")
+          .append(header)
+          .append(", content=")
+          .append(content)
+          .append(", footer=")
+          .append(footer)
+          .append("]");
       return builder.toString();
     }
   }

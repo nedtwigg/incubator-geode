@@ -28,11 +28,7 @@ import org.springframework.shell.core.Completion;
 import org.springframework.shell.core.Converter;
 import org.springframework.shell.core.MethodTarget;
 
-/**
- *
- *
- * @since GemFire 8.0
- */
+/** @since GemFire 8.0 */
 public class LocatorIdNameConverter implements Converter<String> {
   @Override
   public boolean supports(Class<?> type, String optionContext) {
@@ -45,8 +41,14 @@ public class LocatorIdNameConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
-    if (String.class.equals(targetType) && ConverterHint.LOCATOR_MEMBER_IDNAME.equals(optionContext)) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
+    if (String.class.equals(targetType)
+        && ConverterHint.LOCATOR_MEMBER_IDNAME.equals(optionContext)) {
       Set<String> locatorIdsAndNames = getLocatorIdAndNames();
 
       for (String string : locatorIdsAndNames) {
@@ -63,7 +65,8 @@ public class LocatorIdNameConverter implements Converter<String> {
     final Gfsh gfsh = Gfsh.getCurrentInstance();
 
     if (gfsh != null && gfsh.isConnectedAndReady()) {
-      final String[] locatorIds = gfsh.getOperationInvoker().getDistributedSystemMXBean().listLocatorMembers(true);
+      final String[] locatorIds =
+          gfsh.getOperationInvoker().getDistributedSystemMXBean().listLocatorMembers(true);
 
       if (locatorIds != null && locatorIds.length != 0) {
         locatorIdsAndNames.addAll(Arrays.asList(locatorIds));

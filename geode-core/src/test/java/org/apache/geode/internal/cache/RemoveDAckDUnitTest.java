@@ -126,13 +126,14 @@ public class RemoveDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: re
       vm0.invoke(RemoveDAckDUnitTest.class, "putMethod", objArr);
     }
 
-    vm1.invoke(new CacheSerializableRunnable("get object") {
-      public void run2() throws CacheException {
-        for (int i = 1; i < 5; i++) {
-          region.get(new Integer(i));
-        }
-      }
-    });
+    vm1.invoke(
+        new CacheSerializableRunnable("get object") {
+          public void run2() throws CacheException {
+            for (int i = 1; i < 5; i++) {
+              region.get(new Integer(i));
+            }
+          }
+        });
 
     int i = 2;
     objArr[0] = new Integer(i);
@@ -140,8 +141,7 @@ public class RemoveDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: re
 
     int Regsize = vm1.invoke(() -> RemoveDAckDUnitTest.sizeMethod());
     assertEquals(3, Regsize);
-
-  }//end of test case
+  } //end of test case
 
   public static Object putMethod(Object ob) {
     Object obj = null;
@@ -178,7 +178,5 @@ public class RemoveDAckDUnitTest extends JUnit4DistributedTestCase { // TODO: re
       fail("Failed while region.remove");
     }
     return objR;
-
   }
-
-}// end of  class
+} // end of  class

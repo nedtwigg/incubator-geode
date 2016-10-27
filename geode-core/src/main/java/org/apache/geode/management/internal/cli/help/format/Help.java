@@ -16,9 +16,7 @@
  */
 package org.apache.geode.management.internal.cli.help.format;
 
-/**
- *
- */
+/** */
 public class Help {
   private Block[] blocks;
 

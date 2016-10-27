@@ -52,9 +52,7 @@ import org.apache.geode.cache.query.internal.QueryObserverAdapter;
 import org.apache.geode.cache.query.internal.QueryObserverHolder;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class IUMRCompositeIteratorJUnitTest {
 
@@ -90,7 +88,6 @@ public class IUMRCompositeIteratorJUnitTest {
     for (int i = 0; i < 4; i++) {
       r3.put(new Integer(i), new Address("411001", "Pune", str, ph));
     }
-
   }
 
   @After
@@ -104,9 +101,9 @@ public class IUMRCompositeIteratorJUnitTest {
     QueryService qs;
     qs = CacheUtils.getQueryService();
     String queries[] = {
-        //Test Case No. IUMR
-        "Select distinct * from /employees e, /address a, e.getPhoneNo(a.zipCode) ea where e.name ='empName'",
-        //  "Select distinct * from /employees e, /address a, e.getPh(e.empId) where e.name ='empName'",
+      //Test Case No. IUMR
+      "Select distinct * from /employees e, /address a, e.getPhoneNo(a.zipCode) ea where e.name ='empName'",
+      //  "Select distinct * from /employees e, /address a, e.getPh(e.empId) where e.name ='empName'",
     };
     SelectResults r[][] = new SelectResults[queries.length][2];
     //Execute Query without Indexes
@@ -135,7 +132,8 @@ public class IUMRCompositeIteratorJUnitTest {
           fail("Index is NOT uesd");
         }
         int indxs = observer.indexesUsed.size();
-        CacheUtils.log("***********Indexes Used :::: " + indxs + " IndexName::" + observer.IndexName);
+        CacheUtils.log(
+            "***********Indexes Used :::: " + indxs + " IndexName::" + observer.IndexName);
         if (indxs != 1) {
           fail("FAILED: The Index should be used. Presently only " + indxs + " Index(es) is used");
         }
@@ -149,7 +147,10 @@ public class IUMRCompositeIteratorJUnitTest {
           if (temp.equals("nameIndex")) {
             break;
           } else {
-            fail("indices used do not match with the which is expected to be used" + "<nameIndex> was expected but found " + itr.next());
+            fail(
+                "indices used do not match with the which is expected to be used"
+                    + "<nameIndex> was expected but found "
+                    + itr.next());
           }
         }
 
@@ -161,7 +162,6 @@ public class IUMRCompositeIteratorJUnitTest {
     //Verifying the query results
     //  StructSetOrResultsSet ssORrs = new StructSetOrResultsSet();
     CacheUtils.compareResultsOfWithAndWithoutIndex(r, this);
-
   }
 
   @Ignore
@@ -170,8 +170,9 @@ public class IUMRCompositeIteratorJUnitTest {
     QueryService qs;
     qs = CacheUtils.getQueryService();
     String queries[] = {
-        //Test Case No. IUMR
-        "Select distinct * from /countries c, /employees e, c.citizens[e.empId].arr where e.name='empName'", };
+      //Test Case No. IUMR
+      "Select distinct * from /countries c, /employees e, c.citizens[e.empId].arr where e.name='empName'",
+    };
     SelectResults r[][] = new SelectResults[queries.length][2];
 
     //Execute Query without Indexes
@@ -202,7 +203,8 @@ public class IUMRCompositeIteratorJUnitTest {
           fail("Index is NOT uesd");
         }
         int indxs = observer.indexesUsed.size();
-        CacheUtils.log("***********Indexes Used :::: " + indxs + " IndexName::" + observer.IndexName);
+        CacheUtils.log(
+            "***********Indexes Used :::: " + indxs + " IndexName::" + observer.IndexName);
         if (indxs != 1) {
           fail("FAILED: The Index should be used. Presently only " + indxs + " Index(es) is used");
         }
@@ -216,7 +218,10 @@ public class IUMRCompositeIteratorJUnitTest {
           if (temp.equals("nameIndex")) {
             break;
           } else {
-            fail("indices used do not match with the which is expected to be used" + "<nameIndex> was expected but found " + itr.next());
+            fail(
+                "indices used do not match with the which is expected to be used"
+                    + "<nameIndex> was expected but found "
+                    + itr.next());
           }
         }
 
@@ -228,7 +233,6 @@ public class IUMRCompositeIteratorJUnitTest {
     //Verifying the query results
 
     CacheUtils.compareResultsOfWithAndWithoutIndex(r, this);
-
   }
 
   class QueryObserverImpl extends QueryObserverAdapter {
@@ -247,5 +251,4 @@ public class IUMRCompositeIteratorJUnitTest {
       }
     }
   }
-
-}// end of the class
+} // end of the class

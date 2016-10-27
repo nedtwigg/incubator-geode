@@ -41,8 +41,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * The test is written to verify that the rootRegion() in GemfireCache.java
- * doesn't return any metaRegions or HA Regions.
+ * The test is written to verify that the rootRegion() in GemfireCache.java doesn't return any
+ * metaRegions or HA Regions.
  */
 @Category(DistributedTest.class)
 public class Bug37805DUnitTest extends JUnit4DistributedTestCase {
@@ -75,20 +75,32 @@ public class Bug37805DUnitTest extends JUnit4DistributedTestCase {
   public void testFunctionality() {
     // Step 1: Starting the servers
 
-    PORT1 = ((Integer) this.server1VM.invoke(() -> CacheServerTestUtil.createCacheServer(regionName, new Boolean(true)))).intValue();
+    PORT1 =
+        ((Integer)
+                this.server1VM.invoke(
+                    () -> CacheServerTestUtil.createCacheServer(regionName, new Boolean(true))))
+            .intValue();
     final int durableClientTimeout = 600;
 
     // Step 2: Starting Client and creating durableRegion
     final String durableClientId = getName() + "_client";
 
-    this.durableClientVM.invoke(() -> CacheServerTestUtil.createCacheClient(getClientPool(NetworkUtils.getServerHostName(durableClientVM.getHost()), PORT1, true, 0), regionName, getDurableClientDistributedSystemProperties(durableClientId, durableClientTimeout), Boolean.TRUE));
+    this.durableClientVM.invoke(
+        () ->
+            CacheServerTestUtil.createCacheClient(
+                getClientPool(
+                    NetworkUtils.getServerHostName(durableClientVM.getHost()), PORT1, true, 0),
+                regionName,
+                getDurableClientDistributedSystemProperties(durableClientId, durableClientTimeout),
+                Boolean.TRUE));
 
     // Send clientReady message
-    this.durableClientVM.invoke(new CacheSerializableRunnable("Send clientReady") {
-      public void run2() throws CacheException {
-        CacheServerTestUtil.getCache().readyForEvents();
-      }
-    });
+    this.durableClientVM.invoke(
+        new CacheSerializableRunnable("Send clientReady") {
+          public void run2() throws CacheException {
+            CacheServerTestUtil.getCache().readyForEvents();
+          }
+        });
 
     this.server1VM.invoke(() -> Bug37805DUnitTest.checkRootRegions());
 
@@ -98,23 +110,26 @@ public class Bug37805DUnitTest extends JUnit4DistributedTestCase {
   public static void checkRootRegions() {
     Set rootRegions = CacheServerTestUtil.getCache().rootRegions();
     if (rootRegions != null) {
-      for (Iterator itr = rootRegions.iterator(); itr.hasNext();) {
+      for (Iterator itr = rootRegions.iterator(); itr.hasNext(); ) {
         Region region = (Region) itr.next();
-        if (region instanceof HARegion)
-          fail("region of HARegion present");
+        if (region instanceof HARegion) fail("region of HARegion present");
       }
     }
     //assertNull(rootRegions);
     //assertIndexDetailsEquals(0,((Collection)CacheServerTestUtil.getCache().rootRegions()).size());
   }
 
-  private Pool getClientPool(String host, int server1Port, boolean establishCallbackConnection, int redundancyLevel) {
+  private Pool getClientPool(
+      String host, int server1Port, boolean establishCallbackConnection, int redundancyLevel) {
     PoolFactory pf = PoolManager.createFactory();
-    pf.addServer(host, server1Port).setSubscriptionEnabled(establishCallbackConnection).setSubscriptionRedundancy(redundancyLevel);
+    pf.addServer(host, server1Port)
+        .setSubscriptionEnabled(establishCallbackConnection)
+        .setSubscriptionRedundancy(redundancyLevel);
     return ((PoolFactoryImpl) pf).getPoolAttributes();
   }
 
-  private Properties getDurableClientDistributedSystemProperties(String durableClientId, int durableClientTimeout) {
+  private Properties getDurableClientDistributedSystemProperties(
+      String durableClientId, int durableClientTimeout) {
     Properties properties = new Properties();
     properties.setProperty(MCAST_PORT, "0");
     properties.setProperty(LOCATORS, "");

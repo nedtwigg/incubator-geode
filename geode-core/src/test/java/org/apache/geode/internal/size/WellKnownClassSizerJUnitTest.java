@@ -52,10 +52,11 @@ public class WellKnownClassSizerJUnitTest {
     //The size of a string varies based on the JDK version. With 1.7.0_06
     //a couple of fields were removed. So just measure the size of an empty string.
     String emptyString = "";
-    int emptySize = ObjectSizer.SIZE_CLASS_ONCE.sizeof(emptyString) - ObjectSizer.SIZE_CLASS_ONCE.sizeof(new char[0]);
+    int emptySize =
+        ObjectSizer.SIZE_CLASS_ONCE.sizeof(emptyString)
+            - ObjectSizer.SIZE_CLASS_ONCE.sizeof(new char[0]);
 
     assertEquals(emptySize + roundup(OBJECT_SIZE + 4 + 3 * 2), WellKnownClassSizer.sizeof(test1));
     assertEquals(emptySize + roundup(OBJECT_SIZE + 4 + 9 * 2), WellKnownClassSizer.sizeof(test2));
   }
-
 }

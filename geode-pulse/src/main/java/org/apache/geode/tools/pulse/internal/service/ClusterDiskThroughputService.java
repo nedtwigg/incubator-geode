@@ -30,12 +30,11 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Class ClusterDiskThroughput This class contains implementations for getting
- * cluster's current disk throughput details and its trend over time
- * 
+ * Class ClusterDiskThroughput This class contains implementations for getting cluster's current
+ * disk throughput details and its trend over time
+ *
  * @since GemFire version 7.0.Beta
  */
-
 @Component
 @Service("ClusterDiskThroughput")
 @Scope("singleton")
@@ -58,10 +57,14 @@ public class ClusterDiskThroughputService implements PulseService {
     double currentThroughputReads = cluster.getDiskReadsRate();
 
     responseJSON.put("currentThroughputReads", currentThroughputReads);
-    responseJSON.put("throughputReads", mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_THROUGHPUT_READS)));
+    responseJSON.put(
+        "throughputReads",
+        mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_THROUGHPUT_READS)));
 
     responseJSON.put("currentThroughputWrites", currentThroughputWrites);
-    responseJSON.put("throughputWrites", mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_THROUGHPUT_WRITES)));
+    responseJSON.put(
+        "throughputWrites",
+        mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_THROUGHPUT_WRITES)));
 
     // Send json response
     return responseJSON;

@@ -18,9 +18,8 @@ package org.apache.geode.management.internal.cli.parser;
 
 /**
  * Syntax constants for the parser
- * 
- * @since GemFire 7.0
  *
+ * @since GemFire 7.0
  */
 // TODO merge with CliConstants
 public class SyntaxConstants {

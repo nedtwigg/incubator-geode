@@ -18,9 +18,8 @@ package org.apache.geode.management.internal.cli.parser;
 
 /**
  * Object used for ordering method parameters
- * 
+ *
  * @since GemFire 7.0
- * 
  */
 public class MethodParameter {
   private final Object parameter;

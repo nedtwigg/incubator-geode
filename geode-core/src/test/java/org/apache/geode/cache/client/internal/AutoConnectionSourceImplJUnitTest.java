@@ -57,9 +57,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-/**
- *
- */
+/** */
 @SuppressWarnings("deprecation")
 @Category(IntegrationTest.class)
 public class AutoConnectionSourceImplJUnitTest {
@@ -95,7 +93,7 @@ public class AutoConnectionSourceImplJUnitTest {
     properties.put(LOCATORS, "");
     background = Executors.newSingleThreadScheduledExecutor();
 
-    List/*<InetSocketAddress>*/ locators = new ArrayList();
+    List /*<InetSocketAddress>*/ locators = new ArrayList();
     locators.add(new InetSocketAddress(InetAddress.getLocalHost(), port));
     source = new AutoConnectionSourceImpl(locators, "", 60 * 1000);
     source.start(pool);
@@ -158,7 +156,16 @@ public class AutoConnectionSourceImplJUnitTest {
   public void testDiscoverLocators() throws Exception {
     startFakeLocator();
     int secondPort = AvailablePortHelper.getRandomAvailableTCPPort();
-    TcpServer server2 = new TcpServer(secondPort, InetAddress.getLocalHost(), null, null, handler, new FakeHelper(), Thread.currentThread().getThreadGroup(), "tcp server");
+    TcpServer server2 =
+        new TcpServer(
+            secondPort,
+            InetAddress.getLocalHost(),
+            null,
+            null,
+            handler,
+            new FakeHelper(),
+            Thread.currentThread().getThreadGroup(),
+            "tcp server");
     server2.start();
 
     try {
@@ -187,7 +194,16 @@ public class AutoConnectionSourceImplJUnitTest {
   }
 
   private void startFakeLocator() throws UnknownHostException, IOException, InterruptedException {
-    server = new TcpServer(port, InetAddress.getLocalHost(), null, null, handler, new FakeHelper(), Thread.currentThread().getThreadGroup(), "Tcp Server");
+    server =
+        new TcpServer(
+            port,
+            InetAddress.getLocalHost(),
+            null,
+            null,
+            handler,
+            new FakeHelper(),
+            Thread.currentThread().getThreadGroup(),
+            "Tcp Server");
     server.start();
     Thread.sleep(500);
   }
@@ -196,8 +212,7 @@ public class AutoConnectionSourceImplJUnitTest {
     protected volatile ClientConnectionResponse nextConnectionResponse;
     protected volatile LocatorListResponse nextLocatorListResponse;;
 
-    public void init(TcpServer tcpServer) {
-    }
+    public void init(TcpServer tcpServer) {}
 
     public Object processRequest(Object request) throws IOException {
       if (request instanceof ClientConnectionRequest) {
@@ -207,28 +222,21 @@ public class AutoConnectionSourceImplJUnitTest {
       }
     }
 
-    public void shutDown() {
-    }
+    public void shutDown() {}
 
-    public void endRequest(Object request, long startTime) {
-    }
+    public void endRequest(Object request, long startTime) {}
 
-    public void endResponse(Object request, long startTime) {
-    }
+    public void endResponse(Object request, long startTime) {}
 
-    public void restarting(DistributedSystem ds, GemFireCache cache, SharedConfiguration sharedConfig) {
-    }
-
+    public void restarting(
+        DistributedSystem ds, GemFireCache cache, SharedConfiguration sharedConfig) {}
   }
 
   public static class FakeHelper implements PoolStatHelper {
 
-    public void endJob() {
-    }
+    public void endJob() {}
 
-    public void startJob() {
-    }
-
+    public void startJob() {}
   }
 
   public class FakePool implements InternalPool {
@@ -253,16 +261,11 @@ public class AutoConnectionSourceImplJUnitTest {
       return poolStats;
     }
 
-    public void destroy() {
+    public void destroy() {}
 
-    }
+    public void detach() {}
 
-    public void detach() {
-    }
-
-    public void destroy(boolean keepAlive) {
-
-    }
+    public void destroy(boolean keepAlive) {}
 
     public boolean isDurableClient() {
       return false;
@@ -316,16 +319,15 @@ public class AutoConnectionSourceImplJUnitTest {
       return "";
     }
 
-    public List/*<InetSocketAddress>*/ getLocators() {
+    public List /*<InetSocketAddress>*/ getLocators() {
       return new ArrayList();
     }
 
-    public List/*<InetSocketAddress>*/ getServers() {
+    public List /*<InetSocketAddress>*/ getServers() {
       return new ArrayList();
     }
 
-    public void releaseThreadLocalConnection() {
-    }
+    public void releaseThreadLocalConnection() {}
 
     public ConnectionStats getStats(ServerLocation location) {
       return null;
@@ -367,7 +369,8 @@ public class AutoConnectionSourceImplJUnitTest {
       return null;
     }
 
-    public Object executeOn(ServerLocation server, Op op, boolean accessed, boolean onlyUseExistingCnx) {
+    public Object executeOn(
+        ServerLocation server, Op op, boolean accessed, boolean onlyUseExistingCnx) {
       return null;
     }
 
@@ -413,13 +416,11 @@ public class AutoConnectionSourceImplJUnitTest {
         public RuntimeException generateCancelledException(Throwable e) {
           return null;
         }
-
       };
     }
 
-    public void executeOnAllQueueServers(Op op) throws NoSubscriptionServersAvailableException, SubscriptionNotEnabledException {
-
-    }
+    public void executeOnAllQueueServers(Op op)
+        throws NoSubscriptionServersAvailableException, SubscriptionNotEnabledException {}
 
     public Object execute(Op op, int retryAttempts) {
       return null;
@@ -437,17 +438,14 @@ public class AutoConnectionSourceImplJUnitTest {
       return null;
     }
 
-    public void setupServerAffinity(boolean allowFailover) {
-    }
+    public void setupServerAffinity(boolean allowFailover) {}
 
-    public void releaseServerAffinity() {
-    }
+    public void releaseServerAffinity() {}
 
     public ServerLocation getServerAffinityLocation() {
       return null;
     }
 
-    public void setServerAffinityLocation(ServerLocation serverLocation) {
-    }
+    public void setServerAffinityLocation(ServerLocation serverLocation) {}
   }
 }

@@ -25,15 +25,12 @@ package org.apache.geode.cache.query.data;
 
 import java.io.Serializable;
 
-/**
- *
- */
+/** */
 public class ComparableWrapper implements Comparable, Serializable {
   private int val;
 
   /** Creates a new instance of ComparableWrapper */
-  public ComparableWrapper() {
-  }
+  public ComparableWrapper() {}
 
   public ComparableWrapper(int x) {
     this.val = x;
@@ -49,15 +46,15 @@ public class ComparableWrapper implements Comparable, Serializable {
 
   public int compareTo(Object obj) {
     if (!(obj instanceof ComparableWrapper)) {
-      throw new ClassCastException("Can't compare Object " + obj + " : Not of type ComparableWrapper");
+      throw new ClassCastException(
+          "Can't compare Object " + obj + " : Not of type ComparableWrapper");
     } else {
       ComparableWrapper cwObj = (ComparableWrapper) obj;
       if (cwObj.getVal() == this.val) {
         return 0;
       } else if (cwObj.getVal() > this.val) {
         return -1;
-      } else
-        return 1;
+      } else return 1;
     }
   }
 

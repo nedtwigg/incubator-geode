@@ -23,7 +23,7 @@ import org.apache.geode.internal.cache.PartitionedRegion;
 
 /**
  * Composite date type used to distribute attributes for a {@link PartitionedRegion}.
- * 
+ *
  * @since GemFire 7.0
  */
 public class PartitionAttributesData {
@@ -40,11 +40,30 @@ public class PartitionAttributesData {
   private final String[] partitionListeners;
 
   /**
-   * This constructor is to be used by internal JMX framework only. User should
-   * not try to create an instance of this class.
+   * This constructor is to be used by internal JMX framework only. User should not try to create an
+   * instance of this class.
    */
-  @ConstructorProperties({ "redundantCopies", "totalMaxMemory", "totalNumBuckets", "localMaxMemory", "colocatedWith", "partitionResolver", "recoveryDelay", "startupRecoveryDelay", "partitionListeners" })
-  public PartitionAttributesData(int redundantCopies, long totalMaxMemory, int totalNumBuckets, int localMaxMemory, String colocatedWith, String partitionResolver, long recoveryDelay, long startupRecoveryDelay, String[] partitionListeners) {
+  @ConstructorProperties({
+    "redundantCopies",
+    "totalMaxMemory",
+    "totalNumBuckets",
+    "localMaxMemory",
+    "colocatedWith",
+    "partitionResolver",
+    "recoveryDelay",
+    "startupRecoveryDelay",
+    "partitionListeners"
+  })
+  public PartitionAttributesData(
+      int redundantCopies,
+      long totalMaxMemory,
+      int totalNumBuckets,
+      int localMaxMemory,
+      String colocatedWith,
+      String partitionResolver,
+      long recoveryDelay,
+      long startupRecoveryDelay,
+      String[] partitionListeners) {
 
     this.redundantCopies = redundantCopies;
     this.totalMaxMemory = totalMaxMemory;
@@ -57,75 +76,58 @@ public class PartitionAttributesData {
     this.partitionListeners = partitionListeners;
   }
 
-  /**
-   * Returns the number of redundant copies for this PartitionedRegion.
-   */
+  /** Returns the number of redundant copies for this PartitionedRegion. */
   public int getRedundantCopies() {
     return redundantCopies;
   }
 
-  /**
-   * Returns the maximum total size (in megabytes) of the Region.
-   */
+  /** Returns the maximum total size (in megabytes) of the Region. */
   public long getTotalMaxMemory() {
     return totalMaxMemory;
   }
 
-  /**
-   * Returns the total number of buckets for the whole region.
-   */
+  /** Returns the total number of buckets for the whole region. */
   public int getTotalNumBuckets() {
     return totalNumBuckets;
   }
 
-  /**
-   * Returns the maximum amount of local memory that can be used by the region.
-   */
+  /** Returns the maximum amount of local memory that can be used by the region. */
   public int getLocalMaxMemory() {
     return localMaxMemory;
   }
 
-  /**
-   * Returns the name of the PartitionedRegion that this PartitionedRegion is
-   * colocated with.
-   */
+  /** Returns the name of the PartitionedRegion that this PartitionedRegion is colocated with. */
   public String getColocatedWith() {
     return colocatedWith;
   }
 
-  /**
-   * Returns a list of Classes that are configured as resolvers for the Region.
-   */
+  /** Returns a list of Classes that are configured as resolvers for the Region. */
   public String getPartitionResolver() {
     return partitionResolver;
   }
 
   /**
-   * Returns the delay (in milliseconds) that a member will wait while trying
-   * to satisfy the redundancy of data hosted on other members.
+   * Returns the delay (in milliseconds) that a member will wait while trying to satisfy the
+   * redundancy of data hosted on other members.
    */
   public long getRecoveryDelay() {
     return recoveryDelay;
   }
 
   /**
-   * Returns the delay (in milliseconds) that a new member will wait while trying
-   * to satisfy the redundancy of data hosted on other members.
+   * Returns the delay (in milliseconds) that a new member will wait while trying to satisfy the
+   * redundancy of data hosted on other members.
    */
   public long getStartupRecoveryDelay() {
     return startupRecoveryDelay;
   }
 
-  /**
-   * Returns a list of Classes that are configured as listeners for the Region.
-   */
+  /** Returns a list of Classes that are configured as listeners for the Region. */
   public String[] getPartitionListeners() {
     return partitionListeners;
   }
 
-  /**
-   * String representation of PartitionAttributesData
-   */
+  /** String representation of PartitionAttributesData */
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

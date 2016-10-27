@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.execute.data;
 
 import org.apache.geode.DataSerializable;
@@ -29,9 +27,7 @@ import java.io.IOException;
 public class CustId implements DataSerializable {
   Integer custId;
 
-  public CustId() {
-
-  }
+  public CustId() {}
 
   public CustId(int i) {
     this.custId = new Integer(i);
@@ -59,14 +55,11 @@ public class CustId implements DataSerializable {
   }
 
   public boolean equals(Object o) {
-    if (this == o)
-      return true;
+    if (this == o) return true;
 
-    if (!(o instanceof CustId))
-      return false;
+    if (!(o instanceof CustId)) return false;
 
     CustId otherCustId = (CustId) o;
     return (otherCustId.custId.equals(custId));
-
   }
 }

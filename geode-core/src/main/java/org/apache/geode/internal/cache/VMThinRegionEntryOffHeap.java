@@ -18,13 +18,15 @@ package org.apache.geode.internal.cache;
 
 import java.util.UUID;
 
-public abstract class VMThinRegionEntryOffHeap extends VMThinRegionEntry implements OffHeapRegionEntry {
+public abstract class VMThinRegionEntryOffHeap extends VMThinRegionEntry
+    implements OffHeapRegionEntry {
 
   public VMThinRegionEntryOffHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
 
-  private static final VMThinRegionEntryOffHeapFactory factory = new VMThinRegionEntryOffHeapFactory();
+  private static final VMThinRegionEntryOffHeapFactory factory =
+      new VMThinRegionEntryOffHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;

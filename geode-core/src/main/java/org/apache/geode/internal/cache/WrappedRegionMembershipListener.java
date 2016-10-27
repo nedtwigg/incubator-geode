@@ -23,9 +23,8 @@ import org.apache.geode.cache.RegionMembershipListener;
 import org.apache.geode.distributed.DistributedMember;
 
 /**
- * WrappedRegionMembershipListener is used during initialization of new
- * cache listeners at runtime, after the region has already been initialized
- * and is active.
+ * WrappedRegionMembershipListener is used during initialization of new cache listeners at runtime,
+ * after the region has already been initialized and is active.
  */
 class WrappedRegionMembershipListener implements RegionMembershipListener {
 
@@ -35,6 +34,7 @@ class WrappedRegionMembershipListener implements RegionMembershipListener {
 
   /**
    * has initMembers been invoked?
+   *
    * @guarded.By initLock
    */
   private boolean initialized;
@@ -193,5 +193,4 @@ class WrappedRegionMembershipListener implements RegionMembershipListener {
   public String toString() {
     return this.wrappedListener.toString();
   }
-
 }

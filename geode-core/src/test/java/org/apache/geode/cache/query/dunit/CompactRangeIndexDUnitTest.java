@@ -50,16 +50,18 @@ public class CompactRangeIndexDUnitTest extends JUnit4DistributedTestCase {
   @Override
   public final void postSetUp() throws Exception {
     getSystem();
-    Invoke.invokeInEveryVM(new SerializableRunnable("getSystem") {
-      public void run() {
-        getSystem();
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("getSystem") {
+          public void run() {
+            getSystem();
+          }
+        });
     Host host = Host.getHost(0);
     vm0 = host.getVM(0);
     utils = new QueryTestUtils();
     utils.initializeQueryMap();
-    utils.createServer(vm0, DistributedTestUtils.getAllDistributedSystemProperties(new Properties()));
+    utils.createServer(
+        vm0, DistributedTestUtils.getAllDistributedSystemProperties(new Properties()));
     utils.createReplicateRegion("exampleRegion", vm0);
     utils.createIndex(vm0, "type", "\"type\"", "/exampleRegion");
   }
@@ -72,11 +74,12 @@ public class CompactRangeIndexDUnitTest extends JUnit4DistributedTestCase {
     Host host = Host.getHost(0);
     utils.createPartitionRegion("examplePartitionedRegion", Portfolio.class, vm0);
 
-    vm0.invoke(new CacheSerializableRunnable("Putting values") {
-      public void run2() {
-        putPortfolios("examplePartitionedRegion", 100);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Putting values") {
+          public void run2() {
+            putPortfolios("examplePartitionedRegion", 100);
+          }
+        });
     try {
       utils.createIndex(vm0, "partitionedIndex", "\"albs\"", "/examplePartitionedRegion");
     } catch (Exception e) {
@@ -87,7 +90,8 @@ public class CompactRangeIndexDUnitTest extends JUnit4DistributedTestCase {
 
   @Test
   public void testCompactRangeIndexForIndexElemArray() throws Exception {
-    doPut(200);// around 66 entries for a key in the index (< 100 so does not create a ConcurrentHashSet)
+    doPut(
+        200); // around 66 entries for a key in the index (< 100 so does not create a ConcurrentHashSet)
     doQuery();
     doUpdate(10);
     doQuery();
@@ -115,70 +119,73 @@ public class CompactRangeIndexDUnitTest extends JUnit4DistributedTestCase {
   }
 
   public void doPut(final int entries) {
-    vm0.invokeAsync(new CacheSerializableRunnable("Putting values") {
-      public void run2() {
-        putPortfolios("exampleRegion", entries);
-      }
-    });
+    vm0.invokeAsync(
+        new CacheSerializableRunnable("Putting values") {
+          public void run2() {
+            putPortfolios("exampleRegion", entries);
+          }
+        });
   }
 
   public void doPutSync(final int entries) {
-    vm0.invoke(new CacheSerializableRunnable("Putting values") {
-      public void run2() {
-        putPortfolios("exampleRegion", entries);
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Putting values") {
+          public void run2() {
+            putPortfolios("exampleRegion", entries);
+          }
+        });
   }
 
   public void doUpdate(final int entries) {
-    vm0.invokeAsync(new CacheSerializableRunnable("Updating values") {
-      public void run2() {
-        putOffsetPortfolios("exampleRegion", entries);
-      }
-    });
+    vm0.invokeAsync(
+        new CacheSerializableRunnable("Updating values") {
+          public void run2() {
+            putOffsetPortfolios("exampleRegion", entries);
+          }
+        });
   }
 
   public void doQuery() throws InterruptedException {
-    final String[] qarr = { "1", "519", "181" };
-    AsyncInvocation as0 = vm0.invokeAsync(new CacheSerializableRunnable("Executing query") {
-      public void run2() throws CacheException {
-        for (int i = 0; i < 50; i++) {
-          try {
-            utils.executeQueries(qarr);
-          } catch (Exception e) {
-            throw new CacheException(e) {
-            };
-          }
-        }
-      }
-    });
+    final String[] qarr = {"1", "519", "181"};
+    AsyncInvocation as0 =
+        vm0.invokeAsync(
+            new CacheSerializableRunnable("Executing query") {
+              public void run2() throws CacheException {
+                for (int i = 0; i < 50; i++) {
+                  try {
+                    utils.executeQueries(qarr);
+                  } catch (Exception e) {
+                    throw new CacheException(e) {};
+                  }
+                }
+              }
+            });
     as0.join();
     if (as0.exceptionOccurred()) {
       Assert.fail("Query execution failed.", as0.getException());
     }
-
   }
 
   public void doDestroy(final int entries) throws Exception {
-    vm0.invokeAsync(new CacheSerializableRunnable("Destroying values") {
-      public void run2() {
-        try {
-          Thread.sleep(500);
-          //destroy entries
-          Region region = utils.getRegion("exampleRegion");
-          for (int i = 1; i <= entries; i++) {
+    vm0.invokeAsync(
+        new CacheSerializableRunnable("Destroying values") {
+          public void run2() {
             try {
-              region.destroy("KEY-" + i);
+              Thread.sleep(500);
+              //destroy entries
+              Region region = utils.getRegion("exampleRegion");
+              for (int i = 1; i <= entries; i++) {
+                try {
+                  region.destroy("KEY-" + i);
+                } catch (Exception e) {
+                  throw new Exception(e);
+                }
+              }
             } catch (Exception e) {
-              throw new Exception(e);
+              fail("Destroy failed.");
             }
           }
-        } catch (Exception e) {
-          fail("Destroy failed.");
-        }
-      }
-    });
-
+        });
   }
 
   @Override
@@ -189,19 +196,21 @@ public class CompactRangeIndexDUnitTest extends JUnit4DistributedTestCase {
   }
 
   public void setHook() {
-    vm0.invoke(new CacheSerializableRunnable("Setting hook") {
-      public void run2() {
-        IndexManager.testHook = new CompactRangeIndexTestHook();
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Setting hook") {
+          public void run2() {
+            IndexManager.testHook = new CompactRangeIndexTestHook();
+          }
+        });
   }
 
   public void removeHook() {
-    vm0.invoke(new CacheSerializableRunnable("Removing hook") {
-      public void run2() {
-        IndexManager.testHook = null;
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Removing hook") {
+          public void run2() {
+            IndexManager.testHook = null;
+          }
+        });
   }
 
   private void putPortfolios(String regionName, int size) {
@@ -226,5 +235,4 @@ public class CompactRangeIndexDUnitTest extends JUnit4DistributedTestCase {
       }
     }
   }
-
 }

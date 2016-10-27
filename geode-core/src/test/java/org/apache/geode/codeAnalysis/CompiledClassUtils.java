@@ -41,8 +41,9 @@ import org.apache.geode.codeAnalysis.decode.CompiledMethod;
 
 public class CompiledClassUtils {
   /**
-   * Parse the given class files and return a map of name->Dclass.  Any
-   * IO exceptions are consumed by this method and written to stderr.
+   * Parse the given class files and return a map of name->Dclass. Any IO exceptions are consumed by
+   * this method and written to stderr.
+   *
    * @param classFiles
    * @return the parsed classes
    */
@@ -63,15 +64,16 @@ public class CompiledClassUtils {
   }
 
   /**
-   * Parse the files in the given jar file and return a map of name->CompiledClass.
-   * Any IO exceptions are consumed by this method and written to stderr.
+   * Parse the files in the given jar file and return a map of name->CompiledClass. Any IO
+   * exceptions are consumed by this method and written to stderr.
+   *
    * @param jar the jar file holding classes
    */
   public static Map<String, CompiledClass> parseClassFilesInJar(File jar) {
     Map<String, CompiledClass> result = new HashMap<String, CompiledClass>();
     try {
       JarFile jarfile = new JarFile(jar);
-      for (Enumeration<JarEntry> entries = jarfile.entries(); entries.hasMoreElements();) {
+      for (Enumeration<JarEntry> entries = jarfile.entries(); entries.hasMoreElements(); ) {
         JarEntry entry = entries.nextElement();
         if (entry.getName().endsWith(".class")) {
           try {
@@ -80,7 +82,8 @@ public class CompiledClassUtils {
               result.put(parsed.fullyQualifiedName(), parsed);
             }
           } catch (IOException e) {
-            System.err.println("Exception while parsing " + entry.getName() + ": " + e.getMessage());
+            System.err.println(
+                "Exception while parsing " + entry.getName() + ": " + e.getMessage());
           }
         }
       }
@@ -92,8 +95,8 @@ public class CompiledClassUtils {
   }
 
   /**
-   * Parse the files in the given jar file and return a map of name->CompiledClass.
-   * Any IO exceptions are consumed by this method and written to stderr.
+   * Parse the files in the given jar file and return a map of name->CompiledClass. Any IO
+   * exceptions are consumed by this method and written to stderr.
    */
   public static Map<String, CompiledClass> parseClassFilesInDir(File buildDir) {
     Map<String, CompiledClass> result = new HashMap<String, CompiledClass>();
@@ -115,14 +118,14 @@ public class CompiledClassUtils {
   }
 
   /**
-   * returns a collection of all of the .class files in the given list
-   * of files and directories.
-   * 
+   * returns a collection of all of the .class files in the given list of files and directories.
+   *
    * @param filenames a list of the files and directories to examine
    * @param recursive whether to recurse into subdirectories
    * @return a sorted list of the .class files found
    */
-  public static List<File> findClassFiles(String parentPath, String[] filenames, boolean recursive) {
+  public static List<File> findClassFiles(
+      String parentPath, String[] filenames, boolean recursive) {
     // Grab classes and Expand directory names found in list
     List<File> classFiles = new ArrayList<File>();
     for (int i = 0; i < filenames.length; i++) {
@@ -156,7 +159,8 @@ public class CompiledClassUtils {
     return result;
   }
 
-  public static String diffSortedClassesAndMethods(List<ClassAndMethodDetails> goldRecord, List<ClassAndMethods> toDatas) throws IOException {
+  public static String diffSortedClassesAndMethods(
+      List<ClassAndMethodDetails> goldRecord, List<ClassAndMethods> toDatas) throws IOException {
 
     StringBuilder newClassesSb = new StringBuilder(10000);
     StringBuilder changedClassesSb = new StringBuilder(10000);
@@ -177,7 +181,8 @@ public class CompiledClassUtils {
         newclass = it.next();
       }
       int comparison = -1;
-      while (newclass != null && (comparison = gold.className.compareTo(newclass.dclass.fullyQualifiedName())) > 0) {
+      while (newclass != null
+          && (comparison = gold.className.compareTo(newclass.dclass.fullyQualifiedName())) > 0) {
         newClassesSb.append(newclass).append("\n");
         if (it.hasNext()) {
           newclass = it.next();
@@ -251,7 +256,8 @@ public class CompiledClassUtils {
     return result;
   }
 
-  public static void storeClassesAndMethods(List<ClassAndMethods> cams, File file) throws IOException {
+  public static void storeClassesAndMethods(List<ClassAndMethods> cams, File file)
+      throws IOException {
     FileWriter fw = new FileWriter(file);
     BufferedWriter out = new BufferedWriter(fw);
     for (ClassAndMethods entry : cams) {
@@ -274,7 +280,8 @@ public class CompiledClassUtils {
     return null;
   }
 
-  public static List<ClassAndVariableDetails> loadClassesAndVariables(File file) throws IOException {
+  public static List<ClassAndVariableDetails> loadClassesAndVariables(File file)
+      throws IOException {
     List<ClassAndVariableDetails> result = new LinkedList<ClassAndVariableDetails>();
     FileReader fr = new FileReader(file);
     BufferedReader in = new BufferedReader(fr);
@@ -291,7 +298,8 @@ public class CompiledClassUtils {
     return result;
   }
 
-  public static String diffSortedClassesAndVariables(List<ClassAndVariableDetails> goldRecord, List<ClassAndVariables> cavs) throws IOException {
+  public static String diffSortedClassesAndVariables(
+      List<ClassAndVariableDetails> goldRecord, List<ClassAndVariables> cavs) throws IOException {
 
     StringBuilder newClassesSb = new StringBuilder(10000);
     StringBuilder changedClassesSb = new StringBuilder(10000);
@@ -319,7 +327,8 @@ public class CompiledClassUtils {
         newclass = it.next();
       }
       int comparison = -1;
-      while (newclass != null && (comparison = gold.className.compareTo(newclass.dclass.fullyQualifiedName())) > 0) {
+      while (newclass != null
+          && (comparison = gold.className.compareTo(newclass.dclass.fullyQualifiedName())) > 0) {
         newClassesSb.append(ClassAndVariableDetails.convertForStoring(newclass)).append("\n");
         newclass = null;
         if (it.hasNext()) {
@@ -370,21 +379,34 @@ public class CompiledClassUtils {
         if (gold.hasSerialVersionUID) {
           if (nc.hasSerialVersionUID) {
             if (!Long.valueOf(gold.serialVersionUID).equals(nc.serialVersionUID)) {
-              changedClassesSb.append("\t\t " + nc.dclass.fullyQualifiedName() + " serialVersionUID was changed from " + gold.serialVersionUID + " to " + nc.serialVersionUID + " this may break client/server compatibility as well as server/server compatibility \n");
+              changedClassesSb.append(
+                  "\t\t "
+                      + nc.dclass.fullyQualifiedName()
+                      + " serialVersionUID was changed from "
+                      + gold.serialVersionUID
+                      + " to "
+                      + nc.serialVersionUID
+                      + " this may break client/server compatibility as well as server/server compatibility \n");
             }
           } else {
-            changedClassesSb.append("\t\t " + nc.dclass.fullyQualifiedName() + " serialVersionUID was removed, this may break client/server compatibility as well as server/server compatibility \n");
+            changedClassesSb.append(
+                "\t\t "
+                    + nc.dclass.fullyQualifiedName()
+                    + " serialVersionUID was removed, this may break client/server compatibility as well as server/server compatibility \n");
           }
         } else {
           if (nc.hasSerialVersionUID) {
-            changedClassesSb.append("\t\t " + nc.dclass.fullyQualifiedName() + " serialVersionUID was added \n");
+            changedClassesSb.append(
+                "\t\t " + nc.dclass.fullyQualifiedName() + " serialVersionUID was added \n");
           }
         }
       }
     }
     while (it.hasNext()) {
       newclass = it.next();
-      newClassesSb.append(ClassAndVariableDetails.convertForStoring(newclass)).append(": new class\n");
+      newClassesSb
+          .append(ClassAndVariableDetails.convertForStoring(newclass))
+          .append(": new class\n");
     }
     String result = "";
     if (newClassesSb.length() > newBase) {
@@ -399,7 +421,8 @@ public class CompiledClassUtils {
     return result;
   }
 
-  public static void storeClassesAndVariables(List<ClassAndVariables> cams, File file) throws IOException {
+  public static void storeClassesAndVariables(List<ClassAndVariables> cams, File file)
+      throws IOException {
     FileWriter fw = new FileWriter(file);
     BufferedWriter out = new BufferedWriter(fw);
     for (ClassAndVariables entry : cams) {
@@ -409,5 +432,4 @@ public class CompiledClassUtils {
     out.flush();
     out.close();
   }
-
 }

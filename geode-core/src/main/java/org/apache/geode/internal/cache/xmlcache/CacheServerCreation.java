@@ -39,11 +39,9 @@ public class CacheServerCreation extends AbstractCacheServer {
   //////////////////////  Constructors  //////////////////////
 
   /**
-   * Creates a new <code>BridgeServerCreation</code> with the default
-   * configuration.
+   * Creates a new <code>BridgeServerCreation</code> with the default configuration.
    *
-   * @param cache
-   *        The cache being served
+   * @param cache The cache being served
    */
   CacheServerCreation(InternalCache cache) {
     super(cache);
@@ -55,6 +53,7 @@ public class CacheServerCreation extends AbstractCacheServer {
 
   /**
    * Constructor for retaining bridge server information during auto-reconnect
+   *
    * @param cache
    * @param other
    */
@@ -165,14 +164,24 @@ public class CacheServerCreation extends AbstractCacheServer {
   }
 
   /**
-   * Returns whether or not this bridge server has the same
-   * configuration as another bridge server.
+   * Returns whether or not this bridge server has the same configuration as another bridge server.
    */
   @Override
   public boolean sameAs(CacheServer other) {
     ClientSubscriptionConfig cscThis = this.getClientSubscriptionConfig();
     ClientSubscriptionConfig cscOther = other.getClientSubscriptionConfig();
-    boolean result = isCacheServerPortEquals(other) && this.getSocketBufferSize() == other.getSocketBufferSize() && this.getMaximumTimeBetweenPings() == other.getMaximumTimeBetweenPings() && this.getNotifyBySubscription() == other.getNotifyBySubscription() && this.getMaxConnections() == other.getMaxConnections() && this.getMaxThreads() == other.getMaxThreads() && this.getMaximumMessageCount() == other.getMaximumMessageCount() && this.getMessageTimeToLive() == other.getMessageTimeToLive() && this.getTcpNoDelay() == other.getTcpNoDelay() && cscThis.getCapacity() == cscOther.getCapacity() && cscThis.getEvictionPolicy().equals(cscOther.getEvictionPolicy());
+    boolean result =
+        isCacheServerPortEquals(other)
+            && this.getSocketBufferSize() == other.getSocketBufferSize()
+            && this.getMaximumTimeBetweenPings() == other.getMaximumTimeBetweenPings()
+            && this.getNotifyBySubscription() == other.getNotifyBySubscription()
+            && this.getMaxConnections() == other.getMaxConnections()
+            && this.getMaxThreads() == other.getMaxThreads()
+            && this.getMaximumMessageCount() == other.getMaximumMessageCount()
+            && this.getMessageTimeToLive() == other.getMessageTimeToLive()
+            && this.getTcpNoDelay() == other.getTcpNoDelay()
+            && cscThis.getCapacity() == cscOther.getCapacity()
+            && cscThis.getEvictionPolicy().equals(cscOther.getEvictionPolicy());
     String diskStoreName = cscThis.getDiskStoreName();
     if (diskStoreName != null) {
       result = result && diskStoreName.equals(cscOther.getDiskStoreName());
@@ -183,10 +192,10 @@ public class CacheServerCreation extends AbstractCacheServer {
   }
 
   /**
-   * Compare configured cacheServer port against the running cacheServer port.
-   * If the current cacheServer port is set to 0 a random ephemeral
-   * port will be used so there is no need to compare returning <code>true</code>.
-   * If a port is specified, return the proper comparison.
+   * Compare configured cacheServer port against the running cacheServer port. If the current
+   * cacheServer port is set to 0 a random ephemeral port will be used so there is no need to
+   * compare returning <code>true</code>. If a port is specified, return the proper comparison.
+   *
    * @param other CacheServer
    * @return
    */
@@ -196,7 +205,29 @@ public class CacheServerCreation extends AbstractCacheServer {
 
   @Override
   public String toString() {
-    return "BridgeServerCreation on port " + this.getPort() + " notify by subscription " + this.getNotifyBySubscription() + " maximum time between pings " + this.getMaximumTimeBetweenPings() + " socket buffer size " + this.getSocketBufferSize() + " maximum connections " + this.getMaxConnections() + " maximum threads " + this.getMaxThreads() + " maximum message count " + this.getMaximumMessageCount() + " message time to live " + this.getMessageTimeToLive() + " groups " + Arrays.asList(getGroups()) + " loadProbe " + loadProbe + " loadPollInterval " + loadPollInterval + this.getClientSubscriptionConfig().toString();
+    return "BridgeServerCreation on port "
+        + this.getPort()
+        + " notify by subscription "
+        + this.getNotifyBySubscription()
+        + " maximum time between pings "
+        + this.getMaximumTimeBetweenPings()
+        + " socket buffer size "
+        + this.getSocketBufferSize()
+        + " maximum connections "
+        + this.getMaxConnections()
+        + " maximum threads "
+        + this.getMaxThreads()
+        + " maximum message count "
+        + this.getMaximumMessageCount()
+        + " message time to live "
+        + this.getMessageTimeToLive()
+        + " groups "
+        + Arrays.asList(getGroups())
+        + " loadProbe "
+        + loadProbe
+        + " loadPollInterval "
+        + loadPollInterval
+        + this.getClientSubscriptionConfig().toString();
   }
 
   public ClientSubscriptionConfig getClientSubscriptionConfig() {
@@ -204,7 +235,7 @@ public class CacheServerCreation extends AbstractCacheServer {
   }
 
   public Set getInterestRegistrationListeners() {
-    //TODO Yogesh : implement me 
+    //TODO Yogesh : implement me
     return null;
   }
 
@@ -227,5 +258,4 @@ public class CacheServerCreation extends AbstractCacheServer {
   public ClientSession getClientSession(String durableClientId) {
     throw new UnsupportedOperationException("Shouldn't be invoked");
   }
-
 }

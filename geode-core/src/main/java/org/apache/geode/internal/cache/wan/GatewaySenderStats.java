@@ -61,17 +61,25 @@ public class GatewaySenderStats {
   /** Name of the batches resized statistic */
   protected static final String BATCHES_RESIZED = "batchesResized";
   /** Name of the unprocessed events added by primary statistic */
-  protected static final String UNPROCESSED_TOKENS_ADDED_BY_PRIMARY = "unprocessedTokensAddedByPrimary";
+  protected static final String UNPROCESSED_TOKENS_ADDED_BY_PRIMARY =
+      "unprocessedTokensAddedByPrimary";
   /** Name of the unprocessed events added by secondary statistic */
-  protected static final String UNPROCESSED_EVENTS_ADDED_BY_SECONDARY = "unprocessedEventsAddedBySecondary";
+  protected static final String UNPROCESSED_EVENTS_ADDED_BY_SECONDARY =
+      "unprocessedEventsAddedBySecondary";
   /** Name of the unprocessed events removed by primary statistic */
-  protected static final String UNPROCESSED_EVENTS_REMOVED_BY_PRIMARY = "unprocessedEventsRemovedByPrimary";
+  protected static final String UNPROCESSED_EVENTS_REMOVED_BY_PRIMARY =
+      "unprocessedEventsRemovedByPrimary";
   /** Name of the unprocessed events removed by secondary statistic */
-  protected static final String UNPROCESSED_TOKENS_REMOVED_BY_SECONDARY = "unprocessedTokensRemovedBySecondary";
-  protected static final String UNPROCESSED_EVENTS_REMOVED_BY_TIMEOUT = "unprocessedEventsRemovedByTimeout";
-  protected static final String UNPROCESSED_TOKENS_REMOVED_BY_TIMEOUT = "unprocessedTokensRemovedByTimeout";
+  protected static final String UNPROCESSED_TOKENS_REMOVED_BY_SECONDARY =
+      "unprocessedTokensRemovedBySecondary";
+
+  protected static final String UNPROCESSED_EVENTS_REMOVED_BY_TIMEOUT =
+      "unprocessedEventsRemovedByTimeout";
+  protected static final String UNPROCESSED_TOKENS_REMOVED_BY_TIMEOUT =
+      "unprocessedTokensRemovedByTimeout";
   /** Name of the unprocessed events map size statistic */
   protected static final String UNPROCESSED_EVENT_MAP_SIZE = "unprocessedEventMapSize";
+
   protected static final String UNPROCESSED_TOKEN_MAP_SIZE = "unprocessedTokenMapSize";
 
   protected static final String CONFLATION_INDEXES_MAP_SIZE = "conflationIndexesSize";
@@ -115,38 +123,132 @@ public class GatewaySenderStats {
   protected static int unprocessedEventsRemovedByPrimaryId;
   /** Id of the unprocessed events removed by secondary statistic */
   protected static int unprocessedTokensRemovedBySecondaryId;
+
   protected static int unprocessedEventsRemovedByTimeoutId;
   protected static int unprocessedTokensRemovedByTimeoutId;
   /** Id of the unprocessed events map size statistic */
   protected static int unprocessedEventMapSizeId;
+
   protected static int unprocessedTokenMapSizeId;
   /** Id of the conflation indexes size statistic */
   protected static int conflationIndexesMapSizeId;
-  /** Id of filtered events*/
+  /** Id of filtered events */
   protected static int eventsFilteredId;
-  /** Id of not queued events*/
+  /** Id of not queued events */
   protected static int notQueuedEventsId;
-  /**Id of events conflated in batch*/
+  /** Id of events conflated in batch */
   protected static int eventsConflatedFromBatchesId;
-  /** Id of load balances completed*/
+  /** Id of load balances completed */
   protected static int loadBalancesCompletedId;
-  /** Id of load balances in progress*/
+  /** Id of load balances in progress */
   protected static int loadBalancesInProgressId;
-  /** Id of load balance time*/
+  /** Id of load balance time */
   protected static int loadBalanceTimeId;
 
-  /**
-   * Static initializer to create and initialize the <code>StatisticsType</code>
-   */
+  /** Static initializer to create and initialize the <code>StatisticsType</code> */
   static {
-
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    type = f.createType(typeName, "Stats for activity in the GatewaySender",
-        new StatisticDescriptor[] { f.createIntCounter(EVENTS_RECEIVED, "Number of events received by this Sender.", "operations"), f.createIntCounter(EVENTS_QUEUED, "Number of events added to the event queue.", "operations"), f.createLongCounter(EVENT_QUEUE_TIME, "Total time spent queueing events.", "nanoseconds"), f.createIntGauge(EVENT_QUEUE_SIZE, "Size of the event queue.", "operations", false), f.createIntGauge(TMP_EVENT_QUEUE_SIZE, "Size of the temporary events.", "operations", false), f.createIntCounter(EVENTS_NOT_QUEUED_CONFLATED, "Number of events received but not added to the event queue because the queue already contains an event with the event's key.", "operations"), f.createIntCounter(EVENTS_CONFLATED_FROM_BATCHES, "Number of events conflated from batches.", "operations"), f.createIntCounter(EVENTS_DISTRIBUTED, "Number of events removed from the event queue and sent.", "operations"),
-            f.createIntCounter(EVENTS_EXCEEDING_ALERT_THRESHOLD, "Number of events exceeding the alert threshold.", "operations", false), f.createLongCounter(BATCH_DISTRIBUTION_TIME, "Total time spent distributing batches of events to other gateway receivers.", "nanoseconds"), f.createIntCounter(BATCHES_DISTRIBUTED, "Number of batches of events removed from the event queue and sent.", "operations"), f.createIntCounter(BATCHES_REDISTRIBUTED, "Number of batches of events removed from the event queue and resent.", "operations", false), f.createIntCounter(BATCHES_RESIZED, "Number of batches that were resized because they were too large", "operations", false), f.createIntCounter(UNPROCESSED_TOKENS_ADDED_BY_PRIMARY, "Number of tokens added to the secondary's unprocessed token map by the primary (though a listener).", "tokens"), f.createIntCounter(UNPROCESSED_EVENTS_ADDED_BY_SECONDARY, "Number of events added to the secondary's unprocessed event map by the secondary.", "events"),
-            f.createIntCounter(UNPROCESSED_EVENTS_REMOVED_BY_PRIMARY, "Number of events removed from the secondary's unprocessed event map by the primary (though a listener).", "events"), f.createIntCounter(UNPROCESSED_TOKENS_REMOVED_BY_SECONDARY, "Number of tokens removed from the secondary's unprocessed token map by the secondary.", "tokens"), f.createIntCounter(UNPROCESSED_EVENTS_REMOVED_BY_TIMEOUT, "Number of events removed from the secondary's unprocessed event map by a timeout.", "events"), f.createIntCounter(UNPROCESSED_TOKENS_REMOVED_BY_TIMEOUT, "Number of tokens removed from the secondary's unprocessed token map by a timeout.", "tokens"), f.createIntGauge(UNPROCESSED_EVENT_MAP_SIZE, "Current number of entries in the secondary's unprocessed event map.", "events", false), f.createIntGauge(UNPROCESSED_TOKEN_MAP_SIZE, "Current number of entries in the secondary's unprocessed token map.", "tokens", false),
-            f.createIntGauge(CONFLATION_INDEXES_MAP_SIZE, "Current number of entries in the conflation indexes map.", "events"), f.createIntCounter(NOT_QUEUED_EVENTS, "Number of events not added to queue.", "events"), f.createIntCounter(EVENTS_FILTERED, "Number of events filtered through GatewayEventFilter.", "events"), f.createIntCounter(LOAD_BALANCES_COMPLETED, "Number of load balances completed", "operations"), f.createIntGauge(LOAD_BALANCES_IN_PROGRESS, "Number of load balances in progress", "operations"), f.createLongCounter(LOAD_BALANCE_TIME, "Total time spent load balancing this sender", "nanoseconds"), });
+    type =
+        f.createType(
+            typeName,
+            "Stats for activity in the GatewaySender",
+            new StatisticDescriptor[] {
+              f.createIntCounter(
+                  EVENTS_RECEIVED, "Number of events received by this Sender.", "operations"),
+              f.createIntCounter(
+                  EVENTS_QUEUED, "Number of events added to the event queue.", "operations"),
+              f.createLongCounter(
+                  EVENT_QUEUE_TIME, "Total time spent queueing events.", "nanoseconds"),
+              f.createIntGauge(EVENT_QUEUE_SIZE, "Size of the event queue.", "operations", false),
+              f.createIntGauge(
+                  TMP_EVENT_QUEUE_SIZE, "Size of the temporary events.", "operations", false),
+              f.createIntCounter(
+                  EVENTS_NOT_QUEUED_CONFLATED,
+                  "Number of events received but not added to the event queue because the queue already contains an event with the event's key.",
+                  "operations"),
+              f.createIntCounter(
+                  EVENTS_CONFLATED_FROM_BATCHES,
+                  "Number of events conflated from batches.",
+                  "operations"),
+              f.createIntCounter(
+                  EVENTS_DISTRIBUTED,
+                  "Number of events removed from the event queue and sent.",
+                  "operations"),
+              f.createIntCounter(
+                  EVENTS_EXCEEDING_ALERT_THRESHOLD,
+                  "Number of events exceeding the alert threshold.",
+                  "operations",
+                  false),
+              f.createLongCounter(
+                  BATCH_DISTRIBUTION_TIME,
+                  "Total time spent distributing batches of events to other gateway receivers.",
+                  "nanoseconds"),
+              f.createIntCounter(
+                  BATCHES_DISTRIBUTED,
+                  "Number of batches of events removed from the event queue and sent.",
+                  "operations"),
+              f.createIntCounter(
+                  BATCHES_REDISTRIBUTED,
+                  "Number of batches of events removed from the event queue and resent.",
+                  "operations",
+                  false),
+              f.createIntCounter(
+                  BATCHES_RESIZED,
+                  "Number of batches that were resized because they were too large",
+                  "operations",
+                  false),
+              f.createIntCounter(
+                  UNPROCESSED_TOKENS_ADDED_BY_PRIMARY,
+                  "Number of tokens added to the secondary's unprocessed token map by the primary (though a listener).",
+                  "tokens"),
+              f.createIntCounter(
+                  UNPROCESSED_EVENTS_ADDED_BY_SECONDARY,
+                  "Number of events added to the secondary's unprocessed event map by the secondary.",
+                  "events"),
+              f.createIntCounter(
+                  UNPROCESSED_EVENTS_REMOVED_BY_PRIMARY,
+                  "Number of events removed from the secondary's unprocessed event map by the primary (though a listener).",
+                  "events"),
+              f.createIntCounter(
+                  UNPROCESSED_TOKENS_REMOVED_BY_SECONDARY,
+                  "Number of tokens removed from the secondary's unprocessed token map by the secondary.",
+                  "tokens"),
+              f.createIntCounter(
+                  UNPROCESSED_EVENTS_REMOVED_BY_TIMEOUT,
+                  "Number of events removed from the secondary's unprocessed event map by a timeout.",
+                  "events"),
+              f.createIntCounter(
+                  UNPROCESSED_TOKENS_REMOVED_BY_TIMEOUT,
+                  "Number of tokens removed from the secondary's unprocessed token map by a timeout.",
+                  "tokens"),
+              f.createIntGauge(
+                  UNPROCESSED_EVENT_MAP_SIZE,
+                  "Current number of entries in the secondary's unprocessed event map.",
+                  "events",
+                  false),
+              f.createIntGauge(
+                  UNPROCESSED_TOKEN_MAP_SIZE,
+                  "Current number of entries in the secondary's unprocessed token map.",
+                  "tokens",
+                  false),
+              f.createIntGauge(
+                  CONFLATION_INDEXES_MAP_SIZE,
+                  "Current number of entries in the conflation indexes map.",
+                  "events"),
+              f.createIntCounter(
+                  NOT_QUEUED_EVENTS, "Number of events not added to queue.", "events"),
+              f.createIntCounter(
+                  EVENTS_FILTERED,
+                  "Number of events filtered through GatewayEventFilter.",
+                  "events"),
+              f.createIntCounter(
+                  LOAD_BALANCES_COMPLETED, "Number of load balances completed", "operations"),
+              f.createIntGauge(
+                  LOAD_BALANCES_IN_PROGRESS, "Number of load balances in progress", "operations"),
+              f.createLongCounter(
+                  LOAD_BALANCE_TIME, "Total time spent load balancing this sender", "nanoseconds"),
+            });
 
     // Initialize id fields
     eventsReceivedId = type.nameToId(EVENTS_RECEIVED);
@@ -188,10 +290,9 @@ public class GatewaySenderStats {
   /**
    * Constructor.
    *
-   * @param f The <code>StatisticsFactory</code> which creates the
-   * <code>Statistics</code> instance
-   * @param gatewaySenderId The id of the <code>GatewaySender</code> used to
-   * generate the name of the <code>Statistics</code>
+   * @param f The <code>StatisticsFactory</code> which creates the <code>Statistics</code> instance
+   * @param gatewaySenderId The id of the <code>GatewaySender</code> used to generate the name of
+   *     the <code>Statistics</code>
    */
   public GatewaySenderStats(StatisticsFactory f, String gatewaySenderId) {
     this.stats = f.createAtomicStatistics(type, "gatewaySenderStats-" + gatewaySenderId);
@@ -200,11 +301,10 @@ public class GatewaySenderStats {
   /**
    * Constructor.
    *
-   * @param f The <code>StatisticsFactory</code> which creates the
-   * <code>Statistics</code> instance
-   * @param asyncQueueId The id of the <code>AsyncEventQueue</code> used to
-   * generate the name of the <code>Statistics</code>
-   * @param    statType   The StatisticsTYpe 
+   * @param f The <code>StatisticsFactory</code> which creates the <code>Statistics</code> instance
+   * @param asyncQueueId The id of the <code>AsyncEventQueue</code> used to generate the name of the
+   *     <code>Statistics</code>
+   * @param statType The StatisticsTYpe
    */
   public GatewaySenderStats(StatisticsFactory f, String asyncQueueId, StatisticsType statType) {
     this.stats = f.createAtomicStatistics(statType, "asyncEventQueueStats-" + asyncQueueId);
@@ -212,30 +312,28 @@ public class GatewaySenderStats {
 
   /////////////////////  Instance Methods  /////////////////////
 
-  /**
-   * Closes the <code>GatewaySenderStats</code>.
-   */
+  /** Closes the <code>GatewaySenderStats</code>. */
   public void close() {
     this.stats.close();
   }
 
   /**
    * Returns the current value of the "eventsReceived" stat.
+   *
    * @return the current value of the "eventsReceived" stat
    */
   public int getEventsReceived() {
     return this.stats.getInt(eventsReceivedId);
   }
 
-  /**
-   * Increments the number of events received by 1.
-   */
+  /** Increments the number of events received by 1. */
   public void incEventsReceived() {
     this.stats.incInt(eventsReceivedId, 1);
   }
 
   /**
    * Returns the current value of the "eventsQueued" stat.
+   *
    * @return the current value of the "eventsQueued" stat
    */
   public int getEventsQueued() {
@@ -244,6 +342,7 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the "eventsNotQueuedConflated" stat.
+   *
    * @return the current value of the "eventsNotQueuedConflated" stat
    */
   public int getEventsNotQueuedConflated() {
@@ -252,7 +351,7 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the "eventsConflatedFromBatches" stat.
-   * 
+   *
    * @return the current value of the "eventsConflatedFromBatches" stat
    */
   public int getEventsConflatedFromBatches() {
@@ -261,6 +360,7 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the "eventQueueSize" stat.
+   *
    * @return the current value of the "eventQueueSize" stat
    */
   public int getEventQueueSize() {
@@ -269,6 +369,7 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the "tempQueueSize" stat.
+   *
    * @return the current value of the "tempQueueSize" stat.
    */
   public int getTempEventQueueSize() {
@@ -287,6 +388,7 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the "eventsDistributed" stat.
+   *
    * @return the current value of the "eventsDistributed" stat
    */
   public int getEventsDistributed() {
@@ -295,21 +397,21 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the "eventsExceedingAlertThreshold" stat.
+   *
    * @return the current value of the "eventsExceedingAlertThreshold" stat
    */
   public int getEventsExceedingAlertThreshold() {
     return this.stats.getInt(eventsExceedingAlertThresholdId);
   }
 
-  /**
-   * Increments the value of the "eventsExceedingAlertThreshold" stat by 1.
-   */
+  /** Increments the value of the "eventsExceedingAlertThreshold" stat by 1. */
   public void incEventsExceedingAlertThreshold() {
     this.stats.incInt(eventsExceedingAlertThresholdId, 1);
   }
 
   /**
    * Returns the current value of the "batchDistributionTime" stat.
+   *
    * @return the current value of the "batchDistributionTime" stat
    */
   public long getBatchDistributionTime() {
@@ -318,6 +420,7 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the batchesDistributed" stat.
+   *
    * @return the current value of the batchesDistributed" stat
    */
   public int getBatchesDistributed() {
@@ -326,6 +429,7 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the batchesRedistributed" stat.
+   *
    * @return the current value of the batchesRedistributed" stat
    */
   public int getBatchesRedistributed() {
@@ -334,28 +438,26 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the batchesResized" stat.
+   *
    * @return the current value of the batchesResized" stat
    */
   public int getBatchesResized() {
     return this.stats.getInt(batchesResizedId);
   }
 
-  /**
-   * Increments the value of the "batchesRedistributed" stat by 1.
-   */
+  /** Increments the value of the "batchesRedistributed" stat by 1. */
   public void incBatchesRedistributed() {
     this.stats.incInt(batchesRedistributedId, 1);
   }
 
-  /**
-   * Increments the value of the "batchesRedistributed" stat by 1.
-   */
+  /** Increments the value of the "batchesRedistributed" stat by 1. */
   public void incBatchesResized() {
     this.stats.incInt(batchesResizedId, 1);
   }
 
   /**
    * Sets the "eventQueueSize" stat.
+   *
    * @param size The size of the queue
    */
   public void setQueueSize(int size) {
@@ -364,28 +466,26 @@ public class GatewaySenderStats {
 
   /**
    * Sets the "tempQueueSize" stat.
+   *
    * @param size The size of the temp queue
    */
   public void setTempQueueSize(int size) {
     this.stats.setInt(eventTmpQueueSizeId, size);
   }
 
-  /**
-   * Increments the "eventQueueSize" stat by 1.
-   */
+  /** Increments the "eventQueueSize" stat by 1. */
   public void incQueueSize() {
     this.stats.incInt(eventQueueSizeId, 1);
   }
 
-  /**
-   * Increments the "tempQueueSize" stat by 1.
-   */
+  /** Increments the "tempQueueSize" stat by 1. */
   public void incTempQueueSize() {
     this.stats.incInt(eventTmpQueueSizeId, 1);
   }
 
   /**
    * Increments the "eventQueueSize" stat by given delta.
+   *
    * @param delta an integer by which queue size to be increased
    */
   public void incQueueSize(int delta) {
@@ -394,28 +494,26 @@ public class GatewaySenderStats {
 
   /**
    * Increments the "tempQueueSize" stat by given delta.
+   *
    * @param delta an integer by which temp queue size to be increased
    */
   public void incTempQueueSize(int delta) {
     this.stats.incInt(eventTmpQueueSizeId, delta);
   }
 
-  /**
-   * Decrements the "eventQueueSize" stat by 1.
-   */
+  /** Decrements the "eventQueueSize" stat by 1. */
   public void decQueueSize() {
     this.stats.incInt(eventQueueSizeId, -1);
   }
 
-  /**
-   * Decrements the "tempQueueSize" stat by 1.
-   */
+  /** Decrements the "tempQueueSize" stat by 1. */
   public void decTempQueueSize() {
     this.stats.incInt(eventTmpQueueSizeId, -1);
   }
 
   /**
    * Decrements the "eventQueueSize" stat by given delta.
+   *
    * @param delta an integer by which queue size to be increased
    */
   public void decQueueSize(int delta) {
@@ -424,28 +522,26 @@ public class GatewaySenderStats {
 
   /**
    * Decrements the "tempQueueSize" stat by given delta.
+   *
    * @param delta an integer by which temp queue size to be increased
    */
   public void decTempQueueSize(int delta) {
     this.stats.incInt(eventTmpQueueSizeId, -delta);
   }
 
-  /**
-   * Increments the "eventsNotQueuedConflated" stat.
-   */
+  /** Increments the "eventsNotQueuedConflated" stat. */
   public void incEventsNotQueuedConflated() {
     this.stats.incInt(eventsNotQueuedConflatedId, 1);
   }
 
-  /**
-   * Increments the "eventsConflatedFromBatches" stat.
-   */
+  /** Increments the "eventsConflatedFromBatches" stat. */
   public void incEventsConflatedFromBatches(int numEvents) {
     this.stats.incInt(eventsConflatedFromBatchesId, numEvents);
   }
 
   /**
    * Returns the current value of the "unprocessedTokensAddedByPrimary" stat.
+   *
    * @return the current value of the "unprocessedTokensAddedByPrimary" stat
    */
   public int getUnprocessedTokensAddedByPrimary() {
@@ -454,6 +550,7 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the "unprocessedEventsAddedBySecondary" stat.
+   *
    * @return the current value of the "unprocessedEventsAddedBySecondary" stat
    */
   public int getUnprocessedEventsAddedBySecondary() {
@@ -462,6 +559,7 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the "unprocessedEventsRemovedByPrimary" stat.
+   *
    * @return the current value of the "unprocessedEventsRemovedByPrimary" stat
    */
   public int getUnprocessedEventsRemovedByPrimary() {
@@ -470,6 +568,7 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the "unprocessedTokensRemovedBySecondary" stat.
+   *
    * @return the current value of the "unprocessedTokensRemovedBySecondary" stat
    */
   public int getUnprocessedTokensRemovedBySecondary() {
@@ -478,6 +577,7 @@ public class GatewaySenderStats {
 
   /**
    * Returns the current value of the "unprocessedEventMapSize" stat.
+   *
    * @return the current value of the "unprocessedEventMapSize" stat
    */
   public int getUnprocessedEventMapSize() {
@@ -504,33 +604,25 @@ public class GatewaySenderStats {
     return this.stats.getInt(eventsFilteredId);
   }
 
-  /**
-   * Increments the value of the "unprocessedTokensAddedByPrimary" stat by 1.
-   */
+  /** Increments the value of the "unprocessedTokensAddedByPrimary" stat by 1. */
   public void incUnprocessedTokensAddedByPrimary() {
     this.stats.incInt(unprocessedTokensAddedByPrimaryId, 1);
     incUnprocessedTokenMapSize();
   }
 
-  /**
-   * Increments the value of the "unprocessedEventsAddedBySecondary" stat by 1.
-   */
+  /** Increments the value of the "unprocessedEventsAddedBySecondary" stat by 1. */
   public void incUnprocessedEventsAddedBySecondary() {
     this.stats.incInt(unprocessedEventsAddedBySecondaryId, 1);
     incUnprocessedEventMapSize();
   }
 
-  /**
-   * Increments the value of the "unprocessedEventsRemovedByPrimary" stat by 1.
-   */
+  /** Increments the value of the "unprocessedEventsRemovedByPrimary" stat by 1. */
   public void incUnprocessedEventsRemovedByPrimary() {
     this.stats.incInt(unprocessedEventsRemovedByPrimaryId, 1);
     decUnprocessedEventMapSize();
   }
 
-  /**
-   * Increments the value of the "unprocessedTokensRemovedBySecondary" stat by 1.
-   */
+  /** Increments the value of the "unprocessedTokensRemovedBySecondary" stat by 1. */
   public void incUnprocessedTokensRemovedBySecondary() {
     this.stats.incInt(unprocessedTokensRemovedBySecondaryId, 1);
     decUnprocessedTokenMapSize();
@@ -546,9 +638,7 @@ public class GatewaySenderStats {
     decUnprocessedTokenMapSize(count);
   }
 
-  /**
-   * Sets the "unprocessedEventMapSize" stat.
-   */
+  /** Sets the "unprocessedEventMapSize" stat. */
   public void clearUnprocessedMaps() {
     this.stats.setInt(unprocessedEventMapSizeId, 0);
     this.stats.setInt(unprocessedTokenMapSizeId, 0);
@@ -578,22 +668,19 @@ public class GatewaySenderStats {
     this.stats.incInt(unprocessedTokenMapSizeId, -decCount);
   }
 
-  /**
-   * Increments the value of the "conflationIndexesMapSize" stat by 1
-   */
+  /** Increments the value of the "conflationIndexesMapSize" stat by 1 */
   public void incConflationIndexesMapSize() {
     this.stats.incInt(conflationIndexesMapSizeId, 1);
   }
 
-  /**
-   * Decrements the value of the "conflationIndexesMapSize" stat by 1
-   */
+  /** Decrements the value of the "conflationIndexesMapSize" stat by 1 */
   public void decConflationIndexesMapSize() {
     this.stats.incInt(conflationIndexesMapSizeId, -1);
   }
 
   /**
    * Returns the current time (ns).
+   *
    * @return the current time (ns)
    */
   public long startTime() {
@@ -602,10 +689,10 @@ public class GatewaySenderStats {
 
   /**
    * Increments the "eventsDistributed" and "batchDistributionTime" stats.
-   * @param start The start of the batch (which is decremented from the current
-   * time to determine the batch processing time).
-   * @param numberOfEvents The number of events to add to the events
-   * distributed stat
+   *
+   * @param start The start of the batch (which is decremented from the current time to determine
+   *     the batch processing time).
+   * @param numberOfEvents The number of events to add to the events distributed stat
    */
   public void endBatch(long start, int numberOfEvents) {
     long ts = DistributionStats.getStatTime();
@@ -623,8 +710,9 @@ public class GatewaySenderStats {
 
   /**
    * Increments the "eventsQueued" and "eventQueueTime" stats.
-   * @param start The start of the put (which is decremented from the current
-   * time to determine the queue processing time).
+   *
+   * @param start The start of the put (which is decremented from the current time to determine the
+   *     queue processing time).
    */
   public void endPut(long start) {
     long ts = DistributionStats.getStatTime();

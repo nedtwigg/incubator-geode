@@ -34,7 +34,9 @@ public class InterestEvent {
     this.isDeserialized = isDeserialized;
   }
 
-  /** Returns the key.
+  /**
+   * Returns the key.
+   *
    * @return the key
    */
   public Object getKey() {
@@ -50,13 +52,16 @@ public class InterestEvent {
     try {
       value = CacheServerHelper.deserialize((byte[]) value);
     } catch (IOException ioe) {
-      throw new RuntimeException(LocalizedStrings.InterestEvent_IOEXCEPTION_DESERIALIZING_VALUE.toLocalizedString(), ioe);
+      throw new RuntimeException(
+          LocalizedStrings.InterestEvent_IOEXCEPTION_DESERIALIZING_VALUE.toLocalizedString(), ioe);
     } catch (ClassNotFoundException cnfe) {
-      throw new RuntimeException(LocalizedStrings.InterestEvent_CLASSNOTFOUNDEXCEPTION_DESERIALIZING_VALUE.toLocalizedString(), cnfe);
+      throw new RuntimeException(
+          LocalizedStrings.InterestEvent_CLASSNOTFOUNDEXCEPTION_DESERIALIZING_VALUE
+              .toLocalizedString(),
+          cnfe);
     }
     isDeserialized = true;
 
     return value;
   }
-
 }

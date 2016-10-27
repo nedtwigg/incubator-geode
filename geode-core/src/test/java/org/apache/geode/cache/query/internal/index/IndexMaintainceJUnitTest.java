@@ -55,9 +55,7 @@ import org.apache.geode.cache.query.internal.QueryObserverHolder;
 import org.apache.geode.test.dunit.ThreadUtils;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- */
+/** */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Category(IntegrationTest.class)
 public class IndexMaintainceJUnitTest {
@@ -70,8 +68,7 @@ public class IndexMaintainceJUnitTest {
   }
 
   @After
-  public void tearDown() throws Exception {
-  }
+  public void tearDown() throws Exception {}
 
   static QueryService qs;
   static boolean isInitDone = false;
@@ -88,7 +85,9 @@ public class IndexMaintainceJUnitTest {
       region.put("2", new Portfolio(2));
       region.put("3", new Portfolio(3));
       qs = cache.getQueryService();
-      index = (IndexProtocol) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolio");
+      index =
+          (IndexProtocol)
+              qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolio");
       assertTrue(index instanceof CompactRangeIndex);
     } catch (Exception e) {
       e.printStackTrace();
@@ -97,37 +96,95 @@ public class IndexMaintainceJUnitTest {
   }
 
   @Test
-  public void test000BUG32452() throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
-    Index i1 = qs.createIndex("tIndex", IndexType.FUNCTIONAL, "vals.secId", "/portfolio pf, pf.positions.values vals");
+  public void test000BUG32452()
+      throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
+    Index i1 =
+        qs.createIndex(
+            "tIndex",
+            IndexType.FUNCTIONAL,
+            "vals.secId",
+            "/portfolio pf, pf.positions.values vals");
     Index i2 = qs.createIndex("dIndex", IndexType.FUNCTIONAL, "pf.getCW(pf.ID)", "/portfolio pf");
-    Index i3 = qs.createIndex("fIndex", IndexType.FUNCTIONAL, "sIter", "/portfolio pf, pf.collectionHolderMap[(pf.ID).toString()].arr sIter");
-    Index i4 = qs.createIndex("cIndex", IndexType.FUNCTIONAL, "pf.collectionHolderMap[(pf.ID).toString()].arr[pf.ID]", "/portfolio pf");
-    Index i5 = qs.createIndex("inIndex", IndexType.FUNCTIONAL, "kIter.secId", "/portfolio['0'].positions.values kIter");
-    Index i6 = qs.createIndex("sIndex", IndexType.FUNCTIONAL, "pos.secId", "/portfolio.values val, val.positions.values pos");
+    Index i3 =
+        qs.createIndex(
+            "fIndex",
+            IndexType.FUNCTIONAL,
+            "sIter",
+            "/portfolio pf, pf.collectionHolderMap[(pf.ID).toString()].arr sIter");
+    Index i4 =
+        qs.createIndex(
+            "cIndex",
+            IndexType.FUNCTIONAL,
+            "pf.collectionHolderMap[(pf.ID).toString()].arr[pf.ID]",
+            "/portfolio pf");
+    Index i5 =
+        qs.createIndex(
+            "inIndex",
+            IndexType.FUNCTIONAL,
+            "kIter.secId",
+            "/portfolio['0'].positions.values kIter");
+    Index i6 =
+        qs.createIndex(
+            "sIndex",
+            IndexType.FUNCTIONAL,
+            "pos.secId",
+            "/portfolio.values val, val.positions.values pos");
     Index i7 = qs.createIndex("p1Index", IndexType.PRIMARY_KEY, "pkid", "/portfolio pf");
     Index i8 = qs.createIndex("p2Index", IndexType.PRIMARY_KEY, "pk", "/portfolio pf");
-    if (!i1.getCanonicalizedFromClause().equals("/portfolio index_iter1, index_iter1.positions.values index_iter2") || !i1.getCanonicalizedIndexedExpression().equals("index_iter2.secId") || !i1.getFromClause().equals("/portfolio pf, pf.positions.values vals") || !i1.getIndexedExpression().equals("vals.secId")) {
+    if (!i1.getCanonicalizedFromClause()
+            .equals("/portfolio index_iter1, index_iter1.positions.values index_iter2")
+        || !i1.getCanonicalizedIndexedExpression().equals("index_iter2.secId")
+        || !i1.getFromClause().equals("/portfolio pf, pf.positions.values vals")
+        || !i1.getIndexedExpression().equals("vals.secId")) {
       fail("Mismatch found among fromClauses or IndexedExpressions");
     }
-    if (!i2.getCanonicalizedFromClause().equals("/portfolio index_iter1") || !i2.getCanonicalizedIndexedExpression().equals("index_iter1.getCW(index_iter1.ID)") || !i2.getFromClause().equals("/portfolio pf") || !i2.getIndexedExpression().equals("pf.getCW(pf.ID)")) {
+    if (!i2.getCanonicalizedFromClause().equals("/portfolio index_iter1")
+        || !i2.getCanonicalizedIndexedExpression().equals("index_iter1.getCW(index_iter1.ID)")
+        || !i2.getFromClause().equals("/portfolio pf")
+        || !i2.getIndexedExpression().equals("pf.getCW(pf.ID)")) {
       fail("Mismatch found among fromClauses or IndexedExpressions");
     }
-    if (!i3.getCanonicalizedFromClause().equals("/portfolio index_iter1, index_iter1.collectionHolderMap[index_iter1.ID.toString()].arr index_iter3") || !i3.getCanonicalizedIndexedExpression().equals("index_iter3") || !i3.getFromClause().equals("/portfolio pf, pf.collectionHolderMap[(pf.ID).toString()].arr sIter") || !i3.getIndexedExpression().equals("sIter")) {
+    if (!i3.getCanonicalizedFromClause()
+            .equals(
+                "/portfolio index_iter1, index_iter1.collectionHolderMap[index_iter1.ID.toString()].arr index_iter3")
+        || !i3.getCanonicalizedIndexedExpression().equals("index_iter3")
+        || !i3.getFromClause()
+            .equals("/portfolio pf, pf.collectionHolderMap[(pf.ID).toString()].arr sIter")
+        || !i3.getIndexedExpression().equals("sIter")) {
       fail("Mismatch found among fromClauses or IndexedExpressions");
     }
-    if (!i4.getCanonicalizedFromClause().equals("/portfolio index_iter1") || !i4.getCanonicalizedIndexedExpression().equals("index_iter1.collectionHolderMap[index_iter1.ID.toString()].arr[index_iter1.ID]") || !i4.getFromClause().equals("/portfolio pf") || !i4.getIndexedExpression().equals("pf.collectionHolderMap[(pf.ID).toString()].arr[pf.ID]")) {
+    if (!i4.getCanonicalizedFromClause().equals("/portfolio index_iter1")
+        || !i4.getCanonicalizedIndexedExpression()
+            .equals(
+                "index_iter1.collectionHolderMap[index_iter1.ID.toString()].arr[index_iter1.ID]")
+        || !i4.getFromClause().equals("/portfolio pf")
+        || !i4.getIndexedExpression()
+            .equals("pf.collectionHolderMap[(pf.ID).toString()].arr[pf.ID]")) {
       fail("Mismatch found among fromClauses or IndexedExpressions");
     }
-    if (!i5.getCanonicalizedFromClause().equals("/portfolio['0'].positions.values index_iter4") || !i5.getCanonicalizedIndexedExpression().equals("index_iter4.secId") || !i5.getFromClause().equals("/portfolio['0'].positions.values kIter") || !i5.getIndexedExpression().equals("kIter.secId")) {
+    if (!i5.getCanonicalizedFromClause().equals("/portfolio['0'].positions.values index_iter4")
+        || !i5.getCanonicalizedIndexedExpression().equals("index_iter4.secId")
+        || !i5.getFromClause().equals("/portfolio['0'].positions.values kIter")
+        || !i5.getIndexedExpression().equals("kIter.secId")) {
       fail("Mismatch found among fromClauses or IndexedExpressions");
     }
-    if (!i6.getCanonicalizedFromClause().equals("/portfolio.values index_iter5, index_iter5.positions.values index_iter6") || !i6.getCanonicalizedIndexedExpression().equals("index_iter6.secId") || !i6.getFromClause().equals("/portfolio.values val, val.positions.values pos") || !i6.getIndexedExpression().equals("pos.secId")) {
+    if (!i6.getCanonicalizedFromClause()
+            .equals("/portfolio.values index_iter5, index_iter5.positions.values index_iter6")
+        || !i6.getCanonicalizedIndexedExpression().equals("index_iter6.secId")
+        || !i6.getFromClause().equals("/portfolio.values val, val.positions.values pos")
+        || !i6.getIndexedExpression().equals("pos.secId")) {
       fail("Mismatch found among fromClauses or IndexedExpressions");
     }
-    if (!i7.getCanonicalizedFromClause().equals("/portfolio index_iter1") || !i7.getCanonicalizedIndexedExpression().equals("index_iter1.pkid") || !i7.getFromClause().equals("/portfolio pf") || !i7.getIndexedExpression().equals("pkid")) {
+    if (!i7.getCanonicalizedFromClause().equals("/portfolio index_iter1")
+        || !i7.getCanonicalizedIndexedExpression().equals("index_iter1.pkid")
+        || !i7.getFromClause().equals("/portfolio pf")
+        || !i7.getIndexedExpression().equals("pkid")) {
       fail("Mismatch found among fromClauses or IndexedExpressions");
     }
-    if (!i8.getCanonicalizedFromClause().equals("/portfolio index_iter1") || !i8.getCanonicalizedIndexedExpression().equals("index_iter1.pk") || !i8.getFromClause().equals("/portfolio pf") || !i8.getIndexedExpression().equals("pk")) {
+    if (!i8.getCanonicalizedFromClause().equals("/portfolio index_iter1")
+        || !i8.getCanonicalizedIndexedExpression().equals("index_iter1.pk")
+        || !i8.getFromClause().equals("/portfolio pf")
+        || !i8.getIndexedExpression().equals("pk")) {
       fail("Mismatch found among fromClauses or IndexedExpressions");
     }
     qs.removeIndex(i1);
@@ -139,7 +196,10 @@ public class IndexMaintainceJUnitTest {
     qs.removeIndex(i7);
     qs.removeIndex(i8);
     Index i9 = qs.createIndex("p3Index", IndexType.PRIMARY_KEY, "getPk", "/portfolio pf");
-    if (!i9.getCanonicalizedFromClause().equals("/portfolio index_iter1") || !i9.getCanonicalizedIndexedExpression().equals("index_iter1.pk") || !i9.getFromClause().equals("/portfolio pf") || !i9.getIndexedExpression().equals("getPk")) {
+    if (!i9.getCanonicalizedFromClause().equals("/portfolio index_iter1")
+        || !i9.getCanonicalizedIndexedExpression().equals("index_iter1.pk")
+        || !i9.getFromClause().equals("/portfolio pf")
+        || !i9.getIndexedExpression().equals("getPk")) {
       fail("Mismatch found among fromClauses or IndexedExpressions");
     }
     qs.removeIndex(i9);
@@ -213,12 +273,13 @@ public class IndexMaintainceJUnitTest {
       IndexMaintainceJUnitTest.isInitDone = false;
       init();
       Query q = qs.newQuery("SELECT DISTINCT * FROM /portfolio where status = 'active'");
-      QueryObserverHolder.setInstance(new QueryObserverAdapter() {
+      QueryObserverHolder.setInstance(
+          new QueryObserverAdapter() {
 
-        public void afterIndexLookup(Collection coll) {
-          IndexMaintainceJUnitTest.this.indexUsed = true;
-        }
-      });
+            public void afterIndexLookup(Collection coll) {
+              IndexMaintainceJUnitTest.this.indexUsed = true;
+            }
+          });
       SelectResults set = (SelectResults) q.execute();
       if (set.size() == 0 || !this.indexUsed) {
         fail("Either Size of the result set is zero or Index is not used ");
@@ -249,27 +310,30 @@ public class IndexMaintainceJUnitTest {
       IndexMaintainceJUnitTest.isInitDone = false;
       init();
       Query q = qs.newQuery("SELECT DISTINCT * FROM /portfolio where status = 'active'");
-      QueryObserverHolder.setInstance(new QueryObserverAdapter() {
+      QueryObserverHolder.setInstance(
+          new QueryObserverAdapter() {
 
-        public void afterIndexLookup(Collection coll) {
-          IndexMaintainceJUnitTest.this.indexUsed = true;
-        }
+            public void afterIndexLookup(Collection coll) {
+              IndexMaintainceJUnitTest.this.indexUsed = true;
+            }
 
-        public void beforeRerunningIndexCreationQuery() {
-          //Spawn a separate thread here which does a put opertion on region
-          Thread th = new Thread(new Runnable() {
+            public void beforeRerunningIndexCreationQuery() {
+              //Spawn a separate thread here which does a put opertion on region
+              Thread th =
+                  new Thread(
+                      new Runnable() {
 
-            public void run() {
-              //Assert that the size of region is now 0
-              assertTrue(IndexMaintainceJUnitTest.region.size() == 0);
-              IndexMaintainceJUnitTest.region.put("" + 8, new Portfolio(8));
+                        public void run() {
+                          //Assert that the size of region is now 0
+                          assertTrue(IndexMaintainceJUnitTest.region.size() == 0);
+                          IndexMaintainceJUnitTest.region.put("" + 8, new Portfolio(8));
+                        }
+                      });
+              th.start();
+              ThreadUtils.join(th, 30 * 1000);
+              assertTrue(IndexMaintainceJUnitTest.region.size() == 1);
             }
           });
-          th.start();
-          ThreadUtils.join(th, 30 * 1000);
-          assertTrue(IndexMaintainceJUnitTest.region.size() == 1);
-        }
-      });
       SelectResults set = (SelectResults) q.execute();
       if (set.size() == 0 || !this.indexUsed) {
         fail("Either Size of the result set is zero or Index is not used ");
@@ -297,8 +361,15 @@ public class IndexMaintainceJUnitTest {
       init();
       qs.removeIndexes();
 
-      index = (IndexProtocol) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "pos.secId", "/portfolio p , p.positions.values pos");
-      String queryStr = "Select distinct pf from /portfolio pf , pf.positions.values ps where ps.secId='SUN'";
+      index =
+          (IndexProtocol)
+              qs.createIndex(
+                  "statusIndex",
+                  IndexType.FUNCTIONAL,
+                  "pos.secId",
+                  "/portfolio p , p.positions.values pos");
+      String queryStr =
+          "Select distinct pf from /portfolio pf , pf.positions.values ps where ps.secId='SUN'";
 
       Query query = qs.newQuery(queryStr);
       SelectResults rs = (SelectResults) query.execute();
@@ -316,13 +387,9 @@ public class IndexMaintainceJUnitTest {
       IndexMaintainceJUnitTest.isInitDone = false;
       CacheUtils.restartCache();
     }
-
   }
 
-  /**
-   * Test to compare range and compact index.
-   * They should return the same results.
-   */
+  /** Test to compare range and compact index. They should return the same results. */
   @Test
   public void test008RangeAndCompactRangeIndex() {
     try {
@@ -332,9 +399,17 @@ public class IndexMaintainceJUnitTest {
       }
       qs.removeIndexes();
 
-      String[] queryStr = new String[] { "Select status from /portfolio pf where status='active'", "Select pf.ID from /portfolio pf where pf.ID > 2 and pf.ID < 100", "Select * from /portfolio pf where pf.position1.secId > '2'", };
+      String[] queryStr =
+          new String[] {
+            "Select status from /portfolio pf where status='active'",
+            "Select pf.ID from /portfolio pf where pf.ID > 2 and pf.ID < 100",
+            "Select * from /portfolio pf where pf.position1.secId > '2'",
+          };
 
-      String[] queryFields = new String[] { "status", "ID", "position1.secId", };
+      String[] queryFields =
+          new String[] {
+            "status", "ID", "position1.secId",
+          };
 
       for (int i = 0; i < queryStr.length; i++) {
         // Clear indexes if any.
@@ -354,9 +429,12 @@ public class IndexMaintainceJUnitTest {
 
           // Create compact index.
           IndexManager.TEST_RANGEINDEX_ONLY = false;
-          index = (IndexProtocol) qs.createIndex(queryFields[i] + "Index", IndexType.FUNCTIONAL, queryFields[i], "/portfolio");
+          index =
+              (IndexProtocol)
+                  qs.createIndex(
+                      queryFields[i] + "Index", IndexType.FUNCTIONAL, queryFields[i], "/portfolio");
 
-          // Execute Query.    
+          // Execute Query.
           SelectResults[][] rs = new SelectResults[1][2];
           Query query = qs.newQuery(queryStr[i]);
           rs[0][0] = (SelectResults) query.execute();
@@ -366,12 +444,19 @@ public class IndexMaintainceJUnitTest {
 
           // Create Range Index.
           IndexManager.TEST_RANGEINDEX_ONLY = true;
-          index = (IndexProtocol) qs.createIndex(queryFields[i] + "rIndex", IndexType.FUNCTIONAL, queryFields[i], "/portfolio");
+          index =
+              (IndexProtocol)
+                  qs.createIndex(
+                      queryFields[i] + "rIndex",
+                      IndexType.FUNCTIONAL,
+                      queryFields[i],
+                      "/portfolio");
 
           query = qs.newQuery(queryStr[i]);
           rs[0][1] = (SelectResults) query.execute();
 
-          CacheUtils.log("#### rs1 size is : " + (rs[0][0]).size() + " rs2 size is : " + (rs[0][1]).size());
+          CacheUtils.log(
+              "#### rs1 size is : " + (rs[0][0]).size() + " rs2 size is : " + (rs[0][1]).size());
           StructSetOrResultsSet ssORrs = new StructSetOrResultsSet();
           ssORrs.CompareQueryResultsWithoutAndWithIndexes(rs, 1, queryStr);
         }
@@ -386,10 +471,7 @@ public class IndexMaintainceJUnitTest {
     }
   }
 
-  /**
-   * Test to compare range and compact index.
-   * They should return the same results.
-   */
+  /** Test to compare range and compact index. They should return the same results. */
   @Test
   public void test009AcquringCompactRangeIndexEarly() {
     try {
@@ -399,7 +481,14 @@ public class IndexMaintainceJUnitTest {
       }
       qs.removeIndexes();
 
-      String[] queryStr = new String[] { "Select status from /portfolio pf where status='active'", "Select * from /portfolio pf, pf.positions.values pos where pf.ID > 10 and pf.status='active'", "Select pf.ID from /portfolio pf where pf.ID > 2 and pf.ID < 100", "Select * from /portfolio pf where pf.position1.secId > '2'", "Select * from /portfolio pf, pf.positions.values pos where pos.secId > '2'", };
+      String[] queryStr =
+          new String[] {
+            "Select status from /portfolio pf where status='active'",
+            "Select * from /portfolio pf, pf.positions.values pos where pf.ID > 10 and pf.status='active'",
+            "Select pf.ID from /portfolio pf where pf.ID > 2 and pf.ID < 100",
+            "Select * from /portfolio pf where pf.position1.secId > '2'",
+            "Select * from /portfolio pf, pf.positions.values pos where pos.secId > '2'",
+          };
 
       // initialize region.
       region.clear();
@@ -409,8 +498,13 @@ public class IndexMaintainceJUnitTest {
 
       // Create range and compact-range indexes.
       qs.createIndex("id2Index ", IndexType.FUNCTIONAL, "pf.ID", "/portfolio pf");
-      qs.createIndex("id2PosIndex ", IndexType.FUNCTIONAL, "pf.ID", "/portfolio pf, pf.positions.values");
-      qs.createIndex("status2PosIndex ", IndexType.FUNCTIONAL, "pos.secId", "/portfolio pf, pf.positions.values pos");
+      qs.createIndex(
+          "id2PosIndex ", IndexType.FUNCTIONAL, "pf.ID", "/portfolio pf, pf.positions.values");
+      qs.createIndex(
+          "status2PosIndex ",
+          IndexType.FUNCTIONAL,
+          "pos.secId",
+          "/portfolio pf, pf.positions.values pos");
 
       // Set the acquire compact range index flag to true
       //IndexManager.TEST_ACQUIRE_COMPACTINDEX_LOCKS_EARLY = true;
@@ -419,7 +513,7 @@ public class IndexMaintainceJUnitTest {
         region.put("" + k, new Portfolio(k));
       }
       for (int i = 0; i < queryStr.length; i++) {
-        // Execute Query.    
+        // Execute Query.
         SelectResults[][] rs = new SelectResults[1][2];
         Query query = qs.newQuery(queryStr[i]);
         rs[0][0] = (SelectResults) query.execute();

@@ -27,8 +27,8 @@ import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Serializable subclass of {@link org.junit.rules.Timeout Timeout}. All
- * instance variables of {@code Timeout} are serialized by reflection.
+ * Serializable subclass of {@link org.junit.rules.Timeout Timeout}. All instance variables of
+ * {@code Timeout} are serialized by reflection.
  */
 public class SerializableTimeout extends Timeout implements SerializableTestRule {
 
@@ -52,9 +52,7 @@ public class SerializableTimeout extends Timeout implements SerializableTestRule
     return new SerializationProxy(this);
   }
 
-  /**
-   * Builder for {@code SerializableTimeout}.
-   */
+  /** Builder for {@code SerializableTimeout}. */
   public static class Builder extends Timeout.Builder {
 
     protected Builder() {
@@ -79,9 +77,7 @@ public class SerializableTimeout extends Timeout implements SerializableTestRule
     }
   }
 
-  /**
-   * Serialization proxy for {@code SerializableTimeout}.
-   */
+  /** Serialization proxy for {@code SerializableTimeout}. */
   private static class SerializationProxy implements Serializable {
 
     private final long timeout;
@@ -91,11 +87,15 @@ public class SerializableTimeout extends Timeout implements SerializableTestRule
     SerializationProxy(final SerializableTimeout instance) {
       this.timeout = (long) readField(Timeout.class, instance, FIELD_TIMEOUT);
       this.timeUnit = (TimeUnit) readField(Timeout.class, instance, FIELD_TIME_UNIT);
-      this.lookForStuckThread = (boolean) readField(Timeout.class, instance, FIELD_LOOK_FOR_STUCK_THREAD);
+      this.lookForStuckThread =
+          (boolean) readField(Timeout.class, instance, FIELD_LOOK_FOR_STUCK_THREAD);
     }
 
     private Object readResolve() {
-      return new SerializableTimeout.Builder().withTimeout(this.timeout, this.timeUnit).withLookingForStuckThread(this.lookForStuckThread).build();
+      return new SerializableTimeout.Builder()
+          .withTimeout(this.timeout, this.timeUnit)
+          .withLookingForStuckThread(this.lookForStuckThread)
+          .build();
     }
   }
 }

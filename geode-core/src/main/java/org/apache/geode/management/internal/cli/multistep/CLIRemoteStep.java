@@ -20,15 +20,10 @@ import java.io.Serializable;
 
 /**
  * Marker interface to identify remote steps from local steps
- * 
- * Command has to populate the right context information in
- * Remote step to get execution.
- * 
- * For state-ful interactive commands like select where steps
- * are iterating through the result(the state) to and fro, first
- * step has to create the state on the manager.
- * 
+ *
+ * <p>Command has to populate the right context information in Remote step to get execution.
+ *
+ * <p>For state-ful interactive commands like select where steps are iterating through the
+ * result(the state) to and fro, first step has to create the state on the manager.
  */
-public interface CLIRemoteStep extends CLIStep, Serializable {
-
-}
+public interface CLIRemoteStep extends CLIStep, Serializable {}

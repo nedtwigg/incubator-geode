@@ -21,9 +21,8 @@ import java.util.Set;
 
 /**
  * OperationContext for Function execution operation. This is for the pre-operation case
- * 
- * @since GemFire 6.0
  *
+ * @since GemFire 6.0
  */
 public class ExecuteFunctionOperationContext extends OperationContext {
 
@@ -41,7 +40,13 @@ public class ExecuteFunctionOperationContext extends OperationContext {
 
   private Object result;
 
-  public ExecuteFunctionOperationContext(String functionName, String regionName, Set keySet, Object arguments, boolean optimizeForWrite, boolean isPostOperation) {
+  public ExecuteFunctionOperationContext(
+      String functionName,
+      String regionName,
+      Set keySet,
+      Object arguments,
+      boolean optimizeForWrite,
+      boolean isPostOperation) {
     this.functionId = functionName;
     this.regionName = regionName;
     this.keySet = keySet;

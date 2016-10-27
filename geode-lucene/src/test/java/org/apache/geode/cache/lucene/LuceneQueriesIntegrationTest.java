@@ -58,13 +58,10 @@ import org.apache.geode.pdx.PdxInstance;
 import org.apache.geode.pdx.internal.AutoSerializableManager.ObjectArrayField;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * This class contains tests of lucene queries that can fit
- */
+/** This class contains tests of lucene queries that can fit */
 @Category(IntegrationTest.class)
 public class LuceneQueriesIntegrationTest extends LuceneIntegrationTest {
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @Rule public ExpectedException thrown = ExpectedException.none();
   private static final String INDEX_NAME = "index";
   protected static final String REGION_NAME = "index";
   private Region region;
@@ -122,7 +119,7 @@ public class LuceneQueriesIntegrationTest extends LuceneIntegrationTest {
     // query will be--field2:one three
     verifyQuery("field2:\"one three\"", DEFAULT_FIELD, "A");
 
-    // keyword analyzer without double quote. It should be the same as 
+    // keyword analyzer without double quote. It should be the same as
     // with double quote
     // query will be--field2:one@three
     verifyQuery("field2:one@three", DEFAULT_FIELD, "C");
@@ -142,7 +139,8 @@ public class LuceneQueriesIntegrationTest extends LuceneIntegrationTest {
     region.put("primitiveInt3", 224);
 
     index.waitUntilFlushed(60000);
-    verifyQueryUsingCustomizedProvider(LuceneService.REGION_VALUE_FIELD, 123, 223, "primitiveInt1", "primitiveInt2");
+    verifyQueryUsingCustomizedProvider(
+        LuceneService.REGION_VALUE_FIELD, 123, 223, "primitiveInt1", "primitiveInt2");
   }
 
   @Ignore
@@ -162,13 +160,15 @@ public class LuceneQueriesIntegrationTest extends LuceneIntegrationTest {
     index.waitUntilFlushed(60000);
 
     // Note: current QueryParser cannot query by range. It's a known issue in lucene
-    verifyQuery(LuceneService.REGION_VALUE_FIELD + ":[123 TO 223]", LuceneService.REGION_VALUE_FIELD);
+    verifyQuery(
+        LuceneService.REGION_VALUE_FIELD + ":[123 TO 223]", LuceneService.REGION_VALUE_FIELD);
 
     region.put("primitiveDouble1", 123.0);
     index.waitUntilFlushed(60000);
 
     thrown.expectMessage("java.lang.IllegalArgumentException");
-    verifyQueryUsingCustomizedProvider(LuceneService.REGION_VALUE_FIELD, 123, 223, "primitiveInt1", "primitiveInt2");
+    verifyQueryUsingCustomizedProvider(
+        LuceneService.REGION_VALUE_FIELD, 123, 223, "primitiveInt1", "primitiveInt2");
   }
 
   @Test()
@@ -189,8 +189,12 @@ public class LuceneQueriesIntegrationTest extends LuceneIntegrationTest {
     allEntries.addAll(page3);
     allEntries.addAll(page4);
 
-    assertEquals(region.keySet(), allEntries.stream().map(entry -> entry.getKey()).collect(Collectors.toSet()));
-    assertEquals(region.values(), allEntries.stream().map(entry -> entry.getValue()).collect(Collectors.toSet()));
+    assertEquals(
+        region.keySet(),
+        allEntries.stream().map(entry -> entry.getKey()).collect(Collectors.toSet()));
+    assertEquals(
+        region.values(),
+        allEntries.stream().map(entry -> entry.getValue()).collect(Collectors.toSet()));
   }
 
   @Test
@@ -217,7 +221,10 @@ public class LuceneQueriesIntegrationTest extends LuceneIntegrationTest {
     region.put("G", new TestObject(value1, value2));
 
     index.waitUntilFlushed(60000);
-    return luceneService.createLuceneQueryFactory().setPageSize(pagesize).create(INDEX_NAME, REGION_NAME, "one", "field1");
+    return luceneService
+        .createLuceneQueryFactory()
+        .setPageSize(pagesize)
+        .create(INDEX_NAME, REGION_NAME, "one", "field1");
   }
 
   @Test()
@@ -305,9 +312,15 @@ public class LuceneQueriesIntegrationTest extends LuceneIntegrationTest {
     Region region = cache.createRegionFactory(RegionShortcut.PARTITION).create(REGION_NAME);
 
     //Create a query that throws an exception
-    final LuceneQuery<Object, Object> query = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, (index) -> {
-      throw new LuceneQueryException("Bad query");
-    });
+    final LuceneQuery<Object, Object> query =
+        luceneService
+            .createLuceneQueryFactory()
+            .create(
+                INDEX_NAME,
+                REGION_NAME,
+                (index) -> {
+                  throw new LuceneQueryException("Bad query");
+                });
 
     thrown.expect(LuceneQueryException.class);
     query.findPages();
@@ -322,8 +335,10 @@ public class LuceneQueriesIntegrationTest extends LuceneIntegrationTest {
     assertEquals(7, pages.size());
     final List<LuceneResultStruct<Object, Object>> page = pages.next();
     assertFalse(pages.hasNext());
-    assertEquals(region.keySet(), page.stream().map(entry -> entry.getKey()).collect(Collectors.toSet()));
-    assertEquals(region.values(), page.stream().map(entry -> entry.getValue()).collect(Collectors.toSet()));
+    assertEquals(
+        region.keySet(), page.stream().map(entry -> entry.getKey()).collect(Collectors.toSet()));
+    assertEquals(
+        region.values(), page.stream().map(entry -> entry.getValue()).collect(Collectors.toSet()));
   }
 
   @Test
@@ -346,8 +361,12 @@ public class LuceneQueriesIntegrationTest extends LuceneIntegrationTest {
     allEntries.addAll(page1);
     allEntries.addAll(page2);
     allEntries.addAll(page3);
-    assertEquals(region.keySet(), allEntries.stream().map(entry -> entry.getKey()).collect(Collectors.toSet()));
-    assertEquals(region.values(), allEntries.stream().map(entry -> entry.getValue()).collect(Collectors.toSet()));
+    assertEquals(
+        region.keySet(),
+        allEntries.stream().map(entry -> entry.getKey()).collect(Collectors.toSet()));
+    assertEquals(
+        region.values(),
+        allEntries.stream().map(entry -> entry.getValue()).collect(Collectors.toSet()));
   }
 
   @Test
@@ -382,8 +401,12 @@ public class LuceneQueriesIntegrationTest extends LuceneIntegrationTest {
     allEntries.addAll(pages.next());
     assertFalse(pages.hasNext());
 
-    assertEquals(region.keySet(), allEntries.stream().map(entry -> entry.getKey()).collect(Collectors.toSet()));
-    assertEquals(region.values(), allEntries.stream().map(entry -> entry.getValue()).collect(Collectors.toSet()));
+    assertEquals(
+        region.keySet(),
+        allEntries.stream().map(entry -> entry.getKey()).collect(Collectors.toSet()));
+    assertEquals(
+        region.values(),
+        allEntries.stream().map(entry -> entry.getValue()).collect(Collectors.toSet()));
   }
 
   @Test
@@ -404,32 +427,66 @@ public class LuceneQueriesIntegrationTest extends LuceneIntegrationTest {
     final List<LuceneResultStruct<Object, Object>> page1 = pages.next();
     assertEquals(2, page1.size());
     assertFalse(pages.hasNext());
-
   }
 
   private PdxInstance insertAJson(Region region, String key) {
-    String jsonCustomer = "{" + "\"name\": \"" + key + "\"," + "\"lastName\": \"Smith\"," + " \"age\": 25," + "\"address\":" + "{" + "\"streetAddress\": \"21 2nd Street\"," + "\"city\": \"New York\"," + "\"state\": \"NY\"," + "\"postalCode\": \"10021\"" + "}," + "\"phoneNumber\":" + "[" + "{" + " \"type\": \"home\"," + "\"number\": \"212 555-1234\"" + "}," + "{" + " \"type\": \"fax\"," + "\"number\": \"646 555-4567\"" + "}" + "]" + "}";
+    String jsonCustomer =
+        "{"
+            + "\"name\": \""
+            + key
+            + "\","
+            + "\"lastName\": \"Smith\","
+            + " \"age\": 25,"
+            + "\"address\":"
+            + "{"
+            + "\"streetAddress\": \"21 2nd Street\","
+            + "\"city\": \"New York\","
+            + "\"state\": \"NY\","
+            + "\"postalCode\": \"10021\""
+            + "},"
+            + "\"phoneNumber\":"
+            + "["
+            + "{"
+            + " \"type\": \"home\","
+            + "\"number\": \"212 555-1234\""
+            + "},"
+            + "{"
+            + " \"type\": \"fax\","
+            + "\"number\": \"646 555-4567\""
+            + "}"
+            + "]"
+            + "}";
 
     PdxInstance pdx = JSONFormatter.fromJSON(jsonCustomer);
     region.put(key, pdx);
     return pdx;
   }
 
-  private void verifyQueryUsingCustomizedProvider(String fieldName, int lowerValue, int upperValue, String... expectedKeys) throws Exception {
+  private void verifyQueryUsingCustomizedProvider(
+      String fieldName, int lowerValue, int upperValue, String... expectedKeys) throws Exception {
     IntRangeQueryProvider provider = new IntRangeQueryProvider(fieldName, lowerValue, upperValue);
-    LuceneQuery<String, Object> queryWithCustomizedProvider = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, provider);
+    LuceneQuery<String, Object> queryWithCustomizedProvider =
+        luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, provider);
 
     verifyQueryKeys(queryWithCustomizedProvider, expectedKeys);
   }
 
-  private void verifyQuery(String query, String defaultField, String... expectedKeys) throws Exception {
-    final LuceneQuery<String, Object> queryWithStandardAnalyzer = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, query, defaultField);
+  private void verifyQuery(String query, String defaultField, String... expectedKeys)
+      throws Exception {
+    final LuceneQuery<String, Object> queryWithStandardAnalyzer =
+        luceneService
+            .createLuceneQueryFactory()
+            .create(INDEX_NAME, REGION_NAME, query, defaultField);
 
     verifyQueryKeys(queryWithStandardAnalyzer, expectedKeys);
   }
 
-  private void verifyQuery(String query, String DEFAULT_FIELD, HashMap expectedResults) throws Exception {
-    final LuceneQuery<String, Object> queryWithStandardAnalyzer = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, query, DEFAULT_FIELD);
+  private void verifyQuery(String query, String DEFAULT_FIELD, HashMap expectedResults)
+      throws Exception {
+    final LuceneQuery<String, Object> queryWithStandardAnalyzer =
+        luceneService
+            .createLuceneQueryFactory()
+            .create(INDEX_NAME, REGION_NAME, query, DEFAULT_FIELD);
 
     verifyQueryKeyAndValues(queryWithStandardAnalyzer, expectedResults);
   }
@@ -450,7 +507,8 @@ public class LuceneQueriesIntegrationTest extends LuceneIntegrationTest {
     }
   }
 
-  public static class IntRangeQueryProvider implements LuceneQueryProvider, DataSerializableFixedID {
+  public static class IntRangeQueryProvider
+      implements LuceneQueryProvider, DataSerializableFixedID {
     public static final short LUCENE_INT_RANGE_QUERY_PROVIDER = 2177;
     String fieldName;
     int lowerValue;

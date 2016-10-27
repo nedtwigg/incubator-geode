@@ -17,25 +17,22 @@
 
 package org.apache.geode.cache;
 
-/** Indicates that the operation that
- * would have otherwise affected the cache has been aborted.
- * Only subclasses are instantiated.
- *
- *
+/**
+ * Indicates that the operation that would have otherwise affected the cache has been aborted. Only
+ * subclasses are instantiated.
  *
  * @since GemFire 3.0
  */
 public abstract class OperationAbortedException extends CacheRuntimeException {
   private static final long serialVersionUID = -8293166225026556949L;
 
-  /**
-   * Creates a new instance of <code>OperationAbortedException</code> without detail message.
-   */
-  public OperationAbortedException() {
-  }
+  /** Creates a new instance of <code>OperationAbortedException</code> without detail message. */
+  public OperationAbortedException() {}
 
   /**
-   * Constructs an instance of <code>OperationAbortedException</code> with the specified detail message.
+   * Constructs an instance of <code>OperationAbortedException</code> with the specified detail
+   * message.
+   *
    * @param msg the detail message
    */
   public OperationAbortedException(String msg) {
@@ -43,8 +40,9 @@ public abstract class OperationAbortedException extends CacheRuntimeException {
   }
 
   /**
-   * Constructs an instance of <code>OperationAbortedException</code> with the specified detail message
-   * and cause.
+   * Constructs an instance of <code>OperationAbortedException</code> with the specified detail
+   * message and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */
@@ -54,6 +52,7 @@ public abstract class OperationAbortedException extends CacheRuntimeException {
 
   /**
    * Constructs an instance of <code>OperationAbortedException</code> with the specified cause.
+   *
    * @param cause the causal Throwable
    */
   public OperationAbortedException(Throwable cause) {

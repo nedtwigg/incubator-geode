@@ -27,10 +27,7 @@ import org.apache.geode.management.internal.cli.CliUtil;
 import org.apache.geode.management.internal.cli.domain.MemberResult;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
-/***
- * Function to close a durable client
- *
- */
+/** * Function to close a durable client */
 public class CloseDurableClientFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
@@ -39,7 +36,8 @@ public class CloseDurableClientFunction extends FunctionAdapter implements Inter
   public void execute(FunctionContext context) {
     String durableClientId = (String) context.getArguments();
     final Cache cache = CliUtil.getCacheIfExists();
-    final String memberNameOrId = CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
+    final String memberNameOrId =
+        CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
     MemberResult memberResult = new MemberResult(memberNameOrId);
 
     try {
@@ -50,12 +48,15 @@ public class CloseDurableClientFunction extends FunctionAdapter implements Inter
         if (ccp != null) {
           boolean isClosed = cacheClientNotifier.closeDurableClientProxy(durableClientId);
           if (isClosed) {
-            memberResult.setSuccessMessage(CliStrings.format(CliStrings.CLOSE_DURABLE_CLIENTS__SUCCESS, durableClientId));
+            memberResult.setSuccessMessage(
+                CliStrings.format(CliStrings.CLOSE_DURABLE_CLIENTS__SUCCESS, durableClientId));
           } else {
-            memberResult.setErrorMessage(CliStrings.format(CliStrings.NO_CLIENT_FOUND_WITH_CLIENT_ID, durableClientId));
+            memberResult.setErrorMessage(
+                CliStrings.format(CliStrings.NO_CLIENT_FOUND_WITH_CLIENT_ID, durableClientId));
           }
         } else {
-          memberResult.setErrorMessage(CliStrings.format(CliStrings.NO_CLIENT_FOUND_WITH_CLIENT_ID, durableClientId));
+          memberResult.setErrorMessage(
+              CliStrings.format(CliStrings.NO_CLIENT_FOUND_WITH_CLIENT_ID, durableClientId));
         }
       } else {
         memberResult.setErrorMessage(CliStrings.NO_CLIENT_FOUND);
@@ -71,5 +72,4 @@ public class CloseDurableClientFunction extends FunctionAdapter implements Inter
   public String getId() {
     return CloseDurableClientFunction.class.getName();
   }
-
 }

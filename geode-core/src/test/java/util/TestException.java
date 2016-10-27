@@ -31,5 +31,4 @@ public class TestException extends Error {
   public TestException(StringBuffer name) {
     super(name.toString());
   }
-
 }

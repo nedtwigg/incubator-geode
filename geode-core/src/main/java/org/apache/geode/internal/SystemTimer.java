@@ -36,41 +36,32 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * Instances of this class are like {@link Timer}, but are associated
- * with a "swarm", which can be cancelled as a group with 
- * {@link #cancelSwarm(Object)}.
- * 
+ * Instances of this class are like {@link Timer}, but are associated with a "swarm", which can be
+ * cancelled as a group with {@link #cancelSwarm(Object)}.
+ *
  * @see Timer
  * @see TimerTask
- *
- * TODO -- with Java 1.5, this will be a template type so that the swarm's
- * class can be specified.
+ *     <p>TODO -- with Java 1.5, this will be a template type so that the swarm's class can be
+ *     specified.
  */
 public final class SystemTimer {
   private static final Logger logger = LogService.getLogger();
 
-  final static private boolean isIBM = "IBM Corporation".equals(System.getProperty("java.vm.vendor"));
+  private static final boolean isIBM =
+      "IBM Corporation".equals(System.getProperty("java.vm.vendor"));
 
-  /**
-   * Extra debugging for this class
-   */
+  /** Extra debugging for this class */
   //  private static final boolean DEBUG = true;
   static final boolean DEBUG = false;
 
-  /**
-   * the underlying {@link Timer}
-   */
-  final private Timer timer;
+  /** the underlying {@link Timer} */
+  private final Timer timer;
 
-  /**
-   * True if this timer has been cancelled
-   */
+  /** True if this timer has been cancelled */
   private boolean cancelled = false;
 
-  /**
-   * the swarm to which this timer belongs
-   */
-  final private Object /* T */ swarm;
+  /** the swarm to which this timer belongs */
+  private final Object /* T */ swarm;
 
   @Override
   public String toString() {
@@ -84,19 +75,19 @@ public final class SystemTimer {
 
   /**
    * List of all of the swarms in the system
-   * 
+   *
    * @guarded.By self
    */
   // <T, HashMap<Object, ArrayList<WeakReference<SystemTimer>>>>
-  static private final HashMap allSwarms = new HashMap();
+  private static final HashMap allSwarms = new HashMap();
 
   /**
-   * Add the given timer is in the given swarm.  Used only by constructors.
-   * 
+   * Add the given timer is in the given swarm. Used only by constructors.
+   *
    * @param swarm swarm to add the timer to
    * @param t timer to add
    */
-  static private void addToSwarm(Object /* T */ swarm, SystemTimer t) {
+  private static void addToSwarm(Object /* T */ swarm, SystemTimer t) {
     final boolean isDebugEnabled = logger.isTraceEnabled();
     // Get or add list of timers for this swarm...
     ArrayList /* ArrayList<WeakReference<SystemTimer>> */ swarmSet;
@@ -123,26 +114,24 @@ public final class SystemTimer {
 
   /**
    * time that the last sweep was done
-   * 
+   *
    * @see #sweepAllSwarms
    */
   private static long lastSweepAllTime = 0;
 
   /**
-   * Interval, in milliseconds, to sweep all swarms, measured from when
-   * the last sweep finished
-   * 
+   * Interval, in milliseconds, to sweep all swarms, measured from when the last sweep finished
+   *
    * @see #sweepAllSwarms
    */
   private static final long SWEEP_ALL_INTERVAL = 2 * 60 * 1000; // 2 minutes
 
   /**
-   * Manually garbage collect {@link #allSwarms}, if it hasn't happened
-   * in a while.
-   * 
+   * Manually garbage collect {@link #allSwarms}, if it hasn't happened in a while.
+   *
    * @see #lastSweepAllTime
    */
-  static private void sweepAllSwarms() {
+  private static void sweepAllSwarms() {
     if (System.currentTimeMillis() < lastSweepAllTime + SWEEP_ALL_INTERVAL) {
       // Too soon.
       return;
@@ -186,11 +175,11 @@ public final class SystemTimer {
 
   /**
    * Remove given timer from the swarm.
+   *
    * @param t timer to remove
-   * 
    * @see #cancel()
    */
-  static private void removeFromSwarm(SystemTimer t) {
+  private static void removeFromSwarm(SystemTimer t) {
     final boolean isDebugEnabled = logger.isTraceEnabled();
     synchronized (allSwarms) {
       // Get timer's swarm
@@ -229,7 +218,7 @@ public final class SystemTimer {
           }
         } // while
 
-        // While we're here, if the swarm has gone to zero size, 
+        // While we're here, if the swarm has gone to zero size,
         // we should remove it.
         if (swarmSet.size() == 0) {
           allSwarms.remove(t.swarm); // last reference
@@ -245,6 +234,7 @@ public final class SystemTimer {
 
   /**
    * Cancel all outstanding timers
+   *
    * @param swarm the swarm to cancel
    */
   public static void cancelSwarm(Object /* T */ swarm) {
@@ -291,7 +281,7 @@ public final class SystemTimer {
   // This creates a non-daemon timer thread.  We don't EVER do this...
   //  /**
   //   * @see Timer#Timer()
-  //   * 
+  //   *
   //   * @param swarm the swarm this timer belongs to
   //   */
   //  public SystemTimer(DistributedSystem swarm) {
@@ -303,11 +293,13 @@ public final class SystemTimer {
   /**
    * @see Timer#Timer(boolean)
    * @param swarm the swarm this timer belongs to, currently must be a DistributedSystem
-   * @param isDaemon whether the timer is a daemon.  Must be true for GemFire use.
+   * @param isDaemon whether the timer is a daemon. Must be true for GemFire use.
    */
   public SystemTimer(Object /* T */ swarm, boolean isDaemon) {
     Assert.assertTrue(isDaemon); // we don't currently allow non-daemon timers
-    Assert.assertTrue(swarm instanceof InternalDistributedSystem, "Attempt to create swarm on " + swarm); // TODO allow template class?
+    Assert.assertTrue(
+        swarm instanceof InternalDistributedSystem,
+        "Attempt to create swarm on " + swarm); // TODO allow template class?
     this.timer = new Timer(isDaemon);
     this.swarm = swarm;
     addToSwarm(swarm, this);
@@ -316,11 +308,13 @@ public final class SystemTimer {
   /**
    * @param name the name to give the timer thread
    * @param swarm the swarm this timer belongs to, currently must be a DistributedMember
-   * @param isDaemon whether the timer is a daemon.  Must be true for GemFire use.
+   * @param isDaemon whether the timer is a daemon. Must be true for GemFire use.
    */
   public SystemTimer(String name, Object /* T */ swarm, boolean isDaemon) {
     Assert.assertTrue(isDaemon); // we don't currently allow non-daemon timers
-    Assert.assertTrue(swarm instanceof InternalDistributedSystem, "Attempt to create swarm on " + swarm); // TODO allow template class?
+    Assert.assertTrue(
+        swarm instanceof InternalDistributedSystem,
+        "Attempt to create swarm on " + swarm); // TODO allow template class?
     this.timer = new Timer(name, isDaemon);
     this.swarm = swarm;
     addToSwarm(swarm, this);
@@ -332,27 +326,31 @@ public final class SystemTimer {
     }
   }
 
-  /**
-   * @see Timer#schedule(TimerTask, long)
-   */
+  /** @see Timer#schedule(TimerTask, long) */
   public void schedule(SystemTimerTask task, long delay) {
     checkCancelled();
     if (logger.isTraceEnabled()) {
       Date tilt = new Date(System.currentTimeMillis() + delay);
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-      logger.trace("SystemTimer#schedule (long): {}: expect task {} to fire around {}", this, task, sdf.format(tilt));
+      logger.trace(
+          "SystemTimer#schedule (long): {}: expect task {} to fire around {}",
+          this,
+          task,
+          sdf.format(tilt));
     }
     timer.schedule(task, delay);
   }
 
-  /**
-   * @see Timer#schedule(TimerTask, Date)
-   */
+  /** @see Timer#schedule(TimerTask, Date) */
   public void schedule(SystemTimerTask task, Date time) {
     checkCancelled();
     if (logger.isTraceEnabled()) {
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-      logger.trace("SystemTimer#schedule (Date): {}: expect task {} to fire around {}", this, task, sdf.format(time));
+      logger.trace(
+          "SystemTimer#schedule (Date): {}: expect task {} to fire around {}",
+          this,
+          task,
+          sdf.format(time));
     }
     timer.schedule(task, time);
   }
@@ -369,7 +367,7 @@ public final class SystemTimer {
 
   // Not currently used, so don't complicate things
   //  /**
-  //   * @see Timer#schedule(TimerTask, Date, long) 
+  //   * @see Timer#schedule(TimerTask, Date, long)
   //   */
   //  public void schedule(SystemTimerTask task, Date firstTime, long period) {
   //    // TODO add debug statement
@@ -377,18 +375,14 @@ public final class SystemTimer {
   //    timer.schedule(task, firstTime, period);
   //  }
 
-  /**
-   * @see Timer#scheduleAtFixedRate(TimerTask, long, long)
-   */
+  /** @see Timer#scheduleAtFixedRate(TimerTask, long, long) */
   public void scheduleAtFixedRate(SystemTimerTask task, long delay, long period) {
     // TODO add debug statement
     checkCancelled();
     timer.scheduleAtFixedRate(task, delay, period);
   }
 
-  /**
-   * @see Timer#schedule(TimerTask, long, long)
-   */
+  /** @see Timer#schedule(TimerTask, long, long) */
   public void schedule(SystemTimerTask task, long delay, long period) {
     // TODO add debug statement
     checkCancelled();
@@ -406,9 +400,7 @@ public final class SystemTimer {
   //    timer.scheduleAtFixedRate(task, firstTime, period);
   //  }
 
-  /**
-   * @see Timer#cancel()
-   */
+  /** @see Timer#cancel() */
   public void cancel() {
     this.cancelled = true;
     timer.cancel();
@@ -417,23 +409,18 @@ public final class SystemTimer {
 
   /**
    * Cover class to track behavior of scheduled tasks
-   * 
+   *
    * @see TimerTask
    */
   public abstract static class SystemTimerTask extends TimerTask {
     protected static final Logger logger = LogService.getLogger();
 
-    /**
-     * This is your executed action
-     */
+    /** This is your executed action */
     public abstract void run2();
 
-    /**
-     * Does debug logging, catches critical errors, then delegates to
-     * {@link #run2()}
-     */
+    /** Does debug logging, catches critical errors, then delegates to {@link #run2()} */
     @Override
-    final public void run() {
+    public final void run() {
       final boolean isDebugEnabled = logger.isTraceEnabled();
       if (isDebugEnabled) {
         logger.trace("SystemTimer.MyTask: starting {}", this);
@@ -447,7 +434,10 @@ public final class SystemTimer {
         throw e;
       } catch (Throwable t) {
         SystemFailure.checkFailure();
-        logger.warn(LocalizedMessage.create(LocalizedStrings.SystemTimer_TIMER_TASK_0_ENCOUNTERED_EXCEPTION, this), t);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.SystemTimer_TIMER_TASK_0_ENCOUNTERED_EXCEPTION, this),
+            t);
         // Don't rethrow, it will just get eaten and kill the timer
       }
       if (isDebugEnabled) {
@@ -455,5 +445,4 @@ public final class SystemTimer {
       }
     }
   }
-
 }

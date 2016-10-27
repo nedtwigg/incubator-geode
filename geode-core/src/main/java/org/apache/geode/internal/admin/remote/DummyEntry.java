@@ -19,8 +19,8 @@ package org.apache.geode.internal.admin.remote;
 import org.apache.geode.cache.*;
 
 /**
- * This implementation of {@link org.apache.geode.cache.Region.Entry}
- * does nothing but provide an instance of {@link org.apache.geode.cache.CacheStatistics}
+ * This implementation of {@link org.apache.geode.cache.Region.Entry} does nothing but provide an
+ * instance of {@link org.apache.geode.cache.CacheStatistics}
  */
 public class DummyEntry implements Region.Entry {
 
@@ -30,7 +30,8 @@ public class DummyEntry implements Region.Entry {
   private final CacheStatistics stats;
   private final Object userAttribute;
 
-  DummyEntry(Region region, Object key, Object cachedObject, Object userAttribute, CacheStatistics stats) {
+  DummyEntry(
+      Region region, Object key, Object cachedObject, Object userAttribute, CacheStatistics stats) {
     this.region = region;
     this.key = key;
     this.value = cachedObject;

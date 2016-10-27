@@ -17,38 +17,35 @@
 package org.apache.geode.admin;
 
 /**
- * Configuration for a GemFire cache server that is managed by the
- * administration API.  The cache server may or may not be running.
+ * Configuration for a GemFire cache server that is managed by the administration API. The cache
+ * server may or may not be running.
  *
  * @see AdminDistributedSystem#addCacheServer()
- *
  * @since GemFire 4.0
  * @deprecated as of 5.7 use {@link CacheVmConfig} instead.
  */
 @Deprecated
 public interface CacheServerConfig extends CacheVmConfig {
   /**
-   * Returns the <code>cache.xml</code> declarative caching
-   * initialization file used to configure this cache server VM.  By
-   * default, a cache server VM is started without an XML file.
+   * Returns the <code>cache.xml</code> declarative caching initialization file used to configure
+   * this cache server VM. By default, a cache server VM is started without an XML file.
    */
   public String getCacheXMLFile();
 
   /**
-   * Sets the <code>cache.xml</code> declarative caching
-   * initialization file used to configure this cache server VM.
+   * Sets the <code>cache.xml</code> declarative caching initialization file used to configure this
+   * cache server VM.
    */
   public void setCacheXMLFile(String cacheXml);
 
   /**
-   * Returns the location(s) of user classes (such as cache loaders)
-   * required by the cache server VM.
+   * Returns the location(s) of user classes (such as cache loaders) required by the cache server
+   * VM.
    */
   public String getClassPath();
 
   /**
-   * Sets the location(s) of user classes (such as cache loaders)
-   * required by the cache server VM.
+   * Sets the location(s) of user classes (such as cache loaders) required by the cache server VM.
    */
   public void setClassPath(String classpath);
 }

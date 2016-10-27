@@ -30,9 +30,7 @@ public class ConfigurationChangeResult implements DataSerializable {
 
   private static final long serialVersionUID = 1L;
 
-  public ConfigurationChangeResult() {
-
-  }
+  public ConfigurationChangeResult() {}
 
   public ConfigurationChangeResult(boolean isSuccessful) {
     this.isSuccessful = isSuccessful;
@@ -64,31 +62,29 @@ public class ConfigurationChangeResult implements DataSerializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     ConfigurationChangeResult other = (ConfigurationChangeResult) obj;
     if (errorMessage == null) {
-      if (other.errorMessage != null)
-        return false;
-    } else if (!errorMessage.equals(other.errorMessage))
-      return false;
+      if (other.errorMessage != null) return false;
+    } else if (!errorMessage.equals(other.errorMessage)) return false;
     if (exception == null) {
-      if (other.exception != null)
-        return false;
-    } else if (!exception.equals(other.exception))
-      return false;
-    if (isSuccessful != other.isSuccessful)
-      return false;
+      if (other.exception != null) return false;
+    } else if (!exception.equals(other.exception)) return false;
+    if (isSuccessful != other.isSuccessful) return false;
     return true;
   }
 
   @Override
   public String toString() {
-    return "ConfigurationChangeResult [isSuccessful=" + isSuccessful + ", errorMessage=" + errorMessage + ", exception=" + exception + "]";
+    return "ConfigurationChangeResult [isSuccessful="
+        + isSuccessful
+        + ", errorMessage="
+        + errorMessage
+        + ", exception="
+        + exception
+        + "]";
   }
 
   public void setException(Exception exception) {
@@ -122,5 +118,4 @@ public class ConfigurationChangeResult implements DataSerializable {
     this.errorMessage = DataSerializer.readString(in);
     this.exception = DataSerializer.readObject(in);
   }
-
 }

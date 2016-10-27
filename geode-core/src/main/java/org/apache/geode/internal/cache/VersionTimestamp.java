@@ -16,17 +16,14 @@
  */
 package org.apache.geode.internal.cache;
 
-/**
- * 
- */
+/** */
 public class VersionTimestamp {
 
   /** actual storage of version timestamp is in a scalar long value */
   long version = 0;
 
   /** Creates a new instance of VersionTimestamp */
-  public VersionTimestamp() {
-  }
+  public VersionTimestamp() {}
 
   public void increment() {
     version++;

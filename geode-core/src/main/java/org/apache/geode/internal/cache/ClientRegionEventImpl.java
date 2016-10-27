@@ -28,52 +28,58 @@ import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 //import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 
 /**
- * Class <code>ClientRegionEventImpl</code> is a
- * region event with the client's
- * host and port for notification purposes.
- * 
- * 
+ * Class <code>ClientRegionEventImpl</code> is a region event with the client's host and port for
+ * notification purposes.
+ *
  * @since GemFire 5.1
  */
 public final class ClientRegionEventImpl extends RegionEventImpl {
 
-  /**
-   * The originating membershipId of this event.
-   */
+  /** The originating membershipId of this event. */
   private ClientProxyMembershipID context;
 
-  public ClientRegionEventImpl() {
-  }
+  public ClientRegionEventImpl() {}
 
   /**
    * To be called from the Distributed Message without setting EventID
+   *
    * @param region
    * @param op
    * @param callbackArgument
    * @param originRemote
    * @param distributedMember
    */
-  public ClientRegionEventImpl(LocalRegion region, Operation op, Object callbackArgument, boolean originRemote, DistributedMember distributedMember, ClientProxyMembershipID contx) {
+  public ClientRegionEventImpl(
+      LocalRegion region,
+      Operation op,
+      Object callbackArgument,
+      boolean originRemote,
+      DistributedMember distributedMember,
+      ClientProxyMembershipID contx) {
     super(region, op, callbackArgument, originRemote, distributedMember);
     setContext(contx);
   }
 
-  public ClientRegionEventImpl(LocalRegion region, Operation op, Object callbackArgument, boolean originRemote, DistributedMember distributedMember, ClientProxyMembershipID contx, EventID eventId) {
+  public ClientRegionEventImpl(
+      LocalRegion region,
+      Operation op,
+      Object callbackArgument,
+      boolean originRemote,
+      DistributedMember distributedMember,
+      ClientProxyMembershipID contx,
+      EventID eventId) {
     super(region, op, callbackArgument, originRemote, distributedMember, eventId);
     setContext(contx);
   }
 
-  /**
-   * sets The membershipId originating this event
-   *  
-   */
+  /** sets The membershipId originating this event */
   protected void setContext(ClientProxyMembershipID contx) {
     this.context = contx;
   }
 
   /**
    * Returns The context originating this event
-   * 
+   *
    * @return The context originating this event
    */
   @Override

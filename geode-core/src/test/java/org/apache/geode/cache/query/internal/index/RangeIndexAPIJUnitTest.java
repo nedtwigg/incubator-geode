@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal.index;
 
 import static org.junit.Assert.assertEquals;
@@ -54,9 +52,7 @@ import org.apache.geode.cache.query.internal.parse.OQLLexerTokenTypes;
 import org.apache.geode.pdx.PdxInstance;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class RangeIndexAPIJUnitTest {
   private Region region = null;
@@ -75,7 +71,6 @@ public class RangeIndexAPIJUnitTest {
       }
       region.put(new Integer(i), pf);
     }
-
   }
 
   @After
@@ -88,9 +83,15 @@ public class RangeIndexAPIJUnitTest {
   public void testQueryMethod_1() throws Exception {
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    AbstractIndex i1 = (AbstractIndex) qs.createIndex("idIndex", IndexType.FUNCTIONAL, "ID", "/portfolios");
-    AbstractIndex i2 = (AbstractIndex) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
-    AbstractIndex i3 = (AbstractIndex) qs.createIndex("status.toString()", IndexType.FUNCTIONAL, "status.toString", "/portfolios");
+    AbstractIndex i1 =
+        (AbstractIndex) qs.createIndex("idIndex", IndexType.FUNCTIONAL, "ID", "/portfolios");
+    AbstractIndex i2 =
+        (AbstractIndex)
+            qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
+    AbstractIndex i3 =
+        (AbstractIndex)
+            qs.createIndex(
+                "status.toString()", IndexType.FUNCTIONAL, "status.toString", "/portfolios");
 
     Set results = new HashSet();
     DefaultQuery q = new DefaultQuery("select * from /portfolios", CacheUtils.getCache(), false);
@@ -109,7 +110,7 @@ public class RangeIndexAPIJUnitTest {
     results.clear();
     i2.query(new String("active"), OQLLexerTokenTypes.TOK_NE, results, context);
     assertEquals(7, results.size());
-    for (int i = 1; i < 12;) {
+    for (int i = 1; i < 12; ) {
       assertTrue(results.contains(region.get(new Integer(i))));
       if (i >= 9) {
         ++i;
@@ -123,24 +124,29 @@ public class RangeIndexAPIJUnitTest {
     assertEquals(2, results.size());
     assertTrue(results.contains(region.get(new Integer(11))));
     assertTrue(results.contains(region.get(new Integer(10))));
-
   }
 
   /**
-   * The keysToRemove set will never contain null or UNDEFINED as those
-   * conditions never form part of RangeJunctionCondnEvaluator. Such null or 
-   * undefined conditions are treated as separate filter operands.
-   * This test checks the query method of Index which takes a set of keys 
-   * which need to be removed from the set
+   * The keysToRemove set will never contain null or UNDEFINED as those conditions never form part
+   * of RangeJunctionCondnEvaluator. Such null or undefined conditions are treated as separate
+   * filter operands. This test checks the query method of Index which takes a set of keys which
+   * need to be removed from the set
+   *
    * @throws Exception
    */
   @Test
   public void testQueryMethod_2() throws Exception {
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    AbstractIndex i1 = (AbstractIndex) qs.createIndex("idIndex", IndexType.FUNCTIONAL, "ID", "/portfolios");
-    AbstractIndex i2 = (AbstractIndex) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
-    AbstractIndex i3 = (AbstractIndex) qs.createIndex("status.toString()", IndexType.FUNCTIONAL, "status.toString", "/portfolios");
+    AbstractIndex i1 =
+        (AbstractIndex) qs.createIndex("idIndex", IndexType.FUNCTIONAL, "ID", "/portfolios");
+    AbstractIndex i2 =
+        (AbstractIndex)
+            qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
+    AbstractIndex i3 =
+        (AbstractIndex)
+            qs.createIndex(
+                "status.toString()", IndexType.FUNCTIONAL, "status.toString", "/portfolios");
 
     Set results = new HashSet();
     DefaultQuery q = new DefaultQuery("select * from /portfolios  ", CacheUtils.getCache(), false);
@@ -156,7 +162,8 @@ public class RangeIndexAPIJUnitTest {
     keysToRemove.add(new Integer(1));
     try {
       i1.query(new Integer(1), OQLLexerTokenTypes.TOK_EQ, results, keysToRemove, context);
-      fail("A condition having an  equal will be identified at RangeJunction level itself, so this type of condition should throw error in RangeIndex where along with an equal there happens not equal conditions");
+      fail(
+          "A condition having an  equal will be identified at RangeJunction level itself, so this type of condition should throw error in RangeIndex where along with an equal there happens not equal conditions");
     } catch (AssertionError error) {
       //pass
     }
@@ -165,7 +172,7 @@ public class RangeIndexAPIJUnitTest {
     keysToRemove.add(new Integer(9));
     i1.query(new Integer(1), OQLLexerTokenTypes.TOK_GT, results, keysToRemove, context);
     assertEquals(9, results.size());
-    for (int i = 2; i < 12;) {
+    for (int i = 2; i < 12; ) {
       if (i != 9) {
         assertTrue(results.contains(region.get(new Integer(i))));
       }
@@ -178,7 +185,7 @@ public class RangeIndexAPIJUnitTest {
     keysToRemove.add(new Integer(10));
     i1.query(new Integer(1), OQLLexerTokenTypes.TOK_GE, results, keysToRemove, context);
     assertEquals(9, results.size());
-    for (int i = 2; i < 12;) {
+    for (int i = 2; i < 12; ) {
       if (i != 10) {
         assertTrue(results.contains(region.get(new Integer(i))));
       }
@@ -191,7 +198,7 @@ public class RangeIndexAPIJUnitTest {
     keysToRemove.add(new Integer(11));
     i1.query(new Integer(11), OQLLexerTokenTypes.TOK_LT, results, keysToRemove, context);
     assertEquals(10, results.size());
-    for (int i = 0; i < 11;) {
+    for (int i = 0; i < 11; ) {
       if (i != 8) {
         assertTrue(results.contains(region.get(new Integer(i))));
       }
@@ -204,7 +211,7 @@ public class RangeIndexAPIJUnitTest {
     keysToRemove.add(new Integer(11));
     i1.query(new Integer(11), OQLLexerTokenTypes.TOK_LE, results, keysToRemove, context);
     assertEquals(10, results.size());
-    for (int i = 0; i < 11;) {
+    for (int i = 0; i < 11; ) {
       if (i != 8) {
         assertTrue(results.contains(region.get(new Integer(i))));
       }
@@ -217,7 +224,7 @@ public class RangeIndexAPIJUnitTest {
     keysToRemove.add(new Integer(10));
     i1.query(new Integer(1), OQLLexerTokenTypes.TOK_GT, results, keysToRemove, context);
     assertEquals(9, results.size());
-    for (int i = 2; i < 12;) {
+    for (int i = 2; i < 12; ) {
       if (i != 10) {
         assertTrue(results.contains(region.get(new Integer(i))));
       }
@@ -226,16 +233,22 @@ public class RangeIndexAPIJUnitTest {
   }
 
   /**
-   * Tests the query method of RangeIndex with takes a bound defined ( lower 
-   * as well as upper) & may contain NotEqaul Keys
+   * Tests the query method of RangeIndex with takes a bound defined ( lower as well as upper) & may
+   * contain NotEqaul Keys
    */
   @Test
   public void testQueryMethod_3() throws Exception {
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    AbstractIndex i1 = (AbstractIndex) qs.createIndex("idIndex", IndexType.FUNCTIONAL, "ID", "/portfolios");
-    AbstractIndex i2 = (AbstractIndex) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
-    AbstractIndex i3 = (AbstractIndex) qs.createIndex("status.toString()", IndexType.FUNCTIONAL, "status.toString", "/portfolios");
+    AbstractIndex i1 =
+        (AbstractIndex) qs.createIndex("idIndex", IndexType.FUNCTIONAL, "ID", "/portfolios");
+    AbstractIndex i2 =
+        (AbstractIndex)
+            qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
+    AbstractIndex i3 =
+        (AbstractIndex)
+            qs.createIndex(
+                "status.toString()", IndexType.FUNCTIONAL, "status.toString", "/portfolios");
 
     Set results = new HashSet();
     DefaultQuery q = new DefaultQuery("select * from /portfolios", CacheUtils.getCache(), false);
@@ -243,9 +256,16 @@ public class RangeIndexAPIJUnitTest {
     ExecutionContext context = new QueryExecutionContext(null, CacheUtils.getCache(), q);
     bindIterators(context, "/portfolios");
     Set keysToRemove = new HashSet();
-    i1.query(new Integer(5), OQLLexerTokenTypes.TOK_GT, new Integer(10), OQLLexerTokenTypes.TOK_LT, results, null, context);
+    i1.query(
+        new Integer(5),
+        OQLLexerTokenTypes.TOK_GT,
+        new Integer(10),
+        OQLLexerTokenTypes.TOK_LT,
+        results,
+        null,
+        context);
     assertEquals(4, results.size());
-    for (int i = 6; i < 10;) {
+    for (int i = 6; i < 10; ) {
       assertTrue(results.contains(region.get(new Integer(i))));
       ++i;
     }
@@ -254,9 +274,16 @@ public class RangeIndexAPIJUnitTest {
     keysToRemove.clear();
     keysToRemove.add(new Integer(10));
     keysToRemove.add(new Integer(9));
-    i1.query(new Integer(5), OQLLexerTokenTypes.TOK_GT, new Integer(10), OQLLexerTokenTypes.TOK_LT, results, keysToRemove, context);
+    i1.query(
+        new Integer(5),
+        OQLLexerTokenTypes.TOK_GT,
+        new Integer(10),
+        OQLLexerTokenTypes.TOK_LT,
+        results,
+        keysToRemove,
+        context);
     assertEquals(3, results.size());
-    for (int i = 6; i < 9;) {
+    for (int i = 6; i < 9; ) {
       assertTrue(results.contains(region.get(new Integer(i))));
       ++i;
     }
@@ -264,26 +291,47 @@ public class RangeIndexAPIJUnitTest {
     results.clear();
     keysToRemove.clear();
     keysToRemove.add(new Integer(10));
-    i1.query(new Integer(5), OQLLexerTokenTypes.TOK_GT, new Integer(10), OQLLexerTokenTypes.TOK_LE, results, keysToRemove, context);
+    i1.query(
+        new Integer(5),
+        OQLLexerTokenTypes.TOK_GT,
+        new Integer(10),
+        OQLLexerTokenTypes.TOK_LE,
+        results,
+        keysToRemove,
+        context);
     assertEquals(4, results.size());
-    for (int i = 6; i < 10;) {
+    for (int i = 6; i < 10; ) {
       assertTrue(results.contains(region.get(new Integer(i))));
       ++i;
     }
     results.clear();
     keysToRemove.clear();
-    i1.query(new Integer(5), OQLLexerTokenTypes.TOK_GT, new Integer(10), OQLLexerTokenTypes.TOK_LE, results, null, context);
+    i1.query(
+        new Integer(5),
+        OQLLexerTokenTypes.TOK_GT,
+        new Integer(10),
+        OQLLexerTokenTypes.TOK_LE,
+        results,
+        null,
+        context);
     assertEquals(5, results.size());
-    for (int i = 6; i < 11;) {
+    for (int i = 6; i < 11; ) {
       assertTrue(results.contains(region.get(new Integer(i))));
       ++i;
     }
 
     results.clear();
     keysToRemove.clear();
-    i1.query(new Integer(5), OQLLexerTokenTypes.TOK_GE, new Integer(10), OQLLexerTokenTypes.TOK_LE, results, null, context);
+    i1.query(
+        new Integer(5),
+        OQLLexerTokenTypes.TOK_GE,
+        new Integer(10),
+        OQLLexerTokenTypes.TOK_LE,
+        results,
+        null,
+        context);
     assertEquals(6, results.size());
-    for (int i = 5; i < 11;) {
+    for (int i = 5; i < 11; ) {
       assertTrue(results.contains(region.get(new Integer(i))));
       ++i;
     }
@@ -291,9 +339,16 @@ public class RangeIndexAPIJUnitTest {
     results.clear();
     keysToRemove.clear();
     keysToRemove.add(new Integer(5));
-    i1.query(new Integer(5), OQLLexerTokenTypes.TOK_GE, new Integer(10), OQLLexerTokenTypes.TOK_LE, results, keysToRemove, context);
+    i1.query(
+        new Integer(5),
+        OQLLexerTokenTypes.TOK_GE,
+        new Integer(10),
+        OQLLexerTokenTypes.TOK_LE,
+        results,
+        keysToRemove,
+        context);
     assertEquals(5, results.size());
-    for (int i = 6; i < 11;) {
+    for (int i = 6; i < 11; ) {
       assertTrue(results.contains(region.get(new Integer(i))));
       ++i;
     }
@@ -303,7 +358,14 @@ public class RangeIndexAPIJUnitTest {
     keysToRemove.add(new Integer(5));
     keysToRemove.add(new Integer(10));
     keysToRemove.add(new Integer(7));
-    i1.query(new Integer(5), OQLLexerTokenTypes.TOK_GE, new Integer(10), OQLLexerTokenTypes.TOK_LE, results, keysToRemove, context);
+    i1.query(
+        new Integer(5),
+        OQLLexerTokenTypes.TOK_GE,
+        new Integer(10),
+        OQLLexerTokenTypes.TOK_LE,
+        results,
+        keysToRemove,
+        context);
     assertEquals(3, results.size());
     assertTrue(results.contains(region.get(new Integer(6))));
     assertTrue(results.contains(region.get(new Integer(8))));
@@ -311,16 +373,22 @@ public class RangeIndexAPIJUnitTest {
   }
 
   /**
-   * Tests the query method of RangeIndex which just contains not equal keys.
-   * That is if the where clause looks like a != 7 and a != 8 & a!=9
+   * Tests the query method of RangeIndex which just contains not equal keys. That is if the where
+   * clause looks like a != 7 and a != 8 & a!=9
    */
   @Test
   public void testQueryMethod_4() throws Exception {
     QueryService qs;
     qs = CacheUtils.getQueryService();
-    AbstractIndex i1 = (AbstractIndex) qs.createIndex("idIndex", IndexType.FUNCTIONAL, "ID", "/portfolios");
-    AbstractIndex i2 = (AbstractIndex) qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
-    AbstractIndex i3 = (AbstractIndex) qs.createIndex("status.toString()", IndexType.FUNCTIONAL, "status.toString", "/portfolios");
+    AbstractIndex i1 =
+        (AbstractIndex) qs.createIndex("idIndex", IndexType.FUNCTIONAL, "ID", "/portfolios");
+    AbstractIndex i2 =
+        (AbstractIndex)
+            qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/portfolios");
+    AbstractIndex i3 =
+        (AbstractIndex)
+            qs.createIndex(
+                "status.toString()", IndexType.FUNCTIONAL, "status.toString", "/portfolios");
     Set results = new HashSet();
     DefaultQuery q = new DefaultQuery("select * from /portfolios", CacheUtils.getCache(), false);
     q.setRemoteQuery(false);
@@ -331,7 +399,7 @@ public class RangeIndexAPIJUnitTest {
     keysToRemove.add(new Integer(5));
     i1.query(results, keysToRemove, context);
     assertEquals(11, results.size());
-    for (int i = 0; i < 12;) {
+    for (int i = 0; i < 12; ) {
       if (i != 5) {
         assertTrue(results.contains(region.get(new Integer(i))));
       }
@@ -344,7 +412,7 @@ public class RangeIndexAPIJUnitTest {
     keysToRemove.add(new Integer(8));
     i1.query(results, keysToRemove, context);
     assertEquals(10, results.size());
-    for (int i = 0; i < 12;) {
+    for (int i = 0; i < 12; ) {
       if (i != 5 && i != 8) {
         assertTrue(results.contains(region.get(new Integer(i))));
       }
@@ -357,7 +425,7 @@ public class RangeIndexAPIJUnitTest {
     keysToRemove.add("inactive");
     i2.query(results, keysToRemove, context);
     assertEquals(2, results.size());
-    for (int i = 10; i < 12;) {
+    for (int i = 10; i < 12; ) {
       assertTrue(results.contains(region.get(new Integer(i))));
       ++i;
     }
@@ -368,23 +436,43 @@ public class RangeIndexAPIJUnitTest {
     Cache cache = CacheUtils.getCache();
     QueryService queryService = CacheUtils.getCache().getQueryService();
     CacheUtils.createRegion("TEST_REGION", null);
-    queryService.createIndex("tr.nested.id.index", "nested.id", "/TEST_REGION, nested IN nested_values");
-    Query queryInSet = queryService.newQuery("SELECT DISTINCT tr.id FROM /TEST_REGION tr, tr.nested_values nested WHERE nested.id IN SET ('1')");
-    Query queryEquals = queryService.newQuery("SELECT DISTINCT tr.id FROM /TEST_REGION tr, nested IN nested_values WHERE nested.id='1'");
+    queryService.createIndex(
+        "tr.nested.id.index", "nested.id", "/TEST_REGION, nested IN nested_values");
+    Query queryInSet =
+        queryService.newQuery(
+            "SELECT DISTINCT tr.id FROM /TEST_REGION tr, tr.nested_values nested WHERE nested.id IN SET ('1')");
+    Query queryEquals =
+        queryService.newQuery(
+            "SELECT DISTINCT tr.id FROM /TEST_REGION tr, nested IN nested_values WHERE nested.id='1'");
 
-    Object[] nested = new Object[] { cache.createPdxInstanceFactory("nested_1").writeString("id", "1").create(), cache.createPdxInstanceFactory("nested_2").writeString("id", "1").create(), cache.createPdxInstanceFactory("nested_3").writeString("id", "1").create(), cache.createPdxInstanceFactory("nested_4").writeString("id", "4").create() };
+    Object[] nested =
+        new Object[] {
+          cache.createPdxInstanceFactory("nested_1").writeString("id", "1").create(),
+          cache.createPdxInstanceFactory("nested_2").writeString("id", "1").create(),
+          cache.createPdxInstanceFactory("nested_3").writeString("id", "1").create(),
+          cache.createPdxInstanceFactory("nested_4").writeString("id", "4").create()
+        };
 
-    PdxInstance record = cache.createPdxInstanceFactory("root").writeString("id", "2").writeObjectArray("nested_values", nested).create();
+    PdxInstance record =
+        cache
+            .createPdxInstanceFactory("root")
+            .writeString("id", "2")
+            .writeObjectArray("nested_values", nested)
+            .create();
 
     cache.getRegion("TEST_REGION").put("100", record);
-    Index index = cache.getQueryService().getIndex(cache.getRegion("TEST_REGION"), "mdf.testRegion.nested.id");
+    Index index =
+        cache
+            .getQueryService()
+            .getIndex(cache.getRegion("TEST_REGION"), "mdf.testRegion.nested.id");
     SelectResults queryResults = (SelectResults) queryEquals.execute();
     SelectResults inSetQueryResults = (SelectResults) queryInSet.execute();
     assertEquals(queryResults.size(), inSetQueryResults.size());
     assertTrue(inSetQueryResults.size() > 0);
   }
 
-  private void bindIterators(ExecutionContext context, String string) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  private void bindIterators(ExecutionContext context, String string)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     QCompiler compiler = new QCompiler();
     List compilerItrDefs = compiler.compileFromClause(string);
     context.newScope(0);
@@ -394,5 +482,4 @@ public class RangeIndexAPIJUnitTest {
       context.bindIterator(rIter);
     }
   }
-
 }

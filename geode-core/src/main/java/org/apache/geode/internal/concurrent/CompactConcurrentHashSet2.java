@@ -22,10 +22,10 @@ package org.apache.geode.internal.concurrent;
  * made for GemFire turn it into a Set instead of a Map by removing the
  * map's storage for values and removing the methods that are associated
  * with values.
- * 
+ *
  * JSR 166 interest web site:
  * http://gee.cs.oswego.edu/dl/concurrency-interest/
- * 
+ *
  * File download location:
  * http://gee.cs.oswego.edu/cgi-bin/viewcvs.cgi/jsr166/src/jdk7/java/util/concurrent/CompactConcurrentHashSet2.java?revision=1.43
  *
@@ -51,21 +51,15 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * <p>This is the original javadoc describing ConcurrentHashMap.  This
- * class is actually a Set based on Doug Lea's CHM implementation
- * (see the source file for full attribution).
- * </p>
- * A hash map supporting full concurrency of retrievals and
- * high expected concurrency for updates. This class obeys the
- * same functional specification as {@link java.util.HashMap}, and
- * includes versions of methods corresponding to each method of
- * {@code HashMap}. However, even though all operations are
- * thread-safe, retrieval operations do <em>not</em> entail locking,
- * and there is <em>not</em> any support for locking the entire set
- * in a way that prevents all access.  This class is fully
- * interoperable with {@code HashMap} in programs that rely on its
- * thread safety but not on its synchronization details.
- *
+ * This is the original javadoc describing ConcurrentHashMap. This class is actually a Set based on
+ * Doug Lea's CHM implementation (see the source file for full attribution). A hash map supporting
+ * full concurrency of retrievals and high expected concurrency for updates. This class obeys the
+ * same functional specification as {@link java.util.HashMap}, and includes versions of methods
+ * corresponding to each method of {@code HashMap}. However, even though all operations are
+ * thread-safe, retrieval operations do <em>not</em> entail locking, and there is <em>not</em> any
+ * support for locking the entire set in a way that prevents all access. This class is fully
+ * interoperable with {@code HashMap} in programs that rely on its thread safety but not on its
+ * synchronization details.
  *
  * @since Geode 1.0
  * @author Originally Doug Lea
@@ -308,90 +302,73 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   /* ---------------- Constants -------------- */
 
   /**
-   * The largest possible table capacity.  This value must be
-   * exactly 1<<30 to stay within Java array allocation and indexing
-   * bounds for power of two table sizes, and is further required
-   * because the top two bits of 32bit hash fields are used for
-   * control purposes.
+   * The largest possible table capacity. This value must be exactly 1<<30 to stay within Java array
+   * allocation and indexing bounds for power of two table sizes, and is further required because
+   * the top two bits of 32bit hash fields are used for control purposes.
    */
   private static final int MAXIMUM_CAPACITY = 1 << 30;
 
   /**
-   * The default initial table capacity.  Must be a power of 2
-   * (i.e., at least 1) and at most MAXIMUM_CAPACITY.
+   * The default initial table capacity. Must be a power of 2 (i.e., at least 1) and at most
+   * MAXIMUM_CAPACITY.
    */
   private static final int DEFAULT_CAPACITY = 16;
 
-  /**
-   * The largest possible (non-power of two) array size.
-   * Needed by toArray and related methods.
-   */
+  /** The largest possible (non-power of two) array size. Needed by toArray and related methods. */
   static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
   /**
-   * The default concurrency level for this table. Unused but
-   * defined for compatibility with previous versions of this class.
+   * The default concurrency level for this table. Unused but defined for compatibility with
+   * previous versions of this class.
    */
   private static final int DEFAULT_CONCURRENCY_LEVEL = 16;
 
   /**
-   * The load factor for this table. Overrides of this value in
-   * constructors affect only the initial table capacity.  The
-   * actual floating point value isn't normally used -- it is
-   * simpler to use expressions such as {@code n - (n >>> 2)} for
-   * the associated resizing threshold.
+   * The load factor for this table. Overrides of this value in constructors affect only the initial
+   * table capacity. The actual floating point value isn't normally used -- it is simpler to use
+   * expressions such as {@code n - (n >>> 2)} for the associated resizing threshold.
    */
   private static final float LOAD_FACTOR = 0.75f;
 
   /**
-   * The bin count threshold for using a tree rather than list for a
-   * bin.  Bins are converted to trees when adding an element to a
-   * bin with at least this many nodes. The value must be greater
-   * than 2, and should be at least 8 to mesh with assumptions in
-   * tree removal about conversion back to plain bins upon
-   * shrinkage.
+   * The bin count threshold for using a tree rather than list for a bin. Bins are converted to
+   * trees when adding an element to a bin with at least this many nodes. The value must be greater
+   * than 2, and should be at least 8 to mesh with assumptions in tree removal about conversion back
+   * to plain bins upon shrinkage.
    */
   static final int TREEIFY_THRESHOLD = 8;
 
   /**
-   * The bin count threshold for untreeifying a (split) bin during a
-   * resize operation. Should be less than TREEIFY_THRESHOLD, and at
-   * most 6 to mesh with shrinkage detection under removal.
+   * The bin count threshold for untreeifying a (split) bin during a resize operation. Should be
+   * less than TREEIFY_THRESHOLD, and at most 6 to mesh with shrinkage detection under removal.
    */
   static final int UNTREEIFY_THRESHOLD = 6;
 
   /**
-   * The smallest table capacity for which bins may be treeified.
-   * (Otherwise the table is resized if too many nodes in a bin.)
-   * The value should be at least 4 * TREEIFY_THRESHOLD to avoid
-   * conflicts between resizing and treeification thresholds.
+   * The smallest table capacity for which bins may be treeified. (Otherwise the table is resized if
+   * too many nodes in a bin.) The value should be at least 4 * TREEIFY_THRESHOLD to avoid conflicts
+   * between resizing and treeification thresholds.
    */
   static final int MIN_TREEIFY_CAPACITY = 64;
 
   /**
-   * Minimum number of rebinnings per transfer step. Ranges are
-   * subdivided to allow multiple resizer threads.  This value
-   * serves as a lower bound to avoid resizers encountering
-   * excessive memory contention.  The value should be at least
-   * DEFAULT_CAPACITY.
+   * Minimum number of rebinnings per transfer step. Ranges are subdivided to allow multiple resizer
+   * threads. This value serves as a lower bound to avoid resizers encountering excessive memory
+   * contention. The value should be at least DEFAULT_CAPACITY.
    */
   private static final int MIN_TRANSFER_STRIDE = 16;
 
   /**
-   * The number of bits used for generation stamp in sizeCtl.
-   * Must be at least 6 for 32bit arrays.
+   * The number of bits used for generation stamp in sizeCtl. Must be at least 6 for 32bit arrays.
    */
   private static int RESIZE_STAMP_BITS = 16;
 
   /**
-   * The maximum number of threads that can help resize.
-   * Must fit in 32 - RESIZE_STAMP_BITS bits.
+   * The maximum number of threads that can help resize. Must fit in 32 - RESIZE_STAMP_BITS bits.
    */
   private static final int MAX_RESIZERS = (1 << (32 - RESIZE_STAMP_BITS)) - 1;
 
-  /**
-   * The bit shift for recording size stamp in sizeCtl.
-   */
+  /** The bit shift for recording size stamp in sizeCtl. */
   private static final int RESIZE_STAMP_SHIFT = 32 - RESIZE_STAMP_BITS;
 
   /*
@@ -406,17 +383,19 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   static final int NCPU = Runtime.getRuntime().availableProcessors();
 
   /** For serialization compatibility. */
-  private static final ObjectStreamField[] serialPersistentFields = { new ObjectStreamField("segments", Segment[].class), new ObjectStreamField("segmentMask", Integer.TYPE), new ObjectStreamField("segmentShift", Integer.TYPE) };
+  private static final ObjectStreamField[] serialPersistentFields = {
+    new ObjectStreamField("segments", Segment[].class),
+    new ObjectStreamField("segmentMask", Integer.TYPE),
+    new ObjectStreamField("segmentShift", Integer.TYPE)
+  };
 
   /* ---------------- Nodes -------------- */
 
   /**
-   * Key-value entry.  This class is never exported out as a
-   * user-mutable Map.Entry (i.e., one supporting setValue; see
-   * MapEntry below), but can be used for read-only traversals used
-   * in bulk tasks.  Subclasses of Node with a negative hash field
-   * are special, and contain null keys and values (but are never
-   * exported).  Otherwise, keys and vals are never null.
+   * Key-value entry. This class is never exported out as a user-mutable Map.Entry (i.e., one
+   * supporting setValue; see MapEntry below), but can be used for read-only traversals used in bulk
+   * tasks. Subclasses of Node with a negative hash field are special, and contain null keys and
+   * values (but are never exported). Otherwise, keys and vals are never null.
    */
   static class Node<K> {
     final int hash;
@@ -444,19 +423,18 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     public final boolean equals(Object o) {
       Object k, u;
       Node<?> e;
-      return ((o instanceof Node) && ((k = (e = (Node<?>) o)) != null) && (k == key || k.equals(key)));
+      return ((o instanceof Node)
+          && ((k = (e = (Node<?>) o)) != null)
+          && (k == key || k.equals(key)));
     }
 
-    /**
-     * Virtualized support for map.get(); overridden in subclasses.
-     */
+    /** Virtualized support for map.get(); overridden in subclasses. */
     Node<K> find(int h, Object k) {
       Node<K> e = this;
       if (k != null) {
         do {
           K ek;
-          if (e.hash == h && ((ek = e.key) == k || (ek != null && k.equals(ek))))
-            return e;
+          if (e.hash == h && ((ek = e.key) == k || (ek != null && k.equals(ek)))) return e;
         } while ((e = e.next) != null);
       }
       return null;
@@ -466,28 +444,23 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   /* ---------------- Static utilities -------------- */
 
   /**
-   * Spreads (XORs) higher bits of hash to lower and also forces top
-   * bit to 0. Because the table uses power-of-two masking, sets of
-   * hashes that vary only in bits above the current mask will
-   * always collide. (Among known examples are sets of Float keys
-   * holding consecutive whole numbers in small tables.)  So we
-   * apply a transform that spreads the impact of higher bits
-   * downward. There is a tradeoff between speed, utility, and
-   * quality of bit-spreading. Because many common sets of hashes
-   * are already reasonably distributed (so don't benefit from
-   * spreading), and because we use trees to handle large sets of
-   * collisions in bins, we just XOR some shifted bits in the
-   * cheapest possible way to reduce systematic lossage, as well as
-   * to incorporate impact of the highest bits that would otherwise
-   * never be used in index calculations because of table bounds.
+   * Spreads (XORs) higher bits of hash to lower and also forces top bit to 0. Because the table
+   * uses power-of-two masking, sets of hashes that vary only in bits above the current mask will
+   * always collide. (Among known examples are sets of Float keys holding consecutive whole numbers
+   * in small tables.) So we apply a transform that spreads the impact of higher bits downward.
+   * There is a tradeoff between speed, utility, and quality of bit-spreading. Because many common
+   * sets of hashes are already reasonably distributed (so don't benefit from spreading), and
+   * because we use trees to handle large sets of collisions in bins, we just XOR some shifted bits
+   * in the cheapest possible way to reduce systematic lossage, as well as to incorporate impact of
+   * the highest bits that would otherwise never be used in index calculations because of table
+   * bounds.
    */
   static final int spread(int h) {
     return (h ^ (h >>> 16)) & HASH_BITS;
   }
 
   /**
-   * Returns a power of two table size for the given desired capacity.
-   * See Hackers Delight, sec 3.2
+   * Returns a power of two table size for the given desired capacity. See Hackers Delight, sec 3.2
    */
   private static final int tableSizeFor(int c) {
     int n = c - 1;
@@ -499,10 +472,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
   }
 
-  /**
-   * Returns x's Class if it is of the form "class C implements
-   * Comparable<C>", else null.
-   */
+  /** Returns x's Class if it is of the form "class C implements Comparable<C>", else null. */
   static Class<?> comparableClassFor(Object x) {
     if (x instanceof Comparable) {
       Class<?> c;
@@ -510,22 +480,23 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
       Type t;
       ParameterizedType p;
       if ((c = x.getClass()) == String.class) // bypass checks
-        return c;
+      return c;
       if ((ts = c.getGenericInterfaces()) != null) {
         for (int i = 0; i < ts.length; ++i) {
-          if (((t = ts[i]) instanceof ParameterizedType) && ((p = (ParameterizedType) t).getRawType() == Comparable.class) && (as = p.getActualTypeArguments()) != null && as.length == 1 && as[0] == c) // type arg is c
-            return c;
+          if (((t = ts[i]) instanceof ParameterizedType)
+              && ((p = (ParameterizedType) t).getRawType() == Comparable.class)
+              && (as = p.getActualTypeArguments()) != null
+              && as.length == 1
+              && as[0] == c) // type arg is c
+          return c;
         }
       }
     }
     return null;
   }
 
-  /**
-   * Returns k.compareTo(x) if x matches kc (k's screened comparable
-   * class), else 0.
-   */
-  @SuppressWarnings({ "rawtypes", "unchecked" }) // for cast to Comparable
+  /** Returns k.compareTo(x) if x matches kc (k's screened comparable class), else 0. */
+  @SuppressWarnings({"rawtypes", "unchecked"}) // for cast to Comparable
   static int compareComparables(Class<?> kc, Object k, Object x) {
     return (x == null || x.getClass() != kc ? 0 : ((Comparable) k).compareTo(x));
   }
@@ -563,70 +534,56 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   /* ---------------- Fields -------------- */
 
   /**
-   * The array of bins. Lazily initialized upon first insertion.
-   * Size is always a power of two. Accessed directly by iterators.
+   * The array of bins. Lazily initialized upon first insertion. Size is always a power of two.
+   * Accessed directly by iterators.
    */
   transient volatile Node<V>[] table;
 
-  /**
-   * The next table to use; non-null only while resizing.
-   */
+  /** The next table to use; non-null only while resizing. */
   private transient volatile Node<V>[] nextTable;
 
   /**
-   * Base counter value, used mainly when there is no contention,
-   * but also as a fallback during table initialization
-   * races. Updated via CAS.
+   * Base counter value, used mainly when there is no contention, but also as a fallback during
+   * table initialization races. Updated via CAS.
    */
   private transient volatile long baseCount;
 
   /**
-   * Table initialization and resizing control.  When negative, the
-   * table is being initialized or resized: -1 for initialization,
-   * else -(1 + the number of active resizing threads).  Otherwise,
-   * when table is null, holds the initial table size to use upon
-   * creation, or 0 for default. After initialization, holds the
-   * next element count value upon which to resize the table.
+   * Table initialization and resizing control. When negative, the table is being initialized or
+   * resized: -1 for initialization, else -(1 + the number of active resizing threads). Otherwise,
+   * when table is null, holds the initial table size to use upon creation, or 0 for default. After
+   * initialization, holds the next element count value upon which to resize the table.
    */
   private transient volatile int sizeCtl;
 
-  /**
-   * The next table index (plus one) to split while resizing.
-   */
+  /** The next table index (plus one) to split while resizing. */
   private transient volatile int transferIndex;
 
-  /**
-   * Spinlock (locked via CAS) used when resizing and/or creating CounterCells.
-   */
+  /** Spinlock (locked via CAS) used when resizing and/or creating CounterCells. */
   private transient volatile int cellsBusy;
 
-  /**
-   * Table of counter cells. When non-null, size is a power of 2.
-   */
+  /** Table of counter cells. When non-null, size is a power of 2. */
   private transient volatile CounterCell[] counterCells;
 
   /* ---------------- Public operations -------------- */
 
-  /**
-   * Creates a new, empty map with the default initial table size (16).
-   */
-  public CompactConcurrentHashSet2() {
-  }
+  /** Creates a new, empty map with the default initial table size (16). */
+  public CompactConcurrentHashSet2() {}
 
   /**
-   * Creates a new, empty map with an initial table size
-   * accommodating the specified number of elements without the need
-   * to dynamically resize.
+   * Creates a new, empty map with an initial table size accommodating the specified number of
+   * elements without the need to dynamically resize.
    *
-   * @param initialCapacity The implementation performs internal
-   * sizing to accommodate this many elements.
-   * @throws IllegalArgumentException if the initial capacity of
-   * elements is negative
+   * @param initialCapacity The implementation performs internal sizing to accommodate this many
+   *     elements.
+   * @throws IllegalArgumentException if the initial capacity of elements is negative
    */
   public CompactConcurrentHashSet2(int initialCapacity) {
-    if (initialCapacity < 0)
-      throw new IllegalArgumentException();
-    int cap = ((initialCapacity >= (MAXIMUM_CAPACITY >>> 1)) ? MAXIMUM_CAPACITY : tableSizeFor(initialCapacity + (initialCapacity >>> 1) + 1));
+    if (initialCapacity < 0) throw new IllegalArgumentException();
+    int cap =
+        ((initialCapacity >= (MAXIMUM_CAPACITY >>> 1))
+            ? MAXIMUM_CAPACITY
+            : tableSizeFor(initialCapacity + (initialCapacity >>> 1) + 1));
     this.sizeCtl = cap;
   }
 
@@ -641,18 +598,14 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   }
 
   /**
-   * Creates a new, empty map with an initial table size based on
-   * the given number of elements ({@code initialCapacity}) and
-   * initial table density ({@code loadFactor}).
+   * Creates a new, empty map with an initial table size based on the given number of elements
+   * ({@code initialCapacity}) and initial table density ({@code loadFactor}).
    *
-   * @param initialCapacity the initial capacity. The implementation
-   * performs internal sizing to accommodate this many elements,
-   * given the specified load factor.
-   * @param loadFactor the load factor (table density) for
-   * establishing the initial table size
-   * @throws IllegalArgumentException if the initial capacity of
-   * elements is negative or the load factor is nonpositive
-   *
+   * @param initialCapacity the initial capacity. The implementation performs internal sizing to
+   *     accommodate this many elements, given the specified load factor.
+   * @param loadFactor the load factor (table density) for establishing the initial table size
+   * @throws IllegalArgumentException if the initial capacity of elements is negative or the load
+   *     factor is nonpositive
    * @since Geode 1.0
    */
   public CompactConcurrentHashSet2(int initialCapacity, float loadFactor) {
@@ -660,28 +613,23 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   }
 
   /**
-   * Creates a new, empty map with an initial table size based on
-   * the given number of elements ({@code initialCapacity}), table
-   * density ({@code loadFactor}), and number of concurrently
+   * Creates a new, empty map with an initial table size based on the given number of elements
+   * ({@code initialCapacity}), table density ({@code loadFactor}), and number of concurrently
    * updating threads ({@code concurrencyLevel}).
    *
-   * @param initialCapacity the initial capacity. The implementation
-   * performs internal sizing to accommodate this many elements,
-   * given the specified load factor.
-   * @param loadFactor the load factor (table density) for
-   * establishing the initial table size
-   * @param concurrencyLevel the estimated number of concurrently
-   * updating threads. The implementation may use this value as
-   * a sizing hint.
-   * @throws IllegalArgumentException if the initial capacity is
-   * negative or the load factor or concurrencyLevel are
-   * nonpositive
+   * @param initialCapacity the initial capacity. The implementation performs internal sizing to
+   *     accommodate this many elements, given the specified load factor.
+   * @param loadFactor the load factor (table density) for establishing the initial table size
+   * @param concurrencyLevel the estimated number of concurrently updating threads. The
+   *     implementation may use this value as a sizing hint.
+   * @throws IllegalArgumentException if the initial capacity is negative or the load factor or
+   *     concurrencyLevel are nonpositive
    */
   public CompactConcurrentHashSet2(int initialCapacity, float loadFactor, int concurrencyLevel) {
     if (!(loadFactor > 0.0f) || initialCapacity < 0 || concurrencyLevel <= 0)
       throw new IllegalArgumentException();
     if (initialCapacity < concurrencyLevel) // Use at least as many bins
-      initialCapacity = concurrencyLevel; // as estimated threads
+    initialCapacity = concurrencyLevel; // as estimated threads
     long size = (long) (1.0 + (long) initialCapacity / loadFactor);
     int cap = (size >= (long) MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : tableSizeFor((int) size);
     this.sizeCtl = cap;
@@ -689,17 +637,13 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
 
   // Original (since JDK1.2) Map methods
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int size() {
     long n = sumCount();
     return ((n < 0L) ? 0 : (n > (long) Integer.MAX_VALUE) ? Integer.MAX_VALUE : (int) n);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean isEmpty() {
     return sumCount() <= 0L; // ignore transient negative values
   }
@@ -715,13 +659,10 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     int h = spread(key.hashCode());
     if ((tab = table) != null && (n = tab.length) > 0 && (e = tabAt(tab, (n - 1) & h)) != null) {
       if ((eh = e.hash) == h) {
-        if ((ek = e.key) == key || (ek != null && key.equals(ek)))
-          return true;
-      } else if (eh < 0)
-        return ((p = e.find(h, key)) != null);
+        if ((ek = e.key) == key || (ek != null && key.equals(ek))) return true;
+      } else if (eh < 0) return ((p = e.find(h, key)) != null);
       while ((e = e.next) != null) {
-        if (e.hash == h && ((ek = e.key) == key || (ek != null && key.equals(ek))))
-          return true;
+        if (e.hash == h && ((ek = e.key) == key || (ek != null && key.equals(ek)))) return true;
       }
     }
     return false;
@@ -734,27 +675,24 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
 
   /** Implementation for add */
   final boolean putKey(V key, boolean onlyIfAbsent) {
-    if (key == null)
-      throw new NullPointerException();
+    if (key == null) throw new NullPointerException();
     int hash = spread(key.hashCode());
     int binCount = 0;
-    for (Node<V>[] tab = table;;) {
+    for (Node<V>[] tab = table; ; ) {
       Node<V> f;
       int n, i, fh;
-      if (tab == null || (n = tab.length) == 0)
-        tab = initTable();
+      if (tab == null || (n = tab.length) == 0) tab = initTable();
       else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {
         if (casTabAt(tab, i, null, new Node<V>(hash, key, null)))
           break; // no lock when adding to empty bin
-      } else if ((fh = f.hash) == MOVED)
-        tab = helpTransfer(tab, f);
+      } else if ((fh = f.hash) == MOVED) tab = helpTransfer(tab, f);
       else {
         boolean wasPresent = false;
         synchronized (f) {
           if (tabAt(tab, i) == f) {
             if (fh >= 0) {
               binCount = 1;
-              for (Node<V> e = f;; ++binCount) {
+              for (Node<V> e = f; ; ++binCount) {
                 V ek;
                 if (e.hash == hash && ((ek = e.key) == key || (ek != null && key.equals(ek)))) {
                   wasPresent = true;
@@ -776,10 +714,8 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
           }
         }
         if (binCount != 0) {
-          if (binCount >= TREEIFY_THRESHOLD)
-            treeifyBin(tab, i);
-          if (wasPresent)
-            return true;
+          if (binCount >= TREEIFY_THRESHOLD) treeifyBin(tab, i);
+          if (wasPresent) return true;
           break;
         }
       }
@@ -789,9 +725,8 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   }
 
   /**
-   * Copies all of the mappings from the specified map to this one.
-   * These mappings replace any mappings that this map had for any of the
-   * keys currently in the specified map.
+   * Copies all of the mappings from the specified map to this one. These mappings replace any
+   * mappings that this map had for any of the keys currently in the specified map.
    *
    * @param m mappings to be stored in this map
    */
@@ -810,13 +745,12 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
 
   final boolean removeNode(Object key) {
     int hash = spread(key.hashCode());
-    for (Node<V>[] tab = table;;) {
+    for (Node<V>[] tab = table; ; ) {
       Node<V> f;
       int n, i, fh;
       if (tab == null || (n = tab.length) == 0 || (f = tabAt(tab, i = (n - 1) & hash)) == null)
         break;
-      else if ((fh = f.hash) == MOVED)
-        tab = helpTransfer(tab, f);
+      else if ((fh = f.hash) == MOVED) tab = helpTransfer(tab, f);
       else {
         boolean wasPresent = false;
         boolean validated = false;
@@ -824,19 +758,16 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
           if (tabAt(tab, i) == f) {
             if (fh >= 0) {
               validated = true;
-              for (Node<V> e = f, pred = null;;) {
+              for (Node<V> e = f, pred = null; ; ) {
                 V ek;
                 if (e.hash == hash && ((ek = e.key) == key || (ek != null && key.equals(ek)))) {
                   wasPresent = true;
-                  if (pred != null)
-                    pred.next = e.next;
-                  else
-                    setTabAt(tab, i, e.next);
+                  if (pred != null) pred.next = e.next;
+                  else setTabAt(tab, i, e.next);
                   break;
                 }
                 pred = e;
-                if ((e = e.next) == null)
-                  break;
+                if ((e = e.next) == null) break;
               }
             } else if (f instanceof TreeBin) {
               validated = true;
@@ -844,8 +775,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
               TreeNode<V> r, p;
               if ((r = t.root) != null && (p = r.findTreeNode(hash, key, null)) != null) {
                 wasPresent = true;
-                if (t.removeTreeNode(p))
-                  setTabAt(tab, i, untreeify(t.first));
+                if (t.removeTreeNode(p)) setTabAt(tab, i, untreeify(t.first));
               }
             }
           }
@@ -862,9 +792,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     return false;
   }
 
-  /**
-   * Removes all of the mappings from this map.
-   */
+  /** Removes all of the mappings from this map. */
   public void clear() {
     long delta = 0L; // negative number of deletions
     int i = 0;
@@ -872,8 +800,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     while (tab != null && i < tab.length) {
       int fh;
       Node<V> f = tabAt(tab, i);
-      if (f == null)
-        ++i;
+      if (f == null) ++i;
       else if ((fh = f.hash) == MOVED) {
         tab = helpTransfer(tab, f);
         i = 0; // restart
@@ -890,8 +817,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
         }
       }
     }
-    if (delta != 0L)
-      addCount(delta, -1);
+    if (delta != 0L) addCount(delta, -1);
   }
 
   //    public int hashCode() {
@@ -906,12 +832,10 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   //    }
 
   /**
-   * Returns a string representation of this map.  The string
-   * representation consists of a list of key-value mappings (in no
-   * particular order) enclosed in braces (<code>{}</code>).  Adjacent
-   * mappings are separated by the characters <code>", "</code> (comma
-   * and space).  Each key-value mapping is rendered as the key
-   * followed by an equals sign (<code>=</code>) followed by the
+   * Returns a string representation of this map. The string representation consists of a list of
+   * key-value mappings (in no particular order) enclosed in braces (<code>{}</code>). Adjacent
+   * mappings are separated by the characters <code>", "</code> (comma and space). Each key-value
+   * mapping is rendered as the key followed by an equals sign (<code>=</code>) followed by the
    * associated value.
    *
    * @return a string representation of this map
@@ -924,11 +848,10 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     sb.append('{');
     Node<V> p;
     if ((p = it.advance()) != null) {
-      for (;;) {
+      for (; ; ) {
         V k = p.key;
         sb.append(k == this ? "(this Set)" : k);
-        if ((p = it.advance()) == null)
-          break;
+        if ((p = it.advance()) == null) break;
         sb.append(',').append(' ');
       }
     }
@@ -959,8 +882,8 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   //    }
 
   /**
-   * Stripped-down version of helper class used in previous version,
-   * declared for the sake of serialization compatibility
+   * Stripped-down version of helper class used in previous version, declared for the sake of
+   * serialization compatibility
    */
   static class Segment<K> extends ReentrantLock implements Serializable {
     private static final long serialVersionUID = 2249069246763182397L;
@@ -972,13 +895,12 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   }
 
   /**
-   * Saves the state of the {@code CompactConcurrentHashSet2} instance to a
-   * stream (i.e., serializes it).
+   * Saves the state of the {@code CompactConcurrentHashSet2} instance to a stream (i.e., serializes
+   * it).
+   *
    * @param s the stream
-   * @serialData
-   * the key (Object) and value (Object)
-   * for each key-value mapping, followed by a null pair.
-   * The key-value mappings are emitted in no particular order.
+   * @serialData the key (Object) and value (Object) for each key-value mapping, followed by a null
+   *     pair. The key-value mappings are emitted in no particular order.
    */
   private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
     // For serialization compatibility
@@ -993,8 +915,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     int segmentMask = ssize - 1;
     @SuppressWarnings("unchecked")
     Segment<V>[] segments = (Segment<V>[]) new Segment<?>[DEFAULT_CONCURRENCY_LEVEL];
-    for (int i = 0; i < segments.length; ++i)
-      segments[i] = new Segment<V>(LOAD_FACTOR);
+    for (int i = 0; i < segments.length; ++i) segments[i] = new Segment<V>(LOAD_FACTOR);
     java.io.ObjectOutputStream.PutField streamFields = s.putFields();
     streamFields.put("segments", segments);
     streamFields.put("segmentShift", segmentShift);
@@ -1004,7 +925,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     Node<V>[] t;
     if ((t = table) != null) {
       Traverser<V> it = new Traverser<V>(t, t.length, 0, t.length);
-      for (Node<V> p; (p = it.advance()) != null;) {
+      for (Node<V> p; (p = it.advance()) != null; ) {
         s.writeObject(p.key);
       }
     }
@@ -1015,9 +936,11 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
 
   /**
    * Reconstitutes the instance from a stream (that is, deserializes it).
+   *
    * @param s the stream
    */
-  private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
+  private void readObject(java.io.ObjectInputStream s)
+      throws java.io.IOException, ClassNotFoundException {
     /*
      * To improve performance in typical cases, we create nodes
      * while reading, then place in table once size is known.
@@ -1029,21 +952,18 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     s.defaultReadObject();
     long size = 0L;
     Node<V> p = null;
-    for (;;) {
+    for (; ; ) {
       @SuppressWarnings("unchecked")
       V k = (V) s.readObject();
       if (k != null) {
         p = new Node<V>(spread(k.hashCode()), k, p);
         ++size;
-      } else
-        break;
+      } else break;
     }
-    if (size == 0L)
-      sizeCtl = 0;
+    if (size == 0L) sizeCtl = 0;
     else {
       int n;
-      if (size >= (long) (MAXIMUM_CAPACITY >>> 1))
-        n = MAXIMUM_CAPACITY;
+      if (size >= (long) (MAXIMUM_CAPACITY >>> 1)) n = MAXIMUM_CAPACITY;
       else {
         int sz = (int) size;
         n = tableSizeFor(sz + (sz >>> 1) + 1);
@@ -1056,14 +976,12 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
         boolean insertAtFront;
         Node<V> next = p.next, first;
         int h = p.hash, j = h & mask;
-        if ((first = tabAt(tab, j)) == null)
-          insertAtFront = true;
+        if ((first = tabAt(tab, j)) == null) insertAtFront = true;
         else {
           V k = p.key;
           if (first.hash < 0) {
             TreeBin<V> t = (TreeBin<V>) first;
-            if (t.putTreeVal(h, k) == null)
-              ++added;
+            if (t.putTreeVal(h, k) == null) ++added;
             insertAtFront = false;
           } else {
             int binCount = 0;
@@ -1084,10 +1002,8 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
               TreeNode<V> hd = null, tl = null;
               for (q = p; q != null; q = q.next) {
                 TreeNode<V> t = new TreeNode<V>(q.hash, q.key, null, null);
-                if ((t.prev = tl) == null)
-                  hd = t;
-                else
-                  tl.next = t;
+                if ((t.prev = tl) == null) hd = t;
+                else tl.next = t;
                 tl = t;
               }
               setTabAt(tab, j, new TreeBin<V>(hd));
@@ -1123,11 +1039,10 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   // CompactConcurrentHashSet2-only methods
 
   /**
-   * Returns the number of mappings. This method should be used
-   * instead of {@link #size} because a CompactConcurrentHashSet2 may
-   * contain more mappings than can be represented as an int. The
-   * value returned is an estimate; the actual count may differ if
-   * there are concurrent insertions or removals.
+   * Returns the number of mappings. This method should be used instead of {@link #size} because a
+   * CompactConcurrentHashSet2 may contain more mappings than can be represented as an int. The
+   * value returned is an estimate; the actual count may differ if there are concurrent insertions
+   * or removals.
    *
    * @return the number of mappings
    * @since Geode 1.0
@@ -1139,9 +1054,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
 
   /* ---------------- Special Nodes -------------- */
 
-  /**
-   * A node inserted at head of bins during transfer operations.
-   */
+  /** A node inserted at head of bins during transfer operations. */
   static final class ForwardingNode<K> extends Node<K> {
     final Node<K>[] nextTable;
 
@@ -1154,23 +1067,22 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
       Node<K> e;
       int n;
       Node<K>[] tab = nextTable;
-      if (k != null && tab != null && (n = tab.length) > 0 && (e = tabAt(tab, (n - 1) & h)) != null) {
+      if (k != null
+          && tab != null
+          && (n = tab.length) > 0
+          && (e = tabAt(tab, (n - 1) & h)) != null) {
         do {
           int eh;
           K ek;
-          if ((eh = e.hash) == h && ((ek = e.key) == k || (ek != null && k.equals(ek))))
-            return e;
-          if (eh < 0)
-            return e.find(h, k);
+          if ((eh = e.hash) == h && ((ek = e.key) == k || (ek != null && k.equals(ek)))) return e;
+          if (eh < 0) return e.find(h, k);
         } while ((e = e.next) != null);
       }
       return null;
     }
   }
 
-  /**
-   * A place-holder node used in computeIfAbsent and compute
-   */
+  /** A place-holder node used in computeIfAbsent and compute */
   static final class ReservationNode<K> extends Node<K> {
     ReservationNode() {
       super(RESERVED, null, null);
@@ -1184,22 +1096,19 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   /* ---------------- Table Initialization and Resizing -------------- */
 
   /**
-   * Returns the stamp bits for resizing a table of size n.
-   * Must be negative when shifted left by RESIZE_STAMP_SHIFT.
+   * Returns the stamp bits for resizing a table of size n. Must be negative when shifted left by
+   * RESIZE_STAMP_SHIFT.
    */
   static final int resizeStamp(int n) {
     return Integer.numberOfLeadingZeros(n) | (1 << (RESIZE_STAMP_BITS - 1));
   }
 
-  /**
-   * Initializes table, using the size recorded in sizeCtl.
-   */
+  /** Initializes table, using the size recorded in sizeCtl. */
   private final Node<V>[] initTable() {
     Node<V>[] tab;
     int sc;
     while ((tab = table) == null || tab.length == 0) {
-      if ((sc = sizeCtl) < 0)
-        Thread.yield(); // lost initialization race; just spin
+      if ((sc = sizeCtl) < 0) Thread.yield(); // lost initialization race; just spin
       else if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) {
         try {
           if ((tab = table) == null || tab.length == 0) {
@@ -1219,11 +1128,9 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   }
 
   /**
-   * Adds to count, and if table is too small and not already
-   * resizing, initiates transfer. If already resizing, helps
-   * perform transfer if work is available.  Rechecks occupancy
-   * after a transfer to see if another resize is already needed
-   * because resizings are lagging additions.
+   * Adds to count, and if table is too small and not already resizing, initiates transfer. If
+   * already resizing, helps perform transfer if work is available. Rechecks occupancy after a
+   * transfer to see if another resize is already needed because resizings are lagging additions.
    *
    * @param x the count to add
    * @param check if <0, don't check resize, if <= 1 only check if uncontended
@@ -1231,30 +1138,38 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   private final void addCount(long x, int check) {
     CounterCell[] as;
     long b, s;
-    if ((as = counterCells) != null || !U.compareAndSwapLong(this, BASECOUNT, b = baseCount, s = b + x)) {
+    if ((as = counterCells) != null
+        || !U.compareAndSwapLong(this, BASECOUNT, b = baseCount, s = b + x)) {
       CounterHashCode hc;
       CounterCell a;
       long v;
       int m;
       boolean uncontended = true;
-      if ((hc = threadCounterHashCode.get()) == null || as == null || (m = as.length - 1) < 0 || (a = as[m & hc.code]) == null || !(uncontended = U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x))) {
+      if ((hc = threadCounterHashCode.get()) == null
+          || as == null
+          || (m = as.length - 1) < 0
+          || (a = as[m & hc.code]) == null
+          || !(uncontended = U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x))) {
         fullAddCount(x, hc, uncontended);
         return;
       }
-      if (check <= 1)
-        return;
+      if (check <= 1) return;
       s = sumCount();
     }
     if (check >= 0) {
       Node<V>[] tab, nt;
       int n, sc;
-      while (s >= (long) (sc = sizeCtl) && (tab = table) != null && (n = tab.length) < MAXIMUM_CAPACITY) {
+      while (s >= (long) (sc = sizeCtl)
+          && (tab = table) != null
+          && (n = tab.length) < MAXIMUM_CAPACITY) {
         int rs = resizeStamp(n);
         if (sc < 0) {
-          if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 || sc == rs + MAX_RESIZERS || (nt = nextTable) == null || transferIndex <= 0)
-            break;
-          if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1))
-            transfer(tab, nt);
+          if ((sc >>> RESIZE_STAMP_SHIFT) != rs
+              || sc == rs + 1
+              || sc == rs + MAX_RESIZERS
+              || (nt = nextTable) == null
+              || transferIndex <= 0) break;
+          if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1)) transfer(tab, nt);
         } else if (U.compareAndSwapInt(this, SIZECTL, sc, (rs << RESIZE_STAMP_SHIFT) + 2))
           transfer(tab, null);
         s = sumCount();
@@ -1262,17 +1177,19 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     }
   }
 
-  /**
-   * Helps transfer if a resize is in progress.
-   */
+  /** Helps transfer if a resize is in progress. */
   final Node<V>[] helpTransfer(Node<V>[] tab, Node<V> f) {
     Node<V>[] nextTab;
     int sc;
-    if (tab != null && (f instanceof ForwardingNode) && (nextTab = ((ForwardingNode<V>) f).nextTable) != null) {
+    if (tab != null
+        && (f instanceof ForwardingNode)
+        && (nextTab = ((ForwardingNode<V>) f).nextTable) != null) {
       int rs = resizeStamp(tab.length);
       while (nextTab == nextTable && table == tab && (sc = sizeCtl) < 0) {
-        if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 || sc == rs + MAX_RESIZERS || transferIndex <= 0)
-          break;
+        if ((sc >>> RESIZE_STAMP_SHIFT) != rs
+            || sc == rs + 1
+            || sc == rs + MAX_RESIZERS
+            || transferIndex <= 0) break;
         if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1)) {
           transfer(tab, nextTab);
           break;
@@ -1289,7 +1206,10 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
    * @param size number of elements (doesn't need to be perfectly accurate)
    */
   private final void tryPresize(int size) {
-    int c = (size >= (MAXIMUM_CAPACITY >>> 1)) ? MAXIMUM_CAPACITY : tableSizeFor(size + (size >>> 1) + 1);
+    int c =
+        (size >= (MAXIMUM_CAPACITY >>> 1))
+            ? MAXIMUM_CAPACITY
+            : tableSizeFor(size + (size >>> 1) + 1);
     int sc;
     while ((sc = sizeCtl) >= 0) {
       Node<V>[] tab = table;
@@ -1308,26 +1228,24 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
             sizeCtl = sc;
           }
         }
-      } else if (c <= sc || n >= MAXIMUM_CAPACITY)
-        break;
+      } else if (c <= sc || n >= MAXIMUM_CAPACITY) break;
       else if (tab == table) {
         int rs = resizeStamp(n);
         if (sc < 0) {
           Node<V>[] nt;
-          if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 || sc == rs + MAX_RESIZERS || (nt = nextTable) == null || transferIndex <= 0)
-            break;
-          if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1))
-            transfer(tab, nt);
+          if ((sc >>> RESIZE_STAMP_SHIFT) != rs
+              || sc == rs + 1
+              || sc == rs + MAX_RESIZERS
+              || (nt = nextTable) == null
+              || transferIndex <= 0) break;
+          if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1)) transfer(tab, nt);
         } else if (U.compareAndSwapInt(this, SIZECTL, sc, (rs << RESIZE_STAMP_SHIFT) + 2))
           transfer(tab, null);
       }
     }
   }
 
-  /**
-   * Moves and/or copies the nodes in each bin to new table. See
-   * above for explanation.
-   */
+  /** Moves and/or copies the nodes in each bin to new table. See above for explanation. */
   private final void transfer(Node<V>[] tab, Node<V>[] nextTab) {
     int n = tab.length, stride;
     if ((stride = (NCPU > 1) ? (n >>> 3) / NCPU : n) < MIN_TRANSFER_STRIDE)
@@ -1348,17 +1266,20 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     ForwardingNode<V> fwd = new ForwardingNode<V>(nextTab);
     boolean advance = true;
     boolean finishing = false; // to ensure sweep before committing nextTab
-    for (int i = 0, bound = 0;;) {
+    for (int i = 0, bound = 0; ; ) {
       Node<V> f;
       int fh;
       while (advance) {
         int nextIndex, nextBound;
-        if (--i >= bound || finishing)
-          advance = false;
+        if (--i >= bound || finishing) advance = false;
         else if ((nextIndex = transferIndex) <= 0) {
           i = -1;
           advance = false;
-        } else if (U.compareAndSwapInt(this, TRANSFERINDEX, nextIndex, nextBound = (nextIndex > stride ? nextIndex - stride : 0))) {
+        } else if (U.compareAndSwapInt(
+            this,
+            TRANSFERINDEX,
+            nextIndex,
+            nextBound = (nextIndex > stride ? nextIndex - stride : 0))) {
           bound = nextBound;
           i = nextIndex - 1;
           advance = false;
@@ -1373,15 +1294,12 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
           return;
         }
         if (U.compareAndSwapInt(this, SIZECTL, sc = sizeCtl, sc - 1)) {
-          if ((sc - 2) != resizeStamp(n) << RESIZE_STAMP_SHIFT)
-            return;
+          if ((sc - 2) != resizeStamp(n) << RESIZE_STAMP_SHIFT) return;
           finishing = advance = true;
           i = n; // recheck before commit
         }
-      } else if ((f = tabAt(tab, i)) == null)
-        advance = casTabAt(tab, i, null, fwd);
-      else if ((fh = f.hash) == MOVED)
-        advance = true; // already processed
+      } else if ((f = tabAt(tab, i)) == null) advance = casTabAt(tab, i, null, fwd);
+      else if ((fh = f.hash) == MOVED) advance = true; // already processed
       else {
         synchronized (f) {
           if (tabAt(tab, i) == f) {
@@ -1406,10 +1324,8 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
               for (Node<V> p = f; p != lastRun; p = p.next) {
                 int ph = p.hash;
                 V pk = p.key;
-                if ((ph & n) == 0)
-                  ln = new Node<V>(ph, pk, ln);
-                else
-                  hn = new Node<V>(ph, pk, hn);
+                if ((ph & n) == 0) ln = new Node<V>(ph, pk, ln);
+                else hn = new Node<V>(ph, pk, hn);
               }
               setTabAt(nextTab, i, ln);
               setTabAt(nextTab, i + n, hn);
@@ -1424,17 +1340,13 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
                 int h = e.hash;
                 TreeNode<V> p = new TreeNode<V>(h, e.key, null, null);
                 if ((h & n) == 0) {
-                  if ((p.prev = loTail) == null)
-                    lo = p;
-                  else
-                    loTail.next = p;
+                  if ((p.prev = loTail) == null) lo = p;
+                  else loTail.next = p;
                   loTail = p;
                   ++lc;
                 } else {
-                  if ((p.prev = hiTail) == null)
-                    hi = p;
-                  else
-                    hiTail.next = p;
+                  if ((p.prev = hiTail) == null) hi = p;
+                  else hiTail.next = p;
                   hiTail = p;
                   ++hc;
                 }
@@ -1455,25 +1367,22 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   /* ---------------- Conversion from/to TreeBins -------------- */
 
   /**
-   * Replaces all linked nodes in bin at given index unless table is
-   * too small, in which case resizes instead.
+   * Replaces all linked nodes in bin at given index unless table is too small, in which case
+   * resizes instead.
    */
   private final void treeifyBin(Node<V>[] tab, int index) {
     Node<V> b;
     int n, sc;
     if (tab != null) {
-      if ((n = tab.length) < MIN_TREEIFY_CAPACITY)
-        tryPresize(n << 1);
+      if ((n = tab.length) < MIN_TREEIFY_CAPACITY) tryPresize(n << 1);
       else if ((b = tabAt(tab, index)) != null && b.hash >= 0) {
         synchronized (b) {
           if (tabAt(tab, index) == b) {
             TreeNode<V> hd = null, tl = null;
             for (Node<V> e = b; e != null; e = e.next) {
               TreeNode<V> p = new TreeNode<V>(e.hash, e.key, null, null);
-              if ((p.prev = tl) == null)
-                hd = p;
-              else
-                tl.next = p;
+              if ((p.prev = tl) == null) hd = p;
+              else tl.next = p;
               tl = p;
             }
             setTabAt(tab, index, new TreeBin<V>(hd));
@@ -1483,17 +1392,13 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     }
   }
 
-  /**
-   * Returns a list on non-TreeNodes replacing those in given list.
-   */
+  /** Returns a list on non-TreeNodes replacing those in given list. */
   static <K> Node<K> untreeify(Node<K> b) {
     Node<K> hd = null, tl = null;
     for (Node<K> q = b; q != null; q = q.next) {
       Node<K> p = new Node<K>(q.hash, q.key, null);
-      if (tl == null)
-        hd = p;
-      else
-        tl.next = p;
+      if (tl == null) hd = p;
+      else tl.next = p;
       tl = p;
     }
     return hd;
@@ -1501,9 +1406,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
 
   /* ---------------- TreeNodes -------------- */
 
-  /**
-   * Nodes for use in TreeBins
-   */
+  /** Nodes for use in TreeBins */
   static final class TreeNode<K> extends Node<K> {
     TreeNode<K> parent; // red-black tree links
     TreeNode<K> left;
@@ -1520,10 +1423,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
       return findTreeNode(h, k, null);
     }
 
-    /**
-     * Returns the TreeNode (or null if not found) for the given key
-     * starting at given root.
-     */
+    /** Returns the TreeNode (or null if not found) for the given key starting at given root. */
     final TreeNode<K> findTreeNode(int h, Object k, Class<?> kc) {
       if (k != null) {
         TreeNode<K> p = this;
@@ -1532,22 +1432,15 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
           K pk;
           TreeNode<K> q;
           TreeNode<K> pl = p.left, pr = p.right;
-          if ((ph = p.hash) > h)
-            p = pl;
-          else if (ph < h)
-            p = pr;
-          else if ((pk = p.key) == k || (pk != null && k.equals(pk)))
-            return p;
-          else if (pl == null)
-            p = pr;
-          else if (pr == null)
-            p = pl;
-          else if ((kc != null || (kc = comparableClassFor(k)) != null) && (dir = compareComparables(kc, k, pk)) != 0)
-            p = (dir < 0) ? pl : pr;
-          else if ((q = pr.findTreeNode(h, k, kc)) != null)
-            return q;
-          else
-            p = pl;
+          if ((ph = p.hash) > h) p = pl;
+          else if (ph < h) p = pr;
+          else if ((pk = p.key) == k || (pk != null && k.equals(pk))) return p;
+          else if (pl == null) p = pr;
+          else if (pr == null) p = pl;
+          else if ((kc != null || (kc = comparableClassFor(k)) != null)
+              && (dir = compareComparables(kc, k, pk)) != 0) p = (dir < 0) ? pl : pr;
+          else if ((q = pr.findTreeNode(h, k, kc)) != null) return q;
+          else p = pl;
         } while (p != null);
       }
       return null;
@@ -1557,11 +1450,10 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   /* ---------------- TreeBins -------------- */
 
   /**
-   * TreeNodes used at the heads of bins. TreeBins do not hold user
-   * keys or values, but instead point to list of TreeNodes and
-   * their root. They also maintain a parasitic read-write lock
-   * forcing writers (who hold bin lock) to wait for readers (who do
-   * not) to complete before tree restructuring operations.
+   * TreeNodes used at the heads of bins. TreeBins do not hold user keys or values, but instead
+   * point to list of TreeNodes and their root. They also maintain a parasitic read-write lock
+   * forcing writers (who hold bin lock) to wait for readers (who do not) to complete before tree
+   * restructuring operations.
    */
   static final class TreeBin<K> extends Node<K> {
     TreeNode<K> root;
@@ -1574,22 +1466,20 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     static final int READER = 4; // increment value for setting read lock
 
     /**
-     * Tie-breaking utility for ordering insertions when equal
-     * hashCodes and non-comparable. We don't require a total
-     * order, just a consistent insertion rule to maintain
-     * equivalence across rebalancings. Tie-breaking further than
-     * necessary simplifies testing a bit.
+     * Tie-breaking utility for ordering insertions when equal hashCodes and non-comparable. We
+     * don't require a total order, just a consistent insertion rule to maintain equivalence across
+     * rebalancings. Tie-breaking further than necessary simplifies testing a bit.
      */
     static int tieBreakOrder(Object a, Object b) {
       int d;
-      if (a == null || b == null || (d = a.getClass().getName().compareTo(b.getClass().getName())) == 0)
+      if (a == null
+          || b == null
+          || (d = a.getClass().getName().compareTo(b.getClass().getName())) == 0)
         d = (System.identityHashCode(a) <= System.identityHashCode(b) ? -1 : 1);
       return d;
     }
 
-    /**
-     * Creates bin with initial set of nodes headed by b.
-     */
+    /** Creates bin with initial set of nodes headed by b. */
     TreeBin(TreeNode<K> b) {
       super(TREEBIN, null, null);
       this.first = b;
@@ -1605,22 +1495,18 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
           K k = x.key;
           int h = x.hash;
           Class<?> kc = null;
-          for (TreeNode<K> p = r;;) {
+          for (TreeNode<K> p = r; ; ) {
             int dir, ph;
             K pk = p.key;
-            if ((ph = p.hash) > h)
-              dir = -1;
-            else if (ph < h)
-              dir = 1;
-            else if ((kc == null && (kc = comparableClassFor(k)) == null) || (dir = compareComparables(kc, k, pk)) == 0)
-              dir = tieBreakOrder(k, pk);
+            if ((ph = p.hash) > h) dir = -1;
+            else if (ph < h) dir = 1;
+            else if ((kc == null && (kc = comparableClassFor(k)) == null)
+                || (dir = compareComparables(kc, k, pk)) == 0) dir = tieBreakOrder(k, pk);
             TreeNode<K> xp = p;
             if ((p = (dir <= 0) ? p.left : p.right) == null) {
               x.parent = xp;
-              if (dir <= 0)
-                xp.left = x;
-              else
-                xp.right = x;
+              if (dir <= 0) xp.left = x;
+              else xp.right = x;
               r = balanceInsertion(r, x);
               break;
             }
@@ -1631,31 +1517,24 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
       assert checkInvariants(root);
     }
 
-    /**
-     * Acquires write lock for tree restructuring.
-     */
+    /** Acquires write lock for tree restructuring. */
     private final void lockRoot() {
       if (!U.compareAndSwapInt(this, LOCKSTATE, 0, WRITER))
         contendedLock(); // offload to separate method
     }
 
-    /**
-     * Releases write lock for tree restructuring.
-     */
+    /** Releases write lock for tree restructuring. */
     private final void unlockRoot() {
       lockState = 0;
     }
 
-    /**
-     * Possibly blocks awaiting root lock.
-     */
+    /** Possibly blocks awaiting root lock. */
     private final void contendedLock() {
       boolean waiting = false;
-      for (int s;;) {
+      for (int s; ; ) {
         if (((s = lockState) & ~WAITER) == 0) {
           if (U.compareAndSwapInt(this, LOCKSTATE, s, WRITER)) {
-            if (waiting)
-              waiter = null;
+            if (waiting) waiter = null;
             return;
           }
         } else if ((s & WAITER) == 0) {
@@ -1663,24 +1542,21 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
             waiting = true;
             waiter = Thread.currentThread();
           }
-        } else if (waiting)
-          LockSupport.park(this);
+        } else if (waiting) LockSupport.park(this);
       }
     }
 
     /**
-     * Returns matching node or null if none. Tries to search
-     * using tree comparisons from root, but continues linear
-     * search when lock not available.
+     * Returns matching node or null if none. Tries to search using tree comparisons from root, but
+     * continues linear search when lock not available.
      */
     final Node<K> find(int h, Object k) {
       if (k != null) {
-        for (Node<K> e = first; e != null;) {
+        for (Node<K> e = first; e != null; ) {
           int s;
           K ek;
           if (((s = lockState) & (WAITER | WRITER)) != 0) {
-            if (e.hash == h && ((ek = e.key) == k || (ek != null && k.equals(ek))))
-              return e;
+            if (e.hash == h && ((ek = e.key) == k || (ek != null && k.equals(ek)))) return e;
             e = e.next;
           } else if (U.compareAndSwapInt(this, LOCKSTATE, s, s + READER)) {
             TreeNode<K> r, p;
@@ -1690,10 +1566,8 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
 
               Thread w;
               int ls;
-              do {
-              } while (!U.compareAndSwapInt(this, LOCKSTATE, ls = lockState, ls - READER));
-              if (ls == (READER | WAITER) && (w = waiter) != null)
-                LockSupport.unpark(w);
+              do {} while (!U.compareAndSwapInt(this, LOCKSTATE, ls = lockState, ls - READER));
+              if (ls == (READER | WAITER) && (w = waiter) != null) LockSupport.unpark(w);
             }
             return p;
           }
@@ -1704,33 +1578,33 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
 
     /**
      * Finds or adds a node.
+     *
      * @return null if added
      */
     /**
      * Finds or adds a node.
+     *
      * @return null if added
      */
     final TreeNode<K> putTreeVal(int h, K k) {
       Class<?> kc = null;
       boolean searched = false;
-      for (TreeNode<K> p = root;;) {
+      for (TreeNode<K> p = root; ; ) {
         int dir, ph;
         K pk;
         if (p == null) {
           first = root = new TreeNode<K>(h, k, null, null);
           break;
-        } else if ((ph = p.hash) > h)
-          dir = -1;
-        else if (ph < h)
-          dir = 1;
-        else if ((pk = p.key) == k || (pk != null && k.equals(pk)))
-          return p;
-        else if ((kc == null && (kc = comparableClassFor(k)) == null) || (dir = compareComparables(kc, k, pk)) == 0) {
+        } else if ((ph = p.hash) > h) dir = -1;
+        else if (ph < h) dir = 1;
+        else if ((pk = p.key) == k || (pk != null && k.equals(pk))) return p;
+        else if ((kc == null && (kc = comparableClassFor(k)) == null)
+            || (dir = compareComparables(kc, k, pk)) == 0) {
           if (!searched) {
             TreeNode<K> q, ch;
             searched = true;
-            if (((ch = p.left) != null && (q = ch.findTreeNode(h, k, kc)) != null) || ((ch = p.right) != null && (q = ch.findTreeNode(h, k, kc)) != null))
-              return q;
+            if (((ch = p.left) != null && (q = ch.findTreeNode(h, k, kc)) != null)
+                || ((ch = p.right) != null && (q = ch.findTreeNode(h, k, kc)) != null)) return q;
           }
           dir = tieBreakOrder(k, pk);
         }
@@ -1739,14 +1613,10 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
         if ((p = (dir <= 0) ? p.left : p.right) == null) {
           TreeNode<K> x, f = first;
           first = x = new TreeNode<K>(h, k, f, xp);
-          if (f != null)
-            f.prev = x;
-          if (dir <= 0)
-            xp.left = x;
-          else
-            xp.right = x;
-          if (!xp.red)
-            x.red = true;
+          if (f != null) f.prev = x;
+          if (dir <= 0) xp.left = x;
+          else xp.right = x;
+          if (!xp.red) x.red = true;
           else {
             lockRoot();
             try {
@@ -1763,12 +1633,10 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     }
 
     /**
-     * Removes the given node, that must be present before this
-     * call.  This is messier than typical red-black deletion code
-     * because we cannot swap the contents of an interior node
-     * with a leaf successor that is pinned by "next" pointers
-     * that are accessible independently of lock. So instead we
-     * swap the tree linkages.
+     * Removes the given node, that must be present before this call. This is messier than typical
+     * red-black deletion code because we cannot swap the contents of an interior node with a leaf
+     * successor that is pinned by "next" pointers that are accessible independently of lock. So
+     * instead we swap the tree linkages.
      *
      * @return true if now too small, so should be untreeified
      */
@@ -1776,19 +1644,18 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
       TreeNode<K> next = (TreeNode<K>) p.next;
       TreeNode<K> pred = p.prev; // unlink traversal pointers
       TreeNode<K> r, rl;
-      if (pred == null)
-        first = next;
-      else
-        pred.next = next;
-      if (next != null)
-        next.prev = pred;
+      if (pred == null) first = next;
+      else pred.next = next;
+      if (next != null) next.prev = pred;
       if (first == null) {
         root = null;
         return true;
       }
-      if ((r = root) == null || r.right == null || // too small
-          (rl = r.left) == null || rl.left == null)
-        return true;
+      if ((r = root) == null
+          || r.right == null
+          || // too small
+          (rl = r.left) == null
+          || rl.left == null) return true;
       lockRoot();
       try {
         TreeNode<K> replacement;
@@ -1797,7 +1664,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
         if (pl != null && pr != null) {
           TreeNode<K> s = pr, sl;
           while ((sl = s.left) != null) // find successor
-            s = sl;
+          s = sl;
           boolean c = s.red;
           s.red = p.red;
           p.red = c; // swap colors
@@ -1809,43 +1676,27 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
           } else {
             TreeNode<K> sp = s.parent;
             if ((p.parent = sp) != null) {
-              if (s == sp.left)
-                sp.left = p;
-              else
-                sp.right = p;
+              if (s == sp.left) sp.left = p;
+              else sp.right = p;
             }
-            if ((s.right = pr) != null)
-              pr.parent = s;
+            if ((s.right = pr) != null) pr.parent = s;
           }
           p.left = null;
-          if ((p.right = sr) != null)
-            sr.parent = p;
-          if ((s.left = pl) != null)
-            pl.parent = s;
-          if ((s.parent = pp) == null)
-            r = s;
-          else if (p == pp.left)
-            pp.left = s;
-          else
-            pp.right = s;
-          if (sr != null)
-            replacement = sr;
-          else
-            replacement = p;
-        } else if (pl != null)
-          replacement = pl;
-        else if (pr != null)
-          replacement = pr;
-        else
-          replacement = p;
+          if ((p.right = sr) != null) sr.parent = p;
+          if ((s.left = pl) != null) pl.parent = s;
+          if ((s.parent = pp) == null) r = s;
+          else if (p == pp.left) pp.left = s;
+          else pp.right = s;
+          if (sr != null) replacement = sr;
+          else replacement = p;
+        } else if (pl != null) replacement = pl;
+        else if (pr != null) replacement = pr;
+        else replacement = p;
         if (replacement != p) {
           TreeNode<K> pp = replacement.parent = p.parent;
-          if (pp == null)
-            r = replacement;
-          else if (p == pp.left)
-            pp.left = replacement;
-          else
-            pp.right = replacement;
+          if (pp == null) r = replacement;
+          else if (p == pp.left) pp.left = replacement;
+          else pp.right = replacement;
           p.left = p.right = p.parent = null;
         }
 
@@ -1854,10 +1705,8 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
         if (p == replacement) { // detach pointers
           TreeNode<K> pp;
           if ((pp = p.parent) != null) {
-            if (p == pp.left)
-              pp.left = null;
-            else if (p == pp.right)
-              pp.right = null;
+            if (p == pp.left) pp.left = null;
+            else if (p == pp.right) pp.right = null;
             p.parent = null;
           }
         }
@@ -1874,14 +1723,10 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     static <K> TreeNode<K> rotateLeft(TreeNode<K> root, TreeNode<K> p) {
       TreeNode<K> r, pp, rl;
       if (p != null && (r = p.right) != null) {
-        if ((rl = p.right = r.left) != null)
-          rl.parent = p;
-        if ((pp = r.parent = p.parent) == null)
-          (root = r).red = false;
-        else if (pp.left == p)
-          pp.left = r;
-        else
-          pp.right = r;
+        if ((rl = p.right = r.left) != null) rl.parent = p;
+        if ((pp = r.parent = p.parent) == null) (root = r).red = false;
+        else if (pp.left == p) pp.left = r;
+        else pp.right = r;
         r.left = p;
         p.parent = r;
       }
@@ -1891,14 +1736,10 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     static <K> TreeNode<K> rotateRight(TreeNode<K> root, TreeNode<K> p) {
       TreeNode<K> l, pp, lr;
       if (p != null && (l = p.left) != null) {
-        if ((lr = p.left = l.right) != null)
-          lr.parent = p;
-        if ((pp = l.parent = p.parent) == null)
-          (root = l).red = false;
-        else if (pp.right == p)
-          pp.right = l;
-        else
-          pp.left = l;
+        if ((lr = p.left = l.right) != null) lr.parent = p;
+        if ((pp = l.parent = p.parent) == null) (root = l).red = false;
+        else if (pp.right == p) pp.right = l;
+        else pp.left = l;
         l.right = p;
         p.parent = l;
       }
@@ -1907,12 +1748,11 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
 
     static <K> TreeNode<K> balanceInsertion(TreeNode<K> root, TreeNode<K> x) {
       x.red = true;
-      for (TreeNode<K> xp, xpp, xppl, xppr;;) {
+      for (TreeNode<K> xp, xpp, xppl, xppr; ; ) {
         if ((xp = x.parent) == null) {
           x.red = false;
           return x;
-        } else if (!xp.red || (xpp = xp.parent) == null)
-          return root;
+        } else if (!xp.red || (xpp = xp.parent) == null) return root;
         if (xp == (xppl = xpp.left)) {
           if ((xppr = xpp.right) != null && xppr.red) {
             xppr.red = false;
@@ -1956,9 +1796,8 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     }
 
     static <K> TreeNode<K> balanceDeletion(TreeNode<K> root, TreeNode<K> x) {
-      for (TreeNode<K> xp, xpl, xpr;;) {
-        if (x == null || x == root)
-          return root;
+      for (TreeNode<K> xp, xpl, xpr; ; ) {
+        if (x == null || x == root) return root;
         else if ((xp = x.parent) == null) {
           x.red = false;
           return x;
@@ -1972,8 +1811,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
             root = rotateLeft(root, xp);
             xpr = (xp = x.parent) == null ? null : xp.right;
           }
-          if (xpr == null)
-            x = xp;
+          if (xpr == null) x = xp;
           else {
             TreeNode<K> sl = xpr.left, sr = xpr.right;
             if ((sr == null || !sr.red) && (sl == null || !sl.red)) {
@@ -1981,16 +1819,14 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
               x = xp;
             } else {
               if (sr == null || !sr.red) {
-                if (sl != null)
-                  sl.red = false;
+                if (sl != null) sl.red = false;
                 xpr.red = true;
                 root = rotateRight(root, xpr);
                 xpr = (xp = x.parent) == null ? null : xp.right;
               }
               if (xpr != null) {
                 xpr.red = (xp == null) ? false : xp.red;
-                if ((sr = xpr.right) != null)
-                  sr.red = false;
+                if ((sr = xpr.right) != null) sr.red = false;
               }
               if (xp != null) {
                 xp.red = false;
@@ -2006,8 +1842,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
             root = rotateRight(root, xp);
             xpl = (xp = x.parent) == null ? null : xp.left;
           }
-          if (xpl == null)
-            x = xp;
+          if (xpl == null) x = xp;
           else {
             TreeNode<K> sl = xpl.left, sr = xpl.right;
             if ((sl == null || !sl.red) && (sr == null || !sr.red)) {
@@ -2015,16 +1850,14 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
               x = xp;
             } else {
               if (sl == null || !sl.red) {
-                if (sr != null)
-                  sr.red = false;
+                if (sr != null) sr.red = false;
                 xpl.red = true;
                 root = rotateLeft(root, xpl);
                 xpl = (xp = x.parent) == null ? null : xp.left;
               }
               if (xpl != null) {
                 xpl.red = (xp == null) ? false : xp.red;
-                if ((sl = xpl.left) != null)
-                  sl.red = false;
+                if ((sl = xpl.left) != null) sl.red = false;
               }
               if (xp != null) {
                 xp.red = false;
@@ -2037,32 +1870,23 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
       }
     }
 
-    /**
-     * Recursive invariant check
-     */
+    /** Recursive invariant check */
     static <K> boolean checkInvariants(TreeNode<K> t) {
       TreeNode<K> tp = t.parent, tl = t.left, tr = t.right, tb = t.prev, tn = (TreeNode<K>) t.next;
-      if (tb != null && tb.next != t)
-        return false;
-      if (tn != null && tn.prev != t)
-        return false;
-      if (tp != null && t != tp.left && t != tp.right)
-        return false;
-      if (tl != null && (tl.parent != t || tl.hash > t.hash))
-        return false;
-      if (tr != null && (tr.parent != t || tr.hash < t.hash))
-        return false;
-      if (t.red && tl != null && tl.red && tr != null && tr.red)
-        return false;
-      if (tl != null && !checkInvariants(tl))
-        return false;
-      if (tr != null && !checkInvariants(tr))
-        return false;
+      if (tb != null && tb.next != t) return false;
+      if (tn != null && tn.prev != t) return false;
+      if (tp != null && t != tp.left && t != tp.right) return false;
+      if (tl != null && (tl.parent != t || tl.hash > t.hash)) return false;
+      if (tr != null && (tr.parent != t || tr.hash < t.hash)) return false;
+      if (t.red && tl != null && tl.red && tr != null && tr.red) return false;
+      if (tl != null && !checkInvariants(tl)) return false;
+      if (tr != null && !checkInvariants(tr)) return false;
       return true;
     }
 
     private static final sun.misc.Unsafe U;
     private static final long LOCKSTATE;
+
     static {
       try {
         Field f = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
@@ -2079,9 +1903,8 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   /* ----------------Table Traversal -------------- */
 
   /**
-   * Records the table, its length, and current traversal index for a
-   * traverser that must process a region of a forwarded table before
-   * proceeding with current table.
+   * Records the table, its length, and current traversal index for a traverser that must process a
+   * region of a forwarded table before proceeding with current table.
    */
   static final class TableStack<K> {
     int length;
@@ -2091,25 +1914,20 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   }
 
   /**
-   * Encapsulates traversal for methods such as containsValue; also
-   * serves as a base class for other iterators and spliterators.
+   * Encapsulates traversal for methods such as containsValue; also serves as a base class for other
+   * iterators and spliterators.
    *
-   * Method advance visits once each still-valid node that was
-   * reachable upon iterator construction. It might miss some that
-   * were added to a bin after the bin was visited, which is OK wrt
-   * consistency guarantees. Maintaining this property in the face
-   * of possible ongoing resizes requires a fair amount of
-   * bookkeeping state that is difficult to optimize away amidst
-   * volatile accesses.  Even so, traversal maintains reasonable
-   * throughput.
+   * <p>Method advance visits once each still-valid node that was reachable upon iterator
+   * construction. It might miss some that were added to a bin after the bin was visited, which is
+   * OK wrt consistency guarantees. Maintaining this property in the face of possible ongoing
+   * resizes requires a fair amount of bookkeeping state that is difficult to optimize away amidst
+   * volatile accesses. Even so, traversal maintains reasonable throughput.
    *
-   * Normally, iteration proceeds bin-by-bin traversing lists.
-   * However, if the table has been resized, then all future steps
-   * must traverse both the bin at the current index as well as at
-   * (index + baseSize); and so on for further resizings. To
-   * paranoically cope with potential sharing by users of iterators
-   * across threads, iteration terminates if a bounds checks fails
-   * for a table read.
+   * <p>Normally, iteration proceeds bin-by-bin traversing lists. However, if the table has been
+   * resized, then all future steps must traverse both the bin at the current index as well as at
+   * (index + baseSize); and so on for further resizings. To paranoically cope with potential
+   * sharing by users of iterators across threads, iteration terminates if a bounds checks fails for
+   * a table read.
    */
   static class Traverser<K> {
     Node<K>[] tab; // current table; updated if resized
@@ -2128,18 +1946,14 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
       this.next = null;
     }
 
-    /**
-     * Advances if possible, returning next valid node, or null if none.
-     */
+    /** Advances if possible, returning next valid node, or null if none. */
     final Node<K> advance() {
       Node<K> e;
-      if ((e = next) != null)
-        e = e.next;
-      for (;;) {
+      if ((e = next) != null) e = e.next;
+      for (; ; ) {
         Node<K>[] t;
         int i, n; // must use locals in checks
-        if (e != null)
-          return next = e;
+        if (e != null) return next = e;
         if (baseIndex >= baseLimit || (t = tab) == null || (n = t.length) <= (i = index) || i < 0)
           return next = null;
         if ((e = tabAt(t, i)) != null && e.hash < 0) {
@@ -2148,27 +1962,19 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
             e = null;
             pushState(t, i, n);
             continue;
-          } else if (e instanceof TreeBin)
-            e = ((TreeBin<K>) e).first;
-          else
-            e = null;
+          } else if (e instanceof TreeBin) e = ((TreeBin<K>) e).first;
+          else e = null;
         }
-        if (stack != null)
-          recoverState(n);
-        else if ((index = i + baseSize) >= n)
-          index = ++baseIndex; // visit upper slots if present
+        if (stack != null) recoverState(n);
+        else if ((index = i + baseSize) >= n) index = ++baseIndex; // visit upper slots if present
       }
     }
 
-    /**
-     * Saves traversal state upon encountering a forwarding node.
-     */
+    /** Saves traversal state upon encountering a forwarding node. */
     private void pushState(Node<K>[] t, int i, int n) {
       TableStack<K> s = spare; // reuse if possible
-      if (s != null)
-        spare = s.next;
-      else
-        s = new TableStack<K>();
+      if (s != null) spare = s.next;
+      else s = new TableStack<K>();
       s.tab = t;
       s.length = n;
       s.index = i;
@@ -2194,14 +2000,12 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
         stack = next;
         spare = s;
       }
-      if (s == null && (index += baseSize) >= n)
-        index = ++baseIndex;
+      if (s == null && (index += baseSize) >= n) index = ++baseIndex;
     }
   }
 
   /**
-   * Base of key, value, and entry Iterators. Adds fields to
-   * Traverser to support iterator.remove.
+   * Base of key, value, and entry Iterators. Adds fields to Traverser to support iterator.remove.
    */
   static class BaseIterator<K> extends Traverser<K> {
     final CompactConcurrentHashSet2<K> set;
@@ -2223,8 +2027,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
 
     public final void remove() {
       Node<K> p;
-      if ((p = lastReturned) == null)
-        throw new IllegalStateException();
+      if ((p = lastReturned) == null) throw new IllegalStateException();
       lastReturned = null;
       set.removeNode(p.key);
     }
@@ -2237,8 +2040,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
 
     public final K next() {
       Node<K> p;
-      if ((p = next) == null)
-        throw new NoSuchElementException();
+      if ((p = next) == null) throw new NoSuchElementException();
       K k = p.key;
       lastReturned = p;
       advance();
@@ -2267,29 +2069,22 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
   }
 
   /**
-   * Holder for the thread-local hash code determining which
-   * CounterCell to use. The code is initialized via the
-   * counterHashCodeGenerator, but may be moved upon collisions.
+   * Holder for the thread-local hash code determining which CounterCell to use. The code is
+   * initialized via the counterHashCodeGenerator, but may be moved upon collisions.
    */
   static final class CounterHashCode {
     int code;
   }
 
-  /**
-   * Generates initial value for per-thread CounterHashCodes.
-   */
+  /** Generates initial value for per-thread CounterHashCodes. */
   static final AtomicInteger counterHashCodeGenerator = new AtomicInteger();
 
-  /**
-   * Increment for counterHashCodeGenerator. See class ThreadLocal
-   * for explanation.
-   */
+  /** Increment for counterHashCodeGenerator. See class ThreadLocal for explanation. */
   static final int SEED_INCREMENT = 0x61c88647;
 
-  /**
-   * Per-thread counter hash codes. Shared across all instances.
-   */
-  static final ThreadLocal<CounterHashCode> threadCounterHashCode = new ThreadLocal<CounterHashCode>();
+  /** Per-thread counter hash codes. Shared across all instances. */
+  static final ThreadLocal<CounterHashCode> threadCounterHashCode =
+      new ThreadLocal<CounterHashCode>();
 
   final long sumCount() {
     CounterCell[] as = counterCells;
@@ -2297,8 +2092,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     long sum = baseCount;
     if (as != null) {
       for (int i = 0; i < as.length; ++i) {
-        if ((a = as[i]) != null)
-          sum += a.value;
+        if ((a = as[i]) != null) sum += a.value;
       }
     }
     return sum;
@@ -2312,10 +2106,9 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
       int s = counterHashCodeGenerator.addAndGet(SEED_INCREMENT);
       h = hc.code = (s == 0) ? 1 : s; // Avoid zero
       threadCounterHashCode.set(hc);
-    } else
-      h = hc.code;
+    } else h = hc.code;
     boolean collide = false; // True if last slot nonempty
-    for (;;) {
+    for (; ; ) {
       CounterCell[] as;
       CounterCell a;
       int n;
@@ -2329,33 +2122,30 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
               try { // Recheck under lock
                 CounterCell[] rs;
                 int m, j;
-                if ((rs = counterCells) != null && (m = rs.length) > 0 && rs[j = (m - 1) & h] == null) {
+                if ((rs = counterCells) != null
+                    && (m = rs.length) > 0
+                    && rs[j = (m - 1) & h] == null) {
                   rs[j] = r;
                   created = true;
                 }
               } finally {
                 cellsBusy = 0;
               }
-              if (created)
-                break;
+              if (created) break;
               continue; // Slot is now non-empty
             }
           }
           collide = false;
         } else if (!wasUncontended) // CAS already known to fail
-          wasUncontended = true; // Continue after rehash
-        else if (U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x))
-          break;
-        else if (counterCells != as || n >= NCPU)
-          collide = false; // At max size or stale
-        else if (!collide)
-          collide = true;
+        wasUncontended = true; // Continue after rehash
+        else if (U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x)) break;
+        else if (counterCells != as || n >= NCPU) collide = false; // At max size or stale
+        else if (!collide) collide = true;
         else if (cellsBusy == 0 && U.compareAndSwapInt(this, CELLSBUSY, 0, 1)) {
           try {
-            if (counterCells == as) {// Expand table unless stale
+            if (counterCells == as) { // Expand table unless stale
               CounterCell[] rs = new CounterCell[n << 1];
-              for (int i = 0; i < n; ++i)
-                rs[i] = as[i];
+              for (int i = 0; i < n; ++i) rs[i] = as[i];
               counterCells = rs;
             }
           } finally {
@@ -2367,7 +2157,9 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
         h ^= h << 13; // Rehash
         h ^= h >>> 17;
         h ^= h << 5;
-      } else if (cellsBusy == 0 && counterCells == as && U.compareAndSwapInt(this, CELLSBUSY, 0, 1)) {
+      } else if (cellsBusy == 0
+          && counterCells == as
+          && U.compareAndSwapInt(this, CELLSBUSY, 0, 1)) {
         boolean init = false;
         try { // Initialize table
           if (counterCells == as) {
@@ -2379,8 +2171,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
         } finally {
           cellsBusy = 0;
         }
-        if (init)
-          break;
+        if (init) break;
       } else if (U.compareAndSwapLong(this, BASECOUNT, v = baseCount, v + x))
         break; // Fall back on using base
     }
@@ -2412,8 +2203,7 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
       Class<?> ak = Node[].class;
       ABASE = U.arrayBaseOffset(ak);
       int scale = U.arrayIndexScale(ak);
-      if ((scale & (scale - 1)) != 0)
-        throw new Error("data type scale not a power of two");
+      if ((scale & (scale - 1)) != 0) throw new Error("data type scale not a power of two");
       ASHIFT = 31 - Integer.numberOfLeadingZeros(scale);
     } catch (Exception e) {
       throw new Error(e);
@@ -2423,5 +2213,4 @@ public class CompactConcurrentHashSet2<V> extends AbstractSet<V> implements Set<
     // LockSupport.park: https://bugs.openjdk.java.net/browse/JDK-8074773
     Class<?> ensureLoaded = LockSupport.class;
   }
-
 }

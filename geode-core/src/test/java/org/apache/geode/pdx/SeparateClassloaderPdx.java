@@ -36,6 +36,5 @@ class SeparateClassloaderPdx implements PdxSerializable {
     }
   }
 
-  public void fromData(PdxReader in) {
-  }
+  public void fromData(PdxReader in) {}
 }

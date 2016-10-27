@@ -79,8 +79,8 @@ public class CompactRangeIndexJUnitTest {
   }
 
   /**
-   * Tests adding entries to compact range index where the key is null
-   * fixes bug 47151 where null keyed entries would be removed after being added
+   * Tests adding entries to compact range index where the key is null fixes bug 47151 where null
+   * keyed entries would be removed after being added
    */
   @Test
   public void testNullKeyCompactRangeIndex() throws Exception {
@@ -96,13 +96,14 @@ public class CompactRangeIndexJUnitTest {
     }
     //execute query and check result size
     QueryService qs = utils.getCache().getQueryService();
-    SelectResults results = (SelectResults) qs.newQuery("Select * from /exampleRegion r where r.status = null").execute();
+    SelectResults results =
+        (SelectResults)
+            qs.newQuery("Select * from /exampleRegion r where r.status = null").execute();
     assertEquals("Null matched Results expected", numObjects, results.size());
   }
 
   /**
-   * Tests adding entries to compact range index where the the key
-   * of an indexed map field is null.
+   * Tests adding entries to compact range index where the the key of an indexed map field is null.
    */
   @Test
   public void testNullMapKeyCompactRangeIndex() throws Exception {
@@ -119,13 +120,15 @@ public class CompactRangeIndexJUnitTest {
     }
     //execute query and check result size
     QueryService qs = utils.getCache().getQueryService();
-    SelectResults results = (SelectResults) qs.newQuery("Select * from /exampleRegion r where r.position[null] = something").execute();
+    SelectResults results =
+        (SelectResults)
+            qs.newQuery("Select * from /exampleRegion r where r.position[null] = something")
+                .execute();
     assertEquals("Null matched Results expected", numObjects, results.size());
   }
 
   /**
-   * Tests adding entries to compact range index where the the key
-   * of an indexed map field is null.
+   * Tests adding entries to compact range index where the the key of an indexed map field is null.
    */
   @Test
   public void testNullMapKeyCompactRangeIndexCreateIndexLater() throws Exception {
@@ -142,14 +145,17 @@ public class CompactRangeIndexJUnitTest {
     index = utils.createIndex("indexName", "positions[*]", "/exampleRegion");
     //execute query and check result size
     QueryService qs = utils.getCache().getQueryService();
-    SelectResults results = (SelectResults) qs.newQuery("Select * from /exampleRegion r where r.position[null] = something").execute();
+    SelectResults results =
+        (SelectResults)
+            qs.newQuery("Select * from /exampleRegion r where r.position[null] = something")
+                .execute();
     assertEquals("Null matched Results expected", numObjects, results.size());
   }
 
   /**
-   * Tests race condition where we possibly were missing remove calls due to transitioning
-   * to an empty index elem before adding the entries
-   * the fix is to add the entries to the elem and then transition to that elem
+   * Tests race condition where we possibly were missing remove calls due to transitioning to an
+   * empty index elem before adding the entries the fix is to add the entries to the elem and then
+   * transition to that elem
    */
   @Test
   public void testCompactRangeIndexMemoryIndexStoreMaintenance() throws Exception {
@@ -165,29 +171,36 @@ public class CompactRangeIndexJUnitTest {
       DefaultQuery.testHook = new MemoryIndexStoreREToIndexElemTestHook();
       final CountDownLatch threadsDone = new CountDownLatch(2);
 
-      Thread t1 = new Thread(new Runnable() {
-        public void run() {
-          r.put("1", p1);
-          threadsDone.countDown();
-        }
-      });
+      Thread t1 =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  r.put("1", p1);
+                  threadsDone.countDown();
+                }
+              });
       t1.start();
 
-      Thread t0 = new Thread(new Runnable() {
-        public void run() {
-          r.remove("0");
-          threadsDone.countDown();
-
-        }
-      });
+      Thread t0 =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  r.remove("0");
+                  threadsDone.countDown();
+                }
+              });
       t0.start();
       threadsDone.await(90, TimeUnit.SECONDS);
       QueryService qs = utils.getCache().getQueryService();
-      SelectResults results = (SelectResults) qs.newQuery("Select * from /exampleRegion r where r.status='active'").execute();
+      SelectResults results =
+          (SelectResults)
+              qs.newQuery("Select * from /exampleRegion r where r.status='active'").execute();
       //the remove should have happened
       assertEquals(1, results.size());
 
-      results = (SelectResults) qs.newQuery("Select * from /exampleRegion r where r.status!='inactive'").execute();
+      results =
+          (SelectResults)
+              qs.newQuery("Select * from /exampleRegion r where r.status!='inactive'").execute();
       assertEquals(1, results.size());
 
       CompactRangeIndex cindex = (CompactRangeIndex) index;
@@ -205,12 +218,13 @@ public class CompactRangeIndexJUnitTest {
   }
 
   /**
-   * Tests race condition when we are transitioning index collection from elem array to concurrent hash set
-   * The other thread could remove from the empty concurrent hash set.
-   * Instead we now set a token, do all the puts into a collection and then unsets the token to the new collection
+   * Tests race condition when we are transitioning index collection from elem array to concurrent
+   * hash set The other thread could remove from the empty concurrent hash set. Instead we now set a
+   * token, do all the puts into a collection and then unsets the token to the new collection
    */
   @Test
-  public void testMemoryIndexStoreMaintenanceTransitionFromElemArrayToTokenToConcurrentHashSet() throws Exception {
+  public void testMemoryIndexStoreMaintenanceTransitionFromElemArrayToTokenToConcurrentHashSet()
+      throws Exception {
     try {
       index = utils.createIndex("compact range index", "p.status", "/exampleRegion p");
       final Region r = utils.getCache().getRegion("/exampleRegion");
@@ -229,30 +243,37 @@ public class CompactRangeIndexJUnitTest {
       //now we set the test hook.  That way previous calls would not affect the test hooks
       DefaultQuery.testHook = new MemoryIndexStoreIndexElemToTokenToConcurrentHashSetTestHook();
       final CountDownLatch threadsDone = new CountDownLatch(2);
-      Thread t2 = new Thread(new Runnable() {
-        public void run() {
-          r.put("2", p2);
-          threadsDone.countDown();
-
-        }
-      });
+      Thread t2 =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  r.put("2", p2);
+                  threadsDone.countDown();
+                }
+              });
       t2.start();
 
-      Thread t0 = new Thread(new Runnable() {
-        public void run() {
-          r.remove("0");
-          threadsDone.countDown();
-        }
-      });
+      Thread t0 =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  r.remove("0");
+                  threadsDone.countDown();
+                }
+              });
       t0.start();
 
       threadsDone.await(90, TimeUnit.SECONDS);
       QueryService qs = utils.getCache().getQueryService();
-      SelectResults results = (SelectResults) qs.newQuery("Select * from /exampleRegion r where r.status='active'").execute();
+      SelectResults results =
+          (SelectResults)
+              qs.newQuery("Select * from /exampleRegion r where r.status='active'").execute();
       //the remove should have happened
       assertEquals(3, results.size());
 
-      results = (SelectResults) qs.newQuery("Select * from /exampleRegion r where r.status!='inactive'").execute();
+      results =
+          (SelectResults)
+              qs.newQuery("Select * from /exampleRegion r where r.status!='inactive'").execute();
       assertEquals(3, results.size());
 
       CompactRangeIndex cindex = (CompactRangeIndex) index;
@@ -277,11 +298,15 @@ public class CompactRangeIndexJUnitTest {
     r.invalidate("0");
     index = utils.createIndex("compact range index", "p.status", "/exampleRegion p");
     QueryService qs = utils.getCache().getQueryService();
-    SelectResults results = (SelectResults) qs.newQuery("Select * from /exampleRegion r where r.status='active'").execute();
+    SelectResults results =
+        (SelectResults)
+            qs.newQuery("Select * from /exampleRegion r where r.status='active'").execute();
     //the remove should have happened
     assertEquals(0, results.size());
 
-    results = (SelectResults) qs.newQuery("Select * from /exampleRegion r where r.status!='inactive'").execute();
+    results =
+        (SelectResults)
+            qs.newQuery("Select * from /exampleRegion r where r.status!='inactive'").execute();
     assertEquals(0, results.size());
 
     CompactRangeIndex cindex = (CompactRangeIndex) index;
@@ -296,7 +321,8 @@ public class CompactRangeIndexJUnitTest {
   }
 
   @Test
-  public void testUpdateInProgressWithMethodInvocationInIndexClauseShouldNotThrowException() throws Exception {
+  public void testUpdateInProgressWithMethodInvocationInIndexClauseShouldNotThrowException()
+      throws Exception {
     try {
       CompactRangeIndex.TEST_ALWAYS_UPDATE_IN_PROGRESS = true;
       index = utils.createIndex("indexName", "getP1().getSharesOutstanding()", "/exampleRegion");
@@ -311,7 +337,11 @@ public class CompactRangeIndexJUnitTest {
       }
       // execute query and check result size
       QueryService qs = utils.getCache().getQueryService();
-      SelectResults results = (SelectResults) qs.newQuery("<trace>SELECT DISTINCT e.key FROM /exampleRegion AS e WHERE e.ID = 1 AND e.getP1().getSharesOutstanding() >= -1 AND e.getP1().getSharesOutstanding() <= 1000 LIMIT 10 ").execute();
+      SelectResults results =
+          (SelectResults)
+              qs.newQuery(
+                      "<trace>SELECT DISTINCT e.key FROM /exampleRegion AS e WHERE e.ID = 1 AND e.getP1().getSharesOutstanding() >= -1 AND e.getP1().getSharesOutstanding() <= 1000 LIMIT 10 ")
+                  .execute();
     } finally {
       CompactRangeIndex.TEST_ALWAYS_UPDATE_IN_PROGRESS = false;
     }
@@ -329,9 +359,7 @@ public class CompactRangeIndexJUnitTest {
       readyToStartRemoveLatch = new CountDownLatch(1);
     }
 
-    public void doTestHook(int spot) {
-
-    }
+    public void doTestHook(int spot) {}
 
     public void doTestHook(String description) {
       try {
@@ -347,7 +375,8 @@ public class CompactRangeIndexJUnitTest {
         } else if (description.equals("BEGIN_REMOVE_FROM_ELEM_ARRAY")) {
           waitForRemoveLatch.countDown();
           if (waitForTransitioned.await(21, TimeUnit.SECONDS)) {
-            throw new AssertionError("Time ran out waiting for transition from region entry to elem array");
+            throw new AssertionError(
+                "Time ran out waiting for transition from region entry to elem array");
           }
         } else if (description.equals("TRANSITIONED_FROM_REGION_ENTRY_TO_ELEMARRAY")) {
           waitForTransitioned.countDown();
@@ -360,10 +389,9 @@ public class CompactRangeIndexJUnitTest {
   }
 
   /**
-   * Test hook that waits for another thread to begin removing
-   * The current thread should then continue to set the token
-   * then continue and convert to chs while holding the lock to the elem array still
-   * After the conversion of chs, the lock is released and then remove can proceed
+   * Test hook that waits for another thread to begin removing The current thread should then
+   * continue to set the token then continue and convert to chs while holding the lock to the elem
+   * array still After the conversion of chs, the lock is released and then remove can proceed
    */
   private class MemoryIndexStoreIndexElemToTokenToConcurrentHashSetTestHook implements TestHook {
 
@@ -380,8 +408,7 @@ public class CompactRangeIndexJUnitTest {
     }
 
     @Override
-    public void doTestHook(int spot) {
-    }
+    public void doTestHook(int spot) {}
 
     @Override
     public void doTestHook(String description) {
@@ -398,7 +425,8 @@ public class CompactRangeIndexJUnitTest {
         } else if (description.equals("BEGIN_REMOVE_FROM_ELEM_ARRAY")) {
           waitForRemoveLatch.countDown();
           if (!waitForTransitioned.await(21, TimeUnit.SECONDS)) {
-            throw new AssertionError("Time ran out waiting for transition from elem array to token");
+            throw new AssertionError(
+                "Time ran out waiting for transition from elem array to token");
           }
         } else if (description.equals("TRANSITIONED_FROM_ELEMARRAY_TO_TOKEN")) {
           waitForTransitioned.countDown();
@@ -424,7 +452,7 @@ public class CompactRangeIndexJUnitTest {
   }
 
   public void executeQueryWithCount() throws Exception {
-    String[] queries = { "520" };
+    String[] queries = {"520"};
     for (Object result : utils.executeQueries(queries)) {
       if (result instanceof Collection) {
         for (Object e : (Collection) result) {
@@ -438,7 +466,11 @@ public class CompactRangeIndexJUnitTest {
 
   private void isUsingIndexElemArray(String key) {
     if (index instanceof CompactRangeIndex) {
-      assertEquals("Expected IndexElemArray but instanceForKey is " + getValuesFromMap(key).getClass().getName(), getValuesFromMap(key) instanceof IndexElemArray, true);
+      assertEquals(
+          "Expected IndexElemArray but instanceForKey is "
+              + getValuesFromMap(key).getClass().getName(),
+          getValuesFromMap(key) instanceof IndexElemArray,
+          true);
     } else {
       fail("Should have used CompactRangeIndex");
     }
@@ -446,7 +478,11 @@ public class CompactRangeIndexJUnitTest {
 
   private void isUsingConcurrentHashSet(String key) {
     if (index instanceof CompactRangeIndex) {
-      assertEquals("Expected concurrent hash set but instanceForKey is " + getValuesFromMap(key).getClass().getName(), getValuesFromMap(key) instanceof IndexConcurrentHashSet, true);
+      assertEquals(
+          "Expected concurrent hash set but instanceForKey is "
+              + getValuesFromMap(key).getClass().getName(),
+          getValuesFromMap(key) instanceof IndexConcurrentHashSet,
+          true);
     } else {
       fail("Should have used CompactRangeIndex");
     }
@@ -475,7 +511,7 @@ public class CompactRangeIndexJUnitTest {
   }
 
   private int executeSimpleQuery(int expResults) throws Exception {
-    String[] queries = { "519" }; //SELECT * FROM /exampleRegion WHERE \"type\" = 'type1'
+    String[] queries = {"519"}; //SELECT * FROM /exampleRegion WHERE \"type\" = 'type1'
     int results = 0;
     for (Object result : utils.executeQueries(queries)) {
       if (result instanceof SelectResults) {
@@ -493,7 +529,7 @@ public class CompactRangeIndexJUnitTest {
   }
 
   private int executeRangeQueryWithDistinct(int expResults) throws Exception {
-    String[] queries = { "181" };
+    String[] queries = {"181"};
     int results = 0;
     for (Object result : utils.executeQueries(queries)) {
       if (result instanceof SelectResults) {
@@ -514,7 +550,7 @@ public class CompactRangeIndexJUnitTest {
   }
 
   private int executeRangeQueryWithoutDistinct(int expResults) {
-    String[] queries = { "181" };
+    String[] queries = {"181"};
     int results = 0;
     for (Object result : utils.executeQueriesWithoutDistinct(queries)) {
       if (result instanceof SelectResults) {
@@ -537,5 +573,4 @@ public class CompactRangeIndexJUnitTest {
   public void tearDown() throws Exception {
     utils.closeCache();
   }
-
 }

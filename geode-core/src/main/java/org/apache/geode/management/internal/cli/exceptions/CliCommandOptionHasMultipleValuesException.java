@@ -24,11 +24,16 @@ public class CliCommandOptionHasMultipleValuesException extends CliCommandOption
 
   private static final long serialVersionUID = -5277268341319591711L;
 
-  public CliCommandOptionHasMultipleValuesException(final CommandTarget commandTarget, final Option option, final String value) {
+  public CliCommandOptionHasMultipleValuesException(
+      final CommandTarget commandTarget, final Option option, final String value) {
     this(commandTarget, option, null, value, null);
   }
 
-  public CliCommandOptionHasMultipleValuesException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet, final String value) {
+  public CliCommandOptionHasMultipleValuesException(
+      final CommandTarget commandTarget,
+      final Option option,
+      final OptionSet optionSet,
+      final String value) {
     this(commandTarget, option, optionSet, value, null);
   }
 
@@ -40,7 +45,12 @@ public class CliCommandOptionHasMultipleValuesException extends CliCommandOption
     this(null, option, null, null, cause);
   }
 
-  public CliCommandOptionHasMultipleValuesException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet, final String value, final Throwable cause) {
+  public CliCommandOptionHasMultipleValuesException(
+      final CommandTarget commandTarget,
+      final Option option,
+      final OptionSet optionSet,
+      final String value,
+      final Throwable cause) {
     super(commandTarget, option, optionSet, value, cause);
   }
 }

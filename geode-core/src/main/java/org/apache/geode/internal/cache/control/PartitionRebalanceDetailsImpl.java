@@ -25,14 +25,12 @@ import org.apache.geode.cache.partition.PartitionRebalanceInfo;
 import org.apache.geode.internal.cache.PartitionedRegion;
 
 /**
- * Holds the rebalancing details for a single partitioned
- * region.
- * 
- * Serializable form is used to allow JMX 
- * MBeans to use this as a remotable return type.
- * 
+ * Holds the rebalancing details for a single partitioned region.
+ *
+ * <p>Serializable form is used to allow JMX MBeans to use this as a remotable return type.
  */
-public class PartitionRebalanceDetailsImpl implements PartitionRebalanceInfo, Serializable, Comparable<PartitionRebalanceDetailsImpl> {
+public class PartitionRebalanceDetailsImpl
+    implements PartitionRebalanceInfo, Serializable, Comparable<PartitionRebalanceDetailsImpl> {
   private static final long serialVersionUID = 5880667005758250156L;
   private long bucketCreateBytes;
   private long bucketCreateTime;
@@ -47,7 +45,7 @@ public class PartitionRebalanceDetailsImpl implements PartitionRebalanceInfo, Se
   private Set<PartitionMemberInfo> partitionMemberDetailsBefore;
   private long primaryTransferTime;
   private int primaryTransfersCompleted;
-  transient private final PartitionedRegion region;
+  private final transient PartitionedRegion region;
   private long time;
 
   public PartitionRebalanceDetailsImpl(PartitionedRegion region) {
@@ -64,7 +62,6 @@ public class PartitionRebalanceDetailsImpl implements PartitionRebalanceInfo, Se
     bucketRemoveBytes += bytes;
     bucketRemoveTime += time;
     bucketRemovesCompleted++;
-
   }
 
   public synchronized void incTransfers(long bytes, long time) {

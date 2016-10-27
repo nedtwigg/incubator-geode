@@ -144,7 +144,6 @@ public class StringsJunitTest {
       ex = e;
     }
     assertNotNull(ex);
-
   }
 
   @Test
@@ -224,8 +223,7 @@ public class StringsJunitTest {
   @Test
   public void testMSetNX() {
     Set<String> strings = new HashSet<String>();
-    for (int i = 0; i < 2 * 5; i++)
-      strings.add(randString());
+    for (int i = 0; i < 2 * 5; i++) strings.add(randString());
     String[] array = strings.toArray(new String[0]);
     long response = jedis.msetnx(array);
 
@@ -258,8 +256,7 @@ public class StringsJunitTest {
   public void testPAndSetex() {
     Random r = new Random();
     int setex = r.nextInt(5);
-    if (setex == 0)
-      setex = 1;
+    if (setex == 0) setex = 1;
     String key = randString();
     jedis.setex(key, setex, randString());
     try {
@@ -272,8 +269,7 @@ public class StringsJunitTest {
     assertNull(result);
 
     int psetex = r.nextInt(5000);
-    if (psetex == 0)
-      psetex = 1;
+    if (psetex == 0) psetex = 1;
     key = randString();
     jedis.psetex(key, psetex, randString());
     long start = System.currentTimeMillis();

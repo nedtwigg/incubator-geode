@@ -30,12 +30,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-/**
- * Various uitlity methods for open type conversion
- * 
- * 
- */
-
+/** Various uitlity methods for open type conversion */
 public class OpenTypeUtil {
 
   static <K, V> Map<K, V> newMap() {
@@ -43,7 +38,7 @@ public class OpenTypeUtil {
   }
 
   static <K, V> Map<K, V> newSynchronizedMap() {
-    return Collections.synchronizedMap(OpenTypeUtil.<K, V> newMap());
+    return Collections.synchronizedMap(OpenTypeUtil.<K, V>newMap());
   }
 
   static <K, V> IdentityHashMap<K, V> newIdentityHashMap() {
@@ -89,11 +84,9 @@ public class OpenTypeUtil {
   }
 
   /**
-   * Utility method to take a string and convert it to normal Java variable name
-   * capitalization.
-   * 
-   * @param name
-   *          The string to be made in camel case.
+   * Utility method to take a string and convert it to normal Java variable name capitalization.
+   *
+   * @param name The string to be made in camel case.
    * @return The camel case version of the string.
    */
   public static String decapitalize(String name) {
@@ -101,14 +94,12 @@ public class OpenTypeUtil {
       return name;
     }
     int offset1 = Character.offsetByCodePoints(name, 0, 1);
-    if (offset1 < name.length() && Character.isUpperCase(name.codePointAt(offset1)))
-      return name;
+    if (offset1 < name.length() && Character.isUpperCase(name.codePointAt(offset1))) return name;
     return name.substring(0, offset1).toLowerCase() + name.substring(offset1);
   }
 
   protected static String capitalize(String name) {
-    if (name == null || name.length() == 0)
-      return name;
+    if (name == null || name.length() == 0) return name;
     int offset1 = name.offsetByCodePoints(0, 1);
     return name.substring(0, offset1).toUpperCase() + name.substring(offset1);
   }

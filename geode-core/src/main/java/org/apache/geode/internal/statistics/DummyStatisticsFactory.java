@@ -21,16 +21,14 @@ import org.apache.geode.*;
 
 import java.io.*;
 
-/**
- * A StatisticsFactory that creates disconnected statistics
- */
+/** A StatisticsFactory that creates disconnected statistics */
 public class DummyStatisticsFactory implements StatisticsFactory {
 
-  private final static StatisticsTypeFactoryImpl tf = (StatisticsTypeFactoryImpl) StatisticsTypeFactoryImpl.singleton();
+  private static final StatisticsTypeFactoryImpl tf =
+      (StatisticsTypeFactoryImpl) StatisticsTypeFactoryImpl.singleton();
 
   /** Creates a new instance of DummyStatisticsFactory */
-  public DummyStatisticsFactory() {
-  }
+  public DummyStatisticsFactory() {}
 
   // StatisticsFactory methods
   public Statistics createStatistics(StatisticsType type) {
@@ -52,7 +50,7 @@ public class DummyStatisticsFactory implements StatisticsFactory {
   //      statsListModCount++;
   //    }
   //  }
-  //  
+  //
   public Statistics createAtomicStatistics(StatisticsType type) {
     return createAtomicStatistics(type, null, 1);
   }
@@ -114,28 +112,33 @@ public class DummyStatisticsFactory implements StatisticsFactory {
     return tf.createDoubleGauge(name, description, units);
   }
 
-  public StatisticDescriptor createIntCounter(String name, String description, String units, boolean largerBetter) {
+  public StatisticDescriptor createIntCounter(
+      String name, String description, String units, boolean largerBetter) {
     return tf.createIntCounter(name, description, units, largerBetter);
   }
 
-  public StatisticDescriptor createLongCounter(String name, String description, String units, boolean largerBetter) {
+  public StatisticDescriptor createLongCounter(
+      String name, String description, String units, boolean largerBetter) {
     return tf.createLongCounter(name, description, units, largerBetter);
   }
 
-  public StatisticDescriptor createDoubleCounter(String name, String description, String units, boolean largerBetter) {
+  public StatisticDescriptor createDoubleCounter(
+      String name, String description, String units, boolean largerBetter) {
     return tf.createDoubleCounter(name, description, units, largerBetter);
   }
 
-  public StatisticDescriptor createIntGauge(String name, String description, String units, boolean largerBetter) {
+  public StatisticDescriptor createIntGauge(
+      String name, String description, String units, boolean largerBetter) {
     return tf.createIntGauge(name, description, units, largerBetter);
   }
 
-  public StatisticDescriptor createLongGauge(String name, String description, String units, boolean largerBetter) {
+  public StatisticDescriptor createLongGauge(
+      String name, String description, String units, boolean largerBetter) {
     return tf.createLongGauge(name, description, units, largerBetter);
   }
 
-  public StatisticDescriptor createDoubleGauge(String name, String description, String units, boolean largerBetter) {
+  public StatisticDescriptor createDoubleGauge(
+      String name, String description, String units, boolean largerBetter) {
     return tf.createDoubleGauge(name, description, units, largerBetter);
   }
-
 }

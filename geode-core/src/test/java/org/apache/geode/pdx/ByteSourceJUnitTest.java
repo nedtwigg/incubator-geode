@@ -40,9 +40,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 @Category(UnitTest.class)
 public class ByteSourceJUnitTest {
 
-  /**
-   * Override as needed in subclass.
-   */
+  /** Override as needed in subclass. */
   protected ByteSource createByteSource(byte[] bytes) {
     return ByteSourceFactory.wrap(bytes);
   }
@@ -51,9 +49,9 @@ public class ByteSourceJUnitTest {
   public void testHashCode() {
     ByteSource bs = createByteSource(new byte[] {});
     bs.hashCode();
-    bs = createByteSource(new byte[] { 1, 2, 3, 4, 5 });
+    bs = createByteSource(new byte[] {1, 2, 3, 4, 5});
     int hc1 = bs.hashCode();
-    bs = createByteSource(new byte[] { 1, 2, 3, 4, 5 });
+    bs = createByteSource(new byte[] {1, 2, 3, 4, 5});
     int hc2 = bs.hashCode();
     assertEquals(hc1, hc2);
   }
@@ -61,14 +59,20 @@ public class ByteSourceJUnitTest {
   @Test
   public void testEqualsObject() {
     assertEquals(createByteSource(new byte[] {}), createByteSource(new byte[] {}));
-    assertEquals(createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }), createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }));
-    assertNotEquals(createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }), createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1 }));
-    assertNotEquals(createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }), createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 9 }));
+    assertEquals(
+        createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}),
+        createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}));
+    assertNotEquals(
+        createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}),
+        createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1}));
+    assertNotEquals(
+        createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}),
+        createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 9}));
   }
 
   @Test
   public void testDuplicate() {
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     ByteSource dup = bs.duplicate();
     assertEquals(bs, dup);
     dup.position(1);
@@ -83,7 +87,7 @@ public class ByteSourceJUnitTest {
       byte[] bsBytes = bs.array();
       byte[] dupBytes = dup.array();
       assertEquals(bsBytes, dupBytes);
-      assertNotEquals(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }, dupBytes);
+      assertNotEquals(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, dupBytes);
     }
     bs.position(1);
     bs.limit(2);
@@ -96,7 +100,7 @@ public class ByteSourceJUnitTest {
   @Test
   public void testPosition() {
     assertEquals(0, createByteSource(new byte[] {}).position());
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     assertEquals(0, bs.position());
     try {
       bs.position(-1);
@@ -123,7 +127,7 @@ public class ByteSourceJUnitTest {
   @Test
   public void testLimit() {
     assertEquals(0, createByteSource(new byte[] {}).limit());
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     assertEquals(10, bs.limit());
     try {
       bs.limit(11);
@@ -142,7 +146,7 @@ public class ByteSourceJUnitTest {
 
   @Test
   public void testCapacity() {
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     assertEquals(10, bs.capacity());
     bs = createByteSource(new byte[] {});
     assertEquals(0, bs.capacity());
@@ -151,7 +155,7 @@ public class ByteSourceJUnitTest {
   @Test
   public void testRemaining() {
     assertEquals(0, createByteSource(new byte[] {}).remaining());
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     assertEquals(10, bs.remaining());
     bs.position(1);
     assertEquals(9, bs.remaining());
@@ -165,7 +169,7 @@ public class ByteSourceJUnitTest {
 
   @Test
   public void testGet() {
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     byte b = bs.get();
     assertEquals(1, b);
     assertEquals(1, bs.position());
@@ -185,7 +189,7 @@ public class ByteSourceJUnitTest {
 
   @Test
   public void testGetInt() {
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     bs.position(4);
     byte b = bs.get(0);
     assertEquals(1, b);
@@ -204,10 +208,10 @@ public class ByteSourceJUnitTest {
 
   @Test
   public void testGetByteArray() {
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     byte[] bytes = new byte[2];
     bs.get(bytes);
-    assertArrayEquals(new byte[] { 1, 2 }, bytes);
+    assertArrayEquals(new byte[] {1, 2}, bytes);
     assertEquals(2, bs.position());
 
     bytes = new byte[0];
@@ -216,7 +220,7 @@ public class ByteSourceJUnitTest {
 
     bytes = new byte[3];
     bs.get(bytes);
-    assertArrayEquals(new byte[] { 3, 4, 5 }, bytes);
+    assertArrayEquals(new byte[] {3, 4, 5}, bytes);
     assertEquals(5, bs.position());
 
     try {
@@ -228,7 +232,7 @@ public class ByteSourceJUnitTest {
 
     bytes = new byte[5];
     bs.get(bytes);
-    assertArrayEquals(new byte[] { 6, 7, 8, 9, 0 }, bytes);
+    assertArrayEquals(new byte[] {6, 7, 8, 9, 0}, bytes);
     assertEquals(10, bs.position());
 
     bytes = new byte[0];
@@ -245,7 +249,7 @@ public class ByteSourceJUnitTest {
 
   @Test
   public void testGetByteArrayIntInt() {
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     byte[] bytes = new byte[10];
     bs.get(bytes, 0, 2);
     assertEquals(2, bs.position());
@@ -268,7 +272,7 @@ public class ByteSourceJUnitTest {
     bs.get(bytes, 10, 0);
     assertEquals(10, bs.position());
 
-    assertArrayEquals(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }, bytes);
+    assertArrayEquals(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}, bytes);
 
     try {
       bs.get(bytes, 9, 1);
@@ -620,22 +624,20 @@ public class ByteSourceJUnitTest {
     }
   }
 
-  /**
-   * Override as needed in subclass.
-   */
+  /** Override as needed in subclass. */
   protected boolean isTestOffHeap() {
     return false;
   }
 
   @Test
   public void testHasArray() {
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     assertEquals(!isTestOffHeap(), bs.hasArray());
   }
 
   @Test
   public void testArray() {
-    byte[] bytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+    byte[] bytes = new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
     ByteSource bs = createByteSource(bytes);
     if (bs.hasArray()) {
       assertEquals(bytes, bs.array());
@@ -654,7 +656,7 @@ public class ByteSourceJUnitTest {
 
   @Test
   public void testArrayOffset() {
-    byte[] bytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+    byte[] bytes = new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
     ByteSource bs = createByteSource(bytes);
     if (bs.hasArray()) {
       assertEquals(0, bs.arrayOffset());
@@ -673,7 +675,7 @@ public class ByteSourceJUnitTest {
 
   @Test
   public void testSliceInt() {
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     bs.position(1);
     try {
       bs.slice(10);
@@ -687,7 +689,7 @@ public class ByteSourceJUnitTest {
     }
     assertEquals(0, bs.slice(0).remaining());
     ByteSource slice = bs.slice(2);
-    assertEquals(createByteSource(new byte[] { 2, 3 }), slice);
+    assertEquals(createByteSource(new byte[] {2, 3}), slice);
     assertEquals(0, slice.position());
     assertEquals(2, slice.limit());
     slice.position(1);
@@ -698,7 +700,7 @@ public class ByteSourceJUnitTest {
 
   @Test
   public void testSliceIntInt() {
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     try {
       bs.slice(-1, 9);
       fail("expected IllegalArgumentException");
@@ -711,18 +713,18 @@ public class ByteSourceJUnitTest {
     }
     assertEquals(bs, bs.slice(0, 10));
     ByteSource slice = bs.slice(1, 9);
-    assertEquals(createByteSource(new byte[] { 2, 3, 4, 5, 6, 7, 8, 9 }), slice);
+    assertEquals(createByteSource(new byte[] {2, 3, 4, 5, 6, 7, 8, 9}), slice);
   }
 
   @Test
   public void testSendToByteBuffer() {
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     ByteBuffer bb = ByteBuffer.allocate(10);
     bs.sendTo(bb);
     assertEquals(0, bs.remaining());
     assertEquals(10, bb.position());
     bb.position(0);
-    assertEquals(ByteBuffer.wrap(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }), bb);
+    assertEquals(ByteBuffer.wrap(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}), bb);
 
     bs.position(1);
     bs.limit(9);
@@ -732,18 +734,18 @@ public class ByteSourceJUnitTest {
     assertEquals(0, bs.remaining());
     assertEquals(8, bb.position());
     bb.position(0);
-    assertEquals(ByteBuffer.wrap(new byte[] { 2, 3, 4, 5, 6, 7, 8, 9 }), bb);
+    assertEquals(ByteBuffer.wrap(new byte[] {2, 3, 4, 5, 6, 7, 8, 9}), bb);
   }
 
   @Test
   public void testSendToDataOutput() throws IOException {
     HeapDataOutputStream hdos = new HeapDataOutputStream((Version) null);
-    ByteSource bs = createByteSource(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 });
+    ByteSource bs = createByteSource(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     bs.sendTo(hdos);
     assertEquals(0, bs.remaining());
     ByteBuffer bb = hdos.toByteBuffer();
     assertEquals(10, bb.limit());
-    assertEquals(ByteBuffer.wrap(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }), bb);
+    assertEquals(ByteBuffer.wrap(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}), bb);
 
     bs.position(1);
     bs.limit(9);
@@ -752,7 +754,6 @@ public class ByteSourceJUnitTest {
     assertEquals(0, bs.remaining());
     bb = hdos.toByteBuffer();
     assertEquals(8, bb.limit());
-    assertEquals(ByteBuffer.wrap(new byte[] { 2, 3, 4, 5, 6, 7, 8, 9 }), bb);
+    assertEquals(ByteBuffer.wrap(new byte[] {2, 3, 4, 5, 6, 7, 8, 9}), bb);
   }
-
 }

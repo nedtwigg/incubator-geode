@@ -47,15 +47,20 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 
 @Category(IntegrationTest.class)
 public class CustomerOptimizationsJUnitTest {
-  public CustomerOptimizationsJUnitTest() {
-  }
+  public CustomerOptimizationsJUnitTest() {}
 
   @Test
   public void testProjectionEvaluationDuringIndexResults() throws QueryException {
     QueryService qs = CacheUtils.getQueryService();
-    String[] queries = new String[] { "select  p.status from /pos p where p.ID > 0 ", "select  p.status from /pos p, p.positions pos where p.ID > 0 ", "select  p.status from /pos p  where p.ID > 0 and p.createTime > 0", "select  p.status as sts, p as pos from /pos p  where p.ID > 0 and p.createTime > 0", "select  p.status as sts, p as pos from /pos p  where p.ID IN  SET( 0,1,2,3) and p.createTime > 0", "select  p.status as sts, p as pos from /pos p  where ( p.ID IN  SET( 0,1,2,3) and p.createTime > 0L) OR (p.ID IN  SET( 2,3) and p.createTime > 5L)"
-
-    };
+    String[] queries =
+        new String[] {
+          "select  p.status from /pos p where p.ID > 0 ",
+          "select  p.status from /pos p, p.positions pos where p.ID > 0 ",
+          "select  p.status from /pos p  where p.ID > 0 and p.createTime > 0",
+          "select  p.status as sts, p as pos from /pos p  where p.ID > 0 and p.createTime > 0",
+          "select  p.status as sts, p as pos from /pos p  where p.ID IN  SET( 0,1,2,3) and p.createTime > 0",
+          "select  p.status as sts, p as pos from /pos p  where ( p.ID IN  SET( 0,1,2,3) and p.createTime > 0L) OR (p.ID IN  SET( 2,3) and p.createTime > 5L)"
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -65,21 +70,48 @@ public class CustomerOptimizationsJUnitTest {
 
     qs.createIndex("PortFolioID", IndexType.FUNCTIONAL, "ID", "/pos");
 
-    ObjectType[] expectedTypes = new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(String.class), new ObjectTypeImpl(String.class), new StructTypeImpl(new String[] { "sts", "pos" }, new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class) }), new StructTypeImpl(new String[] { "sts", "pos" }, new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class) }), new StructTypeImpl(new String[] { "sts", "pos" }, new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class) }), new StructTypeImpl(new String[] { "sts", "pos" }, new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class) }) };
+    ObjectType[] expectedTypes =
+        new ObjectType[] {
+          new ObjectTypeImpl(String.class),
+          new ObjectTypeImpl(String.class),
+          new ObjectTypeImpl(String.class),
+          new StructTypeImpl(
+              new String[] {"sts", "pos"},
+              new ObjectType[] {
+                new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class)
+              }),
+          new StructTypeImpl(
+              new String[] {"sts", "pos"},
+              new ObjectType[] {
+                new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class)
+              }),
+          new StructTypeImpl(
+              new String[] {"sts", "pos"},
+              new ObjectType[] {
+                new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class)
+              }),
+          new StructTypeImpl(
+              new String[] {"sts", "pos"},
+              new ObjectType[] {
+                new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class)
+              })
+        };
 
-    final boolean[] expectedCallback = { false, true, false, false, false, true };
+    final boolean[] expectedCallback = {false, true, false, false, false, true};
     final boolean[] actualCallback = new boolean[queries.length];
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -95,7 +127,12 @@ public class CustomerOptimizationsJUnitTest {
   @Test
   public void testProjectionEvaluationDuringIndexResults_UNIMPLEMENTED() throws QueryException {
     QueryService qs = CacheUtils.getQueryService();
-    String[] queries = new String[] { "select  p.status from /pos p, p.positions pos where p.ID > 0 ", "select  p.status as sts, p as pos from /pos p  where ( p.ID IN  SET( 0,1,2,3) and p.createTime > 0L) OR (p.ID IN  SET( 2,3) and p.createTime > 5L)", "select  p.status as sts, p as pos from /pos p  where  p.ID IN  SET( 0,1,2,3) and p.createTime > 0L" };
+    String[] queries =
+        new String[] {
+          "select  p.status from /pos p, p.positions pos where p.ID > 0 ",
+          "select  p.status as sts, p as pos from /pos p  where ( p.ID IN  SET( 0,1,2,3) and p.createTime > 0L) OR (p.ID IN  SET( 2,3) and p.createTime > 5L)",
+          "select  p.status as sts, p as pos from /pos p  where  p.ID IN  SET( 0,1,2,3) and p.createTime > 0L"
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -106,21 +143,36 @@ public class CustomerOptimizationsJUnitTest {
     qs.createIndex("PortFolioID", IndexType.FUNCTIONAL, "ID", "/pos");
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
 
-    ObjectType[] expectedTypes = new ObjectType[] { new ObjectTypeImpl(String.class), new StructTypeImpl(new String[] { "sts", "pos" }, new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class) }), new StructTypeImpl(new String[] { "sts", "pos" }, new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class) }) };
+    ObjectType[] expectedTypes =
+        new ObjectType[] {
+          new ObjectTypeImpl(String.class),
+          new StructTypeImpl(
+              new String[] {"sts", "pos"},
+              new ObjectType[] {
+                new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class)
+              }),
+          new StructTypeImpl(
+              new String[] {"sts", "pos"},
+              new ObjectType[] {
+                new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class)
+              })
+        };
 
-    final boolean[] expectedCallback = { false, false, false };
+    final boolean[] expectedCallback = {false, false, false};
     final boolean[] actualCallback = new boolean[queries.length];
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -141,7 +193,11 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  p.status as sts, p as pos from /pos p  where  p.ID IN  SET( 0,1,2,3,4,5) ", "select  p.status as sts, p as pos from /pos p  where  p.ID IN  SET( 0,1,2,3,4,5,101,102,103,104,105) AND p.createTime > 9l" };
+    String[] queries =
+        new String[] {
+          "select  p.status as sts, p as pos from /pos p  where  p.ID IN  SET( 0,1,2,3,4,5) ",
+          "select  p.status as sts, p as pos from /pos p  where  p.ID IN  SET( 0,1,2,3,4,5,101,102,103,104,105) AND p.createTime > 9l"
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -150,42 +206,56 @@ public class CustomerOptimizationsJUnitTest {
     }
 
     qs.createIndex("PortFolioID", IndexType.FUNCTIONAL, "ID", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true, true };
-    final boolean[] actualIndexUsed = new boolean[] { false, false };
+    final boolean[] expectedIndexUsed = new boolean[] {true, true};
+    final boolean[] actualIndexUsed = new boolean[] {false, false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false, false };
-    final boolean[] actualProjectionCallback = new boolean[] { false, false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false, false};
+    final boolean[] actualProjectionCallback = new boolean[] {false, false};
 
-    final boolean[] expectedUnionCallback = { false, false };
+    final boolean[] expectedUnionCallback = {false, false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
 
-    final boolean[] expectedIntersectionCallback = { false, false };
+    final boolean[] expectedIntersectionCallback = {false, false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new StructTypeImpl(new String[] { "sts", "pos" }, new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class) }), new StructTypeImpl(new String[] { "sts", "pos" }, new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class) }) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes =
+        new ObjectType[] {
+          new StructTypeImpl(
+              new String[] {"sts", "pos"},
+              new ObjectType[] {
+                new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class)
+              }),
+          new StructTypeImpl(
+              new String[] {"sts", "pos"},
+              new ObjectType[] {
+                new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class)
+              })
+        };
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -209,9 +279,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  p.status as sts, p as pos from /pos p  where  p.ID IN  ( Select x.ID from /pos x where x.ID > 10) "
-
-    };
+    String[] queries =
+        new String[] {
+          "select  p.status as sts, p as pos from /pos p  where  p.ID IN  ( Select x.ID from /pos x where x.ID > 10) "
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -220,44 +291,51 @@ public class CustomerOptimizationsJUnitTest {
     }
 
     qs.createIndex("PortFolioID", IndexType.FUNCTIONAL, "ID", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true, true };
-    final boolean[] actualIndexUsed = new boolean[] { false, false };
+    final boolean[] expectedIndexUsed = new boolean[] {true, true};
+    final boolean[] actualIndexUsed = new boolean[] {false, false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false, false };
-    final boolean[] actualProjectionCallback = new boolean[] { false, false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false, false};
+    final boolean[] actualProjectionCallback = new boolean[] {false, false};
 
-    final boolean[] expectedUnionCallback = { false };
+    final boolean[] expectedUnionCallback = {false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new StructTypeImpl(new String[] { "sts", "pos" }, new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class) })
+    ObjectType[] expectedTypes =
+        new ObjectType[] {
+          new StructTypeImpl(
+              new String[] {"sts", "pos"},
+              new ObjectType[] {
+                new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class)
+              })
+        };
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-    };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
-
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -281,9 +359,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  p.status as sts, p as pos from /pos p  where  p.ID IN  SET( 0,1,2,3,4,5,101,102,103,104,105) AND p.createTime > 9l"
-
-    };
+    String[] queries =
+        new String[] {
+          "select  p.status as sts, p as pos from /pos p  where  p.ID IN  SET( 0,1,2,3,4,5,101,102,103,104,105) AND p.createTime > 9l"
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -293,42 +372,51 @@ public class CustomerOptimizationsJUnitTest {
 
     qs.createIndex("PortFolioID", IndexType.FUNCTIONAL, "ID", "/pos");
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {true};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { false };
+    final boolean[] expectedUnionCallback = {false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new StructTypeImpl(new String[] { "sts", "pos" }, new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class) }) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes =
+        new ObjectType[] {
+          new StructTypeImpl(
+              new String[] {"sts", "pos"},
+              new ObjectType[] {
+                new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class)
+              })
+        };
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -345,7 +433,8 @@ public class CustomerOptimizationsJUnitTest {
 
   @Ignore
   @Test
-  public void testProjectionEvaluationDuringIndexResultsWithComplexWhereClause_UNIMPLEMENTED_1() throws QueryException {
+  public void testProjectionEvaluationDuringIndexResultsWithComplexWhereClause_UNIMPLEMENTED_1()
+      throws QueryException {
     QueryService qs = CacheUtils.getQueryService();
     Region rgn = CacheUtils.getRegion("/pos");
     for (int i = 100; i < 200; ++i) {
@@ -353,9 +442,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  p.status as sts, p as pos from /pos p  where   (p.ID IN  SET( 0,1,2,3,4,5,101,102,103,104,105) AND p.createTime > 9l) OR (p.ID IN  SET( 20,30,110,120) AND p.createTime > 7l)"
-
-    };
+    String[] queries =
+        new String[] {
+          "select  p.status as sts, p as pos from /pos p  where   (p.ID IN  SET( 0,1,2,3,4,5,101,102,103,104,105) AND p.createTime > 9l) OR (p.ID IN  SET( 20,30,110,120) AND p.createTime > 7l)"
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -365,42 +455,51 @@ public class CustomerOptimizationsJUnitTest {
 
     qs.createIndex("PortFolioID", IndexType.FUNCTIONAL, "ID", "/pos");
     //qs.createIndex("CreateTime", IndexType.FUNCTIONAL,"createTime", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {true};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { true };
+    final boolean[] expectedUnionCallback = {true};
     final boolean[] actualUnionCallback = new boolean[queries.length];
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new StructTypeImpl(new String[] { "sts", "pos" }, new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class) }) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes =
+        new ObjectType[] {
+          new StructTypeImpl(
+              new String[] {"sts", "pos"},
+              new ObjectType[] {
+                new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class)
+              })
+        };
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -417,7 +516,8 @@ public class CustomerOptimizationsJUnitTest {
 
   @Ignore
   @Test
-  public void testProjectionEvaluationDuringIndexResultsWithComplexWhereClause_UNIMPLEMENTED_2() throws QueryException {
+  public void testProjectionEvaluationDuringIndexResultsWithComplexWhereClause_UNIMPLEMENTED_2()
+      throws QueryException {
     QueryService qs = CacheUtils.getQueryService();
     Region rgn = CacheUtils.getRegion("/pos");
     for (int i = 100; i < 200; ++i) {
@@ -425,9 +525,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  p.status as sts, p as pos from /pos p  where   (p.ID IN  SET( 0,1,2,3,4,5,101,102,103,104,105) AND p.createTime > 9l) OR (p.ID IN  SET( 20,30,110,120) AND p.createTime > 7l)"
-
-    };
+    String[] queries =
+        new String[] {
+          "select  p.status as sts, p as pos from /pos p  where   (p.ID IN  SET( 0,1,2,3,4,5,101,102,103,104,105) AND p.createTime > 9l) OR (p.ID IN  SET( 20,30,110,120) AND p.createTime > 7l)"
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -437,42 +538,51 @@ public class CustomerOptimizationsJUnitTest {
 
     qs.createIndex("PortFolioID", IndexType.FUNCTIONAL, "ID", "/pos");
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {true};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { true };
+    final boolean[] expectedUnionCallback = {true};
     final boolean[] actualUnionCallback = new boolean[queries.length];
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new StructTypeImpl(new String[] { "sts", "pos" }, new ObjectType[] { new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class) }) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes =
+        new ObjectType[] {
+          new StructTypeImpl(
+              new String[] {"sts", "pos"},
+              new ObjectType[] {
+                new ObjectTypeImpl(String.class), new ObjectTypeImpl(Portfolio.class)
+              })
+        };
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -496,9 +606,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  distinct p.status  from /pos p  where   p.ID IN  SET( 0) AND p.createTime IN SET( 4l ) AND  p.\"type\" IN SET( 'type0') AND p.status IN SET( 'active')"
-
-    };
+    String[] queries =
+        new String[] {
+          "select  distinct p.status  from /pos p  where   p.ID IN  SET( 0) AND p.createTime IN SET( 4l ) AND  p.\"type\" IN SET( 'type0') AND p.status IN SET( 'active')"
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -510,42 +621,44 @@ public class CustomerOptimizationsJUnitTest {
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
     qs.createIndex("Status", IndexType.FUNCTIONAL, "status", "/pos");
     qs.createIndex("Type", IndexType.FUNCTIONAL, "\"type\"", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {true};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { false };
+    final boolean[] expectedUnionCallback = {false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new ObjectTypeImpl(String.class) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes = new ObjectType[] {new ObjectTypeImpl(String.class)};
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -569,9 +682,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  distinct p.status  from /pos p  where  (p.createTime IN SET( 10l ) OR  p.status IN SET( 'active') )AND  p.ID >  0 "
-
-    };
+    String[] queries =
+        new String[] {
+          "select  distinct p.status  from /pos p  where  (p.createTime IN SET( 10l ) OR  p.status IN SET( 'active') )AND  p.ID >  0 "
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -583,43 +697,45 @@ public class CustomerOptimizationsJUnitTest {
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
     qs.createIndex("Status", IndexType.FUNCTIONAL, "status", "/pos");
     qs.createIndex("Type", IndexType.FUNCTIONAL, "\"type\"", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {true};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { true };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {true};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { false };
+    final boolean[] expectedUnionCallback = {false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
 
-    final boolean[] expectedIntersectionCallback = { true };
+    final boolean[] expectedIntersectionCallback = {true};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new ObjectTypeImpl(String.class) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes = new ObjectType[] {new ObjectTypeImpl(String.class)};
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-        indexUsed.add(index);
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+            indexUsed.add(index);
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -644,9 +760,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  distinct p.status  from /pos p  where  p.createTime > 0 AND p.createTime <11 AND  p.ID IN  SET( 0) "
-
-    };
+    String[] queries =
+        new String[] {
+          "select  distinct p.status  from /pos p  where  p.createTime > 0 AND p.createTime <11 AND  p.ID IN  SET( 0) "
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -658,44 +775,46 @@ public class CustomerOptimizationsJUnitTest {
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
     qs.createIndex("Status", IndexType.FUNCTIONAL, "status", "/pos");
     qs.createIndex("Type", IndexType.FUNCTIONAL, "\"type\"", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {true};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { false };
+    final boolean[] expectedUnionCallback = {false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
     final List indexesUsed = new ArrayList();
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new ObjectTypeImpl(String.class) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes = new ObjectType[] {new ObjectTypeImpl(String.class)};
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-        indexesUsed.add(index);
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+            indexesUsed.add(index);
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -720,9 +839,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  distinct p.status  from /pos p  where  p.ID = 11 AND   p.createTime IN  SET( 10L) "
-
-    };
+    String[] queries =
+        new String[] {
+          "select  distinct p.status  from /pos p  where  p.ID = 11 AND   p.createTime IN  SET( 10L) "
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -734,44 +854,46 @@ public class CustomerOptimizationsJUnitTest {
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
     qs.createIndex("Status", IndexType.FUNCTIONAL, "status", "/pos");
     qs.createIndex("Type", IndexType.FUNCTIONAL, "\"type\"", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {true};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { false };
+    final boolean[] expectedUnionCallback = {false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
     final List indexesUsed = new ArrayList();
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new ObjectTypeImpl(String.class) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes = new ObjectType[] {new ObjectTypeImpl(String.class)};
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-        indexesUsed.add(index);
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+            indexesUsed.add(index);
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -796,9 +918,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  distinct p.status  from /pos p  where  p.ID > 11 AND  p.ID < 20 AND  p.createTime <>9L "
-
-    };
+    String[] queries =
+        new String[] {
+          "select  distinct p.status  from /pos p  where  p.ID > 11 AND  p.ID < 20 AND  p.createTime <>9L "
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -810,49 +933,57 @@ public class CustomerOptimizationsJUnitTest {
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
     qs.createIndex("Status", IndexType.FUNCTIONAL, "status", "/pos");
     qs.createIndex("Type", IndexType.FUNCTIONAL, "\"type\"", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {true};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { true };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {true};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { false };
+    final boolean[] expectedUnionCallback = {false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
     final List indexesUsed = new ArrayList();
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new ObjectTypeImpl(String.class) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes = new ObjectType[] {new ObjectTypeImpl(String.class)};
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-        indexesUsed.add(index);
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+            indexesUsed.add(index);
+          }
 
-      public void beforeIndexLookup(Index index, int lowerBoundOperator, Object lowerBoundKey, int upperBoundOperator, Object upperBoundKey, Set NotEqualKeys) {
-        actualIndexUsed[i] = true;
-        indexesUsed.add(index);
-      }
+          public void beforeIndexLookup(
+              Index index,
+              int lowerBoundOperator,
+              Object lowerBoundKey,
+              int upperBoundOperator,
+              Object upperBoundKey,
+              Set NotEqualKeys) {
+            actualIndexUsed[i] = true;
+            indexesUsed.add(index);
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -877,9 +1008,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  distinct p.status  from /pos p  where  p.ID > 11 AND  p.ID < 19 and  p.createTime IN  SET( 10L) "
-
-    };
+    String[] queries =
+        new String[] {
+          "select  distinct p.status  from /pos p  where  p.ID > 11 AND  p.ID < 19 and  p.createTime IN  SET( 10L) "
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -891,44 +1023,46 @@ public class CustomerOptimizationsJUnitTest {
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
     qs.createIndex("Status", IndexType.FUNCTIONAL, "status", "/pos");
     qs.createIndex("Type", IndexType.FUNCTIONAL, "\"type\"", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {true};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { false };
+    final boolean[] expectedUnionCallback = {false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
     final List indexesUsed = new ArrayList();
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new ObjectTypeImpl(String.class) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes = new ObjectType[] {new ObjectTypeImpl(String.class)};
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-        indexesUsed.add(index);
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+            indexesUsed.add(index);
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -953,9 +1087,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  distinct p.status  from /pos p  where  (p.createTime IN SET( 10l ) OR  p.status IN SET( 'active') )AND  p.ID >  0 AND  p.createTime = 10l"
-
-    };
+    String[] queries =
+        new String[] {
+          "select  distinct p.status  from /pos p  where  (p.createTime IN SET( 10l ) OR  p.status IN SET( 'active') )AND  p.ID >  0 AND  p.createTime = 10l"
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -967,43 +1102,45 @@ public class CustomerOptimizationsJUnitTest {
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
     //qs.createIndex("Status", IndexType.FUNCTIONAL,"status", "/pos");
     qs.createIndex("Type", IndexType.FUNCTIONAL, "\"type\"", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {true};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { false };
+    final boolean[] expectedUnionCallback = {false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new ObjectTypeImpl(String.class) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes = new ObjectType[] {new ObjectTypeImpl(String.class)};
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-        indexUsed.add(index);
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+            indexUsed.add(index);
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -1030,9 +1167,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  distinct p.status  from /pos p  where  p.createTime IN SET( 10l ) OR  p.status IN SET( 'active') OR p.ID >  0"
-
-    };
+    String[] queries =
+        new String[] {
+          "select  distinct p.status  from /pos p  where  p.createTime IN SET( 10l ) OR  p.status IN SET( 'active') OR p.ID >  0"
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -1044,43 +1182,45 @@ public class CustomerOptimizationsJUnitTest {
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
     qs.createIndex("Status", IndexType.FUNCTIONAL, "status", "/pos");
     qs.createIndex("Type", IndexType.FUNCTIONAL, "\"type\"", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {true};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { false };
+    final boolean[] expectedUnionCallback = {false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new ObjectTypeImpl(String.class) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes = new ObjectType[] {new ObjectTypeImpl(String.class)};
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-        indexUsed.add(index);
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+            indexUsed.add(index);
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -1105,9 +1245,8 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  distinct p.status  from /pos p  where  true"
+    String[] queries = new String[] {"select  distinct p.status  from /pos p  where  true"};
 
-    };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -1119,43 +1258,45 @@ public class CustomerOptimizationsJUnitTest {
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
     qs.createIndex("Status", IndexType.FUNCTIONAL, "status", "/pos");
     qs.createIndex("Type", IndexType.FUNCTIONAL, "\"type\"", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { false };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {false};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { false };
+    final boolean[] expectedUnionCallback = {false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new ObjectTypeImpl(String.class) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes = new ObjectType[] {new ObjectTypeImpl(String.class)};
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-        indexUsed.add(index);
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+            indexUsed.add(index);
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -1180,9 +1321,10 @@ public class CustomerOptimizationsJUnitTest {
       pf.setCreateTime(10l);
       rgn.put("" + i, pf);
     }
-    String[] queries = new String[] { "select  distinct p.status  from /pos p  where  p.createTime = 10l AND  p.status IN SET( 'active') AND  true"
-
-    };
+    String[] queries =
+        new String[] {
+          "select  distinct p.status  from /pos p  where  p.createTime = 10l AND  p.status IN SET( 'active') AND  true"
+        };
     SelectResults[][] sr = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; ++i) {
@@ -1194,43 +1336,45 @@ public class CustomerOptimizationsJUnitTest {
     qs.createIndex("CreateTime", IndexType.FUNCTIONAL, "createTime", "/pos");
     qs.createIndex("Status", IndexType.FUNCTIONAL, "status", "/pos");
     qs.createIndex("Type", IndexType.FUNCTIONAL, "\"type\"", "/pos");
-    final boolean[] expectedIndexUsed = new boolean[] { true };
-    final boolean[] actualIndexUsed = new boolean[] { false };
+    final boolean[] expectedIndexUsed = new boolean[] {true};
+    final boolean[] actualIndexUsed = new boolean[] {false};
 
-    final boolean[] expectedProjectionCallabck = new boolean[] { false };
-    final boolean[] actualProjectionCallback = new boolean[] { false };
+    final boolean[] expectedProjectionCallabck = new boolean[] {false};
+    final boolean[] actualProjectionCallback = new boolean[] {false};
 
-    final boolean[] expectedUnionCallback = { false };
+    final boolean[] expectedUnionCallback = {false};
     final boolean[] actualUnionCallback = new boolean[queries.length];
 
-    final boolean[] expectedIntersectionCallback = { false };
+    final boolean[] expectedIntersectionCallback = {false};
     final boolean[] actualIntersectionCallback = new boolean[queries.length];
 
-    ObjectType[] expectedTypes = new ObjectType[] { new ObjectTypeImpl(String.class) };
-    QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-      private int i = 0;
+    ObjectType[] expectedTypes = new ObjectType[] {new ObjectTypeImpl(String.class)};
+    QueryObserverHolder.setInstance(
+        new QueryObserverAdapter() {
+          private int i = 0;
 
-      public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
-        actualUnionCallback[i] = true;
-      }
+          public void invokedQueryUtilsUnion(SelectResults r1, SelectResults r2) {
+            actualUnionCallback[i] = true;
+          }
 
-      public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
-        actualIntersectionCallback[i] = true;
-      }
+          public void invokedQueryUtilsIntersection(SelectResults r1, SelectResults r2) {
+            actualIntersectionCallback[i] = true;
+          }
 
-      public void beforeIndexLookup(Index index, int oper, Object key) {
-        actualIndexUsed[i] = true;
-        indexUsed.add(index);
-      }
+          public void beforeIndexLookup(Index index, int oper, Object key) {
+            actualIndexUsed[i] = true;
+            indexUsed.add(index);
+          }
 
-      public void beforeApplyingProjectionOnFilterEvaluatedResults(Object preProjectionApplied) {
-        actualProjectionCallback[i] = true;
-      }
+          public void beforeApplyingProjectionOnFilterEvaluatedResults(
+              Object preProjectionApplied) {
+            actualProjectionCallback[i] = true;
+          }
 
-      public void afterQueryEvaluation(Object result) {
-        ++i;
-      }
-    });
+          public void afterQueryEvaluation(Object result) {
+            ++i;
+          }
+        });
 
     for (int i = 0; i < queries.length; ++i) {
       Query q = qs.newQuery(queries[i]);
@@ -1254,12 +1398,10 @@ public class CustomerOptimizationsJUnitTest {
     for (int i = 0; i < 100; ++i) {
       region.put("" + i, new Portfolio(i));
     }
-
   }
 
   @After
   public void tearDown() throws Exception {
     CacheUtils.closeCache();
   }
-
 }

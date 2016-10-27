@@ -30,9 +30,8 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * Provides logging when regions are missing from a colocation hierarchy. This logger runs in
- * it's own thread and waits for child regions to be created before logging them as missing.
- *
+ * Provides logging when regions are missing from a colocation hierarchy. This logger runs in it's
+ * own thread and waits for child regions to be created before logging them as missing.
  */
 public class ColocationLogger implements Runnable {
   private static final Logger logger = LogService.getLogger();
@@ -42,15 +41,12 @@ public class ColocationLogger implements Runnable {
   private final Thread loggerThread;
   private final Object loggerLock = new Object();
 
-  /**
-   * Sleep period (milliseconds) between posting log entries.
-   */
+  /** Sleep period (milliseconds) between posting log entries. */
   private static final int DEFAULT_LOG_INTERVAL = 30000;
+
   private static int LOG_INTERVAL = DEFAULT_LOG_INTERVAL;
 
-  /**
-   * @param region the region that owns this logger instance
-   */
+  /** @param region the region that owns this logger instance */
   public ColocationLogger(PartitionedRegion region) {
     this.region = region;
     loggerThread = new Thread(this, "ColocationLogger for " + region.getName());
@@ -85,8 +81,9 @@ public class ColocationLogger implements Runnable {
   }
 
   /**
-   * Writes a log entry every SLEEP_PERIOD when there are missing colocated child regions
-   * for this region.
+   * Writes a log entry every SLEEP_PERIOD when there are missing colocated child regions for this
+   * region.
+   *
    * @throws InterruptedException
    */
   private void run2() throws InterruptedException {
@@ -137,16 +134,18 @@ public class ColocationLogger implements Runnable {
 
   /**
    * Updates the missing colocated child region list and returns a copy of the list.
-   * <p>
-   * The list of missing child regions is normally updated lazily, only when this logger thread periodically wakes up to
-   * log warnings about the colocated regions that are still missing. This method performs an on-demand update of the
-   * list so if called between logging intervals the returned list is current.
+   *
+   * <p>The list of missing child regions is normally updated lazily, only when this logger thread
+   * periodically wakes up to log warnings about the colocated regions that are still missing. This
+   * method performs an on-demand update of the list so if called between logging intervals the
+   * returned list is current.
    *
    * @return missingChildren
    */
   public List<String> updateAndGetMissingChildRegions() {
     synchronized (loggerLock) {
-      Set<String> childRegions = (Set<String>) ColocationHelper.getAllColocationRegions(this.region).keySet();
+      Set<String> childRegions =
+          (Set<String>) ColocationHelper.getAllColocationRegions(this.region).keySet();
       missingChildren.removeAll(childRegions);
     }
     return new ArrayList<String>(missingChildren);
@@ -154,6 +153,7 @@ public class ColocationLogger implements Runnable {
 
   /**
    * Write the a logger warning for a PR that has colocated child regions that are missing.
+   *
    * @param region the parent region that has missing child regions
    */
   private void logMissingRegions(PartitionedRegion region) {
@@ -166,7 +166,11 @@ public class ColocationLogger implements Runnable {
     String plural = "s";
     multipleChildren = missingChildren.size() > 1 ? plural : singular;
     namesOfMissing = String.join("\n\t", multipleChildren, namesOfMissing);
-    logger.warn(LocalizedMessage.create(LocalizedStrings.ColocationLogger_PERSISTENT_DATA_RECOVERY_OF_REGION_PREVENTED_BY_OFFLINE_COLOCATED_CHILDREN, new Object[] { region.getFullPath(), namesOfMissing }));
+    logger.warn(
+        LocalizedMessage.create(
+            LocalizedStrings
+                .ColocationLogger_PERSISTENT_DATA_RECOVERY_OF_REGION_PREVENTED_BY_OFFLINE_COLOCATED_CHILDREN,
+            new Object[] {region.getFullPath(), namesOfMissing}));
   }
 
   public static int getLogInterval() {
@@ -176,13 +180,13 @@ public class ColocationLogger implements Runnable {
   /*
    * Test hook to allow unit test tests to run faster by tweak the interval between log messages
    */
-  public synchronized static int testhookSetLogInterval(int sleepMillis) {
+  public static synchronized int testhookSetLogInterval(int sleepMillis) {
     int currentSleep = LOG_INTERVAL;
     LOG_INTERVAL = sleepMillis;
     return currentSleep;
   }
 
-  public synchronized static void testhookResetLogInterval() {
+  public static synchronized void testhookResetLogInterval() {
     LOG_INTERVAL = DEFAULT_LOG_INTERVAL;
   }
 }

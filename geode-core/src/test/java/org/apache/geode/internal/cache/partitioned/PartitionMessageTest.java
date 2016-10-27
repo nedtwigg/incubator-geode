@@ -68,7 +68,9 @@ public class PartitionMessageTest {
   }
 
   @Test
-  public void messageWithNoTXPerformsOnRegion() throws InterruptedException, CacheException, QueryException, DataLocationException, IOException {
+  public void messageWithNoTXPerformsOnRegion()
+      throws InterruptedException, CacheException, QueryException, DataLocationException,
+          IOException {
     when(txMgr.masqueradeAs(msg)).thenReturn(null);
     msg.process(dm);
 
@@ -76,7 +78,9 @@ public class PartitionMessageTest {
   }
 
   @Test
-  public void messageForNotFinishedTXPerformsOnRegion() throws InterruptedException, CacheException, QueryException, DataLocationException, IOException {
+  public void messageForNotFinishedTXPerformsOnRegion()
+      throws InterruptedException, CacheException, QueryException, DataLocationException,
+          IOException {
     when(txMgr.masqueradeAs(msg)).thenReturn(tx);
     when(tx.isInProgress()).thenReturn(true);
     msg.process(dm);
@@ -85,7 +89,9 @@ public class PartitionMessageTest {
   }
 
   @Test
-  public void messageForFinishedTXDoesNotPerformOnRegion() throws InterruptedException, CacheException, QueryException, DataLocationException, IOException {
+  public void messageForFinishedTXDoesNotPerformOnRegion()
+      throws InterruptedException, CacheException, QueryException, DataLocationException,
+          IOException {
     when(txMgr.masqueradeAs(msg)).thenReturn(tx);
     when(tx.isInProgress()).thenReturn(false);
     msg.process(dm);
@@ -94,7 +100,9 @@ public class PartitionMessageTest {
   }
 
   @Test
-  public void noNewTxProcessingAfterTXManagerImplClosed() throws CacheException, QueryException, DataLocationException, InterruptedException, IOException {
+  public void noNewTxProcessingAfterTXManagerImplClosed()
+      throws CacheException, QueryException, DataLocationException, InterruptedException,
+          IOException {
     txMgr = new TXManagerImpl(null, cache);
     when(msg.getPartitionedRegion()).thenReturn(pr);
     when(msg.getGemFireCacheImpl()).thenReturn(cache);

@@ -29,22 +29,21 @@ import org.junit.rules.TestName;
 import org.apache.geode.distributed.internal.DistributionConfig;
 import org.apache.geode.internal.util.StopWatch;
 
-/**
- * Tests performance of logging when level is OFF.
- */
+/** Tests performance of logging when level is OFF. */
 public abstract class LoggingPerformanceTestCase {
 
-  protected static final boolean TIME_BASED = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "test.LoggingPerformanceTestCase.TIME_BASED");
+  protected static final boolean TIME_BASED =
+      Boolean.getBoolean(
+          DistributionConfig.GEMFIRE_PREFIX + "test.LoggingPerformanceTestCase.TIME_BASED");
   protected static final long TIME_TO_RUN = 1000 * 60 * 10; // ten minutes
   protected static final int LOG_SETS = 1000;
   protected static final int LOG_REPETITIONS_PER_SET = 1000;
   protected static final String message = "This is a log message";
 
-  protected File configDirectory = new File(getUniqueName());//null;
+  protected File configDirectory = new File(getUniqueName()); //null;
   protected File logFile = new File(configDirectory, getUniqueName() + ".log");
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @After
   public void tearDownLoggingPerformanceTestCase() throws Exception {

@@ -30,10 +30,7 @@ import org.apache.geode.test.dunit.IgnoredException;
 import org.apache.geode.test.dunit.Invoke;
 import org.apache.geode.test.dunit.SerializableRunnable;
 
-/**
- * Test class for testing {@link CqServiceImpl#EXECUTE_QUERY_DURING_INIT} flag
- *
- */
+/** Test class for testing {@link CqServiceImpl#EXECUTE_QUERY_DURING_INIT} flag */
 @Category(DistributedTest.class)
 public class CqDataOptimizedExecuteDUnitTest extends CqDataDUnitTest {
 
@@ -46,19 +43,21 @@ public class CqDataOptimizedExecuteDUnitTest extends CqDataDUnitTest {
     //We're seeing this on the server when the client
     //disconnects.
     IgnoredException.addIgnoredException("Connection reset");
-    Invoke.invokeInEveryVM(new SerializableRunnable("getSystem") {
-      public void run() {
-        CqServiceImpl.EXECUTE_QUERY_DURING_INIT = false;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("getSystem") {
+          public void run() {
+            CqServiceImpl.EXECUTE_QUERY_DURING_INIT = false;
+          }
+        });
   }
 
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableRunnable("getSystem") {
-      public void run() {
-        CqServiceImpl.EXECUTE_QUERY_DURING_INIT = true;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("getSystem") {
+          public void run() {
+            CqServiceImpl.EXECUTE_QUERY_DURING_INIT = true;
+          }
+        });
   }
 }

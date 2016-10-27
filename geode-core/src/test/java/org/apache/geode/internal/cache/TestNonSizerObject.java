@@ -20,11 +20,7 @@ import java.io.Serializable;
 
 import org.apache.commons.lang.StringUtils;
 
-/**
- * Test object which does not implement ObjectSizer, used as Key/Value in put operation.
- * 
- * 
- */
+/** Test object which does not implement ObjectSizer, used as Key/Value in put operation. */
 public class TestNonSizerObject implements Serializable {
 
   private static final long serialVersionUID = 0L;
@@ -60,5 +56,4 @@ public class TestNonSizerObject implements Serializable {
 
     return false;
   }
-
 }

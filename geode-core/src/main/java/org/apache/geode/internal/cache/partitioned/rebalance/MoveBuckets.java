@@ -19,9 +19,8 @@ package org.apache.geode.internal.cache.partitioned.rebalance;
 import org.apache.geode.internal.cache.partitioned.rebalance.PartitionedRegionLoadModel.Move;
 
 /**
- * A director to move buckets to improve the load balance of a
- * PR. This is most commonly used as an element of the composite director.
- *
+ * A director to move buckets to improve the load balance of a PR. This is most commonly used as an
+ * element of the composite director.
  */
 public class MoveBuckets extends RebalanceDirectorAdapter {
 
@@ -45,6 +44,7 @@ public class MoveBuckets extends RebalanceDirectorAdapter {
 
   /**
    * Move a single bucket from one member to another.
+   *
    * @return true if we could move the bucket
    */
   private boolean moveBuckets() {
@@ -58,5 +58,4 @@ public class MoveBuckets extends RebalanceDirectorAdapter {
 
     return true;
   }
-
 }

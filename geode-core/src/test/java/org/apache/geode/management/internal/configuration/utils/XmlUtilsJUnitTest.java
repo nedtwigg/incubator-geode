@@ -43,22 +43,30 @@ import org.apache.geode.management.internal.configuration.utils.XmlUtils.XPathCo
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * Unit tests for {@link XmlUtils}. See Also {@link XmlUtilsAddNewNodeJUnitTest}
- * for tests related to {@link XmlUtils#addNewNode(Document, XmlEntity)}
+ * Unit tests for {@link XmlUtils}. See Also {@link XmlUtilsAddNewNodeJUnitTest} for tests related
+ * to {@link XmlUtils#addNewNode(Document, XmlEntity)}
  *
  * @since GemFire 8.1
  */
 @Category(UnitTest.class)
 public class XmlUtilsJUnitTest {
 
-  /**
-   * Test method for {@link XmlUtils#buildSchemaLocationMap(String)}.
-   */
+  /** Test method for {@link XmlUtils#buildSchemaLocationMap(String)}. */
   @Test
   public void testBuildSchemaLocationMapAttribute() throws Exception {
-    final Document doc = XmlUtils.createDocumentFromReader(new InputStreamReader(getClass().getResourceAsStream("XmlUtilsJUnitTest.testBuildSchemaLocationMapAttribute.xml")));
-    final String schemaLocationAttribute = XmlUtils.getAttribute(doc.getDocumentElement(), W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION, W3C_XML_SCHEMA_INSTANCE_NS_URI);
-    final Map<String, List<String>> schemaLocationMap = XmlUtils.buildSchemaLocationMap(schemaLocationAttribute);
+    final Document doc =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                getClass()
+                    .getResourceAsStream(
+                        "XmlUtilsJUnitTest.testBuildSchemaLocationMapAttribute.xml")));
+    final String schemaLocationAttribute =
+        XmlUtils.getAttribute(
+            doc.getDocumentElement(),
+            W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION,
+            W3C_XML_SCHEMA_INSTANCE_NS_URI);
+    final Map<String, List<String>> schemaLocationMap =
+        XmlUtils.buildSchemaLocationMap(schemaLocationAttribute);
 
     assertNotNull(schemaLocationMap);
     assertEquals(2, schemaLocationMap.size());
@@ -68,30 +76,52 @@ public class XmlUtilsJUnitTest {
     assertEquals(1, locations1.size());
     assertEquals("http://geode.apache.org/schema/cache/cache-1.0.xsd", locations1.get(0));
 
-    final List<String> locations2 = schemaLocationMap.get("urn:java:org/apache/geode/management/internal/configuration/utils/XmlUtilsJUnitTest");
+    final List<String> locations2 =
+        schemaLocationMap.get(
+            "urn:java:org/apache/geode/management/internal/configuration/utils/XmlUtilsJUnitTest");
     assertNotNull(locations2);
     assertEquals(2, locations2.size());
-    assertEquals("classpath:/org/apache/geode/management/internal/configuration/utils/XmlUtilsJUnitTest.xsd", locations2.get(0));
+    assertEquals(
+        "classpath:/org/apache/geode/management/internal/configuration/utils/XmlUtilsJUnitTest.xsd",
+        locations2.get(0));
     assertEquals("XmlUtilsJUnitTest.xsd", locations2.get(1));
 
     final List<String> locations3 = schemaLocationMap.get("urn:__does_not_exist__");
     assertNull(locations3);
   }
 
-  /**
-   * Test method for {@link XmlUtils#buildSchemaLocationMap(Map, String)}.
-   */
+  /** Test method for {@link XmlUtils#buildSchemaLocationMap(Map, String)}. */
   @Test
   public void testBuildSchemaLocationMapMapOfStringListOfStringAttribute() throws Exception {
     Map<String, List<String>> schemaLocationMap = new HashMap<>();
 
-    final Document doc1 = XmlUtils.createDocumentFromReader(new InputStreamReader(getClass().getResourceAsStream("XmlUtilsJUnitTest.testBuildSchemaLocationMapAttribute.xml")));
-    final String schemaLocationAttribute1 = XmlUtils.getAttribute(doc1.getDocumentElement(), W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION, W3C_XML_SCHEMA_INSTANCE_NS_URI);
-    schemaLocationMap = XmlUtils.buildSchemaLocationMap(schemaLocationMap, schemaLocationAttribute1);
+    final Document doc1 =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                getClass()
+                    .getResourceAsStream(
+                        "XmlUtilsJUnitTest.testBuildSchemaLocationMapAttribute.xml")));
+    final String schemaLocationAttribute1 =
+        XmlUtils.getAttribute(
+            doc1.getDocumentElement(),
+            W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION,
+            W3C_XML_SCHEMA_INSTANCE_NS_URI);
+    schemaLocationMap =
+        XmlUtils.buildSchemaLocationMap(schemaLocationMap, schemaLocationAttribute1);
 
-    final Document doc2 = XmlUtils.createDocumentFromReader(new InputStreamReader(getClass().getResourceAsStream("XmlUtilsJUnitTest.testBuildSchemaLocationMapMapOfStringListOfStringAttribute.xml")));
-    final String schemaLocationAttribute2 = XmlUtils.getAttribute(doc2.getDocumentElement(), W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION, W3C_XML_SCHEMA_INSTANCE_NS_URI);
-    schemaLocationMap = XmlUtils.buildSchemaLocationMap(schemaLocationMap, schemaLocationAttribute2);
+    final Document doc2 =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                getClass()
+                    .getResourceAsStream(
+                        "XmlUtilsJUnitTest.testBuildSchemaLocationMapMapOfStringListOfStringAttribute.xml")));
+    final String schemaLocationAttribute2 =
+        XmlUtils.getAttribute(
+            doc2.getDocumentElement(),
+            W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION,
+            W3C_XML_SCHEMA_INSTANCE_NS_URI);
+    schemaLocationMap =
+        XmlUtils.buildSchemaLocationMap(schemaLocationMap, schemaLocationAttribute2);
 
     assertNotNull(schemaLocationMap);
     assertEquals(3, schemaLocationMap.size());
@@ -102,54 +132,80 @@ public class XmlUtilsJUnitTest {
     assertEquals("http://geode.apache.org/schema/cache/cache-1.0.xsd", locations1.get(0));
     assertEquals("cache-1.0.xsd", locations1.get(1));
 
-    final List<String> locations2 = schemaLocationMap.get("urn:java:org/apache/geode/management/internal/configuration/utils/XmlUtilsJUnitTest");
+    final List<String> locations2 =
+        schemaLocationMap.get(
+            "urn:java:org/apache/geode/management/internal/configuration/utils/XmlUtilsJUnitTest");
     assertNotNull(locations2);
     assertEquals(2, locations2.size());
-    assertEquals("classpath:/org/apache/geode/management/internal/configuration/utils/XmlUtilsJUnitTest.xsd", locations2.get(0));
+    assertEquals(
+        "classpath:/org/apache/geode/management/internal/configuration/utils/XmlUtilsJUnitTest.xsd",
+        locations2.get(0));
     assertEquals("XmlUtilsJUnitTest.xsd", locations2.get(1));
 
     final List<String> locations3 = schemaLocationMap.get("urn:__does_not_exist__");
     assertNull(locations3);
 
-    final List<String> locations4 = schemaLocationMap.get("urn:java:org/apache/geode/management/internal/configuration/utils/XmlUtilsJUnitTest2");
+    final List<String> locations4 =
+        schemaLocationMap.get(
+            "urn:java:org/apache/geode/management/internal/configuration/utils/XmlUtilsJUnitTest2");
     assertNotNull(locations4);
     assertEquals(1, locations4.size());
     assertEquals("XmlUtilsJUnitTest2.xsd", locations4.get(0));
   }
 
   /**
-   * Test method for {@link XmlUtils#buildSchemaLocationMap(Map, String)}.
-   * Asserts map is empty if schemaLocation attribute is <code>null</code>.
+   * Test method for {@link XmlUtils#buildSchemaLocationMap(Map, String)}. Asserts map is empty if
+   * schemaLocation attribute is <code>null</code>.
    */
   @Test
   public void testBuildSchemaLocationMapNullAttribute() throws Exception {
-    final Document doc = XmlUtils.createDocumentFromReader(new InputStreamReader(getClass().getResourceAsStream("XmlUtilsJUnitTest.testBuildSchemaLocationMapNullAttribute.xml")));
-    final String schemaLocationAttribute = XmlUtils.getAttribute(doc.getDocumentElement(), W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION, W3C_XML_SCHEMA_INSTANCE_NS_URI);
+    final Document doc =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                getClass()
+                    .getResourceAsStream(
+                        "XmlUtilsJUnitTest.testBuildSchemaLocationMapNullAttribute.xml")));
+    final String schemaLocationAttribute =
+        XmlUtils.getAttribute(
+            doc.getDocumentElement(),
+            W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION,
+            W3C_XML_SCHEMA_INSTANCE_NS_URI);
     assertNull(schemaLocationAttribute);
-    final Map<String, List<String>> schemaLocationMap = XmlUtils.buildSchemaLocationMap(schemaLocationAttribute);
+    final Map<String, List<String>> schemaLocationMap =
+        XmlUtils.buildSchemaLocationMap(schemaLocationAttribute);
     assertEquals(0, schemaLocationMap.size());
   }
 
   /**
-   * Test method for {@link XmlUtils#buildSchemaLocationMap(Map, String)}.
-   * Asserts map is empty if schemaLocation attribute is empty.
+   * Test method for {@link XmlUtils#buildSchemaLocationMap(Map, String)}. Asserts map is empty if
+   * schemaLocation attribute is empty.
    */
   @Test
   public void testBuildSchemaLocationMapEmptyAttribute() throws Exception {
-    final Document doc = XmlUtils.createDocumentFromReader(new InputStreamReader(getClass().getResourceAsStream("XmlUtilsJUnitTest.testBuildSchemaLocationMapEmptyAttribute.xml")));
-    final String schemaLocationAttribute = XmlUtils.getAttribute(doc.getDocumentElement(), W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION, W3C_XML_SCHEMA_INSTANCE_NS_URI);
+    final Document doc =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                getClass()
+                    .getResourceAsStream(
+                        "XmlUtilsJUnitTest.testBuildSchemaLocationMapEmptyAttribute.xml")));
+    final String schemaLocationAttribute =
+        XmlUtils.getAttribute(
+            doc.getDocumentElement(),
+            W3C_XML_SCHEMA_INSTANCE_ATTRIBUTE_SCHEMA_LOCATION,
+            W3C_XML_SCHEMA_INSTANCE_NS_URI);
     assertNotNull(schemaLocationAttribute);
-    final Map<String, List<String>> schemaLocationMap = XmlUtils.buildSchemaLocationMap(schemaLocationAttribute);
+    final Map<String, List<String>> schemaLocationMap =
+        XmlUtils.buildSchemaLocationMap(schemaLocationAttribute);
     assertEquals(0, schemaLocationMap.size());
   }
 
-  /**
-   * Test method for
-   * {@link XmlUtils#querySingleElement(Node, String, XPathContext)}.
-   */
+  /** Test method for {@link XmlUtils#querySingleElement(Node, String, XPathContext)}. */
   @Test
   public void testQuerySingleElement() throws Exception {
-    final Document doc = XmlUtils.createDocumentFromReader(new InputStreamReader(getClass().getResourceAsStream("XmlUtilsJUnitTest.testQuerySingleElement.xml")));
+    final Document doc =
+        XmlUtils.createDocumentFromReader(
+            new InputStreamReader(
+                getClass().getResourceAsStream("XmlUtilsJUnitTest.testQuerySingleElement.xml")));
     final Element root = doc.getDocumentElement();
     final String cacheNamespace = "http://geode.apache.org/schema/cache";
     final XPathContext cacheXPathContext = new XPathContext("cache", cacheNamespace);
@@ -163,13 +219,15 @@ public class XmlUtilsJUnitTest {
 
     // This should get the second region with name "r2".
     final NodeList n2 = XmlUtils.query(root, "//cache:region[2]", cacheXPathContext);
-    final Node e2 = XmlUtils.querySingleElement(root, "//cache:region[@name='r2']", cacheXPathContext);
+    final Node e2 =
+        XmlUtils.querySingleElement(root, "//cache:region[@name='r2']", cacheXPathContext);
     assertNotNull(e2);
     assertSame(root.getElementsByTagNameNS(cacheNamespace, "region").item(1), e2);
     assertSame(n2.item(0), e2);
 
     // This should get none since there is no r3.
-    final Node e3 = XmlUtils.querySingleElement(root, "//cache:region[@name='r3']", cacheXPathContext);
+    final Node e3 =
+        XmlUtils.querySingleElement(root, "//cache:region[@name='r3']", cacheXPathContext);
     assertNull(e3);
 
     // Query attributes (not Elements)
@@ -186,9 +244,7 @@ public class XmlUtilsJUnitTest {
     }
   }
 
-  /**
-   * Test method for {@link XmlUtils#changeNamespace(Node, String, String)}.
-   */
+  /** Test method for {@link XmlUtils#changeNamespace(Node, String, String)}. */
   @Test
   public void testChangeNamespace() throws Exception {
     Document doc = XmlUtils.getDocumentBuilder().newDocument();
@@ -212,5 +268,4 @@ public class XmlUtilsJUnitTest {
     assertEquals(ns1, root.getElementsByTagName("child").item(0).getNamespaceURI());
     assertEquals(ns2, root.getElementsByTagName("childWithNamespace").item(0).getNamespaceURI());
   }
-
 }

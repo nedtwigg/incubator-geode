@@ -16,16 +16,16 @@
  */
 package org.apache.geode.internal.util;
 
-/**
- * Provides hexadecimal conversion and display utilities.
- * 
- */
+/** Provides hexadecimal conversion and display utilities. */
 public class Hex {
   /** hex chars */
-  private static final char[] HEX = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+  private static final char[] HEX = {
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+  };
 
   /**
    * Converts the byte array to a hex string.
+   *
    * @param buf the buffer to convert
    * @return the hex string
    */
@@ -35,6 +35,7 @@ public class Hex {
 
   /**
    * Converts the byte array subset to a hex string.
+   *
    * @param buf the buffer to convert
    * @param offset the offset
    * @param length the length

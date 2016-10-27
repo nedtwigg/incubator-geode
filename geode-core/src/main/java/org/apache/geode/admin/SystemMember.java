@@ -23,27 +23,26 @@ import java.net.InetAddress;
 /**
  * Administrative interface for monitoring a GemFire system member.
  *
- * @since GemFire     3.5
- *
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @since GemFire 3.5
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public interface SystemMember {
 
   /** Gets the {@link AdminDistributedSystem} this member belongs to. */
   public AdminDistributedSystem getDistributedSystem();
 
-  /** 
-   * Gets identifying name of this member.
-   * For applications this is the string form of {@link #getDistributedMember}.
-   * For cache servers it is a unique cache server string.
+  /**
+   * Gets identifying name of this member. For applications this is the string form of {@link
+   * #getDistributedMember}. For cache servers it is a unique cache server string.
    */
   public String getId();
 
-  /** 
-   * Retrieves display friendly name for this member.  If this member defined 
-   * an optional name for its connection to the distributed system, that name 
-   * will be returned.  Otherwise the returned value will be {@link
-   * org.apache.geode.admin.SystemMember#getId}.
+  /**
+   * Retrieves display friendly name for this member. If this member defined an optional name for
+   * its connection to the distributed system, that name will be returned. Otherwise the returned
+   * value will be {@link org.apache.geode.admin.SystemMember#getId}.
    *
    * @see org.apache.geode.distributed.DistributedSystem#connect
    * @see org.apache.geode.distributed.DistributedSystem#getName
@@ -73,56 +72,55 @@ public interface SystemMember {
   /** Returns this member's GemFire version information. */
   public String getVersion();
 
-  /** 
-   * Gets the configuration parameters for this member.
-   */
+  /** Gets the configuration parameters for this member. */
   public ConfigurationParameter[] getConfiguration();
 
   /**
-   * Sets the configuration of this member.  The argument is an array of any
-   * and all configuration parameters that are to be updated in the member.
-   * <p>
-   * The entire array of configuration parameters is then returned.
+   * Sets the configuration of this member. The argument is an array of any and all configuration
+   * parameters that are to be updated in the member.
+   *
+   * <p>The entire array of configuration parameters is then returned.
    *
    * @param parms subset of the configuration parameters to be changed
    * @return all configuration parameters including those that were changed
-   * @throws org.apache.geode.admin.AdminException
-   *         if this fails to make the configuration changes
+   * @throws org.apache.geode.admin.AdminException if this fails to make the configuration changes
    */
-  public ConfigurationParameter[] setConfiguration(ConfigurationParameter[] parms) throws org.apache.geode.admin.AdminException;
+  public ConfigurationParameter[] setConfiguration(ConfigurationParameter[] parms)
+      throws org.apache.geode.admin.AdminException;
 
   /** Refreshes this member's configuration from the member or it's properties */
   public void refreshConfig() throws org.apache.geode.admin.AdminException;
 
-  /** 
-   * Retrieves this members statistic resources. If the member is not running 
-   * then an empty array is returned. 
+  /**
+   * Retrieves this members statistic resources. If the member is not running then an empty array is
+   * returned.
    *
-   *@param statisticsTypeName String ame of the Statistics Type
+   * @param statisticsTypeName String ame of the Statistics Type
    * @return array of runtime statistic resources owned by this member
    * @since GemFire 5.7
    */
-  public StatisticResource[] getStat(String statisticsTypeName) throws org.apache.geode.admin.AdminException;
+  public StatisticResource[] getStat(String statisticsTypeName)
+      throws org.apache.geode.admin.AdminException;
 
-  /** 
-   * Retrieves this members statistic resources. If the member is not running 
-   * then an empty array is returned. All Stats are returned
+  /**
+   * Retrieves this members statistic resources. If the member is not running then an empty array is
+   * returned. All Stats are returned
    *
    * @return array of runtime statistic resources owned by this member
    */
   public StatisticResource[] getStats() throws org.apache.geode.admin.AdminException;
 
   /**
-   * Returns whether or not this system member hosts a GemFire {@link
-   * org.apache.geode.cache.Cache Cache}.
+   * Returns whether or not this system member hosts a GemFire {@link org.apache.geode.cache.Cache
+   * Cache}.
    *
    * @see #getCache
    */
   public boolean hasCache() throws org.apache.geode.admin.AdminException;
 
   /**
-   * Returns an object that provides admin access to this member's cache.
-   * If the member currently has no cache then <code>null</code> is returned.
+   * Returns an object that provides admin access to this member's cache. If the member currently
+   * has no cache then <code>null</code> is returned.
    */
   public SystemMemberCache getCache() throws org.apache.geode.admin.AdminException;
 
@@ -135,8 +133,8 @@ public interface SystemMember {
   public String[] getRoles();
 
   /**
-   * Returns the {@link org.apache.geode.distributed.DistributedMember}
-   * that represents this system member.
+   * Returns the {@link org.apache.geode.distributed.DistributedMember} that represents this system
+   * member.
    *
    * @return DistributedMember instance representing this system member
    * @since GemFire 5.0

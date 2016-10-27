@@ -22,11 +22,7 @@ import java.util.Map;
 import org.apache.geode.cache.wan.GatewaySender;
 import org.apache.geode.pdx.PdxInitializationException;
 
-/**
- * A type registration that does nothing. Used if the user
- * explicity disables the type registry
- *
- */
+/** A type registration that does nothing. Used if the user explicity disables the type registry */
 public class NullTypeRegistration implements TypeRegistration {
 
   public int defineType(PdxType newType) {
@@ -93,9 +89,7 @@ public class NullTypeRegistration implements TypeRegistration {
   }
 
   @Override
-  public void testClearRegistry() {
-
-  }
+  public void testClearRegistry() {}
 
   @Override
   public boolean isClient() {

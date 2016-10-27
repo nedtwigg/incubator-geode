@@ -37,14 +37,9 @@ import org.apache.geode.internal.cache.DiskStoreImpl;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.util.ArrayUtils;
 
-/**
- * An instruction to all members with cache that they should 
- * compact their disk stores.
- *
- */
+/** An instruction to all members with cache that they should compact their disk stores. */
 public class CompactRequest extends CliLegacyMessage {
-  public CompactRequest() {
-  }
+  public CompactRequest() {}
 
   public static Map<DistributedMember, Set<PersistentID>> send(DM dm) {
     Set recipients = dm.getOtherDistributionManagerIds();
@@ -107,11 +102,15 @@ public class CompactRequest extends CliLegacyMessage {
 
   @Override
   public String toString() {
-    return "Compact request sent to " + ArrayUtils.toString((Object[]) this.getRecipients()) + " from " + this.getSender();
+    return "Compact request sent to "
+        + ArrayUtils.toString((Object[]) this.getRecipients())
+        + " from "
+        + this.getSender();
   }
 
   private static class CompactReplyProcessor extends AdminMultipleReplyProcessor {
-    Map<DistributedMember, Set<PersistentID>> results = Collections.synchronizedMap(new HashMap<DistributedMember, Set<PersistentID>>());
+    Map<DistributedMember, Set<PersistentID>> results =
+        Collections.synchronizedMap(new HashMap<DistributedMember, Set<PersistentID>>());
 
     public CompactReplyProcessor(DM dm, Collection initMembers) {
       super(dm, initMembers);
@@ -137,6 +136,5 @@ public class CompactRequest extends CliLegacyMessage {
       }
       super.process(msg, warn);
     }
-
   }
 }

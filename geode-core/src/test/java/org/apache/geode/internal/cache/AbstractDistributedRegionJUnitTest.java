@@ -47,7 +47,7 @@ public abstract class AbstractDistributedRegionJUnitTest {
   }
 
   private EventID createDummyEventID() {
-    byte[] memId = { 1, 2, 3 };
+    byte[] memId = {1, 2, 3};
     EventID eventId = new EventID(memId, 11, 12, 13);
     return eventId;
   }
@@ -59,7 +59,17 @@ public abstract class AbstractDistributedRegionJUnitTest {
     String value = "Value1";
 
     // create an event
-    EntryEventImpl event = EntryEventImpl.create(region, Operation.CREATE, key, value, null, false /* origin remote */, null, false /* generateCallbacks */, eventId);
+    EntryEventImpl event =
+        EntryEventImpl.create(
+            region,
+            Operation.CREATE,
+            key,
+            value,
+            null,
+            false /* origin remote */,
+            null,
+            false /* generateCallbacks */,
+            eventId);
     // avoid calling invokeCallbacks
     event.callbacksInvoked(true);
 
@@ -92,15 +102,23 @@ public abstract class AbstractDistributedRegionJUnitTest {
 
   protected abstract void setInternalRegionArguments(InternalRegionArguments ira);
 
-  protected abstract DistributedRegion createAndDefineRegion(boolean isConcurrencyChecksEnabled, RegionAttributes ra, InternalRegionArguments ira, GemFireCacheImpl cache);
+  protected abstract DistributedRegion createAndDefineRegion(
+      boolean isConcurrencyChecksEnabled,
+      RegionAttributes ra,
+      InternalRegionArguments ira,
+      GemFireCacheImpl cache);
 
-  protected abstract void verifyDistributeUpdate(DistributedRegion region, EntryEventImpl event, int cnt);
+  protected abstract void verifyDistributeUpdate(
+      DistributedRegion region, EntryEventImpl event, int cnt);
 
-  protected abstract void verifyDistributeDestroy(DistributedRegion region, EntryEventImpl event, int cnt);
+  protected abstract void verifyDistributeDestroy(
+      DistributedRegion region, EntryEventImpl event, int cnt);
 
-  protected abstract void verifyDistributeInvalidate(DistributedRegion region, EntryEventImpl event, int cnt);
+  protected abstract void verifyDistributeInvalidate(
+      DistributedRegion region, EntryEventImpl event, int cnt);
 
-  protected abstract void verifyDistributeUpdateEntryVersion(DistributedRegion region, EntryEventImpl event, int cnt);
+  protected abstract void verifyDistributeUpdateEntryVersion(
+      DistributedRegion region, EntryEventImpl event, int cnt);
 
   protected DistributedRegion prepare(boolean isConcurrencyChecksEnabled) {
     GemFireCacheImpl cache = Fakes.cache();

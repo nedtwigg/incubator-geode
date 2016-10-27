@@ -37,17 +37,15 @@ import java.util.Map;
 
 /**
  * A helper class for serializing the event state map.
- * 
- * TODO - Store the event state map in DataSerializable object
- * that keeps the map in this compressed format in memory.
  *
+ * <p>TODO - Store the event state map in DataSerializable object that keeps the map in this
+ * compressed format in memory.
  */
 public class EventStateHelper {
   /**
-   * Post 7.1, if changes are made to this method make sure that it is backwards
-   * compatible by creating toDataPreXX methods. Also make sure that the callers
-   * to this method are backwards compatible by creating toDataPreXX methods for
-   * them even if they are not changed. <br>
+   * Post 7.1, if changes are made to this method make sure that it is backwards compatible by
+   * creating toDataPreXX methods. Also make sure that the callers to this method are backwards
+   * compatible by creating toDataPreXX methods for them even if they are not changed. <br>
    * Callers for this method are: <br>
    * {@link CreateRegionReplyMessage#toData(DataOutput)} <br>
    * {@link RegionStateMessage#toData(DataOutput)} <br>
@@ -56,8 +54,10 @@ public class EventStateHelper {
   public static void toData(DataOutput dop, Map eventState, boolean isHARegion) throws IOException {
     //For HARegionQueues, the event state map is uses different values
     //than a regular region :(
-    InternalDistributedMember myId = InternalDistributedSystem.getAnyInstance().getDistributedMember();
-    Map<MemberIdentifier, Map<ThreadIdentifier, Object>> groupedThreadIds = groupThreadIds(eventState);
+    InternalDistributedMember myId =
+        InternalDistributedSystem.getAnyInstance().getDistributedMember();
+    Map<MemberIdentifier, Map<ThreadIdentifier, Object>> groupedThreadIds =
+        groupThreadIds(eventState);
     List<MemberIdentifier> orderedIds = new LinkedList();
     Map<MemberIdentifier, Integer> seenIds = new HashMap();
 
@@ -76,7 +76,8 @@ public class EventStateHelper {
     }
 
     dop.writeInt(groupedThreadIds.size());
-    for (Map.Entry<MemberIdentifier, Map<ThreadIdentifier, Object>> memberIdEntry : groupedThreadIds.entrySet()) {
+    for (Map.Entry<MemberIdentifier, Map<ThreadIdentifier, Object>> memberIdEntry :
+        groupedThreadIds.entrySet()) {
       MemberIdentifier memberId = memberIdEntry.getKey();
       dop.writeInt(seenIds.get(memberId).intValue());
       Map<ThreadIdentifier, Object> threadIdMap = memberIdEntry.getValue();
@@ -94,19 +95,18 @@ public class EventStateHelper {
         }
       }
     }
-
   }
 
   /**
-   * Post 7.1, if changes are made to this method make sure that it is backwards
-   * compatible by creating fromDataPreXX methods. Also make sure that the callers
-   * to this method are backwards compatible by creating fromDataPreXX methods for
-   * them even if they are not changed. <br>
+   * Post 7.1, if changes are made to this method make sure that it is backwards compatible by
+   * creating fromDataPreXX methods. Also make sure that the callers to this method are backwards
+   * compatible by creating fromDataPreXX methods for them even if they are not changed. <br>
    * Callers for this method are: <br>
    * {@link CreateRegionReplyMessage#fromData(DataInput)} <br>
    * {@link RegionStateMessage#fromData(DataInput)} <br>
    */
-  public static Map fromData(DataInput dip, boolean isHARegion) throws IOException, ClassNotFoundException {
+  public static Map fromData(DataInput dip, boolean isHARegion)
+      throws IOException, ClassNotFoundException {
 
     InternalDistributedMember senderId = InternalDistributedMember.readEssentialData(dip);
 
@@ -142,8 +142,10 @@ public class EventStateHelper {
     return eventState;
   }
 
-  private static Map<MemberIdentifier, Map<ThreadIdentifier, Object>> groupThreadIds(Map eventState) {
-    Map<MemberIdentifier, Map<ThreadIdentifier, Object>> results = new HashMap<MemberIdentifier, Map<ThreadIdentifier, Object>>();
+  private static Map<MemberIdentifier, Map<ThreadIdentifier, Object>> groupThreadIds(
+      Map eventState) {
+    Map<MemberIdentifier, Map<ThreadIdentifier, Object>> results =
+        new HashMap<MemberIdentifier, Map<ThreadIdentifier, Object>>();
     for (Object next : eventState.entrySet()) {
       Map.Entry entry = (Map.Entry) next;
       ThreadIdentifier key = (ThreadIdentifier) entry.getKey();
@@ -177,15 +179,11 @@ public class EventStateHelper {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (!(obj instanceof MemberIdentifier))
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (!(obj instanceof MemberIdentifier)) return false;
       MemberIdentifier other = (MemberIdentifier) obj;
-      if (!Arrays.equals(bytes, other.bytes))
-        return false;
+      if (!Arrays.equals(bytes, other.bytes)) return false;
       return true;
     }
   }

@@ -26,9 +26,7 @@ package org.apache.geode.cache.query.data;
 import java.util.Set;
 import java.io.*;
 
-/**
- *
- */
+/** */
 public class District implements Serializable {
   public String name;
   public Set cities;
@@ -39,15 +37,15 @@ public class District implements Serializable {
     this.name = name;
     this.cities = cities;
     this.villages = villages;
-  }//end of contructor 1
+  } //end of contructor 1
 
   public District(int i, Set cities, Set villages) {
-    String arr1[] = { "MUMBAIDIST", "PUNEDIST", "GANDHINAGARDIST", "CHANDIGARHDIST", "KOLKATADIST" };
+    String arr1[] = {"MUMBAIDIST", "PUNEDIST", "GANDHINAGARDIST", "CHANDIGARHDIST", "KOLKATADIST"};
     /*this is for the test to have 20% of the objects belonging to one districtr*/
     this.name = arr1[i % 5];
     this.cities = cities;
     this.villages = villages;
-  }//end of contructor 2
+  } //end of contructor 2
 
   ///////////////////////////////
 
@@ -62,4 +60,4 @@ public class District implements Serializable {
   public Set getVillages() {
     return villages;
   }
-}// end of class
+} // end of class

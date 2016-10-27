@@ -27,10 +27,8 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.SecurityTest;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit tests GMSAuthenticator using old security.
- */
-@Category({ UnitTest.class, SecurityTest.class })
+/** Unit tests GMSAuthenticator using old security. */
+@Category({UnitTest.class, SecurityTest.class})
 public class GMSAuthenticatorWithAuthenticatorTest extends AbstractGMSAuthenticatorTestCase {
 
   @Override
@@ -98,25 +96,32 @@ public class GMSAuthenticatorWithAuthenticatorTest extends AbstractGMSAuthentica
   public void getCredentialsShouldThrowIfPeerAuthInitDoesNotExist() throws Exception {
     String authInit = getClass().getName() + "$NotExistAuth.create";
     props.setProperty(SECURITY_PEER_AUTH_INIT, authInit);
-    assertThatThrownBy(() -> authenticator.getCredentials(member, props)).hasMessageContaining("Instance could not be obtained from");
+    assertThatThrownBy(() -> authenticator.getCredentials(member, props))
+        .hasMessageContaining("Instance could not be obtained from");
   }
 
   @Test
   public void getCredentialsShouldThrowIfPeerAuthInitCreateReturnsNull() throws Exception {
-    props.setProperty(SECURITY_PEER_AUTH_INIT, AuthInitCreateReturnsNull.class.getName() + ".create");
-    assertThatThrownBy(() -> authenticator.getCredentials(member, props)).hasMessageContaining("Instance could not be obtained from");
+    props.setProperty(
+        SECURITY_PEER_AUTH_INIT, AuthInitCreateReturnsNull.class.getName() + ".create");
+    assertThatThrownBy(() -> authenticator.getCredentials(member, props))
+        .hasMessageContaining("Instance could not be obtained from");
   }
 
   @Test
   public void getCredentialsShouldThrowIfPeerAuthInitGetCredentialsAndInitThrow() throws Exception {
-    props.setProperty(SECURITY_PEER_AUTH_INIT, AuthInitGetCredentialsAndInitThrow.class.getName() + ".create");
-    assertThatThrownBy(() -> authenticator.getCredentials(member, props)).hasMessageContaining("expected init error");
+    props.setProperty(
+        SECURITY_PEER_AUTH_INIT, AuthInitGetCredentialsAndInitThrow.class.getName() + ".create");
+    assertThatThrownBy(() -> authenticator.getCredentials(member, props))
+        .hasMessageContaining("expected init error");
   }
 
   @Test
   public void getCredentialsShouldThrowIfPeerAuthInitGetCredentialsThrows() throws Exception {
-    props.setProperty(SECURITY_PEER_AUTH_INIT, AuthInitGetCredentialsThrows.class.getName() + ".create");
-    assertThatThrownBy(() -> authenticator.getCredentials(member, props)).hasMessageContaining("expected get credential error");
+    props.setProperty(
+        SECURITY_PEER_AUTH_INIT, AuthInitGetCredentialsThrows.class.getName() + ".create");
+    assertThatThrownBy(() -> authenticator.getCredentials(member, props))
+        .hasMessageContaining("expected get credential error");
   }
 
   @Test
@@ -150,7 +155,8 @@ public class GMSAuthenticatorWithAuthenticatorTest extends AbstractGMSAuthentica
   }
 
   @Test
-  public void authenticateShouldReturnFailureMessageIfPeerAuthenticatorDoesNotExist() throws Exception {
+  public void authenticateShouldReturnFailureMessageIfPeerAuthenticatorDoesNotExist()
+      throws Exception {
     props.setProperty(SECURITY_PEER_AUTHENTICATOR, getClass().getName() + "$NotExistAuth.create");
     String result = authenticator.authenticate(member, props, props);
     assertThat(result).startsWith("Security check failed. Instance could not be obtained from");
@@ -158,28 +164,32 @@ public class GMSAuthenticatorWithAuthenticatorTest extends AbstractGMSAuthentica
 
   @Test
   public void authenticateShouldReturnFailureMessageIfAuthenticateReturnsNull() throws Exception {
-    props.setProperty(SECURITY_PEER_AUTHENTICATOR, AuthenticatorReturnsNulls.class.getName() + ".create");
+    props.setProperty(
+        SECURITY_PEER_AUTHENTICATOR, AuthenticatorReturnsNulls.class.getName() + ".create");
     String result = authenticator.authenticate(member, props, props);
     assertThat(result).startsWith("Security check failed. Instance could not be obtained");
   }
 
   @Test
   public void authenticateShouldReturnFailureMessageIfNullCredentials() throws Exception {
-    props.setProperty(SECURITY_PEER_AUTHENTICATOR, AuthenticatorReturnsNulls.class.getName() + ".create");
+    props.setProperty(
+        SECURITY_PEER_AUTHENTICATOR, AuthenticatorReturnsNulls.class.getName() + ".create");
     String result = authenticator.authenticate(member, null, props);
     assertThat(result).startsWith("Failed to find credentials from");
   }
 
   @Test
   public void authenticateShouldReturnFailureMessageIfAuthenticateInitThrows() throws Exception {
-    props.setProperty(SECURITY_PEER_AUTHENTICATOR, AuthenticatorInitThrows.class.getName() + ".create");
+    props.setProperty(
+        SECURITY_PEER_AUTHENTICATOR, AuthenticatorInitThrows.class.getName() + ".create");
     String result = authenticator.authenticate(member, props, props);
     assertThat(result).startsWith("Security check failed. expected init error");
   }
 
   @Test
   public void authenticateShouldReturnFailureMessageIfAuthenticateThrows() throws Exception {
-    props.setProperty(SECURITY_PEER_AUTHENTICATOR, AuthenticatorAuthenticateThrows.class.getName() + ".create");
+    props.setProperty(
+        SECURITY_PEER_AUTHENTICATOR, AuthenticatorAuthenticateThrows.class.getName() + ".create");
     String result = authenticator.authenticate(member, props, props);
     assertThat(result).startsWith("Security check failed. expected authenticate error");
   }

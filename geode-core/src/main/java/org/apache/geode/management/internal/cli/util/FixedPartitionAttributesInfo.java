@@ -34,7 +34,9 @@ public class FixedPartitionAttributesInfo implements Serializable {
   public boolean equals(Object obj) {
     if (obj instanceof FixedPartitionAttributesInfo) {
       FixedPartitionAttributesInfo fpaInfo = (FixedPartitionAttributesInfo) obj;
-      return this.numBuckets == fpaInfo.getNumBuckets() && this.partitionName.equals(fpaInfo.getPartitionName()) && this.isPrimary == fpaInfo.isPrimary();
+      return this.numBuckets == fpaInfo.getNumBuckets()
+          && this.partitionName.equals(fpaInfo.getPartitionName())
+          && this.isPrimary == fpaInfo.isPrimary();
 
     } else {
       return false;
@@ -55,7 +57,5 @@ public class FixedPartitionAttributesInfo implements Serializable {
 
   public int hashCode() {
     return 42; // any arbitrary constant will do
-
   }
-
 }

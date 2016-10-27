@@ -43,9 +43,7 @@ import static org.apache.geode.test.dunit.Assert.fail;
 import static org.apache.geode.test.dunit.LogWriterUtils.getLogWriter;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
-/**
- * Dunit class for testing gemfire function commands : export logs
- */
+/** Dunit class for testing gemfire function commands : export logs */
 @Category(DistributedTest.class)
 public class MiscellaneousCommandsExportLogsPart3DUnitTest extends CliCommandTestBase {
 
@@ -60,18 +58,20 @@ public class MiscellaneousCommandsExportLogsPart3DUnitTest extends CliCommandTes
     final VM vm1 = Host.getHost(0).getVM(1);
     setUpJmxManagerOnVm0ThenConnect(null);
 
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
-        // no need to close cache as it will be closed as part of teardown2
-        Cache cache = getCache();
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            // no need to close cache as it will be closed as part of teardown2
+            Cache cache = getCache();
 
-        RegionFactory<Integer, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-        Region region = dataRegionFactory.create("testRegion");
-        for (int i = 0; i < 5; i++) {
-          region.put("key" + (i + 200), "value" + (i + 200));
-        }
-      }
-    });
+            RegionFactory<Integer, Integer> dataRegionFactory =
+                cache.createRegionFactory(RegionShortcut.PARTITION);
+            Region region = dataRegionFactory.create("testRegion");
+            for (int i = 0; i < 5; i++) {
+              region.put("key" + (i + 200), "value" + (i + 200));
+            }
+          }
+        });
   }
 
   String getCurrentTimeString() {
@@ -81,7 +81,9 @@ public class MiscellaneousCommandsExportLogsPart3DUnitTest extends CliCommandTes
     return ("_" + formattedStartDate);
   }
 
-  @Category(FlakyTest.class) // GEODE-672: random ports, java.rmi.server.ExportException: Port already in use, HeadlessGfsh, disk IO
+  @Category(
+      FlakyTest
+          .class) // GEODE-672: random ports, java.rmi.server.ExportException: Port already in use, HeadlessGfsh, disk IO
   @Test
   public void testExportLogsForGroup() throws IOException {
     Properties localProps = new Properties();
@@ -104,7 +106,9 @@ public class MiscellaneousCommandsExportLogsPart3DUnitTest extends CliCommandTes
     String[] groups = new String[1];
     groups[0] = "Group1";
 
-    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForGroup" + dir, groups, null, logLevel, false, false, start, end, 1);
+    Result cmdResult =
+        misc.exportLogsPreprocessing(
+            "./testExportLogsForGroup" + dir, groups, null, logLevel, false, false, start, end, 1);
 
     getLogWriter().info("testExportLogsForGroup command result =" + cmdResult);
     if (cmdResult != null) {
@@ -137,7 +141,17 @@ public class MiscellaneousCommandsExportLogsPart3DUnitTest extends CliCommandTes
     MiscellaneousCommands misc = new MiscellaneousCommands();
     getCache();
 
-    Result cmdResult = misc.exportLogsPreprocessing("./testExportLogsForMember" + dir, null, vm1MemberId, logLevel, false, false, start, end, 1);
+    Result cmdResult =
+        misc.exportLogsPreprocessing(
+            "./testExportLogsForMember" + dir,
+            null,
+            vm1MemberId,
+            logLevel,
+            false,
+            false,
+            start,
+            end,
+            1);
 
     getLogWriter().info("testExportLogsForMember command result =" + cmdResult);
 

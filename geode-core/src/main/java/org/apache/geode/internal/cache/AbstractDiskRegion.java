@@ -49,7 +49,6 @@ import joptsimple.internal.Strings;
 /**
  * Code shared by both DiskRegion and RecoveredDiskRegion.
  *
- *
  * @since GemFire prPersistSprint2
  */
 public abstract class AbstractDiskRegion implements DiskRegionView {
@@ -76,10 +75,11 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
   private final EnumSet<DiskRegionFlag> flags;
 
   /**
-   * A flag used to indicate that this disk region
-   * is being recreated using already existing data on the disk. 
+   * A flag used to indicate that this disk region is being recreated using already existing data on
+   * the disk.
    */
   private boolean isRecreated;
+
   private boolean configChanged;
   private boolean aboutToDestroy;
   private boolean aboutToDestroyDataStorage;
@@ -91,20 +91,18 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
   private boolean offHeap;
 
   /**
-   * Records the version vector of what has been persisted to disk.
-   * This may lag behind the version vector of what is in memory, because
-   * updates may be written asynchronously to disk. We need to keep track
-   * of exactly what has been written to disk so that we can record a version
-   * vector at the beginning of each oplog.
-   * 
-   * The version vector of what is in memory is held in is held 
-   * in LocalRegion.versionVector. 
+   * Records the version vector of what has been persisted to disk. This may lag behind the version
+   * vector of what is in memory, because updates may be written asynchronously to disk. We need to
+   * keep track of exactly what has been written to disk so that we can record a version vector at
+   * the beginning of each oplog.
+   *
+   * <p>The version vector of what is in memory is held in is held in LocalRegion.versionVector.
    */
   private RegionVersionVector versionVector;
 
   /**
-   * A flag whether the current version vector accurately represents
-   * what has been written to this members disk.
+   * A flag whether the current version vector accurately represents what has been written to this
+   * members disk.
    */
   private volatile boolean rvvTrusted = true;
 
@@ -135,7 +133,8 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
       this.aboutToDestroyDataStorage = drv.wasAboutToDestroyDataStorage();
       this.onlineMembers = new CopyOnWriteHashSet<PersistentMemberID>(drv.getOnlineMembers());
       this.offlineMembers = new CopyOnWriteHashSet<PersistentMemberID>(drv.getOfflineMembers());
-      this.equalMembers = new CopyOnWriteHashSet<PersistentMemberID>(drv.getOfflineAndEqualMembers());
+      this.equalMembers =
+          new CopyOnWriteHashSet<PersistentMemberID>(drv.getOfflineAndEqualMembers());
       this.isRecreated = true;
       //Use the same atomic counters as the previous disk region. This ensures that
       //updates from threads with a reference to the old region update this disk region
@@ -196,6 +195,7 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
 
   /**
    * Used to initialize a PlaceHolderDiskRegion for a region that is being closed
+   *
    * @param drv the region that is being closed
    */
   protected AbstractDiskRegion(DiskRegionView drv) {
@@ -270,7 +270,20 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
     this.clearRVV = rvv;
   }
 
-  public void setConfig(byte lruAlgorithm, byte lruAction, int lruLimit, int concurrencyLevel, int initialCapacity, float loadFactor, boolean statisticsEnabled, boolean isBucket, EnumSet<DiskRegionFlag> flags, String partitionName, int startingBucketId, String compressorClassName, boolean offHeap) {
+  public void setConfig(
+      byte lruAlgorithm,
+      byte lruAction,
+      int lruLimit,
+      int concurrencyLevel,
+      int initialCapacity,
+      float loadFactor,
+      boolean statisticsEnabled,
+      boolean isBucket,
+      EnumSet<DiskRegionFlag> flags,
+      String partitionName,
+      int startingBucketId,
+      String compressorClassName,
+      boolean offHeap) {
     this.lruAlgorithm = lruAlgorithm;
     this.lruAction = lruAction;
     this.lruLimit = lruLimit;
@@ -298,20 +311,33 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
     } else {
       try {
         @SuppressWarnings("unchecked")
-        Class<Compressor> compressorClass = (Class<Compressor>) ClassPathLoader.getLatest().forName(compressorClassName);
+        Class<Compressor> compressorClass =
+            (Class<Compressor>) ClassPathLoader.getLatest().forName(compressorClassName);
         this.compressor = compressorClass.newInstance();
       } catch (ClassNotFoundException e) {
-        throw new IllegalArgumentException(LocalizedStrings.DiskInitFile_UNKNOWN_COMPRESSOR_0_FOUND.toLocalizedString(compressorClassName), e);
+        throw new IllegalArgumentException(
+            LocalizedStrings.DiskInitFile_UNKNOWN_COMPRESSOR_0_FOUND.toLocalizedString(
+                compressorClassName),
+            e);
       } catch (InstantiationException e) {
-        throw new IllegalArgumentException(LocalizedStrings.DiskInitFile_UNKNOWN_COMPRESSOR_0_FOUND.toLocalizedString(compressorClassName), e);
+        throw new IllegalArgumentException(
+            LocalizedStrings.DiskInitFile_UNKNOWN_COMPRESSOR_0_FOUND.toLocalizedString(
+                compressorClassName),
+            e);
       } catch (IllegalAccessException e) {
-        throw new IllegalArgumentException(LocalizedStrings.DiskInitFile_UNKNOWN_COMPRESSOR_0_FOUND.toLocalizedString(compressorClassName), e);
+        throw new IllegalArgumentException(
+            LocalizedStrings.DiskInitFile_UNKNOWN_COMPRESSOR_0_FOUND.toLocalizedString(
+                compressorClassName),
+            e);
       }
     }
   }
 
   public EvictionAttributesImpl getEvictionAttributes() {
-    return new EvictionAttributesImpl().setAlgorithm(getActualLruAlgorithm()).setAction(getActualLruAction()).internalSetMaximum(getLruLimit());
+    return new EvictionAttributesImpl()
+        .setAlgorithm(getActualLruAlgorithm())
+        .setAction(getActualLruAction())
+        .internalSetMaximum(getLruLimit());
   }
 
   public byte getLruAlgorithm() {
@@ -445,8 +471,7 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
   // PersistentMemberView methods
   public PersistentMemberID getMyInitializingID() {
     DiskInitFile dif = this.ds.getDiskInitFile();
-    if (dif == null)
-      return this.myInitializingId;
+    if (dif == null) return this.myInitializingId;
     synchronized (dif) {
       return this.myInitializingId;
     }
@@ -454,8 +479,7 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
 
   public PersistentMemberID getMyPersistentID() {
     DiskInitFile dif = this.ds.getDiskInitFile();
-    if (dif == null)
-      return this.myInitializedId;
+    if (dif == null) return this.myInitializedId;
     synchronized (dif) {
       return this.myInitializedId;
     }
@@ -463,8 +487,7 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
 
   public Set<PersistentMemberID> getOnlineMembers() {
     DiskInitFile dif = this.ds.getDiskInitFile();
-    if (dif == null)
-      return this.onlineMembers.getSnapshot();
+    if (dif == null) return this.onlineMembers.getSnapshot();
     synchronized (dif) {
       return this.onlineMembers.getSnapshot();
     }
@@ -472,8 +495,7 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
 
   public Set<PersistentMemberID> getOfflineMembers() {
     DiskInitFile dif = this.ds.getDiskInitFile();
-    if (dif == null)
-      return this.offlineMembers.getSnapshot();
+    if (dif == null) return this.offlineMembers.getSnapshot();
     synchronized (dif) {
       return this.offlineMembers.getSnapshot();
     }
@@ -481,8 +503,7 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
 
   public Set<PersistentMemberID> getOfflineAndEqualMembers() {
     DiskInitFile dif = this.ds.getDiskInitFile();
-    if (dif == null)
-      return this.equalMembers.getSnapshot();
+    if (dif == null) return this.equalMembers.getSnapshot();
     synchronized (dif) {
       return this.equalMembers.getSnapshot();
     }
@@ -496,49 +517,84 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
   public void memberOffline(PersistentMemberID persistentID) {
     this.ds.memberOffline(this, persistentID);
     if (logger.isDebugEnabled()) {
-      logger.trace(LogMarker.PERSIST, "PersistentView {} - {} - member offline {}", getDiskStoreID().abbrev(), this.getName(), persistentID);
+      logger.trace(
+          LogMarker.PERSIST,
+          "PersistentView {} - {} - member offline {}",
+          getDiskStoreID().abbrev(),
+          this.getName(),
+          persistentID);
     }
   }
 
   public void memberOfflineAndEqual(PersistentMemberID persistentID) {
     this.ds.memberOfflineAndEqual(this, persistentID);
     if (logger.isDebugEnabled()) {
-      logger.trace(LogMarker.PERSIST, "PersistentView {} - {} - member offline and equal {}", getDiskStoreID().abbrev(), this.getName(), persistentID);
+      logger.trace(
+          LogMarker.PERSIST,
+          "PersistentView {} - {} - member offline and equal {}",
+          getDiskStoreID().abbrev(),
+          this.getName(),
+          persistentID);
     }
   }
 
   public void memberOnline(PersistentMemberID persistentID) {
     this.ds.memberOnline(this, persistentID);
     if (logger.isDebugEnabled()) {
-      logger.trace(LogMarker.PERSIST, "PersistentView {} - {} - member online {}", getDiskStoreID().abbrev(), this.getName(), persistentID);
+      logger.trace(
+          LogMarker.PERSIST,
+          "PersistentView {} - {} - member online {}",
+          getDiskStoreID().abbrev(),
+          this.getName(),
+          persistentID);
     }
   }
 
   public void memberRemoved(PersistentMemberID persistentID) {
     this.ds.memberRemoved(this, persistentID);
     if (logger.isDebugEnabled()) {
-      logger.trace(LogMarker.PERSIST, "PersistentView {} - {} - member removed {}", getDiskStoreID().abbrev(), this.getName(), persistentID);
+      logger.trace(
+          LogMarker.PERSIST,
+          "PersistentView {} - {} - member removed {}",
+          getDiskStoreID().abbrev(),
+          this.getName(),
+          persistentID);
     }
   }
 
   public void memberRevoked(PersistentMemberPattern revokedPattern) {
     this.ds.memberRevoked(revokedPattern);
     if (logger.isDebugEnabled()) {
-      logger.trace(LogMarker.PERSIST, "PersistentView {} - {} - member revoked {}", getDiskStoreID().abbrev(), this.getName(), revokedPattern);
+      logger.trace(
+          LogMarker.PERSIST,
+          "PersistentView {} - {} - member revoked {}",
+          getDiskStoreID().abbrev(),
+          this.getName(),
+          revokedPattern);
     }
   }
 
   public void setInitializing(PersistentMemberID newId) {
     this.ds.setInitializing(this, newId);
     if (logger.isDebugEnabled()) {
-      logger.trace(LogMarker.PERSIST, "PersistentView {} - {} - initializing local id: {}", getDiskStoreID().abbrev(), this.getName(), getMyInitializingID());
+      logger.trace(
+          LogMarker.PERSIST,
+          "PersistentView {} - {} - initializing local id: {}",
+          getDiskStoreID().abbrev(),
+          this.getName(),
+          getMyInitializingID());
     }
   }
 
   public void setInitialized() {
     this.ds.setInitialized(this);
     if (logger.isDebugEnabled()) {
-      logger.trace(LogMarker.PERSIST, "PersistentView {} - {} - initialized local id: {}", getDiskStoreID().abbrev(), this.getName(), getMyPersistentID());
+      logger.trace(
+          LogMarker.PERSIST,
+          "PersistentView {} - {} - initialized local id: {}",
+          getDiskStoreID().abbrev(),
+          this.getName(),
+          getMyPersistentID());
     }
   }
 
@@ -564,7 +620,8 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
       ds.updateDiskRegion(this);
       this.entriesMapIncompatible = false;
       if (this.entries != null) {
-        CustomEntryConcurrentHashMap<Object, Object> other = ((AbstractRegionMap) this.entries)._getMap();
+        CustomEntryConcurrentHashMap<Object, Object> other =
+            ((AbstractRegionMap) this.entries)._getMap();
         Iterator<Map.Entry<Object, Object>> it = other.entrySetWithReusableEntries().iterator();
         while (it.hasNext()) {
           Map.Entry<Object, Object> me = it.next();
@@ -584,24 +641,36 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
     if (this.aboutToDestroyDataStorage) {
       this.ds.endDestroyDataStorage(region, (DiskRegion) this);
       if (logger.isDebugEnabled()) {
-        logger.trace(LogMarker.PERSIST, "PersistentView {} - {} - endDestroyDataStorage: {}", getDiskStoreID().abbrev(), this.getName(), getMyPersistentID());
+        logger.trace(
+            LogMarker.PERSIST,
+            "PersistentView {} - {} - endDestroyDataStorage: {}",
+            getDiskStoreID().abbrev(),
+            this.getName(),
+            getMyPersistentID());
       }
     } else {
       this.ds.endDestroyRegion(region, (DiskRegion) this);
       if (logger.isDebugEnabled()) {
-        logger.trace(LogMarker.PERSIST, "PersistentView {} - {} - endDestroy: {}", getDiskStoreID().abbrev(), this.getName(), getMyPersistentID());
+        logger.trace(
+            LogMarker.PERSIST,
+            "PersistentView {} - {} - endDestroy: {}",
+            getDiskStoreID().abbrev(),
+            this.getName(),
+            getMyPersistentID());
       }
     }
-
   }
 
-  /**
-   * Begin the destroy of everything related to this disk region.
-   */
+  /** Begin the destroy of everything related to this disk region. */
   public void beginDestroy(LocalRegion region) {
     beginDestroyRegion(region);
     if (logger.isDebugEnabled()) {
-      logger.trace(LogMarker.PERSIST, "PersistentView {} - {} - beginDestroy: {}", getDiskStoreID().abbrev(), this.getName(), getMyPersistentID());
+      logger.trace(
+          LogMarker.PERSIST,
+          "PersistentView {} - {} - beginDestroy: {}",
+          getDiskStoreID().abbrev(),
+          this.getName(),
+          getMyPersistentID());
     }
     if (this.myInitializedId == null) {
       endDestroy(region);
@@ -609,19 +678,22 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
   }
 
   /**
-   * Destroy the data storage this this disk region. Destroying the
-   * data storage leaves the persistent view, but removes
-   * the data.
+   * Destroy the data storage this this disk region. Destroying the data storage leaves the
+   * persistent view, but removes the data.
    */
   public void beginDestroyDataStorage() {
     this.ds.beginDestroyDataStorage((DiskRegion) this);
     if (logger.isDebugEnabled()) {
-      logger.trace(LogMarker.PERSIST, "PersistentView {} - {} - beginDestroyDataStorage: {}", getDiskStoreID().abbrev(), this.getName(), getMyPersistentID());
+      logger.trace(
+          LogMarker.PERSIST,
+          "PersistentView {} - {} - beginDestroyDataStorage: {}",
+          getDiskStoreID().abbrev(),
+          this.getName(),
+          getMyPersistentID());
     }
   }
 
-  public void createDataStorage() {
-  }
+  public void createDataStorage() {}
 
   public boolean wasAboutToDestroy() {
     return this.aboutToDestroy;
@@ -631,14 +703,11 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
     return this.aboutToDestroyDataStorage;
   }
 
-  /**
-   * Set to true once this DiskRegion is ready to be recovered.
-   */
+  /** Set to true once this DiskRegion is ready to be recovered. */
   private boolean readyForRecovery;
   /**
-   * Total number of entries recovered by restoring from backup. Its initialized
-   * right after a recovery but may be updated later as recovered entries go
-   * away due to updates and destroys.
+   * Total number of entries recovered by restoring from backup. Its initialized right after a
+   * recovery but may be updated later as recovered entries go away due to updates and destroys.
    */
   protected int recoveredEntryCount;
 
@@ -695,11 +764,13 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
       //those stats alone.
       this.numEntriesInVM.set(0);
 
-      lr.initializeStats(this.getNumEntriesInVM(), this.getNumOverflowOnDisk(), this.getNumOverflowBytesOnDisk());
+      lr.initializeStats(
+          this.getNumEntriesInVM(), this.getNumOverflowOnDisk(), this.getNumOverflowBytesOnDisk());
       lr.copyRecoveredEntries(this.entries);
     } else {
       this.entries.changeOwner(lr);
-      lr.initializeStats(this.getNumEntriesInVM(), this.getNumOverflowOnDisk(), this.getNumOverflowBytesOnDisk());
+      lr.initializeStats(
+          this.getNumEntriesInVM(), this.getNumOverflowOnDisk(), this.getNumOverflowBytesOnDisk());
       lr.copyRecoveredEntries(null);
     }
     this.entries = null;
@@ -729,7 +800,7 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
 
   /**
    * gets the number of entries recovered
-   * 
+   *
    * @since GemFire 3.2.1
    */
   public int getRecoveredEntryCount() {
@@ -740,9 +811,7 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
     this.recoveredEntryCount++;
   }
 
-  /**
-   * initializes the number of entries recovered
-   */
+  /** initializes the number of entries recovered */
   public void initRecoveredEntryCount() {
     if (this.recoveryCompleted != null) {
       synchronized (this.recoveryCompleted) {
@@ -770,7 +839,6 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
 
   public void incNumOverflowBytesOnDisk(long delta) {
     this.numOverflowBytesOnDisk.addAndGet(delta);
-
   }
 
   protected final AtomicLong numEntriesInVM;
@@ -784,9 +852,8 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
   }
 
   /**
-   * Returns true if this region maintains a backup of all its keys and values
-   * on disk. Returns false if only values that will not fit in memory are
-   * written to disk.
+   * Returns true if this region maintains a backup of all its keys and values on disk. Returns
+   * false if only values that will not fit in memory are written to disk.
    */
   public final boolean isBackup() {
     return this.backup;
@@ -808,9 +875,39 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
         msg += " -lruLimit=" + getEvictionAttributes().getMaximum();
       }
     }
-    msg += " -concurrencyLevel=" + getConcurrencyLevel() + " -initialCapacity=" + getInitialCapacity() + " -loadFactor=" + getLoadFactor() + " -offHeap=" + getOffHeap() + " -compressor=" + (getCompressorClassName() == null ? "none" : getCompressorClassName()) + " -statisticsEnabled=" + getStatisticsEnabled();
+    msg +=
+        " -concurrencyLevel="
+            + getConcurrencyLevel()
+            + " -initialCapacity="
+            + getInitialCapacity()
+            + " -loadFactor="
+            + getLoadFactor()
+            + " -offHeap="
+            + getOffHeap()
+            + " -compressor="
+            + (getCompressorClassName() == null ? "none" : getCompressorClassName())
+            + " -statisticsEnabled="
+            + getStatisticsEnabled();
     if (logger.isTraceEnabled(LogMarker.PERSIST_RECOVERY)) {
-      msg += " drId=" + getId() + " isBucket=" + isBucket() + " clearEntryId=" + getClearOplogEntryId() + " MyInitializingID=<" + getMyInitializingID() + ">" + " MyPersistentID=<" + getMyPersistentID() + ">" + " onlineMembers=" + getOnlineMembers() + " offlineMembers=" + getOfflineMembers() + " equalsMembers=" + getOfflineAndEqualMembers();
+      msg +=
+          " drId="
+              + getId()
+              + " isBucket="
+              + isBucket()
+              + " clearEntryId="
+              + getClearOplogEntryId()
+              + " MyInitializingID=<"
+              + getMyInitializingID()
+              + ">"
+              + " MyPersistentID=<"
+              + getMyPersistentID()
+              + ">"
+              + " onlineMembers="
+              + getOnlineMembers()
+              + " offlineMembers="
+              + getOfflineMembers()
+              + " equalsMembers="
+              + getOfflineAndEqualMembers();
     }
     printStream.println(msg);
   }
@@ -847,7 +944,8 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
     sb.append(lineSeparator);
     sb.append("-offHeap=" + getOffHeap());
     sb.append(lineSeparator);
-    sb.append("-compressor=" + (getCompressorClassName() == null ? "none" : getCompressorClassName()));
+    sb.append(
+        "-compressor=" + (getCompressorClassName() == null ? "none" : getCompressorClassName()));
     sb.append(lineSeparator);
     sb.append("-statisticsEnabled=" + getStatisticsEnabled());
     sb.append(lineSeparator);
@@ -893,6 +991,7 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
 
   /**
    * Dump the (bucket specific) persistent view to the string builder
+   *
    * @param msg
    */
   public void dumpPersistentView(StringBuilder msg) {
@@ -917,6 +1016,7 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
 
   /**
    * Dump the attributes which are common across the PR to the string builder.
+   *
    * @param msg
    */
   public void dumpCommonAttributes(StringBuilder msg) {
@@ -941,9 +1041,9 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
   }
 
   /**
-   * This method was added to fix bug 40192.
-   * It is like getBytesAndBits except it will return Token.REMOVE_PHASE1 if
-   * the htreeReference has changed (which means a clear was done).
+   * This method was added to fix bug 40192. It is like getBytesAndBits except it will return
+   * Token.REMOVE_PHASE1 if the htreeReference has changed (which means a clear was done).
+   *
    * @return an instance of BytesAndBits or Token.REMOVED_PHASE1
    */
   public final Object getRaw(DiskId id) {
@@ -968,10 +1068,10 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
     //like it's not doing the right thing if the current member is the member
     //we just recovered.
     this.versionVector.recordGCVersion(member, gcVersion);
-
   }
 
-  public void recordRecoveredVersonHolder(VersionSource member, RegionVersionHolder versionHolder, boolean latestOplog) {
+  public void recordRecoveredVersonHolder(
+      VersionSource member, RegionVersionHolder versionHolder, boolean latestOplog) {
     this.versionVector.initRecoveredVersion(member, versionHolder, latestOplog);
   }
 
@@ -980,12 +1080,10 @@ public abstract class AbstractDiskRegion implements DiskRegionView {
   }
 
   /**
-   * Indicate that the current RVV for this disk region does not
-   * accurately reflect what has been recorded on disk. This is true
-   * while we are in the middle of a GII, because we record the new RVV
-   * at the beginning of the GII. If we recover in this state, we need to
-   * know that the recovered RVV is not something we can use to do a delta
-   * GII.
+   * Indicate that the current RVV for this disk region does not accurately reflect what has been
+   * recorded on disk. This is true while we are in the middle of a GII, because we record the new
+   * RVV at the beginning of the GII. If we recover in this state, we need to know that the
+   * recovered RVV is not something we can use to do a delta GII.
    */
   public void setRVVTrusted(boolean trusted) {
     this.rvvTrusted = trusted;

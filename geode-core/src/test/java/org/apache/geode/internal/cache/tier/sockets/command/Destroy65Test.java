@@ -52,43 +52,29 @@ public class Destroy65Test {
   private static final Object CALLBACK_ARG = "arg";
   private static final byte[] EVENT = new byte[8];
 
-  @Mock
-  private SecurityService securityService;
-  @Mock
-  private Message message;
-  @Mock
-  private ServerConnection serverConnection;
-  @Mock
-  private AuthorizeRequest authzRequest;
-  @Mock
-  private LocalRegion region;
-  @Mock
-  private Cache cache;
-  @Mock
-  private CacheServerStats cacheServerStats;
-  @Mock
-  private Message responseMessage;
-  @Mock
-  private Message errorResponseMessage;
-  @Mock
-  private Part regionNamePart;
-  @Mock
-  private Part keyPart;
-  @Mock
-  private Part eventPart;
-  @Mock
-  private Part callbackArgPart;
-  @Mock
-  private DestroyOperationContext destroyOperationContext;
-  @InjectMocks
-  private Destroy65 destroy65;
+  @Mock private SecurityService securityService;
+  @Mock private Message message;
+  @Mock private ServerConnection serverConnection;
+  @Mock private AuthorizeRequest authzRequest;
+  @Mock private LocalRegion region;
+  @Mock private Cache cache;
+  @Mock private CacheServerStats cacheServerStats;
+  @Mock private Message responseMessage;
+  @Mock private Message errorResponseMessage;
+  @Mock private Part regionNamePart;
+  @Mock private Part keyPart;
+  @Mock private Part eventPart;
+  @Mock private Part callbackArgPart;
+  @Mock private DestroyOperationContext destroyOperationContext;
+  @InjectMocks private Destroy65 destroy65;
 
   @Before
   public void setUp() throws Exception {
     this.destroy65 = new Destroy65();
     MockitoAnnotations.initMocks(this);
 
-    when(this.authzRequest.destroyAuthorize(eq(REGION_NAME), eq(KEY), eq(CALLBACK_ARG))).thenReturn(this.destroyOperationContext);
+    when(this.authzRequest.destroyAuthorize(eq(REGION_NAME), eq(KEY), eq(CALLBACK_ARG)))
+        .thenReturn(this.destroyOperationContext);
 
     when(this.cache.getRegion(isA(String.class))).thenReturn(this.region);
     when(this.cache.getCancelCriterion()).thenReturn(mock(CancelCriterion.class));
@@ -141,7 +127,9 @@ public class Destroy65Test {
   public void integratedSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(true);
-    doThrow(new NotAuthorizedException("")).when(this.securityService).authorizeRegionWrite(eq(REGION_NAME), eq(KEY));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.securityService)
+        .authorizeRegionWrite(eq(REGION_NAME), eq(KEY));
 
     this.destroy65.cmdExecute(this.message, this.serverConnection, 0);
 
@@ -164,12 +152,13 @@ public class Destroy65Test {
   public void oldSecurityShouldFailIfNotAuthorized() throws Exception {
     when(this.securityService.isClientSecurityRequired()).thenReturn(true);
     when(this.securityService.isIntegratedSecurity()).thenReturn(false);
-    doThrow(new NotAuthorizedException("")).when(this.authzRequest).destroyAuthorize(eq(REGION_NAME), eq(KEY), eq(CALLBACK_ARG));
+    doThrow(new NotAuthorizedException(""))
+        .when(this.authzRequest)
+        .destroyAuthorize(eq(REGION_NAME), eq(KEY), eq(CALLBACK_ARG));
 
     this.destroy65.cmdExecute(this.message, this.serverConnection, 0);
 
     verify(this.authzRequest).destroyAuthorize(eq(REGION_NAME), eq(KEY), eq(CALLBACK_ARG));
     verify(this.errorResponseMessage).send(eq(this.serverConnection));
   }
-
 }

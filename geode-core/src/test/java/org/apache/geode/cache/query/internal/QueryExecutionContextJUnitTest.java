@@ -63,5 +63,4 @@ public class QueryExecutionContextJUnitTest {
     context.popExecCache();
     assertEquals(value, context.cacheGet(key));
   }
-
 }

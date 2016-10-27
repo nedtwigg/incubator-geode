@@ -24,11 +24,7 @@ import org.apache.geode.management.internal.cli.json.GfJsonArray;
 import org.apache.geode.management.internal.cli.json.GfJsonException;
 import org.apache.geode.management.internal.cli.json.GfJsonObject;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class ObjectResultData<T extends CliJsonSerializable> extends AbstractResultData {
   public static final String OBJECTS_ACCESSOR = "__objects__";
 
@@ -75,7 +71,9 @@ public class ObjectResultData<T extends CliJsonSerializable> extends AbstractRes
       CliJsonSerializable cliJsonSerializable = null;
       for (int i = 0; i < size; i++) {
         jsonObject = rootJsonArray.getJSONObject(i);
-        cliJsonSerializable = CliJsonSerializableFactory.getCliJsonSerializable(jsonObject.getInt(CliJsonSerializable.JSID));
+        cliJsonSerializable =
+            CliJsonSerializableFactory.getCliJsonSerializable(
+                jsonObject.getInt(CliJsonSerializable.JSID));
         cliJsonSerializable.fromJson(jsonObject);
         list.add(cliJsonSerializable);
       }

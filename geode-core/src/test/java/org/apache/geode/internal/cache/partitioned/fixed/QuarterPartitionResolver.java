@@ -32,7 +32,8 @@ import org.apache.geode.cache.FixedPartitionResolver;
 import org.apache.geode.cache.PartitionAttributes;
 import org.apache.geode.internal.cache.xmlcache.Declarable2;
 
-public class QuarterPartitionResolver implements FixedPartitionResolver, Declarable2, DataSerializable {
+public class QuarterPartitionResolver
+    implements FixedPartitionResolver, Declarable2, DataSerializable {
   private Properties resolveProps;
 
   public QuarterPartitionResolver() {
@@ -81,7 +82,8 @@ public class QuarterPartitionResolver implements FixedPartitionResolver, Declara
     this.numBuckets = numBukcets;
   }
 
-  public int getNumBuckets(String partitionName, String regionName, PartitionAttributes partitionAttributes) {
+  public int getNumBuckets(
+      String partitionName, String regionName, PartitionAttributes partitionAttributes) {
     return this.numBuckets;
   }
 
@@ -105,7 +107,7 @@ public class QuarterPartitionResolver implements FixedPartitionResolver, Declara
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.internal.cache.xmlcache.Declarable2#getConfig()
    */
   public Properties getConfig() {
@@ -114,7 +116,7 @@ public class QuarterPartitionResolver implements FixedPartitionResolver, Declara
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.cache.Declarable#init(java.util.Properties)
    */
   public void init(Properties props) {
@@ -129,7 +131,5 @@ public class QuarterPartitionResolver implements FixedPartitionResolver, Declara
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeProperties(this.resolveProps, out);
     out.writeInt(this.numBuckets);
-
   }
-
 }

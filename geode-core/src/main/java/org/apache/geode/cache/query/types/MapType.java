@@ -18,10 +18,9 @@
 package org.apache.geode.cache.query.types;
 
 /**
- * Represents the type of a Map, a collection that contains keys as well
- * as values and maintains an association between key-value pairs.
- * The type of the keys is obtained from the getKeyType method, and the type
- * of the values is obtained from the getElementType method.
+ * Represents the type of a Map, a collection that contains keys as well as values and maintains an
+ * association between key-value pairs. The type of the keys is obtained from the getKeyType method,
+ * and the type of the values is obtained from the getElementType method.
  *
  * @since GemFire 4.0
  */
@@ -29,13 +28,14 @@ public interface MapType extends CollectionType {
 
   /**
    * Return the type of the keys in this type of map.
+   *
    * @return the ObjectType of the keys in this type of map.
    */
   public ObjectType getKeyType();
 
-  /** Return the type of the entries in this map.
-   *  In the context of the query language, the entries in a map are
-   *  structs with key and value fields.
+  /**
+   * Return the type of the entries in this map. In the context of the query language, the entries
+   * in a map are structs with key and value fields.
    */
   public StructType getEntryType();
 }

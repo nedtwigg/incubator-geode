@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -47,14 +47,20 @@ public class LuceneQueryImpl<K, V> implements LuceneQuery<K, V> {
   private int limit = LuceneQueryFactory.DEFAULT_LIMIT;
   private int pageSize = LuceneQueryFactory.DEFAULT_PAGESIZE;
   private String indexName;
-  // The projected fields are local to a specific index per Query object. 
+  // The projected fields are local to a specific index per Query object.
   private String[] projectedFieldNames;
   /* the lucene Query object to be wrapped here */
   private LuceneQueryProvider query;
   private Region<K, V> region;
   private String defaultField;
 
-  public LuceneQueryImpl(String indexName, Region<K, V> region, LuceneQueryProvider provider, String[] projectionFields, int limit, int pageSize) {
+  public LuceneQueryImpl(
+      String indexName,
+      Region<K, V> region,
+      LuceneQueryProvider provider,
+      String[] projectionFields,
+      int limit,
+      int pageSize) {
     this.indexName = indexName;
     this.region = region;
     this.limit = limit;
@@ -100,10 +106,13 @@ public class LuceneQueryImpl<K, V> implements LuceneQuery<K, V> {
 
   private TopEntries<K> findTopEntries() throws LuceneQueryException {
     TopEntriesCollectorManager manager = new TopEntriesCollectorManager(null, limit);
-    LuceneFunctionContext<TopEntriesCollector> context = new LuceneFunctionContext<>(query, indexName, manager, limit);
+    LuceneFunctionContext<TopEntriesCollector> context =
+        new LuceneFunctionContext<>(query, indexName, manager, limit);
     TopEntriesFunctionCollector collector = new TopEntriesFunctionCollector(context);
 
-    ResultCollector<TopEntriesCollector, TopEntries<K>> rc = (ResultCollector<TopEntriesCollector, TopEntries<K>>) onRegion().withArgs(context).withCollector(collector).execute(LuceneFunction.ID);
+    ResultCollector<TopEntriesCollector, TopEntries<K>> rc =
+        (ResultCollector<TopEntriesCollector, TopEntries<K>>)
+            onRegion().withArgs(context).withCollector(collector).execute(LuceneFunction.ID);
 
     //TODO provide a timeout to the user?
     TopEntries<K> entries;

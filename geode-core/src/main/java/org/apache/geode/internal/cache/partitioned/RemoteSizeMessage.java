@@ -43,9 +43,8 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * This message is used to determine the number of Entries in a Region, or its
- * size.
- * 
+ * This message is used to determine the number of Entries in a Region, or its size.
+ *
  * @since GemFire 5.0
  */
 public final class RemoteSizeMessage extends RemoteOperationMessage {
@@ -62,44 +61,37 @@ public final class RemoteSizeMessage extends RemoteOperationMessage {
   /** the type of query to perform */
   private int queryType;
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public RemoteSizeMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public RemoteSizeMessage() {}
 
   /**
-   * The message sent to a set of {@link InternalDistributedMember}s to caculate the
-   * number of Entries in each of their buckets
-   * 
-   * @param recipients
-   *          members to receive the message
-   * @param regionPath
-   *          the path to the region
+   * The message sent to a set of {@link InternalDistributedMember}s to caculate the number of
+   * Entries in each of their buckets
+   *
+   * @param recipients members to receive the message
+   * @param regionPath the path to the region
    * @param processor the reply processor used to wait on the response
    */
-  private RemoteSizeMessage(Set recipients, String regionPath, ReplyProcessor21 processor, int queryType) {
+  private RemoteSizeMessage(
+      Set recipients, String regionPath, ReplyProcessor21 processor, int queryType) {
     super(recipients, regionPath, processor);
     this.queryType = queryType;
   }
 
   /**
    * @param in
-   * @throws ClassNotFoundException 
-   * @throws IOException 
+   * @throws ClassNotFoundException
+   * @throws IOException
    */
   public RemoteSizeMessage(DataInput in) throws IOException, ClassNotFoundException {
     fromData(in);
   }
 
   /**
-   * Sends a PartitionedRegion message for {@link java.util.Map#size()}ignoring
-   * any errors on send
-   * 
-   * @param recipients
-   *          the set of members that the size message is sent to
-   * @param r
-   *          the Region that contains the bucket
+   * Sends a PartitionedRegion message for {@link java.util.Map#size()}ignoring any errors on send
+   *
+   * @param recipients the set of members that the size message is sent to
+   * @param r the Region that contains the bucket
    * @return the processor used to read the returned size
    */
   public static SizeResponse send(Set recipients, LocalRegion r) {
@@ -107,9 +99,9 @@ public final class RemoteSizeMessage extends RemoteOperationMessage {
   }
 
   /**
-   * sends a message to the given recipients asking for the size of either
-   * their primary bucket entries or the values sets of their primary
-   * buckets
+   * sends a message to the given recipients asking for the size of either their primary bucket
+   * entries or the values sets of their primary buckets
+   *
    * @param recipients recipients of the message
    * @param r the local PartitionedRegion instance
    * @param queryType either TYPE_ENTRIES or TYPE_VALUES
@@ -123,10 +115,9 @@ public final class RemoteSizeMessage extends RemoteOperationMessage {
   }
 
   /**
-   * This message may be sent to nodes before the PartitionedRegion is
-   * completely initialized due to the RegionAdvisor(s) knowing about the
-   * existance of a partitioned region at a very early part of the
-   * initialization
+   * This message may be sent to nodes before the PartitionedRegion is completely initialized due to
+   * the RegionAdvisor(s) knowing about the existance of a partitioned region at a very early part
+   * of the initialization
    */
   @Override
   protected final boolean failIfRegionMissing() {
@@ -145,7 +136,8 @@ public final class RemoteSizeMessage extends RemoteOperationMessage {
   }
 
   @Override
-  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime) throws RemoteOperationException {
+  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime)
+      throws RemoteOperationException {
 
     int size = 0;
     if (r != null) { // bug #43372 - NPE returned when bucket not found during tx replay
@@ -191,11 +183,8 @@ public final class RemoteSizeMessage extends RemoteOperationMessage {
     /** Propagated exception from remote node to operation initiator */
     private int size;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public SizeReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public SizeReplyMessage() {}
 
     private SizeReplyMessage(int processorId, int size) {
       this.processorId = processorId;
@@ -205,7 +194,7 @@ public final class RemoteSizeMessage extends RemoteOperationMessage {
     /**
      * @param in
      * @throws ClassNotFoundException
-     * @throws IOException 
+     * @throws IOException
      */
     public SizeReplyMessage(DataInput in) throws IOException, ClassNotFoundException {
       fromData(in);
@@ -220,17 +209,18 @@ public final class RemoteSizeMessage extends RemoteOperationMessage {
     }
 
     /**
-     * Processes this message. This method is invoked by the receiver of the
-     * message.
-     * 
-     * @param dm
-     *          the distribution manager that is processing the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
+     * @param dm the distribution manager that is processing the message.
      */
     @Override
     public void process(final DM dm, final ReplyProcessor21 processor) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "{}: process invoking reply processor with processorId: {}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "{}: process invoking reply processor with processorId: {}",
+            this.processorId);
       }
 
       if (processor == null) {
@@ -267,7 +257,13 @@ public final class RemoteSizeMessage extends RemoteOperationMessage {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append(this.getClass().getName()).append(" processorid=").append(this.processorId).append(" reply to sender ").append(this.getSender()).append(" returning size=").append(getSize());
+      sb.append(this.getClass().getName())
+          .append(" processorid=")
+          .append(this.processorId)
+          .append(" reply to sender ")
+          .append(this.getSender())
+          .append(" returning size=")
+          .append(getSize());
       return sb.toString();
     }
 
@@ -277,9 +273,9 @@ public final class RemoteSizeMessage extends RemoteOperationMessage {
   }
 
   /**
-   * A processor to capture the value returned by {@link 
+   * A processor to capture the value returned by {@link
    * org.apache.geode.internal.cache.partitioned.GetMessage.GetReplyMessage}
-   * 
+   *
    * @since GemFire 5.0
    */
   public static class SizeResponse extends ReplyProcessor21 {
@@ -290,11 +286,10 @@ public final class RemoteSizeMessage extends RemoteOperationMessage {
     }
 
     /**
-     * The SizeResponse processor ignores remote exceptions by implmenting this
-     * method. Ignoring remote exceptions is acceptable since the RemoteSizeMessage is
-     * sent to all Nodes and all {@link RemoteSizeMessage.SizeReplyMessage}s are processed for
-     * each individual bucket size. The hope is that any failure due to an
-     * exception will be covered by healthy Nodes.
+     * The SizeResponse processor ignores remote exceptions by implmenting this method. Ignoring
+     * remote exceptions is acceptable since the RemoteSizeMessage is sent to all Nodes and all
+     * {@link RemoteSizeMessage.SizeReplyMessage}s are processed for each individual bucket size.
+     * The hope is that any failure due to an exception will be covered by healthy Nodes.
      */
     @Override
     protected void processException(ReplyException ex) {
@@ -313,9 +308,7 @@ public final class RemoteSizeMessage extends RemoteOperationMessage {
       }
     }
 
-    /**
-     * @return wait for and return the size
-     */
+    /** @return wait for and return the size */
     public int waitForSize() {
       try {
         waitForRepliesUninterruptibly();
@@ -330,5 +323,4 @@ public final class RemoteSizeMessage extends RemoteOperationMessage {
       return this.returnValue;
     }
   }
-
 }

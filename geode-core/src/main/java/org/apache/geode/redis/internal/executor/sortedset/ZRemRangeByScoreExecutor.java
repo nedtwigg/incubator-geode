@@ -44,7 +44,8 @@ public class ZRemRangeByScoreExecutor extends SortedSetExecutor {
     List<byte[]> commandElems = command.getProcessedCommand();
 
     if (commandElems.size() < 4) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.ZREMRANGEBYSCORE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ArityDef.ZREMRANGEBYSCORE));
       return;
     }
 
@@ -88,7 +89,10 @@ public class ZRemRangeByScoreExecutor extends SortedSetExecutor {
 
     Collection<?> removeList = null;
     try {
-      if (start == Double.NEGATIVE_INFINITY && stop == Double.POSITIVE_INFINITY && startInclusive && stopInclusive) {
+      if (start == Double.NEGATIVE_INFINITY
+          && stop == Double.POSITIVE_INFINITY
+          && startInclusive
+          && stopInclusive) {
         numRemoved = keyRegion.size();
         context.getRegionProvider().removeKey(key);
       } else {
@@ -101,21 +105,26 @@ public class ZRemRangeByScoreExecutor extends SortedSetExecutor {
     if (removeList != null) {
       for (Object entry : removeList) {
         ByteArrayWrapper remove = null;
-        if (entry instanceof Entry)
-          remove = (ByteArrayWrapper) ((Entry<?, ?>) entry).getKey();
+        if (entry instanceof Entry) remove = (ByteArrayWrapper) ((Entry<?, ?>) entry).getKey();
         else if (entry instanceof Struct)
           remove = (ByteArrayWrapper) ((Struct) entry).getFieldValues()[0];
         Object oldVal = keyRegion.remove(remove);
-        if (oldVal != null)
-          numRemoved++;
-        if (keyRegion.isEmpty())
-          context.getRegionProvider().removeKey(key);
+        if (oldVal != null) numRemoved++;
+        if (keyRegion.isEmpty()) context.getRegionProvider().removeKey(key);
       }
     }
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), numRemoved));
   }
 
-  private Collection<?> getKeys(ExecutionHandlerContext context, ByteArrayWrapper key, Region<ByteArrayWrapper, DoubleWrapper> keyRegion, double start, double stop, boolean startInclusive, boolean stopInclusive) throws Exception {
+  private Collection<?> getKeys(
+      ExecutionHandlerContext context,
+      ByteArrayWrapper key,
+      Region<ByteArrayWrapper, DoubleWrapper> keyRegion,
+      double start,
+      double stop,
+      boolean startInclusive,
+      boolean stopInclusive)
+      throws Exception {
     if (start == Double.POSITIVE_INFINITY || stop == Double.NEGATIVE_INFINITY || (start > stop))
       return null;
 
@@ -134,7 +143,7 @@ public class ZRemRangeByScoreExecutor extends SortedSetExecutor {
         query = getQuery(key, SortedSetQuery.ZRBS, context);
       }
     }
-    params = new Object[] { start, stop, INFINITY_LIMIT };
+    params = new Object[] {start, stop, INFINITY_LIMIT};
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
 

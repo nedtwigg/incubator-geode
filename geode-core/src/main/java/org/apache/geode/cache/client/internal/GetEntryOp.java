@@ -21,13 +21,12 @@ import org.apache.geode.internal.cache.LocalRegion;
 import org.apache.geode.internal.cache.tier.MessageType;
 import org.apache.geode.internal.cache.tier.sockets.Message;
 
-/**
- * does getEntry on the server
- */
+/** does getEntry on the server */
 public class GetEntryOp {
 
   /**
    * Does a region.getEntry on the server using the given pool
+   *
    * @param pool
    * @param region
    * @param key

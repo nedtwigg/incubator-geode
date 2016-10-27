@@ -28,11 +28,17 @@ public class CliCommandMultiModeOptionException extends CliCommandOptionExceptio
   private String leadOptionString;
   private int code;
 
-  public CliCommandMultiModeOptionException(final CommandTarget commandTarget, final Option option, final String string, final int code) {
+  public CliCommandMultiModeOptionException(
+      final CommandTarget commandTarget, final Option option, final String string, final int code) {
     this(commandTarget, option, string, code, null);
   }
 
-  public CliCommandMultiModeOptionException(final CommandTarget commandTarget, final Option option, final String string, final int code, final Throwable cause) {
+  public CliCommandMultiModeOptionException(
+      final CommandTarget commandTarget,
+      final Option option,
+      final String string,
+      final int code,
+      final Throwable cause) {
     super(commandTarget, option, cause);
     this.leadOptionString = string;
     this.code = code;

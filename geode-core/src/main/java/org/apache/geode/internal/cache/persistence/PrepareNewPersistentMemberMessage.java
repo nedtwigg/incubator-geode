@@ -46,10 +46,9 @@ import org.apache.geode.internal.cache.PartitionedRegionHelper;
 import org.apache.geode.internal.cache.partitioned.Bucket;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- *
- */
-public class PrepareNewPersistentMemberMessage extends HighPriorityDistributionMessage implements MessageWithReply {
+/** */
+public class PrepareNewPersistentMemberMessage extends HighPriorityDistributionMessage
+    implements MessageWithReply {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -58,20 +57,26 @@ public class PrepareNewPersistentMemberMessage extends HighPriorityDistributionM
   private PersistentMemberID newId;
   private int processorId;
 
-  public PrepareNewPersistentMemberMessage() {
+  public PrepareNewPersistentMemberMessage() {}
 
-  }
-
-  public PrepareNewPersistentMemberMessage(String regionPath, PersistentMemberID oldId, PersistentMemberID newId, int processorId) {
+  public PrepareNewPersistentMemberMessage(
+      String regionPath, PersistentMemberID oldId, PersistentMemberID newId, int processorId) {
     this.regionPath = regionPath;
     this.newId = newId;
     this.oldId = oldId;
     this.processorId = processorId;
   }
 
-  public static void send(Set<InternalDistributedMember> members, DM dm, String regionPath, PersistentMemberID oldId, PersistentMemberID newId) throws ReplyException {
+  public static void send(
+      Set<InternalDistributedMember> members,
+      DM dm,
+      String regionPath,
+      PersistentMemberID oldId,
+      PersistentMemberID newId)
+      throws ReplyException {
     ReplyProcessor21 processor = new ReplyProcessor21(dm, members);
-    PrepareNewPersistentMemberMessage msg = new PrepareNewPersistentMemberMessage(regionPath, oldId, newId, processor.getProcessorId());
+    PrepareNewPersistentMemberMessage msg =
+        new PrepareNewPersistentMemberMessage(regionPath, oldId, newId, processor.getProcessorId());
     msg.setRecipients(members);
     dm.putOutgoing(msg);
     processor.waitForRepliesUninterruptibly();
@@ -95,7 +100,9 @@ public class PrepareNewPersistentMemberMessage extends HighPriorityDistributionM
       if (region instanceof DistributedRegion) {
         persistenceAdvisor = ((DistributedRegion) region).getPersistenceAdvisor();
       } else if (region == null) {
-        Bucket proxy = PartitionedRegionHelper.getProxyBucketRegion(GemFireCacheImpl.getInstance(), this.regionPath, false);
+        Bucket proxy =
+            PartitionedRegionHelper.getProxyBucketRegion(
+                GemFireCacheImpl.getInstance(), this.regionPath, false);
         if (proxy != null) {
           persistenceAdvisor = proxy.getPersistenceAdvisor();
         }

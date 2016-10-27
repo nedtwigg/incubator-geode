@@ -22,8 +22,9 @@ package org.apache.geode.tools.pulse.internal.json;
 import java.util.Iterator;
 
 /**
- * This provides static methods to convert an XML text into a JSONObject,
- * and to covert a JSONObject into an XML text.
+ * This provides static methods to convert an XML text into a JSONObject, and to covert a JSONObject
+ * into an XML text.
+ *
  * @author JSON.org
  * @version 2011-02-11
  */
@@ -58,12 +59,14 @@ public class XML {
 
   /**
    * Replace special characters with XML escapes:
+   *
    * <pre>
    * &amp; <small>(ampersand)</small> is replaced by &amp;amp;
    * &lt; <small>(less than)</small> is replaced by &amp;lt;
    * &gt; <small>(greater than)</small> is replaced by &amp;gt;
    * &quot; <small>(double quote)</small> is replaced by &amp;quot;
    * </pre>
+   *
    * @param string The string to be escaped.
    * @return The escaped string.
    */
@@ -72,31 +75,32 @@ public class XML {
     for (int i = 0, length = string.length(); i < length; i++) {
       char c = string.charAt(i);
       switch (c) {
-      case '&':
-        sb.append("&amp;");
-        break;
-      case '<':
-        sb.append("&lt;");
-        break;
-      case '>':
-        sb.append("&gt;");
-        break;
-      case '"':
-        sb.append("&quot;");
-        break;
-      case '\'':
-        sb.append("&apos;");
-        break;
-      default:
-        sb.append(c);
+        case '&':
+          sb.append("&amp;");
+          break;
+        case '<':
+          sb.append("&lt;");
+          break;
+        case '>':
+          sb.append("&gt;");
+          break;
+        case '"':
+          sb.append("&quot;");
+          break;
+        case '\'':
+          sb.append("&apos;");
+          break;
+        default:
+          sb.append(c);
       }
     }
     return sb.toString();
   }
 
   /**
-   * Throw an exception if the string contains whitespace. 
-   * Whitespace is not allowed in tagNames and attributes.
+   * Throw an exception if the string contains whitespace. Whitespace is not allowed in tagNames and
+   * attributes.
+   *
    * @param string
    * @throws JSONException
    */
@@ -114,9 +118,10 @@ public class XML {
 
   /**
    * Scan the content following the named tag, attaching it to the context.
-   * @param x       The XMLTokener containing the source string.
+   *
+   * @param x The XMLTokener containing the source string.
    * @param context The JSONObject that will include the new material.
-   * @param name    The tag name.
+   * @param name The tag name.
    * @return true if the close tag is processed.
    * @throws JSONException
    */
@@ -206,7 +211,7 @@ public class XML {
       tagName = (String) token;
       token = null;
       jsonobject = new JSONObject();
-      for (;;) {
+      for (; ; ) {
         if (token == null) {
           token = x.nextToken();
         }
@@ -243,7 +248,7 @@ public class XML {
           // Content, between <...> and </...>
 
         } else if (token == GT) {
-          for (;;) {
+          for (; ; ) {
             token = x.nextContent();
             if (token == null) {
               if (tagName != null) {
@@ -279,11 +284,11 @@ public class XML {
   }
 
   /**
-   * Try to convert a string into a number, boolean, or null. If the string
-   * can't be converted, return the string. This is much less ambitious than
-   * JSONObject.stringToValue, especially because it does not attempt to
-   * convert plus forms, octal forms, hex forms, or E forms lacking decimal 
-   * points.
+   * Try to convert a string into a number, boolean, or null. If the string can't be converted,
+   * return the string. This is much less ambitious than JSONObject.stringToValue, especially
+   * because it does not attempt to convert plus forms, octal forms, hex forms, or E forms lacking
+   * decimal points.
+   *
    * @param string A String.
    * @return A simple JSON value.
    */
@@ -304,7 +309,7 @@ public class XML {
       return new Integer(0);
     }
 
-    // If it might be a number, try converting it. If that doesn't work, 
+    // If it might be a number, try converting it. If that doesn't work,
     // return the string.
 
     try {
@@ -335,15 +340,14 @@ public class XML {
   }
 
   /**
-   * Convert a well-formed (but not necessarily valid) XML string into a
-   * JSONObject. Some information may be lost in this transformation
-   * because JSON is a data format and XML is a document format. XML uses
-   * elements, attributes, and content text, while JSON uses unordered
-   * collections of name/value pairs and arrays of values. JSON does not
-   * does not like to distinguish between elements and attributes.
-   * Sequences of similar elements are represented as JSONArrays. Content
-   * text may be placed in a "content" member. Comments, prologs, DTDs, and
+   * Convert a well-formed (but not necessarily valid) XML string into a JSONObject. Some
+   * information may be lost in this transformation because JSON is a data format and XML is a
+   * document format. XML uses elements, attributes, and content text, while JSON uses unordered
+   * collections of name/value pairs and arrays of values. JSON does not does not like to
+   * distinguish between elements and attributes. Sequences of similar elements are represented as
+   * JSONArrays. Content text may be placed in a "content" member. Comments, prologs, DTDs, and
    * <code>&lt;[ [ ]]></code> are ignored.
+   *
    * @param string The source string.
    * @return A JSONObject containing the structured data from the XML string.
    * @throws JSONException
@@ -359,9 +363,10 @@ public class XML {
 
   /**
    * Convert a JSONObject into a well-formed, element-normal XML string.
+   *
    * @param object A JSONObject.
-   * @return  A string.
-   * @throws  JSONException
+   * @return A string.
+   * @throws JSONException
    */
   public static String toString(Object object) throws JSONException {
     return toString(object, null);
@@ -369,6 +374,7 @@ public class XML {
 
   /**
    * Convert a JSONObject into a well-formed, element-normal XML string.
+   *
    * @param object A JSONObject.
    * @param tagName The optional name of the enclosing tag.
    * @return A string.
@@ -482,7 +488,11 @@ public class XML {
         return sb.toString();
       } else {
         string = (object == null) ? "null" : escape(object.toString());
-        return (tagName == null) ? "\"" + string + "\"" : (string.length() == 0) ? "<" + tagName + "/>" : "<" + tagName + ">" + string + "</" + tagName + ">";
+        return (tagName == null)
+            ? "\"" + string + "\""
+            : (string.length() == 0)
+                ? "<" + tagName + "/>"
+                : "<" + tagName + ">" + string + "</" + tagName + ">";
       }
     }
   }

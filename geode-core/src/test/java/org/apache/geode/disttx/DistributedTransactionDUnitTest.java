@@ -82,41 +82,45 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
 
   @Override
   public final void postSetUp() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "sync-commits", "true");
-        return null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "sync-commits", "true");
+            return null;
+          }
+        });
 
-    Invoke.invokeInEveryVM(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        //System.setProperty("gemfire.ALLOW_PERSISTENT_TRANSACTIONS", "true");
-        TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = true;
-        return null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            //System.setProperty("gemfire.ALLOW_PERSISTENT_TRANSACTIONS", "true");
+            TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = true;
+            return null;
+          }
+        });
   }
 
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
-    Invoke.invokeInEveryVM(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "sync-commits", "false");
-        return null;
-      }
-    });
-    Invoke.invokeInEveryVM(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        //System.setProperty("gemfire.ALLOW_PERSISTENT_TRANSACTIONS", "false");
-        TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = false;
-        return null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "sync-commits", "false");
+            return null;
+          }
+        });
+    Invoke.invokeInEveryVM(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            //System.setProperty("gemfire.ALLOW_PERSISTENT_TRANSACTIONS", "false");
+            TXManagerImpl.ALLOW_PERSISTENT_TRANSACTIONS = false;
+            return null;
+          }
+        });
   }
 
   public DistributedTransactionDUnitTest() {
@@ -134,17 +138,19 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
   }
 
   public int startServer(VM vm) {
-    return (Integer) vm.invoke(new SerializableCallable() {
-      public Object call() throws Exception {
-        int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
-        CacheServer s = getCache().addCacheServer();
-        s.setPort(port);
-        s.start();
-        TXManagerImpl txMgr = (TXManagerImpl) getCache().getCacheTransactionManager();
-        txMgr.setTransactionTimeToLiveForTest(10);
-        return port;
-      }
-    });
+    return (Integer)
+        vm.invoke(
+            new SerializableCallable() {
+              public Object call() throws Exception {
+                int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
+                CacheServer s = getCache().addCacheServer();
+                s.setPort(port);
+                s.start();
+                TXManagerImpl txMgr = (TXManagerImpl) getCache().getCacheTransactionManager();
+                txMgr.setTransactionTimeToLiveForTest(10);
+                return port;
+              }
+            });
   }
 
   protected boolean getConcurrencyChecksEnabled() {
@@ -169,9 +175,14 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     if (interestPolicy != null) {
       af.setSubscriptionAttributes(new SubscriptionAttributes(interestPolicy));
     }
-    af.setPartitionAttributes(new PartitionAttributesFactory<CustId, Customer>().setTotalNumBuckets(4).setLocalMaxMemory(accessor ? 0 : 1).setPartitionResolver(new CustomerIDPartitionResolver("resolver1")).setRedundantCopies(redundantCopies).create());
+    af.setPartitionAttributes(
+        new PartitionAttributesFactory<CustId, Customer>()
+            .setTotalNumBuckets(4)
+            .setLocalMaxMemory(accessor ? 0 : 1)
+            .setPartitionResolver(new CustomerIDPartitionResolver("resolver1"))
+            .setRedundantCopies(redundantCopies)
+            .create());
     getCache().createRegion(CUSTOMER_PR, af.create());
-
   }
 
   @Override
@@ -193,109 +204,136 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     if (interestPolicy != null) {
       af.setSubscriptionAttributes(new SubscriptionAttributes(interestPolicy));
     }
-    af.setPartitionAttributes(new PartitionAttributesFactory<CustId, Customer>().setTotalNumBuckets(4).setLocalMaxMemory(accessor ? 0 : 1).setPartitionResolver(new CustomerIDPartitionResolver("resolver1")).setRedundantCopies(redundantCopies).create());
+    af.setPartitionAttributes(
+        new PartitionAttributesFactory<CustId, Customer>()
+            .setTotalNumBuckets(4)
+            .setLocalMaxMemory(accessor ? 0 : 1)
+            .setPartitionResolver(new CustomerIDPartitionResolver("resolver1"))
+            .setRedundantCopies(redundantCopies)
+            .create());
     getCache().createRegion(CUSTOMER_PR, af.create());
     af.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-    af.setPartitionAttributes(new PartitionAttributesFactory<OrderId, Order>().setTotalNumBuckets(4).setLocalMaxMemory(accessor ? 0 : 1).setPartitionResolver(new CustomerIDPartitionResolver("resolver2")).setRedundantCopies(redundantCopies).setColocatedWith(CUSTOMER_PR).create());
+    af.setPartitionAttributes(
+        new PartitionAttributesFactory<OrderId, Order>()
+            .setTotalNumBuckets(4)
+            .setLocalMaxMemory(accessor ? 0 : 1)
+            .setPartitionResolver(new CustomerIDPartitionResolver("resolver2"))
+            .setRedundantCopies(redundantCopies)
+            .setColocatedWith(CUSTOMER_PR)
+            .create());
     getCache().createRegion(ORDER_PR, af.create());
   }
 
   public void createRegions(VM[] vms) {
     for (VM vm : vms) {
-      vm.invoke(new SerializableCallable() {
-        @Override
-        public Object call() throws Exception {
-          createRegions(false, 1, null);
-          return null;
-        }
-
-      });
+      vm.invoke(
+          new SerializableCallable() {
+            @Override
+            public Object call() throws Exception {
+              createRegions(false, 1, null);
+              return null;
+            }
+          });
     }
   }
 
   public void createRegions(final VM vm, final boolean accessor, final int redundantCopies) {
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        createRegions(accessor, redundantCopies, null);
-        return null;
-      }
-    });
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            createRegions(accessor, redundantCopies, null);
+            return null;
+          }
+        });
   }
 
   public void createRR(VM[] vms) {
     for (VM vm : vms) {
-      vm.invoke(new SerializableCallable() {
-        @Override
-        public Object call() throws Exception {
-          createRR(false);
-          return null;
-        }
-      });
+      vm.invoke(
+          new SerializableCallable() {
+            @Override
+            public Object call() throws Exception {
+              createRR(false);
+              return null;
+            }
+          });
     }
   }
 
   public void createRRonAccessor(VM accessor) {
-    accessor.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        createRR(true);
-        return null;
-      }
-    });
+    accessor.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            createRR(true);
+            return null;
+          }
+        });
   }
 
   public void createPR(VM[] vms) {
     for (VM vm : vms) {
-      vm.invoke(new SerializableCallable() {
-        @Override
-        public Object call() throws Exception {
-          createPR(false, 0, null);
-          return null;
-        }
-      });
+      vm.invoke(
+          new SerializableCallable() {
+            @Override
+            public Object call() throws Exception {
+              createPR(false, 0, null);
+              return null;
+            }
+          });
     }
   }
 
   public void createPRwithRedundanyCopies(VM[] vms, final int redundency) {
     for (VM vm : vms) {
-      vm.invoke(new SerializableCallable() {
-        @Override
-        public Object call() throws Exception {
-          createPR(false, redundency, null);
-          return null;
-        }
-      });
+      vm.invoke(
+          new SerializableCallable() {
+            @Override
+            public Object call() throws Exception {
+              createPR(false, redundency, null);
+              return null;
+            }
+          });
     }
   }
 
   public void createPRonAccessor(VM accessor, final int redundency) {
-    accessor.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        createPR(true, redundency, null);
-        return null;
-      }
-    });
+    accessor.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            createPR(true, redundency, null);
+            return null;
+          }
+        });
   }
 
   public void createPersistentPR(VM[] vms) {
     for (VM vm : vms) {
-      vm.invoke(new SerializableCallable() {
-        @Override
-        public Object call() throws Exception {
-          createPersistentPR();
-          return null;
-        }
-      });
+      vm.invoke(
+          new SerializableCallable() {
+            @Override
+            public Object call() throws Exception {
+              createPersistentPR();
+              return null;
+            }
+          });
     }
   }
 
   public void createPersistentPR() {
-    getCache().createRegion(PERSISTENT_CUSTOMER_PR, getPersistentPRAttributes(1, -1, getCache(), 113, true));
+    getCache()
+        .createRegion(
+            PERSISTENT_CUSTOMER_PR, getPersistentPRAttributes(1, -1, getCache(), 113, true));
   }
 
-  protected RegionAttributes getPersistentPRAttributes(final int redundancy, final int recoveryDelay, Cache cache, int numBuckets, boolean synchronous) {
+  protected RegionAttributes getPersistentPRAttributes(
+      final int redundancy,
+      final int recoveryDelay,
+      Cache cache,
+      int numBuckets,
+      boolean synchronous) {
     DiskStore ds = cache.findDiskStore("disk");
     if (ds == null) {
       ds = cache.createDiskStoreFactory().setDiskDirs(getDiskDirs()).create("disk");
@@ -339,23 +377,25 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
   }
 
   public void populateData(final VM vm) {
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        populateData();
-        return null;
-      }
-    });
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            populateData();
+            return null;
+          }
+        });
   }
 
   public void populateRR(final VM vm) {
-    vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        populateRR();
-        return null;
-      }
-    });
+    vm.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            populateRR();
+            return null;
+          }
+        });
   }
 
   @Test
@@ -365,66 +405,67 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
 
-    createRR(new VM[] { server1, server2, server3 });
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        mgr.begin();
-        mgr.commit();
-        mgr.begin();
+    createRR(new VM[] {server1, server2, server3});
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            mgr.begin();
+            mgr.commit();
+            mgr.begin();
 
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER_RR);
-        CustId custId = new CustId(1);
-        Customer expectedCustomer = custRegion.get(custId);
-        assertNull(expectedCustomer);
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER_RR);
+            CustId custId = new CustId(1);
+            Customer expectedCustomer = custRegion.get(custId);
+            assertNull(expectedCustomer);
 
-        // Perform a put
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        custRegion.put(custIdOne, customerOne);
+            // Perform a put
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            custRegion.put(custIdOne, customerOne);
 
-        // Rollback the transaction
-        mgr.rollback();
+            // Rollback the transaction
+            mgr.rollback();
 
-        mgr.begin();
-        // Verify that the entry is rolled back
-        expectedCustomer = custRegion.get(custId);
-        assertNull(expectedCustomer);
+            mgr.begin();
+            // Verify that the entry is rolled back
+            expectedCustomer = custRegion.get(custId);
+            assertNull(expectedCustomer);
 
-        // Perform two more puts and a commit
-        CustId custIdTwo = new CustId(2);
-        Customer customerTwo = new Customer("name2", "addr2");
-        CustId custIdThree = new CustId(3);
-        Customer customerThree = new Customer("name3", "addr3");
-        custRegion.put(custIdTwo, customerTwo);
-        custRegion.put(custIdThree, customerThree);
+            // Perform two more puts and a commit
+            CustId custIdTwo = new CustId(2);
+            Customer customerTwo = new Customer("name2", "addr2");
+            CustId custIdThree = new CustId(3);
+            Customer customerThree = new Customer("name3", "addr3");
+            custRegion.put(custIdTwo, customerTwo);
+            custRegion.put(custIdThree, customerThree);
 
-        mgr.commit();
-        mgr.begin();
+            mgr.commit();
+            mgr.begin();
 
-        // Verify data
-        assertEquals(2, custRegion.size());
-        assertTrue(custRegion.containsKey(custIdTwo));
-        assertTrue(custRegion.containsKey(custIdThree));
-        assertEquals(customerTwo, custRegion.get(custIdTwo));
-        assertEquals(customerThree, custRegion.get(custIdThree));
+            // Verify data
+            assertEquals(2, custRegion.size());
+            assertTrue(custRegion.containsKey(custIdTwo));
+            assertTrue(custRegion.containsKey(custIdThree));
+            assertEquals(customerTwo, custRegion.get(custIdTwo));
+            assertEquals(customerThree, custRegion.get(custIdThree));
 
-        // Perform one more put but don't commit
-        custRegion.put(custIdOne, customerOne);
+            // Perform one more put but don't commit
+            custRegion.put(custIdOne, customerOne);
 
-        // Verify data
-        assertEquals(3, custRegion.size());
-        assertTrue(custRegion.containsKey(custIdOne));
-        assertEquals(customerOne, custRegion.get(custIdOne));
+            // Verify data
+            assertEquals(3, custRegion.size());
+            assertTrue(custRegion.containsKey(custIdOne));
+            assertEquals(customerOne, custRegion.get(custIdOne));
 
-        mgr.commit();
+            mgr.commit();
 
-        return null;
-      }
-
-    });
+            return null;
+          }
+        });
   }
 
   @Test
@@ -434,78 +475,79 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
 
-    createPR(new VM[] { server1, server2, server3 });
-    execute(server1, new SerializableCallable() {
+    createPR(new VM[] {server1, server2, server3});
+    execute(
+        server1,
+        new SerializableCallable() {
 
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        LogWriterI18n logger = getGemfireCache().getLoggerI18n();
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            LogWriterI18n logger = getGemfireCache().getLoggerI18n();
 
-        mgr.begin();
-        logger.fine("TEST:Commit-1");
-        mgr.commit();
+            mgr.begin();
+            logger.fine("TEST:Commit-1");
+            mgr.commit();
 
-        mgr.begin();
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER_PR);
-        CustId custId = new CustId(1);
-        Customer expectedCustomer = custRegion.get(custId);
-        assertNull(expectedCustomer);
+            mgr.begin();
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER_PR);
+            CustId custId = new CustId(1);
+            Customer expectedCustomer = custRegion.get(custId);
+            assertNull(expectedCustomer);
 
-        // Perform a put
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        logger.fine("TEST:Put-1");
-        custRegion.put(custIdOne, customerOne);
+            // Perform a put
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            logger.fine("TEST:Put-1");
+            custRegion.put(custIdOne, customerOne);
 
-        // Rollback the transaction
-        logger.fine("TEST:Rollback-1");
-        mgr.rollback();
+            // Rollback the transaction
+            logger.fine("TEST:Rollback-1");
+            mgr.rollback();
 
-        mgr.begin();
-        // Verify that the entry is rolled back
-        expectedCustomer = custRegion.get(custId);
-        assertNull(expectedCustomer);
+            mgr.begin();
+            // Verify that the entry is rolled back
+            expectedCustomer = custRegion.get(custId);
+            assertNull(expectedCustomer);
 
-        // Perform two more puts and a commit
-        CustId custIdTwo = new CustId(2);
-        Customer customerTwo = new Customer("name2", "addr2");
-        CustId custIdThree = new CustId(3);
-        Customer customerThree = new Customer("name3", "addr3");
-        logger.fine("TEST:Put-2");
-        custRegion.put(custIdTwo, customerTwo);
-        logger.fine("TEST:Put-3");
-        custRegion.put(custIdThree, customerThree);
+            // Perform two more puts and a commit
+            CustId custIdTwo = new CustId(2);
+            Customer customerTwo = new Customer("name2", "addr2");
+            CustId custIdThree = new CustId(3);
+            Customer customerThree = new Customer("name3", "addr3");
+            logger.fine("TEST:Put-2");
+            custRegion.put(custIdTwo, customerTwo);
+            logger.fine("TEST:Put-3");
+            custRegion.put(custIdThree, customerThree);
 
-        logger.fine("TEST:Commit-2");
-        mgr.commit();
-        mgr.begin();
+            logger.fine("TEST:Commit-2");
+            mgr.commit();
+            mgr.begin();
 
-        // Verify data
-        assertEquals(2, custRegion.size());
-        assertTrue(custRegion.containsKey(custIdTwo));
-        assertTrue(custRegion.containsKey(custIdThree));
-        assertEquals(customerTwo, custRegion.get(custIdTwo));
-        assertEquals(customerThree, custRegion.get(custIdThree));
+            // Verify data
+            assertEquals(2, custRegion.size());
+            assertTrue(custRegion.containsKey(custIdTwo));
+            assertTrue(custRegion.containsKey(custIdThree));
+            assertEquals(customerTwo, custRegion.get(custIdTwo));
+            assertEquals(customerThree, custRegion.get(custIdThree));
 
-        // Perform one more put but don't commit
-        logger.fine("TEST:Put-4");
-        Customer customerOneMod = new Customer("name1", "addr11");
+            // Perform one more put but don't commit
+            logger.fine("TEST:Put-4");
+            Customer customerOneMod = new Customer("name1", "addr11");
 
-        custRegion.put(custIdOne, customerOneMod);
+            custRegion.put(custIdOne, customerOneMod);
 
-        // Verify data
-        assertEquals(3, custRegion.size());
-        assertTrue(custRegion.containsKey(custIdOne));
-        assertEquals(customerOneMod, custRegion.get(custIdOne));
-        logger.fine("TEST:Commit-3");
-        mgr.commit();
+            // Verify data
+            assertEquals(3, custRegion.size());
+            assertTrue(custRegion.containsKey(custIdOne));
+            assertEquals(customerOneMod, custRegion.get(custIdOne));
+            logger.fine("TEST:Commit-3");
+            mgr.commit();
 
-        return null;
-      }
-
-    });
+            return null;
+          }
+        });
   }
 
   @SuppressWarnings("serial")
@@ -515,43 +557,44 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server1 = host.getVM(0);
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
-    createPR(new VM[] { server1, server2, server3 });
-    createRR(new VM[] { server1, server2, server3 });
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        mgr.begin();
-        Region<CustId, Customer> rrRegion = getCache().getRegion(CUSTOMER_RR);
-        Region<CustId, Customer> prRegion = getCache().getRegion(CUSTOMER_PR);
+    createPR(new VM[] {server1, server2, server3});
+    createRR(new VM[] {server1, server2, server3});
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            mgr.begin();
+            Region<CustId, Customer> rrRegion = getCache().getRegion(CUSTOMER_RR);
+            Region<CustId, Customer> prRegion = getCache().getRegion(CUSTOMER_PR);
 
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        prRegion.put(custIdOne, customerOne);
-        rrRegion.put(custIdOne, customerOne);
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            prRegion.put(custIdOne, customerOne);
+            rrRegion.put(custIdOne, customerOne);
 
-        CustId custIdTwo = new CustId(2);
-        Customer customerTwo = new Customer("name2", "addr2");
-        rrRegion.put(custIdTwo, customerTwo);
+            CustId custIdTwo = new CustId(2);
+            Customer customerTwo = new Customer("name2", "addr2");
+            rrRegion.put(custIdTwo, customerTwo);
 
-        mgr.commit();
+            mgr.commit();
 
-        // Verify
-        assertEquals(2, rrRegion.size());
-        assertTrue(rrRegion.containsKey(custIdOne));
-        assertTrue(rrRegion.containsKey(custIdTwo));
-        assertEquals(customerOne, rrRegion.get(custIdOne));
-        assertEquals(customerTwo, rrRegion.get(custIdTwo));
+            // Verify
+            assertEquals(2, rrRegion.size());
+            assertTrue(rrRegion.containsKey(custIdOne));
+            assertTrue(rrRegion.containsKey(custIdTwo));
+            assertEquals(customerOne, rrRegion.get(custIdOne));
+            assertEquals(customerTwo, rrRegion.get(custIdTwo));
 
-        assertEquals(1, prRegion.size());
-        assertTrue(prRegion.containsKey(custIdOne));
-        assertEquals(customerOne, rrRegion.get(custIdOne));
+            assertEquals(1, prRegion.size());
+            assertTrue(prRegion.containsKey(custIdOne));
+            assertEquals(customerOne, rrRegion.get(custIdOne));
 
-        return null;
-      }
-
-    });
+            return null;
+          }
+        });
   }
 
   @Test
@@ -560,43 +603,45 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server1 = host.getVM(0);
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
-    createPR(new VM[] { server1, server2, server3 });
-    createRR(new VM[] { server1, server2, server3 });
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        mgr.begin();
-        mgr.commit();
-        mgr.begin();
-        Region<CustId, Customer> custPR = getCache().getRegion(CUSTOMER_PR);
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        custPR.put(custIdOne, customerOne);
+    createPR(new VM[] {server1, server2, server3});
+    createRR(new VM[] {server1, server2, server3});
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            mgr.begin();
+            mgr.commit();
+            mgr.begin();
+            Region<CustId, Customer> custPR = getCache().getRegion(CUSTOMER_PR);
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            custPR.put(custIdOne, customerOne);
 
-        Region<CustId, Customer> replicatedRegion = getCache().getRegion(CUSTOMER_RR);
-        replicatedRegion.put(custIdOne, customerOne);
-        CustId custIdTwo = new CustId(2);
-        Customer customerTwo = new Customer("name2", "addr2");
-        replicatedRegion.put(custIdTwo, customerTwo);
+            Region<CustId, Customer> replicatedRegion = getCache().getRegion(CUSTOMER_RR);
+            replicatedRegion.put(custIdOne, customerOne);
+            CustId custIdTwo = new CustId(2);
+            Customer customerTwo = new Customer("name2", "addr2");
+            replicatedRegion.put(custIdTwo, customerTwo);
 
-        // Verify before commit
-        assertEquals(2, replicatedRegion.size());
-        assertEquals(customerOne, replicatedRegion.get(custIdOne));
-        assertEquals(customerTwo, replicatedRegion.get(custIdTwo));
+            // Verify before commit
+            assertEquals(2, replicatedRegion.size());
+            assertEquals(customerOne, replicatedRegion.get(custIdOne));
+            assertEquals(customerTwo, replicatedRegion.get(custIdTwo));
 
-        // Perform commit
-        mgr.commit();
+            // Perform commit
+            mgr.commit();
 
-        // Verify after commit
-        assertEquals(2, replicatedRegion.size());
-        assertEquals(customerOne, replicatedRegion.get(custIdOne));
-        assertEquals(customerTwo, replicatedRegion.get(custIdTwo));
+            // Verify after commit
+            assertEquals(2, replicatedRegion.size());
+            assertEquals(customerOne, replicatedRegion.get(custIdOne));
+            assertEquals(customerTwo, replicatedRegion.get(custIdTwo));
 
-        return null;
-      }
-    });
+            return null;
+          }
+        });
   }
 
   @Test
@@ -605,33 +650,35 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server1 = host.getVM(0);
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
-    createPR(new VM[] { server1, server2, server3 });
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        //mgr.begin();
-        Region<CustId, Customer> custPR = getCache().getRegion(CUSTOMER_PR);
-        for (int i = 0; i < 1000; i++) {
-          CustId custId = new CustId(i);
-          Customer customer = new Customer("name" + i, "addr" + i);
-          mgr.begin();
-          custPR.put(custId, customer);
-          if (i % 2 == 0) {
-            mgr.commit();
-          } else {
-            mgr.rollback();
-          }
-        }
-        // Verify number of puts
-        assertEquals(500, custPR.size());
-        Set<Region.Entry<?, ?>> entries = custPR.entrySet(false);
-        assertEquals(500, entries.size());
+    createPR(new VM[] {server1, server2, server3});
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            //mgr.begin();
+            Region<CustId, Customer> custPR = getCache().getRegion(CUSTOMER_PR);
+            for (int i = 0; i < 1000; i++) {
+              CustId custId = new CustId(i);
+              Customer customer = new Customer("name" + i, "addr" + i);
+              mgr.begin();
+              custPR.put(custId, customer);
+              if (i % 2 == 0) {
+                mgr.commit();
+              } else {
+                mgr.rollback();
+              }
+            }
+            // Verify number of puts
+            assertEquals(500, custPR.size());
+            Set<Region.Entry<?, ?>> entries = custPR.entrySet(false);
+            assertEquals(500, entries.size());
 
-        return null;
-      }
-    });
+            return null;
+          }
+        });
   }
 
   /*
@@ -649,91 +696,125 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     final String CUSTOMER_PR2 = "CUSTOMER_PR2";
 
     // Create CUSTOMER_PR1 on server1
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        AttributesFactory af = new AttributesFactory();
-        af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
-        af.setPartitionAttributes(new PartitionAttributesFactory<CustId, Customer>().setTotalNumBuckets(4).setLocalMaxMemory(1).setPartitionResolver(new CustomerIDPartitionResolver("resolver1")).setRedundantCopies(0).create());
-        getCache().createRegion(CUSTOMER_PR1, af.create());
-        return null;
-      }
-    });
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            AttributesFactory af = new AttributesFactory();
+            af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
+            af.setPartitionAttributes(
+                new PartitionAttributesFactory<CustId, Customer>()
+                    .setTotalNumBuckets(4)
+                    .setLocalMaxMemory(1)
+                    .setPartitionResolver(new CustomerIDPartitionResolver("resolver1"))
+                    .setRedundantCopies(0)
+                    .create());
+            getCache().createRegion(CUSTOMER_PR1, af.create());
+            return null;
+          }
+        });
 
     // Create CUSTOMER_PR2 on server2
-    execute(server2, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        AttributesFactory af = new AttributesFactory();
-        af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
-        af.setPartitionAttributes(new PartitionAttributesFactory<CustId, Customer>().setTotalNumBuckets(4).setLocalMaxMemory(1).setPartitionResolver(new CustomerIDPartitionResolver("resolver2")).setRedundantCopies(0).create());
-        getCache().createRegion(CUSTOMER_PR2, af.create());
-        return null;
-      }
-    });
+    execute(
+        server2,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            AttributesFactory af = new AttributesFactory();
+            af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
+            af.setPartitionAttributes(
+                new PartitionAttributesFactory<CustId, Customer>()
+                    .setTotalNumBuckets(4)
+                    .setLocalMaxMemory(1)
+                    .setPartitionResolver(new CustomerIDPartitionResolver("resolver2"))
+                    .setRedundantCopies(0)
+                    .create());
+            getCache().createRegion(CUSTOMER_PR2, af.create());
+            return null;
+          }
+        });
 
     // Create both the regions on server3 (accessor)
-    execute(server3, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        AttributesFactory af = new AttributesFactory();
-        af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
-        af.setPartitionAttributes(new PartitionAttributesFactory<CustId, Customer>().setTotalNumBuckets(4).setLocalMaxMemory(0) // since this is an accessor
-            .setPartitionResolver(new CustomerIDPartitionResolver("resolver1")).setRedundantCopies(0).create());
-        getCache().createRegion(CUSTOMER_PR1, af.create());
+    execute(
+        server3,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            AttributesFactory af = new AttributesFactory();
+            af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
+            af.setPartitionAttributes(
+                new PartitionAttributesFactory<CustId, Customer>()
+                    .setTotalNumBuckets(4)
+                    .setLocalMaxMemory(0) // since this is an accessor
+                    .setPartitionResolver(new CustomerIDPartitionResolver("resolver1"))
+                    .setRedundantCopies(0)
+                    .create());
+            getCache().createRegion(CUSTOMER_PR1, af.create());
 
-        return null;
-      }
-    });
-    execute(server3, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        AttributesFactory af = new AttributesFactory();
-        af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
-        af.setPartitionAttributes(new PartitionAttributesFactory<CustId, Customer>().setTotalNumBuckets(4).setLocalMaxMemory(0) // since this is an accessor
-            .setPartitionResolver(new CustomerIDPartitionResolver("resolver2")).setRedundantCopies(0).create());
-        getCache().createRegion(CUSTOMER_PR2, af.create());
-        return null;
-      }
-    });
+            return null;
+          }
+        });
+    execute(
+        server3,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            AttributesFactory af = new AttributesFactory();
+            af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
+            af.setPartitionAttributes(
+                new PartitionAttributesFactory<CustId, Customer>()
+                    .setTotalNumBuckets(4)
+                    .setLocalMaxMemory(0) // since this is an accessor
+                    .setPartitionResolver(new CustomerIDPartitionResolver("resolver2"))
+                    .setRedundantCopies(0)
+                    .create());
+            getCache().createRegion(CUSTOMER_PR2, af.create());
+            return null;
+          }
+        });
 
     // Now perform tx ops on accessor
-    execute(server3, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        mgr.begin();
+    execute(
+        server3,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            mgr.begin();
 
-        Region<CustId, Customer> custPR1 = getCache().getRegion(CUSTOMER_PR1);
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        custPR1.put(custIdOne, customerOne);
+            Region<CustId, Customer> custPR1 = getCache().getRegion(CUSTOMER_PR1);
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            custPR1.put(custIdOne, customerOne);
 
-        Region<CustId, Customer> custPR2 = getCache().getRegion(CUSTOMER_PR2);
-        custPR2.put(custIdOne, customerOne);
+            Region<CustId, Customer> custPR2 = getCache().getRegion(CUSTOMER_PR2);
+            custPR2.put(custIdOne, customerOne);
 
-        mgr.commit();
+            mgr.commit();
 
-        // Verify
-        assertEquals(1, custPR1.size());
-        assertEquals(1, custPR2.size());
-        return null;
-      }
-    });
+            // Verify
+            assertEquals(1, custPR1.size());
+            assertEquals(1, custPR2.size());
+            return null;
+          }
+        });
 
     // Verify on one of the servers
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custPR1 = getCache().getRegion(CUSTOMER_PR1);
-        assertEquals(1, custPR1.size());
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        assertEquals(customerOne, custPR1.get(custIdOne));
-        return null;
-      }
-    });
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custPR1 = getCache().getRegion(CUSTOMER_PR1);
+            assertEquals(1, custPR1.size());
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            assertEquals(customerOne, custPR1.get(custIdOne));
+            return null;
+          }
+        });
   }
 
   @Test
@@ -742,50 +823,52 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server1 = host.getVM(0);
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
-    createPR(new VM[] { server1, server2, server3 });
+    createPR(new VM[] {server1, server2, server3});
 
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        //mgr.begin();
-        LogWriterI18n logger = getGemfireCache().getLoggerI18n();
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            //mgr.begin();
+            LogWriterI18n logger = getGemfireCache().getLoggerI18n();
 
-        Region<CustId, Customer> custPR = getCache().getRegion(CUSTOMER_PR);
-        for (int i = 1; i <= 2; i++) {
-          mgr.begin();
-          logger.fine("TEST:PUT-" + i);
-          custPR.put(new CustId(i), new Customer("name" + i, "addr" + i));
-          logger.fine("TEST:COMMIT-" + i);
-          mgr.commit();
-        }
+            Region<CustId, Customer> custPR = getCache().getRegion(CUSTOMER_PR);
+            for (int i = 1; i <= 2; i++) {
+              mgr.begin();
+              logger.fine("TEST:PUT-" + i);
+              custPR.put(new CustId(i), new Customer("name" + i, "addr" + i));
+              logger.fine("TEST:COMMIT-" + i);
+              mgr.commit();
+            }
 
-        // Updates
-        for (int i = 1; i <= 2; i++) {
-          CustId custId = new CustId(i);
-          Customer customer = custPR.get(custId);
-          assertNotNull(customer);
-          mgr.begin();
-          logger.fine("TEST:UPDATE-" + i);
-          custPR.put(custId, new Customer("name" + i * 2, "addr" + i * 2));
-          logger.fine("TEST:UPDATED-" + i + "=" + custId + "," + custPR.get(custId));
-          logger.fine("TEST:UPDATE COMMIT-" + i);
-          mgr.commit();
-          logger.fine("TEST:POSTCOMMIT-" + i + "=" + custId + "," + custPR.get(custId));
-        }
-        // Verify
-        for (int i = 1; i <= 2; i++) {
-          CustId custId = new CustId(i);
-          Customer customer = custPR.get(custId);
-          assertNotNull(customer);
-          logger.fine("TEST:VERIFYING-" + i);
-          assertEquals(new Customer("name" + i * 2, "addr" + i * 2), customer);
-        }
+            // Updates
+            for (int i = 1; i <= 2; i++) {
+              CustId custId = new CustId(i);
+              Customer customer = custPR.get(custId);
+              assertNotNull(customer);
+              mgr.begin();
+              logger.fine("TEST:UPDATE-" + i);
+              custPR.put(custId, new Customer("name" + i * 2, "addr" + i * 2));
+              logger.fine("TEST:UPDATED-" + i + "=" + custId + "," + custPR.get(custId));
+              logger.fine("TEST:UPDATE COMMIT-" + i);
+              mgr.commit();
+              logger.fine("TEST:POSTCOMMIT-" + i + "=" + custId + "," + custPR.get(custId));
+            }
+            // Verify
+            for (int i = 1; i <= 2; i++) {
+              CustId custId = new CustId(i);
+              Customer customer = custPR.get(custId);
+              assertNotNull(customer);
+              logger.fine("TEST:VERIFYING-" + i);
+              assertEquals(new Customer("name" + i * 2, "addr" + i * 2), customer);
+            }
 
-        return null;
-      }
-    });
+            return null;
+          }
+        });
   }
 
   @Test
@@ -794,44 +877,46 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server1 = host.getVM(0);
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
-    createPR(new VM[] { server1, server2, server3 });
+    createPR(new VM[] {server1, server2, server3});
 
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        //mgr.begin();
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            //mgr.begin();
 
-        Region<CustId, Customer> custPR = getCache().getRegion(CUSTOMER_PR);
-        for (int i = 1; i <= 1000; i++) {
-          mgr.begin();
-          custPR.put(new CustId(i), new Customer("name" + i, "addr" + i));
-          mgr.commit();
-        }
+            Region<CustId, Customer> custPR = getCache().getRegion(CUSTOMER_PR);
+            for (int i = 1; i <= 1000; i++) {
+              mgr.begin();
+              custPR.put(new CustId(i), new Customer("name" + i, "addr" + i));
+              mgr.commit();
+            }
 
-        // Destroys
-        for (int i = 1; i <= 100; i++) {
-          CustId custId = new CustId(i);
-          mgr.begin();
-          Object customerRemoved = custPR.remove(custId);
-          // Removing this assertion since in case of distributed destroys the 
-          // value will not be returned.
-          //assertNotNull(customerRemoved);
-          mgr.commit();
-        }
+            // Destroys
+            for (int i = 1; i <= 100; i++) {
+              CustId custId = new CustId(i);
+              mgr.begin();
+              Object customerRemoved = custPR.remove(custId);
+              // Removing this assertion since in case of distributed destroys the
+              // value will not be returned.
+              //assertNotNull(customerRemoved);
+              mgr.commit();
+            }
 
-        // Verify
-        for (int i = 1; i <= 100; i++) {
-          CustId custId = new CustId(1);
-          Customer customer = custPR.get(custId);
-          assertNull(customer);
-        }
+            // Verify
+            for (int i = 1; i <= 100; i++) {
+              CustId custId = new CustId(1);
+              Customer customer = custPR.get(custId);
+              assertNull(customer);
+            }
 
-        assertEquals(900, custPR.size());
-        return null;
-      }
-    });
+            assertEquals(900, custPR.size());
+            return null;
+          }
+        });
   }
 
   @Test
@@ -840,42 +925,44 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server1 = host.getVM(0);
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
-    createRR(new VM[] { server1, server2, server3 });
+    createRR(new VM[] {server1, server2, server3});
 
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        //mgr.begin();
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            //mgr.begin();
 
-        Region<CustId, Customer> custRR = getCache().getRegion(CUSTOMER_RR);
-        for (int i = 1; i <= 1000; i++) {
-          mgr.begin();
-          custRR.put(new CustId(i), new Customer("name" + i, "addr" + i));
-          mgr.commit();
-        }
+            Region<CustId, Customer> custRR = getCache().getRegion(CUSTOMER_RR);
+            for (int i = 1; i <= 1000; i++) {
+              mgr.begin();
+              custRR.put(new CustId(i), new Customer("name" + i, "addr" + i));
+              mgr.commit();
+            }
 
-        // Destroys
-        for (int i = 1; i <= 100; i++) {
-          CustId custId = new CustId(i);
-          mgr.begin();
-          Object customerRemoved = custRR.remove(custId);
-          assertNotNull(customerRemoved);
-          mgr.commit();
-        }
+            // Destroys
+            for (int i = 1; i <= 100; i++) {
+              CustId custId = new CustId(i);
+              mgr.begin();
+              Object customerRemoved = custRR.remove(custId);
+              assertNotNull(customerRemoved);
+              mgr.commit();
+            }
 
-        // Verify
-        for (int i = 1; i <= 100; i++) {
-          CustId custId = new CustId(1);
-          Customer customer = custRR.get(custId);
-          assertNull(customer);
-        }
+            // Verify
+            for (int i = 1; i <= 100; i++) {
+              CustId custId = new CustId(1);
+              Customer customer = custRR.get(custId);
+              assertNull(customer);
+            }
 
-        assertEquals(900, custRR.size());
-        return null;
-      }
-    });
+            assertEquals(900, custRR.size());
+            return null;
+          }
+        });
   }
 
   @Test
@@ -885,54 +972,55 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
 
-    createPR(new VM[] { server2, server3 });
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        mgr.begin();
-        createPR(false, 0, null);
+    createPR(new VM[] {server2, server3});
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            mgr.begin();
+            createPR(false, 0, null);
 
-        Region<CustId, Customer> custPR = getCache().getRegion(CUSTOMER_PR);
-        for (int i = 1; i <= 200; i++) {
-          custPR.put(new CustId(i), new Customer("name" + i, "addr" + i));
-        }
+            Region<CustId, Customer> custPR = getCache().getRegion(CUSTOMER_PR);
+            for (int i = 1; i <= 200; i++) {
+              custPR.put(new CustId(i), new Customer("name" + i, "addr" + i));
+            }
 
-        assertEquals(200, custPR.size());
+            assertEquals(200, custPR.size());
 
-        mgr.rollback();
-        //mgr.commit();
-        mgr.begin();
-        assertEquals(0, custPR.size());
+            mgr.rollback();
+            //mgr.commit();
+            mgr.begin();
+            assertEquals(0, custPR.size());
 
-        mgr.commit();
-        mgr.begin();
+            mgr.commit();
+            mgr.begin();
 
-        for (int i = 1; i <= 200; i++) {
-          custPR.put(new CustId(i), new Customer("name" + i, "addr" + i));
-        }
+            for (int i = 1; i <= 200; i++) {
+              custPR.put(new CustId(i), new Customer("name" + i, "addr" + i));
+            }
 
-        mgr.commit();
-        //mgr.begin();
-        for (int i = 1; i <= 200; i++) {
-          mgr.begin();
-          custPR.put(new CustId(i), new Customer("name" + i * 2, "addr" + i * 2));
-          mgr.commit();
-        }
-        mgr.begin();
-        mgr.rollback();
+            mgr.commit();
+            //mgr.begin();
+            for (int i = 1; i <= 200; i++) {
+              mgr.begin();
+              custPR.put(new CustId(i), new Customer("name" + i * 2, "addr" + i * 2));
+              mgr.commit();
+            }
+            mgr.begin();
+            mgr.rollback();
 
-        assertEquals(200, custPR.size());
+            assertEquals(200, custPR.size());
 
-        for (int i = 1; i <= 200; i++) {
-          assertEquals(new Customer("name" + i * 2, "addr" + i * 2), custPR.get(new CustId(i)));
-        }
+            for (int i = 1; i <= 200; i++) {
+              assertEquals(new Customer("name" + i * 2, "addr" + i * 2), custPR.get(new CustId(i)));
+            }
 
-        return null;
-      }
-
-    });
+            return null;
+          }
+        });
   }
 
   @Test
@@ -942,111 +1030,121 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
 
-    createRegions(new VM[] { server1, server2, server3 });
+    createRegions(new VM[] {server1, server2, server3});
 
-    execute(new VM[] { server1, server2, server3 }, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        AttributesFactory af = new AttributesFactory();
-        af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
-        af.setPartitionAttributes(new PartitionAttributesFactory<CustId, Customer>().setTotalNumBuckets(4).setLocalMaxMemory(1).setPartitionResolver(new CustomerIDPartitionResolver("resolver1")).setRedundantCopies(0).create());
-        getCache().createRegion("NONCOLOCATED_PR", af.create());
-        return null;
-      }
-    });
+    execute(
+        new VM[] {server1, server2, server3},
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            AttributesFactory af = new AttributesFactory();
+            af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
+            af.setPartitionAttributes(
+                new PartitionAttributesFactory<CustId, Customer>()
+                    .setTotalNumBuckets(4)
+                    .setLocalMaxMemory(1)
+                    .setPartitionResolver(new CustomerIDPartitionResolver("resolver1"))
+                    .setRedundantCopies(0)
+                    .create());
+            getCache().createRegion("NONCOLOCATED_PR", af.create());
+            return null;
+          }
+        });
 
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region custRegion = getCache().getRegion(CUSTOMER_PR);
-        Region orderRegion = getCache().getRegion(ORDER_PR);
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region custRegion = getCache().getRegion(CUSTOMER_PR);
+            Region orderRegion = getCache().getRegion(ORDER_PR);
 
-        Map custMap = new HashMap();
-        Map orderMap = new HashMap();
-        for (int i = 0; i < 5; i++) {
-          CustId custId = new CustId(i);
-          Customer customer = new Customer("customer" + i, "address" + i);
-          OrderId orderId = new OrderId(i, custId);
-          Order order = new Order("order" + i);
-          custMap.put(custId, customer);
-          orderMap.put(orderId, order);
-        }
+            Map custMap = new HashMap();
+            Map orderMap = new HashMap();
+            for (int i = 0; i < 5; i++) {
+              CustId custId = new CustId(i);
+              Customer customer = new Customer("customer" + i, "address" + i);
+              OrderId orderId = new OrderId(i, custId);
+              Order order = new Order("order" + i);
+              custMap.put(custId, customer);
+              orderMap.put(orderId, order);
+            }
 
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        mgr.begin();
-        custRegion.putAll(custMap);
-        orderRegion.putAll(orderMap);
-        mgr.commit();
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            mgr.begin();
+            custRegion.putAll(custMap);
+            orderRegion.putAll(orderMap);
+            mgr.commit();
 
-        mgr.begin();
-        assertEquals(5, custRegion.size());
-        assertEquals(5, orderRegion.size());
+            mgr.begin();
+            assertEquals(5, custRegion.size());
+            assertEquals(5, orderRegion.size());
 
-        custMap = new HashMap();
-        orderMap = new HashMap();
-        for (int i = 5; i < 10; i++) {
-          CustId custId = new CustId(i);
-          Customer customer = new Customer("customer" + i, "address" + i);
-          OrderId orderId = new OrderId(i, custId);
-          Order order = new Order("order" + i);
-          custMap.put(custId, customer);
-          orderMap.put(orderId, order);
-        }
-        custRegion.putAll(custMap);
-        orderRegion.putAll(orderMap);
-        mgr.rollback();
+            custMap = new HashMap();
+            orderMap = new HashMap();
+            for (int i = 5; i < 10; i++) {
+              CustId custId = new CustId(i);
+              Customer customer = new Customer("customer" + i, "address" + i);
+              OrderId orderId = new OrderId(i, custId);
+              Order order = new Order("order" + i);
+              custMap.put(custId, customer);
+              orderMap.put(orderId, order);
+            }
+            custRegion.putAll(custMap);
+            orderRegion.putAll(orderMap);
+            mgr.rollback();
 
-        mgr.begin();
-        assertEquals(5, custRegion.size());
-        assertEquals(5, orderRegion.size());
+            mgr.begin();
+            assertEquals(5, custRegion.size());
+            assertEquals(5, orderRegion.size());
 
-        custRegion.putAll(custMap);
-        orderRegion.putAll(orderMap);
+            custRegion.putAll(custMap);
+            orderRegion.putAll(orderMap);
 
-        assertEquals(10, custRegion.size());
-        assertEquals(10, orderRegion.size());
+            assertEquals(10, custRegion.size());
+            assertEquals(10, orderRegion.size());
 
-        // Verify operations involving non colocated PR
-        Map map = new HashMap();
-        custMap.clear();
-        for (int i = 10; i < 15; i++) {
-          CustId custId = new CustId(i);
-          Customer customer = new Customer("customer" + i, "address" + i);
-          OrderId orderId = new OrderId(i, custId);
-          Order order = new Order("order" + i);
-          custMap.put(custId, customer);
-          map.put(custId, customer);
-        }
-        custRegion.putAll(custMap);
-        Region nonColocatedRegion = getCache().getRegion("NONCOLOCATED_PR");
-        nonColocatedRegion.putAll(orderMap);
+            // Verify operations involving non colocated PR
+            Map map = new HashMap();
+            custMap.clear();
+            for (int i = 10; i < 15; i++) {
+              CustId custId = new CustId(i);
+              Customer customer = new Customer("customer" + i, "address" + i);
+              OrderId orderId = new OrderId(i, custId);
+              Order order = new Order("order" + i);
+              custMap.put(custId, customer);
+              map.put(custId, customer);
+            }
+            custRegion.putAll(custMap);
+            Region nonColocatedRegion = getCache().getRegion("NONCOLOCATED_PR");
+            nonColocatedRegion.putAll(orderMap);
 
-        mgr.commit();
-        mgr.begin();
-        assertEquals(15, custRegion.size());
-        assertEquals(5, nonColocatedRegion.size());
+            mgr.commit();
+            mgr.begin();
+            assertEquals(15, custRegion.size());
+            assertEquals(5, nonColocatedRegion.size());
 
-        custMap.clear();
-        map.clear();
-        for (int i = 15; i < 20; i++) {
-          CustId custId = new CustId(i);
-          Customer customer = new Customer("customer" + i, "address" + i);
-          OrderId orderId = new OrderId(i, custId);
-          Order order = new Order("order" + i);
-          custMap.put(custId, customer);
-          map.put(custId, customer);
-        }
-        custRegion.putAll(custMap);
-        nonColocatedRegion.putAll(orderMap);
+            custMap.clear();
+            map.clear();
+            for (int i = 15; i < 20; i++) {
+              CustId custId = new CustId(i);
+              Customer customer = new Customer("customer" + i, "address" + i);
+              OrderId orderId = new OrderId(i, custId);
+              Order order = new Order("order" + i);
+              custMap.put(custId, customer);
+              map.put(custId, customer);
+            }
+            custRegion.putAll(custMap);
+            nonColocatedRegion.putAll(orderMap);
 
-        mgr.rollback();
-        assertEquals(15, custRegion.size());
-        assertEquals(5, nonColocatedRegion.size());
+            mgr.rollback();
+            assertEquals(15, custRegion.size());
+            assertEquals(5, nonColocatedRegion.size());
 
-        return null;
-      }
-    });
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1056,67 +1154,69 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
 
-    createRegions(new VM[] { server1, server2, server3 });
+    createRegions(new VM[] {server1, server2, server3});
 
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region custRegion = getCache().getRegion(CUSTOMER_PR);
-        Region orderRegion = getCache().getRegion(ORDER_PR);
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region custRegion = getCache().getRegion(CUSTOMER_PR);
+            Region orderRegion = getCache().getRegion(ORDER_PR);
 
-        Map custMap = new HashMap();
-        Map orderMap = new HashMap();
-        for (int i = 0; i < 15; i++) {
-          CustId custId = new CustId(i);
-          Customer customer = new Customer("customer" + i, "address" + i);
-          OrderId orderId = new OrderId(i, custId);
-          Order order = new Order("order" + i);
-          custMap.put(custId, customer);
-          orderMap.put(orderId, order);
-        }
+            Map custMap = new HashMap();
+            Map orderMap = new HashMap();
+            for (int i = 0; i < 15; i++) {
+              CustId custId = new CustId(i);
+              Customer customer = new Customer("customer" + i, "address" + i);
+              OrderId orderId = new OrderId(i, custId);
+              Order order = new Order("order" + i);
+              custMap.put(custId, customer);
+              orderMap.put(orderId, order);
+            }
 
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        mgr.begin();
-        custRegion.putAll(custMap);
-        orderRegion.putAll(orderMap);
-        mgr.commit();
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            mgr.begin();
+            custRegion.putAll(custMap);
+            orderRegion.putAll(orderMap);
+            mgr.commit();
 
-        mgr.begin();
-        assertEquals(15, custRegion.size());
-        assertEquals(15, orderRegion.size());
+            mgr.begin();
+            assertEquals(15, custRegion.size());
+            assertEquals(15, orderRegion.size());
 
-        custMap = new HashMap();
-        orderMap = new HashMap();
-        for (int i = 5; i < 10; i++) {
-          CustId custId = new CustId(i);
-          Customer customer = new Customer("customer" + i, "address" + i);
-          OrderId orderId = new OrderId(i, custId);
-          Order order = new Order("order" + i);
-          custMap.put(custId, customer);
-          orderMap.put(orderId, order);
-        }
-        custRegion.removeAll(custMap.keySet());
-        orderRegion.removeAll(orderMap.keySet());
-        mgr.rollback();
+            custMap = new HashMap();
+            orderMap = new HashMap();
+            for (int i = 5; i < 10; i++) {
+              CustId custId = new CustId(i);
+              Customer customer = new Customer("customer" + i, "address" + i);
+              OrderId orderId = new OrderId(i, custId);
+              Order order = new Order("order" + i);
+              custMap.put(custId, customer);
+              orderMap.put(orderId, order);
+            }
+            custRegion.removeAll(custMap.keySet());
+            orderRegion.removeAll(orderMap.keySet());
+            mgr.rollback();
 
-        mgr.begin();
-        assertEquals(15, custRegion.size());
-        assertEquals(15, orderRegion.size());
+            mgr.begin();
+            assertEquals(15, custRegion.size());
+            assertEquals(15, orderRegion.size());
 
-        custRegion.removeAll(custMap.keySet());
-        orderRegion.removeAll(orderMap.keySet());
+            custRegion.removeAll(custMap.keySet());
+            orderRegion.removeAll(orderMap.keySet());
 
-        assertEquals(10, custRegion.size());
-        assertEquals(10, orderRegion.size());
-        mgr.commit();
+            assertEquals(10, custRegion.size());
+            assertEquals(10, orderRegion.size());
+            mgr.commit();
 
-        assertEquals(10, custRegion.size());
-        assertEquals(10, orderRegion.size());
+            assertEquals(10, custRegion.size());
+            assertEquals(10, orderRegion.size());
 
-        return null;
-      }
-    });
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1128,65 +1228,85 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     final String CUSTOMER_PR2 = "CUSTOMER_PR2";
 
     // Create CUSTOMER_PR1 on server1
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        AttributesFactory af = new AttributesFactory();
-        af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
-        af.setPartitionAttributes(new PartitionAttributesFactory<CustId, Customer>().setTotalNumBuckets(4).setLocalMaxMemory(1).setPartitionResolver(new CustomerIDPartitionResolver("resolver1")).setRedundantCopies(0).create());
-        getCache().createRegion(CUSTOMER_PR1, af.create());
-        return null;
-      }
-    });
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            AttributesFactory af = new AttributesFactory();
+            af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
+            af.setPartitionAttributes(
+                new PartitionAttributesFactory<CustId, Customer>()
+                    .setTotalNumBuckets(4)
+                    .setLocalMaxMemory(1)
+                    .setPartitionResolver(new CustomerIDPartitionResolver("resolver1"))
+                    .setRedundantCopies(0)
+                    .create());
+            getCache().createRegion(CUSTOMER_PR1, af.create());
+            return null;
+          }
+        });
 
     // Create CUSTOMER_PR2 on server2
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        AttributesFactory af = new AttributesFactory();
-        af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
-        af.setPartitionAttributes(new PartitionAttributesFactory<CustId, Customer>().setTotalNumBuckets(4).setLocalMaxMemory(1).setPartitionResolver(new CustomerIDPartitionResolver("resolver2")).setRedundantCopies(0).create());
-        getCache().createRegion(CUSTOMER_PR2, af.create());
-        return null;
-      }
-    });
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            AttributesFactory af = new AttributesFactory();
+            af.setConcurrencyChecksEnabled(getConcurrencyChecksEnabled());
+            af.setPartitionAttributes(
+                new PartitionAttributesFactory<CustId, Customer>()
+                    .setTotalNumBuckets(4)
+                    .setLocalMaxMemory(1)
+                    .setPartitionResolver(new CustomerIDPartitionResolver("resolver2"))
+                    .setRedundantCopies(0)
+                    .create());
+            getCache().createRegion(CUSTOMER_PR2, af.create());
+            return null;
+          }
+        });
 
     // Now perform tx ops on accessor
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        mgr.begin();
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            mgr.begin();
 
-        Region<CustId, Customer> custPR1 = getCache().getRegion(CUSTOMER_PR1);
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        custPR1.put(custIdOne, customerOne);
+            Region<CustId, Customer> custPR1 = getCache().getRegion(CUSTOMER_PR1);
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            custPR1.put(custIdOne, customerOne);
 
-        Region<CustId, Customer> custPR2 = getCache().getRegion(CUSTOMER_PR2);
-        custPR2.put(custIdOne, customerOne);
+            Region<CustId, Customer> custPR2 = getCache().getRegion(CUSTOMER_PR2);
+            custPR2.put(custIdOne, customerOne);
 
-        mgr.commit();
+            mgr.commit();
 
-        // Verify
-        assertEquals(1, custPR1.size());
-        assertEquals(1, custPR2.size());
-        return null;
-      }
-    });
+            // Verify
+            assertEquals(1, custPR1.size());
+            assertEquals(1, custPR2.size());
+            return null;
+          }
+        });
 
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> custPR1 = getCache().getRegion(CUSTOMER_PR1);
-        assertEquals(1, custPR1.size());
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        assertEquals(customerOne, custPR1.get(custIdOne));
-        return null;
-      }
-    });
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> custPR1 = getCache().getRegion(CUSTOMER_PR1);
+            assertEquals(1, custPR1.size());
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            assertEquals(customerOne, custPR1.get(custIdOne));
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1196,68 +1316,69 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
 
-    createPR(new VM[] { server1, server2, server3 });
-    execute(server1, new SerializableCallable() {
+    createPR(new VM[] {server1, server2, server3});
+    execute(
+        server1,
+        new SerializableCallable() {
 
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        mgr.begin();
-        mgr.commit();
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            mgr.begin();
+            mgr.commit();
 
-        mgr.begin();
-        Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER_PR);
-        CustId custId = new CustId(1);
-        Customer expectedCustomer = custRegion.get(custId);
-        assertNull(expectedCustomer);
+            mgr.begin();
+            Region<CustId, Customer> custRegion = getCache().getRegion(CUSTOMER_PR);
+            CustId custId = new CustId(1);
+            Customer expectedCustomer = custRegion.get(custId);
+            assertNull(expectedCustomer);
 
-        // Perform a put
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        custRegion.put(custIdOne, customerOne);
+            // Perform a put
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            custRegion.put(custIdOne, customerOne);
 
-        // Rollback the transaction
-        mgr.rollback();
+            // Rollback the transaction
+            mgr.rollback();
 
-        mgr.begin();
-        // Verify that the entry is rolled back
-        expectedCustomer = custRegion.get(custId);
-        assertNull(expectedCustomer);
+            mgr.begin();
+            // Verify that the entry is rolled back
+            expectedCustomer = custRegion.get(custId);
+            assertNull(expectedCustomer);
 
-        // Add more data
-        CustId custIdTwo = new CustId(2);
-        Customer customerTwo = new Customer("name2", "addr2");
-        CustId custIdThree = new CustId(3);
-        Customer customerThree = new Customer("name3", "addr3");
-        custRegion.put(custIdTwo, customerTwo);
-        custRegion.put(custIdThree, customerThree);
-        mgr.commit();
+            // Add more data
+            CustId custIdTwo = new CustId(2);
+            Customer customerTwo = new Customer("name2", "addr2");
+            CustId custIdThree = new CustId(3);
+            Customer customerThree = new Customer("name3", "addr3");
+            custRegion.put(custIdTwo, customerTwo);
+            custRegion.put(custIdThree, customerThree);
+            mgr.commit();
 
-        mgr.begin();
-        // Verify data
-        assertEquals(2, custRegion.size());
-        assertTrue(custRegion.containsKey(custIdTwo));
-        assertTrue(custRegion.containsKey(custIdThree));
-        assertEquals(customerTwo, custRegion.get(custIdTwo));
-        assertEquals(customerThree, custRegion.get(custIdThree));
+            mgr.begin();
+            // Verify data
+            assertEquals(2, custRegion.size());
+            assertTrue(custRegion.containsKey(custIdTwo));
+            assertTrue(custRegion.containsKey(custIdThree));
+            assertEquals(customerTwo, custRegion.get(custIdTwo));
+            assertEquals(customerThree, custRegion.get(custIdThree));
 
-        // Update the values for the same keys multiple times
-        custRegion.put(custIdOne, new Customer("name1_mod1", "addr1_mod1"));
-        custRegion.put(custIdTwo, new Customer("name2_mod1", "addr2_mod1"));
-        custRegion.put(custIdOne, new Customer("name1_mod2", "addr1_mod2"));
-        custRegion.put(custIdOne, new Customer("name1_mod3", "addr1_mod3"));
-        custRegion.put(custIdTwo, new Customer("name2_mod2", "addr2_mod2"));
+            // Update the values for the same keys multiple times
+            custRegion.put(custIdOne, new Customer("name1_mod1", "addr1_mod1"));
+            custRegion.put(custIdTwo, new Customer("name2_mod1", "addr2_mod1"));
+            custRegion.put(custIdOne, new Customer("name1_mod2", "addr1_mod2"));
+            custRegion.put(custIdOne, new Customer("name1_mod3", "addr1_mod3"));
+            custRegion.put(custIdTwo, new Customer("name2_mod2", "addr2_mod2"));
 
-        assertEquals(3, custRegion.size());
-        mgr.commit();
+            assertEquals(3, custRegion.size());
+            mgr.commit();
 
-        assertEquals(3, custRegion.size());
-        Customer c = custRegion.get(custIdOne);
-        return null;
-      }
-    });
-
+            assertEquals(3, custRegion.size());
+            Customer c = custRegion.get(custIdOne);
+            return null;
+          }
+        });
   }
 
   /*
@@ -1272,47 +1393,54 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     final VM server1 = host.getVM(0);
     final VM server2 = host.getVM(1);
 
-    createPersistentPR(new VM[] { server1 });
+    createPersistentPR(new VM[] {server1});
 
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
 
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        prRegion.put(custIdOne, customerOne);
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            prRegion.put(custIdOne, customerOne);
 
-        BucketRegion br = ((PartitionedRegion) prRegion).getBucketRegion(custIdOne);
+            BucketRegion br = ((PartitionedRegion) prRegion).getBucketRegion(custIdOne);
 
-        String primaryMember = br.getBucketAdvisor().getPrimary().toString();
-        getGemfireCache().getLoggerI18n().fine("TEST:PRIMARY:" + primaryMember);
+            String primaryMember = br.getBucketAdvisor().getPrimary().toString();
+            getGemfireCache().getLoggerI18n().fine("TEST:PRIMARY:" + primaryMember);
 
-        String memberId = getGemfireCache().getDistributedSystem().getMemberId();
-        getGemfireCache().getLoggerI18n().fine("TEST:MEMBERID:" + memberId);
+            String memberId = getGemfireCache().getDistributedSystem().getMemberId();
+            getGemfireCache().getLoggerI18n().fine("TEST:MEMBERID:" + memberId);
 
-        return null;
-      }
-    });
+            return null;
+          }
+        });
 
-    createPersistentPR(new VM[] { server2 });
+    createPersistentPR(new VM[] {server2});
 
-    Boolean isPrimary = (Boolean) execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
-        CustId custIdOne = new CustId(1);
-        BucketRegion br = ((PartitionedRegion) prRegion).getBucketRegion(custIdOne);
+    Boolean isPrimary =
+        (Boolean)
+            execute(
+                server1,
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    Region<CustId, Customer> prRegion =
+                        getCache().getRegion(PERSISTENT_CUSTOMER_PR);
+                    CustId custIdOne = new CustId(1);
+                    BucketRegion br = ((PartitionedRegion) prRegion).getBucketRegion(custIdOne);
 
-        String primaryMember = br.getBucketAdvisor().getPrimary().toString();
-        getGemfireCache().getLoggerI18n().fine("TEST:PRIMARY:" + primaryMember);
+                    String primaryMember = br.getBucketAdvisor().getPrimary().toString();
+                    getGemfireCache().getLoggerI18n().fine("TEST:PRIMARY:" + primaryMember);
 
-        String memberId = getGemfireCache().getDistributedSystem().getMemberId();
-        getGemfireCache().getLoggerI18n().fine("TEST:MEMBERID:" + memberId);
+                    String memberId = getGemfireCache().getDistributedSystem().getMemberId();
+                    getGemfireCache().getLoggerI18n().fine("TEST:MEMBERID:" + memberId);
 
-        return memberId.equals(primaryMember);
-      }
-    });
+                    return memberId.equals(primaryMember);
+                  }
+                });
 
     final VM primary = isPrimary.booleanValue() ? server1 : server2;
     final VM secondary = !isPrimary.booleanValue() ? server1 : server2;
@@ -1347,139 +1475,160 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     }
 
     // Install TX hook
-    SerializableCallable txHook = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CountDownLatch cdl = new CountDownLatch(1);
-        GemFireCacheImpl.internalBeforeApplyChanges = new WaitRelease(cdl, "TX OP");
-        return null;
-      }
-    };
+    SerializableCallable txHook =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CountDownLatch cdl = new CountDownLatch(1);
+            GemFireCacheImpl.internalBeforeApplyChanges = new WaitRelease(cdl, "TX OP");
+            return null;
+          }
+        };
 
     execute(secondary, txHook);
 
     // Install non-TX hook
-    SerializableCallable nontxHook = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CountDownLatch cdl = new CountDownLatch(1);
-        GemFireCacheImpl.internalBeforeNonTXBasicPut = new WaitRelease(cdl, "NON TX OP");
-        return null;
-      }
-    };
+    SerializableCallable nontxHook =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CountDownLatch cdl = new CountDownLatch(1);
+            GemFireCacheImpl.internalBeforeNonTXBasicPut = new WaitRelease(cdl, "NON TX OP");
+            return null;
+          }
+        };
 
     // Install the wait-release hook on the secondary
     execute(secondary, nontxHook);
 
     // Start a tx operation on primary
 
-    execute(primary, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        // The reason this is run in a separate thread instead of controller thread
-        // is that this is going to block because the secondary is going to wait.
-        new Thread() {
-          public void run() {
-            CacheTransactionManager mgr = getGemfireCache().getTxManager();
-            mgr.setDistributed(true);
-            getGemfireCache().getLoggerI18n().fine("TEST:DISTTX=" + mgr.isDistributed());
-            mgr.begin();
-            Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
+    execute(
+        primary,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            // The reason this is run in a separate thread instead of controller thread
+            // is that this is going to block because the secondary is going to wait.
+            new Thread() {
+              public void run() {
+                CacheTransactionManager mgr = getGemfireCache().getTxManager();
+                mgr.setDistributed(true);
+                getGemfireCache().getLoggerI18n().fine("TEST:DISTTX=" + mgr.isDistributed());
+                mgr.begin();
+                Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
 
-            CustId custIdOne = new CustId(1);
-            Customer customerOne = new Customer("name1_tx", "addr1");
-            getGemfireCache().getLoggerI18n().fine("TEST:TX UPDATE");
-            prRegion.put(custIdOne, customerOne);
-            getGemfireCache().getLoggerI18n().fine("TEST:TX COMMIT");
-            mgr.commit();
+                CustId custIdOne = new CustId(1);
+                Customer customerOne = new Customer("name1_tx", "addr1");
+                getGemfireCache().getLoggerI18n().fine("TEST:TX UPDATE");
+                prRegion.put(custIdOne, customerOne);
+                getGemfireCache().getLoggerI18n().fine("TEST:TX COMMIT");
+                mgr.commit();
+              }
+            }.start();
+            return null;
           }
-        }.start();
-        return null;
-      }
-    });
+        });
 
     // Let the TX op be applied on primary first
     Thread.currentThread().sleep(200);
 
     // Perform a non-tx op on the same key on primary
-    execute(primary, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
+    execute(
+        primary,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
 
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1_nontx", "addr1");
-        getGemfireCache().getLoggerI18n().fine("TEST:TX NONTXUPDATE");
-        prRegion.put(custIdOne, customerOne);
-        return null;
-      }
-    });
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1_nontx", "addr1");
+            getGemfireCache().getLoggerI18n().fine("TEST:TX NONTXUPDATE");
+            prRegion.put(custIdOne, customerOne);
+            return null;
+          }
+        });
 
     // Wait for a few milliseconds
     Thread.currentThread().sleep(200);
 
-    // Release the waiting non-tx op first, on secondary 
-    execute(secondary, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Runnable r = GemFireCacheImpl.internalBeforeNonTXBasicPut;
-        assert (r != null && r instanceof WaitRelease);
-        WaitRelease e = (WaitRelease) r;
-        e.release();
-        return null;
-      }
-    });
+    // Release the waiting non-tx op first, on secondary
+    execute(
+        secondary,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Runnable r = GemFireCacheImpl.internalBeforeNonTXBasicPut;
+            assert (r != null && r instanceof WaitRelease);
+            WaitRelease e = (WaitRelease) r;
+            e.release();
+            return null;
+          }
+        });
 
     // Now release the waiting commit on secondary
-    execute(secondary, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Runnable r = GemFireCacheImpl.internalBeforeApplyChanges;
-        assert (r != null && r instanceof WaitRelease);
-        WaitRelease e = (WaitRelease) r;
-        e.release();
-        return null;
-      }
-    });
+    execute(
+        secondary,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Runnable r = GemFireCacheImpl.internalBeforeApplyChanges;
+            assert (r != null && r instanceof WaitRelease);
+            WaitRelease e = (WaitRelease) r;
+            e.release();
+            return null;
+          }
+        });
 
     // Verify region and entry versions on primary and secondary
-    SerializableCallable verifyPrimary = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
+    SerializableCallable verifyPrimary =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
 
-        CustId custId = new CustId(1);
-        Customer customer = prRegion.get(custId);
+            CustId custId = new CustId(1);
+            Customer customer = prRegion.get(custId);
 
-        BucketRegion br = ((PartitionedRegion) prRegion).getBucketRegion(custId);
-        RegionEntry re = br.getRegionEntry(custId);
+            BucketRegion br = ((PartitionedRegion) prRegion).getBucketRegion(custId);
+            RegionEntry re = br.getRegionEntry(custId);
 
-        getGemfireCache().getLoggerI18n().fine("TEST:TX PRIMARY CUSTOMER=" + customer);
+            getGemfireCache().getLoggerI18n().fine("TEST:TX PRIMARY CUSTOMER=" + customer);
 
-        getGemfireCache().getLoggerI18n().fine("TEST:TX PRIMARY REGION VERSION=" + re.getVersionStamp().getRegionVersion());
-        getGemfireCache().getLoggerI18n().fine("TEST:TX PRIMARY ENTRY VERSION=" + re.getVersionStamp().getEntryVersion());
-        return null;
-      }
-    };
+            getGemfireCache()
+                .getLoggerI18n()
+                .fine("TEST:TX PRIMARY REGION VERSION=" + re.getVersionStamp().getRegionVersion());
+            getGemfireCache()
+                .getLoggerI18n()
+                .fine("TEST:TX PRIMARY ENTRY VERSION=" + re.getVersionStamp().getEntryVersion());
+            return null;
+          }
+        };
     execute(primary, verifyPrimary);
-    SerializableCallable verifySecondary = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
+    SerializableCallable verifySecondary =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
 
-        CustId custId = new CustId(1);
-        Customer customer = prRegion.get(custId);
+            CustId custId = new CustId(1);
+            Customer customer = prRegion.get(custId);
 
-        BucketRegion br = ((PartitionedRegion) prRegion).getBucketRegion(custId);
-        RegionEntry re = br.getRegionEntry(custId);
+            BucketRegion br = ((PartitionedRegion) prRegion).getBucketRegion(custId);
+            RegionEntry re = br.getRegionEntry(custId);
 
-        getGemfireCache().getLoggerI18n().fine("TEST:TX SECONDARY CUSTOMER=" + customer);
+            getGemfireCache().getLoggerI18n().fine("TEST:TX SECONDARY CUSTOMER=" + customer);
 
-        getGemfireCache().getLoggerI18n().fine("TEST:TX SECONDARY REGION VERSION=" + re.getVersionStamp().getRegionVersion());
-        getGemfireCache().getLoggerI18n().fine("TEST:TX SECONDARY ENTRY VERSION=" + re.getVersionStamp().getEntryVersion());
-        return null;
-      }
-    };
+            getGemfireCache()
+                .getLoggerI18n()
+                .fine(
+                    "TEST:TX SECONDARY REGION VERSION=" + re.getVersionStamp().getRegionVersion());
+            getGemfireCache()
+                .getLoggerI18n()
+                .fine("TEST:TX SECONDARY ENTRY VERSION=" + re.getVersionStamp().getEntryVersion());
+            return null;
+          }
+        };
 
     execute(secondary, verifySecondary);
   }
@@ -1490,34 +1639,35 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server1 = host.getVM(0);
     VM server2 = host.getVM(1);
 
-    createPersistentPR(new VM[] { server1, server2 });
-    execute(server2, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
+    createPersistentPR(new VM[] {server1, server2});
+    execute(
+        server2,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
 
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        getGemfireCache().getLoggerI18n().fine("TEST:DISTTX=" + mgr.isDistributed());
-        getGemfireCache().getLoggerI18n().fine("TEST:TX BEGIN");
-        mgr.begin();
-        Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            getGemfireCache().getLoggerI18n().fine("TEST:DISTTX=" + mgr.isDistributed());
+            getGemfireCache().getLoggerI18n().fine("TEST:TX BEGIN");
+            mgr.begin();
+            Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
 
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        getGemfireCache().getLoggerI18n().fine("TEST:TX PUT 1");
-        prRegion.put(custIdOne, customerOne);
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            getGemfireCache().getLoggerI18n().fine("TEST:TX PUT 1");
+            prRegion.put(custIdOne, customerOne);
 
-        CustId custIdTwo = new CustId(2);
-        Customer customerTwo = new Customer("name2", "addr2");
-        getGemfireCache().getLoggerI18n().fine("TEST:TX PUT 2");
-        prRegion.put(custIdTwo, customerTwo);
+            CustId custIdTwo = new CustId(2);
+            Customer customerTwo = new Customer("name2", "addr2");
+            getGemfireCache().getLoggerI18n().fine("TEST:TX PUT 2");
+            prRegion.put(custIdTwo, customerTwo);
 
-        getGemfireCache().getLoggerI18n().fine("TEST:TX COMMIT");
-        mgr.commit();
-        return null;
-      }
-    });
-
+            getGemfireCache().getLoggerI18n().fine("TEST:TX COMMIT");
+            mgr.commit();
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1526,87 +1676,88 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server1 = host.getVM(0);
     VM server2 = host.getVM(1);
 
-    createPersistentPR(new VM[] { server1, server2 });
-    execute(server2, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        getGemfireCache().getLoggerI18n().fine("TEST:DISTTX=" + mgr.isDistributed());
-        getGemfireCache().getLoggerI18n().fine("TEST:TX BEGIN");
-        mgr.begin();
+    createPersistentPR(new VM[] {server1, server2});
+    execute(
+        server2,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            getGemfireCache().getLoggerI18n().fine("TEST:DISTTX=" + mgr.isDistributed());
+            getGemfireCache().getLoggerI18n().fine("TEST:TX BEGIN");
+            mgr.begin();
 
-        Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
+            Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
 
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        getGemfireCache().getLoggerI18n().fine("TEST:TX PUT 1");
-        prRegion.put(custIdOne, customerOne);
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            getGemfireCache().getLoggerI18n().fine("TEST:TX PUT 1");
+            prRegion.put(custIdOne, customerOne);
 
-        BucketRegion br = ((PartitionedRegion) prRegion).getBucketRegion(custIdOne);
+            BucketRegion br = ((PartitionedRegion) prRegion).getBucketRegion(custIdOne);
 
-        assertEquals(0L, br.getVersionVector().getCurrentVersion());
-        getGemfireCache().getLoggerI18n().fine("TEST:TX COMMIT 1");
-        mgr.commit();
+            assertEquals(0L, br.getVersionVector().getCurrentVersion());
+            getGemfireCache().getLoggerI18n().fine("TEST:TX COMMIT 1");
+            mgr.commit();
 
-        // Verify region version on the region
-        assertEquals(1L, br.getVersionVector().getCurrentVersion());
+            // Verify region version on the region
+            assertEquals(1L, br.getVersionVector().getCurrentVersion());
 
-        RegionEntry re = br.getRegionEntry(custIdOne);
-        getGemfireCache().getLoggerI18n().fine("TEST:VERSION-STAMP:" + re.getVersionStamp());
+            RegionEntry re = br.getRegionEntry(custIdOne);
+            getGemfireCache().getLoggerI18n().fine("TEST:VERSION-STAMP:" + re.getVersionStamp());
 
-        // Verify region version on the region entry
-        assertEquals(1L, re.getVersionStamp().getRegionVersion());
+            // Verify region version on the region entry
+            assertEquals(1L, re.getVersionStamp().getRegionVersion());
 
-        // Verify entry version
-        assertEquals(1, re.getVersionStamp().getEntryVersion());
+            // Verify entry version
+            assertEquals(1, re.getVersionStamp().getEntryVersion());
 
-        mgr.begin();
-        prRegion.put(custIdOne, new Customer("name1_1", "addr1"));
+            mgr.begin();
+            prRegion.put(custIdOne, new Customer("name1_1", "addr1"));
 
-        getGemfireCache().getLoggerI18n().fine("TEST:TX COMMIT 2");
+            getGemfireCache().getLoggerI18n().fine("TEST:TX COMMIT 2");
 
-        assertEquals(1L, br.getVersionVector().getCurrentVersion());
-        mgr.commit();
+            assertEquals(1L, br.getVersionVector().getCurrentVersion());
+            mgr.commit();
 
-        // Verify region version on the region
-        assertEquals(2L, br.getVersionVector().getCurrentVersion());
+            // Verify region version on the region
+            assertEquals(2L, br.getVersionVector().getCurrentVersion());
 
-        re = br.getRegionEntry(custIdOne);
-        getGemfireCache().getLoggerI18n().fine("TEST:VERSION-STAMP:" + re.getVersionStamp());
+            re = br.getRegionEntry(custIdOne);
+            getGemfireCache().getLoggerI18n().fine("TEST:VERSION-STAMP:" + re.getVersionStamp());
 
-        // Verify region version on the region entry
-        assertEquals(2L, re.getVersionStamp().getRegionVersion());
+            // Verify region version on the region entry
+            assertEquals(2L, re.getVersionStamp().getRegionVersion());
 
-        // Verify entry version
-        assertEquals(2, re.getVersionStamp().getEntryVersion());
-        return null;
-      }
+            // Verify entry version
+            assertEquals(2, re.getVersionStamp().getEntryVersion());
+            return null;
+          }
+        });
 
-    });
+    execute(
+        server1,
+        new SerializableCallable() {
 
-    execute(server1, new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
+            CustId custIdOne = new CustId(1);
+            BucketRegion br = ((PartitionedRegion) prRegion).getBucketRegion(custIdOne);
 
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> prRegion = getCache().getRegion(PERSISTENT_CUSTOMER_PR);
-        CustId custIdOne = new CustId(1);
-        BucketRegion br = ((PartitionedRegion) prRegion).getBucketRegion(custIdOne);
+            // Verify region version on the region
+            assertEquals(2L, br.getVersionVector().getCurrentVersion());
 
-        // Verify region version on the region
-        assertEquals(2L, br.getVersionVector().getCurrentVersion());
+            // Verify region version ont the region entry
+            RegionEntry re = br.getRegionEntry(custIdOne);
+            assertEquals(2L, re.getVersionStamp().getRegionVersion());
 
-        // Verify region version ont the region entry
-        RegionEntry re = br.getRegionEntry(custIdOne);
-        assertEquals(2L, re.getVersionStamp().getRegionVersion());
-
-        // Verify entry version 
-        assertEquals(2, re.getVersionStamp().getEntryVersion());
-        return null;
-      }
-
-    });
-
+            // Verify entry version
+            assertEquals(2, re.getVersionStamp().getEntryVersion());
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1615,88 +1766,89 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server1 = host.getVM(0);
     VM server2 = host.getVM(1);
 
-    createRR(new VM[] { server1, server2 });
-    execute(server2, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheTransactionManager mgr = getGemfireCache().getTxManager();
-        mgr.setDistributed(true);
-        getGemfireCache().getLoggerI18n().fine("TEST:DISTTX=" + mgr.isDistributed());
-        getGemfireCache().getLoggerI18n().fine("TEST:TX BEGIN");
-        mgr.begin();
+    createRR(new VM[] {server1, server2});
+    execute(
+        server2,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheTransactionManager mgr = getGemfireCache().getTxManager();
+            mgr.setDistributed(true);
+            getGemfireCache().getLoggerI18n().fine("TEST:DISTTX=" + mgr.isDistributed());
+            getGemfireCache().getLoggerI18n().fine("TEST:TX BEGIN");
+            mgr.begin();
 
-        Region<CustId, Customer> region = getCache().getRegion(CUSTOMER_RR);
+            Region<CustId, Customer> region = getCache().getRegion(CUSTOMER_RR);
 
-        CustId custIdOne = new CustId(1);
-        Customer customerOne = new Customer("name1", "addr1");
-        getGemfireCache().getLoggerI18n().fine("TEST:TX PUT 1");
-        region.put(custIdOne, customerOne);
+            CustId custIdOne = new CustId(1);
+            Customer customerOne = new Customer("name1", "addr1");
+            getGemfireCache().getLoggerI18n().fine("TEST:TX PUT 1");
+            region.put(custIdOne, customerOne);
 
-        LocalRegion lr = (LocalRegion) region;
+            LocalRegion lr = (LocalRegion) region;
 
-        assertEquals(0L, lr.getVersionVector().getCurrentVersion());
-        getGemfireCache().getLoggerI18n().fine("TEST:TX COMMIT 1");
-        mgr.commit();
+            assertEquals(0L, lr.getVersionVector().getCurrentVersion());
+            getGemfireCache().getLoggerI18n().fine("TEST:TX COMMIT 1");
+            mgr.commit();
 
-        // Verify region version on the region
-        assertEquals(1L, lr.getVersionVector().getCurrentVersion());
+            // Verify region version on the region
+            assertEquals(1L, lr.getVersionVector().getCurrentVersion());
 
-        RegionEntry re = lr.getRegionEntry(custIdOne);
-        getGemfireCache().getLoggerI18n().fine("TEST:VERSION-STAMP:" + re.getVersionStamp());
+            RegionEntry re = lr.getRegionEntry(custIdOne);
+            getGemfireCache().getLoggerI18n().fine("TEST:VERSION-STAMP:" + re.getVersionStamp());
 
-        // Verify region version on the region entry
-        assertEquals(1L, re.getVersionStamp().getRegionVersion());
+            // Verify region version on the region entry
+            assertEquals(1L, re.getVersionStamp().getRegionVersion());
 
-        // Verify entry version
-        assertEquals(1, re.getVersionStamp().getEntryVersion());
+            // Verify entry version
+            assertEquals(1, re.getVersionStamp().getEntryVersion());
 
-        mgr.begin();
-        region.put(custIdOne, new Customer("name1_1", "addr1"));
+            mgr.begin();
+            region.put(custIdOne, new Customer("name1_1", "addr1"));
 
-        getGemfireCache().getLoggerI18n().fine("TEST:TX COMMIT 2");
+            getGemfireCache().getLoggerI18n().fine("TEST:TX COMMIT 2");
 
-        assertEquals(1L, lr.getVersionVector().getCurrentVersion());
-        mgr.commit();
+            assertEquals(1L, lr.getVersionVector().getCurrentVersion());
+            mgr.commit();
 
-        // Verify region version on the region
-        assertEquals(2L, lr.getVersionVector().getCurrentVersion());
+            // Verify region version on the region
+            assertEquals(2L, lr.getVersionVector().getCurrentVersion());
 
-        re = lr.getRegionEntry(custIdOne);
-        getGemfireCache().getLoggerI18n().fine("TEST:VERSION-STAMP:" + re.getVersionStamp());
+            re = lr.getRegionEntry(custIdOne);
+            getGemfireCache().getLoggerI18n().fine("TEST:VERSION-STAMP:" + re.getVersionStamp());
 
-        // Verify region version on the region entry
-        assertEquals(2L, re.getVersionStamp().getRegionVersion());
+            // Verify region version on the region entry
+            assertEquals(2L, re.getVersionStamp().getRegionVersion());
 
-        // Verify entry version
-        assertEquals(2, re.getVersionStamp().getEntryVersion());
-        return null;
-      }
+            // Verify entry version
+            assertEquals(2, re.getVersionStamp().getEntryVersion());
+            return null;
+          }
+        });
 
-    });
+    execute(
+        server1,
+        new SerializableCallable() {
 
-    execute(server1, new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Region<CustId, Customer> region = getCache().getRegion(CUSTOMER_RR);
+            CustId custIdOne = new CustId(1);
 
-      @Override
-      public Object call() throws Exception {
-        Region<CustId, Customer> region = getCache().getRegion(CUSTOMER_RR);
-        CustId custIdOne = new CustId(1);
+            LocalRegion lr = (LocalRegion) region;
 
-        LocalRegion lr = (LocalRegion) region;
+            // Verify region version on the region
+            assertEquals(2L, lr.getVersionVector().getCurrentVersion());
 
-        // Verify region version on the region
-        assertEquals(2L, lr.getVersionVector().getCurrentVersion());
+            // Verify region version ont the region entry
+            RegionEntry re = lr.getRegionEntry(custIdOne);
+            assertEquals(2L, re.getVersionStamp().getRegionVersion());
 
-        // Verify region version ont the region entry
-        RegionEntry re = lr.getRegionEntry(custIdOne);
-        assertEquals(2L, re.getVersionStamp().getRegionVersion());
-
-        // Verify entry version 
-        assertEquals(2, re.getVersionStamp().getEntryVersion());
-        return null;
-      }
-
-    });
-
+            // Verify entry version
+            assertEquals(2, re.getVersionStamp().getEntryVersion());
+            return null;
+          }
+        });
   }
 
   @Test
@@ -1706,7 +1858,7 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server2 = host.getVM(1);
     VM server3 = host.getVM(2);
 
-    createPR(new VM[] { server1, server2 });
+    createPR(new VM[] {server1, server2});
 
     class Ops extends SerializableCallable {
       private boolean flag = false;
@@ -1748,18 +1900,20 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     server1.invokeAsync(() -> new Ops().call());
 
     // Now create cache on the third server and let it join the distributed system.
-    createPR(new VM[] { server3 });
+    createPR(new VM[] {server3});
 
     // Let the original thread move on by signalling the flag
 
-    execute(server1, new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        TestObserver o = TestObserver.getInstance();
-        o.setFlag(false);
-        return null;
-      }
-    });
+    execute(
+        server1,
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            TestObserver o = TestObserver.getInstance();
+            o.setFlag(false);
+            return null;
+          }
+        });
   }
 
   public static class TestObserver {
@@ -1828,8 +1982,8 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
       try {
         mgr.commit();
         fail("this test should have failed with CommitConflictException");
-        // [DISTTX] TODO after conflict detection either  
-        // CommitIncompleteException or CommitConflictException is thrown. 
+        // [DISTTX] TODO after conflict detection either
+        // CommitIncompleteException or CommitConflictException is thrown.
         // Should it always be CommitConflictException?
       } catch (CommitIncompleteException cie) {
       } catch (CommitConflictException ce) {
@@ -1858,7 +2012,7 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server3 = host.getVM(2);
     VM accessor = host.getVM(3);
 
-    createPRwithRedundanyCopies(new VM[] { server1, server2, server3 }, 1);
+    createPRwithRedundanyCopies(new VM[] {server1, server2, server3}, 1);
     createPRonAccessor(accessor, 1);
 
     server1.invoke(new TxOps_Conflicts(CUSTOMER_PR));
@@ -1879,7 +2033,7 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server3 = host.getVM(2);
     VM accessor = host.getVM(3);
 
-    createRR(new VM[] { server1, server2, server3 });
+    createRR(new VM[] {server1, server2, server3});
     createRRonAccessor(accessor);
 
     server1.invoke(new TxOps_Conflicts(CUSTOMER_RR));
@@ -1905,7 +2059,8 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
         public Exception ex = new Exception();
 
         public void run() {
-          LogWriterUtils.getLogWriter().info("Inside TxConflictRunnable.TxThread after aquiring locks");
+          LogWriterUtils.getLogWriter()
+              .info("Inside TxConflictRunnable.TxThread after aquiring locks");
           CacheTransactionManager mgr = getGemfireCache().getTxManager();
           mgr.setDistributed(true);
           mgr.begin();
@@ -2005,7 +2160,7 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
 
     //    createPRwithRedundanyCopies(new VM[] { server1, server2 }, 1);
 
-    createPRwithRedundanyCopies(new VM[] { server1 }, 0);
+    createPRwithRedundanyCopies(new VM[] {server1}, 0);
 
     server1.invoke(new TxOps_conflicts_after_locks_acquired(CUSTOMER_PR));
   }
@@ -2021,7 +2176,7 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server1 = host.getVM(0);
     VM server2 = host.getVM(1);
 
-    createRR(new VM[] { server1, server2 });
+    createRR(new VM[] {server1, server2});
 
     server1.invoke(new TxOps_conflicts_after_locks_acquired(CUSTOMER_RR));
   }
@@ -2130,7 +2285,7 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server1 = host.getVM(0);
     VM server2 = host.getVM(1);
 
-    createPRwithRedundanyCopies(new VM[] { server1, server2 }, 1);
+    createPRwithRedundanyCopies(new VM[] {server1, server2}, 1);
 
     server1.invoke(new TxOps_no_conflicts(CUSTOMER_PR));
   }
@@ -2146,9 +2301,8 @@ public class DistributedTransactionDUnitTest extends JUnit4CacheTestCase {
     VM server1 = host.getVM(0);
     VM server2 = host.getVM(1);
 
-    createRR(new VM[] { server1, server2 });
+    createRR(new VM[] {server1, server2});
 
     server1.invoke(new TxOps_no_conflicts(CUSTOMER_RR));
   }
-
 }

@@ -21,37 +21,34 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.geode.annotations.Experimental;
 
 /**
- * Factory for creating instances of {@link LuceneQuery}.
- * To get an instance of this factory call {@link LuceneService#createLuceneQueryFactory}.
- * <P>
- * To use this factory configure it with the <code>set</code> methods and then
- * call {@link #create} to produce a {@link LuceneQuery} instance.
- * 
+ * Factory for creating instances of {@link LuceneQuery}. To get an instance of this factory call
+ * {@link LuceneService#createLuceneQueryFactory}.
+ *
+ * <p>To use this factory configure it with the <code>set</code> methods and then call {@link
+ * #create} to produce a {@link LuceneQuery} instance.
  */
 @Experimental
 public interface LuceneQueryFactory {
 
-  /**
-   * Default query result limit is 100
-   */
+  /** Default query result limit is 100 */
   public static final int DEFAULT_LIMIT = 100;
 
-  /**
-   *  Default page size of result is 0, which means no pagination
-   */
+  /** Default page size of result is 0, which means no pagination */
   public static final int DEFAULT_PAGESIZE = 0;
 
   /**
-   * Set page size for a query result. The default page size is 0 which means no pagination.
-   * If specified negative value, throw IllegalArgumentException
+   * Set page size for a query result. The default page size is 0 which means no pagination. If
+   * specified negative value, throw IllegalArgumentException
+   *
    * @param pageSize
    * @return itself
    */
   LuceneQueryFactory setPageSize(int pageSize);
 
   /**
-   * Set max limit of result for a query
-   * If specified limit is less or equal to zero, throw IllegalArgumentException
+   * Set max limit of result for a query If specified limit is less or equal to zero, throw
+   * IllegalArgumentException
+   *
    * @param limit
    * @return itself
    */
@@ -59,20 +56,19 @@ public interface LuceneQueryFactory {
 
   /**
    * Set a list of fields for result projection.
-   * 
+   *
    * @param fieldNames
    * @return itself
-   * 
    * @deprecated TODO This feature is not yet implemented
    */
   @Deprecated
   LuceneQueryFactory setProjectionFields(String... fieldNames);
 
   /**
-   * Create wrapper object for lucene's QueryParser object using default standard analyzer.
-   * The queryString is using lucene QueryParser's syntax. QueryParser is for easy-to-use 
-   * with human understandable syntax. 
-   *  
+   * Create wrapper object for lucene's QueryParser object using default standard analyzer. The
+   * queryString is using lucene QueryParser's syntax. QueryParser is for easy-to-use with human
+   * understandable syntax.
+   *
    * @param regionName region name
    * @param indexName index name
    * @param queryString query string in lucene QueryParser's syntax
@@ -81,12 +77,14 @@ public interface LuceneQueryFactory {
    * @param <V> the value type in the query results
    * @return LuceneQuery object
    */
-  public <K, V> LuceneQuery<K, V> create(String indexName, String regionName, String queryString, String defaultField);
+  public <K, V> LuceneQuery<K, V> create(
+      String indexName, String regionName, String queryString, String defaultField);
 
   /**
-   * Creates a wrapper object for Lucene's Query object. This {@link LuceneQuery} builder method could be used in
-   * advanced cases, such as cases where Lucene's Query object construction needs Lucene's API over query string.
-   * 
+   * Creates a wrapper object for Lucene's Query object. This {@link LuceneQuery} builder method
+   * could be used in advanced cases, such as cases where Lucene's Query object construction needs
+   * Lucene's API over query string.
+   *
    * @param indexName index name
    * @param regionName region name
    * @param provider constructs and provides a Lucene Query object
@@ -94,5 +92,6 @@ public interface LuceneQueryFactory {
    * @param <V> the value type in the query results
    * @return LuceneQuery object
    */
-  public <K, V> LuceneQuery<K, V> create(String indexName, String regionName, LuceneQueryProvider provider);
+  public <K, V> LuceneQuery<K, V> create(
+      String indexName, String regionName, LuceneQueryProvider provider);
 }

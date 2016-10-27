@@ -52,9 +52,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Tests that the Matris defined in <code>ServerResponseMatrix</code> is
- * applied or not
- * 
+ * Tests that the Matris defined in <code>ServerResponseMatrix</code> is applied or not
+ *
  * @since GemFire 5.1
  */
 @Category(DistributedTest.class)
@@ -159,14 +158,15 @@ public class DurableResponseMatrixDUnitTest extends JUnit4DistributedTestCase {
   @Test
   public void testRegisterInterest_Destroy_Concurrent() throws Exception {
     PoolImpl.BEFORE_REGISTER_CALLBACK_FLAG = true;
-    ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-      public void beforeInterestRegistration() {
-        Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-        r.put(KEY, "AgainDummyValue");
-        r.destroy(KEY);
-        PoolImpl.BEFORE_REGISTER_CALLBACK_FLAG = false;
-      }
-    });
+    ClientServerObserverHolder.setInstance(
+        new ClientServerObserverAdapter() {
+          public void beforeInterestRegistration() {
+            Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+            r.put(KEY, "AgainDummyValue");
+            r.destroy(KEY);
+            PoolImpl.BEFORE_REGISTER_CALLBACK_FLAG = false;
+          }
+        });
 
     Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     r.put(KEY, "DummyValue");
@@ -177,27 +177,28 @@ public class DurableResponseMatrixDUnitTest extends JUnit4DistributedTestCase {
   }
 
   private void waitForValue(final Region r, final Object key, final Object expected) {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        org.apache.geode.cache.Region.Entry entry = r.getEntry(KEY);
-        if (expected == null) {
-          if (!r.containsValueForKey(key)) {
-            return true; // success!
-          }
-        } else {
-          if (entry != null) {
-            if (expected.equals(entry.getValue())) {
-              return true;
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            org.apache.geode.cache.Region.Entry entry = r.getEntry(KEY);
+            if (expected == null) {
+              if (!r.containsValueForKey(key)) {
+                return true; // success!
+              }
+            } else {
+              if (entry != null) {
+                if (expected.equals(entry.getValue())) {
+                  return true;
+                }
+              }
             }
+            return false;
           }
-        }
-        return false;
-      }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 120 * 1000, 200, true);
   }
 
@@ -416,11 +417,18 @@ public class DurableResponseMatrixDUnitTest extends JUnit4DistributedTestCase {
     try {
       final String durableClientId = "DurableResponseMatrixDUnitTest_client";
       final int durableClientTimeout = 60; // keep the client alive for 60 s
-      Properties props = getClientDistributedSystemProperties(durableClientId, durableClientTimeout);
+      Properties props =
+          getClientDistributedSystemProperties(durableClientId, durableClientTimeout);
       new DurableResponseMatrixDUnitTest().createCache(props);
-      Pool p = PoolManager.createFactory().addServer(host, PORT1.intValue()).setSubscriptionEnabled(true).setSubscriptionRedundancy(1).setReadTimeout(10000).setMinConnections(2)
-          // .setRetryInterval(2000)
-          .create("DurableResponseMatrixDUnitTestPool");
+      Pool p =
+          PoolManager.createFactory()
+              .addServer(host, PORT1.intValue())
+              .setSubscriptionEnabled(true)
+              .setSubscriptionRedundancy(1)
+              .setReadTimeout(10000)
+              .setMinConnections(2)
+              // .setRetryInterval(2000)
+              .create("DurableResponseMatrixDUnitTestPool");
 
       AttributesFactory factory = new AttributesFactory();
       factory.setScope(Scope.LOCAL);
@@ -435,7 +443,6 @@ public class DurableResponseMatrixDUnitTest extends JUnit4DistributedTestCase {
     } catch (Exception e) {
       Assert.fail("test failed due to ", e);
     }
-
   }
 
   public static Integer createServerCache() throws Exception {
@@ -455,7 +462,8 @@ public class DurableResponseMatrixDUnitTest extends JUnit4DistributedTestCase {
     return new Integer(server1.getPort());
   }
 
-  private Properties getClientDistributedSystemProperties(String durableClientId, int durableClientTimeout) {
+  private Properties getClientDistributedSystemProperties(
+      String durableClientId, int durableClientTimeout) {
     Properties properties = new Properties();
     properties.setProperty(MCAST_PORT, "0");
     properties.setProperty(LOCATORS, "");

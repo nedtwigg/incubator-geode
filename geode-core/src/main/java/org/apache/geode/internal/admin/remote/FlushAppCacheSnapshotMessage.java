@@ -23,8 +23,8 @@ import org.apache.geode.distributed.internal.*;
 import java.io.*;
 
 /**
- * A message to cause a remote application to release any snapshot info it
- * was holding on behalf of a console.
+ * A message to cause a remote application to release any snapshot info it was holding on behalf of
+ * a console.
  */
 public final class FlushAppCacheSnapshotMessage extends PooledDistributionMessage {
 

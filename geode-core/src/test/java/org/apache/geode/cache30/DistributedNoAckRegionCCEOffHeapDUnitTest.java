@@ -31,24 +31,25 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
  * Tests Distributed Ack Region with ConcurrencyChecksEnabled and OffHeap memory.
- * 
+ *
  * @since Geode 1.0
  */
 @Category(DistributedTest.class)
-@SuppressWarnings({ "deprecation", "serial" })
+@SuppressWarnings({"deprecation", "serial"})
 public class DistributedNoAckRegionCCEOffHeapDUnitTest extends DistributedNoAckRegionCCEDUnitTest {
 
   @Override
   public final void preTearDownAssertions() throws Exception {
-    SerializableRunnable checkOrphans = new SerializableRunnable() {
+    SerializableRunnable checkOrphans =
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        if (hasCache()) {
-          OffHeapTestUtil.checkOrphans();
-        }
-      }
-    };
+          @Override
+          public void run() {
+            if (hasCache()) {
+              OffHeapTestUtil.checkOrphans();
+            }
+          }
+        };
     Invoke.invokeInEveryVM(checkOrphans);
     checkOrphans.run();
   }
@@ -60,7 +61,7 @@ public class DistributedNoAckRegionCCEOffHeapDUnitTest extends DistributedNoAckR
     return props;
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   @Override
   protected RegionAttributes getRegionAttributes() {
     RegionAttributes attrs = super.getRegionAttributes();
@@ -69,7 +70,7 @@ public class DistributedNoAckRegionCCEOffHeapDUnitTest extends DistributedNoAckR
     return factory.create();
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   @Override
   protected RegionAttributes getRegionAttributes(String type) {
     RegionAttributes ra = super.getRegionAttributes(type);

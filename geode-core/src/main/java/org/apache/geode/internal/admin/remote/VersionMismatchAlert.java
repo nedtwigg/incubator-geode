@@ -70,14 +70,11 @@ public class VersionMismatchAlert implements Alert {
 
   /**
    * Returns a InternalDistributedMember instance representing the agent.
-   * 
-   * @return the InternalDistributedMember instance representing this agent
-   *         instance
-   *         
+   *
+   * @return the InternalDistributedMember instance representing this agent instance
    * @since GemFire 6.5
    */
   public InternalDistributedMember getSender() {
     return this.sender;
   }
-
 }

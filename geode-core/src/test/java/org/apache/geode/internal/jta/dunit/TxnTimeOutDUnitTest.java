@@ -51,9 +51,7 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.util.test.TestUtil;
 
-/**
- * This test sees if the TransactionTimeOut works properly
- */
+/** This test sees if the TransactionTimeOut works properly */
 @Category(DistributedTest.class)
 public class TxnTimeOutDUnitTest extends JUnit4DistributedTestCase {
 
@@ -74,8 +72,7 @@ public class TxnTimeOutDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(CACHE_XML_FILE, path);
     props.setProperty(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
     ds = (new TxnTimeOutDUnitTest()).getSystem(props);
-    if (cache == null || cache.isClosed())
-      cache = CacheFactory.create(ds);
+    if (cache == null || cache.isClosed()) cache = CacheFactory.create(ds);
   }
 
   public static Cache getCache() {
@@ -97,8 +94,7 @@ public class TxnTimeOutDUnitTest extends JUnit4DistributedTestCase {
       if (cache != null && !cache.isClosed()) {
         cache.close();
       }
-      if (ds != null && ds.isConnected())
-        ds.disconnect();
+      if (ds != null && ds.isConnected()) ds.disconnect();
 
     } catch (Exception e) {
       fail("Exception in closing cache or ds due to " + e);
@@ -193,13 +189,17 @@ public class TxnTimeOutDUnitTest extends JUnit4DistributedTestCase {
     if (asyncObj2.exceptionOccurred()) {
       Assert.fail("asyncObj2 failed", asyncObj2.getException());
     }
-
   }
 
   public static void runTest1() throws Exception {
     boolean exceptionOccured = false;
     try {
-      getSystemStatic().getLogWriter().fine("<ExpectedException action=add> +" + "DistributedSystemDisconnectedException" + "</ExpectedException>");
+      getSystemStatic()
+          .getLogWriter()
+          .fine(
+              "<ExpectedException action=add> +"
+                  + "DistributedSystemDisconnectedException"
+                  + "</ExpectedException>");
       Context ctx = cache.getJNDIContext();
       UserTransaction utx = (UserTransaction) ctx.lookup("java:/UserTransaction");
       utx.begin();
@@ -210,13 +210,17 @@ public class TxnTimeOutDUnitTest extends JUnit4DistributedTestCase {
       } catch (Exception e) {
         exceptionOccured = true;
       }
-      if (!exceptionOccured)
-        fail("Exception did not occur although was supposed to occur");
+      if (!exceptionOccured) fail("Exception did not occur although was supposed to occur");
     } catch (Exception e) {
       LogWriterUtils.getLogWriter().fine("Exception caught " + e);
       fail("failed in naming lookup: " + e);
     } finally {
-      getSystemStatic().getLogWriter().fine("<ExpectedException action=remove> +" + "DistributedSystemDisconnectedException" + "</ExpectedException>");
+      getSystemStatic()
+          .getLogWriter()
+          .fine(
+              "<ExpectedException action=remove> +"
+                  + "DistributedSystemDisconnectedException"
+                  + "</ExpectedException>");
     }
   }
 
@@ -233,15 +237,15 @@ public class TxnTimeOutDUnitTest extends JUnit4DistributedTestCase {
       } catch (Exception e) {
         exceptionOccured = true;
       }
-      if (!exceptionOccured)
-        fail("Exception did not occur although was supposed to occur");
+      if (!exceptionOccured) fail("Exception did not occur although was supposed to occur");
     } catch (Exception e) {
       LogWriterUtils.getLogWriter().fine("Exception caught " + e);
       fail("failed in naming lookup: " + e);
     }
   }
 
-  public static void runTest3(Object o) throws SystemException, NotSupportedException, NamingException, InterruptedException {
+  public static void runTest3(Object o)
+      throws SystemException, NotSupportedException, NamingException, InterruptedException {
     boolean exceptionOccured = false;
     int sleeptime = ((Integer) o).intValue();
     Context ctx = cache.getJNDIContext();

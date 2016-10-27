@@ -59,11 +59,9 @@ import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * Tests Interest Registration Functionality
- */
+/** Tests Interest Registration Functionality */
 @Category(DistributedTest.class)
-@SuppressWarnings({ "deprecation", "rawtypes", "serial", "unchecked" })
+@SuppressWarnings({"deprecation", "rawtypes", "serial", "unchecked"})
 public class HAInterestTestCase extends JUnit4DistributedTestCase {
 
   protected static final int TIMEOUT_MILLIS = 60 * 1000;
@@ -96,7 +94,7 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
   protected static VM server2 = null;
   protected static VM server3 = null;
 
-  protected volatile static boolean exceptionOccured = false;
+  protected static volatile boolean exceptionOccured = false;
 
   @Override
   public final void postSetUp() throws Exception {
@@ -144,7 +142,7 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
 
   /**
    * Return the current primary waiting for a primary to exist.
-   * 
+   *
    * @since GemFire 5.7
    */
   public static VM getPrimaryVM() {
@@ -152,32 +150,33 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
   }
 
   /**
-   * Return the current primary waiting for a primary to exist and for it not to
-   * be the oldPrimary (if oldPrimary is NOT null).
-   * 
+   * Return the current primary waiting for a primary to exist and for it not to be the oldPrimary
+   * (if oldPrimary is NOT null).
+   *
    * @since GemFire 5.7
    */
   public static VM getPrimaryVM(final VM oldPrimary) {
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        int primaryPort = pool.getPrimaryPort();
-        if (primaryPort == -1) {
-          return false;
-        }
-        // we have a primary
-        VM currentPrimary = getServerVM(primaryPort);
-        if (currentPrimary != oldPrimary) {
-          return true;
-        }
-        return false;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            int primaryPort = pool.getPrimaryPort();
+            if (primaryPort == -1) {
+              return false;
+            }
+            // we have a primary
+            VM currentPrimary = getServerVM(primaryPort);
+            if (currentPrimary != oldPrimary) {
+              return true;
+            }
+            return false;
+          }
 
-      @Override
-      public String description() {
-        return "waiting for primary";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for primary";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     int primaryPort = pool.getPrimaryPort();
@@ -200,14 +199,22 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     } else if (currentPrimary != server1 && server1 != stoppedBackup) {
       return server1;
     } else {
-      fail("expected currentPrimary " + currentPrimary + " to be " + server1 + ", or " + server2 + ", or " + server3);
+      fail(
+          "expected currentPrimary "
+              + currentPrimary
+              + " to be "
+              + server1
+              + ", or "
+              + server2
+              + ", or "
+              + server3);
       return null;
     }
   }
 
   /**
    * Given a server vm (server1, server2, or server3) return its port.
-   * 
+   *
    * @since GemFire 5.7
    */
   public static int getServerPort(VM vm) {
@@ -225,7 +232,7 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
 
   /**
    * Given a server port (PORT1, PORT2, or PORT3) return its vm.
-   * 
+   *
    * @since GemFire 5.7
    */
   public static VM getServerVM(int port) {
@@ -245,53 +252,55 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     final Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
     assertNotNull(r1);
 
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        Region.Entry re = r1.getEntry(k1);
-        if (re == null)
-          return false;
-        Object val = re.getValue();
-        return client_k1.equals(val);
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            Region.Entry re = r1.getEntry(k1);
+            if (re == null) return false;
+            Object val = re.getValue();
+            return client_k1.equals(val);
+          }
 
-      @Override
-      public String description() {
-        return "waiting for client_k1 refresh from server";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for client_k1 refresh from server";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
-    wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        Region.Entry re = r1.getEntry(k2);
-        if (re == null)
-          return false;
-        Object val = re.getValue();
-        return client_k2.equals(val);
-      }
+    wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            Region.Entry re = r1.getEntry(k2);
+            if (re == null) return false;
+            Object val = re.getValue();
+            return client_k2.equals(val);
+          }
 
-      @Override
-      public String description() {
-        return "waiting for client_k2 refresh from server";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for client_k2 refresh from server";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
   }
 
-  public static void verifyDeadAndLiveServers(final int expectedDeadServers, final int expectedLiveServers) {
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return pool.getConnectedServerCount() == expectedLiveServers;
-      }
+  public static void verifyDeadAndLiveServers(
+      final int expectedDeadServers, final int expectedLiveServers) {
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return pool.getConnectedServerCount() == expectedLiveServers;
+          }
 
-      @Override
-      public String description() {
-        return "waiting for pool.getConnectedServerCount() == expectedLiveServer";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for pool.getConnectedServerCount() == expectedLiveServer";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
   }
 
@@ -304,49 +313,53 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
 
   public static void setClientServerObserverForBeforeInterestRecoveryFailure() {
     PoolImpl.BEFORE_RECOVER_INTEREST_CALLBACK_FLAG = true;
-    ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-      public void beforeInterestRecovery() {
-        synchronized (HAInterestTestCase.class) {
-          Thread t = new Thread() {
-            public void run() {
-              getBackupVM().invoke(() -> HAInterestTestCase.startServer());
-              getPrimaryVM().invoke(() -> HAInterestTestCase.stopServer());
+    ClientServerObserverHolder.setInstance(
+        new ClientServerObserverAdapter() {
+          public void beforeInterestRecovery() {
+            synchronized (HAInterestTestCase.class) {
+              Thread t =
+                  new Thread() {
+                    public void run() {
+                      getBackupVM().invoke(() -> HAInterestTestCase.startServer());
+                      getPrimaryVM().invoke(() -> HAInterestTestCase.stopServer());
+                    }
+                  };
+              t.start();
+              try {
+                ThreadUtils.join(t, 30 * 1000);
+              } catch (Exception ignore) {
+                exceptionOccured = true;
+              }
+              HAInterestTestCase.isBeforeInterestRecoveryCallbackCalled = true;
+              HAInterestTestCase.class.notify();
+              PoolImpl.BEFORE_RECOVER_INTEREST_CALLBACK_FLAG = false;
             }
-          };
-          t.start();
-          try {
-            ThreadUtils.join(t, 30 * 1000);
-          } catch (Exception ignore) {
-            exceptionOccured = true;
           }
-          HAInterestTestCase.isBeforeInterestRecoveryCallbackCalled = true;
-          HAInterestTestCase.class.notify();
-          PoolImpl.BEFORE_RECOVER_INTEREST_CALLBACK_FLAG = false;
-        }
-      }
-    });
+        });
   }
 
   public static void setClientServerObserverForBeforeInterestRecovery() {
     PoolImpl.BEFORE_RECOVER_INTEREST_CALLBACK_FLAG = true;
-    ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-      public void beforeInterestRecovery() {
-        synchronized (HAInterestTestCase.class) {
-          Thread t = new Thread() {
-            public void run() {
-              Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-              assertNotNull(r1);
-              r1.put(k1, server_k1_updated);
-            }
-          };
-          t.start();
+    ClientServerObserverHolder.setInstance(
+        new ClientServerObserverAdapter() {
+          public void beforeInterestRecovery() {
+            synchronized (HAInterestTestCase.class) {
+              Thread t =
+                  new Thread() {
+                    public void run() {
+                      Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+                      assertNotNull(r1);
+                      r1.put(k1, server_k1_updated);
+                    }
+                  };
+              t.start();
 
-          HAInterestTestCase.isBeforeInterestRecoveryCallbackCalled = true;
-          HAInterestTestCase.class.notify();
-          PoolImpl.BEFORE_RECOVER_INTEREST_CALLBACK_FLAG = false;
-        }
-      }
-    });
+              HAInterestTestCase.isBeforeInterestRecoveryCallbackCalled = true;
+              HAInterestTestCase.class.notify();
+              PoolImpl.BEFORE_RECOVER_INTEREST_CALLBACK_FLAG = false;
+            }
+          }
+        });
   }
 
   public static void waitForBeforeInterestRecoveryCallBack() throws InterruptedException {
@@ -360,16 +373,17 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
 
   public static void setClientServerObserverForBeforeRegistration(final VM vm) {
     PoolImpl.BEFORE_REGISTER_CALLBACK_FLAG = true;
-    ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-      public void beforeInterestRegistration() {
-        synchronized (HAInterestTestCase.class) {
-          vm.invoke(() -> HAInterestTestCase.startServer());
-          HAInterestTestCase.isBeforeRegistrationCallbackCalled = true;
-          HAInterestTestCase.class.notify();
-          PoolImpl.BEFORE_REGISTER_CALLBACK_FLAG = false;
-        }
-      }
-    });
+    ClientServerObserverHolder.setInstance(
+        new ClientServerObserverAdapter() {
+          public void beforeInterestRegistration() {
+            synchronized (HAInterestTestCase.class) {
+              vm.invoke(() -> HAInterestTestCase.startServer());
+              HAInterestTestCase.isBeforeRegistrationCallbackCalled = true;
+              HAInterestTestCase.class.notify();
+              PoolImpl.BEFORE_REGISTER_CALLBACK_FLAG = false;
+            }
+          }
+        });
   }
 
   public static void waitForBeforeRegistrationCallback() throws InterruptedException {
@@ -383,16 +397,17 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
 
   public static void setClientServerObserverForAfterRegistration(final VM vm) {
     PoolImpl.AFTER_REGISTER_CALLBACK_FLAG = true;
-    ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-      public void afterInterestRegistration() {
-        synchronized (HAInterestTestCase.class) {
-          vm.invoke(() -> HAInterestTestCase.startServer());
-          HAInterestTestCase.isAfterRegistrationCallbackCalled = true;
-          HAInterestTestCase.class.notify();
-          PoolImpl.AFTER_REGISTER_CALLBACK_FLAG = false;
-        }
-      }
-    });
+    ClientServerObserverHolder.setInstance(
+        new ClientServerObserverAdapter() {
+          public void afterInterestRegistration() {
+            synchronized (HAInterestTestCase.class) {
+              vm.invoke(() -> HAInterestTestCase.startServer());
+              HAInterestTestCase.isAfterRegistrationCallbackCalled = true;
+              HAInterestTestCase.class.notify();
+              PoolImpl.AFTER_REGISTER_CALLBACK_FLAG = false;
+            }
+          }
+        });
   }
 
   public static void waitForAfterRegistrationCallback() throws InterruptedException {
@@ -418,17 +433,18 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
   public static void verifyDispatcherIsAlive() {
     assertEquals("More than one BridgeServer", 1, cache.getCacheServers().size());
 
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return cache.getCacheServers().size() == 1;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return cache.getCacheServers().size() == 1;
+          }
 
-      @Override
-      public String description() {
-        return "waiting for cache.getCacheServers().size() == 1";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for cache.getCacheServers().size() == 1";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     CacheServerImpl bs = (CacheServerImpl) cache.getCacheServers().iterator().next();
@@ -437,54 +453,57 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     assertNotNull(bs.getAcceptor().getCacheClientNotifier());
     final CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier();
 
-    wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return ccn.getClientProxies().size() > 0;
-      }
+    wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return ccn.getClientProxies().size() > 0;
+          }
 
-      @Override
-      public String description() {
-        return "waiting for ccn.getClientProxies().size() > 0";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for ccn.getClientProxies().size() > 0";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
-    wc = new WaitCriterion() {
-      Iterator iter_prox;
-      CacheClientProxy proxy;
+    wc =
+        new WaitCriterion() {
+          Iterator iter_prox;
+          CacheClientProxy proxy;
 
-      @Override
-      public boolean done() {
-        iter_prox = ccn.getClientProxies().iterator();
-        if (iter_prox.hasNext()) {
-          proxy = (CacheClientProxy) iter_prox.next();
-          return proxy._messageDispatcher.isAlive();
-        } else {
-          return false;
-        }
-      }
+          @Override
+          public boolean done() {
+            iter_prox = ccn.getClientProxies().iterator();
+            if (iter_prox.hasNext()) {
+              proxy = (CacheClientProxy) iter_prox.next();
+              return proxy._messageDispatcher.isAlive();
+            } else {
+              return false;
+            }
+          }
 
-      @Override
-      public String description() {
-        return "waiting for CacheClientProxy _messageDispatcher to be alive";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for CacheClientProxy _messageDispatcher to be alive";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
   }
 
   public static void verifyDispatcherIsNotAlive() {
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return cache.getCacheServers().size() == 1;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return cache.getCacheServers().size() == 1;
+          }
 
-      @Override
-      public String description() {
-        return "cache.getCacheServers().size() == 1";
-      }
-    };
+          @Override
+          public String description() {
+            return "cache.getCacheServers().size() == 1";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     CacheServerImpl bs = (CacheServerImpl) cache.getCacheServers().iterator().next();
@@ -493,23 +512,25 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     assertNotNull(bs.getAcceptor().getCacheClientNotifier());
     final CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier();
 
-    wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return ccn.getClientProxies().size() > 0;
-      }
+    wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return ccn.getClientProxies().size() > 0;
+          }
 
-      @Override
-      public String description() {
-        return "waiting for ccn.getClientProxies().size() > 0";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for ccn.getClientProxies().size() > 0";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     Iterator iter_prox = ccn.getClientProxies().iterator();
     if (iter_prox.hasNext()) {
       CacheClientProxy proxy = (CacheClientProxy) iter_prox.next();
-      assertFalse("Dispatcher on secondary should not be alive", proxy._messageDispatcher.isAlive());
+      assertFalse(
+          "Dispatcher on secondary should not be alive", proxy._messageDispatcher.isAlive());
     }
   }
 
@@ -590,17 +611,18 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     assertNotNull(r);
     ServerRegionProxy srp = new ServerRegionProxy(r);
 
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return pool.getConnectedServerCount() == 3;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return pool.getConnectedServerCount() == 3;
+          }
 
-      @Override
-      public String description() {
-        return "connected server count never became 3";
-      }
-    };
+          @Override
+          public String description() {
+            return "connected server count never became 3";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     // close primaryEP
@@ -608,7 +630,13 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     List list = new ArrayList();
     list.add(k1);
     list.add(k2);
-    List serverKeys = srp.registerInterest(list, InterestType.KEY, InterestResultPolicy.KEYS, false, r.getAttributes().getDataPolicy().ordinal);
+    List serverKeys =
+        srp.registerInterest(
+            list,
+            InterestType.KEY,
+            InterestResultPolicy.KEYS,
+            false,
+            r.getAttributes().getDataPolicy().ordinal);
     assertNotNull(serverKeys);
     List resultKeys = (List) serverKeys.get(0);
     assertEquals(2, resultKeys.size());
@@ -621,17 +649,18 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     assertNotNull(r);
     ServerRegionProxy srp = new ServerRegionProxy(r);
 
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return pool.getConnectedServerCount() == 3;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return pool.getConnectedServerCount() == 3;
+          }
 
-      @Override
-      public String description() {
-        return "connected server count never became 3";
-      }
-    };
+          @Override
+          public String description() {
+            return "connected server count never became 3";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     // close primaryEP
@@ -646,17 +675,18 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     assertNotNull(r);
     ServerRegionProxy srp = new ServerRegionProxy(r);
 
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return pool.getConnectedServerCount() == 3;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return pool.getConnectedServerCount() == 3;
+          }
 
-      @Override
-      public String description() {
-        return "connected server count never became 3";
-      }
-    };
+          @Override
+          public String description() {
+            return "connected server count never became 3";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     // close primaryEP
@@ -667,7 +697,13 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     List list = new ArrayList();
     list.add(k1);
     list.add(k2);
-    List serverKeys = srp.registerInterest(list, InterestType.KEY, InterestResultPolicy.KEYS, false, r.getAttributes().getDataPolicy().ordinal);
+    List serverKeys =
+        srp.registerInterest(
+            list,
+            InterestType.KEY,
+            InterestResultPolicy.KEYS,
+            false,
+            r.getAttributes().getDataPolicy().ordinal);
 
     assertNotNull(serverKeys);
     List resultKeys = (List) serverKeys.get(0);
@@ -676,25 +712,24 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     assertTrue(resultKeys.contains(k2));
   }
 
-  /**
-   * returns the secondary that was stopped
-   */
+  /** returns the secondary that was stopped */
   public static VM stopSecondaryAndRegisterK1AndK2AndVerifyResponse() {
     LocalRegion r = (LocalRegion) cache.getRegion(Region.SEPARATOR + REGION_NAME);
     assertNotNull(r);
     ServerRegionProxy srp = new ServerRegionProxy(r);
 
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return pool.getConnectedServerCount() == 3;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return pool.getConnectedServerCount() == 3;
+          }
 
-      @Override
-      public String description() {
-        return "Never got three connected servers";
-      }
-    };
+          @Override
+          public String description() {
+            return "Never got three connected servers";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     // close secondary EP
@@ -703,7 +738,13 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     List list = new ArrayList();
     list.add(k1);
     list.add(k2);
-    List serverKeys = srp.registerInterest(list, InterestType.KEY, InterestResultPolicy.KEYS, false, r.getAttributes().getDataPolicy().ordinal);
+    List serverKeys =
+        srp.registerInterest(
+            list,
+            InterestType.KEY,
+            InterestResultPolicy.KEYS,
+            false,
+            r.getAttributes().getDataPolicy().ordinal);
 
     assertNotNull(serverKeys);
     List resultKeys = (List) serverKeys.get(0);
@@ -713,25 +754,24 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     return result;
   }
 
-  /**
-   * returns the secondary that was stopped
-   */
+  /** returns the secondary that was stopped */
   public static VM stopSecondaryAndUNregisterK1() {
     LocalRegion r = (LocalRegion) cache.getRegion(Region.SEPARATOR + REGION_NAME);
     assertNotNull(r);
     ServerRegionProxy srp = new ServerRegionProxy(r);
 
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return pool.getConnectedServerCount() == 3;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return pool.getConnectedServerCount() == 3;
+          }
 
-      @Override
-      public String description() {
-        return "connected server count never became 3";
-      }
-    };
+          @Override
+          public String description() {
+            return "connected server count never became 3";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     // close secondary EP
@@ -754,7 +794,14 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     list.add(k2);
 
     // Primary server
-    List serverKeys1 = srp.registerInterestOn(primary, list, InterestType.KEY, InterestResultPolicy.KEYS, false, r.getAttributes().getDataPolicy().ordinal);
+    List serverKeys1 =
+        srp.registerInterestOn(
+            primary,
+            list,
+            InterestType.KEY,
+            InterestResultPolicy.KEYS,
+            false,
+            r.getAttributes().getDataPolicy().ordinal);
     assertNotNull(serverKeys1);
     // expect serverKeys in response from primary
     List resultKeys = (List) serverKeys1.get(0);
@@ -763,7 +810,14 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     assertTrue(resultKeys.contains(k2));
 
     // Secondary server
-    List serverKeys2 = srp.registerInterestOn(secondary, list, InterestType.KEY, InterestResultPolicy.KEYS, false, r.getAttributes().getDataPolicy().ordinal);
+    List serverKeys2 =
+        srp.registerInterestOn(
+            secondary,
+            list,
+            InterestType.KEY,
+            InterestResultPolicy.KEYS,
+            false,
+            r.getAttributes().getDataPolicy().ordinal);
     // if the list is null then it is empty
     if (serverKeys2 != null) {
       // no serverKeys in response from secondary
@@ -772,17 +826,18 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
   }
 
   public static void verifyInterestRegistration() {
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return cache.getCacheServers().size() == 1;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return cache.getCacheServers().size() == 1;
+          }
 
-      @Override
-      public String description() {
-        return "waiting for cache.getCacheServers().size() == 1";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for cache.getCacheServers().size() == 1";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     CacheServerImpl bs = (CacheServerImpl) cache.getCacheServers().iterator().next();
@@ -791,17 +846,18 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     assertNotNull(bs.getAcceptor().getCacheClientNotifier());
     final CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier();
 
-    wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return ccn.getClientProxies().size() > 0;
-      }
+    wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return ccn.getClientProxies().size() > 0;
+          }
 
-      @Override
-      public String description() {
-        return "waiting for ccn.getClientProxies().size() > 0";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for ccn.getClientProxies().size() > 0";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     Iterator iter_prox = ccn.getClientProxies().iterator();
@@ -809,21 +865,30 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     if (iter_prox.hasNext()) {
       final CacheClientProxy ccp = (CacheClientProxy) iter_prox.next();
 
-      wc = new WaitCriterion() {
-        @Override
-        public boolean done() {
-          Set keysMap = (Set) ccp.cils[RegisterInterestTracker.interestListIndex].getProfile(Region.SEPARATOR + REGION_NAME).getKeysOfInterestFor(ccp.getProxyID());
-          return keysMap != null && keysMap.size() == 2;
-        }
+      wc =
+          new WaitCriterion() {
+            @Override
+            public boolean done() {
+              Set keysMap =
+                  (Set)
+                      ccp.cils[RegisterInterestTracker.interestListIndex]
+                          .getProfile(Region.SEPARATOR + REGION_NAME)
+                          .getKeysOfInterestFor(ccp.getProxyID());
+              return keysMap != null && keysMap.size() == 2;
+            }
 
-        @Override
-        public String description() {
-          return "waiting for keys of interest to include 2 keys";
-        }
-      };
+            @Override
+            public String description() {
+              return "waiting for keys of interest to include 2 keys";
+            }
+          };
       Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
-      Set keysMap = (Set) ccp.cils[RegisterInterestTracker.interestListIndex].getProfile(Region.SEPARATOR + REGION_NAME).getKeysOfInterestFor(ccp.getProxyID());
+      Set keysMap =
+          (Set)
+              ccp.cils[RegisterInterestTracker.interestListIndex]
+                  .getProfile(Region.SEPARATOR + REGION_NAME)
+                  .getKeysOfInterestFor(ccp.getProxyID());
       assertNotNull(keysMap);
       assertEquals(2, keysMap.size());
       assertTrue(keysMap.contains(k1));
@@ -832,17 +897,18 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
   }
 
   public static void verifyInterestUNRegistration() {
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return cache.getCacheServers().size() == 1;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return cache.getCacheServers().size() == 1;
+          }
 
-      @Override
-      public String description() {
-        return "waiting for cache.getCacheServers().size() == 1";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for cache.getCacheServers().size() == 1";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     CacheServerImpl bs = (CacheServerImpl) cache.getCacheServers().iterator().next();
@@ -851,38 +917,48 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     assertNotNull(bs.getAcceptor().getCacheClientNotifier());
     final CacheClientNotifier ccn = bs.getAcceptor().getCacheClientNotifier();
 
-    wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return ccn.getClientProxies().size() > 0;
-      }
+    wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return ccn.getClientProxies().size() > 0;
+          }
 
-      @Override
-      public String description() {
-        return "waiting for ccn.getClientProxies().size() > 0";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for ccn.getClientProxies().size() > 0";
+          }
+        };
     Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
     Iterator iter_prox = ccn.getClientProxies().iterator();
     if (iter_prox.hasNext()) {
       final CacheClientProxy ccp = (CacheClientProxy) iter_prox.next();
 
-      wc = new WaitCriterion() {
-        @Override
-        public boolean done() {
-          Set keysMap = (Set) ccp.cils[RegisterInterestTracker.interestListIndex].getProfile(Region.SEPARATOR + REGION_NAME).getKeysOfInterestFor(ccp.getProxyID());
-          return keysMap != null;
-        }
+      wc =
+          new WaitCriterion() {
+            @Override
+            public boolean done() {
+              Set keysMap =
+                  (Set)
+                      ccp.cils[RegisterInterestTracker.interestListIndex]
+                          .getProfile(Region.SEPARATOR + REGION_NAME)
+                          .getKeysOfInterestFor(ccp.getProxyID());
+              return keysMap != null;
+            }
 
-        @Override
-        public String description() {
-          return "waiting for keys of interest to not be null";
-        }
-      };
+            @Override
+            public String description() {
+              return "waiting for keys of interest to not be null";
+            }
+          };
       Wait.waitForCriterion(wc, TIMEOUT_MILLIS, INTERVAL_MILLIS, true);
 
-      Set keysMap = (Set) ccp.cils[RegisterInterestTracker.interestListIndex].getProfile(Region.SEPARATOR + REGION_NAME).getKeysOfInterestFor(ccp.getProxyID());
+      Set keysMap =
+          (Set)
+              ccp.cils[RegisterInterestTracker.interestListIndex]
+                  .getProfile(Region.SEPARATOR + REGION_NAME)
+                  .getKeysOfInterestFor(ccp.getProxyID());
       assertNotNull(keysMap);
       assertEquals(1, keysMap.size());
       assertFalse(keysMap.contains(k1));
@@ -907,11 +983,20 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     CacheServerTestUtil.disableShufflingOfEndpoints();
     PoolImpl p;
     try {
-      p = (PoolImpl) PoolManager.createFactory().addServer(host, PORT1).addServer(host, PORT2).addServer(host, PORT3).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(1000).setPingInterval(1000)
-          // retryInterval should be more so that only registerInterste thread
-          // will initiate failover
-          // .setRetryInterval(20000)
-          .create("HAInterestBaseTestPool");
+      p =
+          (PoolImpl)
+              PoolManager.createFactory()
+                  .addServer(host, PORT1)
+                  .addServer(host, PORT2)
+                  .addServer(host, PORT3)
+                  .setSubscriptionEnabled(true)
+                  .setSubscriptionRedundancy(-1)
+                  .setReadTimeout(1000)
+                  .setPingInterval(1000)
+                  // retryInterval should be more so that only registerInterste thread
+                  // will initiate failover
+                  // .setRetryInterval(20000)
+                  .create("HAInterestBaseTestPool");
     } finally {
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
@@ -926,7 +1011,8 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     assertNotNull(conn);
   }
 
-  public static void createClientPoolCacheWithSmallRetryInterval(String testName, String host) throws Exception {
+  public static void createClientPoolCacheWithSmallRetryInterval(String testName, String host)
+      throws Exception {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
@@ -934,10 +1020,20 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     CacheServerTestUtil.disableShufflingOfEndpoints();
     PoolImpl p;
     try {
-      p = (PoolImpl) PoolManager.createFactory().addServer(host, PORT1).addServer(host, PORT2).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(1000).setSocketBufferSize(32768).setMinConnections(6).setPingInterval(200)
-          // .setRetryInterval(200)
-          // retryAttempts 3
-          .create("HAInterestBaseTestPool");
+      p =
+          (PoolImpl)
+              PoolManager.createFactory()
+                  .addServer(host, PORT1)
+                  .addServer(host, PORT2)
+                  .setSubscriptionEnabled(true)
+                  .setSubscriptionRedundancy(-1)
+                  .setReadTimeout(1000)
+                  .setSocketBufferSize(32768)
+                  .setMinConnections(6)
+                  .setPingInterval(200)
+                  // .setRetryInterval(200)
+                  // retryAttempts 3
+                  .create("HAInterestBaseTestPool");
     } finally {
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
@@ -953,14 +1049,21 @@ public class HAInterestTestCase extends JUnit4DistributedTestCase {
     assertNotNull(conn);
   }
 
-  public static void createClientPoolCacheConnectionToSingleServer(String testName, String hostName) throws Exception {
+  public static void createClientPoolCacheConnectionToSingleServer(String testName, String hostName)
+      throws Exception {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     new HAInterestTestCase().createCache(props);
-    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(hostName, PORT1).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(1000)
-        // .setRetryInterval(20)
-        .create("HAInterestBaseTestPool");
+    PoolImpl p =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(hostName, PORT1)
+                .setSubscriptionEnabled(true)
+                .setSubscriptionRedundancy(-1)
+                .setReadTimeout(1000)
+                // .setRetryInterval(20)
+                .create("HAInterestBaseTestPool");
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     factory.setConcurrencyChecksEnabled(true);

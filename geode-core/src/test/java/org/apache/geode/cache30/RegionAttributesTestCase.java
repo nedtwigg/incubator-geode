@@ -36,10 +36,8 @@ import java.util.Properties;
 //import java.util.*;
 
 /**
- * An abstract class whose test methods test the functionality of a
- * {@link RegionAttributes}, {@link AttributesFactory}, and {@link
- * AttributesMutator}.
- *
+ * An abstract class whose test methods test the functionality of a {@link RegionAttributes}, {@link
+ * AttributesFactory}, and {@link AttributesMutator}.
  *
  * @since GemFire 3.0
  */
@@ -55,12 +53,13 @@ public abstract class RegionAttributesTestCase extends RegionTestCase {
     public String toString() {
       final StringBuffer sb = new StringBuffer();
       sb.append("CustomExpiry from: <");
-      OutputStream os = new OutputStream() {
+      OutputStream os =
+          new OutputStream() {
 
-        public void write(int b) throws IOException {
-          sb.append((char) b);
-        }
-      };
+            public void write(int b) throws IOException {
+              sb.append((char) b);
+            }
+          };
       PrintStream ps = new PrintStream(os);
       created.printStackTrace(ps);
       sb.append(">");
@@ -71,18 +70,15 @@ public abstract class RegionAttributesTestCase extends RegionTestCase {
       return null;
     }
 
-    public void init(Properties props) {
-    }
+    public void init(Properties props) {}
 
-    public void close() {
-    }
+    public void close() {}
   }
   // ///////////////////// Test Methods ///////////////////////
 
   /**
-   * Tests that an {@link AttributesMutator} actually changes the
-   * region's attributes.  Also tests the return values of the mutator
-   * methods.
+   * Tests that an {@link AttributesMutator} actually changes the region's attributes. Also tests
+   * the return values of the mutator methods.
    */
   @Test
   public void testAttributesMutator() throws CacheException {
@@ -91,16 +87,15 @@ public abstract class RegionAttributesTestCase extends RegionTestCase {
     fac.setStatisticsEnabled(true);
     Region region = createRegion(name, fac.create());
 
-    CacheListener listener = new TestCacheListener() {
-    };
-    CacheLoader loader = new TestCacheLoader() {
-      public Object load2(LoaderHelper helper) {
-        fail("Why was I invoked?");
-        return null;
-      }
-    };
-    CacheWriter writer = new TestCacheWriter() {
-    };
+    CacheListener listener = new TestCacheListener() {};
+    CacheLoader loader =
+        new TestCacheLoader() {
+          public Object load2(LoaderHelper helper) {
+            fail("Why was I invoked?");
+            return null;
+          }
+        };
+    CacheWriter writer = new TestCacheWriter() {};
     CustomExpiry customEntryIdle = new TestExpiry();
     CustomExpiry customTtl = new TestExpiry();
     ExpirationAttributes entryIdle = new ExpirationAttributes(5, ExpirationAction.DESTROY);
@@ -133,16 +128,15 @@ public abstract class RegionAttributesTestCase extends RegionTestCase {
     assertEquals(customEntryIdle, attrs.getCustomEntryIdleTimeout());
     assertEquals(customTtl, attrs.getCustomEntryTimeToLive());
 
-    CacheListener listener2 = new TestCacheListener() {
-    };
-    CacheLoader loader2 = new TestCacheLoader() {
-      public Object load2(LoaderHelper helper) {
-        fail("Why was I invoked?");
-        return null;
-      }
-    };
-    CacheWriter writer2 = new TestCacheWriter() {
-    };
+    CacheListener listener2 = new TestCacheListener() {};
+    CacheLoader loader2 =
+        new TestCacheLoader() {
+          public Object load2(LoaderHelper helper) {
+            fail("Why was I invoked?");
+            return null;
+          }
+        };
+    CacheWriter writer2 = new TestCacheWriter() {};
     CustomExpiry customEntryIdle2 = new TestExpiry();
     CustomExpiry customTtl2 = new TestExpiry();
     ExpirationAttributes entryIdle2 = new ExpirationAttributes(5, ExpirationAction.DESTROY);
@@ -161,10 +155,7 @@ public abstract class RegionAttributesTestCase extends RegionTestCase {
     assertEquals(regionTTL, mutator.setRegionTimeToLive(regionTTL2));
   }
 
-  /**
-   * Tests sending <code>null</code> or bogus values to an {@link
-   * AttributesMutator}.
-   */
+  /** Tests sending <code>null</code> or bogus values to an {@link AttributesMutator}. */
   @Test
   public void testAttributesMutatorBogus() throws CacheException {
     String name = this.getUniqueName();
@@ -250,7 +241,9 @@ public abstract class RegionAttributesTestCase extends RegionTestCase {
     String name = getUniqueName();
     Region region = createRegion(name, attrs);
     assertEquals(60, region.getAttributes().getConcurrencyLevel());
-    assertTrue("expected concurrencyChecksEnabled to be true", region.getAttributes().getConcurrencyChecksEnabled());
+    assertTrue(
+        "expected concurrencyChecksEnabled to be true",
+        region.getAttributes().getConcurrencyChecksEnabled());
   }
 
   //  public void testCCEWithDNoAck() throws CacheException {

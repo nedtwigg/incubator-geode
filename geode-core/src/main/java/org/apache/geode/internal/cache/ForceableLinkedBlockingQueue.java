@@ -38,42 +38,33 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * The only difference between this class on LinkedBlockingQueue
- * is the new method {@link #forcePut} which will always be added to the queue
- * even if it exceeds the queue's capacity.
+ * The only difference between this class on LinkedBlockingQueue is the new method {@link #forcePut}
+ * which will always be added to the queue even if it exceeds the queue's capacity.
  *
- * An optionally-bounded {@linkplain BlockingQueue blocking queue} based on
- * linked nodes.
- * This queue orders elements FIFO (first-in-first-out).
- * The <em>head</em> of the queue is that element that has been on the
- * queue the longest time.
- * The <em>tail</em> of the queue is that element that has been on the
- * queue the shortest time. New elements
- * are inserted at the tail of the queue, and the queue retrieval
- * operations obtain elements at the head of the queue.
- * Linked queues typically have higher throughput than array-based queues but
- * less predictable performance in most concurrent applications.
+ * <p>An optionally-bounded {@linkplain BlockingQueue blocking queue} based on linked nodes. This
+ * queue orders elements FIFO (first-in-first-out). The <em>head</em> of the queue is that element
+ * that has been on the queue the longest time. The <em>tail</em> of the queue is that element that
+ * has been on the queue the shortest time. New elements are inserted at the tail of the queue, and
+ * the queue retrieval operations obtain elements at the head of the queue. Linked queues typically
+ * have higher throughput than array-based queues but less predictable performance in most
+ * concurrent applications.
  *
- * <p> The optional capacity bound constructor argument serves as a
- * way to prevent excessive queue expansion. The capacity, if unspecified,
- * is equal to {@link Integer#MAX_VALUE}.  Linked nodes are
- * dynamically created upon each insertion unless this would bring the
- * queue above capacity.
+ * <p>The optional capacity bound constructor argument serves as a way to prevent excessive queue
+ * expansion. The capacity, if unspecified, is equal to {@link Integer#MAX_VALUE}. Linked nodes are
+ * dynamically created upon each insertion unless this would bring the queue above capacity.
  *
- * <p>This class and its iterator implement all of the
- * <em>optional</em> methods of the {@link Collection} and {@link
- * Iterator} interfaces.
+ * <p>This class and its iterator implement all of the <em>optional</em> methods of the {@link
+ * Collection} and {@link Iterator} interfaces.
  *
- * <p>This class is a member of the
- * <a href="{@docRoot}/../technotes/guides/collections/index.html">
+ * <p>This class is a member of the <a href="{@docRoot}/../technotes/guides/collections/index.html">
  * Java Collections Framework</a>.
  *
  * @since GemFire 1.5
  * @author Doug Lea
  * @param <E> the type of elements held in this collection
- *
  */
-public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements BlockingQueue<E>, java.io.Serializable {
+public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E>
+    implements BlockingQueue<E>, java.io.Serializable {
   private static final long serialVersionUID = -6903933977591709194L;
 
   /*
@@ -111,17 +102,13 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
    * self-link implicitly means to advance to head.next.
    */
 
-  /**
-   * Linked list node class
-   */
+  /** Linked list node class */
   static class Node<E> {
     E item;
 
     /**
-     * One of:
-     * - the real successor Node
-     * - this Node, meaning the successor is head.next
-     * - null, meaning there is no successor (this is the last node)
+     * One of: - the real successor Node - this Node, meaning the successor is head.next - null,
+     * meaning there is no successor (this is the last node)
      */
     Node<E> next;
 
@@ -136,16 +123,10 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
   /** Current number of elements */
   private final AtomicInteger count = new AtomicInteger(0);
 
-  /**
-   * Head of linked list.
-   * Invariant: head.item == null
-   */
+  /** Head of linked list. Invariant: head.item == null */
   private transient Node<E> head;
 
-  /**
-   * Tail of linked list.
-   * Invariant: last.next == null
-   */
+  /** Tail of linked list. Invariant: last.next == null */
   private transient Node<E> last;
 
   /** Lock held by take, poll, etc */
@@ -161,8 +142,8 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
   private final Condition notFull = putLock.newCondition();
 
   /**
-   * Signals a waiting take. Called only from put/offer (which do not
-   * otherwise ordinarily lock takeLock.)
+   * Signals a waiting take. Called only from put/offer (which do not otherwise ordinarily lock
+   * takeLock.)
    */
   private void signalNotEmpty() {
     final ReentrantLock takeLock = this.takeLock;
@@ -174,9 +155,7 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
     }
   }
 
-  /**
-   * Signals a waiting put. Called only from take/poll.
-   */
+  /** Signals a waiting put. Called only from take/poll. */
   private void signalNotFull() {
     final ReentrantLock putLock = this.putLock;
     putLock.lock();
@@ -215,17 +194,13 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
     return x;
   }
 
-  /**
-   * Lock to prevent both puts and takes.
-   */
+  /** Lock to prevent both puts and takes. */
   void fullyLock() {
     putLock.lock();
     takeLock.lock();
   }
 
-  /**
-   * Unlock to allow both puts and takes.
-   */
+  /** Unlock to allow both puts and takes. */
   void fullyUnlock() {
     takeLock.unlock();
     putLock.unlock();
@@ -240,8 +215,7 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
   //     }
 
   /**
-   * Creates a {@code ForceableLinkedBlockingQueue} with a capacity of
-   * {@link Integer#MAX_VALUE}.
+   * Creates a {@code ForceableLinkedBlockingQueue} with a capacity of {@link Integer#MAX_VALUE}.
    */
   public ForceableLinkedBlockingQueue() {
     this(Integer.MAX_VALUE);
@@ -251,12 +225,10 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
    * Creates a {@code ForceableLinkedBlockingQueue} with the given (fixed) capacity.
    *
    * @param capacity the capacity of this queue
-   * @throws IllegalArgumentException if {@code capacity} is not greater
-   *         than zero
+   * @throws IllegalArgumentException if {@code capacity} is not greater than zero
    */
   public ForceableLinkedBlockingQueue(int capacity) {
-    if (capacity <= 0)
-      throw new IllegalArgumentException();
+    if (capacity <= 0) throw new IllegalArgumentException();
     this.capacity = capacity;
     last = head = new Node<E>(null);
   }
@@ -275,14 +247,12 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
   // this doc comment is a modified copy of the inherited doc comment,
   // without the reference to unlimited queues.
   /**
-   * Returns the number of additional elements that this queue can ideally
-   * (in the absence of memory or resource constraints) accept without
-   * blocking. This is always equal to the initial capacity of this queue
-   * less the current {@code size} of this queue.
+   * Returns the number of additional elements that this queue can ideally (in the absence of memory
+   * or resource constraints) accept without blocking. This is always equal to the initial capacity
+   * of this queue less the current {@code size} of this queue.
    *
-   * <p>Note that you <em>cannot</em> always tell if an attempt to insert
-   * an element will succeed by inspecting {@code remainingCapacity}
-   * because it may be the case that another thread is about to
+   * <p>Note that you <em>cannot</em> always tell if an attempt to insert an element will succeed by
+   * inspecting {@code remainingCapacity} because it may be the case that another thread is about to
    * insert or remove an element.
    */
   public int remainingCapacity() {
@@ -290,15 +260,14 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
   }
 
   /**
-   * Inserts the specified element at the tail of this queue, waiting if
-   * necessary for space to become available.
+   * Inserts the specified element at the tail of this queue, waiting if necessary for space to
+   * become available.
    *
    * @throws InterruptedException {@inheritDoc}
    * @throws NullPointerException {@inheritDoc}
    */
   public void put(E e) throws InterruptedException {
-    if (e == null)
-      throw new NullPointerException();
+    if (e == null) throw new NullPointerException();
     // Note: convention in all put/take/etc is to preset local var
     // holding count negative to indicate failure unless set.
     int c = -1;
@@ -319,23 +288,19 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
       }
       enqueue(e);
       c = count.getAndIncrement();
-      if (c + 1 < capacity)
-        notFull.signal();
+      if (c + 1 < capacity) notFull.signal();
     } finally {
       putLock.unlock();
     }
-    if (c == 0)
-      signalNotEmpty();
+    if (c == 0) signalNotEmpty();
   }
 
   /**
-   * Inserts the specified element at the tail of this queue even
-   * if the queue is currently at its capacity.
-   // GEMFIRE addition
+   * Inserts the specified element at the tail of this queue even if the queue is currently at its
+   * capacity. // GEMFIRE addition
    */
   public void forcePut(E e) throws InterruptedException {
-    if (e == null)
-      throw new NullPointerException();
+    if (e == null) throw new NullPointerException();
     // Note: convention in all put/take/etc is to preset local var
     // holding count negative to indicate failure unless set.
     int c = -1;
@@ -345,28 +310,25 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
     try {
       enqueue(e);
       c = count.getAndIncrement();
-      if (c + 1 < capacity)
-        notFull.signal();
+      if (c + 1 < capacity) notFull.signal();
     } finally {
       putLock.unlock();
     }
-    if (c == 0)
-      signalNotEmpty();
+    if (c == 0) signalNotEmpty();
   }
 
   /**
-   * Inserts the specified element at the tail of this queue, waiting if
-   * necessary up to the specified wait time for space to become available.
+   * Inserts the specified element at the tail of this queue, waiting if necessary up to the
+   * specified wait time for space to become available.
    *
-   * @return {@code true} if successful, or {@code false} if
-   *         the specified waiting time elapses before space is available.
+   * @return {@code true} if successful, or {@code false} if the specified waiting time elapses
+   *     before space is available.
    * @throws InterruptedException {@inheritDoc}
    * @throws NullPointerException {@inheritDoc}
    */
   public boolean offer(E e, long timeout, TimeUnit unit) throws InterruptedException {
 
-    if (e == null)
-      throw new NullPointerException();
+    if (e == null) throw new NullPointerException();
     long nanos = unit.toNanos(timeout);
     int c = -1;
     final ReentrantLock putLock = this.putLock;
@@ -374,39 +336,33 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
     putLock.lockInterruptibly();
     try {
       while (count.get() >= capacity) { // GEMFIRE changed == to >=
-        if (nanos <= 0)
-          return false;
+        if (nanos <= 0) return false;
         nanos = notFull.awaitNanos(nanos);
       }
       enqueue(e);
       c = count.getAndIncrement();
-      if (c + 1 < capacity)
-        notFull.signal();
+      if (c + 1 < capacity) notFull.signal();
     } finally {
       putLock.unlock();
     }
-    if (c == 0)
-      signalNotEmpty();
+    if (c == 0) signalNotEmpty();
     return true;
   }
 
   /**
-   * Inserts the specified element at the tail of this queue if it is
-   * possible to do so immediately without exceeding the queue's capacity,
-   * returning {@code true} upon success and {@code false} if this queue
-   * is full.
-   * When using a capacity-restricted queue, this method is generally
-   * preferable to method {@link BlockingQueue#add add}, which can fail to
-   * insert an element only by throwing an exception.
+   * Inserts the specified element at the tail of this queue if it is possible to do so immediately
+   * without exceeding the queue's capacity, returning {@code true} upon success and {@code false}
+   * if this queue is full. When using a capacity-restricted queue, this method is generally
+   * preferable to method {@link BlockingQueue#add add}, which can fail to insert an element only by
+   * throwing an exception.
    *
    * @throws NullPointerException if the specified element is null
    */
   public boolean offer(E e) {
-    if (e == null)
-      throw new NullPointerException();
+    if (e == null) throw new NullPointerException();
     final AtomicInteger count = this.count;
     if (count.get() >= capacity) // GEMFIRE changed == to >=
-      return false;
+    return false;
     int c = -1;
     final ReentrantLock putLock = this.putLock;
     putLock.lock();
@@ -414,14 +370,12 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
       if (count.get() < capacity) {
         enqueue(e);
         c = count.getAndIncrement();
-        if (c + 1 < capacity)
-          notFull.signal();
+        if (c + 1 < capacity) notFull.signal();
       }
     } finally {
       putLock.unlock();
     }
-    if (c == 0)
-      signalNotEmpty();
+    if (c == 0) signalNotEmpty();
     return c >= 0;
   }
 
@@ -437,13 +391,11 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
       }
       x = dequeue();
       c = count.getAndDecrement();
-      if (c > 1)
-        notEmpty.signal();
+      if (c > 1) notEmpty.signal();
     } finally {
       takeLock.unlock();
     }
-    if (c == capacity)
-      signalNotFull();
+    if (c == capacity) signalNotFull();
     return x;
   }
 
@@ -456,26 +408,22 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
     takeLock.lockInterruptibly();
     try {
       while (count.get() == 0) {
-        if (nanos <= 0)
-          return null;
+        if (nanos <= 0) return null;
         nanos = notEmpty.awaitNanos(nanos);
       }
       x = dequeue();
       c = count.getAndDecrement();
-      if (c > 1)
-        notEmpty.signal();
+      if (c > 1) notEmpty.signal();
     } finally {
       takeLock.unlock();
     }
-    if (c == capacity)
-      signalNotFull();
+    if (c == capacity) signalNotFull();
     return x;
   }
 
   public E poll() {
     final AtomicInteger count = this.count;
-    if (count.get() == 0)
-      return null;
+    if (count.get() == 0) return null;
     E x = null;
     int c = -1;
     final ReentrantLock takeLock = this.takeLock;
@@ -484,62 +432,50 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
       if (count.get() > 0) {
         x = dequeue();
         c = count.getAndDecrement();
-        if (c > 1)
-          notEmpty.signal();
+        if (c > 1) notEmpty.signal();
       }
     } finally {
       takeLock.unlock();
     }
-    if (c == capacity)
-      signalNotFull();
+    if (c == capacity) signalNotFull();
     return x;
   }
 
   public E peek() {
-    if (count.get() == 0)
-      return null;
+    if (count.get() == 0) return null;
     final ReentrantLock takeLock = this.takeLock;
     takeLock.lock();
     try {
       Node<E> first = head.next;
-      if (first == null)
-        return null;
-      else
-        return first.item;
+      if (first == null) return null;
+      else return first.item;
     } finally {
       takeLock.unlock();
     }
   }
 
-  /**
-   * Unlinks interior Node p with predecessor trail.
-   */
+  /** Unlinks interior Node p with predecessor trail. */
   void unlink(Node<E> p, Node<E> trail) {
     // assert isFullyLocked();
     // p.next is not changed, to allow iterators that are
     // traversing p to maintain their weak-consistency guarantee.
     p.item = null;
     trail.next = p.next;
-    if (last == p)
-      last = trail;
-    if (count.getAndDecrement() == capacity)
-      notFull.signal();
+    if (last == p) last = trail;
+    if (count.getAndDecrement() == capacity) notFull.signal();
   }
 
   /**
-   * Removes a single instance of the specified element from this queue,
-   * if it is present.  More formally, removes an element {@code e} such
-   * that {@code o.equals(e)}, if this queue contains one or more such
-   * elements.
-   * Returns {@code true} if this queue contained the specified element
+   * Removes a single instance of the specified element from this queue, if it is present. More
+   * formally, removes an element {@code e} such that {@code o.equals(e)}, if this queue contains
+   * one or more such elements. Returns {@code true} if this queue contained the specified element
    * (or equivalently, if this queue changed as a result of the call).
    *
    * @param o element to be removed from this queue, if present
    * @return {@code true} if this queue changed as a result of the call
    */
   public boolean remove(Object o) {
-    if (o == null)
-      return false;
+    if (o == null) return false;
     fullyLock();
     try {
       for (Node<E> trail = head, p = trail.next; p != null; trail = p, p = p.next) {
@@ -555,15 +491,13 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
   }
 
   /**
-   * Returns an array containing all of the elements in this queue, in
-   * proper sequence.
+   * Returns an array containing all of the elements in this queue, in proper sequence.
    *
-   * <p>The returned array will be "safe" in that no references to it are
-   * maintained by this queue.  (In other words, this method must allocate
-   * a new array).  The caller is thus free to modify the returned array.
+   * <p>The returned array will be "safe" in that no references to it are maintained by this queue.
+   * (In other words, this method must allocate a new array). The caller is thus free to modify the
+   * returned array.
    *
-   * <p>This method acts as bridge between array-based and collection-based
-   * APIs.
+   * <p>This method acts as bridge between array-based and collection-based APIs.
    *
    * @return an array containing all of the elements in this queue
    */
@@ -573,8 +507,7 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
       int size = count.get();
       Object[] a = new Object[size];
       int k = 0;
-      for (Node<E> p = head.next; p != null; p = p.next)
-        a[k++] = p.item;
+      for (Node<E> p = head.next; p != null; p = p.next) a[k++] = p.item;
       return a;
     } finally {
       fullyUnlock();
@@ -582,39 +515,32 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
   }
 
   /**
-   * Returns an array containing all of the elements in this queue, in
-   * proper sequence; the runtime type of the returned array is that of
-   * the specified array.  If the queue fits in the specified array, it
-   * is returned therein.  Otherwise, a new array is allocated with the
-   * runtime type of the specified array and the size of this queue.
+   * Returns an array containing all of the elements in this queue, in proper sequence; the runtime
+   * type of the returned array is that of the specified array. If the queue fits in the specified
+   * array, it is returned therein. Otherwise, a new array is allocated with the runtime type of the
+   * specified array and the size of this queue.
    *
-   * <p>If this queue fits in the specified array with room to spare
-   * (i.e., the array has more elements than this queue), the element in
-   * the array immediately following the end of the queue is set to
-   * {@code null}.
+   * <p>If this queue fits in the specified array with room to spare (i.e., the array has more
+   * elements than this queue), the element in the array immediately following the end of the queue
+   * is set to {@code null}.
    *
-   * <p>Like the {@link #toArray()} method, this method acts as bridge between
-   * array-based and collection-based APIs.  Further, this method allows
-   * precise control over the runtime type of the output array, and may,
-   * under certain circumstances, be used to save allocation costs.
+   * <p>Like the {@link #toArray()} method, this method acts as bridge between array-based and
+   * collection-based APIs. Further, this method allows precise control over the runtime type of the
+   * output array, and may, under certain circumstances, be used to save allocation costs.
    *
-   * <p>Suppose {@code x} is a queue known to contain only strings.
-   * The following code can be used to dump the queue into a newly
-   * allocated array of {@code String}:
+   * <p>Suppose {@code x} is a queue known to contain only strings. The following code can be used
+   * to dump the queue into a newly allocated array of {@code String}:
    *
    * <pre>
    *     String[] y = x.toArray(new String[0]);</pre>
    *
-   * Note that {@code toArray(new Object[0])} is identical in function to
-   * {@code toArray()}.
+   * Note that {@code toArray(new Object[0])} is identical in function to {@code toArray()}.
    *
-   * @param a the array into which the elements of the queue are to
-   *          be stored, if it is big enough; otherwise, a new array of the
-   *          same runtime type is allocated for this purpose
+   * @param a the array into which the elements of the queue are to be stored, if it is big enough;
+   *     otherwise, a new array of the same runtime type is allocated for this purpose
    * @return an array containing all of the elements in this queue
-   * @throws ArrayStoreException if the runtime type of the specified array
-   *         is not a supertype of the runtime type of every element in
-   *         this queue
+   * @throws ArrayStoreException if the runtime type of the specified array is not a supertype of
+   *     the runtime type of every element in this queue
    * @throws NullPointerException if the specified array is null
    */
   @SuppressWarnings("unchecked")
@@ -626,10 +552,8 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
         a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
 
       int k = 0;
-      for (Node<E> p = head.next; p != null; p = p.next)
-        a[k++] = (T) p.item;
-      if (a.length > k)
-        a[k] = null;
+      for (Node<E> p = head.next; p != null; p = p.next) a[k++] = (T) p.item;
+      if (a.length > k) a[k] = null;
       return a;
     } finally {
       fullyUnlock();
@@ -646,8 +570,8 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
   }
 
   /**
-   * Atomically removes all of the elements from this queue.
-   * The queue will be empty after this call returns.
+   * Atomically removes all of the elements from this queue. The queue will be empty after this call
+   * returns.
    */
   public void clear() {
     fullyLock();
@@ -659,7 +583,7 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
       head = last;
       // assert head.item == null && head.next == null;
       if (count.getAndSet(0) >= capacity) // GEMFIRE changed == to >=
-        notFull.signal();
+      notFull.signal();
     } finally {
       fullyUnlock();
     }
@@ -667,9 +591,9 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
 
   /**
    * @throws UnsupportedOperationException {@inheritDoc}
-   * @throws ClassCastException            {@inheritDoc}
-   * @throws NullPointerException          {@inheritDoc}
-   * @throws IllegalArgumentException      {@inheritDoc}
+   * @throws ClassCastException {@inheritDoc}
+   * @throws NullPointerException {@inheritDoc}
+   * @throws IllegalArgumentException {@inheritDoc}
    */
   public int drainTo(Collection<? super E> c) {
     return drainTo(c, Integer.MAX_VALUE);
@@ -677,15 +601,13 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
 
   /**
    * @throws UnsupportedOperationException {@inheritDoc}
-   * @throws ClassCastException            {@inheritDoc}
-   * @throws NullPointerException          {@inheritDoc}
-   * @throws IllegalArgumentException      {@inheritDoc}
+   * @throws ClassCastException {@inheritDoc}
+   * @throws NullPointerException {@inheritDoc}
+   * @throws IllegalArgumentException {@inheritDoc}
    */
   public int drainTo(Collection<? super E> c, int maxElements) {
-    if (c == null)
-      throw new NullPointerException();
-    if (c == this)
-      throw new IllegalArgumentException();
+    if (c == null) throw new NullPointerException();
+    if (c == this) throw new IllegalArgumentException();
     boolean signalNotFull = false;
     final ReentrantLock takeLock = this.takeLock;
     takeLock.lock();
@@ -714,19 +636,16 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
       }
     } finally {
       takeLock.unlock();
-      if (signalNotFull)
-        signalNotFull();
+      if (signalNotFull) signalNotFull();
     }
   }
 
   /**
-   * Returns an iterator over the elements in this queue in proper sequence.
-   * The returned {@code Iterator} is a "weakly consistent" iterator that
-   * will never throw {@link java.util.ConcurrentModificationException
-   * ConcurrentModificationException},
-   * and guarantees to traverse elements as they existed upon
-   * construction of the iterator, and may (but is not guaranteed to)
-   * reflect any modifications subsequent to construction.
+   * Returns an iterator over the elements in this queue in proper sequence. The returned {@code
+   * Iterator} is a "weakly consistent" iterator that will never throw {@link
+   * java.util.ConcurrentModificationException ConcurrentModificationException}, and guarantees to
+   * traverse elements as they existed upon construction of the iterator, and may (but is not
+   * guaranteed to) reflect any modifications subsequent to construction.
    *
    * @return an iterator over the elements in this queue in proper sequence
    */
@@ -748,8 +667,7 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
       fullyLock();
       try {
         current = head.next;
-        if (current != null)
-          currentElement = current.item;
+        if (current != null) currentElement = current.item;
       } finally {
         fullyUnlock();
       }
@@ -762,17 +680,14 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
     /**
      * Returns the next live successor of p, or null if no such.
      *
-     * Unlike other traversal methods, iterators need to handle both:
-     * - dequeued nodes (p.next == p)
-     * - (possibly multiple) interior removed nodes (p.item == null)
+     * <p>Unlike other traversal methods, iterators need to handle both: - dequeued nodes (p.next ==
+     * p) - (possibly multiple) interior removed nodes (p.item == null)
      */
     private Node<E> nextNode(Node<E> p) {
-      for (;;) {
+      for (; ; ) {
         Node<E> s = p.next;
-        if (s == p)
-          return head.next;
-        if (s == null || s.item != null)
-          return s;
+        if (s == p) return head.next;
+        if (s == null || s.item != null) return s;
         p = s;
       }
     }
@@ -780,8 +695,7 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
     public E next() {
       fullyLock();
       try {
-        if (current == null)
-          throw new NoSuchElementException();
+        if (current == null) throw new NoSuchElementException();
         E x = currentElement;
         lastRet = current;
         current = nextNode(current);
@@ -793,8 +707,7 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
     }
 
     public void remove() {
-      if (lastRet == null)
-        throw new IllegalStateException();
+      if (lastRet == null) throw new IllegalStateException();
       fullyLock();
       try {
         Node<E> node = lastRet;
@@ -814,9 +727,8 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
   /**
    * Save the state to a stream (that is, serialize it).
    *
-   * @serialData The capacity is emitted (int), followed by all of
-   * its elements (each an {@code Object}) in the proper order,
-   * followed by a null
+   * @serialData The capacity is emitted (int), followed by all of its elements (each an {@code
+   *     Object}) in the proper order, followed by a null
    * @param s the stream
    */
   private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
@@ -827,8 +739,7 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
       s.defaultWriteObject();
 
       // Write out all elements in the proper order.
-      for (Node<E> p = head.next; p != null; p = p.next)
-        s.writeObject(p.item);
+      for (Node<E> p = head.next; p != null; p = p.next) s.writeObject(p.item);
 
       // Use trailing null as sentinel
       s.writeObject(null);
@@ -838,12 +749,12 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
   }
 
   /**
-   * Reconstitute this queue instance from a stream (that is,
-   * deserialize it).
+   * Reconstitute this queue instance from a stream (that is, deserialize it).
    *
    * @param s the stream
    */
-  private void readObject(java.io.ObjectInputStream s) throws java.io.IOException, ClassNotFoundException {
+  private void readObject(java.io.ObjectInputStream s)
+      throws java.io.IOException, ClassNotFoundException {
     // Read in capacity, and any hidden stuff
     s.defaultReadObject();
 
@@ -851,11 +762,10 @@ public class ForceableLinkedBlockingQueue<E> extends AbstractQueue<E> implements
     last = head = new Node<E>(null);
 
     // Read in all elements and place in queue
-    for (;;) {
+    for (; ; ) {
       @SuppressWarnings("unchecked")
       E item = (E) s.readObject();
-      if (item == null)
-        break;
+      if (item == null) break;
       add(item);
     }
   }

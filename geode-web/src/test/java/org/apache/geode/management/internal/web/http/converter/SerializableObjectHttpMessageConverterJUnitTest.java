@@ -40,10 +40,13 @@ import org.apache.geode.internal.util.IOUtils;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The SerializableObjectHttpMessageConverterJUnitTest class is a test suite of test cases testing the contract
- * and functionality of the SerializableObjectHttpMessageConverter class.
- * <p/>
- * @see org.apache.geode.management.internal.web.http.converter.SerializableObjectHttpMessageConverter
+ * The SerializableObjectHttpMessageConverterJUnitTest class is a test suite of test cases testing
+ * the contract and functionality of the SerializableObjectHttpMessageConverter class.
+ *
+ * <p>
+ *
+ * @see
+ *     org.apache.geode.management.internal.web.http.converter.SerializableObjectHttpMessageConverter
  * @see org.jmock.Mockery
  * @see org.junit.Assert
  * @see org.junit.Test
@@ -68,7 +71,8 @@ public class SerializableObjectHttpMessageConverterJUnitTest {
 
   @Test
   public void testCreateSerializableObjectHttpMessageConverter() {
-    final SerializableObjectHttpMessageConverter converter = new SerializableObjectHttpMessageConverter();
+    final SerializableObjectHttpMessageConverter converter =
+        new SerializableObjectHttpMessageConverter();
 
     assertNotNull(converter);
     assertTrue(converter.getSupportedMediaTypes().contains(MediaType.APPLICATION_OCTET_STREAM));
@@ -77,7 +81,8 @@ public class SerializableObjectHttpMessageConverterJUnitTest {
 
   @Test
   public void testSupport() {
-    final SerializableObjectHttpMessageConverter converter = new SerializableObjectHttpMessageConverter();
+    final SerializableObjectHttpMessageConverter converter =
+        new SerializableObjectHttpMessageConverter();
 
     assertTrue(converter.supports(Boolean.class));
     assertTrue(converter.supports(Calendar.class));
@@ -94,16 +99,21 @@ public class SerializableObjectHttpMessageConverterJUnitTest {
   public void testReadInternal() throws IOException {
     final String expectedInputMessageBody = "Expected content of the HTTP input message body!";
 
-    final HttpInputMessage mockInputMessage = mockContext.mock(HttpInputMessage.class, "HttpInputMessage");
+    final HttpInputMessage mockInputMessage =
+        mockContext.mock(HttpInputMessage.class, "HttpInputMessage");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockInputMessage).getBody();
-        will(returnValue(new ByteArrayInputStream(IOUtils.serializeObject(expectedInputMessageBody))));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockInputMessage).getBody();
+            will(
+                returnValue(
+                    new ByteArrayInputStream(IOUtils.serializeObject(expectedInputMessageBody))));
+          }
+        });
 
-    final SerializableObjectHttpMessageConverter converter = new SerializableObjectHttpMessageConverter();
+    final SerializableObjectHttpMessageConverter converter =
+        new SerializableObjectHttpMessageConverter();
 
     final Serializable obj = converter.readInternal(String.class, mockInputMessage);
 
@@ -113,20 +123,23 @@ public class SerializableObjectHttpMessageConverterJUnitTest {
 
   @Test
   public void testSetContentLength() {
-    final byte[] bytes = { (byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE };
+    final byte[] bytes = {(byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE};
 
     final HttpHeaders headers = new HttpHeaders();
 
-    final HttpOutputMessage mockOutputMessage = mockContext.mock(HttpOutputMessage.class, "HttpOutputMessage");
+    final HttpOutputMessage mockOutputMessage =
+        mockContext.mock(HttpOutputMessage.class, "HttpOutputMessage");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockOutputMessage).getHeaders();
-        will(returnValue(headers));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockOutputMessage).getHeaders();
+            will(returnValue(headers));
+          }
+        });
 
-    final SerializableObjectHttpMessageConverter converter = new SerializableObjectHttpMessageConverter();
+    final SerializableObjectHttpMessageConverter converter =
+        new SerializableObjectHttpMessageConverter();
 
     converter.setContentLength(mockOutputMessage, bytes);
 
@@ -137,24 +150,29 @@ public class SerializableObjectHttpMessageConverterJUnitTest {
   public void testWriteInternal() throws IOException {
     final String expectedOutputMessageBody = "Expected media of the HTTP output message body!";
 
-    final byte[] expectedOutputMessageBodyBytes = IOUtils.serializeObject(expectedOutputMessageBody);
+    final byte[] expectedOutputMessageBodyBytes =
+        IOUtils.serializeObject(expectedOutputMessageBody);
 
-    final ByteArrayOutputStream out = new ByteArrayOutputStream(expectedOutputMessageBodyBytes.length);
+    final ByteArrayOutputStream out =
+        new ByteArrayOutputStream(expectedOutputMessageBodyBytes.length);
 
     final HttpHeaders headers = new HttpHeaders();
 
-    final HttpOutputMessage mockOutputMessage = mockContext.mock(HttpOutputMessage.class, "HttpOutputMessage");
+    final HttpOutputMessage mockOutputMessage =
+        mockContext.mock(HttpOutputMessage.class, "HttpOutputMessage");
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockOutputMessage).getHeaders();
-        will(returnValue(headers));
-        oneOf(mockOutputMessage).getBody();
-        will(returnValue(out));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockOutputMessage).getHeaders();
+            will(returnValue(headers));
+            oneOf(mockOutputMessage).getBody();
+            will(returnValue(out));
+          }
+        });
 
-    final SerializableObjectHttpMessageConverter converter = new SerializableObjectHttpMessageConverter();
+    final SerializableObjectHttpMessageConverter converter =
+        new SerializableObjectHttpMessageConverter();
 
     converter.writeInternal(expectedOutputMessageBody, mockOutputMessage);
 
@@ -167,5 +185,4 @@ public class SerializableObjectHttpMessageConverterJUnitTest {
       assertEquals(expectedOutputMessageBodyBytes[index], actualOutputMessageBodyBytes[index]);
     }
   }
-
 }

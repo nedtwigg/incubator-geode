@@ -37,11 +37,10 @@ import org.apache.geode.management.internal.configuration.functions.DeleteJarFun
 import org.apache.geode.management.internal.configuration.functions.DeleteXmlEntityFunction;
 import org.apache.geode.management.internal.configuration.functions.ModifyPropertiesFunction;
 
-/***
- * Class for writing configuration changes to the Shared Configuration at the Locator(s).
- * This class is used in the Gfsh commands, to persist the configuration changes to the shared configuration hosted on locators.
- * 
- *
+/**
+ * * Class for writing configuration changes to the Shared Configuration at the Locator(s). This
+ * class is used in the Gfsh commands, to persist the configuration changes to the shared
+ * configuration hosted on locators.
  */
 public class SharedConfigurationWriter {
   private static final Logger logger = LogService.getLogger();
@@ -56,7 +55,8 @@ public class SharedConfigurationWriter {
 
   public SharedConfigurationWriter() {
     cache = GemFireCacheImpl.getInstance();
-    isSharedConfigEnabled = cache.getDistributionManager().isSharedConfigurationServiceEnabledForDS();
+    isSharedConfigEnabled =
+        cache.getDistributionManager().isSharedConfigurationServiceEnabledForDS();
   }
 
   //  /***
@@ -85,7 +85,8 @@ public class SharedConfigurationWriter {
     return saveConfigChanges(deleteXmlEntityFunction, args);
   }
 
-  public boolean modifyPropertiesAndCacheAttributes(Properties properties, XmlEntity xmlEntity, String[] groups) {
+  public boolean modifyPropertiesAndCacheAttributes(
+      Properties properties, XmlEntity xmlEntity, String[] groups) {
     Object[] args = new Object[3];
     args[0] = properties;
     args[1] = xmlEntity;
@@ -96,7 +97,7 @@ public class SharedConfigurationWriter {
   //  /*****
   //   * Adds the deployed jars to the shared configuration on all the locators
   //   * @param jarNames Name of jar files to be added
-  //   * @param jarBytes Contents of jar files 
+  //   * @param jarBytes Contents of jar files
   //   * @param groups   member groups on which these jars were deployed
   //   * @return true when the jar files are saved on all the locators.
   //   */
@@ -126,7 +127,9 @@ public class SharedConfigurationWriter {
       return true;
     }
     boolean success = false;
-    Set<DistributedMember> locators = new HashSet<DistributedMember>(cache.getDistributionManager().getAllHostedLocatorsWithSharedConfiguration().keySet());
+    Set<DistributedMember> locators =
+        new HashSet<DistributedMember>(
+            cache.getDistributionManager().getAllHostedLocatorsWithSharedConfiguration().keySet());
 
     if (!locators.isEmpty()) {
       for (DistributedMember locator : locators) {
@@ -154,7 +157,9 @@ public class SharedConfigurationWriter {
       return true;
     }
     boolean success = true;
-    Set<DistributedMember> locators = new HashSet<DistributedMember>(cache.getDistributionManager().getAllHostedLocatorsWithSharedConfiguration().keySet());
+    Set<DistributedMember> locators =
+        new HashSet<DistributedMember>(
+            cache.getDistributionManager().getAllHostedLocatorsWithSharedConfiguration().keySet());
 
     if (!locators.isEmpty()) {
       ResultCollector<?, ?> rc = CliUtil.executeFunction(function, args, locators);
@@ -172,5 +177,4 @@ public class SharedConfigurationWriter {
     }
     return success;
   }
-
 }

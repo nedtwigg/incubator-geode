@@ -16,8 +16,8 @@
  */
 /*
  * Created on Oct 13, 2005
- * 
- * 
+ *
+ *
  */
 package org.apache.geode.cache.query.internal;
 
@@ -39,10 +39,7 @@ import org.apache.geode.cache.query.CacheUtils;
 import org.apache.geode.cache.query.internal.parse.OQLLexerTokenTypes;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- * 
- */
+/** */
 @Category(IntegrationTest.class)
 public class QCompilerJUnitTest {
 
@@ -343,10 +340,9 @@ public class QCompilerJUnitTest {
   }
 
   /**
-   * This test is no more valid. From 6.6 Like is enhanced to support 
-   * special chars (% and _) at any place in the string pattern. With 
-   * this the Like predicate is not transformed to compiled-junction
-   * with > and < operator.
+   * This test is no more valid. From 6.6 Like is enhanced to support special chars (% and _) at any
+   * place in the string pattern. With this the Like predicate is not transformed to
+   * compiled-junction with > and < operator.
    */
   @Ignore
   @Test
@@ -364,18 +360,22 @@ public class QCompilerJUnitTest {
     result = compiler.createCompiledValueForLikePredicate(var, literal);
     validationHelperForCompiledJunction((CompiledJunction) result, "abc\\\\", "abc\\]");
 
-    s1 = "abc" + new String(new char[] { (char) 255, '%' });
+    s1 = "abc" + new String(new char[] {(char) 255, '%'});
     literal = new CompiledLiteral(s1);
     compiler = new QCompiler();
     result = compiler.createCompiledValueForLikePredicate(var, literal);
-    String lowerBoundKey = "abc" + new String(new char[] { (char) 255 });
+    String lowerBoundKey = "abc" + new String(new char[] {(char) 255});
     validationHelperForCompiledJunction((CompiledJunction) result, lowerBoundKey, "abd");
 
-    s1 = "abc" + new String(new char[] { (char) 255, (char) 255, (char) 255, (char) 255, (char) 255, '%' });
+    s1 =
+        "abc"
+            + new String(
+                new char[] {(char) 255, (char) 255, (char) 255, (char) 255, (char) 255, '%'});
     literal = new CompiledLiteral(s1);
     compiler = new QCompiler();
     result = compiler.createCompiledValueForLikePredicate(var, literal);
-    lowerBoundKey = "abc" + new String(new char[] { (char) 255, (char) 255, (char) 255, (char) 255, (char) 255 });
+    lowerBoundKey =
+        "abc" + new String(new char[] {(char) 255, (char) 255, (char) 255, (char) 255, (char) 255});
     validationHelperForCompiledJunction((CompiledJunction) result, lowerBoundKey, "abd");
 
     s1 = "%";
@@ -384,21 +384,26 @@ public class QCompilerJUnitTest {
     result = compiler.createCompiledValueForLikePredicate(var, literal);
     assertTrue(result instanceof CompiledComparison);
     CompiledComparison cc = (CompiledComparison) result;
-    assertTrue(cc.reflectOnOperator((CompiledValue) cc.getChildren().get(1)) == OQLLexerTokenTypes.TOK_GE);
+    assertTrue(
+        cc.reflectOnOperator((CompiledValue) cc.getChildren().get(1)) == OQLLexerTokenTypes.TOK_GE);
     assertTrue(((CompiledLiteral) cc.getChildren().get(1))._obj.equals(""));
   }
 
-  private void validationHelperForCompiledJunction(CompiledJunction result, String lowerBoundKey, String upperBoundKey) {
+  private void validationHelperForCompiledJunction(
+      CompiledJunction result, String lowerBoundKey, String upperBoundKey) {
     CompiledJunction cj = result;
     assertTrue(cj.getOperator() == OQLLexerTokenTypes.LITERAL_and);
     List list = cj.getChildren();
     CompiledComparison lowerBound = (CompiledComparison) list.get(0);
     CompiledComparison upperBound = (CompiledComparison) list.get(1);
-    assertTrue(lowerBound.reflectOnOperator((CompiledValue) lowerBound.getChildren().get(1)) == OQLLexerTokenTypes.TOK_GE);
-    assertTrue(upperBound.reflectOnOperator((CompiledValue) upperBound.getChildren().get(1)) == OQLLexerTokenTypes.TOK_LT);
+    assertTrue(
+        lowerBound.reflectOnOperator((CompiledValue) lowerBound.getChildren().get(1))
+            == OQLLexerTokenTypes.TOK_GE);
+    assertTrue(
+        upperBound.reflectOnOperator((CompiledValue) upperBound.getChildren().get(1))
+            == OQLLexerTokenTypes.TOK_LT);
     assertEquals(lowerBoundKey, ((CompiledLiteral) lowerBound.getChildren().get(1))._obj);
     assertEquals(upperBoundKey, ((CompiledLiteral) upperBound.getChildren().get(1))._obj);
-
   }
 
   @Before
@@ -429,14 +434,12 @@ public class QCompilerJUnitTest {
     String s4 = "[";
     String s5 = "a";
     String s6 = "{";
-    String s7 = new String(new char[] { (char) 255 });
+    String s7 = new String(new char[] {(char) 255});
     assertTrue(s2.compareTo(s1) > 0);
     assertTrue(s3.compareTo(s2) > 0);
     assertTrue(s4.compareTo(s3) > 0);
     assertTrue(s5.compareTo(s4) > 0);
     assertTrue(s6.compareTo(s5) > 0);
     assertTrue(s7.compareTo(s6) > 0);
-
   }
-
 }

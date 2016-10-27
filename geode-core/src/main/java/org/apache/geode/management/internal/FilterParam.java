@@ -39,7 +39,6 @@ public class FilterParam {
     if (inclusionList.length == 1 && inclusionList[0].equals(DEFAULT_INCLUDE_FILTER)) {
       isDefaultIncludeFilter = true;
     }
-
   }
 
   public boolean isDefaultExcludeFilter() {
@@ -65,5 +64,4 @@ public class FilterParam {
   public String[] getExclusionList() {
     return exclusionList;
   }
-
 }

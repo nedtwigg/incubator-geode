@@ -25,10 +25,8 @@ import org.xml.sax.SAXException;
 import org.apache.geode.i18n.LogWriterI18n;
 
 /**
- * Abstract for {@link XmlParser} that throws
- * {@link UnsupportedOperationException} on unused methods. Also keeps
- * references for {@link #logWriter} and {@link #stack}
- * 
+ * Abstract for {@link XmlParser} that throws {@link UnsupportedOperationException} on unused
+ * methods. Also keeps references for {@link #logWriter} and {@link #stack}
  *
  * @since GemFire 8.1
  */
@@ -90,5 +88,4 @@ public abstract class AbstractXmlParser implements XmlParser {
   public void skippedEntity(String name) throws SAXException {
     throw new UnsupportedOperationException();
   }
-
 }

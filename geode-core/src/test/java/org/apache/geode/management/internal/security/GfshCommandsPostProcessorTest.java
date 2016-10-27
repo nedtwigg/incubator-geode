@@ -30,7 +30,7 @@ import org.apache.geode.management.internal.cli.HeadlessGfsh;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class GfshCommandsPostProcessorTest {
 
   protected static int jmxPort = AvailablePortHelper.getRandomAvailableTCPPort();
@@ -38,10 +38,13 @@ public class GfshCommandsPostProcessorTest {
   private HeadlessGfsh gfsh = null;
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxPort, "org/apache/geode/management/internal/security/cacheServer.json", SamplePostProcessor.class);
+  public static JsonAuthorizationCacheStartRule serverRule =
+      new JsonAuthorizationCacheStartRule(
+          jmxPort,
+          "org/apache/geode/management/internal/security/cacheServer.json",
+          SamplePostProcessor.class);
 
-  @Rule
-  public GfshShellConnectionRule gfshConnection = new GfshShellConnectionRule(jmxPort);
+  @Rule public GfshShellConnectionRule gfshConnection = new GfshShellConnectionRule(jmxPort);
 
   @Before
   public void before() {

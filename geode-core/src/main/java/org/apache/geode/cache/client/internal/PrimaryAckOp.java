@@ -23,17 +23,17 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Send the primary server acknowledgement on the events this client
- * has received and processed from it.
+ * Send the primary server acknowledgement on the events this client has received and processed from
+ * it.
+ *
  * @since GemFire 5.7
  */
 public class PrimaryAckOp {
   /**
-   * Send the primary server acknowledgement on the events this client
-   * has received and processed from it
-   * using connections from the given pool
-   * to communicate with the server.
-   * @param connection 
+   * Send the primary server acknowledgement on the events this client has received and processed
+   * from it using connections from the given pool to communicate with the server.
+   *
+   * @param connection
    * @param pool the pool to use to communicate with the server.
    * @param events list of events to acknowledge
    */
@@ -47,19 +47,16 @@ public class PrimaryAckOp {
   }
 
   private static class PrimaryAckOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public PrimaryAckOpImpl(List events) {
       super(MessageType.PERIODIC_ACK, events.size());
-      for (Iterator i = events.iterator(); i.hasNext();) {
+      for (Iterator i = events.iterator(); i.hasNext(); ) {
         getMessage().addObjPart(i.next());
       }
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

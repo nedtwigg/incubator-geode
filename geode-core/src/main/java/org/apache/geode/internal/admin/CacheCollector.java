@@ -25,49 +25,45 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import java.util.*;
 
 /**
- * A <code>CacheCollector</code> is {@linkplain
- * GfManagerAgent#setCacheCollector registered} on a {@link
- * GfManagerAgent} to receive {@link CacheSnapshot}s from other
- * members of the distributed system.
+ * A <code>CacheCollector</code> is {@linkplain GfManagerAgent#setCacheCollector registered} on a
+ * {@link GfManagerAgent} to receive {@link CacheSnapshot}s from other members of the distributed
+ * system.
  *
  * @see #takeSnapshot
  */
 public class CacheCollector {
   //private SortedMap results;
 
-  /** A list of distributed system members that this collector has not
-   * heard back from */
+  /** A list of distributed system members that this collector has not heard back from */
   private List notHeardFrom;
 
-  /** A list of distributed system members that this collector has 
-   * heard back from */
+  /** A list of distributed system members that this collector has heard back from */
   private List heardFrom;
 
-  /** The agent for the distributed system whose distributed cache we
-   * are snapshotting */
+  /** The agent for the distributed system whose distributed cache we are snapshotting */
   private final GfManagerAgent systemAgent;
 
-  /** A "view" of the snapshot that is updated as snapshot segments
-   * are received. */
+  /** A "view" of the snapshot that is updated as snapshot segments are received. */
   private final SnapshotClient view;
 
-  /** A sequence number for the snapshots requested by this VM.  We
-   * use this sequence number to ignore snapshot segments that are not
-   * relevent to the current snapshot */
+  /**
+   * A sequence number for the snapshots requested by this VM. We use this sequence number to ignore
+   * snapshot segments that are not relevent to the current snapshot
+   */
   private static int snapshotCount;
 
-  /** A compound <code>CacheSnapshot</code> that combines all of the
-   * Region or Entry instances across a distributed system */
+  /**
+   * A compound <code>CacheSnapshot</code> that combines all of the Region or Entry instances across
+   * a distributed system
+   */
   private CacheSnapshot snaps;
 
   /**
-   * Creates a new <code>CacheCollector</code> for gathering snapshots
-   * of Cache Region data in a distributed system.
+   * Creates a new <code>CacheCollector</code> for gathering snapshots of Cache Region data in a
+   * distributed system.
    *
-   * @param agent
-   *        The agent for the distributed system
-   * @param view
-   *        A "view" that is notified as the snapshot is updated
+   * @param agent The agent for the distributed system
+   * @param view A "view" that is notified as the snapshot is updated
    */
   public CacheCollector(GfManagerAgent agent, SnapshotClient view) {
     this.view = view;
@@ -76,8 +72,7 @@ public class CacheCollector {
   }
 
   /**
-   * Initiates a snapshot of the all of the Cache regions in a
-   * distributed system.
+   * Initiates a snapshot of the all of the Cache regions in a distributed system.
    *
    * @see org.apache.geode.internal.admin.ApplicationVM#takeRegionSnapshot(String, int)
    */
@@ -91,10 +86,7 @@ public class CacheCollector {
     }
   }
 
-  /**
-   * Flushes results from previous snapshots and resets the snapshot
-   * state. 
-   */
+  /** Flushes results from previous snapshots and resets the snapshot state. */
   public synchronized void flush() {
     snapshotCount++;
     //     if (heardFrom != null && notHeardFrom != null) {
@@ -113,18 +105,13 @@ public class CacheCollector {
   //     }
   //   }
 
-  /**
-   * Closes this <code>CacheCollector</code> so it no longer processes
-   * snapshot fragments.
-   */
+  /** Closes this <code>CacheCollector</code> so it no longer processes snapshot fragments. */
   public void close() {
     flush();
     this.systemAgent.setCacheCollector(null);
   }
 
-  /**
-   * Resets the internal state of this <code>CacheCollector</code>
-   */
+  /** Resets the internal state of this <code>CacheCollector</code> */
   private synchronized void clear() {
     //    this.results = new TreeMap(new SnapshotNameComparator());
     snaps = null;
@@ -133,24 +120,21 @@ public class CacheCollector {
   }
 
   /**
-   * Amalgamates a segment of a cache snapshot into the compound
-   * snapshot. 
+   * Amalgamates a segment of a cache snapshot into the compound snapshot.
    *
-   * @param update
-   *        A newly-received snapshot
-   * @param poster
-   *        The distributed system member that sent the
-   *        <code>CacheSnapshot</code>. 
-   *
-   * @return The compound snapshot containing the newly-amalgamated
-   *         <code>update</code>. 
+   * @param update A newly-received snapshot
+   * @param poster The distributed system member that sent the <code>CacheSnapshot</code>.
+   * @return The compound snapshot containing the newly-amalgamated <code>update</code>.
    */
   private CacheSnapshot updateResultSet(CacheSnapshot update, GemFireVM poster) {
     noteResponse(poster);
 
     if (update instanceof EntrySnapshot) {
       if (snaps instanceof CompoundRegionSnapshot) {
-        throw new IllegalStateException(LocalizedStrings.CacheCollector_UNABLE_TO_MIX_REGION_AND_ENTRY_SNAPSHOTS_IN_CACHECOLLECTOR.toLocalizedString());
+        throw new IllegalStateException(
+            LocalizedStrings
+                .CacheCollector_UNABLE_TO_MIX_REGION_AND_ENTRY_SNAPSHOTS_IN_CACHECOLLECTOR
+                .toLocalizedString());
       }
       if (snaps == null) {
         snaps = new CompoundEntrySnapshot(update.getName());
@@ -158,7 +142,10 @@ public class CacheCollector {
       ((CompoundEntrySnapshot) snaps).addCache(poster, (EntrySnapshot) update);
     } else if (update instanceof RegionSnapshot) {
       if (snaps instanceof CompoundEntrySnapshot) {
-        throw new IllegalStateException(LocalizedStrings.CacheCollector_UNABLE_TO_MIX_REGION_AND_ENTRY_SNAPSHOTS_IN_CACHECOLLECTOR.toLocalizedString());
+        throw new IllegalStateException(
+            LocalizedStrings
+                .CacheCollector_UNABLE_TO_MIX_REGION_AND_ENTRY_SNAPSHOTS_IN_CACHECOLLECTOR
+                .toLocalizedString());
       }
       if (snaps == null) {
         snaps = new CompoundRegionSnapshot(update.getName().toString());
@@ -167,7 +154,7 @@ public class CacheCollector {
     }
 
     //     Set keys = results.keySet();
-    //     for (int i=0; i<update.length; i++) { 
+    //     for (int i=0; i<update.length; i++) {
     //       CacheSnapshot temp = update[i];
     //       Object name = temp.getName();
     //       if (keys.contains(name)) {
@@ -196,10 +183,7 @@ public class CacheCollector {
     return snaps;
   }
 
-  /**
-   * Notes that we got a response from a given member of the
-   * distributed system.
-   */
+  /** Notes that we got a response from a given member of the distributed system. */
   private void noteResponse(GemFireVM responder) {
     if (notHeardFrom.remove(responder)) {
       heardFrom.add(responder);
@@ -210,31 +194,26 @@ public class CacheCollector {
   //     for (Iterator iter = notHeardFrom.iterator(); iter.hasNext(); ) {
   //       ApplicationProcess app = (ApplicationProcess)iter.next();
   //       if (app.getSystemManager().equals(parent) && app.getId() == connId) {
-  //         return app;          
+  //         return app;
   //       }
   //     }
   //     for (Iterator iter = heardFrom.iterator(); iter.hasNext(); ) {
   //       ApplicationProcess app = (ApplicationProcess)iter.next();
   //       if (app.getSystemManager().equals(parent) && app.getId() == connId) {
-  //         return app;          
+  //         return app;
   //       }
   //     }
   //     return null; //couldn't find the member...
   //   }
 
-  /** 
-   * This method is called as result segments come in. It updates the
-   * superset of all results and calls back to the view.
+  /**
+   * This method is called as result segments come in. It updates the superset of all results and
+   * calls back to the view.
    *
-   * @param snap
-   *        The snapshot segment of the cache
-   * @param member
-   *        The member of the distributed system that hosts the cache
-   *        segment. 
-   * @param snapshotId
-   *        The sequence number of the snapshot.  If the sequence
-   *        number is not for the current snapshot, then the segment
-   *        is ignored.
+   * @param snap The snapshot segment of the cache
+   * @param member The member of the distributed system that hosts the cache segment.
+   * @param snapshotId The sequence number of the snapshot. If the sequence number is not for the
+   *     current snapshot, then the segment is ignored.
    */
   public synchronized void resultsReturned(CacheSnapshot snap, GemFireVM member, int snapshotId) {
     if (snapshotId == CacheCollector.snapshotCount) {

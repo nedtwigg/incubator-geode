@@ -87,10 +87,12 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
   public void test_Bug_43126_Function_Not_Registered() throws InterruptedException {
     createScenario();
     try {
-      client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.executeRegisteredFunction());
+      client.invoke(
+          () -> PRClientServerRegionFunctionExecutionDUnitTest.executeRegisteredFunction());
     } catch (Exception e) {
       assertEquals(true, (e.getCause() instanceof ServerOperationException));
-      assertTrue(e.getCause().getMessage().contains("The function is not registered for function id"));
+      assertTrue(
+          e.getCause().getMessage().contains("The function is not registered for function id"));
     }
   }
 
@@ -113,32 +115,57 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
     toRegister = new Boolean(true);
-    SerializableRunnable suspect = new SerializableRunnable() {
-      public void run() {
-        cache.getLogger().info("<ExpectedException action=add>" + "No target node found for KEY = " + "|Server could not send the reply" + "|Unexpected exception during" + "</ExpectedException>");
-      }
-    };
+    SerializableRunnable suspect =
+        new SerializableRunnable() {
+          public void run() {
+            cache
+                .getLogger()
+                .info(
+                    "<ExpectedException action=add>"
+                        + "No target node found for KEY = "
+                        + "|Server could not send the reply"
+                        + "|Unexpected exception during"
+                        + "</ExpectedException>");
+          }
+        };
     runOnAllServers(suspect);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution(isByName, toRegister));
-    SerializableRunnable endSuspect = new SerializableRunnable() {
-      public void run() {
-        cache.getLogger().info("<ExpectedException action=remove>" + "No target node found for KEY = " + "|Server could not send the reply" + "|Unexpected exception during" + "</ExpectedException>");
-      }
-    };
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution(
+                isByName, toRegister));
+    SerializableRunnable endSuspect =
+        new SerializableRunnable() {
+          public void run() {
+            cache
+                .getLogger()
+                .info(
+                    "<ExpectedException action=remove>"
+                        + "No target node found for KEY = "
+                        + "|Server could not send the reply"
+                        + "|Unexpected exception during"
+                        + "</ExpectedException>");
+          }
+        };
     runOnAllServers(endSuspect);
   }
 
   @Test
   public void testServerSingleKeyExecution_Bug43513_OnRegion() {
     createScenario_SingleConnection();
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecutionOnRegion_SingleConnection());
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest
+                .serverSingleKeyExecutionOnRegion_SingleConnection());
   }
 
   @Ignore("Bug47584")
   @Test
   public void testServerSingleKeyExecution_Bug43513_OnServer() {
     createScenario_SingleConnection();
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecutionOnServer_SingleConnection());
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest
+                .serverSingleKeyExecutionOnServer_SingleConnection());
   }
 
   @Test
@@ -148,7 +175,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
     toRegister = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution_SendException(isByName, toRegister));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution_SendException(
+                isByName, toRegister));
   }
 
   @Test
@@ -158,7 +188,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
     toRegister = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution_ThrowException(isByName, toRegister));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution_ThrowException(
+                isByName, toRegister));
   }
 
   @Test
@@ -168,18 +201,37 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
     toRegister = new Boolean(true);
-    SerializableRunnable suspect = new SerializableRunnable() {
-      public void run() {
-        cache.getLogger().info("<ExpectedException action=add>" + "No target node found for KEY = " + "|Server could not send the reply" + "|Unexpected exception during" + "</ExpectedException>");
-      }
-    };
+    SerializableRunnable suspect =
+        new SerializableRunnable() {
+          public void run() {
+            cache
+                .getLogger()
+                .info(
+                    "<ExpectedException action=add>"
+                        + "No target node found for KEY = "
+                        + "|Server could not send the reply"
+                        + "|Unexpected exception during"
+                        + "</ExpectedException>");
+          }
+        };
     runOnAllServers(suspect);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecutionWith2Regions(isByName, toRegister));
-    SerializableRunnable endSuspect = new SerializableRunnable() {
-      public void run() {
-        cache.getLogger().info("<ExpectedException action=remove>" + "No target node found for KEY = " + "|Server could not send the reply" + "|Unexpected exception during" + "</ExpectedException>");
-      }
-    };
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecutionWith2Regions(
+                isByName, toRegister));
+    SerializableRunnable endSuspect =
+        new SerializableRunnable() {
+          public void run() {
+            cache
+                .getLogger()
+                .info(
+                    "<ExpectedException action=remove>"
+                        + "No target node found for KEY = "
+                        + "|Server could not send the reply"
+                        + "|Unexpected exception during"
+                        + "</ExpectedException>");
+          }
+        };
     runOnAllServers(endSuspect);
   }
 
@@ -196,7 +248,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     toRegister = new Boolean(true);
 
     final IgnoredException ex = IgnoredException.addIgnoredException("did not send last result");
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution_NoLastResult(isByName, toRegister));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution_NoLastResult(
+                isByName, toRegister));
     ex.remove();
   }
 
@@ -207,18 +262,37 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
     toRegister = new Boolean(false);
-    SerializableRunnable suspect = new SerializableRunnable() {
-      public void run() {
-        cache.getLogger().info("<ExpectedException action=add>" + "No target node found for KEY = " + "|Server could not send the reply" + "|Unexpected exception during" + "</ExpectedException>");
-      }
-    };
+    SerializableRunnable suspect =
+        new SerializableRunnable() {
+          public void run() {
+            cache
+                .getLogger()
+                .info(
+                    "<ExpectedException action=add>"
+                        + "No target node found for KEY = "
+                        + "|Server could not send the reply"
+                        + "|Unexpected exception during"
+                        + "</ExpectedException>");
+          }
+        };
     runOnAllServers(suspect);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution(isByName, toRegister));
-    SerializableRunnable endSuspect = new SerializableRunnable() {
-      public void run() {
-        cache.getLogger().info("<ExpectedException action=remove>" + "No target node found for KEY = " + "|Server could not send the reply" + "|Unexpected exception during" + "</ExpectedException>");
-      }
-    };
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution(
+                isByName, toRegister));
+    SerializableRunnable endSuspect =
+        new SerializableRunnable() {
+          public void run() {
+            cache
+                .getLogger()
+                .info(
+                    "<ExpectedException action=remove>"
+                        + "No target node found for KEY = "
+                        + "|Server could not send the reply"
+                        + "|Unexpected exception during"
+                        + "</ExpectedException>");
+          }
+        };
     runOnAllServers(endSuspect);
   }
 
@@ -231,7 +305,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
   @Test
   public void testserverSingleKeyExecution_FunctionInvocationTargetException() {
     createScenario();
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution_FunctionInvocationTargetException());
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest
+                .serverSingleKeyExecution_FunctionInvocationTargetException());
   }
 
   @Test
@@ -240,7 +317,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SOCKET_TIMEOUT);
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecutionSocketTimeOut(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecutionSocketTimeOut(
+                isByName));
   }
 
   /*
@@ -254,7 +334,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     registerFunctionAtServer(function);
     isByName = new Boolean(false);
     toRegister = true;
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution(isByName, toRegister));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution(
+                isByName, toRegister));
   }
 
   /*
@@ -264,7 +347,8 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
   @Test
   public void testServerSingleKeyExecution_byInlineFunction() {
     createScenario();
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution_Inline());
+    client.invoke(
+        () -> PRClientServerRegionFunctionExecutionDUnitTest.serverSingleKeyExecution_Inline());
   }
 
   /*
@@ -277,7 +361,8 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Function function = new TestFunction(true, TEST_FUNCTION2);
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecution(isByName));
+    client.invoke(
+        () -> PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecution(isByName));
     server1.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.checkBucketsOnServer());
     server2.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.checkBucketsOnServer());
     server3.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.checkBucketsOnServer());
@@ -301,7 +386,6 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     //Test single filter
     bucketFilterSet.add(7);
     client.invoke(() -> PRClientServerTestBase.serverBucketFilterExecution(bucketFilterSet));
-
   }
 
   @Test
@@ -319,8 +403,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     keyFilterSet.add(75);
     keyFilterSet.add(25);
 
-    client.invoke(() -> PRClientServerTestBase.serverBucketFilterOverrideExecution(bucketFilterSet, keyFilterSet));
-
+    client.invoke(
+        () ->
+            PRClientServerTestBase.serverBucketFilterOverrideExecution(
+                bucketFilterSet, keyFilterSet));
   }
 
   @Test
@@ -329,7 +415,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_SEND_EXCEPTION);
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecution_SendException(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecution_SendException(
+                isByName));
   }
 
   @Category(FlakyTest.class) // GEODE-1595
@@ -339,7 +428,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_THROW_EXCEPTION);
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecution_ThrowException(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecution_ThrowException(
+                isByName));
   }
 
   /*
@@ -349,7 +441,8 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
   @Test
   public void testserverMultiKeyExecution_byInlineFunction() {
     createScenario();
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecution_Inline());
+    client.invoke(
+        () -> PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecution_Inline());
   }
 
   /*
@@ -361,7 +454,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
   @Test
   public void testserverMultiKeyExecution_FunctionInvocationTargetException() {
     createScenario();
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecution_FunctionInvocationTargetException());
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest
+                .serverMultiKeyExecution_FunctionInvocationTargetException());
   }
 
   /*
@@ -374,7 +470,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Function function = new TestFunction(false, TEST_FUNCTION7);
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecutionNoResult(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecutionNoResult(
+                isByName));
   }
 
   /*
@@ -387,7 +486,8 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Function function = new TestFunction(true, TEST_FUNCTION2);
     registerFunctionAtServer(function);
     isByName = new Boolean(false);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecution(isByName));
+    client.invoke(
+        () -> PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecution(isByName));
   }
 
   /*
@@ -401,7 +501,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Function function = new TestFunction(true, TEST_FUNCTION2);
     registerFunctionAtServer(function);
     isByName = new Boolean(true);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecutionOnASingleBucket(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecutionOnASingleBucket(
+                isByName));
   }
 
   /*
@@ -415,10 +518,14 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Function function = new TestFunction(true, TEST_FUNCTION2);
     registerFunctionAtServer(function);
     isByName = new Boolean(false);
-    client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecutionOnASingleBucket(isByName));
+    client.invoke(
+        () ->
+            PRClientServerRegionFunctionExecutionDUnitTest.serverMultiKeyExecutionOnASingleBucket(
+                isByName));
   }
 
-  public static void regionSingleKeyExecutionNonHA(Boolean isByName, Function function, Boolean toRegister) throws Exception {
+  public static void regionSingleKeyExecutionNonHA(
+      Boolean isByName, Function function, Boolean toRegister) throws Exception {
     Region region = cache.getRegion(PartitionedRegionName);
     assertNotNull(region);
     final String testKey = "execKey";
@@ -444,13 +551,15 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
       ResultCollector rs = execute(dataSet, testKeysSet, args, function, isByName);
       fail("Expected ServerConnectivityException not thrown!");
     } catch (Exception ex) {
-      if (!(ex.getCause() instanceof ServerConnectivityException) && !(ex.getCause() instanceof FunctionInvocationTargetException)) {
+      if (!(ex.getCause() instanceof ServerConnectivityException)
+          && !(ex.getCause() instanceof FunctionInvocationTargetException)) {
         throw ex;
       }
     }
   }
 
-  public static void regionExecutionHAOneServerDown(Boolean isByName, Function function, Boolean toRegister) throws Exception {
+  public static void regionExecutionHAOneServerDown(
+      Boolean isByName, Function function, Boolean toRegister) throws Exception {
 
     Region region = cache.getRegion(PartitionedRegionName);
     assertNotNull(region);
@@ -478,7 +587,8 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     assertEquals(1, ((List) rs.getResult()).size());
   }
 
-  public static void regionExecutionHATwoServerDown(Boolean isByName, Function function, Boolean toRegister) throws Exception {
+  public static void regionExecutionHATwoServerDown(
+      Boolean isByName, Function function, Boolean toRegister) throws Exception {
 
     Region region = cache.getRegion(PartitionedRegionName);
     assertNotNull(region);
@@ -537,26 +647,27 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
   }
 
   public static void registerFunction() {
-    FunctionService.registerFunction(new FunctionAdapter() {
-      @Override
-      public void execute(FunctionContext context) {
-        if (context.getArguments() instanceof String) {
-          context.getResultSender().lastResult("Failure");
-        } else if (context.getArguments() instanceof Boolean) {
-          context.getResultSender().lastResult(Boolean.FALSE);
-        }
-      }
+    FunctionService.registerFunction(
+        new FunctionAdapter() {
+          @Override
+          public void execute(FunctionContext context) {
+            if (context.getArguments() instanceof String) {
+              context.getResultSender().lastResult("Failure");
+            } else if (context.getArguments() instanceof Boolean) {
+              context.getResultSender().lastResult(Boolean.FALSE);
+            }
+          }
 
-      @Override
-      public String getId() {
-        return "Function";
-      }
+          @Override
+          public String getId() {
+            return "Function";
+          }
 
-      @Override
-      public boolean hasResult() {
-        return true;
-      }
-    });
+          @Override
+          public boolean hasResult() {
+            return true;
+          }
+        });
   }
 
   public static void FunctionExecution_Inline_Bug40714() {
@@ -567,30 +678,36 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
       testKeysSet.add("execKey-" + i);
     }
     int j = 0;
-    for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+    for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
       Integer val = new Integer(j++);
       region.put(i.next(), val);
     }
-    List list = (List) FunctionService.onRegion(region).withArgs(Boolean.TRUE).execute(new FunctionAdapter() {
-      @Override
-      public void execute(FunctionContext context) {
-        if (context.getArguments() instanceof String) {
-          context.getResultSender().lastResult("Success");
-        } else if (context.getArguments() instanceof Boolean) {
-          context.getResultSender().lastResult(Boolean.TRUE);
-        }
-      }
+    List list =
+        (List)
+            FunctionService.onRegion(region)
+                .withArgs(Boolean.TRUE)
+                .execute(
+                    new FunctionAdapter() {
+                      @Override
+                      public void execute(FunctionContext context) {
+                        if (context.getArguments() instanceof String) {
+                          context.getResultSender().lastResult("Success");
+                        } else if (context.getArguments() instanceof Boolean) {
+                          context.getResultSender().lastResult(Boolean.TRUE);
+                        }
+                      }
 
-      @Override
-      public String getId() {
-        return "Function";
-      }
+                      @Override
+                      public String getId() {
+                        return "Function";
+                      }
 
-      @Override
-      public boolean hasResult() {
-        return true;
-      }
-    }).getResult();
+                      @Override
+                      public boolean hasResult() {
+                        return true;
+                      }
+                    })
+                .getResult();
     assertEquals(3, list.size());
     Iterator iterator = list.iterator();
     for (int i = 0; i < 3; i++) {
@@ -599,24 +716,31 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     }
   }
 
-  public static void verifyDeadAndLiveServers(final Integer expectedDeadServers, final Integer expectedLiveServers) {
-    WaitCriterion wc = new WaitCriterion() {
-      String excuse;
+  public static void verifyDeadAndLiveServers(
+      final Integer expectedDeadServers, final Integer expectedLiveServers) {
+    WaitCriterion wc =
+        new WaitCriterion() {
+          String excuse;
 
-      public boolean done() {
-        int sz = pool.getConnectedServerCount();
-        LogWriterUtils.getLogWriter().info("Checking for the Live Servers : Expected  : " + expectedLiveServers + " Available :" + sz);
-        if (sz == expectedLiveServers.intValue()) {
-          return true;
-        }
-        excuse = "Expected " + expectedLiveServers.intValue() + " but found " + sz;
-        return false;
-      }
+          public boolean done() {
+            int sz = pool.getConnectedServerCount();
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "Checking for the Live Servers : Expected  : "
+                        + expectedLiveServers
+                        + " Available :"
+                        + sz);
+            if (sz == expectedLiveServers.intValue()) {
+              return true;
+            }
+            excuse = "Expected " + expectedLiveServers.intValue() + " but found " + sz;
+            return false;
+          }
 
-      public String description() {
-        return excuse;
-      }
-    };
+          public String description() {
+            return excuse;
+          }
+        };
     Wait.waitForCriterion(wc, 3 * 60 * 1000, 1000, true);
   }
 
@@ -633,12 +757,13 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     FunctionService.registerFunction(function);
     Execution dataSet = FunctionService.onRegion(region);
     try {
-      ResultCollector rc1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(function.getId());
+      ResultCollector rc1 =
+          dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(function.getId());
       List l = ((List) rc1.getResult());
       LogWriterUtils.getLogWriter().info("Result size : " + l.size());
       assertEquals(3, l.size());
 
-      for (Iterator i = l.iterator(); i.hasNext();) {
+      for (Iterator i = l.iterator(); i.hasNext(); ) {
         assertEquals(Boolean.TRUE, i.next());
       }
     } catch (CacheClosedException e) {
@@ -656,7 +781,8 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_HA);
     FunctionService.registerFunction(function);
     Execution dataSet = FunctionService.onRegion(region);
-    ResultCollector rc1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(function.getId());
+    ResultCollector rc1 =
+        dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(function.getId());
     List l = ((List) rc1.getResult());
     LogWriterUtils.getLogWriter().info("Result size : " + l.size());
     return l;
@@ -671,7 +797,7 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     }
     int j = 0;
     HashSet origVals = new HashSet();
-    for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+    for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
       Integer val = new Integer(j++);
       origVals.add(val);
       region.put(i.next(), val);
@@ -679,30 +805,39 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
   }
 
   protected void createScenario() {
-    ArrayList commonAttributes = createCommonServerAttributes("TestPartitionedRegion", null, 0, 13, null);
+    ArrayList commonAttributes =
+        createCommonServerAttributes("TestPartitionedRegion", null, 0, 13, null);
     createClientServerScenarion(commonAttributes, 20, 20, 20);
   }
 
   protected void createScenarioForBucketFilter() {
-    ArrayList commonAttributes = createCommonServerAttributes("TestPartitionedRegion", new BucketFilterPRResolver(), 0, 113, null);
+    ArrayList commonAttributes =
+        createCommonServerAttributes(
+            "TestPartitionedRegion", new BucketFilterPRResolver(), 0, 113, null);
     createClientServerScenarion(commonAttributes, 20, 20, 20);
   }
 
   private void createScenario_SingleConnection() {
-    ArrayList commonAttributes = createCommonServerAttributes("TestPartitionedRegion", null, 0, 13, null);
+    ArrayList commonAttributes =
+        createCommonServerAttributes("TestPartitionedRegion", null, 0, 13, null);
     createClientServerScenarion_SingleConnection(commonAttributes, 0, 20, 20);
   }
 
   private void createScenarioWith2Regions() {
-    ArrayList commonAttributes = createCommonServerAttributes(PartitionedRegionName, null, 0, 13, null);
+    ArrayList commonAttributes =
+        createCommonServerAttributes(PartitionedRegionName, null, 0, 13, null);
     createClientServerScenarionWith2Regions(commonAttributes, 20, 20, 20);
-
   }
 
   public static void checkBucketsOnServer() {
     PartitionedRegion region = (PartitionedRegion) cache.getRegion(PartitionedRegionName);
     HashMap localBucket2RegionMap = (HashMap) region.getDataStore().getSizeLocally();
-    LogWriterUtils.getLogWriter().info("Size of the " + PartitionedRegionName + " in this VM :- " + localBucket2RegionMap.size());
+    LogWriterUtils.getLogWriter()
+        .info(
+            "Size of the "
+                + PartitionedRegionName
+                + " in this VM :- "
+                + localBucket2RegionMap.size());
     Set entrySet = localBucket2RegionMap.entrySet();
     assertNotNull(entrySet);
   }
@@ -715,12 +850,12 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
       testKeysSet.add("execKey-" + i);
     }
     int j = 0;
-    for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+    for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
       Integer val = new Integer(j++);
       region.put(i.next(), val);
     }
     DistributedSystem.setThreadsSocketPolicy(false);
-    for (Iterator kiter = testKeysSet.iterator(); kiter.hasNext();) {
+    for (Iterator kiter = testKeysSet.iterator(); kiter.hasNext(); ) {
       Set singleKeySet = Collections.singleton(kiter.next());
       Function function = new TestFunction(true, TEST_FUNCTION2);
       FunctionService.registerFunction(function);
@@ -730,7 +865,8 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
       l = ((List) rc1.getResult());
       assertEquals(1, l.size());
 
-      ResultCollector rc2 = execute(dataSet, singleKeySet, new HashSet(singleKeySet), function, isByName);
+      ResultCollector rc2 =
+          execute(dataSet, singleKeySet, new HashSet(singleKeySet), function, isByName);
       List l2 = null;
       l2 = ((List) rc2.getResult());
 
@@ -755,7 +891,7 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     try {
       int j = 0;
       HashSet origVals = new HashSet();
-      for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+      for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
         Integer val = new Integer(j++);
         origVals.add(val);
         region.put(i.next(), val);
@@ -765,7 +901,7 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
       l = ((List) rc1.getResult());
       LogWriterUtils.getLogWriter().info("Result size : " + l.size());
       assertEquals(3, l.size());
-      for (Iterator i = l.iterator(); i.hasNext();) {
+      for (Iterator i = l.iterator(); i.hasNext(); ) {
         assertEquals(Boolean.TRUE, i.next());
       }
 
@@ -774,10 +910,10 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
       l2 = ((List) rc2.getResult());
       assertEquals(3, l2.size());
       HashSet foundVals = new HashSet();
-      for (Iterator i = l2.iterator(); i.hasNext();) {
+      for (Iterator i = l2.iterator(); i.hasNext(); ) {
         ArrayList subL = (ArrayList) i.next();
         assertTrue(subL.size() > 0);
-        for (Iterator subI = subL.iterator(); subI.hasNext();) {
+        for (Iterator subI = subL.iterator(); subI.hasNext(); ) {
           assertTrue(foundVals.add(subI.next()));
         }
       }
@@ -785,7 +921,6 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
 
     } catch (Exception e) {
       Assert.fail("Test failed after the put operation", e);
-
     }
   }
 
@@ -802,7 +937,7 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Execution dataSet = FunctionService.onRegion(region);
     int j = 0;
     HashSet origVals = new HashSet();
-    for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+    for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
       Integer val = new Integer(j++);
       origVals.add(val);
       region.put(i.next(), val);
@@ -813,7 +948,7 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
       l = ((List) rc1.getResult());
       LogWriterUtils.getLogWriter().info("Result size : " + l.size());
       assertEquals(3, l.size());
-      for (Iterator i = l.iterator(); i.hasNext();) {
+      for (Iterator i = l.iterator(); i.hasNext(); ) {
         assertTrue(i.next() instanceof MyFunctionExecutionException);
       }
     } catch (Exception ex) {
@@ -854,7 +989,7 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Execution dataSet = FunctionService.onRegion(region);
     int j = 0;
     HashSet origVals = new HashSet();
-    for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+    for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
       Integer val = new Integer(j++);
       origVals.add(val);
       region.put(i.next(), val);
@@ -882,7 +1017,7 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     try {
       int j = 0;
       HashSet origVals = new HashSet();
-      for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+      for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
         Integer val = new Integer(j++);
         origVals.add(val);
         region.put(i.next(), val);
@@ -892,13 +1027,12 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
       l = ((List) rc1.getResult());
       LogWriterUtils.getLogWriter().info("Result size : " + l.size());
       assertEquals(3, l.size());
-      for (Iterator i = l.iterator(); i.hasNext();) {
+      for (Iterator i = l.iterator(); i.hasNext(); ) {
         assertEquals(Boolean.TRUE, i.next());
       }
 
     } catch (Exception e) {
       Assert.fail("Test failed after the put operation", e);
-
     }
   }
 
@@ -921,7 +1055,6 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
 
     ResultCollector rs2 = execute(dataSet, testKeysSet, testKey, function, isByName);
     assertEquals(testKey, ((List) rs2.getResult()).get(0));
-
   }
 
   public static void serverMultiKeyExecution_Inline() {
@@ -936,43 +1069,47 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     try {
       int j = 0;
       HashSet origVals = new HashSet();
-      for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+      for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
         Integer val = new Integer(j++);
         origVals.add(val);
         region.put(i.next(), val);
       }
       List l = null;
-      ResultCollector rc1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(new FunctionAdapter() {
-        @Override
-        public void execute(FunctionContext context) {
-          if (context.getArguments() instanceof String) {
-            context.getResultSender().lastResult("Success");
-          } else if (context.getArguments() instanceof Boolean) {
-            context.getResultSender().lastResult(Boolean.TRUE);
-          }
-        }
+      ResultCollector rc1 =
+          dataSet
+              .withFilter(testKeysSet)
+              .withArgs(Boolean.TRUE)
+              .execute(
+                  new FunctionAdapter() {
+                    @Override
+                    public void execute(FunctionContext context) {
+                      if (context.getArguments() instanceof String) {
+                        context.getResultSender().lastResult("Success");
+                      } else if (context.getArguments() instanceof Boolean) {
+                        context.getResultSender().lastResult(Boolean.TRUE);
+                      }
+                    }
 
-        @Override
-        public String getId() {
-          return getClass().getName();
-        }
+                    @Override
+                    public String getId() {
+                      return getClass().getName();
+                    }
 
-        @Override
-        public boolean hasResult() {
-          return true;
-        }
-      });
+                    @Override
+                    public boolean hasResult() {
+                      return true;
+                    }
+                  });
       l = ((List) rc1.getResult());
       LogWriterUtils.getLogWriter().info("Result size : " + l.size());
       assertEquals(3, l.size());
-      for (Iterator i = l.iterator(); i.hasNext();) {
+      for (Iterator i = l.iterator(); i.hasNext(); ) {
         assertEquals(Boolean.TRUE, i.next());
       }
     } catch (Exception e) {
       LogWriterUtils.getLogWriter().info("Exception : " + e.getMessage());
       e.printStackTrace();
       fail("Test failed after the put operation");
-
     }
   }
 
@@ -987,35 +1124,41 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Execution dataSet = FunctionService.onRegion(region);
     int j = 0;
     HashSet origVals = new HashSet();
-    for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+    for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
       Integer val = new Integer(j++);
       origVals.add(val);
       region.put(i.next(), val);
     }
     ResultCollector rc1 = null;
     try {
-      rc1 = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(new FunctionAdapter() {
-        @Override
-        public void execute(FunctionContext context) {
-          if (((RegionFunctionContext) context).isPossibleDuplicate()) {
-            context.getResultSender().lastResult(new Integer(retryCount));
-            return;
-          }
-          if (context.getArguments() instanceof Boolean) {
-            throw new FunctionInvocationTargetException("I have been thrown from TestFunction");
-          }
-        }
+      rc1 =
+          dataSet
+              .withFilter(testKeysSet)
+              .withArgs(Boolean.TRUE)
+              .execute(
+                  new FunctionAdapter() {
+                    @Override
+                    public void execute(FunctionContext context) {
+                      if (((RegionFunctionContext) context).isPossibleDuplicate()) {
+                        context.getResultSender().lastResult(new Integer(retryCount));
+                        return;
+                      }
+                      if (context.getArguments() instanceof Boolean) {
+                        throw new FunctionInvocationTargetException(
+                            "I have been thrown from TestFunction");
+                      }
+                    }
 
-        @Override
-        public String getId() {
-          return getClass().getName();
-        }
+                    @Override
+                    public String getId() {
+                      return getClass().getName();
+                    }
 
-        @Override
-        public boolean hasResult() {
-          return true;
-        }
-      });
+                    @Override
+                    public boolean hasResult() {
+                      return true;
+                    }
+                  });
 
       List list = (ArrayList) rc1.getResult();
       assertEquals(list.get(0), 0);
@@ -1023,7 +1166,6 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
       e.printStackTrace();
       Assert.fail("This is not expected Exception", e);
     }
-
   }
 
   public static void serverMultiKeyExecutionNoResult(Boolean isByName) throws Exception {
@@ -1042,7 +1184,7 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
       cache.getLogger().info(msg);
       int j = 0;
       HashSet origVals = new HashSet();
-      for (Iterator i = testKeysSet.iterator(); i.hasNext();) {
+      for (Iterator i = testKeysSet.iterator(); i.hasNext(); ) {
         Integer val = new Integer(j++);
         origVals.add(val);
         region.put(i.next(), val);
@@ -1052,9 +1194,16 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
       Thread.sleep(20000);
       fail("Test failed after the put operation");
     } catch (FunctionException expected) {
-      assertTrue(expected.getMessage().startsWith((LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE.toLocalizedString("return any"))));
+      assertTrue(
+          expected
+              .getMessage()
+              .startsWith(
+                  (LocalizedStrings.ExecuteFunction_CANNOT_0_RESULTS_HASRESULT_FALSE
+                      .toLocalizedString("return any"))));
     } finally {
-      cache.getLogger().info("<ExpectedException action=remove>" + "FunctionException" + "</ExpectedException>");
+      cache
+          .getLogger()
+          .info("<ExpectedException action=remove>" + "FunctionException" + "</ExpectedException>");
     }
   }
 
@@ -1081,7 +1230,8 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     assertEquals("KB_1", region.get(new Integer(1)));
   }
 
-  public static void serverSingleKeyExecution(Boolean isByName, Boolean toRegister) throws Exception {
+  public static void serverSingleKeyExecution(Boolean isByName, Boolean toRegister)
+      throws Exception {
     Region region = cache.getRegion(PartitionedRegionName);
     assertNotNull(region);
     final String testKey = "execKey";
@@ -1101,7 +1251,9 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     try {
       execute(dataSet, testKeysSet, Boolean.TRUE, function, isByName);
     } catch (Exception ex) {
-      if (!(ex.getMessage().contains("No target node found for KEY = " + testKey) || ex.getMessage().startsWith("Server could not send the reply") || ex.getMessage().startsWith("Unexpected exception during"))) {
+      if (!(ex.getMessage().contains("No target node found for KEY = " + testKey)
+          || ex.getMessage().startsWith("Server could not send the reply")
+          || ex.getMessage().startsWith("Unexpected exception during"))) {
         throw ex;
       }
     }
@@ -1133,17 +1285,21 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Execution dataSet = FunctionService.onRegion(region);
     region.put(testKey, new Integer(1));
     ((AbstractExecution) dataSet).removeFunctionAttributes(TestFunction.TEST_FUNCTION2);
-    ResultCollector rs = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(TestFunction.TEST_FUNCTION2);
+    ResultCollector rs =
+        dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(TestFunction.TEST_FUNCTION2);
     assertEquals(Boolean.TRUE, ((List) rs.getResult()).get(0));
-    byte[] functionAttributes = ((AbstractExecution) dataSet).getFunctionAttributes(TestFunction.TEST_FUNCTION2);
+    byte[] functionAttributes =
+        ((AbstractExecution) dataSet).getFunctionAttributes(TestFunction.TEST_FUNCTION2);
     assertNotNull(functionAttributes);
 
-    rs = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(TestFunction.TEST_FUNCTION2);
+    rs =
+        dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(TestFunction.TEST_FUNCTION2);
     assertEquals(Boolean.TRUE, ((List) rs.getResult()).get(0));
     assertNotNull(functionAttributes);
   }
 
-  public static void serverSingleKeyExecution_SendException(Boolean isByName, Boolean toRegister) throws Exception {
+  public static void serverSingleKeyExecution_SendException(Boolean isByName, Boolean toRegister)
+      throws Exception {
     Region region = cache.getRegion(PartitionedRegionName);
     assertNotNull(region);
     final String testKey = "execKey";
@@ -1245,7 +1401,8 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     }
   }
 
-  public static void serverSingleKeyExecution_NoLastResult(Boolean isByName, Boolean toRegister) throws Exception {
+  public static void serverSingleKeyExecution_NoLastResult(Boolean isByName, Boolean toRegister)
+      throws Exception {
     Region region = cache.getRegion(PartitionedRegionName);
     assertNotNull(region);
     final String testKey = "execKey";
@@ -1272,7 +1429,6 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
       if (!ex.getMessage().contains("did not send last result")) {
         throw ex;
       }
-
     }
   }
 
@@ -1305,94 +1461,118 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
 
     Execution dataSet = FunctionService.onRegion(region);
     try {
-      cache.getLogger().info("<ExpectedException action=add>" + "No target node found for KEY = " + "|Server could not send the reply" + "|Unexpected exception during" + "</ExpectedException>");
-      dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(new FunctionAdapter() {
-        @Override
-        public void execute(FunctionContext context) {
-          if (context.getArguments() instanceof String) {
-            context.getResultSender().lastResult("Success");
-          }
-          context.getResultSender().lastResult("Failure");
-        }
+      cache
+          .getLogger()
+          .info(
+              "<ExpectedException action=add>"
+                  + "No target node found for KEY = "
+                  + "|Server could not send the reply"
+                  + "|Unexpected exception during"
+                  + "</ExpectedException>");
+      dataSet
+          .withFilter(testKeysSet)
+          .withArgs(Boolean.TRUE)
+          .execute(
+              new FunctionAdapter() {
+                @Override
+                public void execute(FunctionContext context) {
+                  if (context.getArguments() instanceof String) {
+                    context.getResultSender().lastResult("Success");
+                  }
+                  context.getResultSender().lastResult("Failure");
+                }
 
-        @Override
-        public String getId() {
-          return getClass().getName();
-        }
+                @Override
+                public String getId() {
+                  return getClass().getName();
+                }
 
-        @Override
-        public boolean hasResult() {
-          return true;
-        }
-      });
+                @Override
+                public boolean hasResult() {
+                  return true;
+                }
+              });
     } catch (Exception ex) {
-      if (!(ex.getMessage().contains("No target node found for KEY = " + testKey) || ex.getMessage().startsWith("Server could not send the reply") || ex.getMessage().startsWith("Unexpected exception during"))) {
+      if (!(ex.getMessage().contains("No target node found for KEY = " + testKey)
+          || ex.getMessage().startsWith("Server could not send the reply")
+          || ex.getMessage().startsWith("Unexpected exception during"))) {
         throw ex;
       }
     } finally {
-      cache.getLogger().info("<ExpectedException action=remove>" + "No target node found for KEY = " + "|Server could not send the reply" + "|Unexpected exception during" + "</ExpectedException>");
+      cache
+          .getLogger()
+          .info(
+              "<ExpectedException action=remove>"
+                  + "No target node found for KEY = "
+                  + "|Server could not send the reply"
+                  + "|Unexpected exception during"
+                  + "</ExpectedException>");
     }
 
     region.put(testKey, new Integer(1));
 
-    ResultCollector rs = dataSet.withFilter(testKeysSet).withArgs(Boolean.TRUE).execute(new FunctionAdapter() {
-      @Override
-      public void execute(FunctionContext context) {
-        if (context.getArguments() instanceof String) {
-          context.getResultSender().lastResult("Success");
-        } else {
-          context.getResultSender().lastResult("Failure");
-        }
-      }
+    ResultCollector rs =
+        dataSet
+            .withFilter(testKeysSet)
+            .withArgs(Boolean.TRUE)
+            .execute(
+                new FunctionAdapter() {
+                  @Override
+                  public void execute(FunctionContext context) {
+                    if (context.getArguments() instanceof String) {
+                      context.getResultSender().lastResult("Success");
+                    } else {
+                      context.getResultSender().lastResult("Failure");
+                    }
+                  }
 
-      @Override
-      public String getId() {
-        return getClass().getName();
-      }
+                  @Override
+                  public String getId() {
+                    return getClass().getName();
+                  }
 
-      @Override
-      public boolean hasResult() {
-        return true;
-      }
-    });
+                  @Override
+                  public boolean hasResult() {
+                    return true;
+                  }
+                });
     assertEquals("Failure", ((List) rs.getResult()).get(0));
 
-    ResultCollector rs2 = dataSet.withFilter(testKeysSet).withArgs(testKey).execute(new FunctionAdapter() {
-      @Override
-      public void execute(FunctionContext context) {
-        if (context.getArguments() instanceof String) {
-          context.getResultSender().lastResult("Success");
-        } else {
-          context.getResultSender().lastResult("Failure");
-        }
-      }
+    ResultCollector rs2 =
+        dataSet
+            .withFilter(testKeysSet)
+            .withArgs(testKey)
+            .execute(
+                new FunctionAdapter() {
+                  @Override
+                  public void execute(FunctionContext context) {
+                    if (context.getArguments() instanceof String) {
+                      context.getResultSender().lastResult("Success");
+                    } else {
+                      context.getResultSender().lastResult("Failure");
+                    }
+                  }
 
-      @Override
-      public String getId() {
-        return getClass().getName();
-      }
+                  @Override
+                  public String getId() {
+                    return getClass().getName();
+                  }
 
-      @Override
-      public boolean hasResult() {
-        return true;
-      }
-    });
+                  @Override
+                  public boolean hasResult() {
+                    return true;
+                  }
+                });
     assertEquals("Success", ((List) rs2.getResult()).get(0));
-
   }
 
-  /**
-   * This class can be serialized but its deserialization will always fail
-   *
-   */
+  /** This class can be serialized but its deserialization will always fail */
   private static class UnDeserializable implements DataSerializable {
-    public void toData(DataOutput out) throws IOException {
-    }
+    public void toData(DataOutput out) throws IOException {}
 
     public void fromData(DataInput in) throws IOException, ClassNotFoundException {
       throw new RuntimeException("deserialization is not allowed on this class");
     }
-
   }
 
   public static void serverBug43430() {
@@ -1406,38 +1586,58 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
     Execution dataSet = FunctionService.onRegion(region);
     region.put(testKey, new Integer(1));
     try {
-      cache.getLogger().info("<ExpectedException action=add>" + "Could not create an instance of  org.apache.geode.internal.cache.execute.PRClientServerRegionFunctionExecutionDUnitTest$UnDeserializable" + "</ExpectedException>");
-      dataSet.withFilter(testKeysSet).withArgs(new UnDeserializable()).execute(new FunctionAdapter() {
-        @Override
-        public void execute(FunctionContext context) {
-          if (context.getArguments() instanceof String) {
-            context.getResultSender().lastResult("Success");
-          }
-          context.getResultSender().lastResult("Failure");
-        }
+      cache
+          .getLogger()
+          .info(
+              "<ExpectedException action=add>"
+                  + "Could not create an instance of  org.apache.geode.internal.cache.execute.PRClientServerRegionFunctionExecutionDUnitTest$UnDeserializable"
+                  + "</ExpectedException>");
+      dataSet
+          .withFilter(testKeysSet)
+          .withArgs(new UnDeserializable())
+          .execute(
+              new FunctionAdapter() {
+                @Override
+                public void execute(FunctionContext context) {
+                  if (context.getArguments() instanceof String) {
+                    context.getResultSender().lastResult("Success");
+                  }
+                  context.getResultSender().lastResult("Failure");
+                }
 
-        @Override
-        public String getId() {
-          return getClass().getName();
-        }
+                @Override
+                public String getId() {
+                  return getClass().getName();
+                }
 
-        @Override
-        public boolean hasResult() {
-          return true;
-        }
-      });
+                @Override
+                public boolean hasResult() {
+                  return true;
+                }
+              });
     } catch (Exception expected) {
-      if (!expected.getCause().getMessage().contains("Could not create an instance of  org.apache.geode.internal.cache.execute.PRClientServerRegionFunctionExecutionDUnitTest$UnDeserializable")) {
+      if (!expected
+          .getCause()
+          .getMessage()
+          .contains(
+              "Could not create an instance of  org.apache.geode.internal.cache.execute.PRClientServerRegionFunctionExecutionDUnitTest$UnDeserializable")) {
         throw expected;
       }
       ;
     } finally {
-      cache.getLogger().info("<ExpectedException action=remove>" + "Could not create an instance of  org.apache.geode.internal.cache.execute.PRClientServerRegionFunctionExecutionDUnitTest$UnDeserializable" + "</ExpectedException>");
+      cache
+          .getLogger()
+          .info(
+              "<ExpectedException action=remove>"
+                  + "Could not create an instance of  org.apache.geode.internal.cache.execute.PRClientServerRegionFunctionExecutionDUnitTest$UnDeserializable"
+                  + "</ExpectedException>");
     }
   }
 
-  private static ResultCollector execute(Execution dataSet, Set testKeysSet, Serializable args, Function function, Boolean isByName) throws Exception {
-    if (isByName.booleanValue()) {// by name
+  private static ResultCollector execute(
+      Execution dataSet, Set testKeysSet, Serializable args, Function function, Boolean isByName)
+      throws Exception {
+    if (isByName.booleanValue()) { // by name
       return dataSet.withFilter(testKeysSet).withArgs(args).execute(function.getId());
     } else { // By Instance
       return dataSet.withFilter(testKeysSet).withArgs(args).execute(function);
@@ -1445,27 +1645,42 @@ public class PRClientServerRegionFunctionExecutionDUnitTest extends PRClientServ
   }
 
   /**
-   * Attempt to do a client server function execution with an arg that fail deserialization
-   * on the server. The client should see an exception instead of a hang if bug 43430 is fixed.
+   * Attempt to do a client server function execution with an arg that fail deserialization on the
+   * server. The client should see an exception instead of a hang if bug 43430 is fixed.
    */
   @Test
   public void testBug43430() {
     createScenario();
     Function function = new TestFunction(true, TEST_FUNCTION2);
     registerFunctionAtServer(function);
-    SerializableRunnable suspect = new SerializableRunnable() {
-      public void run() {
-        cache.getLogger().info("<ExpectedException action=add>" + "No target node found for KEY = " + "|Server could not send the reply" + "|Unexpected exception during" + "</ExpectedException>");
-      }
-    };
+    SerializableRunnable suspect =
+        new SerializableRunnable() {
+          public void run() {
+            cache
+                .getLogger()
+                .info(
+                    "<ExpectedException action=add>"
+                        + "No target node found for KEY = "
+                        + "|Server could not send the reply"
+                        + "|Unexpected exception during"
+                        + "</ExpectedException>");
+          }
+        };
     runOnAllServers(suspect);
     client.invoke(() -> PRClientServerRegionFunctionExecutionDUnitTest.serverBug43430());
-    SerializableRunnable endSuspect = new SerializableRunnable() {
-      public void run() {
-        cache.getLogger().info("<ExpectedException action=remove>" + "No target node found for KEY = " + "|Server could not send the reply" + "|Unexpected exception during" + "</ExpectedException>");
-      }
-    };
+    SerializableRunnable endSuspect =
+        new SerializableRunnable() {
+          public void run() {
+            cache
+                .getLogger()
+                .info(
+                    "<ExpectedException action=remove>"
+                        + "No target node found for KEY = "
+                        + "|Server could not send the reply"
+                        + "|Unexpected exception during"
+                        + "</ExpectedException>");
+          }
+        };
     runOnAllServers(endSuspect);
   }
-
 }

@@ -51,7 +51,8 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
   private static final String parRegPersName = "ParRegPers";
   private static final String repRegPersName = "RepRegPer";
 
-  Region<?, ?> createParReg(String regionName, Cache cache, Class keyConstraint, Class valueConstraint) {
+  Region<?, ?> createParReg(
+      String regionName, Cache cache, Class keyConstraint, Class valueConstraint) {
     RegionFactory regionFactory = cache.createRegionFactory();
     regionFactory.setDataPolicy(DataPolicy.PARTITION);
     regionFactory.setKeyConstraint(keyConstraint);
@@ -59,7 +60,8 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     return regionFactory.create(regionName);
   }
 
-  private Region<?, ?> createParRegWithPersistence(String regionName, String diskStoreName, String diskDirName) {
+  private Region<?, ?> createParRegWithPersistence(
+      String regionName, String diskStoreName, String diskDirName) {
     Cache cache = getCache();
     File diskStoreDirFile = new File(diskDirName);
     diskStoreDirFile.deleteOnExit();
@@ -69,16 +71,15 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     }
 
     DiskStoreFactory diskStoreFactory = cache.createDiskStoreFactory();
-    diskStoreFactory.setDiskDirs(new File[] { diskStoreDirFile });
+    diskStoreFactory.setDiskDirs(new File[] {diskStoreDirFile});
     diskStoreFactory.setMaxOplogSize(1);
     diskStoreFactory.setAllowForceCompaction(true);
     diskStoreFactory.setAutoCompact(false);
     diskStoreFactory.create(diskStoreName);
 
-    /****
-     * Eviction Attributes
-     */
-    EvictionAttributes ea = EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK);
+    /** ** Eviction Attributes */
+    EvictionAttributes ea =
+        EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK);
 
     RegionFactory regionFactory = cache.createRegionFactory();
     regionFactory.setDiskStoreName(diskStoreName);
@@ -89,7 +90,8 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     return regionFactory.create(regionName);
   }
 
-  private Region<?, ?> createRepRegWithPersistence(String regionName, String diskStoreName, String diskDirName) {
+  private Region<?, ?> createRepRegWithPersistence(
+      String regionName, String diskStoreName, String diskDirName) {
     Cache cache = getCache();
     File diskStoreDirFile = new File(diskDirName);
     diskStoreDirFile.deleteOnExit();
@@ -99,16 +101,15 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     }
 
     DiskStoreFactory diskStoreFactory = cache.createDiskStoreFactory();
-    diskStoreFactory.setDiskDirs(new File[] { diskStoreDirFile });
+    diskStoreFactory.setDiskDirs(new File[] {diskStoreDirFile});
     diskStoreFactory.setMaxOplogSize(1);
     diskStoreFactory.setAllowForceCompaction(true);
     diskStoreFactory.setAutoCompact(false);
     diskStoreFactory.create(diskStoreName);
 
-    /****
-     * Eviction Attributes
-     */
-    EvictionAttributes ea = EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK);
+    /** ** Eviction Attributes */
+    EvictionAttributes ea =
+        EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK);
 
     RegionFactory regionFactory = cache.createRegionFactory();
     regionFactory.setDiskStoreName(diskStoreName);
@@ -150,9 +151,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
 
   public void testCreateAndDestroyIndex() {
     setupSystem();
-    /***
-     * Basic Create and Destroy 
-     */
+    /** * Basic Create and Destroy */
     CommandStringBuilder csb = new CommandStringBuilder(CliStrings.CREATE_INDEX);
     csb.addOption(CliStrings.CREATE_INDEX__NAME, indexName);
     csb.addOption(CliStrings.CREATE_INDEX__EXPRESSION, "key");
@@ -286,9 +285,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
   @Test
   public void testCreateAndDestroyIndexOnMember() {
     setupSystem();
-    /***
-     * Basic Create and Destroy 
-     */
+    /** * Basic Create and Destroy */
     CommandStringBuilder csb = new CommandStringBuilder(CliStrings.CREATE_INDEX);
     csb.addOption(CliStrings.CREATE_INDEX__NAME, indexName);
     csb.addOption(CliStrings.CREATE_INDEX__EXPRESSION, "key");
@@ -337,9 +334,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
   @Test
   public void testCreateAndDestroyIndexOnGroup() {
     setupSystem();
-    /***
-     * Basic Create and Destroy 
-     */
+    /** * Basic Create and Destroy */
     CommandStringBuilder csb = new CommandStringBuilder(CliStrings.CREATE_INDEX);
     csb.addOption(CliStrings.CREATE_INDEX__NAME, indexName);
     csb.addOption(CliStrings.CREATE_INDEX__EXPRESSION, "key");
@@ -378,9 +373,9 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     assertEquals(commandResult.getStatus(), Status.OK);
     assertFalse(resultAsString.contains(VM1Name));
 
-    /***
-     * In case of a partitioned region , the index might get created on a 
-     * member which hosts the region and is not the member of the group1
+    /**
+     * * In case of a partitioned region , the index might get created on a member which hosts the
+     * region and is not the member of the group1
      */
     if (resultAsString.contains(indexName)) {
       csb = new CommandStringBuilder(CliStrings.DESTROY_INDEX);
@@ -416,7 +411,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
 
     assertEquals(commandResult.getStatus(), Status.OK);
 
-    //CREATE the same index 
+    //CREATE the same index
     csb = new CommandStringBuilder(CliStrings.CREATE_INDEX);
     csb.addOption(CliStrings.CREATE_INDEX__NAME, indexName);
     csb.addOption(CliStrings.CREATE_INDEX__EXPRESSION, "key");
@@ -446,7 +441,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     assertTrue(commandResult.getStatus().equals(Status.ERROR));
     //assertTrue(resultAsString.contains(CliStrings.format(CliStrings.CREATE_INDEX__INVALID__REGIONPATH, "/StocsParReg")));
 
-    //Create index with wrong expression 
+    //Create index with wrong expression
     csb = new CommandStringBuilder(CliStrings.CREATE_INDEX);
     csb.addOption(CliStrings.CREATE_INDEX__NAME, "Id2");
     csb.addOption(CliStrings.CREATE_INDEX__EXPRESSION, "rey");
@@ -460,7 +455,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     writeToLog("testCreateAndDestroyIndexWithIncorrectInput", resultAsString);
     assertTrue(commandResult.getStatus().equals(Status.ERROR));
 
-    //Create index with wrong type 
+    //Create index with wrong type
     csb = new CommandStringBuilder(CliStrings.CREATE_INDEX);
     csb.addOption(CliStrings.CREATE_INDEX__NAME, indexName);
     csb.addOption(CliStrings.CREATE_INDEX__EXPRESSION, "key");
@@ -475,7 +470,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     assertTrue(resultAsString.contains(CliStrings.CREATE_INDEX__INVALID__INDEX__TYPE__MESSAGE));
     assertTrue(commandResult.getStatus().equals(Status.ERROR));
 
-    //Destroy index with incorrect indexName 
+    //Destroy index with incorrect indexName
     csb = new CommandStringBuilder(CliStrings.DESTROY_INDEX);
     csb.addOption(CliStrings.DESTROY_INDEX__NAME, "Id2");
     commandString = csb.toString();
@@ -484,9 +479,11 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     writeToLog("Command String :\n ", commandString);
     writeToLog("testCreateAndDestroyIndexWithIncorrectInput", resultAsString);
     assertTrue(commandResult.getStatus().equals(Status.ERROR));
-    assertTrue(resultAsString.contains(CliStrings.format(CliStrings.DESTROY_INDEX__INDEX__NOT__FOUND, "Id2")));
+    assertTrue(
+        resultAsString.contains(
+            CliStrings.format(CliStrings.DESTROY_INDEX__INDEX__NOT__FOUND, "Id2")));
 
-    //Destroy index with incorrect region 
+    //Destroy index with incorrect region
     csb = new CommandStringBuilder(CliStrings.DESTROY_INDEX);
     csb.addOption(CliStrings.DESTROY_INDEX__NAME, indexName);
     csb.addOption(CliStrings.DESTROY_INDEX__REGION, "Region");
@@ -496,7 +493,9 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     writeToLog("Command String :\n ", commandString);
     writeToLog("testCreateAndDestroyIndexWithIncorrectInput", resultAsString);
     assertTrue(commandResult.getStatus().equals(Status.ERROR));
-    assertTrue(resultAsString.contains(CliStrings.format(CliStrings.DESTROY_INDEX__REGION__NOT__FOUND, "Region")));
+    assertTrue(
+        resultAsString.contains(
+            CliStrings.format(CliStrings.DESTROY_INDEX__REGION__NOT__FOUND, "Region")));
 
     //Destroy index with incorrect memberName
     csb = new CommandStringBuilder(CliStrings.DESTROY_INDEX);
@@ -580,9 +579,7 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     assertTrue(resultAsString.contains(CliStrings.LIST_INDEX__INDEXES_NOT_FOUND_MESSAGE));
   }
 
-  /**
-   * Asserts that creating and destroying indexes correctly updates the shared configuration.
-   */
+  /** Asserts that creating and destroying indexes correctly updates the shared configuration. */
   @Category(FlakyTest.class) // GEODE-1954
   @Test
   public void testCreateDestroyUpdatesSharedConfig() {
@@ -593,36 +590,43 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
 
     // Start the Locator and wait for shared configuration to be available
     final int locatorPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
-    Host.getHost(0).getVM(3).invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
+    Host.getHost(0)
+        .getVM(3)
+        .invoke(
+            new SerializableRunnable() {
+              @Override
+              public void run() {
 
-        final File locatorLogFile = new File("locator-" + locatorPort + ".log");
-        final Properties locatorProps = new Properties();
-        locatorProps.setProperty(NAME, "Locator");
-        locatorProps.setProperty(MCAST_PORT, "0");
-        locatorProps.setProperty(LOG_LEVEL, "fine");
-        locatorProps.setProperty(ENABLE_CLUSTER_CONFIGURATION, "true");
-        try {
-          final InternalLocator locator = (InternalLocator) Locator.startLocatorAndDS(locatorPort, locatorLogFile, null, locatorProps);
+                final File locatorLogFile = new File("locator-" + locatorPort + ".log");
+                final Properties locatorProps = new Properties();
+                locatorProps.setProperty(NAME, "Locator");
+                locatorProps.setProperty(MCAST_PORT, "0");
+                locatorProps.setProperty(LOG_LEVEL, "fine");
+                locatorProps.setProperty(ENABLE_CLUSTER_CONFIGURATION, "true");
+                try {
+                  final InternalLocator locator =
+                      (InternalLocator)
+                          Locator.startLocatorAndDS(
+                              locatorPort, locatorLogFile, null, locatorProps);
 
-          WaitCriterion wc = new WaitCriterion() {
-            @Override
-            public boolean done() {
-              return locator.isSharedConfigurationRunning();
-            }
+                  WaitCriterion wc =
+                      new WaitCriterion() {
+                        @Override
+                        public boolean done() {
+                          return locator.isSharedConfigurationRunning();
+                        }
 
-            @Override
-            public String description() {
-              return "Waiting for shared configuration to be started";
-            }
-          };
-          Wait.waitForCriterion(wc, 5000, 500, true);
-        } catch (IOException ioex) {
-          fail("Unable to create a locator with a shared configuration");
-        }
-      }
-    });
+                        @Override
+                        public String description() {
+                          return "Waiting for shared configuration to be started";
+                        }
+                      };
+                  Wait.waitForCriterion(wc, 5000, 500, true);
+                } catch (IOException ioex) {
+                  fail("Unable to create a locator with a shared configuration");
+                }
+              }
+            });
 
     // Start the default manager
     Properties managerProps = new Properties();
@@ -632,20 +636,21 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
 
     // Create a cache in VM 1
     VM vm = Host.getHost(0).getVM(1);
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        Properties localProps = new Properties();
-        localProps.setProperty(MCAST_PORT, "0");
-        localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
-        localProps.setProperty(GROUPS, groupName);
-        getSystem(localProps);
-        assertNotNull(getCache());
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            Properties localProps = new Properties();
+            localProps.setProperty(MCAST_PORT, "0");
+            localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
+            localProps.setProperty(GROUPS, groupName);
+            getSystem(localProps);
+            assertNotNull(getCache());
 
-        Region parReg = createParReg(regionName, getCache(), String.class, Stock.class);
-        parReg.put("VMW", new Stock("VMW", 98));
-      }
-    });
+            Region parReg = createParReg(regionName, getCache(), String.class, Stock.class);
+            parReg.put("VMW", new Stock("VMW", 98));
+          }
+        });
 
     // Test creating the index
     CommandStringBuilder commandStringBuilder = new CommandStringBuilder(CliStrings.CREATE_INDEX);
@@ -657,41 +662,46 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     assertEquals(Result.Status.OK, cmdResult.getStatus());
 
     // Make sure the index exists in the shared config
-    Host.getHost(0).getVM(3).invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        SharedConfiguration sharedConfig = ((InternalLocator) Locator.getLocator()).getSharedConfiguration();
-        String xmlFromConfig;
-        try {
-          xmlFromConfig = sharedConfig.getConfiguration(groupName).getCacheXmlContent();
-          assertTrue(xmlFromConfig.contains(indexName));
-        } catch (Exception e) {
-          Assert.fail("Error occurred in cluster configuration service", e);
-        }
-      }
-    });
+    Host.getHost(0)
+        .getVM(3)
+        .invoke(
+            new SerializableRunnable() {
+              @Override
+              public void run() {
+                SharedConfiguration sharedConfig =
+                    ((InternalLocator) Locator.getLocator()).getSharedConfiguration();
+                String xmlFromConfig;
+                try {
+                  xmlFromConfig = sharedConfig.getConfiguration(groupName).getCacheXmlContent();
+                  assertTrue(xmlFromConfig.contains(indexName));
+                } catch (Exception e) {
+                  Assert.fail("Error occurred in cluster configuration service", e);
+                }
+              }
+            });
 
     //Restart a member and make sure he gets the shared configuration
     vm = Host.getHost(0).getVM(1);
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        getCache().close();
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            getCache().close();
 
-        Properties localProps = new Properties();
-        localProps.setProperty(MCAST_PORT, "0");
-        localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
-        localProps.setProperty(GROUPS, groupName);
-        localProps.setProperty(USE_CLUSTER_CONFIGURATION, "true");
-        getSystem(localProps);
-        Cache cache = getCache();
-        assertNotNull(cache);
-        Region region = cache.getRegion(regionName);
-        assertNotNull(region);
-        Index index = cache.getQueryService().getIndex(region, indexName);
-        assertNotNull(index);
-      }
-    });
+            Properties localProps = new Properties();
+            localProps.setProperty(MCAST_PORT, "0");
+            localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
+            localProps.setProperty(GROUPS, groupName);
+            localProps.setProperty(USE_CLUSTER_CONFIGURATION, "true");
+            getSystem(localProps);
+            Cache cache = getCache();
+            assertNotNull(cache);
+            Region region = cache.getRegion(regionName);
+            assertNotNull(region);
+            Index index = cache.getQueryService().getIndex(region, indexName);
+            assertNotNull(index);
+          }
+        });
 
     // Test destroying the index
     commandStringBuilder = new CommandStringBuilder(CliStrings.DESTROY_INDEX);
@@ -702,41 +712,46 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     assertEquals(Result.Status.OK, cmdResult.getStatus());
 
     // Make sure the index was removed from the shared config
-    Host.getHost(0).getVM(3).invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        SharedConfiguration sharedConfig = ((InternalLocator) Locator.getLocator()).getSharedConfiguration();
-        String xmlFromConfig;
-        try {
-          xmlFromConfig = sharedConfig.getConfiguration(groupName).getCacheXmlContent();
-          assertFalse(xmlFromConfig.contains(indexName));
-        } catch (Exception e) {
-          Assert.fail("Error occurred in cluster configuration service", e);
-        }
-      }
-    });
+    Host.getHost(0)
+        .getVM(3)
+        .invoke(
+            new SerializableRunnable() {
+              @Override
+              public void run() {
+                SharedConfiguration sharedConfig =
+                    ((InternalLocator) Locator.getLocator()).getSharedConfiguration();
+                String xmlFromConfig;
+                try {
+                  xmlFromConfig = sharedConfig.getConfiguration(groupName).getCacheXmlContent();
+                  assertFalse(xmlFromConfig.contains(indexName));
+                } catch (Exception e) {
+                  Assert.fail("Error occurred in cluster configuration service", e);
+                }
+              }
+            });
 
     //Restart the data member cache to make sure that the index is destroyed.
     vm = Host.getHost(0).getVM(1);
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        getCache().close();
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            getCache().close();
 
-        Properties localProps = new Properties();
-        localProps.setProperty(MCAST_PORT, "0");
-        localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
-        localProps.setProperty(GROUPS, groupName);
-        localProps.setProperty(USE_CLUSTER_CONFIGURATION, "true");
-        getSystem(localProps);
-        Cache cache = getCache();
-        assertNotNull(cache);
-        Region region = cache.getRegion(regionName);
-        assertNotNull(region);
-        Index index = cache.getQueryService().getIndex(region, indexName);
-        assertNull(index);
-      }
-    });
+            Properties localProps = new Properties();
+            localProps.setProperty(MCAST_PORT, "0");
+            localProps.setProperty(LOCATORS, "localhost[" + locatorPort + "]");
+            localProps.setProperty(GROUPS, groupName);
+            localProps.setProperty(USE_CLUSTER_CONFIGURATION, "true");
+            getSystem(localProps);
+            Cache cache = getCache();
+            assertNotNull(cache);
+            Region region = cache.getRegion(regionName);
+            assertNotNull(region);
+            Index index = cache.getQueryService().getIndex(region, indexName);
+            assertNull(index);
+          }
+        });
   }
 
   private void writeToLog(String text, String resultAsString) {
@@ -752,26 +767,28 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     final VM manager = Host.getHost(0).getVM(0);
     final VM vm1 = Host.getHost(0).getVM(1);
 
-    manager.invoke(new SerializableCallable() {
-      public Object call() {
-        Region parReg = createParReg(parRegName, getCache(), String.class, Stock.class);
-        parReg.put("VMW", new Stock("VMW", 98));
-        return parReg.put("APPL", new Stock("APPL", 600));
-      }
-    });
+    manager.invoke(
+        new SerializableCallable() {
+          public Object call() {
+            Region parReg = createParReg(parRegName, getCache(), String.class, Stock.class);
+            parReg.put("VMW", new Stock("VMW", 98));
+            return parReg.put("APPL", new Stock("APPL", 600));
+          }
+        });
 
-    vm1.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Properties props = new Properties();
-        props.setProperty(NAME, VM1Name);
-        props.setProperty(GROUPS, group1);
-        getSystem(props);
-        Region parReg = createParReg(parRegName, getCache(), String.class, Stock.class);
-        parReg.put("MSFT", new Stock("MSFT", 27));
-        return parReg.put("GOOG", new Stock("GOOG", 540));
-      }
-    });
+    vm1.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Properties props = new Properties();
+            props.setProperty(NAME, VM1Name);
+            props.setProperty(GROUPS, group1);
+            getSystem(props);
+            Region parReg = createParReg(parRegName, getCache(), String.class, Stock.class);
+            parReg.put("MSFT", new Stock("MSFT", 27));
+            return parReg.put("GOOG", new Stock("GOOG", 540));
+          }
+        });
   }
 
   private void setupSystemPersist() {
@@ -782,29 +799,39 @@ public class IndexCommandsDUnitTest extends CliCommandTestBase {
     final VM manager = Host.getHost(0).getVM(0);
     final VM vm1 = Host.getHost(0).getVM(1);
 
-    manager.invoke(new SerializableCallable() {
-      public Object call() {
-        Region parReg = createParReg(parRegName, getCache(), String.class, Stock.class);
-        parReg.put("VMW", new Stock("VMW", 98));
-        Region parRegPers = createParRegWithPersistence(parRegPersName, "testCreateIndexDiskstore1", "testCreateIndexDiskDir1");
-        Region repRegPers = createRepRegWithPersistence(repRegPersName, "testCreateIndexDiskstore1", "testCreateIndexDiskDir1");
-        return parReg.put("APPL", new Stock("APPL", 600));
-      }
-    });
+    manager.invoke(
+        new SerializableCallable() {
+          public Object call() {
+            Region parReg = createParReg(parRegName, getCache(), String.class, Stock.class);
+            parReg.put("VMW", new Stock("VMW", 98));
+            Region parRegPers =
+                createParRegWithPersistence(
+                    parRegPersName, "testCreateIndexDiskstore1", "testCreateIndexDiskDir1");
+            Region repRegPers =
+                createRepRegWithPersistence(
+                    repRegPersName, "testCreateIndexDiskstore1", "testCreateIndexDiskDir1");
+            return parReg.put("APPL", new Stock("APPL", 600));
+          }
+        });
 
-    vm1.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Properties props = new Properties();
-        props.setProperty(NAME, VM1Name);
-        props.setProperty(GROUPS, group1);
-        getSystem(props);
-        Region parReg = createParReg(parRegName, getCache(), String.class, Stock.class);
-        parReg.put("MSFT", new Stock("MSFT", 27));
-        Region parRegPers = createParRegWithPersistence(parRegPersName, "testCreateIndexDiskstore2", "testCreateIndexDiskDir2");
-        Region repRegPers = createRepRegWithPersistence(repRegPersName, "testCreateIndexDiskstore2", "testCreateIndexDiskDir2");
-        return parReg.put("GOOG", new Stock("GOOG", 540));
-      }
-    });
+    vm1.invoke(
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            Properties props = new Properties();
+            props.setProperty(NAME, VM1Name);
+            props.setProperty(GROUPS, group1);
+            getSystem(props);
+            Region parReg = createParReg(parRegName, getCache(), String.class, Stock.class);
+            parReg.put("MSFT", new Stock("MSFT", 27));
+            Region parRegPers =
+                createParRegWithPersistence(
+                    parRegPersName, "testCreateIndexDiskstore2", "testCreateIndexDiskDir2");
+            Region repRegPers =
+                createRepRegWithPersistence(
+                    repRegPersName, "testCreateIndexDiskstore2", "testCreateIndexDiskDir2");
+            return parReg.put("GOOG", new Stock("GOOG", 540));
+          }
+        });
   }
 }

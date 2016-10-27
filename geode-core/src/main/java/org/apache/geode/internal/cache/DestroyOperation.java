@@ -36,11 +36,7 @@ import org.apache.geode.internal.cache.versions.ConcurrentCacheModificationExcep
 import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.offheap.annotations.Retained;
 
-/**
- * Handles distribution messaging for destroying an entry in a region.
- * 
- *  
- */
+/** Handles distribution messaging for destroying an entry in a region. */
 public class DestroyOperation extends DistributedCacheOperation {
   /** Creates a new instance of DestroyOperation */
   public DestroyOperation(EntryEventImpl event) {
@@ -76,22 +72,22 @@ public class DestroyOperation extends DistributedCacheOperation {
 
     private Long tailKey = 0L;
 
-    public DestroyMessage() {
-    }
+    public DestroyMessage() {}
 
     public DestroyMessage(InternalCacheEvent event) {
       this.event = (EntryEventImpl) event;
     }
 
     @Override
-    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException {
+    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm)
+        throws EntryNotFoundException {
       EntryEventImpl ev = (EntryEventImpl) event;
       DistributedRegion rgn = (DistributedRegion) ev.region;
 
       try {
         if (!rgn.isCacheContentProxy()) {
           rgn.basicDestroy(ev, false, null); // expectedOldValue not supported on
-                                             // non- partitioned regions
+          // non- partitioned regions
         }
         this.appliedOperation = true;
 
@@ -106,16 +102,22 @@ public class DestroyOperation extends DistributedCacheOperation {
         }
         throw e;
       } catch (CacheWriterException e) {
-        throw new Error(LocalizedStrings.DestroyOperation_CACHEWRITER_SHOULD_NOT_BE_CALLED.toLocalizedString(), e);
+        throw new Error(
+            LocalizedStrings.DestroyOperation_CACHEWRITER_SHOULD_NOT_BE_CALLED.toLocalizedString(),
+            e);
       } catch (TimeoutException e) {
-        throw new Error(LocalizedStrings.DestroyOperation_DISTRIBUTEDLOCK_SHOULD_NOT_BE_ACQUIRED.toLocalizedString(), e);
+        throw new Error(
+            LocalizedStrings.DestroyOperation_DISTRIBUTEDLOCK_SHOULD_NOT_BE_ACQUIRED
+                .toLocalizedString(),
+            e);
       }
       return true;
     }
 
     @Override
     @Retained
-    protected final InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException {
+    protected final InternalCacheEvent createEvent(DistributedRegion rgn)
+        throws EntryNotFoundException {
       EntryEventImpl ev = createEntryEvent(rgn);
       boolean evReturned = false;
       try {
@@ -139,7 +141,9 @@ public class DestroyOperation extends DistributedCacheOperation {
     @Retained
     EntryEventImpl createEntryEvent(DistributedRegion rgn) {
       @Retained
-      EntryEventImpl event = EntryEventImpl.create(rgn, getOperation(), this.key, null, this.callbackArg, true, getSender());
+      EntryEventImpl event =
+          EntryEventImpl.create(
+              rgn, getOperation(), this.key, null, this.callbackArg, true, getSender());
       //      event.setNewEventId(); Don't set the event here...
       setOldValueInEvent(event);
       event.setTailKey(this.tailKey);
@@ -197,7 +201,14 @@ public class DestroyOperation extends DistributedCacheOperation {
 
     @Override
     public List getOperations() {
-      return Collections.singletonList(new QueuedOperation(getOperation(), this.key, null, null, DistributedCacheOperation.DESERIALIZATION_POLICY_NONE, this.callbackArg));
+      return Collections.singletonList(
+          new QueuedOperation(
+              getOperation(),
+              this.key,
+              null,
+              null,
+              DistributedCacheOperation.DESERIALIZATION_POLICY_NONE,
+              this.callbackArg));
     }
 
     @Override
@@ -222,8 +233,7 @@ public class DestroyOperation extends DistributedCacheOperation {
   public static final class DestroyWithContextMessage extends DestroyMessage {
     transient ClientProxyMembershipID context;
 
-    public DestroyWithContextMessage() {
-    }
+    public DestroyWithContextMessage() {}
 
     public DestroyWithContextMessage(InternalCacheEvent event) {
       super(event);
@@ -232,9 +242,16 @@ public class DestroyOperation extends DistributedCacheOperation {
     @Override
     @Retained
     EntryEventImpl createEntryEvent(DistributedRegion rgn) {
-      EntryEventImpl event = EntryEventImpl.create(rgn, getOperation(), this.key, null, /* newvalue */
-          this.callbackArg, true /* originRemote */, getSender(), true/* generateCallbacks */
-      );
+      EntryEventImpl event =
+          EntryEventImpl.create(
+              rgn,
+              getOperation(),
+              this.key,
+              null, /* newvalue */
+              this.callbackArg,
+              true /* originRemote */,
+              getSender(),
+              true /* generateCallbacks */);
       event.setContext(this.context);
       return event;
     }
@@ -262,7 +279,5 @@ public class DestroyOperation extends DistributedCacheOperation {
       super.toData(out);
       DataSerializer.writeObject(this.context, out);
     }
-
   }
-
 }

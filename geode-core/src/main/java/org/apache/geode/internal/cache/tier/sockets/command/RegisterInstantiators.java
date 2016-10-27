@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import java.io.IOException;
@@ -41,19 +39,23 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 public class RegisterInstantiators extends BaseCommand {
 
-  private final static RegisterInstantiators singleton = new RegisterInstantiators();
+  private static final RegisterInstantiators singleton = new RegisterInstantiators();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private RegisterInstantiators() {
-  }
+  private RegisterInstantiators() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException {
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received register instantiator request ({} parts) from {}", servConn.getName(), msg.getNumberOfParts(), servConn.getSocketString());
+      logger.debug(
+          "{}: Received register instantiator request ({} parts) from {}",
+          servConn.getName(),
+          msg.getNumberOfParts(),
+          servConn.getSocketString());
     }
     int noOfParts = msg.getNumberOfParts();
     // Assert parts
@@ -75,11 +77,13 @@ public class RegisterInstantiators extends BaseCommand {
 
         Part instantiatorPart = msg.getPart(i);
         serializedInstantiators[i] = instantiatorPart.getSerializedForm();
-        String instantiatorClassName = (String) CacheServerHelper.deserialize(serializedInstantiators[i]);
+        String instantiatorClassName =
+            (String) CacheServerHelper.deserialize(serializedInstantiators[i]);
 
         Part instantiatedPart = msg.getPart(i + 1);
         serializedInstantiators[i + 1] = instantiatedPart.getSerializedForm();
-        String instantiatedClassName = (String) CacheServerHelper.deserialize(serializedInstantiators[i + 1]);
+        String instantiatedClassName =
+            (String) CacheServerHelper.deserialize(serializedInstantiators[i + 1]);
 
         Part idPart = msg.getPart(i + 2);
         serializedInstantiators[i + 2] = idPart.getSerializedForm();
@@ -89,7 +93,8 @@ public class RegisterInstantiators extends BaseCommand {
         try {
           instantiatorClass = InternalDataSerializer.getCachedClass(instantiatorClassName);
           instantiatedClass = InternalDataSerializer.getCachedClass(instantiatedClassName);
-          InternalInstantiator.register(instantiatorClass, instantiatedClass, id, true, eventId, servConn.getProxyID());
+          InternalInstantiator.register(
+              instantiatorClass, instantiatedClass, id, true, eventId, servConn.getProxyID());
         } catch (ClassNotFoundException e) {
           // If a ClassNotFoundException is caught, store it, but continue
           // processing other instantiators
@@ -98,7 +103,10 @@ public class RegisterInstantiators extends BaseCommand {
         }
       }
     } catch (Exception e) {
-      logger.warn(LocalizedMessage.create(LocalizedStrings.RegisterInstantiators_BAD_CLIENT, new Object[] { servConn.getMembershipID(), e.getLocalizedMessage() }));
+      logger.warn(
+          LocalizedMessage.create(
+              LocalizedStrings.RegisterInstantiators_BAD_CLIENT,
+              new Object[] {servConn.getMembershipID(), e.getLocalizedMessage()}));
       writeException(msg, e, false, servConn);
       servConn.setAsTrue(RESPONDED);
     }
@@ -114,11 +122,15 @@ public class RegisterInstantiators extends BaseCommand {
       //due to a missing class, because they were not distributed
       //in InternalInstantiator.register. Otherwise they will have
       //been distributed if successfully registered.
-      ClientInstantiatorMessage clientInstantiatorMessage = new ClientInstantiatorMessage(EnumListenerEvent.AFTER_REGISTER_INSTANTIATOR, serializedInstantiators, servConn.getProxyID(), eventId);
+      ClientInstantiatorMessage clientInstantiatorMessage =
+          new ClientInstantiatorMessage(
+              EnumListenerEvent.AFTER_REGISTER_INSTANTIATOR,
+              serializedInstantiators,
+              servConn.getProxyID(),
+              eventId);
 
       // Notify other clients
       CacheClientNotifier.routeClientMessage(clientInstantiatorMessage);
-
     }
 
     // Send reply to client if necessary. If an exception occurs in the above
@@ -131,5 +143,4 @@ public class RegisterInstantiators extends BaseCommand {
       logger.debug("Registered instantiators for MembershipId = {}", servConn.getMembershipID());
     }
   }
-
 }

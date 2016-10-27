@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.apache.geode.modules.session.internal.filter.attributes;
 
@@ -28,15 +28,11 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-/**
- * Capture the update to a particular name
- */
+/** Capture the update to a particular name */
 public class DeltaEvent implements DataSerializable {
 
   private static final Logger LOG = LoggerFactory.getLogger(DeltaEvent.class.getName());
-  /**
-   * The event is either an update (true) or a remove (false)
-   */
+  /** The event is either an update (true) or a remove (false) */
   private boolean update;
 
   private String name;
@@ -45,18 +41,14 @@ public class DeltaEvent implements DataSerializable {
 
   private GemfireHttpSession session = null;
 
-  /**
-   * Constructor for de-serialization only
-   */
-  public DeltaEvent() {
-  }
+  /** Constructor for de-serialization only */
+  public DeltaEvent() {}
 
   /**
-   * Constructor which creates a 'deferred' event. This is used when the value
-   * should only be applied when the object is serialized.
+   * Constructor which creates a 'deferred' event. This is used when the value should only be
+   * applied when the object is serialized.
    *
-   * @param session   the session from which the value ultimately will be
-   *                  retrieved
+   * @param session the session from which the value ultimately will be retrieved
    * @param attribute the name of the attribute
    */
   public DeltaEvent(GemfireHttpSession session, String attribute) {
@@ -74,12 +66,20 @@ public class DeltaEvent implements DataSerializable {
 
   private void blobifyValue() {
     if (value instanceof byte[]) {
-      LOG.warn("Session attribute is already a byte[] - problems may " + "occur transmitting this delta.");
+      LOG.warn(
+          "Session attribute is already a byte[] - problems may "
+              + "occur transmitting this delta.");
     }
     try {
       value = BlobHelper.serializeToBlob(value);
     } catch (IOException iox) {
-      LOG.error("Attribute '" + name + "' value: " + value + " cannot be serialized due to the following exception", iox);
+      LOG.error(
+          "Attribute '"
+              + name
+              + "' value: "
+              + value
+              + " cannot be serialized due to the following exception",
+          iox);
     }
   }
 

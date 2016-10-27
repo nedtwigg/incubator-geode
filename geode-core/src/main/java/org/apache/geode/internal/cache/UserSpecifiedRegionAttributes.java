@@ -26,17 +26,17 @@ import org.apache.geode.internal.Assert;
 
 /**
  * UserSpecifiedRegionAttributes provides an way to detect departures from default attribute values.
- * It may be used when collecting attributes from an XML parser or from attribute changes made using the
- * {@link org.apache.geode.cache.AttributesFactory}.  Its initial usage was to validate
- * when a user set a value which should not be set (for PartitionedRegions).
- * 
- * @since GemFire 5.1
+ * It may be used when collecting attributes from an XML parser or from attribute changes made using
+ * the {@link org.apache.geode.cache.AttributesFactory}. Its initial usage was to validate when a
+ * user set a value which should not be set (for PartitionedRegions).
  *
+ * @since GemFire 5.1
  */
 public abstract class UserSpecifiedRegionAttributes<K, V> implements RegionAttributes<K, V> {
 
   /** The attributes' cache listener */
   private boolean hasCacheListeners = false;
+
   private boolean hasGatewaySenderId = false;
   private boolean hasAsyncEventListeners = false;
   private boolean hasCacheLoader = false;
@@ -74,6 +74,7 @@ public abstract class UserSpecifiedRegionAttributes<K, V> implements RegionAttri
    * @since GemFire prPersistSprint2
    */
   private boolean hasDiskStoreName = false;
+
   private boolean hasDiskSynchronous = false;
 
   /**
@@ -81,7 +82,6 @@ public abstract class UserSpecifiedRegionAttributes<K, V> implements RegionAttri
    *
    * @since GemFire 4.2.3
    */
-
   private boolean hasPublisher = false;
   /**
    * Whether this region has enable bridge conflation explicitly set
@@ -113,14 +113,14 @@ public abstract class UserSpecifiedRegionAttributes<K, V> implements RegionAttri
 
   /**
    * Whether this region has entry value compression.
-   * 
+   *
    * @since GemFire 8.0
    */
   private boolean hasCompressor = false;
 
   /**
    * Whether this region has enable off-heap memory set.
-   * 
+   *
    * @since Geode 1.0
    */
   private boolean hasOffHeap = false;
@@ -438,14 +438,14 @@ public abstract class UserSpecifiedRegionAttributes<K, V> implements RegionAttri
   }
 
   /**
-   * If set to true then an exception will be thrown at creation
-   * time if hasPoolName is not true.
+   * If set to true then an exception will be thrown at creation time if hasPoolName is not true.
+   *
    * @since GemFire 6.5
    */
   public boolean requiresPoolName = false;
   /**
    * Holds index information. Hoisted up to this class in 7.0
-   * 
+   *
    * @since GemFire 6.5
    */
   private List indexes;
@@ -471,7 +471,8 @@ public abstract class UserSpecifiedRegionAttributes<K, V> implements RegionAttri
         try {
           thisFields[i].setBoolean(this, b);
         } catch (IllegalAccessException ouch) {
-          Assert.assertTrue(false, "Could not access field" + thisFields[i].getName() + " on " + getClass());
+          Assert.assertTrue(
+              false, "Could not access field" + thisFields[i].getName() + " on " + getClass());
         }
       }
     }
@@ -534,14 +535,15 @@ public abstract class UserSpecifiedRegionAttributes<K, V> implements RegionAttri
         boolean bval = false;
 
         try {
-          Method otherMeth = other.getClass().getMethod(fieldName/*, (Class[])null*/);
+          Method otherMeth = other.getClass().getMethod(fieldName /*, (Class[])null*/);
           bval = ((Boolean) otherMeth.invoke(other, emptyArgs)).booleanValue();
         } catch (NoSuchMethodException darnit) {
           Assert.assertTrue(false, "A has* method accessor is required for field " + fieldName);
         } catch (IllegalAccessException boom) {
           Assert.assertTrue(false, "Could not access method " + fieldName + " on " + getClass());
         } catch (IllegalArgumentException e) {
-          Assert.assertTrue(false, "Illegal argument trying to set field " + e.getLocalizedMessage());
+          Assert.assertTrue(
+              false, "Illegal argument trying to set field " + e.getLocalizedMessage());
         } catch (InvocationTargetException e) {
           Assert.assertTrue(false, "Failed trying to invoke method " + e.getLocalizedMessage());
         }
@@ -553,7 +555,9 @@ public abstract class UserSpecifiedRegionAttributes<K, V> implements RegionAttri
         }
       }
     }
-    Assert.assertTrue(hasCounter == HAS_COUNT, "Expected " + HAS_COUNT + " methods, got " + hasCounter + " last field: " + fieldName);
+    Assert.assertTrue(
+        hasCounter == HAS_COUNT,
+        "Expected " + HAS_COUNT + " methods, got " + hasCounter + " last field: " + fieldName);
 
     //    this.hasCacheListeners = other.hasCacheListeners();
     //    this.hasCacheLoader = other.hasCacheLoader();

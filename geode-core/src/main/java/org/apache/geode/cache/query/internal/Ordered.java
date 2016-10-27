@@ -19,10 +19,10 @@ package org.apache.geode.cache.query.internal;
 import java.util.Comparator;
 
 /**
+ * This interface is to be implemented by all the query SelectResults implementation which have
+ * ordered data. This encompasses those classes which have data stored in a List, LinkedMap,
+ * LinkedSet, TreeMap , TreeSet etc.
  *
- * This interface is to be implemented by all the query SelectResults implementation which have ordered
- * data. This encompasses those classes which have data stored in a List, LinkedMap, LinkedSet, TreeMap
- * , TreeSet etc.
  * @see NWayMergeResults
  * @see SortedResultsBag
  * @see SortedStructBag
@@ -30,7 +30,6 @@ import java.util.Comparator;
  * @see SortedResultSet
  * @see LinkedResultSet
  * @see LinkedStructSet
- *
  */
 public interface Ordered {
   Comparator comparator();

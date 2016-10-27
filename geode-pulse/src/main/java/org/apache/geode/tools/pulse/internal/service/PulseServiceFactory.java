@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Class PulseServiceFactory
- * 
+ *
  * @since GemFire version 7.5
  */
 @Component
@@ -46,7 +46,8 @@ public class PulseServiceFactory implements ApplicationContextAware {
   }
 
   @Override
-  public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+  public void setApplicationContext(final ApplicationContext applicationContext)
+      throws BeansException {
 
     this.applicationContext = applicationContext;
   }

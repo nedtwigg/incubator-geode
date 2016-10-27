@@ -31,8 +31,7 @@ import java.net.UnknownHostException;
 @SuppressWarnings("unused")
 public class RestApiPathProvider implements SwaggerPathProvider {
 
-  @Autowired
-  private ServletContext servletContext;
+  @Autowired private ServletContext servletContext;
 
   private final String docsLocation;
 
@@ -44,7 +43,8 @@ public class RestApiPathProvider implements SwaggerPathProvider {
     DistributionConfig config = InternalDistributedSystem.getAnyInstance().getConfig();
     String scheme = config.getHttpServiceSSLEnabled() ? "https" : "http";
 
-    this.docsLocation = scheme + "://" + getBindAddressForHttpService() + ":" + config.getHttpServicePort();
+    this.docsLocation =
+        scheme + "://" + getBindAddressForHttpService() + ":" + config.getHttpServicePort();
   }
 
   private String getBindAddressForHttpService() {
@@ -75,12 +75,18 @@ public class RestApiPathProvider implements SwaggerPathProvider {
 
   @Override
   public String getAppBasePath() {
-    return UriComponentsBuilder.fromHttpUrl(docsLocation).path(servletContext.getContextPath()).build().toString();
+    return UriComponentsBuilder.fromHttpUrl(docsLocation)
+        .path(servletContext.getContextPath())
+        .build()
+        .toString();
   }
 
   @Override
   public String getSwaggerDocumentationBasePath() {
-    return UriComponentsBuilder.fromHttpUrl(getAppBasePath()).pathSegment("api-docs/").build().toString();
+    return UriComponentsBuilder.fromHttpUrl(getAppBasePath())
+        .pathSegment("api-docs/")
+        .build()
+        .toString();
   }
 
   @Override
@@ -91,5 +97,4 @@ public class RestApiPathProvider implements SwaggerPathProvider {
   public void setDefaultPathProvider(final SwaggerPathProvider defaultSwaggerPathProvider) {
     this.defaultPathProvider = defaultSwaggerPathProvider;
   }
-
 }

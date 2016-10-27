@@ -31,20 +31,17 @@ import org.apache.geode.internal.InternalDataSerializer;
 import org.apache.geode.internal.Version;
 
 /**
- * Implementation of SelectResults that wraps an existing java.util.Collection
- * and optionally adds a specified element type. Considered ordered if the base
- * collection is a List; duplicates allowed unless base collection is a Set.
- * Defaults to modifiable unless set otherwise.
- * 
+ * Implementation of SelectResults that wraps an existing java.util.Collection and optionally adds a
+ * specified element type. Considered ordered if the base collection is a List; duplicates allowed
+ * unless base collection is a Set. Defaults to modifiable unless set otherwise.
+ *
  * @since GemFire 4.0
  */
 public final class ResultsCollectionWrapper implements SelectResults, DataSerializableFixedID {
 
   private Collection base;
   private CollectionType collectionType;
-  /**
-   * Holds value of property modifiable.
-   */
+  /** Holds value of property modifiable. */
   private boolean modifiable = true;
 
   final Object limitLock = new Object();
@@ -100,17 +97,22 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
 
   private void validateConstraint(ObjectType constraint) {
     if (constraint == null)
-      throw new IllegalArgumentException(LocalizedStrings.ResultsCollectionWrapper_CONSTRAINT_CANNOT_BE_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.ResultsCollectionWrapper_CONSTRAINT_CANNOT_BE_NULL.toLocalizedString());
     // must be public
     if (!Modifier.isPublic(constraint.resolveClass().getModifiers()))
-      throw new IllegalArgumentException(LocalizedStrings.ResultsCollectionWrapper_CONSTRAINT_CLASS_MUST_BE_PUBLIC.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.ResultsCollectionWrapper_CONSTRAINT_CLASS_MUST_BE_PUBLIC
+              .toLocalizedString());
   }
 
   // @todo should we bother taking the performance hit to check the constraint?
   private void checkConstraint(Object obj) {
     ObjectType elementType = this.collectionType.getElementType();
     if (!elementType.resolveClass().isInstance(obj)) {
-      throw new InternalGemFireError(LocalizedStrings.ResultsCollectionWrapper_CONSTRAINT_VIOLATION_0_IS_NOT_A_1.toLocalizedString(new Object[] { obj.getClass().getName(), elementType }));
+      throw new InternalGemFireError(
+          LocalizedStrings.ResultsCollectionWrapper_CONSTRAINT_VIOLATION_0_IS_NOT_A_1
+              .toLocalizedString(new Object[] {obj.getClass().getName(), elementType}));
     }
   }
 
@@ -140,14 +142,16 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
   public boolean add(Object o) {
     //    checkConstraint(o);
     if (this.limitImposed) {
-      throw new UnsupportedOperationException("Addition to the SelectResults not allowed as the query result is constrained by LIMIT");
+      throw new UnsupportedOperationException(
+          "Addition to the SelectResults not allowed as the query result is constrained by LIMIT");
     }
     return this.base.add(o);
   }
 
   public boolean addAll(Collection c) {
     if (this.limitImposed) {
-      throw new UnsupportedOperationException("Addition to the SelectResults not allowed as  the query result is constrained by LIMIT");
+      throw new UnsupportedOperationException(
+          "Addition to the SelectResults not allowed as  the query result is constrained by LIMIT");
     }
     return this.base.addAll(c);
     //    boolean changed = false;
@@ -160,7 +164,7 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
 
   public int size() {
     // return this.limit == -1 ? this.base.size():this.limit;
-    //Asif: If the number of elements in Collection is more than limit, size is 
+    //Asif: If the number of elements in Collection is more than limit, size is
     // governed by limit
     if (this.hasLimitIterator) {
       synchronized (this.limitLock) {
@@ -187,7 +191,7 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
   }
 
   /*
-   *Asif: May throw ConcurrentModificationException 
+   *Asif: May throw ConcurrentModificationException
    */
   public boolean contains(Object obj) {
     if (this.hasLimitIterator) {
@@ -315,8 +319,7 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
         arr[idx++] = itr.next();
       }
       if (!itr.hasNext()) {
-        if (idx == len)
-          return arr;
+        if (idx == len) return arr;
         // otherwise have to trim
         return Arrays.copyOf(arr, idx, Object[].class);
       }
@@ -339,7 +342,8 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
     Class aType = a.getClass();
     // guess the array size; expect to possibly be different
     int len = c.size();
-    Object[] arr = (a.length >= len ? a : (Object[]) Array.newInstance(aType.getComponentType(), len));
+    Object[] arr =
+        (a.length >= len ? a : (Object[]) Array.newInstance(aType.getComponentType(), len));
     Iterator itr = c.iterator();
     int idx = 0;
     while (true) {
@@ -347,8 +351,7 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
         arr[idx++] = itr.next();
       }
       if (!itr.hasNext()) {
-        if (idx == len)
-          return arr;
+        if (idx == len) return arr;
         if (arr == a) {
           // orig array -> null terminate
           a[idx] = null;
@@ -455,7 +458,7 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
 
   /**
    * Getter for property modifiable.
-   * 
+   *
    * @return Value of property modifiable.
    */
   public boolean isModifiable() {
@@ -464,7 +467,7 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
 
   /**
    * Setter for property modifiable.
-   * 
+   *
    * @param modifiable New value of property modifiable.
    */
   public void setModifiable(boolean modifiable) {
@@ -483,7 +486,7 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
     }
     // expensive!!
     int count = 0;
-    for (Iterator itr = this.iterator()/* this.base.iterator() */; itr.hasNext();) {
+    for (Iterator itr = this.iterator() /* this.base.iterator() */; itr.hasNext(); ) {
       Object v = itr.next();
       if (element == null ? v == null : element.equals(v)) {
         count++;
@@ -497,11 +500,9 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
   }
 
   /**
-    * Writes the state of this object as primitive data to the given
-   * <code>DataOutput</code>.
+   * Writes the state of this object as primitive data to the given <code>DataOutput</code>.
    *
-   * @throws IOException
-   *         A problem occurs while writing to <code>out</code>
+   * @throws IOException A problem occurs while writing to <code>out</code>
    */
   public void toData(DataOutput out) throws IOException {
     // special case when wrapping a ResultsBag.SetView
@@ -517,14 +518,10 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
   }
 
   /**
-   * Reads the state of this object as primitive data from the given
-   * <code>DataInput</code>. 
+   * Reads the state of this object as primitive data from the given <code>DataInput</code>.
    *
-   * @throws IOException
-   *         A problem occurs while reading from <code>in</code>
-   * @throws ClassNotFoundException
-   *         A class could not be loaded while reading from
-   *         <code>in</code> 
+   * @throws IOException A problem occurs while reading from <code>in</code>
+   * @throws ClassNotFoundException A class could not be loaded while reading from <code>in</code>
    */
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     boolean isBagSetView = in.readBoolean();
@@ -538,14 +535,12 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
   }
 
   /**
-   * Abstract the base class to Set if it implements Set
-   * (instead of using the concrete class as the type).
-   * Fix for #41249: Prevents the class ResultsBag.SetView from being
-   * serialized to an older version client.
+   * Abstract the base class to Set if it implements Set (instead of using the concrete class as the
+   * type). Fix for #41249: Prevents the class ResultsBag.SetView from being serialized to an older
+   * version client.
    *
-   * This kind of abstraction could be done in the future for
-   * Lists, etc., as well, if desired, but there is no requirement for this
-   * at this time
+   * <p>This kind of abstraction could be done in the future for Lists, etc., as well, if desired,
+   * but there is no requirement for this at this time
    */
   private Class getBaseClass() {
     if (this.base instanceof Ordered) {
@@ -559,10 +554,7 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
     }
   }
 
-  /**
-   * 
-   *
-   */
+  /** */
   class LimitIterator implements Iterator {
     private final Iterator iter;
 
@@ -591,9 +583,7 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
       }
     }
 
-    /**
-     * No thread safe
-     */
+    /** No thread safe */
     public void remove() {
       if (currPos == 0) {
         throw new IllegalStateException("next() must be called before remove()");
@@ -602,7 +592,6 @@ public final class ResultsCollectionWrapper implements SelectResults, DataSerial
           this.iter.remove();
           --ResultsCollectionWrapper.this.limit;
         }
-
       }
       // throw new UnsupportedOperationException("Removal from the SelectResults
       // not allowed as the query result is constrained by LIMIT");

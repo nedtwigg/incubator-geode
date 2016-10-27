@@ -64,5 +64,4 @@ public class ReflectionObjectSizerJUnitTest {
 
     Object reference = null;
   }
-
 }

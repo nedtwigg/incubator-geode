@@ -21,23 +21,20 @@ import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.cache.Operation;
 
 /**
- * An event that describes an operation on a cache.
- * Instances of this are delivered to a {@link SystemMemberCacheListener} when a
- * a cache is created or closed.
+ * An event that describes an operation on a cache. Instances of this are delivered to a {@link
+ * SystemMemberCacheListener} when a a cache is created or closed.
  *
  * @since GemFire 5.0
  */
-public class SystemMemberCacheEventImpl extends SystemMembershipEventImpl implements SystemMemberCacheEvent {
+public class SystemMemberCacheEventImpl extends SystemMembershipEventImpl
+    implements SystemMemberCacheEvent {
 
   /** The operation done by this event */
   private Operation op;
 
   ///////////////////////  Constructors  ///////////////////////
 
-  /**
-   * Creates a new <code>SystemMemberCacheEvent</code> for the member
-   * with the given id.
-   */
+  /** Creates a new <code>SystemMemberCacheEvent</code> for the member with the given id. */
   protected SystemMemberCacheEventImpl(DistributedMember id, Operation op) {
     super(id);
     this.op = op;
@@ -53,5 +50,4 @@ public class SystemMemberCacheEventImpl extends SystemMembershipEventImpl implem
   public String toString() {
     return super.toString() + " op=" + this.op;
   }
-
 }

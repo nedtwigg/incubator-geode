@@ -64,12 +64,17 @@ public class OffHeapStoredObjectAddressStackJUnitTest {
   @Test
   public void defaultStackLogsNothing() {
     OffHeapStoredObjectAddressStack stack = new OffHeapStoredObjectAddressStack();
-    Logger lw = mock(Logger.class, withSettings().invocationListeners(new InvocationListener() {
-      @Override
-      public void reportInvocation(MethodInvocationReport methodInvocationReport) {
-        fail("Unexpected invocation");
-      }
-    }));
+    Logger lw =
+        mock(
+            Logger.class,
+            withSettings()
+                .invocationListeners(
+                    new InvocationListener() {
+                      @Override
+                      public void reportInvocation(MethodInvocationReport methodInvocationReport) {
+                        fail("Unexpected invocation");
+                      }
+                    }));
     stack.logSizes(lw, "should not be used");
   }
 
@@ -83,10 +88,15 @@ public class OffHeapStoredObjectAddressStackJUnitTest {
   public void stackCreatedWithAddressIsNotEmpty() {
     SlabImpl slab = new SlabImpl(1024);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       OffHeapStoredObject chunk = (OffHeapStoredObject) ma.allocate(100);
 
-      OffHeapStoredObjectAddressStack stack = new OffHeapStoredObjectAddressStack(chunk.getAddress());
+      OffHeapStoredObjectAddressStack stack =
+          new OffHeapStoredObjectAddressStack(chunk.getAddress());
       assertEquals(false, stack.isEmpty());
     } finally {
       MemoryAllocatorImpl.freeOffHeapMemory();
@@ -97,7 +107,11 @@ public class OffHeapStoredObjectAddressStackJUnitTest {
   public void stackWithChunkIsNotEmpty() {
     SlabImpl slab = new SlabImpl(1024);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       OffHeapStoredObject chunk = (OffHeapStoredObject) ma.allocate(100);
 
       OffHeapStoredObjectAddressStack stack = new OffHeapStoredObjectAddressStack();
@@ -112,7 +126,11 @@ public class OffHeapStoredObjectAddressStackJUnitTest {
   public void stackWithChunkTopEqualsAddress() {
     SlabImpl slab = new SlabImpl(1024);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       OffHeapStoredObject chunk = (OffHeapStoredObject) ma.allocate(100);
 
       long addr = chunk.getAddress();
@@ -138,7 +156,11 @@ public class OffHeapStoredObjectAddressStackJUnitTest {
   public void stackWithChunkClearReturnsAddressAndEmptiesStack() {
     SlabImpl slab = new SlabImpl(1024);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       OffHeapStoredObject chunk = (OffHeapStoredObject) ma.allocate(100);
 
       long addr = chunk.getAddress();
@@ -156,7 +178,11 @@ public class OffHeapStoredObjectAddressStackJUnitTest {
   public void stackWithChunkPollReturnsAddressAndEmptiesStack() {
     SlabImpl slab = new SlabImpl(1024);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       OffHeapStoredObject chunk = (OffHeapStoredObject) ma.allocate(100);
 
       long addr = chunk.getAddress();
@@ -174,7 +200,11 @@ public class OffHeapStoredObjectAddressStackJUnitTest {
   public void stackWithChunkTotalSizeIsChunkSize() {
     SlabImpl slab = new SlabImpl(1024);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       OffHeapStoredObject chunk = (OffHeapStoredObject) ma.allocate(100);
       int chunkSize = chunk.getSize();
 
@@ -191,7 +221,11 @@ public class OffHeapStoredObjectAddressStackJUnitTest {
   public void stackWithChunkLogShowsMsgAndSize() {
     SlabImpl slab = new SlabImpl(1024);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       OffHeapStoredObject chunk = (OffHeapStoredObject) ma.allocate(100);
       int chunkSize = chunk.getSize();
 
@@ -230,7 +264,11 @@ public class OffHeapStoredObjectAddressStackJUnitTest {
   public void stackWithChunkTotalSizeIsChunkSizeWithConcurrentMod() {
     SlabImpl slab = new SlabImpl(1024);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       OffHeapStoredObject chunk = (OffHeapStoredObject) ma.allocate(100);
       int chunkSize = chunk.getSize();
 
@@ -238,7 +276,10 @@ public class OffHeapStoredObjectAddressStackJUnitTest {
       TestableSyncChunkStack stack = new TestableSyncChunkStack(ma);
       stack.offer(addr);
       long totalSize = stack.computeTotalSize();
-      assertEquals("chunkSize=" + chunkSize + " chunk2Size=" + stack.chunk2Size, chunkSize + stack.chunk2Size, totalSize);
+      assertEquals(
+          "chunkSize=" + chunkSize + " chunk2Size=" + stack.chunk2Size,
+          chunkSize + stack.chunk2Size,
+          totalSize);
     } finally {
       MemoryAllocatorImpl.freeOffHeapMemory();
     }
@@ -248,7 +289,11 @@ public class OffHeapStoredObjectAddressStackJUnitTest {
   public void stackWithChunkLogShowsMsgAndSizeWithConcurrentMod() {
     SlabImpl slab = new SlabImpl(1024);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       OffHeapStoredObject chunk = (OffHeapStoredObject) ma.allocate(100);
       int chunkSize = chunk.getSize();
 

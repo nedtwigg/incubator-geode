@@ -23,9 +23,8 @@ import java.io.Serializable;
 import org.apache.geode.test.dunit.SerializableRunnable;
 
 /**
- * Provides remote invocation support to a {@code TestRule}. These methods
- * will invoke a SerializableRunnable in all remote DUnit JVMs including the
- * Locator JVM.
+ * Provides remote invocation support to a {@code TestRule}. These methods will invoke a
+ * SerializableRunnable in all remote DUnit JVMs including the Locator JVM.
  */
 class RemoteInvoker implements Serializable {
 

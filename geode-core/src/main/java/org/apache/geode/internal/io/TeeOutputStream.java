@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Delegates all operations to the original underlying OutputStream and a
- * mutable branch OutputStream.
- * 
+ * Delegates all operations to the original underlying OutputStream and a mutable branch
+ * OutputStream.
+ *
  * @since GemFire 7.0
  */
 public class TeeOutputStream extends FilterOutputStream {

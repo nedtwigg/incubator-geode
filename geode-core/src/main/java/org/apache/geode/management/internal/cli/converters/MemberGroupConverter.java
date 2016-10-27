@@ -28,10 +28,7 @@ import org.springframework.shell.core.Completion;
 import org.springframework.shell.core.Converter;
 import org.springframework.shell.core.MethodTarget;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class MemberGroupConverter implements Converter<String> {
 
   @Override
@@ -47,7 +44,12 @@ public class MemberGroupConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
     //    System.out.println("MemberGroupConverter.getAllPossibleValues("+existingData+","+targetType+","+optionContext+")");
     if (String.class.equals(targetType) && ConverterHint.MEMBERGROUP.equals(optionContext)) {
       String[] memberGroupNames = getMemberGroupNames();
@@ -64,7 +66,8 @@ public class MemberGroupConverter implements Converter<String> {
     final Set<String> memberGroups = new TreeSet<String>();
 
     if (gfsh != null && gfsh.isConnectedAndReady()) {
-      final String[] memberGroupsArray = gfsh.getOperationInvoker().getDistributedSystemMXBean().listGroups();
+      final String[] memberGroupsArray =
+          gfsh.getOperationInvoker().getDistributedSystemMXBean().listGroups();
       memberGroups.addAll(Arrays.asList(memberGroupsArray));
     }
 
@@ -75,5 +78,4 @@ public class MemberGroupConverter implements Converter<String> {
     final Set<String> memberGroups = getMemberGroups();
     return memberGroups.toArray(new String[memberGroups.size()]);
   }
-
 }

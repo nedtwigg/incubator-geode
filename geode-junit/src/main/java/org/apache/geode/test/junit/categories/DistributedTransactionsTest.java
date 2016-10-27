@@ -16,10 +16,5 @@
  */
 package org.apache.geode.test.junit.categories;
 
-/**
- * JUnit Test Category that specifies tests for distributed transactions
- * functionality
- */
-public interface DistributedTransactionsTest {
-
-}
+/** JUnit Test Category that specifies tests for distributed transactions functionality */
+public interface DistributedTransactionsTest {}

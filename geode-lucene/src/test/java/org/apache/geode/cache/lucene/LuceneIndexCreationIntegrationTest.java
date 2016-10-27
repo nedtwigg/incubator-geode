@@ -71,23 +71,23 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
 /**
- * Tests of creating lucene indexes on regions. All tests of index creation
- * use cases should be in classes starting with LuceneIndexCreation*. Most
- * tests belong in this class, except for:
+ * Tests of creating lucene indexes on regions. All tests of index creation use cases should be in
+ * classes starting with LuceneIndexCreation*. Most tests belong in this class, except for:
+ *
  * <ul>
- * <li> Tests that use persistence are in {@link LuceneIndexCreationPersistenceIntegrationTest}  </li>
- * <li> Tests that use offheap are in {@link LuceneIndexCreationOffHeapIntegrationTest}  </li>
+ *   <li> Tests that use persistence are in {@link LuceneIndexCreationPersistenceIntegrationTest}
+ *   <li> Tests that use offheap are in {@link LuceneIndexCreationOffHeapIntegrationTest}
  * </ul>
  */
 @Category(IntegrationTest.class)
 @RunWith(JUnitParamsRunner.class)
 public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
 
-  @Rule
-  public ExpectedException expectedException = ExpectedException.none();
+  @Rule public ExpectedException expectedException = ExpectedException.none();
 
   @Test
-  public void shouldCreateIndexWriterWithAnalyzersWhenSettingPerFieldAnalyzers() throws BucketNotFoundException, InterruptedException {
+  public void shouldCreateIndexWriterWithAnalyzersWhenSettingPerFieldAnalyzers()
+      throws BucketNotFoundException, InterruptedException {
     Map<String, Analyzer> analyzers = new HashMap<>();
 
     final RecordingAnalyzer field1Analyzer = new RecordingAnalyzer();
@@ -105,36 +105,49 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
   }
 
   @Test
-  @Parameters({ "0", "1", "2" })
+  @Parameters({"0", "1", "2"})
   public void shouldUseRedundancyForInternalRegionsWhenUserRegionHasRedundancy(int redundancy) {
     createIndex("text");
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
     paf.setRedundantCopies(redundancy);
 
-    cache.createRegionFactory(RegionShortcut.PARTITION_REDUNDANT).setPartitionAttributes(paf.create()).create(REGION_NAME);
-    verifyInternalRegions(region -> {
-      assertEquals(redundancy, region.getAttributes().getPartitionAttributes().getRedundantCopies());
-    });
+    cache
+        .createRegionFactory(RegionShortcut.PARTITION_REDUNDANT)
+        .setPartitionAttributes(paf.create())
+        .create(REGION_NAME);
+    verifyInternalRegions(
+        region -> {
+          assertEquals(
+              redundancy, region.getAttributes().getPartitionAttributes().getRedundantCopies());
+        });
   }
 
   @Test
   public void shouldNotUseIdleTimeoutForInternalRegionsWhenUserRegionHasIdleTimeout() {
     createIndex("text");
-    cache.createRegionFactory(RegionShortcut.PARTITION).setEntryIdleTimeout(new ExpirationAttributes(5)).create(REGION_NAME);
+    cache
+        .createRegionFactory(RegionShortcut.PARTITION)
+        .setEntryIdleTimeout(new ExpirationAttributes(5))
+        .create(REGION_NAME);
 
-    verifyInternalRegions(region -> {
-      assertEquals(0, region.getAttributes().getEntryIdleTimeout().getTimeout());
-    });
+    verifyInternalRegions(
+        region -> {
+          assertEquals(0, region.getAttributes().getEntryIdleTimeout().getTimeout());
+        });
   }
 
   @Test
   public void shouldNotUseTTLForInternalRegionsWhenUserRegionHasTTL() {
     createIndex("text");
-    cache.createRegionFactory(RegionShortcut.PARTITION).setEntryTimeToLive(new ExpirationAttributes(5)).create(REGION_NAME);
+    cache
+        .createRegionFactory(RegionShortcut.PARTITION)
+        .setEntryTimeToLive(new ExpirationAttributes(5))
+        .create(REGION_NAME);
 
-    verifyInternalRegions(region -> {
-      assertEquals(0, region.getAttributes().getEntryTimeToLive().getTimeout());
-    });
+    verifyInternalRegions(
+        region -> {
+          assertEquals(0, region.getAttributes().getEntryTimeToLive().getTimeout());
+        });
   }
 
   @Test
@@ -142,19 +155,25 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
     createIndex("text");
 
     PartitionAttributesFactory partitionAttributesFactory = new PartitionAttributesFactory<>();
-    final FixedPartitionAttributes fixedAttributes = FixedPartitionAttributes.createFixedPartition("A", true, 1);
+    final FixedPartitionAttributes fixedAttributes =
+        FixedPartitionAttributes.createFixedPartition("A", true, 1);
     partitionAttributesFactory.addFixedPartitionAttributes(fixedAttributes);
-    cache.createRegionFactory(RegionShortcut.PARTITION).setPartitionAttributes(partitionAttributesFactory.create()).create(REGION_NAME);
+    cache
+        .createRegionFactory(RegionShortcut.PARTITION)
+        .setPartitionAttributes(partitionAttributesFactory.create())
+        .create(REGION_NAME);
 
-    verifyInternalRegions(region -> {
-      //Fixed partitioned regions don't allow you to specify the partitions on the colocated region
-      assertNull(region.getAttributes().getPartitionAttributes().getFixedPartitionAttributes());
-      assertTrue(((PartitionedRegion) region).isFixedPartitionedRegion());
-    });
+    verifyInternalRegions(
+        region -> {
+          //Fixed partitioned regions don't allow you to specify the partitions on the colocated region
+          assertNull(region.getAttributes().getPartitionAttributes().getFixedPartitionAttributes());
+          assertTrue(((PartitionedRegion) region).isFixedPartitionedRegion());
+        });
   }
 
   @Test
-  public void shouldCreateRawIndexIfSpecifiedItsFactory() throws BucketNotFoundException, InterruptedException {
+  public void shouldCreateRawIndexIfSpecifiedItsFactory()
+      throws BucketNotFoundException, InterruptedException {
     Map<String, Analyzer> analyzers = new HashMap<>();
 
     final RecordingAnalyzer field1Analyzer = new RecordingAnalyzer();
@@ -178,7 +197,8 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void cannotCreateLuceneIndexAfterRegionHasBeenCreated() throws IOException, ParseException {
+  public void cannotCreateLuceneIndexAfterRegionHasBeenCreated()
+      throws IOException, ParseException {
     createRegion();
     createIndex("field1", "field2", "field3");
   }
@@ -200,10 +220,13 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
     try {
       createIndex("field1", "field2", "field3");
       RegionFactory regionFactory = this.cache.createRegionFactory(RegionShortcut.PARTITION);
-      regionFactory.setEvictionAttributes(EvictionAttributes.createLIFOEntryAttributes(100, EvictionAction.LOCAL_DESTROY));
+      regionFactory.setEvictionAttributes(
+          EvictionAttributes.createLIFOEntryAttributes(100, EvictionAction.LOCAL_DESTROY));
       regionFactory.create(REGION_NAME);
     } catch (UnsupportedOperationException e) {
-      assertEquals("Lucene indexes on regions with eviction and action local destroy are not supported", e.getMessage());
+      assertEquals(
+          "Lucene indexes on regions with eviction and action local destroy are not supported",
+          e.getMessage());
       assertNull(cache.getRegion(REGION_NAME));
     }
   }
@@ -220,11 +243,23 @@ public class LuceneIndexCreationIntegrationTest extends LuceneIntegrationTest {
     LuceneServiceImpl luceneServiceImpl = (LuceneServiceImpl) luceneService;
     luceneServiceImpl.createIndex(INDEX_NAME, REGION_NAME, "field1", "field2", "field3");
     luceneServiceImpl.createIndex("index2", "region2", "field4", "field5", "field6");
-    final Collection<LuceneIndexCreationProfile> indexList = luceneServiceImpl.getAllDefinedIndexes();
+    final Collection<LuceneIndexCreationProfile> indexList =
+        luceneServiceImpl.getAllDefinedIndexes();
 
-    assertEquals(Arrays.asList(INDEX_NAME, "index2"), indexList.stream().map(LuceneIndexCreationProfile::getIndexName).sorted().collect(Collectors.toList()));
+    assertEquals(
+        Arrays.asList(INDEX_NAME, "index2"),
+        indexList
+            .stream()
+            .map(LuceneIndexCreationProfile::getIndexName)
+            .sorted()
+            .collect(Collectors.toList()));
     createRegion();
-    assertEquals(Collections.singletonList("index2"), indexList.stream().map(LuceneIndexCreationProfile::getIndexName).collect(Collectors.toList()));
+    assertEquals(
+        Collections.singletonList("index2"),
+        indexList
+            .stream()
+            .map(LuceneIndexCreationProfile::getIndexName)
+            .collect(Collectors.toList()));
   }
 
   @Test

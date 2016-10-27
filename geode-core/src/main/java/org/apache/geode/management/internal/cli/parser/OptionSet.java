@@ -22,9 +22,8 @@ import java.util.Map;
 
 /**
  * Stores the result after parsing
- * 
- * @since GemFire 7.0
  *
+ * @since GemFire 7.0
  */
 public class OptionSet {
   private Map<Option, String> optionsMap;
@@ -79,8 +78,7 @@ public class OptionSet {
   public boolean areArgumentsPresent() {
     if (!argumentsMap.isEmpty()) {
       return true;
-    } else
-      return false;
+    } else return false;
   }
 
   public boolean areOptionsPresent() {
@@ -99,17 +97,12 @@ public class OptionSet {
     this.noOfSpacesRemoved = noOfSpacesRemoved;
   }
 
-  /**
-   * @return the split
-   */
+  /** @return the split */
   public List<String> getSplit() {
     return split;
   }
 
-  /**
-   * @param split
-   *          the split to set
-   */
+  /** @param split the split to set */
   public void setSplit(List<String> split) {
     this.split = split;
   }
@@ -124,6 +117,16 @@ public class OptionSet {
 
   @Override
   public String toString() {
-    return "OptionSet [optionsMap=" + optionsMap + ", argumentsMap=" + argumentsMap + ", noOfSpacesRemoved=" + noOfSpacesRemoved + ", split=" + split + ", userInput=" + userInput + "]";
+    return "OptionSet [optionsMap="
+        + optionsMap
+        + ", argumentsMap="
+        + argumentsMap
+        + ", noOfSpacesRemoved="
+        + noOfSpacesRemoved
+        + ", split="
+        + split
+        + ", userInput="
+        + userInput
+        + "]";
   }
 }

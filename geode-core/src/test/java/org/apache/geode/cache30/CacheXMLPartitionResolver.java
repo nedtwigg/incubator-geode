@@ -39,8 +39,7 @@ public class CacheXMLPartitionResolver implements PartitionResolver, Serializabl
     return null;
   }
 
-  public void close() {
-  }
+  public void close() {}
 
   // @Override
   public boolean equals(Object obj) {

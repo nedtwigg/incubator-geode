@@ -35,18 +35,19 @@ import org.apache.geode.internal.AvailablePortHelper;
 import org.apache.geode.internal.DistributionLocator;
 import org.junit.runners.Parameterized;
 
-/**
- * @since GemFire 8.0
- */
-public abstract class AbstractLocatorLauncherIntegrationTestCase extends AbstractLauncherIntegrationTestCase {
+/** @since GemFire 8.0 */
+public abstract class AbstractLocatorLauncherIntegrationTestCase
+    extends AbstractLauncherIntegrationTestCase {
 
   @Parameterized.Parameters
   public static Collection<Object> data() {
-    return Arrays.asList(new Object[] { (IntSupplier) () -> 0, (IntSupplier) () -> AvailablePortHelper.getRandomAvailableTCPPort() });
+    return Arrays.asList(
+        new Object[] {
+          (IntSupplier) () -> 0, (IntSupplier) () -> AvailablePortHelper.getRandomAvailableTCPPort()
+        });
   }
 
-  @Parameterized.Parameter
-  public IntSupplier portSupplier;
+  @Parameterized.Parameter public IntSupplier portSupplier;
 
   protected volatile int locatorPort;
 
@@ -54,18 +55,20 @@ public abstract class AbstractLocatorLauncherIntegrationTestCase extends Abstrac
   protected volatile String workingDirectory;
   protected volatile String clusterConfigDirectory;
 
-  @Rule
-  public ErrorCollector errorCollector = new ErrorCollector();
+  @Rule public ErrorCollector errorCollector = new ErrorCollector();
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
   @Before
   public final void setUpAbstractLocatorLauncherIntegrationTestCase() throws Exception {
     this.locatorPort = portSupplier.getAsInt();
-    System.setProperty(DistributionLocator.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY, String.valueOf(this.locatorPort));
+    System.setProperty(
+        DistributionLocator.TEST_OVERRIDE_DEFAULT_PORT_PROPERTY, String.valueOf(this.locatorPort));
     this.workingDirectory = this.temporaryFolder.getRoot().getCanonicalPath();
-    this.clusterConfigDirectory = this.temporaryFolder.newFolder(SharedConfiguration.CLUSTER_CONFIG_DISK_DIR_PREFIX + getUniqueName()).getCanonicalPath();
+    this.clusterConfigDirectory =
+        this.temporaryFolder
+            .newFolder(SharedConfiguration.CLUSTER_CONFIG_DISK_DIR_PREFIX + getUniqueName())
+            .getCanonicalPath();
   }
 
   @After
@@ -77,32 +80,38 @@ public abstract class AbstractLocatorLauncherIntegrationTestCase extends Abstrac
     }
   }
 
-  /**
-   * Override if needed
-   */
+  /** Override if needed */
   protected Status getExpectedStopStatusForNotRunning() {
     return Status.NOT_RESPONDING;
   }
 
-  protected void waitForLocatorToStart(final LocatorLauncher launcher, int timeout, int interval, boolean throwOnTimeout) throws Exception {
-    assertEventuallyTrue("waiting for process to start: " + launcher.status(), new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        try {
-          final LocatorState LocatorState = launcher.status();
-          return (LocatorState != null && Status.ONLINE.equals(LocatorState.getStatus()));
-        } catch (RuntimeException e) {
-          return false;
-        }
-      }
-    }, timeout, interval);
+  protected void waitForLocatorToStart(
+      final LocatorLauncher launcher, int timeout, int interval, boolean throwOnTimeout)
+      throws Exception {
+    assertEventuallyTrue(
+        "waiting for process to start: " + launcher.status(),
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            try {
+              final LocatorState LocatorState = launcher.status();
+              return (LocatorState != null && Status.ONLINE.equals(LocatorState.getStatus()));
+            } catch (RuntimeException e) {
+              return false;
+            }
+          }
+        },
+        timeout,
+        interval);
   }
 
-  protected void waitForLocatorToStart(final LocatorLauncher launcher, int timeout, boolean throwOnTimeout) throws Exception {
+  protected void waitForLocatorToStart(
+      final LocatorLauncher launcher, int timeout, boolean throwOnTimeout) throws Exception {
     waitForLocatorToStart(launcher, timeout, INTERVAL_MILLISECONDS, throwOnTimeout);
   }
 
-  protected void waitForLocatorToStart(final LocatorLauncher launcher, boolean throwOnTimeout) throws Exception {
+  protected void waitForLocatorToStart(final LocatorLauncher launcher, boolean throwOnTimeout)
+      throws Exception {
     waitForLocatorToStart(launcher, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, throwOnTimeout);
   }
 
@@ -110,18 +119,23 @@ public abstract class AbstractLocatorLauncherIntegrationTestCase extends Abstrac
     waitForLocatorToStart(launcher, TIMEOUT_MILLISECONDS, INTERVAL_MILLISECONDS, true);
   }
 
-  protected static void waitForLocatorToStart(int port, int timeout, int interval, boolean throwOnTimeout) throws Exception {
+  protected static void waitForLocatorToStart(
+      int port, int timeout, int interval, boolean throwOnTimeout) throws Exception {
     final LocatorLauncher locatorLauncher = new Builder().setPort(port).build();
-    assertEventuallyTrue("Waiting for Locator in other process to start.", new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        try {
-          final LocatorState locatorState = locatorLauncher.status();
-          return (locatorState != null && Status.ONLINE.equals(locatorState.getStatus()));
-        } catch (RuntimeException e) {
-          return false;
-        }
-      }
-    }, timeout, interval);
+    assertEventuallyTrue(
+        "Waiting for Locator in other process to start.",
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            try {
+              final LocatorState locatorState = locatorLauncher.status();
+              return (locatorState != null && Status.ONLINE.equals(locatorState.getStatus()));
+            } catch (RuntimeException e) {
+              return false;
+            }
+          }
+        },
+        timeout,
+        interval);
   }
 }

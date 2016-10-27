@@ -31,10 +31,7 @@ import org.apache.geode.internal.cache.TXStateProxy;
 import org.apache.geode.internal.cache.TXManagerImpl;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * 
- *
- */
+/** */
 public class JCALocalTransaction implements LocalTransaction {
   private volatile GemFireCacheImpl cache;
 
@@ -135,7 +132,10 @@ public class JCALocalTransaction implements LocalTransaction {
     }
     TXStateProxy tsp = this.gfTxMgr.getTXState();
     if (tsp != null && this.tid != tsp.getTransactionId()) {
-      throw new IllegalStateException("Local Transaction associated with Tid = " + this.tid + " attempting to commit a different transaction");
+      throw new IllegalStateException(
+          "Local Transaction associated with Tid = "
+              + this.tid
+              + " attempting to commit a different transaction");
     }
     try {
       this.gfTxMgr.commit();
@@ -162,7 +162,10 @@ public class JCALocalTransaction implements LocalTransaction {
     }
     TXStateProxy tsp = this.gfTxMgr.getTXState();
     if (tsp != null && this.tid != tsp.getTransactionId()) {
-      throw new IllegalStateException("Local Transaction associated with Tid = " + this.tid + " attempting to commit a different transaction");
+      throw new IllegalStateException(
+          "Local Transaction associated with Tid = "
+              + this.tid
+              + " attempting to commit a different transaction");
     }
     LogWriter logger = cache.getLogger();
     if (logger.fineEnabled()) {
@@ -172,7 +175,10 @@ public class JCALocalTransaction implements LocalTransaction {
       this.gfTxMgr.rollback();
     } catch (IllegalStateException ise) {
       // It is possible that the GFE transaction has already been rolled back.
-      if (ise.getMessage().equals(LocalizedStrings.TXManagerImpl_THREAD_DOES_NOT_HAVE_AN_ACTIVE_TRANSACTION.toLocalizedString())) {
+      if (ise.getMessage()
+          .equals(
+              LocalizedStrings.TXManagerImpl_THREAD_DOES_NOT_HAVE_AN_ACTIVE_TRANSACTION
+                  .toLocalizedString())) {
         // /ignore;
       } else {
         throw new ResourceException(ise);
@@ -204,5 +210,4 @@ public class JCALocalTransaction implements LocalTransaction {
   boolean transactionInProgress() {
     return this.tid != null;
   }
-
 }

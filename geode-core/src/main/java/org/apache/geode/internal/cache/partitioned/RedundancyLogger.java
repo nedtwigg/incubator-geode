@@ -46,40 +46,35 @@ import org.apache.geode.internal.process.StartupStatus;
 import org.apache.geode.internal.util.TransformUtils;
 
 /**
- * Consolidates logging during the recovery of ProxyRegionBuckets that are not hosted by this member.  This logger
- * is meant to run in its own thread and utilizes the PRHARedundancyProvider's count down latch in order to determine
- * when it is finished.
- * 
+ * Consolidates logging during the recovery of ProxyRegionBuckets that are not hosted by this
+ * member. This logger is meant to run in its own thread and utilizes the PRHARedundancyProvider's
+ * count down latch in order to determine when it is finished.
  */
 public class RedundancyLogger extends RecoveryRunnable implements PersistentStateListener {
 
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * True when one or more buckets have reported a change in status.
-   */
+  /** True when one or more buckets have reported a change in status. */
   private volatile boolean membershipChanged = true;
 
-  /**
-   * Sleep period between posting log entries.
-   */
+  /** Sleep period between posting log entries. */
   private static final int SLEEP_PERIOD = 15000;
 
-  /**
-   * Used to determine when all proxy buckets have been recovered.
-   */
+  /** Used to determine when all proxy buckets have been recovered. */
   private final CountDownLatch allBucketsRecoveredFromDisk;
 
   private final List<RegionStatus> regions;
 
   /**
    * Creates a new RedundancyLogger.
+   *
    * @param prhaRedundancyProvider
    */
   public RedundancyLogger(PRHARedundancyProvider prhaRedundancyProvider) {
     super(prhaRedundancyProvider);
     PartitionedRegion baseRegion = ColocationHelper.getLeaderRegion(redundancyProvider.prRegion);
-    List<PartitionedRegion> colocatedRegions = ColocationHelper.getColocatedChildRegions(baseRegion);
+    List<PartitionedRegion> colocatedRegions =
+        ColocationHelper.getColocatedChildRegions(baseRegion);
     List<RegionStatus> allRegions = new ArrayList<RegionStatus>(colocatedRegions.size() + 1);
     if (baseRegion.getDataPolicy().withPersistence()) {
       allRegions.add(new RegionStatus(baseRegion));
@@ -97,33 +92,25 @@ public class RedundancyLogger extends RecoveryRunnable implements PersistentStat
     addListeners();
   }
 
-  /**
-   * Called when a member comes online for a bucket.
-   */
+  /** Called when a member comes online for a bucket. */
   @Override
   public void memberOnline(InternalDistributedMember member, PersistentMemberID persistentID) {
     this.membershipChanged = true;
   }
 
-  /**
-   * Called when a member goes offline for a bucket.
-   */
+  /** Called when a member goes offline for a bucket. */
   @Override
   public void memberOffline(InternalDistributedMember member, PersistentMemberID persistentID) {
     this.membershipChanged = true;
   }
 
-  /**
-   * Called when a member is removed for a bucket.
-   */
+  /** Called when a member is removed for a bucket. */
   @Override
   public void memberRemoved(PersistentMemberID persistentID, boolean revoked) {
     this.membershipChanged = true;
   }
 
-  /**
-   * Add this RedundancyLogger as a persistence listener to all the region's bucket advisors.
-   */
+  /** Add this RedundancyLogger as a persistence listener to all the region's bucket advisors. */
   private void addListeners() {
     for (RegionStatus region : regions) {
       region.addListeners();
@@ -140,8 +127,8 @@ public class RedundancyLogger extends RecoveryRunnable implements PersistentStat
   }
 
   /**
-   * Writes a consolidated log entry every SLEEP_PERIOD that summarizes which buckets are still waiting on persistent members
-   * for the region.
+   * Writes a consolidated log entry every SLEEP_PERIOD that summarizes which buckets are still
+   * waiting on persistent members for the region.
    */
   @Override
   public void run2() {
@@ -185,29 +172,20 @@ public class RedundancyLogger extends RecoveryRunnable implements PersistentStat
   }
 
   /**
-   * Keeps track of logging a message for a single partitioned region
-   * and logging a separate message when the waiting is done for the same region
-   *
+   * Keeps track of logging a message for a single partitioned region and logging a separate message
+   * when the waiting is done for the same region
    */
   private class RegionStatus {
-    /**
-     * The persistent identifier of the member running this RedundancyLogger.
-     */
+    /** The persistent identifier of the member running this RedundancyLogger. */
     private final PersistentMemberID thisMember;
 
-    /**
-     * The region that the proxy buckets belong to.
-     */
+    /** The region that the proxy buckets belong to. */
     private final String region;
 
-    /**
-     * An array of ProxyBucketRegions that comprise this partitioned region.
-     */
+    /** An array of ProxyBucketRegions that comprise this partitioned region. */
     private final ProxyBucketRegion[] bucketRegions;
 
-    /**
-     * Indicates that a completion message has been logged.
-     */
+    /** Indicates that a completion message has been logged. */
     private volatile boolean loggedDoneMessage = true;
 
     public RegionStatus(PartitionedRegion region) {
@@ -229,25 +207,27 @@ public class RedundancyLogger extends RecoveryRunnable implements PersistentStat
     }
 
     /**
-     * Creates a temporary (and somewhat fake) PersistentMemberID for this member if 
-     * there is no DiskStore available for our region (which can happen in some
-     * colocated scenarios).
+     * Creates a temporary (and somewhat fake) PersistentMemberID for this member if there is no
+     * DiskStore available for our region (which can happen in some colocated scenarios).
      */
     private PersistentMemberID createPersistentMemberID(PartitionedRegion region) {
       DiskStoreImpl diskStore = null;
 
       /*
-       * A non-persistent colocated region will not have a disk store so check the leader 
+       * A non-persistent colocated region will not have a disk store so check the leader
        * region if this region does not have one.
        */
       if (region.getAttributes().getDataPolicy().withPersistence()) {
         diskStore = region.getDiskStore();
-      } else if (ColocationHelper.getLeaderRegion(region).getAttributes().getDataPolicy().withPersistence()) {
+      } else if (ColocationHelper.getLeaderRegion(region)
+          .getAttributes()
+          .getDataPolicy()
+          .withPersistence()) {
         diskStore = ColocationHelper.getLeaderRegion(region).getDiskStore();
       }
 
       /*
-       * We have a DiskStore?  Great!  Simply have it 
+       * We have a DiskStore?  Great!  Simply have it
        * generate the id.
        */
       if (null != diskStore) {
@@ -268,18 +248,26 @@ public class RedundancyLogger extends RecoveryRunnable implements PersistentStat
           logger.error("Could not determine my own host", e);
         }
 
-        return (new PersistentMemberID(null, localHost, diskDir, name, redundancyProvider.prRegion.getCache().cacheTimeMillis(), (short) 0));
+        return (new PersistentMemberID(
+            null,
+            localHost,
+            diskDir,
+            name,
+            redundancyProvider.prRegion.getCache().cacheTimeMillis(),
+            (short) 0));
       }
     }
 
     /**
      * Returns a unique Set of persistent members that all the ProxyBucketRegions are waiting for.
-     * @param offlineOnly true if only the members which are not currently try running should be returned,
-     * false to return all members that this member is waiting for, including members which are running
-     * but not fully initialized.
+     *
+     * @param offlineOnly true if only the members which are not currently try running should be
+     *     returned, false to return all members that this member is waiting for, including members
+     *     which are running but not fully initialized.
      */
     private Map<PersistentMemberID, Set<Integer>> getMembersToWaitFor(boolean offlineOnly) {
-      Map<PersistentMemberID, Set<Integer>> waitingForMembers = new HashMap<PersistentMemberID, Set<Integer>>();
+      Map<PersistentMemberID, Set<Integer>> waitingForMembers =
+          new HashMap<PersistentMemberID, Set<Integer>>();
 
       for (ProxyBucketRegion proxyBucket : this.bucketRegions) {
         Integer bucketId = proxyBucket.getBucketId();
@@ -308,22 +296,24 @@ public class RedundancyLogger extends RecoveryRunnable implements PersistentStat
       return waitingForMembers;
     }
 
-    /**
-     * Prints a recovery completion message to the log.
-     */
+    /** Prints a recovery completion message to the log. */
     private void logDoneMessage() {
       this.loggedDoneMessage = true;
-      StartupStatus.startup(LocalizedStrings.CreatePersistentRegionProcessor_DONE_WAITING_FOR_BUCKET_MEMBERS, new Object[] { this.region, TransformUtils.persistentMemberIdToLogEntryTransformer.transform(this.thisMember) });
+      StartupStatus.startup(
+          LocalizedStrings.CreatePersistentRegionProcessor_DONE_WAITING_FOR_BUCKET_MEMBERS,
+          new Object[] {
+            this.region,
+            TransformUtils.persistentMemberIdToLogEntryTransformer.transform(this.thisMember)
+          });
     }
 
-    /**
-     * Logs a consolidated log entry for all ProxyBucketRegions waiting for persistent members.
-     */
+    /** Logs a consolidated log entry for all ProxyBucketRegions waiting for persistent members. */
     private void logWaitingForMembers() {
       Map<PersistentMemberID, Set<Integer>> offlineMembers = getMembersToWaitFor(true);
       Map<PersistentMemberID, Set<Integer>> allMembersToWaitFor = getMembersToWaitFor(false);
 
-      boolean thereAreBucketsToBeRecovered = (RedundancyLogger.this.allBucketsRecoveredFromDisk.getCount() > 0);
+      boolean thereAreBucketsToBeRecovered =
+          (RedundancyLogger.this.allBucketsRecoveredFromDisk.getCount() > 0);
 
       /*
        * Log any offline members the region is waiting for.
@@ -331,11 +321,21 @@ public class RedundancyLogger extends RecoveryRunnable implements PersistentStat
       if (thereAreBucketsToBeRecovered && !offlineMembers.isEmpty()) {
         Set<String> membersToWaitForLogEntries = new HashSet<String>();
 
-        TransformUtils.transform(offlineMembers.entrySet(), membersToWaitForLogEntries, TransformUtils.persistentMemberEntryToLogEntryTransformer);
+        TransformUtils.transform(
+            offlineMembers.entrySet(),
+            membersToWaitForLogEntries,
+            TransformUtils.persistentMemberEntryToLogEntryTransformer);
 
         Set<Integer> missingBuckets = getAllWaitingBuckets(offlineMembers);
 
-        StartupStatus.startup(LocalizedStrings.CreatePersistentRegionProcessor_WAITING_FOR_OFFLINE_BUCKET_MEMBERS, new Object[] { this.region, missingBuckets, TransformUtils.persistentMemberIdToLogEntryTransformer.transform(this.thisMember), membersToWaitForLogEntries });
+        StartupStatus.startup(
+            LocalizedStrings.CreatePersistentRegionProcessor_WAITING_FOR_OFFLINE_BUCKET_MEMBERS,
+            new Object[] {
+              this.region,
+              missingBuckets,
+              TransformUtils.persistentMemberIdToLogEntryTransformer.transform(this.thisMember),
+              membersToWaitForLogEntries
+            });
 
         this.loggedDoneMessage = false;
       }
@@ -346,24 +346,33 @@ public class RedundancyLogger extends RecoveryRunnable implements PersistentStat
         Set<String> membersToWaitForLogEntries = new HashSet<String>();
 
         Set<Integer> missingBuckets = getAllWaitingBuckets(allMembersToWaitFor);
-        TransformUtils.transform(allMembersToWaitFor.entrySet(), membersToWaitForLogEntries, TransformUtils.persistentMemberEntryToLogEntryTransformer);
+        TransformUtils.transform(
+            allMembersToWaitFor.entrySet(),
+            membersToWaitForLogEntries,
+            TransformUtils.persistentMemberEntryToLogEntryTransformer);
 
-        StartupStatus.startup(LocalizedStrings.CreatePersistentRegionProcessor_WAITING_FOR_ONLINE_BUCKET_MEMBERS, new Object[] { this.region, missingBuckets, TransformUtils.persistentMemberIdToLogEntryTransformer.transform(this.thisMember), membersToWaitForLogEntries });
+        StartupStatus.startup(
+            LocalizedStrings.CreatePersistentRegionProcessor_WAITING_FOR_ONLINE_BUCKET_MEMBERS,
+            new Object[] {
+              this.region,
+              missingBuckets,
+              TransformUtils.persistentMemberIdToLogEntryTransformer.transform(this.thisMember),
+              membersToWaitForLogEntries
+            });
 
         this.loggedDoneMessage = false;
       }
       /*
-       * No online? Then log that we are done. 
+       * No online? Then log that we are done.
        */
       else if (!this.loggedDoneMessage) {
         logDoneMessage();
       }
     }
 
-    /**
-     * Get a consolodated set of all buckets that are waiting.
-     */
-    private Set<Integer> getAllWaitingBuckets(Map<PersistentMemberID, Set<Integer>> offlineMembers) {
+    /** Get a consolodated set of all buckets that are waiting. */
+    private Set<Integer> getAllWaitingBuckets(
+        Map<PersistentMemberID, Set<Integer>> offlineMembers) {
       Set<Integer> allWaitingBuckets = new TreeSet<Integer>();
       for (Set<Integer> missingPerMember : offlineMembers.values()) {
         allWaitingBuckets.addAll(missingPerMember);

@@ -32,20 +32,20 @@ import org.apache.geode.internal.Assert;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * A message that is sent to a given collection of managers and then
- * awaits replies.  It is used by some tests to flush the serial communication
- * channels after no-ack tests.
- * 
+ * A message that is sent to a given collection of managers and then awaits replies. It is used by
+ * some tests to flush the serial communication channels after no-ack tests.
  */
-public final class SerialAckedMessage extends SerialDistributionMessage implements MessageWithReply {
+public final class SerialAckedMessage extends SerialDistributionMessage
+    implements MessageWithReply {
   private static final Logger logger = LogService.getLogger();
 
   /** The is of the distribution manager that sent the message */
   private InternalDistributedMember id;
+
   private int processorId;
 
   transient DistributionManager originDm;
-  transient private ReplyProcessor21 rp;
+  private transient ReplyProcessor21 rp;
 
   public SerialAckedMessage() {
     super();
@@ -58,6 +58,7 @@ public final class SerialAckedMessage extends SerialDistributionMessage implemen
 
   /**
    * send the message and wait for replies
+   *
    * @param recipients the destination manager ids
    * @param multicast whether to use multicast or unicast
    * @throws InterruptedException if the operation is interrupted (as by shutdown)
@@ -66,8 +67,7 @@ public final class SerialAckedMessage extends SerialDistributionMessage implemen
   public void send(Set recipients, boolean multicast) throws InterruptedException, ReplyException {
     final boolean isDebugEnabled = logger.isDebugEnabled();
 
-    if (Thread.interrupted())
-      throw new InterruptedException();
+    if (Thread.interrupted()) throw new InterruptedException();
     recipients = new HashSet(recipients);
     DistributedMember me = originDm.getDistributionManagerId();
     if (recipients.contains(me)) {
@@ -84,7 +84,7 @@ public final class SerialAckedMessage extends SerialDistributionMessage implemen
     setMulticast(multicast);
     Set failures = originDm.putOutgoing(this);
     if (failures != null && failures.size() > 0) {
-      for (Iterator i = failures.iterator(); i.hasNext();) {
+      for (Iterator i = failures.iterator(); i.hasNext(); ) {
         InternalDistributedMember mbr = (InternalDistributedMember) i.next();
         if (isDebugEnabled) {
           logger.debug("Unable to send serial acked message to {}", mbr);
@@ -96,9 +96,7 @@ public final class SerialAckedMessage extends SerialDistributionMessage implemen
     rp.waitForReplies();
   }
 
-  /**
-   * Sets the id of the distribution manager that is shutting down
-   */
+  /** Sets the id of the distribution manager that is shutting down */
   void setDistributionManagerId(InternalDistributedMember id) {
     this.id = id;
   }
@@ -115,10 +113,9 @@ public final class SerialAckedMessage extends SerialDistributionMessage implemen
   }
 
   /**
-   * Adds the distribution manager that is started up to the current
-   * DM's list of members.
+   * Adds the distribution manager that is started up to the current DM's list of members.
    *
-   * This method is invoked on the receiver side
+   * <p>This method is invoked on the receiver side
    */
   @Override
   protected void process(DistributionManager dm) {
@@ -152,5 +149,4 @@ public final class SerialAckedMessage extends SerialDistributionMessage implemen
   public String toString() {
     return "SerialAckedMessage from=" + this.id + ";processorId=" + this.processorId;
   }
-
 }

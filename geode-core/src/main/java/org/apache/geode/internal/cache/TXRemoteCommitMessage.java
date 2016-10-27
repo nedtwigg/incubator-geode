@@ -42,19 +42,16 @@ import org.apache.geode.internal.cache.RemoteOperationMessage.RemoteOperationRes
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
-/**
- * 
- *
- */
+/** */
 public class TXRemoteCommitMessage extends TXMessage {
 
   private static final Logger logger = LogService.getLogger();
 
   /** for deserialization */
-  public TXRemoteCommitMessage() {
-  }
+  public TXRemoteCommitMessage() {}
 
-  public TXRemoteCommitMessage(int txUniqId, InternalDistributedMember onBehalfOfClientMember, ReplyProcessor21 processor) {
+  public TXRemoteCommitMessage(
+      int txUniqId, InternalDistributedMember onBehalfOfClientMember, ReplyProcessor21 processor) {
     super(txUniqId, onBehalfOfClientMember, processor);
   }
 
@@ -63,8 +60,13 @@ public class TXRemoteCommitMessage extends TXMessage {
     return DistributionManager.WAITING_POOL_EXECUTOR;
   }
 
-  public static RemoteCommitResponse send(Cache cache, int txUniqId, InternalDistributedMember onBehalfOfClientMember, DistributedMember recipient) {
-    final InternalDistributedSystem system = (InternalDistributedSystem) cache.getDistributedSystem();
+  public static RemoteCommitResponse send(
+      Cache cache,
+      int txUniqId,
+      InternalDistributedMember onBehalfOfClientMember,
+      DistributedMember recipient) {
+    final InternalDistributedSystem system =
+        (InternalDistributedSystem) cache.getDistributedSystem();
     final Set<DistributedMember> recipients = Collections.singleton(recipient);
     RemoteCommitResponse p = new RemoteCommitResponse(system, recipients);
     TXMessage msg = new TXRemoteCommitMessage(txUniqId, onBehalfOfClientMember, p);
@@ -124,10 +126,9 @@ public class TXRemoteCommitMessage extends TXMessage {
   }
 
   /**
-   * This message is used for the reply to a
-   * remote commit operation: a commit from a stub to the tx host. This is the
-   * reply to a {@link TXRemoteCommitMessage}.
-   * 
+   * This message is used for the reply to a remote commit operation: a commit from a stub to the tx
+   * host. This is the reply to a {@link TXRemoteCommitMessage}.
+   *
    * @since GemFire 6.5
    */
   public static final class TXRemoteCommitReplyMessage extends ReplyMessage {
@@ -138,11 +139,8 @@ public class TXRemoteCommitMessage extends TXMessage {
      */
     public transient byte[] valueInBytes;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public TXRemoteCommitReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public TXRemoteCommitReplyMessage() {}
 
     public TXRemoteCommitReplyMessage(DataInput in) throws IOException, ClassNotFoundException {
       fromData(in);
@@ -160,15 +158,21 @@ public class TXRemoteCommitMessage extends TXMessage {
     }
 
     /**
-     * Return the value from the get operation, serialize it bytes as late as
-     * possible to avoid making un-neccesary byte[] copies.  De-serialize those 
-     * same bytes as late as possible to avoid using precious threads (aka P2P readers). 
+     * Return the value from the get operation, serialize it bytes as late as possible to avoid
+     * making un-neccesary byte[] copies. De-serialize those same bytes as late as possible to avoid
+     * using precious threads (aka P2P readers).
+     *
      * @param recipient the origin VM that performed the get
      * @param processorId the processor on which the origin thread is waiting
-     * @param val the raw value that will eventually be serialized 
+     * @param val the raw value that will eventually be serialized
      * @param replySender distribution manager used to send the reply
      */
-    public static void send(InternalDistributedMember recipient, int processorId, TXCommitMessage val, ReplySender replySender) throws RemoteOperationException {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        TXCommitMessage val,
+        ReplySender replySender)
+        throws RemoteOperationException {
       Assert.assertTrue(recipient != null, "TXRemoteCommitReply NULL reply message");
       TXRemoteCommitReplyMessage m = new TXRemoteCommitReplyMessage(processorId, val);
       m.setRecipient(recipient);
@@ -176,17 +180,18 @@ public class TXRemoteCommitMessage extends TXMessage {
     }
 
     /**
-     * Processes this message. This method is invoked by the receiver of the
-     * message.
-     * 
-     * @param dm
-     *          the distribution manager that is processing the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
+     * @param dm the distribution manager that is processing the message.
      */
     @Override
     public void process(final DM dm, ReplyProcessor21 processor) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "TXRemoteCommitReply process invoking reply processor with processorId:{}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "TXRemoteCommitReply process invoking reply processor with processorId:{}",
+            this.processorId);
       }
 
       if (processor == null) {
@@ -218,7 +223,11 @@ public class TXRemoteCommitMessage extends TXMessage {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("TXRemoteCommitReplyMessage ").append("processorid=").append(this.processorId).append(" reply to sender ").append(this.getSender());
+      sb.append("TXRemoteCommitReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" reply to sender ")
+          .append(this.getSender());
       return sb.toString();
     }
 
@@ -229,9 +238,9 @@ public class TXRemoteCommitMessage extends TXMessage {
   }
 
   /**
-   * A processor to capture the value returned by {@link 
+   * A processor to capture the value returned by {@link
    * org.apache.geode.internal.cache.TXRemoteCommitMessage.TXRemoteCommitReplyMessage}
-   * 
+   *
    * @since GemFire 6.6
    */
   public static class RemoteCommitResponse extends RemoteOperationResponse {
@@ -261,9 +270,7 @@ public class TXRemoteCommitMessage extends TXMessage {
       super.process(msg);
     }
 
-    /**
-     * @return Object associated with the key that was sent in the get message
-     */
+    /** @return Object associated with the key that was sent in the get message */
     public TXCommitMessage waitForResponse() throws RemoteOperationException {
       try {
         //        waitForRepliesUninterruptibly();
@@ -282,5 +289,4 @@ public class TXRemoteCommitMessage extends TXMessage {
       return commitMessage;
     }
   }
-
 }

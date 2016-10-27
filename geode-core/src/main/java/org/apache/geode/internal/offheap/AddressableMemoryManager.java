@@ -25,15 +25,15 @@ import org.apache.geode.internal.SharedLibrary;
 import org.apache.geode.pdx.internal.unsafe.UnsafeWrapper;
 
 /**
- * This class supports allocating and freeing large amounts of addressable memory
- * (i.e. slabs). It also supports using an "address" to operate on the memory.
- * Note that this class's implementation is currently a singleton so all the methods
- * on it are static.
+ * This class supports allocating and freeing large amounts of addressable memory (i.e. slabs). It
+ * also supports using an "address" to operate on the memory. Note that this class's implementation
+ * is currently a singleton so all the methods on it are static.
  */
 public class AddressableMemoryManager {
   private static final UnsafeWrapper unsafe;
   private static final int ARRAY_BYTE_BASE_OFFSET;
   private static final String reason;
+
   static {
     UnsafeWrapper tmp = null;
     String tmpReason = null;
@@ -61,7 +61,8 @@ public class AddressableMemoryManager {
         msg += " Cause: " + err.getMessage();
       }
       if (!SharedLibrary.is64Bit() && size >= (1024 * 1024 * 1024)) {
-        msg += " The JVM looks like a 32-bit one. For large amounts of off-heap memory a 64-bit JVM is needed.";
+        msg +=
+            " The JVM looks like a 32-bit one. For large amounts of off-heap memory a 64-bit JVM is needed.";
       }
       throw new OutOfMemoryError(msg);
     }
@@ -140,7 +141,8 @@ public class AddressableMemoryManager {
     }
 
     assert bytesOffset >= 0 : "byteOffset=" + bytesOffset;
-    assert bytesOffset + size <= bytes.length : "byteOffset=" + bytesOffset + ",size=" + size + ",bytes.length=" + bytes.length;
+    assert bytesOffset + size <= bytes.length
+        : "byteOffset=" + bytesOffset + ",size=" + size + ",bytes.length=" + bytes.length;
 
     if (size == 0) {
       return; // No point in wasting time copying 0 bytes
@@ -161,7 +163,8 @@ public class AddressableMemoryManager {
     }
 
     assert bytesOffset >= 0 : "byteOffset=" + bytesOffset;
-    assert bytesOffset + size <= bytes.length : "byteOffset=" + bytesOffset + ",size=" + size + ",bytes.length=" + bytes.length;
+    assert bytesOffset + size <= bytes.length
+        : "byteOffset=" + bytesOffset + ",size=" + size + ",bytes.length=" + bytes.length;
 
     if (size == 0) {
       return; // No point in wasting time copying 0 bytes
@@ -175,17 +178,19 @@ public class AddressableMemoryManager {
 
   @SuppressWarnings("rawtypes")
   private static volatile Class dbbClass = null;
+
   @SuppressWarnings("rawtypes")
   private static volatile Constructor dbbCtor = null;
+
   private static volatile boolean dbbCreateFailed = false;
   private static volatile Method dbbAddressMethod = null;
   private static volatile boolean dbbAddressFailed = false;
 
   /**
-   * Returns the address of the Unsafe memory for the first byte of a direct ByteBuffer.
-   * If the buffer is not direct or the address can not be obtained return 0.
+   * Returns the address of the Unsafe memory for the first byte of a direct ByteBuffer. If the
+   * buffer is not direct or the address can not be obtained return 0.
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public static long getDirectByteBufferAddress(ByteBuffer bb) {
     if (!bb.isDirect()) {
       return 0L;
@@ -230,11 +235,12 @@ public class AddressableMemoryManager {
   }
 
   /**
-   * Create a direct byte buffer given its address and size.
-   * The returned ByteBuffer will be direct and use the memory at the given address.
+   * Create a direct byte buffer given its address and size. The returned ByteBuffer will be direct
+   * and use the memory at the given address.
+   *
    * @return the created direct byte buffer or null if it could not be created.
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   static ByteBuffer createDirectByteBuffer(long address, int size) {
     if (dbbCreateFailed) {
       return null;
@@ -266,7 +272,10 @@ public class AddressableMemoryManager {
     }
     try {
       return (ByteBuffer) ctor.newInstance(address, size);
-    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+    } catch (InstantiationException
+        | IllegalAccessException
+        | IllegalArgumentException
+        | InvocationTargetException e) {
       //throw new IllegalStateException("Could not create an instance using DirectByteBuffer(long, int)", e);
       dbbClass = null;
       dbbCtor = null;
@@ -274,5 +283,4 @@ public class AddressableMemoryManager {
       return null;
     }
   }
-
 }

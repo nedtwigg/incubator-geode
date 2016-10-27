@@ -56,8 +56,11 @@ public class IndexHintJUnitTest {
   public void testSingleIndexHint() throws Exception {
     createRegion();
     QueryService qs = CacheUtils.getQueryService();
-    DefaultQuery query = (DefaultQuery) qs.newQuery("<hint 'FirstIndex'> select * from /Portfolios p where p.ID > 10");
-    QueryExecutionContext qec = new QueryExecutionContext(new Object[1], CacheUtils.getCache(), query);
+    DefaultQuery query =
+        (DefaultQuery)
+            qs.newQuery("<hint 'FirstIndex'> select * from /Portfolios p where p.ID > 10");
+    QueryExecutionContext qec =
+        new QueryExecutionContext(new Object[1], CacheUtils.getCache(), query);
     query.executeUsingContext(qec);
 
     assertTrue(qec.isHinted("FirstIndex"));
@@ -69,8 +72,12 @@ public class IndexHintJUnitTest {
   public void testTwoIndexHint() throws Exception {
     createRegion();
     QueryService qs = CacheUtils.getQueryService();
-    DefaultQuery query = (DefaultQuery) qs.newQuery("<hint 'FirstIndex', 'SecondIndex'> select * from /Portfolios p where p.ID > 10");
-    QueryExecutionContext qec = new QueryExecutionContext(new Object[1], CacheUtils.getCache(), query);
+    DefaultQuery query =
+        (DefaultQuery)
+            qs.newQuery(
+                "<hint 'FirstIndex', 'SecondIndex'> select * from /Portfolios p where p.ID > 10");
+    QueryExecutionContext qec =
+        new QueryExecutionContext(new Object[1], CacheUtils.getCache(), query);
     query.executeUsingContext(qec);
 
     assertTrue(qec.isHinted("FirstIndex"));
@@ -82,8 +89,12 @@ public class IndexHintJUnitTest {
   public void testIndexHintOrdering() throws Exception {
     createRegion();
     QueryService qs = CacheUtils.getQueryService();
-    DefaultQuery query = (DefaultQuery) qs.newQuery("<hint 'FirstIndex','SecondIndex','ThirdIndex','FourthIndex'>select * from /Portfolios p where p.ID > 10");
-    QueryExecutionContext qec = new QueryExecutionContext(new Object[1], CacheUtils.getCache(), query);
+    DefaultQuery query =
+        (DefaultQuery)
+            qs.newQuery(
+                "<hint 'FirstIndex','SecondIndex','ThirdIndex','FourthIndex'>select * from /Portfolios p where p.ID > 10");
+    QueryExecutionContext qec =
+        new QueryExecutionContext(new Object[1], CacheUtils.getCache(), query);
     query.executeUsingContext(qec);
 
     assertTrue(qec.isHinted("FirstIndex"));
@@ -153,13 +164,17 @@ public class IndexHintJUnitTest {
     //execute query
     SelectResults[][] results = new SelectResults[1][2];
     QueryService qs = CacheUtils.getQueryService();
-    Query query = qs.newQuery("<hint 'IDIndex'>select * from /Portfolios p where p.ID > 10 and p.status = 'inactive'");
+    Query query =
+        qs.newQuery(
+            "<hint 'IDIndex'>select * from /Portfolios p where p.ID > 10 and p.status = 'inactive'");
     results[0][0] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("IDIndex"));
     observer.reset();
 
-    query = qs.newQuery("<hint 'SecIndex'>select * from /Portfolios p where p.ID > 10 and p.status = 'inactive'");
+    query =
+        qs.newQuery(
+            "<hint 'SecIndex'>select * from /Portfolios p where p.ID > 10 and p.status = 'inactive'");
     results[0][1] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("SecIndex"));
@@ -168,7 +183,8 @@ public class IndexHintJUnitTest {
     assertEquals(495, results[0][1].size());
     //Not really with and without index but we can use this method to verify they are the same results
     //regardless of which index used
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(results, 1, new String[] { "<query with hints>" });
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(
+        results, 1, new String[] {"<query with hints>"});
   }
 
   //Using junction, we will hint and make sure single index hints are functioning
@@ -185,13 +201,17 @@ public class IndexHintJUnitTest {
     //execute query
     SelectResults[][] results = new SelectResults[1][2];
     QueryService qs = CacheUtils.getQueryService();
-    Query query = qs.newQuery("<hint 'IDIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive'");
+    Query query =
+        qs.newQuery(
+            "<hint 'IDIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive'");
     results[0][0] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("IDIndex"));
     observer.reset();
 
-    query = qs.newQuery("<hint 'SecIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive'");
+    query =
+        qs.newQuery(
+            "<hint 'SecIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive'");
     results[0][1] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("SecIndex"));
@@ -200,7 +220,8 @@ public class IndexHintJUnitTest {
     assertEquals(95, results[0][1].size());
     //Not really with and without index but we can use this method to verify they are the same results
     //regardless of which index used
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(results, 1, new String[] { "<query with hints>" });
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(
+        results, 1, new String[] {"<query with hints>"});
   }
 
   //Using junction, we will hint and make sure multi index hints are functioning
@@ -217,14 +238,18 @@ public class IndexHintJUnitTest {
     //execute query
     SelectResults[][] results = new SelectResults[1][2];
     QueryService qs = CacheUtils.getQueryService();
-    Query query = qs.newQuery("<hint 'IDIndex', 'SecIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive'");
+    Query query =
+        qs.newQuery(
+            "<hint 'IDIndex', 'SecIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive'");
     results[0][0] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("IDIndex"));
     assertTrue(observer.wasIndexUsed("SecIndex"));
     observer.reset();
 
-    query = qs.newQuery("<hint 'IDIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive'");
+    query =
+        qs.newQuery(
+            "<hint 'IDIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive'");
     results[0][1] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("IDIndex"));
@@ -233,7 +258,8 @@ public class IndexHintJUnitTest {
     assertEquals(95, results[0][1].size());
     //Not really with and without index but we can use this method to verify they are the same results
     //regardless of which index used
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(results, 1, new String[] { "<query with hints>" });
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(
+        results, 1, new String[] {"<query with hints>"});
   }
 
   @Test
@@ -250,13 +276,17 @@ public class IndexHintJUnitTest {
     //execute query
     SelectResults[][] results = new SelectResults[1][2];
     QueryService qs = CacheUtils.getQueryService();
-    Query query = qs.newQuery("<hint 'IDIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN SET ('XXXX', 'XXXY')");
+    Query query =
+        qs.newQuery(
+            "<hint 'IDIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN SET ('XXXX', 'XXXY')");
     results[0][0] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("IDIndex"));
     observer.reset();
 
-    query = qs.newQuery("<hint 'SecIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN SET ('XXXX', 'XXXY')");
+    query =
+        qs.newQuery(
+            "<hint 'SecIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN SET ('XXXX', 'XXXY')");
     results[0][1] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("SecIndex"));
@@ -267,15 +297,19 @@ public class IndexHintJUnitTest {
     assertEquals(95, results[0][1].size());
     //Not really with and without index but we can use this method to verify they are the same results
     //regardless of which index used
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(results, 1, new String[] { "<query with hints>" });
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(
+        results, 1, new String[] {"<query with hints>"});
 
-    query = qs.newQuery("<hint 'DescriptionIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN SET ('XXXX', 'XXXY')");
+    query =
+        qs.newQuery(
+            "<hint 'DescriptionIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN SET ('XXXX', 'XXXY')");
     results[0][1] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("DescriptionIndex"));
 
     //Compare results with the final index result
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(results, 1, new String[] { "<query with hints>" });
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(
+        results, 1, new String[] {"<query with hints>"});
   }
 
   @Test
@@ -292,13 +326,17 @@ public class IndexHintJUnitTest {
     //execute query
     SelectResults[][] results = new SelectResults[1][2];
     QueryService qs = CacheUtils.getQueryService();
-    Query query = qs.newQuery("<hint 'IDIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (select p.description from /Portfolios p where p.ID > 10)");
+    Query query =
+        qs.newQuery(
+            "<hint 'IDIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (select p.description from /Portfolios p where p.ID > 10)");
     results[0][0] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("IDIndex"));
     observer.reset();
 
-    query = qs.newQuery("<hint 'SecIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (select p.description from /Portfolios p where p.ID > 10)");
+    query =
+        qs.newQuery(
+            "<hint 'SecIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (select p.description from /Portfolios p where p.ID > 10)");
     results[0][1] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("SecIndex"));
@@ -309,15 +347,19 @@ public class IndexHintJUnitTest {
     assertEquals(95, results[0][1].size());
     //Not really with and without index but we can use this method to verify they are the same results
     //regardless of which index used
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(results, 1, new String[] { "<query with hints>" });
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(
+        results, 1, new String[] {"<query with hints>"});
 
-    query = qs.newQuery("<hint 'DescriptionIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (select p.description from /Portfolios p where p.ID > 10) ");
+    query =
+        qs.newQuery(
+            "<hint 'DescriptionIndex'>select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (select p.description from /Portfolios p where p.ID > 10) ");
     results[0][1] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("DescriptionIndex"));
 
     //Compare results with the final index result
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(results, 1, new String[] { "<query with hints>" });
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(
+        results, 1, new String[] {"<query with hints>"});
   }
 
   @Test
@@ -334,14 +376,18 @@ public class IndexHintJUnitTest {
     //execute query
     SelectResults[][] results = new SelectResults[1][2];
     QueryService qs = CacheUtils.getQueryService();
-    Query query = qs.newQuery("select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (<hint 'IDIndex', 'SecIndex', 'DescriptionIndex'>select p.description from /Portfolios p where p.ID > 10)");
+    Query query =
+        qs.newQuery(
+            "select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (<hint 'IDIndex', 'SecIndex', 'DescriptionIndex'>select p.description from /Portfolios p where p.ID > 10)");
     results[0][0] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("IDIndex"));
     assertTrue(observer.wasIndexUsed("SecIndex"));
     observer.reset();
 
-    query = qs.newQuery("select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (select p.description from /Portfolios p where p.ID > 10)");
+    query =
+        qs.newQuery(
+            "select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (select p.description from /Portfolios p where p.ID > 10)");
     results[0][1] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("SecIndex"));
@@ -354,9 +400,12 @@ public class IndexHintJUnitTest {
     assertEquals(95, results[0][1].size());
     //Not really with and without index but we can use this method to verify they are the same results
     //regardless of which index used
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(results, 1, new String[] { "<query with hints>" });
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(
+        results, 1, new String[] {"<query with hints>"});
 
-    query = qs.newQuery("select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (<hint 'DescriptionIndex'>select p.description from /Portfolios p where p.ID > 10)");
+    query =
+        qs.newQuery(
+            "select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (<hint 'DescriptionIndex'>select p.description from /Portfolios p where p.ID > 10)");
     results[0][1] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("DescriptionIndex"));
@@ -364,7 +413,8 @@ public class IndexHintJUnitTest {
     //We end up using IDIndex for this case also
 
     //Compare results with the final index result
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(results, 1, new String[] { "<query with hints>" });
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(
+        results, 1, new String[] {"<query with hints>"});
   }
 
   //Hints inside of a nested query will trigger index usage for that query only
@@ -383,7 +433,9 @@ public class IndexHintJUnitTest {
     //execute query
     SelectResults[][] results = new SelectResults[1][2];
     QueryService qs = CacheUtils.getQueryService();
-    Query query = qs.newQuery("select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (<hint 'IDIndex', 'SecIndex', 'DescriptionIndex'>select p.description from /Portfolios p where p.ID > 10)");
+    Query query =
+        qs.newQuery(
+            "select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (<hint 'IDIndex', 'SecIndex', 'DescriptionIndex'>select p.description from /Portfolios p where p.ID > 10)");
     results[0][0] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("IDIndex"));
@@ -393,7 +445,9 @@ public class IndexHintJUnitTest {
     observer.reset();
 
     //query again with no hints for a "bare" comparison
-    query = qs.newQuery("select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (select p.description from /Portfolios p where p.ID > 10)");
+    query =
+        qs.newQuery(
+            "select * from /Portfolios p where p.ID > 10 and p.ID < 200 and p.status = 'inactive' and p.description IN (select p.description from /Portfolios p where p.ID > 10)");
     results[0][1] = (SelectResults) query.execute();
     observer.reset();
 
@@ -402,7 +456,8 @@ public class IndexHintJUnitTest {
     assertEquals(95, results[0][1].size());
     //Not really with and without index but we can use this method to verify they are the same results
     //regardless of which index used
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(results, 1, new String[] { "<query with hints>" });
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(
+        results, 1, new String[] {"<query with hints>"});
   }
 
   @Test
@@ -424,14 +479,18 @@ public class IndexHintJUnitTest {
     //execute query
     SelectResults[][] results = new SelectResults[1][2];
     QueryService qs = CacheUtils.getQueryService();
-    Query query = qs.newQuery("<hint 'SecIndex'>select * from /Portfolios p, /Portfolios_2 p2 where p.ID = p2.ID and p.status = 'inactive'");
+    Query query =
+        qs.newQuery(
+            "<hint 'SecIndex'>select * from /Portfolios p, /Portfolios_2 p2 where p.ID = p2.ID and p.status = 'inactive'");
     results[0][0] = (SelectResults) query.execute();
     //verify index usage
     assertTrue(observer.wasIndexUsed("SecIndex"));
     observer.reset();
 
     //query again with no hints for a "bare" comparison
-    query = qs.newQuery("select * from /Portfolios p, /Portfolios_2 p2 where p.ID = p2.ID and p.status = 'inactive'");
+    query =
+        qs.newQuery(
+            "select * from /Portfolios p, /Portfolios_2 p2 where p.ID = p2.ID and p.status = 'inactive'");
     results[0][1] = (SelectResults) query.execute();
     observer.reset();
 
@@ -440,8 +499,8 @@ public class IndexHintJUnitTest {
     assertEquals(500, results[0][1].size());
     //Not really with and without index but we can use this method to verify they are the same results
     //regardless of which index used
-    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(results, 1, new String[] { "<query with hints>" });
-
+    ssOrrs.CompareQueryResultsWithoutAndWithIndexes(
+        results, 1, new String[] {"<query with hints>"});
   }
 
   class QueryObserverImpl extends QueryObserverAdapter {
@@ -451,7 +510,13 @@ public class IndexHintJUnitTest {
       indexesUsed.add(index.getName());
     }
 
-    public void beforeIndexLookup(Index index, int lowerBoundOperator, Object lowerBoundKey, int upperBoundOperator, Object upperBoundKey, Set NotEqualKeys) {
+    public void beforeIndexLookup(
+        Index index,
+        int lowerBoundOperator,
+        Object lowerBoundKey,
+        int upperBoundOperator,
+        Object upperBoundKey,
+        Set NotEqualKeys) {
       indexesUsed.add(index.getName());
     }
 
@@ -483,7 +548,8 @@ public class IndexHintJUnitTest {
     }
   }
 
-  private void createIndex(String indexName, String indexedExpression, String regionPath) throws RegionNotFoundException, IndexExistsException, IndexNameConflictException {
+  private void createIndex(String indexName, String indexedExpression, String regionPath)
+      throws RegionNotFoundException, IndexExistsException, IndexNameConflictException {
     CacheUtils.getQueryService().createIndex(indexName, indexedExpression, regionPath);
   }
 }

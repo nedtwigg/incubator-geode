@@ -63,56 +63,55 @@ public class Bug38013DUnitTest extends JUnit4CacheTestCase {
     return host.getVM(0);
   }
 
-  static protected Object lastCallback = null;
+  protected static Object lastCallback = null;
 
   private void doCreateOtherVm() {
     VM vm = getOtherVm();
-    vm.invoke(new CacheSerializableRunnable("create root") {
-      public void run2() throws CacheException {
-        getSystem();
-        AttributesFactory af = new AttributesFactory();
-        CacheListener cl = new CacheListenerAdapter() {
-          public void afterCreate(EntryEvent event) {
-            //                   getLogWriter().info("afterCreate " + event.getKey());
-            if (event.getCallbackArgument() != null) {
-              lastCallback = event.getCallbackArgument();
-            }
-          }
+    vm.invoke(
+        new CacheSerializableRunnable("create root") {
+          public void run2() throws CacheException {
+            getSystem();
+            AttributesFactory af = new AttributesFactory();
+            CacheListener cl =
+                new CacheListenerAdapter() {
+                  public void afterCreate(EntryEvent event) {
+                    //                   getLogWriter().info("afterCreate " + event.getKey());
+                    if (event.getCallbackArgument() != null) {
+                      lastCallback = event.getCallbackArgument();
+                    }
+                  }
 
-          public void afterUpdate(EntryEvent event) {
-            //                   getLogWriter().info("afterUpdate " + event.getKey());
-            if (event.getCallbackArgument() != null) {
-              lastCallback = event.getCallbackArgument();
-            }
-          }
+                  public void afterUpdate(EntryEvent event) {
+                    //                   getLogWriter().info("afterUpdate " + event.getKey());
+                    if (event.getCallbackArgument() != null) {
+                      lastCallback = event.getCallbackArgument();
+                    }
+                  }
 
-          public void afterInvalidate(EntryEvent event) {
-            if (event.getCallbackArgument() != null) {
-              lastCallback = event.getCallbackArgument();
-            }
-          }
+                  public void afterInvalidate(EntryEvent event) {
+                    if (event.getCallbackArgument() != null) {
+                      lastCallback = event.getCallbackArgument();
+                    }
+                  }
 
-          public void afterDestroy(EntryEvent event) {
-            if (event.getCallbackArgument() != null) {
-              lastCallback = event.getCallbackArgument();
-            }
+                  public void afterDestroy(EntryEvent event) {
+                    if (event.getCallbackArgument() != null) {
+                      lastCallback = event.getCallbackArgument();
+                    }
+                  }
+                };
+            af.setCacheListener(cl);
+            // create a pr with a data store
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(0);
+            // use defaults so this is a data store
+            af.setPartitionAttributes(paf.create());
+            createRootRegion("bug38013", af.create());
           }
-        };
-        af.setCacheListener(cl);
-        // create a pr with a data store
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(0);
-        // use defaults so this is a data store
-        af.setPartitionAttributes(paf.create());
-        createRootRegion("bug38013", af.create());
-      }
-    });
+        });
   }
 
-  /**
-   * Make sure that value is only deserialized in cache whose application
-   * asks for the value.
-   */
+  /** Make sure that value is only deserialized in cache whose application asks for the value. */
   @Test
   public void testBug38013() throws CacheException {
     final AttributesFactory factory = new AttributesFactory();
@@ -130,8 +129,7 @@ public class Bug38013DUnitTest extends JUnit4CacheTestCase {
   }
 
   public static class HomeBoy implements DataSerializable {
-    public HomeBoy() {
-    }
+    public HomeBoy() {}
 
     public void toData(DataOutput out) throws IOException {
       DistributedMember me = InternalDistributedSystem.getAnyInstance().getDistributedMember();

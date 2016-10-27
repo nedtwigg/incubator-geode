@@ -20,17 +20,16 @@ package org.apache.geode.management.internal.cli.util;
 import org.apache.geode.GemFireException;
 
 /**
- * The JConsoleNotFoundException class is a RuntimeException class that indicates that the JDK JConsole tool could
- * not be located in the file system.
- * </p>
+ * The JConsoleNotFoundException class is a RuntimeException class that indicates that the JDK
+ * JConsole tool could not be located in the file system.
+ *
  * @see org.apache.geode.GemFireException
  * @since GemFire 7.0
  */
 @SuppressWarnings("unused")
 public class JConsoleNotFoundException extends GemFireException {
 
-  public JConsoleNotFoundException() {
-  }
+  public JConsoleNotFoundException() {}
 
   public JConsoleNotFoundException(final String message) {
     super(message);
@@ -43,5 +42,4 @@ public class JConsoleNotFoundException extends GemFireException {
   public JConsoleNotFoundException(final String message, final Throwable cause) {
     super(message, cause);
   }
-
 }

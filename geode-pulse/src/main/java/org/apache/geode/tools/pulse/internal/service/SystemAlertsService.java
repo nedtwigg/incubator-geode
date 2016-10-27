@@ -34,13 +34,12 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Class SystemAlertsService
- * 
- * This class contains implementations of getting system's alerts details (like
- * errors, warnings and severe errors).
- * 
+ *
+ * <p>This class contains implementations of getting system's alerts details (like errors, warnings
+ * and severe errors).
+ *
  * @since GemFire version 7.5
  */
-
 @Component
 @Service("SystemAlerts")
 @Scope("singleton")
@@ -77,9 +76,9 @@ public class SystemAlertsService implements PulseService {
   }
 
   /**
-   * function used for getting all members details in format of JSON Object
-   * array defined under a cluster
-   * 
+   * function used for getting all members details in format of JSON Object array defined under a
+   * cluster
+   *
    * @param cluster
    * @return JSONObject Array list
    */

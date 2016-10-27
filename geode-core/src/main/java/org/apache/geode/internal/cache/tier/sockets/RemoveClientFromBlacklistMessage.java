@@ -36,9 +36,8 @@ import org.apache.geode.internal.logging.LogService;
 
 /**
  * Distribution message for dropping client from blacklist.
- * 
- * @since GemFire 6.0
  *
+ * @since GemFire 6.0
  */
 public class RemoveClientFromBlacklistMessage extends PooledDistributionMessage {
   private static final Logger logger = LogService.getLogger();
@@ -77,7 +76,9 @@ public class RemoveClientFromBlacklistMessage extends PooledDistributionMessage 
               DistributedSystem ds = dm.getSystem();
               if (ds != null) {
                 if (logger.isDebugEnabled()) {
-                  logger.debug("Remove the client from black list as its queue is already destroyed: {}", proxyID);
+                  logger.debug(
+                      "Remove the client from black list as its queue is already destroyed: {}",
+                      proxyID);
                 }
               }
             }
@@ -110,5 +111,4 @@ public class RemoveClientFromBlacklistMessage extends PooledDistributionMessage 
     super.fromData(in);
     proxyID = ClientProxyMembershipID.readCanonicalized(in);
   }
-
 }

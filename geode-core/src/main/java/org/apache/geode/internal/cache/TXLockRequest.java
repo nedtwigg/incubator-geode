@@ -22,12 +22,10 @@ import org.apache.geode.internal.cache.locks.*;
 
 import java.util.*;
 
-/** TXLockRequest represents all the locks that need to be made
- * for a single transaction.
+/**
+ * TXLockRequest represents all the locks that need to be made for a single transaction.
  *
- * 
  * @since GemFire 4.0
- * 
  */
 public class TXLockRequest {
   private boolean localLockHeld;
@@ -86,9 +84,7 @@ public class TXLockRequest {
     }
   }
 
-  /**
-   * Release any local locks obtained by this request
-   */
+  /** Release any local locks obtained by this request */
   public void releaseLocal() {
     if (this.localLockHeld) {
       txLocalRelease(this.localLocks);
@@ -96,18 +92,16 @@ public class TXLockRequest {
     }
   }
 
-  /**
-   * Release any distributed locks obtained by this request
-   */
+  /** Release any distributed locks obtained by this request */
   public void releaseDistributed() {
     if (this.distLockId != null) {
       try {
         TXLockService txls = TXLockService.createDTLS();
         txls.release(this.distLockId);
       } catch (IllegalStateException ignore) {
-        //IllegalStateException: TXLockService cannot be created 
+        //IllegalStateException: TXLockService cannot be created
         //until connected to distributed system
-        //could be thrown if a jvm is disconnected from the ds, 
+        //could be thrown if a jvm is disconnected from the ds,
         //and tries to createDTLS() during clean up
       }
       this.distLockId = null;
@@ -139,11 +133,9 @@ public class TXLockRequest {
     releaseDistributed();
   }
 
-  static private final TXReservationMgr resMgr = new TXReservationMgr(true);
+  private static final TXReservationMgr resMgr = new TXReservationMgr(true);
 
-  /**
-   * @param localLocks is a list of TXRegionLockRequest instances
-   */
+  /** @param localLocks is a list of TXRegionLockRequest instances */
   private static void txLocalLock(IdentityArrayList localLocks) throws CommitConflictException {
     resMgr.makeReservation(localLocks);
   }

@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 
-/** 
- * Test the distribution limitations of transactions.  Other tests can be found in
- * <code>MultiVMRegionTestCase</code>.
- * 
+/**
+ * Test the distribution limitations of transactions. Other tests can be found in <code>
+ * MultiVMRegionTestCase</code>.
  *
  * @since GemFire 4.0
  * @see MultiVMRegionTestCase
- *
  */
 package org.apache.geode.cache30;
 
@@ -61,29 +59,35 @@ public class TXRestrictionsDUnitTest extends JUnit4CacheTestCase {
     File[] diskDirs = new File[1];
     diskDirs[0] = new File("diskRegionDirs/" + OSProcess.getId());
     diskDirs[0].mkdirs();
-    factory.setDiskStoreName(getCache().createDiskStoreFactory().setDiskDirs(diskDirs).setTimeInterval(1000).setQueueSize(0).create("TXRestrictionsDUnitTest").getName());
+    factory.setDiskStoreName(
+        getCache()
+            .createDiskStoreFactory()
+            .setDiskDirs(diskDirs)
+            .setTimeInterval(1000)
+            .setQueueSize(0)
+            .create("TXRestrictionsDUnitTest")
+            .getName());
     factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     return factory.create();
   }
 
-  /** 
-   * Check that remote persistent regions cause conflicts
-   */
+  /** Check that remote persistent regions cause conflicts */
   @Test
   public void testPersistentRestriction() throws Exception {
     final CacheTransactionManager txMgr = this.getCache().getCacheTransactionManager();
     final String misConfigRegionName = getUniqueName();
     Region misConfigRgn = getCache().createRegion(misConfigRegionName, getDiskRegionAttributes());
-    Invoke.invokeInEveryVM(new SerializableRunnable("testPersistentRestriction: Illegal Region Configuration") {
-      public void run() {
-        try {
-          getCache().createRegion(misConfigRegionName, getDiskRegionAttributes());
-          // rgn1.put("misConfigKey", "oldmisConfigVal");
-        } catch (CacheException e) {
-          Assert.fail("While creating region", e);
-        }
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("testPersistentRestriction: Illegal Region Configuration") {
+          public void run() {
+            try {
+              getCache().createRegion(misConfigRegionName, getDiskRegionAttributes());
+              // rgn1.put("misConfigKey", "oldmisConfigVal");
+            } catch (CacheException e) {
+              Assert.fail("While creating region", e);
+            }
+          }
+        });
     misConfigRgn.put("misConfigKey", "oldmisConfigVal");
 
     txMgr.begin();

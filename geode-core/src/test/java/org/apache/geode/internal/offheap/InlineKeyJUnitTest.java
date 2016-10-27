@@ -53,89 +53,133 @@ public class InlineKeyJUnitTest {
   public void testInlineKeys() {
     GemFireCacheImpl gfc = createCache();
     try {
-      Region r = gfc.createRegionFactory(RegionShortcut.LOCAL).setConcurrencyChecksEnabled(false).setOffHeap(true).create("inlineKeyRegion");
+      Region r =
+          gfc.createRegionFactory(RegionShortcut.LOCAL)
+              .setConcurrencyChecksEnabled(false)
+              .setOffHeap(true)
+              .create("inlineKeyRegion");
       LocalRegion lr = (LocalRegion) r;
       Object key = Integer.valueOf(1);
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected int entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapIntKey);
+      assertTrue(
+          "expected int entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapIntKey);
       key = Long.valueOf(2);
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected long entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapLongKey);
+      assertTrue(
+          "expected long entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapLongKey);
       key = new UUID(1L, 2L);
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected uuid entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapUUIDKey);
+      assertTrue(
+          "expected uuid entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapUUIDKey);
       key = "";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
       key = "1";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
       key = "12";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
       key = "123";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
       key = "1234";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
       key = "12345";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
       key = "123456";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
       key = "1234567";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey1);
       key = "12345678";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
       key = "123456789";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
       key = "1234567890";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
       key = "12345678901";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
       key = "123456789012";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
       key = "1234567890123";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
       key = "12345678901234";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
       key = "123456789012345";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string entry but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
+      assertTrue(
+          "expected string entry but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapStringKey2);
 
       key = "1234567890123456";
       r.create(key, null);
       assertEquals(true, r.containsKey(key));
-      assertTrue("expected string object but was " + lr.getRegionEntry(key).getClass(), lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapObjectKey);
+      assertTrue(
+          "expected string object but was " + lr.getRegionEntry(key).getClass(),
+          lr.getRegionEntry(key) instanceof VMThinRegionEntryOffHeapObjectKey);
 
     } finally {
       closeCache(gfc);

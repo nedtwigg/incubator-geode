@@ -42,8 +42,6 @@ public class ExistsExecutor extends AbstractExecutor {
 
     if (exists)
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), EXISTS));
-    else
-      command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_EXISTS));
-
+    else command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), NOT_EXISTS));
   }
 }

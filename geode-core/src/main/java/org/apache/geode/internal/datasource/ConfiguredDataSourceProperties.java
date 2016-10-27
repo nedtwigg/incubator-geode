@@ -18,13 +18,11 @@ package org.apache.geode.internal.datasource;
 
 /**
  * JavaBean for datasource and poold properties.
- * 
- *         This class now contains only those paramaters which are needed
- *         by the Gemfire DataSource configuration. This maps to those
- *         paramaters which are specified as attributes of <jndi-binding>tag.
- *         Those parameters which are specified as attributes of <property>tag
- *         are not stored.
- *  
+ *
+ * <p>This class now contains only those paramaters which are needed by the Gemfire DataSource
+ * configuration. This maps to those paramaters which are specified as attributes of
+ * <jndi-binding>tag. Those parameters which are specified as attributes of <property>tag are not
+ * stored.
  */
 import java.io.*;
 
@@ -47,97 +45,72 @@ public class ConfiguredDataSourceProperties implements Serializable {
   private String txnType = null;
 
   /** Creates a new instance of DataSourceProperties */
-  public ConfiguredDataSourceProperties() {
-  }
+  public ConfiguredDataSourceProperties() {}
 
   //Get Methods for DataSource Properties
-  /**
-   * Returns the login time
-   */
+  /** Returns the login time */
   public int getLoginTimeOut() {
     return loginTimeOut;
   }
 
-  /**
-   * Returns the default username
-   */
+  /** Returns the default username */
   public String getUser() {
     return user;
   }
 
-  /**
-   * Returns the default password
-   */
+  /** Returns the default password */
   public String getPassword() {
     return password;
   }
 
-  /**
-   * Returns the jdbc driver
-   */
+  /** Returns the jdbc driver */
   public String getJDBCDriver() {
     return jdbcDriver;
   }
 
-  /**
-   * Returns the init pool size.
-   */
+  /** Returns the init pool size. */
   public int getInitialPoolSize() {
     return initialPoolSize;
   }
 
-  /**
-   * Returns the maximum pool size.
-   */
+  /** Returns the maximum pool size. */
   public int getMaxPoolSize() {
     return maxPoolSize;
   }
 
-  /**
-   * Returns the db URL.
-   */
+  /** Returns the db URL. */
   public String getURL() {
     return url;
   }
 
-  /**
-   * Returns the max time at which the connection will expire
-   */
+  /** Returns the max time at which the connection will expire */
   public int getConnectionExpirationTime() {
     return expirationTime;
   }
 
-  /**
-   * Returns the max time at which the connection will time out.
-   */
+  /** Returns the max time at which the connection will time out. */
   public int getConnectionTimeOut() {
     return timeOut;
   }
 
-  /**
-   * Returns the class name of the ConnectionPoolDataSource
-   */
+  /** Returns the class name of the ConnectionPoolDataSource */
   public String getConnectionPoolDSClass() {
     return connPoolDSClass;
   }
 
-  /**
-   * Returns the class name of the XADataSource.
-   */
+  /** Returns the class name of the XADataSource. */
   public String getXADSClass() {
     return xadsClass;
   }
 
-  /**
-   * Returns the log writer for the datasource
-   */
+  /** Returns the log writer for the datasource */
   public PrintWriter getPrintWriter() {
     return dataSourcePW;
   }
 
   /**
    * Returns the class name for managed connection factory.
-   * 
+   *
    * @return String
    */
   public String getMCFClass() {
@@ -146,7 +119,7 @@ public class ConfiguredDataSourceProperties implements Serializable {
 
   /**
    * Returns the transaction type.
-   * 
+   *
    * @return "XATransaction"|"NoTransaction"|"LocalTransaction"
    */
   public String getTranType() {
@@ -155,17 +128,16 @@ public class ConfiguredDataSourceProperties implements Serializable {
 
   /**
    * Sets the login time
-   * 
+   *
    * @param loginTime
    */
   public void setLoginTimeOut(int loginTime) {
-    if (loginTime > 0)
-      loginTimeOut = loginTime;
+    if (loginTime > 0) loginTimeOut = loginTime;
   }
 
   /**
    * Sets the database user name .
-   * 
+   *
    * @param usr
    */
   public void setUser(String usr) {
@@ -174,7 +146,7 @@ public class ConfiguredDataSourceProperties implements Serializable {
 
   /**
    * Sets the database user password .
-   * 
+   *
    * @param passwd
    */
   public void setPassword(String passwd) {
@@ -183,7 +155,7 @@ public class ConfiguredDataSourceProperties implements Serializable {
 
   /**
    * Sets the database driver name.
-   * 
+   *
    * @param confDriver
    */
   public void setJDBCDriver(String confDriver) {
@@ -192,32 +164,30 @@ public class ConfiguredDataSourceProperties implements Serializable {
 
   /**
    * Sets the initiale pool size.
-   * 
+   *
    * @param inpoolSize
    */
   public void setInitialPoolSize(int inpoolSize) {
-    if (inpoolSize >= 0)
-      initialPoolSize = inpoolSize;
+    if (inpoolSize >= 0) initialPoolSize = inpoolSize;
   }
 
   /**
    * Sets the maximum pool size
-   * 
+   *
    * @param mxpoolSize
    */
   public void setMaxPoolSize(int mxpoolSize) {
-    if (mxpoolSize > 0)
-      maxPoolSize = mxpoolSize;
+    if (mxpoolSize > 0) maxPoolSize = mxpoolSize;
   }
 
   /**
    * Sets the max idle time
-   * 
+   *
    * @param mxIdleTime
    */
   /**
    * * Sets the db URL.
-   * 
+   *
    * @param urlStr
    */
   public void setURL(String urlStr) {
@@ -226,27 +196,25 @@ public class ConfiguredDataSourceProperties implements Serializable {
 
   /**
    * Sets the connection expiration time
-   * 
+   *
    * @param time
    */
   public void setConnectionExpirationTime(int time) {
-    if (time > 0)
-      expirationTime = time;
+    if (time > 0) expirationTime = time;
   }
 
   /**
    * Sets the connection time out.
-   * 
+   *
    * @param time
    */
   public void setConnectionTimeOut(int time) {
-    if (time > 0)
-      timeOut = time;
+    if (time > 0) timeOut = time;
   }
 
   /**
    * Sets the ConnectionPoolDataSource class name
-   * 
+   *
    * @param classname
    */
   public void setConnectionPoolDSClass(String classname) {
@@ -255,7 +223,7 @@ public class ConfiguredDataSourceProperties implements Serializable {
 
   /**
    * Sets the XADatasource class name
-   * 
+   *
    * @param classname
    */
   public void setXADSClass(String classname) {
@@ -264,7 +232,7 @@ public class ConfiguredDataSourceProperties implements Serializable {
 
   /**
    * Sets the log writer.
-   * 
+   *
    * @param pw
    */
   public void setPrintWriter(PrintWriter pw) {
@@ -273,7 +241,7 @@ public class ConfiguredDataSourceProperties implements Serializable {
 
   /**
    * Sets the MCFClass class name.
-   * 
+   *
    * @param classname
    */
   public void setMCFClass(String classname) {
@@ -281,9 +249,9 @@ public class ConfiguredDataSourceProperties implements Serializable {
   }
 
   /**
-   * Sets the Transaction support type for Managed Connections. It can be one of
-   * "XATransaction" | "NoTransaction" |"LocalTransaction"
-   * 
+   * Sets the Transaction support type for Managed Connections. It can be one of "XATransaction" |
+   * "NoTransaction" |"LocalTransaction"
+   *
    * @param type transaction type.
    */
   public void setTransactionType(String type) {

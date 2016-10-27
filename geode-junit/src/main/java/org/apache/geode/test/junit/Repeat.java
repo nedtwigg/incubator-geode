@@ -23,8 +23,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The Repeat class is a Java Annotation enabling an annotated test suite class test case method to be repeated
- * a specified number of iterations.
+ * The Repeat class is a Java Annotation enabling an annotated test suite class test case method to
+ * be repeated a specified number of iterations.
  *
  * @see java.lang.annotation.Annotation
  */

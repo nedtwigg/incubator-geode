@@ -25,7 +25,8 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryWithParameterizedRunner extends BlockJUnit4ClassRunnerWithParameters implements ExposedGetAnnotations {
+public class CategoryWithParameterizedRunner extends BlockJUnit4ClassRunnerWithParameters
+    implements ExposedGetAnnotations {
   public CategoryWithParameterizedRunner(TestWithParameters test) throws InitializationError {
     super(test);
   }

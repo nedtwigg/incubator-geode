@@ -41,11 +41,9 @@ public class HostNameTest {
   private static final String EXPECTED_HOSTNAME = "expected-hostname";
   private static final String UNKNOWN = "unknown";
 
-  @Rule
-  public final EnvironmentVariables env = new EnvironmentVariables();
+  @Rule public final EnvironmentVariables env = new EnvironmentVariables();
 
-  @Rule
-  public final RestoreSystemProperties sysProps = new RestoreSystemProperties();
+  @Rule public final RestoreSystemProperties sysProps = new RestoreSystemProperties();
 
   @Test
   public void execHostNameShouldNeverReturnNull() throws IOException {
@@ -54,7 +52,7 @@ public class HostNameTest {
   }
 
   @Test
-  @Parameters({ MAC_OSX_NAME, LINUX_OS_NAME, SOLARIS_OS_NAME, WINDOWS_OS_NAME })
+  @Parameters({MAC_OSX_NAME, LINUX_OS_NAME, SOLARIS_OS_NAME, WINDOWS_OS_NAME})
   public void shouldExecHostNameIfEnvValueNotAvailableOnOS(String osName) throws IOException {
     setHostNamePropertiesNull(osName);
     String result = new HostName().determineHostName();
@@ -62,7 +60,7 @@ public class HostNameTest {
   }
 
   @Test
-  @Parameters({ MAC_OSX_NAME, LINUX_OS_NAME, SOLARIS_OS_NAME, WINDOWS_OS_NAME })
+  @Parameters({MAC_OSX_NAME, LINUX_OS_NAME, SOLARIS_OS_NAME, WINDOWS_OS_NAME})
   public void shouldUseComputerNameIfAvailableOnOS(String osName) throws IOException {
     setHostNameProperties(osName);
     String result = new HostName().determineHostName();
@@ -70,7 +68,7 @@ public class HostNameTest {
   }
 
   @Test
-  @Parameters({ MAC_OSX_NAME, LINUX_OS_NAME, SOLARIS_OS_NAME, WINDOWS_OS_NAME })
+  @Parameters({MAC_OSX_NAME, LINUX_OS_NAME, SOLARIS_OS_NAME, WINDOWS_OS_NAME})
   public void shouldBeNullIfEnvValueNotAvailableOnOS(String osName) throws IOException {
     setHostNamePropertiesNull(osName);
     String result = new HostName().getHostNameFromEnv();
@@ -116,5 +114,4 @@ public class HostNameTest {
       assertThat(System.getenv(HOSTNAME_PROPERTY)).isNull();
     }
   }
-
 }

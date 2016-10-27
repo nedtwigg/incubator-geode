@@ -21,9 +21,8 @@ import java.io.Reader;
 import java.io.StringReader;
 
 /**
- * Custom GoldenComparator which returns the string of the golden file name
- * as the output for simple unit testing of the quickstart testing framework.
- * 
+ * Custom GoldenComparator which returns the string of the golden file name as the output for simple
+ * unit testing of the quickstart testing framework.
  */
 public class GoldenStringComparator extends RegexGoldenComparator {
 

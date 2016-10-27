@@ -43,5 +43,4 @@ public class OldFreeListOffHeapRegionJUnitTest extends OffHeapRegionBase {
   public int perObjectOverhead() {
     return OffHeapStoredObject.HEADER_SIZE;
   }
-
 }

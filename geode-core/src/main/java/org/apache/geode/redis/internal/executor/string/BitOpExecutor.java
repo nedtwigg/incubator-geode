@@ -63,18 +63,13 @@ public class BitOpExecutor extends StringExecutor {
         values[0] = val;
         values[i - 3] = tmp;
       }
-      if (i == 3 && operation.equalsIgnoreCase("NOT"))
-        break;
+      if (i == 3 && operation.equalsIgnoreCase("NOT")) break;
     }
 
-    if (operation.equals("AND"))
-      and(context, r, destKey, values, maxLength);
-    else if (operation.equals("OR"))
-      or(context, r, destKey, values, maxLength);
-    else if (operation.equals("XOR"))
-      xor(context, r, destKey, values, maxLength);
-    else if (operation.equals("NOT"))
-      not(context, r, destKey, values, maxLength);
+    if (operation.equals("AND")) and(context, r, destKey, values, maxLength);
+    else if (operation.equals("OR")) or(context, r, destKey, values, maxLength);
+    else if (operation.equals("XOR")) xor(context, r, destKey, values, maxLength);
+    else if (operation.equals("NOT")) not(context, r, destKey, values, maxLength);
     else {
       command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NO_SUCH_OP));
       return;
@@ -83,17 +78,21 @@ public class BitOpExecutor extends StringExecutor {
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), maxLength));
   }
 
-  private void and(ExecutionHandlerContext context, Region<ByteArrayWrapper, ByteArrayWrapper> r, ByteArrayWrapper destKey, byte[][] values, int max) {
+  private void and(
+      ExecutionHandlerContext context,
+      Region<ByteArrayWrapper, ByteArrayWrapper> r,
+      ByteArrayWrapper destKey,
+      byte[][] values,
+      int max) {
     byte[] dest = new byte[max];
-    outer: for (int i = 0; i < max; i++) {
+    outer:
+    for (int i = 0; i < max; i++) {
       byte b = values[0][i];
       for (int j = 1; j < values.length; j++) {
         if (values[j] == null) {
           break outer;
-        } else if (i < values[j].length)
-          b &= values[j][i];
-        else
-          b &= 0;
+        } else if (i < values[j].length) b &= values[j][i];
+        else b &= 0;
       }
       dest[i] = b;
     }
@@ -101,16 +100,19 @@ public class BitOpExecutor extends StringExecutor {
     r.put(destKey, new ByteArrayWrapper(dest));
   }
 
-  private void or(ExecutionHandlerContext context, Region<ByteArrayWrapper, ByteArrayWrapper> r, ByteArrayWrapper destKey, byte[][] values, int max) {
+  private void or(
+      ExecutionHandlerContext context,
+      Region<ByteArrayWrapper, ByteArrayWrapper> r,
+      ByteArrayWrapper destKey,
+      byte[][] values,
+      int max) {
     byte[] dest = new byte[max];
     for (int i = 0; i < max; i++) {
       byte b = values[0][i];
       for (int j = 1; j < values.length; j++) {
         byte[] cA = values[j];
-        if (cA != null && i < cA.length)
-          b |= cA[i];
-        else
-          b |= 0;
+        if (cA != null && i < cA.length) b |= cA[i];
+        else b |= 0;
       }
       dest[i] = b;
     }
@@ -118,16 +120,19 @@ public class BitOpExecutor extends StringExecutor {
     r.put(destKey, new ByteArrayWrapper(dest));
   }
 
-  private void xor(ExecutionHandlerContext context, Region<ByteArrayWrapper, ByteArrayWrapper> r, ByteArrayWrapper destKey, byte[][] values, int max) {
+  private void xor(
+      ExecutionHandlerContext context,
+      Region<ByteArrayWrapper, ByteArrayWrapper> r,
+      ByteArrayWrapper destKey,
+      byte[][] values,
+      int max) {
     byte[] dest = new byte[max];
     for (int i = 0; i < max; i++) {
       byte b = values[0][i];
       for (int j = 1; j < values.length; j++) {
         byte[] cA = values[j];
-        if (cA != null && i < cA.length)
-          b ^= cA[i];
-        else
-          b ^= 0;
+        if (cA != null && i < cA.length) b ^= cA[i];
+        else b ^= 0;
       }
       dest[i] = b;
     }
@@ -135,17 +140,19 @@ public class BitOpExecutor extends StringExecutor {
     r.put(destKey, new ByteArrayWrapper(dest));
   }
 
-  private void not(ExecutionHandlerContext context, Region<ByteArrayWrapper, ByteArrayWrapper> r, ByteArrayWrapper destKey, byte[][] values, int max) {
+  private void not(
+      ExecutionHandlerContext context,
+      Region<ByteArrayWrapper, ByteArrayWrapper> r,
+      ByteArrayWrapper destKey,
+      byte[][] values,
+      int max) {
     byte[] dest = new byte[max];
     byte[] cA = values[0];
     for (int i = 0; i < max; i++) {
-      if (cA == null)
-        dest[i] = ~0;
-      else
-        dest[i] = (byte) (~cA[i] & 0xFF);
+      if (cA == null) dest[i] = ~0;
+      else dest[i] = (byte) (~cA[i] & 0xFF);
     }
     checkAndSetDataType(destKey, context);
     r.put(destKey, new ByteArrayWrapper(dest));
   }
-
 }

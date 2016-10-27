@@ -36,9 +36,7 @@ import org.apache.geode.internal.statistics.platform.WindowsSystemStats;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-/**
- * Provides native methods which fetch operating system statistics.
- */
+/** Provides native methods which fetch operating system statistics. */
 public class HostStatHelper {
   static final int SOLARIS_CODE = 1; // Sparc Solaris
   static final int WINDOWS_CODE = 2;
@@ -53,7 +51,9 @@ public class HostStatHelper {
   static {
     String osName = System.getProperty("os.name", "unknown");
     if (!PureJavaMode.osStatsAreAvailable()) {
-      throw new RuntimeException(LocalizedStrings.HostStatHelper_HOSTSTATHELPER_NOT_ALLOWED_IN_PURE_JAVA_MODE.toLocalizedString());
+      throw new RuntimeException(
+          LocalizedStrings.HostStatHelper_HOSTSTATHELPER_NOT_ALLOWED_IN_PURE_JAVA_MODE
+              .toLocalizedString());
     } else if (osName.equals("SunOS")) {
       osCode = SOLARIS_CODE;
     } else if (osName.startsWith("Windows")) {
@@ -63,7 +63,10 @@ public class HostStatHelper {
     } else if (osName.equals("Mac OS X")) {
       osCode = OSX_CODE;
     } else {
-      throw new InternalGemFireException(LocalizedStrings.HostStatHelper_UNSUPPORTED_OS_0_SUPPORTED_OSS_ARE_SUNOSSPARC_SOLARIS_LINUXX86_AND_WINDOWS.toLocalizedString(osName));
+      throw new InternalGemFireException(
+          LocalizedStrings
+              .HostStatHelper_UNSUPPORTED_OS_0_SUPPORTED_OSS_ARE_SUNOSSPARC_SOLARIS_LINUXX86_AND_WINDOWS
+              .toLocalizedString(osName));
     }
   }
 
@@ -116,33 +119,31 @@ public class HostStatHelper {
   }
 
   /**
-   * Allocates and initializes any resources required to sample
-   * operating system statistics.
-   * returns 0 if initialization succeeded
+   * Allocates and initializes any resources required to sample operating system statistics. returns
+   * 0 if initialization succeeded
    */
   private static native int init();
 
   /**
-   * Frees up resources used by this class. Once close is called this
-   * class can no longer be used.
+   * Frees up resources used by this class. Once close is called this class can no longer be used.
    */
   private static native void close();
 
   /**
-   * Should be called before any calls to the refresh methods.
-   * On some platforms if this is not called then the refesh methods
-   * will just keep returning the same old data.
+   * Should be called before any calls to the refresh methods. On some platforms if this is not
+   * called then the refesh methods will just keep returning the same old data.
    */
   private static native void readyRefresh();
 
   /**
-   * Refreshes the specified process stats instance by fetching
-   * the current OS values for the given stats and storing them in the instance.
+   * Refreshes the specified process stats instance by fetching the current OS values for the given
+   * stats and storing them in the instance.
    */
   private static void refreshProcess(LocalStatisticsImpl s) {
     int pid = (int) s.getNumericId();
     if (isLinux()) {
-      LinuxProcFsStatistics.refreshProcess(pid, s._getIntStorage(), s._getLongStorage(), s._getDoubleStorage());
+      LinuxProcFsStatistics.refreshProcess(
+          pid, s._getIntStorage(), s._getLongStorage(), s._getDoubleStorage());
     } else {
       refreshProcess(pid, s._getIntStorage(), s._getLongStorage(), s._getDoubleStorage());
     }
@@ -151,13 +152,13 @@ public class HostStatHelper {
   private static native void refreshProcess(int pid, int[] ints, long[] longs, double[] doubles);
 
   /**
-   * Refreshes the specified system stats instance by fetching
-   * the current OS values for the local machine and storing them in
-   * the instance.
+   * Refreshes the specified system stats instance by fetching the current OS values for the local
+   * machine and storing them in the instance.
    */
   private static void refreshSystem(LocalStatisticsImpl s) {
     if (isLinux()) {
-      LinuxProcFsStatistics.refreshSystem(s._getIntStorage(), s._getLongStorage(), s._getDoubleStorage());
+      LinuxProcFsStatistics.refreshSystem(
+          s._getIntStorage(), s._getLongStorage(), s._getDoubleStorage());
     } else {
       refreshSystem(s._getIntStorage(), s._getLongStorage(), s._getDoubleStorage());
     }
@@ -165,10 +166,7 @@ public class HostStatHelper {
 
   private static native void refreshSystem(int[] ints, long[] longs, double[] doubles);
 
-  /**
-   * The call should have already checked to make sure
-   * usesSystemCalls returns true.
-   */
+  /** The call should have already checked to make sure usesSystemCalls returns true. */
   public static void refresh(LocalStatisticsImpl stats) {
     int flags = stats.getOsStatFlags();
     if ((flags & PROCESS_STAT_FLAG) != 0) {
@@ -176,85 +174,107 @@ public class HostStatHelper {
     } else if ((flags & SYSTEM_STAT_FLAG) != 0) {
       HostStatHelper.refreshSystem(stats);
     } else {
-      throw new RuntimeException(LocalizedStrings.HostStatHelper_UNEXPECTED_OS_STATS_FLAGS_0.toLocalizedString(Integer.valueOf(flags)));
+      throw new RuntimeException(
+          LocalizedStrings.HostStatHelper_UNEXPECTED_OS_STATS_FLAGS_0.toLocalizedString(
+              Integer.valueOf(flags)));
     }
   }
 
   /**
-   * Creates and returns a {@link Statistics} with
-   * the given pid and name. The resource's stats will contain a snapshot
-   * of the current statistic values for the specified process.
+   * Creates and returns a {@link Statistics} with the given pid and name. The resource's stats will
+   * contain a snapshot of the current statistic values for the specified process.
    */
   public static Statistics newProcess(OsStatisticsFactory f, long pid, String name) {
     Statistics stats;
     switch (osCode) {
-    case SOLARIS_CODE:
-      stats = f.createOsStatistics(SolarisProcessStats.getType(), name, pid, PROCESS_STAT_FLAG);
-      break;
-    case LINUX_CODE:
-      stats = f.createOsStatistics(LinuxProcessStats.getType(), name, pid, PROCESS_STAT_FLAG);
-      break;
-    case OSX_CODE:
-      stats = f.createOsStatistics(OSXProcessStats.getType(), name, pid, PROCESS_STAT_FLAG);
-      break;
-    case WINDOWS_CODE:
-      stats = f.createOsStatistics(WindowsProcessStats.getType(), name, pid, PROCESS_STAT_FLAG);
-      break;
-    default:
-      throw new InternalGemFireException(LocalizedStrings.HostStatHelper_UNHANDLED_OSCODE_0_HOSTSTATHELPERNEWPROCESS.toLocalizedString(Integer.valueOf(osCode)));
+      case SOLARIS_CODE:
+        stats = f.createOsStatistics(SolarisProcessStats.getType(), name, pid, PROCESS_STAT_FLAG);
+        break;
+      case LINUX_CODE:
+        stats = f.createOsStatistics(LinuxProcessStats.getType(), name, pid, PROCESS_STAT_FLAG);
+        break;
+      case OSX_CODE:
+        stats = f.createOsStatistics(OSXProcessStats.getType(), name, pid, PROCESS_STAT_FLAG);
+        break;
+      case WINDOWS_CODE:
+        stats = f.createOsStatistics(WindowsProcessStats.getType(), name, pid, PROCESS_STAT_FLAG);
+        break;
+      default:
+        throw new InternalGemFireException(
+            LocalizedStrings.HostStatHelper_UNHANDLED_OSCODE_0_HOSTSTATHELPERNEWPROCESS
+                .toLocalizedString(Integer.valueOf(osCode)));
     }
     // Note we don't call refreshProcess since we only want the manager to do that
     return stats;
   }
 
   /**
-   * Creates a new <code>ProcessStats</code> instance that wraps the
-   * given <code>Statistics</code>.
+   * Creates a new <code>ProcessStats</code> instance that wraps the given <code>Statistics</code>.
    *
    * @see #newProcess
    * @since GemFire 3.5
    */
   static ProcessStats newProcessStats(Statistics stats) {
     switch (osCode) {
-    case SOLARIS_CODE:
-      return SolarisProcessStats.createProcessStats(stats);
+      case SOLARIS_CODE:
+        return SolarisProcessStats.createProcessStats(stats);
 
-    case LINUX_CODE:
-      return LinuxProcessStats.createProcessStats(stats);
+      case LINUX_CODE:
+        return LinuxProcessStats.createProcessStats(stats);
 
-    case WINDOWS_CODE:
-      return WindowsProcessStats.createProcessStats(stats);
+      case WINDOWS_CODE:
+        return WindowsProcessStats.createProcessStats(stats);
 
-    case OSX_CODE:
-      return OSXProcessStats.createProcessStats(stats);
+      case OSX_CODE:
+        return OSXProcessStats.createProcessStats(stats);
 
-    default:
-      throw new InternalGemFireException(LocalizedStrings.HostStatHelper_UNHANDLED_OSCODE_0_HOSTSTATHELPERNEWPROCESSSTATS.toLocalizedString(Integer.valueOf(osCode)));
+      default:
+        throw new InternalGemFireException(
+            LocalizedStrings.HostStatHelper_UNHANDLED_OSCODE_0_HOSTSTATHELPERNEWPROCESSSTATS
+                .toLocalizedString(Integer.valueOf(osCode)));
     }
   }
 
   /**
-   * Creates and returns a {@link Statistics} with the current
-   * machine's stats. The resource's stats will contain a snapshot
-   * of the current statistic values for the local machine.
+   * Creates and returns a {@link Statistics} with the current machine's stats. The resource's stats
+   * will contain a snapshot of the current statistic values for the local machine.
    */
   static void newSystem(OsStatisticsFactory f) {
     Statistics stats;
     switch (osCode) {
-    case SOLARIS_CODE:
-      stats = f.createOsStatistics(SolarisSystemStats.getType(), getHostSystemName(), getHostSystemId(), SYSTEM_STAT_FLAG);
-      break;
-    case LINUX_CODE:
-      stats = f.createOsStatistics(LinuxSystemStats.getType(), getHostSystemName(), getHostSystemId(), SYSTEM_STAT_FLAG);
-      break;
-    case WINDOWS_CODE:
-      stats = f.createOsStatistics(WindowsSystemStats.getType(), getHostSystemName(), getHostSystemId(), SYSTEM_STAT_FLAG);
-      break;
-    case OSX_CODE:
-      stats = f.createOsStatistics(OSXSystemStats.getType(), getHostSystemName(), getHostSystemId(), SYSTEM_STAT_FLAG);
-      break;
-    default:
-      throw new InternalGemFireException(LocalizedStrings.HostStatHelper_UNHANDLED_OSCODE_0_HOSTSTATHELPERNEWSYSTEM.toLocalizedString(Integer.valueOf(osCode)));
+      case SOLARIS_CODE:
+        stats =
+            f.createOsStatistics(
+                SolarisSystemStats.getType(),
+                getHostSystemName(),
+                getHostSystemId(),
+                SYSTEM_STAT_FLAG);
+        break;
+      case LINUX_CODE:
+        stats =
+            f.createOsStatistics(
+                LinuxSystemStats.getType(),
+                getHostSystemName(),
+                getHostSystemId(),
+                SYSTEM_STAT_FLAG);
+        break;
+      case WINDOWS_CODE:
+        stats =
+            f.createOsStatistics(
+                WindowsSystemStats.getType(),
+                getHostSystemName(),
+                getHostSystemId(),
+                SYSTEM_STAT_FLAG);
+        break;
+      case OSX_CODE:
+        stats =
+            f.createOsStatistics(
+                OSXSystemStats.getType(), getHostSystemName(), getHostSystemId(), SYSTEM_STAT_FLAG);
+        break;
+      default:
+        throw new InternalGemFireException(
+            LocalizedStrings.HostStatHelper_UNHANDLED_OSCODE_0_HOSTSTATHELPERNEWSYSTEM
+                .toLocalizedString(Integer.valueOf(osCode)));
     }
     if (stats instanceof LocalStatisticsImpl) {
       refreshSystem((LocalStatisticsImpl) stats);
@@ -262,8 +282,7 @@ public class HostStatHelper {
   }
 
   /**
-   * @return this machine's fully qualified hostname 
-   *         or "unknownHostName" if one cannot be found.
+   * @return this machine's fully qualified hostname or "unknownHostName" if one cannot be found.
    */
   private static String getHostSystemName() {
     String hostname = "unknownHostName";
@@ -275,11 +294,11 @@ public class HostStatHelper {
     return hostname;
   }
 
-  /** 
-   * Generate a systemid based off of the ip address of the host.
-   * This duplicates the common implementation of 
-   * <code>long gethostid(void) </code>.
-   * Punt on the ipv6 case and just use the same algorithm.
+  /**
+   * Generate a systemid based off of the ip address of the host. This duplicates the common
+   * implementation of <code>long gethostid(void) </code>. Punt on the ipv6 case and just use the
+   * same algorithm.
+   *
    * @return a psuedo unique id based on the ip address
    */
   private static long getHostSystemId() {
@@ -287,7 +306,11 @@ public class HostStatHelper {
     try {
       InetAddress host = SocketCreator.getLocalHost();
       byte[] addr = host.getAddress();
-      id = (addr[1] & 0xFFL) << 24 | (addr[0] & 0xFFL) << 16 | (addr[3] & 0xFFL) << 8 | (addr[2] & 0xFFL) << 0;
+      id =
+          (addr[1] & 0xFFL) << 24
+              | (addr[0] & 0xFFL) << 16
+              | (addr[3] & 0xFFL) << 8
+              | (addr[2] & 0xFFL) << 0;
     } catch (UnknownHostException uhe) {
     }
     return id;

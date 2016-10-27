@@ -33,9 +33,8 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.util.test.TestUtil;
 
 /**
- * This test tests Illegal arguements being passed to 
- * create disk regions. The creation of the DWA object should
- * throw a relevant exception if the arguements specified are incorrect.
+ * This test tests Illegal arguements being passed to create disk regions. The creation of the DWA
+ * object should throw a relevant exception if the arguements specified are incorrect.
  */
 @Category(IntegrationTest.class)
 public class DiskRegionIllegalCacheXMLvaluesJUnitTest {
@@ -56,10 +55,12 @@ public class DiskRegionIllegalCacheXMLvaluesJUnitTest {
         CacheFactory.create(ds);
       } catch (IllegalArgumentException ex) {
         exceptionOccured = true;
-        System.out.println("ExpectedStrings: Received expected IllegalArgumentException:" + ex.getMessage());
+        System.out.println(
+            "ExpectedStrings: Received expected IllegalArgumentException:" + ex.getMessage());
       } catch (CacheXmlException ex) {
         exceptionOccured = true;
-        System.out.println("ExpectedStrings: Received expected CacheXmlException:" + ex.getMessage());
+        System.out.println(
+            "ExpectedStrings: Received expected CacheXmlException:" + ex.getMessage());
       } catch (Exception e) {
         e.printStackTrace();
         fail("test failed due to " + e);
@@ -76,9 +77,7 @@ public class DiskRegionIllegalCacheXMLvaluesJUnitTest {
     }
   }
 
-  /**
-   * test Illegal max oplog size
-   */
+  /** test Illegal max oplog size */
   @Test
   public void testMaxOplogSize() {
     createRegion("faultyDiskXMLsForTesting/incorrect_max_oplog_size.xml");
@@ -86,8 +85,7 @@ public class DiskRegionIllegalCacheXMLvaluesJUnitTest {
 
   @Ignore("TODO: test is empty")
   @Test
-  public void testSynchronous() {
-  }
+  public void testSynchronous() {}
 
   @Test
   public void testIsRolling() {

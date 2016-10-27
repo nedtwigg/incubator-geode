@@ -47,51 +47,46 @@ import java.util.Set;
 import static org.apache.geode.internal.offheap.annotations.OffHeapIdentifier.TX_ENTRY_STATE;
 
 /**
- * TXEntryState is the entity that tracks transactional changes, except for
- * those tracked by {@link TXEntryUserAttrState}, to an entry.
- * 
- * 
+ * TXEntryState is the entity that tracks transactional changes, except for those tracked by {@link
+ * TXEntryUserAttrState}, to an entry.
+ *
  * @since GemFire 4.0
- *  
  */
 public class TXEntryState implements Releasable {
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * This field is final except for when it is nulled out during cleanup
-   */
+  /** This field is final except for when it is nulled out during cleanup */
   @Retained(TX_ENTRY_STATE)
   private Object originalVersionId;
+
   private final Object originalValue;
 
   /**
-   * Serial number that is set each time this entry is modified. Used to order
-   * the events in a TransactionEvent.
+   * Serial number that is set each time this entry is modified. Used to order the events in a
+   * TransactionEvent.
    */
   protected int modSerialNum;
   /**
    * Used to remember the event id to use on the farSide for this entry. See bug 39434.
+   *
    * @since GemFire 5.7
    */
   private int farSideEventOffset = -1;
   /**
    * Used to remember the event id to use on the nearSide for this entry. See bug 39434.
+   *
    * @since GemFire 5.7
    */
   private int nearSideEventOffset = -1;
 
   private Object pendingValue;
 
-  /**
-   * Remember the callback argument for listener invocation
-   */
+  /** Remember the callback argument for listener invocation */
   private Object callBackArgument;
 
   private byte op;
 
-  /**
-   * destroy field remembers the strongest destroy op perfomed on this entry
-   */
+  /** destroy field remembers the strongest destroy op perfomed on this entry */
   private byte destroy; // DESTROY_NONE, DESTROY_LOCAL, DESTROY_DISTRIBUTED
 
   // ORDER of the following is important to the implementation!
@@ -157,36 +152,36 @@ public class TXEntryState implements Releasable {
   private static final byte OP_NLOAD_PUT = 26;
 
   static {
-    Assert.assertTrue(OP_SEARCH_PUT - OP_PUT == OP_SEARCH_CREATE - OP_CREATE, "search offset inconsistent");
-    Assert.assertTrue(OP_LLOAD_PUT - OP_PUT == OP_LLOAD_CREATE - OP_CREATE, "lload offset inconsistent");
-    Assert.assertTrue(OP_NLOAD_PUT - OP_PUT == OP_NLOAD_CREATE - OP_CREATE, "nload offset inconsistent");
+    Assert.assertTrue(
+        OP_SEARCH_PUT - OP_PUT == OP_SEARCH_CREATE - OP_CREATE, "search offset inconsistent");
+    Assert.assertTrue(
+        OP_LLOAD_PUT - OP_PUT == OP_LLOAD_CREATE - OP_CREATE, "lload offset inconsistent");
+    Assert.assertTrue(
+        OP_NLOAD_PUT - OP_PUT == OP_NLOAD_CREATE - OP_CREATE, "nload offset inconsistent");
   }
 
   /**
-   * System property to be set when read conflicts should be detected.
-   * Benefits of read conflict detection are at:
-   * https://wiki.gemstone.com/display/PR/Read+conflict+detection
+   * System property to be set when read conflicts should be detected. Benefits of read conflict
+   * detection are at: https://wiki.gemstone.com/display/PR/Read+conflict+detection
    */
-  private static final boolean DETECT_READ_CONFLICTS = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "detectReadConflicts");
+  private static final boolean DETECT_READ_CONFLICTS =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "detectReadConflicts");
 
   // @todo darrel: optimize footprint by having this field on a subclass
   //      that is only created by TXRegionState when it knows its region needs refCounts.
   /**
-   * A reference to the RegionEntry, in committed state, that this tx entry has
-   * referenced. Note: this field is only needed if the committed region
-   * has eviction or expiration enabled. In both those cases the tx needs to do
-   * reference counting.
+   * A reference to the RegionEntry, in committed state, that this tx entry has referenced. Note:
+   * this field is only needed if the committed region has eviction or expiration enabled. In both
+   * those cases the tx needs to do reference counting.
    */
   private final RegionEntry refCountEntry;
 
-  /**
-   * Set to true once this entry has been written by a tx operation.
-   */
+  /** Set to true once this entry has been written by a tx operation. */
   private boolean dirty;
 
   /**
-   * Set to true if this operation is result of a bulk op. We use this
-   * boolean to determine op type rather than extending the operation algebra.
+   * Set to true if this operation is result of a bulk op. We use this boolean to determine op type
+   * rather than extending the operation algebra.
    */
   private boolean bulkOp;
 
@@ -194,26 +189,23 @@ public class TXEntryState implements Releasable {
   private Set<InternalDistributedMember> adjunctRecipients = null;
 
   /**
-   * versionTag to be sent to other members. This is propogated up from AbstractRegionMap
-   * and then used while building TXCommitMessage
+   * versionTag to be sent to other members. This is propogated up from AbstractRegionMap and then
+   * used while building TXCommitMessage
    */
   private VersionTag versionTag = null;
 
   /**
-   * tailKey (used by wan) to be sent to other members. This is propagated up from
-   * AbstractRegionMap and then used while building TXCommitMessage
+   * tailKey (used by wan) to be sent to other members. This is propagated up from AbstractRegionMap
+   * and then used while building TXCommitMessage
    */
   private long tailKey = -1;
 
   /**
-   * versionTag that is fetched from remote members, if this member's data policy
-   * is not REPLICATE
+   * versionTag that is fetched from remote members, if this member's data policy is not REPLICATE
    */
   private VersionTag remoteVersionTag = null;
 
-  /**
-   * Next region version generated on the primary
-   */
+  /** Next region version generated on the primary */
   private long nextRegionVersion = -1;
 
   /*
@@ -222,15 +214,14 @@ public class TXEntryState implements Releasable {
    */
   private transient DistTxThinEntryState distTxThinEntryState;
 
-  /**
-   * Use this system property if you need to display/log string values in conflict messages
-   */
-  private static final boolean VERBOSE_CONFLICT_STRING = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "verboseConflictString");
+  /** Use this system property if you need to display/log string values in conflict messages */
+  private static final boolean VERBOSE_CONFLICT_STRING =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "verboseConflictString");
 
   /**
-   * This constructor is used to create a singleton used by LocalRegion to
-   * signal that noop invalidate op has been performed. The instance returned by
-   * this constructor is just a marker; it is not good for anything else.
+   * This constructor is used to create a singleton used by LocalRegion to signal that noop
+   * invalidate op has been performed. The instance returned by this constructor is just a marker;
+   * it is not good for anything else.
    */
   protected TXEntryState() {
     this.op = OP_NULL;
@@ -241,10 +232,9 @@ public class TXEntryState implements Releasable {
 
   private TXRegionState txRegionState = null;
 
-  /**
-   * This constructor is used when creating an entry
-   */
-  protected TXEntryState(RegionEntry re, Object pvId, Object pv, TXRegionState txRegionState, boolean isDistributed) {
+  /** This constructor is used when creating an entry */
+  protected TXEntryState(
+      RegionEntry re, Object pvId, Object pv, TXRegionState txRegionState, boolean isDistributed) {
     Object vId = pvId;
     if (vId == null) {
       vId = Token.REMOVED_PHASE1;
@@ -291,8 +281,8 @@ public class TXEntryState implements Releasable {
   }
 
   /**
-   * Gets the pending value for near side operations. Special cases local
-   * destroy and local invalidate to fix bug 34387.
+   * Gets the pending value for near side operations. Special cases local destroy and local
+   * invalidate to fix bug 34387.
    */
   @Unretained
   public Object getNearSidePendingValue() {
@@ -314,10 +304,9 @@ public class TXEntryState implements Releasable {
   }
 
   /**
-   * Fetches the current modification serial number from the txState and puts it in
-   * this entry.
+   * Fetches the current modification serial number from the txState and puts it in this entry.
+   *
    * @param modNum the next modified serial number gotten from TXState
-   * 
    * @since GemFire 5.0
    */
   public void updateForWrite(final int modNum) {
@@ -327,6 +316,7 @@ public class TXEntryState implements Releasable {
 
   /**
    * Returns true if this entry has been written; false if only read
+   *
    * @since GemFire 5.1
    */
   public boolean isDirty() {
@@ -335,6 +325,7 @@ public class TXEntryState implements Releasable {
 
   /**
    * Return true if entry has an operation.
+   *
    * @since GemFire 5.5
    */
   public boolean hasOp() {
@@ -342,8 +333,8 @@ public class TXEntryState implements Releasable {
   }
 
   /**
-   * Returns true if the transaction state has this entry existing "locally".
-   * Returns false if the transaction is going to remove this entry.
+   * Returns true if the transaction state has this entry existing "locally". Returns false if the
+   * transaction is going to remove this entry.
    */
   public boolean existsLocally() {
     if (this.op == OP_NULL) {
@@ -358,29 +349,34 @@ public class TXEntryState implements Releasable {
   }
 
   private boolean isOpLocalInvalidate() {
-    return this.op >= OP_L_INVALIDATE && this.op <= OP_NLOAD_CREATE_LI && this.op != OP_D_INVALIDATE;
+    return this.op >= OP_L_INVALIDATE
+        && this.op <= OP_NLOAD_CREATE_LI
+        && this.op != OP_D_INVALIDATE;
   }
 
   /**
-   * Return true if this transaction has completely invalidated or destroyed the
-   * value of this entry in the entire distributed system. Return false if a
-   * netsearch should be done.
+   * Return true if this transaction has completely invalidated or destroyed the value of this entry
+   * in the entire distributed system. Return false if a netsearch should be done.
    */
   public boolean noValueInSystem() {
     if (this.op == OP_D_DESTROY || this.op == OP_D_INVALIDATE_LD || this.op == OP_D_INVALIDATE) {
       return true;
     } else if (getNearSidePendingValue() == Token.INVALID) {
       // Note that we are not interested in LOCAL_INVALID
-      return (this.op >= OP_CREATE_LD && this.op != OP_L_INVALIDATE && this.op != OP_SEARCH_CREATE && this.op != OP_LOCAL_CREATE && this.op != OP_SEARCH_PUT);
+      return (this.op >= OP_CREATE_LD
+          && this.op != OP_L_INVALIDATE
+          && this.op != OP_SEARCH_CREATE
+          && this.op != OP_LOCAL_CREATE
+          && this.op != OP_SEARCH_PUT);
     } else {
       return false;
     }
   }
 
   /**
-   * Returns true if the transaction state has this entry existing locally and
-   * has a valid local value. Returns false if the transaction is going to
-   * remove this entry or its local value is invalid.
+   * Returns true if the transaction state has this entry existing locally and has a valid local
+   * value. Returns false if the transaction is going to remove this entry or its local value is
+   * invalid.
    */
   public boolean isLocallyValid(boolean isProxy) {
     if (this.op == OP_NULL) {
@@ -406,8 +402,8 @@ public class TXEntryState implements Releasable {
 
   /**
    * @param key
-   * @return the value, or null if the value does not exist in the cache,
-   *         Token.INVALID or Token.LOCAL_INVALID if the value is invalid
+   * @return the value, or null if the value does not exist in the cache, Token.INVALID or
+   *     Token.LOCAL_INVALID if the value is invalid
    */
   public Object getValue(Object key, Region r, boolean preferCD) {
     if (!existsLocally()) {
@@ -462,12 +458,13 @@ public class TXEntryState implements Releasable {
   final boolean isOpDestroyEvent(LocalRegion r) {
     // Note that if the region is a proxy then we go ahead and distributed
     // the destroy because we can't eliminate it based on committed state
-    return isOpDestroy() && (r.isProxy() || (getOriginalValue() != null && !Token.isRemoved(getOriginalValue())));
+    return isOpDestroy()
+        && (r.isProxy() || (getOriginalValue() != null && !Token.isRemoved(getOriginalValue())));
   }
 
   /**
    * Returns true if this operation has an event for the tx listener
-   * 
+   *
    * @since GemFire 5.0
    */
   final boolean isOpAnyEvent(LocalRegion r) {
@@ -507,139 +504,139 @@ public class TXEntryState implements Releasable {
 
   private String opToString(byte opCode) {
     switch (opCode) {
-    case OP_NULL:
-      return "OP_NULL";
-    case OP_L_DESTROY:
-      return "OP_L_DESTROY";
-    case OP_CREATE_LD:
-      return "OP_CREATE_LD";
-    case OP_LLOAD_CREATE_LD:
-      return "OP_LLOAD_CREATE_LD";
-    case OP_NLOAD_CREATE_LD:
-      return "OP_NLOAD_CREATE_LD";
-    case OP_PUT_LD:
-      return "OP_PUT_LD";
-    case OP_LLOAD_PUT_LD:
-      return "OP_LLOAD_PUT_LD";
-    case OP_NLOAD_PUT_LD:
-      return "OP_NLOAD_PUT_LD";
-    case OP_D_INVALIDATE_LD:
-      return "OP_D_INVALIDATE_LD";
-    case OP_D_DESTROY:
-      return "OP_D_DESTROY";
-    case OP_L_INVALIDATE:
-      return "OP_L_INVALIDATE";
-    case OP_PUT_LI:
-      return "OP_PUT_LI";
-    case OP_LLOAD_PUT_LI:
-      return "OP_LLOAD_PUT_LI";
-    case OP_NLOAD_PUT_LI:
-      return "OP_NLOAD_PUT_LI";
-    case OP_D_INVALIDATE:
-      return "OP_D_INVALIDATE";
-    case OP_CREATE_LI:
-      return "OP_CREATE_LI";
-    case OP_LLOAD_CREATE_LI:
-      return "OP_LLOAD_CREATE_LI";
-    case OP_NLOAD_CREATE_LI:
-      return "OP_NLOAD_CREATE_LI";
-    case OP_CREATE:
-      return "OP_CREATE";
-    case OP_SEARCH_CREATE:
-      return "OP_SEARCH_CREATE";
-    case OP_LLOAD_CREATE:
-      return "OP_LLOAD_CREATE";
-    case OP_NLOAD_CREATE:
-      return "OP_NLOAD_CREATE";
-    case OP_LOCAL_CREATE:
-      return "OP_LOCAL_CREATE";
-    case OP_PUT:
-      return "OP_PUT";
-    case OP_SEARCH_PUT:
-      return "OP_SEARCH_PUT";
-    case OP_LLOAD_PUT:
-      return "OP_LLOAD_PUT";
-    case OP_NLOAD_PUT:
-      return "OP_NLOAD_PUT";
-    default:
-      return "<unhandled op " + opCode + " >";
+      case OP_NULL:
+        return "OP_NULL";
+      case OP_L_DESTROY:
+        return "OP_L_DESTROY";
+      case OP_CREATE_LD:
+        return "OP_CREATE_LD";
+      case OP_LLOAD_CREATE_LD:
+        return "OP_LLOAD_CREATE_LD";
+      case OP_NLOAD_CREATE_LD:
+        return "OP_NLOAD_CREATE_LD";
+      case OP_PUT_LD:
+        return "OP_PUT_LD";
+      case OP_LLOAD_PUT_LD:
+        return "OP_LLOAD_PUT_LD";
+      case OP_NLOAD_PUT_LD:
+        return "OP_NLOAD_PUT_LD";
+      case OP_D_INVALIDATE_LD:
+        return "OP_D_INVALIDATE_LD";
+      case OP_D_DESTROY:
+        return "OP_D_DESTROY";
+      case OP_L_INVALIDATE:
+        return "OP_L_INVALIDATE";
+      case OP_PUT_LI:
+        return "OP_PUT_LI";
+      case OP_LLOAD_PUT_LI:
+        return "OP_LLOAD_PUT_LI";
+      case OP_NLOAD_PUT_LI:
+        return "OP_NLOAD_PUT_LI";
+      case OP_D_INVALIDATE:
+        return "OP_D_INVALIDATE";
+      case OP_CREATE_LI:
+        return "OP_CREATE_LI";
+      case OP_LLOAD_CREATE_LI:
+        return "OP_LLOAD_CREATE_LI";
+      case OP_NLOAD_CREATE_LI:
+        return "OP_NLOAD_CREATE_LI";
+      case OP_CREATE:
+        return "OP_CREATE";
+      case OP_SEARCH_CREATE:
+        return "OP_SEARCH_CREATE";
+      case OP_LLOAD_CREATE:
+        return "OP_LLOAD_CREATE";
+      case OP_NLOAD_CREATE:
+        return "OP_NLOAD_CREATE";
+      case OP_LOCAL_CREATE:
+        return "OP_LOCAL_CREATE";
+      case OP_PUT:
+        return "OP_PUT";
+      case OP_SEARCH_PUT:
+        return "OP_SEARCH_PUT";
+      case OP_LLOAD_PUT:
+        return "OP_LLOAD_PUT";
+      case OP_NLOAD_PUT:
+        return "OP_NLOAD_PUT";
+      default:
+        return "<unhandled op " + opCode + " >";
     }
   }
 
   /**
-   * Returns an Operation instance that matches what the transactional operation
-   * done on this entry in the cache the the transaction was performed in.
+   * Returns an Operation instance that matches what the transactional operation done on this entry
+   * in the cache the the transaction was performed in.
    */
   protected Operation getNearSideOperation() {
     switch (this.op) {
-    case OP_NULL:
-      return null;
-    case OP_L_DESTROY:
-      return Operation.LOCAL_DESTROY;
-    case OP_CREATE_LD:
-      return Operation.LOCAL_DESTROY;
-    case OP_LLOAD_CREATE_LD:
-      return Operation.LOCAL_DESTROY;
-    case OP_NLOAD_CREATE_LD:
-      return Operation.LOCAL_DESTROY;
-    case OP_PUT_LD:
-      return Operation.LOCAL_DESTROY;
-    case OP_LLOAD_PUT_LD:
-      return Operation.LOCAL_DESTROY;
-    case OP_NLOAD_PUT_LD:
-      return Operation.LOCAL_DESTROY;
-    case OP_D_INVALIDATE_LD:
-      return Operation.LOCAL_DESTROY;
-    case OP_D_DESTROY:
-      return getDestroyOperation();
-    case OP_L_INVALIDATE:
-      return Operation.LOCAL_INVALIDATE;
-    case OP_PUT_LI:
-      return Operation.LOCAL_INVALIDATE;
-    case OP_LLOAD_PUT_LI:
-      return Operation.LOCAL_INVALIDATE;
-    case OP_NLOAD_PUT_LI:
-      return Operation.LOCAL_INVALIDATE;
-    case OP_D_INVALIDATE:
-      return Operation.INVALIDATE;
-    case OP_CREATE_LI:
-      return getCreateOperation();
-    case OP_LLOAD_CREATE_LI:
-      return getCreateOperation();
-    case OP_NLOAD_CREATE_LI:
-      return getCreateOperation();
-    case OP_CREATE:
-      return getCreateOperation();
-    case OP_SEARCH_CREATE:
-      return Operation.SEARCH_CREATE;
-    case OP_LLOAD_CREATE:
-      return Operation.LOCAL_LOAD_CREATE;
-    case OP_NLOAD_CREATE:
-      return Operation.NET_LOAD_CREATE;
-    case OP_LOCAL_CREATE:
-      return getCreateOperation();
-    case OP_PUT:
-      return getUpdateOperation();
-    case OP_SEARCH_PUT:
-      return Operation.SEARCH_UPDATE;
-    case OP_LLOAD_PUT:
-      return Operation.LOCAL_LOAD_UPDATE;
-    case OP_NLOAD_PUT:
-      return Operation.NET_LOAD_CREATE;
-    default:
-      throw new IllegalStateException(LocalizedStrings.TXEntryState_UNHANDLED_OP_0.toLocalizedString(Byte.valueOf(this.op)));
+      case OP_NULL:
+        return null;
+      case OP_L_DESTROY:
+        return Operation.LOCAL_DESTROY;
+      case OP_CREATE_LD:
+        return Operation.LOCAL_DESTROY;
+      case OP_LLOAD_CREATE_LD:
+        return Operation.LOCAL_DESTROY;
+      case OP_NLOAD_CREATE_LD:
+        return Operation.LOCAL_DESTROY;
+      case OP_PUT_LD:
+        return Operation.LOCAL_DESTROY;
+      case OP_LLOAD_PUT_LD:
+        return Operation.LOCAL_DESTROY;
+      case OP_NLOAD_PUT_LD:
+        return Operation.LOCAL_DESTROY;
+      case OP_D_INVALIDATE_LD:
+        return Operation.LOCAL_DESTROY;
+      case OP_D_DESTROY:
+        return getDestroyOperation();
+      case OP_L_INVALIDATE:
+        return Operation.LOCAL_INVALIDATE;
+      case OP_PUT_LI:
+        return Operation.LOCAL_INVALIDATE;
+      case OP_LLOAD_PUT_LI:
+        return Operation.LOCAL_INVALIDATE;
+      case OP_NLOAD_PUT_LI:
+        return Operation.LOCAL_INVALIDATE;
+      case OP_D_INVALIDATE:
+        return Operation.INVALIDATE;
+      case OP_CREATE_LI:
+        return getCreateOperation();
+      case OP_LLOAD_CREATE_LI:
+        return getCreateOperation();
+      case OP_NLOAD_CREATE_LI:
+        return getCreateOperation();
+      case OP_CREATE:
+        return getCreateOperation();
+      case OP_SEARCH_CREATE:
+        return Operation.SEARCH_CREATE;
+      case OP_LLOAD_CREATE:
+        return Operation.LOCAL_LOAD_CREATE;
+      case OP_NLOAD_CREATE:
+        return Operation.NET_LOAD_CREATE;
+      case OP_LOCAL_CREATE:
+        return getCreateOperation();
+      case OP_PUT:
+        return getUpdateOperation();
+      case OP_SEARCH_PUT:
+        return Operation.SEARCH_UPDATE;
+      case OP_LLOAD_PUT:
+        return Operation.LOCAL_LOAD_UPDATE;
+      case OP_NLOAD_PUT:
+        return Operation.NET_LOAD_CREATE;
+      default:
+        throw new IllegalStateException(
+            LocalizedStrings.TXEntryState_UNHANDLED_OP_0.toLocalizedString(Byte.valueOf(this.op)));
     }
   }
 
-  /**
-   * @return true when the operation is the result of a bulk op
-   */
+  /** @return true when the operation is the result of a bulk op */
   private boolean isBulkOp() {
     return this.bulkOp;
   }
 
   /**
    * Calculate and return the event offset based on the sequence id on TXState.
+   *
    * @since GemFire 5.7
    */
   private static int generateEventOffset(TXState txState) {
@@ -649,8 +646,9 @@ public class TXEntryState implements Releasable {
   }
 
   /**
-   * Generate offsets for different eventIds; one for nearside and one for farside
-   * for the ops for this entry.
+   * Generate offsets for different eventIds; one for nearside and one for farside for the ops for
+   * this entry.
+   *
    * @since GemFire 5.7
    */
   private void generateBothEventOffsets(TXState txState) {
@@ -660,8 +658,9 @@ public class TXEntryState implements Releasable {
   }
 
   /**
-   * Generate the offset for an eventId that will be used for both a farside and nearside
-   * op for this entry.
+   * Generate the offset for an eventId that will be used for both a farside and nearside op for
+   * this entry.
+   *
    * @since GemFire 5.7
    */
   private void generateSharedEventOffset(TXState txState) {
@@ -671,8 +670,9 @@ public class TXEntryState implements Releasable {
   }
 
   /**
-   * Generate the offset for an eventId that will be used for the nearside
-   * op for this entry. No farside op will be done.
+   * Generate the offset for an eventId that will be used for the nearside op for this entry. No
+   * farside op will be done.
+   *
    * @since GemFire 5.7
    */
   private void generateNearSideOnlyEventOffset(TXState txState) {
@@ -690,12 +690,16 @@ public class TXEntryState implements Releasable {
   }
 
   private static EventID createEventID(TXState txState, int offset) {
-    return new EventID(txState.getBaseMembershipId(), txState.getBaseThreadId(), txState.getBaseSequenceId() + offset);
+    return new EventID(
+        txState.getBaseMembershipId(),
+        txState.getBaseThreadId(),
+        txState.getBaseSequenceId() + offset);
   }
 
   /**
-   * Calculate (if farside has not already done so) and return then eventID
-   * to use for near side op applications.
+   * Calculate (if farside has not already done so) and return then eventID to use for near side op
+   * applications.
+   *
    * @since GemFire 5.7
    */
   private EventID getNearSideEventId(TXState txState) {
@@ -705,160 +709,162 @@ public class TXEntryState implements Releasable {
 
   /**
    * Calculate and return the event offset for this entry's farSide operation.
+   *
    * @since GemFire 5.7
    */
   void generateEventOffsets(TXState txState) {
     switch (this.op) {
-    case OP_NULL:
-      // no eventIds needed
-      break;
-    case OP_L_DESTROY:
-      generateNearSideOnlyEventOffset(txState);
-      break;
-    case OP_CREATE_LD:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_LLOAD_CREATE_LD:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_NLOAD_CREATE_LD:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_PUT_LD:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_LLOAD_PUT_LD:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_NLOAD_PUT_LD:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_D_INVALIDATE_LD:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_D_DESTROY:
-      generateSharedEventOffset(txState);
-      break;
-    case OP_L_INVALIDATE:
-      generateNearSideOnlyEventOffset(txState);
-      break;
-    case OP_PUT_LI:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_LLOAD_PUT_LI:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_NLOAD_PUT_LI:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_D_INVALIDATE:
-      generateSharedEventOffset(txState);
-      break;
-    case OP_CREATE_LI:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_LLOAD_CREATE_LI:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_NLOAD_CREATE_LI:
-      generateBothEventOffsets(txState);
-      break;
-    case OP_CREATE:
-      generateSharedEventOffset(txState);
-      break;
-    case OP_SEARCH_CREATE:
-      generateNearSideOnlyEventOffset(txState);
-      break;
-    case OP_LLOAD_CREATE:
-      generateSharedEventOffset(txState);
-      break;
-    case OP_NLOAD_CREATE:
-      generateSharedEventOffset(txState);
-      break;
-    case OP_LOCAL_CREATE:
-      generateNearSideOnlyEventOffset(txState);
-      break;
-    case OP_PUT:
-      generateSharedEventOffset(txState);
-      break;
-    case OP_SEARCH_PUT:
-      generateNearSideOnlyEventOffset(txState);
-      break;
-    case OP_LLOAD_PUT:
-      generateSharedEventOffset(txState);
-      break;
-    case OP_NLOAD_PUT:
-      generateSharedEventOffset(txState);
-      break;
-    default:
-      throw new IllegalStateException("<unhandled op " + this.op + " >");
+      case OP_NULL:
+        // no eventIds needed
+        break;
+      case OP_L_DESTROY:
+        generateNearSideOnlyEventOffset(txState);
+        break;
+      case OP_CREATE_LD:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_LLOAD_CREATE_LD:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_NLOAD_CREATE_LD:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_PUT_LD:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_LLOAD_PUT_LD:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_NLOAD_PUT_LD:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_D_INVALIDATE_LD:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_D_DESTROY:
+        generateSharedEventOffset(txState);
+        break;
+      case OP_L_INVALIDATE:
+        generateNearSideOnlyEventOffset(txState);
+        break;
+      case OP_PUT_LI:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_LLOAD_PUT_LI:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_NLOAD_PUT_LI:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_D_INVALIDATE:
+        generateSharedEventOffset(txState);
+        break;
+      case OP_CREATE_LI:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_LLOAD_CREATE_LI:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_NLOAD_CREATE_LI:
+        generateBothEventOffsets(txState);
+        break;
+      case OP_CREATE:
+        generateSharedEventOffset(txState);
+        break;
+      case OP_SEARCH_CREATE:
+        generateNearSideOnlyEventOffset(txState);
+        break;
+      case OP_LLOAD_CREATE:
+        generateSharedEventOffset(txState);
+        break;
+      case OP_NLOAD_CREATE:
+        generateSharedEventOffset(txState);
+        break;
+      case OP_LOCAL_CREATE:
+        generateNearSideOnlyEventOffset(txState);
+        break;
+      case OP_PUT:
+        generateSharedEventOffset(txState);
+        break;
+      case OP_SEARCH_PUT:
+        generateNearSideOnlyEventOffset(txState);
+        break;
+      case OP_LLOAD_PUT:
+        generateSharedEventOffset(txState);
+        break;
+      case OP_NLOAD_PUT:
+        generateSharedEventOffset(txState);
+        break;
+      default:
+        throw new IllegalStateException("<unhandled op " + this.op + " >");
     }
   }
 
   /**
-   * Gets the operation code for the operation done on this entry in caches
-   * remote from the originator of the tx (i.e. the "far side").
-   * 
+   * Gets the operation code for the operation done on this entry in caches remote from the
+   * originator of the tx (i.e. the "far side").
+   *
    * @return null if no far side operation
    */
   private Operation getFarSideOperation() {
     switch (this.op) {
-    case OP_NULL:
-      return null;
-    case OP_L_DESTROY:
-      return null;
-    case OP_CREATE_LD:
-      return getCreateOperation();
-    case OP_LLOAD_CREATE_LD:
-      return Operation.LOCAL_LOAD_CREATE;
-    case OP_NLOAD_CREATE_LD:
-      return Operation.NET_LOAD_CREATE;
-    case OP_PUT_LD:
-      return getUpdateOperation();
-    case OP_LLOAD_PUT_LD:
-      return Operation.LOCAL_LOAD_UPDATE;
-    case OP_NLOAD_PUT_LD:
-      return Operation.NET_LOAD_UPDATE;
-    case OP_D_INVALIDATE_LD:
-      return Operation.INVALIDATE;
-    case OP_D_DESTROY:
-      return getDestroyOperation();
-    case OP_L_INVALIDATE:
-      return null;
-    case OP_PUT_LI:
-      return getUpdateOperation();
-    case OP_LLOAD_PUT_LI:
-      return Operation.LOCAL_LOAD_UPDATE;
-    case OP_NLOAD_PUT_LI:
-      return Operation.NET_LOAD_UPDATE;
-    case OP_D_INVALIDATE:
-      return Operation.INVALIDATE;
-    case OP_CREATE_LI:
-      return getCreateOperation();
-    case OP_LLOAD_CREATE_LI:
-      return Operation.LOCAL_LOAD_CREATE;
-    case OP_NLOAD_CREATE_LI:
-      return Operation.NET_LOAD_CREATE;
-    case OP_CREATE:
-      return getCreateOperation();
-    case OP_SEARCH_CREATE:
-      return null;
-    case OP_LLOAD_CREATE:
-      return Operation.LOCAL_LOAD_CREATE;
-    case OP_NLOAD_CREATE:
-      return Operation.NET_LOAD_CREATE;
-    case OP_LOCAL_CREATE:
-      return getCreateOperation();
-    case OP_PUT:
-      return getUpdateOperation();
-    case OP_SEARCH_PUT:
-      return null;
-    case OP_LLOAD_PUT:
-      return Operation.LOCAL_LOAD_UPDATE;
-    case OP_NLOAD_PUT:
-      return Operation.NET_LOAD_UPDATE;
-    default:
-      throw new IllegalStateException(LocalizedStrings.TXEntryState_UNHANDLED_OP_0.toLocalizedString(Byte.valueOf(this.op)));
+      case OP_NULL:
+        return null;
+      case OP_L_DESTROY:
+        return null;
+      case OP_CREATE_LD:
+        return getCreateOperation();
+      case OP_LLOAD_CREATE_LD:
+        return Operation.LOCAL_LOAD_CREATE;
+      case OP_NLOAD_CREATE_LD:
+        return Operation.NET_LOAD_CREATE;
+      case OP_PUT_LD:
+        return getUpdateOperation();
+      case OP_LLOAD_PUT_LD:
+        return Operation.LOCAL_LOAD_UPDATE;
+      case OP_NLOAD_PUT_LD:
+        return Operation.NET_LOAD_UPDATE;
+      case OP_D_INVALIDATE_LD:
+        return Operation.INVALIDATE;
+      case OP_D_DESTROY:
+        return getDestroyOperation();
+      case OP_L_INVALIDATE:
+        return null;
+      case OP_PUT_LI:
+        return getUpdateOperation();
+      case OP_LLOAD_PUT_LI:
+        return Operation.LOCAL_LOAD_UPDATE;
+      case OP_NLOAD_PUT_LI:
+        return Operation.NET_LOAD_UPDATE;
+      case OP_D_INVALIDATE:
+        return Operation.INVALIDATE;
+      case OP_CREATE_LI:
+        return getCreateOperation();
+      case OP_LLOAD_CREATE_LI:
+        return Operation.LOCAL_LOAD_CREATE;
+      case OP_NLOAD_CREATE_LI:
+        return Operation.NET_LOAD_CREATE;
+      case OP_CREATE:
+        return getCreateOperation();
+      case OP_SEARCH_CREATE:
+        return null;
+      case OP_LLOAD_CREATE:
+        return Operation.LOCAL_LOAD_CREATE;
+      case OP_NLOAD_CREATE:
+        return Operation.NET_LOAD_CREATE;
+      case OP_LOCAL_CREATE:
+        return getCreateOperation();
+      case OP_PUT:
+        return getUpdateOperation();
+      case OP_SEARCH_PUT:
+        return null;
+      case OP_LLOAD_PUT:
+        return Operation.LOCAL_LOAD_UPDATE;
+      case OP_NLOAD_PUT:
+        return Operation.NET_LOAD_UPDATE;
+      default:
+        throw new IllegalStateException(
+            LocalizedStrings.TXEntryState_UNHANDLED_OP_0.toLocalizedString(Byte.valueOf(this.op)));
     }
   }
 
@@ -875,8 +881,7 @@ public class TXEntryState implements Releasable {
     if (r.isUsedForPartitionedRegionBucket()) {
       eventRegion = r.getPartitionedRegion();
     }
-    @Retained
-    EntryEventImpl result = new TxEntryEventImpl(eventRegion, key);
+    @Retained EntryEventImpl result = new TxEntryEventImpl(eventRegion, key);
     boolean returnedResult = false;
     try {
       if (this.destroy == DESTROY_NONE || isOpDestroy()) {
@@ -891,14 +896,11 @@ public class TXEntryState implements Releasable {
       returnedResult = true;
       return result;
     } finally {
-      if (!returnedResult)
-        result.release();
+      if (!returnedResult) result.release();
     }
   }
 
-  /**
-   * @return true if invalidate was done
-   */
+  /** @return true if invalidate was done */
   public boolean invalidate(EntryEventImpl event) throws EntryNotFoundException {
     //    LocalRegion lr = event.getRegion();
     //    boolean isProxy = lr.isProxy();
@@ -914,10 +916,9 @@ public class TXEntryState implements Releasable {
     return true;
   }
 
-  /**
-   * @return true if destroy was done
-   */
-  public boolean destroy(EntryEventImpl event, boolean cacheWrite, boolean originRemote) throws CacheWriterException, EntryNotFoundException, TimeoutException {
+  /** @return true if destroy was done */
+  public boolean destroy(EntryEventImpl event, boolean cacheWrite, boolean originRemote)
+      throws CacheWriterException, EntryNotFoundException, TimeoutException {
     LocalRegion lr = event.getRegion();
     CacheWriter cWriter = lr.basicGetWriter();
     byte advisedOp = adviseOp((cacheWrite ? OP_D_DESTROY : OP_L_DESTROY), event);
@@ -947,17 +948,14 @@ public class TXEntryState implements Releasable {
   }
 
   /**
-   * @param event
-   *          the event object for this operation, with the exception that the
-   *          oldValue parameter is not yet filled in. The oldValue will be
-   *          filled in by this operation.
-   * 
-   * @param ifNew
-   *          true if this operation must not overwrite an existing key
+   * @param event the event object for this operation, with the exception that the oldValue
+   *     parameter is not yet filled in. The oldValue will be filled in by this operation.
+   * @param ifNew true if this operation must not overwrite an existing key
    * @param originRemote value for cacheWriter's isOriginRemote flag
    * @return true if put was done; otherwise returns false
    */
-  public boolean basicPut(EntryEventImpl event, boolean ifNew, boolean originRemote) throws CacheWriterException, TimeoutException {
+  public boolean basicPut(EntryEventImpl event, boolean ifNew, boolean originRemote)
+      throws CacheWriterException, TimeoutException {
     byte putOp = OP_CREATE;
     boolean doingCreate = true;
     if (!ifNew) {
@@ -1007,11 +1005,10 @@ public class TXEntryState implements Releasable {
   }
 
   /**
-   * We will try to establish TXState on members with dataPolicy REPLICATE, this
-   * is done for the first region to be involved in a transaction. For
-   * subsequent region if the dataPolicy is not REPLICATE, we fetch the
-   * VersionTag from replicate members.
-   * 
+   * We will try to establish TXState on members with dataPolicy REPLICATE, this is done for the
+   * first region to be involved in a transaction. For subsequent region if the dataPolicy is not
+   * REPLICATE, we fetch the VersionTag from replicate members.
+   *
    * @param event
    */
   private void fetchRemoteVersionTag(EntryEventImpl event) {
@@ -1033,7 +1030,7 @@ public class TXEntryState implements Releasable {
 
   /**
    * Perform operation algebra
-   * 
+   *
    * @return false if operation was not done
    */
   private byte adviseOp(byte requestedOpCode, EntryEventImpl event) {
@@ -1046,8 +1043,9 @@ public class TXEntryState implements Releasable {
       }
 
       Region region = event.getRegion();
-      boolean needOldValue = region instanceof HARegion // fix for bug 37909
-          || region instanceof BucketRegion;
+      boolean needOldValue =
+          region instanceof HARegion // fix for bug 37909
+              || region instanceof BucketRegion;
       event.setTXEntryOldValue(oldVal, needOldValue);
     }
 
@@ -1056,307 +1054,322 @@ public class TXEntryState implements Releasable {
     // the requested operation 'requestedOpCode' and
     // the previous operation 'this.op'
     switch (requestedOpCode) {
-    case OP_L_DESTROY:
-      switch (this.op) {
-      case OP_NULL:
-        advisedOpCode = requestedOpCode;
-        break;
       case OP_L_DESTROY:
-      case OP_CREATE_LD:
-      case OP_LLOAD_CREATE_LD:
-      case OP_NLOAD_CREATE_LD:
-      case OP_PUT_LD:
-      case OP_LLOAD_PUT_LD:
-      case OP_NLOAD_PUT_LD:
-      case OP_D_INVALIDATE_LD:
+        switch (this.op) {
+          case OP_NULL:
+            advisedOpCode = requestedOpCode;
+            break;
+          case OP_L_DESTROY:
+          case OP_CREATE_LD:
+          case OP_LLOAD_CREATE_LD:
+          case OP_NLOAD_CREATE_LD:
+          case OP_PUT_LD:
+          case OP_LLOAD_PUT_LD:
+          case OP_NLOAD_PUT_LD:
+          case OP_D_INVALIDATE_LD:
+          case OP_D_DESTROY:
+            throw new IllegalStateException(
+                LocalizedStrings.TXEntryState_UNEXPECTED_CURRENT_OP_0_FOR_REQUESTED_OP_1
+                    .toLocalizedString(new Object[] {opToString(), opToString(requestedOpCode)}));
+          case OP_L_INVALIDATE:
+            advisedOpCode = requestedOpCode;
+            break;
+          case OP_PUT_LI:
+            advisedOpCode = OP_PUT_LD;
+            break;
+          case OP_LLOAD_PUT_LI:
+            advisedOpCode = OP_LLOAD_PUT_LD;
+            break;
+          case OP_NLOAD_PUT_LI:
+            advisedOpCode = OP_NLOAD_PUT_LD;
+            break;
+          case OP_D_INVALIDATE:
+            advisedOpCode = OP_D_INVALIDATE_LD;
+            break;
+          case OP_CREATE_LI:
+            advisedOpCode = OP_CREATE_LD;
+            break;
+          case OP_LLOAD_CREATE_LI:
+            advisedOpCode = OP_LLOAD_CREATE_LD;
+            break;
+          case OP_NLOAD_CREATE_LI:
+            advisedOpCode = OP_NLOAD_CREATE_LD;
+            break;
+          case OP_CREATE:
+            advisedOpCode = OP_CREATE_LD;
+            break;
+          case OP_SEARCH_CREATE:
+            advisedOpCode = requestedOpCode;
+            break;
+          case OP_LLOAD_CREATE:
+            advisedOpCode = OP_LLOAD_CREATE_LD;
+            break;
+          case OP_NLOAD_CREATE:
+            advisedOpCode = OP_NLOAD_CREATE_LD;
+            break;
+          case OP_LOCAL_CREATE:
+            advisedOpCode = requestedOpCode;
+            break;
+          case OP_PUT:
+            advisedOpCode = OP_PUT_LD;
+            break;
+          case OP_SEARCH_PUT:
+            advisedOpCode = requestedOpCode;
+            break;
+          case OP_LLOAD_PUT:
+            advisedOpCode = OP_LLOAD_PUT_LD;
+            break;
+          case OP_NLOAD_PUT:
+            advisedOpCode = OP_NLOAD_PUT_LD;
+            break;
+          default:
+            throw new IllegalStateException(
+                LocalizedStrings.TXEntryState_UNHANDLED_0.toLocalizedString(opToString()));
+        }
+        break;
       case OP_D_DESTROY:
-        throw new IllegalStateException(LocalizedStrings.TXEntryState_UNEXPECTED_CURRENT_OP_0_FOR_REQUESTED_OP_1.toLocalizedString(new Object[] { opToString(), opToString(requestedOpCode) }));
-      case OP_L_INVALIDATE:
+        Assert.assertTrue(!isOpDestroy(), "Transactional destroy assertion op=" + this.op);
         advisedOpCode = requestedOpCode;
         break;
-      case OP_PUT_LI:
-        advisedOpCode = OP_PUT_LD;
-        break;
-      case OP_LLOAD_PUT_LI:
-        advisedOpCode = OP_LLOAD_PUT_LD;
-        break;
-      case OP_NLOAD_PUT_LI:
-        advisedOpCode = OP_NLOAD_PUT_LD;
+      case OP_L_INVALIDATE:
+        switch (this.op) {
+          case OP_NULL:
+            advisedOpCode = requestedOpCode;
+            break;
+          case OP_L_DESTROY:
+          case OP_CREATE_LD:
+          case OP_LLOAD_CREATE_LD:
+          case OP_NLOAD_CREATE_LD:
+          case OP_PUT_LD:
+          case OP_LLOAD_PUT_LD:
+          case OP_NLOAD_PUT_LD:
+          case OP_D_DESTROY:
+          case OP_D_INVALIDATE_LD:
+            throw new IllegalStateException(
+                LocalizedStrings.TXEntryState_UNEXPECTED_CURRENT_OP_0_FOR_REQUESTED_OP_1
+                    .toLocalizedString(new Object[] {opToString(), opToString(requestedOpCode)}));
+          case OP_L_INVALIDATE:
+            advisedOpCode = requestedOpCode;
+            break;
+          case OP_LLOAD_PUT_LI:
+          case OP_NLOAD_PUT_LI:
+          case OP_LLOAD_CREATE_LI:
+          case OP_NLOAD_CREATE_LI:
+            advisedOpCode = this.op;
+            break;
+          case OP_PUT_LI:
+            advisedOpCode = OP_PUT_LI;
+            break;
+          case OP_CREATE_LI:
+            advisedOpCode = OP_CREATE_LI;
+            break;
+          case OP_D_INVALIDATE:
+            advisedOpCode = OP_D_INVALIDATE;
+            break;
+          case OP_CREATE:
+            advisedOpCode = OP_CREATE_LI;
+            break;
+          case OP_SEARCH_CREATE:
+            advisedOpCode = OP_LOCAL_CREATE;
+            // pendingValue will be set to LOCAL_INVALID
+            break;
+          case OP_LLOAD_CREATE:
+            advisedOpCode = OP_LLOAD_CREATE_LI;
+            break;
+          case OP_NLOAD_CREATE:
+            advisedOpCode = OP_NLOAD_CREATE_LI;
+            break;
+          case OP_LOCAL_CREATE:
+            advisedOpCode = OP_LOCAL_CREATE;
+            break;
+          case OP_PUT:
+            advisedOpCode = OP_PUT_LI;
+            break;
+          case OP_SEARCH_PUT:
+            advisedOpCode = requestedOpCode;
+            break;
+          case OP_LLOAD_PUT:
+            advisedOpCode = OP_LLOAD_PUT_LI;
+            break;
+          case OP_NLOAD_PUT:
+            advisedOpCode = OP_NLOAD_PUT_LI;
+            break;
+          default:
+            throw new IllegalStateException(
+                LocalizedStrings.TXEntryState_UNHANDLED_0.toLocalizedString(opToString()));
+        }
         break;
       case OP_D_INVALIDATE:
-        advisedOpCode = OP_D_INVALIDATE_LD;
-        break;
-      case OP_CREATE_LI:
-        advisedOpCode = OP_CREATE_LD;
-        break;
-      case OP_LLOAD_CREATE_LI:
-        advisedOpCode = OP_LLOAD_CREATE_LD;
-        break;
-      case OP_NLOAD_CREATE_LI:
-        advisedOpCode = OP_NLOAD_CREATE_LD;
-        break;
-      case OP_CREATE:
-        advisedOpCode = OP_CREATE_LD;
-        break;
-      case OP_SEARCH_CREATE:
-        advisedOpCode = requestedOpCode;
-        break;
-      case OP_LLOAD_CREATE:
-        advisedOpCode = OP_LLOAD_CREATE_LD;
-        break;
-      case OP_NLOAD_CREATE:
-        advisedOpCode = OP_NLOAD_CREATE_LD;
-        break;
-      case OP_LOCAL_CREATE:
-        advisedOpCode = requestedOpCode;
-        break;
-      case OP_PUT:
-        advisedOpCode = OP_PUT_LD;
-        break;
-      case OP_SEARCH_PUT:
-        advisedOpCode = requestedOpCode;
-        break;
-      case OP_LLOAD_PUT:
-        advisedOpCode = OP_LLOAD_PUT_LD;
-        break;
-      case OP_NLOAD_PUT:
-        advisedOpCode = OP_NLOAD_PUT_LD;
-        break;
-      default:
-        throw new IllegalStateException(LocalizedStrings.TXEntryState_UNHANDLED_0.toLocalizedString(opToString()));
-      }
-      break;
-    case OP_D_DESTROY:
-      Assert.assertTrue(!isOpDestroy(), "Transactional destroy assertion op=" + this.op);
-      advisedOpCode = requestedOpCode;
-      break;
-    case OP_L_INVALIDATE:
-      switch (this.op) {
-      case OP_NULL:
-        advisedOpCode = requestedOpCode;
-        break;
-      case OP_L_DESTROY:
-      case OP_CREATE_LD:
-      case OP_LLOAD_CREATE_LD:
-      case OP_NLOAD_CREATE_LD:
-      case OP_PUT_LD:
-      case OP_LLOAD_PUT_LD:
-      case OP_NLOAD_PUT_LD:
-      case OP_D_DESTROY:
-      case OP_D_INVALIDATE_LD:
-        throw new IllegalStateException(LocalizedStrings.TXEntryState_UNEXPECTED_CURRENT_OP_0_FOR_REQUESTED_OP_1.toLocalizedString(new Object[] { opToString(), opToString(requestedOpCode) }));
-      case OP_L_INVALIDATE:
-        advisedOpCode = requestedOpCode;
-        break;
-      case OP_LLOAD_PUT_LI:
-      case OP_NLOAD_PUT_LI:
-      case OP_LLOAD_CREATE_LI:
-      case OP_NLOAD_CREATE_LI:
-        advisedOpCode = this.op;
-        break;
-      case OP_PUT_LI:
-        advisedOpCode = OP_PUT_LI;
-        break;
-      case OP_CREATE_LI:
-        advisedOpCode = OP_CREATE_LI;
-        break;
-      case OP_D_INVALIDATE:
-        advisedOpCode = OP_D_INVALIDATE;
-        break;
-      case OP_CREATE:
-        advisedOpCode = OP_CREATE_LI;
-        break;
-      case OP_SEARCH_CREATE:
-        advisedOpCode = OP_LOCAL_CREATE;
-        // pendingValue will be set to LOCAL_INVALID
-        break;
-      case OP_LLOAD_CREATE:
-        advisedOpCode = OP_LLOAD_CREATE_LI;
-        break;
-      case OP_NLOAD_CREATE:
-        advisedOpCode = OP_NLOAD_CREATE_LI;
-        break;
-      case OP_LOCAL_CREATE:
-        advisedOpCode = OP_LOCAL_CREATE;
-        break;
-      case OP_PUT:
-        advisedOpCode = OP_PUT_LI;
-        break;
-      case OP_SEARCH_PUT:
-        advisedOpCode = requestedOpCode;
-        break;
-      case OP_LLOAD_PUT:
-        advisedOpCode = OP_LLOAD_PUT_LI;
-        break;
-      case OP_NLOAD_PUT:
-        advisedOpCode = OP_NLOAD_PUT_LI;
-        break;
-      default:
-        throw new IllegalStateException(LocalizedStrings.TXEntryState_UNHANDLED_0.toLocalizedString(opToString()));
-      }
-      break;
-    case OP_D_INVALIDATE:
-      switch (this.op) {
-      case OP_NULL:
-        advisedOpCode = requestedOpCode;
-        break;
-      case OP_L_DESTROY:
-      case OP_CREATE_LD:
-      case OP_LLOAD_CREATE_LD:
-      case OP_NLOAD_CREATE_LD:
-      case OP_PUT_LD:
-      case OP_LLOAD_PUT_LD:
-      case OP_NLOAD_PUT_LD:
-      case OP_D_INVALIDATE_LD:
-      case OP_D_DESTROY:
-        throw new IllegalStateException(LocalizedStrings.TXEntryState_UNEXPECTED_CURRENT_OP_0_FOR_REQUESTED_OP_1.toLocalizedString(new Object[] { opToString(), opToString(requestedOpCode) }));
-      case OP_D_INVALIDATE:
-      case OP_L_INVALIDATE:
-        advisedOpCode = OP_D_INVALIDATE;
-        break;
+        switch (this.op) {
+          case OP_NULL:
+            advisedOpCode = requestedOpCode;
+            break;
+          case OP_L_DESTROY:
+          case OP_CREATE_LD:
+          case OP_LLOAD_CREATE_LD:
+          case OP_NLOAD_CREATE_LD:
+          case OP_PUT_LD:
+          case OP_LLOAD_PUT_LD:
+          case OP_NLOAD_PUT_LD:
+          case OP_D_INVALIDATE_LD:
+          case OP_D_DESTROY:
+            throw new IllegalStateException(
+                LocalizedStrings.TXEntryState_UNEXPECTED_CURRENT_OP_0_FOR_REQUESTED_OP_1
+                    .toLocalizedString(new Object[] {opToString(), opToString(requestedOpCode)}));
+          case OP_D_INVALIDATE:
+          case OP_L_INVALIDATE:
+            advisedOpCode = OP_D_INVALIDATE;
+            break;
 
-      case OP_PUT_LI:
-      case OP_LLOAD_PUT_LI:
-      case OP_NLOAD_PUT_LI:
-      case OP_CREATE_LI:
-      case OP_LLOAD_CREATE_LI:
-      case OP_NLOAD_CREATE_LI:
-        /*
-         * No change, keep it how it was.
-         */
-        advisedOpCode = this.op;
+          case OP_PUT_LI:
+          case OP_LLOAD_PUT_LI:
+          case OP_NLOAD_PUT_LI:
+          case OP_CREATE_LI:
+          case OP_LLOAD_CREATE_LI:
+          case OP_NLOAD_CREATE_LI:
+            /*
+             * No change, keep it how it was.
+             */
+            advisedOpCode = this.op;
+            break;
+          case OP_CREATE:
+            advisedOpCode = OP_CREATE;
+            // pendingValue will be set to INVALID turning it into create invalid
+            break;
+          case OP_SEARCH_CREATE:
+            advisedOpCode = OP_LOCAL_CREATE;
+            // pendingValue will be set to INVALID to indicate dinvalidate
+            break;
+          case OP_LLOAD_CREATE:
+            advisedOpCode = OP_CREATE;
+            // pendingValue will be set to INVALID turning it into create invalid
+            break;
+          case OP_NLOAD_CREATE:
+            advisedOpCode = OP_CREATE;
+            // pendingValue will be set to INVALID turning it into create invalid
+            break;
+          case OP_LOCAL_CREATE:
+            advisedOpCode = OP_LOCAL_CREATE;
+            // pendingValue will be set to INVALID to indicate dinvalidate
+            break;
+          case OP_PUT:
+          case OP_SEARCH_PUT:
+          case OP_LLOAD_PUT:
+          case OP_NLOAD_PUT:
+            advisedOpCode = requestedOpCode;
+            break;
+          default:
+            throw new IllegalStateException(
+                LocalizedStrings.TXEntryState_UNHANDLED_0.toLocalizedString(opToString()));
+        }
         break;
       case OP_CREATE:
-        advisedOpCode = OP_CREATE;
-        // pendingValue will be set to INVALID turning it into create invalid
-        break;
       case OP_SEARCH_CREATE:
-        advisedOpCode = OP_LOCAL_CREATE;
-        // pendingValue will be set to INVALID to indicate dinvalidate
-        break;
       case OP_LLOAD_CREATE:
-        advisedOpCode = OP_CREATE;
-        // pendingValue will be set to INVALID turning it into create invalid
-        break;
       case OP_NLOAD_CREATE:
-        advisedOpCode = OP_CREATE;
-        // pendingValue will be set to INVALID turning it into create invalid
-        break;
-      case OP_LOCAL_CREATE:
-        advisedOpCode = OP_LOCAL_CREATE;
-        // pendingValue will be set to INVALID to indicate dinvalidate
+        advisedOpCode = requestedOpCode;
         break;
       case OP_PUT:
+        switch (this.op) {
+          case OP_CREATE:
+          case OP_SEARCH_CREATE:
+          case OP_LLOAD_CREATE:
+          case OP_NLOAD_CREATE:
+          case OP_LOCAL_CREATE:
+          case OP_CREATE_LI:
+          case OP_LLOAD_CREATE_LI:
+          case OP_NLOAD_CREATE_LI:
+          case OP_CREATE_LD:
+          case OP_LLOAD_CREATE_LD:
+          case OP_NLOAD_CREATE_LD:
+          case OP_PUT_LD:
+          case OP_LLOAD_PUT_LD:
+          case OP_NLOAD_PUT_LD:
+          case OP_D_INVALIDATE_LD:
+          case OP_L_DESTROY:
+          case OP_D_DESTROY:
+            advisedOpCode = OP_CREATE;
+            break;
+          default:
+            advisedOpCode = requestedOpCode;
+            break;
+        }
+        break;
       case OP_SEARCH_PUT:
+        switch (this.op) {
+          case OP_NULL:
+            advisedOpCode = requestedOpCode;
+            break;
+          case OP_L_INVALIDATE:
+            advisedOpCode = requestedOpCode;
+            break;
+            // The incoming search put value should match
+            // the pendingValue from the previous tx operation.
+            // So it is ok to simply drop the _LI from the op
+          case OP_PUT_LI:
+            advisedOpCode = OP_PUT;
+            break;
+          case OP_LLOAD_PUT_LI:
+            advisedOpCode = OP_LLOAD_PUT;
+            break;
+          case OP_NLOAD_PUT_LI:
+            advisedOpCode = OP_NLOAD_PUT;
+            break;
+          case OP_CREATE_LI:
+            advisedOpCode = OP_CREATE;
+            break;
+          case OP_LLOAD_CREATE_LI:
+            advisedOpCode = OP_LLOAD_CREATE;
+            break;
+          case OP_NLOAD_CREATE_LI:
+            advisedOpCode = OP_NLOAD_CREATE;
+            break;
+          default:
+            // Note that OP_LOCAL_CREATE and OP_CREATE with invalid values
+            // are not possible because they would cause the netsearch to
+            // fail and we would do a load or a total miss.
+            // Note that OP_D_INVALIDATE followed by OP_SEARCH_PUT is not
+            // possible since the netsearch will alwsys "miss" in this case.
+            throw new IllegalStateException(
+                LocalizedStrings.TXEntryState_PREVIOUS_OP_0_UNEXPECTED_FOR_REQUESTED_OP_1
+                    .toLocalizedString(new Object[] {opToString(), opToString(requestedOpCode)}));
+        }
+        break;
       case OP_LLOAD_PUT:
       case OP_NLOAD_PUT:
-        advisedOpCode = requestedOpCode;
-        break;
-      default:
-        throw new IllegalStateException(LocalizedStrings.TXEntryState_UNHANDLED_0.toLocalizedString(opToString()));
-      }
-      break;
-    case OP_CREATE:
-    case OP_SEARCH_CREATE:
-    case OP_LLOAD_CREATE:
-    case OP_NLOAD_CREATE:
-      advisedOpCode = requestedOpCode;
-      break;
-    case OP_PUT:
-      switch (this.op) {
-      case OP_CREATE:
-      case OP_SEARCH_CREATE:
-      case OP_LLOAD_CREATE:
-      case OP_NLOAD_CREATE:
-      case OP_LOCAL_CREATE:
-      case OP_CREATE_LI:
-      case OP_LLOAD_CREATE_LI:
-      case OP_NLOAD_CREATE_LI:
-      case OP_CREATE_LD:
-      case OP_LLOAD_CREATE_LD:
-      case OP_NLOAD_CREATE_LD:
-      case OP_PUT_LD:
-      case OP_LLOAD_PUT_LD:
-      case OP_NLOAD_PUT_LD:
-      case OP_D_INVALIDATE_LD:
-      case OP_L_DESTROY:
-      case OP_D_DESTROY:
-        advisedOpCode = OP_CREATE;
-        break;
-      default:
-        advisedOpCode = requestedOpCode;
-        break;
-      }
-      break;
-    case OP_SEARCH_PUT:
-      switch (this.op) {
-      case OP_NULL:
-        advisedOpCode = requestedOpCode;
-        break;
-      case OP_L_INVALIDATE:
-        advisedOpCode = requestedOpCode;
-        break;
-      // The incoming search put value should match
-      // the pendingValue from the previous tx operation.
-      // So it is ok to simply drop the _LI from the op
-      case OP_PUT_LI:
-        advisedOpCode = OP_PUT;
-        break;
-      case OP_LLOAD_PUT_LI:
-        advisedOpCode = OP_LLOAD_PUT;
-        break;
-      case OP_NLOAD_PUT_LI:
-        advisedOpCode = OP_NLOAD_PUT;
-        break;
-      case OP_CREATE_LI:
-        advisedOpCode = OP_CREATE;
-        break;
-      case OP_LLOAD_CREATE_LI:
-        advisedOpCode = OP_LLOAD_CREATE;
-        break;
-      case OP_NLOAD_CREATE_LI:
-        advisedOpCode = OP_NLOAD_CREATE;
-        break;
-      default:
-        // Note that OP_LOCAL_CREATE and OP_CREATE with invalid values
-        // are not possible because they would cause the netsearch to
-        // fail and we would do a load or a total miss.
-        // Note that OP_D_INVALIDATE followed by OP_SEARCH_PUT is not
-        // possible since the netsearch will alwsys "miss" in this case.
-        throw new IllegalStateException(LocalizedStrings.TXEntryState_PREVIOUS_OP_0_UNEXPECTED_FOR_REQUESTED_OP_1.toLocalizedString(new Object[] { opToString(), opToString(requestedOpCode) }));
-      }
-      break;
-    case OP_LLOAD_PUT:
-    case OP_NLOAD_PUT:
-      switch (this.op) {
-      case OP_NULL:
-      case OP_L_INVALIDATE:
-      case OP_PUT_LI:
-      case OP_LLOAD_PUT_LI:
-      case OP_NLOAD_PUT_LI:
-      case OP_D_INVALIDATE:
-        advisedOpCode = requestedOpCode;
-        break;
-      case OP_CREATE:
-      case OP_LOCAL_CREATE:
-      case OP_CREATE_LI:
-      case OP_LLOAD_CREATE_LI:
-      case OP_NLOAD_CREATE_LI:
-        if (requestedOpCode == OP_LLOAD_PUT) {
-          advisedOpCode = OP_LLOAD_CREATE;
-        } else {
-          advisedOpCode = OP_NLOAD_CREATE;
+        switch (this.op) {
+          case OP_NULL:
+          case OP_L_INVALIDATE:
+          case OP_PUT_LI:
+          case OP_LLOAD_PUT_LI:
+          case OP_NLOAD_PUT_LI:
+          case OP_D_INVALIDATE:
+            advisedOpCode = requestedOpCode;
+            break;
+          case OP_CREATE:
+          case OP_LOCAL_CREATE:
+          case OP_CREATE_LI:
+          case OP_LLOAD_CREATE_LI:
+          case OP_NLOAD_CREATE_LI:
+            if (requestedOpCode == OP_LLOAD_PUT) {
+              advisedOpCode = OP_LLOAD_CREATE;
+            } else {
+              advisedOpCode = OP_NLOAD_CREATE;
+            }
+            break;
+          default:
+            // note that other invalid states are covered by this default
+            // case because they should have caused a OP_SEARCH_PUT
+            // to be requested.
+            throw new IllegalStateException(
+                LocalizedStrings.TXEntryState_PREVIOUS_OP_0_UNEXPECTED_FOR_REQUESTED_OP_1
+                    .toLocalizedString(new Object[] {opToString(), opToString(requestedOpCode)}));
         }
         break;
       default:
-        // note that other invalid states are covered by this default
-        // case because they should have caused a OP_SEARCH_PUT
-        // to be requested.
-        throw new IllegalStateException(LocalizedStrings.TXEntryState_PREVIOUS_OP_0_UNEXPECTED_FOR_REQUESTED_OP_1.toLocalizedString(new Object[] { opToString(), opToString(requestedOpCode) }));
-      }
-      break;
-    default:
-      throw new IllegalStateException(LocalizedStrings.TXEntryState_OPCODE_0_SHOULD_NEVER_BE_REQUESTED.toLocalizedString(opToString(requestedOpCode)));
+        throw new IllegalStateException(
+            LocalizedStrings.TXEntryState_OPCODE_0_SHOULD_NEVER_BE_REQUESTED.toLocalizedString(
+                opToString(requestedOpCode)));
     }
     return advisedOpCode;
   }
@@ -1367,11 +1380,9 @@ public class TXEntryState implements Releasable {
   }
 
   private boolean areIdentical(Object o1, Object o2) {
-    if (o1 == o2)
-      return true;
+    if (o1 == o2) return true;
     if (o1 instanceof StoredObject) {
-      if (o1.equals(o2))
-        return true;
+      if (o1.equals(o2)) return true;
     }
     return false;
   }
@@ -1416,17 +1427,24 @@ public class TXEntryState implements Releasable {
             String fromString = calcConflictString(getOriginalVersionId());
             String toString = calcConflictString(curCmtVersionId);
             if (!fromString.equals(toString)) {
-              throw new CommitConflictException(LocalizedStrings.TXEntryState_ENTRY_FOR_KEY_0_ON_REGION_1_HAD_ALREADY_BEEN_CHANGED_FROM_2_TO_3.toLocalizedString(new Object[] { key, r.getDisplayName(), fromString, toString }));
+              throw new CommitConflictException(
+                  LocalizedStrings
+                      .TXEntryState_ENTRY_FOR_KEY_0_ON_REGION_1_HAD_ALREADY_BEEN_CHANGED_FROM_2_TO_3
+                      .toLocalizedString(
+                          new Object[] {key, r.getDisplayName(), fromString, toString}));
             }
           }
-          throw new CommitConflictException(LocalizedStrings.TXEntryState_ENTRY_FOR_KEY_0_ON_REGION_1_HAD_A_STATE_CHANGE.toLocalizedString(new Object[] { key, r.getDisplayName() }));
+          throw new CommitConflictException(
+              LocalizedStrings.TXEntryState_ENTRY_FOR_KEY_0_ON_REGION_1_HAD_A_STATE_CHANGE
+                  .toLocalizedString(new Object[] {key, r.getDisplayName()}));
         }
       } finally {
         OffHeapHelper.release(curCmtVersionId);
       }
     } catch (CacheRuntimeException ex) {
       r.getCancelCriterion().checkCancelInProgress(null);
-      throw new CommitConflictException(LocalizedStrings.TXEntryState_CONFLICT_CAUSED_BY_CACHE_EXCEPTION.toLocalizedString(), ex);
+      throw new CommitConflictException(
+          LocalizedStrings.TXEntryState_CONFLICT_CAUSED_BY_CACHE_EXCEPTION.toLocalizedString(), ex);
     }
   }
 
@@ -1464,65 +1482,78 @@ public class TXEntryState implements Releasable {
   }
 
   /**
-   * Returns the total number of modifications made by this transaction to this
-   * entry. The result will be +1 for a create and -1 for a destroy.
+   * Returns the total number of modifications made by this transaction to this entry. The result
+   * will be +1 for a create and -1 for a destroy.
    */
   int entryCountMod() {
     switch (this.op) {
-    case OP_L_DESTROY:
-    case OP_CREATE_LD:
-    case OP_LLOAD_CREATE_LD:
-    case OP_NLOAD_CREATE_LD:
-    case OP_PUT_LD:
-    case OP_LLOAD_PUT_LD:
-    case OP_NLOAD_PUT_LD:
-    case OP_D_INVALIDATE_LD:
-    case OP_D_DESTROY:
-      if (getOriginalValue() == null || Token.isRemoved(getOriginalValue())) {
+      case OP_L_DESTROY:
+      case OP_CREATE_LD:
+      case OP_LLOAD_CREATE_LD:
+      case OP_NLOAD_CREATE_LD:
+      case OP_PUT_LD:
+      case OP_LLOAD_PUT_LD:
+      case OP_NLOAD_PUT_LD:
+      case OP_D_INVALIDATE_LD:
+      case OP_D_DESTROY:
+        if (getOriginalValue() == null || Token.isRemoved(getOriginalValue())) {
+          return 0;
+        } else {
+          return -1;
+        }
+      case OP_CREATE_LI:
+      case OP_LLOAD_CREATE_LI:
+      case OP_NLOAD_CREATE_LI:
+      case OP_CREATE:
+      case OP_SEARCH_CREATE:
+      case OP_LLOAD_CREATE:
+      case OP_NLOAD_CREATE:
+      case OP_LOCAL_CREATE:
+        if (getOriginalValue() == null || Token.isRemoved(getOriginalValue())) {
+          return 1;
+        } else {
+          return 0;
+        }
+      case OP_NULL:
+      case OP_L_INVALIDATE:
+      case OP_PUT_LI:
+      case OP_LLOAD_PUT_LI:
+      case OP_NLOAD_PUT_LI:
+      case OP_D_INVALIDATE:
+      case OP_PUT:
+      case OP_SEARCH_PUT:
+      case OP_LLOAD_PUT:
+      case OP_NLOAD_PUT:
+      default:
         return 0;
-      } else {
-        return -1;
-      }
-    case OP_CREATE_LI:
-    case OP_LLOAD_CREATE_LI:
-    case OP_NLOAD_CREATE_LI:
-    case OP_CREATE:
-    case OP_SEARCH_CREATE:
-    case OP_LLOAD_CREATE:
-    case OP_NLOAD_CREATE:
-    case OP_LOCAL_CREATE:
-      if (getOriginalValue() == null || Token.isRemoved(getOriginalValue())) {
-        return 1;
-      } else {
-        return 0;
-      }
-    case OP_NULL:
-    case OP_L_INVALIDATE:
-    case OP_PUT_LI:
-    case OP_LLOAD_PUT_LI:
-    case OP_NLOAD_PUT_LI:
-    case OP_D_INVALIDATE:
-    case OP_PUT:
-    case OP_SEARCH_PUT:
-    case OP_LLOAD_PUT:
-    case OP_NLOAD_PUT:
-    default:
-      return 0;
     }
   }
 
-  /**
-   * Returns true if this entry may have been created by this transaction.
-   */
+  /** Returns true if this entry may have been created by this transaction. */
   boolean wasCreatedByTX() {
     return isOpCreate();
   }
 
   private final void txApplyDestroyLocally(LocalRegion r, Object key, TXState txState) {
     boolean invokeCallbacks = isOpDestroyEvent(r);
-    List<EntryEventImpl> pendingCallbacks = invokeCallbacks ? txState.getPendingCallbacks() : new ArrayList<EntryEventImpl>();
+    List<EntryEventImpl> pendingCallbacks =
+        invokeCallbacks ? txState.getPendingCallbacks() : new ArrayList<EntryEventImpl>();
     try {
-      r.txApplyDestroy(key, txState.getTransactionId(), null, false/*inTokenMode*/, getDestroyOperation(), getNearSideEventId(txState), callBackArgument, pendingCallbacks, getFilterRoutingInfo(), txState.bridgeContext, false, this, null, -1);
+      r.txApplyDestroy(
+          key,
+          txState.getTransactionId(),
+          null,
+          false /*inTokenMode*/,
+          getDestroyOperation(),
+          getNearSideEventId(txState),
+          callBackArgument,
+          pendingCallbacks,
+          getFilterRoutingInfo(),
+          txState.bridgeContext,
+          false,
+          this,
+          null,
+          -1);
     } catch (RegionDestroyedException ignore) {
     } catch (EntryDestroyedException ignore) {
     }
@@ -1533,17 +1564,52 @@ public class TXEntryState implements Releasable {
     // transaction listener that no destroy was done.
   }
 
-  private final void txApplyInvalidateLocally(LocalRegion r, Object key, Object newValue, boolean didDestroy, TXState txState) {
+  private final void txApplyInvalidateLocally(
+      LocalRegion r, Object key, Object newValue, boolean didDestroy, TXState txState) {
     try {
-      r.txApplyInvalidate(key, newValue, didDestroy, txState.getTransactionId(), null, isOpLocalInvalidate() ? true : false, getNearSideEventId(txState), callBackArgument, txState.getPendingCallbacks(), getFilterRoutingInfo(), txState.bridgeContext, this, null, -1);
+      r.txApplyInvalidate(
+          key,
+          newValue,
+          didDestroy,
+          txState.getTransactionId(),
+          null,
+          isOpLocalInvalidate() ? true : false,
+          getNearSideEventId(txState),
+          callBackArgument,
+          txState.getPendingCallbacks(),
+          getFilterRoutingInfo(),
+          txState.bridgeContext,
+          this,
+          null,
+          -1);
     } catch (RegionDestroyedException ignore) {
     } catch (EntryDestroyedException ignore) {
     }
   }
 
-  private final void txApplyPutLocally(LocalRegion r, Operation putOp, Object key, Object newValue, boolean didDestroy, TXState txState) {
+  private final void txApplyPutLocally(
+      LocalRegion r,
+      Operation putOp,
+      Object key,
+      Object newValue,
+      boolean didDestroy,
+      TXState txState) {
     try {
-      r.txApplyPut(putOp, key, newValue, didDestroy, txState.getTransactionId(), null, getNearSideEventId(txState), callBackArgument, txState.getPendingCallbacks(), getFilterRoutingInfo(), txState.bridgeContext, this, null, -1);
+      r.txApplyPut(
+          putOp,
+          key,
+          newValue,
+          didDestroy,
+          txState.getTransactionId(),
+          null,
+          getNearSideEventId(txState),
+          callBackArgument,
+          txState.getPendingCallbacks(),
+          getFilterRoutingInfo(),
+          txState.bridgeContext,
+          this,
+          null,
+          -1);
     } catch (RegionDestroyedException ignore) {
     } catch (EntryDestroyedException ignore) {
     }
@@ -1551,6 +1617,7 @@ public class TXEntryState implements Releasable {
 
   /**
    * If the entry is not dirty (read only) then clean it up.
+   *
    * @return true if this entry is not dirty.
    */
   boolean cleanupNonDirty(LocalRegion r) {
@@ -1568,41 +1635,41 @@ public class TXEntryState implements Releasable {
       return;
     }
     switch (this.op) {
-    case OP_NULL:
-    case OP_L_DESTROY:
-    case OP_L_INVALIDATE:
-    case OP_SEARCH_CREATE:
-    case OP_SEARCH_PUT:
-      // local only
-      break;
+      case OP_NULL:
+      case OP_L_DESTROY:
+      case OP_L_INVALIDATE:
+      case OP_SEARCH_CREATE:
+      case OP_SEARCH_PUT:
+        // local only
+        break;
 
-    case OP_CREATE_LD:
-    case OP_LLOAD_CREATE_LD:
-    case OP_NLOAD_CREATE_LD:
-    case OP_PUT_LD:
-    case OP_LLOAD_PUT_LD:
-    case OP_NLOAD_PUT_LD:
-    case OP_D_INVALIDATE_LD:
-    case OP_D_DESTROY:
-    case OP_PUT_LI:
-    case OP_LLOAD_PUT_LI:
-    case OP_NLOAD_PUT_LI:
-    case OP_D_INVALIDATE:
-    case OP_CREATE_LI:
-    case OP_LLOAD_CREATE_LI:
-    case OP_NLOAD_CREATE_LI:
-    case OP_CREATE:
-    case OP_LLOAD_CREATE:
-    case OP_NLOAD_CREATE:
-    case OP_LOCAL_CREATE:
-    case OP_PUT:
-    case OP_LLOAD_PUT:
-    case OP_NLOAD_PUT:
-      msg.addOp(r, key, this, otherRecipients);
-      break;
+      case OP_CREATE_LD:
+      case OP_LLOAD_CREATE_LD:
+      case OP_NLOAD_CREATE_LD:
+      case OP_PUT_LD:
+      case OP_LLOAD_PUT_LD:
+      case OP_NLOAD_PUT_LD:
+      case OP_D_INVALIDATE_LD:
+      case OP_D_DESTROY:
+      case OP_PUT_LI:
+      case OP_LLOAD_PUT_LI:
+      case OP_NLOAD_PUT_LI:
+      case OP_D_INVALIDATE:
+      case OP_CREATE_LI:
+      case OP_LLOAD_CREATE_LI:
+      case OP_NLOAD_CREATE_LI:
+      case OP_CREATE:
+      case OP_LLOAD_CREATE:
+      case OP_NLOAD_CREATE:
+      case OP_LOCAL_CREATE:
+      case OP_PUT:
+      case OP_LLOAD_PUT:
+      case OP_NLOAD_PUT:
+        msg.addOp(r, key, this, otherRecipients);
+        break;
 
-    default:
-      throw new IllegalStateException("Unhandled op=" + opToString());
+      default:
+        throw new IllegalStateException("Unhandled op=" + opToString());
     }
   }
 
@@ -1612,150 +1679,167 @@ public class TXEntryState implements Releasable {
       return;
     }
     switch (this.op) {
-    case OP_NULL:
-    case OP_L_DESTROY:
-    case OP_L_INVALIDATE:
-    case OP_SEARCH_CREATE:
-    case OP_SEARCH_PUT:
-      // local only
-      break;
+      case OP_NULL:
+      case OP_L_DESTROY:
+      case OP_L_INVALIDATE:
+      case OP_SEARCH_CREATE:
+      case OP_SEARCH_PUT:
+        // local only
+        break;
 
-    case OP_CREATE_LD:
-    case OP_LLOAD_CREATE_LD:
-    case OP_NLOAD_CREATE_LD:
-    case OP_PUT_LD:
-    case OP_LLOAD_PUT_LD:
-    case OP_NLOAD_PUT_LD:
-    case OP_D_INVALIDATE_LD:
-    case OP_D_DESTROY:
-    case OP_PUT_LI:
-    case OP_LLOAD_PUT_LI:
-    case OP_NLOAD_PUT_LI:
-    case OP_D_INVALIDATE:
-    case OP_CREATE_LI:
-    case OP_LLOAD_CREATE_LI:
-    case OP_NLOAD_CREATE_LI:
-    case OP_CREATE:
-    case OP_LLOAD_CREATE:
-    case OP_NLOAD_CREATE:
-    case OP_LOCAL_CREATE:
-    case OP_PUT:
-    case OP_LLOAD_PUT:
-    case OP_NLOAD_PUT:
-      msg.addOp(r, key, this, otherRecipients);
-      break;
+      case OP_CREATE_LD:
+      case OP_LLOAD_CREATE_LD:
+      case OP_NLOAD_CREATE_LD:
+      case OP_PUT_LD:
+      case OP_LLOAD_PUT_LD:
+      case OP_NLOAD_PUT_LD:
+      case OP_D_INVALIDATE_LD:
+      case OP_D_DESTROY:
+      case OP_PUT_LI:
+      case OP_LLOAD_PUT_LI:
+      case OP_NLOAD_PUT_LI:
+      case OP_D_INVALIDATE:
+      case OP_CREATE_LI:
+      case OP_LLOAD_CREATE_LI:
+      case OP_NLOAD_CREATE_LI:
+      case OP_CREATE:
+      case OP_LLOAD_CREATE:
+      case OP_NLOAD_CREATE:
+      case OP_LOCAL_CREATE:
+      case OP_PUT:
+      case OP_LLOAD_PUT:
+      case OP_NLOAD_PUT:
+        msg.addOp(r, key, this, otherRecipients);
+        break;
 
-    default:
-      throw new IllegalStateException("Unhandled op=" + opToString());
+      default:
+        throw new IllegalStateException("Unhandled op=" + opToString());
     }
   }
 
   void applyChanges(LocalRegion r, Object key, TXState txState) {
     if (logger.isDebugEnabled()) {
-      logger.debug("applyChanges txState=" + txState + " ,key=" + key + " ,r=" + r.getDisplayName() + " ,op=" + this.op + " ,isDirty=" + isDirty());
+      logger.debug(
+          "applyChanges txState="
+              + txState
+              + " ,key="
+              + key
+              + " ,r="
+              + r.getDisplayName()
+              + " ,op="
+              + this.op
+              + " ,isDirty="
+              + isDirty());
     }
     if (!isDirty()) {
       // all we did was read so just return
       return;
     }
     switch (this.op) {
-    case OP_NULL:
-      // do nothing
-      break;
-    case OP_L_DESTROY:
-      txApplyDestroyLocally(r, key, txState);
-      break;
-    case OP_CREATE_LD:
-      txApplyDestroyLocally(r, key, txState);
-      break;
-    case OP_LLOAD_CREATE_LD:
-      txApplyDestroyLocally(r, key, txState);
-      break;
-    case OP_NLOAD_CREATE_LD:
-      txApplyDestroyLocally(r, key, txState);
-      break;
-    case OP_PUT_LD:
-      txApplyDestroyLocally(r, key, txState);
-      break;
-    case OP_LLOAD_PUT_LD:
-      txApplyDestroyLocally(r, key, txState);
-      break;
-    case OP_NLOAD_PUT_LD:
-      txApplyDestroyLocally(r, key, txState);
-      break;
-    case OP_D_INVALIDATE_LD:
-      txApplyDestroyLocally(r, key, txState);
-      break;
-    case OP_D_DESTROY:
-      txApplyDestroyLocally(r, key, txState);
-      break;
-    case OP_L_INVALIDATE:
-      txApplyInvalidateLocally(r, key, Token.LOCAL_INVALID, didDestroy(), txState);
-      break;
-    case OP_PUT_LI:
-      txApplyPutLocally(r, getUpdateOperation(), key, Token.LOCAL_INVALID, didDestroy(), txState);
-      break;
-    case OP_LLOAD_PUT_LI:
-      txApplyPutLocally(r, getUpdateOperation(), key, Token.LOCAL_INVALID, didDestroy(), txState);
-      break;
-    case OP_NLOAD_PUT_LI:
-      txApplyPutLocally(r, getUpdateOperation(), key, Token.LOCAL_INVALID, didDestroy(), txState);
-      break;
-    case OP_D_INVALIDATE:
-      txApplyInvalidateLocally(r, key, Token.INVALID, didDestroy(), txState);
-      break;
-    case OP_CREATE_LI:
-      txApplyPutLocally(r, getCreateOperation(), key, Token.LOCAL_INVALID, didDestroy(), txState);
-      break;
-    case OP_LLOAD_CREATE_LI:
-      txApplyPutLocally(r, getCreateOperation(), key, Token.LOCAL_INVALID, didDestroy(), txState);
-      break;
-    case OP_NLOAD_CREATE_LI:
-      txApplyPutLocally(r, getCreateOperation(), key, Token.LOCAL_INVALID, didDestroy(), txState);
-      break;
-    case OP_CREATE:
-      txApplyPutLocally(r, getCreateOperation(), key, getPendingValue(), didDestroy(), txState);
-      break;
-    case OP_SEARCH_CREATE:
-      txApplyPutLocally(r, Operation.SEARCH_CREATE, key, getPendingValue(), didDestroy(), txState);
-      break;
-    case OP_LLOAD_CREATE:
-      txApplyPutLocally(r, Operation.LOCAL_LOAD_CREATE, key, getPendingValue(), didDestroy(), txState);
-      break;
-    case OP_NLOAD_CREATE:
-      txApplyPutLocally(r, Operation.NET_LOAD_CREATE, key, getPendingValue(), didDestroy(), txState);
-      break;
-    case OP_LOCAL_CREATE:
-      txApplyPutLocally(r, getCreateOperation(), key, getPendingValue(), didDestroy(), txState);
-      break;
-    case OP_PUT:
-      txApplyPutLocally(r, getUpdateOperation(), key, getPendingValue(), didDestroy(), txState);
-      break;
-    case OP_SEARCH_PUT:
-      txApplyPutLocally(r, Operation.SEARCH_UPDATE, key, getPendingValue(), didDestroy(), txState);
-      break;
-    case OP_LLOAD_PUT:
-      txApplyPutLocally(r, Operation.LOCAL_LOAD_UPDATE, key, getPendingValue(), didDestroy(), txState);
-      break;
-    case OP_NLOAD_PUT:
-      txApplyPutLocally(r, Operation.NET_LOAD_UPDATE, key, getPendingValue(), didDestroy(), txState);
-      break;
-    default:
-      throw new IllegalStateException(LocalizedStrings.TXEntryState_UNHANDLED_OP_0.toLocalizedString(opToString()));
+      case OP_NULL:
+        // do nothing
+        break;
+      case OP_L_DESTROY:
+        txApplyDestroyLocally(r, key, txState);
+        break;
+      case OP_CREATE_LD:
+        txApplyDestroyLocally(r, key, txState);
+        break;
+      case OP_LLOAD_CREATE_LD:
+        txApplyDestroyLocally(r, key, txState);
+        break;
+      case OP_NLOAD_CREATE_LD:
+        txApplyDestroyLocally(r, key, txState);
+        break;
+      case OP_PUT_LD:
+        txApplyDestroyLocally(r, key, txState);
+        break;
+      case OP_LLOAD_PUT_LD:
+        txApplyDestroyLocally(r, key, txState);
+        break;
+      case OP_NLOAD_PUT_LD:
+        txApplyDestroyLocally(r, key, txState);
+        break;
+      case OP_D_INVALIDATE_LD:
+        txApplyDestroyLocally(r, key, txState);
+        break;
+      case OP_D_DESTROY:
+        txApplyDestroyLocally(r, key, txState);
+        break;
+      case OP_L_INVALIDATE:
+        txApplyInvalidateLocally(r, key, Token.LOCAL_INVALID, didDestroy(), txState);
+        break;
+      case OP_PUT_LI:
+        txApplyPutLocally(r, getUpdateOperation(), key, Token.LOCAL_INVALID, didDestroy(), txState);
+        break;
+      case OP_LLOAD_PUT_LI:
+        txApplyPutLocally(r, getUpdateOperation(), key, Token.LOCAL_INVALID, didDestroy(), txState);
+        break;
+      case OP_NLOAD_PUT_LI:
+        txApplyPutLocally(r, getUpdateOperation(), key, Token.LOCAL_INVALID, didDestroy(), txState);
+        break;
+      case OP_D_INVALIDATE:
+        txApplyInvalidateLocally(r, key, Token.INVALID, didDestroy(), txState);
+        break;
+      case OP_CREATE_LI:
+        txApplyPutLocally(r, getCreateOperation(), key, Token.LOCAL_INVALID, didDestroy(), txState);
+        break;
+      case OP_LLOAD_CREATE_LI:
+        txApplyPutLocally(r, getCreateOperation(), key, Token.LOCAL_INVALID, didDestroy(), txState);
+        break;
+      case OP_NLOAD_CREATE_LI:
+        txApplyPutLocally(r, getCreateOperation(), key, Token.LOCAL_INVALID, didDestroy(), txState);
+        break;
+      case OP_CREATE:
+        txApplyPutLocally(r, getCreateOperation(), key, getPendingValue(), didDestroy(), txState);
+        break;
+      case OP_SEARCH_CREATE:
+        txApplyPutLocally(
+            r, Operation.SEARCH_CREATE, key, getPendingValue(), didDestroy(), txState);
+        break;
+      case OP_LLOAD_CREATE:
+        txApplyPutLocally(
+            r, Operation.LOCAL_LOAD_CREATE, key, getPendingValue(), didDestroy(), txState);
+        break;
+      case OP_NLOAD_CREATE:
+        txApplyPutLocally(
+            r, Operation.NET_LOAD_CREATE, key, getPendingValue(), didDestroy(), txState);
+        break;
+      case OP_LOCAL_CREATE:
+        txApplyPutLocally(r, getCreateOperation(), key, getPendingValue(), didDestroy(), txState);
+        break;
+      case OP_PUT:
+        txApplyPutLocally(r, getUpdateOperation(), key, getPendingValue(), didDestroy(), txState);
+        break;
+      case OP_SEARCH_PUT:
+        txApplyPutLocally(
+            r, Operation.SEARCH_UPDATE, key, getPendingValue(), didDestroy(), txState);
+        break;
+      case OP_LLOAD_PUT:
+        txApplyPutLocally(
+            r, Operation.LOCAL_LOAD_UPDATE, key, getPendingValue(), didDestroy(), txState);
+        break;
+      case OP_NLOAD_PUT:
+        txApplyPutLocally(
+            r, Operation.NET_LOAD_UPDATE, key, getPendingValue(), didDestroy(), txState);
+        break;
+      default:
+        throw new IllegalStateException(
+            LocalizedStrings.TXEntryState_UNHANDLED_OP_0.toLocalizedString(opToString()));
     }
   }
 
   /**
-   * @return returns {@link Operation#PUTALL_CREATE} if the operation is a result of bulk op,
-   * {@link Operation#CREATE} otherwise
+   * @return returns {@link Operation#PUTALL_CREATE} if the operation is a result of bulk op, {@link
+   *     Operation#CREATE} otherwise
    */
   private Operation getCreateOperation() {
     return isBulkOp() ? Operation.PUTALL_CREATE : Operation.CREATE;
   }
 
   /**
-   * @return returns {@link Operation#PUTALL_UPDATE} if the operation is a result of bulk op,
-   * {@link Operation#UPDATE} otherwise
+   * @return returns {@link Operation#PUTALL_UPDATE} if the operation is a result of bulk op, {@link
+   *     Operation#UPDATE} otherwise
    */
   private Operation getUpdateOperation() {
     return isBulkOp() ? Operation.PUTALL_UPDATE : Operation.UPDATE;
@@ -1781,19 +1865,18 @@ public class TXEntryState implements Releasable {
   }
 
   /**
-   * Serializes this entry state to a data output stream for a far side consumer.
-   * Make sure this method is backwards compatible if changes are made.
-   * @param largeModCount
-   *          true if modCount needs to be represented by an int; false if a
-   *          byte is enough
-   * @param sendVersionTag
-   *          true if versionTag should be sent to clients 7.0 and above
-   * @param sendShadowKey
-   *          true if wan shadowKey should be sent to peers 7.0.1 and above
-   *          
+   * Serializes this entry state to a data output stream for a far side consumer. Make sure this
+   * method is backwards compatible if changes are made.
+   *
+   * @param largeModCount true if modCount needs to be represented by an int; false if a byte is
+   *     enough
+   * @param sendVersionTag true if versionTag should be sent to clients 7.0 and above
+   * @param sendShadowKey true if wan shadowKey should be sent to peers 7.0.1 and above
    * @since GemFire 5.0
    */
-  void toFarSideData(DataOutput out, boolean largeModCount, boolean sendVersionTag, boolean sendShadowKey) throws IOException {
+  void toFarSideData(
+      DataOutput out, boolean largeModCount, boolean sendVersionTag, boolean sendShadowKey)
+      throws IOException {
     Operation operation = getFarSideOperation();
     out.writeByte(operation.ordinal);
     if (largeModCount) {
@@ -1805,7 +1888,16 @@ public class TXEntryState implements Releasable {
     DataSerializer.writeObject(getFilterRoutingInfo(), out);
     if (sendVersionTag) {
       DataSerializer.writeObject(getVersionTag(), out);
-      assert getVersionTag() != null || !txRegionState.getRegion().concurrencyChecksEnabled || txRegionState.getRegion().dataPolicy != DataPolicy.REPLICATE : "tag:" + getVersionTag() + " r:" + txRegionState.getRegion() + " op:" + opToString() + " key:";
+      assert getVersionTag() != null
+              || !txRegionState.getRegion().concurrencyChecksEnabled
+              || txRegionState.getRegion().dataPolicy != DataPolicy.REPLICATE
+          : "tag:"
+              + getVersionTag()
+              + " r:"
+              + txRegionState.getRegion()
+              + " op:"
+              + opToString()
+              + " key:";
     }
     if (sendShadowKey) {
       out.writeLong(this.tailKey);
@@ -1831,11 +1923,9 @@ public class TXEntryState implements Releasable {
   }
 
   /**
-   * Creates a queued op and returns it for this entry on the far side of the
-   * tx.
-   * 
-   * @param key
-   *          the key for this op
+   * Creates a queued op and returns it for this entry on the far side of the tx.
+   *
+   * @param key the key for this op
    * @since GemFire 5.0
    */
   QueuedOperation toFarSideQueuedOp(Object key) {
@@ -1861,33 +1951,35 @@ public class TXEntryState implements Releasable {
     close();
   }
 
-  /**
-   * Returns the sort key for this entry.
-   */
+  /** Returns the sort key for this entry. */
   int getSortValue() {
     return this.modSerialNum;
   }
 
   /**
-   * Just like an EntryEventImpl but also has access to TxEntryState to make it
-   * Comparable
-   * 
+   * Just like an EntryEventImpl but also has access to TxEntryState to make it Comparable
+   *
    * @since GemFire 5.0
    */
   public final class TxEntryEventImpl extends EntryEventImpl implements Comparable {
-    /**
-     * Creates a local tx entry event
-     */
+    /** Creates a local tx entry event */
     @Retained
     TxEntryEventImpl(LocalRegion r, Object key) {
       //TODO:ASIF :Check if the eventID should be created. Currently not
       // creating it
-      super(r, getNearSideOperation(), key, getNearSidePendingValue(), TXEntryState.this.getCallbackArgument(), false, r.getMyId(), true/* generateCallbacks */, true /*initializeId*/);
+      super(
+          r,
+          getNearSideOperation(),
+          key,
+          getNearSidePendingValue(),
+          TXEntryState.this.getCallbackArgument(),
+          false,
+          r.getMyId(),
+          true /* generateCallbacks */,
+          true /*initializeId*/);
     }
 
-    /**
-     * Returns the value to use to sort us
-     */
+    /** Returns the value to use to sort us */
     private int getSortValue() {
       return TXEntryState.this.getSortValue();
     }
@@ -1899,8 +1991,7 @@ public class TXEntryState implements Releasable {
 
     @Override
     public boolean equals(Object o) {
-      if (o == null || !(o instanceof TxEntryEventImpl))
-        return false;
+      if (o == null || !(o instanceof TxEntryEventImpl)) return false;
       return compareTo(o) == 0;
     }
 
@@ -1910,17 +2001,23 @@ public class TXEntryState implements Releasable {
     }
   }
 
-  private final static TXEntryStateFactory factory = new TXEntryStateFactory() {
+  private static final TXEntryStateFactory factory =
+      new TXEntryStateFactory() {
 
-    public TXEntryState createEntry() {
-      return new TXEntryState();
-    }
+        public TXEntryState createEntry() {
+          return new TXEntryState();
+        }
 
-    public TXEntryState createEntry(RegionEntry re, Object vId, Object pendingValue, Object entryKey, TXRegionState txrs, boolean isDistributed) {
-      return new TXEntryState(re, vId, pendingValue, txrs, isDistributed);
-    }
-
-  };
+        public TXEntryState createEntry(
+            RegionEntry re,
+            Object vId,
+            Object pendingValue,
+            Object entryKey,
+            TXRegionState txrs,
+            boolean isDistributed) {
+          return new TXEntryState(re, vId, pendingValue, txrs, isDistributed);
+        }
+      };
 
   public static TXEntryStateFactory getFactory() {
     return factory;
@@ -1993,14 +2090,12 @@ public class TXEntryState implements Releasable {
 
   /**
    * For Distributed Transaction Usage
-   * 
-   * This class is used to bring relevant information for DistTxEntryEvent from
-   * primary, after end of precommit. Same information are sent to all
-   * replicates during commit.
-   * 
-   * Whereas @see DistTxEntryEvent is used forstoring entry event information on
-   * TxCordinator and carry same to replicates.
-   * 
+   *
+   * <p>This class is used to bring relevant information for DistTxEntryEvent from primary, after
+   * end of precommit. Same information are sent to all replicates during commit.
+   *
+   * <p>Whereas @see DistTxEntryEvent is used forstoring entry event information on TxCordinator and
+   * carry same to replicates.
    */
   public static class DistTxThinEntryState implements DataSerializableFixedID {
 
@@ -2009,8 +2104,7 @@ public class TXEntryState implements Releasable {
     private String memberID;
 
     // For Serialization
-    public DistTxThinEntryState() {
-    }
+    public DistTxThinEntryState() {}
 
     @Override
     public Version[] getSerializationVersions() {

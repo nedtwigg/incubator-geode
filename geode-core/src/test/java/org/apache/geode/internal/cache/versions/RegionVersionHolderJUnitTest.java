@@ -44,8 +44,7 @@ public class RegionVersionHolderJUnitTest {
     postSetUp();
   }
 
-  protected void postSetUp() throws Exception {
-  }
+  protected void postSetUp() throws Exception {}
 
   @After
   public final void tearDown() throws Exception {
@@ -1479,13 +1478,11 @@ public class RegionVersionHolderJUnitTest {
 
     RegionVersionHolder clone = vh.clone();
     System.out.println("clone: \t\t" + clone);
-    assertTrue("Expected a version greater than 7746 but got this: " + clone, clone.getVersion() >= 7746);
-
+    assertTrue(
+        "Expected a version greater than 7746 but got this: " + clone, clone.getVersion() >= 7746);
   }
 
-  /**
-   * Test merging two version holders
-   */
+  /** Test merging two version holders */
   @Test
   public void testInitializeFrom() {
     testInitializeFrom(false);
@@ -1563,11 +1560,7 @@ public class RegionVersionHolderJUnitTest {
     }
   }
 
-  /**
-   * Construct a region version holder that matches the seen revisions
-   * passed in the bit set.
-   * 
-   */
+  /** Construct a region version holder that matches the seen revisions passed in the bit set. */
   private RegionVersionHolder buildHolder(BitSet bs) {
 
     //Createa version holder
@@ -1583,9 +1576,8 @@ public class RegionVersionHolderJUnitTest {
   }
 
   /**
-   * Record all the versions represented in the bit set in the 
-   * RegionVersionHolder. This method is overridden in subclasses
-   * to change the recording order.
+   * Record all the versions represented in the bit set in the RegionVersionHolder. This method is
+   * overridden in subclasses to change the recording order.
    */
   protected void recordVersions(RegionVersionHolder vh, BitSet bs) {
     //    System.out.println("vh="+vh);
@@ -1597,10 +1589,7 @@ public class RegionVersionHolderJUnitTest {
     }
   }
 
-  /**
-   * Test a case in 46522 where the received exceptions end up 
-   * not being in the RVV interval.
-   */
+  /** Test a case in 46522 where the received exceptions end up not being in the RVV interval. */
   @Test
   public void testConsumeReceivedRevisions() {
     testConsumeReceivedRevisions(false);
@@ -1669,18 +1658,18 @@ public class RegionVersionHolderJUnitTest {
 
   private void compareWithBitSet(BitSet bitSet, RegionVersionHolder versionHolder) {
     for (int i = 1; i < bitSet.length(); i++) {
-      assertEquals("For entry " + i + " version=" + versionHolder, bitSet.get(i), versionHolder.contains(i));
+      assertEquals(
+          "For entry " + i + " version=" + versionHolder, bitSet.get(i), versionHolder.contains(i));
     }
   }
 
   /**
    * Test the dominates relation between RegionVersionHolders.
-   * 
-   * This test currently fails in the last case with two different
-   * holders with the same exception list expressed differently.
-   * Hence it is disabled.
-   * 
-   * See bug 47106
+   *
+   * <p>This test currently fails in the last case with two different holders with the same
+   * exception list expressed differently. Hence it is disabled.
+   *
+   * <p>See bug 47106
    */
   @Test
   public void testDominates() {
@@ -1725,7 +1714,7 @@ public class RegionVersionHolderJUnitTest {
         bs2.set(1, 2 * originalBitSetWidth + 1);
         recordVersions(vh2, bs2);
 
-        //vh1={rv2048 bsv100 bs={0, 1948}} or {rv2048 bsv2048 bs={0}; [e(n=2048 p=100)]} after merging 
+        //vh1={rv2048 bsv100 bs={0, 1948}} or {rv2048 bsv2048 bs={0}; [e(n=2048 p=100)]} after merging
         //vh2={rv2048 bsv2047 bs={0, 1}}   or {rv2048 bsv2048 bs={0}} after merging
 
         assertFalse(vh1.dominates(vh2));
@@ -1802,7 +1791,7 @@ public class RegionVersionHolderJUnitTest {
       }
 
       //Same version, but vh2 has an exception that vh1 doesn't
-      //With overlapping exception 
+      //With overlapping exception
       {
         RegionVersionHolder vh1 = new RegionVersionHolder(member);
         BitSet bs1 = new BitSet();
@@ -1849,12 +1838,12 @@ public class RegionVersionHolderJUnitTest {
     } finally {
       RVVException.UseTreeSetsForTesting = false;
     }
-
   }
 
   /**
-   * Return true if bs1 dominates bs2 - meaning that at least all of the bits
-   * set in bs2 are set in bs1.
+   * Return true if bs1 dominates bs2 - meaning that at least all of the bits set in bs2 are set in
+   * bs1.
+   *
    * @param bs1
    * @param bs2
    * @return
@@ -1872,39 +1861,59 @@ public class RegionVersionHolderJUnitTest {
     //bit set 1 had at least all of the bits set that were set in
     //bs2
     return copy.isEmpty();
-
   }
 
-  /**
-   * For test purposes, make sure this version holder is internally consistent.
-   */
+  /** For test purposes, make sure this version holder is internally consistent. */
   private void validateExceptions(RegionVersionHolder<?> holder) {
     if (holder.getExceptionForTest() != null) {
       for (RVVException ex : holder.getExceptionForTest()) {
         // now it allows the special exception whose nextVersion==holder.version+1
         if (ex.nextVersion > holder.version + 1) {
-          Assert.assertTrue(false, "next version too large next=" + ex.nextVersion + " holder version " + holder.version);
+          Assert.assertTrue(
+              false,
+              "next version too large next="
+                  + ex.nextVersion
+                  + " holder version "
+                  + holder.version);
         }
 
         if (ex.nextVersion <= ex.previousVersion) {
-          Assert.assertTrue(false, "bad next and previous next=" + ex.nextVersion + ", previous=" + ex.previousVersion);
+          Assert.assertTrue(
+              false,
+              "bad next and previous next=" + ex.nextVersion + ", previous=" + ex.previousVersion);
         }
 
-        for (ReceivedVersionsIterator it = ex.receivedVersionsIterator(); it.hasNext();) {
+        for (ReceivedVersionsIterator it = ex.receivedVersionsIterator(); it.hasNext(); ) {
           Long received = it.next();
           if (received >= ex.nextVersion) {
-            Assert.assertTrue(false, "received greater than next next=" + ex.nextVersion + ", received=" + received + " exception=" + ex);
+            Assert.assertTrue(
+                false,
+                "received greater than next next="
+                    + ex.nextVersion
+                    + ", received="
+                    + received
+                    + " exception="
+                    + ex);
           }
 
           if (received <= ex.previousVersion) {
-            Assert.assertTrue(false, "received less than previous prev=" + ex.previousVersion + ", received=" + received);
+            Assert.assertTrue(
+                false,
+                "received less than previous prev="
+                    + ex.previousVersion
+                    + ", received="
+                    + received);
           }
         }
         if (ex.nextVersion - ex.previousVersion > 1000000) {
-          Assert.assertTrue(false, "to large a gap in exceptions prev=" + ex.previousVersion + ", next=" + ex.nextVersion);
+          Assert.assertTrue(
+              false,
+              "to large a gap in exceptions prev="
+                  + ex.previousVersion
+                  + ", next="
+                  + ex.nextVersion);
         }
       }
     }
   }
-
 }

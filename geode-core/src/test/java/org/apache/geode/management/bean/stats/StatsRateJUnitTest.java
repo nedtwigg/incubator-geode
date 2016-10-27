@@ -52,7 +52,8 @@ public class StatsRateJUnitTest {
 
   @Test
   public void testSingleStatLongRate() throws Exception {
-    StatsRate singleStatsRate = new StatsRate("SINGLE_STATS_LONG_COUNTER", StatType.LONG_TYPE, statsMonitor);
+    StatsRate singleStatsRate =
+        new StatsRate("SINGLE_STATS_LONG_COUNTER", StatType.LONG_TYPE, statsMonitor);
 
     SINGLE_STATS_LONG_COUNTER = 5000L;
     float actualRate = singleStatsRate.getRate();
@@ -68,7 +69,8 @@ public class StatsRateJUnitTest {
 
   @Test
   public void testSingleStatIntRate() throws Exception {
-    StatsRate singleStatsRate = new StatsRate("SINGLE_STATS_INT_COUNTER", StatType.INT_TYPE, statsMonitor);
+    StatsRate singleStatsRate =
+        new StatsRate("SINGLE_STATS_INT_COUNTER", StatType.INT_TYPE, statsMonitor);
 
     SINGLE_STATS_INT_COUNTER = 5000;
     float actualRate = singleStatsRate.getRate();
@@ -85,7 +87,7 @@ public class StatsRateJUnitTest {
 
   @Test
   public void testMultiStatLongRate() throws Exception {
-    String[] counters = new String[] { "MULTI_STATS_LONG_COUNTER_1", "MULTI_STATS_LONG_COUNTER_2" };
+    String[] counters = new String[] {"MULTI_STATS_LONG_COUNTER_1", "MULTI_STATS_LONG_COUNTER_2"};
     StatsRate multiStatsRate = new StatsRate(counters, StatType.LONG_TYPE, statsMonitor);
 
     MULTI_STATS_LONG_COUNTER_1 = 5000L;
@@ -104,7 +106,7 @@ public class StatsRateJUnitTest {
 
   @Test
   public void testMultiStatIntRate() throws Exception {
-    String[] counters = new String[] { "MULTI_STATS_INT_COUNTER_1", "MULTI_STATS_INT_COUNTER_2" };
+    String[] counters = new String[] {"MULTI_STATS_INT_COUNTER_1", "MULTI_STATS_INT_COUNTER_2"};
     StatsRate multiStatsRate = new StatsRate(counters, StatType.INT_TYPE, statsMonitor);
 
     MULTI_STATS_INT_COUNTER_1 = 5000;
@@ -128,8 +130,7 @@ public class StatsRateJUnitTest {
     }
 
     @Override
-    public void addStatisticsToMonitor(Statistics stats) {
-    }
+    public void addStatisticsToMonitor(Statistics stats) {}
 
     @Override
     public Number getStatistic(String statName) {
@@ -156,12 +157,9 @@ public class StatsRateJUnitTest {
     }
 
     @Override
-    public void removeStatisticsFromMonitor(Statistics stats) {
-    }
+    public void removeStatisticsFromMonitor(Statistics stats) {}
 
     @Override
-    public void stopListener() {
-    }
+    public void stopListener() {}
   }
-
 }

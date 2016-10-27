@@ -22,11 +22,7 @@ import org.apache.geode.management.internal.cli.json.GfJsonArray;
 import org.apache.geode.management.internal.cli.json.GfJsonException;
 import org.apache.geode.management.internal.cli.json.GfJsonObject;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class CompositeResultData extends AbstractResultData {
   public static String SEPARATOR = "__separator__";
 
@@ -46,22 +42,18 @@ public class CompositeResultData extends AbstractResultData {
   }
 
   /**
-   * 
    * @param headerText
    * @return this CompositeResultData
-   * @throws ResultDataException
-   *           If the value is non-finite number or if the key is null.
+   * @throws ResultDataException If the value is non-finite number or if the key is null.
    */
   public CompositeResultData setHeader(String headerText) {
     return (CompositeResultData) super.setHeader(headerText);
   }
 
   /**
-   * 
    * @param footerText
    * @return this CompositeResultData
-   * @throws ResultDataException
-   *           If the value is non-finite number or if the key is null.
+   * @throws ResultDataException If the value is non-finite number or if the key is null.
    */
   public CompositeResultData setFooter(String footerText) {
     return (CompositeResultData) super.setFooter(footerText);
@@ -107,7 +99,7 @@ public class CompositeResultData extends AbstractResultData {
   public SectionResultData retrieveSectionByIndex(int index) {
     SectionResultData sectionToRetrieve = null;
     int i = 0;
-    for (Iterator<String> iterator = contentObject.keys(); iterator.hasNext();) {
+    for (Iterator<String> iterator = contentObject.keys(); iterator.hasNext(); ) {
       String key = iterator.next();
       if (key.startsWith(CompositeResultData.SECTION_DATA_ACCESSOR)) {
         if (i == index) {
@@ -124,16 +116,14 @@ public class CompositeResultData extends AbstractResultData {
   public SectionResultData retrieveSection(String keyToRetrieve) {
     SectionResultData sectionToRetrieve = null;
     if (contentObject.has(SectionResultData.generateSectionKey(keyToRetrieve))) {
-      GfJsonObject sectionData = contentObject.getJSONObject(SectionResultData.generateSectionKey(keyToRetrieve));
+      GfJsonObject sectionData =
+          contentObject.getJSONObject(SectionResultData.generateSectionKey(keyToRetrieve));
       sectionToRetrieve = new SectionResultData(sectionData);
     }
     return sectionToRetrieve;
   }
 
-  /**
-   * 
-   * @since GemFire 7.0
-   */
+  /** @since GemFire 7.0 */
   public static class SectionResultData /*extends AbstractResultData*/ {
     protected GfJsonObject sectionGfJsonObject;
 
@@ -233,7 +223,7 @@ public class CompositeResultData extends AbstractResultData {
     public SectionResultData retrieveSectionByIndex(int index) {
       SectionResultData sectionToRetrieve = null;
       int i = 0;
-      for (Iterator<String> iterator = sectionGfJsonObject.keys(); iterator.hasNext();) {
+      for (Iterator<String> iterator = sectionGfJsonObject.keys(); iterator.hasNext(); ) {
         String key = iterator.next();
         if (key.startsWith(CompositeResultData.SECTION_DATA_ACCESSOR)) {
           if (i == index) {
@@ -250,7 +240,8 @@ public class CompositeResultData extends AbstractResultData {
     public SectionResultData retrieveSection(String keyToRetrieve) {
       SectionResultData sectionToRetrieve = null;
       if (sectionGfJsonObject.has(generateSectionKey(keyToRetrieve))) {
-        GfJsonObject sectionData = sectionGfJsonObject.getJSONObject(generateSectionKey(keyToRetrieve));
+        GfJsonObject sectionData =
+            sectionGfJsonObject.getJSONObject(generateSectionKey(keyToRetrieve));
         sectionToRetrieve = new SectionResultData(sectionData);
       }
       return sectionToRetrieve;
@@ -259,7 +250,7 @@ public class CompositeResultData extends AbstractResultData {
     public TabularResultData retrieveTableByIndex(int index) {
       TabularResultData tabularResultData = null;
       int i = 0;
-      for (Iterator<String> iterator = sectionGfJsonObject.keys(); iterator.hasNext();) {
+      for (Iterator<String> iterator = sectionGfJsonObject.keys(); iterator.hasNext(); ) {
         String key = iterator.next();
         if (key.startsWith(CompositeResultData.TABLE_DATA_ACCESSOR)) {
           if (i == index) {
@@ -330,25 +321,64 @@ public class CompositeResultData extends AbstractResultData {
     CompositeResultData crd = new CompositeResultData();
 
     SectionResultData r1Section = crd.addSection("R1");
-    r1Section.addData("Region", "R1").addData("IsPartitioned", false).addData("IsPersistent", true).addData("Disk Store", "DiskStore1").addData("Group", "Group1");
+    r1Section
+        .addData("Region", "R1")
+        .addData("IsPartitioned", false)
+        .addData("IsPersistent", true)
+        .addData("Disk Store", "DiskStore1")
+        .addData("Group", "Group1");
     TabularResultData r1Table = r1Section.addTable("R1Members");
-    r1Table.accumulate("Member Id", "host1(3467):12435:12423").accumulate("PrimaryEntryCount", 20000).accumulate("BackupEntryCount", 20000).accumulate("Memory(MB)", "100").accumulate("NumOfCopies", 1);
-    r1Table.accumulate("Member Id", "host3(5756):57665:90923").accumulate("PrimaryEntryCount", 25000).accumulate("BackupEntryCount", 10000).accumulate("Memory(MB)", "200").accumulate("NumOfCopies", 1);
+    r1Table
+        .accumulate("Member Id", "host1(3467):12435:12423")
+        .accumulate("PrimaryEntryCount", 20000)
+        .accumulate("BackupEntryCount", 20000)
+        .accumulate("Memory(MB)", "100")
+        .accumulate("NumOfCopies", 1);
+    r1Table
+        .accumulate("Member Id", "host3(5756):57665:90923")
+        .accumulate("PrimaryEntryCount", 25000)
+        .accumulate("BackupEntryCount", 10000)
+        .accumulate("Memory(MB)", "200")
+        .accumulate("NumOfCopies", 1);
 
     SectionResultData r3Section = crd.addSection("R3");
-    r3Section.addData("Region", "R3").addData("IsPartitioned", true).addData("IsPersistent", true).addData("Disk Store", "DiskStore2").addData("Group", "Group2").addData("ColocatedWith", "-");
+    r3Section
+        .addData("Region", "R3")
+        .addData("IsPartitioned", true)
+        .addData("IsPersistent", true)
+        .addData("Disk Store", "DiskStore2")
+        .addData("Group", "Group2")
+        .addData("ColocatedWith", "-");
     SectionResultData r3SubSection = r3Section.addSection("R3Config");
     r3SubSection.addData("Configuration", "");
     r3SubSection.addData("Config1", "abcd");
     r3SubSection.addData("Config2", "abcde");
     r3SubSection.addData("Config3", "abcdfg");
     TabularResultData r3Table = r3Section.addTable("R3Members");
-    r3Table.accumulate("Member Id", "host1(3467):12435:12423").accumulate("PrimaryEntryCount", 20000).accumulate("BackupEntryCount", 20000).accumulate("Memory(MB)", "100").accumulate("NumOfCopies", 1).accumulate("NumOfBuckets", 100);
-    r3Table.accumulate("Member Id", "host2(3353):23545:14723").accumulate("PrimaryEntryCount", 20000).accumulate("BackupEntryCount", 20000).accumulate("Memory(MB)", "100").accumulate("NumOfCopies", 1).accumulate("NumOfBuckets", 100);
-    r3Table.accumulate("Member Id", "host3(5756):57665:90923").accumulate("PrimaryEntryCount", 25000).accumulate("BackupEntryCount", 10000).accumulate("Memory(MB)", "200").accumulate("NumOfCopies", 1).accumulate("NumOfBuckets", 100);
+    r3Table
+        .accumulate("Member Id", "host1(3467):12435:12423")
+        .accumulate("PrimaryEntryCount", 20000)
+        .accumulate("BackupEntryCount", 20000)
+        .accumulate("Memory(MB)", "100")
+        .accumulate("NumOfCopies", 1)
+        .accumulate("NumOfBuckets", 100);
+    r3Table
+        .accumulate("Member Id", "host2(3353):23545:14723")
+        .accumulate("PrimaryEntryCount", 20000)
+        .accumulate("BackupEntryCount", 20000)
+        .accumulate("Memory(MB)", "100")
+        .accumulate("NumOfCopies", 1)
+        .accumulate("NumOfBuckets", 100);
+    r3Table
+        .accumulate("Member Id", "host3(5756):57665:90923")
+        .accumulate("PrimaryEntryCount", 25000)
+        .accumulate("BackupEntryCount", 10000)
+        .accumulate("Memory(MB)", "200")
+        .accumulate("NumOfCopies", 1)
+        .accumulate("NumOfBuckets", 100);
 
     try {
-      System.out.println(crd.getGfJsonObject().toIndentedString(/*2*/0));
+      System.out.println(crd.getGfJsonObject().toIndentedString(/*2*/ 0));
 
     } catch (GfJsonException e) {
       e.printStackTrace();

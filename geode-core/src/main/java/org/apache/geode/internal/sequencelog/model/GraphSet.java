@@ -28,9 +28,7 @@ import java.util.regex.Pattern;
 
 import org.apache.geode.internal.sequencelog.GraphType;
 
-/**
- *
- */
+/** */
 public class GraphSet implements GraphReaderCallback {
   private Map<GraphID, Graph> graphs = new HashMap<GraphID, Graph>();
   private long maxTime = Long.MIN_VALUE;
@@ -39,11 +37,26 @@ public class GraphSet implements GraphReaderCallback {
 
   private Set<EdgePattern> edgePatterns = new TreeSet<EdgePattern>();
 
-  public void addEdge(long timestamp, GraphType graphType, String graphName, String edgeName, String state, String source, String dest) {
+  public void addEdge(
+      long timestamp,
+      GraphType graphType,
+      String graphName,
+      String edgeName,
+      String state,
+      String source,
+      String dest) {
     addEdge(timestamp, graphType, graphName, edgeName, state, source, dest, false);
   }
 
-  private void addEdge(long timestamp, GraphType graphType, String graphName, String edgeName, String state, String source, String dest, boolean isFromPattern) {
+  private void addEdge(
+      long timestamp,
+      GraphType graphType,
+      String graphName,
+      String edgeName,
+      String state,
+      String source,
+      String dest,
+      boolean isFromPattern) {
     if (source == null) {
       source = "ERROR_NULL";
     }
@@ -70,7 +83,6 @@ public class GraphSet implements GraphReaderCallback {
     if (dest != null) {
       updateLocations(dest, timestamp);
     }
-
   }
 
   private void updateLocations(String location, long timestamp) {
@@ -78,22 +90,35 @@ public class GraphSet implements GraphReaderCallback {
     if (time == null || time.longValue() > timestamp) {
       locations.put(location, timestamp);
     }
-
   }
 
-  public void addEdgePattern(long timestamp, GraphType graphType, Pattern graphNamePattern, String edgeName, String state, String source, String dest) {
-    edgePatterns.add(new EdgePattern(timestamp, graphType, graphNamePattern, edgeName, state, source, dest));
-
+  public void addEdgePattern(
+      long timestamp,
+      GraphType graphType,
+      Pattern graphNamePattern,
+      String edgeName,
+      String state,
+      String source,
+      String dest) {
+    edgePatterns.add(
+        new EdgePattern(timestamp, graphType, graphNamePattern, edgeName, state, source, dest));
   }
 
-  /**
-   * Indicate this graphset is done populating. Triggers parsing of all of the graph patterns.
-   */
+  /** Indicate this graphset is done populating. Triggers parsing of all of the graph patterns. */
   public void readingDone() {
     for (EdgePattern edgePattern : edgePatterns) {
       for (GraphID graphId : graphs.keySet()) {
-        if (edgePattern.graphNamePattern.matcher(graphId.getGraphName()).matches() && edgePattern.graphType.equals(graphId.getType())) {
-          addEdge(edgePattern.timestamp, graphId.getType(), graphId.getGraphName(), edgePattern.edgeName, edgePattern.state, edgePattern.source, edgePattern.dest, true);
+        if (edgePattern.graphNamePattern.matcher(graphId.getGraphName()).matches()
+            && edgePattern.graphType.equals(graphId.getType())) {
+          addEdge(
+              edgePattern.timestamp,
+              graphId.getType(),
+              graphId.getGraphName(),
+              edgePattern.edgeName,
+              edgePattern.state,
+              edgePattern.source,
+              edgePattern.dest,
+              true);
         }
       }
     }
@@ -113,13 +138,15 @@ public class GraphSet implements GraphReaderCallback {
 
   public List<String> getLocations() {
     List<String> result = new ArrayList<String>(locations.keySet());
-    Collections.<String> sort(result, new Comparator<String>() {
-      public int compare(String o1, String o2) {
-        Long time1 = locations.get(o1);
-        Long time2 = locations.get(o2);
-        return time1.compareTo(time2);
-      }
-    });
+    Collections.<String>sort(
+        result,
+        new Comparator<String>() {
+          public int compare(String o1, String o2) {
+            Long time1 = locations.get(o1);
+            Long time2 = locations.get(o2);
+            return time1.compareTo(time2);
+          }
+        });
     return result;
   }
 
@@ -132,7 +159,14 @@ public class GraphSet implements GraphReaderCallback {
     private final String source;
     private final String dest;
 
-    public EdgePattern(long timestamp, GraphType graphType, Pattern graphNamePattern, String edgeName, String state, String source, String dest) {
+    public EdgePattern(
+        long timestamp,
+        GraphType graphType,
+        Pattern graphNamePattern,
+        String edgeName,
+        String state,
+        String source,
+        String dest) {
       this.timestamp = timestamp;
       this.graphType = graphType;
       this.graphNamePattern = graphNamePattern;

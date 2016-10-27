@@ -27,10 +27,10 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
  *
  * @since GemFire 4.0
  */
-public class CacheServerConfigImpl extends ManagedEntityConfigImpl implements CacheVmConfig, CacheServerConfig {
+public class CacheServerConfigImpl extends ManagedEntityConfigImpl
+    implements CacheVmConfig, CacheServerConfig {
 
-  /** Declarative caching XML file that is used to initialize the
-   * Cache in the cache server. */
+  /** Declarative caching XML file that is used to initialize the Cache in the cache server. */
   private String cacheXMLFile;
 
   /** Extra classpath for the cache server */
@@ -38,19 +38,13 @@ public class CacheServerConfigImpl extends ManagedEntityConfigImpl implements Ca
 
   ///////////////////////  Constructors  ///////////////////////
 
-  /**
-   * Creates a new <code>CacheServerConfigImpl</code> with the default
-   * configuration settings.
-   */
+  /** Creates a new <code>CacheServerConfigImpl</code> with the default configuration settings. */
   public CacheServerConfigImpl() {
     this.cacheXMLFile = null;
     this.classpath = null;
   }
 
-  /**
-   * Creates a new <code>CacheServerConfigImpl</code> for a running
-   * cache server.
-   */
+  /** Creates a new <code>CacheServerConfigImpl</code> for a running cache server. */
   public CacheServerConfigImpl(GemFireVM vm) {
     super(vm);
 
@@ -59,18 +53,14 @@ public class CacheServerConfigImpl extends ManagedEntityConfigImpl implements Ca
     this.classpath = null;
   }
 
-  /**
-   * Copy constructor
-   */
+  /** Copy constructor */
   public CacheServerConfigImpl(CacheServerConfig other) {
     super(other);
     this.cacheXMLFile = other.getCacheXMLFile();
     this.classpath = other.getClassPath();
   }
 
-  /**
-   * Copy constructor
-   */
+  /** Copy constructor */
   public CacheServerConfigImpl(CacheVmConfig other) {
     super(other);
     this.cacheXMLFile = other.getCacheXMLFile();
@@ -107,13 +97,9 @@ public class CacheServerConfigImpl extends ManagedEntityConfigImpl implements Ca
     // different file system.
   }
 
-  /**
-   * Currently, listeners are not supported on the locator config.
-   */
+  /** Currently, listeners are not supported on the locator config. */
   @Override
-  protected void configChanged() {
-
-  }
+  protected void configChanged() {}
 
   @Override
   public Object clone() throws CloneNotSupportedException {
@@ -131,5 +117,4 @@ public class CacheServerConfigImpl extends ManagedEntityConfigImpl implements Ca
 
     return sb.toString();
   }
-
 }

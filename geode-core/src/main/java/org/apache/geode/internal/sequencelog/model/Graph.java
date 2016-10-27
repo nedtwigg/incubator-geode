@@ -25,12 +25,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- *
- * TODO - I think a better idea here would be consider
- * source vertices as "temporary" place holders that
- * will get coalesed in the nearest destination vertex
- * in time. That might help the visualization. Or
- * maybe that should happen in that layer...
+ * TODO - I think a better idea here would be consider source vertices as "temporary" place holders
+ * that will get coalesed in the nearest destination vertex in time. That might help the
+ * visualization. Or maybe that should happen in that layer...
  */
 public class Graph {
 
@@ -39,7 +36,8 @@ public class Graph {
   private Set<Edge> edges = new HashSet<Edge>();
   //A map used to find vertices by location id and timestamp.
   //locationId-> map(timestamp->vertex)
-  private Map<String, SortedMap<Long, Vertex>> indexedVertices = new HashMap<String, SortedMap<Long, Vertex>>();
+  private Map<String, SortedMap<Long, Vertex>> indexedVertices =
+      new HashMap<String, SortedMap<Long, Vertex>>();
 
   public Graph(GraphID id) {
     this.id = id;
@@ -47,13 +45,20 @@ public class Graph {
 
   /**
    * Add an edge to this graph.
+   *
    * @param timestamp
    * @param edgeName
    * @param source
    * @param dest
-   * @param isFromPattern 
+   * @param isFromPattern
    */
-  public void addEdge(long timestamp, String edgeName, String state, String source, String dest, boolean isFromPattern) {
+  public void addEdge(
+      long timestamp,
+      String edgeName,
+      String state,
+      String source,
+      String dest,
+      boolean isFromPattern) {
 
     Vertex destVertex = new Vertex(this, dest, state, timestamp);
     SortedMap<Long, Vertex> map = this.indexedVertices.get(dest);
@@ -86,17 +91,12 @@ public class Graph {
     edges.add(new Edge(this, timestamp, edgeName, source, destVertex));
   }
 
-  /**
-   * Get the edges in the graph.
-   */
+  /** Get the edges in the graph. */
   public Collection<Edge> getEdges() {
     return edges;
   }
 
-  /**
-   * Get the vertices in this graph, grouped by location id and then sorted
-   * by timestamp.
-   */
+  /** Get the vertices in this graph, grouped by location id and then sorted by timestamp. */
   Map<String, SortedMap<Long, Vertex>> getIndexedVertices() {
     return indexedVertices;
   }

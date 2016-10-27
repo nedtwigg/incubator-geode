@@ -25,8 +25,7 @@ public class SyncImpl implements Synchronization {
   public boolean befCompletion = false;
   public boolean aftCompletion = false;
 
-  public SyncImpl() {
-  }
+  public SyncImpl() {}
 
   public void beforeCompletion() {
     befCompletion = true;

@@ -19,9 +19,8 @@ package org.apache.geode.test.dunit;
 import java.io.Serializable;
 
 /**
- * This interface provides both {@link Serializable} and {@link
- * Runnable}.  It is often used in conjunction with {@link
- * VM#invoke(SerializableRunnableIF)}.
+ * This interface provides both {@link Serializable} and {@link Runnable}. It is often used in
+ * conjunction with {@link VM#invoke(SerializableRunnableIF)}.
  *
  * <PRE>
  * public void testRegionPutGet() {
@@ -93,5 +92,4 @@ public abstract class SerializableRunnable implements SerializableRunnableIF {
       return super.toString();
     }
   }
-
 }

@@ -32,11 +32,10 @@ import org.apache.geode.internal.logging.log4j.AlertAppender;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * A message that is sent to make members of the distributed system
- * aware that a manager agent wants alerts at a new level.
+ * A message that is sent to make members of the distributed system aware that a manager agent wants
+ * alerts at a new level.
  *
  * @see AlertLevel
- *
  * @since GemFire 3.5
  */
 public final class AlertLevelChangeMessage extends SerialDistributionMessage {
@@ -48,9 +47,7 @@ public final class AlertLevelChangeMessage extends SerialDistributionMessage {
 
   ///////////////////////  Static Methods  ///////////////////////
 
-  /**
-   * Creates a new <code>AlertLevelChangeMessage</code> 
-   */
+  /** Creates a new <code>AlertLevelChangeMessage</code> */
   public static AlertLevelChangeMessage create(int newLevel) {
     AlertLevelChangeMessage m = new AlertLevelChangeMessage();
     m.newLevel = newLevel;
@@ -89,6 +86,7 @@ public final class AlertLevelChangeMessage extends SerialDistributionMessage {
 
   @Override
   public String toString() {
-    return LocalizedStrings.AlertLevelChangeMessage_CHANGING_ALERT_LEVEL_TO_0.toLocalizedString(AlertLevel.forSeverity(this.newLevel));
+    return LocalizedStrings.AlertLevelChangeMessage_CHANGING_ALERT_LEVEL_TO_0.toLocalizedString(
+        AlertLevel.forSeverity(this.newLevel));
   }
 }

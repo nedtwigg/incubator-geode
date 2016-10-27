@@ -43,40 +43,47 @@ import org.apache.geode.management.internal.MBeanJMXAdapter;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class MBeanSecurityJUnitTest {
 
   private static int jmxManagerPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
+  public static JsonAuthorizationCacheStartRule serverRule =
+      new JsonAuthorizationCacheStartRule(
+          jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
 
   @Rule
   public MBeanServerConnectionRule connectionRule = new MBeanServerConnectionRule(jmxManagerPort);
 
-  /**
-   * No user can call createBean or unregisterBean of GemFire Domain
-   */
+  /** No user can call createBean or unregisterBean of GemFire Domain */
   @Test
   @JMXConnectionConfiguration(user = "super-user", password = "1234567")
   public void testNoAccessWithWhoever() throws Exception {
     MBeanServerConnection con = connectionRule.getMBeanServerConnection();
-    assertThatThrownBy(() -> con.createMBean("FakeClassName", new ObjectName("GemFire", "name", "foo"))).isInstanceOf(SecurityException.class);
+    assertThatThrownBy(
+            () -> con.createMBean("FakeClassName", new ObjectName("GemFire", "name", "foo")))
+        .isInstanceOf(SecurityException.class);
 
-    assertThatThrownBy(() -> con.unregisterMBean(new ObjectName("GemFire", "name", "foo"))).isInstanceOf(SecurityException.class);
+    assertThatThrownBy(() -> con.unregisterMBean(new ObjectName("GemFire", "name", "foo")))
+        .isInstanceOf(SecurityException.class);
 
     // user is allowed to create beans of other domains
-    assertThatThrownBy(() -> con.createMBean("FakeClassName", new ObjectName("OtherDomain", "name", "foo"))).isInstanceOf(ReflectionException.class);
+    assertThatThrownBy(
+            () -> con.createMBean("FakeClassName", new ObjectName("OtherDomain", "name", "foo")))
+        .isInstanceOf(ReflectionException.class);
   }
 
   /**
-   * looks like everyone can query for beans, but the AccessControlMXBean is filtered from the result
+   * looks like everyone can query for beans, but the AccessControlMXBean is filtered from the
+   * result
    */
   @Test
   @JMXConnectionConfiguration(user = "stranger", password = "1234567")
   public void testQueryBean() throws MalformedObjectNameException, IOException {
     MBeanServerConnection con = connectionRule.getMBeanServerConnection();
-    Set<ObjectInstance> objects = con.queryMBeans(ObjectName.getInstance(ResourceConstants.OBJECT_NAME_ACCESSCONTROL), null);
+    Set<ObjectInstance> objects =
+        con.queryMBeans(ObjectName.getInstance(ResourceConstants.OBJECT_NAME_ACCESSCONTROL), null);
     assertThat(objects.size()).isEqualTo(0); // no AccessControlMBean in the query result
 
     objects = con.queryMBeans(ObjectName.getInstance("GemFire:service=CacheServer,*"), null);
@@ -84,15 +91,22 @@ public class MBeanSecurityJUnitTest {
   }
 
   /**
-   * These calls does not go through the MBeanServerWrapper authentication, therefore is not throwing the SecurityExceptions
+   * These calls does not go through the MBeanServerWrapper authentication, therefore is not
+   * throwing the SecurityExceptions
    */
   @Test
   public void testLocalCalls() throws Exception {
     MBeanServer server = MBeanJMXAdapter.mbeanServer;
-    assertThatThrownBy(() -> server.createMBean("FakeClassName", new ObjectName("GemFire", "name", "foo"))).isInstanceOf(ReflectionException.class);
+    assertThatThrownBy(
+            () -> server.createMBean("FakeClassName", new ObjectName("GemFire", "name", "foo")))
+        .isInstanceOf(ReflectionException.class);
 
     MBeanJMXAdapter adapter = new MBeanJMXAdapter();
-    assertThatThrownBy(() -> adapter.registerMBean(mock(DynamicMBean.class), new ObjectName("MockDomain", "name", "mock"), false)).isInstanceOf(ManagementException.class);
+    assertThatThrownBy(
+            () ->
+                adapter.registerMBean(
+                    mock(DynamicMBean.class), new ObjectName("MockDomain", "name", "mock"), false))
+        .isInstanceOf(ManagementException.class);
   }
 
   @Test

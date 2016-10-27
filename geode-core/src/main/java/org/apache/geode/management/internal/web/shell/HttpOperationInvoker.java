@@ -20,11 +20,11 @@ import org.apache.geode.management.internal.cli.shell.OperationInvoker;
 
 /**
  * The HttpOperationInvoker interface is a marker interface for HTTP-based OperationInvokers.
- * <p/>
+ *
+ * <p>
+ *
  * @see org.apache.geode.management.internal.cli.shell.OperationInvoker
  * @since GemFire 8.0
  */
 @SuppressWarnings("unused")
-public interface HttpOperationInvoker extends OperationInvoker {
-
-}
+public interface HttpOperationInvoker extends OperationInvoker {}

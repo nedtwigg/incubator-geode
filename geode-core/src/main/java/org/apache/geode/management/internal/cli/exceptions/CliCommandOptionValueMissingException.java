@@ -22,11 +22,16 @@ import org.apache.geode.management.internal.cli.parser.OptionSet;
 
 public class CliCommandOptionValueMissingException extends CliCommandOptionValueException {
 
-  public CliCommandOptionValueMissingException(final CommandTarget commandTarget, final Option option, final String value) {
+  public CliCommandOptionValueMissingException(
+      final CommandTarget commandTarget, final Option option, final String value) {
     this(commandTarget, option, null, value, null);
   }
 
-  public CliCommandOptionValueMissingException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet, final String value) {
+  public CliCommandOptionValueMissingException(
+      final CommandTarget commandTarget,
+      final Option option,
+      final OptionSet optionSet,
+      final String value) {
     this(commandTarget, option, optionSet, value, null);
   }
 
@@ -38,7 +43,12 @@ public class CliCommandOptionValueMissingException extends CliCommandOptionValue
     this(null, option, null, null, cause);
   }
 
-  public CliCommandOptionValueMissingException(final CommandTarget commandTarget, final Option option, final OptionSet optionSet, final String value, final Throwable cause) {
+  public CliCommandOptionValueMissingException(
+      final CommandTarget commandTarget,
+      final Option option,
+      final OptionSet optionSet,
+      final String value,
+      final Throwable cause) {
     super(commandTarget, option, optionSet, value);
   }
 }

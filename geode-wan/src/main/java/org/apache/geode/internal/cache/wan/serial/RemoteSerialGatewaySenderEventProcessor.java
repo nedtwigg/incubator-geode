@@ -45,5 +45,4 @@ public class RemoteSerialGatewaySenderEventProcessor extends SerialGatewaySender
       this.dispatcher = new GatewaySenderEventCallbackDispatcher(this);
     }
   }
-
 }

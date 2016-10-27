@@ -42,13 +42,12 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VMStatsDiskRegionEntryOffHeapIntKey extends VMStatsDiskRegionEntryOffHeap {
-  public VMStatsDiskRegionEntryOffHeapIntKey(RegionEntryContext context, int key, @Retained Object value) {
+  public VMStatsDiskRegionEntryOffHeapIntKey(
+      RegionEntryContext context, int key, @Retained Object value) {
     super(context, (value instanceof RecoveredEntry ? null : value));
     // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
     initialize(context, value);
@@ -59,9 +58,14 @@ public class VMStatsDiskRegionEntryOffHeapIntKey extends VMStatsDiskRegionEntryO
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VMStatsDiskRegionEntryOffHeapIntKey> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VMStatsDiskRegionEntryOffHeapIntKey.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VMStatsDiskRegionEntryOffHeapIntKey>
+      lastModifiedUpdater =
+          AtomicLongFieldUpdater.newUpdater(
+              VMStatsDiskRegionEntryOffHeapIntKey.class, "lastModified");
   /**
    * All access done using ohAddrUpdater so it is used even though the compiler can not tell it is.
    */
@@ -70,14 +74,15 @@ public class VMStatsDiskRegionEntryOffHeapIntKey extends VMStatsDiskRegionEntryO
   @Released
   private volatile long ohAddress;
   /**
-   * I needed to add this because I wanted clear to call setValue which normally can only be called while the re is synced.
-   * But if I sync in that code it causes a lock ordering deadlock with the disk regions because they also get a rw lock in clear.
-   * Some hardware platforms do not support CAS on a long. If gemfire is run on one of those the AtomicLongFieldUpdater does a sync
-   * on the re and we will once again be deadlocked.
-   * I don't know if we support any of the hardware platforms that do not have a 64bit CAS. If we do then we can expect deadlocks
-   * on disk regions.
+   * I needed to add this because I wanted clear to call setValue which normally can only be called
+   * while the re is synced. But if I sync in that code it causes a lock ordering deadlock with the
+   * disk regions because they also get a rw lock in clear. Some hardware platforms do not support
+   * CAS on a long. If gemfire is run on one of those the AtomicLongFieldUpdater does a sync on the
+   * re and we will once again be deadlocked. I don't know if we support any of the hardware
+   * platforms that do not have a 64bit CAS. If we do then we can expect deadlocks on disk regions.
    */
-  private final static AtomicLongFieldUpdater<VMStatsDiskRegionEntryOffHeapIntKey> ohAddrUpdater = AtomicLongFieldUpdater.newUpdater(VMStatsDiskRegionEntryOffHeapIntKey.class, "ohAddress");
+  private static final AtomicLongFieldUpdater<VMStatsDiskRegionEntryOffHeapIntKey> ohAddrUpdater =
+      AtomicLongFieldUpdater.newUpdater(VMStatsDiskRegionEntryOffHeapIntKey.class, "ohAddress");
 
   @Override
   public Token getValueAsToken() {
@@ -134,9 +139,7 @@ public class VMStatsDiskRegionEntryOffHeapIntKey extends VMStatsDiskRegionEntryO
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -145,16 +148,12 @@ public class VMStatsDiskRegionEntryOffHeapIntKey extends VMStatsDiskRegionEntryO
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -176,16 +175,16 @@ public class VMStatsDiskRegionEntryOffHeapIntKey extends VMStatsDiskRegionEntryO
     DiskStoreImpl ds = drs.getDiskStore();
     long maxOplogSize = ds.getMaxOplogSize();
     //get appropriate instance of DiskId implementation based on maxOplogSize
-    this.id = DiskId.createDiskId(maxOplogSize, true/* is persistence */, ds.needsLinkedList());
+    this.id = DiskId.createDiskId(maxOplogSize, true /* is persistence */, ds.needsLinkedList());
     Helper.initialize(this, drs, value);
   }
 
   /**
    * DiskId
-   * 
+   *
    * @since GemFire 5.1
    */
-  protected DiskId id;//= new DiskId();
+  protected DiskId id; //= new DiskId();
 
   public DiskId getDiskId() {
     return this.id;
@@ -204,7 +203,7 @@ public class VMStatsDiskRegionEntryOffHeapIntKey extends VMStatsDiskRegionEntryO
   //   * 1 byte = users bits
   //   * 2-8 bytes = oplog id
   //   * least significant.
-  //   * 
+  //   *
   //   * The highest bit in the oplog id part is set to 1 if the oplog id
   //   * is negative.
   //   * @todo this field could be an int for an overflow only region
@@ -258,8 +257,14 @@ public class VMStatsDiskRegionEntryOffHeapIntKey extends VMStatsDiskRegionEntryO
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VMStatsDiskRegionEntryOffHeapIntKey> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsDiskRegionEntryOffHeapIntKey.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VMStatsDiskRegionEntryOffHeapIntKey> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsDiskRegionEntryOffHeapIntKey.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsDiskRegionEntryOffHeapIntKey>
+      hitCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VMStatsDiskRegionEntryOffHeapIntKey.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsDiskRegionEntryOffHeapIntKey>
+      missCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(
+              VMStatsDiskRegionEntryOffHeapIntKey.class, "missCount");
 
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {

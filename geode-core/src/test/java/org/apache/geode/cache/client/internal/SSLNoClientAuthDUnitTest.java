@@ -44,9 +44,7 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.util.test.TestUtil;
 
-/**
- * Test for GEODE-396
- */
+/** Test for GEODE-396 */
 @Category(DistributedTest.class)
 public class SSLNoClientAuthDUnitTest extends JUnit4DistributedTestCase {
 
@@ -126,7 +124,13 @@ public class SSLNoClientAuthDUnitTest extends JUnit4DistributedTestCase {
     r.put("serverkey", "servervalue");
   }
 
-  public void setUpClientVM(String host, int port, boolean cacheServerSslenabled, boolean cacheServerSslRequireAuth, String keyStore, String trustStore) {
+  public void setUpClientVM(
+      String host,
+      int port,
+      boolean cacheServerSslenabled,
+      boolean cacheServerSslRequireAuth,
+      String keyStore,
+      String trustStore) {
 
     Properties gemFireProps = new Properties();
 
@@ -156,7 +160,8 @@ public class SSLNoClientAuthDUnitTest extends JUnit4DistributedTestCase {
     clientCacheFactory.addPoolServer(host, port);
     clientCache = clientCacheFactory.create();
 
-    ClientRegionFactory<String, String> regionFactory = clientCache.createClientRegionFactory(ClientRegionShortcut.PROXY);
+    ClientRegionFactory<String, String> regionFactory =
+        clientCache.createClientRegionFactory(ClientRegionShortcut.PROXY);
     Region<String, String> region = regionFactory.create("serverRegion");
     assertNotNull(region);
   }
@@ -182,8 +187,16 @@ public class SSLNoClientAuthDUnitTest extends JUnit4DistributedTestCase {
     instance.createServer();
   }
 
-  public static void setUpClientVMTask(String host, int port, boolean cacheServerSslenabled, boolean cacheServerSslRequireAuth, String keyStore, String trustStore) throws Exception {
-    instance.setUpClientVM(host, port, cacheServerSslenabled, cacheServerSslRequireAuth, keyStore, trustStore);
+  public static void setUpClientVMTask(
+      String host,
+      int port,
+      boolean cacheServerSslenabled,
+      boolean cacheServerSslRequireAuth,
+      String keyStore,
+      String trustStore)
+      throws Exception {
+    instance.setUpClientVM(
+        host, port, cacheServerSslenabled, cacheServerSslRequireAuth, keyStore, trustStore);
   }
 
   public static void doClientRegionTestTask() {
@@ -213,9 +226,7 @@ public class SSLNoClientAuthDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * Test for GEODE-396
-   */
+  /** Test for GEODE-396 */
   @Test
   public void testSSLServerWithNoAuth() throws Exception {
     final Host host = Host.getHost(0);
@@ -229,7 +240,8 @@ public class SSLNoClientAuthDUnitTest extends JUnit4DistributedTestCase {
     serverVM.invoke(() -> SSLNoClientAuthDUnitTest.setUpServerVMTask(cacheServerSslenabled));
     serverVM.invoke(() -> SSLNoClientAuthDUnitTest.createServerTask());
 
-    Object array[] = (Object[]) serverVM.invoke(() -> SSLNoClientAuthDUnitTest.getCacheServerEndPointTask());
+    Object array[] =
+        (Object[]) serverVM.invoke(() -> SSLNoClientAuthDUnitTest.getCacheServerEndPointTask());
     String hostName = (String) array[0];
     int port = (Integer) array[1];
     Object params[] = new Object[6];

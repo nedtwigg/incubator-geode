@@ -19,16 +19,15 @@ package org.apache.geode.admin;
 import org.apache.geode.cache.Operation;
 
 /**
- * An event that describes an operation on a cache.
- * Instances of this are delivered to a {@link SystemMemberCacheListener} when a
- * a cache is created or closed.
+ * An event that describes an operation on a cache. Instances of this are delivered to a {@link
+ * SystemMemberCacheListener} when a a cache is created or closed.
  *
  * @since GemFire 5.0
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public interface SystemMemberCacheEvent extends SystemMembershipEvent {
-  /**
-   * Returns the actual operation that caused this event.
-   */
+  /** Returns the actual operation that caused this event. */
   public Operation getOperation();
 }

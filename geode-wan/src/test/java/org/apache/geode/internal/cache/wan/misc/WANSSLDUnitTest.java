@@ -52,11 +52,13 @@ public class WANSSLDUnitTest extends WANTestBase {
 
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.startSender("ln"));
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
 
@@ -78,11 +80,13 @@ public class WANSSLDUnitTest extends WANTestBase {
 
       vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-      vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+      vm2.invoke(
+          () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
       vm4.invoke(() -> WANTestBase.startSender("ln"));
 
-      vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+      vm4.invoke(
+          () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
 
       vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
 
@@ -109,15 +113,19 @@ public class WANSSLDUnitTest extends WANTestBase {
 
     vm4.invoke(() -> WANTestBase.createSender("ln", 2, false, 100, 10, false, false, null, true));
 
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.startSender("ln"));
 
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
 
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1));
 
-    Boolean doesSizeMatch = (Boolean) vm2.invoke(() -> WANSSLDUnitTest.ValidateSSLRegionSize(getTestMethodName() + "_RR", 1));
+    Boolean doesSizeMatch =
+        (Boolean)
+            vm2.invoke(() -> WANSSLDUnitTest.ValidateSSLRegionSize(getTestMethodName() + "_RR", 1));
 
     assertFalse(doesSizeMatch);
   }
@@ -125,15 +133,16 @@ public class WANSSLDUnitTest extends WANTestBase {
   public static boolean ValidateSSLRegionSize(String regionName, final int regionSize) {
     final Region r = cache.getRegion(Region.SEPARATOR + regionName);
     assertNotNull(r);
-    WaitCriterion wc = new WaitCriterion() {
-      public boolean done() {
-        return false;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          public boolean done() {
+            return false;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(wc, 2000, 500, false);
 
     if (r.size() == regionSize) {

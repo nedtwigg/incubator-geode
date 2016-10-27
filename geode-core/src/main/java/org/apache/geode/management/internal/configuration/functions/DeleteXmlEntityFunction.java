@@ -27,9 +27,7 @@ import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
 public class DeleteXmlEntityFunction extends FunctionAdapter implements InternalEntity {
 
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
 
   @Override
@@ -44,7 +42,8 @@ public class DeleteXmlEntityFunction extends FunctionAdapter implements Internal
         SharedConfiguration sharedConfig = locator.getSharedConfiguration();
         sharedConfig.deleteXmlEntity(xmlEntity, groups);
       } else {
-        configChangeResult.setErrorMessage("Shared Configuration has not been started in locator : " + locator);
+        configChangeResult.setErrorMessage(
+            "Shared Configuration has not been started in locator : " + locator);
       }
     } catch (Exception e) {
       configChangeResult.setException(e);
@@ -52,7 +51,6 @@ public class DeleteXmlEntityFunction extends FunctionAdapter implements Internal
 
     } finally {
       context.getResultSender().lastResult(configChangeResult);
-
     }
   }
 
@@ -60,5 +58,4 @@ public class DeleteXmlEntityFunction extends FunctionAdapter implements Internal
   public String getId() {
     return DeleteXmlEntityFunction.class.getName();
   }
-
 }

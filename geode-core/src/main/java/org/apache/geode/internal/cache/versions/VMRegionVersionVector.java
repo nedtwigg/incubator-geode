@@ -25,9 +25,8 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.cache.LocalRegion;
 
 /**
- * A region version vector for regions without persistent data. This region
- * version vector uses the InternalDistributedMember as the member id.
- *
+ * A region version vector for regions without persistent data. This region version vector uses the
+ * InternalDistributedMember as the member id.
  */
 public class VMRegionVersionVector extends RegionVersionVector<InternalDistributedMember> {
 
@@ -44,23 +43,40 @@ public class VMRegionVersionVector extends RegionVersionVector<InternalDistribut
     super(ownerId);
   }
 
-  public VMRegionVersionVector(InternalDistributedMember ownerId, ConcurrentHashMap<InternalDistributedMember, RegionVersionHolder<InternalDistributedMember>> vector, long version, ConcurrentHashMap<InternalDistributedMember, Long> gcVersions, long gcVersion, boolean singleMember, RegionVersionHolder<InternalDistributedMember> localExceptions) {
+  public VMRegionVersionVector(
+      InternalDistributedMember ownerId,
+      ConcurrentHashMap<InternalDistributedMember, RegionVersionHolder<InternalDistributedMember>>
+          vector,
+      long version,
+      ConcurrentHashMap<InternalDistributedMember, Long> gcVersions,
+      long gcVersion,
+      boolean singleMember,
+      RegionVersionHolder<InternalDistributedMember> localExceptions) {
     super(ownerId, vector, version, gcVersions, gcVersion, singleMember, localExceptions);
   }
 
   @Override
-  protected RegionVersionVector createCopy(InternalDistributedMember ownerId, ConcurrentHashMap<InternalDistributedMember, RegionVersionHolder<InternalDistributedMember>> vector, long version, ConcurrentHashMap<InternalDistributedMember, Long> gcVersions, long gcVersion, boolean singleMember, RegionVersionHolder<InternalDistributedMember> localExceptions) {
-    return new VMRegionVersionVector(ownerId, vector, version, gcVersions, gcVersion, singleMember, localExceptions);
+  protected RegionVersionVector createCopy(
+      InternalDistributedMember ownerId,
+      ConcurrentHashMap<InternalDistributedMember, RegionVersionHolder<InternalDistributedMember>>
+          vector,
+      long version,
+      ConcurrentHashMap<InternalDistributedMember, Long> gcVersions,
+      long gcVersion,
+      boolean singleMember,
+      RegionVersionHolder<InternalDistributedMember> localExceptions) {
+    return new VMRegionVersionVector(
+        ownerId, vector, version, gcVersions, gcVersion, singleMember, localExceptions);
   }
 
   @Override
   protected void writeMember(InternalDistributedMember member, DataOutput out) throws IOException {
     member.writeEssentialData(out);
-
   }
 
   @Override
-  protected InternalDistributedMember readMember(DataInput in) throws IOException, ClassNotFoundException {
+  protected InternalDistributedMember readMember(DataInput in)
+      throws IOException, ClassNotFoundException {
     return InternalDistributedMember.readEssentialData(in);
   }
 
@@ -78,11 +94,8 @@ public class VMRegionVersionVector extends RegionVersionVector<InternalDistribut
     removeOldMember(id);
   }
 
-  /**
-   * remove an old member from the vector
-   */
+  /** remove an old member from the vector */
   private void removeOldMember(InternalDistributedMember id) {
     super.markDepartedMember(id);
   }
-
 }

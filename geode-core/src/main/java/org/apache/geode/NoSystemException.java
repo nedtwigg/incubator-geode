@@ -17,14 +17,14 @@
 package org.apache.geode;
 
 /**
- * A <code>NoSystemException</code> is thrown when a
- * locator can not be found or connected to.
- * In most cases one of the following subclasses is used instead
- * of <code>NoSystemException</code>:
+ * A <code>NoSystemException</code> is thrown when a locator can not be found or connected to. In
+ * most cases one of the following subclasses is used instead of <code>NoSystemException</code>:
+ *
  * <ul>
- * <li> {@link UncreatedSystemException}
- * <li> {@link UnstartedSystemException}
+ *   <li> {@link UncreatedSystemException}
+ *   <li> {@link UnstartedSystemException}
  * </ul>
+ *
  * <p>As of GemFire 5.0 this exception should be named NoLocatorException.
  */
 public class NoSystemException extends GemFireException {
@@ -32,17 +32,12 @@ public class NoSystemException extends GemFireException {
 
   //////////////////////  Constructors  //////////////////////
 
-  /**
-   * Creates a new <code>NoSystemException</code>.
-   */
+  /** Creates a new <code>NoSystemException</code>. */
   public NoSystemException(String message) {
     super(message);
   }
 
-  /**
-   * Creates a new <code>NoSystemException</code> with the given message
-   * and cause.
-   */
+  /** Creates a new <code>NoSystemException</code> with the given message and cause. */
   public NoSystemException(String message, Throwable cause) {
     super(message, cause);
   }

@@ -19,19 +19,14 @@ package org.apache.geode.distributed.internal;
 import org.apache.geode.GemFireException;
 
 /**
- * This exception is thrown when a problem occurs when accessing the
- * underlying distrubtion system (JGroups).  It most often wraps
- * another (checked) exception.
+ * This exception is thrown when a problem occurs when accessing the underlying distrubtion system
+ * (JGroups). It most often wraps another (checked) exception.
  */
 public class DistributionException extends GemFireException {
   private static final long serialVersionUID = 9039055444056269504L;
 
-  /**
-   * Creates a new <code>DistributionException</code> with the given
-   * cause. 
-   */
+  /** Creates a new <code>DistributionException</code> with the given cause. */
   public DistributionException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

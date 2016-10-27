@@ -104,9 +104,7 @@ public class JGroupsMessengerJUnitTest {
     initMocks(enableMcast, new Properties());
   }
 
-  /**
-   * Create stub and mock objects
-   */
+  /** Create stub and mock objects */
   private void initMocks(boolean enableMcast, Properties addProp) throws Exception {
     if (messenger != null) {
       messenger.stop();
@@ -114,7 +112,8 @@ public class JGroupsMessengerJUnitTest {
     }
     Properties nonDefault = new Properties();
     nonDefault.put(DISABLE_TCP, "true");
-    nonDefault.put(MCAST_PORT, enableMcast ? "" + AvailablePortHelper.getRandomAvailableUDPPort() : "0");
+    nonDefault.put(
+        MCAST_PORT, enableMcast ? "" + AvailablePortHelper.getRandomAvailableUDPPort() : "0");
     nonDefault.put(MCAST_TTL, "0");
     nonDefault.put(LOG_FILE, "");
     nonDefault.put(LOG_LEVEL, "fine");
@@ -122,7 +121,8 @@ public class JGroupsMessengerJUnitTest {
     nonDefault.put(ACK_WAIT_THRESHOLD, "1");
     nonDefault.putAll(addProp);
     DistributionConfigImpl config = new DistributionConfigImpl(nonDefault);
-    RemoteTransportConfig tconfig = new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
+    RemoteTransportConfig tconfig =
+        new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
 
     stopper = mock(Stopper.class);
     when(stopper.isCancelInProgress()).thenReturn(false);
@@ -144,7 +144,8 @@ public class JGroupsMessengerJUnitTest {
     when(services.getJoinLeave()).thenReturn(joinLeave);
 
     DM dm = mock(DM.class);
-    InternalDistributedSystem system = InternalDistributedSystem.newInstanceForTesting(dm, nonDefault);
+    InternalDistributedSystem system =
+        InternalDistributedSystem.newInstanceForTesting(dm, nonDefault);
     when(services.getStatistics()).thenReturn(new DistributionStats(system, statsId));
 
     messenger = new JGroupsMessenger();
@@ -156,15 +157,20 @@ public class JGroupsMessengerJUnitTest {
     String jgroupsConfig = messenger.getJGroupsStackConfig();
     int startIdx = jgroupsConfig.indexOf("<org");
     int insertIdx = jgroupsConfig.indexOf('>', startIdx + 4) + 1;
-    jgroupsConfig = jgroupsConfig.substring(0, insertIdx) + "<" + InterceptUDP.class.getName() + "/>" + jgroupsConfig.substring(insertIdx);
+    jgroupsConfig =
+        jgroupsConfig.substring(0, insertIdx)
+            + "<"
+            + InterceptUDP.class.getName()
+            + "/>"
+            + jgroupsConfig.substring(insertIdx);
     messenger.setJGroupsStackConfigForTesting(jgroupsConfig);
     //    System.out.println("jgroups config: " + jgroupsConfig);
 
     messenger.start();
     messenger.started();
 
-    interceptor = (InterceptUDP) messenger.myChannel.getProtocolStack().getTransport().getUpProtocol();
-
+    interceptor =
+        (InterceptUDP) messenger.myChannel.getProtocolStack().getTransport().getUpProtocol();
   }
 
   @After
@@ -181,7 +187,8 @@ public class JGroupsMessengerJUnitTest {
     NetView v = createView();
     when(joinLeave.getView()).thenReturn(v);
     messenger.installView(v);
-    messenger.handleJGroupsIOException(new IOException("je m'en fiche"), new JGAddress(v.getMembers().get(1)));
+    messenger.handleJGroupsIOException(
+        new IOException("je m'en fiche"), new JGAddress(v.getMembers().get(1)));
     verify(healthMonitor).suspect(isA(InternalDistributedMember.class), isA(String.class));
   }
 
@@ -193,8 +200,11 @@ public class JGroupsMessengerJUnitTest {
     when(joinLeave.getView()).thenReturn(v);
     when(manager.shutdownInProgress()).thenReturn(true);
     messenger.installView(v);
-    messenger.handleJGroupsIOException(new IOException("fichez-moi le camp"), new JGAddress(v.getMembers().get(1)));
-    verify(healthMonitor, never()).checkIfAvailable(isA(InternalDistributedMember.class), isA(String.class), isA(Boolean.class));
+    messenger.handleJGroupsIOException(
+        new IOException("fichez-moi le camp"), new JGAddress(v.getMembers().get(1)));
+    verify(healthMonitor, never())
+        .checkIfAvailable(
+            isA(InternalDistributedMember.class), isA(String.class), isA(Boolean.class));
   }
 
   private NetView createView() {
@@ -214,11 +224,13 @@ public class JGroupsMessengerJUnitTest {
     DistributionMessage dmsg = mock(DistributionMessage.class);
     when(dmsg.getProcessorType()).thenReturn(DistributionManager.SERIAL_EXECUTOR);
     messenger.setMessageFlags(dmsg, jgmsg);
-    assertFalse("expected no_fc to not be set in " + jgmsg.getFlags(), jgmsg.isFlagSet(Message.Flag.NO_FC));
+    assertFalse(
+        "expected no_fc to not be set in " + jgmsg.getFlags(), jgmsg.isFlagSet(Message.Flag.NO_FC));
     AlertAppender.setIsAlerting(true);
     try {
       messenger.setMessageFlags(dmsg, jgmsg);
-      assertTrue("expected no_fc to be set in " + jgmsg.getFlags(), jgmsg.isFlagSet(Message.Flag.NO_FC));
+      assertTrue(
+          "expected no_fc to be set in " + jgmsg.getFlags(), jgmsg.isFlagSet(Message.Flag.NO_FC));
     } finally {
       AlertAppender.setIsAlerting(false);
     }
@@ -242,8 +254,9 @@ public class JGroupsMessengerJUnitTest {
       boolean enableMcast = (i == 1);
       initMocks(enableMcast);
       InternalDistributedMember mbr = createAddress(8888);
-      DistributedCacheOperation.CacheOperationMessage msg = mock(DistributedCacheOperation.CacheOperationMessage.class);
-      when(msg.getRecipients()).thenReturn(new InternalDistributedMember[] { mbr });
+      DistributedCacheOperation.CacheOperationMessage msg =
+          mock(DistributedCacheOperation.CacheOperationMessage.class);
+      when(msg.getRecipients()).thenReturn(new InternalDistributedMember[] {mbr});
       when(msg.getMulticast()).thenReturn(enableMcast);
       if (!enableMcast) {
         // for non-mcast we send a message with a reply-processor
@@ -290,8 +303,9 @@ public class JGroupsMessengerJUnitTest {
       messenger.myChannel = mockChannel;
       try {
         InternalDistributedMember mbr = createAddress(8888);
-        DistributedCacheOperation.CacheOperationMessage msg = mock(DistributedCacheOperation.CacheOperationMessage.class);
-        when(msg.getRecipients()).thenReturn(new InternalDistributedMember[] { mbr });
+        DistributedCacheOperation.CacheOperationMessage msg =
+            mock(DistributedCacheOperation.CacheOperationMessage.class);
+        when(msg.getRecipients()).thenReturn(new InternalDistributedMember[] {mbr});
         when(msg.getMulticast()).thenReturn(enableMcast);
         when(msg.getProcessorId()).thenReturn(1234);
         when(msg.getDSFID()).thenReturn((int) DataSerializableFixedID.PUT_ALL_MESSAGE);
@@ -332,8 +346,9 @@ public class JGroupsMessengerJUnitTest {
 
       try {
         InternalDistributedMember mbr = createAddress(8888);
-        DistributedCacheOperation.CacheOperationMessage msg = mock(DistributedCacheOperation.CacheOperationMessage.class);
-        when(msg.getRecipients()).thenReturn(new InternalDistributedMember[] { mbr });
+        DistributedCacheOperation.CacheOperationMessage msg =
+            mock(DistributedCacheOperation.CacheOperationMessage.class);
+        when(msg.getRecipients()).thenReturn(new InternalDistributedMember[] {mbr});
         when(msg.getMulticast()).thenReturn(enableMcast);
         when(msg.getProcessorId()).thenReturn(1234);
         when(msg.getDSFID()).thenReturn((int) DataSerializableFixedID.PUT_ALL_MESSAGE);
@@ -368,8 +383,9 @@ public class JGroupsMessengerJUnitTest {
       messenger.myChannel = mockChannel;
       try {
         InternalDistributedMember mbr = createAddress(8888);
-        DistributedCacheOperation.CacheOperationMessage msg = mock(DistributedCacheOperation.CacheOperationMessage.class);
-        when(msg.getRecipients()).thenReturn(new InternalDistributedMember[] { mbr });
+        DistributedCacheOperation.CacheOperationMessage msg =
+            mock(DistributedCacheOperation.CacheOperationMessage.class);
+        when(msg.getRecipients()).thenReturn(new InternalDistributedMember[] {mbr});
         when(msg.getMulticast()).thenReturn(false);
         when(msg.getProcessorId()).thenReturn(1234);
         try {
@@ -391,8 +407,9 @@ public class JGroupsMessengerJUnitTest {
       boolean enableMcast = (i == 1);
       initMocks(enableMcast);
       InternalDistributedMember mbr = createAddress(8888);
-      DistributedCacheOperation.CacheOperationMessage msg = mock(DistributedCacheOperation.CacheOperationMessage.class);
-      when(msg.getRecipients()).thenReturn(new InternalDistributedMember[] { mbr });
+      DistributedCacheOperation.CacheOperationMessage msg =
+          mock(DistributedCacheOperation.CacheOperationMessage.class);
+      when(msg.getRecipients()).thenReturn(new InternalDistributedMember[] {mbr});
       when(msg.getMulticast()).thenReturn(enableMcast);
       if (!enableMcast) {
         // for non-mcast we send a message with a reply-processor
@@ -413,7 +430,9 @@ public class JGroupsMessengerJUnitTest {
         verify(msg, atLeastOnce()).registerProcessor();
       }
       verify(msg).toData(isA(DataOutput.class));
-      assertTrue("expected 1 message but found " + interceptor.collectedMessages, interceptor.collectedMessages.size() == 1);
+      assertTrue(
+          "expected 1 message but found " + interceptor.collectedMessages,
+          interceptor.collectedMessages.size() == 1);
       assertTrue(interceptor.collectedMessages.get(0).isFlagSet(Message.Flag.NO_RELIABILITY));
     }
   }
@@ -452,7 +471,6 @@ public class JGroupsMessengerJUnitTest {
     interceptor.up(new Event(Event.MSG, jmsg));
 
     verify(manager).processMessage(any(LeaveRequestMessage.class));
-
   }
 
   @Test
@@ -470,7 +488,8 @@ public class JGroupsMessengerJUnitTest {
     doTestBigMessageIsFragmented(false, true);
   }
 
-  public void doTestBigMessageIsFragmented(boolean mcastEnabled, boolean mcastMsg) throws Exception {
+  public void doTestBigMessageIsFragmented(boolean mcastEnabled, boolean mcastMsg)
+      throws Exception {
     initMocks(mcastEnabled);
     MessageHandler mh = mock(MessageHandler.class);
     messenger.addHandler(JoinRequestMessage.class, mh);
@@ -485,20 +504,31 @@ public class JGroupsMessengerJUnitTest {
     }
 
     messenger.send(msg);
-    int sentMessages = (mcastEnabled && mcastMsg) ? interceptor.mcastSentDataMessages : interceptor.unicastSentDataMessages;
+    int sentMessages =
+        (mcastEnabled && mcastMsg)
+            ? interceptor.mcastSentDataMessages
+            : interceptor.unicastSentDataMessages;
     assertTrue("expected 1 message to be sent but found " + sentMessages, sentMessages == 1);
 
     // send a big message and expect fragmentation
-    msg = new JoinRequestMessage(messenger.localAddress, sender, new byte[(int) (services.getConfig().getDistributionConfig().getUdpFragmentSize() * (1.5))], -1, 0);
+    msg =
+        new JoinRequestMessage(
+            messenger.localAddress,
+            sender,
+            new byte
+                [(int) (services.getConfig().getDistributionConfig().getUdpFragmentSize() * (1.5))],
+            -1,
+            0);
 
     // configure an incoming message handler for JoinRequestMessage
     final DistributionMessage[] messageReceived = new DistributionMessage[1];
-    MessageHandler handler = new MessageHandler() {
-      @Override
-      public void processMessage(DistributionMessage m) {
-        messageReceived[0] = m;
-      }
-    };
+    MessageHandler handler =
+        new MessageHandler() {
+          @Override
+          public void processMessage(DistributionMessage m) {
+            messageReceived[0] = m;
+          }
+        };
     messenger.addHandler(JoinRequestMessage.class, handler);
 
     // configure the outgoing message interceptor
@@ -508,7 +538,9 @@ public class JGroupsMessengerJUnitTest {
 
     messenger.send(msg);
 
-    assertTrue("expected 2 messages to be sent but found " + interceptor.unicastSentDataMessages, interceptor.unicastSentDataMessages == 2);
+    assertTrue(
+        "expected 2 messages to be sent but found " + interceptor.unicastSentDataMessages,
+        interceptor.unicastSentDataMessages == 2);
 
     List<Message> messages = new ArrayList<>(interceptor.collectedMessages);
     UUID fakeMember = new UUID(50, 50);
@@ -517,9 +549,9 @@ public class JGroupsMessengerJUnitTest {
     for (Message m : messages) {
       m.setSrc(fakeMember);
       UNICAST3.Header oldHeader = (UNICAST3.Header) m.getHeader(unicastHeaderId);
-      if (oldHeader == null)
-        continue;
-      UNICAST3.Header newHeader = UNICAST3.Header.createDataHeader(seqno, oldHeader.connId(), seqno == 1);
+      if (oldHeader == null) continue;
+      UNICAST3.Header newHeader =
+          UNICAST3.Header.createDataHeader(seqno, oldHeader.connId(), seqno == 1);
       seqno += 1;
       m.putHeader(unicastHeaderId, newHeader);
       interceptor.up(new Event(Event.MSG, m));
@@ -549,7 +581,8 @@ public class JGroupsMessengerJUnitTest {
   }
 
   @Test
-  public void testChannelStillConnectedAfterEmergencyCloseAfterForcedDisconnectWithAutoReconnect() throws Exception {
+  public void testChannelStillConnectedAfterEmergencyCloseAfterForcedDisconnectWithAutoReconnect()
+      throws Exception {
     initMocks(false);
     doCallRealMethod().when(services).setShutdownCause(any(ForcedDisconnectException.class));
     doCallRealMethod().when(services).getShutdownCause();
@@ -563,7 +596,8 @@ public class JGroupsMessengerJUnitTest {
   }
 
   @Test
-  public void testChannelStillConnectedAfterStopAfterForcedDisconnectWithAutoReconnect() throws Exception {
+  public void testChannelStillConnectedAfterStopAfterForcedDisconnectWithAutoReconnect()
+      throws Exception {
     initMocks(false);
     doCallRealMethod().when(services).setShutdownCause(any(ForcedDisconnectException.class));
     doCallRealMethod().when(services).getShutdownCause();
@@ -637,7 +671,8 @@ public class JGroupsMessengerJUnitTest {
   }
 
   @Test
-  public void testChannelClosedAfterEmergencyCloseForcedDisconnectWithoutAutoReconnect() throws Exception {
+  public void testChannelClosedAfterEmergencyCloseForcedDisconnectWithoutAutoReconnect()
+      throws Exception {
     initMocks(false);
     doCallRealMethod().when(services).setShutdownCause(any(ForcedDisconnectException.class));
     doCallRealMethod().when(services).getShutdownCause();
@@ -652,7 +687,8 @@ public class JGroupsMessengerJUnitTest {
   }
 
   @Test
-  public void testChannelStillConnectedStopAfterForcedDisconnectWithoutAutoReconnect() throws Exception {
+  public void testChannelStillConnectedStopAfterForcedDisconnectWithoutAutoReconnect()
+      throws Exception {
     initMocks(false);
     doCallRealMethod().when(services).setShutdownCause(any(ForcedDisconnectException.class));
     doCallRealMethod().when(services).getShutdownCause();
@@ -667,7 +703,8 @@ public class JGroupsMessengerJUnitTest {
   }
 
   @Test
-  public void testChannelClosedAfterEmergencyCloseNotForcedDisconnectWithAutoReconnect() throws Exception {
+  public void testChannelClosedAfterEmergencyCloseNotForcedDisconnectWithAutoReconnect()
+      throws Exception {
     initMocks(false);
     doCallRealMethod().when(services).setShutdownCause(any(ForcedDisconnectException.class));
     doCallRealMethod().when(services).getShutdownCause();
@@ -715,7 +752,8 @@ public class JGroupsMessengerJUnitTest {
     assertNull(joinResponse.getMessengerData());
 
     // the digest shouldn't be set in an outgoing rejection message
-    joinResponse = new JoinResponseMessage("you can't join my distributed system.  nyah nyah nyah!", 0);
+    joinResponse =
+        new JoinResponseMessage("you can't join my distributed system.  nyah nyah nyah!", 0);
     messenger.filterOutgoingMessage(joinResponse);
     assertNull(joinResponse.getMessengerData());
 
@@ -742,13 +780,19 @@ public class JGroupsMessengerJUnitTest {
 
     interceptor.collectMessages = true;
     pinger.sendPingMessage(messenger.myChannel, null, addr);
-    assertEquals("expected 1 message but found " + interceptor.collectedMessages, interceptor.collectedMessages.size(), 1);
+    assertEquals(
+        "expected 1 message but found " + interceptor.collectedMessages,
+        interceptor.collectedMessages.size(),
+        1);
     pingMessage = interceptor.collectedMessages.get(0);
     assertTrue(pinger.isPingMessage(pingMessage.getBuffer()));
 
     interceptor.collectedMessages.clear();
     pinger.sendPongMessage(messenger.myChannel, null, addr);
-    assertEquals("expected 1 message but found " + interceptor.collectedMessages, interceptor.collectedMessages.size(), 1);
+    assertEquals(
+        "expected 1 message but found " + interceptor.collectedMessages,
+        interceptor.collectedMessages.size(),
+        1);
     pongMessage = interceptor.collectedMessages.get(0);
     assertTrue(pinger.isPongMessage(pongMessage.getBuffer()));
 
@@ -758,7 +802,10 @@ public class JGroupsMessengerJUnitTest {
     receiver.receive(pongMessage);
     assertEquals(pongsReceived + 1, messenger.pongsReceived.longValue());
     receiver.receive(pingMessage);
-    assertEquals("expected 1 message but found " + interceptor.collectedMessages, interceptor.collectedMessages.size(), 1);
+    assertEquals(
+        "expected 1 message but found " + interceptor.collectedMessages,
+        interceptor.collectedMessages.size(),
+        1);
     Message m = interceptor.collectedMessages.get(0);
     assertTrue(pinger.isPongMessage(m.getBuffer()));
   }
@@ -816,7 +863,9 @@ public class JGroupsMessengerJUnitTest {
       receiver.receive(msg);
       verify(manager, never()).processMessage(isA(DistributionMessage.class));
 
-      assertTrue("There should be UDPDispatchRequestTime stats", services.getStatistics().getUDPDispatchRequestTime() > 0);
+      assertTrue(
+          "There should be UDPDispatchRequestTime stats",
+          services.getStatistics().getUDPDispatchRequestTime() > 0);
     } finally {
       DistributionStats.enableClockStats = false;
     }
@@ -837,7 +886,7 @@ public class JGroupsMessengerJUnitTest {
 
   @Test
   public void testGetMessageState() throws Exception {
-    initMocks(true/*multicast*/);
+    initMocks(true /*multicast*/);
     messenger.testMulticast(50); // do some multicast messaging
     NAKACK2 nakack = (NAKACK2) messenger.myChannel.getProtocolStack().findProtocol("NAKACK2");
     assertNotNull(nakack);
@@ -846,12 +895,14 @@ public class JGroupsMessengerJUnitTest {
     messenger.getMessageState(null, state, true);
     assertEquals(1, state.size());
     Long stateLong = (Long) state.values().iterator().next();
-    assertTrue("expected multicast state to be at least " + seqno + " but it was " + stateLong.longValue(), stateLong.longValue() >= seqno);
+    assertTrue(
+        "expected multicast state to be at least " + seqno + " but it was " + stateLong.longValue(),
+        stateLong.longValue() >= seqno);
   }
 
   @Test
   public void testGetMessageStateNoMulticast() throws Exception {
-    initMocks(false/*multicast*/);
+    initMocks(false /*multicast*/);
     Map state = new HashMap();
     messenger.getMessageState(null, state, true);
     assertEquals("expected an empty map but received " + state, 0, state.size());
@@ -859,27 +910,34 @@ public class JGroupsMessengerJUnitTest {
 
   @Test
   public void testWaitForMessageStateSucceeds() throws Exception {
-    initMocks(true/*multicast*/);
+    initMocks(true /*multicast*/);
     NAKACK2 nakack = mock(NAKACK2.class);
     Digest digest = mock(Digest.class);
     when(nakack.getDigest(any(Address.class))).thenReturn(digest);
-    when(digest.get(any(Address.class))).thenReturn(new long[] { 0, 0 }, new long[] { 2, 50 }, new long[] { 49, 50 }, new long[] { 50, 80 }, new long[] { 80, 120 });
+    when(digest.get(any(Address.class)))
+        .thenReturn(
+            new long[] {0, 0},
+            new long[] {2, 50},
+            new long[] {49, 50},
+            new long[] {50, 80},
+            new long[] {80, 120});
     messenger.waitForMessageState(nakack, createAddress(1234), Long.valueOf(50));
     verify(digest, times(4)).get(isA(Address.class));
 
     reset(digest);
-    when(digest.get(any(Address.class))).thenReturn(new long[] { 0, 0 }, new long[] { 2, 50 }, null);
+    when(digest.get(any(Address.class))).thenReturn(new long[] {0, 0}, new long[] {2, 50}, null);
     messenger.waitForMessageState(nakack, createAddress(1234), Long.valueOf(50));
     verify(digest, times(3)).get(isA(Address.class));
   }
 
   @Test
   public void testWaitForMessageStateThrowsExceptionIfMessagesMissing() throws Exception {
-    initMocks(true/*multicast*/);
+    initMocks(true /*multicast*/);
     NAKACK2 nakack = mock(NAKACK2.class);
     Digest digest = mock(Digest.class);
     when(nakack.getDigest(any(Address.class))).thenReturn(digest);
-    when(digest.get(any(Address.class))).thenReturn(new long[] { 0, 0 }, new long[] { 2, 50 }, new long[] { 49, 50 });
+    when(digest.get(any(Address.class)))
+        .thenReturn(new long[] {0, 0}, new long[] {2, 50}, new long[] {49, 50});
     try {
       // message 50 will never arrive
       messenger.waitForMessageState(nakack, createAddress(1234), Long.valueOf(50));
@@ -895,7 +953,9 @@ public class JGroupsMessengerJUnitTest {
     boolean result = messenger.testMulticast(50);
     // this shouldln't succeed because there's no-one to respond
     assertFalse(result);
-    assertFalse(AvailablePort.isPortAvailable(services.getConfig().getDistributionConfig().getMcastPort(), AvailablePort.MULTICAST));
+    assertFalse(
+        AvailablePort.isPortAvailable(
+            services.getConfig().getDistributionConfig().getMcastPort(), AvailablePort.MULTICAST));
   }
 
   private NetView createView(InternalDistributedMember otherMbr) {
@@ -916,13 +976,21 @@ public class JGroupsMessengerJUnitTest {
     initMocks(false, p);
 
     NetView v = createView(otherMbr);
-    when(joinLeave.getMemberID(messenger.getMemberID().getNetMember())).thenReturn(messenger.getMemberID());
+    when(joinLeave.getMemberID(messenger.getMemberID().getNetMember()))
+        .thenReturn(messenger.getMemberID());
     GMSEncrypt otherMbrEncrptor = new GMSEncrypt(services);
 
     messenger.setPublicKey(otherMbrEncrptor.getPublicKeyBytes(), otherMbr);
     messenger.initClusterKey();
 
-    FindCoordinatorRequest gfmsg = new FindCoordinatorRequest(messenger.getMemberID(), new ArrayList<InternalDistributedMember>(2), 1, messenger.getPublicKey(messenger.getMemberID()), 1, "");
+    FindCoordinatorRequest gfmsg =
+        new FindCoordinatorRequest(
+            messenger.getMemberID(),
+            new ArrayList<InternalDistributedMember>(2),
+            1,
+            messenger.getPublicKey(messenger.getMemberID()),
+            1,
+            "");
     Set<InternalDistributedMember> recipients = new HashSet<>();
     recipients.add(otherMbr);
     gfmsg.setRecipients(recipients);
@@ -937,7 +1005,8 @@ public class JGroupsMessengerJUnitTest {
 
     DataInputStream dis = new DataInputStream(new ByteArrayInputStream(requestBytes));
 
-    DistributionMessage distributionMessage = messenger.readEncryptedMessage(dis, version, otherMbrEncrptor);
+    DistributionMessage distributionMessage =
+        messenger.readEncryptedMessage(dis, version, otherMbrEncrptor);
 
     assertEquals(gfmsg, distributionMessage);
   }
@@ -953,12 +1022,15 @@ public class JGroupsMessengerJUnitTest {
     NetView v = createView(otherMbr);
 
     GMSEncrypt otherMbrEncrptor = new GMSEncrypt(services);
-    otherMbrEncrptor.setPublicKey(messenger.getPublicKey(messenger.getMemberID()), messenger.getMemberID());
+    otherMbrEncrptor.setPublicKey(
+        messenger.getPublicKey(messenger.getMemberID()), messenger.getMemberID());
 
     messenger.setPublicKey(otherMbrEncrptor.getPublicKeyBytes(), otherMbr);
     messenger.initClusterKey();
 
-    FindCoordinatorResponse gfmsg = new FindCoordinatorResponse(messenger.getMemberID(), messenger.getMemberID(), messenger.getClusterSecretKey(), 1);
+    FindCoordinatorResponse gfmsg =
+        new FindCoordinatorResponse(
+            messenger.getMemberID(), messenger.getMemberID(), messenger.getClusterSecretKey(), 1);
     Set<InternalDistributedMember> recipients = new HashSet<>();
     recipients.add(otherMbr);
     gfmsg.setRecipients(recipients);
@@ -975,7 +1047,8 @@ public class JGroupsMessengerJUnitTest {
 
     messenger.addRequestId(1, messenger.getMemberID());
 
-    DistributionMessage distributionMessage = messenger.readEncryptedMessage(dis, version, otherMbrEncrptor);
+    DistributionMessage distributionMessage =
+        messenger.readEncryptedMessage(dis, version, otherMbrEncrptor);
 
     assertEquals(gfmsg, distributionMessage);
   }
@@ -995,7 +1068,8 @@ public class JGroupsMessengerJUnitTest {
     messenger.setPublicKey(otherMbrEncrptor.getPublicKeyBytes(), otherMbr);
     messenger.initClusterKey();
 
-    JoinRequestMessage gfmsg = new JoinRequestMessage(otherMbr, messenger.getMemberID(), null, 9789, 1);
+    JoinRequestMessage gfmsg =
+        new JoinRequestMessage(otherMbr, messenger.getMemberID(), null, 9789, 1);
 
     short version = Version.CURRENT_ORDINAL;
 
@@ -1007,7 +1081,8 @@ public class JGroupsMessengerJUnitTest {
 
     DataInputStream dis = new DataInputStream(new ByteArrayInputStream(requestBytes));
 
-    DistributionMessage distributionMessage = messenger.readEncryptedMessage(dis, version, otherMbrEncrptor);
+    DistributionMessage distributionMessage =
+        messenger.readEncryptedMessage(dis, version, otherMbrEncrptor);
 
     assertEquals(gfmsg, distributionMessage);
   }
@@ -1023,12 +1098,14 @@ public class JGroupsMessengerJUnitTest {
     NetView v = createView(otherMbr);
 
     GMSEncrypt otherMbrEncrptor = new GMSEncrypt(services);
-    otherMbrEncrptor.setPublicKey(messenger.getPublicKey(messenger.getMemberID()), messenger.getMemberID());
+    otherMbrEncrptor.setPublicKey(
+        messenger.getPublicKey(messenger.getMemberID()), messenger.getMemberID());
 
     messenger.setPublicKey(otherMbrEncrptor.getPublicKeyBytes(), otherMbr);
     messenger.initClusterKey();
 
-    JoinResponseMessage gfmsg = new JoinResponseMessage(otherMbr, messenger.getClusterSecretKey(), 1);
+    JoinResponseMessage gfmsg =
+        new JoinResponseMessage(otherMbr, messenger.getClusterSecretKey(), 1);
 
     short version = Version.CURRENT_ORDINAL;
 
@@ -1042,7 +1119,8 @@ public class JGroupsMessengerJUnitTest {
 
     messenger.addRequestId(1, messenger.getMemberID());
 
-    DistributionMessage gfMessageAtOtherMbr = messenger.readEncryptedMessage(dis, version, otherMbrEncrptor);
+    DistributionMessage gfMessageAtOtherMbr =
+        messenger.readEncryptedMessage(dis, version, otherMbrEncrptor);
 
     assertEquals(gfmsg, gfMessageAtOtherMbr);
 
@@ -1063,14 +1141,12 @@ public class JGroupsMessengerJUnitTest {
     gfMessageAtOtherMbr = messenger.readEncryptedMessage(dis, version, otherMbrEncrptor);
 
     assertEquals(installViewMessage, gfMessageAtOtherMbr);
-
   }
 
   /**
-   * creates an InternalDistributedMember address that can be used
-   * with the doctored JGroups channel.  This includes a logical
-   * (UUID) address and a physical (IpAddress) address.
-   * 
+   * creates an InternalDistributedMember address that can be used with the doctored JGroups
+   * channel. This includes a logical (UUID) address and a physical (IpAddress) address.
+   *
    * @param port the UDP port to use for the new address
    */
   private InternalDistributedMember createAddress(int port) {
@@ -1080,5 +1156,4 @@ public class JGroupsMessengerJUnitTest {
     gms.setVersionOrdinal(Version.CURRENT_ORDINAL);
     return new InternalDistributedMember(gms);
   }
-
 }

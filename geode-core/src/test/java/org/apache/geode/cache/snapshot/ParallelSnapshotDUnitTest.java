@@ -46,8 +46,8 @@ import org.apache.geode.test.dunit.VM;
 
 @Category(DistributedTest.class)
 public class ParallelSnapshotDUnitTest extends JUnit4CacheTestCase {
-  static byte[] ffff = new byte[] { 0xf, 0xf, 0xf, 0xf };
-  static byte[] eeee = new byte[] { 0xe, 0xe, 0xe, 0xe };
+  static byte[] ffff = new byte[] {0xf, 0xf, 0xf, 0xf};
+  static byte[] eeee = new byte[] {0xe, 0xe, 0xe, 0xe};
 
   private static class TestSnapshotFileMapper implements SnapshotFileMapper {
     volatile boolean explode;
@@ -67,7 +67,7 @@ public class ParallelSnapshotDUnitTest extends JUnit4CacheTestCase {
       }
 
       File f = new File(snapshot.getAbsoluteFile().toString() + VM.getCurrentVMNum());
-      return new File[] { f };
+      return new File[] {f};
     }
   }
 
@@ -116,16 +116,18 @@ public class ParallelSnapshotDUnitTest extends JUnit4CacheTestCase {
     rss.save(f, SnapshotFormat.GEMFIRE, opt);
 
     mapper.explode = false;
-    SerializableCallable check = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        getCache().getDistributedSystem().getDistributedMember();
-        File snap = mapper.mapExportPath(getCache().getDistributedSystem().getDistributedMember(), f);
+    SerializableCallable check =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            getCache().getDistributedSystem().getDistributedMember();
+            File snap =
+                mapper.mapExportPath(getCache().getDistributedSystem().getDistributedMember(), f);
 
-        assertTrue("Could not find snapshot: " + snap, snap.exists());
-        return null;
-      }
-    };
+            assertTrue("Could not find snapshot: " + snap, snap.exists());
+            return null;
+          }
+        };
 
     forEachVm(check, true);
   }
@@ -174,12 +176,15 @@ public class ParallelSnapshotDUnitTest extends JUnit4CacheTestCase {
 
   @Override
   public final void postTearDownCacheTestCase() throws Exception {
-    File[] snaps = new File(".").listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(File dir, String name) {
-        return name.startsWith("mysnap");
-      }
-    });
+    File[] snaps =
+        new File(".")
+            .listFiles(
+                new FilenameFilter() {
+                  @Override
+                  public boolean accept(File dir, String name) {
+                    return name.startsWith("mysnap");
+                  }
+                });
 
     if (snaps != null) {
       for (File f : snaps) {
@@ -189,18 +194,19 @@ public class ParallelSnapshotDUnitTest extends JUnit4CacheTestCase {
   }
 
   public void loadCache() throws Exception {
-    SerializableCallable setup = new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
+    SerializableCallable setup =
+        new SerializableCallable() {
+          @Override
+          public Object call() throws Exception {
+            CacheFactory cf = new CacheFactory().setPdxSerializer(new MyPdxSerializer());
 
-        Cache cache = getCache(cf);
-        RegionGenerator rgen = new RegionGenerator();
-        rgen.createRegion(cache, null, RegionType.PARTITION, "test");
+            Cache cache = getCache(cf);
+            RegionGenerator rgen = new RegionGenerator();
+            rgen.createRegion(cache, null, RegionType.PARTITION, "test");
 
-        return null;
-      }
-    };
+            return null;
+          }
+        };
 
     forEachVm(setup, true);
   }

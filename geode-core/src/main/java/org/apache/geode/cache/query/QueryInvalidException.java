@@ -23,12 +23,12 @@ import org.apache.geode.GemFireException;
  *
  * @since GemFire 4.0
  */
-
 public class QueryInvalidException extends GemFireException {
   private static final long serialVersionUID = 2849255122285215114L;
 
   /**
    * Construct an instance of QueryInvalidException
+   *
    * @param msg the error message
    */
   public QueryInvalidException(String msg) {
@@ -37,6 +37,7 @@ public class QueryInvalidException extends GemFireException {
 
   /**
    * Construct an instance of QueryInvalidException
+   *
    * @param msg the error message
    * @param cause a Throwable cause
    */

@@ -20,32 +20,30 @@ package org.apache.geode.internal.cache.operations;
 import org.apache.geode.cache.operations.KeyOperationContext;
 
 /**
- * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#CONTAINS_KEY} region operation having the
- * key object for the pre-operation case.
- * 
+ * Encapsulates a {@link
+ * org.apache.geode.cache.operations.OperationContext.OperationCode#CONTAINS_KEY} region operation
+ * having the key object for the pre-operation case.
+ *
  * @since GemFire 5.5
  */
 public class ContainsKeyOperationContext extends KeyOperationContext {
 
   /**
    * Constructor for the operation.
-   * 
-   * @param key
-   *                the key for this operation
+   *
+   * @param key the key for this operation
    */
   public ContainsKeyOperationContext(Object key) {
     super(key);
   }
 
   /**
-   * Return the operation associated with the <code>OperationContext</code>
-   * object.
-   * 
+   * Return the operation associated with the <code>OperationContext</code> object.
+   *
    * @return <code>OperationCode.CONTAINS_KEY</code>.
    */
   @Override
   public OperationCode getOperationCode() {
     return OperationCode.CONTAINS_KEY;
   }
-
 }

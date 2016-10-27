@@ -38,9 +38,7 @@ import org.apache.geode.internal.logging.log4j.FastLogger;
 import org.apache.geode.internal.logging.log4j.LogWriterLogger;
 import org.apache.geode.internal.logging.log4j.message.GemFireParameterizedMessageFactory;
 
-/**
- * Centralizes log configuration and initialization.
- */
+/** Centralizes log configuration and initialization. */
 @SuppressWarnings("unused")
 public class LogService extends LogManager {
 
@@ -57,16 +55,16 @@ public class LogService extends LogManager {
 
   protected static final String STDOUT = "STDOUT";
 
-  private static final PropertyChangeListener propertyChangeListener = new PropertyChangeListenerImpl();
+  private static final PropertyChangeListener propertyChangeListener =
+      new PropertyChangeListenerImpl();
 
   /**
-   * Name of variable that is set to "true" in log4j2.xml to indicate that it is the default geode config xml.
+   * Name of variable that is set to "true" in log4j2.xml to indicate that it is the default geode
+   * config xml.
    */
   private static final String GEMFIRE_DEFAULT_PROPERTY = "geode-default";
 
-  /**
-   * Protected by static synchronization. Used for removal and adding stdout back in.
-   */
+  /** Protected by static synchronization. Used for removal and adding stdout back in. */
   private static Appender stdoutAppender;
 
   static {
@@ -78,7 +76,10 @@ public class LogService extends LogManager {
   }
 
   private static void init() {
-    LoggerContext context = ((org.apache.logging.log4j.core.Logger) LogManager.getLogger(BASE_LOGGER_NAME, GemFireParameterizedMessageFactory.INSTANCE)).getContext();
+    LoggerContext context =
+        ((org.apache.logging.log4j.core.Logger)
+                LogManager.getLogger(BASE_LOGGER_NAME, GemFireParameterizedMessageFactory.INSTANCE))
+            .getContext();
     context.removePropertyChangeListener(propertyChangeListener);
     context.addPropertyChangeListener(propertyChangeListener);
     context.reconfigure(); // propertyChangeListener invokes configureFastLoggerDelegating
@@ -97,7 +98,8 @@ public class LogService extends LogManager {
     Configurator.getOrCreateLoggerConfig(BASE_LOGGER_NAME, true, false);
     Configurator.getOrCreateLoggerConfig(MAIN_LOGGER_NAME, true, hasLogFile);
     final boolean useMainLoggerForSecurity = !hasSecurityLogFile;
-    Configurator.getOrCreateLoggerConfig(SECURITY_LOGGER_NAME, useMainLoggerForSecurity, hasSecurityLogFile);
+    Configurator.getOrCreateLoggerConfig(
+        SECURITY_LOGGER_NAME, useMainLoggerForSecurity, hasSecurityLogFile);
   }
 
   public static AppenderContext getAppenderContext() {
@@ -109,7 +111,11 @@ public class LogService extends LogManager {
   }
 
   public static boolean isUsingGemFireDefaultConfig() {
-    final Configuration config = ((org.apache.logging.log4j.core.Logger) LogManager.getLogger(ROOT_LOGGER_NAME, GemFireParameterizedMessageFactory.INSTANCE)).getContext().getConfiguration();
+    final Configuration config =
+        ((org.apache.logging.log4j.core.Logger)
+                LogManager.getLogger(ROOT_LOGGER_NAME, GemFireParameterizedMessageFactory.INSTANCE))
+            .getContext()
+            .getConfiguration();
 
     final StrSubstitutor sub = config.getStrSubstitutor();
     final StrLookup resolver = sub.getVariableResolver();
@@ -124,9 +130,8 @@ public class LogService extends LogManager {
   }
 
   /**
-   * Finds a Log4j configuration file in the current directory.  The names of
-   * the files to look for are the same as those that Log4j would look for on
-   * the classpath.
+   * Finds a Log4j configuration file in the current directory. The names of the files to look for
+   * are the same as those that Log4j would look for on the classpath.
    *
    * @return A File for the configuration file or null if one isn't found.
    */
@@ -140,7 +145,8 @@ public class LogService extends LogManager {
    * @return The Logger for the calling class.
    */
   public static Logger getLogger() {
-    return new FastLogger(LogManager.getLogger(getClassName(2), GemFireParameterizedMessageFactory.INSTANCE));
+    return new FastLogger(
+        LogManager.getLogger(getClassName(2), GemFireParameterizedMessageFactory.INSTANCE));
   }
 
   public static Logger getLogger(final String name) {
@@ -148,16 +154,16 @@ public class LogService extends LogManager {
   }
 
   /**
-   * Returns a LogWriterLogger that is decorated with the LogWriter and LogWriterI18n
-   * methods.
-   * <p>
-   * This is the bridge to LogWriter and LogWriterI18n that we need to eventually
-   * stop using in phase 1. We will switch over from a shared LogWriterLogger instance
-   * to having every GemFire class own its own private static GemFireLogger
+   * Returns a LogWriterLogger that is decorated with the LogWriter and LogWriterI18n methods.
+   *
+   * <p>This is the bridge to LogWriter and LogWriterI18n that we need to eventually stop using in
+   * phase 1. We will switch over from a shared LogWriterLogger instance to having every GemFire
+   * class own its own private static GemFireLogger
    *
    * @return The LogWriterLogger for the calling class.
    */
-  public static LogWriterLogger createLogWriterLogger(final String name, final String connectionName, final boolean isSecure) {
+  public static LogWriterLogger createLogWriterLogger(
+      final String name, final String connectionName, final boolean isSecure) {
     return LogWriterLogger.create(name, connectionName, isSecure);
   }
 
@@ -165,9 +171,7 @@ public class LogService extends LogManager {
    * Return the Log4j Level associated with the int level.
    *
    * @param intLevel The int value of the Level to return.
-   *
    * @return The Level.
-   *
    * @throws java.lang.IllegalArgumentException if the Level int is not registered.
    */
   public static Level toLevel(final int intLevel) {
@@ -184,7 +188,6 @@ public class LogService extends LogManager {
    * Gets the class name of the caller in the current stack at the given {@code depth}.
    *
    * @param depth a 0-based index in the current stack.
-   *
    * @return a class name
    */
   public static String getClassName(final int depth) {
@@ -192,14 +195,26 @@ public class LogService extends LogManager {
   }
 
   public static Configuration getConfiguration() {
-    final Configuration config = ((org.apache.logging.log4j.core.Logger) LogManager.getLogger(ROOT_LOGGER_NAME, GemFireParameterizedMessageFactory.INSTANCE)).getContext().getConfiguration();
+    final Configuration config =
+        ((org.apache.logging.log4j.core.Logger)
+                LogManager.getLogger(ROOT_LOGGER_NAME, GemFireParameterizedMessageFactory.INSTANCE))
+            .getContext()
+            .getConfiguration();
     return config;
   }
 
   public static void configureFastLoggerDelegating() {
-    final Configuration config = ((org.apache.logging.log4j.core.Logger) LogManager.getLogger(ROOT_LOGGER_NAME, GemFireParameterizedMessageFactory.INSTANCE)).getContext().getConfiguration();
+    final Configuration config =
+        ((org.apache.logging.log4j.core.Logger)
+                LogManager.getLogger(ROOT_LOGGER_NAME, GemFireParameterizedMessageFactory.INSTANCE))
+            .getContext()
+            .getConfiguration();
 
-    if (Configurator.hasContextWideFilter(config) || Configurator.hasAppenderFilter(config) || Configurator.hasDebugOrLower(config) || Configurator.hasLoggerFilter(config) || Configurator.hasAppenderRefFilter(config)) {
+    if (Configurator.hasContextWideFilter(config)
+        || Configurator.hasAppenderFilter(config)
+        || Configurator.hasDebugOrLower(config)
+        || Configurator.hasLoggerFilter(config)
+        || Configurator.hasAppenderRefFilter(config)) {
       FastLogger.setDelegating(true);
     } else {
       FastLogger.setDelegating(false);
@@ -227,13 +242,13 @@ public class LogService extends LogManager {
   }
 
   /**
-   * Removes STDOUT ConsoleAppender from ROOT logger. Only called when using
-   * the log4j2-default.xml configuration. This is done when creating the
-   * LogWriterAppender for log-file. The Appender instance is stored in
-   * stdoutAppender so it can be restored later using restoreConsoleAppender.
+   * Removes STDOUT ConsoleAppender from ROOT logger. Only called when using the log4j2-default.xml
+   * configuration. This is done when creating the LogWriterAppender for log-file. The Appender
+   * instance is stored in stdoutAppender so it can be restored later using restoreConsoleAppender.
    */
   public static synchronized void removeConsoleAppender() {
-    final AppenderContext appenderContext = LogService.getAppenderContext(LogService.ROOT_LOGGER_NAME);
+    final AppenderContext appenderContext =
+        LogService.getAppenderContext(LogService.ROOT_LOGGER_NAME);
     final LoggerConfig config = appenderContext.getLoggerConfig();
     Appender stdout = config.getAppenders().get(STDOUT);
     if (stdout != null) {
@@ -244,16 +259,16 @@ public class LogService extends LogManager {
   }
 
   /**
-   * Restores STDOUT ConsoleAppender to ROOT logger. Only called when using
-   * the log4j2-default.xml configuration. This is done when the
-   * LogWriterAppender for log-file is destroyed. The Appender instance stored
-   * in stdoutAppender is used.
+   * Restores STDOUT ConsoleAppender to ROOT logger. Only called when using the log4j2-default.xml
+   * configuration. This is done when the LogWriterAppender for log-file is destroyed. The Appender
+   * instance stored in stdoutAppender is used.
    */
   public static synchronized void restoreConsoleAppender() {
     if (stdoutAppender == null) {
       return;
     }
-    final AppenderContext appenderContext = LogService.getAppenderContext(LogService.ROOT_LOGGER_NAME);
+    final AppenderContext appenderContext =
+        LogService.getAppenderContext(LogService.ROOT_LOGGER_NAME);
     final LoggerConfig config = appenderContext.getLoggerConfig();
     Appender stdout = config.getAppenders().get(STDOUT);
     if (stdout == null) {
@@ -267,7 +282,10 @@ public class LogService extends LogManager {
     @Override
     @SuppressWarnings("synthetic-access")
     public void propertyChange(final PropertyChangeEvent evt) {
-      StatusLogger.getLogger().debug("LogService responding to a property change event. Property name is {}.", evt.getPropertyName());
+      StatusLogger.getLogger()
+          .debug(
+              "LogService responding to a property change event. Property name is {}.",
+              evt.getPropertyName());
 
       if (evt.getPropertyName().equals(LoggerContext.PROPERTY_CONFIG)) {
         configureFastLoggerDelegating();

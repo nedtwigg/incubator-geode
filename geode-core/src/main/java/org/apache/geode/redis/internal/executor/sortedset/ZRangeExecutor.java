@@ -49,7 +49,6 @@ public class ZRangeExecutor extends SortedSetExecutor implements Extendable {
     if (commandElems.size() >= 5) {
       byte[] fifthElem = commandElems.get(4);
       withScores = Coder.bytesToString(fifthElem).equalsIgnoreCase("WITHSCORES");
-
     }
 
     ByteArrayWrapper key = command.getKey();
@@ -83,8 +82,7 @@ public class ZRangeExecutor extends SortedSetExecutor implements Extendable {
       command.setResponse(Coder.getEmptyArrayResponse(context.getByteBufAllocator()));
       return;
     }
-    if (stop == sSetSize)
-      stop--;
+    if (stop == sSetSize) stop--;
     List<?> list;
     try {
       list = getRange(context, key, start, stop);
@@ -95,22 +93,20 @@ public class ZRangeExecutor extends SortedSetExecutor implements Extendable {
     command.setResponse(Coder.zRangeResponse(context.getByteBufAllocator(), list, withScores));
   }
 
-  private List<?> getRange(ExecutionHandlerContext context, ByteArrayWrapper key, int start, int stop) throws Exception {
+  private List<?> getRange(
+      ExecutionHandlerContext context, ByteArrayWrapper key, int start, int stop) throws Exception {
     Query query;
 
-    if (isReverse())
-      query = getQuery(key, SortedSetQuery.ZRANGE, context);
-    else
-      query = getQuery(key, SortedSetQuery.ZREVRANGE, context);
+    if (isReverse()) query = getQuery(key, SortedSetQuery.ZRANGE, context);
+    else query = getQuery(key, SortedSetQuery.ZREVRANGE, context);
 
-    Object[] params = { stop + 1 };
+    Object[] params = {stop + 1};
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
 
     List<?> list = results.asList();
 
     return list.subList(start, stop + 1);
-
   }
 
   protected boolean isReverse() {

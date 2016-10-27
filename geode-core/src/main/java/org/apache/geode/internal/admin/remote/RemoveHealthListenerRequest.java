@@ -26,17 +26,15 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * remove a health listener.
+ * A message that is sent to a particular distribution manager to remove a health listener.
+ *
  * @since GemFire 3.5
  */
 public final class RemoveHealthListenerRequest extends AdminRequest {
   // instance variables
   private int id;
 
-  /**
-   * Returns a <code>RemoveHealthListenerRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>RemoveHealthListenerRequest</code> to be sent to the specified recipient. */
   public static RemoveHealthListenerRequest create(int id) {
     RemoveHealthListenerRequest m = new RemoveHealthListenerRequest();
     m.id = id;
@@ -44,12 +42,11 @@ public final class RemoveHealthListenerRequest extends AdminRequest {
   }
 
   public RemoveHealthListenerRequest() {
-    friendlyName = LocalizedStrings.RemoveHealthListenerRequest_REMOVE_HEALTH_LISTENER.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.RemoveHealthListenerRequest_REMOVE_HEALTH_LISTENER.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return RemoveHealthListenerResponse.create(dm, this.getSender(), this.id);

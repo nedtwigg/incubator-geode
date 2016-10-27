@@ -20,12 +20,11 @@ package org.apache.geode.cache.query.internal.types;
 import java.util.*;
 
 /**
- * Comparator for mixed comparisons between instances of
- * java.util.Date, java.sql.Date, java.sql.Time, and java.sql.Timestamp.
+ * Comparator for mixed comparisons between instances of java.util.Date, java.sql.Date,
+ * java.sql.Time, and java.sql.Timestamp.
  *
- * @version     $Revision: 1.1 $
+ * @version $Revision: 1.1 $
  */
-
 class TemporalComparator implements Comparator {
   // all temporal comparators are created equal
   @Override
@@ -58,8 +57,7 @@ class TemporalComparator implements Comparator {
       extraNanos2 = nanos - (ms * 1000000);
     }
 
-    if (ms1 != ms2)
-      return ms1 < ms2 ? -1 : 1;
+    if (ms1 != ms2) return ms1 < ms2 ? -1 : 1;
     return extraNanos1 == extraNanos2 ? 0 : (extraNanos1 < extraNanos2 ? -1 : 1);
   }
 }

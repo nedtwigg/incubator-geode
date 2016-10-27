@@ -23,9 +23,7 @@
 
 package org.apache.geode.cache.query.data;
 
-/**
- *
- */
+/** */
 import java.io.*;
 
 public class City implements Serializable {
@@ -36,14 +34,14 @@ public class City implements Serializable {
   public City(String name, int zip) {
     this.name = name;
     this.zip = zip;
-  }//end of constructor 1
+  } //end of constructor 1
 
   public City(int i) {
-    String arr1[] = { "MUMBAI", "PUNE", "GANDHINAGAR", "CHANDIGARH" };
+    String arr1[] = {"MUMBAI", "PUNE", "GANDHINAGAR", "CHANDIGARH"};
     /*this is for the test to have 50% of the objects belonging to one city*/
     this.name = arr1[i % 2];
     this.zip = 425125 + i;
-  }//end of constructor 2
+  } //end of constructor 2
 
   ////////////////////////////
 
@@ -54,4 +52,4 @@ public class City implements Serializable {
   public int getZip() {
     return zip;
   }
-}//end of class
+} //end of class

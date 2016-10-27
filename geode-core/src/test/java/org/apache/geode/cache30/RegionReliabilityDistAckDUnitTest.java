@@ -28,8 +28,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.cache.*;
 
 /**
- * Tests region reliability defined by MembershipAttributes using 
- * DISTRIBUTED_ACK scope.
+ * Tests region reliability defined by MembershipAttributes using DISTRIBUTED_ACK scope.
  *
  * @since GemFire 5.0
  */
@@ -43,5 +42,4 @@ public class RegionReliabilityDistAckDUnitTest extends RegionReliabilityTestCase
   protected Scope getRegionScope() {
     return Scope.DISTRIBUTED_ACK;
   }
-
 }

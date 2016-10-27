@@ -81,22 +81,23 @@ public class RedisDistDUnitTest extends JUnit4DistributedTestCase {
     client2 = host.getVM(3);
     final int[] ports = AvailablePortHelper.getRandomAvailableTCPPorts(2);
     final int locatorPort = DistributedTestUtils.getDUnitLocatorPort();
-    final SerializableCallable<Object> startRedisAdapter = new SerializableCallable<Object>() {
+    final SerializableCallable<Object> startRedisAdapter =
+        new SerializableCallable<Object>() {
 
-      @Override
-      public Object call() throws Exception {
-        int port = ports[VM.getCurrentVMNum()];
-        CacheFactory cF = new CacheFactory();
-        String locator = SocketCreator.getLocalHost().getHostName() + "[" + locatorPort + "]";
-        cF.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-        cF.set(ConfigurationProperties.REDIS_BIND_ADDRESS, localHost);
-        cF.set(ConfigurationProperties.REDIS_PORT, "" + port);
-        cF.set(MCAST_PORT, "0");
-        cF.set(LOCATORS, locator);
-        cF.create();
-        return Integer.valueOf(port);
-      }
-    };
+          @Override
+          public Object call() throws Exception {
+            int port = ports[VM.getCurrentVMNum()];
+            CacheFactory cF = new CacheFactory();
+            String locator = SocketCreator.getLocalHost().getHostName() + "[" + locatorPort + "]";
+            cF.set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
+            cF.set(ConfigurationProperties.REDIS_BIND_ADDRESS, localHost);
+            cF.set(ConfigurationProperties.REDIS_PORT, "" + port);
+            cF.set(MCAST_PORT, "0");
+            cF.set(LOCATORS, locator);
+            cF.create();
+            return Integer.valueOf(port);
+          }
+        };
     AsyncInvocation i = server1.invokeAsync(startRedisAdapter);
     server2Port = (Integer) server2.invoke(startRedisAdapter);
     server1Port = (Integer) i.getResult();
@@ -107,7 +108,9 @@ public class RedisDistDUnitTest extends JUnit4DistributedTestCase {
     disconnectAllFromDS();
   }
 
-  @Category(FlakyTest.class) // GEODE-1092: random ports, failure stack involves TCPTransport ConnectionHandler (are we eating BindExceptions somewhere?), uses Random, async actions
+  @Category(
+      FlakyTest
+          .class) // GEODE-1092: random ports, failure stack involves TCPTransport ConnectionHandler (are we eating BindExceptions somewhere?), uses Random, async actions
   @Test
   public void testConcListOps() throws Exception {
     final Jedis jedis1 = new Jedis(localHost, server1Port, JEDIS_TIMEOUT);
@@ -131,8 +134,7 @@ public class RedisDistDUnitTest extends JUnit4DistributedTestCase {
         }
         return null;
       }
-    }
-    ;
+    };
 
     AsyncInvocation i = client1.invokeAsync(new ConcListOps(server1Port));
     client2.invoke(new ConcListOps(server2Port));
@@ -144,7 +146,8 @@ public class RedisDistDUnitTest extends JUnit4DistributedTestCase {
     assertEquals(result1, result2);
   }
 
-  @Category(FlakyTest.class) // GEODE-717: random ports, BindException in failure stack, async actions
+  @Category(
+      FlakyTest.class) // GEODE-717: random ports, BindException in failure stack, async actions
   @Test
   public void testConcCreateDestroy() throws Exception {
     IgnoredException.addIgnoredException("RegionDestroyedException");
@@ -202,9 +205,7 @@ public class RedisDistDUnitTest extends JUnit4DistributedTestCase {
     i.getResult();
   }
 
-  /**
-   * Just make sure there are no unexpected server crashes
-   */
+  /** Just make sure there are no unexpected server crashes */
   @Category(FlakyTest.class) // GEODE-1697
   @Test
   public void testConcOps() throws Exception {
@@ -261,5 +262,4 @@ public class RedisDistDUnitTest extends JUnit4DistributedTestCase {
   private String randString() {
     return Long.toHexString(Double.doubleToLongBits(Math.random()));
   }
-
 }

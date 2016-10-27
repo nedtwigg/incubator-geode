@@ -19,11 +19,10 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.GemFireException;
 
 /**
- * An exception thrown if a bucket instance is not primary yet was requested
- * to perform a modification operation. 
+ * An exception thrown if a bucket instance is not primary yet was requested to perform a
+ * modification operation.
  *
  * @since GemFire 5.1
- *
  */
 public class PrimaryBucketException extends GemFireException {
   private static final long serialVersionUID = 1L;
@@ -43,5 +42,4 @@ public class PrimaryBucketException extends GemFireException {
   public PrimaryBucketException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

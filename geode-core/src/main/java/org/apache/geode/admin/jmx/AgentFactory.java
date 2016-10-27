@@ -25,26 +25,23 @@ import org.apache.geode.admin.jmx.internal.AgentImpl;
  * A factory class that creates JMX administration entities.
  *
  * @since GemFire 4.0
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public class AgentFactory {
 
-  /**
-   * Defines a "default" GemFire JMX administration agent
-   * configuration.
-   */
+  /** Defines a "default" GemFire JMX administration agent configuration. */
   public static AgentConfig defineAgent() {
     return new AgentConfigImpl();
   }
 
   /**
-   * Creates an unstarted GemFire JMX administration agent with the
-   * given configuration.
+   * Creates an unstarted GemFire JMX administration agent with the given configuration.
    *
    * @see Agent#start
    */
   public static Agent getAgent(AgentConfig config) throws AdminException {
     return new AgentImpl((AgentConfigImpl) config);
   }
-
 }

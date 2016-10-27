@@ -29,5 +29,4 @@ public class CLIStepExecption extends RuntimeException {
   public Result getResult() {
     return result;
   }
-
 }

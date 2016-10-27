@@ -43,10 +43,10 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
  * This message is used to request a VersionTag from a remote member.
- * 
- * DistributedRegions with DataPolicy EMPTY, NORMAL, PRELOADED, can use
- * this message to fetch VersionTag for a key.
- * 
+ *
+ * <p>DistributedRegions with DataPolicy EMPTY, NORMAL, PRELOADED, can use this message to fetch
+ * VersionTag for a key.
+ *
  * @since GemFire 7.0
  */
 public final class RemoteFetchVersionMessage extends RemoteOperationMessage {
@@ -56,28 +56,36 @@ public final class RemoteFetchVersionMessage extends RemoteOperationMessage {
   private Object key;
 
   /** for deserialization */
-  public RemoteFetchVersionMessage() {
-  }
+  public RemoteFetchVersionMessage() {}
 
   /**
    * Send RemoteFetchVersionMessage to the recipient for the given key
+   *
    * @param recipient
    * @param r
    * @param key
    * @return the processor used to fetch the VersionTag for the key
    * @throws RemoteOperationException if the member is no longer available
    */
-  public static FetchVersionResponse send(InternalDistributedMember recipient, LocalRegion r, Object key) throws RemoteOperationException {
+  public static FetchVersionResponse send(
+      InternalDistributedMember recipient, LocalRegion r, Object key)
+      throws RemoteOperationException {
     FetchVersionResponse response = new FetchVersionResponse(r.getSystem(), recipient);
-    RemoteFetchVersionMessage msg = new RemoteFetchVersionMessage(recipient, r.getFullPath(), response, key);
+    RemoteFetchVersionMessage msg =
+        new RemoteFetchVersionMessage(recipient, r.getFullPath(), response, key);
     Set<?> failures = r.getDistributionManager().putOutgoing(msg);
     if (failures != null && failures.size() > 0) {
-      throw new RemoteOperationException(LocalizedStrings.GetMessage_FAILED_SENDING_0.toLocalizedString(msg));
+      throw new RemoteOperationException(
+          LocalizedStrings.GetMessage_FAILED_SENDING_0.toLocalizedString(msg));
     }
     return response;
   }
 
-  private RemoteFetchVersionMessage(InternalDistributedMember recipient, String regionPath, ReplyProcessor21 processor, Object key) {
+  private RemoteFetchVersionMessage(
+      InternalDistributedMember recipient,
+      String regionPath,
+      ReplyProcessor21 processor,
+      Object key) {
     super(recipient, regionPath, processor);
     this.key = key;
   }
@@ -111,7 +119,8 @@ public final class RemoteFetchVersionMessage extends RemoteOperationMessage {
   }
 
   @Override
-  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime) throws RemoteOperationException {
+  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime)
+      throws RemoteOperationException {
     if (!(r instanceof PartitionedRegion)) {
       r.waitOnInitialization();
     }
@@ -120,7 +129,8 @@ public final class RemoteFetchVersionMessage extends RemoteOperationMessage {
       RegionEntry re = r.getRegionEntry(key);
       if (re == null) {
         if (logger.isTraceEnabled(LogMarker.DM)) {
-          logger.trace(LogMarker.DM, "RemoteFetchVersionMessage did not find entry for key:{}", key);
+          logger.trace(
+              LogMarker.DM, "RemoteFetchVersionMessage did not find entry for key:{}", key);
         }
         r.checkEntryNotFound(key);
       }
@@ -136,23 +146,20 @@ public final class RemoteFetchVersionMessage extends RemoteOperationMessage {
     return false;
   }
 
-  /**
-   * This message is used to send a reply for RemoteFetchVersionMessage.
-   * 
-   */
+  /** This message is used to send a reply for RemoteFetchVersionMessage. */
   public static final class FetchVersionReplyMessage extends ReplyMessage {
     private VersionTag tag;
 
     /** for deserialization */
-    public FetchVersionReplyMessage() {
-    }
+    public FetchVersionReplyMessage() {}
 
     private FetchVersionReplyMessage(int processorId, VersionTag tag) {
       setProcessorId(processorId);
       this.tag = tag;
     }
 
-    public static void send(InternalDistributedMember recipient, int processorId, VersionTag tag, DM dm) {
+    public static void send(
+        InternalDistributedMember recipient, int processorId, VersionTag tag, DM dm) {
       FetchVersionReplyMessage reply = new FetchVersionReplyMessage(processorId, tag);
       reply.setRecipient(recipient);
       dm.putOutgoing(reply);
@@ -164,7 +171,10 @@ public final class RemoteFetchVersionMessage extends RemoteOperationMessage {
       final boolean isDebugEnabled = logger.isTraceEnabled(LogMarker.DM);
 
       if (isDebugEnabled) {
-        logger.trace(LogMarker.DM, "FetchVersionReplyMessage process invoking reply processor with processorId:{}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "FetchVersionReplyMessage process invoking reply processor with processorId:{}",
+            this.processorId);
       }
 
       if (processor == null) {
@@ -199,10 +209,7 @@ public final class RemoteFetchVersionMessage extends RemoteOperationMessage {
     }
   }
 
-  /**
-   * A processor to capture the VersionTag returned by RemoteFetchVersion message.
-   * 
-   */
+  /** A processor to capture the VersionTag returned by RemoteFetchVersion message. */
   public static class FetchVersionResponse extends RemoteOperationResponse {
 
     private volatile VersionTag tag;

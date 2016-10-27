@@ -36,10 +36,7 @@ import org.apache.geode.internal.InternalEntity;
 import org.apache.geode.management.internal.cli.GfshParser;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class UserFunctionExecution implements Function, InternalEntity {
   public static final String ID = UserFunctionExecution.class.getName();
 
@@ -66,7 +63,9 @@ public class UserFunctionExecution implements Function, InternalEntity {
           Set<String> filters = new HashSet<String>();
           ResultCollector resultCollectorInstance = null;
           if (resultCollectorName != null && resultCollectorName.length() > 0) {
-            resultCollectorInstance = (ResultCollector) ClassPathLoader.getLatest().forName(resultCollectorName).newInstance();
+            resultCollectorInstance =
+                (ResultCollector)
+                    ClassPathLoader.getLatest().forName(resultCollectorName).newInstance();
           }
           if (filterString != null && filterString.length() > 0) {
             filters.add(filterString);
@@ -74,7 +73,12 @@ public class UserFunctionExecution implements Function, InternalEntity {
           Function function = FunctionService.getFunction(functionId);
 
           if (function == null) {
-            context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__DOES_NOT_HAVE_FUNCTION_0_REGISTERED, functionId));
+            context
+                .getResultSender()
+                .lastResult(
+                    CliStrings.format(
+                        CliStrings.EXECUTE_FUNCTION__MSG__DOES_NOT_HAVE_FUNCTION_0_REGISTERED,
+                        functionId));
           } else {
             Execution execution = null;
             if (onRegion != null && onRegion.length() > 0) {
@@ -118,25 +122,75 @@ public class UserFunctionExecution implements Function, InternalEntity {
               }
               context.getResultSender().lastResult(resultMessege);
             } else {
-              context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_0_ON_MEMBER_1_ON_REGION_2_DETAILS_3, functionId, member.getId(), onRegion, CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_RETRIEVING_EXECUTOR));
+              context
+                  .getResultSender()
+                  .lastResult(
+                      CliStrings.format(
+                          CliStrings
+                              .EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_0_ON_MEMBER_1_ON_REGION_2_DETAILS_3,
+                          functionId,
+                          member.getId(),
+                          onRegion,
+                          CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_RETRIEVING_EXECUTOR));
             }
           }
 
         } catch (ClassNotFoundException e) {
-          context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__RESULT_COLLECTOR_0_NOT_FOUND_ERROR_1, resultCollectorName, e.getMessage()));
+          context
+              .getResultSender()
+              .lastResult(
+                  CliStrings.format(
+                      CliStrings.EXECUTE_FUNCTION__MSG__RESULT_COLLECTOR_0_NOT_FOUND_ERROR_1,
+                      resultCollectorName,
+                      e.getMessage()));
         } catch (FunctionException e) {
-          context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_ON_MEMBER_1_DETAILS_2, functionId, member.getId(), e.getMessage()));
+          context
+              .getResultSender()
+              .lastResult(
+                  CliStrings.format(
+                      CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_ON_MEMBER_1_DETAILS_2,
+                      functionId,
+                      member.getId(),
+                      e.getMessage()));
         } catch (CancellationException e) {
-          context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_ON_MEMBER_1_DETAILS_2, functionId, member.getId(), e.getMessage()));
+          context
+              .getResultSender()
+              .lastResult(
+                  CliStrings.format(
+                      CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_ON_MEMBER_1_DETAILS_2,
+                      functionId,
+                      member.getId(),
+                      e.getMessage()));
         } catch (InstantiationException e) {
-          context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__RESULT_COLLECTOR_0_NOT_FOUND_ERROR_1, resultCollectorName, e.getMessage()));
+          context
+              .getResultSender()
+              .lastResult(
+                  CliStrings.format(
+                      CliStrings.EXECUTE_FUNCTION__MSG__RESULT_COLLECTOR_0_NOT_FOUND_ERROR_1,
+                      resultCollectorName,
+                      e.getMessage()));
         } catch (IllegalAccessException e) {
-          context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__RESULT_COLLECTOR_0_NOT_FOUND_ERROR_1, resultCollectorName, e.getMessage()));
+          context
+              .getResultSender()
+              .lastResult(
+                  CliStrings.format(
+                      CliStrings.EXECUTE_FUNCTION__MSG__RESULT_COLLECTOR_0_NOT_FOUND_ERROR_1,
+                      resultCollectorName,
+                      e.getMessage()));
         } catch (Exception e) {
-          context.getResultSender().lastResult(CliStrings.format(CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_ON_MEMBER_1_DETAILS_2, functionId, member.getId(), e.getMessage()));
+          context
+              .getResultSender()
+              .lastResult(
+                  CliStrings.format(
+                      CliStrings.EXECUTE_FUNCTION__MSG__ERROR_IN_EXECUTING_ON_MEMBER_1_DETAILS_2,
+                      functionId,
+                      member.getId(),
+                      e.getMessage()));
         }
       } else {
-        context.getResultSender().lastResult(CliStrings.EXECUTE_FUNCTION__MSG__COULD_NOT_RETRIEVE_ARGUMENTS);
+        context
+            .getResultSender()
+            .lastResult(CliStrings.EXECUTE_FUNCTION__MSG__COULD_NOT_RETRIEVE_ARGUMENTS);
       }
 
     } catch (Exception ex) {
@@ -164,5 +218,4 @@ public class UserFunctionExecution implements Function, InternalEntity {
   public boolean isHA() {
     return false;
   }
-
 }

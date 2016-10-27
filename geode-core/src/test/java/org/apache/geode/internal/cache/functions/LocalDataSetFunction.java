@@ -42,7 +42,8 @@ public class LocalDataSetFunction extends FunctionAdapter {
     Region cust = rContext.getDataSet();
     LocalDataSet localCust = (LocalDataSet) PartitionRegionHelper.getLocalDataForContext(rContext);
     Map<String, Region<?, ?>> colocatedRegions = PartitionRegionHelper.getColocatedRegions(cust);
-    Map<String, Region<?, ?>> localColocatedRegions = PartitionRegionHelper.getLocalColocatedRegions(rContext);
+    Map<String, Region<?, ?>> localColocatedRegions =
+        PartitionRegionHelper.getLocalColocatedRegions(rContext);
 
     Assert.assertTrue(colocatedRegions.size() == 2);
     Set custKeySet = cust.keySet();

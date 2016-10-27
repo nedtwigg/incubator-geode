@@ -14,25 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal.parse;
 
 import antlr.Token;
 
 import org.apache.geode.cache.query.internal.QCompiler;
 
-/**
- * 
- * @since GemFire 8.1
- *
- */
+/** @since GemFire 8.1 */
 public class ASTHintIdentifier extends GemFireAST {
 
-  public ASTHintIdentifier() {
-
-  }
+  public ASTHintIdentifier() {}
 
   public ASTHintIdentifier(Token token) {
     super(token);

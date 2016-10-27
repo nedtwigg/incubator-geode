@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -43,9 +43,7 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.InternalGemFireError;
 import org.apache.geode.internal.util.BlobHelper;
 
-/**
- * Static utility functions for mapping objects to lucene documents
- */
+/** Static utility functions for mapping objects to lucene documents */
 public class SerializerUtil {
   private static final String KEY_FIELD = "_KEY";
 
@@ -66,22 +64,18 @@ public class SerializerUtil {
     SUPPORTED_PRIMITIVE_TYPES = Collections.unmodifiableSet(primitiveTypes);
   }
 
-  /**
-   * A small buffer for converting keys to byte[] arrays.
-   */
-  private static ThreadLocal<ByteArrayOutputStream> LOCAL_BUFFER = new ThreadLocal<ByteArrayOutputStream>() {
-    @Override
-    protected ByteArrayOutputStream initialValue() {
-      return new ByteArrayOutputStream();
-    }
-  };
+  /** A small buffer for converting keys to byte[] arrays. */
+  private static ThreadLocal<ByteArrayOutputStream> LOCAL_BUFFER =
+      new ThreadLocal<ByteArrayOutputStream>() {
+        @Override
+        protected ByteArrayOutputStream initialValue() {
+          return new ByteArrayOutputStream();
+        }
+      };
 
-  private SerializerUtil() {
-  }
+  private SerializerUtil() {}
 
-  /**
-   * Add a gemfire key to a document
-   */
+  /** Add a gemfire key to a document */
   public static void addKey(Object key, Document doc) {
     if (key instanceof String) {
       doc.add(new StringField(KEY_FIELD, (String) key, Store.YES));
@@ -92,7 +86,7 @@ public class SerializerUtil {
 
   /**
    * Add a field to the document.
-   * 
+   *
    * @return true if the field was successfully added
    */
   public static boolean addField(Document doc, String field, Object fieldValue) {
@@ -114,9 +108,7 @@ public class SerializerUtil {
     return true;
   }
 
-  /**
-   * Return true if a field type can be written to a lucene document.
-   */
+  /** Return true if a field type can be written to a lucene document. */
   public static boolean isSupported(Class<?> type) {
     return SUPPORTED_PRIMITIVE_TYPES.contains(type);
   }
@@ -125,9 +117,7 @@ public class SerializerUtil {
     return SUPPORTED_PRIMITIVE_TYPES;
   }
 
-  /**
-   * Extract the gemfire key from a lucene document
-   */
+  /** Extract the gemfire key from a lucene document */
   public static Object getKey(Document doc) {
     IndexableField field = doc.getField(KEY_FIELD);
     if (field.stringValue() != null) {
@@ -137,9 +127,7 @@ public class SerializerUtil {
     }
   }
 
-  /**
-   * Extract the gemfire key term from a lucene document
-   */
+  /** Extract the gemfire key term from a lucene document */
   public static Term getKeyTerm(Document doc) {
     IndexableField field = doc.getField(KEY_FIELD);
     if (field.stringValue() != null) {
@@ -150,8 +138,8 @@ public class SerializerUtil {
   }
 
   /**
-   * Convert a gemfire key into a key search term that can be used to
-   * update or delete the document associated with this key.
+   * Convert a gemfire key into a key search term that can be used to update or delete the document
+   * associated with this key.
    */
   public static Term toKeyTerm(Object key) {
     if (key instanceof String) {
@@ -169,9 +157,7 @@ public class SerializerUtil {
     }
   }
 
-  /**
-   * Convert a key to a byte array.
-   */
+  /** Convert a key to a byte array. */
   private static BytesRef keyToBytes(Object key) {
     ByteArrayOutputStream buffer = LOCAL_BUFFER.get();
 
@@ -186,5 +172,4 @@ public class SerializerUtil {
       throw new InternalGemFireError("Unable to serialize key", e);
     }
   }
-
 }

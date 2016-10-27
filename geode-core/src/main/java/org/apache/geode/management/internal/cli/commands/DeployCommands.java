@@ -55,7 +55,9 @@ import org.springframework.shell.core.annotation.CliOption;
 
 /**
  * Commands for deploying, un-deploying and listing files deployed using the command line shell.
- * <p/>
+ *
+ * <p>
+ *
  * @see org.apache.geode.management.internal.cli.commands.AbstractCommandsSupport
  * @since GemFire 7.0
  */
@@ -67,19 +69,40 @@ public final class DeployCommands extends AbstractCommandsSupport implements Com
 
   /**
    * Deploy one or more JAR files to members of a group or all members.
-   * 
-   * @param groups
-   *          Group(s) to deploy the JAR to or null for all members
-   * @param jar
-   *          JAR file to deploy
-   * @param dir
-  *          Directory of JAR files to deploy
+   *
+   * @param groups Group(s) to deploy the JAR to or null for all members
+   * @param jar JAR file to deploy
+   * @param dir Directory of JAR files to deploy
    * @return The result of the attempt to deploy
    */
-  @CliCommand(value = { CliStrings.DEPLOY }, help = CliStrings.DEPLOY__HELP)
-  @CliMetaData(interceptor = "org.apache.geode.management.internal.cli.commands.DeployCommands$Interceptor", relatedTopic = { CliStrings.TOPIC_GEODE_CONFIG }, writesToSharedConfiguration = true)
+  @CliCommand(
+    value = {CliStrings.DEPLOY},
+    help = CliStrings.DEPLOY__HELP
+  )
+  @CliMetaData(
+    interceptor = "org.apache.geode.management.internal.cli.commands.DeployCommands$Interceptor",
+    relatedTopic = {CliStrings.TOPIC_GEODE_CONFIG},
+    writesToSharedConfiguration = true
+  )
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
-  public final Result deploy(@CliOption(key = { CliStrings.DEPLOY__GROUP }, help = CliStrings.DEPLOY__GROUP__HELP, optionContext = ConverterHint.MEMBERGROUP) @CliMetaData(valueSeparator = ",") String[] groups, @CliOption(key = { CliStrings.DEPLOY__JAR }, help = CliStrings.DEPLOY__JAR__HELP) String jar, @CliOption(key = { CliStrings.DEPLOY__DIR }, help = CliStrings.DEPLOY__DIR__HELP) String dir) {
+  public final Result deploy(
+      @CliOption(
+            key = {CliStrings.DEPLOY__GROUP},
+            help = CliStrings.DEPLOY__GROUP__HELP,
+            optionContext = ConverterHint.MEMBERGROUP
+          )
+          @CliMetaData(valueSeparator = ",")
+          String[] groups,
+      @CliOption(
+            key = {CliStrings.DEPLOY__JAR},
+            help = CliStrings.DEPLOY__JAR__HELP
+          )
+          String jar,
+      @CliOption(
+            key = {CliStrings.DEPLOY__DIR},
+            help = CliStrings.DEPLOY__DIR__HELP
+          )
+          String dir) {
     try {
       TabularResultData tabularData = ResultBuilder.createTabularResultData();
 
@@ -96,15 +119,23 @@ public final class DeployCommands extends AbstractCommandsSupport implements Com
         return e.getResult();
       }
 
-      ResultCollector<?, ?> resultCollector = CliUtil.executeFunction(this.deployFunction, new Object[] { jarNames, jarBytes }, targetMembers);
+      ResultCollector<?, ?> resultCollector =
+          CliUtil.executeFunction(
+              this.deployFunction, new Object[] {jarNames, jarBytes}, targetMembers);
 
-      List<CliFunctionResult> results = CliFunctionResult.cleanResults((List<?>) resultCollector.getResult());
+      List<CliFunctionResult> results =
+          CliFunctionResult.cleanResults((List<?>) resultCollector.getResult());
 
       for (CliFunctionResult result : results) {
         if (result.getThrowable() != null) {
           tabularData.accumulate("Member", result.getMemberIdOrName());
           tabularData.accumulate("Deployed JAR", "");
-          tabularData.accumulate("Deployed JAR Location", "ERROR: " + result.getThrowable().getClass().getName() + ": " + result.getThrowable().getMessage());
+          tabularData.accumulate(
+              "Deployed JAR Location",
+              "ERROR: "
+                  + result.getThrowable().getClass().getName()
+                  + ": "
+                  + result.getThrowable().getMessage());
           accumulatedData = true;
           tabularData.setStatus(Status.ERROR);
         } else {
@@ -125,7 +156,8 @@ public final class DeployCommands extends AbstractCommandsSupport implements Com
 
       Result result = ResultBuilder.buildResult(tabularData);
       if (tabularData.getStatus().equals(Status.OK)) {
-        result.setCommandPersisted((new SharedConfigurationWriter()).addJars(jarNames, jarBytes, groups));
+        result.setCommandPersisted(
+            (new SharedConfigurationWriter()).addJars(jarNames, jarBytes, groups));
       }
       return result;
     } catch (VirtualMachineError e) {
@@ -133,23 +165,43 @@ public final class DeployCommands extends AbstractCommandsSupport implements Com
       throw e;
     } catch (Throwable t) {
       SystemFailure.checkFailure();
-      return ResultBuilder.createGemFireErrorResult(String.format("Exception while attempting to deploy: (%1$s)", toString(t, isDebugging())));
+      return ResultBuilder.createGemFireErrorResult(
+          String.format(
+              "Exception while attempting to deploy: (%1$s)", toString(t, isDebugging())));
     }
   }
 
   /**
    * Undeploy one or more JAR files from members of a group or all members.
-   * 
-   * @param groups
-   *          Group(s) to undeploy the JAR from or null for all members
-   * @param jars
-   *          JAR(s) to undeploy (separated by comma)
+   *
+   * @param groups Group(s) to undeploy the JAR from or null for all members
+   * @param jars JAR(s) to undeploy (separated by comma)
    * @return The result of the attempt to undeploy
    */
-  @CliCommand(value = { CliStrings.UNDEPLOY }, help = CliStrings.UNDEPLOY__HELP)
-  @CliMetaData(relatedTopic = { CliStrings.TOPIC_GEODE_CONFIG }, writesToSharedConfiguration = true)
+  @CliCommand(
+    value = {CliStrings.UNDEPLOY},
+    help = CliStrings.UNDEPLOY__HELP
+  )
+  @CliMetaData(
+    relatedTopic = {CliStrings.TOPIC_GEODE_CONFIG},
+    writesToSharedConfiguration = true
+  )
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
-  public final Result undeploy(@CliOption(key = { CliStrings.UNDEPLOY__GROUP }, help = CliStrings.UNDEPLOY__GROUP__HELP, optionContext = ConverterHint.MEMBERGROUP) @CliMetaData(valueSeparator = ",") String[] groups, @CliOption(key = { CliStrings.UNDEPLOY__JAR }, help = CliStrings.UNDEPLOY__JAR__HELP, unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE) @CliMetaData(valueSeparator = ",") String jars) {
+  public final Result undeploy(
+      @CliOption(
+            key = {CliStrings.UNDEPLOY__GROUP},
+            help = CliStrings.UNDEPLOY__GROUP__HELP,
+            optionContext = ConverterHint.MEMBERGROUP
+          )
+          @CliMetaData(valueSeparator = ",")
+          String[] groups,
+      @CliOption(
+            key = {CliStrings.UNDEPLOY__JAR},
+            help = CliStrings.UNDEPLOY__JAR__HELP,
+            unspecifiedDefaultValue = CliMetaData.ANNOTATION_NULL_VALUE
+          )
+          @CliMetaData(valueSeparator = ",")
+          String jars) {
 
     try {
       TabularResultData tabularData = ResultBuilder.createTabularResultData();
@@ -162,14 +214,20 @@ public final class DeployCommands extends AbstractCommandsSupport implements Com
         return crex.getResult();
       }
 
-      ResultCollector<?, ?> rc = CliUtil.executeFunction(this.undeployFunction, new Object[] { jars }, targetMembers);
+      ResultCollector<?, ?> rc =
+          CliUtil.executeFunction(this.undeployFunction, new Object[] {jars}, targetMembers);
       List<CliFunctionResult> results = CliFunctionResult.cleanResults((List<?>) rc.getResult());
 
       for (CliFunctionResult result : results) {
         if (result.getThrowable() != null) {
           tabularData.accumulate("Member", result.getMemberIdOrName());
           tabularData.accumulate("Un-Deployed JAR", "");
-          tabularData.accumulate("Un-Deployed JAR Location", "ERROR: " + result.getThrowable().getClass().getName() + ": " + result.getThrowable().getMessage());
+          tabularData.accumulate(
+              "Un-Deployed JAR Location",
+              "ERROR: "
+                  + result.getThrowable().getClass().getName()
+                  + ": "
+                  + result.getThrowable().getMessage());
           accumulatedData = true;
           tabularData.setStatus(Status.ERROR);
         } else {
@@ -189,7 +247,9 @@ public final class DeployCommands extends AbstractCommandsSupport implements Com
 
       Result result = ResultBuilder.buildResult(tabularData);
       if (tabularData.getStatus().equals(Status.OK)) {
-        result.setCommandPersisted((new SharedConfigurationWriter()).deleteJars(jars == null ? null : jars.split(","), groups));
+        result.setCommandPersisted(
+            (new SharedConfigurationWriter())
+                .deleteJars(jars == null ? null : jars.split(","), groups));
       }
       return result;
     } catch (VirtualMachineError e) {
@@ -197,21 +257,33 @@ public final class DeployCommands extends AbstractCommandsSupport implements Com
       throw e;
     } catch (Throwable th) {
       SystemFailure.checkFailure();
-      return ResultBuilder.createGemFireErrorResult("Exception while attempting to un-deploy: " + th.getClass().getName() + ": " + th.getMessage());
+      return ResultBuilder.createGemFireErrorResult(
+          "Exception while attempting to un-deploy: "
+              + th.getClass().getName()
+              + ": "
+              + th.getMessage());
     }
   }
 
   /**
    * List all currently deployed JARs for members of a group or for all members.
-   * 
-   * @param group
-   *          Group for which to list JARs or null for all members
+   *
+   * @param group Group for which to list JARs or null for all members
    * @return List of deployed JAR files
    */
-  @CliCommand(value = { CliStrings.LIST_DEPLOYED }, help = CliStrings.LIST_DEPLOYED__HELP)
-  @CliMetaData(relatedTopic = { CliStrings.TOPIC_GEODE_CONFIG })
+  @CliCommand(
+    value = {CliStrings.LIST_DEPLOYED},
+    help = CliStrings.LIST_DEPLOYED__HELP
+  )
+  @CliMetaData(relatedTopic = {CliStrings.TOPIC_GEODE_CONFIG})
   @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
-  public final Result listDeployed(@CliOption(key = { CliStrings.LIST_DEPLOYED__GROUP }, help = CliStrings.LIST_DEPLOYED__GROUP__HELP) @CliMetaData(valueSeparator = ",") String group) {
+  public final Result listDeployed(
+      @CliOption(
+            key = {CliStrings.LIST_DEPLOYED__GROUP},
+            help = CliStrings.LIST_DEPLOYED__GROUP__HELP
+          )
+          @CliMetaData(valueSeparator = ",")
+          String group) {
 
     try {
       TabularResultData tabularData = ResultBuilder.createTabularResultData();
@@ -224,14 +296,20 @@ public final class DeployCommands extends AbstractCommandsSupport implements Com
         return crex.getResult();
       }
 
-      ResultCollector<?, ?> rc = CliUtil.executeFunction(this.listDeployedFunction, null, targetMembers);
+      ResultCollector<?, ?> rc =
+          CliUtil.executeFunction(this.listDeployedFunction, null, targetMembers);
       List<CliFunctionResult> results = CliFunctionResult.cleanResults((List<?>) rc.getResult());
 
       for (CliFunctionResult result : results) {
         if (result.getThrowable() != null) {
           tabularData.accumulate("Member", result.getMemberIdOrName());
           tabularData.accumulate("JAR", "");
-          tabularData.accumulate("JAR Location", "ERROR: " + result.getThrowable().getClass().getName() + ": " + result.getThrowable().getMessage());
+          tabularData.accumulate(
+              "JAR Location",
+              "ERROR: "
+                  + result.getThrowable().getClass().getName()
+                  + ": "
+                  + result.getThrowable().getMessage());
           accumulatedData = true;
           tabularData.setStatus(Status.ERROR);
         } else {
@@ -255,11 +333,15 @@ public final class DeployCommands extends AbstractCommandsSupport implements Com
       throw e;
     } catch (Throwable th) {
       SystemFailure.checkFailure();
-      return ResultBuilder.createGemFireErrorResult("Exception while attempting to list deployed: " + th.getClass().getName() + ": " + th.getMessage());
+      return ResultBuilder.createGemFireErrorResult(
+          "Exception while attempting to list deployed: "
+              + th.getClass().getName()
+              + ": "
+              + th.getMessage());
     }
   }
 
-  @CliAvailabilityIndicator({ CliStrings.DEPLOY, CliStrings.UNDEPLOY, CliStrings.LIST_DEPLOYED })
+  @CliAvailabilityIndicator({CliStrings.DEPLOY, CliStrings.UNDEPLOY, CliStrings.LIST_DEPLOYED})
   public final boolean isConnected() {
     if (!CliUtil.isGfshVM()) {
       return true;
@@ -268,9 +350,7 @@ public final class DeployCommands extends AbstractCommandsSupport implements Com
     return (getGfsh() != null && getGfsh().isConnectedAndReady());
   }
 
-  /**
-   * Interceptor used by gfsh to intercept execution of deploy command at "shell".
-   */
+  /** Interceptor used by gfsh to intercept execution of deploy command at "shell". */
   public static class Interceptor extends AbstractCliAroundInterceptor {
     private final DecimalFormat numFormatter = new DecimalFormat("###,##0.00");
 
@@ -290,24 +370,35 @@ public final class DeployCommands extends AbstractCommandsSupport implements Com
       String jarOrDir = (jar != null ? jar : dir);
 
       if (jar == null && dir == null) {
-        return ResultBuilder.createUserErrorResult("Parameter \"jar\" or \"dir\" is required. Use \"help <command name>\" for assistance.");
+        return ResultBuilder.createUserErrorResult(
+            "Parameter \"jar\" or \"dir\" is required. Use \"help <command name>\" for assistance.");
       }
 
       FileResult fileResult;
       try {
-        fileResult = new FileResult(new String[] { jar != null ? jar : dir });
+        fileResult = new FileResult(new String[] {jar != null ? jar : dir});
       } catch (FileNotFoundException fnfex) {
         return ResultBuilder.createGemFireErrorResult("'" + jarOrDir + "' not found.");
       } catch (IOException ioex) {
-        return ResultBuilder.createGemFireErrorResult("I/O error when reading jar/dir: " + ioex.getClass().getName() + ": " + ioex.getMessage());
+        return ResultBuilder.createGemFireErrorResult(
+            "I/O error when reading jar/dir: "
+                + ioex.getClass().getName()
+                + ": "
+                + ioex.getMessage());
       }
 
       // Only do this additional check if a dir was provided
       if (dir != null) {
-        String message = "\nDeploying files: " + fileResult.getFormattedFileList() + "\nTotal file size is: " + this.numFormatter.format(((double) fileResult.computeFileSizeTotal() / 1048576)) + "MB\n\nContinue? ";
+        String message =
+            "\nDeploying files: "
+                + fileResult.getFormattedFileList()
+                + "\nTotal file size is: "
+                + this.numFormatter.format(((double) fileResult.computeFileSizeTotal() / 1048576))
+                + "MB\n\nContinue? ";
 
         if (readYesNo(message, Response.YES) == Response.NO) {
-          return ResultBuilder.createShellClientAbortOperationResult("Aborted deploy of " + jarOrDir + ".");
+          return ResultBuilder.createShellClientAbortOperationResult(
+              "Aborted deploy of " + jarOrDir + ".");
         }
       }
 

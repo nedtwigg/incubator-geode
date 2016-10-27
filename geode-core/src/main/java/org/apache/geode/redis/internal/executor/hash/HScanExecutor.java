@@ -47,10 +47,12 @@ public class HScanExecutor extends AbstractScanExecutor {
 
     ByteArrayWrapper key = command.getKey();
     @SuppressWarnings("unchecked")
-    Region<ByteArrayWrapper, ByteArrayWrapper> keyRegion = (Region<ByteArrayWrapper, ByteArrayWrapper>) context.getRegionProvider().getRegion(key);
+    Region<ByteArrayWrapper, ByteArrayWrapper> keyRegion =
+        (Region<ByteArrayWrapper, ByteArrayWrapper>) context.getRegionProvider().getRegion(key);
     checkDataType(key, RedisDataType.REDIS_HASH, context);
     if (keyRegion == null) {
-      command.setResponse(Coder.getScanResponse(context.getByteBufAllocator(), new ArrayList<String>()));
+      command.setResponse(
+          Coder.getScanResponse(context.getByteBufAllocator(), new ArrayList<String>()));
       return;
     }
     byte[] cAr = commandElems.get(2);
@@ -113,24 +115,28 @@ public class HScanExecutor extends AbstractScanExecutor {
     try {
       matchPattern = convertGlobToRegex(globMatchPattern);
     } catch (PatternSyntaxException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_ILLEGAL_GLOB));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_ILLEGAL_GLOB));
       return;
     }
 
-    List<Object> returnList = getIteration(new HashSet(keyRegion.entrySet()), matchPattern, count, cursor);
+    List<Object> returnList =
+        getIteration(new HashSet(keyRegion.entrySet()), matchPattern, count, cursor);
 
     command.setResponse(Coder.getScanResponse(context.getByteBufAllocator(), returnList));
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  protected List<Object> getIteration(Collection<?> list, Pattern matchPattern, int count, int cursor) {
+  protected List<Object> getIteration(
+      Collection<?> list, Pattern matchPattern, int count, int cursor) {
     List<Object> returnList = new ArrayList<Object>();
     int size = list.size();
     int beforeCursor = 0;
     int numElements = 0;
     int i = -1;
-    for (Entry<ByteArrayWrapper, ByteArrayWrapper> entry : (Collection<Entry<ByteArrayWrapper, ByteArrayWrapper>>) list) {
+    for (Entry<ByteArrayWrapper, ByteArrayWrapper> entry :
+        (Collection<Entry<ByteArrayWrapper, ByteArrayWrapper>>) list) {
       ByteArrayWrapper key = entry.getKey();
       ByteArrayWrapper value = entry.getValue();
       i++;
@@ -149,15 +155,11 @@ public class HScanExecutor extends AbstractScanExecutor {
           returnList.add(value);
           numElements++;
         }
-      } else
-        break;
+      } else break;
     }
 
-    if (i == size - 1)
-      returnList.add(0, String.valueOf(0));
-    else
-      returnList.add(0, String.valueOf(i));
+    if (i == size - 1) returnList.add(0, String.valueOf(0));
+    else returnList.add(0, String.valueOf(i));
     return returnList;
   }
-
 }

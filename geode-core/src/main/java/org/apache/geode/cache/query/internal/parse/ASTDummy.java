@@ -23,8 +23,7 @@ import org.apache.geode.cache.query.internal.QCompiler;
 public class ASTDummy extends GemFireAST {
   private static final long serialVersionUID = -5390937473819850292L;
 
-  public ASTDummy() {
-  }
+  public ASTDummy() {}
 
   /** Creates a new instance of ASTCombination */
   public ASTDummy(Token t) {
@@ -36,5 +35,4 @@ public class ASTDummy extends GemFireAST {
     super.compile(compiler);
     compiler.push(this.getText());
   }
-
 }

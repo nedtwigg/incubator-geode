@@ -27,27 +27,26 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Inspects a completed backup and parses the operation log file data from the restore script produced by a previous backup.
+ * Inspects a completed backup and parses the operation log file data from the restore script
+ * produced by a previous backup.
  */
 public abstract class BackupInspector {
   /**
-   * Maps operation log file names to script lines that copy previously backed up operation log files.
-   * These lines will be added to future restore scripts if the operation logs are still relevant to the member.
+   * Maps operation log file names to script lines that copy previously backed up operation log
+   * files. These lines will be added to future restore scripts if the operation logs are still
+   * relevant to the member.
    */
   protected Map<String, String> oplogLineMap = new HashMap<String, String>();
 
-  /**
-   * Contains the unique set of operation log file names contained in the restore script.
-   */
+  /** Contains the unique set of operation log file names contained in the restore script. */
   protected Set<String> oplogFileNames = new HashSet<String>();
 
-  /**
-   * Root directory for a member's backup.
-   */
+  /** Root directory for a member's backup. */
   protected File backupDir = null;
 
   /**
    * Returns a BackupInspector for a member's backup directory.
+   *
    * @param backupDir a member's backup directory.
    * @return a new BackupInspector.
    * @throws IOException the backup directory was malformed.
@@ -62,6 +61,7 @@ public abstract class BackupInspector {
 
   /**
    * Creates a new BackupInspector.
+   *
    * @param backupDir a a previous backup for a member.
    * @throws IOException an error occurred while parsing the restore script.
    */
@@ -92,6 +92,7 @@ public abstract class BackupInspector {
 
   /**
    * Searches for the incremental backup marker.
+   *
    * @param reader restore file reader.
    * @throws IOException
    */
@@ -109,29 +110,24 @@ public abstract class BackupInspector {
     }
   }
 
-  /**
-   * @return true if the host operating system is windows.
-   */
+  /** @return true if the host operating system is windows. */
   public static boolean isWindows() {
     return (System.getProperty("os.name").indexOf("Windows") != -1);
   }
 
-  /**
-   * Returns true if the restore script is incremental.
-   */
+  /** Returns true if the restore script is incremental. */
   public boolean isIncremental() {
     return !this.oplogFileNames.isEmpty();
   }
 
-  /**
-   * @return the backup directory being inspected.
-   */
+  /** @return the backup directory being inspected. */
   public File getBackupDir() {
     return this.backupDir;
   }
 
   /**
    * Returns the restore script line that restores a particular operation log file.
+   *
    * @param oplogFileName an operation log file.
    */
   public String getScriptLineForOplogFile(String oplogFileName) {
@@ -139,58 +135,52 @@ public abstract class BackupInspector {
   }
 
   /**
-   * Returns the set of operation log files copied in the incremental backup section
-   * of the restore script. 
+   * Returns the set of operation log files copied in the incremental backup section of the restore
+   * script.
    */
   public Set<String> getIncrementalOplogFileNames() {
     return Collections.unmodifiableSet(this.oplogFileNames);
   }
 
-  /**
-   * @return the incremental marke contained in the backup restore script.
-   */
+  /** @return the incremental marke contained in the backup restore script. */
   protected abstract String getIncrementalMarker();
 
   /**
    * Returns the restore script for the backup.
+   *
    * @param backupDir a member's backup directory.
    */
   protected abstract File getRestoreFile(final File backupDir);
 
   /**
    * Returns the copyTo operation log file path for an operation log file name.
+   *
    * @param oplogFileName an operation log file.
    */
   public abstract String getCopyToForOplogFile(String oplogFileName);
 
   /**
    * Returns the copy from operation log file path for an operation log file name.
+   *
    * @param oplogFileName an operation log file.
    */
   public abstract String getCopyFromForOplogFile(String oplogFileName);
 
   /**
-   * Parses out operation log data from the incremental backup portion
-   * of the restore script.
+   * Parses out operation log data from the incremental backup portion of the restore script.
+   *
    * @param reader restore file reader.
    * @throws IOException
    */
   protected abstract void parseOplogLines(BufferedReader reader) throws IOException;
 }
 
-/**
- * A BackupInspector for the Windows platform(s).
- *
- */
+/** A BackupInspector for the Windows platform(s). */
 class WindowsBackupInspector extends BackupInspector {
-  /**
-   * When found indicates that the restore script was produced from an incremental backup. 
-   */
+  /** When found indicates that the restore script was produced from an incremental backup. */
   private static final String INCREMENTAL_MARKER = "rem Incremental backup";
 
-  /**
-   * Restore file for windows platform.
-   */
+  /** Restore file for windows platform. */
   static final String RESTORE_FILE = "restore.bat";
 
   WindowsBackupInspector(File backupDir) throws IOException {
@@ -225,8 +215,8 @@ class WindowsBackupInspector extends BackupInspector {
 
   @Override
   /**
-   * Parses out operation log data from the incremental backup portion
-   * of the restore script.
+   * Parses out operation log data from the incremental backup portion of the restore script.
+   *
    * @param reader restore file reader.
    * @throws IOException
    */
@@ -262,18 +252,12 @@ class WindowsBackupInspector extends BackupInspector {
   }
 }
 
-/**
- * A BackupInspector for Unix platforms.
- */
+/** A BackupInspector for Unix platforms. */
 class UnixBackupInspector extends BackupInspector {
-  /**
-   * When found indicates that the restore script was produced from an incremental backup. 
-   */
+  /** When found indicates that the restore script was produced from an incremental backup. */
   private static final String INCREMENTAL_MARKER = "#Incremental backup";
 
-  /**
-   * Restore file for windows platform.
-   */
+  /** Restore file for windows platform. */
   static final String RESTORE_FILE = "restore.sh";
 
   UnixBackupInspector(File backupDir) throws IOException {
@@ -308,8 +292,8 @@ class UnixBackupInspector extends BackupInspector {
 
   @Override
   /**
-   * Parses out operation log data from the incremental backup portion
-   * of the restore script.
+   * Parses out operation log data from the incremental backup portion of the restore script.
+   *
    * @param reader restore file reader.
    * @throws IOException
    */

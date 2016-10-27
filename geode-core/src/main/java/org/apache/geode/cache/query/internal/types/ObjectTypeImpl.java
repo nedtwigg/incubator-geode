@@ -30,17 +30,15 @@ import org.apache.geode.internal.Version;
 
 /**
  * Implementation of ObjectType
+ *
  * @since GemFire 4.0
  */
 public class ObjectTypeImpl implements ObjectType, DataSerializableFixedID {
   private static final long serialVersionUID = 3327357282163564784L;
   private Class clazz;
 
-  /**
-   * Empty constructor to satisfy <code>DataSerializer</code> requirements
-   */
-  public ObjectTypeImpl() {
-  }
+  /** Empty constructor to satisfy <code>DataSerializer</code> requirements */
+  public ObjectTypeImpl() {}
 
   /** Creates a new instance of ObjectTypeImpl */
   public ObjectTypeImpl(Class clazz) {
@@ -63,8 +61,7 @@ public class ObjectTypeImpl implements ObjectType, DataSerializableFixedID {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof ObjectTypeImpl))
-      return false;
+    if (!(obj instanceof ObjectTypeImpl)) return false;
     return this.clazz == ((ObjectTypeImpl) obj).clazz;
   }
 

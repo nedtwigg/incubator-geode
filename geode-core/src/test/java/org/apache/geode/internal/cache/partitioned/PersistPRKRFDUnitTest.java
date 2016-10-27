@@ -43,10 +43,7 @@ import org.apache.geode.test.dunit.Host;
 import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 
-/**
- * Tests the basic use cases for PR persistence.
- *
- */
+/** Tests the basic use cases for PR persistence. */
 @Category(DistributedTest.class)
 public class PersistPRKRFDUnitTest extends PersistentPartitionedRegionTestBase {
   private static final int NUM_BUCKETS = 15;
@@ -55,9 +52,9 @@ public class PersistPRKRFDUnitTest extends PersistentPartitionedRegionTestBase {
 
   /**
    * do a put/modify/destroy while closing disk store
-   * 
-   * to turn on debug, add following parameter in local.conf:
-   * hydra.VmPrms-extraVMArgs += "-Ddisk.KRF_DEBUG=true";
+   *
+   * <p>to turn on debug, add following parameter in local.conf: hydra.VmPrms-extraVMArgs +=
+   * "-Ddisk.KRF_DEBUG=true";
    */
   @Test
   public void testCloseDiskStoreWhenPut() {
@@ -67,132 +64,147 @@ public class PersistPRKRFDUnitTest extends PersistentPartitionedRegionTestBase {
 
     createPR(vm0, 0);
     createData(vm0, 0, 10, "a");
-    vm0.invoke(new CacheSerializableRunnable(title + "server add writer") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion(PR_REGION_NAME);
-        // let the region to hold on the put until diskstore is closed
-        if (!DiskStoreImpl.KRF_DEBUG) {
-          region.getAttributesMutator().setCacheWriter(new MyWriter());
-        }
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable(title + "server add writer") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion(PR_REGION_NAME);
+            // let the region to hold on the put until diskstore is closed
+            if (!DiskStoreImpl.KRF_DEBUG) {
+              region.getAttributesMutator().setCacheWriter(new MyWriter());
+            }
+          }
+        });
 
     // create test
-    AsyncInvocation async1 = vm0.invokeAsync(new CacheSerializableRunnable(title + "async create") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion(PR_REGION_NAME);
-        IgnoredException expect = IgnoredException.addIgnoredException("CacheClosedException");
-        try {
-          region.put(10, "b");
-          fail("Expect CacheClosedException here");
-        } catch (CacheClosedException cce) {
-          System.out.println(title + cce.getMessage());
-          if (DiskStoreImpl.KRF_DEBUG) {
-            assert cce.getMessage().contains("The disk store is closed.");
-          } else {
-            assert cce.getMessage().contains("The disk store is closed");
+    AsyncInvocation async1 =
+        vm0.invokeAsync(
+            new CacheSerializableRunnable(title + "async create") {
+              public void run2() throws CacheException {
+                Region region = getRootRegion(PR_REGION_NAME);
+                IgnoredException expect =
+                    IgnoredException.addIgnoredException("CacheClosedException");
+                try {
+                  region.put(10, "b");
+                  fail("Expect CacheClosedException here");
+                } catch (CacheClosedException cce) {
+                  System.out.println(title + cce.getMessage());
+                  if (DiskStoreImpl.KRF_DEBUG) {
+                    assert cce.getMessage().contains("The disk store is closed.");
+                  } else {
+                    assert cce.getMessage().contains("The disk store is closed");
+                  }
+                } finally {
+                  expect.remove();
+                }
+              }
+            });
+    vm0.invoke(
+        new CacheSerializableRunnable(title + "close disk store") {
+          public void run2() throws CacheException {
+            GemFireCacheImpl gfc = (GemFireCacheImpl) getCache();
+            Wait.pause(500);
+            gfc.closeDiskStores();
+            synchronized (lockObject) {
+              lockObject.notify();
+            }
           }
-        } finally {
-          expect.remove();
-        }
-      }
-    });
-    vm0.invoke(new CacheSerializableRunnable(title + "close disk store") {
-      public void run2() throws CacheException {
-        GemFireCacheImpl gfc = (GemFireCacheImpl) getCache();
-        Wait.pause(500);
-        gfc.closeDiskStores();
-        synchronized (lockObject) {
-          lockObject.notify();
-        }
-      }
-    });
+        });
     ThreadUtils.join(async1, MAX_WAIT);
     closeCache(vm0);
 
     // update
     createPR(vm0, 0);
-    vm0.invoke(new CacheSerializableRunnable(title + "server add writer") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion(PR_REGION_NAME);
-        // let the region to hold on the put until diskstore is closed
-        if (!DiskStoreImpl.KRF_DEBUG) {
-          region.getAttributesMutator().setCacheWriter(new MyWriter());
-        }
-      }
-    });
-    async1 = vm0.invokeAsync(new CacheSerializableRunnable(title + "async update") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion(PR_REGION_NAME);
-        IgnoredException expect = IgnoredException.addIgnoredException("CacheClosedException");
-        try {
-          region.put(1, "b");
-          fail("Expect CacheClosedException here");
-        } catch (CacheClosedException cce) {
-          System.out.println(title + cce.getMessage());
-          if (DiskStoreImpl.KRF_DEBUG) {
-            assert cce.getMessage().contains("The disk store is closed.");
-          } else {
-            assert cce.getMessage().contains("The disk store is closed");
+    vm0.invoke(
+        new CacheSerializableRunnable(title + "server add writer") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion(PR_REGION_NAME);
+            // let the region to hold on the put until diskstore is closed
+            if (!DiskStoreImpl.KRF_DEBUG) {
+              region.getAttributesMutator().setCacheWriter(new MyWriter());
+            }
           }
-        } finally {
-          expect.remove();
-        }
-      }
-    });
-    vm0.invoke(new CacheSerializableRunnable(title + "close disk store") {
-      public void run2() throws CacheException {
-        GemFireCacheImpl gfc = (GemFireCacheImpl) getCache();
-        Wait.pause(500);
-        gfc.closeDiskStores();
-        synchronized (lockObject) {
-          lockObject.notify();
-        }
-      }
-    });
+        });
+    async1 =
+        vm0.invokeAsync(
+            new CacheSerializableRunnable(title + "async update") {
+              public void run2() throws CacheException {
+                Region region = getRootRegion(PR_REGION_NAME);
+                IgnoredException expect =
+                    IgnoredException.addIgnoredException("CacheClosedException");
+                try {
+                  region.put(1, "b");
+                  fail("Expect CacheClosedException here");
+                } catch (CacheClosedException cce) {
+                  System.out.println(title + cce.getMessage());
+                  if (DiskStoreImpl.KRF_DEBUG) {
+                    assert cce.getMessage().contains("The disk store is closed.");
+                  } else {
+                    assert cce.getMessage().contains("The disk store is closed");
+                  }
+                } finally {
+                  expect.remove();
+                }
+              }
+            });
+    vm0.invoke(
+        new CacheSerializableRunnable(title + "close disk store") {
+          public void run2() throws CacheException {
+            GemFireCacheImpl gfc = (GemFireCacheImpl) getCache();
+            Wait.pause(500);
+            gfc.closeDiskStores();
+            synchronized (lockObject) {
+              lockObject.notify();
+            }
+          }
+        });
     ThreadUtils.join(async1, MAX_WAIT);
     closeCache(vm0);
 
     // destroy
     createPR(vm0, 0);
-    vm0.invoke(new CacheSerializableRunnable(title + "server add writer") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion(PR_REGION_NAME);
-        // let the region to hold on the put until diskstore is closed
-        if (!DiskStoreImpl.KRF_DEBUG) {
-          region.getAttributesMutator().setCacheWriter(new MyWriter());
-        }
-      }
-    });
-    async1 = vm0.invokeAsync(new CacheSerializableRunnable(title + "async destroy") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion(PR_REGION_NAME);
-        IgnoredException expect = IgnoredException.addIgnoredException("CacheClosedException");
-        try {
-          region.destroy(2, "b");
-          fail("Expect CacheClosedException here");
-        } catch (CacheClosedException cce) {
-          System.out.println(title + cce.getMessage());
-          if (DiskStoreImpl.KRF_DEBUG) {
-            assert cce.getMessage().contains("The disk store is closed.");
-          } else {
-            assert cce.getMessage().contains("The disk store is closed");
+    vm0.invoke(
+        new CacheSerializableRunnable(title + "server add writer") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion(PR_REGION_NAME);
+            // let the region to hold on the put until diskstore is closed
+            if (!DiskStoreImpl.KRF_DEBUG) {
+              region.getAttributesMutator().setCacheWriter(new MyWriter());
+            }
           }
-        } finally {
-          expect.remove();
-        }
-      }
-    });
-    vm0.invoke(new CacheSerializableRunnable(title + "close disk store") {
-      public void run2() throws CacheException {
-        GemFireCacheImpl gfc = (GemFireCacheImpl) getCache();
-        Wait.pause(500);
-        gfc.closeDiskStores();
-        synchronized (lockObject) {
-          lockObject.notify();
-        }
-      }
-    });
+        });
+    async1 =
+        vm0.invokeAsync(
+            new CacheSerializableRunnable(title + "async destroy") {
+              public void run2() throws CacheException {
+                Region region = getRootRegion(PR_REGION_NAME);
+                IgnoredException expect =
+                    IgnoredException.addIgnoredException("CacheClosedException");
+                try {
+                  region.destroy(2, "b");
+                  fail("Expect CacheClosedException here");
+                } catch (CacheClosedException cce) {
+                  System.out.println(title + cce.getMessage());
+                  if (DiskStoreImpl.KRF_DEBUG) {
+                    assert cce.getMessage().contains("The disk store is closed.");
+                  } else {
+                    assert cce.getMessage().contains("The disk store is closed");
+                  }
+                } finally {
+                  expect.remove();
+                }
+              }
+            });
+    vm0.invoke(
+        new CacheSerializableRunnable(title + "close disk store") {
+          public void run2() throws CacheException {
+            GemFireCacheImpl gfc = (GemFireCacheImpl) getCache();
+            Wait.pause(500);
+            gfc.closeDiskStores();
+            synchronized (lockObject) {
+              lockObject.notify();
+            }
+          }
+        });
     ThreadUtils.join(async1, MAX_WAIT);
 
     checkData(vm0, 0, 10, "a");
@@ -201,11 +213,9 @@ public class PersistPRKRFDUnitTest extends PersistentPartitionedRegionTestBase {
   }
 
   private static class MyWriter extends CacheWriterAdapter implements Declarable {
-    public MyWriter() {
-    }
+    public MyWriter() {}
 
-    public void init(Properties props) {
-    }
+    public void init(Properties props) {}
 
     public void beforeCreate(EntryEvent event) {
       try {

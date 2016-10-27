@@ -24,9 +24,7 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
-/**
- *
- */
+/** */
 public abstract class ServerLocationRequest implements DataSerializableFixedID {
 
   private String serverGroup;
@@ -37,9 +35,7 @@ public abstract class ServerLocationRequest implements DataSerializableFixedID {
   }
 
   /** Used by DataSerializer */
-  public ServerLocationRequest() {
-
-  }
+  public ServerLocationRequest() {}
 
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     serverGroup = DataSerializer.readString(in);

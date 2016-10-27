@@ -19,7 +19,8 @@ package org.apache.geode.management.internal.beans;
 import org.apache.geode.management.GatewaySenderMXBean;
 import javax.management.NotificationBroadcasterSupport;
 
-public class GatewaySenderMBean extends NotificationBroadcasterSupport implements GatewaySenderMXBean {
+public class GatewaySenderMBean extends NotificationBroadcasterSupport
+    implements GatewaySenderMXBean {
 
   private GatewaySenderMBeanBridge bridge;
 
@@ -160,7 +161,6 @@ public class GatewaySenderMBean extends NotificationBroadcasterSupport implement
   @Override
   public void stop() {
     bridge.stop();
-
   }
 
   @Override

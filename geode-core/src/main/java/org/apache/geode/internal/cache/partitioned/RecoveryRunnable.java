@@ -30,9 +30,7 @@ public abstract class RecoveryRunnable implements Runnable {
 
   protected final PRHARedundancyProvider redundancyProvider;
 
-  /**
-   * @param prhaRedundancyProvider
-   */
+  /** @param prhaRedundancyProvider */
   public RecoveryRunnable(PRHARedundancyProvider prhaRedundancyProvider) {
     redundancyProvider = prhaRedundancyProvider;
   }
@@ -52,7 +50,8 @@ public abstract class RecoveryRunnable implements Runnable {
   }
 
   public void run() {
-    CancelCriterion stopper = redundancyProvider.prRegion.getGemFireCache().getDistributedSystem().getCancelCriterion();
+    CancelCriterion stopper =
+        redundancyProvider.prRegion.getGemFireCache().getDistributedSystem().getCancelCriterion();
     DistributedSystem.setThreadsSocketPolicy(true /* conserve sockets */);
     SystemFailure.checkFailure();
     if (stopper.isCancelInProgress()) {
@@ -77,6 +76,5 @@ public abstract class RecoveryRunnable implements Runnable {
       }
       failure = t;
     }
-
   }
 }

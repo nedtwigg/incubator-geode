@@ -43,21 +43,20 @@ import org.apache.geode.redis.internal.executor.transactions.TransactionExecutor
 import org.apache.geode.redis.GeodeRedisServer;
 
 /**
- * This class extends {@link ChannelInboundHandlerAdapter} from Netty and it is
- * the last part of the channel pipeline. The {@link ByteToCommandDecoder} forwards a
- * {@link Command} to this class which executes it and sends the result back to the
- * client. Additionally, all exception handling is done by this class. 
- * <p>
- * Besides being part of Netty's pipeline, this class also serves as a context to the
- * execution of a command. It abstracts transactions, provides access to the {@link RegionProvider}
- * and anything else an executing {@link Command} may need.
- * 
+ * This class extends {@link ChannelInboundHandlerAdapter} from Netty and it is the last part of the
+ * channel pipeline. The {@link ByteToCommandDecoder} forwards a {@link Command} to this class which
+ * executes it and sends the result back to the client. Additionally, all exception handling is done
+ * by this class.
  *
+ * <p>Besides being part of Netty's pipeline, this class also serves as a context to the execution
+ * of a command. It abstracts transactions, provides access to the {@link RegionProvider} and
+ * anything else an executing {@link Command} may need.
  */
 public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
 
   private static final int WAIT_REGION_DSTRYD_MILLIS = 100;
-  private static final int MAXIMUM_NUM_RETRIES = (1000 * 60) / WAIT_REGION_DSTRYD_MILLIS; // 60 seconds total
+  private static final int MAXIMUM_NUM_RETRIES =
+      (1000 * 60) / WAIT_REGION_DSTRYD_MILLIS; // 60 seconds total
 
   private final Cache cache;
   private final GeodeRedisServer server;
@@ -67,30 +66,29 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
   private final Runnable flusher;
   private final EventExecutor lastExecutor;
   private final ByteBufAllocator byteBufAllocator;
-  /**
-   * TransactionId for any transactions started by this client
-   */
+  /** TransactionId for any transactions started by this client */
   private TransactionId transactionID;
 
-  /**
-   * Queue of commands for a given transaction
-   */
+  /** Queue of commands for a given transaction */
   private Queue<Command> transactionQueue;
+
   private final RegionProvider regionProvider;
   private final byte[] authPwd;
 
   private boolean isAuthenticated;
 
   /**
-   * Default constructor for execution contexts. 
-   * 
+   * Default constructor for execution contexts.
+   *
    * @param ch Channel used by this context, should be one to one
    * @param cache The Geode cache instance of this vm
    * @param regionProvider The region provider of this context
-   * @param server Instance of the server it is attached to, only used so that any execution can initiate a shutdwon
+   * @param server Instance of the server it is attached to, only used so that any execution can
+   *     initiate a shutdwon
    * @param pwd Authentication password for each context, can be null
    */
-  public ExecutionHandlerContext(Channel ch, Cache cache, RegionProvider regionProvider, GeodeRedisServer server, byte[] pwd) {
+  public ExecutionHandlerContext(
+      Channel ch, Cache cache, RegionProvider regionProvider, GeodeRedisServer server, byte[] pwd) {
     if (ch == null || cache == null || regionProvider == null || server == null)
       throw new IllegalArgumentException("Only the authentication password may be null");
     this.cache = cache;
@@ -98,14 +96,14 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
     this.logger = cache.getLogger();
     this.channel = ch;
     this.needChannelFlush = new AtomicBoolean(false);
-    this.flusher = new Runnable() {
+    this.flusher =
+        new Runnable() {
 
-      @Override
-      public void run() {
-        flushChannel();
-      }
-
-    };
+          @Override
+          public void run() {
+            flushChannel();
+          }
+        };
     this.lastExecutor = channel.pipeline().lastContext().executor();
     this.byteBufAllocator = channel.alloc();
     this.transactionID = null;
@@ -128,18 +126,14 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
     }
   }
 
-  /**
-   * This will handle the execution of received commands
-   */
+  /** This will handle the execution of received commands */
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     Command command = (Command) msg;
     executeCommand(ctx, command);
   }
 
-  /**
-   * Exception handler for the entire pipeline
-   */
+  /** Exception handler for the entire pipeline */
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
     if (cause instanceof IOException) {
@@ -154,13 +148,17 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
     ByteBuf response;
     if (cause instanceof RedisDataTypeMismatchException)
       response = Coder.getWrongTypeResponse(this.byteBufAllocator, cause.getMessage());
-    else if (cause instanceof DecoderException && cause.getCause() instanceof RedisCommandParserException)
-      response = Coder.getErrorResponse(this.byteBufAllocator, RedisConstants.PARSING_EXCEPTION_MESSAGE);
+    else if (cause instanceof DecoderException
+        && cause.getCause() instanceof RedisCommandParserException)
+      response =
+          Coder.getErrorResponse(this.byteBufAllocator, RedisConstants.PARSING_EXCEPTION_MESSAGE);
     else if (cause instanceof RegionCreationException) {
       this.logger.error(cause);
-      response = Coder.getErrorResponse(this.byteBufAllocator, RedisConstants.ERROR_REGION_CREATION);
+      response =
+          Coder.getErrorResponse(this.byteBufAllocator, RedisConstants.ERROR_REGION_CREATION);
     } else if (cause instanceof InterruptedException || cause instanceof CacheClosedException)
-      response = Coder.getErrorResponse(this.byteBufAllocator, RedisConstants.SERVER_ERROR_SHUTDOWN);
+      response =
+          Coder.getErrorResponse(this.byteBufAllocator, RedisConstants.SERVER_ERROR_SHUTDOWN);
     else if (cause instanceof IllegalStateException) {
       response = Coder.getErrorResponse(this.byteBufAllocator, cause.getMessage());
     } else {
@@ -189,11 +187,11 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
       }
       if (hasTransaction() && !(exec instanceof TransactionExecutor))
         executeWithTransaction(ctx, exec, command);
-      else
-        executeWithoutTransaction(exec, command);
+      else executeWithoutTransaction(exec, command);
 
       if (hasTransaction() && command.getCommandType() != RedisCommandType.MULTI) {
-        writeToChannel(Coder.getSimpleStringResponse(this.byteBufAllocator, RedisConstants.COMMAND_QUEUED));
+        writeToChannel(
+            Coder.getSimpleStringResponse(this.byteBufAllocator, RedisConstants.COMMAND_QUEUED));
       } else {
         ByteBuf response = command.getResponse();
         writeToChannel(response);
@@ -214,9 +212,9 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
   }
 
   /**
-   * Private helper method to execute a command without a transaction, done for
-   * special exception handling neatness
-   * 
+   * Private helper method to execute a command without a transaction, done for special exception
+   * handling neatness
+   *
    * @param exec Executor to use
    * @param command Command to execute
    * @throws Exception Throws exception if exception is from within execution and not to be handled
@@ -229,23 +227,30 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
         return;
       } catch (Exception e) {
         cause = e;
-        if (e instanceof RegionDestroyedException || e instanceof RegionNotFoundException || e.getCause() instanceof QueryInvocationTargetException)
+        if (e instanceof RegionDestroyedException
+            || e instanceof RegionNotFoundException
+            || e.getCause() instanceof QueryInvocationTargetException)
           Thread.sleep(WAIT_REGION_DSTRYD_MILLIS);
       }
     }
     throw cause;
   }
 
-  private void executeWithTransaction(ChannelHandlerContext ctx, final Executor exec, Command command) throws Exception {
+  private void executeWithTransaction(
+      ChannelHandlerContext ctx, final Executor exec, Command command) throws Exception {
     CacheTransactionManager txm = cache.getCacheTransactionManager();
     TransactionId transactionId = getTransactionID();
     txm.resume(transactionId);
     try {
       exec.executeCommand(command, this);
     } catch (UnsupportedOperationInTransactionException e) {
-      command.setResponse(Coder.getErrorResponse(this.byteBufAllocator, RedisConstants.ERROR_UNSUPPORTED_OPERATION_IN_TRANSACTION));
+      command.setResponse(
+          Coder.getErrorResponse(
+              this.byteBufAllocator, RedisConstants.ERROR_UNSUPPORTED_OPERATION_IN_TRANSACTION));
     } catch (TransactionException e) {
-      command.setResponse(Coder.getErrorResponse(this.byteBufAllocator, RedisConstants.ERROR_TRANSACTION_EXCEPTION));
+      command.setResponse(
+          Coder.getErrorResponse(
+              this.byteBufAllocator, RedisConstants.ERROR_TRANSACTION_EXCEPTION));
     } catch (Exception e) {
       ByteBuf response = getExceptionResponse(ctx, e);
       command.setResponse(response);
@@ -257,7 +262,7 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
 
   /**
    * Get the current transacationId
-   * 
+   *
    * @return The current transactionId, null if one doesn't exist
    */
   public TransactionId getTransactionID() {
@@ -266,7 +271,7 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
 
   /**
    * Check if client has transaction
-   * 
+   *
    * @return True if client has transaction, false otherwise
    */
   public boolean hasTransaction() {
@@ -275,23 +280,20 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
 
   /**
    * Setter method for transaction
-   * 
+   *
    * @param id TransactionId of current transaction for client
    */
   public void setTransactionID(TransactionId id) {
     this.transactionID = id;
   }
 
-  /**
-   * Reset the transaction of client
-   */
+  /** Reset the transaction of client */
   public void clearTransaction() {
     this.transactionID = null;
     if (this.transactionQueue != null) {
       for (Command c : this.transactionQueue) {
         ByteBuf r = c.getResponse();
-        if (r != null)
-          r.release();
+        if (r != null) r.release();
       }
       this.transactionQueue.clear();
     }
@@ -299,20 +301,18 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
 
   /**
    * Getter for transaction command queue
-   * 
+   *
    * @return Command queue
    */
   public Queue<Command> getTransactionQueue() {
-    if (this.transactionQueue == null)
-      this.transactionQueue = new ConcurrentLinkedQueue<Command>();
+    if (this.transactionQueue == null) this.transactionQueue = new ConcurrentLinkedQueue<Command>();
     return this.transactionQueue;
   }
 
   /**
-   * {@link ByteBuf} allocator for this context. All executors
-   * must use this pooled allocator as opposed to having unpooled buffers
-   * for maximum performance
-   * 
+   * {@link ByteBuf} allocator for this context. All executors must use this pooled allocator as
+   * opposed to having unpooled buffers for maximum performance
+   *
    * @return allocator instance
    */
   public ByteBufAllocator getByteBufAllocator() {
@@ -321,7 +321,7 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
 
   /**
    * Gets the provider of Regions
-   * 
+   *
    * @return Provider
    */
   public RegionProvider getRegionProvider() {
@@ -330,6 +330,7 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
 
   /**
    * Getter for manager to allow pausing and resuming transactions
+   *
    * @return Instance
    */
   public CacheTransactionManager getCacheTransactionManager() {
@@ -338,6 +339,7 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
 
   /**
    * Getter for logger
+   *
    * @return instance
    */
   public LogWriter getLogger() {
@@ -346,16 +348,15 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
 
   /**
    * Get the channel for this context
-   * @return instance
    *
-  public Channel getChannel() {
-    return this.channel;
-  }
+   * @return instance
+   *     <p>public Channel getChannel() { return this.channel; }
    */
 
   /**
-   * Get the authentication password, this will be same server wide.
-   * It is exposed here as opposed to {@link GeodeRedisServer}.
+   * Get the authentication password, this will be same server wide. It is exposed here as opposed
+   * to {@link GeodeRedisServer}.
+   *
    * @return password
    */
   public byte[] getAuthPwd() {
@@ -364,15 +365,14 @@ public class ExecutionHandlerContext extends ChannelInboundHandlerAdapter {
 
   /**
    * Checker if user has authenticated themselves
+   *
    * @return True if no authentication required or authentication complete, false otherwise
    */
   public boolean isAuthenticated() {
     return this.isAuthenticated;
   }
 
-  /**
-   * Lets this context know the authentication is complete
-   */
+  /** Lets this context know the authentication is complete */
   public void setAuthenticationVerified() {
     this.isAuthenticated = true;
   }

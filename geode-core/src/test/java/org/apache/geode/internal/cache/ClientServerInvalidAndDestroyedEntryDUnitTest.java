@@ -54,10 +54,9 @@ import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * This tests the fix for bug #43407 under a variety of configurations and
- * also tests that tombstones are treated in a similar manner.  The ticket
- * complains that a client that does a get(K) does not end up with the entry
- * in its cache if K is invalid on the server.
+ * This tests the fix for bug #43407 under a variety of configurations and also tests that
+ * tombstones are treated in a similar manner. The ticket complains that a client that does a get(K)
+ * does not end up with the entry in its cache if K is invalid on the server.
  */
 @Category(DistributedTest.class)
 public class ClientServerInvalidAndDestroyedEntryDUnitTest extends JUnit4CacheTestCase {
@@ -132,7 +131,8 @@ public class ClientServerInvalidAndDestroyedEntryDUnitTest extends JUnit4CacheTe
   }
 
   /* this method creates a server cache and is used by all of the tests in this class */
-  private SerializableCallableIF getCreateServerCallable(final String regionName, final boolean usePR) {
+  private SerializableCallableIF getCreateServerCallable(
+      final String regionName, final boolean usePR) {
     return new SerializableCallable("create server and entries") {
       public Object call() {
         Cache cache = getCache();
@@ -166,10 +166,11 @@ public class ClientServerInvalidAndDestroyedEntryDUnitTest extends JUnit4CacheTe
   }
 
   /**
-   * Bug #43407 - when a client does a get(k) and the entry is invalid in the server
-   * we want the client to end up with an entry that is invalid.
+   * Bug #43407 - when a client does a get(k) and the entry is invalid in the server we want the
+   * client to end up with an entry that is invalid.
    */
-  private void doTestClientGetsInvalidEntry(final String regionName, final boolean usePR, boolean useTX) throws Exception {
+  private void doTestClientGetsInvalidEntry(
+      final String regionName, final boolean usePR, boolean useTX) throws Exception {
     VM vm1 = Host.getHost(0).getVM(1);
     VM vm2 = Host.getHost(0).getVM(2);
 
@@ -185,19 +186,25 @@ public class ClientServerInvalidAndDestroyedEntryDUnitTest extends JUnit4CacheTe
     SerializableCallableIF createServer = getCreateServerCallable(regionName, usePR);
     int serverPort = (Integer) vm1.invoke(createServer);
     vm2.invoke(createServer);
-    vm1.invoke(new SerializableRunnable("populate server and create invalid entry") {
-      public void run() {
-        Region myRegion = getCache().getRegion(regionName);
-        for (int i = 1; i <= 20; i++) {
-          myRegion.put("Object" + i, "Value" + i);
-        }
-        myRegion.invalidate(key1);
-        myRegion.invalidate(key2);
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable("populate server and create invalid entry") {
+          public void run() {
+            Region myRegion = getCache().getRegion(regionName);
+            for (int i = 1; i <= 20; i++) {
+              myRegion.put("Object" + i, "Value" + i);
+            }
+            myRegion.invalidate(key1);
+            myRegion.invalidate(key2);
+          }
+        });
     org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("creating client cache");
-    ClientCache c = new ClientCacheFactory().addPoolServer("localhost", serverPort).set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel()).create();
-    Region myRegion = c.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create(regionName);
+    ClientCache c =
+        new ClientCacheFactory()
+            .addPoolServer("localhost", serverPort)
+            .set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel())
+            .create();
+    Region myRegion =
+        c.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create(regionName);
     ;
     if (useTX) {
       c.getCacheTransactionManager().begin();
@@ -207,7 +214,8 @@ public class ClientServerInvalidAndDestroyedEntryDUnitTest extends JUnit4CacheTe
     assertNotNull(myRegion.get(notAffectedKey));
 
     // get of an invalid entry should return null and create the entry in an invalid state
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("getting " + key1 + " - should reach this cache and be INVALID");
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("getting " + key1 + " - should reach this cache and be INVALID");
     assertNull(myRegion.get(key1));
     assertTrue(myRegion.containsKey(key1));
 
@@ -269,21 +277,24 @@ public class ClientServerInvalidAndDestroyedEntryDUnitTest extends JUnit4CacheTe
     listener.log = org.apache.geode.test.dunit.LogWriterUtils.getLogWriter();
     myRegion.getAttributesMutator().addCacheListener(listener);
     myRegion.get(key1);
-    assertEquals("expected no cache listener invocations", 0, listener.updateCount, listener.updateCount);
+    assertEquals(
+        "expected no cache listener invocations", 0, listener.updateCount, listener.updateCount);
 
     myRegion.localDestroy(notAffectedKey);
     myRegion.getAll(keys);
     assertTrue("expected to find " + notAffectedKey, myRegion.containsKey(notAffectedKey));
-    assertEquals("expected only one listener invocation for " + notAffectedKey, 1, listener.updateCount);
+    assertEquals(
+        "expected only one listener invocation for " + notAffectedKey, 1, listener.updateCount);
   }
 
   /**
-   * Similar to bug #43407 but not reported in a ticket, we want a client that
-   * does a get() on a destroyed entry to end up with a tombstone for that entry.
-   * This was already the case but there were no unit tests covering this for
-   * different server configurations and with/without transactions. 
+   * Similar to bug #43407 but not reported in a ticket, we want a client that does a get() on a
+   * destroyed entry to end up with a tombstone for that entry. This was already the case but there
+   * were no unit tests covering this for different server configurations and with/without
+   * transactions.
    */
-  private void doTestClientGetsTombstone(final String regionName, final boolean usePR, boolean useTX) throws Exception {
+  private void doTestClientGetsTombstone(
+      final String regionName, final boolean usePR, boolean useTX) throws Exception {
     VM vm1 = Host.getHost(0).getVM(1);
     VM vm2 = Host.getHost(0).getVM(2);
 
@@ -299,19 +310,25 @@ public class ClientServerInvalidAndDestroyedEntryDUnitTest extends JUnit4CacheTe
     SerializableCallableIF createServer = getCreateServerCallable(regionName, usePR);
     int serverPort = (Integer) vm1.invoke(createServer);
     vm2.invoke(createServer);
-    vm1.invoke(new SerializableRunnable("populate server and create invalid entry") {
-      public void run() {
-        Region myRegion = getCache().getRegion(regionName);
-        for (int i = 1; i <= 20; i++) {
-          myRegion.put("Object" + i, "Value" + i);
-        }
-        myRegion.destroy(key1);
-        myRegion.destroy(key2);
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable("populate server and create invalid entry") {
+          public void run() {
+            Region myRegion = getCache().getRegion(regionName);
+            for (int i = 1; i <= 20; i++) {
+              myRegion.put("Object" + i, "Value" + i);
+            }
+            myRegion.destroy(key1);
+            myRegion.destroy(key2);
+          }
+        });
     org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("creating client cache");
-    ClientCache c = new ClientCacheFactory().addPoolServer("localhost", serverPort).set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel()).create();
-    Region myRegion = c.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create(regionName);
+    ClientCache c =
+        new ClientCacheFactory()
+            .addPoolServer("localhost", serverPort)
+            .set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel())
+            .create();
+    Region myRegion =
+        c.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create(regionName);
     ;
     if (useTX) {
       c.getCacheTransactionManager().begin();
@@ -319,7 +336,8 @@ public class ClientServerInvalidAndDestroyedEntryDUnitTest extends JUnit4CacheTe
     // get of a valid entry should work
     assertNotNull(myRegion.get(notAffectedKey));
     // get of an invalid entry should return null and create the entry in an invalid state
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("getting " + key1 + " - should reach this cache and be a TOMBSTONE");
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("getting " + key1 + " - should reach this cache and be a TOMBSTONE");
     assertNull(myRegion.get(key1));
     assertFalse(myRegion.containsKey(key1));
     RegionEntry entry;
@@ -404,10 +422,10 @@ public class ClientServerInvalidAndDestroyedEntryDUnitTest extends JUnit4CacheTe
       assertNotNull(entry); // it should be there
       assertTrue(entry.isTombstone()); // it should be a destroyed entry with Token.TOMBSTONE
     }
-
   }
 
-  private void doTestRegisterInterestRemovesOldEntry(final String regionName, final boolean usePR) throws Exception {
+  private void doTestRegisterInterestRemovesOldEntry(final String regionName, final boolean usePR)
+      throws Exception {
     VM vm1 = Host.getHost(0).getVM(1);
     VM vm2 = Host.getHost(0).getVM(2);
 
@@ -421,18 +439,25 @@ public class ClientServerInvalidAndDestroyedEntryDUnitTest extends JUnit4CacheTe
     SerializableCallableIF createServer = getCreateServerCallable(regionName, usePR);
     int serverPort = (Integer) vm1.invoke(createServer);
     vm2.invoke(createServer);
-    vm1.invoke(new SerializableRunnable("populate server") {
-      public void run() {
-        Region myRegion = getCache().getRegion(regionName);
-        for (int i = 1; i <= 20; i++) {
-          myRegion.put("Object" + i, "Value" + i);
-        }
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable("populate server") {
+          public void run() {
+            Region myRegion = getCache().getRegion(regionName);
+            for (int i = 1; i <= 20; i++) {
+              myRegion.put("Object" + i, "Value" + i);
+            }
+          }
+        });
     org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("creating client cache");
-    ClientCache c = new ClientCacheFactory().addPoolServer("localhost", serverPort).set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel()).setPoolSubscriptionEnabled(true).create();
+    ClientCache c =
+        new ClientCacheFactory()
+            .addPoolServer("localhost", serverPort)
+            .set(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel())
+            .setPoolSubscriptionEnabled(true)
+            .create();
 
-    Region myRegion = c.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create(regionName);
+    Region myRegion =
+        c.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY).create(regionName);
     ;
 
     myRegion.registerInterestRegex(interestPattern);
@@ -443,36 +468,49 @@ public class ClientServerInvalidAndDestroyedEntryDUnitTest extends JUnit4CacheTe
     // remove the entry for key1 on the servers and then simulate interest recovery
     // to show that the entry for key1 is no longer there in the client when recovery
     // finishes
-    SerializableRunnable destroyKey10 = new SerializableRunnable("locally destroy " + key10 + " in the servers") {
-      public void run() {
-        Region myRegion = getCache().getRegion(regionName);
-        EntryEventImpl event = ((LocalRegion) myRegion).generateEvictDestroyEvent(key10);
-        event.setOperation(Operation.LOCAL_DESTROY);
-        if (usePR) {
-          BucketRegion bucket = ((PartitionedRegion) myRegion).getBucketRegion(key10);
-          if (bucket != null) {
-            event.setRegion(bucket);
-            org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("performing local destroy in " + bucket + " ccEnabled=" + bucket.concurrencyChecksEnabled + " rvv=" + bucket.getVersionVector());
-            bucket.concurrencyChecksEnabled = false; // turn off cc so entry is removed
-            bucket.mapDestroy(event, false, false, null);
-            bucket.concurrencyChecksEnabled = true;
+    SerializableRunnable destroyKey10 =
+        new SerializableRunnable("locally destroy " + key10 + " in the servers") {
+          public void run() {
+            Region myRegion = getCache().getRegion(regionName);
+            EntryEventImpl event = ((LocalRegion) myRegion).generateEvictDestroyEvent(key10);
+            event.setOperation(Operation.LOCAL_DESTROY);
+            if (usePR) {
+              BucketRegion bucket = ((PartitionedRegion) myRegion).getBucketRegion(key10);
+              if (bucket != null) {
+                event.setRegion(bucket);
+                org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+                    .info(
+                        "performing local destroy in "
+                            + bucket
+                            + " ccEnabled="
+                            + bucket.concurrencyChecksEnabled
+                            + " rvv="
+                            + bucket.getVersionVector());
+                bucket.concurrencyChecksEnabled = false; // turn off cc so entry is removed
+                bucket.mapDestroy(event, false, false, null);
+                bucket.concurrencyChecksEnabled = true;
+              }
+            } else {
+              ((LocalRegion) myRegion).concurrencyChecksEnabled =
+                  false; // turn off cc so entry is removed
+              ((LocalRegion) myRegion).mapDestroy(event, false, false, null);
+              ((LocalRegion) myRegion).concurrencyChecksEnabled = true;
+            }
           }
-        } else {
-          ((LocalRegion) myRegion).concurrencyChecksEnabled = false; // turn off cc so entry is removed
-          ((LocalRegion) myRegion).mapDestroy(event, false, false, null);
-          ((LocalRegion) myRegion).concurrencyChecksEnabled = true;
-        }
-      }
-    };
+        };
 
     vm1.invoke(destroyKey10);
     vm2.invoke(destroyKey10);
 
     myRegion.getCache().getLogger().info("clearing keys of interest");
-    ((LocalRegion) myRegion).clearKeysOfInterest(interestPattern, InterestType.REGULAR_EXPRESSION, InterestResultPolicy.KEYS_VALUES);
+    ((LocalRegion) myRegion)
+        .clearKeysOfInterest(
+            interestPattern, InterestType.REGULAR_EXPRESSION, InterestResultPolicy.KEYS_VALUES);
     myRegion.getCache().getLogger().info("done clearing keys of interest");
 
-    assertTrue("expected region to be empty but it has " + myRegion.size() + " entries", myRegion.size() == 0);
+    assertTrue(
+        "expected region to be empty but it has " + myRegion.size() + " entries",
+        myRegion.size() == 0);
 
     RegionEntry entry;
     entry = ((LocalRegion) myRegion).getRegionEntry(key10);
@@ -503,5 +541,4 @@ public class ClientServerInvalidAndDestroyedEntryDUnitTest extends JUnit4CacheTe
       this.updateCount++;
     }
   }
-
 }

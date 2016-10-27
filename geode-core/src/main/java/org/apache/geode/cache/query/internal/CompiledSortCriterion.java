@@ -34,11 +34,7 @@ import org.apache.geode.cache.query.internal.parse.OQLLexerTokenTypes;
 import org.apache.geode.cache.query.internal.types.TypeUtils;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * This class represents a compiled form of sort criterian present in order by
- * clause
- * 
- */
+/** This class represents a compiled form of sort criterian present in order by clause */
 public class CompiledSortCriterion extends AbstractCompiledValue {
   // Asif: criterion true indicates descending order
   private boolean criterion = false;
@@ -52,20 +48,17 @@ public class CompiledSortCriterion extends AbstractCompiledValue {
     return Collections.singletonList(this.originalCorrectedExpression);
   }
 
-  /**
-   * @return int
-   */
+  /** @return int */
   public int getType() {
     return SORT_CRITERION;
   }
 
   /**
    * evaluates sort criteria in order by clause
-   * 
+   *
    * @param context
    * @return Object
    */
-
   public Object evaluate(Object data, ExecutionContext context) {
     Object value = null;
     if (this.columnIndex > 0) {
@@ -83,15 +76,13 @@ public class CompiledSortCriterion extends AbstractCompiledValue {
     try {
       return this.expr.evaluate(context);
     } catch (Exception e) {
-      throw new CacheException(e) {
-      };
+      throw new CacheException(e) {};
     }
-
   }
 
   /**
    * concstructor
-   * 
+   *
    * @param criterion
    * @param cv
    */
@@ -119,7 +110,9 @@ public class CompiledSortCriterion extends AbstractCompiledValue {
    */
 
   @Override
-  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
 
     return this.expr.evaluate(context);
   }
@@ -134,7 +127,8 @@ public class CompiledSortCriterion extends AbstractCompiledValue {
     this.columnIndex = columnIndex;
   }
 
-  private CompiledValue getReconstructedExpression(String projAttribStr, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  private CompiledValue getReconstructedExpression(String projAttribStr, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     List<CompiledValue> expressions = PathUtils.collectCompiledValuesInThePath(expr, context);
     StringBuffer tempBuff = new StringBuffer();
     ListIterator<CompiledValue> listIter = expressions.listIterator(expressions.size());
@@ -160,18 +154,18 @@ public class CompiledSortCriterion extends AbstractCompiledValue {
       prevCV = cv;
 
       switch (cv.getType()) {
-      case CompiledOperation.METHOD_INV:
-        reconstruct.add(0, ((CompiledOperation) cv).getArguments());
-        reconstruct.add(0, ((CompiledOperation) cv).getMethodName());
-        break;
-      case CompiledPath.PATH:
-        reconstruct.add(0, ((CompiledPath) cv).getTailID());
-        break;
-      case CompiledIndexOperation.TOK_LBRACK:
-        reconstruct.add(0, ((CompiledIndexOperation) cv).getExpression());
-        break;
-      default:
-        throw new IllegalStateException("Unexpected CompiledValue in order by clause");
+        case CompiledOperation.METHOD_INV:
+          reconstruct.add(0, ((CompiledOperation) cv).getArguments());
+          reconstruct.add(0, ((CompiledOperation) cv).getMethodName());
+          break;
+        case CompiledPath.PATH:
+          reconstruct.add(0, ((CompiledPath) cv).getTailID());
+          break;
+        case CompiledIndexOperation.TOK_LBRACK:
+          reconstruct.add(0, ((CompiledIndexOperation) cv).getExpression());
+          break;
+        default:
+          throw new IllegalStateException("Unexpected CompiledValue in order by clause");
       }
       reconstruct.add(0, Integer.valueOf(prevCV.getType()));
       cv = expressions.get(++index);
@@ -183,23 +177,24 @@ public class CompiledSortCriterion extends AbstractCompiledValue {
     while (iter.hasNext()) {
       int type = ((Integer) iter.next()).intValue();
       switch (type) {
-      case CompiledValue.PATH:
-        currentValue = new CompiledPath(currentValue, (String) iter.next());
-        break;
-      case OQLLexerTokenTypes.METHOD_INV:
-        currentValue = new CompiledOperation(currentValue, (String) iter.next(), (List) iter.next());
-        break;
-      case OQLLexerTokenTypes.TOK_LBRACK:
-        currentValue = new CompiledIndexOperation(currentValue, (CompiledValue) iter.next());
-        break;
+        case CompiledValue.PATH:
+          currentValue = new CompiledPath(currentValue, (String) iter.next());
+          break;
+        case OQLLexerTokenTypes.METHOD_INV:
+          currentValue =
+              new CompiledOperation(currentValue, (String) iter.next(), (List) iter.next());
+          break;
+        case OQLLexerTokenTypes.TOK_LBRACK:
+          currentValue = new CompiledIndexOperation(currentValue, (CompiledValue) iter.next());
+          break;
       }
-
     }
 
     return currentValue;
   }
 
-  boolean mapExpressionToProjectionField(List projAttrs, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  boolean mapExpressionToProjectionField(List projAttrs, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     boolean mappedColumn = false;
     this.originalCorrectedExpression = expr;
     if (projAttrs != null) {
@@ -213,10 +208,8 @@ public class CompiledSortCriterion extends AbstractCompiledValue {
             this.substituteExpressionWithProjectionField(i);
             this.originalCorrectedExpression = (CompiledValue) prj[1];
             mappedColumn = true;
-
           }
         }
-
       }
       if (!mappedColumn) {
         // the order by expr is not an alias check for path
@@ -271,19 +264,18 @@ public class CompiledSortCriterion extends AbstractCompiledValue {
       }
     }
     return mappedColumn;
-
   }
 
   static class ProjectionField extends AbstractCompiledValue {
 
     private static ProjectionField singleton = new ProjectionField();
 
-    private ProjectionField() {
-    }
+    private ProjectionField() {}
 
-    public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+    public Object evaluate(ExecutionContext context)
+        throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+            QueryInvocationTargetException {
       return context.getCurrentProjectionField();
-
     }
 
     @Override
@@ -294,7 +286,5 @@ public class CompiledSortCriterion extends AbstractCompiledValue {
     public static ProjectionField getProjectionField() {
       return singleton;
     }
-
   }
-
 }

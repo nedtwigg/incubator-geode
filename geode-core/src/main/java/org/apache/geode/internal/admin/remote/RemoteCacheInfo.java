@@ -34,9 +34,7 @@ import java.util.*;
 
 //import org.apache.geode.internal.*;
 
-/**
- * This class is an implementation of the {@link CacheInfo} interface.
- */
+/** This class is an implementation of the {@link CacheInfo} interface. */
 public class RemoteCacheInfo implements CacheInfo, DataSerializable {
   private static final long serialVersionUID = 4251279100323876440L;
 
@@ -106,11 +104,8 @@ public class RemoteCacheInfo implements CacheInfo, DataSerializable {
     }
   }
 
-  /**
-   * For use only by DataExternalizable mechanism
-   */
-  public RemoteCacheInfo() {
-  }
+  /** For use only by DataExternalizable mechanism */
+  public RemoteCacheInfo() {}
 
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeString(this.name, out);
@@ -204,6 +199,7 @@ public class RemoteCacheInfo implements CacheInfo, DataSerializable {
 
   @Override
   public String toString() {
-    return LocalizedStrings.RemoteCacheInfo_INFORMATION_ABOUT_THE_CACHE_0_WITH_1_BRIDGE_SERVERS.toLocalizedString(new Object[] { this.name, Integer.valueOf(this.bridgeServerIds.length) });
+    return LocalizedStrings.RemoteCacheInfo_INFORMATION_ABOUT_THE_CACHE_0_WITH_1_BRIDGE_SERVERS
+        .toLocalizedString(new Object[] {this.name, Integer.valueOf(this.bridgeServerIds.length)});
   }
 }

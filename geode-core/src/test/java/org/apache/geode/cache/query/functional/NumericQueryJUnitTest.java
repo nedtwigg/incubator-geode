@@ -76,7 +76,13 @@ public class NumericQueryJUnitTest {
   }
 
   private String[] getQueriesOnRegion(String regionName, String field, String op) {
-    return new String[] { "select * from /" + regionName + " r where " + field + op + " 50", "select * from /" + regionName + " r where " + field + op + " 50.0", "select * from /" + regionName + " r where " + field + op + " 50.0f", "select * from /" + regionName + " r where " + field + op + " 50.0d", "select * from /" + regionName + " r where " + field + op + " 50L", };
+    return new String[] {
+      "select * from /" + regionName + " r where " + field + op + " 50",
+      "select * from /" + regionName + " r where " + field + op + " 50.0",
+      "select * from /" + regionName + " r where " + field + op + " 50.0f",
+      "select * from /" + regionName + " r where " + field + op + " 50.0d",
+      "select * from /" + regionName + " r where " + field + op + " 50L",
+    };
   }
 
   //This test is to determine if using a map with an in clause will correctly
@@ -100,41 +106,66 @@ public class NumericQueryJUnitTest {
 
     QueryService qs = CacheUtils.getQueryService();
     //big decimal test
-    SelectResults selectResults = helpTestFunctionalIndexForQuery("select * from /testRegion tr where tr['bigdecimal'] in set (1234.5678)", "tr['bigdecimal']", "/testRegion tr");
+    SelectResults selectResults =
+        helpTestFunctionalIndexForQuery(
+            "select * from /testRegion tr where tr['bigdecimal'] in set (1234.5678)",
+            "tr['bigdecimal']",
+            "/testRegion tr");
     assertEquals(1, selectResults.size());
 
     //integer test
-    selectResults = helpTestFunctionalIndexForQuery("select * from /testRegion tr where tr['integer'] in set (777.0)", "tr['integer']", "/testRegion tr");
+    selectResults =
+        helpTestFunctionalIndexForQuery(
+            "select * from /testRegion tr where tr['integer'] in set (777.0)",
+            "tr['integer']",
+            "/testRegion tr");
     assertEquals(1, selectResults.size());
 
     //long test
-    selectResults = helpTestFunctionalIndexForQuery("select * from /testRegion tr where tr['long'] in set (1000.0)", "tr['long']", "/testRegion tr");
+    selectResults =
+        helpTestFunctionalIndexForQuery(
+            "select * from /testRegion tr where tr['long'] in set (1000.0)",
+            "tr['long']",
+            "/testRegion tr");
     assertEquals(1, selectResults.size());
 
     //big integer test
-    selectResults = helpTestFunctionalIndexForQuery("select * from /testRegion tr where tr['biginteger'] in set (1000.0)", "tr['biginteger']", "/testRegion tr");
+    selectResults =
+        helpTestFunctionalIndexForQuery(
+            "select * from /testRegion tr where tr['biginteger'] in set (1000.0)",
+            "tr['biginteger']",
+            "/testRegion tr");
     assertEquals(1, selectResults.size());
 
     //double test
-    selectResults = helpTestFunctionalIndexForQuery("select * from /testRegion tr where tr['double'] in set (1000)", "tr['double']", "/testRegion tr");
+    selectResults =
+        helpTestFunctionalIndexForQuery(
+            "select * from /testRegion tr where tr['double'] in set (1000)",
+            "tr['double']",
+            "/testRegion tr");
     assertEquals(1, selectResults.size());
 
     //short test
-    selectResults = helpTestFunctionalIndexForQuery("select * from /testRegion tr where tr['short'] in set (1000.0)", "tr['short']", "/testRegion tr");
+    selectResults =
+        helpTestFunctionalIndexForQuery(
+            "select * from /testRegion tr where tr['short'] in set (1000.0)",
+            "tr['short']",
+            "/testRegion tr");
     assertEquals(1, selectResults.size());
 
     //float test
-    selectResults = helpTestFunctionalIndexForQuery("select * from /testRegion tr where tr['float'] in set (1000)", "tr['float']", "/testRegion tr");
+    selectResults =
+        helpTestFunctionalIndexForQuery(
+            "select * from /testRegion tr where tr['float'] in set (1000)",
+            "tr['float']",
+            "/testRegion tr");
     assertEquals(1, selectResults.size());
-
   }
 
   //All queries are compared against themselves as well as the non indexed results
 
-  /**Queries compared against a stored Float**/
-  /**
-   * Test on Local Region data against an indexed Float object and non indexed Float Object
-   */
+  /** Queries compared against a stored Float* */
+  /** Test on Local Region data against an indexed Float object and non indexed Float Object */
   @Test
   public void testQueriesOnLocalRegionWithIndexOnFloat() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -150,9 +181,7 @@ public class NumericQueryJUnitTest {
     executeQueryTest(getQueriesOnRegion(testRegionName, "r.max1", LTE), "r.max1", regionPath);
   }
 
-  /**
-   * Test on Replicated Region data against an indexed Float object and non indexed Float Object
-   */
+  /** Test on Replicated Region data against an indexed Float object and non indexed Float Object */
   @Test
   public void testQueriesOnReplicatedRegion() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -186,10 +215,8 @@ public class NumericQueryJUnitTest {
     executeQueryTest(getQueriesOnRegion(testRegionName, "r.max1", LTE), "r.max1", regionPath);
   }
 
-  /**Queries compared against a stored Int**/
-  /** 
-   * Test on Local Region data against an indexed Int object and non indexed Int Object
-   */
+  /** Queries compared against a stored Int* */
+  /** Test on Local Region data against an indexed Int object and non indexed Int Object */
   @Test
   public void testQueriesOnLocalRegionWithIndexOnInt() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -205,9 +232,7 @@ public class NumericQueryJUnitTest {
     executeQueryTest(getQueriesOnRegion(testRegionName, "r.id", LTE), "r.id", regionPath);
   }
 
-  /**
-   * Test on Replicated Region data against an indexed Int object and non indexed Int Object
-   */
+  /** Test on Replicated Region data against an indexed Int object and non indexed Int Object */
   @Test
   public void testQueriesOnReplicatedRegionWithIndexOnInt() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -223,9 +248,7 @@ public class NumericQueryJUnitTest {
     executeQueryTest(getQueriesOnRegion(testRegionName, "r.id", LTE), "r.id", regionPath);
   }
 
-  /**
-   * Test on Partitioned Region data against an indexed Int object and non indexed Int Object
-   */
+  /** Test on Partitioned Region data against an indexed Int object and non indexed Int Object */
   @Test
   public void testQueriesOnPartitionedRegionWithIndexOnInt() throws Exception {
     Cache cache = CacheUtils.getCache();
@@ -241,7 +264,7 @@ public class NumericQueryJUnitTest {
     executeQueryTest(getQueriesOnRegion(testRegionName, "r.id", LTE), "r.id", regionPath);
   }
 
-  /******** Region Creation Helper Methods *********/
+  /** ****** Region Creation Helper Methods ******** */
   private Region createLocalRegion(String regionName) throws ParseException {
     Cache cache = CacheUtils.getCache();
     AttributesFactory attributesFactory = new AttributesFactory();
@@ -280,9 +303,9 @@ public class NumericQueryJUnitTest {
     region.put(id + numElem, obj);
   }
 
-  /**** Query Execution Helpers ****/
-
-  private void executeQueryTest(String[] queries, String indexedExpression, String regionPath) throws Exception {
+  /** ** Query Execution Helpers *** */
+  private void executeQueryTest(String[] queries, String indexedExpression, String regionPath)
+      throws Exception {
     ArrayList list = new ArrayList(queries.length);
     for (String query : queries) {
       helpTestFunctionalIndexForQuery(query, indexedExpression, regionPath);
@@ -294,7 +317,8 @@ public class NumericQueryJUnitTest {
    * @param query
    * @throws Exception
    */
-  private SelectResults helpTestFunctionalIndexForQuery(String query, String indexedExpression, String regionPath) throws Exception {
+  private SelectResults helpTestFunctionalIndexForQuery(
+      String query, String indexedExpression, String regionPath) throws Exception {
     MyQueryObserverAdapter observer = new MyQueryObserverAdapter();
     QueryObserverHolder.setInstance(observer);
 

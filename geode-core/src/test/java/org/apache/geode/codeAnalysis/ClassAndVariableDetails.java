@@ -27,10 +27,8 @@ import org.apache.geode.codeAnalysis.decode.CompiledClass;
 import org.apache.geode.codeAnalysis.decode.CompiledField;
 
 /**
- * A class used to store the names of dataserializable classes and the sizes
- * of their toData/fromData methods.
- * 
- *
+ * A class used to store the names of dataserializable classes and the sizes of their
+ * toData/fromData methods.
  */
 public class ClassAndVariableDetails implements Comparable {
   public String className;
@@ -61,9 +59,7 @@ public class ClassAndVariableDetails implements Comparable {
     }
   }
 
-  /**
-   * returns a string that can be parsed by ClassAndVariableDetails(String)
-   */
+  /** returns a string that can be parsed by ClassAndVariableDetails(String) */
   public String valuesAsString() {
     StringBuilder sb = new StringBuilder(80);
     sb.append(className);
@@ -74,8 +70,8 @@ public class ClassAndVariableDetails implements Comparable {
   }
 
   /**
-   * convert a ClassAndMethods into a string that can then be used to
-   * instantiate a ClassAndVariableDetails
+   * convert a ClassAndMethods into a string that can then be used to instantiate a
+   * ClassAndVariableDetails
    */
   public static String convertForStoring(ClassAndVariables cam) {
     StringBuilder sb = new StringBuilder(150);

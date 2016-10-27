@@ -36,7 +36,7 @@ import org.apache.geode.management.internal.beans.GatewaySenderMBean;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class GatewaySenderMBeanSecurityTest {
 
   private static int jmxManagerPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
@@ -48,7 +48,9 @@ public class GatewaySenderMBeanSecurityTest {
   private GatewaySenderMXBean bean;
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
+  public static JsonAuthorizationCacheStartRule serverRule =
+      new JsonAuthorizationCacheStartRule(
+          jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
 
   @Rule
   public MBeanServerConnectionRule connectionRule = new MBeanServerConnectionRule(jmxManagerPort);
@@ -91,18 +93,25 @@ public class GatewaySenderMBeanSecurityTest {
   @Test
   @JMXConnectionConfiguration(user = "stranger", password = "1234567")
   public void testNoAccess() throws Exception {
-    assertThatThrownBy(() -> bean.getAlertThreshold()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> bean.getAverageDistributionTimePerBatch()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> bean.getBatchSize()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> bean.getMaximumQueueMemory()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> bean.getOrderPolicy()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> bean.isBatchConflationEnabled()).hasMessageContaining(TestCommand.clusterRead.toString());
-    assertThatThrownBy(() -> bean.isManualStart()).hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.getAlertThreshold())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.getAverageDistributionTimePerBatch())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.getBatchSize())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.getMaximumQueueMemory())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.getOrderPolicy())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.isBatchConflationEnabled())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
+    assertThatThrownBy(() -> bean.isManualStart())
+        .hasMessageContaining(TestCommand.clusterRead.toString());
     assertThatThrownBy(() -> bean.pause()).hasMessageContaining(TestCommand.dataManage.toString());
-    assertThatThrownBy(() -> bean.rebalance()).hasMessageContaining(TestCommand.dataManage.toString());
+    assertThatThrownBy(() -> bean.rebalance())
+        .hasMessageContaining(TestCommand.dataManage.toString());
     assertThatThrownBy(() -> bean.resume()).hasMessageContaining(TestCommand.dataManage.toString());
     assertThatThrownBy(() -> bean.start()).hasMessageContaining(TestCommand.dataManage.toString());
     assertThatThrownBy(() -> bean.stop()).hasMessageContaining(TestCommand.dataManage.toString());
   }
-
 }

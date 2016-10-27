@@ -30,12 +30,11 @@ public class SInterExecutor extends SetOpExecutor {
   }
 
   @Override
-  protected Set<ByteArrayWrapper> setOp(Set<ByteArrayWrapper> firstSet, List<Set<ByteArrayWrapper>> setList) {
-    if (firstSet == null)
-      return null;
+  protected Set<ByteArrayWrapper> setOp(
+      Set<ByteArrayWrapper> firstSet, List<Set<ByteArrayWrapper>> setList) {
+    if (firstSet == null) return null;
     for (Set<ByteArrayWrapper> set : setList) {
-      if (set == null || set.isEmpty())
-        return null;
+      if (set == null || set.isEmpty()) return null;
       firstSet.retainAll(set);
     }
     return firstSet;
@@ -45,5 +44,4 @@ public class SInterExecutor extends SetOpExecutor {
   public String getArgsError() {
     return ArityDef.SINTER;
   }
-
 }

@@ -64,22 +64,20 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-/**
- *
- */
+/** */
 @Category(DistributedTest.class)
 public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
 
   /**
-   * The number of connections that we can be off by in the balancing tests
-   * We need this little fudge factor, because the locator can receive an update
-   * from the bridge server after it has made incremented its counter for a client
-   * connection, but the client hasn't connected yet. This wipes out the estimation
-   * on the locator.  This means that we may be slighly off in our balance.
-   * <p>
-   * TODO grid fix this hole in the locator.
+   * The number of connections that we can be off by in the balancing tests We need this little
+   * fudge factor, because the locator can receive an update from the bridge server after it has
+   * made incremented its counter for a client connection, but the client hasn't connected yet. This
+   * wipes out the estimation on the locator. This means that we may be slighly off in our balance.
+   *
+   * <p>TODO grid fix this hole in the locator.
    */
   private static final int ALLOWABLE_ERROR_IN_COUNT = 1;
+
   protected static final long MAX_WAIT = 60000;
 
   public LocatorLoadBalancingDUnitTest() {
@@ -87,8 +85,8 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
   }
 
   /**
-   * Test the locator discovers a bridge server and is initialized with
-   * the correct load for that bridge server.
+   * Test the locator discovers a bridge server and is initialized with the correct load for that
+   * bridge server.
    */
   @Test
   public void testDiscovery() {
@@ -103,26 +101,32 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
 
     String locators = getLocatorString(host, locatorPort);
 
-    int serverPort = vm1.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "a", "b" }, locators));
+    int serverPort =
+        vm1.invoke(
+            "Start BridgeServer", () -> startBridgeServer(new String[] {"a", "b"}, locators));
 
     ServerLoad expectedLoad = new ServerLoad(0f, 1 / 800.0f, 0f, 1f);
-    ServerLocation expectedLocation = new ServerLocation(NetworkUtils.getServerHostName(vm0.getHost()), serverPort);
+    ServerLocation expectedLocation =
+        new ServerLocation(NetworkUtils.getServerHostName(vm0.getHost()), serverPort);
     Map expected = new HashMap();
     expected.put(expectedLocation, expectedLoad);
 
     vm0.invoke("check Locator Load", () -> checkLocatorLoad(expected));
 
-    int serverPort2 = vm2.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "a", "b" }, locators));
+    int serverPort2 =
+        vm2.invoke(
+            "Start BridgeServer", () -> startBridgeServer(new String[] {"a", "b"}, locators));
 
-    ServerLocation expectedLocation2 = new ServerLocation(NetworkUtils.getServerHostName(vm0.getHost()), serverPort2);
+    ServerLocation expectedLocation2 =
+        new ServerLocation(NetworkUtils.getServerHostName(vm0.getHost()), serverPort2);
 
     expected.put(expectedLocation2, expectedLoad);
     vm0.invoke("check Locator Load", () -> checkLocatorLoad(expected));
   }
 
   /**
-   * Test that the locator will properly estimate the load for servers when
-   * it receives connection requests.
+   * Test that the locator will properly estimate the load for servers when it receives connection
+   * requests.
    */
   @Test
   public void testEstimation() throws IOException, ClassNotFoundException {
@@ -135,29 +139,63 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
     vm0.invoke("Start Locator", () -> startLocator(hostName, locatorPort, ""));
     String locators = getLocatorString(host, locatorPort);
 
-    int serverPort = vm1.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "a", "b" }, locators));
+    int serverPort =
+        vm1.invoke(
+            "Start BridgeServer", () -> startBridgeServer(new String[] {"a", "b"}, locators));
 
     ServerLoad expectedLoad = new ServerLoad(2 / 800f, 1 / 800.0f, 0f, 1f);
-    ServerLocation expectedLocation = new ServerLocation(NetworkUtils.getServerHostName(host), serverPort);
+    ServerLocation expectedLocation =
+        new ServerLocation(NetworkUtils.getServerHostName(host), serverPort);
     Map expected = new HashMap();
     expected.put(expectedLocation, expectedLoad);
 
     SocketCreatorFactory.setDistributionConfig(new DistributionConfigImpl(new Properties()));
     ClientConnectionResponse response;
-    response = (ClientConnectionResponse) new TcpClient().requestToServer(InetAddress.getByName(NetworkUtils.getServerHostName(host)), locatorPort, new ClientConnectionRequest(Collections.EMPTY_SET, null), 10000);
+    response =
+        (ClientConnectionResponse)
+            new TcpClient()
+                .requestToServer(
+                    InetAddress.getByName(NetworkUtils.getServerHostName(host)),
+                    locatorPort,
+                    new ClientConnectionRequest(Collections.EMPTY_SET, null),
+                    10000);
     Assert.assertEquals(expectedLocation, response.getServer());
 
-    response = (ClientConnectionResponse) new TcpClient().requestToServer(InetAddress.getByName(NetworkUtils.getServerHostName(host)), locatorPort, new ClientConnectionRequest(Collections.EMPTY_SET, null), 10000, true);
+    response =
+        (ClientConnectionResponse)
+            new TcpClient()
+                .requestToServer(
+                    InetAddress.getByName(NetworkUtils.getServerHostName(host)),
+                    locatorPort,
+                    new ClientConnectionRequest(Collections.EMPTY_SET, null),
+                    10000,
+                    true);
     Assert.assertEquals(expectedLocation, response.getServer());
 
     //we expect that the connection load load will be 2 * the loadPerConnection
     vm0.invoke("check Locator Load", () -> checkLocatorLoad(expected));
 
     QueueConnectionResponse response2;
-    response2 = (QueueConnectionResponse) new TcpClient().requestToServer(InetAddress.getByName(NetworkUtils.getServerHostName(host)), locatorPort, new QueueConnectionRequest(null, 2, Collections.EMPTY_SET, null, false), 10000, true);
+    response2 =
+        (QueueConnectionResponse)
+            new TcpClient()
+                .requestToServer(
+                    InetAddress.getByName(NetworkUtils.getServerHostName(host)),
+                    locatorPort,
+                    new QueueConnectionRequest(null, 2, Collections.EMPTY_SET, null, false),
+                    10000,
+                    true);
     Assert.assertEquals(Collections.singletonList(expectedLocation), response2.getServers());
 
-    response2 = (QueueConnectionResponse) new TcpClient().requestToServer(InetAddress.getByName(NetworkUtils.getServerHostName(host)), locatorPort, new QueueConnectionRequest(null, 5, Collections.EMPTY_SET, null, false), 10000, true);
+    response2 =
+        (QueueConnectionResponse)
+            new TcpClient()
+                .requestToServer(
+                    InetAddress.getByName(NetworkUtils.getServerHostName(host)),
+                    locatorPort,
+                    new QueueConnectionRequest(null, 5, Collections.EMPTY_SET, null, false),
+                    10000,
+                    true);
 
     Assert.assertEquals(Collections.singletonList(expectedLocation), response2.getServers());
 
@@ -167,9 +205,8 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
   }
 
   /**
-   * Test to make sure the bridge servers communicate
-   * their updated load to the controller when the load
-   * on the bridge server changes.
+   * Test to make sure the bridge servers communicate their updated load to the controller when the
+   * load on the bridge server changes.
    *
    * @throws Exception
    */
@@ -185,23 +222,28 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
     vm0.invoke("Start Locator", () -> startLocator(hostName, locatorPort, ""));
     String locators = getLocatorString(host, locatorPort);
 
-    final int serverPort = vm1.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "a", "b" }, locators));
+    final int serverPort =
+        vm1.invoke(
+            "Start BridgeServer", () -> startBridgeServer(new String[] {"a", "b"}, locators));
 
     //We expect 0 load
     Map expected = new HashMap();
-    ServerLocation expectedLocation = new ServerLocation(NetworkUtils.getServerHostName(host), serverPort);
+    ServerLocation expectedLocation =
+        new ServerLocation(NetworkUtils.getServerHostName(host), serverPort);
     ServerLoad expectedLoad = new ServerLoad(0f, 1 / 800.0f, 0f, 1f);
     expected.put(expectedLocation, expectedLoad);
     vm0.invoke("check Locator Load", () -> checkLocatorLoad(expected));
-    vm2.invoke("StartBridgeClient", () -> {
-      PoolFactoryImpl pf = new PoolFactoryImpl(null);
-      pf.addServer(NetworkUtils.getServerHostName(host), serverPort);
-      pf.setMinConnections(8);
-      pf.setMaxConnections(8);
-      pf.setSubscriptionEnabled(true);
-      startBridgeClient(pf.getPoolAttributes(), new String[] { REGION_NAME });
-      return null;
-    });
+    vm2.invoke(
+        "StartBridgeClient",
+        () -> {
+          PoolFactoryImpl pf = new PoolFactoryImpl(null);
+          pf.addServer(NetworkUtils.getServerHostName(host), serverPort);
+          pf.setMinConnections(8);
+          pf.setMaxConnections(8);
+          pf.setSubscriptionEnabled(true);
+          startBridgeClient(pf.getPoolAttributes(), new String[] {REGION_NAME});
+          return null;
+        });
 
     //We expect 8 client to server connections. The queue requires
     //an additional client to server connection, but that shouldn't show up here.
@@ -219,8 +261,7 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
   }
 
   /**
-   * Test to make sure that the locator
-   * balancing load between two servers.
+   * Test to make sure that the locator balancing load between two servers.
    *
    * @throws Exception
    */
@@ -237,19 +278,21 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
     vm0.invoke("Start Locator", () -> startLocator(hostName, locatorPort, ""));
     String locators = getLocatorString(host, locatorPort);
 
-    vm1.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "a", "b" }, locators));
-    vm2.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "a", "b" }, locators));
+    vm1.invoke("Start BridgeServer", () -> startBridgeServer(new String[] {"a", "b"}, locators));
+    vm2.invoke("Start BridgeServer", () -> startBridgeServer(new String[] {"a", "b"}, locators));
 
-    vm3.invoke("StartBridgeClient", () -> {
-      PoolFactoryImpl pf = new PoolFactoryImpl(null);
-      pf.addLocator(NetworkUtils.getServerHostName(host), locatorPort);
-      pf.setMinConnections(80);
-      pf.setMaxConnections(80);
-      pf.setSubscriptionEnabled(false);
-      pf.setIdleTimeout(-1);
-      startBridgeClient(pf.getPoolAttributes(), new String[] { REGION_NAME });
-      return null;
-    });
+    vm3.invoke(
+        "StartBridgeClient",
+        () -> {
+          PoolFactoryImpl pf = new PoolFactoryImpl(null);
+          pf.addLocator(NetworkUtils.getServerHostName(host), locatorPort);
+          pf.setMinConnections(80);
+          pf.setMaxConnections(80);
+          pf.setSubscriptionEnabled(false);
+          pf.setIdleTimeout(-1);
+          startBridgeClient(pf.getPoolAttributes(), new String[] {REGION_NAME});
+          return null;
+        });
 
     vm3.invoke("waitForPrefilledConnections", () -> waitForPrefilledConnections(80));
 
@@ -260,30 +303,38 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
   private void checkConnectionCount(final int count) {
     Cache cache = (Cache) remoteObjects.get(CACHE_KEY);
     final CacheServerImpl server = (CacheServerImpl) cache.getCacheServers().get(0);
-    Awaitility.await().pollDelay(100, TimeUnit.MILLISECONDS).pollInterval(100, TimeUnit.MILLISECONDS).timeout(300, TimeUnit.SECONDS).until(() -> {
-      int sz = server.getAcceptor().getStats().getCurrentClientConnections();
-      if (Math.abs(sz - count) <= ALLOWABLE_ERROR_IN_COUNT) {
-        return true;
-      }
-      System.out.println("Found " + sz + " connections, expected " + count);
-      return false;
-    });
+    Awaitility.await()
+        .pollDelay(100, TimeUnit.MILLISECONDS)
+        .pollInterval(100, TimeUnit.MILLISECONDS)
+        .timeout(300, TimeUnit.SECONDS)
+        .until(
+            () -> {
+              int sz = server.getAcceptor().getStats().getCurrentClientConnections();
+              if (Math.abs(sz - count) <= ALLOWABLE_ERROR_IN_COUNT) {
+                return true;
+              }
+              System.out.println("Found " + sz + " connections, expected " + count);
+              return false;
+            });
   }
 
   private void waitForPrefilledConnections(final int count) throws Exception {
     waitForPrefilledConnections(count, POOL_NAME);
   }
 
-  private void waitForPrefilledConnections(final int count, final String poolName) throws Exception {
+  private void waitForPrefilledConnections(final int count, final String poolName)
+      throws Exception {
     final PoolImpl pool = (PoolImpl) PoolManager.getAll().get(poolName);
-    Awaitility.await().pollDelay(100, TimeUnit.MILLISECONDS).pollInterval(100, TimeUnit.MILLISECONDS).timeout(300, TimeUnit.SECONDS).until(() -> pool.getConnectionCount() >= count);
+    Awaitility.await()
+        .pollDelay(100, TimeUnit.MILLISECONDS)
+        .pollInterval(100, TimeUnit.MILLISECONDS)
+        .timeout(300, TimeUnit.SECONDS)
+        .until(() -> pool.getConnectionCount() >= count);
   }
 
   /**
-   * Test that the locator balances load between
-   * three servers with intersecting server groups.
-   * Server:    1       2       3
-   * Groups:    a       a,b     b
+   * Test that the locator balances load between three servers with intersecting server groups.
+   * Server: 1 2 3 Groups: a a,b b
    *
    * @throws Exception
    */
@@ -300,9 +351,10 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
     vm0.invoke("Start Locator", () -> startLocator(hostName, locatorPort, ""));
     String locators = getLocatorString(host, locatorPort);
 
-    int serverPort1 = vm1.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "a" }, locators));
-    vm2.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "a", "b" }, locators));
-    vm3.invoke("Start BridgeServer", () -> startBridgeServer(new String[] { "b" }, locators));
+    int serverPort1 =
+        vm1.invoke("Start BridgeServer", () -> startBridgeServer(new String[] {"a"}, locators));
+    vm2.invoke("Start BridgeServer", () -> startBridgeServer(new String[] {"a", "b"}, locators));
+    vm3.invoke("Start BridgeServer", () -> startBridgeServer(new String[] {"b"}, locators));
 
     PoolFactoryImpl pf = new PoolFactoryImpl(null);
     pf.addLocator(NetworkUtils.getServerHostName(host), locatorPort);
@@ -310,7 +362,7 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
     pf.setSubscriptionEnabled(false);
     pf.setServerGroup("a");
     pf.setIdleTimeout(-1);
-    startBridgeClient(pf.getPoolAttributes(), new String[] { REGION_NAME });
+    startBridgeClient(pf.getPoolAttributes(), new String[] {REGION_NAME});
     waitForPrefilledConnections(12);
 
     vm1.invoke("Check Connection Count", () -> checkConnectionCount(6));
@@ -333,7 +385,8 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
 
     LogWriterUtils.getLogWriter().info("pool2 prefilled");
 
-    ServerLocation location1 = new ServerLocation(NetworkUtils.getServerHostName(host), serverPort1);
+    ServerLocation location1 =
+        new ServerLocation(NetworkUtils.getServerHostName(host), serverPort1);
     PoolImpl pool1 = (PoolImpl) PoolManager.getAll().get(POOL_NAME);
     Assert.assertEquals("a", pool1.getServerGroup());
 
@@ -362,13 +415,13 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
       pool2.acquireConnection();
     }
 
-    LogWriterUtils.getLogWriter().info("interleaved 6 connections from pool1 with 6 connections from pool2");
+    LogWriterUtils.getLogWriter()
+        .info("interleaved 6 connections from pool1 with 6 connections from pool2");
 
     //The load should still be balanced
     vm1.invoke("Check Connection Count", () -> checkConnectionCount(13));
     vm2.invoke("Check Connection Count", () -> checkConnectionCount(13));
     vm3.invoke("Check Connection Count", () -> checkConnectionCount(13));
-
   }
 
   @Test
@@ -386,8 +439,18 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
 
     final ServerLoad load1 = new ServerLoad(.3f, .01f, .44f, 4564f);
     final ServerLoad load2 = new ServerLoad(23.2f, 1.1f, 22.3f, .3f);
-    int serverPort1 = vm1.invoke("Start BridgeServer", () -> startBridgeServer(null, locators, new String[] { REGION_NAME }, new MyLoadProbe(load1)));
-    int serverPort2 = vm2.invoke("Start BridgeServer", () -> startBridgeServer(null, locators, new String[] { REGION_NAME }, new MyLoadProbe(load2)));
+    int serverPort1 =
+        vm1.invoke(
+            "Start BridgeServer",
+            () ->
+                startBridgeServer(
+                    null, locators, new String[] {REGION_NAME}, new MyLoadProbe(load1)));
+    int serverPort2 =
+        vm2.invoke(
+            "Start BridgeServer",
+            () ->
+                startBridgeServer(
+                    null, locators, new String[] {REGION_NAME}, new MyLoadProbe(load2)));
 
     HashMap expected = new HashMap();
     ServerLocation l1 = new ServerLocation(NetworkUtils.getServerHostName(host), serverPort1);
@@ -415,7 +478,7 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
     pf.setMinConnections(20);
     pf.setSubscriptionEnabled(true);
     pf.setIdleTimeout(-1);
-    startBridgeClient(pf.getPoolAttributes(), new String[] { REGION_NAME });
+    startBridgeClient(pf.getPoolAttributes(), new String[] {REGION_NAME});
     waitForPrefilledConnections(20);
 
     //The first 10 connection should to go vm1, then 1 to vm2, then another 9 to vm1
@@ -431,7 +494,11 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
     final ServerLocator sl = locator.getServerLocatorAdvisee();
     InternalLogWriter log = new LocalLogWriter(InternalLogWriter.FINEST_LEVEL, System.out);
     sl.getDistributionAdvisor().dumpProfiles("PROFILES= ");
-    Awaitility.await().pollDelay(100, TimeUnit.MILLISECONDS).pollInterval(100, TimeUnit.MILLISECONDS).timeout(300, TimeUnit.SECONDS).until(() -> expected.equals(sl.getLoadMap()));
+    Awaitility.await()
+        .pollDelay(100, TimeUnit.MILLISECONDS)
+        .pollInterval(100, TimeUnit.MILLISECONDS)
+        .timeout(300, TimeUnit.SECONDS)
+        .until(() -> expected.equals(sl.getLoadMap()));
   }
 
   private void changeLoad(final ServerLoad newLoad) {
@@ -449,9 +516,16 @@ public class LocatorLoadBalancingDUnitTest extends LocatorTestBase {
     }
 
     public ServerLoad getLoad(ServerMetrics metrics) {
-      float connectionLoad = load.getConnectionLoad() + metrics.getConnectionCount() * load.getLoadPerConnection();
-      float queueLoad = load.getSubscriptionConnectionLoad() + metrics.getSubscriptionConnectionCount() * load.getLoadPerSubscriptionConnection();
-      return new ServerLoad(connectionLoad, load.getLoadPerConnection(), queueLoad, load.getLoadPerSubscriptionConnection());
+      float connectionLoad =
+          load.getConnectionLoad() + metrics.getConnectionCount() * load.getLoadPerConnection();
+      float queueLoad =
+          load.getSubscriptionConnectionLoad()
+              + metrics.getSubscriptionConnectionCount() * load.getLoadPerSubscriptionConnection();
+      return new ServerLoad(
+          connectionLoad,
+          load.getLoadPerConnection(),
+          queueLoad,
+          load.getLoadPerSubscriptionConnection());
     }
 
     public void setLoad(ServerLoad load) {

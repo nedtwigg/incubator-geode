@@ -23,15 +23,11 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Includes tests for all utility methods in {@link ParserUtils}
- */
+/** Includes tests for all utility methods in {@link ParserUtils} */
 @Category(UnitTest.class)
 public class ParserUtilsJUnitTest {
 
-  /**
-   * Test for {@link ParserUtils#split(String, String)}
-   */
+  /** Test for {@link ParserUtils#split(String, String)} */
   @Test
   public void testSplit() {
     String input = "something::{::}::nothing";
@@ -42,9 +38,7 @@ public class ParserUtilsJUnitTest {
     assertEquals("Third string", "nothing", split[2]);
   }
 
-  /**
-   * Test for {@link ParserUtils#splitValues(String, String)}
-   */
+  /** Test for {@link ParserUtils#splitValues(String, String)} */
   @Test
   public void testSplitValues() {
     String input = "something::{::}::nothing::";
@@ -56,9 +50,7 @@ public class ParserUtilsJUnitTest {
     assertEquals("Fourth string", "", split[3]);
   }
 
-  /**
-   * Test for {@link ParserUtils#contains(String, String)}
-   */
+  /** Test for {@link ParserUtils#contains(String, String)} */
   @Test
   public void testContains() {
     String input = "something::{::}::nothing::";
@@ -67,9 +59,7 @@ public class ParserUtilsJUnitTest {
     assertFalse("Check Boolean", ParserUtils.contains(input, "::"));
   }
 
-  /**
-   * Test for {@link ParserUtils#lastIndexOf(String, String)}
-   */
+  /** Test for {@link ParserUtils#lastIndexOf(String, String)} */
   @Test
   public void testLastIndexOf() {
     String input = "something::{::}::nothing::";
@@ -79,5 +69,4 @@ public class ParserUtilsJUnitTest {
     input = "{something::{::}::\"nothing::\"}";
     assertEquals("lastIndex", -1, ParserUtils.lastIndexOf(input, "::"));
   }
-
 }

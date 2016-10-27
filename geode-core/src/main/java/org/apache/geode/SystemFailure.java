@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode;
 
 import org.apache.geode.distributed.internal.DistributionConfig;
@@ -27,191 +25,201 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
  * Catches and responds to JVM failure
- * <p>
- * This class represents a catastrophic failure of the system,
- * especially the Java virtual machine.  Any class may,
- * at any time, indicate that a system failure has occurred by calling
- * {@link #initiateFailure(Error)} (or, less commonly,
- * {@link #setFailure(Error)}).
- * <p>
- * In practice, the most common type of failure that is likely to be
- * reported by an otherwise healthy JVM is {@link OutOfMemoryError}.  However,
- * GemFire will report any occurrence of {@link VirtualMachineError} as
- * a JVM failure.
- * <p>
- * When a failure is reported, you must assume that the JVM has <em>broken 
- * its fundamental execution contract</em> with your application. 
- * No programming invariant can be assumed to be true, and your 
- * entire application must be regarded as corrupted.
+ *
+ * <p>This class represents a catastrophic failure of the system, especially the Java virtual
+ * machine. Any class may, at any time, indicate that a system failure has occurred by calling
+ * {@link #initiateFailure(Error)} (or, less commonly, {@link #setFailure(Error)}).
+ *
+ * <p>In practice, the most common type of failure that is likely to be reported by an otherwise
+ * healthy JVM is {@link OutOfMemoryError}. However, GemFire will report any occurrence of {@link
+ * VirtualMachineError} as a JVM failure.
+ *
+ * <p>When a failure is reported, you must assume that the JVM has <em>broken its fundamental
+ * execution contract</em> with your application. No programming invariant can be assumed to be
+ * true, and your entire application must be regarded as corrupted.
+ *
  * <h1>Failure Hooks</h1>
- * GemFire uses this class to disable its distributed system (group
- * communication) and any open caches.  It also provides a hook for you
- * to respond to after GemFire disables itself.
+ *
+ * GemFire uses this class to disable its distributed system (group communication) and any open
+ * caches. It also provides a hook for you to respond to after GemFire disables itself.
+ *
  * <h1>Failure WatchDog</h1>
- * When {@link #startThreads()} is called, a "watchdog" {@link Thread} is started that 
- * periodically checks to see if system corruption has been reported.  When 
- * system corruption is detected, this thread proceeds to:
+ *
+ * When {@link #startThreads()} is called, a "watchdog" {@link Thread} is started that periodically
+ * checks to see if system corruption has been reported. When system corruption is detected, this
+ * thread proceeds to:
+ *
  * <p>
+ *
  * <ol>
- * <li>
- * <em>Close GemFire</em> -- Group communication is ceased (this cache
- * member recuses itself from the distributed system) and the cache
- * is further poisoned (it is pointless to try to cleanly close it at this
- * point.).
- * <p>
- * After this has successfully ended, we launch a
- * </li>
- * <li>
- * <em>failure action</em>, a user-defined Runnable
- * {@link #setFailureAction(Runnable)}.
- * By default, this Runnable performs nothing.  If you feel you need to perform
- * an action before exiting the JVM, this hook gives you a
- * means of attempting some action.  Whatever you attempt should be extremely
- * simple, since your Java execution environment has been corrupted.
- * <p>
- * GemStone recommends that you employ 
- * <a href="http://wrapper.tanukisoftware.org/doc/english/introduction.html">
- * Java Service Wrapper</a> to detect when your JVM exits and to perform
- * appropriate failure and restart actions.
- * </li>
- * <li>
- * Finally, if the application has granted the watchdog permission to exit the JVM
- * (via {@link #setExitOK(boolean)}), the watchdog calls {@link System#exit(int)} with
- * an argument of 1.  If you have not granted this class permission to
- * close the JVM, you are <em>strongly</em>  advised to call it in your
- * failure action (in the previous step).
- * </li>
+ *   <li> <em>Close GemFire</em> -- Group communication is ceased (this cache member recuses itself
+ *       from the distributed system) and the cache is further poisoned (it is pointless to try to
+ *       cleanly close it at this point.).
+ *       <p>After this has successfully ended, we launch a
+ *   <li> <em>failure action</em>, a user-defined Runnable {@link #setFailureAction(Runnable)}. By
+ *       default, this Runnable performs nothing. If you feel you need to perform an action before
+ *       exiting the JVM, this hook gives you a means of attempting some action. Whatever you
+ *       attempt should be extremely simple, since your Java execution environment has been
+ *       corrupted.
+ *       <p>GemStone recommends that you employ <a
+ *       href="http://wrapper.tanukisoftware.org/doc/english/introduction.html">Java Service
+ *       Wrapper</a> to detect when your JVM exits and to perform appropriate failure and restart
+ *       actions.
+ *   <li> Finally, if the application has granted the watchdog permission to exit the JVM (via
+ *       {@link #setExitOK(boolean)}), the watchdog calls {@link System#exit(int)} with an argument
+ *       of 1. If you have not granted this class permission to close the JVM, you are
+ *       <em>strongly</em> advised to call it in your failure action (in the previous step).
  * </ol>
- * <p> 
- * Each of these actions will be run exactly once in the above described
- * order.  However, if either step throws any type of error ({@link Throwable}), 
- * the watchdog will assume that the JVM is still under duress (esp. an 
- * {@link OutOfMemoryError}), will wait a bit, and then retry the failed action.
+ *
+ * <p>Each of these actions will be run exactly once in the above described order. However, if
+ * either step throws any type of error ({@link Throwable}), the watchdog will assume that the JVM
+ * is still under duress (esp. an {@link OutOfMemoryError}), will wait a bit, and then retry the
+ * failed action.
+ *
+ * <p>It bears repeating that you should be very cautious of any Runnables you ask this class to
+ * run. By definition the JVM is <em>very sick</em> when failure has been signalled.
+ *
  * <p>
- * It bears repeating that you should be very cautious of any Runnables you
- * ask this class to run.  By definition the JVM is <em>very sick</em>
- * when failure has been signalled.  
- * <p>
+ *
  * <h1>Failure Proctor</h1>
- * In addition to the failure watchdog, {@link #startThreads()} creates a second
- * thread (the "proctor") that monitors free memory. It does this by examining
- * {@link Runtime#freeMemory() free memory},  
- * {@link Runtime#totalMemory() total memory} and 
- * {@link Runtime#maxMemory() maximum memory}.  If the amount of available 
- * memory stays below a given 
- * {@link #setFailureMemoryThreshold(long) threshold}, for
- * more than {@link #WATCHDOG_WAIT} seconds, the watchdog is notified.
- * <p>
- * Note that the proctor can be effectively disabled by
- * {@link SystemFailure#setFailureMemoryThreshold(long) setting} the failure memory threshold
- * to a negative value.
- * <p>
- * The proctor is a second line of defense, attempting to detect 
- * OutOfMemoryError conditions in circumstances where nothing alerted the
- * watchdog.  For instance, a third-party jar might incorrectly handle this
- * error and leave your virtual machine in a "stuck" state.
- * <p>
- * Note that the proctor does not relieve you of the obligation to
- * follow the best practices in the next section.
+ *
+ * In addition to the failure watchdog, {@link #startThreads()} creates a second thread (the
+ * "proctor") that monitors free memory. It does this by examining {@link Runtime#freeMemory() free
+ * memory}, {@link Runtime#totalMemory() total memory} and {@link Runtime#maxMemory() maximum
+ * memory}. If the amount of available memory stays below a given {@link
+ * #setFailureMemoryThreshold(long) threshold}, for more than {@link #WATCHDOG_WAIT} seconds, the
+ * watchdog is notified.
+ *
+ * <p>Note that the proctor can be effectively disabled by {@link
+ * SystemFailure#setFailureMemoryThreshold(long) setting} the failure memory threshold to a negative
+ * value.
+ *
+ * <p>The proctor is a second line of defense, attempting to detect OutOfMemoryError conditions in
+ * circumstances where nothing alerted the watchdog. For instance, a third-party jar might
+ * incorrectly handle this error and leave your virtual machine in a "stuck" state.
+ *
+ * <p>Note that the proctor does not relieve you of the obligation to follow the best practices in
+ * the next section.
+ *
  * <h1>Best Practices</h1>
+ *
  * <h2>Catch and Handle VirtualMachineError</h2>
- * If you feel obliged to catch <em>either</em> {@link Error}, or 
- * {@link Throwable}, you <em>must</em>also check for 
- * {@link VirtualMachineError} like so:
+ *
+ * If you feel obliged to catch <em>either</em> {@link Error}, or {@link Throwable}, you
+ * <em>must</em>also check for {@link VirtualMachineError} like so:
+ *
  * <p>
+ *
  * <pre>
-        catch (VirtualMachineError err) {
-          SystemFailure.{@link #initiateFailure(Error) initiateFailure}(err);
-          // If this ever returns, rethrow the error.  We're poisoned
-          // now, so don't let this thread continue.
-          throw err;
-        }
+ * catch (VirtualMachineError err) {
+ * SystemFailure.{@link #initiateFailure(Error) initiateFailure}(err);
+ * // If this ever returns, rethrow the error.  We're poisoned
+ * // now, so don't let this thread continue.
+ * throw err;
+ * }
  * </pre>
+ *
  * <h2>Periodically Check For Errors</h2>
- * Check for serious system errors at
- * appropriate points in your algorithms.  You may elect to use
- * the {@link #checkFailure()} utility function, but you are
- * not required to (you could just see if {@link SystemFailure#getFailure()}
- * returns a non-null result).  
+ *
+ * Check for serious system errors at appropriate points in your algorithms. You may elect to use
+ * the {@link #checkFailure()} utility function, but you are not required to (you could just see if
+ * {@link SystemFailure#getFailure()} returns a non-null result).
+ *
+ * <p>A job processing loop is a good candidate, for instance, in
+ * org.apache.org.jgroups.protocols.UDP#run(), which implements {@link Thread#run}:
+ *
  * <p>
- * A job processing loop is a good candidate, for
- * instance, in org.apache.org.jgroups.protocols.UDP#run(), 
- * which implements {@link Thread#run}:
- * <p>
+ *
  * <pre>
-         for (;;)  {
-           SystemFailure.{@link #checkFailure() checkFailure}();
-           if (mcast_recv_sock == null || mcast_recv_sock.isClosed()) break;
-           if (Thread.currentThread().isInterrupted()) break;
-          ...
+ * for (;;)  {
+ * SystemFailure.{@link #checkFailure() checkFailure}();
+ * if (mcast_recv_sock == null || mcast_recv_sock.isClosed()) break;
+ * if (Thread.currentThread().isInterrupted()) break;
+ * ...
  * </pre>
+ *
  * <h2>Create Logging ThreadGroups</h2>
- * If you create any Thread, a best practice is to catch severe errors
- * and signal failure appropriately.  One trick to do this is to create a 
- * ThreadGroup that handles uncaught exceptions by overriding 
- * {@link ThreadGroup#uncaughtException(Thread, Throwable)} and to declare 
- * your thread as a member of that {@link ThreadGroup}.  This also has a 
- * significant side-benefit in that most uncaught exceptions 
- * can be detected:
+ *
+ * If you create any Thread, a best practice is to catch severe errors and signal failure
+ * appropriately. One trick to do this is to create a ThreadGroup that handles uncaught exceptions
+ * by overriding {@link ThreadGroup#uncaughtException(Thread, Throwable)} and to declare your thread
+ * as a member of that {@link ThreadGroup}. This also has a significant side-benefit in that most
+ * uncaught exceptions can be detected:
+ *
  * <p>
+ *
  * <pre>
-    ThreadGroup tg = new ThreadGroup("Worker Threads") {
-        public void uncaughtException(Thread t, Throwable e) {
-          // Do this *before* any object allocation in case of
-          // OutOfMemoryError (for instance)
-          if (e instanceof VirtualMachineError) {
-            SystemFailure.{@link #setFailure(Error) setFailure}((VirtualMachineError)e); // don't throw
-          }
-          String s = "Uncaught exception in thread " + t;
-          system.getLogWriter().severe(s, e);
-        }
-        Thread t = new Thread(myRunnable, tg, "My Thread");
-        t.start();
-      }; * </pre>
+ * ThreadGroup tg = new ThreadGroup("Worker Threads") {
+ * public void uncaughtException(Thread t, Throwable e) {
+ * // Do this *before* any object allocation in case of
+ * // OutOfMemoryError (for instance)
+ * if (e instanceof VirtualMachineError) {
+ * SystemFailure.{@link #setFailure(Error) setFailure}((VirtualMachineError)e); // don't throw
+ * }
+ * String s = "Uncaught exception in thread " + t;
+ * system.getLogWriter().severe(s, e);
+ * }
+ * Thread t = new Thread(myRunnable, tg, "My Thread");
+ * t.start();
+ * }; * </pre>
+ *
  * <p>
-  * <h2>Catches of Error and Throwable Should Check for Failure</h2>
-  * Keep in mind that peculiar or flat-out<em>impossible</em>  exceptions may 
-  * ensue after a VirtualMachineError has been thrown <em>anywhere</em> in
-  * your virtual machine. Whenever you catch {@link Error} or {@link Throwable}, 
-  * you should also make sure that you aren't dealing with a corrupted JVM:
-  * <p>
-  * <pre>
-        catch (Throwable t) {
-          // Whenever you catch Error or Throwable, you must also
-          // catch VirtualMachineError (see above).  However, there is
-          // _still_ a possibility that you are dealing with a cascading
-          // error condition, so you also need to check to see if the JVM
-          // is still usable:
-          SystemFailure.{@link #checkFailure() checkFailure}();
-          ...
-        }
+ *
+ * <h2>Catches of Error and Throwable Should Check for Failure</h2>
+ *
+ * Keep in mind that peculiar or flat-out<em>impossible</em> exceptions may ensue after a
+ * VirtualMachineError has been thrown <em>anywhere</em> in your virtual machine. Whenever you catch
+ * {@link Error} or {@link Throwable}, you should also make sure that you aren't dealing with a
+ * corrupted JVM:
+ *
+ * <p>
+ *
+ * <pre>
+ * catch (Throwable t) {
+ * // Whenever you catch Error or Throwable, you must also
+ * // catch VirtualMachineError (see above).  However, there is
+ * // _still_ a possibility that you are dealing with a cascading
+ * // error condition, so you also need to check to see if the JVM
+ * // is still usable:
+ * SystemFailure.{@link #checkFailure() checkFailure}();
+ * ...
+ * }
  * </pre>
+ *
  * @since GemFire 5.1
  */
-@edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "DM_GC", justification = "This class performs System.gc as last ditch effort during out-of-memory condition.")
+@edu.umd.cs.findbugs.annotations.SuppressWarnings(
+  value = "DM_GC",
+  justification =
+      "This class performs System.gc as last ditch effort during out-of-memory condition."
+)
 public final class SystemFailure {
 
-  /**
-   * Time to wait during stopWatchdog and stopProctor. Not final
-   * for tests
-   */
+  /** Time to wait during stopWatchdog and stopProctor. Not final for tests */
   static int SHUTDOWN_WAIT = 1000;
   /**
-   * Preallocated error messages\
-   * LocalizedStrings may use memory (in the form of an iterator)
-   * so we must get the translated messages in advance.
-   **/
-  static final String JVM_CORRUPTION = LocalizedStrings.SystemFailure_JVM_CORRUPTION_HAS_BEEN_DETECTED.toLocalizedString();
-  static final String CALLING_SYSTEM_EXIT = LocalizedStrings.SystemFailure_SINCE_THIS_IS_A_DEDICATED_CACHE_SERVER_AND_THE_JVM_HAS_BEEN_CORRUPTED_THIS_PROCESS_WILL_NOW_TERMINATE_PERMISSION_TO_CALL_SYSTEM_EXIT_INT_WAS_GIVEN_IN_THE_FOLLOWING_CONTEXT.toLocalizedString();
-  public static final String DISTRIBUTION_HALTED_MESSAGE = LocalizedStrings.SystemFailure_DISTRIBUTION_HALTED_DUE_TO_JVM_CORRUPTION.toLocalizedString();
-  public static final String DISTRIBUTED_SYSTEM_DISCONNECTED_MESSAGE = LocalizedStrings.SystemFailure_DISTRIBUTED_SYSTEM_DISCONNECTED_DUE_TO_JVM_CORRUPTION.toLocalizedString();
+   * Preallocated error messages\ LocalizedStrings may use memory (in the form of an iterator) so we
+   * must get the translated messages in advance.
+   */
+  static final String JVM_CORRUPTION =
+      LocalizedStrings.SystemFailure_JVM_CORRUPTION_HAS_BEEN_DETECTED.toLocalizedString();
+
+  static final String CALLING_SYSTEM_EXIT =
+      LocalizedStrings
+          .SystemFailure_SINCE_THIS_IS_A_DEDICATED_CACHE_SERVER_AND_THE_JVM_HAS_BEEN_CORRUPTED_THIS_PROCESS_WILL_NOW_TERMINATE_PERMISSION_TO_CALL_SYSTEM_EXIT_INT_WAS_GIVEN_IN_THE_FOLLOWING_CONTEXT
+          .toLocalizedString();
+  public static final String DISTRIBUTION_HALTED_MESSAGE =
+      LocalizedStrings.SystemFailure_DISTRIBUTION_HALTED_DUE_TO_JVM_CORRUPTION.toLocalizedString();
+  public static final String DISTRIBUTED_SYSTEM_DISCONNECTED_MESSAGE =
+      LocalizedStrings.SystemFailure_DISTRIBUTED_SYSTEM_DISCONNECTED_DUE_TO_JVM_CORRUPTION
+          .toLocalizedString();
 
   /**
    * the underlying failure
-   * 
-   * This is usually an instance of {@link VirtualMachineError}, but it
-   * is not required to be such.
-   * 
+   *
+   * <p>This is usually an instance of {@link VirtualMachineError}, but it is not required to be
+   * such.
+   *
    * @see #getFailure()
    * @see #initiateFailure(Error)
    */
@@ -219,33 +227,29 @@ public final class SystemFailure {
 
   /**
    * user-defined runnable to run last
-   * 
+   *
    * @see #setFailureAction(Runnable)
    */
-  private static volatile Runnable failureAction = new Runnable() {
-    public void run() {
-      System.err.println(JVM_CORRUPTION);
-      failure.printStackTrace();
-    }
-  };
+  private static volatile Runnable failureAction =
+      new Runnable() {
+        public void run() {
+          System.err.println(JVM_CORRUPTION);
+          failure.printStackTrace();
+        }
+      };
 
-  /**
-   * @see #setExitOK(boolean)
-   */
+  /** @see #setExitOK(boolean) */
   private static volatile boolean exitOK = false;
 
-  /**
-   * If we're going to exit the JVM, I want to be accountable for who
-   * told us it was OK.
-   */
+  /** If we're going to exit the JVM, I want to be accountable for who told us it was OK. */
   private static volatile Throwable exitExcuse;
 
   /**
-   * Indicate whether it is acceptable to call {@link System#exit(int)} after
-   * failure processing has completed.
-   * <p>
-   * This may be dynamically modified while the system is running.
-   * 
+   * Indicate whether it is acceptable to call {@link System#exit(int)} after failure processing has
+   * completed.
+   *
+   * <p>This may be dynamically modified while the system is running.
+   *
    * @param newVal true if it is OK to exit the process
    * @return the previous value
    */
@@ -262,9 +266,8 @@ public final class SystemFailure {
 
   //merge42180: Added this method while merging 42180. It should have already be here through different merges or will come later
   /**
-   * Returns true if the given Error is a fatal to the JVM and it should be shut
-   * down. Code should call {@link #initiateFailure(Error)} or
-   * {@link #setFailure(Error)} if this returns true.
+   * Returns true if the given Error is a fatal to the JVM and it should be shut down. Code should
+   * call {@link #initiateFailure(Error)} or {@link #setFailure(Error)} if this returns true.
    */
   public static boolean isJVMFailureError(Error err) {
     // all VirtualMachineErrors are not fatal to the JVM, in particular
@@ -272,17 +275,12 @@ public final class SystemFailure {
     return err instanceof OutOfMemoryError || err instanceof UnknownError;
   }
 
-  /**
-   * Disallow instance creation
-   */
-  private SystemFailure() {
-
-  }
+  /** Disallow instance creation */
+  private SystemFailure() {}
 
   /**
-   * Synchronizes access to state variables, used to notify the watchdog
-   * when to run
-   * 
+   * Synchronizes access to state variables, used to notify the watchdog when to run
+   *
    * @see #notifyWatchDog()
    * @see #startProctor()
    * @see #startWatchDog()
@@ -291,70 +289,66 @@ public final class SystemFailure {
 
   /**
    * True if we have closed GemFire
-   * 
+   *
    * @see #emergencyClose()
    */
   private static volatile boolean gemfireCloseCompleted = false;
 
   /**
    * True if we have completed the user-defined failure action
-   * 
+   *
    * @see #setFailureAction(Runnable)
    */
   private static volatile boolean failureActionCompleted = false;
 
-  /**
-   * This is a logging ThreadGroup, created only once.
-   */
-  private final static ThreadGroup tg;
+  /** This is a logging ThreadGroup, created only once. */
+  private static final ThreadGroup tg;
+
   static {
-    tg = new ThreadGroup("SystemFailure Watchdog Threads") {
-      // If the watchdog is correctly written, this will never get executed.
-      // However, there's no reason for us not to eat our own dog food
-      // (har, har) -- see the javadoc above.
-      @Override
-      public void uncaughtException(Thread t, Throwable e) {
-        // Uhhh...if the watchdog is running, we *know* there's some
-        // sort of serious error, no need to check for it here.
-        System.err.println("Internal error in SystemFailure watchdog:" + e);
-        e.printStackTrace();
-      }
-    };
+    tg =
+        new ThreadGroup("SystemFailure Watchdog Threads") {
+          // If the watchdog is correctly written, this will never get executed.
+          // However, there's no reason for us not to eat our own dog food
+          // (har, har) -- see the javadoc above.
+          @Override
+          public void uncaughtException(Thread t, Throwable e) {
+            // Uhhh...if the watchdog is running, we *know* there's some
+            // sort of serious error, no need to check for it here.
+            System.err.println("Internal error in SystemFailure watchdog:" + e);
+            e.printStackTrace();
+          }
+        };
   }
 
   /**
-   * This is the amount of time, in seconds, the watchdog periodically awakens
-   * to see if the system has been corrupted.
-   * <p>
-   * The watchdog will be explicitly awakened by calls to
-   * {@link #setFailure(Error)} or {@link #initiateFailure(Error)}, but
-   * it will awaken of its own accord periodically to check for failure even
-   * if the above calls do not occur.
-   * <p>
-   * This can be set with the system property 
-   * <code>gemfire.WATCHDOG_WAIT</code>. The default is 15 sec.
+   * This is the amount of time, in seconds, the watchdog periodically awakens to see if the system
+   * has been corrupted.
+   *
+   * <p>The watchdog will be explicitly awakened by calls to {@link #setFailure(Error)} or {@link
+   * #initiateFailure(Error)}, but it will awaken of its own accord periodically to check for
+   * failure even if the above calls do not occur.
+   *
+   * <p>This can be set with the system property <code>gemfire.WATCHDOG_WAIT</code>. The default is
+   * 15 sec.
    */
-  static public final int WATCHDOG_WAIT = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "WATCHDOG_WAIT", 15).intValue();
+  public static final int WATCHDOG_WAIT =
+      Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "WATCHDOG_WAIT", 15).intValue();
 
   /**
    * This is the watchdog thread
-   * 
+   *
    * @guarded.By {@link #failureSync}
    */
   private static Thread watchDog;
 
   private static volatile boolean isCacheClosing = false;
 
-  /**
-   * Should be invoked when GemFire cache is being created. 
-   */
+  /** Should be invoked when GemFire cache is being created. */
   public static void signalCacheCreate() {
     isCacheClosing = false;
   }
 
-  /**
-   * Should be invoked when GemFire cache is closing or closed. 
-   */
+  /** Should be invoked when GemFire cache is closing or closed. */
   public static void signalCacheClose() {
     isCacheClosing = true;
     if (proctor != null) {
@@ -365,9 +359,7 @@ public final class SystemFailure {
     }
   }
 
-  /**
-   * Start the watchdog thread, if it isn't already running.
-   */
+  /** Start the watchdog thread, if it isn't already running. */
   private static void startWatchDog() {
     if (failureActionCompleted) {
       // Our work is done, don't restart
@@ -377,11 +369,15 @@ public final class SystemFailure {
       if (watchDog != null && watchDog.isAlive()) {
         return;
       }
-      watchDog = new Thread(tg, new Runnable() {
-        public void run() {
-          runWatchDog();
-        }
-      }, "SystemFailure WatchDog");
+      watchDog =
+          new Thread(
+              tg,
+              new Runnable() {
+                public void run() {
+                  runWatchDog();
+                }
+              },
+              "SystemFailure WatchDog");
       watchDog.setDaemon(true);
       watchDog.start();
     }
@@ -411,10 +407,8 @@ public final class SystemFailure {
     }
   }
 
-  /**
-   * This is the run loop for the watchdog thread.
-   */
-  static protected void runWatchDog() {
+  /** This is the run loop for the watchdog thread. */
+  protected static void runWatchDog() {
 
     boolean warned = false;
 
@@ -444,7 +438,7 @@ public final class SystemFailure {
       logWarning(WATCHDOG_NAME, "Unable to initialize watchdog", t);
       return;
     }
-    for (;;) {
+    for (; ; ) {
       if (stopping) {
         return;
       }
@@ -515,9 +509,11 @@ public final class SystemFailure {
         stopProctor();
 
         if (exitOK) {
-          logWarning(WATCHDOG_NAME,
+          logWarning(
+              WATCHDOG_NAME,
               // No "+" in this long message, we're out of memory!
-              CALLING_SYSTEM_EXIT, exitExcuse);
+              CALLING_SYSTEM_EXIT,
+              exitExcuse);
 
           // ATTENTION: there are VERY FEW places in GemFire where it is
           // acceptable to call System.exit.  This is one of those
@@ -537,74 +533,78 @@ public final class SystemFailure {
 
   /**
    * Spies on system statistics looking for low memory threshold
-   * 
-   * Well, if you're gonna have a watchdog, why not a watch CAT????
-   * 
+   *
+   * <p>Well, if you're gonna have a watchdog, why not a watch CAT????
+   *
    * @guarded.By {@link #failureSync}
    * @see #minimumMemoryThreshold
    */
   private static Thread proctor;
 
   /**
-   * This mutex controls access to {@link #firstStarveTime} and
-   * {@link #minimumMemoryThreshold}.
-   * <p>
-   * I'm hoping that a fat lock is never created here, so that
-   * an object allocation isn't necessary to acquire this
-   * mutex.  You'd have to have A LOT of contention on this mutex
-   * in order for a fat lock to be created, which indicates IMHO
-   * a serious problem in your applications.
+   * This mutex controls access to {@link #firstStarveTime} and {@link #minimumMemoryThreshold}.
+   *
+   * <p>I'm hoping that a fat lock is never created here, so that an object allocation isn't
+   * necessary to acquire this mutex. You'd have to have A LOT of contention on this mutex in order
+   * for a fat lock to be created, which indicates IMHO a serious problem in your applications.
    */
   private static final Object memorySync = new Object();
 
   /**
-   * This is the minimum amount of memory that the proctor will
-   * tolerate before declaring a system failure.
-   * 
+   * This is the minimum amount of memory that the proctor will tolerate before declaring a system
+   * failure.
+   *
    * @see #setFailureMemoryThreshold(long)
    * @guarded.By {@link #memorySync}
    */
-  static long minimumMemoryThreshold = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "SystemFailure.chronic_memory_threshold", 1048576).longValue();
+  static long minimumMemoryThreshold =
+      Long.getLong(
+              DistributionConfig.GEMFIRE_PREFIX + "SystemFailure.chronic_memory_threshold", 1048576)
+          .longValue();
 
   /**
-   * This is the interval, in seconds, that the proctor
-   * thread will awaken and poll system free memory.
-   * 
-   * The default is 1 sec.  This can be set using the system property
-   * <code>gemfire.SystemFailure.MEMORY_POLL_INTERVAL</code>.
-   * 
+   * This is the interval, in seconds, that the proctor thread will awaken and poll system free
+   * memory.
+   *
+   * <p>The default is 1 sec. This can be set using the system property <code>
+   * gemfire.SystemFailure.MEMORY_POLL_INTERVAL</code>.
+   *
    * @see #setFailureMemoryThreshold(long)
    */
-  static final public long MEMORY_POLL_INTERVAL = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "SystemFailure.MEMORY_POLL_INTERVAL", 1).longValue();
+  public static final long MEMORY_POLL_INTERVAL =
+      Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "SystemFailure.MEMORY_POLL_INTERVAL", 1)
+          .longValue();
 
   /**
-   * This is the maximum amount of time, in seconds, that the proctor thread
-   * will tolerate seeing free memory stay below
-   * {@link #setFailureMemoryThreshold(long)}, after which point it will 
+   * This is the maximum amount of time, in seconds, that the proctor thread will tolerate seeing
+   * free memory stay below {@link #setFailureMemoryThreshold(long)}, after which point it will
    * declare a system failure.
-   * 
-   * The default is 15 sec.  This can be set using the system property
-   * <code>gemfire.SystemFailure.MEMORY_MAX_WAIT</code>.
-   * 
+   *
+   * <p>The default is 15 sec. This can be set using the system property <code>
+   * gemfire.SystemFailure.MEMORY_MAX_WAIT</code>.
+   *
    * @see #setFailureMemoryThreshold(long)
    */
-  static final public long MEMORY_MAX_WAIT = Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "SystemFailure.MEMORY_MAX_WAIT", 15).longValue();
+  public static final long MEMORY_MAX_WAIT =
+      Long.getLong(DistributionConfig.GEMFIRE_PREFIX + "SystemFailure.MEMORY_MAX_WAIT", 15)
+          .longValue();
 
   /**
-   * Flag that determines whether or not we monitor memory on our own.
-   * If this flag is set, we will check freeMemory, invoke GC if free memory 
-   * gets low, and start throwing our own OutOfMemoryException if 
-   * 
-   * The default is false, so this monitoring is turned off. This monitoring has been found 
-   * to be unreliable in non-Sun VMs when the VM is under stress or behaves in unpredictable ways.
+   * Flag that determines whether or not we monitor memory on our own. If this flag is set, we will
+   * check freeMemory, invoke GC if free memory gets low, and start throwing our own
+   * OutOfMemoryException if
+   *
+   * <p>The default is false, so this monitoring is turned off. This monitoring has been found to be
+   * unreliable in non-Sun VMs when the VM is under stress or behaves in unpredictable ways.
    *
    * @since GemFire 6.5
    */
-  static final public boolean MONITOR_MEMORY = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "SystemFailure.MONITOR_MEMORY");
+  public static final boolean MONITOR_MEMORY =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "SystemFailure.MONITOR_MEMORY");
 
   /**
    * Start the proctor thread, if it isn't already running.
-   * 
+   *
    * @see #proctor
    */
   private static void startProctor() {
@@ -617,11 +617,15 @@ public final class SystemFailure {
       if (proctor != null && proctor.isAlive()) {
         return;
       }
-      proctor = new Thread(tg, new Runnable() {
-        public void run() {
-          runProctor();
-        }
-      }, "SystemFailure Proctor");
+      proctor =
+          new Thread(
+              tg,
+              new Runnable() {
+                public void run() {
+                  runProctor();
+                }
+              },
+              "SystemFailure Proctor");
       proctor.setDaemon(true);
       proctor.start();
     }
@@ -642,40 +646,46 @@ public final class SystemFailure {
     }
   }
 
-  /**
-   * Symbolic representation of an invalid starve time
-   */
-  static private final long NEVER_STARVED = Long.MAX_VALUE;
+  /** Symbolic representation of an invalid starve time */
+  private static final long NEVER_STARVED = Long.MAX_VALUE;
 
   /**
    * this is the last time we saw memory starvation
-   * 
+   *
    * @guarded.By {@link #memorySync}}}
    */
-  static private long firstStarveTime = NEVER_STARVED;
+  private static long firstStarveTime = NEVER_STARVED;
 
   /**
-   * This is the previous measure of total memory.  If it changes,
-   * we reset the proctor's starve statistic.
+   * This is the previous measure of total memory. If it changes, we reset the proctor's starve
+   * statistic.
    */
-  static private long lastTotalMemory = 0;
+  private static long lastTotalMemory = 0;
 
-  /**
-   * This is the run loop for the proctor thread (formally known
-   * as the "watchcat" (grin)
-   */
-  static protected void runProctor() {
+  /** This is the run loop for the proctor thread (formally known as the "watchcat" (grin) */
+  protected static void runProctor() {
     // Note that the javadocs say this can return Long.MAX_VALUE.
     // If it does, the proctor will never do its job...
     final long maxMemory = Runtime.getRuntime().maxMemory();
 
     // Allocate this error in advance, since it's too late once
     // it's been detected!
-    final OutOfMemoryError oome = new OutOfMemoryError(LocalizedStrings.SystemFailure_0_MEMORY_HAS_REMAINED_CHRONICALLY_BELOW_1_BYTES_OUT_OF_A_MAXIMUM_OF_2_FOR_3_SEC.toLocalizedString(new Object[] { PROCTOR_NAME, Long.valueOf(minimumMemoryThreshold), Long.valueOf(maxMemory), Integer.valueOf(WATCHDOG_WAIT) }));
+    final OutOfMemoryError oome =
+        new OutOfMemoryError(
+            LocalizedStrings
+                .SystemFailure_0_MEMORY_HAS_REMAINED_CHRONICALLY_BELOW_1_BYTES_OUT_OF_A_MAXIMUM_OF_2_FOR_3_SEC
+                .toLocalizedString(
+                    new Object[] {
+                      PROCTOR_NAME,
+                      Long.valueOf(minimumMemoryThreshold),
+                      Long.valueOf(maxMemory),
+                      Integer.valueOf(WATCHDOG_WAIT)
+                    }));
 
     // Catenation, but should be OK when starting up
-    logFine(PROCTOR_NAME, "Starting, threshold = " + minimumMemoryThreshold + "; max = " + maxMemory);
-    for (;;) {
+    logFine(
+        PROCTOR_NAME, "Starting, threshold = " + minimumMemoryThreshold + "; max = " + maxMemory);
+    for (; ; ) {
       if (isCacheClosing) {
         break;
       }
@@ -717,7 +727,8 @@ public final class SystemFailure {
           if (DEBUG) {
             // This message has catenation, we don't want this in
             // production code :-)
-            logFine(PROCTOR_NAME, "totalMemory (" + totalMemory + ") < maxMemory (" + maxMemory + ")");
+            logFine(
+                PROCTOR_NAME, "totalMemory (" + totalMemory + ") < maxMemory (" + maxMemory + ")");
           }
           firstStarveTime = NEVER_STARVED;
           continue;
@@ -753,8 +764,7 @@ public final class SystemFailure {
           lastStarveTime = firstStarveTime;
         }
 
-        if (freeMemory >= curThreshold /* enough memory */
-            || curThreshold == 0 /* disabled */) {
+        if (freeMemory >= curThreshold /* enough memory */ || curThreshold == 0 /* disabled */) {
           // Memory is FINE, reset everything
           if (DEBUG) {
             // This message has catenation, we don't want this in
@@ -778,9 +788,14 @@ public final class SystemFailure {
           // first sighting
           if (DEBUG) {
             // Catenation in this message, don't put in production
-            logFine(PROCTOR_NAME, "Noting current memory " + freeMemory + " is less than threshold " + curThreshold);
+            logFine(
+                PROCTOR_NAME,
+                "Noting current memory " + freeMemory + " is less than threshold " + curThreshold);
           } else {
-            logWarning(PROCTOR_NAME, "Noting that current memory available is less than the currently designated threshold", null);
+            logWarning(
+                PROCTOR_NAME,
+                "Noting that current memory available is less than the currently designated threshold",
+                null);
           }
 
           synchronized (memorySync) {
@@ -797,8 +812,10 @@ public final class SystemFailure {
             // catenation
             logFine(PROCTOR_NAME, "...memory is still below threshold: " + freeMemory);
           } else {
-            logWarning(PROCTOR_NAME, "Noting that current memory available is still below currently designated threshold", null);
-
+            logWarning(
+                PROCTOR_NAME,
+                "Noting that current memory available is still below currently designated threshold",
+                null);
           }
           continue;
         }
@@ -817,36 +834,26 @@ public final class SystemFailure {
     } // for
   }
 
-  /**
-   * Enables some fine logging
-   */
-  static private final boolean DEBUG = false;
+  /** Enables some fine logging */
+  private static final boolean DEBUG = false;
 
-  /**
-   * If true, we track the progress of emergencyClose
-   * on System.err
-   */
-  static public final boolean TRACE_CLOSE = false;
+  /** If true, we track the progress of emergencyClose on System.err */
+  public static final boolean TRACE_CLOSE = false;
 
-  static protected final String WATCHDOG_NAME = "SystemFailure Watchdog";
+  protected static final String WATCHDOG_NAME = "SystemFailure Watchdog";
 
-  static protected final String PROCTOR_NAME = "SystemFailure Proctor";
+  protected static final String PROCTOR_NAME = "SystemFailure Proctor";
 
-  /**
-   * break any potential circularity in {@link #loadEmergencyClasses()}
-   */
+  /** break any potential circularity in {@link #loadEmergencyClasses()} */
   private static volatile boolean emergencyClassesLoaded = false;
 
   /**
-   * Since it requires object memory to unpack a jar file,
-   * make sure this JVM has loaded the classes necessary for
-   * closure <em>before</em> it becomes necessary to use them.
-   * <p>
-   * Note that just touching the class in order to load it
-   * is usually sufficient, so all an implementation needs
-   * to do is to reference the same classes used in
-   * {@link #emergencyClose()}.  Just make sure to do it while
-   * you still have memory to succeed!
+   * Since it requires object memory to unpack a jar file, make sure this JVM has loaded the classes
+   * necessary for closure <em>before</em> it becomes necessary to use them.
+   *
+   * <p>Note that just touching the class in order to load it is usually sufficient, so all an
+   * implementation needs to do is to reference the same classes used in {@link #emergencyClose()}.
+   * Just make sure to do it while you still have memory to succeed!
    */
   public static void loadEmergencyClasses() {
     // This method was called to basically load this class
@@ -857,8 +864,7 @@ public final class SystemFailure {
   }
 
   private static void basicLoadEmergencyClasses() {
-    if (emergencyClassesLoaded)
-      return;
+    if (emergencyClassesLoaded) return;
     emergencyClassesLoaded = true;
     SystemFailureTestHook.loadEmergencyClasses(); // bug 50516
     GemFireCacheImpl.loadEmergencyClasses();
@@ -867,21 +873,19 @@ public final class SystemFailure {
 
   /**
    * Attempt to close any and all GemFire resources.
-   * 
-   * The contract of this method is that it should not
-   * acquire any synchronization mutexes nor create any objects.
-   * <p>
-   * The former is because the system is in an undefined state and
-   * attempting to acquire the mutex may cause a hang.
-   * <p>
-   * The latter is because the likelihood is that we are invoking
-   * this method due to memory exhaustion, so any attempt to create
-   * an object will also cause a hang.
-   * <p>
-   * This method is not meant to be called directly (but, well, I
-   * guess it could).  It is public to document the contract
-   * that is implemented by <code>emergencyClose</code> in other
-   * parts of the system.
+   *
+   * <p>The contract of this method is that it should not acquire any synchronization mutexes nor
+   * create any objects.
+   *
+   * <p>The former is because the system is in an undefined state and attempting to acquire the
+   * mutex may cause a hang.
+   *
+   * <p>The latter is because the likelihood is that we are invoking this method due to memory
+   * exhaustion, so any attempt to create an object will also cause a hang.
+   *
+   * <p>This method is not meant to be called directly (but, well, I guess it could). It is public
+   * to document the contract that is implemented by <code>emergencyClose</code> in other parts of
+   * the system.
    */
   public static void emergencyClose() {
     // Make the cache (more) useless and inaccessible...
@@ -908,26 +912,21 @@ public final class SystemFailure {
 
   /**
    * Throw the system failure.
-   * 
-   * This method does not return normally.
-   * <p>
-   * Unfortunately, attempting to create a new Throwable at this
-   * point may cause the thread to hang (instead of generating
-   * another OutOfMemoryError), so we have to make do with whatever
-   * Error we have, instead of wrapping it with one pertinent
-   * to the current context.  See bug 38394.
+   *
+   * <p>This method does not return normally.
+   *
+   * <p>Unfortunately, attempting to create a new Throwable at this point may cause the thread to
+   * hang (instead of generating another OutOfMemoryError), so we have to make do with whatever
+   * Error we have, instead of wrapping it with one pertinent to the current context. See bug 38394.
    *
    * @throws Error
    */
-  static private void throwFailure() throws InternalGemFireError, Error {
+  private static void throwFailure() throws InternalGemFireError, Error {
     // Do not return normally...
-    if (failure != null)
-      throw failure;
+    if (failure != null) throw failure;
   }
 
-  /**
-   * Notifies the watchdog thread (assumes that {@link #failure} has been set)
-   */
+  /** Notifies the watchdog thread (assumes that {@link #failure} has been set) */
   private static void notifyWatchDog() {
     startWatchDog(); // just in case
     synchronized (failureSync) {
@@ -936,13 +935,13 @@ public final class SystemFailure {
   }
 
   /**
-   * Utility function to check for failures.  If a failure is
-   * detected, this methods throws an AssertionFailure.
-   * 
+   * Utility function to check for failures. If a failure is detected, this methods throws an
+   * AssertionFailure.
+   *
    * @see #initiateFailure(Error)
    * @throws InternalGemFireError if the system has been corrupted
-   * @throws Error if the system has been corrupted and a thread-specific 
-   * AssertionError cannot be allocated
+   * @throws Error if the system has been corrupted and a thread-specific AssertionError cannot be
+   *     allocated
    */
   public static void checkFailure() throws InternalGemFireError, Error {
     if (failure == null) {
@@ -953,9 +952,8 @@ public final class SystemFailure {
   }
 
   /**
-   * Signals that a system failure has occurred and then throws an
-   * AssertionError.
-   * 
+   * Signals that a system failure has occurred and then throws an AssertionError.
+   *
    * @param f the failure to set
    * @throws IllegalArgumentException if f is null
    * @throws InternalGemFireError always; this method does not return normally.
@@ -968,17 +966,19 @@ public final class SystemFailure {
 
   /**
    * Set the underlying system failure, if not already set.
-   * <p>
-   * This method does not generate an error, and should only be used
-   * in circumstances where execution needs to continue, such as when
-   * re-implementing {@link ThreadGroup#uncaughtException(Thread, Throwable)}.
-   * 
+   *
+   * <p>This method does not generate an error, and should only be used in circumstances where
+   * execution needs to continue, such as when re-implementing {@link
+   * ThreadGroup#uncaughtException(Thread, Throwable)}.
+   *
    * @param failure the system failure
    * @throws IllegalArgumentException if you attempt to set the failure to null
    */
   public static void setFailure(Error failure) {
     if (failure == null) {
-      throw new IllegalArgumentException(LocalizedStrings.SystemFailure_YOU_ARE_NOT_PERMITTED_TO_UNSET_A_SYSTEM_FAILURE.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SystemFailure_YOU_ARE_NOT_PERMITTED_TO_UNSET_A_SYSTEM_FAILURE
+              .toLocalizedString());
     }
     if (SystemFailureTestHook.errorIsExpected(failure)) {
       return;
@@ -993,29 +993,25 @@ public final class SystemFailure {
 
   /**
    * Returns the catastrophic system failure, if any.
-   * <p>
-   * This is usually (though not necessarily) an instance of
-   * {@link VirtualMachineError}.
-   * <p>
-   * A return value of null indicates that no system failure has yet been
-   * detected.
-   * <p>
-   * Object synchronization can implicitly require object creation (fat locks 
-   * in JRockit for instance), so the underlying value is not synchronized
-   * (it is a volatile). This means the return value from this call is not 
-   * necessarily the <em>first</em> failure reported by the JVM.
-   * <p>
-   * Note that even if it <em>were</em> synchronized, it would only be a 
-   * proximal indicator near the time that the JVM crashed, and may not 
-   * actually reflect the underlying root cause that generated the failure.  
-   * For instance, if your JVM is running short of memory, this Throwable is 
-   * probably an innocent victim and <em>not</em> the actual allocation (or 
-   * series of allocations) that caused your JVM to exhaust memory.
-   * <p>
-   * If this function returns a non-null value, keep in mind that the JVM is
-   * very limited.  In particular, any attempt to allocate objects may fail
-   * if the original failure was an OutOfMemoryError.  
-   * 
+   *
+   * <p>This is usually (though not necessarily) an instance of {@link VirtualMachineError}.
+   *
+   * <p>A return value of null indicates that no system failure has yet been detected.
+   *
+   * <p>Object synchronization can implicitly require object creation (fat locks in JRockit for
+   * instance), so the underlying value is not synchronized (it is a volatile). This means the
+   * return value from this call is not necessarily the <em>first</em> failure reported by the JVM.
+   *
+   * <p>Note that even if it <em>were</em> synchronized, it would only be a proximal indicator near
+   * the time that the JVM crashed, and may not actually reflect the underlying root cause that
+   * generated the failure. For instance, if your JVM is running short of memory, this Throwable is
+   * probably an innocent victim and <em>not</em> the actual allocation (or series of allocations)
+   * that caused your JVM to exhaust memory.
+   *
+   * <p>If this function returns a non-null value, keep in mind that the JVM is very limited. In
+   * particular, any attempt to allocate objects may fail if the original failure was an
+   * OutOfMemoryError.
+   *
    * @return the failure, if any
    */
   public static Error getFailure() {
@@ -1023,16 +1019,14 @@ public final class SystemFailure {
   }
 
   /**
-   * Sets a user-defined action that is run in the event
-   * that failure has been detected.
-   * <p> 
-   * This action is run <em>after</em> the GemFire cache has been shut down.
-   * If it throws any error, it will be reattempted indefinitely until it
-   * succeeds. This action may be dynamically modified while the system
-   * is running.
-   * <p>
-   * The default action prints the failure stack trace to System.err.
-   * 
+   * Sets a user-defined action that is run in the event that failure has been detected.
+   *
+   * <p>This action is run <em>after</em> the GemFire cache has been shut down. If it throws any
+   * error, it will be reattempted indefinitely until it succeeds. This action may be dynamically
+   * modified while the system is running.
+   *
+   * <p>The default action prints the failure stack trace to System.err.
+   *
    * @see #initiateFailure(Error)
    * @param action the Runnable to use
    * @return the previous action
@@ -1044,13 +1038,12 @@ public final class SystemFailure {
   }
 
   /**
-   * Set the memory threshold under which system failure will be
-   * notified. 
-   * 
-   * This value may be dynamically  modified while the system
-   * is running.  The default is 1048576 bytes.  This can be set using the 
-   * system property <code>gemfire.SystemFailure.chronic_memory_threshold</code>.
-   * 
+   * Set the memory threshold under which system failure will be notified.
+   *
+   * <p>This value may be dynamically modified while the system is running. The default is 1048576
+   * bytes. This can be set using the system property <code>
+   * gemfire.SystemFailure.chronic_memory_threshold</code>.
+   *
    * @param newVal threshold in bytes
    * @return the old threshold
    * @see Runtime#freeMemory()
@@ -1068,7 +1061,7 @@ public final class SystemFailure {
 
   //  /**
   //   * For use by GemStone Quality Assurance Only
-  //   * 
+  //   *
   //   * @deprecated TODO remove this
   //   */
   //  public static void reset() {
@@ -1098,7 +1091,7 @@ public final class SystemFailure {
   //    startWatchCat();
   //  }
 
-  static private boolean logStdErr(String kind, String name, String s, Throwable t) {
+  private static boolean logStdErr(String kind, String name, String s, Throwable t) {
     // As far as I can tell, this code path doesn't allocate
     // any objects!!!!
     try {
@@ -1118,14 +1111,14 @@ public final class SystemFailure {
   }
 
   /**
-   * Logging can require allocation of objects, so we wrap the
-   * logger so that failures are silently ignored.
-   * 
+   * Logging can require allocation of objects, so we wrap the logger so that failures are silently
+   * ignored.
+   *
    * @param s string to print
    * @param t the call stack, if any
    * @return true if the warning got printed
    */
-  static protected boolean logWarning(String name, String s, Throwable t) {
+  protected static boolean logWarning(String name, String s, Throwable t) {
     return logStdErr("warning", name, s, t);
     //    if (PREFER_STDERR) {
     //      return logStdErr("warning", name, s, t);
@@ -1140,12 +1133,12 @@ public final class SystemFailure {
   }
 
   /**
-   * Logging can require allocation of objects, so we wrap the
-   * logger so that failures are silently ignored.
-   * 
+   * Logging can require allocation of objects, so we wrap the logger so that failures are silently
+   * ignored.
+   *
    * @param s string to print
    */
-  static protected void logInfo(String name, String s) {
+  protected static void logInfo(String name, String s) {
     logStdErr("info", name, s, null);
     //    if (PREFER_STDERR) {
     //      logStdErr("info", name, s, null);
@@ -1160,12 +1153,12 @@ public final class SystemFailure {
   }
 
   /**
-   * Logging can require allocation of objects, so we wrap the
-   * logger so that failures are silently ignored.
-   * 
+   * Logging can require allocation of objects, so we wrap the logger so that failures are silently
+   * ignored.
+   *
    * @param s string to print
    */
-  static protected void logFine(String name, String s) {
+  protected static void logFine(String name, String s) {
     if (DEBUG) {
       logStdErr("fine", name, s, null);
     }
@@ -1186,8 +1179,7 @@ public final class SystemFailure {
   private static volatile boolean stopping;
 
   /**
-   * This starts up the watchdog and proctor threads.
-   * This method is called when a Cache is created.
+   * This starts up the watchdog and proctor threads. This method is called when a Cache is created.
    */
   public static void startThreads() {
     stopping = false;
@@ -1196,8 +1188,8 @@ public final class SystemFailure {
   }
 
   /**
-   * This stops the threads that implement this service.
-   * This method is called when a Cache is closed.
+   * This stops the threads that implement this service. This method is called when a Cache is
+   * closed.
    */
   public static void stopThreads() {
     // this method fixes bug 45409

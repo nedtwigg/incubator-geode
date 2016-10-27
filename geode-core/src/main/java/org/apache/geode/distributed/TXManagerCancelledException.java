@@ -20,10 +20,9 @@ import org.apache.geode.CancelException;
 
 /**
  * Thrown when a GemFire transaction manager has been terminated.
- * 
+ *
  * @since GemFire 6.0
  */
-
 public class TXManagerCancelledException extends CancelException {
 
   private static final long serialVersionUID = 3902857360354568446L;
@@ -43,5 +42,4 @@ public class TXManagerCancelledException extends CancelException {
   public TXManagerCancelledException(String s) {
     super(s);
   }
-
 }

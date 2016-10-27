@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.client.internal;
 
 import org.apache.geode.DataSerializer;
@@ -47,16 +45,15 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * Authenticates this client (or a user) on a server. This op ideally should get
- * executed once-per-server.
- * 
- * When multiuser-authentication is set to false, this op gets executed
- * immedialtely after a client-to-server connection is established.
- * 
- * When multiuser-authentication is set to true, this op gets executed
- * before the user attempts to perform an op whose
- * {@link AbstractOp#needsUserId()} returns true.
- * 
+ * Authenticates this client (or a user) on a server. This op ideally should get executed
+ * once-per-server.
+ *
+ * <p>When multiuser-authentication is set to false, this op gets executed immedialtely after a
+ * client-to-server connection is established.
+ *
+ * <p>When multiuser-authentication is set to true, this op gets executed before the user attempts
+ * to perform an op whose {@link AbstractOp#needsUserId()} returns true.
+ *
  * @see PutUserCredentials
  * @see ProxyCache
  * @since GemFire 6.5
@@ -64,13 +61,10 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 public class AuthenticateUserOp {
 
   /**
-   * Sends the auth credentials to the server. Used in single user mode of
-   * authentication.
-   * 
-   * @param con
-   *          The connection to use for this operation.
-   * @param pool
-   *          The connection pool to use for this operation.
+   * Sends the auth credentials to the server. Used in single user mode of authentication.
+   *
+   * @param con The connection to use for this operation.
+   * @param pool The connection pool to use for this operation.
    * @return Object unique user-id.
    */
   public static Object executeOn(Connection con, ExecutablePool pool) {
@@ -79,18 +73,17 @@ public class AuthenticateUserOp {
   }
 
   /**
-   * Sends the auth credentials to the server for a particular user. Used in
-   * multiple user mode of authentication.
-   * 
-   * @param location
-   *          The ServerLocation instance whose connection instance will be used
-   *          to perform the operation.
-   * @param pool
-   *          The connection pool to use for this operation.
+   * Sends the auth credentials to the server for a particular user. Used in multiple user mode of
+   * authentication.
+   *
+   * @param location The ServerLocation instance whose connection instance will be used to perform
+   *     the operation.
+   * @param pool The connection pool to use for this operation.
    * @param securityProps
    * @return Object unique user-id.
    */
-  public static Object executeOn(ServerLocation location, ExecutablePool pool, Properties securityProps) {
+  public static Object executeOn(
+      ServerLocation location, ExecutablePool pool, Properties securityProps) {
     AbstractOp op = new AuthenticateUserOpImpl(pool, securityProps);
     return pool.executeOn(location, op);
   }
@@ -107,13 +100,22 @@ public class AuthenticateUserOp {
     public AuthenticateUserOpImpl(Connection con, ExecutablePool pool) {
       super(MessageType.USER_CREDENTIAL_MESSAGE, 1);
       byte[] credentialBytes = null;
-      DistributedMember server = new InternalDistributedMember(con.getSocket().getInetAddress(), con.getSocket().getPort(), false);
+      DistributedMember server =
+          new InternalDistributedMember(
+              con.getSocket().getInetAddress(), con.getSocket().getPort(), false);
       DistributedSystem sys = InternalDistributedSystem.getConnectedInstance();
       String authInitMethod = sys.getProperties().getProperty(SECURITY_CLIENT_AUTH_INIT);
       Properties tmpSecurityProperties = sys.getSecurityProperties();
 
       // LOG: following passes the DS API LogWriters into the security API
-      Properties credentials = HandShake.getCredentials(authInitMethod, tmpSecurityProperties, server, false, (InternalLogWriter) sys.getLogWriter(), (InternalLogWriter) sys.getSecurityLogWriter());
+      Properties credentials =
+          HandShake.getCredentials(
+              authInitMethod,
+              tmpSecurityProperties,
+              server,
+              false,
+              (InternalLogWriter) sys.getLogWriter(),
+              (InternalLogWriter) sys.getSecurityLogWriter());
 
       getMessage().setMessageHasSecurePartFlag();
       HeapDataOutputStream heapdos = new HeapDataOutputStream(Version.CURRENT);
@@ -132,7 +134,8 @@ public class AuthenticateUserOp {
       this(pool, securityProps, false);
     }
 
-    public AuthenticateUserOpImpl(ExecutablePool pool, Properties securityProps, boolean needsServer) {
+    public AuthenticateUserOpImpl(
+        ExecutablePool pool, Properties securityProps, boolean needsServer) {
       super(MessageType.USER_CREDENTIAL_MESSAGE, 1);
       this.securityProperties = securityProps;
       this.needsServerLocation = needsServer;
@@ -147,15 +150,25 @@ public class AuthenticateUserOp {
       hdos.writeLong(cnx.getConnectionID());
       if (this.securityProperties != null) {
         byte[] credentialBytes = null;
-        DistributedMember server = new InternalDistributedMember(cnx.getSocket().getInetAddress(), cnx.getSocket().getPort(), false);
+        DistributedMember server =
+            new InternalDistributedMember(
+                cnx.getSocket().getInetAddress(), cnx.getSocket().getPort(), false);
         DistributedSystem sys = InternalDistributedSystem.getConnectedInstance();
         String authInitMethod = sys.getProperties().getProperty(SECURITY_CLIENT_AUTH_INIT);
 
-        Properties credentials = HandShake.getCredentials(authInitMethod, this.securityProperties, server, false, (InternalLogWriter) sys.getLogWriter(), (InternalLogWriter) sys.getSecurityLogWriter());
+        Properties credentials =
+            HandShake.getCredentials(
+                authInitMethod,
+                this.securityProperties,
+                server,
+                false,
+                (InternalLogWriter) sys.getLogWriter(),
+                (InternalLogWriter) sys.getSecurityLogWriter());
         HeapDataOutputStream heapdos = new HeapDataOutputStream(Version.CURRENT);
         try {
           DataSerializer.writeProperties(credentials, heapdos);
-          credentialBytes = ((ConnectionImpl) cnx).getHandShake().encryptBytes(heapdos.toByteArray());
+          credentialBytes =
+              ((ConnectionImpl) cnx).getHandShake().encryptBytes(heapdos.toByteArray());
         } finally {
           heapdos.close();
         }
@@ -183,7 +196,12 @@ public class AuthenticateUserOp {
     protected Object attemptReadResponse(Connection cnx) throws Exception {
       Message msg = createResponseMessage();
       if (msg != null) {
-        msg.setComms(cnx.getSocket(), cnx.getInputStream(), cnx.getOutputStream(), cnx.getCommBuffer(), cnx.getStats());
+        msg.setComms(
+            cnx.getSocket(),
+            cnx.getInputStream(),
+            cnx.getOutputStream(),
+            cnx.getCommBuffer(),
+            cnx.getStats());
         if (msg instanceof ChunkedMessage) {
           try {
             return processResponse(cnx, msg);
@@ -221,7 +239,7 @@ public class AuthenticateUserOp {
           userId = dis.readLong();
         }
         if (this.needsServerLocation) {
-          return new Object[] { cnx.getServer(), userId };
+          return new Object[] {cnx.getServer(), userId};
         } else {
           return userId;
         }
@@ -282,5 +300,4 @@ public class AuthenticateUserOp {
       return false;
     }
   }
-
 }

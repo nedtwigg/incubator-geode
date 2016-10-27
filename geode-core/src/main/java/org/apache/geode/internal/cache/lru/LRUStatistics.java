@@ -25,25 +25,28 @@ import org.apache.geode.StatisticsType;
 import org.apache.geode.internal.Assert;
 
 /**
- * Statistics for both the LocalLRUClockHand.  Note that all its instance fields are
- * <code>final</code>.  Thus, we do not need to worry about refreshing
- * an instance when it resides in shared memory.
+ * Statistics for both the LocalLRUClockHand. Note that all its instance fields are <code>final
+ * </code>. Thus, we do not need to worry about refreshing an instance when it resides in shared
+ * memory.
  */
 public class LRUStatistics {
 
   /** The Statistics object that we delegate most behavior to */
   private final Statistics stats;
+
   protected int limitId;
   /**
-   * the number of destroys that must occur before a list scan is initiated to
-   * to remove unlinked entries.
+   * the number of destroys that must occur before a list scan is initiated to to remove unlinked
+   * entries.
    */
   protected int destroysLimitId;
+
   protected int counterId;
   /** entries that have been evicted from the LRU list */
   protected int evictionsId;
   /** entries that have been destroyed, but not yet evicted from the LRU list */
   protected int destroysId;
+
   protected int evaluationsId;
   protected int greedyReturnsId;
 
@@ -60,9 +63,9 @@ public class LRUStatistics {
   /////////////////////////  Constructors  /////////////////////////
 
   /**
-   *  Constructor for the LRUStatistics object
+   * Constructor for the LRUStatistics object
    *
-   * @param  name  Description of the Parameter
+   * @param name Description of the Parameter
    */
   public LRUStatistics(StatisticsFactory factory, String name, EnableLRU helper) {
     String statName = helper.getStatisticsName() + "-" + name;
@@ -100,7 +103,8 @@ public class LRUStatistics {
 
   /** limit */
   public void setLimit(long newValue) {
-    Assert.assertTrue(newValue > 0L, "limit must be positive, an attempt was made to set it to: " + newValue);
+    Assert.assertTrue(
+        newValue > 0L, "limit must be positive, an attempt was made to set it to: " + newValue);
     long oldValue = this.limit.get();
     if (oldValue != newValue) {
       this.limit.set(newValue);
@@ -110,7 +114,9 @@ public class LRUStatistics {
 
   /** destroy limit */
   public void setDestroysLimit(long newValue) {
-    Assert.assertTrue(newValue > 0L, "destroys limit must be positive, an attempt was made to set it to: " + newValue);
+    Assert.assertTrue(
+        newValue > 0L,
+        "destroys limit must be positive, an attempt was made to set it to: " + newValue);
     long oldValue = this.destroysLimit.get();
     if (oldValue != newValue) {
       this.destroysLimit.set(newValue);
@@ -147,7 +153,7 @@ public class LRUStatistics {
   //      stats.setLong(counterId, newValue);
   //    }
   //  }
-  //  
+  //
   public void decrementCounter(long delta) {
     if (delta != 0) {
       this.counter.addAndGet(-delta);
@@ -196,5 +202,4 @@ public class LRUStatistics {
   public Statistics getStats() {
     return this.stats;
   }
-
 }

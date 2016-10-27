@@ -16,10 +16,7 @@
  */
 package org.apache.geode.internal.cache.persistence.query.mock;
 
-/**
- * An object that holds a pair of objects.
- *
- */
+/** An object that holds a pair of objects. */
 public class Pair<X, Y> {
   private final X x;
   private final Y y;
@@ -53,24 +50,16 @@ public class Pair<X, Y> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     Pair other = (Pair) obj;
     if (x == null) {
-      if (other.x != null)
-        return false;
-    } else if (!x.equals(other.x))
-      return false;
+      if (other.x != null) return false;
+    } else if (!x.equals(other.x)) return false;
     if (y == null) {
-      if (other.y != null)
-        return false;
-    } else if (!y.equals(other.y))
-      return false;
+      if (other.y != null) return false;
+    } else if (!y.equals(other.y)) return false;
     return true;
   }
-
 }

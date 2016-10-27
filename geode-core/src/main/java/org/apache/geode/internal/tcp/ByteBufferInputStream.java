@@ -35,24 +35,18 @@ import org.apache.geode.internal.offheap.AddressableMemoryManager;
 import org.apache.geode.internal.offheap.StoredObject;
 
 /**
- * <p>
- * ByteBufferInputStream is an input stream for ByteBuffer objects. It's
- * incredible that the jdk doesn't have one of these already.
- * </p>
- * 
- * The methods in this class throw BufferUnderflowException, not EOFException,
- * if the end of the buffer is reached before we read the full amount. That
- * breaks the contract for InputStream and DataInput, but it works for our code.
- * 
+ * ByteBufferInputStream is an input stream for ByteBuffer objects. It's incredible that the jdk
+ * doesn't have one of these already. The methods in this class throw BufferUnderflowException, not
+ * EOFException, if the end of the buffer is reached before we read the full amount. That breaks the
+ * contract for InputStream and DataInput, but it works for our code.
+ *
  * @since GemFire 3.0
  */
-
-public class ByteBufferInputStream extends InputStream implements DataInput, java.io.Externalizable {
+public class ByteBufferInputStream extends InputStream
+    implements DataInput, java.io.Externalizable {
   /**
-   * This interface is used to wrap either a ByteBuffer or an offheap Chunk
-   * as the source of bytes for a ByteBufferInputStream.
-   * 
-   *
+   * This interface is used to wrap either a ByteBuffer or an offheap Chunk as the source of bytes
+   * for a ByteBufferInputStream.
    */
   public static interface ByteSource {
     int position();
@@ -111,9 +105,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
 
     ByteSource slice(int pos, int limit);
 
-    /**
-     * Returns the ByteBuffer that this ByteSource wraps; null if no ByteBuffer
-     */
+    /** Returns the ByteBuffer that this ByteSource wraps; null if no ByteBuffer */
     ByteBuffer getBackingByteBuffer();
 
     void sendTo(ByteBuffer out);
@@ -153,15 +145,15 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
     /**
      * Returns the current hash code of this byte source.
      *
-     * <p> The hash code of a byte source depends only upon its remaining
-     * elements; that is, upon the elements from <tt>position()</tt> up to, and
-     * including, the element at <tt>limit()</tt>&nbsp;-&nbsp;<tt>1</tt>.
+     * <p>The hash code of a byte source depends only upon its remaining elements; that is, upon the
+     * elements from <tt>position()</tt> up to, and including, the element at
+     * <tt>limit()</tt>&nbsp;-&nbsp;<tt>1</tt>.
      *
-     * <p> Because byte source hash codes are content-dependent, it is inadvisable
-     * to use byte sources as keys in hash maps or similar data structures unless it
-     * is known that their contents will not change.  </p>
+     * <p>Because byte source hash codes are content-dependent, it is inadvisable to use byte
+     * sources as keys in hash maps or similar data structures unless it is known that their
+     * contents will not change.
      *
-     * @return  The current hash code of this byte source
+     * @return The current hash code of this byte source
      */
     @Override
     public int hashCode() {
@@ -350,8 +342,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
     @Override
     public void sendTo(DataOutput out) throws IOException {
       int len = remaining();
-      if (len == 0)
-        return;
+      if (len == 0) return;
       if (out instanceof ByteBufferWriter) {
         ((ByteBufferWriter) out).write(this.bb);
         return;
@@ -395,15 +386,15 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
     /**
      * Returns the current hash code of this byte source.
      *
-     * <p> The hash code of a byte source depends only upon its remaining
-     * elements; that is, upon the elements from <tt>position()</tt> up to, and
-     * including, the element at <tt>limit()</tt>&nbsp;-&nbsp;<tt>1</tt>.
+     * <p>The hash code of a byte source depends only upon its remaining elements; that is, upon the
+     * elements from <tt>position()</tt> up to, and including, the element at
+     * <tt>limit()</tt>&nbsp;-&nbsp;<tt>1</tt>.
      *
-     * <p> Because byte source hash codes are content-dependent, it is inadvisable
-     * to use byte sources as keys in hash maps or similar data structures unless it
-     * is known that their contents will not change.  </p>
+     * <p>Because byte source hash codes are content-dependent, it is inadvisable to use byte
+     * sources as keys in hash maps or similar data structures unless it is known that their
+     * contents will not change.
      *
-     * @return  The current hash code of this byte source
+     * @return The current hash code of this byte source
      */
     @Override
     public int hashCode() {
@@ -494,9 +485,8 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
     }
 
     /**
-     * Checks the given index against the limit, throwing an {@link
-     * IndexOutOfBoundsException} if it is not smaller than the limit
-     * or is smaller than zero.
+     * Checks the given index against the limit, throwing an {@link IndexOutOfBoundsException} if it
+     * is not smaller than the limit or is smaller than zero.
      */
     private final void checkIndex(int i) {
       if ((i < 0) || (i >= this.limit)) {
@@ -547,16 +537,19 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       return this.chunk.readDataByte(pos);
     }
 
-    /**
-     * Return true if the hardware supported unaligned reads from memory.
-     */
+    /** Return true if the hardware supported unaligned reads from memory. */
     private static boolean determineUnaligned() {
       try {
         Class c = Class.forName("java.nio.Bits");
         Method m = c.getDeclaredMethod("unaligned");
         m.setAccessible(true);
         return (boolean) m.invoke(null);
-      } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+      } catch (ClassNotFoundException
+          | NoSuchMethodException
+          | SecurityException
+          | IllegalAccessException
+          | IllegalArgumentException
+          | InvocationTargetException e) {
         return false;
         //throw new IllegalStateException("Could not invoke java.nio.Bits.unaligned()", e);
       }
@@ -672,7 +665,14 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
         byte b5 = AddressableMemoryManager.readByte(addr++);
         byte b6 = AddressableMemoryManager.readByte(addr++);
         byte b7 = AddressableMemoryManager.readByte(addr);
-        return (((long) b0 << 56) + ((long) (b1 & 255) << 48) + ((long) (b2 & 255) << 40) + ((long) (b3 & 255) << 32) + ((long) (b4 & 255) << 24) + ((b5 & 255) << 16) + ((b6 & 255) << 8) + ((b7 & 255) << 0));
+        return (((long) b0 << 56)
+            + ((long) (b1 & 255) << 48)
+            + ((long) (b2 & 255) << 40)
+            + ((long) (b3 & 255) << 32)
+            + ((long) (b4 & 255) << 24)
+            + ((b5 & 255) << 16)
+            + ((b6 & 255) << 8)
+            + ((b7 & 255) << 0));
       }
     }
 
@@ -783,8 +783,7 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
     setBuffer(buffer);
   }
 
-  public ByteBufferInputStream() {
-  }
+  public ByteBufferInputStream() {}
 
   protected ByteBufferInputStream(ByteBufferInputStream copy) {
     this.buffer = copy.buffer.duplicate();
@@ -809,10 +808,8 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
   }
 
   /**
-   * See the InputStream read method for javadocs.
-   * Note that if an attempt
-   * to read past the end of the wrapped ByteBuffer is done this method
-   * throws BufferUnderflowException
+   * See the InputStream read method for javadocs. Note that if an attempt to read past the end of
+   * the wrapped ByteBuffer is done this method throws BufferUnderflowException
    */
   @Override
   public final int read() {
@@ -925,7 +922,6 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
    */
   public void readFully(byte[] b) {
     this.buffer.get(b);
-
   }
 
   /* (non-Javadoc)
@@ -933,7 +929,6 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
    */
   public void readFully(byte[] b, int off, int len) {
     this.buffer.get(b, off, len);
-
   }
 
   /* (non-Javadoc)
@@ -1082,7 +1077,8 @@ public class ByteBufferInputStream extends InputStream implements DataInput, jav
       byte[] bytes = new byte[capacity];
       int bytesRead = in.read(bytes);
       if (bytesRead != capacity) {
-        throw new IOException("Expected to read " + capacity + " bytes but only read " + bytesRead + " bytes.");
+        throw new IOException(
+            "Expected to read " + capacity + " bytes but only read " + bytesRead + " bytes.");
       }
       setBuffer(ByteBuffer.wrap(bytes, position, limit - position));
     } else {

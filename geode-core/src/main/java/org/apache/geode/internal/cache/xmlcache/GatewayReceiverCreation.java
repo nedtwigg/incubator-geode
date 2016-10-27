@@ -58,7 +58,16 @@ public class GatewayReceiverCreation implements GatewayReceiver {
   private CacheServer receiver;
 
   @SuppressWarnings("deprecation")
-  public GatewayReceiverCreation(Cache cache, int startPort, int endPort, int timeBetPings, int buffSize, String bindAdd, List<GatewayTransportFilter> filters, String hostnameForSenders, boolean manualStart) {
+  public GatewayReceiverCreation(
+      Cache cache,
+      int startPort,
+      int endPort,
+      int timeBetPings,
+      int buffSize,
+      String bindAdd,
+      List<GatewayTransportFilter> filters,
+      String hostnameForSenders,
+      boolean manualStart) {
     this.cache = cache;
 
     /*
@@ -69,10 +78,12 @@ public class GatewayReceiverCreation implements GatewayReceiver {
     if (hostnameForSenders == null || hostnameForSenders.isEmpty()) {
       if (bindAdd == null || bindAdd.isEmpty()) {
         try {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.GatewayReceiverImpl_USING_LOCAL_HOST));
+          logger.warn(
+              LocalizedMessage.create(LocalizedStrings.GatewayReceiverImpl_USING_LOCAL_HOST));
           this.host = SocketCreator.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-          throw new IllegalStateException(LocalizedStrings.GatewayReceiverImpl_COULD_NOT_GET_HOST_NAME.toLocalizedString(), e);
+          throw new IllegalStateException(
+              LocalizedStrings.GatewayReceiverImpl_COULD_NOT_GET_HOST_NAME.toLocalizedString(), e);
         }
       } else {
         this.host = bindAdd;
@@ -146,9 +157,7 @@ public class GatewayReceiverCreation implements GatewayReceiver {
     }
   }
 
-  public void stop() {
-
-  }
+  public void stop() {}
 
   public boolean isRunning() {
     return false;
@@ -180,5 +189,4 @@ public class GatewayReceiverCreation implements GatewayReceiver {
   public CacheServer getServer() {
     return null;
   }
-
 }

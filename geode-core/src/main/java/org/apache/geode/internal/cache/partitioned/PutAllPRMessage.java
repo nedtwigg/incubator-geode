@@ -75,9 +75,8 @@ import org.apache.geode.internal.offheap.annotations.Released;
 import org.apache.geode.internal.offheap.annotations.Retained;
 
 /**
- * A Partitioned Region update message.  Meant to be sent only to
- * a bucket's primary owner.  In addition to updating an entry it is also used to
- * send Partitioned Region event information.
+ * A Partitioned Region update message. Meant to be sent only to a bucket's primary owner. In
+ * addition to updating an entry it is also used to send Partitioned Region event information.
  *
  * @since GemFire 6.0
  */
@@ -90,11 +89,14 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
 
   private Integer bucketId;
 
-  /** An additional object providing context for the operation, e.g., for BridgeServer notification */
+  /**
+   * An additional object providing context for the operation, e.g., for BridgeServer notification
+   */
   ClientProxyMembershipID bridgeContext;
 
   /** true if no callbacks should be invoked */
   private boolean skipCallbacks;
+
   private Object callbackArg;
 
   protected static final short HAS_BRIDGE_CONTEXT = UNRESERVED_FLAGS_START;
@@ -105,21 +107,21 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
   /** whether direct-acknowledgement is desired */
   private transient boolean directAck = false;
 
-  /**
-   * state from operateOnRegion that must be preserved for transmission
-   * from the waiting pool
-   */
+  /** state from operateOnRegion that must be preserved for transmission from the waiting pool */
   transient boolean result = false;
 
   transient VersionedObjectList versions = null;
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer}requirements
-   */
-  public PutAllPRMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer}requirements */
+  public PutAllPRMessage() {}
 
-  public PutAllPRMessage(int bucketId, int size, boolean notificationOnly, boolean posDup, boolean skipCallbacks, Object callbackArg) {
+  public PutAllPRMessage(
+      int bucketId,
+      int size,
+      boolean notificationOnly,
+      boolean posDup,
+      boolean skipCallbacks,
+      Object callbackArg) {
     this.bucketId = Integer.valueOf(bucketId);
     putAllPRData = new PutAllEntryData[size];
     this.notificationOnly = notificationOnly;
@@ -133,7 +135,8 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
     this.putAllPRData[this.putAllPRDataSize++] = entry;
   }
 
-  public void initMessage(PartitionedRegion r, Set recipients, boolean notifyOnly, DirectReplyProcessor p) {
+  public void initMessage(
+      PartitionedRegion r, Set recipients, boolean notifyOnly, DirectReplyProcessor p) {
     setInternalDs(r.getSystem());
     setDirectAck(false);
     this.resetRecipients();
@@ -180,13 +183,15 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
 
   /**
    * Sends a PartitionedRegion PutAllPRMessage to the recipient
+   *
    * @param recipient the member to which the put message is sent
-   * @param r  the PartitionedRegion for which the put was performed
-   * @return the processor used to await acknowledgement that the update was
-   *         sent, or null to indicate that no acknowledgement will be sent
+   * @param r the PartitionedRegion for which the put was performed
+   * @return the processor used to await acknowledgement that the update was sent, or null to
+   *     indicate that no acknowledgement will be sent
    * @throws ForceReattemptException if the peer is no longer available
    */
-  public PartitionResponse send(DistributedMember recipient, PartitionedRegion r) throws ForceReattemptException {
+  public PartitionResponse send(DistributedMember recipient, PartitionedRegion r)
+      throws ForceReattemptException {
     //Assert.assertTrue(recipient != null, "PutAllPRMessage NULL recipient");  recipient can be null for event notifications
     Set recipients = Collections.singleton(recipient);
     PutAllResponse p = new PutAllResponse(r.getSystem(), recipients);
@@ -237,7 +242,6 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
         }
       }
     }
-
   }
 
   @Override
@@ -284,10 +288,8 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
   @Override
   protected short computeCompressedShort(short s) {
     s = super.computeCompressedShort(s);
-    if (this.bridgeContext != null)
-      s |= HAS_BRIDGE_CONTEXT;
-    if (this.skipCallbacks)
-      s |= SKIP_CALLBACKS;
+    if (this.bridgeContext != null) s |= HAS_BRIDGE_CONTEXT;
+    if (this.skipCallbacks) s |= SKIP_CALLBACKS;
     return s;
   }
 
@@ -306,13 +308,14 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
   }
 
   /**
-   * This method is called upon receipt and make the desired changes to the
-   * PartitionedRegion Note: It is very important that this message does NOT
-   * cause any deadlocks as the sender will wait indefinitely for the
-   * acknowledgement
+   * This method is called upon receipt and make the desired changes to the PartitionedRegion Note:
+   * It is very important that this message does NOT cause any deadlocks as the sender will wait
+   * indefinitely for the acknowledgement
    */
   @Override
-  protected final boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime) throws EntryExistsException, ForceReattemptException, DataLocationException {
+  protected final boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion r, long startTime)
+      throws EntryExistsException, ForceReattemptException, DataLocationException {
     boolean sendReply = true;
 
     InternalDistributedMember eventSender = getSender();
@@ -339,7 +342,17 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
     }
 
     @Retained
-    EntryEventImpl ev = EntryEventImpl.create(r, putAllPRData[0].getOp(), putAllPRData[0].getKey(), putAllPRData[0].getValue(), this.callbackArg, false /* originRemote */, getSender(), true/* generate Callbacks */, putAllPRData[0].getEventID());
+    EntryEventImpl ev =
+        EntryEventImpl.create(
+            r,
+            putAllPRData[0].getOp(),
+            putAllPRData[0].getKey(),
+            putAllPRData[0].getValue(),
+            this.callbackArg,
+            false /* originRemote */,
+            getSender(),
+            true /* generate Callbacks */,
+            putAllPRData[0].getEventID());
     return ev;
   }
 
@@ -350,18 +363,19 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
   }
 
   /**
-   * This method is called by both operateOnPartitionedRegion() when processing a remote msg
-   * or by sendMsgByBucket() when processing a msg targeted to local Jvm. 
-   * PartitionedRegion Note: It is very important that this message does NOT
-   * cause any deadlocks as the sender will wait indefinitely for the
-   * acknowledgment
-   * @param r partitioned region
-   *        eventSender the endpoint server who received request from client
-   *        lastModified timestamp for last modification
+   * This method is called by both operateOnPartitionedRegion() when processing a remote msg or by
+   * sendMsgByBucket() when processing a msg targeted to local Jvm. PartitionedRegion Note: It is
+   * very important that this message does NOT cause any deadlocks as the sender will wait
+   * indefinitely for the acknowledgment
+   *
+   * @param r partitioned region eventSender the endpoint server who received request from client
+   *     lastModified timestamp for last modification
    * @return If succeeds, return true, otherwise, throw exception
    */
   @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "IMSE_DONT_CATCH_IMSE")
-  public final boolean doLocalPutAll(PartitionedRegion r, InternalDistributedMember eventSender, long lastModified) throws EntryExistsException, ForceReattemptException, DataLocationException {
+  public final boolean doLocalPutAll(
+      PartitionedRegion r, InternalDistributedMember eventSender, long lastModified)
+      throws EntryExistsException, ForceReattemptException, DataLocationException {
     boolean didPut = false;
     long clientReadTimeOut = PoolFactory.DEFAULT_READ_TIMEOUT;
     if (r.hasServerProxy()) {
@@ -372,8 +386,7 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
     }
 
     DistributedPutAllOperation dpao = null;
-    @Released
-    EntryEventImpl baseEvent = null;
+    @Released EntryEventImpl baseEvent = null;
     BucketRegion bucketRegion = null;
     PartitionedRegionDataStore ds = r.getDataStore();
     InternalDistributedMember myId = r.getDistributionManager().getDistributionManagerId();
@@ -383,10 +396,24 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
         // bucketRegion is not null only when !notificationOnly
         bucketRegion = ds.getInitializedBucketForId(null, bucketId);
 
-        this.versions = new VersionedObjectList(this.putAllPRDataSize, true, bucketRegion.getAttributes().getConcurrencyChecksEnabled());
+        this.versions =
+            new VersionedObjectList(
+                this.putAllPRDataSize,
+                true,
+                bucketRegion.getAttributes().getConcurrencyChecksEnabled());
 
         // create a base event and a DPAO for PutAllMessage distributed btw redundant buckets
-        baseEvent = EntryEventImpl.create(bucketRegion, Operation.PUTALL_CREATE, null, null, this.callbackArg, true, eventSender, !skipCallbacks, true);
+        baseEvent =
+            EntryEventImpl.create(
+                bucketRegion,
+                Operation.PUTALL_CREATE,
+                null,
+                null,
+                this.callbackArg,
+                true,
+                eventSender,
+                !skipCallbacks,
+                true);
         // set baseEventId to the first entry's event id. We need the thread id for DACE
         baseEvent.setEventId(putAllPRData[0].getEventID());
         if (this.bridgeContext != null) {
@@ -394,7 +421,11 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
         }
         baseEvent.setPossibleDuplicate(this.posDup);
         if (logger.isDebugEnabled()) {
-          logger.debug("PutAllPRMessage.doLocalPutAll: eventSender is {}, baseEvent is {}, msg is {}", eventSender, baseEvent, this);
+          logger.debug(
+              "PutAllPRMessage.doLocalPutAll: eventSender is {}, baseEvent is {}, msg is {}",
+              eventSender,
+              baseEvent,
+              this);
         }
         dpao = new DistributedPutAllOperation(baseEvent, putAllPRDataSize, false);
       }
@@ -418,7 +449,8 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
               // of the previous attempt
               for (int i = 0; i < putAllPRDataSize; i++) {
                 if (putAllPRData[i].versionTag == null) {
-                  putAllPRData[i].versionTag = bucketRegion.findVersionTagForClientBulkOp(putAllPRData[i].getEventID());
+                  putAllPRData[i].versionTag =
+                      bucketRegion.findVersionTagForClientBulkOp(putAllPRData[i].getEventID());
                   if (putAllPRData[i].versionTag != null) {
                     putAllPRData[i].versionTag.replaceNullIDs(bucketRegion.getVersionMember());
                   }
@@ -426,7 +458,8 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
               }
             }
             EventID eventID = putAllPRData[0].getEventID();
-            ThreadIdentifier membershipID = new ThreadIdentifier(eventID.getMembershipID(), eventID.getThreadID());
+            ThreadIdentifier membershipID =
+                new ThreadIdentifier(eventID.getMembershipID(), eventID.getThreadID());
             bucketRegion.recordBulkOpStart(membershipID);
           }
           bucketRegion.waitUntilLocked(keys);
@@ -438,13 +471,23 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
             bucketRegion.doLockForPrimary(false);
             lockedForPrimary = true;
 
-            /* The real work to be synchronized, it will take long time. We don't 
+            /* The real work to be synchronized, it will take long time. We don't
              * worry about another thread to send any msg which has the same key
              * in this request, because these request will be blocked by foundKey
              */
             for (int i = 0; i < putAllPRDataSize; i++) {
               @Released
-              EntryEventImpl ev = getEventFromEntry(r, myId, eventSender, i, putAllPRData, notificationOnly, bridgeContext, posDup, skipCallbacks);
+              EntryEventImpl ev =
+                  getEventFromEntry(
+                      r,
+                      myId,
+                      eventSender,
+                      i,
+                      putAllPRData,
+                      notificationOnly,
+                      bridgeContext,
+                      posDup,
+                      skipCallbacks);
               try {
                 key = ev.getKey();
 
@@ -459,20 +502,27 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
                 // oldValue and real operation will be modified into ev in putLocally()
                 // then in basicPutPart3(), the ev is added into dpao
                 try {
-                  didPut = r.getDataView().putEntryOnRemote(ev, false, false, null, false, lastModified, true);
+                  didPut =
+                      r.getDataView()
+                          .putEntryOnRemote(ev, false, false, null, false, lastModified, true);
                   if (didPut && logger.isDebugEnabled()) {
                     logger.debug("PutAllPRMessage.doLocalPutAll:putLocally success for {}", ev);
                   }
                 } catch (ConcurrentCacheModificationException e) {
                   didPut = true;
                   if (logger.isDebugEnabled()) {
-                    logger.debug("PutAllPRMessage.doLocalPutAll:putLocally encountered concurrent cache modification for {}", ev, e);
+                    logger.debug(
+                        "PutAllPRMessage.doLocalPutAll:putLocally encountered concurrent cache modification for {}",
+                        ev,
+                        e);
                   }
                 }
                 putAllPRData[i].setTailKey(ev.getTailKey());
                 if (!didPut) { // make sure the region hasn't gone away
                   r.checkReadiness();
-                  ForceReattemptException fre = new ForceReattemptException("unable to perform put in PutAllPR, but operation should not fail");
+                  ForceReattemptException fre =
+                      new ForceReattemptException(
+                          "unable to perform put in PutAllPR, but operation should not fail");
                   fre.setHash(ev.getKey().hashCode());
                   throw fre;
                 } else {
@@ -485,7 +535,8 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
             } // for
 
           } catch (IllegalMonitorStateException ex) {
-            ForceReattemptException fre = new ForceReattemptException("unable to get lock for primary, retrying... ");
+            ForceReattemptException fre =
+                new ForceReattemptException("unable to get lock for primary, retrying... ");
             throw fre;
           } catch (CacheWriterException cwe) {
             // encounter cacheWriter exception
@@ -506,7 +557,11 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
           if (partialKeys.hasFailure()) {
             partialKeys.addKeysAndVersions(this.versions);
             if (logger.isDebugEnabled()) {
-              logger.debug("PutAllPRMessage: partial keys applied, map to bucket {}'s keys: {}. Applied {}", bucketId, Arrays.toString(keys), succeeded);
+              logger.debug(
+                  "PutAllPRMessage: partial keys applied, map to bucket {}'s keys: {}. Applied {}",
+                  bucketId,
+                  Arrays.toString(keys),
+                  succeeded);
             }
             throw new PutAllPartialResultException(partialKeys);
           }
@@ -517,23 +572,37 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
         }
       } else {
         for (int i = 0; i < putAllPRDataSize; i++) {
-          EntryEventImpl ev = getEventFromEntry(r, myId, eventSender, i, putAllPRData, notificationOnly, bridgeContext, posDup, skipCallbacks);
+          EntryEventImpl ev =
+              getEventFromEntry(
+                  r,
+                  myId,
+                  eventSender,
+                  i,
+                  putAllPRData,
+                  notificationOnly,
+                  bridgeContext,
+                  posDup,
+                  skipCallbacks);
           try {
             ev.setOriginRemote(true);
             if (this.callbackArg != null) {
               ev.setCallbackArgument(this.callbackArg);
             }
-            r.invokePutCallbacks(ev.getOperation().isCreate() ? EnumListenerEvent.AFTER_CREATE : EnumListenerEvent.AFTER_UPDATE, ev, r.isInitialized(), true);
+            r.invokePutCallbacks(
+                ev.getOperation().isCreate()
+                    ? EnumListenerEvent.AFTER_CREATE
+                    : EnumListenerEvent.AFTER_UPDATE,
+                ev,
+                r.isInitialized(),
+                true);
           } finally {
             ev.release();
           }
         }
       }
     } finally {
-      if (baseEvent != null)
-        baseEvent.release();
-      if (dpao != null)
-        dpao.freeOffHeapResources();
+      if (baseEvent != null) baseEvent.release();
+      if (dpao != null) dpao.freeOffHeapResources();
     }
 
     return true;
@@ -549,22 +618,42 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
   }
 
   @Retained
-  public static EntryEventImpl getEventFromEntry(LocalRegion r, InternalDistributedMember myId, InternalDistributedMember eventSender, int idx, DistributedPutAllOperation.PutAllEntryData[] data, boolean notificationOnly, ClientProxyMembershipID bridgeContext, boolean posDup, boolean skipCallbacks) {
+  public static EntryEventImpl getEventFromEntry(
+      LocalRegion r,
+      InternalDistributedMember myId,
+      InternalDistributedMember eventSender,
+      int idx,
+      DistributedPutAllOperation.PutAllEntryData[] data,
+      boolean notificationOnly,
+      ClientProxyMembershipID bridgeContext,
+      boolean posDup,
+      boolean skipCallbacks) {
     PutAllEntryData prd = data[idx];
-    //EntryEventImpl ev = EntryEventImpl.create(r, 
+    //EntryEventImpl ev = EntryEventImpl.create(r,
     // prd.getOp(),
     // prd.getKey(), null/* value */, null /* callbackArg */,
     // false /* originRemote */,
-    //  eventSender, 
+    //  eventSender,
     //  true/* generate Callbacks */,
     //  prd.getEventID());
 
     @Retained
-    EntryEventImpl ev = EntryEventImpl.create(r, prd.getOp(), prd.getKey(), prd.getValue(), null, false, eventSender, !skipCallbacks, prd.getEventID());
+    EntryEventImpl ev =
+        EntryEventImpl.create(
+            r,
+            prd.getOp(),
+            prd.getKey(),
+            prd.getValue(),
+            null,
+            false,
+            eventSender,
+            !skipCallbacks,
+            prd.getEventID());
     boolean evReturned = false;
     try {
 
-      if (prd.getValue() == null && ev.getRegion().getAttributes().getDataPolicy() == DataPolicy.NORMAL) {
+      if (prd.getValue() == null
+          && ev.getRegion().getAttributes().getDataPolicy() == DataPolicy.NORMAL) {
         ev.setLocalInvalid(true);
       }
       ev.setNewValue(prd.getValue());
@@ -603,7 +692,13 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
 
   // override reply message type from PartitionMessage
   @Override
-  protected void sendReply(InternalDistributedMember member, int procId, DM dm, ReplyException ex, PartitionedRegion pr, long startTime) {
+  protected void sendReply(
+      InternalDistributedMember member,
+      int procId,
+      DM dm,
+      ReplyException ex,
+      PartitionedRegion pr,
+      long startTime) {
     //    if (!result && getOperation().isCreate()) {
     //      System.err.println("DEBUG: put returning false.  ifNew=" + ifNew
     //          +" ifOld="+ifOld + " message=" + this);
@@ -622,7 +717,10 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
   @Override
   protected final void appendFields(StringBuffer buff) {
     super.appendFields(buff);
-    buff.append("; putAllPRDataSize=").append(putAllPRDataSize).append("; bucketId=").append(bucketId);
+    buff.append("; putAllPRDataSize=")
+        .append(putAllPRDataSize)
+        .append("; bucketId=")
+        .append(bucketId);
     if (this.bridgeContext != null) {
       buff.append("; bridgeContext=").append(this.bridgeContext);
     }
@@ -631,7 +729,10 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
 
     for (int i = 0; i < putAllPRDataSize; i++) {
       //      buff.append("; entry"+i+":").append(putAllPRData[i]);
-      buff.append("; entry" + i + ":").append(putAllPRData[i].getKey()).append(",").append(putAllPRData[i].versionTag);
+      buff.append("; entry" + i + ":")
+          .append(putAllPRData[i].getKey())
+          .append(",")
+          .append(putAllPRData[i].versionTag);
     }
   }
 
@@ -656,8 +757,9 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
   public String toString() {
     StringBuffer buff = new StringBuffer();
     String className = getClass().getName();
-    //    className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo> more generic version 
-    buff.append(className.substring(className.indexOf(PN_TOKEN) + PN_TOKEN.length())); // partition.<foo>
+    //    className.substring(className.lastIndexOf('.', className.lastIndexOf('.') - 1) + 1);  // partition.<foo> more generic version
+    buff.append(
+        className.substring(className.indexOf(PN_TOKEN) + PN_TOKEN.length())); // partition.<foo>
     buff.append("(prid="); // make sure this is the first one
     buff.append(this.regionId);
 
@@ -691,6 +793,7 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
   public static final class PutAllReplyMessage extends ReplyMessage {
     /** Result of the PutAll operation */
     boolean result;
+
     VersionedObjectList versions;
 
     @Override
@@ -698,13 +801,11 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
       return true;
     }
 
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public PutAllReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public PutAllReplyMessage() {}
 
-    private PutAllReplyMessage(int processorId, boolean result, VersionedObjectList versions, ReplyException ex) {
+    private PutAllReplyMessage(
+        int processorId, boolean result, VersionedObjectList versions, ReplyException ex) {
       super();
       this.versions = versions;
       this.result = result;
@@ -713,7 +814,13 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient, int processorId, ReplySender dm, boolean result, VersionedObjectList versions, ReplyException ex) {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        ReplySender dm,
+        boolean result,
+        VersionedObjectList versions,
+        ReplyException ex) {
       Assert.assertTrue(recipient != null, "PutAllReplyMessage NULL reply message");
       PutAllReplyMessage m = new PutAllReplyMessage(processorId, result, versions, ex);
       m.setRecipient(recipient);
@@ -721,8 +828,8 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
     }
 
     /**
-     * Processes this message.  This method is invoked by the receiver
-     * of the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
      * @param dm the distribution manager that is processing the message.
      */
     @Override
@@ -768,14 +875,22 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("PutAllReplyMessage ").append("processorid=").append(this.processorId).append(" returning ").append(this.result).append(" exception=").append(getException()).append(" versions= ").append(this.versions);
+      sb.append("PutAllReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" returning ")
+          .append(this.result)
+          .append(" exception=")
+          .append(getException())
+          .append(" versions= ")
+          .append(this.versions);
       return sb.toString();
     }
-
   }
 
   /**
    * A processor to capture the value returned by {@link PutAllPRMessage}
+   *
    * @since GemFire 5.8
    */
   public static class PutAllResponse extends PartitionResponse {
@@ -835,5 +950,4 @@ public final class PutAllPRMessage extends PartitionMessageWithDirectReply {
       return "PutAllResult(" + this.returnValue + ", " + this.versions + ")";
     }
   }
-
 }

@@ -67,8 +67,7 @@ public class IntegratedSecurityService implements SecurityService {
     return defaultInstance;
   }
 
-  private IntegratedSecurityService() {
-  }
+  private IntegratedSecurityService() {}
 
   private PostProcessor postProcessor;
   private SecurityManager securityManager;
@@ -79,9 +78,8 @@ public class IntegratedSecurityService implements SecurityService {
   private boolean isPeerAuthenticator; // is there a SECURITY_PEER_AUTHENTICATOR
 
   /**
-   * It first looks the shiro subject in AccessControlContext since JMX will
-   * use multiple threads to process operations from the same client, then it
-   * looks into Shiro's thead context.
+   * It first looks the shiro subject in AccessControlContext since JMX will use multiple threads to
+   * process operations from the same client, then it looks into Shiro's thead context.
    *
    * @return the shiro subject, null if security is not enabled
    */
@@ -94,7 +92,8 @@ public class IntegratedSecurityService implements SecurityService {
 
     // First try get the principal out of AccessControlContext instead of Shiro's Thread context
     // since threads can be shared between JMX clients.
-    javax.security.auth.Subject jmxSubject = javax.security.auth.Subject.getSubject(AccessController.getContext());
+    javax.security.auth.Subject jmxSubject =
+        javax.security.auth.Subject.getSubject(AccessController.getContext());
 
     if (jmxSubject != null) {
       Set<ShiroPrincipal> principals = jmxSubject.getPrincipals(ShiroPrincipal.class);
@@ -116,12 +115,9 @@ public class IntegratedSecurityService implements SecurityService {
     return currentUser;
   }
 
-  /**
-   * convenient method for testing
-   */
+  /** convenient method for testing */
   public Subject login(String username, String password) {
-    if (StringUtils.isBlank(username) || StringUtils.isBlank(password))
-      return null;
+    if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) return null;
 
     Properties credentials = new Properties();
     credentials.setProperty(ResourceConstants.USER_NAME, username);
@@ -129,16 +125,13 @@ public class IntegratedSecurityService implements SecurityService {
     return login(credentials);
   }
 
-  /**
-   * @return null if security is not enabled, otherwise return a shiro subject
-   */
+  /** @return null if security is not enabled, otherwise return a shiro subject */
   public Subject login(Properties credentials) {
     if (!isIntegratedSecurity) {
       return null;
     }
 
-    if (credentials == null)
-      return null;
+    if (credentials == null) return null;
 
     // this makes sure it starts with a clean user object
     ThreadContext.remove();
@@ -150,7 +143,8 @@ public class IntegratedSecurityService implements SecurityService {
       currentUser.login(token);
     } catch (ShiroException e) {
       logger.info(e.getMessage(), e);
-      throw new AuthenticationFailedException("Authentication error. Please check your credentials.", e);
+      throw new AuthenticationFailedException(
+          "Authentication error. Please check your credentials.", e);
     }
 
     return currentUser;
@@ -183,18 +177,10 @@ public class IntegratedSecurityService implements SecurityService {
   }
 
   /**
-   * this binds the passed-in subject to the executing thread, normally, you
-   * would do this:
+   * this binds the passed-in subject to the executing thread, normally, you would do this:
    *
-   * ThreadState state = null;
-   * try{
-   *   state = IntegratedSecurityService.bindSubject(subject);
-   *   //do the rest of the work as this subject
-   * }
-   * finally{
-   *   if(state!=null)
-   *      state.clear();
-   * }
+   * <p>ThreadState state = null; try{ state = IntegratedSecurityService.bindSubject(subject); //do
+   * the rest of the work as this subject } finally{ if(state!=null) state.clear(); }
    */
   public ThreadState bindSubject(Subject subject) {
     if (subject == null) {
@@ -298,9 +284,7 @@ public class IntegratedSecurityService implements SecurityService {
     }
   }
 
-  /**
-   * initialize Shiro's Security Manager and Security Utilities
-   */
+  /** initialize Shiro's Security Manager and Security Utilities */
   public void initSecurity(Properties securityProps) {
     if (securityProps == null) {
       return;
@@ -316,7 +300,9 @@ public class IntegratedSecurityService implements SecurityService {
 
       // we will need to make sure that shiro uses a case sensitive permission resolver
       Section main = factory.getIni().addSection("main");
-      main.put("geodePermissionResolver", "org.apache.geode.internal.security.shiro.GeodePermissionResolver");
+      main.put(
+          "geodePermissionResolver",
+          "org.apache.geode.internal.security.shiro.GeodePermissionResolver");
       if (!main.containsKey("iniRealm.permissionResolver")) {
         main.put("iniRealm.permissionResolver", "$geodePermissionResolver");
       }
@@ -327,7 +313,8 @@ public class IntegratedSecurityService implements SecurityService {
     }
     // only set up shiro realm if user has implemented SecurityManager
     else if (!StringUtils.isBlank(securityConfig)) {
-      securityManager = SecurityService.getObjectOfTypeFromClassName(securityConfig, SecurityManager.class);
+      securityManager =
+          SecurityService.getObjectOfTypeFromClassName(securityConfig, SecurityManager.class);
       securityManager.init(securityProps);
       Realm realm = new CustomAuthRealm(securityManager);
       org.apache.shiro.mgt.SecurityManager shiroManager = new DefaultSecurityManager(realm);
@@ -346,7 +333,8 @@ public class IntegratedSecurityService implements SecurityService {
     // this initializes the post processor
     String customPostProcessor = securityProps.getProperty(SECURITY_POST_PROCESSOR);
     if (!StringUtils.isBlank(customPostProcessor)) {
-      postProcessor = SecurityService.getObjectOfTypeFromClassName(customPostProcessor, PostProcessor.class);
+      postProcessor =
+          SecurityService.getObjectOfTypeFromClassName(customPostProcessor, PostProcessor.class);
       postProcessor.init(securityProps);
     } else {
       postProcessor = null;
@@ -370,27 +358,26 @@ public class IntegratedSecurityService implements SecurityService {
   }
 
   /**
-   * postProcess call already has this logic built in, you don't need to call
-   * this everytime you call postProcess. But if your postProcess is pretty
-   * involved with preparations and you need to bypass it entirely, call this
-   * first.
+   * postProcess call already has this logic built in, you don't need to call this everytime you
+   * call postProcess. But if your postProcess is pretty involved with preparations and you need to
+   * bypass it entirely, call this first.
    */
   public boolean needPostProcess() {
     return (isIntegratedSecurity && postProcessor != null);
   }
 
-  public Object postProcess(String regionPath, Object key, Object value, boolean valueIsSerialized) {
+  public Object postProcess(
+      String regionPath, Object key, Object value, boolean valueIsSerialized) {
     return postProcess(null, regionPath, key, value, valueIsSerialized);
   }
 
-  public Object postProcess(Object principal, String regionPath, Object key, Object value, boolean valueIsSerialized) {
-    if (!needPostProcess())
-      return value;
+  public Object postProcess(
+      Object principal, String regionPath, Object key, Object value, boolean valueIsSerialized) {
+    if (!needPostProcess()) return value;
 
     if (principal == null) {
       Subject subject = getSubject();
-      if (subject == null)
-        return value;
+      if (subject == null) return value;
       principal = (Serializable) subject.getPrincipal();
     }
 

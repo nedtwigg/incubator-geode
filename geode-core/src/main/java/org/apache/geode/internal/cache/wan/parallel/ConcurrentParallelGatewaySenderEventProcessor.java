@@ -55,15 +55,14 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 /**
  * Parallel processor which constitutes of multiple {@link ParallelGatewaySenderEventProcessor}.
  * Each of the {@link ParallelGatewaySenderEventProcessor} is responsible of dispatching events from
- * a set of shadowPR or buckets.
- * Once the buckets/shadowPRs are assigned to a processor it should not change to avoid any event 
- * ordering issue. 
+ * a set of shadowPR or buckets. Once the buckets/shadowPRs are assigned to a processor it should
+ * not change to avoid any event ordering issue.
  *
- * The {@link ParallelGatewaySenderQueue} should be shared among all the {@link ParallelGatewaySenderEventProcessor}s.
- * 
- *
+ * <p>The {@link ParallelGatewaySenderQueue} should be shared among all the {@link
+ * ParallelGatewaySenderEventProcessor}s.
  */
-public class ConcurrentParallelGatewaySenderEventProcessor extends AbstractGatewaySenderEventProcessor {
+public class ConcurrentParallelGatewaySenderEventProcessor
+    extends AbstractGatewaySenderEventProcessor {
 
   protected static final Logger logger = LogService.getLogger();
 
@@ -73,26 +72,31 @@ public class ConcurrentParallelGatewaySenderEventProcessor extends AbstractGatew
   final int nDispatcher;
 
   public ConcurrentParallelGatewaySenderEventProcessor(AbstractGatewaySender sender) {
-    super(LoggingThreadGroup.createThreadGroup("Event Processor for GatewaySender_" + sender.getId()), "Event Processor for GatewaySender_" + sender.getId(), sender);
+    super(
+        LoggingThreadGroup.createThreadGroup("Event Processor for GatewaySender_" + sender.getId()),
+        "Event Processor for GatewaySender_" + sender.getId(),
+        sender);
     // initializeMessageQueue(sender.getId());
-    logger.info("ConcurrentParallelGatewaySenderEventProcessor: dispatcher threads {}", sender.getDispatcherThreads());
+    logger.info(
+        "ConcurrentParallelGatewaySenderEventProcessor: dispatcher threads {}",
+        sender.getDispatcherThreads());
 
     nDispatcher = sender.getDispatcherThreads();
     /**
-     * We have to divide the buckets/shadowPRs here.
-     * So that the individual processors can start with a set of events to deal with
-     * In case of shadowPR getting created it will have to attach itself to one of the 
-     * processors when they are created.
+     * We have to divide the buckets/shadowPRs here. So that the individual processors can start
+     * with a set of events to deal with In case of shadowPR getting created it will have to attach
+     * itself to one of the processors when they are created.
      */
     // We have to do static partitioning of buckets and region attached.
     // We should remember that this partitioning may change in future as new shadowPRs
     // get created.
     // Static partitioning is as follows
-    // for each of the shadowPR: 
+    // for each of the shadowPR:
     // each of the processor gets : 0 .. totalNumBuckets/totalDispatcherThreads and last processor gets the remaining
     // bucket
     Set<Region> targetRs = new HashSet<Region>();
-    for (LocalRegion pr : ((GemFireCacheImpl) ((AbstractGatewaySender) sender).getCache()).getApplicationRegions()) {
+    for (LocalRegion pr :
+        ((GemFireCacheImpl) ((AbstractGatewaySender) sender).getCache()).getApplicationRegions()) {
       if (pr.getAllGatewaySenderIds().contains(sender.getId())) {
         targetRs.add(pr);
       }
@@ -114,7 +118,9 @@ public class ConcurrentParallelGatewaySenderEventProcessor extends AbstractGatew
       logger.debug("Creating AsyncEventProcessor");
     }
     for (int i = 0; i < sender.getDispatcherThreads(); i++) {
-      processors[i] = new ParallelGatewaySenderEventProcessor(sender, targetRs, i, sender.getDispatcherThreads());
+      processors[i] =
+          new ParallelGatewaySenderEventProcessor(
+              sender, targetRs, i, sender.getDispatcherThreads());
     }
   }
 
@@ -137,7 +143,8 @@ public class ConcurrentParallelGatewaySenderEventProcessor extends AbstractGatew
   }
 
   @Override
-  public void enqueueEvent(EnumListenerEvent operation, EntryEvent event, Object substituteValue) throws IOException, CacheException {
+  public void enqueueEvent(EnumListenerEvent operation, EntryEvent event, Object substituteValue)
+      throws IOException, CacheException {
     Region region = event.getRegion();
     //int bucketId = PartitionedRegionHelper.getHashKey((EntryOperation)event);
     int bucketId = ((EntryEventImpl) event).getEventId().getBucketID();
@@ -215,7 +222,10 @@ public class ConcurrentParallelGatewaySenderEventProcessor extends AbstractGatew
         }
         Exception ex = parallelProcessor.getException();
         if (ex != null) {
-          throw new GatewaySenderException(LocalizedStrings.Sender_COULD_NOT_START_GATEWAYSENDER_0_BECAUSE_OF_EXCEPTION_1.toLocalizedString(new Object[] { this.getId(), ex.getMessage() }), ex.getCause());
+          throw new GatewaySenderException(
+              LocalizedStrings.Sender_COULD_NOT_START_GATEWAYSENDER_0_BECAUSE_OF_EXCEPTION_1
+                  .toLocalizedString(new Object[] {this.getId(), ex.getMessage()}),
+              ex.getCause());
         }
       }
     }
@@ -229,15 +239,22 @@ public class ConcurrentParallelGatewaySenderEventProcessor extends AbstractGatew
 
     setIsStopped(true);
 
-    final LoggingThreadGroup loggingThreadGroup = LoggingThreadGroup.createThreadGroup("ConcurrentParallelGatewaySenderEventProcessor Logger Group", logger);
+    final LoggingThreadGroup loggingThreadGroup =
+        LoggingThreadGroup.createThreadGroup(
+            "ConcurrentParallelGatewaySenderEventProcessor Logger Group", logger);
 
-    ThreadFactory threadFactory = new ThreadFactory() {
-      public Thread newThread(final Runnable task) {
-        final Thread thread = new Thread(loggingThreadGroup, task, "ConcurrentParallelGatewaySenderEventProcessor Stopper Thread");
-        thread.setDaemon(true);
-        return thread;
-      }
-    };
+    ThreadFactory threadFactory =
+        new ThreadFactory() {
+          public Thread newThread(final Runnable task) {
+            final Thread thread =
+                new Thread(
+                    loggingThreadGroup,
+                    task,
+                    "ConcurrentParallelGatewaySenderEventProcessor Stopper Thread");
+            thread.setDaemon(true);
+            return thread;
+          }
+        };
 
     List<SenderStopperCallable> stopperCallables = new ArrayList<SenderStopperCallable>();
     for (ParallelGatewaySenderEventProcessor parallelProcessor : this.processors) {
@@ -251,11 +268,17 @@ public class ConcurrentParallelGatewaySenderEventProcessor extends AbstractGatew
         try {
           Boolean b = f.get();
           if (logger.isDebugEnabled()) {
-            logger.debug("ConcurrentParallelGatewaySenderEventProcessor: {} stopped dispatching: {}", (b ? "Successfully" : "Unsuccesfully"), this);
+            logger.debug(
+                "ConcurrentParallelGatewaySenderEventProcessor: {} stopped dispatching: {}",
+                (b ? "Successfully" : "Unsuccesfully"),
+                this);
           }
         } catch (ExecutionException e) {
           // we don't expect any exception but if caught then eat it and log warning
-          logger.warn(LocalizedMessage.create(LocalizedStrings.GatewaySender_0_CAUGHT_EXCEPTION_WHILE_STOPPING_1, sender), e.getCause());
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings.GatewaySender_0_CAUGHT_EXCEPTION_WHILE_STOPPING_1, sender),
+              e.getCause());
         }
       }
     } catch (InterruptedException e) {
@@ -314,11 +337,10 @@ public class ConcurrentParallelGatewaySenderEventProcessor extends AbstractGatew
     super.waitForResumption();
   }
 
-  /**
-   * Test only methods for verification purpose.
-   */
+  /** Test only methods for verification purpose. */
   public List<ParallelGatewaySenderEventProcessor> getProcessors() {
-    List<ParallelGatewaySenderEventProcessor> l = new LinkedList<ParallelGatewaySenderEventProcessor>();
+    List<ParallelGatewaySenderEventProcessor> l =
+        new LinkedList<ParallelGatewaySenderEventProcessor>();
     for (int i = 0; i < processors.length; i++) {
       l.add(processors[i]);
     }
@@ -337,14 +359,14 @@ public class ConcurrentParallelGatewaySenderEventProcessor extends AbstractGatew
   /* public Set<PartitionedRegion> getRegions() {
    return ((ParallelGatewaySenderQueue)(processors[0].getQueue())).getRegions();
   }
-  
+
   public int localSize() {
     return ((ParallelGatewaySenderQueue)(processors[0].getQueue())).localSize();
   }*/
 
   @Override
   public GatewaySenderEventDispatcher getDispatcher() {
-    return this.processors[0].getDispatcher();//Suranjan is that fine??
+    return this.processors[0].getDispatcher(); //Suranjan is that fine??
   }
 
   @Override

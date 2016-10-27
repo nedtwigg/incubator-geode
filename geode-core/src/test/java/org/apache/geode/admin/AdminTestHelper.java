@@ -20,8 +20,7 @@ import static org.junit.Assert.*;
 import org.apache.geode.distributed.internal.DistributionManager;
 
 public class AdminTestHelper {
-  private AdminTestHelper() {
-  }
+  private AdminTestHelper() {}
 
   public static void checkEnableAdministrationOnly(boolean v, boolean expectException) {
     boolean origIsDedicatedAdminVM = DistributionManager.isDedicatedAdminVM;

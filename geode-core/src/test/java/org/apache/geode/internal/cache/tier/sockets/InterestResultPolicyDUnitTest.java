@@ -50,9 +50,7 @@ import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * DUnit Test for use-cases of various {@link InterestResultPolicy} types.
- */
+/** DUnit Test for use-cases of various {@link InterestResultPolicy} types. */
 @Category(DistributedTest.class)
 public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
 
@@ -60,20 +58,19 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
   VM vm0, vm1 = null;
 
   /** total entries pre-populated on server */
-  final static int PREPOPULATED_ENTRIES = 10;
+  static final int PREPOPULATED_ENTRIES = 10;
 
   /** the cache instance for the test */
   private static Cache cache = null;
 
   private int PORT;
 
-  private static final String REGION_NAME = InterestResultPolicyDUnitTest.class.getSimpleName() + "_region";
+  private static final String REGION_NAME =
+      InterestResultPolicyDUnitTest.class.getSimpleName() + "_region";
 
   private IgnoredException expectedEx;
 
-  /**
-   * Creates the server cache and populates it with some entries
-   */
+  /** Creates the server cache and populates it with some entries */
   @Override
   public final void postSetUp() throws Exception {
     disconnectAllFromDS();
@@ -81,17 +78,17 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
     final Host host = Host.getHost(0);
     vm0 = host.getVM(0);
     vm1 = host.getVM(1);
-    PORT = ((Integer) vm0.invoke(() -> InterestResultPolicyDUnitTest.createServerCache())).intValue();
+    PORT =
+        ((Integer) vm0.invoke(() -> InterestResultPolicyDUnitTest.createServerCache())).intValue();
     vm0.invoke(() -> InterestResultPolicyDUnitTest.populateServerCache());
   }
 
-  /**
-   * Closes the cache on server and client
-   */
+  /** Closes the cache on server and client */
   @Override
   public final void preTearDown() throws Exception {
     // might get ServerConnectivityExceptions during shutdown
-    this.expectedEx = IgnoredException.addIgnoredException(ServerConnectivityException.class.getName());
+    this.expectedEx =
+        IgnoredException.addIgnoredException(ServerConnectivityException.class.getName());
     // close server
     vm0.invoke(() -> InterestResultPolicyDUnitTest.closeCache());
     // close client
@@ -108,10 +105,9 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
   /**
    * This test does the following<br>
    * 1)Create client cache and region<br>
-   * 2)Call registerInterest with all keys pre-populated on server and
-   * policy:NONE<br>
-   * 3)At the end of registerInterest call, verify that no entries are created
-   * in the client cache<br>
+   * 2)Call registerInterest with all keys pre-populated on server and policy:NONE<br>
+   * 3)At the end of registerInterest call, verify that no entries are created in the client cache
+   * <br>
    */
   @Test
   public void testPolicyNone() {
@@ -121,7 +117,10 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
     objArr[0] = InterestResultPolicy.NONE;
     objArr[1] = new Integer(PREPOPULATED_ENTRIES);
     Host host = Host.getHost(0);
-    vm1.invoke(() -> InterestResultPolicyDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT)));
+    vm1.invoke(
+        () ->
+            InterestResultPolicyDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT)));
     vm1.invoke(InterestResultPolicyDUnitTest.class, "registerInterest", objArr);
     vm1.invoke(InterestResultPolicyDUnitTest.class, "verifyResult", objArr);
     logger.fine("testPolicyNone END");
@@ -130,10 +129,9 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
   /**
    * This test does the following<br>
    * 1)Create client cache and region<br>
-   * 2)Call registerInterest with all keys pre-populated on server and
-   * policy:KEYS<br>
-   * 3)At the end of registerInterest call, verify that entries are created in
-   * the client cache with value null<br>
+   * 2)Call registerInterest with all keys pre-populated on server and policy:KEYS<br>
+   * 3)At the end of registerInterest call, verify that entries are created in the client cache with
+   * value null<br>
    */
   @Test
   public void testPolicyKeys() {
@@ -143,7 +141,10 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
     objArr[0] = InterestResultPolicy.KEYS;
     objArr[1] = new Integer(PREPOPULATED_ENTRIES);
     Host host = Host.getHost(0);
-    vm1.invoke(() -> InterestResultPolicyDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT)));
+    vm1.invoke(
+        () ->
+            InterestResultPolicyDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT)));
     ;
     vm1.invoke(InterestResultPolicyDUnitTest.class, "registerInterest", objArr);
     vm1.invoke(InterestResultPolicyDUnitTest.class, "verifyResult", objArr);
@@ -153,10 +154,9 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
   /**
    * This test does the following<br>
    * 1)Create client cache and region<br>
-   * 2)Call registerInterest with all keys pre-populated on server and
-   * policy:KEYS_VALUES<br>
-   * 3)At the end of registerInterest call, verify that all entries are created
-   * in the client cache with values<br>
+   * 2)Call registerInterest with all keys pre-populated on server and policy:KEYS_VALUES<br>
+   * 3)At the end of registerInterest call, verify that all entries are created in the client cache
+   * with values<br>
    */
   @Test
   public void testPolicyKeysValues() {
@@ -166,7 +166,10 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
     objArr[0] = InterestResultPolicy.KEYS_VALUES;
     objArr[1] = new Integer(PREPOPULATED_ENTRIES);
     Host host = Host.getHost(0);
-    vm1.invoke(() -> InterestResultPolicyDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT)));
+    vm1.invoke(
+        () ->
+            InterestResultPolicyDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT)));
     vm1.invoke(InterestResultPolicyDUnitTest.class, "registerInterest", objArr);
     vm1.invoke(InterestResultPolicyDUnitTest.class, "verifyResult", objArr);
     logger.fine("testPolicyKeyValues END");
@@ -175,12 +178,11 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
   /**
    * This test does the following<br>
    * 1)Create client cache and region<br>
-   * 2)Call registerInterest with specific keys (having extra keys other than
-   * those pre-populated on server cache) and policy:KEYS<br>
-   * 3)At the end of registerInterest call, verify that only prepolulated
-   * entries are created in the client cache with null values (entries for keys
-   * in the keylist which are not on the server should not be created on the
-   * client as a result of registerInterest call)<br>
+   * 2)Call registerInterest with specific keys (having extra keys other than those pre-populated on
+   * server cache) and policy:KEYS<br>
+   * 3)At the end of registerInterest call, verify that only prepolulated entries are created in the
+   * client cache with null values (entries for keys in the keylist which are not on the server
+   * should not be created on the client as a result of registerInterest call)<br>
    */
   @Test
   public void testBug35358() {
@@ -191,7 +193,10 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
     objArr[0] = InterestResultPolicy.KEYS;
     /* registering for 5 extra keys */
     objArr[1] = new Integer(PREPOPULATED_ENTRIES + 5);
-    vm1.invoke(() -> InterestResultPolicyDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT)));
+    vm1.invoke(
+        () ->
+            InterestResultPolicyDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT)));
     vm1.invoke(InterestResultPolicyDUnitTest.class, "registerInterest", objArr);
     vm1.invoke(InterestResultPolicyDUnitTest.class, "verifyResult", objArr);
     Integer cnt = (Integer) vm0.invoke(() -> InterestResultPolicyDUnitTest.getEntryCount());
@@ -202,12 +207,10 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
   /**
    * Creates cache instance
    *
-   * @param props -
-   *          properties of the distributed system
+   * @param props - properties of the distributed system
    * @return cache
-   * @throws Exception -
-   *           thrown if any problem occurs while connecting to distributed
-   *           system or creating cache
+   * @throws Exception - thrown if any problem occurs while connecting to distributed system or
+   *     creating cache
    */
   private Cache createCache(Properties props) throws Exception {
     DistributedSystem ds = getSystem(props);
@@ -219,10 +222,7 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
     return cache;
   }
 
-  /**
-   * Closes the cache instance created and disconnects from the distributed
-   * system.
-   */
+  /** Closes the cache instance created and disconnects from the distributed system. */
   public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
@@ -233,9 +233,8 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
   /**
    * Creates the cache and starts the server
    *
-   * @throws Exception -
-   *           thrown if any problem occurs in creating server cache or starting
-   *           the server
+   * @throws Exception - thrown if any problem occurs in creating server cache or starting the
+   *     server
    */
   public static Integer createServerCache() throws Exception {
     InterestResultPolicyDUnitTest test = new InterestResultPolicyDUnitTest();
@@ -256,9 +255,7 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
   /**
    * Populates the server cache by putting some entries
    *
-   * @throws Exception -
-   *           thrown if any problem occurs while creating entries at server
-   *           cache
+   * @throws Exception - thrown if any problem occurs while creating entries at server cache
    */
   public static void populateServerCache() throws Exception {
     Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -270,8 +267,7 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
   /**
    * Creates the client cache and region.
    *
-   * @throws Exception -
-   *           thrown if any problem occurs in creating cache or region
+   * @throws Exception - thrown if any problem occurs in creating cache or region
    */
   public static void createClientCache(String host, Integer port) throws Exception {
     int PORT = port.intValue();
@@ -280,10 +276,18 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     cache = test.createCache(props);
-    Pool p = PoolManager.createFactory().addServer(host, port.intValue()).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setReadTimeout(10000).setThreadLocalConnections(true).setSocketBufferSize(32768).setMinConnections(3)
-        // .setRetryAttempts(5)
-        // .setRetryInterval(10000)
-        .create("InterestResultPolicyDUnitTestPool");
+    Pool p =
+        PoolManager.createFactory()
+            .addServer(host, port.intValue())
+            .setSubscriptionEnabled(true)
+            .setSubscriptionRedundancy(-1)
+            .setReadTimeout(10000)
+            .setThreadLocalConnections(true)
+            .setSocketBufferSize(32768)
+            .setMinConnections(3)
+            // .setRetryAttempts(5)
+            // .setRetryInterval(10000)
+            .create("InterestResultPolicyDUnitTestPool");
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setPoolName(p.getName());
@@ -292,12 +296,10 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * Registers the test region on client with a keylist containing all keys
-   * pre-populated on server and a given {@link InterestResultPolicy} type.
+   * Registers the test region on client with a keylist containing all keys pre-populated on server
+   * and a given {@link InterestResultPolicy} type.
    *
-   * @param interestPolicy -
-   *          InterestResultPolicy type specified (NONE,KEYS,KEY_VALUES or
-   *          DEFAULT)
+   * @param interestPolicy - InterestResultPolicy type specified (NONE,KEYS,KEY_VALUES or DEFAULT)
    */
   public static void registerInterest(Object interestPolicy, Object totalKeysToRegister) {
     InterestResultPolicy policy = (InterestResultPolicy) interestPolicy;
@@ -318,12 +320,11 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * Verifies the number of entries (including values) created on the test
-   * region at the end of {@link Region#registerInterest} call depending on the
-   * type of {@link InterestResultPolicy} registered for the region.
+   * Verifies the number of entries (including values) created on the test region at the end of
+   * {@link Region#registerInterest} call depending on the type of {@link InterestResultPolicy}
+   * registered for the region.
    *
-   * @param interestPolicy -
-   *          {@link InterestResultPolicy} registered for the region
+   * @param interestPolicy - {@link InterestResultPolicy} registered for the region
    */
   public static void verifyResult(Object interestPolicy, Object totalKeysRegistered) {
     Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
@@ -333,7 +334,15 @@ public class InterestResultPolicyDUnitTest extends JUnit4DistributedTestCase {
     InterestResultPolicy policy = (InterestResultPolicy) interestPolicy;
     LogWriter logger = cache.getLogger();
 
-    logger.fine("policy = " + policy + " ==> entries = " + entriesSize + " ;keys = " + keysSize + ";values = " + valuesSize);
+    logger.fine(
+        "policy = "
+            + policy
+            + " ==> entries = "
+            + entriesSize
+            + " ;keys = "
+            + keysSize
+            + ";values = "
+            + valuesSize);
 
     if (policy.isNone()) {
       // nothing should be created on client cache

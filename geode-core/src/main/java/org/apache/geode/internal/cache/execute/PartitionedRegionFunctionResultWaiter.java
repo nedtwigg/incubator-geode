@@ -32,12 +32,10 @@ import org.apache.geode.internal.cache.partitioned.PartitionedRegionFunctionStre
 import org.apache.geode.internal.cache.partitioned.PRFunctionStreamingResultCollector;
 
 /**
- * ResultReciever (which could be resultCollector?)will be instantiated and will be used
- * to send messages and receive results from other nodes.
- * It takes a set of nodes to which functionExecution message has to be sent. Creates one message for each and sends
- * it to each of them. Then it gets result in processData where it adds them to the resultCollector.
- * 
- *
+ * ResultReciever (which could be resultCollector?)will be instantiated and will be used to send
+ * messages and receive results from other nodes. It takes a set of nodes to which functionExecution
+ * message has to be sent. Creates one message for each and sends it to each of them. Then it gets
+ * result in processData where it adds them to the resultCollector.
  */
 public class PartitionedRegionFunctionResultWaiter extends StreamingFunctionOperation {
 
@@ -47,22 +45,33 @@ public class PartitionedRegionFunctionResultWaiter extends StreamingFunctionOper
 
   private Set<InternalDistributedMember> recipients = null;
 
-  public PartitionedRegionFunctionResultWaiter(InternalDistributedSystem sys, int regionId, ResultCollector rc, final Function function, PartitionedRegionFunctionResultSender sender) {
+  public PartitionedRegionFunctionResultWaiter(
+      InternalDistributedSystem sys,
+      int regionId,
+      ResultCollector rc,
+      final Function function,
+      PartitionedRegionFunctionResultSender sender) {
     super(sys, rc, function, sender);
     this.regionId = regionId;
   }
 
   @Override
-  public DistributionMessage createRequestMessage(Set<InternalDistributedMember> singleton, FunctionStreamingResultCollector processor, boolean isReExecute, boolean isFnSerializationReqd) {
+  public DistributionMessage createRequestMessage(
+      Set<InternalDistributedMember> singleton,
+      FunctionStreamingResultCollector processor,
+      boolean isReExecute,
+      boolean isFnSerializationReqd) {
     return null;
   }
 
   /**
-   * Returns normally if succeeded to get data, otherwise throws an exception
-   * Have to wait outside this function and when getResult() is called. For the
-   * time being get the correct results.
+   * Returns normally if succeeded to get data, otherwise throws an exception Have to wait outside
+   * this function and when getResult() is called. For the time being get the correct results.
    */
-  public ResultCollector getPartitionedDataFrom(Map<InternalDistributedMember, FunctionRemoteContext> recipMap, PartitionedRegion pr, AbstractExecution execution) {
+  public ResultCollector getPartitionedDataFrom(
+      Map<InternalDistributedMember, FunctionRemoteContext> recipMap,
+      PartitionedRegion pr,
+      AbstractExecution execution) {
 
     if (recipMap.isEmpty()) {
       return this.rc;
@@ -73,7 +82,9 @@ public class PartitionedRegionFunctionResultWaiter extends StreamingFunctionOper
     }
     this.recipients = recipientsSet;
 
-    PRFunctionStreamingResultCollector processor = new PRFunctionStreamingResultCollector(this, this.sys, recipientsSet, this.rc, functionObject, pr, execution);
+    PRFunctionStreamingResultCollector processor =
+        new PRFunctionStreamingResultCollector(
+            this, this.sys, recipientsSet, this.rc, functionObject, pr, execution);
 
     this.reply = processor;
 
@@ -85,19 +96,22 @@ public class PartitionedRegionFunctionResultWaiter extends StreamingFunctionOper
     return processor;
   }
 
-  protected DistributionMessage createRequestMessage(InternalDistributedMember recipient, ReplyProcessor21 processor, FunctionRemoteContext context) {
+  protected DistributionMessage createRequestMessage(
+      InternalDistributedMember recipient,
+      ReplyProcessor21 processor,
+      FunctionRemoteContext context) {
 
-    PartitionedRegionFunctionStreamingMessage msg = new PartitionedRegionFunctionStreamingMessage(recipient, this.regionId, processor, context);
+    PartitionedRegionFunctionStreamingMessage msg =
+        new PartitionedRegionFunctionStreamingMessage(recipient, this.regionId, processor, context);
 
     return msg;
   }
 
   /**
-   * This function processes the result data it receives. Adds the result to
-   * resultCollector as it gets the objects. On getting the last msg from all
-   * the sender it will call endResult on ResultSender.
+   * This function processes the result data it receives. Adds the result to resultCollector as it
+   * gets the objects. On getting the last msg from all the sender it will call endResult on
+   * ResultSender.
    */
-
   public void processData(Object result, boolean lastMsg, DistributedMember memberID) {
     boolean completelyDone = false;
     if (lastMsg) {
@@ -106,7 +120,7 @@ public class PartitionedRegionFunctionResultWaiter extends StreamingFunctionOper
     if (this.totalLastMsgRecieved == this.recipients.size()) {
       completelyDone = true;
     }
-    ((PartitionedRegionFunctionResultSender) resultSender).lastResult(result, completelyDone, this.reply, memberID);
-
+    ((PartitionedRegionFunctionResultSender) resultSender)
+        .lastResult(result, completelyDone, this.reply, memberID);
   }
 }

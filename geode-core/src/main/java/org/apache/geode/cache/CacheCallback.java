@@ -18,23 +18,20 @@
 package org.apache.geode.cache;
 
 /**
- * User-defined objects that can be plugged into caching to receive callback
- * notifications.
- *
+ * User-defined objects that can be plugged into caching to receive callback notifications.
  *
  * @since GemFire 3.0
  */
 public interface CacheCallback {
-  /** Called when the region containing this callback is closed or destroyed, when
-   * the cache is closed, or when a callback is removed from a region
-   * using an <code>AttributesMutator</code>.
+  /**
+   * Called when the region containing this callback is closed or destroyed, when the cache is
+   * closed, or when a callback is removed from a region using an <code>AttributesMutator</code>.
    *
-   * <p>Implementations should cleanup any external
-   * resources such as database connections. Any runtime exceptions this method
-   * throws will be logged.
+   * <p>Implementations should cleanup any external resources such as database connections. Any
+   * runtime exceptions this method throws will be logged.
    *
-   * <p>It is possible for this method to be called multiple times on a single
-   * callback instance, so implementations must be tolerant of this.
+   * <p>It is possible for this method to be called multiple times on a single callback instance, so
+   * implementations must be tolerant of this.
    *
    * @see Cache#close()
    * @see Region#close

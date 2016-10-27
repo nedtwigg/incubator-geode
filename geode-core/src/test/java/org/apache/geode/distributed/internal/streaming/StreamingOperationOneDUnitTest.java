@@ -66,10 +66,12 @@ public class StreamingOperationOneDUnitTest extends JUnit4DistributedTestCase {
     }
 
     // get the other member id that connected
-    InternalDistributedMember otherId = (InternalDistributedMember) vm0.invoke(new IDGetter(), "getMemberId");
+    InternalDistributedMember otherId =
+        (InternalDistributedMember) vm0.invoke(new IDGetter(), "getMemberId");
     Set setOfIds = Collections.singleton(otherId);
 
-    TestStreamingOperationOneProviderNoExceptions streamOp = new TestStreamingOperationOneProviderNoExceptions(getSystem());
+    TestStreamingOperationOneProviderNoExceptions streamOp =
+        new TestStreamingOperationOneProviderNoExceptions(getSystem());
     streamOp.getDataFromAll(setOfIds);
     assertTrue(streamOp.dataValidated);
   }
@@ -87,13 +89,15 @@ public class StreamingOperationOneDUnitTest extends JUnit4DistributedTestCase {
     }
 
     protected DistributionMessage createRequestMessage(Set recipients, ReplyProcessor21 processor) {
-      TestRequestStreamingMessageOneProviderNoExceptions msg = new TestRequestStreamingMessageOneProviderNoExceptions();
+      TestRequestStreamingMessageOneProviderNoExceptions msg =
+          new TestRequestStreamingMessageOneProviderNoExceptions();
       msg.processorId = processor == null ? 0 : processor.getProcessorId();
       msg.setRecipients(recipients);
       return msg;
     }
 
-    protected synchronized boolean processData(List objects, InternalDistributedMember sender, int sequenceNum, boolean lastInSequence) {
+    protected synchronized boolean processData(
+        List objects, InternalDistributedMember sender, int sequenceNum, boolean lastInSequence) {
       LogWriter logger = this.sys.getLogWriter();
 
       // assert that we haven't gotten this sequence number yet
@@ -135,7 +139,7 @@ public class StreamingOperationOneDUnitTest extends JUnit4DistributedTestCase {
       LogWriter logger = this.sys.getLogWriter();
 
       // sort the input streams
-      for (Iterator itr = this.chunkMap.entrySet().iterator(); itr.hasNext();) {
+      for (Iterator itr = this.chunkMap.entrySet().iterator(); itr.hasNext(); ) {
         Map.Entry entry = (Map.Entry) itr.next();
         int seqNum = ((Integer) entry.getKey()).intValue();
         objList = (List) entry.getValue();
@@ -165,7 +169,8 @@ public class StreamingOperationOneDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  public static final class TestRequestStreamingMessageOneProviderNoExceptions extends StreamingOperation.RequestStreamingMessage {
+  public static final class TestRequestStreamingMessageOneProviderNoExceptions
+      extends StreamingOperation.RequestStreamingMessage {
     private int nextInt = -10;
     private int count = 0;
 

@@ -34,15 +34,16 @@ public class CompressionCacheListenerOffHeapDUnitTest extends CompressionCacheLi
 
   @Override
   public final void preTearDownAssertions() throws Exception {
-    SerializableRunnable checkOrphans = new SerializableRunnable() {
+    SerializableRunnable checkOrphans =
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        if (hasCache()) {
-          OffHeapTestUtil.checkOrphans();
-        }
-      }
-    };
+          @Override
+          public void run() {
+            if (hasCache()) {
+              OffHeapTestUtil.checkOrphans();
+            }
+          }
+        };
     Invoke.invokeInEveryVM(checkOrphans);
     checkOrphans.run();
   }
@@ -58,5 +59,4 @@ public class CompressionCacheListenerOffHeapDUnitTest extends CompressionCacheLi
   protected void createRegion() {
     createCompressedRegionOnVm(getVM(TEST_VM), REGION_NAME, new SnappyCompressor(), true);
   }
-
 }

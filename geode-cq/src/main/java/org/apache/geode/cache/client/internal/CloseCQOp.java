@@ -24,12 +24,14 @@ import org.apache.geode.internal.cache.tier.MessageType;
 
 /**
  * Close a continuous query on the server
+ *
  * @since GemFire 5.7
  */
 public class CloseCQOp {
   /**
-   * Close a continuous query on the given server using connections from the given pool
-   * to communicate with the server.
+   * Close a continuous query on the given server using connections from the given pool to
+   * communicate with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param cqName name of the CQ to close
    */
@@ -43,9 +45,7 @@ public class CloseCQOp {
   }
 
   private static class CloseCQOpImpl extends CreateCQOpImpl {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public CloseCQOpImpl(String cqName) {
       super(MessageType.CLOSECQ_MSG_TYPE, 1);
       getMessage().addStringPart(cqName);

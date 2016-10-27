@@ -43,25 +43,17 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * This is a test for creation of Partition
- * region(PR).
- * <p>
- * Following tests are included in PartitionedRegionCreationJUnitTest :
- * </p>
- * <p>
- * 1) testpartionedRegionCreate - Tests the PR creation.
- * </p>
- * <p>
- * 2) testpartionedRegionInitialization - Tests the PR initialization
- * </p>
- * <p>
- * 3) testpartionedRegionRegistration - Tests the PR registration
- * </p>
- * <p>
- * 4) testpartionedRegionBucketToNodeCreate - Tests the PR's BUCKET_2_NODE region creation
- * </p>
- * 
- * 
+ * This is a test for creation of Partition region(PR).
+ *
+ * <p>Following tests are included in PartitionedRegionCreationJUnitTest :
+ *
+ * <p>1) testpartionedRegionCreate - Tests the PR creation.
+ *
+ * <p>2) testpartionedRegionInitialization - Tests the PR initialization
+ *
+ * <p>3) testpartionedRegionRegistration - Tests the PR registration
+ *
+ * <p>4) testpartionedRegionBucketToNodeCreate - Tests the PR's BUCKET_2_NODE region creation
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Category(IntegrationTest.class)
@@ -101,14 +93,13 @@ public class PartitionedRegionCreationJUnitTest {
   @Before
   public void setUp() throws Exception {
     TOTAL_RETURNS = 0;
-    if (logger == null)
-      logger = PartitionedRegionTestHelper.getLogger();
+    if (logger == null) logger = PartitionedRegionTestHelper.getLogger();
   }
 
   /*
    * 1)Create 10 thread each. Each thread will try to create PartionedRegion total
    * of 5 partitioned region will be created. 5 threads should throw
-   * RegionExistException. 
+   * RegionExistException.
    * 2) Tests for PR scope = GLOBAL and PR scope = LOCAL </p>
    * 3)  Test for redundancy < 0 </p>
    * 4)  Test for redundancy > 3 </p>
@@ -119,7 +110,8 @@ public class PartitionedRegionCreationJUnitTest {
     createMultiplePartitionedRegions();
     verifyCreateResults();
     if (logger.fineEnabled()) {
-      logger.fine(" PartitionedRegionCreationTest-testpartionedRegionCreate() Successfully Complete ..  ");
+      logger.fine(
+          " PartitionedRegionCreationTest-testpartionedRegionCreate() Successfully Complete ..  ");
     }
 
     final String regionname = "testPartionedRegionCreate";
@@ -138,7 +130,9 @@ public class PartitionedRegionCreationJUnitTest {
     }
 
     // Assert that setting any scope throws IllegalStateException
-    final Scope[] scopes = { Scope.LOCAL, Scope.DISTRIBUTED_ACK, Scope.DISTRIBUTED_NO_ACK, Scope.GLOBAL };
+    final Scope[] scopes = {
+      Scope.LOCAL, Scope.DISTRIBUTED_ACK, Scope.DISTRIBUTED_NO_ACK, Scope.GLOBAL
+    };
     for (int i = 0; i < scopes.length; i++) {
       try {
         AttributesFactory af = new AttributesFactory();
@@ -147,7 +141,9 @@ public class PartitionedRegionCreationJUnitTest {
         RegionAttributes ra = af.create();
         Cache cache = PartitionedRegionTestHelper.createCache();
         pr = (PartitionedRegion) cache.createRegion(regionname, ra);
-        fail("testpartionedRegionCreate() Expected IllegalStateException not thrown for Scope " + scopes[i]);
+        fail(
+            "testpartionedRegionCreate() Expected IllegalStateException not thrown for Scope "
+                + scopes[i]);
       } catch (IllegalStateException expected) {
       } finally {
         if (pr != null && !pr.isDestroyed()) {
@@ -159,23 +155,31 @@ public class PartitionedRegionCreationJUnitTest {
     // test for redundancy > 3
     int redundancy = 10;
     try {
-      pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionname, String.valueOf(localMaxMemory), redundancy);
+      pr =
+          (PartitionedRegion)
+              PartitionedRegionTestHelper.createPartitionedRegion(
+                  regionname, String.valueOf(localMaxMemory), redundancy);
     } catch (IllegalStateException illex) {
       if (logger.fineEnabled()) {
-        logger.fine("testpartionedRegionCreate() Got a correct exception-IllegalStateException for  redundancy > 3 ");
+        logger.fine(
+            "testpartionedRegionCreate() Got a correct exception-IllegalStateException for  redundancy > 3 ");
       }
     }
 
     // test for redundancy < 0
-    if (pr != null && !pr.isDestroyed())
-      pr.destroyRegion();
+    if (pr != null && !pr.isDestroyed()) pr.destroyRegion();
     redundancy = -5;
     try {
-      pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionname, String.valueOf(200), redundancy);
-      fail("testpartionedRegionCreate() Expected IllegalStateException not thrown for redundancy < 0 ");
+      pr =
+          (PartitionedRegion)
+              PartitionedRegionTestHelper.createPartitionedRegion(
+                  regionname, String.valueOf(200), redundancy);
+      fail(
+          "testpartionedRegionCreate() Expected IllegalStateException not thrown for redundancy < 0 ");
     } catch (IllegalStateException illex) {
       if (logger.fineEnabled()) {
-        logger.fine("testpartionedRegionCreate() Got a correct exception-IllegalStateException for  redundancy < 0 ");
+        logger.fine(
+            "testpartionedRegionCreate() Got a correct exception-IllegalStateException for  redundancy < 0 ");
       }
     }
 
@@ -195,7 +199,7 @@ public class PartitionedRegionCreationJUnitTest {
       if (logger.fineEnabled()) {
         logger
             .fine("testpartionedRegionCreate() Got a correct exception-IllegalStateException for  localMaxMemory < 0  ");
-      }      
+      }
     }
     */
   }
@@ -229,7 +233,8 @@ public class PartitionedRegionCreationJUnitTest {
       pr = (PartitionedRegion) cache.createRegion(regionname, ra);
       fail("testpartionedRegionCreate() Expected IllegalStateException not thrown");
     } catch (IllegalStateException expected) {
-      assertEquals("Persistence is not allowed when local-max-memory is zero.", expected.getMessage());
+      assertEquals(
+          "Persistence is not allowed when local-max-memory is zero.", expected.getMessage());
     }
 
     // Assert that a region can't be created
@@ -243,7 +248,12 @@ public class PartitionedRegionCreationJUnitTest {
       pr = (PartitionedRegion) cache.createRegion(regionname, ra);
       fail("testpartionedRegionCreate() Expected IllegalStateException not thrown");
     } catch (RuntimeException expected) {
-      assertTrue(expected.getMessage().contains(LocalizedStrings.CacheCreation_DISKSTORE_NOTFOUND_0.toLocalizedString("nonexistentDiskStore")));
+      assertTrue(
+          expected
+              .getMessage()
+              .contains(
+                  LocalizedStrings.CacheCreation_DISKSTORE_NOTFOUND_0.toLocalizedString(
+                      "nonexistentDiskStore")));
     }
 
     // Assert that you can't have a diskStoreName unless you are persistent or overflow.
@@ -257,11 +267,15 @@ public class PartitionedRegionCreationJUnitTest {
       pr = (PartitionedRegion) cache.createRegion(regionname, ra);
       fail("testpartionedRegionCreate() Expected IllegalStateException not thrown");
     } catch (IllegalStateException expected) {
-      assertEquals("Only regions with persistence or overflow to disk can specify DiskStore", expected.getMessage());
+      assertEquals(
+          "Only regions with persistence or overflow to disk can specify DiskStore",
+          expected.getMessage());
     }
 
     // Assert that setting any scope throws IllegalStateException
-    final Scope[] scopes = { Scope.LOCAL, Scope.DISTRIBUTED_ACK, Scope.DISTRIBUTED_NO_ACK, Scope.GLOBAL };
+    final Scope[] scopes = {
+      Scope.LOCAL, Scope.DISTRIBUTED_ACK, Scope.DISTRIBUTED_NO_ACK, Scope.GLOBAL
+    };
     for (int i = 0; i < scopes.length; i++) {
       try {
         AttributesFactory af = new AttributesFactory();
@@ -270,45 +284,55 @@ public class PartitionedRegionCreationJUnitTest {
         RegionAttributes ra = af.create();
         Cache cache = PartitionedRegionTestHelper.createCache();
         pr = (PartitionedRegion) cache.createRegion(regionname, ra);
-        fail("testpartionedRegionCreate() Expected IllegalStateException not thrown for Scope " + scopes[i]);
+        fail(
+            "testpartionedRegionCreate() Expected IllegalStateException not thrown for Scope "
+                + scopes[i]);
       } catch (IllegalStateException expected) {
       }
     }
 
     // test for redundancy > 3
     try {
-      pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionname, String.valueOf(0), 4);
-      fail("testpartionedRegionCreate() Expected IllegalStateException not thrown for redundancy > 3 ");
+      pr =
+          (PartitionedRegion)
+              PartitionedRegionTestHelper.createPartitionedRegion(regionname, String.valueOf(0), 4);
+      fail(
+          "testpartionedRegionCreate() Expected IllegalStateException not thrown for redundancy > 3 ");
     } catch (IllegalStateException illex) {
       if (logger.fineEnabled()) {
-        logger.fine("testpartionedRegionCreate() Got a correct exception-IllegalStateException for  redundancy > 3 ");
+        logger.fine(
+            "testpartionedRegionCreate() Got a correct exception-IllegalStateException for  redundancy > 3 ");
       }
     }
 
     // test for redundancy < 0
     try {
-      pr = (PartitionedRegion) PartitionedRegionTestHelper.createPartitionedRegion(regionname, String.valueOf(200), -1);
-      fail("testpartionedRegionCreate() Expected IllegalStateException not thrown for redundancy < 0 ");
+      pr =
+          (PartitionedRegion)
+              PartitionedRegionTestHelper.createPartitionedRegion(
+                  regionname, String.valueOf(200), -1);
+      fail(
+          "testpartionedRegionCreate() Expected IllegalStateException not thrown for redundancy < 0 ");
     } catch (IllegalStateException illex) {
       if (logger.fineEnabled()) {
-        logger.fine("testpartionedRegionCreate() Got a correct exception-IllegalStateException for  redundancy < 0 ");
+        logger.fine(
+            "testpartionedRegionCreate() Got a correct exception-IllegalStateException for  redundancy < 0 ");
       }
     }
   }
 
   /**
-   * Test for initialization of PartitionedRegion. Following are tested for the
-   * PartitionedRegion:
-   * <p>
-   * (1) Test for Root == null
-   * <p>
-   * (2) Test for Root region scope is DIST_ACK
-   * <p>
-   * (3) Test if MirrorType.NONE for root region.
-   * <p>
-   * (4) Test if PARTITIONED_REGION_CONFIG_NAME exist and isDistributedAck and the
-   * mirror type is MirrorType.KEYS_VALUES.
-   * 
+   * Test for initialization of PartitionedRegion. Following are tested for the PartitionedRegion:
+   *
+   * <p>(1) Test for Root == null
+   *
+   * <p>(2) Test for Root region scope is DIST_ACK
+   *
+   * <p>(3) Test if MirrorType.NONE for root region.
+   *
+   * <p>(4) Test if PARTITIONED_REGION_CONFIG_NAME exist and isDistributedAck and the mirror type is
+   * MirrorType.KEYS_VALUES.
+   *
    * @throws RegionExistsException
    */
   @Test
@@ -316,13 +340,21 @@ public class PartitionedRegionCreationJUnitTest {
     String PRName = "testpartionedRegionInitialization";
     PartitionedRegionTestHelper.createPartionedRegion(PRName);
 
-    Region root = (PartitionedRegionTestHelper.getExistingRegion(PartitionedRegionHelper.PR_ROOT_REGION_NAME));
+    Region root =
+        (PartitionedRegionTestHelper.getExistingRegion(
+            PartitionedRegionHelper.PR_ROOT_REGION_NAME));
     if (root == null)
-      fail("testpartionedRegionInitialization() - the " + PartitionedRegionHelper.PR_ROOT_REGION_NAME + " do not exists");
+      fail(
+          "testpartionedRegionInitialization() - the "
+              + PartitionedRegionHelper.PR_ROOT_REGION_NAME
+              + " do not exists");
     RegionAttributes regionAttribs = root.getAttributes();
     Scope scope = regionAttribs.getScope();
     if (!scope.isDistributedAck())
-      fail("testpartionedRegionInitialization() - the " + PartitionedRegionHelper.PR_ROOT_REGION_NAME + " scope is not distributed_ack");
+      fail(
+          "testpartionedRegionInitialization() - the "
+              + PartitionedRegionHelper.PR_ROOT_REGION_NAME
+              + " scope is not distributed_ack");
     assertEquals(DataPolicy.REPLICATE, regionAttribs.getDataPolicy());
 
     //    Region allPartitionedRegions = root
@@ -351,15 +383,16 @@ public class PartitionedRegionCreationJUnitTest {
   }
 
   /**
-   * Test for partitioned Region registration. All partitioned regions created must
-   * have a entry in PARTITIONED_REGION_CONFIG_NAME. Every PR has PR name /
-   * PartitionRegionConfig entry in region PARTITIONED_REGION_CONFIG_NAME
-   * 
+   * Test for partitioned Region registration. All partitioned regions created must have a entry in
+   * PARTITIONED_REGION_CONFIG_NAME. Every PR has PR name / PartitionRegionConfig entry in region
+   * PARTITIONED_REGION_CONFIG_NAME
    */
   @Test
   public void test003partionedRegionRegistration() {
     createMultiplePartitionedRegions();
-    Region root = (PartitionedRegionTestHelper.getExistingRegion(PartitionedRegionHelper.PR_ROOT_REGION_NAME));
+    Region root =
+        (PartitionedRegionTestHelper.getExistingRegion(
+            PartitionedRegionHelper.PR_ROOT_REGION_NAME));
     //
     //    Region allPartitionedRegions = root
     //        .getSubregion(PartitionedRegionHelper.PARTITIONED_REGION_CONFIG_NAME);
@@ -370,7 +403,11 @@ public class PartitionedRegionCreationJUnitTest {
       String name = ((PartitionedRegion) region).getRegionIdentifier();
       PartitionRegionConfig prConfig = (PartitionRegionConfig) root.get(name);
       if (prConfig == null)
-        fail("testpartionedRegionRegistration() - PartionedRegion - " + name + " configs do not exists in  region - " + root.getName());
+        fail(
+            "testpartionedRegionRegistration() - PartionedRegion - "
+                + name
+                + " configs do not exists in  region - "
+                + root.getName());
     }
 
     if (logger.fineEnabled()) {
@@ -379,13 +416,9 @@ public class PartitionedRegionCreationJUnitTest {
     // System.out.println("testpartionedRegionRegistration");
   }
 
-  /**
-   * creates multiple partitioned region from different threads.
-   * 
-   */
+  /** creates multiple partitioned region from different threads. */
   private void createMultiplePartitionedRegions() {
-    if (PRCreateDone)
-      return;
+    if (PRCreateDone) return;
     int numthread = 0;
     while (numthread < TOTAL_THREADS) {
       PartionedRegionCreateThread pregionThread = new PartionedRegionCreateThread();
@@ -405,10 +438,7 @@ public class PartitionedRegionCreationJUnitTest {
     PRCreateDone = true;
   }
 
-  /**
-   * Verifies creation of partitioned region.
-   * 
-   */
+  /** Verifies creation of partitioned region. */
   private void verifyCreateResults() {
     if (TOTAL_RETURNS != TOTAL_THREADS)
       fail("Failed -- Total thread returned is not same as number of threads created");
@@ -420,10 +450,7 @@ public class PartitionedRegionCreationJUnitTest {
       fail("Failed -- Total Partioned Region creation failures is not correct");
   }
 
-  /**
-   * Thread to create the partitioned region.
-   * 
-   */
+  /** Thread to create the partitioned region. */
   public class PartionedRegionCreateThread extends Thread {
     public void run() {
       String prName = "PartitionedRegionCreationJUnitTest_" + getPRNumber();
@@ -431,12 +458,16 @@ public class PartitionedRegionCreationJUnitTest {
         Region region = PartitionedRegionTestHelper.createPartionedRegion(prName);
         PRRegionList.add(region);
         if (logger.fineEnabled()) {
-          logger.fine("PartitionedRegionCreationJUnitTest - partitioned region -" + prName + "Created");
+          logger.fine(
+              "PartitionedRegionCreationJUnitTest - partitioned region -" + prName + "Created");
         }
         updatePRCreate();
       } catch (RegionExistsException rex) {
         if (logger.fineEnabled()) {
-          logger.fine("PartitionedRegionCreationTest -  Thread - " + Thread.currentThread().getName() + " Failed to create a PartitionedRegion. Region already exists");
+          logger.fine(
+              "PartitionedRegionCreationTest -  Thread - "
+                  + Thread.currentThread().getName()
+                  + " Failed to create a PartitionedRegion. Region already exists");
         }
         updatePRCreateFail();
       }
@@ -446,9 +477,8 @@ public class PartitionedRegionCreationJUnitTest {
   }
 
   /**
-   * Increments and returns the PR nmber used for PR creation. Thread safe
-   * function.
-   * 
+   * Increments and returns the PR nmber used for PR creation. Thread safe function.
+   *
    * @return the PR number
    */
   protected int getPRNumber() {
@@ -477,10 +507,7 @@ public class PartitionedRegionCreationJUnitTest {
     }
   }
 
-  /**
-   * Increments total creation thread returns.
-   * 
-   */
+  /** Increments total creation thread returns. */
   protected void updateTotalReturns() {
     synchronized (PR_TOTAL_RETURNS) {
       TOTAL_RETURNS++;

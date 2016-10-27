@@ -28,7 +28,7 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.SecurityTest;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-@Category({ UnitTest.class, SecurityTest.class })
+@Category({UnitTest.class, SecurityTest.class})
 public class ResourcePermissionTest {
 
   private ResourcePermission context;

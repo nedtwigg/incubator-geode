@@ -30,8 +30,7 @@ public class ASTMethodInvocation extends GemFireAST {
   private static final long serialVersionUID = -3158542132262327470L;
   private boolean implicitReceiver;
 
-  public ASTMethodInvocation() {
-  }
+  public ASTMethodInvocation() {}
 
   public ASTMethodInvocation(Token t) {
     super(t);
@@ -60,5 +59,4 @@ public class ASTMethodInvocation extends GemFireAST {
 
     compiler.methodInvocation();
   }
-
 }

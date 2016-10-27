@@ -16,10 +16,7 @@
  */
 package org.apache.geode.test.golden;
 
-/**
- * Compares test output to golden text file using string equality
- * 
- */
+/** Compares test output to golden text file using string equality */
 public class StringGoldenComparator extends GoldenComparator {
 
   protected StringGoldenComparator(final String[] expectedProblemLines) {

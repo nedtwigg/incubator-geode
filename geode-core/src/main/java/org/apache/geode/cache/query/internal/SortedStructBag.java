@@ -32,74 +32,76 @@ import org.apache.geode.cache.query.types.StructType;
 import org.apache.geode.internal.cache.CachePerfStats;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * 
- *
- */
+/** */
 public class SortedStructBag extends SortedResultsBag<Object[]> implements StructFields {
 
   /**
    * Constructor for unordered input
-   * 
+   *
    * @param comparator
    * @param nullAtStart
    */
   public SortedStructBag(Comparator<Object[]> comparator, boolean nullAtStart) {
     super(comparator, nullAtStart);
-
   }
 
   /**
    * Constructor for unordered input
+   *
    * @param comparator
    * @param elementType
    * @param nullAtStart
    */
-  public SortedStructBag(Comparator<Object[]> comparator, StructType elementType, boolean nullAtStart) {
+  public SortedStructBag(
+      Comparator<Object[]> comparator, StructType elementType, boolean nullAtStart) {
     super(comparator, elementType, nullAtStart);
   }
 
   /**
    * Constructor for unordered input
-   * 
+   *
    * @param comparator
    * @param elementType
    * @param stats
    * @param nullAtStart
    */
-  public SortedStructBag(Comparator<Object[]> comparator, ObjectType elementType, CachePerfStats stats, boolean nullAtStart) {
+  public SortedStructBag(
+      Comparator<Object[]> comparator,
+      ObjectType elementType,
+      CachePerfStats stats,
+      boolean nullAtStart) {
     super(comparator, elementType, stats, nullAtStart);
-
   }
 
   /**
    * Constructor for unordered input
-   * 
+   *
    * @param comparator
    * @param stats
    * @param nullAtStart
    */
-  public SortedStructBag(Comparator<Object[]> comparator, CachePerfStats stats, boolean nullAtStart) {
+  public SortedStructBag(
+      Comparator<Object[]> comparator, CachePerfStats stats, boolean nullAtStart) {
     super(comparator, stats, nullAtStart);
-
   }
 
   /** Add a Struct */
   @Override
   public boolean add(Object obj) {
     if (!(obj instanceof StructImpl)) {
-      throw new IllegalArgumentException(LocalizedStrings.StructBag_THIS_SET_ONLY_ACCEPTS_STRUCTIMPL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.StructBag_THIS_SET_ONLY_ACCEPTS_STRUCTIMPL.toLocalizedString());
     }
     StructImpl s = (StructImpl) obj;
     if (!this.elementType.equals(s.getStructType())) {
-      throw new IllegalArgumentException(LocalizedStrings.StructBag_OBJ_DOES_NOT_HAVE_THE_SAME_STRUCTTYPE.toLocalizedString(this.elementType, s.getStructType()));
+      throw new IllegalArgumentException(
+          LocalizedStrings.StructBag_OBJ_DOES_NOT_HAVE_THE_SAME_STRUCTTYPE.toLocalizedString(
+              this.elementType, s.getStructType()));
     }
     return addFieldValues(s.getFieldValues());
   }
 
-  /**
-   * For internal use. Just add the Object[] values for a struct with same type
-   */
+  /** For internal use. Just add the Object[] values for a struct with same type */
   public boolean addFieldValues(Object[] fieldValues) {
     return super.add(fieldValues);
   }
@@ -121,10 +123,7 @@ public class SortedStructBag extends SortedResultsBag<Object[]> implements Struc
     return new CollectionTypeImpl(SortedStructBag.class, this.elementType);
   }
 
-  /**
-   * Does this set contain a Struct of the correct type with the specified
-   * values?
-   */
+  /** Does this set contain a Struct of the correct type with the specified values? */
   public boolean containsFieldValues(Object[] fieldValues) {
     // Asif: The fieldValues can never be null . If the Struc contained
     // null , then the the getFieldValues would have returned
@@ -155,7 +154,7 @@ public class SortedStructBag extends SortedResultsBag<Object[]> implements Struc
       int count = 0;
       boolean encounteredObject = false;
       Object[] fields = s.getFieldValues();
-      for (Iterator itr = this.fieldValuesIterator(); itr.hasNext();) {
+      for (Iterator itr = this.fieldValuesIterator(); itr.hasNext(); ) {
         Object[] structFields = (Object[]) itr.next();
         if (Arrays.equals(fields, structFields)) {
           count++;
@@ -229,10 +228,11 @@ public class SortedStructBag extends SortedResultsBag<Object[]> implements Struc
   public boolean addAll(StructFields sb) {
     boolean modified = false;
     if (!this.elementType.equals(sb.getCollectionType().getElementType())) {
-      throw new IllegalArgumentException(LocalizedStrings.StructBag_TYPES_DONT_MATCH.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.StructBag_TYPES_DONT_MATCH.toLocalizedString());
     }
 
-    for (Iterator itr = sb.fieldValuesIterator(); itr.hasNext();) {
+    for (Iterator itr = sb.fieldValuesIterator(); itr.hasNext(); ) {
       // Check if query execution on this thread is canceled.
       QueryMonitor.isQueryExecutionCanceled();
 
@@ -249,7 +249,7 @@ public class SortedStructBag extends SortedResultsBag<Object[]> implements Struc
     if (!this.elementType.equals(ss.getCollectionType().getElementType())) {
       return false; // nothing // modified
     }
-    for (Iterator itr = ss.fieldValuesIterator(); itr.hasNext();) {
+    for (Iterator itr = ss.fieldValuesIterator(); itr.hasNext(); ) {
       Object[] vals = (Object[]) itr.next();
       if (this.removeFieldValues(vals)) {
         modified = true;
@@ -282,8 +282,8 @@ public class SortedStructBag extends SortedResultsBag<Object[]> implements Struc
   }
 
   /**
-   * Return an iterator over the elements in this collection. Duplicates will
-   * show up the number of times it has occurrances.
+   * Return an iterator over the elements in this collection. Duplicates will show up the number of
+   * times it has occurrances.
    */
   @Override
   public Iterator iterator() {
@@ -302,7 +302,8 @@ public class SortedStructBag extends SortedResultsBag<Object[]> implements Struc
   @Override
   public void setElementType(ObjectType elementType) {
     if (!(elementType instanceof StructTypeImpl)) {
-      throw new IllegalArgumentException(LocalizedStrings.StructBag_ELEMENT_TYPE_MUST_BE_STRUCT.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.StructBag_ELEMENT_TYPE_MUST_BE_STRUCT.toLocalizedString());
     }
     this.elementType = elementType;
   }
@@ -314,7 +315,7 @@ public class SortedStructBag extends SortedResultsBag<Object[]> implements Struc
 
   /**
    * Getter for property modifiable.
-   * 
+   *
    * @return Value of property modifiable.
    */
   @Override
@@ -322,17 +323,12 @@ public class SortedStructBag extends SortedResultsBag<Object[]> implements Struc
     return false;
   }
 
-  /**
-   * Iterator wrapper to construct Structs on demand.
-   */
+  /** Iterator wrapper to construct Structs on demand. */
   private class StructBagIterator extends BagIterator {
 
     private final Iterator itr;
 
-    /**
-     * @param itr
-     *          iterator over the Object[] instances of fieldValues
-     */
+    /** @param itr iterator over the Object[] instances of fieldValues */
     StructBagIterator(Iterator itr) {
       this.itr = itr;
     }
@@ -344,7 +340,8 @@ public class SortedStructBag extends SortedResultsBag<Object[]> implements Struc
 
     @Override
     public Object next() {
-      return new StructImpl((StructTypeImpl) SortedStructBag.this.elementType, (Object[]) this.itr.next());
+      return new StructImpl(
+          (StructTypeImpl) SortedStructBag.this.elementType, (Object[]) this.itr.next());
     }
 
     @Override
@@ -352,5 +349,4 @@ public class SortedStructBag extends SortedResultsBag<Object[]> implements Struc
       this.itr.remove();
     }
   }
-
 }

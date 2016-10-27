@@ -27,6 +27,7 @@ import org.apache.geode.distributed.internal.membership.*;
 
 /**
  * A message that is sent in response to a {@link VersionInfoRequest}.
+ *
  * @since GemFire 3.5
  */
 public final class VersionInfoResponse extends AdminResponse {
@@ -34,10 +35,10 @@ public final class VersionInfoResponse extends AdminResponse {
   private String verInfo;
 
   /**
-   * Returns a <code>VersionInfoResponse</code> that will be returned to the
-   * specified recipient.
+   * Returns a <code>VersionInfoResponse</code> that will be returned to the specified recipient.
    */
-  public static VersionInfoResponse create(DistributionManager dm, InternalDistributedMember recipient) {
+  public static VersionInfoResponse create(
+      DistributionManager dm, InternalDistributedMember recipient) {
     VersionInfoResponse m = new VersionInfoResponse();
     m.setRecipient(recipient);
     m.verInfo = GemFireVersion.asString();

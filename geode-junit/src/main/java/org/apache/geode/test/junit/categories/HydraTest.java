@@ -16,8 +16,5 @@
  */
 package org.apache.geode.test.junit.categories;
 
-/**
- * JUnit Test Category that specifies a hydra test.
- */
-public interface HydraTest {
-}
+/** JUnit Test Category that specifies a hydra test. */
+public interface HydraTest {}

@@ -48,15 +48,13 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.LoggingThreadGroup;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
-/**
- * @since GemFire 7.0
- *
- */
+/** @since GemFire 7.0 */
 public class ParallelGatewaySenderImpl extends AbstractRemoteGatewaySender {
 
   private static final Logger logger = LogService.getLogger();
 
-  final ThreadGroup loggerGroup = LoggingThreadGroup.createThreadGroup("Remote Site Discovery Logger Group", logger);
+  final ThreadGroup loggerGroup =
+      LoggingThreadGroup.createThreadGroup("Remote Site Discovery Logger Group", logger);
 
   public ParallelGatewaySenderImpl() {
     super();
@@ -72,14 +70,20 @@ public class ParallelGatewaySenderImpl extends AbstractRemoteGatewaySender {
     this.getLifeCycleLock().writeLock().lock();
     try {
       if (isRunning()) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.GatewaySender_SENDER_0_IS_ALREADY_RUNNING, this.getId()));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.GatewaySender_SENDER_0_IS_ALREADY_RUNNING, this.getId()));
         return;
       }
 
       if (this.remoteDSId != DEFAULT_DISTRIBUTED_SYSTEM_ID) {
-        String locators = ((GemFireCacheImpl) this.cache).getDistributedSystem().getConfig().getLocators();
+        String locators =
+            ((GemFireCacheImpl) this.cache).getDistributedSystem().getConfig().getLocators();
         if (locators.length() == 0) {
-          throw new IllegalStateException(LocalizedStrings.AbstractGatewaySender_LOCATOR_SHOULD_BE_CONFIGURED_BEFORE_STARTING_GATEWAY_SENDER.toLocalizedString());
+          throw new IllegalStateException(
+              LocalizedStrings
+                  .AbstractGatewaySender_LOCATOR_SHOULD_BE_CONFIGURED_BEFORE_STARTING_GATEWAY_SENDER
+                  .toLocalizedString());
         }
       }
       /*
@@ -102,10 +106,12 @@ public class ParallelGatewaySenderImpl extends AbstractRemoteGatewaySender {
       }
       new UpdateAttributesProcessor(this).distribute(false);
 
-      InternalDistributedSystem system = (InternalDistributedSystem) this.cache.getDistributedSystem();
+      InternalDistributedSystem system =
+          (InternalDistributedSystem) this.cache.getDistributedSystem();
       system.handleResourceEvent(ResourceEvent.GATEWAYSENDER_START, this);
 
-      logger.info(LocalizedMessage.create(LocalizedStrings.ParallelGatewaySenderImpl_STARTED__0, this));
+      logger.info(
+          LocalizedMessage.create(LocalizedStrings.ParallelGatewaySenderImpl_STARTED__0, this));
 
       enqueueTempEvents();
     } finally {
@@ -148,12 +154,13 @@ public class ParallelGatewaySenderImpl extends AbstractRemoteGatewaySender {
 
       logger.info(LocalizedMessage.create(LocalizedStrings.GatewayImpl_STOPPED__0, this));
 
-      InternalDistributedSystem system = (InternalDistributedSystem) this.cache.getDistributedSystem();
+      InternalDistributedSystem system =
+          (InternalDistributedSystem) this.cache.getDistributedSystem();
       system.handleResourceEvent(ResourceEvent.GATEWAYSENDER_STOP, this);
 
       clearTempEventsAfterSenderStopped();
       // Keep the eventProcessor around so we can ask it for the regionQueues later.
-      // Tests expect to be able to do this. 
+      // Tests expect to be able to do this.
       //      } finally {
       //        this.eventProcessor = null;
       //      }
@@ -213,14 +220,18 @@ public class ParallelGatewaySenderImpl extends AbstractRemoteGatewaySender {
       //            getMaxParallelismForReplicatedRegion());
       //      }
       //      else
-      bucketId = PartitionedRegionHelper.getHashKey(clonedEvent.getKey(), getMaxParallelismForReplicatedRegion());
+      bucketId =
+          PartitionedRegionHelper.getHashKey(
+              clonedEvent.getKey(), getMaxParallelismForReplicatedRegion());
     } else {
       bucketId = PartitionedRegionHelper.getHashKey((EntryOperation) clonedEvent);
     }
     EventID originalEventId = clonedEvent.getEventId();
     long originatingThreadId = ThreadIdentifier.getRealThreadID(originalEventId.getThreadID());
 
-    long newThreadId = ThreadIdentifier.createFakeThreadIDForParallelGSPrimaryBucket(bucketId, originatingThreadId, getEventIdIndex());
+    long newThreadId =
+        ThreadIdentifier.createFakeThreadIDForParallelGSPrimaryBucket(
+            bucketId, originatingThreadId, getEventIdIndex());
 
     // In case of parallel as all events go through primary buckets
     // we don't need to generate different threadId for secondary buckets
@@ -238,11 +249,23 @@ public class ParallelGatewaySenderImpl extends AbstractRemoteGatewaySender {
     //              originatingThreadId);
     //    }
 
-    EventID newEventId = new EventID(originalEventId.getMembershipID(), newThreadId, originalEventId.getSequenceID(), bucketId);
+    EventID newEventId =
+        new EventID(
+            originalEventId.getMembershipID(),
+            newThreadId,
+            originalEventId.getSequenceID(),
+            bucketId);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Generated event id for event with key={}, bucketId={}, original event id={}, threadId={}, new event id={}, newThreadId={}", this, clonedEvent.getKey(), bucketId, originalEventId, originatingThreadId, newEventId, newThreadId);
+      logger.debug(
+          "{}: Generated event id for event with key={}, bucketId={}, original event id={}, threadId={}, new event id={}, newThreadId={}",
+          this,
+          clonedEvent.getKey(),
+          bucketId,
+          originalEventId,
+          originatingThreadId,
+          newEventId,
+          newThreadId);
     }
     clonedEvent.setEventId(newEventId);
   }
-
 }

@@ -33,27 +33,30 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 /**
  * Spring security authentication object for GemFire
+ *
+ * <p>To use GemFire Integrated Security Model set Spring Application Profile to
+ * pulse.authentication.gemfire
+ *
+ * <p>1. Authentication : 1.a GemFire profile creates JMX connection with given credentials at the
+ * login time. 1.b Successful connect is considered as Successful Authentication for Pulse WebApp
+ *
  * <p>
- * To use GemFire Integrated Security Model set Spring Application Profile to pulse.authentication.gemfire
- * <p>
- * 1. Authentication :
- * 1.a GemFire profile creates JMX connection with given credentials at the login time.
- * 1.b Successful connect is considered as Successful Authentication for Pulse WebApp
- * <p>
- * <p>
- * 2. Authorization :
- * 2.a Using newly created authenticated connection AccessControlMXBean is called to get authentication
- * levels. See @See {@link #populateAuthorities(JMXConnector)}. This sets Spring Security Authorities
- * 2.b DataBrowser end-points are required to be authorized against Spring Granted Authority
+ *
+ * <p>2. Authorization : 2.a Using newly created authenticated connection AccessControlMXBean is
+ * called to get authentication levels. See @See {@link #populateAuthorities(JMXConnector)}. This
+ * sets Spring Security Authorities 2.b DataBrowser end-points are required to be authorized against
+ * Spring Granted Authority
+ *
  * @since GemFire version 9.0
  */
 public class GemFireAuthentication extends UsernamePasswordAuthenticationToken {
 
-  private final static PulseLogWriter logger = PulseLogWriter.getLogger();
+  private static final PulseLogWriter logger = PulseLogWriter.getLogger();
 
   private JMXConnector jmxc = null;
 
-  public GemFireAuthentication(Object principal, Object credentials, Collection<GrantedAuthority> list, JMXConnector jmxc) {
+  public GemFireAuthentication(
+      Object principal, Object credentials, Collection<GrantedAuthority> list, JMXConnector jmxc) {
     super(principal, credentials, list);
     this.jmxc = jmxc;
   }
@@ -69,7 +72,8 @@ public class GemFireAuthentication extends UsernamePasswordAuthenticationToken {
 
       for (String role : PulseConstants.PULSE_ROLES) {
         Object[] params = role.split(":");
-        String[] signature = new String[] { String.class.getCanonicalName(), String.class.getCanonicalName() };
+        String[] signature =
+            new String[] {String.class.getCanonicalName(), String.class.getCanonicalName()};
         boolean result = (Boolean) mbeanServer.invoke(name, "authorize", params, signature);
         if (result) {
           authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
@@ -80,11 +84,9 @@ public class GemFireAuthentication extends UsernamePasswordAuthenticationToken {
     }
 
     return authorities;
-
   }
 
   public JMXConnector getJmxc() {
     return jmxc;
   }
-
 }

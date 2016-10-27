@@ -39,9 +39,7 @@ import org.apache.geode.cache.query.data.Data;
 import org.apache.geode.cache.query.data.Portfolio;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class MultipleRegionsJUnitTest {
 
@@ -73,25 +71,31 @@ public class MultipleRegionsJUnitTest {
 
   @Test
   public void testQueriesExecutionOnMultipleRegion() throws Exception {
-    int SizeArray[] = { 5, 2, 0, 8, 80, 10, 8, 10, 48 };
+    int SizeArray[] = {5, 2, 0, 8, 80, 10, 8, 10, 48};
     QueryService qs = CacheUtils.getQueryService();
     String queries[] = {
-        // Multiple Regions Available. Execute queries on any of the Region.
-        "select distinct * from /Portfolios", "SELECT DISTINCT * FROM /Portfolios2,  positions.values where status='active'", "SELECT DISTINCT * from /Portfolios pf , pf.positions.values pos where pos.getSecId = 'IBM' and status = 'inactive'", "Select distinct * from /Portfolios3 pf, pf.positions",
-        // Multiple Regions in a Query         
-        "Select distinct * from /Portfolios, /Portfolios2, /Portfolios3, /Data", "Select distinct * from /Portfolios, /Portfolios2", "Select distinct * from /Portfolios3, /Data", "Select distinct * from /Portfolios, /Data", "Select distinct * from /Portfolios pf, /Portfolios2, /Portfolios3, /Data where pf.status='active'" };
+      // Multiple Regions Available. Execute queries on any of the Region.
+      "select distinct * from /Portfolios",
+      "SELECT DISTINCT * FROM /Portfolios2,  positions.values where status='active'",
+      "SELECT DISTINCT * from /Portfolios pf , pf.positions.values pos where pos.getSecId = 'IBM' and status = 'inactive'",
+      "Select distinct * from /Portfolios3 pf, pf.positions",
+      // Multiple Regions in a Query
+      "Select distinct * from /Portfolios, /Portfolios2, /Portfolios3, /Data",
+      "Select distinct * from /Portfolios, /Portfolios2",
+      "Select distinct * from /Portfolios3, /Data",
+      "Select distinct * from /Portfolios, /Data",
+      "Select distinct * from /Portfolios pf, /Portfolios2, /Portfolios3, /Data where pf.status='active'"
+    };
     try {
       for (int i = 0; i < queries.length; i++) {
         Query query = qs.newQuery(queries[i]);
         Object result = query.execute();
         //  CacheUtils.log(Utils.printResult(result));
-        if (((Collection) result).size() != SizeArray[i])
-          fail("Size of Result is not as Expected");
+        if (((Collection) result).size() != SizeArray[i]) fail("Size of Result is not as Expected");
       }
     } catch (Exception e) {
       e.printStackTrace();
       fail();
     }
   }
-
 }

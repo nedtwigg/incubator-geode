@@ -23,11 +23,13 @@ import org.apache.geode.internal.cache.tier.sockets.Message;
 
 /**
  * Ping a server to see if it is still alive.
+ *
  * @since GemFire 5.7
  */
 public class PingOp {
   /**
    * Ping the specified server to see if it is still alive
+   *
    * @param pool the pool to use to communicate with the server.
    * @param server the server to do the execution on
    */
@@ -44,9 +46,7 @@ public class PingOp {
 
     private long startTime;
 
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public PingOpImpl() {
       super(MessageType.PING, 0);
     }

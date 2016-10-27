@@ -25,10 +25,8 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.DataSerializableFixedID;
 
 /**
- * A response from locator to client indicating the servers
- * to use to host the clients queue. The servers already
- * contain the queue if the durableQueueFound flag is true.
- *
+ * A response from locator to client indicating the servers to use to host the clients queue. The
+ * servers already contain the queue if the durableQueueFound flag is true.
  */
 public class QueueConnectionResponse extends ServerLocationResponse {
 
@@ -36,8 +34,7 @@ public class QueueConnectionResponse extends ServerLocationResponse {
   private List servers;
   private boolean serversFound = false;
 
-  public QueueConnectionResponse() {
-  }
+  public QueueConnectionResponse() {}
 
   public QueueConnectionResponse(boolean durableQueueFound, List servers) {
     this.durableQueueFound = durableQueueFound;
@@ -70,7 +67,11 @@ public class QueueConnectionResponse extends ServerLocationResponse {
 
   @Override
   public String toString() {
-    return "QueueConnectionResponse{durableQueueFound=" + durableQueueFound + ", servers=" + servers + "}";
+    return "QueueConnectionResponse{durableQueueFound="
+        + durableQueueFound
+        + ", servers="
+        + servers
+        + "}";
   }
 
   public int getDSFID() {
@@ -81,5 +82,4 @@ public class QueueConnectionResponse extends ServerLocationResponse {
   public boolean hasResult() {
     return this.serversFound;
   }
-
 }

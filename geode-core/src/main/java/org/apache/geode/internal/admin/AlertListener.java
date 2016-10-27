@@ -16,14 +16,9 @@
  */
 package org.apache.geode.internal.admin;
 
-/**
- * A listener whose callback methods are invoekd when an {@link Alert}
- * is received.
- */
+/** A listener whose callback methods are invoekd when an {@link Alert} is received. */
 public interface AlertListener extends java.util.EventListener {
 
-  /**
-   * Invoked when an <code>Alert</code> is received.
-   */
+  /** Invoked when an <code>Alert</code> is received. */
   public void alert(Alert alert);
 }

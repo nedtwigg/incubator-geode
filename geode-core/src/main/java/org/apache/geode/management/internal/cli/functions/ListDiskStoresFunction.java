@@ -32,9 +32,10 @@ import org.apache.geode.internal.cache.InternalCache;
 import org.apache.geode.management.internal.cli.domain.DiskStoreDetails;
 
 /**
- * The ListDiskStoresFunction class is an implementation of GemFire Function interface used to determine all the
- * disk stores that exist for the entire cache, distributed across the GemFire distributed system.
- * </p>
+ * The ListDiskStoresFunction class is an implementation of GemFire Function interface used to
+ * determine all the disk stores that exist for the entire cache, distributed across the GemFire
+ * distributed system.
+ *
  * @see org.apache.geode.cache.DiskStore
  * @see org.apache.geode.cache.execute.Function
  * @see org.apache.geode.cache.execute.FunctionAdapter
@@ -46,8 +47,7 @@ import org.apache.geode.management.internal.cli.domain.DiskStoreDetails;
 public class ListDiskStoresFunction extends FunctionAdapter implements InternalEntity {
 
   @SuppressWarnings("unused")
-  public void init(final Properties props) {
-  }
+  public void init(final Properties props) {}
 
   public String getId() {
     return getClass().getName();
@@ -69,7 +69,12 @@ public class ListDiskStoresFunction extends FunctionAdapter implements InternalE
         final DistributedMember member = gemfireCache.getMyId();
 
         for (final DiskStore memberDiskStore : gemfireCache.listDiskStoresIncludingRegionOwned()) {
-          memberDiskStores.add(new DiskStoreDetails(memberDiskStore.getDiskStoreUUID(), memberDiskStore.getName(), member.getId(), member.getName()));
+          memberDiskStores.add(
+              new DiskStoreDetails(
+                  memberDiskStore.getDiskStoreUUID(),
+                  memberDiskStore.getName(),
+                  member.getId(),
+                  member.getName()));
         }
       }
 
@@ -78,5 +83,4 @@ public class ListDiskStoresFunction extends FunctionAdapter implements InternalE
       context.getResultSender().sendException(e);
     }
   }
-
 }

@@ -16,8 +16,7 @@
  */
 package org.apache.geode.internal.datasource;
 
-/**
- */
+/** */
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEventListener;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -31,9 +30,8 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * This class implements a connection pool for Managed connection. Extends the
- * AbstractPoolCache to inherit the pool bahavior.
- * 
+ * This class implements a connection pool for Managed connection. Extends the AbstractPoolCache to
+ * inherit the pool bahavior.
  */
 public class ManagedPoolCacheImpl extends AbstractPoolCache {
 
@@ -44,10 +42,14 @@ public class ManagedPoolCacheImpl extends AbstractPoolCache {
   private Subject sub;
   private ConnectionRequestInfo connReqInfo;
 
-  /**
-   * Constructor initializes the ConnectionPoolCacheImpl properties.
-   */
-  public ManagedPoolCacheImpl(ManagedConnectionFactory connFac, Subject subject, ConnectionRequestInfo connReq, javax.resource.spi.ConnectionEventListener eventListner, ConfiguredDataSourceProperties configs) throws PoolException {
+  /** Constructor initializes the ConnectionPoolCacheImpl properties. */
+  public ManagedPoolCacheImpl(
+      ManagedConnectionFactory connFac,
+      Subject subject,
+      ConnectionRequestInfo connReq,
+      javax.resource.spi.ConnectionEventListener eventListner,
+      ConfiguredDataSourceProperties configs)
+      throws PoolException {
     super(eventListner, configs);
     connFactory = connFac;
     sub = subject;
@@ -57,7 +59,7 @@ public class ManagedPoolCacheImpl extends AbstractPoolCache {
 
   /**
    * Creates a new connection for the managed connection pool.
-   * 
+   *
    * @return the managed connection from the EIS as ManagedConnection object.
    * @throws PoolException
    */
@@ -68,26 +70,35 @@ public class ManagedPoolCacheImpl extends AbstractPoolCache {
       manConn = connFactory.createManagedConnection(sub, connReqInfo);
     } catch (ResourceException rex) {
       rex.printStackTrace();
-      throw new PoolException(LocalizedStrings.ManagedPoolCacheImpl_MANAGEDPOOLCACHEIMPLGETNEWCONNECTION_EXCEPTION_IN_CREATING_NEW_MANAGED_POOLEDCONNECTION.toLocalizedString(), rex);
+      throw new PoolException(
+          LocalizedStrings
+              .ManagedPoolCacheImpl_MANAGEDPOOLCACHEIMPLGETNEWCONNECTION_EXCEPTION_IN_CREATING_NEW_MANAGED_POOLEDCONNECTION
+              .toLocalizedString(),
+          rex);
     }
-    manConn.addConnectionEventListener((javax.resource.spi.ConnectionEventListener) connEventListner);
+    manConn.addConnectionEventListener(
+        (javax.resource.spi.ConnectionEventListener) connEventListner);
     return manConn;
   }
 
   /**
    * Destroys the underline physical connection to EIS.
-   * 
+   *
    * @param connectionObject connection Object.
    */
   @Override
   void destroyPooledConnection(Object connectionObject) {
     try {
-      ((ManagedConnection) connectionObject).removeConnectionEventListener((ConnectionEventListener) connEventListner);
+      ((ManagedConnection) connectionObject)
+          .removeConnectionEventListener((ConnectionEventListener) connEventListner);
       ((ManagedConnection) connectionObject).destroy();
       connectionObject = null;
     } catch (ResourceException rex) {
       if (logger.isTraceEnabled()) {
-        logger.trace("ManagedPoolcacheImpl::destroyPooledConnection:Exception in closing the connection.Ignoring it. The exeption is {}", rex.getMessage(), rex);
+        logger.trace(
+            "ManagedPoolcacheImpl::destroyPooledConnection:Exception in closing the connection.Ignoring it. The exeption is {}",
+            rex.getMessage(),
+            rex);
       }
     }
   }

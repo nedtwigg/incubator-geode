@@ -21,9 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * Abstract test case for tests verifying that unexpected test output will
- * cause expected failures.
- * 
+ * Abstract test case for tests verifying that unexpected test output will cause expected failures.
  */
 public abstract class FailOutputTestCase extends GoldenTestCase implements ExecutableProcess {
 

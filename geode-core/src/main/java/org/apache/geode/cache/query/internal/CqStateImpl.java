@@ -24,7 +24,6 @@ import org.apache.geode.cache.query.CqState;
  *
  * @since GemFire 5.5
  */
-
 public class CqStateImpl implements CqState {
 
   public static final int STOPPED = 0;
@@ -39,64 +38,52 @@ public class CqStateImpl implements CqState {
 
   private volatile int state = INIT;
 
-  /**
-   * Returns true if the CQ is in Running state.
-   */
+  /** Returns true if the CQ is in Running state. */
   public boolean isRunning() {
     return (this.state == RUNNING);
   }
 
-  /**
-   * Returns true if the CQ is in Stopped or Initializing state.
-   */
+  /** Returns true if the CQ is in Stopped or Initializing state. */
   public boolean isStopped() {
     return (this.state == STOPPED || this.state == INIT);
   }
 
-  /**
-   * Returns true if the CQ is in Closed state.
-   */
+  /** Returns true if the CQ is in Closed state. */
   public boolean isClosed() {
     return (this.state == CLOSED);
   }
 
-  /**
-   * Returns true if the CQ is in the Closing state.
-   */
+  /** Returns true if the CQ is in the Closing state. */
   public boolean isClosing() {
     return (this.state == CLOSING);
   }
 
   /**
    * Sets the state of CQ.
+   *
    * @param state
    */
   public void setState(int state) {
     this.state = state;
   }
 
-  /**
-   * Returns the integer state of CQ.
-   */
+  /** Returns the integer state of CQ. */
   public int getState() {
     return this.state;
   }
 
-  /**
-   * Returns the state in string form.
-   */
+  /** Returns the state in string form. */
   @Override
   public String toString() {
     switch (this.state) {
-    case STOPPED:
-      return "STOPPED";
-    case RUNNING:
-      return "RUNNING";
-    case CLOSED:
-      return "CLOSED";
-    default:
-      return "UNKNOWN";
+      case STOPPED:
+        return "STOPPED";
+      case RUNNING:
+        return "RUNNING";
+      case CLOSED:
+        return "CLOSED";
+      default:
+        return "UNKNOWN";
     }
   }
-
 }

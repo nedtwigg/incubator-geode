@@ -27,9 +27,9 @@ import org.apache.geode.internal.Sendable;
 import org.apache.geode.internal.tcp.ByteBufferInputStream;
 
 /**
- * A class that references the String offset in PdxInstance
- * Used as Index keys for PdxInstances and 
+ * A class that references the String offset in PdxInstance Used as Index keys for PdxInstances and
  * query evaluation for PdxInstances
+ *
  * @since GemFire 7.0
  */
 public class PdxString implements Comparable<PdxString>, Sendable {
@@ -61,12 +61,12 @@ public class PdxString implements Comparable<PdxString>, Sendable {
     // length is stored as short for small strings
     if (header == DSCODE.STRING_BYTES || header == DSCODE.STRING) {
       offset += 2; // position the offset to the start of the String
-                   // (skipping header and length bytes)
+      // (skipping header and length bytes)
     }
     // length is stored as int for huge strings
     else if (header == DSCODE.HUGE_STRING_BYTES || header == DSCODE.HUGE_STRING) {
       offset += 4; // position the offset to the start of the String
-                   // (skipping header and length bytes)
+      // (skipping header and length bytes)
     }
     return offset;
   }
@@ -154,8 +154,7 @@ public class PdxString implements Comparable<PdxString>, Sendable {
         int i = this.offset;
         int j = o.offset;
         while (n-- != 0) {
-          if (bytes[i++] != o.bytes[j++])
-            return false;
+          if (bytes[i++] != o.bytes[j++]) return false;
         }
         return true;
       }
@@ -176,7 +175,11 @@ public class PdxString implements Comparable<PdxString>, Sendable {
       else if (header == DSCODE.HUGE_STRING_BYTES || header == DSCODE.HUGE_STRING) {
         headerOffset -= 4;
       }
-      ByteBuffer stringByteBuffer = ByteBuffer.wrap(bytes, headerOffset, bytes.length - headerOffset); // Wrapping more bytes than the actual String bytes in
+      ByteBuffer stringByteBuffer =
+          ByteBuffer.wrap(
+              bytes,
+              headerOffset,
+              bytes.length - headerOffset); // Wrapping more bytes than the actual String bytes in
       // array. Counting on the readString() to read only String
       // bytes
       s = DataSerializer.readString(new ByteBufferInputStream(stringByteBuffer));
@@ -190,7 +193,7 @@ public class PdxString implements Comparable<PdxString>, Sendable {
   public void sendTo(DataOutput out) throws IOException {
     int offset = this.offset;
     int len = getLength();
-    --offset; // for header byte  
+    --offset; // for header byte
     len++;
     if (header == DSCODE.STRING_BYTES || header == DSCODE.STRING) {
       len += 2;
@@ -201,5 +204,4 @@ public class PdxString implements Comparable<PdxString>, Sendable {
     }
     out.write(bytes, offset, len);
   }
-
 }

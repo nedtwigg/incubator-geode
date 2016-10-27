@@ -19,38 +19,34 @@ package hydra;
 
 import java.io.*;
 
-/**
-*
-* The result of a MethExecutor execute method.
-*
-*/
+/** The result of a MethExecutor execute method. */
 public class MethExecutorResult implements Serializable {
 
-  /** A "result" object that indicates that an exception occurred
-   * while invoking the method */
-  public static final Serializable EXCEPTION_OCCURRED = new Serializable() {
-    public boolean equals(Object o) {
-      // Allows instances to be compared across VMs
-      return o != null && this.getClass().equals(o.getClass());
-    }
+  /** A "result" object that indicates that an exception occurred while invoking the method */
+  public static final Serializable EXCEPTION_OCCURRED =
+      new Serializable() {
+        public boolean equals(Object o) {
+          // Allows instances to be compared across VMs
+          return o != null && this.getClass().equals(o.getClass());
+        }
 
-    public String toString() {
-      return "EXCEPTION_OCCURRED";
-    }
-  };
+        public String toString() {
+          return "EXCEPTION_OCCURRED";
+        }
+      };
 
-  /** A "exception" object that indicates that an exception could not
-   * be serialized. */
-  public static final Throwable NONSERIALIZABLE_EXCEPTION = new Throwable() {
-    public boolean equals(Object o) {
-      // Allows instances to be compared across VMs
-      return o != null && this.getClass().equals(o.getClass());
-    }
+  /** A "exception" object that indicates that an exception could not be serialized. */
+  public static final Throwable NONSERIALIZABLE_EXCEPTION =
+      new Throwable() {
+        public boolean equals(Object o) {
+          // Allows instances to be compared across VMs
+          return o != null && this.getClass().equals(o.getClass());
+        }
 
-    public String toString() {
-      return "NONSERIALIZABLE_EXCEPTION";
-    }
-  };
+        public String toString() {
+          return "NONSERIALIZABLE_EXCEPTION";
+        }
+      };
 
   ////////////////////  Instance Methods  ///////////////////////////
 
@@ -78,11 +74,9 @@ public class MethExecutorResult implements Serializable {
   }
 
   /**
-   * This constructor is invoked when invoking a method resulted in an
-   * exception being thrown.  The "result" is set to {@link
-   * #EXCEPTION_OCCURRED}.  If the exception could not be serialized,
-   * {@link #getException()} will return IOException with the exception
-   * stack as the message.
+   * This constructor is invoked when invoking a method resulted in an exception being thrown. The
+   * "result" is set to {@link #EXCEPTION_OCCURRED}. If the exception could not be serialized,
+   * {@link #getException()} will return IOException with the exception stack as the message.
    */
   public MethExecutorResult(Throwable thr) {
     this.result = EXCEPTION_OCCURRED;
@@ -124,9 +118,8 @@ public class MethExecutorResult implements Serializable {
   }
 
   /**
-   * Returns the result of the method call.  If an exception was
-   * thrown during the method call, {@link #EXCEPTION_OCCURRED} is
-   * returned.
+   * Returns the result of the method call. If an exception was thrown during the method call,
+   * {@link #EXCEPTION_OCCURRED} is returned.
    *
    * @see #exceptionOccurred()
    */
@@ -135,48 +128,40 @@ public class MethExecutorResult implements Serializable {
   }
 
   /**
-   * Returns the name of the exception class of the exception that
-   * was thrown while invoking a method.  If no exception was thrown,
-   * <code>null</code> is returned.
+   * Returns the name of the exception class of the exception that was thrown while invoking a
+   * method. If no exception was thrown, <code>null</code> is returned.
    */
   public String getExceptionClassName() {
     return this.exceptionClassName;
   }
 
   /**
-   * Returns the message of the exception that was thrown while
-   * invoking a method.  If no exception was thrown, <code>null</code>
-   * is returned.
+   * Returns the message of the exception that was thrown while invoking a method. If no exception
+   * was thrown, <code>null</code> is returned.
    */
   public String getExceptionMessage() {
     return this.exceptionMessage;
   }
 
   /**
-   * Returns the stack trace of the exception that was thrown while
-   * invoking a method.  If no exception was thrown, <code>null</code>
-   * is returned.
+   * Returns the stack trace of the exception that was thrown while invoking a method. If no
+   * exception was thrown, <code>null</code> is returned.
    */
   public String getStackTrace() {
     return this.stackTrace;
   }
 
   /**
-   * Returns the exception that was thrown while invoking a method.
-   * If the exception could not be serialized, then {@link
-   * #NONSERIALIZABLE_EXCEPTION} is returned.  If no exception was
-   * thrown, <code>null</code> is returned.
+   * Returns the exception that was thrown while invoking a method. If the exception could not be
+   * serialized, then {@link #NONSERIALIZABLE_EXCEPTION} is returned. If no exception was thrown,
+   * <code>null</code> is returned.
    */
   public Throwable getException() {
     return this.exception;
   }
 
-  /**
-   * Returns whether or not an exception occurred while invoking the
-   * method 
-   */
+  /** Returns whether or not an exception occurred while invoking the method */
   public boolean exceptionOccurred() {
     return EXCEPTION_OCCURRED.equals(this.result);
   }
-
 }

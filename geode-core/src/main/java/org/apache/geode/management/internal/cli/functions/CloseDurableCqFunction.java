@@ -27,10 +27,7 @@ import org.apache.geode.management.internal.cli.CliUtil;
 import org.apache.geode.management.internal.cli.domain.MemberResult;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
-/***
- * Function to close a durable cq
- *
- */
+/** * Function to close a durable cq */
 public class CloseDurableCqFunction extends FunctionAdapter implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
@@ -39,7 +36,8 @@ public class CloseDurableCqFunction extends FunctionAdapter implements InternalE
   public void execute(FunctionContext context) {
 
     final Cache cache = CliUtil.getCacheIfExists();
-    final String memberNameOrId = CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
+    final String memberNameOrId =
+        CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
     CacheClientNotifier cacheClientNotifier = CacheClientNotifier.getInstance();
     String[] args = (String[]) context.getArguments();
     String durableClientId = args[0];
@@ -51,13 +49,17 @@ public class CloseDurableCqFunction extends FunctionAdapter implements InternalE
         CacheClientProxy cacheClientProxy = cacheClientNotifier.getClientProxy(durableClientId);
         if (cacheClientProxy != null) {
           if (cacheClientNotifier.closeClientCq(durableClientId, cqName)) {
-            memberResult.setSuccessMessage(CliStrings.format(CliStrings.CLOSE_DURABLE_CQS__SUCCESS, cqName, durableClientId));
+            memberResult.setSuccessMessage(
+                CliStrings.format(CliStrings.CLOSE_DURABLE_CQS__SUCCESS, cqName, durableClientId));
           } else {
-            memberResult.setErrorMessage(CliStrings.format(CliStrings.CLOSE_DURABLE_CQS__UNABLE__TO__CLOSE__CQ, cqName, durableClientId));
+            memberResult.setErrorMessage(
+                CliStrings.format(
+                    CliStrings.CLOSE_DURABLE_CQS__UNABLE__TO__CLOSE__CQ, cqName, durableClientId));
           }
 
         } else {
-          memberResult.setErrorMessage(CliStrings.format(CliStrings.NO_CLIENT_FOUND_WITH_CLIENT_ID, durableClientId));
+          memberResult.setErrorMessage(
+              CliStrings.format(CliStrings.NO_CLIENT_FOUND_WITH_CLIENT_ID, durableClientId));
         }
       } else {
         memberResult.setErrorMessage(CliStrings.NO_CLIENT_FOUND);
@@ -73,5 +75,4 @@ public class CloseDurableCqFunction extends FunctionAdapter implements InternalE
   public String getId() {
     return CloseDurableCqFunction.class.getName();
   }
-
 }

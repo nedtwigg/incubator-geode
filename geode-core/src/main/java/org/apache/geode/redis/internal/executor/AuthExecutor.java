@@ -38,7 +38,8 @@ public class AuthExecutor implements Executor {
     }
     byte[] pwd = context.getAuthPwd();
     if (pwd == null) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_NO_PASS));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_NO_PASS));
       return;
     }
     boolean correct = Arrays.equals(commandElems.get(1), pwd);
@@ -47,8 +48,8 @@ public class AuthExecutor implements Executor {
       context.setAuthenticationVerified();
       command.setResponse(Coder.getSimpleStringResponse(context.getByteBufAllocator(), "OK"));
     } else {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_INVALID_PWD));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), RedisConstants.ERROR_INVALID_PWD));
     }
   }
-
 }

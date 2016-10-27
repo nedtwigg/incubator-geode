@@ -82,48 +82,66 @@ public class ProductUseLogDUnitTest extends JUnit4CacheTestCase {
     assertTrue(logFile.exists());
 
     assertTrue(logFile.exists());
-    int serverPort = (Integer) vm0.invoke(new SerializableCallable("get system") {
-      public Object call() {
-        getSystem();
-        Cache cache = getCache();
-        cache.createRegionFactory(RegionShortcut.REPLICATE).create("myregion");
-        CacheServer server = cache.addCacheServer();
-        server.setPort(0);
-        try {
-          server.start();
-        } catch (IOException e) {
-          Assert.fail("failed to start server", e);
-        }
-        return server.getPort();
-      }
-    });
+    int serverPort =
+        (Integer)
+            vm0.invoke(
+                new SerializableCallable("get system") {
+                  public Object call() {
+                    getSystem();
+                    Cache cache = getCache();
+                    cache.createRegionFactory(RegionShortcut.REPLICATE).create("myregion");
+                    CacheServer server = cache.addCacheServer();
+                    server.setPort(0);
+                    try {
+                      server.start();
+                    } catch (IOException e) {
+                      Assert.fail("failed to start server", e);
+                    }
+                    return server.getPort();
+                  }
+                });
 
-    vm1.invoke(new SerializableRunnable("create a client") {
-      public void run() {
-        ClientCache clientCache = new ClientCacheFactory().setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
-        Region r = clientCache.createClientRegionFactory(ClientRegionShortcut.PROXY).create("myregion");
-        r.registerInterest(".*");
-        r.put("somekey", "somevalue");
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable("create a client") {
+          public void run() {
+            ClientCache clientCache =
+                new ClientCacheFactory()
+                    .setPoolSubscriptionEnabled(true)
+                    .addPoolServer("localhost", serverPort)
+                    .create();
+            Region r =
+                clientCache
+                    .createClientRegionFactory(ClientRegionShortcut.PROXY)
+                    .create("myregion");
+            r.registerInterest(".*");
+            r.put("somekey", "somevalue");
+          }
+        });
 
-    vm0.invoke(new SerializableRunnable("check region") {
-      public void run() {
-        Region r = getCache().getRegion("myregion");
-        Assert.assertNotNull(r.get("somekey"));
-      }
-    });
+    vm0.invoke(
+        new SerializableRunnable("check region") {
+          public void run() {
+            Region r = getCache().getRegion("myregion");
+            Assert.assertNotNull(r.get("somekey"));
+          }
+        });
 
-    // wait for the server info to be received and logged 
+    // wait for the server info to be received and logged
     Thread.sleep(2 * CacheServer.DEFAULT_LOAD_POLL_INTERVAL);
 
     system.disconnect();
 
     String logContents = readFile(logFile);
     assertTrue("expected " + logFile + " to contain a View", logContents.contains("View"));
-    assertTrue("expected " + logFile + " to have a server count of 1", logContents.contains("server count: 1"));
-    assertTrue("expected " + logFile + " to have a client count of 1", logContents.contains("client count: 1"));
-    assertTrue("expected " + logFile + " to have a queue count of 1", logContents.contains("queue count: 1"));
+    assertTrue(
+        "expected " + logFile + " to have a server count of 1",
+        logContents.contains("server count: 1"));
+    assertTrue(
+        "expected " + logFile + " to have a client count of 1",
+        logContents.contains("client count: 1"));
+    assertTrue(
+        "expected " + logFile + " to have a queue count of 1",
+        logContents.contains("queue count: 1"));
   }
 
   private String readFile(File file) throws IOException {
@@ -135,5 +153,4 @@ public class ProductUseLogDUnitTest extends JUnit4CacheTestCase {
     }
     return sb.toString();
   }
-
 }

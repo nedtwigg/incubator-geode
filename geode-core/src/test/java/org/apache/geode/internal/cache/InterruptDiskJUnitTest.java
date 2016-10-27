@@ -37,10 +37,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-/**
- * Test of interrupting threads doing disk writes to see the effect.
- *
- */
+/** Test of interrupting threads doing disk writes to see the effect. */
 @Category(IntegrationTest.class)
 public class InterruptDiskJUnitTest {
 
@@ -77,8 +74,16 @@ public class InterruptDiskJUnitTest {
     cache = CacheFactory.create(ds);
     File diskStore = new File("diskStore");
     diskStore.mkdir();
-    cache.createDiskStoreFactory().setMaxOplogSize(1).setDiskDirs(new File[] { diskStore }).create("store");
-    region = cache.createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT).setDiskStoreName("store").create("region");
+    cache
+        .createDiskStoreFactory()
+        .setMaxOplogSize(1)
+        .setDiskDirs(new File[] {diskStore})
+        .create("store");
+    region =
+        cache
+            .createRegionFactory(RegionShortcut.REPLICATE_PERSISTENT)
+            .setDiskStoreName("store")
+            .create("region");
     ex = Executors.newSingleThreadExecutor();
   }
 
@@ -90,21 +95,22 @@ public class InterruptDiskJUnitTest {
 
   @Test
   public void testDRPutWithInterrupt() throws Throwable {
-    Callable doPuts = new Callable() {
+    Callable doPuts =
+        new Callable() {
 
-      @Override
-      public Object call() {
-        puttingThread = Thread.currentThread();
-        long end = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(MAX_WAIT);
-        while (!Thread.currentThread().isInterrupted()) {
-          region.put(0, nextValue.incrementAndGet());
-          if (System.nanoTime() > end) {
-            fail("Did not get interrupted in 60 seconds");
+          @Override
+          public Object call() {
+            puttingThread = Thread.currentThread();
+            long end = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(MAX_WAIT);
+            while (!Thread.currentThread().isInterrupted()) {
+              region.put(0, nextValue.incrementAndGet());
+              if (System.nanoTime() > end) {
+                fail("Did not get interrupted in 60 seconds");
+              }
+            }
+            return null;
           }
-        }
-        return null;
-      }
-    };
+        };
 
     Future result = ex.submit(doPuts);
 
@@ -122,6 +128,5 @@ public class InterruptDiskJUnitTest {
     result.get(60, TimeUnit.SECONDS);
 
     assertEquals(nextValue.get(), region.get(0));
-
   }
 }

@@ -34,20 +34,20 @@ import java.util.Set;
 import org.apache.geode.SystemFailure;
 
 /**
- * Encapsulates native C/C++ calls via JNA. To obtain an instance of
- * implementation for a platform, use {@link NativeCalls#getInstance()}.
- * 
+ * Encapsulates native C/C++ calls via JNA. To obtain an instance of implementation for a platform,
+ * use {@link NativeCalls#getInstance()}.
+ *
  * @since GemFire 8.0
  */
 public abstract class NativeCalls {
 
   /**
-   * Static instance of NativeCalls implementation. This can be one of JNA
-   * implementations in <code>NativeCallsJNAImpl</code> or can fall back to a
-   * generic implementation in case JNA is not available for the platform.
-   * 
-   * Note: this variable is deliberately not final so that other clients 
-   * can plug in their own native implementations of NativeCalls.
+   * Static instance of NativeCalls implementation. This can be one of JNA implementations in <code>
+   * NativeCallsJNAImpl</code> or can fall back to a generic implementation in case JNA is not
+   * available for the platform.
+   *
+   * <p>Note: this variable is deliberately not final so that other clients can plug in their own
+   * native implementations of NativeCalls.
    */
   protected static NativeCalls instance;
 
@@ -73,13 +73,9 @@ public abstract class NativeCalls {
     instance = inst;
   }
 
-  public NativeCalls() {
-  }
+  public NativeCalls() {}
 
-  /**
-   * Get an instance of implementation of {@link NativeCalls} for the current
-   * platform.
-   */
+  /** Get an instance of implementation of {@link NativeCalls} for the current platform. */
   public static NativeCalls getInstance() {
     return instance;
   }
@@ -99,7 +95,9 @@ public abstract class NativeCalls {
   @SuppressWarnings("unchecked")
   protected static final Map<String, String> getModifiableJavaEnvWIN() {
     try {
-      final Field envField = Class.forName("java.lang.ProcessEnvironment").getDeclaredField("theCaseInsensitiveEnvironment");
+      final Field envField =
+          Class.forName("java.lang.ProcessEnvironment")
+              .getDeclaredField("theCaseInsensitiveEnvironment");
       envField.setAccessible(true);
       return (Map<String, String>) envField.get(null);
     } catch (Exception ex) {
@@ -108,20 +106,17 @@ public abstract class NativeCalls {
   }
 
   /**
-   * Get the native kernel descriptor given the java Socket. This is a horribly
-   * implementation dependent code checking various cases to get to the
-   * underlying kernel socket descriptor but works for the JDK's we support or
-   * intend to support directly or indirectly (e.g. GCJ for ODBC clients).
-   * 
-   * @param sock
-   *          the java socket
-   * @param sockStream
-   *          the {@link InputStream} of the java socket, if available
-   * 
-   * @throws UnsupportedOperationException
-   *           if the kernel descriptor could not be extracted
+   * Get the native kernel descriptor given the java Socket. This is a horribly implementation
+   * dependent code checking various cases to get to the underlying kernel socket descriptor but
+   * works for the JDK's we support or intend to support directly or indirectly (e.g. GCJ for ODBC
+   * clients).
+   *
+   * @param sock the java socket
+   * @param sockStream the {@link InputStream} of the java socket, if available
+   * @throws UnsupportedOperationException if the kernel descriptor could not be extracted
    */
-  protected int getSocketKernelDescriptor(Socket sock, InputStream sockStream) throws UnsupportedOperationException {
+  protected int getSocketKernelDescriptor(Socket sock, InputStream sockStream)
+      throws UnsupportedOperationException {
     Method m;
     Field f;
     Object obj;
@@ -212,9 +207,10 @@ public abstract class NativeCalls {
     }
   }
 
-  protected static Method getAnyMethod(Class<?> c, String name, Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException {
+  protected static Method getAnyMethod(Class<?> c, String name, Class<?>... parameterTypes)
+      throws NoSuchMethodException, SecurityException {
     NoSuchMethodException firstEx = null;
-    for (;;) {
+    for (; ; ) {
       try {
         return c.getDeclaredMethod(name, parameterTypes);
       } catch (NoSuchMethodException nsme) {
@@ -229,9 +225,10 @@ public abstract class NativeCalls {
     }
   }
 
-  protected static Field getAnyField(Class<?> c, String name) throws NoSuchFieldException, SecurityException {
+  protected static Field getAnyField(Class<?> c, String name)
+      throws NoSuchFieldException, SecurityException {
     NoSuchFieldException firstEx = null;
-    for (;;) {
+    for (; ; ) {
       try {
         return c.getDeclaredField(name);
       } catch (NoSuchFieldException nsfe) {
@@ -247,78 +244,66 @@ public abstract class NativeCalls {
   }
 
   protected String getUnsupportedSocketOptionMessage(TCPSocketOptions opt) {
-    return "setSocketOption(): socket option " + opt + " not supported by current platform " + getOSType();
+    return "setSocketOption(): socket option "
+        + opt
+        + " not supported by current platform "
+        + getOSType();
   }
 
-  /**
-   * Get the {@link OSType} of current system.
-   */
+  /** Get the {@link OSType} of current system. */
   public abstract OSType getOSType();
 
   /**
-   * Get the value of given environment variable. This is different from
-   * {@link System#getenv(String)} in that it returns the current value of the
-   * environment variable in the process rather than from a static unmodifiable
-   * map created on the first call.
-   * 
-   * @param name
-   *          the name of the environment variable to be modified
+   * Get the value of given environment variable. This is different from {@link
+   * System#getenv(String)} in that it returns the current value of the environment variable in the
+   * process rather than from a static unmodifiable map created on the first call.
+   *
+   * @param name the name of the environment variable to be modified
    */
   public abstract String getEnvironment(String name);
 
   /**
-   * Set the value of an environment variable. This modifies both the value in
-   * the process, and the cached static map maintained by JVM on the first call
-   * so further calls to {@link System#getenv(String)} will also return the
-   * modified value.
-   * 
-   * @param name
-   *          the name of the environment variable to be modified
-   * @param value
-   *          the new value of the environment variable; a value of null clears
-   *          the existing value
+   * Set the value of an environment variable. This modifies both the value in the process, and the
+   * cached static map maintained by JVM on the first call so further calls to {@link
+   * System#getenv(String)} will also return the modified value.
+   *
+   * @param name the name of the environment variable to be modified
+   * @param value the new value of the environment variable; a value of null clears the existing
+   *     value
    */
   public abstract void setEnvironment(String name, String value);
 
-  /**
-   * Get the process ID of the current process.
-   */
+  /** Get the process ID of the current process. */
   public abstract int getProcessId();
 
   /**
    * Check whether a process with given ID is still running.
-   * 
-   * @throws UnsupportedOperationException
-   *           if no native API to determine the process status could be invoked
+   *
+   * @throws UnsupportedOperationException if no native API to determine the process status could be
+   *     invoked
    */
   public abstract boolean isProcessActive(int processId) throws UnsupportedOperationException;
 
   /**
-   * Kill the process with given process ID immediately (i.e. without giving it
-   * a chance to cleanup properly).
-   * 
-   * @param processId
-   *          the PID of the process to be kill
-   * 
-   * @throws UnsupportedOperationException
-   *           if no native API to kill the process could be invoked
+   * Kill the process with given process ID immediately (i.e. without giving it a chance to cleanup
+   * properly).
+   *
+   * @param processId the PID of the process to be kill
+   * @throws UnsupportedOperationException if no native API to kill the process could be invoked
    */
   public abstract boolean killProcess(int processId) throws UnsupportedOperationException;
 
   /**
    * Perform the steps necessary to make the current JVM a proper UNIX daemon.
-   * 
-   * @param callback
-   *          register callback to be invoked on catching a SIGHUP signal;
-   *          SIGHUP signal is ignored if the callback is null
-   * 
-   * @throws UnsupportedOperationException
-   *           if the native calls could not be completed for some reason or are
-   *           not available
-   * @throws IllegalStateException
-   *           for a non-UNIX platform
+   *
+   * @param callback register callback to be invoked on catching a SIGHUP signal; SIGHUP signal is
+   *     ignored if the callback is null
+   * @throws UnsupportedOperationException if the native calls could not be completed for some
+   *     reason or are not available
+   * @throws IllegalStateException for a non-UNIX platform
    */
-  public void daemonize(RehashServerOnSIGHUP callback) throws UnsupportedOperationException, IllegalStateException {
+  public void daemonize(RehashServerOnSIGHUP callback)
+      throws UnsupportedOperationException, IllegalStateException {
     throw new UnsupportedOperationException("daemonize() not available in base implementation");
   }
 
@@ -332,13 +317,11 @@ public abstract class NativeCalls {
   }
 
   /**
-   * This will return whether the path passed in as arg is
-   * part of a local file system or a remote file system.
-   * This method is mainly used by the DiskCapacityMonitor thread
-   * and we don't want to monitor remote fs available space as
-   * due to network problems/firewall issues the call to getUsableSpace
-   * can hang. See bug #49155. On platforms other than Linux this will
-   * return false even if it on local file system for now.
+   * This will return whether the path passed in as arg is part of a local file system or a remote
+   * file system. This method is mainly used by the DiskCapacityMonitor thread and we don't want to
+   * monitor remote fs available space as due to network problems/firewall issues the call to
+   * getUsableSpace can hang. See bug #49155. On platforms other than Linux this will return false
+   * even if it on local file system for now.
    */
   public boolean isOnLocalFileSystem(final String path) {
     return false;
@@ -346,16 +329,16 @@ public abstract class NativeCalls {
 
   /**
    * Set given extended socket options on a Java {@link Socket}.
-   * 
-   * @throws UnsupportedOperationException
-   *           if the native API to set the option could not be found or invoked
-   * 
-   * @return the unsupported {@link TCPSocketOptions} for the current platform
-   *         and the underlying exception
-   * 
+   *
+   * @throws UnsupportedOperationException if the native API to set the option could not be found or
+   *     invoked
+   * @return the unsupported {@link TCPSocketOptions} for the current platform and the underlying
+   *     exception
    * @see TCPSocketOptions
    */
-  public abstract Map<TCPSocketOptions, Throwable> setSocketOptions(Socket sock, InputStream sockStream, Map<TCPSocketOptions, Object> optValueMap) throws UnsupportedOperationException;
+  public abstract Map<TCPSocketOptions, Throwable> setSocketOptions(
+      Socket sock, InputStream sockStream, Map<TCPSocketOptions, Object> optValueMap)
+      throws UnsupportedOperationException;
 
   // IPPROTO_TCP is used by setsockopt to denote a TCP option
   protected static final int OPT_IPPROTO_TCP = 6;
@@ -363,11 +346,12 @@ public abstract class NativeCalls {
   protected static final int UNSUPPORTED_OPTION = Integer.MIN_VALUE;
 
   /**
-   * A generic implementation of {@link #setSocketOptions} for POSIX like
-   * systems that requires the child classes to implement a few platform
-   * specific methods.
+   * A generic implementation of {@link #setSocketOptions} for POSIX like systems that requires the
+   * child classes to implement a few platform specific methods.
    */
-  protected final Map<TCPSocketOptions, Throwable> setGenericSocketOptions(Socket sock, InputStream sockStream, Map<TCPSocketOptions, Object> optValueMap) throws UnsupportedOperationException {
+  protected final Map<TCPSocketOptions, Throwable> setGenericSocketOptions(
+      Socket sock, InputStream sockStream, Map<TCPSocketOptions, Object> optValueMap)
+      throws UnsupportedOperationException {
     final Set<Map.Entry<TCPSocketOptions, Object>> optValueEntries = optValueMap.entrySet();
     for (Map.Entry<TCPSocketOptions, Object> e : optValueEntries) {
       TCPSocketOptions opt = e.getKey();
@@ -376,7 +360,11 @@ public abstract class NativeCalls {
       getPlatformOption(opt);
       // all options currently require an integer argument
       if (value == null || !(value instanceof Integer)) {
-        throw new IllegalArgumentException("bad argument type " + (value != null ? value.getClass().getName() : "NULL") + " for " + opt);
+        throw new IllegalArgumentException(
+            "bad argument type "
+                + (value != null ? value.getClass().getName() : "NULL")
+                + " for "
+                + opt);
       }
     }
 
@@ -387,20 +375,26 @@ public abstract class NativeCalls {
       Object value = e.getValue();
       final int optName = getPlatformOption(opt);
       if (optName == UNSUPPORTED_OPTION) {
-        failures.put(opt, new UnsupportedOperationException(getUnsupportedSocketOptionMessage(opt)));
+        failures.put(
+            opt, new UnsupportedOperationException(getUnsupportedSocketOptionMessage(opt)));
         continue;
       }
       final int optSize = Integer.SIZE / Byte.SIZE;
       try {
-        if (setPlatformSocketOption(sockfd, OPT_IPPROTO_TCP, optName, opt, (Integer) value, optSize) != 0) {
-          failures.put(opt, new SocketException(getOSType() + ": error setting option " + opt + " to " + value));
+        if (setPlatformSocketOption(sockfd, OPT_IPPROTO_TCP, optName, opt, (Integer) value, optSize)
+            != 0) {
+          failures.put(
+              opt,
+              new SocketException(getOSType() + ": error setting option " + opt + " to " + value));
         }
       } catch (NativeErrorException ne) {
         // check if the error indicates that option is not supported
         if (isNoProtocolOptionCode(ne.getErrorCode())) {
-          failures.put(opt, new UnsupportedOperationException(getUnsupportedSocketOptionMessage(opt), ne));
+          failures.put(
+              opt, new UnsupportedOperationException(getUnsupportedSocketOptionMessage(opt), ne));
         } else {
-          final SocketException se = new SocketException(getOSType() + ": failed to set " + opt + " to " + value);
+          final SocketException se =
+              new SocketException(getOSType() + ": failed to set " + opt + " to " + value);
           se.initCause(ne);
           failures.put(opt, se);
         }
@@ -411,39 +405,40 @@ public abstract class NativeCalls {
 
   protected int getPlatformOption(TCPSocketOptions opt) throws UnsupportedOperationException {
     // no generic POSIX specification for this
-    throw new UnsupportedOperationException("setSocketOption not supported for generic POSIX platform");
+    throw new UnsupportedOperationException(
+        "setSocketOption not supported for generic POSIX platform");
   }
 
-  protected int setPlatformSocketOption(int sockfd, int level, int optName, TCPSocketOptions opt, Integer optVal, int optSize) throws UnsupportedOperationException, NativeErrorException {
+  protected int setPlatformSocketOption(
+      int sockfd, int level, int optName, TCPSocketOptions opt, Integer optVal, int optSize)
+      throws UnsupportedOperationException, NativeErrorException {
     // no generic POSIX specification for this
-    throw new UnsupportedOperationException("setSocketOption not supported for generic POSIX platform");
+    throw new UnsupportedOperationException(
+        "setSocketOption not supported for generic POSIX platform");
   }
 
   protected boolean isNoProtocolOptionCode(int errno) throws UnsupportedOperationException {
     // no generic POSIX specification for this
-    throw new UnsupportedOperationException("setSocketOption not supported for generic POSIX platform");
+    throw new UnsupportedOperationException(
+        "setSocketOption not supported for generic POSIX platform");
   }
 
   /**
-   * Callback invoked when an OS-level SIGHUP signal is caught after handler has
-   * been installed by {@link NativeCalls#daemonize}. This is provided to allow
-   * for re-reading configuration files or any other appropriate actions on
-   * receiving HUP signal as is the convention in other servers.
-   * 
+   * Callback invoked when an OS-level SIGHUP signal is caught after handler has been installed by
+   * {@link NativeCalls#daemonize}. This is provided to allow for re-reading configuration files or
+   * any other appropriate actions on receiving HUP signal as is the convention in other servers.
+   *
    * @since GemFire 8.0
    */
   public static interface RehashServerOnSIGHUP {
 
-    /**
-     * Perform the actions required to "rehash" the server.
-     */
+    /** Perform the actions required to "rehash" the server. */
     public void rehash();
   }
 
   /**
-   * whether o/s supports high resolution clock or equivalent 
-   * perf counter.
-   * 
+   * whether o/s supports high resolution clock or equivalent perf counter.
+   *
    * @return true if implemented, otherwise false.
    */
   public boolean isNativeTimerEnabled() {
@@ -451,13 +446,12 @@ public abstract class NativeCalls {
   }
 
   /**
-   * This is fall back for jni based library implementation of NanoTimer which
-   * is more efficient than current impl through jna.
-   * 
-   * Linux impls create temporary timespec object and marshals that for invoking
-   * native api. Shouldn't be used if to be called too many times, instead jni
-   * implementation is more desirable.
-   * 
+   * This is fall back for jni based library implementation of NanoTimer which is more efficient
+   * than current impl through jna.
+   *
+   * <p>Linux impls create temporary timespec object and marshals that for invoking native api.
+   * Shouldn't be used if to be called too many times, instead jni implementation is more desirable.
+   *
    * @param clock_id
    * @return nanosecond precision performance counter.
    */
@@ -474,10 +468,10 @@ public abstract class NativeCalls {
   }
 
   /**
-   * A generic fallback implementation of {@link NativeCalls} when no JNA based
-   * implementation could be initialized (e.g. if JNA itself does not provide an
-   * implementation for the platform, or JNA is not found).
-   * 
+   * A generic fallback implementation of {@link NativeCalls} when no JNA based implementation could
+   * be initialized (e.g. if JNA itself does not provide an implementation for the platform, or JNA
+   * is not found).
+   *
    * @since GemFire 8.0
    */
   public static class NativeCallsGeneric extends NativeCalls {
@@ -491,25 +485,19 @@ public abstract class NativeCalls {
       javaEnv = isWin ? getModifiableJavaEnvWIN() : getModifiableJavaEnv();
     }
 
-    /**
-     * @see NativeCalls#getOSType()
-     */
+    /** @see NativeCalls#getOSType() */
     @Override
     public OSType getOSType() {
       return isWin ? OSType.WIN : OSType.GENERIC;
     }
 
-    /**
-     * @see NativeCalls#getEnvironment(String)
-     */
+    /** @see NativeCalls#getEnvironment(String) */
     @Override
     public String getEnvironment(final String name) {
       return System.getenv(name);
     }
 
-    /**
-     * @see NativeCalls#setEnvironment(String, String)
-     */
+    /** @see NativeCalls#setEnvironment(String, String) */
     @Override
     public void setEnvironment(final String name, final String value) {
       // just change the cached map in java env if possible
@@ -522,9 +510,7 @@ public abstract class NativeCalls {
       }
     }
 
-    /**
-     * @see NativeCalls#getProcessId()
-     */
+    /** @see NativeCalls#getProcessId() */
     @Override
     public int getProcessId() {
       final String name = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
@@ -539,28 +525,29 @@ public abstract class NativeCalls {
       return 0;
     }
 
-    /**
-     * @see NativeCalls#isProcessActive(int)
-     */
+    /** @see NativeCalls#isProcessActive(int) */
     @Override
     public boolean isProcessActive(int processId) throws UnsupportedOperationException {
-      throw new UnsupportedOperationException("isProcessActive() not available in generic implementation");
+      throw new UnsupportedOperationException(
+          "isProcessActive() not available in generic implementation");
     }
 
-    /**
-     * @see NativeCalls#killProcess(int)
-     */
+    /** @see NativeCalls#killProcess(int) */
     @Override
     public boolean killProcess(int processId) throws UnsupportedOperationException {
-      throw new UnsupportedOperationException("killProcess() not available in generic implementation");
+      throw new UnsupportedOperationException(
+          "killProcess() not available in generic implementation");
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public Map<TCPSocketOptions, Throwable> setSocketOptions(Socket sock, InputStream sockStream, Map<TCPSocketOptions, Object> optValueMap) throws UnsupportedOperationException {
-      throw new UnsupportedOperationException("setting native socket options " + optValueMap.keySet() + " not possible in generic implementation");
+    public Map<TCPSocketOptions, Throwable> setSocketOptions(
+        Socket sock, InputStream sockStream, Map<TCPSocketOptions, Object> optValueMap)
+        throws UnsupportedOperationException {
+      throw new UnsupportedOperationException(
+          "setting native socket options "
+              + optValueMap.keySet()
+              + " not possible in generic implementation");
     }
   }
 }

@@ -36,7 +36,6 @@ import org.apache.geode.management.internal.configuration.domain.XmlEntity;
 
 /**
  * Function to create {@link MockCacheExtension} on a {@link Region}.
- * 
  *
  * @since GemFire 8.1
  */
@@ -64,12 +63,19 @@ public class AlterMockCacheExtensionFunction extends FunctionAdapter {
       }
     }
 
-    final XmlEntity xmlEntity = XmlEntity.builder().withType(ELEMENT_CACHE).withNamespace(PREFIX, NAMESPACE).build();
+    final XmlEntity xmlEntity =
+        XmlEntity.builder().withType(ELEMENT_CACHE).withNamespace(PREFIX, NAMESPACE).build();
 
     final ResultSender<Object> resultSender = context.getResultSender();
-    final String memberNameOrId = CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
+    final String memberNameOrId =
+        CliUtil.getMemberNameOrId(cache.getDistributedSystem().getDistributedMember());
 
-    resultSender.lastResult(new CliFunctionResult(memberNameOrId, xmlEntity, CliStrings.format("Mock cache extension altered on \"{0}\"", new Object[] { memberNameOrId })));
+    resultSender.lastResult(
+        new CliFunctionResult(
+            memberNameOrId,
+            xmlEntity,
+            CliStrings.format(
+                "Mock cache extension altered on \"{0}\"", new Object[] {memberNameOrId})));
   }
 
   @Override
@@ -83,6 +89,6 @@ public class AlterMockCacheExtensionFunction extends FunctionAdapter {
    * @since GemFire 8.1
    */
   public static Object[] toArgs(final String value) {
-    return new Object[] { value };
+    return new Object[] {value};
   }
 }

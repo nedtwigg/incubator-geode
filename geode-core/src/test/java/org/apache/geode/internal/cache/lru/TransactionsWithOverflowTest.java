@@ -30,14 +30,11 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.LOCATORS;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 
-/**
- * Test for transactional operations on overflowed data
- */
+/** Test for transactional operations on overflowed data */
 @Category(IntegrationTest.class)
 public class TransactionsWithOverflowTest {
 
-  @Rule
-  public TestName name = new TestName();
+  @Rule public TestName name = new TestName();
 
   private Cache cache;
 
@@ -80,7 +77,8 @@ public class TransactionsWithOverflowTest {
   private Region createOverflowPR(Cache cache, String diskStoreName) {
     RegionFactory rf = cache.createRegionFactory();
     rf.setDataPolicy(DataPolicy.PARTITION);
-    rf.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
+    rf.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
     rf.setPartitionAttributes(new PartitionAttributesFactory().setTotalNumBuckets(1).create());
     rf.setDiskStoreName(diskStoreName);
     return rf.create(name.getMethodName());

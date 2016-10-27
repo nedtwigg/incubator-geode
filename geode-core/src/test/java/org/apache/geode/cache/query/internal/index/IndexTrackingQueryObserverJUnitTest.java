@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal.index;
 
 import org.apache.geode.cache.AttributesFactory;
@@ -42,9 +40,7 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class IndexTrackingQueryObserverJUnitTest {
   static QueryService qs;
@@ -89,7 +85,8 @@ public class IndexTrackingQueryObserverJUnitTest {
     assertEquals(100, region.size());
     qs = CacheUtils.getQueryService();
 
-    keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex1 =
+        (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex1 instanceof PartitionedIndex);
 
@@ -136,7 +133,8 @@ public class IndexTrackingQueryObserverJUnitTest {
     assertEquals(100, region.size());
     qs = CacheUtils.getQueryService();
 
-    keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex1 =
+        (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex1 instanceof CompactRangeIndex);
 
@@ -160,5 +158,4 @@ public class IndexTrackingQueryObserverJUnitTest {
 
     assertEquals(results.size(), ((Integer) rslts).intValue());
   }
-
 }

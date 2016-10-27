@@ -40,8 +40,7 @@ public class RegionAttributesInfo implements CliJsonSerializable {
   private String valueConstraint;
   private String[] fieldsToSkipOnUI;
 
-  public RegionAttributesInfo() {
-  }
+  public RegionAttributesInfo() {}
 
   /**
    * @param cacheLoader
@@ -49,7 +48,8 @@ public class RegionAttributesInfo implements CliJsonSerializable {
    * @param keyConstraint
    * @param valueConstraint
    */
-  public RegionAttributesInfo(String cacheLoader, String cacheWriter, String keyConstraint, String valueConstraint) {
+  public RegionAttributesInfo(
+      String cacheLoader, String cacheWriter, String keyConstraint, String valueConstraint) {
     this.cacheLoader = cacheLoader;
     this.cacheWriter = cacheWriter;
     this.keyConstraint = keyConstraint;
@@ -114,35 +114,23 @@ public class RegionAttributesInfo implements CliJsonSerializable {
 
   @Override
   public boolean equals(Object obj) { // eclipse generated
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     RegionAttributesInfo other = (RegionAttributesInfo) obj;
     if (cacheLoader == null) {
-      if (other.cacheLoader != null)
-        return false;
-    } else if (!cacheLoader.equals(other.cacheLoader))
-      return false;
+      if (other.cacheLoader != null) return false;
+    } else if (!cacheLoader.equals(other.cacheLoader)) return false;
     if (cacheWriter == null) {
-      if (other.cacheWriter != null)
-        return false;
-    } else if (!cacheWriter.equals(other.cacheWriter))
-      return false;
-    if (!Arrays.equals(fieldsToSkipOnUI, other.fieldsToSkipOnUI))
-      return false;
+      if (other.cacheWriter != null) return false;
+    } else if (!cacheWriter.equals(other.cacheWriter)) return false;
+    if (!Arrays.equals(fieldsToSkipOnUI, other.fieldsToSkipOnUI)) return false;
     if (keyConstraint == null) {
-      if (other.keyConstraint != null)
-        return false;
-    } else if (!keyConstraint.equals(other.keyConstraint))
-      return false;
+      if (other.keyConstraint != null) return false;
+    } else if (!keyConstraint.equals(other.keyConstraint)) return false;
     if (valueConstraint == null) {
-      if (other.valueConstraint != null)
-        return false;
-    } else if (!valueConstraint.equals(other.valueConstraint))
-      return false;
+      if (other.valueConstraint != null) return false;
+    } else if (!valueConstraint.equals(other.valueConstraint)) return false;
     return true;
   }
 

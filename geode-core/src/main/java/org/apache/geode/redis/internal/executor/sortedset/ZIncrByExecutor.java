@@ -43,7 +43,8 @@ public class ZIncrByExecutor extends SortedSetExecutor {
 
     ByteArrayWrapper key = command.getKey();
 
-    Region<ByteArrayWrapper, DoubleWrapper> keyRegion = getOrCreateRegion(context, key, RedisDataType.REDIS_SORTEDSET);
+    Region<ByteArrayWrapper, DoubleWrapper> keyRegion =
+        getOrCreateRegion(context, key, RedisDataType.REDIS_SORTEDSET);
 
     ByteArrayWrapper member = new ByteArrayWrapper(commandElems.get(3));
 
@@ -73,5 +74,4 @@ public class ZIncrByExecutor extends SortedSetExecutor {
     keyRegion.put(member, score);
     command.setResponse(Coder.getBulkStringResponse(context.getByteBufAllocator(), score.score));
   }
-
 }

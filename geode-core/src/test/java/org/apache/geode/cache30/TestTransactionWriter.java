@@ -39,5 +39,4 @@ public class TestTransactionWriter implements TransactionWriter, Declarable {
     // TODO Auto-generated method stub
 
   }
-
 }

@@ -20,30 +20,24 @@ package org.apache.geode.cache.partition;
 import org.apache.geode.cache.Region;
 
 /**
- * <p>Utility class that implements all methods in <code>PartitionListener</code>
- * with empty implementations. Applications can subclass this class and only
- * override the methods of interest.<p>
- * 
- * <p>Subclasses declared in a Cache XML file, it must also implement {@link org.apache.geode.cache.Declarable}
- * </p>
- * 
- * Note : Please request help on the Geode developer mailing list
+ * Utility class that implements all methods in <code>PartitionListener</code> with empty
+ * implementations. Applications can subclass this class and only override the methods of interest.
+ *
+ * <p>
+ *
+ * <p>Subclasses declared in a Cache XML file, it must also implement {@link
+ * org.apache.geode.cache.Declarable} Note : Please request help on the Geode developer mailing list
  * (dev@geode.incubator.apache.org) before using these APIs.
  *
- * 
  * @since GemFire 6.6.2
  */
 public class PartitionListenerAdapter implements PartitionListener {
 
-  public void afterPrimary(int bucketId) {
-  }
+  public void afterPrimary(int bucketId) {}
 
-  public void afterRegionCreate(Region<?, ?> region) {
-  }
+  public void afterRegionCreate(Region<?, ?> region) {}
 
-  public void afterBucketRemoved(int bucketId, Iterable<?> keys) {
-  }
+  public void afterBucketRemoved(int bucketId, Iterable<?> keys) {}
 
-  public void afterBucketCreated(int bucketId, Iterable<?> keys) {
-  }
+  public void afterBucketCreated(int bucketId, Iterable<?> keys) {}
 }

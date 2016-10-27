@@ -37,12 +37,11 @@ import java.text.DecimalFormat;
 
 /**
  * Class MemberRegionsService
- * 
- * This class contains implementations of getting Memeber's Regions details.
- * 
+ *
+ * <p>This class contains implementations of getting Memeber's Regions details.
+ *
  * @since GemFire version 7.5
  */
-
 @Component
 @Service("MemberRegions")
 @Scope("singleton")
@@ -81,9 +80,11 @@ public class MemberRegionsService implements PulseService {
         ObjectNode regionJSON = mapper.createObjectNode();
         regionJSON.put(this.NAME, memberRegion.getName());
 
-        if (PulseConstants.PRODUCT_NAME_SQLFIRE.equalsIgnoreCase(PulseController.getPulseProductSupport())) {
+        if (PulseConstants.PRODUCT_NAME_SQLFIRE.equalsIgnoreCase(
+            PulseController.getPulseProductSupport())) {
           // Convert region path to dot separated region path
-          regionJSON.put("fullPath", StringUtils.getTableNameFromRegionName(memberRegion.getFullPath()));
+          regionJSON.put(
+              "fullPath", StringUtils.getTableNameFromRegionName(memberRegion.getFullPath()));
         } else {
           regionJSON.put("fullPath", memberRegion.getFullPath());
         }
@@ -117,7 +118,6 @@ public class MemberRegionsService implements PulseService {
 
       // response
       responseJSON.put("status", "Normal");
-
     }
 
     // Send json response

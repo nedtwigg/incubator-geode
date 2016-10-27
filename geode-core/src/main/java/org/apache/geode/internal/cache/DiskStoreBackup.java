@@ -24,12 +24,10 @@ import java.util.Set;
 import org.apache.geode.internal.cache.persistence.BackupInspector;
 
 /**
- * This class manages the state of the backup of an individual disk store. It
- * holds the list of oplogs that still need to be backed up, along with the
- * lists of oplog files that should be deleted when the oplog is backed up. See
- * {@link DiskStoreImpl#startBackup(File, BackupInspector, org.apache.geode.internal.cache.persistence.RestoreScript)}
- * 
- * 
+ * This class manages the state of the backup of an individual disk store. It holds the list of
+ * oplogs that still need to be backed up, along with the lists of oplog files that should be
+ * deleted when the oplog is backed up. See {@link DiskStoreImpl#startBackup(File, BackupInspector,
+ * org.apache.geode.internal.cache.persistence.RestoreScript)}
  */
 public class DiskStoreBackup {
 
@@ -45,8 +43,9 @@ public class DiskStoreBackup {
 
   /**
    * Add the oplog to the list of deferred deletes.
-   * @return true if the delete has been deferred. False if this
-   * oplog should be deleted immediately.
+   *
+   * @return true if the delete has been deferred. False if this oplog should be deleted
+   *     immediately.
    */
   public synchronized boolean deferCrfDelete(Oplog oplog) {
     if (pendingBackup.contains(oplog)) {
@@ -59,8 +58,9 @@ public class DiskStoreBackup {
 
   /**
    * Add the oplog to the list of deferred deletes.
-   * @return true if the delete has been deferred. False if this
-   * oplog should be deleted immediately.
+   *
+   * @return true if the delete has been deferred. False if this oplog should be deleted
+   *     immediately.
    */
   public synchronized boolean deferDrfDelete(Oplog oplog) {
     if (pendingBackup.contains(oplog)) {

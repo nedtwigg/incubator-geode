@@ -23,9 +23,9 @@ import java.util.List;
 import org.apache.geode.i18n.LogWriterI18n;
 
 /**
- * Base interface for {@link MsgStreamer} and {@link MsgStreamerList} to send a
- * message over a list of connections to one or more peers.
- * 
+ * Base interface for {@link MsgStreamer} and {@link MsgStreamerList} to send a message over a list
+ * of connections to one or more peers.
+ *
  * @since GemFire 7.1
  */
 public interface BaseMsgStreamer {
@@ -33,31 +33,28 @@ public interface BaseMsgStreamer {
   public void reserveConnections(long startTime, long ackTimeout, long ackSDTimeout);
 
   /**
-   * Returns a list of the Connections that the message was sent to. Call this
-   * after {@link #writeMessage}.
+   * Returns a list of the Connections that the message was sent to. Call this after {@link
+   * #writeMessage}.
    */
   public List<?> getSentConnections();
 
   /**
-   * Returns an exception the describes which cons the message was not sent to.
-   * Call this after {@link #writeMessage}.
+   * Returns an exception the describes which cons the message was not sent to. Call this after
+   * {@link #writeMessage}.
    */
   public ConnectExceptions getConnectExceptions();
 
   /**
-   * Writes the message to the connected streams and returns the number of bytes
-   * written.
-   * 
-   * @throws IOException
-   *           if serialization failure
+   * Writes the message to the connected streams and returns the number of bytes written.
+   *
+   * @throws IOException if serialization failure
    */
   public int writeMessage() throws IOException;
 
   /**
    * Close this streamer.
-   * 
-   * @throws IOException
-   *           on exception
+   *
+   * @throws IOException on exception
    */
   public void close() throws IOException;
 }

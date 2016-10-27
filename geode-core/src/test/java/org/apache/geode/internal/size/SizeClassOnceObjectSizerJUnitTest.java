@@ -43,11 +43,15 @@ public class SizeClassOnceObjectSizerJUnitTest {
     //The size of a string varies based on the JDK version. With 1.7.0_06
     //a couple of fields were removed. So just measure the size of an empty string.
     String emptyString = "";
-    int emptySize = ObjectSizer.SIZE_CLASS_ONCE.sizeof(emptyString) - ObjectSizer.SIZE_CLASS_ONCE.sizeof(new char[0]);
+    int emptySize =
+        ObjectSizer.SIZE_CLASS_ONCE.sizeof(emptyString)
+            - ObjectSizer.SIZE_CLASS_ONCE.sizeof(new char[0]);
 
     //Make sure that we actually size strings each time
-    assertEquals(emptySize + roundup(OBJECT_SIZE + 4 + 5 * 2), ObjectSizer.SIZE_CLASS_ONCE.sizeof(s1));
-    assertEquals(emptySize + roundup(OBJECT_SIZE + 4 + 10 * 2), ObjectSizer.SIZE_CLASS_ONCE.sizeof(s2));
+    assertEquals(
+        emptySize + roundup(OBJECT_SIZE + 4 + 5 * 2), ObjectSizer.SIZE_CLASS_ONCE.sizeof(s1));
+    assertEquals(
+        emptySize + roundup(OBJECT_SIZE + 4 + 10 * 2), ObjectSizer.SIZE_CLASS_ONCE.sizeof(s2));
 
     TestObject t1 = new TestObject(5);
     TestObject t2 = new TestObject(15);
@@ -64,5 +68,4 @@ public class SizeClassOnceObjectSizerJUnitTest {
       this.field = new byte[size];
     }
   }
-
 }

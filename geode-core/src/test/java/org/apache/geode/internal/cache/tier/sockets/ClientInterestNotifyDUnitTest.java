@@ -58,9 +58,9 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * This test verifies the per-client notify-by-subscription (NBS) override
- * functionality along with register interest new receiveValues flag.
- * Taken from the existing ClientConflationDUnitTest.java and modified.
+ * This test verifies the per-client notify-by-subscription (NBS) override functionality along with
+ * register interest new receiveValues flag. Taken from the existing ClientConflationDUnitTest.java
+ * and modified.
  *
  * @since GemFire 6.0.3
  */
@@ -105,18 +105,29 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
     public void validate(int creates, int updates, int invalidates, int destroys) {
       // Wait for the last destroy event to arrive.
       try {
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> {
-          return (destroys == m_destroys);
-        });
+        Awaitility.await()
+            .atMost(5, TimeUnit.SECONDS)
+            .until(
+                () -> {
+                  return (destroys == m_destroys);
+                });
       } catch (Exception ex) {
         // The event is not received in a given wait time.
         // The check will be done below to report the valid reason.
       }
 
-      GemFireCacheImpl.getInstance().getLogger().info(m_name + ": creates: expected=" + creates + ", actual=" + m_creates);
-      GemFireCacheImpl.getInstance().getLogger().info(m_name + ": updates: expected=" + updates + ", actual=" + m_updates);
-      GemFireCacheImpl.getInstance().getLogger().info(m_name + ": invalidates: expected=" + invalidates + ", actual=" + m_invalidates);
-      GemFireCacheImpl.getInstance().getLogger().info(m_name + ": destroys: expected=" + destroys + ", actual=" + m_destroys);
+      GemFireCacheImpl.getInstance()
+          .getLogger()
+          .info(m_name + ": creates: expected=" + creates + ", actual=" + m_creates);
+      GemFireCacheImpl.getInstance()
+          .getLogger()
+          .info(m_name + ": updates: expected=" + updates + ", actual=" + m_updates);
+      GemFireCacheImpl.getInstance()
+          .getLogger()
+          .info(m_name + ": invalidates: expected=" + invalidates + ", actual=" + m_invalidates);
+      GemFireCacheImpl.getInstance()
+          .getLogger()
+          .info(m_name + ": destroys: expected=" + destroys + ", actual=" + m_destroys);
 
       assertEquals("Creates :", creates, m_creates);
       assertEquals("Updates :", updates, m_updates);
@@ -174,13 +185,19 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
 
     Host host = Host.getHost(0);
     // Create a feeder.
-    vm0.invoke(() -> ClientInterestNotifyDUnitTest.createClientCacheFeeder(NetworkUtils.getServerHostName(host), new Integer(PORT)));
+    vm0.invoke(
+        () ->
+            ClientInterestNotifyDUnitTest.createClientCacheFeeder(
+                NetworkUtils.getServerHostName(host), new Integer(PORT)));
 
     // Client 1 overrides NBS to true.
     // Client 2 "overrides" NSB to false.
     // Client 3 uses the default NBS which is false on the server.
 
-    vm1.invoke(() -> ClientInterestNotifyDUnitTest.createClientCache(NetworkUtils.getServerHostName(host), new Integer(PORT), "ClientOn"));
+    vm1.invoke(
+        () ->
+            ClientInterestNotifyDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(host), new Integer(PORT), "ClientOn"));
 
     // Feeder doFeed does one put on one key for each of the 3 regions so
     // that the following client RI with ALL_KEYS and KEYS_VALUE result works.
@@ -256,13 +273,10 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
     vm1.invoke(() -> ClientInterestNotifyDUnitTest.doValidation(REGION_NAME1, 1, 3, 2, 2));
     vm1.invoke(() -> ClientInterestNotifyDUnitTest.doValidation(REGION_NAME2, 0, 0, 1, 1));
     vm1.invoke(() -> ClientInterestNotifyDUnitTest.doValidation(REGION_NAME3, 1, 0, 0, 0));
-
   }
 
-  /**
-   * create properties for a loner VM
-   */
-  private static Properties createProperties1(/*String nbs*/) {
+  /** create properties for a loner VM */
+  private static Properties createProperties1(/*String nbs*/ ) {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
@@ -271,15 +285,21 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
 
   private static void createPool2(String host, AttributesFactory factory, Integer port) {
     PoolFactory pf = PoolManager.createFactory();
-    pf.addServer(host, port.intValue()).setSubscriptionEnabled(true).setThreadLocalConnections(true).setReadTimeout(10000).setSocketBufferSize(32768).setPingInterval(1000).setMinConnections(3).setSubscriptionRedundancy(-1);
+    pf.addServer(host, port.intValue())
+        .setSubscriptionEnabled(true)
+        .setThreadLocalConnections(true)
+        .setReadTimeout(10000)
+        .setSocketBufferSize(32768)
+        .setPingInterval(1000)
+        .setMinConnections(3)
+        .setSubscriptionRedundancy(-1);
     Pool pool = pf.create("superpoolish" + (poolNameCounter++));
     factory.setPoolName(pool.getName());
   }
 
-  /**
-   * Do validation based on feeder events received by the client
-   */
-  public static void doValidation(String region, int creates, int updates, int invalidates, int destroys) {
+  /** Do validation based on feeder events received by the client */
+  public static void doValidation(
+      String region, int creates, int updates, int invalidates, int destroys) {
     Cache cacheClient = GemFireCacheImpl.getInstance();
     EventListener listener = null;
     listener = (EventListener) cacheClient.getRegion(region).getAttributes().getCacheListeners()[0];
@@ -288,12 +308,13 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
 
   /**
    * create client with 3 regions each with a unique listener
+   *
    * @throws Exception
    */
-  public static void createClientCache(String host, Integer port, /*String nbs,*/
-      String name) throws Exception {
+  public static void createClientCache(String host, Integer port, /*String nbs,*/ String name)
+      throws Exception {
     ClientInterestNotifyDUnitTest test = new ClientInterestNotifyDUnitTest();
-    Cache cacheClient = test.createCache(createProperties1(/*nbs*/));
+    Cache cacheClient = test.createCache(createProperties1(/*nbs*/ ));
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     factory.setConcurrencyChecksEnabled(false);
@@ -321,8 +342,10 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
 
   public static void createClientCacheFeeder(String host, Integer port) throws Exception {
     ClientInterestNotifyDUnitTest test = new ClientInterestNotifyDUnitTest();
-    Cache cacheFeeder = test.createCache(createProperties1(
-    /*DistributionConfig.NOTIFY_BY_SUBSCRIPTION_OVERRIDE_PROP_VALUE_DEFAULT*/));
+    Cache cacheFeeder =
+        test.createCache(
+            createProperties1(
+                /*DistributionConfig.NOTIFY_BY_SUBSCRIPTION_OVERRIDE_PROP_VALUE_DEFAULT*/ ));
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     factory.setConcurrencyChecksEnabled(false);
@@ -333,9 +356,7 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
     cacheFeeder.createRegion(REGION_NAME3, attrs);
   }
 
-  /**
-   * Assert all queues are empty to aid later assertion for listener event counts.
-   */
+  /** Assert all queues are empty to aid later assertion for listener event counts. */
 
   // NOTE: replaced with waitForQueuesToDrain() using waitcriterion to avoid
   // occasional failures in precheckins and cruisecontrol.
@@ -344,7 +365,12 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
     Iterator servers = cacheServer.getCacheServers().iterator();
     assertTrue("No servers found!", servers.hasNext());
     while (servers.hasNext()) {
-      Iterator proxies = ((CacheServerImpl) servers.next()).getAcceptor().getCacheClientNotifier().getClientProxies().iterator();
+      Iterator proxies =
+          ((CacheServerImpl) servers.next())
+              .getAcceptor()
+              .getCacheClientNotifier()
+              .getClientProxies()
+              .iterator();
       assertTrue("No proxies found!", proxies.hasNext());
       while (proxies.hasNext()) {
         int qsize = ((CacheClientProxy) proxies.next()).getQueueSize();
@@ -354,41 +380,44 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
   }
 
   public static void waitForQueuesToDrain() {
-    WaitCriterion wc = new WaitCriterion() {
-      String excuse;
+    WaitCriterion wc =
+        new WaitCriterion() {
+          String excuse;
 
-      public boolean done() {
-        // assume a single cache server as configured in this test
-        CacheServerImpl bridgeServer = (CacheServerImpl) cacheServer.getCacheServers().iterator().next();
-        if (bridgeServer == null) {
-          excuse = "No Cache Server";
-          return false;
-        }
-        Iterator proxies = bridgeServer.getAcceptor().getCacheClientNotifier().getClientProxies().iterator();
-        if (!proxies.hasNext()) {
-          excuse = "No CacheClientProxy";
-          return false;
-        }
-        while (proxies.hasNext()) {
-          CacheClientProxy proxy = (CacheClientProxy) proxies.next();
-          if (proxy == null) {
-            excuse = "No CacheClientProxy";
-            return false;
+          public boolean done() {
+            // assume a single cache server as configured in this test
+            CacheServerImpl bridgeServer =
+                (CacheServerImpl) cacheServer.getCacheServers().iterator().next();
+            if (bridgeServer == null) {
+              excuse = "No Cache Server";
+              return false;
+            }
+            Iterator proxies =
+                bridgeServer.getAcceptor().getCacheClientNotifier().getClientProxies().iterator();
+            if (!proxies.hasNext()) {
+              excuse = "No CacheClientProxy";
+              return false;
+            }
+            while (proxies.hasNext()) {
+              CacheClientProxy proxy = (CacheClientProxy) proxies.next();
+              if (proxy == null) {
+                excuse = "No CacheClientProxy";
+                return false;
+              }
+              // Verify the queue size
+              int sz = proxy.getQueueSize();
+              if (0 != sz) {
+                excuse = "Queue did not drain. Expected size = 0, actual = " + sz + "for " + proxy;
+                return false;
+              }
+            }
+            return true;
           }
-          // Verify the queue size
-          int sz = proxy.getQueueSize();
-          if (0 != sz) {
-            excuse = "Queue did not drain. Expected size = 0, actual = " + sz + "for " + proxy;
-            return false;
-          }
-        }
-        return true;
-      }
 
-      public String description() {
-        return excuse;
-      }
-    };
+          public String description() {
+            return excuse;
+          }
+        };
     Wait.waitForCriterion(wc, 60 * 1000, 1000, true);
   }
 
@@ -419,10 +448,7 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
     return new Integer(server.getPort());
   }
 
-  /**
-   * close the client cache
-   *
-   */
+  /** close the client cache */
   public static void closeCache() {
     Cache cacheClient = GemFireCacheImpl.getInstance();
     if (cacheClient != null && !cacheClient.isClosed()) {
@@ -431,10 +457,7 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * close the server cache
-   *
-   */
+  /** close the server cache */
   public static void closeCacheServer() {
     if (cacheServer != null && !cacheServer.isClosed()) {
       cacheServer.close();
@@ -442,10 +465,7 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * register interest with the server on ALL_KEYS
-   *
-   */
+  /** register interest with the server on ALL_KEYS */
   public static void registerInterest() {
     try {
       Cache cacheClient = GemFireCacheImpl.getInstance();
@@ -465,11 +485,7 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * register interest with the server on ALL_KEYS
-   *
-   */
-
+  /** register interest with the server on ALL_KEYS */
   public static void unregisterInterest() {
     try {
       Cache cacheClient = GemFireCacheImpl.getInstance();
@@ -482,9 +498,7 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * Do 2 puts, 1 invalidate and 1 destroy for a key "key-1"
-   */
+  /** Do 2 puts, 1 invalidate and 1 destroy for a key "key-1" */
   public static void doEntryOps() {
     try {
       LogWriterUtils.getLogWriter().info("Putting entries...");
@@ -510,9 +524,7 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * Do initial puts
-   */
+  /** Do initial puts */
   public static void doFeed() {
     try {
       LogWriterUtils.getLogWriter().info("Putting entries...");
@@ -529,9 +541,7 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * Get entries on all clients' region 3 since it does not register interest.
-   */
+  /** Get entries on all clients' region 3 since it does not register interest. */
   public static void getEntries() {
     try {
       LogWriterUtils.getLogWriter().info("Getting entries...");
@@ -544,9 +554,7 @@ public class ClientInterestNotifyDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * close the caches in tearDown
-   */
+  /** close the caches in tearDown */
   @Override
   public final void preTearDown() throws Exception {
     vm0.invoke(() -> ClientInterestNotifyDUnitTest.closeCache());

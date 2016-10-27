@@ -20,11 +20,7 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Just like its parent but enables the server thread pool (aka selector).
- * 
- * 
- */
+/** Just like its parent but enables the server thread pool (aka selector). */
 @Category(IntegrationTest.class)
 public class CacheServerSelectorMaxConnectionsJUnitTest extends CacheServerMaxConnectionsJUnitTest {
   protected int getMaxThreads() {

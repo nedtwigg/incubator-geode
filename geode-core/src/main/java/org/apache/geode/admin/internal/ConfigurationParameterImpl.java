@@ -30,8 +30,7 @@ import java.util.List;
 /**
  * A single configuration parameter of a system member.
  *
- * @since GemFire     3.5
- *
+ * @since GemFire 3.5
  */
 public class ConfigurationParameterImpl implements org.apache.geode.admin.ConfigurationParameter {
 
@@ -52,33 +51,38 @@ public class ConfigurationParameterImpl implements org.apache.geode.admin.Config
   //   Constructor(s)
   // -------------------------------------------------------------------------
 
-  /** 
+  /**
    * Constructs new <code>ConfigurationParameterImpl</code>.
    *
-   * @param name            the name of this parameter which cannot change
-   * @param description     full description to use
-   * @param value           the value of this parameter
-   * @param type            the class type of the value
-   * @param userModifiable  true if this is modifiable; false if read-only
+   * @param name the name of this parameter which cannot change
+   * @param description full description to use
+   * @param value the value of this parameter
+   * @param type the class type of the value
+   * @param userModifiable true if this is modifiable; false if read-only
    */
-  protected ConfigurationParameterImpl(String name, String description, Object value, Class type, boolean userModifiable) {
+  protected ConfigurationParameterImpl(
+      String name, String description, Object value, Class type, boolean userModifiable) {
     if (name == null || name.length() == 0) {
-      throw new IllegalArgumentException(LocalizedStrings.ConfigurationParameterImpl_CONFIGURATIONPARAMETER_NAME_MUST_BE_SPECIFIED.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.ConfigurationParameterImpl_CONFIGURATIONPARAMETER_NAME_MUST_BE_SPECIFIED
+              .toLocalizedString());
     }
 
     this.name = name;
     setInternalState(description, value, type, userModifiable);
   }
 
-  /** 
+  /**
    * Constructs new <code>ConfigurationParameterImpl</code>.
    *
-   * @param name            the name of this parameter which cannot change
-   * @param value           the value of this parameter
+   * @param name the name of this parameter which cannot change
+   * @param value the value of this parameter
    */
   protected ConfigurationParameterImpl(String name, Object value) {
     if (name == null || name.length() == 0) {
-      throw new IllegalArgumentException(LocalizedStrings.ConfigurationParameterImpl_CONFIGURATIONPARAMETER_NAME_MUST_BE_SPECIFIED.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.ConfigurationParameterImpl_CONFIGURATIONPARAMETER_NAME_MUST_BE_SPECIFIED
+              .toLocalizedString());
     }
 
     this.name = name;
@@ -86,8 +90,7 @@ public class ConfigurationParameterImpl implements org.apache.geode.admin.Config
   }
 
   /** Constructor to allow serialization by subclass */
-  protected ConfigurationParameterImpl() {
-  }
+  protected ConfigurationParameterImpl() {}
 
   // -------------------------------------------------------------------------
   //   Attribute accessors and mutators
@@ -156,13 +159,20 @@ public class ConfigurationParameterImpl implements org.apache.geode.admin.Config
 
   public void setValue(Object value) throws UnmodifiableConfigurationException {
     if (!isModifiable()) {
-      throw new UnmodifiableConfigurationException(LocalizedStrings.ConfigurationParameterImpl_0_IS_NOT_A_MODIFIABLE_CONFIGURATION_PARAMETER.toLocalizedString(getName()));
+      throw new UnmodifiableConfigurationException(
+          LocalizedStrings.ConfigurationParameterImpl_0_IS_NOT_A_MODIFIABLE_CONFIGURATION_PARAMETER
+              .toLocalizedString(getName()));
     }
     if (value == null) {
-      throw new IllegalArgumentException(LocalizedStrings.ConfigurationParameterImpl_UNABLE_TO_SET_0_TO_NULL_VALUE.toLocalizedString(getName()));
+      throw new IllegalArgumentException(
+          LocalizedStrings.ConfigurationParameterImpl_UNABLE_TO_SET_0_TO_NULL_VALUE
+              .toLocalizedString(getName()));
     }
     if (!getValueType().equals(value.getClass())) {
-      throw new IllegalArgumentException(LocalizedStrings.ConfigurationParameterImpl_UNABLE_TO_SET_TYPE_0_WITH_TYPE_1.toLocalizedString(new Object[] { getValueType().getName(), value.getClass().getName() }));
+      throw new IllegalArgumentException(
+          LocalizedStrings.ConfigurationParameterImpl_UNABLE_TO_SET_TYPE_0_WITH_TYPE_1
+              .toLocalizedString(
+                  new Object[] {getValueType().getName(), value.getClass().getName()}));
     }
 
     if (value instanceof String && !isString()) {
@@ -199,7 +209,9 @@ public class ConfigurationParameterImpl implements org.apache.geode.admin.Config
 
   protected void setValueFromString(String newValue) {
     if (newValue == null) {
-      throw new IllegalArgumentException(LocalizedStrings.ConfigurationParameterImpl_UNABLE_TO_SET_0_TO_NULL_VALUE.toLocalizedString(getName()));
+      throw new IllegalArgumentException(
+          LocalizedStrings.ConfigurationParameterImpl_UNABLE_TO_SET_0_TO_NULL_VALUE
+              .toLocalizedString(getName()));
     }
 
     if (isInetAddress()) {
@@ -213,7 +225,10 @@ public class ConfigurationParameterImpl implements org.apache.geode.admin.Config
       this.value = Integer.valueOf(Integer.parseInt(newValue, 8));
     } else if (isArray()) {
       // parse it TODO
-      throw new IllegalArgumentException(LocalizedStrings.ConfigurationParameterImpl_SETTING_ARRAY_VALUE_FROM_DELIMITED_STRING_IS_NOT_SUPPORTED.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .ConfigurationParameterImpl_SETTING_ARRAY_VALUE_FROM_DELIMITED_STRING_IS_NOT_SUPPORTED
+              .toLocalizedString());
     } else {
       this.value = newValue;
     }
@@ -222,33 +237,41 @@ public class ConfigurationParameterImpl implements org.apache.geode.admin.Config
   /**
    * Fires changed configuration parameter to registered listeners.
    *
-   * @param parm  the configuration parameter the changed 
+   * @param parm the configuration parameter the changed
    */
   protected void fireConfigurationParameterValueChanged(ConfigurationParameter parm) {
-    ConfigurationParameterListener[] listeners = (ConfigurationParameterListener[]) this.listeners.toArray(new ConfigurationParameterListener[0]);
+    ConfigurationParameterListener[] listeners =
+        (ConfigurationParameterListener[])
+            this.listeners.toArray(new ConfigurationParameterListener[0]);
     for (int i = 0; i < listeners.length; i++) {
       listeners[i].configurationParameterValueChanged(parm);
     }
   }
 
   /**
-   * Sets the internal state of this configuration parameter.  
+   * Sets the internal state of this configuration parameter.
    *
-   * @param description     full description to use
-   * @param value           the value of this parameter
-   * @param type            the class type of the value
-   * @param userModifiable  true if this is modifiable; false if read-only
+   * @param description full description to use
+   * @param value the value of this parameter
+   * @param type the class type of the value
+   * @param userModifiable true if this is modifiable; false if read-only
    */
-  protected void setInternalState(String description, Object value, Class type, boolean userModifiable) {
+  protected void setInternalState(
+      String description, Object value, Class type, boolean userModifiable) {
     if (description == null || description.length() == 0) {
-      throw new IllegalArgumentException(LocalizedStrings.ConfigurationParameterImpl_CONFIGURATIONPARAMETER_DESCRIPTION_MUST_BE_SPECIFIED.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .ConfigurationParameterImpl_CONFIGURATIONPARAMETER_DESCRIPTION_MUST_BE_SPECIFIED
+              .toLocalizedString());
     }
     this.description = description;
     this.type = type;
     this.userModifiable = userModifiable;
 
     if (value == null) {
-      throw new IllegalArgumentException(LocalizedStrings.ConfigurationParameterImpl_UNABLE_TO_SET_0_TO_NULL_VALUE.toLocalizedString(getName()));
+      throw new IllegalArgumentException(
+          LocalizedStrings.ConfigurationParameterImpl_UNABLE_TO_SET_0_TO_NULL_VALUE
+              .toLocalizedString(getName()));
     }
 
     this.value = value;
@@ -258,5 +281,4 @@ public class ConfigurationParameterImpl implements org.apache.geode.admin.Config
   public String toString() {
     return this.name;
   }
-
 }

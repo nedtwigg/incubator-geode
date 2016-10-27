@@ -51,11 +51,9 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * Represents a {@link ClientCache} that is created declaratively.  Notice
- * that it implements the {@link ClientCache} interface so that this class
- * must be updated when {@link ClientCache} is modified.  This class is
- * public for testing purposes.
- *
+ * Represents a {@link ClientCache} that is created declaratively. Notice that it implements the
+ * {@link ClientCache} interface so that this class must be updated when {@link ClientCache} is
+ * modified. This class is public for testing purposes.
  *
  * @since GemFire 6.5
  */
@@ -64,16 +62,14 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
 
   ////////////////////////  Constructors  ////////////////////////
 
-  /**
-   * Creates a new <code>ClientCacheCreation</code> with no root regions
-   */
+  /** Creates a new <code>ClientCacheCreation</code> with no root regions */
   public ClientCacheCreation() {
     this(false);
   }
 
   /**
-   * @param forParsing if true then this creation is used for parsing xml;
-   *   if false then it is used for generating xml.
+   * @param forParsing if true then this creation is used for parsing xml; if false then it is used
+   *     for generating xml.
    * @since GemFire 5.7
    */
   public ClientCacheCreation(boolean forParsing) {
@@ -82,7 +78,8 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
 
   //////////////////////  Instance Methods  //////////////////////
 
-  static final private RegionAttributes clientDefaults;
+  private static final RegionAttributes clientDefaults;
+
   static {
     AttributesFactory af = new AttributesFactory();
     af.setScope(Scope.LOCAL);
@@ -109,16 +106,12 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
 
-  /**
-   * @since GemFire 6.5
-   */
+  /** @since GemFire 6.5 */
   public <K, V> ClientRegionFactory<K, V> createClientRegionFactory(ClientRegionShortcut atts) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
 
-  /**
-   * @since GemFire 6.5
-   */
+  /** @since GemFire 6.5 */
   public <K, V> ClientRegionFactory<K, V> createClientRegionFactory(String regionAttributesId) {
     throw new UnsupportedOperationException(LocalizedStrings.SHOULDNT_INVOKE.toLocalizedString());
   }
@@ -167,8 +160,7 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
   }
 
   /**
-   * Fills in the contents of a {@link Cache} based on this creation
-   * object's state.
+   * Fills in the contents of a {@link Cache} based on this creation object's state.
    *
    * @throws TimeoutException
    * @throws CacheWriterException
@@ -176,10 +168,12 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
    * @throws GatewayException
    */
   @Override
-  void create(GemFireCacheImpl cache) throws TimeoutException, CacheWriterException, GatewayException, RegionExistsException {
+  void create(GemFireCacheImpl cache)
+      throws TimeoutException, CacheWriterException, GatewayException, RegionExistsException {
     cache.setDeclarativeCacheConfig(this.getCacheConfig());
     if (!cache.isClient()) {
-      throw new IllegalStateException("You must use ClientCacheFactory when the cache.xml uses client-cache.");
+      throw new IllegalStateException(
+          "You must use ClientCacheFactory when the cache.xml uses client-cache.");
     }
     { // create connection pools
       Map m = getPools();
@@ -207,13 +201,13 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
 
     cache.initializePdxRegistry();
 
-    for (Iterator iter = listDiskStores().iterator(); iter.hasNext();) {
+    for (Iterator iter = listDiskStores().iterator(); iter.hasNext(); ) {
       DiskStoreAttributesCreation creation = (DiskStoreAttributesCreation) iter.next();
       if (creation != pdxRegDSC) {
         createDiskStore(creation, cache);
       }
     }
-    for (Iterator iter = listDiskStores().iterator(); iter.hasNext();) {
+    for (Iterator iter = listDiskStores().iterator(); iter.hasNext(); ) {
       DiskStoreAttributesCreation creation = (DiskStoreAttributesCreation) iter.next();
 
       // It's GemFireCache
@@ -230,17 +224,22 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
       cache.setCopyOnRead(getCopyOnRead());
     }
 
-    if (this.txMgrCreation != null && this.txMgrCreation.getListeners().length > 0 && cache.getCacheTransactionManager() != null) {
+    if (this.txMgrCreation != null
+        && this.txMgrCreation.getListeners().length > 0
+        && cache.getCacheTransactionManager() != null) {
       cache.getCacheTransactionManager().initListeners(this.txMgrCreation.getListeners());
     }
 
-    if (this.txMgrCreation != null && cache.getCacheTransactionManager() != null && this.txMgrCreation.getWriter() != null) {
-      throw new IllegalStateException(LocalizedStrings.TXManager_NO_WRITER_ON_CLIENT.toLocalizedString());
+    if (this.txMgrCreation != null
+        && cache.getCacheTransactionManager() != null
+        && this.txMgrCreation.getWriter() != null) {
+      throw new IllegalStateException(
+          LocalizedStrings.TXManager_NO_WRITER_ON_CLIENT.toLocalizedString());
     }
 
     cache.initializePdxRegistry();
 
-    for (Iterator iter = this.regionAttributesNames.iterator(); iter.hasNext();) {
+    for (Iterator iter = this.regionAttributesNames.iterator(); iter.hasNext(); ) {
       String id = (String) iter.next();
       RegionAttributesCreation creation = (RegionAttributesCreation) getRegionAttributes(id);
       creation.inheritAttributes(cache, false);
@@ -293,5 +292,4 @@ public class ClientCacheCreation extends CacheCreation implements ClientCache {
   public Set<InetSocketAddress> getCurrentServers() {
     return Collections.EMPTY_SET;
   }
-
 }

@@ -33,12 +33,11 @@ import org.apache.geode.distributed.internal.ServerLocator;
 import org.apache.geode.internal.InternalDataSerializer;
 
 /**
- * A message from a server to a locator to update the locator
- * with new load information from the server.
- * Also includes the id of any clients whose estimate is no
- * longer needed on the server-locator.
- * @since GemFire 5.7
+ * A message from a server to a locator to update the locator with new load information from the
+ * server. Also includes the id of any clients whose estimate is no longer needed on the
+ * server-locator.
  *
+ * @since GemFire 5.7
  */
 public class CacheServerLoadMessage extends SerialDistributionMessage {
   protected ServerLoad load;
@@ -98,5 +97,4 @@ public class CacheServerLoadMessage extends SerialDistributionMessage {
   protected Object clone() throws CloneNotSupportedException {
     return super.clone();
   }
-
 }

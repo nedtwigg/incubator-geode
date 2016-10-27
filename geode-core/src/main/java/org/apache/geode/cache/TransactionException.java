@@ -17,16 +17,15 @@
 package org.apache.geode.cache;
 
 /**
- * This is the superclass for all Exceptions that may be thrown
- * by a GemFire transaction.
+ * This is the superclass for all Exceptions that may be thrown by a GemFire transaction.
+ *
  * @since GemFire 6.5
  */
 public class TransactionException extends CacheException {
 
   private static final long serialVersionUID = -8400774340264221993L;
 
-  public TransactionException() {
-  }
+  public TransactionException() {}
 
   public TransactionException(String message) {
     super(message);

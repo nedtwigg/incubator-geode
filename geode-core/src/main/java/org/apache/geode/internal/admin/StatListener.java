@@ -17,27 +17,20 @@
 
 package org.apache.geode.internal.admin;
 
-/**
- * Interface for those who want to be alerted of a change in value of
- * a statistic
- */
+/** Interface for those who want to be alerted of a change in value of a statistic */
 public interface StatListener {
   /**
    * Invoked when the value of a statistic has changed
    *
-   * @param value
-   *        The new value of the statistic
-   * @param time
-   *        The time at which the statistic's value change was
-   *        detected 
+   * @param value The new value of the statistic
+   * @param time The time at which the statistic's value change was detected
    */
   public void statValueChanged(double value, long time);
 
   /**
    * Invoked when the value of a statistic has not changed
    *
-   * @param time
-   *        The time of the latest statistic sample
+   * @param time The time of the latest statistic sample
    */
   public void statValueUnchanged(long time);
 }

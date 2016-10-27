@@ -75,7 +75,8 @@ public class CommandSeparatorEscapeJUnitTest {
 
   @Test
   public void testMultiCommandWithCmdSep() {
-    String input = "put --region=/region1 --key='key1\\;part' --value='value1\\;part2';put --region=/region1 --key='key2\\;part' --value='value2\\;part2'";
+    String input =
+        "put --region=/region1 --key='key1\\;part' --value='value1\\;part2';put --region=/region1 --key='key2\\;part' --value='value2\\;part2'";
     //System.out.println("I >> " + input);
     List<String> split = getMultipleCommands(input);
     /*for(String s : split){
@@ -126,7 +127,8 @@ public class CommandSeparatorEscapeJUnitTest {
 
   @Test
   public void testMultiCmdCommaValueMiddle() {
-    String input = "stop server1;put --region=/region1 --key='key\\;part' --value='value\\;part2';stop server2;stop server3";
+    String input =
+        "stop server1;put --region=/region1 --key='key\\;part' --value='value\\;part2';stop server2;stop server3";
     //System.out.println("I >> " + input);
     List<String> split = getMultipleCommands(input);
     /*for(String s : split){
@@ -138,5 +140,4 @@ public class CommandSeparatorEscapeJUnitTest {
     assertEquals("stop server2", split.get(2));
     assertEquals("stop server3", split.get(3));
   }
-
 }

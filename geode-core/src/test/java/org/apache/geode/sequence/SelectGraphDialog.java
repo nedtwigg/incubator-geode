@@ -31,11 +31,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Created by IntelliJ IDEA.
- * User: dsmith
- * Date: Dec 9, 2010
- * Time: 3:34:38 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: dsmith Date: Dec 9, 2010 Time: 3:34:38 PM To change this template
+ * use File | Settings | File Templates.
  */
 public class SelectGraphDialog extends JDialog {
   private List<GraphID> selectedIds = new ArrayList<GraphID>();
@@ -52,20 +49,22 @@ public class SelectGraphDialog extends JDialog {
     selectGraphPane.setPreferredSize(new Dimension(500, 500));
 
     JButton apply = new JButton("Apply");
-    apply.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        selectedIds = (List) Arrays.asList(list.getSelectedValues());
-        fireSelectionChanged();
-        setVisible(false);
-      }
-    });
+    apply.addActionListener(
+        new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            selectedIds = (List) Arrays.asList(list.getSelectedValues());
+            fireSelectionChanged();
+            setVisible(false);
+          }
+        });
 
     JButton cancel = new JButton("Cancel");
-    cancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-      }
-    });
+    cancel.addActionListener(
+        new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            setVisible(false);
+          }
+        });
 
     JPanel buttonPane = new JPanel();
     buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
@@ -75,23 +74,26 @@ public class SelectGraphDialog extends JDialog {
     buttonPane.add(cancel);
 
     final JTextField searchField = new JTextField(10);
-    searchField.getDocument().addDocumentListener(new DocumentListener() {
-      public void removeUpdate(DocumentEvent e) {
-        doUpdate();
-      }
+    searchField
+        .getDocument()
+        .addDocumentListener(
+            new DocumentListener() {
+              public void removeUpdate(DocumentEvent e) {
+                doUpdate();
+              }
 
-      public void insertUpdate(DocumentEvent e) {
-        doUpdate();
-      }
+              public void insertUpdate(DocumentEvent e) {
+                doUpdate();
+              }
 
-      public void changedUpdate(DocumentEvent e) {
-        doUpdate();
-      }
+              public void changedUpdate(DocumentEvent e) {
+                doUpdate();
+              }
 
-      private void doUpdate() {
-        listModel.updateFilter(searchField.getText());
-      }
-    });
+              private void doUpdate() {
+                listModel.updateFilter(searchField.getText());
+              }
+            });
 
     Container contentPane = getContentPane();
     contentPane.add(searchField, BorderLayout.PAGE_START);
@@ -107,16 +109,13 @@ public class SelectGraphDialog extends JDialog {
 
   public void addSelectionListener(SelectionListener listener) {
     listeners.add(listener);
-
   }
 
   public void removeSelectionListener(SelectionListener listener) {
     listeners.remove(listener);
   }
 
-  /**
-   * A listener for changes to the graph selections
-   */
+  /** A listener for changes to the graph selections */
   public static interface SelectionListener {
     void selectionChanged(List<GraphID> selectedIds);
   }
@@ -149,6 +148,5 @@ public class SelectGraphDialog extends JDialog {
 
       fireContentsChanged(this, 0, filteredElements.size());
     }
-
   }
 }

@@ -14,26 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.versions;
 
 import java.util.ConcurrentModificationException;
 
 /**
- * ConcurrentCacheModification is thrown by the internal concurrency-checking
- * mechanism when a conflict is detected.  It is not currently meant to be
- * exposed to customers.
- * 
+ * ConcurrentCacheModification is thrown by the internal concurrency-checking mechanism when a
+ * conflict is detected. It is not currently meant to be exposed to customers.
+ *
  * @since GemFire 7.0
  */
 public class ConcurrentCacheModificationException extends ConcurrentModificationException {
-  public ConcurrentCacheModificationException() {
-  }
+  public ConcurrentCacheModificationException() {}
 
   public ConcurrentCacheModificationException(String message) {
     super(message);
   }
-
 }

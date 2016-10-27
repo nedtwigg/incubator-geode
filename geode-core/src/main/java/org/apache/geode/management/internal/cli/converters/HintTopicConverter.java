@@ -26,10 +26,7 @@ import org.springframework.shell.core.MethodTarget;
 import org.apache.geode.management.cli.ConverterHint;
 import org.apache.geode.management.internal.cli.CommandManager;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class HintTopicConverter implements Converter<String> {
 
   @Override
@@ -43,7 +40,12 @@ public class HintTopicConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
     if (String.class.equals(targetType) && ConverterHint.HINTTOPIC.equals(optionContext)) {
       CommandManager commandManager = CommandManager.getExisting();
       if (commandManager != null) {
@@ -53,7 +55,9 @@ public class HintTopicConverter implements Converter<String> {
           if (existingData != null && !existingData.isEmpty()) {
             if (topicName.startsWith(existingData)) { // match exact case
               completions.add(new Completion(topicName));
-            } else if (topicName.toLowerCase().startsWith(existingData.toLowerCase())) { // match case insensitive
+            } else if (topicName
+                .toLowerCase()
+                .startsWith(existingData.toLowerCase())) { // match case insensitive
               String completionStr = existingData + topicName.substring(existingData.length());
 
               completions.add(new Completion(completionStr));

@@ -34,7 +34,8 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.fail;
 
 /**
- * Wraps spawned {@link java.lang.Process} to capture output and provide interaction with the process.
+ * Wraps spawned {@link java.lang.Process} to capture output and provide interaction with the
+ * process.
  *
  * @since GemFire 4.1.1
  */
@@ -70,7 +71,13 @@ public class ProcessWrapper {
   private ProcessStreamReader stdout;
   private ProcessStreamReader stderr;
 
-  private ProcessWrapper(final String[] jvmArguments, final Class<?> mainClass, final String[] mainArguments, final boolean useMainLauncher, final boolean headless, final long timeoutMillis) {
+  private ProcessWrapper(
+      final String[] jvmArguments,
+      final Class<?> mainClass,
+      final String[] mainArguments,
+      final boolean useMainLauncher,
+      final boolean headless,
+      final long timeoutMillis) {
     this.jvmArguments = jvmArguments;
     this.mainClass = mainClass;
     this.mainArguments = mainArguments;
@@ -99,7 +106,9 @@ public class ProcessWrapper {
     boolean done = false;
     while (!done) {
       synchronized (this.exitValue) {
-        done = (this.process != null || this.processException != null) && (this.started || this.exitValue.get() > -1 || this.interrupted);
+        done =
+            (this.process != null || this.processException != null)
+                && (this.started || this.exitValue.get() > -1 || this.interrupted);
       }
       if (!done && System.currentTimeMillis() > start + timeoutMillis) {
         throw new TimeoutException("Timed out launching process");
@@ -116,7 +125,11 @@ public class ProcessWrapper {
       if (this.interrupted) { // TODO: do we want to do this?
         throw new InterruptedException("Process was interrupted");
       }
-      return this.exitValue.get() == -1 && this.started && !this.stopped && !this.interrupted && this.processThread.isAlive();
+      return this.exitValue.get() == -1
+          && this.started
+          && !this.stopped
+          && !this.interrupted
+          && this.processThread.isAlive();
     }
   }
 
@@ -182,7 +195,8 @@ public class ProcessWrapper {
     return this;
   }
 
-  public ProcessWrapper failIfOutputMatches(final String patternString, final long timeoutMillis) throws InterruptedException {
+  public ProcessWrapper failIfOutputMatches(final String patternString, final long timeoutMillis)
+      throws InterruptedException {
     checkStarting();
     checkOk();
 
@@ -193,17 +207,24 @@ public class ProcessWrapper {
     while (System.currentTimeMillis() <= start + timeoutMillis) {
       final String line = lineBuffer.poll(timeoutMillis, TimeUnit.MILLISECONDS);
       if (line != null && pattern.matcher(line).matches()) {
-        fail("failIfOutputMatches Matched pattern \"" + patternString + "\" against output \"" + line + "\". Output: " + this.allLines);
+        fail(
+            "failIfOutputMatches Matched pattern \""
+                + patternString
+                + "\" against output \""
+                + line
+                + "\". Output: "
+                + this.allLines);
       }
     }
     return this;
   }
 
   /*
-   * Waits for the process stdout or stderr stream to contain the specified 
+   * Waits for the process stdout or stderr stream to contain the specified
    * text. Uses the specified timeout for debugging purposes.
    */
-  public ProcessWrapper waitForOutputToMatch(final String patternString, final long timeoutMillis) throws InterruptedException {
+  public ProcessWrapper waitForOutputToMatch(final String patternString, final long timeoutMillis)
+      throws InterruptedException {
     checkStarting();
     checkOk();
 
@@ -213,24 +234,37 @@ public class ProcessWrapper {
     while (true) {
       final String line = this.lineBuffer.poll(timeoutMillis, TimeUnit.MILLISECONDS);
       if (line == null) {
-        fail("Timed out waiting for output \"" + patternString + "\" after " + timeoutMillis + " ms. Output: " + new OutputFormatter(this.allLines));
+        fail(
+            "Timed out waiting for output \""
+                + patternString
+                + "\" after "
+                + timeoutMillis
+                + " ms. Output: "
+                + new OutputFormatter(this.allLines));
       }
 
       if (pattern.matcher(line).matches()) {
-        logger.debug("ProcessWrapper:waitForOutputToMatch Matched pattern \"{}\" against output \"{}\"", patternString, line);
+        logger.debug(
+            "ProcessWrapper:waitForOutputToMatch Matched pattern \"{}\" against output \"{}\"",
+            patternString,
+            line);
         break;
       } else {
-        logger.debug("ProcessWrapper:waitForOutputToMatch Did not match pattern \"{}\" against output \"{}\"", patternString, line);
+        logger.debug(
+            "ProcessWrapper:waitForOutputToMatch Did not match pattern \"{}\" against output \"{}\"",
+            patternString,
+            line);
       }
     }
     return this;
   }
 
   /*
-   * Waits for the process stdout or stderr stream to contain the specified 
+   * Waits for the process stdout or stderr stream to contain the specified
    * text. Uses the default timeout.
    */
-  public ProcessWrapper waitForOutputToMatch(final String patternString) throws InterruptedException {
+  public ProcessWrapper waitForOutputToMatch(final String patternString)
+      throws InterruptedException {
     return waitForOutputToMatch(patternString, timeoutMillis);
   }
 
@@ -238,21 +272,26 @@ public class ProcessWrapper {
     return execute(null, new File(System.getProperty("user.dir")));
   }
 
-  public ProcessWrapper execute(final Properties properties) throws InterruptedException, TimeoutException {
+  public ProcessWrapper execute(final Properties properties)
+      throws InterruptedException, TimeoutException {
     return execute(properties, new File(System.getProperty("user.dir")));
   }
 
-  public ProcessWrapper execute(final Properties properties, final File workingDirectory) throws InterruptedException, TimeoutException {
+  public ProcessWrapper execute(final Properties properties, final File workingDirectory)
+      throws InterruptedException, TimeoutException {
     synchronized (this.exitValue) {
       if (this.starting) {
         throw new IllegalStateException("ProcessWrapper can only be executed once");
       }
       this.starting = true;
-      this.processThread = new Thread(new Runnable() {
-        public void run() {
-          start(properties, workingDirectory);
-        }
-      }, "ProcessWrapper Process Thread");
+      this.processThread =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  start(properties, workingDirectory);
+                }
+              },
+              "ProcessWrapper Process Thread");
     }
     this.processThread.start();
 
@@ -294,7 +333,8 @@ public class ProcessWrapper {
 
     try {
       synchronized (this.exitValue) {
-        final String[] command = defineCommand(jvmArgumentsList.toArray(new String[jvmArgumentsList.size()]));
+        final String[] command =
+            defineCommand(jvmArgumentsList.toArray(new String[jvmArgumentsList.size()]));
         this.process = new ProcessBuilder(command).directory(workingDirectory).start();
 
         final StringBuilder processCommand = new StringBuilder();
@@ -311,8 +351,12 @@ public class ProcessWrapper {
         final String commandString = processCommand.toString();
         logger.debug("Starting " + commandString);
 
-        final ProcessStreamReader stdOut = new ProcessStreamReader(commandString, this.process.getInputStream(), this.lineBuffer, this.allLines);
-        final ProcessStreamReader stdErr = new ProcessStreamReader(commandString, this.process.getErrorStream(), this.lineBuffer, this.allLines);
+        final ProcessStreamReader stdOut =
+            new ProcessStreamReader(
+                commandString, this.process.getInputStream(), this.lineBuffer, this.allLines);
+        final ProcessStreamReader stdErr =
+            new ProcessStreamReader(
+                commandString, this.process.getErrorStream(), this.lineBuffer, this.allLines);
 
         this.stdout = stdOut;
         this.stderr = stdErr;
@@ -461,7 +505,8 @@ public class ProcessWrapper {
     }
 
     public ProcessWrapper build() {
-      return new ProcessWrapper(jvmArguments, mainClass, mainArguments, useMainLauncher, headless, timeoutMillis);
+      return new ProcessWrapper(
+          jvmArguments, mainClass, mainArguments, useMainLauncher, headless, timeoutMillis);
     }
   }
 }

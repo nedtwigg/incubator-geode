@@ -28,11 +28,10 @@ import org.apache.geode.internal.cache.persistence.PersistentMemberPattern;
 import org.apache.geode.internal.cache.persistence.PersistentMemberState;
 import org.apache.geode.internal.cache.persistence.PersistentMemberView;
 
-/**
- *
- */
+/** */
 public class InMemoryPersistentMemberView implements PersistentMemberView {
-  private Map<PersistentMemberID, PersistentMemberState> members = new ConcurrentHashMap<PersistentMemberID, PersistentMemberState>();
+  private Map<PersistentMemberID, PersistentMemberState> members =
+      new ConcurrentHashMap<PersistentMemberID, PersistentMemberState>();
 
   public PersistentMemberID generatePersistentID() {
     return null;
@@ -88,15 +87,13 @@ public class InMemoryPersistentMemberView implements PersistentMemberView {
     members.remove(persistentID);
   }
 
-  public void setInitialized() {
-  }
+  public void setInitialized() {}
 
   public PersistentMemberID getMyInitializingID() {
     return null;
   }
 
-  public void setInitializing(PersistentMemberID newId) {
-  }
+  public void setInitializing(PersistentMemberID newId) {}
 
   public void endDestroy(LocalRegion region) {
     //don't care
@@ -110,8 +107,7 @@ public class InMemoryPersistentMemberView implements PersistentMemberView {
     //don't care
   }
 
-  public void finishPendingDestroy() {
-  }
+  public void finishPendingDestroy() {}
 
   public boolean wasAboutToDestroy() {
     return false;

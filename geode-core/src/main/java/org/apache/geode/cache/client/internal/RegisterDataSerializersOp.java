@@ -30,12 +30,14 @@ import org.apache.geode.internal.util.BlobHelper;
 
 public class RegisterDataSerializersOp {
 
-  public static void execute(ExecutablePool pool, DataSerializer[] dataSerializers, EventID eventId) {
+  public static void execute(
+      ExecutablePool pool, DataSerializer[] dataSerializers, EventID eventId) {
     AbstractOp op = new RegisterDataSerializersOpImpl(dataSerializers, eventId);
     pool.execute(op);
   }
 
-  public static void execute(ExecutablePool pool, SerializerAttributesHolder[] holders, EventID eventId) {
+  public static void execute(
+      ExecutablePool pool, SerializerAttributesHolder[] holders, EventID eventId) {
     AbstractOp op = new RegisterDataSerializersOpImpl(holders, eventId);
     pool.execute(op);
   }
@@ -46,9 +48,7 @@ public class RegisterDataSerializersOp {
 
   private static class RegisterDataSerializersOpImpl extends AbstractOp {
 
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public RegisterDataSerializersOpImpl(DataSerializer[] dataSerializers, EventID eventId) {
       super(MessageType.REGISTER_DATASERIALIZERS, dataSerializers.length * 2 + 1);
       for (int i = 0; i < dataSerializers.length; i++) {
@@ -70,10 +70,7 @@ public class RegisterDataSerializersOp {
       }
     }
 
-    /**
-     * @throws SerializationException
-     *           Thrown when serialization fails.
-     */
+    /** @throws SerializationException Thrown when serialization fails. */
     public RegisterDataSerializersOpImpl(SerializerAttributesHolder[] holders, EventID eventId) {
       super(MessageType.REGISTER_DATASERIALIZERS, holders.length * 2 + 1);
       for (int i = 0; i < holders.length; i++) {
@@ -119,8 +116,7 @@ public class RegisterDataSerializersOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

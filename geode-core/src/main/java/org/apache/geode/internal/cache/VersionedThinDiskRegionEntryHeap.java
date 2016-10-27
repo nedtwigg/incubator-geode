@@ -23,7 +23,8 @@ public abstract class VersionedThinDiskRegionEntryHeap extends VersionedThinDisk
     super(context, value);
   }
 
-  private static final VersionedThinDiskRegionEntryHeapFactory factory = new VersionedThinDiskRegionEntryHeapFactory();
+  private static final VersionedThinDiskRegionEntryHeapFactory factory =
+      new VersionedThinDiskRegionEntryHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;
@@ -43,9 +44,11 @@ public abstract class VersionedThinDiskRegionEntryHeap extends VersionedThinDisk
           if (info != null) {
             final boolean byteEncoded = info;
             if (skey.length() <= InlineKeyHelper.getMaxInlineStringKey(1, byteEncoded)) {
-              return new VersionedThinDiskRegionEntryHeapStringKey1(context, skey, value, byteEncoded);
+              return new VersionedThinDiskRegionEntryHeapStringKey1(
+                  context, skey, value, byteEncoded);
             } else {
-              return new VersionedThinDiskRegionEntryHeapStringKey2(context, skey, value, byteEncoded);
+              return new VersionedThinDiskRegionEntryHeapStringKey2(
+                  context, skey, value, byteEncoded);
             }
           }
         } else if (keyClass == UUID.class) {

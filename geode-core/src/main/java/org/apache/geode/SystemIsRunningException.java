@@ -17,12 +17,12 @@
 package org.apache.geode;
 
 /**
- * A <code>SystemIsRunningException</code> is thrown when an operation
- * is attempted that requires that the locator is stopped.
- * <p>
- * In some cases this exception may be thrown and the locator will
- * not be running. This will happen if the locator was not stopped
- * cleanly.
+ * A <code>SystemIsRunningException</code> is thrown when an operation is attempted that requires
+ * that the locator is stopped.
+ *
+ * <p>In some cases this exception may be thrown and the locator will not be running. This will
+ * happen if the locator was not stopped cleanly.
+ *
  * <p>As of GemFire 5.0 this exception should be named LocatorIsRunningException.
  */
 public class SystemIsRunningException extends GemFireException {
@@ -30,16 +30,12 @@ public class SystemIsRunningException extends GemFireException {
 
   //////////////////////  Constructors  //////////////////////
 
-  /**
-   * Creates a new <code>SystemIsRunningException</code>.
-   */
+  /** Creates a new <code>SystemIsRunningException</code>. */
   public SystemIsRunningException() {
     super();
   }
 
-  /**
-   * Creates a new <code>SystemIsRunningException</code>.
-   */
+  /** Creates a new <code>SystemIsRunningException</code>. */
   public SystemIsRunningException(String message) {
     super(message);
   }

@@ -21,33 +21,36 @@ import org.apache.geode.i18n.StringId;
 import org.apache.geode.internal.cache.EventID;
 
 /**
- * Breadcrumbs establishes traces in thread names that are useful in figuring
- * out what is going on in a distributed system given only stack traces.
- * 
- * @since GemFire 20 May 2014
+ * Breadcrumbs establishes traces in thread names that are useful in figuring out what is going on
+ * in a distributed system given only stack traces.
  *
+ * @since GemFire 20 May 2014
  */
 public class Breadcrumbs {
 
   private static ThreadLocal<EventID> EventIDs = new ThreadLocal<EventID>();
 
-  public static boolean ENABLED = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "enable-breadcrumbs");
+  public static boolean ENABLED =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "enable-breadcrumbs");
 
   /** delimiter for crumb numbers */
-  final static String CrumbDelimiter = "/";
+  static final String CrumbDelimiter = "/";
 
   /** string that starts a crumb */
-  final static String CommonBreadcrumbStart = "\n\t" + CrumbDelimiter;
+  static final String CommonBreadcrumbStart = "\n\t" + CrumbDelimiter;
 
   /** all known types of breadcrumbs */
   private enum CrumbType {
-    RECEIVE_SIDE, EVENTID, SEND_SIDE, PROBLEM
+    RECEIVE_SIDE,
+    EVENTID,
+    SEND_SIDE,
+    PROBLEM
   }
 
   /** crumb with the highest ordinal, for initialization of delimiter strings */
   private static CrumbType Crumbiest = CrumbType.PROBLEM;
 
-  private static String[] crumbLabels = new String[] { "rcv", "evt", "snd", "oops" };
+  private static String[] crumbLabels = new String[] {"rcv", "evt", "snd", "oops"};
 
   /** strings that start a particular breadcrumb */
   private static String[] crumbStarts = new String[Crumbiest.ordinal() + 1];
@@ -95,8 +98,8 @@ public class Breadcrumbs {
   }
 
   /**
-   * a problem crumb can be set using I18n message strings and arguments.
-   * Breadcrumb will localize the string with the given args
+   * a problem crumb can be set using I18n message strings and arguments. Breadcrumb will localize
+   * the string with the given args
    */
   public static void setProblem(StringId msg, Object[] args) {
     if (ENABLED) {
@@ -136,12 +139,11 @@ public class Breadcrumbs {
   }
 
   /**
-   * This method does all of the work of setting/clearing individual
-   * breadcrumbs in thread names
-   * 
-   * @param t           the thread to modify
-   * @param type        the type of breadcrumb
-   * @param crumb       the crumb to insert, or null to clear
+   * This method does all of the work of setting/clearing individual breadcrumbs in thread names
+   *
+   * @param t the thread to modify
+   * @param type the type of breadcrumb
+   * @param crumb the crumb to insert, or null to clear
    */
   private static void setCrumbInThread(Thread t, CrumbType type, Object crumb) {
 
@@ -174,7 +176,8 @@ public class Breadcrumbs {
       t.setName(name + crumbString);
     } else if (endIndex > 0) {
       // insert before the higher-numbered breadcrumb
-      t.setName(name.substring(0, startIndex) + crumbString + name.substring(startIndex, name.length()));
+      t.setName(
+          name.substring(0, startIndex) + crumbString + name.substring(startIndex, name.length()));
     } else {
       // replace the existing breadcrumb
       endIndex = name.indexOf(crumbEnds[typeIndex], startIndex + 1);
@@ -182,7 +185,10 @@ public class Breadcrumbs {
       // this shouldn't happen
       assert endIndex > 0 : "odd thread name: " + name;
 
-      t.setName(name.substring(0, startIndex) + crumbString + name.substring(endIndex + crumbEnds[typeIndex].length(), name.length()));
+      t.setName(
+          name.substring(0, startIndex)
+              + crumbString
+              + name.substring(endIndex + crumbEnds[typeIndex].length(), name.length()));
     }
   }
 
@@ -235,5 +241,4 @@ public class Breadcrumbs {
     threadName = Thread.currentThread().getName();
     System.out.println("thread name cleared=" + threadName);
   }
-
 }

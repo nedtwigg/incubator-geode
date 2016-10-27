@@ -26,10 +26,7 @@ import org.apache.geode.distributed.internal.DistributionManager;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.DataSerializer;
 
-/**
- *
- *
- */
+/** */
 public class InvalidateRegionOperation extends DistributedCacheOperation {
 
   /** Creates new instance of InvalidateRegionOperation */
@@ -62,16 +59,19 @@ public class InvalidateRegionOperation extends DistributedCacheOperation {
 
     @Override
     protected InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException {
-      RegionEventImpl event = new RegionEventImpl(rgn, getOperation(), this.callbackArg, true, getSender());
+      RegionEventImpl event =
+          new RegionEventImpl(rgn, getOperation(), this.callbackArg, true, getSender());
       event.setEventID(this.eventID);
       if (this.filterRouting != null) {
-        event.setLocalFilterInfo(this.filterRouting.getFilterInfo((InternalDistributedMember) rgn.getMyId()));
+        event.setLocalFilterInfo(
+            this.filterRouting.getFilterInfo((InternalDistributedMember) rgn.getMyId()));
       }
       return event;
     }
 
     @Override
-    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException {
+    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm)
+        throws EntryNotFoundException {
       RegionEventImpl ev = (RegionEventImpl) event;
       DistributedRegion rgn = (DistributedRegion) ev.region;
 

@@ -47,6 +47,14 @@ public class LockObject {
 
   @Override
   public String toString() {
-    return "LockObject [key=" + key + ", lockedTimeStamp=" + lockedTimeStamp + ", removed=" + removed + ", waiting=" + waiting + "]";
+    return "LockObject [key="
+        + key
+        + ", lockedTimeStamp="
+        + lockedTimeStamp
+        + ", removed="
+        + removed
+        + ", waiting="
+        + waiting
+        + "]";
   }
 }

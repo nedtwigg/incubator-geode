@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -42,10 +42,7 @@ import org.apache.geode.internal.cache.partitioned.Bucket;
 import org.apache.geode.internal.cache.tier.sockets.CacheClientProxy.TestHook;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- * An Async event queue listener that writes all of the
- * events in batches to Lucene
- */
+/** An Async event queue listener that writes all of the events in batches to Lucene */
 public class LuceneEventListener implements AsyncEventListener {
   Logger logger = LogService.getLogger();
 
@@ -56,8 +53,7 @@ public class LuceneEventListener implements AsyncEventListener {
   }
 
   @Override
-  public void close() {
-  }
+  public void close() {}
 
   @Override
   public boolean processEvents(List<AsyncEvent> events) {

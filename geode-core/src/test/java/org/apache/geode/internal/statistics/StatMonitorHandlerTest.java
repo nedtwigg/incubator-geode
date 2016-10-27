@@ -33,7 +33,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
  * Unit tests for {@link StatMonitorHandler}.
- *   
+ *
  * @since GemFire 7.0
  */
 @Category(UnitTest.class)
@@ -47,7 +47,7 @@ public class StatMonitorHandlerTest {
     assertTrue(handler.addMonitor(monitor));
     assertFalse(handler.getMonitorsSnapshot().isEmpty());
     assertTrue(handler.getMonitorsSnapshot().contains(monitor));
-    handler.sampled(NanoTimer.getTime(), Collections.<ResourceInstance> emptyList());
+    handler.sampled(NanoTimer.getTime(), Collections.<ResourceInstance>emptyList());
     waitForNotificationCount(monitor, 1, 2 * 1000, 10, false);
     assertEquals(1, monitor.getNotificationCount());
   }
@@ -74,7 +74,7 @@ public class StatMonitorHandlerTest {
     assertTrue(handler.removeMonitor(monitor));
     assertFalse(handler.getMonitorsSnapshot().contains(monitor));
     assertTrue(handler.getMonitorsSnapshot().isEmpty());
-    handler.sampled(NanoTimer.getTime(), Collections.<ResourceInstance> emptyList());
+    handler.sampled(NanoTimer.getTime(), Collections.<ResourceInstance>emptyList());
     assertEquals(0, monitor.getNotificationCount());
   }
 
@@ -96,7 +96,7 @@ public class StatMonitorHandlerTest {
     handler.addMonitor(monitor);
     final int sampleCount = 100;
     for (int i = 0; i < sampleCount; i++) {
-      handler.sampled(NanoTimer.getTime(), Collections.<ResourceInstance> emptyList());
+      handler.sampled(NanoTimer.getTime(), Collections.<ResourceInstance>emptyList());
       waitForNotificationCount(monitor, 1 + i, 2 * 1000, 10, false);
     }
     assertEquals(sampleCount / sampleFrequency, monitor.getNotificationCount());
@@ -109,7 +109,7 @@ public class StatMonitorHandlerTest {
     TestStatisticsMonitor monitor = new TestStatisticsMonitor();
     handler.addMonitor(monitor);
     long nanoTimeStamp = NanoTimer.getTime();
-    handler.sampled(nanoTimeStamp, Collections.<ResourceInstance> emptyList());
+    handler.sampled(nanoTimeStamp, Collections.<ResourceInstance>emptyList());
     waitForNotificationCount(monitor, 1, 2 * 1000, 10, false);
     assertTrue(monitor.getTimeStamp() != nanoTimeStamp);
     assertTrue(monitor.getTimeStamp() >= currentTime);
@@ -174,7 +174,7 @@ public class StatMonitorHandlerTest {
 
     // if notification occurs then notifier woke up...
     assertEquals(0, monitor.getNotificationCount());
-    handler.sampled(NanoTimer.getTime(), Collections.<ResourceInstance> emptyList());
+    handler.sampled(NanoTimer.getTime(), Collections.<ResourceInstance>emptyList());
 
     waitForNotificationCount(monitor, 1, 2 * 1000, 10, false);
     assertEquals(1, monitor.getNotificationCount());
@@ -185,15 +185,25 @@ public class StatMonitorHandlerTest {
 
   private static void waitUntilWaiting(StatMonitorNotifier notifier) throws InterruptedException {
     boolean done = false;
-    for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < 2000; done = (notifier.isWaiting())) {
+    for (StopWatch time = new StopWatch(true);
+        !done && time.elapsedTimeMillis() < 2000;
+        done = (notifier.isWaiting())) {
       Thread.sleep(10);
     }
     assertTrue("waiting for notifier to be waiting", done);
   }
 
-  private static void waitForNotificationCount(final TestStatisticsMonitor monitor, final int expected, long ms, long interval, boolean throwOnTimeout) throws InterruptedException {
+  private static void waitForNotificationCount(
+      final TestStatisticsMonitor monitor,
+      final int expected,
+      long ms,
+      long interval,
+      boolean throwOnTimeout)
+      throws InterruptedException {
     boolean done = false;
-    for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < ms; done = (monitor.getNotificationCount() >= expected)) {
+    for (StopWatch time = new StopWatch(true);
+        !done && time.elapsedTimeMillis() < ms;
+        done = (monitor.getNotificationCount() >= expected)) {
       Thread.sleep(interval);
     }
     if (throwOnTimeout) {
@@ -201,9 +211,7 @@ public class StatMonitorHandlerTest {
     }
   }
 
-  /**
-   * @since GemFire 7.0
-   */
+  /** @since GemFire 7.0 */
   private static class TestStatisticsMonitor extends StatisticsMonitor {
     private volatile long timeStamp;
     private volatile List<ResourceInstance> resourceInstances;

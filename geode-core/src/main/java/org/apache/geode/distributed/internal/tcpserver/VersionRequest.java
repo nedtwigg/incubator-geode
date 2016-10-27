@@ -22,18 +22,14 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-/**
- * @since GemFire 7.1
- */
+/** @since GemFire 7.1 */
 public class VersionRequest implements DataSerializable {
 
   private static final long serialVersionUID = -8272913634136267812L;
 
   @Override
-  public void toData(DataOutput out) throws IOException {
-  }
+  public void toData(DataOutput out) throws IOException {}
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-  }
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 }

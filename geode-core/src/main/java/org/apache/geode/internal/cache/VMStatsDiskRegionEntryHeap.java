@@ -23,7 +23,8 @@ public abstract class VMStatsDiskRegionEntryHeap extends VMStatsDiskRegionEntry 
     super(context, value);
   }
 
-  private static final VMStatsDiskRegionEntryHeapFactory factory = new VMStatsDiskRegionEntryHeapFactory();
+  private static final VMStatsDiskRegionEntryHeapFactory factory =
+      new VMStatsDiskRegionEntryHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;

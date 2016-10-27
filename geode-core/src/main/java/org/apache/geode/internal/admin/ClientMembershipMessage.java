@@ -27,9 +27,8 @@ import org.apache.geode.distributed.internal.PooledDistributionMessage;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
 /**
- * A PooledDistributionMessage for notifying admin members about changes in 
- * Client Membership received through BridgeMembership 
- * 
+ * A PooledDistributionMessage for notifying admin members about changes in Client Membership
+ * received through BridgeMembership
  */
 public class ClientMembershipMessage extends PooledDistributionMessage {
   public static final int JOINED = 0;
@@ -40,23 +39,17 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
   private String clientHost;
   private int eventType;
 
-  /**
-   * Default constructor(for serialization)
-   */
-  public ClientMembershipMessage() {
-  }
+  /** Default constructor(for serialization) */
+  public ClientMembershipMessage() {}
 
   /**
    * Parameterized constructor
-   * 
-   * @param clientId
-   *          Id of the client
-   * @param clientHost
-   *          host the client was running on (could be null)
-   * @param eventType
-   *          whether client joined, left or crashed. Should be one of
-   *          ClientMembershipMessage.JOINED, ClientMembershipMessage.LEFT,
-   *          ClientMembershipMessage.CRASHED
+   *
+   * @param clientId Id of the client
+   * @param clientHost host the client was running on (could be null)
+   * @param eventType whether client joined, left or crashed. Should be one of
+   *     ClientMembershipMessage.JOINED, ClientMembershipMessage.LEFT,
+   *     ClientMembershipMessage.CRASHED
    */
   public ClientMembershipMessage(String clientId, String clientHost, int eventType) {
     this.clientId = clientId;
@@ -64,17 +57,17 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
     this.eventType = eventType;
   }
 
-  /** 
-   * 
-   * @see org.apache.geode.distributed.internal.DistributionMessage#process(org.apache.geode.distributed.internal.DistributionManager)
+  /**
+   * @see
+   *     org.apache.geode.distributed.internal.DistributionMessage#process(org.apache.geode.distributed.internal.DistributionManager)
    */
   @Override
   protected void process(DistributionManager dm) {
     AdminDistributedSystemImpl adminDs = AdminDistributedSystemImpl.getConnectedInstance();
 
-    /* 
-     * Disconnect can be called on AdminDistributedSystem from Agent and it is 
-     * not synchronous with processing of this message. Null check added to 
+    /*
+     * Disconnect can be called on AdminDistributedSystem from Agent and it is
+     * not synchronous with processing of this message. Null check added to
      * avoid null if disconnect has been called on AdminDistributedSystem
      */
     if (adminDs != null) {
@@ -88,10 +81,7 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
     }
   }
 
-  /**
-   *  
-   * @see org.apache.geode.internal.DataSerializableFixedID#getDSFID()
-   */
+  /** @see org.apache.geode.internal.DataSerializableFixedID#getDSFID() */
   public int getDSFID() {
     return CLIENT_MEMBERSHIP_MESSAGE;
   }
@@ -113,23 +103,17 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
     this.eventType = in.readInt();
   }
 
-  /**
-   * @return the clientId
-   */
+  /** @return the clientId */
   public String getClientId() {
     return clientId;
   }
 
-  /**
-   * @return the clientHost
-   */
+  /** @return the clientHost */
   public String getClientHost() {
     return clientHost;
   }
 
-  /**
-   * @return the eventType
-   */
+  /** @return the eventType */
   public int getEventType() {
     return eventType;
   }
@@ -140,20 +124,20 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
    */
   public static String getEventTypeString(int eventType) {
     switch (eventType) {
-    case JOINED:
-      return "Member JOINED";
-    case LEFT:
-      return "Member LEFT";
-    case CRASHED:
-      return "Member CRASHED";
-    default:
-      return "UNKNOWN";
+      case JOINED:
+        return "Member JOINED";
+      case LEFT:
+        return "Member LEFT";
+      case CRASHED:
+        return "Member CRASHED";
+      default:
+        return "UNKNOWN";
     }
   }
 
   /**
    * String representation of this message.
-   * 
+   *
    * @return String representation of this message.
    */
   @Override
@@ -161,19 +145,25 @@ public class ClientMembershipMessage extends PooledDistributionMessage {
     String clientMembership = "JOINED";
 
     switch (this.eventType) {
-    case LEFT:
-      clientMembership = "LEFT";
-      break;
+      case LEFT:
+        clientMembership = "LEFT";
+        break;
 
-    case CRASHED:
-      clientMembership = "CRASHED and left";
-      break;
+      case CRASHED:
+        clientMembership = "CRASHED and left";
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
 
-    return "Client with Id: " + this.clientId + " running on host: " + this.clientHost + " " + clientMembership + " the server: " + this.getSender();
+    return "Client with Id: "
+        + this.clientId
+        + " running on host: "
+        + this.clientHost
+        + " "
+        + clientMembership
+        + " the server: "
+        + this.getSender();
   }
-
 }

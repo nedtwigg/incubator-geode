@@ -16,18 +16,21 @@
  */
 package org.apache.geode.distributed.internal;
 
-/** FlowControlParams are used to represent mcast-flow-control parameters for a
-    DistributedSystem.  Instances of this class are used in DistributionConfig to
-    hold the relevant settings, which are<br>
-    - byteAllowance, the number of bytes that can be transmitted to another process without a recharge<br>
-    - rechargeThreshold, the ratio of (initial byteAllowance)/(current byteAllowance) that causes a process to send a recharge message<br>
-    - rechargeBlockMs, the maximum wait time for a recharge before explicitly asking for a recharge
-    <p>
-    The byteAllowance and rechargeBlockMs settings are used in hashcode calculations,
-    and should not be changed if the hashcode of a FlowControlParams needs to remain invariant.
-    @since GemFire 5.0
-*/
-
+/**
+ * FlowControlParams are used to represent mcast-flow-control parameters for a DistributedSystem.
+ * Instances of this class are used in DistributionConfig to hold the relevant settings, which are
+ * <br>
+ * - byteAllowance, the number of bytes that can be transmitted to another process without a
+ * recharge<br>
+ * - rechargeThreshold, the ratio of (initial byteAllowance)/(current byteAllowance) that causes a
+ * process to send a recharge message<br>
+ * - rechargeBlockMs, the maximum wait time for a recharge before explicitly asking for a recharge
+ *
+ * <p>The byteAllowance and rechargeBlockMs settings are used in hashcode calculations, and should
+ * not be changed if the hashcode of a FlowControlParams needs to remain invariant.
+ *
+ * @since GemFire 5.0
+ */
 public class FlowControlParams implements java.io.Serializable {
   private static final long serialVersionUID = 7322447678546893647L;
 
@@ -36,8 +39,7 @@ public class FlowControlParams implements java.io.Serializable {
   private int rechargeBlockMs;
 
   /** for serialization use only */
-  public FlowControlParams() {
-  }
+  public FlowControlParams() {}
 
   /** instantiate a FlowControlParams */
   public FlowControlParams(int byteAllowance, float rechargeThreshold, int rechargeBlockMs) {
@@ -90,7 +92,9 @@ public class FlowControlParams implements java.io.Serializable {
   public boolean equals(Object obj) {
     if (obj != null && obj instanceof FlowControlParams) {
       FlowControlParams other = (FlowControlParams) obj;
-      return (this.byteAllowance == other.byteAllowance) && (this.rechargeThreshold == other.rechargeThreshold) && (this.rechargeBlockMs == other.rechargeBlockMs);
+      return (this.byteAllowance == other.byteAllowance)
+          && (this.rechargeThreshold == other.rechargeThreshold)
+          && (this.rechargeBlockMs == other.rechargeBlockMs);
     } else {
       return false;
     }
@@ -100,5 +104,4 @@ public class FlowControlParams implements java.io.Serializable {
   public int hashCode() {
     return byteAllowance + rechargeBlockMs;
   }
-
 }

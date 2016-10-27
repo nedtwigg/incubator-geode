@@ -17,8 +17,9 @@
 
 package org.apache.geode.cache;
 
-/** Thrown when attempting to create a <code>Region.Entry</code> that already
- * exists in the <code>Region</code>.
+/**
+ * Thrown when attempting to create a <code>Region.Entry</code> that already exists in the <code>
+ * Region</code>.
  *
  * @see org.apache.geode.cache.Region#create(Object, Object)
  * @see Region.Entry
@@ -32,6 +33,7 @@ public class EntryExistsException extends CacheException {
 
   /**
    * Constructs an instance of <code>EntryExistsException</code> with the specified detail message.
+   *
    * @param msg the detail message
    * @since GemFire 6.5
    */
@@ -40,16 +42,12 @@ public class EntryExistsException extends CacheException {
     this.oldValue = oldValue;
   }
 
-  /**
-   * Returns the old existing value that caused this exception.
-   */
+  /** Returns the old existing value that caused this exception. */
   public Object getOldValue() {
     return this.oldValue;
   }
 
-  /**
-   * Sets the old existing value that caused this exception.
-   */
+  /** Sets the old existing value that caused this exception. */
   public void setOldValue(Object oldValue) {
     this.oldValue = oldValue;
   }

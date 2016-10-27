@@ -16,5 +16,4 @@
  */
 package org.apache.geode.test.junit.categories;
 
-public interface CategoryOne {
-}
+public interface CategoryOne {}

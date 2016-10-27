@@ -17,9 +17,8 @@
 package org.apache.geode.internal.offheap;
 
 /**
- * Used to keep the heapForm around while an operation is still in progress.
- * This allows the operation to access the serialized heap form instead of copying
- * it from offheap. See bug 48135.
+ * Used to keep the heapForm around while an operation is still in progress. This allows the
+ * operation to access the serialized heap form instead of copying it from offheap. See bug 48135.
  */
 public class OffHeapStoredObjectWithHeapForm extends OffHeapStoredObject {
   private final byte[] heapForm;

@@ -31,30 +31,24 @@ import org.apache.geode.CancelCriterion;
 import org.apache.geode.internal.Assert;
 
 /**
- * Instances of {@link java.util.concurrent.locks.ReentrantReadWriteLock}
- * that respond to cancellation
- *
+ * Instances of {@link java.util.concurrent.locks.ReentrantReadWriteLock} that respond to
+ * cancellation
  */
 public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ java.io.Serializable {
   private static final long serialVersionUID = -1185707921434766946L;
 
-  /**
-   * The underlying read lock
-   */
-  transient private final StoppableReadLock readLock;
+  /** The underlying read lock */
+  private final transient StoppableReadLock readLock;
 
-  /**
-   * the underlying write lock
-   */
-  transient private final StoppableWriteLock writeLock;
+  /** the underlying write lock */
+  private final transient StoppableWriteLock writeLock;
 
-  /**
-   * This is how often waiters will wake up to check for cancellation
-   */
+  /** This is how often waiters will wake up to check for cancellation */
   private static final long RETRY_TIME = 15 * 1000; // milliseconds
 
   /**
    * Create a new instance
+   *
    * @param stopper the cancellation criterion
    */
   public StoppableReentrantReadWriteLock(CancelCriterion stopper) {
@@ -67,30 +61,25 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
     this.writeLock = new StoppableWriteLock(lock, stopper);
   }
 
-  /**
-   * @return the read lock
-   */
+  /** @return the read lock */
   public StoppableReadLock readLock() {
     return readLock;
   }
 
-  /**
-   * @return the write lock
-   */
+  /** @return the write lock */
   public StoppableWriteLock writeLock() {
     return writeLock;
   }
 
-  /**
-   * read locks that are stoppable
-   */
-  static public class StoppableReadLock {
+  /** read locks that are stoppable */
+  public static class StoppableReadLock {
 
     private final Lock lock;
     private final CancelCriterion stopper;
 
     /**
      * Create a new read lock from the given lock
+     *
      * @param lock the lock to be used
      * @param stopper the cancellation criterion
      */
@@ -102,7 +91,7 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
     public void lock() {
       boolean interrupted = Thread.interrupted();
       try {
-        for (;;) {
+        for (; ; ) {
           try {
             lockInterruptibly();
             break;
@@ -111,25 +100,19 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
           }
         } // for
       } finally {
-        if (interrupted)
-          Thread.currentThread().interrupt();
+        if (interrupted) Thread.currentThread().interrupt();
       }
     }
 
-    /**
-     * @throws InterruptedException
-     */
+    /** @throws InterruptedException */
     public void lockInterruptibly() throws InterruptedException {
-      for (;;) {
+      for (; ; ) {
         stopper.checkCancelInProgress(null);
-        if (lock.tryLock(RETRY_TIME, TimeUnit.MILLISECONDS))
-          break;
+        if (lock.tryLock(RETRY_TIME, TimeUnit.MILLISECONDS)) break;
       }
     }
 
-    /**
-     * @return true if the lock was acquired
-     */
+    /** @return true if the lock was acquired */
     public boolean tryLock() {
       stopper.checkCancelInProgress(null);
       return lock.tryLock();
@@ -157,20 +140,17 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
     //     }
   }
 
-  static public class StoppableWriteLock {
+  public static class StoppableWriteLock {
 
-    /**
-     * The underlying write lock
-     */
+    /** The underlying write lock */
     private final Lock lock;
 
-    /**
-     * the cancellation criterion
-     */
+    /** the cancellation criterion */
     private final CancelCriterion stopper;
 
     /**
      * Create a new instance
+     *
      * @param lock the underlying lock
      * @param stopper
      */
@@ -182,7 +162,7 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
     public void lock() {
       boolean interrupted = Thread.interrupted();
       try {
-        for (;;) {
+        for (; ; ) {
           try {
             lockInterruptibly();
             break;
@@ -191,25 +171,19 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
           }
         } // for
       } finally {
-        if (interrupted)
-          Thread.currentThread().interrupt();
+        if (interrupted) Thread.currentThread().interrupt();
       }
     }
 
-    /**
-     * @throws InterruptedException
-     */
+    /** @throws InterruptedException */
     public void lockInterruptibly() throws InterruptedException {
-      for (;;) {
+      for (; ; ) {
         stopper.checkCancelInProgress(null);
-        if (lock.tryLock(RETRY_TIME, TimeUnit.MILLISECONDS))
-          break;
+        if (lock.tryLock(RETRY_TIME, TimeUnit.MILLISECONDS)) break;
       }
     }
 
-    /**
-     * @return true if the lock was acquired
-     */
+    /** @return true if the lock was acquired */
     public boolean tryLock() {
       stopper.checkCancelInProgress(null);
       return lock.tryLock();
@@ -225,8 +199,7 @@ public class StoppableReentrantReadWriteLock implements /* ReadWriteLock, */ jav
       return lock.tryLock(timeout, TimeUnit.MILLISECONDS);
     }
 
-    /**
-     */
+    /** */
     public void unlock() {
       lock.unlock();
     }

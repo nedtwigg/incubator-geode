@@ -17,25 +17,15 @@
 
 package org.apache.geode.internal.admin;
 
-/**
- * Interface to represent a single statistic of a <code>StatResource</code>
- *
- */
+/** Interface to represent a single statistic of a <code>StatResource</code> */
 public interface Stat extends GfObject {
 
-  /**
-   * @return the value of this stat as a <code>java.lang.Number</code> 
-   */
+  /** @return the value of this stat as a <code>java.lang.Number</code> */
   public Number getValue();
 
-  /**
-   * @return a display string for the unit of measurement (if any) this stat represents
-   */
+  /** @return a display string for the unit of measurement (if any) this stat represents */
   public String getUnits();
 
-  /**
-   * @return true if this stat represents a numeric value which always increases
-   */
+  /** @return true if this stat represents a numeric value which always increases */
   public boolean isCounter();
-
 }

@@ -22,7 +22,5 @@ import org.apache.geode.redis.internal.ExecutionHandlerContext;
 public class ShutDownExecutor extends AbstractExecutor {
 
   @Override
-  public void executeCommand(Command command, ExecutionHandlerContext context) {
-  }
-
+  public void executeCommand(Command command, ExecutionHandlerContext context) {}
 }

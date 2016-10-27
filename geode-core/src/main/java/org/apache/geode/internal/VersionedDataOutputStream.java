@@ -21,33 +21,27 @@ import java.io.DataOutputStream;
 import java.io.OutputStream;
 
 /**
- * An extension of {@link DataOutputStream} that implements
- * {@link VersionedDataStream}.
- * 
+ * An extension of {@link DataOutputStream} that implements {@link VersionedDataStream}.
+ *
  * @since GemFire 7.1
  */
-public final class VersionedDataOutputStream extends DataOutputStream implements VersionedDataStream {
+public final class VersionedDataOutputStream extends DataOutputStream
+    implements VersionedDataStream {
 
   private final Version version;
 
   /**
-   * Creates a VersionedDataOutputStream that wraps the specified underlying
-   * OutputStream.
-   * 
-   * @param out
-   *          the underlying output stream
-   * @param version
-   *          the product version that serialized object on the given
-   *          {@link OutputStream}
+   * Creates a VersionedDataOutputStream that wraps the specified underlying OutputStream.
+   *
+   * @param out the underlying output stream
+   * @param version the product version that serialized object on the given {@link OutputStream}
    */
   public VersionedDataOutputStream(OutputStream out, Version version) {
     super(out);
     this.version = version;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final Version getVersion() {
     return this.version;

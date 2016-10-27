@@ -32,15 +32,15 @@ import static org.junit.Assert.assertEquals;
 /**
  * Tests {@link org.apache.geode.admin.internal.AdminDistributedSystemImpl}.
  *
- * @created   August 30, 2004
- * @since GemFire     3.5
+ * @created August 30, 2004
+ * @since GemFire 3.5
  */
 @SuppressWarnings("deprecation")
 @Category(IntegrationTest.class)
 public class BindDistributedSystemJUnitTest {
 
-  private final static int RETRY_ATTEMPTS = 3;
-  private final static int RETRY_SLEEP = 100;
+  private static final int RETRY_ATTEMPTS = 3;
+  private static final int RETRY_SLEEP = 100;
 
   private DistributedSystem system;
 
@@ -70,14 +70,13 @@ public class BindDistributedSystemJUnitTest {
 
     Properties props = new Properties();
     props.setProperty(BIND_ADDRESS, bindTo);
-    props.setProperty(START_LOCATOR, "localhost[" + AvailablePortHelper.getRandomAvailableTCPPort() + "]");
+    props.setProperty(
+        START_LOCATOR, "localhost[" + AvailablePortHelper.getRandomAvailableTCPPort() + "]");
     this.system = org.apache.geode.distributed.DistributedSystem.connect(props);
 
     assertEquals(true, this.system.isConnected());
 
     // Because of fix for bug 31409
     this.system.disconnect();
-
   }
-
 }

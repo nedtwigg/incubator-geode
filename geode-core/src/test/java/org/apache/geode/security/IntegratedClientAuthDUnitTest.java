@@ -31,19 +31,26 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.FlakyTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class IntegratedClientAuthDUnitTest extends AbstractSecureServerDUnitTest {
 
   @Category(FlakyTest.class) // GEODE-1877
   @Test
   public void authWithCorrectPasswordShouldPass() {
-    client1.invoke("logging in super-user with correct password", () -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("super-user", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    client1.invoke(
+        "logging in super-user with correct password",
+        () -> {
+          ClientCache cache =
+              new ClientCacheFactory(createClientProperties("super-user", "1234567"))
+                  .setPoolSubscriptionEnabled(true)
+                  .addPoolServer("localhost", serverPort)
+                  .create();
 
-      ClientRegionFactory<String, String> crf = cache.createClientRegionFactory(ClientRegionShortcut.PROXY);
+          ClientRegionFactory<String, String> crf =
+              cache.createClientRegionFactory(ClientRegionShortcut.PROXY);
 
-      crf.create(REGION_NAME);
-    });
+          crf.create(REGION_NAME);
+        });
   }
 
   @Category(FlakyTest.class) // GEODE-1875
@@ -51,11 +58,19 @@ public class IntegratedClientAuthDUnitTest extends AbstractSecureServerDUnitTest
   public void authWithIncorrectPasswordShouldFail() {
     IgnoredException.addIgnoredException(AuthenticationFailedException.class.getName());
 
-    client2.invoke("logging in super-user with wrong password", () -> {
-      AuthenticationFailedException expected = new AuthenticationFailedException("Authentication error. Please check your credentials.");
+    client2.invoke(
+        "logging in super-user with wrong password",
+        () -> {
+          AuthenticationFailedException expected =
+              new AuthenticationFailedException(
+                  "Authentication error. Please check your credentials.");
 
-      catchException(new ClientCacheFactory(createClientProperties("super-user", "wrong")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort)).create();
-      assertThat((Throwable) caughtException()).hasCause(expected);
-    });
+          catchException(
+                  new ClientCacheFactory(createClientProperties("super-user", "wrong"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort))
+              .create();
+          assertThat((Throwable) caughtException()).hasCause(expected);
+        });
   }
 }

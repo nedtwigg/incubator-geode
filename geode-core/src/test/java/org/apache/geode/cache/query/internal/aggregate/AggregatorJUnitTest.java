@@ -139,8 +139,8 @@ public class AggregatorJUnitTest {
     assertEquals(35, ((Number) arr[1]).intValue());
 
     AvgPRQueryNode apqn = new AvgPRQueryNode();
-    Object[] val1 = new Object[] { new Integer(7), new Double(43) };
-    Object[] val2 = new Object[] { new Integer(5), new Double(273.86) };
+    Object[] val1 = new Object[] {new Integer(7), new Double(43)};
+    Object[] val2 = new Object[] {new Integer(5), new Double(273.86)};
     apqn.accumulate(val1);
     apqn.accumulate(val2);
     expected = (43 + 273.86f) / 12.0f;
@@ -203,5 +203,4 @@ public class AggregatorJUnitTest {
     min.accumulate(null);
     assertEquals(1, ((Integer) min.terminate()).intValue());
   }
-
 }

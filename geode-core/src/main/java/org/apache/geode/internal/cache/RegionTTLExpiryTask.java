@@ -19,9 +19,7 @@ package org.apache.geode.internal.cache;
 
 import org.apache.geode.cache.*;
 
-/**
- *
- */
+/** */
 class RegionTTLExpiryTask extends RegionExpiryTask {
 
   /** Creates a new instance of RegionTTLExpiryTask */
@@ -30,9 +28,8 @@ class RegionTTLExpiryTask extends RegionExpiryTask {
   }
 
   /**
-   * @return the absolute time (ms since Jan 1, 1970) at which this
-   * region expires, due to either time-to-live or idle-timeout (whichever
-   * will occur first), or 0 if neither are used.
+   * @return the absolute time (ms since Jan 1, 1970) at which this region expires, due to either
+   *     time-to-live or idle-timeout (whichever will occur first), or 0 if neither are used.
    */
   @Override
   public long getExpirationTime() throws EntryNotFoundException {
@@ -42,12 +39,11 @@ class RegionTTLExpiryTask extends RegionExpiryTask {
     if (action == ExpirationAction.INVALIDATE || action == ExpirationAction.LOCAL_INVALIDATE) {
       if (getLocalRegion().regionInvalid) {
         int timeout = getTTLAttributes().getTimeout();
-        if (timeout == 0)
-          return 0L;
+        if (timeout == 0) return 0L;
         if (!getLocalRegion().EXPIRY_UNITS_MS) {
           timeout *= 1000;
         }
-        // Sometimes region expiration depends on lastModifiedTime which in turn 
+        // Sometimes region expiration depends on lastModifiedTime which in turn
         // depends on entry modification time. To make it consistent always use
         // cache time here.
         return timeout + getLocalRegion().cacheTimeMillis();

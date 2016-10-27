@@ -41,13 +41,12 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VMStatsRegionEntryOffHeapUUIDKey extends VMStatsRegionEntryOffHeap {
-  public VMStatsRegionEntryOffHeapUUIDKey(RegionEntryContext context, UUID key, @Retained Object value) {
+  public VMStatsRegionEntryOffHeapUUIDKey(
+      RegionEntryContext context, UUID key, @Retained Object value) {
     super(context, value);
     // DO NOT modify this class. It was generated from LeafRegionEntry.cpp
     this.keyMostSigBits = key.getMostSignificantBits();
@@ -58,9 +57,13 @@ public class VMStatsRegionEntryOffHeapUUIDKey extends VMStatsRegionEntryOffHeap 
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VMStatsRegionEntryOffHeapUUIDKey> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapUUIDKey.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VMStatsRegionEntryOffHeapUUIDKey>
+      lastModifiedUpdater =
+          AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapUUIDKey.class, "lastModified");
   /**
    * All access done using ohAddrUpdater so it is used even though the compiler can not tell it is.
    */
@@ -69,14 +72,15 @@ public class VMStatsRegionEntryOffHeapUUIDKey extends VMStatsRegionEntryOffHeap 
   @Released
   private volatile long ohAddress;
   /**
-   * I needed to add this because I wanted clear to call setValue which normally can only be called while the re is synced.
-   * But if I sync in that code it causes a lock ordering deadlock with the disk regions because they also get a rw lock in clear.
-   * Some hardware platforms do not support CAS on a long. If gemfire is run on one of those the AtomicLongFieldUpdater does a sync
-   * on the re and we will once again be deadlocked.
-   * I don't know if we support any of the hardware platforms that do not have a 64bit CAS. If we do then we can expect deadlocks
-   * on disk regions.
+   * I needed to add this because I wanted clear to call setValue which normally can only be called
+   * while the re is synced. But if I sync in that code it causes a lock ordering deadlock with the
+   * disk regions because they also get a rw lock in clear. Some hardware platforms do not support
+   * CAS on a long. If gemfire is run on one of those the AtomicLongFieldUpdater does a sync on the
+   * re and we will once again be deadlocked. I don't know if we support any of the hardware
+   * platforms that do not have a 64bit CAS. If we do then we can expect deadlocks on disk regions.
    */
-  private final static AtomicLongFieldUpdater<VMStatsRegionEntryOffHeapUUIDKey> ohAddrUpdater = AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapUUIDKey.class, "ohAddress");
+  private static final AtomicLongFieldUpdater<VMStatsRegionEntryOffHeapUUIDKey> ohAddrUpdater =
+      AtomicLongFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapUUIDKey.class, "ohAddress");
 
   @Override
   public Token getValueAsToken() {
@@ -133,9 +137,7 @@ public class VMStatsRegionEntryOffHeapUUIDKey extends VMStatsRegionEntryOffHeap 
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -144,16 +146,12 @@ public class VMStatsRegionEntryOffHeapUUIDKey extends VMStatsRegionEntryOffHeap 
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -181,8 +179,11 @@ public class VMStatsRegionEntryOffHeapUUIDKey extends VMStatsRegionEntryOffHeap 
   private volatile long lastAccessed;
   private volatile int hitCount;
   private volatile int missCount;
-  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryOffHeapUUIDKey> hitCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapUUIDKey.class, "hitCount");
-  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryOffHeapUUIDKey> missCountUpdater = AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapUUIDKey.class, "missCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryOffHeapUUIDKey> hitCountUpdater =
+      AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapUUIDKey.class, "hitCount");
+  private static final AtomicIntegerFieldUpdater<VMStatsRegionEntryOffHeapUUIDKey>
+      missCountUpdater =
+          AtomicIntegerFieldUpdater.newUpdater(VMStatsRegionEntryOffHeapUUIDKey.class, "missCount");
 
   @Override
   public final long getLastAccessed() throws InternalStatisticsDisabledException {
@@ -245,7 +246,8 @@ public class VMStatsRegionEntryOffHeapUUIDKey extends VMStatsRegionEntryOffHeap 
   public boolean isKeyEqual(Object k) {
     if (k instanceof UUID) {
       UUID uuid = (UUID) k;
-      return uuid.getLeastSignificantBits() == this.keyLeastSigBits && uuid.getMostSignificantBits() == this.keyMostSigBits;
+      return uuid.getLeastSignificantBits() == this.keyLeastSigBits
+          && uuid.getMostSignificantBits() == this.keyMostSigBits;
     }
     return false;
   }

@@ -24,9 +24,7 @@ package org.apache.geode.cache.query.data;
 
 import java.util.*;
 
-/**
- *
- */
+/** */
 public class Employee {
   private String name;
   private int age;
@@ -67,7 +65,6 @@ public class Employee {
     this.salary = salary;
     this.addresses = addresses;
     this.phoneNo = new PhoneNo(111, 222, 333, 444);
-
   }
 
   // Added for the Test IUMRCompositeIteratorTest
@@ -82,5 +79,4 @@ public class Employee {
     ph.add(this.phoneNo);
     return ph;
   }
-
-}// end of employee class
+} // end of employee class

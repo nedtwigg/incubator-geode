@@ -37,15 +37,11 @@ public class Employee {
     d = 0.1;
     salary = (int) (rand.nextFloat() * 200000);
     name = genName();
-    if (rand.nextFloat() < 0.2)
-      hireDate = null;
-    else
-      hireDate = new Date(Math.abs(rand.nextLong()));
+    if (rand.nextFloat() < 0.2) hireDate = null;
+    else hireDate = new Date(Math.abs(rand.nextLong()));
 
-    if (rand.nextFloat() < 0.2)
-      fieldAddress = null;
-    else
-      fieldAddress = new Address();
+    if (rand.nextFloat() < 0.2) fieldAddress = null;
+    else fieldAddress = new Address();
 
     collect = new HashSet();
   }
@@ -111,16 +107,16 @@ public class Employee {
 
   private static String genName() {
     switch ((Math.abs(rand.nextInt()) % 5)) {
-    case 0:
-      return "Adam";
-    case 1:
-      return "Bob";
-    case 2:
-      return "Charles";
-    case 3:
-      return "David";
-    case 4:
-      return "Earnest";
+      case 0:
+        return "Adam";
+      case 1:
+        return "Bob";
+      case 2:
+        return "Charles";
+      case 3:
+        return "David";
+      case 4:
+        return "Earnest";
     }
     throw new IllegalStateException();
   }
@@ -129,5 +125,4 @@ public class Employee {
     System.out.println("In address() method");
     return fieldAddress;
   }
-
 }

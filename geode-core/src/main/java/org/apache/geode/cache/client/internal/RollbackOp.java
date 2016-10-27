@@ -21,12 +21,14 @@ import org.apache.geode.internal.cache.tier.sockets.Message;
 
 /**
  * Does a Rollback on the server
+ *
  * @since GemFire 6.6
  */
 public class RollbackOp {
 
   /**
    * Does a rollback on the server for given transaction
+   *
    * @param pool the pool to use to communicate with the server.
    * @param txId the id of the transaction to rollback
    */
@@ -80,8 +82,7 @@ public class RollbackOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

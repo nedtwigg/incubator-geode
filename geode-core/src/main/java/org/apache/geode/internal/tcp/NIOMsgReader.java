@@ -24,15 +24,12 @@ import java.nio.channels.SocketChannel;
 
 import org.apache.geode.internal.Version;
 
-/**
- * A message reader which reads from the socket
- * using (blocking) nio.
- *
- */
+/** A message reader which reads from the socket using (blocking) nio. */
 public class NIOMsgReader extends MsgReader {
 
   /** the buffer used for NIO message receipt */
   private ByteBuffer nioInputBuffer;
+
   private final SocketChannel inputChannel;
   private int lastReadPosition;
   private int lastProcessedPosition;

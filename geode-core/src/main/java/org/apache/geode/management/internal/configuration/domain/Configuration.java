@@ -27,10 +27,7 @@ import org.apache.geode.DataSerializable;
 import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.util.CollectionUtils;
 
-/**
- * Domain object for all the configuration related data. 
- *
- */
+/** Domain object for all the configuration related data. */
 public class Configuration implements DataSerializable {
 
   private static final long serialVersionUID = 1L;
@@ -42,9 +39,7 @@ public class Configuration implements DataSerializable {
   Set<String> jarNames = new HashSet<String>();
 
   //Public no arg constructor required for Deserializable
-  public Configuration() {
-
-  }
+  public Configuration() {}
 
   public Configuration(String configName) {
     this.configName = configName;
@@ -136,7 +131,19 @@ public class Configuration implements DataSerializable {
 
   @Override
   public String toString() {
-    return "Configuration [configName=" + configName + ", cacheXmlContent=" + cacheXmlContent + ", cacheXmlFileName=" + cacheXmlFileName + ", propertiesFileName=" + propertiesFileName + ", gemfireProperties=" + gemfireProperties + ", jarNames=" + jarNames + "]";
+    return "Configuration [configName="
+        + configName
+        + ", cacheXmlContent="
+        + cacheXmlContent
+        + ", cacheXmlFileName="
+        + cacheXmlFileName
+        + ", propertiesFileName="
+        + propertiesFileName
+        + ", gemfireProperties="
+        + gemfireProperties
+        + ", jarNames="
+        + jarNames
+        + "]";
   }
 
   @Override
@@ -154,44 +161,28 @@ public class Configuration implements DataSerializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (!(obj instanceof Configuration))
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (!(obj instanceof Configuration)) return false;
     Configuration other = (Configuration) obj;
     if (cacheXmlContent == null) {
-      if (other.cacheXmlContent != null)
-        return false;
-    } else if (!cacheXmlContent.equals(other.cacheXmlContent))
-      return false;
+      if (other.cacheXmlContent != null) return false;
+    } else if (!cacheXmlContent.equals(other.cacheXmlContent)) return false;
     if (cacheXmlFileName == null) {
-      if (other.cacheXmlFileName != null)
-        return false;
-    } else if (!cacheXmlFileName.equals(other.cacheXmlFileName))
-      return false;
+      if (other.cacheXmlFileName != null) return false;
+    } else if (!cacheXmlFileName.equals(other.cacheXmlFileName)) return false;
     if (configName == null) {
-      if (other.configName != null)
-        return false;
-    } else if (!configName.equals(other.configName))
-      return false;
+      if (other.configName != null) return false;
+    } else if (!configName.equals(other.configName)) return false;
     if (gemfireProperties == null) {
-      if (other.gemfireProperties != null)
-        return false;
-    } else if (!gemfireProperties.equals(other.gemfireProperties))
-      return false;
+      if (other.gemfireProperties != null) return false;
+    } else if (!gemfireProperties.equals(other.gemfireProperties)) return false;
     if (jarNames == null) {
-      if (other.jarNames != null)
-        return false;
-    } else if (!jarNames.equals(other.jarNames))
-      return false;
+      if (other.jarNames != null) return false;
+    } else if (!jarNames.equals(other.jarNames)) return false;
     if (propertiesFileName == null) {
-      if (other.propertiesFileName != null)
-        return false;
-    } else if (!propertiesFileName.equals(other.propertiesFileName))
-      return false;
+      if (other.propertiesFileName != null) return false;
+    } else if (!propertiesFileName.equals(other.propertiesFileName)) return false;
     return true;
   }
-
 }

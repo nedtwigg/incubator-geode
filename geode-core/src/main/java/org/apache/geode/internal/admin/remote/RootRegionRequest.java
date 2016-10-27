@@ -25,28 +25,24 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular application to get its
- * root region(s). All it really needs to find out is if the app
- * has created a cache.
+ * A message that is sent to a particular application to get its root region(s). All it really needs
+ * to find out is if the app has created a cache.
  */
 public final class RootRegionRequest extends AdminRequest {
   // instance variables
 
-  /**
-   * Returns a <code>RootRegionRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>RootRegionRequest</code> to be sent to the specified recipient. */
   public static RootRegionRequest create() {
     RootRegionRequest m = new RootRegionRequest();
     return m;
   }
 
   public RootRegionRequest() {
-    friendlyName = LocalizedStrings.RootRegionRequest_INSPECT_ROOT_CACHE_REGIONS.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.RootRegionRequest_INSPECT_ROOT_CACHE_REGIONS.toLocalizedString();
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     // nothing needs to be done. If we got this far then a cache must exist.

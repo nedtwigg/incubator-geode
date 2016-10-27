@@ -24,8 +24,7 @@ import java.io.ObjectOutput;
 public class UnitTestValueHolder implements Externalizable {
   private Object value;
 
-  public UnitTestValueHolder() {
-  }
+  public UnitTestValueHolder() {}
 
   public UnitTestValueHolder(Object v) {
     this.value = v;

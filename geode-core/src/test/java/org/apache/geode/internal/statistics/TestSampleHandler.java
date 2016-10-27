@@ -19,15 +19,12 @@ package org.apache.geode.internal.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class TestSampleHandler implements SampleHandler {
 
   private final List<Info> notifications = new ArrayList<Info>();
 
-  public TestSampleHandler() {
-  }
+  public TestSampleHandler() {}
 
   public synchronized void clearAllNotifications() {
     this.notifications.clear();
@@ -72,9 +69,7 @@ public class TestSampleHandler implements SampleHandler {
     return sb.toString();
   }
 
-  /**
-   * @since GemFire 7.0
-   */
+  /** @since GemFire 7.0 */
   public static class Info {
     private final String name;
 
@@ -95,13 +90,10 @@ public class TestSampleHandler implements SampleHandler {
       return sb.append("}").toString();
     }
 
-    protected void appendToString(StringBuilder sb) {
-    }
+    protected void appendToString(StringBuilder sb) {}
   }
 
-  /**
-   * @since GemFire 7.0
-   */
+  /** @since GemFire 7.0 */
   public static class ResourceInstanceInfo extends Info {
     private final ResourceInstance resource;
 
@@ -120,9 +112,7 @@ public class TestSampleHandler implements SampleHandler {
     }
   }
 
-  /**
-   * @since GemFire 7.0
-   */
+  /** @since GemFire 7.0 */
   public static class ResourceTypeInfo extends Info {
     private final ResourceType type;
 
@@ -141,9 +131,7 @@ public class TestSampleHandler implements SampleHandler {
     }
   }
 
-  /**
-   * @since GemFire 7.0
-   */
+  /** @since GemFire 7.0 */
   public static class SampledInfo extends Info {
     private final long timeStamp;
     private final int resourceCount;
@@ -168,5 +156,4 @@ public class TestSampleHandler implements SampleHandler {
       sb.append(", resourceCount=").append(this.resourceCount);
     }
   }
-
 }

@@ -21,9 +21,8 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import java.lang.Math;
 
 /**
- * A <code>ListenerIdMap</code> maps ints to an <code>Object</code>.
- * This is an optimization because using a {@link java.util.HashMap}
- * for this purposed proved to be too slow because of all of the
+ * A <code>ListenerIdMap</code> maps ints to an <code>Object</code>. This is an optimization because
+ * using a {@link java.util.HashMap} for this purposed proved to be too slow because of all of the
  * {@link Integer}s that had to be created.
  */
 public class ListenerIdMap {
@@ -34,9 +33,9 @@ public class ListenerIdMap {
   /** The total number of mappings in the map */
   private int count;
 
-  /** Once the number of mappings in the map exceeds the threshold,
-   * the map is rehased.  The threshold is the capacity *
-   * loadFactor.
+  /**
+   * Once the number of mappings in the map exceeds the threshold, the map is rehased. The threshold
+   * is the capacity * loadFactor.
    */
   private int threshold;
 
@@ -46,16 +45,19 @@ public class ListenerIdMap {
   ////////////////////  Constructors  ////////////////////
 
   /**
-   * Creates a new, empty map with the given initial capacity (number
-   * of buckets) and load factor.
+   * Creates a new, empty map with the given initial capacity (number of buckets) and load factor.
    */
   public ListenerIdMap(int initialCapacity, float loadFactor) {
     if (initialCapacity < 0) {
-      throw new IllegalArgumentException(LocalizedStrings.ListenerIdMap_ILLEGAL_INITIAL_CAPACITY_0.toLocalizedString(Integer.valueOf(initialCapacity)));
+      throw new IllegalArgumentException(
+          LocalizedStrings.ListenerIdMap_ILLEGAL_INITIAL_CAPACITY_0.toLocalizedString(
+              Integer.valueOf(initialCapacity)));
     }
 
     if (loadFactor <= 0 || Float.isNaN(loadFactor)) {
-      throw new IllegalArgumentException(LocalizedStrings.ListenerIdMap_ILLEGAL_LOAD_FACTOR_0.toLocalizedString(new Float(loadFactor)));
+      throw new IllegalArgumentException(
+          LocalizedStrings.ListenerIdMap_ILLEGAL_LOAD_FACTOR_0.toLocalizedString(
+              new Float(loadFactor)));
     }
 
     if (initialCapacity == 0) {
@@ -68,8 +70,7 @@ public class ListenerIdMap {
   }
 
   /**
-   * Creates a new, empty map with the default initial capacity (11
-   * buckets) and load factor (0.75).
+   * Creates a new, empty map with the default initial capacity (11 buckets) and load factor (0.75).
    */
   public ListenerIdMap() {
     this(11, 0.75f);
@@ -77,19 +78,15 @@ public class ListenerIdMap {
 
   ////////////////////  Instance Methods  ////////////////////
 
-  /**
-   * Returns the number of mappings in this map
-   */
+  /** Returns the number of mappings in this map */
   public int size() {
     return this.count;
   }
 
   /**
-   * Returns <code>true</code> if this map contains a mapping for the
-   * given key.
+   * Returns <code>true</code> if this map contains a mapping for the given key.
    *
-   * @throws IllegalArgumentException
-   *         <code>key</code> is less than zero
+   * @throws IllegalArgumentException <code>key</code> is less than zero
    */
   public boolean containsKey(int key) {
 
@@ -105,11 +102,10 @@ public class ListenerIdMap {
   }
 
   /**
-   * Returns the object to which the given key is mapped.  If no
-   * object is mapped to the given key, <code>null</code> is returned.
+   * Returns the object to which the given key is mapped. If no object is mapped to the given key,
+   * <code>null</code> is returned.
    *
-   * @throws IllegalArgumentException
-   *         <code>key</code> is less than zero
+   * @throws IllegalArgumentException <code>key</code> is less than zero
    */
   public Object get(int key) {
 
@@ -125,9 +121,8 @@ public class ListenerIdMap {
   }
 
   /**
-   * Rehashes this map into a new map with a large number of buckets.
-   * It is called when the number of entries in the map exceeds the
-   * capacity and load factor.
+   * Rehashes this map into a new map with a large number of buckets. It is called when the number
+   * of entries in the map exceeds the capacity and load factor.
    */
   private void rehash() {
     int oldCapacity = table.length;
@@ -139,8 +134,8 @@ public class ListenerIdMap {
     threshold = (int) (newCapacity * loadFactor);
     table = newMap;
 
-    for (int i = oldCapacity; i-- > 0;) {
-      for (Entry old = oldMap[i]; old != null;) {
+    for (int i = oldCapacity; i-- > 0; ) {
+      for (Entry old = oldMap[i]; old != null; ) {
         Entry e = old;
         old = old.next;
 
@@ -152,12 +147,10 @@ public class ListenerIdMap {
   }
 
   /**
-   * Creates a mapping between the given key (object id) and an
-   * object.  Returns the previous value, or <code>null</code> if
-   * there was none.
+   * Creates a mapping between the given key (object id) and an object. Returns the previous value,
+   * or <code>null</code> if there was none.
    *
-   * @throws IllegalArgumentException
-   *         <code>key</code> is less than zero
+   * @throws IllegalArgumentException <code>key</code> is less than zero
    */
   public Object put(int key, Object value) {
 
@@ -190,8 +183,8 @@ public class ListenerIdMap {
   }
 
   /**
-   * Removes the mapping for the given key.  Returns the object to
-   * which the key was mapped, or <code>null</code> otherwise.
+   * Removes the mapping for the given key. Returns the object to which the key was mapped, or
+   * <code>null</code> otherwise.
    */
   public Object remove(int key) {
     Entry[] table = this.table;
@@ -199,10 +192,8 @@ public class ListenerIdMap {
 
     for (Entry e = table[bucket], prev = null; e != null; prev = e, e = e.next) {
       if (key == e.key) {
-        if (prev != null)
-          prev.next = e.next;
-        else
-          table[bucket] = e.next;
+        if (prev != null) prev.next = e.next;
+        else table[bucket] = e.next;
 
         count--;
         Object oldValue = e.value;
@@ -214,9 +205,7 @@ public class ListenerIdMap {
     return null;
   }
 
-  /**
-   * Returns all of the objects in the map
-   */
+  /** Returns all of the objects in the map */
   public Object[] values() {
     Object[] values = new Object[this.size()];
 
@@ -231,9 +220,7 @@ public class ListenerIdMap {
     return values;
   }
 
-  /**
-   * Returns all of the entries in the map
-   */
+  /** Returns all of the entries in the map */
   public ListenerIdMap.Entry[] entries() {
     Entry[] entries = new Entry[this.size()];
 
@@ -248,9 +235,8 @@ public class ListenerIdMap {
   }
 
   /**
-   * Returns an iterator over the {@link Entry}s of this map.  Note
-   * that this iterator is <b>not</b> fail-fast.  That is, it is the
-   * user's responsibility to ensure that the map does not change
+   * Returns an iterator over the {@link Entry}s of this map. Note that this iterator is <b>not</b>
+   * fail-fast. That is, it is the user's responsibility to ensure that the map does not change
    * while he is iterating over it.
    */
   public EntryIterator iterator() {
@@ -259,9 +245,7 @@ public class ListenerIdMap {
 
   ///////////////////////  Inner Classes  ///////////////////////
 
-  /**
-   * Inner class that represents an entry in the map
-   */
+  /** Inner class that represents an entry in the map */
   public static class Entry {
     /** The key of the entry */
     int key;
@@ -281,10 +265,7 @@ public class ListenerIdMap {
     }
   }
 
-  /**
-   * A class for iterating over the contents of an
-   * <code>ObjIdMap</code> 
-   */
+  /** A class for iterating over the contents of an <code>ObjIdMap</code> */
   public class EntryIterator {
     /** The current collision chain we're traversing */
     private int index;
@@ -295,8 +276,8 @@ public class ListenerIdMap {
     ////////////////////  Instance Methods  ////////////////////
 
     /**
-     * Returns the next Entry to visit.  Will return <code>null</code>
-     * after we have iterated through all of the entries.
+     * Returns the next Entry to visit. Will return <code>null</code> after we have iterated through
+     * all of the entries.
      */
     public Entry next() {
       while (this.next == null && this.index < table.length) {
@@ -312,7 +293,5 @@ public class ListenerIdMap {
       }
       return oldNext;
     }
-
   }
-
 }

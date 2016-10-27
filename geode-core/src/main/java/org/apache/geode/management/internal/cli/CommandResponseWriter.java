@@ -20,14 +20,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
- * Some methods decorated to be commands may have return type as 'void'. For
- * such commands, the result.response can be written in the
- * CommandResponseWriter. Each command execution will have a ThreadLocal copy of
- * this writer which will be accessible through
- * {@link org.apache.geode.management.internal.cli.remote.CommandExecutionContext#WRITER_WRAPPER}. 
- * NOTE: Not thread safe 
- * 
- * 
+ * Some methods decorated to be commands may have return type as 'void'. For such commands, the
+ * result.response can be written in the CommandResponseWriter. Each command execution will have a
+ * ThreadLocal copy of this writer which will be accessible through {@link
+ * org.apache.geode.management.internal.cli.remote.CommandExecutionContext#WRITER_WRAPPER}. NOTE:
+ * Not thread safe
+ *
  * @since GemFire 7.0
  */
 public class CommandResponseWriter {
@@ -49,9 +47,7 @@ public class CommandResponseWriter {
     return this;
   }
 
-  /**
-   * @see PrintWriter#printf(String, Object...)
-   */
+  /** @see PrintWriter#printf(String, Object...) */
   public CommandResponseWriter printf(String format, Object... args) {
     pwriter.printf(format, args);
     return this;
@@ -60,5 +56,4 @@ public class CommandResponseWriter {
   public String getResponseWritten() {
     return swriter.toString();
   }
-
 }

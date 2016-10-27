@@ -57,7 +57,10 @@ public class LuceneIndexMaintenanceIntegrationTest extends LuceneIntegrationTest
 
     LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
     index.waitUntilFlushed(WAIT_FOR_FLUSH_TIME);
-    LuceneQuery query = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, "description:\"hello world\"", DEFAULT_FIELD);
+    LuceneQuery query =
+        luceneService
+            .createLuceneQueryFactory()
+            .create(INDEX_NAME, REGION_NAME, "description:\"hello world\"", DEFAULT_FIELD);
     PageableLuceneQueryResults<Integer, TestObject> results = query.findPages();
     assertEquals(3, results.size());
 
@@ -80,7 +83,10 @@ public class LuceneIndexMaintenanceIntegrationTest extends LuceneIntegrationTest
 
     LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
     index.waitUntilFlushed(WAIT_FOR_FLUSH_TIME);
-    LuceneQuery query = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, "description:\"hello world\"", DEFAULT_FIELD);
+    LuceneQuery query =
+        luceneService
+            .createLuceneQueryFactory()
+            .create(INDEX_NAME, REGION_NAME, "description:\"hello world\"", DEFAULT_FIELD);
     PageableLuceneQueryResults<Integer, TestObject> results = query.findPages();
     assertEquals(3, results.size());
 
@@ -104,7 +110,10 @@ public class LuceneIndexMaintenanceIntegrationTest extends LuceneIntegrationTest
 
     LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
     index.waitUntilFlushed(WAIT_FOR_FLUSH_TIME);
-    LuceneQuery query = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, "description:\"hello world\"", DEFAULT_FIELD);
+    LuceneQuery query =
+        luceneService
+            .createLuceneQueryFactory()
+            .create(INDEX_NAME, REGION_NAME, "description:\"hello world\"", DEFAULT_FIELD);
     PageableLuceneQueryResults<Integer, TestObject> results = query.findPages();
     assertEquals(3, results.size());
 
@@ -126,7 +135,8 @@ public class LuceneIndexMaintenanceIntegrationTest extends LuceneIntegrationTest
     region.put("object-3", new TestObject("title 3", "hello world"));
     region.put("object-4", new TestObject("hello world", "hello world"));
 
-    LuceneIndexForPartitionedRegion index = (LuceneIndexForPartitionedRegion) luceneService.getIndex(INDEX_NAME, REGION_NAME);
+    LuceneIndexForPartitionedRegion index =
+        (LuceneIndexForPartitionedRegion) luceneService.getIndex(INDEX_NAME, REGION_NAME);
     index.waitUntilFlushed(WAIT_FOR_FLUSH_TIME);
 
     FileSystemStats fileSystemStats = index.getFileSystemStats();
@@ -142,19 +152,29 @@ public class LuceneIndexMaintenanceIntegrationTest extends LuceneIntegrationTest
     luceneService.createIndex(INDEX_NAME, REGION_NAME, "title", "description");
 
     // Configure PR with expiration operation set to destroy
-    Region region = cache.createRegionFactory(RegionShortcut.PARTITION).setEntryTimeToLive(new ExpirationAttributes(1, ExpirationAction.DESTROY)).create(REGION_NAME);
+    Region region =
+        cache
+            .createRegionFactory(RegionShortcut.PARTITION)
+            .setEntryTimeToLive(new ExpirationAttributes(1, ExpirationAction.DESTROY))
+            .create(REGION_NAME);
     populateRegion(region);
     // Wait for expiration to destroy region entries. The region should be
     // left with zero entries.
-    Awaitility.await().atMost(60, TimeUnit.SECONDS).until(() -> {
-      assertEquals(0, region.size());
-    });
+    Awaitility.await()
+        .atMost(60, TimeUnit.SECONDS)
+        .until(
+            () -> {
+              assertEquals(0, region.size());
+            });
 
     LuceneIndex index = luceneService.getIndex(INDEX_NAME, REGION_NAME);
     // Wait for events to be flushed from AEQ.
     index.waitUntilFlushed(WAIT_FOR_FLUSH_TIME);
     // Execute query to fetch all the values for "description" field.
-    LuceneQuery query = luceneService.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, "description:\"hello world\"", DEFAULT_FIELD);
+    LuceneQuery query =
+        luceneService
+            .createLuceneQueryFactory()
+            .create(INDEX_NAME, REGION_NAME, "description:\"hello world\"", DEFAULT_FIELD);
     PageableLuceneQueryResults<Integer, TestObject> results = query.findPages();
     // The query should return 0 results.
     assertEquals(0, results.size());

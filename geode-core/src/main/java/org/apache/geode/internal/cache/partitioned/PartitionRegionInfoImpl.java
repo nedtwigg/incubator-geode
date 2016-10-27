@@ -35,7 +35,16 @@ public class PartitionRegionInfoImpl implements InternalPRInfo, Serializable {
   private final String colocatedWith;
   private final OfflineMemberDetails offlineMembers;
 
-  public PartitionRegionInfoImpl(String regionPath, int configuredBucketCount, int createdBucketCount, int lowRedundancyBucketCount, int configuredRedundantCopies, int actualRedundantCopies, Set<InternalPartitionDetails> memberDetails, String colocatedPath, OfflineMemberDetails offlineMembers) {
+  public PartitionRegionInfoImpl(
+      String regionPath,
+      int configuredBucketCount,
+      int createdBucketCount,
+      int lowRedundancyBucketCount,
+      int configuredRedundantCopies,
+      int actualRedundantCopies,
+      Set<InternalPartitionDetails> memberDetails,
+      String colocatedPath,
+      OfflineMemberDetails offlineMembers) {
     this.regionPath = regionPath;
     this.configuredBucketCount = configuredBucketCount;
     this.createdBucketCount = createdBucketCount;
@@ -76,7 +85,8 @@ public class PartitionRegionInfoImpl implements InternalPRInfo, Serializable {
   }
 
   public Set<InternalPartitionDetails> getInternalPartitionDetails() {
-    return Collections.unmodifiableSet((Set<? extends InternalPartitionDetails>) this.memberDetails);
+    return Collections.unmodifiableSet(
+        (Set<? extends InternalPartitionDetails>) this.memberDetails);
   }
 
   public String getRegionPath() {
@@ -104,12 +114,9 @@ public class PartitionRegionInfoImpl implements InternalPRInfo, Serializable {
   }
 
   /**
-   * hashCode is defined for this class to make
-   * sure that the before details and after details for
-   * RebalanceResults are in the same order. This makes
-   * debugging printouts easier, and it also removes
-   * discrepancies due to rounding errors when calculating
-   * the stddev in tests.
+   * hashCode is defined for this class to make sure that the before details and after details for
+   * RebalanceResults are in the same order. This makes debugging printouts easier, and it also
+   * removes discrepancies due to rounding errors when calculating the stddev in tests.
    */
   @Override
   public int hashCode() {

@@ -35,10 +35,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 import static org.junit.Assert.fail;
 
-/**
- * This class makes sure that instantatiors are persisted to disk
- * and can be recovered.
- */
+/** This class makes sure that instantatiors are persisted to disk and can be recovered. */
 @SuppressWarnings("deprecation")
 @Category(IntegrationTest.class)
 public class DiskInstantiatorsJUnitTest {
@@ -49,16 +46,18 @@ public class DiskInstantiatorsJUnitTest {
 
   @BeforeClass
   public static void beforeClass() {
-    Instantiator.register(new Instantiator(Payload.class, (byte) 22) {
-      public DataSerializable newInstance() {
-        return new Payload();
-      }
-    });
-    Instantiator.register(new Instantiator(Key.class, (byte) 21) {
-      public DataSerializable newInstance() {
-        return new Key();
-      }
-    });
+    Instantiator.register(
+        new Instantiator(Payload.class, (byte) 22) {
+          public DataSerializable newInstance() {
+            return new Payload();
+          }
+        });
+    Instantiator.register(
+        new Instantiator(Key.class, (byte) 21) {
+          public DataSerializable newInstance() {
+            return new Key();
+          }
+        });
   }
 
   @AfterClass
@@ -84,7 +83,8 @@ public class DiskInstantiatorsJUnitTest {
     factory.setScope(Scope.LOCAL);
     factory.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
     factory.setDiskSynchronous(true);
-    factory.setDiskStoreName(this.c.createDiskStoreFactory().create("DiskInstantiatorsJUnitTest").getName());
+    factory.setDiskStoreName(
+        this.c.createDiskStoreFactory().create("DiskInstantiatorsJUnitTest").getName());
 
     this.r = this.c.createRegion("DiskInstantiatorsJUnitTest", factory.create());
   }
@@ -144,8 +144,7 @@ public class DiskInstantiatorsJUnitTest {
   private static class Payload implements DataSerializable {
     private byte[] data;
 
-    public Payload() {
-    }
+    public Payload() {}
 
     public Payload(int size) {
       this.data = new byte[size];
@@ -175,8 +174,7 @@ public class DiskInstantiatorsJUnitTest {
 
     private Long key;
 
-    public Key() {
-    }
+    public Key() {}
 
     public Key(long k) {
       this.key = new Long(k);

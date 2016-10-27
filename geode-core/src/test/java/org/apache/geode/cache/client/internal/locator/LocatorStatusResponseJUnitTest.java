@@ -30,9 +30,9 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The LocatorStatusResponseJUnitTest class is a test suite of test cases testing the contract and functionality of the
- * LocatorStatusResponse class.
- * </p>
+ * The LocatorStatusResponseJUnitTest class is a test suite of test cases testing the contract and
+ * functionality of the LocatorStatusResponse class.
+ *
  * @see org.apache.geode.cache.client.internal.locator.LocatorStatusResponse
  * @see org.junit.Assert
  * @see org.junit.Test
@@ -49,7 +49,9 @@ public class LocatorStatusResponseJUnitTest {
     final String locatorName = "LocatorStatusResponseJUnitTest";
 
     final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-    final LocatorStatusResponse expectedResponse = new LocatorStatusResponse().initialize(locatorPort, locatorHost, locatorLogFile, locatorName);
+    final LocatorStatusResponse expectedResponse =
+        new LocatorStatusResponse()
+            .initialize(locatorPort, locatorHost, locatorLogFile, locatorName);
 
     assertNotNull(expectedResponse);
 
@@ -70,5 +72,4 @@ public class LocatorStatusResponseJUnitTest {
 
     assertEquals(expectedResponse, actualResponse);
   }
-
 }

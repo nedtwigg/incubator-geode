@@ -26,20 +26,18 @@ import java.io.*;
 import java.util.*;
 import org.apache.geode.distributed.internal.membership.*;
 
-/**
- * Responds to {@link ObjectNamesResponse}.
- */
+/** Responds to {@link ObjectNamesResponse}. */
 public final class ObjectNamesResponse extends AdminResponse implements Cancellable {
   // instance variables
   private HashSet objectNames;
   private transient boolean cancelled;
 
   /**
-   * Returns a <code>ObjectNamesResponse</code> that will be returned to the
-   * specified recipient. The message will contains a copy of the local manager's
-   * system config.
+   * Returns a <code>ObjectNamesResponse</code> that will be returned to the specified recipient.
+   * The message will contains a copy of the local manager's system config.
    */
-  public static ObjectNamesResponse create(DistributionManager dm, InternalDistributedMember recipient) {
+  public static ObjectNamesResponse create(
+      DistributionManager dm, InternalDistributedMember recipient) {
     ObjectNamesResponse m = new ObjectNamesResponse();
     m.setRecipient(recipient);
     return m;

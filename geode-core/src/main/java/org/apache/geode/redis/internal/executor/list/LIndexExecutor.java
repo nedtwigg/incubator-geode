@@ -99,20 +99,20 @@ public class LIndexExecutor extends ListExecutor {
 
     Object[] entryArray = entry.getFieldValues();
     ByteArrayWrapper valueWrapper = (ByteArrayWrapper) entryArray[1];
-    command.setResponse(Coder.getBulkStringResponse(context.getByteBufAllocator(), valueWrapper.toBytes()));
+    command.setResponse(
+        Coder.getBulkStringResponse(context.getByteBufAllocator(), valueWrapper.toBytes()));
   }
 
-  private Struct getEntryAtIndex(ExecutionHandlerContext context, ByteArrayWrapper key, int index) throws Exception {
+  private Struct getEntryAtIndex(ExecutionHandlerContext context, ByteArrayWrapper key, int index)
+      throws Exception {
 
     Query query = getQuery(key, ListQuery.LINDEX, context);
 
-    Object[] params = { Integer.valueOf(index + 1) };
+    Object[] params = {Integer.valueOf(index + 1)};
 
     SelectResults<?> results = (SelectResults<?>) query.execute(params);
 
-    if (results == null || results.size() == 0 || results.size() <= index)
-      return null;
-    else
-      return (Struct) results.asList().get(index);
+    if (results == null || results.size() == 0 || results.size() <= index) return null;
+    else return (Struct) results.asList().get(index);
   }
 }

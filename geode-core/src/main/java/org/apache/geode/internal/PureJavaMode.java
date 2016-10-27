@@ -19,25 +19,25 @@ package org.apache.geode.internal;
 
 import org.apache.geode.distributed.internal.DistributionConfig;
 
-/**
- * Used to determine if product should use pure java mode.
- */
+/** Used to determine if product should use pure java mode. */
 public final class PureJavaMode {
-  /**
-   * System property to set to true to force pure java mode
-   */
-  public final static String PURE_MODE_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "pureJavaMode";
+  /** System property to set to true to force pure java mode */
+  public static final String PURE_MODE_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "pureJavaMode";
   /**
    * System property to set to true enable debug information regarding native library loading.
+   *
    * @since GemFire 5.1
    */
-  public final static String LOADLIBRARY_DEBUG_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "loadLibrary.debug";
+  public static final String LOADLIBRARY_DEBUG_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "loadLibrary.debug";
 
   private static final boolean debug = Boolean.getBoolean(LOADLIBRARY_DEBUG_PROPERTY);
 
   private static final boolean isPure;
   private static final boolean is64Bit;
   private static final boolean osStatsAreAvailable;
+
   static {
     boolean tmpIsPure = false;
     if (Boolean.getBoolean(PURE_MODE_PROPERTY)) {
@@ -52,7 +52,8 @@ public final class PureJavaMode {
         SharedLibrary.loadLibrary(debug);
       } catch (UnsatisfiedLinkError ignore) {
         if (debug) {
-          System.out.println("java.library.path is set to:\n" + System.getProperty("java.library.path"));
+          System.out.println(
+              "java.library.path is set to:\n" + System.getProperty("java.library.path"));
           System.out.println("Error: Failed to load library " + SharedLibrary.getName());
           ignore.printStackTrace();
         }
@@ -65,20 +66,19 @@ public final class PureJavaMode {
     osStatsAreAvailable = osName.startsWith("Linux") || !isPure;
   }
 
-  public final static boolean isPure() {
+  public static final boolean isPure() {
     return isPure;
   }
 
-  public final static boolean is64Bit() {
+  public static final boolean is64Bit() {
     return is64Bit;
   }
 
   /**
-   * Linux has OsStats even in PureJava mode but other platforms
-   * require the native code to provide OS Statistics.
-   * return true if OSStatistics are available
+   * Linux has OsStats even in PureJava mode but other platforms require the native code to provide
+   * OS Statistics. return true if OSStatistics are available
    */
-  public final static boolean osStatsAreAvailable() {
+  public static final boolean osStatsAreAvailable() {
     return osStatsAreAvailable;
   }
 }

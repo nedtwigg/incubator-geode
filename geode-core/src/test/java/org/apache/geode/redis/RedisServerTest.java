@@ -67,7 +67,8 @@ public class RedisServerTest {
     redisServer = new GeodeRedisServer(0);
     redisServer.start();
     Region r = cache.getRegion(GeodeRedisServer.STRING_REGION);
-    assert r.getAttributes().getDataPolicy() == DataPolicy.PARTITION : r.getAttributes().getDataPolicy();
+    assert r.getAttributes().getDataPolicy() == DataPolicy.PARTITION
+        : r.getAttributes().getDataPolicy();
   }
 
   @Test
@@ -78,7 +79,8 @@ public class RedisServerTest {
     redisServer = new GeodeRedisServer(0);
     redisServer.start();
     Region r = cache.getRegion(GeodeRedisServer.STRING_REGION);
-    assert r.getAttributes().getDataPolicy() == DataPolicy.REPLICATE : r.getAttributes().getDataPolicy();
+    assert r.getAttributes().getDataPolicy() == DataPolicy.REPLICATE
+        : r.getAttributes().getDataPolicy();
     System.setProperty("gemfireredis.regiontype", "");
   }
 }

@@ -46,31 +46,20 @@ public class CompiledMethod implements Comparable {
     }
   }
 
-  /**
-   * return a string describing the access modifiers for this class
-   */
+  /** return a string describing the access modifiers for this class */
   public String accessString() {
     StringBuffer result;
 
-    if (accessString != null)
-      return accessString;
+    if (accessString != null) return accessString;
     result = new StringBuffer();
-    if ((access_flags & 0x0001) != 0)
-      result.append("public ");
-    if ((access_flags & 0x0002) != 0)
-      result.append("private ");
-    if ((access_flags & 0x0004) != 0)
-      result.append("protected ");
-    if ((access_flags & 0x0008) != 0)
-      result.append("static ");
-    if ((access_flags & 0x0010) != 0)
-      result.append("final ");
-    if ((access_flags & 0x0020) != 0)
-      result.append("synchronized ");
-    if ((access_flags & 0x0100) != 0)
-      result.append("native ");
-    if ((access_flags & 0x0400) != 0)
-      result.append("abstract ");
+    if ((access_flags & 0x0001) != 0) result.append("public ");
+    if ((access_flags & 0x0002) != 0) result.append("private ");
+    if ((access_flags & 0x0004) != 0) result.append("protected ");
+    if ((access_flags & 0x0008) != 0) result.append("static ");
+    if ((access_flags & 0x0010) != 0) result.append("final ");
+    if ((access_flags & 0x0020) != 0) result.append("synchronized ");
+    if ((access_flags & 0x0100) != 0) result.append("native ");
+    if ((access_flags & 0x0400) != 0) result.append("abstract ");
     //        if ((access_flags & 0x0800) != 0)
     //            result.append("strict ");
     //        if ((access_flags & 0x1000) != 0)
@@ -84,9 +73,7 @@ public class CompiledMethod implements Comparable {
     return (access_flags & 0x0400) != 0;
   }
 
-  /**
-   * the descriptor is just the type string for the return value
-   */
+  /** the descriptor is just the type string for the return value */
   public String descriptor() {
     if (descriptor == null) {
       descriptor = ((CpUtf8) myclass.constant_pool[descriptor_index]).decodeClassName(0);
@@ -109,14 +96,11 @@ public class CompiledMethod implements Comparable {
       argCount = ((CpUtf8) myclass.constant_pool[descriptor_index]).argCount();
       for (idx = 1; idx <= argCount; idx++) {
         str = ((CpUtf8) myclass.constant_pool[descriptor_index]).decodeClassName(idx);
-        if (args == null)
-          args = str;
-        else
-          args = args + ", " + str;
+        if (args == null) args = str;
+        else args = args + ", " + str;
       }
     }
-    if (args == null)
-      args = "";
+    if (args == null) args = "";
     return args;
   }
 
@@ -147,5 +131,4 @@ public class CompiledMethod implements Comparable {
     CompiledMethod otherMethod = (CompiledMethod) other;
     return signature().compareTo(otherMethod.signature());
   }
-
 }

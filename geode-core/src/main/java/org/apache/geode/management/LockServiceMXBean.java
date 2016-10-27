@@ -24,19 +24,16 @@ import org.apache.geode.security.ResourcePermission.Operation;
 import org.apache.geode.security.ResourcePermission.Resource;
 
 /**
- * MBean that provides access to information and management functionality for a
- * {@link DLockService}.  Since any number of DLockService objects can be created
- * by a member there may be 0 or more instances of this MBean available.
+ * MBean that provides access to information and management functionality for a {@link
+ * DLockService}. Since any number of DLockService objects can be created by a member there may be 0
+ * or more instances of this MBean available.
  *
  * @since GemFire 7.0
- * 
  */
 @ResourceOperation(resource = Resource.CLUSTER, operation = Operation.READ)
 public interface LockServiceMXBean {
 
-  /**
-   * Returns the name of the lock service.
-   */
+  /** Returns the name of the lock service. */
   public String getName();
 
   /**
@@ -46,43 +43,32 @@ public interface LockServiceMXBean {
    */
   public boolean isDistributed();
 
-  /**
-   * Returns the number of members using this LockService.
-   */
+  /** Returns the number of members using this LockService. */
   public int getMemberCount();
 
-  /**
-   * Returns of the name of the member which grants the lock.
-   */
+  /** Returns of the name of the member which grants the lock. */
   public String fetchGrantorMember();
 
-  /**
-   * Returns a list of names of the members using this LockService.
-   */
+  /** Returns a list of names of the members using this LockService. */
   public String[] getMemberNames();
 
   /**
    * Returns whether this member is the granter.
-   * 
+   *
    * @return True if this member is the granter, false otherwise.
    */
   public boolean isLockGrantor();
 
-  /**
-   * Requests that this member become the granter.
-   */
+  /** Requests that this member become the granter. */
   @ResourceOperation(resource = Resource.DATA, operation = Operation.MANAGE)
   public void becomeLockGrantor();
 
   /**
-   * Returns a map of the names of the objects being locked on and the names of
-   * the threads holding the locks.
+   * Returns a map of the names of the objects being locked on and the names of the threads holding
+   * the locks.
    */
   public Map<String, String> listThreadsHoldingLock();
 
-  /**
-   * Returns a list of names of the locks held by this member's threads.
-   */
+  /** Returns a list of names of the locks held by this member's threads. */
   public String[] listHeldLocks();
-
 }

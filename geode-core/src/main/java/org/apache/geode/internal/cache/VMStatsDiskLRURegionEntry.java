@@ -18,15 +18,10 @@
 package org.apache.geode.internal.cache;
 
 /**
- * Implementation class of RegionEntry interface.
- * VM -> entries stored in VM memory
- * Stats -> extra statistics
- * Disk -> entries can be on disk 
- * LRU -> entries maintain LRU information
+ * Implementation class of RegionEntry interface. VM -> entries stored in VM memory Stats -> extra
+ * statistics Disk -> entries can be on disk LRU -> entries maintain LRU information
  *
  * @since GemFire 3.5.1
- *
- *
  */
 public abstract class VMStatsDiskLRURegionEntry extends AbstractDiskLRURegionEntry {
   protected VMStatsDiskLRURegionEntry(RegionEntryContext context, Object value) {

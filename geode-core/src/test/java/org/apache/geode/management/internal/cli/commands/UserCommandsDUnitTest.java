@@ -45,7 +45,16 @@ import static org.apache.geode.test.dunit.Assert.assertEquals;
 public class UserCommandsDUnitTest extends CliCommandTestBase {
 
   private static final long serialVersionUID = 1L;
-  final File jarDirectory = new File((new File(ClassPathLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath())).getParent(), "ext");
+  final File jarDirectory =
+      new File(
+          (new File(
+                  ClassPathLoader.class
+                      .getProtectionDomain()
+                      .getCodeSource()
+                      .getLocation()
+                      .getPath()))
+              .getParent(),
+          "ext");
   final File jarFile = new File(this.jarDirectory, "UserCommandsDUnit.jar");
   boolean deleteJarDirectory = false;
 
@@ -66,16 +75,19 @@ public class UserCommandsDUnitTest extends CliCommandTestBase {
     ClassPathLoader.setLatestToDefault();
     CommandManager.clearInstance();
 
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      private static final long serialVersionUID = 1L;
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              private static final long serialVersionUID = 1L;
 
-      @Override
-      public void run() {
-        System.clearProperty(CommandManager.USER_CMD_PACKAGES_PROPERTY);
-        ClassPathLoader.setLatestToDefault();
-        CommandManager.clearInstance();
-      }
-    });
+              @Override
+              public void run() {
+                System.clearProperty(CommandManager.USER_CMD_PACKAGES_PROPERTY);
+                ClassPathLoader.setLatestToDefault();
+                CommandManager.clearInstance();
+              }
+            });
   }
 
   public void createUserCommandJarFile() throws IOException {
@@ -85,7 +97,8 @@ public class UserCommandsDUnitTest extends CliCommandTestBase {
 
     stringBuffer.append("package junit.ucdunit;");
     stringBuffer.append("import org.springframework.shell.core.CommandMarker;");
-    stringBuffer.append("import org.springframework.shell.core.annotation.CliAvailabilityIndicator;");
+    stringBuffer.append(
+        "import org.springframework.shell.core.annotation.CliAvailabilityIndicator;");
     stringBuffer.append("import org.springframework.shell.core.annotation.CliCommand;");
     stringBuffer.append("import org.springframework.shell.core.annotation.CliOption;");
     stringBuffer.append("import org.apache.geode.management.cli.Result;");
@@ -93,15 +106,19 @@ public class UserCommandsDUnitTest extends CliCommandTestBase {
     stringBuffer.append("import org.apache.geode.management.internal.cli.result.ResultBuilder;");
     stringBuffer.append("import org.apache.geode.management.internal.cli.shell.Gfsh;");
 
-    stringBuffer.append("public final class UCDunitClass implements CommandMarker { public UCDunitClass() {}");
+    stringBuffer.append(
+        "public final class UCDunitClass implements CommandMarker { public UCDunitClass() {}");
     stringBuffer.append("@CliCommand(value = { \"ucdunitcmd\" }, help = \"ucdunitcmd help\")");
-    stringBuffer.append("public final Result ucdunitcmd(@CliOption(key = { \"name\" }, help = \"ucdunitcmd name help\") String name) {");
+    stringBuffer.append(
+        "public final Result ucdunitcmd(@CliOption(key = { \"name\" }, help = \"ucdunitcmd name help\") String name) {");
     stringBuffer.append("return ResultBuilder.createInfoResult(\"ucdunitcmd \" + name); }");
     stringBuffer.append("@CliAvailabilityIndicator({ \"ucdunitcmd\" })");
     stringBuffer.append("public final boolean isAvailable() { return true; } }");
 
     ClassBuilder classBuilder = new ClassBuilder();
-    final byte[] jarBytes = classBuilder.createJarFromClassContent("junit/ucdunit/UCDunitClass", stringBuffer.toString());
+    final byte[] jarBytes =
+        classBuilder.createJarFromClassContent(
+            "junit/ucdunit/UCDunitClass", stringBuffer.toString());
 
     final FileOutputStream outStream = new FileOutputStream(this.jarFile);
     outStream.write(jarBytes);
@@ -115,16 +132,19 @@ public class UserCommandsDUnitTest extends CliCommandTestBase {
     ClassPathLoader.setLatestToDefault();
     CommandManager.clearInstance();
 
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      private static final long serialVersionUID = 1L;
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              private static final long serialVersionUID = 1L;
 
-      @Override
-      public void run() {
-        System.setProperty(CommandManager.USER_CMD_PACKAGES_PROPERTY, "junit.ucdunit");
-        ClassPathLoader.setLatestToDefault();
-        CommandManager.clearInstance();
-      }
-    });
+              @Override
+              public void run() {
+                System.setProperty(CommandManager.USER_CMD_PACKAGES_PROPERTY, "junit.ucdunit");
+                ClassPathLoader.setLatestToDefault();
+                CommandManager.clearInstance();
+              }
+            });
 
     setUpJmxManagerOnVm0ThenConnect(null);
 
@@ -139,15 +159,18 @@ public class UserCommandsDUnitTest extends CliCommandTestBase {
     ClassPathLoader.setLatestToDefault();
     CommandManager.clearInstance();
 
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      private static final long serialVersionUID = 1L;
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              private static final long serialVersionUID = 1L;
 
-      @Override
-      public void run() {
-        ClassPathLoader.setLatestToDefault();
-        CommandManager.clearInstance();
-      }
-    });
+              @Override
+              public void run() {
+                ClassPathLoader.setLatestToDefault();
+                CommandManager.clearInstance();
+              }
+            });
 
     Properties properties = new Properties();
     properties.setProperty(ConfigurationProperties.USER_COMMAND_PACKAGES, "junit.ucdunit");

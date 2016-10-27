@@ -41,16 +41,15 @@ import org.apache.geode.internal.logging.LogService;
 
 /**
  * Stores the information such as partition attributes and meta data details
- * 
- * 
+ *
  * @since GemFire 6.5
- * 
  */
 public class ClientPartitionAdvisor {
 
   private static final Logger logger = LogService.getLogger();
 
-  private final ConcurrentMap<Integer, List<BucketServerLocation66>> bucketServerLocationsMap = new ConcurrentHashMap<Integer, List<BucketServerLocation66>>();
+  private final ConcurrentMap<Integer, List<BucketServerLocation66>> bucketServerLocationsMap =
+      new ConcurrentHashMap<Integer, List<BucketServerLocation66>>();
 
   private final int totalNumBuckets;
 
@@ -67,20 +66,28 @@ public class ClientPartitionAdvisor {
   private Random random = new Random();
 
   @SuppressWarnings("unchecked")
-  public ClientPartitionAdvisor(int totalNumBuckets, String colocatedWith, String partitionResolverName, Set<FixedPartitionAttributes> fpaSet) {
+  public ClientPartitionAdvisor(
+      int totalNumBuckets,
+      String colocatedWith,
+      String partitionResolverName,
+      Set<FixedPartitionAttributes> fpaSet) {
 
     this.totalNumBuckets = totalNumBuckets;
     this.colocatedWith = colocatedWith;
     try {
       if (partitionResolverName != null) {
-        this.partitionResolver = (PartitionResolver) ClassPathLoader.getLatest().forName(partitionResolverName).newInstance();
+        this.partitionResolver =
+            (PartitionResolver)
+                ClassPathLoader.getLatest().forName(partitionResolverName).newInstance();
       }
     } catch (Exception e) {
       if (logger.isErrorEnabled()) {
         logger.error(e.getMessage(), e);
       }
 
-      throw new InternalGemFireException(LocalizedStrings.ClientPartitionAdvisor_CANNOT_CREATE_AN_INSTANCE_OF_PARTITION_RESOLVER_0.toLocalizedString(partitionResolverName));
+      throw new InternalGemFireException(
+          LocalizedStrings.ClientPartitionAdvisor_CANNOT_CREATE_AN_INSTANCE_OF_PARTITION_RESOLVER_0
+              .toLocalizedString(partitionResolverName));
     }
     if (fpaSet != null) {
       fixedPAMap = new ConcurrentHashMap<String, List<Integer>>();
@@ -119,11 +126,11 @@ public class ClientPartitionAdvisor {
     ArrayList<Integer> bucketList = new ArrayList<Integer>(this.bucketServerLocationsMap.keySet());
     int size = bucketList.size();
     if (size > 0) {
-      List<BucketServerLocation66> locations = this.bucketServerLocationsMap.get(bucketList.get(random.nextInt(size)));
+      List<BucketServerLocation66> locations =
+          this.bucketServerLocationsMap.get(bucketList.get(random.nextInt(size)));
       if (locations != null) {
         List<BucketServerLocation66> serverList = new ArrayList<BucketServerLocation66>(locations);
-        if (serverList.size() == 0)
-          return null;
+        if (serverList.size() == 0) return null;
         return serverList.get(0);
       }
     }
@@ -132,7 +139,8 @@ public class ClientPartitionAdvisor {
 
   public List<BucketServerLocation66> adviseServerLocations(int bucketId) {
     if (this.bucketServerLocationsMap.containsKey(bucketId)) {
-      List<BucketServerLocation66> locationsCopy = new ArrayList<BucketServerLocation66>(this.bucketServerLocationsMap.get(bucketId));
+      List<BucketServerLocation66> locationsCopy =
+          new ArrayList<BucketServerLocation66>(this.bucketServerLocationsMap.get(bucketId));
       return locationsCopy;
     }
     return null;
@@ -151,7 +159,8 @@ public class ClientPartitionAdvisor {
     return null;
   }
 
-  public void updateBucketServerLocations(int bucketId, List<BucketServerLocation66> bucketServerLocations, ClientMetadataService cms) {
+  public void updateBucketServerLocations(
+      int bucketId, List<BucketServerLocation66> bucketServerLocations, ClientMetadataService cms) {
     List<BucketServerLocation66> locationCopy = new ArrayList<BucketServerLocation66>();
     List<BucketServerLocation66> locations;
 
@@ -180,15 +189,18 @@ public class ClientPartitionAdvisor {
   }
 
   public void removeBucketServerLocation(ServerLocation serverLocation) {
-    Iterator<Map.Entry<Integer, List<BucketServerLocation66>>> iter = this.bucketServerLocationsMap.entrySet().iterator();
+    Iterator<Map.Entry<Integer, List<BucketServerLocation66>>> iter =
+        this.bucketServerLocationsMap.entrySet().iterator();
     while (iter.hasNext()) {
       Map.Entry<Integer, List<BucketServerLocation66>> entry = iter.next();
       Integer key = entry.getKey();
       List<BucketServerLocation66> oldLocations = entry.getValue();
-      List<BucketServerLocation66> newLocations = new ArrayList<BucketServerLocation66>(oldLocations);
+      List<BucketServerLocation66> newLocations =
+          new ArrayList<BucketServerLocation66>(oldLocations);
       // if this serverLocation contains in the list the remove the
       // serverLocation and update the map with new List
-      while (newLocations.remove(serverLocation) && !this.bucketServerLocationsMap.replace(key, oldLocations, newLocations)) {
+      while (newLocations.remove(serverLocation)
+          && !this.bucketServerLocationsMap.replace(key, oldLocations, newLocations)) {
         oldLocations = this.bucketServerLocationsMap.get(key);
         newLocations = new ArrayList<BucketServerLocation66>(oldLocations);
       }
@@ -201,17 +213,14 @@ public class ClientPartitionAdvisor {
 
   /**
    * This method returns total number of buckets for a PartitionedRegion.
-   * 
+   *
    * @return total number of buckets for a PartitionedRegion.
    */
-
   public int getTotalNumBuckets() {
     return this.totalNumBuckets;
   }
 
-  /**
-   * @return the serverGroup
-   */
+  /** @return the serverGroup */
   public String getServerGroup() {
     return this.serverGroup;
   }
@@ -220,16 +229,14 @@ public class ClientPartitionAdvisor {
     this.serverGroup = group;
   }
 
-  /**
-   * Returns name of the colocated PartitionedRegion on CacheServer
-   */
+  /** Returns name of the colocated PartitionedRegion on CacheServer */
   public String getColocatedWith() {
     return this.colocatedWith;
   }
 
   /**
    * Returns the PartitionResolver set for custom partitioning
-   * 
+   *
    * @return <code>PartitionResolver</code> for the PartitionedRegion
    */
   public PartitionResolver getPartitionResolver() {

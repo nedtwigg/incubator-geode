@@ -25,12 +25,14 @@ import org.apache.geode.internal.cache.tier.MessageType;
 
 /**
  * Does a region registerInterestList on a server
+ *
  * @since GemFire 5.7
  */
 public class RegisterInterestListOp {
   /**
-   * Does a region registerInterestList on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region registerInterestList on a server using connections from the given pool to
+   * communicate with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the registerInterestList on
    * @param keys list of keys we are interested in
@@ -39,8 +41,17 @@ public class RegisterInterestListOp {
    * @param regionDataPolicy the data policy ordinal of the region
    * @return list of keys
    */
-  public static List execute(ExecutablePool pool, String region, List keys, InterestResultPolicy policy, boolean isDurable, boolean receiveUpdatesAsInvalidates, byte regionDataPolicy) {
-    AbstractOp op = new RegisterInterestListOpImpl(region, keys, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
+  public static List execute(
+      ExecutablePool pool,
+      String region,
+      List keys,
+      InterestResultPolicy policy,
+      boolean isDurable,
+      boolean receiveUpdatesAsInvalidates,
+      byte regionDataPolicy) {
+    AbstractOp op =
+        new RegisterInterestListOpImpl(
+            region, keys, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
     return (List) pool.executeOnQueuesAndReturnPrimaryResult(op);
   }
 
@@ -49,8 +60,9 @@ public class RegisterInterestListOp {
   }
 
   /**
-   * Does a region registerInterestList on a server using connections from the given pool
-   * to communicate with the given server location.
+   * Does a region registerInterestList on a server using connections from the given pool to
+   * communicate with the given server location.
+   *
    * @param sl the server to do the register interest on.
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the registerInterest on
@@ -60,14 +72,25 @@ public class RegisterInterestListOp {
    * @param regionDataPolicy the data policy ordinal of the region
    * @return list of keys
    */
-  public static List executeOn(ServerLocation sl, ExecutablePool pool, String region, List keys, InterestResultPolicy policy, boolean isDurable, boolean receiveUpdatesAsInvalidates, byte regionDataPolicy) {
-    AbstractOp op = new RegisterInterestListOpImpl(region, keys, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
+  public static List executeOn(
+      ServerLocation sl,
+      ExecutablePool pool,
+      String region,
+      List keys,
+      InterestResultPolicy policy,
+      boolean isDurable,
+      boolean receiveUpdatesAsInvalidates,
+      byte regionDataPolicy) {
+    AbstractOp op =
+        new RegisterInterestListOpImpl(
+            region, keys, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
     return (List) pool.executeOn(sl, op);
   }
 
   /**
-   * Does a region registerInterestList on a server using connections from the given pool
-   * to communicate with the given server location.
+   * Does a region registerInterestList on a server using connections from the given pool to
+   * communicate with the given server location.
+   *
    * @param conn the connection to do the register interest on.
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the registerInterest on
@@ -77,34 +100,48 @@ public class RegisterInterestListOp {
    * @param regionDataPolicy the data policy ordinal of the region
    * @return list of keys
    */
-  public static List executeOn(Connection conn, ExecutablePool pool, String region, List keys, InterestResultPolicy policy, boolean isDurable, boolean receiveUpdatesAsInvalidates, byte regionDataPolicy) {
-    AbstractOp op = new RegisterInterestListOpImpl(region, keys, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
+  public static List executeOn(
+      Connection conn,
+      ExecutablePool pool,
+      String region,
+      List keys,
+      InterestResultPolicy policy,
+      boolean isDurable,
+      boolean receiveUpdatesAsInvalidates,
+      byte regionDataPolicy) {
+    AbstractOp op =
+        new RegisterInterestListOpImpl(
+            region, keys, policy, isDurable, receiveUpdatesAsInvalidates, regionDataPolicy);
     return (List) pool.executeOn(conn, op);
   }
 
   private static class RegisterInterestListOpImpl extends RegisterInterestOpImpl {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
-    public RegisterInterestListOpImpl(String region, List keys, InterestResultPolicy policy, boolean isDurable, boolean receiveUpdatesAsInvalidates, byte regionDataPolicy) {
+    /** @throws org.apache.geode.SerializationException if serialization fails */
+    public RegisterInterestListOpImpl(
+        String region,
+        List keys,
+        InterestResultPolicy policy,
+        boolean isDurable,
+        boolean receiveUpdatesAsInvalidates,
+        byte regionDataPolicy) {
       super(region, MessageType.REGISTER_INTEREST_LIST, 6);
       getMessage().addStringPart(region);
       getMessage().addObjPart(policy);
       {
         byte durableByte = (byte) (isDurable ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] { durableByte });
+        getMessage().addBytesPart(new byte[] {durableByte});
       }
-      //Set chunk size of HDOS for keys      
+      //Set chunk size of HDOS for keys
       getMessage().setChunkSize(keys.size() * 16);
       getMessage().addObjPart(keys);
 
       byte notifyByte = (byte) (receiveUpdatesAsInvalidates ? 0x01 : 0x00);
-      getMessage().addBytesPart(new byte[] { notifyByte });
+      getMessage().addBytesPart(new byte[] {notifyByte});
 
       // The second byte '1' below tells server to serialize values in VersionObjectList.
       // Java clients always expect serializeValues to be true in VersionObjectList unlike Native clients.
       // This was being sent as part of GetAllOp prior to fixing #43684.
-      getMessage().addBytesPart(new byte[] { regionDataPolicy, (byte) 0x01 });
+      getMessage().addBytesPart(new byte[] {regionDataPolicy, (byte) 0x01});
     }
 
     @Override

@@ -50,10 +50,10 @@ public class CommandModes {
       }
       return _allModes;
     }
-
   }
 
-  private Map<String, Map<String, CommandMode>> modeMap = new HashMap<String, Map<String, CommandMode>>();
+  private Map<String, Map<String, CommandMode>> modeMap =
+      new HashMap<String, Map<String, CommandMode>>();
 
   private void readAllModes() {
     try {
@@ -117,25 +117,20 @@ public class CommandModes {
 
   private String[] toStringArray(JSONArray jsonArray) throws JSONException {
     String[] array = new String[jsonArray.length()];
-    for (int i = 0; i < array.length; i++)
-      array[i] = jsonArray.getString(i);
+    for (int i = 0; i < array.length; i++) array[i] = jsonArray.getString(i);
     return array;
   }
 
   public Collection<CommandMode> getCommandModes(String name) {
     Map<String, CommandMode> commandModes = modeMap.get(name);
-    if (commandModes != null)
-      return commandModes.values();
-    else
-      return null;
+    if (commandModes != null) return commandModes.values();
+    else return null;
   }
 
   public CommandMode getCommandMode(String commandName, String modeName) {
     Map<String, CommandMode> commandModes = modeMap.get(commandName);
-    if (commandModes != null)
-      return commandModes.get(modeName);
-    else
-      return null;
+    if (commandModes != null) return commandModes.get(modeName);
+    else return null;
   }
 
   public String toString() {
@@ -152,5 +147,4 @@ public class CommandModes {
       return "CM: name : " + name + " text:" + text;
     }
   }
-
 }

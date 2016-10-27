@@ -38,10 +38,9 @@ import org.apache.geode.internal.process.ProcessStreamReader.ReadingMode;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Tests BlockingProcessStreamReader. Most tests are skipped on Windows due to 
- * TRAC bug #51967 which is caused by a JDK bug. The test {@link #hangsOnWindows}
- * verifies the existence of the bug.
- * 
+ * Tests BlockingProcessStreamReader. Most tests are skipped on Windows due to TRAC bug #51967 which
+ * is caused by a JDK bug. The test {@link #hangsOnWindows} verifies the existence of the bug.
+ *
  * @since GemFire 8.2
  */
 @Category(IntegrationTest.class)
@@ -68,9 +67,15 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
 
     this.process = new ProcessBuilder(createCommandLine(ProcessSleeps.class)).start();
 
-    this.stderr = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build();
+    this.stderr =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build();
 
-    this.stdout = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build();
+    this.stdout =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build();
 
     this.stderr.start();
     this.stdout.start();
@@ -80,20 +85,22 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
     assertEventuallyIsRunning(this.stderr);
     assertEventuallyIsRunning(this.stdout);
 
-    Future<Boolean> future = this.futures.submit(new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws IOException {
-        process.getErrorStream().close();
-        process.getOutputStream().close();
-        process.getInputStream().close();
-        return true;
-      }
-    });
+    Future<Boolean> future =
+        this.futures.submit(
+            new Callable<Boolean>() {
+              @Override
+              public Boolean call() throws IOException {
+                process.getErrorStream().close();
+                process.getOutputStream().close();
+                process.getInputStream().close();
+                return true;
+              }
+            });
 
     try {
       future.get(HANG_TIMEOUT, TimeUnit.SECONDS);
-      // if the following fails then perhaps we're testing with a new JRE that 
-      // fixes blocking reads of process streams on windows 
+      // if the following fails then perhaps we're testing with a new JRE that
+      // fixes blocking reads of process streams on windows
       fail("future should have timedout due to hang on windows");
     } catch (TimeoutException expected) {
       // verified hang on windows which causes TRAC bug #51967
@@ -108,9 +115,15 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
 
     this.process = new ProcessBuilder(createCommandLine(ProcessSleeps.class)).start();
 
-    this.stderr = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build();
+    this.stderr =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build();
 
-    this.stdout = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build();
+    this.stdout =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build();
 
     this.stderr.start();
     this.stdout.start();
@@ -135,9 +148,15 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
 
     this.process = new ProcessBuilder(createCommandLine(ProcessSleeps.class)).start();
 
-    this.stderr = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).build();
+    this.stderr =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .build();
 
-    this.stdout = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).build();
+    this.stdout =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .build();
 
     this.stderr.start();
     this.stdout.start();
@@ -166,24 +185,36 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
     this.process = new ProcessBuilder(createCommandLine(ProcessPrintsToStdout.class)).start();
 
     final StringBuffer stderrBuffer = new StringBuffer();
-    InputListener stderrListener = new InputListener() {
-      @Override
-      public void notifyInputLine(String line) {
-        stderrBuffer.append(line);
-      }
-    };
+    InputListener stderrListener =
+        new InputListener() {
+          @Override
+          public void notifyInputLine(String line) {
+            stderrBuffer.append(line);
+          }
+        };
 
     final StringBuffer stdoutBuffer = new StringBuffer();
-    InputListener stdoutListener = new InputListener() {
-      @Override
-      public void notifyInputLine(String line) {
-        stdoutBuffer.append(line);
-      }
-    };
+    InputListener stdoutListener =
+        new InputListener() {
+          @Override
+          public void notifyInputLine(String line) {
+            stdoutBuffer.append(line);
+          }
+        };
 
-    this.stderr = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(stderrListener).readingMode(ReadingMode.NON_BLOCKING).build();
+    this.stderr =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .inputListener(stderrListener)
+            .readingMode(ReadingMode.NON_BLOCKING)
+            .build();
 
-    this.stdout = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(stdoutListener).readingMode(ReadingMode.NON_BLOCKING).build();
+    this.stdout =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .inputListener(stdoutListener)
+            .readingMode(ReadingMode.NON_BLOCKING)
+            .build();
 
     this.stderr.start();
     this.stdout.start();
@@ -192,12 +223,16 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
     assertEventuallyIsRunning(this.stdout);
 
     // wait for process to die
-    assertEventuallyFalse("Process never died", new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        return ProcessUtils.isProcessAlive(process);
-      }
-    }, WAIT_FOR_PROCESS_TO_DIE_TIMEOUT, INTERVAL);
+    assertEventuallyFalse(
+        "Process never died",
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            return ProcessUtils.isProcessAlive(process);
+          }
+        },
+        WAIT_FOR_PROCESS_TO_DIE_TIMEOUT,
+        INTERVAL);
 
     final int exitValue = this.process.exitValue();
     assertEquals(0, exitValue);
@@ -216,7 +251,11 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
     assertEquals("", stderrBuffer.toString());
 
     //System.out.println("stdout=\n" + stdoutBuffer.toString());
-    StringBuilder sb = new StringBuilder().append(ProcessPrintsToStdout.LINES[0]).append(ProcessPrintsToStdout.LINES[1]).append(ProcessPrintsToStdout.LINES[2]);
+    StringBuilder sb =
+        new StringBuilder()
+            .append(ProcessPrintsToStdout.LINES[0])
+            .append(ProcessPrintsToStdout.LINES[1])
+            .append(ProcessPrintsToStdout.LINES[2]);
     assertEquals(sb.toString(), stdoutBuffer.toString());
 
     //System.out.println("Closing streams");
@@ -233,35 +272,51 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
     this.process = new ProcessBuilder(createCommandLine(ProcessPrintsToStderr.class)).start();
 
     final StringBuffer stderrBuffer = new StringBuffer();
-    InputListener stderrListener = new InputListener() {
-      @Override
-      public void notifyInputLine(String line) {
-        stderrBuffer.append(line);
-      }
-    };
+    InputListener stderrListener =
+        new InputListener() {
+          @Override
+          public void notifyInputLine(String line) {
+            stderrBuffer.append(line);
+          }
+        };
 
     final StringBuffer stdoutBuffer = new StringBuffer();
-    InputListener stdoutListener = new InputListener() {
-      @Override
-      public void notifyInputLine(String line) {
-        stdoutBuffer.append(line);
-      }
-    };
+    InputListener stdoutListener =
+        new InputListener() {
+          @Override
+          public void notifyInputLine(String line) {
+            stdoutBuffer.append(line);
+          }
+        };
 
-    this.stderr = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(stderrListener).readingMode(ReadingMode.NON_BLOCKING).build();
+    this.stderr =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .inputListener(stderrListener)
+            .readingMode(ReadingMode.NON_BLOCKING)
+            .build();
 
-    this.stdout = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(stdoutListener).readingMode(ReadingMode.NON_BLOCKING).build();
+    this.stdout =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .inputListener(stdoutListener)
+            .readingMode(ReadingMode.NON_BLOCKING)
+            .build();
 
     this.stderr.start();
     this.stdout.start();
 
     // wait for process to die
-    assertEventuallyFalse("Process never died", new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        return ProcessUtils.isProcessAlive(process);
-      }
-    }, WAIT_FOR_PROCESS_TO_DIE_TIMEOUT, INTERVAL);
+    assertEventuallyFalse(
+        "Process never died",
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            return ProcessUtils.isProcessAlive(process);
+          }
+        },
+        WAIT_FOR_PROCESS_TO_DIE_TIMEOUT,
+        INTERVAL);
 
     final int exitValue = this.process.exitValue();
     assertEquals(0, exitValue);
@@ -277,7 +332,11 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
     this.stdout.stop();
 
     //System.out.println("stderr=\n" + stderrBuffer.toString());
-    StringBuilder sb = new StringBuilder().append(ProcessPrintsToStderr.LINES[0]).append(ProcessPrintsToStderr.LINES[1]).append(ProcessPrintsToStderr.LINES[2]);
+    StringBuilder sb =
+        new StringBuilder()
+            .append(ProcessPrintsToStderr.LINES[0])
+            .append(ProcessPrintsToStderr.LINES[1])
+            .append(ProcessPrintsToStderr.LINES[2]);
     assertEquals(sb.toString(), stderrBuffer.toString());
 
     //System.out.println("stdout=\n" + stdoutBuffer.toString());
@@ -297,35 +356,51 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
     this.process = new ProcessBuilder(createCommandLine(ProcessPrintsToBoth.class)).start();
 
     final StringBuffer stderrBuffer = new StringBuffer();
-    InputListener stderrListener = new InputListener() {
-      @Override
-      public void notifyInputLine(String line) {
-        stderrBuffer.append(line);
-      }
-    };
+    InputListener stderrListener =
+        new InputListener() {
+          @Override
+          public void notifyInputLine(String line) {
+            stderrBuffer.append(line);
+          }
+        };
 
     final StringBuffer stdoutBuffer = new StringBuffer();
-    InputListener stdoutListener = new InputListener() {
-      @Override
-      public void notifyInputLine(String line) {
-        stdoutBuffer.append(line);
-      }
-    };
+    InputListener stdoutListener =
+        new InputListener() {
+          @Override
+          public void notifyInputLine(String line) {
+            stdoutBuffer.append(line);
+          }
+        };
 
-    this.stderr = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(stderrListener).readingMode(ReadingMode.NON_BLOCKING).build();
+    this.stderr =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .inputListener(stderrListener)
+            .readingMode(ReadingMode.NON_BLOCKING)
+            .build();
 
-    this.stdout = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(stdoutListener).readingMode(ReadingMode.NON_BLOCKING).build();
+    this.stdout =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .inputListener(stdoutListener)
+            .readingMode(ReadingMode.NON_BLOCKING)
+            .build();
 
     this.stderr.start();
     this.stdout.start();
 
     // wait for process to die
-    assertEventuallyFalse("Process never died", new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        return ProcessUtils.isProcessAlive(process);
-      }
-    }, WAIT_FOR_PROCESS_TO_DIE_TIMEOUT, INTERVAL);
+    assertEventuallyFalse(
+        "Process never died",
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            return ProcessUtils.isProcessAlive(process);
+          }
+        },
+        WAIT_FOR_PROCESS_TO_DIE_TIMEOUT,
+        INTERVAL);
 
     final int exitValue = this.process.exitValue();
     assertEquals(0, exitValue);
@@ -341,11 +416,19 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
     this.stdout.stop();
 
     //System.out.println("stderr=\n" + stderrBuffer.toString());
-    StringBuilder sb = new StringBuilder().append(ProcessPrintsToBoth.ERR_LINES[0]).append(ProcessPrintsToBoth.ERR_LINES[1]).append(ProcessPrintsToBoth.ERR_LINES[2]);
+    StringBuilder sb =
+        new StringBuilder()
+            .append(ProcessPrintsToBoth.ERR_LINES[0])
+            .append(ProcessPrintsToBoth.ERR_LINES[1])
+            .append(ProcessPrintsToBoth.ERR_LINES[2]);
     assertEquals(sb.toString(), stderrBuffer.toString());
 
     //System.out.println("stdout=\n" + stdoutBuffer.toString());
-    sb = new StringBuilder().append(ProcessPrintsToBoth.OUT_LINES[0]).append(ProcessPrintsToBoth.OUT_LINES[1]).append(ProcessPrintsToBoth.OUT_LINES[2]);
+    sb =
+        new StringBuilder()
+            .append(ProcessPrintsToBoth.OUT_LINES[0])
+            .append(ProcessPrintsToBoth.OUT_LINES[1])
+            .append(ProcessPrintsToBoth.OUT_LINES[2]);
     assertEquals(sb.toString(), stdoutBuffer.toString());
 
     //System.out.println("Closing streams");
@@ -362,35 +445,51 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
     this.process = new ProcessBuilder(createCommandLine(ProcessThrowsError.class)).start();
 
     final StringBuffer stderrBuffer = new StringBuffer();
-    InputListener stderrListener = new InputListener() {
-      @Override
-      public void notifyInputLine(String line) {
-        stderrBuffer.append(line);
-      }
-    };
+    InputListener stderrListener =
+        new InputListener() {
+          @Override
+          public void notifyInputLine(String line) {
+            stderrBuffer.append(line);
+          }
+        };
 
     final StringBuffer stdoutBuffer = new StringBuffer();
-    InputListener stdoutListener = new InputListener() {
-      @Override
-      public void notifyInputLine(String line) {
-        stdoutBuffer.append(line);
-      }
-    };
+    InputListener stdoutListener =
+        new InputListener() {
+          @Override
+          public void notifyInputLine(String line) {
+            stdoutBuffer.append(line);
+          }
+        };
 
-    this.stderr = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getErrorStream()).inputListener(stderrListener).readingMode(ReadingMode.NON_BLOCKING).build();
+    this.stderr =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getErrorStream())
+            .inputListener(stderrListener)
+            .readingMode(ReadingMode.NON_BLOCKING)
+            .build();
 
-    this.stdout = new ProcessStreamReader.Builder(this.process).inputStream(this.process.getInputStream()).inputListener(stdoutListener).readingMode(ReadingMode.NON_BLOCKING).build();
+    this.stdout =
+        new ProcessStreamReader.Builder(this.process)
+            .inputStream(this.process.getInputStream())
+            .inputListener(stdoutListener)
+            .readingMode(ReadingMode.NON_BLOCKING)
+            .build();
 
     this.stderr.start();
     this.stdout.start();
 
     // wait for process to die
-    assertEventuallyFalse("Process never died", new Callable<Boolean>() {
-      @Override
-      public Boolean call() throws Exception {
-        return ProcessUtils.isProcessAlive(process);
-      }
-    }, WAIT_FOR_PROCESS_TO_DIE_TIMEOUT, INTERVAL);
+    assertEventuallyFalse(
+        "Process never died",
+        new Callable<Boolean>() {
+          @Override
+          public Boolean call() throws Exception {
+            return ProcessUtils.isProcessAlive(process);
+          }
+        },
+        WAIT_FOR_PROCESS_TO_DIE_TIMEOUT,
+        INTERVAL);
 
     final int exitValue = this.process.exitValue();
     assertNotEquals(0, exitValue);
@@ -406,7 +505,9 @@ public class BlockingProcessStreamReaderJUnitTest extends ProcessStreamReaderTes
     this.stdout.stop();
 
     //System.out.println("stderr=\n" + stderrBuffer.toString());
-    assertTrue(stderrBuffer.toString() + " does not contain " + ProcessThrowsError.ERROR_MSG, stderrBuffer.toString().contains(ProcessThrowsError.ERROR_MSG));
+    assertTrue(
+        stderrBuffer.toString() + " does not contain " + ProcessThrowsError.ERROR_MSG,
+        stderrBuffer.toString().contains(ProcessThrowsError.ERROR_MSG));
 
     //System.out.println("stdout=\n" + stdoutBuffer.toString());
 

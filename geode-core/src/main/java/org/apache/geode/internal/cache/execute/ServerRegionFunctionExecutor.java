@@ -38,22 +38,23 @@ import java.util.Set;
 import org.apache.logging.log4j.Logger;
 
 /**
+ * Executes Function with FunctionService#onRegion(Region region) in client server mode.
  *
- * Executes Function with FunctionService#onRegion(Region region) in client server mode. 
- * 
- * @see FunctionService#onRegion(Region) * 
+ * @see FunctionService#onRegion(Region) *
  * @since GemFire 5.8 LA
- *
  */
 public class ServerRegionFunctionExecutor extends AbstractExecution {
   private static final Logger logger = LogService.getLogger();
 
-  final private LocalRegion region;
+  private final LocalRegion region;
   private boolean executeOnBucketSet = false;
 
   public ServerRegionFunctionExecutor(Region r, ProxyCache proxyCache) {
     if (r == null) {
-      throw new IllegalArgumentException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("Region"));
+      throw new IllegalArgumentException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("Region"));
     }
     this.region = (LocalRegion) r;
     this.proxyCache = proxyCache;
@@ -68,7 +69,8 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
   //    }
   //  }
 
-  private ServerRegionFunctionExecutor(ServerRegionFunctionExecutor serverRegionFunctionExecutor, Object args) {
+  private ServerRegionFunctionExecutor(
+      ServerRegionFunctionExecutor serverRegionFunctionExecutor, Object args) {
     super(serverRegionFunctionExecutor);
 
     this.region = serverRegionFunctionExecutor.region;
@@ -78,7 +80,9 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
     this.executeOnBucketSet = serverRegionFunctionExecutor.executeOnBucketSet;
   }
 
-  private ServerRegionFunctionExecutor(ServerRegionFunctionExecutor serverRegionFunctionExecutor, MemberMappedArgument memberMapargs) {
+  private ServerRegionFunctionExecutor(
+      ServerRegionFunctionExecutor serverRegionFunctionExecutor,
+      MemberMappedArgument memberMapargs) {
     super(serverRegionFunctionExecutor);
 
     this.region = serverRegionFunctionExecutor.region;
@@ -88,7 +92,8 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
     this.executeOnBucketSet = serverRegionFunctionExecutor.executeOnBucketSet;
   }
 
-  private ServerRegionFunctionExecutor(ServerRegionFunctionExecutor serverRegionFunctionExecutor, ResultCollector rc) {
+  private ServerRegionFunctionExecutor(
+      ServerRegionFunctionExecutor serverRegionFunctionExecutor, ResultCollector rc) {
     super(serverRegionFunctionExecutor);
 
     this.region = serverRegionFunctionExecutor.region;
@@ -98,7 +103,8 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
     this.executeOnBucketSet = serverRegionFunctionExecutor.executeOnBucketSet;
   }
 
-  private ServerRegionFunctionExecutor(ServerRegionFunctionExecutor serverRegionFunctionExecutor, Set filter2) {
+  private ServerRegionFunctionExecutor(
+      ServerRegionFunctionExecutor serverRegionFunctionExecutor, Set filter2) {
 
     super(serverRegionFunctionExecutor);
 
@@ -108,7 +114,10 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
     this.executeOnBucketSet = serverRegionFunctionExecutor.executeOnBucketSet;
   }
 
-  private ServerRegionFunctionExecutor(ServerRegionFunctionExecutor serverRegionFunctionExecutor, Set<Integer> bucketsAsFilter, boolean executeOnBucketSet) {
+  private ServerRegionFunctionExecutor(
+      ServerRegionFunctionExecutor serverRegionFunctionExecutor,
+      Set<Integer> bucketsAsFilter,
+      boolean executeOnBucketSet) {
 
     super(serverRegionFunctionExecutor);
 
@@ -120,7 +129,10 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
 
   public Execution withFilter(Set fltr) {
     if (fltr == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("filter"));
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("filter"));
     }
     this.executeOnBucketSet = false;
     return new ServerRegionFunctionExecutor(this, fltr);
@@ -128,7 +140,10 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
 
   public InternalExecution withBucketFilter(Set<Integer> bucketIDs) {
     if (bucketIDs == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("buckets as filter"));
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("buckets as filter"));
     }
     return new ServerRegionFunctionExecutor(this, bucketIDs, true /* execute on bucketset*/);
   }
@@ -161,7 +176,8 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
     }
   }
 
-  protected ResultCollector executeFunction(final String functionId, boolean resultReq, boolean isHA, boolean optimizeForWrite) {
+  protected ResultCollector executeFunction(
+      final String functionId, boolean resultReq, boolean isHA, boolean optimizeForWrite) {
     try {
       if (proxyCache != null) {
         if (this.proxyCache.isClosed()) {
@@ -187,7 +203,8 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
     }
   }
 
-  private ResultCollector executeOnServer(Function function, ResultCollector collector, byte hasResult) throws FunctionException {
+  private ResultCollector executeOnServer(
+      Function function, ResultCollector collector, byte hasResult) throws FunctionException {
     ServerRegionProxy srp = getServerRegionProxy();
     FunctionStats stats = FunctionStats.getFunctionStats(function.getId(), this.region.getSystem());
     try {
@@ -206,7 +223,13 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
     }
   }
 
-  private ResultCollector executeOnServer(String functionId, ResultCollector collector, byte hasResult, boolean isHA, boolean optimizeForWrite) throws FunctionException {
+  private ResultCollector executeOnServer(
+      String functionId,
+      ResultCollector collector,
+      byte hasResult,
+      boolean isHA,
+      boolean optimizeForWrite)
+      throws FunctionException {
 
     ServerRegionProxy srp = getServerRegionProxy();
     FunctionStats stats = FunctionStats.getFunctionStats(functionId, this.region.getSystem());
@@ -214,7 +237,15 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
       validateExecution(null, null);
       long start = stats.startTime();
       stats.startFunctionExecution(true);
-      srp.executeFunction(this.region.getFullPath(), functionId, this, collector, hasResult, isHA, optimizeForWrite, false);
+      srp.executeFunction(
+          this.region.getFullPath(),
+          functionId,
+          this,
+          collector,
+          hasResult,
+          isHA,
+          optimizeForWrite,
+          false);
       stats.endFunctionExecution(start, true);
       return collector;
     } catch (FunctionException functionException) {
@@ -244,14 +275,17 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
     }
   }
 
-  private void executeOnServerNoAck(String functionId, byte hasResult, boolean isHA, boolean optimizeForWrite) throws FunctionException {
+  private void executeOnServerNoAck(
+      String functionId, byte hasResult, boolean isHA, boolean optimizeForWrite)
+      throws FunctionException {
     ServerRegionProxy srp = getServerRegionProxy();
     FunctionStats stats = FunctionStats.getFunctionStats(functionId, this.region.getSystem());
     try {
       validateExecution(null, null);
       long start = stats.startTime();
       stats.startFunctionExecution(false);
-      srp.executeFunctionNoAck(this.region.getFullPath(), functionId, this, hasResult, isHA, optimizeForWrite, false);
+      srp.executeFunctionNoAck(
+          this.region.getFullPath(), functionId, this, hasResult, isHA, optimizeForWrite, false);
       stats.endFunctionExecution(start, false);
     } catch (FunctionException functionException) {
       stats.endFunctionExecutionWithException(false);
@@ -272,7 +306,9 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
     } else {
       StringBuffer message = new StringBuffer();
       message.append(srp).append(": ");
-      message.append("No available connection was found. Server Region Proxy is not available for this region " + region.getName());
+      message.append(
+          "No available connection was found. Server Region Proxy is not available for this region "
+              + region.getName());
       throw new FunctionException(message.toString());
     }
   }
@@ -283,26 +319,44 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
 
   @Override
   public String toString() {
-    return new StringBuffer().append("[ ServerRegionExecutor:").append("args=").append(this.args).append(" ;filter=").append(this.filter).append(" ;region=").append(this.region.getName()).append("]").toString();
+    return new StringBuffer()
+        .append("[ ServerRegionExecutor:")
+        .append("args=")
+        .append(this.args)
+        .append(" ;filter=")
+        .append(this.filter)
+        .append(" ;region=")
+        .append(this.region.getName())
+        .append("]")
+        .toString();
   }
 
   public Execution withArgs(Object params) {
     if (params == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("args"));
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("args"));
     }
     return new ServerRegionFunctionExecutor(this, params);
   }
 
   public Execution withCollector(ResultCollector rs) {
     if (rs == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("Result Collector"));
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("Result Collector"));
     }
     return new ServerRegionFunctionExecutor(this, rs);
   }
 
   public InternalExecution withMemberMappedArgument(MemberMappedArgument argument) {
     if (argument == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString("MemberMappedArgument"));
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteRegionFunction_THE_INPUT_0_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString("MemberMappedArgument"));
     }
     return new ServerRegionFunctionExecutor(this, argument);
   }
@@ -323,7 +377,10 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
   @Override
   public ResultCollector execute(final String functionName) {
     if (functionName == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString());
     }
     this.isFnSerializationReqd = false;
     Function functionObject = FunctionService.getFunction(functionName);
@@ -347,64 +404,90 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
   @Override
   public ResultCollector execute(String functionName, boolean hasResult) throws FunctionException {
     if (functionName == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString());
     }
     this.isFnSerializationReqd = false;
     Function functionObject = FunctionService.getFunction(functionName);
     if (functionObject == null) {
       return executeFunction(functionName, hasResult, hasResult, false);
     } else {
-      byte registeredFunctionState = AbstractExecution.getFunctionState(functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
+      byte registeredFunctionState =
+          AbstractExecution.getFunctionState(
+              functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
 
       byte functionState = AbstractExecution.getFunctionState(hasResult, hasResult, false);
       if (registeredFunctionState != functionState) {
-        throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER.toLocalizedString(functionName));
+        throw new FunctionException(
+            LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER
+                .toLocalizedString(functionName));
       }
       return executeFunction(functionObject);
     }
   }
 
   @Override
-  public ResultCollector execute(String functionName, boolean hasResult, boolean isHA) throws FunctionException {
+  public ResultCollector execute(String functionName, boolean hasResult, boolean isHA)
+      throws FunctionException {
     if (functionName == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString());
     }
     this.isFnSerializationReqd = false;
     if (isHA && !hasResult) {
-      throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH.toLocalizedString());
     }
     Function functionObject = FunctionService.getFunction(functionName);
     if (functionObject == null) {
       return executeFunction(functionName, hasResult, isHA, false);
     } else {
-      byte registeredFunctionState = AbstractExecution.getFunctionState(functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
+      byte registeredFunctionState =
+          AbstractExecution.getFunctionState(
+              functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
 
       byte functionState = AbstractExecution.getFunctionState(isHA, hasResult, false);
       if (registeredFunctionState != functionState) {
-        throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER.toLocalizedString(functionName));
+        throw new FunctionException(
+            LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER
+                .toLocalizedString(functionName));
       }
       return executeFunction(functionObject);
     }
   }
 
   @Override
-  public ResultCollector execute(String functionName, boolean hasResult, boolean isHA, boolean isOptimizeForWrite) throws FunctionException {
+  public ResultCollector execute(
+      String functionName, boolean hasResult, boolean isHA, boolean isOptimizeForWrite)
+      throws FunctionException {
     if (functionName == null) {
-      throw new FunctionException(LocalizedStrings.ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings
+              .ExecuteFunction_THE_INPUT_FUNCTION_FOR_THE_EXECUTE_FUNCTION_REQUEST_IS_NULL
+              .toLocalizedString());
     }
     this.isFnSerializationReqd = false;
     if (isHA && !hasResult) {
-      throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH.toLocalizedString());
+      throw new FunctionException(
+          LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH.toLocalizedString());
     }
     Function functionObject = FunctionService.getFunction(functionName);
     if (functionObject == null) {
       return executeFunction(functionName, hasResult, isHA, isOptimizeForWrite);
     } else {
-      byte registeredFunctionState = AbstractExecution.getFunctionState(functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
+      byte registeredFunctionState =
+          AbstractExecution.getFunctionState(
+              functionObject.isHA(), functionObject.hasResult(), functionObject.optimizeForWrite());
 
       byte functionState = AbstractExecution.getFunctionState(isHA, hasResult, isOptimizeForWrite);
       if (registeredFunctionState != functionState) {
-        throw new FunctionException(LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER.toLocalizedString(functionName));
+        throw new FunctionException(
+            LocalizedStrings.FunctionService_FUNCTION_ATTRIBUTE_MISMATCH_CLIENT_SERVER
+                .toLocalizedString(functionName));
       }
       return executeFunction(functionObject);
     }
@@ -413,5 +496,4 @@ public class ServerRegionFunctionExecutor extends AbstractExecution {
   public boolean getExecuteOnBucketSetFlag() {
     return this.executeOnBucketSet;
   }
-
 }

@@ -93,7 +93,8 @@ public class PulseAnonymousUserTest {
     jetty.stop();
   }
 
-  public static void setUpServer(String username, String password, String jsonAuthFile) throws Exception {
+  public static void setUpServer(String username, String password, String jsonAuthFile)
+      throws Exception {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
     final String jmxPropertiesFile = classLoader.getResource("test.properties").getPath();
@@ -119,7 +120,9 @@ public class PulseAnonymousUserTest {
     DesiredCapabilities capabilities = new DesiredCapabilities();
     capabilities.setJavascriptEnabled(true);
     capabilities.setCapability("takesScreenshot", true);
-    capabilities.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/16.0");
+    capabilities.setCapability(
+        "phantomjs.page.settings.userAgent",
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:16.0) Gecko/20121026 Firefox/16.0");
 
     driver = new PhantomJSDriver(capabilities);
     driver.manage().window().maximize();
@@ -135,7 +138,8 @@ public class PulseAnonymousUserTest {
     String version = properties.getProperty("Product-Version");
     warPath = "geode-pulse-" + version + ".war";
     String propFilePath = classLoader.getResource("GemFireVersion.properties").getPath();
-    warPath = propFilePath.substring(0, propFilePath.indexOf("generated-resources")) + "libs/" + warPath;
+    warPath =
+        propFilePath.substring(0, propFilePath.indexOf("generated-resources")) + "libs/" + warPath;
     return warPath;
   }
 

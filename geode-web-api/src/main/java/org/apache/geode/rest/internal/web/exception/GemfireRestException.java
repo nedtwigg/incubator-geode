@@ -21,14 +21,16 @@ import org.apache.geode.GemFireException;
 
 /**
  * Indicates that error encountered while processing REST request.
- * <p/>
+ *
+ * <p>
+ *
  * @since GemFire 8.0
  */
-
 public class GemfireRestException extends GemFireException {
 
   /**
    * Create the exception with the given message.
+   *
    * @param message the message of the new exception
    */
   public GemfireRestException(String message) {
@@ -37,11 +39,11 @@ public class GemfireRestException extends GemFireException {
 
   /**
    * Create the exception with the given message and cause.
+   *
    * @param message the message of the new exception
    * @param cause the cause of the new exception
    */
   public GemfireRestException(String message, Throwable cause) {
     super(message, cause);
   }
-
 }

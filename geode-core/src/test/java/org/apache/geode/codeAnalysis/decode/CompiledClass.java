@@ -34,10 +34,7 @@ import org.apache.geode.codeAnalysis.decode.cp.CpLong;
 import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.logging.PureLogWriter;
 
-/**
- * Decoder represents a jdk ClassFile header
- */
-
+/** Decoder represents a jdk ClassFile header */
 public class CompiledClass implements Comparable {
   public long magic;
   public int minor_version;
@@ -83,9 +80,7 @@ public class CompiledClass implements Comparable {
     return instance;
   }
 
-  /**
-   * read a ClassFile structure from the given input source (usually a file)
-   */
+  /** read a ClassFile structure from the given input source (usually a file) */
   public CompiledClass(DataInputStream source) throws IOException {
     int idx;
 
@@ -104,8 +99,7 @@ public class CompiledClass implements Comparable {
       //   all eight-byte constants take up two spots in the constant pool.
       //   If this is the nth item in the constant pool, then the next
       //   item will be numbered n+2.
-      if ((constant_pool[idx] instanceof CpLong) || (constant_pool[idx] instanceof CpDouble))
-        idx++;
+      if ((constant_pool[idx] instanceof CpLong) || (constant_pool[idx] instanceof CpDouble)) idx++;
     }
     access_flags = source.readUnsignedShort();
     this_class = source.readUnsignedShort();
@@ -140,30 +134,18 @@ public class CompiledClass implements Comparable {
     StringBuffer result;
 
     result = new StringBuffer();
-    if ((access_flags & 0x0001) != 0)
-      result.append("public ");
-    if ((access_flags & 0x0002) != 0)
-      result.append("(private?) ");
-    if ((access_flags & 0x0004) != 0)
-      result.append("(protected?) ");
-    if ((access_flags & 0x0008) != 0)
-      result.append("(static?) ");
-    if ((access_flags & 0x0010) != 0)
-      result.append("final ");
-    if ((access_flags & 0x0020) != 0)
-      result.append("(??0x20??) ");
-    if ((access_flags & 0x0040) != 0)
-      result.append("(volatile?) ");
-    if ((access_flags & 0x0080) != 0)
-      result.append("(transient?) ");
-    if ((access_flags & 0x0100) != 0)
-      result = result.append("(??0x100??) ");
-    if ((access_flags & 0x0200) != 0)
-      result = result.append("interface ");
-    if ((access_flags & 0x0400) != 0)
-      result = result.append("abstract ");
-    if ((access_flags & 0x0800) != 0)
-      result = result.append("(??0x800??) ");
+    if ((access_flags & 0x0001) != 0) result.append("public ");
+    if ((access_flags & 0x0002) != 0) result.append("(private?) ");
+    if ((access_flags & 0x0004) != 0) result.append("(protected?) ");
+    if ((access_flags & 0x0008) != 0) result.append("(static?) ");
+    if ((access_flags & 0x0010) != 0) result.append("final ");
+    if ((access_flags & 0x0020) != 0) result.append("(??0x20??) ");
+    if ((access_flags & 0x0040) != 0) result.append("(volatile?) ");
+    if ((access_flags & 0x0080) != 0) result.append("(transient?) ");
+    if ((access_flags & 0x0100) != 0) result = result.append("(??0x100??) ");
+    if ((access_flags & 0x0200) != 0) result = result.append("interface ");
+    if ((access_flags & 0x0400) != 0) result = result.append("abstract ");
+    if ((access_flags & 0x0800) != 0) result = result.append("(??0x800??) ");
 
     return result.toString();
   }
@@ -176,14 +158,17 @@ public class CompiledClass implements Comparable {
     // these classes throw exceptions or log ugly messages when you try to load them
     // in junit
     String name = fullyQualifiedName().replace('/', '.');
-    if (name.startsWith("org.apache.geode.internal.shared.NativeCallsJNAImpl") || name.startsWith("org.apache.geode.internal.statistics.HostStatHelper")) {
+    if (name.startsWith("org.apache.geode.internal.shared.NativeCallsJNAImpl")
+        || name.startsWith("org.apache.geode.internal.statistics.HostStatHelper")) {
       return false;
     }
     try {
       debugLog.info("isSerializableAndNotDataSerializable loading class " + name);
       debugStream.flush();
       Class realClass = Class.forName(name);
-      return Serializable.class.isAssignableFrom(realClass) && !DataSerializable.class.isAssignableFrom(realClass) && !DataSerializableFixedID.class.isAssignableFrom(realClass);
+      return Serializable.class.isAssignableFrom(realClass)
+          && !DataSerializable.class.isAssignableFrom(realClass)
+          && !DataSerializableFixedID.class.isAssignableFrom(realClass);
     } catch (UnsatisfiedLinkError e) {
       System.out.println("Unable to load actual class " + name + " external JNI dependencies");
     } catch (NoClassDefFoundError e) {
@@ -269,5 +254,4 @@ public class CompiledClass implements Comparable {
     //	}
     System.exit(exitCode);
   }
-
 }

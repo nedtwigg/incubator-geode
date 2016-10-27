@@ -27,15 +27,15 @@ import org.apache.geode.LogWriter;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Disk region perf test for Persist only with Async writes and  Buffer.
- * Set Rolling oplog to true and setMaxOplogSize to 10240
- * 
- * If more than some number of files are open, an Exception is thrown. This ia JDK 1.4 bug. This
+ * Disk region perf test for Persist only with Async writes and Buffer. Set Rolling oplog to true
+ * and setMaxOplogSize to 10240
+ *
+ * <p>If more than some number of files are open, an Exception is thrown. This ia JDK 1.4 bug. This
  * test should be run after transition to JDK 1.5 to verify that the bug does not exceed.
- * 
- * The disk properties will ensure that very many oplog files are created.
- * 
- * This test is currently not being executed and is marked with an underscore
+ *
+ * <p>The disk properties will ensure that very many oplog files are created.
+ *
+ * <p>This test is currently not being executed and is marked with an underscore
  */
 @Category(IntegrationTest.class)
 public class Bug34179TooManyFilesOpenJUnitTest extends DiskRegionTestingBase {
@@ -69,7 +69,8 @@ public class Bug34179TooManyFilesOpenJUnitTest extends DiskRegionTestingBase {
   }
 
   /**
-   * currently not being executed for congo but after transition to JDK 1.5, this test should be executed.
+   * currently not being executed for congo but after transition to JDK 1.5, this test should be
+   * executed.
    */
   @Ignore("TODO: test is disabled")
   @Test
@@ -82,9 +83,7 @@ public class Bug34179TooManyFilesOpenJUnitTest extends DiskRegionTestingBase {
     closeDown(); // closes disk file which will flush all buffers
   }
 
-  /**
-   * cleans all the directory of all the files present in them
-   */
+  /** cleans all the directory of all the files present in them */
   protected static void deleteFiles() {
     for (int i = 0; i < dirs.length; i++) {
       File[] files = dirs[i].listFiles();
@@ -93,5 +92,4 @@ public class Bug34179TooManyFilesOpenJUnitTest extends DiskRegionTestingBase {
       }
     }
   }
-
-}// end of Bug34179TooManyFilesOpenJUnitTest
+} // end of Bug34179TooManyFilesOpenJUnitTest

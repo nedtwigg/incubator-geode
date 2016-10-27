@@ -30,7 +30,10 @@ public class SuspectMember {
   public String reason;
 
   /** create a new SuspectMember */
-  public SuspectMember(InternalDistributedMember whoSuspected, InternalDistributedMember suspectedMember, String reason) {
+  public SuspectMember(
+      InternalDistributedMember whoSuspected,
+      InternalDistributedMember suspectedMember,
+      String reason) {
     this.whoSuspected = whoSuspected;
     this.suspectedMember = suspectedMember;
     this.reason = reason;

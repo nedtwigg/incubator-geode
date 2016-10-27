@@ -38,11 +38,8 @@ import static org.junit.Assert.fail;
 //import org.apache.geode.internal.jta.CacheUtils;
 
 /**
- * 
- * This test check the graceful removal of all the resource
- * (DataSources , TransactionManager and UserTransaction and 
- * its associated thread) before we reconnect to the distributed 
- * syatem.
+ * This test check the graceful removal of all the resource (DataSources , TransactionManager and
+ * UserTransaction and its associated thread) before we reconnect to the distributed syatem.
  */
 @Category(IntegrationTest.class)
 public class RestartJUnitTest {

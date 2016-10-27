@@ -25,17 +25,14 @@ import org.apache.geode.Statistics;
 import org.apache.geode.internal.admin.StatAlertsManager;
 
 /**
- * Implementation {@link StatisticInfo} This does not contains associated
- * statistics object
- * 
- * This has been created client(E.g GFMon2.0), where we actually don't need
- * statistic object. So, Instance of this will be light weight object So that we
- * can reduce the overhead of data transfer across network and
- * serialization/dserialization
- * 
- * on server side , {@link StatAlertsManager} create instance of
- * {@link StatisticInfoImpl} class with help of this class instance
- * 
+ * Implementation {@link StatisticInfo} This does not contains associated statistics object
+ *
+ * <p>This has been created client(E.g GFMon2.0), where we actually don't need statistic object. So,
+ * Instance of this will be light weight object So that we can reduce the overhead of data transfer
+ * across network and serialization/dserialization
+ *
+ * <p>on server side , {@link StatAlertsManager} create instance of {@link StatisticInfoImpl} class
+ * with help of this class instance
  */
 public class DummyStatisticInfoImpl implements StatisticInfo {
   private static final long serialVersionUID = -5456779525795868187L;
@@ -46,14 +43,14 @@ public class DummyStatisticInfoImpl implements StatisticInfo {
 
   protected String statisticName;
 
-  public DummyStatisticInfoImpl() {
-  }
+  public DummyStatisticInfoImpl() {}
 
   /**
    * @param statisticsTextId
    * @param statisticName
    */
-  public DummyStatisticInfoImpl(String statisticsTypeName, String statisticsTextId, String statisticName) {
+  public DummyStatisticInfoImpl(
+      String statisticsTypeName, String statisticsTextId, String statisticName) {
     super();
     this.statisticsTypeName = statisticsTypeName;
     this.statisticsTextId = statisticsTextId;
@@ -77,11 +74,13 @@ public class DummyStatisticInfoImpl implements StatisticInfo {
   }
 
   public StatisticDescriptor getStatisticDescriptor() {
-    throw new UnsupportedOperationException("DummyStatisticInfoImpl class does not support getStatisticDescriptor method.");
+    throw new UnsupportedOperationException(
+        "DummyStatisticInfoImpl class does not support getStatisticDescriptor method.");
   }
 
   public Statistics getStatistics() {
-    throw new UnsupportedOperationException("DummyStatisticInfoImpl class does not support getStatistics method.");
+    throw new UnsupportedOperationException(
+        "DummyStatisticInfoImpl class does not support getStatistics method.");
   }
 
   public String getStatisticsTypeName() {
@@ -93,7 +92,8 @@ public class DummyStatisticInfoImpl implements StatisticInfo {
   }
 
   public Number getValue() {
-    throw new UnsupportedOperationException("DummyStatisticInfoImpl class does not support getValue method.");
+    throw new UnsupportedOperationException(
+        "DummyStatisticInfoImpl class does not support getValue method.");
   }
 
   @Override
@@ -105,9 +105,11 @@ public class DummyStatisticInfoImpl implements StatisticInfo {
 
     DummyStatisticInfoImpl other = (DummyStatisticInfoImpl) object;
 
-    if (this.statisticName.equals(other.getStatisticName()) && this.statisticsTypeName.equals(other.getStatisticsTypeName()) && this.statisticsTextId != null && this.statisticsTextId.equals(other.getStatisticsTextId())) {
+    if (this.statisticName.equals(other.getStatisticName())
+        && this.statisticsTypeName.equals(other.getStatisticsTypeName())
+        && this.statisticsTextId != null
+        && this.statisticsTextId.equals(other.getStatisticsTextId())) {
       return true;
-
     }
 
     return false;

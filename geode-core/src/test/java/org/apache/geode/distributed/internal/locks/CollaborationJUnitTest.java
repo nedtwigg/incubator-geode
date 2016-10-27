@@ -50,17 +50,19 @@ public class CollaborationJUnitTest {
 
   @Before
   public void setUp() throws Exception {
-    this.collaboration = new Collaboration(new CancelCriterion() {
-      @Override
-      public String cancelInProgress() {
-        return null;
-      }
+    this.collaboration =
+        new Collaboration(
+            new CancelCriterion() {
+              @Override
+              public String cancelInProgress() {
+                return null;
+              }
 
-      @Override
-      public RuntimeException generateCancelledException(Throwable e) {
-        return null;
-      }
-    });
+              @Override
+              public RuntimeException generateCancelledException(Throwable e) {
+                return null;
+              }
+            });
   }
 
   @After
@@ -74,80 +76,89 @@ public class CollaborationJUnitTest {
   @Test
   public void testBlocksUntilRelease() throws Exception {
     this.log.info("[testBlocksUntilRelease]");
-    Thread threadA = new Thread(group, new Runnable() {
-      @Override
-      public void run() {
-        collaboration.acquireUninterruptibly("topicA");
-        try {
-          flagTestBlocksUntilRelease = true;
-          while (flagTestBlocksUntilRelease) {
-            try {
-              Thread.sleep(10);
-            } catch (InterruptedException ignore) {
-              fail("interrupted");
-            }
-          }
-        } finally {
-          collaboration.release();
-        }
-      }
-    });
+    Thread threadA =
+        new Thread(
+            group,
+            new Runnable() {
+              @Override
+              public void run() {
+                collaboration.acquireUninterruptibly("topicA");
+                try {
+                  flagTestBlocksUntilRelease = true;
+                  while (flagTestBlocksUntilRelease) {
+                    try {
+                      Thread.sleep(10);
+                    } catch (InterruptedException ignore) {
+                      fail("interrupted");
+                    }
+                  }
+                } finally {
+                  collaboration.release();
+                }
+              }
+            });
 
     // thread one acquires
     threadA.start();
-    WaitCriterion ev = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return CollaborationJUnitTest.this.flagTestBlocksUntilRelease;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return CollaborationJUnitTest.this.flagTestBlocksUntilRelease;
+          }
 
-      @Override
-      public String description() {
-        return "waiting for thread";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for thread";
+          }
+        };
     Wait.waitForCriterion(ev, 5 * 1000, 200, true);
     assertTrue(this.collaboration.hasCurrentTopic(threadA));
 
     // thread two blocks until one releeases
-    Thread threadB = new Thread(group, new Runnable() {
-      @Override
-      public void run() {
-        threadBStartedTestBlocksUntilRelease = true;
-        collaboration.acquireUninterruptibly("topicB");
-        try {
-          flagTestBlocksUntilRelease = true;
-          WaitCriterion ev2 = new WaitCriterion() {
-            @Override
-            public boolean done() {
-              return !flagTestBlocksUntilRelease;
-            }
+    Thread threadB =
+        new Thread(
+            group,
+            new Runnable() {
+              @Override
+              public void run() {
+                threadBStartedTestBlocksUntilRelease = true;
+                collaboration.acquireUninterruptibly("topicB");
+                try {
+                  flagTestBlocksUntilRelease = true;
+                  WaitCriterion ev2 =
+                      new WaitCriterion() {
+                        @Override
+                        public boolean done() {
+                          return !flagTestBlocksUntilRelease;
+                        }
 
-            @Override
-            public String description() {
-              return "waiting for release";
-            }
-          };
-          Wait.waitForCriterion(ev2, 20 * 1000, 200, true);
-        } finally {
-          collaboration.release();
-        }
-      }
-    });
+                        @Override
+                        public String description() {
+                          return "waiting for release";
+                        }
+                      };
+                  Wait.waitForCriterion(ev2, 20 * 1000, 200, true);
+                } finally {
+                  collaboration.release();
+                }
+              }
+            });
 
     // start up threadB
     threadB.start();
-    ev = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return threadBStartedTestBlocksUntilRelease;
-      }
+    ev =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return threadBStartedTestBlocksUntilRelease;
+          }
 
-      @Override
-      public String description() {
-        return "waiting for thread b";
-      }
-    };
+          @Override
+          public String description() {
+            return "waiting for thread b";
+          }
+        };
     Wait.waitForCriterion(ev, 5 * 1000, 200, true);
 
     // threadA holds topic and threadB is waiting...
@@ -159,24 +170,25 @@ public class CollaborationJUnitTest {
     ThreadUtils.join(threadA, 30 * 1000);
 
     // make sure threadB is doing what it's supposed to do...
-    ev = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return flagTestBlocksUntilRelease;
-      }
+    ev =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return flagTestBlocksUntilRelease;
+          }
 
-      @Override
-      public String description() {
-        return "threadB";
-      }
-    };
+          @Override
+          public String description() {
+            return "threadB";
+          }
+        };
     Wait.waitForCriterion(ev, 5 * 1000, 200, true);
     // threadB must have lock now... let threadB release
     assertTrue(this.collaboration.hasCurrentTopic(threadB));
     this.flagTestBlocksUntilRelease = false;
     ThreadUtils.join(threadB, 30 * 1000);
 
-    // collaboration should be free now    
+    // collaboration should be free now
     assertFalse(this.collaboration.hasCurrentTopic(threadA));
     assertFalse(this.collaboration.hasCurrentTopic(threadB));
     assertFalse(this.collaboration.hasCurrentTopic());
@@ -195,155 +207,174 @@ public class CollaborationJUnitTest {
     final Object topicB = "topicB";
 
     // threads one and two acquire
-    Thread threadA = new Thread(group, new Runnable() {
-      @Override
-      public void run() {
-        collaboration.acquireUninterruptibly(topicA);
-        try {
-          threadAFlag_TestLateComerJoinsIn = true;
-          WaitCriterion ev = new WaitCriterion() {
-            @Override
-            public boolean done() {
-              return !threadAFlag_TestLateComerJoinsIn;
-            }
+    Thread threadA =
+        new Thread(
+            group,
+            new Runnable() {
+              @Override
+              public void run() {
+                collaboration.acquireUninterruptibly(topicA);
+                try {
+                  threadAFlag_TestLateComerJoinsIn = true;
+                  WaitCriterion ev =
+                      new WaitCriterion() {
+                        @Override
+                        public boolean done() {
+                          return !threadAFlag_TestLateComerJoinsIn;
+                        }
 
-            @Override
-            public String description() {
-              return null;
-            }
-          };
-          Wait.waitForCriterion(ev, 60 * 1000, 200, true);
-        } finally {
-          collaboration.release();
-        }
-      }
-    });
+                        @Override
+                        public String description() {
+                          return null;
+                        }
+                      };
+                  Wait.waitForCriterion(ev, 60 * 1000, 200, true);
+                } finally {
+                  collaboration.release();
+                }
+              }
+            });
     threadA.start();
-    WaitCriterion ev = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return threadAFlag_TestLateComerJoinsIn;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return threadAFlag_TestLateComerJoinsIn;
+          }
 
-      @Override
-      public String description() {
-        return "wait for ThreadA";
-      }
-    };
+          @Override
+          public String description() {
+            return "wait for ThreadA";
+          }
+        };
     Wait.waitForCriterion(ev, 30 * 1000, 200, true);
     assertTrue(this.collaboration.hasCurrentTopic(threadA));
     assertTrue(this.collaboration.isCurrentTopic(topicA));
 
-    Thread threadB = new Thread(group, new Runnable() {
-      @Override
-      public void run() {
-        collaboration.acquireUninterruptibly(topicA);
-        try {
-          threadBFlag_TestLateComerJoinsIn = true;
-          WaitCriterion ev2 = new WaitCriterion() {
-            @Override
-            public boolean done() {
-              return !threadBFlag_TestLateComerJoinsIn;
-            }
+    Thread threadB =
+        new Thread(
+            group,
+            new Runnable() {
+              @Override
+              public void run() {
+                collaboration.acquireUninterruptibly(topicA);
+                try {
+                  threadBFlag_TestLateComerJoinsIn = true;
+                  WaitCriterion ev2 =
+                      new WaitCriterion() {
+                        @Override
+                        public boolean done() {
+                          return !threadBFlag_TestLateComerJoinsIn;
+                        }
 
-            @Override
-            public String description() {
-              return null;
-            }
-          };
-          Wait.waitForCriterion(ev2, 60 * 1000, 200, true);
-        } finally {
-          collaboration.release();
-        }
-      }
-    });
+                        @Override
+                        public String description() {
+                          return null;
+                        }
+                      };
+                  Wait.waitForCriterion(ev2, 60 * 1000, 200, true);
+                } finally {
+                  collaboration.release();
+                }
+              }
+            });
     threadB.start();
-    ev = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return threadBFlag_TestLateComerJoinsIn;
-      }
+    ev =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return threadBFlag_TestLateComerJoinsIn;
+          }
 
-      @Override
-      public String description() {
-        return "";
-      }
-    };
+          @Override
+          public String description() {
+            return "";
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
     assertTrue(this.collaboration.hasCurrentTopic(threadB));
 
     // thread three blocks for new topic
-    Thread threadC = new Thread(group, new Runnable() {
-      @Override
-      public void run() {
-        threadCFlag_TestLateComerJoinsIn = false;
-        collaboration.acquireUninterruptibly(topicB);
-        try {
-          threadCFlag_TestLateComerJoinsIn = true;
-          WaitCriterion ev2 = new WaitCriterion() {
-            @Override
-            public boolean done() {
-              return !threadCFlag_TestLateComerJoinsIn;
-            }
+    Thread threadC =
+        new Thread(
+            group,
+            new Runnable() {
+              @Override
+              public void run() {
+                threadCFlag_TestLateComerJoinsIn = false;
+                collaboration.acquireUninterruptibly(topicB);
+                try {
+                  threadCFlag_TestLateComerJoinsIn = true;
+                  WaitCriterion ev2 =
+                      new WaitCriterion() {
+                        @Override
+                        public boolean done() {
+                          return !threadCFlag_TestLateComerJoinsIn;
+                        }
 
-            @Override
-            public String description() {
-              return null;
-            }
-          };
-          Wait.waitForCriterion(ev2, 60 * 1000, 200, true);
-        } finally {
-          collaboration.release();
-        }
-      }
-    });
+                        @Override
+                        public String description() {
+                          return null;
+                        }
+                      };
+                  Wait.waitForCriterion(ev2, 60 * 1000, 200, true);
+                } finally {
+                  collaboration.release();
+                }
+              }
+            });
     threadC.start();
-    ev = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return threadCFlag_TestLateComerJoinsIn;
-      }
+    ev =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return threadCFlag_TestLateComerJoinsIn;
+          }
 
-      @Override
-      public String description() {
-        return null;
-      }
-    };
+          @Override
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
     assertFalse(this.collaboration.hasCurrentTopic(threadC));
     assertFalse(this.collaboration.isCurrentTopic(topicB));
 
     // thread four (lateComer) acquires current topic immediately
-    Thread threadD = new Thread(group, new Runnable() {
-      @Override
-      public void run() {
-        collaboration.acquireUninterruptibly(topicA);
-        try {
-          threadDFlag_TestLateComerJoinsIn = true;
-          while (threadDFlag_TestLateComerJoinsIn) {
-            try {
-              Thread.sleep(10);
-            } catch (InterruptedException ignore) {
-              fail("interrupted");
-            }
-          }
-        } finally {
-          collaboration.release();
-        }
-      }
-    });
+    Thread threadD =
+        new Thread(
+            group,
+            new Runnable() {
+              @Override
+              public void run() {
+                collaboration.acquireUninterruptibly(topicA);
+                try {
+                  threadDFlag_TestLateComerJoinsIn = true;
+                  while (threadDFlag_TestLateComerJoinsIn) {
+                    try {
+                      Thread.sleep(10);
+                    } catch (InterruptedException ignore) {
+                      fail("interrupted");
+                    }
+                  }
+                } finally {
+                  collaboration.release();
+                }
+              }
+            });
     threadD.start();
-    ev = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return threadDFlag_TestLateComerJoinsIn;
-      }
+    ev =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return threadDFlag_TestLateComerJoinsIn;
+          }
 
-      @Override
-      public String description() {
-        return null;
-      }
-    };
+          @Override
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
     assertTrue(this.collaboration.hasCurrentTopic(threadD));
 
@@ -369,17 +400,18 @@ public class CollaborationJUnitTest {
     // release threadD
     this.threadDFlag_TestLateComerJoinsIn = false;
     ThreadUtils.join(threadD, 30 * 1000);
-    ev = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return threadCFlag_TestLateComerJoinsIn;
-      }
+    ev =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return threadCFlag_TestLateComerJoinsIn;
+          }
 
-      @Override
-      public String description() {
-        return null;
-      }
-    };
+          @Override
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
     assertTrue(this.collaboration.hasCurrentTopic(threadC));
     assertFalse(this.collaboration.hasCurrentTopic(threadD));
@@ -404,43 +436,46 @@ public class CollaborationJUnitTest {
     final int numThreads = 20;
     Thread threads[] = new Thread[numThreads];
 
-    Runnable run = new Runnable() {
-      public void run() {
-        boolean released = false;
-        try {
-          String uniqueTopic = Thread.currentThread().getName();
-          while (runTestFairnessStressfully) {
-            waitingList.add(uniqueTopic);
-            collaboration.acquireUninterruptibly(uniqueTopic);
+    Runnable run =
+        new Runnable() {
+          public void run() {
+            boolean released = false;
             try {
-              released = false;
-              fairnessList.add(uniqueTopic);
-              waitingList.remove(uniqueTopic);
-            } finally {
-              // wait for the other threads to line up...
-              WaitCriterion ev = new WaitCriterion() {
-                @Override
-                public boolean done() {
-                  return !runTestFairnessStressfully || waitingList.size() >= numThreads - 1;
-                }
+              String uniqueTopic = Thread.currentThread().getName();
+              while (runTestFairnessStressfully) {
+                waitingList.add(uniqueTopic);
+                collaboration.acquireUninterruptibly(uniqueTopic);
+                try {
+                  released = false;
+                  fairnessList.add(uniqueTopic);
+                  waitingList.remove(uniqueTopic);
+                } finally {
+                  // wait for the other threads to line up...
+                  WaitCriterion ev =
+                      new WaitCriterion() {
+                        @Override
+                        public boolean done() {
+                          return !runTestFairnessStressfully
+                              || waitingList.size() >= numThreads - 1;
+                        }
 
-                @Override
-                public String description() {
-                  return "other threads lining up";
+                        @Override
+                        public String description() {
+                          return "other threads lining up";
+                        }
+                      };
+                  Wait.waitForCriterion(ev, 60 * 1000, 200, true);
+                  collaboration.release();
+                  released = true;
                 }
-              };
-              Wait.waitForCriterion(ev, 60 * 1000, 200, true);
-              collaboration.release();
-              released = true;
+              }
+            } finally {
+              if (!released) {
+                collaboration.release();
+              }
             }
           }
-        } finally {
-          if (!released) {
-            collaboration.release();
-          }
-        }
-      }
-    };
+        };
 
     try {
       // many threads loop: acquire and release with unique topic
@@ -452,17 +487,18 @@ public class CollaborationJUnitTest {
       log.info("Started all threads... waiting for test to complete.");
 
       // wait for numThreads * 10
-      WaitCriterion ev = new WaitCriterion() {
-        @Override
-        public boolean done() {
-          return fairnessList.size() >= numThreads * 20;
-        }
+      WaitCriterion ev =
+          new WaitCriterion() {
+            @Override
+            public boolean done() {
+              return fairnessList.size() >= numThreads * 20;
+            }
 
-        @Override
-        public String description() {
-          return "waiting for numThreads * 10";
-        }
-      };
+            @Override
+            public String description() {
+              return "waiting for numThreads * 10";
+            }
+          };
       Wait.waitForCriterion(ev, 5 * 60 * 1000, 200, true);
     } finally {
       if (this.runTestFairnessStressfully) {
@@ -481,7 +517,7 @@ public class CollaborationJUnitTest {
       count[i] = 0;
     }
     synchronized (this.fairnessList) {
-      for (Iterator iter = this.fairnessList.iterator(); iter.hasNext();) {
+      for (Iterator iter = this.fairnessList.iterator(); iter.hasNext(); ) {
         int id = Integer.valueOf((String) iter.next()).intValue();
         count[id] = count[id] + 1;
       }
@@ -493,14 +529,18 @@ public class CollaborationJUnitTest {
     for (int i = 0; i < count.length; i++) {
       int locks = count[i];
       this.log.fine("testFairnessStressfully thread-" + i + " acquired topic " + locks + " times.");
-      if (locks < minLocks)
-        minLocks = locks;
-      if (locks > maxLocks)
-        maxLocks = locks;
+      if (locks < minLocks) minLocks = locks;
+      if (locks > maxLocks) maxLocks = locks;
       totalLocks = totalLocks + locks;
     }
 
-    this.log.info("[testFairnessStressfully] totalLocks=" + totalLocks + " minLocks=" + minLocks + " maxLocks=" + maxLocks);
+    this.log.info(
+        "[testFairnessStressfully] totalLocks="
+            + totalLocks
+            + " minLocks="
+            + minLocks
+            + " maxLocks="
+            + maxLocks);
 
     int expectedLocks = (totalLocks / numThreads) + 1;
 
@@ -510,7 +550,15 @@ public class CollaborationJUnitTest {
     int lowThreshold = expectedLocks - deviation;
     int highThreshold = expectedLocks + deviation;
 
-    this.log.info("[testFairnessStressfully] deviation=" + deviation + " expectedLocks=" + expectedLocks + " lowThreshold=" + lowThreshold + " highThreshold=" + highThreshold);
+    this.log.info(
+        "[testFairnessStressfully] deviation="
+            + deviation
+            + " expectedLocks="
+            + expectedLocks
+            + " lowThreshold="
+            + lowThreshold
+            + " highThreshold="
+            + highThreshold);
 
     // if these assertions keep failing we'll have to rewrite the test
     // to handle scheduling of the threads...
@@ -537,44 +585,49 @@ public class CollaborationJUnitTest {
   @Test
   public void testThreadHasCurrentTopic() throws Exception {
     this.log.info("[testThreadHasCurrentTopic]");
-    Thread thread = new Thread(group, new Runnable() {
-      @Override
-      public void run() {
-        collaboration.acquireUninterruptibly("testThreadHasCurrentTopic");
-        try {
-          flagTestThreadHasCurrentTopic = true;
-          WaitCriterion ev = new WaitCriterion() {
-            @Override
-            public boolean done() {
-              return !flagTestThreadHasCurrentTopic;
-            }
+    Thread thread =
+        new Thread(
+            group,
+            new Runnable() {
+              @Override
+              public void run() {
+                collaboration.acquireUninterruptibly("testThreadHasCurrentTopic");
+                try {
+                  flagTestThreadHasCurrentTopic = true;
+                  WaitCriterion ev =
+                      new WaitCriterion() {
+                        @Override
+                        public boolean done() {
+                          return !flagTestThreadHasCurrentTopic;
+                        }
 
-            @Override
-            public String description() {
-              return null;
-            }
-          };
-          Wait.waitForCriterion(ev, 60 * 1000, 200, true);
-        } finally {
-          collaboration.release();
-        }
-      }
-    });
+                        @Override
+                        public String description() {
+                          return null;
+                        }
+                      };
+                  Wait.waitForCriterion(ev, 60 * 1000, 200, true);
+                } finally {
+                  collaboration.release();
+                }
+              }
+            });
 
     // before starting thread, hasCurrentTopic(thread) returns false
     assertTrue(!this.collaboration.hasCurrentTopic(thread));
     thread.start();
-    WaitCriterion ev = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return flagTestThreadHasCurrentTopic;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return flagTestThreadHasCurrentTopic;
+          }
 
-      @Override
-      public String description() {
-        return null;
-      }
-    };
+          @Override
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
 
     // after starting thread, hasCurrentTopic(thread) returns true
@@ -600,15 +653,16 @@ public class CollaborationJUnitTest {
     assertTrue(!this.collaboration.isCurrentTopic(topic));
   }
 
-  protected final ThreadGroup group = new ThreadGroup("CollaborationJUnitTest Threads") {
-    @Override
-    public void uncaughtException(Thread t, Throwable e) {
-      if (e instanceof VirtualMachineError) {
-        SystemFailure.setFailure((VirtualMachineError) e); // don't throw
-      }
-      String s = "Uncaught exception in thread " + t;
-      log.error(s, e);
-      fail(s);
-    }
-  };
+  protected final ThreadGroup group =
+      new ThreadGroup("CollaborationJUnitTest Threads") {
+        @Override
+        public void uncaughtException(Thread t, Throwable e) {
+          if (e instanceof VirtualMachineError) {
+            SystemFailure.setFailure((VirtualMachineError) e); // don't throw
+          }
+          String s = "Uncaught exception in thread " + t;
+          log.error(s, e);
+          fail(s);
+        }
+      };
 }

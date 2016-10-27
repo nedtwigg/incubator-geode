@@ -22,16 +22,13 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.cache.CacheDistributionAdvisor.InitialImageAdvice;
 
 /**
- * Used to exchange profiles during region initialization and determine the
- * targets for GII. There are currently two implementations, one for persistent
- * regions and one of non persistent regions. The persistent region
- * implementation will wait for members to come online that may have a later
+ * Used to exchange profiles during region initialization and determine the targets for GII. There
+ * are currently two implementations, one for persistent regions and one of non persistent regions.
+ * The persistent region implementation will wait for members to come online that may have a later
  * copies of the region.
- * 
- * 
  */
 public interface ProfileExchangeProcessor {
-  /** Exchange profiles with other members to initialize the region*/
+  /** Exchange profiles with other members to initialize the region */
   void initializeRegion();
 
   /** Get, and possibling wait for, the members that we should initialize from. */

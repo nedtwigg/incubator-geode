@@ -40,8 +40,7 @@ public class TXReservationMgrJUnitTest {
   int commitCount = 0;
   int conflictCount = 0;
 
-  public TXReservationMgrJUnitTest() {
-  }
+  public TXReservationMgrJUnitTest() {}
 
   @Before
   public void setUp() throws Exception {
@@ -61,8 +60,8 @@ public class TXReservationMgrJUnitTest {
     this.ds.disconnect();
   }
 
-  private final static int THREAD_COUNT = Integer.getInteger("junit.THREAD_COUNT", 30).intValue();
-  private final static int KEY_COUNT = Integer.getInteger("junit.KEY_COUNT", 50).intValue();
+  private static final int THREAD_COUNT = Integer.getInteger("junit.THREAD_COUNT", 30).intValue();
+  private static final int KEY_COUNT = Integer.getInteger("junit.KEY_COUNT", 50).intValue();
 
   protected void doThreadBody(final TXReservationMgr mgr) {
     final String tName = Thread.currentThread().getName();
@@ -114,11 +113,14 @@ public class TXReservationMgrJUnitTest {
     }
     Thread[] threads = new Thread[THREAD_COUNT];
     for (int i = 0; i < THREAD_COUNT; i++) {
-      threads[i] = new Thread(new Runnable() {
-        public void run() {
-          doThreadBody(mgr);
-        }
-      }, "t" + i);
+      threads[i] =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  doThreadBody(mgr);
+                }
+              },
+              "t" + i);
     }
     for (int i = 0; i < THREAD_COUNT; i++) {
       threads[i].start();

@@ -48,7 +48,8 @@ public class DistributedAckOverflowRegionCCEDUnitTest extends DistributedAckRegi
     factory.setScope(Scope.DISTRIBUTED_ACK);
     factory.setDataPolicy(DataPolicy.REPLICATE);
     factory.setConcurrencyChecksEnabled(true);
-    factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(5, EvictionAction.OVERFLOW_TO_DISK));
+    factory.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(5, EvictionAction.OVERFLOW_TO_DISK));
     return factory.create();
   }
 
@@ -61,7 +62,8 @@ public class DistributedAckOverflowRegionCCEDUnitTest extends DistributedAckRegi
     AttributesFactory factory = new AttributesFactory(ra);
     factory.setConcurrencyChecksEnabled(true);
     if (!ra.getDataPolicy().isEmpty()) {
-      factory.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(5, EvictionAction.OVERFLOW_TO_DISK));
+      factory.setEvictionAttributes(
+          EvictionAttributes.createLRUEntryAttributes(5, EvictionAction.OVERFLOW_TO_DISK));
     }
     return factory.create();
   }

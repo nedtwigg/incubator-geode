@@ -49,27 +49,31 @@ public class DisconnectingOutOfOffHeapMemoryListenerJUnitTest {
 
   @Test
   public void constructWithNullSupportsClose() {
-    DisconnectingOutOfOffHeapMemoryListener listener = new DisconnectingOutOfOffHeapMemoryListener(null);
+    DisconnectingOutOfOffHeapMemoryListener listener =
+        new DisconnectingOutOfOffHeapMemoryListener(null);
     listener.close();
   }
 
   @Test
   public void constructWithNullSupportsOutOfOffHeapMemory() {
-    DisconnectingOutOfOffHeapMemoryListener listener = new DisconnectingOutOfOffHeapMemoryListener(null);
+    DisconnectingOutOfOffHeapMemoryListener listener =
+        new DisconnectingOutOfOffHeapMemoryListener(null);
     listener.outOfOffHeapMemory(null);
   }
 
   @Test
   public void disconnectNotCalledWhenSysPropIsSet() {
     System.setProperty(OffHeapStorage.STAY_CONNECTED_ON_OUTOFOFFHEAPMEMORY_PROPERTY, "true");
-    DisconnectingOutOfOffHeapMemoryListener listener = new DisconnectingOutOfOffHeapMemoryListener(ids);
+    DisconnectingOutOfOffHeapMemoryListener listener =
+        new DisconnectingOutOfOffHeapMemoryListener(ids);
     listener.outOfOffHeapMemory(ex);
     verify(ids, never()).disconnect(ex.getMessage(), ex, false);
   }
 
   @Test
   public void disconnectNotCalledWhenListenerClosed() {
-    DisconnectingOutOfOffHeapMemoryListener listener = new DisconnectingOutOfOffHeapMemoryListener(ids);
+    DisconnectingOutOfOffHeapMemoryListener listener =
+        new DisconnectingOutOfOffHeapMemoryListener(ids);
     listener.close();
     listener.outOfOffHeapMemory(ex);
     verify(ids, never()).disconnect(ex.getMessage(), ex, false);
@@ -77,7 +81,8 @@ public class DisconnectingOutOfOffHeapMemoryListenerJUnitTest {
 
   @Test
   public void setRootCauseCalledWhenGetRootCauseReturnsNull() {
-    DisconnectingOutOfOffHeapMemoryListener listener = new DisconnectingOutOfOffHeapMemoryListener(ids);
+    DisconnectingOutOfOffHeapMemoryListener listener =
+        new DisconnectingOutOfOffHeapMemoryListener(ids);
     when(dm.getRootCause()).thenReturn(null);
     listener.outOfOffHeapMemory(ex);
     verify(dm).setRootCause(ex);
@@ -85,7 +90,8 @@ public class DisconnectingOutOfOffHeapMemoryListenerJUnitTest {
 
   @Test
   public void setRootCauseNotCalledWhenGetRootCauseReturnsNonNull() {
-    DisconnectingOutOfOffHeapMemoryListener listener = new DisconnectingOutOfOffHeapMemoryListener(ids);
+    DisconnectingOutOfOffHeapMemoryListener listener =
+        new DisconnectingOutOfOffHeapMemoryListener(ids);
     when(dm.getRootCause()).thenReturn(ex);
     listener.outOfOffHeapMemory(ex);
     verify(dm, never()).setRootCause(ex);
@@ -93,10 +99,10 @@ public class DisconnectingOutOfOffHeapMemoryListenerJUnitTest {
 
   @Test
   public void disconnectCalledAsyncAfterCallingOutOfOffHeapMemory() {
-    DisconnectingOutOfOffHeapMemoryListener listener = new DisconnectingOutOfOffHeapMemoryListener(ids);
+    DisconnectingOutOfOffHeapMemoryListener listener =
+        new DisconnectingOutOfOffHeapMemoryListener(ids);
     listener.outOfOffHeapMemory(ex);
     verify(ids, timeout(5000).atLeastOnce()).disconnect(ex.getMessage(), ex, false);
     verify(lw).info("OffHeapStorage about to invoke disconnect on " + ids);
   }
-
 }

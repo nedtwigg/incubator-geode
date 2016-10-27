@@ -34,7 +34,11 @@ public class LuceneIndexInfo implements Serializable {
   private final String[] searchableFieldNames;
   private final String[] fieldAnalyzers;
 
-  public LuceneIndexInfo(final String indexName, final String regionPath, final String[] searchableFieldNames, String[] fieldAnalyzers) {
+  public LuceneIndexInfo(
+      final String indexName,
+      final String regionPath,
+      final String[] searchableFieldNames,
+      String[] fieldAnalyzers) {
     this.indexName = indexName;
     this.regionPath = regionPath;
     this.searchableFieldNames = searchableFieldNames;

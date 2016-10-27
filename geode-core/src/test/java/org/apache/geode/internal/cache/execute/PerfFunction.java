@@ -34,8 +34,10 @@ public class PerfFunction implements Function {
   public void execute(FunctionContext context) {
     RegionFunctionContext ctx = (RegionFunctionContext) context;
     Region customerPR = ctx.getDataSet();
-    Region orderPR = customerPR.getCache().getRegion(PRColocationDUnitTest.OrderPartitionedRegionName);
-    Region shipmentPR = customerPR.getCache().getRegion(PRColocationDUnitTest.ShipmentPartitionedRegionName);
+    Region orderPR =
+        customerPR.getCache().getRegion(PRColocationDUnitTest.OrderPartitionedRegionName);
+    Region shipmentPR =
+        customerPR.getCache().getRegion(PRColocationDUnitTest.ShipmentPartitionedRegionName);
     ArrayList args = (ArrayList) ctx.getArguments();
     for (int i = 0; i < args.size() / 4; i++) {
       OrderId orderId = (OrderId) args.get(i * 4);
@@ -63,5 +65,4 @@ public class PerfFunction implements Function {
   public boolean isHA() {
     return false;
   }
-
 }

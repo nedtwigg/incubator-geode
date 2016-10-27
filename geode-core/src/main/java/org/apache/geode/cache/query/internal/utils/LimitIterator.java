@@ -57,6 +57,5 @@ public class LimitIterator<E> implements Iterator<E> {
   @Override
   public void remove() {
     throw new UnsupportedOperationException("Removal from limit based collection not supported");
-
   }
 }

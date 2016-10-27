@@ -23,10 +23,7 @@ package org.apache.geode.internal.datasource;
 
 import org.apache.geode.GemFireCheckedException;
 
-/**
- * Exception thrown from the connection provider.
- * 
- */
+/** Exception thrown from the connection provider. */
 public class ConnectionProviderException extends GemFireCheckedException {
   private static final long serialVersionUID = -7406652144153958227L;
 
@@ -37,28 +34,23 @@ public class ConnectionProviderException extends GemFireCheckedException {
     super();
   }
 
-  /**
-   * @param message
-   */
+  /** @param message */
   public ConnectionProviderException(String message) {
     super(message);
   }
 
   /**
-   * Single Argument constructor to construct a new exception with the specified
-   * detail message. Calls Exception class constructor.
-   * 
-   * @param message The detail message. The detail message is saved for later
-   *          retrieval.
+   * Single Argument constructor to construct a new exception with the specified detail message.
+   * Calls Exception class constructor.
+   *
+   * @param message The detail message. The detail message is saved for later retrieval.
    */
   public ConnectionProviderException(String message, Exception ex) {
     super(message);
     this.excep = ex;
   }
 
-  /**
-   * @return ???
-   */
+  /** @return ??? */
   @Override
   public StackTraceElement[] getStackTrace() {
     return excep.getStackTrace();

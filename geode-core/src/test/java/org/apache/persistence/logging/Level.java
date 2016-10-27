@@ -19,17 +19,18 @@ package org.apache.persistence.logging;
 /**
  * A level measures the importance of a entry in a log file.
  *
- * The priorty of level from highest to lowest is:
+ * <p>The priorty of level from highest to lowest is:
+ *
  * <OL>
- * <LI>ALL</LI>
- * <LI>SEVERE</LI>
- * <LI>WARNING</LI>
- * <LI>INFO</LI>
- * <LI>CONFIG</LI>
- * <LI>FINE</LI>
- * <LI>FINER</LI>
- * <LI>FINEST</LI>
- * <LI>OFF</LI>
+ *   <LI>ALL
+ *   <LI>SEVERE
+ *   <LI>WARNING
+ *   <LI>INFO
+ *   <LI>CONFIG
+ *   <LI>FINE
+ *   <LI>FINER
+ *   <LI>FINEST
+ *   <LI>OFF
  * </OL>
  */
 public class Level {
@@ -47,18 +48,15 @@ public class Level {
   private String name;
   private int value;
 
-  /**
-   * Creates a new <code>Level</code> with a given name and integer
-   * value.
-   */
+  /** Creates a new <code>Level</code> with a given name and integer value. */
   protected Level(String name, int value) {
     this.name = name;
     this.value = value;
   }
 
   /**
-   * Creates a new <code>Level</code> from a string.  The string
-   * should be something like "FINER" or "42".
+   * Creates a new <code>Level</code> from a string. The string should be something like "FINER" or
+   * "42".
    */
   public static Level parse(String name) {
     if (name.equalsIgnoreCase("OFF")) {
@@ -97,23 +95,17 @@ public class Level {
     }
   }
 
-  /**
-   * Returns the integer value for this level
-   */
+  /** Returns the integer value for this level */
   public int intValue() {
     return (this.value);
   }
 
-  /**
-   * Returns a textual representation of this level
-   */
+  /** Returns a textual representation of this level */
   public String toString() {
     return ("Level " + this.name + " (" + this.value + ")");
   }
 
-  /**
-   * Two levels are equal if they have the same integer value
-   */
+  /** Two levels are equal if they have the same integer value */
   public boolean equals(Object o) {
     if (o instanceof Level) {
       Level l = (Level) o;
@@ -124,5 +116,4 @@ public class Level {
 
     return (false);
   }
-
 }

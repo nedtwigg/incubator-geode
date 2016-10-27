@@ -34,23 +34,21 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * RegionVersionHolders are part of a RegionVersionVector.  A RVH holds the
- * current version for a member and a list of exceptions, which are
- * holes in the list of versions received from that member.
+ * RegionVersionHolders are part of a RegionVersionVector. A RVH holds the current version for a
+ * member and a list of exceptions, which are holes in the list of versions received from that
+ * member.
  *
- * RegionVersionHolders should be modified under synchronization on the holder.
- * 
- * Starting in 7.0.1 the holder has a BitSet that records the most recent
- * versions.  The variable bitSetVersion corresponds to bit zero, and
- * subsequent bits represent bitSetVersion+1, +2, etc.  The method
- * mergeBitSet() should be used to dump the BitSet's exceptions into
- * the regular exceptions list prior to performing operations like exceptions-
- * comparisons or dominance checks.
- * 
- * Starting in 8.0, the holder introduced a special exception to describe following use case of unfinished operation:
- * Operation R4 and R5 are applied locally, but never distributed to P. So P's RVV for R is still 3.
- * After R GIIed from P, R's RVV becomes R5(3-6), i.e. Exception's nextVersion is currentVersion+1. 
- * 
+ * <p>RegionVersionHolders should be modified under synchronization on the holder.
+ *
+ * <p>Starting in 7.0.1 the holder has a BitSet that records the most recent versions. The variable
+ * bitSetVersion corresponds to bit zero, and subsequent bits represent bitSetVersion+1, +2, etc.
+ * The method mergeBitSet() should be used to dump the BitSet's exceptions into the regular
+ * exceptions list prior to performing operations like exceptions- comparisons or dominance checks.
+ *
+ * <p>Starting in 8.0, the holder introduced a special exception to describe following use case of
+ * unfinished operation: Operation R4 and R5 are applied locally, but never distributed to P. So P's
+ * RVV for R is still 3. After R GIIed from P, R's RVV becomes R5(3-6), i.e. Exception's nextVersion
+ * is currentVersion+1.
  */
 public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
 
@@ -70,8 +68,9 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
   private BitSet bitSet;
 
   /**
-   * This contructor should only be used for cloning a RegionVersionHolder
-   * or initializing and invalid version holder (with version -1)
+   * This contructor should only be used for cloning a RegionVersionHolder or initializing and
+   * invalid version holder (with version -1)
+   *
    * @param ver
    */
   public RegionVersionHolder(long ver) {
@@ -191,7 +190,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
       return;
     }
     int i = 0;
-    for (Iterator<RVVException> it = this.exceptions.iterator(); it.hasNext();) {
+    for (Iterator<RVVException> it = this.exceptions.iterator(); it.hasNext(); ) {
       RVVException e = it.next();
       if (e.nextVersion <= missingVersion) {
         return; // there is no RVVException for this version
@@ -228,7 +227,11 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
     int bitCountToFlush = length * 3 / 4;
 
     if (logger.isTraceEnabled(LogMarker.RVV)) {
-      logger.trace(LogMarker.RVV, "flushing RVV bitset bitSetVersion={}; bits={}", this.bitSetVersion, this.bitSet);
+      logger.trace(
+          LogMarker.RVV,
+          "flushing RVV bitset bitSetVersion={}; bits={}",
+          this.bitSetVersion,
+          this.bitSet);
     }
     // see if we can shift part of the bits so that exceptions in the recent bits can
     // be kept in the bitset and later filled without having to create real exception objects
@@ -241,7 +244,11 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
       addBitSetExceptions(bitCountToFlush, this.bitSetVersion + bitCountToFlush);
     }
     if (logger.isTraceEnabled(LogMarker.RVV)) {
-      logger.trace(LogMarker.RVV, "After flushing bitSetVersion={}; bits={}", this.bitSetVersion, this.bitSet);
+      logger.trace(
+          LogMarker.RVV,
+          "After flushing bitSetVersion={}; bits={}",
+          this.bitSetVersion,
+          this.bitSet);
     }
   }
 
@@ -253,13 +260,13 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
   }
 
   /**
-   * Add exceptions from the BitSet array to the exceptions list.  Assumes that
-   * the BitSet[0] corresponds to this.bitSetVersion.  This scans the bitset
-   * looking for gaps that are recorded as RVV exceptions.  The scan terminates
-   * at numBits or when the last set bit is found.  The bitSet is adjusted and
-   * a new bitSetVersion is established.
-   * 
-   * @param newVersion  the desired new bitSetVersion, which may be > the max representable in the bitset
+   * Add exceptions from the BitSet array to the exceptions list. Assumes that the BitSet[0]
+   * corresponds to this.bitSetVersion. This scans the bitset looking for gaps that are recorded as
+   * RVV exceptions. The scan terminates at numBits or when the last set bit is found. The bitSet is
+   * adjusted and a new bitSetVersion is established.
+   *
+   * @param newVersion the desired new bitSetVersion, which may be > the max representable in the
+   *     bitset
    * @param numBits the desired number of bits to flush from the bitset
    */
   private void addBitSetExceptions(int numBits, long newVersion) {
@@ -270,7 +277,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
       logger.trace(LogMarker.RVV, "addBitSetExceptions({},{})", numBits, newVersion);
     }
 
-    for (int idx = 0; idx < numBits;) {
+    for (int idx = 0; idx < numBits; ) {
       int nextMissingIndex = this.bitSet.nextClearBit(idx);
       if (nextMissingIndex < 0) {
         break;
@@ -285,13 +292,20 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
         nextReceivedVersion = (long) (nextReceivedIndex) + this.bitSetVersion;
         idx = nextReceivedIndex + 1;
         if (isDebugEnabled_RVV) {
-          logger.trace(LogMarker.RVV, "found gap in bitSet: missing bit at index={}; next set index={}", nextMissingIndex, nextReceivedIndex);
+          logger.trace(
+              LogMarker.RVV,
+              "found gap in bitSet: missing bit at index={}; next set index={}",
+              nextMissingIndex,
+              nextReceivedIndex);
         }
       } else {
         // We can't flush any more bits from the bit set because there
         //are no more received versions
         if (isDebugEnabled_RVV) {
-          logger.trace(LogMarker.RVV, "terminating flush at bit {} because of missing entries", lastSetIndex);
+          logger.trace(
+              LogMarker.RVV,
+              "terminating flush at bit {} because of missing entries",
+              lastSetIndex);
         }
         this.bitSetVersion += lastSetIndex;
         this.bitSet.clear();
@@ -304,7 +318,11 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
       if (nextReceivedVersion > nextMissingVersion) {
         addException(nextMissingVersion - 1, nextReceivedVersion);
         if (isDebugEnabled_RVV) {
-          logger.trace(LogMarker.RVV, "Added rvv exception e<rv{} - rv{}>", (nextMissingVersion - 1), nextReceivedVersion);
+          logger.trace(
+              LogMarker.RVV,
+              "Added rvv exception e<rv{} - rv{}>",
+              (nextMissingVersion - 1),
+              nextReceivedVersion);
         }
       }
     }
@@ -368,9 +386,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
     }
   }
 
-  /**
-   * Add an exception that is older than this.bitSetVersion.
-   */
+  /** Add an exception that is older than this.bitSetVersion. */
   protected synchronized void addException(long previousVersion, long nextVersion) {
     if (this.exceptions == null) {
       this.exceptions = new LinkedList<RVVException>();
@@ -390,7 +406,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
   synchronized void removeExceptionsOlderThan(long v) {
     mergeBitSet();
     if (this.exceptions != null) {
-      for (Iterator<RVVException> it = this.exceptions.iterator(); it.hasNext();) {
+      for (Iterator<RVVException> it = this.exceptions.iterator(); it.hasNext(); ) {
         RVVException e = it.next();
         if (e.nextVersion <= v) {
           it.remove();
@@ -403,14 +419,12 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
   }
 
   /**
-   * Initialize this version holder from another version holder
-   * This is called during GII.
-   * 
-   * It's more likely that the other holder has seen most of the
-   * versions, and this version holder only has
-   * a few updates that happened since the GII started. So we apply
-   * our seen versions to the other version holder and then initialize
-   * this version holder from the other version holder. 
+   * Initialize this version holder from another version holder This is called during GII.
+   *
+   * <p>It's more likely that the other holder has seen most of the versions, and this version
+   * holder only has a few updates that happened since the GII started. So we apply our seen
+   * versions to the other version holder and then initialize this version holder from the other
+   * version holder.
    */
   public synchronized void initializeFrom(RegionVersionHolder<T> source) {
     //Make sure the bitsets are merged in both the source
@@ -457,8 +471,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
   }
 
   /**
-   * initialize a holder that was cloned from another holder so it is
-   * ready for use in a live vector
+   * initialize a holder that was cloned from another holder so it is ready for use in a live vector
    */
   void makeReadyForRecording() {
     if (this.bitSet == null) {
@@ -468,9 +481,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
     }
   }
 
-  /**
-   * returns true if this version holder has seen the given version number
-   */
+  /** returns true if this version holder has seen the given version number */
   synchronized boolean contains(long v) {
     if (v > getVersion()) {
       return false;
@@ -481,7 +492,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
       if (this.exceptions == null) {
         return true;
       }
-      for (Iterator<RVVException> it = this.exceptions.iterator(); it.hasNext();) {
+      for (Iterator<RVVException> it = this.exceptions.iterator(); it.hasNext(); ) {
         RVVException e = it.next();
         if (e.nextVersion <= v) {
           return true; // there is no RVVException for this version
@@ -495,11 +506,11 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
   }
 
   /**
-   * Returns true if this version hold has an exception in the exception list
-   * for the given version number.
-   * 
-   * This differs from contains because it returns true if v is greater
-   * than the last seen version for this holder.
+   * Returns true if this version hold has an exception in the exception list for the given version
+   * number.
+   *
+   * <p>This differs from contains because it returns true if v is greater than the last seen
+   * version for this holder.
    */
   synchronized boolean hasExceptionFor(long v) {
     if (this.bitSet != null && v >= this.bitSetVersion) {
@@ -511,7 +522,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
     if (this.exceptions == null) {
       return false;
     }
-    for (Iterator<RVVException> it = this.exceptions.iterator(); it.hasNext();) {
+    for (Iterator<RVVException> it = this.exceptions.iterator(); it.hasNext(); ) {
       RVVException e = it.next();
       if (e.nextVersion <= v) {
         return false; // there is no RVVException for this version
@@ -529,7 +540,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
 
   public boolean isSpecialException(RVVException e, RegionVersionHolder holder) {
     // deltaGII introduced a special exception, i.e. the hone is not in the middle, but at the end
-    // For example, P was at P3, operation P4 is on-going and identified as unfinished operation. 
+    // For example, P was at P3, operation P4 is on-going and identified as unfinished operation.
     // The next operation from P should be P5, but P's currentVersion() should be 3. In holder,
     // it's described as P3(2-4), i.e. exception.nextVersion == holder.version + 1
     return (e != null && e.nextVersion == holder.version + 1);
@@ -557,7 +568,8 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
     RVVException myException = myIterator.hasNext() ? myIterator.next() : null;
     RVVException otherException = otherIterator.hasNext() ? otherIterator.next() : null;
     // I can't fill exceptions that are newer than anything I've seen, so skip them
-    while ((otherException != null && otherException.previousVersion > this.version) || isSpecialException(otherException, other)) {
+    while ((otherException != null && otherException.previousVersion > this.version)
+        || isSpecialException(otherException, other)) {
       otherException = otherIterator.hasNext() ? otherIterator.next() : null;
     }
     while (otherException != null) {
@@ -589,7 +601,8 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
         // it has not
         return true;
       }
-      if ((myException.previousVersion == otherException.previousVersion) && (myException.nextVersion == otherException.nextVersion)) {
+      if ((myException.previousVersion == otherException.previousVersion)
+          && (myException.nextVersion == otherException.nextVersion)) {
         // |____| my exception
         // |____|   -- other exception
         // If the exceptions are identical we can skip both of them and
@@ -608,7 +621,8 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
       //
       // Unless my exception completely contains the other exception (*)
       // I have seen changes the other hasn't
-      if ((otherException.previousVersion < myException.previousVersion) || (myException.nextVersion < otherException.nextVersion)) {
+      if ((otherException.previousVersion < myException.previousVersion)
+          || (myException.nextVersion < otherException.nextVersion)) {
         return true;
       }
       // My exception completely contains the other exception and I have not
@@ -621,7 +635,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
 
   /* (non-Javadoc)
    * @see org.apache.geode.DataSerializable#toData(java.io.DataOutput)
-   * 
+   *
    * Version Holders serialized to disk, so if the serialization
    * format of version holder changes, we need to upgrade our persistence
    * format.
@@ -657,7 +671,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
 
   /* Warning: this hashcode uses mutable state and is only good for as long
    * as the holder is not modified.  It was added for unit testing.
-   * 
+   *
    * (non-Javadoc)
    * @see java.lang.Object#hashCode()
    */
@@ -675,7 +689,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
   // 2 RegionVersionHolders are actually the same
   void removeSpecialException() {
     if (this.exceptions != null && !this.exceptions.isEmpty()) {
-      for (Iterator<RVVException> it = this.exceptions.iterator(); it.hasNext();) {
+      for (Iterator<RVVException> it = this.exceptions.iterator(); it.hasNext(); ) {
         RVVException e = it.next();
         if (isSpecialException(e, this)) {
           it.remove();
@@ -687,11 +701,10 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
     }
   }
 
-  /** For test purposes only. Two
-   * RVVs that have effectively same exceptions
-   * may represent the exceptions differently. This
-   * method will test to see if the exception lists are
-   * effectively the same, regardless of representation.
+  /**
+   * For test purposes only. Two RVVs that have effectively same exceptions may represent the
+   * exceptions differently. This method will test to see if the exception lists are effectively the
+   * same, regardless of representation.
    */
   public synchronized boolean sameAs(RegionVersionHolder<T> other) {
     mergeBitSet();
@@ -731,8 +744,9 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
   }
 
   /**
-   * Canonicalize an ordered set of exceptions. In the canonical form,
-   * none of the RVVExceptions have any received versions.
+   * Canonicalize an ordered set of exceptions. In the canonical form, none of the RVVExceptions
+   * have any received versions.
+   *
    * @param exceptions
    * @return The canonicalized set of exceptions.
    */
@@ -747,7 +761,7 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
           long previous = exception.previousVersion;
           //Iterate through the set of received versions for this exception
           int insertAt = canon.size();
-          for (ReceivedVersionsIterator it = exception.receivedVersionsIterator(); it.hasNext();) {
+          for (ReceivedVersionsIterator it = exception.receivedVersionsIterator(); it.hasNext(); ) {
             Long received = it.next();
             //If we find a gap between the previous received version and the
             //next received version, add an exception.
@@ -770,5 +784,4 @@ public class RegionVersionHolder<T> implements Cloneable, DataSerializable {
     }
     return canon;
   }
-
 }

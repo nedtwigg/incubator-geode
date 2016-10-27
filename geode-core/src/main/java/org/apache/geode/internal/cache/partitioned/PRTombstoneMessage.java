@@ -50,9 +50,11 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
  * This message class sends tombstone GC information to other PR holders
+ *
  * @since GemFire 7.0
  */
-public final class PRTombstoneMessage extends PartitionMessageWithDirectReply implements SerializationVersions {
+public final class PRTombstoneMessage extends PartitionMessageWithDirectReply
+    implements SerializationVersions {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -61,20 +63,19 @@ public final class PRTombstoneMessage extends PartitionMessageWithDirectReply im
   private Set<Object> keys;
   private EventID eventID;
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public PRTombstoneMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public PRTombstoneMessage() {}
 
   public static void send(BucketRegion r, final Set<Object> keys, EventID eventID) {
-    Set<InternalDistributedMember> recipients = r.getPartitionedRegion().getRegionAdvisor().adviseAllPRNodes();
+    Set<InternalDistributedMember> recipients =
+        r.getPartitionedRegion().getRegionAdvisor().adviseAllPRNodes();
     recipients.removeAll(r.getDistributionAdvisor().adviseReplicates());
     if (recipients.size() == 0) {
       return;
     }
     PartitionResponse p = new Response(r.getSystem(), recipients);
-    PRTombstoneMessage m = new PRTombstoneMessage(recipients, r.getPartitionedRegion().getPRId(), p, keys, eventID);
+    PRTombstoneMessage m =
+        new PRTombstoneMessage(recipients, r.getPartitionedRegion().getPRId(), p, keys, eventID);
     r.getDistributionManager().putOutgoing(m);
 
     try {
@@ -85,21 +86,30 @@ public final class PRTombstoneMessage extends PartitionMessageWithDirectReply im
     }
   }
 
-  private PRTombstoneMessage(Set<InternalDistributedMember> recipients, int regionId, PartitionResponse p, Set<Object> reapedKeys, EventID eventID) {
+  private PRTombstoneMessage(
+      Set<InternalDistributedMember> recipients,
+      int regionId,
+      PartitionResponse p,
+      Set<Object> reapedKeys,
+      EventID eventID) {
     super(recipients, regionId, p);
     this.keys = reapedKeys;
     this.eventID = eventID;
   }
 
   @Override
-  protected final boolean operateOnPartitionedRegion(final DistributionManager dm, PartitionedRegion r, long startTime) throws ForceReattemptException {
+  protected final boolean operateOnPartitionedRegion(
+      final DistributionManager dm, PartitionedRegion r, long startTime)
+      throws ForceReattemptException {
     if (logger.isTraceEnabled(LogMarker.DM)) {
       logger.debug("PRTombstoneMessage operateOnRegion: {}", r.getFullPath());
     }
     FilterProfile fp = r.getFilterProfile();
     if (this.keys != null && this.keys.size() > 0) { // sanity check
       if (fp != null && CacheClientNotifier.getInstance() != null && this.eventID != null) {
-        RegionEventImpl regionEvent = new RegionEventImpl(r, Operation.REGION_DESTROY, null, true, r.getGemFireCache().getMyId());
+        RegionEventImpl regionEvent =
+            new RegionEventImpl(
+                r, Operation.REGION_DESTROY, null, true, r.getGemFireCache().getMyId());
         regionEvent.setLocalFilterInfo(fp.getLocalFilterRouting(regionEvent));
         ClientUpdateMessage clientMessage = ClientTombstoneMessage.gc(r, this.keys, this.eventID);
         CacheClientNotifier.notifyClients(regionEvent, clientMessage);

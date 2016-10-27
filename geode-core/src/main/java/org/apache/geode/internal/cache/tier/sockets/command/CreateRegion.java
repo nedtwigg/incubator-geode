@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import java.io.IOException;
@@ -36,7 +34,7 @@ import org.apache.geode.security.NotAuthorizedException;
 
 public class CreateRegion extends BaseCommand {
 
-  private final static CreateRegion singleton = new CreateRegion();
+  private static final CreateRegion singleton = new CreateRegion();
 
   public static Command getCommand() {
     return singleton;
@@ -59,19 +57,39 @@ public class CreateRegion extends BaseCommand {
     regionName = regionNamePart.getString();
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received create region request ({} bytes) from {} for parent region {} region {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), parentRegionName, regionName);
+      logger.debug(
+          "{}: Received create region request ({} bytes) from {} for parent region {} region {}",
+          servConn.getName(),
+          msg.getPayloadLength(),
+          servConn.getSocketString(),
+          parentRegionName,
+          regionName);
     }
 
     // Process the create region request
     if (parentRegionName == null || regionName == null) {
       String errMessage = "";
       if (parentRegionName == null) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CreateRegion_0_THE_INPUT_PARENT_REGION_NAME_FOR_THE_CREATE_REGION_REQUEST_IS_NULL, servConn.getName()));
-        errMessage = LocalizedStrings.CreateRegion_THE_INPUT_PARENT_REGION_NAME_FOR_THE_CREATE_REGION_REQUEST_IS_NULL.toLocalizedString();
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .CreateRegion_0_THE_INPUT_PARENT_REGION_NAME_FOR_THE_CREATE_REGION_REQUEST_IS_NULL,
+                servConn.getName()));
+        errMessage =
+            LocalizedStrings
+                .CreateRegion_THE_INPUT_PARENT_REGION_NAME_FOR_THE_CREATE_REGION_REQUEST_IS_NULL
+                .toLocalizedString();
       }
       if (regionName == null) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.CreateRegion_0_THE_INPUT_REGION_NAME_FOR_THE_CREATE_REGION_REQUEST_IS_NULL, servConn.getName()));
-        errMessage = LocalizedStrings.CreateRegion_THE_INPUT_REGION_NAME_FOR_THE_CREATE_REGION_REQUEST_IS_NULL.toLocalizedString();
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .CreateRegion_0_THE_INPUT_REGION_NAME_FOR_THE_CREATE_REGION_REQUEST_IS_NULL,
+                servConn.getName()));
+        errMessage =
+            LocalizedStrings
+                .CreateRegion_THE_INPUT_REGION_NAME_FOR_THE_CREATE_REGION_REQUEST_IS_NULL
+                .toLocalizedString();
       }
       writeErrorResponse(msg, MessageType.CREATE_REGION_DATA_ERROR, errMessage, servConn);
       servConn.setAsTrue(RESPONDED);
@@ -80,7 +98,9 @@ public class CreateRegion extends BaseCommand {
 
     Region parentRegion = servConn.getCache().getRegion(parentRegionName);
     if (parentRegion == null) {
-      String reason = LocalizedStrings.CreateRegion__0_WAS_NOT_FOUND_DURING_SUBREGION_CREATION_REQUEST.toLocalizedString(parentRegionName);
+      String reason =
+          LocalizedStrings.CreateRegion__0_WAS_NOT_FOUND_DURING_SUBREGION_CREATION_REQUEST
+              .toLocalizedString(parentRegionName);
       writeRegionDestroyedEx(msg, parentRegionName, reason, servConn);
       servConn.setAsTrue(RESPONDED);
       return;
@@ -126,8 +146,11 @@ public class CreateRegion extends BaseCommand {
     writeReply(msg, servConn);
     servConn.setAsTrue(RESPONDED);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Sent create region response for parent region {} region {}", servConn.getName(), parentRegionName, regionName);
+      logger.debug(
+          "{}: Sent create region response for parent region {} region {}",
+          servConn.getName(),
+          parentRegionName,
+          regionName);
     }
   }
-
 }

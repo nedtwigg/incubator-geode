@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -58,9 +58,9 @@ public class TopEntries<K> implements DataSerializableFixedID {
   }
 
   /**
-   * Adds an entry to the collection. The new entry must have a lower score than all previous entries added to the
-   * collection. The new entry will be ignored if the limit is already reached.
-   * 
+   * Adds an entry to the collection. The new entry must have a lower score than all previous
+   * entries added to the collection. The new entry will be ignored if the limit is already reached.
+   *
    * @param entry
    */
   public void addHit(EntryScore<K> entry) {
@@ -78,30 +78,24 @@ public class TopEntries<K> implements DataSerializableFixedID {
     hits.add(entry);
   }
 
-  /**
-   * @return count of entries in the collection
-   */
+  /** @return count of entries in the collection */
   public int size() {
     return hits.size();
   }
 
-  /**
-   * @return The entries collection managed by this instance
-   */
+  /** @return The entries collection managed by this instance */
   public List<EntryScore<K>> getHits() {
     return hits;
   }
 
-  /**
-   * @return The maximum capacity of this collection
-   */
+  /** @return The maximum capacity of this collection */
   public int getLimit() {
     return limit;
   }
 
   /**
-   * Compares scores of two entries using natural ordering. I.e. it returns -1 if the first entry's score is less than
-   * the second one.
+   * Compares scores of two entries using natural ordering. I.e. it returns -1 if the first entry's
+   * score is less than the second one.
    */
   class EntryScoreComparator implements Comparator<EntryScore<K>> {
     @Override

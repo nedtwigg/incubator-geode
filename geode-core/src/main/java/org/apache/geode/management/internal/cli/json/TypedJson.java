@@ -38,28 +38,21 @@ import org.apache.geode.cache.query.internal.StructImpl;
 import org.apache.geode.pdx.PdxInstance;
 
 /**
- * A limited functionality JSON parser. Its a DSF based JSON parser. It does not
- * create Object maps and serialize them like JSONObject. It just traverses an Object graph in
- * depth first search manner and appends key values to a String writer.
- * Hence we prevent creating a lot of garbage.
- * 
- * Although it has limited functionality,still a simple use of add() method
- * should suffice for most of the simple JSON use cases.
- * 
- * 
+ * A limited functionality JSON parser. Its a DSF based JSON parser. It does not create Object maps
+ * and serialize them like JSONObject. It just traverses an Object graph in depth first search
+ * manner and appends key values to a String writer. Hence we prevent creating a lot of garbage.
+ *
+ * <p>Although it has limited functionality,still a simple use of add() method should suffice for
+ * most of the simple JSON use cases.
  */
 public class TypedJson {
 
-  /**
-   * Limit of collection length to be serialized in JSON format.
-   */
+  /** Limit of collection length to be serialized in JSON format. */
   public static int DEFAULT_COLLECTION_ELEMENT_LIMIT = 100;
 
   public static final Object NULL = GfJsonObject.NULL;
 
-  /**
-   * If Integer of Float is NAN
-   */
+  /** If Integer of Float is NAN */
   static final String NONFINITE = "Non-Finite";
 
   Map<Object, List<Object>> forbidden = new java.util.IdentityHashMap<Object, List<Object>>();
@@ -137,10 +130,8 @@ public class TypedJson {
               newList.add(n);
               forbidden.put(r, newList);
             }
-
           }
         }
-
       }
     }
   }
@@ -154,19 +145,16 @@ public class TypedJson {
   }
 
   /**
-   * 
    * User can build on this object by adding Objects against a key.
-   * 
-   * TypedJson result = new TypedJson(); result.add(KEY,object); If users add
-   * more objects against the same key the newly added object will be appended
-   * to the existing key forming an array of objects.
-   * 
-   * If the KEY is a new one then it will be a key map value.
-   * 
-   * @param key
-   *          Key against which an object will be added
-   * @param value
-   *          Object to be added
+   *
+   * <p>TypedJson result = new TypedJson(); result.add(KEY,object); If users add more objects
+   * against the same key the newly added object will be appended to the existing key forming an
+   * array of objects.
+   *
+   * <p>If the KEY is a new one then it will be a key map value.
+   *
+   * @param key Key against which an object will be added
+   * @param value Object to be added
    * @return TypedJson object
    */
   public TypedJson add(String key, Object value) {
@@ -222,7 +210,6 @@ public class TypedJson {
           commanate = false;
           addComma = true;
         }
-
       }
 
       writer.write('}');
@@ -291,7 +278,26 @@ public class TypedJson {
   }
 
   static boolean isPrimitiveOrWrapper(Class<?> klass) {
-    return klass.isAssignableFrom(Byte.class) || klass.isAssignableFrom(byte.class) || klass.isAssignableFrom(Short.class) || klass.isAssignableFrom(short.class) || klass.isAssignableFrom(Integer.class) || klass.isAssignableFrom(int.class) || klass.isAssignableFrom(Long.class) || klass.isAssignableFrom(long.class) || klass.isAssignableFrom(Float.class) || klass.isAssignableFrom(float.class) || klass.isAssignableFrom(Double.class) || klass.isAssignableFrom(double.class) || klass.isAssignableFrom(Boolean.class) || klass.isAssignableFrom(boolean.class) || klass.isAssignableFrom(String.class) || klass.isAssignableFrom(char.class) || klass.isAssignableFrom(Character.class) || klass.isAssignableFrom(java.sql.Date.class) || klass.isAssignableFrom(java.util.Date.class) || klass.isAssignableFrom(java.math.BigDecimal.class);
+    return klass.isAssignableFrom(Byte.class)
+        || klass.isAssignableFrom(byte.class)
+        || klass.isAssignableFrom(Short.class)
+        || klass.isAssignableFrom(short.class)
+        || klass.isAssignableFrom(Integer.class)
+        || klass.isAssignableFrom(int.class)
+        || klass.isAssignableFrom(Long.class)
+        || klass.isAssignableFrom(long.class)
+        || klass.isAssignableFrom(Float.class)
+        || klass.isAssignableFrom(float.class)
+        || klass.isAssignableFrom(Double.class)
+        || klass.isAssignableFrom(double.class)
+        || klass.isAssignableFrom(Boolean.class)
+        || klass.isAssignableFrom(boolean.class)
+        || klass.isAssignableFrom(String.class)
+        || klass.isAssignableFrom(char.class)
+        || klass.isAssignableFrom(Character.class)
+        || klass.isAssignableFrom(java.sql.Date.class)
+        || klass.isAssignableFrom(java.util.Date.class)
+        || klass.isAssignableFrom(java.math.BigDecimal.class);
   }
 
   static boolean isSpecialObject(Object object) {
@@ -299,7 +305,11 @@ public class TypedJson {
     if (type.isArray() || type.isEnum()) {
       return true;
     }
-    if ((object instanceof Collection) || (object instanceof Map) || (object instanceof PdxInstance) || (object instanceof Struct) || (object instanceof Region.Entry)) {
+    if ((object instanceof Collection)
+        || (object instanceof Map)
+        || (object instanceof PdxInstance)
+        || (object instanceof Struct)
+        || (object instanceof Region.Entry)) {
       return true;
     }
     return false;
@@ -318,7 +328,6 @@ public class TypedJson {
     if (shouldVisitChildren(object)) {
       visitChildrens(w, object, true);
     }
-
   }
 
   void writeKeyValue(Writer w, Object key, Object value, Class type) throws IOException {
@@ -363,7 +372,10 @@ public class TypedJson {
       return;
     }
 
-    if (value instanceof String || value instanceof Character || value instanceof java.sql.Date || value instanceof java.util.Date) {
+    if (value instanceof String
+        || value instanceof Character
+        || value instanceof java.sql.Date
+        || value instanceof java.util.Date) {
       w.write(quote(value.toString()));
       return;
     }
@@ -411,7 +423,6 @@ public class TypedJson {
     for (int i = 0; i < length && elements < queryCollectionsDepth; i += 1) {
       Object item = Array.get(object, i);
       items.add(item);
-
     }
     return items;
   }
@@ -455,7 +466,6 @@ public class TypedJson {
       endType(w, rootClazz);
     } catch (IOException e) {
     }
-
   }
 
   void startKey(Writer writer, String key) throws IOException {
@@ -470,7 +480,6 @@ public class TypedJson {
     if (key != null) {
       writer.write('}');
     }
-
   }
 
   List<Object> visitSpecialObjects(Writer w, Object object, boolean write) throws IOException {
@@ -505,8 +514,7 @@ public class TypedJson {
       Collection collection = (Collection) object;
       Iterator iter = collection.iterator();
       int i = 0;
-      if (write)
-        w.write('{');
+      if (write) w.write('{');
       while (iter.hasNext() && i < queryCollectionsDepth) {
         Object item = iter.next();
         if (write) {
@@ -517,8 +525,7 @@ public class TypedJson {
 
         i++;
       }
-      if (write)
-        w.write('}');
+      if (write) w.write('}');
       return elements;
     }
 
@@ -526,8 +533,7 @@ public class TypedJson {
       Map map = (Map) object;
       Iterator it = map.entrySet().iterator();
       int i = 0;
-      if (write)
-        w.write('{');
+      if (write) w.write('{');
       while (it.hasNext() && i < queryCollectionsDepth) {
         Map.Entry e = (Map.Entry) it.next();
         Object value = e.getValue();
@@ -539,15 +545,13 @@ public class TypedJson {
 
         i++;
       }
-      if (write)
-        w.write('}');
+      if (write) w.write('}');
       return elements;
     }
 
     if (object instanceof PdxInstance) {
       PdxInstance pdxInstance = (PdxInstance) object;
-      if (write)
-        w.write('{');
+      if (write) w.write('{');
       for (String field : pdxInstance.getFieldNames()) {
         Object fieldValue = pdxInstance.getField(field);
         if (write) {
@@ -555,10 +559,8 @@ public class TypedJson {
         } else {
           elements.add(fieldValue);
         }
-
       }
-      if (write)
-        w.write('}');
+      if (write) w.write('}');
       return elements;
     }
 
@@ -567,19 +569,17 @@ public class TypedJson {
       String fields[] = impl.getFieldNames();
       Object[] values = impl.getFieldValues();
 
-      if (write)
-        w.write('{');
+      if (write) w.write('{');
       for (int i = 0; i < fields.length; i++) {
         Object fieldValue = values[i];
         if (write) {
-          writeKeyValue(w, fields[i], fieldValue, fieldValue != null ? fieldValue.getClass() : null);
+          writeKeyValue(
+              w, fields[i], fieldValue, fieldValue != null ? fieldValue.getClass() : null);
         } else {
           elements.add(fieldValue);
         }
-
       }
-      if (write)
-        w.write('}');
+      if (write) w.write('}');
       return elements;
     }
 
@@ -613,7 +613,6 @@ public class TypedJson {
   /**
    * Handle some special GemFire classes. We don't want to expose some of the internal classes.
    * Hence corresponding interface or external classes should be shown.
-   * 
    */
   String internalToExternal(Class clazz, Object value) {
     if (value != null && value instanceof Region.Entry) {
@@ -629,7 +628,6 @@ public class TypedJson {
     if (clazz != TypedJson.class) {
       w.write(']');
     }
-
   }
 
   List<Object> visitChildrens(Writer w, Object object, boolean write) {
@@ -653,7 +651,9 @@ public class TypedJson {
           } else if (name.startsWith("is")) {
             key = name.substring(2);
           }
-          if (key.length() > 0 && Character.isUpperCase(key.charAt(0)) && method.getParameterTypes().length == 0) {
+          if (key.length() > 0
+              && Character.isUpperCase(key.charAt(0))
+              && method.getParameterTypes().length == 0) {
             if (key.length() == 1) {
               key = key.toLowerCase();
             } else if (!Character.isUpperCase(key.charAt(1))) {
@@ -671,7 +671,6 @@ public class TypedJson {
             } else {
               elements.add(result);
             }
-
           }
         }
       } catch (Exception ignore) {
@@ -681,8 +680,8 @@ public class TypedJson {
   }
 
   /**
-   * This method returns method declared in a Class as well as all the super classes in the hierarchy.
-   * If class is a system class it wont include super class methods 
+   * This method returns method declared in a Class as well as all the super classes in the
+   * hierarchy. If class is a system class it wont include super class methods
    */
   Method[] getMethods(Object object) {
     Class klass = object.getClass();
@@ -715,9 +714,8 @@ public class TypedJson {
 
   /**
    * Produce a string from a Number.
-   * 
-   * @param number
-   *          A Number
+   *
+   * @param number A Number
    * @return A String.
    */
   public static String numberToString(Number number) {
@@ -767,39 +765,39 @@ public class TypedJson {
       b = c;
       c = string.charAt(i);
       switch (c) {
-      case '\\':
-      case '"':
-        w.write('\\');
-        w.write(c);
-        break;
-      case '/':
-        if (b == '<') {
+        case '\\':
+        case '"':
           w.write('\\');
-        }
-        w.write(c);
-        break;
-      case '\b':
-        w.write("\\b");
-        break;
-      case '\t':
-        w.write("\\t");
-        break;
-      case '\n':
-        w.write("\\n");
-        break;
-      case '\f':
-        w.write("\\f");
-        break;
-      case '\r':
-        w.write("\\r");
-        break;
-      default:
-        if (c < ' ' || (c >= '\u0080' && c < '\u00a0') || (c >= '\u2000' && c < '\u2100')) {
-          hhhh = "000" + Integer.toHexString(c);
-          w.write("\\u" + hhhh.substring(hhhh.length() - 4));
-        } else {
           w.write(c);
-        }
+          break;
+        case '/':
+          if (b == '<') {
+            w.write('\\');
+          }
+          w.write(c);
+          break;
+        case '\b':
+          w.write("\\b");
+          break;
+        case '\t':
+          w.write("\\t");
+          break;
+        case '\n':
+          w.write("\\n");
+          break;
+        case '\f':
+          w.write("\\f");
+          break;
+        case '\r':
+          w.write("\\r");
+          break;
+        default:
+          if (c < ' ' || (c >= '\u0080' && c < '\u00a0') || (c >= '\u2000' && c < '\u2100')) {
+            hhhh = "000" + Integer.toHexString(c);
+            w.write("\\u" + hhhh.substring(hhhh.length() - 4));
+          } else {
+            w.write(c);
+          }
       }
     }
     w.write('"');

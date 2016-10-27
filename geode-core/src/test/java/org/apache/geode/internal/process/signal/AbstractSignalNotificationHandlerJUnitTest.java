@@ -32,9 +32,9 @@ import org.apache.geode.internal.util.CollectionUtils;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The AbstractSignalNotificationHandlerJUnitTest class is a test suite of test cases testing the contract
- * and functionality of the AbstractSignalNotificationHandler.
- * </p>
+ * The AbstractSignalNotificationHandlerJUnitTest class is a test suite of test cases testing the
+ * contract and functionality of the AbstractSignalNotificationHandler.
+ *
  * @see org.apache.geode.internal.process.signal.AbstractSignalNotificationHandler
  * @see org.apache.geode.internal.process.signal.Signal
  * @see org.apache.geode.internal.process.signal.SignalEvent
@@ -52,11 +52,12 @@ public class AbstractSignalNotificationHandlerJUnitTest {
 
   @Before
   public void setup() {
-    mockContext = new Mockery() {
-      {
-        setImposteriser(ClassImposteriser.INSTANCE);
-      }
-    };
+    mockContext =
+        new Mockery() {
+          {
+            setImposteriser(ClassImposteriser.INSTANCE);
+          }
+        };
   }
 
   @After
@@ -107,7 +108,8 @@ public class AbstractSignalNotificationHandlerJUnitTest {
   @Test(expected = IllegalArgumentException.class)
   public void testAssertValidArgmentWithIllegalArgument() {
     try {
-      AbstractSignalNotificationHandler.assertValidArgument(false, "Expected %1$s message!", "test");
+      AbstractSignalNotificationHandler.assertValidArgument(
+          false, "Expected %1$s message!", "test");
     } catch (IllegalArgumentException expected) {
       assertEquals("Expected test message!", expected.getMessage());
       throw expected;
@@ -148,7 +150,9 @@ public class AbstractSignalNotificationHandlerJUnitTest {
     try {
       createSignalNotificationHandler().registerListener(null);
     } catch (NullPointerException expected) {
-      assertEquals("The SignalListener to register, listening for all signals cannot be null!", expected.getMessage());
+      assertEquals(
+          "The SignalListener to register, listening for all signals cannot be null!",
+          expected.getMessage());
       throw expected;
     }
   }
@@ -158,7 +162,8 @@ public class AbstractSignalNotificationHandlerJUnitTest {
     final AbstractSignalNotificationHandler signalHandler = createSignalNotificationHandler();
 
     final SignalListener mockSigIntListener = mockContext.mock(SignalListener.class, "SIGINT");
-    final SignalListener mockSigIntTermListener = mockContext.mock(SignalListener.class, "SIGINT + SIGTERM");
+    final SignalListener mockSigIntTermListener =
+        mockContext.mock(SignalListener.class, "SIGINT + SIGTERM");
 
     assertFalse(signalHandler.isListening(mockSigIntListener));
     assertFalse(signalHandler.isListening(mockSigIntTermListener));
@@ -181,17 +186,17 @@ public class AbstractSignalNotificationHandlerJUnitTest {
     for (final Signal signal : Signal.values()) {
       assertEquals(expectedSignals.contains(signal), signalHandler.hasListeners(signal));
       switch (signal) {
-      case SIGINT:
-        assertTrue(signalHandler.isListening(mockSigIntListener, signal));
-        assertTrue(signalHandler.isListening(mockSigIntTermListener, signal));
-        break;
-      case SIGTERM:
-        assertFalse(signalHandler.isListening(mockSigIntListener, signal));
-        assertTrue(signalHandler.isListening(mockSigIntTermListener, signal));
-        break;
-      default:
-        assertFalse(signalHandler.isListening(mockSigIntListener, signal));
-        assertFalse(signalHandler.isListening(mockSigIntTermListener, signal));
+        case SIGINT:
+          assertTrue(signalHandler.isListening(mockSigIntListener, signal));
+          assertTrue(signalHandler.isListening(mockSigIntTermListener, signal));
+          break;
+        case SIGTERM:
+          assertFalse(signalHandler.isListening(mockSigIntListener, signal));
+          assertTrue(signalHandler.isListening(mockSigIntTermListener, signal));
+          break;
+        default:
+          assertFalse(signalHandler.isListening(mockSigIntListener, signal));
+          assertFalse(signalHandler.isListening(mockSigIntTermListener, signal));
       }
     }
   }
@@ -199,9 +204,11 @@ public class AbstractSignalNotificationHandlerJUnitTest {
   @Test(expected = NullPointerException.class)
   public void testRegisterListenerWithNullSignal() {
     try {
-      createSignalNotificationHandler().registerListener(mockContext.mock(SignalListener.class, "SIGALL"), null);
+      createSignalNotificationHandler()
+          .registerListener(mockContext.mock(SignalListener.class, "SIGALL"), null);
     } catch (NullPointerException expected) {
-      assertEquals("The signal to register the listener for cannot be null!", expected.getMessage());
+      assertEquals(
+          "The signal to register the listener for cannot be null!", expected.getMessage());
       throw expected;
     }
   }
@@ -211,7 +218,11 @@ public class AbstractSignalNotificationHandlerJUnitTest {
     try {
       createSignalNotificationHandler().registerListener(null, Signal.SIGQUIT);
     } catch (NullPointerException expected) {
-      assertEquals(String.format("The SignalListener being registered to listen for '%1$s' signals cannot be null!", Signal.SIGQUIT.getName()), expected.getMessage());
+      assertEquals(
+          String.format(
+              "The SignalListener being registered to listen for '%1$s' signals cannot be null!",
+              Signal.SIGQUIT.getName()),
+          expected.getMessage());
       throw expected;
     }
   }
@@ -292,9 +303,12 @@ public class AbstractSignalNotificationHandlerJUnitTest {
   @Test(expected = NullPointerException.class)
   public void testUnregisterListenerWithSignalListenerAndNullSignal() {
     try {
-      createSignalNotificationHandler().unregisterListener(mockContext.mock(SignalListener.class, "SIGALL"), null);
+      createSignalNotificationHandler()
+          .unregisterListener(mockContext.mock(SignalListener.class, "SIGALL"), null);
     } catch (NullPointerException expected) {
-      assertEquals("The signal from which to unregister the listener cannot be null!", expected.getMessage());
+      assertEquals(
+          "The signal from which to unregister the listener cannot be null!",
+          expected.getMessage());
       throw expected;
     }
   }
@@ -305,7 +319,8 @@ public class AbstractSignalNotificationHandlerJUnitTest {
 
     final SignalListener mockSigQuitListener = mockContext.mock(SignalListener.class, "SIGQUIT");
     final SignalListener mockSigTermListener = mockContext.mock(SignalListener.class, "SIGTERM");
-    final SignalListener mockSigTermQuitListener = mockContext.mock(SignalListener.class, "SIGTERM + SIGQUIT");
+    final SignalListener mockSigTermQuitListener =
+        mockContext.mock(SignalListener.class, "SIGTERM + SIGQUIT");
 
     assertFalse(signalHandler.isListening(mockSigQuitListener));
     assertFalse(signalHandler.isListening(mockSigTermListener));
@@ -362,7 +377,9 @@ public class AbstractSignalNotificationHandlerJUnitTest {
     try {
       createSignalNotificationHandler().unregisterListeners(null);
     } catch (NullPointerException expected) {
-      assertEquals("The signal from which to unregister all listeners cannot be null!", expected.getMessage());
+      assertEquals(
+          "The signal from which to unregister all listeners cannot be null!",
+          expected.getMessage());
       throw expected;
     }
   }
@@ -374,25 +391,27 @@ public class AbstractSignalNotificationHandlerJUnitTest {
     final SignalListener mockSigAllListener = mockContext.mock(SignalListener.class, "SIGALL");
     final SignalListener mockSigIntListener = mockContext.mock(SignalListener.class, "SIGINT");
     final SignalListener mockSigQuitListener = mockContext.mock(SignalListener.class, "SIGQUIT");
-    final SignalListener mockSigQuitTermListener = mockContext.mock(SignalListener.class, "SIGQUIT + SIGTERM");
+    final SignalListener mockSigQuitTermListener =
+        mockContext.mock(SignalListener.class, "SIGQUIT + SIGTERM");
 
     final SignalEvent sigintEvent = new SignalEvent(this, Signal.SIGINT);
     final SignalEvent sigioEvent = new SignalEvent(this, Signal.SIGIO);
     final SignalEvent sigquitEvent = new SignalEvent(this, Signal.SIGQUIT);
     final SignalEvent sigtermEvent = new SignalEvent(this, Signal.SIGTERM);
 
-    mockContext.checking(new Expectations() {
-      {
-        oneOf(mockSigAllListener).handle(with(equal(sigintEvent)));
-        oneOf(mockSigAllListener).handle(with(equal(sigioEvent)));
-        oneOf(mockSigAllListener).handle(with(equal(sigquitEvent)));
-        oneOf(mockSigAllListener).handle(with(equal(sigtermEvent)));
-        oneOf(mockSigIntListener).handle(with(equal(sigintEvent)));
-        oneOf(mockSigQuitListener).handle(with(equal(sigquitEvent)));
-        oneOf(mockSigQuitTermListener).handle(with(equal(sigquitEvent)));
-        oneOf(mockSigQuitTermListener).handle(with(equal(sigtermEvent)));
-      }
-    });
+    mockContext.checking(
+        new Expectations() {
+          {
+            oneOf(mockSigAllListener).handle(with(equal(sigintEvent)));
+            oneOf(mockSigAllListener).handle(with(equal(sigioEvent)));
+            oneOf(mockSigAllListener).handle(with(equal(sigquitEvent)));
+            oneOf(mockSigAllListener).handle(with(equal(sigtermEvent)));
+            oneOf(mockSigIntListener).handle(with(equal(sigintEvent)));
+            oneOf(mockSigQuitListener).handle(with(equal(sigquitEvent)));
+            oneOf(mockSigQuitTermListener).handle(with(equal(sigquitEvent)));
+            oneOf(mockSigQuitTermListener).handle(with(equal(sigtermEvent)));
+          }
+        });
 
     assertFalse(signalHandler.isListening(mockSigAllListener));
     assertFalse(signalHandler.isListening(mockSigIntListener));
@@ -418,25 +437,25 @@ public class AbstractSignalNotificationHandlerJUnitTest {
       assertTrue(signalHandler.isListening(mockSigAllListener, signal));
 
       switch (signal) {
-      case SIGINT:
-        assertTrue(signalHandler.isListening(mockSigIntListener, signal));
-        assertFalse(signalHandler.isListening(mockSigQuitListener, signal));
-        assertFalse(signalHandler.isListening(mockSigQuitTermListener, signal));
-        break;
-      case SIGQUIT:
-        assertFalse(signalHandler.isListening(mockSigIntListener, signal));
-        assertTrue(signalHandler.isListening(mockSigQuitListener, signal));
-        assertTrue(signalHandler.isListening(mockSigQuitTermListener, signal));
-        break;
-      case SIGTERM:
-        assertFalse(signalHandler.isListening(mockSigIntListener, signal));
-        assertFalse(signalHandler.isListening(mockSigQuitListener, signal));
-        assertTrue(signalHandler.isListening(mockSigQuitTermListener, signal));
-        break;
-      default:
-        assertFalse(signalHandler.isListening(mockSigIntListener, signal));
-        assertFalse(signalHandler.isListening(mockSigQuitListener, signal));
-        assertFalse(signalHandler.isListening(mockSigQuitTermListener, signal));
+        case SIGINT:
+          assertTrue(signalHandler.isListening(mockSigIntListener, signal));
+          assertFalse(signalHandler.isListening(mockSigQuitListener, signal));
+          assertFalse(signalHandler.isListening(mockSigQuitTermListener, signal));
+          break;
+        case SIGQUIT:
+          assertFalse(signalHandler.isListening(mockSigIntListener, signal));
+          assertTrue(signalHandler.isListening(mockSigQuitListener, signal));
+          assertTrue(signalHandler.isListening(mockSigQuitTermListener, signal));
+          break;
+        case SIGTERM:
+          assertFalse(signalHandler.isListening(mockSigIntListener, signal));
+          assertFalse(signalHandler.isListening(mockSigQuitListener, signal));
+          assertTrue(signalHandler.isListening(mockSigQuitTermListener, signal));
+          break;
+        default:
+          assertFalse(signalHandler.isListening(mockSigIntListener, signal));
+          assertFalse(signalHandler.isListening(mockSigQuitListener, signal));
+          assertFalse(signalHandler.isListening(mockSigQuitTermListener, signal));
       }
     }
 
@@ -448,7 +467,6 @@ public class AbstractSignalNotificationHandlerJUnitTest {
     // notification verification handled by mockContext.assertIsSatisfied in tearDown()
   }
 
-  private static final class TestSignalNotificationHandler extends AbstractSignalNotificationHandler {
-  }
-
+  private static final class TestSignalNotificationHandler
+      extends AbstractSignalNotificationHandler {}
 }

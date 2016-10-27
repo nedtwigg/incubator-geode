@@ -76,15 +76,18 @@ public class WanSnapshotJUnitTest extends SnapshotTestCase {
 
     wan = new WanListener();
     cache.createAsyncEventQueueFactory().setBatchSize(1).create("wanqueue", wan);
-    region = cache.<Integer, MyObject> createRegionFactory(RegionShortcut.REPLICATE).addAsyncEventQueueId("wanqueue").create("test");
+    region =
+        cache
+            .<Integer, MyObject>createRegionFactory(RegionShortcut.REPLICATE)
+            .addAsyncEventQueueId("wanqueue")
+            .create("test");
   }
 
   private class WanListener implements AsyncEventListener {
     private final AtomicInteger ticker = new AtomicInteger(0);
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 
     @Override
     public boolean processEvents(List<AsyncEvent> events) {
@@ -92,5 +95,4 @@ public class WanSnapshotJUnitTest extends SnapshotTestCase {
       return true;
     }
   }
-
 }

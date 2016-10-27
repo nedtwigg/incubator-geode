@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.apache.geode.modules.session.filter;
 
@@ -36,47 +36,47 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Primary class which orchestrates everything. This is the class which gets
- * configured in the web.xml.
+ * Primary class which orchestrates everything. This is the class which gets configured in the
+ * web.xml.
  */
 public class SessionCachingFilter implements Filter {
 
-  /**
-   * Logger instance
-   */
+  /** Logger instance */
   private static final Logger LOG = LoggerFactory.getLogger(SessionCachingFilter.class.getName());
 
   /**
-   * The filter configuration object we are associated with.  If this value is
-   * null, this filter instance is not currently configured.
+   * The filter configuration object we are associated with. If this value is null, this filter
+   * instance is not currently configured.
    */
   private FilterConfig filterConfig = null;
 
   /**
-   * Some containers will want to instantiate multiple instances of this filter,
-   * but we only need one SessionManager
+   * Some containers will want to instantiate multiple instances of this filter, but we only need
+   * one SessionManager
    */
   private static SessionManager manager = null;
 
-  /**
-   * Can be overridden during testing.
-   */
-  private static AtomicInteger started = new AtomicInteger(Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "override.session.manager.count", 1));
+  /** Can be overridden during testing. */
+  private static AtomicInteger started =
+      new AtomicInteger(
+          Integer.getInteger(
+              DistributionConfig.GEMFIRE_PREFIX + "override.session.manager.count", 1));
 
-  private static int percentInactiveTimeTriggerRebuild = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "session.inactive.trigger.rebuild", 80);
+  private static int percentInactiveTimeTriggerRebuild =
+      Integer.getInteger(
+          DistributionConfig.GEMFIRE_PREFIX + "session.inactive.trigger.rebuild", 80);
 
   /**
-   * This latch ensures that at least one thread/instance has fired up the
-   * session manager before any other threads complete the init method.
+   * This latch ensures that at least one thread/instance has fired up the session manager before
+   * any other threads complete the init method.
    */
   private static CountDownLatch startingLatch = new CountDownLatch(1);
 
   /**
-   * This request wrapper class extends the support class
-   * HttpServletRequestWrapper, which implements all the methods in the
-   * HttpServletRequest interface, as delegations to the wrapped request. You
-   * only need to override the methods that you need to change. You can get
-   * access to the wrapped request using the method getRequest()
+   * This request wrapper class extends the support class HttpServletRequestWrapper, which
+   * implements all the methods in the HttpServletRequest interface, as delegations to the wrapped
+   * request. You only need to override the methods that you need to change. You can get access to
+   * the wrapped request using the method getRequest()
    */
   public static class RequestWrapper extends HttpServletRequestWrapper {
 
@@ -96,12 +96,11 @@ public class SessionCachingFilter implements Filter {
 
     private HttpServletRequest outerRequest = null;
 
-    /**
-     * Need to save this in case we need the original {@code RequestDispatcher}
-     */
+    /** Need to save this in case we need the original {@code RequestDispatcher} */
     private HttpServletRequest originalRequest;
 
-    public RequestWrapper(SessionManager manager, HttpServletRequest request, ResponseWrapper response) {
+    public RequestWrapper(
+        SessionManager manager, HttpServletRequest request, ResponseWrapper response) {
 
       super(request);
       this.response = response;
@@ -111,7 +110,8 @@ public class SessionCachingFilter implements Filter {
       final Cookie[] cookies = request.getCookies();
       if (cookies != null) {
         for (final Cookie cookie : cookies) {
-          if (cookie.getName().equalsIgnoreCase(manager.getSessionCookieName()) && cookie.getValue().endsWith("-GF")) {
+          if (cookie.getName().equalsIgnoreCase(manager.getSessionCookieName())
+              && cookie.getValue().endsWith("-GF")) {
             requestedSessionId = cookie.getValue();
             sessionFromCookie = true;
 
@@ -129,9 +129,7 @@ public class SessionCachingFilter implements Filter {
       }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public HttpSession getSession() {
       return getSession(true);
@@ -155,7 +153,8 @@ public class SessionCachingFilter implements Filter {
          *
          * (inactive * 1000) * (pct / 100) ==> (inactive * 10 * pct)
          */
-        if (session.getLastAccessedTime() - session.getCreationTime() > (session.getMaxInactiveInterval() * 10 * percentInactiveTimeTriggerRebuild)) {
+        if (session.getLastAccessedTime() - session.getCreationTime()
+            > (session.getMaxInactiveInterval() * 10 * percentInactiveTimeTriggerRebuild)) {
           HttpSession nativeSession = super.getSession();
           session.failoverSession(nativeSession);
         }
@@ -234,7 +233,6 @@ public class SessionCachingFilter implements Filter {
           response.addCookie(c);
         }
       }
-
     }
 
     private String getCookieString(Cookie c) {
@@ -256,25 +254,19 @@ public class SessionCachingFilter implements Filter {
       return cookie.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean isRequestedSessionIdFromCookie() {
       return sessionFromCookie;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean isRequestedSessionIdFromURL() {
       return sessionFromURL;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getRequestedSessionId() {
       if (requestedSessionId != null) {
@@ -295,9 +287,7 @@ public class SessionCachingFilter implements Filter {
      * to that. There's probably a better way....
      */
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Principal getUserPrincipal() {
       if (outerRequest != null) {
@@ -307,9 +297,7 @@ public class SessionCachingFilter implements Filter {
       }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String getRemoteUser() {
       if (outerRequest != null) {
@@ -319,9 +307,7 @@ public class SessionCachingFilter implements Filter {
       }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean isUserInRole(String role) {
       if (outerRequest != null) {
@@ -358,11 +344,10 @@ public class SessionCachingFilter implements Filter {
   }
 
   /**
-   * This response wrapper class extends the support class
-   * HttpServletResponseWrapper, which implements all the methods in the
-   * HttpServletResponse interface, as delegations to the wrapped response. You
-   * only need to override the methods that you need to change. You can get
-   * access to the wrapped response using the method getResponse()
+   * This response wrapper class extends the support class HttpServletResponseWrapper, which
+   * implements all the methods in the HttpServletResponse interface, as delegations to the wrapped
+   * response. You only need to override the methods that you need to change. You can get access to
+   * the wrapped response using the method getResponse()
    */
   class ResponseWrapper extends HttpServletResponseWrapper {
 
@@ -388,25 +373,25 @@ public class SessionCachingFilter implements Filter {
     }
   }
 
-  public SessionCachingFilter() {
-  }
+  public SessionCachingFilter() {}
 
   /**
-   * @param request  The servlet request we are processing
+   * @param request The servlet request we are processing
    * @param response The servlet response we are creating
-   * @param chain    The filter chain we are processing
-   * @throws IOException      if an input/output error occurs
+   * @param chain The filter chain we are processing
+   * @throws IOException if an input/output error occurs
    * @throws ServletException if a servlet error occurs
    */
   @Override
-  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+      throws IOException, ServletException {
 
     HttpServletRequest httpReq = (HttpServletRequest) request;
     HttpServletResponse httpResp = (HttpServletResponse) response;
 
     /**
-     * Early out if this isn't the right kind of request. We might see a
-     * RequestWrapper instance during a forward or include request.
+     * Early out if this isn't the right kind of request. We might see a RequestWrapper instance
+     * during a forward or include request.
      */
     if (alreadyWrapped(httpReq)) {
       LOG.debug("Handling already-wrapped request");
@@ -453,8 +438,8 @@ public class SessionCachingFilter implements Filter {
     }
 
     /**
-     * Commit any updates. What actually happens at that point is
-     * dependent on the type of attributes defined for use by the sessions.
+     * Commit any updates. What actually happens at that point is dependent on the type of
+     * attributes defined for use by the sessions.
      */
     if (session != null) {
       session.commit();
@@ -462,8 +447,8 @@ public class SessionCachingFilter implements Filter {
   }
 
   /**
-   * Test if a request has been wrapped with RequestWrapper somewhere
-   * in the chain of wrapped requests.
+   * Test if a request has been wrapped with RequestWrapper somewhere in the chain of wrapped
+   * requests.
    */
   private boolean alreadyWrapped(final ServletRequest request) {
     if (request instanceof RequestWrapper) {
@@ -483,9 +468,7 @@ public class SessionCachingFilter implements Filter {
     return alreadyWrapped(nestedRequest);
   }
 
-  /**
-   * Return the filter configuration object for this filter.
-   */
+  /** Return the filter configuration object for this filter. */
   public FilterConfig getFilterConfig() {
     return (this.filterConfig);
   }
@@ -499,9 +482,7 @@ public class SessionCachingFilter implements Filter {
     this.filterConfig = filterConfig;
   }
 
-  /**
-   * Destroy method for this filter
-   */
+  /** Destroy method for this filter */
   @Override
   public void destroy() {
     if (manager != null) {
@@ -521,9 +502,7 @@ public class SessionCachingFilter implements Filter {
     this.filterConfig = config;
 
     if (started.getAndDecrement() > 0) {
-      /**
-       * Allow override for testing purposes
-       */
+      /** Allow override for testing purposes */
       String managerClassStr = config.getInitParameter("session-manager-class");
 
       // Otherwise default
@@ -552,9 +531,7 @@ public class SessionCachingFilter implements Filter {
     LOG.debug("Filter class loader {}", this.getClass().getClassLoader());
   }
 
-  /**
-   * Return a String representation of this object.
-   */
+  /** Return a String representation of this object. */
   @Override
   public String toString() {
     if (filterConfig == null) {
@@ -564,7 +541,6 @@ public class SessionCachingFilter implements Filter {
     sb.append(filterConfig);
     sb.append(")");
     return (sb.toString());
-
   }
 
   private void sendProcessingError(Throwable t, ServletResponse response) {
@@ -611,10 +587,7 @@ public class SessionCachingFilter implements Filter {
     return stackTrace;
   }
 
-  /**
-   * Retrieve the SessionManager. This is only here so that tests can get access
-   * to the cache.
-   */
+  /** Retrieve the SessionManager. This is only here so that tests can get access to the cache. */
   public static SessionManager getSessionManager() {
     return manager;
   }
@@ -622,10 +595,9 @@ public class SessionCachingFilter implements Filter {
   /**
    * Return the GemFire session which wraps a native session
    *
-   * @param nativeSession the native session for which the corresponding GemFire
-   *                      session should be returned.
-   * @return the GemFire session or null if no session maps to the native
-   * session
+   * @param nativeSession the native session for which the corresponding GemFire session should be
+   *     returned.
+   * @return the GemFire session or null if no session maps to the native session
    */
   public static HttpSession getWrappingSession(HttpSession nativeSession) {
     /*

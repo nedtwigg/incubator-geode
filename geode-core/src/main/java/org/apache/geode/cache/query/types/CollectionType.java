@@ -18,28 +18,26 @@
 package org.apache.geode.cache.query.types;
 
 /**
- * Represents the type of a collection, an object that can contain element
- * objects.
+ * Represents the type of a collection, an object that can contain element objects.
  *
  * @since GemFire 4.0
  */
 public interface CollectionType extends ObjectType {
 
-  /** Return the type of the elements of this collection type.
-   */
+  /** Return the type of the elements of this collection type. */
   public ObjectType getElementType();
 
   /**
-   * Return whether duplicates are kept in this type of collection. Duplicates
-   * are two objects are equal to each other as defined by the <code>equals</code>
-   * method. 
-   * @return true if duplicates have been retained, false if duplicates have
-   * been eliminated
+   * Return whether duplicates are kept in this type of collection. Duplicates are two objects are
+   * equal to each other as defined by the <code>equals</code> method.
+   *
+   * @return true if duplicates have been retained, false if duplicates have been eliminated
    */
   public boolean allowsDuplicates();
 
   /**
-   * Return whether this collection type has ordered elements. 
+   * Return whether this collection type has ordered elements.
+   *
    * @return true if this collection type is ordered, false if not
    */
   public boolean isOrdered();

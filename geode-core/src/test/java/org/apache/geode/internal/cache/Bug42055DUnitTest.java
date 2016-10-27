@@ -39,17 +39,11 @@ import org.apache.geode.test.dunit.SerializableCallable;
 import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
-/**
- * Test that the bucket size does not go negative when
- * we fault out and in a delta object.
- *
- */
+/** Test that the bucket size does not go negative when we fault out and in a delta object. */
 @Category(DistributedTest.class)
 public class Bug42055DUnitTest extends JUnit4CacheTestCase {
 
-  /**
-   * @param name
-   */
+  /** @param name */
   public Bug42055DUnitTest() {
     super();
   }
@@ -60,35 +54,41 @@ public class Bug42055DUnitTest extends JUnit4CacheTestCase {
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-    SerializableCallable createDataRegion = new SerializableCallable("createDataRegion") {
-      public Object call() throws Exception {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        PartitionAttributes prAttr = paf.create();
-        attr.setPartitionAttributes(prAttr);
-        attr.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
-        Region region = cache.createRegion("region1", attr.create());
+    SerializableCallable createDataRegion =
+        new SerializableCallable("createDataRegion") {
+          public Object call() throws Exception {
+            Cache cache = getCache();
+            AttributesFactory attr = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            PartitionAttributes prAttr = paf.create();
+            attr.setPartitionAttributes(prAttr);
+            attr.setEvictionAttributes(
+                EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
+            Region region = cache.createRegion("region1", attr.create());
 
-        return null;
-      }
-    };
+            return null;
+          }
+        };
 
     vm0.invoke(createDataRegion);
 
-    SerializableRunnable createEmptyRegion = new SerializableRunnable("createEmptyRegion") {
-      public void run() {
-        Cache cache = getCache();
-        AttributesFactory<Integer, TestDelta> attr = new AttributesFactory<Integer, TestDelta>();
-        PartitionAttributesFactory<Integer, TestDelta> paf = new PartitionAttributesFactory<Integer, TestDelta>();
-        paf.setLocalMaxMemory(0);
-        PartitionAttributes<Integer, TestDelta> prAttr = paf.create();
-        attr.setPartitionAttributes(prAttr);
-        attr.setDataPolicy(DataPolicy.PARTITION);
-        attr.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
-        Region<Integer, TestDelta> region = cache.createRegion("region1", attr.create());
-      }
-    };
+    SerializableRunnable createEmptyRegion =
+        new SerializableRunnable("createEmptyRegion") {
+          public void run() {
+            Cache cache = getCache();
+            AttributesFactory<Integer, TestDelta> attr =
+                new AttributesFactory<Integer, TestDelta>();
+            PartitionAttributesFactory<Integer, TestDelta> paf =
+                new PartitionAttributesFactory<Integer, TestDelta>();
+            paf.setLocalMaxMemory(0);
+            PartitionAttributes<Integer, TestDelta> prAttr = paf.create();
+            attr.setPartitionAttributes(prAttr);
+            attr.setDataPolicy(DataPolicy.PARTITION);
+            attr.setEvictionAttributes(
+                EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
+            Region<Integer, TestDelta> region = cache.createRegion("region1", attr.create());
+          }
+        };
 
     vm1.invoke(createEmptyRegion);
   }

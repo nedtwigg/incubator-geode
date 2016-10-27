@@ -78,11 +78,12 @@ public class PutAllMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO:
     vm0.invoke(() -> PutAllMultiVmDUnitTest.closeCache());
     vm1.invoke(() -> PutAllMultiVmDUnitTest.closeCache());
     cache = null;
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        cache = null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            cache = null;
+          }
+        });
   }
 
   public static void createCache() {
@@ -97,7 +98,7 @@ public class PutAllMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO:
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-  }//end of createCache
+  } //end of createCache
 
   public static void createMirroredRegion() {
     try {
@@ -109,7 +110,7 @@ public class PutAllMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO:
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-  }//end of createCache
+  } //end of createCache
 
   public static void closeCache() {
     try {
@@ -120,7 +121,7 @@ public class PutAllMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO:
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-  }//end of closeCache
+  } //end of closeCache
 
   //tests methods
 
@@ -130,103 +131,107 @@ public class PutAllMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO:
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-    SerializableRunnable clear = new CacheSerializableRunnable("clear") {
-      public void run2() throws CacheException {
-        try {
-          region.clear();
-        } catch (Exception ex) {
-          ex.printStackTrace();
-        }
-      }
-    };//end of clear
+    SerializableRunnable clear =
+        new CacheSerializableRunnable("clear") {
+          public void run2() throws CacheException {
+            try {
+              region.clear();
+            } catch (Exception ex) {
+              ex.printStackTrace();
+            }
+          }
+        }; //end of clear
 
-    vm0.invoke(new CacheSerializableRunnable("testSimplePutAll1") {
-      public void run2() throws CacheException {
-        int cntr = 0, cntr1 = 0;
-        for (int i = 1; i < 6; i++) {
-          region.put(new Integer(i), new String("testSimplePutAll" + i));
-          cntr++;
-        }
+    vm0.invoke(
+        new CacheSerializableRunnable("testSimplePutAll1") {
+          public void run2() throws CacheException {
+            int cntr = 0, cntr1 = 0;
+            for (int i = 1; i < 6; i++) {
+              region.put(new Integer(i), new String("testSimplePutAll" + i));
+              cntr++;
+            }
 
-        int size1 = region.size();
-        Map m = new HashMap();
-        for (int i = 6; i < 27; i++) {
-          m.put(new Integer(i), new String("map" + i));
-          cntr++;
-          cntr1++;
-        }
+            int size1 = region.size();
+            Map m = new HashMap();
+            for (int i = 6; i < 27; i++) {
+              m.put(new Integer(i), new String("map" + i));
+              cntr++;
+              cntr1++;
+            }
 
-        region.putAll(m);
-        int size2 = region.size();
+            region.putAll(m);
+            int size2 = region.size();
 
-        assertEquals(cntr, region.size());
-        assertEquals(cntr1, (size2 - size1));
-        assertEquals(true, region.containsKey(new Integer(10)));
-        assertEquals(true, region.containsValue(new String("map12")));
-      }
-    });
+            assertEquals(cntr, region.size());
+            assertEquals(cntr1, (size2 - size1));
+            assertEquals(true, region.containsKey(new Integer(10)));
+            assertEquals(true, region.containsValue(new String("map12")));
+          }
+        });
 
     vm0.invoke(clear);
 
-    vm1.invoke(new CacheSerializableRunnable("create mirrored region") {
-      public void run2() throws CacheException {
-        createMirroredRegion();
-      }
-    });
+    vm1.invoke(
+        new CacheSerializableRunnable("create mirrored region") {
+          public void run2() throws CacheException {
+            createMirroredRegion();
+          }
+        });
 
-    vm0.invoke(new CacheSerializableRunnable("testSimplePutAll2") {
-      public void run2() throws CacheException {
-        //assertIndexDetailsEquals(0, region.size());
-        createMirroredRegion();
-        cacheTxnMgr = cache.getCacheTransactionManager();
-        int cntr = 0;
-        for (int i = 1; i < 6; i++) {
-          mirroredRegion.put(new Integer(i), new String("testSimplePutAll" + i));
-          cntr++;
-        }
+    vm0.invoke(
+        new CacheSerializableRunnable("testSimplePutAll2") {
+          public void run2() throws CacheException {
+            //assertIndexDetailsEquals(0, region.size());
+            createMirroredRegion();
+            cacheTxnMgr = cache.getCacheTransactionManager();
+            int cntr = 0;
+            for (int i = 1; i < 6; i++) {
+              mirroredRegion.put(new Integer(i), new String("testSimplePutAll" + i));
+              cntr++;
+            }
 
-        int size1 = mirroredRegion.size();
-        Map m = new HashMap();
-        for (int i = 6; i < 27; i++) {
-          m.put(new Integer(i), new String("map" + i));
-          cntr++;
-        }
+            int size1 = mirroredRegion.size();
+            Map m = new HashMap();
+            for (int i = 6; i < 27; i++) {
+              m.put(new Integer(i), new String("map" + i));
+              cntr++;
+            }
 
-        //Disabled until putAll works in tx
-        //cacheTxnMgr.begin();
-        //mirroredRegion.putAll(m);
-        //cacheTxnMgr.rollback();
+            //Disabled until putAll works in tx
+            //cacheTxnMgr.begin();
+            //mirroredRegion.putAll(m);
+            //cacheTxnMgr.rollback();
 
-        assertEquals(size1, mirroredRegion.size());
-        assertEquals(false, mirroredRegion.containsKey(new Integer(10)));
-        assertEquals(false, mirroredRegion.containsValue(new String("map12")));
+            assertEquals(size1, mirroredRegion.size());
+            assertEquals(false, mirroredRegion.containsKey(new Integer(10)));
+            assertEquals(false, mirroredRegion.containsValue(new String("map12")));
 
-        //cacheTxnMgr.begin();
-        mirroredRegion.putAll(m);
-        //cacheTxnMgr.commit();
+            //cacheTxnMgr.begin();
+            mirroredRegion.putAll(m);
+            //cacheTxnMgr.commit();
 
-        //                int size2 = mirroredRegion.size();
+            //                int size2 = mirroredRegion.size();
 
-        assertEquals(cntr, mirroredRegion.size());
-        assertEquals(true, mirroredRegion.containsKey(new Integer(10)));
-        assertEquals(true, mirroredRegion.containsValue(new String("map12")));
+            assertEquals(cntr, mirroredRegion.size());
+            assertEquals(true, mirroredRegion.containsKey(new Integer(10)));
+            assertEquals(true, mirroredRegion.containsValue(new String("map12")));
 
-        //sharing the size of region of vm0 in vm1
-        mirroredRegion.put("size", new Integer(mirroredRegion.size()));
-      }
-    });
+            //sharing the size of region of vm0 in vm1
+            mirroredRegion.put("size", new Integer(mirroredRegion.size()));
+          }
+        });
 
-    vm1.invoke(new CacheSerializableRunnable("testSimplePutAll3") {
-      public void run2() throws CacheException {
-        Integer i = (Integer) mirroredRegion.get("size");
-        int cntr = i.intValue();
-        assertEquals(cntr, (mirroredRegion.size() - 1));
-        assertEquals(true, mirroredRegion.containsKey(new Integer(10)));
-        assertEquals(true, mirroredRegion.containsValue(new String("map12")));
-      }
-    });
-
-  }//end of testSimplePutAll
+    vm1.invoke(
+        new CacheSerializableRunnable("testSimplePutAll3") {
+          public void run2() throws CacheException {
+            Integer i = (Integer) mirroredRegion.get("size");
+            int cntr = i.intValue();
+            assertEquals(cntr, (mirroredRegion.size() - 1));
+            assertEquals(true, mirroredRegion.containsKey(new Integer(10)));
+            assertEquals(true, mirroredRegion.containsValue(new String("map12")));
+          }
+        });
+  } //end of testSimplePutAll
 
   @Test
   public void testPutAllExceptions() {
@@ -234,94 +239,97 @@ public class PutAllMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO:
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
 
-    vm0.invoke(new CacheSerializableRunnable("testPutAllExceptions1") {
-      public void run2() throws CacheException {
-        int cntr = 0;
-        //                int cntr1 = 0;
-        for (int i = 1; i < 6; i++) {
-          region.put(new Integer(i), new String("testSimplePutAll" + i));
-          cntr++;
-        }
+    vm0.invoke(
+        new CacheSerializableRunnable("testPutAllExceptions1") {
+          public void run2() throws CacheException {
+            int cntr = 0;
+            //                int cntr1 = 0;
+            for (int i = 1; i < 6; i++) {
+              region.put(new Integer(i), new String("testSimplePutAll" + i));
+              cntr++;
+            }
 
-        Map m = new TreeMap();//to verify the assertions
-        for (int i = 6; i < 27; i++) {
-          if (i == 16) {
-            m.put(new Integer(i), null);
-          } else {
-            m.put(new Integer(i), new String("map" + i));
+            Map m = new TreeMap(); //to verify the assertions
+            for (int i = 6; i < 27; i++) {
+              if (i == 16) {
+                m.put(new Integer(i), null);
+              } else {
+                m.put(new Integer(i), new String("map" + i));
+              }
+            }
+
+            try {
+              region.putAll(m);
+              fail("Expect NullPointerException");
+            } catch (NullPointerException ex) {
+              //do nothing
+            }
+
+            assertEquals(5, region.size());
+            assertEquals(false, region.containsKey(new Integer(10)));
+            assertEquals(false, region.containsValue(new String("map12")));
+            assertEquals(false, region.containsKey(new Integer(20)));
+            assertEquals(false, region.containsValue(new String("map21")));
           }
-        }
+        });
 
-        try {
-          region.putAll(m);
-          fail("Expect NullPointerException");
-        } catch (NullPointerException ex) {
-          //do nothing
-        }
-
-        assertEquals(5, region.size());
-        assertEquals(false, region.containsKey(new Integer(10)));
-        assertEquals(false, region.containsValue(new String("map12")));
-        assertEquals(false, region.containsKey(new Integer(20)));
-        assertEquals(false, region.containsValue(new String("map21")));
-      }
-    });
-
-    vm1.invoke(new CacheSerializableRunnable("create mirrored region") {
-      public void run2() throws CacheException {
-        createMirroredRegion();
-      }
-    });
-
-    vm0.invoke(new CacheSerializableRunnable("testPutAllExceptions2") {
-      public void run2() throws CacheException {
-        //assertIndexDetailsEquals(0, region.size());
-        createMirroredRegion();
-
-        for (int i = 1; i < 6; i++) {
-          mirroredRegion.put(new Integer(i), new String("testSimplePutAll" + i));
-        }
-
-        Map m = new TreeMap();//to verify the assertions
-        for (int i = 6; i < 27; i++) {
-          if (i == 16) {
-            m.put(new Integer(i), null);
-          } else {
-            m.put(new Integer(i), new String("map" + i));
+    vm1.invoke(
+        new CacheSerializableRunnable("create mirrored region") {
+          public void run2() throws CacheException {
+            createMirroredRegion();
           }
-        }
+        });
 
-        try {
-          mirroredRegion.putAll(m);
-          fail("Expect NullPointerException");
-        } catch (NullPointerException ex) {
-          //do nothing
-        }
+    vm0.invoke(
+        new CacheSerializableRunnable("testPutAllExceptions2") {
+          public void run2() throws CacheException {
+            //assertIndexDetailsEquals(0, region.size());
+            createMirroredRegion();
 
-        assertEquals(5, mirroredRegion.size());
-        assertEquals(false, mirroredRegion.containsKey(new Integer(10)));
-        assertEquals(false, mirroredRegion.containsValue(new String("map12")));
-        assertEquals(false, region.containsKey(new Integer(20)));
-        assertEquals(false, region.containsValue(new String("map21")));
+            for (int i = 1; i < 6; i++) {
+              mirroredRegion.put(new Integer(i), new String("testSimplePutAll" + i));
+            }
 
-        //sharing the size of region of vm0 in vm1
-        mirroredRegion.put("size", new Integer(mirroredRegion.size()));
-      }
-    });
+            Map m = new TreeMap(); //to verify the assertions
+            for (int i = 6; i < 27; i++) {
+              if (i == 16) {
+                m.put(new Integer(i), null);
+              } else {
+                m.put(new Integer(i), new String("map" + i));
+              }
+            }
 
-    vm1.invoke(new CacheSerializableRunnable("testPutAllExceptions3") {
-      public void run2() throws CacheException {
-        Integer i = (Integer) mirroredRegion.get("size");
-        int cntr = i.intValue();
-        assertEquals(cntr, (mirroredRegion.size() - 1));
-        assertEquals(false, mirroredRegion.containsKey(new Integer(10)));
-        assertEquals(false, mirroredRegion.containsValue(new String("map12")));
-        assertEquals(false, mirroredRegion.containsKey(new Integer(20)));
-        assertEquals(false, mirroredRegion.containsValue(new String("map21")));
-      }
-    });
+            try {
+              mirroredRegion.putAll(m);
+              fail("Expect NullPointerException");
+            } catch (NullPointerException ex) {
+              //do nothing
+            }
 
-  }//end of testPutAllExceptions
+            assertEquals(5, mirroredRegion.size());
+            assertEquals(false, mirroredRegion.containsKey(new Integer(10)));
+            assertEquals(false, mirroredRegion.containsValue(new String("map12")));
+            assertEquals(false, region.containsKey(new Integer(20)));
+            assertEquals(false, region.containsValue(new String("map21")));
+
+            //sharing the size of region of vm0 in vm1
+            mirroredRegion.put("size", new Integer(mirroredRegion.size()));
+          }
+        });
+
+    vm1.invoke(
+        new CacheSerializableRunnable("testPutAllExceptions3") {
+          public void run2() throws CacheException {
+            Integer i = (Integer) mirroredRegion.get("size");
+            int cntr = i.intValue();
+            assertEquals(cntr, (mirroredRegion.size() - 1));
+            assertEquals(false, mirroredRegion.containsKey(new Integer(10)));
+            assertEquals(false, mirroredRegion.containsValue(new String("map12")));
+            assertEquals(false, mirroredRegion.containsKey(new Integer(20)));
+            assertEquals(false, mirroredRegion.containsValue(new String("map21")));
+          }
+        });
+  } //end of testPutAllExceptions
 
   @Test
   public void testPutAllExceptionHandling() {
@@ -329,33 +337,31 @@ public class PutAllMultiVmDUnitTest extends JUnit4DistributedTestCase { // TODO:
     VM vm0 = host.getVM(0);
     //        VM vm1 = host.getVM(1);
 
-    vm0.invoke(new CacheSerializableRunnable("testPutAllExceptionHandling1") {
-      public void run2() throws CacheException {
-        Map m = new HashMap();
-        m = null;
-        try {
-          region.putAll(m);
-          fail("Should have thrown NullPointerException");
-        } catch (NullPointerException ex) {
-          //pass
-        }
+    vm0.invoke(
+        new CacheSerializableRunnable("testPutAllExceptionHandling1") {
+          public void run2() throws CacheException {
+            Map m = new HashMap();
+            m = null;
+            try {
+              region.putAll(m);
+              fail("Should have thrown NullPointerException");
+            } catch (NullPointerException ex) {
+              //pass
+            }
 
-        region.localDestroyRegion();
-        try {
-          Map m1 = new HashMap();
-          for (int i = 1; i < 21; i++) {
-            m1.put(new Integer(i), Integer.toString(i));
+            region.localDestroyRegion();
+            try {
+              Map m1 = new HashMap();
+              for (int i = 1; i < 21; i++) {
+                m1.put(new Integer(i), Integer.toString(i));
+              }
+
+              region.putAll(m1);
+              fail("Should have thrown RegionDestroyedException");
+            } catch (RegionDestroyedException ex) {
+              //pass
+            }
           }
-
-          region.putAll(m1);
-          fail("Should have thrown RegionDestroyedException");
-        } catch (RegionDestroyedException ex) {
-          //pass
-        }
-
-      }
-    });
-
-  }//testPutAllExceptionHandling
-
-}//end of PutAllMultiVmDUnitTest
+        });
+  } //testPutAllExceptionHandling
+} //end of PutAllMultiVmDUnitTest

@@ -85,13 +85,11 @@ public abstract class CqQueryImpl implements InternalCqQuery {
 
   public static TestHook testHook = null;
 
-  /**
-   * Constructor.
-   */
-  public CqQueryImpl() {
-  }
+  /** Constructor. */
+  public CqQueryImpl() {}
 
-  public CqQueryImpl(CqServiceImpl cqService, String cqName, String queryString, boolean isDurable) {
+  public CqQueryImpl(
+      CqServiceImpl cqService, String cqName, String queryString, boolean isDurable) {
     this.cqName = cqName;
     this.queryString = queryString;
     this.securityLogWriter = (InternalLogWriter) cqService.getCache().getSecurityLoggerI18n();
@@ -99,9 +97,7 @@ public abstract class CqQueryImpl implements InternalCqQuery {
     this.isDurable = isDurable;
   }
 
-  /** 
-   * returns CQ name
-   */
+  /** returns CQ name */
   public String getName() {
     return this.cqName;
   }
@@ -115,9 +111,7 @@ public abstract class CqQueryImpl implements InternalCqQuery {
     this.cqService = (CqServiceImpl) cqService;
   }
 
-  /**
-   * get the region name in CQ query
-   */
+  /** get the region name in CQ query */
   @Override
   public String getRegionName() {
     return this.regionName;
@@ -135,13 +129,11 @@ public abstract class CqQueryImpl implements InternalCqQuery {
     this.cqService.stats.incCqsOnClient();
   }
 
-  /**
-   * Validates the CQ. Checks for cq constraints. 
-   * Also sets the base region name.
-   */
+  /** Validates the CQ. Checks for cq constraints. Also sets the base region name. */
   public void validateCq() {
     Cache cache = cqService.getCache();
-    DefaultQuery locQuery = (DefaultQuery) ((GemFireCacheImpl) cache).getLocalQueryService().newQuery(this.queryString);
+    DefaultQuery locQuery =
+        (DefaultQuery) ((GemFireCacheImpl) cache).getLocalQueryService().newQuery(this.queryString);
     this.query = locQuery;
     //    assert locQuery != null;
 
@@ -151,12 +143,16 @@ public abstract class CqQueryImpl implements InternalCqQuery {
     // check that it is only a SELECT statement (possibly with IMPORTs)
     CompiledSelect select = locQuery.getSimpleSelect();
     if (select == null) {
-      throw new UnsupportedOperationException(LocalizedStrings.CqQueryImpl_CQ_QUERIES_MUST_BE_A_SELECT_STATEMENT_ONLY.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings.CqQueryImpl_CQ_QUERIES_MUST_BE_A_SELECT_STATEMENT_ONLY
+              .toLocalizedString());
     }
 
     // must not be a DISTINCT select
     if (select.isDistinct()) {
-      throw new UnsupportedOperationException(LocalizedStrings.CqQueryImpl_SELECT_DISTINCT_QUERIES_NOT_SUPPORTED_IN_CQ.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings.CqQueryImpl_SELECT_DISTINCT_QUERIES_NOT_SUPPORTED_IN_CQ
+              .toLocalizedString());
     }
 
     // get the regions referenced in this query
@@ -164,7 +160,9 @@ public abstract class CqQueryImpl implements InternalCqQuery {
     // check for more than one region is referenced in the query
     // (though it could still be one region referenced multiple times)
     if (regionsInQuery.size() > 1 || regionsInQuery.size() < 1) {
-      throw new UnsupportedOperationException(LocalizedStrings.CqQueryImpl_CQ_QUERIES_MUST_REFERENCE_ONE_AND_ONLY_ONE_REGION.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings.CqQueryImpl_CQ_QUERIES_MUST_REFERENCE_ONE_AND_ONLY_ONE_REGION
+              .toLocalizedString());
     }
     this.regionName = (String) regionsInQuery.iterator().next();
 
@@ -174,13 +172,18 @@ public abstract class CqQueryImpl implements InternalCqQuery {
     if (whereClause != null) {
       whereClause.getRegionsInQuery(regions, parameters);
       if (!regions.isEmpty()) {
-        throw new UnsupportedOperationException(LocalizedStrings.CqQueryImpl_THE_WHERE_CLAUSE_IN_CQ_QUERIES_CANNOT_REFER_TO_A_REGION.toLocalizedString());
+        throw new UnsupportedOperationException(
+            LocalizedStrings.CqQueryImpl_THE_WHERE_CLAUSE_IN_CQ_QUERIES_CANNOT_REFER_TO_A_REGION
+                .toLocalizedString());
       }
     }
     List fromClause = select.getIterators();
     // cannot have more than one iterator in FROM clause
     if (fromClause.size() > 1) {
-      throw new UnsupportedOperationException(LocalizedStrings.CqQueryImpl_CQ_QUERIES_CANNOT_HAVE_MORE_THAN_ONE_ITERATOR_IN_THE_FROM_CLAUSE.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings
+              .CqQueryImpl_CQ_QUERIES_CANNOT_HAVE_MORE_THAN_ONE_ITERATOR_IN_THE_FROM_CLAUSE
+              .toLocalizedString());
     }
 
     // the first iterator in the FROM clause must be just a CompiledRegion
@@ -188,19 +191,24 @@ public abstract class CqQueryImpl implements InternalCqQuery {
     // By process of elimination, we know that the first iterator contains a reference
     // to the region. Check to make sure it is only a CompiledRegion
     if (!(itrDef.getCollectionExpr() instanceof CompiledRegion)) {
-      throw new UnsupportedOperationException(LocalizedStrings.CqQueryImpl_CQ_QUERIES_MUST_HAVE_A_REGION_PATH_ONLY_AS_THE_FIRST_ITERATOR_IN_THE_FROM_CLAUSE.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings
+              .CqQueryImpl_CQ_QUERIES_MUST_HAVE_A_REGION_PATH_ONLY_AS_THE_FIRST_ITERATOR_IN_THE_FROM_CLAUSE
+              .toLocalizedString());
     }
 
     // must not have any projections
     List projs = select.getProjectionAttributes();
     if (projs != null) {
-      throw new UnsupportedOperationException(LocalizedStrings.CqQueryImpl_CQ_QUERIES_DO_NOT_SUPPORT_PROJECTIONS.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings.CqQueryImpl_CQ_QUERIES_DO_NOT_SUPPORT_PROJECTIONS.toLocalizedString());
     }
 
     // check the orderByAttrs, not supported
     List orderBys = select.getOrderByAttrs();
     if (orderBys != null) {
-      throw new UnsupportedOperationException(LocalizedStrings.CqQueryImpl_CQ_QUERIES_DO_NOT_SUPPORT_ORDER_BY.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings.CqQueryImpl_CQ_QUERIES_DO_NOT_SUPPORT_ORDER_BY.toLocalizedString());
     }
 
     // Set Query ExecutionContext, that will be used in later execution.
@@ -209,14 +217,17 @@ public abstract class CqQueryImpl implements InternalCqQuery {
 
   /**
    * Removes the CQ from CQ repository.
+   *
    * @throws CqException
    */
   protected void removeFromCqMap() throws CqException {
     try {
       cqService.removeCq(this.getServerCqName());
     } catch (Exception ex) {
-      StringId errMsg = LocalizedStrings.CqQueryImpl_FAILED_TO_REMOVE_CONTINUOUS_QUERY_FROM_THE_REPOSITORY_CQNAME_0_ERROR_1;
-      Object[] errMsgArgs = new Object[] { cqName, ex.getLocalizedMessage() };
+      StringId errMsg =
+          LocalizedStrings
+              .CqQueryImpl_FAILED_TO_REMOVE_CONTINUOUS_QUERY_FROM_THE_REPOSITORY_CQNAME_0_ERROR_1;
+      Object[] errMsgArgs = new Object[] {cqName, ex.getLocalizedMessage()};
       String msg = errMsg.toLocalizedString(errMsgArgs);
       logger.error(msg);
       throw new CqException(msg, ex);
@@ -226,24 +237,21 @@ public abstract class CqQueryImpl implements InternalCqQuery {
     }
   }
 
-  /** 
-   * Returns the QueryString of this CQ.
-   */
+  /** Returns the QueryString of this CQ. */
   public String getQueryString() {
     return queryString;
   }
 
   /**
    * Return the query after replacing region names with parameters
+   *
    * @return the Query for the query string
    */
   public Query getQuery() {
     return query;
   }
 
-  /**
-   * @see org.apache.geode.cache.query.CqQuery#getStatistics()
-   */
+  /** @see org.apache.geode.cache.query.CqQuery#getStatistics() */
   public CqStatistics getStatistics() {
     return cqStats;
   }
@@ -258,9 +266,7 @@ public abstract class CqQueryImpl implements InternalCqQuery {
 
   protected abstract void cleanup() throws CqException;
 
-  /**
-   * @return Returns the Region name on which this cq is created.
-   */
+  /** @return Returns the Region name on which this cq is created. */
   public String getBaseRegionName() {
 
     return this.regionName;
@@ -269,8 +275,8 @@ public abstract class CqQueryImpl implements InternalCqQuery {
   public abstract String getServerCqName();
 
   /**
-   * Return the state of this query.
-   * Should not modify this state without first locking it.
+   * Return the state of this query. Should not modify this state without first locking it.
+   *
    * @return STOPPED RUNNING or CLOSED
    */
   public CqState getState() {
@@ -278,12 +284,13 @@ public abstract class CqQueryImpl implements InternalCqQuery {
   }
 
   /* (non-Javadoc)
-  * @see org.apache.geode.cache.query.internal.InternalCqQuery2#setCqState(int)
-  */
+   * @see org.apache.geode.cache.query.internal.InternalCqQuery2#setCqState(int)
+   */
   @Override
   public void setCqState(int state) {
     if (this.isClosed()) {
-      throw new CqClosedException(LocalizedStrings.CqQueryImpl_CQ_IS_CLOSED_CQNAME_0.toLocalizedString(this.cqName));
+      throw new CqClosedException(
+          LocalizedStrings.CqQueryImpl_CQ_IS_CLOSED_CQNAME_0.toLocalizedString(this.cqName));
     }
 
     synchronized (cqState) {
@@ -307,6 +314,7 @@ public abstract class CqQueryImpl implements InternalCqQuery {
 
   /**
    * Update CQ stats
+   *
    * @param cqEvent object
    */
   public void updateStats(CqEvent cqEvent) {
@@ -315,6 +323,7 @@ public abstract class CqQueryImpl implements InternalCqQuery {
 
   /**
    * Return true if the CQ is in running state
+   *
    * @return true if running, false otherwise
    */
   public boolean isRunning() {
@@ -323,6 +332,7 @@ public abstract class CqQueryImpl implements InternalCqQuery {
 
   /**
    * Return true if the CQ is in Sstopped state
+   *
    * @return true if stopped, false otherwise
    */
   public boolean isStopped() {
@@ -331,6 +341,7 @@ public abstract class CqQueryImpl implements InternalCqQuery {
 
   /**
    * Return true if the CQ is closed
+   *
    * @return true if closed, false otherwise
    */
   public boolean isClosed() {
@@ -339,6 +350,7 @@ public abstract class CqQueryImpl implements InternalCqQuery {
 
   /**
    * Return true if the CQ is in closing state.
+   *
    * @return true if close in progress, false otherwise
    */
   public boolean isClosing() {
@@ -347,6 +359,7 @@ public abstract class CqQueryImpl implements InternalCqQuery {
 
   /**
    * Return true if the CQ is durable
+   *
    * @return true if durable, false otherwise
    */
   public boolean isDurable() {
@@ -355,6 +368,7 @@ public abstract class CqQueryImpl implements InternalCqQuery {
 
   /**
    * Returns a reference to VSD stats of the CQ
+   *
    * @return VSD stats of the CQ
    */
   @Override

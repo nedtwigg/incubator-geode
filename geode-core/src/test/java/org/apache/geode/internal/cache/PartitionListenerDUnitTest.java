@@ -46,7 +46,7 @@ import org.apache.geode.test.dunit.SerializableCallable;
 import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
-@SuppressWarnings({ "serial", "rawtypes", "deprecation", "unchecked" })
+@SuppressWarnings({"serial", "rawtypes", "deprecation", "unchecked"})
 @Category(DistributedTest.class)
 public class PartitionListenerDUnitTest extends JUnit4CacheTestCase {
 
@@ -88,77 +88,89 @@ public class PartitionListenerDUnitTest extends JUnit4CacheTestCase {
     assertEquals(allBucketsAndKeysRemoved, vm3BucketsAndKeysAdded);
   }
 
-  protected DistributedMember createPR(VM vm, final String regionName, final boolean isAccessor) throws Throwable {
-    SerializableCallable createPrRegion = new SerializableCallable("createRegion") {
+  protected DistributedMember createPR(VM vm, final String regionName, final boolean isAccessor)
+      throws Throwable {
+    SerializableCallable createPrRegion =
+        new SerializableCallable("createRegion") {
 
-      public Object call() {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        if (isAccessor) {
-          paf.setLocalMaxMemory(0);
-        }
-        paf.addPartitionListener(new TestPartitionListener());
-        PartitionAttributes prAttr = paf.create();
-        attr.setPartitionAttributes(prAttr);
-        cache.createRegion(regionName, attr.create());
-        return cache.getDistributedSystem().getDistributedMember();
-      }
-    };
+          public Object call() {
+            Cache cache = getCache();
+            AttributesFactory attr = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            if (isAccessor) {
+              paf.setLocalMaxMemory(0);
+            }
+            paf.addPartitionListener(new TestPartitionListener());
+            PartitionAttributes prAttr = paf.create();
+            attr.setPartitionAttributes(prAttr);
+            cache.createRegion(regionName, attr.create());
+            return cache.getDistributedSystem().getDistributedMember();
+          }
+        };
     return (DistributedMember) vm.invoke(createPrRegion);
   }
 
-  protected void createData(VM vm, final int startKey, final int endKey, final String value, final String regionName) {
-    SerializableRunnable createData = new SerializableRunnable("createData") {
+  protected void createData(
+      VM vm, final int startKey, final int endKey, final String value, final String regionName) {
+    SerializableRunnable createData =
+        new SerializableRunnable("createData") {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(regionName);
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(regionName);
 
-        for (int i = startKey; i < endKey; i++) {
-          region.put(i, value);
-        }
-      }
-    };
+            for (int i = startKey; i < endKey; i++) {
+              region.put(i, value);
+            }
+          }
+        };
     vm.invoke(createData);
   }
 
   protected Map<Integer, List<Integer>> getBucketsAndKeysRemoved(VM vm, final String regionName) {
-    SerializableCallable getBucketsAndKeysRemoved = new SerializableCallable("getBucketsAndKeysRemoved") {
+    SerializableCallable getBucketsAndKeysRemoved =
+        new SerializableCallable("getBucketsAndKeysRemoved") {
 
-      public Object call() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(regionName);
-        TestPartitionListener listener = (TestPartitionListener) region.getAttributes().getPartitionAttributes().getPartitionListeners()[0];
-        return listener.getBucketsAndKeysRemoved();
-      }
-    };
+          public Object call() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(regionName);
+            TestPartitionListener listener =
+                (TestPartitionListener)
+                    region.getAttributes().getPartitionAttributes().getPartitionListeners()[0];
+            return listener.getBucketsAndKeysRemoved();
+          }
+        };
     return (Map<Integer, List<Integer>>) vm.invoke(getBucketsAndKeysRemoved);
   }
 
   protected Map<Integer, List<Integer>> getBucketsAndKeysAdded(VM vm, final String regionName) {
-    SerializableCallable getBucketsAndKeysAdded = new SerializableCallable("getBucketsAndKeysAdded") {
+    SerializableCallable getBucketsAndKeysAdded =
+        new SerializableCallable("getBucketsAndKeysAdded") {
 
-      public Object call() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(regionName);
-        TestPartitionListener listener = (TestPartitionListener) region.getAttributes().getPartitionAttributes().getPartitionListeners()[0];
-        return listener.getBucketsAndKeysAdded();
-      }
-    };
+          public Object call() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(regionName);
+            TestPartitionListener listener =
+                (TestPartitionListener)
+                    region.getAttributes().getPartitionAttributes().getPartitionListeners()[0];
+            return listener.getBucketsAndKeysAdded();
+          }
+        };
     return (Map<Integer, List<Integer>>) vm.invoke(getBucketsAndKeysAdded);
   }
 
   protected void rebalance(VM vm) {
-    vm.invoke(new SerializableCallable() {
+    vm.invoke(
+        new SerializableCallable() {
 
-      public Object call() throws Exception {
-        RebalanceOperation rebalance = getCache().getResourceManager().createRebalanceFactory().start();
-        rebalance.getResults();
-        return null;
-      }
-    });
+          public Object call() throws Exception {
+            RebalanceOperation rebalance =
+                getCache().getResourceManager().createRebalanceFactory().start();
+            rebalance.getResults();
+            return null;
+          }
+        });
   }
 
   protected static class TestPartitionListener extends PartitionListenerAdapter {

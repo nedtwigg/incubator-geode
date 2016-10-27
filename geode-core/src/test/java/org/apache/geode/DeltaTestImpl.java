@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode;
 
 import java.io.DataInput;
@@ -29,7 +27,7 @@ import org.apache.geode.internal.cache.PartitionedRegionLocalMaxMemoryDUnitTest.
 
 /**
  * Sample test class which implements Delta.
- * 
+ *
  * @since GemFire 6.1
  */
 public class DeltaTestImpl implements DataSerializable, Delta {
@@ -41,11 +39,12 @@ public class DeltaTestImpl implements DataSerializable, Delta {
   private static final byte TEST_OBJ_MASK = 0x10;
   private static final byte COMPLETE_MASK = 0x1F;
 
-  /*****************************************************************************
-   * Below fields are not part of standard Delta implementation but are used for
-   * testing purpose.
+  /**
+   * *************************************************************************** Below fields are
+   * not part of standard Delta implementation but are used for testing purpose.
    */
   public static final String ERRONEOUS_STRING_FOR_FROM_DELTA = "ERRONEOUS_STRING";
+
   public static final int ERRONEOUS_INT_FOR_TO_DELTA = -101;
   private static long fromDeltaInvokations;
   private static long toDeltaInvokations;
@@ -57,14 +56,13 @@ public class DeltaTestImpl implements DataSerializable, Delta {
 
   // Actual data fields of this instance.
   private int intVar = 0; // 0000 0001
+
   private String str = ""; // 0000 0010
   private Double doubleVar = new Double(0); // 0000 0100
   private byte[] byteArr = new byte[1]; // 0000 1000
   private TestObject1 testObj = new TestObject1(); // 0001 0000
 
-  /**
-   * Indicates the fields containing delta.
-   */
+  /** Indicates the fields containing delta. */
   private byte deltaBits = 0x0;
 
   private boolean hasDelta = false;
@@ -78,7 +76,8 @@ public class DeltaTestImpl implements DataSerializable, Delta {
     this.str = str;
   }
 
-  public DeltaTestImpl(int intVal, String string, Double doubleVal, byte[] bytes, TestObject1 testObj) {
+  public DeltaTestImpl(
+      int intVal, String string, Double doubleVal, byte[] bytes, TestObject1 testObj) {
     this.intVar = intVal;
     this.str = string;
     this.doubleVar = doubleVal;
@@ -149,9 +148,9 @@ public class DeltaTestImpl implements DataSerializable, Delta {
     this.hasDelta = true;
   }
 
-  /*****************************************************************************
-   * Below methods are not part of standard Delta implementation but are used
-   * for testing purpose.
+  /**
+   * *************************************************************************** Below methods are
+   * not part of standard Delta implementation but are used for testing purpose.
    */
   public static void resetDeltaInvokationCounters() {
     resetToDeltaCounter();
@@ -222,11 +221,9 @@ public class DeltaTestImpl implements DataSerializable, Delta {
     }
   }
 
-  protected void checkInvalidInt2(int intVal) {
-  }
+  protected void checkInvalidInt2(int intVal) {}
 
   /** ********************************************************************** */
-
   public String toString() {
     StringBuffer bytes = new StringBuffer("");
     if (byteArr != null) {
@@ -234,7 +231,19 @@ public class DeltaTestImpl implements DataSerializable, Delta {
         bytes.append(byteArr[i]);
       }
     }
-    return "DeltaTestImpl[hasDelta=" + this.hasDelta + ",int=" + this.intVar + ",double=" + this.doubleVar + ",str=" + this.str + ",bytes={" + bytes.toString() + "},testObj=" + ((this.testObj != null) ? this.testObj.hashCode() : "") + "]";
+    return "DeltaTestImpl[hasDelta="
+        + this.hasDelta
+        + ",int="
+        + this.intVar
+        + ",double="
+        + this.doubleVar
+        + ",str="
+        + this.str
+        + ",bytes={"
+        + bytes.toString()
+        + "},testObj="
+        + ((this.testObj != null) ? this.testObj.hashCode() : "")
+        + "]";
   }
 
   public boolean equals(Object other) {
@@ -242,7 +251,10 @@ public class DeltaTestImpl implements DataSerializable, Delta {
       return false;
     }
     DeltaTestImpl delta = (DeltaTestImpl) other;
-    if (this.intVar == delta.intVar && this.doubleVar.equals(delta.doubleVar) && Arrays.equals(this.byteArr, delta.byteArr) && this.str.equals(delta.str)) {
+    if (this.intVar == delta.intVar
+        && this.doubleVar.equals(delta.doubleVar)
+        && Arrays.equals(this.byteArr, delta.byteArr)
+        && this.str.equals(delta.str)) {
       return true;
     }
     return false;
@@ -250,7 +262,7 @@ public class DeltaTestImpl implements DataSerializable, Delta {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.Delta#fromDelta(java.io.DataInput)
    */
   public void fromDelta(DataInput in) throws IOException {
@@ -311,7 +323,7 @@ public class DeltaTestImpl implements DataSerializable, Delta {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.Delta#hasDelta()
    */
   public boolean hasDelta() {
@@ -320,7 +332,7 @@ public class DeltaTestImpl implements DataSerializable, Delta {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.Delta#toDelta(java.io.DataOutput)
    */
   public void toDelta(DataOutput out) throws IOException {
@@ -356,9 +368,9 @@ public class DeltaTestImpl implements DataSerializable, Delta {
       GemFireCacheImpl.getInstance().getLogger().warning("DeltaTestImpl.toDelta(): " + iae);
       throw new InvalidDeltaException(iae);
     } finally {
-      if (NEED_TO_RESET_T0_DELTA) {// No need to reset if secondary needs to
-                                     // send delta again upon receiving
-                                   // forceReattemptException
+      if (NEED_TO_RESET_T0_DELTA) { // No need to reset if secondary needs to
+        // send delta again upon receiving
+        // forceReattemptException
         this.deltaBits = 0x0;
         this.hasDelta = false;
       }
@@ -385,5 +397,4 @@ public class DeltaTestImpl implements DataSerializable, Delta {
     DataSerializer.writeByteArray(this.byteArr, out);
     DataSerializer.writeObject(this.testObj, out);
   }
-
 }

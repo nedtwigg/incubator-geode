@@ -37,5 +37,4 @@ public class NamedRunnable implements SerializableRunnableIF {
   public String toString() {
     return ("runnable(" + name + ")");
   }
-
 }

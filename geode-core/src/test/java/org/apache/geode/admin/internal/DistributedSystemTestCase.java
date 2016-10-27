@@ -34,17 +34,13 @@ public abstract class DistributedSystemTestCase {
   /** The DistributedSystem used for this test */
   protected DistributedSystem system;
 
-  /**
-   * Creates a "loner" <code>DistributedSystem</code> for this test.
-   */
+  /** Creates a "loner" <code>DistributedSystem</code> for this test. */
   @Before
   public void setUp() throws Exception {
     this.system = DistributedSystem.connect(defineProperties());
   }
 
-  /**
-   * Closes the "loner" <code>DistributedSystem</code>
-   */
+  /** Closes the "loner" <code>DistributedSystem</code> */
   @After
   public void tearDown() throws Exception {
     if (this.system != null) {
@@ -53,10 +49,7 @@ public abstract class DistributedSystemTestCase {
     this.system = null;
   }
 
-  /**
-   * Defines the <code>Properties</code> used to connect to the distributed 
-   * system.
-   */
+  /** Defines the <code>Properties</code> used to connect to the distributed system. */
   protected Properties defineProperties() {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");

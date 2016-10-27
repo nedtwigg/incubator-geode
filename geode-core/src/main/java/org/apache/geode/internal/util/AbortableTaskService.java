@@ -22,10 +22,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * Wraps an executor with a task queue so that currently executing tasks can
- * be aborted.
- */
+/** Wraps an executor with a task queue so that currently executing tasks can be aborted. */
 public class AbortableTaskService {
   /** the executor */
   private final Executor exec;
@@ -33,21 +30,17 @@ public class AbortableTaskService {
   /** the queue of executing tasks */
   private final Queue<AbortingRunnable> tasks;
 
-  /**
-   * Provides an executable interface that can be aborted during execution.
-   */
+  /** Provides an executable interface that can be aborted during execution. */
   public interface AbortableTask {
     /**
-     * Invoked to execute the task.  The task implementation should periodically
-     * check the aborted flag and take appropriate action.
-     *  
+     * Invoked to execute the task. The task implementation should periodically check the aborted
+     * flag and take appropriate action.
+     *
      * @param aborted set to true when the task has been aborted
      */
     void runOrAbort(AtomicBoolean aborted);
 
-    /**
-     * Invoked when a task is aborted prior to execution.
-     */
+    /** Invoked when a task is aborted prior to execution. */
     void abortBeforeRun();
   }
 
@@ -58,6 +51,7 @@ public class AbortableTaskService {
 
   /**
    * Executes the task using the embedded executor.
+   *
    * @param task the task to execute
    */
   public void execute(AbortableTask task) {
@@ -73,18 +67,14 @@ public class AbortableTaskService {
     }
   }
 
-  /**
-   * Aborts all executing tasks.
-   */
+  /** Aborts all executing tasks. */
   public void abortAll() {
     for (AbortingRunnable ar : tasks) {
       ar.abort();
     }
   }
 
-  /**
-   * Waits for all currently executing tasks to complete.
-   */
+  /** Waits for all currently executing tasks to complete. */
   public void waitForCompletion() {
     boolean interrupted = false;
     for (AbortingRunnable ar : tasks) {
@@ -100,9 +90,7 @@ public class AbortableTaskService {
     }
   }
 
-  /**
-   * Returns true if all tasks are done or aborted.
-   */
+  /** Returns true if all tasks are done or aborted. */
   public boolean isCompleted() {
     for (AbortingRunnable ar : tasks) {
       synchronized (ar) {

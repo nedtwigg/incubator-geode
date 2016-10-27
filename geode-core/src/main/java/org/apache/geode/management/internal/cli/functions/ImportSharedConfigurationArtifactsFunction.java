@@ -27,12 +27,12 @@ import org.apache.geode.management.internal.cli.CliUtil;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 import org.apache.geode.management.internal.configuration.utils.ZipUtils;
 
-/******
- * This function copies the zipped shared configuration, renames the existing shared configuration directory
- * and unzips the shared configuration.
- *
+/**
+ * **** This function copies the zipped shared configuration, renames the existing shared
+ * configuration directory and unzips the shared configuration.
  */
-public class ImportSharedConfigurationArtifactsFunction extends FunctionAdapter implements InternalEntity {
+public class ImportSharedConfigurationArtifactsFunction extends FunctionAdapter
+    implements InternalEntity {
 
   private static final long serialVersionUID = 1L;
 
@@ -55,16 +55,20 @@ public class ImportSharedConfigurationArtifactsFunction extends FunctionAdapter 
         FileUtils.writeByteArrayToFile(zippedSharedConfiguration, zipFileData);
         ZipUtils.unzip(zipFileName, sc.getSharedConfigurationDirPath());
 
-        CliFunctionResult cliFunctionResult = new CliFunctionResult(memberName, true, CliStrings.IMPORT_SHARED_CONFIG__ARTIFACTS__COPIED);
+        CliFunctionResult cliFunctionResult =
+            new CliFunctionResult(
+                memberName, true, CliStrings.IMPORT_SHARED_CONFIG__ARTIFACTS__COPIED);
         context.getResultSender().lastResult(cliFunctionResult);
       } catch (Exception e) {
-        CliFunctionResult result = new CliFunctionResult(memberName, e, CliUtil.stackTraceAsString(e));
+        CliFunctionResult result =
+            new CliFunctionResult(memberName, e, CliUtil.stackTraceAsString(e));
         context.getResultSender().lastResult(result);
       } finally {
         FileUtils.deleteQuietly(zippedSharedConfiguration);
       }
     } else {
-      CliFunctionResult cliFunctionResult = new CliFunctionResult(memberName, false, CliStrings.SHARED_CONFIGURATION_NOT_STARTED);
+      CliFunctionResult cliFunctionResult =
+          new CliFunctionResult(memberName, false, CliStrings.SHARED_CONFIGURATION_NOT_STARTED);
       context.getResultSender().lastResult(cliFunctionResult);
     }
   }

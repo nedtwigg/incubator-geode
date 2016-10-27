@@ -34,8 +34,8 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 
 // @todo probably should assert element type when elements added
 /**
- * Implementation of SelectResults that extends HashSet
- * If the elements are Structs, then use a StructSet instead.
+ * Implementation of SelectResults that extends HashSet If the elements are Structs, then use a
+ * StructSet instead.
  *
  * @since GemFire 4.0
  */
@@ -43,11 +43,8 @@ public final class ResultsSet extends HashSet implements SelectResults, DataSeri
   private static final long serialVersionUID = -5423281031630216824L;
   private ObjectType elementType;
 
-  /**
-   * Empty constructor to satisfy <code>DataSerializer</code> requirements
-   */
-  public ResultsSet() {
-  }
+  /** Empty constructor to satisfy <code>DataSerializer</code> requirements */
+  public ResultsSet() {}
 
   ResultsSet(Collection c) {
     super(c);
@@ -79,7 +76,9 @@ public final class ResultsSet extends HashSet implements SelectResults, DataSeri
 
   public void setElementType(ObjectType elementType) {
     if (elementType instanceof StructType)
-      throw new IllegalArgumentException(LocalizedStrings.ResultsSet_THIS_COLLECTION_DOES_NOT_SUPPORT_STRUCT_ELEMENTS.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.ResultsSet_THIS_COLLECTION_DOES_NOT_SUPPORT_STRUCT_ELEMENTS
+              .toLocalizedString());
     this.elementType = elementType;
   }
 
@@ -133,7 +132,7 @@ public final class ResultsSet extends HashSet implements SelectResults, DataSeri
     ObjectTypeImpl ctImpl = (ObjectTypeImpl) this.getCollectionType().getElementType();
     Assert.assertTrue(ctImpl != null, "ctImpl can not be null");
     InternalDataSerializer.invokeToData(ctImpl, out);
-    for (Iterator itr = this.iterator(); itr.hasNext();) {
+    for (Iterator itr = this.iterator(); itr.hasNext(); ) {
       DataSerializer.writeObject(itr.next(), out);
     }
   }

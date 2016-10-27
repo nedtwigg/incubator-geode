@@ -20,22 +20,57 @@ package org.apache.geode.cache.operations;
 import org.apache.geode.security.ResourcePermission;
 
 /**
- * Encapsulates a cache operation and the data associated with it for both the
- * pre-operation and post-operation cases. Implementations for specific
- * operations will extend this with the specifics as required e.g. a getKey()
- * method for a GET operation. Implementations for all the cache operations that
- * require authorization are provided.
+ * Encapsulates a cache operation and the data associated with it for both the pre-operation and
+ * post-operation cases. Implementations for specific operations will extend this with the specifics
+ * as required e.g. a getKey() method for a GET operation. Implementations for all the cache
+ * operations that require authorization are provided.
  *
- * Implementations of this interface are <b>not</b> expected to be thread-safe.
+ * <p>Implementations of this interface are <b>not</b> expected to be thread-safe.
  *
  * @since GemFire 5.5
- *
  * @deprecated since Geode1.0, use {@link ResourcePermission} instead
  */
 public abstract class OperationContext {
 
   public enum OperationCode {
-    @Deprecated GET, @Deprecated PUT, @Deprecated PUTALL, @Deprecated REMOVEALL, @Deprecated DESTROY, @Deprecated INVALIDATE, @Deprecated REGISTER_INTEREST, @Deprecated UNREGISTER_INTEREST, @Deprecated CONTAINS_KEY, @Deprecated KEY_SET, @Deprecated QUERY, @Deprecated EXECUTE_CQ, @Deprecated STOP_CQ, @Deprecated CLOSE_CQ, @Deprecated REGION_CLEAR, @Deprecated REGION_CREATE, @Deprecated REGION_DESTROY, @Deprecated EXECUTE_FUNCTION, @Deprecated GET_DURABLE_CQS;
+    @Deprecated
+    GET,
+    @Deprecated
+    PUT,
+    @Deprecated
+    PUTALL,
+    @Deprecated
+    REMOVEALL,
+    @Deprecated
+    DESTROY,
+    @Deprecated
+    INVALIDATE,
+    @Deprecated
+    REGISTER_INTEREST,
+    @Deprecated
+    UNREGISTER_INTEREST,
+    @Deprecated
+    CONTAINS_KEY,
+    @Deprecated
+    KEY_SET,
+    @Deprecated
+    QUERY,
+    @Deprecated
+    EXECUTE_CQ,
+    @Deprecated
+    STOP_CQ,
+    @Deprecated
+    CLOSE_CQ,
+    @Deprecated
+    REGION_CLEAR,
+    @Deprecated
+    REGION_CREATE,
+    @Deprecated
+    REGION_DESTROY,
+    @Deprecated
+    EXECUTE_FUNCTION,
+    @Deprecated
+    GET_DURABLE_CQS;
 
     /**
      * Check if this is an entry get operation.
@@ -119,7 +154,7 @@ public abstract class OperationContext {
      * Check if this is an unregister interest operation.
      *
      * @return true if this is an unregister interest operation.
-     * @deprecated Use {@code getOperationCode() ==  UNREGISTER_INTEREST} instead
+     * @deprecated Use {@code getOperationCode() == UNREGISTER_INTEREST} instead
      */
     @Deprecated
     public boolean isUnregisterInterest() {
@@ -248,57 +283,58 @@ public abstract class OperationContext {
     }
   }
 
-  /**
-   * Return the operation code associated with the <code>OperationContext</code>
-   * object.
-   */
+  /** Return the operation code associated with the <code>OperationContext</code> object. */
   public abstract OperationCode getOperationCode();
 
   /**
    * True if the context is for post-operation.
    *
-   * The <code>OperationContext</code> interface encapsulates the data both
-   * before the operation is performed and after the operation is complete. For
-   * example, for a query operation the <code>Query</code> object as well as
-   * the list of region names referenced by the query would be part of the
-   * context object in the pre-processing stage. In the post-processing stage
-   * the context object shall contain results of the query.
+   * <p>The <code>OperationContext</code> interface encapsulates the data both before the operation
+   * is performed and after the operation is complete. For example, for a query operation the <code>
+   * Query</code> object as well as the list of region names referenced by the query would be part
+   * of the context object in the pre-processing stage. In the post-processing stage the context
+   * object shall contain results of the query.
    */
   public abstract boolean isPostOperation();
 
   /**
-   * When called post-operation, returns true if the operation was one that performed an update.
-   * An update occurs when one of the following methods on <code>getOperationCode()</code> returns true:
-   * <code>isPut()</code>, <code>isPutAll()</code>, <code>isDestroy()</code>, <code>isRemoveAll()</code>,
-   * <code>isInvalidate()</code>, <code>isRegionCreate()</code>, <code>isRegionClear()</code>, <code>isRegionDestroy()</code>.
-   * Otherwise, returns false.
+   * When called post-operation, returns true if the operation was one that performed an update. An
+   * update occurs when one of the following methods on <code>getOperationCode()</code> returns
+   * true: <code>isPut()</code>, <code>isPutAll()</code>, <code>isDestroy()</code>, <code>
+   * isRemoveAll()</code>, <code>isInvalidate()</code>, <code>isRegionCreate()</code>, <code>
+   * isRegionClear()</code>, <code>isRegionDestroy()</code>. Otherwise, returns false.
    *
    * @since GemFire 6.6
    */
   public boolean isClientUpdate() {
     if (isPostOperation()) {
       switch (getOperationCode()) {
-      case PUT:
-      case PUTALL:
-      case DESTROY:
-      case REMOVEALL:
-      case INVALIDATE:
-      case REGION_CREATE:
-      case REGION_DESTROY:
-      case REGION_CLEAR:
-        return true;
+        case PUT:
+        case PUTALL:
+        case DESTROY:
+        case REMOVEALL:
+        case INVALIDATE:
+        case REGION_CREATE:
+        case REGION_DESTROY:
+        case REGION_CLEAR:
+          return true;
       }
     }
     return false;
   }
 
-  /**
-   * True if the context is created before sending the updates to a client.
-   */
+  /** True if the context is created before sending the updates to a client. */
   @Deprecated
   public boolean isClientUpdate(OperationContext context) {
     OperationCode opCode = context.getOperationCode();
-    return context.isPostOperation() && (opCode.isPut() || opCode.isPutAll() || opCode.isDestroy() || opCode.isRemoveAll() || opCode.isInvalidate() || opCode.isRegionCreate() || opCode.isRegionDestroy() || opCode.isRegionClear());
+    return context.isPostOperation()
+        && (opCode.isPut()
+            || opCode.isPutAll()
+            || opCode.isDestroy()
+            || opCode.isRemoveAll()
+            || opCode.isInvalidate()
+            || opCode.isRegionCreate()
+            || opCode.isRegionDestroy()
+            || opCode.isRegionClear());
   }
-
 }

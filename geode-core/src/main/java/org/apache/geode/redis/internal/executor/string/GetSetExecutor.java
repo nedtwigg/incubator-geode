@@ -52,8 +52,8 @@ public class GetSetExecutor extends StringExecutor {
     if (oldValueWrapper == null) {
       command.setResponse(Coder.getNilResponse(context.getByteBufAllocator()));
     } else {
-      command.setResponse(Coder.getBulkStringResponse(context.getByteBufAllocator(), oldValueWrapper.toBytes()));
+      command.setResponse(
+          Coder.getBulkStringResponse(context.getByteBufAllocator(), oldValueWrapper.toBytes()));
     }
-
   }
 }

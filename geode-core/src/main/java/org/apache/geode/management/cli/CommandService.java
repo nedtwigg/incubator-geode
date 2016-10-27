@@ -27,13 +27,10 @@ import org.apache.geode.management.internal.cli.CliUtil;
 import org.apache.geode.management.internal.cli.remote.MemberCommandService;
 
 /**
- * Processes remote GemFire Command Line Interface (CLI) commands. Refer to the
- * vFabric GemFire documentation for information regarding local vs. remote
- * commands.
- * <p>
- * <b>NOTE:</b> <code>CommandService</code> is currently available only on
- * GemFire Manager nodes.
+ * Processes remote GemFire Command Line Interface (CLI) commands. Refer to the vFabric GemFire
+ * documentation for information regarding local vs. remote commands.
  *
+ * <p><b>NOTE:</b> <code>CommandService</code> is currently available only on GemFire Manager nodes.
  *
  * @since GemFire 7.0
  */
@@ -45,73 +42,56 @@ public abstract class CommandService {
   /* ************* Methods to be implemented by sub-classes START *********** */
 
   /**
-   * Returns whether the underlying <code>Cache</code> exists and is not closed.
-   * The Cache must be ready in order for commands to be processed using this
-   * <code>CommandService</code>. A call to this method should be made before
-   * attempting to process commands.
+   * Returns whether the underlying <code>Cache</code> exists and is not closed. The Cache must be
+   * ready in order for commands to be processed using this <code>CommandService</code>. A call to
+   * this method should be made before attempting to process commands.
    *
-   * @return True if the <code>Cache</code> exists and is not closed, false
-   *         otherwise.
+   * @return True if the <code>Cache</code> exists and is not closed, false otherwise.
    */
   public abstract boolean isUsable();
 
   /**
-   * Processes the specified command string. Only remote commands can be
-   * processed using this method. Refer to the vFabric GemFire documentation for
-   * details.
+   * Processes the specified command string. Only remote commands can be processed using this
+   * method. Refer to the vFabric GemFire documentation for details.
    *
-   * @param commandString
-   *          Command string to be processed.
+   * @param commandString Command string to be processed.
    * @return The {@link Result} of the execution of this command string.
    */
   public abstract Result processCommand(String commandString);
 
   /**
-   * Processes the specified command string. Only remote commands can be
-   * processed using this method. Refer to the vFabric GemFire documentation for
-   * details.
+   * Processes the specified command string. Only remote commands can be processed using this
+   * method. Refer to the vFabric GemFire documentation for details.
    *
-   * @param commandString
-   *          Command string to be processed.
-   * @param env
-   *          Environmental values that will be used during the execution of
-   *          this command.
+   * @param commandString Command string to be processed.
+   * @param env Environmental values that will be used during the execution of this command.
    * @return The {@link Result} of the execution of this command string.
    */
   protected abstract Result processCommand(String commandString, Map<String, String> env);
 
   /**
-   * Creates a <code>CommandStatement</code> from the specified command string.
-   * Only remote commands can be processed using this method. Refer to the
-   * vFabric GemFire documentation for details.
+   * Creates a <code>CommandStatement</code> from the specified command string. Only remote commands
+   * can be processed using this method. Refer to the vFabric GemFire documentation for details.
    *
-   * @param commandString
-   *          Command string from which to create a
-   *          <code>CommandStatement</code>.
-   * @return A <code>CommandStatement</code> which can be used to repeatedly
-   *         process the same command.
-   *
+   * @param commandString Command string from which to create a <code>CommandStatement</code>.
+   * @return A <code>CommandStatement</code> which can be used to repeatedly process the same
+   *     command.
    * @see CommandStatement#process()
    */
   public abstract CommandStatement createCommandStatement(String commandString);
 
   /**
-   * Creates a <code>CommandStatement</code> from the specified command string.
-   * Only remote commands can be processed using this method. Refer to the
-   * vFabric GemFire documentation for details.
+   * Creates a <code>CommandStatement</code> from the specified command string. Only remote commands
+   * can be processed using this method. Refer to the vFabric GemFire documentation for details.
    *
-   * @param commandString
-   *          Command string from which to create a
-   *          <code>CommandStatement</code>.
-   * @param env
-   *          Environmental values that will be used during the execution of
-   *          this command.
-   * @return A <code>CommandStatement</code> which can be used to repeatedly
-   *         process the same command.
-   *
+   * @param commandString Command string from which to create a <code>CommandStatement</code>.
+   * @param env Environmental values that will be used during the execution of this command.
+   * @return A <code>CommandStatement</code> which can be used to repeatedly process the same
+   *     command.
    * @see CommandStatement#process()
    */
-  protected abstract CommandStatement createCommandStatement(String commandString, Map<String, String> env);
+  protected abstract CommandStatement createCommandStatement(
+      String commandString, Map<String, String> env);
 
   /* ************** Methods to be implemented by sub-classes END ************ */
 
@@ -126,9 +106,11 @@ public abstract class CommandService {
    * @throws CommandServiceException
    *           If command service could not be initialized.
    */
-  public static final CommandService createLocalCommandService(Cache cache) throws CommandServiceException {
+  public static final CommandService createLocalCommandService(Cache cache)
+      throws CommandServiceException {
     if (cache == null || cache.isClosed()) {
-      throw new CacheClosedException("Can not create command service as cache doesn't exist or cache is closed.");
+      throw new CacheClosedException(
+          "Can not create command service as cache doesn't exist or cache is closed.");
     }
 
     /* if (!cache.isServer()) {
@@ -138,7 +120,9 @@ public abstract class CommandService {
     if (localCommandService == null || !localCommandService.isUsable()) {
       String nonExistingDependency = CliUtil.cliDependenciesExist(false);
       if (nonExistingDependency != null) {
-        throw new DependenciesNotFoundException(LocalizedStrings.CommandServiceManager_COULD_NOT_FIND__0__LIB_NEEDED_FOR_CLI_GFSH.toLocalizedString(new Object[] { nonExistingDependency }));
+        throw new DependenciesNotFoundException(
+            LocalizedStrings.CommandServiceManager_COULD_NOT_FIND__0__LIB_NEEDED_FOR_CLI_GFSH
+                .toLocalizedString(new Object[] {nonExistingDependency}));
       }
 
       localCommandService = new MemberCommandService(cache);
@@ -148,12 +132,10 @@ public abstract class CommandService {
   }
 
   /**
-   * Returns an existing 'usable' <code>CommandService></code>. A
-   * <code>CommandService</code> is considered usable if at has an underlying
-   * <code>Cache</code> which is not closed.
+   * Returns an existing 'usable' <code>CommandService></code>. A <code>CommandService</code> is
+   * considered usable if at has an underlying <code>Cache</code> which is not closed.
    *
-   * @return A usable <code>CommandService</code> or null if one cannot be
-   *         found.
+   * @return A usable <code>CommandService</code> or null if one cannot be found.
    */
   public static final CommandService getUsableLocalCommandService() {
     if (localCommandService != null && localCommandService.isUsable()) {

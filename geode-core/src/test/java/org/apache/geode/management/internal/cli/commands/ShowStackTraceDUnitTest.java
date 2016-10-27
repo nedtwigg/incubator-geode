@@ -38,9 +38,7 @@ import static org.apache.geode.test.dunit.Assert.assertFalse;
 import static org.apache.geode.test.dunit.Assert.assertTrue;
 import static org.apache.geode.test.dunit.LogWriterUtils.getLogWriter;
 
-/***
- * DUnit test for 'show stack-trace' command
- */
+/** * DUnit test for 'show stack-trace' command */
 @Category(DistributedTest.class)
 public class ShowStackTraceDUnitTest extends CliCommandTestBase {
 
@@ -62,28 +60,28 @@ public class ShowStackTraceDUnitTest extends CliCommandTestBase {
     return props;
   }
 
-  /***
-   * Sets up a system of 3 peers
-   */
+  /** * Sets up a system of 3 peers */
   private void setupSystem() {
     disconnectAllFromDS();
     final Host host = Host.getHost(0);
-    final VM[] servers = { host.getVM(0), host.getVM(1) };
+    final VM[] servers = {host.getVM(0), host.getVM(1)};
 
     final Properties propsManager = createProperties(host, "Manager", "G1");
     final Properties propsServer2 = createProperties(host, "Server", "G2");
 
     setUpJmxManagerOnVm0ThenConnect(propsManager);
 
-    servers[1].invoke(new SerializableRunnable("Create cache for server1") {
-      public void run() {
-        createCache(propsServer2);
-      }
-    });
+    servers[1]
+        .invoke(
+            new SerializableRunnable("Create cache for server1") {
+              public void run() {
+                createCache(propsServer2);
+              }
+            });
   }
 
-  /***
-   * Tests the default behavior of the show stack-trace command
+  /**
+   * * Tests the default behavior of the show stack-trace command
    *
    * @throws ClassNotFoundException
    * @throws IOException

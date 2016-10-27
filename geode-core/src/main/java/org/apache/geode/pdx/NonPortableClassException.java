@@ -17,9 +17,9 @@
 package org.apache.geode.pdx;
 
 /**
- * Thrown if "check-portability" is enabled and an attempt is made to
- * pdx serialize a class that is not portable to non-java platforms.
- * 
+ * Thrown if "check-portability" is enabled and an attempt is made to pdx serialize a class that is
+ * not portable to non-java platforms.
+ *
  * @since GemFire 6.6.2
  */
 public class NonPortableClassException extends PdxSerializationException {
@@ -29,5 +29,4 @@ public class NonPortableClassException extends PdxSerializationException {
   public NonPortableClassException(String message) {
     super(message);
   }
-
 }

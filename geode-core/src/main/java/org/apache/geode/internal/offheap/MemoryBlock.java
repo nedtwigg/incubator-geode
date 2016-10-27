@@ -17,9 +17,9 @@
 package org.apache.geode.internal.offheap;
 
 /**
- * Basic size and usage information about an off-heap memory block under
- * inspection. For test validation only.
- * 
+ * Basic size and usage information about an off-heap memory block under inspection. For test
+ * validation only.
+ *
  * @since Geode 1.0
  */
 public interface MemoryBlock {
@@ -35,29 +35,19 @@ public interface MemoryBlock {
 
   public State getState();
 
-  /**
-   * Returns the unsafe memory address of the first byte of this block.
-   */
+  /** Returns the unsafe memory address of the first byte of this block. */
   public long getAddress();
 
-  /**
-   * Returns the size of this memory block in bytes.
-   */
+  /** Returns the size of this memory block in bytes. */
   public int getBlockSize();
 
-  /**
-   * Returns the next memory block immediately after this one.
-   */
+  /** Returns the next memory block immediately after this one. */
   public MemoryBlock getNextBlock();
 
-  /**
-   * Returns the identifier of which slab contains this block.
-   */
+  /** Returns the identifier of which slab contains this block. */
   public int getSlabId();
 
-  /**
-   * Returns the identifier of which free list contains this block.
-   */
+  /** Returns the identifier of which free list contains this block. */
   public int getFreeListId();
 
   public int getRefCount();

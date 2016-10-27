@@ -21,7 +21,14 @@ import org.apache.geode.security.SecurableCommunicationChannels;
 import org.apache.geode.GemFireConfigException;
 
 public enum SecurableCommunicationChannel {
-  ALL(SecurableCommunicationChannels.ALL), CLUSTER(SecurableCommunicationChannels.CLUSTER), SERVER(SecurableCommunicationChannels.SERVER), JMX(SecurableCommunicationChannels.JMX), WEB(SecurableCommunicationChannels.WEB), GATEWAY(SecurableCommunicationChannels.GATEWAY), LOCATOR(SecurableCommunicationChannels.LOCATOR), NONE("NO_COMPONENT");
+  ALL(SecurableCommunicationChannels.ALL),
+  CLUSTER(SecurableCommunicationChannels.CLUSTER),
+  SERVER(SecurableCommunicationChannels.SERVER),
+  JMX(SecurableCommunicationChannels.JMX),
+  WEB(SecurableCommunicationChannels.WEB),
+  GATEWAY(SecurableCommunicationChannels.GATEWAY),
+  LOCATOR(SecurableCommunicationChannels.LOCATOR),
+  NONE("NO_COMPONENT");
 
   private final String constant;
 
@@ -30,12 +37,14 @@ public enum SecurableCommunicationChannel {
   }
 
   public static SecurableCommunicationChannel getEnum(String enumString) {
-    for (SecurableCommunicationChannel securableCommunicationChannel : SecurableCommunicationChannel.values()) {
+    for (SecurableCommunicationChannel securableCommunicationChannel :
+        SecurableCommunicationChannel.values()) {
       if (securableCommunicationChannel.constant.equalsIgnoreCase(enumString)) {
         return securableCommunicationChannel;
       }
     }
-    throw new GemFireConfigException("There is no registered component for the name: " + enumString);
+    throw new GemFireConfigException(
+        "There is no registered component for the name: " + enumString);
   }
 
   public String getConstant() {

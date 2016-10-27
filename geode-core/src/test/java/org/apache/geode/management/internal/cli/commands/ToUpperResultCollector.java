@@ -42,7 +42,8 @@ public class ToUpperResultCollector implements ResultCollector {
   }
 
   @Override
-  public Object getResult(long timeout, TimeUnit unit) throws FunctionException, InterruptedException {
+  public Object getResult(long timeout, TimeUnit unit)
+      throws FunctionException, InterruptedException {
     latch.await(timeout, unit);
     return results;
   }

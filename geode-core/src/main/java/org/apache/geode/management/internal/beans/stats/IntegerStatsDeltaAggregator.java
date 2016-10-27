@@ -38,7 +38,7 @@ public class IntegerStatsDeltaAggregator {
   }
 
   public void aggregate(FederationComponent newState, FederationComponent oldState) {
-    incData(newState, oldState);// Only increase the value. No need to decrease
+    incData(newState, oldState); // Only increase the value. No need to decrease
     // when a
     // member goes away.
   }
@@ -89,5 +89,4 @@ public class IntegerStatsDeltaAggregator {
       arr.set(i, Integer.valueOf(0));
     }
   }
-
 }

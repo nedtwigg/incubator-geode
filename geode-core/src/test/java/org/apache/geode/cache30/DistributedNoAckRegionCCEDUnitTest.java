@@ -64,9 +64,7 @@ public class DistributedNoAckRegionCCEDUnitTest extends DistributedNoAckRegionDU
     return p;
   }
 
-  /**
-   * Returns region attributes for a <code>GLOBAL</code> region
-   */
+  /** Returns region attributes for a <code>GLOBAL</code> region */
   protected RegionAttributes getRegionAttributes() {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_NO_ACK);
@@ -89,8 +87,13 @@ public class DistributedNoAckRegionCCEDUnitTest extends DistributedNoAckRegionDU
   @Override
   public void sendSerialMessageToAll() {
     try {
-      org.apache.geode.distributed.internal.SerialAckedMessage msg = new org.apache.geode.distributed.internal.SerialAckedMessage();
-      msg.send(InternalDistributedSystem.getConnectedInstance().getDM().getNormalDistributionManagerIds(), false);
+      org.apache.geode.distributed.internal.SerialAckedMessage msg =
+          new org.apache.geode.distributed.internal.SerialAckedMessage();
+      msg.send(
+          InternalDistributedSystem.getConnectedInstance()
+              .getDM()
+              .getNormalDistributionManagerIds(),
+          false);
     } catch (Exception e) {
       throw new RuntimeException("Unable to send serial message due to exception", e);
     }
@@ -145,7 +148,7 @@ public class DistributedNoAckRegionCCEDUnitTest extends DistributedNoAckRegionDU
     //    if (a0failed && a1failed) {
     //      fail("neither member saw event conflation - check stats for " + name);
     //    }
-    Wait.pause(2000);//this test has with noack, thus we should wait before validating entries
+    Wait.pause(2000); //this test has with noack, thus we should wait before validating entries
     // check consistency of the regions
     Map r0Contents = (Map) vm0.invoke(() -> this.getCCRegionContents());
     Map r1Contents = (Map) vm1.invoke(() -> this.getCCRegionContents());
@@ -159,66 +162,73 @@ public class DistributedNoAckRegionCCEDUnitTest extends DistributedNoAckRegionDU
       assertEquals("region contents are not consistent", r2Contents.get(key), r3Contents.get(key));
       for (int subi = 1; subi < 3; subi++) {
         String subkey = key + "-" + subi;
-        assertEquals("region contents are not consistent", r0Contents.get(subkey), r1Contents.get(subkey));
-        assertEquals("region contents are not consistent", r1Contents.get(subkey), r2Contents.get(subkey));
-        assertEquals("region contents are not consistent", r2Contents.get(subkey), r3Contents.get(subkey));
+        assertEquals(
+            "region contents are not consistent", r0Contents.get(subkey), r1Contents.get(subkey));
+        assertEquals(
+            "region contents are not consistent", r1Contents.get(subkey), r2Contents.get(subkey));
+        assertEquals(
+            "region contents are not consistent", r2Contents.get(subkey), r3Contents.get(subkey));
       }
     }
   }
 
   static void addBlockingListener() {
     ListenerBlocking = true;
-    CCRegion.getAttributesMutator().addCacheListener(new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent event) {
-        onEvent(event);
-      }
-
-      private void onEvent(EntryEvent event) {
-        boolean blocked = false;
-        if (event.isOriginRemote()) {
-          synchronized (this) {
-            while (ListenerBlocking) {
-              LogWriterUtils.getLogWriter().info("blocking cache operations for " + event.getDistributedMember());
-              blocked = true;
-              try {
-                wait();
-              } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                LogWriterUtils.getLogWriter().info("blocking cache listener interrupted");
-                return;
+    CCRegion.getAttributesMutator()
+        .addCacheListener(
+            new CacheListenerAdapter() {
+              public void afterCreate(EntryEvent event) {
+                onEvent(event);
               }
-            }
-          }
-          if (blocked) {
-            LogWriterUtils.getLogWriter().info("allowing cache operations for " + event.getDistributedMember());
-          }
-        }
-      }
 
-      @Override
-      public void close() {
-        LogWriterUtils.getLogWriter().info("closing blocking listener");
-        ListenerBlocking = false;
-        synchronized (this) {
-          notifyAll();
-        }
-      }
+              private void onEvent(EntryEvent event) {
+                boolean blocked = false;
+                if (event.isOriginRemote()) {
+                  synchronized (this) {
+                    while (ListenerBlocking) {
+                      LogWriterUtils.getLogWriter()
+                          .info("blocking cache operations for " + event.getDistributedMember());
+                      blocked = true;
+                      try {
+                        wait();
+                      } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        LogWriterUtils.getLogWriter().info("blocking cache listener interrupted");
+                        return;
+                      }
+                    }
+                  }
+                  if (blocked) {
+                    LogWriterUtils.getLogWriter()
+                        .info("allowing cache operations for " + event.getDistributedMember());
+                  }
+                }
+              }
 
-      @Override
-      public void afterUpdate(EntryEvent event) {
-        onEvent(event);
-      }
+              @Override
+              public void close() {
+                LogWriterUtils.getLogWriter().info("closing blocking listener");
+                ListenerBlocking = false;
+                synchronized (this) {
+                  notifyAll();
+                }
+              }
 
-      @Override
-      public void afterInvalidate(EntryEvent event) {
-        onEvent(event);
-      }
+              @Override
+              public void afterUpdate(EntryEvent event) {
+                onEvent(event);
+              }
 
-      @Override
-      public void afterDestroy(EntryEvent event) {
-        onEvent(event);
-      }
-    });
+              @Override
+              public void afterInvalidate(EntryEvent event) {
+                onEvent(event);
+              }
+
+              @Override
+              public void afterDestroy(EntryEvent event) {
+                onEvent(event);
+              }
+            });
   }
 
   static void doManyOps() {
@@ -239,24 +249,23 @@ public class DistributedNoAckRegionCCEDUnitTest extends DistributedNoAckRegionDU
   }
 
   /**
-   * This test creates a server cache in vm0 and a peer cache in vm1.
-   * It then tests to see if GII transferred tombstones to vm1 like it's supposed to.
-   * A client cache is created in vm2 and the same sort of check is performed
-   * for register-interest.
+   * This test creates a server cache in vm0 and a peer cache in vm1. It then tests to see if GII
+   * transferred tombstones to vm1 like it's supposed to. A client cache is created in vm2 and the
+   * same sort of check is performed for register-interest.
    */
-
   @Test
   public void testGIISendsTombstones() throws Exception {
     versionTestGIISendsTombstones();
   }
 
-  protected void do_version_recovery_if_necessary(final VM vm0, final VM vm1, final VM vm2, final Object[] params) {
+  protected void do_version_recovery_if_necessary(
+      final VM vm0, final VM vm1, final VM vm2, final Object[] params) {
     // do nothing here
   }
 
   /**
-   * This tests the concurrency versioning system to ensure that event conflation
-   * happens correctly and that the statistic is being updated properly
+   * This tests the concurrency versioning system to ensure that event conflation happens correctly
+   * and that the statistic is being updated properly
    */
   @Test
   public void testConcurrentEvents() throws Exception {
@@ -304,29 +313,36 @@ public class DistributedNoAckRegionCCEDUnitTest extends DistributedNoAckRegionDU
     // sure that all three regions are consistent
 
     final String name = this.getUniqueName() + "-CC";
-    SerializableRunnable createRegion = new SerializableRunnable("Create Region") {
-      public void run() {
-        try {
-          final RegionFactory f;
-          int vmNumber = VM.getCurrentVMNum();
-          switch (vmNumber) {
-          case 0:
-            f = getCache().createRegionFactory(getRegionAttributes(RegionShortcut.REPLICATE_PROXY.toString()));
-            break;
-          case 1:
-            f = getCache().createRegionFactory(getRegionAttributes(RegionShortcut.REPLICATE.toString()));
-            f.setDataPolicy(DataPolicy.NORMAL);
-            break;
-          default:
-            f = getCache().createRegionFactory(getRegionAttributes());
-            break;
+    SerializableRunnable createRegion =
+        new SerializableRunnable("Create Region") {
+          public void run() {
+            try {
+              final RegionFactory f;
+              int vmNumber = VM.getCurrentVMNum();
+              switch (vmNumber) {
+                case 0:
+                  f =
+                      getCache()
+                          .createRegionFactory(
+                              getRegionAttributes(RegionShortcut.REPLICATE_PROXY.toString()));
+                  break;
+                case 1:
+                  f =
+                      getCache()
+                          .createRegionFactory(
+                              getRegionAttributes(RegionShortcut.REPLICATE.toString()));
+                  f.setDataPolicy(DataPolicy.NORMAL);
+                  break;
+                default:
+                  f = getCache().createRegionFactory(getRegionAttributes());
+                  break;
+              }
+              CCRegion = (LocalRegion) f.create(name);
+            } catch (CacheException ex) {
+              Assert.fail("While creating region", ex);
+            }
           }
-          CCRegion = (LocalRegion) f.create(name);
-        } catch (CacheException ex) {
-          Assert.fail("While creating region", ex);
-        }
-      }
-    };
+        };
 
     vm0.invoke(createRegion); // empty
     vm1.invoke(createRegion); // normal
@@ -335,27 +351,28 @@ public class DistributedNoAckRegionCCEDUnitTest extends DistributedNoAckRegionDU
     // case 1: entry already invalid on vm2 (replicate) is invalidated by vm0 (empty)
     final String invalidationKey = "invalidationKey";
     final String destroyKey = "destroyKey";
-    SerializableRunnable test = new SerializableRunnable("case 1: second invalidation not applied or distributed") {
-      public void run() {
-        CCRegion.put(invalidationKey, "initialValue");
+    SerializableRunnable test =
+        new SerializableRunnable("case 1: second invalidation not applied or distributed") {
+          public void run() {
+            CCRegion.put(invalidationKey, "initialValue");
 
-        int invalidationCount = CCRegion.getCachePerfStats().getInvalidates();
-        CCRegion.invalidate(invalidationKey);
-        CCRegion.invalidate(invalidationKey);
-        assertEquals(invalidationCount + 1, CCRegion.getCachePerfStats().getInvalidates());
+            int invalidationCount = CCRegion.getCachePerfStats().getInvalidates();
+            CCRegion.invalidate(invalidationKey);
+            CCRegion.invalidate(invalidationKey);
+            assertEquals(invalidationCount + 1, CCRegion.getCachePerfStats().getInvalidates());
 
-        // also test destroy() while we're at it.  It should throw an exception
-        int destroyCount = CCRegion.getCachePerfStats().getDestroys();
-        CCRegion.destroy(invalidationKey);
-        try {
-          CCRegion.destroy(invalidationKey);
-          fail("expected an EntryNotFoundException");
-        } catch (EntryNotFoundException e) {
-          // expected
-        }
-        assertEquals(destroyCount + 1, CCRegion.getCachePerfStats().getDestroys());
-      }
-    };
+            // also test destroy() while we're at it.  It should throw an exception
+            int destroyCount = CCRegion.getCachePerfStats().getDestroys();
+            CCRegion.destroy(invalidationKey);
+            try {
+              CCRegion.destroy(invalidationKey);
+              fail("expected an EntryNotFoundException");
+            } catch (EntryNotFoundException e) {
+              // expected
+            }
+            assertEquals(destroyCount + 1, CCRegion.getCachePerfStats().getDestroys());
+          }
+        };
     vm0.invoke(test);
 
     // now do the same with the datapolicy=normal region
@@ -364,8 +381,8 @@ public class DistributedNoAckRegionCCEDUnitTest extends DistributedNoAckRegionDU
   }
 
   /**
-   * This tests the concurrency versioning system to ensure that event conflation
-   * happens correctly and that the statistic is being updated properly
+   * This tests the concurrency versioning system to ensure that event conflation happens correctly
+   * and that the statistic is being updated properly
    */
   @Category(FlakyTest.class) // GEODE-976: time sensitive, thread sleeps, relies on stat values
   @Test
@@ -374,8 +391,8 @@ public class DistributedNoAckRegionCCEDUnitTest extends DistributedNoAckRegionDU
   }
 
   /**
-   * This tests the concurrency versioning system to ensure that event conflation
-   * happens correctly and that the statistic is being updated properly
+   * This tests the concurrency versioning system to ensure that event conflation happens correctly
+   * and that the statistic is being updated properly
    */
   @Test
   public void testConcurrentEventsOnNonReplicatedRegion() {

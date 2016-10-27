@@ -25,8 +25,8 @@ import org.apache.geode.test.dunit.Host;
 import org.apache.geode.test.dunit.VM;
 
 /**
- * Base class for function tests that use client server. This
- * class takes care of setting up the client server topology.
+ * Base class for function tests that use client server. This class takes care of setting up the
+ * client server topology.
  */
 public abstract class FunctionServiceClientBase extends FunctionServiceBase {
 
@@ -39,20 +39,23 @@ public abstract class FunctionServiceClientBase extends FunctionServiceBase {
     }
 
     ClientCacheFactory clientCacheFactory = new ClientCacheFactory();
-    Arrays.stream(ports).forEach(port -> {
-      clientCacheFactory.addPoolServer("localhost", port);
-    });
+    Arrays.stream(ports)
+        .forEach(
+            port -> {
+              clientCacheFactory.addPoolServer("localhost", port);
+            });
     configureClient(clientCacheFactory);
     return getClientCache(clientCacheFactory);
   }
 
   protected Integer createServer(final VM vm) {
-    return vm.invoke(() -> {
-      CacheServer server = getCache().addCacheServer();
-      server.setPort(0);
-      server.start();
-      return server.getPort();
-    });
+    return vm.invoke(
+        () -> {
+          CacheServer server = getCache().addCacheServer();
+          server.setPort(0);
+          server.start();
+          return server.getPort();
+        });
   }
 
   public void configureClient(ClientCacheFactory cacheFactory) {

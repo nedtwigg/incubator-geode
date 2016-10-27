@@ -24,15 +24,11 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.internal.lang.SystemUtils;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Includes tests for all utility methods in {@link PreprocessorUtils}
- */
+/** Includes tests for all utility methods in {@link PreprocessorUtils} */
 @Category(UnitTest.class)
 public class PreprocessorUtilsJUnitTest {
 
-  /**
-   * Test for {@link PreprocessorUtils#simpleTrim(String)}
-   */
+  /** Test for {@link PreprocessorUtils#simpleTrim(String)} */
   @Test
   public void testSimpleTrim() {
     String input = " 1 2 3 ";
@@ -46,9 +42,7 @@ public class PreprocessorUtilsJUnitTest {
     assertEquals("input after trimming", "1 2 3", simpleTrim.getString());
   }
 
-  /**
-   * Test for {@link PreprocessorUtils#trim(String)}
-   */
+  /** Test for {@link PreprocessorUtils#trim(String)} */
   @Test
   public void testTrim() {
     String input = " command argument1 argument2 ";
@@ -77,9 +71,7 @@ public class PreprocessorUtilsJUnitTest {
     assertEquals("input after trimming", "command argument1 argument2", trim.getString());
   }
 
-  /**
-   * Test for {@link PreprocessorUtils#removeWhiteSpaces(String)}
-   */
+  /** Test for {@link PreprocessorUtils#removeWhiteSpaces(String)} */
   @Test
   public void testRemoveWhiteSpaces() {
     String input = "1 2 3   ";
@@ -87,9 +79,7 @@ public class PreprocessorUtilsJUnitTest {
     assertEquals("Output after removing white spaces", "123", output);
   }
 
-  /**
-   * Test for {@link PreprocessorUtils#isSyntaxValid(String)}
-   */
+  /** Test for {@link PreprocessorUtils#isSyntaxValid(String)} */
   @Test
   public void testIsSyntaxValid() {
     assertTrue(PreprocessorUtils.isSyntaxValid("{}"));
@@ -99,18 +89,16 @@ public class PreprocessorUtilsJUnitTest {
     assertFalse(PreprocessorUtils.isSyntaxValid("{\"}\""));
   }
 
-  /**
-   * Test for {@link PreprocessorUtils#containsOnlyWhiteSpaces(String)}
-   */
+  /** Test for {@link PreprocessorUtils#containsOnlyWhiteSpaces(String)} */
   @Test
   public void testContainsOnlyWhiteSpaces() {
-    assertTrue(PreprocessorUtils.containsOnlyWhiteSpaces("                                                  "));
+    assertTrue(
+        PreprocessorUtils.containsOnlyWhiteSpaces(
+            "                                                  "));
     assertFalse(PreprocessorUtils.containsOnlyWhiteSpaces("              d       "));
   }
 
-  /**
-   * Test for {@link PreprocessorUtils#isWhitespace(char)}
-   */
+  /** Test for {@link PreprocessorUtils#isWhitespace(char)} */
   @Test
   public void testIsWhitespace() {
     assertTrue(PreprocessorUtils.isWhitespace(' '));
@@ -118,5 +106,4 @@ public class PreprocessorUtilsJUnitTest {
     assertTrue(PreprocessorUtils.isWhitespace('\n'));
     assertEquals(SystemUtils.isWindows(), PreprocessorUtils.isWhitespace('\r'));
   }
-
 }

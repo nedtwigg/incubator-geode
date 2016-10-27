@@ -27,9 +27,8 @@ import org.apache.geode.internal.cache.PartitionedRegion;
 /**
  * Represents an identifier that follows a dot operator.
  *
- * @version     $Revision: 1.1 $
+ * @version $Revision: 1.1 $
  */
-
 public class CompiledPath extends AbstractCompiledValue {
   private CompiledValue _receiver; // the value represented by the expression before the dot
   private String _tailID; // the identifier after the dot.
@@ -49,14 +48,15 @@ public class CompiledPath extends AbstractCompiledValue {
   }
 
   @Override
-  public Set computeDependencies(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  public Set computeDependencies(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     return context.addDependencies(this, this._receiver.computeDependencies(context));
   }
 
   @Override
-  public List getPathOnIterator(RuntimeIterator itr, ExecutionContext context) throws TypeMismatchException, AmbiguousNameException {
-    if (!isDependentOnIterator(itr, context))
-      return null;
+  public List getPathOnIterator(RuntimeIterator itr, ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException {
+    if (!isDependentOnIterator(itr, context)) return null;
 
     List list = new ArrayList();
     list.add(getTailID());
@@ -72,8 +72,7 @@ public class CompiledPath extends AbstractCompiledValue {
 
     if (type == Identifier) {
       List path = v.getPathOnIterator(itr, context);
-      if (path == null)
-        return null;
+      if (path == null) return null;
       list.addAll(0, path);
       return list;
     }
@@ -81,11 +80,14 @@ public class CompiledPath extends AbstractCompiledValue {
     return null;
   }
 
-  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     CompiledValue rcvr = getReceiver();
     Object evalRcvr = rcvr.evaluate(context);
 
-    if (context.isCqQueryContext() && (evalRcvr instanceof Region.Entry || evalRcvr instanceof CqEntry)) {
+    if (context.isCqQueryContext()
+        && (evalRcvr instanceof Region.Entry || evalRcvr instanceof CqEntry)) {
       try {
         if (evalRcvr instanceof Region.Entry) {
           Region.Entry re = (Region.Entry) evalRcvr;
@@ -98,11 +100,10 @@ public class CompiledPath extends AbstractCompiledValue {
           evalRcvr = re.getValue();
         }
       } catch (EntryDestroyedException ede) {
-        // Even though isDestory() check is made, the entry could 
+        // Even though isDestory() check is made, the entry could
         // throw EntryDestroyedException if the value becomes null.
         return QueryService.UNDEFINED;
       }
-
     }
 
     // if the receiver is an iterator, then use the contrained type
@@ -149,7 +150,8 @@ public class CompiledPath extends AbstractCompiledValue {
   }
 
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     //Asif: Canonicalize the tail ID. If the tail ID contains
     // something like getX ,convert it into x.
     int len;

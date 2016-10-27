@@ -27,13 +27,11 @@ public class ASTUndefinedExpr extends GemFireAST {
     super(t);
   }
 
-  public ASTUndefinedExpr() {
-  }
+  public ASTUndefinedExpr() {}
 
   @Override
   public void compile(QCompiler compiler) {
     super.compile(compiler);
     compiler.undefinedExpr(getType() == OQLLexerTokenTypes.LITERAL_is_defined);
   }
-
 }

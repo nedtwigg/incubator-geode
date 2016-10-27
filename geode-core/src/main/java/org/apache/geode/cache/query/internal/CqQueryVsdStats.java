@@ -27,7 +27,7 @@ import org.apache.geode.internal.cache.tier.MessageType;
 
 /**
  * This class tracks GemFire statistics related to a {@link org.apache.geode.cache.query.CqQuery}.
- * 
+ *
  * @since GemFire 5.5
  */
 public class CqQueryVsdStats {
@@ -82,29 +82,39 @@ public class CqQueryVsdStats {
   /** Id for the queued CQ events size during execute with initial results */
   private static final int _queuedCqListenerEventsId;
 
-  /**
-   * Static initializer to create and initialize the <code>StatisticsType</code>
-   */
+  /** Static initializer to create and initialize the <code>StatisticsType</code> */
   static {
     String statName = "CqQueryStats";
 
     StatisticsTypeFactory f = StatisticsTypeFactoryImpl.singleton();
 
-    _type = f.createType(statName, statName, new StatisticDescriptor[] { f.createLongCounter(CQ_INITIAL_RESULTS_TIME, "The total amount of time, in nanoseconds, it took to do this initial query and send the results to the client.", "nanoseconds"),
-
-        f.createLongCounter(CQ_INSERTS, "Total number of inserts done on this cq.", "operations"),
-
-        f.createLongCounter(CQ_UPDATES, "Total number of updates done on this cq.", "operations"),
-
-        f.createLongCounter(CQ_DELETES, "Total number of deletes done on this cq.", "operations"),
-
-        f.createLongCounter(CQ_EVENTS, "Total number of inserts, updates, and deletes done on this cq.", "operations"),
-
-        f.createLongGauge(NUM_HA_QUEUED_CQ_EVENTS, "Number of events in this cq.", "events"),
-
-        f.createLongCounter(CQ_LISTENER_INVOCATIONS, "Total number of CqListener invocations.", "operations"),
-
-        f.createLongGauge(QUEUED_CQ_LISTENER_EVENTS, "Number of events queued while CQ registration is in progress. This is not the main cq queue but a temporary internal one used while the cq is starting up.", "events"), });
+    _type =
+        f.createType(
+            statName,
+            statName,
+            new StatisticDescriptor[] {
+              f.createLongCounter(
+                  CQ_INITIAL_RESULTS_TIME,
+                  "The total amount of time, in nanoseconds, it took to do this initial query and send the results to the client.",
+                  "nanoseconds"),
+              f.createLongCounter(
+                  CQ_INSERTS, "Total number of inserts done on this cq.", "operations"),
+              f.createLongCounter(
+                  CQ_UPDATES, "Total number of updates done on this cq.", "operations"),
+              f.createLongCounter(
+                  CQ_DELETES, "Total number of deletes done on this cq.", "operations"),
+              f.createLongCounter(
+                  CQ_EVENTS,
+                  "Total number of inserts, updates, and deletes done on this cq.",
+                  "operations"),
+              f.createLongGauge(NUM_HA_QUEUED_CQ_EVENTS, "Number of events in this cq.", "events"),
+              f.createLongCounter(
+                  CQ_LISTENER_INVOCATIONS, "Total number of CqListener invocations.", "operations"),
+              f.createLongGauge(
+                  QUEUED_CQ_LISTENER_EVENTS,
+                  "Number of events queued while CQ registration is in progress. This is not the main cq queue but a temporary internal one used while the cq is starting up.",
+                  "events"),
+            });
 
     // Initialize id fields
     _cqInitialResultsTimeId = _type.nameToId(CQ_INITIAL_RESULTS_TIME);
@@ -122,12 +132,10 @@ public class CqQueryVsdStats {
 
   /**
    * Constructor.
-   * 
-   * @param factory
-   *          The <code>StatisticsFactory</code> which creates the
-   *          <code>Statistics</code> instance
-   * @param name
-   *          The name of the <code>Statistics</code>
+   *
+   * @param factory The <code>StatisticsFactory</code> which creates the <code>Statistics</code>
+   *     instance
+   * @param name The name of the <code>Statistics</code>
    */
   public CqQueryVsdStats(StatisticsFactory factory, String name) {
     this._stats = factory.createAtomicStatistics(_type, "CqQueryStats-" + name);
@@ -135,112 +143,98 @@ public class CqQueryVsdStats {
 
   // /////////////////// Instance Methods /////////////////////
 
-  /**
-   * Closes the <code>CqQueryVSDStats</code>.
-   */
+  /** Closes the <code>CqQueryVSDStats</code>. */
   public void close() {
     this._stats.close();
   }
 
   /**
    * Returns the current value of the "cqInitialResultsTime" stat.
-   * 
+   *
    * @return the current value of the "cqInitialResultsTime" stat
    */
   public long getCqInitialResultsTime() {
     return this._stats.getLong(_cqInitialResultsTimeId);
   }
 
-  /**
-   * Set the "cqInitialResultsTime" stat.
-   */
+  /** Set the "cqInitialResultsTime" stat. */
   public void setCqInitialResultsTime(long time) {
     this._stats.setLong(_cqInitialResultsTimeId, time);
   }
 
   /**
    * Returns the current value of the "numInserts" stat.
-   * 
+   *
    * @return the current value of the "numInserts" stat
    */
   public long getNumInserts() {
     return this._stats.getLong(_numInsertsId);
   }
 
-  /**
-   * Increments the "numInserts" stat by 1.
-   */
+  /** Increments the "numInserts" stat by 1. */
   public void incNumInserts() {
     this._stats.incLong(_numInsertsId, 1);
   }
 
   /**
    * Returns the current value of the "numUpdates" stat.
-   * 
+   *
    * @return the current value of the "numUpdates" stat
    */
   public long getNumUpdates() {
     return this._stats.getLong(_numUpdatesId);
   }
 
-  /**
-   * Increments the "numUpdates" stat by 1.
-   */
+  /** Increments the "numUpdates" stat by 1. */
   public void incNumUpdates() {
     this._stats.incLong(_numUpdatesId, 1);
   }
 
   /**
    * Returns the current value of the "numDeletes" stat.
-   * 
+   *
    * @return the current value of the "numDeletes" stat
    */
   public long getNumDeletes() {
     return this._stats.getLong(_numDeletesId);
   }
 
-  /**
-   * Increments the "numDeletes" stat by 1.
-   */
+  /** Increments the "numDeletes" stat by 1. */
   public void incNumDeletes() {
     this._stats.incLong(_numDeletesId, 1);
   }
 
   /**
    * Returns the current value of the "numEvents" stat.
-   * 
+   *
    * @return the current value of the "numEvents" stat
    */
   public long getNumEvents() {
     return this._stats.getLong(_numEventsId);
   }
 
-  /**
-   * Increments the "numEvents" stat by 1.
-   */
+  /** Increments the "numEvents" stat by 1. */
   public void incNumEvents() {
     this._stats.incLong(_numEventsId, 1);
   }
 
   /**
    * Returns the current value of the "numQueuedEvents" stat.
-   * 
+   *
    * @return the current value of the "numQueuedEvents" stat
    */
   public long getNumHAQueuedEvents() {
     return this._stats.getLong(_numHAQueuedEventsId);
   }
 
-  /**
-   * Increments the "numQueuedEvents" stat by incAmount.
-   */
+  /** Increments the "numQueuedEvents" stat by incAmount. */
   public void incNumHAQueuedEvents(long incAmount) {
     this._stats.incLong(_numHAQueuedEventsId, incAmount);
   }
 
   /**
    * Returns the current value of the "numCqListenerInvocations" stat.
-   * 
+   *
    * @return the current value of the "numCqListenerInvocations" stat
    */
   public long getNumCqListenerInvocations() {
@@ -251,9 +245,7 @@ public class CqQueryVsdStats {
     return this._stats.getLong(_queuedCqListenerEventsId);
   }
 
-  /**
-   * Increments the "numCqListenerInvocations" stat by 1.
-   */
+  /** Increments the "numCqListenerInvocations" stat by 1. */
   public void incNumCqListenerInvocations() {
     this._stats.incLong(_numCqListenerInvocationsId, 1);
   }
@@ -268,11 +260,11 @@ public class CqQueryVsdStats {
 
   /**
    * Update stats for a CQ for VSD
+   *
    * @param cqEvent object containing info on the newly qualified CQ event
    */
   public void updateStats(CqEvent cqEvent) {
-    if (cqEvent.getQueryOperation() == null)
-      return;
+    if (cqEvent.getQueryOperation() == null) return;
     this.incNumEvents();
     if (cqEvent.getQueryOperation().isCreate()) {
       this.incNumInserts();
@@ -287,6 +279,7 @@ public class CqQueryVsdStats {
 
   /**
    * Update stats for a CQ for VSD
+   *
    * @param cqEvent object the type of CQ event
    */
   public void updateStats(Integer cqEvent) {
@@ -295,17 +288,17 @@ public class CqQueryVsdStats {
     }
     this.incNumEvents();
     switch (cqEvent.intValue()) {
-    case MessageType.LOCAL_CREATE:
-      this.incNumInserts();
-      return;
-    case MessageType.LOCAL_UPDATE:
-      this.incNumUpdates();
-      return;
-    case MessageType.LOCAL_DESTROY:
-      this.incNumDeletes();
-      return;
-    default:
-      return;
+      case MessageType.LOCAL_CREATE:
+        this.incNumInserts();
+        return;
+      case MessageType.LOCAL_UPDATE:
+        this.incNumUpdates();
+        return;
+      case MessageType.LOCAL_DESTROY:
+        this.incNumDeletes();
+        return;
+      default:
+        return;
     }
   }
 }

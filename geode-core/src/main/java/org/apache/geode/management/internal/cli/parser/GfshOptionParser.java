@@ -23,7 +23,7 @@ import org.apache.geode.management.internal.cli.exceptions.CliException;
 
 /**
  * Delegate used for parsing by {@link GfshParser}
- *  
+ *
  * @since GemFire 7.0
  */
 public interface GfshOptionParser {

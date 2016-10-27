@@ -51,10 +51,15 @@ public class ShellCommandsDUnitTest extends CliCommandTestBase {
   }
 
   protected CommandResult connectToLocator(final int locatorPort) {
-    return executeCommand(new CommandStringBuilder(CliStrings.CONNECT).addOption(CliStrings.CONNECT__LOCATOR, "localhost[" + locatorPort + "]").toString());
+    return executeCommand(
+        new CommandStringBuilder(CliStrings.CONNECT)
+            .addOption(CliStrings.CONNECT__LOCATOR, "localhost[" + locatorPort + "]")
+            .toString());
   }
 
-  @Category(FlakyTest.class) // GEODE-989: random ports, suspect string: DiskAccessException, disk pollution, HeadlessGfsh, time sensitive
+  @Category(
+      FlakyTest
+          .class) // GEODE-989: random ports, suspect string: DiskAccessException, disk pollution, HeadlessGfsh, time sensitive
   @Test
   public void testConnectToLocatorBecomesManager() {
     final int[] ports = AvailablePortHelper.getRandomAvailableTCPPorts(2);
@@ -62,11 +67,15 @@ public class ShellCommandsDUnitTest extends CliCommandTestBase {
     final int jmxManagerPort = ports[0];
     final int locatorPort = ports[1];
 
-    System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "jmx-manager-port", String.valueOf(jmxManagerPort));
+    System.setProperty(
+        DistributionConfig.GEMFIRE_PREFIX + "jmx-manager-port", String.valueOf(jmxManagerPort));
     System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "jmx-manager-http-port", "0");
 
-    assertEquals(String.valueOf(jmxManagerPort), System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "jmx-manager-port"));
-    assertEquals("0", System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "jmx-manager-http-port"));
+    assertEquals(
+        String.valueOf(jmxManagerPort),
+        System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "jmx-manager-port"));
+    assertEquals(
+        "0", System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "jmx-manager-http-port"));
 
     final String pathname = (getClass().getSimpleName() + "_" + getTestMethodName());
     final File workingDirectory = new File(pathname);
@@ -75,7 +84,14 @@ public class ShellCommandsDUnitTest extends CliCommandTestBase {
 
     assertTrue(workingDirectory.isDirectory());
 
-    final LocatorLauncher locatorLauncher = new LocatorLauncher.Builder().setBindAddress(null).setForce(true).setMemberName(pathname).setPort(locatorPort).setWorkingDirectory(IOUtils.tryGetCanonicalPathElseGetAbsolutePath(workingDirectory)).build();
+    final LocatorLauncher locatorLauncher =
+        new LocatorLauncher.Builder()
+            .setBindAddress(null)
+            .setForce(true)
+            .setMemberName(pathname)
+            .setPort(locatorPort)
+            .setWorkingDirectory(IOUtils.tryGetCanonicalPathElseGetAbsolutePath(workingDirectory))
+            .build();
 
     assertNotNull(locatorLauncher);
     assertEquals(locatorPort, locatorLauncher.getPort().intValue());
@@ -84,7 +100,8 @@ public class ShellCommandsDUnitTest extends CliCommandTestBase {
       // fix for bug 46729
       locatorLauncher.start();
 
-      final LocatorState locatorState = locatorLauncher.waitOnStatusResponse(60, 10, TimeUnit.SECONDS);
+      final LocatorState locatorState =
+          locatorLauncher.waitOnStatusResponse(60, 10, TimeUnit.SECONDS);
 
       assertNotNull(locatorState);
       assertEquals(Status.ONLINE, locatorState.getStatus());
@@ -283,7 +300,6 @@ public class ShellCommandsDUnitTest extends CliCommandTestBase {
       fail("testDebug failed");
     }
     assertEquals(gfshInstance.getDebug(), true);
-
   }
 
   @Test
@@ -351,7 +367,13 @@ public class ShellCommandsDUnitTest extends CliCommandTestBase {
     File historyFile = new File(historyFileName);
     historyFile.deleteOnExit();
     String fileName = historyFile.getParent();
-    fileName = fileName + File.separator + getClass().getSimpleName() + "_" + getName() + "-exported.history";
+    fileName =
+        fileName
+            + File.separator
+            + getClass().getSimpleName()
+            + "_"
+            + getName()
+            + "-exported.history";
 
     String command = "history --file=" + fileName;
     CommandResult cmdResult = executeCommand(command);
@@ -411,7 +433,7 @@ public class ShellCommandsDUnitTest extends CliCommandTestBase {
   private void printAllEnvs(Gfsh gfsh) {
     getLogWriter().info("printAllEnvs : " + StringUtils.objectToString(gfsh.getEnv(), false, 0));
     /*
-    getLogWriter().info("Gfsh printAllEnvs : " + HydraUtil.ObjectToString(getDefaultShell().getEnv()));    
+    getLogWriter().info("Gfsh printAllEnvs : " + HydraUtil.ObjectToString(getDefaultShell().getEnv()));
     getLogWriter().info("gfsh " + gfsh + " default shell " + getDefaultShell());*/
   }
 }

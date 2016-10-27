@@ -17,37 +17,24 @@
 
 package org.apache.geode.internal.admin;
 
-/**
- * Represents an arbitrary object that has been placed into a GemFire
- * <code>Region</code>.
- */
+/** Represents an arbitrary object that has been placed into a GemFire <code>Region</code>. */
 public interface EntryValueNode {
 
-  /**
-   * Returns true if this node represents a primitive value or String
-   */
+  /** Returns true if this node represents a primitive value or String */
   public boolean isPrimitiveOrString();
 
-  /**
-   * Returns the field name, if any
-   */
+  /** Returns the field name, if any */
   public String getName();
 
-  /**
-   * Returns the class name
-   */
+  /** Returns the class name */
   public String getType();
 
-  /**
-   * Returns the fields in physical inspection, or the logical elements
-   * in logical inspection
-   */
+  /** Returns the fields in physical inspection, or the logical elements in logical inspection */
   public EntryValueNode[] getChildren();
 
   /**
-   * Returns the wrapped primitive value if this is a primitive
-   * or the result of calling <code>toString()</code> if this is
-   * an object.
+   * Returns the wrapped primitive value if this is a primitive or the result of calling <code>
+   * toString()</code> if this is an object.
    */
   public Object getPrimitiveValue();
 }

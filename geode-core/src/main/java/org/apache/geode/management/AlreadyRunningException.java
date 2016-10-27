@@ -17,18 +17,15 @@
 package org.apache.geode.management;
 
 /**
- * Indicates that a request to start a management service
- * failed because it was already running.
- * 
+ * Indicates that a request to start a management service failed because it was already running.
+ *
  * @since GemFire 7.0
- * 
  */
 public class AlreadyRunningException extends ManagementException {
 
   private static final long serialVersionUID = 8947734854770335071L;
 
-  public AlreadyRunningException() {
-  }
+  public AlreadyRunningException() {}
 
   public AlreadyRunningException(String message) {
     super(message);
@@ -41,5 +38,4 @@ public class AlreadyRunningException extends ManagementException {
   public AlreadyRunningException(Throwable cause) {
     super(cause);
   }
-
 }

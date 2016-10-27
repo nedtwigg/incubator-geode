@@ -44,19 +44,14 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * A request to from an admin VM to all non admin members
- * to start a backup. In the prepare phase of the backup,
- * the members will suspend bucket destroys to make sure
- * buckets aren't missed during the backup.
- * 
- *
+ * A request to from an admin VM to all non admin members to start a backup. In the prepare phase of
+ * the backup, the members will suspend bucket destroys to make sure buckets aren't missed during
+ * the backup.
  */
 public class PrepareBackupRequest extends CliLegacyMessage {
   private static final Logger logger = LogService.getLogger();
 
-  public PrepareBackupRequest() {
-
-  }
+  public PrepareBackupRequest() {}
 
   public static Map<DistributedMember, Set<PersistentID>> send(DM dm, Set recipients) {
     PrepareBackupRequest request = new PrepareBackupRequest();
@@ -91,7 +86,8 @@ public class PrepareBackupRequest extends CliLegacyMessage {
         BackupManager manager = cache.startBackup(getSender());
         persistentIds = manager.prepareBackup();
       } catch (IOException e) {
-        logger.error(LocalizedMessage.create(LocalizedStrings.CliLegacyMessage_ERROR, this.getClass()), e);
+        logger.error(
+            LocalizedMessage.create(LocalizedStrings.CliLegacyMessage_ERROR, this.getClass()), e);
         return AdminFailureResponse.create(dm, getSender(), e);
       }
     }
@@ -104,7 +100,8 @@ public class PrepareBackupRequest extends CliLegacyMessage {
   }
 
   private static class PrepareBackupReplyProcessor extends AdminMultipleReplyProcessor {
-    Map<DistributedMember, Set<PersistentID>> results = Collections.synchronizedMap(new HashMap<DistributedMember, Set<PersistentID>>());
+    Map<DistributedMember, Set<PersistentID>> results =
+        Collections.synchronizedMap(new HashMap<DistributedMember, Set<PersistentID>>());
 
     public PrepareBackupReplyProcessor(DM dm, Collection initMembers) {
       super(dm, initMembers);
@@ -118,13 +115,13 @@ public class PrepareBackupRequest extends CliLegacyMessage {
     @Override
     protected void process(DistributionMessage msg, boolean warn) {
       if (msg instanceof PrepareBackupResponse) {
-        final HashSet<PersistentID> persistentIds = ((PrepareBackupResponse) msg).getPersistentIds();
+        final HashSet<PersistentID> persistentIds =
+            ((PrepareBackupResponse) msg).getPersistentIds();
         if (persistentIds != null && !persistentIds.isEmpty()) {
           results.put(msg.getSender(), persistentIds);
         }
       }
       super.process(msg, warn);
     }
-
   }
 }

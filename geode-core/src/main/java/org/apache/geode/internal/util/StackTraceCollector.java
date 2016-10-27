@@ -23,90 +23,73 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * Collects unique stack traces for later examination.  This works best and is most useful when traces are added at the same point of origin.
- * This will collect all unique code paths while the collector is turned on.  This class will affect timing and performance so its use is suspect
- * while diagnosing concurrency issues.
- * 
- * Example: 
- * <code>
+ * Collects unique stack traces for later examination. This works best and is most useful when
+ * traces are added at the same point of origin. This will collect all unique code paths while the
+ * collector is turned on. This class will affect timing and performance so its use is suspect while
+ * diagnosing concurrency issues.
+ *
+ * <p>Example: <code>
  * public void doSomeWork() {
  *      // This will collect all unique code paths to this method.
  *      this.traceCollector.add(new Exception())
  * }
- * </code> 
- * 
+ * </code>
  *
  * @since Geode 1.0
  */
 public class StackTraceCollector {
-  /**
-   * Maximum stack trace size.
-   */
+  /** Maximum stack trace size. */
   private static int MAX_TRACE_SIZE = 128 * 1024;
 
-  /**
-   * Contains unique stack traces.
-   */
+  /** Contains unique stack traces. */
   private Set<String> stackTraceSet = new ConcurrentSkipListSet<String>();
 
-  /**
-   * The {@link StackTraceCollector#add(Throwable)} method will do no work when this is false.
-   */
+  /** The {@link StackTraceCollector#add(Throwable)} method will do no work when this is false. */
   private volatile boolean on = true;
 
-  /**
-   * Contains converted stack traces (Throwable -> String).
-   */
+  /** Contains converted stack traces (Throwable -> String). */
   private ByteArrayOutputStream ostream = new ByteArrayOutputStream(MAX_TRACE_SIZE);
 
-  /**
-   * Used to convert stack traces (Throwable -> String).
-   */
+  /** Used to convert stack traces (Throwable -> String). */
   private PrintWriter writer = new PrintWriter(this.ostream);
 
-  /**
-   * Returns true if this collector is on.
-   */
+  /** Returns true if this collector is on. */
   public boolean isOn() {
     return this.on;
   }
 
-  /**
-   * Returns true if this collector is off.
-   */
+  /** Returns true if this collector is off. */
   public boolean isOff() {
     return !isOn();
   }
 
-  /**
-   * Turns this collector on.
-   */
+  /** Turns this collector on. */
   public void on() {
     this.on = true;
   }
 
-  /**
-   * Turns this collector off.
-   */
+  /** Turns this collector off. */
   public void off() {
     this.on = false;
   }
 
   /**
-   * Adds a stack trace to this collector if it is unique.  
+   * Adds a stack trace to this collector if it is unique.
+   *
    * @param throwable used to generate the stack trace.
-   * @return true if the stack trace was not already present in this collector.  This
-   * will always return false if the collector is turned off.
+   * @return true if the stack trace was not already present in this collector. This will always
+   *     return false if the collector is turned off.
    */
   public boolean add(final Throwable throwable) {
     return add(this.stackTraceSet, throwable);
   }
 
   /**
-   * Adds a stack trace to a collection Set if it is unique.  
+   * Adds a stack trace to a collection Set if it is unique.
+   *
    * @param throwable used to generate the stack trace.
-   * @return true if the stack trace was not already present in this collector.  This
-   * will always return false if the collector is turned off.
+   * @return true if the stack trace was not already present in this collector. This will always
+   *     return false if the collector is turned off.
    */
   protected synchronized boolean add(Set<String> stackTraceSet, final Throwable throwable) {
     if (this.on) {
@@ -119,6 +102,7 @@ public class StackTraceCollector {
 
   /**
    * Clears this collector of all stack traces.
+   *
    * @return true if there were stack traces to clear.
    */
   public boolean clear() {
@@ -129,8 +113,8 @@ public class StackTraceCollector {
   }
 
   /**
-   * Returns true if the throwable parameter is contained by 
-   * this collector. 
+   * Returns true if the throwable parameter is contained by this collector.
+   *
    * @param throwable a stack trace to check.
    */
   public boolean contains(final Throwable throwable) {
@@ -138,8 +122,8 @@ public class StackTraceCollector {
   }
 
   /**
-   * Returns true if the stackTrace parameter is contained
-   * by this collector.
+   * Returns true if the stackTrace parameter is contained by this collector.
+   *
    * @param stackTrace a stack trace.
    */
   public boolean contains(final String stackTrace) {
@@ -148,6 +132,7 @@ public class StackTraceCollector {
 
   /**
    * Returns the stack trace associated with a Throwable as a String.
+   *
    * @param throwable contains a stack trace to be extracted and returned.
    */
   public synchronized String convert(final Throwable throwable) {
@@ -159,9 +144,7 @@ public class StackTraceCollector {
     return stackTrace;
   }
 
-  /**
-   * Returns an unmodifiable Set of the unique stack traces contained by this collector.
-   */
+  /** Returns an unmodifiable Set of the unique stack traces contained by this collector. */
   public Set<String> view() {
     return Collections.unmodifiableSet(this.stackTraceSet);
   }

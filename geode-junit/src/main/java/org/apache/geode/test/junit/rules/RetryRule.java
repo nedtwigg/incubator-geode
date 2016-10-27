@@ -25,43 +25,39 @@ import org.junit.runners.model.Statement;
 import org.apache.geode.test.junit.Retry;
 
 /**
- * JUnit Rule that enables retrying a failed test up to a maximum number of retries.
- * </p> 
- * RetryRule can be used globally for all tests in a test case by specifying a 
- * retryCount when instantiating it:
+ * JUnit Rule that enables retrying a failed test up to a maximum number of retries. RetryRule can
+ * be used globally for all tests in a test case by specifying a retryCount when instantiating it:
+ *
  * <pre>
  * {@literal @}Rule
  * public final RetryRule retryRule = new RetryRule(3);
- * 
+ *
  * {@literal @}Test
  * public void shouldBeRetriedUntilPasses() {
  *   ...
  * }
  * </pre>
- * </p> 
- * The above will result in 3 retries for every test in the test case.
- * </p> 
- * RetryRule can be used locally for specific tests by annotating the test 
- * method with {@literal @}Rule and specifying a retryCount for that test:
+ *
+ * The above will result in 3 retries for every test in the test case. RetryRule can be used locally
+ * for specific tests by annotating the test method with {@literal @}Rule and specifying a
+ * retryCount for that test:
+ *
  * <pre>
  * {@literal @}Rule
  * public final RetryRule retryRule = new RetryRule();
- * 
+ *
  * {@literal @}Test
  * {@literal @}Retry(3)
  * public void shouldBeRetriedUntilPasses() {
  *   ...
  * }
  * </pre>
- * </p>
- * This version of RetryRule will retry a test that fails because of any kind 
- * of Throwable.
+ *
+ * This version of RetryRule will retry a test that fails because of any kind of Throwable.
  */
 public class RetryRule implements TestRule, Serializable {
 
-  /**
-   * Enables printing of failures to System.err even if test passes on a retry
-   */
+  /** Enables printing of failures to System.err even if test passes on a retry */
   private static final boolean LOG = false;
 
   private final AbstractRetryRule implementation;
@@ -80,13 +76,13 @@ public class RetryRule implements TestRule, Serializable {
   }
 
   protected abstract class AbstractRetryRule implements TestRule, Serializable {
-    protected AbstractRetryRule() {
-    }
+    protected AbstractRetryRule() {}
 
-    protected void evaluate(final Statement base, final Description description, final int retryCount) throws Throwable {
-      if (retryCount == 0) {
+    protected void evaluate(
+        final Statement base, final Description description, final int retryCount)
+        throws Throwable {
+      if (retryCount == 0) {}
 
-      }
       Throwable caughtThrowable = null;
 
       for (int count = 0; count < retryCount; count++) {
@@ -110,9 +106,7 @@ public class RetryRule implements TestRule, Serializable {
     }
   }
 
-  /**
-   * Implementation of RetryRule for all test methods in a test case
-   */
+  /** Implementation of RetryRule for all test methods in a test case */
   protected class GlobalRetryRule extends AbstractRetryRule {
 
     private final int retryCount;
@@ -134,18 +128,16 @@ public class RetryRule implements TestRule, Serializable {
       };
     }
 
-    protected void evaluatePerCase(final Statement base, final Description description) throws Throwable {
+    protected void evaluatePerCase(final Statement base, final Description description)
+        throws Throwable {
       evaluate(base, description, this.retryCount);
     }
   }
 
-  /**
-   * Implementation of RetryRule for test methods annotated with Retry
-   */
+  /** Implementation of RetryRule for test methods annotated with Retry */
   protected class LocalRetryRule extends AbstractRetryRule {
 
-    protected LocalRetryRule() {
-    }
+    protected LocalRetryRule() {}
 
     @Override
     public Statement apply(final Statement base, final Description description) {
@@ -157,7 +149,8 @@ public class RetryRule implements TestRule, Serializable {
       };
     }
 
-    protected void evaluatePerTest(final Statement base, final Description description) throws Throwable {
+    protected void evaluatePerTest(final Statement base, final Description description)
+        throws Throwable {
       if (isTest(description)) {
         Retry retry = description.getAnnotation(Retry.class);
         int retryCount = getRetryCount(retry);

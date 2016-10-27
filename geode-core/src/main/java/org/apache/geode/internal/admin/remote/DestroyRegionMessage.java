@@ -35,8 +35,8 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular distribution manager to let
- * it know that the sender is an administation console that just connected.
+ * A message that is sent to a particular distribution manager to let it know that the sender is an
+ * administation console that just connected.
  */
 public final class DestroyRegionMessage extends RegionAdminMessage {
 
@@ -65,7 +65,11 @@ public final class DestroyRegionMessage extends RegionAdminMessage {
           r.localInvalidateRegion();
         }
       } catch (Exception e) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.DestroRegionMessage_FAILED_ATTEMPT_TO_DESTROY_OR_INVALIDATE_REGION_0_FROM_CONSOLE_AT_1, new Object[] { r.getFullPath(), this.getSender() }));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .DestroRegionMessage_FAILED_ATTEMPT_TO_DESTROY_OR_INVALIDATE_REGION_0_FROM_CONSOLE_AT_1,
+                new Object[] {r.getFullPath(), this.getSender()}));
       }
     }
   }
@@ -88,6 +92,7 @@ public final class DestroyRegionMessage extends RegionAdminMessage {
 
   @Override
   public String toString() {
-    return LocalizedStrings.DestroyRegionMessage_DESTROYREGIONMESSAGE_FROM_0.toLocalizedString(this.getSender());
+    return LocalizedStrings.DestroyRegionMessage_DESTROYREGIONMESSAGE_FROM_0.toLocalizedString(
+        this.getSender());
   }
 }

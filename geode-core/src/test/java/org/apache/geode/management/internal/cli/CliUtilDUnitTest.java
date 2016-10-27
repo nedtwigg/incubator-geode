@@ -94,58 +94,61 @@ public class CliUtilDUnitTest extends JUnit4CacheTestCase {
     final VM vm3 = Host.getHost(0).getVM(2);
     final VM vm4 = Host.getHost(0).getVM(3);
 
-    vm1.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        createCacheWithMemberIdAndGroup(MEMBER_1_GROUP1, GROUP1);
-        createRegion(REGION_MEMBER1_GROUP1);
-        createRegion(COMMON_REGION_GROUP1);
-        createRegion(COMMON_REGION);
-        //registerFunction();       
-      }
+    vm1.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            createCacheWithMemberIdAndGroup(MEMBER_1_GROUP1, GROUP1);
+            createRegion(REGION_MEMBER1_GROUP1);
+            createRegion(COMMON_REGION_GROUP1);
+            createRegion(COMMON_REGION);
+            //registerFunction();
+          }
+        });
 
-    });
+    vm2.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            createCacheWithMemberIdAndGroup(MEMBER_2_GROUP1, GROUP1);
+            createRegion(REGION_MEMBER2_GROUP1);
+            createRegion(COMMON_REGION_GROUP1);
+            createRegion(COMMON_REGION);
+            //registerFunction();
+          }
+        });
 
-    vm2.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        createCacheWithMemberIdAndGroup(MEMBER_2_GROUP1, GROUP1);
-        createRegion(REGION_MEMBER2_GROUP1);
-        createRegion(COMMON_REGION_GROUP1);
-        createRegion(COMMON_REGION);
-        //registerFunction();
-      }
-    });
+    vm3.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            createCacheWithMemberIdAndGroup(MEMBER_1_GROUP2, GROUP2);
+            createRegion(REGION_MEMBER1_GROUP2);
+            createRegion(COMMON_REGION_GROUP2);
+            createRegion(COMMON_REGION);
+            //registerFunction();
+          }
+        });
 
-    vm3.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        createCacheWithMemberIdAndGroup(MEMBER_1_GROUP2, GROUP2);
-        createRegion(REGION_MEMBER1_GROUP2);
-        createRegion(COMMON_REGION_GROUP2);
-        createRegion(COMMON_REGION);
-        //registerFunction();
-      }
-    });
+    vm4.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            createCacheWithMemberIdAndGroup(MEMBER_2_GROUP2, GROUP2);
+            createRegion(REGION_MEMBER2_GROUP2);
+            createRegion(COMMON_REGION_GROUP2);
+            createRegion(COMMON_REGION);
+            //registerFunction();
+          }
+        });
 
-    vm4.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        createCacheWithMemberIdAndGroup(MEMBER_2_GROUP2, GROUP2);
-        createRegion(REGION_MEMBER2_GROUP2);
-        createRegion(COMMON_REGION_GROUP2);
-        createRegion(COMMON_REGION);
-        //registerFunction();
-      }
-    });
-
-    vm1.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        startManager();
-      }
-    });
-
+    vm1.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            startManager();
+          }
+        });
   }
 
   private void startManager() {
@@ -154,40 +157,57 @@ public class CliUtilDUnitTest extends JUnit4CacheTestCase {
     assertEquals(true, service.isManager());
     assertNotNull(service.getManagerMXBean());
     assertTrue(service.getManagerMXBean().isRunning());
-    final WaitCriterion waitForMaangerMBean = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        boolean flag = checkBean(COMMON_REGION, 4) && checkBean(COMMON_REGION_GROUP1, 2) && checkBean(COMMON_REGION_GROUP2, 2) && checkBean(REGION_MEMBER1_GROUP1, 1) && checkBean(REGION_MEMBER2_GROUP1, 1) && checkBean(REGION_MEMBER1_GROUP2, 1) && checkBean(REGION_MEMBER2_GROUP2, 1);
-        if (!flag) {
-          LogWriterUtils.getLogWriter().info("Still probing for mbeans");
-          return false;
-        } else {
-          LogWriterUtils.getLogWriter().info("All distributed region mbeans are federated to manager.");
-          return true;
-        }
-      }
-
-      private boolean checkBean(String string, int memberCount) {
-        DistributedRegionMXBean bean2 = service.getDistributedRegionMXBean(Region.SEPARATOR + string);
-        LogWriterUtils.getLogWriter().info("DistributedRegionMXBean for region=" + string + " is " + bean2);
-        if (bean2 == null)
-          return false;
-        else {
-          int members = bean2.getMemberCount();
-          LogWriterUtils.getLogWriter().info("DistributedRegionMXBean for region=" + string + " is aggregated for " + memberCount + " expected count=" + memberCount);
-          if (members < memberCount) {
-            return false;
-          } else {
-            return true;
+    final WaitCriterion waitForMaangerMBean =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            boolean flag =
+                checkBean(COMMON_REGION, 4)
+                    && checkBean(COMMON_REGION_GROUP1, 2)
+                    && checkBean(COMMON_REGION_GROUP2, 2)
+                    && checkBean(REGION_MEMBER1_GROUP1, 1)
+                    && checkBean(REGION_MEMBER2_GROUP1, 1)
+                    && checkBean(REGION_MEMBER1_GROUP2, 1)
+                    && checkBean(REGION_MEMBER2_GROUP2, 1);
+            if (!flag) {
+              LogWriterUtils.getLogWriter().info("Still probing for mbeans");
+              return false;
+            } else {
+              LogWriterUtils.getLogWriter()
+                  .info("All distributed region mbeans are federated to manager.");
+              return true;
+            }
           }
-        }
-      }
 
-      @Override
-      public String description() {
-        return "Probing for ManagerMBean";
-      }
-    };
+          private boolean checkBean(String string, int memberCount) {
+            DistributedRegionMXBean bean2 =
+                service.getDistributedRegionMXBean(Region.SEPARATOR + string);
+            LogWriterUtils.getLogWriter()
+                .info("DistributedRegionMXBean for region=" + string + " is " + bean2);
+            if (bean2 == null) return false;
+            else {
+              int members = bean2.getMemberCount();
+              LogWriterUtils.getLogWriter()
+                  .info(
+                      "DistributedRegionMXBean for region="
+                          + string
+                          + " is aggregated for "
+                          + memberCount
+                          + " expected count="
+                          + memberCount);
+              if (members < memberCount) {
+                return false;
+              } else {
+                return true;
+              }
+            }
+          }
+
+          @Override
+          public String description() {
+            return "Probing for ManagerMBean";
+          }
+        };
 
     Wait.waitForCriterion(waitForMaangerMBean, 120000, 2000, true);
     LogWriterUtils.getLogWriter().info("Manager federation is complete");
@@ -240,45 +260,51 @@ public class CliUtilDUnitTest extends JUnit4CacheTestCase {
     final VM vm1 = Host.getHost(0).getVM(0);
 
     LogWriterUtils.getLogWriter().info("testFor - findAllMatchingMembers");
-    vm1.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        verifyFindAllMatchingMembers();
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            verifyFindAllMatchingMembers();
+          }
+        });
 
-    final String id = (String) vm1.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Cache cache = getCache();
-        return cache.getDistributedSystem().getDistributedMember().getId();
-      }
-    });
+    final String id =
+        (String)
+            vm1.invoke(
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    Cache cache = getCache();
+                    return cache.getDistributedSystem().getDistributedMember().getId();
+                  }
+                });
 
     LogWriterUtils.getLogWriter().info("testFor - getDistributedMemberByNameOrId");
-    vm1.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        getDistributedMemberByNameOrId(MEMBER_1_GROUP1, id);
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            getDistributedMemberByNameOrId(MEMBER_1_GROUP1, id);
+          }
+        });
 
     LogWriterUtils.getLogWriter().info("testFor - executeFunction");
-    vm1.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        verifyExecuteFunction();
-      }
-    });
+    vm1.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            verifyExecuteFunction();
+          }
+        });
 
     LogWriterUtils.getLogWriter().info("testFor - getRegionAssociatedMembers");
-    vm1.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        getRegionAssociatedMembers();
-      }
-    });
-
+    vm1.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            getRegionAssociatedMembers();
+          }
+        });
   }
 
   public void verifyFindAllMatchingMembers() {
@@ -315,9 +341,7 @@ public class CliUtilDUnitTest extends JUnit4CacheTestCase {
 
   private Object containsMember(Set<DistributedMember> set, String string) {
     boolean returnValue = false;
-    for (DistributedMember member : set)
-      if (member.getName().equals(string))
-        return true;
+    for (DistributedMember member : set) if (member.getName().equals(string)) return true;
     return returnValue;
   }
 
@@ -328,7 +352,6 @@ public class CliUtilDUnitTest extends JUnit4CacheTestCase {
 
     member = CliUtil.getDistributedMemberByNameOrId(id);
     assertNotNull(member);
-
   }
 
   public void verifyExecuteFunction() {
@@ -358,9 +381,9 @@ public class CliUtilDUnitTest extends JUnit4CacheTestCase {
     String region1 = "/region1";
     String region_member2_group1 = "/region_member2_group1";
 
-    /* 
-    String region_member1_group1 ="/region_member1_group1";    
-    String region_member1_group2 ="/region_member1_group2";    
+    /*
+    String region_member1_group1 ="/region_member1_group1";
+    String region_member1_group2 ="/region_member1_group2";
     String region_member2_group2 ="/region_member2_group2";
     String region_group2 ="/region_group2";
     */
@@ -390,7 +413,6 @@ public class CliUtilDUnitTest extends JUnit4CacheTestCase {
     assertNotNull(set);
     assertEquals(1, set.size());
     assertEquals(true, containsMember(set, MEMBER_2_GROUP1));
-
   }
 
   public static class DunitFunction extends FunctionAdapter {
@@ -419,5 +441,4 @@ public class CliUtilDUnitTest extends JUnit4CacheTestCase {
       return id;
     }
   }
-
 }

@@ -26,9 +26,8 @@ import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
 /**
  * Domain object used for Data Commands Functions
- * 
- * TODO : Implement DataSerializable
  *
+ * <p>TODO : Implement DataSerializable
  */
 public class DataCommandRequest implements /*Data*/ Serializable {
 
@@ -226,5 +225,4 @@ public class DataCommandRequest implements /*Data*/ Serializable {
     loadOnCacheMiss = DataSerializer.readBoolean(in);
     principal = DataSerializer.readObject(in);
   }
-
 }

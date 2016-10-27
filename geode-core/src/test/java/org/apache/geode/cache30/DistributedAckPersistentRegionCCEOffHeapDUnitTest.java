@@ -31,12 +31,13 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
  * Tests Distributed Ack Persistent Region with ConcurrencyChecksEnabled and OffHeap memory.
- * 
+ *
  * @since Geode 1.0
  */
-@SuppressWarnings({ "deprecation", "serial" })
+@SuppressWarnings({"deprecation", "serial"})
 @Category(DistributedTest.class)
-public class DistributedAckPersistentRegionCCEOffHeapDUnitTest extends DistributedAckPersistentRegionCCEDUnitTest {
+public class DistributedAckPersistentRegionCCEOffHeapDUnitTest
+    extends DistributedAckPersistentRegionCCEDUnitTest {
 
   public DistributedAckPersistentRegionCCEOffHeapDUnitTest() {
     super();
@@ -44,15 +45,16 @@ public class DistributedAckPersistentRegionCCEOffHeapDUnitTest extends Distribut
 
   @Override
   public final void preTearDownAssertions() throws Exception {
-    SerializableRunnable checkOrphans = new SerializableRunnable() {
+    SerializableRunnable checkOrphans =
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        if (hasCache()) {
-          OffHeapTestUtil.checkOrphans();
-        }
-      }
-    };
+          @Override
+          public void run() {
+            if (hasCache()) {
+              OffHeapTestUtil.checkOrphans();
+            }
+          }
+        };
     Invoke.invokeInEveryVM(checkOrphans);
     checkOrphans.run();
   }
@@ -64,7 +66,7 @@ public class DistributedAckPersistentRegionCCEOffHeapDUnitTest extends Distribut
     return props;
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   @Override
   protected RegionAttributes getRegionAttributes() {
     RegionAttributes attrs = super.getRegionAttributes();
@@ -73,7 +75,7 @@ public class DistributedAckPersistentRegionCCEOffHeapDUnitTest extends Distribut
     return factory.create();
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   @Override
   protected RegionAttributes getRegionAttributes(String type) {
     RegionAttributes ra = super.getRegionAttributes(type);

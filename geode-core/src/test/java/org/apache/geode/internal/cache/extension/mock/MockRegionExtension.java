@@ -23,7 +23,6 @@ import org.apache.geode.internal.cache.xmlcache.XmlGenerator;
 
 /**
  * Mock Extension for {@link Region}.
- * 
  *
  * @since GemFire 8.1
  */

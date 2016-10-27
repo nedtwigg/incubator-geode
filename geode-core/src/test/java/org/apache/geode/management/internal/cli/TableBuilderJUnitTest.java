@@ -39,18 +39,14 @@ import static org.junit.Assert.*;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-/**
- * Testing TableBuilder and TableBuilderHelper using mocks for Gfsh
- *
- */
+/** Testing TableBuilder and TableBuilderHelper using mocks for Gfsh */
 @Category(IntegrationTest.class)
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("*.IntegrationTest")
 @PrepareForTest(TableBuilderHelper.class)
 public class TableBuilderJUnitTest {
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
@@ -94,7 +90,13 @@ public class TableBuilderJUnitTest {
 
     int line = 0;
     for (String s : lines) {
-      System.out.println("For line " + line++ + " length is " + s.length() + " isWider = " + (s.length() > screenWidth));
+      System.out.println(
+          "For line "
+              + line++
+              + " length is "
+              + s.length()
+              + " isWider = "
+              + (s.length() > screenWidth));
 
       if (shouldTrim) {
         if (s.length() > screenWidth) {
@@ -110,9 +112,7 @@ public class TableBuilderJUnitTest {
     return lines;
   }
 
-  /**
-   * Test Variations table-wide separator true false
-   */
+  /** Test Variations table-wide separator true false */
   @Test
   public void testSanity() throws Exception {
     assertTrue(TableBuilderHelper.shouldTrimColumns());
@@ -134,7 +134,10 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(4, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("1").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-123456789-12345");
+    row1.newLeftCol("1")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-123456789-12345");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -148,7 +151,10 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(4, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("123456789-123456789-").newLeftCol("123456789-12345").newLeftCol("123456789-").newLeftCol("1");
+    row1.newLeftCol("123456789-123456789-")
+        .newLeftCol("123456789-12345")
+        .newLeftCol("123456789-")
+        .newLeftCol("1");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -162,7 +168,10 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(4, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("1").newLeftCol("123456789-").newLeftCol("123456789-123456789-123456789-").newLeftCol("123456789-123456789-12345");
+    row1.newLeftCol("1")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-123456789-123456789-")
+        .newLeftCol("123456789-123456789-12345");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -176,7 +185,10 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(4, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("123456789-123456789-123456789-").newLeftCol("123456789-123456789-12345").newLeftCol("1").newLeftCol("123456789-");
+    row1.newLeftCol("123456789-123456789-123456789-")
+        .newLeftCol("123456789-123456789-12345")
+        .newLeftCol("1")
+        .newLeftCol("123456789-");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -219,7 +231,10 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(4, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("1").newLeftCol("123456789-").newLeftCol("123456789-123456789-123456789-").newLeftCol("123456789-123456789-12345");
+    row1.newLeftCol("1")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-123456789-123456789-")
+        .newLeftCol("123456789-123456789-12345");
 
     List<String> result = validateTable(table, true);
     // Check the last line
@@ -233,16 +248,17 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(4, "<|>");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("1").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-123456789-12345");
+    row1.newLeftCol("1")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-123456789-12345");
 
     List<String> result = validateTable(table, true);
     // Check the last line
     assertEquals("1     <|>123456789-<|>123456789-<|>123..", result.get(3));
   }
 
-  /**
-   * multiple columns upto 8 : done
-   */
+  /** multiple columns upto 8 : done */
   @Test
   public void testManyColumns() throws Exception {
     assertTrue(TableBuilderHelper.shouldTrimColumns());
@@ -250,16 +266,21 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(8, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-");
+    row1.newLeftCol("123456789-")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-");
 
     List<String> result = validateTable(table, true);
     // Check the last line
     assertEquals("123456789-|123456789-|..|..|..|..|..|..", result.get(3));
   }
 
-  /**
-   * set gfsh env property result_viewer to basic disable for external reader
-   */
+  /** set gfsh env property result_viewer to basic disable for external reader */
   @Test
   public void testDisableColumnAdjustment() throws Exception {
     when(TableBuilderHelper.class, "shouldTrimColumns").thenReturn(false);
@@ -268,7 +289,11 @@ public class TableBuilderJUnitTest {
     Table table = createTableStructure(5, "|");
     RowGroup rowGroup = table.getLastRowGroup();
     Row row1 = rowGroup.newRow();
-    row1.newLeftCol("1").newLeftCol("123456789-").newLeftCol("123456789-").newLeftCol("123456789-123456789-12345").newLeftCol("1");
+    row1.newLeftCol("1")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-")
+        .newLeftCol("123456789-123456789-12345")
+        .newLeftCol("1");
 
     List<String> result = validateTable(table, false);
     // Check the last line

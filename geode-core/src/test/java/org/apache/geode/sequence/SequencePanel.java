@@ -22,11 +22,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 /**
- * Created by IntelliJ IDEA.
- * User: dan
- * Date: Oct 28, 2010
- * Time: 10:29:23 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: dan Date: Oct 28, 2010 Time: 10:29:23 PM To change this template
+ * use File | Settings | File Templates.
  */
 public class SequencePanel extends JPanel {
 
@@ -40,7 +37,8 @@ public class SequencePanel extends JPanel {
     final JScrollPane scroller = new JScrollPane(drawingPane);
     scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-    final TimeAxis timeAxis = new TimeAxis(TimeAxis.VERTICAL, sequenceDiagram.getMinTime(), sequenceDiagram.getMaxTime());
+    final TimeAxis timeAxis =
+        new TimeAxis(TimeAxis.VERTICAL, sequenceDiagram.getMinTime(), sequenceDiagram.getMaxTime());
     timeAxis.setPreferredHeight(drawingPane.getHeight());
     scroller.setRowHeaderView(timeAxis);
     scroller.setColumnHeaderView(sequenceDiagram.createMemberAxis());
@@ -50,14 +48,15 @@ public class SequencePanel extends JPanel {
     scroller.setAutoscrolls(true);
     //        scroller.setPreferredSize(new Dimension(200,200));
 
-    sequenceDiagram.addComponentListener(new ComponentAdapter() {
-      @Override
-      public void componentResized(ComponentEvent e) {
-        int height = e.getComponent().getHeight();
-        timeAxis.setPreferredHeight(height);
-        timeAxis.revalidate();
-      }
-    });
+    sequenceDiagram.addComponentListener(
+        new ComponentAdapter() {
+          @Override
+          public void componentResized(ComponentEvent e) {
+            int height = e.getComponent().getHeight();
+            timeAxis.setPreferredHeight(height);
+            timeAxis.revalidate();
+          }
+        });
 
     BorderLayout layout = new BorderLayout();
     //        layout.setHgap(0);
@@ -67,14 +66,14 @@ public class SequencePanel extends JPanel {
     //        add(instructionPanel, BorderLayout.PAGE_START);
     add(scroller, BorderLayout.CENTER);
 
-    addComponentListener(new ComponentAdapter() {
-      @Override
-      public void componentResized(ComponentEvent e) {
-        Component source = e.getComponent();
-        scroller.setSize(source.getSize());
-        scroller.revalidate();
-      }
-    });
-
+    addComponentListener(
+        new ComponentAdapter() {
+          @Override
+          public void componentResized(ComponentEvent e) {
+            Component source = e.getComponent();
+            scroller.setSize(source.getSize());
+            scroller.revalidate();
+          }
+        });
   }
 }

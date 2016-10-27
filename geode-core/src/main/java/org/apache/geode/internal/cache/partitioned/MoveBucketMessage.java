@@ -42,17 +42,13 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * Moves the bucket to the recipient's PartitionedRegionDataStore. The
- * recipient will create an extra redundant copy of the bucket and then
- * send a {@link RemoveBucketMessage} to the specified source for the bucket.
- * 
- * Usage:
- * MoveBucketResponse response = MoveBucketMessage.send(
- *     InternalDistributedMember, PartitionedRegion, int bucketId);
- * if (response != null && response.waitForResponse()) {
- *   // bucket was moved
- * }
- * 
+ * Moves the bucket to the recipient's PartitionedRegionDataStore. The recipient will create an
+ * extra redundant copy of the bucket and then send a {@link RemoveBucketMessage} to the specified
+ * source for the bucket.
+ *
+ * <p>Usage: MoveBucketResponse response = MoveBucketMessage.send( InternalDistributedMember,
+ * PartitionedRegion, int bucketId); if (response != null && response.waitForResponse()) { // bucket
+ * was moved }
  */
 public class MoveBucketMessage extends PartitionMessage {
   private static final Logger logger = LogService.getLogger();
@@ -60,34 +56,41 @@ public class MoveBucketMessage extends PartitionMessage {
   private volatile int bucketId;
   private volatile InternalDistributedMember source;
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public MoveBucketMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public MoveBucketMessage() {}
 
-  private MoveBucketMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, int bucketId, InternalDistributedMember source) {
+  private MoveBucketMessage(
+      InternalDistributedMember recipient,
+      int regionId,
+      ReplyProcessor21 processor,
+      int bucketId,
+      InternalDistributedMember source) {
     super(recipient, regionId, processor);
     this.bucketId = bucketId;
     this.source = source;
   }
 
   /**
-   * Sends a message to move the bucket from <code>source</code> member to
-   * the <code>recipient</code> member.
-   * 
+   * Sends a message to move the bucket from <code>source</code> member to the <code>recipient
+   * </code> member.
+   *
    * @param recipient the member to move the bucket to
    * @param region the PartitionedRegion of the bucket
    * @param bucketId the bucket to move
    * @param source the member to move the bucket from
    * @return the processor used to wait for the response
    */
-  public static MoveBucketResponse send(InternalDistributedMember recipient, PartitionedRegion region, int bucketId, InternalDistributedMember source) {
+  public static MoveBucketResponse send(
+      InternalDistributedMember recipient,
+      PartitionedRegion region,
+      int bucketId,
+      InternalDistributedMember source) {
 
     Assert.assertTrue(recipient != null, "MoveBucketMessage NULL recipient");
 
     MoveBucketResponse response = new MoveBucketResponse(region.getSystem(), recipient, region);
-    MoveBucketMessage msg = new MoveBucketMessage(recipient, region.getPRId(), response, bucketId, source);
+    MoveBucketMessage msg =
+        new MoveBucketMessage(recipient, region.getPRId(), response, bucketId, source);
 
     Set<InternalDistributedMember> failures = region.getDistributionManager().putOutgoing(msg);
     if (failures != null && failures.size() > 0) {
@@ -109,7 +112,9 @@ public class MoveBucketMessage extends PartitionMessage {
   }
 
   @Override
-  protected final boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion region, long startTime) throws ForceReattemptException {
+  protected final boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion region, long startTime)
+      throws ForceReattemptException {
 
     PartitionedRegionDataStore dataStore = region.getDataStore();
     boolean moved = dataStore.moveBucket(this.bucketId, this.source, true);
@@ -149,11 +154,8 @@ public class MoveBucketMessage extends PartitionMessage {
 
     private boolean moved;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public MoveBucketReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public MoveBucketReplyMessage() {}
 
     public MoveBucketReplyMessage(DataInput in) throws IOException, ClassNotFoundException {
       fromData(in);
@@ -166,7 +168,12 @@ public class MoveBucketMessage extends PartitionMessage {
     }
 
     /** Send a reply */
-    public static void send(InternalDistributedMember recipient, int processorId, DM dm, ReplyException re, boolean moved) {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        DM dm,
+        ReplyException re,
+        boolean moved) {
       Assert.assertTrue(recipient != null, "MoveBucketReplyMessage NULL recipient");
       MoveBucketReplyMessage m = new MoveBucketReplyMessage(processorId, re, moved);
       m.setRecipient(recipient);
@@ -181,7 +188,10 @@ public class MoveBucketMessage extends PartitionMessage {
     public void process(final DM dm, final ReplyProcessor21 processor) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "MoveBucketReplyMessage process invoking reply processor with processorId: {}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "MoveBucketReplyMessage process invoking reply processor with processorId: {}",
+            this.processorId);
       }
 
       if (processor == null) {
@@ -218,20 +228,26 @@ public class MoveBucketMessage extends PartitionMessage {
     @Override
     public String toString() {
       StringBuffer sb = new StringBuffer();
-      sb.append("MoveBucketReplyMessage ").append("processorid=").append(this.processorId).append(" moved=").append(this.moved).append(" reply to sender ").append(this.getSender());
+      sb.append("MoveBucketReplyMessage ")
+          .append("processorid=")
+          .append(this.processorId)
+          .append(" moved=")
+          .append(this.moved)
+          .append(" reply to sender ")
+          .append(this.getSender());
       return sb.toString();
     }
   }
 
-  /**
-   * A processor to capture the value returned by the
-   * <code>MoveBucketReplyMessage</code>
-   */
+  /** A processor to capture the value returned by the <code>MoveBucketReplyMessage</code> */
   public static class MoveBucketResponse extends PartitionResponse {
 
     private volatile boolean moved = false;
 
-    public MoveBucketResponse(InternalDistributedSystem ds, InternalDistributedMember recipient, PartitionedRegion theRegion) {
+    public MoveBucketResponse(
+        InternalDistributedSystem ds,
+        InternalDistributedMember recipient,
+        PartitionedRegion theRegion) {
       super(ds, recipient);
     }
 
@@ -251,8 +267,8 @@ public class MoveBucketMessage extends PartitionMessage {
     }
 
     /**
-     * Ignore any incoming exception from other VMs, we just want an
-     * acknowledgement that the message was processed.
+     * Ignore any incoming exception from other VMs, we just want an acknowledgement that the
+     * message was processed.
      */
     @Override
     protected void processException(ReplyException ex) {
@@ -275,7 +291,8 @@ public class MoveBucketMessage extends PartitionMessage {
           return false;
         }
         if (t instanceof ForceReattemptException) {
-          String msg = "MoveBucketMessage got ForceReattemptException due to local destroy on the PartitionRegion";
+          String msg =
+              "MoveBucketMessage got ForceReattemptException due to local destroy on the PartitionRegion";
           logger.debug(msg, t);
           return false;
         }
@@ -284,5 +301,4 @@ public class MoveBucketMessage extends PartitionMessage {
       return this.moved;
     }
   }
-
 }

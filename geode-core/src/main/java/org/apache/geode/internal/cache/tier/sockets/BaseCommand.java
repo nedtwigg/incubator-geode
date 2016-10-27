@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets;
 
 import org.apache.geode.*;
@@ -57,41 +55,46 @@ public abstract class BaseCommand implements Command {
   protected static final Logger logger = LogService.getLogger();
 
   /**
-   * Whether zipped values are being passed to/from the client. Can be modified
-   * using the system property Message.ZIP_VALUES ? This does not appear to
-   * happen anywhere
+   * Whether zipped values are being passed to/from the client. Can be modified using the system
+   * property Message.ZIP_VALUES ? This does not appear to happen anywhere
    */
   protected static final boolean zipValues = false;
 
-  protected static final boolean APPLY_RETRIES = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "gateway.ApplyRetries");
+  protected static final boolean APPLY_RETRIES =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "gateway.ApplyRetries");
 
-  public static final byte[] OK_BYTES = new byte[] { 0 };
+  public static final byte[] OK_BYTES = new byte[] {0};
 
-  public static final int maximumChunkSize = Integer.getInteger("BridgeServer.MAXIMUM_CHUNK_SIZE", 100).intValue();
+  public static final int maximumChunkSize =
+      Integer.getInteger("BridgeServer.MAXIMUM_CHUNK_SIZE", 100).intValue();
 
   /** Maximum number of entries in each chunked response chunk */
 
   /** Whether to suppress logging of IOExceptions */
-  private static boolean suppressIOExceptionLogging = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "bridge.suppressIOExceptionLogging");
+  private static boolean suppressIOExceptionLogging =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "bridge.suppressIOExceptionLogging");
 
   /**
-   * Maximum number of concurrent incoming client message bytes that a bridge
-   * server will allow. Once a server is working on this number additional
-   * incoming client messages will wait until one of them completes or fails.
-   * The bytes are computed based in the size sent in the incoming msg header.
+   * Maximum number of concurrent incoming client message bytes that a bridge server will allow.
+   * Once a server is working on this number additional incoming client messages will wait until one
+   * of them completes or fails. The bytes are computed based in the size sent in the incoming msg
+   * header.
    */
-  private static final int MAX_INCOMING_DATA = Integer.getInteger("BridgeServer.MAX_INCOMING_DATA", -1).intValue();
+  private static final int MAX_INCOMING_DATA =
+      Integer.getInteger("BridgeServer.MAX_INCOMING_DATA", -1).intValue();
 
   /**
-   * Maximum number of concurrent incoming client messages that a bridge server
-   * will allow. Once a server is working on this number additional incoming
-   * client messages will wait until one of them completes or fails.
+   * Maximum number of concurrent incoming client messages that a bridge server will allow. Once a
+   * server is working on this number additional incoming client messages will wait until one of
+   * them completes or fails.
    */
-  private static final int MAX_INCOMING_MSGS = Integer.getInteger("BridgeServer.MAX_INCOMING_MSGS", -1).intValue();
+  private static final int MAX_INCOMING_MSGS =
+      Integer.getInteger("BridgeServer.MAX_INCOMING_MSGS", -1).intValue();
 
   private static final Semaphore incomingDataLimiter;
 
   private static final Semaphore incomingMsgLimiter;
+
   static {
     Semaphore tmp;
     if (MAX_INCOMING_DATA > 0) {
@@ -108,12 +111,11 @@ public abstract class BaseCommand implements Command {
       tmp = null;
     }
     incomingMsgLimiter = tmp;
-
   }
 
   protected SecurityService securityService = IntegratedSecurityService.getSecurityService();
 
-  final public void execute(Message msg, ServerConnection servConn) {
+  public final void execute(Message msg, ServerConnection servConn) {
     // Read the request and update the statistics
     long start = DistributionStats.getStatTime();
     //servConn.resetTransientData();
@@ -124,7 +126,8 @@ public abstract class BaseCommand implements Command {
     try {
       if (shouldMasquerade) {
         GemFireCacheImpl cache = (GemFireCacheImpl) servConn.getCache();
-        InternalDistributedMember member = (InternalDistributedMember) servConn.getProxyID().getDistributedMember();
+        InternalDistributedMember member =
+            (InternalDistributedMember) servConn.getProxyID().getDistributedMember();
         TXManagerImpl txMgr = cache.getTxManager();
         TXStateProxy tx = null;
         try {
@@ -138,7 +141,14 @@ public abstract class BaseCommand implements Command {
         cmdExecute(msg, servConn, start);
       }
 
-    } catch (TransactionException | CopyException | SerializationException | CacheWriterException | CacheLoaderException | GemFireSecurityException | PartitionOfflineException | MessageTooLargeException e) {
+    } catch (TransactionException
+        | CopyException
+        | SerializationException
+        | CacheWriterException
+        | CacheLoaderException
+        | GemFireSecurityException
+        | PartitionOfflineException
+        | MessageTooLargeException e) {
       handleExceptionNoDisconnect(msg, servConn, e);
     } catch (EOFException eof) {
       BaseCommand.handleEOFException(msg, servConn, eof);
@@ -161,27 +171,30 @@ public abstract class BaseCommand implements Command {
   }
 
   /**
-   * checks to see if this thread needs to masquerade as a transactional thread.
-   * clients after GFE_66 should be able to start a transaction.
+   * checks to see if this thread needs to masquerade as a transactional thread. clients after
+   * GFE_66 should be able to start a transaction.
+   *
    * @param msg
    * @param servConn
    * @return true if thread should masquerade as a transactional thread.
    */
   protected boolean shouldMasqueradeForTx(Message msg, ServerConnection servConn) {
-    if (servConn.getClientVersion().compareTo(Version.GFE_66) >= 0 && msg.getTransactionId() > TXManagerImpl.NOTX) {
+    if (servConn.getClientVersion().compareTo(Version.GFE_66) >= 0
+        && msg.getTransactionId() > TXManagerImpl.NOTX) {
       return true;
     }
     return false;
   }
 
   /**
-   * If an operation is retried then some server may have seen it already.
-   * We cannot apply this operation to the cache without knowing whether a
-   * version tag has already been created for it.  Otherwise caches that have
-   * seen the event already will reject it but others will not, but will have
-   * no version tag with which to perform concurrency checks.
-   * <p>The client event should have the event identifier from the client and
-   * the region affected by the operation.
+   * If an operation is retried then some server may have seen it already. We cannot apply this
+   * operation to the cache without knowing whether a version tag has already been created for it.
+   * Otherwise caches that have seen the event already will reject it but others will not, but will
+   * have no version tag with which to perform concurrency checks.
+   *
+   * <p>The client event should have the event identifier from the client and the region affected by
+   * the operation.
+   *
    * @param clientEvent
    */
   public boolean recoverVersionTagForRetriedOperation(EntryEventImpl clientEvent) {
@@ -201,7 +214,8 @@ public abstract class BaseCommand implements Command {
     }
     if (tag != null) {
       if (logger.isDebugEnabled()) {
-        logger.debug("recovered version tag {} for replayed operation {}", tag, clientEvent.getEventId());
+        logger.debug(
+            "recovered version tag {} for replayed operation {}", tag, clientEvent.getEventId());
       }
       clientEvent.setVersionTag(tag);
     }
@@ -209,13 +223,13 @@ public abstract class BaseCommand implements Command {
   }
 
   /**
-   * If an operation is retried then some server may have seen it already.
-   * We cannot apply this operation to the cache without knowing whether a
-   * version tag has already been created for it.  Otherwise caches that have
-   * seen the event already will reject it but others will not, but will have
-   * no version tag with which to perform concurrency checks.
-   * <p>The client event should have the event identifier from the client and
-   * the region affected by the operation.
+   * If an operation is retried then some server may have seen it already. We cannot apply this
+   * operation to the cache without knowing whether a version tag has already been created for it.
+   * Otherwise caches that have seen the event already will reject it but others will not, but will
+   * have no version tag with which to perform concurrency checks.
+   *
+   * <p>The client event should have the event identifier from the client and the region affected by
+   * the operation.
    */
   protected VersionTag findVersionTagsForRetriedBulkOp(LocalRegion r, EventID eventID) {
     VersionTag tag = r.findVersionTagForClientBulkOp(eventID);
@@ -238,7 +252,8 @@ public abstract class BaseCommand implements Command {
     return tag;
   }
 
-  abstract public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException, InterruptedException;
+  public abstract void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException, InterruptedException;
 
   protected void writeReply(Message origMsg, ServerConnection servConn) throws IOException {
     Message replyMsg = servConn.getReplyMessage();
@@ -253,17 +268,20 @@ public abstract class BaseCommand implements Command {
     }
   }
 
-  protected void writeReplyWithRefreshMetadata(Message origMsg, ServerConnection servConn, PartitionedRegion pr, byte nwHop) throws IOException {
+  protected void writeReplyWithRefreshMetadata(
+      Message origMsg, ServerConnection servConn, PartitionedRegion pr, byte nwHop)
+      throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);
     replyMsg.setNumberOfParts(1);
     replyMsg.setTransactionId(origMsg.getTransactionId());
-    replyMsg.addBytesPart(new byte[] { pr.getMetadataVersion(), nwHop });
+    replyMsg.addBytesPart(new byte[] {pr.getMetadataVersion(), nwHop});
     replyMsg.send(servConn);
     pr.getPrStats().incPRMetaDataSentCount();
     if (logger.isTraceEnabled()) {
-      logger.trace("{}: rpl with REFRESH_METADAT tx: {}", servConn.getName(), origMsg.getTransactionId());
+      logger.trace(
+          "{}: rpl with REFRESH_METADAT tx: {}", servConn.getName(), origMsg.getTransactionId());
     }
   }
 
@@ -280,17 +298,30 @@ public abstract class BaseCommand implements Command {
       if (!suppressIOExceptionLogging) {
         if (potentialModification) {
           int transId = (msg != null) ? msg.getTransactionId() : Integer.MIN_VALUE;
-          logger.warn(LocalizedMessage.create(LocalizedStrings.BaseCommand_0_EOFEXCEPTION_DURING_A_WRITE_OPERATION_ON_REGION__1_KEY_2_MESSAGEID_3, new Object[] { servConn.getName(), servConn.getModRegion(), servConn.getModKey(), Integer.valueOf(transId) }));
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .BaseCommand_0_EOFEXCEPTION_DURING_A_WRITE_OPERATION_ON_REGION__1_KEY_2_MESSAGEID_3,
+                  new Object[] {
+                    servConn.getName(),
+                    servConn.getModRegion(),
+                    servConn.getModKey(),
+                    Integer.valueOf(transId)
+                  }));
         } else {
           logger.debug("EOF exception", eof);
-          logger.info(LocalizedMessage.create(LocalizedStrings.BaseCommand_0_CONNECTION_DISCONNECT_DETECTED_BY_EOF, servConn.getName()));
+          logger.info(
+              LocalizedMessage.create(
+                  LocalizedStrings.BaseCommand_0_CONNECTION_DISCONNECT_DETECTED_BY_EOF,
+                  servConn.getName()));
         }
       }
     }
     servConn.setFlagProcessMessagesAsFalse();
   }
 
-  private static void handleInterruptedIOException(Message msg, ServerConnection servConn, Exception e) {
+  private static void handleInterruptedIOException(
+      Message msg, ServerConnection servConn, Exception e) {
     CachedRegionHelper crHelper = servConn.getCachedRegionHelper();
     if (!crHelper.isShutdown() && servConn.isOpen()) {
       if (!suppressIOExceptionLogging) {
@@ -309,9 +340,22 @@ public abstract class BaseCommand implements Command {
       if (!suppressIOExceptionLogging) {
         if (potentialModification) {
           int transId = (msg != null) ? msg.getTransactionId() : Integer.MIN_VALUE;
-          logger.warn(LocalizedMessage.create(LocalizedStrings.BaseCommand_0_UNEXPECTED_IOEXCEPTION_DURING_OPERATION_FOR_REGION_1_KEY_2_MESSID_3, new Object[] { servConn.getName(), servConn.getModRegion(), servConn.getModKey(), Integer.valueOf(transId) }), e);
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings
+                      .BaseCommand_0_UNEXPECTED_IOEXCEPTION_DURING_OPERATION_FOR_REGION_1_KEY_2_MESSID_3,
+                  new Object[] {
+                    servConn.getName(),
+                    servConn.getModRegion(),
+                    servConn.getModKey(),
+                    Integer.valueOf(transId)
+                  }),
+              e);
         } else {
-          logger.warn(LocalizedMessage.create(LocalizedStrings.BaseCommand_0_UNEXPECTED_IOEXCEPTION, servConn.getName()), e);
+          logger.warn(
+              LocalizedMessage.create(
+                  LocalizedStrings.BaseCommand_0_UNEXPECTED_IOEXCEPTION, servConn.getName()),
+              e);
         }
       }
     }
@@ -325,9 +369,22 @@ public abstract class BaseCommand implements Command {
     if (!crHelper.isShutdown()) {
       if (potentialModification) {
         int transId = (msg != null) ? msg.getTransactionId() : Integer.MIN_VALUE;
-        logger.warn(LocalizedMessage.create(LocalizedStrings.BaseCommand_0_UNEXPECTED_SHUTDOWNEXCEPTION_DURING_OPERATION_ON_REGION_1_KEY_2_MESSAGEID_3, new Object[] { servConn.getName(), servConn.getModRegion(), servConn.getModKey(), Integer.valueOf(transId) }), e);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .BaseCommand_0_UNEXPECTED_SHUTDOWNEXCEPTION_DURING_OPERATION_ON_REGION_1_KEY_2_MESSAGEID_3,
+                new Object[] {
+                  servConn.getName(),
+                  servConn.getModRegion(),
+                  servConn.getModKey(),
+                  Integer.valueOf(transId)
+                }),
+            e);
       } else {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.BaseCommand_0_UNEXPECTED_SHUTDOWNEXCEPTION, servConn.getName()), e);
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.BaseCommand_0_UNEXPECTED_SHUTDOWNEXCEPTION, servConn.getName()),
+            e);
       }
     }
     servConn.setFlagProcessMessagesAsFalse();
@@ -372,7 +429,8 @@ public abstract class BaseCommand implements Command {
   //    }
   //  }
 
-  private static void handleExceptionNoDisconnect(Message msg, ServerConnection servConn, Exception e) {
+  private static void handleExceptionNoDisconnect(
+      Message msg, ServerConnection servConn, Exception e) {
     boolean requiresResponse = servConn.getTransientFlag(REQUIRES_RESPONSE);
     boolean responded = servConn.getTransientFlag(RESPONDED);
     boolean requiresChunkedResponse = servConn.getTransientFlag(REQUIRES_CHUNKED_RESPONSE);
@@ -394,15 +452,34 @@ public abstract class BaseCommand implements Command {
         if (potentialModification) {
           int transId = (msg != null) ? msg.getTransactionId() : Integer.MIN_VALUE;
           if (!wroteExceptionResponse) {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.BaseCommand_0_UNEXPECTED_EXCEPTION_DURING_OPERATION_ON_REGION_1_KEY_2_MESSAGEID_3, new Object[] { servConn.getName(), servConn.getModRegion(), servConn.getModKey(), Integer.valueOf(transId) }), e);
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings
+                        .BaseCommand_0_UNEXPECTED_EXCEPTION_DURING_OPERATION_ON_REGION_1_KEY_2_MESSAGEID_3,
+                    new Object[] {
+                      servConn.getName(),
+                      servConn.getModRegion(),
+                      servConn.getModKey(),
+                      Integer.valueOf(transId)
+                    }),
+                e);
           } else {
             if (logger.isDebugEnabled()) {
-              logger.debug("{}: Exception during operation on region: {} key: {} messageId: {}", servConn.getName(), servConn.getModRegion(), servConn.getModKey(), transId, e);
+              logger.debug(
+                  "{}: Exception during operation on region: {} key: {} messageId: {}",
+                  servConn.getName(),
+                  servConn.getModRegion(),
+                  servConn.getModKey(),
+                  transId,
+                  e);
             }
           }
         } else {
           if (!wroteExceptionResponse) {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.BaseCommand_0_UNEXPECTED_EXCEPTION, servConn.getName()), e);
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings.BaseCommand_0_UNEXPECTED_EXCEPTION, servConn.getName()),
+                e);
           } else {
             if (logger.isDebugEnabled()) {
               logger.debug("{}: Exception: {}", servConn.getName(), e.getMessage(), e);
@@ -412,7 +489,11 @@ public abstract class BaseCommand implements Command {
       }
     } catch (IOException ioe) {
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Unexpected IOException writing exception: {}", servConn.getName(), ioe.getMessage(), ioe);
+        logger.debug(
+            "{}: Unexpected IOException writing exception: {}",
+            servConn.getName(),
+            ioe.getMessage(),
+            ioe);
       }
     }
   }
@@ -426,7 +507,10 @@ public abstract class BaseCommand implements Command {
     try {
       try {
         if (th instanceof Error) {
-          logger.fatal(LocalizedMessage.create(LocalizedStrings.BaseCommand_0_UNEXPECTED_ERROR_ON_SERVER, servConn.getName()), th);
+          logger.fatal(
+              LocalizedMessage.create(
+                  LocalizedStrings.BaseCommand_0_UNEXPECTED_ERROR_ON_SERVER, servConn.getName()),
+              th);
         }
         if (requiresResponse && !responded) {
           if (requiresChunkedResponse) {
@@ -444,30 +528,62 @@ public abstract class BaseCommand implements Command {
         } else {
           if (potentialModification) {
             int transId = (msg != null) ? msg.getTransactionId() : Integer.MIN_VALUE;
-            logger.warn(LocalizedMessage.create(LocalizedStrings.BaseCommand_0_UNEXPECTED_EXCEPTION_DURING_OPERATION_ON_REGION_1_KEY_2_MESSAGEID_3, new Object[] { servConn.getName(), servConn.getModRegion(), servConn.getModKey(), Integer.valueOf(transId) }), th);
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings
+                        .BaseCommand_0_UNEXPECTED_EXCEPTION_DURING_OPERATION_ON_REGION_1_KEY_2_MESSAGEID_3,
+                    new Object[] {
+                      servConn.getName(),
+                      servConn.getModRegion(),
+                      servConn.getModKey(),
+                      Integer.valueOf(transId)
+                    }),
+                th);
           } else {
-            logger.warn(LocalizedMessage.create(LocalizedStrings.BaseCommand_0_UNEXPECTED_EXCEPTION, servConn.getName()), th);
+            logger.warn(
+                LocalizedMessage.create(
+                    LocalizedStrings.BaseCommand_0_UNEXPECTED_EXCEPTION, servConn.getName()),
+                th);
           }
         }
       }
     } catch (IOException ioe) {
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Unexpected IOException writing exception: {}", servConn.getName(), ioe.getMessage(), ioe);
+        logger.debug(
+            "{}: Unexpected IOException writing exception: {}",
+            servConn.getName(),
+            ioe.getMessage(),
+            ioe);
       }
     } finally {
       servConn.setFlagProcessMessagesAsFalse();
     }
   }
 
-  protected static void writeChunkedException(Message origMsg, Throwable e, boolean isSevere, ServerConnection servConn) throws IOException {
+  protected static void writeChunkedException(
+      Message origMsg, Throwable e, boolean isSevere, ServerConnection servConn)
+      throws IOException {
     writeChunkedException(origMsg, e, isSevere, servConn, servConn.getChunkedResponseMessage());
   }
 
-  protected static void writeChunkedException(Message origMsg, Throwable e, boolean isSevere, ServerConnection servConn, ChunkedMessage originalReponse) throws IOException {
+  protected static void writeChunkedException(
+      Message origMsg,
+      Throwable e,
+      boolean isSevere,
+      ServerConnection servConn,
+      ChunkedMessage originalReponse)
+      throws IOException {
     writeChunkedException(origMsg, e, isSevere, servConn, originalReponse, 2);
   }
 
-  protected static void writeChunkedException(Message origMsg, Throwable exception, boolean isSevere, ServerConnection servConn, ChunkedMessage originalReponse, int numOfParts) throws IOException {
+  protected static void writeChunkedException(
+      Message origMsg,
+      Throwable exception,
+      boolean isSevere,
+      ServerConnection servConn,
+      ChunkedMessage originalReponse,
+      int numOfParts)
+      throws IOException {
     Throwable e = getClientException(servConn, exception);
     ChunkedMessage chunkedResponseMsg = servConn.getChunkedResponseMessage();
     chunkedResponseMsg.setServerConnection(servConn);
@@ -481,7 +597,11 @@ public abstract class BaseCommand implements Command {
         chunkedResponseMsg.addStringPart(getExceptionTrace(e));
       }
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Sending exception chunk while reply in progress: {}", servConn.getName(), e.getMessage(), e);
+        logger.debug(
+            "{}: Sending exception chunk while reply in progress: {}",
+            servConn.getName(),
+            e.getMessage(),
+            e);
       }
     } else {
       chunkedResponseMsg.setMessageType(MessageType.EXCEPTION);
@@ -509,7 +629,9 @@ public abstract class BaseCommand implements Command {
     return sw.toString();
   }
 
-  protected static void writeException(Message origMsg, Throwable e, boolean isSevere, ServerConnection servConn) throws IOException {
+  protected static void writeException(
+      Message origMsg, Throwable e, boolean isSevere, ServerConnection servConn)
+      throws IOException {
     writeException(origMsg, MessageType.EXCEPTION, e, isSevere, servConn);
   }
 
@@ -525,7 +647,9 @@ public abstract class BaseCommand implements Command {
     return e;
   }
 
-  protected static void writeException(Message origMsg, int msgType, Throwable e, boolean isSevere, ServerConnection servConn) throws IOException {
+  protected static void writeException(
+      Message origMsg, int msgType, Throwable e, boolean isSevere, ServerConnection servConn)
+      throws IOException {
     Throwable theException = getClientException(servConn, e);
     Message errorMsg = servConn.getErrorResponseMessage();
     errorMsg.setMessageType(msgType);
@@ -536,7 +660,8 @@ public abstract class BaseCommand implements Command {
       if (msg == null) {
         msg = theException.toString();
       }
-      logger.fatal(LocalizedMessage.create(LocalizedStrings.BaseCommand_SEVERE_CACHE_EXCEPTION_0, msg));
+      logger.fatal(
+          LocalizedMessage.create(LocalizedStrings.BaseCommand_SEVERE_CACHE_EXCEPTION_0, msg));
     }
     errorMsg.addObjPart(theException);
     errorMsg.addStringPart(getExceptionTrace(theException));
@@ -549,16 +674,21 @@ public abstract class BaseCommand implements Command {
     }
   }
 
-  protected static void writeErrorResponse(Message origMsg, int messageType, ServerConnection servConn) throws IOException {
+  protected static void writeErrorResponse(
+      Message origMsg, int messageType, ServerConnection servConn) throws IOException {
     Message errorMsg = servConn.getErrorResponseMessage();
     errorMsg.setMessageType(messageType);
     errorMsg.setNumberOfParts(1);
     errorMsg.setTransactionId(origMsg.getTransactionId());
-    errorMsg.addStringPart(LocalizedStrings.BaseCommand_INVALID_DATA_RECEIVED_PLEASE_SEE_THE_CACHE_SERVER_LOG_FILE_FOR_ADDITIONAL_DETAILS.toLocalizedString());
+    errorMsg.addStringPart(
+        LocalizedStrings
+            .BaseCommand_INVALID_DATA_RECEIVED_PLEASE_SEE_THE_CACHE_SERVER_LOG_FILE_FOR_ADDITIONAL_DETAILS
+            .toLocalizedString());
     errorMsg.send(servConn);
   }
 
-  protected static void writeErrorResponse(Message origMsg, int messageType, String msg, ServerConnection servConn) throws IOException {
+  protected static void writeErrorResponse(
+      Message origMsg, int messageType, String msg, ServerConnection servConn) throws IOException {
     Message errorMsg = servConn.getErrorResponseMessage();
     errorMsg.setMessageType(messageType);
     errorMsg.setNumberOfParts(1);
@@ -567,7 +697,8 @@ public abstract class BaseCommand implements Command {
     errorMsg.send(servConn);
   }
 
-  protected static void writeRegionDestroyedEx(Message msg, String regionName, String title, ServerConnection servConn) throws IOException {
+  protected static void writeRegionDestroyedEx(
+      Message msg, String regionName, String title, ServerConnection servConn) throws IOException {
     String reason = servConn.getName() + ": Region named " + regionName + title;
     RegionDestroyedException ex = new RegionDestroyedException(reason, regionName);
     if (servConn.getTransientFlag(REQUIRES_CHUNKED_RESPONSE)) {
@@ -577,7 +708,9 @@ public abstract class BaseCommand implements Command {
     }
   }
 
-  protected static void writeResponse(Object data, Object callbackArg, Message origMsg, boolean isObject, ServerConnection servConn) throws IOException {
+  protected static void writeResponse(
+      Object data, Object callbackArg, Message origMsg, boolean isObject, ServerConnection servConn)
+      throws IOException {
     Message responseMsg = servConn.getResponseMessage();
     responseMsg.setMessageType(MessageType.RESPONSE);
     responseMsg.setTransactionId(origMsg.getTransactionId());
@@ -601,7 +734,15 @@ public abstract class BaseCommand implements Command {
     origMsg.clearParts();
   }
 
-  protected static void writeResponseWithRefreshMetadata(Object data, Object callbackArg, Message origMsg, boolean isObject, ServerConnection servConn, PartitionedRegion pr, byte nwHop) throws IOException {
+  protected static void writeResponseWithRefreshMetadata(
+      Object data,
+      Object callbackArg,
+      Message origMsg,
+      boolean isObject,
+      ServerConnection servConn,
+      PartitionedRegion pr,
+      byte nwHop)
+      throws IOException {
     Message responseMsg = servConn.getResponseMessage();
     responseMsg.setMessageType(MessageType.RESPONSE);
     responseMsg.setTransactionId(origMsg.getTransactionId());
@@ -621,13 +762,14 @@ public abstract class BaseCommand implements Command {
     if (callbackArg != null) {
       responseMsg.addObjPart(callbackArg);
     }
-    responseMsg.addBytesPart(new byte[] { pr.getMetadataVersion(), nwHop });
+    responseMsg.addBytesPart(new byte[] {pr.getMetadataVersion(), nwHop});
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     responseMsg.send(servConn);
     origMsg.clearParts();
   }
 
-  protected static void writeResponseWithFunctionAttribute(byte[] data, Message origMsg, ServerConnection servConn) throws IOException {
+  protected static void writeResponseWithFunctionAttribute(
+      byte[] data, Message origMsg, ServerConnection servConn) throws IOException {
     Message responseMsg = servConn.getResponseMessage();
     responseMsg.setMessageType(MessageType.RESPONSE);
     responseMsg.setTransactionId(origMsg.getTransactionId());
@@ -638,7 +780,8 @@ public abstract class BaseCommand implements Command {
     origMsg.clearParts();
   }
 
-  static protected void checkForInterrupt(ServerConnection servConn, Exception e) throws InterruptedException, InterruptedIOException {
+  protected static void checkForInterrupt(ServerConnection servConn, Exception e)
+      throws InterruptedException, InterruptedIOException {
     servConn.getCachedRegionHelper().checkCancelInProgress(e);
     if (e instanceof InterruptedException) {
       throw (InterruptedException) e;
@@ -648,7 +791,12 @@ public abstract class BaseCommand implements Command {
     }
   }
 
-  protected static void writeQueryResponseChunk(Object queryResponseChunk, CollectionType collectionType, boolean lastChunk, ServerConnection servConn) throws IOException {
+  protected static void writeQueryResponseChunk(
+      Object queryResponseChunk,
+      CollectionType collectionType,
+      boolean lastChunk,
+      ServerConnection servConn)
+      throws IOException {
     ChunkedMessage queryResponseMsg = servConn.getQueryResponseMessage();
     queryResponseMsg.setNumberOfParts(2);
     queryResponseMsg.setLastChunk(lastChunk);
@@ -657,7 +805,9 @@ public abstract class BaseCommand implements Command {
     queryResponseMsg.sendChunk(servConn);
   }
 
-  protected static void writeQueryResponseException(Message origMsg, Throwable exception, boolean isSevere, ServerConnection servConn) throws IOException {
+  protected static void writeQueryResponseException(
+      Message origMsg, Throwable exception, boolean isSevere, ServerConnection servConn)
+      throws IOException {
     Throwable e = getClientException(servConn, exception);
     ChunkedMessage queryResponseMsg = servConn.getQueryResponseMessage();
     ChunkedMessage chunkedResponseMsg = servConn.getChunkedResponseMessage();
@@ -670,7 +820,11 @@ public abstract class BaseCommand implements Command {
       queryResponseMsg.addObjPart(e);
       queryResponseMsg.addStringPart(getExceptionTrace(e));
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Sending exception chunk while reply in progress: {}", servConn.getName(), e.getMessage(), e);
+        logger.debug(
+            "{}: Sending exception chunk while reply in progress: {}",
+            servConn.getName(),
+            e.getMessage(),
+            e);
       }
       queryResponseMsg.sendChunk(servConn);
     } else {
@@ -689,11 +843,18 @@ public abstract class BaseCommand implements Command {
     }
   }
 
-  protected static void writeChunkedErrorResponse(Message origMsg, int messageType, String message, ServerConnection servConn) throws IOException {
+  protected static void writeChunkedErrorResponse(
+      Message origMsg, int messageType, String message, ServerConnection servConn)
+      throws IOException {
     // Send chunked response header identifying error message
     ChunkedMessage chunkedResponseMsg = servConn.getChunkedResponseMessage();
     if (logger.isDebugEnabled()) {
-      logger.debug(servConn.getName() + ": Sending error message header type: " + messageType + " transaction: " + origMsg.getTransactionId());
+      logger.debug(
+          servConn.getName()
+              + ": Sending error message header type: "
+              + messageType
+              + " transaction: "
+              + origMsg.getTransactionId());
     }
     chunkedResponseMsg.setMessageType(messageType);
     chunkedResponseMsg.setTransactionId(origMsg.getTransactionId());
@@ -709,7 +870,13 @@ public abstract class BaseCommand implements Command {
     chunkedResponseMsg.sendChunk(servConn);
   }
 
-  protected static void writeFunctionResponseException(Message origMsg, int messageType, String message, ServerConnection servConn, Throwable exception) throws IOException {
+  protected static void writeFunctionResponseException(
+      Message origMsg,
+      int messageType,
+      String message,
+      ServerConnection servConn,
+      Throwable exception)
+      throws IOException {
     Throwable e = getClientException(servConn, exception);
     ChunkedMessage functionResponseMsg = servConn.getFunctionResponseMessage();
     ChunkedMessage chunkedResponseMsg = servConn.getChunkedResponseMessage();
@@ -720,7 +887,11 @@ public abstract class BaseCommand implements Command {
       functionResponseMsg.addObjPart(e);
       functionResponseMsg.addStringPart(getExceptionTrace(e));
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Sending exception chunk while reply in progress: {}", servConn.getName(), e.getMessage(), e);
+        logger.debug(
+            "{}: Sending exception chunk while reply in progress: {}",
+            servConn.getName(),
+            e.getMessage(),
+            e);
       }
       functionResponseMsg.sendChunk(servConn);
     } else {
@@ -739,7 +910,9 @@ public abstract class BaseCommand implements Command {
     }
   }
 
-  protected static void writeFunctionResponseError(Message origMsg, int messageType, String message, ServerConnection servConn) throws IOException {
+  protected static void writeFunctionResponseError(
+      Message origMsg, int messageType, String message, ServerConnection servConn)
+      throws IOException {
     ChunkedMessage functionResponseMsg = servConn.getFunctionResponseMessage();
     ChunkedMessage chunkedResponseMsg = servConn.getChunkedResponseMessage();
     if (functionResponseMsg.headerHasBeenSent()) {
@@ -747,7 +920,8 @@ public abstract class BaseCommand implements Command {
       functionResponseMsg.setLastChunk(true);
       functionResponseMsg.addStringPart(message);
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Sending Error chunk while reply in progress: {}", servConn.getName(), message);
+        logger.debug(
+            "{}: Sending Error chunk while reply in progress: {}", servConn.getName(), message);
       }
       functionResponseMsg.sendChunk(servConn);
     } else {
@@ -764,11 +938,17 @@ public abstract class BaseCommand implements Command {
     }
   }
 
-  protected static void writeKeySetErrorResponse(Message origMsg, int messageType, String message, ServerConnection servConn) throws IOException {
+  protected static void writeKeySetErrorResponse(
+      Message origMsg, int messageType, String message, ServerConnection servConn)
+      throws IOException {
     // Send chunked response header identifying error message
     ChunkedMessage chunkedResponseMsg = servConn.getKeySetResponseMessage();
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Sending error message header type: {} transaction: {}", servConn.getName(), messageType, origMsg.getTransactionId());
+      logger.debug(
+          "{}: Sending error message header type: {} transaction: {}",
+          servConn.getName(),
+          messageType,
+          origMsg.getTransactionId());
     }
     chunkedResponseMsg.setMessageType(messageType);
     chunkedResponseMsg.setTransactionId(origMsg.getTransactionId());
@@ -814,14 +994,27 @@ public abstract class BaseCommand implements Command {
     return requestMsg;
   }
 
-  protected static void fillAndSendRegisterInterestResponseChunks(LocalRegion region, Object riKey, int interestType, InterestResultPolicy policy, ServerConnection servConn) throws IOException {
+  protected static void fillAndSendRegisterInterestResponseChunks(
+      LocalRegion region,
+      Object riKey,
+      int interestType,
+      InterestResultPolicy policy,
+      ServerConnection servConn)
+      throws IOException {
     fillAndSendRegisterInterestResponseChunks(region, riKey, interestType, false, policy, servConn);
   }
 
   /*
    * serializeValues is unused for clients < GFE_80
    */
-  protected static void fillAndSendRegisterInterestResponseChunks(LocalRegion region, Object riKey, int interestType, boolean serializeValues, InterestResultPolicy policy, ServerConnection servConn) throws IOException {
+  protected static void fillAndSendRegisterInterestResponseChunks(
+      LocalRegion region,
+      Object riKey,
+      int interestType,
+      boolean serializeValues,
+      InterestResultPolicy policy,
+      ServerConnection servConn)
+      throws IOException {
     // Client is not interested.
     if (policy.isNone()) {
       sendRegisterInterestResponseChunk(region, riKey, new ArrayList(), true, servConn);
@@ -841,36 +1034,46 @@ public abstract class BaseCommand implements Command {
     }
 
     switch (interestType) {
-    case InterestType.OQL_QUERY:
-      // Not supported yet
-      throw new InternalGemFireError(LocalizedStrings.BaseCommand_NOT_YET_SUPPORTED.toLocalizedString());
-    case InterestType.FILTER_CLASS:
-      throw new InternalGemFireError(LocalizedStrings.BaseCommand_NOT_YET_SUPPORTED.toLocalizedString());
-      // handleFilter(region, (String)riKey, policy);
-      // break;
-    case InterestType.REGULAR_EXPRESSION: {
-      String regEx = (String) riKey;
-      if (regEx.equals(".*")) {
-        handleAllKeys(region, policy, servConn);
-      } else {
-        handleRegEx(region, regEx, policy, servConn);
-      }
-    }
-      break;
-    case InterestType.KEY:
-      if (riKey.equals("ALL_KEYS")) {
-        handleAllKeys(region, policy, servConn);
-      } else {
-        handleSingleton(region, riKey, policy, servConn);
-      }
-      break;
-    default:
-      throw new InternalGemFireError(LocalizedStrings.BaseCommand_UNKNOWN_INTEREST_TYPE.toLocalizedString());
+      case InterestType.OQL_QUERY:
+        // Not supported yet
+        throw new InternalGemFireError(
+            LocalizedStrings.BaseCommand_NOT_YET_SUPPORTED.toLocalizedString());
+      case InterestType.FILTER_CLASS:
+        throw new InternalGemFireError(
+            LocalizedStrings.BaseCommand_NOT_YET_SUPPORTED.toLocalizedString());
+        // handleFilter(region, (String)riKey, policy);
+        // break;
+      case InterestType.REGULAR_EXPRESSION:
+        {
+          String regEx = (String) riKey;
+          if (regEx.equals(".*")) {
+            handleAllKeys(region, policy, servConn);
+          } else {
+            handleRegEx(region, regEx, policy, servConn);
+          }
+        }
+        break;
+      case InterestType.KEY:
+        if (riKey.equals("ALL_KEYS")) {
+          handleAllKeys(region, policy, servConn);
+        } else {
+          handleSingleton(region, riKey, policy, servConn);
+        }
+        break;
+      default:
+        throw new InternalGemFireError(
+            LocalizedStrings.BaseCommand_UNKNOWN_INTEREST_TYPE.toLocalizedString());
     }
   }
 
   @SuppressWarnings("rawtypes")
-  private static void handleKeysValuesPolicy(LocalRegion region, Object riKey, int interestType, boolean serializeValues, ServerConnection servConn) throws IOException {
+  private static void handleKeysValuesPolicy(
+      LocalRegion region,
+      Object riKey,
+      int interestType,
+      boolean serializeValues,
+      ServerConnection servConn)
+      throws IOException {
     if (riKey instanceof List) {
       handleKVList(region, (List) riKey, serializeValues, servConn);
       return;
@@ -881,42 +1084,54 @@ public abstract class BaseCommand implements Command {
     }
 
     switch (interestType) {
-    case InterestType.OQL_QUERY:
-      throw new InternalGemFireError(LocalizedStrings.BaseCommand_NOT_YET_SUPPORTED.toLocalizedString());
-    case InterestType.FILTER_CLASS:
-      throw new InternalGemFireError(LocalizedStrings.BaseCommand_NOT_YET_SUPPORTED.toLocalizedString());
-    case InterestType.REGULAR_EXPRESSION:
-      String regEx = (String) riKey;
-      if (regEx.equals(".*")) {
-        handleKVAllKeys(region, null, serializeValues, servConn);
-      } else {
-        handleKVAllKeys(region, regEx, serializeValues, servConn);
-      }
-      break;
-    case InterestType.KEY:
-      if (riKey.equals("ALL_KEYS")) {
-        handleKVAllKeys(region, null, serializeValues, servConn);
-      } else {
-        handleKVSingleton(region, riKey, serializeValues, servConn);
-      }
-      break;
-    default:
-      throw new InternalGemFireError(LocalizedStrings.BaseCommand_UNKNOWN_INTEREST_TYPE.toLocalizedString());
+      case InterestType.OQL_QUERY:
+        throw new InternalGemFireError(
+            LocalizedStrings.BaseCommand_NOT_YET_SUPPORTED.toLocalizedString());
+      case InterestType.FILTER_CLASS:
+        throw new InternalGemFireError(
+            LocalizedStrings.BaseCommand_NOT_YET_SUPPORTED.toLocalizedString());
+      case InterestType.REGULAR_EXPRESSION:
+        String regEx = (String) riKey;
+        if (regEx.equals(".*")) {
+          handleKVAllKeys(region, null, serializeValues, servConn);
+        } else {
+          handleKVAllKeys(region, regEx, serializeValues, servConn);
+        }
+        break;
+      case InterestType.KEY:
+        if (riKey.equals("ALL_KEYS")) {
+          handleKVAllKeys(region, null, serializeValues, servConn);
+        } else {
+          handleKVSingleton(region, riKey, serializeValues, servConn);
+        }
+        break;
+      default:
+        throw new InternalGemFireError(
+            LocalizedStrings.BaseCommand_UNKNOWN_INTEREST_TYPE.toLocalizedString());
     }
   }
 
-  /**
-   * @param list
-   *                is a List of entry keys
-   */
-  protected static void sendRegisterInterestResponseChunk(Region region, Object riKey, ArrayList list, boolean lastChunk, ServerConnection servConn) throws IOException {
+  /** @param list is a List of entry keys */
+  protected static void sendRegisterInterestResponseChunk(
+      Region region, Object riKey, ArrayList list, boolean lastChunk, ServerConnection servConn)
+      throws IOException {
     ChunkedMessage chunkedResponseMsg = servConn.getRegisterInterestResponseMessage();
     chunkedResponseMsg.setNumberOfParts(1);
     chunkedResponseMsg.setLastChunk(lastChunk);
     chunkedResponseMsg.addObjPart(list, zipValues);
     String regionName = (region == null) ? " null " : region.getFullPath();
     if (logger.isDebugEnabled()) {
-      String str = servConn.getName() + ": Sending" + (lastChunk ? " last " : " ") + "register interest response chunk for region: " + regionName + " for keys: " + riKey + " chunk=<" + chunkedResponseMsg + ">";
+      String str =
+          servConn.getName()
+              + ": Sending"
+              + (lastChunk ? " last " : " ")
+              + "register interest response chunk for region: "
+              + regionName
+              + " for keys: "
+              + riKey
+              + " chunk=<"
+              + chunkedResponseMsg
+              + ">";
       logger.debug(str);
     }
 
@@ -924,29 +1139,30 @@ public abstract class BaseCommand implements Command {
   }
 
   /**
-   * Determines whether keys for destroyed entries (tombstones) should be sent
-   * to clients in register-interest results.
-   * 
+   * Determines whether keys for destroyed entries (tombstones) should be sent to clients in
+   * register-interest results.
+   *
    * @param servConn
    * @param policy
    * @return true if tombstones should be sent to the client
    */
-  private static boolean sendTombstonesInRIResults(ServerConnection servConn, InterestResultPolicy policy) {
-    return (policy == InterestResultPolicy.KEYS_VALUES) && (servConn.getClientVersion().compareTo(Version.GFE_80) >= 0);
+  private static boolean sendTombstonesInRIResults(
+      ServerConnection servConn, InterestResultPolicy policy) {
+    return (policy == InterestResultPolicy.KEYS_VALUES)
+        && (servConn.getClientVersion().compareTo(Version.GFE_80) >= 0);
   }
 
   /**
    * Process an interest request involving a list of keys
    *
-   * @param region
-   *                the region
-   * @param keyList
-   *                the list of keys
-   * @param policy
-   *                the policy
+   * @param region the region
+   * @param keyList the list of keys
+   * @param policy the policy
    * @throws IOException
    */
-  private static void handleList(LocalRegion region, List keyList, InterestResultPolicy policy, ServerConnection servConn) throws IOException {
+  private static void handleList(
+      LocalRegion region, List keyList, InterestResultPolicy policy, ServerConnection servConn)
+      throws IOException {
     if (region instanceof PartitionedRegion) {
       // too bad java doesn't provide another way to do this...
       handleListPR((PartitionedRegion) region, keyList, policy, servConn);
@@ -955,9 +1171,11 @@ public abstract class BaseCommand implements Command {
     ArrayList newKeyList = new ArrayList(maximumChunkSize);
     // Handle list of keys
     if (region != null) {
-      for (Iterator it = keyList.iterator(); it.hasNext();) {
+      for (Iterator it = keyList.iterator(); it.hasNext(); ) {
         Object entryKey = it.next();
-        if (region.containsKey(entryKey) || (sendTombstonesInRIResults(servConn, policy) && region.containsTombstone(entryKey))) {
+        if (region.containsKey(entryKey)
+            || (sendTombstonesInRIResults(servConn, policy)
+                && region.containsTombstone(entryKey))) {
 
           appendInterestResponseKey(region, keyList, entryKey, newKeyList, "list", servConn);
         }
@@ -968,13 +1186,21 @@ public abstract class BaseCommand implements Command {
     sendRegisterInterestResponseChunk(region, keyList, newKeyList, true, servConn);
   }
 
-  /**
-   * Handles both RR and PR cases
-   */
+  /** Handles both RR and PR cases */
   @SuppressWarnings("rawtypes")
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "NP_NULL_PARAM_DEREF", justification = "Null value handled in sendNewRegisterInterestResponseChunk()")
-  private static void handleKVSingleton(LocalRegion region, Object entryKey, boolean serializeValues, ServerConnection servConn) throws IOException {
-    VersionedObjectList values = new VersionedObjectList(maximumChunkSize, true, region == null ? true : region.getAttributes().getConcurrencyChecksEnabled(), serializeValues);
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "NP_NULL_PARAM_DEREF",
+    justification = "Null value handled in sendNewRegisterInterestResponseChunk()"
+  )
+  private static void handleKVSingleton(
+      LocalRegion region, Object entryKey, boolean serializeValues, ServerConnection servConn)
+      throws IOException {
+    VersionedObjectList values =
+        new VersionedObjectList(
+            maximumChunkSize,
+            true,
+            region == null ? true : region.getAttributes().getConcurrencyChecksEnabled(),
+            serializeValues);
 
     if (region != null) {
       if (region.containsKey(entryKey) || region.containsTombstone(entryKey)) {
@@ -995,18 +1221,18 @@ public abstract class BaseCommand implements Command {
   /**
    * Process an interest request consisting of a single key
    *
-   * @param region
-   *                the region
-   * @param entryKey
-   *                the key
-   * @param policy
-   *                the policy
+   * @param region the region
+   * @param entryKey the key
+   * @param policy the policy
    * @throws IOException
    */
-  private static void handleSingleton(LocalRegion region, Object entryKey, InterestResultPolicy policy, ServerConnection servConn) throws IOException {
+  private static void handleSingleton(
+      LocalRegion region, Object entryKey, InterestResultPolicy policy, ServerConnection servConn)
+      throws IOException {
     ArrayList keyList = new ArrayList(1);
     if (region != null) {
-      if (region.containsKey(entryKey) || (sendTombstonesInRIResults(servConn, policy) && region.containsTombstone(entryKey))) {
+      if (region.containsKey(entryKey)
+          || (sendTombstonesInRIResults(servConn, policy) && region.containsTombstone(entryKey))) {
         appendInterestResponseKey(region, entryKey, entryKey, keyList, "individual", servConn);
       }
     }
@@ -1018,16 +1244,18 @@ public abstract class BaseCommand implements Command {
   /**
    * Process an interest request of type ALL_KEYS
    *
-   * @param region
-   *                the region
-   * @param policy
-   *                the policy
+   * @param region the region
+   * @param policy the policy
    * @throws IOException
    */
-  private static void handleAllKeys(LocalRegion region, InterestResultPolicy policy, ServerConnection servConn) throws IOException {
+  private static void handleAllKeys(
+      LocalRegion region, InterestResultPolicy policy, ServerConnection servConn)
+      throws IOException {
     ArrayList keyList = new ArrayList(maximumChunkSize);
     if (region != null) {
-      for (Iterator it = region.keySet(sendTombstonesInRIResults(servConn, policy)).iterator(); it.hasNext();) {
+      for (Iterator it = region.keySet(sendTombstonesInRIResults(servConn, policy)).iterator();
+          it.hasNext();
+          ) {
         appendInterestResponseKey(region, "ALL_KEYS", it.next(), keyList, "ALL_KEYS", servConn);
       }
     }
@@ -1043,14 +1271,21 @@ public abstract class BaseCommand implements Command {
    * @param servConn
    * @throws IOException
    */
-  private static void handleKVAllKeys(LocalRegion region, String regex, boolean serializeValues, ServerConnection servConn) throws IOException {
+  private static void handleKVAllKeys(
+      LocalRegion region, String regex, boolean serializeValues, ServerConnection servConn)
+      throws IOException {
 
     if (region != null && region instanceof PartitionedRegion) {
       handleKVKeysPR((PartitionedRegion) region, regex, serializeValues, servConn);
       return;
     }
 
-    VersionedObjectList values = new VersionedObjectList(maximumChunkSize, true, region == null ? true : region.getAttributes().getConcurrencyChecksEnabled(), serializeValues);
+    VersionedObjectList values =
+        new VersionedObjectList(
+            maximumChunkSize,
+            true,
+            region == null ? true : region.getAttributes().getConcurrencyChecksEnabled(),
+            serializeValues);
 
     if (region != null) {
 
@@ -1082,7 +1317,8 @@ public abstract class BaseCommand implements Command {
         updateValues(values, key, data, versionTag);
 
         if (values.size() == maximumChunkSize) {
-          sendNewRegisterInterestResponseChunk(region, regex != null ? regex : "ALL_KEYS", values, false, servConn);
+          sendNewRegisterInterestResponseChunk(
+              region, regex != null ? regex : "ALL_KEYS", values, false, servConn);
           values.clear();
         }
       } // for
@@ -1090,14 +1326,19 @@ public abstract class BaseCommand implements Command {
 
     // Send the last chunk (the only chunk for individual and list keys)
     // always send it back, even if the list is of zero size.
-    sendNewRegisterInterestResponseChunk(region, regex != null ? regex : "ALL_KEYS", values, true, servConn);
+    sendNewRegisterInterestResponseChunk(
+        region, regex != null ? regex : "ALL_KEYS", values, true, servConn);
   }
 
-  private static void handleKVKeysPR(PartitionedRegion region, Object keyInfo, boolean serializeValues, ServerConnection servConn) throws IOException {
+  private static void handleKVKeysPR(
+      PartitionedRegion region, Object keyInfo, boolean serializeValues, ServerConnection servConn)
+      throws IOException {
     int id = 0;
     HashMap<Integer, HashSet> bucketKeys = null;
 
-    VersionedObjectList values = new VersionedObjectList(maximumChunkSize, true, region.getConcurrencyChecksEnabled(), serializeValues);
+    VersionedObjectList values =
+        new VersionedObjectList(
+            maximumChunkSize, true, region.getConcurrencyChecksEnabled(), serializeValues);
 
     if (keyInfo != null && keyInfo instanceof List) {
       bucketKeys = new HashMap<Integer, HashSet>();
@@ -1118,16 +1359,18 @@ public abstract class BaseCommand implements Command {
 
     // Send the last chunk (the only chunk for individual and list keys)
     // always send it back, even if the list is of zero size.
-    sendNewRegisterInterestResponseChunk(region, keyInfo != null ? keyInfo : "ALL_KEYS", values, true, servConn);
+    sendNewRegisterInterestResponseChunk(
+        region, keyInfo != null ? keyInfo : "ALL_KEYS", values, true, servConn);
   }
 
   /**
-   * Copied from Get70.getValueAndIsObject(), except a minor change. (Make the
-   * method static instead of copying it here?)
-   * 
+   * Copied from Get70.getValueAndIsObject(), except a minor change. (Make the method static instead
+   * of copying it here?)
+   *
    * @param value
    */
-  private static void updateValues(VersionedObjectList values, Object key, Object value, VersionTag versionTag) {
+  private static void updateValues(
+      VersionedObjectList values, Object key, Object value, VersionTag versionTag) {
     boolean isObject = true;
 
     // If the value in the VM is a CachedDeserializable,
@@ -1138,7 +1381,10 @@ public abstract class BaseCommand implements Command {
     boolean wasInvalid = false;
     if (value instanceof CachedDeserializable) {
       value = ((CachedDeserializable) value).getValue();
-    } else if (value == Token.REMOVED_PHASE1 || value == Token.REMOVED_PHASE2 || value == Token.DESTROYED || value == Token.TOMBSTONE) {
+    } else if (value == Token.REMOVED_PHASE1
+        || value == Token.REMOVED_PHASE2
+        || value == Token.DESTROYED
+        || value == Token.TOMBSTONE) {
       value = null;
     } else if (value == Token.INVALID || value == Token.LOCAL_INVALID) {
       value = null; // fix for bug 35884
@@ -1155,11 +1401,17 @@ public abstract class BaseCommand implements Command {
     }
   }
 
-  public static void appendNewRegisterInterestResponseChunkFromLocal(LocalRegion region, VersionedObjectList values, Object riKeys, Set keySet, ServerConnection servConn) throws IOException {
+  public static void appendNewRegisterInterestResponseChunkFromLocal(
+      LocalRegion region,
+      VersionedObjectList values,
+      Object riKeys,
+      Set keySet,
+      ServerConnection servConn)
+      throws IOException {
     Object key = null;
     VersionTagHolder versionHolder = null;
     ClientProxyMembershipID requestingClient = servConn == null ? null : servConn.getProxyID();
-    for (Iterator it = keySet.iterator(); it.hasNext();) {
+    for (Iterator it = keySet.iterator(); it.hasNext(); ) {
       key = it.next();
       versionHolder = new VersionTagHolder();
 
@@ -1170,14 +1422,14 @@ public abstract class BaseCommand implements Command {
       if (values.size() == maximumChunkSize) {
         // Send the chunk and clear the list
         // values.setKeys(null); // Now we need to send keys too.
-        sendNewRegisterInterestResponseChunk(region, riKeys != null ? riKeys : "ALL_KEYS", values, false, servConn);
+        sendNewRegisterInterestResponseChunk(
+            region, riKeys != null ? riKeys : "ALL_KEYS", values, false, servConn);
         values.clear();
       }
     } // for
   }
 
   /**
-   * 
    * @param region
    * @param values {@link VersionedObjectList}
    * @param riKeys
@@ -1185,8 +1437,14 @@ public abstract class BaseCommand implements Command {
    * @param servConn
    * @throws IOException
    */
-  public static void appendNewRegisterInterestResponseChunk(LocalRegion region, VersionedObjectList values, Object riKeys, Set set, ServerConnection servConn) throws IOException {
-    for (Iterator<Map.Entry> it = set.iterator(); it.hasNext();) {
+  public static void appendNewRegisterInterestResponseChunk(
+      LocalRegion region,
+      VersionedObjectList values,
+      Object riKeys,
+      Set set,
+      ServerConnection servConn)
+      throws IOException {
+    for (Iterator<Map.Entry> it = set.iterator(); it.hasNext(); ) {
       Map.Entry entry = it.next(); // Region.Entry or Map.Entry
       if (entry instanceof Region.Entry) { // local entries
         VersionTag vt = null;
@@ -1217,20 +1475,37 @@ public abstract class BaseCommand implements Command {
       if (values.size() == maximumChunkSize) {
         // Send the chunk and clear the list
         // values.setKeys(null); // Now we need to send keys too.
-        sendNewRegisterInterestResponseChunk(region, riKeys != null ? riKeys : "ALL_KEYS", values, false, servConn);
+        sendNewRegisterInterestResponseChunk(
+            region, riKeys != null ? riKeys : "ALL_KEYS", values, false, servConn);
         values.clear();
       }
     } // for
   }
 
-  public static void sendNewRegisterInterestResponseChunk(LocalRegion region, Object riKey, VersionedObjectList list, boolean lastChunk, ServerConnection servConn) throws IOException {
+  public static void sendNewRegisterInterestResponseChunk(
+      LocalRegion region,
+      Object riKey,
+      VersionedObjectList list,
+      boolean lastChunk,
+      ServerConnection servConn)
+      throws IOException {
     ChunkedMessage chunkedResponseMsg = servConn.getRegisterInterestResponseMessage();
     chunkedResponseMsg.setNumberOfParts(1);
     chunkedResponseMsg.setLastChunk(lastChunk);
     chunkedResponseMsg.addObjPart(list, zipValues);
     String regionName = (region == null) ? " null " : region.getFullPath();
     if (logger.isDebugEnabled()) {
-      String str = servConn.getName() + ": Sending" + (lastChunk ? " last " : " ") + "register interest response chunk for region: " + regionName + " for keys: " + riKey + " chunk=<" + chunkedResponseMsg + ">";
+      String str =
+          servConn.getName()
+              + ": Sending"
+              + (lastChunk ? " last " : " ")
+              + "register interest response chunk for region: "
+              + regionName
+              + " for keys: "
+              + riKey
+              + " chunk=<"
+              + chunkedResponseMsg
+              + ">";
       logger.debug(str);
     }
 
@@ -1240,15 +1515,14 @@ public abstract class BaseCommand implements Command {
   /**
    * Process an interest request of type {@link InterestType#REGULAR_EXPRESSION}
    *
-   * @param region
-   *                the region
-   * @param regex
-   *                the regex
-   * @param policy
-   *                the policy
+   * @param region the region
+   * @param regex the regex
+   * @param policy the policy
    * @throws IOException
    */
-  private static void handleRegEx(LocalRegion region, String regex, InterestResultPolicy policy, ServerConnection servConn) throws IOException {
+  private static void handleRegEx(
+      LocalRegion region, String regex, InterestResultPolicy policy, ServerConnection servConn)
+      throws IOException {
     if (region instanceof PartitionedRegion) {
       // too bad java doesn't provide another way to do this...
       handleRegExPR((PartitionedRegion) region, regex, policy, servConn);
@@ -1258,7 +1532,9 @@ public abstract class BaseCommand implements Command {
     // Handle the regex pattern
     Pattern keyPattern = Pattern.compile(regex);
     if (region != null) {
-      for (Iterator it = region.keySet(sendTombstonesInRIResults(servConn, policy)).iterator(); it.hasNext();) {
+      for (Iterator it = region.keySet(sendTombstonesInRIResults(servConn, policy)).iterator();
+          it.hasNext();
+          ) {
         Object entryKey = it.next();
         if (!(entryKey instanceof String)) {
           // key is not a String, cannot apply regex to this entry
@@ -1280,21 +1556,26 @@ public abstract class BaseCommand implements Command {
   /**
    * Process an interest request of type {@link InterestType#REGULAR_EXPRESSION}
    *
-   * @param region
-   *                the region
-   * @param regex
-   *                the regex
-   * @param policy
-   *                the policy
+   * @param region the region
+   * @param regex the regex
+   * @param policy the policy
    * @throws IOException
    */
-  private static void handleRegExPR(final PartitionedRegion region, final String regex, final InterestResultPolicy policy, final ServerConnection servConn) throws IOException {
+  private static void handleRegExPR(
+      final PartitionedRegion region,
+      final String regex,
+      final InterestResultPolicy policy,
+      final ServerConnection servConn)
+      throws IOException {
     final ArrayList keyList = new ArrayList(maximumChunkSize);
-    region.getKeysWithRegEx(regex, sendTombstonesInRIResults(servConn, policy), new PartitionedRegion.SetCollector() {
-      public void receiveSet(Set theSet) throws IOException {
-        appendInterestResponseKeys(region, regex, theSet, keyList, "regex", servConn);
-      }
-    });
+    region.getKeysWithRegEx(
+        regex,
+        sendTombstonesInRIResults(servConn, policy),
+        new PartitionedRegion.SetCollector() {
+          public void receiveSet(Set theSet) throws IOException {
+            appendInterestResponseKeys(region, regex, theSet, keyList, "regex", servConn);
+          }
+        });
     // Send the last chunk (the only chunk for individual and list keys)
     // always send it back, even if the list is of zero size.
     sendRegisterInterestResponseChunk(region, regex, keyList, true, servConn);
@@ -1303,41 +1584,56 @@ public abstract class BaseCommand implements Command {
   /**
    * Process an interest request involving a list of keys
    *
-   * @param region
-   *                the region
-   * @param keyList
-   *                the list of keys
-   * @param policy
-   *                the policy
+   * @param region the region
+   * @param keyList the list of keys
+   * @param policy the policy
    * @throws IOException
    */
-  private static void handleListPR(final PartitionedRegion region, final List keyList, final InterestResultPolicy policy, final ServerConnection servConn) throws IOException {
+  private static void handleListPR(
+      final PartitionedRegion region,
+      final List keyList,
+      final InterestResultPolicy policy,
+      final ServerConnection servConn)
+      throws IOException {
     final ArrayList newKeyList = new ArrayList(maximumChunkSize);
-    region.getKeysWithList(keyList, sendTombstonesInRIResults(servConn, policy), new PartitionedRegion.SetCollector() {
-      public void receiveSet(Set theSet) throws IOException {
-        appendInterestResponseKeys(region, keyList, theSet, newKeyList, "list", servConn);
-      }
-    });
+    region.getKeysWithList(
+        keyList,
+        sendTombstonesInRIResults(servConn, policy),
+        new PartitionedRegion.SetCollector() {
+          public void receiveSet(Set theSet) throws IOException {
+            appendInterestResponseKeys(region, keyList, theSet, newKeyList, "list", servConn);
+          }
+        });
     // Send the last chunk (the only chunk for individual and list keys)
     // always send it back, even if the list is of zero size.
     sendRegisterInterestResponseChunk(region, keyList, newKeyList, true, servConn);
   }
 
   @SuppressWarnings("rawtypes")
-  private static void handleKVList(final LocalRegion region, final List keyList, boolean serializeValues, final ServerConnection servConn) throws IOException {
+  private static void handleKVList(
+      final LocalRegion region,
+      final List keyList,
+      boolean serializeValues,
+      final ServerConnection servConn)
+      throws IOException {
 
     if (region != null && region instanceof PartitionedRegion) {
       handleKVKeysPR((PartitionedRegion) region, keyList, serializeValues, servConn);
       return;
     }
-    VersionedObjectList values = new VersionedObjectList(maximumChunkSize, true, region == null ? true : region.getAttributes().getConcurrencyChecksEnabled(), serializeValues);
+    VersionedObjectList values =
+        new VersionedObjectList(
+            maximumChunkSize,
+            true,
+            region == null ? true : region.getAttributes().getConcurrencyChecksEnabled(),
+            serializeValues);
 
     // Handle list of keys
     if (region != null) {
       VersionTag versionTag = null;
       Object data = null;
 
-      for (Iterator it = keyList.iterator(); it.hasNext();) {
+      for (Iterator it = keyList.iterator(); it.hasNext(); ) {
         Object key = it.next();
         if (region.containsKey(key) || region.containsTombstone(key)) {
           VersionTagHolder versionHolder = new VersionTagHolder();
@@ -1364,22 +1660,28 @@ public abstract class BaseCommand implements Command {
   /**
    * Append an interest response
    *
-   * @param region
-   *                the region (for debugging)
-   * @param riKey
-   *                the registerInterest "key" (what the client is interested
-   *                in)
-   * @param entryKey
-   *                key we're responding to
-   * @param list
-   *                list to append to
-   * @param kind
-   *                for debugging
+   * @param region the region (for debugging)
+   * @param riKey the registerInterest "key" (what the client is interested in)
+   * @param entryKey key we're responding to
+   * @param list list to append to
+   * @param kind for debugging
    */
-  private static void appendInterestResponseKey(LocalRegion region, Object riKey, Object entryKey, ArrayList list, String kind, ServerConnection servConn) throws IOException {
+  private static void appendInterestResponseKey(
+      LocalRegion region,
+      Object riKey,
+      Object entryKey,
+      ArrayList list,
+      String kind,
+      ServerConnection servConn)
+      throws IOException {
     list.add(entryKey);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: appendInterestResponseKey <{}>; list size was {}; region: {}", servConn.getName(), entryKey, list.size(), region.getFullPath());
+      logger.debug(
+          "{}: appendInterestResponseKey <{}>; list size was {}; region: {}",
+          servConn.getName(),
+          entryKey,
+          list.size(),
+          region.getFullPath());
     }
     if (list.size() == maximumChunkSize) {
       // Send the chunk and clear the list
@@ -1388,8 +1690,15 @@ public abstract class BaseCommand implements Command {
     }
   }
 
-  protected static void appendInterestResponseKeys(LocalRegion region, Object riKey, Collection entryKeys, ArrayList collector, String riDescr, ServerConnection servConn) throws IOException {
-    for (Iterator it = entryKeys.iterator(); it.hasNext();) {
+  protected static void appendInterestResponseKeys(
+      LocalRegion region,
+      Object riKey,
+      Collection entryKeys,
+      ArrayList collector,
+      String riDescr,
+      ServerConnection servConn)
+      throws IOException {
+    for (Iterator it = entryKeys.iterator(); it.hasNext(); ) {
       appendInterestResponseKey(region, riKey, it.next(), collector, riDescr, servConn);
     }
   }

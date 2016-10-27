@@ -27,7 +27,7 @@ import org.apache.geode.pdx.SimpleClass;
 import org.apache.geode.pdx.internal.PdxInstanceImpl;
 
 public class PDXPostProcessor implements PostProcessor {
-  public static byte[] BYTES = { 1, 0 };
+  public static byte[] BYTES = {1, 0};
 
   private boolean pdx = false;
   private int count = 0;
@@ -38,7 +38,8 @@ public class PDXPostProcessor implements PostProcessor {
   }
 
   @Override
-  public Object processRegionValue(final Object principal, final String regionName, final Object key, final Object value) {
+  public Object processRegionValue(
+      final Object principal, final String regionName, final Object key, final Object value) {
     count++;
     if (value instanceof byte[]) {
       assertTrue(Arrays.equals(BYTES, (byte[]) value));

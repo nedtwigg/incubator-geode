@@ -21,12 +21,14 @@ import org.apache.geode.internal.cache.tier.sockets.Message;
 
 /**
  * Does a region size on a server
+ *
  * @since GemFire 6.6
  */
 public class SizeOp {
   /**
-   * Does a region size on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region size on a server using connections from the given pool to communicate with the
+   * server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the entry keySet on
    */
@@ -40,9 +42,7 @@ public class SizeOp {
   }
 
   private static class SizeOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public SizeOpImpl(String region) {
       super(MessageType.SIZE, 1);
       getMessage().addStringPart(region);
@@ -75,8 +75,7 @@ public class SizeOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import java.io.DataInput;
@@ -37,9 +35,7 @@ import org.apache.geode.internal.cache.TXRemoteCommitMessage.RemoteCommitRespons
 import org.apache.geode.internal.cache.TXRemoteCommitMessage.TXRemoteCommitReplyMessage;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- *
- */
+/** */
 public class JtaAfterCompletionMessage extends TXMessage {
 
   private static final Logger logger = LogService.getLogger();
@@ -48,24 +44,34 @@ public class JtaAfterCompletionMessage extends TXMessage {
 
   private int processorType;
 
-  public JtaAfterCompletionMessage() {
-  }
+  public JtaAfterCompletionMessage() {}
 
   @Override
   public int getProcessorType() {
     return this.processorType;
   }
 
-  public JtaAfterCompletionMessage(int status, int txUniqId, InternalDistributedMember onBehalfOfClientMember, ReplyProcessor21 processor) {
+  public JtaAfterCompletionMessage(
+      int status,
+      int txUniqId,
+      InternalDistributedMember onBehalfOfClientMember,
+      ReplyProcessor21 processor) {
     super(txUniqId, onBehalfOfClientMember, processor);
     this.status = status;
   }
 
-  public static RemoteCommitResponse send(Cache cache, int txId, InternalDistributedMember onBehalfOfClientMember, int status, DistributedMember recipient) {
-    final InternalDistributedSystem system = (InternalDistributedSystem) cache.getDistributedSystem();
+  public static RemoteCommitResponse send(
+      Cache cache,
+      int txId,
+      InternalDistributedMember onBehalfOfClientMember,
+      int status,
+      DistributedMember recipient) {
+    final InternalDistributedSystem system =
+        (InternalDistributedSystem) cache.getDistributedSystem();
     final Set recipients = Collections.singleton(recipient);
     RemoteCommitResponse response = new RemoteCommitResponse(system, recipients);
-    JtaAfterCompletionMessage msg = new JtaAfterCompletionMessage(status, txId, onBehalfOfClientMember, response);
+    JtaAfterCompletionMessage msg =
+        new JtaAfterCompletionMessage(status, txId, onBehalfOfClientMember, response);
     msg.setRecipients(recipients);
     // bug #43087 - hang sending JTA synchronizations from delegate server
     if (system.threadOwnsResources()) {
@@ -121,5 +127,4 @@ public class JtaAfterCompletionMessage extends TXMessage {
     this.status = in.readInt();
     this.processorType = in.readInt();
   }
-
 }

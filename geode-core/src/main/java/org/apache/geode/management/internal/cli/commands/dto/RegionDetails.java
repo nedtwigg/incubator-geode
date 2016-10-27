@@ -133,18 +133,21 @@ public class RegionDetails implements CliJsonSerializable {
   public void fromJson(GfJsonObject objectStateAsjson) {
     this.name = JsonUtil.getString(objectStateAsjson, "name");
     this.path = JsonUtil.getString(objectStateAsjson, "path");
-    this.isPartitioned = JsonUtil.getBoolean(objectStateAsjson, "partitioned"); // NOTE: no 'is' in names
+    this.isPartitioned =
+        JsonUtil.getBoolean(objectStateAsjson, "partitioned"); // NOTE: no 'is' in names
     this.isPersistent = JsonUtil.getBoolean(objectStateAsjson, "persistent");
     this.groups = JsonUtil.getStringArray(objectStateAsjson, "groups");
 
     if (objectStateAsjson.has("regionAttributesInfo")) {
       this.regionAttributesInfo = new RegionAttributesInfo();
-      this.regionAttributesInfo.fromJson(JsonUtil.getJSONObject(objectStateAsjson, "regionAttributesInfo"));
+      this.regionAttributesInfo.fromJson(
+          JsonUtil.getJSONObject(objectStateAsjson, "regionAttributesInfo"));
     }
 
-    List<CliJsonSerializable> retrievedList = JsonUtil.getList(objectStateAsjson, "regionMemberDetailsList");
+    List<CliJsonSerializable> retrievedList =
+        JsonUtil.getList(objectStateAsjson, "regionMemberDetailsList");
     regionMemberDetailsList = new ArrayList<RegionMemberDetails>();
-    for (int i = 0; i < retrievedList.size(); i++) { // What's the better way? 
+    for (int i = 0; i < retrievedList.size(); i++) { // What's the better way?
       regionMemberDetailsList.add((RegionMemberDetails) retrievedList.get(i));
     }
   }
@@ -159,52 +162,42 @@ public class RegionDetails implements CliJsonSerializable {
     result = prime * result + (isPersistent ? 1231 : 1237);
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     result = prime * result + ((path == null) ? 0 : path.hashCode());
-    result = prime * result + ((regionAttributesInfo == null) ? 0 : regionAttributesInfo.hashCode());
-    result = prime * result + ((regionMemberDetailsList == null) ? 0 : regionMemberDetailsList.hashCode());
+    result =
+        prime * result + ((regionAttributesInfo == null) ? 0 : regionAttributesInfo.hashCode());
+    result =
+        prime * result
+            + ((regionMemberDetailsList == null) ? 0 : regionMemberDetailsList.hashCode());
     return result;
   }
 
   @Override
   public boolean equals(Object obj) { // eclipse generated
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     RegionDetails other = (RegionDetails) obj;
-    if (!Arrays.equals(fieldsToSkipOnUI, other.fieldsToSkipOnUI))
-      return false;
-    if (!Arrays.equals(groups, other.groups))
-      return false;
-    if (isPartitioned != other.isPartitioned)
-      return false;
-    if (isPersistent != other.isPersistent)
-      return false;
+    if (!Arrays.equals(fieldsToSkipOnUI, other.fieldsToSkipOnUI)) return false;
+    if (!Arrays.equals(groups, other.groups)) return false;
+    if (isPartitioned != other.isPartitioned) return false;
+    if (isPersistent != other.isPersistent) return false;
     if (name == null) {
-      if (other.name != null)
-        return false;
-    } else if (!name.equals(other.name))
-      return false;
+      if (other.name != null) return false;
+    } else if (!name.equals(other.name)) return false;
     if (path == null) {
-      if (other.path != null)
-        return false;
-    } else if (!path.equals(other.path))
-      return false;
+      if (other.path != null) return false;
+    } else if (!path.equals(other.path)) return false;
     if (regionAttributesInfo == null) {
-      if (other.regionAttributesInfo != null)
-        return false;
-    } else if (!regionAttributesInfo.equals(other.regionAttributesInfo))
-      return false;
+      if (other.regionAttributesInfo != null) return false;
+    } else if (!regionAttributesInfo.equals(other.regionAttributesInfo)) return false;
     if (regionMemberDetailsList == null) {
-      if (other.regionMemberDetailsList != null)
-        return false;
+      if (other.regionMemberDetailsList != null) return false;
     } else if (!areMemberDetailsSame(regionMemberDetailsList, other.regionMemberDetailsList))
       return false;
     return true;
   }
 
-  private boolean areMemberDetailsSame(List<RegionMemberDetails> mine, List<RegionMemberDetails> other) {
+  private boolean areMemberDetailsSame(
+      List<RegionMemberDetails> mine, List<RegionMemberDetails> other) {
     if (other != null && other.size() == mine.size()) {
       for (int i = 0; i < mine.size(); i++) {
         if (!mine.get(i).equals(other.get(i))) {

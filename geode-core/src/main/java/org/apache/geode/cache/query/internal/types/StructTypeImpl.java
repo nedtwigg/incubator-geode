@@ -31,6 +31,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
  * Implementation of StructType
+ *
  * @since GemFire 4.0
  */
 public final class StructTypeImpl extends ObjectTypeImpl implements StructType {
@@ -39,11 +40,8 @@ public final class StructTypeImpl extends ObjectTypeImpl implements StructType {
   private ObjectType[] fieldTypes;
   private String[] indexAlternativeFieldNames;
 
-  /**
-   * Empty constructor to satisfy <code>DataSerializer</code> requirements
-   */
-  public StructTypeImpl() {
-  }
+  /** Empty constructor to satisfy <code>DataSerializer</code> requirements */
+  public StructTypeImpl() {}
 
   /** Creates a new instance of StructType */
   public StructTypeImpl(String[] fieldNames) {
@@ -54,7 +52,8 @@ public final class StructTypeImpl extends ObjectTypeImpl implements StructType {
     this(Struct.class, fieldNames, fieldTypes);
   }
 
-  public StructTypeImpl(String[] fieldNames, String[] indexAlternativeFieldNames, ObjectType[] fieldTypes) {
+  public StructTypeImpl(
+      String[] fieldNames, String[] indexAlternativeFieldNames, ObjectType[] fieldTypes) {
     this(Struct.class, fieldNames, fieldTypes);
     this.indexAlternativeFieldNames = indexAlternativeFieldNames;
   }
@@ -66,7 +65,8 @@ public final class StructTypeImpl extends ObjectTypeImpl implements StructType {
   public StructTypeImpl(Class clazz, String[] fieldNames, ObjectType[] fieldTypes) {
     super(clazz);
     if (fieldNames == null) {
-      throw new IllegalArgumentException(LocalizedStrings.StructTypeImpl_FIELDNAMES_MUST_NOT_BE_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.StructTypeImpl_FIELDNAMES_MUST_NOT_BE_NULL.toLocalizedString());
     }
     this.fieldNames = fieldNames;
     this.fieldTypes = fieldTypes == null ? new ObjectType[this.fieldNames.length] : fieldTypes;
@@ -91,15 +91,17 @@ public final class StructTypeImpl extends ObjectTypeImpl implements StructType {
         return i;
       }
     }
-    throw new IllegalArgumentException(LocalizedStrings.StructTypeImpl_FIELDNAME_0_NOT_FOUND.toLocalizedString(fieldName));
+    throw new IllegalArgumentException(
+        LocalizedStrings.StructTypeImpl_FIELDNAME_0_NOT_FOUND.toLocalizedString(fieldName));
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof StructTypeImpl))
-      return false;
+    if (!(obj instanceof StructTypeImpl)) return false;
     StructTypeImpl t = (StructTypeImpl) obj;
-    return (Arrays.equals(this.fieldNames, t.getFieldNames()) || Arrays.equals(this.indexAlternativeFieldNames, t.getFieldNames())) && Arrays.equals(getFieldTypes(), t.getFieldTypes());
+    return (Arrays.equals(this.fieldNames, t.getFieldNames())
+            || Arrays.equals(this.indexAlternativeFieldNames, t.getFieldNames()))
+        && Arrays.equals(getFieldTypes(), t.getFieldTypes());
   }
 
   @Override
@@ -111,8 +113,7 @@ public final class StructTypeImpl extends ObjectTypeImpl implements StructType {
   public String toString() {
     StringBuffer sb = new StringBuffer("struct<");
     for (int i = 0; i < fieldNames.length; i++) {
-      if (i > 0)
-        sb.append(',');
+      if (i > 0) sb.append(',');
       sb.append(fieldNames[i] + ":" + fieldTypes[i]);
     }
     sb.append('>');
@@ -134,7 +135,7 @@ public final class StructTypeImpl extends ObjectTypeImpl implements StructType {
     return true;
   }
 
-  // Static Utilities 
+  // Static Utilities
   public static StructTypeImpl typeFromStruct(Struct s) {
     // handle unlikely event that Struct is not a StructImpl
     if (s instanceof StructImpl) {
@@ -161,5 +162,4 @@ public final class StructTypeImpl extends ObjectTypeImpl implements StructType {
     DataSerializer.writeStringArray(this.fieldNames, out);
     DataSerializer.writeObjectArray(fieldTypes, out);
   }
-
 }

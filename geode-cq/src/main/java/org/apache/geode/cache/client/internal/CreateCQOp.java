@@ -31,12 +31,14 @@ import org.apache.geode.cache.client.internal.ExecutablePool;
 
 /**
  * Creates a CQ on a server
+ *
  * @since GemFire 5.7
  */
 public class CreateCQOp {
   /**
-   * Create a continuous query on the server using connections from the given pool
-   * to communicate with the server.
+   * Create a continuous query on the server using connections from the given pool to communicate
+   * with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param cqName name of the CQ to create
    * @param queryStr string OQL statement to be executed
@@ -44,13 +46,20 @@ public class CreateCQOp {
    * @param isDurable true if CQ is durable
    * @param regionDataPolicy the data policy ordinal of the region
    */
-  public static Object execute(ExecutablePool pool, String cqName, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
+  public static Object execute(
+      ExecutablePool pool,
+      String cqName,
+      String queryStr,
+      int cqState,
+      boolean isDurable,
+      byte regionDataPolicy) {
     AbstractOp op = new CreateCQOpImpl(cqName, queryStr, cqState, isDurable, regionDataPolicy);
     return pool.executeOnQueuesAndReturnPrimaryResult(op);
   }
 
   /**
    * Create a continuous query on the server using a specific connections from the given pool.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param conn the actual connection to use
    * @param cqName name of the CQ to create
@@ -59,7 +68,14 @@ public class CreateCQOp {
    * @param isDurable true if CQ is durable
    * @param regionDataPolicy the data policy ordinal of the region
    */
-  public static Object executeOn(ExecutablePool pool, Connection conn, String cqName, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
+  public static Object executeOn(
+      ExecutablePool pool,
+      Connection conn,
+      String cqName,
+      String queryStr,
+      int cqState,
+      boolean isDurable,
+      byte regionDataPolicy) {
     AbstractOp op = new CreateCQOpImpl(cqName, queryStr, cqState, isDurable, regionDataPolicy);
     return pool.executeOn(conn, op);
   }
@@ -68,23 +84,20 @@ public class CreateCQOp {
     // no instances allowed
   }
 
-  /**
-   * Note both StopCQOpImpl and CloseCQOpImpl extend this class
-   */
+  /** Note both StopCQOpImpl and CloseCQOpImpl extend this class */
   protected static class CreateCQOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
-    public CreateCQOpImpl(String cqName, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
+    /** @throws org.apache.geode.SerializationException if serialization fails */
+    public CreateCQOpImpl(
+        String cqName, String queryStr, int cqState, boolean isDurable, byte regionDataPolicy) {
       super(MessageType.EXECUTECQ_MSG_TYPE, 5);
       getMessage().addStringPart(cqName);
       getMessage().addStringPart(queryStr);
       getMessage().addIntPart(cqState);
       {
         byte durableByte = (byte) (isDurable ? 0x01 : 0x00);
-        getMessage().addBytesPart(new byte[] { durableByte });
+        getMessage().addBytesPart(new byte[] {durableByte});
       }
-      getMessage().addBytesPart(new byte[] { regionDataPolicy });
+      getMessage().addBytesPart(new byte[] {regionDataPolicy});
     }
 
     @Override
@@ -118,13 +131,15 @@ public class CreateCQOp {
 
           throw new ServerOperationException(errorMessage);
         } else {
-          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
+          throw new InternalGemFireError(
+              "Unexpected message type " + MessageType.getString(msgType));
         }
       }
     }
 
     /**
      * This constructor is for our subclasses
+     *
      * @throws org.apache.geode.SerializationException if serialization fails
      */
     protected CreateCQOpImpl(int msgType, int numParts) {
@@ -137,7 +152,8 @@ public class CreateCQOp {
 
     @Override
     protected boolean isErrorResponse(int msgType) {
-      return msgType == MessageType.CQDATAERROR_MSG_TYPE || msgType == MessageType.CQ_EXCEPTION_TYPE;
+      return msgType == MessageType.CQDATAERROR_MSG_TYPE
+          || msgType == MessageType.CQ_EXCEPTION_TYPE;
     }
 
     @Override

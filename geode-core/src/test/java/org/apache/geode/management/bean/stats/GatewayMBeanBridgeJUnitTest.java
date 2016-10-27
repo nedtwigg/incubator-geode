@@ -30,8 +30,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 
 import io.codearte.catchexception.shade.mockito.Mockito;
 
-/**
- */
+/** */
 @Category(IntegrationTest.class)
 public class GatewayMBeanBridgeJUnitTest extends MBeanStatsTestCase {
 

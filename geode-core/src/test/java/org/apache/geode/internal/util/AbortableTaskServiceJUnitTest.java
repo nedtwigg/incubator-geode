@@ -68,13 +68,15 @@ public class AbortableTaskServiceJUnitTest {
     DelayedTask dt = new DelayedTask();
     this.tasks.execute(dt);
 
-    Future<Boolean> future = this.futures.submit(new Callable<Boolean>() {
-      @Override
-      public Boolean call() {
-        tasks.waitForCompletion();
-        return tasks.isCompleted();
-      }
-    });
+    Future<Boolean> future =
+        this.futures.submit(
+            new Callable<Boolean>() {
+              @Override
+              public Boolean call() {
+                tasks.waitForCompletion();
+                return tasks.isCompleted();
+              }
+            });
 
     this.delay.countDown();
 
@@ -89,13 +91,15 @@ public class AbortableTaskServiceJUnitTest {
     DelayedTask dt = new DelayedTask();
     this.tasks.execute(dt);
 
-    Future<Boolean> future = this.futures.submit(new Callable<Boolean>() {
-      @Override
-      public Boolean call() {
-        tasks.waitForCompletion();
-        return tasks.isCompleted();
-      }
-    });
+    Future<Boolean> future =
+        this.futures.submit(
+            new Callable<Boolean>() {
+              @Override
+              public Boolean call() {
+                tasks.waitForCompletion();
+                return tasks.isCompleted();
+              }
+            });
 
     this.tasks.abortAll();
     this.delay.countDown();
@@ -109,7 +113,12 @@ public class AbortableTaskServiceJUnitTest {
   @Test
   public void testAbortBeforeExecute() throws Exception {
     // delay underlying call to execute(Runnable) until after abortAll() is invoked
-    Executor executor = (Executor) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { Executor.class }, new DelayedExecutorHandler(Executors.newSingleThreadExecutor(), "execute"));
+    Executor executor =
+        (Executor)
+            Proxy.newProxyInstance(
+                getClass().getClassLoader(),
+                new Class[] {Executor.class},
+                new DelayedExecutorHandler(Executors.newSingleThreadExecutor(), "execute"));
     this.tasks = new AbortableTaskService(executor);
 
     DelayedTask dt = new DelayedTask();
@@ -118,13 +127,15 @@ public class AbortableTaskServiceJUnitTest {
     this.tasks.execute(dt);
     this.tasks.execute(dt2);
 
-    Future<Boolean> future = this.futures.submit(new Callable<Boolean>() {
-      @Override
-      public Boolean call() {
-        tasks.waitForCompletion();
-        return tasks.isCompleted();
-      }
-    });
+    Future<Boolean> future =
+        this.futures.submit(
+            new Callable<Boolean>() {
+              @Override
+              public Boolean call() {
+                tasks.waitForCompletion();
+                return tasks.isCompleted();
+              }
+            });
 
     this.tasks.abortAll();
     this.delay.countDown();
@@ -137,9 +148,7 @@ public class AbortableTaskServiceJUnitTest {
     assertTrue(this.tasks.isCompleted());
   }
 
-  /**
-   * AbortableTask that waits on the CountDownLatch proceeding.
-   */
+  /** AbortableTask that waits on the CountDownLatch proceeding. */
   private class DelayedTask implements AbortableTask {
     private final AtomicBoolean wasAborted = new AtomicBoolean(false);
     private final AtomicBoolean wasRun = new AtomicBoolean(false);
@@ -162,9 +171,8 @@ public class AbortableTaskServiceJUnitTest {
   }
 
   /**
-   * Proxy handler which invokes methodName asynchronously AND delays the 
-   * invocation to the underlying methodName until after CountDownLatch is 
-   * opened.
+   * Proxy handler which invokes methodName asynchronously AND delays the invocation to the
+   * underlying methodName until after CountDownLatch is opened.
    */
   private class DelayedExecutorHandler implements InvocationHandler {
     private final Executor executor;
@@ -178,21 +186,23 @@ public class AbortableTaskServiceJUnitTest {
     }
 
     @Override
-    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-      this.async.execute(new Runnable() {
-        public void run() {
-          try {
-            if (method.getName().equals(methodName)) {
-              delay.await();
+    public Object invoke(final Object proxy, final Method method, final Object[] args)
+        throws Throwable {
+      this.async.execute(
+          new Runnable() {
+            public void run() {
+              try {
+                if (method.getName().equals(methodName)) {
+                  delay.await();
+                }
+                method.invoke(executor, args);
+              } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+              } catch (Exception e) {
+                throw new Error(e);
+              }
             }
-            method.invoke(executor, args);
-          } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-          } catch (Exception e) {
-            throw new Error(e);
-          }
-        }
-      });
+          });
       return null;
     }
   }

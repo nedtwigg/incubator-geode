@@ -18,18 +18,14 @@ package org.apache.geode.cache;
 
 import java.util.Properties;
 
-/** 
+/**
  * An object that can be described in a declarative caching XML file.
  *
- * <p>
+ * <p>Any user-defined object in the declarative caching xml file should implement this interface in
+ * order to be constructed.
  *
- * Any user-defined object in the declarative caching xml file
- * should implement this interface in order to be constructed.
- *
- * <p>
- *
- * For example, the user can declare a <code>CacheLoader</code> in a declarative
- * XML file as follows:
+ * <p>For example, the user can declare a <code>CacheLoader</code> in a declarative XML file as
+ * follows:
  *
  * <pre>
  *        &lt;cache-loader&gt;
@@ -40,37 +36,24 @@ import java.util.Properties;
  *        &lt;/cache-loader&gt;
  * </pre>
  *
- * <p>
+ * <p>In this case, <code>com.company.app.DBLoader</code> must implement both the {@link
+ * CacheLoader} and <code>Declarable</code> interfaces. The cache service will construct a <code>
+ * com.company.app.DBLoader</code> object by invoking the loader's zero-argument constructor and
+ * then calling the {@link #init} method to pass in the parameters.
  *
- * In this case, <code>com.company.app.DBLoader</code> must 
- * implement both the {@link CacheLoader} and <code>Declarable</code>
- * interfaces. The cache service will construct a
- * <code>com.company.app.DBLoader</code> object by invoking the loader's
- * zero-argument constructor and then calling the {@link #init} method
- * to pass in the parameters.
+ * <p>See <a href="package-summary.html#declarative">package introduction</a>.
  *
- * <P>
- *
- * See <a href="package-summary.html#declarative">package introduction</a>.
- *
- *
- * 
  * @since GemFire 2.0
  */
 public interface Declarable {
 
   /**
-   * Initializes a user-defined object using the given properties.
-   * Note that any uncaught exception thrown by this method will cause
-   * the <code>Cache</code> initialization to fail.
+   * Initializes a user-defined object using the given properties. Note that any uncaught exception
+   * thrown by this method will cause the <code>Cache</code> initialization to fail.
    *
-   * @param props 
-   *        Contains the parameters declared in the declarative xml
-   *        file.
-   *
-   * @throws IllegalArgumentException
-   *         If one of the configuration options in <code>props</code>
-   *         is illegal or malformed.
+   * @param props Contains the parameters declared in the declarative xml file.
+   * @throws IllegalArgumentException If one of the configuration options in <code>props</code> is
+   *     illegal or malformed.
    */
   public void init(Properties props);
 }

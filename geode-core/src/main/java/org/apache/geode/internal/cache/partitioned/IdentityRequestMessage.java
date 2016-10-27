@@ -41,6 +41,7 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
  * A message sent to determine the most recent PartitionedRegion identity
+ *
  * @since GemFire 5.0
  */
 public final class IdentityRequestMessage extends DistributionMessage implements MessageWithReply {
@@ -48,9 +49,7 @@ public final class IdentityRequestMessage extends DistributionMessage implements
 
   private static final int UNINITIALIZED = -1;
 
-  /**
-   * This is the keeper of the latest PartitionedRegion Identity on a per VM basis
-   */
+  /** This is the keeper of the latest PartitionedRegion Identity on a per VM basis */
   private static int latestId = UNINITIALIZED;
 
   public static synchronized void setLatestId(int newlatest) {
@@ -61,6 +60,7 @@ public final class IdentityRequestMessage extends DistributionMessage implements
 
   /**
    * Method public for test reasons
+   *
    * @return the latest identity
    */
   public static synchronized int getLatestId() {
@@ -69,12 +69,8 @@ public final class IdentityRequestMessage extends DistributionMessage implements
 
   private int processorId;
 
-  /** 
-   * Empty constructor to conform to DataSerializer interface
-   *
-   */
-  public IdentityRequestMessage() {
-  }
+  /** Empty constructor to conform to DataSerializer interface */
+  public IdentityRequestMessage() {}
 
   public IdentityRequestMessage(Set recipients, int processorId) {
     setRecipients(recipients);
@@ -116,8 +112,10 @@ public final class IdentityRequestMessage extends DistributionMessage implements
   }
 
   /**
-   * Sends a <code>IdentityRequest</code> to each <code>PartitionedRegion</code> {@link org.apache.geode.internal.cache.Node}.  The
-   * <code>IdentityResponse</code> is used to fetch the highest current identity value. 
+   * Sends a <code>IdentityRequest</code> to each <code>PartitionedRegion</code> {@link
+   * org.apache.geode.internal.cache.Node}. The <code>IdentityResponse</code> is used to fetch the
+   * highest current identity value.
+   *
    * @param recipients
    * @return the response object to wait upon
    */
@@ -152,12 +150,20 @@ public final class IdentityRequestMessage extends DistributionMessage implements
 
   @Override
   public String toString() {
-    return new StringBuffer().append(getClass().getName()).append("(sender=").append(getSender()).append("; processorId=").append(this.processorId).append(")").toString();
+    return new StringBuffer()
+        .append(getClass().getName())
+        .append("(sender=")
+        .append(getSender())
+        .append("; processorId=")
+        .append(this.processorId)
+        .append(")")
+        .toString();
   }
 
   /**
-   * The message that contains the <code>Integer</code> identity response to the {@link IdentityRequestMessage}
-   *  
+   * The message that contains the <code>Integer</code> identity response to the {@link
+   * IdentityRequestMessage}
+   *
    * @since GemFire 5.0
    */
   public static final class IdentityReplyMessage extends HighPriorityDistributionMessage {
@@ -166,11 +172,8 @@ public final class IdentityRequestMessage extends DistributionMessage implements
     /** The shared obj id of the ReplyProcessor */
     private int processorId;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface 
-     */
-    public IdentityReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public IdentityReplyMessage() {}
 
     private IdentityReplyMessage(int processorId) {
       this.processorId = processorId;
@@ -188,7 +191,11 @@ public final class IdentityRequestMessage extends DistributionMessage implements
     protected void process(final DistributionManager dm) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "{} process invoking reply processor with processorId:{}", getClass().getName(), this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "{} process invoking reply processor with processorId:{}",
+            getClass().getName(),
+            this.processorId);
       }
 
       ReplyProcessor21 processor = ReplyProcessor21.getProcessor(this.processorId);
@@ -227,12 +234,23 @@ public final class IdentityRequestMessage extends DistributionMessage implements
 
     @Override
     public String toString() {
-      return new StringBuffer().append(getClass().getName()).append("(sender=").append(getSender()).append("; processorId=").append(this.processorId).append("; PRId=").append(getId()).append(")").toString();
+      return new StringBuffer()
+          .append(getClass().getName())
+          .append("(sender=")
+          .append(getSender())
+          .append("; processorId=")
+          .append(this.processorId)
+          .append("; PRId=")
+          .append(getId())
+          .append(")")
+          .toString();
     }
 
     /**
-     * Fetch the current Identity number  
-     * @return the identity Integer from the sender or null if the sender did not have the Integer initialized 
+     * Fetch the current Identity number
+     *
+     * @return the identity Integer from the sender or null if the sender did not have the Integer
+     *     initialized
      */
     public Integer getId() {
       if (this.Id == UNINITIALIZED) {
@@ -243,8 +261,9 @@ public final class IdentityRequestMessage extends DistributionMessage implements
   }
 
   /**
-   * The response to a {@link IdentityRequestMessage} use {@link #waitForId()} to 
-   * capture the identity
+   * The response to a {@link IdentityRequestMessage} use {@link #waitForId()} to capture the
+   * identity
+   *
    * @since GemFire 5.0
    */
   public static class IdentityResponse extends ReplyProcessor21 {
@@ -276,7 +295,8 @@ public final class IdentityRequestMessage extends DistributionMessage implements
             }
           }
           if (logger.isTraceEnabled(LogMarker.DM)) {
-            logger.trace(LogMarker.DM, "{} return value is {}", getClass().getName(), this.returnValue);
+            logger.trace(
+                LogMarker.DM, "{} return value is {}", getClass().getName(), this.returnValue);
           }
         }
       } finally {
@@ -285,22 +305,23 @@ public final class IdentityRequestMessage extends DistributionMessage implements
     }
 
     /**
-     * Fetch the next <code>PartitionedRegion</code> identity, used to uniquely identify (globally) each instance of a 
-     * <code>PartitionedRegion</code>  
-     * @return the next highest Integer for the <code>PartitionedRegion</code> or null if this is the first identity
-     * 
+     * Fetch the next <code>PartitionedRegion</code> identity, used to uniquely identify (globally)
+     * each instance of a <code>PartitionedRegion</code>
+     *
+     * @return the next highest Integer for the <code>PartitionedRegion</code> or null if this is
+     *     the first identity
      * @see PartitionMessage#getRegionId()
      */
     public Integer waitForId() {
       try {
         waitForRepliesUninterruptibly();
       } catch (ReplyException e) {
-        logger.debug("{} waitBucketSizes ignoring exception {}", getClass().getName(), e.getMessage(), e);
+        logger.debug(
+            "{} waitBucketSizes ignoring exception {}", getClass().getName(), e.getMessage(), e);
       }
       synchronized (this) {
         return this.returnValue;
       }
     }
   }
-
 }

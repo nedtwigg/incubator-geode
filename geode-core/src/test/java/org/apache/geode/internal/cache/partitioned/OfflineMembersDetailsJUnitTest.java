@@ -40,7 +40,14 @@ public class OfflineMembersDetailsJUnitTest {
     Set<PersistentMemberID>[] offlineMembers = new Set[5];
     for (int i = 0; i < offlineMembers.length; i++) {
       offlineMembers[i] = new HashSet<PersistentMemberID>();
-      offlineMembers[i].add(new PersistentMemberID(DiskStoreID.random(), InetAddress.getLocalHost(), "a", System.currentTimeMillis(), (short) 0));
+      offlineMembers[i]
+          .add(
+              new PersistentMemberID(
+                  DiskStoreID.random(),
+                  InetAddress.getLocalHost(),
+                  "a",
+                  System.currentTimeMillis(),
+                  (short) 0));
     }
     OfflineMemberDetailsImpl details = new OfflineMemberDetailsImpl(offlineMembers);
 
@@ -51,5 +58,4 @@ public class OfflineMembersDetailsJUnitTest {
     OfflineMemberDetailsImpl details2 = new OfflineMemberDetailsImpl();
     details2.fromData(new DataInputStream(new ByteArrayInputStream(boas.toByteArray())));
   }
-
 }

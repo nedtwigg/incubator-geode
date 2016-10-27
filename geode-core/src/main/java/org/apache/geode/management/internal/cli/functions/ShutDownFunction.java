@@ -29,13 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-/**
- * 
- * Class for Shutdown function
- * 
- *  
- * 
- */
+/** Class for Shutdown function */
 public class ShutDownFunction implements Function, InternalEntity {
   private static final Logger logger = LogService.getLogger();
 
@@ -65,14 +59,17 @@ public class ShutDownFunction implements Function, InternalEntity {
    * The shutdown is performed in a separate, non-daemon thread so that the JVM does not shut down
    * prematurely before the full process has completed.
    */
-  private void disconnectInNonDaemonThread(final InternalDistributedSystem ids) throws InterruptedException, ExecutionException {
+  private void disconnectInNonDaemonThread(final InternalDistributedSystem ids)
+      throws InterruptedException, ExecutionException {
     ExecutorService exec = Executors.newSingleThreadExecutor();
-    Future future = exec.submit(() -> {
-      ConnectionTable.threadWantsSharedResources();
-      if (ids.isConnected()) {
-        ids.disconnect();
-      }
-    });
+    Future future =
+        exec.submit(
+            () -> {
+              ConnectionTable.threadWantsSharedResources();
+              if (ids.isConnected()) {
+                ids.disconnect();
+              }
+            });
     try {
       future.get();
     } finally {
@@ -83,7 +80,6 @@ public class ShutDownFunction implements Function, InternalEntity {
   @Override
   public String getId() {
     return ShutDownFunction.ID;
-
   }
 
   @Override
@@ -101,5 +97,4 @@ public class ShutDownFunction implements Function, InternalEntity {
   public boolean isHA() {
     return false;
   }
-
 }

@@ -21,9 +21,8 @@ import java.io.Serializable;
 import org.apache.geode.distributed.DistributedMember;
 
 /**
- * Implements PartitionMemberInfo. Serializable form is used to allow JMX 
- * MBeans to use this as a remotable return type.
- * 
+ * Implements PartitionMemberInfo. Serializable form is used to allow JMX MBeans to use this as a
+ * remotable return type.
  */
 public class PartitionMemberInfoImpl implements InternalPartitionDetails, Serializable {
 
@@ -36,7 +35,12 @@ public class PartitionMemberInfoImpl implements InternalPartitionDetails, Serial
   private final transient PRLoad prLoad; // do not serialize for JMX mbeans
   private final transient long[] bucketSizes; // do not serialize for JMX mbeans
 
-  public PartitionMemberInfoImpl(DistributedMember distributedMember, long configuredMaxMemory, long size, int bucketCount, int primaryCount) {
+  public PartitionMemberInfoImpl(
+      DistributedMember distributedMember,
+      long configuredMaxMemory,
+      long size,
+      int bucketCount,
+      int primaryCount) {
     this.distributedMember = distributedMember;
     this.configuredMaxMemory = configuredMaxMemory;
     this.size = size;
@@ -46,8 +50,15 @@ public class PartitionMemberInfoImpl implements InternalPartitionDetails, Serial
     this.bucketSizes = null;
   }
 
-  public PartitionMemberInfoImpl(DistributedMember distributedMember, long configuredMaxMemory, long size, int bucketCount, int primaryCount, PRLoad prLoad, long[] bucketSizes) {
-    //TODO rebalance disabling this unit bug 39868 is fixed. 
+  public PartitionMemberInfoImpl(
+      DistributedMember distributedMember,
+      long configuredMaxMemory,
+      long size,
+      int bucketCount,
+      int primaryCount,
+      PRLoad prLoad,
+      long[] bucketSizes) {
+    //TODO rebalance disabling this unit bug 39868 is fixed.
     //    Assert.assertTrue(size >= 0);
     this.distributedMember = distributedMember;
     this.configuredMaxMemory = configuredMaxMemory;
@@ -87,16 +98,16 @@ public class PartitionMemberInfoImpl implements InternalPartitionDetails, Serial
       throw new IllegalStateException(this + " has no bucketSizes");
     }
     if (bucketId < 0 || bucketId > this.bucketSizes.length) {
-      throw new IllegalArgumentException("bucketId must be between 0 and " + this.bucketSizes.length);
+      throw new IllegalArgumentException(
+          "bucketId must be between 0 and " + this.bucketSizes.length);
     }
     return this.bucketSizes[bucketId];
   }
 
   /**
-   * Returns the backed array of bucket bytes. Index is the BID and the value
-   * is either 0 or positive. Please do not change the values! Internal use
-   * only.
-   * 
+   * Returns the backed array of bucket bytes. Index is the BID and the value is either 0 or
+   * positive. Please do not change the values! Internal use only.
+   *
    * @return the backed array of bucket bytes
    */
   public long[] getBucketSizes() {
@@ -128,12 +139,9 @@ public class PartitionMemberInfoImpl implements InternalPartitionDetails, Serial
   }
 
   /**
-   * hashCode is defined for this class to make
-   * sure that the before details and after details for
-   * RebalanceResults are in the same order. This makes
-   * debugging printouts easier, and it also removes
-   * discrepancies due to rounding errors when calculating
-   * the stddev in tests.
+   * hashCode is defined for this class to make sure that the before details and after details for
+   * RebalanceResults are in the same order. This makes debugging printouts easier, and it also
+   * removes discrepancies due to rounding errors when calculating the stddev in tests.
    */
   @Override
   public int hashCode() {

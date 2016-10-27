@@ -29,47 +29,38 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.lang.StringUtils;
 
 /**
- * This cache deserializable always keeps its byte[] in serialized form
- * and the object form.
+ * This cache deserializable always keeps its byte[] in serialized form and the object form.
  *
  * @since GemFire 5.5
- *
  */
 public class StoreAllCachedDeserializable implements CachedDeserializable, DataSerializableFixedID {
-  /**
-   * empty constructor for serialization only
-   */
-  public StoreAllCachedDeserializable() {
-  }
+  /** empty constructor for serialization only */
+  public StoreAllCachedDeserializable() {}
 
   private /*final*/ Object objValue;
 
   /** The cached value */
   private /*final*/ byte[] value;
 
-  /**
-   * +PER_OBJECT_OVERHEAD for VMCachedDeserializable object
-   * +4 for value field
-   */
+  /** +PER_OBJECT_OVERHEAD for VMCachedDeserializable object +4 for value field */
   static final int MEM_OVERHEAD = PER_OBJECT_OVERHEAD + 8;
 
-  /** 
+  /**
    * Creates a new instance of <code>StoreAllCachedDeserializable</code>.
    *
-   * Note that, in general, instances of this class should be obtained
-   * via {@link CachedDeserializableFactory}.
+   * <p>Note that, in general, instances of this class should be obtained via {@link
+   * CachedDeserializableFactory}.
    */
   StoreAllCachedDeserializable(byte[] serializedValue) {
     if (serializedValue == null) {
-      throw new NullPointerException(LocalizedStrings.StoreAllCachedDeserializable_VALUE_MUST_NOT_BE_NULL.toLocalizedString());
+      throw new NullPointerException(
+          LocalizedStrings.StoreAllCachedDeserializable_VALUE_MUST_NOT_BE_NULL.toLocalizedString());
     }
     this.value = serializedValue;
     this.objValue = EntryEventImpl.deserialize(this.value);
   }
 
-  /**
-   * @param object
-   */
+  /** @param object */
   public StoreAllCachedDeserializable(Object object) {
     this.objValue = object;
     this.value = EntryEventImpl.serialize(object);
@@ -87,21 +78,22 @@ public class StoreAllCachedDeserializable implements CachedDeserializable, DataS
     return EntryEventImpl.deserialize(this.value);
   }
 
-  /**
-   * Return the serialized value as a byte[]
-   */
+  /** Return the serialized value as a byte[] */
   public byte[] getSerializedValue() {
     return this.value;
   }
 
   public void fillSerializedValue(BytesAndBitsForCompactor wrapper, byte userBits) {
-    wrapper.setData(this.value, userBits, this.value.length, false /* Not Reusable as it refers to underlying value */);
+    wrapper.setData(
+        this.value,
+        userBits,
+        this.value.length,
+        false /* Not Reusable as it refers to underlying value */);
   }
 
   /**
-   * Return current value regardless of whether it is serialized or
-   * deserialized: if it was serialized than it is a byte[], otherwise
-   * it is not a byte[].
+   * Return current value regardless of whether it is serialized or deserialized: if it was
+   * serialized than it is a byte[], otherwise it is not a byte[].
    */
   public Object getValue() {
     return this.value;

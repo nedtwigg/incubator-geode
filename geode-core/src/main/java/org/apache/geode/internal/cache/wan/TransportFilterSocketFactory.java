@@ -29,7 +29,8 @@ public class TransportFilterSocketFactory implements ClientSocketFactory {
 
   private List<GatewayTransportFilter> gatewayTransportFilters;
 
-  public TransportFilterSocketFactory setGatewayTransportFilters(List<GatewayTransportFilter> transportFilters) {
+  public TransportFilterSocketFactory setGatewayTransportFilters(
+      List<GatewayTransportFilter> transportFilters) {
     this.gatewayTransportFilters = transportFilters;
     return this;
   }
@@ -37,5 +38,4 @@ public class TransportFilterSocketFactory implements ClientSocketFactory {
   public Socket createSocket(InetAddress address, int port) throws IOException {
     return new TransportFilterSocket(gatewayTransportFilters, address, port);
   }
-
 }

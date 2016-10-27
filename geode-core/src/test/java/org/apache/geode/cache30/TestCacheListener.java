@@ -21,21 +21,17 @@ import org.apache.geode.cache.*;
 import java.util.*;
 
 /**
- * A <code>CacheListener</code> used in testing.  Its callback methods
- * are implemented to thrown {@link UnsupportedOperationException}
- * unless the user overrides the "2" methods.
+ * A <code>CacheListener</code> used in testing. Its callback methods are implemented to thrown
+ * {@link UnsupportedOperationException} unless the user overrides the "2" methods.
  *
  * @see #wasInvoked
- *
  * @since GemFire 3.0
  */
 public abstract class TestCacheListener extends TestCacheCallback implements CacheListener {
 
   private List eventHistory = null;
 
-  /**
-   * Should be called for every event delivered to this listener
-   */
+  /** Should be called for every event delivered to this listener */
   private void addEvent(CacheEvent e, boolean setInvoked) {
     if (setInvoked) {
       this.invoked = true;
@@ -53,6 +49,7 @@ public abstract class TestCacheListener extends TestCacheCallback implements Cac
 
   /**
    * Enables collection of event history.
+   *
    * @since GemFire 5.0
    */
   public void enableEventHistory() {
@@ -63,6 +60,7 @@ public abstract class TestCacheListener extends TestCacheCallback implements Cac
 
   /**
    * Disables collection of events.
+   *
    * @since GemFire 5.0
    */
   public void disableEventHistory() {
@@ -70,8 +68,9 @@ public abstract class TestCacheListener extends TestCacheCallback implements Cac
   }
 
   /**
-   * Returns a copy of the list of events collected in this listener's history.
-   * Also clears the current history.
+   * Returns a copy of the list of events collected in this listener's history. Also clears the
+   * current history.
+   *
    * @since GemFire 5.0
    */
   public List getEventHistory() {
@@ -178,8 +177,7 @@ public abstract class TestCacheListener extends TestCacheCallback implements Cac
 
   public final void afterRegionDestroy(RegionEvent event) {
     // check argument to see if this is during tearDown
-    if ("teardown".equals(event.getCallbackArgument()))
-      return;
+    if ("teardown".equals(event.getCallbackArgument())) return;
     afterRegionDestroyBeforeAddEvent(event);
     addEvent(event);
     try {

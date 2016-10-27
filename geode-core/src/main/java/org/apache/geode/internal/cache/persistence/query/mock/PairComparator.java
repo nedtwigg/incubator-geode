@@ -18,11 +18,7 @@ package org.apache.geode.internal.cache.persistence.query.mock;
 
 import java.util.Comparator;
 
-/**
- * A comparator for Pair objects that uses two
- * passed in comparators.
- *
- */
+/** A comparator for Pair objects that uses two passed in comparators. */
 public class PairComparator implements Comparator<Pair> {
   private Comparator xComparator;
   private Comparator yComparator;
@@ -30,7 +26,6 @@ public class PairComparator implements Comparator<Pair> {
   public PairComparator(Comparator xComparator, Comparator yComparator) {
     this.xComparator = xComparator;
     this.yComparator = yComparator;
-
   }
 
   @Override
@@ -41,5 +36,4 @@ public class PairComparator implements Comparator<Pair> {
     }
     return result;
   }
-
 }

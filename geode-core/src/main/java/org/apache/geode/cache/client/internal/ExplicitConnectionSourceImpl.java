@@ -28,13 +28,12 @@ import java.net.InetSocketAddress;
 import java.util.*;
 
 /**
- * A connection source where the list of endpoints is specified explicitly. 
- * @since GemFire 5.7
- * 
- * TODO - the UnusedServerMonitor basically will force the pool to
- * have at least one connection to each server. Maybe we need to have it
- * create connections that are outside the pool?
+ * A connection source where the list of endpoints is specified explicitly.
  *
+ * @since GemFire 5.7
+ *     <p>TODO - the UnusedServerMonitor basically will force the pool to have at least one
+ *     connection to each server. Maybe we need to have it create connections that are outside the
+ *     pool?
  */
 public class ExplicitConnectionSourceImpl implements ConnectionSource {
 
@@ -46,12 +45,12 @@ public class ExplicitConnectionSourceImpl implements ConnectionSource {
   private InternalPool pool;
 
   /**
-   * A debug flag, which can be toggled by tests to disable/enable shuffling of
-   * the endpoints list
+   * A debug flag, which can be toggled by tests to disable/enable shuffling of the endpoints list
    */
-  private boolean DISABLE_SHUFFLING = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "bridge.disableShufflingOfEndpoints");
+  private boolean DISABLE_SHUFFLING =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "bridge.disableShufflingOfEndpoints");
 
-  public ExplicitConnectionSourceImpl(List/*<InetSocketAddress>*/ contacts) {
+  public ExplicitConnectionSourceImpl(List /*<InetSocketAddress>*/ contacts) {
     ArrayList serverList = new ArrayList(contacts.size());
     for (int i = 0; i < contacts.size(); i++) {
       InetSocketAddress addr = (InetSocketAddress) contacts.get(i);
@@ -73,7 +72,8 @@ public class ExplicitConnectionSourceImpl implements ConnectionSource {
   }
 
   @Override
-  public ServerLocation findReplacementServer(ServerLocation currentServer, Set/*<ServerLocation>*/ excludedServers) {
+  public ServerLocation findReplacementServer(
+      ServerLocation currentServer, Set /*<ServerLocation>*/ excludedServers) {
     // at this time we always try to find a server other than currentServer
     // and if we do return it. Otherwise return null;
     // so that clients would attempt to keep the same number of connections
@@ -105,12 +105,15 @@ public class ExplicitConnectionSourceImpl implements ConnectionSource {
   }
 
   /**
-   * TODO - this algorithm could be cleaned up. Right now we have to
-   * connect to every server in the system to find where our durable
-   * queue lives.
+   * TODO - this algorithm could be cleaned up. Right now we have to connect to every server in the
+   * system to find where our durable queue lives.
    */
   @Override
-  public synchronized List findServersForQueue(Set excludedServers, int numServers, ClientProxyMembershipID proxyId, boolean findDurableQueue) {
+  public synchronized List findServersForQueue(
+      Set excludedServers,
+      int numServers,
+      ClientProxyMembershipID proxyId,
+      boolean findDurableQueue) {
     if (PoolImpl.TEST_DURABLE_IS_NET_DOWN) {
       return new ArrayList();
     }
@@ -147,9 +150,7 @@ public class ExplicitConnectionSourceImpl implements ConnectionSource {
     return result;
   }
 
-  /**
-   * a "fake" operation which just extracts the queue status from the connection
-   */
+  /** a "fake" operation which just extracts the queue status from the connection */
   private static class HasQueueOp implements Op {
     public static final HasQueueOp SINGLETON = new HasQueueOp();
 
@@ -170,7 +171,7 @@ public class ExplicitConnectionSourceImpl implements ConnectionSource {
 
     logger.debug("ExplicitConnectionSource - looking for durable queue");
 
-    for (Iterator itr = serverList.iterator(); itr.hasNext();) {
+    for (Iterator itr = serverList.iterator(); itr.hasNext(); ) {
       ServerLocation server = (ServerLocation) itr.next();
       if (excludedServers.contains(server)) {
         continue;

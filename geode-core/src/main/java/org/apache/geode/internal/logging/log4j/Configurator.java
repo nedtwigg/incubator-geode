@@ -33,13 +33,14 @@ import org.apache.logging.log4j.core.filter.AbstractFilterable;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * Utility methods to programmatically alter the configuration of Log4J2. Used
- * by LogService and tests.
+ * Utility methods to programmatically alter the configuration of Log4J2. Used by LogService and
+ * tests.
  */
 public class Configurator {
 
   public static void shutdown() {
-    final LoggerContext context = ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger()).getContext();
+    final LoggerContext context =
+        ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger()).getContext();
     context.stop();
     org.apache.logging.log4j.core.config.Configurator.shutdown(context);
   }
@@ -70,7 +71,18 @@ public class Configurator {
       List<AppenderRef> appenderRefs = logConfig.getAppenderRefs();
       Map<Property, Boolean> properties = logConfig.getProperties();
       Set<Property> props = properties == null ? null : properties.keySet();
-      logConfig = LoggerConfig.createLogger(String.valueOf(logConfig.isAdditive()), logConfig.getLevel(), name, String.valueOf(logConfig.isIncludeLocation()), appenderRefs == null ? null : appenderRefs.toArray(new AppenderRef[appenderRefs.size()]), props == null ? null : props.toArray(new Property[props.size()]), config, null);
+      logConfig =
+          LoggerConfig.createLogger(
+              String.valueOf(logConfig.isAdditive()),
+              logConfig.getLevel(),
+              name,
+              String.valueOf(logConfig.isIncludeLocation()),
+              appenderRefs == null
+                  ? null
+                  : appenderRefs.toArray(new AppenderRef[appenderRefs.size()]),
+              props == null ? null : props.toArray(new Property[props.size()]),
+              config,
+              null);
       config.addLogger(name, logConfig);
       update = true;
     }
@@ -80,7 +92,8 @@ public class Configurator {
     return logConfig;
   }
 
-  public static LoggerConfig getOrCreateLoggerConfig(String name, boolean additive, boolean forceAdditivity) {
+  public static LoggerConfig getOrCreateLoggerConfig(
+      String name, boolean additive, boolean forceAdditivity) {
     LoggerContext context = (LoggerContext) LogManager.getContext(false);
     Configuration config = context.getConfiguration();
     LoggerConfig logConfig = config.getLoggerConfig(name);
@@ -89,7 +102,18 @@ public class Configurator {
       List<AppenderRef> appenderRefs = logConfig.getAppenderRefs();
       Map<Property, Boolean> properties = logConfig.getProperties();
       Set<Property> props = properties == null ? null : properties.keySet();
-      logConfig = LoggerConfig.createLogger(String.valueOf(additive), logConfig.getLevel(), name, String.valueOf(logConfig.isIncludeLocation()), appenderRefs == null ? null : appenderRefs.toArray(new AppenderRef[appenderRefs.size()]), props == null ? null : props.toArray(new Property[props.size()]), config, null);
+      logConfig =
+          LoggerConfig.createLogger(
+              String.valueOf(additive),
+              logConfig.getLevel(),
+              name,
+              String.valueOf(logConfig.isIncludeLocation()),
+              appenderRefs == null
+                  ? null
+                  : appenderRefs.toArray(new AppenderRef[appenderRefs.size()]),
+              props == null ? null : props.toArray(new Property[props.size()]),
+              config,
+              null);
       config.addLogger(name, logConfig);
       update = true;
     }
@@ -147,7 +171,10 @@ public class Configurator {
       boolean isRoot = loggerConfig.getName().equals("");
       boolean isGemFire = loggerConfig.getName().startsWith(LogService.BASE_LOGGER_NAME);
       boolean hasFilter = loggerConfig.hasFilter();
-      boolean isGemFireVerboseFilter = hasFilter && (LogService.GEODE_VERBOSE_FILTER.equals(loggerConfig.getFilter().toString()) || LogService.GEMFIRE_VERBOSE_FILTER.equals(loggerConfig.getFilter().toString()));
+      boolean isGemFireVerboseFilter =
+          hasFilter
+              && (LogService.GEODE_VERBOSE_FILTER.equals(loggerConfig.getFilter().toString())
+                  || LogService.GEMFIRE_VERBOSE_FILTER.equals(loggerConfig.getFilter().toString()));
 
       if (isRoot || isGemFire) {
         // check for Logger Filter

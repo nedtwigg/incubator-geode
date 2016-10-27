@@ -23,11 +23,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
 /**
- * Created by IntelliJ IDEA.
- * User: dan
- * Date: Oct 28, 2010
- * Time: 10:30:40 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: dan Date: Oct 28, 2010 Time: 10:30:40 PM To change this template
+ * use File | Settings | File Templates.
  */
 public class ZoomingPanel extends JPanel {
   private int zoomBoxStartX;
@@ -38,43 +35,44 @@ public class ZoomingPanel extends JPanel {
 
   public ZoomingPanel() {
     super();
-    addMouseListener(new MouseAdapter() {
-      @Override
-      public void mousePressed(MouseEvent e) {
-        startBox(e.getX(), e.getY());
-      }
+    addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mousePressed(MouseEvent e) {
+            startBox(e.getX(), e.getY());
+          }
 
-      @Override
-      public void mouseReleased(MouseEvent e) {
-        endBox(e.getX(), e.getY());
-      }
+          @Override
+          public void mouseReleased(MouseEvent e) {
+            endBox(e.getX(), e.getY());
+          }
 
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        if (e.getButton() != MouseEvent.BUTTON1) {
-          unzoom();
-        } else {
-          child.selectState(e.getX(), e.getY());
-        }
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            if (e.getButton() != MouseEvent.BUTTON1) {
+              unzoom();
+            } else {
+              child.selectState(e.getX(), e.getY());
+            }
+          }
+        });
 
-      }
-    });
+    addMouseMotionListener(
+        new MouseMotionAdapter() {
+          @Override
+          public void mouseDragged(MouseEvent e) {
+            Rectangle r = new Rectangle(e.getX(), e.getY(), 1, 1);
+            ((JPanel) e.getSource()).scrollRectToVisible(r);
+            showBox(e.getX(), e.getY());
+          }
 
-    addMouseMotionListener(new MouseMotionAdapter() {
-      @Override
-      public void mouseDragged(MouseEvent e) {
-        Rectangle r = new Rectangle(e.getX(), e.getY(), 1, 1);
-        ((JPanel) e.getSource()).scrollRectToVisible(r);
-        showBox(e.getX(), e.getY());
-      }
-
-      @Override
-      public void mouseMoved(MouseEvent e) {
-        int popupX = ZoomingPanel.this.getLocationOnScreen().x + e.getX();
-        int popupY = ZoomingPanel.this.getLocationOnScreen().y + e.getY();
-        child.showPopupText(e.getX(), e.getY(), popupX, popupY);
-      }
-    });
+          @Override
+          public void mouseMoved(MouseEvent e) {
+            int popupX = ZoomingPanel.this.getLocationOnScreen().x + e.getX();
+            int popupY = ZoomingPanel.this.getLocationOnScreen().y + e.getY();
+            child.showPopupText(e.getX(), e.getY(), popupX, popupY);
+          }
+        });
     BorderLayout layout = new BorderLayout();
     layout.setHgap(0);
     layout.setVgap(0);
@@ -112,7 +110,6 @@ public class ZoomingPanel extends JPanel {
     Rectangle r = new Rectangle(scrollX, scrollY, scrollWidth, scrollHeight);
     ((JViewport) getParent()).scrollRectToVisible(r);
     repaint();
-
   }
 
   public void setSequenceDiagram(SequenceDiagram diag) {
@@ -137,7 +134,12 @@ public class ZoomingPanel extends JPanel {
   }
 
   private void endBox(int x, int y) {
-    if (zoomBoxStartX != -1 && zoomBoxStartY != -1 && zoomBoxWidth != -1 && zoomBoxHeight != -1 && zoomBoxWidth != 0 && zoomBoxHeight != 0) {
+    if (zoomBoxStartX != -1
+        && zoomBoxStartY != -1
+        && zoomBoxWidth != -1
+        && zoomBoxHeight != -1
+        && zoomBoxWidth != 0
+        && zoomBoxHeight != 0) {
       resizeMe(getBoxX(), getBoxY(), getBoxWidth(), getBoxHeight());
       repaint(getBoxX(), getBoxY(), getBoxWidth(), getBoxHeight());
       this.zoomBoxStartX = -1;

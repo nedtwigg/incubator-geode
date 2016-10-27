@@ -51,18 +51,31 @@ public class ClientTXRegionStub implements TXRegionStub {
     return proxy.containsValueForKey(keyInfo.getKey());
   }
 
-  public void destroyExistingEntry(EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) {
+  public void destroyExistingEntry(
+      EntryEventImpl event, boolean cacheWrite, Object expectedOldValue) {
     if (event.getOperation().isLocal()) {
       throw new UnsupportedOperationInTransactionException();
     }
-    Object result = proxy.destroy(event.getKey(), expectedOldValue, event.getOperation(), event, event.getCallbackArgument());
+    Object result =
+        proxy.destroy(
+            event.getKey(),
+            expectedOldValue,
+            event.getOperation(),
+            event,
+            event.getCallbackArgument());
     if (result instanceof EntryNotFoundException) {
       throw (EntryNotFoundException) result;
     }
-
   }
 
-  public Object findObject(KeyInfo keyInfo, boolean isCreate, boolean generateCallbacks, Object value, boolean preferCD, ClientProxyMembershipID requestingClient, EntryEventImpl event) {
+  public Object findObject(
+      KeyInfo keyInfo,
+      boolean isCreate,
+      boolean generateCallbacks,
+      Object value,
+      boolean preferCD,
+      ClientProxyMembershipID requestingClient,
+      EntryEventImpl event) {
     return proxy.get(keyInfo.getKey(), keyInfo.getCallbackArg(), event);
   }
 
@@ -74,22 +87,39 @@ public class ClientTXRegionStub implements TXRegionStub {
     return getEntry(keyInfo, allowTombstones);
   }
 
-  public void invalidateExistingEntry(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {
+  public void invalidateExistingEntry(
+      EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry) {
     if (event.getOperation().isLocal()) {
       throw new UnsupportedOperationInTransactionException();
     }
     proxy.invalidate(event);
-
   }
 
-  public boolean putEntry(EntryEventImpl event, boolean ifNew, boolean ifOld, Object expectedOldValue, boolean requireOldValue, long lastModified, boolean overwriteDestroyed) {
+  public boolean putEntry(
+      EntryEventImpl event,
+      boolean ifNew,
+      boolean ifOld,
+      Object expectedOldValue,
+      boolean requireOldValue,
+      long lastModified,
+      boolean overwriteDestroyed) {
     if (event.isBulkOpInProgress()) {
       // this is a put all, ignore this!
       return true;
     }
     Object result = null;
     try {
-      result = proxy.put(event.getKey(), event.getRawNewValue(), event.getDeltaBytes(), event, event.getOperation(), requireOldValue, expectedOldValue, event.getCallbackArgument(), event.isCreate());
+      result =
+          proxy.put(
+              event.getKey(),
+              event.getRawNewValue(),
+              event.getDeltaBytes(),
+              event,
+              event.getOperation(),
+              requireOldValue,
+              expectedOldValue,
+              event.getCallbackArgument(),
+              event.isCreate());
     } catch (ServerOperationException e) {
       if (e.getCause() != null && (e.getCause() instanceof EntryExistsException)) {
         throw (EntryExistsException) e.getCause();
@@ -122,19 +152,19 @@ public class ClientTXRegionStub implements TXRegionStub {
     return proxy.keySet();
   }
 
-  public void postPutAll(DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts, LocalRegion r) {
+  public void postPutAll(
+      DistributedPutAllOperation putallOp, VersionedObjectList successfulPuts, LocalRegion r) {
     /*
      * Don't do anything here , it's handled in proxy and elsewhere.
      */
   }
 
   @Override
-  public void postRemoveAll(DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion region) {
+  public void postRemoveAll(
+      DistributedRemoveAllOperation op, VersionedObjectList successfulOps, LocalRegion region) {
     // Don't do anything here , it's handled in proxy and elsewhere.
   }
 
   @Override
-  public void cleanup() {
-  }
-
+  public void cleanup() {}
 }

@@ -34,9 +34,9 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
  * Test for the new variable length format
- * 
- * TODO these tests need some work. I don't think they really represent
- * edge cases for this variable length value.
+ *
+ * <p>TODO these tests need some work. I don't think they really represent edge cases for this
+ * variable length value.
  */
 @Category(UnitTest.class)
 public class VLJUnitTest {
@@ -139,5 +139,4 @@ public class VLJUnitTest {
     InternalDataSerializer.writeUnsignedVL(Long.MAX_VALUE, createDOS());
     assertEquals(Long.MAX_VALUE, InternalDataSerializer.readUnsignedVL(createDIS()));
   }
-
 }

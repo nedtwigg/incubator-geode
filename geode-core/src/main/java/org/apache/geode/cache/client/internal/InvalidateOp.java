@@ -27,6 +27,7 @@ import org.apache.geode.internal.logging.LogService;
 
 /**
  * Does a region invalidate on a server
+ *
  * @since GemFire 6.6
  */
 public class InvalidateOp {
@@ -36,8 +37,9 @@ public class InvalidateOp {
   public static final int HAS_VERSION_TAG = 0x01;
 
   /**
-   * Does a region invalidate on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region invalidate on a server using connections from the given pool to communicate with
+   * the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the entry keySet on
    */
@@ -53,9 +55,7 @@ public class InvalidateOp {
   private static class InvalidateOpImpl extends AbstractOp {
     private EntryEventImpl event;
 
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public InvalidateOpImpl(String region, EntryEventImpl event) {
       super(MessageType.INVALIDATE, event.getCallbackArgument() != null ? 4 : 3);
       Object callbackArg = event.getCallbackArgument();

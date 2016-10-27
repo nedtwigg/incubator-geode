@@ -25,28 +25,25 @@ import org.apache.geode.admin.GemFireHealthConfig;
 import org.apache.geode.admin.internal.GemFireHealthConfigImpl;
 
 /**
- * The JMX "managed resource" that represents the configuration for
- * the health of GemFire.  Basically, it provides the behavior of
- * <code>GemFireHealthConfigImpl</code>, but does some JMX stuff like
- * registering beans with the agent.
+ * The JMX "managed resource" that represents the configuration for the health of GemFire.
+ * Basically, it provides the behavior of <code>GemFireHealthConfigImpl</code>, but does some JMX
+ * stuff like registering beans with the agent.
  *
- * <P>
- *
- * Unlike other <code>ManagedResource</code>s this class cannot simply
- * subclass <code>GemFireHealthImpl</code> because it instances are
- * serialized and sent to other VMs.  This is problematic because the
- * other VMs most likely do not have JMX classes like
- * <code>ModelMBean</code> on their classpaths.  So, instead we
- * delegate all of the <code>GemFireHealthConfig</code> behavior to
- * another object which IS serialized.
+ * <p>Unlike other <code>ManagedResource</code>s this class cannot simply subclass <code>
+ * GemFireHealthImpl</code> because it instances are serialized and sent to other VMs. This is
+ * problematic because the other VMs most likely do not have JMX classes like <code>ModelMBean
+ * </code> on their classpaths. So, instead we delegate all of the <code>GemFireHealthConfig</code>
+ * behavior to another object which IS serialized.
  *
  * @see GemFireHealthJmxImpl#createDistributedSystemHealthConfig
- *
- *
  * @since GemFire 3.5
  */
-@edu.umd.cs.findbugs.annotations.SuppressWarnings(justification = "This class is deprecated. Also, any further changes so close to the release is inadvisable.")
-public class GemFireHealthConfigJmxImpl implements GemFireHealthConfig, ManagedResource, java.io.Serializable {
+@edu.umd.cs.findbugs.annotations.SuppressWarnings(
+  justification =
+      "This class is deprecated. Also, any further changes so close to the release is inadvisable."
+)
+public class GemFireHealthConfigJmxImpl
+    implements GemFireHealthConfig, ManagedResource, java.io.Serializable {
 
   private static final long serialVersionUID = 1482719647163239953L;
 
@@ -68,23 +65,29 @@ public class GemFireHealthConfigJmxImpl implements GemFireHealthConfig, ManagedR
   ///////////////////////  Constructors  ///////////////////////
 
   /**
-   * Creates a new <code>GemFireHealthConfigJmxImpl</code> that
-   * configures the health monitoring of components running on the
-   * given host.
+   * Creates a new <code>GemFireHealthConfigJmxImpl</code> that configures the health monitoring of
+   * components running on the given host.
    */
   GemFireHealthConfigJmxImpl(GemFireHealthJmxImpl health, String hostName) throws AdminException {
 
     this.delegate = new GemFireHealthConfigImpl(hostName);
     this.health = health;
-    this.mbeanName = new StringBuffer().append(MBEAN_NAME_PREFIX).append("GemFireHealthConfig,id=").append(MBeanUtil.makeCompliantMBeanNameProperty(health.getDistributedSystem().getId())).append(",host=").append((hostName == null ? "default" : MBeanUtil.makeCompliantMBeanNameProperty(hostName))).toString();
+    this.mbeanName =
+        new StringBuffer()
+            .append(MBEAN_NAME_PREFIX)
+            .append("GemFireHealthConfig,id=")
+            .append(MBeanUtil.makeCompliantMBeanNameProperty(health.getDistributedSystem().getId()))
+            .append(",host=")
+            .append(
+                (hostName == null ? "default" : MBeanUtil.makeCompliantMBeanNameProperty(hostName)))
+            .toString();
     this.objectName = MBeanUtil.createMBean(this);
   }
 
   //////////////////////  Instance Methods  //////////////////////
 
   /**
-   * Applies the changes made to this config back to the health
-   * monitor.
+   * Applies the changes made to this config back to the health monitor.
    *
    * @see GemFireHealth#setDistributedSystemHealthConfig
    */
@@ -118,10 +121,7 @@ public class GemFireHealthConfigJmxImpl implements GemFireHealthConfig, ManagedR
     return ManagedResourceType.GEMFIRE_HEALTH_CONFIG;
   }
 
-  /**
-   * Replace this object with the delegate that can be properly
-   * serialized. 
-   */
+  /** Replace this object with the delegate that can be properly serialized. */
   public Object writeReplace() {
     return this.delegate;
   }
@@ -208,7 +208,5 @@ public class GemFireHealthConfigJmxImpl implements GemFireHealthConfig, ManagedR
     return delegate.getHealthEvaluationInterval();
   }
 
-  public void cleanupResource() {
-  }
-
+  public void cleanupResource() {}
 }

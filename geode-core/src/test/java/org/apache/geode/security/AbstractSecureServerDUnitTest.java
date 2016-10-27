@@ -78,7 +78,9 @@ public class AbstractSecureServerDUnitTest extends JUnit4CacheTestCase {
     this.client3 = host.getVM(3);
 
     Properties props = new Properties();
-    props.setProperty(SampleSecurityManager.SECURITY_JSON, "org/apache/geode/management/internal/security/clientServer.json");
+    props.setProperty(
+        SampleSecurityManager.SECURITY_JSON,
+        "org/apache/geode/management/internal/security/clientServer.json");
     props.setProperty(SECURITY_MANAGER, SampleSecurityManager.class.getName());
     props.setProperty(LOCATORS, "");
     props.setProperty(MCAST_PORT, "0");
@@ -152,10 +154,13 @@ public class AbstractSecureServerDUnitTest extends JUnit4CacheTestCase {
   }
 
   public static ClientCache createClientCache(String username, String password, int serverPort) {
-    ClientCache cache = new ClientCacheFactory(createClientProperties(username, password)).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    ClientCache cache =
+        new ClientCacheFactory(createClientProperties(username, password))
+            .setPoolSubscriptionEnabled(true)
+            .addPoolServer("localhost", serverPort)
+            .create();
 
     cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
     return cache;
   }
-
 }

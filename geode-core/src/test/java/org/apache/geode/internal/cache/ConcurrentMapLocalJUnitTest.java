@@ -73,12 +73,17 @@ public class ConcurrentMapLocalJUnitTest { // TODO: reformat
 
   @Test
   public void testEmptyRegion() {
-    cmOpsUnsupported(this.cache.createRegionFactory(RegionShortcut.REPLICATE_PROXY).create("empty"));
+    cmOpsUnsupported(
+        this.cache.createRegionFactory(RegionShortcut.REPLICATE_PROXY).create("empty"));
   }
 
   @Test
   public void testNormalRegion() {
-    cmOpsUnsupported(this.cache.createRegionFactory(RegionShortcut.REPLICATE).setDataPolicy(DataPolicy.NORMAL).create("normal"));
+    cmOpsUnsupported(
+        this.cache
+            .createRegionFactory(RegionShortcut.REPLICATE)
+            .setDataPolicy(DataPolicy.NORMAL)
+            .create("normal"));
   }
 
   @Test
@@ -97,5 +102,4 @@ public class ConcurrentMapLocalJUnitTest { // TODO: reformat
     assertEquals(true, r.remove(key, "value3"));
     assertEquals(false, r.containsKey(key));
   }
-
 }

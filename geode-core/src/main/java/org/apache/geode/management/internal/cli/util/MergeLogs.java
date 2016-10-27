@@ -28,16 +28,9 @@ import java.text.SimpleDateFormat;
 import org.apache.geode.internal.logging.MergeLogFiles;
 import org.apache.geode.management.internal.cli.i18n.CliStrings;
 
-/**
- * 
- * @since GemFire 7.0
- */
-
+/** @since GemFire 7.0 */
 public class MergeLogs {
-  /**
-   * @param args
-   */
-
+  /** @param args */
   public static void main(String[] args) {
     if (args.length < 1 || args.length > 1) {
       throw new IllegalArgumentException("Requires only 1  arguments : <targetDirName>");
@@ -48,7 +41,6 @@ public class MergeLogs {
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
-
   }
 
   static String mergeLogFile(String dirName) throws Exception {
@@ -62,22 +54,24 @@ public class MergeLogs {
         logFiles[i] = new FileInputStream(dirName + File.separator + logsToMerge[i]);
         logFileNames[i] = dirName + File.separator + logsToMerge[i];
       } catch (FileNotFoundException e) {
-        throw new Exception(logsToMerge[i] + " " + CliStrings.EXPORT_LOGS__MSG__FILE_DOES_NOT_EXIST);
+        throw new Exception(
+            logsToMerge[i] + " " + CliStrings.EXPORT_LOGS__MSG__FILE_DOES_NOT_EXIST);
       }
     }
 
     PrintWriter mergedLog = null;
     try {
-      String mergeLog = dirName + File.separator + "merge_" + sdf.format(new java.util.Date()) + ".log";
+      String mergeLog =
+          dirName + File.separator + "merge_" + sdf.format(new java.util.Date()) + ".log";
       mergedLog = new PrintWriter(mergeLog);
       boolean flag = MergeLogFiles.mergeLogFiles(logFiles, logFileNames, mergedLog);
     } catch (FileNotFoundException e) {
-      throw new Exception("FileNotFoundException in creating PrintWriter in MergeLogFiles" + e.getMessage());
+      throw new Exception(
+          "FileNotFoundException in creating PrintWriter in MergeLogFiles" + e.getMessage());
     } catch (Exception e) {
       throw new Exception("Exception in creating PrintWriter in MergeLogFiles" + e.getMessage());
     }
 
     return "Sucessfully merged logs";
   }
-
 }

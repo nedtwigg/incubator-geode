@@ -139,8 +139,7 @@ public class HashesJUnitTest {
     String field = randString();
 
     Long incr = (long) rand.nextInt(50);
-    if (incr == 0)
-      incr++;
+    if (incr == 0) incr++;
 
     long response1 = jedis.hincrBy(key, field, incr);
     assertTrue(response1 == incr);
@@ -166,8 +165,7 @@ public class HashesJUnitTest {
   private String randString() {
     int length = rand.nextInt(8) + 5;
     StringBuilder rString = new StringBuilder();
-    for (int i = 0; i < length; i++)
-      rString.append((char) (rand.nextInt(57) + 65));
+    for (int i = 0; i < length; i++) rString.append((char) (rand.nextInt(57) + 65));
     return rString.toString();
     //return Long.toHexString(Double.doubleToLongBits(Math.random()));
   }

@@ -32,9 +32,7 @@ import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 import org.apache.geode.internal.cache.tier.sockets.ClientUpdateMessageImpl;
 import org.apache.geode.internal.cache.tier.sockets.HAEventWrapper;
 
-/**
- * @since GemFire 5.7
- */
+/** @since GemFire 5.7 */
 public class HAContainerRegion implements HAContainerWrapper {
 
   private Region map;
@@ -171,5 +169,4 @@ public class HAContainerRegion implements HAContainerWrapper {
   public Collection values() {
     return map.values();
   }
-
 }

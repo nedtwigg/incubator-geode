@@ -22,9 +22,7 @@ import java.util.Map;
 import org.apache.geode.internal.cache.tier.sockets.CacheClientProxy;
 import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 
-/**
- * @since GemFire 5.7
- */
+/** @since GemFire 5.7 */
 public interface HAContainerWrapper extends Map {
 
   public void cleanUp();

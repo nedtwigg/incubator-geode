@@ -19,9 +19,9 @@ package org.apache.geode.management.internal.cli.util;
 import org.springframework.util.Assert;
 
 /**
- * Utility based on code extracted from
- * {@link org.springframework.shell.core.AbstractShell#executeCommand(String)}
- * 
+ * Utility based on code extracted from {@link
+ * org.springframework.shell.core.AbstractShell#executeCommand(String)}
+ *
  * @since GemFire 7.0
  */
 // @original-author Ben Alex
@@ -40,7 +40,7 @@ public class CommentSkipHelper {
       } else {
         line = lhs;
       }
-    } else if (!inBlockComment && line.contains("/*")) {//GemStone Added
+    } else if (!inBlockComment && line.contains("/*")) { //GemStone Added
       blockCommentBegin();
     }
     if (inBlockComment) {
@@ -52,7 +52,8 @@ public class CommentSkipHelper {
     }
     // We also support inline comments (but only at start of line, otherwise valid
     // command options like http://www.helloworld.com will fail as per ROO-517)
-    if (!inBlockComment && (line.trim().startsWith("//") || line.trim().startsWith("#"))) { // # support in ROO-1116
+    if (!inBlockComment
+        && (line.trim().startsWith("//") || line.trim().startsWith("#"))) { // # support in ROO-1116
       line = "";
     }
     // Convert any TAB characters to whitespace (ROO-527)
@@ -61,7 +62,7 @@ public class CommentSkipHelper {
   }
 
   private void blockCommentBegin() {
-    /**asdsfsdf /*asdsdfsdsd */
+    /** asdsfsdf /*asdsdfsdsd */
     //why dis-allow this??? It's allowed in Java. It was probably because '/*' is considered as a command by Roo.
     Assert.isTrue(!inBlockComment, "Cannot open a new block comment when one already active");
     inBlockComment = true;

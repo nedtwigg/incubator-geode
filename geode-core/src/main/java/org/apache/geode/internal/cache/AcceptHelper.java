@@ -17,13 +17,7 @@
 
 package org.apache.geode.internal.cache;
 
-/**
- *
- *
- * Helper class that holds values needed by the search optimizer to do its work.
- *
- */
-
+/** Helper class that holds values needed by the search optimizer to do its work. */
 import java.util.Set;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SelectionKey;
@@ -41,8 +35,7 @@ class AcceptHelper {
   public SelectionKey nackSelKey;
   public boolean closed = false;
 
-  public AcceptHelper() {
-  }
+  public AcceptHelper() {}
 
   public void close() {
     try {
@@ -63,7 +56,8 @@ class AcceptHelper {
         ackServerChannel.configureBlocking(false);
         ackServerChannel.socket().bind(null, 1);
         //ackPort = ackServerChannel.socket().getLocalPort();
-        InetSocketAddress addr = (InetSocketAddress) ackServerChannel.socket().getLocalSocketAddress();
+        InetSocketAddress addr =
+            (InetSocketAddress) ackServerChannel.socket().getLocalSocketAddress();
         ackPort = addr.getPort();
 
       } else {
@@ -73,7 +67,8 @@ class AcceptHelper {
       nackServerChannel = ServerSocketChannel.open();
       nackServerChannel.configureBlocking(false);
       nackServerChannel.socket().bind(null, 1);
-      InetSocketAddress addr = (InetSocketAddress) nackServerChannel.socket().getLocalSocketAddress();
+      InetSocketAddress addr =
+          (InetSocketAddress) nackServerChannel.socket().getLocalSocketAddress();
       // nackPort = nackServerChannel.socket().getLocalPort();
       nackPort = addr.getPort();
 
@@ -83,11 +78,9 @@ class AcceptHelper {
       e.printStackTrace();
     }
     closed = false;
-
   }
 
   public boolean isClosed() {
     return closed;
   }
-
 }

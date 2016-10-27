@@ -152,11 +152,8 @@ public class AuthJUnitTest {
       }
       assertNotNull(ex);
     } finally {
-      if (authorizedJedis != null)
-        authorizedJedis.close();
-      if (nonAuthorizedJedis != null)
-        nonAuthorizedJedis.close();
+      if (authorizedJedis != null) authorizedJedis.close();
+      if (nonAuthorizedJedis != null) nonAuthorizedJedis.close();
     }
   }
-
 }

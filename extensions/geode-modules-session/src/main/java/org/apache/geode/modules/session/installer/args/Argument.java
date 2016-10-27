@@ -1,65 +1,50 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.apache.geode.modules.session.installer.args;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Class representing a single command line argument.
- */
+/** Class representing a single command line argument. */
 public class Argument {
 
-  /**
-   * Parameter names.
-   */
+  /** Parameter names. */
   private final String[] paramNames;
 
-  /**
-   * Default values for the parameters when not explicitly set.
-   */
+  /** Default values for the parameters when not explicitly set. */
   private String[] defaults;
 
   /**
-   * Environment variable names forfor each parameter where values will be
-   * pulled in, if not explicitly provided and if the environment variable
-   * exists.
+   * Environment variable names forfor each parameter where values will be pulled in, if not
+   * explicitly provided and if the environment variable exists.
    */
   private String[] envVars;
 
-  /**
-   * Flag indicating whether this argument is required on the command line.
-   */
+  /** Flag indicating whether this argument is required on the command line. */
   private final boolean required;
 
-  /**
-   * Handler used to hook into processing.
-   */
+  /** Handler used to hook into processing. */
   private ArgumentHandler handler;
 
-  /**
-   * List of all representation forms.
-   */
+  /** List of all representation forms. */
   private final List<String> forms = new ArrayList<String>();
 
-  /**
-   * Usage description.
-   */
+  /** Usage description. */
   private String description;
 
   ///////////////////////////////////////////////////////////////////////////
@@ -68,14 +53,13 @@ public class Argument {
   /**
    * Contructor to create an argument definition.
    *
-   * @param primaryForm    the form of the argument (e.g., --foo).  Should start
-   *                       with a dash.
-   * @param argRequired    flag indicating whether or not the argument is
-   *                       required to be onthe command line
-   * @param parameterNames names of the parameters to this argument for use in
-   *                       the usage generation
+   * @param primaryForm the form of the argument (e.g., --foo). Should start with a dash.
+   * @param argRequired flag indicating whether or not the argument is required to be onthe command
+   *     line
+   * @param parameterNames names of the parameters to this argument for use in the usage generation
    */
-  public Argument(final String primaryForm, final boolean argRequired, final String... parameterNames) {
+  public Argument(
+      final String primaryForm, final boolean argRequired, final String... parameterNames) {
     forms.add(primaryForm);
     paramNames = parameterNames;
     required = argRequired;
@@ -109,9 +93,7 @@ public class Argument {
     return required;
   }
 
-  /**
-   * Determines if the argument provisioning has been done via the environment.
-   */
+  /** Determines if the argument provisioning has been done via the environment. */
   public boolean isDefinedInEnv() {
     if (envVars == null || paramNames.length == 0) {
       return false;
@@ -205,7 +187,8 @@ public class Argument {
    */
   public Argument setDefaults(final String... newDefaults) {
     if (newDefaults.length != paramNames.length) {
-      throw (new IllegalArgumentException("Defaults array length provided is not the correct size"));
+      throw (new IllegalArgumentException(
+          "Defaults array length provided is not the correct size"));
     }
     defaults = newDefaults;
     return this;
@@ -221,15 +204,16 @@ public class Argument {
   }
 
   /**
-   * Sets the environment variables which will be checked for values before
-   * falling back on the default values.
+   * Sets the environment variables which will be checked for values before falling back on the
+   * default values.
    *
    * @param newEnvVars environment variable name array
    * @return this argument (for chained calls)
    */
   public Argument setEnvVars(final String... newEnvVars) {
     if (newEnvVars.length != paramNames.length) {
-      throw (new IllegalArgumentException("Environment variables array length provided is not " + "the correct size"));
+      throw (new IllegalArgumentException(
+          "Environment variables array length provided is not " + "the correct size"));
     }
     envVars = newEnvVars;
     return this;
@@ -265,5 +249,4 @@ public class Argument {
     builder.append("]");
     return builder.toString();
   }
-
 }

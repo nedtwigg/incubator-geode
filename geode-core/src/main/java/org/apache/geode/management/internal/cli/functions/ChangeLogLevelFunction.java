@@ -34,13 +34,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 
  * Class for change log level function
- * 
- * since 8.0 
- * 
+ *
+ * <p>since 8.0
  */
-
 public class ChangeLogLevelFunction implements Function, InternalEntity {
   private static final Logger logger = LogService.getLogger();
 
@@ -60,12 +57,16 @@ public class ChangeLogLevelFunction implements Function, InternalEntity {
       System.setProperty(DistributionConfig.GEMFIRE_PREFIX + LOG_LEVEL, logLevel);
       // LOG:CONFIG:
       logger.info(LogMarker.CONFIG, "GFSH Changed log level to {}", log4jLevel);
-      result.put(cache.getDistributedSystem().getDistributedMember().getId(), "New log level is " + log4jLevel);
+      result.put(
+          cache.getDistributedSystem().getDistributedMember().getId(),
+          "New log level is " + log4jLevel);
       context.getResultSender().lastResult(result);
     } catch (Exception ex) {
       // LOG:CONFIG:
       logger.info(LogMarker.CONFIG, "GFSH Changing log level exception {}", ex.getMessage(), ex);
-      result.put(cache.getDistributedSystem().getDistributedMember().getId(), "ChangeLogLevelFunction exception " + ex.getMessage());
+      result.put(
+          cache.getDistributedSystem().getDistributedMember().getId(),
+          "ChangeLogLevelFunction exception " + ex.getMessage());
       context.getResultSender().lastResult(result);
     }
   }
@@ -73,7 +74,6 @@ public class ChangeLogLevelFunction implements Function, InternalEntity {
   @Override
   public String getId() {
     return ChangeLogLevelFunction.ID;
-
   }
 
   @Override
@@ -91,5 +91,4 @@ public class ChangeLogLevelFunction implements Function, InternalEntity {
   public boolean isHA() {
     return false;
   }
-
 }

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -22,24 +22,20 @@ package org.apache.geode.cache.lucene.internal.repository;
 import org.apache.geode.annotations.Experimental;
 
 /**
- * Interface for collection results of a query on
- * an IndexRepository. See {@link IndexRepository#query(org.apache.lucene.search.Query, int, IndexResultCollector)}
+ * Interface for collection results of a query on an IndexRepository. See {@link
+ * IndexRepository#query(org.apache.lucene.search.Query, int, IndexResultCollector)}
  */
 @Experimental
 public interface IndexResultCollector {
-  /**
-   * @return Name/identifier of this collector
-   */
+  /** @return Name/identifier of this collector */
   public String getName();
 
-  /**
-   * @return Number of results collected by this collector
-   */
+  /** @return Number of results collected by this collector */
   public int size();
 
   /**
    * Collect a single document
-   * 
+   *
    * @param key the gemfire key of the object
    * @param score the lucene score of this object
    */

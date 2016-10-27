@@ -27,19 +27,27 @@ import org.apache.geode.test.dunit.AsyncInvocation;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
-public class IntegratedClientUnregisterInterestAuthDistributedTest extends AbstractSecureServerDUnitTest {
+@Category({DistributedTest.class, SecurityTest.class})
+public class IntegratedClientUnregisterInterestAuthDistributedTest
+    extends AbstractSecureServerDUnitTest {
 
   @Test
   public void testUnregisterInterest() throws InterruptedException {
     // client2 connects to user as a user authorized to use AuthRegion region
-    AsyncInvocation ai1 = client2.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionUser", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai1 =
+        client2.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("authRegionUser", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      region.registerInterest("key3");
-      region.unregisterInterest("key3"); //  DATA:READ:AuthRegion:key3;
-    });
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              region.registerInterest("key3");
+              region.unregisterInterest("key3"); //  DATA:READ:AuthRegion:key3;
+            });
     ai1.join();
     ai1.checkException();
   }

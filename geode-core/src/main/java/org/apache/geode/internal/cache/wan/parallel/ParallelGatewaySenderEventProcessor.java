@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.wan.parallel;
 
 import java.io.IOException;
@@ -51,9 +49,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
-/**
- * 
- */
+/** */
 public class ParallelGatewaySenderEventProcessor extends AbstractGatewaySenderEventProcessor {
 
   private static final Logger logger = LogService.getLogger();
@@ -62,18 +58,25 @@ public class ParallelGatewaySenderEventProcessor extends AbstractGatewaySenderEv
   final int nDispatcher;
 
   protected ParallelGatewaySenderEventProcessor(AbstractGatewaySender sender) {
-    super(LoggingThreadGroup.createThreadGroup("Event Processor for GatewaySender_" + sender.getId(), logger), "Event Processor for GatewaySender_" + sender.getId(), sender);
+    super(
+        LoggingThreadGroup.createThreadGroup(
+            "Event Processor for GatewaySender_" + sender.getId(), logger),
+        "Event Processor for GatewaySender_" + sender.getId(),
+        sender);
     this.index = 0;
     this.nDispatcher = 1;
     initializeMessageQueue(sender.getId());
     setDaemon(true);
   }
 
-  /**
-   * use in concurrent scenario where queue is to be shared among all the processors.
-   */
-  protected ParallelGatewaySenderEventProcessor(AbstractGatewaySender sender, Set<Region> userRegions, int id, int nDispatcher) {
-    super(LoggingThreadGroup.createThreadGroup("Event Processor for GatewaySender_" + sender.getId(), logger), "Event Processor for GatewaySender_" + sender.getId() + "_" + id, sender);
+  /** use in concurrent scenario where queue is to be shared among all the processors. */
+  protected ParallelGatewaySenderEventProcessor(
+      AbstractGatewaySender sender, Set<Region> userRegions, int id, int nDispatcher) {
+    super(
+        LoggingThreadGroup.createThreadGroup(
+            "Event Processor for GatewaySender_" + sender.getId(), logger),
+        "Event Processor for GatewaySender_" + sender.getId() + "_" + id,
+        sender);
     this.index = id;
     this.nDispatcher = nDispatcher;
     //this.queue = new ParallelGatewaySenderQueue(sender, userRegions, id, nDispatcher);
@@ -84,7 +87,8 @@ public class ParallelGatewaySenderEventProcessor extends AbstractGatewaySenderEv
   @Override
   protected void initializeMessageQueue(String id) {
     Set<Region> targetRs = new HashSet<Region>();
-    for (LocalRegion region : ((GemFireCacheImpl) ((AbstractGatewaySender) sender).getCache()).getApplicationRegions()) {
+    for (LocalRegion region :
+        ((GemFireCacheImpl) ((AbstractGatewaySender) sender).getCache()).getApplicationRegions()) {
       if (region.getAllGatewaySenderIds().contains(id)) {
         targetRs.add(region);
       }
@@ -105,17 +109,20 @@ public class ParallelGatewaySenderEventProcessor extends AbstractGatewaySenderEv
   }
 
   @Override
-  public void enqueueEvent(EnumListenerEvent operation, EntryEvent event, Object substituteValue) throws IOException, CacheException {
+  public void enqueueEvent(EnumListenerEvent operation, EntryEvent event, Object substituteValue)
+      throws IOException, CacheException {
     GatewaySenderEventImpl gatewayQueueEvent = null;
     Region region = event.getRegion();
 
     if (!(region instanceof DistributedRegion) && ((EntryEventImpl) event).getTailKey() == -1) {
-      // In case of parallel sender, we don't expect the key to be not set. 
+      // In case of parallel sender, we don't expect the key to be not set.
       // If it is the case then the event must be coming from notificationOnly message.
-      // Don't enqueue the event and return from here only. 
-      // Fix for #49081 and EntryDestroyedException in #49367. 
+      // Don't enqueue the event and return from here only.
+      // Fix for #49081 and EntryDestroyedException in #49367.
       if (logger.isDebugEnabled()) {
-        logger.debug("ParallelGatewaySenderEventProcessor not enqueing the following event since tailKey is not set. {}", event);
+        logger.debug(
+            "ParallelGatewaySenderEventProcessor not enqueing the following event since tailKey is not set. {}",
+            event);
       }
       return;
     }
@@ -132,7 +139,9 @@ public class ParallelGatewaySenderEventProcessor extends AbstractGatewaySenderEv
 
       // while merging 42004, kept substituteValue as it is(it is barry's
       // change 42466). bucketID is merged with eventID.getBucketID
-      gatewayQueueEvent = new GatewaySenderEventImpl(operation, event, substituteValue, true, eventID.getBucketID());
+      gatewayQueueEvent =
+          new GatewaySenderEventImpl(
+              operation, event, substituteValue, true, eventID.getBucketID());
 
       if (getSender().beforeEnqueue(gatewayQueueEvent)) {
         long start = getSender().getStatistics().startTime();

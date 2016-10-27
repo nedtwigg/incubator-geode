@@ -18,9 +18,7 @@ package org.apache.geode.cache.client.internal.locator;
 
 import org.apache.geode.internal.DataSerializableFixedID;
 
-/**
- *
- */
+/** */
 public class LocatorListRequest extends ServerLocationRequest {
 
   @Override

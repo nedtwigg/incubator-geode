@@ -38,27 +38,25 @@ import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * Captures sample of statistics. The SampleCollector contains maps of 
- * StatisticsTypes to ResourceTypes and Statistics instances to 
- * ResourceInstances, each of which contains the actual stat values of the 
- * sample. The {@link #sample(long)} operation determines what stats have 
- * changed, adds in new types and instances, and updates the sampled stat 
- * values.
- * <p/>
- * SampleHandlers are registered with the SampleCollector. The handlers are
- * notified of any changes to statistics.
- * <p/>
- * Extracted from StatArchiveWriter.
- * 
+ * Captures sample of statistics. The SampleCollector contains maps of StatisticsTypes to
+ * ResourceTypes and Statistics instances to ResourceInstances, each of which contains the actual
+ * stat values of the sample. The {@link #sample(long)} operation determines what stats have
+ * changed, adds in new types and instances, and updates the sampled stat values.
+ *
+ * <p>SampleHandlers are registered with the SampleCollector. The handlers are notified of any
+ * changes to statistics.
+ *
+ * <p>Extracted from StatArchiveWriter.
+ *
  * @since GemFire 7.0
  */
 public class SampleCollector {
 
   private static final Logger logger = LogService.getLogger();
 
-  /** 
-   * Singleton instance of SampleCollector set during initialization. This
-   * field simply points to the latest initialized instance. 
+  /**
+   * Singleton instance of SampleCollector set during initialization. This field simply points to
+   * the latest initialized instance.
    */
   private static SampleCollector instance;
 
@@ -68,17 +66,13 @@ public class SampleCollector {
   /** The handlers that are registered for notification of stat samples */
   private final SampleHandlers sampleHandlers = new SampleHandlers();
 
-  /** 
-   * Map of StatisticsType to ResourceType. Contains all currently known 
-   * statistics types.
-   */
-  private final Map<StatisticsType, ResourceType> resourceTypeMap = new HashMap<StatisticsType, ResourceType>();
+  /** Map of StatisticsType to ResourceType. Contains all currently known statistics types. */
+  private final Map<StatisticsType, ResourceType> resourceTypeMap =
+      new HashMap<StatisticsType, ResourceType>();
 
-  /** 
-   * Map of Statistics to ResourceInstance. Contains all currently known 
-   * statistics resources. 
-   */
-  private final Map<Statistics, ResourceInstance> resourceInstMap = new HashMap<Statistics, ResourceInstance>();
+  /** Map of Statistics to ResourceInstance. Contains all currently known statistics resources. */
+  private final Map<Statistics, ResourceInstance> resourceInstMap =
+      new HashMap<Statistics, ResourceInstance>();
 
   /** Incremented to use as unique identifier to construct new ResourceType */
   private int resourceTypeId = 0;
@@ -97,7 +91,7 @@ public class SampleCollector {
 
   /**
    * Constructs a new instance.
-   * 
+   *
    * @param sampler the stat sampler using this collector
    */
   public SampleCollector(StatisticsSampler sampler) {
@@ -110,13 +104,10 @@ public class SampleCollector {
   }
 
   /**
-   * Returns the {@link StatMonitorHandler}. If one does not currently exist
-   * it will be created.
-   * 
+   * Returns the {@link StatMonitorHandler}. If one does not currently exist it will be created.
+   *
    * @return the StatMonitorHandler for adding monitors
-   * 
-   * @throws IllegalStateException if no SampleCollector has been created and
-   * initialized yet
+   * @throws IllegalStateException if no SampleCollector has been created and initialized yet
    */
   public static StatMonitorHandler getStatMonitorHandler() {
     // sync SampleCollector.class and then instance.sampleHandlers
@@ -137,13 +128,16 @@ public class SampleCollector {
   }
 
   /**
-   * Initializes this collector by creating a {@link StatArchiveHandler} and
-   * registering it as a handler.
-   * 
+   * Initializes this collector by creating a {@link StatArchiveHandler} and registering it as a
+   * handler.
+   *
    * @param config defines the configuration for the StatArchiveHandler
    * @param nanosTimeStamp the nanos time stamp to initialize stat archiver with
    */
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", justification = "There is never more than one SampleCollector instance.")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
+    justification = "There is never more than one SampleCollector instance."
+  )
   public void initialize(StatArchiveHandlerConfig config, long nanosTimeStamp) {
     synchronized (SampleCollector.class) {
       instance = this;
@@ -166,7 +160,7 @@ public class SampleCollector {
 
   /**
    * Adds a {@link SampleHandler} to this collector.
-   * 
+   *
    * @param handler the SampleHandler to add
    */
   public void addSampleHandler(SampleHandler handler) {
@@ -175,7 +169,7 @@ public class SampleCollector {
 
   /**
    * Removes a {@link SampleHandler} from this collector.
-   * 
+   *
    * @param handler the SampleHandler to remove
    */
   public void removeSampleHandler(SampleHandler handler) {
@@ -188,26 +182,23 @@ public class SampleCollector {
   }
 
   /**
-   * Collect a sample of all statistics. Adds new statistics resources,
-   * removes destroyed statistics resources, collects the latest stat values,
-   * and notifies SamplerHandlers of the sample.
-   * <p/>
-   * The timeStamp is an arbitrary nanoseconds time stamp only used for
-   * archiving to stats files. The initial time in system milliseconds and the
-   * first NanoTimer timeStamp are both written to the archive file. Thereafter
-   * only the NanoTimer timeStamp is written to the archive file for each
-   * sample. The delta in nanos can be determined by comparing any nano 
-   * timeStamp to the first nano timeStamp written to the archive file. Adding 
-   * this delta to the recorded initial time in milliseconds provides the 
-   * actual (non-arbitrary) time for each sample.
-   * 
-   * @param nanosTimeStamp an arbitrary time stamp in nanoseconds for this 
-   * sample
+   * Collect a sample of all statistics. Adds new statistics resources, removes destroyed statistics
+   * resources, collects the latest stat values, and notifies SamplerHandlers of the sample.
+   *
+   * <p>The timeStamp is an arbitrary nanoseconds time stamp only used for archiving to stats files.
+   * The initial time in system milliseconds and the first NanoTimer timeStamp are both written to
+   * the archive file. Thereafter only the NanoTimer timeStamp is written to the archive file for
+   * each sample. The delta in nanos can be determined by comparing any nano timeStamp to the first
+   * nano timeStamp written to the archive file. Adding this delta to the recorded initial time in
+   * milliseconds provides the actual (non-arbitrary) time for each sample.
+   *
+   * @param nanosTimeStamp an arbitrary time stamp in nanoseconds for this sample
    */
   public void sample(long nanosTimeStamp) {
     final boolean isDebugEnabled_STATISTICS = logger.isTraceEnabled(LogMarker.STATISTICS);
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#sample nanosTimeStamp={}", nanosTimeStamp);
+      logger.trace(
+          LogMarker.STATISTICS, "SampleCollector#sample nanosTimeStamp={}", nanosTimeStamp);
     }
     List<MarkableSampleHandler> handlers = this.sampleHandlers.currentHandlers();
     if (isDebugEnabled_STATISTICS) {
@@ -256,7 +247,10 @@ public class SampleCollector {
     try {
       notifyAllHandlersOfSample(handlers, updatedResources, nanosTimeStamp);
     } catch (IllegalArgumentException e) {
-      logger.warn(LogMarker.STATISTICS, "Use of java.lang.System.nanoTime() resulted in a non-positive timestamp delta. Skipping notification of statistics sample.", e);
+      logger.warn(
+          LogMarker.STATISTICS,
+          "Use of java.lang.System.nanoTime() resulted in a non-positive timestamp delta. Skipping notification of statistics sample.",
+          e);
     }
 
     for (ResourceInstance ri : updatedResources) {
@@ -277,7 +271,11 @@ public class SampleCollector {
             handler.close();
           }
         } catch (GemFireException ignore) {
-          logger.warn(LogMarker.STATISTICS, LocalizedMessage.create(LocalizedStrings.HostStatSampler_STATISTIC_ARCHIVER_SHUTDOWN_FAILED_BECAUSE__0, ignore.getMessage()));
+          logger.warn(
+              LogMarker.STATISTICS,
+              LocalizedMessage.create(
+                  LocalizedStrings.HostStatSampler_STATISTIC_ARCHIVER_SHUTDOWN_FAILED_BECAUSE__0,
+                  ignore.getMessage()));
         }
         StatMonitorHandler handler = this.statMonitorHandler;
         if (handler != null) {
@@ -293,7 +291,11 @@ public class SampleCollector {
   public final void changeArchive(File newFile, long nanosTimeStamp) {
     synchronized (this.sampleHandlers) {
       if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-        logger.trace(LogMarker.STATISTICS, "SampleCollector#changeArchive newFile={}, nanosTimeStamp={}", newFile, nanosTimeStamp);
+        logger.trace(
+            LogMarker.STATISTICS,
+            "SampleCollector#changeArchive newFile={}, nanosTimeStamp={}",
+            newFile,
+            nanosTimeStamp);
       }
       StatArchiveHandler handler = this.statArchiveHandler;
       if (handler != null) {
@@ -327,16 +329,15 @@ public class SampleCollector {
     return this.sampleHandlers.currentHandlers();
   }
 
-  /**
-   * Detect and archive any new resource additions or deletions
-   */
+  /** Detect and archive any new resource additions or deletions */
   private void sampleResources(List<MarkableSampleHandler> handlers) {
     final boolean isDebugEnabled_STATISTICS = logger.isTraceEnabled(LogMarker.STATISTICS);
     if (isDebugEnabled_STATISTICS) {
       logger.trace(LogMarker.STATISTICS, "SampleCollector#sampleResources handlers={}", handlers);
     }
     int newModCount = this.sampler.getStatisticsModCount();
-    if (this.statResourcesModCount != newModCount) { // TODO: what if one is deleted and one is added?
+    if (this.statResourcesModCount
+        != newModCount) { // TODO: what if one is deleted and one is added?
       this.statResourcesModCount = newModCount;
       int ignoreCount = 0;
 
@@ -357,7 +358,11 @@ public class SampleCollector {
       }
 
       if (isDebugEnabled_STATISTICS) {
-        logger.trace(LogMarker.STATISTICS, "SampleCollector#sampleResources resources.length={}, ignoreCount={}", resources.length, ignoreCount);
+        logger.trace(
+            LogMarker.STATISTICS,
+            "SampleCollector#sampleResources resources.length={}, ignoreCount={}",
+            resources.length,
+            ignoreCount);
       }
       List<ResourceInstance> ri = cleanupResources(resources, ignoreCount);
       notifyOldHandlers(handlers, ri);
@@ -367,16 +372,21 @@ public class SampleCollector {
     notifyNewHandlersOfResources(handlers, this.resourceInstMap.values());
   }
 
-  private ResourceType getResourceType(List<MarkableSampleHandler> handlers, Statistics statistics) throws IgnoreResourceException {
+  private ResourceType getResourceType(List<MarkableSampleHandler> handlers, Statistics statistics)
+      throws IgnoreResourceException {
     final boolean isDebugEnabled_STATISTICS = logger.isTraceEnabled(LogMarker.STATISTICS);
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#getResourceType statistics={}", statistics);
+      logger.trace(
+          LogMarker.STATISTICS, "SampleCollector#getResourceType statistics={}", statistics);
     }
     StatisticsType type = statistics.getType();
     if (type == null) {
       // bug 30707
       if (isDebugEnabled_STATISTICS) {
-        logger.trace(LogMarker.STATISTICS, "SampleCollector#getResourceType type={}, throwing IgnoreResourceException", type);
+        logger.trace(
+            LogMarker.STATISTICS,
+            "SampleCollector#getResourceType type={}, throwing IgnoreResourceException",
+            type);
       }
       throw new IgnoreResourceException();
     }
@@ -386,7 +396,9 @@ public class SampleCollector {
     } catch (NullPointerException ex) {
       // bug 30716
       if (isDebugEnabled_STATISTICS) {
-        logger.trace(LogMarker.STATISTICS, "SampleCollector#getResourceType resourceTypeMap.get threw NPE, throwing NullPointerException");
+        logger.trace(
+            LogMarker.STATISTICS,
+            "SampleCollector#getResourceType resourceTypeMap.get threw NPE, throwing NullPointerException");
       }
       throw new IgnoreResourceException();
     }
@@ -397,7 +409,8 @@ public class SampleCollector {
     return resourceType;
   }
 
-  private ResourceType allocateResourceType(List<MarkableSampleHandler> handlers, StatisticsType type) throws IgnoreResourceException {
+  private ResourceType allocateResourceType(
+      List<MarkableSampleHandler> handlers, StatisticsType type) throws IgnoreResourceException {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
       logger.trace(LogMarker.STATISTICS, "SampleCollector#allocateResourceType type={}", type);
     }
@@ -409,7 +422,8 @@ public class SampleCollector {
 
   private ResourceInstance allocateResourceInstance(ResourceType type, Statistics s) {
     if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#allocateResourceInstance type={}, s={}", type, s);
+      logger.trace(
+          LogMarker.STATISTICS, "SampleCollector#allocateResourceInstance type={}, s={}", type, s);
     }
     ResourceInstance resourceInstance = new ResourceInstance(this.resourceInstId, s, type);
     this.resourceInstMap.put(s, resourceInstance);
@@ -420,20 +434,28 @@ public class SampleCollector {
   private List<ResourceInstance> cleanupResources(Statistics[] resources, int ignoreCount) {
     final boolean isDebugEnabled_STATISTICS = logger.isTraceEnabled(LogMarker.STATISTICS);
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#cleanupResources resources.length={}, ignoreCount={}", resources.length, ignoreCount);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "SampleCollector#cleanupResources resources.length={}, ignoreCount={}",
+          resources.length,
+          ignoreCount);
     }
     int resourcesToDelete = this.resourceInstMap.size() - (resources.length - ignoreCount);
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#cleanupResources resourcesToDelete={}", resourcesToDelete);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "SampleCollector#cleanupResources resourcesToDelete={}",
+          resourcesToDelete);
     }
     if (resourcesToDelete == 0) {
-      return Collections.<ResourceInstance> emptyList();
+      return Collections.<ResourceInstance>emptyList();
     }
 
     // some resource instances need to be removed
     List<ResourceInstance> resourcesRemoved = new ArrayList<ResourceInstance>();
     List<Statistics> resourceList = Arrays.asList(resources);
-    Iterator<Map.Entry<Statistics, ResourceInstance>> it = this.resourceInstMap.entrySet().iterator();
+    Iterator<Map.Entry<Statistics, ResourceInstance>> it =
+        this.resourceInstMap.entrySet().iterator();
 
     while (it.hasNext() && resourcesToDelete > 0) {
       Map.Entry<Statistics, ResourceInstance> e = it.next();
@@ -447,15 +469,24 @@ public class SampleCollector {
       }
     }
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#cleanupResources resourcesRemoved={}", resourcesRemoved);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "SampleCollector#cleanupResources resourcesRemoved={}",
+          resourcesRemoved);
     }
     return resourcesRemoved;
   }
 
-  private void notifyAllHandlersOfSample(List<MarkableSampleHandler> handlers, List<ResourceInstance> updatedResources, long nanosTimeStamp) {
+  private void notifyAllHandlersOfSample(
+      List<MarkableSampleHandler> handlers,
+      List<ResourceInstance> updatedResources,
+      long nanosTimeStamp) {
     final boolean isDebugEnabled_STATISTICS = logger.isTraceEnabled(LogMarker.STATISTICS);
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#notifyAllHandlersOfSample timeStamp={}", nanosTimeStamp);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "SampleCollector#notifyAllHandlersOfSample timeStamp={}",
+          nanosTimeStamp);
     }
     //    List<ResourceInstance> ri = new ArrayList<ResourceInstance>();
     //    for (ResourceInstance resource : this.resourceInstMap.values()) {
@@ -464,17 +495,25 @@ public class SampleCollector {
     //      }
     //    }
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#notifyAllHandlersOfSample updatedResources.size()={}, handlers={}", updatedResources.size(), handlers);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "SampleCollector#notifyAllHandlersOfSample updatedResources.size()={}, handlers={}",
+          updatedResources.size(),
+          handlers);
     }
     for (MarkableSampleHandler handler : handlers) {
       handler.sampled(nanosTimeStamp, Collections.unmodifiableList(updatedResources));
     }
   }
 
-  private void notifyNewHandlersOfResources(List<MarkableSampleHandler> handlers, Collection<ResourceInstance> resources) {
+  private void notifyNewHandlersOfResources(
+      List<MarkableSampleHandler> handlers, Collection<ResourceInstance> resources) {
     final boolean isDebugEnabled_STATISTICS = logger.isTraceEnabled(LogMarker.STATISTICS);
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#notifyNewHandlersOfResources ri.size()={}", resources.size());
+      logger.trace(
+          LogMarker.STATISTICS,
+          "SampleCollector#notifyNewHandlersOfResources ri.size()={}",
+          resources.size());
     }
     int count = 0;
     for (MarkableSampleHandler handler : handlers) {
@@ -495,14 +534,21 @@ public class SampleCollector {
       }
     }
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#notifyNewHandlersOfResources notified {} new handlers", count);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "SampleCollector#notifyNewHandlersOfResources notified {} new handlers",
+          count);
     }
   }
 
-  private void notifyOldHandlersOfResource(List<MarkableSampleHandler> handlers, ResourceInstance resource) {
+  private void notifyOldHandlersOfResource(
+      List<MarkableSampleHandler> handlers, ResourceInstance resource) {
     final boolean isDebugEnabled_STATISTICS = logger.isTraceEnabled(LogMarker.STATISTICS);
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#notifyOldHandlersOfResource resource={}", resource);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "SampleCollector#notifyOldHandlersOfResource resource={}",
+          resource);
     }
     int count = 0;
     for (MarkableSampleHandler handler : handlers) {
@@ -512,14 +558,19 @@ public class SampleCollector {
       }
     }
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#notifyOldHandlersOfResource notified {} old handlers", count);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "SampleCollector#notifyOldHandlersOfResource notified {} old handlers",
+          count);
     }
   }
 
-  private void notifyOldHandlersOfResourceType(List<MarkableSampleHandler> handlers, ResourceType type) {
+  private void notifyOldHandlersOfResourceType(
+      List<MarkableSampleHandler> handlers, ResourceType type) {
     final boolean isDebugEnabled_STATISTICS = logger.isTraceEnabled(LogMarker.STATISTICS);
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#notifyOldHandlersOfResourceType type={}", type);
+      logger.trace(
+          LogMarker.STATISTICS, "SampleCollector#notifyOldHandlersOfResourceType type={}", type);
     }
     int count = 0;
     for (MarkableSampleHandler handler : handlers) {
@@ -529,7 +580,10 @@ public class SampleCollector {
       }
     }
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#notifyOldHandlersOfResourceType notified {} old handlers", count);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "SampleCollector#notifyOldHandlersOfResourceType notified {} old handlers",
+          count);
     }
   }
 
@@ -548,7 +602,10 @@ public class SampleCollector {
       }
     }
     if (isDebugEnabled_STATISTICS) {
-      logger.trace(LogMarker.STATISTICS, "SampleCollector#notifyOldHandlers notified {} old handlers", count);
+      logger.trace(
+          LogMarker.STATISTICS,
+          "SampleCollector#notifyOldHandlers notified {} old handlers",
+          count);
     }
   }
 
@@ -559,9 +616,7 @@ public class SampleCollector {
     }
   }
 
-  /**
-   * @since GemFire 7.0
-   */
+  /** @since GemFire 7.0 */
   public class MarkableSampleHandler implements SampleHandler {
 
     private final SampleHandler sampleHandler;
@@ -576,7 +631,11 @@ public class SampleCollector {
 
     public boolean isMarked() {
       if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-        logger.trace(LogMarker.STATISTICS, "MarkableSampleHandler#isMarked returning {} for {}", this.mark, this);
+        logger.trace(
+            LogMarker.STATISTICS,
+            "MarkableSampleHandler#isMarked returning {} for {}",
+            this.mark,
+            this);
       }
       return this.mark;
     }
@@ -622,12 +681,9 @@ public class SampleCollector {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
       MarkableSampleHandler other = (MarkableSampleHandler) obj;
       return this.sampleHandler == other.sampleHandler;
     }
@@ -642,15 +698,13 @@ public class SampleCollector {
     }
   }
 
-  /**
-   * @since GemFire 7.0
-   */
+  /** @since GemFire 7.0 */
   public class SampleHandlers implements Iterable<MarkableSampleHandler> {
 
-    private volatile List<MarkableSampleHandler> currentHandlers = Collections.<MarkableSampleHandler> emptyList();
+    private volatile List<MarkableSampleHandler> currentHandlers =
+        Collections.<MarkableSampleHandler>emptyList();
 
-    public SampleHandlers() {
-    }
+    public SampleHandlers() {}
 
     /** For test usage only. */
     public MarkableSampleHandler getMarkableSampleHandler(SampleHandler handler) {
@@ -694,8 +748,12 @@ public class SampleCollector {
         MarkableSampleHandler markableHandler = new MarkableSampleHandler(handler);
         List<MarkableSampleHandler> oldHandlers = this.currentHandlers;
         if (!oldHandlers.contains(markableHandler)) {
-          logger.trace(LogMarker.STATISTICS, "SampleHandlers#addSampleHandler adding markableHandler to {}", this);
-          List<MarkableSampleHandler> newHandlers = new ArrayList<MarkableSampleHandler>(oldHandlers);
+          logger.trace(
+              LogMarker.STATISTICS,
+              "SampleHandlers#addSampleHandler adding markableHandler to {}",
+              this);
+          List<MarkableSampleHandler> newHandlers =
+              new ArrayList<MarkableSampleHandler>(oldHandlers);
           added = newHandlers.add(markableHandler);
           this.currentHandlers = Collections.unmodifiableList(newHandlers);
         }
@@ -710,9 +768,13 @@ public class SampleCollector {
         List<MarkableSampleHandler> oldHandlers = this.currentHandlers;
         if (oldHandlers.contains(markableHandler)) {
           if (logger.isTraceEnabled(LogMarker.STATISTICS)) {
-            logger.trace(LogMarker.STATISTICS, "SampleHandlers#removeSampleHandler removing markableHandler from {}", this);
+            logger.trace(
+                LogMarker.STATISTICS,
+                "SampleHandlers#removeSampleHandler removing markableHandler from {}",
+                this);
           }
-          List<MarkableSampleHandler> newHandlers = new ArrayList<MarkableSampleHandler>(oldHandlers);
+          List<MarkableSampleHandler> newHandlers =
+              new ArrayList<MarkableSampleHandler>(oldHandlers);
           removed = newHandlers.remove(markableHandler);
           this.currentHandlers = Collections.unmodifiableList(newHandlers);
         }

@@ -75,13 +75,14 @@ public class HelpCommandsIntegrationTest {
   }
 
   /**
-   * TODO:GEODE-1466: update golden file to geode.properties
-   * TODO:GEODE-1566: update golden file to GeodeRedisServer
+   * TODO:GEODE-1466: update golden file to geode.properties TODO:GEODE-1566: update golden file to
+   * GeodeRedisServer
    */
   @Test
   public void testOfflineHelp() throws Exception {
     Properties helpProps = new Properties();
-    helpProps.load(HelpCommandsIntegrationTest.class.getResourceAsStream("golden-help-offline.properties"));
+    helpProps.load(
+        HelpCommandsIntegrationTest.class.getResourceAsStream("golden-help-offline.properties"));
 
     CommandManager cm = CommandManager.getInstance();
     for (Map.Entry<String, CommandTarget> e : cm.getCommands().entrySet()) {
@@ -109,7 +110,8 @@ public class HelpCommandsIntegrationTest {
   @Test
   public void testOnlineHelp() throws Exception {
     Properties helpProps = new Properties();
-    helpProps.load(HelpCommandsIntegrationTest.class.getResourceAsStream("golden-help-online.properties"));
+    helpProps.load(
+        HelpCommandsIntegrationTest.class.getResourceAsStream("golden-help-online.properties"));
 
     gfsh.executeCommand("connect --jmx-manager=localhost[" + jmxPort + "]");
 

@@ -54,9 +54,7 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.ThreadUtils;
 import org.apache.geode.test.dunit.VM;
 
-/**
- *  
- */
+/** */
 @Category(DistributedTest.class)
 public class PartitionedRegionHADUnitTest extends PartitionedRegionDUnitTestCase {
 
@@ -64,21 +62,22 @@ public class PartitionedRegionHADUnitTest extends PartitionedRegionDUnitTestCase
   public PartitionedRegionHADUnitTest() {
 
     super();
-  }//end of constructor
+  } //end of constructor
 
   public static final String PR_PREFIX = "PR";
 
   Properties props = new Properties();
 
-  volatile static int regionCnt = 0;
+  static volatile int regionCnt = 0;
 
-  final static int MAX_REGIONS = 1;
+  static final int MAX_REGIONS = 1;
 
   final int totalNumBuckets = 5;
 
   /**
-   * Test to ensure that we have proper bucket failover, with no data loss, in the face
-   * of sequential cache.close() events.
+   * Test to ensure that we have proper bucket failover, with no data loss, in the face of
+   * sequential cache.close() events.
+   *
    * @throws Exception
    */
   @Test
@@ -91,74 +90,78 @@ public class PartitionedRegionHADUnitTest extends PartitionedRegionDUnitTestCase
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
     VM vm3 = host.getVM(3);
-    CacheSerializableRunnable createPR = new CacheSerializableRunnable("createRegion") {
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        final CountDownLatch rebalancingFinished = new CountDownLatch(1);
-        InternalResourceManager.setResourceObserver(new ResourceObserverAdapter() {
+    CacheSerializableRunnable createPR =
+        new CacheSerializableRunnable("createRegion") {
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            final CountDownLatch rebalancingFinished = new CountDownLatch(1);
+            InternalResourceManager.setResourceObserver(
+                new ResourceObserverAdapter() {
 
-          @Override
-          public void rebalancingOrRecoveryFinished(Region region) {
-            rebalancingFinished.countDown();
+                  @Override
+                  public void rebalancingOrRecoveryFinished(Region region) {
+                    rebalancingFinished.countDown();
+                  }
+                });
+            try {
+              Region partitionedregion =
+                  cache.createRegion(regionName, createRegionAttributesForPR(1, 20));
+              if (!rebalancingFinished.await(60000, TimeUnit.MILLISECONDS)) {
+                fail("Redundancy recovery did not happen within 60 seconds");
+              }
+              assertNotNull(partitionedregion);
+            } catch (InterruptedException e) {
+              Assert.fail("interrupted", e);
+            } finally {
+              InternalResourceManager.setResourceObserver(null);
+            }
           }
-
-        });
-        try {
-          Region partitionedregion = cache.createRegion(regionName, createRegionAttributesForPR(1, 20));
-          if (!rebalancingFinished.await(60000, TimeUnit.MILLISECONDS)) {
-            fail("Redundancy recovery did not happen within 60 seconds");
-          }
-          assertNotNull(partitionedregion);
-        } catch (InterruptedException e) {
-          Assert.fail("interrupted", e);
-        } finally {
-          InternalResourceManager.setResourceObserver(null);
-        }
-      }
-    };
+        };
     vm2.invoke(createPR);
     vm3.invoke(createPR);
 
-    vm3.invoke(new CacheSerializableRunnable("createPRBuckets") {
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        PartitionedRegion pr = (PartitionedRegion) cache.getRegion(regionName);
-        assertTrue(pr.isEmpty());
-        Integer k;
-        // Create keys such that all buckets are created, Integer works well
-        // assuming buckets are allocated on the mod of the key hashCode, x 2 just to be safe
-        final int numEntries = pr.getTotalNumberOfBuckets() * 2;
-        for (int i = numEntries; i >= 0; --i) {
-          k = new Integer(i);
-          pr.put(k, value);
-        }
-        assertEquals(numEntries + 1, pr.size());
-        assertEquals(pr.getRegionAdvisor().getBucketSet().size(), pr.getTotalNumberOfBuckets());
+    vm3.invoke(
+        new CacheSerializableRunnable("createPRBuckets") {
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            PartitionedRegion pr = (PartitionedRegion) cache.getRegion(regionName);
+            assertTrue(pr.isEmpty());
+            Integer k;
+            // Create keys such that all buckets are created, Integer works well
+            // assuming buckets are allocated on the mod of the key hashCode, x 2 just to be safe
+            final int numEntries = pr.getTotalNumberOfBuckets() * 2;
+            for (int i = numEntries; i >= 0; --i) {
+              k = new Integer(i);
+              pr.put(k, value);
+            }
+            assertEquals(numEntries + 1, pr.size());
+            assertEquals(pr.getRegionAdvisor().getBucketSet().size(), pr.getTotalNumberOfBuckets());
+          }
+        });
 
-      }
-    });
-
-    CacheSerializableRunnable existsEntryCheck = new CacheSerializableRunnable("PRExistsEntryCheck") {
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        PartitionedRegion pr = (PartitionedRegion) cache.getRegion(regionName);
-        Integer k;
-        for (int i = pr.getTotalNumberOfBuckets() * 2; i >= 0; --i) {
-          k = new Integer(i);
-          assertTrue("containsKey for key=" + k, pr.containsKey(k));
-          assertEquals("get for key=" + k, value, pr.get(k));
-        }
-      }
-    };
+    CacheSerializableRunnable existsEntryCheck =
+        new CacheSerializableRunnable("PRExistsEntryCheck") {
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            PartitionedRegion pr = (PartitionedRegion) cache.getRegion(regionName);
+            Integer k;
+            for (int i = pr.getTotalNumberOfBuckets() * 2; i >= 0; --i) {
+              k = new Integer(i);
+              assertTrue("containsKey for key=" + k, pr.containsKey(k));
+              assertEquals("get for key=" + k, value, pr.get(k));
+            }
+          }
+        };
     vm3.invoke(existsEntryCheck);
     vm2.invoke(existsEntryCheck);
 
-    CacheSerializableRunnable closeCache = new CacheSerializableRunnable("PRCloseCache") {
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        cache.close();
-      }
-    };
+    CacheSerializableRunnable closeCache =
+        new CacheSerializableRunnable("PRCloseCache") {
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            cache.close();
+          }
+        };
 
     // origin VM down!
     vm2.invoke(closeCache);
@@ -193,89 +196,115 @@ public class PartitionedRegionHADUnitTest extends PartitionedRegionDUnitTestCase
     VM accessor = host.getVM(3);
     final int redundantCopies = 1;
     // Create PRs On 2 VMs
-    CacheSerializableRunnable createPRs = new CacheSerializableRunnable("createPrRegions") {
+    CacheSerializableRunnable createPRs =
+        new CacheSerializableRunnable("createPrRegions") {
 
-      public void run2() throws CacheException {
-        final CountDownLatch recoveryDone = new CountDownLatch(MAX_REGIONS);
-        ResourceObserver waitForRecovery = new ResourceObserverAdapter() {
-          @Override
-          public void rebalancingOrRecoveryFinished(Region region) {
-            recoveryDone.countDown();
+          public void run2() throws CacheException {
+            final CountDownLatch recoveryDone = new CountDownLatch(MAX_REGIONS);
+            ResourceObserver waitForRecovery =
+                new ResourceObserverAdapter() {
+                  @Override
+                  public void rebalancingOrRecoveryFinished(Region region) {
+                    recoveryDone.countDown();
+                  }
+                };
+            InternalResourceManager.setResourceObserver(waitForRecovery);
+            try {
+              Cache cache = getCache();
+              System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, "20000");
+              for (int i = 0; i < MAX_REGIONS; i++) {
+                cache.createRegion(
+                    PR_PREFIX + i, createRegionAttributesForPR(redundantCopies, 200));
+              }
+              System.setProperty(
+                  PartitionedRegion.RETRY_TIMEOUT_PROPERTY,
+                  Integer.toString(PartitionedRegionHelper.DEFAULT_TOTAL_WAIT_RETRY_ITERATION));
+              if (!recoveryDone.await(60, TimeUnit.SECONDS)) {
+                fail("recovery didn't happen in 60 seconds");
+              }
+            } catch (InterruptedException e) {
+              Assert.fail("recovery wait interrupted", e);
+            } finally {
+              InternalResourceManager.setResourceObserver(null);
+            }
           }
         };
-        InternalResourceManager.setResourceObserver(waitForRecovery);
-        try {
-          Cache cache = getCache();
-          System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, "20000");
-          for (int i = 0; i < MAX_REGIONS; i++) {
-            cache.createRegion(PR_PREFIX + i, createRegionAttributesForPR(redundantCopies, 200));
-          }
-          System.setProperty(PartitionedRegion.RETRY_TIMEOUT_PROPERTY, Integer.toString(PartitionedRegionHelper.DEFAULT_TOTAL_WAIT_RETRY_ITERATION));
-          if (!recoveryDone.await(60, TimeUnit.SECONDS)) {
-            fail("recovery didn't happen in 60 seconds");
-          }
-        } catch (InterruptedException e) {
-          Assert.fail("recovery wait interrupted", e);
-        } finally {
-          InternalResourceManager.setResourceObserver(null);
-        }
-      }
-    };
-    CacheSerializableRunnable createAccessor = new CacheSerializableRunnable("createAccessor") {
+    CacheSerializableRunnable createAccessor =
+        new CacheSerializableRunnable("createAccessor") {
 
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        for (int i = 0; i < MAX_REGIONS; i++) {
-          cache.createRegion(PR_PREFIX + i, createRegionAttributesForPR(redundantCopies, 0));
-        }
-      }
-    };
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            for (int i = 0; i < MAX_REGIONS; i++) {
+              cache.createRegion(PR_PREFIX + i, createRegionAttributesForPR(redundantCopies, 0));
+            }
+          }
+        };
     // Create PRs on only 2 VMs
     dataStore0.invoke(createPRs);
     // dataStore1.invoke(createPRs);
     final String expectedExceptions = PartitionedRegionStorageException.class.getName();
-    SerializableRunnable addExpectedExceptions = new CacheSerializableRunnable("addExpectedExceptions") {
-      public void run2() throws CacheException {
-        getCache().getLogger().info("<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
-        LogWriterUtils.getLogWriter().info("<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
-      }
-    };
-    SerializableRunnable removeExpectedExceptions = new CacheSerializableRunnable("removeExpectedExceptions") {
-      public void run2() throws CacheException {
-        LogWriterUtils.getLogWriter().info("<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>");
-        getCache().getLogger().info("<ExpectedException action=remove>" + expectedExceptions + "</ExpectedException>");
-      }
-    };
+    SerializableRunnable addExpectedExceptions =
+        new CacheSerializableRunnable("addExpectedExceptions") {
+          public void run2() throws CacheException {
+            getCache()
+                .getLogger()
+                .info(
+                    "<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "<ExpectedException action=add>" + expectedExceptions + "</ExpectedException>");
+          }
+        };
+    SerializableRunnable removeExpectedExceptions =
+        new CacheSerializableRunnable("removeExpectedExceptions") {
+          public void run2() throws CacheException {
+            LogWriterUtils.getLogWriter()
+                .info(
+                    "<ExpectedException action=remove>"
+                        + expectedExceptions
+                        + "</ExpectedException>");
+            getCache()
+                .getLogger()
+                .info(
+                    "<ExpectedException action=remove>"
+                        + expectedExceptions
+                        + "</ExpectedException>");
+          }
+        };
 
     // Do put operations on these 2 PRs asynchronosly.
-    CacheSerializableRunnable dataStore0Puts = new CacheSerializableRunnable("dataStore0PutOperations") {
-      public void run2() {
-        Cache cache = getCache();
-        for (int j = 0; j < MAX_REGIONS; j++) {
-          Region pr = cache.getRegion(Region.SEPARATOR + PR_PREFIX + j);
-          assertNotNull(pr);
-          for (int k = 0; k < 10; k++) {
-            pr.put(j + PR_PREFIX + k, PR_PREFIX + k);
+    CacheSerializableRunnable dataStore0Puts =
+        new CacheSerializableRunnable("dataStore0PutOperations") {
+          public void run2() {
+            Cache cache = getCache();
+            for (int j = 0; j < MAX_REGIONS; j++) {
+              Region pr = cache.getRegion(Region.SEPARATOR + PR_PREFIX + j);
+              assertNotNull(pr);
+              for (int k = 0; k < 10; k++) {
+                pr.put(j + PR_PREFIX + k, PR_PREFIX + k);
+              }
+              LogWriterUtils.getLogWriter()
+                  .info("VM0 Done put successfully for PR = " + PR_PREFIX + j);
+            }
           }
-          LogWriterUtils.getLogWriter().info("VM0 Done put successfully for PR = " + PR_PREFIX + j);
-        }
-      }
-    };
+        };
 
-    CacheSerializableRunnable dataStore1Puts = new CacheSerializableRunnable("dataStore1PutOperations") { // TODO bug36296
-      public void run2() {
+    CacheSerializableRunnable dataStore1Puts =
+        new CacheSerializableRunnable("dataStore1PutOperations") { // TODO bug36296
+          public void run2() {
 
-        Cache cache = getCache();
-        for (int j = 0; j < MAX_REGIONS; j++) {
-          Region pr = cache.getRegion(Region.SEPARATOR + PR_PREFIX + (j));
-          assertNotNull(pr);
-          for (int k = 10; k < 20; k++) {
-            pr.put(j + PR_PREFIX + k, PR_PREFIX + k);
+            Cache cache = getCache();
+            for (int j = 0; j < MAX_REGIONS; j++) {
+              Region pr = cache.getRegion(Region.SEPARATOR + PR_PREFIX + (j));
+              assertNotNull(pr);
+              for (int k = 10; k < 20; k++) {
+                pr.put(j + PR_PREFIX + k, PR_PREFIX + k);
+              }
+              LogWriterUtils.getLogWriter()
+                  .info("VM1 Done put successfully for PR = " + PR_PREFIX + j);
+            }
           }
-          LogWriterUtils.getLogWriter().info("VM1 Done put successfully for PR = " + PR_PREFIX + j);
-        }
-      }
-    };
+        };
     dataStore0.invoke(addExpectedExceptions);
     // dataStore1.invoke(addExpectedExceptions);
     AsyncInvocation async0 = dataStore0.invokeAsync(dataStore0Puts);
@@ -312,41 +341,45 @@ public class PartitionedRegionHADUnitTest extends PartitionedRegionDUnitTestCase
 
     for (int c = 0; c < MAX_REGIONS; c++) {
       final Integer ri = new Integer(c);
-      final SerializableCallable validateLocalBucket2RegionMapSize = new SerializableCallable("validateLocalBucket2RegionMapSize") {
-        public Object call() throws Exception {
-          int size = 0;
-          Cache cache = getCache();
-          PartitionedRegion pr = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + PR_PREFIX + ri.intValue());
-          if (pr.getDataStore() != null) {
-            size = pr.getDataStore().getBucketsManaged();
-          }
-          return new Integer(size);
-        }
-      };
-      final SerializableCallable validateBucketsOnNode = new SerializableCallable("validateBucketOnNode") {
-        public Object call() throws Exception {
-          int containsNode = 0;
-          Cache cache = getCache();
-          PartitionedRegion pr = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + PR_PREFIX + ri.intValue());
-
-          Iterator it = pr.getRegionAdvisor().getBucketSet().iterator();
-          Set nodeList;
-          try {
-            while (it.hasNext()) {
-              Integer bucketId = (Integer) it.next();
-              nodeList = pr.getRegionAdvisor().getBucketOwners(bucketId.intValue());
-              if ((nodeList != null) && (nodeList.contains(pr.getMyId()))) {
-                containsNode++;
-              } else {
-                getCache().getLogger().fine("I don't contain member " + pr.getMyId());
+      final SerializableCallable validateLocalBucket2RegionMapSize =
+          new SerializableCallable("validateLocalBucket2RegionMapSize") {
+            public Object call() throws Exception {
+              int size = 0;
+              Cache cache = getCache();
+              PartitionedRegion pr =
+                  (PartitionedRegion) cache.getRegion(Region.SEPARATOR + PR_PREFIX + ri.intValue());
+              if (pr.getDataStore() != null) {
+                size = pr.getDataStore().getBucketsManaged();
               }
+              return new Integer(size);
             }
-          } catch (NoSuchElementException done) {
-          }
+          };
+      final SerializableCallable validateBucketsOnNode =
+          new SerializableCallable("validateBucketOnNode") {
+            public Object call() throws Exception {
+              int containsNode = 0;
+              Cache cache = getCache();
+              PartitionedRegion pr =
+                  (PartitionedRegion) cache.getRegion(Region.SEPARATOR + PR_PREFIX + ri.intValue());
 
-          return new Integer(containsNode);
-        }
-      };
+              Iterator it = pr.getRegionAdvisor().getBucketSet().iterator();
+              Set nodeList;
+              try {
+                while (it.hasNext()) {
+                  Integer bucketId = (Integer) it.next();
+                  nodeList = pr.getRegionAdvisor().getBucketOwners(bucketId.intValue());
+                  if ((nodeList != null) && (nodeList.contains(pr.getMyId()))) {
+                    containsNode++;
+                  } else {
+                    getCache().getLogger().fine("I don't contain member " + pr.getMyId());
+                  }
+                }
+              } catch (NoSuchElementException done) {
+              }
+
+              return new Integer(containsNode);
+            }
+          };
 
       //      int vm0LBRsize = ((Integer)dataStore0.invoke(validateLocalBucket2RegionMapSize)).intValue();
       int vm2LBRsize = ((Integer) dataStore2.invoke(validateLocalBucket2RegionMapSize)).intValue();
@@ -362,8 +395,8 @@ public class PartitionedRegionHADUnitTest extends PartitionedRegionDUnitTestCase
   }
 
   /**
-   * This verifies the Bucket Regions on the basis of
-   * redundantCopies set in RegionAttributes. 
+   * This verifies the Bucket Regions on the basis of redundantCopies set in RegionAttributes.
+   *
    * @see PartitionedRegionSingleNodeOperationsJUnitTest#test018BucketScope()
    * @throws Exception
    */
@@ -376,87 +409,95 @@ public class PartitionedRegionHADUnitTest extends PartitionedRegionDUnitTestCase
     final String PR_ZeroRedundancy = "PR_ZeroRedundancy";
     final String PR_SingleRedundancy = "PR_SingleRedundancy";
     // Create PRs On 2 VMs
-    CacheSerializableRunnable createPRs = new CacheSerializableRunnable("createPrRegionWithZeroRed") {
-      public void run2() throws CacheException {
-        Cache cache = getCache();
+    CacheSerializableRunnable createPRs =
+        new CacheSerializableRunnable("createPrRegionWithZeroRed") {
+          public void run2() throws CacheException {
+            Cache cache = getCache();
 
-        // RedundantCopies = 0 , Scope = DISTRIBUTED_ACK
-        cache.createRegion(PR_ZeroRedundancy, createRegionAttributesForPR(0, 200));
-        // RedundantCopies > 0 , Scope = DISTRIBUTED_ACK
-        cache.createRegion(PR_SingleRedundancy, createRegionAttributesForPR(1, 200));
-      }
-    };
+            // RedundantCopies = 0 , Scope = DISTRIBUTED_ACK
+            cache.createRegion(PR_ZeroRedundancy, createRegionAttributesForPR(0, 200));
+            // RedundantCopies > 0 , Scope = DISTRIBUTED_ACK
+            cache.createRegion(PR_SingleRedundancy, createRegionAttributesForPR(1, 200));
+          }
+        };
 
     // Create PRs on only 2 VMs
     vm0.invoke(createPRs);
     vm1.invoke(createPRs);
     // Do put operations on these 2 PRs asynchronosly.
 
-    vm0.invoke(new CacheSerializableRunnable("doPutOperations") {
-      public void run2() {
-        Cache cache = getCache();
-        String regionName = PR_ZeroRedundancy;
-        Region pr = cache.getRegion(Region.SEPARATOR + regionName);
-        assertNotNull(pr);
-        for (int k = 0; k < 10; k++) {
-          pr.put(k + "", k + "");
-        }
-        cache.getLogger().fine("VM0 Done put successfully for PR = " + regionName);
+    vm0.invoke(
+        new CacheSerializableRunnable("doPutOperations") {
+          public void run2() {
+            Cache cache = getCache();
+            String regionName = PR_ZeroRedundancy;
+            Region pr = cache.getRegion(Region.SEPARATOR + regionName);
+            assertNotNull(pr);
+            for (int k = 0; k < 10; k++) {
+              pr.put(k + "", k + "");
+            }
+            cache.getLogger().fine("VM0 Done put successfully for PR = " + regionName);
 
-        regionName = PR_SingleRedundancy;
-        Region pr1 = cache.getRegion(Region.SEPARATOR + regionName);
-        assertNotNull(pr1);
-        for (int k = 0; k < 10; k++) {
-          pr1.put(k + "", k + "");
-        }
-        cache.getLogger().fine("VM0 Done put successfully for PR = " + regionName);
-      }
+            regionName = PR_SingleRedundancy;
+            Region pr1 = cache.getRegion(Region.SEPARATOR + regionName);
+            assertNotNull(pr1);
+            for (int k = 0; k < 10; k++) {
+              pr1.put(k + "", k + "");
+            }
+            cache.getLogger().fine("VM0 Done put successfully for PR = " + regionName);
+          }
+        });
 
-    });
+    CacheSerializableRunnable validateBucketScope =
+        new CacheSerializableRunnable("validateBucketScope") {
+          public void run2() {
+            Cache cache = getCache();
 
-    CacheSerializableRunnable validateBucketScope = new CacheSerializableRunnable("validateBucketScope") {
-      public void run2() {
-        Cache cache = getCache();
+            String regionName = PR_ZeroRedundancy;
+            PartitionedRegion pr =
+                (PartitionedRegion) cache.getRegion(Region.SEPARATOR + regionName);
 
-        String regionName = PR_ZeroRedundancy;
-        PartitionedRegion pr = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + regionName);
+            java.util.Iterator buckRegionIterator =
+                pr.getDataStore().localBucket2RegionMap.values().iterator();
+            while (buckRegionIterator.hasNext()) {
+              BucketRegion bucket = (BucketRegion) buckRegionIterator.next();
+              assertTrue(bucket.getAttributes().getScope().isDistributedAck());
+            }
 
-        java.util.Iterator buckRegionIterator = pr.getDataStore().localBucket2RegionMap.values().iterator();
-        while (buckRegionIterator.hasNext()) {
-          BucketRegion bucket = (BucketRegion) buckRegionIterator.next();
-          assertTrue(bucket.getAttributes().getScope().isDistributedAck());
-        }
+            regionName = PR_SingleRedundancy;
+            PartitionedRegion pr1 =
+                (PartitionedRegion) cache.getRegion(Region.SEPARATOR + regionName);
 
-        regionName = PR_SingleRedundancy;
-        PartitionedRegion pr1 = (PartitionedRegion) cache.getRegion(Region.SEPARATOR + regionName);
-
-        java.util.Iterator buckRegionIterator1 = pr1.getDataStore().localBucket2RegionMap.values().iterator();
-        while (buckRegionIterator1.hasNext()) {
-          Region bucket = (Region) buckRegionIterator1.next();
-          assertEquals(DataPolicy.REPLICATE, bucket.getAttributes().getDataPolicy());
-        }
-      }
-
-    };
+            java.util.Iterator buckRegionIterator1 =
+                pr1.getDataStore().localBucket2RegionMap.values().iterator();
+            while (buckRegionIterator1.hasNext()) {
+              Region bucket = (Region) buckRegionIterator1.next();
+              assertEquals(DataPolicy.REPLICATE, bucket.getAttributes().getDataPolicy());
+            }
+          }
+        };
 
     vm0.invoke(validateBucketScope);
     vm1.invoke(validateBucketScope);
-
   }
 
   /**
-   * This private methods sets the passed attributes and returns RegionAttribute
-   * object, which is used in create region
+   * This private methods sets the passed attributes and returns RegionAttribute object, which is
+   * used in create region
+   *
    * @param redundancy
    * @param localMaxMem
-   * 
    * @return
    */
   protected RegionAttributes createRegionAttributesForPR(int redundancy, int localMaxMem) {
 
     AttributesFactory attr = new AttributesFactory();
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
-    PartitionAttributes prAttr = paf.setRedundantCopies(redundancy).setLocalMaxMemory(localMaxMem).setTotalNumBuckets(totalNumBuckets).create();
+    PartitionAttributes prAttr =
+        paf.setRedundantCopies(redundancy)
+            .setLocalMaxMemory(localMaxMem)
+            .setTotalNumBuckets(totalNumBuckets)
+            .create();
     attr.setPartitionAttributes(prAttr);
     return attr.create();
   }

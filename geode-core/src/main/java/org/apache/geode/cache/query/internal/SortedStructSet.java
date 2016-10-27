@@ -27,27 +27,23 @@ import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
 /**
- * A TreeSet constrained to contain Structs of all the same type. To conserve on
- * objects, we store the StructType once and reuse it to generate Struct
- * instances on demand.
- * 
- * The values in this set are stored as Object[] and get wrapped in Structs as
- * necessary.
- * 
+ * A TreeSet constrained to contain Structs of all the same type. To conserve on objects, we store
+ * the StructType once and reuse it to generate Struct instances on demand.
+ *
+ * <p>The values in this set are stored as Object[] and get wrapped in Structs as necessary.
+ *
  * @since GemFire 4.0
  */
-public final class SortedStructSet extends TreeSet implements SelectResults, DataSerializableFixedID, Ordered, StructFields {
+public final class SortedStructSet extends TreeSet
+    implements SelectResults, DataSerializableFixedID, Ordered, StructFields {
   private static final long serialVersionUID = -1687142950781718159L;
 
   protected StructTypeImpl structType;
-  /**
-   * Holds value of property modifiable.
-   */
+  /** Holds value of property modifiable. */
   private boolean modifiable = true;
 
   /** Creates a new instance of StructSet */
-  public SortedStructSet() {
-  };
+  public SortedStructSet() {};
 
   /** Creates a new instance of StructSet */
   private SortedStructSet(Comparator c) {
@@ -58,7 +54,8 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
   public SortedStructSet(Comparator c, StructTypeImpl structType) {
     this(c);
     if (structType == null) {
-      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_STRUCTTYPE_MUST_NOT_BE_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SortedStructSet_STRUCTTYPE_MUST_NOT_BE_NULL.toLocalizedString());
     }
     this.structType = structType;
   }
@@ -66,7 +63,8 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
   /** Creates a new instance of StructSet */
   public SortedStructSet(StructTypeImpl structType) {
     if (structType == null) {
-      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_STRUCTTYPE_MUST_NOT_BE_NULL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SortedStructSet_STRUCTTYPE_MUST_NOT_BE_NULL.toLocalizedString());
     }
     this.structType = structType;
   }
@@ -86,29 +84,29 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
   @Override
   public boolean add(Object obj) {
     if (!(obj instanceof StructImpl)) {
-      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_THIS_SET_ONLY_ACCEPTS_STRUCTIMPL.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SortedStructSet_THIS_SET_ONLY_ACCEPTS_STRUCTIMPL.toLocalizedString());
     }
     StructImpl s = (StructImpl) obj;
     if (!s.getStructType().equals(this.structType)) {
-      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_OBJ_DOES_NOT_HAVE_THE_SAME_STRUCTTYPE.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SortedStructSet_OBJ_DOES_NOT_HAVE_THE_SAME_STRUCTTYPE
+              .toLocalizedString());
     }
     // return addFieldValues(s.getFieldValues());
     return this.addFieldValues(s.getFieldValues());
   }
 
-  /**
-   * For internal use. Just add the Object[] values for a struct with same type
-   */
+  /** For internal use. Just add the Object[] values for a struct with same type */
   public boolean addFieldValues(Object[] fieldValues) {
     return super.add(fieldValues);
   }
 
   /**
    * For internal use. Just add the Object[] values for a struct with same type
-   * 
-   * public boolean addFieldValues(Object[] fieldValues) { //return
-   * super.add(fieldValues); StructImpl s = new StructImpl(this.structType,
-   * fieldValues); return super.add(s); }
+   *
+   * <p>public boolean addFieldValues(Object[] fieldValues) { //return super.add(fieldValues);
+   * StructImpl s = new StructImpl(this.structType, fieldValues); return super.add(s); }
    */
 
   /** Does this set contain specified struct? */
@@ -124,19 +122,15 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
     return containsFieldValues(s.getFieldValues());
   }
 
-  /**
-   * Does this set contain a Struct of the correct type with the specified
-   * values?
-   */
+  /** Does this set contain a Struct of the correct type with the specified values? */
   public boolean containsFieldValues(Object[] fieldValues) {
     return super.contains(fieldValues);
   }
 
   /**
-   * Does this set contain a Struct of the correct type with the specified
-   * values?
-   * 
-   * public boolean containsFieldValues(Object[] fieldValues) { return
+   * Does this set contain a Struct of the correct type with the specified values?
+   *
+   * <p>public boolean containsFieldValues(Object[] fieldValues) { return
    * super.contains(fieldValues); }
    */
 
@@ -156,7 +150,6 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
   /** Remove the field values from a struct of the correct type */
   public boolean removeFieldValues(Object[] fieldValues) {
     return super.remove(fieldValues);
-
   }
 
   // downcast StructSets to call more efficient methods
@@ -187,9 +180,10 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
   public boolean addAll(StructSet ss) {
     boolean modified = false;
     if (!this.structType.equals(ss.structType)) {
-      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_TYPES_DONT_MATCH.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SortedStructSet_TYPES_DONT_MATCH.toLocalizedString());
     }
-    for (Iterator itr = ss.fieldValuesIterator(); itr.hasNext();) {
+    for (Iterator itr = ss.fieldValuesIterator(); itr.hasNext(); ) {
       if (this.addFieldValues((Object[]) itr.next())) {
         modified = true;
       }
@@ -201,9 +195,9 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
     boolean modified = false;
     if (!this.structType.equals(ss.structType)) {
       return false; // nothing
-                    // modified
+      // modified
     }
-    for (Iterator itr = ss.fieldValuesIterator(); itr.hasNext();) {
+    for (Iterator itr = ss.fieldValuesIterator(); itr.hasNext(); ) {
       Object[] fieldValues = (Object[]) itr.next();
       if (this.removeFieldValues(fieldValues)) {
         modified = true;
@@ -257,7 +251,8 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
   // is overriding the element type in a set of structs
   public void setElementType(ObjectType elementType) {
     if (!(elementType instanceof StructTypeImpl)) {
-      throw new IllegalArgumentException(LocalizedStrings.SortedStructSet_ELEMENT_TYPE_MUST_BE_STRUCT.toLocalizedString());
+      throw new IllegalArgumentException(
+          LocalizedStrings.SortedStructSet_ELEMENT_TYPE_MUST_BE_STRUCT.toLocalizedString());
     }
     this.structType = (StructTypeImpl) elementType;
   }
@@ -272,7 +267,7 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
 
   /**
    * Getter for property modifiable.
-   * 
+   *
    * @return Value of property modifiable.
    */
   public boolean isModifiable() {
@@ -285,9 +280,8 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
 
   /**
    * Setter for property modifiable.
-   * 
-   * @param modifiable
-   *          New value of property modifiable.
+   *
+   * @param modifiable New value of property modifiable.
    */
   public void setModifiable(boolean modifiable) {
     this.modifiable = modifiable;
@@ -303,16 +297,13 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
       Object o = i.next();
       buf.append(o == this ? "(this Collection)" : String.valueOf(o));
       hasNext = i.hasNext();
-      if (hasNext)
-        buf.append(",\n ");
+      if (hasNext) buf.append(",\n ");
     }
     buf.append("]");
     return buf.toString();
   }
 
-  /**
-   * Iterator wrapper to construct Structs on demand.
-   */
+  /** Iterator wrapper to construct Structs on demand. */
   private class StructIterator implements Iterator {
 
     private final Iterator itr;
@@ -326,7 +317,8 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
     }
 
     public Object next() {
-      return new StructImpl((StructTypeImpl) SortedStructSet.this.structType, (Object[]) this.itr.next());
+      return new StructImpl(
+          (StructTypeImpl) SortedStructSet.this.structType, (Object[]) this.itr.next());
     }
 
     public void remove() {
@@ -353,7 +345,7 @@ public final class SortedStructSet extends TreeSet implements SelectResults, Dat
     out.writeBoolean(this.modifiable);
     out.writeInt(this.size());
     DataSerializer.writeObject(this.structType, out);
-    for (Iterator i = this.fieldValuesIterator(); i.hasNext();) {
+    for (Iterator i = this.fieldValuesIterator(); i.hasNext(); ) {
       Object[] fieldValues = (Object[]) i.next();
       DataSerializer.writeObjectArray(fieldValues, out);
     }

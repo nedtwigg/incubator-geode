@@ -17,11 +17,8 @@
 package org.apache.geode.redis.internal;
 
 /**
- * This exception is for the case that a client attempts to operate on
- * a data structure of one {@link RedisDataType} with a command that is 
- * of another type
- * 
- *
+ * This exception is for the case that a client attempts to operate on a data structure of one
+ * {@link RedisDataType} with a command that is of another type
  */
 public class RedisDataTypeMismatchException extends RuntimeException {
 
@@ -34,5 +31,4 @@ public class RedisDataTypeMismatchException extends RuntimeException {
   public RedisDataTypeMismatchException(String message) {
     super(message);
   }
-
 }

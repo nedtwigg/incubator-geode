@@ -26,11 +26,13 @@ public class UserAttributes {
 
   private Properties credentials;
   // Update this whenever we lose/add a server.
-  private ConcurrentHashMap<ServerLocation, Long> serverToId = new ConcurrentHashMap<ServerLocation, Long>();
+  private ConcurrentHashMap<ServerLocation, Long> serverToId =
+      new ConcurrentHashMap<ServerLocation, Long>();
 
   private Pool pool;
 
-  public static final ThreadLocal<UserAttributes> userAttributes = new ThreadLocal<UserAttributes>();
+  public static final ThreadLocal<UserAttributes> userAttributes =
+      new ThreadLocal<UserAttributes>();
 
   public UserAttributes(Properties credentials, Pool pool) {
     this.credentials = credentials;

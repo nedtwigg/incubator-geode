@@ -45,8 +45,7 @@ public class PositionNoDS implements Serializable, Comparable {
   public int portfolioId = 0;
 
   /* public no-arg constructor required for DataSerializable */
-  public PositionNoDS() {
-  }
+  public PositionNoDS() {}
 
   public PositionNoDS(String id, double out) {
     secId = id;
@@ -58,8 +57,7 @@ public class PositionNoDS implements Serializable, Comparable {
   }
 
   public boolean equals(Object o) {
-    if (!(o instanceof PositionNoDS))
-      return false;
+    if (!(o instanceof PositionNoDS)) return false;
     return this.secId.equals(((PositionNoDS) o).secId);
   }
 
@@ -88,7 +86,17 @@ public class PositionNoDS implements Serializable, Comparable {
   }
 
   public String toString() {
-    return "Position [secId=" + this.secId + " out=" + this.sharesOutstanding + " type=" + this.secType + " id=" + this.pid + " mktValue=" + this.mktValue + "]";
+    return "Position [secId="
+        + this.secId
+        + " out="
+        + this.sharesOutstanding
+        + " type="
+        + this.secType
+        + " id="
+        + this.pid
+        + " mktValue="
+        + this.mktValue
+        + "]";
   }
 
   public Set getSet(int size) {
@@ -115,12 +123,8 @@ public class PositionNoDS implements Serializable, Comparable {
     if (o == this) {
       return 0;
     } else {
-      if (this.pid == ((PositionNoDS) o).pid)
-        return 0;
-      else
-        return this.pid < ((PositionNoDS) o).pid ? -1 : 1;
+      if (this.pid == ((PositionNoDS) o).pid) return 0;
+      else return this.pid < ((PositionNoDS) o).pid ? -1 : 1;
     }
-
   }
-
 }

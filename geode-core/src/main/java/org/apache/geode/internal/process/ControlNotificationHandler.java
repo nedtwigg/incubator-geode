@@ -19,10 +19,10 @@ package org.apache.geode.internal.process;
 import org.apache.geode.distributed.AbstractLauncher.ServiceState;
 
 /**
- * Defines the callbacks for handling stop and status by a {@link ControllableProcess}.
- * Separated from ControllableProcess so that an internal object can implement
- * this to avoid exposing these methods via the customer API.
- * 
+ * Defines the callbacks for handling stop and status by a {@link ControllableProcess}. Separated
+ * from ControllableProcess so that an internal object can implement this to avoid exposing these
+ * methods via the customer API.
+ *
  * @since GemFire 8.0
  */
 public interface ControlNotificationHandler {

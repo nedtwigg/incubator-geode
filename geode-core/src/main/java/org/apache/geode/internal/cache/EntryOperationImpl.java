@@ -21,12 +21,9 @@ import org.apache.geode.cache.Operation;
 import org.apache.geode.cache.Region;
 
 /**
- * 
- * Gemfire Context passed to <code>PartitionResolver</code> to compute the
- * data location
- * 
+ * Gemfire Context passed to <code>PartitionResolver</code> to compute the data location
+ *
  * @since GemFire 5.8
- * 
  */
 public class EntryOperationImpl implements EntryOperation {
 
@@ -40,7 +37,8 @@ public class EntryOperationImpl implements EntryOperation {
 
   private final Object callbackArgument;
 
-  public EntryOperationImpl(Region region, Operation operation, Object key, Object value, Object callbackArgument) {
+  public EntryOperationImpl(
+      Region region, Operation operation, Object key, Object value, Object callbackArgument) {
     this.region = region;
     this.operation = operation;
     this.key = key;
@@ -49,11 +47,10 @@ public class EntryOperationImpl implements EntryOperation {
   }
 
   /**
-   * Returns the region to which this cached object belongs or the region that
-   * raised this event for <code>RegionEvent</code>s.
-   * 
-   * @return the region associated with this object or the region that raised
-   *         this event.
+   * Returns the region to which this cached object belongs or the region that raised this event for
+   * <code>RegionEvent</code>s.
+   *
+   * @return the region associated with this object or the region that raised this event.
    */
   public Region getRegion() {
     return this.region;
@@ -61,7 +58,7 @@ public class EntryOperationImpl implements EntryOperation {
 
   /**
    * Return a description of the operation that triggered this event.
-   * 
+   *
    * @return the operation that triggered this event.
    * @since GemFire 5.8Beta
    */
@@ -71,7 +68,7 @@ public class EntryOperationImpl implements EntryOperation {
 
   /**
    * Returns the key.
-   * 
+   *
    * @return the key
    */
   public Object getKey() {

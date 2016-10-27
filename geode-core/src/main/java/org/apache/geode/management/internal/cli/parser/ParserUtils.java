@@ -23,12 +23,11 @@ import java.util.List;
 import org.apache.geode.management.internal.cli.parser.preprocessor.PreprocessorUtils;
 
 /**
- * 
  * Utility class for parsing and pre-processing
- * 
- * The methods herein always ensure that the syntax is proper before performing
- * the desired operation
- * 
+ *
+ * <p>The methods herein always ensure that the syntax is proper before performing the desired
+ * operation
+ *
  * @since GemFire 7.0
  */
 public class ParserUtils {
@@ -36,7 +35,8 @@ public class ParserUtils {
     if (input != null && splitAround != null) {
       List<String> parts = new ArrayList<String>();
       StringBuffer part = new StringBuffer();
-      outer: for (int i = 0; i < input.length(); i++) {
+      outer:
+      for (int i = 0; i < input.length(); i++) {
         char ch = input.charAt(i);
         if (splitAround.startsWith("" + ch)) {
           // First check whether syntax is valid
@@ -65,8 +65,7 @@ public class ParserUtils {
       // Need to copy the last part in the parts list
       if (part.length() > 0) {
         if (!PreprocessorUtils.containsOnlyWhiteSpaces(part.toString())) {
-          if (!part.toString().equals(splitAround))
-            parts.add(part.toString().trim());
+          if (!part.toString().equals(splitAround)) parts.add(part.toString().trim());
         }
       }
       // Convert the list into an array
@@ -83,7 +82,8 @@ public class ParserUtils {
   public static String[] splitValues(String value, String valueSeparator) {
     if (value != null && valueSeparator != null) {
       String[] split = split(value, valueSeparator);
-      if (value.endsWith(valueSeparator) && PreprocessorUtils.isSyntaxValid(split[split.length - 1])) {
+      if (value.endsWith(valueSeparator)
+          && PreprocessorUtils.isSyntaxValid(split[split.length - 1])) {
         String[] extendedSplit = new String[split.length + 1];
         for (int i = 0; i < split.length; i++) {
           extendedSplit[i] = split[i];
@@ -94,7 +94,8 @@ public class ParserUtils {
 
       // Remove quotes from the beginning and end of split strings
       for (int i = 0; i < split.length; i++) {
-        if ((split[i].endsWith("\"") && split[i].endsWith("\"")) || (split[i].startsWith("\'") && split[i].endsWith("\'"))) {
+        if ((split[i].endsWith("\"") && split[i].endsWith("\""))
+            || (split[i].startsWith("\'") && split[i].endsWith("\'"))) {
           split[i] = split[i].substring(1, split[i].length() - 1);
         }
       }
@@ -135,7 +136,8 @@ public class ParserUtils {
     int index = -1;
     if (value != null && subString != null) {
       StringBuffer part = new StringBuffer();
-      outer: for (int i = 0; i < value.length(); i++) {
+      outer:
+      for (int i = 0; i < value.length(); i++) {
         char ch = value.charAt(i);
         if (subString.startsWith("" + ch)) {
           StringBuffer subPart = new StringBuffer(ch);
@@ -182,5 +184,4 @@ public class ParserUtils {
 
     return stringToTrim;
   }
-
 }

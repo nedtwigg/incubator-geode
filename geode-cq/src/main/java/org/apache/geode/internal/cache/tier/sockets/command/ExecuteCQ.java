@@ -46,17 +46,17 @@ import org.apache.geode.internal.security.AuthorizeRequest;
 public class ExecuteCQ extends BaseCQCommand {
   protected static final Logger logger = LogService.getLogger();
 
-  private final static ExecuteCQ singleton = new ExecuteCQ();
+  private static final ExecuteCQ singleton = new ExecuteCQ();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private ExecuteCQ() {
-  }
+  private ExecuteCQ() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, InterruptedException {
     AcceptorImpl acceptor = servConn.getAcceptor();
     CachedRegionHelper crHelper = servConn.getCachedRegionHelper();
     ClientProxyMembershipID id = servConn.getProxyID();
@@ -74,7 +74,13 @@ public class ExecuteCQ extends BaseCQCommand {
     byte[] isDurableByte = isDurablePart.getSerializedForm();
     boolean isDurable = (isDurableByte == null || isDurableByte[0] == 0) ? false : true;
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received {} request from {} CqName: {} queryString: {}", servConn.getName(), MessageType.getString(msg.getMessageType()), servConn.getSocketString(), cqName, cqQueryString);
+      logger.debug(
+          "{}: Received {} request from {} CqName: {} queryString: {}",
+          servConn.getName(),
+          MessageType.getString(msg.getMessageType()),
+          servConn.getSocketString(),
+          cqName,
+          cqQueryString);
     }
 
     DefaultQueryService qService = null;
@@ -85,7 +91,8 @@ public class ExecuteCQ extends BaseCQCommand {
     ServerCQ cqQuery = null;
 
     try {
-      qService = (DefaultQueryService) ((GemFireCacheImpl) crHelper.getCache()).getLocalQueryService();
+      qService =
+          (DefaultQueryService) ((GemFireCacheImpl) crHelper.getCache()).getLocalQueryService();
 
       // Authorization check
       AuthorizeRequest authzRequest = servConn.getAuthzRequest();
@@ -106,7 +113,17 @@ public class ExecuteCQ extends BaseCQCommand {
       }
 
       cqServiceForExec = qService.getCqService();
-      cqQuery = cqServiceForExec.executeCq(cqName, cqQueryString, cqState, id, acceptor.getCacheClientNotifier(), isDurable, false, 0, null);
+      cqQuery =
+          cqServiceForExec.executeCq(
+              cqName,
+              cqQueryString,
+              cqState,
+              id,
+              acceptor.getCacheClientNotifier(),
+              isDurable,
+              false,
+              0,
+              null);
     } catch (CqException cqe) {
       sendCqResponse(MessageType.CQ_EXCEPTION_TYPE, "", msg.getTransactionId(), cqe, servConn);
       return;
@@ -123,14 +140,24 @@ public class ExecuteCQ extends BaseCQCommand {
       sendResults = true;
     }
 
-    // Execute the query and send the result-set to client.    
+    // Execute the query and send the result-set to client.
     try {
       if (query == null) {
         query = qService.newQuery(cqQueryString);
         cqRegionNames = ((DefaultQuery) query).getRegionsInQuery(null);
       }
       ((DefaultQuery) query).setIsCqQuery(true);
-      successQuery = processQuery(msg, query, cqQueryString, cqRegionNames, start, cqQuery, executeCQContext, servConn, sendResults);
+      successQuery =
+          processQuery(
+              msg,
+              query,
+              cqQueryString,
+              cqRegionNames,
+              start,
+              cqQuery,
+              executeCQContext,
+              servConn,
+              sendResults);
 
       // Update the CQ statistics.
       cqQuery.getVsdStats().setCqInitialResultsTime((DistributionStats.getStatTime()) - oldstart);
@@ -149,12 +176,16 @@ public class ExecuteCQ extends BaseCQCommand {
 
     if (!sendResults && successQuery) {
       // Send OK to client
-      sendCqResponse(MessageType.REPLY, LocalizedStrings.ExecuteCQ_CQ_CREATED_SUCCESSFULLY.toLocalizedString(), msg.getTransactionId(), null, servConn);
+      sendCqResponse(
+          MessageType.REPLY,
+          LocalizedStrings.ExecuteCQ_CQ_CREATED_SUCCESSFULLY.toLocalizedString(),
+          msg.getTransactionId(),
+          null,
+          servConn);
 
       long start2 = DistributionStats.getStatTime();
       stats.incProcessCreateCqTime(start2 - oldstart);
     }
     servConn.setAsTrue(RESPONDED);
   }
-
 }

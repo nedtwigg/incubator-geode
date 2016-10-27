@@ -26,13 +26,10 @@ import org.apache.geode.management.internal.configuration.domain.ConfigurationCh
 
 public class DeleteJarFunction extends FunctionAdapter implements InternalEntity {
 
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
 
-  public DeleteJarFunction() {
-  }
+  public DeleteJarFunction() {}
 
   @Override
   public void execute(FunctionContext context) {
@@ -49,7 +46,8 @@ public class DeleteJarFunction extends FunctionAdapter implements InternalEntity
         SharedConfiguration sharedConfiguration = locator.getSharedConfiguration();
         sharedConfiguration.removeJars(jarFilenames, groups);
       } else {
-        configChangeResult.setErrorMessage("Shared Configuration has not been started in locator : " + locator);
+        configChangeResult.setErrorMessage(
+            "Shared Configuration has not been started in locator : " + locator);
       }
     } catch (Exception e) {
       configChangeResult.setException(e);
@@ -63,5 +61,4 @@ public class DeleteJarFunction extends FunctionAdapter implements InternalEntity
   public String getId() {
     return DeleteJarFunction.class.getName();
   }
-
 }

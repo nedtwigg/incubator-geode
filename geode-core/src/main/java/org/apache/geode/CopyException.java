@@ -19,17 +19,13 @@ package org.apache.geode;
 /**
  * Indicates a failure to copy an object.
  *
- *
- *
  * @see CopyHelper#copy
  * @since GemFire 4.0
  */
 public class CopyException extends GemFireException {
   private static final long serialVersionUID = -1143711608610323585L;
 
-  /**
-   * Constructs a new <code>CopyException</code>.
-   */
+  /** Constructs a new <code>CopyException</code>. */
   public CopyException() {
     super();
   }
@@ -44,8 +40,7 @@ public class CopyException extends GemFireException {
   }
 
   /**
-   * Constructs a new <code>CopyException</code> with a message string
-   * and a cause.
+   * Constructs a new <code>CopyException</code> with a message string and a cause.
    *
    * @param msg the message string
    * @param cause a causal Throwable

@@ -33,10 +33,10 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Class MemberDiskThroughputService
- * 
- * This class contains implementations for getting Memeber's current Disk
- * Throughput trends over the time.
- * 
+ *
+ * <p>This class contains implementations for getting Memeber's current Disk Throughput trends over
+ * the time.
+ *
  * @since GemFire version 7.5
  */
 @Component
@@ -63,9 +63,15 @@ public class MemberDiskThroughputService implements PulseService {
     if (clusterMember != null) {
       // response
       responseJSON.put("throughputWrites", clusterMember.getThroughputWrites());
-      responseJSON.put("throughputWritesTrend", mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_THROUGHPUT_WRITES)));
+      responseJSON.put(
+          "throughputWritesTrend",
+          mapper.valueToTree(
+              clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_THROUGHPUT_WRITES)));
       responseJSON.put("throughputReads", clusterMember.getThroughputWrites());
-      responseJSON.put("throughputReadsTrend", mapper.valueToTree(clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_THROUGHPUT_READS)));
+      responseJSON.put(
+          "throughputReadsTrend",
+          mapper.valueToTree(
+              clusterMember.getMemberStatisticTrend(Cluster.Member.MEMBER_STAT_THROUGHPUT_READS)));
     }
 
     // Send json response

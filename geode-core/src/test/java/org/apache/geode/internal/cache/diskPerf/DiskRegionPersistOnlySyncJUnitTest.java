@@ -33,9 +33,7 @@ import org.apache.geode.internal.cache.DiskRegionTestingBase;
 import org.apache.geode.internal.cache.LocalRegion;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Disk region perf test for Persist only with sync writes.
- */
+/** Disk region perf test for Persist only with sync writes. */
 @Category(IntegrationTest.class)
 public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
 
@@ -69,7 +67,17 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
     //    final String key = "K";
     final byte[] value = new byte[ENTRY_SIZE];
     Arrays.fill(value, (byte) 77);
-    String config = "ENTRY_SIZE=" + ENTRY_SIZE + " OP_COUNT=" + OP_COUNT + " UNIQUE_KEYS=" + UNIQUE_KEYS + " opLogEnabled=" + !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disableOpLog") + " syncWrites=" + Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "syncWrites");
+    String config =
+        "ENTRY_SIZE="
+            + ENTRY_SIZE
+            + " OP_COUNT="
+            + OP_COUNT
+            + " UNIQUE_KEYS="
+            + UNIQUE_KEYS
+            + " opLogEnabled="
+            + !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disableOpLog")
+            + " syncWrites="
+            + Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "syncWrites");
     if (ra.getDiskStoreName() != null) {
       config += " diskStoreName=" + ra.getDiskStoreName();
     } else {
@@ -155,7 +163,7 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
      * If required to be set as higher value such as 1000000
      * one needs to set the VM heap size accordingly.
      * (For example:Default setting in build.xml is <jvmarg value="-Xmx256M"/>
-     *    
+     *
      */
     OP_COUNT = 1000;
     UNIQUE_KEYS = Boolean.getBoolean("DRP.UNIQUE_KEYS");
@@ -163,7 +171,17 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
     //    final String key = "K";
     final byte[] value = new byte[ENTRY_SIZE];
     Arrays.fill(value, (byte) 77);
-    String config = "ENTRY_SIZE=" + ENTRY_SIZE + " OP_COUNT=" + OP_COUNT + " UNIQUE_KEYS=" + UNIQUE_KEYS + " opLogEnabled=" + !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disableOpLog") + " syncWrites=" + Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "syncWrites");
+    String config =
+        "ENTRY_SIZE="
+            + ENTRY_SIZE
+            + " OP_COUNT="
+            + OP_COUNT
+            + " UNIQUE_KEYS="
+            + UNIQUE_KEYS
+            + " opLogEnabled="
+            + !Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "disableOpLog")
+            + " syncWrites="
+            + Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "syncWrites");
     if (ra.getDiskStoreName() != null) {
       config += " diskStoreName=" + ra.getDiskStoreName();
     } else {
@@ -197,5 +215,4 @@ public class DiskRegionPersistOnlySyncJUnitTest extends DiskRegionTestingBase {
     log.info(stats);
     System.out.println("Stats for 5kb writes :" + stats);
   }
-
 }

@@ -25,7 +25,7 @@ import org.apache.geode.DataSerializer;
 public class MyDataSerializer extends DataSerializer {
   @Override
   public Class<?>[] getSupportedClasses() {
-    return new Class[] { MyObjectDataSerializable2.class };
+    return new Class[] {MyObjectDataSerializable2.class};
   }
 
   @Override
@@ -52,8 +52,7 @@ public class MyDataSerializer extends DataSerializer {
   }
 
   public static class MyObjectDataSerializable2 extends MyObject {
-    public MyObjectDataSerializable2() {
-    }
+    public MyObjectDataSerializable2() {}
 
     public MyObjectDataSerializable2(long number, String s) {
       super(number, s);

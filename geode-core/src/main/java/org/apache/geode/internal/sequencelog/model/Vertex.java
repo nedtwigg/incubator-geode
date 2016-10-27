@@ -18,9 +18,7 @@ package org.apache.geode.internal.sequencelog.model;
 
 import java.util.SortedMap;
 
-/**
- *
- */
+/** */
 public class Vertex implements Comparable<Vertex> {
 
   private final Graph graph;
@@ -64,25 +62,17 @@ public class Vertex implements Comparable<Vertex> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (!(obj instanceof Vertex))
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (!(obj instanceof Vertex)) return false;
     Vertex other = (Vertex) obj;
     if (name == null) {
-      if (other.name != null)
-        return false;
-    } else if (!name.equals(other.name))
-      return false;
+      if (other.name != null) return false;
+    } else if (!name.equals(other.name)) return false;
     if (state == null) {
-      if (other.state != null)
-        return false;
-    } else if (!state.equals(other.state))
-      return false;
-    if (timestamp != other.timestamp)
-      return false;
+      if (other.state != null) return false;
+    } else if (!state.equals(other.state)) return false;
+    if (timestamp != other.timestamp) return false;
     return true;
   }
 
@@ -99,7 +89,10 @@ public class Vertex implements Comparable<Vertex> {
     if (difference != 0) {
       return difference;
     }
-    difference = o.state == null ? (this.state == null ? 0 : -1) : (this.state == null ? 1 : o.state.compareTo(this.state));
+    difference =
+        o.state == null
+            ? (this.state == null ? 0 : -1)
+            : (this.state == null ? 1 : o.state.compareTo(this.state));
 
     return difference;
   }

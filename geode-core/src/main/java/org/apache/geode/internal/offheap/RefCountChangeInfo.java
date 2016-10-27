@@ -22,9 +22,7 @@ import java.io.PrintStream;
 import org.apache.geode.internal.shared.StringPrintWriter;
 
 @SuppressWarnings("serial")
-/**
- * Used by MemoryAllocatorImpl to debug off-heap memory leaks.
- */
+/** Used by MemoryAllocatorImpl to debug off-heap memory leaks. */
 public class RefCountChangeInfo extends Throwable {
   private final String threadName;
   private final int rc;
@@ -84,12 +82,10 @@ public class RefCountChangeInfo extends Throwable {
   }
 
   public boolean isSameCaller(RefCountChangeInfo other) {
-    if (!getMessage().equals(other.getMessage()))
-      return false;
+    if (!getMessage().equals(other.getMessage())) return false;
     Object trace = getStackTraceString();
     Object traceOther = other.getStackTraceString();
-    if (trace.hashCode() != traceOther.hashCode())
-      return false;
+    if (trace.hashCode() != traceOther.hashCode()) return false;
     if (trace.equals(traceOther)) {
       return true;
     } else {
@@ -129,5 +125,4 @@ public class RefCountChangeInfo extends Throwable {
       ps.println("\tat " + trace[i]);
     }
   }
-
 }

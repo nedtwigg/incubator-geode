@@ -85,11 +85,12 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
     vm0.invoke(() -> DistAckMapMethodsDUnitTest.closeCache());
     vm1.invoke(() -> DistAckMapMethodsDUnitTest.closeCache());
     cache = null;
-    Invoke.invokeInEveryVM(new SerializableRunnable() {
-      public void run() {
-        cache = null;
-      }
-    });
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable() {
+          public void run() {
+            cache = null;
+          }
+        });
   }
 
   public static void createCache() {
@@ -114,7 +115,6 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-
   }
 
   public static void createMirroredRegion() {
@@ -173,7 +173,8 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
     //objArr[0] = (Object) in;
     vm0.invoke(DistAckMapMethodsDUnitTest.class, "putMethod", objArr);
     obj1 = vm1.invoke(DistAckMapMethodsDUnitTest.class, "putMethod", objArr);
-    if (obj1 != null) {//here if some dummy object is returned on first time put then that should be checked
+    if (obj1
+        != null) { //here if some dummy object is returned on first time put then that should be checked
       fail("failed while region.put from both vms for same key");
     }
   }
@@ -195,18 +196,21 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
     vm0.invoke(DistAckMapMethodsDUnitTest.class, "removeMethod", objArr);
     //validate if vm0 has that key value entry
     ret = vm0.invoke(() -> containsKeyMethod("" + i));
-    if (ret) {//if returned true means that the key is still there
+    if (ret) { //if returned true means that the key is still there
       fail("region.remove failed with distributed ack scope");
     }
 
     //test if the correct value is returned
     vm0.invoke(DistAckMapMethodsDUnitTest.class, "putMethod", objArr);
-    obj1 = vm1.invoke(DistAckMapMethodsDUnitTest.class, "getMethod", objArr);//to make sure that vm1 region has the entry
+    obj1 =
+        vm1.invoke(
+            DistAckMapMethodsDUnitTest.class,
+            "getMethod",
+            objArr); //to make sure that vm1 region has the entry
     obj2 = vm1.invoke(DistAckMapMethodsDUnitTest.class, "removeMethod", objArr);
     LogWriterUtils.getLogWriter().fine("111111111" + obj1);
     LogWriterUtils.getLogWriter().fine("2222222222" + obj2);
-    if (obj1 == null)
-      fail("region1.getMethod returned null");
+    if (obj1 == null) fail("region1.getMethod returned null");
     if (!(obj1.equals(obj2))) {
       fail("region.remove failed with distributed ack scope");
     }
@@ -222,18 +226,19 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
     vm1.invoke(() -> DistAckMapMethodsDUnitTest.createRegionToTestRemove());
 
     vm0.invoke(() -> DistAckMapMethodsDUnitTest.removeMethodDetails());
-    vm1.invoke(new CacheSerializableRunnable("testRemoveMethodDetails") {
-      public void run2() throws CacheException {
-        Object ob1 = remRegion.get(new Integer(1));
-        assertEquals("beforeDestroy", ob1.toString());
-        //wait till listeber switches afterDestroy to true
-        //                    while(!afterDestroy){
-        //                        //wait
-        //                    }
-        assertEquals("afterDestroy", remRegion.get(new Integer(3)).toString());
-      }
-    });
-  }//end of testRemoveMethodDetails
+    vm1.invoke(
+        new CacheSerializableRunnable("testRemoveMethodDetails") {
+          public void run2() throws CacheException {
+            Object ob1 = remRegion.get(new Integer(1));
+            assertEquals("beforeDestroy", ob1.toString());
+            //wait till listeber switches afterDestroy to true
+            //                    while(!afterDestroy){
+            //                        //wait
+            //                    }
+            assertEquals("afterDestroy", remRegion.get(new Integer(3)).toString());
+          }
+        });
+  } //end of testRemoveMethodDetails
 
   @Test
   public void testIsEmptyMethod() {
@@ -249,7 +254,7 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
     //objArr[0] = (Object) in;
     vm0.invoke(DistAckMapMethodsDUnitTest.class, "putMethod", objArr);
     boolean val = vm1.invoke(() -> DistAckMapMethodsDUnitTest.isEmptyMethod());
-    if (!val) {//val should be true
+    if (!val) { //val should be true
       fail("Failed in region.isEmpty");
     }
 
@@ -274,13 +279,13 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
     //objArr[0] = (Object) in;
     vm0.invoke(DistAckMapMethodsDUnitTest.class, "putMethod", objArr);
     boolean val = vm1.invoke(() -> containsValueMethod("first"));
-    if (val) {//val should be false.
+    if (val) { //val should be false.
       fail("Failed in region.ContainsValue");
     }
 
     vm1.invoke(DistAckMapMethodsDUnitTest.class, "getMethod", objArr);
     boolean val1 = vm1.invoke(() -> containsValueMethod("first"));
-    if (!val1) {//val1 should be true.
+    if (!val1) { //val1 should be true.
       fail("Failed in region.ContainsValue");
     }
   }
@@ -302,7 +307,10 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
       fail("failed in keySetMethodtest method");
     }
 
-    vm1.invoke(DistAckMapMethodsDUnitTest.class, "getMethod", objArr);//to make sure that vm1 region has the entry
+    vm1.invoke(
+        DistAckMapMethodsDUnitTest.class,
+        "getMethod",
+        objArr); //to make sure that vm1 region has the entry
     temp = vm1.invoke(() -> DistAckMapMethodsDUnitTest.keySetMethod());
     if (temp == 0) {
       fail("failed in keySetMethodtest method");
@@ -335,7 +343,10 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
       fail("failed in entrySetMethodtest method");
     }
 
-    vm1.invoke(DistAckMapMethodsDUnitTest.class, "getMethod", objArr);//to make sure that vm1 region has the entry
+    vm1.invoke(
+        DistAckMapMethodsDUnitTest.class,
+        "getMethod",
+        objArr); //to make sure that vm1 region has the entry
     temp = vm1.invoke(() -> DistAckMapMethodsDUnitTest.entrySetMethod());
     if (temp == 0) {
       fail("failed in entrySetMethodtest method");
@@ -368,7 +379,10 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
       fail("failed in region.size method");
     }
 
-    vm1.invoke(DistAckMapMethodsDUnitTest.class, "getMethod", objArr);//to make sure that vm1 region has the entry
+    vm1.invoke(
+        DistAckMapMethodsDUnitTest.class,
+        "getMethod",
+        objArr); //to make sure that vm1 region has the entry
     j = vm1.invoke(() -> DistAckMapMethodsDUnitTest.sizeMethod());
     if (j == 0) {
       fail("failed in region.size method");
@@ -559,8 +573,7 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
       assertEquals("beforeDestroy", remRegion.get(inOb2).toString());
 
       //wait till listeber switches afterDestroy to true
-      while (!afterDestroy) {
-      }
+      while (!afterDestroy) {}
       //to test cacheListener
       inOb2 = new Integer(3);
       assertEquals("afterDestroy", remRegion.get(inOb2).toString());
@@ -571,8 +584,7 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-
-  }//end of removeMethodDetail
+  } //end of removeMethodDetail
 
   public static void allMethodsArgs() {
     //testing args for put method
@@ -677,23 +689,23 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-
-  }//end of allMethodsArgs
+  } //end of allMethodsArgs
 
   //helper classes
 
   static class RemoveCacheWriter extends CacheWriterAdapter {
 
-    public void beforeDestroy(EntryEvent entryEvent) throws org.apache.geode.cache.CacheWriterException {
+    public void beforeDestroy(EntryEvent entryEvent)
+        throws org.apache.geode.cache.CacheWriterException {
       Integer o1 = new Integer(1);
       remRegion.put(o1, "beforeDestroy");
     }
-
-  }//end of RemoveCacheWriter
+  } //end of RemoveCacheWriter
 
   static class RemoveCacheListener extends CacheListenerAdapter {
 
-    public void afterDestroy(EntryEvent entryEvent) throws org.apache.geode.cache.CacheWriterException {
+    public void afterDestroy(EntryEvent entryEvent)
+        throws org.apache.geode.cache.CacheWriterException {
       Integer o1 = new Integer(3);
       remRegion.put(o1, "afterDestroy");
 
@@ -702,7 +714,5 @@ public class DistAckMapMethodsDUnitTest extends JUnit4DistributedTestCase { // T
       //to continue main thread where region.remove has actually occurred
       afterDestroy = true;
     }
-
-  }//end of RemoveCacheListener
-
-}//end of class
+  } //end of RemoveCacheListener
+} //end of class

@@ -23,6 +23,12 @@ import org.apache.geode.internal.logging.log4j.FastLoggerIntegrationJUnitTest;
 import org.apache.geode.internal.logging.log4j.FastLoggerWithDefaultConfigJUnitTest;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ DistributedSystemLogFileJUnitTest.class, LocatorLogFileJUnitTest.class, LogServiceIntegrationJUnitTest.class, MergeLogFilesJUnitTest.class, FastLoggerWithDefaultConfigJUnitTest.class, FastLoggerIntegrationJUnitTest.class, })
-public class LoggingIntegrationTestSuite {
-}
+@Suite.SuiteClasses({
+  DistributedSystemLogFileJUnitTest.class,
+  LocatorLogFileJUnitTest.class,
+  LogServiceIntegrationJUnitTest.class,
+  MergeLogFilesJUnitTest.class,
+  FastLoggerWithDefaultConfigJUnitTest.class,
+  FastLoggerIntegrationJUnitTest.class,
+})
+public class LoggingIntegrationTestSuite {}

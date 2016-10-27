@@ -44,11 +44,11 @@ import static org.junit.Assert.assertTrue;
 @Category(UnitTest.class)
 public class CategoryWithParameterizedRunnerFactoryTest {
 
-  /**
-   * So much hacking in order to expose JUnit internals. I have no words...
-   */
-  public static class ExposedBlockJUnit4ClassRunnerWithParameters extends BlockJUnit4ClassRunnerWithParameters implements ExposedGetAnnotations {
-    public ExposedBlockJUnit4ClassRunnerWithParameters(TestWithParameters test) throws InitializationError {
+  /** So much hacking in order to expose JUnit internals. I have no words... */
+  public static class ExposedBlockJUnit4ClassRunnerWithParameters
+      extends BlockJUnit4ClassRunnerWithParameters implements ExposedGetAnnotations {
+    public ExposedBlockJUnit4ClassRunnerWithParameters(TestWithParameters test)
+        throws InitializationError {
       super(test);
     }
 
@@ -58,8 +58,10 @@ public class CategoryWithParameterizedRunnerFactoryTest {
     }
   }
 
-  public static class ExposedBlockJUnit4ClassRunnerWithParametersFactory extends BlockJUnit4ClassRunnerWithParametersFactory {
-    public Runner createRunnerForTestWithParameters(TestWithParameters test) throws InitializationError {
+  public static class ExposedBlockJUnit4ClassRunnerWithParametersFactory
+      extends BlockJUnit4ClassRunnerWithParametersFactory {
+    public Runner createRunnerForTestWithParameters(TestWithParameters test)
+        throws InitializationError {
       return new ExposedBlockJUnit4ClassRunnerWithParameters(test);
     }
   }
@@ -77,15 +79,15 @@ public class CategoryWithParameterizedRunnerFactoryTest {
 
   @Category(UnitTest.class)
   @RunWith(ExposedParameterized.class)
-  @Parameterized.UseParametersRunnerFactory(ExposedBlockJUnit4ClassRunnerWithParametersFactory.class)
+  @Parameterized.UseParametersRunnerFactory(
+      ExposedBlockJUnit4ClassRunnerWithParametersFactory.class)
   public static class BrokenCategoryClass {
     @Parameterized.Parameters
     public static Iterable<String> getParams() {
       return Arrays.asList("one", "two");
     }
 
-    @Parameterized.Parameter
-    public String value;
+    @Parameterized.Parameter public String value;
 
     @Test
     public void insanity() {
@@ -102,8 +104,7 @@ public class CategoryWithParameterizedRunnerFactoryTest {
       return Arrays.asList("one", "two");
     }
 
-    @Parameterized.Parameter
-    public String value;
+    @Parameterized.Parameter public String value;
 
     @Test
     public void insanity() {
@@ -115,16 +116,23 @@ public class CategoryWithParameterizedRunnerFactoryTest {
   public void testBrokenCategoryAndParameterized() {
     Request request = Request.aClass(BrokenCategoryClass.class);
     ExposedParameterized runner = (ExposedParameterized) request.getRunner();
-    request = request.filterWith(new CategoryFilter((ExposedBlockJUnit4ClassRunnerWithParameters) runner.getChildren().get(0)));
+    request =
+        request.filterWith(
+            new CategoryFilter(
+                (ExposedBlockJUnit4ClassRunnerWithParameters) runner.getChildren().get(0)));
     Result result = new JUnitCore().run(request);
-    assertEquals("Yeah!! This might actually mean we've upgraded to JUnit 4.13. Hurry up already and delete this hack.", 1, result.getRunCount());
+    assertEquals(
+        "Yeah!! This might actually mean we've upgraded to JUnit 4.13. Hurry up already and delete this hack.",
+        1,
+        result.getRunCount());
   }
 
   @Test
   public void testWorkingCategoryAndParameterized() {
     Request request = Request.aClass(WorkingCategoryClass.class);
     ExposedParameterized runner = (ExposedParameterized) request.getRunner();
-    request = request.filterWith(new CategoryFilter((ExposedGetAnnotations) runner.getChildren().get(0)));
+    request =
+        request.filterWith(new CategoryFilter((ExposedGetAnnotations) runner.getChildren().get(0)));
     Result result = new JUnitCore().run(request);
     assertEquals(2, result.getRunCount());
   }

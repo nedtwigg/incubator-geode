@@ -23,8 +23,7 @@ import org.apache.geode.cache.query.internal.QCompiler;
 public class ASTRegionPath extends GemFireAST {
   private static final long serialVersionUID = -4326820914154387472L;
 
-  public ASTRegionPath() {
-  }
+  public ASTRegionPath() {}
 
   public ASTRegionPath(Token t) {
     super(t);
@@ -34,5 +33,4 @@ public class ASTRegionPath extends GemFireAST {
   public void compile(QCompiler compiler) {
     compiler.pushRegion(getText());
   }
-
 }

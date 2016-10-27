@@ -40,7 +40,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
  * Integration tests for {@link SimpleStatSampler}.
- * 
+ *
  * @since GemFire 7.0
  */
 @Category(IntegrationTest.class)
@@ -49,17 +49,19 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
   private LocalStatisticsFactory statisticsFactory;
   private File testDir;
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
     this.testDir = this.temporaryFolder.getRoot();
     assertTrue(this.testDir.exists());
-    System.setProperty(SimpleStatSampler.ARCHIVE_FILE_NAME_PROPERTY, this.testDir.getAbsolutePath() + File.separator + SimpleStatSampler.DEFAULT_ARCHIVE_FILE_NAME);
+    System.setProperty(
+        SimpleStatSampler.ARCHIVE_FILE_NAME_PROPERTY,
+        this.testDir.getAbsolutePath()
+            + File.separator
+            + SimpleStatSampler.DEFAULT_ARCHIVE_FILE_NAME);
   }
 
   @After
@@ -71,9 +73,7 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
     closeStatisticsFactory();
   }
 
-  /**
-   * Tests the majority of getters and the basic functionality of the sampler.
-   */
+  /** Tests the majority of getters and the basic functionality of the sampler. */
   @Test
   public void testBasics() throws Exception {
     initStatisticsFactory();
@@ -81,7 +81,9 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
     SimpleStatSampler statSampler = getSimpleStatSampler();
     assertTrue(statSampler.waitForInitialization(5000));
 
-    assertEquals(new File(System.getProperty(SimpleStatSampler.ARCHIVE_FILE_NAME_PROPERTY)), statSampler.getArchiveFileName());
+    assertEquals(
+        new File(System.getProperty(SimpleStatSampler.ARCHIVE_FILE_NAME_PROPERTY)),
+        statSampler.getArchiveFileName());
     assertEquals(0, statSampler.getArchiveFileSizeLimit());
     assertEquals(0, statSampler.getArchiveDiskSpaceLimit());
     assertEquals(SimpleStatSampler.DEFAULT_SAMPLE_RATE, statSampler.getSampleRate());
@@ -97,7 +99,9 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
 
     Assert.assertEquals(getStatisticsManager().getId(), statSampler.getSystemId());
     assertTrue(statSampler.getSystemStartTime() <= System.currentTimeMillis());
-    assertEquals(SocketCreator.getHostName(SocketCreator.getLocalHost()), statSampler.getSystemDirectoryPath());
+    assertEquals(
+        SocketCreator.getHostName(SocketCreator.getLocalHost()),
+        statSampler.getSystemDirectoryPath());
 
     VMStatsContract vmStats = statSampler.getVMStats();
     assertNotNull(vmStats);
@@ -121,9 +125,7 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
     assertEquals("Unknown product", statSampler.getProductDescription());
   }
 
-  /**
-   * Tests that the configured archive file is created and exists. 
-   */
+  /** Tests that the configured archive file is created and exists. */
   @Test
   public void testArchiveFileExists() throws Exception {
     final String dir = this.testDir.getAbsolutePath();
@@ -141,12 +143,17 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
 
     waitForFileToExist(archiveFile, 5000, 10);
 
-    assertTrue("File name incorrect: archiveFile.getName()=" + archiveFile.getName() + " archiveFile.getAbsolutePath()=" + archiveFile.getAbsolutePath() + " getCanonicalPath()" + archiveFile.getCanonicalPath(), archiveFileName.contains(archiveFile.getName()));
+    assertTrue(
+        "File name incorrect: archiveFile.getName()="
+            + archiveFile.getName()
+            + " archiveFile.getAbsolutePath()="
+            + archiveFile.getAbsolutePath()
+            + " getCanonicalPath()"
+            + archiveFile.getCanonicalPath(),
+        archiveFileName.contains(archiveFile.getName()));
   }
 
-  /**
-   * Tests the statistics sample rate within an acceptable margin of error.
-   */
+  /** Tests the statistics sample rate within an acceptable margin of error. */
   @Test
   public void testSampleRate() throws Exception {
     initStatisticsFactory();
@@ -173,9 +180,7 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
     waitForStatSample(statSamplerStats, expectedSampleCount, 20000, 10);
   }
 
-  /**
-   * Tests lack of methods for supporting LocalStatListener.
-   */
+  /** Tests lack of methods for supporting LocalStatListener. */
   @Test
   public void testLocalStatListener() throws Exception {
     initStatisticsFactory();
@@ -194,7 +199,11 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
 
     Method addLocalStatListener = null;
     try {
-      addLocalStatListener = getSimpleStatSampler().getClass().getMethod("addLocalStatListener", LocalStatListener.class, Statistics.class, String.class);
+      addLocalStatListener =
+          getSimpleStatSampler()
+              .getClass()
+              .getMethod(
+                  "addLocalStatListener", LocalStatListener.class, Statistics.class, String.class);
       fail("SimpleStatSampler should not have the method addLocalStatListener()");
     } catch (NoSuchMethodException exected) {
       // passed
@@ -203,7 +212,10 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
 
     Method removeLocalStatListener = null;
     try {
-      removeLocalStatListener = getSimpleStatSampler().getClass().getMethod("removeLocalStatListener", LocalStatListener.class);
+      removeLocalStatListener =
+          getSimpleStatSampler()
+              .getClass()
+              .getMethod("removeLocalStatListener", LocalStatListener.class);
       fail("SimpleStatSampler should not have the method addLocalStatListener()");
     } catch (NoSuchMethodException exected) {
       // passed
@@ -211,9 +223,7 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
     assertNull(removeLocalStatListener);
   }
 
-  /**
-   * Invokes stop() and then validates that the sampler did in fact stop.
-   */
+  /** Invokes stop() and then validates that the sampler did in fact stop. */
   @Test
   public void testStop() throws Exception {
     initStatisticsFactory();
@@ -245,8 +255,8 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
   }
 
   /**
-   * Verifies that archive rolling works correctly when archive-file-size-limit
-   * is specified. This feature is broken in SimpleStatSampler.
+   * Verifies that archive rolling works correctly when archive-file-size-limit is specified. This
+   * feature is broken in SimpleStatSampler.
    */
   @Test
   public void testArchiveRolling() throws Exception {
@@ -280,8 +290,8 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
   }
 
   /**
-   * Verifies that archive removal works correctly when archive-disk-space-limit
-   * is specified. This feature is broken in SimpleStatSampler. 
+   * Verifies that archive removal works correctly when archive-disk-space-limit is specified. This
+   * feature is broken in SimpleStatSampler.
    */
   @Test
   public void testArchiveRemoval() throws Exception {
@@ -325,15 +335,16 @@ public class SimpleStatSamplerIntegrationTest extends StatSamplerTestCase {
   }
 
   private void initStatisticsFactory() {
-    CancelCriterion stopper = new CancelCriterion() {
-      public String cancelInProgress() {
-        return null;
-      }
+    CancelCriterion stopper =
+        new CancelCriterion() {
+          public String cancelInProgress() {
+            return null;
+          }
 
-      public RuntimeException generateCancelledException(Throwable e) {
-        return null;
-      }
-    };
+          public RuntimeException generateCancelledException(Throwable e) {
+            return null;
+          }
+        };
     this.statisticsFactory = new LocalStatisticsFactory(stopper);
   }
 

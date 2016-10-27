@@ -20,7 +20,8 @@ package org.apache.geode.tools.pulse.tests;
 
 import javax.management.NotificationBroadcasterSupport;
 
-public class GemFireXDAggregateTable extends NotificationBroadcasterSupport implements GemFireXDAggregateTableMBean {
+public class GemFireXDAggregateTable extends NotificationBroadcasterSupport
+    implements GemFireXDAggregateTableMBean {
   private String name = null;
 
   public GemFireXDAggregateTable(String name) {

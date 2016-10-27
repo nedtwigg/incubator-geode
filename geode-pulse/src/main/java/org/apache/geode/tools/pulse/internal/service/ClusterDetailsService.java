@@ -33,13 +33,11 @@ import java.text.DecimalFormat;
 
 /**
  * Class ClusterDetailsService
- * 
- * This service class has implementation for providing cluster's basic
- * statistical data.
- * 
+ *
+ * <p>This service class has implementation for providing cluster's basic statistical data.
+ *
  * @since GemFire version 7.5
  */
-
 @Component
 @Service("ClusterDetails")
 @Scope("singleton")

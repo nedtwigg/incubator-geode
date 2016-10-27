@@ -29,9 +29,7 @@ import org.apache.geode.internal.admin.StatAlert;
 import org.apache.geode.internal.admin.StatAlertDefinition;
 
 /**
- * Implementation of {@link StatAlertDefinition} This provides the definition
- * for multiple statistic
- * 
+ * Implementation of {@link StatAlertDefinition} This provides the definition for multiple statistic
  */
 public final class MultiAttrDefinitionImpl implements StatAlertDefinition {
   private static final long serialVersionUID = 2508805676076940969L;
@@ -42,12 +40,9 @@ public final class MultiAttrDefinitionImpl implements StatAlertDefinition {
 
   protected StatisticInfo[] statisticInfo;
 
-  public MultiAttrDefinitionImpl() {
-  }
+  public MultiAttrDefinitionImpl() {}
 
-  /**
-   * @param statInfo
-   */
+  /** @param statInfo */
   public MultiAttrDefinitionImpl(String name, StatisticInfo[] statInfo) {
     super();
     setStatisticInfo(statInfo);
@@ -76,8 +71,7 @@ public final class MultiAttrDefinitionImpl implements StatAlertDefinition {
       if (statisticInfo[i] != null) {
         Statistics[] temp = factory.findStatisticsByTextId(statisticInfo[i].getStatisticsTextId());
 
-        if (temp == null || temp.length == 0)
-          return false;
+        if (temp == null || temp.length == 0) return false;
 
         StatisticDescriptor[] temp1 = temp[0].getType().getStatistics();
         for (int j = 0; j < temp1.length; j++) {
@@ -120,7 +114,7 @@ public final class MultiAttrDefinitionImpl implements StatAlertDefinition {
 
   /**
    * This method returns the name of this stat alert definition.
-   * 
+   *
    * @return Name of the StatAlertDefinition
    */
   public String getName() {
@@ -129,9 +123,8 @@ public final class MultiAttrDefinitionImpl implements StatAlertDefinition {
 
   /**
    * This method sets the name of this stat alert definition.
-   * 
-   * @param name
-   *                name to be set for this StatAlertDefinition.
+   *
+   * @param name name to be set for this StatAlertDefinition.
    */
   public void setName(String name) {
     this._name = name;
@@ -139,7 +132,8 @@ public final class MultiAttrDefinitionImpl implements StatAlertDefinition {
 
   public void setStatisticInfo(StatisticInfo[] info) {
     if (info == null || info.length == 0)
-      throw new IllegalArgumentException("setStatisticInfo method requires non-zero length array of StatisticInfo objects.");
+      throw new IllegalArgumentException(
+          "setStatisticInfo method requires non-zero length array of StatisticInfo objects.");
 
     statisticInfo = info;
   }

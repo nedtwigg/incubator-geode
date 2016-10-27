@@ -27,7 +27,8 @@ import org.apache.geode.redis.internal.RedisConstants.ArityDef;
 
 public class IncrExecutor extends StringExecutor {
 
-  private final String ERROR_VALUE_NOT_USABLE = "The value at this key cannot be incremented numerically";
+  private final String ERROR_VALUE_NOT_USABLE =
+      "The value at this key cannot be incremented numerically";
 
   private final String ERROR_OVERFLOW = "This incrementation cannot be performed due to overflow";
 
@@ -53,7 +54,7 @@ public class IncrExecutor extends StringExecutor {
      */
 
     if (valueWrapper == null) {
-      byte[] newValue = { Coder.NUMBER_1_BYTE };
+      byte[] newValue = {Coder.NUMBER_1_BYTE};
       r.put(key, new ByteArrayWrapper(newValue));
       command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), INIT_VALUE_INT));
       return;
@@ -69,7 +70,8 @@ public class IncrExecutor extends StringExecutor {
     try {
       value = Long.parseLong(stringValue);
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_VALUE_NOT_USABLE));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_VALUE_NOT_USABLE));
       return;
     }
 
@@ -84,7 +86,5 @@ public class IncrExecutor extends StringExecutor {
     r.put(key, new ByteArrayWrapper(Coder.stringToBytes(stringValue)));
 
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), value));
-
   }
-
 }

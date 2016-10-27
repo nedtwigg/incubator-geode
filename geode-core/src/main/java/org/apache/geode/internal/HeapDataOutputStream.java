@@ -31,39 +31,34 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-/** HeapDataOutputStream is an OutputStream that also implements DataOutput
- * and stores all data written to it in heap memory.
- * It is always better to use this class instead ByteArrayOutputStream.
+/**
+ * HeapDataOutputStream is an OutputStream that also implements DataOutput and stores all data
+ * written to it in heap memory. It is always better to use this class instead
+ * ByteArrayOutputStream.
+ *
  * <p>This class is not thread safe
  *
- *  @since GemFire 5.0.2
- * 
- *
- *
- * Added boolean flag that when turned on will throw an exception instead of allocating a new
- * buffer. The exception is a BufferOverflowException thrown from expand, and will restore
- * the position to the point at which the flag was set with the disallowExpansion method.
- * Usage Model:
- *              boolean succeeded = true;
- *              stream.disallowExpansion();
- *              try {
- *                DataSerializer.writeObject(obj, stream);
- *              } catch (BufferOverflowException e) {
- *                succeeded = false;
- *              }
+ * @since GemFire 5.0.2
+ *     <p>Added boolean flag that when turned on will throw an exception instead of allocating a new
+ *     buffer. The exception is a BufferOverflowException thrown from expand, and will restore the
+ *     position to the point at which the flag was set with the disallowExpansion method. Usage
+ *     Model: boolean succeeded = true; stream.disallowExpansion(); try {
+ *     DataSerializer.writeObject(obj, stream); } catch (BufferOverflowException e) { succeeded =
+ *     false; }
  */
-public class HeapDataOutputStream extends OutputStream implements ObjToByteArraySerializer, VersionedDataStream, ByteBufferWriter {
+public class HeapDataOutputStream extends OutputStream
+    implements ObjToByteArraySerializer, VersionedDataStream, ByteBufferWriter {
   private static final Logger logger = LogService.getLogger();
   ByteBuffer buffer;
   protected LinkedList<ByteBuffer> chunks = null;
   protected int size = 0;
   /**
-   * True if this stream is currently setup for writing.
-   * Once it switches to reading then it must be reset before
-   * it can be written again.
+   * True if this stream is currently setup for writing. Once it switches to reading then it must be
+   * reset before it can be written again.
    */
   private boolean writeMode = true;
-  private boolean ignoreWrites = false; // added for bug 39569 
+
+  private boolean ignoreWrites = false; // added for bug 39569
   private final int MIN_CHUNK_SIZE;
   private boolean disallowExpansion = false;
   private Error expansionException = null;
@@ -78,8 +73,8 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * Create a HeapDataOutputStream optimized to contain just the specified string.
-   * The string will be written to this stream encoded as utf.
+   * Create a HeapDataOutputStream optimized to contain just the specified string. The string will
+   * be written to this stream encoded as utf.
    */
   public HeapDataOutputStream(String s) {
     int maxStrBytes;
@@ -99,8 +94,8 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * @param doNotCopy if true then byte arrays/buffers/sources will not
-   * be copied to this hdos but instead referenced.
+   * @param doNotCopy if true then byte arrays/buffers/sources will not be copied to this hdos but
+   *     instead referenced.
    */
   public HeapDataOutputStream(int allocSize, Version version, boolean doNotCopy) {
     if (allocSize < 32) {
@@ -114,8 +109,8 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * @param doNotCopy if true then byte arrays/buffers/sources will not
-   * be copied to this hdos but instead referenced.
+   * @param doNotCopy if true then byte arrays/buffers/sources will not be copied to this hdos but
+   *     instead referenced.
    */
   public HeapDataOutputStream(ByteBuffer initialBuffer, Version version, boolean doNotCopy) {
     if (initialBuffer.position() != 0) {
@@ -133,9 +128,9 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * Construct a HeapDataOutputStream which uses the byte array provided as its
-   * underlying ByteBuffer
-   * 
+   * Construct a HeapDataOutputStream which uses the byte array provided as its underlying
+   * ByteBuffer
+   *
    * @param bytes
    */
   public HeapDataOutputStream(byte[] bytes) {
@@ -153,8 +148,8 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * Returns true if this HDOS currently does not copy byte arrays/buffers written to it.
-   * Instead of copying a reference is kept to the original array/buffer.
+   * Returns true if this HDOS currently does not copy byte arrays/buffers written to it. Instead of
+   * copying a reference is kept to the original array/buffer.
    */
   public boolean setDoNotCopy(boolean v) {
     boolean result = this.doNotCopy;
@@ -164,19 +159,17 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
     return result;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final Version getVersion() {
     return this.version;
   }
 
   /*throw an exception instead of allocating a new
-    * buffer. The exception is a BufferOverflowException thrown from expand, and will restore
-    * the position to the point at which the flag was set with the disallowExpansion method.
-    * @param ee the exception to throw if expansion is needed
-    */
+   * buffer. The exception is a BufferOverflowException thrown from expand, and will restore
+   * the position to the point at which the flag was set with the disallowExpansion method.
+   * @param ee the exception to throw if expansion is needed
+   */
   public void disallowExpansion(Error ee) {
     this.disallowExpansion = true;
     this.expansionException = ee;
@@ -186,8 +179,7 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   /** write the low-order 8 bits of the given int */
   @Override
   public final void write(int b) {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     ensureCapacity(1);
     buffer.put((byte) b);
@@ -211,7 +203,7 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
     if (this.chunks == null) {
       this.chunks = new LinkedList<ByteBuffer>();
     }
-    oldBuffer.flip(); // now ready for reading    
+    oldBuffer.flip(); // now ready for reading
     this.size += oldBuffer.remaining();
     this.chunks.add(oldBuffer);
     if (amount < MIN_CHUNK_SIZE) {
@@ -222,17 +214,16 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
 
   private final void checkIfWritable() {
     if (!this.writeMode) {
-      throw new IllegalStateException(LocalizedStrings.HeapDataOutputStream_NOT_IN_WRITE_MODE.toLocalizedString());
+      throw new IllegalStateException(
+          LocalizedStrings.HeapDataOutputStream_NOT_IN_WRITE_MODE.toLocalizedString());
     }
   }
 
   /** override OutputStream's write() */
   @Override
   public void write(byte[] source, int offset, int len) {
-    if (len == 0)
-      return;
-    if (this.ignoreWrites)
-      return;
+    if (len == 0) return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     if (this.doNotCopy && len > MIN_TO_COPY) {
       moveBufferToChunks();
@@ -320,9 +311,7 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
     }
   }
 
-  /**
-   * Free up any unused memory
-   */
+  /** Free up any unused memory */
   public final void trim() {
     finishWriting();
     if (this.buffer.limit() < this.buffer.capacity()) {
@@ -353,9 +342,7 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
     }
   }
 
-  /**
-   * Prepare the contents for sending again
-   */
+  /** Prepare the contents for sending again */
   public final void rewind() {
     finishWriting();
     this.size = 0;
@@ -396,9 +383,7 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
     }
   }
 
-  /**
-   * Returns a ByteBuffer of the unused buffer; returns null if the buffer was completely used.
-   */
+  /** Returns a ByteBuffer of the unused buffer; returns null if the buffer was completely used. */
   public ByteBuffer finishWritingAndReturnUnusedBuffer() {
     finishWriting();
     ByteBuffer result = this.buffer.duplicate();
@@ -422,8 +407,9 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
     reset();
   }
 
-  /** gets the contents of this stream as s ByteBuffer, ready for reading.
-   * The stream should not be written to past this point until it has been reset.
+  /**
+   * gets the contents of this stream as s ByteBuffer, ready for reading. The stream should not be
+   * written to past this point until it has been reset.
    */
   public final ByteBuffer toByteBuffer() {
     finishWriting();
@@ -431,8 +417,9 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
     return this.buffer;
   }
 
-  /** gets the contents of this stream as a byte[].
-   * The stream should not be written to past this point until it has been reset.
+  /**
+   * gets the contents of this stream as a byte[]. The stream should not be written to past this
+   * point until it has been reset.
    */
   public final byte[] toByteArray() {
     ByteBuffer bb = toByteBuffer();
@@ -449,15 +436,13 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * Writes this stream to the wrapper object of BytesAndBitsForCompactor type. The
-   * byte array retrieved from the HeapDataOutputStream is set in the wrapper
-   * object. The byte array may be partially filled. The valid length of data in
-   * the byte array is set in the wrapper. It is assumed that the
-   * HeapDataOutputStream is appropriately seeded with a byte array from the
-   * wrapper. However the filled byte array may or may not be the same as that
-   * used for seeding , depending upon whether the data got accommodated in the
-   * original byte buffer or not.
-   * 
+   * Writes this stream to the wrapper object of BytesAndBitsForCompactor type. The byte array
+   * retrieved from the HeapDataOutputStream is set in the wrapper object. The byte array may be
+   * partially filled. The valid length of data in the byte array is set in the wrapper. It is
+   * assumed that the HeapDataOutputStream is appropriately seeded with a byte array from the
+   * wrapper. However the filled byte array may or may not be the same as that used for seeding ,
+   * depending upon whether the data got accommodated in the original byte buffer or not.
+   *
    * @param wrapper
    */
   //Asif
@@ -478,7 +463,9 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * Write this stream to the specified channel. Call multiple times until size returns zero to make sure all bytes in the stream have been written.
+   * Write this stream to the specified channel. Call multiple times until size returns zero to make
+   * sure all bytes in the stream have been written.
+   *
    * @return the number of bytes written, possibly zero.
    * @throws IOException if channel is closed, not yet connected, or some other I/O error occurs.
    */
@@ -516,10 +503,11 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * sends the data from "in" by writing it to "sc" through "out" (out is used
-   * to chunk to data and is probably a direct memory buffer).
+   * sends the data from "in" by writing it to "sc" through "out" (out is used to chunk to data and
+   * is probably a direct memory buffer).
    */
-  private final void sendChunkTo(ByteBuffer in, SocketChannel sc, ByteBuffer out) throws IOException {
+  private final void sendChunkTo(ByteBuffer in, SocketChannel sc, ByteBuffer out)
+      throws IOException {
     int bytesSent = in.remaining();
     if (in.isDirect()) {
       flushBuffer(sc, out);
@@ -553,8 +541,7 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   private void flushBuffer(SocketChannel sc, ByteBuffer out) throws IOException {
-    if (out.position() == 0)
-      return;
+    if (out.position() == 0) return;
     out.flip();
     while (out.remaining() > 0) {
       sc.write(out);
@@ -564,8 +551,8 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
 
   /**
    * Write the contents of this stream to the byte buffer.
-   * @throws BufferOverflowException if out is not large enough to contain all of
-   * our data.
+   *
+   * @throws BufferOverflowException if out is not large enough to contain all of our data.
    */
   public final void sendTo(ByteBuffer out) {
     finishWriting();
@@ -592,8 +579,7 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * Write the contents of this stream to the specified stream using
-   * outBuf if a buffer is needed.
+   * Write the contents of this stream to the specified stream using outBuf if a buffer is needed.
    */
   public final void sendTo(OutputStream out, ByteBuffer outBuf) throws IOException {
     finishWriting();
@@ -610,10 +596,9 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
     this.size -= writeByteBufferToStream(out, outBuf, inBuf);
   }
 
-  /**
-   * Returns the number of bytes written
-   */
-  public static int writeByteBufferToStream(OutputStream out, ByteBuffer outBuf, ByteBuffer inBuf) throws IOException {
+  /** Returns the number of bytes written */
+  public static int writeByteBufferToStream(OutputStream out, ByteBuffer outBuf, ByteBuffer inBuf)
+      throws IOException {
     int bytesToWrite = inBuf.remaining();
     if (bytesToWrite > 0) {
       if (inBuf.hasArray()) {
@@ -641,17 +626,14 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   public static void flushStream(OutputStream out, ByteBuffer outBuf) throws IOException {
-    if (outBuf.position() == 0)
-      return;
+    if (outBuf.position() == 0) return;
     assert outBuf.hasArray();
     outBuf.flip();
     out.write(outBuf.array(), outBuf.arrayOffset(), outBuf.remaining());
     outBuf.clear();
   }
 
-  /**
-   * Write the contents of this stream to the specified stream.
-   */
+  /** Write the contents of this stream to the specified stream. */
   public final void sendTo(ByteBufferWriter out) {
     finishWriting();
     if (this.chunks != null) {
@@ -671,8 +653,8 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * Returns an input stream that can be used to read the contents that
-   * where written to this output stream.
+   * Returns an input stream that can be used to read the contents that where written to this output
+   * stream.
    */
   public final InputStream getInputStream() {
     return new HDInputStream();
@@ -790,13 +772,13 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
     private void consume(int c) {
       HeapDataOutputStream.this.size -= c;
     }
-
   }
 
   /**
    * Write the contents of this stream to the specified stream.
-   * <p>Note this implementation is exactly the same as writeTo(OutputStream)
-   * but they do not both implement a common interface.
+   *
+   * <p>Note this implementation is exactly the same as writeTo(OutputStream) but they do not both
+   * implement a common interface.
    */
   public final void sendTo(DataOutput out) throws IOException {
     finishWriting();
@@ -835,158 +817,142 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
 
   // DataOutput methods
   /**
-     * Writes a <code>boolean</code> value to this output stream.
-     * If the argument <code>v</code>
-     * is <code>true</code>, the value <code>(byte)1</code>
-     * is written; if <code>v</code> is <code>false</code>,
-     * the  value <code>(byte)0</code> is written.
-     * The byte written by this method may
-     * be read by the <code>readBoolean</code>
-     * method of interface <code>DataInput</code>,
-     * which will then return a <code>boolean</code>
-     * equal to <code>v</code>.
-     *
-     * @param      v   the boolean to be written.
-     */
+   * Writes a <code>boolean</code> value to this output stream. If the argument <code>v</code> is
+   * <code>true</code>, the value <code>(byte)1</code> is written; if <code>v</code> is <code>false
+   * </code>, the value <code>(byte)0</code> is written. The byte written by this method may be read
+   * by the <code>readBoolean</code> method of interface <code>DataInput</code>, which will then
+   * return a <code>boolean</code> equal to <code>v</code>.
+   *
+   * @param v the boolean to be written.
+   */
   public final void writeBoolean(boolean v) {
     write(v ? 1 : 0);
   }
 
   /**
-     * Writes to the output stream the eight low-
-     * order bits of the argument <code>v</code>.
-     * The 24 high-order bits of <code>v</code>
-     * are ignored. (This means  that <code>writeByte</code>
-     * does exactly the same thing as <code>write</code>
-     * for an integer argument.) The byte written
-     * by this method may be read by the <code>readByte</code>
-     * method of interface <code>DataInput</code>,
-     * which will then return a <code>byte</code>
-     * equal to <code>(byte)v</code>.
-     *
-     * @param      v   the byte value to be written.
-     */
+   * Writes to the output stream the eight low- order bits of the argument <code>v</code>. The 24
+   * high-order bits of <code>v</code> are ignored. (This means that <code>writeByte</code> does
+   * exactly the same thing as <code>write</code> for an integer argument.) The byte written by this
+   * method may be read by the <code>readByte</code> method of interface <code>DataInput</code>,
+   * which will then return a <code>byte</code> equal to <code>(byte)v</code>.
+   *
+   * @param v the byte value to be written.
+   */
   public final void writeByte(int v) {
     write(v);
   }
 
   /**
-     * Writes two bytes to the output
-     * stream to represent the value of the argument.
-     * The byte values to be written, in the  order
-     * shown, are: <p>
-     * <pre><code>
-     * (byte)(0xff &amp; (v &gt;&gt; 8))
-     * (byte)(0xff &amp; v)
-     * </code> </pre> <p>
-     * The bytes written by this method may be
-     * read by the <code>readShort</code> method
-     * of interface <code>DataInput</code> , which
-     * will then return a <code>short</code> equal
-     * to <code>(short)v</code>.
-     *
-     * @param      v   the <code>short</code> value to be written.
-     */
+   * Writes two bytes to the output stream to represent the value of the argument. The byte values
+   * to be written, in the order shown, are:
+   *
+   * <p>
+   *
+   * <pre><code>
+   * (byte)(0xff &amp; (v &gt;&gt; 8))
+   * (byte)(0xff &amp; v)
+   * </code> </pre>
+   *
+   * <p>The bytes written by this method may be read by the <code>readShort</code> method of
+   * interface <code>DataInput</code> , which will then return a <code>short</code> equal to <code>
+   * (short)v</code>.
+   *
+   * @param v the <code>short</code> value to be written.
+   */
   public final void writeShort(int v) {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     ensureCapacity(2);
     buffer.putShort((short) v);
   }
 
   /**
-     * Writes a <code>char</code> value, wich
-     * is comprised of two bytes, to the
-     * output stream.
-     * The byte values to be written, in the  order
-     * shown, are:
-     * <p><pre><code>
-     * (byte)(0xff &amp; (v &gt;&gt; 8))
-     * (byte)(0xff &amp; v)
-     * </code></pre><p>
-     * The bytes written by this method may be
-     * read by the <code>readChar</code> method
-     * of interface <code>DataInput</code> , which
-     * will then return a <code>char</code> equal
-     * to <code>(char)v</code>.
-     *
-     * @param      v   the <code>char</code> value to be written.
-     */
+   * Writes a <code>char</code> value, wich is comprised of two bytes, to the output stream. The
+   * byte values to be written, in the order shown, are:
+   *
+   * <p>
+   *
+   * <pre><code>
+   * (byte)(0xff &amp; (v &gt;&gt; 8))
+   * (byte)(0xff &amp; v)
+   * </code></pre>
+   *
+   * <p>The bytes written by this method may be read by the <code>readChar</code> method of
+   * interface <code>DataInput</code> , which will then return a <code>char</code> equal to <code>
+   * (char)v</code>.
+   *
+   * @param v the <code>char</code> value to be written.
+   */
   public final void writeChar(int v) {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     ensureCapacity(2);
     buffer.putChar((char) v);
   }
 
   /**
-     * Writes an <code>int</code> value, which is
-     * comprised of four bytes, to the output stream.
-     * The byte values to be written, in the  order
-     * shown, are:
-     * <p><pre><code>
-     * (byte)(0xff &amp; (v &gt;&gt; 24))
-     * (byte)(0xff &amp; (v &gt;&gt; 16))
-     * (byte)(0xff &amp; (v &gt;&gt; &#32; &#32;8))
-     * (byte)(0xff &amp; v)
-     * </code></pre><p>
-     * The bytes written by this method may be read
-     * by the <code>readInt</code> method of interface
-     * <code>DataInput</code> , which will then
-     * return an <code>int</code> equal to <code>v</code>.
-     *
-     * @param      v   the <code>int</code> value to be written.
-     */
+   * Writes an <code>int</code> value, which is comprised of four bytes, to the output stream. The
+   * byte values to be written, in the order shown, are:
+   *
+   * <p>
+   *
+   * <pre><code>
+   * (byte)(0xff &amp; (v &gt;&gt; 24))
+   * (byte)(0xff &amp; (v &gt;&gt; 16))
+   * (byte)(0xff &amp; (v &gt;&gt; &#32; &#32;8))
+   * (byte)(0xff &amp; v)
+   * </code></pre>
+   *
+   * <p>The bytes written by this method may be read by the <code>readInt</code> method of interface
+   * <code>DataInput</code> , which will then return an <code>int</code> equal to <code>v</code>.
+   *
+   * @param v the <code>int</code> value to be written.
+   */
   public final void writeInt(int v) {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     ensureCapacity(4);
     buffer.putInt(v);
   }
 
   /**
-     * Writes a <code>long</code> value, which is
-     * comprised of eight bytes, to the output stream.
-     * The byte values to be written, in the  order
-     * shown, are:
-     * <p><pre><code>
-     * (byte)(0xff &amp; (v &gt;&gt; 56))
-     * (byte)(0xff &amp; (v &gt;&gt; 48))
-     * (byte)(0xff &amp; (v &gt;&gt; 40))
-     * (byte)(0xff &amp; (v &gt;&gt; 32))
-     * (byte)(0xff &amp; (v &gt;&gt; 24))
-     * (byte)(0xff &amp; (v &gt;&gt; 16))
-     * (byte)(0xff &amp; (v &gt;&gt;  8))
-     * (byte)(0xff &amp; v)
-     * </code></pre><p>
-     * The bytes written by this method may be
-     * read by the <code>readLong</code> method
-     * of interface <code>DataInput</code> , which
-     * will then return a <code>long</code> equal
-     * to <code>v</code>.
-     *
-     * @param      v   the <code>long</code> value to be written.
-     */
+   * Writes a <code>long</code> value, which is comprised of eight bytes, to the output stream. The
+   * byte values to be written, in the order shown, are:
+   *
+   * <p>
+   *
+   * <pre><code>
+   * (byte)(0xff &amp; (v &gt;&gt; 56))
+   * (byte)(0xff &amp; (v &gt;&gt; 48))
+   * (byte)(0xff &amp; (v &gt;&gt; 40))
+   * (byte)(0xff &amp; (v &gt;&gt; 32))
+   * (byte)(0xff &amp; (v &gt;&gt; 24))
+   * (byte)(0xff &amp; (v &gt;&gt; 16))
+   * (byte)(0xff &amp; (v &gt;&gt;  8))
+   * (byte)(0xff &amp; v)
+   * </code></pre>
+   *
+   * <p>The bytes written by this method may be read by the <code>readLong</code> method of
+   * interface <code>DataInput</code> , which will then return a <code>long</code> equal to <code>v
+   * </code>.
+   *
+   * @param v the <code>long</code> value to be written.
+   */
   public final void writeLong(long v) {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     ensureCapacity(8);
     buffer.putLong(v);
   }
 
   /**
-   * Reserves space in the output for a long
-   * and returns a LongUpdater than can be used
-   * to update this particular long.
+   * Reserves space in the output for a long and returns a LongUpdater than can be used to update
+   * this particular long.
+   *
    * @return the LongUpdater that allows the long to be updated
    */
   public final LongUpdater reserveLong() {
-    if (this.ignoreWrites)
-      return null;
+    if (this.ignoreWrites) return null;
     checkIfWritable();
     ensureCapacity(8);
     LongUpdater result = new LongUpdater(this.buffer);
@@ -1009,75 +975,54 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-     * Writes a <code>float</code> value,
-     * which is comprised of four bytes, to the output stream.
-     * It does this as if it first converts this
-     * <code>float</code> value to an <code>int</code>
-     * in exactly the manner of the <code>Float.floatToIntBits</code>
-     * method  and then writes the <code>int</code>
-     * value in exactly the manner of the  <code>writeInt</code>
-     * method.  The bytes written by this method
-     * may be read by the <code>readFloat</code>
-     * method of interface <code>DataInput</code>,
-     * which will then return a <code>float</code>
-     * equal to <code>v</code>.
-     *
-     * @param      v   the <code>float</code> value to be written.
-     */
+   * Writes a <code>float</code> value, which is comprised of four bytes, to the output stream. It
+   * does this as if it first converts this <code>float</code> value to an <code>int</code> in
+   * exactly the manner of the <code>Float.floatToIntBits</code> method and then writes the <code>
+   * int</code> value in exactly the manner of the <code>writeInt</code> method. The bytes written
+   * by this method may be read by the <code>readFloat</code> method of interface <code>DataInput
+   * </code>, which will then return a <code>float</code> equal to <code>v</code>.
+   *
+   * @param v the <code>float</code> value to be written.
+   */
   public final void writeFloat(float v) {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     ensureCapacity(4);
     buffer.putFloat(v);
   }
 
   /**
-     * Writes a <code>double</code> value,
-     * which is comprised of eight bytes, to the output stream.
-     * It does this as if it first converts this
-     * <code>double</code> value to a <code>long</code>
-     * in exactly the manner of the <code>Double.doubleToLongBits</code>
-     * method  and then writes the <code>long</code>
-     * value in exactly the manner of the  <code>writeLong</code>
-     * method. The bytes written by this method
-     * may be read by the <code>readDouble</code>
-     * method of interface <code>DataInput</code>,
-     * which will then return a <code>double</code>
-     * equal to <code>v</code>.
-     *
-     * @param      v   the <code>double</code> value to be written.
-     */
+   * Writes a <code>double</code> value, which is comprised of eight bytes, to the output stream. It
+   * does this as if it first converts this <code>double</code> value to a <code>long</code> in
+   * exactly the manner of the <code>Double.doubleToLongBits</code> method and then writes the
+   * <code>long</code> value in exactly the manner of the <code>writeLong</code> method. The bytes
+   * written by this method may be read by the <code>readDouble</code> method of interface <code>
+   * DataInput</code>, which will then return a <code>double</code> equal to <code>v</code>.
+   *
+   * @param v the <code>double</code> value to be written.
+   */
   public final void writeDouble(double v) {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     ensureCapacity(8);
     buffer.putDouble(v);
   }
 
   /**
-     * Writes a string to the output stream.
-     * For every character in the string
-     * <code>s</code>,  taken in order, one byte
-     * is written to the output stream.  If
-     * <code>s</code> is <code>null</code>, a <code>NullPointerException</code>
-     * is thrown.<p>  If <code>s.length</code>
-     * is zero, then no bytes are written. Otherwise,
-     * the character <code>s[0]</code> is written
-     * first, then <code>s[1]</code>, and so on;
-     * the last character written is <code>s[s.length-1]</code>.
-     * For each character, one byte is written,
-     * the low-order byte, in exactly the manner
-     * of the <code>writeByte</code> method . The
-     * high-order eight bits of each character
-     * in the string are ignored.
-     *
-     * @param      str the string of bytes to be written.
-     */
+   * Writes a string to the output stream. For every character in the string <code>s</code>, taken
+   * in order, one byte is written to the output stream. If <code>s</code> is <code>null</code>, a
+   * <code>NullPointerException</code> is thrown.
+   *
+   * <p>If <code>s.length</code> is zero, then no bytes are written. Otherwise, the character <code>
+   * s[0]</code> is written first, then <code>s[1]</code>, and so on; the last character written is
+   * <code>s[s.length-1]</code>. For each character, one byte is written, the low-order byte, in
+   * exactly the manner of the <code>writeByte</code> method . The high-order eight bits of each
+   * character in the string are ignored.
+   *
+   * @param str the string of bytes to be written.
+   */
   public final void writeBytes(String str) {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     int strlen = str.length();
     if (strlen > 0) {
@@ -1100,25 +1045,17 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-     * Writes every character in the string <code>s</code>,
-     * to the output stream, in order,
-     * two bytes per character. If <code>s</code>
-     * is <code>null</code>, a <code>NullPointerException</code>
-     * is thrown.  If <code>s.length</code>
-     * is zero, then no characters are written.
-     * Otherwise, the character <code>s[0]</code>
-     * is written first, then <code>s[1]</code>,
-     * and so on; the last character written is
-     * <code>s[s.length-1]</code>. For each character,
-     * two bytes are actually written, high-order
-     * byte first, in exactly the manner of the
-     * <code>writeChar</code> method.
-     *
-     * @param      s   the string value to be written.
-     */
+   * Writes every character in the string <code>s</code>, to the output stream, in order, two bytes
+   * per character. If <code>s</code> is <code>null</code>, a <code>NullPointerException</code> is
+   * thrown. If <code>s.length</code> is zero, then no characters are written. Otherwise, the
+   * character <code>s[0]</code> is written first, then <code>s[1]</code>, and so on; the last
+   * character written is <code>s[s.length-1]</code>. For each character, two bytes are actually
+   * written, high-order byte first, in exactly the manner of the <code>writeChar</code> method.
+   *
+   * @param s the string value to be written.
+   */
   public final void writeChars(String s) {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     int len = s.length();
     if (len > 0) {
@@ -1130,63 +1067,61 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * Use -Dgemfire.ASCII_STRINGS=true if all String instances contain
-   * ASCII characters. Setting this to true gives a performance improvement.
+   * Use -Dgemfire.ASCII_STRINGS=true if all String instances contain ASCII characters. Setting this
+   * to true gives a performance improvement.
    */
-  private static final boolean ASCII_STRINGS = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "ASCII_STRINGS");
+  private static final boolean ASCII_STRINGS =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "ASCII_STRINGS");
 
   /**
-     * Writes two bytes of length information
-     * to the output stream, followed
-     * by the Java modified UTF representation
-     * of  every character in the string <code>s</code>.
-     * If <code>s</code> is <code>null</code>,
-     * a <code>NullPointerException</code> is thrown.
-     * Each character in the string <code>s</code>
-     * is converted to a group of one, two, or
-     * three bytes, depending on the value of the
-     * character.<p>
-     * If a character <code>c</code>
-     * is in the range <code>&#92;u0001</code> through
-     * <code>&#92;u007f</code>, it is represented
-     * by one byte:<p>
-     * <pre>(byte)c </pre>  <p>
-     * If a character <code>c</code> is <code>&#92;u0000</code>
-     * or is in the range <code>&#92;u0080</code>
-     * through <code>&#92;u07ff</code>, then it is
-     * represented by two bytes, to be written
-     * in the order shown:<p> <pre><code>
-     * (byte)(0xc0 | (0x1f &amp; (c &gt;&gt; 6)))
-     * (byte)(0x80 | (0x3f &amp; c))
-     *  </code></pre>  <p> If a character
-     * <code>c</code> is in the range <code>&#92;u0800</code>
-     * through <code>uffff</code>, then it is
-     * represented by three bytes, to be written
-     * in the order shown:<p> <pre><code>
-     * (byte)(0xe0 | (0x0f &amp; (c &gt;&gt; 12)))
-     * (byte)(0x80 | (0x3f &amp; (c &gt;&gt;  6)))
-     * (byte)(0x80 | (0x3f &amp; c))
-     *  </code></pre>  <p> First,
-     * the total number of bytes needed to represent
-     * all the characters of <code>s</code> is
-     * calculated. If this number is larger than
-     * <code>65535</code>, then a <code>UTFDataFormatException</code>
-     * is thrown. Otherwise, this length is written
-     * to the output stream in exactly the manner
-     * of the <code>writeShort</code> method;
-     * after this, the one-, two-, or three-byte
-     * representation of each character in the
-     * string <code>s</code> is written.<p>  The
-     * bytes written by this method may be read
-     * by the <code>readUTF</code> method of interface
-     * <code>DataInput</code> , which will then
-     * return a <code>String</code> equal to <code>s</code>.
-     *
-     * @param      str   the string value to be written.
-     */
+   * Writes two bytes of length information to the output stream, followed by the Java modified UTF
+   * representation of every character in the string <code>s</code>. If <code>s</code> is <code>null
+   * </code>, a <code>NullPointerException</code> is thrown. Each character in the string <code>s
+   * </code> is converted to a group of one, two, or three bytes, depending on the value of the
+   * character.
+   *
+   * <p>If a character <code>c</code> is in the range <code>&#92;u0001</code> through <code>
+   * &#92;u007f</code>, it is represented by one byte:
+   *
+   * <p>
+   *
+   * <pre>(byte)c </pre>
+   *
+   * <p>If a character <code>c</code> is <code>&#92;u0000</code> or is in the range <code>&#92;u0080
+   * </code> through <code>&#92;u07ff</code>, then it is represented by two bytes, to be written in
+   * the order shown:
+   *
+   * <p>
+   *
+   * <pre><code>
+   * (byte)(0xc0 | (0x1f &amp; (c &gt;&gt; 6)))
+   * (byte)(0x80 | (0x3f &amp; c))
+   *  </code></pre>
+   *
+   * <p>If a character <code>c</code> is in the range <code>&#92;u0800</code> through <code>uffff
+   * </code>, then it is represented by three bytes, to be written in the order shown:
+   *
+   * <p>
+   *
+   * <pre><code>
+   * (byte)(0xe0 | (0x0f &amp; (c &gt;&gt; 12)))
+   * (byte)(0x80 | (0x3f &amp; (c &gt;&gt;  6)))
+   * (byte)(0x80 | (0x3f &amp; c))
+   *  </code></pre>
+   *
+   * <p>First, the total number of bytes needed to represent all the characters of <code>s</code> is
+   * calculated. If this number is larger than <code>65535</code>, then a <code>
+   * UTFDataFormatException</code> is thrown. Otherwise, this length is written to the output stream
+   * in exactly the manner of the <code>writeShort</code> method; after this, the one-, two-, or
+   * three-byte representation of each character in the string <code>s</code> is written.
+   *
+   * <p>The bytes written by this method may be read by the <code>readUTF</code> method of interface
+   * <code>DataInput</code> , which will then return a <code>String</code> equal to <code>s</code>.
+   *
+   * @param str the string value to be written.
+   */
   public final void writeUTF(String str) throws UTFDataFormatException {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     if (ASCII_STRINGS) {
       writeAsciiUTF(str, true);
@@ -1226,10 +1161,9 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * The logic used here is based on java's DataOutputStream.writeUTF() from 
-   * the version 1.6.0_10.
-   * The reader code should use the logic similar to DataOutputStream.readUTF() 
-   * from the version 1.6.0_10 to decode this properly.
+   * The logic used here is based on java's DataOutputStream.writeUTF() from the version 1.6.0_10.
+   * The reader code should use the logic similar to DataOutputStream.readUTF() from the version
+   * 1.6.0_10 to decode this properly.
    */
   private final void writeFullUTF(String str, boolean encodeLength) throws UTFDataFormatException {
     int strlen = str.length();
@@ -1275,12 +1209,11 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * Same as {@link #writeUTF} but it does not encode the length in the
-   * first two bytes and allows strings longer than 65k to be encoded.
+   * Same as {@link #writeUTF} but it does not encode the length in the first two bytes and allows
+   * strings longer than 65k to be encoded.
    */
   public void writeUTFNoLength(String str) {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     try {
       if (ASCII_STRINGS) {
@@ -1290,18 +1223,17 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
       }
     } catch (UTFDataFormatException ex) {
       // this shouldn't happen since we did not encode the length
-      throw new IllegalStateException(LocalizedStrings.HeapDataOutputStream_UNEXPECTED_0.toLocalizedString(ex));
+      throw new IllegalStateException(
+          LocalizedStrings.HeapDataOutputStream_UNEXPECTED_0.toLocalizedString(ex));
     }
   }
 
   /**
-   * Writes the given object to this stream as a byte array.
-   * The byte array is produced by serializing v. The serialization
-   * is done by calling DataSerializer.writeObject.
+   * Writes the given object to this stream as a byte array. The byte array is produced by
+   * serializing v. The serialization is done by calling DataSerializer.writeObject.
    */
   public void writeAsSerializedByteArray(Object v) throws IOException {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     ensureCapacity(5);
     if (v instanceof HeapDataOutputStream) {
@@ -1332,31 +1264,25 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
   }
 
   /**
-   * We set "doNotCopy" to prevent wasting time
-   * by copying bytes. But to do this we create
-   * either a HeapByteBuffer to DirectByteBuffer
-   * to reference the byte array or off-heap memory.
-   * The ByteBuffer instance itself uses up memory
-   * that needs to be initialized and eventually
-   * gc'd so for smaller sizes it is better to just copy it.
-   * Public for unit test access.
+   * We set "doNotCopy" to prevent wasting time by copying bytes. But to do this we create either a
+   * HeapByteBuffer to DirectByteBuffer to reference the byte array or off-heap memory. The
+   * ByteBuffer instance itself uses up memory that needs to be initialized and eventually gc'd so
+   * for smaller sizes it is better to just copy it. Public for unit test access.
    */
   public static final int MIN_TO_COPY = 128;
 
   /**
    * Write a byte buffer to this HeapDataOutputStream,
-   * 
-   * the contents of the buffer between the position and the limit
-   * are copied to the output stream.
+   *
+   * <p>the contents of the buffer between the position and the limit are copied to the output
+   * stream.
    */
   @Override
   public void write(ByteBuffer bb) {
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     int remaining = bb.remaining();
-    if (remaining == 0)
-      return;
+    if (remaining == 0) return;
     if (this.doNotCopy && remaining > MIN_TO_COPY) {
       moveBufferToChunks();
       addToChunks(bb);
@@ -1375,9 +1301,9 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
 
   /**
    * Write a byte source to this HeapDataOutputStream,
-   * 
-   * the contents of the buffer between the position and the limit
-   * are copied to the output stream.
+   *
+   * <p>the contents of the buffer between the position and the limit are copied to the output
+   * stream.
    */
   public void write(ByteSource source) {
     ByteBuffer bb = source.getBackingByteBuffer();
@@ -1385,8 +1311,7 @@ public class HeapDataOutputStream extends OutputStream implements ObjToByteArray
       write(bb);
       return;
     }
-    if (this.ignoreWrites)
-      return;
+    if (this.ignoreWrites) return;
     checkIfWritable();
     int remainingSpace = this.buffer.limit() - this.buffer.position();
     if (remainingSpace < source.remaining()) {

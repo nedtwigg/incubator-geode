@@ -16,11 +16,7 @@
  */
 package org.apache.geode.internal.cache;
 
-/**
- * 
- *
- */
+/** */
 public interface GatewayEventFilter {
   boolean enqueueEvent(EntryEventImpl event);
-
 }

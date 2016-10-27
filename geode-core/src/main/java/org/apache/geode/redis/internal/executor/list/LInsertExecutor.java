@@ -24,6 +24,9 @@ public class LInsertExecutor extends ListExecutor {
 
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
-    command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), "Unfortunately GemFireRedis server does not support LINSERT"));
+    command.setResponse(
+        Coder.getErrorResponse(
+            context.getByteBufAllocator(),
+            "Unfortunately GemFireRedis server does not support LINSERT"));
   }
 }

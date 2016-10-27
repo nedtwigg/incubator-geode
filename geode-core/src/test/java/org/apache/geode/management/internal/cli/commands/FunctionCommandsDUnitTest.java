@@ -46,7 +46,8 @@ import static org.apache.geode.test.dunit.Wait.waitForCriterion;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
- * Dunit class for testing gemfire function commands : execute function, destroy function, list function
+ * Dunit class for testing gemfire function commands : execute function, destroy function, list
+ * function
  */
 @Category(DistributedTest.class)
 public class FunctionCommandsDUnitTest extends CliCommandTestBase {
@@ -61,43 +62,47 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     final VM vm2 = Host.getHost(0).getVM(2);
     setUpJmxManagerOnVm0ThenConnect(null);
 
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
-        final Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-        FunctionService.registerFunction(function);
-        // no need to close cache as it will be closed as part of teardown2
-        Cache cache = getCache();
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            final Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
+            FunctionService.registerFunction(function);
+            // no need to close cache as it will be closed as part of teardown2
+            Cache cache = getCache();
 
-        RegionFactory<Integer, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-        Region region = dataRegionFactory.create("RegionOne");
-        for (int i = 0; i < 10; i++) {
-          region.put("key" + (i + 200), "value" + (i + 200));
-        }
-        region = dataRegionFactory.create("RegionTwo");
-        for (int i = 0; i < 1000; i++) {
-          region.put("key" + (i + 200), "value" + (i + 200));
-        }
-      }
-    });
+            RegionFactory<Integer, Integer> dataRegionFactory =
+                cache.createRegionFactory(RegionShortcut.PARTITION);
+            Region region = dataRegionFactory.create("RegionOne");
+            for (int i = 0; i < 10; i++) {
+              region.put("key" + (i + 200), "value" + (i + 200));
+            }
+            region = dataRegionFactory.create("RegionTwo");
+            for (int i = 0; i < 1000; i++) {
+              region.put("key" + (i + 200), "value" + (i + 200));
+            }
+          }
+        });
 
-    vm2.invoke(new SerializableRunnable() {
-      public void run() {
-        final Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-        FunctionService.registerFunction(function);
-        // no need to close cache as it will be closed as part of teardown2
-        Cache cache = getCache();
+    vm2.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            final Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
+            FunctionService.registerFunction(function);
+            // no need to close cache as it will be closed as part of teardown2
+            Cache cache = getCache();
 
-        RegionFactory<Integer, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-        Region region = dataRegionFactory.create("RegionOne");
-        for (int i = 0; i < 10000; i++) {
-          region.put("key" + (i + 400), "value" + (i + 400));
-        }
-        region = dataRegionFactory.create("Regiontwo");
-        for (int i = 0; i < 10; i++) {
-          region.put("key" + (i + 200), "value" + (i + 200));
-        }
-      }
-    });
+            RegionFactory<Integer, Integer> dataRegionFactory =
+                cache.createRegionFactory(RegionShortcut.PARTITION);
+            Region region = dataRegionFactory.create("RegionOne");
+            for (int i = 0; i < 10000; i++) {
+              region.put("key" + (i + 400), "value" + (i + 400));
+            }
+            region = dataRegionFactory.create("Regiontwo");
+            for (int i = 0; i < 10; i++) {
+              region.put("key" + (i + 200), "value" + (i + 200));
+            }
+          }
+        });
   }
 
   @Test
@@ -105,25 +110,28 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     setupWith2Regions();
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
     FunctionService.registerFunction(function);
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      public void run() {
-        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-        FunctionService.registerFunction(function);
-      }
-    });
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
+                FunctionService.registerFunction(function);
+              }
+            });
     Thread.sleep(2500);
     String command = "execute function --id=" + function.getId() + " --region=" + "/" + "RegionOne";
     getLogWriter().info("testExecuteFunctionWithNoRegionOnManager command : " + command);
     CommandResult cmdResult = executeCommand(command);
     if (cmdResult != null) {
       String strCmdResult = commandResultToString(cmdResult);
-      getLogWriter().info("testExecuteFunctionWithNoRegionOnManager stringResult : " + strCmdResult);
+      getLogWriter()
+          .info("testExecuteFunctionWithNoRegionOnManager stringResult : " + strCmdResult);
       assertEquals(Result.Status.OK, cmdResult.getStatus());
       assertTrue(strCmdResult.contains("Execution summary"));
     } else {
       fail("testExecuteFunctionWithNoRegionOnManager failed as did not get CommandResult");
     }
-
   }
 
   public String getMemberId() {
@@ -136,14 +144,18 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     setUpJmxManagerOnVm0ThenConnect(null);
 
     final Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      public void run() {
-        RegionFactory<Integer, Integer> dataRegionFactory = getCache().createRegionFactory(RegionShortcut.REPLICATE);
-        Region region = dataRegionFactory.create(REGION_NAME);
-        assertNotNull(region);
-        FunctionService.registerFunction(function);
-      }
-    });
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                RegionFactory<Integer, Integer> dataRegionFactory =
+                    getCache().createRegionFactory(RegionShortcut.REPLICATE);
+                Region region = dataRegionFactory.create(REGION_NAME);
+                assertNotNull(region);
+                FunctionService.registerFunction(function);
+              }
+            });
 
     String command = "execute function --id=" + function.getId() + " --region=" + REGION_NAME;
     getLogWriter().info("testExecuteFunctionOnRegion command=" + command);
@@ -164,16 +176,27 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     setUpJmxManagerOnVm0ThenConnect(null);
 
     final Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_RETURN_ARGS);
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      public void run() {
-        RegionFactory<Integer, Integer> dataRegionFactory = getCache().createRegionFactory(RegionShortcut.REPLICATE);
-        Region region = dataRegionFactory.create(REGION_NAME);
-        assertNotNull(region);
-        FunctionService.registerFunction(function);
-      }
-    });
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                RegionFactory<Integer, Integer> dataRegionFactory =
+                    getCache().createRegionFactory(RegionShortcut.REPLICATE);
+                Region region = dataRegionFactory.create(REGION_NAME);
+                assertNotNull(region);
+                FunctionService.registerFunction(function);
+              }
+            });
 
-    String command = "execute function --id=" + function.getId() + " --region=" + REGION_NAME + " --arguments=arg1,arg2" + " --result-collector=" + ToUpperResultCollector.class.getName();
+    String command =
+        "execute function --id="
+            + function.getId()
+            + " --region="
+            + REGION_NAME
+            + " --arguments=arg1,arg2"
+            + " --result-collector="
+            + ToUpperResultCollector.class.getName();
     getLogWriter().info("testExecuteFunctionOnRegion command=" + command);
     CommandResult cmdResult = executeCommand(command);
     if (cmdResult != null) {
@@ -191,48 +214,58 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
   void setupForBug51480() {
     final VM vm1 = Host.getHost(0).getVM(1);
     setUpJmxManagerOnVm0ThenConnect(null);
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
-        final Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-        FunctionService.registerFunction(function);
-        // no need to close cache as it will be closed as part of teardown2
-        Cache cache = getCache();
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            final Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
+            FunctionService.registerFunction(function);
+            // no need to close cache as it will be closed as part of teardown2
+            Cache cache = getCache();
 
-        RegionFactory<Integer, Integer> dataRegionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-        Region region = dataRegionFactory.create(REGION_ONE);
-        for (int i = 0; i < 10; i++) {
-          region.put("key" + (i + 200), "value" + (i + 200));
-        }
-      }
-    });
+            RegionFactory<Integer, Integer> dataRegionFactory =
+                cache.createRegionFactory(RegionShortcut.PARTITION);
+            Region region = dataRegionFactory.create(REGION_ONE);
+            for (int i = 0; i < 10; i++) {
+              region.put("key" + (i + 200), "value" + (i + 200));
+            }
+          }
+        });
   }
 
-  SerializableRunnable checkRegionMBeans = new SerializableRunnable() {
-    @Override
-    public void run() {
-      final WaitCriterion waitForMaangerMBean = new WaitCriterion() {
+  SerializableRunnable checkRegionMBeans =
+      new SerializableRunnable() {
         @Override
-        public boolean done() {
-          final ManagementService service = ManagementService.getManagementService(getCache());
-          final DistributedRegionMXBean bean = service.getDistributedRegionMXBean(Region.SEPARATOR + REGION_ONE);
-          if (bean == null) {
-            return false;
-          } else {
-            getLogWriter().info("Probing for checkRegionMBeans testExecuteFunctionOnRegionBug51480 finished");
-            return true;
-          }
-        }
+        public void run() {
+          final WaitCriterion waitForMaangerMBean =
+              new WaitCriterion() {
+                @Override
+                public boolean done() {
+                  final ManagementService service =
+                      ManagementService.getManagementService(getCache());
+                  final DistributedRegionMXBean bean =
+                      service.getDistributedRegionMXBean(Region.SEPARATOR + REGION_ONE);
+                  if (bean == null) {
+                    return false;
+                  } else {
+                    getLogWriter()
+                        .info(
+                            "Probing for checkRegionMBeans testExecuteFunctionOnRegionBug51480 finished");
+                    return true;
+                  }
+                }
 
-        @Override
-        public String description() {
-          return "Probing for testExecuteFunctionOnRegionBug51480";
+                @Override
+                public String description() {
+                  return "Probing for testExecuteFunctionOnRegionBug51480";
+                }
+              };
+          waitForCriterion(waitForMaangerMBean, 2 * 60 * 1000, 2000, true);
+          DistributedRegionMXBean bean =
+              ManagementService.getManagementService(getCache())
+                  .getDistributedRegionMXBean(Region.SEPARATOR + REGION_ONE);
+          assertNotNull(bean);
         }
       };
-      waitForCriterion(waitForMaangerMBean, 2 * 60 * 1000, 2000, true);
-      DistributedRegionMXBean bean = ManagementService.getManagementService(getCache()).getDistributedRegionMXBean(Region.SEPARATOR + REGION_ONE);
-      assertNotNull(bean);
-    }
-  };
 
   @Test
   public void testExecuteFunctionOnRegionBug51480() {
@@ -243,11 +276,14 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     manager.invoke(checkRegionMBeans);
 
     final Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      public void run() {
-        FunctionService.registerFunction(function);
-      }
-    });
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                FunctionService.registerFunction(function);
+              }
+            });
 
     String command = "execute function --id=" + function.getId() + " --region=" + REGION_ONE;
 
@@ -261,7 +297,6 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
       assertTrue(stringResult.contains("Execution summary"));
     } else {
       fail("testExecuteFunctionOnRegionBug51480 did not return CommandResult");
-
     }
   }
 
@@ -276,15 +311,19 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     final VM vm1 = Host.getHost(0).getVM(1);
     final String vm1MemberId = (String) vm1.invoke(() -> getMemberId());
 
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      public void run() {
-        RegionFactory<Integer, Integer> dataRegionFactory = getCache().createRegionFactory(RegionShortcut.REPLICATE);
-        Region region = dataRegionFactory.create(REGION_NAME);
-        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-        assertNotNull(region);
-        FunctionService.registerFunction(function);
-      }
-    });
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                RegionFactory<Integer, Integer> dataRegionFactory =
+                    getCache().createRegionFactory(RegionShortcut.REPLICATE);
+                Region region = dataRegionFactory.create(REGION_NAME);
+                Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
+                assertNotNull(region);
+                FunctionService.registerFunction(function);
+              }
+            });
 
     String command = "execute function --id=" + function.getId() + " --member=" + vm1MemberId;
     getLogWriter().info("testExecuteFunctionOnMember command=" + command);
@@ -306,15 +345,19 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     FunctionService.registerFunction(function);
     final VM vm1 = Host.getHost(0).getVM(1);
 
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      public void run() {
-        RegionFactory<Integer, Integer> dataRegionFactory = getCache().createRegionFactory(RegionShortcut.REPLICATE);
-        Region region = dataRegionFactory.create(REGION_NAME);
-        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-        assertNotNull(region);
-        FunctionService.registerFunction(function);
-      }
-    });
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                RegionFactory<Integer, Integer> dataRegionFactory =
+                    getCache().createRegionFactory(RegionShortcut.REPLICATE);
+                Region region = dataRegionFactory.create(REGION_NAME);
+                Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
+                assertNotNull(region);
+                FunctionService.registerFunction(function);
+              }
+            });
     String command = "execute function --id=" + function.getId();
     getLogWriter().info("testExecuteFunctionOnMembers command=" + command);
     CommandResult cmdResult = executeCommand(command);
@@ -338,15 +381,19 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_RETURN_ARGS);
     FunctionService.registerFunction(function);
 
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      public void run() {
-        RegionFactory<Integer, Integer> dataRegionFactory = getCache().createRegionFactory(RegionShortcut.REPLICATE);
-        Region region = dataRegionFactory.create(REGION_NAME);
-        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_RETURN_ARGS);
-        assertNotNull(region);
-        FunctionService.registerFunction(function);
-      }
-    });
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                RegionFactory<Integer, Integer> dataRegionFactory =
+                    getCache().createRegionFactory(RegionShortcut.REPLICATE);
+                Region region = dataRegionFactory.create(REGION_NAME);
+                Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_RETURN_ARGS);
+                assertNotNull(region);
+                FunctionService.registerFunction(function);
+              }
+            });
 
     String command = "execute function --id=" + function.getId() + " --arguments=arg1,arg2";
 
@@ -373,17 +420,26 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_RETURN_ARGS);
     FunctionService.registerFunction(function);
 
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      public void run() {
-        RegionFactory<Integer, Integer> dataRegionFactory = getCache().createRegionFactory(RegionShortcut.REPLICATE);
-        Region region = dataRegionFactory.create(REGION_NAME);
-        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_RETURN_ARGS);
-        assertNotNull(region);
-        FunctionService.registerFunction(function);
-      }
-    });
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                RegionFactory<Integer, Integer> dataRegionFactory =
+                    getCache().createRegionFactory(RegionShortcut.REPLICATE);
+                Region region = dataRegionFactory.create(REGION_NAME);
+                Function function = new TestFunction(true, TestFunction.TEST_FUNCTION_RETURN_ARGS);
+                assertNotNull(region);
+                FunctionService.registerFunction(function);
+              }
+            });
 
-    String command = "execute function --id=" + function.getId() + " --arguments=\"arg1,arg2\"" + " --result-collector=" + ToUpperResultCollector.class.getName();
+    String command =
+        "execute function --id="
+            + function.getId()
+            + " --arguments=\"arg1,arg2\""
+            + " --result-collector="
+            + ToUpperResultCollector.class.getName();
 
     getLogWriter().info("testExecuteFunctionOnMembersWithArgs command=" + command);
     CommandResult cmdResult = executeCommand(command);
@@ -399,7 +455,9 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     }
   }
 
-  @Category(FlakyTest.class) // GEODE-1563: JMX RMI (java.rmi.NoSuchObjectException: no such object in table)
+  @Category(
+      FlakyTest
+          .class) // GEODE-1563: JMX RMI (java.rmi.NoSuchObjectException: no such object in table)
   @Test
   public void testExecuteFunctionOnGroups() {
     Properties localProps = new Properties();
@@ -412,43 +470,54 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     VM vm1 = Host.getHost(0).getVM(1);
     VM vm2 = Host.getHost(0).getVM(2);
 
-    String vm1id = (String) vm1.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Properties localProps = new Properties();
-        localProps.setProperty(GROUPS, "Group1");
-        getSystem(localProps);
-        Cache cache = getCache();
-        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-        FunctionService.registerFunction(function);
-        return cache.getDistributedSystem().getDistributedMember().getId();
-      }
-    });
+    String vm1id =
+        (String)
+            vm1.invoke(
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    Properties localProps = new Properties();
+                    localProps.setProperty(GROUPS, "Group1");
+                    getSystem(localProps);
+                    Cache cache = getCache();
+                    Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
+                    FunctionService.registerFunction(function);
+                    return cache.getDistributedSystem().getDistributedMember().getId();
+                  }
+                });
 
-    String vm2id = (String) vm2.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Properties localProps = new Properties();
-        localProps.setProperty(GROUPS, "Group2");
-        getSystem(localProps);
-        Cache cache = getCache();
-        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-        FunctionService.registerFunction(function);
-        return cache.getDistributedSystem().getDistributedMember().getId();
-      }
-    });
+    String vm2id =
+        (String)
+            vm2.invoke(
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    Properties localProps = new Properties();
+                    localProps.setProperty(GROUPS, "Group2");
+                    getSystem(localProps);
+                    Cache cache = getCache();
+                    Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
+                    FunctionService.registerFunction(function);
+                    return cache.getDistributedSystem().getDistributedMember().getId();
+                  }
+                });
 
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      public void run() {
-        RegionFactory<Integer, Integer> dataRegionFactory = getCache().createRegionFactory(RegionShortcut.REPLICATE);
-        Region region = dataRegionFactory.create(REGION_NAME);
-        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-        assertNotNull(region);
-        FunctionService.registerFunction(function);
-      }
-    });
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                RegionFactory<Integer, Integer> dataRegionFactory =
+                    getCache().createRegionFactory(RegionShortcut.REPLICATE);
+                Region region = dataRegionFactory.create(REGION_NAME);
+                Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
+                assertNotNull(region);
+                FunctionService.registerFunction(function);
+              }
+            });
 
-    String command = "execute function --id=" + TestFunction.TEST_FUNCTION1 + " --groups=Group1,Group2";
+    String command =
+        "execute function --id=" + TestFunction.TEST_FUNCTION1 + " --groups=Group1,Group2";
     getLogWriter().info("testExecuteFunctionOnGroups command=" + command);
     CommandResult cmdResult = executeCommand(command);
     getLogWriter().info("testExecuteFunctionOnGroups cmdResult=" + cmdResult);
@@ -491,40 +560,50 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     VM vm1 = Host.getHost(0).getVM(1);
     VM vm2 = Host.getHost(0).getVM(2);
 
-    String vm1id = (String) vm1.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Properties localProps = new Properties();
-        localProps.setProperty(GROUPS, "Group1");
-        getSystem(localProps);
-        Cache cache = getCache();
-        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-        FunctionService.registerFunction(function);
-        return cache.getDistributedSystem().getDistributedMember().getId();
-      }
-    });
+    String vm1id =
+        (String)
+            vm1.invoke(
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    Properties localProps = new Properties();
+                    localProps.setProperty(GROUPS, "Group1");
+                    getSystem(localProps);
+                    Cache cache = getCache();
+                    Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
+                    FunctionService.registerFunction(function);
+                    return cache.getDistributedSystem().getDistributedMember().getId();
+                  }
+                });
 
-    String vm2id = (String) vm2.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Properties localProps = new Properties();
-        localProps.setProperty(GROUPS, "Group2");
-        getSystem(localProps);
-        Cache cache = getCache();
-        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-        FunctionService.registerFunction(function);
-        return cache.getDistributedSystem().getDistributedMember().getId();
-      }
-    });
+    String vm2id =
+        (String)
+            vm2.invoke(
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    Properties localProps = new Properties();
+                    localProps.setProperty(GROUPS, "Group2");
+                    getSystem(localProps);
+                    Cache cache = getCache();
+                    Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
+                    FunctionService.registerFunction(function);
+                    return cache.getDistributedSystem().getDistributedMember().getId();
+                  }
+                });
 
-    Host.getHost(0).getVM(0).invoke(new SerializableRunnable() {
-      public void run() {
-        Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
-        FunctionService.registerFunction(function);
-      }
-    });
+    Host.getHost(0)
+        .getVM(0)
+        .invoke(
+            new SerializableRunnable() {
+              public void run() {
+                Function function = new TestFunction(true, TestFunction.TEST_FUNCTION1);
+                FunctionService.registerFunction(function);
+              }
+            });
 
-    String command = "destroy function --id=" + TestFunction.TEST_FUNCTION1 + " --groups=Group1,Group2";
+    String command =
+        "destroy function --id=" + TestFunction.TEST_FUNCTION1 + " --groups=Group1,Group2";
     getLogWriter().info("testDestroyOnGroups command=" + command);
     CommandResult cmdResult = executeCommand(command);
     getLogWriter().info("testDestroyOnGroups cmdResult=" + cmdResult);
@@ -537,7 +616,23 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
       fail("testDestroyOnGroups exception=" + e);
     }
     assertNotNull(content);
-    assertTrue(content.equals("[\"Destroyed " + TestFunction.TEST_FUNCTION1 + " Successfully on " + vm1id + "," + vm2id + "\"]") || content.equals("[\"Destroyed " + TestFunction.TEST_FUNCTION1 + " Successfully on " + vm2id + "," + vm1id + "\"]"));
+    assertTrue(
+        content.equals(
+                "[\"Destroyed "
+                    + TestFunction.TEST_FUNCTION1
+                    + " Successfully on "
+                    + vm1id
+                    + ","
+                    + vm2id
+                    + "\"]")
+            || content.equals(
+                "[\"Destroyed "
+                    + TestFunction.TEST_FUNCTION1
+                    + " Successfully on "
+                    + vm2id
+                    + ","
+                    + vm1id
+                    + "\"]"));
   }
 
   @Test
@@ -555,29 +650,31 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     // Add a function in the manager VM (VM 0)
     final Function function1 = new TestFunction(true, TestFunction.TEST_FUNCTION1);
     final VM managerVm = Host.getHost(0).getVM(0);
-    managerVm.invoke(new SerializableRunnable() {
-      public void run() {
-        FunctionService.registerFunction(function1);
-      }
-    });
+    managerVm.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            FunctionService.registerFunction(function1);
+          }
+        });
 
     // Add functions in another VM (VM 1)
     final Function function2 = new TestFunction(true, TestFunction.TEST_FUNCTION2);
     final Function function3 = new TestFunction(true, TestFunction.TEST_FUNCTION3);
     final VM vm1 = Host.getHost(0).getVM(1);
     final String vm1Name = "VM" + vm1.getPid();
-    vm1.invoke(new SerializableRunnable() {
-      public void run() {
-        Properties localProps = new Properties();
-        localProps.setProperty(NAME, vm1Name);
-        localProps.setProperty(GROUPS, "Group2");
-        getSystem(localProps);
-        getCache();
+    vm1.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Properties localProps = new Properties();
+            localProps.setProperty(NAME, vm1Name);
+            localProps.setProperty(GROUPS, "Group2");
+            getSystem(localProps);
+            getCache();
 
-        FunctionService.registerFunction(function2);
-        FunctionService.registerFunction(function3);
-      }
-    });
+            FunctionService.registerFunction(function2);
+            FunctionService.registerFunction(function3);
+          }
+        });
 
     // Add functions in a third VM (VM 2)
     final Function function4 = new TestFunction(true, TestFunction.TEST_FUNCTION4);
@@ -585,19 +682,20 @@ public class FunctionCommandsDUnitTest extends CliCommandTestBase {
     final Function function6 = new TestFunction(true, TestFunction.TEST_FUNCTION6);
     final VM vm2 = Host.getHost(0).getVM(2);
     final String vm2Name = "VM" + vm2.getPid();
-    vm2.invoke(new SerializableRunnable() {
-      public void run() {
-        Properties localProps = new Properties();
-        localProps.setProperty(NAME, vm2Name);
-        localProps.setProperty(GROUPS, "Group3");
-        getSystem(localProps);
-        getCache();
+    vm2.invoke(
+        new SerializableRunnable() {
+          public void run() {
+            Properties localProps = new Properties();
+            localProps.setProperty(NAME, vm2Name);
+            localProps.setProperty(GROUPS, "Group3");
+            getSystem(localProps);
+            getCache();
 
-        FunctionService.registerFunction(function4);
-        FunctionService.registerFunction(function5);
-        FunctionService.registerFunction(function6);
-      }
-    });
+            FunctionService.registerFunction(function4);
+            FunctionService.registerFunction(function5);
+            FunctionService.registerFunction(function6);
+          }
+        });
 
     // Find all functions
     cmdResult = executeCommand(CliStrings.LIST_FUNCTION);

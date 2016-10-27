@@ -14,34 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import org.apache.geode.distributed.internal.DistributionMessage;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
-/**
- * Messages that carry transaction information will implement this interface
- * 
- */
+/** Messages that carry transaction information will implement this interface */
 public interface TransactionMessage {
   /**
    * Returns the transaction id on the sender this message belongs to
+   *
    * @return the unique transaction id per sender
    */
   public int getTXUniqId();
 
   /**
    * Returns the member id of the originating member for this transaction
+   *
    * @return memberId of tx originator
    */
   public InternalDistributedMember getMemberToMasqueradeAs();
 
   /**
-   * We do not want all the messages to start a remote transaction. e.g. SizeMessage.
-   * If this method returns true, a transaction will be created if none exists
+   * We do not want all the messages to start a remote transaction. e.g. SizeMessage. If this method
+   * returns true, a transaction will be created if none exists
+   *
    * @return true if this message can start a remote transaction, false otherwise
    */
   public boolean canStartRemoteTransaction();
@@ -54,19 +52,17 @@ public interface TransactionMessage {
 
   /**
    * Gets the MemberId of the originating member of the transaction that this message is a part of.
+   *
    * @return the memberId of the client that started this transaction, or null if not from client
    */
   public InternalDistributedMember getTXOriginatorClient();
 
   /**
-   * Messages that do not want to participate in transactions return false.  
-   * e.g. <code>ManageBucketMessage</code>
+   * Messages that do not want to participate in transactions return false. e.g. <code>
+   * ManageBucketMessage</code>
    */
   public boolean canParticipateInTransaction();
 
-  /**
-   * Messages that participate in distributed transaction return true,
-   * others return false
-   */
+  /** Messages that participate in distributed transaction return true, others return false */
   public boolean isTransactionDistributed();
 }

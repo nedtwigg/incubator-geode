@@ -25,11 +25,11 @@ import java.io.*;
 //import java.util.*;
 
 /**
- * A message that is sent to a particular console distribution manager
- * when changes have been detected that will be of interest to
- * registered stat listeners.
+ * A message that is sent to a particular console distribution manager when changes have been
+ * detected that will be of interest to registered stat listeners.
  */
-public final class StatListenerMessage extends PooledDistributionMessage implements AdminMessageType {
+public final class StatListenerMessage extends PooledDistributionMessage
+    implements AdminMessageType {
 
   //instance variables
   private long timestamp;
@@ -40,10 +40,8 @@ public final class StatListenerMessage extends PooledDistributionMessage impleme
   /**
    * Creates a new <code>StatListenerMessage</code>
    *
-   * @param timestamp
-   *        The time at which the statistics were sampled
-   * @param maxChanges
-   *        The number of statistics that are reported in the message
+   * @param timestamp The time at which the statistics were sampled
+   * @param maxChanges The number of statistics that are reported in the message
    */
   public static StatListenerMessage create(long timestamp, int maxChanges) {
     StatListenerMessage m = new StatListenerMessage();
@@ -58,7 +56,6 @@ public final class StatListenerMessage extends PooledDistributionMessage impleme
    * Notes that the value of a given statistics has changed
    *
    * @param listenerId
-   *        
    */
   public void addChange(int listenerId, double value) {
     listenerIds[changeCount] = listenerId;
@@ -109,5 +106,4 @@ public final class StatListenerMessage extends PooledDistributionMessage impleme
       this.values[i] = in.readDouble();
     }
   }
-
 }

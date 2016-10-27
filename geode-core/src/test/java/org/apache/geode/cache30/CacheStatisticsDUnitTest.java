@@ -39,9 +39,8 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.dunit.Wait;
 
 /**
- * Tests the {@link CacheStatistics} that are maintained by a {@link
- * Region} and a {@link org.apache.geode.cache.Region.Entry}.
- *
+ * Tests the {@link CacheStatistics} that are maintained by a {@link Region} and a {@link
+ * org.apache.geode.cache.Region.Entry}.
  *
  * @since GemFire 3.0
  */
@@ -54,10 +53,7 @@ public class CacheStatisticsDUnitTest extends JUnit4CacheTestCase {
 
   ////////  Helper Methods
 
-  /**
-   * Asserts that two <code>long</code>s are equal concerning a
-   * delta.
-   */
+  /** Asserts that two <code>long</code>s are equal concerning a delta. */
   //   public static void assertIndexDetailsEquals(long expected, long actual,
   //                                   long delta) {
   //     long difference = Math.abs(expected - actual);
@@ -74,9 +70,9 @@ public class CacheStatisticsDUnitTest extends JUnit4CacheTestCase {
   ////////  Test methods
 
   /**
-   * Tests that the {@link CacheStatistics#getHitCount hit count} and
-   * {@link CacheStatistics#getMissCount miss count} are updated
-   * properly for a local region and its entries.
+   * Tests that the {@link CacheStatistics#getHitCount hit count} and {@link
+   * CacheStatistics#getMissCount miss count} are updated properly for a local region and its
+   * entries.
    */
   @Test
   public void testHitMissCount() throws CacheException {
@@ -183,11 +179,10 @@ public class CacheStatisticsDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Tests that the {@linkplain CacheStatistics#getLastAccessedTime
-   * last access time} and {@link CacheStatistics#getLastModifiedTime
-   * last modified time} are update appropriately for a local region
-   * and its entries.  It also validates that the last modification
-   * and last access times are propagated to parent regions.
+   * Tests that the {@linkplain CacheStatistics#getLastAccessedTime last access time} and {@link
+   * CacheStatistics#getLastModifiedTime last modified time} are update appropriately for a local
+   * region and its entries. It also validates that the last modification and last access times are
+   * propagated to parent regions.
    */
   @Test
   public void testTimeStats() throws CacheException, InterruptedException {
@@ -318,16 +313,16 @@ public class CacheStatisticsDUnitTest extends JUnit4CacheTestCase {
 
   /** The last time an entry was accessed */
   protected static volatile long lastAccessed;
+
   protected static volatile long lastModified;
   protected static volatile long lastModifiedLocal;
   protected static volatile long lastModifiedRemote;
 
   /**
-   * Tests that distributed operations update the {@link
-   * CacheStatistics#getLastModifiedTime last modified time}, but not
-   * the {@link CacheStatistics#getLastAccessedTime last accessed
-   * time}.  It also validates that distributed operations do not
-   * affect the hit and miss counts in remote caches.
+   * Tests that distributed operations update the {@link CacheStatistics#getLastModifiedTime last
+   * modified time}, but not the {@link CacheStatistics#getLastAccessedTime last accessed time}. It
+   * also validates that distributed operations do not affect the hit and miss counts in remote
+   * caches.
    */
   @Test
   public void testDistributedStats() {
@@ -335,15 +330,16 @@ public class CacheStatisticsDUnitTest extends JUnit4CacheTestCase {
     final Object key = "KEY";
     final Object value = "VALUE";
 
-    SerializableRunnable create = new CacheSerializableRunnable("Create Region") {
-      public void run2() throws CacheException {
-        AttributesFactory factory = new AttributesFactory();
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        factory.setEarlyAck(false);
-        factory.setStatisticsEnabled(true);
-        createRegion(name, factory.create());
-      }
-    };
+    SerializableRunnable create =
+        new CacheSerializableRunnable("Create Region") {
+          public void run2() throws CacheException {
+            AttributesFactory factory = new AttributesFactory();
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            factory.setEarlyAck(false);
+            factory.setStatisticsEnabled(true);
+            createRegion(name, factory.create());
+          }
+        };
 
     Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
@@ -352,44 +348,54 @@ public class CacheStatisticsDUnitTest extends JUnit4CacheTestCase {
     vm0.invoke(create);
     vm1.invoke(create);
 
-    vm0.invoke(new CacheSerializableRunnable("Define entry") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(name);
-        // region.create(key, null);
-        region.put(key, value);
-        CacheStatistics stats = region.getEntry(key).getStatistics();
-        lastAccessed = stats.getLastAccessedTime();
-        lastModified = stats.getLastModifiedTime();
-        getCache().getLogger().fine("DEFINE: lastAccessed: " + lastAccessed + ", lastModified: " + lastModified);
-        assertEquals(0, stats.getHitCount());
-        assertEquals(0, stats.getMissCount());
-        assertTrue(lastModified > 0);
-        lastModifiedLocal = lastModified;
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Define entry") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(name);
+            // region.create(key, null);
+            region.put(key, value);
+            CacheStatistics stats = region.getEntry(key).getStatistics();
+            lastAccessed = stats.getLastAccessedTime();
+            lastModified = stats.getLastModifiedTime();
+            getCache()
+                .getLogger()
+                .fine("DEFINE: lastAccessed: " + lastAccessed + ", lastModified: " + lastModified);
+            assertEquals(0, stats.getHitCount());
+            assertEquals(0, stats.getMissCount());
+            assertTrue(lastModified > 0);
+            lastModifiedLocal = lastModified;
+          }
+        });
 
-    vm1.invoke(new CacheSerializableRunnable("Net search") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(name);
-        Object result = region.get(key);
-        assertEquals(value, result);
-        CacheStatistics stats = region.getEntry(key).getStatistics();
-        lastModifiedRemote = stats.getLastModifiedTime();
-        getCache().getLogger().fine("NETSEARCH: lastAccessed: " + stats.getLastAccessedTime() + ", lastModified: " + stats.getLastModifiedTime());
+    vm1.invoke(
+        new CacheSerializableRunnable("Net search") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(name);
+            Object result = region.get(key);
+            assertEquals(value, result);
+            CacheStatistics stats = region.getEntry(key).getStatistics();
+            lastModifiedRemote = stats.getLastModifiedTime();
+            getCache()
+                .getLogger()
+                .fine(
+                    "NETSEARCH: lastAccessed: "
+                        + stats.getLastAccessedTime()
+                        + ", lastModified: "
+                        + stats.getLastModifiedTime());
+          }
+        });
 
-      }
-    });
-
-    vm0.invoke(new CacheSerializableRunnable("Verify stats") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(name);
-        CacheStatistics stats = region.getEntry(key).getStatistics();
-        assertEquals(lastAccessed, stats.getLastAccessedTime());
-        assertEquals(lastModified, stats.getLastModifiedTime());
-        assertEquals(0, stats.getHitCount());
-        assertEquals(0, stats.getMissCount());
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("Verify stats") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(name);
+            CacheStatistics stats = region.getEntry(key).getStatistics();
+            assertEquals(lastAccessed, stats.getLastAccessedTime());
+            assertEquals(lastModified, stats.getLastModifiedTime());
+            assertEquals(0, stats.getHitCount());
+            assertEquals(0, stats.getMissCount());
+          }
+        });
 
     assertEquals(lastModifiedLocal, lastModifiedRemote);
 
@@ -397,77 +403,93 @@ public class CacheStatisticsDUnitTest extends JUnit4CacheTestCase {
     // may not actually bump the statistics
     Wait.pause(100);
 
-    vm1.invoke(new CacheSerializableRunnable("Update") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(name);
-        //assertNull(region.getEntry(key));
-        region.put(key, value);
-        assertEquals(value, region.getEntry(key).getValue());
-        CacheStatistics stats = region.getEntry(key).getStatistics();
-        getCache().getLogger().fine("UPDATE: lastAccessed: " + stats.getLastAccessedTime() + ", lastModified: " + stats.getLastModifiedTime());
-      }
-    });
+    vm1.invoke(
+        new CacheSerializableRunnable("Update") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(name);
+            //assertNull(region.getEntry(key));
+            region.put(key, value);
+            assertEquals(value, region.getEntry(key).getValue());
+            CacheStatistics stats = region.getEntry(key).getStatistics();
+            getCache()
+                .getLogger()
+                .fine(
+                    "UPDATE: lastAccessed: "
+                        + stats.getLastAccessedTime()
+                        + ", lastModified: "
+                        + stats.getLastModifiedTime());
+          }
+        });
 
     final long errorMargin = 50;
 
-    vm0.invoke(new CacheSerializableRunnable("Verify stats") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(name);
-        CacheStatistics stats = region.getEntry(key).getStatistics();
-        long ta = stats.getLastAccessedTime();
-        long tm = stats.getLastModifiedTime();
-        long hc = stats.getHitCount();
-        long mc = stats.getMissCount();
+    vm0.invoke(
+        new CacheSerializableRunnable("Verify stats") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(name);
+            CacheStatistics stats = region.getEntry(key).getStatistics();
+            long ta = stats.getLastAccessedTime();
+            long tm = stats.getLastModifiedTime();
+            long hc = stats.getHitCount();
+            long mc = stats.getMissCount();
 
-        getCache().getLogger().fine("VERIFY: lastAccessed: " + ta + ", lastModified: " + tm);
-        assertTrue("lastAccessedTime was " + ta + " but was expected to be > " + lastAccessed, lastAccessed < (ta + errorMargin));
-        assertTrue("lastAccessed=" + lastAccessed + " should be < stats.getLastModifiedTime=" + tm, lastAccessed < (tm + errorMargin));
-        assertEquals(0, hc);
-        assertEquals(0, mc);
-        lastAccessed = stats.getLastAccessedTime();
-      }
-    });
+            getCache().getLogger().fine("VERIFY: lastAccessed: " + ta + ", lastModified: " + tm);
+            assertTrue(
+                "lastAccessedTime was " + ta + " but was expected to be > " + lastAccessed,
+                lastAccessed < (ta + errorMargin));
+            assertTrue(
+                "lastAccessed=" + lastAccessed + " should be < stats.getLastModifiedTime=" + tm,
+                lastAccessed < (tm + errorMargin));
+            assertEquals(0, hc);
+            assertEquals(0, mc);
+            lastAccessed = stats.getLastAccessedTime();
+          }
+        });
 
-    vm1.invoke(new CacheSerializableRunnable("Invalidate") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(name);
-        region.invalidate(key);
-      }
-    });
-    vm0.invoke(new CacheSerializableRunnable("Verify stats") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(name);
-        CacheStatistics stats = region.getEntry(key).getStatistics();
-        assertEquals(lastAccessed, stats.getLastAccessedTime());
-        assertEquals(lastAccessed, stats.getLastModifiedTime());
-        assertEquals(0, stats.getHitCount());
-        assertEquals(0, stats.getMissCount());
-      }
-    });
-    vm1.invoke(new CacheSerializableRunnable("Destroy Entry") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(name);
-        region.destroy(key);
-      }
-    });
-    vm0.invoke(new CacheSerializableRunnable("Verify region stats") {
-      public void run2() throws CacheException {
-        Region region = getRootRegion().getSubregion(name);
-        CacheStatistics stats = region.getStatistics();
+    vm1.invoke(
+        new CacheSerializableRunnable("Invalidate") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(name);
+            region.invalidate(key);
+          }
+        });
+    vm0.invoke(
+        new CacheSerializableRunnable("Verify stats") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(name);
+            CacheStatistics stats = region.getEntry(key).getStatistics();
+            assertEquals(lastAccessed, stats.getLastAccessedTime());
+            assertEquals(lastAccessed, stats.getLastModifiedTime());
+            assertEquals(0, stats.getHitCount());
+            assertEquals(0, stats.getMissCount());
+          }
+        });
+    vm1.invoke(
+        new CacheSerializableRunnable("Destroy Entry") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(name);
+            region.destroy(key);
+          }
+        });
+    vm0.invoke(
+        new CacheSerializableRunnable("Verify region stats") {
+          public void run2() throws CacheException {
+            Region region = getRootRegion().getSubregion(name);
+            CacheStatistics stats = region.getStatistics();
 
-        // lastAccessed var contains stat from an Entry, which may be
-        // up to 100 ms off from stat in Region because Entry has
-        // less precision
-        //assertIndexDetailsEquals(lastAccessed, stats.getLastAccessedTime(), 100);
-        assertEquals(0, stats.getHitCount());
-        assertEquals(0, stats.getMissCount());
-      }
-    });
+            // lastAccessed var contains stat from an Entry, which may be
+            // up to 100 ms off from stat in Region because Entry has
+            // less precision
+            //assertIndexDetailsEquals(lastAccessed, stats.getLastAccessedTime(), 100);
+            assertEquals(0, stats.getHitCount());
+            assertEquals(0, stats.getMissCount());
+          }
+        });
   }
 
   /**
-   * Tests that an attempt to get statistics when they are disabled
-   * results in a {@link StatisticsDisabledException}.
+   * Tests that an attempt to get statistics when they are disabled results in a {@link
+   * StatisticsDisabledException}.
    */
   @Test
   public void testDisabledStatistics() throws CacheException {
@@ -496,5 +518,4 @@ public class CacheStatisticsDUnitTest extends JUnit4CacheTestCase {
       // pass...
     }
   }
-
 }

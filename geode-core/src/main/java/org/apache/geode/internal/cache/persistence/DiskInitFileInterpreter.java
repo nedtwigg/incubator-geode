@@ -23,9 +23,7 @@ import org.apache.geode.internal.Version;
 import org.apache.geode.internal.cache.DiskInitFile.DiskRegionFlag;
 import org.apache.geode.internal.cache.versions.RegionVersionHolder;
 
-/**
- *
- */
+/** */
 public interface DiskInitFileInterpreter {
 
   boolean isClosing();
@@ -46,9 +44,7 @@ public interface DiskInitFileInterpreter {
    */
   void cmnInstantiatorId(int id, String cn, String icn);
 
-  /**
-   * @param dsc
-   */
+  /** @param dsc */
   void cmnDataSerializerId(Class dsc);
 
   /**
@@ -77,9 +73,7 @@ public interface DiskInitFileInterpreter {
    */
   void cmnAddMyInitializingPMID(long drId, PersistentMemberID pmid);
 
-  /**
-   * @param drId
-   */
+  /** @param drId */
   void cmnMarkInitialized(long drId);
 
   /**
@@ -88,24 +82,16 @@ public interface DiskInitFileInterpreter {
    */
   void cmnCreateRegion(long drId, String regName);
 
-  /**
-   * @param drId
-   */
+  /** @param drId */
   void cmnBeginDestroyRegion(long drId);
 
-  /**
-   * @param drId
-   */
+  /** @param drId */
   void cmnEndDestroyRegion(long drId);
 
-  /**
-   * @param drId
-   */
+  /** @param drId */
   void cmnBeginPartialDestroyRegion(long drId);
 
-  /**
-   * @param drId
-   */
+  /** @param drId */
   void cmnEndPartialDestroyRegion(long drId);
 
   /**
@@ -118,7 +104,8 @@ public interface DiskInitFileInterpreter {
    * @param drId
    * @param clearRVV
    */
-  void cmnClearRegion(long drId, ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> clearRVV);
+  void cmnClearRegion(
+      long drId, ConcurrentHashMap<DiskStoreID, RegionVersionHolder<DiskStoreID>> clearRVV);
 
   public void cmnCrfCreate(long oplogId);
 
@@ -128,7 +115,21 @@ public interface DiskInitFileInterpreter {
 
   public boolean cmnDrfDelete(long oplogId);
 
-  public void cmnRegionConfig(long drId, byte lruAlgorithm, byte lruAction, int lruLimit, int concurrencyLevel, int initialCapacity, float loadFactor, boolean statisticsEnabled, boolean isBucket, EnumSet<DiskRegionFlag> flags, String partitionName, int startingBucketId, String compressorClassName, boolean offHeap);
+  public void cmnRegionConfig(
+      long drId,
+      byte lruAlgorithm,
+      byte lruAction,
+      int lruLimit,
+      int concurrencyLevel,
+      int initialCapacity,
+      float loadFactor,
+      boolean statisticsEnabled,
+      boolean isBucket,
+      EnumSet<DiskRegionFlag> flags,
+      String partitionName,
+      int startingBucketId,
+      String compressorClassName,
+      boolean offHeap);
 
   void cmnKrfCreate(long oplogId);
 

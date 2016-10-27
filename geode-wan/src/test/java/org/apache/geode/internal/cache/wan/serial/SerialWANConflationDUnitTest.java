@@ -80,15 +80,19 @@ public class SerialWANConflationDUnitTest extends WANTestBase {
     vm6.invoke(() -> resumeSender("ln"));
     vm7.invoke(() -> resumeSender("ln"));
 
-    ArrayList<Integer> v4List = (ArrayList<Integer>) vm4.invoke(() -> WANTestBase.getSenderStats("ln", 0));
-    ArrayList<Integer> v5List = (ArrayList<Integer>) vm5.invoke(() -> WANTestBase.getSenderStats("ln", 0));
-    ArrayList<Integer> v6List = (ArrayList<Integer>) vm6.invoke(() -> WANTestBase.getSenderStats("ln", 0));
-    ArrayList<Integer> v7List = (ArrayList<Integer>) vm7.invoke(() -> WANTestBase.getSenderStats("ln", 0));
+    ArrayList<Integer> v4List =
+        (ArrayList<Integer>) vm4.invoke(() -> WANTestBase.getSenderStats("ln", 0));
+    ArrayList<Integer> v5List =
+        (ArrayList<Integer>) vm5.invoke(() -> WANTestBase.getSenderStats("ln", 0));
+    ArrayList<Integer> v6List =
+        (ArrayList<Integer>) vm6.invoke(() -> WANTestBase.getSenderStats("ln", 0));
+    ArrayList<Integer> v7List =
+        (ArrayList<Integer>) vm7.invoke(() -> WANTestBase.getSenderStats("ln", 0));
 
-    assertTrue("No events conflated in batch", (v4List.get(8) + v5List.get(8) + v6List.get(8) + v7List.get(8)) > 0);
+    assertTrue(
+        "No events conflated in batch",
+        (v4List.get(8) + v5List.get(8) + v6List.get(8) + v7List.get(8)) > 0);
 
     vm2.invoke(() -> validateRegionSize(getTestMethodName(), 10));
-
   }
-
 }

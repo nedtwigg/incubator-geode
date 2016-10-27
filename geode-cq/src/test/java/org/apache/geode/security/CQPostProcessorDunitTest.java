@@ -37,7 +37,7 @@ import org.apache.geode.security.templates.SamplePostProcessor;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class CQPostProcessorDunitTest extends AbstractSecureServerDUnitTest {
 
   public CQPostProcessorDunitTest() {
@@ -47,43 +47,45 @@ public class CQPostProcessorDunitTest extends AbstractSecureServerDUnitTest {
   @Test
   public void testPostProcess() {
     String query = "select * from /AuthRegion";
-    client1.invoke(() -> {
-      ClientCache cache = createClientCache("super-user", "1234567", serverPort);
-      Region region = cache.getRegion(REGION_NAME);
+    client1.invoke(
+        () -> {
+          ClientCache cache = createClientCache("super-user", "1234567", serverPort);
+          Region region = cache.getRegion(REGION_NAME);
 
-      Pool pool = PoolManager.find(region);
-      QueryService qs = pool.getQueryService();
+          Pool pool = PoolManager.find(region);
+          QueryService qs = pool.getQueryService();
 
-      CqAttributesFactory factory = new CqAttributesFactory();
+          CqAttributesFactory factory = new CqAttributesFactory();
 
-      factory.addCqListener(new CqListenerImpl() {
-        @Override
-        public void onEvent(final CqEvent aCqEvent) {
-          assertEquals("key6", aCqEvent.getKey());
-          assertEquals("super-user/AuthRegion/key6/value6", aCqEvent.getNewValue());
-        }
-      });
+          factory.addCqListener(
+              new CqListenerImpl() {
+                @Override
+                public void onEvent(final CqEvent aCqEvent) {
+                  assertEquals("key6", aCqEvent.getKey());
+                  assertEquals("super-user/AuthRegion/key6/value6", aCqEvent.getNewValue());
+                }
+              });
 
-      CqAttributes cqa = factory.create();
+          CqAttributes cqa = factory.create();
 
-      // Create the CqQuery
-      CqQuery cq = qs.newCq("CQ1", query, cqa);
-      CqResults results = cq.executeWithInitialResults();
-      assertEquals(5, results.size());
-      String resultString = results.toString();
-      assertTrue(resultString, resultString.contains("key:key0,value:super-user/null/key0/value0"));
-      assertTrue(resultString.contains("key:key1,value:super-user/null/key1/value1"));
-      assertTrue(resultString.contains("key:key2,value:super-user/null/key2/value2"));
-      assertTrue(resultString.contains("key:key3,value:super-user/null/key3/value3"));
-      assertTrue(resultString.contains("key:key4,value:super-user/null/key4/value4"));
-    });
+          // Create the CqQuery
+          CqQuery cq = qs.newCq("CQ1", query, cqa);
+          CqResults results = cq.executeWithInitialResults();
+          assertEquals(5, results.size());
+          String resultString = results.toString();
+          assertTrue(
+              resultString, resultString.contains("key:key0,value:super-user/null/key0/value0"));
+          assertTrue(resultString.contains("key:key1,value:super-user/null/key1/value1"));
+          assertTrue(resultString.contains("key:key2,value:super-user/null/key2/value2"));
+          assertTrue(resultString.contains("key:key3,value:super-user/null/key3/value3"));
+          assertTrue(resultString.contains("key:key4,value:super-user/null/key4/value4"));
+        });
 
-    client2.invoke(() -> {
-      ClientCache cache = createClientCache("authRegionUser", "1234567", serverPort);
-      Region region = cache.getRegion(REGION_NAME);
-      region.put("key6", "value6");
-    });
-
+    client2.invoke(
+        () -> {
+          ClientCache cache = createClientCache("authRegionUser", "1234567", serverPort);
+          Region region = cache.getRegion(REGION_NAME);
+          region.put("key6", "value6");
+        });
   }
-
 }

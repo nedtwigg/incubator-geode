@@ -23,7 +23,8 @@ public abstract class VersionedThinRegionEntryHeap extends VersionedThinRegionEn
     super(context, value);
   }
 
-  private static final VersionedThinRegionEntryHeapFactory factory = new VersionedThinRegionEntryHeapFactory();
+  private static final VersionedThinRegionEntryHeapFactory factory =
+      new VersionedThinRegionEntryHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;

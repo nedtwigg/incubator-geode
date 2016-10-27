@@ -28,10 +28,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/******
- * This class is used to resolve the location of DTD. 
- * During development time the dtd for the latest version is not published 
- * on the www.gemstone.com , then the dtd should be picked up as a resource from the Jar file.
+/**
+ * **** This class is used to resolve the location of DTD. During development time the dtd for the
+ * latest version is not published on the www.gemstone.com , then the dtd should be picked up as a
+ * resource from the Jar file.
  *
  * @deprecated As of 8.1 use {@link CacheXml}
  */
@@ -52,8 +52,9 @@ public class DtdResolver implements EntityResolver {
     }
   }
 
-  /****
-   * Checks if the url passed , can be contacted or not.
+  /**
+   * ** Checks if the url passed , can be contacted or not.
+   *
    * @param urlString
    * @return true if the URL is up and can be contacted.
    */
@@ -74,8 +75,9 @@ public class DtdResolver implements EntityResolver {
     }
   }
 
-  /***
-   * Gets the URL for Cache dtd
+  /**
+   * * Gets the URL for Cache dtd
+   *
    * @return dtd url as string
    * @throws MalformedURLException
    */

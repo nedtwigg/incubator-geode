@@ -31,8 +31,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * The RestTestUtils class contains core functionality for Spring REST Template
- * <p/>
- * 
+ *
+ * <p>
+ *
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.data.gemfire.GemfireTemplate
  * @since GemFire 8.0
@@ -43,7 +44,8 @@ public class RestTestUtils {
   public static final String GEMFIRE_REST_API_CONTEXT = "/gemfire-api";
   public static final String GEMFIRE_REST_API_VERSION = "/v1";
 
-  public static final URI GEMFIRE_REST_API_WEB_SERVICE_URL = URI.create(BASE_URL + GEMFIRE_REST_API_CONTEXT + GEMFIRE_REST_API_VERSION);
+  public static final URI GEMFIRE_REST_API_WEB_SERVICE_URL =
+      URI.create(BASE_URL + GEMFIRE_REST_API_CONTEXT + GEMFIRE_REST_API_VERSION);
 
   private static RestTemplate restTemplate;
 
@@ -51,7 +53,8 @@ public class RestTestUtils {
     if (restTemplate == null) {
       restTemplate = new RestTemplate();
 
-      final List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+      final List<HttpMessageConverter<?>> messageConverters =
+          new ArrayList<HttpMessageConverter<?>>();
 
       messageConverters.add(new ByteArrayHttpMessageConverter());
       messageConverters.add(new ResourceHttpMessageConverter());
@@ -64,16 +67,22 @@ public class RestTestUtils {
   }
 
   public static HttpMessageConverter<Object> createMappingJackson2HttpMessageConverter() {
-    final Jackson2ObjectMapperFactoryBean objectMapperFactoryBean = new Jackson2ObjectMapperFactoryBean();
+    final Jackson2ObjectMapperFactoryBean objectMapperFactoryBean =
+        new Jackson2ObjectMapperFactoryBean();
 
     objectMapperFactoryBean.setFailOnEmptyBeans(true);
     objectMapperFactoryBean.setIndentOutput(true);
     objectMapperFactoryBean.setDateFormat(new SimpleDateFormat("MM/dd/yyyy"));
-    objectMapperFactoryBean.setFeaturesToDisable(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    objectMapperFactoryBean.setFeaturesToEnable(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_COMMENTS, com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_SINGLE_QUOTES, com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+    objectMapperFactoryBean.setFeaturesToDisable(
+        com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    objectMapperFactoryBean.setFeaturesToEnable(
+        com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_COMMENTS,
+        com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_SINGLE_QUOTES,
+        com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
     objectMapperFactoryBean.afterPropertiesSet();
 
-    final MappingJackson2HttpMessageConverter httpMessageConverter = new MappingJackson2HttpMessageConverter();
+    final MappingJackson2HttpMessageConverter httpMessageConverter =
+        new MappingJackson2HttpMessageConverter();
     httpMessageConverter.setObjectMapper(objectMapperFactoryBean.getObject());
     return httpMessageConverter;
   }
@@ -81,12 +90,12 @@ public class RestTestUtils {
   /*
   protected static HttpMessageConverter<Object> createMarshallingHttpMessageConverter() {
     final Jaxb2Marshaller jaxbMarshaller = new Jaxb2Marshaller();
-  
+
     jaxbMarshaller.setContextPaths("org.apache.geode.web.rest.domain",
         "org.apache.geode.web.controllers.support");
     jaxbMarshaller.setMarshallerProperties(Collections.singletonMap(
         "jaxb.formatted.output", Boolean.TRUE));
-  
+
     return new MarshallingHttpMessageConverter(jaxbMarshaller);
   }
   */

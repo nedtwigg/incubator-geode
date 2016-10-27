@@ -31,10 +31,7 @@ import javax.transaction.TransactionManager;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
-/**
- * Moved some non-DUnit tests over from org/apache/geode/internal/jta/dunit/JTADUnitTest
- * 
- */
+/** Moved some non-DUnit tests over from org/apache/geode/internal/jta/dunit/JTADUnitTest */
 @Category(IntegrationTest.class)
 public class JtaIntegrationJUnitTest {
 
@@ -51,7 +48,7 @@ public class JtaIntegrationJUnitTest {
   @Test
   public void testBug43987() {
     //InternalDistributedSystem ds = getSystem(); // ties us in to the DS owned by DistributedTestCase.
-    CacheFactory cf = new CacheFactory().set(MCAST_PORT, "0");//(ds.getProperties());
+    CacheFactory cf = new CacheFactory().set(MCAST_PORT, "0"); //(ds.getProperties());
     Cache cache = cf.create(); // should just reuse the singleton DS owned by DistributedTestCase.
     RegionFactory<String, String> rf = cache.createRegionFactory(RegionShortcut.REPLICATE);
     Region<String, String> r = rf.create("JTA_reg");
@@ -72,7 +69,8 @@ public class JtaIntegrationJUnitTest {
     logger.debug("init for bug46169 Successful!");
     Cache cache = CacheUtils.getCache();
 
-    TransactionManager xmanager = (TransactionManager) cache.getJNDIContext().lookup("java:/TransactionManager");
+    TransactionManager xmanager =
+        (TransactionManager) cache.getJNDIContext().lookup("java:/TransactionManager");
     assertNotNull(xmanager);
 
     Transaction trans = xmanager.suspend();
@@ -97,7 +95,8 @@ public class JtaIntegrationJUnitTest {
     logger.debug("init for bug46192 Successful!");
     Cache cache = CacheUtils.getCache();
 
-    TransactionManager xmanager = (TransactionManager) cache.getJNDIContext().lookup("java:/TransactionManager");
+    TransactionManager xmanager =
+        (TransactionManager) cache.getJNDIContext().lookup("java:/TransactionManager");
     assertNotNull(xmanager);
 
     try {

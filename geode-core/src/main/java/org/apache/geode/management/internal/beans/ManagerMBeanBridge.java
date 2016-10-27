@@ -20,10 +20,7 @@ import javax.management.JMException;
 
 import org.apache.geode.management.internal.SystemManagementService;
 
-/**
- * Bridge for ManagerMBean
- *
- */
+/** Bridge for ManagerMBean */
 public class ManagerMBeanBridge {
 
   private SystemManagementService service;
@@ -64,7 +61,6 @@ public class ManagerMBeanBridge {
 
   public void setPulseURL(String pulseURL) {
     this.pulseURL = pulseURL;
-
   }
 
   public String getStatusMessage() {
@@ -74,5 +70,4 @@ public class ManagerMBeanBridge {
   public void setStatusMessage(String message) {
     this.statusMessage = message;
   }
-
 }

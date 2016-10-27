@@ -16,11 +16,7 @@
  */
 package org.apache.geode.management.internal.cli.result;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public interface CliJsonSerializableIds {
   /* sample objects 11-20 */
   int CLI_DOMAIN_OBJECT__REGION_DETAILS = 11;

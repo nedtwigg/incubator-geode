@@ -26,14 +26,11 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
  * This is a stand alone locator with a distributed-system-id = -2
- * 
- * This locator is started so that the locator information regarding the site 2
- * is removed from site 1's locator and at the same time
- * MyDistributedSystemListener's removeDistributedSystem is invoked on site 1's locator which will stop the GatewaySender
- * 
- * 
+ *
+ * <p>This locator is started so that the locator information regarding the site 2 is removed from
+ * site 1's locator and at the same time MyDistributedSystemListener's removeDistributedSystem is
+ * invoked on site 1's locator which will stop the GatewaySender
  */
-
 public class WANBootStrapping_Site2_Remove {
 
   public static void main(String[] args) {
@@ -66,5 +63,4 @@ public class WANBootStrapping_Site2_Remove {
 
     System.exit(0);
   }
-
 }

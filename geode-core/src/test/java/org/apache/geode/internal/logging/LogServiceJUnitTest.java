@@ -35,9 +35,7 @@ import org.apache.geode.internal.ClassPathLoader;
 import org.apache.geode.internal.logging.log4j.AppenderContext;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit tests for LogService
- */
+/** Unit tests for LogService */
 @Category(UnitTest.class)
 @RunWith(JUnitParamsRunner.class)
 public class LogServiceJUnitTest {
@@ -45,8 +43,7 @@ public class LogServiceJUnitTest {
   private URL defaultConfigUrl;
   private URL cliConfigUrl;
 
-  @Rule
-  public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+  @Rule public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
   @Before
   public void setUp() {
@@ -90,17 +87,29 @@ public class LogServiceJUnitTest {
   @Test
   public void defaultConfigShouldBeLoadableAsResource() {
     final URL configUrlFromLogService = LogService.class.getResource(LogService.DEFAULT_CONFIG);
-    final URL configUrlFromClassLoader = getClass().getClassLoader().getResource(LogService.DEFAULT_CONFIG.substring(1));
-    final URL configUrlFromClassPathLoader = ClassPathLoader.getLatest().getResource(LogService.DEFAULT_CONFIG.substring(1));
+    final URL configUrlFromClassLoader =
+        getClass().getClassLoader().getResource(LogService.DEFAULT_CONFIG.substring(1));
+    final URL configUrlFromClassPathLoader =
+        ClassPathLoader.getLatest().getResource(LogService.DEFAULT_CONFIG.substring(1));
 
     assertThat(configUrlFromLogService).isNotNull();
     assertThat(configUrlFromClassLoader).isNotNull();
     assertThat(configUrlFromClassPathLoader).isNotNull();
-    assertThat(configUrlFromLogService).isEqualTo(configUrlFromClassLoader).isEqualTo(configUrlFromClassPathLoader);
+    assertThat(configUrlFromLogService)
+        .isEqualTo(configUrlFromClassLoader)
+        .isEqualTo(configUrlFromClassPathLoader);
   }
 
   @SuppressWarnings("unused")
   private static final Object[] getToLevelParameters() {
-    return $(new Object[] { 0, Level.OFF }, new Object[] { 100, Level.FATAL }, new Object[] { 200, Level.ERROR }, new Object[] { 300, Level.WARN }, new Object[] { 400, Level.INFO }, new Object[] { 500, Level.DEBUG }, new Object[] { 600, Level.TRACE }, new Object[] { Integer.MAX_VALUE, Level.ALL });
+    return $(
+        new Object[] {0, Level.OFF},
+        new Object[] {100, Level.FATAL},
+        new Object[] {200, Level.ERROR},
+        new Object[] {300, Level.WARN},
+        new Object[] {400, Level.INFO},
+        new Object[] {500, Level.DEBUG},
+        new Object[] {600, Level.TRACE},
+        new Object[] {Integer.MAX_VALUE, Level.ALL});
   }
 }

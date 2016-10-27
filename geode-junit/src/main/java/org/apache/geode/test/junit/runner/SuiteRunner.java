@@ -26,11 +26,11 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 
 /**
- * SuiteRunner is like Junit Suite, it's used in conjunction with <code>SuiteClass({xx.class, yy.class})</code>
- * It's different from Suite in two ways:
- * 1. it should only contain contain Junit4 test classes
- * 2. the test method names inside each test class are appended with the suiteClass name so that the result will show up different
- * as when you run these tests alone.
+ * SuiteRunner is like Junit Suite, it's used in conjunction with <code>
+ * SuiteClass({xx.class, yy.class})</code> It's different from Suite in two ways: 1. it should only
+ * contain contain Junit4 test classes 2. the test method names inside each test class are appended
+ * with the suiteClass name so that the result will show up different as when you run these tests
+ * alone.
  */
 public class SuiteRunner extends Suite {
 
@@ -41,7 +41,8 @@ public class SuiteRunner extends Suite {
   private static List<Runner> getRunners(final Class<?> klass) throws InitializationError {
     SuiteClasses annotation = klass.getAnnotation(SuiteClasses.class);
     if (annotation == null) {
-      throw new InitializationError(String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));
+      throw new InitializationError(
+          String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));
     }
     Class<?>[] childClasses = annotation.value();
     List<Runner> runners = new ArrayList<>();

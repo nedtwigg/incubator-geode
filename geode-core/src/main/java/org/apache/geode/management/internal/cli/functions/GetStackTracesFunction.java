@@ -37,7 +37,8 @@ public class GetStackTracesFunction extends FunctionAdapter implements InternalE
       if (memberNameOrId == null) {
         memberNameOrId = cache.getDistributedSystem().getDistributedMember().getId();
       }
-      StackTracesPerMember stackTracePerMember = new StackTracesPerMember(memberNameOrId, OSProcess.zipStacks());
+      StackTracesPerMember stackTracePerMember =
+          new StackTracesPerMember(memberNameOrId, OSProcess.zipStacks());
       context.getResultSender().lastResult(stackTracePerMember);
     } catch (Exception e) {
       context.getResultSender().sendException(e);

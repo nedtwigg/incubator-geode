@@ -35,11 +35,11 @@ import org.apache.geode.test.dunit.AsyncInvocation;
 import org.apache.geode.test.dunit.Wait;
 
 //The tests here are to validate changes introduced because a distributed deadlock
-//was found that caused issues for a production customer. 
+//was found that caused issues for a production customer.
 //
-//There are 4 tests which use sender gateways with primaries on different 
+//There are 4 tests which use sender gateways with primaries on different
 //JVM's. Two tests use replicated and two use partition regions and the
-//the tests vary the conserve-sockets.  
+//the tests vary the conserve-sockets.
 //
 //currently the 4th test using PR, conserve-sockets=true hangs/fails and is commented
 //out to prevent issues
@@ -70,10 +70,14 @@ public class SerialGatewaySenderDistributedDeadlockDUnitTest extends WANTestBase
 
     //exercise region and gateway operations with different messaging
     exerciseWANOperations();
-    AsyncInvocation invVM4transaction = vm4.invokeAsync(() -> WANTestBase.doTxPuts(getTestMethodName() + "_RR"));
-    AsyncInvocation invVM5transaction = vm5.invokeAsync(() -> WANTestBase.doTxPuts(getTestMethodName() + "_RR"));
-    AsyncInvocation invVM4 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
-    AsyncInvocation invVM5 = vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
+    AsyncInvocation invVM4transaction =
+        vm4.invokeAsync(() -> WANTestBase.doTxPuts(getTestMethodName() + "_RR"));
+    AsyncInvocation invVM5transaction =
+        vm5.invokeAsync(() -> WANTestBase.doTxPuts(getTestMethodName() + "_RR"));
+    AsyncInvocation invVM4 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
+    AsyncInvocation invVM5 =
+        vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
 
     exerciseFunctions();
 
@@ -105,11 +109,21 @@ public class SerialGatewaySenderDistributedDeadlockDUnitTest extends WANTestBase
     startSerialSenders();
 
     exerciseWANOperations();
-    AsyncInvocation invVM4transaction = vm4.invokeAsync(() -> SerialGatewaySenderDistributedDeadlockDUnitTest.doTxPutsPR(getTestMethodName() + "_RR", 100, 1000));
-    AsyncInvocation invVM5transaction = vm5.invokeAsync(() -> SerialGatewaySenderDistributedDeadlockDUnitTest.doTxPutsPR(getTestMethodName() + "_RR", 100, 1000));
+    AsyncInvocation invVM4transaction =
+        vm4.invokeAsync(
+            () ->
+                SerialGatewaySenderDistributedDeadlockDUnitTest.doTxPutsPR(
+                    getTestMethodName() + "_RR", 100, 1000));
+    AsyncInvocation invVM5transaction =
+        vm5.invokeAsync(
+            () ->
+                SerialGatewaySenderDistributedDeadlockDUnitTest.doTxPutsPR(
+                    getTestMethodName() + "_RR", 100, 1000));
 
-    AsyncInvocation invVM4 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
-    AsyncInvocation invVM5 = vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
+    AsyncInvocation invVM4 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
+    AsyncInvocation invVM5 =
+        vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
 
     exerciseFunctions();
 
@@ -144,11 +158,15 @@ public class SerialGatewaySenderDistributedDeadlockDUnitTest extends WANTestBase
 
     //exercise region and gateway operations with messaging
     exerciseWANOperations();
-    AsyncInvocation invVM4transaction = vm4.invokeAsync(() -> WANTestBase.doTxPuts(getTestMethodName() + "_RR"));
-    AsyncInvocation invVM5transaction = vm5.invokeAsync(() -> WANTestBase.doTxPuts(getTestMethodName() + "_RR"));
+    AsyncInvocation invVM4transaction =
+        vm4.invokeAsync(() -> WANTestBase.doTxPuts(getTestMethodName() + "_RR"));
+    AsyncInvocation invVM5transaction =
+        vm5.invokeAsync(() -> WANTestBase.doTxPuts(getTestMethodName() + "_RR"));
 
-    AsyncInvocation invVM4 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
-    AsyncInvocation invVM5 = vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
+    AsyncInvocation invVM4 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
+    AsyncInvocation invVM5 =
+        vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
 
     exerciseFunctions();
 
@@ -180,11 +198,21 @@ public class SerialGatewaySenderDistributedDeadlockDUnitTest extends WANTestBase
     startSerialSenders();
 
     exerciseWANOperations();
-    AsyncInvocation invVM4transaction = vm4.invokeAsync(() -> SerialGatewaySenderDistributedDeadlockDUnitTest.doTxPutsPR(getTestMethodName() + "_RR", 100, 1000));
-    AsyncInvocation invVM5transaction = vm5.invokeAsync(() -> SerialGatewaySenderDistributedDeadlockDUnitTest.doTxPutsPR(getTestMethodName() + "_RR", 100, 1000));
+    AsyncInvocation invVM4transaction =
+        vm4.invokeAsync(
+            () ->
+                SerialGatewaySenderDistributedDeadlockDUnitTest.doTxPutsPR(
+                    getTestMethodName() + "_RR", 100, 1000));
+    AsyncInvocation invVM5transaction =
+        vm5.invokeAsync(
+            () ->
+                SerialGatewaySenderDistributedDeadlockDUnitTest.doTxPutsPR(
+                    getTestMethodName() + "_RR", 100, 1000));
 
-    AsyncInvocation invVM4 = vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
-    AsyncInvocation invVM5 = vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
+    AsyncInvocation invVM4 =
+        vm4.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
+    AsyncInvocation invVM5 =
+        vm5.invokeAsync(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 1000));
 
     exerciseFunctions();
 
@@ -208,9 +236,11 @@ public class SerialGatewaySenderDistributedDeadlockDUnitTest extends WANTestBase
     vm2.invoke(() -> WANTestBase.createReceiver());
 
     //create senders
-    vm4.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln1,ln2", false));
+    vm4.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln1,ln2", false));
 
-    vm5.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln1,ln2", false));
+    vm5.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln1,ln2", false));
   }
 
   private void createCachesWith(Boolean socketPolicy, Integer nyPort, Integer lnPort) {
@@ -225,32 +255,51 @@ public class SerialGatewaySenderDistributedDeadlockDUnitTest extends WANTestBase
     //do function calls that use a shared connection
     for (int x = 0; x < 1000; x++) {
       //setting it to Boolean.TRUE it should pass the test
-      vm4.invoke(() -> SerialGatewaySenderDistributedDeadlockDUnitTest.doFunctionPuts(getTestMethodName() + "_RR", 1, Boolean.TRUE));
-      vm5.invoke(() -> SerialGatewaySenderDistributedDeadlockDUnitTest.doFunctionPuts(getTestMethodName() + "_RR", 1, Boolean.TRUE));
+      vm4.invoke(
+          () ->
+              SerialGatewaySenderDistributedDeadlockDUnitTest.doFunctionPuts(
+                  getTestMethodName() + "_RR", 1, Boolean.TRUE));
+      vm5.invoke(
+          () ->
+              SerialGatewaySenderDistributedDeadlockDUnitTest.doFunctionPuts(
+                  getTestMethodName() + "_RR", 1, Boolean.TRUE));
     }
     for (int x = 0; x < 1000; x++) {
       //setting the Boolean.FALSE below will cause a deadlock in some GFE versions
       //setting it to Boolean.TRUE as above it should pass the test
       //this is similar to the customer found distributed deadlock
-      vm4.invoke(() -> SerialGatewaySenderDistributedDeadlockDUnitTest.doFunctionPuts(getTestMethodName() + "_RR", 1, Boolean.FALSE));
-      vm5.invoke(() -> SerialGatewaySenderDistributedDeadlockDUnitTest.doFunctionPuts(getTestMethodName() + "_RR", 1, Boolean.FALSE));
+      vm4.invoke(
+          () ->
+              SerialGatewaySenderDistributedDeadlockDUnitTest.doFunctionPuts(
+                  getTestMethodName() + "_RR", 1, Boolean.FALSE));
+      vm5.invoke(
+          () ->
+              SerialGatewaySenderDistributedDeadlockDUnitTest.doFunctionPuts(
+                  getTestMethodName() + "_RR", 1, Boolean.FALSE));
     }
   }
 
   private void createPartitionedRegions(Integer nyPort) throws Exception {
     //create remote receiver
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_RR", "", 0, 113, false));
+    vm2.invoke(
+        () -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_RR", "", 0, 113, false));
 
     vm2.invoke(() -> WANTestBase.createReceiver());
 
     //create sender vms
-    vm4.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_RR", "ln1,ln2", 1, 113, false));
+    vm4.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_RR", "ln1,ln2", 1, 113, false));
 
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_RR", "ln1,ln2", 1, 113, false));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_RR", "ln1,ln2", 1, 113, false));
   }
 
   private void exerciseWANOperations() throws Exception {
-    //note - some of these should be made async to truly exercise the 
+    //note - some of these should be made async to truly exercise the
     //messaging between the WAN gateways and members
 
     //exercise region and gateway operations
@@ -260,7 +309,7 @@ public class SerialGatewaySenderDistributedDeadlockDUnitTest extends WANTestBase
     vm4.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 100));
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 100));
     vm5.invoke(() -> WANTestBase.doDestroys(getTestMethodName() + "_RR", 100));
-    Wait.pause(2000);//wait for events to propagate
+    Wait.pause(2000); //wait for events to propagate
     vm5.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 0));
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 0));
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_RR", 100));
@@ -268,14 +317,17 @@ public class SerialGatewaySenderDistributedDeadlockDUnitTest extends WANTestBase
     Wait.pause(2000); //wait for events to propagate
     vm4.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 100));
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 100));
-    vm4.invoke(() -> SerialGatewaySenderDistributedDeadlockDUnitTest.doInvalidates(getTestMethodName() + "_RR", 100, 100));
+    vm4.invoke(
+        () ->
+            SerialGatewaySenderDistributedDeadlockDUnitTest.doInvalidates(
+                getTestMethodName() + "_RR", 100, 100));
     vm4.invoke(() -> WANTestBase.doPutAll(getTestMethodName() + "_RR", 100, 10));
     vm5.invoke(() -> WANTestBase.doPutAll(getTestMethodName() + "_RR", 100, 10));
-    Wait.pause(2000);//wait for events to propagate
+    Wait.pause(2000); //wait for events to propagate
     vm4.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 1000));
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 1000));
     vm4.invoke(() -> WANTestBase.doDestroys(getTestMethodName() + "_RR", 1000));
-    Wait.pause(2000);//wait for events to propagate
+    Wait.pause(2000); //wait for events to propagate
     vm5.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 0));
     vm2.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_RR", 0));
     vm4.invoke(() -> WANTestBase.doPutsPDXSerializable(getTestMethodName() + "_RR", 100));
@@ -309,12 +361,14 @@ public class SerialGatewaySenderDistributedDeadlockDUnitTest extends WANTestBase
     vm5.invoke(() -> WANTestBase.createSender("ln2", 2, false, 100, 10, false, false, null, true));
   }
 
-  public static void doFunctionPuts(String name, int num, Boolean useThreadOwnedSocket) throws Exception {
+  public static void doFunctionPuts(String name, int num, Boolean useThreadOwnedSocket)
+      throws Exception {
     Region region = CacheFactory.getAnyInstance().getRegion(name);
     FunctionService.registerFunction(new TestFunction());
     Execution exe = FunctionService.onRegion(region);
     for (int x = 0; x < num; x++) {
-      exe.withArgs(useThreadOwnedSocket).execute("org.apache.geode.internal.cache.wan.serial.TestFunction");
+      exe.withArgs(useThreadOwnedSocket)
+          .execute("org.apache.geode.internal.cache.wan.serial.TestFunction");
     }
   }
 
@@ -328,14 +382,15 @@ public class SerialGatewaySenderDistributedDeadlockDUnitTest extends WANTestBase
         r.put(temp, temp);
         mgr.commit();
       } catch (org.apache.geode.cache.TransactionDataNotColocatedException txe) {
-        //ignore colocation issues or primary bucket issues 
+        //ignore colocation issues or primary bucket issues
       } catch (org.apache.geode.cache.CommitConflictException cce) {
         //ignore - conflicts are ok and expected
       }
     }
   }
 
-  public static void doInvalidates(String regionName, int numInvalidates, int size) throws Exception {
+  public static void doInvalidates(String regionName, int numInvalidates, int size)
+      throws Exception {
     Region r = cache.getRegion(Region.SEPARATOR + regionName);
     for (int x = 0; x < numInvalidates; x++) {
       int temp = (int) (Math.floor(Math.random() * size));
@@ -348,7 +403,6 @@ public class SerialGatewaySenderDistributedDeadlockDUnitTest extends WANTestBase
       }
     }
   }
-
 }
 
 class TestFunction implements Function {

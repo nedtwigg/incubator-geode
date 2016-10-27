@@ -89,7 +89,8 @@ public class DistributedSystemBridgeJUnitTest {
     when(cache.startBackup(any())).thenReturn(backupManager);
     when(cache.getPersistentMemberManager()).thenReturn(memberManager);
     when(cache.getBackupManager()).thenReturn(backupManager);
-    when(dm.putOutgoing(isA(PrepareBackupRequest.class))).thenThrow(new RuntimeException("Fail the prepare"));
+    when(dm.putOutgoing(isA(PrepareBackupRequest.class)))
+        .thenThrow(new RuntimeException("Fail the prepare"));
 
     DistributedSystemBridge bridge = new DistributedSystemBridge(null);
     try {

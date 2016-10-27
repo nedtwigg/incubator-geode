@@ -17,11 +17,7 @@
 package org.apache.geode.management.internal.cli.remote;
 
 /**
- * 
- * 
- * @param <T>
- *          Type of ThreadLocal variable
- * 
+ * @param <T> Type of ThreadLocal variable
  * @since GemFire 7.0
  */
 public abstract class WrapperThreadLocal<T> extends ThreadLocal<T> {

@@ -26,11 +26,7 @@ import org.apache.geode.cache.persistence.PersistentID;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 import org.apache.geode.internal.admin.remote.AdminResponse;
 
-/**
- * The response to the {@link PrepareBackupRequest}
- * 
- *
- */
+/** The response to the {@link PrepareBackupRequest} */
 public class PrepareBackupResponse extends AdminResponse {
 
   private HashSet<PersistentID> persistentIds;
@@ -39,7 +35,8 @@ public class PrepareBackupResponse extends AdminResponse {
     super();
   }
 
-  public PrepareBackupResponse(InternalDistributedMember sender, HashSet<PersistentID> persistentIds) {
+  public PrepareBackupResponse(
+      InternalDistributedMember sender, HashSet<PersistentID> persistentIds) {
     this.setRecipient(sender);
     this.persistentIds = persistentIds;
   }

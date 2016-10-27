@@ -32,12 +32,11 @@ import org.apache.geode.test.dunit.ThreadUtils;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * This JUnit test tests concurrent rolling and normal region operations
- * put,get,clear,destroy in both sync and async mode
- * 
- * A region operation is done on the same key that is about to be rolled or has
- * just been rolled and the region operation is verified to have been correctly
- * executed.
+ * This JUnit test tests concurrent rolling and normal region operations put,get,clear,destroy in
+ * both sync and async mode
+ *
+ * <p>A region operation is done on the same key that is about to be rolled or has just been rolled
+ * and the region operation is verified to have been correctly executed.
  */
 @Category(IntegrationTest.class)
 public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTestingBase {
@@ -54,19 +53,20 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
   }
 
   void putBeforeRoll(final Region region) {
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void beforeGoingToCompact() {
-        region.put("Key", "Value2");
-      }
+          public void beforeGoingToCompact() {
+            region.put("Key", "Value2");
+          }
 
-      public void afterHavingCompacted() {
-        synchronized (region) {
-          region.notify();
-          hasBeenNotified = true;
-        }
-      }
-    });
+          public void afterHavingCompacted() {
+            synchronized (region) {
+              region.notify();
+              hasBeenNotified = true;
+            }
+          }
+        });
     region.put("Key", "Value1");
     switchOplog(region);
     synchronized (region) {
@@ -88,19 +88,20 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
   }
 
   void getBeforeRoll(final Region region) {
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void beforeGoingToCompact() {
-        region.get("Key");
-      }
+          public void beforeGoingToCompact() {
+            region.get("Key");
+          }
 
-      public void afterHavingCompacted() {
-        synchronized (region) {
-          region.notify();
-          hasBeenNotified = true;
-        }
-      }
-    });
+          public void afterHavingCompacted() {
+            synchronized (region) {
+              region.notify();
+              hasBeenNotified = true;
+            }
+          }
+        });
     region.put("Key", "Value1");
     switchOplog(region);
     synchronized (region) {
@@ -123,15 +124,16 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
   }
 
   void delBeforeRoll(final Region region) {
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void beforeGoingToCompact() {
-        synchronized (region) {
-          region.notify();
-          hasBeenNotified = true;
-        }
-      }
-    });
+          public void beforeGoingToCompact() {
+            synchronized (region) {
+              region.notify();
+              hasBeenNotified = true;
+            }
+          }
+        });
     region.put("Key", "Value1");
     switchOplog(region);
     synchronized (region) {
@@ -171,15 +173,16 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
 
   void clearBeforeRoll(final Region region) {
     this.hasBeenNotified = false;
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void beforeGoingToCompact() {
-        synchronized (region) {
-          region.notify();
-          hasBeenNotified = true;
-        }
-      }
-    });
+          public void beforeGoingToCompact() {
+            synchronized (region) {
+              region.notify();
+              hasBeenNotified = true;
+            }
+          }
+        });
     region.put("Key", "Value1");
     switchOplog(region);
     synchronized (region) {
@@ -213,19 +216,20 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
   }
 
   void putAfterRoll(final Region region) {
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void beforeGoingToCompact() {
-        region.put("Key", "Value1");
-      }
+          public void beforeGoingToCompact() {
+            region.put("Key", "Value1");
+          }
 
-      public void afterHavingCompacted() {
-        synchronized (region) {
-          region.notify();
-          hasBeenNotified = true;
-        }
-      }
-    });
+          public void afterHavingCompacted() {
+            synchronized (region) {
+              region.notify();
+              hasBeenNotified = true;
+            }
+          }
+        });
     region.put("makeNonEmpty", "needSomethingSoIt can be compacted");
     switchOplog(region);
     synchronized (region) {
@@ -248,15 +252,16 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
   }
 
   void getAfterRoll(final Region region) {
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void afterHavingCompacted() {
-        synchronized (region) {
-          region.notify();
-          hasBeenNotified = true;
-        }
-      }
-    });
+          public void afterHavingCompacted() {
+            synchronized (region) {
+              region.notify();
+              hasBeenNotified = true;
+            }
+          }
+        });
     region.put("Key", "Value1");
     switchOplog(region);
     synchronized (region) {
@@ -280,15 +285,16 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
   }
 
   void delAfterRoll(final Region region) {
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void afterHavingCompacted() {
-        synchronized (region) {
-          region.notify();
-          hasBeenNotified = true;
-        }
-      }
-    });
+          public void afterHavingCompacted() {
+            synchronized (region) {
+              region.notify();
+              hasBeenNotified = true;
+            }
+          }
+        });
     region.put("Key", "Value1");
     switchOplog(region);
     synchronized (region) {
@@ -327,15 +333,16 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
   }
 
   void clearAfterRoll(final Region region) {
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void afterHavingCompacted() {
-        synchronized (region) {
-          region.notify();
-          hasBeenNotified = true;
-        }
-      }
-    });
+          public void afterHavingCompacted() {
+            synchronized (region) {
+              region.notify();
+              hasBeenNotified = true;
+            }
+          }
+        });
     region.put("Key", "Value1");
     switchOplog(region);
     synchronized (region) {
@@ -390,7 +397,8 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
     diskRegionProperties.setDiskDirs(dirs);
     diskRegionProperties.setRolling(true);
     diskRegionProperties.setCompactionThreshold(100);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     putBeforeRoll(region);
     region.destroyRegion();
@@ -416,7 +424,8 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
     diskRegionProperties.setDiskDirs(dirs);
     diskRegionProperties.setRolling(true);
     diskRegionProperties.setCompactionThreshold(100);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     putAfterRoll(region);
     region.destroyRegion();
@@ -442,7 +451,8 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
     diskRegionProperties.setDiskDirs(dirs);
     diskRegionProperties.setRolling(true);
     diskRegionProperties.setCompactionThreshold(100);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     getBeforeRoll(region);
     region.destroyRegion();
@@ -468,7 +478,8 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
     diskRegionProperties.setDiskDirs(dirs);
     diskRegionProperties.setRolling(true);
     diskRegionProperties.setCompactionThreshold(100);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     getAfterRoll(region);
     region.destroyRegion();
@@ -494,7 +505,8 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
     diskRegionProperties.setDiskDirs(dirs);
     diskRegionProperties.setRolling(true);
     diskRegionProperties.setCompactionThreshold(100);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     clearBeforeRoll(region);
     region.destroyRegion();
@@ -520,7 +532,8 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
     diskRegionProperties.setDiskDirs(dirs);
     diskRegionProperties.setRolling(true);
     diskRegionProperties.setCompactionThreshold(100);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     clearAfterRoll(region);
     region.destroyRegion();
@@ -546,7 +559,8 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
     diskRegionProperties.setDiskDirs(dirs);
     diskRegionProperties.setRolling(true);
     diskRegionProperties.setCompactionThreshold(100);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     delBeforeRoll(region);
     region.destroyRegion();
@@ -572,7 +586,8 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
     diskRegionProperties.setDiskDirs(dirs);
     diskRegionProperties.setRolling(true);
     diskRegionProperties.setCompactionThreshold(100);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     delAfterRoll(region);
     region.destroyRegion();
@@ -598,7 +613,8 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
     diskRegionProperties.setDiskDirs(dirs);
     diskRegionProperties.setRolling(true);
     diskRegionProperties.setCompactionThreshold(100);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     closeBeforeRoll(region);
   }
@@ -610,11 +626,13 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
     diskRegionProperties.setDiskDirs(dirs);
     diskRegionProperties.setRolling(true);
     diskRegionProperties.setCompactionThreshold(100);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     closeAfterRoll(region);
     //Asif :Recreate the region so it gets destroyed in tear down
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
   }
 
   @Ignore("TODO:DARREL_DISABLE: test is disabled")
@@ -624,7 +642,8 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
     diskRegionProperties.setDiskDirs(dirs);
     diskRegionProperties.setRolling(true);
     diskRegionProperties.setCompactionThreshold(100);
-    region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
+    region =
+        DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskRegionProperties, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
     concurrentPutAndRoll(region);
     region.destroyRegion();
@@ -632,60 +651,68 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
 
   private void concurrentPutAndRoll(final Region region) {
     hasBeenNotified = false;
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      long startTime, endTime, totalTime = 0;
+          long startTime, endTime, totalTime = 0;
 
-      boolean localHasBeenNotified = false;
+          boolean localHasBeenNotified = false;
 
-      public void beforeGoingToCompact() {
-        final Object obj = new Object();
-        Thread thread1 = new Thread() {
+          public void beforeGoingToCompact() {
+            final Object obj = new Object();
+            Thread thread1 =
+                new Thread() {
 
-          public void run() {
-            RegionEntry re = ((LocalRegion) region).basicGetEntry("Key");
+                  public void run() {
+                    RegionEntry re = ((LocalRegion) region).basicGetEntry("Key");
 
-            synchronized (re) {
-              synchronized (obj) {
-                obj.notify();
-                localHasBeenNotified = true;
-              }
+                    synchronized (re) {
+                      synchronized (obj) {
+                        obj.notify();
+                        localHasBeenNotified = true;
+                      }
+                      try {
+                        Thread.sleep(2000);
+                      } catch (InterruptedException e) {
+                        testFailed = true;
+                        failureCause =
+                            "Exception occured when it was not supposed to occur, Exception is "
+                                + e
+                                + "in concurrentPutAndRoll";
+                        throw new AssertionError("exception not expected here", e);
+                      }
+                    }
+                  }
+                };
+            thread1.start();
+            synchronized (obj) {
               try {
-                Thread.sleep(2000);
+                if (!localHasBeenNotified) {
+                  obj.wait(10000);
+                  assertTrue(localHasBeenNotified);
+                }
               } catch (InterruptedException e) {
                 testFailed = true;
-                failureCause = "Exception occured when it was not supposed to occur, Exception is " + e + "in concurrentPutAndRoll";
+                failureCause =
+                    "Exception occured when it was not supposed to occur, Exception is "
+                        + e
+                        + "in concurrentPutAndRoll";
                 throw new AssertionError("exception not expected here", e);
               }
             }
+            startTime = System.currentTimeMillis();
           }
-        };
-        thread1.start();
-        synchronized (obj) {
-          try {
-            if (!localHasBeenNotified) {
-              obj.wait(10000);
-              assertTrue(localHasBeenNotified);
-            }
-          } catch (InterruptedException e) {
-            testFailed = true;
-            failureCause = "Exception occured when it was not supposed to occur, Exception is " + e + "in concurrentPutAndRoll";
-            throw new AssertionError("exception not expected here", e);
-          }
-        }
-        startTime = System.currentTimeMillis();
-      }
 
-      public void afterHavingCompacted() {
-        endTime = System.currentTimeMillis();
-        totalTime = endTime - startTime;
-        setTotalTime(totalTime);
-        synchronized (region) {
-          region.notify();
-          hasBeenNotified = true;
-        }
-      }
-    });
+          public void afterHavingCompacted() {
+            endTime = System.currentTimeMillis();
+            totalTime = endTime - startTime;
+            setTotalTime(totalTime);
+            synchronized (region) {
+              region.notify();
+              hasBeenNotified = true;
+            }
+          }
+        });
     region.put("Key", "Value1");
     switchOplog(region);
     synchronized (region) {
@@ -705,11 +732,10 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
   }
 
   /**
-   * Check if the roller thread cant skip rolling the entry & if a get is done
-   * on that entry , it is possible for the get operation to get the Oplog which
-   * is not yet destroyed but by the time a basicGet is done,the oplog gets
-   * destroyed & the get operation sees the file length zero or it may encounter
-   * null pointer exception while retrieving the oplog.
+   * Check if the roller thread cant skip rolling the entry & if a get is done on that entry , it is
+   * possible for the get operation to get the Oplog which is not yet destroyed but by the time a
+   * basicGet is done,the oplog gets destroyed & the get operation sees the file length zero or it
+   * may encounter null pointer exception while retrieving the oplog.
    */
   @Test
   public void testConcurrentRollingAndGet() {
@@ -729,41 +755,47 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
     region = DiskRegionHelperFactory.getSyncPersistOnlyRegion(cache, diskProps, Scope.LOCAL);
     LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
 
-    CacheObserver old = CacheObserverHolder.setInstance(new CacheObserverAdapter() {
-      public void beforeGoingToCompact() {
-        for (int k = 0; k < TOTAL_KEYS; ++k) {
-          final int num = k;
-          Thread th = new Thread(new Runnable() {
-            public void run() {
+    CacheObserver old =
+        CacheObserverHolder.setInstance(
+            new CacheObserverAdapter() {
+              public void beforeGoingToCompact() {
+                for (int k = 0; k < TOTAL_KEYS; ++k) {
+                  final int num = k;
+                  Thread th =
+                      new Thread(
+                          new Runnable() {
+                            public void run() {
 
-              byte[] val_on_disk = null;
-              try {
-                val_on_disk = (byte[]) ((LocalRegion) region).getValueOnDisk("key" + (num + 1));
-                assertTrue("byte  array was not of right size  as its size was " + val_on_disk.length, val_on_disk.length == 100);
+                              byte[] val_on_disk = null;
+                              try {
+                                val_on_disk =
+                                    (byte[])
+                                        ((LocalRegion) region).getValueOnDisk("key" + (num + 1));
+                                assertTrue(
+                                    "byte  array was not of right size  as its size was "
+                                        + val_on_disk.length,
+                                    val_on_disk.length == 100);
 
-              } catch (Exception e) {
-                encounteredFailure = true;
-                logWriter.error("Test encountered exception ", e);
-                throw new AssertionError(" Test failed as could not obtain value from disk.Exception = ", e);
+                              } catch (Exception e) {
+                                encounteredFailure = true;
+                                logWriter.error("Test encountered exception ", e);
+                                throw new AssertionError(
+                                    " Test failed as could not obtain value from disk.Exception = ",
+                                    e);
+                              }
+                            }
+                          });
+                  threads.add(th);
+                }
+                for (int j = 0; j < TOTAL_KEYS; ++j) {
+                  ((Thread) threads.get(rollingCount++)).start();
+                }
               }
-
-            }
-
-          });
-          threads.add(th);
-        }
-        for (int j = 0; j < TOTAL_KEYS; ++j) {
-          ((Thread) threads.get(rollingCount++)).start();
-        }
-
-      }
-
-    });
+            });
 
     for (int i = 0; i < TOTAL_SWITCHING; ++i) {
       for (int j = 0; j < TOTAL_KEYS; ++j) {
         region.put("key" + (j + 1), val);
-
       }
       LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = true;
       try {
@@ -781,10 +813,11 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
         ThreadUtils.join(th, 30 * 1000);
       }
     }
-    assertTrue("The test will fail as atleast one  thread doing get operation encounetred exception", !encounteredFailure);
+    assertTrue(
+        "The test will fail as atleast one  thread doing get operation encounetred exception",
+        !encounteredFailure);
     CacheObserverHolder.setInstance(old);
     closeDown();
-
   }
 
   private volatile long totalTime = 0;
@@ -796,19 +829,20 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
   void closeAfterRoll(final Region region) {
     hasBeenNotified = false;
     final Close th = new Close(region);
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void afterHavingCompacted() {
-        LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-        try {
-          th.start();
-          Thread.sleep(3000);
-        } catch (Exception e) {
-          logWriter.error("Exception occured", e);
-          throw new AssertionError("Exception occured when it was not supposed to occur", e);
-        }
-      }
-    });
+          public void afterHavingCompacted() {
+            LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
+            try {
+              th.start();
+              Thread.sleep(3000);
+            } catch (Exception e) {
+              logWriter.error("Exception occured", e);
+              throw new AssertionError("Exception occured when it was not supposed to occur", e);
+            }
+          }
+        });
     region.put("Key", "Value1");
     switchOplog(region);
     synchronized (region) {
@@ -833,19 +867,20 @@ public class ConcurrentRollingAndRegionOperationsJUnitTest extends DiskRegionTes
   void closeBeforeRoll(final Region region) {
     hasBeenNotified = false;
     final Close th = new Close(region);
-    CacheObserverHolder.setInstance(new CacheObserverAdapter() {
+    CacheObserverHolder.setInstance(
+        new CacheObserverAdapter() {
 
-      public void beforeGoingToCompact() {
-        LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
-        try {
-          th.start();
-          Thread.sleep(3000);
-        } catch (Exception e) {
-          logWriter.error("Exception occured", e);
-          throw new AssertionError("Exception occured when it was not supposed to occur", e);
-        }
-      }
-    });
+          public void beforeGoingToCompact() {
+            LocalRegion.ISSUE_CALLBACKS_TO_CACHE_OBSERVER = false;
+            try {
+              th.start();
+              Thread.sleep(3000);
+            } catch (Exception e) {
+              logWriter.error("Exception occured", e);
+              throw new AssertionError("Exception occured when it was not supposed to occur", e);
+            }
+          }
+        });
     region.put("Key", "Value1");
     switchOplog(region);
     synchronized (region) {

@@ -34,17 +34,14 @@ import org.apache.geode.StatisticsType;
 import org.apache.geode.distributed.DistributedSystem;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Integration tests for {@link StatisticsType} as implemented by {@link DistributedSystem}.
- */
+/** Integration tests for {@link StatisticsType} as implemented by {@link DistributedSystem}. */
 @Category(IntegrationTest.class)
 public class DistributedSystemStatisticsTypeIntegrationTest {
 
   private DistributedSystem system;
   private StatisticsType type;
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
@@ -54,7 +51,7 @@ public class DistributedSystemStatisticsTypeIntegrationTest {
     props.setProperty(NAME, getUniqueName());
     this.system = DistributedSystem.connect(props);
 
-    StatisticDescriptor[] stats = { factory().createIntGauge("test", "TEST", "ms") };
+    StatisticDescriptor[] stats = {factory().createIntGauge("test", "TEST", "ms")};
 
     this.type = factory().createType(getUniqueName(), "TEST", stats);
   }
@@ -68,13 +65,15 @@ public class DistributedSystemStatisticsTypeIntegrationTest {
   @Test
   public void testNameToIdUnknownStatistic() {
     assertThat(type.nameToId("test")).isEqualTo(0);
-    assertThatThrownBy(() -> type.nameToId("Fred")).isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> type.nameToId("Fred"))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   public void testNameToDescriptorUnknownStatistic() {
     assertThat(type.nameToDescriptor("test").getName()).isEqualTo("test");
-    assertThatThrownBy(() -> type.nameToDescriptor("Fred")).isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> type.nameToDescriptor("Fred"))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
   }
 
   private String getUniqueName() {
@@ -84,5 +83,4 @@ public class DistributedSystemStatisticsTypeIntegrationTest {
   private StatisticsFactory factory() {
     return this.system;
   }
-
 }

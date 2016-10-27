@@ -14,15 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.management.internal.cli.util;
 
-/**
- *  
- *
- */
+/** */
 public class ConnectionEndpoint {
   public static final String JMXMANAGER_OPTION_CONTEXT = "__jmx-manager__";
   public static final String LOCATOR_OPTION_CONTEXT = "__locator__";
@@ -39,16 +34,12 @@ public class ConnectionEndpoint {
     this.port = port;
   }
 
-  /**
-   * @return the host
-   */
+  /** @return the host */
   public String getHost() {
     return host;
   }
 
-  /**
-   * @return the port
-   */
+  /** @return the port */
   public int getPort() {
     return port;
   }

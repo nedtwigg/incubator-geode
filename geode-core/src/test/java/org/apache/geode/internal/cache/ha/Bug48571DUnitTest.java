@@ -98,28 +98,28 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
   }
 
   private static void verifyProxyHasBeenPaused() {
-    WaitCriterion criterion = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        CacheClientNotifier ccn = CacheClientNotifier.getInstance();
-        Collection<CacheClientProxy> ccProxies = ccn.getClientProxies();
+    WaitCriterion criterion =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            CacheClientNotifier ccn = CacheClientNotifier.getInstance();
+            Collection<CacheClientProxy> ccProxies = ccn.getClientProxies();
 
-        Iterator<CacheClientProxy> itr = ccProxies.iterator();
+            Iterator<CacheClientProxy> itr = ccProxies.iterator();
 
-        while (itr.hasNext()) {
-          CacheClientProxy ccp = itr.next();
-          System.out.println("proxy status " + ccp.getState());
-          if (ccp.isPaused())
-            return true;
-        }
-        return false;
-      }
+            while (itr.hasNext()) {
+              CacheClientProxy ccp = itr.next();
+              System.out.println("proxy status " + ccp.getState());
+              if (ccp.isPaused()) return true;
+            }
+            return false;
+          }
 
-      @Override
-      public String description() {
-        return "Proxy has not paused yet";
-      }
-    };
+          @Override
+          public String description() {
+            return "Proxy has not paused yet";
+          }
+        };
     Wait.waitForCriterion(criterion, 15 * 1000, 200, true);
   }
 
@@ -199,28 +199,36 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
 
     cache = (GemFireCacheImpl) ccf.create();
 
-    ClientRegionFactory<String, String> crf = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
+    ClientRegionFactory<String, String> crf =
+        cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
     crf.setConcurrencyChecksEnabled(false);
 
-    crf.addCacheListener(new CacheListenerAdapter<String, String>() {
-      public void afterInvalidate(EntryEvent<String, String> event) {
-        cache.getLoggerI18n().fine("Invalidate Event: " + event.getKey() + ", " + event.getNewValue());
-        numOfInvalidates++;
-      }
+    crf.addCacheListener(
+        new CacheListenerAdapter<String, String>() {
+          public void afterInvalidate(EntryEvent<String, String> event) {
+            cache
+                .getLoggerI18n()
+                .fine("Invalidate Event: " + event.getKey() + ", " + event.getNewValue());
+            numOfInvalidates++;
+          }
 
-      public void afterCreate(EntryEvent<String, String> event) {
-        if (((String) event.getKey()).equals("last_key")) {
-          lastKeyReceived = true;
-        }
-        cache.getLoggerI18n().fine("Create Event: " + event.getKey() + ", " + event.getNewValue());
-        numOfCreates++;
-      }
+          public void afterCreate(EntryEvent<String, String> event) {
+            if (((String) event.getKey()).equals("last_key")) {
+              lastKeyReceived = true;
+            }
+            cache
+                .getLoggerI18n()
+                .fine("Create Event: " + event.getKey() + ", " + event.getNewValue());
+            numOfCreates++;
+          }
 
-      public void afterUpdate(EntryEvent<String, String> event) {
-        cache.getLoggerI18n().fine("Update Event: " + event.getKey() + ", " + event.getNewValue());
-        numOfUpdates++;
-      }
-    });
+          public void afterUpdate(EntryEvent<String, String> event) {
+            cache
+                .getLoggerI18n()
+                .fine("Update Event: " + event.getKey() + ", " + event.getNewValue());
+            numOfUpdates++;
+          }
+        });
 
     Region<String, String> r = crf.create(region);
     r.registerInterest("ALL_KEYS", true);
@@ -229,27 +237,33 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
 
   public static void doPuts() throws Exception {
     final Region<String, String> r = cache.getRegion(region);
-    Thread t1 = new Thread(new Runnable() {
-      public void run() {
-        for (int i = 0; i < 500; i++) {
-          r.put("T1_KEY_" + i, "VALUE_" + i);
-        }
-      }
-    });
-    Thread t2 = new Thread(new Runnable() {
-      public void run() {
-        for (int i = 0; i < 500; i++) {
-          r.put("T2_KEY_" + i, "VALUE_" + i);
-        }
-      }
-    });
-    Thread t3 = new Thread(new Runnable() {
-      public void run() {
-        for (int i = 0; i < 500; i++) {
-          r.put("T3_KEY_" + i, "VALUE_" + i);
-        }
-      }
-    });
+    Thread t1 =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                for (int i = 0; i < 500; i++) {
+                  r.put("T1_KEY_" + i, "VALUE_" + i);
+                }
+              }
+            });
+    Thread t2 =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                for (int i = 0; i < 500; i++) {
+                  r.put("T2_KEY_" + i, "VALUE_" + i);
+                }
+              }
+            });
+    Thread t3 =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                for (int i = 0; i < 500; i++) {
+                  r.put("T3_KEY_" + i, "VALUE_" + i);
+                }
+              }
+            });
 
     t1.start();
     t2.start();
@@ -269,17 +283,18 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
   }
 
   public static void waitForLastKey() {
-    WaitCriterion wc = new WaitCriterion() {
-      @Override
-      public boolean done() {
-        return lastKeyReceived;
-      }
+    WaitCriterion wc =
+        new WaitCriterion() {
+          @Override
+          public boolean done() {
+            return lastKeyReceived;
+          }
 
-      @Override
-      public String description() {
-        return "Did not receive last key.";
-      }
-    };
+          @Override
+          public String description() {
+            return "Did not receive last key.";
+          }
+        };
     Wait.waitForCriterion(wc, 60 * 1000, 500, true);
   }
 
@@ -287,11 +302,30 @@ public class Bug48571DUnitTest extends JUnit4DistributedTestCase {
     CacheClientNotifier ccn = CacheClientNotifier.getInstance();
     CacheClientProxy ccp = ccn.getClientProxies().iterator().next();
     cache.getLoggerI18n().info(LocalizedStrings.DEBUG, "getQueueSize() " + ccp.getQueueSize());
-    cache.getLoggerI18n().info(LocalizedStrings.DEBUG, "getQueueSizeStat() " + ccp.getQueueSizeStat());
-    cache.getLoggerI18n().info(LocalizedStrings.DEBUG, "getEventsEnqued() " + ccp.getHARegionQueue().getStatistics().getEventsEnqued());
-    cache.getLoggerI18n().info(LocalizedStrings.DEBUG, "getEventsDispatched() " + ccp.getHARegionQueue().getStatistics().getEventsDispatched());
-    cache.getLoggerI18n().info(LocalizedStrings.DEBUG, "getEventsRemoved() " + ccp.getHARegionQueue().getStatistics().getEventsRemoved());
-    cache.getLoggerI18n().info(LocalizedStrings.DEBUG, "getNumVoidRemovals() " + ccp.getHARegionQueue().getStatistics().getNumVoidRemovals());
+    cache
+        .getLoggerI18n()
+        .info(LocalizedStrings.DEBUG, "getQueueSizeStat() " + ccp.getQueueSizeStat());
+    cache
+        .getLoggerI18n()
+        .info(
+            LocalizedStrings.DEBUG,
+            "getEventsEnqued() " + ccp.getHARegionQueue().getStatistics().getEventsEnqued());
+    cache
+        .getLoggerI18n()
+        .info(
+            LocalizedStrings.DEBUG,
+            "getEventsDispatched() "
+                + ccp.getHARegionQueue().getStatistics().getEventsDispatched());
+    cache
+        .getLoggerI18n()
+        .info(
+            LocalizedStrings.DEBUG,
+            "getEventsRemoved() " + ccp.getHARegionQueue().getStatistics().getEventsRemoved());
+    cache
+        .getLoggerI18n()
+        .info(
+            LocalizedStrings.DEBUG,
+            "getNumVoidRemovals() " + ccp.getHARegionQueue().getStatistics().getNumVoidRemovals());
     assertEquals(ccp.getQueueSize(), ccp.getQueueSizeStat());
   }
 }

@@ -30,19 +30,21 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 @Category(DistributedTest.class)
-public class CompressionRegionOperationsOffHeapDUnitTest extends CompressionRegionOperationsDUnitTest {
+public class CompressionRegionOperationsOffHeapDUnitTest
+    extends CompressionRegionOperationsDUnitTest {
 
   @Override
   public final void preTearDownAssertions() throws Exception {
-    SerializableRunnable checkOrphans = new SerializableRunnable() {
+    SerializableRunnable checkOrphans =
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        if (hasCache()) {
-          OffHeapTestUtil.checkOrphans();
-        }
-      }
-    };
+          @Override
+          public void run() {
+            if (hasCache()) {
+              OffHeapTestUtil.checkOrphans();
+            }
+          }
+        };
     Invoke.invokeInEveryVM(checkOrphans);
     checkOrphans.run();
   }
@@ -59,5 +61,4 @@ public class CompressionRegionOperationsOffHeapDUnitTest extends CompressionRegi
     Compressor compressor = new SnappyCompressor();
     createCompressedRegionOnVm(getVM(TEST_VM), REGION_NAME, compressor, true);
   }
-
 }

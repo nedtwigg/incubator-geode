@@ -31,37 +31,38 @@ import org.apache.geode.internal.size.ObjectGraphSizer.ObjectFilter;
 import org.apache.logging.log4j.Logger;
 
 /**
- * An implementation of {@link ObjectSizer} that calculates an accurate, in
- * memory size of for each object that it sizes. This is the slowest method of
- * calculating sizes, but it should accurately reflect the amount of heap memory
- * used for objects.
- * 
- * This class will traverse all objects that are reachable from the passed in
- * object by instance fields. So use this class with caution if you have
- * instance fields that refer to shared objects.
- * 
- * For objects that are all approximately the same size, consider using
- * {@link SizeClassOnceObjectSizer}
- * 
- * 
+ * An implementation of {@link ObjectSizer} that calculates an accurate, in memory size of for each
+ * object that it sizes. This is the slowest method of calculating sizes, but it should accurately
+ * reflect the amount of heap memory used for objects.
+ *
+ * <p>This class will traverse all objects that are reachable from the passed in object by instance
+ * fields. So use this class with caution if you have instance fields that refer to shared objects.
+ *
+ * <p>For objects that are all approximately the same size, consider using {@link
+ * SizeClassOnceObjectSizer}
  */
 public class ReflectionObjectSizer implements ObjectSizer, Serializable {
 
   private static final ReflectionObjectSizer INSTANCE = new ReflectionObjectSizer();
 
-  private static final ObjectFilter FILTER = new ObjectFilter() {
+  private static final ObjectFilter FILTER =
+      new ObjectFilter() {
 
-    public boolean accept(Object parent, Object object) {
-      //Protect the user from a couple of pitfalls. If their object
-      //has a link to a region or cache, we don't want to size the whole thing.
-      if (object instanceof Region || object instanceof Cache || object instanceof PlaceHolderDiskRegion || object instanceof InternalDistributedSystem || object instanceof ClassLoader || object instanceof Logger) {
-        return false;
-      }
+        public boolean accept(Object parent, Object object) {
+          //Protect the user from a couple of pitfalls. If their object
+          //has a link to a region or cache, we don't want to size the whole thing.
+          if (object instanceof Region
+              || object instanceof Cache
+              || object instanceof PlaceHolderDiskRegion
+              || object instanceof InternalDistributedSystem
+              || object instanceof ClassLoader
+              || object instanceof Logger) {
+            return false;
+          }
 
-      return true;
-    }
-
-  };
+          return true;
+        }
+      };
 
   public int sizeof(Object o) {
     try {
@@ -77,18 +78,14 @@ public class ReflectionObjectSizer implements ObjectSizer, Serializable {
     return INSTANCE;
   }
 
-  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-  }
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {}
 
-  private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
-  }
+  private void readObject(java.io.ObjectInputStream in)
+      throws IOException, ClassNotFoundException {}
 
   private Object readResolve() throws ObjectStreamException {
     return INSTANCE;
   }
 
-  private ReflectionObjectSizer() {
-
-  }
-
+  private ReflectionObjectSizer() {}
 }

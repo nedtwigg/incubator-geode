@@ -31,17 +31,15 @@ public class MyDistributedSystemListener implements DistributedSystemListener {
   public int removeCount;
   Cache cache;
 
-  public MyDistributedSystemListener() {
-  }
+  public MyDistributedSystemListener() {}
 
-  /**
-   * Please note that dynamic addition of the sender id to region is not yet available.  
-   */
+  /** Please note that dynamic addition of the sender id to region is not yet available. */
   public void addedDistributedSystem(int remoteDsId) {
     addCount++;
     List<Locator> locatorsConfigured = Locator.getLocators();
     Locator locator = locatorsConfigured.get(0);
-    Map<Integer, Set<DistributionLocatorId>> allSiteMetaData = ((InternalLocator) locator).getlocatorMembershipListener().getAllLocatorsInfo();
+    Map<Integer, Set<DistributionLocatorId>> allSiteMetaData =
+        ((InternalLocator) locator).getlocatorMembershipListener().getAllLocatorsInfo();
     System.out.println("Added : allSiteMetaData : " + allSiteMetaData);
   }
 
@@ -49,7 +47,8 @@ public class MyDistributedSystemListener implements DistributedSystemListener {
     removeCount++;
     List<Locator> locatorsConfigured = Locator.getLocators();
     Locator locator = locatorsConfigured.get(0);
-    Map<Integer, Set<DistributionLocatorId>> allSiteMetaData = ((InternalLocator) locator).getlocatorMembershipListener().getAllLocatorsInfo();
+    Map<Integer, Set<DistributionLocatorId>> allSiteMetaData =
+        ((InternalLocator) locator).getlocatorMembershipListener().getAllLocatorsInfo();
     System.out.println("Removed : allSiteMetaData : " + allSiteMetaData);
   }
 
@@ -60,5 +59,4 @@ public class MyDistributedSystemListener implements DistributedSystemListener {
   public int getRemoveCount() {
     return removeCount;
   }
-
 }

@@ -35,10 +35,8 @@ import org.apache.geode.distributed.internal.membership.gms.Services;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
- * JGroups doesn't capture quite the stats we want so this protocol is
- * inserted into the stack to gather the missing ones.
- * 
- *
+ * JGroups doesn't capture quite the stats we want so this protocol is inserted into the stack to
+ * gather the missing ones.
  */
 public class StatRecorder extends Protocol {
 
@@ -56,6 +54,7 @@ public class StatRecorder extends Protocol {
 
   /**
    * sets the services object of the GMS that is using this recorder
+   *
    * @param services the Services collective of the GMS
    */
   public void setServices(Services services) {
@@ -66,11 +65,11 @@ public class StatRecorder extends Protocol {
   @Override
   public Object up(Event evt) {
     switch (evt.getType()) {
-    case Event.MSG:
-      Message msg = (Message) evt.getArg();
-      processForMulticast(msg, INCOMING);
-      processForUnicast(msg, INCOMING);
-      filter(msg, INCOMING);
+      case Event.MSG:
+        Message msg = (Message) evt.getArg();
+        processForMulticast(msg, INCOMING);
+        processForUnicast(msg, INCOMING);
+        filter(msg, INCOMING);
     }
     return up_prot.up(evt);
   }
@@ -78,18 +77,19 @@ public class StatRecorder extends Protocol {
   @Override
   public Object down(Event evt) {
     switch (evt.getType()) {
-    case Event.MSG:
-      Message msg = (Message) evt.getArg();
-      processForMulticast(msg, OUTGOING);
-      processForUnicast(msg, OUTGOING);
-      filter(msg, OUTGOING);
-      break;
+      case Event.MSG:
+        Message msg = (Message) evt.getArg();
+        processForMulticast(msg, OUTGOING);
+        processForUnicast(msg, OUTGOING);
+        filter(msg, OUTGOING);
+        break;
     }
     do {
       try {
         return down_prot.down(evt);
       } catch (RejectedExecutionException e) {
-        logger.debug("retrying JGroups message transmission due to rejected execution (GEODE-1178)");
+        logger.debug(
+            "retrying JGroups message transmission due to rejected execution (GEODE-1178)");
         try {
           Thread.sleep(10);
         } catch (InterruptedException ie) {
@@ -98,7 +98,9 @@ public class StatRecorder extends Protocol {
           return null;
         }
       }
-    } while (services != null && !services.getManager().shutdownInProgress() && !services.getCancelCriterion().isCancelInProgress());
+    } while (services != null
+        && !services.getManager().shutdownInProgress()
+        && !services.getCancelCriterion().isCancelInProgress());
     return null;
   }
 
@@ -108,20 +110,20 @@ public class StatRecorder extends Protocol {
     if (o instanceof NakAckHeader2 && stats != null) {
       NakAckHeader2 hdr = (NakAckHeader2) o;
       switch (direction) {
-      case INCOMING:
-        stats.incMcastReadBytes((int) msg.size());
-        break;
-      case OUTGOING:
-        stats.incMcastWriteBytes((int) msg.size());
-        switch (hdr.getType()) {
-        case NakAckHeader2.XMIT_RSP:
-          stats.incMcastRetransmits();
+        case INCOMING:
+          stats.incMcastReadBytes((int) msg.size());
           break;
-        case NakAckHeader2.XMIT_REQ:
-          stats.incMcastRetransmitRequests();
+        case OUTGOING:
+          stats.incMcastWriteBytes((int) msg.size());
+          switch (hdr.getType()) {
+            case NakAckHeader2.XMIT_RSP:
+              stats.incMcastRetransmits();
+              break;
+            case NakAckHeader2.XMIT_REQ:
+              stats.incMcastRetransmitRequests();
+              break;
+          }
           break;
-        }
-        break;
       }
     }
   }
@@ -131,17 +133,17 @@ public class StatRecorder extends Protocol {
     if (o instanceof UNICAST3.Header && stats != null) {
       UNICAST3.Header hdr = (UNICAST3.Header) o;
       switch (direction) {
-      case INCOMING:
-        stats.incUcastReadBytes((int) msg.size());
-        break;
-      case OUTGOING:
-        stats.incUcastWriteBytes((int) msg.size());
-        switch (hdr.type()) {
-        case UNICAST3.Header.XMIT_REQ:
-          stats.incUcastRetransmits();
+        case INCOMING:
+          stats.incUcastReadBytes((int) msg.size());
           break;
-        }
-        break;
+        case OUTGOING:
+          stats.incUcastWriteBytes((int) msg.size());
+          switch (hdr.type()) {
+            case UNICAST3.Header.XMIT_REQ:
+              stats.incUcastRetransmits();
+              break;
+          }
+          break;
       }
     }
   }
@@ -153,7 +155,7 @@ public class StatRecorder extends Protocol {
       if (h != null && h instanceof FragHeader) {
         copyBuffer = true;
         //      String str = direction == OUTGOING? "sending" : "receiving";
-        //      logger.debug("{} fragment {} msg buffer hash {}  offset {} msg size {} first bytes=\n{}", str, hdr, 
+        //      logger.debug("{} fragment {} msg buffer hash {}  offset {} msg size {} first bytes=\n{}", str, hdr,
         //          msg.getRawBuffer().hashCode(), msg.getOffset(), msg.getLength(),
         //          GMSUtil.formatBytes(msg.getRawBuffer(), msg.getOffset(),
         //              Math.min(200, msg.getLength())));

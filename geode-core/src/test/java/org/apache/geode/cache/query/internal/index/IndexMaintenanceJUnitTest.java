@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Created on May 31, 2007
- *
- */
+/** Created on May 31, 2007 */
 package org.apache.geode.cache.query.internal.index;
 
 import static org.junit.Assert.assertEquals;
@@ -65,9 +62,7 @@ import org.apache.geode.internal.cache.RegionEntry;
 import org.apache.geode.internal.cache.persistence.query.CloseableIterator;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * 
- */
+/** */
 @Category(IntegrationTest.class)
 public class IndexMaintenanceJUnitTest {
 
@@ -97,7 +92,6 @@ public class IndexMaintenanceJUnitTest {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
   }
 
   @Before
@@ -111,9 +105,7 @@ public class IndexMaintenanceJUnitTest {
     IndexManager.TEST_RANGEINDEX_ONLY = false;
   }
 
-  /** 
-   * Tests Index maintenance on heterogenous objects  
-   */
+  /** Tests Index maintenance on heterogenous objects */
   @Test
   public void testIndexMaintenanceWithHeterogenousObjects() {
     try {
@@ -135,7 +127,8 @@ public class IndexMaintenanceJUnitTest {
       assertEquals(2, ri.valueToEntriesMap.size());
       Iterator itr = ri.valueToEntriesMap.values().iterator();
       while (itr.hasNext()) {
-        RangeIndex.RegionEntryToValuesMap re2ValMap = (RangeIndex.RegionEntryToValuesMap) itr.next();
+        RangeIndex.RegionEntryToValuesMap re2ValMap =
+            (RangeIndex.RegionEntryToValuesMap) itr.next();
         assertEquals(1, re2ValMap.map.size());
         Object obj = re2ValMap.map.values().iterator().next();
         assertFalse(obj instanceof Collection);
@@ -167,7 +160,8 @@ public class IndexMaintenanceJUnitTest {
       assertEquals(2, ri.valueToEntriesMap.size());
       itr = ri.valueToEntriesMap.values().iterator();
       while (itr.hasNext()) {
-        RangeIndex.RegionEntryToValuesMap re2ValMap = (RangeIndex.RegionEntryToValuesMap) itr.next();
+        RangeIndex.RegionEntryToValuesMap re2ValMap =
+            (RangeIndex.RegionEntryToValuesMap) itr.next();
         assertEquals(1, re2ValMap.map.size());
         Object obj = re2ValMap.map.values().iterator().next();
         assertFalse(obj instanceof Collection);
@@ -201,9 +195,7 @@ public class IndexMaintenanceJUnitTest {
     }
   }
 
-  /** 
-   * Tests query on region containing heterogenous objects 
-   */
+  /** Tests query on region containing heterogenous objects */
   @Test
   public void testQueryOnHeterogenousObjects() {
     try {
@@ -229,17 +221,19 @@ public class IndexMaintenanceJUnitTest {
       }
 
       Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "pf.getID()", "/portfolio1 pf");
-      QueryObserver old = QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-        private boolean indexUsed = false;
+      QueryObserver old =
+          QueryObserverHolder.setInstance(
+              new QueryObserverAdapter() {
+                private boolean indexUsed = false;
 
-        public void beforeIndexLookup(Index index, int oper, Object key) {
-          indexUsed = true;
-        }
+                public void beforeIndexLookup(Index index, int oper, Object key) {
+                  indexUsed = true;
+                }
 
-        public void endQuery() {
-          assertTrue(indexUsed);
-        }
-      });
+                public void endQuery() {
+                  assertTrue(indexUsed);
+                }
+              });
 
       rs = (SelectResults) q.execute();
       assertEquals(2, rs.size());
@@ -261,17 +255,18 @@ public class IndexMaintenanceJUnitTest {
       }
 
       i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "pf.pkid", "/portfolio1 pf");
-      QueryObserverHolder.setInstance(new QueryObserverAdapter() {
-        private boolean indexUsed = false;
+      QueryObserverHolder.setInstance(
+          new QueryObserverAdapter() {
+            private boolean indexUsed = false;
 
-        public void beforeIndexLookup(Index index, int oper, Object key) {
-          indexUsed = true;
-        }
+            public void beforeIndexLookup(Index index, int oper, Object key) {
+              indexUsed = true;
+            }
 
-        public void endQuery() {
-          assertTrue(indexUsed);
-        }
-      });
+            public void endQuery() {
+              assertTrue(indexUsed);
+            }
+          });
 
       rs = (SelectResults) q.execute();
       assertEquals(2, rs.size());
@@ -286,17 +281,17 @@ public class IndexMaintenanceJUnitTest {
     } finally {
       DefaultQueryService.TEST_QUERY_HETEROGENEOUS_OBJECTS = false;
     }
-
   }
 
   /**
-   * Tests Index maintenance on method Keys() as iterator ( with focus on
-   * behaviour if not implemented in DummyQRegion 
+   * Tests Index maintenance on method Keys() as iterator ( with focus on behaviour if not
+   * implemented in DummyQRegion
    */
   @Test
   public void testIndexMaintenanceWithIndexOnMethodKeys() {
     try {
-      Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "ks.toString", "/portfolio.keys() ks");
+      Index i1 =
+          qs.createIndex("indx1", IndexType.FUNCTIONAL, "ks.toString", "/portfolio.keys() ks");
       CacheUtils.getCache();
       region = CacheUtils.getRegion("/portfolio");
       region.put("4", new Portfolio(4));
@@ -311,13 +306,14 @@ public class IndexMaintenanceJUnitTest {
   }
 
   /**
-   * Tests Index maintenance on method asList() as iterator ( with focus on
-   * behaviour if not implemented in DummyQRegion 
+   * Tests Index maintenance on method asList() as iterator ( with focus on behaviour if not
+   * implemented in DummyQRegion
    */
   @Test
   public void testIndexMaintenanceWithIndexOnMethodAsList() {
     try {
-      Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "pf.getID", "/portfolio.asList() pf");
+      Index i1 =
+          qs.createIndex("indx1", IndexType.FUNCTIONAL, "pf.getID", "/portfolio.asList() pf");
       CacheUtils.getCache();
       region = CacheUtils.getRegion("/portfolio");
       region.put("4", new Portfolio(4));
@@ -331,13 +327,14 @@ public class IndexMaintenanceJUnitTest {
   }
 
   /**
-   * Tests Index maintenance on method values() as iterator ( with focus on
-   * behaviour if not implemented in DummyQRegion 
+   * Tests Index maintenance on method values() as iterator ( with focus on behaviour if not
+   * implemented in DummyQRegion
    */
   @Test
   public void testIndexMaintenanceWithIndexOnMethodValues() {
     try {
-      Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "pf.getID", "/portfolio.values() pf");
+      Index i1 =
+          qs.createIndex("indx1", IndexType.FUNCTIONAL, "pf.getID", "/portfolio.values() pf");
       assertTrue(i1 instanceof CompactRangeIndex);
       Cache cache = CacheUtils.getCache();
       region = CacheUtils.getRegion("/portfolio");
@@ -352,13 +349,14 @@ public class IndexMaintenanceJUnitTest {
   }
 
   /**
-   * Tests Index maintenance on method getValues() as iterator ( with focus on
-   * behaviour if not implemented in DummyQRegion 
+   * Tests Index maintenance on method getValues() as iterator ( with focus on behaviour if not
+   * implemented in DummyQRegion
    */
   @Test
   public void testIndexMaintenanceWithIndexOnMethodGetValues() {
     try {
-      Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "pf.getID", "/portfolio.getValues() pf");
+      Index i1 =
+          qs.createIndex("indx1", IndexType.FUNCTIONAL, "pf.getID", "/portfolio.getValues() pf");
       assertTrue(i1 instanceof CompactRangeIndex);
       Cache cache = CacheUtils.getCache();
       region = CacheUtils.getRegion("/portfolio");
@@ -373,13 +371,14 @@ public class IndexMaintenanceJUnitTest {
   }
 
   /**
-   * Tests Index maintenance on method toArray() as iterator ( with focus on
-   * behaviour if not implemented in DummyQRegion 
+   * Tests Index maintenance on method toArray() as iterator ( with focus on behaviour if not
+   * implemented in DummyQRegion
    */
   @Test
   public void testIndexMaintenanceWithIndexOnMethodtoArray() {
     try {
-      Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "pf.getID", "/portfolio.toArray() pf");
+      Index i1 =
+          qs.createIndex("indx1", IndexType.FUNCTIONAL, "pf.getID", "/portfolio.toArray() pf");
       assertTrue(i1 instanceof CompactRangeIndex);
       Cache cache = CacheUtils.getCache();
       region = CacheUtils.getRegion("/portfolio");
@@ -394,8 +393,8 @@ public class IndexMaintenanceJUnitTest {
   }
 
   /**
-   * Tests Index maintenance on method asSet() as iterator ( with focus on
-   * behaviour if not implemented in DummyQRegion 
+   * Tests Index maintenance on method asSet() as iterator ( with focus on behaviour if not
+   * implemented in DummyQRegion
    */
   @Test
   public void testIndexMaintenanceWithIndexOnMethodAsSet() {
@@ -414,13 +413,14 @@ public class IndexMaintenanceJUnitTest {
   }
 
   /**
-   * Tests Index maintenance on method keySet() as iterator ( with focus on
-   * behaviour if not implemented in DummyQRegion 
+   * Tests Index maintenance on method keySet() as iterator ( with focus on behaviour if not
+   * implemented in DummyQRegion
    */
   @Test
   public void testIndexMaintenanceWithIndexOnMethodKeySet() {
     try {
-      Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "ks.toString", "/portfolio.keySet() ks");
+      Index i1 =
+          qs.createIndex("indx1", IndexType.FUNCTIONAL, "ks.toString", "/portfolio.keySet() ks");
       CacheUtils.getCache();
       region = CacheUtils.getRegion("/portfolio");
       region.put("4", new Portfolio(4));
@@ -434,13 +434,14 @@ public class IndexMaintenanceJUnitTest {
   }
 
   /**
-   * Tests Index maintenance on method getKeys() as iterator ( with focus on
-   * behaviour if not implemented in DummyQRegion 
+   * Tests Index maintenance on method getKeys() as iterator ( with focus on behaviour if not
+   * implemented in DummyQRegion
    */
   @Test
   public void testIndexMaintenanceWithIndexOnMethodGetKeys() {
     try {
-      Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "ks.toString", "/portfolio.getKeys() ks");
+      Index i1 =
+          qs.createIndex("indx1", IndexType.FUNCTIONAL, "ks.toString", "/portfolio.getKeys() ks");
       CacheUtils.getCache();
       region = CacheUtils.getRegion("/portfolio");
       region.put("4", new Portfolio(4));
@@ -454,13 +455,18 @@ public class IndexMaintenanceJUnitTest {
   }
 
   /**
-   * Tests Index maintenance on method entrySet() as iterator ( with focus on
-   * behaviour if not implemented in DummyQRegion 
+   * Tests Index maintenance on method entrySet() as iterator ( with focus on behaviour if not
+   * implemented in DummyQRegion
    */
   @Test
   public void testIndexMaintenanceWithIndexOnMethodEntrySet() {
     try {
-      Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "entries.value.getID", "/portfolio.entrySet() entries");
+      Index i1 =
+          qs.createIndex(
+              "indx1",
+              IndexType.FUNCTIONAL,
+              "entries.value.getID",
+              "/portfolio.entrySet() entries");
       CacheUtils.getCache();
       region = CacheUtils.getRegion("/portfolio");
       region.put("4", new Portfolio(4));
@@ -474,13 +480,18 @@ public class IndexMaintenanceJUnitTest {
   }
 
   /**
-   * Tests Index maintenance on method entries(boolean ) as iterator ( with focus on
-   * behaviour if not implemented in DummyQRegion 
+   * Tests Index maintenance on method entries(boolean ) as iterator ( with focus on behaviour if
+   * not implemented in DummyQRegion
    */
   @Test
   public void testIndexMaintenanceWithIndexOnMethodEntries() {
     try {
-      Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "entries.value.getID", "/portfolio.entries(false) entries");
+      Index i1 =
+          qs.createIndex(
+              "indx1",
+              IndexType.FUNCTIONAL,
+              "entries.value.getID",
+              "/portfolio.entries(false) entries");
       CacheUtils.getCache();
       region = CacheUtils.getRegion("/portfolio");
       region.put("4", new Portfolio(4));
@@ -494,13 +505,18 @@ public class IndexMaintenanceJUnitTest {
   }
 
   /**
-   * Tests Index maintenance on method getEntries( ) as iterator ( with focus on
-   * behaviour if not implemented in DummyQRegion 
+   * Tests Index maintenance on method getEntries( ) as iterator ( with focus on behaviour if not
+   * implemented in DummyQRegion
    */
   @Test
   public void testIndexMaintenanceWithIndexOnMethodGetEntries() {
     try {
-      Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "entries.value.getID", "/portfolio.getEntries() entries");
+      Index i1 =
+          qs.createIndex(
+              "indx1",
+              IndexType.FUNCTIONAL,
+              "entries.value.getID",
+              "/portfolio.getEntries() entries");
       CacheUtils.getCache();
       region = CacheUtils.getRegion("/portfolio");
       region.put("4", new Portfolio(4));
@@ -560,7 +576,7 @@ public class IndexMaintenanceJUnitTest {
       }
     }
     // addition of new Portfolio in the Map
-    ++ID;// ID = 6;
+    ++ID; // ID = 6;
     MapKeyIndexData mkid = new MapKeyIndexData(ID);
     for (int j = 1; j <= ID; ++j) {
       mkid.maap.put("key" + j, "val" + j);
@@ -695,7 +711,7 @@ public class IndexMaintenanceJUnitTest {
     }
     // deletion of portfolio object key in the positions map
     testRgn.remove(ID);
-    --ID;// ID = 5;
+    --ID; // ID = 5;
     //No Key Indexes are removed from a MapRangeIndex even if they are empty.
     assertEquals(indxMap.size(), ID + 2);
     for (int j = 1; j <= ID; ++j) {
@@ -743,7 +759,6 @@ public class IndexMaintenanceJUnitTest {
         }
       }
     }
-
   }
 
   @Test
@@ -763,9 +778,15 @@ public class IndexMaintenanceJUnitTest {
       }
       testRgn.put(ID, mkid);
     }
-    --ID;// ID = 5;
-    Index i1 = qs.createIndex("Index1", IndexType.FUNCTIONAL, "objs.maap['key1','key2','key3','key7']", "/testRgn objs");
-    assertEquals(i1.getCanonicalizedIndexedExpression(), "index_iter1.maap['key1','key2','key3','key7']");
+    --ID; // ID = 5;
+    Index i1 =
+        qs.createIndex(
+            "Index1",
+            IndexType.FUNCTIONAL,
+            "objs.maap['key1','key2','key3','key7']",
+            "/testRgn objs");
+    assertEquals(
+        i1.getCanonicalizedIndexedExpression(), "index_iter1.maap['key1','key2','key3','key7']");
     assertTrue(i1 instanceof MapRangeIndex);
     MapRangeIndex mri = (MapRangeIndex) i1;
     // Test index maintenance
@@ -984,7 +1005,6 @@ public class IndexMaintenanceJUnitTest {
         }
       }
     }
-
   }
 
   //  @Test
@@ -1030,7 +1050,7 @@ public class IndexMaintenanceJUnitTest {
   //      if (mapValue instanceof RegionEntry) {
   //        size = 1;
   //      }
-  //      else if (mapValue instanceof ConcurrentHashSet) {            
+  //      else if (mapValue instanceof ConcurrentHashSet) {
   //       size = ((ConcurrentHashSet)mapValue).size();
   //      }
   //      assertIndexDetailsEquals(expectedElements.size(), size);
@@ -1039,7 +1059,7 @@ public class IndexMaintenanceJUnitTest {
   //          if (mapValue instanceof RegionEntry) {
   //            assertTrue(mapValue.equals(re));
   //          }
-  //          else if (mapValue instanceof ConcurrentHashSet) {            
+  //          else if (mapValue instanceof ConcurrentHashSet) {
   //           assertTrue(((ConcurrentHashSet)mapValue).contains(re));
   //          }
   //          else {
@@ -1073,7 +1093,7 @@ public class IndexMaintenanceJUnitTest {
   //      if (mapValue instanceof RegionEntry) {
   //        size = 1;
   //      }
-  //      else if (mapValue instanceof ConcurrentHashSet) {            
+  //      else if (mapValue instanceof ConcurrentHashSet) {
   //       size = ((ConcurrentHashSet)mapValue).size();
   //      }
   //      assertIndexDetailsEquals(expectedElements.size(), size);
@@ -1082,7 +1102,7 @@ public class IndexMaintenanceJUnitTest {
   //          if (mapValue instanceof RegionEntry) {
   //            assertTrue(mapValue.equals(re));
   //          }
-  //          else if (mapValue instanceof ConcurrentHashSet) {            
+  //          else if (mapValue instanceof ConcurrentHashSet) {
   //           assertTrue(((ConcurrentHashSet)mapValue).contains(re));
   //          }
   //          else {
@@ -1167,12 +1187,9 @@ public class IndexMaintenanceJUnitTest {
         }
       }
     }
-
   }
 
-  /**
-   * Tests Index maintenance on  data loaded via cache loader
-   */
+  /** Tests Index maintenance on data loaded via cache loader */
   @Test
   public void testIndexMaintenanceOnCacheLoadedData() {
     try {
@@ -1181,20 +1198,20 @@ public class IndexMaintenanceJUnitTest {
       qs = cache.getQueryService();
       region = CacheUtils.createRegion("portfolio1", null);
       AttributesMutator am = region.getAttributesMutator();
-      am.setCacheLoader(new CacheLoader() {
+      am.setCacheLoader(
+          new CacheLoader() {
 
-        public Object load(LoaderHelper helper) throws CacheLoaderException {
-          String key = (String) helper.getKey();
-          Portfolio p = new Portfolio(Integer.parseInt(key));
-          return p;
-        }
+            public Object load(LoaderHelper helper) throws CacheLoaderException {
+              String key = (String) helper.getKey();
+              Portfolio p = new Portfolio(Integer.parseInt(key));
+              return p;
+            }
 
-        public void close() {
-          // TODO Auto-generated method stub
+            public void close() {
+              // TODO Auto-generated method stub
 
-        }
-
-      });
+            }
+          });
 
       Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "pf.getID()", "/portfolio1 pf");
       List keys = new ArrayList();
@@ -1211,9 +1228,7 @@ public class IndexMaintenanceJUnitTest {
     }
   }
 
-  /**
-   * Tests Index maintenance on  data loaded via cache loader
-   */
+  /** Tests Index maintenance on data loaded via cache loader */
   @Test
   public void testIndexMaintenanceOnPutAll() {
     try {
@@ -1222,7 +1237,12 @@ public class IndexMaintenanceJUnitTest {
       qs = cache.getQueryService();
       region = CacheUtils.createRegion("portfolio1", null);
       region.put("1", new Portfolio(1));
-      Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "posvals.secId", "/portfolio1 pf, pf.positions.values posvals ");
+      Index i1 =
+          qs.createIndex(
+              "indx1",
+              IndexType.FUNCTIONAL,
+              "posvals.secId",
+              "/portfolio1 pf, pf.positions.values posvals ");
       Map data = new HashMap();
       for (int i = 1; i < 11; ++i) {
         data.put("" + i, new Portfolio(i + 2));
@@ -1245,7 +1265,12 @@ public class IndexMaintenanceJUnitTest {
       Cache cache = CacheUtils.getCache();
       qs = cache.getQueryService();
       region = CacheUtils.createRegion("portfolio1", null);
-      Index i1 = qs.createIndex("indx1", IndexType.FUNCTIONAL, "posvals", "/portfolio1 pf, pf.getCollectionHolderMap.values posvals ");
+      Index i1 =
+          qs.createIndex(
+              "indx1",
+              IndexType.FUNCTIONAL,
+              "posvals",
+              "/portfolio1 pf, pf.getCollectionHolderMap.values posvals ");
       Portfolio pf1 = new Portfolio(1);
       Map collHolderMap = pf1.getCollectionHolderMap();
       collHolderMap.clear();
@@ -1278,7 +1303,6 @@ public class IndexMaintenanceJUnitTest {
       assertFalse(obj instanceof Collection);
       assertTrue(obj instanceof Portfolio);
       assertTrue(idSet.contains(String.valueOf(((Portfolio) obj).getID())));
-
     }
   }
 
@@ -1367,5 +1391,4 @@ public class IndexMaintenanceJUnitTest {
       this.maap.put(key, value);
     }
   }
-
 }

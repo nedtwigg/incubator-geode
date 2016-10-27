@@ -32,13 +32,9 @@ import org.apache.geode.internal.cache.versions.ConcurrentCacheModificationExcep
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * A message that acknowledges that an operation completed
- * successfully, or threw a CacheException.  Note that even though
- * this message has a <code>processorId</code>, it is not a {@link
- * MessageWithReply} because it is sent in <b>reply</b> to another
- * message. 
- *
- *
+ * A message that acknowledges that an operation completed successfully, or threw a CacheException.
+ * Note that even though this message has a <code>processorId</code>, it is not a {@link
+ * MessageWithReply} because it is sent in <b>reply</b> to another message.
  */
 public class ReplyMessage extends HighPriorityDistributionMessage {
   private static final Logger logger = LogService.getLogger();
@@ -84,12 +80,21 @@ public class ReplyMessage extends HighPriorityDistributionMessage {
   }
 
   /** Send an ack */
-  public static void send(InternalDistributedMember recipient, int processorId, ReplyException exception, ReplySender dm) {
+  public static void send(
+      InternalDistributedMember recipient,
+      int processorId,
+      ReplyException exception,
+      ReplySender dm) {
     send(recipient, processorId, exception, dm, false);
   }
 
   /** Send an ack */
-  public static void send(InternalDistributedMember recipient, int processorId, ReplyException exception, ReplySender dm, boolean internal) {
+  public static void send(
+      InternalDistributedMember recipient,
+      int processorId,
+      ReplyException exception,
+      ReplySender dm,
+      boolean internal) {
     Assert.assertTrue(recipient != null, "Sending a ReplyMessage to ALL");
     ReplyMessage m = new ReplyMessage();
 
@@ -99,9 +104,11 @@ public class ReplyMessage extends HighPriorityDistributionMessage {
       m.returnValueIsException = true;
     }
     if (exception != null && logger.isDebugEnabled()) {
-      if (exception.getCause() != null && (exception.getCause() instanceof EntryNotFoundException)) {
+      if (exception.getCause() != null
+          && (exception.getCause() instanceof EntryNotFoundException)) {
         logger.debug("Replying with entry-not-found: {}", exception.getCause().getMessage());
-      } else if (exception.getCause() != null && (exception.getCause() instanceof ConcurrentCacheModificationException)) {
+      } else if (exception.getCause() != null
+          && (exception.getCause() instanceof ConcurrentCacheModificationException)) {
         logger.debug("Replying with concurrent-modification-exception");
       } else {
         logger.debug("Replying with exception: " + m, exception);
@@ -112,7 +119,8 @@ public class ReplyMessage extends HighPriorityDistributionMessage {
   }
 
   /** Send an ack */
-  public static void send(InternalDistributedMember recipient, int processorId, Object returnValue, ReplySender dm) {
+  public static void send(
+      InternalDistributedMember recipient, int processorId, Object returnValue, ReplySender dm) {
     Assert.assertTrue(recipient != null, "Sending a ReplyMessage to ALL");
     ReplyMessage m = new ReplyMessage();
 
@@ -125,11 +133,26 @@ public class ReplyMessage extends HighPriorityDistributionMessage {
     dm.putOutgoing(m);
   }
 
-  public static void send(InternalDistributedMember recipient, int processorId, ReplyException exception, ReplySender dm, boolean ignored, boolean closed, boolean sendViaJGroups) {
+  public static void send(
+      InternalDistributedMember recipient,
+      int processorId,
+      ReplyException exception,
+      ReplySender dm,
+      boolean ignored,
+      boolean closed,
+      boolean sendViaJGroups) {
     send(recipient, processorId, exception, dm, ignored, false, false, false);
   }
 
-  public static void send(InternalDistributedMember recipient, int processorId, ReplyException exception, ReplySender dm, boolean ignored, boolean closed, boolean sendViaJGroups, boolean internal) {
+  public static void send(
+      InternalDistributedMember recipient,
+      int processorId,
+      ReplyException exception,
+      ReplySender dm,
+      boolean ignored,
+      boolean closed,
+      boolean sendViaJGroups,
+      boolean internal) {
     Assert.assertTrue(recipient != null, "Sending a ReplyMessage to ALL");
     ReplyMessage m = new ReplyMessage();
 
@@ -149,9 +172,11 @@ public class ReplyMessage extends HighPriorityDistributionMessage {
           logger.debug("Replying with ignored=true and exception: {}", m, exception);
         }
       } else if (exception != null) {
-        if (exception.getCause() != null && (exception.getCause() instanceof EntryNotFoundException)) {
+        if (exception.getCause() != null
+            && (exception.getCause() instanceof EntryNotFoundException)) {
           logger.debug("Replying with entry-not-found: {}", exception.getCause().getMessage());
-        } else if (exception.getCause() != null && (exception.getCause() instanceof ConcurrentCacheModificationException)) {
+        } else if (exception.getCause() != null
+            && (exception.getCause() instanceof ConcurrentCacheModificationException)) {
           logger.debug("Replying with concurrent-modification-exception");
         } else {
           logger.debug("Replying with exception: {}", m, exception);
@@ -166,9 +191,10 @@ public class ReplyMessage extends HighPriorityDistributionMessage {
   }
 
   /**
-   * Processes this message.  This method is invoked by the receiver
-   * of the message if the message is not direct ack. If the message
-   * is a direct ack, the process(dm, ReplyProcessor) method is invoked instead.
+   * Processes this message. This method is invoked by the receiver of the message if the message is
+   * not direct ack. If the message is a direct ack, the process(dm, ReplyProcessor) method is
+   * invoked instead.
+   *
    * @param dm the distribution manager that is processing the message.
    */
   @Override
@@ -194,12 +220,11 @@ public class ReplyMessage extends HighPriorityDistributionMessage {
   }
 
   /**
-   * @param dm 
+   * @param dm
    * @param processor
    */
   public void process(final DM dm, ReplyProcessor21 processor) {
-    if (processor == null)
-      return;
+    if (processor == null) return;
     processor.process(ReplyMessage.this);
   }
 

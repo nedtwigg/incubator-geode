@@ -24,9 +24,8 @@ import javax.naming.NamingException;
 import org.apache.geode.GemFireException;
 
 /**
- * The base class for all org.apache.geode.security package related
- * exceptions.
- * 
+ * The base class for all org.apache.geode.security package related exceptions.
+ *
  * @since GemFire 5.5
  */
 public class GemFireSecurityException extends GemFireException {
@@ -38,9 +37,8 @@ public class GemFireSecurityException extends GemFireException {
   /**
    * Constructs a new exception with the specified detail message.
    *
-   * @param  message the detail message (which is saved for later retrieval
-   *         by the {@link #getMessage()} method).  (A <tt>null</tt> value
-   *         is permitted.)
+   * @param message the detail message (which is saved for later retrieval by the {@link
+   *     #getMessage()} method). (A <tt>null</tt> value is permitted.)
    */
   public GemFireSecurityException(final String message) {
     this(message, null);
@@ -49,13 +47,12 @@ public class GemFireSecurityException extends GemFireException {
   /**
    * Constructs a new exception with the specified cause.
    *
-   * <p>Note that the detail message associated with {@code cause} <i>is</i>
-   * automatically used as this exception's detail message.
+   * <p>Note that the detail message associated with {@code cause} <i>is</i> automatically used as
+   * this exception's detail message.
    *
-   * @param  cause the cause (which is saved for later retrieval by the
-   *         {@link #getCause()} method).  (A <tt>null</tt> value is
-   *         permitted, and indicates that the cause is nonexistent or
-   *         unknown.)
+   * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+   *     (A <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or
+   *     unknown.)
    */
   public GemFireSecurityException(final Throwable cause) {
     this(cause != null ? cause.getMessage() : null, cause);
@@ -64,17 +61,14 @@ public class GemFireSecurityException extends GemFireException {
   /**
    * Constructs a new exception with the specified detail message and cause.
    *
-   * <p>If {@code message} is null, then the detail message associated with
-   * {@code cause} <i>is</i> automatically used as this exception's detail
-   * message.
+   * <p>If {@code message} is null, then the detail message associated with {@code cause} <i>is</i>
+   * automatically used as this exception's detail message.
    *
-   * @param  message the detail message (which is saved for later retrieval
-   *         by the {@link #getMessage()} method).  (A <tt>null</tt> value
-   *         is permitted.)
-   * @param  cause the cause (which is saved for later retrieval by the
-   *         {@link #getCause()} method).  (A <tt>null</tt> value is
-   *         permitted, and indicates that the cause is nonexistent or
-   *         unknown.)
+   * @param message the detail message (which is saved for later retrieval by the {@link
+   *     #getMessage()} method). (A <tt>null</tt> value is permitted.)
+   * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+   *     (A <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or
+   *     unknown.)
    */
   public GemFireSecurityException(final String message, final Throwable cause) {
     super(message != null ? message : (cause != null ? cause.getMessage() : null));
@@ -89,7 +83,7 @@ public class GemFireSecurityException extends GemFireException {
   /**
    * Returns true if the provided {@code object} implements {@code Serializable}.
    *
-   * @param  object the {@code object} to test for implementing {@code Serializable}.
+   * @param object the {@code object} to test for implementing {@code Serializable}.
    * @return true if the provided {@code object} implements {@code Serializable}.
    */
   protected final boolean isSerializable(final Object object) {
@@ -100,12 +94,11 @@ public class GemFireSecurityException extends GemFireException {
   }
 
   /**
-   * Returns {@link NamingException#getResolvedObj()} if the {@code cause}
-   * is a {@code NamingException}. Returns <tt>null</tt> for any other type
-   * of {@code cause}.
+   * Returns {@link NamingException#getResolvedObj()} if the {@code cause} is a {@code
+   * NamingException}. Returns <tt>null</tt> for any other type of {@code cause}.
    *
-   * @return {@code NamingException#getResolvedObj()} if the {@code cause}
-   *         is a {@code NamingException}.
+   * @return {@code NamingException#getResolvedObj()} if the {@code cause} is a {@code
+   *     NamingException}.
    */
   protected final Object getResolvedObj() {
     final Throwable thisCause = this.cause;

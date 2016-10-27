@@ -61,9 +61,8 @@ public class CQJUnitTest {
   }
 
   /**
-   * Test to make sure CQs that have invalid syntax
-   * throw QueryInvalidException, and CQs that have unsupported
-   * CQ features throw UnsupportedOperationException
+   * Test to make sure CQs that have invalid syntax throw QueryInvalidException, and CQs that have
+   * unsupported CQ features throw UnsupportedOperationException
    */
   @Test
   public void testValidateCQ() throws Exception {
@@ -88,30 +87,32 @@ public class CQJUnitTest {
       // pass
     }
 
-    String[] unsupportedCQs = new String[] {
-        // not "just" a select statement
-        "(select * from /region where status = 'active').isEmpty",
+    String[] unsupportedCQs =
+        new String[] {
+          // not "just" a select statement
+          "(select * from /region where status = 'active').isEmpty",
 
-        // cannot be DISTINCT
-        "select DISTINCT * from /region WHERE status = 'active'",
+          // cannot be DISTINCT
+          "select DISTINCT * from /region WHERE status = 'active'",
 
-        // references more than one region
-        "select * from /region1 r1, /region2 r2 where r1 = r2",
+          // references more than one region
+          "select * from /region1 r1, /region2 r2 where r1 = r2",
 
-        // where clause refers to a region
-        "select * from /region r where r.val = /region.size",
+          // where clause refers to a region
+          "select * from /region r where r.val = /region.size",
 
-        // more than one iterator in FROM clause
-        "select * from /portfolios p1, p1.positions p2 where p2.id = 'IBM'",
+          // more than one iterator in FROM clause
+          "select * from /portfolios p1, p1.positions p2 where p2.id = 'IBM'",
 
-        // first iterator in FROM clause is not just a region path
-        "select * from /region.entries e where e.value.id = 23",
+          // first iterator in FROM clause is not just a region path
+          "select * from /region.entries e where e.value.id = 23",
 
-        // has projections
-        "select id from /region where status = 'active'",
+          // has projections
+          "select id from /region where status = 'active'",
 
-        // has ORDER BY
-        "select * from /region where status = 'active' ORDER BY id", };
+          // has ORDER BY
+          "select * from /region where status = 'active' ORDER BY id",
+        };
 
     for (int i = 0; i < unsupportedCQs.length; i++) {
       try {
@@ -122,5 +123,4 @@ public class CQJUnitTest {
       }
     }
   }
-
 }

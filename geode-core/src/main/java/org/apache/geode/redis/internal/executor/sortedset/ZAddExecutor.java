@@ -55,14 +55,16 @@ public class ZAddExecutor extends SortedSetExecutor {
         try {
           score = Coder.bytesToDouble(scoreArray);
         } catch (NumberFormatException e) {
-          command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_NUMERICAL));
+          command.setResponse(
+              Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_NUMERICAL));
           return;
         }
 
         map.put(new ByteArrayWrapper(memberArray), new DoubleWrapper(score));
         numberOfAdds++;
       }
-      Region<ByteArrayWrapper, DoubleWrapper> keyRegion = getOrCreateRegion(context, key, RedisDataType.REDIS_SORTEDSET);
+      Region<ByteArrayWrapper, DoubleWrapper> keyRegion =
+          getOrCreateRegion(context, key, RedisDataType.REDIS_SORTEDSET);
       keyRegion.putAll(map);
     } else {
       byte[] scoreArray = commandElems.get(2);
@@ -71,17 +73,17 @@ public class ZAddExecutor extends SortedSetExecutor {
       try {
         score = Coder.bytesToDouble(scoreArray);
       } catch (NumberFormatException e) {
-        command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_NUMERICAL));
+        command.setResponse(
+            Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_NOT_NUMERICAL));
         return;
       }
-      Region<ByteArrayWrapper, DoubleWrapper> keyRegion = getOrCreateRegion(context, key, RedisDataType.REDIS_SORTEDSET);
+      Region<ByteArrayWrapper, DoubleWrapper> keyRegion =
+          getOrCreateRegion(context, key, RedisDataType.REDIS_SORTEDSET);
       Object oldVal = keyRegion.put(new ByteArrayWrapper(memberArray), new DoubleWrapper(score));
 
-      if (oldVal == null)
-        numberOfAdds = 1;
+      if (oldVal == null) numberOfAdds = 1;
     }
 
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), numberOfAdds));
   }
-
 }

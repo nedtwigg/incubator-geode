@@ -25,7 +25,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 public class JsonHelper {
 
-  public static void getJsonFromPrimitiveBoolArray(JsonGenerator jg, boolean[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromPrimitiveBoolArray(JsonGenerator jg, boolean[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (boolean obj : array) {
       jg.writeBoolean(obj);
@@ -33,7 +34,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromPrimitiveByteArray(JsonGenerator jg, byte[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromPrimitiveByteArray(JsonGenerator jg, byte[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (byte obj : array) {
       jg.writeNumber(obj);
@@ -41,7 +43,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromPrimitiveShortArray(JsonGenerator jg, short[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromPrimitiveShortArray(JsonGenerator jg, short[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (short obj : array) {
       jg.writeNumber(obj);
@@ -49,7 +52,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromPrimitiveIntArray(JsonGenerator jg, int[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromPrimitiveIntArray(JsonGenerator jg, int[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (int obj : array) {
       jg.writeNumber(obj);
@@ -57,7 +61,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromPrimitiveLongArray(JsonGenerator jg, long[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromPrimitiveLongArray(JsonGenerator jg, long[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (long obj : array) {
       jg.writeNumber(obj);
@@ -65,7 +70,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromPrimitiveFloatArray(JsonGenerator jg, float[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromPrimitiveFloatArray(JsonGenerator jg, float[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (float obj : array) {
       jg.writeNumber(obj);
@@ -73,7 +79,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromPrimitiveDoubleArray(JsonGenerator jg, double[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromPrimitiveDoubleArray(JsonGenerator jg, double[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (double obj : array) {
       jg.writeNumber(obj);
@@ -81,7 +88,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromWrapperBoolArray(JsonGenerator jg, Boolean[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromWrapperBoolArray(JsonGenerator jg, Boolean[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (Boolean obj : array) {
       jg.writeBoolean(obj.booleanValue());
@@ -89,7 +97,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromWrapperByteArray(JsonGenerator jg, Byte[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromWrapperByteArray(JsonGenerator jg, Byte[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (Byte obj : array) {
       jg.writeNumber(obj.byteValue());
@@ -97,7 +106,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromWrapperShortArray(JsonGenerator jg, Short[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromWrapperShortArray(JsonGenerator jg, Short[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (Short obj : array) {
       jg.writeNumber(obj.shortValue());
@@ -105,7 +115,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromWrapperIntArray(JsonGenerator jg, Integer[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromWrapperIntArray(JsonGenerator jg, Integer[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (Integer obj : array) {
       jg.writeNumber(obj.intValue());
@@ -113,7 +124,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromWrapperLongArray(JsonGenerator jg, Long[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromWrapperLongArray(JsonGenerator jg, Long[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (Long obj : array) {
       jg.writeNumber(obj.longValue());
@@ -121,7 +133,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromWrapperFloatArray(JsonGenerator jg, Float[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromWrapperFloatArray(JsonGenerator jg, Float[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (Float obj : array) {
       jg.writeNumber(obj.floatValue());
@@ -129,7 +142,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromWrapperDoubleArray(JsonGenerator jg, Double[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromWrapperDoubleArray(JsonGenerator jg, Double[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (Double obj : array) {
       jg.writeNumber(obj.doubleValue());
@@ -137,7 +151,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromBigIntArray(JsonGenerator jg, BigInteger[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromBigIntArray(JsonGenerator jg, BigInteger[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (BigInteger obj : array) {
       jg.writeNumber(obj);
@@ -145,7 +160,8 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromBigDecimalArray(JsonGenerator jg, BigDecimal[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromBigDecimalArray(JsonGenerator jg, BigDecimal[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (BigDecimal obj : array) {
       jg.writeNumber(obj);
@@ -153,12 +169,12 @@ public class JsonHelper {
     jg.writeEndArray();
   }
 
-  public static void getJsonFromStringArray(JsonGenerator jg, String[] array, String pf) throws JsonGenerationException, IOException {
+  public static void getJsonFromStringArray(JsonGenerator jg, String[] array, String pf)
+      throws JsonGenerationException, IOException {
     jg.writeStartArray();
     for (String obj : array) {
       jg.writeString(obj);
     }
     jg.writeEndArray();
   }
-
 }

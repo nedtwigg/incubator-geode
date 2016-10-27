@@ -17,16 +17,15 @@
 package org.apache.geode.admin;
 
 /**
- * An event that describes an operation on a region.
- * Instances of this are delivered to a {@link SystemMemberCacheListener} when a
- * a region comes or goes.
+ * An event that describes an operation on a region. Instances of this are delivered to a {@link
+ * SystemMemberCacheListener} when a a region comes or goes.
  *
  * @since GemFire 5.0
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public interface SystemMemberRegionEvent extends SystemMemberCacheEvent {
-  /**
-   * Returns the full path of the region the event was done on.
-   */
+  /** Returns the full path of the region the event was done on. */
   public String getRegionPath();
 }

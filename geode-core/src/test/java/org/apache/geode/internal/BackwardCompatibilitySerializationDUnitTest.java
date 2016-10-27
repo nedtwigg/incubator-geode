@@ -45,12 +45,7 @@ import org.apache.geode.cache.CacheFactory;
 import org.apache.geode.cache30.CacheTestCase;
 import org.apache.geode.internal.cache.DistributedPutAllOperation.EntryVersionsList;
 
-/**
- * Test the DSFID serialization framework added for rolling upgrades in 7.1
- * 
- * 
- * 
- */
+/** Test the DSFID serialization framework added for rolling upgrades in 7.1 */
 @Category(DistributedTest.class)
 public class BackwardCompatibilitySerializationDUnitTest extends JUnit4CacheTestCase {
 
@@ -81,42 +76,45 @@ public class BackwardCompatibilitySerializationDUnitTest extends JUnit4CacheTest
   public final void preTearDownCacheTestCase() {
     resetFlags();
     // reset the class mapped to the dsfid
-    DSFIDFactory.registerDSFID(DataSerializableFixedID.PUTALL_VERSIONS_LIST, EntryVersionsList.class);
+    DSFIDFactory.registerDSFID(
+        DataSerializableFixedID.PUTALL_VERSIONS_LIST, EntryVersionsList.class);
     this.baos = null;
     this.bais = null;
   }
 
   /**
-   * Test if correct toData/toDataPreXXX is called when changes are made to the
-   * TestMessage in 66 and 70 and version of peer is 56
-   * 
+   * Test if correct toData/toDataPreXXX is called when changes are made to the TestMessage in 66
+   * and 70 and version of peer is 56
+   *
    * @throws Exception
    */
   @Test
   public void testToDataFromHigherVersionToLower() throws Exception {
-    DataOutputStream dos = new VersionedDataOutputStream(new DataOutputStream(baos), Version.GFE_56);
+    DataOutputStream dos =
+        new VersionedDataOutputStream(new DataOutputStream(baos), Version.GFE_56);
     InternalDataSerializer.writeDSFID(msg, dos);
     assertTrue(toDataPre66Called);
     assertFalse(toDataCalled);
   }
 
   /**
-   * Test if correct toData/toDataXXX is called when changes are made to the
-   * TestMessage in 66 and 70 and version of peer is 70
-   * 
+   * Test if correct toData/toDataXXX is called when changes are made to the TestMessage in 66 and
+   * 70 and version of peer is 70
+   *
    * @throws Exception
    */
   @Test
   public void testToDataFromLowerVersionToHigher() throws Exception {
-    DataOutputStream dos = new VersionedDataOutputStream(new DataOutputStream(baos), Version.GFE_701);
+    DataOutputStream dos =
+        new VersionedDataOutputStream(new DataOutputStream(baos), Version.GFE_701);
     InternalDataSerializer.writeDSFID(msg, dos);
     assertTrue(toDataCalled);
   }
 
   /**
-   * Test if correct fromData/fromDataXXX is called when changes are made to the
-   * TestMessage in 66 and 70 and version of peer is 70
-   * 
+   * Test if correct fromData/fromDataXXX is called when changes are made to the TestMessage in 66
+   * and 70 and version of peer is 70
+   *
    * @throws Exception
    */
   @Test
@@ -131,9 +129,9 @@ public class BackwardCompatibilitySerializationDUnitTest extends JUnit4CacheTest
   }
 
   /**
-   * Test if correct fromData/fromDataXXX is called when changes are made to the
-   * TestMessage in 66 and 70 and version of peer is 56
-   * 
+   * Test if correct fromData/fromDataXXX is called when changes are made to the TestMessage in 66
+   * and 70 and version of peer is 56
+   *
    * @throws Exception
    */
   @Test
@@ -148,9 +146,9 @@ public class BackwardCompatibilitySerializationDUnitTest extends JUnit4CacheTest
   }
 
   /**
-   * Test if all messages implement toDataPreXXX and fromDataPreXXX if the
-   * message has been upgraded in any of the versions
-   * 
+   * Test if all messages implement toDataPreXXX and fromDataPreXXX if the message has been upgraded
+   * in any of the versions
+   *
    * @throws Exception
    */
   @Test
@@ -201,9 +199,13 @@ public class BackwardCompatibilitySerializationDUnitTest extends JUnit4CacheTest
     if (versions != null && versions.length > 0) {
       for (int i = 0; i < versions.length; i++) {
         try {
-          ds.getClass().getMethod("toDataPre_" + versions[i].getMethodSuffix(), new Class[] { DataOutput.class });
+          ds.getClass()
+              .getMethod(
+                  "toDataPre_" + versions[i].getMethodSuffix(), new Class[] {DataOutput.class});
 
-          ds.getClass().getMethod("fromDataPre_" + versions[i].getMethodSuffix(), new Class[] { DataInput.class });
+          ds.getClass()
+              .getMethod(
+                  "fromDataPre_" + versions[i].getMethodSuffix(), new Class[] {DataInput.class});
         } catch (NoSuchMethodException e) {
           fail("toDataPreXXX or fromDataPreXXX for previous versions not found " + e.getMessage());
         }
@@ -211,12 +213,15 @@ public class BackwardCompatibilitySerializationDUnitTest extends JUnit4CacheTest
     } else {
       for (Method method : ds.getClass().getMethods()) {
         if (method.getName().startsWith("toDataPre")) {
-          fail("Found backwards compatible toData, but class does not implement getSerializationVersions()" + method);
+          fail(
+              "Found backwards compatible toData, but class does not implement getSerializationVersions()"
+                  + method);
         } else if (method.getName().startsWith("fromDataPre")) {
-          fail("Found backwards compatible fromData, but class does not implement getSerializationVersions()" + method);
+          fail(
+              "Found backwards compatible fromData, but class does not implement getSerializationVersions()"
+                  + method);
         }
       }
-
     }
   }
 
@@ -231,10 +236,9 @@ public class BackwardCompatibilitySerializationDUnitTest extends JUnit4CacheTest
 
   public static final class TestMessage implements DataSerializableFixedID {
     /** The versions in which this message was modified */
-    private static final Version[] dsfidVersions = new Version[] { Version.GFE_66, Version.GFE_70 };
+    private static final Version[] dsfidVersions = new Version[] {Version.GFE_66, Version.GFE_70};
 
-    public TestMessage() {
-    }
+    public TestMessage() {}
 
     @Override
     public Version[] getSerializationVersions() {
@@ -271,6 +275,5 @@ public class BackwardCompatibilitySerializationDUnitTest extends JUnit4CacheTest
     public int getDSFID() {
       return DataSerializableFixedID.PUTALL_VERSIONS_LIST;
     }
-
   }
 }

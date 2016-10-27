@@ -23,21 +23,19 @@ import org.apache.geode.cache.client.internal.ExecuteRegionFunctionOp.ExecuteReg
 import org.apache.geode.cache.client.internal.ExecuteRegionFunctionSingleHopOp.ExecuteRegionFunctionSingleHopOpImpl;
 import org.apache.geode.distributed.internal.ServerLocation;
 
-/**
- * 
- *
- */
+/** */
 public class SingleHopOperationCallable implements Callable {
 
-  final private ServerLocation server;
+  private final ServerLocation server;
 
-  final private PoolImpl pool;
+  private final PoolImpl pool;
 
-  final private AbstractOp op;
+  private final AbstractOp op;
 
-  final private UserAttributes securityAttributes;
+  private final UserAttributes securityAttributes;
 
-  public SingleHopOperationCallable(ServerLocation server, PoolImpl pool, AbstractOp op, UserAttributes securityAttributes) {
+  public SingleHopOperationCallable(
+      ServerLocation server, PoolImpl pool, AbstractOp op, UserAttributes securityAttributes) {
     this.server = server;
     this.pool = pool;
     this.op = op;
@@ -47,7 +45,10 @@ public class SingleHopOperationCallable implements Callable {
   public Object call() throws Exception {
     op.initMessagePart();
     Object result = null;
-    boolean onlyUseExistingCnx = ((pool.getMaxConnections() != -1 && pool.getConnectionCount() >= pool.getMaxConnections()) ? true : false);
+    boolean onlyUseExistingCnx =
+        ((pool.getMaxConnections() != -1 && pool.getConnectionCount() >= pool.getMaxConnections())
+            ? true
+            : false);
     op.setAllowDuplicateMetadataRefresh(!onlyUseExistingCnx);
     try {
       UserAttributes.userAttributes.set(securityAttributes);

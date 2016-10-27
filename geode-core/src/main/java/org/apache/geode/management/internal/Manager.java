@@ -22,41 +22,27 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.logging.InternalLogWriter;
 
 /**
- * The Manager is a 7.0 JMX Agent which is hosted within a GemFire process.
- * Only one instance is allowed per DistributedSystem connection (or loner).
- * It's responsible for defining JMX server endpoints for servicing JMX 
- * clients.
+ * The Manager is a 7.0 JMX Agent which is hosted within a GemFire process. Only one instance is
+ * allowed per DistributedSystem connection (or loner). It's responsible for defining JMX server
+ * endpoints for servicing JMX clients.
  *
  * @since GemFire 7.0
  */
 public abstract class Manager {
 
-  /**
-   * GemFire Cache implementation
-   */
-
+  /** GemFire Cache implementation */
   protected GemFireCacheImpl cache;
 
-  /**
-   * depicts whether this node is a Managing node or not
-   */
+  /** depicts whether this node is a Managing node or not */
   protected volatile boolean running = false;
 
-  /**
-   * depicts whether this node is a Managing node or not
-   */
+  /** depicts whether this node is a Managing node or not */
   protected volatile boolean stopCacheOps = false;
 
-  /**
-   * This is a single window to manipulate region resources for management
-   */
+  /** This is a single window to manipulate region resources for management */
   protected ManagementResourceRepo repo;
 
-  /**
-   * The concrete implementation of DistributedSystem that provides
-   * internal-only functionality.
-   */
-
+  /** The concrete implementation of DistributedSystem that provides internal-only functionality. */
   protected InternalDistributedSystem system;
 
   public Manager(ManagementResourceRepo repo, InternalDistributedSystem system, Cache cache) {
@@ -71,13 +57,8 @@ public abstract class Manager {
 
   public abstract void stopManager();
 
-  /**
-   * For internal use only
-   * 
-   */
-
+  /** For internal use only */
   public ManagementResourceRepo getManagementResourceRepo() {
     return repo;
   }
-
 }

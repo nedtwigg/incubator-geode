@@ -28,25 +28,29 @@ import java.util.concurrent.TimeUnit;
 
 public class MultithreadedTester {
 
-  public static Collection<Object> runMultithreaded(Collection<Callable> callables) throws InterruptedException {
+  public static Collection<Object> runMultithreaded(Collection<Callable> callables)
+      throws InterruptedException {
     final CountDownLatch allRunnablesAreSubmitted = new CountDownLatch(callables.size());
     final CountDownLatch callablesComplete = new CountDownLatch(callables.size());
     final ExecutorService executor = Executors.newFixedThreadPool(callables.size());
     final LinkedList<Future> futures = new LinkedList<>();
     //Submit all tasks to the executor
-    callables.forEach(callable -> {
-      futures.add(executor.submit(() -> {
-        try {
-          allRunnablesAreSubmitted.countDown();
-          allRunnablesAreSubmitted.await(60, TimeUnit.SECONDS);
-          return callable.call();
-        } catch (Throwable t) {
-          return t;
-        } finally {
-          callablesComplete.countDown();
-        }
-      }));
-    });
+    callables.forEach(
+        callable -> {
+          futures.add(
+              executor.submit(
+                  () -> {
+                    try {
+                      allRunnablesAreSubmitted.countDown();
+                      allRunnablesAreSubmitted.await(60, TimeUnit.SECONDS);
+                      return callable.call();
+                    } catch (Throwable t) {
+                      return t;
+                    } finally {
+                      callablesComplete.countDown();
+                    }
+                  }));
+        });
     //Wait until all tasks are complete
     callablesComplete.await(60, TimeUnit.SECONDS);
     executor.shutdown();
@@ -56,13 +60,14 @@ public class MultithreadedTester {
 
   private static Collection<Object> convertFutureToResult(final Collection<Future> futures) {
     List<Object> results = new LinkedList<Object>();
-    futures.forEach(future -> {
-      try {
-        results.add(future.get());
-      } catch (Exception e) {
-        results.add(e);
-      }
-    });
+    futures.forEach(
+        future -> {
+          try {
+            results.add(future.get());
+          } catch (Exception e) {
+            results.add(e);
+          }
+        });
     return results;
   }
 }

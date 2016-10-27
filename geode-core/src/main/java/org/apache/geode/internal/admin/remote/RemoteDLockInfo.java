@@ -39,7 +39,8 @@ public class RemoteDLockInfo implements DLockInfo, DataSerializable {
   private long leaseExpiration;
   private transient Date expirationDate;
 
-  public RemoteDLockInfo(String serviceName, String name, DLockToken lock, InternalDistributedMember localId) {
+  public RemoteDLockInfo(
+      String serviceName, String name, DLockToken lock, InternalDistributedMember localId) {
     this.serviceName = serviceName;
     this.lockName = name;
     synchronized (lock) {
@@ -53,11 +54,8 @@ public class RemoteDLockInfo implements DLockInfo, DataSerializable {
     }
   }
 
-  /**
-   * for DataExternalizable only
-   */
-  public RemoteDLockInfo() {
-  }
+  /** for DataExternalizable only */
+  public RemoteDLockInfo() {}
 
   public String getService() {
     return serviceName;
@@ -92,7 +90,6 @@ public class RemoteDLockInfo implements DLockInfo, DataSerializable {
       expirationDate = new Date(leaseExpiration);
     }
     return expirationDate;
-
   }
 
   public void toData(DataOutput out) throws IOException {
@@ -116,5 +113,4 @@ public class RemoteDLockInfo implements DLockInfo, DataSerializable {
     this.startTime = in.readLong();
     this.leaseExpiration = in.readLong();
   }
-
 }

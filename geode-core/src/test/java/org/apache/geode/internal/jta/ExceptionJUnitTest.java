@@ -35,9 +35,7 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.distributed.DistributedSystem;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Check if the correct expectations are being thrown when they are supposed to.
- */
+/** Check if the correct expectations are being thrown when they are supposed to. */
 @Category(IntegrationTest.class)
 public class ExceptionJUnitTest {
 

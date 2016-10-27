@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import org.apache.geode.cache.client.internal.DestroyOp;
@@ -29,21 +27,25 @@ import org.apache.geode.internal.cache.versions.VersionTag;
 
 import java.io.IOException;
 
-/**
- *
- */
+/** */
 public class Destroy70 extends Destroy65 {
-  private final static Destroy70 singleton = new Destroy70();
+  private static final Destroy70 singleton = new Destroy70();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private Destroy70() {
-  }
+  private Destroy70() {}
 
   @Override
-  protected void writeReplyWithRefreshMetadata(Message origMsg, ServerConnection servConn, PartitionedRegion pr, boolean entryNotFoundForRemove, byte nwHop, VersionTag versionTag) throws IOException {
+  protected void writeReplyWithRefreshMetadata(
+      Message origMsg,
+      ServerConnection servConn,
+      PartitionedRegion pr,
+      boolean entryNotFoundForRemove,
+      byte nwHop,
+      VersionTag versionTag)
+      throws IOException {
     Message replyMsg = servConn.getReplyMessage();
     servConn.getCache().getCancelCriterion().checkCancelInProgress(null);
     replyMsg.setMessageType(MessageType.REPLY);
@@ -63,17 +65,20 @@ public class Destroy70 extends Destroy65 {
     if (versionTag != null) {
       replyMsg.addObjPart(versionTag);
     }
-    replyMsg.addBytesPart(new byte[] { pr.getMetadataVersion(), nwHop });
+    replyMsg.addBytesPart(new byte[] {pr.getMetadataVersion(), nwHop});
     replyMsg.addIntPart(entryNotFoundForRemove ? 1 : 0);
     pr.getPrStats().incPRMetaDataSentCount();
     replyMsg.send(servConn);
     if (logger.isTraceEnabled()) {
-      logger.trace("{}: rpl with REFRESH_METADAT tx: {}", servConn.getName(), origMsg.getTransactionId());
+      logger.trace(
+          "{}: rpl with REFRESH_METADAT tx: {}", servConn.getName(), origMsg.getTransactionId());
     }
   }
 
   @Override
-  protected void writeReply(Message origMsg, ServerConnection servConn, boolean entryNotFound, VersionTag versionTag) throws IOException {
+  protected void writeReply(
+      Message origMsg, ServerConnection servConn, boolean entryNotFound, VersionTag versionTag)
+      throws IOException {
     if (logger.isDebugEnabled()) {
       logger.debug("Destroy70.writeReply(entryNotFound={}, tag={})", entryNotFound, versionTag);
     }
@@ -107,7 +112,11 @@ public class Destroy70 extends Destroy65 {
     replyMsg.addIntPart(entryNotFound ? 1 : 0);
     replyMsg.send(servConn);
     if (logger.isTraceEnabled()) {
-      logger.trace("{}: rpl tx: {} parts={}", servConn.getName(), origMsg.getTransactionId(), replyMsg.getNumberOfParts());
+      logger.trace(
+          "{}: rpl tx: {} parts={}",
+          servConn.getName(),
+          origMsg.getTransactionId(),
+          replyMsg.getNumberOfParts());
     }
   }
 }

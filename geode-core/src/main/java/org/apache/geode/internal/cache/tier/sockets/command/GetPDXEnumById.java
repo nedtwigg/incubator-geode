@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import java.io.IOException;
@@ -32,20 +30,24 @@ import org.apache.geode.pdx.internal.TypeRegistry;
 
 public class GetPDXEnumById extends BaseCommand {
 
-  private final static GetPDXEnumById singleton = new GetPDXEnumById();
+  private static final GetPDXEnumById singleton = new GetPDXEnumById();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private GetPDXEnumById() {
-  }
+  private GetPDXEnumById() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received get pdx enum by id request ({} parts) from {}", servConn.getName(), msg.getNumberOfParts(), servConn.getSocketString());
+      logger.debug(
+          "{}: Received get pdx enum by id request ({} parts) from {}",
+          servConn.getName(),
+          msg.getNumberOfParts(),
+          servConn.getSocketString());
     }
     int enumId = msg.getPart(0).getInt();
 

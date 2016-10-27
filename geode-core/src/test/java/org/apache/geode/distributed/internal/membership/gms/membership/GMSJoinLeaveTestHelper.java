@@ -43,24 +43,26 @@ public class GMSJoinLeaveTestHelper {
         return false;
       }
     }
-    throw new RuntimeException("This should not have happened. There should be a JoinLeave for every DS");
+    throw new RuntimeException(
+        "This should not have happened. There should be a JoinLeave for every DS");
   }
 
   private static void waitCriterion() {
-    WaitCriterion waitCriterion = new WaitCriterion() {
-      public boolean done() {
-        try {
-          return getIDS() != null;
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-        return false; // NOTREACHED
-      }
+    WaitCriterion waitCriterion =
+        new WaitCriterion() {
+          public boolean done() {
+            try {
+              return getIDS() != null;
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+            return false; // NOTREACHED
+          }
 
-      public String description() {
-        return "Distributed system is null";
-      }
-    };
+          public String description() {
+            return "Distributed system is null";
+          }
+        };
     Wait.waitForCriterion(waitCriterion, 10 * 1000, 200, true);
   }
 

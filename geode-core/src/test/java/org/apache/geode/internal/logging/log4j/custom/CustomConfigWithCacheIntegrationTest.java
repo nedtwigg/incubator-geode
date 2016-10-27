@@ -43,9 +43,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.apache.geode.internal.logging.log4j.custom.CustomConfiguration.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Integration tests with custom log4j2 configuration.
- */
+/** Integration tests with custom log4j2 configuration. */
 @Category(IntegrationTest.class)
 public class CustomConfigWithCacheIntegrationTest {
 
@@ -55,29 +53,27 @@ public class CustomConfigWithCacheIntegrationTest {
   private File customConfigFile;
   private Cache cache;
 
-  @Rule
-  public SystemErrRule systemErrRule = new SystemErrRule().enableLog();
+  @Rule public SystemErrRule systemErrRule = new SystemErrRule().enableLog();
 
-  @Rule
-  public SystemOutRule systemOutRule = new SystemOutRule().enableLog();
+  @Rule public SystemOutRule systemOutRule = new SystemOutRule().enableLog();
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
     Configurator.shutdown();
     BasicAppender.clearInstance();
 
-    this.beforeConfigFileProp = System.getProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
+    this.beforeConfigFileProp =
+        System.getProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
     this.beforeLevel = StatusLogger.getLogger().getLevel();
 
     this.customConfigFile = createConfigFileIn(this.temporaryFolder.getRoot());
 
-    System.setProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, this.customConfigFile.getAbsolutePath());
+    System.setProperty(
+        ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, this.customConfigFile.getAbsolutePath());
 
     Properties gemfireProperties = new Properties();
     gemfireProperties.put(LOCATORS, "");
@@ -96,12 +92,15 @@ public class CustomConfigWithCacheIntegrationTest {
 
     System.clearProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
     if (this.beforeConfigFileProp != null) {
-      System.setProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, this.beforeConfigFileProp);
+      System.setProperty(
+          ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, this.beforeConfigFileProp);
     }
     StatusLogger.getLogger().setLevel(this.beforeLevel);
 
     LogService.reconfigure();
-    assertThat(LogService.isUsingGemFireDefaultConfig()).as(LogService.getConfigInformation()).isTrue();
+    assertThat(LogService.isUsingGemFireDefaultConfig())
+        .as(LogService.getConfigInformation())
+        .isTrue();
 
     BasicAppender.clearInstance();
 
@@ -115,7 +114,9 @@ public class CustomConfigWithCacheIntegrationTest {
     String logMessage = "this is a log statement from " + testName.getMethodName();
 
     LogWriter logger = this.cache.getLogger();
-    assertThat(LogService.isUsingGemFireDefaultConfig()).as(LogService.getConfigInformation()).isFalse();
+    assertThat(LogService.isUsingGemFireDefaultConfig())
+        .as(LogService.getConfigInformation())
+        .isFalse();
 
     BasicAppender.clearEvents();
 
@@ -142,6 +143,7 @@ public class CustomConfigWithCacheIntegrationTest {
     assertThat(systemOutRule.getLog()).contains(logLevel.name());
     assertThat(systemOutRule.getLog()).contains(logMessage);
     assertThat(systemOutRule.getLog()).contains(CONFIG_LAYOUT_PREFIX);
-    assertThat(systemOutRule.getLog()).containsPattern(defineLogStatementRegex(logLevel, logMessage));
+    assertThat(systemOutRule.getLog())
+        .containsPattern(defineLogStatementRegex(logLevel, logMessage));
   }
 }

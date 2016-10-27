@@ -29,9 +29,7 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.cache.CacheFactory;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Tests notifications of CacheLifecycleListener from GemFireCacheImpl.
- */
+/** Tests notifications of CacheLifecycleListener from GemFireCacheImpl. */
 @Category(IntegrationTest.class)
 public class CacheLifecycleListenerJUnitTest {
 
@@ -43,18 +41,24 @@ public class CacheLifecycleListenerJUnitTest {
 
   @Test
   public void testRemoveNonExistent() throws Exception {
-    final List<CacheLifecycleCallback> cacheCreatedCallbacks = new ArrayList<CacheLifecycleCallback>();
-    final List<CacheLifecycleCallback> cacheClosedCallbacks = new ArrayList<CacheLifecycleCallback>();
-    final TestCacheLifecycleListener listener = new TestCacheLifecycleListener(cacheCreatedCallbacks, cacheClosedCallbacks);
+    final List<CacheLifecycleCallback> cacheCreatedCallbacks =
+        new ArrayList<CacheLifecycleCallback>();
+    final List<CacheLifecycleCallback> cacheClosedCallbacks =
+        new ArrayList<CacheLifecycleCallback>();
+    final TestCacheLifecycleListener listener =
+        new TestCacheLifecycleListener(cacheCreatedCallbacks, cacheClosedCallbacks);
     GemFireCacheImpl.removeCacheLifecycleListener(listener);
   }
 
   @Test
   public void testCallbacks() throws Exception {
-    final List<CacheLifecycleCallback> cacheCreatedCallbacks = new ArrayList<CacheLifecycleCallback>();
-    final List<CacheLifecycleCallback> cacheClosedCallbacks = new ArrayList<CacheLifecycleCallback>();
+    final List<CacheLifecycleCallback> cacheCreatedCallbacks =
+        new ArrayList<CacheLifecycleCallback>();
+    final List<CacheLifecycleCallback> cacheClosedCallbacks =
+        new ArrayList<CacheLifecycleCallback>();
 
-    final TestCacheLifecycleListener listener = new TestCacheLifecycleListener(cacheCreatedCallbacks, cacheClosedCallbacks);
+    final TestCacheLifecycleListener listener =
+        new TestCacheLifecycleListener(cacheCreatedCallbacks, cacheClosedCallbacks);
     try {
       GemFireCacheImpl.addCacheLifecycleListener(listener);
 
@@ -94,10 +98,13 @@ public class CacheLifecycleListenerJUnitTest {
 
   @Test
   public void testRemoveBeforeCreate() throws Exception {
-    final List<CacheLifecycleCallback> cacheCreatedCallbacks = new ArrayList<CacheLifecycleCallback>();
-    final List<CacheLifecycleCallback> cacheClosedCallbacks = new ArrayList<CacheLifecycleCallback>();
+    final List<CacheLifecycleCallback> cacheCreatedCallbacks =
+        new ArrayList<CacheLifecycleCallback>();
+    final List<CacheLifecycleCallback> cacheClosedCallbacks =
+        new ArrayList<CacheLifecycleCallback>();
 
-    final TestCacheLifecycleListener listener = new TestCacheLifecycleListener(cacheCreatedCallbacks, cacheClosedCallbacks);
+    final TestCacheLifecycleListener listener =
+        new TestCacheLifecycleListener(cacheCreatedCallbacks, cacheClosedCallbacks);
     try {
       GemFireCacheImpl.addCacheLifecycleListener(listener);
       GemFireCacheImpl.removeCacheLifecycleListener(listener);
@@ -132,10 +139,13 @@ public class CacheLifecycleListenerJUnitTest {
 
   @Test
   public void testRemoveBeforeClose() throws Exception {
-    final List<CacheLifecycleCallback> cacheCreatedCallbacks = new ArrayList<CacheLifecycleCallback>();
-    final List<CacheLifecycleCallback> cacheClosedCallbacks = new ArrayList<CacheLifecycleCallback>();
+    final List<CacheLifecycleCallback> cacheCreatedCallbacks =
+        new ArrayList<CacheLifecycleCallback>();
+    final List<CacheLifecycleCallback> cacheClosedCallbacks =
+        new ArrayList<CacheLifecycleCallback>();
 
-    final TestCacheLifecycleListener listener = new TestCacheLifecycleListener(cacheCreatedCallbacks, cacheClosedCallbacks);
+    final TestCacheLifecycleListener listener =
+        new TestCacheLifecycleListener(cacheCreatedCallbacks, cacheClosedCallbacks);
     try {
       GemFireCacheImpl.addCacheLifecycleListener(listener);
 
@@ -174,10 +184,13 @@ public class CacheLifecycleListenerJUnitTest {
 
   @Test
   public void testCallbacksRepeat() throws Exception {
-    final List<CacheLifecycleCallback> cacheCreatedCallbacks = new ArrayList<CacheLifecycleCallback>();
-    final List<CacheLifecycleCallback> cacheClosedCallbacks = new ArrayList<CacheLifecycleCallback>();
+    final List<CacheLifecycleCallback> cacheCreatedCallbacks =
+        new ArrayList<CacheLifecycleCallback>();
+    final List<CacheLifecycleCallback> cacheClosedCallbacks =
+        new ArrayList<CacheLifecycleCallback>();
 
-    final TestCacheLifecycleListener listener = new TestCacheLifecycleListener(cacheCreatedCallbacks, cacheClosedCallbacks);
+    final TestCacheLifecycleListener listener =
+        new TestCacheLifecycleListener(cacheCreatedCallbacks, cacheClosedCallbacks);
     try {
       GemFireCacheImpl.addCacheLifecycleListener(listener);
 
@@ -243,10 +256,13 @@ public class CacheLifecycleListenerJUnitTest {
 
   @Test
   public void testAddAfterCreate() throws Exception {
-    final List<CacheLifecycleCallback> cacheCreatedCallbacks = new ArrayList<CacheLifecycleCallback>();
-    final List<CacheLifecycleCallback> cacheClosedCallbacks = new ArrayList<CacheLifecycleCallback>();
+    final List<CacheLifecycleCallback> cacheCreatedCallbacks =
+        new ArrayList<CacheLifecycleCallback>();
+    final List<CacheLifecycleCallback> cacheClosedCallbacks =
+        new ArrayList<CacheLifecycleCallback>();
 
-    final TestCacheLifecycleListener listener = new TestCacheLifecycleListener(cacheCreatedCallbacks, cacheClosedCallbacks);
+    final TestCacheLifecycleListener listener =
+        new TestCacheLifecycleListener(cacheCreatedCallbacks, cacheClosedCallbacks);
     // assert no create callback
     assertTrue(cacheCreatedCallbacks.isEmpty());
     // assert no close callback
@@ -300,7 +316,9 @@ public class CacheLifecycleListenerJUnitTest {
     private final List<CacheLifecycleCallback> cacheCreatedCallbacks;
     private final List<CacheLifecycleCallback> cacheClosedCallbacks;
 
-    TestCacheLifecycleListener(List<CacheLifecycleCallback> cacheCreatedCallbacks, List<CacheLifecycleCallback> cacheClosedCallbacks) {
+    TestCacheLifecycleListener(
+        List<CacheLifecycleCallback> cacheCreatedCallbacks,
+        List<CacheLifecycleCallback> cacheClosedCallbacks) {
       this.cacheCreatedCallbacks = cacheCreatedCallbacks;
       this.cacheClosedCallbacks = cacheClosedCallbacks;
     }

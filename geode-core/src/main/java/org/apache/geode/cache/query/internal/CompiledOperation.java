@@ -44,9 +44,8 @@ import org.apache.geode.pdx.internal.PdxString;
 /**
  * Class Description
  *
- * @version     $Revision: 1.1 $
+ * @version $Revision: 1.1 $
  */
-
 public class CompiledOperation extends AbstractCompiledValue {
   private final CompiledValue receiver; // may be null if implicit to scope
   private final String methodName;
@@ -95,7 +94,9 @@ public class CompiledOperation extends AbstractCompiledValue {
     return this.getReceiver(null);
   }
 
-  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     CompiledValue rcvr = getReceiver(context);
 
     Object result;
@@ -103,7 +104,8 @@ public class CompiledOperation extends AbstractCompiledValue {
 
     if (rcvr == null) { // must be intended as implicit iterator operation
       // see if it's an implicit operation name
-      RuntimeIterator rcvrItr = context.resolveImplicitOperationName(this.methodName, this.args.size(), true);
+      RuntimeIterator rcvrItr =
+          context.resolveImplicitOperationName(this.methodName, this.args.size(), true);
       evalRcvr = rcvrItr.evaluate(context);
       /*
       // evaluate on current iteration of collection
@@ -112,7 +114,7 @@ public class CompiledOperation extends AbstractCompiledValue {
                 rcvrItr.getElementType().resolveClass(),
                 context);
       }
-      
+
       // function call: no functions implemented except keywords in the grammar
       throw new TypeMismatchException(LocalizedStrings.CompiledOperation_COULD_NOT_RESOLVE_METHOD_NAMED_0.toLocalizedString(this.methodName));
       */
@@ -134,7 +136,7 @@ public class CompiledOperation extends AbstractCompiledValue {
       try {
         evalRcvr = re.getValue();
       } catch (EntryDestroyedException ede) {
-        // Even though isDestory() check is made, the entry could 
+        // Even though isDestory() check is made, the entry could
         // throw EntryDestroyedException if the value becomes null.
         return QueryService.UNDEFINED;
       }
@@ -184,7 +186,8 @@ public class CompiledOperation extends AbstractCompiledValue {
   }
 
   @Override
-  public Set computeDependencies(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  public Set computeDependencies(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     List args = this.args;
     Iterator i = args.iterator();
     while (i.hasNext()) {
@@ -195,10 +198,13 @@ public class CompiledOperation extends AbstractCompiledValue {
     if (rcvr == null) // implicit iterator operation
     {
       // see if it's an implicit operation name
-      RuntimeIterator rcvrItr = context.resolveImplicitOperationName(this.methodName, this.args.size(), true);
+      RuntimeIterator rcvrItr =
+          context.resolveImplicitOperationName(this.methodName, this.args.size(), true);
       if (rcvrItr == null) { // no receiver resolved
         // function call: no functions implemented except keywords in the grammar
-        throw new TypeMismatchException(LocalizedStrings.CompiledOperation_COULD_NOT_RESOLVE_METHOD_NAMED_0.toLocalizedString(this.methodName));
+        throw new TypeMismatchException(
+            LocalizedStrings.CompiledOperation_COULD_NOT_RESOLVE_METHOD_NAMED_0.toLocalizedString(
+                this.methodName));
       }
       // cache the receiver so we don't have to resolve it again
       context.cachePut(this, rcvrItr);
@@ -209,10 +215,14 @@ public class CompiledOperation extends AbstractCompiledValue {
     return context.addDependencies(this, rcvr.computeDependencies(context));
   }
 
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED", justification = "Does not matter if the methodDispatch that isn't stored in the map is used")
-  private Object eval0(Object receiver, Class resolutionType, ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
-    if (receiver == null || receiver == QueryService.UNDEFINED)
-      return QueryService.UNDEFINED;
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED",
+    justification = "Does not matter if the methodDispatch that isn't stored in the map is used"
+  )
+  private Object eval0(Object receiver, Class resolutionType, ExecutionContext context)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
+    if (receiver == null || receiver == QueryService.UNDEFINED) return QueryService.UNDEFINED;
 
     List args = new ArrayList();
     List argTypes = new ArrayList();
@@ -222,13 +232,11 @@ public class CompiledOperation extends AbstractCompiledValue {
       Object o = arg.evaluate(context);
 
       // undefined arg produces undefines method result
-      if (o == QueryService.UNDEFINED)
-        return QueryService.UNDEFINED;
+      if (o == QueryService.UNDEFINED) return QueryService.UNDEFINED;
 
       args.add(o);
       // pass in null for the type if the runtime value is null
-      if (o == null)
-        argTypes.add(null);
+      if (o == null) argTypes.add(null);
       // commented out because we currently always use the runtime type for args
       //             else if (arg.getType() == Identifier)
       //             {
@@ -238,19 +246,20 @@ public class CompiledOperation extends AbstractCompiledValue {
       //                 else
       //                     argTypes.add(o.getClass());
       //             }
-      else
-        argTypes.add(o.getClass()); // otherwise use the runtime type
+      else argTypes.add(o.getClass()); // otherwise use the runtime type
     }
 
     // see if in cache
     MethodDispatch methodDispatch;
-    List key = Arrays.asList(new Object[] { resolutionType, this.methodName, argTypes });
+    List key = Arrays.asList(new Object[] {resolutionType, this.methodName, argTypes});
     methodDispatch = (MethodDispatch) CompiledOperation.cache.get(key);
     if (methodDispatch == null) {
       try {
         methodDispatch = new MethodDispatch(resolutionType, this.methodName, argTypes);
       } catch (NameResolutionException nre) {
-        if (!org.apache.geode.cache.query.Struct.class.isAssignableFrom(resolutionType) && (DefaultQueryService.QUERY_HETEROGENEOUS_OBJECTS || DefaultQueryService.TEST_QUERY_HETEROGENEOUS_OBJECTS)) {
+        if (!org.apache.geode.cache.query.Struct.class.isAssignableFrom(resolutionType)
+            && (DefaultQueryService.QUERY_HETEROGENEOUS_OBJECTS
+                || DefaultQueryService.TEST_QUERY_HETEROGENEOUS_OBJECTS)) {
           return QueryService.UNDEFINED;
         } else {
           throw nre;
@@ -277,11 +286,14 @@ public class CompiledOperation extends AbstractCompiledValue {
 
   //Asif :Function for generating from clause
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     //  Asif: if the method name starts with getABC & argument list is empty
     // then canonicalize it to aBC
     int len;
-    if (this.methodName.startsWith("get") && (len = this.methodName.length()) > 3 && (this.args == null || this.args.isEmpty())) {
+    if (this.methodName.startsWith("get")
+        && (len = this.methodName.length()) > 3
+        && (this.args == null || this.args.isEmpty())) {
       clauseBuffer.insert(0, len > 4 ? this.methodName.substring(4) : "");
       clauseBuffer.insert(0, Character.toLowerCase(this.methodName.charAt(3)));
     } else if (this.args == null || this.args.isEmpty()) {
@@ -290,13 +302,12 @@ public class CompiledOperation extends AbstractCompiledValue {
       //The method contains arguments which need to be canonicalized
       clauseBuffer.insert(0, ')');
       CompiledValue cv = null;
-      for (int j = this.args.size(); j > 0;) {
+      for (int j = this.args.size(); j > 0; ) {
         cv = (CompiledValue) this.args.get(--j);
         cv.generateCanonicalizedExpression(clauseBuffer, context);
         clauseBuffer.insert(0, ',');
       }
       clauseBuffer.deleteCharAt(0).insert(0, '(').insert(0, this.methodName);
-
     }
     clauseBuffer.insert(0, '.');
     CompiledValue rcvr = this.receiver;
@@ -307,5 +318,4 @@ public class CompiledOperation extends AbstractCompiledValue {
     }
     rcvr.generateCanonicalizedExpression(clauseBuffer, context);
   }
-
 }

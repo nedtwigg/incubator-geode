@@ -23,9 +23,8 @@ import org.apache.geode.internal.cache.partitioned.rebalance.PartitionedRegionLo
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * A director to create redundant copies for buckets that are low in redundancy
- * level. This is most commonly used as an element of the composite director.
- *
+ * A director to create redundant copies for buckets that are low in redundancy level. This is most
+ * commonly used as an element of the composite director.
  */
 public class SatisfyRedundancy extends RebalanceDirectorAdapter {
 
@@ -36,7 +35,6 @@ public class SatisfyRedundancy extends RebalanceDirectorAdapter {
   @Override
   public void initialize(PartitionedRegionLoadModel model) {
     this.model = model;
-
   }
 
   @Override
@@ -56,6 +54,7 @@ public class SatisfyRedundancy extends RebalanceDirectorAdapter {
 
   /**
    * Try to satisfy redundancy for a single bucket.
+   *
    * @return true if we actually created a bucket somewhere.
    */
   private boolean satisfyRedundancy() {
@@ -83,5 +82,4 @@ public class SatisfyRedundancy extends RebalanceDirectorAdapter {
 
     return true;
   }
-
 }

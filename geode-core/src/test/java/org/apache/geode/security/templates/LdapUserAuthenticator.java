@@ -52,17 +52,23 @@ public class LdapUserAuthenticator implements Authenticator {
   }
 
   @Override
-  public void init(final Properties securityProps, final LogWriter systemLogWriter, final LogWriter securityLogWriter) throws AuthenticationFailedException {
+  public void init(
+      final Properties securityProps,
+      final LogWriter systemLogWriter,
+      final LogWriter securityLogWriter)
+      throws AuthenticationFailedException {
     logger.info("Initializing LdapUserAuthenticator with {}", securityProps);
 
     this.ldapServer = securityProps.getProperty(LDAP_SERVER_NAME);
     if (this.ldapServer == null || this.ldapServer.length() == 0) {
-      throw new AuthenticationFailedException("LdapUserAuthenticator: LDAP server property [" + LDAP_SERVER_NAME + "] not specified");
+      throw new AuthenticationFailedException(
+          "LdapUserAuthenticator: LDAP server property [" + LDAP_SERVER_NAME + "] not specified");
     }
 
     this.baseDomainName = securityProps.getProperty(LDAP_BASEDN_NAME);
     if (this.baseDomainName == null || this.baseDomainName.length() == 0) {
-      throw new AuthenticationFailedException("LdapUserAuthenticator: LDAP base DN property [" + LDAP_BASEDN_NAME + "] not specified");
+      throw new AuthenticationFailedException(
+          "LdapUserAuthenticator: LDAP base DN property [" + LDAP_BASEDN_NAME + "] not specified");
     }
 
     final String sslName = securityProps.getProperty(LDAP_SSL_NAME);
@@ -77,7 +83,10 @@ public class LdapUserAuthenticator implements Authenticator {
   public Principal authenticate(final Properties credentials, final DistributedMember member) {
     final String userName = credentials.getProperty(UserPasswordAuthInit.USER_NAME);
     if (userName == null) {
-      throw new AuthenticationFailedException("LdapUserAuthenticator: user name property [" + UserPasswordAuthInit.USER_NAME + "] not provided");
+      throw new AuthenticationFailedException(
+          "LdapUserAuthenticator: user name property ["
+              + UserPasswordAuthInit.USER_NAME
+              + "] not provided");
     }
 
     String password = credentials.getProperty(UserPasswordAuthInit.PASSWORD);
@@ -95,13 +104,15 @@ public class LdapUserAuthenticator implements Authenticator {
       final DirContext ctx = new InitialDirContext(env);
       ctx.close();
     } catch (Exception e) {
-      throw new AuthenticationFailedException("LdapUserAuthenticator: Failure with provided username, password combination for user name: " + userName, e);
+      throw new AuthenticationFailedException(
+          "LdapUserAuthenticator: Failure with provided username, password combination for user name: "
+              + userName,
+          e);
     }
 
     return new UsernamePrincipal(userName);
   }
 
   @Override
-  public void close() {
-  }
+  public void close() {}
 }

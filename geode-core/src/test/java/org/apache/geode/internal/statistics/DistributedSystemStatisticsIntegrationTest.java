@@ -36,9 +36,7 @@ import org.apache.geode.StatisticsType;
 import org.apache.geode.distributed.DistributedSystem;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Integration tests for {@link Statistics} as implemented by {@link DistributedSystem}.
- */
+/** Integration tests for {@link Statistics} as implemented by {@link DistributedSystem}. */
 @Category(IntegrationTest.class)
 public class DistributedSystemStatisticsIntegrationTest {
 
@@ -51,8 +49,7 @@ public class DistributedSystemStatisticsIntegrationTest {
 
   private Random random;
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
@@ -66,7 +63,7 @@ public class DistributedSystemStatisticsIntegrationTest {
     this.statName1 = "one";
     this.statName2 = "two";
     this.statName3 = "three";
-    this.statNames = new String[] { statName1, statName2, statName3 };
+    this.statNames = new String[] {statName1, statName2, statName3};
 
     this.random = new Random();
   }
@@ -77,9 +74,7 @@ public class DistributedSystemStatisticsIntegrationTest {
     this.system = null;
   }
 
-  /**
-   * Tests {@code int} statistics
-   */
+  /** Tests {@code int} statistics */
   @Test
   public void testIntStatistics() {
     Statistics stats = setUpIntStatistics(3);
@@ -94,9 +89,7 @@ public class DistributedSystemStatisticsIntegrationTest {
     }
   }
 
-  /**
-   * Tests {@code long} statistics
-   */
+  /** Tests {@code long} statistics */
   @Test
   public void testLongStatistics() {
     Statistics stats = setUpLongStatistics(3);
@@ -123,9 +116,7 @@ public class DistributedSystemStatisticsIntegrationTest {
     }
   }
 
-  /**
-   * Tests {@code double} statistics
-   */
+  /** Tests {@code double} statistics */
   @Test
   public void testDoubleStatistics() {
     Statistics stats = setUpDoubleStatistics(3);
@@ -152,64 +143,76 @@ public class DistributedSystemStatisticsIntegrationTest {
     }
   }
 
-  /**
-   * Tests that accessing an {@code int} stat throws the appropriate exceptions.
-   */
+  /** Tests that accessing an {@code int} stat throws the appropriate exceptions. */
   @Test
   public void testAccessingIntStat() {
     Statistics stats = setUpIntStatistics(1);
 
     assertThat(stats.getInt(this.statName1)).isEqualTo(0);
-    assertThatThrownBy(() -> stats.getDouble(this.statName1)).isExactlyInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> stats.getLong(this.statName1)).isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.getDouble(this.statName1))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.getLong(this.statName1))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
 
     stats.setInt(this.statName1, 4);
-    assertThatThrownBy(() -> stats.setDouble(this.statName1, 4.0)).isExactlyInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> stats.setLong(this.statName1, 4L)).isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.setDouble(this.statName1, 4.0))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.setLong(this.statName1, 4L))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
 
     stats.incInt(this.statName1, 4);
-    assertThatThrownBy(() -> stats.incDouble(this.statName1, 4.0)).isExactlyInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> stats.incLong(this.statName1, 4L)).isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.incDouble(this.statName1, 4.0))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.incLong(this.statName1, 4L))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
   }
 
-  /**
-   * Tests that accessing a {@code long} stat throws the appropriate exceptions.
-   */
+  /** Tests that accessing a {@code long} stat throws the appropriate exceptions. */
   @Test
   public void testAccessingLongStat() {
     Statistics stats = setUpLongStatistics(1);
 
     assertThat(stats.getLong(this.statName1)).isEqualTo(0L);
-    assertThatThrownBy(() -> stats.getDouble(this.statName1)).isExactlyInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> stats.getInt(this.statName1)).isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.getDouble(this.statName1))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.getInt(this.statName1))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
 
     stats.setLong(this.statName1, 4L);
-    assertThatThrownBy(() -> stats.setDouble(this.statName1, 4.0)).isExactlyInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> stats.setInt(this.statName1, 4)).isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.setDouble(this.statName1, 4.0))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.setInt(this.statName1, 4))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
 
     stats.incLong(this.statName1, 4L);
-    assertThatThrownBy(() -> stats.incDouble(this.statName1, 4.0)).isExactlyInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> stats.incInt(this.statName1, 4)).isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.incDouble(this.statName1, 4.0))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.incInt(this.statName1, 4))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
   }
 
-  /**
-   * Tests that accessing an {@code double} stat throws the appropriate exceptions.
-   */
+  /** Tests that accessing an {@code double} stat throws the appropriate exceptions. */
   @Test
   public void testAccessingDoubleStat() {
     Statistics stats = setUpDoubleStatistics(1);
 
     assertThat(stats.getDouble(this.statName1)).isEqualTo(0.0);
-    assertThatThrownBy(() -> stats.getInt(this.statName1)).isExactlyInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> stats.getLong(this.statName1)).isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.getInt(this.statName1))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.getLong(this.statName1))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
 
     stats.setDouble(this.statName1, 4.0);
-    assertThatThrownBy(() -> stats.setInt(this.statName1, 4)).isExactlyInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> stats.setLong(this.statName1, 4L)).isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.setInt(this.statName1, 4))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.setLong(this.statName1, 4L))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
 
     stats.incDouble(this.statName1, 4.0);
-    assertThatThrownBy(() -> stats.incInt(this.statName1, 4)).isExactlyInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> stats.incLong(this.statName1, 4L)).isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.incInt(this.statName1, 4))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> stats.incLong(this.statName1, 4L))
+        .isExactlyInstanceOf(IllegalArgumentException.class);
   }
 
   private StatisticsFactory factory() {
@@ -217,7 +220,7 @@ public class DistributedSystemStatisticsIntegrationTest {
   }
 
   private Statistics setUpIntStatistics(final int count) {
-    String[] descriptions = new String[] { "ONE", "TWO", "THREE" };
+    String[] descriptions = new String[] {"ONE", "TWO", "THREE"};
     StatisticDescriptor[] descriptors = new StatisticDescriptor[count];
     for (int i = 0; i < count; i++) {
       descriptors[i] = factory().createIntGauge(this.statNames[i], descriptions[i], "x");
@@ -233,7 +236,7 @@ public class DistributedSystemStatisticsIntegrationTest {
   }
 
   private Statistics setUpLongStatistics(final int count) {
-    String[] descriptions = new String[] { "ONE", "TWO", "THREE" };
+    String[] descriptions = new String[] {"ONE", "TWO", "THREE"};
     StatisticDescriptor[] descriptors = new StatisticDescriptor[count];
     for (int i = 0; i < count; i++) {
       descriptors[i] = factory().createLongGauge(this.statNames[i], descriptions[i], "x");
@@ -249,7 +252,7 @@ public class DistributedSystemStatisticsIntegrationTest {
   }
 
   private Statistics setUpDoubleStatistics(final int count) {
-    String[] descriptions = new String[] { "ONE", "TWO", "THREE" };
+    String[] descriptions = new String[] {"ONE", "TWO", "THREE"};
     StatisticDescriptor[] descriptors = new StatisticDescriptor[count];
     for (int i = 0; i < count; i++) {
       descriptors[i] = factory().createDoubleGauge(this.statNames[i], descriptions[i], "x");
@@ -267,5 +270,4 @@ public class DistributedSystemStatisticsIntegrationTest {
   private String getUniqueName() {
     return getClass().getSimpleName() + "_" + this.testName.getMethodName();
   }
-
 }

@@ -78,7 +78,8 @@ public class BucketOperatorImplTest {
   }
 
   @Test
-  public void moveBucketShouldDelegateToParRegRebalanceOpMoveBucketForRegion() throws UnknownHostException {
+  public void moveBucketShouldDelegateToParRegRebalanceOpMoveBucketForRegion()
+      throws UnknownHostException {
     doReturn(true).when(rebalanceOp).moveBucketForRegion(sourceMember, targetMember, bucketId);
 
     operator.moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
@@ -88,7 +89,8 @@ public class BucketOperatorImplTest {
   }
 
   @Test
-  public void movePrimaryShouldDelegateToParRegRebalanceOpMovePrimaryBucketForRegion() throws UnknownHostException {
+  public void movePrimaryShouldDelegateToParRegRebalanceOpMovePrimaryBucketForRegion()
+      throws UnknownHostException {
     doReturn(true).when(rebalanceOp).movePrimaryBucketForRegion(targetMember, bucketId);
 
     operator.movePrimary(sourceMember, targetMember, bucketId);
@@ -98,7 +100,8 @@ public class BucketOperatorImplTest {
   }
 
   @Test
-  public void createBucketShouldDelegateToParRegRebalanceOpCreateRedundantBucketForRegion() throws UnknownHostException {
+  public void createBucketShouldDelegateToParRegRebalanceOpCreateRedundantBucketForRegion()
+      throws UnknownHostException {
     doReturn(true).when(rebalanceOp).createRedundantBucketForRegion(targetMember, bucketId);
 
     operator.createRedundantBucket(targetMember, bucketId, colocatedRegionBytes, completion);
@@ -118,7 +121,9 @@ public class BucketOperatorImplTest {
 
   @Test
   public void createBucketShouldInvokeOnFailureIfCreateBucketFails() {
-    doReturn(false).when(rebalanceOp).createRedundantBucketForRegion(targetMember, bucketId); //return false for create fail
+    doReturn(false)
+        .when(rebalanceOp)
+        .createRedundantBucketForRegion(targetMember, bucketId); //return false for create fail
 
     operator.createRedundantBucket(targetMember, bucketId, colocatedRegionBytes, completion);
 
@@ -134,5 +139,4 @@ public class BucketOperatorImplTest {
 
     verify(rebalanceOp, times(1)).removeRedundantBucketForRegion(targetMember, bucketId);
   }
-
 }

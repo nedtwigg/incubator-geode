@@ -45,20 +45,23 @@ public class MemoryBlockNodeJUnitTest {
   private MemoryAllocatorImpl ma;
   private OutOfOffHeapMemoryListener ooohml;
   private OffHeapMemoryStats stats;
-  private Slab[] slabs = { new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE), new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE * 2) };
+  private Slab[] slabs = {
+    new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE),
+    new SlabImpl((int) OffHeapStorage.MIN_SLAB_SIZE * 2)
+  };
   private StoredObject storedObject = null;
 
   @Rule
-  public final ProvideSystemProperty myPropertyHasMyValue = new ProvideSystemProperty(DistributionConfig.GEMFIRE_PREFIX + "OFF_HEAP_DO_EXPENSIVE_VALIDATION", "true");
+  public final ProvideSystemProperty myPropertyHasMyValue =
+      new ProvideSystemProperty(
+          DistributionConfig.GEMFIRE_PREFIX + "OFF_HEAP_DO_EXPENSIVE_VALIDATION", "true");
 
   @Rule
   public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
-  @Rule
-  public ExpectedException expectedException = ExpectedException.none();
+  @Rule public ExpectedException expectedException = ExpectedException.none();
 
-  @Rule
-  public JUnitSoftAssertions softly = new JUnitSoftAssertions();
+  @Rule public JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
   @Before
   public void setUp() {
@@ -114,7 +117,8 @@ public class MemoryBlockNodeJUnitTest {
 
     boolean isSerialized = true;
 
-    StoredObject createdObject = createChunk(valueInSerializedByteArray, isSerialized, isCompressed);
+    StoredObject createdObject =
+        createChunk(valueInSerializedByteArray, isSerialized, isCompressed);
     return createdObject;
   }
 
@@ -129,7 +133,8 @@ public class MemoryBlockNodeJUnitTest {
 
     MemoryBlock mb = new MemoryBlockNode(ma, null);
     Long addr = mb.getAddress();
-    fail("Operations on MemoryBlockNodes with null block argument expected to throw NullPointerException ");
+    fail(
+        "Operations on MemoryBlockNodes with null block argument expected to throw NullPointerException ");
   }
 
   @Test
@@ -332,11 +337,15 @@ public class MemoryBlockNodeJUnitTest {
     storedObject = createValueAsSerializedStoredObject(obj);
     OffHeapStoredObject spyStoredObject = spy((OffHeapStoredObject) storedObject);
     doReturn("java.lang.Long").when(spyStoredObject).getDataType();
-    doThrow(new CacheClosedException("Unit test forced exception")).when(spyStoredObject).getRawBytes();
+    doThrow(new CacheClosedException("Unit test forced exception"))
+        .when(spyStoredObject)
+        .getRawBytes();
     ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     System.setErr(new PrintStream(errContent));
     MemoryBlock mb = new MemoryBlockNode(ma, spyStoredObject);
-    softly.assertThat(mb.getDataValue()).isEqualTo("CacheClosedException:Unit test forced exception");
+    softly
+        .assertThat(mb.getDataValue())
+        .isEqualTo("CacheClosedException:Unit test forced exception");
   }
 
   @SuppressWarnings("unchecked")
@@ -357,7 +366,10 @@ public class MemoryBlockNodeJUnitTest {
   public void toStringOfUnusedBlockReturnsStateUnusedAndTypeNA() {
     Fragment fragment = new Fragment(slabs[0].getMemoryAddress(), slabs[0].getSize());
     MemoryBlock mb = new MemoryBlockNode(ma, fragment);
-    softly.assertThat(mb.toString()).matches("MemoryBlock\\{MemoryAddress=\\d*, State=UNUSED, BlockSize=1024, SlabId=0, FreeListId=NONE, RefCount=0, isSerialized=false, isCompressed=false, DataType=N/A, DataValue=null}");
+    softly
+        .assertThat(mb.toString())
+        .matches(
+            "MemoryBlock\\{MemoryAddress=\\d*, State=UNUSED, BlockSize=1024, SlabId=0, FreeListId=NONE, RefCount=0, isSerialized=false, isCompressed=false, DataType=N/A, DataValue=null}");
   }
 
   @Test
@@ -365,7 +377,10 @@ public class MemoryBlockNodeJUnitTest {
     Object obj = getValue();
     storedObject = createValueAsSerializedStoredObject(obj);
     MemoryBlock mb = new MemoryBlockNode(ma, (MemoryBlock) storedObject);
-    softly.assertThat(mb.toString()).matches("MemoryBlock\\{MemoryAddress=\\d*, State=ALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=NONE, RefCount=1, isSerialized=true, isCompressed=false, DataType=java.lang.Long, DataValue=9223372036854775807}");
+    softly
+        .assertThat(mb.toString())
+        .matches(
+            "MemoryBlock\\{MemoryAddress=\\d*, State=ALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=NONE, RefCount=1, isSerialized=true, isCompressed=false, DataType=java.lang.Long, DataValue=9223372036854775807}");
   }
 
   @Test
@@ -373,7 +388,10 @@ public class MemoryBlockNodeJUnitTest {
     Object obj = getValue();
     storedObject = createValueAsUnserializedStoredObject(obj);
     MemoryBlock mb = new MemoryBlockNode(ma, (MemoryBlock) storedObject);
-    softly.assertThat(mb.toString()).matches("MemoryBlock\\{MemoryAddress=\\d*, State=ALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=NONE, RefCount=1, isSerialized=false, isCompressed=false, DataType=byte\\[8], DataValue=\\[127, -1, -1, -1, -1, -1, -1, -1]}");
+    softly
+        .assertThat(mb.toString())
+        .matches(
+            "MemoryBlock\\{MemoryAddress=\\d*, State=ALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=NONE, RefCount=1, isSerialized=false, isCompressed=false, DataType=byte\\[8], DataValue=\\[127, -1, -1, -1, -1, -1, -1, -1]}");
   }
 
   @Test
@@ -382,10 +400,16 @@ public class MemoryBlockNodeJUnitTest {
     storedObject = createValueAsSerializedStoredObject(obj);
     MemoryBlock mb = new MemoryBlockNode(ma, (MemoryBlock) storedObject);
     MemoryBlock spyMb = spy(mb);
-    softly.assertThat(spyMb.toString()).matches("MemoryBlock\\{MemoryAddress=\\d*, State=ALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=NONE, RefCount=1, isSerialized=true, isCompressed=false, DataType=java.lang.Long, DataValue=9223372036854775807}");
+    softly
+        .assertThat(spyMb.toString())
+        .matches(
+            "MemoryBlock\\{MemoryAddress=\\d*, State=ALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=NONE, RefCount=1, isSerialized=true, isCompressed=false, DataType=java.lang.Long, DataValue=9223372036854775807}");
     when(spyMb.getState()).thenReturn(State.DEALLOCATED);
     when(spyMb.getRefCount()).thenReturn(0);
-    softly.assertThat(spyMb.toString()).matches("MemoryBlock\\{MemoryAddress=\\d*, State=DEALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=HUGE, RefCount=0, isSerialized=true, isCompressed=false, DataType=java.lang.Long, DataValue=9223372036854775807}");
+    softly
+        .assertThat(spyMb.toString())
+        .matches(
+            "MemoryBlock\\{MemoryAddress=\\d*, State=DEALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=HUGE, RefCount=0, isSerialized=true, isCompressed=false, DataType=java.lang.Long, DataValue=9223372036854775807}");
   }
 
   @Test
@@ -394,12 +418,21 @@ public class MemoryBlockNodeJUnitTest {
     storedObject = createValueAsSerializedStoredObject(obj);
     MemoryBlock mb = new MemoryBlockNode(ma, (MemoryBlock) storedObject);
     MemoryBlock spyMb = spy(mb);
-    softly.assertThat(spyMb.toString()).matches("MemoryBlock\\{MemoryAddress=\\d*, State=ALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=NONE, RefCount=1, isSerialized=true, isCompressed=false, DataType=java.lang.Long, DataValue=9223372036854775807}");
+    softly
+        .assertThat(spyMb.toString())
+        .matches(
+            "MemoryBlock\\{MemoryAddress=\\d*, State=ALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=NONE, RefCount=1, isSerialized=true, isCompressed=false, DataType=java.lang.Long, DataValue=9223372036854775807}");
     when(spyMb.getState()).thenReturn(State.DEALLOCATED);
     when(spyMb.getRefCount()).thenReturn(0);
-    softly.assertThat(spyMb.toString()).matches("MemoryBlock\\{MemoryAddress=\\d*, State=DEALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=HUGE, RefCount=0, isSerialized=true, isCompressed=false, DataType=java.lang.Long, DataValue=9223372036854775807}");
+    softly
+        .assertThat(spyMb.toString())
+        .matches(
+            "MemoryBlock\\{MemoryAddress=\\d*, State=DEALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=HUGE, RefCount=0, isSerialized=true, isCompressed=false, DataType=java.lang.Long, DataValue=9223372036854775807}");
     when(spyMb.getFreeListId()).thenReturn(0);
-    softly.assertThat(spyMb.toString()).matches("MemoryBlock\\{MemoryAddress=\\d*, State=DEALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=0, RefCount=0, isSerialized=true, isCompressed=false, DataType=java.lang.Long, DataValue=9223372036854775807}");
+    softly
+        .assertThat(spyMb.toString())
+        .matches(
+            "MemoryBlock\\{MemoryAddress=\\d*, State=DEALLOCATED, BlockSize=\\d*, SlabId=0, FreeListId=0, RefCount=0, isSerialized=true, isCompressed=false, DataType=java.lang.Long, DataValue=9223372036854775807}");
   }
 
   @Test
@@ -407,6 +440,10 @@ public class MemoryBlockNodeJUnitTest {
     Object obj = new byte[1024];
     storedObject = createValueAsUnserializedStoredObject(obj);
     MemoryBlock mb = new MemoryBlockNode(ma, (MemoryBlock) storedObject);
-    softly.assertThat(mb.toString()).matches("MemoryBlock\\{MemoryAddress=\\d*, State=ALLOCATED, BlockSize=\\d*, SlabId=1, FreeListId=NONE, RefCount=1," + " isSerialized=false, isCompressed=false, DataType=byte\\[1024], DataValue=<byte array of length 1024>}");
+    softly
+        .assertThat(mb.toString())
+        .matches(
+            "MemoryBlock\\{MemoryAddress=\\d*, State=ALLOCATED, BlockSize=\\d*, SlabId=1, FreeListId=NONE, RefCount=1,"
+                + " isSerialized=false, isCompressed=false, DataType=byte\\[1024], DataValue=<byte array of length 1024>}");
   }
 }

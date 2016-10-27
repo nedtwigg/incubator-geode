@@ -30,7 +30,8 @@ import org.apache.geode.internal.cache.tier.sockets.Part;
 
 public class ProxyCacheCloseOp {
 
-  public static Object executeOn(ServerLocation location, ExecutablePool pool, Properties securityProps, boolean keepAlive) {
+  public static Object executeOn(
+      ServerLocation location, ExecutablePool pool, Properties securityProps, boolean keepAlive) {
     AbstractOp op = new ProxyCacheCloseOpImpl(pool, securityProps, keepAlive);
     return pool.executeOn(location, op);
   }
@@ -44,7 +45,7 @@ public class ProxyCacheCloseOp {
     public ProxyCacheCloseOpImpl(ExecutablePool pool, Properties securityProps, boolean keepAlive) {
       super(MessageType.REMOVE_USER_AUTH, 1);
       getMessage().setMessageHasSecurePartFlag();
-      getMessage().addBytesPart(keepAlive ? new byte[] { 1 } : new byte[] { 0 });
+      getMessage().addBytesPart(keepAlive ? new byte[] {1} : new byte[] {0});
     }
 
     @Override
@@ -112,5 +113,4 @@ public class ProxyCacheCloseOp {
       stats.endGet(start, hasTimedOut(), hasFailed());
     }
   }
-
 }

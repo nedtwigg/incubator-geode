@@ -21,11 +21,13 @@ import org.apache.geode.internal.cache.tier.sockets.Message;
 
 /**
  * Tell a server to become the primary host of a server-to-client queue
+ *
  * @since GemFire 5.7
  */
 public class MakePrimaryOp {
   /**
    * Tell the given server to become the primary host of a server-to-client queue
+   *
    * @param pool the pool to use to communicate with the server.
    * @param conn the connection to do the execution on
    * @param sentClientReady true if the client ready message has already been sent
@@ -40,17 +42,14 @@ public class MakePrimaryOp {
   }
 
   private static class MakePrimaryOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public MakePrimaryOpImpl(boolean sentClientReady) {
       super(MessageType.MAKE_PRIMARY, 1);
-      getMessage().addBytesPart(new byte[] { (byte) (sentClientReady ? 0x01 : 0x00) });
+      getMessage().addBytesPart(new byte[] {(byte) (sentClientReady ? 0x01 : 0x00)});
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

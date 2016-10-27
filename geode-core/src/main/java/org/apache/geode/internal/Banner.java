@@ -27,9 +27,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.*;
 
-/**
- * Utility class to print banner information at manager startup.
- */
+/** Utility class to print banner information at manager startup. */
 public class Banner {
 
   private Banner() {
@@ -47,12 +45,14 @@ public class Banner {
 
   /**
    * Print information about this process to the specified stream.
+   *
    * @param args possibly null list of command line arguments
    */
   private static void print(PrintWriter out, String args[]) {
     Map sp = new TreeMap((Properties) System.getProperties().clone()); // fix for 46822
     int processId = -1;
-    final String SEPERATOR = "---------------------------------------------------------------------------";
+    final String SEPERATOR =
+        "---------------------------------------------------------------------------";
     try {
       processId = OSProcess.getId();
     } catch (VirtualMachineError err) {
@@ -141,7 +141,12 @@ public class Banner {
         String key = me.getKey().toString();
         // SW: Filter out the security properties since they may contain
         // sensitive information.
-        if (!key.startsWith(DistributionConfig.GEMFIRE_PREFIX + DistributionConfig.SECURITY_PREFIX_NAME) && !key.startsWith(DistributionConfigImpl.SECURITY_SYSTEM_PREFIX + DistributionConfig.SECURITY_PREFIX_NAME) && !key.toLowerCase().contains("password") /* bug 45381 */) {
+        if (!key.startsWith(
+                DistributionConfig.GEMFIRE_PREFIX + DistributionConfig.SECURITY_PREFIX_NAME)
+            && !key.startsWith(
+                DistributionConfigImpl.SECURITY_SYSTEM_PREFIX
+                    + DistributionConfig.SECURITY_PREFIX_NAME)
+            && !key.toLowerCase().contains("password") /* bug 45381 */) {
           out.println("    " + key + " = " + me.getValue());
         } else {
           out.println("    " + key + " = " + "********");
@@ -155,6 +160,7 @@ public class Banner {
 
   /**
    * Return a string containing the banner information.
+   *
    * @param args possibly null list of command line arguments
    */
   public static String getString(String args[]) {

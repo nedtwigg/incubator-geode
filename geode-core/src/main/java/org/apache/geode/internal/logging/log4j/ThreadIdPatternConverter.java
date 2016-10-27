@@ -21,20 +21,14 @@ import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.pattern.ConverterKeys;
 import org.apache.logging.log4j.core.pattern.LogEventPatternConverter;
 
-/**
- * Formats the event thread id.
- */
+/** Formats the event thread id. */
 @Plugin(name = "ThreadIdPatternConverter", category = "Converter")
-@ConverterKeys({ "tid", "threadId" })
+@ConverterKeys({"tid", "threadId"})
 public final class ThreadIdPatternConverter extends LogEventPatternConverter {
-  /**
-   * Singleton.
-   */
+  /** Singleton. */
   private static final ThreadIdPatternConverter INSTANCE = new ThreadIdPatternConverter();
 
-  /**
-   * Private constructor.
-   */
+  /** Private constructor. */
   private ThreadIdPatternConverter() {
     super("ThreadId", "threadId");
   }
@@ -49,9 +43,7 @@ public final class ThreadIdPatternConverter extends LogEventPatternConverter {
     return INSTANCE;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void format(final LogEvent event, final StringBuilder toAppendTo) {
     toAppendTo.append("0x").append(Long.toHexString(Thread.currentThread().getId()));

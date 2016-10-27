@@ -27,9 +27,7 @@ import org.junit.runners.model.Statement;
 
 import java.io.Serializable;
 
-/**
- * Unit tests for {@link SerializableRuleList}.
- */
+/** Unit tests for {@link SerializableRuleList}. */
 @Category(UnitTest.class)
 public class SerializableRuleListTest {
 
@@ -47,12 +45,12 @@ public class SerializableRuleListTest {
     SerializableRuleList cloned = (SerializableRuleList) SerializationUtils.clone(instance);
 
     assertThat(cloned.rules().size()).isEqualTo(1);
-    assertThat(cloned.rules().get(0)).isInstanceOf(FakeSerializableTestRule.class).isEqualTo(fakeRule);
+    assertThat(cloned.rules().get(0))
+        .isInstanceOf(FakeSerializableTestRule.class)
+        .isEqualTo(fakeRule);
   }
 
-  /**
-   * Fake SerializableTestRule with a string field and overriding equals.
-   */
+  /** Fake SerializableTestRule with a string field and overriding equals. */
   private static class FakeSerializableTestRule implements SerializableTestRule {
 
     private String value = null;
@@ -78,10 +76,8 @@ public class SerializableRuleListTest {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o)
-        return true;
-      if (o == null || getClass() != o.getClass())
-        return false;
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
 
       FakeSerializableTestRule that = (FakeSerializableTestRule) o;
 

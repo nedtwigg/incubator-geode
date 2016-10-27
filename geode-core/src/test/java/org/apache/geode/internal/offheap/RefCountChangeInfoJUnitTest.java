@@ -38,7 +38,6 @@ public class RefCountChangeInfoJUnitTest {
     assertEquals(owner1, refInfo1.getOwner());
     assertEquals(notOwner1, refInfo2.getOwner());
     assertFalse(refInfo1.getOwner().equals(refInfo2.getOwner()));
-
   }
 
   @Test
@@ -56,7 +55,6 @@ public class RefCountChangeInfoJUnitTest {
     assertEquals(notOwner1, refInfo2.getOwner());
     assertTrue(isOwnerNull(refInfo1.getOwner()));
     assertFalse(hasStringLit(refInfo1.toString(), " owner="));
-
   }
 
   private boolean isOwnerNull(Object own1) {
@@ -64,8 +62,7 @@ public class RefCountChangeInfoJUnitTest {
   }
 
   private boolean hasStringLit(String str, String has) {
-    if (str.indexOf(has) == -1)
-      return false;
+    if (str.indexOf(has) == -1) return false;
     return true;
   }
 
@@ -92,7 +89,6 @@ public class RefCountChangeInfoJUnitTest {
     RefCountChangeInfo refInfo4 = new RefCountChangeInfo(false, 1, owner2);
     assertFalse(refInfo1.isSameCaller(refInfo4));
     assertEquals(2, refInfo1.getUseCount());
-
   }
 
   @Test
@@ -120,7 +116,6 @@ public class RefCountChangeInfoJUnitTest {
 
     refInfo1.decUseCount();
     assertEquals(0, refInfo1.getUseCount());
-
   }
 
   @Test
@@ -138,7 +133,6 @@ public class RefCountChangeInfoJUnitTest {
 
     RefCountChangeInfo refInfo4 = new RefCountChangeInfo(true, 2, owner1);
     assertFalse(refInfo1.toString().equals(refInfo4.toString()));
-
   }
 
   @Test
@@ -179,7 +173,6 @@ public class RefCountChangeInfoJUnitTest {
     refInfo4.setStackTraceString(new SameHashDifferentTrace());
     assertFalse(refInfo1.isSameCaller(refInfo4));
     assertEquals(2, refInfo1.getUseCount());
-
   }
 
   private static class SameHashDifferentTrace {

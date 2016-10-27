@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import org.apache.geode.internal.cache.tier.Command;
@@ -27,14 +25,13 @@ import java.io.IOException;
 
 public class ClientReady extends BaseCommand {
 
-  private final static ClientReady singleton = new ClientReady();
+  private static final ClientReady singleton = new ClientReady();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private ClientReady() {
-  }
+  private ClientReady() {}
 
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
@@ -48,7 +45,13 @@ public class ClientReady extends BaseCommand {
       String clientHost = servConn.getSocketHost();
       int clientPort = servConn.getSocketPort();
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Received client ready request ({} bytes) from {} on {}:{}", servConn.getName(), msg.getPayloadLength(), servConn.getProxyID(), clientHost, clientPort);
+        logger.debug(
+            "{}: Received client ready request ({} bytes) from {} on {}:{}",
+            servConn.getName(),
+            msg.getPayloadLength(),
+            servConn.getProxyID(),
+            clientHost,
+            clientPort);
       }
 
       servConn.getAcceptor().getCacheClientNotifier().readyForEvents(servConn.getProxyID());
@@ -61,12 +64,17 @@ public class ClientReady extends BaseCommand {
       servConn.setAsTrue(RESPONDED);
 
       if (logger.isDebugEnabled()) {
-        logger.debug(servConn.getName() + ": Processed client ready request from " + servConn.getProxyID() + " on " + clientHost + ":" + clientPort);
+        logger.debug(
+            servConn.getName()
+                + ": Processed client ready request from "
+                + servConn.getProxyID()
+                + " on "
+                + clientHost
+                + ":"
+                + clientPort);
       }
     } finally {
       stats.incWriteClientReadyResponseTime(DistributionStats.getStatTime() - start);
     }
-
   }
-
 }

@@ -121,7 +121,9 @@ public class DistributionConfigJUnitTest {
   public void testAttributeDesc() {
     String[] attNames = AbstractDistributionConfig._getAttNames();
     for (String attName : attNames) {
-      assertTrue("Does not contain description for attribute " + attName, AbstractDistributionConfig.dcAttDescriptions.containsKey(attName));
+      assertTrue(
+          "Does not contain description for attribute " + attName,
+          AbstractDistributionConfig.dcAttDescriptions.containsKey(attName));
     }
     List<String> attList = Arrays.asList(attNames);
     for (Object attName : AbstractDistributionConfig.dcAttDescriptions.keySet()) {
@@ -153,7 +155,6 @@ public class DistributionConfigJUnitTest {
           throw new RuntimeException("Error calling setter " + setter.getName(), e);
         }
       }
-
     }
   }
 
@@ -184,7 +185,9 @@ public class DistributionConfigJUnitTest {
       assertNotNull("every getter should have a corresponding setter " + attr, setter);
       String setterName = setter.getName();
       String getterName = getter.getName();
-      assertEquals(setterName.substring(setterName.indexOf("set") + 3), getterName.substring(getterName.indexOf("get") + 3));
+      assertEquals(
+          setterName.substring(setterName.indexOf("set") + 3),
+          getterName.substring(getterName.indexOf("get") + 3));
       assertEquals(setter.getParameterTypes()[0], getter.getReturnType());
     }
 
@@ -225,7 +228,10 @@ public class DistributionConfigJUnitTest {
       assertTrue(attributes.containsKey(att));
       Method checker = checkers.get(att);
       assertEquals(checker.getParameterCount(), 1);
-      assertEquals("invalid checker: " + checker.getName(), checker.getReturnType(), checker.getParameterTypes()[0]);
+      assertEquals(
+          "invalid checker: " + checker.getName(),
+          checker.getReturnType(),
+          checker.getParameterTypes()[0]);
 
       //TODO assert checker and setter accepts this same type of parameter
     }

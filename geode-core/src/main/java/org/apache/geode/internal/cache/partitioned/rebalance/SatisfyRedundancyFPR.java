@@ -27,12 +27,9 @@ import org.apache.geode.internal.cache.partitioned.rebalance.PartitionedRegionLo
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * A director to create redundant copies for buckets in the correct place
- * for a fixed partitioned region. This is most commonly used as part
- * of the FPRDirector.
- *
+ * A director to create redundant copies for buckets in the correct place for a fixed partitioned
+ * region. This is most commonly used as part of the FPRDirector.
  */
-
 public class SatisfyRedundancyFPR extends RebalanceDirectorAdapter {
 
   private static final Logger logger = LogService.getLogger();
@@ -42,13 +39,11 @@ public class SatisfyRedundancyFPR extends RebalanceDirectorAdapter {
   @Override
   public void initialize(PartitionedRegionLoadModel model) {
     this.model = model;
-
   }
 
   @Override
   public void membershipChanged(PartitionedRegionLoadModel model) {
     initialize(model);
-
   }
 
   @Override
@@ -71,11 +66,12 @@ public class SatisfyRedundancyFPR extends RebalanceDirectorAdapter {
         moves.put(bucket, move);
       } else {
         if (logger.isDebugEnabled()) {
-          logger.debug("Skipping low redundancy bucket {} because no member will accept it", bucket);
+          logger.debug(
+              "Skipping low redundancy bucket {} because no member will accept it", bucket);
         }
       }
     }
-    // TODO: This can be done in a thread pool to speed things up as all buckets 
+    // TODO: This can be done in a thread pool to speed things up as all buckets
     // are different, there will not be any contention for lock
     for (Map.Entry<BucketRollup, Move> bucketMove : moves.entrySet()) {
       BucketRollup bucket = bucketMove.getKey();

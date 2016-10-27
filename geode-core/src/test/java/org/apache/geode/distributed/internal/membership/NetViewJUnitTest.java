@@ -93,12 +93,16 @@ public class NetViewJUnitTest {
 
     assertFalse(view.shouldBeCoordinator(members.get(1)));
     assertTrue(view.shouldBeCoordinator(members.get(0)));
-    assertEquals(members.get(numMembers - 1), view.getCoordinator(Collections.singletonList(members.get(0))));
+    assertEquals(
+        members.get(numMembers - 1),
+        view.getCoordinator(Collections.singletonList(members.get(0))));
     members.get(numMembers - 1).getNetMember().setPreferredForCoordinator(false);
     assertEquals(members.get(1), view.getCoordinator(Collections.singletonList(members.get(0))));
 
     members.get(numMembers - 1).getNetMember().setPreferredForCoordinator(true);
-    List<InternalDistributedMember> preferred = view.getPreferredCoordinators(Collections.<InternalDistributedMember> singleton(members.get(1)), members.get(0), 2);
+    List<InternalDistributedMember> preferred =
+        view.getPreferredCoordinators(
+            Collections.<InternalDistributedMember>singleton(members.get(1)), members.get(0), 2);
     assertEquals(2, preferred.size());
     assertEquals(members.get(numMembers - 1), preferred.get(0));
   }
@@ -176,7 +180,8 @@ public class NetViewJUnitTest {
 
     int oldSize = view.size();
     for (int i = 0; i < 100; i++) {
-      InternalDistributedMember mbr = new InternalDistributedMember(SocketCreator.getLocalHost(), 2000 + i);
+      InternalDistributedMember mbr =
+          new InternalDistributedMember(SocketCreator.getLocalHost(), 2000 + i);
       mbr.setVmKind(DistributionManager.NORMAL_DM_TYPE);
       mbr.setVmViewId(2);
       view.add(mbr);
@@ -191,15 +196,21 @@ public class NetViewJUnitTest {
     assertEquals(100, view.getNewMembers(copy).size());
   }
 
-  /**
-   * Test that failed weight calculations are correctly performed.  See bug #47342
-   */
+  /** Test that failed weight calculations are correctly performed. See bug #47342 */
   @Test
   public void testFailedWeight() throws Exception {
     // in #47342 a new view was created that contained a member that was joining but
     // was no longer reachable.  The member was included in the failed-weight and not
     // in the previous view-weight, causing a spurious network partition to be declared
-    InternalDistributedMember members[] = new InternalDistributedMember[] { new InternalDistributedMember("localhost", 1), new InternalDistributedMember("localhost", 2), new InternalDistributedMember("localhost", 3), new InternalDistributedMember("localhost", 4), new InternalDistributedMember("localhost", 5), new InternalDistributedMember("localhost", 6) };
+    InternalDistributedMember members[] =
+        new InternalDistributedMember[] {
+          new InternalDistributedMember("localhost", 1),
+          new InternalDistributedMember("localhost", 2),
+          new InternalDistributedMember("localhost", 3),
+          new InternalDistributedMember("localhost", 4),
+          new InternalDistributedMember("localhost", 5),
+          new InternalDistributedMember("localhost", 6)
+        };
     int i = 0;
     // weight 3
     members[i].setVmKind(DistributionManager.LOCATOR_DM_TYPE);
@@ -239,7 +250,8 @@ public class NetViewJUnitTest {
     failedMembers.add(joiningMember);
     failedMembers.add(members[members.length - 1]); // cache
     failedMembers.add(members[members.length - 2]); // admin
-    List<InternalDistributedMember> newMbrs = new ArrayList<InternalDistributedMember>(lastView.getMembers());
+    List<InternalDistributedMember> newMbrs =
+        new ArrayList<InternalDistributedMember>(lastView.getMembers());
     newMbrs.removeAll(failedMembers);
     NetView newView = new NetView(members[0], 5, newMbrs, Collections.emptySet(), failedMembers);
 

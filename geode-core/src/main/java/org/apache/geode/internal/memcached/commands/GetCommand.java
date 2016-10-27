@@ -34,20 +34,17 @@ import org.apache.geode.internal.memcached.ValueWrapper;
 import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 
 /**
- * 
- * The retrieval commands "get" and "gets" operates like this:<br/>
+ * The retrieval commands "get" and "gets" operates like this:<br>
  * <code>
  * get &lt;key&gt;*\r\n<br/>
  * gets &lt;key&gt;*\r\n
  * </code>
- * <p>
- * Each item sent by the server looks like this:<br/>
+ *
+ * <p>Each item sent by the server looks like this:<br>
  * <code>
  * VALUE &lt;key&gt; &lt;flags&gt; &lt;bytes&gt; [&lt;cas unique&gt;]\r\n<br/>
  * &lt;data block&gt;\r\n
  * </code>
- * 
- *
  */
 public class GetCommand extends AbstractCommand {
 
@@ -57,19 +54,14 @@ public class GetCommand extends AbstractCommand {
   private static final ByteBuffer RN_BUF = asciiCharset.encode(RN);
   private static final ByteBuffer END_BUF = asciiCharset.encode(Reply.END.toString());
 
-  /**
-   * buffer used to compose one line of reply
-   */
+  /** buffer used to compose one line of reply */
   private static ThreadLocal<CharBuffer> lineBuffer = new ThreadLocal<CharBuffer>();
 
-  /**
-   * defaults to the default send buffer size on socket
-   */
-  private static final int REPLY_BUFFER_CAPACITY = Integer.getInteger("replyBufferCapacity", 146988);
+  /** defaults to the default send buffer size on socket */
+  private static final int REPLY_BUFFER_CAPACITY =
+      Integer.getInteger("replyBufferCapacity", 146988);
 
-  /**
-   * buffer for sending get replies, one per thread
-   */
+  /** buffer for sending get replies, one per thread */
   private static ThreadLocal<ByteBuffer> replyBuffer = new ThreadLocal<ByteBuffer>();
 
   private static final int EXTRAS_LENGTH = 4;
@@ -82,7 +74,8 @@ public class GetCommand extends AbstractCommand {
     return processBinaryCommand(request.getRequest(), request, cache, request.getResponse());
   }
 
-  protected ByteBuffer processBinaryCommand(ByteBuffer buffer, RequestReader request, Cache cache, ByteBuffer response) {
+  protected ByteBuffer processBinaryCommand(
+      ByteBuffer buffer, RequestReader request, Cache cache, ByteBuffer response) {
     Region<Object, ValueWrapper> r = getMemcachedRegion(cache);
 
     KeyWrapper key = getKey(buffer, HEADER_LENGTH);
@@ -102,7 +95,11 @@ public class GetCommand extends AbstractCommand {
       response.putShort(POSITION_RESPONSE_STATUS, ResponseStatus.KEY_NOT_FOUND.asShort());
     } else {
       byte[] realValue = val.getValue();
-      int responseLength = HEADER_LENGTH + realValue.length + EXTRAS_LENGTH + (sendKeysInResponse() ? key.getKey().length : 0);
+      int responseLength =
+          HEADER_LENGTH
+              + realValue.length
+              + EXTRAS_LENGTH
+              + (sendKeysInResponse() ? key.getKey().length : 0);
       if (response.capacity() < responseLength) {
         response = request.getResponse(responseLength);
       }
@@ -112,7 +109,9 @@ public class GetCommand extends AbstractCommand {
         response.putShort(KEY_LENGTH_INDEX, (short) key.getKey().length);
       }
       response.put(EXTRAS_LENGTH_INDEX, (byte) EXTRAS_LENGTH);
-      response.putInt(TOTAL_BODY_LENGTH_INDEX, EXTRAS_LENGTH + realValue.length + (sendKeysInResponse() ? key.getKey().length : 0));
+      response.putInt(
+          TOTAL_BODY_LENGTH_INDEX,
+          EXTRAS_LENGTH + realValue.length + (sendKeysInResponse() ? key.getKey().length : 0));
       response.putLong(POSITION_CAS, val.getVersion());
       response.position(HEADER_LENGTH);
       response.putInt(val.getFlags());
@@ -126,16 +125,12 @@ public class GetCommand extends AbstractCommand {
     return response;
   }
 
-  /**
-   * Overridden by GetQ and getKQ to not send reply on cache miss
-   */
+  /** Overridden by GetQ and getKQ to not send reply on cache miss */
   protected boolean isQuiet() {
     return false;
   }
 
-  /**
-   * Overridden by GetK command
-   */
+  /** Overridden by GetK command */
   protected boolean sendKeysInResponse() {
     return false;
   }
@@ -161,7 +156,10 @@ public class GetCommand extends AbstractCommand {
     return composeReply(results, isGets);
   }
 
-  @edu.umd.cs.findbugs.annotations.SuppressWarnings(value = "NP_NULL_PARAM_DEREF", justification = "findbugs complains that v is null while putting into buffer, but it is not")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings(
+    value = "NP_NULL_PARAM_DEREF",
+    justification = "findbugs complains that v is null while putting into buffer, but it is not"
+  )
   private ByteBuffer composeReply(Map<Object, ValueWrapper> results, boolean isGets) {
     Iterator<Entry<Object, ValueWrapper>> it = results.entrySet().iterator();
     ByteBuffer buffer = getReplyBuffer();

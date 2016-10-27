@@ -40,7 +40,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
  * Unit tests for {@link ClassPathLoader}.
- * 
+ *
  * @since GemFire 6.5.1.4
  */
 @Category(UnitTest.class)
@@ -48,8 +48,7 @@ public class ClassPathLoaderTest {
 
   private static final int GENERATED_CLASS_BYTES_COUNT = 354;
 
-  @Rule
-  public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+  @Rule public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
   @Before
   public void setUp() throws Exception {
@@ -57,8 +56,8 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that {@link ClassPathLoader#getLatest()} is always initialized and returns a <tt>ClassPathLoader</tt>
-   * instance.
+   * Verifies that {@link ClassPathLoader#getLatest()} is always initialized and returns a
+   * <tt>ClassPathLoader</tt> instance.
    */
   @Test
   public void testLatestExists() throws Exception {
@@ -68,7 +67,8 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that {@link ClassPathLoader#getLatest()} throws <tt>ClassNotFoundException</tt> when class does not exist.
+   * Verifies that {@link ClassPathLoader#getLatest()} throws <tt>ClassNotFoundException</tt> when
+   * class does not exist.
    */
   @Test
   public void testForNameThrowsClassNotFoundException() throws Exception {
@@ -97,7 +97,8 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that {@link ClassPathLoader#getLatest()} can actually <tt>getResource</tt> when it exists.
+   * Verifies that {@link ClassPathLoader#getLatest()} can actually <tt>getResource</tt> when it
+   * exists.
    */
   @Test
   public void testGetResource() throws Exception {
@@ -114,7 +115,7 @@ public class ClassPathLoaderTest {
     byte[] input = new byte[256];
 
     BufferedInputStream bis = new BufferedInputStream(is);
-    for (int bytesRead = bis.read(input); bytesRead > -1;) {
+    for (int bytesRead = bis.read(input); bytesRead > -1; ) {
       totalBytesRead += bytesRead;
       bytesRead = bis.read(input);
     }
@@ -126,7 +127,8 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that {@link ClassPathLoader#getLatest()} can actually <tt>getResources</tt> when it exists.
+   * Verifies that {@link ClassPathLoader#getLatest()} can actually <tt>getResources</tt> when it
+   * exists.
    */
   @Test
   public void testGetResources() throws Exception {
@@ -145,7 +147,7 @@ public class ClassPathLoaderTest {
     byte[] input = new byte[256];
 
     BufferedInputStream bis = new BufferedInputStream(is);
-    for (int bytesRead = bis.read(input); bytesRead > -1;) {
+    for (int bytesRead = bis.read(input); bytesRead > -1; ) {
       totalBytesRead += bytesRead;
       bytesRead = bis.read(input);
     }
@@ -157,7 +159,8 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that {@link ClassPathLoader#getLatest()} can actually <tt>getResourceAsStream</tt> when it exists.
+   * Verifies that {@link ClassPathLoader#getLatest()} can actually <tt>getResourceAsStream</tt>
+   * when it exists.
    */
   @Test
   public void testGetResourceAsStream() throws Exception {
@@ -171,7 +174,7 @@ public class ClassPathLoaderTest {
     byte[] input = new byte[256];
 
     BufferedInputStream bis = new BufferedInputStream(is);
-    for (int bytesRead = bis.read(input); bytesRead > -1;) {
+    for (int bytesRead = bis.read(input); bytesRead > -1; ) {
       totalBytesRead += bytesRead;
       bytesRead = bis.read(input);
     }
@@ -183,8 +186,9 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that the {@link GeneratingClassLoader} works and always generates the named class. This is a control which
-   * ensures that tests depending on <tt>GeneratingClassLoader</tt> are valid.
+   * Verifies that the {@link GeneratingClassLoader} works and always generates the named class.
+   * This is a control which ensures that tests depending on <tt>GeneratingClassLoader</tt> are
+   * valid.
    */
   @Test
   public void testGeneratingClassLoader() throws Exception {
@@ -215,9 +219,7 @@ public class ClassPathLoaderTest {
     assertEquals(classToLoad, objForName.getClass().getName());
   }
 
-  /**
-   * Verifies that custom loader is used to load class.
-   */
+  /** Verifies that custom loader is used to load class. */
   @Test
   public void testForNameWithCustomLoader() throws Exception {
     System.out.println("\nStarting ClassPathLoaderTest#testForNameWithCustomLoader");
@@ -235,9 +237,9 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that {@link Class#forName(String, boolean, ClassLoader)} used with {@link ClassPathLoader} works as
-   * expected with named object arrays, while {@link ClassLoader#loadClass(String)} throws ClassNotFoundException for
-   * named object arrays.
+   * Verifies that {@link Class#forName(String, boolean, ClassLoader)} used with {@link
+   * ClassPathLoader} works as expected with named object arrays, while {@link
+   * ClassLoader#loadClass(String)} throws ClassNotFoundException for named object arrays.
    */
   @Test
   public void testForNameWithObjectArray() throws Exception {
@@ -252,8 +254,8 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that TCCL finds the class when {@link Class#forName(String, boolean, ClassLoader)} uses
-   * {@link ClassPathLoader}.
+   * Verifies that TCCL finds the class when {@link Class#forName(String, boolean, ClassLoader)}
+   * uses {@link ClassPathLoader}.
    */
   @Test
   public void testForNameWithTCCL() throws Exception {
@@ -288,12 +290,11 @@ public class ClassPathLoaderTest {
     } catch (ClassNotFoundException expected) {
       // Expected
     }
-
   }
 
   /**
-   * Verifies that the {@link NullClassLoader} works and never finds the named class. This is a control which ensures
-   * that tests depending on <tt>NullClassLoader</tt> are valid.
+   * Verifies that the {@link NullClassLoader} works and never finds the named class. This is a
+   * control which ensures that tests depending on <tt>NullClassLoader</tt> are valid.
    */
   @Test
   public void testNullClassLoader() throws Exception {
@@ -319,8 +320,8 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that the {@link SimpleClassLoader} works and finds classes that the parent can find. This is a control
-   * which ensures that tests depending on <tt>SimpleClassLoader</tt> are valid.
+   * Verifies that the {@link SimpleClassLoader} works and finds classes that the parent can find.
+   * This is a control which ensures that tests depending on <tt>SimpleClassLoader</tt> are valid.
    */
   @Test
   public void testSimpleClassLoader() throws Exception {
@@ -342,8 +343,8 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that the {@link BrokenClassLoader} is broken and always throws errors. This is a control which ensures
-   * that tests depending on <tt>BrokenClassLoader</tt> are valid.
+   * Verifies that the {@link BrokenClassLoader} is broken and always throws errors. This is a
+   * control which ensures that tests depending on <tt>BrokenClassLoader</tt> are valid.
    */
   @Test
   public void testBrokenClassLoader() throws Exception {
@@ -377,10 +378,10 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that the {@link BrokenClassLoader} is broken and always throws errors even when used as a TCCL from
-   * {@link ClassPathLoader}. This is primarily a control which ensures that tests depending on
-   * <tt>BrokenClassLoader</tt> are valid, but it also verifies that TCCL is included by default by
-   * <tt>ClassPathLoader</tt>.
+   * Verifies that the {@link BrokenClassLoader} is broken and always throws errors even when used
+   * as a TCCL from {@link ClassPathLoader}. This is primarily a control which ensures that tests
+   * depending on <tt>BrokenClassLoader</tt> are valid, but it also verifies that TCCL is included
+   * by default by <tt>ClassPathLoader</tt>.
    */
   @Test
   public void testBrokenTCCLThrowsErrors() throws Exception {
@@ -424,8 +425,8 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that the class classloader or system classloader will find the class or resource. Parent is a
-   * {@link NullClassLoader} while the TCCL is an excluded {@link BrokenClassLoader}.
+   * Verifies that the class classloader or system classloader will find the class or resource.
+   * Parent is a {@link NullClassLoader} while the TCCL is an excluded {@link BrokenClassLoader}.
    */
   @Test
   public void testEverythingWithDefaultLoader() throws Exception {
@@ -455,8 +456,9 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that the 3rd custom loader will find the class. Parent cannot find it and TCCL is broken. This verifies
-   * that all custom loaders are checked and that the custom loaders are all checked before TCCL.
+   * Verifies that the 3rd custom loader will find the class. Parent cannot find it and TCCL is
+   * broken. This verifies that all custom loaders are checked and that the custom loaders are all
+   * checked before TCCL.
    */
   @Test
   public void testForNameWithMultipleCustomLoaders() throws Exception {
@@ -480,8 +482,13 @@ public class ClassPathLoaderTest {
       Class<?> clazz = dcl.forName(classToLoad);
       assertNotNull(clazz);
       assertEquals(classToLoad, clazz.getName());
-      assertTrue("Class not loaded by a GeneratingClassLoader.", clazz.getClassLoader() instanceof GeneratingClassLoader);
-      assertEquals("Class not loaded by generatingClassLoader.", generatingClassLoader, clazz.getClassLoader());
+      assertTrue(
+          "Class not loaded by a GeneratingClassLoader.",
+          clazz.getClassLoader() instanceof GeneratingClassLoader);
+      assertEquals(
+          "Class not loaded by generatingClassLoader.",
+          generatingClassLoader,
+          clazz.getClassLoader());
 
       Object obj = clazz.newInstance();
       assertEquals(classToLoad, obj.getClass().getName());
@@ -491,7 +498,8 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that setting <tt>excludeThreadContextClassLoader</tt> to true will indeed exclude the TCCL.
+   * Verifies that setting <tt>excludeThreadContextClassLoader</tt> to true will indeed exclude the
+   * TCCL.
    */
   @Test
   public void testExcludeTCCL() throws Exception {
@@ -519,11 +527,11 @@ public class ClassPathLoaderTest {
     } finally {
       Thread.currentThread().setContextClassLoader(cl);
     }
-
   }
 
   /**
-   * Verifies that <tt>getResource</tt> will skip TCCL if <tt>excludeThreadContextClassLoader</tt> has been set to true.
+   * Verifies that <tt>getResource</tt> will skip TCCL if <tt>excludeThreadContextClassLoader</tt>
+   * has been set to true.
    */
   @Test
   public void testGetResourceExcludeTCCL() throws Exception {
@@ -545,8 +553,8 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Verifies that <tt>getResourceAsStream</tt> will skip TCCL if <tt>excludeThreadContextClassLoader</tt> has been set
-   * to true.
+   * Verifies that <tt>getResourceAsStream</tt> will skip TCCL if
+   * <tt>excludeThreadContextClassLoader</tt> has been set to true.
    */
   @Test
   public void testGetResourceAsStreamExcludeTCCL() throws Exception {
@@ -588,9 +596,7 @@ public class ClassPathLoaderTest {
     }
   }
 
-  /**
-   * Verifies removing a ClassLoader.
-   */
+  /** Verifies removing a ClassLoader. */
   @Test
   public void testRemoveClassLoader() throws Exception {
     System.out.println("\nStarting ClassPathLoaderTest#testRemoveClassLoader");
@@ -613,9 +619,7 @@ public class ClassPathLoaderTest {
     }
   }
 
-  /**
-   * Verifies that a ClassLoader will be replaced when added more than once.
-   */
+  /** Verifies that a ClassLoader will be replaced when added more than once. */
   @Test
   public void testClassLoaderReplace() throws Exception {
     System.out.println("\nStarting ClassPathLoaderTest#testClassLoaderReplace");
@@ -660,7 +664,8 @@ public class ClassPathLoaderTest {
 
   @Test
   public void testAsClassLoaderLoadClassWithMultipleCustomLoaders() throws Exception {
-    System.out.println("\nStarting ClassPathLoaderTest#testAsClassLoaderLoadClassWithMultipleCustomLoaders");
+    System.out.println(
+        "\nStarting ClassPathLoaderTest#testAsClassLoaderLoadClassWithMultipleCustomLoaders");
 
     // create DCL such that the 3rd loader should find the class
     // first custom loader becomes parent which won't find anything
@@ -724,8 +729,7 @@ public class ClassPathLoaderTest {
       URL[] urls = ((URLClassLoader) cl).getURLs();
       StringBuilder sb = new StringBuilder(prefix).append("ClassLoader getURLs = [");
       for (int i = 0; i < urls.length; i++) {
-        if (i > 0)
-          sb.append(", ");
+        if (i > 0) sb.append(", ");
         sb.append(urls[i].toString());
       }
       sb.append("]");
@@ -744,14 +748,13 @@ public class ClassPathLoaderTest {
   private static void exploreClassLoaderSuperClass(String prefix, Class<?> clazz) {
     Class<?> superClazz = clazz.getSuperclass();
     if (superClazz != null) {
-      System.out.println(prefix + "                       getSuperclass().getName() = " + superClazz.getName());
+      System.out.println(
+          prefix + "                       getSuperclass().getName() = " + superClazz.getName());
       exploreClassLoaderSuperClass(prefix, superClazz);
     }
   }
 
-  /**
-   * Custom class loader which will never find any class or resource.
-   */
+  /** Custom class loader which will never find any class or resource. */
   static class NullClassLoader extends ClassLoader {
     public NullClassLoader() {
       super(null); // no parent!!
@@ -768,18 +771,14 @@ public class ClassPathLoaderTest {
     }
   }
 
-  /**
-   * Custom class loader which will find anything the parent can find.
-   */
+  /** Custom class loader which will find anything the parent can find. */
   static class SimpleClassLoader extends ClassLoader {
     public SimpleClassLoader(ClassLoader parent) {
       super(parent);
     }
   }
 
-  /**
-   * Custom class loader which is broken and always throws errors.
-   */
+  /** Custom class loader which is broken and always throws errors. */
   static class BrokenClassLoader extends ClassLoader {
     public BrokenClassLoader() {
       super(null); // no parent!!
@@ -797,32 +796,36 @@ public class ClassPathLoaderTest {
   }
 
   /**
-   * Custom class loader which uses BCEL to always dynamically generate a class for any class name it tries to load.
+   * Custom class loader which uses BCEL to always dynamically generate a class for any class name
+   * it tries to load.
    */
   static class GeneratingClassLoader extends ClassLoader {
 
     /**
-     * Currently unused but potentially useful for some future test. This causes this loader to only generate a class
-     * that the parent could not find.
+     * Currently unused but potentially useful for some future test. This causes this loader to only
+     * generate a class that the parent could not find.
      *
-     * @param parent
-     *          the parent class loader to check with first
+     * @param parent the parent class loader to check with first
      */
     @SuppressWarnings("unused")
     public GeneratingClassLoader(ClassLoader parent) {
       super(parent);
     }
 
-    /**
-     * Specifies no parent to ensure that this loader generates the named class.
-     */
+    /** Specifies no parent to ensure that this loader generates the named class. */
     public GeneratingClassLoader() {
       super(null); // no parent!!
     }
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-      ClassGen cg = new ClassGen(name, "java.lang.Object", "<generated>", Constants.ACC_PUBLIC | Constants.ACC_SUPER, null);
+      ClassGen cg =
+          new ClassGen(
+              name,
+              "java.lang.Object",
+              "<generated>",
+              Constants.ACC_PUBLIC | Constants.ACC_SUPER,
+              null);
       cg.addEmptyConstructor(Constants.ACC_PUBLIC);
       JavaClass jClazz = cg.getJavaClass();
       byte[] bytes = jClazz.getBytes();
@@ -884,6 +887,5 @@ public class ClassPathLoaderTest {
   }
 
   @SuppressWarnings("serial")
-  static class BrokenError extends Error {
-  }
+  static class BrokenError extends Error {}
 }

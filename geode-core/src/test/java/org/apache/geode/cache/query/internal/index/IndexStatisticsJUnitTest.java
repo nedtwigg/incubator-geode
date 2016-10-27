@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal.index;
 
 import static org.junit.Assert.assertEquals;
@@ -45,9 +43,7 @@ import org.apache.geode.cache.query.internal.QueryObserverAdapter;
 import org.apache.geode.cache.query.internal.QueryObserverHolder;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class IndexStatisticsJUnitTest {
 
@@ -88,11 +84,18 @@ public class IndexStatisticsJUnitTest {
   }*/
   /**
    * Test RenageIndex IndexStatistics for keys, values, updates and uses.
+   *
    * @throws Exception
    */
   @Test
   public void testStatsForRangeIndex() throws Exception {
-    keyIndex1 = (IndexProtocol) qs.createIndex("multiKeyIndex1", IndexType.FUNCTIONAL, "pos.secId", "/portfolio p, p.positions.values pos");
+    keyIndex1 =
+        (IndexProtocol)
+            qs.createIndex(
+                "multiKeyIndex1",
+                IndexType.FUNCTIONAL,
+                "pos.secId",
+                "/portfolio p, p.positions.values pos");
 
     assertTrue(keyIndex1 instanceof RangeIndex);
 
@@ -155,7 +158,13 @@ public class IndexStatisticsJUnitTest {
   @Test
   public void testStatsForRangeIndexAfterRecreate() throws Exception {
 
-    keyIndex2 = (IndexProtocol) qs.createIndex("multiKeyIndex2", IndexType.FUNCTIONAL, "pos.secId", "/portfolio p, p.positions.values pos");
+    keyIndex2 =
+        (IndexProtocol)
+            qs.createIndex(
+                "multiKeyIndex2",
+                IndexType.FUNCTIONAL,
+                "pos.secId",
+                "/portfolio p, p.positions.values pos");
 
     assertTrue(keyIndex2 instanceof RangeIndex);
 
@@ -208,12 +217,14 @@ public class IndexStatisticsJUnitTest {
 
   /**
    * Test CompactRenageIndex IndexStatistics for keys, values, updates and uses.
+   *
    * @throws Exception
    */
   @Test
   public void testStatsForCompactRangeIndex() throws Exception {
 
-    keyIndex2 = (IndexProtocol) qs.createIndex("multiKeyIndex2", IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex2 =
+        (IndexProtocol) qs.createIndex("multiKeyIndex2", IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex2 instanceof CompactRangeIndex);
 
@@ -275,7 +286,8 @@ public class IndexStatisticsJUnitTest {
   @Test
   public void testStatsForCompactRangeIndexAfterRecreate() throws Exception {
 
-    keyIndex2 = (IndexProtocol) qs.createIndex("multiKeyIndex2", IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex2 =
+        (IndexProtocol) qs.createIndex("multiKeyIndex2", IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex2 instanceof CompactRangeIndex);
 
@@ -328,14 +340,22 @@ public class IndexStatisticsJUnitTest {
 
   /**
    * Test CompactMapRenageIndex IndexStatistics for keys, values, updates and uses.
+   *
    * @throws Exception
    */
   @Test
   public void testStatsForCompactMapRangeIndex() throws Exception {
-    keyIndex3 = (IndexProtocol) qs.createIndex("multiKeyIndex3", IndexType.FUNCTIONAL, "positions['DELL', 'YHOO']", "/portfolio p");
+    keyIndex3 =
+        (IndexProtocol)
+            qs.createIndex(
+                "multiKeyIndex3",
+                IndexType.FUNCTIONAL,
+                "positions['DELL', 'YHOO']",
+                "/portfolio p");
     assertTrue(keyIndex3 instanceof CompactMapRangeIndex);
 
-    Object[] indexes = ((CompactMapRangeIndex) keyIndex3).getRangeIndexHolderForTesting().values().toArray();
+    Object[] indexes =
+        ((CompactMapRangeIndex) keyIndex3).getRangeIndexHolderForTesting().values().toArray();
     assertTrue(indexes[0] instanceof CompactRangeIndex);
     assertTrue(indexes[1] instanceof CompactRangeIndex);
 
@@ -356,7 +376,8 @@ public class IndexStatisticsJUnitTest {
     assertEquals(100, keyIndexStats.getNumberOfValues());
     assertEquals(200, keyIndexStats.getNumUpdates());
 
-    String queryStr = "select * from /portfolio where positions['DELL'] != NULL OR positions['YHOO'] != NULL";
+    String queryStr =
+        "select * from /portfolio where positions['DELL'] != NULL OR positions['YHOO'] != NULL";
     Query query = qs.newQuery(queryStr);
 
     for (int i = 0; i < 50; i++) {
@@ -400,16 +421,21 @@ public class IndexStatisticsJUnitTest {
 
   /**
    * Test MapRenageIndex IndexStatistics for keys, values, updates and uses.
+   *
    * @throws Exception
    */
   @Test
   public void testStatsForMapRangeIndex() throws Exception {
     IndexManager.TEST_RANGEINDEX_ONLY = true;
-    keyIndex3 = (IndexProtocol) qs.createIndex("multiKeyIndex3", IndexType.FUNCTIONAL, "positions['DELL', 'YHOO']", "/portfolio");
+    keyIndex3 =
+        (IndexProtocol)
+            qs.createIndex(
+                "multiKeyIndex3", IndexType.FUNCTIONAL, "positions['DELL', 'YHOO']", "/portfolio");
 
     assertTrue(keyIndex3 instanceof MapRangeIndex);
 
-    Object[] indexes = ((MapRangeIndex) keyIndex3).getRangeIndexHolderForTesting().values().toArray();
+    Object[] indexes =
+        ((MapRangeIndex) keyIndex3).getRangeIndexHolderForTesting().values().toArray();
     assertTrue(indexes[0] instanceof RangeIndex);
     assertTrue(indexes[1] instanceof RangeIndex);
 
@@ -429,7 +455,8 @@ public class IndexStatisticsJUnitTest {
     assertEquals(100, mapIndexStats.getNumberOfKeys());
     assertEquals(100, mapIndexStats.getNumberOfValues());
     assertEquals(200, mapIndexStats.getNumUpdates());
-    String queryStr = "select * from /portfolio where positions['DELL'] != NULL OR positions['YHOO'] != NULL";
+    String queryStr =
+        "select * from /portfolio where positions['DELL'] != NULL OR positions['YHOO'] != NULL";
     Query query = qs.newQuery(queryStr);
 
     for (int i = 0; i < 50; i++) {
@@ -472,6 +499,7 @@ public class IndexStatisticsJUnitTest {
 
   /**
    * Test RenageIndex IndexStatistics for keys, values, updates and uses.
+   *
    * @throws Exception
    */
   @Test
@@ -481,7 +509,13 @@ public class IndexStatisticsJUnitTest {
     assertEquals(0, region.size());
     Position.cnt = 0;
 
-    keyIndex1 = (IndexProtocol) qs.createIndex("multiKeyIndex4", IndexType.FUNCTIONAL, "pos.secId", "/portfolio p, p.positions.values pos");
+    keyIndex1 =
+        (IndexProtocol)
+            qs.createIndex(
+                "multiKeyIndex4",
+                IndexType.FUNCTIONAL,
+                "pos.secId",
+                "/portfolio p, p.positions.values pos");
 
     //Recreate all entries in the region
     for (int i = 0; i < 100; i++) {
@@ -547,6 +581,7 @@ public class IndexStatisticsJUnitTest {
 
   /**
    * Test CompactRenageIndex IndexStatistics for keys, values, updates and uses.
+   *
    * @throws Exception
    */
   @Test
@@ -556,7 +591,8 @@ public class IndexStatisticsJUnitTest {
     assertEquals(0, region.size());
     Position.cnt = 0;
 
-    keyIndex2 = (IndexProtocol) qs.createIndex("multiKeyIndex5", IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex2 =
+        (IndexProtocol) qs.createIndex("multiKeyIndex5", IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     //Recreate all entries in the region
     for (int i = 0; i < 100; i++) {
@@ -621,6 +657,7 @@ public class IndexStatisticsJUnitTest {
 
   /**
    * Test MapRenageIndex IndexStatistics for keys, values, updates and uses.
+   *
    * @throws Exception
    */
   @Test
@@ -631,8 +668,12 @@ public class IndexStatisticsJUnitTest {
     assertEquals(0, region.size());
     Position.cnt = 0;
 
-    keyIndex3 = (IndexProtocol) qs.createIndex("multiKeyIndex6", IndexType.FUNCTIONAL, "positions['DELL', 'YHOO']", "/portfolio");
-    Object[] indexes = ((MapRangeIndex) keyIndex3).getRangeIndexHolderForTesting().values().toArray();
+    keyIndex3 =
+        (IndexProtocol)
+            qs.createIndex(
+                "multiKeyIndex6", IndexType.FUNCTIONAL, "positions['DELL', 'YHOO']", "/portfolio");
+    Object[] indexes =
+        ((MapRangeIndex) keyIndex3).getRangeIndexHolderForTesting().values().toArray();
     assertEquals(indexes.length, 0);
 
     //Recreate all entries in the region
@@ -662,7 +703,8 @@ public class IndexStatisticsJUnitTest {
     assertEquals(100, mapIndexStats.getNumberOfValues());
     assertEquals(200, mapIndexStats.getNumUpdates());
 
-    String queryStr = "select * from /portfolio where positions['DELL'] != NULL OR positions['YHOO'] != NULL";
+    String queryStr =
+        "select * from /portfolio where positions['DELL'] != NULL OR positions['YHOO'] != NULL";
     Query query = qs.newQuery(queryStr);
 
     for (int i = 0; i < 50; i++) {
@@ -796,7 +838,10 @@ public class IndexStatisticsJUnitTest {
     SelectResults sr = (SelectResults) q.execute();
 
     assertEquals("Read locks should have been taken by the query ", 1, observer.readLockCount);
-    assertEquals("Read lock count should have been released by the query ", 0, statusIndex.getStatistics().getReadLockCount());
+    assertEquals(
+        "Read lock count should have been released by the query ",
+        0,
+        statusIndex.getStatistics().getReadLockCount());
 
     QueryObserverHolder.setInstance(old);
     qs.removeIndexes();
@@ -820,13 +865,17 @@ public class IndexStatisticsJUnitTest {
       r1.put("key-" + i, new Portfolio(i));
     }
 
-    String query = "select distinct * from " + name + " p, p.positions.values pos where pos.secId = 'IBM' ";
+    String query =
+        "select distinct * from " + name + " p, p.positions.values pos where pos.secId = 'IBM' ";
 
     final Query q = cache.getQueryService().newQuery(query);
     SelectResults sr = (SelectResults) q.execute();
 
     assertEquals("Read locks should have been taken by the query ", 1, observer.readLockCount);
-    assertEquals("Read lock count should have been released by the query ", 0, secIdIndex.getStatistics().getReadLockCount());
+    assertEquals(
+        "Read lock count should have been released by the query ",
+        0,
+        secIdIndex.getStatistics().getReadLockCount());
 
     QueryObserverHolder.setInstance(old);
     qs.removeIndexes();

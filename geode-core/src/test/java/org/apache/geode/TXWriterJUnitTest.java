@@ -39,21 +39,22 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 public class TXWriterJUnitTest extends TXWriterTestCase {
 
   /**
-   *  make sure standard Cache(Listener,Writer)
-   *  are not called during rollback due to transaction writer throw
+   * make sure standard Cache(Listener,Writer) are not called during rollback due to transaction
+   * writer throw
    */
   @Test
   public void testNoCallbacksOnTransactionWriterThrow() throws Exception {
     installCacheListenerAndWriter();
 
-    ((CacheTransactionManager) this.txMgr).setWriter(new TransactionWriter() {
-      public void beforeCommit(TransactionEvent event) throws TransactionWriterException {
-        throw new TransactionWriterException("Rollback now!");
-      }
+    ((CacheTransactionManager) this.txMgr)
+        .setWriter(
+            new TransactionWriter() {
+              public void beforeCommit(TransactionEvent event) throws TransactionWriterException {
+                throw new TransactionWriterException("Rollback now!");
+              }
 
-      public void close() {
-      }
-    });
+              public void close() {}
+            });
 
     installTransactionListener();
 
@@ -144,21 +145,22 @@ public class TXWriterJUnitTest extends TXWriterTestCase {
   }
 
   /**
-   * make sure standard Cache(Listener,Writer)
-   * are not called during rollback due to transaction writer throw
+   * make sure standard Cache(Listener,Writer) are not called during rollback due to transaction
+   * writer throw
    */
   @Test
   public void testAfterCommitFailedOnTransactionWriterThrow() throws Exception {
     installCacheListenerAndWriter();
 
-    ((CacheTransactionManager) this.txMgr).setWriter(new TransactionWriter() {
-      public void beforeCommit(TransactionEvent event) throws TransactionWriterException {
-        throw new TransactionWriterException("Rollback now!");
-      }
+    ((CacheTransactionManager) this.txMgr)
+        .setWriter(
+            new TransactionWriter() {
+              public void beforeCommit(TransactionEvent event) throws TransactionWriterException {
+                throw new TransactionWriterException("Rollback now!");
+              }
 
-      public void close() {
-      }
-    });
+              public void close() {}
+            });
 
     installTransactionListener();
 
@@ -179,25 +181,27 @@ public class TXWriterJUnitTest extends TXWriterTestCase {
   }
 
   /**
-   * make sure standard Cache(Listener,Writer)
-   * are not called during rollback due to transaction writer throw
+   * make sure standard Cache(Listener,Writer) are not called during rollback due to transaction
+   * writer throw
    */
   @Test
   public void testAfterCommitFailedOnTransactionWriterThrowWithJTA() throws Exception {
     installCacheListenerAndWriter();
 
-    ((CacheTransactionManager) this.txMgr).setWriter(new TransactionWriter() {
-      public void beforeCommit(TransactionEvent event) throws TransactionWriterException {
-        throw new TransactionWriterException("Rollback now!");
-      }
+    ((CacheTransactionManager) this.txMgr)
+        .setWriter(
+            new TransactionWriter() {
+              public void beforeCommit(TransactionEvent event) throws TransactionWriterException {
+                throw new TransactionWriterException("Rollback now!");
+              }
 
-      public void close() {
-      }
-    });
+              public void close() {}
+            });
 
     installTransactionListener();
 
-    UserTransaction userTx = (UserTransaction) this.cache.getJNDIContext().lookup("java:/UserTransaction");
+    UserTransaction userTx =
+        (UserTransaction) this.cache.getJNDIContext().lookup("java:/UserTransaction");
 
     userTx.begin();
     this.region.create("key1", "value1");
@@ -207,7 +211,9 @@ public class TXWriterJUnitTest extends TXWriterTestCase {
       fail("Commit should have thrown RollbackException");
     } catch (RollbackException expected) {
       assertNotNull(expected.getCause());
-      assertTrue(expected.getCause() + " is not a SynchronizationCommitConflictException", expected.getCause() instanceof SynchronizationCommitConflictException);
+      assertTrue(
+          expected.getCause() + " is not a SynchronizationCommitConflictException",
+          expected.getCause() instanceof SynchronizationCommitConflictException);
     }
     assertEquals(0, this.cbCount);
     assertEquals(1, this.failedCommits);
@@ -219,14 +225,15 @@ public class TXWriterJUnitTest extends TXWriterTestCase {
   public void testAfterCommitFailedOnThrowNPE() throws Exception {
     installCacheListenerAndWriter();
 
-    ((CacheTransactionManager) this.txMgr).setWriter(new TransactionWriter() {
-      public void beforeCommit(TransactionEvent event) throws TransactionWriterException {
-        throw new NullPointerException("this is expected!");
-      }
+    ((CacheTransactionManager) this.txMgr)
+        .setWriter(
+            new TransactionWriter() {
+              public void beforeCommit(TransactionEvent event) throws TransactionWriterException {
+                throw new NullPointerException("this is expected!");
+              }
 
-      public void close() {
-      }
-    });
+              public void close() {}
+            });
 
     installTransactionListener();
 

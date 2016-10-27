@@ -26,12 +26,12 @@ import org.apache.geode.internal.cache.partitioned.PersistentPartitionedRegionWi
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Same tests as that of
- * {@link PersistentPartitionedRegionWithTransactionDUnitTest} after setting
+ * Same tests as that of {@link PersistentPartitionedRegionWithTransactionDUnitTest} after setting
  * "distributed-transactions" property to true
  */
 @Category(DistributedTest.class)
-public class PersistentPartitionedRegionWithDistTXDUnitTest extends PersistentPartitionedRegionWithTransactionDUnitTest {
+public class PersistentPartitionedRegionWithDistTXDUnitTest
+    extends PersistentPartitionedRegionWithTransactionDUnitTest {
 
   @Override
   public Properties getDistributedSystemProperties() {

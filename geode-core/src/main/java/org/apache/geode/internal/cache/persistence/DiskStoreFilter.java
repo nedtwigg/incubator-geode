@@ -33,7 +33,9 @@ public class DiskStoreFilter implements FilenameFilter {
 
   private boolean selected(String fileName) {
     if (this.includeKRF) {
-      return (fileName.endsWith(Oplog.CRF_FILE_EXT) || fileName.endsWith(Oplog.KRF_FILE_EXT) || fileName.endsWith(Oplog.DRF_FILE_EXT));
+      return (fileName.endsWith(Oplog.CRF_FILE_EXT)
+          || fileName.endsWith(Oplog.KRF_FILE_EXT)
+          || fileName.endsWith(Oplog.DRF_FILE_EXT));
 
     } else {
       return (fileName.endsWith(Oplog.CRF_FILE_EXT) || fileName.endsWith(Oplog.DRF_FILE_EXT));

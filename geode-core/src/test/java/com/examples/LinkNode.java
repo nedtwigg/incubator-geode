@@ -17,10 +17,8 @@
 package com.examples;
 
 /**
- * A node in a linked list that is used to test that serializing
- * non-<code>Serializable</code> objects handle back references
- * correctly. 
- *
+ * A node in a linked list that is used to test that serializing non-<code>Serializable</code>
+ * objects handle back references correctly.
  *
  * @since GemFire 3.5
  */
@@ -35,17 +33,14 @@ public class LinkNode {
   /** The next node in the chain */
   public LinkNode next;
 
-  /**
-   * Creates a new <code>LinkNode</code> with the given value
-   */
+  /** Creates a new <code>LinkNode</code> with the given value */
   public LinkNode(int value) {
     this.value = value;
   }
 
   /**
-   * Two <code>LinkNode</code>s are equal if they have the same
-   * <code>value</code> and their <code>next</code> node have the same
-   * value.
+   * Two <code>LinkNode</code>s are equal if they have the same <code>value</code> and their <code>
+   * next</code> node have the same value.
    */
   public boolean equals(Object o) {
     if (!(o instanceof LinkNode)) {
@@ -71,7 +66,5 @@ public class LinkNode {
     } else {
       return other.object == null;
     }
-
   }
-
 }

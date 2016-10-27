@@ -26,19 +26,14 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * This listener is added to the cache when a node becomes Managing node. It
- * then starts to listen on various membership events to take steps accordingly
- * 
- * 
+ * This listener is added to the cache when a node becomes Managing node. It then starts to listen
+ * on various membership events to take steps accordingly
  */
-
 public class ManagementMembershipListener implements MembershipListener {
 
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * Resource Manager
-   */
+  /** Resource Manager */
   private SystemManagementService service;
 
   public ManagementMembershipListener(SystemManagementService service) {
@@ -76,7 +71,8 @@ public class ManagementMembershipListener implements MembershipListener {
   }
 
   @Override
-  public void memberSuspect(InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
+  public void memberSuspect(
+      InternalDistributedMember id, InternalDistributedMember whoSuspected, String reason) {
 
     if (logger.isDebugEnabled()) {
       logger.debug("ManagementMembershipListener member suspected .. {}", id.getId());
@@ -89,6 +85,6 @@ public class ManagementMembershipListener implements MembershipListener {
     }
   }
 
-  public void quorumLost(Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {
-  }
+  public void quorumLost(
+      Set<InternalDistributedMember> failures, List<InternalDistributedMember> remaining) {}
 }

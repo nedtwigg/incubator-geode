@@ -26,19 +26,18 @@ import org.apache.geode.internal.InternalDataSerializer;
 public class RVVExceptionB extends RVVException {
 
   /**
-   * received represents individual received versions that fall within this
-   * exception.  position 0 corresponds to version receivedBaseVersion.
+   * received represents individual received versions that fall within this exception. position 0
+   * corresponds to version receivedBaseVersion.
    */
   BitSet received;
+
   private long receivedBaseVersion;
 
   public RVVExceptionB(long previousVersion, long nextVersion) {
     super(previousVersion, nextVersion);
   }
 
-  /**
-   * add a received version
-   */
+  /** add a received version */
   public void add(long receivedVersion) {
     //    String me = this.toString();
     //    long oldv = this.nextVersion;
@@ -65,7 +64,8 @@ public class RVVExceptionB extends RVVException {
   protected void addReceived(long rv) {
     if (this.received == null) {
       this.receivedBaseVersion = this.previousVersion + 1;
-      if (this.nextVersion > this.previousVersion) { // next version not known during deserialization
+      if (this.nextVersion
+          > this.previousVersion) { // next version not known during deserialization
         long size = this.nextVersion - this.previousVersion;
         this.received = new BitSet((int) size);
       } else {
@@ -79,8 +79,7 @@ public class RVVExceptionB extends RVVException {
   }
 
   /**
-   * checks to see if any of the received versions can be merged into the
-   * start/end version numbers
+   * checks to see if any of the received versions can be merged into the start/end version numbers
    */
   private void consumeReceivedVersions() {
     int idx = (int) (this.previousVersion - this.receivedBaseVersion + 1);
@@ -128,7 +127,7 @@ public class RVVExceptionB extends RVVException {
 
     //TODO - it would be better just to serialize the longs[] in the BitSet
     //as is, rather than go through this delta encoding.
-    for (ReceivedVersionsIterator it = receivedVersionsIterator(); it.hasNext();) {
+    for (ReceivedVersionsIterator it = receivedVersionsIterator(); it.hasNext(); ) {
       Long version = it.next();
       long delta = version.longValue() - last;
       if (deltas == null) {
@@ -163,7 +162,9 @@ public class RVVExceptionB extends RVVException {
       int i = this.received.nextSetBit((int) (this.previousVersion - this.receivedBaseVersion + 1));
       if (i >= 0) {
         sb.append(i);
-        for (i = this.received.nextSetBit(i + 1); (0 < i) && (i < lastBit); i = this.received.nextSetBit(i + 1)) {
+        for (i = this.received.nextSetBit(i + 1);
+            (0 < i) && (i < lastBit);
+            i = this.received.nextSetBit(i + 1)) {
           sb.append(',').append(i);
         }
       }
@@ -184,11 +185,10 @@ public class RVVExceptionB extends RVVException {
   //    return result;
   //  }
 
-  /** For test purposes only. This
-   * isn't quite accurate, because I think two
-   * RVVs that have effectively same exceptions
-   * may represent the exceptions differently. This
-   * method is testing for an exact match of exception format.
+  /**
+   * For test purposes only. This isn't quite accurate, because I think two RVVs that have
+   * effectively same exceptions may represent the exceptions differently. This method is testing
+   * for an exact match of exception format.
    */
   @Override
   public boolean sameAs(RVVException ex) {
@@ -203,8 +203,7 @@ public class RVVExceptionB extends RVVException {
       if (other.received != null && !other.received.isEmpty()) {
         return false;
       }
-    } else if (!this.received.equals(other.received))
-      return false;
+    } else if (!this.received.equals(other.received)) return false;
     return true;
   }
 
@@ -237,7 +236,6 @@ public class RVVExceptionB extends RVVException {
       //received version
       return receivedBaseVersion + received.length() - 1;
     }
-
   }
 
   /** it's a shame that BitSet has no iterator */
@@ -283,6 +281,5 @@ public class RVVExceptionB extends RVVException {
         this.nextIndex = -1;
       }
     }
-
   }
 }

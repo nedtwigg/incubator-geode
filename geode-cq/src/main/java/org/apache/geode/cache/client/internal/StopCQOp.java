@@ -24,12 +24,14 @@ import org.apache.geode.internal.cache.tier.MessageType;
 
 /**
  * Does a region query on a server
+ *
  * @since GemFire 5.7
  */
 public class StopCQOp {
   /**
-   * Stop a continuous query on the server using connections from the given pool
-   * to communicate with the server.
+   * Stop a continuous query on the server using connections from the given pool to communicate with
+   * the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param cqName name of the CQ to stop
    */
@@ -43,9 +45,7 @@ public class StopCQOp {
   }
 
   private static class StopCQOpImpl extends CreateCQOpImpl {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public StopCQOpImpl(String cqName) {
       super(MessageType.STOPCQ_MSG_TYPE, 1);
       getMessage().addStringPart(cqName);

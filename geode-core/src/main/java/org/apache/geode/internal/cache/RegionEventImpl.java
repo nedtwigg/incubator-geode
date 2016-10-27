@@ -35,13 +35,10 @@ import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.distributed.DistributedSystem;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
-/**
- * Implementation of a region event
- * 
- *  
- */
+/** Implementation of a region event */
 // must be public for DataSerializable to work
-public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneable, DataSerializableFixedID {
+public class RegionEventImpl
+    implements RegionEvent, InternalCacheEvent, Cloneable, DataSerializableFixedID {
 
   transient LocalRegion region;
 
@@ -70,18 +67,29 @@ public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneab
 
   /**
    * Constructor which does not generate EventID
-   * 
+   *
    * @param region
    * @param op
    * @param callbackArgument
    * @param originRemote
    * @param distributedMember
    */
-  public RegionEventImpl(Region region, Operation op, Object callbackArgument, boolean originRemote, DistributedMember distributedMember) {
+  public RegionEventImpl(
+      Region region,
+      Operation op,
+      Object callbackArgument,
+      boolean originRemote,
+      DistributedMember distributedMember) {
     this(region, op, callbackArgument, originRemote, distributedMember, false);
   }
 
-  public RegionEventImpl(Region region, Operation op, Object callbackArgument, boolean originRemote, DistributedMember distributedMember, boolean generateEventID) {
+  public RegionEventImpl(
+      Region region,
+      Operation op,
+      Object callbackArgument,
+      boolean originRemote,
+      DistributedMember distributedMember,
+      boolean generateEventID) {
     this.region = (LocalRegion) region;
     this.regionPath = region.getFullPath();
     this.op = op;
@@ -96,16 +104,21 @@ public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneab
 
   /**
    * Constructor which uses the eventID passed
-   * 
+   *
    * @param region
    * @param op
    * @param callbackArgument
    * @param originRemote
    * @param distributedMember
-   * @param eventID
-   *          EventID used to create the RegionEvent
+   * @param eventID EventID used to create the RegionEvent
    */
-  public RegionEventImpl(Region region, Operation op, Object callbackArgument, boolean originRemote, DistributedMember distributedMember, EventID eventID) {
+  public RegionEventImpl(
+      Region region,
+      Operation op,
+      Object callbackArgument,
+      boolean originRemote,
+      DistributedMember distributedMember,
+      EventID eventID) {
     this.region = (LocalRegion) region;
     this.regionPath = region.getFullPath();
     this.op = op;
@@ -119,7 +132,7 @@ public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneab
 
   /**
    * (non-Javadoc)
-   * 
+   *
    * @see org.apache.geode.cache.CacheEvent#getRegion()
    */
   public Region getRegion() {
@@ -142,9 +155,7 @@ public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneab
     return this.versionTag;
   }
 
-  /**
-   * @see org.apache.geode.cache.CacheEvent#getCallbackArgument()
-   */
+  /** @see org.apache.geode.cache.CacheEvent#getCallbackArgument() */
   public Object getCallbackArgument() {
     Object result = this.callbackArgument;
     while (result instanceof WrappedCallbackArgument) {
@@ -162,18 +173,16 @@ public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneab
   }
 
   /**
-   * Returns the value of the RegionEventImpl field.
-   * This is for internal use only. Customers should always call
-   * {@link #getCallbackArgument}
+   * Returns the value of the RegionEventImpl field. This is for internal use only. Customers should
+   * always call {@link #getCallbackArgument}
+   *
    * @since GemFire 5.7
    */
   public Object getRawCallbackArgument() {
     return this.callbackArgument;
   }
 
-  /**
-   * @see org.apache.geode.cache.CacheEvent#isOriginRemote()
-   */
+  /** @see org.apache.geode.cache.CacheEvent#isOriginRemote() */
   public boolean isOriginRemote() {
     return originRemote;
   }
@@ -186,16 +195,12 @@ public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneab
     return true;
   }
 
-  /**
-   * @see org.apache.geode.cache.CacheEvent#isExpiration()
-   */
+  /** @see org.apache.geode.cache.CacheEvent#isExpiration() */
   public boolean isExpiration() {
     return this.op.isExpiration();
   }
 
-  /**
-   * @see org.apache.geode.cache.CacheEvent#isDistributed()
-   */
+  /** @see org.apache.geode.cache.CacheEvent#isDistributed() */
   public boolean isDistributed() {
     return this.op.isDistributed();
   }
@@ -213,9 +218,7 @@ public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneab
     return REGION_EVENT;
   }
 
-  /**
-   * Writes the contents of this message to the given output.
-   */
+  /** Writes the contents of this message to the given output. */
   public void toData(DataOutput out) throws IOException {
     DataSerializer.writeString(this.regionPath, out);
     DataSerializer.writeObject(this.callbackArgument, out);
@@ -224,9 +227,7 @@ public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneab
     InternalDataSerializer.invokeToData(((InternalDistributedMember) this.distributedMember), out);
   }
 
-  /**
-   * Reads the contents of this message from the given input.
-   */
+  /** Reads the contents of this message from the given input. */
   public void fromData(DataInput in) throws IOException, ClassNotFoundException {
     this.regionPath = DataSerializer.readString(in);
     this.callbackArgument = DataSerializer.readObject(in);
@@ -253,6 +254,7 @@ public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneab
 
   /**
    * Returns the Operation type.
+   *
    * @return eventType
    */
   public EnumListenerEvent getEventType() {
@@ -261,6 +263,7 @@ public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneab
 
   /**
    * Sets the operation type.
+   *
    * @param eventType
    */
   public void setEventType(EnumListenerEvent eventType) {
@@ -272,16 +275,12 @@ public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneab
     return null;
   }
 
-  /**
-   * sets the routing information for cache clients
-   */
+  /** sets the routing information for cache clients */
   public void setLocalFilterInfo(FilterInfo info) {
     this.filterInfo = info;
   }
 
-  /**
-   * retrieves the routing information for cache clients in this VM
-   */
+  /** retrieves the routing information for cache clients in this VM */
   public FilterInfo getLocalFilterInfo() {
     return this.filterInfo;
   }
@@ -301,7 +300,25 @@ public class RegionEventImpl implements RegionEvent, InternalCacheEvent, Cloneab
 
   @Override
   public String toString() {
-    return new StringBuffer().append(getShortClassName()).append("[").append("region=").append(getRegion()).append(";op=").append(getOperation()).append(";isReinitializing=").append(isReinitializing()).append(";callbackArg=").append(getCallbackArgument()).append(";originRemote=").append(isOriginRemote()).append(";originMember=").append(getDistributedMember()).append(";tag=").append(this.versionTag).append("]").toString();
+    return new StringBuffer()
+        .append(getShortClassName())
+        .append("[")
+        .append("region=")
+        .append(getRegion())
+        .append(";op=")
+        .append(getOperation())
+        .append(";isReinitializing=")
+        .append(isReinitializing())
+        .append(";callbackArg=")
+        .append(getCallbackArgument())
+        .append(";originRemote=")
+        .append(isOriginRemote())
+        .append(";originMember=")
+        .append(getDistributedMember())
+        .append(";tag=")
+        .append(this.versionTag)
+        .append("]")
+        .toString();
   }
 
   @Override

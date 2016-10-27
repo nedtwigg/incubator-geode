@@ -27,5 +27,4 @@ import org.junit.runner.Description;
 public interface IgnoreCondition {
 
   boolean evaluate(Description testCaseDescription);
-
 }

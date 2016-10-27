@@ -39,9 +39,7 @@ import org.apache.geode.internal.lang.StringUtils;
 import org.apache.geode.management.internal.configuration.domain.Configuration;
 import org.apache.geode.management.internal.configuration.utils.XmlUtils;
 
-/***
- * Response containing the configuration requested by the {@link ConfigurationRequest}
- */
+/** * Response containing the configuration requested by the {@link ConfigurationRequest} */
 public class ConfigurationResponse implements DataSerializableFixedID {
 
   private Map<String, Configuration> requestedConfiguration = new HashMap<String, Configuration>();
@@ -49,9 +47,7 @@ public class ConfigurationResponse implements DataSerializableFixedID {
   private String[] jarNames;
   private boolean failedToGetSharedConfig = false;
 
-  public ConfigurationResponse() {
-
-  }
+  public ConfigurationResponse() {}
 
   public ConfigurationResponse(Map<String, Configuration> requestedConfiguration) {
     this.requestedConfiguration.putAll(requestedConfiguration);
@@ -132,11 +128,14 @@ public class ConfigurationResponse implements DataSerializableFixedID {
             if (!StringUtils.isBlank(cacheXmlContent)) {
               sb.append("\n" + XmlUtils.prettyXml(cacheXmlContent));
             }
-          } catch (IOException | TransformerFactoryConfigurationError | TransformerException | SAXException | ParserConfigurationException e) {
+          } catch (IOException
+              | TransformerFactoryConfigurationError
+              | TransformerException
+              | SAXException
+              | ParserConfigurationException e) {
             throw new InternalGemFireError(e);
           }
         }
-
       }
     }
     return sb.toString();
@@ -157,7 +156,7 @@ public class ConfigurationResponse implements DataSerializableFixedID {
 
   // TODO Sourabh, please review for correctness
   public Version[] getSerializationVersions() {
-    return new Version[] { Version.CURRENT };
+    return new Version[] {Version.CURRENT};
   }
 
   public boolean failedToGetSharedConfig() {

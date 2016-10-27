@@ -18,15 +18,16 @@ package org.apache.geode.internal;
 
 import java.io.*;
 
-/** ObjToByteArraySerializer allows an object to be serialized as a byte array
- * so that the other side sees a byte array arrive.
+/**
+ * ObjToByteArraySerializer allows an object to be serialized as a byte array so that the other side
+ * sees a byte array arrive.
  *
- *  @since GemFire 5.0.2
- * 
+ * @since GemFire 5.0.2
  */
 public interface ObjToByteArraySerializer extends DataOutput {
   /**
    * Serialize the given object v as a byte array
+   *
    * @throws IOException if something goes wrong during serialization
    */
   public void writeAsSerializedByteArray(Object v) throws IOException;

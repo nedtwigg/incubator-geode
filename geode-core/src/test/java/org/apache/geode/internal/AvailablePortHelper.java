@@ -25,25 +25,22 @@ import java.util.Set;
 import org.apache.geode.internal.AvailablePort.Keeper;
 
 /**
- * Provides helper methods for acquiring a set of unique available ports. It
- * is not safe to simply call AvailablePort.getRandomAvailablePort several
- * times in a row without doing something to ensure that they are unique.
- * Although they are random, it is possible for subsequent calls to
- * getRandomAvailablePort to return the same integer, unless that port is put
- * into use before further calls to getRandomAvailablePort.
+ * Provides helper methods for acquiring a set of unique available ports. It is not safe to simply
+ * call AvailablePort.getRandomAvailablePort several times in a row without doing something to
+ * ensure that they are unique. Although they are random, it is possible for subsequent calls to
+ * getRandomAvailablePort to return the same integer, unless that port is put into use before
+ * further calls to getRandomAvailablePort.
  */
 public class AvailablePortHelper {
 
-  /**
-   * Returns array of unique randomly available tcp ports of specified count.
-   */
+  /** Returns array of unique randomly available tcp ports of specified count. */
   public static int[] getRandomAvailableTCPPorts(int count) {
     return getRandomAvailableTCPPorts(count, false);
   }
 
   /**
    * Returns an array of unique randomly available tcp ports
-   * 
+   *
    * @param count number of desired ports
    * @param useMembershipPortRange whether to use the configured membership-port-range
    * @return the ports
@@ -64,17 +61,20 @@ public class AvailablePortHelper {
     return getRandomAvailableTCPPortKeepers(count, false);
   }
 
-  public static List<Keeper> getRandomAvailableTCPPortKeepers(int count, boolean useMembershipPortRange) {
+  public static List<Keeper> getRandomAvailableTCPPortKeepers(
+      int count, boolean useMembershipPortRange) {
     List<Keeper> result = new ArrayList<Keeper>();
     while (result.size() < count) {
-      result.add(AvailablePort.getRandomAvailablePortKeeper(AvailablePort.SOCKET, AvailablePort.getAddress(AvailablePort.SOCKET), useMembershipPortRange));
+      result.add(
+          AvailablePort.getRandomAvailablePortKeeper(
+              AvailablePort.SOCKET,
+              AvailablePort.getAddress(AvailablePort.SOCKET),
+              useMembershipPortRange));
     }
     return result;
   }
 
-  /**
-   * Returns array of unique randomly available tcp ports of specified count.
-   */
+  /** Returns array of unique randomly available tcp ports of specified count. */
   public static int[] getRandomAvailableTCPPortsForDUnitSite(int count) {
     int site = 1;
     String hostName = System.getProperty("hostName");
@@ -89,16 +89,14 @@ public class AvailablePortHelper {
     }
     int[] ports = new int[set.size()];
     int i = 0;
-    for (Iterator iter = set.iterator(); iter.hasNext();) {
+    for (Iterator iter = set.iterator(); iter.hasNext(); ) {
       ports[i] = ((Integer) iter.next()).intValue();
       i++;
     }
     return ports;
   }
 
-  /**
-   * Returns array of unique randomly available tcp ports of specified count.
-   */
+  /** Returns array of unique randomly available tcp ports of specified count. */
   public static int getRandomAvailablePortForDUnitSite() {
     int site = 1;
     String hostName = System.getProperty("hostName");
@@ -111,16 +109,12 @@ public class AvailablePortHelper {
     return port;
   }
 
-  /**
-   * Returns randomly available tcp port.
-   */
+  /** Returns randomly available tcp port. */
   public static int getRandomAvailableTCPPort() {
     return getRandomAvailableTCPPorts(1)[0];
   }
 
-  /**
-   * Returns array of unique randomly available udp ports of specified count.
-   */
+  /** Returns array of unique randomly available udp ports of specified count. */
   public static int[] getRandomAvailableUDPPorts(int count) {
     Set set = new HashSet();
     while (set.size() < count) {
@@ -129,18 +123,15 @@ public class AvailablePortHelper {
     }
     int[] ports = new int[set.size()];
     int i = 0;
-    for (Iterator iter = set.iterator(); iter.hasNext();) {
+    for (Iterator iter = set.iterator(); iter.hasNext(); ) {
       ports[i] = ((Integer) iter.next()).intValue();
       i++;
     }
     return ports;
   }
 
-  /**
-   * Returns randomly available udp port.
-   */
+  /** Returns randomly available udp port. */
   public static int getRandomAvailableUDPPort() {
     return getRandomAvailableUDPPorts(1)[0];
   }
-
 }

@@ -32,27 +32,20 @@ import org.apache.geode.internal.util.PluckStacks;
 
 /**
  * This class holds a graph of dependencies between objects
- * 
- * It detects cycles in the graph by using the Depth First Search algorithm.
- * Calling findCycle will return the first cycle that is discovered in the
- * graph.
- * 
- * 
- * 
+ *
+ * <p>It detects cycles in the graph by using the Depth First Search algorithm. Calling findCycle
+ * will return the first cycle that is discovered in the graph.
  */
 public class DependencyGraph implements Serializable {
   private static final long serialVersionUID = -6794339771271587648L;
 
   /**
-   * The vertices of the graph. The key is the vertex, the value is the set of
-   * outgoing dependencies (ie the dependencies where this vertex is the
-   * depender).
+   * The vertices of the graph. The key is the vertex, the value is the set of outgoing dependencies
+   * (ie the dependencies where this vertex is the depender).
    */
   private Map<Object, Set<Dependency>> vertices = new LinkedHashMap();
 
-  /**
-   * The edges of the graph. This holds all of the dependencies in the graph.
-   */
+  /** The edges of the graph. This holds all of the dependencies in the graph. */
   private Set<Dependency> edges = new LinkedHashSet<Dependency>();
 
   /** add a collection of edges to this graph */
@@ -62,9 +55,7 @@ public class DependencyGraph implements Serializable {
     }
   }
 
-  /** 
-   * Add an edge to the dependency graph. 
-   */
+  /** Add an edge to the dependency graph. */
   public void addEdge(Dependency dependency) {
     if (!edges.contains(dependency)) {
       edges.add(dependency);
@@ -83,11 +74,11 @@ public class DependencyGraph implements Serializable {
 
   /**
    * Find a cycle in the graph, if one exists.
-   * 
-   * This method works by starting at any vertex and doing a depth first search.
-   * If it ever encounters a vertex that is currently in the middle of the search
-   * (as opposed to a vertex whose dependencies have been completely analyzed), then
-   * it returns the chain that starts from our start vertex and includes the cycle.
+   *
+   * <p>This method works by starting at any vertex and doing a depth first search. If it ever
+   * encounters a vertex that is currently in the middle of the search (as opposed to a vertex whose
+   * dependencies have been completely analyzed), then it returns the chain that starts from our
+   * start vertex and includes the cycle.
    */
   public LinkedList<Dependency> findCycle() {
 
@@ -108,14 +99,12 @@ public class DependencyGraph implements Serializable {
   }
 
   /**
-   * This will find the longest call chain in the graph.  If a
-   * cycle is detected it will be returned.  Otherwise all
-   * subgraphs are traversed to find the one that has the most
-   * depth.  This usually indicates the thread that is blocking
-   * the most other threads.<p>
-   * 
-   * The findDependenciesWith method can then be used to find all
-   * top-level threads that are blocked by the culprit.
+   * This will find the longest call chain in the graph. If a cycle is detected it will be returned.
+   * Otherwise all subgraphs are traversed to find the one that has the most depth. This usually
+   * indicates the thread that is blocking the most other threads.
+   *
+   * <p>The findDependenciesWith method can then be used to find all top-level threads that are
+   * blocked by the culprit.
    */
   public DependencyGraph findLongestCallChain() {
     int depth = 0;
@@ -133,9 +122,8 @@ public class DependencyGraph implements Serializable {
   }
 
   /**
-   * This returns a collection of top-level threads and their
-   * path to the given object.  The object name is some
-   * substring of the toString of the object
+   * This returns a collection of top-level threads and their path to the given object. The object
+   * name is some substring of the toString of the object
    *
    * @param objectName
    */
@@ -203,18 +191,15 @@ public class DependencyGraph implements Serializable {
 
   /**
    * Visit a vertex for the purposes of finding a cycle in the graph.
-   * 
-   * @param start
-   *          the node
-   * @param unvisited
-   *          the set of vertices that have not yet been visited
-   * @param finished
-   *          the set of vertices that have been completely analyzed
-   * @param cycle
-   *          an object used to record the any cycles that are detected
+   *
+   * @param start the node
+   * @param unvisited the set of vertices that have not yet been visited
+   * @param finished the set of vertices that have been completely analyzed
+   * @param cycle an object used to record the any cycles that are detected
    * @param depth the depth of the recursion chain up to this point
    */
-  private boolean visitCycle(Object start, Set<Object> unvisited, Set<Object> finished, CycleHolder cycle, int depth) {
+  private boolean visitCycle(
+      Object start, Set<Object> unvisited, Set<Object> finished, CycleHolder cycle, int depth) {
     if (finished.contains(start)) {
       return false;
     }
@@ -257,8 +242,8 @@ public class DependencyGraph implements Serializable {
 
   /**
    * Get the subgraph that the starting object has dependencies on.
-   * 
-   * This does not include any objects that have dependencies on the starting object.
+   *
+   * <p>This does not include any objects that have dependencies on the starting object.
    */
   public DependencyGraph getSubGraph(Object start) {
     DependencyGraph result = new DependencyGraph();
@@ -282,9 +267,7 @@ public class DependencyGraph implements Serializable {
     }
   }
 
-  /**
-   * Add a vertex to the graph.
-   */
+  /** Add a vertex to the graph. */
   private void addVertex(Object start, Set<Dependency> set) {
     vertices.put(start, set);
     edges.addAll(set);
@@ -327,5 +310,4 @@ public class DependencyGraph implements Serializable {
       }
     }
   }
-
 }

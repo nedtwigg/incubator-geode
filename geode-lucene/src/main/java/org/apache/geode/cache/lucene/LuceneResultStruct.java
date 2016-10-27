@@ -18,11 +18,7 @@ package org.apache.geode.cache.lucene;
 
 import org.apache.geode.annotations.Experimental;
 
-/**
- * <p>
- * Abstract data structure for one item in query result.
- * 
- */
+/** Abstract data structure for one item in query result. */
 @Experimental
 public interface LuceneResultStruct<K, V> {
   /**
@@ -51,7 +47,7 @@ public interface LuceneResultStruct<K, V> {
   public V getValue();
 
   /**
-   * Return score of the query 
+   * Return score of the query
    *
    * @return score
    * @throws IllegalArgumentException If this struct does not contain score

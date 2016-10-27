@@ -35,28 +35,21 @@ import org.apache.geode.test.dunit.SerializableCallable;
 import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
-/**
- * Tests that the compressor region attribute is properly set or rejected by a RegionFactory.
- */
+/** Tests that the compressor region attribute is properly set or rejected by a RegionFactory. */
 @Category(DistributedTest.class)
 public class CompressionRegionFactoryDUnitTest extends JUnit4CacheTestCase {
-  /**
-   * Compressed region name.
-   */
+  /** Compressed region name. */
   protected static final String COMPRESSED_REGION_NAME = "compressedRegion";
 
-  /**
-   * A valid compressor.
-   */
+  /** A valid compressor. */
   protected static final Compressor compressor = new SnappyCompressor();
 
-  /**
-   * Our test vm.
-   */
+  /** Our test vm. */
   protected static final int TEST_VM = 0;
 
   /**
    * Creates a new CompressionRegionFactoryDUnitTest.
+   *
    * @param name test name.
    */
   public CompressionRegionFactoryDUnitTest() {
@@ -64,8 +57,8 @@ public class CompressionRegionFactoryDUnitTest extends JUnit4CacheTestCase {
   }
 
   /**
-   * Asserts that a region is created when a valid compressor is used.
-   * Asserts that the region attributes contain the correct compressor value. 
+   * Asserts that a region is created when a valid compressor is used. Asserts that the region
+   * attributes contain the correct compressor value.
    */
   @Test
   public void testRegionFactoryCompressor() {
@@ -76,6 +69,7 @@ public class CompressionRegionFactoryDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Returns the VM for a given identifier.
+   *
    * @param vm a virtual machine identifier.
    */
   private VM getVM(int vm) {
@@ -84,63 +78,77 @@ public class CompressionRegionFactoryDUnitTest extends JUnit4CacheTestCase {
 
   /**
    * Removes created regions from a VM.
+   *
    * @param vm the virtual machine to cleanup.
    */
   private void cleanup(final VM vm) {
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        getCache().getRegion(COMPRESSED_REGION_NAME).destroyRegion();
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            getCache().getRegion(COMPRESSED_REGION_NAME).destroyRegion();
+          }
+        });
   }
 
   /**
    * Asserts that a given compressor has been assigned to a region.
+   *
    * @param vm the virtual machine to run the assertions on.
    * @param name a region name.
    * @param compressor a compressor.
    */
   private void assertCompressor(final VM vm, final String name, final Compressor compressor) {
-    vm.invoke(new SerializableRunnable() {
-      @Override
-      public void run() {
-        Region region = getCache().getRegion(name);
-        assertNotNull(region);
-        assertNotNull(region.getAttributes().getCompressor());
-        assertTrue(compressor.equals(region.getAttributes().getCompressor()));
-      }
-    });
+    vm.invoke(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            Region region = getCache().getRegion(name);
+            assertNotNull(region);
+            assertNotNull(region.getAttributes().getCompressor());
+            assertTrue(compressor.equals(region.getAttributes().getCompressor()));
+          }
+        });
   }
 
   /**
    * Creates a region and assigns a compressor.
+   *
    * @param vm a virtual machine to create the region on.
    * @param name a region name.
    * @param compressor a compressor.
    * @return true if successfully created, otherwise false.
    */
-  private boolean createCompressedRegionOnVm(final VM vm, final String name, final Compressor compressor) {
-    return (Boolean) vm.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        try {
-          createRegion(name, compressor);
-        } catch (IllegalStateException e) {
-          return Boolean.FALSE;
-        }
+  private boolean createCompressedRegionOnVm(
+      final VM vm, final String name, final Compressor compressor) {
+    return (Boolean)
+        vm.invoke(
+            new SerializableCallable() {
+              @Override
+              public Object call() throws Exception {
+                try {
+                  createRegion(name, compressor);
+                } catch (IllegalStateException e) {
+                  return Boolean.FALSE;
+                }
 
-        return Boolean.TRUE;
-      }
-    });
+                return Boolean.TRUE;
+              }
+            });
   }
 
   /**
    * Creates a region and assigns a compressor.
+   *
    * @param name a region name.
    * @param compressor a compressor.
    */
   private Region createRegion(String name, Compressor compressor) {
-    return getCache().<String, String> createRegionFactory().setDataPolicy(DataPolicy.REPLICATE).setCloningEnabled(true).setCompressor(compressor).create(name);
+    return getCache()
+        .<String, String>createRegionFactory()
+        .setDataPolicy(DataPolicy.REPLICATE)
+        .setCloningEnabled(true)
+        .setCompressor(compressor)
+        .create(name);
   }
 }

@@ -32,10 +32,7 @@ import org.apache.geode.management.internal.beans.stats.StatsAverageLatency;
 import org.apache.geode.management.internal.beans.stats.StatsKey;
 import org.apache.geode.management.internal.beans.stats.StatsRate;
 
-/**
- * 
- * 
- */
+/** */
 public class GatewaySenderMBeanBridge {
 
   private GatewaySender sender;
@@ -56,7 +53,8 @@ public class GatewaySenderMBeanBridge {
 
   public GatewaySenderMBeanBridge(GatewaySender sender) {
     this.sender = sender;
-    this.monitor = new MBeanStatsMonitor(ManagementStrings.GATEWAY_SENDER_MONITOR.toLocalizedString());
+    this.monitor =
+        new MBeanStatsMonitor(ManagementStrings.GATEWAY_SENDER_MONITOR.toLocalizedString());
 
     this.abstractSender = ((AbstractGatewaySender) this.sender);
     GatewaySenderStats stats = abstractSender.getStatistics();
@@ -70,7 +68,6 @@ public class GatewaySenderMBeanBridge {
     if (eventProcessor != null) {
       this.dispatcher = abstractSender.getEventProcessor().getDispatcher();
     }
-
   }
 
   public void addGatewaySenderStats(GatewaySenderStats gatewaySenderStats) {
@@ -82,10 +79,18 @@ public class GatewaySenderMBeanBridge {
   }
 
   private void initializeStats() {
-    eventsQueuedRate = new StatsRate(StatsKey.GATEWAYSENDER_EVENTS_QUEUED, StatType.INT_TYPE, monitor);
-    eventsReceivedRate = new StatsRate(StatsKey.GATEWAYSENDER_EVENTS_RECEIVED, StatType.INT_TYPE, monitor);
-    batchesDispatchedRate = new StatsRate(StatsKey.GATEWAYSENDER_BATCHES_DISTRIBUTED, StatType.INT_TYPE, monitor);
-    batchDistributionAvgLatency = new StatsAverageLatency(StatsKey.GATEWAYSENDER_BATCHES_DISTRIBUTED, StatType.INT_TYPE, StatsKey.GATEWAYSENDER_BATCHES_DISTRIBUTE_TIME, monitor);
+    eventsQueuedRate =
+        new StatsRate(StatsKey.GATEWAYSENDER_EVENTS_QUEUED, StatType.INT_TYPE, monitor);
+    eventsReceivedRate =
+        new StatsRate(StatsKey.GATEWAYSENDER_EVENTS_RECEIVED, StatType.INT_TYPE, monitor);
+    batchesDispatchedRate =
+        new StatsRate(StatsKey.GATEWAYSENDER_BATCHES_DISTRIBUTED, StatType.INT_TYPE, monitor);
+    batchDistributionAvgLatency =
+        new StatsAverageLatency(
+            StatsKey.GATEWAYSENDER_BATCHES_DISTRIBUTED,
+            StatType.INT_TYPE,
+            StatsKey.GATEWAYSENDER_BATCHES_DISTRIBUTE_TIME,
+            monitor);
   }
 
   public int getAlertThreshold() {
@@ -139,7 +144,6 @@ public class GatewaySenderMBeanBridge {
 
   public int getMaximumQueueMemory() {
     return sender.getMaximumQueueMemory();
-
   }
 
   public int getRemoteDSId() {
@@ -180,22 +184,18 @@ public class GatewaySenderMBeanBridge {
 
   public void pause() {
     sender.pause();
-
   }
 
   public void resume() {
     sender.resume();
-
   }
 
   public void start() {
     sender.start();
-
   }
 
   public void stop() {
     sender.stop();
-
   }
 
   public void rebalance() {
@@ -222,8 +222,7 @@ public class GatewaySenderMBeanBridge {
     return sender.isParallel();
   }
 
-  /** Statistics Related Attributes **/
-
+  /** Statistics Related Attributes * */
   public int getTotalBatchesRedistributed() {
     return getStatistic(StatsKey.GATEWAYSENDER_TOTAL_BATCHES_REDISTRIBUTED).intValue();
   }

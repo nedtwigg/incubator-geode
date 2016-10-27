@@ -37,10 +37,8 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VMThinDiskRegionEntryHeapUUIDKey extends VMThinDiskRegionEntryHeap {
   public VMThinDiskRegionEntryHeapUUIDKey(RegionEntryContext context, UUID key, Object value) {
@@ -55,9 +53,13 @@ public class VMThinDiskRegionEntryHeapUUIDKey extends VMThinDiskRegionEntryHeap 
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VMThinDiskRegionEntryHeapUUIDKey> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VMThinDiskRegionEntryHeapUUIDKey.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VMThinDiskRegionEntryHeapUUIDKey>
+      lastModifiedUpdater =
+          AtomicLongFieldUpdater.newUpdater(VMThinDiskRegionEntryHeapUUIDKey.class, "lastModified");
   private volatile Object value;
 
   @Override
@@ -78,9 +80,7 @@ public class VMThinDiskRegionEntryHeapUUIDKey extends VMThinDiskRegionEntryHeap 
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -89,16 +89,12 @@ public class VMThinDiskRegionEntryHeapUUIDKey extends VMThinDiskRegionEntryHeap 
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -120,16 +116,16 @@ public class VMThinDiskRegionEntryHeapUUIDKey extends VMThinDiskRegionEntryHeap 
     DiskStoreImpl ds = drs.getDiskStore();
     long maxOplogSize = ds.getMaxOplogSize();
     //get appropriate instance of DiskId implementation based on maxOplogSize
-    this.id = DiskId.createDiskId(maxOplogSize, true/* is persistence */, ds.needsLinkedList());
+    this.id = DiskId.createDiskId(maxOplogSize, true /* is persistence */, ds.needsLinkedList());
     Helper.initialize(this, drs, value);
   }
 
   /**
    * DiskId
-   * 
+   *
    * @since GemFire 5.1
    */
-  protected DiskId id;//= new DiskId();
+  protected DiskId id; //= new DiskId();
 
   public DiskId getDiskId() {
     return this.id;
@@ -148,7 +144,7 @@ public class VMThinDiskRegionEntryHeapUUIDKey extends VMThinDiskRegionEntryHeap 
   //   * 1 byte = users bits
   //   * 2-8 bytes = oplog id
   //   * least significant.
-  //   * 
+  //   *
   //   * The highest bit in the oplog id part is set to 1 if the oplog id
   //   * is negative.
   //   * @todo this field could be an int for an overflow only region
@@ -193,7 +189,8 @@ public class VMThinDiskRegionEntryHeapUUIDKey extends VMThinDiskRegionEntryHeap 
   public boolean isKeyEqual(Object k) {
     if (k instanceof UUID) {
       UUID uuid = (UUID) k;
-      return uuid.getLeastSignificantBits() == this.keyLeastSigBits && uuid.getMostSignificantBits() == this.keyMostSigBits;
+      return uuid.getLeastSignificantBits() == this.keyLeastSigBits
+          && uuid.getMostSignificantBits() == this.keyMostSigBits;
     }
     return false;
   }

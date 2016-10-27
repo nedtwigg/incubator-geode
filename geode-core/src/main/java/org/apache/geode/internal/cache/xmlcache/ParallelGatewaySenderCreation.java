@@ -37,7 +37,8 @@ public class ParallelGatewaySenderCreation extends AbstractGatewaySender impleme
     super(cache, attrs);
   }
 
-  public void distribute(EnumListenerEvent operation, EntryEventImpl event, List<Integer> remoteDSIds) {
+  public void distribute(
+      EnumListenerEvent operation, EntryEventImpl event, List<Integer> remoteDSIds) {
     // TODO Auto-generated method stub
 
   }
@@ -58,8 +59,7 @@ public class ParallelGatewaySenderCreation extends AbstractGatewaySender impleme
   }
 
   @Override
-  public void destroy() {
-  }
+  public void destroy() {}
 
   public void fillInProfile(Profile profile) {
     // TODO Auto-generated method stub
@@ -119,5 +119,4 @@ public class ParallelGatewaySenderCreation extends AbstractGatewaySender impleme
     // TODO Auto-generated method stub
 
   }
-
 }

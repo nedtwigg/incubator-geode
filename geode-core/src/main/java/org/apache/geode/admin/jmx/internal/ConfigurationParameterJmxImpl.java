@@ -28,20 +28,18 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
  * Provides MBean support for managing accessing a ConfigurationParameter.
- * <p>
- * Implements java.io.Serializable because several MBeans have attributes of
- * type ConfigurationParameter. This means that calls to getMBeanInfo which
- * may be serialized for remote clients will be broken unless those attributes
- * support serialization.
- * <p>
- * TODO: refactor to implement ConfigurationParameter and delegate to 
- * ConfigurationParameterImpl. Wrap all delegate calls w/ e.printStackTrace()
- * since the HttpAdaptor devours them
  *
- * @since GemFire     3.5
+ * <p>Implements java.io.Serializable because several MBeans have attributes of type
+ * ConfigurationParameter. This means that calls to getMBeanInfo which may be serialized for remote
+ * clients will be broken unless those attributes support serialization.
  *
+ * <p>TODO: refactor to implement ConfigurationParameter and delegate to ConfigurationParameterImpl.
+ * Wrap all delegate calls w/ e.printStackTrace() since the HttpAdaptor devours them
+ *
+ * @since GemFire 3.5
  */
-public class ConfigurationParameterJmxImpl extends org.apache.geode.admin.internal.ConfigurationParameterImpl implements Serializable {
+public class ConfigurationParameterJmxImpl
+    extends org.apache.geode.admin.internal.ConfigurationParameterImpl implements Serializable {
 
   private static final long serialVersionUID = -7822171853906772375L;
   private boolean deserialized = false;
@@ -50,7 +48,8 @@ public class ConfigurationParameterJmxImpl extends org.apache.geode.admin.intern
   //   Constructor(s)
   // -------------------------------------------------------------------------
 
-  protected ConfigurationParameterJmxImpl(String name, String description, Object value, Class type, boolean userModifiable) {
+  protected ConfigurationParameterJmxImpl(
+      String name, String description, Object value, Class type, boolean userModifiable) {
     super(name, description, value, type, userModifiable);
   }
 
@@ -66,7 +65,10 @@ public class ConfigurationParameterJmxImpl extends org.apache.geode.admin.intern
   @Override
   public void setValue(Object value) throws UnmodifiableConfigurationException {
     if (deserialized) {
-      throw new UnsupportedOperationException(LocalizedStrings.ConfigurationParameterJmxImpl_REMOTE_MUTATION_OF_CONFIGURATIONPARAMETER_IS_CURRENTLY_UNSUPPORTED.toLocalizedString());
+      throw new UnsupportedOperationException(
+          LocalizedStrings
+              .ConfigurationParameterJmxImpl_REMOTE_MUTATION_OF_CONFIGURATIONPARAMETER_IS_CURRENTLY_UNSUPPORTED
+              .toLocalizedString());
     }
     try {
       super.setValue(value);
@@ -126,10 +128,9 @@ public class ConfigurationParameterJmxImpl extends org.apache.geode.admin.intern
     return getValue();
   }
 
-  /** 
-   * Override writeObject which is used in serialization. This class is
-   * serialized when JMX client acquires MBeanInfo for ConfigurationParameter
-   * MBean. Super class is not serializable.
+  /**
+   * Override writeObject which is used in serialization. This class is serialized when JMX client
+   * acquires MBeanInfo for ConfigurationParameter MBean. Super class is not serializable.
    */
   private void writeObject(java.io.ObjectOutputStream out) throws IOException {
     out.writeObject(this.name);
@@ -139,10 +140,9 @@ public class ConfigurationParameterJmxImpl extends org.apache.geode.admin.intern
     out.writeBoolean(this.userModifiable);
   }
 
-  /** 
-   * Override readObject which is used in serialization. Customize 
-   * serialization of this exception to avoid escape of InternalRole
-   * which is not Serializable. 
+  /**
+   * Override readObject which is used in serialization. Customize serialization of this exception
+   * to avoid escape of InternalRole which is not Serializable.
    */
   private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
     String inName = (String) in.readObject();
@@ -160,5 +160,4 @@ public class ConfigurationParameterJmxImpl extends org.apache.geode.admin.intern
     this.name = inName;
     setInternalState(inDescription, inValue, inClass, inUserModifiable);
   }
-
 }

@@ -43,7 +43,8 @@ public class HMSetExecutor extends HashExecutor {
 
     ByteArrayWrapper key = command.getKey();
 
-    Region<ByteArrayWrapper, ByteArrayWrapper> keyRegion = getOrCreateRegion(context, key, RedisDataType.REDIS_HASH);
+    Region<ByteArrayWrapper, ByteArrayWrapper> keyRegion =
+        getOrCreateRegion(context, key, RedisDataType.REDIS_HASH);
 
     Map<ByteArrayWrapper, ByteArrayWrapper> map = new HashMap<ByteArrayWrapper, ByteArrayWrapper>();
     for (int i = 2; i < commandElems.size(); i += 2) {
@@ -56,7 +57,5 @@ public class HMSetExecutor extends HashExecutor {
     keyRegion.putAll(map);
 
     command.setResponse(Coder.getSimpleStringResponse(context.getByteBufAllocator(), SUCCESS));
-
   }
-
 }

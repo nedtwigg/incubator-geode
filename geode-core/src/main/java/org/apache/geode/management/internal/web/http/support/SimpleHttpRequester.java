@@ -36,9 +36,11 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * The SimpleHttpRequester class is a Adapter/facade for the Spring RestTemplate class for abstracting HTTP requests
- * and operations.
- * <p/>
+ * The SimpleHttpRequester class is a Adapter/facade for the Spring RestTemplate class for
+ * abstracting HTTP requests and operations.
+ *
+ * <p>
+ *
  * @see org.springframework.http.client.SimpleClientHttpRequestFactory
  * @see org.springframework.web.client.RestTemplate
  * @since GemFire 8.0
@@ -57,8 +59,8 @@ public class SimpleHttpRequester {
   private Map<String, String> securityProperties;
 
   /**
-   * Default constructor to create an instance of the SimpleHttpRequester class using the default connection timeout
-   * of 30 seconds.
+   * Default constructor to create an instance of the SimpleHttpRequester class using the default
+   * connection timeout of 30 seconds.
    */
   public SimpleHttpRequester(Gfsh gfsh, Map<String, String> securityProperties) {
     this(gfsh, DEFAULT_CONNECT_TIMEOUT, securityProperties);
@@ -66,67 +68,74 @@ public class SimpleHttpRequester {
 
   /**
    * Constructs an instance of the SimpleHttpRequester class with the specified connection timeout.
-   * <p/>
-   * @param connectTimeout an integer value specifying the timeout value in milliseconds for establishing the HTTP
-   * connection to the HTTP server.
+   *
+   * <p>
+   *
+   * @param connectTimeout an integer value specifying the timeout value in milliseconds for
+   *     establishing the HTTP connection to the HTTP server.
    */
-  public SimpleHttpRequester(final Gfsh gfsh, final int connectTimeout, Map<String, String> securityProperties) {
-    final SimpleClientHttpRequestFactory clientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+  public SimpleHttpRequester(
+      final Gfsh gfsh, final int connectTimeout, Map<String, String> securityProperties) {
+    final SimpleClientHttpRequestFactory clientHttpRequestFactory =
+        new SimpleClientHttpRequestFactory();
 
     clientHttpRequestFactory.setConnectTimeout(connectTimeout);
 
     this.securityProperties = securityProperties;
     this.restTemplate = new RestTemplate(clientHttpRequestFactory);
 
-    this.restTemplate.setErrorHandler(new ResponseErrorHandler() {
-      @Override
-      public boolean hasError(final ClientHttpResponse response) throws IOException {
-        final HttpStatus status = response.getStatusCode();
+    this.restTemplate.setErrorHandler(
+        new ResponseErrorHandler() {
+          @Override
+          public boolean hasError(final ClientHttpResponse response) throws IOException {
+            final HttpStatus status = response.getStatusCode();
 
-        switch (status) {
-        case BAD_REQUEST: // 400 *
-        case UNAUTHORIZED: // 401
-        case FORBIDDEN: // 403
-        case NOT_FOUND: // 404 *
-        case METHOD_NOT_ALLOWED: // 405 *
-        case NOT_ACCEPTABLE: // 406 *
-        case REQUEST_TIMEOUT: // 408
-        case CONFLICT: // 409
-        case REQUEST_ENTITY_TOO_LARGE: // 413
-        case REQUEST_URI_TOO_LONG: // 414
-        case UNSUPPORTED_MEDIA_TYPE: // 415 *
-        case TOO_MANY_REQUESTS: // 429
-        case INTERNAL_SERVER_ERROR: // 500 *
-        case NOT_IMPLEMENTED: // 501
-        case BAD_GATEWAY: // 502 ?
-        case SERVICE_UNAVAILABLE: // 503
-          return true;
-        default:
-          return false;
-        }
-      }
+            switch (status) {
+              case BAD_REQUEST: // 400 *
+              case UNAUTHORIZED: // 401
+              case FORBIDDEN: // 403
+              case NOT_FOUND: // 404 *
+              case METHOD_NOT_ALLOWED: // 405 *
+              case NOT_ACCEPTABLE: // 406 *
+              case REQUEST_TIMEOUT: // 408
+              case CONFLICT: // 409
+              case REQUEST_ENTITY_TOO_LARGE: // 413
+              case REQUEST_URI_TOO_LONG: // 414
+              case UNSUPPORTED_MEDIA_TYPE: // 415 *
+              case TOO_MANY_REQUESTS: // 429
+              case INTERNAL_SERVER_ERROR: // 500 *
+              case NOT_IMPLEMENTED: // 501
+              case BAD_GATEWAY: // 502 ?
+              case SERVICE_UNAVAILABLE: // 503
+                return true;
+              default:
+                return false;
+            }
+          }
 
-      @Override
-      public void handleError(final ClientHttpResponse response) throws IOException {
-        final String message = String.format("The HTTP request failed with: %1$d - %2$s", response.getRawStatusCode(), response.getStatusText());
+          @Override
+          public void handleError(final ClientHttpResponse response) throws IOException {
+            final String message =
+                String.format(
+                    "The HTTP request failed with: %1$d - %2$s",
+                    response.getRawStatusCode(), response.getStatusText());
 
-        if (response.getRawStatusCode() == 401) {
-          throw new AuthenticationFailedException(message);
-        } else if (response.getRawStatusCode() == 403) {
-          throw new NotAuthorizedException(message);
-        } else {
-          throw new RuntimeException(message);
-        }
-
-      }
-
-    });
-
+            if (response.getRawStatusCode() == 401) {
+              throw new AuthenticationFailedException(message);
+            } else if (response.getRawStatusCode() == 403) {
+              throw new NotAuthorizedException(message);
+            } else {
+              throw new RuntimeException(message);
+            }
+          }
+        });
   }
 
   /**
    * Gets an instance of the Spring RestTemplate to perform the HTTP operations.
-   * <p/>
+   *
+   * <p>
+   *
    * @return an instance of the Spring RestTemplate for performing HTTP operations.
    * @see org.springframework.web.client.RestTemplate
    */
@@ -135,8 +144,11 @@ public class SimpleHttpRequester {
   }
 
   /**
-   * Performs an HTTP DELETE operation on the requested resource identified/located by the specified URL.
-   * <p/>
+   * Performs an HTTP DELETE operation on the requested resource identified/located by the specified
+   * URL.
+   *
+   * <p>
+   *
    * @param url a String value identifying or locating the resource intended for the HTTP operation.
    * @param urlVariables an array of variables to substitute in the URI/URL template.
    * @see org.springframework.web.client.RestTemplate#delete(String, Object...)
@@ -146,8 +158,11 @@ public class SimpleHttpRequester {
   }
 
   /**
-   * Performs an HTTP GET operation on the requested resource identified/located by the specified URL.
-   * <p/>
+   * Performs an HTTP GET operation on the requested resource identified/located by the specified
+   * URL.
+   *
+   * <p>
+   *
    * @param url a String value identifying or locating the resource intended for the HTTP operation.
    * @param urlVariables an array of variables to substitute in the URI/URL template.
    * @see org.springframework.web.client.RestTemplate#getForObject(String, Class, Object...)
@@ -158,7 +173,9 @@ public class SimpleHttpRequester {
 
   /**
    * Retrieves the HTTP HEADERS for the requested resource identified/located by the specified URL.
-   * <p/>
+   *
+   * <p>
+   *
    * @param url a String value identifying or locating the resource intended for the HTTP operation.
    * @param urlVariables an array of variables to substitute in the URI/URL template.
    * @see org.springframework.web.client.RestTemplate#headForHeaders(String, Object...)
@@ -168,8 +185,11 @@ public class SimpleHttpRequester {
   }
 
   /**
-   * Request the available/allowed HTTP operations on the resource identified/located by the specified URL.
-   * <p/>
+   * Request the available/allowed HTTP operations on the resource identified/located by the
+   * specified URL.
+   *
+   * <p>
+   *
    * @param url a String value identifying or locating the resource intended for the HTTP operation.
    * @param urlVariables an array of variables to substitute in the URI/URL template.
    * @see org.springframework.web.client.RestTemplate#optionsForAllow(String, Object...)
@@ -179,19 +199,30 @@ public class SimpleHttpRequester {
   }
 
   /**
-   * Performs an HTTP POST operation on the requested resource identified/located by the specified URL.
-   * <p/>
+   * Performs an HTTP POST operation on the requested resource identified/located by the specified
+   * URL.
+   *
+   * <p>
+   *
    * @param url a String value identifying or locating the resource intended for the HTTP operation.
    * @param urlVariables an array of variables to substitute in the URI/URL template.
-   * @see org.springframework.web.client.RestTemplate#postForObject(String, Object, Class, Object...) z
+   * @see org.springframework.web.client.RestTemplate#postForObject(String, Object, Class,
+   *     Object...) z
    */
-  public <T> T post(final String url, final Object requestBody, final Class<T> responseType, final Object... urlVariables) {
+  public <T> T post(
+      final String url,
+      final Object requestBody,
+      final Class<T> responseType,
+      final Object... urlVariables) {
     return getRestTemplate().postForObject(url, requestBody, responseType, urlVariables);
   }
 
   /**
-   * Performs an HTTP PUT operation on the requested resource identifiedR/located by the specified URL.
-   * <p/>
+   * Performs an HTTP PUT operation on the requested resource identifiedR/located by the specified
+   * URL.
+   *
+   * <p>
+   *
    * @param url a String value identifying or locating the resource intended for the HTTP operation.
    * @param urlVariables an array of variables to substitute in the URI/URL template.
    * @see org.springframework.web.client.RestTemplate#put(String, Object, Object...)
@@ -201,17 +232,19 @@ public class SimpleHttpRequester {
   }
 
   /**
-   * Performs an HTTP GET operation on the requested resource identified/located
-   * by the specified URL.
-   * <p/>
-   * @param url a String value identifying or locating the resource intended for
-   * the HTTP operation.
+   * Performs an HTTP GET operation on the requested resource identified/located by the specified
+   * URL.
+   *
+   * <p>
+   *
+   * @param url a String value identifying or locating the resource intended for the HTTP operation.
    * @param urlVariables an array of variables to substitute in the URI/URL template.
-   * @see org.springframework.web.client.RestTemplate#getForObject(String,
-   * Class, Object...)
+   * @see org.springframework.web.client.RestTemplate#getForObject(String, Class, Object...)
    */
-  public <T> T exchange(final String url, final Class<T> responseType, final Object... urlVariables) {
-    ResponseEntity<T> response = getRestTemplate().exchange(url, HttpMethod.GET, getRequestEntity(), responseType);
+  public <T> T exchange(
+      final String url, final Class<T> responseType, final Object... urlVariables) {
+    ResponseEntity<T> response =
+        getRestTemplate().exchange(url, HttpMethod.GET, getRequestEntity(), responseType);
     return response.getBody();
   }
 
@@ -224,7 +257,5 @@ public class SimpleHttpRequester {
     HttpEntity<?> requestEntity = new HttpEntity(requestHeaders);
 
     return requestEntity;
-
   }
-
 }

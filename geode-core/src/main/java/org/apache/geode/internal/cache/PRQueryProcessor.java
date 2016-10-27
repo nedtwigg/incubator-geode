@@ -41,23 +41,22 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * This class takes the responsibility of executing the query on a data store
- * for the buckets specified in bucketList. It contains a
- * <code>PRQueryExecutor</code> thread-pool executor that takes a
- * <code>Callable</code> task identified by <code>PartitionedRegion</code>,
- * queryString and bucketId.
- * 
- * The QueryTasks add results directly to a results queue.
- * The BucketQueryResult is used not only to indicate completion, and holds an exception if there one occurred while
- * processing a query.
+ * This class takes the responsibility of executing the query on a data store for the buckets
+ * specified in bucketList. It contains a <code>PRQueryExecutor</code> thread-pool executor that
+ * takes a <code>Callable</code> task identified by <code>PartitionedRegion</code>, queryString and
+ * bucketId.
  *
+ * <p>The QueryTasks add results directly to a results queue. The BucketQueryResult is used not only
+ * to indicate completion, and holds an exception if there one occurred while processing a query.
  */
 public class PRQueryProcessor {
   private static final Logger logger = LogService.getLogger();
 
-  final static int BUCKET_QUERY_TIMEOUT = 60;
+  static final int BUCKET_QUERY_TIMEOUT = 60;
 
-  public final static int NUM_THREADS = Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "PRQueryProcessor.numThreads", 1).intValue();
+  public static final int NUM_THREADS =
+      Integer.getInteger(DistributionConfig.GEMFIRE_PREFIX + "PRQueryProcessor.numThreads", 1)
+          .intValue();
 
   /* For Test purpose */
   public static int TEST_NUM_THREADS = 0;
@@ -73,7 +72,11 @@ public class PRQueryProcessor {
   private boolean isIndexUsedForLocalQuery = false;
   //  private List _failedBuckets;
 
-  public PRQueryProcessor(PartitionedRegionDataStore prDS, DefaultQuery query, Object[] parameters, List<Integer> buckets) {
+  public PRQueryProcessor(
+      PartitionedRegionDataStore prDS,
+      DefaultQuery query,
+      Object[] parameters,
+      List<Integer> buckets) {
     Assert.assertTrue(!buckets.isEmpty(), "bucket list can not be empty. ");
     this._prds = prDS;
     this._bucketsToQuery = buckets;
@@ -83,7 +86,8 @@ public class PRQueryProcessor {
     PRQueryExecutor.initializeExecutorService();
   }
 
-  public PRQueryProcessor(PartitionedRegion pr, DefaultQuery query, Object[] parameters, List buckets) {
+  public PRQueryProcessor(
+      PartitionedRegion pr, DefaultQuery query, Object[] parameters, List buckets) {
     Assert.assertTrue(!buckets.isEmpty(), "bucket list can not be empty. ");
     this.pr = pr;
     this._bucketsToQuery = buckets;
@@ -101,13 +105,14 @@ public class PRQueryProcessor {
   }
 
   /**
-   * Executes a pre-compiled query on a data store.
-   * Adds result objects to resultQueue
+   * Executes a pre-compiled query on a data store. Adds result objects to resultQueue
+   *
    * @return boolean true if the result is a struct type
    * @throws QueryException
    * @throws ForceReattemptException if query should be tried again
    */
-  public boolean executeQuery(Collection<Collection> resultCollector) throws QueryException, InterruptedException, ForceReattemptException {
+  public boolean executeQuery(Collection<Collection> resultCollector)
+      throws QueryException, InterruptedException, ForceReattemptException {
     //Set indexInfoMap to this threads observer.
     //QueryObserver observer = QueryObserverHolder.getInstance();
     //if(observer != null && observer instanceof IndexTrackingQueryObserver){
@@ -122,9 +127,9 @@ public class PRQueryProcessor {
     return this.resultType.isStructType();
   }
 
-  private void executeWithThreadPool(Collection<Collection> resultCollector) throws QueryException, InterruptedException, ForceReattemptException {
-    if (Thread.interrupted())
-      throw new InterruptedException();
+  private void executeWithThreadPool(Collection<Collection> resultCollector)
+      throws QueryException, InterruptedException, ForceReattemptException {
+    if (Thread.interrupted()) throw new InterruptedException();
 
     java.util.List callableTasks = buildCallableTaskList(resultCollector);
     ExecutorService execService = PRQueryExecutor.getExecutorService();
@@ -162,13 +167,20 @@ public class PRQueryProcessor {
             }
 
           } catch (TimeoutException e) {
-            throw new InternalGemFireException(LocalizedStrings.PRQueryProcessor_TIMED_OUT_WHILE_EXECUTING_QUERY_TIME_EXCEEDED_0.toLocalizedString(Integer.valueOf(BUCKET_QUERY_TIMEOUT)), e);
+            throw new InternalGemFireException(
+                LocalizedStrings.PRQueryProcessor_TIMED_OUT_WHILE_EXECUTING_QUERY_TIME_EXCEEDED_0
+                    .toLocalizedString(Integer.valueOf(BUCKET_QUERY_TIMEOUT)),
+                e);
           } catch (ExecutionException ee) {
             Throwable cause = ee.getCause();
             if (cause instanceof QueryException) {
               throw (QueryException) cause;
             } else {
-              throw new InternalGemFireException(LocalizedStrings.PRQueryProcessor_GOT_UNEXPECTED_EXCEPTION_WHILE_EXECUTING_QUERY_ON_PARTITIONED_REGION_BUCKET.toLocalizedString(), cause);
+              throw new InternalGemFireException(
+                  LocalizedStrings
+                      .PRQueryProcessor_GOT_UNEXPECTED_EXCEPTION_WHILE_EXECUTING_QUERY_ON_PARTITIONED_REGION_BUCKET
+                      .toLocalizedString(),
+                  cause);
             }
           }
         }
@@ -192,14 +204,16 @@ public class PRQueryProcessor {
     if (reattemptNeeded) {
       throw fre;
     }
-
   }
 
-  /**
-   * @throws ForceReattemptException
-   *           if bucket was moved so caller should try query again
-   */
-  private void doBucketQuery(final Integer bId, final PartitionedRegionDataStore prds, final DefaultQuery query, final Object[] params, final PRQueryResultCollector rq) throws QueryException, ForceReattemptException, InterruptedException {
+  /** @throws ForceReattemptException if bucket was moved so caller should try query again */
+  private void doBucketQuery(
+      final Integer bId,
+      final PartitionedRegionDataStore prds,
+      final DefaultQuery query,
+      final Object[] params,
+      final PRQueryResultCollector rq)
+      throws QueryException, ForceReattemptException, InterruptedException {
     final BucketRegion bukRegion = (BucketRegion) prds.localBucket2RegionMap.get(bId);
     final PartitionedRegion pr = prds.getPartitionedRegion();
     try {
@@ -208,7 +222,11 @@ public class PRQueryProcessor {
         if (pr.isLocallyDestroyed || pr.isClosed) {
           throw new RegionDestroyedException("PR destroyed during query", pr.getFullPath());
         } else {
-          throw new ForceReattemptException("Bucket id " + pr.bucketStringForLogs(bId.intValue()) + " not found on VM " + pr.getMyId());
+          throw new ForceReattemptException(
+              "Bucket id "
+                  + pr.bucketStringForLogs(bId.intValue())
+                  + " not found on VM "
+                  + pr.getMyId());
         }
       }
       bukRegion.waitForData();
@@ -221,8 +239,8 @@ public class PRQueryProcessor {
       }
 
       if (!bukRegion.isBucketDestroyed()) {
-        // If the result queue has reached the limit, no need to 
-        // execute the query. Handle the bucket destroy condition 
+        // If the result queue has reached the limit, no need to
+        // execute the query. Handle the bucket destroy condition
         // and add the end bucket token.
         int numBucketsProcessed = getNumBucketsProcessed();
         if (limit < 0 || (rq.size() - numBucketsProcessed) < limit) {
@@ -239,8 +257,10 @@ public class PRQueryProcessor {
                 rq.put(DefaultQuery.NULL_RESULT);
               } else {
                 // Count from each bucket should be > 0 otherwise limit makes the final result wrong.
-                // Avoid if query is distinct as this Integer could be a region value. 
-                if (!query.getSimpleSelect().isDistinct() && query.getSimpleSelect().isCount() && r instanceof Integer) {
+                // Avoid if query is distinct as this Integer could be a region value.
+                if (!query.getSimpleSelect().isDistinct()
+                    && query.getSimpleSelect().isCount()
+                    && r instanceof Integer) {
                   if (((Integer) r).intValue() != 0) {
                     rq.put(r);
                   }
@@ -275,27 +295,34 @@ public class PRQueryProcessor {
 
   /**
    * @throws ForceReattemptException if it detects that the given bucket moved
-   * @throws RegionDestroyedException if the given pr was destroyed 
+   * @throws RegionDestroyedException if the given pr was destroyed
    */
-  private static void checkForBucketMoved(Integer bId, BucketRegion br, PartitionedRegion pr) throws ForceReattemptException, RegionDestroyedException {
+  private static void checkForBucketMoved(Integer bId, BucketRegion br, PartitionedRegion pr)
+      throws ForceReattemptException, RegionDestroyedException {
     if (br.isBucketDestroyed()) {
       // see if the pr is destroyed
       if (pr.isLocallyDestroyed || pr.isClosed) {
         throw new RegionDestroyedException("PR destroyed during query", pr.getFullPath());
       }
       pr.checkReadiness();
-      throw new ForceReattemptException("Bucket id " + pr.bucketStringForLogs(bId.intValue()) + " not found on VM " + pr.getMyId());
+      throw new ForceReattemptException(
+          "Bucket id "
+              + pr.bucketStringForLogs(bId.intValue())
+              + " not found on VM "
+              + pr.getMyId());
     }
   }
 
-  private void executeSequentially(Collection<Collection> resultCollector, List buckets) throws QueryException, InterruptedException, ForceReattemptException {
+  private void executeSequentially(Collection<Collection> resultCollector, List buckets)
+      throws QueryException, InterruptedException, ForceReattemptException {
     /*
     for (Iterator itr = _bucketsToQuery.iterator(); itr.hasNext(); ) {
       Integer bId = (Integer)itr.next();
       doBucketQuery(bId, this._prds, this.query, this.parameters, resultCollector);
     }*/
 
-    ExecutionContext context = new QueryExecutionContext(this.parameters, this.pr.getCache(), this.query);
+    ExecutionContext context =
+        new QueryExecutionContext(this.parameters, this.pr.getCache(), this.query);
 
     CompiledSelect cs = this.query.getSimpleSelect();
     int limit = this.query.getLimit(parameters);
@@ -315,7 +342,8 @@ public class PRQueryProcessor {
     }
   }
 
-  private Collection coalesceOrderedResults(Collection<Collection> results, ExecutionContext context, CompiledSelect cs, int limit) {
+  private Collection coalesceOrderedResults(
+      Collection<Collection> results, ExecutionContext context, CompiledSelect cs, int limit) {
     List<Collection> sortedResults = new ArrayList<Collection>(results.size());
     //TODO :Asif : Deal with UNDEFINED
     for (Object o : results) {
@@ -324,12 +352,20 @@ public class PRQueryProcessor {
       }
     }
 
-    NWayMergeResults mergedResults = new NWayMergeResults(sortedResults, cs.isDistinct(), limit, cs.getOrderByAttrs(), context, cs.getElementTypeForOrderByQueries());
+    NWayMergeResults mergedResults =
+        new NWayMergeResults(
+            sortedResults,
+            cs.isDistinct(),
+            limit,
+            cs.getOrderByAttrs(),
+            context,
+            cs.getElementTypeForOrderByQueries());
     return mergedResults;
-
   }
 
-  private void executeQueryOnBuckets(Collection<Collection> resultCollector, ExecutionContext context) throws ForceReattemptException, QueryInvocationTargetException, QueryException {
+  private void executeQueryOnBuckets(
+      Collection<Collection> resultCollector, ExecutionContext context)
+      throws ForceReattemptException, QueryInvocationTargetException, QueryException {
     // Check if QueryMonitor is enabled, if so add query to be monitored.
     QueryMonitor queryMonitor = null;
     context.setCqQueryContext(query.isCqQuery());
@@ -361,13 +397,16 @@ public class PRQueryProcessor {
       if (logger.isDebugEnabled()) {
         logger.debug("Query targeted local bucket not found. {}", bme.getMessage(), bme);
       }
-      throw new ForceReattemptException("Query targeted local bucket not found." + bme.getMessage(), bme);
+      throw new ForceReattemptException(
+          "Query targeted local bucket not found." + bme.getMessage(), bme);
     } catch (RegionDestroyedException rde) {
-      throw new QueryInvocationTargetException("The Region on which query is executed may have been destroyed." + rde.getMessage(), rde);
+      throw new QueryInvocationTargetException(
+          "The Region on which query is executed may have been destroyed." + rde.getMessage(), rde);
     } catch (QueryException qe) {
       // Check if PR is locally destroyed.
       if (pr.isLocallyDestroyed || pr.isClosed) {
-        throw new ForceReattemptException("Local Partition Region or the targeted bucket has been moved");
+        throw new ForceReattemptException(
+            "Local Partition Region or the targeted bucket has been moved");
       }
       throw qe;
     } finally {
@@ -379,7 +418,7 @@ public class PRQueryProcessor {
 
   private List buildCallableTaskList(Collection<Collection> resultsColl) {
     List callableTasks = new ArrayList();
-    for (Iterator itr = _bucketsToQuery.iterator(); itr.hasNext();) {
+    for (Iterator itr = _bucketsToQuery.iterator(); itr.hasNext(); ) {
       Integer bId = (Integer) itr.next();
       callableTasks.add(new QueryTask(this.query, this.parameters, _prds, bId, resultsColl));
     }
@@ -399,18 +438,16 @@ public class PRQueryProcessor {
   }
 
   /**
-   * A ThreadPool ( Fixed Size ) with an executor service to execute the query
-   * execution spread over buckets.
-   * 
-   * 
+   * A ThreadPool ( Fixed Size ) with an executor service to execute the query execution spread over
+   * buckets.
    */
   static class PRQueryExecutor {
 
     private static ExecutorService execService = null;
 
     /**
-     * Closes the executor service. This is called from
-     * {@link PartitionedRegion#afterRegionsClosedByCacheClose(GemFireCacheImpl)}
+     * Closes the executor service. This is called from {@link
+     * PartitionedRegion#afterRegionsClosedByCacheClose(GemFireCacheImpl)}
      */
     static synchronized void shutdown() {
       if (execService != null) {
@@ -419,8 +456,7 @@ public class PRQueryProcessor {
     }
 
     static synchronized void shutdownNow() {
-      if (execService != null)
-        execService.shutdownNow();
+      if (execService != null) execService.shutdownNow();
     }
 
     static synchronized ExecutorService getExecutorService() {
@@ -431,9 +467,7 @@ public class PRQueryProcessor {
       return execService;
     }
 
-    /**
-     * Creates the Executor Service.
-     */
+    /** Creates the Executor Service. */
     static synchronized void initializeExecutorService() {
       if (execService == null || execService.isShutdown() || execService.isTerminated()) {
         int numThreads = (TEST_NUM_THREADS > 1 ? TEST_NUM_THREADS : NUM_THREADS);
@@ -443,16 +477,14 @@ public class PRQueryProcessor {
   }
 
   /**
-    * Status token placed in results stream to track completion of
-   * query results for a given bucket
+   * Status token placed in results stream to track completion of query results for a given bucket
    */
   public static final class EndOfBucket implements DataSerializableFixedID {
 
     private int bucketId;
 
     /** Required by DataSerializer */
-    public EndOfBucket() {
-    }
+    public EndOfBucket() {}
 
     public EndOfBucket(int bucketId) {
       this.bucketId = bucketId;
@@ -487,9 +519,8 @@ public class PRQueryProcessor {
   }
 
   /**
-   * Implementation of call-able task to execute query on a bucket region. This
-   * task will be generated by the PRQueryProcessor.
-   * 
+   * Implementation of call-able task to execute query on a bucket region. This task will be
+   * generated by the PRQueryProcessor.
    */
   @SuppressWarnings("synthetic-access")
   private final class QueryTask implements Callable {
@@ -499,7 +530,12 @@ public class PRQueryProcessor {
     private final Integer _bucketId;
     private final Collection<Collection> resultColl;
 
-    public QueryTask(DefaultQuery query, Object[] parameters, PartitionedRegionDataStore prDS, Integer bucketId, final Collection<Collection> rColl) {
+    public QueryTask(
+        DefaultQuery query,
+        Object[] parameters,
+        PartitionedRegionDataStore prDS,
+        Integer bucketId,
+        final Collection<Collection> rColl) {
       this.query = query;
       this._prDs = prDS;
       this._bucketId = bucketId;
@@ -519,7 +555,8 @@ public class PRQueryProcessor {
 
         final Integer bId = Integer.valueOf(this._bucketId);
         List<Integer> bucketList = Collections.singletonList(bId);
-        ExecutionContext context = new QueryExecutionContext(this.parameters, pr.getCache(), this.query);
+        ExecutionContext context =
+            new QueryExecutionContext(this.parameters, pr.getCache(), this.query);
         context.setBucketList(bucketList);
         executeQueryOnBuckets(this.resultColl, context);
         //executeSequentially(this.resultColl, bucketList);
@@ -536,10 +573,7 @@ public class PRQueryProcessor {
       return bukResult;
     }
 
-    /**
-      * Encapsulates the result for the query on the bucket.
-     * 
-     */
+    /** Encapsulates the result for the query on the bucket. */
     private final class BucketQueryResult {
 
       private int _buk;
@@ -547,8 +581,8 @@ public class PRQueryProcessor {
       public boolean retry = false;
 
       /**
-        * Constructor
-       * 
+       * Constructor
+       *
        * @param bukId
        */
       public BucketQueryResult(int bukId) {

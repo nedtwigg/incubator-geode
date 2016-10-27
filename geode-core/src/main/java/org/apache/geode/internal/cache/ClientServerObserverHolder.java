@@ -19,29 +19,21 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.cache.query.internal.Support;
 
 /**
- * This class is intended to hold a single 'observer' which will receive
- * callbacks. There can be only one such observer at a time. If no observer is
- * needed, this member variable should point to an object with 'do-nothing'
- * methods, such as ClientServerObserverAdapter.
- * 
+ * This class is intended to hold a single 'observer' which will receive callbacks. There can be
+ * only one such observer at a time. If no observer is needed, this member variable should point to
+ * an object with 'do-nothing' methods, such as ClientServerObserverAdapter.
+ *
  * @since GemFire 5.1
  */
 public class ClientServerObserverHolder {
 
-  /**
-   * The default 'do-nothing' bridge observer *
-   */
+  /** The default 'do-nothing' bridge observer * */
   private static final ClientServerObserver NO_OBSERVER = new ClientServerObserverAdapter();
 
-  /**
-   * The current observer which will be notified of all query events.
-   */
+  /** The current observer which will be notified of all query events. */
   private static ClientServerObserver _instance = NO_OBSERVER;
 
-  /**
-   * Set the given observer to be notified of events. Returns the current
-   * observer.
-   */
+  /** Set the given observer to be notified of events. Returns the current observer. */
   public static final ClientServerObserver setInstance(ClientServerObserver observer) {
     Support.assertArg(observer != null, "setInstance expects a non-null argument!");
     ClientServerObserver oldObserver = _instance;
@@ -53,5 +45,4 @@ public class ClientServerObserverHolder {
   public static final ClientServerObserver getInstance() {
     return _instance;
   }
-
 }

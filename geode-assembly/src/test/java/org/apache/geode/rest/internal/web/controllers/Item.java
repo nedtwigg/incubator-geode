@@ -25,10 +25,11 @@ import org.apache.geode.pdx.PdxWriter;
 
 /**
  * The Item class models item entity in the real world.
- * <p/>
+ *
+ * <p>
+ *
  * @since GemFire 8.0
  */
-
 public class Item implements PdxSerializable {
 
   private Long itemNo;
@@ -77,15 +78,18 @@ public class Item implements PdxSerializable {
     this.totalPrice = totalprice;
   }
 
-  public Item() {
-
-  }
+  public Item() {}
 
   public Item(final Long itemNumber) {
     this.itemNo = itemNumber;
   }
 
-  public Item(final Long itemNumber, final String desc, final int qty, final float uprice, final float tprice) {
+  public Item(
+      final Long itemNumber,
+      final String desc,
+      final int qty,
+      final float uprice,
+      final float tprice) {
     this.itemNo = itemNumber;
     this.description = desc;
     this.quantity = qty;
@@ -105,7 +109,11 @@ public class Item implements PdxSerializable {
 
     final Item that = (Item) obj;
 
-    return (ObjectUtils.equals(this.getItemNo(), that.getItemNo()) && ObjectUtils.equals(this.getDescription(), that.getDescription()) && ObjectUtils.equals(this.getQuantity(), that.getQuantity()) && ObjectUtils.equals(this.getQuantity(), that.getUnitPrice()) && ObjectUtils.equals(this.getQuantity(), that.getTotalPrice()));
+    return (ObjectUtils.equals(this.getItemNo(), that.getItemNo())
+        && ObjectUtils.equals(this.getDescription(), that.getDescription())
+        && ObjectUtils.equals(this.getQuantity(), that.getQuantity())
+        && ObjectUtils.equals(this.getQuantity(), that.getUnitPrice())
+        && ObjectUtils.equals(this.getQuantity(), that.getTotalPrice()));
   }
 
   @Override
@@ -148,7 +156,5 @@ public class Item implements PdxSerializable {
     quantity = reader.readInt("quantity");
     unitPrice = reader.readFloat("unitPrice");
     totalPrice = reader.readFloat("totalPrice");
-
   }
-
 }

@@ -37,10 +37,9 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.management.internal.cli.domain.AsyncEventQueueDetails;
 
 /**
- * An implementation of GemFire Function interface used to determine all the
- * async event queues that exist for the entire cache, distributed across the
- * GemFire distributed system. </p>
- * 
+ * An implementation of GemFire Function interface used to determine all the async event queues that
+ * exist for the entire cache, distributed across the GemFire distributed system.
+ *
  * @since GemFire 8.0
  */
 public class ListAsyncEventQueuesFunction extends FunctionAdapter implements InternalEntity {
@@ -75,7 +74,8 @@ public class ListAsyncEventQueuesFunction extends FunctionAdapter implements Int
 
       Set<AsyncEventQueue> asyncEventQueues = cache.getAsyncEventQueues();
 
-      AsyncEventQueueDetails[] asyncEventQueueDetails = new AsyncEventQueueDetails[asyncEventQueues.size()];
+      AsyncEventQueueDetails[] asyncEventQueueDetails =
+          new AsyncEventQueueDetails[asyncEventQueues.size()];
       int i = 0;
       for (AsyncEventQueue queue : asyncEventQueues) {
         AsyncEventListener listener = queue.getAsyncEventListener();
@@ -83,7 +83,15 @@ public class ListAsyncEventQueuesFunction extends FunctionAdapter implements Int
         if (listener instanceof Declarable2) {
           listenerProperties = ((Declarable2) listener).getConfig();
         }
-        asyncEventQueueDetails[i++] = new AsyncEventQueueDetails(queue.getId(), queue.getBatchSize(), queue.isPersistent(), queue.getDiskStoreName(), queue.getMaximumQueueMemory(), listener.getClass().getName(), listenerProperties);
+        asyncEventQueueDetails[i++] =
+            new AsyncEventQueueDetails(
+                queue.getId(),
+                queue.getBatchSize(),
+                queue.isPersistent(),
+                queue.getDiskStoreName(),
+                queue.getMaximumQueueMemory(),
+                listener.getClass().getName(),
+                listenerProperties);
       }
 
       CliFunctionResult result = new CliFunctionResult(memberId, asyncEventQueueDetails);

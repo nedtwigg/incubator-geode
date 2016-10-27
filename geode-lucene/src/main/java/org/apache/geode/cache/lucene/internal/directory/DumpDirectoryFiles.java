@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -78,25 +78,30 @@ public class DumpDirectoryFiles implements Function, InternalEntity {
 
     final Region<Object, Object> region = ctx.getDataSet();
     LuceneService service = LuceneServiceProvider.get(ctx.getDataSet().getCache());
-    InternalLuceneIndex index = (InternalLuceneIndex) service.getIndex(indexName, region.getFullPath());
+    InternalLuceneIndex index =
+        (InternalLuceneIndex) service.getIndex(indexName, region.getFullPath());
     if (index == null) {
-      throw new IllegalStateException("Index not found for region " + region + " index " + indexName);
+      throw new IllegalStateException(
+          "Index not found for region " + region + " index " + indexName);
     }
 
     final RepositoryManager repoManager = index.getRepositoryManager();
     try {
       final Collection<IndexRepository> repositories = repoManager.getRepositories(ctx);
-      repositories.stream().forEach(repo -> {
-        final IndexWriter writer = repo.getWriter();
-        RegionDirectory directory = (RegionDirectory) writer.getDirectory();
-        FileSystem fs = directory.getFileSystem();
+      repositories
+          .stream()
+          .forEach(
+              repo -> {
+                final IndexWriter writer = repo.getWriter();
+                RegionDirectory directory = (RegionDirectory) writer.getDirectory();
+                FileSystem fs = directory.getFileSystem();
 
-        String bucketName = index.getName() + "_" + repo.getRegion().getFullPath();
-        bucketName = bucketName.replace("/", "_");
-        File bucketDirectory = new File(exportLocation, bucketName);
-        bucketDirectory.mkdirs();
-        fs.export(bucketDirectory);
-      });
+                String bucketName = index.getName() + "_" + repo.getRegion().getFullPath();
+                bucketName = bucketName.replace("/", "_");
+                File bucketDirectory = new File(exportLocation, bucketName);
+                bucketDirectory.mkdirs();
+                fs.export(bucketDirectory);
+              });
       context.getResultSender().lastResult(null);
     } catch (BucketNotFoundException e) {
       throw new FunctionException(e);

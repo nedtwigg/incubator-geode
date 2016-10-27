@@ -32,16 +32,13 @@ import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 
 /**
  * decr <key> <value> [noreply]\r\n
- * 
- * value is the amount by which the client wants to increase/decrease
- * the item. It is a decimal representation of a 64-bit unsigned integer.
- * 
- * The data for the item is
- * treated as decimal representation of a 64-bit unsigned integer.
- * Also, the item must already exist for incr/decr to work; these commands won't pretend
- * that a non-existent key exists with value 0; instead, they will fail.
- * 
  *
+ * <p>value is the amount by which the client wants to increase/decrease the item. It is a decimal
+ * representation of a 64-bit unsigned integer.
+ *
+ * <p>The data for the item is treated as decimal representation of a 64-bit unsigned integer. Also,
+ * the item must already exist for incr/decr to work; these commands won't pretend that a
+ * non-existent key exists with value 0; instead, they will fail.
  */
 public class DecrementCommand extends AbstractCommand {
 
@@ -80,7 +77,7 @@ public class DecrementCommand extends AbstractCommand {
       long oldLong = getLongFromByteArray(oldVal);
       long newLong = oldLong - decrBy;
       newVal.putLong(newLong);
-      ValueWrapper newValWrapper = ValueWrapper.getWrappedValue(newVal.array(), 0/*flags*/);
+      ValueWrapper newValWrapper = ValueWrapper.getWrappedValue(newVal.array(), 0 /*flags*/);
       if (r.replace(key, oldValWrapper, newValWrapper)) {
         reply = newLong + "\r\n";
         break;
@@ -113,7 +110,7 @@ public class DecrementCommand extends AbstractCommand {
             notFound = true;
           } else {
             newVal.putLong(0, initialVal);
-            newValWrapper = ValueWrapper.getWrappedValue(newVal.array(), 0/*flags*/);
+            newValWrapper = ValueWrapper.getWrappedValue(newVal.array(), 0 /*flags*/);
             r.put(key, newValWrapper);
           }
           break;
@@ -125,7 +122,7 @@ public class DecrementCommand extends AbstractCommand {
           newLong = 0;
         }
         newVal.putLong(0, newLong);
-        newValWrapper = ValueWrapper.getWrappedValue(newVal.array(), 0/*flags*/);
+        newValWrapper = ValueWrapper.getWrappedValue(newVal.array(), 0 /*flags*/);
         if (r.replace(key, oldValWrapper, newValWrapper)) {
           break;
         }
@@ -135,16 +132,31 @@ public class DecrementCommand extends AbstractCommand {
     }
 
     if (expiration > 0) {
-      StorageCommand.getExpiryExecutor().schedule(new Runnable() {
-        @Override
-        public void run() {
-          r.destroy(key);
-        }
-      }, expiration, TimeUnit.SECONDS);
+      StorageCommand.getExpiryExecutor()
+          .schedule(
+              new Runnable() {
+                @Override
+                public void run() {
+                  r.destroy(key);
+                }
+              },
+              expiration,
+              TimeUnit.SECONDS);
     }
 
     if (getLogger().fineEnabled()) {
-      getLogger().fine("decr:key:" + key + " decrBy:" + decrBy + " initVal:" + initialVal + " exp:" + expiration + " notFound:" + notFound);
+      getLogger()
+          .fine(
+              "decr:key:"
+                  + key
+                  + " decrBy:"
+                  + decrBy
+                  + " initVal:"
+                  + initialVal
+                  + " exp:"
+                  + expiration
+                  + " notFound:"
+                  + notFound);
     }
 
     ByteBuffer response = null;
@@ -163,9 +175,7 @@ public class DecrementCommand extends AbstractCommand {
     return response;
   }
 
-  /**
-   * Overridden by Q command
-   */
+  /** Overridden by Q command */
   protected boolean isQuiet() {
     return false;
   }

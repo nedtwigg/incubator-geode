@@ -21,9 +21,10 @@ package org.apache.geode.admin;
 /**
  * Type-safe definition for system members.
  *
- * @since GemFire     3.5
- *
- * @deprecated as of 7.0 use the <code><a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code> package instead
+ * @since GemFire 3.5
+ * @deprecated as of 7.0 use the <code>
+ *     <a href="{@docRoot}/org/apache/geode/management/package-summary.html">management</a></code>
+ *     package instead
  */
 public class SystemMemberType implements java.io.Serializable {
   private static final long serialVersionUID = 3284366994485749302L;
@@ -37,11 +38,12 @@ public class SystemMemberType implements java.io.Serializable {
   /** GemFire Cache VM connected to the distributed system */
   public static final SystemMemberType CACHE_VM = new SystemMemberType("CacheVm");
 
-  /** GemFire Cache Server connected to the distributed system
+  /**
+   * GemFire Cache Server connected to the distributed system
+   *
    * @deprecated as of 5.7 use {@link #CACHE_VM} instead.
    */
-  @Deprecated
-  public static final SystemMemberType CACHE_SERVER = CACHE_VM;
+  @Deprecated public static final SystemMemberType CACHE_SERVER = CACHE_VM;
 
   /** The display-friendly name of this system member type. */
   private final transient String name;
@@ -52,7 +54,7 @@ public class SystemMemberType implements java.io.Serializable {
 
   private static int nextOrdinal = 0;
 
-  private static final SystemMemberType[] VALUES = { MANAGER, APPLICATION, CACHE_VM };
+  private static final SystemMemberType[] VALUES = {MANAGER, APPLICATION, CACHE_VM};
 
   private Object readResolve() throws java.io.ObjectStreamException {
     return VALUES[ordinal]; // Canonicalize
@@ -82,7 +84,9 @@ public class SystemMemberType implements java.io.Serializable {
     return this.equals(APPLICATION);
   }
 
-  /** Return whether this is <code>CACHE_SERVER</code>.
+  /**
+   * Return whether this is <code>CACHE_SERVER</code>.
+   *
    * @deprecated as of 5.7 use {@link #isCacheVm} instead.
    */
   @Deprecated
@@ -90,13 +94,12 @@ public class SystemMemberType implements java.io.Serializable {
     return isCacheVm();
   }
 
-  /** Return whether this is <code>CACHE_VM</code>.
-   */
+  /** Return whether this is <code>CACHE_VM</code>. */
   public boolean isCacheVm() {
     return this.equals(CACHE_VM);
   }
 
-  /** 
+  /**
    * Returns a string representation for this system member type.
    *
    * @return the name of this system member type
@@ -109,27 +112,22 @@ public class SystemMemberType implements java.io.Serializable {
   /**
    * Indicates whether some other object is "equal to" this one.
    *
-   * @param  other  the reference object with which to compare.
-   * @return true if this object is the same as the obj argument;
-   *         false otherwise.
+   * @param other the reference object with which to compare.
+   * @return true if this object is the same as the obj argument; false otherwise.
    */
   @Override
   public boolean equals(Object other) {
-    if (other == this)
-      return true;
-    if (other == null)
-      return false;
-    if (!(other instanceof SystemMemberType))
-      return false;
+    if (other == this) return true;
+    if (other == null) return false;
+    if (!(other instanceof SystemMemberType)) return false;
     final SystemMemberType that = (SystemMemberType) other;
-    if (this.ordinal != that.ordinal)
-      return false;
+    if (this.ordinal != that.ordinal) return false;
     return true;
   }
 
   /**
-   * Returns a hash code for the object. This method is supported for the
-   * benefit of hashtables such as those provided by java.util.Hashtable.
+   * Returns a hash code for the object. This method is supported for the benefit of hashtables such
+   * as those provided by java.util.Hashtable.
    *
    * @return the integer 0 if description is null; otherwise a unique integer.
    */
@@ -140,5 +138,4 @@ public class SystemMemberType implements java.io.Serializable {
     result = mult * result + this.ordinal;
     return result;
   }
-
 }

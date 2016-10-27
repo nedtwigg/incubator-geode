@@ -17,12 +17,12 @@
 package org.apache.geode.distributed.internal;
 
 /**
- * Provides a method to get the system millisecond clock time
- * adjusted for the distributed cache.
+ * Provides a method to get the system millisecond clock time adjusted for the distributed cache.
  */
 public interface CacheTime {
   /**
    * Returns the system millisecond clock time with adjustments from the distributed cache
+   *
    * @return the current time
    */
   public long cacheTimeMillis();

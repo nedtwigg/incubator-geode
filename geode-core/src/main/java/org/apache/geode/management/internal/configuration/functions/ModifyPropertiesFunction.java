@@ -46,7 +46,8 @@ public class ModifyPropertiesFunction extends FunctionAdapter implements Interna
         sharedConfig.modifyProperties(properties, groups);
         sharedConfig.modifyCacheAttributes(xmlEntity, groups);
       } else {
-        configChangeResult.setErrorMessage("Shared Configuration has not been started in locator : " + locator);
+        configChangeResult.setErrorMessage(
+            "Shared Configuration has not been started in locator : " + locator);
       }
     } catch (Exception e) {
       configChangeResult.setException(e);
@@ -60,5 +61,4 @@ public class ModifyPropertiesFunction extends FunctionAdapter implements Interna
   public String getId() {
     return ModifyPropertiesFunction.class.getName();
   }
-
 }

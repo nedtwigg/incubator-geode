@@ -40,8 +40,9 @@ import javax.tools.SimpleJavaFileObject;
 import javax.tools.ToolProvider;
 
 /**
- * Test framework utility class to programmatically create classes, JARs and ClassLoaders that include the classes.
- * 
+ * Test framework utility class to programmatically create classes, JARs and ClassLoaders that
+ * include the classes.
+ *
  * @since GemFire 7.0
  */
 public class ClassBuilder implements Serializable {
@@ -51,32 +52,26 @@ public class ClassBuilder implements Serializable {
   /**
    * Write a JAR with an empty class using the given class name. The className may have a package
    * separated by /. For example: my/package/myclass
-   * 
-   * @param className
-   *          Name of the class to create
-   * @param outputFile
-   *          Where to write the JAR file
-   * @throws IOException
-   *           If there is a problem creating the output stream for the JAR file.
+   *
+   * @param className Name of the class to create
+   * @param outputFile Where to write the JAR file
+   * @throws IOException If there is a problem creating the output stream for the JAR file.
    */
   public void writeJarFromName(final String className, final File outputFile) throws IOException {
     writeJarFromContent(className, "public class " + className + "{}", outputFile);
   }
 
   /**
-   * Write a JAR with a class of the given name with the provided content. The className
-   * may have a package separated by /. For example: my/package/myclass
-   * 
-   * @param className
-   *          Name of the class to create
-   * @param content
-   *          Content of the created class
-   * @param outputFile
-   *          Where to write the JAR file
-   * @throws IOException
-   *           If there is a problem writing the JAR file.
+   * Write a JAR with a class of the given name with the provided content. The className may have a
+   * package separated by /. For example: my/package/myclass
+   *
+   * @param className Name of the class to create
+   * @param content Content of the created class
+   * @param outputFile Where to write the JAR file
+   * @throws IOException If there is a problem writing the JAR file.
    */
-  public void writeJarFromContent(final String className, final String content, final File outputFile) throws IOException {
+  public void writeJarFromContent(
+      final String className, final String content, final File outputFile) throws IOException {
     FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
     writeJarFromContent(className, content, fileOutputStream);
     fileOutputStream.close();
@@ -85,12 +80,10 @@ public class ClassBuilder implements Serializable {
   /**
    * Create a JAR with an empty class using the given class name. The className may have a package
    * separated by /. For example: my/package/myclass
-   * 
-   * @param className
-   *          Name of the class to create
+   *
+   * @param className Name of the class to create
    * @return The JAR file contents
-   * @throws IOException
-   *           If there is a problem creating the output stream for the JAR file.
+   * @throws IOException If there is a problem creating the output stream for the JAR file.
    */
   public byte[] createJarFromName(final String className) throws IOException {
     return createJarFromClassContent(className, "public class " + className + "{}");
@@ -98,16 +91,14 @@ public class ClassBuilder implements Serializable {
 
   /**
    * Create a JAR using the given file contents and with the given file name.
-   * 
-   * @param fileName
-   *          Name of the file to create
-   * @param content
-   *          Content of the created file
+   *
+   * @param fileName Name of the file to create
+   * @param content Content of the created file
    * @return The JAR file content
-   * @throws IOException
-   *           If there is a problem creating the output stream for the JAR file.
+   * @throws IOException If there is a problem creating the output stream for the JAR file.
    */
-  public byte[] createJarFromFileContent(final String fileName, final String content) throws IOException {
+  public byte[] createJarFromFileContent(final String fileName, final String content)
+      throws IOException {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     JarOutputStream jarOutputStream = new JarOutputStream(byteArrayOutputStream);
 
@@ -123,35 +114,31 @@ public class ClassBuilder implements Serializable {
 
   /**
    * Create a JAR using the given class contents and with the given class name.
-   * 
-   * @param className
-   *          Name of the class to create
-   * @param content
-   *          Content of the created class
+   *
+   * @param className Name of the class to create
+   * @param content Content of the created class
    * @return The JAR file content
-   * @throws IOException
-   *           If there is a problem creating the output stream for the JAR file.
+   * @throws IOException If there is a problem creating the output stream for the JAR file.
    */
-  public byte[] createJarFromClassContent(final String className, final String content) throws IOException {
+  public byte[] createJarFromClassContent(final String className, final String content)
+      throws IOException {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     writeJarFromContent(className, content, byteArrayOutputStream);
     return byteArrayOutputStream.toByteArray();
   }
 
   /**
-   * Write a JAR with a class of the given name with the provided content. The className
-   * may have a package separated by /. For example: my/package/myclass
-   * 
-   * @param className
-   *          Name of the class to create
-   * @param content
-   *          Content of the created class
-   * @param outStream
-   *          Stream to write the JAR to
-   * @throws IOException
-   *           If there is a problem creating the output stream for the JAR file.
+   * Write a JAR with a class of the given name with the provided content. The className may have a
+   * package separated by /. For example: my/package/myclass
+   *
+   * @param className Name of the class to create
+   * @param content Content of the created class
+   * @param outStream Stream to write the JAR to
+   * @throws IOException If there is a problem creating the output stream for the JAR file.
    */
-  public void writeJarFromContent(final String className, final String content, final OutputStream outStream) throws IOException {
+  public void writeJarFromContent(
+      final String className, final String content, final OutputStream outStream)
+      throws IOException {
     JarOutputStream jarOutputStream = new JarOutputStream(outStream);
 
     // Add the class file to the JAR file
@@ -179,16 +166,14 @@ public class ClassBuilder implements Serializable {
   /**
    * Creates a ClassLoader that contains an empty class with the given name using the given content.
    * The className may have a package separated by /. For example: my/package/myclass
-   * 
-   * @param className
-   *          Name of the class to create
-   * @param content
-   *          Content of the created class
+   *
+   * @param className Name of the class to create
+   * @param content Content of the created class
    * @return The class loader
-   * @throws IOException
-   *           If there's a problem creating the output stream used to generate the class
+   * @throws IOException If there's a problem creating the output stream used to generate the class
    */
-  public ClassLoader createClassLoaderFromContent(final String className, final String content) throws IOException {
+  public ClassLoader createClassLoaderFromContent(final String className, final String content)
+      throws IOException {
     byte[] classDefinition = compileClass(className, content);
     SingleClassClassLoader classLoader = new SingleClassClassLoader();
     classLoader.addClass(className, classDefinition);
@@ -196,12 +181,11 @@ public class ClassBuilder implements Serializable {
   }
 
   /**
-   * Compile the provided class. The className may have a package separated by /. For example: my/package/myclass
-   * 
-   * @param className
-   *          Name of the class to compile.
-   * @param classCode
-   *          Plain text contents of the class
+   * Compile the provided class. The className may have a package separated by /. For example:
+   * my/package/myclass
+   *
+   * @param className Name of the class to compile.
+   * @param classCode Plain text contents of the class
    * @return The byte contents of the compiled class.
    * @throws IOException
    */
@@ -209,7 +193,9 @@ public class ClassBuilder implements Serializable {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
     JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
-    OutputStreamJavaFileManager<JavaFileManager> fileManager = new OutputStreamJavaFileManager<JavaFileManager>(javaCompiler.getStandardFileManager(null, null, null), byteArrayOutputStream);
+    OutputStreamJavaFileManager<JavaFileManager> fileManager =
+        new OutputStreamJavaFileManager<JavaFileManager>(
+            javaCompiler.getStandardFileManager(null, null, null), byteArrayOutputStream);
 
     List<JavaFileObject> fileObjects = new ArrayList<JavaFileObject>();
     fileObjects.add(new JavaSourceFromString(className, classCode));
@@ -219,7 +205,9 @@ public class ClassBuilder implements Serializable {
     if (!javaCompiler.getTask(null, fileManager, diagnostics, options, null, fileObjects).call()) {
       StringBuilder errorMsg = new StringBuilder();
       for (Diagnostic d : diagnostics.getDiagnostics()) {
-        String err = String.format("Compilation error: Line %d - %s%n", d.getLineNumber(), d.getMessage(null));
+        String err =
+            String.format(
+                "Compilation error: Line %d - %s%n", d.getLineNumber(), d.getMessage(null));
         errorMsg.append(err);
         System.err.print(err);
       }
@@ -228,11 +216,10 @@ public class ClassBuilder implements Serializable {
     return byteArrayOutputStream.toByteArray();
   }
 
-  /***
-   * Add to the ClassPath used when compiling.
-   * 
-   * @param path
-   *          Path to add
+  /**
+   * * Add to the ClassPath used when compiling.
+   *
+   * @param path Path to add
    * @return The complete, new ClassPath
    */
   public String addToClassPath(final String path) {
@@ -242,7 +229,7 @@ public class ClassBuilder implements Serializable {
 
   /**
    * Get the current ClassPath used when compiling.
-   * 
+   *
    * @return The ClassPath used when compiling.
    */
   public String getClassPath() {
@@ -266,7 +253,8 @@ public class ClassBuilder implements Serializable {
   private class OutputStreamSimpleFileObject extends SimpleJavaFileObject {
     private OutputStream outputStream;
 
-    protected OutputStreamSimpleFileObject(final URI uri, final JavaFileObject.Kind kind, final OutputStream outputStream) {
+    protected OutputStreamSimpleFileObject(
+        final URI uri, final JavaFileObject.Kind kind, final OutputStream outputStream) {
       super(uri, kind);
       this.outputStream = outputStream;
     }
@@ -277,7 +265,8 @@ public class ClassBuilder implements Serializable {
     }
   }
 
-  private class OutputStreamJavaFileManager<M extends JavaFileManager> extends ForwardingJavaFileManager<M> {
+  private class OutputStreamJavaFileManager<M extends JavaFileManager>
+      extends ForwardingJavaFileManager<M> {
     private OutputStream outputStream;
 
     protected OutputStreamJavaFileManager(final M fileManager, final OutputStream outputStream) {
@@ -286,7 +275,11 @@ public class ClassBuilder implements Serializable {
     }
 
     @Override
-    public JavaFileObject getJavaFileForOutput(final JavaFileManager.Location location, final String className, final JavaFileObject.Kind kind, final FileObject sibling) {
+    public JavaFileObject getJavaFileForOutput(
+        final JavaFileManager.Location location,
+        final String className,
+        final JavaFileObject.Kind kind,
+        final FileObject sibling) {
       return new OutputStreamSimpleFileObject(new File(className).toURI(), kind, outputStream);
     }
   }

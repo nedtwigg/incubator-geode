@@ -16,9 +16,7 @@
  */
 package org.apache.geode.test.junit.rules.serializable;
 
-/**
- * Names of member fields in {@link org.junit.rules.Timeout}.
- */
+/** Names of member fields in {@link org.junit.rules.Timeout}. */
 interface FieldsOfTimeout {
   static final String FIELD_TIMEOUT = "timeout"; // long
   static final String FIELD_TIME_UNIT = "timeUnit"; // java.util.concurrent.TimeUnit

@@ -36,5 +36,4 @@ public class EchoExecutor extends AbstractExecutor {
     byte[] echoMessage = commandElems.get(1);
     command.setResponse(Coder.getBulkStringResponse(context.getByteBufAllocator(), echoMessage));
   }
-
 }

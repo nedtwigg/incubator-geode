@@ -35,7 +35,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 enum Day {
-  Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
+  Sunday,
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday
 }
 
 public class TestObjectForJSONFormatter implements PdxSerializable {
@@ -69,7 +75,7 @@ public class TestObjectForJSONFormatter implements PdxSerializable {
   private float[] p_floatArray;
   private double[] p_doubleArray;
 
-  //Wrapper_Arrays 
+  //Wrapper_Arrays
   private Boolean[] w_boolArray;
   private Byte[] w_byteArray;
   private Short[] w_shortArray;
@@ -96,8 +102,7 @@ public class TestObjectForJSONFormatter implements PdxSerializable {
 
   private Employee employee;
 
-  public TestObjectForJSONFormatter() {
-  }
+  public TestObjectForJSONFormatter() {}
 
   public String addClassTypeToJson(String json) throws JSONException {
     JSONObject jsonObj = new JSONObject(json);
@@ -190,13 +195,13 @@ public class TestObjectForJSONFormatter implements PdxSerializable {
     w_string = new String("Nilkanth Patel");
 
     //Initialization for members of type primitive arrays
-    p_boolArray = new boolean[] { true, false, false };
-    p_byteArray = new byte[] { 10, 11, 12 };
-    p_shortArray = new short[] { 101, 102, 103 };
-    p_intArray = new int[] { 1001, 1002, 1003, 1004, 1005, 1006 };
-    p_longArray = new long[] { 12345678910L, 12345678911L, 12345678912L };
-    p_floatArray = new float[] { 123.45f, 456.78f, -91011.123f };
-    p_doubleArray = new double[] { 1234.5678d, -91011.1213d, 1415.1617d };
+    p_boolArray = new boolean[] {true, false, false};
+    p_byteArray = new byte[] {10, 11, 12};
+    p_shortArray = new short[] {101, 102, 103};
+    p_intArray = new int[] {1001, 1002, 1003, 1004, 1005, 1006};
+    p_longArray = new long[] {12345678910L, 12345678911L, 12345678912L};
+    p_floatArray = new float[] {123.45f, 456.78f, -91011.123f};
+    p_doubleArray = new double[] {1234.5678d, -91011.1213d, 1415.1617d};
 
     //Initialization for members of type wrapper arrays
     w_boolArray = new Boolean[3];
@@ -218,15 +223,34 @@ public class TestObjectForJSONFormatter implements PdxSerializable {
       w_doubleArray[i] = p_doubleArray[i];
     }
 
-    w_bigIntArray = new BigInteger[] { BigInteger.ZERO, BigInteger.ONE, new BigInteger("12345678910") };
-    w_bigDecArray = new BigDecimal[] { BigDecimal.TEN, new BigDecimal("143.145"), new BigDecimal("10.01") };
-    w_strArray = new String[] { "Nilkanth", "Vishal", "Hitesh" };
+    w_bigIntArray =
+        new BigInteger[] {BigInteger.ZERO, BigInteger.ONE, new BigInteger("12345678910")};
+    w_bigDecArray =
+        new BigDecimal[] {BigDecimal.TEN, new BigDecimal("143.145"), new BigDecimal("10.01")};
+    w_strArray = new String[] {"Nilkanth", "Vishal", "Hitesh"};
 
     //Enum type initialization
     day = Day.Thursday;
   }
 
-  public TestObjectForJSONFormatter(boolean p_bool, byte p_byte, short p_short, int p_int, long p_long, float p_float, double p_double, Boolean w_bool, Byte w_byte, Short w_short, Integer w_int, Long w_long, BigInteger w_bigInt, Float w_float, BigDecimal w_bigDec, Double w_double, String w_string) {
+  public TestObjectForJSONFormatter(
+      boolean p_bool,
+      byte p_byte,
+      short p_short,
+      int p_int,
+      long p_long,
+      float p_float,
+      double p_double,
+      Boolean w_bool,
+      Byte w_byte,
+      Short w_short,
+      Integer w_int,
+      Long w_long,
+      BigInteger w_bigInt,
+      Float w_float,
+      BigDecimal w_bigDec,
+      Double w_double,
+      String w_string) {
     super();
     this.p_bool = p_bool;
     this.p_byte = p_byte;
@@ -868,118 +892,80 @@ public class TestObjectForJSONFormatter implements PdxSerializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
 
     TestObjectForJSONFormatter other = (TestObjectForJSONFormatter) obj;
 
     // primitive type
-    if (p_bool != other.p_bool)
-      return false;
-    if (p_byte != other.p_byte)
-      return false;
-    if (p_short != other.p_short)
-      return false;
-    if (p_int != other.p_int)
-      return false;
-    if (p_long != other.p_long)
-      return false;
-    if (p_float != other.p_float)
-      return false;
-    if (p_double != other.p_double)
-      return false;
+    if (p_bool != other.p_bool) return false;
+    if (p_byte != other.p_byte) return false;
+    if (p_short != other.p_short) return false;
+    if (p_int != other.p_int) return false;
+    if (p_long != other.p_long) return false;
+    if (p_float != other.p_float) return false;
+    if (p_double != other.p_double) return false;
 
     // wrapper type
-    if (w_bool.booleanValue() != other.w_bool.booleanValue())
-      return false;
-    if (w_byte.byteValue() != other.w_byte.byteValue())
-      return false;
-    if (w_short.shortValue() != other.w_short.shortValue())
-      return false;
-    if (w_int.intValue() != other.w_int.intValue())
-      return false;
-    if (w_long.longValue() != other.w_long.longValue())
-      return false;
-    if (w_float.floatValue() != other.w_float.floatValue())
-      return false;
-    if (w_double.doubleValue() != other.w_double.doubleValue())
-      return false;
-    if (!w_string.equals(other.w_string))
-      return false;
-    if (w_bigInt.longValue() != other.w_bigInt.longValue())
-      return false;
-    if (w_bigDec.longValue() != other.w_bigDec.longValue())
-      return false;
+    if (w_bool.booleanValue() != other.w_bool.booleanValue()) return false;
+    if (w_byte.byteValue() != other.w_byte.byteValue()) return false;
+    if (w_short.shortValue() != other.w_short.shortValue()) return false;
+    if (w_int.intValue() != other.w_int.intValue()) return false;
+    if (w_long.longValue() != other.w_long.longValue()) return false;
+    if (w_float.floatValue() != other.w_float.floatValue()) return false;
+    if (w_double.doubleValue() != other.w_double.doubleValue()) return false;
+    if (!w_string.equals(other.w_string)) return false;
+    if (w_bigInt.longValue() != other.w_bigInt.longValue()) return false;
+    if (w_bigDec.longValue() != other.w_bigDec.longValue()) return false;
 
     // Primitive arrays
-    if (!Arrays.equals(p_boolArray, other.p_boolArray))
-      return false;
-    if (!Arrays.equals(p_byteArray, other.p_byteArray))
-      return false;
-    if (!Arrays.equals(p_shortArray, other.p_shortArray))
-      return false;
-    if (!Arrays.equals(p_intArray, other.p_intArray))
-      return false;
-    if (!Arrays.equals(p_longArray, other.p_longArray))
-      return false;
-    if (!Arrays.equals(p_floatArray, other.p_floatArray))
-      return false;
-    if (!Arrays.equals(p_doubleArray, other.p_doubleArray))
-      return false;
+    if (!Arrays.equals(p_boolArray, other.p_boolArray)) return false;
+    if (!Arrays.equals(p_byteArray, other.p_byteArray)) return false;
+    if (!Arrays.equals(p_shortArray, other.p_shortArray)) return false;
+    if (!Arrays.equals(p_intArray, other.p_intArray)) return false;
+    if (!Arrays.equals(p_longArray, other.p_longArray)) return false;
+    if (!Arrays.equals(p_floatArray, other.p_floatArray)) return false;
+    if (!Arrays.equals(p_doubleArray, other.p_doubleArray)) return false;
 
     // wrapper Arrays
-    if (!Arrays.equals(w_boolArray, other.w_boolArray))
-      return false;
-    if (!Arrays.equals(w_byteArray, other.w_byteArray))
-      return false;
-    if (!Arrays.equals(w_shortArray, other.w_shortArray))
-      return false;
-    if (!Arrays.equals(w_intArray, other.w_intArray))
-      return false;
-    if (!Arrays.equals(w_longArray, other.w_longArray))
-      return false;
-    if (!Arrays.equals(w_floatArray, other.w_floatArray))
-      return false;
-    if (!Arrays.equals(w_doubleArray, other.w_doubleArray))
-      return false;
-    if (!Arrays.equals(w_strArray, other.w_strArray))
-      return false;
-    if (!Arrays.equals(w_bigIntArray, other.w_bigIntArray))
-      return false;
-    if (!Arrays.equals(w_bigDecArray, other.w_bigDecArray))
-      return false;
+    if (!Arrays.equals(w_boolArray, other.w_boolArray)) return false;
+    if (!Arrays.equals(w_byteArray, other.w_byteArray)) return false;
+    if (!Arrays.equals(w_shortArray, other.w_shortArray)) return false;
+    if (!Arrays.equals(w_intArray, other.w_intArray)) return false;
+    if (!Arrays.equals(w_longArray, other.w_longArray)) return false;
+    if (!Arrays.equals(w_floatArray, other.w_floatArray)) return false;
+    if (!Arrays.equals(w_doubleArray, other.w_doubleArray)) return false;
+    if (!Arrays.equals(w_strArray, other.w_strArray)) return false;
+    if (!Arrays.equals(w_bigIntArray, other.w_bigIntArray)) return false;
+    if (!Arrays.equals(w_bigDecArray, other.w_bigDecArray)) return false;
 
     // comparing Collections based on content, order not considered
-    if (!(c_list.size() == other.c_list.size() && c_list.containsAll(other.c_list) && other.c_list.containsAll(c_list)))
-      return false;
-    if (!(c_set.size() == other.c_set.size() && c_set.containsAll(other.c_set) && other.c_set.containsAll(c_set)))
-      return false;
-    if (!(c_queue.size() == other.c_queue.size() && c_queue.containsAll(other.c_queue) && other.c_queue.containsAll(c_queue)))
-      return false;
-    if (!(c_deque.size() == other.c_deque.size() && c_deque.containsAll(other.c_deque) && other.c_deque.containsAll(c_deque)))
-      return false;
+    if (!(c_list.size() == other.c_list.size()
+        && c_list.containsAll(other.c_list)
+        && other.c_list.containsAll(c_list))) return false;
+    if (!(c_set.size() == other.c_set.size()
+        && c_set.containsAll(other.c_set)
+        && other.c_set.containsAll(c_set))) return false;
+    if (!(c_queue.size() == other.c_queue.size()
+        && c_queue.containsAll(other.c_queue)
+        && other.c_queue.containsAll(c_queue))) return false;
+    if (!(c_deque.size() == other.c_deque.size()
+        && c_deque.containsAll(other.c_deque)
+        && other.c_deque.containsAll(c_deque))) return false;
 
     // map comparision.
-    if (!(compareMaps(m_empByCity, other.m_empByCity)))
-      return false;
+    if (!(compareMaps(m_empByCity, other.m_empByCity))) return false;
 
     // Enum validation
-    if (!(day.equals(other.day)))
-      return false;
+    if (!(day.equals(other.day))) return false;
 
     return true;
   }
 
   boolean compareMaps(Map m1, Map m2) {
-    if (m1.size() != m2.size())
-      return false;
-    for (Object key : m1.keySet())
-      if (!m1.get(key).equals(m2.get(key)))
-        return false;
+    if (m1.size() != m2.size()) return false;
+    for (Object key : m1.keySet()) if (!m1.get(key).equals(m2.get(key))) return false;
     return true;
   }
 }

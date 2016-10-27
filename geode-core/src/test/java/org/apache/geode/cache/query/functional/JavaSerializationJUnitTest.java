@@ -38,10 +38,10 @@ public class JavaSerializationJUnitTest {
 
   @Test
   public void testStructImplSerialization() throws Exception {
-    String[] fieldNames = { "col1", "col2" };
-    ObjectType[] fieldTypes = { new ObjectTypeImpl(Integer.class), new ObjectTypeImpl(String.class) };
+    String[] fieldNames = {"col1", "col2"};
+    ObjectType[] fieldTypes = {new ObjectTypeImpl(Integer.class), new ObjectTypeImpl(String.class)};
     StructTypeImpl type = new StructTypeImpl(fieldNames, fieldTypes);
-    Object[] values = { new Integer(123), new String("456") };
+    Object[] values = {new Integer(123), new String("456")};
     StructImpl si = new StructImpl(type, values);
     verifyJavaSerialization(si);
   }

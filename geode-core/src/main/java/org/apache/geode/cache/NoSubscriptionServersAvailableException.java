@@ -19,9 +19,9 @@ package org.apache.geode.cache;
 import org.apache.geode.cache.client.ServerConnectivityException;
 
 /**
- * Indicates that this client cannot contact any servers and
- * therefore cannot perform operations that require subscriptions, such as
- * registering interest.
+ * Indicates that this client cannot contact any servers and therefore cannot perform operations
+ * that require subscriptions, such as registering interest.
+ *
  * @since GemFire 5.7
  */
 public class NoSubscriptionServersAvailableException extends ServerConnectivityException {
@@ -29,14 +29,14 @@ public class NoSubscriptionServersAvailableException extends ServerConnectivityE
   private static final long serialVersionUID = 8484086019155762365L;
 
   /**
-   * Create a new instance of NoSubscriptionServersAvailableException without a detail message or cause.
+   * Create a new instance of NoSubscriptionServersAvailableException without a detail message or
+   * cause.
    */
-  public NoSubscriptionServersAvailableException() {
-  }
+  public NoSubscriptionServersAvailableException() {}
 
   /**
-   * 
    * Create a new instance of NoSubscriptionServersAvailableException with a detail message
+   *
    * @param message the detail message
    */
   public NoSubscriptionServersAvailableException(String message) {
@@ -44,7 +44,9 @@ public class NoSubscriptionServersAvailableException extends ServerConnectivityE
   }
 
   /**
-   * Create a new instance of NoSubscriptionServersAvailableException with a detail message and cause
+   * Create a new instance of NoSubscriptionServersAvailableException with a detail message and
+   * cause
+   *
    * @param message the detail message
    * @param cause the cause
    */
@@ -54,10 +56,10 @@ public class NoSubscriptionServersAvailableException extends ServerConnectivityE
 
   /**
    * Create a new instance of NoSubscriptionServersAvailableException with a cause
+   *
    * @param cause the cause
    */
   public NoSubscriptionServersAvailableException(Throwable cause) {
     super(cause);
   }
-
 }

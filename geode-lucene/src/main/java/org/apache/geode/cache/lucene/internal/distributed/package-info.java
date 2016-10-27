@@ -17,9 +17,9 @@
  * under the License.
  */
 /**
- * Classes used for distributing lucene queries to geode nodes. Contains the lucene related functions
- * like {@link org.apache.geode.cache.lucene.internal.distributed.LuceneFunction} as well as objects that are
- * passed between nodes like {@link org.apache.geode.cache.lucene.internal.distributed.EntryScore}
+ * Classes used for distributing lucene queries to geode nodes. Contains the lucene related
+ * functions like {@link org.apache.geode.cache.lucene.internal.distributed.LuceneFunction} as well
+ * as objects that are passed between nodes like {@link
+ * org.apache.geode.cache.lucene.internal.distributed.EntryScore}
  */
-
 package org.apache.geode.cache.lucene.internal.distributed;

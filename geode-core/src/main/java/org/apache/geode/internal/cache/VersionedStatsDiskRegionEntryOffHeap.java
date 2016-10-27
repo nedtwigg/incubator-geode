@@ -18,12 +18,14 @@ package org.apache.geode.internal.cache;
 
 import java.util.UUID;
 
-public abstract class VersionedStatsDiskRegionEntryOffHeap extends VersionedStatsDiskRegionEntry implements OffHeapRegionEntry {
+public abstract class VersionedStatsDiskRegionEntryOffHeap extends VersionedStatsDiskRegionEntry
+    implements OffHeapRegionEntry {
   public VersionedStatsDiskRegionEntryOffHeap(RegionEntryContext context, Object value) {
     super(context, value);
   }
 
-  private static final VersionedStatsDiskRegionEntryOffHeapFactory factory = new VersionedStatsDiskRegionEntryOffHeapFactory();
+  private static final VersionedStatsDiskRegionEntryOffHeapFactory factory =
+      new VersionedStatsDiskRegionEntryOffHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;
@@ -43,9 +45,11 @@ public abstract class VersionedStatsDiskRegionEntryOffHeap extends VersionedStat
           if (info != null) {
             final boolean byteEncoded = info;
             if (skey.length() <= InlineKeyHelper.getMaxInlineStringKey(1, byteEncoded)) {
-              return new VersionedStatsDiskRegionEntryOffHeapStringKey1(context, skey, value, byteEncoded);
+              return new VersionedStatsDiskRegionEntryOffHeapStringKey1(
+                  context, skey, value, byteEncoded);
             } else {
-              return new VersionedStatsDiskRegionEntryOffHeapStringKey2(context, skey, value, byteEncoded);
+              return new VersionedStatsDiskRegionEntryOffHeapStringKey2(
+                  context, skey, value, byteEncoded);
             }
           }
         } else if (keyClass == UUID.class) {

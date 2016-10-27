@@ -25,43 +25,39 @@ import org.apache.geode.internal.Version;
 import org.apache.geode.internal.VersionedDataSerializable;
 
 /**
- * RVV exceptions are part of a RegionVersionVector.  They are held by
- * RegionVersionHolders.<p>
- * 
- * An RVV exception represents a missing range of versions from a member.
- * This is represented as a pair of version numbers: the last version we've
- * received from the member and the next version we've received from the member.
- * The span of versions between (but not including) these two numbers are
- * the versions that are missing.<p>
- * 
- * RVVException also tracks the scattering of versions we've received that fall
- * within the range of the exception.  As these missing versions are received
- * the RVVException coalesces the range.  If isFilled() returns true after
- * adding a missing version to the RVVException, the hole has been filled
- * and the RVVException is no longer needed.<p>
- * 
- * New exceptions are common to see as operations
- * arrive from parallel threads operating on the same region.  These exceptions
- * are soon mended and disappear.<p>
- * 
- * Old exceptions indicate that we missed something that we are unlikely
- * to receive without asking for it.<p>
- * 
- * RVVException currently depends on external synchronization.  Typically the
- * RegionVersionHolder that holds the exception is locked while accessing
- * its RVVExceptions.  This is what is done in RegionVersionVector.
- * 
+ * RVV exceptions are part of a RegionVersionVector. They are held by RegionVersionHolders.
+ *
+ * <p>An RVV exception represents a missing range of versions from a member. This is represented as
+ * a pair of version numbers: the last version we've received from the member and the next version
+ * we've received from the member. The span of versions between (but not including) these two
+ * numbers are the versions that are missing.
+ *
+ * <p>RVVException also tracks the scattering of versions we've received that fall within the range
+ * of the exception. As these missing versions are received the RVVException coalesces the range. If
+ * isFilled() returns true after adding a missing version to the RVVException, the hole has been
+ * filled and the RVVException is no longer needed.
+ *
+ * <p>New exceptions are common to see as operations arrive from parallel threads operating on the
+ * same region. These exceptions are soon mended and disappear.
+ *
+ * <p>Old exceptions indicate that we missed something that we are unlikely to receive without
+ * asking for it.
+ *
+ * <p>RVVException currently depends on external synchronization. Typically the RegionVersionHolder
+ * that holds the exception is locked while accessing its RVVExceptions. This is what is done in
+ * RegionVersionVector.
  */
-abstract class RVVException implements Comparable<RVVException>, Cloneable, VersionedDataSerializable {
+abstract class RVVException
+    implements Comparable<RVVException>, Cloneable, VersionedDataSerializable {
   protected static boolean UseTreeSetsForTesting = false;
 
   /**
-   * The maximum version span that can be represented by a bitset
-   * RVVException.  If the span is greater than this we use the
-   * version of RVVException that collects "received versions" in a
+   * The maximum version span that can be represented by a bitset RVVException. If the span is
+   * greater than this we use the version of RVVException that collects "received versions" in a
    * regular collection.
    */
-  protected static final long RVV_MAX_BITSET_SPAN = 128 * 8; // 128 bytes gives a span of 1k versions
+  protected static final long RVV_MAX_BITSET_SPAN =
+      128 * 8; // 128 bytes gives a span of 1k versions
 
   long previousVersion;
   long nextVersion;
@@ -71,12 +67,14 @@ abstract class RVVException implements Comparable<RVVException>, Cloneable, Vers
   }
 
   /** Use this method to create a new RVVException */
-  static RVVException createException(long previousVersion, long nextVersion, long initialExceptionCount) {
+  static RVVException createException(
+      long previousVersion, long nextVersion, long initialExceptionCount) {
     // arbitrary cutoff of 100 bytes to use a treeSet instead of bitSet
     // But if we are deserializing an exception too many received versions use a
     // bitset anyway.
     long delta = nextVersion - previousVersion;
-    if (UseTreeSetsForTesting || (delta > RVV_MAX_BITSET_SPAN && initialExceptionCount * 512 < delta)) {
+    if (UseTreeSetsForTesting
+        || (delta > RVV_MAX_BITSET_SPAN && initialExceptionCount * 512 < delta)) {
       return new RVVExceptionT(previousVersion, nextVersion);
     }
     return new RVVExceptionB(previousVersion, nextVersion);
@@ -87,9 +85,7 @@ abstract class RVVException implements Comparable<RVVException>, Cloneable, Vers
     this.nextVersion = nextVersion;
   }
 
-  /**
-   * RegionVersionHolder.fromData() calls this to create an exception
-   */
+  /** RegionVersionHolder.fromData() calls this to create an exception */
   static RVVException createException(DataInput in) throws IOException {
     long previousVersion = InternalDataSerializer.readUnsignedVL(in);
     int size = (int) InternalDataSerializer.readUnsignedVL(in);
@@ -125,15 +121,10 @@ abstract class RVVException implements Comparable<RVVException>, Cloneable, Vers
     writeReceived(out);
   }
 
-  /**
-   * add a received version
-   */
+  /** add a received version */
   public abstract void add(long receivedVersion);
 
-  /**
-   * returns true if the missing versions that this exception represents have
-   * all been received
-   */
+  /** returns true if the missing versions that this exception represents have all been received */
   public boolean isFilled() {
     return this.previousVersion + 1 >= this.nextVersion;
   }
@@ -151,7 +142,8 @@ abstract class RVVException implements Comparable<RVVException>, Cloneable, Vers
 
   /** Test hook - compare two exceptions */
   public boolean sameAs(RVVException other) {
-    return (this.previousVersion == other.previousVersion) && (this.nextVersion == other.nextVersion);
+    return (this.previousVersion == other.previousVersion)
+        && (this.nextVersion == other.nextVersion);
   }
 
   @Override
@@ -178,12 +170,10 @@ abstract class RVVException implements Comparable<RVVException>, Cloneable, Vers
     abstract long next();
 
     abstract void remove();
-
   }
 
   @Override
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-  }
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
   @Override
   public Version[] getSerializationVersions() {

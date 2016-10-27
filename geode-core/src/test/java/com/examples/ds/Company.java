@@ -24,9 +24,7 @@ public class Company {
   /** The address of this company */
   private Address address;
 
-  /**
-   * Creates a new company
-   */
+  /** Creates a new company */
   public Company(String name, Address address) {
     this.name = name;
     this.address = address;
@@ -39,5 +37,4 @@ public class Company {
   public Address getAddress() {
     return this.address;
   }
-
 }

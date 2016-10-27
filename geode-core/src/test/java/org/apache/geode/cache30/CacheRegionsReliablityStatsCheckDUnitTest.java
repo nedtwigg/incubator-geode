@@ -46,8 +46,8 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 public class CacheRegionsReliablityStatsCheckDUnitTest extends JUnit4CacheTestCase {
 
   /**
-   * The tests check to see if all the reliablity stats are working
-   * fine and asserts their values to constants.
+   * The tests check to see if all the reliablity stats are working fine and asserts their values to
+   * constants.
    */
   @Test
   public void testRegionsReliablityStats() throws Exception {
@@ -56,10 +56,11 @@ public class CacheRegionsReliablityStatsCheckDUnitTest extends JUnit4CacheTestCa
     final String regionLimitedAccess = "regionLimitedAccess";
     final String regionFullAccess = "regionFullAccess";
     //final String regionNameRoleA = "roleA";
-    String requiredRoles[] = { rr1 };
+    String requiredRoles[] = {rr1};
     Cache myCache = getCache();
 
-    MembershipAttributes ra = new MembershipAttributes(requiredRoles, LossAction.NO_ACCESS, ResumptionAction.NONE);
+    MembershipAttributes ra =
+        new MembershipAttributes(requiredRoles, LossAction.NO_ACCESS, ResumptionAction.NONE);
 
     AttributesFactory fac = new AttributesFactory();
     fac.setMembershipAttributes(ra);
@@ -90,40 +91,45 @@ public class CacheRegionsReliablityStatsCheckDUnitTest extends JUnit4CacheTestCa
     assertEquals(stats.getReliableRegionsMissingNoAccess(), 1);
     assertEquals(stats.getReliableRegionsMissingLimitedAccess(), 1);
     assertEquals(stats.getReliableRegionsMissingFullAccess(), 1);
-    assertEquals(stats.getReliableRegionsMissing(), (stats.getReliableRegionsMissingNoAccess() + stats.getReliableRegionsMissingLimitedAccess() + stats.getReliableRegionsMissingFullAccess()));
+    assertEquals(
+        stats.getReliableRegionsMissing(),
+        (stats.getReliableRegionsMissingNoAccess()
+            + stats.getReliableRegionsMissingLimitedAccess()
+            + stats.getReliableRegionsMissingFullAccess()));
 
     Host host = Host.getHost(0);
     VM vm1 = host.getVM(1);
 
-    SerializableRunnable roleAPlayer = new CacheSerializableRunnable("ROLEAPLAYER") {
-      public void run2() throws CacheException {
+    SerializableRunnable roleAPlayer =
+        new CacheSerializableRunnable("ROLEAPLAYER") {
+          public void run2() throws CacheException {
 
-        Properties props = new Properties();
-        props.setProperty(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
-        props.setProperty(ROLES, rr1);
+            Properties props = new Properties();
+            props.setProperty(LOG_LEVEL, LogWriterUtils.getDUnitLogLevel());
+            props.setProperty(ROLES, rr1);
 
-        getSystem(props);
-        Cache cache = getCache();
-        AttributesFactory fac = new AttributesFactory();
-        fac.setScope(Scope.DISTRIBUTED_ACK);
-        fac.setDataPolicy(DataPolicy.REPLICATE);
+            getSystem(props);
+            Cache cache = getCache();
+            AttributesFactory fac = new AttributesFactory();
+            fac.setScope(Scope.DISTRIBUTED_ACK);
+            fac.setDataPolicy(DataPolicy.REPLICATE);
 
-        RegionAttributes attr = fac.create();
-        cache.createRegion(regionNoAccess, attr);
-        cache.createRegion(regionLimitedAccess, attr);
-        cache.createRegion(regionFullAccess, attr);
-
-      }
-
-    };
+            RegionAttributes attr = fac.create();
+            cache.createRegion(regionNoAccess, attr);
+            cache.createRegion(regionLimitedAccess, attr);
+            cache.createRegion(regionFullAccess, attr);
+          }
+        };
 
     vm1.invoke(roleAPlayer);
 
     assertEquals(stats.getReliableRegionsMissingNoAccess(), 0);
     assertEquals(stats.getReliableRegionsMissingLimitedAccess(), 0);
     assertEquals(stats.getReliableRegionsMissingFullAccess(), 0);
-    assertEquals(stats.getReliableRegionsMissing(), (stats.getReliableRegionsMissingNoAccess() + stats.getReliableRegionsMissingLimitedAccess() + stats.getReliableRegionsMissingFullAccess()));
-
+    assertEquals(
+        stats.getReliableRegionsMissing(),
+        (stats.getReliableRegionsMissingNoAccess()
+            + stats.getReliableRegionsMissingLimitedAccess()
+            + stats.getReliableRegionsMissingFullAccess()));
   }
-
 }

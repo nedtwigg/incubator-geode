@@ -22,31 +22,25 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Operation for rebalancing resources used by the {@link 
- * org.apache.geode.cache.Cache}.
- * 
+ * Operation for rebalancing resources used by the {@link org.apache.geode.cache.Cache}.
+ *
  * @since GemFire 6.0
  */
 public interface RebalanceOperation {
 
   // NOTE: cancelled is the spelling used in java.util.concurrent.Future
 
-  /**
-   * Returns true if this operation was cancelled before it completed.
-   */
+  /** Returns true if this operation was cancelled before it completed. */
   public boolean isCancelled();
 
-  /**
-   * Returns true if this operation completed.
-   */
+  /** Returns true if this operation completed. */
   public boolean isDone();
 
   /**
-   * Cancels this rebalance operation. The rebalance operation will find a
-   * safe point and then stop.
+   * Cancels this rebalance operation. The rebalance operation will find a safe point and then stop.
    *
-   * @return false if this operation could not be cancelled, typically because
-   * it has already completed; true otherwise
+   * @return false if this operation could not be cancelled, typically because it has already
+   *     completed; true otherwise
    */
   public boolean cancel();
 
@@ -67,7 +61,8 @@ public interface RebalanceOperation {
    * @return the rebalance results
    * @throws CancellationException if the operation was cancelled
    * @throws TimeoutException if the wait timed out
-   * @throws InterruptedException if the wait was interrupted 
+   * @throws InterruptedException if the wait was interrupted
    */
-  public RebalanceResults getResults(long timeout, TimeUnit unit) throws CancellationException, TimeoutException, InterruptedException;
+  public RebalanceResults getResults(long timeout, TimeUnit unit)
+      throws CancellationException, TimeoutException, InterruptedException;
 }

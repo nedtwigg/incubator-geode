@@ -20,10 +20,9 @@ import org.apache.geode.CancelException;
 
 /**
  * Thrown when a GemFire distributed system has been terminated.
- * 
+ *
  * @since GemFire 6.0
  */
-
 public class DistributedSystemDisconnectedException extends CancelException {
 
   private static final long serialVersionUID = -2484849299224086250L;
@@ -43,5 +42,4 @@ public class DistributedSystemDisconnectedException extends CancelException {
   public DistributedSystemDisconnectedException(String s) {
     super(s);
   }
-
 }

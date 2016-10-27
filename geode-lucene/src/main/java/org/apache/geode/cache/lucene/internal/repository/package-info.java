@@ -19,7 +19,7 @@
 /**
  * The repository package contains classes for managing a Lucene index in geode.
  *
- * All lucene index access should be through the {@link org.apache.geode.cache.lucene.internal.repository.IndexRepository}
- * class.
+ * <p>All lucene index access should be through the {@link
+ * org.apache.geode.cache.lucene.internal.repository.IndexRepository} class.
  */
 package org.apache.geode.cache.lucene.internal.repository;

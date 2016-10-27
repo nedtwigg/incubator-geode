@@ -33,7 +33,7 @@ import org.apache.geode.security.NotAuthorizedException;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class CliCommandsSecurityTest {
 
   private static int jmxManagerPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
@@ -43,7 +43,9 @@ public class CliCommandsSecurityTest {
   private List<TestCommand> commands = TestCommand.getCommands();
 
   @ClassRule
-  public static JsonAuthorizationCacheStartRule serverRule = new JsonAuthorizationCacheStartRule(jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
+  public static JsonAuthorizationCacheStartRule serverRule =
+      new JsonAuthorizationCacheStartRule(
+          jmxManagerPort, "org/apache/geode/management/internal/security/cacheServer.json");
 
   @Rule
   public MBeanServerConnectionRule connectionRule = new MBeanServerConnectionRule(jmxManagerPort);
@@ -58,8 +60,7 @@ public class CliCommandsSecurityTest {
   public void testNoAccess() {
     for (TestCommand command : commands) {
       // skip query commands since query commands are only available in client shell
-      if (command.getCommand().startsWith("query"))
-        continue;
+      if (command.getCommand().startsWith("query")) continue;
       LogService.getLogger().info("processing: " + command.getCommand());
       // for those commands that requires a permission, we expect an exception to be thrown
       if (command.getPermission() != null) {
@@ -67,7 +68,9 @@ public class CliCommandsSecurityTest {
           String result = bean.processCommand(command.getCommand());
           fail(command.getCommand() + " has result: " + result);
         } catch (NotAuthorizedException e) {
-          assertTrue(e.getMessage() + " should contain " + command.getPermission(), e.getMessage().contains(command.getPermission().toString()));
+          assertTrue(
+              e.getMessage() + " should contain " + command.getPermission(),
+              e.getMessage().contains(command.getPermission().toString()));
         }
       }
     }
@@ -81,5 +84,4 @@ public class CliCommandsSecurityTest {
       bean.processCommand(command.getCommand());
     }
   }
-
 }

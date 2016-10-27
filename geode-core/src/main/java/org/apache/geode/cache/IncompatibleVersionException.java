@@ -17,8 +17,8 @@
 package org.apache.geode.cache;
 
 /**
- * An <code>IncompatibleVersionException</code> that the client version
- * was not compatible with the server version.
+ * An <code>IncompatibleVersionException</code> that the client version was not compatible with the
+ * server version.
  *
  * @since GemFire 5.7
  */
@@ -31,8 +31,13 @@ public class IncompatibleVersionException extends VersionException {
    * @param clientVersion The client <code>Version</code>
    * @param serverVersion The server <code>Version</code>
    */
-  public IncompatibleVersionException(Object/*Version*/ clientVersion, Object/*Version*/ serverVersion) {
-    this("Client version " + clientVersion + " is incompatible with server version " + serverVersion);
+  public IncompatibleVersionException(
+      Object /*Version*/ clientVersion, Object /*Version*/ serverVersion) {
+    this(
+        "Client version "
+            + clientVersion
+            + " is incompatible with server version "
+            + serverVersion);
   }
 
   /**

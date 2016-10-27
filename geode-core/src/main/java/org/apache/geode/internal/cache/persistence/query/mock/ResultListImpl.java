@@ -33,7 +33,6 @@ public class ResultListImpl implements ResultList {
   @Override
   public void add(Object e) {
     map.put(counter.getAndIncrement(), e);
-
   }
 
   @Override
@@ -50,5 +49,4 @@ public class ResultListImpl implements ResultList {
   public void close() {
     map.close();
   }
-
 }

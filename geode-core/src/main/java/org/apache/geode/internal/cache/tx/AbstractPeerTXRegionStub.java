@@ -41,15 +41,18 @@ public abstract class AbstractPeerTXRegionStub implements TXRegionStub {
   @Override
   public Set getRegionKeysForIteration(LocalRegion currRegion) {
     try {
-      RemoteFetchKeysMessage.FetchKeysResponse response = RemoteFetchKeysMessage.send(currRegion, state.getTarget());
+      RemoteFetchKeysMessage.FetchKeysResponse response =
+          RemoteFetchKeysMessage.send(currRegion, state.getTarget());
       return response.waitForKeys();
     } catch (RegionDestroyedException e) {
-      throw new TransactionDataNotColocatedException(LocalizedStrings.RemoteMessage_REGION_0_NOT_COLOCATED_WITH_TRANSACTION.toLocalizedString(e.getRegionFullPath()), e);
+      throw new TransactionDataNotColocatedException(
+          LocalizedStrings.RemoteMessage_REGION_0_NOT_COLOCATED_WITH_TRANSACTION.toLocalizedString(
+              e.getRegionFullPath()),
+          e);
     } catch (CacheClosedException e) {
       throw new TransactionDataNodeHasDepartedException("Cache was closed while fetching keys");
     } catch (Exception e) {
       throw new TransactionException(e);
     }
   }
-
 }

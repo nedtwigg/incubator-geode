@@ -36,15 +36,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-/**
- * This test is to baseline and compare the performance figures for index usage benchmarks.
- */
+/** This test is to baseline and compare the performance figures for index usage benchmarks. */
 @Category(IntegrationTest.class)
 public class BaseLineAndCompareQueryPerfJUnitTest {
 
   /** Creates a new instance of BaseLineAndCompareQueryPerfJUnitTest */
-  public BaseLineAndCompareQueryPerfJUnitTest() {
-  }//end of constructor1
+  public BaseLineAndCompareQueryPerfJUnitTest() {} //end of constructor1
 
   /////////////////////
   //    static Cache cache;
@@ -73,65 +70,69 @@ public class BaseLineAndCompareQueryPerfJUnitTest {
   /////////////queries ///////////
 
   String queries[] = {
-      //Query 1
-      "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d," + " d.villages v, d.cities ct WHERE v.name = 'MAHARASHTRA_VILLAGE1'",
-      //Query 2
-      "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.villages v," + " d.cities ct WHERE v.name='MAHARASHTRA_VILLAGE1' AND ct.name = 'PUNE'",
-      //Query 3
-      "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.villages v, " + "d.cities ct WHERE ct.name = 'PUNE' AND s.name = 'MAHARASHTRA'",
-      //Query 4a & 4b
-      "SELECT DISTINCT * FROM /Countries c WHERE c.name = 'INDIA'", "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.cities ct, d.villages v WHERE c.name = 'INDIA'",
-      //Query 5
-      "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d WHERE d.name = 'PUNEDIST' AND s.name = 'GUJARAT'",
-      //Query 6
-      "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.cities ct WHERE ct.name = 'MUMBAI'",
-      //Query 7
-      "SELECT DISTINCT c.name, s.name, d.name, ct.name FROM /Countries c, c.states s, s.districts d, d.cities ct WHERE ct.name = 'MUMBAI' OR ct.name = 'CHENNAI'",
-      //Query 8
-      "SELECT DISTINCT c.name, s.name FROM /Countries c, c.states s, s.districts d, d.cities ct WHERE ct.name = 'MUMBAI' AND s.name = 'GUJARAT'",
+    //Query 1
+    "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d,"
+        + " d.villages v, d.cities ct WHERE v.name = 'MAHARASHTRA_VILLAGE1'",
+    //Query 2
+    "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.villages v,"
+        + " d.cities ct WHERE v.name='MAHARASHTRA_VILLAGE1' AND ct.name = 'PUNE'",
+    //Query 3
+    "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.villages v, "
+        + "d.cities ct WHERE ct.name = 'PUNE' AND s.name = 'MAHARASHTRA'",
+    //Query 4a & 4b
+    "SELECT DISTINCT * FROM /Countries c WHERE c.name = 'INDIA'",
+    "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.cities ct, d.villages v WHERE c.name = 'INDIA'",
+    //Query 5
+    "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d WHERE d.name = 'PUNEDIST' AND s.name = 'GUJARAT'",
+    //Query 6
+    "SELECT DISTINCT * FROM /Countries c, c.states s, s.districts d, d.cities ct WHERE ct.name = 'MUMBAI'",
+    //Query 7
+    "SELECT DISTINCT c.name, s.name, d.name, ct.name FROM /Countries c, c.states s, s.districts d, d.cities ct WHERE ct.name = 'MUMBAI' OR ct.name = 'CHENNAI'",
+    //Query 8
+    "SELECT DISTINCT c.name, s.name FROM /Countries c, c.states s, s.districts d, d.cities ct WHERE ct.name = 'MUMBAI' AND s.name = 'GUJARAT'",
 
-      ////following are multiregion queries        
-      // Query 9
-      "SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.villages v1, d1.cities ct1, /Countries2 c2, c2.states s2, s2.districts d2, d2.villages v2, d2.cities ct2 WHERE v1.name = 'MAHARASHTRA_VILLAGE1' AND ct2.name = 'MUMBAI' ",
-      // Query 10
-      //"SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.villages v1, d1.cities ct1, /Countries2 c2, c2.states s2, s2.districts d2, d2.villages v2, d2.cities ct2, /Countries3 c3, c3.states s3, s3.districts d3, d3.villages v3, d3.cities ct3  WHERE v1.name='MAHARASHTRA_VILLAGE1' AND ct3.name = 'PUNE'",
-      // Query 11
-      "SELECT DISTINCT * FROM /Countries1 c1, /Countries2 c2 WHERE c1.name = 'INDIA' AND c2.name = 'ISRAEL'",
-      // Query 12
-      "SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.cities ct1, d1.villages v1, /Countries2 c2, c2.states s2, s2.districts d2, d2.cities ct2, d2.villages v2 WHERE c1.name = 'INDIA' AND c2.name = 'ISRAEL'",
-      // Query 13
-      "SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, /Countries2 c2, c2.states s2, s2.districts d2, /Countries3 c3, c3.states s3, s3.districts d3 WHERE d3.name = 'PUNEDIST' AND s2.name = 'GUJARAT'",
-      // Query 14
-      "SELECT DISTINCT c1.name, s1.name, d2.name, ct2.name FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.cities ct1, /Countries2 c2, c2.states s2, s2.districts d2, d2.cities ct2 WHERE ct1.name = 'MUMBAI' OR ct2.name = 'CHENNAI'",
-      // Query 15
-      "SELECT DISTINCT c1.name, s1.name, ct1.name FROM /Countries1 c1, c1.states s1, (SELECT DISTINCT * FROM /Countries2 c2, c2.states s2, s2.districts d2, d2.cities ct2 WHERE s2.name = 'PUNJAB') itr1, s1.districts d1, d1.cities ct1 WHERE ct1.name = 'CHANDIGARH'",
-      // Query 16
-      "SELECT DISTINCT c1.name, s1.name, ct1.name FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.cities ct1 WHERE ct1.name = element (SELECT DISTINCT ct3.name FROM /Countries3 c3, c3.states s3, s3.districts d3, d3.cities ct3 WHERE s3.name = 'MAHARASHTRA' AND ct3.name = 'PUNE')",
-      // Query 17
-      "SELECT DISTINCT c1.name, s1.name, ct1.name FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.cities ct1, d1.getVillages() v1 WHERE v1.getName() = 'PUNJAB_VILLAGE1'",
-      // Query 18
-      "SELECT DISTINCT s.name, s.getDistricts(), ct.getName() FROM /Countries1 c, c.getStates() s, s.getDistricts() d, d.getCities() ct WHERE ct.getName() = 'PUNE' OR ct.name = 'CHANDIGARH' OR s.getName() = 'GUJARAT'",
-      // Query 19
-      "SELECT DISTINCT d.getName(), d.getCities(), d.getVillages() FROM /Countries3 c, c.states s, s.districts d WHERE d.name = 'MUMBAIDIST'"
+    ////following are multiregion queries
+    // Query 9
+    "SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.villages v1, d1.cities ct1, /Countries2 c2, c2.states s2, s2.districts d2, d2.villages v2, d2.cities ct2 WHERE v1.name = 'MAHARASHTRA_VILLAGE1' AND ct2.name = 'MUMBAI' ",
+    // Query 10
+    //"SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.villages v1, d1.cities ct1, /Countries2 c2, c2.states s2, s2.districts d2, d2.villages v2, d2.cities ct2, /Countries3 c3, c3.states s3, s3.districts d3, d3.villages v3, d3.cities ct3  WHERE v1.name='MAHARASHTRA_VILLAGE1' AND ct3.name = 'PUNE'",
+    // Query 11
+    "SELECT DISTINCT * FROM /Countries1 c1, /Countries2 c2 WHERE c1.name = 'INDIA' AND c2.name = 'ISRAEL'",
+    // Query 12
+    "SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.cities ct1, d1.villages v1, /Countries2 c2, c2.states s2, s2.districts d2, d2.cities ct2, d2.villages v2 WHERE c1.name = 'INDIA' AND c2.name = 'ISRAEL'",
+    // Query 13
+    "SELECT DISTINCT * FROM /Countries1 c1, c1.states s1, s1.districts d1, /Countries2 c2, c2.states s2, s2.districts d2, /Countries3 c3, c3.states s3, s3.districts d3 WHERE d3.name = 'PUNEDIST' AND s2.name = 'GUJARAT'",
+    // Query 14
+    "SELECT DISTINCT c1.name, s1.name, d2.name, ct2.name FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.cities ct1, /Countries2 c2, c2.states s2, s2.districts d2, d2.cities ct2 WHERE ct1.name = 'MUMBAI' OR ct2.name = 'CHENNAI'",
+    // Query 15
+    "SELECT DISTINCT c1.name, s1.name, ct1.name FROM /Countries1 c1, c1.states s1, (SELECT DISTINCT * FROM /Countries2 c2, c2.states s2, s2.districts d2, d2.cities ct2 WHERE s2.name = 'PUNJAB') itr1, s1.districts d1, d1.cities ct1 WHERE ct1.name = 'CHANDIGARH'",
+    // Query 16
+    "SELECT DISTINCT c1.name, s1.name, ct1.name FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.cities ct1 WHERE ct1.name = element (SELECT DISTINCT ct3.name FROM /Countries3 c3, c3.states s3, s3.districts d3, d3.cities ct3 WHERE s3.name = 'MAHARASHTRA' AND ct3.name = 'PUNE')",
+    // Query 17
+    "SELECT DISTINCT c1.name, s1.name, ct1.name FROM /Countries1 c1, c1.states s1, s1.districts d1, d1.cities ct1, d1.getVillages() v1 WHERE v1.getName() = 'PUNJAB_VILLAGE1'",
+    // Query 18
+    "SELECT DISTINCT s.name, s.getDistricts(), ct.getName() FROM /Countries1 c, c.getStates() s, s.getDistricts() d, d.getCities() ct WHERE ct.getName() = 'PUNE' OR ct.name = 'CHANDIGARH' OR s.getName() = 'GUJARAT'",
+    // Query 19
+    "SELECT DISTINCT d.getName(), d.getCities(), d.getVillages() FROM /Countries3 c, c.states s, s.districts d WHERE d.name = 'MUMBAIDIST'"
 
-      //Query 9a & 9b
-      //        "SELECT DISTINCT c.name, s.name, ct.name FROM /Countries c, c.states s, (SELECT DISTINCT * FROM " +
-      //        "/Countries c, c.states s, s.districts d, d.cities ct WHERE s.name = 'PUNJAB') itr1, " +
-      //        "s.districts d, d.cities ct WHERE ct.name = 'CHANDIGARH'",
-      //
-      //        "SELECT DISTINCT c.name, s.name, ct.name FROM /Countries c, c.states s, s.districts d," +
-      //        " d.cities ct WHERE ct.name = (SELECT DISTINCT ct.name FROM /Countries c, c.states s, " +
-      //        "s.districts d, d.cities ct WHERE s.name = 'MAHARASHTRA' AND ct.name = 'PUNE')",
-      //        //Query 10
-      //        "SELECT DISTINCT c.name, s.name, ct.name FROM /Countries c, c.states s, s.districts d, " +
-      //        "d.cities ct, d.getVillages() v WHERE v.getName() = 'PUNJAB_VILLAGE1'",
-      //        //Query 11
-      //        "SELECT DISTINCT s.name, s.getDistricts(), ct.getName() FROM /Countries c, c.getStates() s, " +
-      //        "s.getDistricts() d, d.getCities() ct WHERE ct.getName() = 'PUNE' OR ct.name = 'CHANDIGARH' " +
-      //        "OR s.getName() = 'GUJARAT'",
-      //        //Query 12
-      //        "SELECT DISTINCT d.getName(), d.getCities(), d.getVillages() FROM /Countries c, " +
-      //        "c.states s, s.districts d WHERE d.name = 'MUMBAIDIST'"
+    //Query 9a & 9b
+    //        "SELECT DISTINCT c.name, s.name, ct.name FROM /Countries c, c.states s, (SELECT DISTINCT * FROM " +
+    //        "/Countries c, c.states s, s.districts d, d.cities ct WHERE s.name = 'PUNJAB') itr1, " +
+    //        "s.districts d, d.cities ct WHERE ct.name = 'CHANDIGARH'",
+    //
+    //        "SELECT DISTINCT c.name, s.name, ct.name FROM /Countries c, c.states s, s.districts d," +
+    //        " d.cities ct WHERE ct.name = (SELECT DISTINCT ct.name FROM /Countries c, c.states s, " +
+    //        "s.districts d, d.cities ct WHERE s.name = 'MAHARASHTRA' AND ct.name = 'PUNE')",
+    //        //Query 10
+    //        "SELECT DISTINCT c.name, s.name, ct.name FROM /Countries c, c.states s, s.districts d, " +
+    //        "d.cities ct, d.getVillages() v WHERE v.getName() = 'PUNJAB_VILLAGE1'",
+    //        //Query 11
+    //        "SELECT DISTINCT s.name, s.getDistricts(), ct.getName() FROM /Countries c, c.getStates() s, " +
+    //        "s.getDistricts() d, d.getCities() ct WHERE ct.getName() = 'PUNE' OR ct.name = 'CHANDIGARH' " +
+    //        "OR s.getName() = 'GUJARAT'",
+    //        //Query 12
+    //        "SELECT DISTINCT d.getName(), d.getCities(), d.getVillages() FROM /Countries c, " +
+    //        "c.states s, s.districts d WHERE d.name = 'MUMBAIDIST'"
   };
 
   ////////////////////
@@ -139,13 +140,13 @@ public class BaseLineAndCompareQueryPerfJUnitTest {
   @Before
   public void setUp() throws java.lang.Exception {
     CacheUtils.startCache();
-  }//end of setUp
+  } //end of setUp
 
   @After
   public void tearDown() throws java.lang.Exception {
     CacheUtils.closeCache();
     //    ds.disconnect();
-  }//end of tearDown
+  } //end of tearDown
 
   ////////////////test methods ///////////////
   @Test
@@ -190,7 +191,7 @@ public class BaseLineAndCompareQueryPerfJUnitTest {
     for (int x = 0; x < queries.length; x++) {
       CacheUtils.log("Query No: " + (x + 1) + "...with index execution");
       sqlStr = queries[x];
-      QueryService qs2 = CacheUtils.getQueryService();//????
+      QueryService qs2 = CacheUtils.getQueryService(); //????
       q = qs2.newQuery(sqlStr);
 
       queriesMap.put(new Integer(x), q);
@@ -224,12 +225,9 @@ public class BaseLineAndCompareQueryPerfJUnitTest {
     }
 
     printSummary();
+  } //end of testPerf
 
-  }//end of testPerf
-
-  /**
-  * Get the performance of Range query in an AND junction.
-  */
+  /** Get the performance of Range query in an AND junction. */
   @Test
   public void testPerformanceForRangeQueries() {
     try {
@@ -285,13 +283,14 @@ public class BaseLineAndCompareQueryPerfJUnitTest {
       t2 = ((float) (time)) / numTimesToRun;
       CacheUtils.log("AVG time taken with Index =" + t2);
       CacheUtils.compareResultsOfWithAndWithoutIndex(r, this);
-      assertTrue("Avg. Time taken to query with index should be less than time taken without index", t2 < t1);
+      assertTrue(
+          "Avg. Time taken to query with index should be less than time taken without index",
+          t2 < t1);
 
     } catch (Exception e) {
       e.printStackTrace();
       fail("Test failed due to exception=" + e.toString());
     }
-
   }
 
   // /////// supplementary methods /////////////
@@ -313,25 +312,24 @@ public class BaseLineAndCompareQueryPerfJUnitTest {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-  }//end of createRegion
+  } //end of createRegion
 
   public static void populateData() throws Exception {
     /*Set villages = new HashSet();
     for (int i=0; i<10; i++){
         villages.add(new Village(i));
     }
-    
+
     Set cities = new HashSet();
     for (int i=0; i<10; i++){
         cities.add(new City(i));
     }
-    
+
     Set districts = new HashSet();
     for (int i=0; i<10; i++){
         districts.add(new District(i, cities, villages));
     }
-    
+
     Set states = new HashSet();
     for (int i=0; i<10; i++){
         states.add(new State(i, districts));
@@ -345,8 +343,7 @@ public class BaseLineAndCompareQueryPerfJUnitTest {
       region3.put(new Integer(i), new Country(i, 2, 3, 4, 4));
     }
     CacheUtils.log("Regions are populated");
-
-  }//end of populateData
+  } //end of populateData
 
   public static void createIndex() throws Exception {
     QueryService qs = CacheUtils.getQueryService();
@@ -359,37 +356,90 @@ public class BaseLineAndCompareQueryPerfJUnitTest {
      *e. villageName: No index
      */
     //qs.createIndex("villageName", IndexType.FUNCTIONAL, "v.name", "/Countries c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("cityName", IndexType.FUNCTIONAL, "ct.name", "/Countries c, c.states s, s.districts d, d.cities ct, d.villages v");//
-    qs.createIndex("districtName", IndexType.FUNCTIONAL, "d.name", "/Countries c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("stateName", IndexType.FUNCTIONAL, "s.name", "/Countries c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("countryName", IndexType.FUNCTIONAL, "c.name", "/Countries c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "cityName",
+        IndexType.FUNCTIONAL,
+        "ct.name",
+        "/Countries c, c.states s, s.districts d, d.cities ct, d.villages v"); //
+    qs.createIndex(
+        "districtName",
+        IndexType.FUNCTIONAL,
+        "d.name",
+        "/Countries c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "stateName",
+        IndexType.FUNCTIONAL,
+        "s.name",
+        "/Countries c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "countryName",
+        IndexType.FUNCTIONAL,
+        "c.name",
+        "/Countries c, c.states s, s.districts d, d.cities ct, d.villages v");
 
     /*Indices on region1*/
-    qs.createIndex("villageName1", IndexType.FUNCTIONAL, "v.name", "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("cityName1", IndexType.FUNCTIONAL, "ct.name", "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("countryNameA", IndexType.FUNCTIONAL, "c.name", "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "villageName1",
+        IndexType.FUNCTIONAL,
+        "v.name",
+        "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "cityName1",
+        IndexType.FUNCTIONAL,
+        "ct.name",
+        "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "countryNameA",
+        IndexType.FUNCTIONAL,
+        "c.name",
+        "/Countries1 c, c.states s, s.districts d, d.cities ct, d.villages v");
     qs.createIndex("countryNameB", IndexType.FUNCTIONAL, "c.name", "/Countries1 c");
 
     /*Indices on region2*/
-    qs.createIndex("stateName2", IndexType.FUNCTIONAL, "s.name", "/Countries2 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("cityName2", IndexType.FUNCTIONAL, "ct.name", "/Countries2 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "stateName2",
+        IndexType.FUNCTIONAL,
+        "s.name",
+        "/Countries2 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "cityName2",
+        IndexType.FUNCTIONAL,
+        "ct.name",
+        "/Countries2 c, c.states s, s.districts d, d.cities ct, d.villages v");
 
     /*Indices on region3*/
-    qs.createIndex("districtName3", IndexType.FUNCTIONAL, "d.name", "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("villageName3", IndexType.FUNCTIONAL, "v.name", "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
-    qs.createIndex("cityName3", IndexType.FUNCTIONAL, "ct.name", "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "districtName3",
+        IndexType.FUNCTIONAL,
+        "d.name",
+        "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "villageName3",
+        IndexType.FUNCTIONAL,
+        "v.name",
+        "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
+    qs.createIndex(
+        "cityName3",
+        IndexType.FUNCTIONAL,
+        "ct.name",
+        "/Countries3 c, c.states s, s.districts d, d.cities ct, d.villages v");
 
     CacheUtils.log("Indices are created");
-
-  }//end of createIndex
+  } //end of createIndex
 
   public static void printSummary() throws Exception {
     CacheUtils.log("Printing summary");
 
     if (printCntr == 1) {
-      //file = new FileOutputStream("c:\\QueryPerfLog.txt"); 
+      //file = new FileOutputStream("c:\\QueryPerfLog.txt");
       Date date = new Date(System.currentTimeMillis());
-      file = new FileOutputStream("./QueryPerfLog-" + (date.toGMTString().substring(0, date.toGMTString().indexOf("200") + 4).replace(' ', '-')) + ".txt");
+      file =
+          new FileOutputStream(
+              "./QueryPerfLog-"
+                  + (date.toGMTString()
+                      .substring(0, date.toGMTString().indexOf("200") + 4)
+                      .replace(' ', '-'))
+                  + ".txt");
       wr = new BufferedWriter(new OutputStreamWriter(file));
 
       wr.write("===========================================================================");
@@ -412,7 +462,10 @@ public class BaseLineAndCompareQueryPerfJUnitTest {
       wr.newLine();
       wr.flush();
 
-      wr.write("Timings are the average of times for execution of query " + QUERY_EXECUTED + " number of times");
+      wr.write(
+          "Timings are the average of times for execution of query "
+              + QUERY_EXECUTED
+              + " number of times");
       wr.newLine();
       wr.newLine();
       wr.write("===========================================================================");
@@ -429,16 +482,16 @@ public class BaseLineAndCompareQueryPerfJUnitTest {
 
     /*Set set1 = withoutIndexTimeRegion.keySet();
     Iterator itr1 = set1.iterator();
-    
+
     Set set2 = withIndexTimeRegion.keySet();
     Iterator itr2 = set2.iterator();
-    
+
     Set set3 = indexNameRegion.keySet();
     Iterator itr3 = set3.iterator();
-    
+
     Set set4 = withoutIndexResultSetSize.keySet();
     Iterator itr4 = set4.iterator();
-    
+
     Set set5 = withIndexResultSetSize.keySet();
     Iterator itr5 = set5.iterator();*/
     Integer it;
@@ -497,8 +550,7 @@ public class BaseLineAndCompareQueryPerfJUnitTest {
 
     wr.write("===========================================================================");
     wr.flush();
-
-  }//end of printSummary
+  } //end of printSummary
 
   ////// query observer to get which indices are getting used /////
   class QueryObserverImpl extends QueryObserverAdapter {
@@ -507,13 +559,12 @@ public class BaseLineAndCompareQueryPerfJUnitTest {
 
     public void beforeIndexLookup(Index index, int oper, Object key) {
       indexesUsed.add(index.getName());
-    }//////
+    } //////
 
     public void afterIndexLookup(Collection results) {
       if (results != null) {
         isIndexesUsed = true;
       } /////////
     }
-  }//end of QueryObserverImpls
-
-}//end of BaseLineAndCompareQueryPerfJUnitTest
+  } //end of QueryObserverImpls
+} //end of BaseLineAndCompareQueryPerfJUnitTest

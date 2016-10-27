@@ -38,8 +38,7 @@ import org.apache.geode.cache.query.QueryService;
 import org.apache.geode.cache.query.data.Portfolio;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- */
+/** */
 @Category(IntegrationTest.class)
 public class IndexJUnitTest {
 
@@ -69,7 +68,8 @@ public class IndexJUnitTest {
 
   @Test
   public void testGetType() {
-    assertSame("Index.getName does not return correct index type", IndexType.FUNCTIONAL, index.getType());
+    assertSame(
+        "Index.getName does not return correct index type", IndexType.FUNCTIONAL, index.getType());
   }
 
   @Test
@@ -80,16 +80,25 @@ public class IndexJUnitTest {
   @Test
   public void testGetFromClause() {
     CacheUtils.log("testGetCanonicalizedFromClause");
-    assertEquals("Index.getName does not return correct from clause", "/Portfolios index_iter1", index.getCanonicalizedFromClause());
+    assertEquals(
+        "Index.getName does not return correct from clause",
+        "/Portfolios index_iter1",
+        index.getCanonicalizedFromClause());
   }
 
   @Test
   public void testGetCanonicalizedIndexedExpression() {
-    assertEquals("Index.getName does not return correct index expression", "index_iter1.status", index.getCanonicalizedIndexedExpression());
+    assertEquals(
+        "Index.getName does not return correct index expression",
+        "index_iter1.status",
+        index.getCanonicalizedIndexedExpression());
   }
 
   @Test
   public void testGetCanonicalizedProjectionAttributes() {
-    assertEquals("Index.getName does not return correct projection attributes", "*", index.getCanonicalizedProjectionAttributes());
+    assertEquals(
+        "Index.getName does not return correct projection attributes",
+        "*",
+        index.getCanonicalizedProjectionAttributes());
   }
 }

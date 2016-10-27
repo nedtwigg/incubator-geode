@@ -32,7 +32,9 @@ import org.apache.geode.internal.lang.StringUtils;
 
 /**
  * Reusable Input/Output operation utility methods.
- * <p/>
+ *
+ * <p>
+ *
  * @since GemFire 6.6
  */
 @SuppressWarnings("unused")
@@ -41,11 +43,11 @@ public abstract class IOUtils {
   public static final int BUFFER_SIZE = 4096;
 
   /**
-   * Gets a fully qualified path with the path elements appended to the specified pathname using the File.separator
-   * character.  If the pathname is unspecified (null, empty or blank) then path elements are considered relative to
-   * file system root, beginning with File.separator.  If array of path elements are null, then the pathname is
-   * returned as is.
-   * </p>
+   * Gets a fully qualified path with the path elements appended to the specified pathname using the
+   * File.separator character. If the pathname is unspecified (null, empty or blank) then path
+   * elements are considered relative to file system root, beginning with File.separator. If array
+   * of path elements are null, then the pathname is returned as is.
+   *
    * @param pathname a String value indicating the base pathname.
    * @param pathElements the path elements to append to pathname.
    * @return the path elements appended to the pathname.
@@ -65,10 +67,12 @@ public abstract class IOUtils {
   }
 
   /**
-   * Invokes the close method on any class instance implementing the Closeable interface, such as InputStreams
-   * and OutputStreams.  Note, this method silently ignores the possible IOException resulting from the close
-   * invocation.
-   * <p/>
+   * Invokes the close method on any class instance implementing the Closeable interface, such as
+   * InputStreams and OutputStreams. Note, this method silently ignores the possible IOException
+   * resulting from the close invocation.
+   *
+   * <p>
+   *
    * @param obj an Object implementing the Closeable interface who's close method will be invoked.
    */
   public static void close(final Closeable obj) {
@@ -82,10 +86,10 @@ public abstract class IOUtils {
 
   /**
    * Creates a path with the given path elements delimited with File.separator.
-   * </p>
+   *
    * @param pathElements an array of Strings constituting elements of the path.
-   * @return a fully constructed pathname containing the elements from the given array as path elements separated
-   * by File.separator.
+   * @return a fully constructed pathname containing the elements from the given array as path
+   *     elements separated by File.separator.
    * @see java.io.File#separator
    */
   public static String createPath(final String... pathElements) {
@@ -94,12 +98,12 @@ public abstract class IOUtils {
 
   /**
    * Creates a path with the given path elements delimited with separator.
-   * </p>
+   *
    * @param pathElements an array of Strings constituting elements of the path.
-   * @param separator a String specifying the separator of the path.  If the given String is null, then separator
-   * defaults to File.separator
-   * @return a fully constructor pathname containing the elements of the path from the given array separated
-   * by separator.
+   * @param separator a String specifying the separator of the path. If the given String is null,
+   *     then separator defaults to File.separator
+   * @return a fully constructor pathname containing the elements of the path from the given array
+   *     separated by separator.
    * @throws NullPointerException if the pathElements is null.
    * @see java.io.File#separator
    */
@@ -117,7 +121,9 @@ public abstract class IOUtils {
 
   /**
    * Convenience method to de-serialize a byte array back into Object form.
-   * <p/>
+   *
+   * <p>
+   *
    * @param objBytes an array of bytes constituting the serialized form of the Object.
    * @return a Serializable Object from the array of bytes.
    * @throws ClassNotFoundException if the Class type of the serialized Object cannot be resolved.
@@ -128,7 +134,8 @@ public abstract class IOUtils {
    * @see java.io.ObjectInputStream
    * @see java.io.Serializable
    */
-  public static Object deserializeObject(final byte[] objBytes) throws IOException, ClassNotFoundException {
+  public static Object deserializeObject(final byte[] objBytes)
+      throws IOException, ClassNotFoundException {
     ObjectInputStream objIn = null;
 
     try {
@@ -140,15 +147,18 @@ public abstract class IOUtils {
   }
 
   /**
-   * Convenience method to de-serialize a byte array back into an Object who's Class type is resolved by the specific
-   * ClassLoader.
-   * <p/>
+   * Convenience method to de-serialize a byte array back into an Object who's Class type is
+   * resolved by the specific ClassLoader.
+   *
+   * <p>
+   *
    * @param objBytes an array of bytes constituting the serialized form of the Object.
    * @param loader the ClassLoader used to resolve the Class type of the serialized Object.
    * @return a Serializable Object from the array of bytes.
-   * @throws ClassNotFoundException if the Class type of the serialized Object cannot be resolved by the specified
-   * ClassLoader.
-   * @throws IOException if an I/O error occurs while de-serializing the Object from the array of bytes.
+   * @throws ClassNotFoundException if the Class type of the serialized Object cannot be resolved by
+   *     the specified ClassLoader.
+   * @throws IOException if an I/O error occurs while de-serializing the Object from the array of
+   *     bytes.
    * @see #deserializeObject(byte[])
    * @see #serializeObject(Object)
    * @see IOUtils.ClassLoaderObjectInputStream
@@ -156,7 +166,8 @@ public abstract class IOUtils {
    * @see java.io.Serializable
    * @see java.lang.ClassLoader
    */
-  public static Object deserializeObject(final byte[] objBytes, final ClassLoader loader) throws IOException, ClassNotFoundException {
+  public static Object deserializeObject(final byte[] objBytes, final ClassLoader loader)
+      throws IOException, ClassNotFoundException {
     ObjectInputStream objIn = null;
 
     try {
@@ -169,7 +180,9 @@ public abstract class IOUtils {
 
   /**
    * Extracts the filename from the pathname of a file system resource (file).
-   * <p/>
+   *
+   * <p>
+   *
    * @param pathname a String indicating the path, or location of the file system resource.
    * @return a String value containing only the filename of the file system resource (file).
    */
@@ -186,10 +199,12 @@ public abstract class IOUtils {
 
   /**
    * Determines whether the path represented by name exists in the file system of the localhost.
-   * <p/>
+   *
+   * <p>
+   *
    * @param pathname a String indicating the name of the path.
-   * @return a boolean indicating whether the path represented by name (pathname) actually exists in the file system
-   * of the localhost (system).
+   * @return a boolean indicating whether the path represented by name (pathname) actually exists in
+   *     the file system of the localhost (system).
    * @see org.apache.geode.internal.lang.StringUtils#isBlank(String)
    * @see java.io.File#exists()
    */
@@ -199,7 +214,9 @@ public abstract class IOUtils {
 
   /**
    * Convenience method to serialize a Serializable Object into a byte array.
-   * <p/>
+   *
+   * <p>
+   *
    * @param obj the Serializable Object to serialize into an array of bytes.
    * @return a byte array of the serialized Object.
    * @throws IOException if an I/O error occurs during the serialization process.
@@ -226,7 +243,9 @@ public abstract class IOUtils {
 
   /**
    * Reads the contents of the specified InputStream into a byte array.
-   * <p/>
+   *
+   * <p>
+   *
    * @param in the InputStream to read content from.
    * @return a byte array containing the content of the specified InputStream.
    * @throws IOException if an I/O error occurs while reading the InputStream.
@@ -254,11 +273,14 @@ public abstract class IOUtils {
   }
 
   /**
-   * This method attempts to get the canonical form of the specified file otherwise returns it's absolute form.
-   * <p/>
+   * This method attempts to get the canonical form of the specified file otherwise returns it's
+   * absolute form.
+   *
+   * <p>
+   *
    * @param file the java.io.File object who's canonical representation is attempted to be returned.
-   * @return the canonical form of the specified File or the absolute form if an IOException occurs during the
-   * File.getCanonicalFile call.
+   * @return the canonical form of the specified File or the absolute form if an IOException occurs
+   *     during the File.getCanonicalFile call.
    * @see java.io.File#getCanonicalFile()
    * @see java.io.File#getAbsoluteFile()
    */
@@ -271,11 +293,14 @@ public abstract class IOUtils {
   }
 
   /**
-   * This method attempts to get the canonical path of the specified file otherwise returns it's absolute path.
-   * <p/>
+   * This method attempts to get the canonical path of the specified file otherwise returns it's
+   * absolute path.
+   *
+   * <p>
+   *
    * @param file the java.io.File object who's canonical path is attempted to be returned.
-   * @return the canonical path of the specified File or the absolute path if an IOException occurs during the
-   * File.getCanonicalPath call.
+   * @return the canonical path of the specified File or the absolute path if an IOException occurs
+   *     during the File.getCanonicalPath call.
    * @see java.io.File#getCanonicalPath()
    * @see java.io.File#getAbsolutePath()
    */
@@ -288,13 +313,14 @@ public abstract class IOUtils {
   }
 
   /**
-   * Verifies that the specified pathname is valid and actually exists in the file system in localhost.  The pathname
-   * is considered valid if it is not null, empty or blank and exists in the file system as a file path (which could
-   * represent a file or a directory).
-   * </p>
+   * Verifies that the specified pathname is valid and actually exists in the file system in
+   * localhost. The pathname is considered valid if it is not null, empty or blank and exists in the
+   * file system as a file path (which could represent a file or a directory).
+   *
    * @param pathname a String indicating the file path in the file system on localhost.
    * @return the pathname if valid and it exits.
-   * @throws FileNotFoundException if the pathname is invalid or does not exist in the file system on localhost.
+   * @throws FileNotFoundException if the pathname is invalid or does not exist in the file system
+   *     on localhost.
    * @see java.io.File#exists()
    */
   public static String verifyPathnameExists(final String pathname) throws FileNotFoundException {
@@ -306,9 +332,11 @@ public abstract class IOUtils {
   }
 
   /**
-   * The ClassLoaderObjectInputStream class is a ObjectInputStream implementation that resolves the Class type of
-   * the Object being de-serialized with the specified ClassLoader.
-   * <p/>
+   * The ClassLoaderObjectInputStream class is a ObjectInputStream implementation that resolves the
+   * Class type of the Object being de-serialized with the specified ClassLoader.
+   *
+   * <p>
+   *
    * @see java.io.ObjectInputStream
    * @see java.lang.ClassLoader
    */
@@ -316,11 +344,13 @@ public abstract class IOUtils {
 
     private final ClassLoader loader;
 
-    public ClassLoaderObjectInputStream(final InputStream in, final ClassLoader loader) throws IOException {
+    public ClassLoaderObjectInputStream(final InputStream in, final ClassLoader loader)
+        throws IOException {
       super(in);
 
       if (loader == null) {
-        throw new NullPointerException("The ClassLoader used by this ObjectInputStream to resolve Class types for serialized Objects cannot be null!");
+        throw new NullPointerException(
+            "The ClassLoader used by this ObjectInputStream to resolve Class types for serialized Objects cannot be null!");
       }
 
       this.loader = loader;
@@ -331,9 +361,9 @@ public abstract class IOUtils {
     }
 
     @Override
-    protected Class<?> resolveClass(final ObjectStreamClass descriptor) throws IOException, ClassNotFoundException {
+    protected Class<?> resolveClass(final ObjectStreamClass descriptor)
+        throws IOException, ClassNotFoundException {
       return Class.forName(descriptor.getName(), false, getClassLoader());
     }
   }
-
 }

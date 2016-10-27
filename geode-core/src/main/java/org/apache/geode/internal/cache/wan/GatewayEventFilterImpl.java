@@ -41,5 +41,4 @@ public class GatewayEventFilterImpl implements GatewayEventFilter {
     // TODO Auto-generated method stub
 
   }
-
 }

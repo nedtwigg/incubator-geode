@@ -26,6 +26,7 @@ public class PingExecutor extends AbstractExecutor {
 
   @Override
   public void executeCommand(Command command, ExecutionHandlerContext context) {
-    command.setResponse(Coder.getSimpleStringResponse(context.getByteBufAllocator(), PING_RESPONSE));
+    command.setResponse(
+        Coder.getSimpleStringResponse(context.getByteBufAllocator(), PING_RESPONSE));
   }
 }

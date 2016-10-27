@@ -31,13 +31,12 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Class ClusterMemoryUsageService
- * 
- * This class contains implementations of getting Cluster's overall current
- * memory usage details and its trend over the time.
- * 
+ *
+ * <p>This class contains implementations of getting Cluster's overall current memory usage details
+ * and its trend over the time.
+ *
  * @since GemFire version 7.5
  */
-
 @Component
 @Service("ClusterMemoryUsage")
 @Scope("singleton")
@@ -56,7 +55,9 @@ public class ClusterMemoryUsageService implements PulseService {
     // cluster's Memory Usage trend added to json response object
 
     responseJSON.put("currentMemoryUsage", cluster.getUsedHeapSize());
-    responseJSON.put("memoryUsageTrend", mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_MEMORY_USAGE)));
+    responseJSON.put(
+        "memoryUsageTrend",
+        mapper.valueToTree(cluster.getStatisticTrend(Cluster.CLUSTER_STAT_MEMORY_USAGE)));
 
     // Send json response
     return responseJSON;

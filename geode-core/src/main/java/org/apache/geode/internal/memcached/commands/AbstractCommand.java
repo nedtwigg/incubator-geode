@@ -38,11 +38,7 @@ import org.apache.geode.memcached.GemFireMemcachedServer;
 import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 import org.apache.geode.internal.memcached.ValueWrapper;
 
-/**
- * Abstract class with utility methods for all Command classes.
- * 
- *
- */
+/** Abstract class with utility methods for all Command classes. */
 public abstract class AbstractCommand implements CommandProcessor {
 
   protected static final char N = '\n';
@@ -52,25 +48,25 @@ public abstract class AbstractCommand implements CommandProcessor {
   protected static final int POSITION_RESPONSE_STATUS = 6;
   protected static final int POSITION_CAS = 16;
 
-  private final ThreadLocal<CharsetDecoder> asciiDecoder = new ThreadLocal<CharsetDecoder>() {
-    @Override
-    protected CharsetDecoder initialValue() {
-      return asciiCharset.newDecoder();
-    }
-  };
+  private final ThreadLocal<CharsetDecoder> asciiDecoder =
+      new ThreadLocal<CharsetDecoder>() {
+        @Override
+        protected CharsetDecoder initialValue() {
+          return asciiCharset.newDecoder();
+        }
+      };
 
-  private final ThreadLocal<CharsetEncoder> asciiEncoder = new ThreadLocal<CharsetEncoder>() {
-    @Override
-    protected CharsetEncoder initialValue() {
-      return asciiCharset.newEncoder();
-    }
-  };
+  private final ThreadLocal<CharsetEncoder> asciiEncoder =
+      new ThreadLocal<CharsetEncoder>() {
+        @Override
+        protected CharsetEncoder initialValue() {
+          return asciiCharset.newEncoder();
+        }
+      };
 
   private LogWriter logger;
 
-  /**
-   * A buffer to read and decode the first line.
-   */
+  /** A buffer to read and decode the first line. */
   protected static ThreadLocal<CharBuffer> firstLineBuffer = new ThreadLocal<CharBuffer>();
 
   @Override
@@ -113,7 +109,14 @@ public abstract class AbstractCommand implements CommandProcessor {
     //      value[i] = buffer.get();
     //    }
     if (getLogger().finerEnabled()) {
-      getLogger().finer("val:" + Arrays.toString(value) + " totalBody:" + totalBodyLength + " valLen:" + valueLength);
+      getLogger()
+          .finer(
+              "val:"
+                  + Arrays.toString(value)
+                  + " totalBody:"
+                  + totalBodyLength
+                  + " valLen:"
+                  + valueLength);
     }
     return value;
   }
@@ -123,7 +126,7 @@ public abstract class AbstractCommand implements CommandProcessor {
     StringBuilder builder = new StringBuilder();
     try {
       char c = buffer.get();
-      for (;;) {
+      for (; ; ) {
         builder.append(c);
         if (c == N) {
           break;
@@ -146,7 +149,8 @@ public abstract class AbstractCommand implements CommandProcessor {
       synchronized (AbstractCommand.class) {
         r = cache.getRegion(GemFireMemcachedServer.REGION_NAME);
         if (r == null) {
-          RegionFactory<Object, ValueWrapper> rf = cache.createRegionFactory(RegionShortcut.PARTITION);
+          RegionFactory<Object, ValueWrapper> rf =
+              cache.createRegionFactory(RegionShortcut.PARTITION);
           r = rf.create(GemFireMemcachedServer.REGION_NAME);
         }
       }
@@ -200,10 +204,9 @@ public abstract class AbstractCommand implements CommandProcessor {
     return asciiEncoder.get();
   }
 
-  /**
-   * Used to handle exceptions thrown by the region callbacks.
-   */
-  protected ByteBuffer handleBinaryException(Object key, RequestReader request, ByteBuffer response, String operation, Exception e) {
+  /** Used to handle exceptions thrown by the region callbacks. */
+  protected ByteBuffer handleBinaryException(
+      Object key, RequestReader request, ByteBuffer response, String operation, Exception e) {
     getLogger().info("Exception occurred while processing " + operation + " :" + key, e);
     String errStr = e.getMessage() == null ? "SERVER ERROR" : e.getMessage();
     byte[] errMsg = errStr.getBytes(asciiCharset);

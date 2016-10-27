@@ -26,7 +26,7 @@ import java.lang.reflect.Array;
 
 /**
  * Class Description
- * 
+ *
  * @version $Revision: 1.1 $
  */
 public class CompiledIndexOperation extends AbstractCompiledValue implements MapIndexable {
@@ -41,7 +41,8 @@ public class CompiledIndexOperation extends AbstractCompiledValue implements Map
     this.indexExpr = indexExpr;
   }
 
-  public CompiledIndexOperation(CompiledValue receiver, CompiledValue indexExpr, boolean evalRegionAsEntry) {
+  public CompiledIndexOperation(
+      CompiledValue receiver, CompiledValue indexExpr, boolean evalRegionAsEntry) {
     this.receiver = receiver;
     this.indexExpr = indexExpr;
     this.evalRegionAsEntry = evalRegionAsEntry;
@@ -60,12 +61,15 @@ public class CompiledIndexOperation extends AbstractCompiledValue implements Map
   }
 
   @Override
-  public Set computeDependencies(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  public Set computeDependencies(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     context.addDependencies(this, this.receiver.computeDependencies(context));
     return context.addDependencies(this, this.indexExpr.computeDependencies(context));
   }
 
-  public Object evaluate(ExecutionContext context) throws TypeMismatchException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context)
+      throws TypeMismatchException, FunctionDomainException, NameResolutionException,
+          QueryInvocationTargetException {
     Object rcvr = this.receiver.evaluate(context);
     Object index = this.indexExpr.evaluate(context);
 
@@ -98,7 +102,10 @@ public class CompiledIndexOperation extends AbstractCompiledValue implements Map
     }
     if ((rcvr instanceof List) || rcvr.getClass().isArray() || (rcvr instanceof String)) {
       if (!(index instanceof Integer)) {
-        throw new TypeMismatchException(LocalizedStrings.CompiledIndexOperation_INDEX_EXPRESSION_MUST_BE_AN_INTEGER_FOR_LISTS_OR_ARRAYS.toLocalizedString());
+        throw new TypeMismatchException(
+            LocalizedStrings
+                .CompiledIndexOperation_INDEX_EXPRESSION_MUST_BE_AN_INTEGER_FOR_LISTS_OR_ARRAYS
+                .toLocalizedString());
       }
     }
     if (rcvr instanceof List) {
@@ -135,12 +142,15 @@ public class CompiledIndexOperation extends AbstractCompiledValue implements Map
      * ((Region)rcvr).getEntry(index); if (entry == null) { return null; }
      * return this.evalRegionAsEntry? entry:entry.getValue(); }
      */
-    throw new TypeMismatchException(LocalizedStrings.CompiledIndexOperation_INDEX_EXPRESSION_NOT_SUPPORTED_ON_OBJECTS_OF_TYPE_0.toLocalizedString(rcvr.getClass().getName()));
+    throw new TypeMismatchException(
+        LocalizedStrings.CompiledIndexOperation_INDEX_EXPRESSION_NOT_SUPPORTED_ON_OBJECTS_OF_TYPE_0
+            .toLocalizedString(rcvr.getClass().getName()));
   }
 
   //Asif :Function for generating canonicalized expression
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     //  Asif: The canonicalization of Index operator will be of
     // the form IterX.getPositions[IterY.a.b.c]
     clauseBuffer.insert(0, ']');

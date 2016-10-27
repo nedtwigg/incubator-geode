@@ -65,18 +65,16 @@ import static org.apache.geode.internal.cache.DistributedCacheOperation.VALUE_IS
 import static org.apache.geode.internal.cache.DistributedCacheOperation.VALUE_IS_OBJECT;
 
 /**
- * A class that specifies a destroy operation.
- * Used by ReplicateRegions.
- * Note: The reason for different classes for Destroy and Invalidate is to
- * prevent sending an extra bit for every RemoteDestroyMessage to differentiate an
- * invalidate versus a destroy. The assumption is that these operations are used
- * frequently, if they are not then it makes sense to fold the destroy and the
- * invalidate into the same message and use an extra bit to differentiate
- * 
+ * A class that specifies a destroy operation. Used by ReplicateRegions. Note: The reason for
+ * different classes for Destroy and Invalidate is to prevent sending an extra bit for every
+ * RemoteDestroyMessage to differentiate an invalidate versus a destroy. The assumption is that
+ * these operations are used frequently, if they are not then it makes sense to fold the destroy and
+ * the invalidate into the same message and use an extra bit to differentiate
+ *
  * @since GemFire 6.5
- *  
  */
-public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply implements OldValueImporter {
+public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply
+    implements OldValueImporter {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -97,7 +95,9 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
   /** The operation performed on the sender */
   private Operation op;
 
-  /** An additional object providing context for the operation, e.g., for BridgeServer notification */
+  /**
+   * An additional object providing context for the operation, e.g., for BridgeServer notification
+   */
   ClientProxyMembershipID bridgeContext;
 
   /** event identifier */
@@ -106,10 +106,10 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
   /** for relayed messages, this is the original sender of the message */
   InternalDistributedMember originalSender;
 
-  /**whether the message has old value */
+  /** whether the message has old value */
   private boolean hasOldValue = false;
 
-  /**whether old value is serialized*/
+  /** whether old value is serialized */
   private boolean oldValueIsSerialized = false;
 
   /** expectedOldValue used for PartitionedRegion#remove(key, value) */
@@ -135,13 +135,18 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
   protected static final short HAS_ORIGINAL_SENDER = (HAS_BRIDGE_CONTEXT << 1);
   protected static final int HAS_VERSION_TAG = (HAS_ORIGINAL_SENDER << 1);
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public RemoteDestroyMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public RemoteDestroyMessage() {}
 
-  protected RemoteDestroyMessage(Set recipients, String regionPath, DirectReplyProcessor processor, EntryEventImpl event, Object expectedOldValue, int processorType, boolean useOriginRemote, boolean possibleDuplicate) {
+  protected RemoteDestroyMessage(
+      Set recipients,
+      String regionPath,
+      DirectReplyProcessor processor,
+      EntryEventImpl event,
+      Object expectedOldValue,
+      int processorType,
+      boolean useOriginRemote,
+      boolean possibleDuplicate) {
     super(recipients, regionPath, processor);
     this.expectedOldValue = expectedOldValue;
     this.key = event.getKey();
@@ -160,7 +165,6 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
       this.hasOldValue = true;
       event.exportOldValue(this);
     }
-
   }
 
   @Override
@@ -194,9 +198,9 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
   }
 
   /**
-   * Set the old value for this message, only used if there are cqs registered 
-   * on one of the bridge servers.
-   * 
+   * Set the old value for this message, only used if there are cqs registered on one of the bridge
+   * servers.
+   *
    * @param event underlying event.
    * @since GemFire 5.5
    */
@@ -232,10 +236,14 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
     }
   }
 
-  public static boolean distribute(EntryEventImpl event, Object expectedOldValue, boolean onlyPersistent) {
+  public static boolean distribute(
+      EntryEventImpl event, Object expectedOldValue, boolean onlyPersistent) {
     boolean successful = false;
     DistributedRegion r = (DistributedRegion) event.getRegion();
-    Collection replicates = onlyPersistent ? r.getCacheDistributionAdvisor().adviseInitializedPersistentMembers().keySet() : r.getCacheDistributionAdvisor().adviseInitializedReplicates();
+    Collection replicates =
+        onlyPersistent
+            ? r.getCacheDistributionAdvisor().adviseInitializedPersistentMembers().keySet()
+            : r.getCacheDistributionAdvisor().adviseInitializedReplicates();
     if (replicates.isEmpty()) {
       return false;
     }
@@ -245,18 +253,29 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
       replicates = l;
     }
     int attempts = 0;
-    for (Iterator<InternalDistributedMember> it = replicates.iterator(); it.hasNext();) {
+    for (Iterator<InternalDistributedMember> it = replicates.iterator(); it.hasNext(); ) {
       InternalDistributedMember replicate = it.next();
       try {
         attempts++;
         final boolean posDup = (attempts > 1);
-        RemoteDestroyReplyProcessor processor = send(replicate, event.getRegion(), event, expectedOldValue, DistributionManager.SERIAL_EXECUTOR, false, posDup);
+        RemoteDestroyReplyProcessor processor =
+            send(
+                replicate,
+                event.getRegion(),
+                event,
+                expectedOldValue,
+                DistributionManager.SERIAL_EXECUTOR,
+                false,
+                posDup);
         processor.waitForCacheException();
         VersionTag versionTag = processor.getVersionTag();
         if (versionTag != null) {
           event.setVersionTag(versionTag);
           if (event.getRegion().getVersionVector() != null) {
-            event.getRegion().getVersionVector().recordVersion(versionTag.getMemberID(), versionTag);
+            event
+                .getRegion()
+                .getVersionVector()
+                .recordVersion(versionTag.getMemberID(), versionTag);
           }
         }
         event.setInhibitDistribution(true);
@@ -279,7 +298,10 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
 
       } catch (RemoteOperationException e) {
         if (logger.isTraceEnabled(LogMarker.DM)) {
-          logger.trace(LogMarker.DM, "RemoteDestroyMessage caught an unexpected exception during distribution", e);
+          logger.trace(
+              LogMarker.DM,
+              "RemoteDestroyMessage caught an unexpected exception during distribution",
+              e);
         }
       }
     }
@@ -287,29 +309,45 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
   }
 
   /**
-   * Sends a RemoteDestroyMessage
-   * {@link org.apache.geode.cache.Region#destroy(Object)}message to the
-   * recipient
-   * 
+   * Sends a RemoteDestroyMessage {@link org.apache.geode.cache.Region#destroy(Object)}message to
+   * the recipient
+   *
    * @param recipient the recipient of the message
-   * @param r
-   *          the ReplicateRegion for which the destroy was performed
+   * @param r the ReplicateRegion for which the destroy was performed
    * @param event the event causing this message
    * @param processorType the type of executor to use in processing the message
    * @param useOriginRemote TODO
-   * @return the processor used to await the potential
-   *         {@link org.apache.geode.cache.CacheException}
+   * @return the processor used to await the potential {@link org.apache.geode.cache.CacheException}
    */
-  public static RemoteDestroyReplyProcessor send(DistributedMember recipient, LocalRegion r, EntryEventImpl event, Object expectedOldValue, int processorType, boolean useOriginRemote, boolean possibleDuplicate) throws RemoteOperationException {
+  public static RemoteDestroyReplyProcessor send(
+      DistributedMember recipient,
+      LocalRegion r,
+      EntryEventImpl event,
+      Object expectedOldValue,
+      int processorType,
+      boolean useOriginRemote,
+      boolean possibleDuplicate)
+      throws RemoteOperationException {
     //Assert.assertTrue(recipient != null, "RemoteDestroyMessage NULL recipient"); recipient may be null for event notification
     Set recipients = Collections.singleton(recipient);
-    RemoteDestroyReplyProcessor p = new RemoteDestroyReplyProcessor(r.getSystem(), recipients, false);
+    RemoteDestroyReplyProcessor p =
+        new RemoteDestroyReplyProcessor(r.getSystem(), recipients, false);
     p.requireResponse();
-    RemoteDestroyMessage m = new RemoteDestroyMessage(recipients, r.getFullPath(), p, event, expectedOldValue, processorType, useOriginRemote, possibleDuplicate);
+    RemoteDestroyMessage m =
+        new RemoteDestroyMessage(
+            recipients,
+            r.getFullPath(),
+            p,
+            event,
+            expectedOldValue,
+            processorType,
+            useOriginRemote,
+            possibleDuplicate);
     m.setTransactionDistributed(r.getCache().getTxManager().isDistributed());
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new RemoteOperationException(LocalizedStrings.RemoteDestroyMessage_FAILED_SENDING_0.toLocalizedString(m));
+      throw new RemoteOperationException(
+          LocalizedStrings.RemoteDestroyMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
     return p;
   }
@@ -320,22 +358,30 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
   }
 
   /**
-   * This method is called upon receipt and make the desired changes to the
-   * PartitionedRegion Note: It is very important that this message does NOT
-   * cause any deadlocks as the sender will wait indefinitely for the
-   * acknowledgement
+   * This method is called upon receipt and make the desired changes to the PartitionedRegion Note:
+   * It is very important that this message does NOT cause any deadlocks as the sender will wait
+   * indefinitely for the acknowledgement
    */
   @Override
-  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime) throws EntryExistsException, RemoteOperationException {
+  protected boolean operateOnRegion(DistributionManager dm, LocalRegion r, long startTime)
+      throws EntryExistsException, RemoteOperationException {
     InternalDistributedMember eventSender = originalSender;
     if (eventSender == null) {
       eventSender = getSender();
     }
-    @Released
-    EntryEventImpl event = null;
+    @Released EntryEventImpl event = null;
     try {
       if (this.bridgeContext != null) {
-        event = EntryEventImpl.create(r, getOperation(), getKey(), null/*newValue*/, getCallbackArg(), false/*originRemote*/, eventSender, true/*generateCallbacks*/);
+        event =
+            EntryEventImpl.create(
+                r,
+                getOperation(),
+                getKey(),
+                null /*newValue*/,
+                getCallbackArg(),
+                false /*originRemote*/,
+                eventSender,
+                true /*generateCallbacks*/);
         event.setContext(this.bridgeContext);
 
         // for cq processing and client notification by BS.
@@ -348,8 +394,17 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
         }
       } // bridgeContext != null
       else {
-        event = EntryEventImpl.create(r, getOperation(), getKey(), null, /*newValue*/
-            getCallbackArg(), this.useOriginRemote, eventSender, true/*generateCallbacks*/, false/*initializeId*/);
+        event =
+            EntryEventImpl.create(
+                r,
+                getOperation(),
+                getKey(),
+                null, /*newValue*/
+                getCallbackArg(),
+                this.useOriginRemote,
+                eventSender,
+                true /*generateCallbacks*/,
+                false /*initializeId*/);
       }
 
       event.setCausedByMessage(this);
@@ -382,12 +437,22 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
         if (logger.isDebugEnabled()) {
           logger.debug("operateOnRegion caught EntryNotFoundException", eee);
         }
-        ReplyMessage.send(getSender(), getProcessorId(), new ReplyException(eee), getReplySender(dm), r.isInternalRegion());
+        ReplyMessage.send(
+            getSender(),
+            getProcessorId(),
+            new ReplyException(eee),
+            getReplySender(dm),
+            r.isInternalRegion());
       } catch (DataLocationException e) {
         if (logger.isDebugEnabled()) {
           logger.debug("operateOnRegion caught DataLocationException");
         }
-        ReplyMessage.send(getSender(), getProcessorId(), new ReplyException(e), getReplySender(dm), r.isInternalRegion());
+        ReplyMessage.send(
+            getSender(),
+            getProcessorId(),
+            new ReplyException(e),
+            getReplySender(dm),
+            r.isInternalRegion());
       }
       return false;
     } finally {
@@ -468,18 +533,12 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
   protected short computeCompressedShort() {
     short s = super.computeCompressedShort();
     // this will be on wire for cqs old value generations.
-    if (this.hasOldValue)
-      s |= HAS_OLD_VALUE;
-    if (this.useOriginRemote)
-      s |= USE_ORIGIN_REMOTE;
-    if (this.possibleDuplicate)
-      s |= POS_DUP;
-    if (this.bridgeContext != null)
-      s |= HAS_BRIDGE_CONTEXT;
-    if (this.originalSender != null)
-      s |= HAS_ORIGINAL_SENDER;
-    if (this.versionTag != null)
-      s |= HAS_VERSION_TAG;
+    if (this.hasOldValue) s |= HAS_OLD_VALUE;
+    if (this.useOriginRemote) s |= USE_ORIGIN_REMOTE;
+    if (this.possibleDuplicate) s |= POS_DUP;
+    if (this.bridgeContext != null) s |= HAS_BRIDGE_CONTEXT;
+    if (this.originalSender != null) s |= HAS_ORIGINAL_SENDER;
+    if (this.versionTag != null) s |= HAS_VERSION_TAG;
     return s;
   }
 
@@ -488,10 +547,7 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
     return this.eventId;
   }
 
-  /**
-   * Assists the toString method in reporting the contents of this message
-   * 
-   */
+  /** Assists the toString method in reporting the contents of this message */
   @Override
   protected void appendFields(StringBuffer buff) {
     super.appendFields(buff);
@@ -569,10 +625,10 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
     private VersionTag versionTag;
 
     /** DSFIDFactory constructor */
-    public DestroyReplyMessage() {
-    }
+    public DestroyReplyMessage() {}
 
-    static void send(InternalDistributedMember recipient, ReplySender dm, int procId, VersionTag versionTag) {
+    static void send(
+        InternalDistributedMember recipient, ReplySender dm, int procId, VersionTag versionTag) {
       Assert.assertTrue(recipient != null, "DestroyReplyMessage NULL recipient");
       DestroyReplyMessage m = new DestroyReplyMessage(recipient, procId, versionTag);
       dm.putOutgoing(m);
@@ -599,7 +655,10 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
     public void process(final DM dm, final ReplyProcessor21 rp) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "DestroyReplyMessage process invoking reply processor with processorId:{}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "DestroyReplyMessage process invoking reply processor with processorId:{}",
+            this.processorId);
       }
       if (rp == null) {
         if (logger.isTraceEnabled(LogMarker.DM)) {
@@ -667,7 +726,6 @@ public class RemoteDestroyMessage extends RemoteOperationMessageWithDirectReply 
       }
       return sb.toString();
     }
-
   }
 
   static class RemoteDestroyReplyProcessor extends RemoteOperationResponse {

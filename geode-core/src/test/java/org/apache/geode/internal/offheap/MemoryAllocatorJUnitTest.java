@@ -71,12 +71,18 @@ public class MemoryAllocatorJUnitTest {
       NullOutOfOffHeapMemoryListener listener = new NullOutOfOffHeapMemoryListener();
       NullOffHeapMemoryStats stats = new NullOffHeapMemoryStats();
       try {
-        MemoryAllocatorImpl.createForUnitTest(listener, stats, 10, 950, 100, new SlabFactory() {
-          @Override
-          public Slab create(int size) {
-            throw new OutOfMemoryError("expected");
-          }
-        });
+        MemoryAllocatorImpl.createForUnitTest(
+            listener,
+            stats,
+            10,
+            950,
+            100,
+            new SlabFactory() {
+              @Override
+              public Slab create(int size) {
+                throw new OutOfMemoryError("expected");
+              }
+            });
       } catch (OutOfMemoryError expected) {
       }
       assertTrue(listener.isClosed());
@@ -87,19 +93,20 @@ public class MemoryAllocatorJUnitTest {
       NullOffHeapMemoryStats stats = new NullOffHeapMemoryStats();
       int MAX_SLAB_SIZE = 100;
       try {
-        SlabFactory factory = new SlabFactory() {
-          private int createCount = 0;
+        SlabFactory factory =
+            new SlabFactory() {
+              private int createCount = 0;
 
-          @Override
-          public Slab create(int size) {
-            createCount++;
-            if (createCount == 1) {
-              return new SlabImpl(size);
-            } else {
-              throw new OutOfMemoryError("expected");
-            }
-          }
-        };
+              @Override
+              public Slab create(int size) {
+                createCount++;
+                if (createCount == 1) {
+                  return new SlabImpl(size);
+                } else {
+                  throw new OutOfMemoryError("expected");
+                }
+              }
+            };
         MemoryAllocatorImpl.createForUnitTest(listener, stats, 10, 950, MAX_SLAB_SIZE, factory);
       } catch (OutOfMemoryError expected) {
       }
@@ -109,13 +116,15 @@ public class MemoryAllocatorJUnitTest {
     {
       NullOutOfOffHeapMemoryListener listener = new NullOutOfOffHeapMemoryListener();
       NullOffHeapMemoryStats stats = new NullOffHeapMemoryStats();
-      SlabFactory factory = new SlabFactory() {
-        @Override
-        public Slab create(int size) {
-          return new SlabImpl(size);
-        }
-      };
-      MemoryAllocator ma = MemoryAllocatorImpl.createForUnitTest(listener, stats, 10, 950, 100, factory);
+      SlabFactory factory =
+          new SlabFactory() {
+            @Override
+            public Slab create(int size) {
+              return new SlabImpl(size);
+            }
+          };
+      MemoryAllocator ma =
+          MemoryAllocatorImpl.createForUnitTest(listener, stats, 10, 950, 100, factory);
       try {
         assertFalse(listener.isClosed());
         assertFalse(stats.isClosed());
@@ -127,9 +136,14 @@ public class MemoryAllocatorJUnitTest {
         {
           SlabImpl slab = new SlabImpl(1024);
           try {
-            MemoryAllocatorImpl.createForUnitTest(listener, stats2, new SlabImpl[] { slab });
+            MemoryAllocatorImpl.createForUnitTest(listener, stats2, new SlabImpl[] {slab});
           } catch (IllegalStateException expected) {
-            assertTrue("unexpected message: " + expected.getMessage(), expected.getMessage().equals("attempted to reuse existing off-heap memory even though new off-heap memory was allocated"));
+            assertTrue(
+                "unexpected message: " + expected.getMessage(),
+                expected
+                    .getMessage()
+                    .equals(
+                        "attempted to reuse existing off-heap memory even though new off-heap memory was allocated"));
           } finally {
             slab.free();
           }
@@ -139,7 +153,8 @@ public class MemoryAllocatorJUnitTest {
         }
         listener = new NullOutOfOffHeapMemoryListener();
         stats2 = new NullOffHeapMemoryStats();
-        MemoryAllocator ma2 = MemoryAllocatorImpl.createForUnitTest(listener, stats2, 10, 950, 100, factory);
+        MemoryAllocator ma2 =
+            MemoryAllocatorImpl.createForUnitTest(listener, stats2, 10, 950, 100, factory);
         assertSame(ma, ma2);
         assertTrue(stats.isClosed());
         assertFalse(listener.isClosed());
@@ -163,68 +178,127 @@ public class MemoryAllocatorJUnitTest {
     int perObjectOverhead = OffHeapStoredObject.HEADER_SIZE;
     int maxTiny = FreeListManager.MAX_TINY - perObjectOverhead;
     int minHuge = maxTiny + 1;
-    int TOTAL_MEM = (maxTiny + perObjectOverhead) * BATCH_SIZE /*+ (maxBig+perObjectOverhead)*BATCH_SIZE*/ + round(TINY_MULTIPLE, minHuge + 1 + perObjectOverhead) * BATCH_SIZE + (TINY_MULTIPLE + perObjectOverhead) * BATCH_SIZE /*+ (MIN_BIG_SIZE+perObjectOverhead)*BATCH_SIZE*/ + round(TINY_MULTIPLE, minHuge + perObjectOverhead + 1);
+    int TOTAL_MEM =
+        (maxTiny + perObjectOverhead) * BATCH_SIZE /*+ (maxBig+perObjectOverhead)*BATCH_SIZE*/
+            + round(TINY_MULTIPLE, minHuge + 1 + perObjectOverhead) * BATCH_SIZE
+            + (TINY_MULTIPLE + perObjectOverhead)
+                * BATCH_SIZE /*+ (MIN_BIG_SIZE+perObjectOverhead)*BATCH_SIZE*/
+            + round(TINY_MULTIPLE, minHuge + perObjectOverhead + 1);
     SlabImpl slab = new SlabImpl(TOTAL_MEM);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       assertEquals(TOTAL_MEM, ma.getFreeMemory());
       assertEquals(TOTAL_MEM, ma.freeList.getFreeFragmentMemory());
       assertEquals(0, ma.freeList.getFreeTinyMemory());
       assertEquals(0, ma.freeList.getFreeHugeMemory());
       StoredObject tinymc = ma.allocate(maxTiny);
-      assertEquals(TOTAL_MEM - round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.getFreeMemory());
-      assertEquals(round(TINY_MULTIPLE, maxTiny + perObjectOverhead) * (BATCH_SIZE - 1), ma.freeList.getFreeTinyMemory());
+      assertEquals(
+          TOTAL_MEM - round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.getFreeMemory());
+      assertEquals(
+          round(TINY_MULTIPLE, maxTiny + perObjectOverhead) * (BATCH_SIZE - 1),
+          ma.freeList.getFreeTinyMemory());
       StoredObject hugemc = ma.allocate(minHuge);
-      assertEquals(TOTAL_MEM - round(TINY_MULTIPLE, minHuge + perObjectOverhead)/*-round(BIG_MULTIPLE, maxBig+perObjectOverhead)*/ - round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.getFreeMemory());
+      assertEquals(
+          TOTAL_MEM
+              - round(
+                  TINY_MULTIPLE,
+                  minHuge + perObjectOverhead) /*-round(BIG_MULTIPLE, maxBig+perObjectOverhead)*/
+              - round(TINY_MULTIPLE, maxTiny + perObjectOverhead),
+          ma.getFreeMemory());
       long freeSlab = ma.freeList.getFreeFragmentMemory();
       long oldFreeHugeMemory = ma.freeList.getFreeHugeMemory();
-      assertEquals(round(TINY_MULTIPLE, minHuge + perObjectOverhead) * (BATCH_SIZE - 1), oldFreeHugeMemory);
+      assertEquals(
+          round(TINY_MULTIPLE, minHuge + perObjectOverhead) * (BATCH_SIZE - 1), oldFreeHugeMemory);
       hugemc.release();
-      assertEquals(round(TINY_MULTIPLE, minHuge + perObjectOverhead), ma.freeList.getFreeHugeMemory() - oldFreeHugeMemory);
-      assertEquals(TOTAL_MEM/*-round(BIG_MULTIPLE, maxBig+perObjectOverhead)*/ - round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.getFreeMemory());
-      assertEquals(TOTAL_MEM - round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.getFreeMemory());
+      assertEquals(
+          round(TINY_MULTIPLE, minHuge + perObjectOverhead),
+          ma.freeList.getFreeHugeMemory() - oldFreeHugeMemory);
+      assertEquals(
+          TOTAL_MEM /*-round(BIG_MULTIPLE, maxBig+perObjectOverhead)*/
+              - round(TINY_MULTIPLE, maxTiny + perObjectOverhead),
+          ma.getFreeMemory());
+      assertEquals(
+          TOTAL_MEM - round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.getFreeMemory());
       long oldFreeTinyMemory = ma.freeList.getFreeTinyMemory();
       tinymc.release();
-      assertEquals(round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.freeList.getFreeTinyMemory() - oldFreeTinyMemory);
+      assertEquals(
+          round(TINY_MULTIPLE, maxTiny + perObjectOverhead),
+          ma.freeList.getFreeTinyMemory() - oldFreeTinyMemory);
       assertEquals(TOTAL_MEM, ma.getFreeMemory());
       // now lets reallocate from the free lists
       tinymc = ma.allocate(maxTiny);
       assertEquals(oldFreeTinyMemory, ma.freeList.getFreeTinyMemory());
-      assertEquals(TOTAL_MEM - round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.getFreeMemory());
+      assertEquals(
+          TOTAL_MEM - round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.getFreeMemory());
       hugemc = ma.allocate(minHuge);
       assertEquals(oldFreeHugeMemory, ma.freeList.getFreeHugeMemory());
-      assertEquals(TOTAL_MEM - round(TINY_MULTIPLE, minHuge + perObjectOverhead)/*-round(BIG_MULTIPLE, maxBig+perObjectOverhead)*/ - round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.getFreeMemory());
+      assertEquals(
+          TOTAL_MEM
+              - round(
+                  TINY_MULTIPLE,
+                  minHuge + perObjectOverhead) /*-round(BIG_MULTIPLE, maxBig+perObjectOverhead)*/
+              - round(TINY_MULTIPLE, maxTiny + perObjectOverhead),
+          ma.getFreeMemory());
       hugemc.release();
-      assertEquals(round(TINY_MULTIPLE, minHuge + perObjectOverhead), ma.freeList.getFreeHugeMemory() - oldFreeHugeMemory);
-      assertEquals(TOTAL_MEM/*-round(BIG_MULTIPLE, maxBig+perObjectOverhead)*/ - round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.getFreeMemory());
-      assertEquals(TOTAL_MEM - round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.getFreeMemory());
+      assertEquals(
+          round(TINY_MULTIPLE, minHuge + perObjectOverhead),
+          ma.freeList.getFreeHugeMemory() - oldFreeHugeMemory);
+      assertEquals(
+          TOTAL_MEM /*-round(BIG_MULTIPLE, maxBig+perObjectOverhead)*/
+              - round(TINY_MULTIPLE, maxTiny + perObjectOverhead),
+          ma.getFreeMemory());
+      assertEquals(
+          TOTAL_MEM - round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.getFreeMemory());
       tinymc.release();
-      assertEquals(round(TINY_MULTIPLE, maxTiny + perObjectOverhead), ma.freeList.getFreeTinyMemory() - oldFreeTinyMemory);
+      assertEquals(
+          round(TINY_MULTIPLE, maxTiny + perObjectOverhead),
+          ma.freeList.getFreeTinyMemory() - oldFreeTinyMemory);
       assertEquals(TOTAL_MEM, ma.getFreeMemory());
       // None of the reallocates should have come from the slab.
       assertEquals(freeSlab, ma.freeList.getFreeFragmentMemory());
       tinymc = ma.allocate(1);
       assertEquals(round(TINY_MULTIPLE, 1 + perObjectOverhead), tinymc.getSize());
-      assertEquals(freeSlab - (round(TINY_MULTIPLE, 1 + perObjectOverhead) * BATCH_SIZE), ma.freeList.getFreeFragmentMemory());
+      assertEquals(
+          freeSlab - (round(TINY_MULTIPLE, 1 + perObjectOverhead) * BATCH_SIZE),
+          ma.freeList.getFreeFragmentMemory());
       freeSlab = ma.freeList.getFreeFragmentMemory();
       tinymc.release();
-      assertEquals(round(TINY_MULTIPLE, maxTiny + perObjectOverhead) + (round(TINY_MULTIPLE, 1 + perObjectOverhead) * BATCH_SIZE), ma.freeList.getFreeTinyMemory() - oldFreeTinyMemory);
+      assertEquals(
+          round(TINY_MULTIPLE, maxTiny + perObjectOverhead)
+              + (round(TINY_MULTIPLE, 1 + perObjectOverhead) * BATCH_SIZE),
+          ma.freeList.getFreeTinyMemory() - oldFreeTinyMemory);
 
       hugemc = ma.allocate(minHuge + 1);
       assertEquals(round(TINY_MULTIPLE, minHuge + 1 + perObjectOverhead), hugemc.getSize());
-      assertEquals(round(TINY_MULTIPLE, minHuge + perObjectOverhead) * (BATCH_SIZE - 1), ma.freeList.getFreeHugeMemory());
+      assertEquals(
+          round(TINY_MULTIPLE, minHuge + perObjectOverhead) * (BATCH_SIZE - 1),
+          ma.freeList.getFreeHugeMemory());
       hugemc.release();
-      assertEquals(round(TINY_MULTIPLE, minHuge + perObjectOverhead) * BATCH_SIZE, ma.freeList.getFreeHugeMemory());
+      assertEquals(
+          round(TINY_MULTIPLE, minHuge + perObjectOverhead) * BATCH_SIZE,
+          ma.freeList.getFreeHugeMemory());
       hugemc = ma.allocate(minHuge);
-      assertEquals(round(TINY_MULTIPLE, minHuge + perObjectOverhead) * (BATCH_SIZE - 1), ma.freeList.getFreeHugeMemory());
+      assertEquals(
+          round(TINY_MULTIPLE, minHuge + perObjectOverhead) * (BATCH_SIZE - 1),
+          ma.freeList.getFreeHugeMemory());
       if (BATCH_SIZE > 1) {
         StoredObject hugemc2 = ma.allocate(minHuge);
-        assertEquals(round(TINY_MULTIPLE, minHuge + perObjectOverhead) * (BATCH_SIZE - 2), ma.freeList.getFreeHugeMemory());
+        assertEquals(
+            round(TINY_MULTIPLE, minHuge + perObjectOverhead) * (BATCH_SIZE - 2),
+            ma.freeList.getFreeHugeMemory());
         hugemc2.release();
-        assertEquals(round(TINY_MULTIPLE, minHuge + perObjectOverhead) * (BATCH_SIZE - 1), ma.freeList.getFreeHugeMemory());
+        assertEquals(
+            round(TINY_MULTIPLE, minHuge + perObjectOverhead) * (BATCH_SIZE - 1),
+            ma.freeList.getFreeHugeMemory());
       }
       hugemc.release();
-      assertEquals(round(TINY_MULTIPLE, minHuge + perObjectOverhead) * BATCH_SIZE, ma.freeList.getFreeHugeMemory());
+      assertEquals(
+          round(TINY_MULTIPLE, minHuge + perObjectOverhead) * BATCH_SIZE,
+          ma.freeList.getFreeHugeMemory());
       // now that we do defragmentation the following allocate works.
       hugemc = ma.allocate(minHuge + HUGE_MULTIPLE + HUGE_MULTIPLE - 1);
     } finally {
@@ -236,16 +310,25 @@ public class MemoryAllocatorJUnitTest {
   public void testChunkCreateDirectByteBuffer() {
     SlabImpl slab = new SlabImpl(1024 * 1024);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       ByteBuffer bb = ByteBuffer.allocate(1024);
       for (int i = 0; i < 1024; i++) {
         bb.put((byte) i);
       }
       bb.position(0);
-      OffHeapStoredObject c = (OffHeapStoredObject) ma.allocateAndInitialize(bb.array(), false, false);
+      OffHeapStoredObject c =
+          (OffHeapStoredObject) ma.allocateAndInitialize(bb.array(), false, false);
       assertEquals(1024, c.getDataSize());
       if (!Arrays.equals(bb.array(), c.getRawBytes())) {
-        fail("arrays are not equal. Expected " + Arrays.toString(bb.array()) + " but found: " + Arrays.toString(c.getRawBytes()));
+        fail(
+            "arrays are not equal. Expected "
+                + Arrays.toString(bb.array())
+                + " but found: "
+                + Arrays.toString(c.getRawBytes()));
       }
       ByteBuffer dbb = c.createDirectByteBuffer();
       assertEquals(true, dbb.isDirect());
@@ -265,7 +348,11 @@ public class MemoryAllocatorJUnitTest {
   public void testGetLostChunks() {
     SlabImpl slab = new SlabImpl(1024 * 1024);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       assertEquals(Collections.emptyList(), ma.getLostChunks());
     } finally {
       MemoryAllocatorImpl.freeOffHeapMemory();
@@ -277,7 +364,11 @@ public class MemoryAllocatorJUnitTest {
     final int SLAB_SIZE = 1024 * 1024;
     SlabImpl slab = new SlabImpl(SLAB_SIZE);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       assertEquals(0, ma.findSlab(slab.getMemoryAddress()));
       assertEquals(0, ma.findSlab(slab.getMemoryAddress() + SLAB_SIZE - 1));
       try {
@@ -300,33 +391,65 @@ public class MemoryAllocatorJUnitTest {
     final int SLAB_SIZE = 1024 * 1024;
     SlabImpl slab = new SlabImpl(SLAB_SIZE);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       try {
         MemoryAllocatorImpl.validateAddress(0L);
         fail("expected IllegalStateException");
       } catch (IllegalStateException expected) {
-        assertEquals("Unexpected exception message: " + expected.getMessage(), true, expected.getMessage().contains("addr was smaller than expected"));
+        assertEquals(
+            "Unexpected exception message: " + expected.getMessage(),
+            true,
+            expected.getMessage().contains("addr was smaller than expected"));
       }
       try {
         MemoryAllocatorImpl.validateAddress(1L);
         fail("expected IllegalStateException");
       } catch (IllegalStateException expected) {
-        assertEquals("Unexpected exception message: " + expected.getMessage(), true, expected.getMessage().contains("Valid addresses must be in one of the following ranges:"));
+        assertEquals(
+            "Unexpected exception message: " + expected.getMessage(),
+            true,
+            expected
+                .getMessage()
+                .contains("Valid addresses must be in one of the following ranges:"));
       }
-      MemoryAllocatorImpl.validateAddressAndSizeWithinSlab(slab.getMemoryAddress(), SLAB_SIZE, false);
-      MemoryAllocatorImpl.validateAddressAndSizeWithinSlab(slab.getMemoryAddress(), SLAB_SIZE, true);
+      MemoryAllocatorImpl.validateAddressAndSizeWithinSlab(
+          slab.getMemoryAddress(), SLAB_SIZE, false);
+      MemoryAllocatorImpl.validateAddressAndSizeWithinSlab(
+          slab.getMemoryAddress(), SLAB_SIZE, true);
       MemoryAllocatorImpl.validateAddressAndSizeWithinSlab(slab.getMemoryAddress(), -1, true);
       try {
-        MemoryAllocatorImpl.validateAddressAndSizeWithinSlab(slab.getMemoryAddress() - 1, SLAB_SIZE, true);
+        MemoryAllocatorImpl.validateAddressAndSizeWithinSlab(
+            slab.getMemoryAddress() - 1, SLAB_SIZE, true);
         fail("expected IllegalStateException");
       } catch (IllegalStateException expected) {
-        assertEquals("Unexpected exception message: " + expected.getMessage(), true, expected.getMessage().equals(" address 0x" + Long.toString(slab.getMemoryAddress() - 1, 16) + " does not address the original slab memory"));
+        assertEquals(
+            "Unexpected exception message: " + expected.getMessage(),
+            true,
+            expected
+                .getMessage()
+                .equals(
+                    " address 0x"
+                        + Long.toString(slab.getMemoryAddress() - 1, 16)
+                        + " does not address the original slab memory"));
       }
       try {
-        MemoryAllocatorImpl.validateAddressAndSizeWithinSlab(slab.getMemoryAddress(), SLAB_SIZE + 1, true);
+        MemoryAllocatorImpl.validateAddressAndSizeWithinSlab(
+            slab.getMemoryAddress(), SLAB_SIZE + 1, true);
         fail("expected IllegalStateException");
       } catch (IllegalStateException expected) {
-        assertEquals("Unexpected exception message: " + expected.getMessage(), true, expected.getMessage().equals(" address 0x" + Long.toString(slab.getMemoryAddress() + SLAB_SIZE, 16) + " does not address the original slab memory"));
+        assertEquals(
+            "Unexpected exception message: " + expected.getMessage(),
+            true,
+            expected
+                .getMessage()
+                .equals(
+                    " address 0x"
+                        + Long.toString(slab.getMemoryAddress() + SLAB_SIZE, 16)
+                        + " does not address the original slab memory"));
       }
     } finally {
       MemoryAllocatorImpl.freeOffHeapMemory();
@@ -338,7 +461,11 @@ public class MemoryAllocatorJUnitTest {
     final int SLAB_SIZE = 1024 * 1024;
     SlabImpl slab = new SlabImpl(SLAB_SIZE);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       MemoryInspector inspector = ma.getMemoryInspector();
       assertNotNull(inspector);
       assertEquals(null, inspector.getFirstBlock());
@@ -376,14 +503,18 @@ public class MemoryAllocatorJUnitTest {
     System.setProperty(MemoryAllocatorImpl.FREE_OFF_HEAP_MEMORY_PROPERTY, "false");
     SlabImpl slab = new SlabImpl(1024 * 1024);
     boolean freeSlab = true;
-    SlabImpl[] slabs = new SlabImpl[] { slab };
+    SlabImpl[] slabs = new SlabImpl[] {slab};
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), slabs);
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), slabs);
       ma.close();
       ma.close();
       System.setProperty(MemoryAllocatorImpl.FREE_OFF_HEAP_MEMORY_PROPERTY, "true");
       try {
-        ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), slabs);
+        ma =
+            MemoryAllocatorImpl.createForUnitTest(
+                new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), slabs);
         ma.close();
         freeSlab = false;
         ma.close();
@@ -395,7 +526,6 @@ public class MemoryAllocatorJUnitTest {
         MemoryAllocatorImpl.freeOffHeapMemory();
       }
     }
-
   }
 
   @Test
@@ -406,7 +536,11 @@ public class MemoryAllocatorJUnitTest {
     final int TOTAL_MEM = BIG_ALLOC_SIZE;
     SlabImpl slab = new SlabImpl(TOTAL_MEM);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
       StoredObject bmc = ma.allocate(BIG_ALLOC_SIZE - perObjectOverhead);
       try {
         StoredObject smc = ma.allocate(SMALL_ALLOC_SIZE - perObjectOverhead);
@@ -444,7 +578,8 @@ public class MemoryAllocatorJUnitTest {
       assertEquals(8 + perObjectOverhead, ma.freeList.getFreeMemory());
       mcs.remove(0).release(); // frees 8+perObjectOverhead
       assertEquals((8 + perObjectOverhead) * 2, ma.freeList.getFreeMemory());
-      ma.allocate(16).release(); // allocates and frees 16+perObjectOverhead; still have perObjectOverhead
+      ma.allocate(16)
+          .release(); // allocates and frees 16+perObjectOverhead; still have perObjectOverhead
       assertEquals((8 + perObjectOverhead) * 2, ma.freeList.getFreeMemory());
       mcs.remove(0).release(); // frees 8+perObjectOverhead
       assertEquals((8 + perObjectOverhead) * 3, ma.freeList.getFreeMemory());
@@ -467,15 +602,23 @@ public class MemoryAllocatorJUnitTest {
       // At this point I should have 8*6 + perObjectOverhead*6 of free memory
       StoredObject mc24 = ma.allocate(24);
       checkMcs(mcs);
-      assertEquals((8 + perObjectOverhead) * 6 - (24 + perObjectOverhead), ma.freeList.getFreeMemory());
+      assertEquals(
+          (8 + perObjectOverhead) * 6 - (24 + perObjectOverhead), ma.freeList.getFreeMemory());
       // At this point I should have 8*3 + perObjectOverhead*5 of free memory
       StoredObject mc16 = ma.allocate(16);
       checkMcs(mcs);
-      assertEquals((8 + perObjectOverhead) * 6 - (24 + perObjectOverhead) - (16 + perObjectOverhead), ma.freeList.getFreeMemory());
+      assertEquals(
+          (8 + perObjectOverhead) * 6 - (24 + perObjectOverhead) - (16 + perObjectOverhead),
+          ma.freeList.getFreeMemory());
       // At this point I should have 8*1 + perObjectOverhead*4 of free memory
       mcs.add(ma.allocate(8));
       checkMcs(mcs);
-      assertEquals((8 + perObjectOverhead) * 6 - (24 + perObjectOverhead) - (16 + perObjectOverhead) - (8 + perObjectOverhead), ma.freeList.getFreeMemory());
+      assertEquals(
+          (8 + perObjectOverhead) * 6
+              - (24 + perObjectOverhead)
+              - (16 + perObjectOverhead)
+              - (8 + perObjectOverhead),
+          ma.freeList.getFreeMemory());
       // At this point I should have 8*0 + perObjectOverhead*3 of free memory
       StoredObject mcDO = ma.allocate(perObjectOverhead * 2);
       checkMcs(mcs);
@@ -493,9 +636,16 @@ public class MemoryAllocatorJUnitTest {
       mcs.remove(mcs.size() - 1).release();
       assertEquals((perObjectOverhead * 3) + (8 + perObjectOverhead), ma.freeList.getFreeMemory());
       mc16.release();
-      assertEquals((perObjectOverhead * 3) + (8 + perObjectOverhead) + (16 + perObjectOverhead), ma.freeList.getFreeMemory());
+      assertEquals(
+          (perObjectOverhead * 3) + (8 + perObjectOverhead) + (16 + perObjectOverhead),
+          ma.freeList.getFreeMemory());
       mc24.release();
-      assertEquals((perObjectOverhead * 3) + (8 + perObjectOverhead) + (16 + perObjectOverhead) + (24 + perObjectOverhead), ma.freeList.getFreeMemory());
+      assertEquals(
+          (perObjectOverhead * 3)
+              + (8 + perObjectOverhead)
+              + (16 + perObjectOverhead)
+              + (24 + perObjectOverhead),
+          ma.freeList.getFreeMemory());
 
       long freeMem = ma.freeList.getFreeMemory();
       for (StoredObject mc : mcs) {
@@ -518,14 +668,19 @@ public class MemoryAllocatorJUnitTest {
     final int SMALL_ALLOC_SIZE = 1000;
     SlabImpl slab = new SlabImpl(3000);
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
-      MemoryUsageListener listener = new MemoryUsageListener() {
-        @Override
-        public void updateMemoryUsed(final long bytesUsed) {
-          MemoryAllocatorJUnitTest.this.memoryUsageEventReceived = true;
-          assertEquals(MemoryAllocatorJUnitTest.this.expectedMemoryUsage, bytesUsed);
-        }
-      };
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              new NullOutOfOffHeapMemoryListener(),
+              new NullOffHeapMemoryStats(),
+              new SlabImpl[] {slab});
+      MemoryUsageListener listener =
+          new MemoryUsageListener() {
+            @Override
+            public void updateMemoryUsed(final long bytesUsed) {
+              MemoryAllocatorJUnitTest.this.memoryUsageEventReceived = true;
+              assertEquals(MemoryAllocatorJUnitTest.this.expectedMemoryUsage, bytesUsed);
+            }
+          };
       ma.addMemoryUsageListener(listener);
 
       this.expectedMemoryUsage = SMALL_ALLOC_SIZE;
@@ -538,12 +693,13 @@ public class MemoryAllocatorJUnitTest {
       smc = ma.allocate(SMALL_ALLOC_SIZE - perObjectOverhead);
       assertEquals(true, this.memoryUsageEventReceived);
 
-      MemoryUsageListener unaddedListener = new MemoryUsageListener() {
-        @Override
-        public void updateMemoryUsed(final long bytesUsed) {
-          throw new IllegalStateException("Should never be called");
-        }
-      };
+      MemoryUsageListener unaddedListener =
+          new MemoryUsageListener() {
+            @Override
+            public void updateMemoryUsed(final long bytesUsed) {
+              throw new IllegalStateException("Should never be called");
+            }
+          };
       ma.removeMemoryUsageListener(unaddedListener);
 
       ma.removeMemoryUsageListener(listener);
@@ -573,19 +729,22 @@ public class MemoryAllocatorJUnitTest {
     final int SMALL_ALLOC_SIZE = BIG_ALLOC_SIZE / 2;
     final int TOTAL_MEM = BIG_ALLOC_SIZE;
     final SlabImpl slab = new SlabImpl(TOTAL_MEM);
-    final AtomicReference<OutOfOffHeapMemoryException> ooom = new AtomicReference<OutOfOffHeapMemoryException>();
-    final OutOfOffHeapMemoryListener oooml = new OutOfOffHeapMemoryListener() {
-      @Override
-      public void outOfOffHeapMemory(OutOfOffHeapMemoryException cause) {
-        ooom.set(cause);
-      }
+    final AtomicReference<OutOfOffHeapMemoryException> ooom =
+        new AtomicReference<OutOfOffHeapMemoryException>();
+    final OutOfOffHeapMemoryListener oooml =
+        new OutOfOffHeapMemoryListener() {
+          @Override
+          public void outOfOffHeapMemory(OutOfOffHeapMemoryException cause) {
+            ooom.set(cause);
+          }
 
-      @Override
-      public void close() {
-      }
-    };
+          @Override
+          public void close() {}
+        };
     try {
-      MemoryAllocatorImpl ma = MemoryAllocatorImpl.createForUnitTest(oooml, new NullOffHeapMemoryStats(), new SlabImpl[] { slab });
+      MemoryAllocatorImpl ma =
+          MemoryAllocatorImpl.createForUnitTest(
+              oooml, new NullOffHeapMemoryStats(), new SlabImpl[] {slab});
       // make a big allocation
       StoredObject bmc = ma.allocate(BIG_ALLOC_SIZE - perObjectOverhead);
       assertNull(ooom.get());
@@ -596,7 +755,8 @@ public class MemoryAllocatorJUnitTest {
       } catch (OutOfOffHeapMemoryException expected) {
       }
       assertNotNull(ooom.get());
-      assertTrue(ooom.get().getMessage().contains("Out of off-heap memory. Could not allocate size of "));
+      assertTrue(
+          ooom.get().getMessage().contains("Out of off-heap memory. Could not allocate size of "));
     } finally {
       MemoryAllocatorImpl.freeOffHeapMemory();
     }

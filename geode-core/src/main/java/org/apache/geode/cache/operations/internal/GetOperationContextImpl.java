@@ -23,11 +23,8 @@ import org.apache.geode.internal.offheap.StoredObject;
 import org.apache.geode.internal.offheap.annotations.Unretained;
 
 /**
- * This subclass's job is to keep customers from getting a reference to a value
- * that is off-heap. Any access to an off-heap value should appear to the customer
- * as a serialized value.
- * 
- *
+ * This subclass's job is to keep customers from getting a reference to a value that is off-heap.
+ * Any access to an off-heap value should appear to the customer as a serialized value.
  */
 public class GetOperationContextImpl extends GetOperationContext implements Releasable {
 
@@ -37,9 +34,7 @@ public class GetOperationContextImpl extends GetOperationContext implements Rele
     super(key, postOperation);
   }
 
-  /**
-   * This method is for internal use and should not be on the public apis.
-   */
+  /** This method is for internal use and should not be on the public apis. */
   public @Unretained Object getRawValue() {
     return super.getValue();
   }
@@ -69,7 +64,8 @@ public class GetOperationContextImpl extends GetOperationContext implements Rele
   private void checkForReleasedOffHeapValue(StoredObject so) {
     // Note that we only care about stored objects with a ref count
     if (this.released && so.hasRefCount()) {
-      throw new IllegalStateException("Attempt to access off-heap value after the OperationContext callback returned.");
+      throw new IllegalStateException(
+          "Attempt to access off-heap value after the OperationContext callback returned.");
     }
   }
 
@@ -121,5 +117,4 @@ public class GetOperationContextImpl extends GetOperationContext implements Rele
       this.released = true;
     }
   }
-
 }

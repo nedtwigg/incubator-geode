@@ -18,12 +18,11 @@ package org.apache.geode.internal.cache.versions;
 
 /**
  * A in memory representation of a VersionTag that is more compact than the VersionTag.
- * 
- * The version tag class has accumulated some temporary flags that make in undesirable
- * to retain a reference for long periods of type.
- * 
- * This class is used store version tags that are pending writing to a krf.
  *
+ * <p>The version tag class has accumulated some temporary flags that make in undesirable to retain
+ * a reference for long periods of type.
+ *
+ * <p>This class is used store version tags that are pending writing to a krf.
  */
 public class CompactVersionHolder<T extends VersionSource> implements VersionHolder<T> {
   //////VersionStamp implementation
@@ -75,12 +74,12 @@ public class CompactVersionHolder<T extends VersionSource> implements VersionHol
     return tag;
   }
 
-  /** get rvv internal high byte.  Used by region entries for transferring to storage */
+  /** get rvv internal high byte. Used by region entries for transferring to storage */
   public short getRegionVersionHighBytes() {
     return this.regionVersionHighBytes;
   }
 
-  /** get rvv internal low bytes.  Used by region entries for transferring to storage */
+  /** get rvv internal low bytes. Used by region entries for transferring to storage */
   public int getRegionVersionLowBytes() {
     return this.regionVersionLowBytes;
   }
@@ -99,5 +98,4 @@ public class CompactVersionHolder<T extends VersionSource> implements VersionHol
     s.append("}");
     return s.toString();
   }
-
 }

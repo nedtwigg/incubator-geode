@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-/******
- * THIS FILE IS ENCODED IN UTF-8 IN ORDER TO TEST UNICODE IN FIELD NAMES.
- * THE ENCODING MUST BE SPECIFIED AS UTF-8 WHEN COMPILED
- *******/
-
+/**
+ * **** THIS FILE IS ENCODED IN UTF-8 IN ORDER TO TEST UNICODE IN FIELD NAMES. THE ENCODING MUST BE
+ * SPECIFIED AS UTF-8 WHEN COMPILED *****
+ */
 package org.apache.geode.cache.query.data;
 
 import java.io.*;
@@ -44,7 +43,13 @@ public class PortfolioPdx implements Serializable, PdxSerializable {
   public static boolean DEBUG = false;
 
   public enum Day {
-    Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
+    Sunday,
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday
   }
 
   public Day aDay;
@@ -62,7 +67,7 @@ public class PortfolioPdx implements Serializable, PdxSerializable {
   public HashMap collectionHolderMap = new HashMap();
   String type;
   public String status;
-  public String[] names = { "aaa", "bbb", "ccc", "ddd" };
+  public String[] names = {"aaa", "bbb", "ccc", "ddd"};
   public String unicodeṤtring;
   private final long longMinValue = Long.MIN_VALUE;
   private final float floatMinValue = Float.MIN_VALUE;
@@ -129,7 +134,9 @@ public class PortfolioPdx implements Serializable, PdxSerializable {
     return status.equals("active");
   }
 
-  public static String secIds[] = { "SUN", "IBM", "YHOO", "GOOG", "MSFT", "AOL", "APPL", "ORCL", "SAP", "DELL", "RHAT", "NOVL", "HP" };
+  public static String secIds[] = {
+    "SUN", "IBM", "YHOO", "GOOG", "MSFT", "AOL", "APPL", "ORCL", "SAP", "DELL", "RHAT", "NOVL", "HP"
+  };
 
   static {
     dayList = new ArrayList();
@@ -139,15 +146,13 @@ public class PortfolioPdx implements Serializable, PdxSerializable {
   /* public no-arg constructor required for Deserializable */
   public PortfolioPdx() {
     this.numInstance++;
-    if (DEBUG)
-      Thread.dumpStack();
+    if (DEBUG) Thread.dumpStack();
     //    GemFireCacheImpl.getInstance().getLoggerI18n().fine(new Exception("DEBUG"));
   }
 
   public PortfolioPdx(int i) {
     aDay = (Day) (dayList.get((i % dayList.size())));
-    if (DEBUG)
-      Thread.dumpStack();
+    if (DEBUG) Thread.dumpStack();
     this.numInstance++;
     ID = i;
     if (i % 2 == 0) {
@@ -165,8 +170,12 @@ public class PortfolioPdx implements Serializable, PdxSerializable {
       position2 = null;
     }
 
-    positions.put(secIds[PositionPdx.cnt % secIds.length], new PositionPdx(secIds[PositionPdx.cnt % secIds.length], PositionPdx.cnt * 1000));
-    positions.put(secIds[PositionPdx.cnt % secIds.length], new PositionPdx(secIds[PositionPdx.cnt % secIds.length], PositionPdx.cnt * 1000));
+    positions.put(
+        secIds[PositionPdx.cnt % secIds.length],
+        new PositionPdx(secIds[PositionPdx.cnt % secIds.length], PositionPdx.cnt * 1000));
+    positions.put(
+        secIds[PositionPdx.cnt % secIds.length],
+        new PositionPdx(secIds[PositionPdx.cnt % secIds.length], PositionPdx.cnt * 1000));
 
     collectionHolderMap.put("0", new CollectionHolder());
     collectionHolderMap.put("1", new CollectionHolder());
@@ -208,7 +217,8 @@ public class PortfolioPdx implements Serializable, PdxSerializable {
   }
 
   public String toString() {
-    String out = "PortfolioPdx [ID=" + ID + " status=" + status + " type=" + type + " pkid=" + pkid + "\n ";
+    String out =
+        "PortfolioPdx [ID=" + ID + " status=" + status + " type=" + type + " pkid=" + pkid + "\n ";
     Iterator iter = positions.entrySet().iterator();
     while (iter.hasNext()) {
       Map.Entry entry = (Map.Entry) iter.next();
@@ -220,7 +230,7 @@ public class PortfolioPdx implements Serializable, PdxSerializable {
 
   /**
    * Getter for property type.S
-   * 
+   *
    * @return Value of property type.
    */
   public String getType() {
@@ -237,7 +247,7 @@ public class PortfolioPdx implements Serializable, PdxSerializable {
 
   public String funcReturnSecId(Object o) {
     return ((PositionPdx) o).getSecId();
-  }//added by vikramj
+  } //added by vikramj
 
   public long longFunction(long j) {
     return j;
@@ -292,5 +302,4 @@ public class PortfolioPdx implements Serializable, PdxSerializable {
     // Identity Field.
     out.markIdentityField("ID");
   }
-
 }

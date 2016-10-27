@@ -22,13 +22,13 @@ import org.apache.geode.management.internal.cli.shell.Gfsh;
 
 /**
  * Semi-complete implementation of {@link CliAroundInterceptor} for convenience for implementors.
- * 
- * 
+ *
  * @since GemFire 7.0
  */
 public abstract class AbstractCliAroundInterceptor implements CliAroundInterceptor {
   protected enum Response {
-    YES("yes"), NO("no");
+    YES("yes"),
+    NO("no");
 
     private String text;
 
@@ -53,7 +53,8 @@ public abstract class AbstractCliAroundInterceptor implements CliAroundIntercept
         for (Response response : Response.values()) {
           // If the whole string matches, or the input is only 1 character and it matches the
           // first character of the response text, then they are considered equal.
-          if (text.equalsIgnoreCase(response.text) || ((text.length() == 1 && text.equalsIgnoreCase(response.text.substring(0, 1))))) {
+          if (text.equalsIgnoreCase(response.text)
+              || ((text.length() == 1 && text.equalsIgnoreCase(response.text.substring(0, 1))))) {
             return response;
           }
         }

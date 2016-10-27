@@ -43,15 +43,13 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.LoggingThreadGroup;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
-/**
- * @since GemFire 7.0
- *
- */
+/** @since GemFire 7.0 */
 public class SerialGatewaySenderImpl extends AbstractRemoteGatewaySender {
 
   private static final Logger logger = LogService.getLogger();
 
-  final ThreadGroup loggerGroup = LoggingThreadGroup.createThreadGroup("Remote Site Discovery Logger Group", logger);
+  final ThreadGroup loggerGroup =
+      LoggingThreadGroup.createThreadGroup("Remote Site Discovery Logger Group", logger);
 
   public SerialGatewaySenderImpl() {
     super();
@@ -71,13 +69,19 @@ public class SerialGatewaySenderImpl extends AbstractRemoteGatewaySender {
     this.getLifeCycleLock().writeLock().lock();
     try {
       if (isRunning()) {
-        logger.warn(LocalizedMessage.create(LocalizedStrings.GatewaySender_SENDER_0_IS_ALREADY_RUNNING, this.getId()));
+        logger.warn(
+            LocalizedMessage.create(
+                LocalizedStrings.GatewaySender_SENDER_0_IS_ALREADY_RUNNING, this.getId()));
         return;
       }
       if (this.remoteDSId != DEFAULT_DISTRIBUTED_SYSTEM_ID) {
-        String locators = ((GemFireCacheImpl) this.cache).getDistributedSystem().getConfig().getLocators();
+        String locators =
+            ((GemFireCacheImpl) this.cache).getDistributedSystem().getConfig().getLocators();
         if (locators.length() == 0) {
-          throw new GatewaySenderConfigurationException(LocalizedStrings.AbstractGatewaySender_LOCATOR_SHOULD_BE_CONFIGURED_BEFORE_STARTING_GATEWAY_SENDER.toLocalizedString());
+          throw new GatewaySenderConfigurationException(
+              LocalizedStrings
+                  .AbstractGatewaySender_LOCATOR_SHOULD_BE_CONFIGURED_BEFORE_STARTING_GATEWAY_SENDER
+                  .toLocalizedString());
         }
       }
       getSenderAdvisor().initDLockService();
@@ -89,9 +93,11 @@ public class SerialGatewaySenderImpl extends AbstractRemoteGatewaySender {
         }
       }
       if (getDispatcherThreads() > 1) {
-        eventProcessor = new RemoteConcurrentSerialGatewaySenderEventProcessor(SerialGatewaySenderImpl.this);
+        eventProcessor =
+            new RemoteConcurrentSerialGatewaySenderEventProcessor(SerialGatewaySenderImpl.this);
       } else {
-        eventProcessor = new RemoteSerialGatewaySenderEventProcessor(SerialGatewaySenderImpl.this, getId());
+        eventProcessor =
+            new RemoteSerialGatewaySenderEventProcessor(SerialGatewaySenderImpl.this, getId());
       }
       eventProcessor.start();
       waitForRunningStatus();
@@ -103,10 +109,12 @@ public class SerialGatewaySenderImpl extends AbstractRemoteGatewaySender {
       }
       new UpdateAttributesProcessor(this).distribute(false);
 
-      InternalDistributedSystem system = (InternalDistributedSystem) this.cache.getDistributedSystem();
+      InternalDistributedSystem system =
+          (InternalDistributedSystem) this.cache.getDistributedSystem();
       system.handleResourceEvent(ResourceEvent.GATEWAYSENDER_START, this);
 
-      logger.info(LocalizedMessage.create(LocalizedStrings.SerialGatewaySenderImpl_STARTED__0, this));
+      logger.info(
+          LocalizedMessage.create(LocalizedStrings.SerialGatewaySenderImpl_STARTED__0, this));
 
       enqueueTempEvents();
     } finally {
@@ -169,11 +177,15 @@ public class SerialGatewaySenderImpl extends AbstractRemoteGatewaySender {
         Thread.currentThread().interrupt();
       }
       if (lockObtainingThread.isAlive()) {
-        logger.info(LocalizedMessage.create(LocalizedStrings.GatewaySender_COULD_NOT_STOP_LOCK_OBTAINING_THREAD_DURING_GATEWAY_SENDER_STOP));
+        logger.info(
+            LocalizedMessage.create(
+                LocalizedStrings
+                    .GatewaySender_COULD_NOT_STOP_LOCK_OBTAINING_THREAD_DURING_GATEWAY_SENDER_STOP));
       }
     }
 
-    InternalDistributedSystem system = (InternalDistributedSystem) this.cache.getDistributedSystem();
+    InternalDistributedSystem system =
+        (InternalDistributedSystem) this.cache.getDistributedSystem();
     system.handleResourceEvent(ResourceEvent.GATEWAYSENDER_STOP, this);
 
     this.eventProcessor = null;
@@ -231,13 +243,23 @@ public class SerialGatewaySenderImpl extends AbstractRemoteGatewaySender {
     if (ThreadIdentifier.isWanTypeThreadID(newThreadId)) {
       // This thread id has already been converted. Do nothing.
     } else {
-      newThreadId = ThreadIdentifier.createFakeThreadIDForParallelGSPrimaryBucket(0, originalThreadId, getEventIdIndex());
+      newThreadId =
+          ThreadIdentifier.createFakeThreadIDForParallelGSPrimaryBucket(
+              0, originalThreadId, getEventIdIndex());
     }
-    EventID newEventId = new EventID(originalEventId.getMembershipID(), newThreadId, originalEventId.getSequenceID());
+    EventID newEventId =
+        new EventID(
+            originalEventId.getMembershipID(), newThreadId, originalEventId.getSequenceID());
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Generated event id for event with key={}, original event id={}, originalThreadId={}, new event id={}, newThreadId={}", this, clonedEvent.getKey(), originalEventId, originalThreadId, newEventId, newThreadId);
+      logger.debug(
+          "{}: Generated event id for event with key={}, original event id={}, originalThreadId={}, new event id={}, newThreadId={}",
+          this,
+          clonedEvent.getKey(),
+          originalEventId,
+          originalThreadId,
+          newEventId,
+          newThreadId);
     }
     clonedEvent.setEventId(newEventId);
   }
-
 }

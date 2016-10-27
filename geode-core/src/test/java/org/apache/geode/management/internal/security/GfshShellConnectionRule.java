@@ -28,8 +28,9 @@ import org.apache.geode.management.internal.cli.util.CommandStringBuilder;
 import org.apache.geode.test.junit.rules.DescribedExternalResource;
 
 /**
- * Class which eases the creation of MBeans for security testing. When combined with {@link JMXConnectionConfiguration}
- * it allows for the creation of per-test connections with different user/password combinations.
+ * Class which eases the creation of MBeans for security testing. When combined with {@link
+ * JMXConnectionConfiguration} it allows for the creation of per-test connections with different
+ * user/password combinations.
  */
 public class GfshShellConnectionRule extends DescribedExternalResource {
 
@@ -39,9 +40,7 @@ public class GfshShellConnectionRule extends DescribedExternalResource {
   private HeadlessGfsh gfsh;
   private boolean authenticated;
 
-  /**
-   * Rule constructor
-   */
+  /** Rule constructor */
   public GfshShellConnectionRule(int jmxPort, int httpPort, boolean useHttp) {
     this.jmxPort = jmxPort;
     this.httpPort = httpPort;
@@ -54,8 +53,7 @@ public class GfshShellConnectionRule extends DescribedExternalResource {
 
   protected void before(Description description) throws Throwable {
     JMXConnectionConfiguration config = description.getAnnotation(JMXConnectionConfiguration.class);
-    if (config == null)
-      return;
+    if (config == null) return;
 
     CliUtil.isGfshVM = true;
     String shellId = getClass().getSimpleName() + "_" + description.getMethodName();
@@ -81,15 +79,14 @@ public class GfshShellConnectionRule extends DescribedExternalResource {
     CommandResult result = (CommandResult) gfsh.getResult();
     if (result.getResultData() instanceof ErrorResultData) {
       ErrorResultData errorResultData = (ErrorResultData) result.getResultData();
-      this.authenticated = !(errorResultData.getErrorCode() == ResultBuilder.ERRORCODE_CONNECTION_ERROR);
+      this.authenticated =
+          !(errorResultData.getErrorCode() == ResultBuilder.ERRORCODE_CONNECTION_ERROR);
     } else {
       this.authenticated = true;
     }
   }
 
-  /**
-   * Override to tear down your specific external resource.
-   */
+  /** Override to tear down your specific external resource. */
   protected void after(Description description) throws Throwable {
     if (gfsh != null) {
       gfsh.clearEvents();

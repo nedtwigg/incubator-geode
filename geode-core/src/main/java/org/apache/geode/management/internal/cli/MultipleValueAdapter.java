@@ -29,8 +29,12 @@ public abstract class MultipleValueAdapter<T> implements MultipleValueConverter<
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
     return false;
   }
-
 }

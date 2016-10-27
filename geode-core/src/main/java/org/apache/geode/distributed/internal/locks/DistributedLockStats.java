@@ -19,42 +19,28 @@ package org.apache.geode.distributed.internal.locks;
 
 import org.apache.geode.distributed.internal.*;
 
-/**
- * Defines the interface used to access and modify distributed lock statistics.
- *
- *
- */
+/** Defines the interface used to access and modify distributed lock statistics. */
 public interface DistributedLockStats {
 
   // time for call to lock() to complete
 
-  /**
-   * Returns the number of threads currently waiting for a distributed lock
-   */
+  /** Returns the number of threads currently waiting for a distributed lock */
   public int getLockWaitsInProgress();
 
-  /**
-   * Returns the total number of waits for a distributed lock
-   */
+  /** Returns the total number of waits for a distributed lock */
   public int getLockWaitsCompleted();
 
   public int getLockWaitsFailed();
 
-  /**
-   * Returns the total number of nanoseconds spent waiting for a distributed lock.
-   */
+  /** Returns the total number of nanoseconds spent waiting for a distributed lock. */
   public long getLockWaitTime();
 
   public long getLockWaitFailedTime();
 
-  /**
-   * @return the timestamp that marks the start of the operation
-   */
+  /** @return the timestamp that marks the start of the operation */
   public long startLockWait();
 
-  /**
-   * @param start the timestamp taken when the operation started 
-   */
+  /** @param start the timestamp taken when the operation started */
   public void endLockWait(long start, boolean success);
 
   // incSerialQueueSize everytime getWaitingQueueHelper add/remove called
@@ -67,7 +53,7 @@ public interface DistributedLockStats {
 
   public void incSerialQueueSize(int messages);
 
-  // incNumSerialThreads everytime we execute with dlock getSerialExecutor() 
+  // incNumSerialThreads everytime we execute with dlock getSerialExecutor()
   public int getNumSerialThreads();
 
   public void incNumSerialThreads(int threads);
@@ -77,12 +63,12 @@ public interface DistributedLockStats {
 
   public void incWaitingThreads(int threads);
 
-  // current number of lock services used by this system member 
+  // current number of lock services used by this system member
   public int getServices();
 
   public void incServices(int val);
 
-  // current number of lock grantors hosted by this system member 
+  // current number of lock grantors hosted by this system member
   public int getGrantors();
 
   public void incGrantors(int val);
@@ -185,7 +171,7 @@ public interface DistributedLockStats {
 
   public void endGrantorThread(long start);
 
-  // current number of lock grantors hosted by this system member 
+  // current number of lock grantors hosted by this system member
   public int getPendingRequests();
 
   public void incPendingRequests(int val);
@@ -220,12 +206,12 @@ public interface DistributedLockStats {
 
   public void endDestroyWriteWait(long start, boolean success);
 
-  // current number of DLockService destroy read locks held by this process 
+  // current number of DLockService destroy read locks held by this process
   public int getDestroyReads();
 
   public void incDestroyReads(int val);
 
-  // current number of DLockService destroy write locks held by this process 
+  // current number of DLockService destroy write locks held by this process
   public int getDestroyWrites();
 
   public void incDestroyWrites(int val);
@@ -246,7 +232,7 @@ public interface DistributedLockStats {
 
   public void incBecomeGrantorRequests();
 
-  // current number of lock tokens used by this system member 
+  // current number of lock tokens used by this system member
   public int getTokens();
 
   public void incTokens(int val);
@@ -256,7 +242,7 @@ public interface DistributedLockStats {
 
   public void incGrantTokens(int val);
 
-  // current number of lock request queues used by this system member 
+  // current number of lock request queues used by this system member
   public int getRequestQueues();
 
   public void incRequestQueues(int val);

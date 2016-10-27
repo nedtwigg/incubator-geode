@@ -20,19 +20,14 @@ import org.apache.geode.cache.Declarable;
 import java.util.Properties;
 
 /**
- * An extension of {@link Declarable} that allows a
- * <code>Declarable</code> to provides its configuration (as a {@link
- * Properties}).  This allows us to convert a <code>Declarable</code>
- * into XML.
- *
+ * An extension of {@link Declarable} that allows a <code>Declarable</code> to provides its
+ * configuration (as a {@link Properties}). This allows us to convert a <code>Declarable</code> into
+ * XML.
  *
  * @since GemFire 3.0
  */
 public interface Declarable2 extends Declarable {
 
-  /**
-   * Returns the current configuration of this {@link Declarable}
-   */
+  /** Returns the current configuration of this {@link Declarable} */
   public Properties getConfig();
-
 }

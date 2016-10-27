@@ -28,7 +28,9 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 public class RangeIndexMaintenanceIntegrationTest extends AbstractIndexMaintenanceIntegrationTest {
 
   @Override
-  protected AbstractIndex createIndex(final QueryService qs, String name, String indexExpression, String regionPath) throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
+  protected AbstractIndex createIndex(
+      final QueryService qs, String name, String indexExpression, String regionPath)
+      throws IndexNameConflictException, IndexExistsException, RegionNotFoundException {
     boolean oldTestValue = IndexManager.TEST_RANGEINDEX_ONLY;
     IndexManager.TEST_RANGEINDEX_ONLY = true;
     RangeIndex index = (RangeIndex) qs.createIndex(name, indexExpression, regionPath);

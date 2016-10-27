@@ -74,13 +74,17 @@ import org.apache.geode.pdx.internal.PdxType;
 import org.apache.geode.pdx.internal.TypeRegistry;
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Tests the DataType support for off-heap MemoryInspector.
- */
+/** Tests the DataType support for off-heap MemoryInspector. */
 @Category(UnitTest.class)
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("*.UnitTest")
-@PrepareForTest({ InternalInstantiator.class, Instantiator.class, DataSerializer.class, GemFireCacheImpl.class, DSFIDFactory.class })
+@PrepareForTest({
+  InternalInstantiator.class,
+  Instantiator.class,
+  DataSerializer.class,
+  GemFireCacheImpl.class,
+  DSFIDFactory.class
+})
 public class DataTypeJUnitTest {
 
   @Test
@@ -91,7 +95,8 @@ public class DataTypeJUnitTest {
     InternalDataSerializer.writeDSFID(value, out);
     byte[] bytes = baos.toByteArray();
     String type = DataType.getDataType(bytes);
-    assertEquals("org.apache.geode.internal.DataSerializableFixedID:" + ReplyMessage.class.getName(), type);
+    assertEquals(
+        "org.apache.geode.internal.DataSerializableFixedID:" + ReplyMessage.class.getName(), type);
   }
 
   @Test
@@ -102,7 +107,9 @@ public class DataTypeJUnitTest {
     InternalDataSerializer.writeDSFID(value, out);
     byte[] bytes = baos.toByteArray();
     String type = DataType.getDataType(bytes);
-    assertEquals("org.apache.geode.internal.DataSerializableFixedID:" + ShutdownAllResponse.class.getName(), type);
+    assertEquals(
+        "org.apache.geode.internal.DataSerializableFixedID:" + ShutdownAllResponse.class.getName(),
+        type);
   }
 
   @Test
@@ -119,7 +126,8 @@ public class DataTypeJUnitTest {
     DataSerializer.writeInteger(someDSFIDInt, out);
     byte[] bytes = baos.toByteArray();
     String type = DataType.getDataType(bytes);
-    assertEquals("org.apache.geode.internal.DataSerializableFixedID:" + Integer.class.getName(), type);
+    assertEquals(
+        "org.apache.geode.internal.DataSerializableFixedID:" + Integer.class.getName(), type);
   }
 
   @Test
@@ -130,7 +138,8 @@ public class DataTypeJUnitTest {
     DataSerializer.writeClass(Integer.class, out);
     byte[] bytes = baos.toByteArray();
     String type = DataType.getDataType(bytes);
-    assertEquals("org.apache.geode.internal.DataSerializableFixedID:" + Integer.class.getName(), type);
+    assertEquals(
+        "org.apache.geode.internal.DataSerializableFixedID:" + Integer.class.getName(), type);
   }
 
   @Test
@@ -523,7 +532,8 @@ public class DataTypeJUnitTest {
 
   @Test
   public void testTimeUnit() throws IOException {
-    final EnumSet<TimeUnit> optimizedTimeUnits = EnumSet.range(TimeUnit.NANOSECONDS, TimeUnit.SECONDS);
+    final EnumSet<TimeUnit> optimizedTimeUnits =
+        EnumSet.range(TimeUnit.NANOSECONDS, TimeUnit.SECONDS);
     for (TimeUnit v : TimeUnit.values()) {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       DataOutputStream out = new DataOutputStream(baos);
@@ -729,7 +739,9 @@ public class DataTypeJUnitTest {
     byte[] bytes = baos.toByteArray();
     String type = DataType.getDataType(bytes);
 
-    assertThat(type).isEqualTo("org.apache.geode.Instantiator:org.apache.geode.internal.cache.execute.data.CustId");
+    assertThat(type)
+        .isEqualTo(
+            "org.apache.geode.Instantiator:org.apache.geode.internal.cache.execute.data.CustId");
   }
 
   @Test
@@ -752,7 +764,9 @@ public class DataTypeJUnitTest {
     byte[] bytes = baos.toByteArray();
     String type = DataType.getDataType(bytes);
 
-    assertThat(type).isEqualTo("org.apache.geode.Instantiator:org.apache.geode.internal.cache.execute.data.CustId");
+    assertThat(type)
+        .isEqualTo(
+            "org.apache.geode.Instantiator:org.apache.geode.internal.cache.execute.data.CustId");
   }
 
   @Test
@@ -775,7 +789,9 @@ public class DataTypeJUnitTest {
     byte[] bytes = baos.toByteArray();
     String type = DataType.getDataType(bytes);
 
-    assertThat(type).isEqualTo("org.apache.geode.Instantiator:org.apache.geode.internal.cache.execute.data.CustId");
+    assertThat(type)
+        .isEqualTo(
+            "org.apache.geode.Instantiator:org.apache.geode.internal.cache.execute.data.CustId");
   }
 
   @Test
@@ -801,8 +817,7 @@ public class DataTypeJUnitTest {
   }
 
   @SuppressWarnings("serial")
-  public static class SerializableClass implements Serializable {
-  }
+  public static class SerializableClass implements Serializable {}
 
   @Test
   public void getDataTypeShouldReturnPDXType() throws IOException {
@@ -841,7 +856,9 @@ public class DataTypeJUnitTest {
     when(pdxInstance.getPdxRegistry()).thenReturn(mockTypeRegistry);
 
     PowerMockito.mockStatic(GemFireCacheImpl.class);
-    when(GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.")).thenReturn(pdxInstance);
+    when(GemFireCacheImpl.getForPdx(
+            "PDX registry is unavailable because the Cache has been closed."))
+        .thenReturn(pdxInstance);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     DataOutputStream out = new DataOutputStream(baos);
@@ -854,11 +871,14 @@ public class DataTypeJUnitTest {
   }
 
   @Test
-  public void getDataTypeShouldReturnPDXRegistryClosedForPDXTypeWhenCacheIsClosed() throws IOException {
+  public void getDataTypeShouldReturnPDXRegistryClosedForPDXTypeWhenCacheIsClosed()
+      throws IOException {
     int somePdxTypeInt = 1;
 
     PowerMockito.mockStatic(GemFireCacheImpl.class);
-    when(GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.")).thenThrow(CacheClosedException.class);
+    when(GemFireCacheImpl.getForPdx(
+            "PDX registry is unavailable because the Cache has been closed."))
+        .thenThrow(CacheClosedException.class);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     DataOutputStream out = new DataOutputStream(baos);
@@ -883,7 +903,9 @@ public class DataTypeJUnitTest {
     when(pdxInstance.getPdxRegistry()).thenReturn(mockTypeRegistry);
 
     PowerMockito.mockStatic(GemFireCacheImpl.class);
-    when(GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.")).thenReturn(pdxInstance);
+    when(GemFireCacheImpl.getForPdx(
+            "PDX registry is unavailable because the Cache has been closed."))
+        .thenReturn(pdxInstance);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     DataOutputStream out = new DataOutputStream(baos);
@@ -896,11 +918,14 @@ public class DataTypeJUnitTest {
   }
 
   @Test
-  public void getDataTypeShouldReturnPDXRegistryClosedForEnumTypeWhenCacheIsClosed() throws IOException {
+  public void getDataTypeShouldReturnPDXRegistryClosedForEnumTypeWhenCacheIsClosed()
+      throws IOException {
     int someArrayLength = 1;
 
     PowerMockito.mockStatic(GemFireCacheImpl.class);
-    when(GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.")).thenThrow(CacheClosedException.class);
+    when(GemFireCacheImpl.getForPdx(
+            "PDX registry is unavailable because the Cache has been closed."))
+        .thenThrow(CacheClosedException.class);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     DataOutputStream out = new DataOutputStream(baos);

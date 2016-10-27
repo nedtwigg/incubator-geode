@@ -20,12 +20,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- *
- */
+/** */
 public class TestUtils {
   public static <T> Set<T> asSet(T... objects) {
     return new HashSet<T>(Arrays.asList(objects));
   }
-
 }

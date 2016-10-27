@@ -21,10 +21,9 @@ import java.io.DataInputStream;
 import java.io.InputStream;
 
 /**
- * An extension to {@link DataInputStream} that implements
- * {@link VersionedDataStream} for a stream coming from a different product
- * version.
- * 
+ * An extension to {@link DataInputStream} that implements {@link VersionedDataStream} for a stream
+ * coming from a different product version.
+ *
  * @since GemFire 7.1
  */
 public final class VersionedDataInputStream extends DataInputStream implements VersionedDataStream {
@@ -32,31 +31,23 @@ public final class VersionedDataInputStream extends DataInputStream implements V
   private final Version version;
 
   /**
-   * Creates a VersionedDataInputStream that uses the specified underlying
-   * InputStream.
-   * 
-   * @param in
-   *          the specified input stream
-   * @param version
-   *          the product version that serialized object on the given input
-   *          stream
+   * Creates a VersionedDataInputStream that uses the specified underlying InputStream.
+   *
+   * @param in the specified input stream
+   * @param version the product version that serialized object on the given input stream
    */
   public VersionedDataInputStream(InputStream in, Version version) {
     super(in);
     this.version = version;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public Version getVersion() {
     return this.version;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return super.toString() + " (" + this.version + ')';

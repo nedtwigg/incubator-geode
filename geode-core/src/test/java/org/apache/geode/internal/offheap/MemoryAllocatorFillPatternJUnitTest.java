@@ -28,13 +28,11 @@ import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Tests fill pattern validation for the {@link MemoryAllocatorImpl}.
- */
+/** Tests fill pattern validation for the {@link MemoryAllocatorImpl}. */
 @Category(UnitTest.class)
 public class MemoryAllocatorFillPatternJUnitTest {
 
-  /** Size of single test slab.*/
+  /** Size of single test slab. */
   private static final int SLAB_SIZE = 1024 * 1024 * 50;
 
   /** Canned data for write operations. */
@@ -58,19 +56,19 @@ public class MemoryAllocatorFillPatternJUnitTest {
   /** Our test victim's memory slab. */
   private SlabImpl slab = null;
 
-  /**
-   * Enables fill validation and creates the test victim.
-   */
+  /** Enables fill validation and creates the test victim. */
   @Before
   public void setUp() throws Exception {
     System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "validateOffHeapWithFill", "true");
     this.slab = new SlabImpl(SLAB_SIZE);
-    this.allocator = MemoryAllocatorImpl.createForUnitTest(new NullOutOfOffHeapMemoryListener(), new NullOffHeapMemoryStats(), new SlabImpl[] { this.slab });
+    this.allocator =
+        MemoryAllocatorImpl.createForUnitTest(
+            new NullOutOfOffHeapMemoryListener(),
+            new NullOffHeapMemoryStats(),
+            new SlabImpl[] {this.slab});
   }
 
-  /**
-   * Frees off heap memory.
-   */
+  /** Frees off heap memory. */
   @After
   public void tearDown() throws Exception {
     MemoryAllocatorImpl.freeOffHeapMemory();
@@ -79,6 +77,7 @@ public class MemoryAllocatorFillPatternJUnitTest {
 
   /**
    * This tests the fill pattern for a single tiny Chunk allocation.
+   *
    * @throws Exception
    */
   @Test
@@ -88,6 +87,7 @@ public class MemoryAllocatorFillPatternJUnitTest {
 
   /**
    * This tests the fill pattern for a single huge Chunk allocation.
+   *
    * @throws Exception
    */
   @Test
@@ -134,13 +134,15 @@ public class MemoryAllocatorFillPatternJUnitTest {
 
     catchException(chunk).validateFill();
     assertTrue(caughtException() instanceof IllegalStateException);
-    assertEquals("Fill pattern violated for chunk " + chunk.getAddress() + " with size " + chunk.getSize(), caughtException().getMessage());
-
+    assertEquals(
+        "Fill pattern violated for chunk " + chunk.getAddress() + " with size " + chunk.getSize(),
+        caughtException().getMessage());
   }
 
   /**
-   * This tests that fill validation is working properly on newly created fragments after
-   * a defragmentation.
+   * This tests that fill validation is working properly on newly created fragments after a
+   * defragmentation.
+   *
    * @throws Exception
    */
   @Test
@@ -155,7 +157,8 @@ public class MemoryAllocatorFillPatternJUnitTest {
      * Our memory looks like [      ][      ][      ]
      */
     for (int i = 0; i < allocatedChunks.length; ++i) {
-      allocatedChunks[i] = (OffHeapStoredObject) this.allocator.allocate(DEFRAGMENTATION_CHUNK_SIZE);
+      allocatedChunks[i] =
+          (OffHeapStoredObject) this.allocator.allocate(DEFRAGMENTATION_CHUNK_SIZE);
       allocatedChunks[i].validateFill();
     }
 
@@ -172,7 +175,8 @@ public class MemoryAllocatorFillPatternJUnitTest {
      * our initial chunks.  This should force a defragmentation causing our
      * memory to look like [            ][      ].
      */
-    OffHeapStoredObject slightlyLargerChunk = (OffHeapStoredObject) this.allocator.allocate(FORCE_DEFRAGMENTATION_CHUNK_SIZE);
+    OffHeapStoredObject slightlyLargerChunk =
+        (OffHeapStoredObject) this.allocator.allocate(FORCE_DEFRAGMENTATION_CHUNK_SIZE);
 
     /*
      * Make sure the defragmented memory has the fill validation.

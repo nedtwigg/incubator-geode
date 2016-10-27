@@ -17,9 +17,8 @@
 package org.apache.geode.internal.datasource;
 
 /**
- * This class models a connection pool for non-transactional database
- * connection. Extends the AbstractPoolCache to inherit the pool bahavior.
- * 
+ * This class models a connection pool for non-transactional database connection. Extends the
+ * AbstractPoolCache to inherit the pool bahavior.
  */
 import java.sql.SQLException;
 
@@ -41,34 +40,38 @@ public class ConnectionPoolCacheImpl extends AbstractPoolCache {
 
   private ConnectionPoolDataSource m_cpds;
 
-  /**
-   * Constructor initializes the ConnectionPoolCacheImpl properties.
-   */
-  public ConnectionPoolCacheImpl(ConnectionPoolDataSource connectionpooldatasource, ConnectionEventListener eventListner, ConfiguredDataSourceProperties configs) throws PoolException {
+  /** Constructor initializes the ConnectionPoolCacheImpl properties. */
+  public ConnectionPoolCacheImpl(
+      ConnectionPoolDataSource connectionpooldatasource,
+      ConnectionEventListener eventListner,
+      ConfiguredDataSourceProperties configs)
+      throws PoolException {
     super(eventListner, configs);
     m_cpds = connectionpooldatasource;
     initializePool();
   }
 
-  /**
-   * This method destroys the connection.
-   */
+  /** This method destroys the connection. */
   @Override
   void destroyPooledConnection(Object connectionObject) {
     try {
-      ((PooledConnection) connectionObject).removeConnectionEventListener((javax.sql.ConnectionEventListener) connEventListner);
+      ((PooledConnection) connectionObject)
+          .removeConnectionEventListener((javax.sql.ConnectionEventListener) connEventListner);
       ((PooledConnection) connectionObject).close();
       connectionObject = null;
     } catch (Exception ex) {
       if (logger.isTraceEnabled()) {
-        logger.trace("AbstractPoolcache::destroyPooledConnection:Exception in closing the connection.Ignoring it. The exeption is {}", ex.getMessage(), ex);
+        logger.trace(
+            "AbstractPoolcache::destroyPooledConnection:Exception in closing the connection.Ignoring it. The exeption is {}",
+            ex.getMessage(),
+            ex);
       }
     }
   }
 
   /**
    * Creates a new connection for the pool.
-   * 
+   *
    * @return the connection from the database as Object.
    * @throws PoolException
    */
@@ -79,15 +82,23 @@ public class ConnectionPoolCacheImpl extends AbstractPoolCache {
       try {
         poolConn = m_cpds.getPooledConnection(configProps.getUser(), configProps.getPassword());
       } catch (SQLException sqx) {
-        throw new PoolException(LocalizedStrings.ConnectionPoolCacheImpl_CONNECTIONPOOLCACHEIMPLGENEWCONNECTION_EXCEPTION_IN_CREATING_NEW_POOLEDCONNECTION.toLocalizedString(), sqx);
+        throw new PoolException(
+            LocalizedStrings
+                .ConnectionPoolCacheImpl_CONNECTIONPOOLCACHEIMPLGENEWCONNECTION_EXCEPTION_IN_CREATING_NEW_POOLEDCONNECTION
+                .toLocalizedString(),
+            sqx);
       }
       poolConn.addConnectionEventListener((javax.sql.ConnectionEventListener) connEventListner);
       return poolConn;
     } else {
       if (logger.isDebugEnabled()) {
-        logger.debug("ConnectionPoolCacheImpl::geNewConnection: ConnectionPoolCache not intialized with ConnectionPoolDatasource");
+        logger.debug(
+            "ConnectionPoolCacheImpl::geNewConnection: ConnectionPoolCache not intialized with ConnectionPoolDatasource");
       }
-      throw new PoolException(LocalizedStrings.ConnectionPoolCacheImpl_CONNECTIONPOOLCACHEIMPLGENEWCONNECTION_CONNECTIONPOOLCACHE_NOT_INTIALIZED_WITH_CONNECTIONPOOLDATASOURCE.toLocalizedString());
+      throw new PoolException(
+          LocalizedStrings
+              .ConnectionPoolCacheImpl_CONNECTIONPOOLCACHEIMPLGENEWCONNECTION_CONNECTIONPOOLCACHE_NOT_INTIALIZED_WITH_CONNECTIONPOOLDATASOURCE
+              .toLocalizedString());
     }
   }
 }

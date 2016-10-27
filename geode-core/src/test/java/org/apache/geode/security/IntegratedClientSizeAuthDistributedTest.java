@@ -27,7 +27,7 @@ import org.apache.geode.test.dunit.AsyncInvocation;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class IntegratedClientSizeAuthDistributedTest extends AbstractSecureServerDUnitTest {
 
   @Test
@@ -36,15 +36,21 @@ public class IntegratedClientSizeAuthDistributedTest extends AbstractSecureServe
   // and it won't bind the correct subject on the executing thread.
   public void testSize() throws InterruptedException {
 
-    AsyncInvocation ai1 = client1.invokeAsync(() -> {
-      ClientCache cache = createClientCache("dataWriter", "1234567", serverPort);
-      assertNotAuthorized(() -> SizeOp.execute((InternalPool) cache.getDefaultPool(), REGION_NAME), "DATA:READ:AuthRegion");
-    });
+    AsyncInvocation ai1 =
+        client1.invokeAsync(
+            () -> {
+              ClientCache cache = createClientCache("dataWriter", "1234567", serverPort);
+              assertNotAuthorized(
+                  () -> SizeOp.execute((InternalPool) cache.getDefaultPool(), REGION_NAME),
+                  "DATA:READ:AuthRegion");
+            });
 
-    AsyncInvocation ai2 = client2.invokeAsync(() -> {
-      ClientCache cache = createClientCache("authRegionReader", "1234567", serverPort);
-      SizeOp.execute((InternalPool) cache.getDefaultPool(), REGION_NAME);
-    });
+    AsyncInvocation ai2 =
+        client2.invokeAsync(
+            () -> {
+              ClientCache cache = createClientCache("authRegionReader", "1234567", serverPort);
+              SizeOp.execute((InternalPool) cache.getDefaultPool(), REGION_NAME);
+            });
 
     ai1.join();
     ai2.join();

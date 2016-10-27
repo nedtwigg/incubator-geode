@@ -22,9 +22,7 @@ import antlr.*;
 //import org.apache.geode.cache.query.*;
 import org.apache.geode.cache.query.internal.QCompiler;
 
-/**
- *
- */
+/** */
 public class GemFireAST extends CommonAST {
   private static final long serialVersionUID = 779964802274305208L;
 
@@ -56,5 +54,4 @@ public class GemFireAST extends CommonAST {
       child = (GemFireAST) child.getNextSibling();
     }
   }
-
 }

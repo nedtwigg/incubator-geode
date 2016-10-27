@@ -43,20 +43,21 @@ import org.junit.runner.RunWith;
 
 import junitparams.JUnitParamsRunner;
 
-/**
- * Tests of lucene index creation that use persistence
- */
+/** Tests of lucene index creation that use persistence */
 @Category(IntegrationTest.class)
 @RunWith(JUnitParamsRunner.class)
 public class LuceneQueriesPersistenceIntegrationTest extends LuceneIntegrationTest {
 
-  @Rule
-  public DiskDirRule diskDirRule = new DiskDirRule();
+  @Rule public DiskDirRule diskDirRule = new DiskDirRule();
 
   @Override
   public void createCache() {
     super.createCache();
-    cache.createDiskStoreFactory().setDiskDirs(new File[] { diskDirRule.get() }).setMaxOplogSize(1).create(GemFireCacheImpl.getDefaultDiskStoreName());
+    cache
+        .createDiskStoreFactory()
+        .setDiskDirs(new File[] {diskDirRule.get()})
+        .setMaxOplogSize(1)
+        .create(GemFireCacheImpl.getDefaultDiskStoreName());
   }
 
   @Test
@@ -66,8 +67,10 @@ public class LuceneQueriesPersistenceIntegrationTest extends LuceneIntegrationTe
     LuceneService service = LuceneServiceProvider.get(cache);
     service.createIndex(INDEX_NAME, REGION_NAME, Type1.fields);
 
-    RegionFactory<String, Type1> regionFactory = cache.createRegionFactory(RegionShortcut.PARTITION);
-    EvictionAttributesImpl evicAttr = new EvictionAttributesImpl().setAction(EvictionAction.OVERFLOW_TO_DISK);
+    RegionFactory<String, Type1> regionFactory =
+        cache.createRegionFactory(RegionShortcut.PARTITION);
+    EvictionAttributesImpl evicAttr =
+        new EvictionAttributesImpl().setAction(EvictionAction.OVERFLOW_TO_DISK);
     evicAttr.setAlgorithm(EvictionAlgorithm.LRU_ENTRY).setMaximum(1);
     regionFactory.setEvictionAttributes(evicAttr);
 
@@ -91,9 +94,11 @@ public class LuceneQueriesPersistenceIntegrationTest extends LuceneIntegrationTe
     assertNotNull(chunkRegion);
     Assert.assertTrue(0 < userRegion.getDiskRegionStats().getNumOverflowOnDisk());
 
-    LuceneQuery<Integer, Type1> query = service.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, "s:world", DEFAULT_FIELD);
+    LuceneQuery<Integer, Type1> query =
+        service
+            .createLuceneQueryFactory()
+            .create(INDEX_NAME, REGION_NAME, "s:world", DEFAULT_FIELD);
     PageableLuceneQueryResults<Integer, Type1> results = query.findPages();
     Assert.assertEquals(3, results.size());
   }
-
 }

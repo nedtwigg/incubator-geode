@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.cache.query.internal;
 
 import static org.junit.Assert.assertEquals;
@@ -48,9 +46,7 @@ import org.apache.geode.cache.query.internal.index.IndexProtocol;
 import org.apache.geode.cache.query.internal.index.PartitionedIndex;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class QueryTraceJUnitTest {
 
@@ -76,13 +72,15 @@ public class QueryTraceJUnitTest {
 
   /**
    * Tests tracing on queries with <TRACE> or <trace> tag.
+   *
    * @throws Exception
    */
   @Test
   public void testTraceOnPartitionedRegionWithTracePrefix() throws Exception {
 
     String slComment = "-- single line comment with TRACE \n";
-    String mlComment = " /* Multi-line comments here" + "* ends here " + "* with TRACE too" + "*/ <TRACE> ";
+    String mlComment =
+        " /* Multi-line comments here" + "* ends here " + "* with TRACE too" + "*/ <TRACE> ";
     String prefix = slComment + mlComment;
 
     //Create Partition Region
@@ -100,7 +98,8 @@ public class QueryTraceJUnitTest {
     assertEquals(100, region.size());
     qs = CacheUtils.getQueryService();
 
-    keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex1 =
+        (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex1 instanceof PartitionedIndex);
 
@@ -118,7 +117,8 @@ public class QueryTraceJUnitTest {
   public void testTraceOnLocalRegionWithTracePrefix() throws Exception {
 
     String slComment = "-- single line comment with TRACE \n";
-    String mlComment = " /* Multi-line comments here" + "* ends here " + "* with TRACE too" + "*/ <TRACE> ";
+    String mlComment =
+        " /* Multi-line comments here" + "* ends here " + "* with TRACE too" + "*/ <TRACE> ";
     String prefix = slComment + mlComment;
 
     //Create Partition Region
@@ -134,7 +134,8 @@ public class QueryTraceJUnitTest {
     assertEquals(100, region.size());
     qs = CacheUtils.getQueryService();
 
-    keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex1 =
+        (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex1 instanceof CompactRangeIndex);
 
@@ -149,7 +150,8 @@ public class QueryTraceJUnitTest {
   }
 
   /**
-   * negative testing: if  <TRACE> is in comments not tracing is done.
+   * negative testing: if <TRACE> is in comments not tracing is done.
+   *
    * @throws Exception
    */
   @Test
@@ -174,7 +176,8 @@ public class QueryTraceJUnitTest {
     assertEquals(100, region.size());
     qs = CacheUtils.getQueryService();
 
-    keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex1 =
+        (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex1 instanceof PartitionedIndex);
 
@@ -189,7 +192,8 @@ public class QueryTraceJUnitTest {
   }
 
   /**
-   * negative testing: if  <TRACE> is in comments not tracing is done.
+   * negative testing: if <TRACE> is in comments not tracing is done.
+   *
    * @throws Exception
    */
   @Test
@@ -212,7 +216,8 @@ public class QueryTraceJUnitTest {
     assertEquals(100, region.size());
     qs = CacheUtils.getQueryService();
 
-    keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex1 =
+        (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex1 instanceof CompactRangeIndex);
 
@@ -228,6 +233,7 @@ public class QueryTraceJUnitTest {
 
   /**
    * No Query comments
+   *
    * @throws Exception
    */
   @Test
@@ -249,7 +255,8 @@ public class QueryTraceJUnitTest {
     assertEquals(100, region.size());
     qs = CacheUtils.getQueryService();
 
-    keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex1 =
+        (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex1 instanceof PartitionedIndex);
 
@@ -281,7 +288,8 @@ public class QueryTraceJUnitTest {
     assertEquals(100, region.size());
     qs = CacheUtils.getQueryService();
 
-    keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex1 =
+        (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex1 instanceof CompactRangeIndex);
 
@@ -314,7 +322,8 @@ public class QueryTraceJUnitTest {
     assertEquals(100, region.size());
     qs = CacheUtils.getQueryService();
 
-    keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex1 =
+        (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex1 instanceof PartitionedIndex);
 
@@ -326,7 +335,6 @@ public class QueryTraceJUnitTest {
     //The query should return all elements in region.
     assertEquals(region.size(), results.size());
     QueryObserverHolder.reset();
-
   }
 
   @Test
@@ -347,7 +355,8 @@ public class QueryTraceJUnitTest {
     assertEquals(100, region.size());
     qs = CacheUtils.getQueryService();
 
-    keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex1 =
+        (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex1 instanceof CompactRangeIndex);
 
@@ -379,7 +388,8 @@ public class QueryTraceJUnitTest {
     assertEquals(100, region.size());
     qs = CacheUtils.getQueryService();
 
-    keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex1 =
+        (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex1 instanceof CompactRangeIndex);
 
@@ -410,7 +420,8 @@ public class QueryTraceJUnitTest {
     assertEquals(100, region.size());
     qs = CacheUtils.getQueryService();
 
-    keyIndex1 = (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
+    keyIndex1 =
+        (IndexProtocol) qs.createIndex(INDEX_NAME, IndexType.FUNCTIONAL, "ID", "/portfolio ");
 
     assertTrue(keyIndex1 instanceof CompactRangeIndex);
 
@@ -422,5 +433,4 @@ public class QueryTraceJUnitTest {
       }
     }
   }
-
 }

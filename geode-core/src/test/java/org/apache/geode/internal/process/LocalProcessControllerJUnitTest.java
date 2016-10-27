@@ -42,7 +42,7 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
  * Unit tests for LocalProcessController.
- * 
+ *
  * @since GemFire 7.0
  */
 @Category(UnitTest.class)
@@ -52,15 +52,16 @@ public class LocalProcessControllerJUnitTest {
   private ObjectName objectName;
   private int pid;
 
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void setUp() throws Exception {
     pid = ProcessUtils.identifyPid();
     final Process process = new Process(pid, true);
 
-    this.objectName = ObjectName.getInstance(getClass().getSimpleName() + ":testName=" + testName.getMethodName());
+    this.objectName =
+        ObjectName.getInstance(
+            getClass().getSimpleName() + ":testName=" + testName.getMethodName());
     this.server = ManagementFactory.getPlatformMBeanServer();
 
     final ObjectInstance instance = this.server.registerMBean(process, objectName);
@@ -108,12 +109,18 @@ public class LocalProcessControllerJUnitTest {
     assertTrue("Found matching mbeans", mbeanNames.isEmpty());
 
     // validate query using both attributes
-    constraint = Query.and(Query.eq(Query.attr("Process"), Query.value(true)), Query.eq(Query.attr("Pid"), Query.value(pid)));
+    constraint =
+        Query.and(
+            Query.eq(Query.attr("Process"), Query.value(true)),
+            Query.eq(Query.attr("Pid"), Query.value(pid)));
     mbeanNames = this.server.queryNames(objectName, constraint);
     assertFalse("Zero matching mbeans", mbeanNames.isEmpty());
 
     // validate query with wrong attribute finds nothing
-    constraint = Query.and(Query.eq(Query.attr("Process"), Query.value(false)), Query.eq(Query.attr("Pid"), Query.value(pid)));
+    constraint =
+        Query.and(
+            Query.eq(Query.attr("Process"), Query.value(false)),
+            Query.eq(Query.attr("Pid"), Query.value(pid)));
     mbeanNames = this.server.queryNames(objectName, constraint);
     assertTrue("Found matching mbeans", mbeanNames.isEmpty());
   }

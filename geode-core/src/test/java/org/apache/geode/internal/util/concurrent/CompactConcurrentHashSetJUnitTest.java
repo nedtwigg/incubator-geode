@@ -69,7 +69,7 @@ public class CompactConcurrentHashSetJUnitTest {
       int nexti = random.nextInt(RANGE);
       s1.add(nexti);
     }
-    for (Iterator<Integer> it = s1.iterator(); it.hasNext();) {
+    for (Iterator<Integer> it = s1.iterator(); it.hasNext(); ) {
       Integer i = it.next();
       assertTrue(s1.contains(i));
       it.remove();
@@ -105,5 +105,4 @@ public class CompactConcurrentHashSetJUnitTest {
     s2.clear();
     assertTrue(s2.isEmpty());
   }
-
 }

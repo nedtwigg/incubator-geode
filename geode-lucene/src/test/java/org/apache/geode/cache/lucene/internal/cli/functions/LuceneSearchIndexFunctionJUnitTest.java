@@ -45,7 +45,6 @@ import org.junit.experimental.categories.Category;
 import org.mockito.ArgumentCaptor;
 
 @Category(UnitTest.class)
-
 public class LuceneSearchIndexFunctionJUnitTest {
 
   @Test
@@ -55,7 +54,8 @@ public class LuceneSearchIndexFunctionJUnitTest {
     ResultSender resultSender = mock(ResultSender.class);
     GemFireCacheImpl cache = Fakes.cache();
 
-    LuceneQueryInfo queryInfo = createMockQueryInfo("index", "region", "field1:region1", "field1", 1);
+    LuceneQueryInfo queryInfo =
+        createMockQueryInfo("index", "region", "field1:region1", "field1", 1);
     InternalLuceneService service = getMockLuceneService("A", "Value", "1.2");
     Region mockRegion = mock(Region.class);
 
@@ -81,12 +81,14 @@ public class LuceneSearchIndexFunctionJUnitTest {
     }
   }
 
-  private InternalLuceneService getMockLuceneService(String resultKey, String resultValue, String resultScore) throws LuceneQueryException {
+  private InternalLuceneService getMockLuceneService(
+      String resultKey, String resultValue, String resultScore) throws LuceneQueryException {
     InternalLuceneService service = mock(InternalLuceneService.class);
     LuceneQueryFactory mockQueryFactory = spy(LuceneQueryFactory.class);
     LuceneQuery mockQuery = mock(LuceneQuery.class);
     PageableLuceneQueryResults pageableLuceneQueryResults = mock(PageableLuceneQueryResults.class);
-    LuceneResultStruct<String, String> resultStruct = new LuceneResultStructImpl(resultKey, resultValue, Float.valueOf(resultScore));
+    LuceneResultStruct<String, String> resultStruct =
+        new LuceneResultStructImpl(resultKey, resultValue, Float.valueOf(resultScore));
     List<LuceneResultStruct<String, String>> queryResults = new ArrayList<>();
     queryResults.add(resultStruct);
 
@@ -101,7 +103,12 @@ public class LuceneSearchIndexFunctionJUnitTest {
     return service;
   }
 
-  private LuceneQueryInfo createMockQueryInfo(final String index, final String region, final String query, final String field, final int limit) {
+  private LuceneQueryInfo createMockQueryInfo(
+      final String index,
+      final String region,
+      final String query,
+      final String field,
+      final int limit) {
     LuceneQueryInfo queryInfo = mock(LuceneQueryInfo.class);
     when(queryInfo.getIndexName()).thenReturn(index);
     when(queryInfo.getRegionPath()).thenReturn(region);
@@ -110,5 +117,4 @@ public class LuceneSearchIndexFunctionJUnitTest {
     when(queryInfo.getLimit()).thenReturn(limit);
     return queryInfo;
   }
-
 }

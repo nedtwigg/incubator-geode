@@ -42,6 +42,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Does a region put (or create) on a server
+ *
  * @since GemFire 5.7
  */
 public class PutOp {
@@ -49,8 +50,9 @@ public class PutOp {
   private static final Logger logger = LogService.getLogger();
 
   /**
-   * Does a region put on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region put on a server using connections from the given pool to communicate with the
+   * server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the region to do the put on
    * @param key the entry key to do the put on
@@ -60,18 +62,50 @@ public class PutOp {
    * @param expectedOldValue
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    */
-  public static Object execute(ExecutablePool pool, LocalRegion region, Object key, Object value, byte[] deltaBytes, EntryEventImpl event, Operation operation, boolean requireOldValue, Object expectedOldValue, Object callbackArg, boolean prSingleHopEnabled) {
-    PutOpImpl op = new PutOpImpl(region, key, value, deltaBytes, event, operation, requireOldValue, expectedOldValue, callbackArg, false/*donot send full obj; send delta*/, prSingleHopEnabled);
+  public static Object execute(
+      ExecutablePool pool,
+      LocalRegion region,
+      Object key,
+      Object value,
+      byte[] deltaBytes,
+      EntryEventImpl event,
+      Operation operation,
+      boolean requireOldValue,
+      Object expectedOldValue,
+      Object callbackArg,
+      boolean prSingleHopEnabled) {
+    PutOpImpl op =
+        new PutOpImpl(
+            region,
+            key,
+            value,
+            deltaBytes,
+            event,
+            operation,
+            requireOldValue,
+            expectedOldValue,
+            callbackArg,
+            false /*donot send full obj; send delta*/,
+            prSingleHopEnabled);
 
     if (prSingleHopEnabled) {
       ClientMetadataService cms = region.getCache().getClientMetadataService();
-      ServerLocation server = cms.getBucketServerLocation(region, Operation.UPDATE, key, value, callbackArg);
+      ServerLocation server =
+          cms.getBucketServerLocation(region, Operation.UPDATE, key, value, callbackArg);
       if (server != null) {
         try {
           PoolImpl poolImpl = (PoolImpl) pool;
-          boolean onlyUseExistingCnx = ((poolImpl.getMaxConnections() != -1 && poolImpl.getConnectionCount() >= poolImpl.getMaxConnections()) ? true : false);
+          boolean onlyUseExistingCnx =
+              ((poolImpl.getMaxConnections() != -1
+                      && poolImpl.getConnectionCount() >= poolImpl.getMaxConnections())
+                  ? true
+                  : false);
           op.setAllowDuplicateMetadataRefresh(!onlyUseExistingCnx);
-          return pool.executeOn(new ServerLocation(server.getHostName(), server.getPort()), op, true, onlyUseExistingCnx);
+          return pool.executeOn(
+              new ServerLocation(server.getHostName(), server.getPort()),
+              op,
+              true,
+              onlyUseExistingCnx);
         } catch (AllConnectionsInUseException e) {
         } catch (ServerConnectivityException e) {
           if (e instanceof ServerOperationException) {
@@ -84,19 +118,43 @@ public class PutOp {
     return pool.execute(op);
   }
 
-  public static Object execute(ExecutablePool pool, String regionName, Object key, Object value, byte[] deltaBytes, EntryEventImpl event, Operation operation, boolean requireOldValue, Object expectedOldValue, Object callbackArg, boolean prSingleHopEnabled, boolean isMetaRegionPutOp) {
+  public static Object execute(
+      ExecutablePool pool,
+      String regionName,
+      Object key,
+      Object value,
+      byte[] deltaBytes,
+      EntryEventImpl event,
+      Operation operation,
+      boolean requireOldValue,
+      Object expectedOldValue,
+      Object callbackArg,
+      boolean prSingleHopEnabled,
+      boolean isMetaRegionPutOp) {
 
-    AbstractOp op = new PutOpImpl(regionName, key, value, deltaBytes, event, operation, requireOldValue, expectedOldValue, callbackArg, false/*donot send full obj; send delta*/, prSingleHopEnabled);
+    AbstractOp op =
+        new PutOpImpl(
+            regionName,
+            key,
+            value,
+            deltaBytes,
+            event,
+            operation,
+            requireOldValue,
+            expectedOldValue,
+            callbackArg,
+            false /*donot send full obj; send delta*/,
+            prSingleHopEnabled);
     ((PutOpImpl) op).setMetaRegionPutOp(isMetaRegionPutOp);
     return pool.execute(op);
   }
 
   /**
-   * This is a unit test method.
-   * It does a region put on a server using the given connection from the given pool
-   * to communicate with the server. Do not call this method if the value is 
-   * Delta instance.
-   * @param con the connection to use 
+   * This is a unit test method. It does a region put on a server using the given connection from
+   * the given pool to communicate with the server. Do not call this method if the value is Delta
+   * instance.
+   *
+   * @param con the connection to use
    * @param pool the pool to use to communicate with the server.
    * @param regionName the name of the region to do the put on
    * @param key the entry key to do the put on
@@ -104,8 +162,28 @@ public class PutOp {
    * @param event the event for this put
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    */
-  public static void execute(Connection con, ExecutablePool pool, String regionName, Object key, Object value, EntryEventImpl event, Object callbackArg, boolean prSingleHopEnabled) {
-    AbstractOp op = new PutOpImpl(regionName, key, value, null, event, Operation.CREATE, false, null, callbackArg, false /*donot send full Obj; send delta*/, prSingleHopEnabled);
+  public static void execute(
+      Connection con,
+      ExecutablePool pool,
+      String regionName,
+      Object key,
+      Object value,
+      EntryEventImpl event,
+      Object callbackArg,
+      boolean prSingleHopEnabled) {
+    AbstractOp op =
+        new PutOpImpl(
+            regionName,
+            key,
+            value,
+            null,
+            event,
+            Operation.CREATE,
+            false,
+            null,
+            callbackArg,
+            false /*donot send full Obj; send delta*/,
+            prSingleHopEnabled);
     pool.executeOn(con, op);
   }
 
@@ -124,9 +202,8 @@ public class PutOp {
     private LocalRegion region;
 
     /**
-     * the operation will have either a region or a regionName.  Names seem
-     * to be used by unit tests to exercise operations without creating a
-     * real region 
+     * the operation will have either a region or a regionName. Names seem to be used by unit tests
+     * to exercise operations without creating a real region
      */
     private String regionName;
 
@@ -146,11 +223,24 @@ public class PutOp {
 
     private Object expectedOldValue;
 
-    public PutOpImpl(String regionName, Object key, Object value, byte[] deltaBytes, EntryEventImpl event, Operation op, boolean requireOldValue, Object expectedOldValue, Object callbackArg, boolean sendFullObj, boolean prSingleHopEnabled) {
-      super(MessageType.PUT, 7 + (callbackArg != null ? 1 : 0) + (expectedOldValue != null ? 1 : 0));
+    public PutOpImpl(
+        String regionName,
+        Object key,
+        Object value,
+        byte[] deltaBytes,
+        EntryEventImpl event,
+        Operation op,
+        boolean requireOldValue,
+        Object expectedOldValue,
+        Object callbackArg,
+        boolean sendFullObj,
+        boolean prSingleHopEnabled) {
+      super(
+          MessageType.PUT, 7 + (callbackArg != null ? 1 : 0) + (expectedOldValue != null ? 1 : 0));
       final boolean isDebugEnabled = logger.isDebugEnabled();
       if (isDebugEnabled) {
-        logger.debug("PutOpImpl constructing(1) message for {}; operation={}", event.getEventId(), op);
+        logger.debug(
+            "PutOpImpl constructing(1) message for {}; operation={}", event.getEventId(), op);
       }
       this.key = key;
       this.callbackArg = callbackArg;
@@ -163,10 +253,8 @@ public class PutOp {
       getMessage().addStringPart(regionName);
       getMessage().addObjPart(op);
       int flags = 0;
-      if (requireOldValue)
-        flags |= 0x01;
-      if (expectedOldValue != null)
-        flags |= 0x02;
+      if (requireOldValue) flags |= 0x01;
+      if (expectedOldValue != null) flags |= 0x02;
       getMessage().addIntPart(flags);
       if (expectedOldValue != null) {
         getMessage().addObjPart(expectedOldValue);
@@ -205,8 +293,20 @@ public class PutOp {
       }
     }
 
-    public PutOpImpl(Region region, Object key, Object value, byte[] deltaBytes, EntryEventImpl event, Operation op, boolean requireOldValue, Object expectedOldValue, Object callbackArg, boolean sendFullObj, boolean prSingleHopEnabled) {
-      super(MessageType.PUT, 7 + (callbackArg != null ? 1 : 0) + (expectedOldValue != null ? 1 : 0));
+    public PutOpImpl(
+        Region region,
+        Object key,
+        Object value,
+        byte[] deltaBytes,
+        EntryEventImpl event,
+        Operation op,
+        boolean requireOldValue,
+        Object expectedOldValue,
+        Object callbackArg,
+        boolean sendFullObj,
+        boolean prSingleHopEnabled) {
+      super(
+          MessageType.PUT, 7 + (callbackArg != null ? 1 : 0) + (expectedOldValue != null ? 1 : 0));
       this.key = key;
       this.callbackArg = callbackArg;
       this.event = event;
@@ -221,10 +321,8 @@ public class PutOp {
       getMessage().addStringPart(region.getFullPath());
       getMessage().addObjPart(op);
       int flags = 0;
-      if (requireOldValue)
-        flags |= 0x01;
-      if (expectedOldValue != null)
-        flags |= 0x02;
+      if (requireOldValue) flags |= 0x01;
+      if (expectedOldValue != null) flags |= 0x02;
       getMessage().addIntPart(flags);
       if (expectedOldValue != null) {
         getMessage().addObjPart(expectedOldValue);
@@ -265,12 +363,13 @@ public class PutOp {
 
     @Override
     protected Object processResponse(Message msg) throws Exception {
-      throw new UnsupportedOperationException("processResponse should not be invoked in PutOp.  Use processResponse(Message, Connection)");
+      throw new UnsupportedOperationException(
+          "processResponse should not be invoked in PutOp.  Use processResponse(Message, Connection)");
     }
 
     /*
      * Process a response that contains an ack.
-     * 
+     *
      * @param msg
      *                the message containing the response
      * @param con
@@ -287,10 +386,12 @@ public class PutOp {
       if (prSingleHopEnabled) {
         Part part = msg.getPart(0);
         byte[] bytesReceived = part.getSerializedForm();
-        if (bytesReceived[0] != ClientMetadataService.INITIAL_VERSION && bytesReceived.length == ClientMetadataService.SIZE_BYTES_ARRAY_RECEIVED) {
+        if (bytesReceived[0] != ClientMetadataService.INITIAL_VERSION
+            && bytesReceived.length == ClientMetadataService.SIZE_BYTES_ARRAY_RECEIVED) {
           if (this.region != null) {
             ClientMetadataService cms = region.getCache().getClientMetadataService();
-            byte myVersion = cms.getMetaDataVersion(region, Operation.UPDATE, key, value, callbackArg);
+            byte myVersion =
+                cms.getMetaDataVersion(region, Operation.UPDATE, key, value, callbackArg);
             if (myVersion != bytesReceived[0] || isAllowDuplicateMetadataRefresh()) {
               cms.scheduleGetPRMetaData(region, false, bytesReceived[1]);
             }
@@ -327,16 +428,12 @@ public class PutOp {
 
     /**
      * Process a response that contains an ack.
-     * 
-     * @param msg
-     *                the message containing the response
-     * @param opName
-     *                text describing this op
-     * @param con
-     *                Connection on which this op is executing
-     * @throws Exception
-     *                 if response could not be processed or we received a
-     *                 response with a server exception.
+     *
+     * @param msg the message containing the response
+     * @param opName text describing this op
+     * @param con Connection on which this op is executing
+     * @throws Exception if response could not be processed or we received a response with a server
+     *     exception.
      * @since GemFire 6.1
      */
     private final void processAck(Message msg, String opName, Connection con) throws Exception {
@@ -353,7 +450,19 @@ public class PutOp {
           if (logger.isDebugEnabled()) {
             logger.debug("PutOp: Sending full value as delta failed on server...");
           }
-          AbstractOp op = new PutOpImpl(this.regionName, this.key, this.value, null, this.event, Operation.CREATE, this.requireOldValue, this.expectedOldValue, this.callbackArg, true /* send full obj */, this.prSingleHopEnabled);
+          AbstractOp op =
+              new PutOpImpl(
+                  this.regionName,
+                  this.key,
+                  this.value,
+                  null,
+                  this.event,
+                  Operation.CREATE,
+                  this.requireOldValue,
+                  this.expectedOldValue,
+                  this.callbackArg,
+                  true /* send full obj */,
+                  this.prSingleHopEnabled);
 
           op.attempt(con);
           if (this.region != null) {
@@ -368,7 +477,8 @@ public class PutOp {
         } else if (isErrorResponse(msgType)) {
           throw new ServerOperationException(part.getString());
         } else {
-          throw new InternalGemFireError("Unexpected message type " + MessageType.getString(msgType));
+          throw new InternalGemFireError(
+              "Unexpected message type " + MessageType.getString(msgType));
         }
       }
     }
@@ -421,20 +531,25 @@ public class PutOp {
     }
 
     /**
-      * Attempts to read a response to this operation by reading it from the given
-      * connection, and returning it.
-      * 
-      * @param cnx
-      *                the connection to read the response from
-      * @return the result of the operation or
-      *         <code>null</code if the operation has no result.
+     * Attempts to read a response to this operation by reading it from the given
+     * connection, and returning it.
+     *
+     * @param cnx
+     *                the connection to read the response from
+     * @return the result of the operation or
+     *         <code>null</code if the operation has no result.
      * @throws Exception if the execute failed
-      */
+     */
     @Override
     protected Object attemptReadResponse(Connection cnx) throws Exception {
       Message msg = createResponseMessage();
       if (msg != null) {
-        msg.setComms(cnx.getSocket(), cnx.getInputStream(), cnx.getOutputStream(), cnx.getCommBuffer(), cnx.getStats());
+        msg.setComms(
+            cnx.getSocket(),
+            cnx.getInputStream(),
+            cnx.getOutputStream(),
+            cnx.getCommBuffer(),
+            cnx.getStats());
         if (msg instanceof ChunkedMessage) {
           try {
             return processResponse(msg, cnx);
@@ -460,5 +575,4 @@ public class PutOp {
       this.isMetaRegionPutOp = bool;
     }
   }
-
 }

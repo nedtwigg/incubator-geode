@@ -19,11 +19,7 @@ package org.apache.geode.management.internal.cli.result;
 import org.apache.geode.management.cli.Result.Status;
 import org.apache.geode.management.internal.cli.json.GfJsonObject;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public interface ResultData {
   String RESULT_HEADER = "header";
   String RESULT_CONTENT = "content";

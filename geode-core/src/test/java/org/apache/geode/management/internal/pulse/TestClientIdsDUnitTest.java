@@ -54,9 +54,7 @@ import org.apache.geode.test.dunit.WaitCriterion;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * This is for testing client IDs
- */
+/** This is for testing client IDs */
 @Category(DistributedTest.class)
 public class TestClientIdsDUnitTest extends JUnit4DistributedTestCase {
 
@@ -82,8 +80,7 @@ public class TestClientIdsDUnitTest extends JUnit4DistributedTestCase {
 
   @Override
   public final void preSetUp() throws Exception {
-    this.helper = new ManagementTestBase() {
-    };
+    this.helper = new ManagementTestBase() {};
   }
 
   @Override
@@ -121,31 +118,33 @@ public class TestClientIdsDUnitTest extends JUnit4DistributedTestCase {
 
   @SuppressWarnings("serial")
   private Object createServerCache(VM vm) {
-    return vm.invoke(new SerializableCallable("Create Server Cache") {
-      public Object call() {
-        try {
-          return createServerCache();
-        } catch (Exception e) {
-          fail("Error while createServerCache " + e);
-        }
-        return null;
-      }
-    });
+    return vm.invoke(
+        new SerializableCallable("Create Server Cache") {
+          public Object call() {
+            try {
+              return createServerCache();
+            } catch (Exception e) {
+              fail("Error while createServerCache " + e);
+            }
+            return null;
+          }
+        });
   }
 
   @SuppressWarnings("serial")
   private void createClientCache(VM vm, final String host, final Integer port1) {
-    vm.invoke(new SerializableCallable("Create Client Cache") {
+    vm.invoke(
+        new SerializableCallable("Create Client Cache") {
 
-      public Object call() {
-        try {
-          createClientCache(host, port1);
-        } catch (Exception e) {
-          fail("Error while createClientCache " + e);
-        }
-        return null;
-      }
-    });
+          public Object call() {
+            try {
+              createClientCache(host, port1);
+            } catch (Exception e) {
+              fail("Error while createClientCache " + e);
+            }
+            return null;
+          }
+        });
   }
 
   private Cache createCache(Properties props) throws Exception {
@@ -183,7 +182,19 @@ public class TestClientIdsDUnitTest extends JUnit4DistributedTestCase {
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     Cache cache = createCache(props);
-    PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(host, port1.intValue()).setSubscriptionEnabled(false).setThreadLocalConnections(true).setMinConnections(1).setReadTimeout(20000).setPingInterval(10000).setRetryAttempts(1).setSubscriptionEnabled(true).setStatisticInterval(1000).create("CacheServerManagementDUnitTest");
+    PoolImpl p =
+        (PoolImpl)
+            PoolManager.createFactory()
+                .addServer(host, port1.intValue())
+                .setSubscriptionEnabled(false)
+                .setThreadLocalConnections(true)
+                .setMinConnections(1)
+                .setReadTimeout(20000)
+                .setPingInterval(10000)
+                .setRetryAttempts(1)
+                .setSubscriptionEnabled(true)
+                .setStatisticInterval(1000)
+                .create("CacheServerManagementDUnitTest");
 
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.DISTRIBUTED_ACK);
@@ -192,12 +203,9 @@ public class TestClientIdsDUnitTest extends JUnit4DistributedTestCase {
     RegionAttributes attrs = factory.create();
     Region region = cache.createRegion(REGION_NAME, attrs);
     return cache;
-
   }
 
-  /**
-   * get member id
-   */
+  /** get member id */
   @SuppressWarnings("serial")
   protected static DistributedMember getMember() throws Exception {
     GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
@@ -206,92 +214,98 @@ public class TestClientIdsDUnitTest extends JUnit4DistributedTestCase {
 
   /**
    * Verify the Cache Server details
-   * 
+   *
    * @param vm
    */
   @SuppressWarnings("serial")
-  protected void verifyClientIds(final VM vm, final DistributedMember serverMember, final int serverPort) {
-    SerializableRunnable verifyCacheServerRemote = new SerializableRunnable("Verify Cache Server Remote") {
-      public void run() {
-        try {
-          final WaitCriterion waitCriteria = new WaitCriterion() {
-            @Override
-            public boolean done() {
-              CacheServerMXBean bean = null;
-              try {
-                bean = MBeanUtil.getCacheServerMbeanProxy(serverMember, serverPort);
-                if (bean != null) {
-                  if (bean.getClientIds().length > 0) {
-                    return true;
-                  }
-                }
-              } catch (Exception e) {
-                LogWriterUtils.getLogWriter().info("exception occured " + e.getMessage() + CliUtil.stackTraceAsString((Throwable) e));
-              }
-              return false;
-            }
+  protected void verifyClientIds(
+      final VM vm, final DistributedMember serverMember, final int serverPort) {
+    SerializableRunnable verifyCacheServerRemote =
+        new SerializableRunnable("Verify Cache Server Remote") {
+          public void run() {
+            try {
+              final WaitCriterion waitCriteria =
+                  new WaitCriterion() {
+                    @Override
+                    public boolean done() {
+                      CacheServerMXBean bean = null;
+                      try {
+                        bean = MBeanUtil.getCacheServerMbeanProxy(serverMember, serverPort);
+                        if (bean != null) {
+                          if (bean.getClientIds().length > 0) {
+                            return true;
+                          }
+                        }
+                      } catch (Exception e) {
+                        LogWriterUtils.getLogWriter()
+                            .info(
+                                "exception occured "
+                                    + e.getMessage()
+                                    + CliUtil.stackTraceAsString((Throwable) e));
+                      }
+                      return false;
+                    }
 
-            @Override
-            public String description() {
-              return "wait for getNumOfClients bean to complete and get results";
-            }
-          };
-          Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
+                    @Override
+                    public String description() {
+                      return "wait for getNumOfClients bean to complete and get results";
+                    }
+                  };
+              Wait.waitForCriterion(waitCriteria, 2 * 60 * 1000, 3000, true);
 
-          //Now it is sure that bean would be available
-          CacheServerMXBean bean = MBeanUtil.getCacheServerMbeanProxy(serverMember, serverPort);
-          LogWriterUtils.getLogWriter().info("verifyClientIds = " + bean.getClientIds().length);
-          assertEquals(true, bean.getClientIds().length > 0 ? true : false);
-        } catch (Exception e) {
-          fail("Error while verifying cache server from remote member " + e);
-        }
-      }
-    };
+              //Now it is sure that bean would be available
+              CacheServerMXBean bean = MBeanUtil.getCacheServerMbeanProxy(serverMember, serverPort);
+              LogWriterUtils.getLogWriter().info("verifyClientIds = " + bean.getClientIds().length);
+              assertEquals(true, bean.getClientIds().length > 0 ? true : false);
+            } catch (Exception e) {
+              fail("Error while verifying cache server from remote member " + e);
+            }
+          }
+        };
     vm.invoke(verifyCacheServerRemote);
   }
 
   /**
    * Verify the Cache Server details
-   * 
+   *
    * @param vm
    */
   @SuppressWarnings("serial")
   protected void put(final VM vm) {
-    SerializableRunnable put = new SerializableRunnable("put") {
-      public void run() {
-        try {
-          Cache cache = GemFireCacheImpl.getInstance();
-          Region<Object, Object> r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
-          assertNotNull(r1);
+    SerializableRunnable put =
+        new SerializableRunnable("put") {
+          public void run() {
+            try {
+              Cache cache = GemFireCacheImpl.getInstance();
+              Region<Object, Object> r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME);
+              assertNotNull(r1);
 
-          r1.put(k1, client_k1);
-          assertEquals(r1.getEntry(k1).getValue(), client_k1);
-          r1.put(k2, client_k2);
-          assertEquals(r1.getEntry(k2).getValue(), client_k2);
-          try {
-            Thread.sleep(10000);
-          } catch (Exception e) {
-            // sleep
+              r1.put(k1, client_k1);
+              assertEquals(r1.getEntry(k1).getValue(), client_k1);
+              r1.put(k2, client_k2);
+              assertEquals(r1.getEntry(k2).getValue(), client_k2);
+              try {
+                Thread.sleep(10000);
+              } catch (Exception e) {
+                // sleep
+              }
+              r1.clear();
+
+              r1.put(k1, client_k1);
+              assertEquals(r1.getEntry(k1).getValue(), client_k1);
+              r1.put(k2, client_k2);
+              assertEquals(r1.getEntry(k2).getValue(), client_k2);
+              try {
+                Thread.sleep(10000);
+              } catch (Exception e) {
+                // sleep
+              }
+              r1.clear();
+            } catch (Exception ex) {
+              Assert.fail("failed while put", ex);
+            }
           }
-          r1.clear();
-
-          r1.put(k1, client_k1);
-          assertEquals(r1.getEntry(k1).getValue(), client_k1);
-          r1.put(k2, client_k2);
-          assertEquals(r1.getEntry(k2).getValue(), client_k2);
-          try {
-            Thread.sleep(10000);
-          } catch (Exception e) {
-            // sleep
-          }
-          r1.clear();
-        } catch (Exception ex) {
-          Assert.fail("failed while put", ex);
-        }
-      }
-
-    };
+        };
     vm.invoke(put);
   }
-
 }

@@ -25,24 +25,24 @@ import org.apache.geode.internal.cache.tier.Command;
 import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 
 /**
- * getEntry(key) operation performed on server.
- * Extends Request, and overrides getValueAndIsObject() in Request
- * so as to not invoke loader.
+ * getEntry(key) operation performed on server. Extends Request, and overrides getValueAndIsObject()
+ * in Request so as to not invoke loader.
+ *
  * @since GemFire 6.6
  */
 public class GetEntryCommand extends Request {
 
-  private final static GetEntryCommand singleton = new GetEntryCommand();
+  private static final GetEntryCommand singleton = new GetEntryCommand();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  protected GetEntryCommand() {
-  }
+  protected GetEntryCommand() {}
 
   @Override
-  public void getValueAndIsObject(Region p_region, Object key, Object callbackArg, ServerConnection servConn, Object[] result) {
+  public void getValueAndIsObject(
+      Region p_region, Object key, Object callbackArg, ServerConnection servConn, Object[] result) {
     Object data = null;
     LocalRegion region = (LocalRegion) p_region;
     Entry entry = region.getEntry(key);

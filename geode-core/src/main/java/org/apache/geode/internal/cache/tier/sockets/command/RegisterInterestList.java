@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache.tier.sockets.command;
 
 import org.apache.geode.internal.cache.LocalRegion;
@@ -37,22 +35,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 
- */
+/** */
 public class RegisterInterestList extends BaseCommand {
 
-  private final static RegisterInterestList singleton = new RegisterInterestList();
+  private static final RegisterInterestList singleton = new RegisterInterestList();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  RegisterInterestList() {
-  }
+  RegisterInterestList() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, InterruptedException {
     Part regionNamePart = null, keyPart = null, numberOfKeysPart = null;
     String regionName = null;
     Object key = null;
@@ -124,12 +120,19 @@ public class RegisterInterestList extends BaseCommand {
     }
 
     if (logger.isDebugEnabled()) {
-      logger.debug("{}: Received register interest request ({} bytes) from {} for the following {} keys in region {}: {}", servConn.getName(), msg.getPayloadLength(), servConn.getSocketString(), numberOfKeys, regionName, keys);
+      logger.debug(
+          "{}: Received register interest request ({} bytes) from {} for the following {} keys in region {}: {}",
+          servConn.getName(),
+          msg.getPayloadLength(),
+          servConn.getSocketString(),
+          numberOfKeys,
+          regionName,
+          keys);
     }
 
     /*
     AcceptorImpl acceptor = servConn.getAcceptor();
-    
+
     //  Check if the Server is running in NotifyBySubscription=true mode.
     if (!acceptor.getCacheClientNotifier().getNotifyBySubscription()) {
       // This should have been taken care at the client.
@@ -144,11 +147,17 @@ public class RegisterInterestList extends BaseCommand {
     if (keys.isEmpty() || regionName == null) {
       StringId errMessage = null;
       if (keys.isEmpty() && regionName == null) {
-        errMessage = LocalizedStrings.RegisterInterestList_THE_INPUT_LIST_OF_KEYS_IS_EMPTY_AND_THE_INPUT_REGION_NAME_IS_NULL_FOR_THE_REGISTER_INTEREST_REQUEST;
+        errMessage =
+            LocalizedStrings
+                .RegisterInterestList_THE_INPUT_LIST_OF_KEYS_IS_EMPTY_AND_THE_INPUT_REGION_NAME_IS_NULL_FOR_THE_REGISTER_INTEREST_REQUEST;
       } else if (keys.isEmpty()) {
-        errMessage = LocalizedStrings.RegisterInterestList_THE_INPUT_LIST_OF_KEYS_FOR_THE_REGISTER_INTEREST_REQUEST_IS_EMPTY;
+        errMessage =
+            LocalizedStrings
+                .RegisterInterestList_THE_INPUT_LIST_OF_KEYS_FOR_THE_REGISTER_INTEREST_REQUEST_IS_EMPTY;
       } else if (regionName == null) {
-        errMessage = LocalizedStrings.RegisterInterest_THE_INPUT_REGION_NAME_FOR_THE_REGISTER_INTEREST_REQUEST_IS_NULL;
+        errMessage =
+            LocalizedStrings
+                .RegisterInterest_THE_INPUT_REGION_NAME_FOR_THE_REGISTER_INTEREST_REQUEST_IS_NULL;
       }
       String s = errMessage.toLocalizedString();
       logger.warn("{}: {}", servConn.getName(), s);
@@ -160,7 +169,11 @@ public class RegisterInterestList extends BaseCommand {
     // key not null
     LocalRegion region = (LocalRegion) servConn.getCache().getRegion(regionName);
     if (region == null) {
-      logger.info(LocalizedMessage.create(LocalizedStrings.RegisterInterestList_0_REGION_NAMED_1_WAS_NOT_FOUND_DURING_REGISTER_INTEREST_LIST_REQUEST, new Object[] { servConn.getName(), regionName }));
+      logger.info(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .RegisterInterestList_0_REGION_NAMED_1_WAS_NOT_FOUND_DURING_REGISTER_INTEREST_LIST_REQUEST,
+              new Object[] {servConn.getName(), regionName}));
       // writeChunkedErrorResponse(msg,
       // MessageType.REGISTER_INTEREST_DATA_ERROR, message);
       // responded = true;
@@ -170,12 +183,24 @@ public class RegisterInterestList extends BaseCommand {
       AuthorizeRequest authzRequest = servConn.getAuthzRequest();
       if (authzRequest != null) {
         if (!DynamicRegionFactory.regionIsDynamicRegionList(regionName)) {
-          RegisterInterestOperationContext registerContext = authzRequest.registerInterestListAuthorize(regionName, keys, policy);
+          RegisterInterestOperationContext registerContext =
+              authzRequest.registerInterestListAuthorize(regionName, keys, policy);
           keys = (List) registerContext.getKey();
         }
       }
       // Register interest
-      servConn.getAcceptor().getCacheClientNotifier().registerClientInterest(regionName, keys, servConn.getProxyID(), isDurable, sendUpdatesAsInvalidates, false, 0, true);
+      servConn
+          .getAcceptor()
+          .getCacheClientNotifier()
+          .registerClientInterest(
+              regionName,
+              keys,
+              servConn.getProxyID(),
+              isDurable,
+              sendUpdatesAsInvalidates,
+              false,
+              0,
+              true);
     } catch (Exception ex) {
       // If an interrupted exception is thrown , rethrow it
       checkForInterrupt(servConn, ex);
@@ -190,14 +215,24 @@ public class RegisterInterestList extends BaseCommand {
     // DistributionStats.getStatTime() - start);
     // start = DistributionStats.getStatTime();
 
-    boolean isPrimary = servConn.getAcceptor().getCacheClientNotifier().getClientProxy(servConn.getProxyID()).isPrimary();
+    boolean isPrimary =
+        servConn
+            .getAcceptor()
+            .getCacheClientNotifier()
+            .getClientProxy(servConn.getProxyID())
+            .isPrimary();
     if (!isPrimary) {
       chunkedResponseMsg.setMessageType(MessageType.RESPONSE_FROM_SECONDARY);
       chunkedResponseMsg.setTransactionId(msg.getTransactionId());
       chunkedResponseMsg.sendHeader();
       chunkedResponseMsg.setLastChunk(true);
       if (logger.isDebugEnabled()) {
-        logger.debug("{}: Sending register interest response chunk from secondary for region: {} for key: {} chunk=<{}>", servConn.getName(), regionName, key, chunkedResponseMsg);
+        logger.debug(
+            "{}: Sending register interest response chunk from secondary for region: {} for key: {} chunk=<{}>",
+            servConn.getName(),
+            regionName,
+            key,
+            chunkedResponseMsg);
       }
       chunkedResponseMsg.sendChunk(servConn);
     } else { // isPrimary
@@ -224,7 +259,12 @@ public class RegisterInterestList extends BaseCommand {
         // logger.debug(getName() + ": Sent chunk (1 of 1) of register interest
         // response (" + chunkedResponseMsg.getBufferLength() + " bytes) for
         // region " + regionName + " key " + key);
-        logger.debug("{}: Sent register interest response for the following {} keys in region {}: {}", servConn.getName(), numberOfKeys, regionName, keys);
+        logger.debug(
+            "{}: Sent register interest response for the following {} keys in region {}: {}",
+            servConn.getName(),
+            numberOfKeys,
+            regionName,
+            keys);
       }
       // bserverStats.incLong(writeDestroyResponseTimeId,
       // DistributionStats.getStatTime() - start);
@@ -232,5 +272,4 @@ public class RegisterInterestList extends BaseCommand {
     } // isPrimary
     // } // region not null
   }
-
 }

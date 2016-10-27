@@ -28,13 +28,9 @@ import org.apache.geode.memcached.GemFireMemcachedServer;
 import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 
 /**
- * One instance of ConnectionHandle is created for each
- * client that connects to {@link GemFireMemcachedServer}
- * and is responsible for reading requests and sending
- * responses to this client.
- * 
- * 
- *
+ * One instance of ConnectionHandle is created for each client that connects to {@link
+ * GemFireMemcachedServer} and is responsible for reading requests and sending responses to this
+ * client.
  */
 public class ConnectionHandler implements Runnable {
 
@@ -63,7 +59,8 @@ public class ConnectionHandler implements Runnable {
         if (logger.fineEnabled()) {
           logger.fine("processing command:" + command);
         }
-        ByteBuffer reply = command.getCommandProcessor().processCommand(request, this.protocol, cache);
+        ByteBuffer reply =
+            command.getCommandProcessor().processCommand(request, this.protocol, cache);
         if (reply != null) {
           request.sendReply(reply);
         }

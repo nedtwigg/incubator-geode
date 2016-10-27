@@ -28,11 +28,7 @@ import org.springframework.shell.core.Completion;
 import org.springframework.shell.core.Converter;
 import org.springframework.shell.core.MethodTarget;
 
-/**
- *
- *
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class MemberIdNameConverter implements Converter<String> {
   @Override
   public boolean supports(Class<?> type, String optionContext) {
@@ -45,7 +41,12 @@ public class MemberIdNameConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
     if (String.class.equals(targetType) && ConverterHint.MEMBERIDNAME.equals(optionContext)) {
       Set<String> memberIdAndNames = getMemberIdAndNames();
 
@@ -63,9 +64,11 @@ public class MemberIdNameConverter implements Converter<String> {
     final Gfsh gfsh = Gfsh.getCurrentInstance();
 
     if (gfsh != null && gfsh.isConnectedAndReady()) {
-      nonLocatorMembers.addAll(Arrays.asList(gfsh.getOperationInvoker().getDistributedSystemMXBean().listMembers()));
+      nonLocatorMembers.addAll(
+          Arrays.asList(gfsh.getOperationInvoker().getDistributedSystemMXBean().listMembers()));
 
-      final String[] locatorMembers = gfsh.getOperationInvoker().getDistributedSystemMXBean().listLocatorMembers(true);
+      final String[] locatorMembers =
+          gfsh.getOperationInvoker().getDistributedSystemMXBean().listLocatorMembers(true);
 
       if (locatorMembers != null && locatorMembers.length != 0) {
         nonLocatorMembers.removeAll(Arrays.asList(locatorMembers));
@@ -74,5 +77,4 @@ public class MemberIdNameConverter implements Converter<String> {
 
     return nonLocatorMembers;
   }
-
 }

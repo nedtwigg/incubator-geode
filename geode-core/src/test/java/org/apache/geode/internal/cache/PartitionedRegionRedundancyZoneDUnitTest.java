@@ -50,10 +50,7 @@ public class PartitionedRegionRedundancyZoneDUnitTest extends JUnit4CacheTestCas
     disconnectAllFromDS();
   }
 
-  /**
-   * Test that we don't try to put buckets in the same
-   * zone when we don't have enough zones.
-   */
+  /** Test that we don't try to put buckets in the same zone when we don't have enough zones. */
   @Test
   public void testNotEnoughZones() throws Exception {
     Host host = Host.getHost(0);
@@ -90,71 +87,78 @@ public class PartitionedRegionRedundancyZoneDUnitTest extends JUnit4CacheTestCas
   }
 
   protected void checkBucketCount(VM vm0, final int numLocalBuckets) {
-    vm0.invoke(new SerializableRunnable("checkLowRedundancy") {
+    vm0.invoke(
+        new SerializableRunnable("checkLowRedundancy") {
 
-      public void run() {
-        Cache cache = getCache();
-        PartitionedRegion region = (PartitionedRegion) cache.getRegion("region1");
-        assertEquals(numLocalBuckets, region.getLocalBucketsListTestOnly().size());
-      }
-    });
+          public void run() {
+            Cache cache = getCache();
+            PartitionedRegion region = (PartitionedRegion) cache.getRegion("region1");
+            assertEquals(numLocalBuckets, region.getLocalBucketsListTestOnly().size());
+          }
+        });
   }
 
   protected int getBucketCount(VM vm0) {
-    return (Integer) vm0.invoke(new SerializableCallable("checkLowRedundancy") {
+    return (Integer)
+        vm0.invoke(
+            new SerializableCallable("checkLowRedundancy") {
 
-      public Object call() {
-        Cache cache = getCache();
-        PartitionedRegion region = (PartitionedRegion) cache.getRegion("region1");
-        return region.getLocalBucketsListTestOnly().size();
-      }
-    });
+              public Object call() {
+                Cache cache = getCache();
+                PartitionedRegion region = (PartitionedRegion) cache.getRegion("region1");
+                return region.getLocalBucketsListTestOnly().size();
+              }
+            });
   }
 
   protected DistributedMember createPR(VM vm, int redundancy) throws Exception {
-    SerializableCallable createPrRegion = new SerializableCallable("createRegion") {
-      public Object call() {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        PartitionAttributes prAttr = paf.create();
-        attr.setPartitionAttributes(prAttr);
-        cache.createRegion("region1", attr.create());
-        return cache.getDistributedSystem().getDistributedMember();
-      }
-    };
+    SerializableCallable createPrRegion =
+        new SerializableCallable("createRegion") {
+          public Object call() {
+            Cache cache = getCache();
+            AttributesFactory attr = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            PartitionAttributes prAttr = paf.create();
+            attr.setPartitionAttributes(prAttr);
+            cache.createRegion("region1", attr.create());
+            return cache.getDistributedSystem().getDistributedMember();
+          }
+        };
     return (DistributedMember) vm.invoke(createPrRegion);
   }
 
   protected DistributedMember setRedundancyZone(VM vm, final String zone) {
-    return (DistributedMember) vm.invoke(new SerializableCallable("set redundancy zone") {
-      public Object call() {
-        Properties props = new Properties();
-        props.setProperty(REDUNDANCY_ZONE, zone);
-        DistributedSystem system = getSystem(props);
-        return system.getDistributedMember();
-
-      }
-    });
+    return (DistributedMember)
+        vm.invoke(
+            new SerializableCallable("set redundancy zone") {
+              public Object call() {
+                Properties props = new Properties();
+                props.setProperty(REDUNDANCY_ZONE, zone);
+                DistributedSystem system = getSystem(props);
+                return system.getDistributedMember();
+              }
+            });
   }
 
   protected void createData(VM vm, final int startKey, final int endKey, final String value) {
     createData(vm, startKey, endKey, value, "region1");
   }
 
-  protected void createData(VM vm, final int startKey, final int endKey, final String value, final String regionName) {
-    SerializableRunnable createData = new SerializableRunnable("createData") {
+  protected void createData(
+      VM vm, final int startKey, final int endKey, final String value, final String regionName) {
+    SerializableRunnable createData =
+        new SerializableRunnable("createData") {
 
-      public void run() {
-        Cache cache = getCache();
-        Region region = cache.getRegion(regionName);
+          public void run() {
+            Cache cache = getCache();
+            Region region = cache.getRegion(regionName);
 
-        for (int i = startKey; i < endKey; i++) {
-          region.put(i, value);
-        }
-      }
-    };
+            for (int i = startKey; i < endKey; i++) {
+              region.put(i, value);
+            }
+          }
+        };
     vm.invoke(createData);
   }
 }

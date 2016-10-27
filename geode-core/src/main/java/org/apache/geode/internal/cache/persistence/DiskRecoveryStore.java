@@ -30,9 +30,8 @@ import org.apache.geode.internal.cache.versions.VersionSource;
 import org.apache.geode.internal.cache.versions.VersionTag;
 
 /**
- * Used by the disk code to store recovered data into the cache.
- * The primary implementor of this interface is LocalRegion.
- *
+ * Used by the disk code to store recovered data into the cache. The primary implementor of this
+ * interface is LocalRegion.
  *
  * @since GemFire prPersistSprint3
  */
@@ -65,11 +64,13 @@ public interface DiskRecoveryStore {
 
   public EvictionAttributes getEvictionAttributes();
 
-  public void initializeStats(long numEntriesInVM, long numOverflowOnDisk, long numOverflowBytesOnDisk);
+  public void initializeStats(
+      long numEntriesInVM, long numOverflowOnDisk, long numOverflowBytesOnDisk);
 
   public void recordRecoveredGCVersion(VersionSource member, long gcVersion);
 
-  public void recordRecoveredVersonHolder(VersionSource member, RegionVersionHolder versionHolder, boolean latestOplog);
+  public void recordRecoveredVersonHolder(
+      VersionSource member, RegionVersionHolder versionHolder, boolean latestOplog);
 
   public void recordRecoveredVersionTag(VersionTag tag);
 

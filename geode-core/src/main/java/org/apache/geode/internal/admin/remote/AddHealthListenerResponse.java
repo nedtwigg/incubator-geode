@@ -28,6 +28,7 @@ import org.apache.geode.distributed.internal.membership.*;
 
 /**
  * The response to adding a health listener.
+ *
  * @since GemFire 3.5
  */
 public final class AddHealthListenerResponse extends AdminResponse {
@@ -35,10 +36,11 @@ public final class AddHealthListenerResponse extends AdminResponse {
   int listenerId;
 
   /**
-   * Returns a <code>AddHealthListenerResponse</code> that will be returned to the
-   * specified recipient.
+   * Returns a <code>AddHealthListenerResponse</code> that will be returned to the specified
+   * recipient.
    */
-  public static AddHealthListenerResponse create(DistributionManager dm, InternalDistributedMember recipient, GemFireHealthConfig cfg) {
+  public static AddHealthListenerResponse create(
+      DistributionManager dm, InternalDistributedMember recipient, GemFireHealthConfig cfg) {
     AddHealthListenerResponse m = new AddHealthListenerResponse();
     m.setRecipient(recipient);
     dm.createHealthMonitor(recipient, cfg);
@@ -69,6 +71,9 @@ public final class AddHealthListenerResponse extends AdminResponse {
 
   @Override
   public String toString() {
-    return "AddHealthListenerResponse from " + this.getRecipient() + " listenerId=" + this.listenerId;
+    return "AddHealthListenerResponse from "
+        + this.getRecipient()
+        + " listenerId="
+        + this.listenerId;
   }
 }

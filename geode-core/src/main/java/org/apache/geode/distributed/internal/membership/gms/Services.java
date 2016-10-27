@@ -47,20 +47,21 @@ public class Services {
 
   private static final Logger logger = LogService.getLogger();
 
-  private static final ThreadGroup threadGroup = LoggingThreadGroup.createThreadGroup("GemFire Membership", logger);
+  private static final ThreadGroup threadGroup =
+      LoggingThreadGroup.createThreadGroup("GemFire Membership", logger);
 
   private static InternalLogWriter staticLogWriter;
   private static InternalLogWriter staticSecurityLogWriter;
 
-  final private Manager manager;
-  final private JoinLeave joinLeave;
+  private final Manager manager;
+  private final JoinLeave joinLeave;
   private Locator locator;
-  final private HealthMonitor healthMon;
-  final private Messenger messenger;
-  final private Authenticator auth;
-  final private ServiceConfig config;
-  final private DMStats stats;
-  final private Stopper cancelCriterion;
+  private final HealthMonitor healthMon;
+  private final Messenger messenger;
+  private final Authenticator auth;
+  private final ServiceConfig config;
+  private final DMStats stats;
+  private final Stopper cancelCriterion;
   private volatile boolean stopping;
   private volatile boolean stopped;
   private volatile Exception shutdownCause;
@@ -70,23 +71,17 @@ public class Services {
 
   private final Timer timer = new Timer("Geode Membership Timer", true);
 
-  /**
-   * A common logger for membership classes
-   */
+  /** A common logger for membership classes */
   public static Logger getLogger() {
     return logger;
   }
 
-  /**
-   * The thread group for all membership threads
-   */
+  /** The thread group for all membership threads */
   public static ThreadGroup getThreadGroup() {
     return threadGroup;
   }
 
-  /**
-   * a timer used for membership tasks
-   */
+  /** a timer used for membership tasks */
   public Timer getTimer() {
     return this.timer;
   }
@@ -95,9 +90,7 @@ public class Services {
     return this.stopped;
   }
 
-  /**
-   * for testing only - create a non-functional Services object with a Stopper
-   */
+  /** for testing only - create a non-functional Services object with a Stopper */
   public Services() {
     this.cancelCriterion = new Stopper();
     this.stats = null;
@@ -109,7 +102,11 @@ public class Services {
     this.auth = null;
   }
 
-  public Services(DistributedMembershipListener listener, DistributionConfig config, RemoteTransportConfig transport, DMStats stats) {
+  public Services(
+      DistributedMembershipListener listener,
+      DistributionConfig config,
+      RemoteTransportConfig transport,
+      DMStats stats) {
     this.cancelCriterion = new Stopper();
     this.stats = stats;
     this.config = new ServiceConfig(transport, config);
@@ -281,7 +278,8 @@ public class Services {
     manager.installView(v);
   }
 
-  public void memberSuspected(InternalDistributedMember initiator, InternalDistributedMember suspect, String reason) {
+  public void memberSuspected(
+      InternalDistributedMember initiator, InternalDistributedMember suspect, String reason) {
     try {
       joinLeave.memberSuspected(initiator, suspect, reason);
     } finally {
@@ -369,8 +367,7 @@ public class Services {
 
     @Override
     public String cancelInProgress() {
-      if (Services.this.shutdownCause != null)
-        return Services.this.shutdownCause.toString();
+      if (Services.this.shutdownCause != null) return Services.this.shutdownCause.toString();
       return reasonForStopping;
     }
 
@@ -387,7 +384,5 @@ public class Services {
         }
       }
     }
-
   }
-
 }

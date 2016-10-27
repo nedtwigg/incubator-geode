@@ -23,14 +23,17 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
 /**
- * Provides the LoggerContext and LoggerConfig for GemFire appenders to attach
- * to. These appenders include AlertAppender and LogWriterAppender.
- * 
+ * Provides the LoggerContext and LoggerConfig for GemFire appenders to attach to. These appenders
+ * include AlertAppender and LogWriterAppender.
  */
 public class AppenderContext {
 
-  /** "org.apache" is a good alternative for limiting alerts to just gemstone packages, otherwise ROOT is used */
-  public static final String LOGGER_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "logging.appenders.LOGGER";
+  /**
+   * "org.apache" is a good alternative for limiting alerts to just gemstone packages, otherwise
+   * ROOT is used
+   */
+  public static final String LOGGER_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "logging.appenders.LOGGER";
 
   public AppenderContext() {
     this(System.getProperty(LOGGER_PROPERTY, ""));

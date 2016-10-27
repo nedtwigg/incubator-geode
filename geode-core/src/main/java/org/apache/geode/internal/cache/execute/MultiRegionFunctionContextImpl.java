@@ -22,20 +22,23 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.cache.execute.ResultSender;
 
 /**
- * Context available when called using
- * {@link InternalFunctionService#onRegions(Set)}
- * 
- * 
+ * Context available when called using {@link InternalFunctionService#onRegions(Set)}
+ *
  * @since GemFire 6.5
- * 
  */
-public class MultiRegionFunctionContextImpl extends FunctionContextImpl implements MultiRegionFunctionContext {
+public class MultiRegionFunctionContextImpl extends FunctionContextImpl
+    implements MultiRegionFunctionContext {
 
   private Set<Region> regions = null;
 
   private final boolean isPossibleDuplicate;
 
-  public MultiRegionFunctionContextImpl(final String functionId, final Object args, ResultSender resultSender, Set<Region> regions, boolean isPossibleDuplicate) {
+  public MultiRegionFunctionContextImpl(
+      final String functionId,
+      final Object args,
+      ResultSender resultSender,
+      Set<Region> regions,
+      boolean isPossibleDuplicate) {
     super(functionId, args, resultSender);
     this.regions = regions;
     this.isPossibleDuplicate = isPossibleDuplicate;
@@ -48,5 +51,4 @@ public class MultiRegionFunctionContextImpl extends FunctionContextImpl implemen
   public boolean isPossibleDuplicate() {
     return isPossibleDuplicate;
   }
-
 }

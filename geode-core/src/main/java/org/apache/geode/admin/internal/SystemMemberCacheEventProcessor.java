@@ -38,8 +38,9 @@ import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * This class processes the message to be delivered to admin node.
- * [This needs to be redesigned and reimplemented... see 32887]
+ * This class processes the message to be delivered to admin node. [This needs to be redesigned and
+ * reimplemented... see 32887]
+ *
  * @since GemFire 5.0
  */
 public class SystemMemberCacheEventProcessor {
@@ -82,7 +83,8 @@ public class SystemMemberCacheEventProcessor {
       AdminDistributedSystemImpl admin = AdminDistributedSystemImpl.getConnectedInstance();
       if (admin == null) {
         if (logger.isDebugEnabled()) {
-          logger.debug("Ignoring message because there is no admin distributed system present: {}", this);
+          logger.debug(
+              "Ignoring message because there is no admin distributed system present: {}", this);
         }
         return; // probably shutting down or still connecting
       }
@@ -99,7 +101,8 @@ public class SystemMemberCacheEventProcessor {
             listener.afterCacheClose(event);
           }
         } else {
-          SystemMemberRegionEvent event = new SystemMemberRegionEventImpl(getSender(), this.op, this.regionPath);
+          SystemMemberRegionEvent event =
+              new SystemMemberRegionEventImpl(getSender(), this.op, this.regionPath);
           if (this.op.isRegionDestroy()) {
             listener.afterRegionLoss(event);
           } else {

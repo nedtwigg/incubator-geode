@@ -22,7 +22,7 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 import org.junit.experimental.categories.Category;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class GfshCommandsOverHttpSecurityTest extends GfshCommandsSecurityTest {
   public GfshCommandsOverHttpSecurityTest() {
     gfshConnection = new GfshShellConnectionRule(jmxPort, httpPort, true);

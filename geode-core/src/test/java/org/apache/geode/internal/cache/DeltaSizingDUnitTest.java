@@ -45,15 +45,11 @@ import org.apache.geode.test.dunit.SerializableCallable;
 import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.VM;
 
-/**
- *
- */
+/** */
 @Category(DistributedTest.class)
 public class DeltaSizingDUnitTest extends JUnit4CacheTestCase {
 
-  /**
-   * @param name
-   */
+  /** @param name */
   public DeltaSizingDUnitTest() {
     super();
   }
@@ -99,106 +95,118 @@ public class DeltaSizingDUnitTest extends JUnit4CacheTestCase {
   }
 
   private void doPeerTest(final boolean clone, final boolean copyOnRead) throws Exception {
-    AccessorFactory factory = new AccessorFactory() {
+    AccessorFactory factory =
+        new AccessorFactory() {
 
-      public Region<Integer, TestDelta> createRegion(Host host, Cache cache, int port1, int port2) {
-        AttributesFactory<Integer, TestDelta> attr = new AttributesFactory<Integer, TestDelta>();
-        attr.setCloningEnabled(clone);
-        PartitionAttributesFactory<Integer, TestDelta> paf = new PartitionAttributesFactory<Integer, TestDelta>();
-        paf.setRedundantCopies(1);
-        paf.setLocalMaxMemory(0);
-        PartitionAttributes<Integer, TestDelta> prAttr = paf.create();
-        attr.setPartitionAttributes(prAttr);
-        attr.setDataPolicy(DataPolicy.PARTITION);
-        Region<Integer, TestDelta> region = cache.createRegion("region1", attr.create());
-        return region;
-      }
-    };
+          public Region<Integer, TestDelta> createRegion(
+              Host host, Cache cache, int port1, int port2) {
+            AttributesFactory<Integer, TestDelta> attr =
+                new AttributesFactory<Integer, TestDelta>();
+            attr.setCloningEnabled(clone);
+            PartitionAttributesFactory<Integer, TestDelta> paf =
+                new PartitionAttributesFactory<Integer, TestDelta>();
+            paf.setRedundantCopies(1);
+            paf.setLocalMaxMemory(0);
+            PartitionAttributes<Integer, TestDelta> prAttr = paf.create();
+            attr.setPartitionAttributes(prAttr);
+            attr.setDataPolicy(DataPolicy.PARTITION);
+            Region<Integer, TestDelta> region = cache.createRegion("region1", attr.create());
+            return region;
+          }
+        };
 
     doTest(factory, clone, copyOnRead);
   }
 
   private void doClientTest(final boolean clone, final boolean copyOnRead) throws Exception {
-    AccessorFactory factory = new AccessorFactory() {
+    AccessorFactory factory =
+        new AccessorFactory() {
 
-      public Region<Integer, TestDelta> createRegion(Host host, Cache cache, int port1, int port2) {
-        AttributesFactory<Integer, TestDelta> attr = new AttributesFactory<Integer, TestDelta>();
-        PoolFactory pf = PoolManager.createFactory();
-        pf.addServer(NetworkUtils.getServerHostName(host), port1);
-        pf.addServer(NetworkUtils.getServerHostName(host), port2);
-        pf.create("pool");
-        attr.setCloningEnabled(clone);
-        attr.setDataPolicy(DataPolicy.EMPTY);
-        attr.setScope(Scope.LOCAL);
-        attr.setPoolName("pool");
-        Region<Integer, TestDelta> region = cache.createRegion("region1", attr.create());
-        return region;
-      }
-    };
+          public Region<Integer, TestDelta> createRegion(
+              Host host, Cache cache, int port1, int port2) {
+            AttributesFactory<Integer, TestDelta> attr =
+                new AttributesFactory<Integer, TestDelta>();
+            PoolFactory pf = PoolManager.createFactory();
+            pf.addServer(NetworkUtils.getServerHostName(host), port1);
+            pf.addServer(NetworkUtils.getServerHostName(host), port2);
+            pf.create("pool");
+            attr.setCloningEnabled(clone);
+            attr.setDataPolicy(DataPolicy.EMPTY);
+            attr.setScope(Scope.LOCAL);
+            attr.setPoolName("pool");
+            Region<Integer, TestDelta> region = cache.createRegion("region1", attr.create());
+            return region;
+          }
+        };
 
     doTest(factory, clone, copyOnRead);
   }
 
-  public void doTest(final AccessorFactory accessorFactory, final boolean clone, final boolean copyOnRead) throws InterruptedException {
+  public void doTest(
+      final AccessorFactory accessorFactory, final boolean clone, final boolean copyOnRead)
+      throws InterruptedException {
     final Host host = Host.getHost(0);
     VM vm0 = host.getVM(0);
     VM vm1 = host.getVM(1);
     VM vm2 = host.getVM(2);
 
-    SerializableCallable createDataRegion = new SerializableCallable("createRegion") {
-      public Object call() throws Exception {
-        Cache cache = getCache();
-        cache.setCopyOnRead(copyOnRead);
-        AttributesFactory attr = new AttributesFactory();
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        PartitionAttributes prAttr = paf.create();
-        attr.setPartitionAttributes(prAttr);
-        attr.setCloningEnabled(clone);
-        //        attr.setCacheWriter(new CacheWriterAdapter() {
-        //
-        //          @Override
-        //          public void beforeCreate(EntryEvent event)
-        //              throws CacheWriterException {
-        //            assertTrue(event.getOldValue() == null);
-        //            assertTrue(event.getNewValue() instanceof MyClass);
-        //          }
-        //
-        //          @Override
-        //          public void beforeUpdate(EntryEvent event)
-        //              throws CacheWriterException {
-        //            assertTrue(event.getOldValue() instanceof MyClass);
-        //            assertTrue(event.getNewValue() instanceof MyClass);
-        //            assertIndexDetailsEquals(event.getOldValue(), event.getNewValue());
-        //          }
-        //          
-        //        });
-        cache.createRegion("region1", attr.create());
-        CacheServer server = cache.addCacheServer();
-        int port = AvailablePortHelper.getRandomAvailableTCPPort();
-        server.setPort(port);
-        server.start();
-        return Integer.valueOf(port);
-      }
-    };
+    SerializableCallable createDataRegion =
+        new SerializableCallable("createRegion") {
+          public Object call() throws Exception {
+            Cache cache = getCache();
+            cache.setCopyOnRead(copyOnRead);
+            AttributesFactory attr = new AttributesFactory();
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            PartitionAttributes prAttr = paf.create();
+            attr.setPartitionAttributes(prAttr);
+            attr.setCloningEnabled(clone);
+            //        attr.setCacheWriter(new CacheWriterAdapter() {
+            //
+            //          @Override
+            //          public void beforeCreate(EntryEvent event)
+            //              throws CacheWriterException {
+            //            assertTrue(event.getOldValue() == null);
+            //            assertTrue(event.getNewValue() instanceof MyClass);
+            //          }
+            //
+            //          @Override
+            //          public void beforeUpdate(EntryEvent event)
+            //              throws CacheWriterException {
+            //            assertTrue(event.getOldValue() instanceof MyClass);
+            //            assertTrue(event.getNewValue() instanceof MyClass);
+            //            assertIndexDetailsEquals(event.getOldValue(), event.getNewValue());
+            //          }
+            //
+            //        });
+            cache.createRegion("region1", attr.create());
+            CacheServer server = cache.addCacheServer();
+            int port = AvailablePortHelper.getRandomAvailableTCPPort();
+            server.setPort(port);
+            server.start();
+            return Integer.valueOf(port);
+          }
+        };
 
     final Integer port1 = (Integer) vm0.invoke(createDataRegion);
     final Integer port2 = (Integer) vm1.invoke(createDataRegion);
 
-    SerializableRunnable createEmptyRegion = new SerializableRunnable("createRegion") {
-      public void run() {
-        Cache cache = getCache();
-        cache.setCopyOnRead(copyOnRead);
-        Region<Integer, TestDelta> region = accessorFactory.createRegion(host, cache, port1.intValue(), port2.intValue());
-        //This call just creates a bucket. We do an extra serialization on entries that trigger
-        //bucket creation. Thats a bug that should get fixed, but for now it's throwing off my
-        //assertions. So I'll force the creation of the bucket
-        region.put(new Integer(113), new TestDelta(false, "bogus"));
+    SerializableRunnable createEmptyRegion =
+        new SerializableRunnable("createRegion") {
+          public void run() {
+            Cache cache = getCache();
+            cache.setCopyOnRead(copyOnRead);
+            Region<Integer, TestDelta> region =
+                accessorFactory.createRegion(host, cache, port1.intValue(), port2.intValue());
+            //This call just creates a bucket. We do an extra serialization on entries that trigger
+            //bucket creation. Thats a bug that should get fixed, but for now it's throwing off my
+            //assertions. So I'll force the creation of the bucket
+            region.put(new Integer(113), new TestDelta(false, "bogus"));
 
-        //Now put an entry in that we will modify
-        region.put(new Integer(0), new TestDelta(false, "initial"));
-      }
-    };
+            //Now put an entry in that we will modify
+            region.put(new Integer(0), new TestDelta(false, "initial"));
+          }
+        };
 
     vm2.invoke(createEmptyRegion);
 
@@ -208,13 +216,14 @@ public class DeltaSizingDUnitTest extends JUnit4CacheTestCase {
     assertEquals(size, checkObjects(vm1, 1, 1, 0, clones));
 
     //Now apply a delta
-    vm2.invoke(new SerializableRunnable("update") {
-      public void run() {
-        Cache cache = getCache();
-        Region<Object, TestDelta> region = cache.getRegion("region1");
-        region.put(new Integer(0), new TestDelta(true, "changedAAAAAAAA"));
-      }
-    });
+    vm2.invoke(
+        new SerializableRunnable("update") {
+          public void run() {
+            Cache cache = getCache();
+            Region<Object, TestDelta> region = cache.getRegion("region1");
+            region.put(new Integer(0), new TestDelta(true, "changedAAAAAAAA"));
+          }
+        });
 
     clones = 0;
     if (copyOnRead) {
@@ -230,13 +239,14 @@ public class DeltaSizingDUnitTest extends JUnit4CacheTestCase {
     assertEquals(size, checkObjects(vm1, 1, 1, 1, clones));
 
     //Try another
-    vm2.invoke(new SerializableRunnable("update") {
-      public void run() {
-        Cache cache = getCache();
-        Region<Object, TestDelta> region = cache.getRegion("region1");
-        region.put(new Integer(0), new TestDelta(true, "changedBBBBBBB"));
-      }
-    });
+    vm2.invoke(
+        new SerializableRunnable("update") {
+          public void run() {
+            Cache cache = getCache();
+            Region<Object, TestDelta> region = cache.getRegion("region1");
+            region.put(new Integer(0), new TestDelta(true, "changedBBBBBBB"));
+          }
+        });
 
     if (clone || copyOnRead) {
       //1 clone to copy the object when we apply the delta.
@@ -252,17 +262,23 @@ public class DeltaSizingDUnitTest extends JUnit4CacheTestCase {
     assertEquals(size, checkObjects(vm1, 1, 1, 2, clones));
   }
 
-  private long checkObjects(VM vm, final int serializations, final int deserializations, final int deltas, final int clones) {
-    SerializableCallable getSize = new SerializableCallable("check objects") {
-      public Object call() {
-        GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-        PartitionedRegion region = (PartitionedRegion) cache.getRegion("region1");
-        long size = region.getDataStore().getBucketSize(0);
-        TestDelta value = (TestDelta) region.get(Integer.valueOf(0));
-        value.checkFields(serializations, deserializations, deltas, clones);
-        return Long.valueOf(size);
-      }
-    };
+  private long checkObjects(
+      VM vm,
+      final int serializations,
+      final int deserializations,
+      final int deltas,
+      final int clones) {
+    SerializableCallable getSize =
+        new SerializableCallable("check objects") {
+          public Object call() {
+            GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+            PartitionedRegion region = (PartitionedRegion) cache.getRegion("region1");
+            long size = region.getDataStore().getBucketSize(0);
+            TestDelta value = (TestDelta) region.get(Integer.valueOf(0));
+            value.checkFields(serializations, deserializations, deltas, clones);
+            return Long.valueOf(size);
+          }
+        };
     Object size = vm.invoke(getSize);
     return ((Long) size).longValue();
   }
@@ -270,5 +286,4 @@ public class DeltaSizingDUnitTest extends JUnit4CacheTestCase {
   private static interface AccessorFactory extends Serializable {
     Region<Integer, TestDelta> createRegion(Host host, Cache cache, int port1, int port2);
   }
-
 }

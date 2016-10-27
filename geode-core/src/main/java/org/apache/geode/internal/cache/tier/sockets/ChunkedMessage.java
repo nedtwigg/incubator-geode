@@ -30,59 +30,48 @@ import java.nio.ByteBuffer;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Class <code>ChunkedMessage</code> is used to send messages from a server to
- * a client divided into chunks.
- * 
- * This class encapsulates the wire protocol. It provides accessors to encode
- * and decode a message and serialize it out to the wire.
- * 
+ * Class <code>ChunkedMessage</code> is used to send messages from a server to a client divided into
+ * chunks.
+ *
+ * <p>This class encapsulates the wire protocol. It provides accessors to encode and decode a
+ * message and serialize it out to the wire.
+ *
  * <PRE>
- * 
+ *
  * msgType - int - 4 bytes type of message, types enumerated below
- * 
+ *
  * numberOfParts - int - 4 bytes number of elements (LEN-BYTE* pairs) contained
  * in the payload. Message can be a multi-part message
- * 
+ *
  * transId - int - 4 bytes filled in by the requestor, copied back into the
  * response len1 part1 . . . lenn partn
- * 
+ *
  * </PRE>
- * 
- * We read the fixed length 15 bytes into a byte[] and populate a bytebuffer We
- * read the fixed length header tokens from the header parse the header and use
- * information contained in there to read the payload.
- * 
- * <P>
- * 
- * See also <a href="package-summary.html#messages">package description </a>.
- * 
+ *
+ * We read the fixed length 15 bytes into a byte[] and populate a bytebuffer We read the fixed
+ * length header tokens from the header parse the header and use information contained in there to
+ * read the payload.
+ *
+ * <p>See also <a href="package-summary.html#messages">package description </a>.
+ *
  * @see org.apache.geode.internal.cache.tier.MessageType
- * 
- * 
  * @since GemFire 4.2
  */
 public class ChunkedMessage extends Message {
   private static final Logger logger = LogService.getLogger();
 
   /**
-   * The chunk header length.
-   * The chunk header contains a 5-byte int chunk length (4 bytes for the chunk
-   * length and 1 byte for the last chunk boolean)
+   * The chunk header length. The chunk header contains a 5-byte int chunk length (4 bytes for the
+   * chunk length and 1 byte for the last chunk boolean)
    */
   private static final int CHUNK_HEADER_LENGTH = 5;
-  /**
-   * The main header length. The main header contains 3 4-byte ints
-   */
+  /** The main header length. The main header contains 3 4-byte ints */
   private static final int CHUNK_MSG_HEADER_LENGTH = 12;
 
-  /**
-   * The chunk's payload length
-   */
+  /** The chunk's payload length */
   protected int chunkLength;
 
-  /**
-   * Whether this is the last chunk
-   */
+  /** Whether this is the last chunk */
   protected byte lastChunk;
 
   //  /**
@@ -91,8 +80,8 @@ public class ChunkedMessage extends Message {
   //  private static final int HEADER_LENGTH = 12;
 
   /**
-   * Initially false; set to true once the message header is sent; set back to
-   * false when last chunk is sent.
+   * Initially false; set to true once the message header is sent; set back to false when last chunk
+   * is sent.
    */
   private transient boolean headerSent = false;
 
@@ -108,6 +97,7 @@ public class ChunkedMessage extends Message {
 
   /**
    * Creates a new message with the given number of parts
+   *
    * @param numberOfParts The number of parts to create
    */
   public ChunkedMessage(int numberOfParts, Version version) {
@@ -116,6 +106,7 @@ public class ChunkedMessage extends Message {
 
   /**
    * Returns the header length.
+   *
    * @return the header length
    */
   @Override
@@ -125,6 +116,7 @@ public class ChunkedMessage extends Message {
 
   /**
    * Sets whether this is the last chunk.
+   *
    * @param lastChunk Whether this is the last chunk
    */
   public void setLastChunk(boolean lastChunk) {
@@ -145,7 +137,7 @@ public class ChunkedMessage extends Message {
       //if not then inform client so that it will refresh pr-meta-data
       if (((b & 2) == 2)) {
 
-        this.lastChunk |= 0x04;//setting third bit, we are okay
+        this.lastChunk |= 0x04; //setting third bit, we are okay
       }
     }
   }
@@ -161,12 +153,12 @@ public class ChunkedMessage extends Message {
   }
 
   public void setServerConnection(ServerConnection servConn) {
-    if (this.sc != servConn)
-      throw new IllegalStateException("this.sc was not correctly set");
+    if (this.sc != servConn) throw new IllegalStateException("this.sc was not correctly set");
   }
 
   /**
    * Answers whether this is the last chunk.
+   *
    * @return whether this is the last chunk
    */
   public boolean isLastChunk() {
@@ -179,16 +171,14 @@ public class ChunkedMessage extends Message {
 
   /**
    * Returns the chunk length.
-   * 
+   *
    * @return the chunk length
    */
   public int getChunkLength() {
     return this.chunkLength;
   }
 
-  /**
-   *  Populates the header with information received via socket
-   */
+  /** Populates the header with information received via socket */
   public void readHeader() throws IOException {
     if (this.socket != null) {
       final ByteBuffer cb = getCommBuffer();
@@ -199,7 +189,9 @@ public class ChunkedMessage extends Message {
         final int txid = cb.getInt();
         cb.clear();
         if (!MessageType.validate(type)) {
-          throw new IOException(LocalizedStrings.ChunkedMessage_INVALID_MESSAGE_TYPE_0_WHILE_READING_HEADER.toLocalizedString(Integer.valueOf(type)));
+          throw new IOException(
+              LocalizedStrings.ChunkedMessage_INVALID_MESSAGE_TYPE_0_WHILE_READING_HEADER
+                  .toLocalizedString(Integer.valueOf(type)));
         }
 
         // Set the header and payload fields only after receiving all the
@@ -214,9 +206,7 @@ public class ChunkedMessage extends Message {
     }
   }
 
-  /**
-   * Reads a chunk of this message.
-   */
+  /** Reads a chunk of this message. */
   public void receiveChunk() throws IOException {
     if (this.socket != null) {
       synchronized (getCommBuffer()) {
@@ -227,9 +217,7 @@ public class ChunkedMessage extends Message {
     }
   }
 
-  /**
-   * Reads a chunk of this message.
-   */
+  /** Reads a chunk of this message. */
   private void readChunk() throws IOException {
     final ByteBuffer cb = getCommBuffer();
     clearParts();
@@ -239,7 +227,8 @@ public class ChunkedMessage extends Message {
       int bytesRead = 0;
       bytesRead = is.read(cb.array(), totalBytesRead, CHUNK_HEADER_LENGTH - totalBytesRead);
       if (bytesRead == -1) {
-        throw new EOFException(LocalizedStrings.ChunkedMessage_CHUNK_READ_ERROR_CONNECTION_RESET.toLocalizedString());
+        throw new EOFException(
+            LocalizedStrings.ChunkedMessage_CHUNK_READ_ERROR_CONNECTION_RESET.toLocalizedString());
       }
       totalBytesRead += bytesRead;
       if (this.msgStats != null) {
@@ -270,9 +259,7 @@ public class ChunkedMessage extends Message {
     readPayloadFields(this.numberOfParts, this.chunkLength);
   }
 
-  /**
-   * Sends the header of this message.
-   */
+  /** Sends the header of this message. */
   public void sendHeader() throws IOException {
     if (this.socket != null) {
       synchronized (getCommBuffer()) {
@@ -289,16 +276,12 @@ public class ChunkedMessage extends Message {
     }
   }
 
-  /**
-   * Return true if the header for this message has already been sent.
-   */
+  /** Return true if the header for this message has already been sent. */
   public boolean headerHasBeenSent() {
     return this.headerSent;
   }
 
-  /**
-   * Sends a chunk of this message.
-   */
+  /** Sends a chunk of this message. */
   public void sendChunk() throws IOException {
     if (isLastChunk()) {
       this.headerSent = false;
@@ -306,21 +289,16 @@ public class ChunkedMessage extends Message {
     sendBytes(true);
   }
 
-  /**
-   * Sends a chunk of this message.
-   */
+  /** Sends a chunk of this message. */
   public void sendChunk(ServerConnection servConn) throws IOException {
-    if (this.sc != servConn)
-      throw new IllegalStateException("this.sc was not correctly set");
+    if (this.sc != servConn) throw new IllegalStateException("this.sc was not correctly set");
     sendChunk();
   }
 
   @Override
   protected Part getSecurityPart() {
-    if (this.isLastChunk())
-      return super.getSecurityPart();
-    else
-      return null;
+    if (this.isLastChunk()) return super.getSecurityPart();
+    else return null;
   }
 
   @Override
@@ -345,8 +323,7 @@ public class ChunkedMessage extends Message {
   }
 
   /**
-   * Converts the header of this message into a <code>byte</code> array using a
-   * {@link ByteBuffer}.
+   * Converts the header of this message into a <code>byte</code> array using a {@link ByteBuffer}.
    */
   protected void getHeaderBytesForWrite() {
     final ByteBuffer cb = getCommBuffer();

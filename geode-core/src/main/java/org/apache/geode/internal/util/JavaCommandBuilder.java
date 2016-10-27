@@ -23,16 +23,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * A utility class for building up arguments used in spawning another VM
- **/
+/** A utility class for building up arguments used in spawning another VM */
 public class JavaCommandBuilder {
 
   /**
    * Builds a command line containing all basic arguments required by java
+   *
    * @return cmdVec - The caller can then add additional arguments
    */
-  public static List<String> buildCommand(final String className, final String additionalClasspath, final Properties systemProperties, final List<String> jvmOptions) {
+  public static List<String> buildCommand(
+      final String className,
+      final String additionalClasspath,
+      final Properties systemProperties,
+      final List<String> jvmOptions) {
     final List<String> javaCommandLine = new ArrayList<String>();
 
     final File javaBinDir = new File(System.getProperty("java.home"), "bin");
@@ -79,12 +82,16 @@ public class JavaCommandBuilder {
 
   private static String getDashServerArg(final File javaBinDir) {
     // the gemfire.vmarg.dashserver property allows customers to add a custom argument in place of -server
-    final String altDashServerArg = System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "vmarg.dashserver", null);
-    return (altDashServerArg != null ? altDashServerArg : (omitDashServerArg(javaBinDir) ? null : "-server"));
+    final String altDashServerArg =
+        System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "vmarg.dashserver", null);
+    return (altDashServerArg != null
+        ? altDashServerArg
+        : (omitDashServerArg(javaBinDir) ? null : "-server"));
   }
 
   /**
    * Determine if the -server argument should be omitted for this vm
+   *
    * @param javaBinDir - the path to the bin directory of java
    * @return true if the VM is known not to support the -server arg
    */
@@ -116,5 +123,4 @@ public class JavaCommandBuilder {
 
     return false;
   }
-
 }

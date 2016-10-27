@@ -79,9 +79,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.runners.CategoryWithParameterizedRunnerFactory;
 import org.apache.geode.util.test.TestUtil;
 
-/**
- * @since GemFire 8.0
- */
+/** @since GemFire 8.0 */
 @Category(DistributedTest.class)
 @RunWith(Parameterized.class)
 @Parameterized.UseParametersRunnerFactory(CategoryWithParameterizedRunnerFactory.class)
@@ -92,8 +90,7 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   private final String PEOPLE_REGION_NAME = "People";
   private final String INVALID_CLIENT_ALIAS = "INVALID_CLIENT_ALIAS";
 
-  @Parameterized.Parameter
-  public String urlContext;
+  @Parameterized.Parameter public String urlContext;
 
   @Parameterized.Parameters
   public static Collection<String> data() {
@@ -116,7 +113,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   }
 
   private File findTrustedJKSWithSingleEntry() {
-    return new File(TestUtil.getResourcePath(RestAPIsWithSSLDUnitTest.class, "/ssl/trusted.keystore"));
+    return new File(
+        TestUtil.getResourcePath(RestAPIsWithSSLDUnitTest.class, "/ssl/trusted.keystore"));
   }
 
   private File findTrustStoreJKSForPath(Properties props) {
@@ -139,7 +137,13 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   }
 
   @SuppressWarnings("deprecation")
-  protected int startBridgeServer(String hostName, int restServicePort, final String locators, final String[] regions, final Properties sslProperties, boolean clusterLevel) {
+  protected int startBridgeServer(
+      String hostName,
+      int restServicePort,
+      final String locators,
+      final String[] regions,
+      final Properties sslProperties,
+      boolean clusterLevel) {
 
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
@@ -184,7 +188,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
     region.put("2", new Person(102L, "Sachin", "Ramesh", "Tendulkar", new Date(), Gender.MALE));
     region.put("3", new Person(103L, "Saurabh", "Baburav", "Ganguly", new Date(), Gender.MALE));
     region.put("4", new Person(104L, "Rahul", "subrymanyam", "Dravid", new Date(), Gender.MALE));
-    region.put("5", new Person(105L, "Jhulan", "Chidambaram", "Goswami", new Date(), Gender.FEMALE));
+    region.put(
+        "5", new Person(105L, "Jhulan", "Chidambaram", "Goswami", new Date(), Gender.FEMALE));
 
     Map<String, Object> userMap = new HashMap<String, Object>();
     userMap.put("6", new Person(101L, "Rahul", "Rajiv", "Gndhi", new Date(), Gender.MALE));
@@ -193,7 +198,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
     userMap.put("9", new Person(104L, "Soniya", "Rajiv", "Gandhi", new Date(), Gender.FEMALE));
     userMap.put("10", new Person(104L, "Priyanka", "Robert", "Gandhi", new Date(), Gender.FEMALE));
     userMap.put("11", new Person(104L, "Murali", "Manohar", "Joshi", new Date(), Gender.MALE));
-    userMap.put("12", new Person(104L, "Lalkrishna", "Parmhansh", "Advani", new Date(), Gender.MALE));
+    userMap.put(
+        "12", new Person(104L, "Lalkrishna", "Parmhansh", "Advani", new Date(), Gender.MALE));
     userMap.put("13", new Person(104L, "Shushma", "kumari", "Swaraj", new Date(), Gender.FEMALE));
     userMap.put("14", new Person(104L, "Arun", "raman", "jetly", new Date(), Gender.MALE));
     userMap.put("15", new Person(104L, "Amit", "kumar", "shah", new Date(), Gender.MALE));
@@ -202,10 +208,10 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
     region.putAll(userMap);
 
     clientCache.getLogger().info("Gemfire Cache Client: Puts successfully done");
-
   }
 
-  private String startInfraWithSSL(final Properties sslProperties, boolean clusterLevel) throws Exception {
+  private String startInfraWithSSL(final Properties sslProperties, boolean clusterLevel)
+      throws Exception {
 
     final Host host = Host.getHost(0);
     VM locator = host.getVM(0);
@@ -217,29 +223,46 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
     final int locatorPort = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
     final String locatorHostName = NetworkUtils.getServerHostName(locator.getHost());
 
-    locator.invoke("Start Locator", () -> {
-      startLocator(locatorHostName, locatorPort, "");
-    });
+    locator.invoke(
+        "Start Locator",
+        () -> {
+          startLocator(locatorHostName, locatorPort, "");
+        });
 
     // find locators
     String locators = locatorHostName + "[" + locatorPort + "]";
 
     // start manager (peer cache)
-    manager.invoke("StartManager", () -> startManager(locators, new String[] { REGION_NAME }, sslProperties));
+    manager.invoke(
+        "StartManager", () -> startManager(locators, new String[] {REGION_NAME}, sslProperties));
 
     // start startBridgeServer With RestService enabled
-    String restEndpoint = server.invoke("startBridgeServerWithRestServiceOnInVM", () -> {
-      final String hostName = server.getHost().getHostName();
-      final int restServicePort = AvailablePortHelper.getRandomAvailableTCPPort();
-      startBridgeServer(hostName, restServicePort, locators, new String[] { REGION_NAME }, sslProperties, clusterLevel);
-      return "https://" + hostName + ":" + restServicePort + urlContext + "/v1";
-    });
+    String restEndpoint =
+        server.invoke(
+            "startBridgeServerWithRestServiceOnInVM",
+            () -> {
+              final String hostName = server.getHost().getHostName();
+              final int restServicePort = AvailablePortHelper.getRandomAvailableTCPPort();
+              startBridgeServer(
+                  hostName,
+                  restServicePort,
+                  locators,
+                  new String[] {REGION_NAME},
+                  sslProperties,
+                  clusterLevel);
+              return "https://" + hostName + ":" + restServicePort + urlContext + "/v1";
+            });
 
     // create a client cache
-    client.invoke("Create ClientCache", () -> {
-      new ClientCacheFactory().setPdxReadSerialized(true).addPoolLocator(locatorHostName, locatorPort).create();
-      return null;
-    });
+    client.invoke(
+        "Create ClientCache",
+        () -> {
+          new ClientCacheFactory()
+              .setPdxReadSerialized(true)
+              .addPoolLocator(locatorHostName, locatorPort)
+              .create();
+          return null;
+        });
 
     // create region in Manager, peer cache and Client cache nodes
     manager.invoke("createRegionInManager", () -> createRegionInCache());
@@ -250,7 +273,6 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
     client.invoke("doPutsInClientCache", () -> doPutsInClientCache());
 
     return restEndpoint;
-
   }
 
   private void closeInfra() throws Exception {
@@ -277,28 +299,43 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
     }
   }
 
-  private void sslPropertyConverter(Properties properties, Properties newProperties, String propertyName, String newPropertyName) {
+  private void sslPropertyConverter(
+      Properties properties,
+      Properties newProperties,
+      String propertyName,
+      String newPropertyName) {
     String property = properties.getProperty(propertyName);
     if (property != null) {
-      newProperties.setProperty((newPropertyName != null ? newPropertyName : propertyName), property);
+      newProperties.setProperty(
+          (newPropertyName != null ? newPropertyName : propertyName), property);
     }
   }
 
-  /**
-   * @Deprecated once the legacy SSL properties have been removed we need to remove this logic.
-   */
+  /** @Deprecated once the legacy SSL properties have been removed we need to remove this logic. */
   @Deprecated()
-  private Properties configureSSL(Properties props, Properties sslProperties, boolean clusterLevel) {
+  private Properties configureSSL(
+      Properties props, Properties sslProperties, boolean clusterLevel) {
 
     if (clusterLevel) {
       sslPropertyConverter(sslProperties, props, HTTP_SERVICE_SSL_ENABLED, CLUSTER_SSL_ENABLED);
       sslPropertyConverter(sslProperties, props, HTTP_SERVICE_SSL_KEYSTORE, CLUSTER_SSL_KEYSTORE);
-      sslPropertyConverter(sslProperties, props, HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, CLUSTER_SSL_KEYSTORE_PASSWORD);
-      sslPropertyConverter(sslProperties, props, HTTP_SERVICE_SSL_KEYSTORE_TYPE, CLUSTER_SSL_KEYSTORE_TYPE);
+      sslPropertyConverter(
+          sslProperties, props, HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, CLUSTER_SSL_KEYSTORE_PASSWORD);
+      sslPropertyConverter(
+          sslProperties, props, HTTP_SERVICE_SSL_KEYSTORE_TYPE, CLUSTER_SSL_KEYSTORE_TYPE);
       sslPropertyConverter(sslProperties, props, HTTP_SERVICE_SSL_PROTOCOLS, CLUSTER_SSL_PROTOCOLS);
-      sslPropertyConverter(sslProperties, props, HTTP_SERVICE_SSL_REQUIRE_AUTHENTICATION, CLUSTER_SSL_REQUIRE_AUTHENTICATION);
-      sslPropertyConverter(sslProperties, props, HTTP_SERVICE_SSL_TRUSTSTORE, CLUSTER_SSL_TRUSTSTORE);
-      sslPropertyConverter(sslProperties, props, HTTP_SERVICE_SSL_TRUSTSTORE_PASSWORD, CLUSTER_SSL_TRUSTSTORE_PASSWORD);
+      sslPropertyConverter(
+          sslProperties,
+          props,
+          HTTP_SERVICE_SSL_REQUIRE_AUTHENTICATION,
+          CLUSTER_SSL_REQUIRE_AUTHENTICATION);
+      sslPropertyConverter(
+          sslProperties, props, HTTP_SERVICE_SSL_TRUSTSTORE, CLUSTER_SSL_TRUSTSTORE);
+      sslPropertyConverter(
+          sslProperties,
+          props,
+          HTTP_SERVICE_SSL_TRUSTSTORE_PASSWORD,
+          CLUSTER_SSL_TRUSTSTORE_PASSWORD);
     } else {
       sslPropertyConverter(sslProperties, props, HTTP_SERVICE_SSL_ENABLED, null);
       sslPropertyConverter(sslProperties, props, HTTP_SERVICE_SSL_KEYSTORE, null);
@@ -326,7 +363,9 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
     return props;
   }
 
-  private int startManager(final String locators, final String[] regions, final Properties sslProperties) throws IOException {
+  private int startManager(
+      final String locators, final String[] regions, final Properties sslProperties)
+      throws IOException {
 
     IgnoredException.addIgnoredException("java.net.BindException");
     IgnoredException.addIgnoredException("java.rmi.server.ExportException");
@@ -343,12 +382,17 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
     while (true) {
       try {
         DistributedSystem ds = getSystem(props);
-        System.out.println("Creating cache with http-service-port " + props.getProperty(HTTP_SERVICE_PORT, "7070") + " and jmx-manager-port " + props.getProperty(JMX_MANAGER_PORT, "1099"));
+        System.out.println(
+            "Creating cache with http-service-port "
+                + props.getProperty(HTTP_SERVICE_PORT, "7070")
+                + " and jmx-manager-port "
+                + props.getProperty(JMX_MANAGER_PORT, "1099"));
         cache = CacheFactory.create(ds);
         System.out.println("Successfully created cache.");
         break;
       } catch (ManagementException ex) {
-        if ((ex.getCause() instanceof BindException) || (ex.getCause() != null && ex.getCause().getCause() instanceof BindException)) {
+        if ((ex.getCause() instanceof BindException)
+            || (ex.getCause() != null && ex.getCause().getCause() instanceof BindException)) {
           //close cache and disconnect
           GemFireCacheImpl existingInstance = GemFireCacheImpl.getInstance();
           if (existingInstance != null) {
@@ -394,7 +438,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   private void createRegionInCache() {
     Cache cache = GemFireCacheImpl.getInstance();
     assertNotNull(cache);
-    RegionFactory<String, Object> regionFactory = cache.createRegionFactory(RegionShortcut.REPLICATE);
+    RegionFactory<String, Object> regionFactory =
+        cache.createRegionFactory(RegionShortcut.REPLICATE);
     regionFactory.create(PEOPLE_REGION_NAME);
   }
 
@@ -410,21 +455,30 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
 
     // this is needed
     SSLContextBuilder custom = SSLContexts.custom();
-    SSLContextBuilder sslContextBuilder = custom.loadTrustMaterial(clientTrust, new TrustSelfSignedStrategy());
-    SSLContext sslcontext = sslContextBuilder.loadKeyMaterial(clientKeys, "password".toCharArray(), (aliases, socket) -> {
-      if (aliases.size() == 1) {
-        return aliases.keySet().stream().findFirst().get();
-      }
-      if (!StringUtils.isEmpty(properties.getProperty(INVALID_CLIENT_ALIAS))) {
-        return properties.getProperty(INVALID_CLIENT_ALIAS);
-      } else {
-        return properties.getProperty(SSL_WEB_ALIAS);
-      }
-    }).build();
+    SSLContextBuilder sslContextBuilder =
+        custom.loadTrustMaterial(clientTrust, new TrustSelfSignedStrategy());
+    SSLContext sslcontext =
+        sslContextBuilder
+            .loadKeyMaterial(
+                clientKeys,
+                "password".toCharArray(),
+                (aliases, socket) -> {
+                  if (aliases.size() == 1) {
+                    return aliases.keySet().stream().findFirst().get();
+                  }
+                  if (!StringUtils.isEmpty(properties.getProperty(INVALID_CLIENT_ALIAS))) {
+                    return properties.getProperty(INVALID_CLIENT_ALIAS);
+                  } else {
+                    return properties.getProperty(SSL_WEB_ALIAS);
+                  }
+                })
+            .build();
 
     // Host checking is disabled here , as tests might run on multiple hosts and
     // host entries can not be assumed
-    SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslcontext, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+    SSLConnectionSocketFactory sslConnectionSocketFactory =
+        new SSLConnectionSocketFactory(
+            sslcontext, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 
     return HttpClients.custom().setSSLSocketFactory(sslConnectionSocketFactory).build();
   }
@@ -484,8 +538,12 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   public void testSimpleSSLWithMultiKey_KeyStore() throws Exception {
 
     Properties props = new Properties();
-    props.setProperty(SSL_KEYSTORE, TestUtil.getResourcePath(getClass(), "/org/apache/geode/internal/net/multiKey.jks"));
-    props.setProperty(SSL_TRUSTSTORE, TestUtil.getResourcePath(getClass(), "/org/apache/geode/internal/net/multiKeyTrust.jks"));
+    props.setProperty(
+        SSL_KEYSTORE,
+        TestUtil.getResourcePath(getClass(), "/org/apache/geode/internal/net/multiKey.jks"));
+    props.setProperty(
+        SSL_TRUSTSTORE,
+        TestUtil.getResourcePath(getClass(), "/org/apache/geode/internal/net/multiKeyTrust.jks"));
     props.setProperty(SSL_KEYSTORE_PASSWORD, "password");
     props.setProperty(SSL_TRUSTSTORE_PASSWORD, "password");
     props.setProperty(SSL_KEYSTORE_TYPE, "JKS");
@@ -500,8 +558,12 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   public void testSimpleSSLWithMultiKey_KeyStore_WithInvalidClientKey() throws Exception {
 
     Properties props = new Properties();
-    props.setProperty(SSL_KEYSTORE, TestUtil.getResourcePath(getClass(), "/org/apache/geode/internal/net/multiKey.jks"));
-    props.setProperty(SSL_TRUSTSTORE, TestUtil.getResourcePath(getClass(), "/org/apache/geode/internal/net/multiKeyTrust.jks"));
+    props.setProperty(
+        SSL_KEYSTORE,
+        TestUtil.getResourcePath(getClass(), "/org/apache/geode/internal/net/multiKey.jks"));
+    props.setProperty(
+        SSL_TRUSTSTORE,
+        TestUtil.getResourcePath(getClass(), "/org/apache/geode/internal/net/multiKeyTrust.jks"));
     props.setProperty(SSL_KEYSTORE_PASSWORD, "password");
     props.setProperty(SSL_TRUSTSTORE_PASSWORD, "password");
     props.setProperty(SSL_KEYSTORE_TYPE, "JKS");
@@ -669,7 +731,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
 
     Properties props = new Properties();
     props.setProperty(HTTP_SERVICE_SSL_ENABLED, "true");
-    props.setProperty(HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
+    props.setProperty(
+        HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
     props.setProperty(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, "password");
     props.setProperty(HTTP_SERVICE_SSL_KEYSTORE_TYPE, "JKS");
     String restEndpoint = startInfraWithSSL(props, false);
@@ -680,7 +743,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   public void testSSLWithoutKeyStoreTypeLegacy() throws Exception {
     Properties props = new Properties();
     props.setProperty(HTTP_SERVICE_SSL_ENABLED, "true");
-    props.setProperty(HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
+    props.setProperty(
+        HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
     props.setProperty(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, "password");
 
     String restEndpoint = startInfraWithSSL(props, false);
@@ -691,7 +755,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   public void testSSLWithSSLProtocolLegacy() throws Exception {
     Properties props = new Properties();
     props.setProperty(HTTP_SERVICE_SSL_ENABLED, "true");
-    props.setProperty(HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
+    props.setProperty(
+        HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
     props.setProperty(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, "password");
     props.setProperty(HTTP_SERVICE_SSL_PROTOCOLS, "SSL");
 
@@ -703,7 +768,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   public void testSSLWithTLSProtocolLegacy() throws Exception {
     Properties props = new Properties();
     props.setProperty(HTTP_SERVICE_SSL_ENABLED, "true");
-    props.setProperty(HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
+    props.setProperty(
+        HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
     props.setProperty(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, "password");
     props.setProperty(HTTP_SERVICE_SSL_PROTOCOLS, "TLS");
 
@@ -715,7 +781,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   public void testSSLWithTLSv11ProtocolLegacy() throws Exception {
     Properties props = new Properties();
     props.setProperty(HTTP_SERVICE_SSL_ENABLED, "true");
-    props.setProperty(HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
+    props.setProperty(
+        HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
     props.setProperty(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, "password");
     props.setProperty(HTTP_SERVICE_SSL_PROTOCOLS, "TLSv1.1");
 
@@ -727,7 +794,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   public void testSSLWithTLSv12ProtocolLegacy() throws Exception {
     Properties props = new Properties();
     props.setProperty(HTTP_SERVICE_SSL_ENABLED, "true");
-    props.setProperty(HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
+    props.setProperty(
+        HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
     props.setProperty(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, "password");
     props.setProperty(HTTP_SERVICE_SSL_PROTOCOLS, "TLSv1.2");
 
@@ -739,7 +807,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   public void testWithMultipleProtocolLegacy() throws Exception {
     Properties props = new Properties();
     props.setProperty(HTTP_SERVICE_SSL_ENABLED, "true");
-    props.setProperty(HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
+    props.setProperty(
+        HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
     props.setProperty(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, "password");
     props.setProperty(HTTP_SERVICE_SSL_PROTOCOLS, "SSL,TLSv1.2");
 
@@ -752,7 +821,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
     System.setProperty("javax.net.debug", "ssl");
     Properties props = new Properties();
     props.setProperty(HTTP_SERVICE_SSL_ENABLED, "true");
-    props.setProperty(HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
+    props.setProperty(
+        HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
     props.setProperty(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, "password");
     props.setProperty(HTTP_SERVICE_SSL_PROTOCOLS, "TLSv1.2");
 
@@ -771,7 +841,8 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   public void testSSLWithMultipleCipherSuiteLegacy() throws Exception {
     Properties props = new Properties();
     props.setProperty(HTTP_SERVICE_SSL_ENABLED, "true");
-    props.setProperty(HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
+    props.setProperty(
+        HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
     props.setProperty(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, "password");
     props.setProperty(HTTP_SERVICE_SSL_PROTOCOLS, "TLSv1.2");
 
@@ -790,17 +861,18 @@ public class RestAPIsWithSSLDUnitTest extends LocatorTestBase {
   public void testMutualAuthenticationLegacy() throws Exception {
     Properties props = new Properties();
     props.setProperty(HTTP_SERVICE_SSL_ENABLED, "true");
-    props.setProperty(HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
+    props.setProperty(
+        HTTP_SERVICE_SSL_KEYSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
     props.setProperty(HTTP_SERVICE_SSL_KEYSTORE_PASSWORD, "password");
     props.setProperty(HTTP_SERVICE_SSL_PROTOCOLS, "SSL");
     props.setProperty(HTTP_SERVICE_SSL_REQUIRE_AUTHENTICATION, "true");
 
-    props.setProperty(HTTP_SERVICE_SSL_TRUSTSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
+    props.setProperty(
+        HTTP_SERVICE_SSL_TRUSTSTORE, findTrustedJKSWithSingleEntry().getCanonicalPath());
 
     props.setProperty(HTTP_SERVICE_SSL_TRUSTSTORE_PASSWORD, "password");
 
     String restEndpoint = startInfraWithSSL(props, false);
     validateConnection(restEndpoint, "SSL", props);
   }
-
 }

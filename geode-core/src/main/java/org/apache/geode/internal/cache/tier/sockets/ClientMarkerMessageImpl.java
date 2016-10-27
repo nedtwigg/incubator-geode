@@ -25,20 +25,17 @@ import org.apache.geode.internal.cache.tier.MessageType;
 import java.io.*;
 
 /**
- * Class <code>ClientMarkerMessageImpl</code> is a marker message that is
- * placed in the <code>CacheClientProxy</code>'s queue when the client connects
- * to notify the client that all of its queued updates have been sent. This is
- * to be used mostly by the durable clients, although all clients receive it.
- *
+ * Class <code>ClientMarkerMessageImpl</code> is a marker message that is placed in the <code>
+ * CacheClientProxy</code>'s queue when the client connects to notify the client that all of its
+ * queued updates have been sent. This is to be used mostly by the durable clients, although all
+ * clients receive it.
  *
  * @since GemFire 5.5
  */
 public final class ClientMarkerMessageImpl implements ClientMessage {
   private static final long serialVersionUID = 5423895238521508743L;
 
-  /**
-   * This <code>ClientMessage</code>'s <code>EventID</code>
-   */
+  /** This <code>ClientMessage</code>'s <code>EventID</code> */
   private EventID eventId;
 
   /**
@@ -50,11 +47,8 @@ public final class ClientMarkerMessageImpl implements ClientMessage {
     this.eventId = eventId;
   }
 
-  /**
-   * Default constructor.
-   */
-  public ClientMarkerMessageImpl() {
-  }
+  /** Default constructor. */
+  public ClientMarkerMessageImpl() {}
 
   public Message getMessage(CacheClientProxy proxy, boolean notify) throws IOException {
     Version clientVersion = proxy.getVersion();
@@ -62,7 +56,8 @@ public final class ClientMarkerMessageImpl implements ClientMessage {
     if (clientVersion.compareTo(Version.GFE_57) >= 0) {
       message = getGFEMessage();
     } else {
-      throw new IOException("Unsupported client version for server-to-client message creation: " + clientVersion);
+      throw new IOException(
+          "Unsupported client version for server-to-client message creation: " + clientVersion);
     }
 
     return message;

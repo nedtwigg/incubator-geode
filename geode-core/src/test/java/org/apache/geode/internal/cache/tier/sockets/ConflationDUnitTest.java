@@ -59,15 +59,12 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * This test verifies the conflation functionality of the
- * dispatcher.
+ * This test verifies the conflation functionality of the dispatcher.
  *
- * A sequence of create, put, put, put, destroy is sent
- * and a total of three operations should be sent to the client from the
- * server and not all the five.
+ * <p>A sequence of create, put, put, put, destroy is sent and a total of three operations should be
+ * sent to the client from the server and not all the five.
  *
- * The test has two regions. In one scenario
- * they share a common bridgewriter and in the second
+ * <p>The test has two regions. In one scenario they share a common bridgewriter and in the second
  * scenario, each has a unique bridgewriter.
  */
 @Category(DistributedTest.class)
@@ -102,43 +99,34 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     return cache;
   }
 
-  /**
-   * set the boolean for starting the dispatcher thread a bit later.
-   *
-   */
+  /** set the boolean for starting the dispatcher thread a bit later. */
   public static void setIsSlowStart() {
     setIsSlowStart("5000");
   }
 
-  /**
-   * Set the boolean to make the dispatcher thread pause <code>milis</code>
-   * miliseconds.
-   * 
-   */
+  /** Set the boolean to make the dispatcher thread pause <code>milis</code> miliseconds. */
   public static void setIsSlowStart(String milis) {
     CacheClientProxy.isSlowStartForTesting = true;
     System.setProperty("slowStartTimeForTesting", milis);
   }
 
-  /**
-   * Unset the boolean to start the dispatcher thread.
-   *
-   */
+  /** Unset the boolean to start the dispatcher thread. */
   public static void unsetIsSlowStart() {
     CacheClientProxy.isSlowStartForTesting = false;
   }
 
-  /**
-   * two regions, with two writers (each region will have a unique bridgwriter).
-   *
-   */
+  /** two regions, with two writers (each region will have a unique bridgwriter). */
   @Test
   public void testTwoRegionsTwoWriters() {
     try {
       vm0.invoke(() -> ConflationDUnitTest.setIsSlowStart());
-      createClientCache1UniqueWriter(NetworkUtils.getServerHostName(Host.getHost(0)), new Integer(PORT));
+      createClientCache1UniqueWriter(
+          NetworkUtils.getServerHostName(Host.getHost(0)), new Integer(PORT));
       Host host = Host.getHost(0);
-      vm2.invoke(() -> ConflationDUnitTest.createClientCache2UniqueWriter(NetworkUtils.getServerHostName(host), new Integer(PORT)));
+      vm2.invoke(
+          () ->
+              ConflationDUnitTest.createClientCache2UniqueWriter(
+                  NetworkUtils.getServerHostName(host), new Integer(PORT)));
       vm2.invoke(() -> ConflationDUnitTest.setClientServerObserverForBeforeInterestRecovery());
       vm2.invoke(() -> ConflationDUnitTest.setAllCountersZero());
       vm2.invoke(() -> ConflationDUnitTest.assertAllCountersZero());
@@ -158,16 +146,16 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * two regions with a common bridgewriter
-   *
-   */
+  /** two regions with a common bridgewriter */
   @Test
   public void testTwoRegionsOneWriter() throws Exception {
     vm0.invoke(() -> ConflationDUnitTest.setIsSlowStart());
     Host host = Host.getHost(0);
     createClientCache1CommonWriter(NetworkUtils.getServerHostName(host), new Integer(PORT));
-    vm2.invoke(() -> ConflationDUnitTest.createClientCache2CommonWriter(NetworkUtils.getServerHostName(host), new Integer(PORT)));
+    vm2.invoke(
+        () ->
+            ConflationDUnitTest.createClientCache2CommonWriter(
+                NetworkUtils.getServerHostName(host), new Integer(PORT)));
     vm2.invoke(() -> ConflationDUnitTest.setClientServerObserverForBeforeInterestRecovery());
     vm2.invoke(() -> ConflationDUnitTest.setAllCountersZero());
     vm2.invoke(() -> ConflationDUnitTest.assertAllCountersZero());
@@ -184,16 +172,16 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     vm2.invoke(() -> ConflationDUnitTest.assertCounterSizes());
   }
 
-  /**
-   * test more messages are not sent to client from server
-   *
-   */
+  /** test more messages are not sent to client from server */
   @Test
   public void testNotMoreMessagesSent() throws Exception {
     vm0.invoke(() -> ConflationDUnitTest.setIsSlowStart());
     Host host = Host.getHost(0);
     createClientCache1CommonWriterTest3(NetworkUtils.getServerHostName(host), new Integer(PORT));
-    vm2.invoke(() -> ConflationDUnitTest.createClientCache2CommonWriterTest3(NetworkUtils.getServerHostName(host), new Integer(PORT)));
+    vm2.invoke(
+        () ->
+            ConflationDUnitTest.createClientCache2CommonWriterTest3(
+                NetworkUtils.getServerHostName(host), new Integer(PORT)));
     vm2.invoke(() -> ConflationDUnitTest.setClientServerObserverForBeforeInterestRecovery());
     vm2.invoke(() -> ConflationDUnitTest.setAllCountersZero());
     vm2.invoke(() -> ConflationDUnitTest.assertAllCountersZero());
@@ -212,9 +200,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     vm0.invoke(() -> ConflationDUnitTest.assertConflationStatus());
   }
 
-  /**
-   * create properties for a loner VM
-   */
+  /** create properties for a loner VM */
   private static Properties createProperties1() {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
@@ -224,10 +210,18 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
 
   /**
    * create pool for a client
+   *
    * @return created pool
    */
   private static Pool createPool(String host, String name, Integer port, boolean enableQueue) {
-    return PoolManager.createFactory().addServer(host, port.intValue()).setSubscriptionEnabled(enableQueue).setSubscriptionRedundancy(-1).setReadTimeout(10000).setSocketBufferSize(32768).setMinConnections(3).setThreadLocalConnections(true)
+    return PoolManager.createFactory()
+        .addServer(host, port.intValue())
+        .setSubscriptionEnabled(enableQueue)
+        .setSubscriptionRedundancy(-1)
+        .setReadTimeout(10000)
+        .setSocketBufferSize(32768)
+        .setMinConnections(3)
+        .setThreadLocalConnections(true)
         // .setRetryInterval(10000)
         // .setRetryAttempts(5)
         .create("ConflationUnitTestPool" + name);
@@ -235,9 +229,9 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
 
   /**
    * create a client with 2 regions sharing a common writer
+   *
    * @throws Exception
    */
-
   public static void createClientCache1CommonWriter(String host, Integer port) throws Exception {
     ConflationDUnitTest test = new ConflationDUnitTest();
     cache = test.createCache(createProperties1());
@@ -251,10 +245,11 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
 
   /**
    * create a client with 2 regions sharing a common writer
+   *
    * @throws Exception
    */
-
-  public static void createClientCache1CommonWriterTest3(String host, Integer port) throws Exception {
+  public static void createClientCache1CommonWriterTest3(String host, Integer port)
+      throws Exception {
     ConflationDUnitTest test = new ConflationDUnitTest();
     cache = test.createCache(createProperties1());
     AttributesFactory factory = new AttributesFactory();
@@ -266,8 +261,8 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * create client 2 with 2 regions with sharing a common writer
-   * and having a common listener
+   * create client 2 with 2 regions with sharing a common writer and having a common listener
+   *
    * @throws Exception
    */
   public static void createClientCache2CommonWriter(String host, Integer port) throws Exception {
@@ -276,81 +271,84 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     factory.setPoolName(createPool(host, "p1", port, true).getName());
-    factory.addCacheListener(new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent event) {
-        LogWriterUtils.getLogWriter().info("Listener received event " + event);
-        String val = (String) event.getNewValue();
-        synchronized (ConflationDUnitTest.class) {
-          if (val.equals(MARKER)) {
-            count++;
-          } else {
-            counterCreate++;
+    factory.addCacheListener(
+        new CacheListenerAdapter() {
+          public void afterCreate(EntryEvent event) {
+            LogWriterUtils.getLogWriter().info("Listener received event " + event);
+            String val = (String) event.getNewValue();
+            synchronized (ConflationDUnitTest.class) {
+              if (val.equals(MARKER)) {
+                count++;
+              } else {
+                counterCreate++;
+              }
+              if (2 == count) {
+                ConflationDUnitTest.class.notify();
+              }
+            }
           }
-          if (2 == count) {
-            ConflationDUnitTest.class.notify();
-          }
-        }
-      }
 
-      public void afterUpdate(EntryEvent event) {
-        LogWriterUtils.getLogWriter().info("Listener received event " + event);
-        synchronized (this) {
-          counterUpdate++;
-        }
-      }
-
-      public void afterDestroy(EntryEvent event) {
-        LogWriterUtils.getLogWriter().info("Listener received event " + event);
-        synchronized (this) {
-          if (!event.getKey().equals(MARKER)) {
-            counterDestroy++;
+          public void afterUpdate(EntryEvent event) {
+            LogWriterUtils.getLogWriter().info("Listener received event " + event);
+            synchronized (this) {
+              counterUpdate++;
+            }
           }
-        }
-      }
-    });
+
+          public void afterDestroy(EntryEvent event) {
+            LogWriterUtils.getLogWriter().info("Listener received event " + event);
+            synchronized (this) {
+              if (!event.getKey().equals(MARKER)) {
+                counterDestroy++;
+              }
+            }
+          }
+        });
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME1, attrs);
     cache.createRegion(REGION_NAME2, attrs);
   }
 
-  public static void createClientCache2CommonWriterTest3(String host, Integer port) throws Exception {
+  public static void createClientCache2CommonWriterTest3(String host, Integer port)
+      throws Exception {
     ConflationDUnitTest test = new ConflationDUnitTest();
     cache = test.createCache(createProperties1());
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     factory.setPoolName(createPool(host, "p1", port, true).getName());
-    factory.addCacheListener(new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent event) {
-        LogWriterUtils.getLogWriter().info("Listener received event " + event);
-        String val = (String) event.getNewValue();
-        synchronized (ConflationDUnitTest.class) {
-          if (val.equals(MARKER)) {
-            count++;
-          } else {
-            counterCreate++;
+    factory.addCacheListener(
+        new CacheListenerAdapter() {
+          public void afterCreate(EntryEvent event) {
+            LogWriterUtils.getLogWriter().info("Listener received event " + event);
+            String val = (String) event.getNewValue();
+            synchronized (ConflationDUnitTest.class) {
+              if (val.equals(MARKER)) {
+                count++;
+              } else {
+                counterCreate++;
+              }
+              if (2 == count) {
+                ConflationDUnitTest.class.notify();
+              }
+            }
           }
-          if (2 == count) {
-            ConflationDUnitTest.class.notify();
-          }
-        }
-      }
 
-      public void afterUpdate(EntryEvent event) {
-        LogWriterUtils.getLogWriter().info("Listener received event " + event);
-        synchronized (this) {
-          counterUpdate++;
-        }
-      }
-
-      public void afterDestroy(EntryEvent event) {
-        LogWriterUtils.getLogWriter().info("Listener received event " + event);
-        synchronized (this) {
-          if (!event.getKey().equals(MARKER)) {
-            counterDestroy++;
+          public void afterUpdate(EntryEvent event) {
+            LogWriterUtils.getLogWriter().info("Listener received event " + event);
+            synchronized (this) {
+              counterUpdate++;
+            }
           }
-        }
-      }
-    });
+
+          public void afterDestroy(EntryEvent event) {
+            LogWriterUtils.getLogWriter().info("Listener received event " + event);
+            synchronized (this) {
+              if (!event.getKey().equals(MARKER)) {
+                counterDestroy++;
+              }
+            }
+          }
+        });
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME1, attrs);
     cache.createRegion(REGION_NAME2, attrs);
@@ -361,7 +359,6 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
    *
    * @throws Exception
    */
-
   public static void createClientCache1UniqueWriter(String host, Integer port) throws Exception {
     ConflationDUnitTest test = new ConflationDUnitTest();
     cache = test.createCache(createProperties1());
@@ -376,8 +373,8 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * create client 2 with 2 regions each with a unique writer
-   * but both having a common listener
+   * create client 2 with 2 regions each with a unique writer but both having a common listener
+   *
    * @throws Exception
    */
   public static void createClientCache2UniqueWriter(String host, Integer port) throws Exception {
@@ -386,36 +383,37 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
     factory.setPoolName(createPool(host, "p1", port, true).getName());
-    factory.addCacheListener(new CacheListenerAdapter() {
-      public void afterCreate(EntryEvent event) {
-        String val = (String) event.getNewValue();
-        LogWriterUtils.getLogWriter().info("Listener received event " + event);
-        synchronized (ConflationDUnitTest.class) {
-          if (val.equals(MARKER)) {
-            count++;
-          } else {
-            counterCreate++;
+    factory.addCacheListener(
+        new CacheListenerAdapter() {
+          public void afterCreate(EntryEvent event) {
+            String val = (String) event.getNewValue();
+            LogWriterUtils.getLogWriter().info("Listener received event " + event);
+            synchronized (ConflationDUnitTest.class) {
+              if (val.equals(MARKER)) {
+                count++;
+              } else {
+                counterCreate++;
+              }
+              if (2 == count) {
+                ConflationDUnitTest.class.notify();
+              }
+            }
           }
-          if (2 == count) {
-            ConflationDUnitTest.class.notify();
-          }
-        }
-      }
 
-      public void afterUpdate(EntryEvent event) {
-        synchronized (this) {
-          counterUpdate++;
-        }
-      }
-
-      public void afterDestroy(EntryEvent event) {
-        synchronized (this) {
-          if (!event.getKey().equals(MARKER)) {
-            counterDestroy++;
+          public void afterUpdate(EntryEvent event) {
+            synchronized (this) {
+              counterUpdate++;
+            }
           }
-        }
-      }
-    });
+
+          public void afterDestroy(EntryEvent event) {
+            synchronized (this) {
+              if (!event.getKey().equals(MARKER)) {
+                counterDestroy++;
+              }
+            }
+          }
+        });
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME1, attrs);
     factory.setPoolName(createPool(host, "p2", port, true).getName());
@@ -423,18 +421,14 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     cache.createRegion(REGION_NAME2, attrs);
   }
 
-  /**
-   * variables to count operations (messages received on client from server)
-   */
-  volatile static int count = 0;
-  volatile static int counterCreate = 0;
-  volatile static int counterUpdate = 0;
-  volatile static int counterDestroy = 0;
+  /** variables to count operations (messages received on client from server) */
+  static volatile int count = 0;
 
-  /**
-   * assert all the counters are zero
-   *
-   */
+  static volatile int counterCreate = 0;
+  static volatile int counterUpdate = 0;
+  static volatile int counterDestroy = 0;
+
+  /** assert all the counters are zero */
   public static void assertAllCountersZero() {
     assertEquals(count, 0);
     assertEquals(counterCreate, 0);
@@ -442,10 +436,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     assertEquals(counterDestroy, 0);
   }
 
-  /**
-   * set all the counters to zero
-   *
-   */
+  /** set all the counters to zero */
   public static void setAllCountersZero() {
     count = 0;
     counterCreate = 0;
@@ -453,103 +444,101 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     counterDestroy = 0;
   }
 
-  /**
-   * reset all counters to zero before interest recovery
-   *
-   */
+  /** reset all counters to zero before interest recovery */
   public static void setClientServerObserverForBeforeInterestRecovery() {
     PoolImpl.BEFORE_RECOVER_INTEREST_CALLBACK_FLAG = true;
-    ClientServerObserverHolder.setInstance(new ClientServerObserverAdapter() {
-      public void beforeInterestRecovery() {
-        setAllCountersZero();
-      }
-    });
+    ClientServerObserverHolder.setInstance(
+        new ClientServerObserverAdapter() {
+          public void beforeInterestRecovery() {
+            setAllCountersZero();
+          }
+        });
   }
 
-  /**
-   * assert the counters size are as expected (2)
-   *
-   */
+  /** assert the counters size are as expected (2) */
   public static void assertCounterSizes() {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        Thread.yield(); // TODO is this necessary?
-        return counterCreate == 2;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            Thread.yield(); // TODO is this necessary?
+            return counterCreate == 2;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
 
-    ev = new WaitCriterion() {
-      public boolean done() {
-        Thread.yield(); // TODO is this necessary?
-        return counterUpdate == 2;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            Thread.yield(); // TODO is this necessary?
+            return counterUpdate == 2;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
 
-    ev = new WaitCriterion() {
-      public boolean done() {
-        Thread.yield(); // TODO is this necessary?
-        return counterDestroy == 2;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            Thread.yield(); // TODO is this necessary?
+            return counterDestroy == 2;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
   }
 
-  /**
-   * assert the counters size less than 20000
-   *
-   */
+  /** assert the counters size less than 20000 */
   public static void assertCounterSizesLessThan200() {
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        Thread.yield(); // TODO is this necessary?
-        return counterCreate == 2;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            Thread.yield(); // TODO is this necessary?
+            return counterCreate == 2;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
     // assertIndexDetailsEquals("creates", 2, counterCreate);
 
-    ev = new WaitCriterion() {
-      public boolean done() {
-        Thread.yield(); // TODO is this necessary?
-        return counterDestroy == 2;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            Thread.yield(); // TODO is this necessary?
+            return counterDestroy == 2;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
 
     // assertIndexDetailsEquals("destroys", 2, counterDestroy);
     // assertTrue("updates", 20000 >= counterUpdate);
-    ev = new WaitCriterion() {
-      public boolean done() {
-        Thread.yield(); // TODO is this necessary?
-        return counterUpdate <= 200;
-      }
+    ev =
+        new WaitCriterion() {
+          public boolean done() {
+            Thread.yield(); // TODO is this necessary?
+            return counterUpdate <= 200;
+          }
 
-      public String description() {
-        return null;
-      }
-    };
+          public String description() {
+            return null;
+          }
+        };
     Wait.waitForCriterion(ev, 60 * 1000, 200, true);
   }
 
@@ -571,10 +560,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * assert that the final value is 33
-   *
-   */
+  /** assert that the final value is 33 */
   public static void assertValue() {
     try {
       Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME1);
@@ -588,15 +574,16 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * assert Conflation Status
-   *
-   */
+  /** assert Conflation Status */
   public static void assertConflationStatus() {
     assertNotNull(statMap);
     Long confCount = (Long) statMap.get("eventsConflated");
-    assertTrue("No Conflation found: eventsConflated value is " + confCount.longValue(), confCount.longValue() > (0));
-    assertTrue("Error in Conflation found: eventsConflated value is " + confCount.longValue(), confCount.longValue() <= (200));
+    assertTrue(
+        "No Conflation found: eventsConflated value is " + confCount.longValue(),
+        confCount.longValue() > (0));
+    assertTrue(
+        "Error in Conflation found: eventsConflated value is " + confCount.longValue(),
+        confCount.longValue() <= (200));
   }
 
   /**
@@ -622,10 +609,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     return new Integer(server.getPort());
   }
 
-  /**
-   * close the cache
-   *
-   */
+  /** close the cache */
   public static void closeCache() {
     if (cache != null && !cache.isClosed()) {
       cache.close();
@@ -633,10 +617,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * register interest with the server on ALL_KEYS
-   *
-   */
+  /** register interest with the server on ALL_KEYS */
   public static void registerInterest() {
     try {
       Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME1);
@@ -650,11 +631,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * register interest with the server on ALL_KEYS
-   *
-   */
-
+  /** register interest with the server on ALL_KEYS */
   public static void unregisterInterest() {
     try {
       Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME1);
@@ -666,10 +643,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * Create an entry on two region with key : key-1 and value
-   *
-   */
+  /** Create an entry on two region with key : key-1 and value */
   public static void create() {
     try {
       Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME1);
@@ -682,10 +656,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * do three puts on key-1
-   *
-   */
+  /** do three puts on key-1 */
   public static void put() {
     try {
       Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME1);
@@ -714,10 +685,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * do 200 puts on key-1
-   *
-   */
+  /** do 200 puts on key-1 */
   public static void put200() {
     try {
       Region r1 = cache.getRegion(Region.SEPARATOR + REGION_NAME1);
@@ -725,7 +693,6 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
       for (int i = 1; i < 100; i++) {
         r1.put("key-1", "11");
         r2.put("key-1", "11");
-
       }
       r1.put("key-1", "33");
       r2.put("key-1", "33");
@@ -735,16 +702,13 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * getting conflation Stats on server
-   *
-   */
-
+  /** getting conflation Stats on server */
   public static void getStatsOnServer() {
     Cache cache = GemFireCacheImpl.getInstance();
     Iterator itr = cache.getCacheServers().iterator();
     CacheServerImpl server = (CacheServerImpl) itr.next();
-    Iterator iter_prox = server.getAcceptor().getCacheClientNotifier().getClientProxies().iterator();
+    Iterator iter_prox =
+        server.getAcceptor().getCacheClientNotifier().getClientProxies().iterator();
     int ccpCount = 0;
     while (iter_prox.hasNext()) {
       ccpCount++;
@@ -753,19 +717,17 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
         HARegion region = (HARegion) proxy.getHARegion();
         assertNotNull(region);
         HARegionQueue haRegionQueue = HAHelper.getRegionQueue(region);
-        statMap.put("eventsConflated", new Long(HAHelper.getRegionQueueStats(haRegionQueue).getEventsConflated()));
+        statMap.put(
+            "eventsConflated",
+            new Long(HAHelper.getRegionQueueStats(haRegionQueue).getEventsConflated()));
         LogWriterUtils.getLogWriter().info("new Stats Map  : " + statMap.toString());
-
       }
     }
     assertTrue("CCP Count is not 1 ", ccpCount == 1);
     //}
   }
 
-  /**
-   * do a get on region1
-   *
-   */
+  /** do a get on region1 */
   public static void get() {
     try {
       Region r = cache.getRegion(Region.SEPARATOR + REGION_NAME1);
@@ -776,10 +738,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * destroy the regions
-   *
-   */
+  /** destroy the regions */
   public static void destroyRegion() {
     try {
       Region region1 = cache.getRegion("/region1");
@@ -796,10 +755,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * destroy key-1
-   *
-   */
+  /** destroy key-1 */
   public static void destroy() {
     try {
       Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME1);
@@ -813,10 +769,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * destroy marker
-   *
-   */
+  /** destroy marker */
   public static void destroyMarker() {
     try {
       Region region1 = cache.getRegion(Region.SEPARATOR + REGION_NAME1);
@@ -831,9 +784,7 @@ public class ConflationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * close the cache in tearDown
-   */
+  /** close the cache in tearDown */
   @Override
   public final void preTearDown() throws Exception {
     // close client

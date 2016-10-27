@@ -39,15 +39,14 @@ import org.apache.geode.internal.logging.log4j.LogMarker;
 public class ElderState {
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * Maps service name keys to GrantorInfo values.
-   */
+  /** Maps service name keys to GrantorInfo values. */
   private final HashMap nameToInfo;
+
   private final DM dm;
 
   /**
-   * Constructs the EdlerState for the given dm. Note that this
-   * constructor does not complete until elder recovery is complete.
+   * Constructs the EdlerState for the given dm. Note that this constructor does not complete until
+   * elder recovery is complete.
    */
   public ElderState(DM dm) {
     Assert.assertTrue(dm != null);
@@ -60,20 +59,18 @@ public class ElderState {
       try {
         checkForProblem(dm);
       } finally {
-        if (true)
-          throw e; // conditional prevents eclipse warning
+        if (true) throw e; // conditional prevents eclipse warning
       }
     } catch (InternalGemFireError e) {
       try {
         checkForProblem(dm);
       } finally {
-        if (true)
-          throw e; // conditional prevents eclipse warning
+        if (true) throw e; // conditional prevents eclipse warning
       }
     } finally {
       if (logger.isTraceEnabled(LogMarker.DLS)) {
         StringBuffer sb = new StringBuffer("ElderState initialized with:");
-        for (Iterator grantors = this.nameToInfo.keySet().iterator(); grantors.hasNext();) {
+        for (Iterator grantors = this.nameToInfo.keySet().iterator(); grantors.hasNext(); ) {
           Object key = grantors.next();
           // key=dlock svc name, value=GrantorInfo object
           sb.append("\n\t" + key + ": " + this.nameToInfo.get(key));
@@ -85,27 +82,39 @@ public class ElderState {
 
   private void checkForProblem(DM checkDM) {
     if (checkDM.getSystem() == null) {
-      logger.warn(LogMarker.DLS, LocalizedMessage.create(LocalizedStrings.ElderState_ELDERSTATE_PROBLEM_SYSTEM_0, checkDM.getSystem()));
+      logger.warn(
+          LogMarker.DLS,
+          LocalizedMessage.create(
+              LocalizedStrings.ElderState_ELDERSTATE_PROBLEM_SYSTEM_0, checkDM.getSystem()));
       return;
     }
     if (checkDM.getSystem().getDistributionManager() == null) {
-      logger.warn(LogMarker.DLS, LocalizedMessage.create(LocalizedStrings.ElderState_ELDERSTATE_PROBLEM_SYSTEM_DISTRIBUTIONMANAGER_0, checkDM.getSystem().getDistributionManager()));
+      logger.warn(
+          LogMarker.DLS,
+          LocalizedMessage.create(
+              LocalizedStrings.ElderState_ELDERSTATE_PROBLEM_SYSTEM_DISTRIBUTIONMANAGER_0,
+              checkDM.getSystem().getDistributionManager()));
     }
     if (checkDM != checkDM.getSystem().getDistributionManager()) {
-      logger.warn(LogMarker.DLS, LocalizedMessage.create(LocalizedStrings.ElderState_ELDERSTATE_PROBLEM_DM_0_BUT_SYSTEM_DISTRIBUTIONMANAGER_1, new Object[] { checkDM, checkDM.getSystem().getDistributionManager() }));
+      logger.warn(
+          LogMarker.DLS,
+          LocalizedMessage.create(
+              LocalizedStrings.ElderState_ELDERSTATE_PROBLEM_DM_0_BUT_SYSTEM_DISTRIBUTIONMANAGER_1,
+              new Object[] {checkDM, checkDM.getSystem().getDistributionManager()}));
     }
   }
 
   /**
-   * Atomically determine who is the current grantor of the given service.
-   * If no current grantor exists then the caller is made the grantor.
+   * Atomically determine who is the current grantor of the given service. If no current grantor
+   * exists then the caller is made the grantor.
+   *
    * @param serviceName the name of the lock service we want the grantor of
    * @param requestor the id of the member who is making this request
-   * @return the current grantor of <code>serviceName</code>
-   *   and recoveryNeeded will be true if requestor has become the grantor
-   *   and needs to recover lock info.
+   * @return the current grantor of <code>serviceName</code> and recoveryNeeded will be true if
+   *     requestor has become the grantor and needs to recover lock info.
    */
-  public GrantorInfo getGrantor(String serviceName, InternalDistributedMember requestor, int dlsSerialNumberRequestor) {
+  public GrantorInfo getGrantor(
+      String serviceName, InternalDistributedMember requestor, int dlsSerialNumberRequestor) {
     synchronized (this) {
       GrantorInfo gi = (GrantorInfo) this.nameToInfo.get(serviceName);
       if (gi != null) {
@@ -113,20 +122,33 @@ public class ElderState {
         InternalDistributedMember currentGrantor = gi.getId();
         // Note that elder recovery may put GrantorInfo instances in
         // the map whose id is null and whose needRecovery is true
-        if (currentGrantor != null && this.dm.getDistributionManagerIds().contains(currentGrantor)) {
+        if (currentGrantor != null
+            && this.dm.getDistributionManagerIds().contains(currentGrantor)) {
           return gi;
         } else {
           if (logger.isTraceEnabled(LogMarker.DLS)) {
-            logger.trace(LogMarker.DLS, "Elder setting grantor for {} to {} because {} ", serviceName, requestor, (currentGrantor != null ? "current grantor crashed" : "of unclean grantor shutdown"));
+            logger.trace(
+                LogMarker.DLS,
+                "Elder setting grantor for {} to {} because {} ",
+                serviceName,
+                requestor,
+                (currentGrantor != null
+                    ? "current grantor crashed"
+                    : "of unclean grantor shutdown"));
           }
           // current grantor crashed; make new guy grantor and force recovery
           long myVersion = gi.getVersionId() + 1;
-          this.nameToInfo.put(serviceName, new GrantorInfo(requestor, myVersion, dlsSerialNumberRequestor, false));
+          this.nameToInfo.put(
+              serviceName, new GrantorInfo(requestor, myVersion, dlsSerialNumberRequestor, false));
           return new GrantorInfo(requestor, myVersion, dlsSerialNumberRequestor, true);
         }
       } else {
         if (logger.isTraceEnabled(LogMarker.DLS)) {
-          logger.trace(LogMarker.DLS, "Elder setting grantor for {} to {} because of clean grantor shutdown", serviceName, requestor);
+          logger.trace(
+              LogMarker.DLS,
+              "Elder setting grantor for {} to {} because of clean grantor shutdown",
+              serviceName,
+              requestor);
         }
         gi = new GrantorInfo(requestor, 1, dlsSerialNumberRequestor, false);
         this.nameToInfo.put(serviceName, gi);
@@ -137,10 +159,10 @@ public class ElderState {
 
   /**
    * Atomically determine who is the current grantor of the given service.
+   *
    * @param serviceName the name of the lock service we want the grantor of
-   * @return the current grantor of <code>serviceName</code>
-   *   and recoveryNeeded will be true if requestor has become the grantor
-   *   and needs to recover lock info.
+   * @return the current grantor of <code>serviceName</code> and recoveryNeeded will be true if
+   *     requestor has become the grantor and needs to recover lock info.
    */
   public GrantorInfo peekGrantor(String serviceName) {
     synchronized (this) {
@@ -150,7 +172,8 @@ public class ElderState {
         InternalDistributedMember currentGrantor = gi.getId();
         // Note that elder recovery may put GrantorInfo instances in
         // the map whose id is null and whose needRecovery is true
-        if (currentGrantor != null && this.dm.getDistributionManagerIds().contains(currentGrantor)) {
+        if (currentGrantor != null
+            && this.dm.getDistributionManagerIds().contains(currentGrantor)) {
           return gi;
         } else {
           return new GrantorInfo(null, 0, 0, true);
@@ -162,15 +185,19 @@ public class ElderState {
   }
 
   /**
-   * Atomically sets the current grantor of the given service to
-   * <code>newGrantor</code>.
+   * Atomically sets the current grantor of the given service to <code>newGrantor</code>.
+   *
    * @param serviceName the name of the lock service we want the grantor of
    * @param newGrantor the id of the member who is making this request
    * @param oldTurk if non-null then only do the become if the current grantor is the oldTurk
-   * @return the previous grantor, which may be null, of <code>serviceName</code>
-   *   and recoveryNeeded will be true if new grantor needs to recover lock info
+   * @return the previous grantor, which may be null, of <code>serviceName</code> and recoveryNeeded
+   *     will be true if new grantor needs to recover lock info
    */
-  public GrantorInfo becomeGrantor(String serviceName, InternalDistributedMember newGrantor, int newGrantorSerialNumber, InternalDistributedMember oldTurk) {
+  public GrantorInfo becomeGrantor(
+      String serviceName,
+      InternalDistributedMember newGrantor,
+      int newGrantorSerialNumber,
+      InternalDistributedMember oldTurk) {
     GrantorInfo newInfo = null;
     InternalDistributedMember previousGrantor = null;
     long newGrantorVersion = -1;
@@ -187,15 +214,22 @@ public class ElderState {
           // the map whose id is null and whose needRecovery is true
 
           // if previousGrantor still exists...
-          if (previousGrantor != null && this.dm.getDistributionManagerIds().contains(previousGrantor)) {
+          if (previousGrantor != null
+              && this.dm.getDistributionManagerIds().contains(previousGrantor)) {
 
             // if newGrantor is not previousGrantor...
             if (!newGrantor.equals(previousGrantor)) {
 
-              // problem: specified oldTurk is not previousGrantor... 
+              // problem: specified oldTurk is not previousGrantor...
               if (oldTurk != null && !oldTurk.equals(previousGrantor)) {
                 if (logger.isTraceEnabled(LogMarker.DLS)) {
-                  logger.trace(LogMarker.DLS, "Elder did not become grantor for {} to {} because oldT was {} and the current grantor is {}", serviceName, newGrantor, oldTurk, previousGrantor);
+                  logger.trace(
+                      LogMarker.DLS,
+                      "Elder did not become grantor for {} to {} because oldT was {} and the current grantor is {}",
+                      serviceName,
+                      newGrantor,
+                      oldTurk,
+                      previousGrantor);
                 }
               }
 
@@ -203,17 +237,22 @@ public class ElderState {
               else {
                 // install new grantor
                 if (logger.isTraceEnabled(LogMarker.DLS)) {
-                  logger.trace(LogMarker.DLS, "Elder forced to set grantor for {} to {}", serviceName, newGrantor);
+                  logger.trace(
+                      LogMarker.DLS,
+                      "Elder forced to set grantor for {} to {}",
+                      serviceName,
+                      newGrantor);
                 }
                 long myVersion = gi.getVersionId() + 1;
                 newGrantorVersion = myVersion;
                 newInfo = new GrantorInfo(newGrantor, myVersion, newGrantorSerialNumber, false);
                 this.nameToInfo.put(serviceName, newInfo);
 
-                if (gi.getId() != null && (oldTurk == null || gi.getId().equals(oldTurk)) && !gi.getId().equals(newGrantor)) {
+                if (gi.getId() != null
+                    && (oldTurk == null || gi.getId().equals(oldTurk))
+                    && !gi.getId().equals(newGrantor)) {
                   beginInitiatingTransfer(newInfo);
                 }
-
               }
             }
             // return previous grantor
@@ -227,17 +266,29 @@ public class ElderState {
             // problem: oldTurk was specified but there is no previousGrantor...
             if (oldTurk != null) {
               if (logger.isTraceEnabled(LogMarker.DLS)) {
-                logger.trace(LogMarker.DLS, "Elder did not become grantor for {} to {} because oldT was {} and the current grantor {} had crashed", serviceName, newGrantor, oldTurk, previousGrantor);
+                logger.trace(
+                    LogMarker.DLS,
+                    "Elder did not become grantor for {} to {} because oldT was {} and the current grantor {} had crashed",
+                    serviceName,
+                    newGrantor,
+                    oldTurk,
+                    previousGrantor);
               }
             }
 
             // no oldTurk was specified...
             else {
               if (logger.isTraceEnabled(LogMarker.DLS)) {
-                logger.trace(LogMarker.DLS, "Elder forced to set grantor for {} to {} and noticed previous grantor had crashed", serviceName, newGrantor);
+                logger.trace(
+                    LogMarker.DLS,
+                    "Elder forced to set grantor for {} to {} and noticed previous grantor had crashed",
+                    serviceName,
+                    newGrantor);
               }
               // current grantor crashed; make new guy grantor and force recovery
-              this.nameToInfo.put(serviceName, new GrantorInfo(newGrantor, myVersion, newGrantorSerialNumber, false));
+              this.nameToInfo.put(
+                  serviceName,
+                  new GrantorInfo(newGrantor, myVersion, newGrantorSerialNumber, false));
             }
 
             return new GrantorInfo(null, myVersion - 1, gi.getSerialNumber(), true);
@@ -249,14 +300,23 @@ public class ElderState {
           // problem: no oldTurk was specified
           if (oldTurk != null) {
             if (logger.isTraceEnabled(LogMarker.DLS)) {
-              logger.trace(LogMarker.DLS, "Elder did not become grantor for {} to {} because oldT was {} and elder had no current grantor", serviceName, newGrantor, oldTurk);
+              logger.trace(
+                  LogMarker.DLS,
+                  "Elder did not become grantor for {} to {} because oldT was {} and elder had no current grantor",
+                  serviceName,
+                  newGrantor,
+                  oldTurk);
             }
           }
 
           // no oldTurk was specified
           else {
             if (logger.isTraceEnabled(LogMarker.DLS)) {
-              logger.trace(LogMarker.DLS, "Elder forced to set grantor for {} to {} because of clean grantor shutdown", serviceName, newGrantor);
+              logger.trace(
+                  LogMarker.DLS,
+                  "Elder forced to set grantor for {} to {} because of clean grantor shutdown",
+                  serviceName,
+                  newGrantor);
             }
             // no current grantor; last one shutdown cleanly
             gi = new GrantorInfo(newGrantor, 1, newGrantorSerialNumber, false);
@@ -268,20 +328,31 @@ public class ElderState {
     } finally {
       if (isInitiatingTransfer(newInfo)) {
         Assert.assertTrue(newGrantorVersion > -1);
-        DeposeGrantorProcessor.send(serviceName, previousGrantor, newGrantor, newGrantorVersion, newGrantorSerialNumber, dm);
+        DeposeGrantorProcessor.send(
+            serviceName,
+            previousGrantor,
+            newGrantor,
+            newGrantorVersion,
+            newGrantorSerialNumber,
+            dm);
         finishInitiatingTransfer(newInfo);
       }
     }
   }
 
   /**
-   * Atomically clears the current grantor of the given service if
-   * the current grantor is <code>oldGrantor</code>.
-   * The next grantor for this service will not need to recover
-   * unless <code>locksHeld</code> is true.
+   * Atomically clears the current grantor of the given service if the current grantor is <code>
+   * oldGrantor</code>. The next grantor for this service will not need to recover unless <code>
+   * locksHeld</code> is true.
+   *
    * @param locksHeld true if old grantor had held locks
    */
-  public void clearGrantor(long grantorVersion, String serviceName, int dlsSerialNumber, InternalDistributedMember oldGrantor, boolean locksHeld) {
+  public void clearGrantor(
+      long grantorVersion,
+      String serviceName,
+      int dlsSerialNumber,
+      InternalDistributedMember oldGrantor,
+      boolean locksHeld) {
     synchronized (this) {
       if (grantorVersion == -1) {
         // not possible to clear grantor of non-initialized grantorVersion
@@ -292,14 +363,18 @@ public class ElderState {
       if (currentGI == null) {
         return; // KIRK added this null check because becomeGrantor may not have talked to elder before destroy dls
       }
-      if (currentGI.getVersionId() != grantorVersion || currentGI.getSerialNumber() != dlsSerialNumber) {
+      if (currentGI.getVersionId() != grantorVersion
+          || currentGI.getSerialNumber() != dlsSerialNumber) {
         // not possible to clear mismatched grantorVersion
         return;
       }
 
       GrantorInfo gi;
       if (locksHeld) {
-        gi = (GrantorInfo) this.nameToInfo.put(serviceName, new GrantorInfo(null, currentGI.getVersionId(), 0, true));
+        gi =
+            (GrantorInfo)
+                this.nameToInfo.put(
+                    serviceName, new GrantorInfo(null, currentGI.getVersionId(), 0, true));
       } else {
         gi = (GrantorInfo) this.nameToInfo.remove(serviceName);
       }
@@ -308,11 +383,22 @@ public class ElderState {
         if (!oldGrantor.equals(currentGrantor)) { // fix for 32603
           this.nameToInfo.put(serviceName, gi);
           if (logger.isTraceEnabled(LogMarker.DLS)) {
-            logger.trace(LogMarker.DLS, "Elder not making {} grantor shutdown for {} by {} because the current grantor is {}", (locksHeld ? "unclean" : "clean"), serviceName, oldGrantor, currentGrantor);
+            logger.trace(
+                LogMarker.DLS,
+                "Elder not making {} grantor shutdown for {} by {} because the current grantor is {}",
+                (locksHeld ? "unclean" : "clean"),
+                serviceName,
+                oldGrantor,
+                currentGrantor);
           }
         } else {
           if (logger.isTraceEnabled(LogMarker.DLS)) {
-            logger.trace(LogMarker.DLS, "Elder making {} grantor shutdown for {} by {}", (locksHeld ? "unclean" : "clean"), serviceName, oldGrantor);
+            logger.trace(
+                LogMarker.DLS,
+                "Elder making {} grantor shutdown for {} by {}",
+                (locksHeld ? "unclean" : "clean"),
+                serviceName,
+                oldGrantor);
           }
         }
       }
@@ -320,8 +406,7 @@ public class ElderState {
   }
 
   private final boolean isInitiatingTransfer(GrantorInfo gi) {
-    if (gi == null)
-      return false;
+    if (gi == null) return false;
     synchronized (this) {
       return gi.isInitiatingTransfer();
     }
@@ -353,8 +438,7 @@ public class ElderState {
           }
         }
       } finally {
-        if (interrupted)
-          Thread.currentThread().interrupt();
+        if (interrupted) Thread.currentThread().interrupt();
       }
     }
   }
@@ -364,10 +448,13 @@ public class ElderState {
     synchronized (this) {
       GrantorInfo gi = (GrantorInfo) this.nameToInfo.get(serviceName);
       if (gi.isInitiatingTransfer()) {
-        throw new IllegalStateException(LocalizedStrings.ElderState_CANNOT_FORCE_GRANTOR_RECOVERY_FOR_GRANTOR_THAT_IS_TRANSFERRING.toLocalizedString());
+        throw new IllegalStateException(
+            LocalizedStrings
+                .ElderState_CANNOT_FORCE_GRANTOR_RECOVERY_FOR_GRANTOR_THAT_IS_TRANSFERRING
+                .toLocalizedString());
       }
-      this.nameToInfo.put(serviceName, new GrantorInfo(gi.getId(), gi.getVersionId(), gi.getSerialNumber(), true));
+      this.nameToInfo.put(
+          serviceName, new GrantorInfo(gi.getId(), gi.getVersionId(), gi.getSerialNumber(), true));
     }
   }
-
 }

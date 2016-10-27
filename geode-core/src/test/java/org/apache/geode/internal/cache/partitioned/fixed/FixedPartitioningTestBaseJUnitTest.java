@@ -29,17 +29,16 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/** 
-* FixedPartitioningTestBase Tester. 
-*/
+/** FixedPartitioningTestBase Tester. */
 @Category(UnitTest.class)
 public class FixedPartitioningTestBaseJUnitTest {
 
   @Test
   @SuppressWarnings("RedundantStringConstructorCall")
-  public void testGenerateDate() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+  public void testGenerateDate()
+      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-    Class[] classes = { int.class, String.class, String.class };
+    Class[] classes = {int.class, String.class, String.class};
 
     Method method = FixedPartitioningTestBase.class.getDeclaredMethod("generateDate", classes);
     method.setAccessible(true);

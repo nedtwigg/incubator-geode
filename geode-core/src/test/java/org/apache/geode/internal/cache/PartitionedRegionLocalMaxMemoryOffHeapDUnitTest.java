@@ -31,24 +31,26 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
  * Tests PartitionedRegion localMaxMemory with Off-Heap memory.
- * 
+ *
  * @since Geode 1.0
  */
-@SuppressWarnings({ "deprecation", "serial" })
+@SuppressWarnings({"deprecation", "serial"})
 @Category(DistributedTest.class)
-public class PartitionedRegionLocalMaxMemoryOffHeapDUnitTest extends PartitionedRegionLocalMaxMemoryDUnitTest {
+public class PartitionedRegionLocalMaxMemoryOffHeapDUnitTest
+    extends PartitionedRegionLocalMaxMemoryDUnitTest {
 
   @Override
   public final void preTearDownAssertions() throws Exception {
-    SerializableRunnable checkOrphans = new SerializableRunnable() {
+    SerializableRunnable checkOrphans =
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        if (hasCache()) {
-          OffHeapTestUtil.checkOrphans();
-        }
-      }
-    };
+          @Override
+          public void run() {
+            if (hasCache()) {
+              OffHeapTestUtil.checkOrphans();
+            }
+          }
+        };
     Invoke.invokeInEveryVM(checkOrphans);
     checkOrphans.run();
   }
@@ -61,10 +63,12 @@ public class PartitionedRegionLocalMaxMemoryOffHeapDUnitTest extends Partitioned
     return props;
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   @Override
-  protected RegionAttributes<?, ?> createRegionAttrsForPR(int red, int localMaxMem, long recoveryDelay, EvictionAttributes evictionAttrs) {
-    RegionAttributes<?, ?> attrs = super.createRegionAttrsForPR(red, localMaxMem, recoveryDelay, evictionAttrs);
+  protected RegionAttributes<?, ?> createRegionAttrsForPR(
+      int red, int localMaxMem, long recoveryDelay, EvictionAttributes evictionAttrs) {
+    RegionAttributes<?, ?> attrs =
+        super.createRegionAttrsForPR(red, localMaxMem, recoveryDelay, evictionAttrs);
     AttributesFactory factory = new AttributesFactory(attrs);
     factory.setOffHeap(true);
     return factory.create();

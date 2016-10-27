@@ -18,9 +18,7 @@ package org.apache.geode.management.internal.cli.functions;
 
 import java.io.Serializable;
 
-/**
- * This class stores the arguments provided in the create gateway-receiver command.
- */
+/** This class stores the arguments provided in the create gateway-receiver command. */
 public class GatewayReceiverFunctionArgs implements Serializable {
   private static final long serialVersionUID = -5158224572470173267L;
 
@@ -38,7 +36,14 @@ public class GatewayReceiverFunctionArgs implements Serializable {
 
   private final String[] gatewayTransportFilters;
 
-  public GatewayReceiverFunctionArgs(Boolean manualStart, Integer startPort, Integer endPort, String bindAddress, Integer socketBufferSize, Integer maximumTimeBetweenPings, String[] gatewayTransportFilters) {
+  public GatewayReceiverFunctionArgs(
+      Boolean manualStart,
+      Integer startPort,
+      Integer endPort,
+      String bindAddress,
+      Integer socketBufferSize,
+      Integer maximumTimeBetweenPings,
+      String[] gatewayTransportFilters) {
     this.manualStart = manualStart;
     this.startPort = startPort;
     this.endPort = endPort;

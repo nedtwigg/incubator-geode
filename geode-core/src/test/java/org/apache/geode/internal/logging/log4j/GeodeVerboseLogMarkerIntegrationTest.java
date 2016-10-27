@@ -40,14 +40,13 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.custom.BasicAppender;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Integration tests with accept and deny of GEODE_VERBOSE and GEMFIRE_VERBOSE.
- */
+/** Integration tests with accept and deny of GEODE_VERBOSE and GEMFIRE_VERBOSE. */
 @Category(IntegrationTest.class)
 public class GeodeVerboseLogMarkerIntegrationTest {
 
   private static final String RESOURCE_PACKAGE = "/org/apache/geode/internal/logging/log4j/marker/";
-  private static final String FILE_NAME_GEMFIRE_VERBOSE_ACCEPT = "log4j2-gemfire_verbose-accept.xml";
+  private static final String FILE_NAME_GEMFIRE_VERBOSE_ACCEPT =
+      "log4j2-gemfire_verbose-accept.xml";
   private static final String FILE_NAME_GEMFIRE_VERBOSE_DENY = "log4j2-gemfire_verbose-deny.xml";
   private static final String FILE_NAME_GEODE_VERBOSE_ACCEPT = "log4j2-geode_verbose-accept.xml";
   private static final String FILE_NAME_GEODE_VERBOSE_DENY = "log4j2-geode_verbose-deny.xml";
@@ -60,20 +59,19 @@ public class GeodeVerboseLogMarkerIntegrationTest {
   private File configFileGeodeVerboseAccept;
   private File configFileGeodeVerboseDeny;
 
-  @Rule
-  public SystemErrRule systemErrRule = new SystemErrRule().enableLog();
-  @Rule
-  public SystemOutRule systemOutRule = new SystemOutRule().enableLog();
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
-  @Rule
-  public TestName testName = new TestName();
+  @Rule public SystemErrRule systemErrRule = new SystemErrRule().enableLog();
+  @Rule public SystemOutRule systemOutRule = new SystemOutRule().enableLog();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TestName testName = new TestName();
 
   @Before
   public void preAssertions() throws Exception {
-    assertThat(getClass().getResource(RESOURCE_PACKAGE + FILE_NAME_GEMFIRE_VERBOSE_ACCEPT)).isNotNull();
-    assertThat(getClass().getResource(RESOURCE_PACKAGE + FILE_NAME_GEMFIRE_VERBOSE_DENY)).isNotNull();
-    assertThat(getClass().getResource(RESOURCE_PACKAGE + FILE_NAME_GEODE_VERBOSE_ACCEPT)).isNotNull();
+    assertThat(getClass().getResource(RESOURCE_PACKAGE + FILE_NAME_GEMFIRE_VERBOSE_ACCEPT))
+        .isNotNull();
+    assertThat(getClass().getResource(RESOURCE_PACKAGE + FILE_NAME_GEMFIRE_VERBOSE_DENY))
+        .isNotNull();
+    assertThat(getClass().getResource(RESOURCE_PACKAGE + FILE_NAME_GEODE_VERBOSE_ACCEPT))
+        .isNotNull();
     assertThat(getClass().getResource(RESOURCE_PACKAGE + FILE_NAME_GEODE_VERBOSE_DENY)).isNotNull();
   }
 
@@ -82,7 +80,8 @@ public class GeodeVerboseLogMarkerIntegrationTest {
     Configurator.shutdown();
     BasicAppender.clearInstance();
 
-    this.beforeConfigFileProp = System.getProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
+    this.beforeConfigFileProp =
+        System.getProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
     this.beforeLevel = StatusLogger.getLogger().getLevel();
 
     this.configFileGemfireVerboseAccept = createConfigFile(FILE_NAME_GEMFIRE_VERBOSE_ACCEPT);
@@ -97,12 +96,15 @@ public class GeodeVerboseLogMarkerIntegrationTest {
 
     System.clearProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY);
     if (this.beforeConfigFileProp != null) {
-      System.setProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, this.beforeConfigFileProp);
+      System.setProperty(
+          ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, this.beforeConfigFileProp);
     }
     StatusLogger.getLogger().setLevel(this.beforeLevel);
 
     LogService.reconfigure();
-    assertThat(LogService.isUsingGemFireDefaultConfig()).as(LogService.getConfigInformation()).isTrue();
+    assertThat(LogService.isUsingGemFireDefaultConfig())
+        .as(LogService.getConfigInformation())
+        .isTrue();
 
     BasicAppender.clearInstance();
 
@@ -154,8 +156,8 @@ public class GeodeVerboseLogMarkerIntegrationTest {
   }
 
   /**
-   * GEMFIRE_VERBOSE is parent of GEODE_VERBOSE so enabling GEODE_VERBOSE does
-   * not enable GEMFIRE_VERBOSE.
+   * GEMFIRE_VERBOSE is parent of GEODE_VERBOSE so enabling GEODE_VERBOSE does not enable
+   * GEMFIRE_VERBOSE.
    */
   @Test
   public void gemfireVerboseShouldNotLogIfGeodeVerboseIsAccept() {
@@ -169,8 +171,8 @@ public class GeodeVerboseLogMarkerIntegrationTest {
   }
 
   /**
-   * GEMFIRE_VERBOSE is parent of GEODE_VERBOSE so disabling GEODE_VERBOSE does
-   * not disable GEMFIRE_VERBOSE.
+   * GEMFIRE_VERBOSE is parent of GEODE_VERBOSE so disabling GEODE_VERBOSE does not disable
+   * GEMFIRE_VERBOSE.
    */
   @Test
   public void gemfireVerboseShouldLogIfGeodeVerboseIsDeny() {
@@ -207,11 +209,13 @@ public class GeodeVerboseLogMarkerIntegrationTest {
 
   private File createConfigFile(final String name) throws IOException, URISyntaxException {
     assertThat(getClass().getResource(RESOURCE_PACKAGE + name)).isNotNull();
-    return new Configuration(getClass().getResource(RESOURCE_PACKAGE + name), name).createConfigFileIn(this.temporaryFolder.getRoot());
+    return new Configuration(getClass().getResource(RESOURCE_PACKAGE + name), name)
+        .createConfigFileIn(this.temporaryFolder.getRoot());
   }
 
   private void configureLogging(final File configFile) {
-    System.setProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, configFile.getAbsolutePath());
+    System.setProperty(
+        ConfigurationFactory.CONFIGURATION_FILE_PROPERTY, configFile.getAbsolutePath());
     LogService.reconfigure();
   }
 }

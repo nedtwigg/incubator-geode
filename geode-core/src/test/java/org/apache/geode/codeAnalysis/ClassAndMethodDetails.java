@@ -29,8 +29,8 @@ import org.apache.geode.codeAnalysis.decode.CompiledCode;
 import org.apache.geode.codeAnalysis.decode.CompiledMethod;
 
 /**
- * A class used to store the names of dataserializable classes and the sizes
- * of their toData/fromData methods.
+ * A class used to store the names of dataserializable classes and the sizes of their
+ * toData/fromData methods.
  */
 public class ClassAndMethodDetails implements Comparable {
 
@@ -40,7 +40,10 @@ public class ClassAndMethodDetails implements Comparable {
   public Map<String, byte[]> methodCode = new HashMap<String, byte[]>();
 
   static {
-    String[] digits = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
+    String[] digits =
+        new String[] {
+          "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"
+        };
 
     hexChars = new String[256];
     for (int i = 0; i < 256; i++) {
@@ -52,8 +55,7 @@ public class ClassAndMethodDetails implements Comparable {
     this.className = dclass.fullyQualifiedName();
   }
 
-  private ClassAndMethodDetails() {
-  }
+  private ClassAndMethodDetails() {}
 
   public static ClassAndMethodDetails create(LineNumberReader in) throws IOException {
     String line;
@@ -98,9 +100,7 @@ public class ClassAndMethodDetails implements Comparable {
     }
   }
 
-  /**
-   * returns a string that can be parsed by ClassAndMethodDetails(String)
-   */
+  /** returns a string that can be parsed by ClassAndMethodDetails(String) */
   public String valuesAsString() {
     StringBuilder sb = new StringBuilder(80);
     sb.append(className).append(',').append(methodCode.size()).append("\n");
@@ -116,8 +116,8 @@ public class ClassAndMethodDetails implements Comparable {
   }
 
   /**
-   * convert a ClassAndMethods into a string that can then be used to
-   * instantiate a ClassAndMethodDetails
+   * convert a ClassAndMethods into a string that can then be used to instantiate a
+   * ClassAndMethodDetails
    */
   public static String convertForStoring(ClassAndMethods cam) {
     StringBuilder sb = new StringBuilder(150);

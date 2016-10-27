@@ -31,10 +31,10 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
- * The SimpleHttpOperationInvoker class is an implementation of the OperationInvoker interface that issues commands
- * to the GemFire Manager via HTTP.  The SimpleHttpOperationInvoker uses a single URL web service endpoint to process
- * commands and return responses.
- * 
+ * The SimpleHttpOperationInvoker class is an implementation of the OperationInvoker interface that
+ * issues commands to the GemFire Manager via HTTP. The SimpleHttpOperationInvoker uses a single URL
+ * web service endpoint to process commands and return responses.
+ *
  * @see java.net.URI
  * @see org.apache.geode.management.internal.cli.shell.Gfsh
  * @see org.apache.geode.management.internal.cli.shell.OperationInvoker
@@ -51,19 +51,22 @@ public class SimpleHttpOperationInvoker extends AbstractHttpOperationInvoker {
   protected static final String REST_API_MANAGEMENT_COMMANDS_URI = "/management/commands";
 
   /**
-   * Default no-arg constructor to create an instance of the SimpleHttpOperationInvoker class for testing purposes.
+   * Default no-arg constructor to create an instance of the SimpleHttpOperationInvoker class for
+   * testing purposes.
    */
   SimpleHttpOperationInvoker() {
     super(REST_API_URL);
   }
 
   /**
-   * Constructs an instance of the SimpleHttpOperationInvoker class initialized with a reference to the GemFire shell
-   * (Gfsh) using this HTTP-based OperationInvoker to send command invocations to the GemFire Manager's HTTP service
-   * using HTTP processing.
-   * 
-   * @param gfsh a reference to the instance of the GemFire shell using this OperationInvoker to process commands.
-   * @see #SimpleHttpOperationInvoker(org.apache.geode.management.internal.cli.shell.Gfsh, String, Map)
+   * Constructs an instance of the SimpleHttpOperationInvoker class initialized with a reference to
+   * the GemFire shell (Gfsh) using this HTTP-based OperationInvoker to send command invocations to
+   * the GemFire Manager's HTTP service using HTTP processing.
+   *
+   * @param gfsh a reference to the instance of the GemFire shell using this OperationInvoker to
+   *     process commands.
+   * @see #SimpleHttpOperationInvoker(org.apache.geode.management.internal.cli.shell.Gfsh, String,
+   *     Map)
    * @see org.apache.geode.management.internal.cli.shell.Gfsh
    */
   public SimpleHttpOperationInvoker(final Gfsh gfsh, Map<String, String> securityProperties) {
@@ -71,29 +74,33 @@ public class SimpleHttpOperationInvoker extends AbstractHttpOperationInvoker {
   }
 
   /**
-   * Constructs an instance of the SimpleHttpOperationInvoker class initialized with a reference to the GemFire shell
-   * (Gfsh) using this HTTP-based OperationInvoker to send command invocations to the GemFire Manager's HTTP service
-   * using HTTP for processing.  In addition, the base URL to the HTTP service running in the GemFire Manager is
-   * specified as the base location for all HTTP requests.
-   * 
-   * @param gfsh a reference to the instance of the GemFire shell using this OperationInvoker to process commands.
+   * Constructs an instance of the SimpleHttpOperationInvoker class initialized with a reference to
+   * the GemFire shell (Gfsh) using this HTTP-based OperationInvoker to send command invocations to
+   * the GemFire Manager's HTTP service using HTTP for processing. In addition, the base URL to the
+   * HTTP service running in the GemFire Manager is specified as the base location for all HTTP
+   * requests.
+   *
+   * @param gfsh a reference to the instance of the GemFire shell using this OperationInvoker to
+   *     process commands.
    * @param baseUrl the base URL to the GemFire Manager's HTTP service.
    * @see org.apache.geode.management.internal.cli.shell.Gfsh
    */
-  public SimpleHttpOperationInvoker(final Gfsh gfsh, final String baseUrl, Map<String, String> securityProperties) {
+  public SimpleHttpOperationInvoker(
+      final Gfsh gfsh, final String baseUrl, Map<String, String> securityProperties) {
     super(gfsh, baseUrl, securityProperties);
   }
 
   /**
-   * Creates an HTTP request from a command invocation encapsulated in a CommandRequest object.  The CommandRequest
-   * identifies the resource targeted by the command invocation along with any parameters to be sent as part of the
-   * HTTP request.
-   * 
+   * Creates an HTTP request from a command invocation encapsulated in a CommandRequest object. The
+   * CommandRequest identifies the resource targeted by the command invocation along with any
+   * parameters to be sent as part of the HTTP request.
+   *
    * @param command a CommandRequest object encapsulating the details of the command invocation.
-   * @return a client HTTP request detailing the operation to be performed on the remote resource targeted by the
-   * command invocation.
+   * @return a client HTTP request detailing the operation to be performed on the remote resource
+   *     targeted by the command invocation.
    * @see #createLink(org.apache.geode.management.internal.cli.CommandRequest)
-   * @see AbstractHttpOperationInvoker#createHttpRequest(org.apache.geode.management.internal.web.domain.Link)
+   * @see
+   *     AbstractHttpOperationInvoker#createHttpRequest(org.apache.geode.management.internal.web.domain.Link)
    * @see org.apache.geode.management.internal.cli.CommandRequest
    * @see org.apache.geode.management.internal.web.http.ClientHttpRequest
    */
@@ -102,12 +109,14 @@ public class SimpleHttpOperationInvoker extends AbstractHttpOperationInvoker {
   }
 
   /**
-   * Creates a Link based on the resource being targeted by the command invocation.  The Link will contain the URI
-   * uniquely identifying the resource along with the HTTP GET operation specifying the method of processing.
-   * 
+   * Creates a Link based on the resource being targeted by the command invocation. The Link will
+   * contain the URI uniquely identifying the resource along with the HTTP GET operation specifying
+   * the method of processing.
+   *
    * @param command a CommandRequest object encapsulating the details of the command invocation.
    * @return a Link identifying the resource and the operation on the resource.
-   * @see AbstractHttpOperationInvoker#createLink(String, java.net.URI, org.apache.geode.management.internal.web.http.HttpMethod)
+   * @see AbstractHttpOperationInvoker#createLink(String, java.net.URI,
+   *     org.apache.geode.management.internal.web.http.HttpMethod)
    * @see org.apache.geode.management.internal.cli.CommandRequest
    * @see org.apache.geode.management.internal.web.domain.Link
    */
@@ -117,7 +126,7 @@ public class SimpleHttpOperationInvoker extends AbstractHttpOperationInvoker {
 
   /**
    * Gets HTTP request URL (URI) locating the proper resource along with details for the request.
-   * 
+   *
    * @param command a CommandRequest object encapsulating the details of the command invocation.
    * @return a URI identifying the resource, it's location as well as details of the HTTP request.
    * @see org.apache.geode.management.internal.cli.CommandRequest
@@ -126,24 +135,35 @@ public class SimpleHttpOperationInvoker extends AbstractHttpOperationInvoker {
    * @see org.springframework.web.util.UriComponentsBuilder
    */
   protected URI getHttpRequestUrl(final CommandRequest command) {
-    return UriComponentsBuilder.fromHttpUrl(getBaseUrl()).path(REST_API_MANAGEMENT_COMMANDS_URI).queryParam(CMD_QUERY_PARAMETER, command.getInput()).build().encode().toUri();
+    return UriComponentsBuilder.fromHttpUrl(getBaseUrl())
+        .path(REST_API_MANAGEMENT_COMMANDS_URI)
+        .queryParam(CMD_QUERY_PARAMETER, command.getInput())
+        .build()
+        .encode()
+        .toUri();
   }
 
   /**
-   * Processes the requested command.  Sends the command to the GemFire Manager for remote processing (execution).
-   * 
+   * Processes the requested command. Sends the command to the GemFire Manager for remote processing
+   * (execution).
+   *
    * @param command the command requested/entered by the user to be processed.
    * @return the result of the command execution.
    * @see #isConnected()
    * @see #createHttpRequest(org.apache.geode.management.internal.cli.CommandRequest)
-   * @see AbstractHttpOperationInvoker#handleResourceAccessException(org.springframework.web.client.ResourceAccessException)
-   * @see AbstractHttpOperationInvoker#send(org.apache.geode.management.internal.web.http.ClientHttpRequest, Class)
+   * @see
+   *     AbstractHttpOperationInvoker#handleResourceAccessException(org.springframework.web.client.ResourceAccessException)
+   * @see
+   *     AbstractHttpOperationInvoker#send(org.apache.geode.management.internal.web.http.ClientHttpRequest,
+   *     Class)
    * @see org.apache.geode.management.internal.cli.CommandRequest
    * @see org.springframework.http.ResponseEntity
    */
   @Override
   public String processCommand(final CommandRequest command) {
-    assertState(isConnected(), "Gfsh must be connected to the GemFire Manager in order to process commands remotely!");
+    assertState(
+        isConnected(),
+        "Gfsh must be connected to the GemFire Manager in order to process commands remotely!");
 
     try {
       final ResponseEntity<String> response = send(createHttpRequest(command), String.class);
@@ -153,5 +173,4 @@ public class SimpleHttpOperationInvoker extends AbstractHttpOperationInvoker {
       return handleResourceAccessException(e);
     }
   }
-
 }

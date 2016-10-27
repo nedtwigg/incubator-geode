@@ -29,11 +29,10 @@ import org.apache.geode.security.AccessControl;
 import org.apache.geode.security.NotAuthorizedException;
 
 /**
- * Test authorization class for testing the accessibility of query bind
- * parameters from QueryOperationContext
- * 
- * Used by test:
+ * Test authorization class for testing the accessibility of query bind parameters from
+ * QueryOperationContext
  *
+ * <p>Used by test:
  * <li/>QueryParamsAuthorizationDUnitTest (via reflection)
  */
 public class QueryAuthorization implements AccessControl {
@@ -47,11 +46,11 @@ public class QueryAuthorization implements AccessControl {
   }
 
   @Override
-  public void close() {
-  }
+  public void close() {}
 
   @Override
-  public void init(Principal principal, DistributedMember remoteMember, Cache cache) throws NotAuthorizedException {
+  public void init(Principal principal, DistributedMember remoteMember, Cache cache)
+      throws NotAuthorizedException {
     this.remoteDistributedMember = remoteMember;
     this.logger = cache.getSecurityLogger();
   }

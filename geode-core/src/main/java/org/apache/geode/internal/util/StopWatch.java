@@ -36,10 +36,7 @@ public class StopWatch {
     }
   }
 
-  /** 
-   * Returns the elapsed time in millis since starting. Value is final once 
-   * stopped. 
-   */
+  /** Returns the elapsed time in millis since starting. Value is final once stopped. */
   public long elapsedTimeMillis() {
     if (this.stopTime == 0) {
       return System.currentTimeMillis() - this.startTime;
@@ -57,7 +54,8 @@ public class StopWatch {
   /** Stop the stop watch */
   public void stop() {
     if (!isRunning()) {
-      throw new IllegalStateException(LocalizedStrings.StopWatch_ATTEMPTED_TO_STOP_NONRUNNING_STOPWATCH.toLocalizedString());
+      throw new IllegalStateException(
+          LocalizedStrings.StopWatch_ATTEMPTED_TO_STOP_NONRUNNING_STOPWATCH.toLocalizedString());
     }
     this.stopTime = System.currentTimeMillis();
   }

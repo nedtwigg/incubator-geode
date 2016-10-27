@@ -18,23 +18,22 @@ package org.apache.geode.test.dunit.cache.internal;
 
 import org.apache.geode.test.dunit.internal.DistributedTestFixture;
 
-/**
- * Defines the {@code CacheTestCase} methods that can be overridden by its subclasses.
- */
+/** Defines the {@code CacheTestCase} methods that can be overridden by its subclasses. */
 public interface CacheTestFixture extends DistributedTestFixture {
 
   /**
-   * {@code preTearDownCacheTestCase()} is invoked before {@code CacheTestCase#tearDownCacheTestCase()}.
+   * {@code preTearDownCacheTestCase()} is invoked before {@code
+   * CacheTestCase#tearDownCacheTestCase()}.
    *
    * <p>Override this as needed. Default implementation is empty.
    */
   public void preTearDownCacheTestCase() throws Exception;
 
   /**
-   * {@code postTearDownCacheTestCase()} is invoked after {@code CacheTestCase#tearDownCacheTestCase()}.
+   * {@code postTearDownCacheTestCase()} is invoked after {@code
+   * CacheTestCase#tearDownCacheTestCase()}.
    *
    * <p>Override this as needed. Default implementation is empty.
    */
   public void postTearDownCacheTestCase() throws Exception;
-
 }

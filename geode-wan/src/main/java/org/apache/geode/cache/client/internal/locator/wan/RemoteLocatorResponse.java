@@ -25,10 +25,7 @@ import org.apache.geode.DataSerializer;
 import org.apache.geode.internal.DataSerializableFixedID;
 import org.apache.geode.internal.Version;
 
-/**
- * 
- *
- */
+/** */
 public class RemoteLocatorResponse implements DataSerializableFixedID {
 
   private Set<String> locators;
@@ -67,5 +64,4 @@ public class RemoteLocatorResponse implements DataSerializableFixedID {
   public Version[] getSerializationVersions() {
     return null;
   }
-
 }

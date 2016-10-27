@@ -40,7 +40,8 @@ public class GeodeAuthenticationProvider implements AuthenticationProvider {
 
     try {
       securityService.login(username, password);
-      return new UsernamePasswordAuthenticationToken(username, password, AuthorityUtils.NO_AUTHORITIES);
+      return new UsernamePasswordAuthenticationToken(
+          username, password, AuthorityUtils.NO_AUTHORITIES);
     } catch (GemFireSecurityException e) {
       throw new BadCredentialsException(e.getLocalizedMessage(), e);
     }

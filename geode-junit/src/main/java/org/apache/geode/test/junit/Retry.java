@@ -23,16 +23,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Java Annotation used to annotate a test method in order to retry failures
- * up to the specified maximum attempts. Default maximum attempts is one retry.
+ * Java Annotation used to annotate a test method in order to retry failures up to the specified
+ * maximum attempts. Default maximum attempts is one retry.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 public @interface Retry {
 
   public static int DEFAULT = 1;
 
   int value() default DEFAULT;
-
 }

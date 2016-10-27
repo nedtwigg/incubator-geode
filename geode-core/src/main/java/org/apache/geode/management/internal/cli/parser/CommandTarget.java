@@ -22,9 +22,8 @@ import org.apache.geode.management.internal.cli.GfshParser;
 
 /**
  * Used by {@link GfshParser} to store details of a command
- * 
+ *
  * @since GemFire 7.0
- * 
  */
 public class CommandTarget {
   private final String commandName;
@@ -34,7 +33,13 @@ public class CommandTarget {
   private final GfshOptionParser optionParser;
   private AvailabilityTarget availabilityIndicator;
 
-  public CommandTarget(String commandName, String[] synonyms, GfshMethodTarget methodTarget, GfshOptionParser optionParser, AvailabilityTarget availabilityIndicator, String commandHelp) {
+  public CommandTarget(
+      String commandName,
+      String[] synonyms,
+      GfshMethodTarget methodTarget,
+      GfshOptionParser optionParser,
+      AvailabilityTarget availabilityIndicator,
+      String commandHelp) {
     this.commandName = commandName;
     this.synonyms = synonyms;
     this.gfshMethodTarget = methodTarget;
@@ -51,7 +56,8 @@ public class CommandTarget {
     return optionParser;
   }
 
-  public boolean isAvailable() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+  public boolean isAvailable()
+      throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
     if (availabilityIndicator != null) {
       return (Boolean) availabilityIndicator.getMethod().invoke(availabilityIndicator.getTarget());
     } else {
@@ -77,7 +83,14 @@ public class CommandTarget {
   }
 
   public CommandTarget duplicate(String key, String remainingBuffer) {
-    return new CommandTarget(commandName, synonyms, new GfshMethodTarget(gfshMethodTarget.getMethod(), gfshMethodTarget.getTarget(), remainingBuffer, key), optionParser, availabilityIndicator, commandHelp);
+    return new CommandTarget(
+        commandName,
+        synonyms,
+        new GfshMethodTarget(
+            gfshMethodTarget.getMethod(), gfshMethodTarget.getTarget(), remainingBuffer, key),
+        optionParser,
+        availabilityIndicator,
+        commandHelp);
   }
 
   @Override
@@ -88,7 +101,8 @@ public class CommandTarget {
     result = prime * result + ((commandHelp == null) ? 0 : commandHelp.hashCode());
     result = prime * result + ((gfshMethodTarget == null) ? 0 : gfshMethodTarget.hashCode());
     result = prime * result + ((optionParser == null) ? 0 : optionParser.hashCode());
-    result = prime * result + ((availabilityIndicator == null) ? 0 : availabilityIndicator.hashCode());
+    result =
+        prime * result + ((availabilityIndicator == null) ? 0 : availabilityIndicator.hashCode());
     return result;
   }
 
@@ -147,7 +161,10 @@ public class CommandTarget {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append(CommandTarget.class.getSimpleName()).append("[" + "commandName=" + commandName).append(",commandHelp=" + commandHelp);
+    builder
+        .append(CommandTarget.class.getSimpleName())
+        .append("[" + "commandName=" + commandName)
+        .append(",commandHelp=" + commandHelp);
     builder.append(",synonyms=");
     if (synonyms != null) {
       for (String string : synonyms) {

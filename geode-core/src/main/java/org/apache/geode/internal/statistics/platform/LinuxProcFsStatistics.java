@@ -28,14 +28,21 @@ import java.util.regex.Pattern;
 
 public class LinuxProcFsStatistics {
   private enum CPU {
-    USER, NICE, SYSTEM, IDLE, IOWAIT, IRQ, SOFTIRQ,
-    /** stands for aggregation of all columns not present in the enum list*/
+    USER,
+    NICE,
+    SYSTEM,
+    IDLE,
+    IOWAIT,
+    IRQ,
+    SOFTIRQ,
+    /** stands for aggregation of all columns not present in the enum list */
     OTHER
   }
 
   private static final int DEFAULT_PAGESIZE = 4 * 1024;
   private static final int OneMeg = 1024 * 1024;
-  private static final String pageSizeProperty = DistributionConfig.GEMFIRE_PREFIX + "statistics.linux.pageSize";
+  private static final String pageSizeProperty =
+      DistributionConfig.GEMFIRE_PREFIX + "statistics.linux.pageSize";
   private static CpuStat cpuStatSingleton;
   private static int pageSize;
   private static int sys_cpus;
@@ -48,6 +55,7 @@ public class LinuxProcFsStatistics {
 
   /** /proc/stat tokens */
   private static final String CPU_TOKEN = "cpu ";
+
   private static final String PAGE = "page ";
   private static final String SWAP = "swap ";
   private static final String CTXT = "ctxt ";
@@ -55,13 +63,13 @@ public class LinuxProcFsStatistics {
 
   /** /proc/vmstat tokens */
   private static final String PGPGIN = "pgpgin ";
+
   private static final String PGPGOUT = "pgpgout ";
   private static final String PSWPIN = "pswpin ";
   private static final String PSWPOUT = "pswpout ";
 
   //Do not create instances of this class
-  private LinuxProcFsStatistics() {
-  }
+  private LinuxProcFsStatistics() {}
 
   public static int init() { // TODO: was package-protected
     nonPidFilesInProc = getNumberOfNonProcessProcFiles();
@@ -82,17 +90,17 @@ public class LinuxProcFsStatistics {
   public static void readyRefresh() { // TODO: was package-protected
   }
 
-  /* get the statistics for the specified process. 
+  /* get the statistics for the specified process.
    * ( pid_rssSize, pid_imageSize )
    * vsize is assumed to be in units of kbytes
-   * System property gemfire.statistics.pagesSize can be used to configure 
+   * System property gemfire.statistics.pagesSize can be used to configure
    * pageSize. This is the mem_unit member of the struct returned by sysinfo()
-   * 
+   *
    */
-  public static void refreshProcess(int pid, int[] ints, long[] longs, double[] doubles) { // TODO: was package-protected
+  public static void refreshProcess(
+      int pid, int[] ints, long[] longs, double[] doubles) { // TODO: was package-protected
     //Just incase a pid is not available
-    if (pid == 0)
-      return;
+    if (pid == 0) return;
     InputStreamReader isr = null;
     BufferedReader br = null;
     try {
@@ -109,12 +117,12 @@ public class LinuxProcFsStatistics {
       ints[LinuxProcessStats.rssSizeINT] = (int) ((st.nextTokenAsLong() * pageSize) / OneMeg);
     } catch (NoSuchElementException nsee) {
       // It might just be a case of the process going away while we
-      // where trying to get its stats. 
+      // where trying to get its stats.
       // So for now lets just ignore the failure and leave the stats
       // as they are.
     } catch (IOException ioe) {
       // It might just be a case of the process going away while we
-      // where trying to get its stats. 
+      // where trying to get its stats.
       // So for now lets just ignore the failure and leave the stats
       // as they are.
     } finally {
@@ -127,7 +135,8 @@ public class LinuxProcFsStatistics {
     }
   }
 
-  public static void refreshSystem(int[] ints, long[] longs, double[] doubles) { // TODO: was package-protected
+  public static void refreshSystem(
+      int[] ints, long[] longs, double[] doubles) { // TODO: was package-protected
     ints[LinuxSystemStats.processesINT] = getProcessCount();
     ints[LinuxSystemStats.cpusINT] = sys_cpus;
     InputStreamReader isr = null;
@@ -148,19 +157,30 @@ public class LinuxProcFsStatistics {
             ints[LinuxSystemStats.irqINT] = cpuData[CPU.IRQ.ordinal()];
             ints[LinuxSystemStats.softirqINT] = cpuData[CPU.SOFTIRQ.ordinal()];
             ints[LinuxSystemStats.cpuActiveINT] = 100 - cpuData[CPU.IDLE.ordinal()];
-            ints[LinuxSystemStats.cpuNonUserINT] = cpuData[CPU.OTHER.ordinal()] + cpuData[CPU.SYSTEM.ordinal()] + cpuData[CPU.IOWAIT.ordinal()] + cpuData[CPU.IRQ.ordinal()] + cpuData[CPU.SOFTIRQ.ordinal()];
+            ints[LinuxSystemStats.cpuNonUserINT] =
+                cpuData[CPU.OTHER.ordinal()]
+                    + cpuData[CPU.SYSTEM.ordinal()]
+                    + cpuData[CPU.IOWAIT.ordinal()]
+                    + cpuData[CPU.IRQ.ordinal()]
+                    + cpuData[CPU.SOFTIRQ.ordinal()];
           } else if (!hasProcVmStat && line.startsWith(PAGE)) {
             int secondIndex = line.indexOf(" ", PAGE.length());
-            longs[LinuxSystemStats.pagesPagedInLONG] = SpaceTokenizer.parseAsLong(line.substring(PAGE.length(), secondIndex));
-            longs[LinuxSystemStats.pagesPagedOutLONG] = SpaceTokenizer.parseAsLong(line.substring(secondIndex + 1));
+            longs[LinuxSystemStats.pagesPagedInLONG] =
+                SpaceTokenizer.parseAsLong(line.substring(PAGE.length(), secondIndex));
+            longs[LinuxSystemStats.pagesPagedOutLONG] =
+                SpaceTokenizer.parseAsLong(line.substring(secondIndex + 1));
           } else if (!hasProcVmStat && line.startsWith(SWAP)) {
             int secondIndex = line.indexOf(" ", SWAP.length());
-            longs[LinuxSystemStats.pagesSwappedInLONG] = SpaceTokenizer.parseAsLong(line.substring(SWAP.length(), secondIndex));
-            longs[LinuxSystemStats.pagesSwappedOutLONG] = SpaceTokenizer.parseAsLong(line.substring(secondIndex + 1));
+            longs[LinuxSystemStats.pagesSwappedInLONG] =
+                SpaceTokenizer.parseAsLong(line.substring(SWAP.length(), secondIndex));
+            longs[LinuxSystemStats.pagesSwappedOutLONG] =
+                SpaceTokenizer.parseAsLong(line.substring(secondIndex + 1));
           } else if (line.startsWith(CTXT)) {
-            longs[LinuxSystemStats.contextSwitchesLONG] = SpaceTokenizer.parseAsLong(line.substring(CTXT.length()));
+            longs[LinuxSystemStats.contextSwitchesLONG] =
+                SpaceTokenizer.parseAsLong(line.substring(CTXT.length()));
           } else if (line.startsWith(PROCESSES)) {
-            longs[LinuxSystemStats.processCreatesLONG] = SpaceTokenizer.parseAsInt(line.substring(PROCESSES.length()));
+            longs[LinuxSystemStats.processCreatesLONG] =
+                SpaceTokenizer.parseAsInt(line.substring(PROCESSES.length()));
           }
         } catch (NoSuchElementException nsee) {
           //this is the result of reading a partially formed file
@@ -215,12 +235,14 @@ public class LinuxProcFsStatistics {
 
   /**
    * Returns the available system memory (free + cached).
+   *
    * @param logger the logger
    * @return the available memory in bytes
    */
   public static long getAvailableMemory(Logger logger) {
     try {
-      BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("/proc/meminfo")));
+      BufferedReader br =
+          new BufferedReader(new InputStreamReader(new FileInputStream("/proc/meminfo")));
       try {
         long free = 0;
         Pattern p = Pattern.compile("(.*)?:\\s+(\\d+)( kB)?");
@@ -532,13 +554,17 @@ public class LinuxProcFsStatistics {
       String line = null;
       while ((line = br.readLine()) != null) {
         if (line.startsWith(PGPGIN)) {
-          longs[LinuxSystemStats.pagesPagedInLONG] = SpaceTokenizer.parseAsLong(line.substring(PGPGIN.length()));
+          longs[LinuxSystemStats.pagesPagedInLONG] =
+              SpaceTokenizer.parseAsLong(line.substring(PGPGIN.length()));
         } else if (line.startsWith(PGPGOUT)) {
-          longs[LinuxSystemStats.pagesPagedOutLONG] = SpaceTokenizer.parseAsLong(line.substring(PGPGOUT.length()));
+          longs[LinuxSystemStats.pagesPagedOutLONG] =
+              SpaceTokenizer.parseAsLong(line.substring(PGPGOUT.length()));
         } else if (line.startsWith(PSWPIN)) {
-          longs[LinuxSystemStats.pagesSwappedInLONG] = SpaceTokenizer.parseAsLong(line.substring(PSWPIN.length()));
+          longs[LinuxSystemStats.pagesSwappedInLONG] =
+              SpaceTokenizer.parseAsLong(line.substring(PSWPIN.length()));
         } else if (line.startsWith(PSWPOUT)) {
-          longs[LinuxSystemStats.pagesSwappedOutLONG] = SpaceTokenizer.parseAsLong(line.substring(PSWPOUT.length()));
+          longs[LinuxSystemStats.pagesSwappedOutLONG] =
+              SpaceTokenizer.parseAsLong(line.substring(PSWPOUT.length()));
         }
       }
     } catch (NoSuchElementException nsee) {
@@ -553,10 +579,10 @@ public class LinuxProcFsStatistics {
   }
 
   /**
-   * Count the number of files in /proc that do not represent processes.
-   * This value is cached to make counting the number of running process a 
-   * cheap operation. The assumption is that the contents of /proc will not 
-   * change on a running system.
+   * Count the number of files in /proc that do not represent processes. This value is cached to
+   * make counting the number of running process a cheap operation. The assumption is that the
+   * contents of /proc will not change on a running system.
+   *
    * @return the files in /proc that do NOT match /proc/[0-9]*
    */
   private static int getNumberOfNonProcessProcFiles() {
@@ -584,9 +610,7 @@ public class LinuxProcFsStatistics {
     return count;
   }
 
-  /**
-   * @return the number of running processes on the system 
-   */
+  /** @return the number of running processes on the system */
   private static int getProcessCount() {
     File proc = new File("/proc");
     String[] procFiles = proc.list();
@@ -702,7 +726,7 @@ public class LinuxProcFsStatistics {
             endIdx = i;
           }
         } else {
-          //this handles multiple consecutive delimiters 
+          //this handles multiple consecutive delimiters
           if (endIdx != -1) {
             nextIdx = i;
             return;
@@ -757,8 +781,7 @@ public class LinuxProcFsStatistics {
 
     protected void skipTokens(int numberToSkip) {
       int remaining = numberToSkip + 1;
-      while (--remaining > 0 && skipToken())
-        ;
+      while (--remaining > 0 && skipToken()) ;
     }
 
     protected static long parseAsLong(String number) {

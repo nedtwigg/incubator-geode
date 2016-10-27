@@ -26,23 +26,22 @@ public class CliJsonSerializableFactory implements CliJsonSerializableIds {
     CliJsonSerializable cliJsonSerializable = null;
 
     switch (id) {
-    case CLI_DOMAIN_OBJECT__REGION_DETAILS:
-      cliJsonSerializable = new RegionDetails();
-      break;
+      case CLI_DOMAIN_OBJECT__REGION_DETAILS:
+        cliJsonSerializable = new RegionDetails();
+        break;
 
-    case CLI_DOMAIN_OBJECT__REGION_ATTR_INFO:
-      cliJsonSerializable = new RegionAttributesInfo();
-      break;
+      case CLI_DOMAIN_OBJECT__REGION_ATTR_INFO:
+        cliJsonSerializable = new RegionAttributesInfo();
+        break;
 
-    case CLI_DOMAIN_OBJECT__REGION_MEMBER_DETAILS:
-      cliJsonSerializable = new RegionMemberDetails();
-      break;
+      case CLI_DOMAIN_OBJECT__REGION_MEMBER_DETAILS:
+        cliJsonSerializable = new RegionMemberDetails();
+        break;
 
-    default:
-      throw new IllegalArgumentException("Could not find type with given identifer.");
+      default:
+        throw new IllegalArgumentException("Could not find type with given identifer.");
     }
 
     return cliJsonSerializable;
   }
-
 }

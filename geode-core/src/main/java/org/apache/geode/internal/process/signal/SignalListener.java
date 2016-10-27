@@ -21,7 +21,7 @@ import java.util.EventListener;
 
 /**
  * The SignalListener class...
- * </p>
+ *
  * @see java.util.EventListener
  * @since GemFire 7.0
  */
@@ -29,5 +29,4 @@ import java.util.EventListener;
 public interface SignalListener extends EventListener {
 
   public void handle(SignalEvent event);
-
 }

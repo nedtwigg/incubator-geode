@@ -66,13 +66,12 @@ public class IndexUsageWithAliasAsProjAtrbtJUnitTest {
     QueryService qs;
     qs = CacheUtils.getQueryService();
     String queries[] = {
-        // IUM 7
-        "Select distinct security from /portfolios, secIds security where length > 1",
-        // IUM 8         
-        "Select distinct security from /portfolios , secIds security where length > 2 AND (intern <> 'SUN' OR intern <> 'DELL' )",
-        // IUM 9 
-        "Select distinct  security from /portfolios  pos , secIds security where length > 2 and pos.ID > 0"
-
+      // IUM 7
+      "Select distinct security from /portfolios, secIds security where length > 1",
+      // IUM 8
+      "Select distinct security from /portfolios , secIds security where length > 2 AND (intern <> 'SUN' OR intern <> 'DELL' )",
+      // IUM 9
+      "Select distinct  security from /portfolios  pos , secIds security where length > 2 and pos.ID > 0"
     };
     SelectResults r[][] = new SelectResults[queries.length][2];
 
@@ -92,7 +91,8 @@ public class IndexUsageWithAliasAsProjAtrbtJUnitTest {
     //  Create an Index on status and execute the same query again.
 
     qs = CacheUtils.getQueryService();
-    qs.createIndex("lengthIndex", IndexType.FUNCTIONAL, "length", "/portfolios,secIds, positions.values");
+    qs.createIndex(
+        "lengthIndex", IndexType.FUNCTIONAL, "length", "/portfolios,secIds, positions.values");
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       q = CacheUtils.getQueryService().newQuery(queries[i]);
@@ -117,9 +117,11 @@ public class IndexUsageWithAliasAsProjAtrbtJUnitTest {
     }
     CacheUtils.getQueryService();
     String queries[] = {
-        //"select distinct * from /pos, positions where value != null",
-        //"select distinct intern from /pos,names where length >= 3",
-        "select distinct nm from /pos prt,names nm where ID>0", "select distinct prt from /pos prt, names where names[3]='ddd'" };
+      //"select distinct * from /pos, positions where value != null",
+      //"select distinct intern from /pos,names where length >= 3",
+      "select distinct nm from /pos prt,names nm where ID>0",
+      "select distinct prt from /pos prt, names where names[3]='ddd'"
+    };
     for (int i = 0; i < queries.length; i++) {
       Query q = CacheUtils.getQueryService().newQuery(queries[i]);
       q.execute();

@@ -95,7 +95,8 @@ public class LuceneIndexStatsJUnitTest {
     stats.addDocumentsSupplier(() -> 3);
 
     int documentsId = type.nameToId("documents");
-    ArgumentCaptor<IntSupplier> documentsSupplierCaptor = ArgumentCaptor.forClass(IntSupplier.class);
+    ArgumentCaptor<IntSupplier> documentsSupplierCaptor =
+        ArgumentCaptor.forClass(IntSupplier.class);
     verify(statistics).setIntSupplier(eq(documentsId), documentsSupplierCaptor.capture());
     IntSupplier documentsSuppler = documentsSupplierCaptor.getValue();
     assertEquals(8, documentsSuppler.getAsInt());
@@ -110,5 +111,4 @@ public class LuceneIndexStatsJUnitTest {
     final int statId = type.nameToId(statName);
     verify(statistics).incLong(eq(statId), eq(value));
   }
-
 }

@@ -36,31 +36,24 @@ import org.apache.geode.internal.cache.Token;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * A <code>CapacityController</code> that will remove the least
- * recently used (LRU) entry from a region once the region reaches a
- * certain byte {@linkplain #setMaximumMegabytes capacity}. Capacity
- * is determined by monitoring the size of entries added and evicted.
- * Capacity is specified in terms of megabytes.  GemFire uses an
- * efficient algorithm to determine the amount of space a region entry
- * occupies in the VM.  However, this algorithm may not yield optimal
- * results for all kinds of data.  The user may provide his or her own
- * algorithm for determining the size of objects by implementing an
- * {@link ObjectSizer}.
+ * A <code>CapacityController</code> that will remove the least recently used (LRU) entry from a
+ * region once the region reaches a certain byte {@linkplain #setMaximumMegabytes capacity}.
+ * Capacity is determined by monitoring the size of entries added and evicted. Capacity is specified
+ * in terms of megabytes. GemFire uses an efficient algorithm to determine the amount of space a
+ * region entry occupies in the VM. However, this algorithm may not yield optimal results for all
+ * kinds of data. The user may provide his or her own algorithm for determining the size of objects
+ * by implementing an {@link ObjectSizer}.
  *
- * <P>MemLRUCapacityController must be set in the {@link
- * RegionAttributes} before the region is created. A Region with
- * MemLRUCapacityController set will throw an {@link
- * IllegalStateException} if an attempt is made to replace the
- * Region's capacity controller. While the capacity controller cannot
- * be replaced, it does support changing the limit with the {@link
- * #setMaximumMegabytes} method.
+ * <p>MemLRUCapacityController must be set in the {@link RegionAttributes} before the region is
+ * created. A Region with MemLRUCapacityController set will throw an {@link IllegalStateException}
+ * if an attempt is made to replace the Region's capacity controller. While the capacity controller
+ * cannot be replaced, it does support changing the limit with the {@link #setMaximumMegabytes}
+ * method.
  *
- * <P>
- * If you are using a <code>cache.xml</code> file to create a JCache
- * region declaratively, you can include the following to associate a
- * <code>MemLRUCapacityController</code> with a region:
+ * <p>If you are using a <code>cache.xml</code> file to create a JCache region declaratively, you
+ * can include the following to associate a <code>MemLRUCapacityController</code> with a region:
  *
- *  <pre>
+ * <pre>
  *  &lt;region-attributes&gt;
  *    &lt;capacity-controller&gt;
  *      &lt;classname&gt;org.apache.geode.cache.MemLRUCapacityController&lt;/classname&gt;
@@ -75,8 +68,6 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
  *  </pre>
  *
  * @see LRUCapacityController
- *
- *
  * @since GemFire 2.0.2
  */
 public final class MemLRUCapacityController extends LRUAlgorithm implements Declarable {
@@ -85,18 +76,22 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
 
   private static final int OVERHEAD_PER_ENTRY = 250;
 
-  /** The default maximum number of entries allowed by MemLRU capacity
-   * controller is 10 megabytes. */
+  /**
+   * The default maximum number of entries allowed by MemLRU capacity controller is 10 megabytes.
+   */
   public static final int DEFAULT_MAXIMUM_MEGABYTES = EvictionAttributes.DEFAULT_MEMORY_MAXIMUM;
 
-  /** The key for setting the maximum-entries
-   * property declaratively.
+  /**
+   * The key for setting the maximum-entries property declaratively.
    *
-   * @see #init */
+   * @see #init
+   */
   public static final String MAXIMUM_MEGABYTES = "maximum-megabytes";
 
-  /** The {@link #init initialization} property that specifies the
-   * name of the {@link ObjectSizer} implementation class. */
+  /**
+   * The {@link #init initialization} property that specifies the name of the {@link ObjectSizer}
+   * implementation class.
+   */
   public static final String SIZER_IMPL = "sizer";
 
   private static final long ONE_MEG = 1024L * 1024L;
@@ -110,12 +105,26 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
     final String bytesAllowedDesc = "Number of total bytes allowed in this region.";
     final String byteCountDesc = "Number of bytes in region.";
     final String lruEvictionsDesc = "Number of total entry evictions triggered by LRU.";
-    final String lruDestroysDesc = "Number of entries destroyed in the region through both destroy cache operations and eviction. Reset to zero each time it exceeds lruDestroysLimit.";
-    final String lruDestroysLimitDesc = "Maximum number of entry destroys triggered by LRU before scan occurs.";
+    final String lruDestroysDesc =
+        "Number of entries destroyed in the region through both destroy cache operations and eviction. Reset to zero each time it exceeds lruDestroysLimit.";
+    final String lruDestroysLimitDesc =
+        "Maximum number of entry destroys triggered by LRU before scan occurs.";
     final String lruEvaluationsDesc = "Number of entries evaluated during LRU operations.";
     final String lruGreedyReturnsDesc = "Number of non-LRU entries evicted during LRU operations";
 
-    statType = f.createType("MemLRUStatistics", "Statistics about byte based Least Recently Used region entry disposal", new StatisticDescriptor[] { f.createLongGauge("bytesAllowed", bytesAllowedDesc, "bytes"), f.createLongGauge("byteCount", byteCountDesc, "bytes"), f.createLongCounter("lruEvictions", lruEvictionsDesc, "entries"), f.createLongCounter("lruDestroys", lruDestroysDesc, "entries"), f.createLongGauge("lruDestroysLimit", lruDestroysLimitDesc, "entries"), f.createLongCounter("lruEvaluations", lruEvaluationsDesc, "entries"), f.createLongCounter("lruGreedyReturns", lruGreedyReturnsDesc, "entries"), });
+    statType =
+        f.createType(
+            "MemLRUStatistics",
+            "Statistics about byte based Least Recently Used region entry disposal",
+            new StatisticDescriptor[] {
+              f.createLongGauge("bytesAllowed", bytesAllowedDesc, "bytes"),
+              f.createLongGauge("byteCount", byteCountDesc, "bytes"),
+              f.createLongCounter("lruEvictions", lruEvictionsDesc, "entries"),
+              f.createLongCounter("lruDestroys", lruDestroysDesc, "entries"),
+              f.createLongGauge("lruDestroysLimit", lruDestroysLimitDesc, "entries"),
+              f.createLongCounter("lruEvaluations", lruEvaluationsDesc, "entries"),
+              f.createLongCounter("lruGreedyReturns", lruGreedyReturnsDesc, "entries"),
+            });
   }
 
   ////////////////////  Instance Fields  ////////////////////
@@ -131,11 +140,9 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
   ///////////////////////  Constructors  ///////////////////////
 
   /**
-   * Create an instance of the capacity controller with default
-   * settings.  The default settings are 0
-   * <code>maximum-megabytes</code> and a default <code>sizer</code>,
-   * requiring either the {@link #init} method to be called, or the
-   * {@link #setMaximumMegabytes} method.
+   * Create an instance of the capacity controller with default settings. The default settings are 0
+   * <code>maximum-megabytes</code> and a default <code>sizer</code>, requiring either the {@link
+   * #init} method to be called, or the {@link #setMaximumMegabytes} method.
    */
   public MemLRUCapacityController(Region region) {
     this(DEFAULT_MAXIMUM_MEGABYTES, region);
@@ -143,21 +150,13 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
 
   /**
    * Create an instance of the capacity controller the given settings.
-   * 
-   * @param megabytes
-   *                the amount of memory allowed in this region specified in
-   *                megabytes.<br>
-   *                <p>
-   *                For a region with
-   *                {@link org.apache.geode.cache.DataPolicy#PARTITION}, it
-   *                is overridden by
-   *                {@link  org.apache.geode.cache.PartitionAttributesFactory#setLocalMaxMemory(int)  " local max memory "}
-   *                specified for the
-   *                {@link org.apache.geode.cache.PartitionAttributes}. It
-   *                signifies the amount of memory allowed in the region,
-   *                collectively for its primary buckets and redundant copies
-   *                for this VM. It can be different for the same region in
-   *                different VMs.
+   *
+   * @param megabytes the amount of memory allowed in this region specified in megabytes.<br>
+   *     <p>For a region with {@link org.apache.geode.cache.DataPolicy#PARTITION}, it is overridden
+   *     by {@link org.apache.geode.cache.PartitionAttributesFactory#setLocalMaxMemory(int) " local
+   *     max memory "} specified for the {@link org.apache.geode.cache.PartitionAttributes}. It
+   *     signifies the amount of memory allowed in the region, collectively for its primary buckets
+   *     and redundant copies for this VM. It can be different for the same region in different VMs.
    */
   public MemLRUCapacityController(int megabytes, Region region) {
     this(megabytes, null /* sizerImpl */, region);
@@ -165,24 +164,15 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
 
   /**
    * Create an instance of the capacity controller the given settings.
-   * 
-   * @param megabytes
-   *                the amount of memory allowed in this region specified in
-   *                megabytes.<br>
-   *                <p>
-   *                For a region with
-   *                {@link org.apache.geode.cache.DataPolicy#PARTITION}, it
-   *                is overridden by
-   *                {@link  org.apache.geode.cache.PartitionAttributesFactory#setLocalMaxMemory(int)  " local max memory "}
-   *                specified for the
-   *                {@link org.apache.geode.cache.PartitionAttributes}. It
-   *                signifies the amount of memory allowed in the region,
-   *                collectively for its primary buckets and redundant copies
-   *                for this VM. It can be different for the same region in
-   *                different VMs.
-   * @param sizerImpl
-   *                classname of a class that implements ObjectSizer, used to
-   *                compute object sizes for MemLRU
+   *
+   * @param megabytes the amount of memory allowed in this region specified in megabytes.<br>
+   *     <p>For a region with {@link org.apache.geode.cache.DataPolicy#PARTITION}, it is overridden
+   *     by {@link org.apache.geode.cache.PartitionAttributesFactory#setLocalMaxMemory(int) " local
+   *     max memory "} specified for the {@link org.apache.geode.cache.PartitionAttributes}. It
+   *     signifies the amount of memory allowed in the region, collectively for its primary buckets
+   *     and redundant copies for this VM. It can be different for the same region in different VMs.
+   * @param sizerImpl classname of a class that implements ObjectSizer, used to compute object sizes
+   *     for MemLRU
    */
   public MemLRUCapacityController(int megabytes, ObjectSizer sizerImpl, Region region) {
     this(megabytes, sizerImpl, EvictionAction.DEFAULT_EVICTION_ACTION, region, false);
@@ -190,27 +180,23 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
 
   /**
    * Create an instance of the capacity controller the given settings.
-   * 
-   * @param megabytes
-   *                the amount of memory allowed in this region specified in
-   *                megabytes.<br>
-   *                <p>
-   *                For a region with
-   *                {@link org.apache.geode.cache.DataPolicy#PARTITION}, it
-   *                is overridden by
-   *                {@link  org.apache.geode.cache.PartitionAttributesFactory#setLocalMaxMemory(int)  " local max memory "}
-   *                specified for the
-   *                {@link org.apache.geode.cache.PartitionAttributes}. It
-   *                signifies the amount of memory allowed in the region,
-   *                collectively for its primary buckets and redundant copies
-   *                for this VM. It can be different for the same region in
-   *                different VMs.
-   * @param sizerImpl
-   *                classname of a class that implements ObjectSizer, used to
-   *                compute object sizes for MemLRU
+   *
+   * @param megabytes the amount of memory allowed in this region specified in megabytes.<br>
+   *     <p>For a region with {@link org.apache.geode.cache.DataPolicy#PARTITION}, it is overridden
+   *     by {@link org.apache.geode.cache.PartitionAttributesFactory#setLocalMaxMemory(int) " local
+   *     max memory "} specified for the {@link org.apache.geode.cache.PartitionAttributes}. It
+   *     signifies the amount of memory allowed in the region, collectively for its primary buckets
+   *     and redundant copies for this VM. It can be different for the same region in different VMs.
+   * @param sizerImpl classname of a class that implements ObjectSizer, used to compute object sizes
+   *     for MemLRU
    * @param isOffHeap true if the region that owns this cc is stored off heap
    */
-  public MemLRUCapacityController(int megabytes, ObjectSizer sizerImpl, EvictionAction evictionAction, Region region, boolean isOffHeap) {
+  public MemLRUCapacityController(
+      int megabytes,
+      ObjectSizer sizerImpl,
+      EvictionAction evictionAction,
+      Region region,
+      boolean isOffHeap) {
     super(evictionAction, region);
     this.isOffHeap = isOffHeap;
     setMaximumMegabytes(megabytes);
@@ -220,25 +206,21 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
   //////////////////////  Instance Methods  /////////////////////
 
   /**
-   * Declaratively initializes this capacity controller.  Supported
-   * properties are:
+   * Declaratively initializes this capacity controller. Supported properties are:
    *
    * <ul>
-   * <li>{@link #MAXIMUM_MEGABYTES maximum-megabytes}: The number of
-   *      megabytes to limit the region to.</li> 
-   * <li>{@link #EVICTION_ACTION eviction-action}: The action to
-   *     perform when the LRU region entry is evicted.</li>
-   * <li>{@link #SIZER_IMPL sizer}: The name of the {@link
-   *     ObjectSizer} implementation class to use for computing the
-   *     size of region entries.</li>
+   *   <li>{@link #MAXIMUM_MEGABYTES maximum-megabytes}: The number of megabytes to limit the region
+   *       to.
+   *   <li>{@link #EVICTION_ACTION eviction-action}: The action to perform when the LRU region entry
+   *       is evicted.
+   *   <li>{@link #SIZER_IMPL sizer}: The name of the {@link ObjectSizer} implementation class to
+   *       use for computing the size of region entries.
    * </ul>
    *
-   * @throws NumberFormatException
-   *         The <code>maximum-megabytes</code> property cannot be
-   *         parsed as an integer
-   * @throws IllegalArgumentException
-   *         The value of the <code>eviction-action</code> property is
-   *         not recoginzed.
+   * @throws NumberFormatException The <code>maximum-megabytes</code> property cannot be parsed as
+   *     an integer
+   * @throws IllegalArgumentException The value of the <code>eviction-action</code> property is not
+   *     recoginzed.
    */
   public void init(Properties props) {
     String prop = null;
@@ -248,7 +230,11 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
         Class c = ClassPathLoader.getLatest().forName(sizerStr);
         setSizer((ObjectSizer) c.newInstance());
       } catch (Exception e) {
-        IllegalArgumentException ex = new IllegalArgumentException(LocalizedStrings.MemLRUCapacityController_COULD_NOT_CREATE_SIZER_INSTANCE_GIVEN_THE_CLASS_NAME_0.toLocalizedString(sizer));
+        IllegalArgumentException ex =
+            new IllegalArgumentException(
+                LocalizedStrings
+                    .MemLRUCapacityController_COULD_NOT_CREATE_SIZER_INSTANCE_GIVEN_THE_CLASS_NAME_0
+                    .toLocalizedString(sizer));
         ex.initCause(e);
         throw ex;
       }
@@ -263,7 +249,7 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
     }
   }
 
-  // Candidate for removal since capacity controller no longer part of 
+  // Candidate for removal since capacity controller no longer part of
   // cache.xml
   @Override
   public Properties getProperties() {
@@ -282,14 +268,15 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
   }
 
   /**
-   * Reset the maximum allowed limit on memory to use for this region. This
-   * change takes effect on next region operation that could increase the
-   * region's byte size. If the region is shared, this change is seen by all vms
-   * on using the same GemFire shared memory system.
+   * Reset the maximum allowed limit on memory to use for this region. This change takes effect on
+   * next region operation that could increase the region's byte size. If the region is shared, this
+   * change is seen by all vms on using the same GemFire shared memory system.
    */
   public void setMaximumMegabytes(int megabytes) {
     if (megabytes <= 0) {
-      throw new IllegalArgumentException(LocalizedStrings.MemLRUCapacityController_MEMLRUCONTROLLER_LIMIT_MUST_BE_POSTIVE_0.toLocalizedString(Integer.valueOf(megabytes)));
+      throw new IllegalArgumentException(
+          LocalizedStrings.MemLRUCapacityController_MEMLRUCONTROLLER_LIMIT_MUST_BE_POSTIVE_0
+              .toLocalizedString(Integer.valueOf(megabytes)));
     }
     this.limit = (megabytes) * ONE_MEG;
     if (bucketRegion != null) {
@@ -305,8 +292,8 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
   }
 
   /**
-   * Sets the the number of bytes of overhead each object occupies in
-   * the VM.  This value may vary between VM implementations.
+   * Sets the the number of bytes of overhead each object occupies in the VM. This value may vary
+   * between VM implementations.
    */
   public void setEntryOverHead(int entryOverHead) {
     this.perEntryOverHead = entryOverHead;
@@ -345,11 +332,9 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
   //   }
 
   /**
-   * Sets the {@link ObjectSizer} used to calculate the size of
-   * objects placed in the cache.
+   * Sets the {@link ObjectSizer} used to calculate the size of objects placed in the cache.
    *
-   * @param sizer
-   *        The name of the sizer class
+   * @param sizer The name of the sizer class
    */
   private void setSizer(ObjectSizer sizer) {
     this.sizer = sizer;
@@ -364,16 +349,12 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
   protected EnableLRU createLRUHelper() {
     return new AbstractEnableLRU() {
 
-      /**
-       * Indicate what kind of <code>EvictionAlgorithm</code> this helper implements 
-       */
+      /** Indicate what kind of <code>EvictionAlgorithm</code> this helper implements */
       public EvictionAlgorithm getEvictionAlgorithm() {
         return EvictionAlgorithm.LRU_MEMORY;
       }
 
-      /**
-       * compute the size of storing a key/value pair in the cache..
-       */
+      /** compute the size of storing a key/value pair in the cache.. */
       public int entrySize(Object key, Object value) throws IllegalArgumentException {
 
         if (value == Token.TOMBSTONE) {
@@ -443,7 +424,11 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
     if (cdChangingForm) {
       o = ((CDValueWrapper) o).getValue();
     }
-    if (o == null || o == Token.INVALID || o == Token.LOCAL_INVALID || o == Token.DESTROYED || o == Token.TOMBSTONE) {
+    if (o == null
+        || o == Token.INVALID
+        || o == Token.LOCAL_INVALID
+        || o == Token.DESTROYED
+        || o == Token.TOMBSTONE) {
       return 0;
     }
 
@@ -465,9 +450,8 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
   }
 
   /**
-   * Return the size of an object as stored in GemFire... Typically
-   * this is the serialized size in bytes..  This implementation is
-   * slow....  Need to add Sizer interface and call it for customer
+   * Return the size of an object as stored in GemFire... Typically this is the serialized size in
+   * bytes.. This implementation is slow.... Need to add Sizer interface and call it for customer
    * objects.
    */
   protected int sizeof(Object o) throws IllegalArgumentException {
@@ -480,18 +464,16 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
 
   @Override
   public boolean equals(Object cc) {
-    if (!super.equals(cc))
-      return false;
+    if (!super.equals(cc)) return false;
     MemLRUCapacityController other = (MemLRUCapacityController) cc;
-    if (this.limit != other.limit)
-      return false;
+    if (this.limit != other.limit) return false;
     return true;
   }
 
   /*
    * (non-Javadoc)
    * @see java.lang.Object#hashCode()
-   * 
+   *
    * Note that we just need to make sure that equal objects return equal
    * hashcodes; nothing really elaborate is done here.
    */
@@ -509,6 +491,9 @@ public final class MemLRUCapacityController extends LRUAlgorithm implements Decl
    */
   @Override
   public String toString() {
-    return "MemLRUCapacityController with a capacity of " + this.getLimit() + " megabytes and and eviction action " + this.getEvictionAction();
+    return "MemLRUCapacityController with a capacity of "
+        + this.getLimit()
+        + " megabytes and and eviction action "
+        + this.getEvictionAction();
   }
 }

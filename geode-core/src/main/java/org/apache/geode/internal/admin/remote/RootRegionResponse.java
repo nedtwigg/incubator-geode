@@ -38,9 +38,7 @@ import java.util.List;
 
 //import org.apache.geode.internal.*;
 
-/**
- * Responds to {@link RootRegionResponse}.
- */
+/** Responds to {@link RootRegionResponse}. */
 public final class RootRegionResponse extends AdminResponse {
   // instance variables
   //private boolean hasRoot = false;
@@ -48,11 +46,11 @@ public final class RootRegionResponse extends AdminResponse {
   private String[] userAttrs;
 
   /**
-   * Returns a <code>RootRegionResponse</code> that will be returned to the
-   * specified recipient. The message will contains a copy of the local manager's
-   * system config.
+   * Returns a <code>RootRegionResponse</code> that will be returned to the specified recipient. The
+   * message will contains a copy of the local manager's system config.
    */
-  public static RootRegionResponse create(DistributionManager dm, InternalDistributedMember recipient) {
+  public static RootRegionResponse create(
+      DistributionManager dm, InternalDistributedMember recipient) {
     RootRegionResponse m = new RootRegionResponse();
     try {
       Cache cache = CacheFactory.getInstance(dm.getSystem());
@@ -65,10 +63,12 @@ public final class RootRegionResponse extends AdminResponse {
 
       List regionNames = new ArrayList();
       List userAttributes = new ArrayList();
-      for (Iterator iter = roots.iterator(); iter.hasNext();) {
+      for (Iterator iter = roots.iterator(); iter.hasNext(); ) {
         Region r = (Region) iter.next();
         regionNames.add(r.getName());
-        userAttributes.add(CacheDisplay.getCachedObjectDisplay(r.getUserAttribute(), GemFireVM.LIGHTWEIGHT_CACHE_VALUE));
+        userAttributes.add(
+            CacheDisplay.getCachedObjectDisplay(
+                r.getUserAttribute(), GemFireVM.LIGHTWEIGHT_CACHE_VALUE));
       }
 
       String[] temp = new String[0];

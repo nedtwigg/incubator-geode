@@ -26,10 +26,11 @@ import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.junit.rules.serializable.SerializableTestRule;
 
 /**
- * Distributed version of RestoreSystemProperties which affects all DUnit 
- * JVMs including the Locator JVM.
+ * Distributed version of RestoreSystemProperties which affects all DUnit JVMs including the Locator
+ * JVM.
  */
-public class DistributedRestoreSystemProperties extends RestoreSystemProperties implements SerializableTestRule {
+public class DistributedRestoreSystemProperties extends RestoreSystemProperties
+    implements SerializableTestRule {
 
   private static volatile Properties originalProperties;
 
@@ -47,24 +48,26 @@ public class DistributedRestoreSystemProperties extends RestoreSystemProperties 
   @Override
   protected void before() throws Throwable {
     super.before();
-    this.invoker.remoteInvokeInEveryVMAndLocator(new SerializableRunnable() {
-      @Override
-      public void run() {
-        originalProperties = getProperties();
-        setProperties(new Properties(originalProperties));
-      }
-    });
+    this.invoker.remoteInvokeInEveryVMAndLocator(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            originalProperties = getProperties();
+            setProperties(new Properties(originalProperties));
+          }
+        });
   }
 
   @Override
   protected void after() {
     super.after();
-    this.invoker.remoteInvokeInEveryVMAndLocator(new SerializableRunnable() {
-      @Override
-      public void run() {
-        setProperties(originalProperties);
-        originalProperties = null;
-      }
-    });
+    this.invoker.remoteInvokeInEveryVMAndLocator(
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            setProperties(originalProperties);
+            originalProperties = null;
+          }
+        });
   }
 }

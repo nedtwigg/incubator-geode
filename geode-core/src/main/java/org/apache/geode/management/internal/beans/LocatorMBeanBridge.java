@@ -32,10 +32,7 @@ import org.apache.geode.management.internal.JmxManagerAdvisor.JmxManagerProfile;
 import org.apache.geode.management.internal.ManagementConstants;
 import org.apache.geode.management.internal.ManagementStrings;
 
-/**
- * 
- *
- */
+/** */
 public class LocatorMBeanBridge {
   private static final Logger logger = LogService.getLogger();
 
@@ -77,7 +74,8 @@ public class LocatorMBeanBridge {
 
   public String[] listManagers() {
     if (cache != null) {
-      List<JmxManagerProfile> alreadyManaging = this.cache.getJmxManagerAdvisor().adviseAlreadyManaging();
+      List<JmxManagerProfile> alreadyManaging =
+          this.cache.getJmxManagerAdvisor().adviseAlreadyManaging();
       if (!alreadyManaging.isEmpty()) {
         String[] managers = new String[alreadyManaging.size()];
         int j = 0;
@@ -93,7 +91,8 @@ public class LocatorMBeanBridge {
 
   public String[] listPotentialManagers() {
     if (cache != null) {
-      List<JmxManagerProfile> willingToManage = this.cache.getJmxManagerAdvisor().adviseWillingToManage();
+      List<JmxManagerProfile> willingToManage =
+          this.cache.getJmxManagerAdvisor().adviseWillingToManage();
       if (!willingToManage.isEmpty()) {
         String[] managers = new String[willingToManage.size()];
         int j = 0;
@@ -107,10 +106,7 @@ public class LocatorMBeanBridge {
     return ManagementConstants.NO_DATA_STRING;
   }
 
-  /**
-   * 
-   * @return log of the locator.
-   */
+  /** @return log of the locator. */
   private String fetchLog(File logFile, int numLines) {
 
     if (numLines > ManagementConstants.MAX_SHOW_LOG_LINES) {
@@ -124,16 +120,23 @@ public class LocatorMBeanBridge {
       InternalDistributedSystem sys = system;
       mainTail = BeanUtilFuncs.tailSystemLog(logFile, numLines);
       if (mainTail == null) {
-        mainTail = ManagementStrings.TailLogResponse_NO_LOG_FILE_WAS_SPECIFIED_IN_THE_CONFIGURATION_MESSAGES_IS_BEING_DIRECTED_TO_STDOUT.toLocalizedString();
+        mainTail =
+            ManagementStrings
+                .TailLogResponse_NO_LOG_FILE_WAS_SPECIFIED_IN_THE_CONFIGURATION_MESSAGES_IS_BEING_DIRECTED_TO_STDOUT
+                .toLocalizedString();
       }
 
     } catch (IOException e) {
-      logger.warn(LocalizedMessage.create(ManagementStrings.TailLogResponse_ERROR_OCCURRED_WHILE_READING_LOGFILE_LOG__0, e));
+      logger.warn(
+          LocalizedMessage.create(
+              ManagementStrings.TailLogResponse_ERROR_OCCURRED_WHILE_READING_LOGFILE_LOG__0, e));
       mainTail = "";
     }
 
     if (mainTail == null) {
-      return LocalizedStrings.SystemMemberImpl_NO_LOG_FILE_CONFIGURED_LOG_MESSAGES_WILL_BE_DIRECTED_TO_STDOUT.toLocalizedString();
+      return LocalizedStrings
+          .SystemMemberImpl_NO_LOG_FILE_CONFIGURED_LOG_MESSAGES_WILL_BE_DIRECTED_TO_STDOUT
+          .toLocalizedString();
     } else {
       StringBuffer result = new StringBuffer();
       if (mainTail != null) {
@@ -142,5 +145,4 @@ public class LocatorMBeanBridge {
       return result.toString();
     }
   }
-
 }

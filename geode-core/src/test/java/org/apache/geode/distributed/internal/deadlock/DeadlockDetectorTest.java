@@ -63,8 +63,8 @@ public class DeadlockDetectorTest {
   }
 
   /**
-   * Test that the deadlock detector will find deadlocks
-   * that are reported by the {@link DependencyMonitorManager}
+   * Test that the deadlock detector will find deadlocks that are reported by the {@link
+   * DependencyMonitorManager}
    */
   @Test
   public void testProgrammaticDependencies() throws Exception {
@@ -96,24 +96,23 @@ public class DeadlockDetectorTest {
   }
 
   private Thread startAThread(final CountDownLatch latch) {
-    Thread thread = new Thread() {
-      @Override
-      public void run() {
-        try {
-          latch.await();
-        } catch (InterruptedException ignore) {
-        }
-      }
-    };
+    Thread thread =
+        new Thread() {
+          @Override
+          public void run() {
+            try {
+              latch.await();
+            } catch (InterruptedException ignore) {
+            }
+          }
+        };
 
     thread.start();
 
     return thread;
   }
 
-  /**
-   * A fake dependency monitor.
-   */
+  /** A fake dependency monitor. */
   private static class MockDependencyMonitor implements DependencyMonitor {
 
     Set<Dependency<Thread, Serializable>> blockedThreads = new HashSet<>();

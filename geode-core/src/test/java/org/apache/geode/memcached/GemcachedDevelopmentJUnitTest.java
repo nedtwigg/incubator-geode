@@ -45,7 +45,8 @@ import static org.junit.Assert.*;
 @Category(IntegrationTest.class)
 public class GemcachedDevelopmentJUnitTest {
 
-  private static final Logger logger = Logger.getLogger(GemcachedDevelopmentJUnitTest.class.getCanonicalName());
+  private static final Logger logger =
+      Logger.getLogger(GemcachedDevelopmentJUnitTest.class.getCanonicalName());
 
   protected static int PORT = 0;
 
@@ -244,7 +245,8 @@ public class GemcachedDevelopmentJUnitTest {
     assertTrue(client.add("keystats", 1, "stats").get());
   }
 
-  private MemcachedClient bootstrapClient() throws IOException, UnknownHostException, InterruptedException, ExecutionException {
+  private MemcachedClient bootstrapClient()
+      throws IOException, UnknownHostException, InterruptedException, ExecutionException {
     MemcachedClient client = createMemcachedClient();
     Future<Boolean> f = client.add("key", 10, "myStringValue");
     f.get();
@@ -254,7 +256,8 @@ public class GemcachedDevelopmentJUnitTest {
   }
 
   protected MemcachedClient createMemcachedClient() throws IOException, UnknownHostException {
-    MemcachedClient client = new MemcachedClient(new InetSocketAddress(InetAddress.getLocalHost(), PORT));
+    MemcachedClient client =
+        new MemcachedClient(new InetSocketAddress(InetAddress.getLocalHost(), PORT));
     return client;
   }
 }

@@ -26,11 +26,12 @@ import org.apache.geode.pdx.PdxSerializable;
 import org.apache.geode.pdx.PdxWriter;
 
 /**
-* The Order class is an abstraction modeling a order.
-* <p/>
-* @since GemFire 8.0
-*/
-
+ * The Order class is an abstraction modeling a order.
+ *
+ * <p>
+ *
+ * @since GemFire 8.0
+ */
 public class Order implements PdxSerializable {
 
   private Long purchaseOrderNo;
@@ -52,7 +53,17 @@ public class Order implements PdxSerializable {
     this.purchaseOrderNo = orderNo;
   }
 
-  public Order(final Long orderNo, final Long custId, final String desc, final Date odate, final Date ddate, final String contact, final String email, final String phone, final List<Item> items, final double tprice) {
+  public Order(
+      final Long orderNo,
+      final Long custId,
+      final String desc,
+      final Date odate,
+      final Date ddate,
+      final String contact,
+      final String email,
+      final String phone,
+      final List<Item> items,
+      final double tprice) {
     this.purchaseOrderNo = orderNo;
     this.customerId = custId;
     this.description = desc;
@@ -66,8 +77,7 @@ public class Order implements PdxSerializable {
   }
 
   public void addItem(final Item item) {
-    if (item != null)
-      this.items.add(item);
+    if (item != null) this.items.add(item);
   }
 
   public Long getPurchaseOrderNo() {
@@ -131,11 +141,9 @@ public class Order implements PdxSerializable {
   }
 
   public void setItems(List<Item> items) {
-    if (this.items == null)
-      this.items = new ArrayList<Item>();
+    if (this.items == null) this.items = new ArrayList<Item>();
 
-    for (Item it : items)
-      this.items.add(it);
+    for (Item it : items) this.items.add(it);
   }
 
   public Date getOrderDate() {
@@ -180,7 +188,5 @@ public class Order implements PdxSerializable {
     phone = reader.readString("phone");
     items = (List<Item>) reader.readObject("items");
     totalPrice = reader.readDouble("totalPrice");
-
   }
-
 }

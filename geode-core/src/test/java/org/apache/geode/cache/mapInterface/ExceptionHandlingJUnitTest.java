@@ -63,8 +63,7 @@ public class ExceptionHandlingJUnitTest {
   }
 
   @After
-  public void tearDown() throws Exception {
-  }
+  public void tearDown() throws Exception {}
 
   @Test
   public void testNullPointerWithContainsValue() {

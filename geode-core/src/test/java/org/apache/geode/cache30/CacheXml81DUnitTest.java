@@ -37,9 +37,8 @@ import org.apache.geode.test.dunit.IgnoredException;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Tests 8.1 schema based configuration. From this point all config test cases
- * should extend this test case where {@link #getUseSchema()} will return true.
- * 
+ * Tests 8.1 schema based configuration. From this point all config test cases should extend this
+ * test case where {@link #getUseSchema()} will return true.
  *
  * @since GemFire 8.1
  */
@@ -62,7 +61,7 @@ public class CacheXml81DUnitTest extends CacheXml80DUnitTest {
   /**
    * Test extensions to
    * <code>cache<code> element.
-   * 
+   *
    * @since GemFire 8.1
    */
   @Test
@@ -84,18 +83,18 @@ public class CacheXml81DUnitTest extends CacheXml80DUnitTest {
     @SuppressWarnings("unchecked")
     final Extensible<Cache> c = (Extensible<Cache>) getCache();
     assertNotNull(c);
-    final MockCacheExtension m = (MockCacheExtension) c.getExtensionPoint().getExtensions().iterator().next();
+    final MockCacheExtension m =
+        (MockCacheExtension) c.getExtensionPoint().getExtensions().iterator().next();
     assertNotNull(m);
 
     assertEquals(1, m.beforeCreateCounter.get());
     assertEquals(1, m.onCreateCounter.get());
     assertEquals(0, m.getXmlGeneratorCounter.get());
-
   }
 
   /**
    * Test extensions to <code>region</code> element.
-   * 
+   *
    * @since GemFire 8.1
    */
   @Test
@@ -104,7 +103,8 @@ public class CacheXml81DUnitTest extends CacheXml80DUnitTest {
     final CacheCreation cache = new CacheCreation();
     final RegionAttributesCreation attrs = new RegionAttributesCreation(cache);
     @SuppressWarnings("unchecked")
-    Extensible<Region<?, ?>> region = (Extensible<Region<?, ?>>) cache.createRegion(regionName, attrs);
+    Extensible<Region<?, ?>> region =
+        (Extensible<Region<?, ?>>) cache.createRegion(regionName, attrs);
 
     final MockRegionExtension extension = new MockRegionExtension("test");
     region.getExtensionPoint().addExtension(extension);
@@ -122,19 +122,19 @@ public class CacheXml81DUnitTest extends CacheXml80DUnitTest {
     @SuppressWarnings("unchecked")
     final Extensible<Region<?, ?>> r = (Extensible<Region<?, ?>>) getCache().getRegion(regionName);
     assertNotNull(r);
-    final MockRegionExtension m = (MockRegionExtension) r.getExtensionPoint().getExtensions().iterator().next();
+    final MockRegionExtension m =
+        (MockRegionExtension) r.getExtensionPoint().getExtensions().iterator().next();
     assertNotNull(m);
 
     assertEquals(1, m.beforeCreateCounter.get());
     assertEquals(1, m.onCreateCounter.get());
     assertEquals(0, m.getXmlGeneratorCounter.get());
-
   }
 
   /**
-   * Test {@link Locator} is used in {@link SAXParseException}.
-   * Exercises {@link XmlParser#setDocumentLocator(Locator)}
-   * 
+   * Test {@link Locator} is used in {@link SAXParseException}. Exercises {@link
+   * XmlParser#setDocumentLocator(Locator)}
+   *
    * @since GemFire 8.2
    */
   @Test
@@ -143,7 +143,8 @@ public class CacheXml81DUnitTest extends CacheXml80DUnitTest {
     final CacheCreation cache = new CacheCreation();
     final RegionAttributesCreation attrs = new RegionAttributesCreation(cache);
     @SuppressWarnings("unchecked")
-    Extensible<Region<?, ?>> region = (Extensible<Region<?, ?>>) cache.createRegion(regionName, attrs);
+    Extensible<Region<?, ?>> region =
+        (Extensible<Region<?, ?>>) cache.createRegion(regionName, attrs);
 
     final MockRegionExtension extension = new MockRegionExtension("exception");
     region.getExtensionPoint().addExtension(extension);
@@ -152,7 +153,8 @@ public class CacheXml81DUnitTest extends CacheXml80DUnitTest {
     assertEquals(0, extension.onCreateCounter.get());
     assertEquals(0, extension.getXmlGeneratorCounter.get());
 
-    IgnoredException expectedException = IgnoredException.addIgnoredException("While reading Cache XML file");
+    IgnoredException expectedException =
+        IgnoredException.addIgnoredException("While reading Cache XML file");
     try {
       testXml(cache);
       fail("Excepted CacheXmlException");
@@ -166,5 +168,4 @@ public class CacheXml81DUnitTest extends CacheXml80DUnitTest {
       expectedException.remove();
     }
   }
-
 }

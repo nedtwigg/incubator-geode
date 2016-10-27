@@ -32,7 +32,12 @@ public class JoinRequestMessage extends HighPriorityDistributionMessage {
   private int failureDetectionPort = -1;
   private int requestId;
 
-  public JoinRequestMessage(InternalDistributedMember coord, InternalDistributedMember id, Object credentials, int fdPort, int requestId) {
+  public JoinRequestMessage(
+      InternalDistributedMember coord,
+      InternalDistributedMember id,
+      Object credentials,
+      int fdPort,
+      int requestId) {
     super();
     setRecipient(coord);
     this.memberID = id;
@@ -69,7 +74,12 @@ public class JoinRequestMessage extends HighPriorityDistributionMessage {
 
   @Override
   public String toString() {
-    return getShortClassName() + "(" + memberID + (credentials == null ? ")" : "; with credentials)") + " failureDetectionPort:" + failureDetectionPort;
+    return getShortClassName()
+        + "("
+        + memberID
+        + (credentials == null ? ")" : "; with credentials)")
+        + " failureDetectionPort:"
+        + failureDetectionPort;
   }
 
   @Override
@@ -103,27 +113,18 @@ public class JoinRequestMessage extends HighPriorityDistributionMessage {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
     JoinRequestMessage other = (JoinRequestMessage) obj;
     if (credentials == null) {
-      if (other.credentials != null)
-        return false;
-    } else if (!credentials.equals(other.credentials))
-      return false;
-    if (failureDetectionPort != other.failureDetectionPort)
-      return false;
+      if (other.credentials != null) return false;
+    } else if (!credentials.equals(other.credentials)) return false;
+    if (failureDetectionPort != other.failureDetectionPort) return false;
     if (memberID == null) {
-      if (other.memberID != null)
-        return false;
-    } else if (!memberID.equals(other.memberID))
-      return false;
-    if (requestId != other.requestId)
-      return false;
+      if (other.memberID != null) return false;
+    } else if (!memberID.equals(other.memberID)) return false;
+    if (requestId != other.requestId) return false;
     return true;
   }
 }

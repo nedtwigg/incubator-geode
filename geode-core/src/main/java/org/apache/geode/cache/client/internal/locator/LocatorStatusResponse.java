@@ -35,7 +35,7 @@ import org.apache.geode.internal.process.ProcessUtils;
 
 /**
  * The LocatorStatusResponse class...
- * </p>
+ *
  * @see org.apache.geode.cache.client.internal.locator.ServerLocationResponse
  * @since GemFire 7.0
  */
@@ -65,7 +65,11 @@ public class LocatorStatusResponse extends ServerLocationResponse {
     }
   }
 
-  public LocatorStatusResponse initialize(final int locatorPort, final String locatorHost, final String locatorLogFile, final String locatorName) {
+  public LocatorStatusResponse initialize(
+      final int locatorPort,
+      final String locatorHost,
+      final String locatorLogFile,
+      final String locatorName) {
     final RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
     this.pid = identifyPid();
     this.jvmArgs = runtimeBean.getInputArguments();
@@ -100,7 +104,8 @@ public class LocatorStatusResponse extends ServerLocationResponse {
 
   @SuppressWarnings("unchecked")
   public List<String> getJvmArgs() {
-    return Collections.unmodifiableList(ObjectUtils.defaultIfNull(jvmArgs, Collections.<String> emptyList()));
+    return Collections.unmodifiableList(
+        ObjectUtils.defaultIfNull(jvmArgs, Collections.<String>emptyList()));
   }
 
   public Integer getPid() {
@@ -277,7 +282,13 @@ public class LocatorStatusResponse extends ServerLocationResponse {
 
     final LocatorStatusResponse that = (LocatorStatusResponse) obj;
 
-    return ObjectUtils.equalsIgnoreNull(this.getPid(), that.getPid()) && ObjectUtils.equals(this.getUptime(), that.getUptime()) && ObjectUtils.equals(this.getWorkingDirectory(), that.getWorkingDirectory()) && ObjectUtils.equals(this.getJvmArgs(), that.getJvmArgs()) && ObjectUtils.equals(this.getClasspath(), that.getClasspath()) && ObjectUtils.equals(this.getGemFireVersion(), that.getGemFireVersion()) && ObjectUtils.equals(this.getJavaVersion(), that.getJavaVersion());
+    return ObjectUtils.equalsIgnoreNull(this.getPid(), that.getPid())
+        && ObjectUtils.equals(this.getUptime(), that.getUptime())
+        && ObjectUtils.equals(this.getWorkingDirectory(), that.getWorkingDirectory())
+        && ObjectUtils.equals(this.getJvmArgs(), that.getJvmArgs())
+        && ObjectUtils.equals(this.getClasspath(), that.getClasspath())
+        && ObjectUtils.equals(this.getGemFireVersion(), that.getGemFireVersion())
+        && ObjectUtils.equals(this.getJavaVersion(), that.getJavaVersion());
   }
 
   @Override
@@ -306,5 +317,4 @@ public class LocatorStatusResponse extends ServerLocationResponse {
     buffer.append("}");
     return buffer.toString();
   }
-
 }

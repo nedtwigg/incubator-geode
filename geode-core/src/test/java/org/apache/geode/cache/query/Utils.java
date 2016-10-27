@@ -31,9 +31,7 @@ import org.apache.geode.cache.query.data.Position;
 
 import parReg.query.unittest.NewPortfolio;
 
-/**
- *
- */
+/** */
 public class Utils {
   public static String printResult(Object r) {
     StringBuffer sb = new StringBuffer();
@@ -55,8 +53,7 @@ public class Utils {
         sb.append((cnt++) + " type = " + value.getClass().getName()).append("\n");
         sb.append("  " + value + "\n");
       }
-    } else
-      sb.append(r);
+    } else sb.append(r);
     return sb.toString();
   }
 
@@ -66,7 +63,6 @@ public class Utils {
    *
    * @return PortFolioData Objects
    */
-
   public static PortfolioData[] createPortfolioData(final int cnt, final int cntDest) {
     PortfolioData[] portfolio = new PortfolioData[cntDest];
     for (int k = cnt; k < cntDest; k++) {

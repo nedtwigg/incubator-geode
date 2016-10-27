@@ -37,11 +37,7 @@ import org.apache.geode.management.internal.cli.LogWrapper;
 import org.apache.geode.management.internal.cli.result.FileResult;
 import org.apache.geode.management.internal.cli.result.ResultBuilder;
 
-/**
- * 
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 // Doesn't have to be org.springframework.roo.shell.ExecutionStrategy
 public class RemoteExecutionStrategy {
   private LogWrapper logWrapper = LogWrapper.getInstance();
@@ -70,7 +66,9 @@ public class RemoteExecutionStrategy {
         // 1. Pre Execution
         if (!sentFromShell && !CliMetaData.ANNOTATION_NULL_VALUE.equals(interceptorClass)) {
           try {
-            interceptor = (CliAroundInterceptor) ClassPathLoader.getLatest().forName(interceptorClass).newInstance();
+            interceptor =
+                (CliAroundInterceptor)
+                    ClassPathLoader.getLatest().forName(interceptorClass).newInstance();
           } catch (InstantiationException e) {
             logWrapper.info(e.getMessage());
           } catch (IllegalAccessException e) {
@@ -88,32 +86,48 @@ public class RemoteExecutionStrategy {
               CommandExecutionContext.setBytesFromShell(fileData);
             }
           } else {
-            return ResultBuilder.createBadConfigurationErrorResult("Interceptor Configuration Error");
+            return ResultBuilder.createBadConfigurationErrorResult(
+                "Interceptor Configuration Error");
           }
         }
         logWrapper.info("Executing " + gfshParseResult.getUserInput());
 
         GemFireCacheImpl gfc = GemFireCacheImpl.getInstance();
 
-        //Do the locking and annotation check only if the shared configuration service is enabled 
+        //Do the locking and annotation check only if the shared configuration service is enabled
         //Else go the usual route of command execution
-        if (gfc.getDistributionManager().isSharedConfigurationServiceEnabledForDS() && (writesToSharedConfiguration(method) || readsFromSharedConfiguration(method))) {
-          DistributedLockService dls = SharedConfiguration.getSharedConfigLockService(InternalDistributedSystem.getAnyInstance());
+        if (gfc.getDistributionManager().isSharedConfigurationServiceEnabledForDS()
+            && (writesToSharedConfiguration(method) || readsFromSharedConfiguration(method))) {
+          DistributedLockService dls =
+              SharedConfiguration.getSharedConfigLockService(
+                  InternalDistributedSystem.getAnyInstance());
           if (dls.lock(SharedConfiguration.SHARED_CONFIG_LOCK_NAME, 10000, -1)) {
             try {
-              result = (Result) ReflectionUtils.invokeMethod(gfshParseResult.getMethod(), gfshParseResult.getInstance(), gfshParseResult.getArguments());
+              result =
+                  (Result)
+                      ReflectionUtils.invokeMethod(
+                          gfshParseResult.getMethod(),
+                          gfshParseResult.getInstance(),
+                          gfshParseResult.getArguments());
             } finally {
               dls.unlock(SharedConfiguration.SHARED_CONFIG_LOCK_NAME);
             }
           } else {
-            return ResultBuilder.createGemFireErrorResult("Unable to execute the command due to ongoing configuration change/member startup.");
+            return ResultBuilder.createGemFireErrorResult(
+                "Unable to execute the command due to ongoing configuration change/member startup.");
           }
         } else {
-          result = (Result) ReflectionUtils.invokeMethod(gfshParseResult.getMethod(), gfshParseResult.getInstance(), gfshParseResult.getArguments());
+          result =
+              (Result)
+                  ReflectionUtils.invokeMethod(
+                      gfshParseResult.getMethod(),
+                      gfshParseResult.getInstance(),
+                      gfshParseResult.getArguments());
         }
 
         if (result != null && Status.ERROR.equals(result.getStatus())) {
-          logWrapper.info("Error occurred while executing \"" + gfshParseResult.getUserInput() + "\".");
+          logWrapper.info(
+              "Error occurred while executing \"" + gfshParseResult.getUserInput() + "\".");
         }
 
         if (interceptor != null) {
@@ -129,7 +143,12 @@ public class RemoteExecutionStrategy {
           CommandExecutionContext.setBytesFromShell(null); // for remote commands with bytes
         }
       } else {
-        throw new IllegalArgumentException("Only Remote command can be executed through " + ManagementService.class.getSimpleName() + ".processCommand() or ManagementMBean's processCommand " + "operation. Please refer documentation for the list of " + "commands.");
+        throw new IllegalArgumentException(
+            "Only Remote command can be executed through "
+                + ManagementService.class.getSimpleName()
+                + ".processCommand() or ManagementMBean's processCommand "
+                + "operation. Please refer documentation for the list of "
+                + "commands.");
       }
     } catch (RuntimeException e) {
       throw e;
@@ -157,6 +176,5 @@ public class RemoteExecutionStrategy {
     return cliMetadata != null ? cliMetadata.interceptor() : CliMetaData.ANNOTATION_NULL_VALUE;
   }
 
-  public void terminate() {
-  }
+  public void terminate() {}
 }

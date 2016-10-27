@@ -27,9 +27,9 @@ import org.apache.geode.internal.process.ProcessControllerFactory;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Subclass of ServerLauncherLocalDUnitTest which forces the code to not find 
- * the Attach API which is in the JDK tools.jar.  As a result ServerLauncher
- * ends up using the FileProcessController implementation.
+ * Subclass of ServerLauncherLocalDUnitTest which forces the code to not find the Attach API which
+ * is in the JDK tools.jar. As a result ServerLauncher ends up using the FileProcessController
+ * implementation.
  *
  * @since GemFire 8.0
  */
@@ -42,8 +42,7 @@ public class ServerLauncherLocalFileIntegrationTest extends ServerLauncherLocalI
   }
 
   @After
-  public final void tearDownServerLauncherLocalFileTest() throws Exception {
-  }
+  public final void tearDownServerLauncherLocalFileTest() throws Exception {}
 
   @Override
   @Test

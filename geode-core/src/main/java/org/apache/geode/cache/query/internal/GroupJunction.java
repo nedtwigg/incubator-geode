@@ -27,21 +27,20 @@ import org.apache.geode.cache.query.QueryInvocationTargetException;
 import org.apache.geode.cache.query.TypeMismatchException;
 
 /**
- * This structure contains the filter evaluable and iter evaluable
- * conditions which are dependent on a group of iterators derived from a single
- * independent iterator ( an iterator on the region) . The iter evaluatable
- * conditions belonging to other group of iterators can be a part of
+ * This structure contains the filter evaluable and iter evaluable conditions which are dependent on
+ * a group of iterators derived from a single independent iterator ( an iterator on the region) .
+ * The iter evaluatable conditions belonging to other group of iterators can be a part of
  * GroupJunction only if the complete expansion flag is true.
- * 
- * 
- *  
  */
 public class GroupJunction extends AbstractGroupOrRangeJunction {
   private List unevaluatedFilterOperands = null;
 
-  GroupJunction(int operator, RuntimeIterator[] indpndntItr, boolean isCompleteExpansion, CompiledValue[] operands) {
+  GroupJunction(
+      int operator,
+      RuntimeIterator[] indpndntItr,
+      boolean isCompleteExpansion,
+      CompiledValue[] operands) {
     super(operator, indpndntItr, isCompleteExpansion, operands);
-
   }
 
   void addUnevaluatedFilterOperands(List unevaluatedFilterOps) {
@@ -52,22 +51,33 @@ public class GroupJunction extends AbstractGroupOrRangeJunction {
     return this.unevaluatedFilterOperands;
   }
 
-  private GroupJunction(AbstractGroupOrRangeJunction oldGJ, boolean completeExpansion, RuntimeIterator indpnds[], CompiledValue iterOp) {
+  private GroupJunction(
+      AbstractGroupOrRangeJunction oldGJ,
+      boolean completeExpansion,
+      RuntimeIterator indpnds[],
+      CompiledValue iterOp) {
     super(oldGJ, completeExpansion, indpnds, iterOp);
   }
 
   @Override
-  AbstractGroupOrRangeJunction recreateFromOld(boolean completeExpansion, RuntimeIterator indpnds[], CompiledValue iterOp) {
+  AbstractGroupOrRangeJunction recreateFromOld(
+      boolean completeExpansion, RuntimeIterator indpnds[], CompiledValue iterOp) {
     return new GroupJunction(this, completeExpansion, indpnds, iterOp);
   }
 
   @Override
-  AbstractGroupOrRangeJunction createNewOfSameType(int operator, RuntimeIterator[] indpndntItr, boolean isCompleteExpansion, CompiledValue[] operands) {
+  AbstractGroupOrRangeJunction createNewOfSameType(
+      int operator,
+      RuntimeIterator[] indpndntItr,
+      boolean isCompleteExpansion,
+      CompiledValue[] operands) {
     return new GroupJunction(operator, indpndntItr, isCompleteExpansion, operands);
   }
 
   @Override
-  OrganizedOperands organizeOperands(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  OrganizedOperands organizeOperands(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     // get the list of operands to evaluate,
     // and evaluate operands that can use indexes first
 
@@ -75,7 +85,9 @@ public class GroupJunction extends AbstractGroupOrRangeJunction {
     int indexCount = 0;
     boolean foundPreferredCondition = false;
     if (this.getOperator() == LITERAL_and) {
-      if (context instanceof QueryExecutionContext && ((QueryExecutionContext) context).hasHints() && ((QueryExecutionContext) context).hasMultiHints()) {
+      if (context instanceof QueryExecutionContext
+          && ((QueryExecutionContext) context).hasHints()
+          && ((QueryExecutionContext) context).hasMultiHints()) {
         //Hint was provided, so allow multi index usage
         for (int i = 0; i < _operands.length; i++) {
           if (_operands[i].getPlanInfo(context).evalAsFilter) {
@@ -93,8 +105,8 @@ public class GroupJunction extends AbstractGroupOrRangeJunction {
         when the compiled junction tree is being probed for indexable operands. But there are issues in
         it as we need to tackle comlex cases like detection of those conditions which can actually form
         a closed range or those which belong to different independent runtime iterators ( in case of multi
-        region queries). So going for the  quick fix of sorting here. The filter operands present here 
-        could be Comaprisn, IN or Range. The priority of sorting will be equality/IN/Range/Inequality    
+        region queries). So going for the  quick fix of sorting here. The filter operands present here
+        could be Comaprisn, IN or Range. The priority of sorting will be equality/IN/Range/Inequality
         */
 
         Filter currentBestFilter = null;
@@ -120,7 +132,7 @@ public class GroupJunction extends AbstractGroupOrRangeJunction {
           // either tru or false for an AND junction but always false for an
           // OR Junction.
           PlanInfo pi = _operands[i].getPlanInfo(context);
-          //we check for size == 1 now because of the join optimization can 
+          //we check for size == 1 now because of the join optimization can
           //leave an operand with two indexes, but the key element is not set
           //this will throw an npe
           if (pi.evalAsFilter && pi.indexes.size() == 1) {
@@ -137,20 +149,22 @@ public class GroupJunction extends AbstractGroupOrRangeJunction {
             if (currentBestFilter == null) {
               currentBestFilter = (Filter) _operands[i];
               currentBestFilterSize = ((Filter) _operands[i]).getSizeEstimate(context);
-            } else if (foundPreferredCondition || currentBestFilter.isBetterFilter((Filter) _operands[i], context, currentBestFilterSize)) {
+            } else if (foundPreferredCondition
+                || currentBestFilter.isBetterFilter(
+                    (Filter) _operands[i], context, currentBestFilterSize)) {
               evalOperands.add(_operands[i]);
             } else {
               evalOperands.add(currentBestFilter);
               currentBestFilter = (Filter) _operands[i];
               // TODO:Asif: Avoid this call. Let the function which is doing the
-              // comparison return some how the size of comparedTo operand. 
+              // comparison return some how the size of comparedTo operand.
               currentBestFilterSize = ((Filter) _operands[i]).getSizeEstimate(context);
-
             }
           } else if (!_operands[i].isDependentOnCurrentScope(context)) {
             // TODO: Asif :Remove this Assert & else if condition after successful
             // testing of the build
-            Support.assertionFailed("An independentoperand should not ever be present as operand inside a GroupJunction as it should always be present only in CompiledJunction");
+            Support.assertionFailed(
+                "An independentoperand should not ever be present as operand inside a GroupJunction as it should always be present only in CompiledJunction");
           } else {
             evalOperands.add(_operands[i]);
           }
@@ -170,7 +184,9 @@ public class GroupJunction extends AbstractGroupOrRangeJunction {
     return createOrganizedOperandsObject(indexCount, evalOperands);
   }
 
-  public int getSizeEstimate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public int getSizeEstimate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     return 1;
   }
 }

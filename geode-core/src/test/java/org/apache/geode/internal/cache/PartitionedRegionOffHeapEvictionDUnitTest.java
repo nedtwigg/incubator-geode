@@ -35,15 +35,16 @@ public class PartitionedRegionOffHeapEvictionDUnitTest extends PartitionedRegion
 
   @Override
   public final void preTearDownAssertions() throws Exception {
-    SerializableRunnable checkOrphans = new SerializableRunnable() {
+    SerializableRunnable checkOrphans =
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        if (hasCache()) {
-          OffHeapTestUtil.checkOrphans();
-        }
-      }
-    };
+          @Override
+          public void run() {
+            if (hasCache()) {
+              OffHeapTestUtil.checkOrphans();
+            }
+          }
+        };
     Invoke.invokeInEveryVM(checkOrphans);
     checkOrphans.run();
   }
@@ -81,7 +82,8 @@ public class PartitionedRegionOffHeapEvictionDUnitTest extends PartitionedRegion
     ((GemFireCacheImpl) getCache()).getOffHeapEvictor().testAbortAfterLoopCount = 1;
 
     setEvictionPercentage(85);
-    OffHeapMemoryMonitor ohmm = ((GemFireCacheImpl) getCache()).getResourceManager().getOffHeapMonitor();
+    OffHeapMemoryMonitor ohmm =
+        ((GemFireCacheImpl) getCache()).getResourceManager().getOffHeapMonitor();
     ohmm.stopMonitoring(true);
 
     ohmm.updateStateAndSendEvent(94371840);

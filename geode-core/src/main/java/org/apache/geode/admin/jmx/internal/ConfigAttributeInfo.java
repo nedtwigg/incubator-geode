@@ -23,14 +23,12 @@ import javax.management.Descriptor;
 import javax.management.modelmbean.DescriptorSupport;
 import javax.management.modelmbean.ModelMBeanAttributeInfo;
 
-/** 
- * Subclass of AttributeInfo with {@link 
- * org.apache.geode.admin.ConfigurationParameter} added for use as the 
- * {@link javax.management.modelmbean.ModelMBeanAttributeInfo} descriptor's 
+/**
+ * Subclass of AttributeInfo with {@link org.apache.geode.admin.ConfigurationParameter} added for
+ * use as the {@link javax.management.modelmbean.ModelMBeanAttributeInfo} descriptor's
  * <i>targetObject</i> value.
  *
- * @since GemFire     3.5
- *
+ * @since GemFire 3.5
  */
 class ConfigAttributeInfo extends org.apache.commons.modeler.AttributeInfo {
   private static final long serialVersionUID = -1918437700841687078L;
@@ -48,19 +46,29 @@ class ConfigAttributeInfo extends org.apache.commons.modeler.AttributeInfo {
 
   @Override
   public ModelMBeanAttributeInfo createAttributeInfo() {
-    Descriptor desc = new DescriptorSupport(new String[] { "name=" + this.displayName, "descriptorType=attribute", "currencyTimeLimit=-1", // always stale
-        "displayName=" + this.displayName, "getMethod=getJmxValue", "setMethod=setJmxValue" });
+    Descriptor desc =
+        new DescriptorSupport(
+            new String[] {
+              "name=" + this.displayName,
+              "descriptorType=attribute",
+              "currencyTimeLimit=-1", // always stale
+              "displayName=" + this.displayName,
+              "getMethod=getJmxValue",
+              "setMethod=setJmxValue"
+            });
 
     Assert.assertTrue(this.config != null, "Config target object is null!");
     desc.setField("targetObject", this.config);
 
-    ModelMBeanAttributeInfo info = new ModelMBeanAttributeInfo(this.displayName, // name
-        this.type, // type
-        this.description, // description
-        this.readable, // isReadable
-        this.writeable, // isWritable
-        this.is, // isIs
-        desc);
+    ModelMBeanAttributeInfo info =
+        new ModelMBeanAttributeInfo(
+            this.displayName, // name
+            this.type, // type
+            this.description, // description
+            this.readable, // isReadable
+            this.writeable, // isWritable
+            this.is, // isIs
+            desc);
 
     return info;
   }

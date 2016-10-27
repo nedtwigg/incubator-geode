@@ -22,34 +22,36 @@ import org.apache.geode.internal.cache.CacheDistributionAdvisor;
 import org.apache.geode.internal.cache.CreateRegionProcessor;
 
 /**
- * Similar to CreateRegionProcessor, this class is used during
- * the initialization of a persistent region to exchange
- * profiles with other members. This class also determines which
- * member should be used for initialization.
- *
+ * Similar to CreateRegionProcessor, this class is used during the initialization of a persistent
+ * region to exchange profiles with other members. This class also determines which member should be
+ * used for initialization.
  */
 public class CreatePersistentRegionProcessor extends CreateRegionProcessor {
 
   private final PersistenceAdvisor persistenceAdvisor;
   private final boolean recoverFromDisk;
 
-  public CreatePersistentRegionProcessor(CacheDistributionAdvisee advisee, PersistenceAdvisor persistenceAdvisor, boolean recoverFromDisk) {
+  public CreatePersistentRegionProcessor(
+      CacheDistributionAdvisee advisee,
+      PersistenceAdvisor persistenceAdvisor,
+      boolean recoverFromDisk) {
     super(advisee);
     this.persistenceAdvisor = persistenceAdvisor;
     this.recoverFromDisk = recoverFromDisk;
   }
 
   /**
-   * Returns the member id of the member who has the latest
-   * copy of the persistent region. This may be the local member ID
-   * if this member has the latest known copy.
-   * 
-   * This method will block until the latest member is online.
-   * @throws ConflictingPersistentDataException if there are active members
-   * which are not based on the state that is persisted in this member.
+   * Returns the member id of the member who has the latest copy of the persistent region. This may
+   * be the local member ID if this member has the latest known copy.
+   *
+   * <p>This method will block until the latest member is online.
+   *
+   * @throws ConflictingPersistentDataException if there are active members which are not based on
+   *     the state that is persisted in this member.
    */
   @Override
-  public CacheDistributionAdvisor.InitialImageAdvice getInitialImageAdvice(CacheDistributionAdvisor.InitialImageAdvice previousAdvice) {
+  public CacheDistributionAdvisor.InitialImageAdvice getInitialImageAdvice(
+      CacheDistributionAdvisor.InitialImageAdvice previousAdvice) {
     return this.persistenceAdvisor.getInitialImageAdvice(previousAdvice, recoverFromDisk);
   }
 }

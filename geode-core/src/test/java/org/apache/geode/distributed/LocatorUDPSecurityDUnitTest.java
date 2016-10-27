@@ -42,8 +42,7 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 public class LocatorUDPSecurityDUnitTest extends LocatorDUnitTest {
 
-  public LocatorUDPSecurityDUnitTest() {
-  }
+  public LocatorUDPSecurityDUnitTest() {}
 
   @Override
   protected void addDSProps(Properties p) {
@@ -70,22 +69,23 @@ public class LocatorUDPSecurityDUnitTest extends LocatorDUnitTest {
     final String locators = NetworkUtils.getServerHostName(host) + "[" + port + "]";
     final String uniqueName = getUniqueName();
 
-    vm0.invoke(new SerializableRunnable("Start locator " + locators) {
-      public void run() {
-        File logFile = new File("");
-        try {
-          Properties locProps = new Properties();
-          locProps.setProperty(MCAST_PORT, "0");
-          locProps.setProperty(MEMBER_TIMEOUT, "1000");
-          locProps.put(ENABLE_CLUSTER_CONFIGURATION, "false");
+    vm0.invoke(
+        new SerializableRunnable("Start locator " + locators) {
+          public void run() {
+            File logFile = new File("");
+            try {
+              Properties locProps = new Properties();
+              locProps.setProperty(MCAST_PORT, "0");
+              locProps.setProperty(MEMBER_TIMEOUT, "1000");
+              locProps.put(ENABLE_CLUSTER_CONFIGURATION, "false");
 
-          addDSProps(locProps);
-          Locator.startLocatorAndDS(port, logFile, locProps);
-        } catch (IOException ex) {
-          org.apache.geode.test.dunit.Assert.fail("While starting locator on port " + port, ex);
-        }
-      }
-    });
+              addDSProps(locProps);
+              Locator.startLocatorAndDS(port, logFile, locProps);
+            } catch (IOException ex) {
+              org.apache.geode.test.dunit.Assert.fail("While starting locator on port " + port, ex);
+            }
+          }
+        });
     try {
 
       Properties props = new Properties();

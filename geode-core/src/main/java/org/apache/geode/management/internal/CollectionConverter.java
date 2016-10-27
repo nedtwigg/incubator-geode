@@ -32,13 +32,13 @@ import java.util.TreeSet;
 import javax.management.openmbean.ArrayType;
 import javax.management.openmbean.OpenDataException;
 
-/**
- * Open type converter for Collections
- * 
- * 
- */
+/** Open type converter for Collections */
 public final class CollectionConverter extends OpenTypeConverter {
-  CollectionConverter(Type targetType, ArrayType openArrayType, Class openArrayClass, OpenTypeConverter elementConverter) {
+  CollectionConverter(
+      Type targetType,
+      ArrayType openArrayType,
+      Class openArrayClass,
+      OpenTypeConverter elementConverter) {
     super(targetType, openArrayType, openArrayClass);
     this.elementConverter = elementConverter;
 
@@ -49,12 +49,9 @@ public final class CollectionConverter extends OpenTypeConverter {
      */
     Type raw = ((ParameterizedType) targetType).getRawType();
     Class c = (Class<?>) raw;
-    if (c == List.class)
-      collectionClass = ArrayList.class;
-    else if (c == Set.class)
-      collectionClass = HashSet.class;
-    else if (c == SortedSet.class)
-      collectionClass = TreeSet.class;
+    if (c == List.class) collectionClass = ArrayList.class;
+    else if (c == Set.class) collectionClass = HashSet.class;
+    else if (c == SortedSet.class) collectionClass = TreeSet.class;
     else { // can't happen
       assert (false);
       collectionClass = null;
@@ -70,10 +67,10 @@ public final class CollectionConverter extends OpenTypeConverter {
         throw openDataException(msg, new IllegalArgumentException(msg));
       }
     }
-    final Object[] openArray = (Object[]) Array.newInstance(getOpenClass().getComponentType(), valueCollection.size());
+    final Object[] openArray =
+        (Object[]) Array.newInstance(getOpenClass().getComponentType(), valueCollection.size());
     int i = 0;
-    for (Object o : valueCollection)
-      openArray[i++] = elementConverter.toOpenValue(o);
+    for (Object o : valueCollection) openArray[i++] = elementConverter.toOpenValue(o);
     return openArray;
   }
 
@@ -88,7 +85,8 @@ public final class CollectionConverter extends OpenTypeConverter {
     for (Object o : openArray) {
       Object value = elementConverter.fromOpenValue(o);
       if (!valueCollection.add(value)) {
-        final String msg = "Could not add " + o + " to " + collectionClass.getName() + " (duplicate set element?)";
+        final String msg =
+            "Could not add " + o + " to " + collectionClass.getName() + " (duplicate set element?)";
         throw new InvalidObjectException(msg);
       }
     }

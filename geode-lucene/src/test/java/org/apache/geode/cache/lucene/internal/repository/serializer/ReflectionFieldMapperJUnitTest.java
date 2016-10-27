@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -26,17 +26,14 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit test of the ReflectionFieldMapperClass. Tests that 
- * all field types are mapped correctly. 
- */
+/** Unit test of the ReflectionFieldMapperClass. Tests that all field types are mapped correctly. */
 @Category(UnitTest.class)
 public class ReflectionFieldMapperJUnitTest {
 
   @Test
   public void testAllFields() {
 
-    String[] allFields = new String[] { "s", "i", "l", "d", "f", "s2" };
+    String[] allFields = new String[] {"s", "i", "l", "d", "f", "s2"};
     ReflectionLuceneSerializer mapper1 = new ReflectionLuceneSerializer(Type1.class, allFields);
     ReflectionLuceneSerializer mapper2 = new ReflectionLuceneSerializer(Type2.class, allFields);
 
@@ -68,7 +65,7 @@ public class ReflectionFieldMapperJUnitTest {
   @Test
   public void testIgnoreInvalid() {
 
-    String[] fields = new String[] { "s", "o", "s2" };
+    String[] fields = new String[] {"s", "o", "s2"};
     ReflectionLuceneSerializer mapper = new ReflectionLuceneSerializer(Type2.class, fields);
 
     Type2 t = new Type2("a", 1, 2L, 3.0, 4.0f, "b");
@@ -84,7 +81,7 @@ public class ReflectionFieldMapperJUnitTest {
   @Test
   public void testNullField() {
 
-    String[] fields = new String[] { "s", "o", "s2" };
+    String[] fields = new String[] {"s", "o", "s2"};
     ReflectionLuceneSerializer mapper = new ReflectionLuceneSerializer(Type2.class, fields);
 
     Type2 t = new Type2("a", 1, 2L, 3.0, 4.0f, null);

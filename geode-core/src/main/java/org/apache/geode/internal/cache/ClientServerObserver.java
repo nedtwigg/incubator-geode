@@ -20,63 +20,49 @@ import org.apache.geode.distributed.internal.ServerLocation;
 import org.apache.geode.internal.cache.tier.sockets.Message;
 
 /**
- * This interface is used by testing/debugging code to be notified of different
- * client/server events.
- * See the documentation for class ClientServerObserverHolder for details.
- * 
+ * This interface is used by testing/debugging code to be notified of different client/server
+ * events. See the documentation for class ClientServerObserverHolder for details.
+ *
  * @since GemFire 5.1
- *  
  */
 public interface ClientServerObserver {
-  /**
-   * This callback is called when now primary Ep is identified.
-   */
+  /** This callback is called when now primary Ep is identified. */
   public void afterPrimaryIdentificationFromBackup(ServerLocation location);
 
-  /**
-   * This callback is called just before interest registartion
-   */
+  /** This callback is called just before interest registartion */
   public void beforeInterestRegistration();
 
-  /**
-   * This callback is called just after interest registartion
-   */
+  /** This callback is called just after interest registartion */
   public void afterInterestRegistration();
 
-  /**
-   * This callback is called just before primary identification
-   */
+  /** This callback is called just before primary identification */
   public void beforePrimaryIdentificationFromBackup();
 
-  /**
-   * This callback is called just before Interest Recovery by DSM thread happens
-   */
+  /** This callback is called just before Interest Recovery by DSM thread happens */
   public void beforeInterestRecovery();
 
   /**
-   * Invoked by CacheClientUpdater just before invoking endpointDied for
-   * fail over
+   * Invoked by CacheClientUpdater just before invoking endpointDied for fail over
+   *
    * @param location ServerLocation which has failed
    */
   public void beforeFailoverByCacheClientUpdater(ServerLocation location);
 
   /**
    * Invoked before sending an instantiator message to server
-   * 
+   *
    * @param eventId
    */
   public void beforeSendingToServer(EventID eventId);
 
   /**
-   * Invoked after sending an instantiator message to server 
-   * 
+   * Invoked after sending an instantiator message to server
+   *
    * @param eventId
    */
   public void afterReceivingFromServer(EventID eventId);
 
-  /**
-   * This callback is called just before sending client ack to the primary servrer.
-   */
+  /** This callback is called just before sending client ack to the primary servrer. */
   public void beforeSendingClientAck();
 
   /**
@@ -86,14 +72,9 @@ public interface ClientServerObserver {
    */
   public void afterMessageCreation(Message msg);
 
-  /**
-   * Invoked after Queue Destroy Message has been sent
-   */
+  /** Invoked after Queue Destroy Message has been sent */
   public void afterQueueDestroyMessage();
 
-  /**
-   * Invoked after a primary is recovered from a backup or new connection. 
-   */
+  /** Invoked after a primary is recovered from a backup or new connection. */
   public void afterPrimaryRecovered(ServerLocation location);
-
 }

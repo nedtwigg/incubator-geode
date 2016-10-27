@@ -26,18 +26,15 @@ import org.apache.geode.internal.admin.StatAlert;
 import org.apache.geode.internal.admin.StatAlertDefinition;
 
 /**
- * Implementation of {@link StatAlertDefinition}, which defines function
- * Function to be applied on all the statistic Threshold is valid for value
- * evaluated by function
- * 
+ * Implementation of {@link StatAlertDefinition}, which defines function Function to be applied on
+ * all the statistic Threshold is valid for value evaluated by function
  */
 public final class FunctionDecoratorImpl extends BaseDecoratorImpl {
   private static final long serialVersionUID = -4857857489413081553L;
 
   protected short functorId = -1;
 
-  public FunctionDecoratorImpl() {
-  }
+  public FunctionDecoratorImpl() {}
 
   public FunctionDecoratorImpl(StatAlertDefinition definition, short functorId) {
     super(definition);
@@ -65,13 +62,10 @@ public final class FunctionDecoratorImpl extends BaseDecoratorImpl {
     return buffer.toString();
   }
 
-  /**
-   * This eval just applies to a single value or the 1st value in params
-   */
+  /** This eval just applies to a single value or the 1st value in params */
   @Override
   public boolean evaluate(Number[] params) {
     return super.evaluate(params) && canApplyFunction(params);
-
   }
 
   @Override
@@ -126,5 +120,4 @@ public final class FunctionDecoratorImpl extends BaseDecoratorImpl {
   }
 
   public static final String ID = "NonSystemFunction";
-
 }

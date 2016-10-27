@@ -28,21 +28,15 @@ import org.apache.geode.internal.cache.tier.sockets.CacheClientProxy;
 import org.apache.geode.internal.cache.tier.sockets.ClientProxyMembershipID;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * @since GemFire 5.7
- */
+/** @since GemFire 5.7 */
 public class HAContainerMap implements HAContainerWrapper {
 
-  /**
-   * TODO: Amogh: Using ConcurrentHashMap may be beneficial. It gives us
-   * putEntryIfAbsent()!
-   */
+  /** TODO: Amogh: Using ConcurrentHashMap may be beneficial. It gives us putEntryIfAbsent()! */
   private ConcurrentHashMap map = null;
 
   /**
-   * This map helps us retrieve the proxy id at the receiver side during GII so
-   * that we can retain the cqlist of a client for an event which already
-   * existed at the receiver side.
+   * This map helps us retrieve the proxy id at the receiver side during GII so that we can retain
+   * the cqlist of a client for an event which already existed at the receiver side.
    */
   private final Map<String, CacheClientProxy> haRegionNameToProxy;
 
@@ -156,7 +150,7 @@ public class HAContainerMap implements HAContainerWrapper {
     throw new UnsupportedOperationException("values() not supported.");
   }
 
-  static protected class Entry implements Map.Entry {
+  protected static class Entry implements Map.Entry {
     private Object key = null;
 
     private Object value = null;
@@ -181,5 +175,4 @@ public class HAContainerMap implements HAContainerWrapper {
       throw new UnsupportedOperationException("setValue() not supported.");
     }
   }
-
 }

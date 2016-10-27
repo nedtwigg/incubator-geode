@@ -83,16 +83,17 @@ public class ConnectionManagerJUnitTest {
     background = Executors.newSingleThreadScheduledExecutor();
     poolStats = new PoolStats(ds, "connectionManagerJUnitTest");
     endpointManager = new EndpointManagerImpl("pool", ds, ds.getCancelCriterion(), poolStats);
-    cancelCriterion = new CancelCriterion() {
+    cancelCriterion =
+        new CancelCriterion() {
 
-      public String cancelInProgress() {
-        return null;
-      }
+          public String cancelInProgress() {
+            return null;
+          }
 
-      public RuntimeException generateCancelledException(Throwable e) {
-        return null;
-      }
-    };
+          public RuntimeException generateCancelledException(Throwable e) {
+            return null;
+          }
+        };
   }
 
   @After
@@ -105,8 +106,21 @@ public class ConnectionManagerJUnitTest {
   }
 
   @Test
-  public void testGet() throws InterruptedException, AllConnectionsInUseException, NoAvailableServersException {
-    manager = new ConnectionManagerImpl("pool", factory, endpointManager, 3, 0, -1, -1, logger, 60 * 1000, cancelCriterion, poolStats);
+  public void testGet()
+      throws InterruptedException, AllConnectionsInUseException, NoAvailableServersException {
+    manager =
+        new ConnectionManagerImpl(
+            "pool",
+            factory,
+            endpointManager,
+            3,
+            0,
+            -1,
+            -1,
+            logger,
+            60 * 1000,
+            cancelCriterion,
+            poolStats);
     manager.start(background);
 
     Connection conn[] = new Connection[4];
@@ -137,24 +151,50 @@ public class ConnectionManagerJUnitTest {
 
   @Test
   public void testPrefill() throws InterruptedException {
-    manager = new ConnectionManagerImpl("pool", factory, endpointManager, 10, 2, -1, -1, logger, 60 * 1000, cancelCriterion, poolStats);
+    manager =
+        new ConnectionManagerImpl(
+            "pool",
+            factory,
+            endpointManager,
+            10,
+            2,
+            -1,
+            -1,
+            logger,
+            60 * 1000,
+            cancelCriterion,
+            poolStats);
     manager.start(background);
     final String descrip = manager.toString();
-    WaitCriterion ev = new WaitCriterion() {
-      public boolean done() {
-        return factory.creates == 2 && factory.destroys == 0;
-      }
+    WaitCriterion ev =
+        new WaitCriterion() {
+          public boolean done() {
+            return factory.creates == 2 && factory.destroys == 0;
+          }
 
-      public String description() {
-        return "waiting for manager " + descrip;
-      }
-    };
+          public String description() {
+            return "waiting for manager " + descrip;
+          }
+        };
     Wait.waitForCriterion(ev, 200, 200, true);
   }
 
   @Test
-  public void testInvalidateConnection() throws InterruptedException, AllConnectionsInUseException, NoAvailableServersException {
-    manager = new ConnectionManagerImpl("pool", factory, endpointManager, 10, 0, 0L, -1, logger, 60 * 1000, cancelCriterion, poolStats);
+  public void testInvalidateConnection()
+      throws InterruptedException, AllConnectionsInUseException, NoAvailableServersException {
+    manager =
+        new ConnectionManagerImpl(
+            "pool",
+            factory,
+            endpointManager,
+            10,
+            0,
+            0L,
+            -1,
+            logger,
+            60 * 1000,
+            cancelCriterion,
+            poolStats);
     manager.start(background);
 
     Connection conn = manager.borrowConnection(0);
@@ -170,8 +210,21 @@ public class ConnectionManagerJUnitTest {
   }
 
   @Test
-  public void testInvalidateServer() throws InterruptedException, AllConnectionsInUseException, NoAvailableServersException {
-    manager = new ConnectionManagerImpl("pool", factory, endpointManager, 10, 0, -1, -1, logger, 60 * 1000, cancelCriterion, poolStats);
+  public void testInvalidateServer()
+      throws InterruptedException, AllConnectionsInUseException, NoAvailableServersException {
+    manager =
+        new ConnectionManagerImpl(
+            "pool",
+            factory,
+            endpointManager,
+            10,
+            0,
+            -1,
+            -1,
+            logger,
+            60 * 1000,
+            cancelCriterion,
+            poolStats);
     manager.start(background);
 
     ServerLocation server1 = new ServerLocation("localhost", 1);
@@ -205,25 +258,38 @@ public class ConnectionManagerJUnitTest {
   //    DummySource source = new DummySource();
   //    manager = new ConnectionManager(source, factory, 10, -1, 10, logger, logger);
   //    manager.start();
-  //    
+  //
   //    source.nextServer = new ServerLocation("localhost", 10);
   //    Connection conn1 = manager.borrowConnection(10);
   //    manager.returnConnection(conn1);
-  //    
+  //
   //    try {
   //      Connection conn2 = manager.borrowConnection(new ServerLocation("locahost", 20), 10);
   //      Assert.fail("Should have received no servers available, because we asked for a server we can't get");
   //    } catch(NoAvailableServersException expected) {
-  //      
+  //
   //    }
-  //    
+  //
   //  }
 
   @Test
-  public void testIdleExpiration() throws InterruptedException, AllConnectionsInUseException, NoAvailableServersException {
+  public void testIdleExpiration()
+      throws InterruptedException, AllConnectionsInUseException, NoAvailableServersException {
     final long nanoToMillis = 1000000;
     final long idleTimeout = 300;
-    manager = new ConnectionManagerImpl("pool", factory, endpointManager, 5, 2, idleTimeout, -1, logger, 60 * 1000, cancelCriterion, poolStats);
+    manager =
+        new ConnectionManagerImpl(
+            "pool",
+            factory,
+            endpointManager,
+            5,
+            2,
+            idleTimeout,
+            -1,
+            logger,
+            60 * 1000,
+            cancelCriterion,
+            poolStats);
     manager.start(background);
 
     {
@@ -240,7 +306,7 @@ public class ConnectionManagerJUnitTest {
       Assert.assertEquals(0, factory.closes);
       Assert.assertEquals(0, poolStats.getIdleExpire());
       // no need to wait; dangerous because it gives connections a chance to expire
-      //     //wait for prefill task to finish. 
+      //     //wait for prefill task to finish.
       //     Thread.sleep(100);
     }
 
@@ -269,7 +335,9 @@ public class ConnectionManagerJUnitTest {
         }
       }
       long elapsed = (System.nanoTime() - startInNanos) / nanoToMillis;
-      Assert.assertTrue("Elapsed " + elapsed + " is less than idle timeout " + idleTimeout, elapsed >= idleTimeout && elapsed <= idleTimeout + 100);
+      Assert.assertTrue(
+          "Elapsed " + elapsed + " is less than idle timeout " + idleTimeout,
+          elapsed >= idleTimeout && elapsed <= idleTimeout + 100);
       Assert.assertEquals(5, factory.creates);
       Assert.assertEquals(1, factory.destroys);
       Assert.assertEquals(1, factory.closes);
@@ -292,7 +360,9 @@ public class ConnectionManagerJUnitTest {
         }
       }
       long elapsed = (System.nanoTime() - startInNanos) / nanoToMillis;
-      Assert.assertTrue("Elapsed " + elapsed + " is less than idle timeout " + idleTimeout, elapsed >= idleTimeout && elapsed <= idleTimeout + 100);
+      Assert.assertTrue(
+          "Elapsed " + elapsed + " is less than idle timeout " + idleTimeout,
+          elapsed >= idleTimeout && elapsed <= idleTimeout + 100);
       Assert.assertEquals(5, factory.creates);
       Assert.assertEquals(3, factory.destroys);
       Assert.assertEquals(3, factory.closes);
@@ -308,9 +378,22 @@ public class ConnectionManagerJUnitTest {
   }
 
   @Test
-  public void testBug41516() throws InterruptedException, AllConnectionsInUseException, NoAvailableServersException {
+  public void testBug41516()
+      throws InterruptedException, AllConnectionsInUseException, NoAvailableServersException {
     final long idleTimeout = 300;
-    manager = new ConnectionManagerImpl("pool", factory, endpointManager, 2, 1, idleTimeout, -1, logger, 60 * 1000, cancelCriterion, poolStats);
+    manager =
+        new ConnectionManagerImpl(
+            "pool",
+            factory,
+            endpointManager,
+            2,
+            1,
+            idleTimeout,
+            -1,
+            logger,
+            60 * 1000,
+            cancelCriterion,
+            poolStats);
     manager.start(background);
 
     Connection conn1 = manager.borrowConnection(500);
@@ -330,7 +413,9 @@ public class ConnectionManagerJUnitTest {
         }
       }
       long elapsed = System.currentTimeMillis() - start;
-      Assert.assertTrue("Elapsed " + elapsed + " is less than idle timeout " + idleTimeout, elapsed + ALLOWABLE_ERROR_IN_EXPIRATION >= idleTimeout);
+      Assert.assertTrue(
+          "Elapsed " + elapsed + " is less than idle timeout " + idleTimeout,
+          elapsed + ALLOWABLE_ERROR_IN_EXPIRATION >= idleTimeout);
       Assert.assertEquals(1, factory.destroys);
       Assert.assertEquals(1, factory.closes);
       Assert.assertEquals(1, poolStats.getIdleExpire());
@@ -356,9 +441,23 @@ public class ConnectionManagerJUnitTest {
   }
 
   @Test
-  public void testLifetimeExpiration() throws InterruptedException, AllConnectionsInUseException, NoAvailableServersException, Throwable {
+  public void testLifetimeExpiration()
+      throws InterruptedException, AllConnectionsInUseException, NoAvailableServersException,
+          Throwable {
     int lifetimeTimeout = 500;
-    manager = new ConnectionManagerImpl("pool", factory, endpointManager, 2, 2, -1, lifetimeTimeout, logger, 60 * 1000, cancelCriterion, poolStats);
+    manager =
+        new ConnectionManagerImpl(
+            "pool",
+            factory,
+            endpointManager,
+            2,
+            2,
+            -1,
+            lifetimeTimeout,
+            logger,
+            60 * 1000,
+            cancelCriterion,
+            poolStats);
     manager.start(background);
 
     {
@@ -405,7 +504,12 @@ public class ConnectionManagerJUnitTest {
       Assert.assertEquals(0, factory.destroys);
       Assert.assertEquals(0, factory.closes);
 
-      Assert.assertTrue("took too long to expire lifetime; expected=" + lifetimeTimeout + " but took=" + (end - start), (end - start) < lifetimeTimeout * 2);
+      Assert.assertTrue(
+          "took too long to expire lifetime; expected="
+              + lifetimeTimeout
+              + " but took="
+              + (end - start),
+          (end - start) < lifetimeTimeout * 2);
     }
 
     for (int i = 0; i < updaterCount; i++) {
@@ -443,7 +547,7 @@ public class ConnectionManagerJUnitTest {
     //     long start = System.currentTimeMillis();
     //     synchronized(factory) {
     //       while(factory.destroys < 3 && remaining > 0) {
-    //         factory.wait(remaining); 
+    //         factory.wait(remaining);
     //         remaining = TIMEOUT - (System.currentTimeMillis() - start);
     //       }
     //     }
@@ -457,7 +561,19 @@ public class ConnectionManagerJUnitTest {
 
   @Test
   public void testExclusiveConnectionAccess() throws Throwable {
-    manager = new ConnectionManagerImpl("pool", factory, endpointManager, 1, 0, -1, -1, logger, 60 * 1000, cancelCriterion, poolStats);
+    manager =
+        new ConnectionManagerImpl(
+            "pool",
+            factory,
+            endpointManager,
+            1,
+            0,
+            -1,
+            -1,
+            logger,
+            60 * 1000,
+            cancelCriterion,
+            poolStats);
     manager.start(background);
     AtomicReference exception = new AtomicReference();
     AtomicBoolean haveConnection = new AtomicBoolean();
@@ -486,8 +602,21 @@ public class ConnectionManagerJUnitTest {
   }
 
   @Test
-  public void testClose() throws AllConnectionsInUseException, NoAvailableServersException, InterruptedException {
-    manager = new ConnectionManagerImpl("pool", factory, endpointManager, 10, 0, -1, -1, logger, 60 * 1000, cancelCriterion, poolStats);
+  public void testClose()
+      throws AllConnectionsInUseException, NoAvailableServersException, InterruptedException {
+    manager =
+        new ConnectionManagerImpl(
+            "pool",
+            factory,
+            endpointManager,
+            10,
+            0,
+            -1,
+            -1,
+            logger,
+            60 * 1000,
+            cancelCriterion,
+            poolStats);
     manager.start(background);
 
     Connection conn1 = manager.borrowConnection(0);
@@ -500,12 +629,23 @@ public class ConnectionManagerJUnitTest {
 
     Assert.assertEquals(2, factory.closes);
     Assert.assertEquals(2, factory.destroys);
-
   }
 
   @Test
   public void testExchangeConnection() throws Exception {
-    manager = new ConnectionManagerImpl("pool", factory, endpointManager, 2, 0, -1, -1, logger, 60 * 1000, cancelCriterion, poolStats);
+    manager =
+        new ConnectionManagerImpl(
+            "pool",
+            factory,
+            endpointManager,
+            2,
+            0,
+            -1,
+            -1,
+            logger,
+            60 * 1000,
+            cancelCriterion,
+            poolStats);
     manager.start(background);
 
     Connection conn1 = manager.borrowConnection(10);
@@ -533,7 +673,8 @@ public class ConnectionManagerJUnitTest {
     Assert.assertEquals(1, factory.destroys);
     Assert.assertEquals(2, manager.getConnectionCount());
 
-    Connection conn4 = manager.exchangeConnection(conn3, Collections.singleton(conn3.getServer()), 10);
+    Connection conn4 =
+        manager.exchangeConnection(conn3, Collections.singleton(conn3.getServer()), 10);
 
     Assert.assertEquals(4, factory.creates);
     Assert.assertEquals(2, factory.destroys);
@@ -544,7 +685,19 @@ public class ConnectionManagerJUnitTest {
 
   @Test
   public void testBlocking() throws Throwable {
-    manager = new ConnectionManagerImpl("pool", factory, endpointManager, 1, 0, -1, -1, logger, 60 * 1000, cancelCriterion, poolStats);
+    manager =
+        new ConnectionManagerImpl(
+            "pool",
+            factory,
+            endpointManager,
+            1,
+            0,
+            -1,
+            -1,
+            logger,
+            60 * 1000,
+            cancelCriterion,
+            poolStats);
     manager.start(background);
 
     final Connection conn1 = manager.borrowConnection(10);
@@ -559,16 +712,17 @@ public class ConnectionManagerJUnitTest {
     long elapsed = System.currentTimeMillis() - startTime;
     Assert.assertTrue("Should have blocked for 100 millis for a connection", elapsed >= 100);
 
-    Thread returnThread = new Thread() {
-      public void run() {
-        try {
-          Thread.sleep(50);
-        } catch (InterruptedException e) {
-          fail("interrupted");
-        }
-        manager.returnConnection(conn1);
-      }
-    };
+    Thread returnThread =
+        new Thread() {
+          public void run() {
+            try {
+              Thread.sleep(50);
+            } catch (InterruptedException e) {
+              fail("interrupted");
+            }
+            manager.returnConnection(conn1);
+          }
+        };
 
     returnThread.start();
     startTime = System.currentTimeMillis();
@@ -578,17 +732,18 @@ public class ConnectionManagerJUnitTest {
     manager.returnConnection(conn2);
 
     final Connection conn3 = manager.borrowConnection(10);
-    Thread invalidateThread = new Thread() {
-      public void run() {
-        try {
-          Thread.sleep(50);
-        } catch (InterruptedException e) {
-          fail("interrupted");
-        }
-        conn3.destroy();
-        manager.returnConnection(conn3);
-      }
-    };
+    Thread invalidateThread =
+        new Thread() {
+          public void run() {
+            try {
+              Thread.sleep(50);
+            } catch (InterruptedException e) {
+              fail("interrupted");
+            }
+            conn3.destroy();
+            manager.returnConnection(conn3);
+          }
+        };
 
     invalidateThread.start();
     startTime = System.currentTimeMillis();
@@ -598,17 +753,18 @@ public class ConnectionManagerJUnitTest {
     manager.returnConnection(conn2);
 
     final Connection conn4 = manager.borrowConnection(10);
-    Thread invalidateThread2 = new Thread() {
-      public void run() {
-        try {
-          Thread.sleep(50);
-        } catch (InterruptedException e) {
-          fail("interrupted");
-        }
-        endpointManager.serverCrashed(conn4.getEndpoint());
-        manager.returnConnection(conn4);
-      }
-    };
+    Thread invalidateThread2 =
+        new Thread() {
+          public void run() {
+            try {
+              Thread.sleep(50);
+            } catch (InterruptedException e) {
+              fail("interrupted");
+            }
+            endpointManager.serverCrashed(conn4.getEndpoint());
+            manager.returnConnection(conn4);
+          }
+        };
 
     invalidateThread2.start();
     startTime = System.currentTimeMillis();
@@ -620,7 +776,19 @@ public class ConnectionManagerJUnitTest {
 
   @Test
   public void testExplicitServer() throws Exception {
-    manager = new ConnectionManagerImpl("pool", factory, endpointManager, 1, 0, -1, -1, logger, 60 * 1000, cancelCriterion, poolStats);
+    manager =
+        new ConnectionManagerImpl(
+            "pool",
+            factory,
+            endpointManager,
+            1,
+            0,
+            -1,
+            -1,
+            logger,
+            60 * 1000,
+            cancelCriterion,
+            poolStats);
     manager.start(background);
 
     Connection conn1 = manager.borrowConnection(0);
@@ -656,16 +824,19 @@ public class ConnectionManagerJUnitTest {
 
     private int id;
     private final int iterations;
-    /**
-     * If true then obtain the connection as if it is a thread local one
-     */
+    /** If true then obtain the connection as if it is a thread local one */
     private final boolean threadLocal;
 
     public UpdaterThread(AtomicBoolean haveConnection, AtomicReference exception, int id) {
       this(haveConnection, exception, id, 10, false);
     }
 
-    public UpdaterThread(AtomicBoolean haveConnection, AtomicReference exception, int id, int iterations, boolean threadLocal) {
+    public UpdaterThread(
+        AtomicBoolean haveConnection,
+        AtomicReference exception,
+        int id,
+        int iterations,
+        boolean threadLocal) {
       this.haveConnection = haveConnection;
       this.exception = exception;
       this.id = id;
@@ -677,7 +848,9 @@ public class ConnectionManagerJUnitTest {
       long startTime = System.currentTimeMillis();
       Connection conn = manager.borrowConnection(2000);
       if (haveConnection != null) {
-        Assert.assertTrue("Updater[" + id + "] loop[" + i + "] Someone else has the connection!", haveConnection.compareAndSet(false, true));
+        Assert.assertTrue(
+            "Updater[" + id + "] loop[" + i + "] Someone else has the connection!",
+            haveConnection.compareAndSet(false, true));
       }
       long elapsed = System.currentTimeMillis() - startTime;
       if (elapsed >= 2000) {
@@ -704,7 +877,9 @@ public class ConnectionManagerJUnitTest {
           try {
             Thread.sleep(10);
             if (haveConnection != null) {
-              Assert.assertTrue("Updater[" + id + "] loop[" + i + "] Someone else changed the connection flag", haveConnection.compareAndSet(true, false));
+              Assert.assertTrue(
+                  "Updater[" + id + "] loop[" + i + "] Someone else changed the connection flag",
+                  haveConnection.compareAndSet(true, false));
             }
           } finally {
             if (!threadLocal) {
@@ -715,13 +890,13 @@ public class ConnectionManagerJUnitTest {
           }
         }
       } catch (Throwable t) {
-        this.exception.compareAndSet(null, new Exception("ERROR Updater[" + id + "] loop[" + i + "]", t));
+        this.exception.compareAndSet(
+            null, new Exception("ERROR Updater[" + id + "] loop[" + i + "]", t));
       } finally {
         if (threadLocal && conn != null) {
           manager.returnConnection(conn);
         }
       }
-
     }
   }
 
@@ -756,7 +931,8 @@ public class ConnectionManagerJUnitTest {
     /* (non-Javadoc)
      * @see org.apache.geode.cache.client.internal.ConnectionFactory#createClientToServerConnection(org.apache.geode.distributed.internal.ServerLocation)
      */
-    public Connection createClientToServerConnection(final ServerLocation location, boolean forQueue) {
+    public Connection createClientToServerConnection(
+        final ServerLocation location, boolean forQueue) {
       synchronized (this) {
         creates++;
         this.notifyAll();
@@ -820,8 +996,7 @@ public class ConnectionManagerJUnitTest {
           return false;
         }
 
-        public void emergencyClose() {
-        }
+        public void emergencyClose() {}
 
         public short getWanSiteVersion() {
           return -1;
@@ -831,8 +1006,7 @@ public class ConnectionManagerJUnitTest {
           return -1;
         }
 
-        public void setWanSiteVersion(short wanSiteVersion) {
-        }
+        public void setWanSiteVersion(short wanSiteVersion) {}
 
         public InputStream getInputStream() {
           return null;
@@ -842,8 +1016,7 @@ public class ConnectionManagerJUnitTest {
           return null;
         }
 
-        public void setConnectionID(long id) {
-        }
+        public void setConnectionID(long id) {}
 
         public long getConnectionID() {
           return 0;
@@ -851,7 +1024,8 @@ public class ConnectionManagerJUnitTest {
       };
     }
 
-    public ClientUpdater createServerToClientConnection(Endpoint endpoint, QueueManager manager, boolean isPrimary, ClientUpdater failedUpdater) {
+    public ClientUpdater createServerToClientConnection(
+        Endpoint endpoint, QueueManager manager, boolean isPrimary, ClientUpdater failedUpdater) {
       return null;
     }
   }

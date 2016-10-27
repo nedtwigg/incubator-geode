@@ -35,7 +35,8 @@ public class BackupDataStoreHelper {
   private static Object LOCK_SYNC = new Object();
 
   @SuppressWarnings("rawtypes")
-  public static BackupDataStoreResult backupAllMembers(DM dm, Set recipients, File targetDir, File baselineDir) {
+  public static BackupDataStoreResult backupAllMembers(
+      DM dm, Set recipients, File targetDir, File baselineDir) {
     FlushToDiskRequest.send(dm, recipients);
 
     boolean abort = true;

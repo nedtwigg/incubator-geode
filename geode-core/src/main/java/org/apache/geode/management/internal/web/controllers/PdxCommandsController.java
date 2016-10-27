@@ -27,7 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * The PdxCommandsController class implements GemFire Management REST API web service endpoints for Gfsh PDX Commands.
+ * The PdxCommandsController class implements GemFire Management REST API web service endpoints for
+ * Gfsh PDX Commands.
  *
  * @see org.apache.geode.management.internal.cli.commands.PDXCommands
  * @see org.apache.geode.management.internal.web.controllers.AbstractCommandsController
@@ -45,12 +46,20 @@ public class PdxCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.POST, value = "/pdx")
   @ResponseBody
-  public String configurePdx(@RequestParam(value = CliStrings.CONFIGURE_PDX__READ__SERIALIZED, required = false)
-  final Boolean readSerialized, @RequestParam(value = CliStrings.CONFIGURE_PDX__IGNORE__UNREAD_FIELDS, required = false)
-  final Boolean ignoreUnreadFields, @RequestParam(value = CliStrings.CONFIGURE_PDX__DISKSTORE, required = false)
-  final String diskStore, @RequestParam(value = CliStrings.CONFIGURE_PDX__AUTO__SERIALIZER__CLASSES, required = false)
-  final String[] autoSerializerClasses, @RequestParam(value = CliStrings.CONFIGURE_PDX__PORTABLE__AUTO__SERIALIZER__CLASSES, required = false)
-  final String[] portableAutoSerializerClasses) {
+  public String configurePdx(
+      @RequestParam(value = CliStrings.CONFIGURE_PDX__READ__SERIALIZED, required = false)
+          final Boolean readSerialized,
+      @RequestParam(value = CliStrings.CONFIGURE_PDX__IGNORE__UNREAD_FIELDS, required = false)
+          final Boolean ignoreUnreadFields,
+      @RequestParam(value = CliStrings.CONFIGURE_PDX__DISKSTORE, required = false)
+          final String diskStore,
+      @RequestParam(value = CliStrings.CONFIGURE_PDX__AUTO__SERIALIZER__CLASSES, required = false)
+          final String[] autoSerializerClasses,
+      @RequestParam(
+            value = CliStrings.CONFIGURE_PDX__PORTABLE__AUTO__SERIALIZER__CLASSES,
+            required = false
+          )
+          final String[] portableAutoSerializerClasses) {
     CommandStringBuilder command = new CommandStringBuilder(CliStrings.CONFIGURE_PDX);
 
     if (Boolean.TRUE.equals(readSerialized)) {
@@ -58,7 +67,8 @@ public class PdxCommandsController extends AbstractCommandsController {
     }
 
     if (Boolean.TRUE.equals(ignoreUnreadFields)) {
-      command.addOption(CliStrings.CONFIGURE_PDX__IGNORE__UNREAD_FIELDS, String.valueOf(ignoreUnreadFields));
+      command.addOption(
+          CliStrings.CONFIGURE_PDX__IGNORE__UNREAD_FIELDS, String.valueOf(ignoreUnreadFields));
     }
 
     if (hasValue(diskStore)) {
@@ -66,11 +76,15 @@ public class PdxCommandsController extends AbstractCommandsController {
     }
 
     if (hasValue(autoSerializerClasses)) {
-      command.addOption(CliStrings.CONFIGURE_PDX__AUTO__SERIALIZER__CLASSES, StringUtils.concat(autoSerializerClasses, StringUtils.COMMA_DELIMITER));
+      command.addOption(
+          CliStrings.CONFIGURE_PDX__AUTO__SERIALIZER__CLASSES,
+          StringUtils.concat(autoSerializerClasses, StringUtils.COMMA_DELIMITER));
     }
 
     if (hasValue(portableAutoSerializerClasses)) {
-      command.addOption(CliStrings.CONFIGURE_PDX__PORTABLE__AUTO__SERIALIZER__CLASSES, StringUtils.concat(portableAutoSerializerClasses, StringUtils.COMMA_DELIMITER));
+      command.addOption(
+          CliStrings.CONFIGURE_PDX__PORTABLE__AUTO__SERIALIZER__CLASSES,
+          StringUtils.concat(portableAutoSerializerClasses, StringUtils.COMMA_DELIMITER));
     }
 
     return processCommand(command.toString());
@@ -78,11 +92,11 @@ public class PdxCommandsController extends AbstractCommandsController {
 
   //@RequestMapping(method = RequestMethod.DELETE, value = "/pdx/type/field")
   //@ResponseBody
-  public String pdxDeleteField(@RequestParam(value = CliStrings.PDX_CLASS)
-  final String className, @RequestParam(value = CliStrings.PDX_FIELD)
-  final String fieldName, @RequestParam(value = CliStrings.PDX_DISKSTORE)
-  final String diskStore, @RequestParam(value = CliStrings.PDX_DISKDIR, required = false)
-  final String[] diskDirs) {
+  public String pdxDeleteField(
+      @RequestParam(value = CliStrings.PDX_CLASS) final String className,
+      @RequestParam(value = CliStrings.PDX_FIELD) final String fieldName,
+      @RequestParam(value = CliStrings.PDX_DISKSTORE) final String diskStore,
+      @RequestParam(value = CliStrings.PDX_DISKDIR, required = false) final String[] diskDirs) {
     CommandStringBuilder command = new CommandStringBuilder(CliStrings.PDX_DELETE_FIELD);
 
     command.addOption(CliStrings.PDX_CLASS, className);
@@ -90,7 +104,8 @@ public class PdxCommandsController extends AbstractCommandsController {
     command.addOption(CliStrings.PDX_DISKSTORE, diskStore);
 
     if (hasValue(diskDirs)) {
-      command.addOption(CliStrings.PDX_DISKDIR, StringUtils.concat(diskDirs, StringUtils.COMMA_DELIMITER));
+      command.addOption(
+          CliStrings.PDX_DISKDIR, StringUtils.concat(diskDirs, StringUtils.COMMA_DELIMITER));
     }
 
     return processCommand(command.toString());
@@ -98,11 +113,11 @@ public class PdxCommandsController extends AbstractCommandsController {
 
   @RequestMapping(method = RequestMethod.POST, value = "/pdx/type")
   @ResponseBody
-  public String pdxRename(@RequestParam(value = CliStrings.PDX_RENAME_OLD)
-  final String oldClassName, @RequestParam(value = CliStrings.PDX_RENAME_NEW)
-  final String newClassName, @RequestParam(value = CliStrings.PDX_DISKSTORE)
-  final String diskStore, @RequestParam(value = CliStrings.PDX_DISKDIR, required = false)
-  final String[] diskDirs) {
+  public String pdxRename(
+      @RequestParam(value = CliStrings.PDX_RENAME_OLD) final String oldClassName,
+      @RequestParam(value = CliStrings.PDX_RENAME_NEW) final String newClassName,
+      @RequestParam(value = CliStrings.PDX_DISKSTORE) final String diskStore,
+      @RequestParam(value = CliStrings.PDX_DISKDIR, required = false) final String[] diskDirs) {
     CommandStringBuilder command = new CommandStringBuilder(CliStrings.PDX_RENAME);
 
     command.addOption(CliStrings.PDX_RENAME_OLD, oldClassName);
@@ -110,10 +125,10 @@ public class PdxCommandsController extends AbstractCommandsController {
     command.addOption(CliStrings.PDX_DISKSTORE, diskStore);
 
     if (hasValue(diskDirs)) {
-      command.addOption(CliStrings.PDX_DISKDIR, StringUtils.concat(diskDirs, StringUtils.COMMA_DELIMITER));
+      command.addOption(
+          CliStrings.PDX_DISKDIR, StringUtils.concat(diskDirs, StringUtils.COMMA_DELIMITER));
     }
 
     return processCommand(command.toString());
   }
-
 }

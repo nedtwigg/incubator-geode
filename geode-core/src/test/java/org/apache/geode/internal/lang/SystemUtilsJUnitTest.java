@@ -26,9 +26,11 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
- * The SystemUtilsJUnitTest class is a test suite of test cases for testing the contract and functionality of the SystemUtils
- * class.
- * <p/>
+ * The SystemUtilsJUnitTest class is a test suite of test cases for testing the contract and
+ * functionality of the SystemUtils class.
+ *
+ * <p>
+ *
  * @see org.apache.geode.internal.lang.SystemUtils
  * @see org.junit.Assert
  * @see org.junit.Test
@@ -52,50 +54,67 @@ public class SystemUtilsJUnitTest {
 
   @Test
   public void testIsAppleJVM() {
-    final boolean expected = ManagementFactory.getRuntimeMXBean().getVmVendor().contains(SystemUtils.APPLE_JVM_VENDOR_NAME);
+    final boolean expected =
+        ManagementFactory.getRuntimeMXBean()
+            .getVmVendor()
+            .contains(SystemUtils.APPLE_JVM_VENDOR_NAME);
     assertEquals(expected, SystemUtils.isAppleJVM());
   }
 
   @Test
   public void testIsOracleJVM() {
-    final boolean expected = ManagementFactory.getRuntimeMXBean().getVmVendor().contains(SystemUtils.ORACLE_JVM_VENDOR_NAME);
+    final boolean expected =
+        ManagementFactory.getRuntimeMXBean()
+            .getVmVendor()
+            .contains(SystemUtils.ORACLE_JVM_VENDOR_NAME);
     assertEquals(expected, SystemUtils.isOracleJVM());
   }
 
   @Test
   public void testIsHotSpotVM() {
-    final boolean expected = ManagementFactory.getRuntimeMXBean().getVmName().contains(SystemUtils.JAVA_HOTSPOT_JVM_NAME);
+    final boolean expected =
+        ManagementFactory.getRuntimeMXBean()
+            .getVmName()
+            .contains(SystemUtils.JAVA_HOTSPOT_JVM_NAME);
     assertEquals(expected, SystemUtils.isHotSpotVM());
   }
 
   @Test
   public void testIsJ9VM() {
-    final boolean expected = ManagementFactory.getRuntimeMXBean().getVmName().contains(SystemUtils.IBM_J9_JVM_NAME);
+    final boolean expected =
+        ManagementFactory.getRuntimeMXBean().getVmName().contains(SystemUtils.IBM_J9_JVM_NAME);
     assertEquals(expected, SystemUtils.isJ9VM());
   }
 
   @Test
   public void testIsJRockitVM() {
-    final boolean expected = ManagementFactory.getRuntimeMXBean().getVmName().contains(SystemUtils.ORACLE_JROCKIT_JVM_NAME);
+    final boolean expected =
+        ManagementFactory.getRuntimeMXBean()
+            .getVmName()
+            .contains(SystemUtils.ORACLE_JROCKIT_JVM_NAME);
     assertEquals(expected, SystemUtils.isJRockitVM());
   }
 
   @Test
   public void testIsLinux() {
-    final boolean expected = ManagementFactory.getOperatingSystemMXBean().getName().contains(SystemUtils.LINUX_OS_NAME);
+    final boolean expected =
+        ManagementFactory.getOperatingSystemMXBean().getName().contains(SystemUtils.LINUX_OS_NAME);
     assertEquals(expected, SystemUtils.isLinux());
   }
 
   @Test
   public void testIsMacOSX() {
-    final boolean expected = ManagementFactory.getOperatingSystemMXBean().getName().contains(SystemUtils.MAC_OSX_NAME);
+    final boolean expected =
+        ManagementFactory.getOperatingSystemMXBean().getName().contains(SystemUtils.MAC_OSX_NAME);
     assertEquals(expected, SystemUtils.isMacOSX());
   }
 
   @Test
   public void testIsWindows() throws Exception {
-    final boolean expected = ManagementFactory.getOperatingSystemMXBean().getName().contains(SystemUtils.WINDOWS_OS_NAME);
+    final boolean expected =
+        ManagementFactory.getOperatingSystemMXBean()
+            .getName()
+            .contains(SystemUtils.WINDOWS_OS_NAME);
     assertEquals(expected, SystemUtils.isWindows());
   }
-
 }

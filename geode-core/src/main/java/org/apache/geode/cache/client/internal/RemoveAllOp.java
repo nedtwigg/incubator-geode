@@ -46,6 +46,7 @@ import org.apache.geode.internal.logging.LogService;
 
 /**
  * Does a region removeAll on a server
+ *
  * @since GemFire 8.1
  */
 public class RemoveAllOp {
@@ -56,15 +57,24 @@ public class RemoveAllOp {
   public static final int FLAG_CONCURRENCY_CHECKS = 0x02;
 
   /**
-   * Does a region removeAll on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region removeAll on a server using connections from the given pool to communicate with
+   * the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the removeAll on
    * @param keys Collection of keys to remove
    * @param eventId the event id for this op
    */
-  public static VersionedObjectList execute(ExecutablePool pool, Region region, Collection<Object> keys, EventID eventId, boolean isRetry, Object callbackArg) {
-    RemoveAllOpImpl op = new RemoveAllOpImpl(region, keys, eventId, ((PoolImpl) pool).getPRSingleHopEnabled(), callbackArg);
+  public static VersionedObjectList execute(
+      ExecutablePool pool,
+      Region region,
+      Collection<Object> keys,
+      EventID eventId,
+      boolean isRetry,
+      Object callbackArg) {
+    RemoveAllOpImpl op =
+        new RemoveAllOpImpl(
+            region, keys, eventId, ((PoolImpl) pool).getPRSingleHopEnabled(), callbackArg);
     op.initMessagePart();
     if (isRetry) {
       op.getMessage().setIsRetry();
@@ -73,40 +83,57 @@ public class RemoveAllOp {
   }
 
   /**
-   * Does a region put on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region put on a server using connections from the given pool to communicate with the
+   * server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the removeAll on
    * @param keys the Collection of keys to remove
    * @param eventId the event id for this removeAll
    */
-  public static VersionedObjectList execute(ExecutablePool pool, Region region, Collection<Object> keys, EventID eventId, int retryAttempts, Object callbackArg) {
+  public static VersionedObjectList execute(
+      ExecutablePool pool,
+      Region region,
+      Collection<Object> keys,
+      EventID eventId,
+      int retryAttempts,
+      Object callbackArg) {
     final boolean isDebugEnabled = logger.isDebugEnabled();
     ClientMetadataService cms = ((LocalRegion) region).getCache().getClientMetadataService();
 
     Map<ServerLocation, HashSet> serverToFilterMap = cms.getServerToFilterMap(keys, region, true);
 
     if (serverToFilterMap == null || serverToFilterMap.isEmpty()) {
-      AbstractOp op = new RemoveAllOpImpl(region, keys, eventId, ((PoolImpl) pool).getPRSingleHopEnabled(), callbackArg);
+      AbstractOp op =
+          new RemoveAllOpImpl(
+              region, keys, eventId, ((PoolImpl) pool).getPRSingleHopEnabled(), callbackArg);
       op.initMessagePart();
       return (VersionedObjectList) pool.execute(op);
     }
 
-    List callableTasks = constructAndGetRemoveAllTasks(region, eventId, serverToFilterMap, (PoolImpl) pool, callbackArg);
+    List callableTasks =
+        constructAndGetRemoveAllTasks(
+            region, eventId, serverToFilterMap, (PoolImpl) pool, callbackArg);
 
     if (isDebugEnabled) {
       logger.debug("RemoveAllOp#execute : Number of removeAll tasks is :{}", callableTasks.size());
     }
-    HashMap<ServerLocation, RuntimeException> failedServers = new HashMap<ServerLocation, RuntimeException>();
+    HashMap<ServerLocation, RuntimeException> failedServers =
+        new HashMap<ServerLocation, RuntimeException>();
     PutAllPartialResult result = new PutAllPartialResult(keys.size());
     try {
-      Map<ServerLocation, Object> results = SingleHopClientExecutor.submitBulkOp(callableTasks, cms, (LocalRegion) region, failedServers);
+      Map<ServerLocation, Object> results =
+          SingleHopClientExecutor.submitBulkOp(
+              callableTasks, cms, (LocalRegion) region, failedServers);
       for (Map.Entry<ServerLocation, Object> entry : results.entrySet()) {
         Object value = entry.getValue();
         if (value instanceof PutAllPartialResultException) {
           PutAllPartialResultException pap = (PutAllPartialResultException) value;
           if (isDebugEnabled) {
-            logger.debug("RemoveAll SingleHop encountered BulkOpPartialResultException exception: {}, failedServers are {}", pap, failedServers.keySet());
+            logger.debug(
+                "RemoveAll SingleHop encountered BulkOpPartialResultException exception: {}, failedServers are {}",
+                pap,
+                failedServers.keySet());
           }
           result.consolidate(pap.getResult());
         } else {
@@ -147,7 +174,7 @@ public class RemoveAllOp {
         result.addKeys(succeedKeySet);
       }
 
-      // send maps for the failed servers one by one instead of merging 
+      // send maps for the failed servers one by one instead of merging
       // them into one big map. The reason is, we have to keep the same event
       // ids for each sub map. There is a unit test in PutAllCSDUnitTest for
       // the otherwise case.
@@ -158,13 +185,14 @@ public class RemoveAllOp {
         RuntimeException savedRTE = failedServers.get(failedServer);
         if (savedRTE instanceof PutAllPartialResultException) {
           // will not retry for BulkOpPartialResultException
-          // but it means at least one sub map ever failed 
+          // but it means at least one sub map ever failed
           oneSubMapRetryFailed = true;
           continue;
         }
         Collection<Object> newKeys = serverToFilterMap.get(failedServer);
         try {
-          VersionedObjectList v = RemoveAllOp.execute(pool, region, newKeys, eventId, true, callbackArg);
+          VersionedObjectList v =
+              RemoveAllOp.execute(pool, region, newKeys, eventId, true, callbackArg);
           if (v == null) {
             result.addKeys(newKeys);
           } else {
@@ -172,7 +200,10 @@ public class RemoveAllOp {
           }
         } catch (PutAllPartialResultException pre) {
           oneSubMapRetryFailed = true;
-          logger.debug("Retry failed with BulkOpPartialResultException: {} Before retry: {}", pre, result.getKeyListString());
+          logger.debug(
+              "Retry failed with BulkOpPartialResultException: {} Before retry: {}",
+              pre,
+              result.getKeyListString());
           result.consolidate(pre.getResult());
         } catch (Exception rte) {
           oneSubMapRetryFailed = true;
@@ -195,7 +226,12 @@ public class RemoveAllOp {
     // no instances allowed
   }
 
-  static List constructAndGetRemoveAllTasks(Region region, final EventID eventId, final Map<ServerLocation, HashSet> serverToFilterMap, final PoolImpl pool, Object callbackArg) {
+  static List constructAndGetRemoveAllTasks(
+      Region region,
+      final EventID eventId,
+      final Map<ServerLocation, HashSet> serverToFilterMap,
+      final PoolImpl pool,
+      Object callbackArg) {
     final List<SingleHopOperationCallable> tasks = new ArrayList<SingleHopOperationCallable>();
     ArrayList<ServerLocation> servers = new ArrayList<ServerLocation>(serverToFilterMap.keySet());
 
@@ -203,9 +239,15 @@ public class RemoveAllOp {
       logger.debug("Constructing tasks for the servers{}", servers);
     }
     for (ServerLocation server : servers) {
-      AbstractOp RemoveAllOp = new RemoveAllOpImpl(region, serverToFilterMap.get(server), eventId, true, callbackArg);
+      AbstractOp RemoveAllOp =
+          new RemoveAllOpImpl(region, serverToFilterMap.get(server), eventId, true, callbackArg);
 
-      SingleHopOperationCallable task = new SingleHopOperationCallable(new ServerLocation(server.getHostName(), server.getPort()), pool, RemoveAllOp, UserAttributes.userAttributes.get());
+      SingleHopOperationCallable task =
+          new SingleHopOperationCallable(
+              new ServerLocation(server.getHostName(), server.getPort()),
+              pool,
+              RemoveAllOp,
+              UserAttributes.userAttributes.get());
       tasks.add(task);
     }
     return tasks;
@@ -220,10 +262,13 @@ public class RemoveAllOp {
     private Collection<Object> keys = null;
     private final Object callbackArg;
 
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
-    public RemoveAllOpImpl(Region region, Collection<Object> keys, EventID eventId, boolean prSingleHopEnabled, Object callbackArg) {
+    /** @throws org.apache.geode.SerializationException if serialization fails */
+    public RemoveAllOpImpl(
+        Region region,
+        Collection<Object> keys,
+        EventID eventId,
+        boolean prSingleHopEnabled,
+        Object callbackArg) {
       super(MessageType.REMOVE_ALL, 5 + keys.size());
       this.prSingleHopEnabled = prSingleHopEnabled;
       this.region = (LocalRegion) region;
@@ -268,48 +313,55 @@ public class RemoveAllOp {
       final Exception[] exceptionRef = new Exception[1];
       final boolean isDebugEnabled = logger.isDebugEnabled();
       try {
-        processChunkedResponse((ChunkedMessage) msg, "removeAll", new ChunkHandler() {
-          public void handle(ChunkedMessage cm) throws Exception {
-            int numParts = msg.getNumberOfParts();
-            if (isDebugEnabled) {
-              logger.debug("RemoveAllOp.processChunkedResponse processing message with {} parts", numParts);
-            }
-            for (int partNo = 0; partNo < numParts; partNo++) {
-              Part part = cm.getPart(partNo);
-              try {
-                Object o = part.getObject();
+        processChunkedResponse(
+            (ChunkedMessage) msg,
+            "removeAll",
+            new ChunkHandler() {
+              public void handle(ChunkedMessage cm) throws Exception {
+                int numParts = msg.getNumberOfParts();
                 if (isDebugEnabled) {
-                  logger.debug("part({}) contained {}", partNo, o);
+                  logger.debug(
+                      "RemoveAllOp.processChunkedResponse processing message with {} parts",
+                      numParts);
                 }
-                if (o == null) {
-                  // no response is an okay response
-                } else if (o instanceof byte[]) {
-                  if (prSingleHopEnabled) {
-                    byte[] bytesReceived = part.getSerializedForm();
-                    if (bytesReceived[0] != ClientMetadataService.INITIAL_VERSION) {
-                      if (region != null) {
-                        try {
-                          ClientMetadataService cms = region.getCache().getClientMetadataService();
-                          cms.scheduleGetPRMetaData(region, false, bytesReceived[1]);
-                        } catch (CacheClosedException e) {
+                for (int partNo = 0; partNo < numParts; partNo++) {
+                  Part part = cm.getPart(partNo);
+                  try {
+                    Object o = part.getObject();
+                    if (isDebugEnabled) {
+                      logger.debug("part({}) contained {}", partNo, o);
+                    }
+                    if (o == null) {
+                      // no response is an okay response
+                    } else if (o instanceof byte[]) {
+                      if (prSingleHopEnabled) {
+                        byte[] bytesReceived = part.getSerializedForm();
+                        if (bytesReceived[0] != ClientMetadataService.INITIAL_VERSION) {
+                          if (region != null) {
+                            try {
+                              ClientMetadataService cms =
+                                  region.getCache().getClientMetadataService();
+                              cms.scheduleGetPRMetaData(region, false, bytesReceived[1]);
+                            } catch (CacheClosedException e) {
+                            }
+                          }
                         }
                       }
+                    } else if (o instanceof Throwable) {
+                      String s = "While performing a remote removeAll";
+                      exceptionRef[0] = new ServerOperationException(s, (Throwable) o);
+                    } else {
+                      VersionedObjectList chunk = (VersionedObjectList) o;
+                      chunk.replaceNullIDs(con.getEndpoint().getMemberId());
+                      result.addAll(chunk);
                     }
+                  } catch (Exception e) {
+                    exceptionRef[0] =
+                        new ServerOperationException("Unable to deserialize value", e);
                   }
-                } else if (o instanceof Throwable) {
-                  String s = "While performing a remote removeAll";
-                  exceptionRef[0] = new ServerOperationException(s, (Throwable) o);
-                } else {
-                  VersionedObjectList chunk = (VersionedObjectList) o;
-                  chunk.replaceNullIDs(con.getEndpoint().getMemberId());
-                  result.addAll(chunk);
                 }
-              } catch (Exception e) {
-                exceptionRef[0] = new ServerOperationException("Unable to deserialize value", e);
               }
-            }
-          }
-        });
+            });
       } catch (ServerOperationException e) {
         if (e.getCause() instanceof PutAllPartialResultException) {
           PutAllPartialResultException cause = (PutAllPartialResultException) e.getCause();
@@ -359,5 +411,4 @@ public class RemoveAllOp {
       stats.endRemoveAll(start, hasTimedOut(), hasFailed());
     }
   }
-
 }

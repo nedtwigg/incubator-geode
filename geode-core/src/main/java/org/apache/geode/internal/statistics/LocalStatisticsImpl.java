@@ -25,14 +25,10 @@ import org.apache.geode.internal.statistics.StatisticsTypeImpl;
 //import org.apache.geode.util.LongArray;
 
 /**
- * An implementation of {@link Statistics} that stores its statistics
- * in local java memory.
+ * An implementation of {@link Statistics} that stores its statistics in local java memory.
  *
  * @see <A href="package-summary.html#statistics">Package introduction</A>
- *
- *
  * @since GemFire 3.0
- *
  */
 public class LocalStatisticsImpl extends StatisticsImpl {
 
@@ -45,17 +41,14 @@ public class LocalStatisticsImpl extends StatisticsImpl {
   /** In JOM Statistics, the values of the double statistics */
   private final double[] doubleStorage;
 
-  /** An array containing the JOM object used to lock a int statistic when
-   * it is incremented. */
-  private transient final Object[] intLocks;
+  /** An array containing the JOM object used to lock a int statistic when it is incremented. */
+  private final transient Object[] intLocks;
 
-  /** An array containing the JOM object used to lock a long statistic when
-   * it is incremented. */
-  private transient final Object[] longLocks;
+  /** An array containing the JOM object used to lock a long statistic when it is incremented. */
+  private final transient Object[] longLocks;
 
-  /** An array containing the JOM object used to lock a double statistic when
-   * it is incremented. */
-  private transient final Object[] doubleLocks;
+  /** An array containing the JOM object used to lock a double statistic when it is incremented. */
+  private final transient Object[] doubleLocks;
 
   /** The StatisticsFactory that created this instance */
   private final StatisticsManager dSystem;
@@ -65,27 +58,27 @@ public class LocalStatisticsImpl extends StatisticsImpl {
   /**
    * Creates a new statistics instance of the given type
    *
-   * @param type
-   *        A description of the statistics
-   * @param textId
-   *        Text that identifies this statistic when it is monitored
-   * @param numericId
-   *        A number that displayed when this statistic is monitored
-   * @param uniqueId
-   *        A number that uniquely identifies this instance
-   * @param atomicIncrements
-   *        Are increment operations atomic?  If only one application
-   *        thread increments a statistic, then a <code>false</code>
-   *        value may yield better performance.
-   * @param osStatFlags
-   *        Non-zero if stats require system calls to collect them; for internal use only
-   * @param system
-   *        The distributed system that determines whether or not these
-   *        statistics are stored (and collected) in GemFire shared
-   *        memory or in the local VM
+   * @param type A description of the statistics
+   * @param textId Text that identifies this statistic when it is monitored
+   * @param numericId A number that displayed when this statistic is monitored
+   * @param uniqueId A number that uniquely identifies this instance
+   * @param atomicIncrements Are increment operations atomic? If only one application thread
+   *     increments a statistic, then a <code>false</code> value may yield better performance.
+   * @param osStatFlags Non-zero if stats require system calls to collect them; for internal use
+   *     only
+   * @param system The distributed system that determines whether or not these statistics are stored
+   *     (and collected) in GemFire shared memory or in the local VM
    */
-  public LocalStatisticsImpl(StatisticsType type, String textId, long numericId, long uniqueId, boolean atomicIncrements, int osStatFlags, StatisticsManager system) {
-    super(type, calcTextId(system, textId), calcNumericId(system, numericId), uniqueId, osStatFlags);
+  public LocalStatisticsImpl(
+      StatisticsType type,
+      String textId,
+      long numericId,
+      long uniqueId,
+      boolean atomicIncrements,
+      int osStatFlags,
+      StatisticsManager system) {
+    super(
+        type, calcTextId(system, textId), calcNumericId(system, numericId), uniqueId, osStatFlags);
 
     this.dSystem = system;
 

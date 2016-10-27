@@ -55,15 +55,23 @@ import org.apache.geode.test.junit.categories.SecurityTest;
 
 /**
  * Tests peer to peer authentication in Gemfire
- * 
+ *
  * @since GemFire 5.5
  */
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
 
   private static VM locatorVM = null;
 
-  private static final String[] ignoredExceptions = { AuthenticationRequiredException.class.getName(), AuthenticationFailedException.class.getName(), GemFireSecurityException.class.getName(), SSLHandshakeException.class.getName(), ClassNotFoundException.class.getName(), "Authentication failed for", "Failed to obtain credentials" };
+  private static final String[] ignoredExceptions = {
+    AuthenticationRequiredException.class.getName(),
+    AuthenticationFailedException.class.getName(),
+    GemFireSecurityException.class.getName(),
+    SSLHandshakeException.class.getName(),
+    ClassNotFoundException.class.getName(),
+    "Authentication failed for",
+    "Failed to obtain credentials"
+  };
 
   @Override
   public final void postSetUp() throws Exception {
@@ -74,10 +82,7 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * Check that mcast-port setting for discovery or with locator are
-   * incompatible with security
-   */
+  /** Check that mcast-port setting for discovery or with locator are incompatible with security */
   @Test
   public void testIllegalPropertyCombos() throws Exception {
     int port = getRandomAvailablePort(SOCKET);
@@ -85,7 +90,9 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "26753");
     props.setProperty(ConfigurationProperties.LOCATORS, getIPLiteral() + "[" + port + "]");
-    props.setProperty(ConfigurationProperties.SECURITY_PEER_AUTH_INIT, UserPasswordAuthInit.class.getName() + ".create");
+    props.setProperty(
+        ConfigurationProperties.SECURITY_PEER_AUTH_INIT,
+        UserPasswordAuthInit.class.getName() + ".create");
     props.setProperty(ConfigurationProperties.ENABLE_CLUSTER_CONFIGURATION, "false");
 
     try {
@@ -100,7 +107,8 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
     props = new Properties();
     props.setProperty(MCAST_PORT, "26753");
     props.setProperty(LOCATORS, getIPLiteral() + "[" + port + "]");
-    props.setProperty(SECURITY_PEER_AUTHENTICATOR, LdapUserAuthenticator.class.getName() + ".create");
+    props.setProperty(
+        SECURITY_PEER_AUTHENTICATOR, LdapUserAuthenticator.class.getName() + ".create");
     props.setProperty(ENABLE_CLUSTER_CONFIGURATION, "false");
 
     try {
@@ -126,7 +134,8 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
     // Also try setting the authenticator
     props = new Properties();
     props.setProperty(MCAST_PORT, "26753");
-    props.setProperty(SECURITY_PEER_AUTHENTICATOR, LdapUserAuthenticator.class.getName() + ".create");
+    props.setProperty(
+        SECURITY_PEER_AUTHENTICATOR, LdapUserAuthenticator.class.getName() + ".create");
 
     try {
       getSystem(props);
@@ -137,9 +146,7 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * AuthInitialize is incorrect
-   */
+  /** AuthInitialize is incorrect */
   @Test
   public void testP2PAuthenticationWithInvalidAuthInitialize() throws Exception {
     int locatorPort = getRandomAvailablePort(SOCKET);
@@ -158,7 +165,8 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
 
     try {
       new SecurityTestUtils("tmp").createSystem(props, null);
-      fail("AuthenticationFailedException was expected as the AuthInitialize object passed is incorrect");
+      fail(
+          "AuthenticationFailedException was expected as the AuthInitialize object passed is incorrect");
 
     } catch (GemFireSecurityException expected) {
       // success
@@ -168,9 +176,7 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  /**
-   * Authenticator is incorrect
-   */
+  /** Authenticator is incorrect */
   @Category(FlakyTest.class) // GEODE-1089: random port
   @Test
   public void testP2PAuthenticationWithInvalidAuthenticator() throws Exception {
@@ -190,7 +196,8 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
 
     try {
       new SecurityTestUtils("tmp").createSystem(props, null);
-      fail("AuthenticationFailedException was expected as the Authenticator object passed is incorrect");
+      fail(
+          "AuthenticationFailedException was expected as the Authenticator object passed is incorrect");
 
     } catch (GemFireSecurityException expected) {
       // success
@@ -309,13 +316,12 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
   }
 
   /**
-   * The strategy is to test view change reject by having two different
-   * authenticators on different VMs.
-   * 
-   * Here locator will accept the credentials from peer2 but the first peer will
-   * reject them due to different authenticator. Hence the number of members
-   * reported by the first peer should be only two while others will report as
-   * three.
+   * The strategy is to test view change reject by having two different authenticators on different
+   * VMs.
+   *
+   * <p>Here locator will accept the credentials from peer2 but the first peer will reject them due
+   * to different authenticator. Hence the number of members reported by the first peer should be
+   * only two while others will report as three.
    */
   @Ignore("disabled for some reason?")
   @Test
@@ -426,10 +432,9 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
 
   /**
    * The strategy is to test credential size greater than UDP datagram size.
-   * 
-   * Here locator will accept the credentials from peer2 and the large credential
-   * from the first peer. Number of members in the DS
-   * should be four
+   *
+   * <p>Here locator will accept the credentials from peer2 and the large credential from the first
+   * peer. Number of members in the DS should be four
    */
   @Test
   public void testP2PLargeCredentialSucceeds() throws Exception {
@@ -517,7 +522,8 @@ public class P2PAuthenticationDUnitTest extends JUnit4DistributedTestCase {
   }
 
   private void startTheLocator(final Properties props, final Properties javaProps, final int port) {
-    locatorVM.invoke(() -> startLocator(getUniqueName(), port, props, javaProps, ignoredExceptions));
+    locatorVM.invoke(
+        () -> startLocator(getUniqueName(), port, props, javaProps, ignoredExceptions));
   }
 
   private static void createDS(final Properties props, final Properties javaProps) {

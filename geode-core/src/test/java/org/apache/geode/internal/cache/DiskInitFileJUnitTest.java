@@ -38,46 +38,46 @@ import org.apache.geode.test.junit.categories.IntegrationTest;
 public class DiskInitFileJUnitTest {
 
   private File testDirectory;
-  private Mockery context = new Mockery() {
-    {
-      setImposteriser(ClassImposteriser.INSTANCE);
-    }
-  };
+  private Mockery context =
+      new Mockery() {
+        {
+          setImposteriser(ClassImposteriser.INSTANCE);
+        }
+      };
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
   @Before
   public void setUp() throws Exception {
     testDirectory = temporaryFolder.newFolder("_" + getClass().getSimpleName());
   }
 
-  /**
-   * Test the behavior of canonical ids in the init file.
-   */
+  /** Test the behavior of canonical ids in the init file. */
   @Test
   public void testCanonicalIds() {
     //create a mock statistics factory for creating directory holders
     final StatisticsFactory sf = context.mock(StatisticsFactory.class);
-    context.checking(new Expectations() {
-      {
-        ignoring(sf);
-      }
-    });
+    context.checking(
+        new Expectations() {
+          {
+            ignoring(sf);
+          }
+        });
 
     //Create a mock disk store impl. All we need to do is return
     //this init file directory.
     final DiskStoreImpl parent = context.mock(DiskStoreImpl.class);
-    context.checking(new Expectations() {
-      {
-        allowing(parent).getInfoFileDir();
-        will(returnValue(new DirectoryHolder(sf, testDirectory, 0, 0)));
-        ignoring(parent);
-      }
-    });
+    context.checking(
+        new Expectations() {
+          {
+            allowing(parent).getInfoFileDir();
+            will(returnValue(new DirectoryHolder(sf, testDirectory, 0, 0)));
+            ignoring(parent);
+          }
+        });
 
     //Create an init file and add some canonical ids
-    DiskInitFile dif = new DiskInitFile("testFile", parent, false, Collections.<File> emptySet());
+    DiskInitFile dif = new DiskInitFile("testFile", parent, false, Collections.<File>emptySet());
     assertEquals(null, dif.getCanonicalObject(5));
     assertNull(dif.getCanonicalObject(0));
     int id1 = dif.getOrCreateCanonicalId("object1");
@@ -90,18 +90,19 @@ public class DiskInitFileJUnitTest {
     //Add a mock region to the init file so it doesn't
     //delete the file when the init file is closed
     final DiskRegionView drv = context.mock(DiskRegionView.class);
-    context.checking(new Expectations() {
-      {
-        ignoring(drv);
-      }
-    });
+    context.checking(
+        new Expectations() {
+          {
+            ignoring(drv);
+          }
+        });
     dif.createRegion(drv);
 
     //close the init file
     dif.close();
 
     //recover the init file from disk
-    dif = new DiskInitFile("testFile", parent, true, Collections.<File> emptySet());
+    dif = new DiskInitFile("testFile", parent, true, Collections.<File>emptySet());
 
     //make sure we can recover the ids from disk
     assertEquals("object1", dif.getCanonicalObject(id1));
@@ -117,5 +118,4 @@ public class DiskInitFileJUnitTest {
 
     dif.close();
   }
-
 }

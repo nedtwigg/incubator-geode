@@ -68,14 +68,15 @@ public class GMSQuorumChecker implements QuorumChecker {
     pingPonger = new GMSPingPonger();
     //    UUID logicalAddress = (UUID) channel.getAddress();
     //    IpAddress ipaddr = (IpAddress) channel.down(new Event(Event.GET_PHYSICAL_ADDRESS));
-    //    
+    //
     //    myAddress = new JGAddress(logicalAddress, ipaddr);
     myAddress = (JGAddress) channel.down(new Event(Event.GET_LOCAL_ADDRESS));
 
     addressConversionMap = new ConcurrentHashMap<>(this.lastView.size());
     List<InternalDistributedMember> members = this.lastView.getMembers();
     for (InternalDistributedMember addr : members) {
-      SocketAddress sockaddr = new InetSocketAddress(addr.getNetMember().getInetAddress(), addr.getPort());
+      SocketAddress sockaddr =
+          new InetSocketAddress(addr.getNetMember().getInetAddress(), addr.getPort());
       addressConversionMap.put(sockaddr, addr);
     }
 
@@ -135,30 +136,38 @@ public class GMSQuorumChecker implements QuorumChecker {
     int ackedWeight = getWeight(receivedAcks, this.lastView.getLeadMember());
     int lossThreshold = (int) Math.round((weight * this.partitionThreshold) / 100.0);
     if (isDebugEnabled) {
-      logger.debug("quorum check: contacted {} processes with {} member weight units.  Threshold for a quorum is {}", receivedAcks.size(), ackedWeight, lossThreshold);
+      logger.debug(
+          "quorum check: contacted {} processes with {} member weight units.  Threshold for a quorum is {}",
+          receivedAcks.size(),
+          ackedWeight,
+          lossThreshold);
     }
     return (ackedWeight >= lossThreshold);
   }
 
   private boolean waitForResponses(int numMembers, long timeout) throws InterruptedException {
     long endTime = System.currentTimeMillis() + timeout;
-    for (;;) {
+    for (; ; ) {
       long time = System.currentTimeMillis();
       long remaining = (endTime - time);
       if (remaining <= 0) {
         if (isDebugEnabled) {
-          logger.debug("quorum check: timeout waiting for responses.  {} responses received", receivedAcks.size());
+          logger.debug(
+              "quorum check: timeout waiting for responses.  {} responses received",
+              receivedAcks.size());
         }
         break;
       }
       if (isDebugEnabled) {
-        logger.debug("quorum check: waiting up to {}ms to receive a quorum of responses", remaining);
+        logger.debug(
+            "quorum check: waiting up to {}ms to receive a quorum of responses", remaining);
       }
       Thread.sleep(500);
       if (receivedAcks.size() == numMembers) {
         // we've heard from everyone now so we've got a quorum
         if (isDebugEnabled) {
-          logger.debug("quorum check: received responses from all members that were in the old distributed system");
+          logger.debug(
+              "quorum check: received responses from all members that were in the old distributed system");
         }
         return true;
       }
@@ -166,7 +175,8 @@ public class GMSQuorumChecker implements QuorumChecker {
     return false;
   }
 
-  private int getWeight(Collection<InternalDistributedMember> idms, InternalDistributedMember leader) {
+  private int getWeight(
+      Collection<InternalDistributedMember> idms, InternalDistributedMember leader) {
     int weight = 0;
     for (InternalDistributedMember mbr : idms) {
       int thisWeight = mbr.getNetMember().getMemberWeight();
@@ -218,28 +228,22 @@ public class GMSQuorumChecker implements QuorumChecker {
     }
 
     @Override
-    public void getState(OutputStream output) throws Exception {
-    }
+    public void getState(OutputStream output) throws Exception {}
 
     @Override
-    public void setState(InputStream input) throws Exception {
-    }
+    public void setState(InputStream input) throws Exception {}
 
     @Override
-    public void viewAccepted(View new_view) {
-    }
+    public void viewAccepted(View new_view) {}
 
     @Override
-    public void suspect(Address suspected_mbr) {
-    }
+    public void suspect(Address suspected_mbr) {}
 
     @Override
-    public void block() {
-    }
+    public void block() {}
 
     @Override
-    public void unblock() {
-    }
+    public void unblock() {}
 
     public void pongReceived(Address sender) {
       logger.debug("received ping-pong response from {}", sender);
@@ -257,5 +261,4 @@ public class GMSQuorumChecker implements QuorumChecker {
   public String toString() {
     return getClass().getSimpleName() + " on view " + this.lastView;
   }
-
 }

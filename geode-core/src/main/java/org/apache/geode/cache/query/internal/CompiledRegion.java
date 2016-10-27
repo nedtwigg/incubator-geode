@@ -25,11 +25,7 @@ import org.apache.geode.internal.cache.LocalDataSet;
 import org.apache.geode.internal.cache.PartitionedRegion;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * Class Description
- *
- */
-
+/** Class Description */
 public class CompiledRegion extends AbstractCompiledValue {
   private String regionPath;
 
@@ -54,7 +50,7 @@ public class CompiledRegion extends AbstractCompiledValue {
     if (pr != null && pr.getFullPath().equals(this.regionPath)) {
       rgn = context.getBucketRegion();
     } else if (pr != null) {
-      //Asif : This is a   very tricky solution to allow equijoin queries on PartitionedRegion locally 
+      //Asif : This is a   very tricky solution to allow equijoin queries on PartitionedRegion locally
       //We have possibly got a situation of equijoin. it may be across PRs. so use the context's bucket region
       // to get ID and then retrieve the this region's bucket region
       BucketRegion br = context.getBucketRegion();
@@ -77,7 +73,8 @@ public class CompiledRegion extends AbstractCompiledValue {
       if (cache.isClosed()) {
         throw new CacheClosedException();
       }
-      throw new RegionNotFoundException(LocalizedStrings.CompiledRegion_REGION_NOT_FOUND_0.toLocalizedString(this.regionPath));
+      throw new RegionNotFoundException(
+          LocalizedStrings.CompiledRegion_REGION_NOT_FOUND_0.toLocalizedString(this.regionPath));
     }
 
     if (context.isCqQueryContext()) {
@@ -88,7 +85,8 @@ public class CompiledRegion extends AbstractCompiledValue {
   }
 
   @Override
-  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context) throws NameResolutionException {
+  public void generateCanonicalizedExpression(StringBuffer clauseBuffer, ExecutionContext context)
+      throws NameResolutionException {
     clauseBuffer.insert(0, regionPath);
     //rahul : changed for running queries on partitioned region.
     //clauseBuffer.insert(0, ((QRegion)this.evaluate(context)).getFullPath());
@@ -98,5 +96,4 @@ public class CompiledRegion extends AbstractCompiledValue {
   public void getRegionsInQuery(Set regionsInQuery, Object[] parameters) {
     regionsInQuery.add(this.regionPath);
   }
-
 }

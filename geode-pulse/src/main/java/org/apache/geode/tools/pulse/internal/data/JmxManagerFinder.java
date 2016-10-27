@@ -31,21 +31,18 @@ import org.apache.geode.tools.pulse.internal.log.PulseLogWriter;
 import org.apache.geode.tools.pulse.internal.util.ConnectionUtil;
 
 /**
- * This class can be used to connect to a locator and ask it to find a jmx
- * manager. If the locator can find a jmx manager that is already running it
- * returns it. Otherwise the locator will attempt to start a jmx manager and
- * then return it.
- * 
- * This code does not depend on gemfire.jar but in order to do this some of
- * GemFire's internal serialization codes and byte sequences have been hard
- * coded into this code.
- * 
+ * This class can be used to connect to a locator and ask it to find a jmx manager. If the locator
+ * can find a jmx manager that is already running it returns it. Otherwise the locator will attempt
+ * to start a jmx manager and then return it.
+ *
+ * <p>This code does not depend on gemfire.jar but in order to do this some of GemFire's internal
+ * serialization codes and byte sequences have been hard coded into this code.
+ *
  * @since GemFire version 7.0.Beta 2012-09-23
- * 
  */
 public class JmxManagerFinder {
 
-  private final static PulseLogWriter LOGGER = PulseLogWriter.getLogger();
+  private static final PulseLogWriter LOGGER = PulseLogWriter.getLogger();
 
   /*
    * public static void main(String[] args) throws IOException { if (args.length
@@ -53,10 +50,10 @@ public class JmxManagerFinder {
    * "Usage: JmxManagerFinder locatorHost locatorPort. Expected two arguments but found "
    * + args.length); return; } String locatorHost = args[0]; int locatorPort =
    * Integer.parseInt(args[1]);
-   * 
+   *
    * InetAddress addr = InetAddress.getByName(locatorHost); JmxManagerInfo
    * locRes = askLocatorForJmxManager(addr, locatorPort, 15000);
-   * 
+   *
    * if (locRes.port == 0) {
    * System.out.println("Locator could not find a jmx manager"); } else {
    * System.out.println("Locator on host " + locRes.host + " port " +
@@ -70,10 +67,7 @@ public class JmxManagerFinder {
   private static final byte NULL_STRING = 69;
 
   /**
-   * Describes the location of a jmx manager. If a jmx manager does not exist
-   * then port will be 0.
-   * 
-   * 
+   * Describes the location of a jmx manager. If a jmx manager does not exist then port will be 0.
    */
   public static class JmxManagerInfo {
     JmxManagerInfo(String host, int port, boolean ssl) {
@@ -82,38 +76,27 @@ public class JmxManagerFinder {
       this.ssl = ssl;
     }
 
-    /**
-     * The host/address the jmx manager is listening on.
-     */
+    /** The host/address the jmx manager is listening on. */
     public final String host;
-    /**
-     * The port the jmx manager is listening on.
-     */
+    /** The port the jmx manager is listening on. */
     public final int port;
-    /**
-     * True if the jmx manager is using SSL.
-     */
+    /** True if the jmx manager is using SSL. */
     public final boolean ssl;
   }
 
   /**
-   * Ask a locator to find a jmx manager. The locator will start one if one is
-   * not already running.
-   * 
-   * @param addr
-   *          the host address the locator is listening on
-   * @param port
-   *          the port the locator is listening on
-   * @param timeout
-   *          the number of milliseconds to wait for a response; 15000 is a
-   *          reasonable default
-   * @return describes the location of the jmx manager. The port will be zero if
-   *         no jmx manager was found.
-   * @throws IOException
-   *           if a problem occurs trying to connect to the locator or
-   *           communicate with it.
+   * Ask a locator to find a jmx manager. The locator will start one if one is not already running.
+   *
+   * @param addr the host address the locator is listening on
+   * @param port the port the locator is listening on
+   * @param timeout the number of milliseconds to wait for a response; 15000 is a reasonable default
+   * @return describes the location of the jmx manager. The port will be zero if no jmx manager was
+   *     found.
+   * @throws IOException if a problem occurs trying to connect to the locator or communicate with
+   *     it.
    */
-  public static JmxManagerInfo askLocatorForJmxManager(InetAddress addr, int port, int timeout, boolean usessl) throws IOException {
+  public static JmxManagerInfo askLocatorForJmxManager(
+      InetAddress addr, int port, int timeout, boolean usessl) throws IOException {
     SocketAddress sockaddr = new InetSocketAddress(addr, port);
     Socket sock = ConnectionUtil.getSocketFactory(usessl).createSocket();
     try {
@@ -133,7 +116,8 @@ public class JmxManagerFinder {
       }
       int msgType = in.readShort();
       if (msgType != JMX_MANAGER_LOCATOR_RESPONSE) {
-        throw new IllegalStateException("Expected " + JMX_MANAGER_LOCATOR_RESPONSE + " but found " + msgType);
+        throw new IllegalStateException(
+            "Expected " + JMX_MANAGER_LOCATOR_RESPONSE + " but found " + msgType);
       }
       byte hostHeader = in.readByte();
       String host;
@@ -147,7 +131,8 @@ public class JmxManagerFinder {
         String str = new String(buf, 0);
         host = str;
       } else {
-        throw new IllegalStateException("Expected " + STRING_BYTES + " or " + NULL_STRING + " but found " + hostHeader);
+        throw new IllegalStateException(
+            "Expected " + STRING_BYTES + " or " + NULL_STRING + " but found " + hostHeader);
       }
       int jmport = in.readInt();
       boolean ssl = in.readBoolean();

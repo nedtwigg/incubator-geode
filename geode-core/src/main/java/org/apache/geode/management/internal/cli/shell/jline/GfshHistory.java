@@ -25,13 +25,14 @@ import jline.console.history.MemoryHistory;
 
 /**
  * Overrides jline.History to add History without newline characters.
- * 
+ *
  * @since GemFire 7.0
  */
 public class GfshHistory extends MemoryHistory {
 
   // Pattern which is intended to pick up any params containing the word 'password'.
-  private static final Pattern passwordRe = Pattern.compile("(--[^=\\s]*password[^=\\s]*\\s*=\\s*)([^\\s]*)");
+  private static final Pattern passwordRe =
+      Pattern.compile("(--[^=\\s]*password[^=\\s]*\\s*=\\s*)([^\\s]*)");
 
   // let the history from history file get added initially
   private boolean autoFlush = true;

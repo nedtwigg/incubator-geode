@@ -48,31 +48,47 @@ public class IntegratedSecurityServiceTest {
     String string = SecurityService.getObjectOfType(String.class.getName(), String.class);
     assertNotNull(string);
 
-    CharSequence charSequence = SecurityService.getObjectOfType(String.class.getName(), CharSequence.class);
+    CharSequence charSequence =
+        SecurityService.getObjectOfType(String.class.getName(), CharSequence.class);
     assertNotNull(charSequence);
 
-    assertThatThrownBy(() -> SecurityService.getObjectOfType("com.abc.testString", String.class)).isInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(() -> SecurityService.getObjectOfType("com.abc.testString", String.class))
+        .isInstanceOf(GemFireSecurityException.class);
 
-    assertThatThrownBy(() -> SecurityService.getObjectOfType(String.class.getName(), Boolean.class)).isInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(() -> SecurityService.getObjectOfType(String.class.getName(), Boolean.class))
+        .isInstanceOf(GemFireSecurityException.class);
 
-    assertThatThrownBy(() -> SecurityService.getObjectOfType("", String.class)).isInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(() -> SecurityService.getObjectOfType("", String.class))
+        .isInstanceOf(GemFireSecurityException.class);
 
-    assertThatThrownBy(() -> SecurityService.getObjectOfType(null, String.class)).isInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(() -> SecurityService.getObjectOfType(null, String.class))
+        .isInstanceOf(GemFireSecurityException.class);
 
-    assertThatThrownBy(() -> SecurityService.getObjectOfType("  ", String.class)).isInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(() -> SecurityService.getObjectOfType("  ", String.class))
+        .isInstanceOf(GemFireSecurityException.class);
   }
 
   @Test
   public void testGetObjectFromFactoryMethod() {
-    String string = SecurityService.getObjectOfType(Factories.class.getName() + ".getString", String.class);
+    String string =
+        SecurityService.getObjectOfType(Factories.class.getName() + ".getString", String.class);
     assertNotNull(string);
 
-    CharSequence charSequence = SecurityService.getObjectOfType(Factories.class.getName() + ".getString", String.class);
+    CharSequence charSequence =
+        SecurityService.getObjectOfType(Factories.class.getName() + ".getString", String.class);
     assertNotNull(charSequence);
 
-    assertThatThrownBy(() -> SecurityService.getObjectOfType(Factories.class.getName() + ".getStringNonStatic", String.class)).isInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(
+            () ->
+                SecurityService.getObjectOfType(
+                    Factories.class.getName() + ".getStringNonStatic", String.class))
+        .isInstanceOf(GemFireSecurityException.class);
 
-    assertThatThrownBy(() -> SecurityService.getObjectOfType(Factories.class.getName() + ".getNullString", String.class)).isInstanceOf(GemFireSecurityException.class);
+    assertThatThrownBy(
+            () ->
+                SecurityService.getObjectOfType(
+                    Factories.class.getName() + ".getNullString", String.class))
+        .isInstanceOf(GemFireSecurityException.class);
   }
 
   @Test
@@ -85,8 +101,10 @@ public class IntegratedSecurityServiceTest {
 
   @Test
   public void testInitWithSecurityManager() {
-    properties.setProperty(SECURITY_MANAGER, "org.apache.geode.security.templates.SampleSecurityManager");
-    properties.setProperty(SampleSecurityManager.SECURITY_JSON, "org/apache/geode/security/templates/security.json");
+    properties.setProperty(
+        SECURITY_MANAGER, "org.apache.geode.security.templates.SampleSecurityManager");
+    properties.setProperty(
+        SampleSecurityManager.SECURITY_JSON, "org/apache/geode/security/templates/security.json");
 
     securityService.initSecurity(properties);
 

@@ -28,8 +28,8 @@ import org.apache.geode.internal.cache.DiskRegionTestingBase;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Disk region Perf test for Overflow only with ASync writes. 1) Performance of
- * get operation for entry in memory.
+ * Disk region Perf test for Overflow only with ASync writes. 1) Performance of get operation for
+ * entry in memory.
  */
 @Category(IntegrationTest.class)
 public class DiskRegOverflowAsyncGetInMemPerfJUnitTest extends DiskRegionTestingBase {

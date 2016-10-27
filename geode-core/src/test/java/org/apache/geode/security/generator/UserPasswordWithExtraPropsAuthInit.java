@@ -26,12 +26,11 @@ import java.util.Iterator;
 import java.util.Properties;
 
 /**
- * An {@link AuthInitialize} implementation that obtains the user name and
- * password as the credentials from the given set of properties. If 
- * keep-extra-props property exits, it will copy rest of the
- * properties provided in getCredential props argument will also be 
- * copied as new credentials.
- * 
+ * An {@link AuthInitialize} implementation that obtains the user name and password as the
+ * credentials from the given set of properties. If keep-extra-props property exits, it will copy
+ * rest of the properties provided in getCredential props argument will also be copied as new
+ * credentials.
+ *
  * @since GemFire 5.5
  */
 public class UserPasswordWithExtraPropsAuthInit extends UserPasswordAuthInit {
@@ -48,18 +47,25 @@ public class UserPasswordWithExtraPropsAuthInit extends UserPasswordAuthInit {
   }
 
   @Override
-  public Properties getCredentials(final Properties securityProperties, final DistributedMember server, final boolean isPeer) throws AuthenticationFailedException {
-    final Properties securityPropertiesCopy = super.getCredentials(securityProperties, server, isPeer);
+  public Properties getCredentials(
+      final Properties securityProperties, final DistributedMember server, final boolean isPeer)
+      throws AuthenticationFailedException {
+    final Properties securityPropertiesCopy =
+        super.getCredentials(securityProperties, server, isPeer);
     final String extraProps = securityProperties.getProperty(EXTRA_PROPS);
 
     if (extraProps != null) {
-      for (Iterator it = securityProperties.keySet().iterator(); it.hasNext();) {
+      for (Iterator it = securityProperties.keySet().iterator(); it.hasNext(); ) {
         final String key = (String) it.next();
-        if (key.startsWith(SECURITY_PREFIX) && key.equalsIgnoreCase(USER_NAME) == false && key.equalsIgnoreCase(PASSWORD) == false && key.equalsIgnoreCase(EXTRA_PROPS) == false) {
+        if (key.startsWith(SECURITY_PREFIX)
+            && key.equalsIgnoreCase(USER_NAME) == false
+            && key.equalsIgnoreCase(PASSWORD) == false
+            && key.equalsIgnoreCase(EXTRA_PROPS) == false) {
           securityPropertiesCopy.setProperty(key, securityProperties.getProperty(key));
         }
       }
-      this.securityLogWriter.fine("got everything and now have: " + securityPropertiesCopy.keySet().toString());
+      this.securityLogWriter.fine(
+          "got everything and now have: " + securityPropertiesCopy.keySet().toString());
     }
 
     return securityPropertiesCopy;

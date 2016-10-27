@@ -53,7 +53,7 @@ public class RegionVersionVectorJUnitTest {
     doExceptionsWithContains(id1, rvv);
   }
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings({"unchecked", "rawtypes"})
   @Test
   public void testRegionVersionVectors() throws Exception {
     // this is just a quick set of unit tests for basic RVV functionality
@@ -250,7 +250,8 @@ public class RegionVersionVectorJUnitTest {
     rv1.recordVersion(server2, bitSetRollPoint + 1); // bitSet should be rolled at this point
     RegionVersionHolder h = (RegionVersionHolder) rv1.getMemberToVersion().get(server2);
     long versionBoundary = h.getBitSetVersionForTesting();
-    assertEquals("expected holder bitset version to roll to this value", boundary - 1, versionBoundary);
+    assertEquals(
+        "expected holder bitset version to roll to this value", boundary - 1, versionBoundary);
     assertFalse(rv1.contains(server2, bitSetRollPoint - 1));
     assertTrue(rv1.contains(server2, bitSetRollPoint));
     assertTrue(rv1.contains(server2, bitSetRollPoint + 1));
@@ -262,7 +263,8 @@ public class RegionVersionVectorJUnitTest {
 
     // now test the merge
     System.out.println("testing merge for " + rv1.fullToString());
-    assertEquals(1, rv1.getExceptionCount(server2)); // one exception from boundary-1 to bitSetRollPoint
+    assertEquals(
+        1, rv1.getExceptionCount(server2)); // one exception from boundary-1 to bitSetRollPoint
     assertFalse(rv1.contains(server2, bitSetRollPoint - 1));
     assertTrue(rv1.contains(server2, bitSetRollPoint));
     assertTrue(rv1.contains(server2, bitSetRollPoint + 1));
@@ -298,9 +300,7 @@ public class RegionVersionVectorJUnitTest {
     assertTrue(rvv.sameAs(rvv2));
   }
 
-  /**
-   * Test that we can copy the member to version map correctly.
-   */
+  /** Test that we can copy the member to version map correctly. */
   @Test
   public void testCopyMemberToVersion() {
     DiskStoreID id0 = new DiskStoreID(0, 0);
@@ -418,8 +418,8 @@ public class RegionVersionVectorJUnitTest {
   }
 
   /**
-   * Test for bug 47023. Make sure recordGCVersion works
-   * correctly and doesn't generate exceptions for the local member.
+   * Test for bug 47023. Make sure recordGCVersion works correctly and doesn't generate exceptions
+   * for the local member.
    */
   @Test
   public void testRecordGCVersion() {
@@ -440,7 +440,8 @@ public class RegionVersionVectorJUnitTest {
 
     //Assert that the exceptions are present
     {
-      Map<DiskStoreID, RegionVersionHolder<DiskStoreID>> memberToVersion = rvv0.getMemberToVersion();
+      Map<DiskStoreID, RegionVersionHolder<DiskStoreID>> memberToVersion =
+          rvv0.getMemberToVersion();
       RegionVersionHolder<DiskStoreID> holder1 = memberToVersion.get(id1);
 
       //Make sure the exceptions are present
@@ -453,7 +454,8 @@ public class RegionVersionVectorJUnitTest {
     rvv0.recordGCVersion(id1, 3);
 
     {
-      Map<DiskStoreID, RegionVersionHolder<DiskStoreID>> memberToVersion = rvv0.getMemberToVersion();
+      Map<DiskStoreID, RegionVersionHolder<DiskStoreID>> memberToVersion =
+          rvv0.getMemberToVersion();
       RegionVersionHolder<DiskStoreID> holder0 = memberToVersion.get(id0);
       //Make sure we didn't generate a bogus exception for
       //the local member by calling record GC version - bug 47023
@@ -463,7 +465,7 @@ public class RegionVersionVectorJUnitTest {
     //Clean up old exceptions
     rvv0.pruneOldExceptions();
 
-    //Make assertions about what exceptions are still present 
+    //Make assertions about what exceptions are still present
     Map<DiskStoreID, RegionVersionHolder<DiskStoreID>> memberToVersion = rvv0.getMemberToVersion();
     RegionVersionHolder<DiskStoreID> holder0 = memberToVersion.get(id0);
     RegionVersionHolder<DiskStoreID> holder1 = memberToVersion.get(id1);
@@ -503,12 +505,27 @@ public class RegionVersionVectorJUnitTest {
 
     rvv.removeOldVersions();
 
-    assertEquals("expected gc version to be set to current version for " + rvv.fullToString(), rvv.getCurrentVersion(), rvv.getGCVersion(null));
-    assertEquals("expected gc version to be set to current version for " + rvv.fullToString(), rvv.getVersionForMember(id1), rvv.getGCVersion(id1));
-    assertEquals("expected gc version to be set to current version for " + rvv.fullToString(), rvv.getVersionForMember(id2), rvv.getGCVersion(id2));
+    assertEquals(
+        "expected gc version to be set to current version for " + rvv.fullToString(),
+        rvv.getCurrentVersion(),
+        rvv.getGCVersion(null));
+    assertEquals(
+        "expected gc version to be set to current version for " + rvv.fullToString(),
+        rvv.getVersionForMember(id1),
+        rvv.getGCVersion(id1));
+    assertEquals(
+        "expected gc version to be set to current version for " + rvv.fullToString(),
+        rvv.getVersionForMember(id2),
+        rvv.getGCVersion(id2));
 
-    assertEquals("expected exceptions to be erased for " + rvv.fullToString(), rvv.getExceptionCount(id1), 0);
-    assertEquals("expected exceptions to be erased for " + rvv.fullToString(), rvv.getExceptionCount(id2), 0);
+    assertEquals(
+        "expected exceptions to be erased for " + rvv.fullToString(),
+        rvv.getExceptionCount(id1),
+        0);
+    assertEquals(
+        "expected exceptions to be erased for " + rvv.fullToString(),
+        rvv.getExceptionCount(id2),
+        0);
   }
 
   @Test
@@ -539,5 +556,4 @@ public class RegionVersionVectorJUnitTest {
     }
     assertEquals(0, rvv.getExceptionCount(id));
   }
-
 }

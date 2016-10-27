@@ -25,12 +25,7 @@ import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
-/**
- * Just like parent but enables server thread pool
- * (ie. selector)
- *
- *
- */
+/** Just like parent but enables server thread pool (ie. selector) */
 @Category(DistributedTest.class)
 public class ClientServerMiscSelectorDUnitTest extends ClientServerMiscDUnitTest {
   public ClientServerMiscSelectorDUnitTest() {

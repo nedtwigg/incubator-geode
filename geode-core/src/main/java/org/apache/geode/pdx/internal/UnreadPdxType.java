@@ -17,12 +17,11 @@
 package org.apache.geode.pdx.internal;
 
 /**
- * Just like a PdxType but also keeps track of the unreadFields.
- * This is used when we deserialize a pdx and the blob we are deserializing
- * contains fields that our local version does not read.
- * Note that instances of the class are only kept locally so I didn't add code
- * to serialize unreadFieldIndexes.
- * 
+ * Just like a PdxType but also keeps track of the unreadFields. This is used when we deserialize a
+ * pdx and the blob we are deserializing contains fields that our local version does not read. Note
+ * that instances of the class are only kept locally so I didn't add code to serialize
+ * unreadFieldIndexes.
+ *
  * @since GemFire 6.6
  */
 public class UnreadPdxType extends PdxType {
@@ -30,9 +29,7 @@ public class UnreadPdxType extends PdxType {
   private static final long serialVersionUID = 582651859847937174L;
 
   private final int[] unreadFieldIndexes;
-  /**
-   * Null until this unread type is finally serialized for the first time.
-   */
+  /** Null until this unread type is finally serialized for the first time. */
   private PdxType serializedType;
 
   public UnreadPdxType(PdxType pdxType, int[] unreadFieldIndexes) {

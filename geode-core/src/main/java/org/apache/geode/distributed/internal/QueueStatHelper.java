@@ -18,26 +18,19 @@
 package org.apache.geode.distributed.internal;
 
 /**
- * Used to implement statistics on a queue.
- * The implementation will call these methods at to proper time.
- *
+ * Used to implement statistics on a queue. The implementation will call these methods at to proper
+ * time.
  *
  * @since GemFire 3.5
  */
 public interface QueueStatHelper {
 
-  /**
-   * Called when an item is added to the queue.
-   */
+  /** Called when an item is added to the queue. */
   public void add();
 
-  /**
-   * Called when an item is removed from the queue.
-   */
+  /** Called when an item is removed from the queue. */
   public void remove();
 
-  /**
-   * Called when count items are removed from the queue.
-   */
+  /** Called when count items are removed from the queue. */
   public void remove(int count);
 }

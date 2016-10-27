@@ -20,10 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Basic Stack implementation, used by
- * {@link PreprocessorUtils#isSyntaxValid(String)} for detecting valid syntax
- * 
- * 
+ * Basic Stack implementation, used by {@link PreprocessorUtils#isSyntaxValid(String)} for detecting
+ * valid syntax
+ *
  * @param <T>
  */
 public class Stack<T> {

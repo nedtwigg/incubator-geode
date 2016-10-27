@@ -23,20 +23,19 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import java.io.*;
 
 /**
- * A message that is sent to a particular distribution manager to
- * get its current {@link org.apache.geode.internal.Config}.
+ * A message that is sent to a particular distribution manager to get its current {@link
+ * org.apache.geode.internal.Config}.
  */
 public final class FetchSysCfgRequest extends AdminRequest {
-  /**
-   * Returns a <code>FetchSysCfgRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>FetchSysCfgRequest</code> to be sent to the specified recipient. */
   public static FetchSysCfgRequest create() {
     FetchSysCfgRequest m = new FetchSysCfgRequest();
     return m;
   }
 
   public FetchSysCfgRequest() {
-    friendlyName = LocalizedStrings.FetchSysCfgRequest_FETCH_CONFIGURATION_PARAMETERS.toLocalizedString();
+    friendlyName =
+        LocalizedStrings.FetchSysCfgRequest_FETCH_CONFIGURATION_PARAMETERS.toLocalizedString();
   }
 
   @Override
@@ -44,9 +43,7 @@ public final class FetchSysCfgRequest extends AdminRequest {
     return true;
   }
 
-  /**
-   * Must return a proper response to this request.
-   */
+  /** Must return a proper response to this request. */
   @Override
   protected AdminResponse createResponse(DistributionManager dm) {
     return FetchSysCfgResponse.create(dm, this.getSender());

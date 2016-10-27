@@ -22,10 +22,7 @@ import org.xml.sax.EntityResolver;
 
 import org.apache.geode.test.junit.categories.UnitTest;
 
-/**
- * Unit test for {@link GeodeEntityResolver} and
- * {@link DefaultEntityResolver2}.
- */
+/** Unit test for {@link GeodeEntityResolver} and {@link DefaultEntityResolver2}. */
 @Category(UnitTest.class)
 public class GeodeEntityResolverJUnitTest extends AbstractEntityResolverTest {
 
@@ -47,5 +44,4 @@ public class GeodeEntityResolverJUnitTest extends AbstractEntityResolverTest {
   protected String getSystemId() {
     return systemId;
   }
-
 }

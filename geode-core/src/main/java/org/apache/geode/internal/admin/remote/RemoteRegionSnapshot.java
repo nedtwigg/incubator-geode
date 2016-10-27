@@ -57,11 +57,8 @@ public class RemoteRegionSnapshot implements RegionSnapshot, DataSerializable {
     }
   }
 
-  /**
-   * This constructor is only for use by the DataSerializableMechanism
-   */
-  public RemoteRegionSnapshot() {
-  }
+  /** This constructor is only for use by the DataSerializableMechanism */
+  public RemoteRegionSnapshot() {}
 
   public Object getName() {
     return this.name;
@@ -120,8 +117,7 @@ public class RemoteRegionSnapshot implements RegionSnapshot, DataSerializable {
 
   @Override
   public boolean equals(Object other) {
-    if (other == this)
-      return true;
+    if (other == this) return true;
     if (other instanceof RemoteRegionSnapshot) {
       RemoteRegionSnapshot snap = (RemoteRegionSnapshot) other;
       return this.name.equals(snap.name);

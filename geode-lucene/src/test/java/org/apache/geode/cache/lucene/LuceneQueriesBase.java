@@ -40,11 +40,9 @@ import org.apache.lucene.search.TermQuery;
 import org.junit.Test;
 
 /**
-  * This test class is intended to contain basic integration tests
-  * of the lucene query class that should be executed against a number
-  * of different regions types and topologies.
-  *
-  */
+ * This test class is intended to contain basic integration tests of the lucene query class that
+ * should be executed against a number of different regions types and topologies.
+ */
 public abstract class LuceneQueriesBase extends LuceneDUnitTest {
 
   private static final long serialVersionUID = 1L;
@@ -60,10 +58,11 @@ public abstract class LuceneQueriesBase extends LuceneDUnitTest {
 
   @Test
   public void returnCorrectResultsFromStringQueryWithDefaultAnalyzer() {
-    SerializableRunnableIF createIndex = () -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      luceneService.createIndex(INDEX_NAME, REGION_NAME, "text");
-    };
+    SerializableRunnableIF createIndex =
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          luceneService.createIndex(INDEX_NAME, REGION_NAME, "text");
+        };
     dataStore1.invoke(() -> initDataStore(createIndex));
     dataStore2.invoke(() -> initDataStore(createIndex));
     accessor.invoke(() -> initAccessor(createIndex));
@@ -75,10 +74,11 @@ public abstract class LuceneQueriesBase extends LuceneDUnitTest {
 
   @Test
   public void defaultFieldShouldPropogateCorrectlyThroughFunction() {
-    SerializableRunnableIF createIndex = () -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      luceneService.createIndex(INDEX_NAME, REGION_NAME, "text");
-    };
+    SerializableRunnableIF createIndex =
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          luceneService.createIndex(INDEX_NAME, REGION_NAME, "text");
+        };
     dataStore1.invoke(() -> initDataStore(createIndex));
     dataStore2.invoke(() -> initDataStore(createIndex));
     accessor.invoke(() -> initAccessor(createIndex));
@@ -90,10 +90,11 @@ public abstract class LuceneQueriesBase extends LuceneDUnitTest {
 
   @Test
   public void canQueryWithCustomLuceneQueryObject() {
-    SerializableRunnableIF createIndex = () -> {
-      LuceneService luceneService = LuceneServiceProvider.get(getCache());
-      luceneService.createIndex(INDEX_NAME, REGION_NAME, "text");
-    };
+    SerializableRunnableIF createIndex =
+        () -> {
+          LuceneService luceneService = LuceneServiceProvider.get(getCache());
+          luceneService.createIndex(INDEX_NAME, REGION_NAME, "text");
+        };
     dataStore1.invoke(() -> initDataStore(createIndex));
     dataStore2.invoke(() -> initDataStore(createIndex));
     accessor.invoke(() -> initAccessor(createIndex));
@@ -101,71 +102,91 @@ public abstract class LuceneQueriesBase extends LuceneDUnitTest {
     assertTrue(waitForFlushBeforeExecuteTextSearch(dataStore1, 60000));
 
     //Execute a query with a custom lucene query object
-    accessor.invoke(() -> {
-      Cache cache = getCache();
-      LuceneService service = LuceneServiceProvider.get(cache);
-      LuceneQuery query = service.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, index -> {
-        return new TermQuery(new Term("text", "world"));
-      });
-      final PageableLuceneQueryResults results = query.findPages();
-      assertEquals(3, results.size());
-    });
+    accessor.invoke(
+        () -> {
+          Cache cache = getCache();
+          LuceneService service = LuceneServiceProvider.get(cache);
+          LuceneQuery query =
+              service
+                  .createLuceneQueryFactory()
+                  .create(
+                      INDEX_NAME,
+                      REGION_NAME,
+                      index -> {
+                        return new TermQuery(new Term("text", "world"));
+                      });
+          final PageableLuceneQueryResults results = query.findPages();
+          assertEquals(3, results.size());
+        });
   }
 
   protected boolean waitForFlushBeforeExecuteTextSearch(VM vm, int ms) {
-    return vm.invoke(() -> {
-      Cache cache = getCache();
+    return vm.invoke(
+        () -> {
+          Cache cache = getCache();
 
-      LuceneService service = LuceneServiceProvider.get(cache);
-      LuceneIndexImpl index = (LuceneIndexImpl) service.getIndex(INDEX_NAME, REGION_NAME);
+          LuceneService service = LuceneServiceProvider.get(cache);
+          LuceneIndexImpl index = (LuceneIndexImpl) service.getIndex(INDEX_NAME, REGION_NAME);
 
-      return index.waitUntilFlushed(ms);
-    });
+          return index.waitUntilFlushed(ms);
+        });
   }
 
   protected void executeTextSearch(VM vm) {
-    vm.invoke(() -> {
-      Cache cache = getCache();
-      Region<Object, Object> region = cache.getRegion(REGION_NAME);
+    vm.invoke(
+        () -> {
+          Cache cache = getCache();
+          Region<Object, Object> region = cache.getRegion(REGION_NAME);
 
-      LuceneService service = LuceneServiceProvider.get(cache);
-      LuceneQuery<Integer, TestObject> query;
-      query = service.createLuceneQueryFactory().create(INDEX_NAME, REGION_NAME, "text:world", DEFAULT_FIELD);
-      PageableLuceneQueryResults<Integer, TestObject> results = query.findPages();
-      assertEquals(3, results.size());
-      List<LuceneResultStruct<Integer, TestObject>> page = results.next();
+          LuceneService service = LuceneServiceProvider.get(cache);
+          LuceneQuery<Integer, TestObject> query;
+          query =
+              service
+                  .createLuceneQueryFactory()
+                  .create(INDEX_NAME, REGION_NAME, "text:world", DEFAULT_FIELD);
+          PageableLuceneQueryResults<Integer, TestObject> results = query.findPages();
+          assertEquals(3, results.size());
+          List<LuceneResultStruct<Integer, TestObject>> page = results.next();
 
-      Map<Integer, TestObject> data = new HashMap<Integer, TestObject>();
-      for (LuceneResultStruct<Integer, TestObject> row : page) {
-        data.put(row.getKey(), row.getValue());
-      }
+          Map<Integer, TestObject> data = new HashMap<Integer, TestObject>();
+          for (LuceneResultStruct<Integer, TestObject> row : page) {
+            data.put(row.getKey(), row.getValue());
+          }
 
-      assertEquals(new HashMap(region), data);
-      return null;
-    });
+          assertEquals(new HashMap(region), data);
+          return null;
+        });
   }
 
-  protected void executeTextSearch(VM vm, String queryString, String defaultField, int expectedResultsSize) {
-    vm.invoke(() -> {
-      Cache cache = getCache();
+  protected void executeTextSearch(
+      VM vm, String queryString, String defaultField, int expectedResultsSize) {
+    vm.invoke(
+        () -> {
+          Cache cache = getCache();
 
-      LuceneService service = LuceneServiceProvider.get(cache);
-      LuceneQuery<Integer, TestObject> query;
-      query = service.createLuceneQueryFactory().setResultLimit(1000).setPageSize(1000).create(INDEX_NAME, REGION_NAME, queryString, defaultField);
-      Collection<?> results = query.findKeys();
+          LuceneService service = LuceneServiceProvider.get(cache);
+          LuceneQuery<Integer, TestObject> query;
+          query =
+              service
+                  .createLuceneQueryFactory()
+                  .setResultLimit(1000)
+                  .setPageSize(1000)
+                  .create(INDEX_NAME, REGION_NAME, queryString, defaultField);
+          Collection<?> results = query.findKeys();
 
-      assertEquals(expectedResultsSize, results.size());
-    });
+          assertEquals(expectedResultsSize, results.size());
+        });
   }
 
   protected void putDataInRegion(VM vm) {
-    vm.invoke(() -> {
-      final Cache cache = getCache();
-      Region<Object, Object> region = cache.getRegion(REGION_NAME);
-      region.put(1, new TestObject("hello world"));
-      region.put(113, new TestObject("hi world"));
-      region.put(2, new TestObject("goodbye world"));
-    });
+    vm.invoke(
+        () -> {
+          final Cache cache = getCache();
+          Region<Object, Object> region = cache.getRegion(REGION_NAME);
+          region.put(1, new TestObject("hello world"));
+          region.put(113, new TestObject("hi world"));
+          region.put(2, new TestObject("goodbye world"));
+        });
   }
 
   protected static class TestObject implements Serializable {
@@ -186,18 +207,13 @@ public abstract class LuceneQueriesBase extends LuceneDUnitTest {
 
     @Override
     public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
+      if (this == obj) return true;
+      if (obj == null) return false;
+      if (getClass() != obj.getClass()) return false;
       TestObject other = (TestObject) obj;
       if (text == null) {
-        if (other.text != null)
-          return false;
-      } else if (!text.equals(other.text))
-        return false;
+        if (other.text != null) return false;
+      } else if (!text.equals(other.text)) return false;
       return true;
     }
 

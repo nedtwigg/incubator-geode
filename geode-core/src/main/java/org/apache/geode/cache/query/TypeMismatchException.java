@@ -21,12 +21,12 @@ package org.apache.geode.cache.query;
  *
  * @since GemFire 4.0
  */
-
 public class TypeMismatchException extends QueryException {
   private static final long serialVersionUID = 4205901708655503775L;
 
   /**
    * Construct an instance of TypeMismatchException
+   *
    * @param msg the error message
    */
   public TypeMismatchException(String msg) {
@@ -35,6 +35,7 @@ public class TypeMismatchException extends QueryException {
 
   /**
    * Construct an instance of TypeMismatchException
+   *
    * @param msg the error message
    * @param cause a Throwable cause of this exception
    */

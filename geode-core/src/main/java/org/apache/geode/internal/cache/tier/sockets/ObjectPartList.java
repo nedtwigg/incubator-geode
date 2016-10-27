@@ -36,10 +36,10 @@ import java.util.List;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Encapsulates list containing objects, serialized objects, raw byte arrays, or
- * exceptions. It can optionally also hold the list of associated keys. Assumes
- * that keys are either provided for all entries or for none.
- * 
+ * Encapsulates list containing objects, serialized objects, raw byte arrays, or exceptions. It can
+ * optionally also hold the list of associated keys. Assumes that keys are either provided for all
+ * entries or for none.
+ *
  * @since GemFire 5.7
  */
 public class ObjectPartList implements DataSerializableFixedID, Releasable {
@@ -88,7 +88,8 @@ public class ObjectPartList implements DataSerializableFixedID, Releasable {
 
   public ObjectPartList(int maxSize, boolean hasKeys) {
     if (maxSize <= 0) {
-      throw new IllegalArgumentException("Invalid size " + maxSize + " to ObjectPartList constructor");
+      throw new IllegalArgumentException(
+          "Invalid size " + maxSize + " to ObjectPartList constructor");
     }
     this.objectTypeArray = new byte[maxSize];
     this.hasKeys = hasKeys;
@@ -256,5 +257,4 @@ public class ObjectPartList implements DataSerializableFixedID, Releasable {
       OffHeapHelper.release(v);
     }
   }
-
 }

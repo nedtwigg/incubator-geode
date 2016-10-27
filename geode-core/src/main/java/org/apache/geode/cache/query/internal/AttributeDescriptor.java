@@ -45,9 +45,8 @@ import org.apache.geode.pdx.JSONFormatter;
 /**
  * Utility for managing an attribute
  *
- * @version     $Revision: 1.1 $
+ * @version $Revision: 1.1 $
  */
-
 public class AttributeDescriptor {
   private final String _name;
   /** cache for remembering the correct Member for a class and attribute */
@@ -80,7 +79,8 @@ public class AttributeDescriptor {
 
   // used when the resolution of an attribute must be on a superclass
   // instead of the runtime class
-  private Object read(Object target, Class resolutionClass) throws NameNotFoundException, QueryInvocationTargetException {
+  private Object read(Object target, Class resolutionClass)
+      throws NameNotFoundException, QueryInvocationTargetException {
     Support.Assert(target != null);
     Support.Assert(target != QueryService.UNDEFINED);
     Member m;
@@ -101,7 +101,11 @@ public class AttributeDescriptor {
           //eat the Exception
           return QueryService.UNDEFINED;
         } catch (IllegalAccessException e) {
-          throw new NameNotFoundException(LocalizedStrings.AttributeDescriptor_METHOD_0_IN_CLASS_1_IS_NOT_ACCESSIBLE_TO_THE_QUERY_PROCESSOR.toLocalizedString(new Object[] { m.getName(), target.getClass().getName() }), e);
+          throw new NameNotFoundException(
+              LocalizedStrings
+                  .AttributeDescriptor_METHOD_0_IN_CLASS_1_IS_NOT_ACCESSIBLE_TO_THE_QUERY_PROCESSOR
+                  .toLocalizedString(new Object[] {m.getName(), target.getClass().getName()}),
+              e);
         } catch (InvocationTargetException e) {
           // if the target exception is Exception, wrap that,
           // otherwise wrap the InvocationTargetException itself
@@ -110,8 +114,7 @@ public class AttributeDescriptor {
             //eat the exception
             return QueryService.UNDEFINED;
           }
-          if (t instanceof Exception)
-            throw new QueryInvocationTargetException(t);
+          if (t instanceof Exception) throw new QueryInvocationTargetException(t);
           throw new QueryInvocationTargetException(e);
         }
       } else {
@@ -122,7 +125,11 @@ public class AttributeDescriptor {
             return ((Field) m).get(target);
           }
         } catch (IllegalAccessException e) {
-          throw new NameNotFoundException(LocalizedStrings.AttributeDescriptor_FIELD_0_IN_CLASS_1_IS_NOT_ACCESSIBLE_TO_THE_QUERY_PROCESSOR.toLocalizedString(new Object[] { m.getName(), target.getClass().getName() }), e);
+          throw new NameNotFoundException(
+              LocalizedStrings
+                  .AttributeDescriptor_FIELD_0_IN_CLASS_1_IS_NOT_ACCESSIBLE_TO_THE_QUERY_PROCESSOR
+                  .toLocalizedString(new Object[] {m.getName(), target.getClass().getName()}),
+              e);
         } catch (EntryDestroyedException e) {
           return QueryService.UNDEFINED;
         }
@@ -141,8 +148,8 @@ public class AttributeDescriptor {
   {
   if (target == null)
       return QueryService.UNDEFINED;
-   
-   
+
+
   Class targetType = target.getClass();
   Class argType = newValue == null ? null : newValue.getClass();
   Member m = getWriteMember(targetType, argType);
@@ -172,7 +179,7 @@ public class AttributeDescriptor {
   {
       throw new PathEvaluationException(e));
   }
-   
+
   }
    */
 
@@ -182,22 +189,21 @@ public class AttributeDescriptor {
 
   Member getReadMember(Class targetClass) throws NameNotFoundException {
     // mapping: public field (same name), method (getAttribute()),
-    // method (attribute())    
+    // method (attribute())
     List key = new ArrayList();
     key.add(targetClass);
     key.add(_name);
 
     Member m = (Member) _cache.get(key);
-    if (m != null)
-      return m;
+    if (m != null) return m;
 
     m = getReadField(targetClass);
-    if (m == null)
-      m = getReadMethod(targetClass);
-    if (m != null)
-      _cache.putIfAbsent(key, m);
+    if (m == null) m = getReadMethod(targetClass);
+    if (m != null) _cache.putIfAbsent(key, m);
     else
-      throw new NameNotFoundException(LocalizedStrings.AttributeDescriptor_NO_PUBLIC_ATTRIBUTE_NAMED_0_WAS_FOUND_IN_CLASS_1.toLocalizedString(new Object[] { _name, targetClass.getName() }));
+      throw new NameNotFoundException(
+          LocalizedStrings.AttributeDescriptor_NO_PUBLIC_ATTRIBUTE_NAMED_0_WAS_FOUND_IN_CLASS_1
+              .toLocalizedString(new Object[] {_name, targetClass.getName()}));
     // override security for nonpublic derived classes with public members
     ((AccessibleObject) m).setAccessible(true);
     return m;
@@ -242,8 +248,7 @@ public class AttributeDescriptor {
     Method m;
     String beanMethod = "get" + _name.substring(0, 1).toUpperCase() + _name.substring(1);
     m = getReadMethod(targetType, beanMethod);
-    if (m != null)
-      return m;
+    if (m != null) return m;
     return getReadMethod(targetType, _name);
   }
 
@@ -284,12 +289,14 @@ public class AttributeDescriptor {
    */
   /**
    * reads field value from a PdxInstance
+   *
    * @param target
    * @return the value of the field from PdxInstance
    * @throws NameNotFoundException
    * @throws QueryInvocationTargetException
    */
-  private Object readPdx(PdxInstance target) throws NameNotFoundException, QueryInvocationTargetException {
+  private Object readPdx(PdxInstance target)
+      throws NameNotFoundException, QueryInvocationTargetException {
     if (target instanceof PdxInstanceImpl) {
       PdxInstanceImpl pdxInstance = (PdxInstanceImpl) target;
       // if the field is present in the pdxinstance
@@ -325,8 +332,7 @@ public class AttributeDescriptor {
             updateClassToMethodsMap(pdxInstance.getClassName(), _name);
             throw ex;
           }
-        } else
-          return QueryService.UNDEFINED;
+        } else return QueryService.UNDEFINED;
       }
     } else {
       // target could be another implementation of PdxInstance like
@@ -335,17 +341,23 @@ public class AttributeDescriptor {
       if (((PdxInstance) target).hasField(_name)) {
         return ((PdxInstance) target).getField(_name);
       }
-      throw new NameNotFoundException(LocalizedStrings.AttributeDescriptor_FIELD_0_IN_CLASS_1_IS_NOT_ACCESSIBLE_TO_THE_QUERY_PROCESSOR.toLocalizedString(new Object[] { _name, target.getClass().getName() }));
+      throw new NameNotFoundException(
+          LocalizedStrings
+              .AttributeDescriptor_FIELD_0_IN_CLASS_1_IS_NOT_ACCESSIBLE_TO_THE_QUERY_PROCESSOR
+              .toLocalizedString(new Object[] {_name, target.getClass().getName()}));
     }
   }
 
-  private Object readFieldFromDeserializedObject(PdxInstanceImpl pdxInstance, Object target) throws NameNotFoundException, QueryInvocationTargetException {
+  private Object readFieldFromDeserializedObject(PdxInstanceImpl pdxInstance, Object target)
+      throws NameNotFoundException, QueryInvocationTargetException {
     try {
       Object obj = pdxInstance.getCachedObject();
       return read(obj, obj.getClass());
     } catch (PdxSerializationException e) {
       throw new NameNotFoundException( // the domain object is not available
-          LocalizedStrings.AttributeDescriptor_FIELD_0_IN_CLASS_1_IS_NOT_ACCESSIBLE_TO_THE_QUERY_PROCESSOR.toLocalizedString(new Object[] { _name, target.getClass().getName() }));
+          LocalizedStrings
+              .AttributeDescriptor_FIELD_0_IN_CLASS_1_IS_NOT_ACCESSIBLE_TO_THE_QUERY_PROCESSOR
+              .toLocalizedString(new Object[] {_name, target.getClass().getName()}));
     }
   }
 
@@ -384,5 +396,4 @@ public class AttributeDescriptor {
     }
     return false;
   }
-
 }

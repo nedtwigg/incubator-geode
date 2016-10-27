@@ -20,26 +20,23 @@ package org.apache.geode.internal.admin.remote;
 import org.apache.geode.internal.admin.*;
 import org.apache.geode.distributed.internal.membership.*;
 
-/**
- * Represents an application VM (member of the distributed system).
- */
+/** Represents an application VM (member of the distributed system). */
 public final class RemoteApplicationVM extends RemoteGemFireVM implements ApplicationVM {
 
   // constructors
 
   /**
-   * Creates a <code>RemoteApplicationVM</code> in a given distributed
-   * system (<code>agent</code>) with the given <code>id</code>.
-   * <p/>
-   * You MUST invoke {@link RemoteGemFireVM#startStatDispatcher()} immediately after
-   * constructing an instance.
-   * 
-   * @param alertLevel
-   *        The level of {@link Alert}s that this administration
-   *        console should receive from this member of the distributed
-   *        system. 
+   * Creates a <code>RemoteApplicationVM</code> in a given distributed system (<code>agent</code>)
+   * with the given <code>id</code>.
+   *
+   * <p>You MUST invoke {@link RemoteGemFireVM#startStatDispatcher()} immediately after constructing
+   * an instance.
+   *
+   * @param alertLevel The level of {@link Alert}s that this administration console should receive
+   *     from this member of the distributed system.
    */
-  public RemoteApplicationVM(RemoteGfManagerAgent agent, InternalDistributedMember id, int alertLevel) {
+  public RemoteApplicationVM(
+      RemoteGfManagerAgent agent, InternalDistributedMember id, int alertLevel) {
     super(agent, id, alertLevel);
   }
 
@@ -54,5 +51,4 @@ public final class RemoteApplicationVM extends RemoteGemFireVM implements Applic
       return (this.agent == vm.agent) && this.id.equals(vm.id);
     }
   }
-
 }

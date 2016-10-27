@@ -19,24 +19,21 @@ package org.apache.geode.cache;
 import org.apache.geode.cache.client.ServerConnectivityException;
 
 /**
- * Indicates that this client cannot contact any queue servers and
- * therefore cannot perform operations that require a queue, such as
- * registering interest.
+ * Indicates that this client cannot contact any queue servers and therefore cannot perform
+ * operations that require a queue, such as registering interest.
+ *
  * @since GemFire 5.7
  */
 public class NoQueueServersAvailableException extends ServerConnectivityException {
 
   private static final long serialVersionUID = 8484086019155762365L;
 
-  /**
-   * Create a new instance of NoPrimaryAvailableException without a detail message or cause.
-   */
-  public NoQueueServersAvailableException() {
-  }
+  /** Create a new instance of NoPrimaryAvailableException without a detail message or cause. */
+  public NoQueueServersAvailableException() {}
 
   /**
-   * 
    * Create a new instance of NoPrimaryAvailableException with a detail message
+   *
    * @param message the detail message
    */
   public NoQueueServersAvailableException(String message) {
@@ -45,6 +42,7 @@ public class NoQueueServersAvailableException extends ServerConnectivityExceptio
 
   /**
    * Create a new instance of NoPrimaryAvailableException with a detail message and cause
+   *
    * @param message the detail message
    * @param cause the cause
    */
@@ -54,10 +52,10 @@ public class NoQueueServersAvailableException extends ServerConnectivityExceptio
 
   /**
    * Create a new instance of NoPrimaryAvailableException with a cause
+   *
    * @param cause the cause
    */
   public NoQueueServersAvailableException(Throwable cause) {
     super(cause);
   }
-
 }

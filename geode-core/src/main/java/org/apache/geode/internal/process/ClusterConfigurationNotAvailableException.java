@@ -17,8 +17,9 @@
 package org.apache.geode.internal.process;
 
 /**
- * Exception thrown during server startup when  it requests the locators for shared configuration and does not receive it.
- * 
+ * Exception thrown during server startup when it requests the locators for shared configuration and
+ * does not receive it.
+ *
  * @since GemFire 8.0
  */
 public final class ClusterConfigurationNotAvailableException extends RuntimeException {

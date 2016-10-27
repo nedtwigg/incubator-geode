@@ -37,20 +37,20 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 
 /**
  * An test class for exploring the various notification listener behaviors
- * 
- * Run it like this:
- * 
- * java -cp geode-dependencies.jar:. -Dgemfire.log-file=system.log -Dgemfire.statistic-archive-file=statsArchive.gfs org.apache.geode.cache.control.MXMemoryPoolListenerExample  
- * 
+ *
+ * <p>Run it like this:
+ *
+ * <p>java -cp geode-dependencies.jar:. -Dgemfire.log-file=system.log
+ * -Dgemfire.statistic-archive-file=statsArchive.gfs
+ * org.apache.geode.cache.control.MXMemoryPoolListenerExample
+ *
  * @since GemFire 6.0
  */
 public class MXMemoryPoolListenerExample implements NotificationListener {
   private AtomicBoolean critical = new AtomicBoolean();
-  final private LogWriter logger;
+  private final LogWriter logger;
 
-  /**
-   * @param ds
-   */
+  /** @param ds */
   public MXMemoryPoolListenerExample(DistributedSystem ds) {
     this.logger = ds.getLogWriter();
   }
@@ -106,7 +106,17 @@ public class MXMemoryPoolListenerExample implements NotificationListener {
     DistributedSystem ds = DistributedSystem.connect(dsProps);
     final LogWriter logger = ds.getLogWriter();
 
-    logger.info("Usage threshold: " + threshold + "; percent tenured: " + percentTenured + "; Runtime Maximum memory: " + (Runtime.getRuntime().maxMemory() / (1024 * 1024)) + "Mb" + "; Heap Maximum memory: " + (mbean.getHeapMemoryUsage().getMax() / (1024 * 1024)) + "Mb");
+    logger.info(
+        "Usage threshold: "
+            + threshold
+            + "; percent tenured: "
+            + percentTenured
+            + "; Runtime Maximum memory: "
+            + (Runtime.getRuntime().maxMemory() / (1024 * 1024))
+            + "Mb"
+            + "; Heap Maximum memory: "
+            + (mbean.getHeapMemoryUsage().getMax() / (1024 * 1024))
+            + "Mb");
 
     MXMemoryPoolListenerExample me = new MXMemoryPoolListenerExample(ds);
 
@@ -117,13 +127,25 @@ public class MXMemoryPoolListenerExample implements NotificationListener {
     for (MemoryPoolMXBean p : pools) {
       if (p.isCollectionUsageThresholdSupported()) {
         // p.setCollectionUsageThreshold(0);
-        logger.info("Pool which supports collection usage threshold: " + p.getName() + "; " + p.getCollectionUsage());
+        logger.info(
+            "Pool which supports collection usage threshold: "
+                + p.getName()
+                + "; "
+                + p.getCollectionUsage());
       }
 
       // On JRockit do not set the usage threshold on the Nursery pool
-      if (p.getType().equals(MemoryType.HEAP) && p.isUsageThresholdSupported() && !p.getName().startsWith("Nursery")) {
+      if (p.getType().equals(MemoryType.HEAP)
+          && p.isUsageThresholdSupported()
+          && !p.getName().startsWith("Nursery")) {
         int byteThreshold = (int) Math.ceil(threshold * p.getUsage().getMax());
-        logger.info("Setting threshold " + (byteThreshold / (1024 * 1024)) + "Mb on: " + p.getName() + "; " + p.getCollectionUsage());
+        logger.info(
+            "Setting threshold "
+                + (byteThreshold / (1024 * 1024))
+                + "Mb on: "
+                + p.getName()
+                + "; "
+                + p.getCollectionUsage());
         p.setUsageThreshold(byteThreshold);
       }
     }
@@ -146,16 +168,15 @@ public class MXMemoryPoolListenerExample implements NotificationListener {
       this.criticalState = critical;
     }
 
-    /**
-     * @param percentTenured
-     */
+    /** @param percentTenured */
     public MemoryHog consumeMemory(final int percentTenured) {
       final long maxSecondsToRun = 180;
       final LogWriter logger = this.cache.getLogger();
       final long start = System.nanoTime();
-      for (int i = 100;; i++) {
+      for (int i = 100; ; i++) {
         // Create garbage
-        byte[] val = new byte[1012]; // 1024 less 4 bytes for obj ref, less 8 bytes for Integer key == 1012
+        byte[] val =
+            new byte[1012]; // 1024 less 4 bytes for obj ref, less 8 bytes for Integer key == 1012
         // Some random usage of the data to prevent optimization
         val[percentTenured] = (byte) i;
         if (percentTenured > 0 && (i % 100) <= percentTenured) {
@@ -172,7 +193,11 @@ public class MXMemoryPoolListenerExample implements NotificationListener {
         }
 
         if (this.criticalState.get()) {
-          logger.info(this.name + ": Clearing tenured data: size=" + (this.tenuredData.size() / 1024) + "Mb");
+          logger.info(
+              this.name
+                  + ": Clearing tenured data: size="
+                  + (this.tenuredData.size() / 1024)
+                  + "Mb");
           this.tenuredData.clear();
           this.criticalState.set(false);
           try {
@@ -185,9 +210,11 @@ public class MXMemoryPoolListenerExample implements NotificationListener {
     }
 
     public MemoryHog printTenuredSize() {
-      this.cache.getLogger().info("Tenured data size: " + this.tenuredData.getName() + ": " + this.tenuredData.size());
+      this.cache
+          .getLogger()
+          .info(
+              "Tenured data size: " + this.tenuredData.getName() + ": " + this.tenuredData.size());
       return this;
     }
   }
-
 }

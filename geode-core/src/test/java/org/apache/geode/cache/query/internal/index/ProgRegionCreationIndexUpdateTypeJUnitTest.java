@@ -16,7 +16,7 @@
  */
 /*
  * Created on Apr 21, 2005 *
- * 
+ *
  */
 package org.apache.geode.cache.query.internal.index;
 
@@ -33,25 +33,18 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.*;
 import static org.junit.Assert.fail;
 
-/**
- *
- * 
- */
+/** */
 @Category(IntegrationTest.class)
 public class ProgRegionCreationIndexUpdateTypeJUnitTest {
 
   private Cache cache = null;
 
   @Before
-  public void setUp() throws Exception {
-
-  }
+  public void setUp() throws Exception {}
 
   @After
   public void tearDown() throws Exception {
-    if (!cache.isClosed())
-      cache.close();
-
+    if (!cache.isClosed()) cache.close();
   }
 
   @Test
@@ -69,25 +62,27 @@ public class ProgRegionCreationIndexUpdateTypeJUnitTest {
     IndexManager im = IndexUtils.getIndexManager(region, true);
 
     if (!im.isIndexMaintenanceTypeSynchronous())
-      fail("IndexMaintenanceTest::testProgrammaticIndexUpdateType: Index Update Type found to be asynchronous when it was marked explicitly synchronous");
+      fail(
+          "IndexMaintenanceTest::testProgrammaticIndexUpdateType: Index Update Type found to be asynchronous when it was marked explicitly synchronous");
 
-    //Create a Region with index mainteneace type as explicit asynchronous    
+    //Create a Region with index mainteneace type as explicit asynchronous
     attributesFactory = new AttributesFactory();
     attributesFactory.setIndexMaintenanceSynchronous(false);
     regionAttributes = attributesFactory.create();
     region = cache.createRegion("region2", regionAttributes);
     im = IndexUtils.getIndexManager(region, true);
     if (im.isIndexMaintenanceTypeSynchronous())
-      fail("IndexMaintenanceTest::testProgrammaticIndexUpdateType: Index Update Type found to be synchronous when it was marked explicitly asynchronous");
+      fail(
+          "IndexMaintenanceTest::testProgrammaticIndexUpdateType: Index Update Type found to be synchronous when it was marked explicitly asynchronous");
 
-    //create a default region & check index maintenecae type .It should be 
-    // synchronous    
+    //create a default region & check index maintenecae type .It should be
+    // synchronous
     attributesFactory = new AttributesFactory();
     regionAttributes = attributesFactory.create();
     region = cache.createRegion("region3", regionAttributes);
     im = IndexUtils.getIndexManager(region, true);
     if (!im.isIndexMaintenanceTypeSynchronous())
-      fail("IndexMaintenanceTest::testProgrammaticIndexUpdateType: Index Update Type found to be asynchronous when it default RegionAttributes should have created synchronous update type");
-
+      fail(
+          "IndexMaintenanceTest::testProgrammaticIndexUpdateType: Index Update Type found to be asynchronous when it default RegionAttributes should have created synchronous update type");
   }
 }

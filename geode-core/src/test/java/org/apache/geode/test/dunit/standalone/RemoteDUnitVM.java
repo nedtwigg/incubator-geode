@@ -26,9 +26,7 @@ import org.apache.logging.log4j.Logger;
 
 import org.apache.geode.internal.logging.LogService;
 
-/**
- *
- */
+/** */
 public class RemoteDUnitVM extends UnicastRemoteObject implements RemoteDUnitVMIF {
 
   private static final Logger logger = LogService.getLogger();
@@ -37,10 +35,10 @@ public class RemoteDUnitVM extends UnicastRemoteObject implements RemoteDUnitVMI
     super();
   }
 
-  /** 
-   * Called remotely by the master controller to cause the client to execute 
-   * the instance method on the object.  Does this synchronously (does not spawn
-   * a thread).  This method is used by the unit test framework, dunit.
+  /**
+   * Called remotely by the master controller to cause the client to execute the instance method on
+   * the object. Does this synchronously (does not spawn a thread). This method is used by the unit
+   * test framework, dunit.
    *
    * @param obj the object to execute the method on
    * @param methodName the name of the method to execute
@@ -65,22 +63,25 @@ public class RemoteDUnitVM extends UnicastRemoteObject implements RemoteDUnitVMI
     logger.info("Got result: " + result.toString() + " from " + name + " (took " + delta + " ms)");
   }
 
-  /**
-   * Executes a given instance method on a given object with the given
-   * arguments. 
-   */
+  /** Executes a given instance method on a given object with the given arguments. */
   public MethExecutorResult executeMethodOnObject(Object obj, String methodName, Object[] args) {
-    String name = obj.getClass().getName() + "." + methodName + (args != null ? " with " + args.length + " args" : "") + " on object: " + obj;
+    String name =
+        obj.getClass().getName()
+            + "."
+            + methodName
+            + (args != null ? " with " + args.length + " args" : "")
+            + " on object: "
+            + obj;
     long start = start(name);
     MethExecutorResult result = MethExecutor.executeObject(obj, methodName, args);
     logDelta(name, start, result);
     return result;
   }
 
-  /** 
-   * Called remotely by the master controller to cause the client to execute 
-   * the method on the class.  Does this synchronously (does not spawn a thread).
-   * This method is used by the unit test framework, dunit.
+  /**
+   * Called remotely by the master controller to cause the client to execute the method on the
+   * class. Does this synchronously (does not spawn a thread). This method is used by the unit test
+   * framework, dunit.
    *
    * @param className the name of the class execute
    * @param methodName the name of the method to execute
@@ -95,12 +96,11 @@ public class RemoteDUnitVM extends UnicastRemoteObject implements RemoteDUnitVMI
     return result;
   }
 
-  /**
-   * Executes a given static method in a given class with the given
-   * arguments. 
-   */
-  public MethExecutorResult executeMethodOnClass(String className, String methodName, Object[] args) {
-    String name = className + "." + methodName + (args != null ? " with " + args.length + " args" : "");
+  /** Executes a given static method in a given class with the given arguments. */
+  public MethExecutorResult executeMethodOnClass(
+      String className, String methodName, Object[] args) {
+    String name =
+        className + "." + methodName + (args != null ? " with " + args.length + " args" : "");
     long start = start(name);
     MethExecutorResult result = MethExecutor.execute(className, methodName, args);
     logDelta(name, start, result);
@@ -109,22 +109,17 @@ public class RemoteDUnitVM extends UnicastRemoteObject implements RemoteDUnitVMI
 
   public void executeTask(int tsid, int type, int index) throws RemoteException {
     throw new UnsupportedOperationException();
-
   }
 
-  public void runShutdownHook() throws RemoteException {
-
-  }
+  public void runShutdownHook() throws RemoteException {}
 
   public void notifyDynamicActionComplete(int actionId) throws RemoteException {
     throw new UnsupportedOperationException();
-
   }
 
   public void shutDownVM() throws RemoteException {
     ChildVM.stopVM();
   }
 
-  public void disconnectVM() throws RemoteException {
-  }
+  public void disconnectVM() throws RemoteException {}
 }

@@ -24,10 +24,8 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * This exception is thrown as a result of one or more failed attempts
- * to connect to a remote conduit.
- *
- *
+ * This exception is thrown as a result of one or more failed attempts to connect to a remote
+ * conduit.
  *
  * @since GemFire 3.0
  */
@@ -42,34 +40,25 @@ public class ConnectExceptions extends GemFireCheckedException {
 
   ////////////////////  Constructors  ////////////////////
 
-  /**
-   * Creates a new <code>ConnectExceptions</code>
-   */
+  /** Creates a new <code>ConnectExceptions</code> */
   public ConnectExceptions() {
     super(LocalizedStrings.ConnectException_COULD_NOT_CONNECT.toLocalizedString());
     this.causes = new ArrayList();
     this.members = new ArrayList();
   }
 
-  /**
-   * Notes the member we couldn't connect to.
-   */
+  /** Notes the member we couldn't connect to. */
   public void addFailure(InternalDistributedMember member, Throwable cause) {
     this.members.add(member);
     this.causes.add(cause);
   }
 
-  /**
-   * Returns a list of <code>InternalDistributedMember</code>s that couldn't be connected
-   * to.
-   */
+  /** Returns a list of <code>InternalDistributedMember</code>s that couldn't be connected to. */
   public List getMembers() {
     return this.members;
   }
 
-  /**
-   * Returns the causes of this exception
-   */
+  /** Returns the causes of this exception */
   public List getCauses() {
     return this.causes;
   }
@@ -77,14 +66,13 @@ public class ConnectExceptions extends GemFireCheckedException {
   @Override
   public String getMessage() {
     StringBuffer sb = new StringBuffer();
-    for (Iterator iter = this.members.iterator(); iter.hasNext();) {
+    for (Iterator iter = this.members.iterator(); iter.hasNext(); ) {
       sb.append(' ').append(iter.next());
     }
     sb.append(" ").append(LocalizedStrings.ConnectException_CAUSES.toLocalizedString());
-    for (Iterator iter = this.causes.iterator(); iter.hasNext();) {
+    for (Iterator iter = this.causes.iterator(); iter.hasNext(); ) {
       sb.append(" {").append(iter.next()).append("}");
     }
     return LocalizedStrings.ConnectException_COULD_NOT_CONNECT_TO_0.toLocalizedString(sb);
   }
-
 }

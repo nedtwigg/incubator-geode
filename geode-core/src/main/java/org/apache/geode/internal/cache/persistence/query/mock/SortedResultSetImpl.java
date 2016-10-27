@@ -35,7 +35,6 @@ public class SortedResultSetImpl implements ResultSet {
   @Override
   public void add(Object e) {
     map.put(extractor.getSortKey(e), e);
-
   }
 
   @Override
@@ -47,5 +46,4 @@ public class SortedResultSetImpl implements ResultSet {
   public void close() {
     map.close();
   }
-
 }

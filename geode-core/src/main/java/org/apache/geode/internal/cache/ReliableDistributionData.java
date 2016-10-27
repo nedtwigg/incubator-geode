@@ -19,9 +19,9 @@ package org.apache.geode.internal.cache;
 import java.util.*;
 
 /**
- * Represents one or more distributed operations that can be reliably distributed.
- * This interface allows the data to be queued and checked for reliable distribution.
- * 
+ * Represents one or more distributed operations that can be reliably distributed. This interface
+ * allows the data to be queued and checked for reliable distribution.
+ *
  * @since GemFire 5.0
  */
 public interface ReliableDistributionData {
@@ -30,14 +30,12 @@ public interface ReliableDistributionData {
   //   * @param processor the reply processor used for responses to this data.
   //   */
   //  public Set getSuccessfulRecipients(ReliableReplyProcessor21 processor);
-  /**
-   * Returns the number of logical operations this data contains.
-   */
+  /** Returns the number of logical operations this data contains. */
   public int getOperationCount();
 
   /**
-   * Returns a list of QueuedOperation instances one for each logical
-   * operation done by this data instance.
+   * Returns a list of QueuedOperation instances one for each logical operation done by this data
+   * instance.
    */
   public List getOperations();
 }

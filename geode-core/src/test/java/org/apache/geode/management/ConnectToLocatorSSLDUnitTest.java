@@ -55,8 +55,7 @@ public class ConnectToLocatorSSLDUnitTest extends JUnit4DistributedTestCase {
   protected File jks = null;
   protected File securityPropsFile = null;
 
-  @Rule
-  public TemporaryFolder folder = new SerializableTemporaryFolder();
+  @Rule public TemporaryFolder folder = new SerializableTemporaryFolder();
 
   @Before
   public void before() throws Exception {
@@ -75,7 +74,8 @@ public class ConnectToLocatorSSLDUnitTest extends JUnit4DistributedTestCase {
   @Test
   public void testConnectToLocatorWithSSL() throws Exception {
     Properties securityProps = new Properties();
-    securityProps.setProperty(SSL_ENABLED_COMPONENTS, SecurableCommunicationChannel.LOCATOR.getConstant());
+    securityProps.setProperty(
+        SSL_ENABLED_COMPONENTS, SecurableCommunicationChannel.LOCATOR.getConstant());
     securityProps.setProperty(SSL_KEYSTORE, jks.getCanonicalPath());
     securityProps.setProperty(SSL_KEYSTORE_PASSWORD, "password");
     securityProps.setProperty(SSL_KEYSTORE_TYPE, "JKS");
@@ -118,15 +118,16 @@ public class ConnectToLocatorSSLDUnitTest extends JUnit4DistributedTestCase {
     int locatorPort = ports[0];
     int jmxPort = ports[1];
 
-    locator.invoke(() -> {
-      Properties props = new Properties();
-      props.setProperty(MCAST_PORT, "0");
-      props.put(JMX_MANAGER, "true");
-      props.put(JMX_MANAGER_START, "true");
-      props.put(JMX_MANAGER_PORT, jmxPort + "");
-      props.putAll(securityProps);
-      Locator.startLocatorAndDS(locatorPort, folder.newFile("locator.log"), props);
-    });
+    locator.invoke(
+        () -> {
+          Properties props = new Properties();
+          props.setProperty(MCAST_PORT, "0");
+          props.put(JMX_MANAGER, "true");
+          props.put(JMX_MANAGER_START, "true");
+          props.put(JMX_MANAGER_PORT, jmxPort + "");
+          props.putAll(securityProps);
+          Locator.startLocatorAndDS(locatorPort, folder.newFile("locator.log"), props);
+        });
 
     // saving the securityProps to a file
     OutputStream out = new FileOutputStream(securityPropsFile);
@@ -135,17 +136,18 @@ public class ConnectToLocatorSSLDUnitTest extends JUnit4DistributedTestCase {
     // run gfsh connect command in this vm
     CliUtil.isGfshVM = true;
     String shellId = getClass().getSimpleName();
-    HeadlessGfsh gfsh = new HeadlessGfsh(shellId, 30, folder.newFolder("gfsh_files").getCanonicalPath());
+    HeadlessGfsh gfsh =
+        new HeadlessGfsh(shellId, 30, folder.newFolder("gfsh_files").getCanonicalPath());
 
     // connect to the locator with the saved property file
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.CONNECT);
     command.addOption(CliStrings.CONNECT__LOCATOR, "localhost[" + locatorPort + "]");
-    command.addOption(CliStrings.CONNECT__SECURITY_PROPERTIES, securityPropsFile.getCanonicalPath());
+    command.addOption(
+        CliStrings.CONNECT__SECURITY_PROPERTIES, securityPropsFile.getCanonicalPath());
 
     gfsh.executeCommand(command.toString());
     CommandResult result = (CommandResult) gfsh.getResult();
     assertEquals(Status.OK, result.getStatus());
     assertTrue(result.getContent().toString().contains("Successfully connected to"));
   }
-
 }

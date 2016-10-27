@@ -37,12 +37,10 @@ import org.apache.geode.internal.cache.AbstractRegionMap;
 import org.apache.geode.test.dunit.Wait;
 
 /**
- * An abstract class whose test methods test the functionality of
- * {@link CacheListener}s that are invoked locally.
+ * An abstract class whose test methods test the functionality of {@link CacheListener}s that are
+ * invoked locally.
  *
  * @see MultiVMRegionTestCase#testRemoteCacheWriter
- *
- *
  * @since GemFire 3.0
  */
 public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
@@ -54,8 +52,8 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
   ///////////////////////  Test Methods  ///////////////////////
 
   /**
-   * Tests that the <code>CacheListener</code> is called after an entry
-   * is {@linkplain CacheListener#afterCreate created}.
+   * Tests that the <code>CacheListener</code> is called after an entry is {@linkplain
+   * CacheListener#afterCreate created}.
    */
   @Test
   public void testCacheListenerAfterCreate() throws CacheException {
@@ -64,21 +62,22 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
     final Object value = new Integer(42);
     Object arg = "ARG";
 
-    TestCacheListener listener = new TestCacheListener() {
-      public void afterCreate2(EntryEvent event) {
-        assertEquals(key, event.getKey());
-        assertEquals(value, event.getNewValue());
-        assertNull(event.getOldValue());
-        assertFalse(event.isLoad());
-        assertFalse(event.isLocalLoad());
-        assertFalse(event.isNetLoad());
-        assertFalse(event.isNetSearch());
-      }
+    TestCacheListener listener =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent event) {
+            assertEquals(key, event.getKey());
+            assertEquals(value, event.getNewValue());
+            assertNull(event.getOldValue());
+            assertFalse(event.isLoad());
+            assertFalse(event.isLocalLoad());
+            assertFalse(event.isNetLoad());
+            assertFalse(event.isNetSearch());
+          }
 
-      public void afterDestroy2(EntryEvent event) {
-        // This method will get invoked when the entry is destroyed
-      }
-    };
+          public void afterDestroy2(EntryEvent event) {
+            // This method will get invoked when the entry is destroyed
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheListener(listener);
@@ -106,8 +105,8 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
   }
 
   /**
-   * Tests that the <code>CacheListener</code> is called after an entry
-   * is {@linkplain CacheListener#afterUpdate updated}.
+   * Tests that the <code>CacheListener</code> is called after an entry is {@linkplain
+   * CacheListener#afterUpdate updated}.
    */
   @Test
   public void testCacheListenerAfterUpdate() throws CacheException {
@@ -117,25 +116,26 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
     final Object newValue = new Integer(43);
     Object arg = "ARG";
 
-    TestCacheListener listener = new TestCacheListener() {
-      public void afterCreate2(EntryEvent event) {
-        // This method will get invoked when the region is populated
-      }
+    TestCacheListener listener =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent event) {
+            // This method will get invoked when the region is populated
+          }
 
-      public void afterDestroy2(EntryEvent event) {
-        // This method will get invoked when an entry is destroyed
-      }
+          public void afterDestroy2(EntryEvent event) {
+            // This method will get invoked when an entry is destroyed
+          }
 
-      public void afterUpdate2(EntryEvent event) {
-        assertEquals(key, event.getKey());
-        assertEquals(newValue, event.getNewValue());
-        assertEquals(oldValue, event.getOldValue());
-        assertFalse(event.isLoad());
-        assertFalse(event.isLocalLoad());
-        assertFalse(event.isNetLoad());
-        assertFalse(event.isNetSearch());
-      }
-    };
+          public void afterUpdate2(EntryEvent event) {
+            assertEquals(key, event.getKey());
+            assertEquals(newValue, event.getNewValue());
+            assertEquals(oldValue, event.getOldValue());
+            assertFalse(event.isLoad());
+            assertFalse(event.isLocalLoad());
+            assertFalse(event.isNetLoad());
+            assertFalse(event.isNetSearch());
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheListener(listener);
@@ -171,8 +171,8 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
   }
 
   /**
-   * Tests that the <code>CacheListener</code> is called after an
-   * entry is {@linkplain CacheListener#afterDestroy destroyed}.
+   * Tests that the <code>CacheListener</code> is called after an entry is {@linkplain
+   * CacheListener#afterDestroy destroyed}.
    */
   @Test
   public void testCacheListenerAfterDestroy() throws CacheException {
@@ -182,21 +182,22 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
     Object arg = "ARG";
     //    final boolean localScope = getRegionAttributes().getScope().isLocal();
 
-    TestCacheListener listener = new TestCacheListener() {
-      public void afterCreate2(EntryEvent event) {
-        // This method will get invoked when the region is populated
-      }
+    TestCacheListener listener =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent event) {
+            // This method will get invoked when the region is populated
+          }
 
-      public void afterDestroy2(EntryEvent event) {
-        assertEquals(key, event.getKey());
-        assertEquals(value, event.getOldValue());
-        assertNull(event.getNewValue());
-        assertFalse(event.isLoad());
-        assertFalse(event.isLocalLoad());
-        assertFalse(event.isNetLoad());
-        assertFalse(event.isNetSearch());
-      }
-    };
+          public void afterDestroy2(EntryEvent event) {
+            assertEquals(key, event.getKey());
+            assertEquals(value, event.getOldValue());
+            assertNull(event.getNewValue());
+            assertFalse(event.isLoad());
+            assertFalse(event.isLocalLoad());
+            assertFalse(event.isNetLoad());
+            assertFalse(event.isNetSearch());
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheListener(listener);
@@ -214,8 +215,8 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
   }
 
   /**
-   * Tests that the <code>CacheListener</code> is called after an
-   * entry is {@linkplain CacheListener#afterInvalidate invalidated}.
+   * Tests that the <code>CacheListener</code> is called after an entry is {@linkplain
+   * CacheListener#afterInvalidate invalidated}.
    */
   @Test
   public void testCacheListenerAfterInvalidate() throws CacheException {
@@ -224,21 +225,22 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
     final Object value = new Integer(42);
     //    Object arg = "ARG";
 
-    TestCacheListener listener = new TestCacheListener() {
-      public void afterCreate2(EntryEvent event) {
-        // This method will get invoked when the region is populated
-      }
+    TestCacheListener listener =
+        new TestCacheListener() {
+          public void afterCreate2(EntryEvent event) {
+            // This method will get invoked when the region is populated
+          }
 
-      public void afterInvalidate2(EntryEvent event) {
-        assertEquals(key, event.getKey());
-        assertEquals(value, event.getOldValue());
-        assertNull(event.getNewValue());
-        assertFalse(event.isLoad());
-        assertFalse(event.isLocalLoad());
-        assertFalse(event.isNetLoad());
-        assertFalse(event.isNetSearch());
-      }
-    };
+          public void afterInvalidate2(EntryEvent event) {
+            assertEquals(key, event.getKey());
+            assertEquals(value, event.getOldValue());
+            assertNull(event.getNewValue());
+            assertFalse(event.isLoad());
+            assertFalse(event.isLocalLoad());
+            assertFalse(event.isNetLoad());
+            assertFalse(event.isNetSearch());
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheListener(listener);
@@ -270,28 +272,29 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
       final Object key = this.getUniqueName();
       final Object value = new Integer(42);
 
-      TestCacheListener listener = new TestCacheListener() {
-        int invalidateCount = 0;
+      TestCacheListener listener =
+          new TestCacheListener() {
+            int invalidateCount = 0;
 
-        public void afterCreate2(EntryEvent event) {
-          // This method will get invoked when the region is populated
-        }
+            public void afterCreate2(EntryEvent event) {
+              // This method will get invoked when the region is populated
+            }
 
-        public void afterInvalidate2(EntryEvent event) {
-          invalidateCount++;
-          assertEquals(key, event.getKey());
-          if (invalidateCount == 2) {
-            assertEquals(value, event.getOldValue());
-          } else {
-            assertNull(event.getOldValue());
-          }
-          assertNull(event.getNewValue());
-          assertFalse(event.isLoad());
-          assertFalse(event.isLocalLoad());
-          assertFalse(event.isNetLoad());
-          assertFalse(event.isNetSearch());
-        }
-      };
+            public void afterInvalidate2(EntryEvent event) {
+              invalidateCount++;
+              assertEquals(key, event.getKey());
+              if (invalidateCount == 2) {
+                assertEquals(value, event.getOldValue());
+              } else {
+                assertNull(event.getOldValue());
+              }
+              assertNull(event.getNewValue());
+              assertFalse(event.isLoad());
+              assertFalse(event.isLocalLoad());
+              assertFalse(event.isNetLoad());
+              assertFalse(event.isNetSearch());
+            }
+          };
 
       AttributesFactory factory = new AttributesFactory(getRegionAttributes());
       factory.setCacheListener(listener);
@@ -318,8 +321,7 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
   }
 
   /**
-   * Tests that the <code>CacheListener</code> is called after a region
-   * is destroyed.
+   * Tests that the <code>CacheListener</code> is called after a region is destroyed.
    *
    * @see CacheListener#afterRegionDestroy
    * @see CacheListener#close
@@ -332,30 +334,31 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
     //    final String exception = "EXCEPTION";
     //    final boolean localScope = getRegionAttributes().getScope().isLocal();
 
-    TestCacheListener listener = new TestCacheListener() {
-      private boolean closed = false;
-      private boolean destroyed = false;
+    TestCacheListener listener =
+        new TestCacheListener() {
+          private boolean closed = false;
+          private boolean destroyed = false;
 
-      public boolean wasInvoked() {
-        boolean value = closed && destroyed;
-        super.wasInvoked();
-        return value;
-      }
+          public boolean wasInvoked() {
+            boolean value = closed && destroyed;
+            super.wasInvoked();
+            return value;
+          }
 
-      public void close2() {
-        this.closed = true;
-      }
+          public void close2() {
+            this.closed = true;
+          }
 
-      public void afterRegionDestroy2(RegionEvent event) {
-        assertEquals(name, event.getRegion().getName());
-        // this should be a distributed destroy unless the region
-        // is local scope
-        assertFalse(event.isExpiration());
-        assertFalse(event.isOriginRemote());
+          public void afterRegionDestroy2(RegionEvent event) {
+            assertEquals(name, event.getRegion().getName());
+            // this should be a distributed destroy unless the region
+            // is local scope
+            assertFalse(event.isExpiration());
+            assertFalse(event.isOriginRemote());
 
-        this.destroyed = true;
-      }
-    };
+            this.destroyed = true;
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheListener(listener);
@@ -377,8 +380,7 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
   }
 
   /**
-   * Tests that the <code>CacheListener</code> is called after a region
-   * is invalidated.
+   * Tests that the <code>CacheListener</code> is called after a region is invalidated.
    *
    * @see CacheListener#afterRegionInvalidate
    * @see CacheListener#close
@@ -390,28 +392,29 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
     //    Object arg = "ARG";
     //    final String exception = "EXCEPTION";
 
-    TestCacheListener listener = new TestCacheListener() {
-      private boolean closed = false;
-      private boolean invalidated = false;
+    TestCacheListener listener =
+        new TestCacheListener() {
+          private boolean closed = false;
+          private boolean invalidated = false;
 
-      public boolean wasInvoked() {
-        boolean value = invalidated;
-        super.wasInvoked();
-        return value;
-      }
+          public boolean wasInvoked() {
+            boolean value = invalidated;
+            super.wasInvoked();
+            return value;
+          }
 
-      public void close2() {
-        this.closed = true;
-      }
+          public void close2() {
+            this.closed = true;
+          }
 
-      public void afterRegionInvalidate2(RegionEvent event) {
-        assertEquals(name, event.getRegion().getName());
-        assertFalse(event.isExpiration());
-        assertFalse(event.isOriginRemote());
+          public void afterRegionInvalidate2(RegionEvent event) {
+            assertEquals(name, event.getRegion().getName());
+            assertFalse(event.isExpiration());
+            assertFalse(event.isOriginRemote());
 
-        this.invalidated = true;
-      }
-    };
+            this.invalidated = true;
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheListener(listener);
@@ -424,5 +427,4 @@ public abstract class CacheListenerTestCase extends CacheLoaderTestCase {
     assertTrue(listener.wasInvoked());
     assertEquals(0, region.values().size());
   }
-
 }

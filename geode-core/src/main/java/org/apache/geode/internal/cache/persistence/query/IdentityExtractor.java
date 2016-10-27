@@ -22,5 +22,4 @@ public class IdentityExtractor implements SortKeyExtractor {
   public Object getSortKey(Object element) {
     return element;
   }
-
 }

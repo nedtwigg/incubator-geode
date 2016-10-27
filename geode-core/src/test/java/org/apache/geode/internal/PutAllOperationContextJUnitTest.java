@@ -91,9 +91,7 @@ public class PutAllOperationContextJUnitTest {
     }
   }
 
-  /**
-   * Make sure that we do not expose the internal Token.INVALID to customers
-   */
+  /** Make sure that we do not expose the internal Token.INVALID to customers */
   @Test
   public void testInvalidToken() {
     LinkedHashMap<String, Object> m = new LinkedHashMap<>();
@@ -116,9 +114,7 @@ public class PutAllOperationContextJUnitTest {
     assertEquals(Token.INVALID, m.get("INVALID_TOKEN"));
   }
 
-  /**
-   * Make sure that we do not expose the internal CachedDeserializable to customers
-   */
+  /** Make sure that we do not expose the internal CachedDeserializable to customers */
   @Test
   public void testCachedDeserializable() {
     LinkedHashMap<String, Object> m = new LinkedHashMap<>();
@@ -142,7 +138,10 @@ public class PutAllOperationContextJUnitTest {
     assertEquals(v, me.getValue());
     assertEquals(cd, m.get("cd"));
     String opMapStr = opMap.toString();
-    assertEquals("expected " + opMapStr + " to not contain CachedDeserializable", false, opMapStr.contains("CachedDeserializable"));
+    assertEquals(
+        "expected " + opMapStr + " to not contain CachedDeserializable",
+        false,
+        opMapStr.contains("CachedDeserializable"));
     HashMap<String, Object> hm = new HashMap<>(opMap);
     assertEquals(hm, opMap);
     assertEquals(opMap, hm);
@@ -200,5 +199,4 @@ public class PutAllOperationContextJUnitTest {
 
     opMap.toString();
   }
-
 }

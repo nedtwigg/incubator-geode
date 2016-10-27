@@ -37,21 +37,21 @@ import org.apache.geode.internal.cache.PoolStats;
 import org.apache.geode.internal.cache.tier.InternalClientMembership;
 import org.apache.geode.internal.logging.LogService;
 
-/**
- *
- */
+/** */
 public class EndpointManagerImpl implements EndpointManager {
   private static final Logger logger = LogService.getLogger();
 
   private volatile Map<ServerLocation, Endpoint> endpointMap = Collections.emptyMap();
-  private final Map/*<ServerLocation, ConnectionStats>*/<ServerLocation, ConnectionStats> statMap = new HashMap<ServerLocation, ConnectionStats>();
+  private final Map /*<ServerLocation, ConnectionStats>*/<ServerLocation, ConnectionStats> statMap =
+      new HashMap<ServerLocation, ConnectionStats>();
   private final DistributedSystem ds;
   private final String poolName;
   private final EndpointListenerBroadcaster listener = new EndpointListenerBroadcaster();
   protected final CancelCriterion cancelCriterion;
   private final PoolStats poolStats;
 
-  public EndpointManagerImpl(String poolName, DistributedSystem ds, CancelCriterion cancelCriterion, PoolStats poolStats) {
+  public EndpointManagerImpl(
+      String poolName, DistributedSystem ds, CancelCriterion cancelCriterion, PoolStats poolStats) {
     this.ds = ds;
     this.poolName = poolName;
     this.cancelCriterion = cancelCriterion;
@@ -71,7 +71,8 @@ public class EndpointManagerImpl implements EndpointManager {
         endpoint = endpointMap.get(server);
         if (endpoint == null || endpoint.isClosed()) {
           ConnectionStats stats = getStats(server);
-          Map<ServerLocation, Endpoint> endpointMapTemp = new HashMap<ServerLocation, Endpoint>(endpointMap);
+          Map<ServerLocation, Endpoint> endpointMapTemp =
+              new HashMap<ServerLocation, Endpoint>(endpointMap);
           endpoint = new Endpoint(this, ds, server, stats, memberId);
           endpointMapTemp.put(server, endpoint);
           endpointMap = Collections.unmodifiableMap(endpointMapTemp);
@@ -109,7 +110,8 @@ public class EndpointManagerImpl implements EndpointManager {
     endpoint.close();
     boolean removedEndpoint = false;
     synchronized (this) {
-      Map<ServerLocation, Endpoint> endpointMapTemp = new HashMap<ServerLocation, Endpoint>(endpointMap);
+      Map<ServerLocation, Endpoint> endpointMapTemp =
+          new HashMap<ServerLocation, Endpoint>(endpointMap);
       endpoint = endpointMapTemp.remove(endpoint.getLocation());
       if (endpoint != null) {
         endpointMap = Collections.unmodifiableMap(endpointMapTemp);
@@ -125,7 +127,8 @@ public class EndpointManagerImpl implements EndpointManager {
         synchronized (proxyCaches) {
           for (ProxyCache proxyCache : proxyCaches) {
             try {
-              Long userId = proxyCache.getUserAttributes().getServerToId().remove(endpoint.getLocation());
+              Long userId =
+                  proxyCache.getUserAttributes().getServerToId().remove(endpoint.getLocation());
               if (userId != null) {
                 ++size;
               }
@@ -135,14 +138,19 @@ public class EndpointManagerImpl implements EndpointManager {
             }
           }
           if (logger.isDebugEnabled()) {
-            logger.debug("EndpointManagerImpl.removeEndpoint() Removed server {} from {} user's ProxyCache", endpoint.getLocation(), size);
+            logger.debug(
+                "EndpointManagerImpl.removeEndpoint() Removed server {} from {} user's ProxyCache",
+                endpoint.getLocation(),
+                size);
           }
         }
         UserAttributes ua = UserAttributes.userAttributes.get();
         if (ua != null) {
           Long userId = ua.getServerToId().remove(endpoint.getLocation());
           if (userId != null && logger.isDebugEnabled()) {
-            logger.debug("EndpointManagerImpl.removeEndpoint() Removed server {} from thread local variable", endpoint.getLocation());
+            logger.debug(
+                "EndpointManagerImpl.removeEndpoint() Removed server {} from thread local variable",
+                endpoint.getLocation());
           }
         }
       } else if (pool != null && !pool.getMultiuserAuthentication()) {
@@ -167,7 +175,7 @@ public class EndpointManagerImpl implements EndpointManager {
    * @see org.apache.geode.cache.client.internal.EndpointManager#close()
    */
   public synchronized void close() {
-    for (Iterator<ConnectionStats> itr = statMap.values().iterator(); itr.hasNext();) {
+    for (Iterator<ConnectionStats> itr = statMap.values().iterator(); itr.hasNext(); ) {
       ConnectionStats stats = itr.next();
       stats.close();
     }
@@ -198,11 +206,13 @@ public class EndpointManagerImpl implements EndpointManager {
       PoolImpl pool = (PoolImpl) PoolManager.find(this.poolName);
       if (pool != null) {
         if (pool.getGatewaySender() != null) {
-          stats = new ConnectionStats(new DummyStatisticsFactory(), statName, this.poolStats/*, this.gatewayStats*/);
+          stats =
+              new ConnectionStats(
+                  new DummyStatisticsFactory(), statName, this.poolStats /*, this.gatewayStats*/);
         }
       }
       if (stats == null) {
-        stats = new ConnectionStats(ds, statName, this.poolStats/*,
+        stats = new ConnectionStats(ds, statName, this.poolStats /*,
                                                                 this.gatewayStats*/);
       }
       statMap.put(location, stats);
@@ -225,7 +235,8 @@ public class EndpointManagerImpl implements EndpointManager {
 
   protected static class EndpointListenerBroadcaster implements EndpointManager.EndpointListener {
 
-    private volatile Set/*<EndpointListener>*/<EndpointListener> endpointListeners = Collections.emptySet();
+    private volatile Set /*<EndpointListener>*/<EndpointListener> endpointListeners =
+        Collections.emptySet();
 
     public synchronized void addListener(EndpointManager.EndpointListener listener) {
       HashSet<EndpointListener> tmpListeners = new HashSet<EndpointListener>(endpointListeners);
@@ -244,14 +255,14 @@ public class EndpointManagerImpl implements EndpointManager {
     }
 
     public void endpointCrashed(Endpoint endpoint) {
-      for (Iterator<EndpointListener> itr = endpointListeners.iterator(); itr.hasNext();) {
+      for (Iterator<EndpointListener> itr = endpointListeners.iterator(); itr.hasNext(); ) {
         EndpointManager.EndpointListener listener = itr.next();
         listener.endpointCrashed(endpoint);
       }
     }
 
     public void endpointNoLongerInUse(Endpoint endpoint) {
-      for (Iterator<EndpointListener> itr = endpointListeners.iterator(); itr.hasNext();) {
+      for (Iterator<EndpointListener> itr = endpointListeners.iterator(); itr.hasNext(); ) {
         EndpointManager.EndpointListener listener = itr.next();
         listener.endpointNoLongerInUse(endpoint);
       }
@@ -259,7 +270,7 @@ public class EndpointManagerImpl implements EndpointManager {
 
     public void endpointNowInUse(Endpoint endpoint) {
       //logger.warn("HIGHUP:JOIN:"+endpoint.getLocation());
-      for (Iterator<EndpointListener> itr = endpointListeners.iterator(); itr.hasNext();) {
+      for (Iterator<EndpointListener> itr = endpointListeners.iterator(); itr.hasNext(); ) {
         EndpointManager.EndpointListener listener = itr.next();
         listener.endpointNowInUse(endpoint);
       }
@@ -296,5 +307,4 @@ public class EndpointManagerImpl implements EndpointManager {
   public String getPoolName() {
     return poolName;
   }
-
 }

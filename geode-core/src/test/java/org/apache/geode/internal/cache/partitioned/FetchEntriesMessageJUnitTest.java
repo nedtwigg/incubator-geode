@@ -42,7 +42,8 @@ public class FetchEntriesMessageJUnitTest {
 
   private GemFireCacheImpl cache;
 
-  private VersionTag createVersionTag(boolean validVersionTag) throws ClassNotFoundException, IOException {
+  private VersionTag createVersionTag(boolean validVersionTag)
+      throws ClassNotFoundException, IOException {
     VersionTag tag = VersionTag.create(cache.getMyId());
     if (validVersionTag) {
       tag.setRegionVersion(1);
@@ -52,7 +53,8 @@ public class FetchEntriesMessageJUnitTest {
   }
 
   private HeapDataOutputStream createDummyChunk() throws IOException, ClassNotFoundException {
-    HeapDataOutputStream mos = new HeapDataOutputStream(InitialImageOperation.CHUNK_SIZE_IN_BYTES + 2048, Version.CURRENT);
+    HeapDataOutputStream mos =
+        new HeapDataOutputStream(InitialImageOperation.CHUNK_SIZE_IN_BYTES + 2048, Version.CURRENT);
     mos.reset();
     DataSerializer.writeObject("keyWithOutVersionTag", mos);
     DataSerializer.writeObject("valueWithOutVersionTag", mos);
@@ -76,7 +78,8 @@ public class FetchEntriesMessageJUnitTest {
 
     FetchEntriesResponse response = new FetchEntriesResponse(system, pr, null, 0);
     HeapDataOutputStream chunkStream = createDummyChunk();
-    FetchEntriesReplyMessage reply = new FetchEntriesReplyMessage(null, 0, 0, chunkStream, 0, 0, 0, false, false);
+    FetchEntriesReplyMessage reply =
+        new FetchEntriesReplyMessage(null, 0, 0, chunkStream, 0, 0, 0, false, false);
     reply.chunk = chunkStream.toByteArray();
     response.processChunk(reply);
     assertNull(response.returnRVV);

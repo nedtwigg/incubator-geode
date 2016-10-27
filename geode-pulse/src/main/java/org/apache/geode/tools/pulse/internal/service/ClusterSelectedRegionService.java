@@ -44,11 +44,10 @@ import java.util.List;
 /**
  * Class ClusterSelectedRegionService
  *
- * This class contains implementations of getting Cluster's selected region details
+ * <p>This class contains implementations of getting Cluster's selected region details
  *
- * @since GemFire version 7.5 cedar  2014-03-01
+ * @since GemFire version 7.5 cedar 2014-03-01
  */
-
 @Component
 @Service("ClusterSelectedRegion")
 @Scope("singleton")
@@ -60,17 +59,18 @@ public class ClusterSelectedRegionService implements PulseService {
   private final String ENTRY_SIZE = "entrySize";
 
   // Comparator based upon regions entry count
-  private static Comparator<Cluster.Member> memberCurrentHeapUsageComparator = (m1, m2) -> {
-    long m1HeapUsage = m1.getCurrentHeapSize();
-    long m2HeapUsage = m2.getCurrentHeapSize();
-    if (m1HeapUsage < m2HeapUsage) {
-      return -1;
-    } else if (m1HeapUsage > m2HeapUsage) {
-      return 1;
-    } else {
-      return 0;
-    }
-  };
+  private static Comparator<Cluster.Member> memberCurrentHeapUsageComparator =
+      (m1, m2) -> {
+        long m1HeapUsage = m1.getCurrentHeapSize();
+        long m2HeapUsage = m2.getCurrentHeapSize();
+        if (m1HeapUsage < m2HeapUsage) {
+          return -1;
+        } else if (m1HeapUsage > m2HeapUsage) {
+          return 1;
+        } else {
+          return 0;
+        }
+      };
 
   @Override
   public ObjectNode execute(final HttpServletRequest request) throws Exception {
@@ -78,7 +78,8 @@ public class ClusterSelectedRegionService implements PulseService {
     String userName = request.getUserPrincipal().getName();
     String pulseData = request.getParameter("pulseData");
     JsonNode parameterMap = mapper.readTree(pulseData);
-    String selectedRegionFullPath = parameterMap.get("ClusterSelectedRegion").get("regionFullPath").textValue();
+    String selectedRegionFullPath =
+        parameterMap.get("ClusterSelectedRegion").get("regionFullPath").textValue();
 
     // get cluster object
     Cluster cluster = Repository.get().getCluster();
@@ -171,7 +172,8 @@ public class ClusterSelectedRegionService implements PulseService {
         regionMember.put("sockets", member.getTotalFileDescriptorOpen());
         regionMember.put("threads", member.getNumThreads());
 
-        if (PulseController.getPulseProductSupport().equalsIgnoreCase(PulseConstants.PRODUCT_NAME_SQLFIRE)) {
+        if (PulseController.getPulseProductSupport()
+            .equalsIgnoreCase(PulseConstants.PRODUCT_NAME_SQLFIRE)) {
           regionMember.put("clients", member.getNumSqlfireClients());
         } else {
           regionMember.put("clients", member.getMemberClientsHMap().size());
@@ -183,9 +185,13 @@ public class ClusterSelectedRegionService implements PulseService {
       regionJSON.put("members", memberArray);
       regionJSON.put("entryCount", reg.getSystemRegionEntryCount());
 
-      regionJSON.put("persistence", reg.getPersistentEnabled() ? PulseService.VALUE_ON : PulseService.VALUE_OFF);
+      regionJSON.put(
+          "persistence",
+          reg.getPersistentEnabled() ? PulseService.VALUE_ON : PulseService.VALUE_OFF);
 
-      regionJSON.put("isEnableOffHeapMemory", reg.isEnableOffHeapMemory() ? PulseService.VALUE_ON : PulseService.VALUE_OFF);
+      regionJSON.put(
+          "isEnableOffHeapMemory",
+          reg.isEnableOffHeapMemory() ? PulseService.VALUE_ON : PulseService.VALUE_OFF);
 
       String regCompCodec = reg.getCompressionCodec();
       if (StringUtils.isNotNullNotEmptyNotWhiteSpace(regCompCodec)) {
@@ -194,17 +200,30 @@ public class ClusterSelectedRegionService implements PulseService {
         regionJSON.put("compressionCodec", PulseService.VALUE_NA);
       }
 
-      if (PulseConstants.PRODUCT_NAME_SQLFIRE.equalsIgnoreCase(PulseController.getPulseProductSupport())) {
+      if (PulseConstants.PRODUCT_NAME_SQLFIRE.equalsIgnoreCase(
+          PulseController.getPulseProductSupport())) {
         // Convert region path to dot separated region path
         regionJSON.put("regionPath", StringUtils.getTableNameFromRegionName(reg.getFullPath()));
       } else {
         regionJSON.put("regionPath", reg.getFullPath());
       }
 
-      regionJSON.put("memoryReadsTrend", mapper.<JsonNode> valueToTree(reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_GETS_PER_SEC_TREND)));
-      regionJSON.put("memoryWritesTrend", mapper.<JsonNode> valueToTree(reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_PUTS_PER_SEC_TREND)));
-      regionJSON.put("diskReadsTrend", mapper.<JsonNode> valueToTree(reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_DISK_READS_PER_SEC_TREND)));
-      regionJSON.put("diskWritesTrend", mapper.<JsonNode> valueToTree(reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_DISK_WRITES_PER_SEC_TREND)));
+      regionJSON.put(
+          "memoryReadsTrend",
+          mapper.<JsonNode>valueToTree(
+              reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_GETS_PER_SEC_TREND)));
+      regionJSON.put(
+          "memoryWritesTrend",
+          mapper.<JsonNode>valueToTree(
+              reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_PUTS_PER_SEC_TREND)));
+      regionJSON.put(
+          "diskReadsTrend",
+          mapper.<JsonNode>valueToTree(
+              reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_DISK_READS_PER_SEC_TREND)));
+      regionJSON.put(
+          "diskWritesTrend",
+          mapper.<JsonNode>valueToTree(
+              reg.getRegionStatisticTrend(Cluster.Region.REGION_STAT_DISK_WRITES_PER_SEC_TREND)));
 
       regionJSON.put("emptyNodes", reg.getEmptyNode());
       Long entrySize = reg.getEntrySize();

@@ -18,11 +18,7 @@ package org.apache.geode.cache.query.internal.aggregate;
 
 import org.apache.geode.cache.query.QueryService;
 
-/**
- * Computes the sum for replicated & PR based queries.
- * 
- *
- */
+/** Computes the sum for replicated & PR based queries. */
 public class Sum extends AbstractAggregator {
 
   private double result = 0;
@@ -36,9 +32,7 @@ public class Sum extends AbstractAggregator {
   }
 
   @Override
-  public void init() {
-
-  }
+  public void init() {}
 
   @Override
   public Object terminate() {

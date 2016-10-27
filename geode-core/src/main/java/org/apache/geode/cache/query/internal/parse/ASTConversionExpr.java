@@ -23,8 +23,7 @@ import org.apache.geode.cache.query.internal.QCompiler;
 public class ASTConversionExpr extends GemFireAST {
   private static final long serialVersionUID = 8713000632283704611L;
 
-  public ASTConversionExpr() {
-  }
+  public ASTConversionExpr() {}
 
   public ASTConversionExpr(Token t) {
     super(t);
@@ -36,5 +35,4 @@ public class ASTConversionExpr extends GemFireAST {
     int numOfChildren = this.getNumberOfChildren();
     compiler.function(getType(), numOfChildren);
   }
-
 }

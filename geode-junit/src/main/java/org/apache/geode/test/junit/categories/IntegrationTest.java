@@ -17,8 +17,6 @@
 package org.apache.geode.test.junit.categories;
 
 /**
- * JUnit Test Category that specifies a test involving inter-operation of 
- * components or subsystems.
+ * JUnit Test Category that specifies a test involving inter-operation of components or subsystems.
  */
-public interface IntegrationTest {
-}
+public interface IntegrationTest {}

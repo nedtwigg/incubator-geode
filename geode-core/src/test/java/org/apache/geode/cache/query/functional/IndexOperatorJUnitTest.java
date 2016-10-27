@@ -40,9 +40,7 @@ import org.apache.geode.cache.query.Utils;
 import org.apache.geode.cache.query.data.Portfolio;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- *
- */
+/** */
 @Category(IntegrationTest.class)
 public class IndexOperatorJUnitTest {
 
@@ -60,32 +58,27 @@ public class IndexOperatorJUnitTest {
   public void testWithString() throws Exception {
     String str = "xyz";
     Character c = (Character) runQuery(str, 0);
-    if (c.charValue() != 'x')
-      fail();
+    if (c.charValue() != 'x') fail();
     Character d = (Character) runQuery(str, 2);
-    if (d.charValue() != 'z')
-      fail();
+    if (d.charValue() != 'z') fail();
   }
 
   @Test
   public void testWithArray() throws Exception {
     Object result = null;
     int index = 1;
-    String stringArray[] = { "a", "b" };
+    String stringArray[] = {"a", "b"};
     result = runQuery(stringArray, index);
-    if (result == null || !stringArray[index].equals(result))
-      fail("failed for String array");
+    if (result == null || !stringArray[index].equals(result)) fail("failed for String array");
 
-    int intArray[] = { 1, 2 };
+    int intArray[] = {1, 2};
     result = runQuery(intArray, index);
     if (result == null || intArray[index] != ((Integer) result).intValue())
       fail("failed for int array");
 
-    Object objectArray[] = { "a", "b" };
+    Object objectArray[] = {"a", "b"};
     result = runQuery(objectArray, index);
-    if (result == null || !objectArray[index].equals(result))
-      fail("failed for String array");
-
+    if (result == null || !objectArray[index].equals(result)) fail("failed for String array");
   }
 
   @Test
@@ -96,8 +89,7 @@ public class IndexOperatorJUnitTest {
     Object result = null;
     int index = 1;
     result = runQuery(list, index);
-    if (result == null || !list.get(index).equals(result))
-      fail("failed for List");
+    if (result == null || !list.get(index).equals(result)) fail("failed for List");
   }
 
   @Test
@@ -109,8 +101,7 @@ public class IndexOperatorJUnitTest {
     Object result = null;
     Object index = "1";
     result = runQuery(map, index);
-    if (result == null || !map.get(index).equals(result))
-      fail("failed for Map");
+    if (result == null || !map.get(index).equals(result)) fail("failed for Map");
   }
 
   @Test
@@ -123,26 +114,24 @@ public class IndexOperatorJUnitTest {
     Object result = null;
     Object index = "2";
     result = runQuery(region, index);
-    if (result == null || !region.get(index).equals(result))
-      fail("failed for Region");
+    if (result == null || !region.get(index).equals(result)) fail("failed for Region");
   }
 
   @Test
   public void testIndexOfIndex() throws Exception {
-    String array[] = { "abc", "def" };
+    String array[] = {"abc", "def"};
     Query q = CacheUtils.getQueryService().newQuery("$1[0][0]");
-    Object params[] = { array, new Integer(0) };
+    Object params[] = {array, new Integer(0)};
     Character result = (Character) q.execute(params);
     CacheUtils.log(Utils.printResult(result));
-    if (result == null || result.charValue() != 'a')
-      fail();
+    if (result == null || result.charValue() != 'a') fail();
   }
 
   @Test
   public void testWithNULL() throws Exception {
     runQuery(null, 0);
     runQuery(null, null);
-    Object objectArray[] = { "a", "b" };
+    Object objectArray[] = {"a", "b"};
     try {
       runQuery(objectArray, null);
       fail();
@@ -152,8 +141,7 @@ public class IndexOperatorJUnitTest {
     map.put("0", new Integer(11));
     map.put("1", new Integer(12));
     Object result = runQuery(map, null);
-    if (result != null)
-      fail();
+    if (result != null) fail();
   }
 
   @Test
@@ -168,7 +156,7 @@ public class IndexOperatorJUnitTest {
     } catch (TypeMismatchException e) {
       fail();
     }
-    Object objectArray[] = { "a", "b" };
+    Object objectArray[] = {"a", "b"};
     try {
       runQuery(objectArray, QueryService.UNDEFINED);
       fail();
@@ -178,8 +166,7 @@ public class IndexOperatorJUnitTest {
     map.put("0", new Integer(11));
     map.put("1", new Integer(12));
     Object result = runQuery(map, QueryService.UNDEFINED);
-    if (result != null)
-      fail();
+    if (result != null) fail();
   }
 
   @Test
@@ -197,7 +184,7 @@ public class IndexOperatorJUnitTest {
     }
 
     try {
-      Object objectArray[] = { "a", "b" };
+      Object objectArray[] = {"a", "b"};
       runQuery(objectArray, new Object());
       fail();
     } catch (TypeMismatchException e) {
@@ -206,7 +193,7 @@ public class IndexOperatorJUnitTest {
 
   public Object runQuery(Object array, Object index) throws Exception {
     Query q = CacheUtils.getQueryService().newQuery("$1[$2]");
-    Object params[] = { array, index };
+    Object params[] = {array, index};
     Object result = q.execute(params);
     CacheUtils.log(Utils.printResult(result));
     return result;
@@ -214,10 +201,9 @@ public class IndexOperatorJUnitTest {
 
   public Object runQuery(Object array, int index) throws Exception {
     Query q = CacheUtils.getQueryService().newQuery("$1[$2]");
-    Object params[] = { array, new Integer(index) };
+    Object params[] = {array, new Integer(index)};
     Object result = q.execute(params);
     CacheUtils.log(Utils.printResult(result));
     return result;
   }
-
 }

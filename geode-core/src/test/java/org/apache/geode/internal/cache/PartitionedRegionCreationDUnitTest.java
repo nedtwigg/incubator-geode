@@ -51,15 +51,15 @@ import org.apache.geode.test.dunit.VM;
 import org.apache.geode.test.junit.categories.FlakyTest;
 
 /**
- * This test is to test and validate the partitioned region creation in multiple
- * vm scenario. This will verify the functionality under distributed scenario.
+ * This test is to test and validate the partitioned region creation in multiple vm scenario. This
+ * will verify the functionality under distributed scenario.
  */
 @SuppressWarnings("serial")
 @Category(DistributedTest.class)
 public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTestCase {
   /**
    * constructor
-   * 
+   *
    * @param name
    */
   public PartitionedRegionCreationDUnitTest() {
@@ -74,8 +74,8 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
   static final int totalNumBuckets = 7;
 
   /**
-   * This tests creates partition regions with scope = DISTRIBUTED_ACK and then
-   * validating thoes partition regions
+   * This tests creates partition regions with scope = DISTRIBUTED_ACK and then validating thoes
+   * partition regions
    */
   @Test
   public void testSequentialCreation() throws Exception {
@@ -102,9 +102,9 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
   }
 
   /**
-   * This test create regions with scope = DISTRIBUTED_NO_ACK and then
-   * validating these partition regons
-   * 
+   * This test create regions with scope = DISTRIBUTED_NO_ACK and then validating these partition
+   * regons
+   *
    * @throws Exception
    */
   // TODO: fix the hang that concurent creation often runs into -- mthomas
@@ -120,10 +120,14 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
     VM vm3 = host.getVM(3);
     int AsyncInvocationArrSize = 4;
     AsyncInvocation[] async = new AsyncInvocation[AsyncInvocationArrSize];
-    async[0] = vm0.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
-    async[1] = vm1.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
-    async[2] = vm2.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
-    async[3] = vm3.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
+    async[0] =
+        vm0.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
+    async[1] =
+        vm1.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
+    async[2] =
+        vm2.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
+    async[3] =
+        vm3.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
 
     /** main thread is waiting for the other threads to complete */
     for (int count = 0; count < AsyncInvocationArrSize; count++) {
@@ -145,10 +149,10 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
   }
 
   /**
-   * This test create regions with scope = DISTRIBUTED_NO_ACK and then
-   * validating these partition regons. Test specially added for SQL fabric
-   * testing since that always creates regions in parallel.
-   * 
+   * This test create regions with scope = DISTRIBUTED_NO_ACK and then validating these partition
+   * regons. Test specially added for SQL fabric testing since that always creates regions in
+   * parallel.
+   *
    * @throws Exception
    */
   @Test
@@ -161,16 +165,17 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
     int AsyncInvocationArrSize = 4;
     final String regionNamePrefix = "PARTREG";
     final String replRegion = "TESTREG";
-    CacheSerializableRunnable createRepl = new CacheSerializableRunnable("Create Repl") {
-      @Override
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        AttributesFactory attr = new AttributesFactory();
-        attr.setScope(Scope.DISTRIBUTED_ACK);
-        attr.setDataPolicy(DataPolicy.REPLICATE);
-        cache.createRegion(replRegion, attr.create());
-      }
-    };
+    CacheSerializableRunnable createRepl =
+        new CacheSerializableRunnable("Create Repl") {
+          @Override
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            AttributesFactory attr = new AttributesFactory();
+            attr.setScope(Scope.DISTRIBUTED_ACK);
+            attr.setDataPolicy(DataPolicy.REPLICATE);
+            cache.createRegion(replRegion, attr.create());
+          }
+        };
     createRepl.run2();
     vm0.invoke(createRepl);
     vm1.invoke(createRepl);
@@ -178,60 +183,71 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
     vm3.invoke(createRepl);
 
     AsyncInvocation[] async = new AsyncInvocation[AsyncInvocationArrSize];
-    CacheSerializableRunnable createPR = new CacheSerializableRunnable("Create PR") {
-      @Override
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        Region partitionedregion = null;
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(2).create());
-        // wait for put
-        Region reg = cache.getRegion(replRegion);
-        Region.Entry regEntry;
-        while ((regEntry = reg.getEntry("start")) == null || regEntry.getValue() == null) {
-          try {
-            Thread.sleep(10);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
+    CacheSerializableRunnable createPR =
+        new CacheSerializableRunnable("Create PR") {
+          @Override
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            Region partitionedregion = null;
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(
+                new PartitionAttributesFactory().setRedundantCopies(2).create());
+            // wait for put
+            Region reg = cache.getRegion(replRegion);
+            Region.Entry regEntry;
+            while ((regEntry = reg.getEntry("start")) == null || regEntry.getValue() == null) {
+              try {
+                Thread.sleep(10);
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              }
+            }
+            for (int index = 0; index < MAX_REGIONS; ++index) {
+              final String regionName = regionNamePrefix + String.valueOf(index);
+              partitionedregion = cache.createRegion(regionName, attr.create());
+              assertNotNull("Partitioned Region ref null", partitionedregion);
+              assertNotNull("Cache does not contain PR " + regionName, cache.getRegion(regionName));
+              assertTrue(
+                  "Partitioned Region ref claims to be destroyed",
+                  !partitionedregion.isDestroyed());
+            }
           }
-        }
-        for (int index = 0; index < MAX_REGIONS; ++index) {
-          final String regionName = regionNamePrefix + String.valueOf(index);
-          partitionedregion = cache.createRegion(regionName, attr.create());
-          assertNotNull("Partitioned Region ref null", partitionedregion);
-          assertNotNull("Cache does not contain PR " + regionName, cache.getRegion(regionName));
-          assertTrue("Partitioned Region ref claims to be destroyed", !partitionedregion.isDestroyed());
-        }
-      }
-    };
+        };
 
     // create accessor on the main thread
-    CacheSerializableRunnable createAccessorPR = new CacheSerializableRunnable("Create Accessor PR") {
-      @Override
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        Region partitionedregion = null;
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(2).setLocalMaxMemory(0).create());
-        // wait for put
-        Region reg = cache.getRegion(replRegion);
-        Region.Entry regEntry;
-        while ((regEntry = reg.getEntry("start")) == null || regEntry.getValue() == null) {
-          try {
-            Thread.sleep(10);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
+    CacheSerializableRunnable createAccessorPR =
+        new CacheSerializableRunnable("Create Accessor PR") {
+          @Override
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            Region partitionedregion = null;
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(
+                new PartitionAttributesFactory()
+                    .setRedundantCopies(2)
+                    .setLocalMaxMemory(0)
+                    .create());
+            // wait for put
+            Region reg = cache.getRegion(replRegion);
+            Region.Entry regEntry;
+            while ((regEntry = reg.getEntry("start")) == null || regEntry.getValue() == null) {
+              try {
+                Thread.sleep(10);
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              }
+            }
+            for (int index = 0; index < MAX_REGIONS; ++index) {
+              final String regionName = regionNamePrefix + String.valueOf(index);
+              partitionedregion = cache.createRegion(regionName, attr.create());
+              assertNotNull("Partitioned Region ref null", partitionedregion);
+              assertNotNull("Cache does not contain PR " + regionName, cache.getRegion(regionName));
+              assertTrue(
+                  "Partitioned Region ref claims to be destroyed",
+                  !partitionedregion.isDestroyed());
+            }
           }
-        }
-        for (int index = 0; index < MAX_REGIONS; ++index) {
-          final String regionName = regionNamePrefix + String.valueOf(index);
-          partitionedregion = cache.createRegion(regionName, attr.create());
-          assertNotNull("Partitioned Region ref null", partitionedregion);
-          assertNotNull("Cache does not contain PR " + regionName, cache.getRegion(regionName));
-          assertTrue("Partitioned Region ref claims to be destroyed", !partitionedregion.isDestroyed());
-        }
-      }
-    };
+        };
 
     Thread th = new Thread(() -> createAccessorPR.run());
     th.start();
@@ -265,9 +281,9 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
   }
 
   /**
-  * Test whether partition region creation is preveented when
-  * an instance is created that has the incorrect redundancy
-  */
+   * Test whether partition region creation is preveented when an instance is created that has the
+   * incorrect redundancy
+   */
   @Test
   public void testPartitionedRegionRedundancyConflict() throws Exception {
     Host host = Host.getHost(0);
@@ -275,85 +291,118 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
     VM vm1 = host.getVM(1);
 
     final String rName = getUniqueName();
-    vm0.invoke(new CacheSerializableRunnable("validateNoException") {
-      @Override
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        Region partitionedregion = null;
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(0).create());
-        partitionedregion = cache.createRegion(rName, attr.create());
-        assertNotNull("Partitioned Region ref null", partitionedregion);
-        assertNotNull("Cache does not contain PR " + rName, cache.getRegion(rName));
-        assertTrue("Partitioned Region ref claims to be destroyed", !partitionedregion.isDestroyed());
-      }
-    });
+    vm0.invoke(
+        new CacheSerializableRunnable("validateNoException") {
+          @Override
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            Region partitionedregion = null;
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(
+                new PartitionAttributesFactory().setRedundantCopies(0).create());
+            partitionedregion = cache.createRegion(rName, attr.create());
+            assertNotNull("Partitioned Region ref null", partitionedregion);
+            assertNotNull("Cache does not contain PR " + rName, cache.getRegion(rName));
+            assertTrue(
+                "Partitioned Region ref claims to be destroyed", !partitionedregion.isDestroyed());
+          }
+        });
 
-    vm1.invoke(new CacheSerializableRunnable("validatePRCreationException") {
-      @Override
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        Region partitionedregion = null;
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(1).create());
-        try {
-          cache.getLogger().info("<ExpectedException action=add>" + "IllegalStateException</ExpectedException>");
-          partitionedregion = cache.createRegion(rName, attr.create());
-          fail("Expected exception upon creation with invalid redundancy");
-        } catch (IllegalStateException expected) {
-        } finally {
-          cache.getLogger().info("<ExpectedException action=remove>" + "IllegalStateException</ExpectedException>");
-        }
-        assertNull("Partitioned Region ref null", partitionedregion);
-        assertNull("Cache contains PR " + rName + "!!", cache.getRegion(rName));
-      }
-    });
+    vm1.invoke(
+        new CacheSerializableRunnable("validatePRCreationException") {
+          @Override
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            Region partitionedregion = null;
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(
+                new PartitionAttributesFactory().setRedundantCopies(1).create());
+            try {
+              cache
+                  .getLogger()
+                  .info(
+                      "<ExpectedException action=add>"
+                          + "IllegalStateException</ExpectedException>");
+              partitionedregion = cache.createRegion(rName, attr.create());
+              fail("Expected exception upon creation with invalid redundancy");
+            } catch (IllegalStateException expected) {
+            } finally {
+              cache
+                  .getLogger()
+                  .info(
+                      "<ExpectedException action=remove>"
+                          + "IllegalStateException</ExpectedException>");
+            }
+            assertNull("Partitioned Region ref null", partitionedregion);
+            assertNull("Cache contains PR " + rName + "!!", cache.getRegion(rName));
+          }
+        });
 
-    vm1.invoke(new CacheSerializableRunnable("validatePRCreationException") {
-      @Override
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        Region partitionedregion = null;
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(2).create());
-        try {
-          cache.getLogger().info("<ExpectedException action=add>" + "IllegalStateException</ExpectedException>");
-          partitionedregion = cache.createRegion(rName, attr.create());
-          fail("Expected exception upon creation with invalid redundancy");
-        } catch (IllegalStateException expected) {
-        } finally {
-          cache.getLogger().info("<ExpectedException action=remove>" + "IllegalStateException</ExpectedException>");
-        }
-        assertNull("Partitioned Region ref null", partitionedregion);
-        assertNull("Cache contains PR " + rName + "!!", cache.getRegion(rName));
-      }
-    });
+    vm1.invoke(
+        new CacheSerializableRunnable("validatePRCreationException") {
+          @Override
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            Region partitionedregion = null;
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(
+                new PartitionAttributesFactory().setRedundantCopies(2).create());
+            try {
+              cache
+                  .getLogger()
+                  .info(
+                      "<ExpectedException action=add>"
+                          + "IllegalStateException</ExpectedException>");
+              partitionedregion = cache.createRegion(rName, attr.create());
+              fail("Expected exception upon creation with invalid redundancy");
+            } catch (IllegalStateException expected) {
+            } finally {
+              cache
+                  .getLogger()
+                  .info(
+                      "<ExpectedException action=remove>"
+                          + "IllegalStateException</ExpectedException>");
+            }
+            assertNull("Partitioned Region ref null", partitionedregion);
+            assertNull("Cache contains PR " + rName + "!!", cache.getRegion(rName));
+          }
+        });
 
-    vm1.invoke(new CacheSerializableRunnable("validatePRCreationException") {
-      @Override
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        Region partitionedregion = null;
-        AttributesFactory attr = new AttributesFactory();
-        attr.setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(3).create());
-        try {
-          cache.getLogger().info("<ExpectedException action=add>" + "IllegalStateException</ExpectedException>");
-          partitionedregion = cache.createRegion(rName, attr.create());
-          fail("Expected exception upon creation with invalid redundancy");
-        } catch (IllegalStateException expected) {
-        } finally {
-          cache.getLogger().info("<ExpectedException action=remove>" + "IllegalStateException</ExpectedException>");
-        }
-        assertNull("Partitioned Region ref null", partitionedregion);
-        assertNull("Cache contains PR " + rName + "!!", cache.getRegion(rName));
-      }
-    });
+    vm1.invoke(
+        new CacheSerializableRunnable("validatePRCreationException") {
+          @Override
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            Region partitionedregion = null;
+            AttributesFactory attr = new AttributesFactory();
+            attr.setPartitionAttributes(
+                new PartitionAttributesFactory().setRedundantCopies(3).create());
+            try {
+              cache
+                  .getLogger()
+                  .info(
+                      "<ExpectedException action=add>"
+                          + "IllegalStateException</ExpectedException>");
+              partitionedregion = cache.createRegion(rName, attr.create());
+              fail("Expected exception upon creation with invalid redundancy");
+            } catch (IllegalStateException expected) {
+            } finally {
+              cache
+                  .getLogger()
+                  .info(
+                      "<ExpectedException action=remove>"
+                          + "IllegalStateException</ExpectedException>");
+            }
+            assertNull("Partitioned Region ref null", partitionedregion);
+            assertNull("Cache contains PR " + rName + "!!", cache.getRegion(rName));
+          }
+        });
   }
 
   /**
-   * This test creates partition region with scope = DISTRIBUTED_ACK and tests
-   * whether all the attributes of partiotion region are properlt initialized
-   * 
+   * This test creates partition region with scope = DISTRIBUTED_ACK and tests whether all the
+   * attributes of partiotion region are properlt initialized
+   *
    * @throws Exception
    */
   @Category(FlakyTest.class) // GEODE-1104: time sensitive, async actions
@@ -368,10 +417,14 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
     LogWriterUtils.getLogWriter().info("*****INITIALIZATION TEST STARTED*****");
     int AsyncInvocationArrSize = 8;
     AsyncInvocation[] async = new AsyncInvocation[AsyncInvocationArrSize];
-    async[0] = vm0.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
-    async[1] = vm1.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
-    async[2] = vm2.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
-    async[3] = vm3.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
+    async[0] =
+        vm0.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
+    async[1] =
+        vm1.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
+    async[2] =
+        vm2.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
+    async[3] =
+        vm3.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
 
     /** main thread is waiting for the other threads to complete */
     for (int count = 0; count < 4; count++) {
@@ -403,9 +456,8 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
   }
 
   /**
-   * This tests registration of partition region is happened in allpartition
-   * region
-   * 
+   * This tests registration of partition region is happened in allpartition region
+   *
    * @throws Exception
    */
   @Test
@@ -420,10 +472,14 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
     LogWriterUtils.getLogWriter().info("*****REGISTRATION TEST STARTED*****");
     int AsyncInvocationArrSize = 8;
     AsyncInvocation[] async = new AsyncInvocation[AsyncInvocationArrSize];
-    async[0] = vm0.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
-    async[1] = vm1.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
-    async[2] = vm2.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
-    async[3] = vm3.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
+    async[0] =
+        vm0.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
+    async[1] =
+        vm1.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
+    async[2] =
+        vm2.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
+    async[3] =
+        vm3.invokeAsync(getCacheSerializableRunnableForPRCreate(name, MAX_REGIONS, 0, "NONE"));
 
     /** main thread is waiting for the other threads to complete */
     for (int count = 0; count < 4; count++) {
@@ -456,7 +512,7 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
 
   /**
    * This tests persistence conflicts btw members of partition region
-   * 
+   *
    * @throws Exception
    */
   @Test
@@ -478,78 +534,95 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
     LogWriterUtils.getLogWriter().info("*****PERSISTENCE CONFLICTS TEST ENDED*****");
   }
 
-  /**
-   * This function tests root, allpartition region and their scope and
-   * mirrortype attribute.
-   */
+  /** This function tests root, allpartition region and their scope and mirrortype attribute. */
   public CacheSerializableRunnable getCacheSerializableRunnableForPRInitialize() {
     SerializableRunnable initializePrRegion;
-    initializePrRegion = new CacheSerializableRunnable("initialize") {
-      @Override
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        Region root = cache.getRegion(PartitionedRegionHelper.PR_ROOT_REGION_NAME);
-        if (root == null)
-          fail("PartionedRegionInitializationDUnitTest() - the " + PartitionedRegionHelper.PR_ROOT_REGION_NAME + " do not exists");
-        RegionAttributes regionAttribs = root.getAttributes();
-        Scope scope = regionAttribs.getScope();
-        if (!scope.isDistributedAck())
-          fail("PartionedRegionInitializationDUnitTest() - the " + PartitionedRegionHelper.PR_ROOT_REGION_NAME + " scope is not distributedAck");
-        assertEquals("PartionedRegionInitializationTest() - the " + PartitionedRegionHelper.PR_ROOT_REGION_NAME + " does not have the proper data policy" + DataPolicy.REPLICATE, DataPolicy.REPLICATE, regionAttribs.getDataPolicy());
-        //        Region allPartitionedRegions = root
-        //            .getSubregion(PartitionedRegionHelper.PARTITIONED_REGION_CONFIG_NAME);
-        //        if (allPartitionedRegions == null)
-        //          fail("PartionedRegionInitializationTest() - the "
-        //              + PartitionedRegionHelper.PARTITIONED_REGION_CONFIG_NAME
-        //              + " do not exists");
-        //        regionAttribs = allPartitionedRegions.getAttributes();
-        //        scope = regionAttribs.getScope();
-        //        if (!scope.isDistributedAck())
-        //          fail("PartionedRegionInitializationTest() - the "
-        //              + PartitionedRegionHelper.PARTITIONED_REGION_CONFIG_NAME
-        //              + " scope is not global");
-        //        DataPolicy datapolicy = regionAttribs.getDataPolicy();
-        //        if (! DataPolicy.REPLICATE.equals(datapolicy)) 
-        //          fail("PartionedRegionInitializationTest() - the "
-        //              + PartitionedRegionHelper.PARTITIONED_REGION_CONFIG_NAME
-        //              + " data policy is not " + DataPolicy.REPLICATE);
-      }
-    };
+    initializePrRegion =
+        new CacheSerializableRunnable("initialize") {
+          @Override
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            Region root = cache.getRegion(PartitionedRegionHelper.PR_ROOT_REGION_NAME);
+            if (root == null)
+              fail(
+                  "PartionedRegionInitializationDUnitTest() - the "
+                      + PartitionedRegionHelper.PR_ROOT_REGION_NAME
+                      + " do not exists");
+            RegionAttributes regionAttribs = root.getAttributes();
+            Scope scope = regionAttribs.getScope();
+            if (!scope.isDistributedAck())
+              fail(
+                  "PartionedRegionInitializationDUnitTest() - the "
+                      + PartitionedRegionHelper.PR_ROOT_REGION_NAME
+                      + " scope is not distributedAck");
+            assertEquals(
+                "PartionedRegionInitializationTest() - the "
+                    + PartitionedRegionHelper.PR_ROOT_REGION_NAME
+                    + " does not have the proper data policy"
+                    + DataPolicy.REPLICATE,
+                DataPolicy.REPLICATE,
+                regionAttribs.getDataPolicy());
+            //        Region allPartitionedRegions = root
+            //            .getSubregion(PartitionedRegionHelper.PARTITIONED_REGION_CONFIG_NAME);
+            //        if (allPartitionedRegions == null)
+            //          fail("PartionedRegionInitializationTest() - the "
+            //              + PartitionedRegionHelper.PARTITIONED_REGION_CONFIG_NAME
+            //              + " do not exists");
+            //        regionAttribs = allPartitionedRegions.getAttributes();
+            //        scope = regionAttribs.getScope();
+            //        if (!scope.isDistributedAck())
+            //          fail("PartionedRegionInitializationTest() - the "
+            //              + PartitionedRegionHelper.PARTITIONED_REGION_CONFIG_NAME
+            //              + " scope is not global");
+            //        DataPolicy datapolicy = regionAttribs.getDataPolicy();
+            //        if (! DataPolicy.REPLICATE.equals(datapolicy))
+            //          fail("PartionedRegionInitializationTest() - the "
+            //              + PartitionedRegionHelper.PARTITIONED_REGION_CONFIG_NAME
+            //              + " data policy is not " + DataPolicy.REPLICATE);
+          }
+        };
     return (CacheSerializableRunnable) initializePrRegion;
-
   }
 
   /**
    * this function tests psConfig for the regions
-   * 
+   *
    * @param rgionName
    * @return
    */
-  public CacheSerializableRunnable getCacheSerializableRunnableForPRRegistration(final String rgionName) {
+  public CacheSerializableRunnable getCacheSerializableRunnableForPRRegistration(
+      final String rgionName) {
     SerializableRunnable registerPrRegion;
-    registerPrRegion = new CacheSerializableRunnable("register") {
-      @Override
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        Region root = PartitionedRegionHelper.getPRRoot(cache);
-        //        Region allPartitionedRegions = PartitionedRegionHelper
-        //            .getPRConfigRegion(root, cache);
-        for (int i = 0; i < MAX_REGIONS; i++) {
-          Region region = cache.getRegion("/" + rgionName + String.valueOf(i));
-          String name = ((PartitionedRegion) region).getRegionIdentifier();
-          PartitionRegionConfig prConfig = (PartitionRegionConfig) root.get(name);
-          if (prConfig == null)
-            fail("PartionedRegionRegistrationTest() - PartionedRegion - " + name + " configs do not exists in  region - " + root.getName());
-        }
-        LogWriterUtils.getLogWriter().info(" PartitionedRegionCreationTest PartionedRegionRegistrationTest() Successfully Complete ..  ");
-      }
-    };
+    registerPrRegion =
+        new CacheSerializableRunnable("register") {
+          @Override
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            Region root = PartitionedRegionHelper.getPRRoot(cache);
+            //        Region allPartitionedRegions = PartitionedRegionHelper
+            //            .getPRConfigRegion(root, cache);
+            for (int i = 0; i < MAX_REGIONS; i++) {
+              Region region = cache.getRegion("/" + rgionName + String.valueOf(i));
+              String name = ((PartitionedRegion) region).getRegionIdentifier();
+              PartitionRegionConfig prConfig = (PartitionRegionConfig) root.get(name);
+              if (prConfig == null)
+                fail(
+                    "PartionedRegionRegistrationTest() - PartionedRegion - "
+                        + name
+                        + " configs do not exists in  region - "
+                        + root.getName());
+            }
+            LogWriterUtils.getLogWriter()
+                .info(
+                    " PartitionedRegionCreationTest PartionedRegionRegistrationTest() Successfully Complete ..  ");
+          }
+        };
     return (CacheSerializableRunnable) registerPrRegion;
   }
 
   //  /**
   //   * This function tests bucket2node for the regions
-  //   * 
+  //   *
   //   * @param regionName
   //   * @return
   //   */
@@ -577,204 +650,244 @@ public class PartitionedRegionCreationDUnitTest extends PartitionedRegionDUnitTe
   //    return (CacheSerializableRunnable)bucket2NodePrRegion;
   //  }
 
-  /**
-   * this function creates partion region with the given name and throws
-   * appropriate exception
-   */
-  public CacheSerializableRunnable getCacheSerializableRunnableForPRCreate(final String regionName, final int cnt, final int redundancy, final String exceptionType) {
+  /** this function creates partion region with the given name and throws appropriate exception */
+  public CacheSerializableRunnable getCacheSerializableRunnableForPRCreate(
+      final String regionName, final int cnt, final int redundancy, final String exceptionType) {
     SerializableRunnable createPrRegion1;
     if (cnt == 0) {
-      createPrRegion1 = new CacheSerializableRunnable(regionName) {
-        @Override
-        public void run2() throws CacheException {
-          Cache cache = getCache();
-          Region partitionedregion = null;
-          try {
-            AttributesFactory attr = new AttributesFactory();
-            PartitionAttributesFactory paf = new PartitionAttributesFactory();
-            if (redundancy != 0)
-              paf.setRedundantCopies(redundancy);
-            PartitionAttributes prAttr = paf.create();
-            attr.setPartitionAttributes(prAttr);
-            partitionedregion = cache.createRegion(regionName, attr.create());
-          } catch (IllegalStateException ex) {
-            getCache().getLogger().warning("Creation caught IllegalStateException", ex);
-            if (exceptionType.equals("GLOBAL"))
-              LogWriterUtils.getLogWriter().info("PartitionedRegionCreationDUnitTest:testPartitionedRegionCreationExceptions()  Got a Correct exception for scope = GLOBAL");
-            if (exceptionType.equals("REDUNDANCY"))
-              LogWriterUtils.getLogWriter().info("PartitionedRegionCreationDUnitTest:testPartitionedRegionCreationExceptions()  Got a Correct exception for 0 > redundancy  > 3  ");
-            if (exceptionType.equals("DIFFREG"))
-              LogWriterUtils.getLogWriter().info("PartitionedRegionCreationDUnitTest:testPartitionedRegionCreationExceptions()  Got a Correct exception for regions with diff scope ");
-          }
-          assertNotNull("Partitioned Region " + regionName + " not in cache", cache.getRegion(regionName));
-          assertNotNull("Partitioned Region ref null", partitionedregion);
-          assertTrue("Partitioned Region ref claims to be destroyed", !partitionedregion.isDestroyed());
-        }
-      };
-    } else {
-      createPrRegion1 = new CacheSerializableRunnable(regionName) {
-        @Override
-        public void run2() throws CacheException {
-          Cache cache = getCache();
-          AttributesFactory attr = new AttributesFactory();
-          PartitionAttributesFactory paf = new PartitionAttributesFactory();
-          if (redundancy != 0)
-            paf.setRedundantCopies(redundancy);
-          PartitionAttributes prAttr = paf.create();
-          attr.setPartitionAttributes(prAttr);
-          Region partitionedregion = null;
-          String rName = null;
-          for (int i = 0; i < cnt; i++) {
-            try {
-              rName = regionName + i;
-              partitionedregion = cache.createRegion(rName, attr.create());
-            } catch (IllegalStateException ex) {
-              getCache().getLogger().warning("Creation caught IllegalStateException", ex);
-              if (exceptionType.equals("GLOBAL"))
-                LogWriterUtils.getLogWriter().info("PartitionedRegionCreationDUnitTest:testPartitionedRegionCreationExceptions()  Got a Correct exception for scope = GLOBAL");
-              if (exceptionType.equals("REDUNDANCY"))
-                LogWriterUtils.getLogWriter().info("PartitionedRegionCreationDUnitTest:testPartitionedRegionCreationExceptions()  Got a Correct exception for 0 > redundancy  > 3  ");
-              if (exceptionType.equals("DIFFREG"))
-                LogWriterUtils.getLogWriter().info("PartitionedRegionCreationDUnitTest:testPartitionedRegionCreationExceptions()  Got a Correct exception for regions with diff scope ");
+      createPrRegion1 =
+          new CacheSerializableRunnable(regionName) {
+            @Override
+            public void run2() throws CacheException {
+              Cache cache = getCache();
+              Region partitionedregion = null;
+              try {
+                AttributesFactory attr = new AttributesFactory();
+                PartitionAttributesFactory paf = new PartitionAttributesFactory();
+                if (redundancy != 0) paf.setRedundantCopies(redundancy);
+                PartitionAttributes prAttr = paf.create();
+                attr.setPartitionAttributes(prAttr);
+                partitionedregion = cache.createRegion(regionName, attr.create());
+              } catch (IllegalStateException ex) {
+                getCache().getLogger().warning("Creation caught IllegalStateException", ex);
+                if (exceptionType.equals("GLOBAL"))
+                  LogWriterUtils.getLogWriter()
+                      .info(
+                          "PartitionedRegionCreationDUnitTest:testPartitionedRegionCreationExceptions()  Got a Correct exception for scope = GLOBAL");
+                if (exceptionType.equals("REDUNDANCY"))
+                  LogWriterUtils.getLogWriter()
+                      .info(
+                          "PartitionedRegionCreationDUnitTest:testPartitionedRegionCreationExceptions()  Got a Correct exception for 0 > redundancy  > 3  ");
+                if (exceptionType.equals("DIFFREG"))
+                  LogWriterUtils.getLogWriter()
+                      .info(
+                          "PartitionedRegionCreationDUnitTest:testPartitionedRegionCreationExceptions()  Got a Correct exception for regions with diff scope ");
+              }
+              assertNotNull(
+                  "Partitioned Region " + regionName + " not in cache",
+                  cache.getRegion(regionName));
+              assertNotNull("Partitioned Region ref null", partitionedregion);
+              assertTrue(
+                  "Partitioned Region ref claims to be destroyed",
+                  !partitionedregion.isDestroyed());
             }
-            assertNotNull("Partitioned Region " + rName + " not in cache", cache.getRegion(rName));
-            assertNotNull("Partitioned Region ref null", partitionedregion);
-            assertTrue("Partitioned Region ref claims to be destroyed", !partitionedregion.isDestroyed());
-          }
-        }
-      };
+          };
+    } else {
+      createPrRegion1 =
+          new CacheSerializableRunnable(regionName) {
+            @Override
+            public void run2() throws CacheException {
+              Cache cache = getCache();
+              AttributesFactory attr = new AttributesFactory();
+              PartitionAttributesFactory paf = new PartitionAttributesFactory();
+              if (redundancy != 0) paf.setRedundantCopies(redundancy);
+              PartitionAttributes prAttr = paf.create();
+              attr.setPartitionAttributes(prAttr);
+              Region partitionedregion = null;
+              String rName = null;
+              for (int i = 0; i < cnt; i++) {
+                try {
+                  rName = regionName + i;
+                  partitionedregion = cache.createRegion(rName, attr.create());
+                } catch (IllegalStateException ex) {
+                  getCache().getLogger().warning("Creation caught IllegalStateException", ex);
+                  if (exceptionType.equals("GLOBAL"))
+                    LogWriterUtils.getLogWriter()
+                        .info(
+                            "PartitionedRegionCreationDUnitTest:testPartitionedRegionCreationExceptions()  Got a Correct exception for scope = GLOBAL");
+                  if (exceptionType.equals("REDUNDANCY"))
+                    LogWriterUtils.getLogWriter()
+                        .info(
+                            "PartitionedRegionCreationDUnitTest:testPartitionedRegionCreationExceptions()  Got a Correct exception for 0 > redundancy  > 3  ");
+                  if (exceptionType.equals("DIFFREG"))
+                    LogWriterUtils.getLogWriter()
+                        .info(
+                            "PartitionedRegionCreationDUnitTest:testPartitionedRegionCreationExceptions()  Got a Correct exception for regions with diff scope ");
+                }
+                assertNotNull(
+                    "Partitioned Region " + rName + " not in cache", cache.getRegion(rName));
+                assertNotNull("Partitioned Region ref null", partitionedregion);
+                assertTrue(
+                    "Partitioned Region ref claims to be destroyed",
+                    !partitionedregion.isDestroyed());
+              }
+            }
+          };
     }
     return (CacheSerializableRunnable) createPrRegion1;
   }
 
   /**
-   * this function creates partition region with the specified persistence and 
-   * throws appropriate exception
+   * this function creates partition region with the specified persistence and throws appropriate
+   * exception
    */
-  public CacheSerializableRunnable getCacheSerializableRunnableForPRPersistence(final String regionName, final int localMaxMemory, final boolean isPersistent, final boolean expectException) {
+  public CacheSerializableRunnable getCacheSerializableRunnableForPRPersistence(
+      final String regionName,
+      final int localMaxMemory,
+      final boolean isPersistent,
+      final boolean expectException) {
     SerializableRunnable createPrRegion1;
-    createPrRegion1 = new CacheSerializableRunnable(regionName) {
-      @Override
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        Region partitionedregion = null;
-        try {
-          AttributesFactory attr = new AttributesFactory();
-          PartitionAttributesFactory paf = new PartitionAttributesFactory();
-          paf.setLocalMaxMemory(localMaxMemory); // 0: accessor
-          PartitionAttributes prAttr = paf.create();
-          attr.setPartitionAttributes(prAttr);
-          if (isPersistent) {
-            attr.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
-          } else {
-            attr.setDataPolicy(DataPolicy.PARTITION);
+    createPrRegion1 =
+        new CacheSerializableRunnable(regionName) {
+          @Override
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            Region partitionedregion = null;
+            try {
+              AttributesFactory attr = new AttributesFactory();
+              PartitionAttributesFactory paf = new PartitionAttributesFactory();
+              paf.setLocalMaxMemory(localMaxMemory); // 0: accessor
+              PartitionAttributes prAttr = paf.create();
+              attr.setPartitionAttributes(prAttr);
+              if (isPersistent) {
+                attr.setDataPolicy(DataPolicy.PERSISTENT_PARTITION);
+              } else {
+                attr.setDataPolicy(DataPolicy.PARTITION);
+              }
+              partitionedregion = cache.createRegion(regionName, attr.create());
+              if (expectException) {
+                fail("Expect exception but it did not");
+              }
+              assertNotNull(
+                  "Partitioned Region " + regionName + " not in cache",
+                  cache.getRegion(regionName));
+              assertNotNull("Partitioned Region ref null", partitionedregion);
+              assertTrue(
+                  "Partitioned Region ref claims to be destroyed",
+                  !partitionedregion.isDestroyed());
+            } catch (IllegalStateException ex) {
+              if (localMaxMemory > 0) {
+                // datastore
+                assertTrue(
+                    ex.getMessage()
+                        .contains(
+                            "DataPolicy for Datastore members should all be persistent or not."));
+              } else {
+                assertTrue(
+                    ex.getMessage()
+                        .contains("Persistence is not allowed when local-max-memory is zero."));
+              }
+            }
           }
-          partitionedregion = cache.createRegion(regionName, attr.create());
-          if (expectException) {
-            fail("Expect exception but it did not");
-          }
-          assertNotNull("Partitioned Region " + regionName + " not in cache", cache.getRegion(regionName));
-          assertNotNull("Partitioned Region ref null", partitionedregion);
-          assertTrue("Partitioned Region ref claims to be destroyed", !partitionedregion.isDestroyed());
-        } catch (IllegalStateException ex) {
-          if (localMaxMemory > 0) {
-            // datastore
-            assertTrue(ex.getMessage().contains("DataPolicy for Datastore members should all be persistent or not."));
-          } else {
-            assertTrue(ex.getMessage().contains("Persistence is not allowed when local-max-memory is zero."));
-          }
-        }
-      }
-    };
+        };
     return (CacheSerializableRunnable) createPrRegion1;
   }
 
   /**
    * this function validates partition regions
-   * 
+   *
    * @param regionName
    * @return
    */
-  public CacheSerializableRunnable getCacheSerializableRunnableForPRValidate(final String regionName) {
-    SerializableRunnable validatePrRegion = new CacheSerializableRunnable("validateRegionCreation") {
-      @Override
-      public void run2() throws CacheException {
-        Cache cache = getCache();
-        String n;
-        for (int i = 0; i < MAX_REGIONS; i++) {
-          n = Region.SEPARATOR + regionName + String.valueOf(i);
-          assertNotNull(n + " not created successfully", cache.getRegion(n));
-        }
-      }
-    };
+  public CacheSerializableRunnable getCacheSerializableRunnableForPRValidate(
+      final String regionName) {
+    SerializableRunnable validatePrRegion =
+        new CacheSerializableRunnable("validateRegionCreation") {
+          @Override
+          public void run2() throws CacheException {
+            Cache cache = getCache();
+            String n;
+            for (int i = 0; i < MAX_REGIONS; i++) {
+              n = Region.SEPARATOR + regionName + String.valueOf(i);
+              assertNotNull(n + " not created successfully", cache.getRegion(n));
+            }
+          }
+        };
     return (CacheSerializableRunnable) validatePrRegion;
   }
 
-  /**
-   * This creates a PR with data store for a specified number of buckets
-   */
-  SerializableRunnable createPrRegion = new CacheSerializableRunnable("createPrRegion") {
+  /** This creates a PR with data store for a specified number of buckets */
+  SerializableRunnable createPrRegion =
+      new CacheSerializableRunnable("createPrRegion") {
 
-    @Override
-    public void run2() throws CacheException {
-      Cache cache = getCache();
-      AttributesFactory attr = new AttributesFactory();
-      PartitionAttributesFactory paf = new PartitionAttributesFactory();
-      PartitionAttributes prAttr = paf.create();
-      attr.setPartitionAttributes(prAttr);
-      RegionAttributes regionAttribs = attr.create();
-      cache.createRegion("PR1", regionAttribs);
+        @Override
+        public void run2() throws CacheException {
+          Cache cache = getCache();
+          AttributesFactory attr = new AttributesFactory();
+          PartitionAttributesFactory paf = new PartitionAttributesFactory();
+          PartitionAttributes prAttr = paf.create();
+          attr.setPartitionAttributes(prAttr);
+          RegionAttributes regionAttribs = attr.create();
+          cache.createRegion("PR1", regionAttribs);
 
-      paf.setTotalNumBuckets(totalNumBuckets);
-      prAttr = paf.create();
-      attr.setPartitionAttributes(prAttr);
-      regionAttribs = attr.create();
-      cache.createRegion("PR2", regionAttribs);
-
-    }
-  };
+          paf.setTotalNumBuckets(totalNumBuckets);
+          prAttr = paf.create();
+          attr.setPartitionAttributes(prAttr);
+          regionAttribs = attr.create();
+          cache.createRegion("PR2", regionAttribs);
+        }
+      };
 
   /**
-   * SerializableRunnable object to create PR with scope = D_ACK with only
-   * Accessor(no data store)
+   * SerializableRunnable object to create PR with scope = D_ACK with only Accessor(no data store)
    */
+  SerializableRunnable createPrRegionOnlyAccessor =
+      new CacheSerializableRunnable("createPrRegionOnlyAccessor") {
 
-  SerializableRunnable createPrRegionOnlyAccessor = new CacheSerializableRunnable("createPrRegionOnlyAccessor") {
+        @Override
+        public void run2() throws CacheException {
+          Cache cache = getCache();
+          AttributesFactory attr = new AttributesFactory();
+          PartitionAttributesFactory paf = new PartitionAttributesFactory();
+          PartitionAttributes prAttr = paf.setLocalMaxMemory(0).create();
+          attr.setPartitionAttributes(prAttr);
+          RegionAttributes regionAttribs = attr.create();
+          PartitionedRegion accessor = (PartitionedRegion) cache.createRegion("PR1", regionAttribs);
+          LogWriterUtils.getLogWriter().info("Region created in VM1.");
+          assertEquals(
+              accessor.getTotalNumberOfBuckets(),
+              PartitionAttributesFactory.GLOBAL_MAX_BUCKETS_DEFAULT);
+          try {
+            cache
+                .getLogger()
+                .info(
+                    "<ExpectedException action=add>" + "IllegalStateException</ExpectedException>");
+            accessor = (PartitionedRegion) cache.createRegion("PR2", regionAttribs);
+            fail(
+                "Creation of a Partitioned Region was allowed with incompatible GLOBAL_MAX_BUCKETS setting");
+          } catch (IllegalStateException expected) {
 
-    @Override
-    public void run2() throws CacheException {
-      Cache cache = getCache();
-      AttributesFactory attr = new AttributesFactory();
-      PartitionAttributesFactory paf = new PartitionAttributesFactory();
-      PartitionAttributes prAttr = paf.setLocalMaxMemory(0).create();
-      attr.setPartitionAttributes(prAttr);
-      RegionAttributes regionAttribs = attr.create();
-      PartitionedRegion accessor = (PartitionedRegion) cache.createRegion("PR1", regionAttribs);
-      LogWriterUtils.getLogWriter().info("Region created in VM1.");
-      assertEquals(accessor.getTotalNumberOfBuckets(), PartitionAttributesFactory.GLOBAL_MAX_BUCKETS_DEFAULT);
-      try {
-        cache.getLogger().info("<ExpectedException action=add>" + "IllegalStateException</ExpectedException>");
-        accessor = (PartitionedRegion) cache.createRegion("PR2", regionAttribs);
-        fail("Creation of a Partitioned Region was allowed with incompatible GLOBAL_MAX_BUCKETS setting");
-      } catch (IllegalStateException expected) {
+          } finally {
+            cache
+                .getLogger()
+                .info(
+                    "<ExpectedException action=remove>"
+                        + "IllegalStateException</ExpectedException>");
+          }
 
-      } finally {
-        cache.getLogger().info("<ExpectedException action=remove>" + "IllegalStateException</ExpectedException>");
-      }
-
-      Properties globalProps = new Properties();
-      globalProps.setProperty(PartitionAttributesFactory.GLOBAL_MAX_BUCKETS_PROPERTY, "" + totalNumBuckets);
-      paf.setGlobalProperties(globalProps);
-      attr.setPartitionAttributes(paf.create());
-      accessor = (PartitionedRegion) cache.createRegion("PR2", attr.create());
-      assertEquals(accessor.getTotalNumberOfBuckets(), totalNumBuckets);
-
-    }
-  };
+          Properties globalProps = new Properties();
+          globalProps.setProperty(
+              PartitionAttributesFactory.GLOBAL_MAX_BUCKETS_PROPERTY, "" + totalNumBuckets);
+          paf.setGlobalProperties(globalProps);
+          attr.setPartitionAttributes(paf.create());
+          accessor = (PartitionedRegion) cache.createRegion("PR2", attr.create());
+          assertEquals(accessor.getTotalNumberOfBuckets(), totalNumBuckets);
+        }
+      };
 
   /**
    * This method validates that TotalNumberOfBuckets are getting set properly.
-   * 
+   *
    * @throws Exception
    */
   @Test

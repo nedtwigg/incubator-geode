@@ -21,13 +21,11 @@ import java.util.Map;
 
 import org.apache.geode.management.internal.FederationComponent;
 
-/**
- *
- *
- */
+/** */
 public class GatewaySenderClusterStatsMonitor {
 
-  private static final String AVERAGE_DISTRIBUTION_TIME_PER_BATCH = "AverageDistributionTimePerBatch";
+  private static final String AVERAGE_DISTRIBUTION_TIME_PER_BATCH =
+      "AverageDistributionTimePerBatch";
 
   private static final String BATCHES_DISPATCHED_RATE = "BatchesDispatchedRate";
 
@@ -60,7 +58,6 @@ public class GatewaySenderClusterStatsMonitor {
     typeMap.put(EVENTS_QUEUED_RATE, Float.TYPE);
     typeMap.put(TOTAL_BATCHES_REDISTRIBUTED, Integer.TYPE);
     typeMap.put(TOTAL_EVENTS_CONFLATED, Integer.TYPE);
-
   }
 
   public long getGatewaySenderAverageDistributionTimePerBatch() {
@@ -86,5 +83,4 @@ public class GatewaySenderClusterStatsMonitor {
   public int getGatewaySenderTotalEventsConflated() {
     return aggregator.getIntValue(TOTAL_EVENTS_CONFLATED);
   }
-
 }

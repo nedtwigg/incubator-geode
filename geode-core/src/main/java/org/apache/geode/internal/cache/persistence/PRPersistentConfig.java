@@ -16,9 +16,7 @@
  */
 package org.apache.geode.internal.cache.persistence;
 
-/**
- *
- */
+/** */
 public class PRPersistentConfig {
   private final int totalNumBuckets;
   private final String colocatedWith;
@@ -53,20 +51,14 @@ public class PRPersistentConfig {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (!(obj instanceof PRPersistentConfig))
-      return false;
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (!(obj instanceof PRPersistentConfig)) return false;
     PRPersistentConfig other = (PRPersistentConfig) obj;
     if (colocatedWith == null) {
-      if (other.colocatedWith != null)
-        return false;
-    } else if (!colocatedWith.equals(other.colocatedWith))
-      return false;
-    if (totalNumBuckets != other.totalNumBuckets)
-      return false;
+      if (other.colocatedWith != null) return false;
+    } else if (!colocatedWith.equals(other.colocatedWith)) return false;
+    if (totalNumBuckets != other.totalNumBuckets) return false;
     return true;
   }
 }

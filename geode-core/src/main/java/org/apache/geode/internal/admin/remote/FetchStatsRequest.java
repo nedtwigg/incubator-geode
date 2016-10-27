@@ -28,9 +28,7 @@ public final class FetchStatsRequest extends AdminRequest {
 
   private String statisticsTypeName;
 
-  /**
-   * Returns a <code>FetchStatsRequest</code> to be sent to the specified recipient.
-   */
+  /** Returns a <code>FetchStatsRequest</code> to be sent to the specified recipient. */
   public static FetchStatsRequest create(String statisticsTypeName) {
     FetchStatsRequest m = new FetchStatsRequest();
     m.statisticsTypeName = statisticsTypeName;

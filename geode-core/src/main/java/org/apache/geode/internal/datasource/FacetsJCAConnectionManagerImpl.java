@@ -44,14 +44,13 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
 /**
- * This class implements a connection pool manager for managed connections (JCA)
- * for transactional and non-transactional resource connection. Implements
- * ConnectionManager interface. QoS (Transaction, Security etc is taken into
- * account while allocating a connection). Security related features are
- * remaining.
- * 
+ * This class implements a connection pool manager for managed connections (JCA) for transactional
+ * and non-transactional resource connection. Implements ConnectionManager interface. QoS
+ * (Transaction, Security etc is taken into account while allocating a connection). Security related
+ * features are remaining.
  */
-public class FacetsJCAConnectionManagerImpl implements ConnectionManager, ConnectionEventListener, Synchronization {
+public class FacetsJCAConnectionManagerImpl
+    implements ConnectionManager, ConnectionEventListener, Synchronization {
 
   private static final Logger logger = LogService.getLogger();
 
@@ -62,26 +61,33 @@ public class FacetsJCAConnectionManagerImpl implements ConnectionManager, Connec
   protected ConnectionRequestInfo conReqInfo = null;
   protected Subject subject = null;
   protected boolean isActive = true;
-  private transient ThreadLocal xalistThreadLocal = new ThreadLocal() {
+  private transient ThreadLocal xalistThreadLocal =
+      new ThreadLocal() {
 
-    @Override
-    protected Object initialValue() {
-      return new ArrayList();
-    }
-  };
+        @Override
+        protected Object initialValue() {
+          return new ArrayList();
+        }
+      };
 
   /*
    * Constructor.
-   *  
+   *
    */
-  public FacetsJCAConnectionManagerImpl(ManagedConnectionFactory mcf, ConfiguredDataSourceProperties configs) {
+  public FacetsJCAConnectionManagerImpl(
+      ManagedConnectionFactory mcf, ConfiguredDataSourceProperties configs) {
     // Get the security info and form the Subject
     // Initialize the Pool.
     try {
       isActive = true;
       mannPoolCache = new ManagedPoolCacheImpl(mcf, null, null, this, configs);
     } catch (Exception ex) {
-      logger.fatal(LocalizedMessage.create(LocalizedStrings.FacetsJCAConnectionManagerImpl_FACETSJCACONNECTIONMANAGERIMPL_CONSTRUCTOR_AN_EXCEPTION_WAS_CAUGHT_WHILE_INITIALIZING_DUE_TO_0, ex.getMessage()), ex);
+      logger.fatal(
+          LocalizedMessage.create(
+              LocalizedStrings
+                  .FacetsJCAConnectionManagerImpl_FACETSJCACONNECTIONMANAGERIMPL_CONSTRUCTOR_AN_EXCEPTION_WAS_CAUGHT_WHILE_INITIALIZING_DUE_TO_0,
+              ex.getMessage()),
+          ex);
     }
   }
 
@@ -89,19 +95,27 @@ public class FacetsJCAConnectionManagerImpl implements ConnectionManager, Connec
    * allocates a ManagedConnection from the ConnectionPool or creates a new
    * ManagedConnection. @param javax.resource.spi.ManagedConnectionFactory
    * @param javax.resource.spi.ConnectionRequestInfo
-   * 
+   *
    * @throws ResourceException
    */
-  public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo reqInfo) throws ResourceException {
+  public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo reqInfo)
+      throws ResourceException {
     if (!isActive) {
-      throw new ResourceException(LocalizedStrings.FacetsJCAConnectionManagerImpl_FACETSJCACONNECTIONMANAGERIMPLALLOCATECONNECTIONNO_VALID_CONNECTION_AVAILABLE.toLocalizedString());
+      throw new ResourceException(
+          LocalizedStrings
+              .FacetsJCAConnectionManagerImpl_FACETSJCACONNECTIONMANAGERIMPLALLOCATECONNECTIONNO_VALID_CONNECTION_AVAILABLE
+              .toLocalizedString());
     }
     ManagedConnection conn = null;
     try {
       conn = (ManagedConnection) mannPoolCache.getPooledConnectionFromPool();
     } catch (PoolException ex) {
       ex.printStackTrace();
-      throw new ResourceException(LocalizedStrings.FacetsJCAConnectionManagerImpl_FACETSJCACONNECTIONMANAGERIMPL_ALLOCATECONNECTION_IN_GETTING_CONNECTION_FROM_POOL_DUE_TO_0.toLocalizedString(ex.getMessage()), ex);
+      throw new ResourceException(
+          LocalizedStrings
+              .FacetsJCAConnectionManagerImpl_FACETSJCACONNECTIONMANAGERIMPL_ALLOCATECONNECTION_IN_GETTING_CONNECTION_FROM_POOL_DUE_TO_0
+              .toLocalizedString(ex.getMessage()),
+          ex);
     }
     // Check if a connection is having a transactional context
     // if a transactional context is used, get the XA Resource
@@ -133,17 +147,24 @@ public class FacetsJCAConnectionManagerImpl implements ConnectionManager, Connec
         // else throw a resource exception
       }
     } catch (RollbackException ex) {
-      String exception = LocalizedStrings.FacetsJCAConnectionManagerImpl_FACETSJCACONNECTIONMANAGERIMPL_AN_EXCEPTION_WAS_CAUGHT_WHILE_ALLOCATING_A_CONNECTION_DUE_TO_0.toLocalizedString(ex.getMessage());
+      String exception =
+          LocalizedStrings
+              .FacetsJCAConnectionManagerImpl_FACETSJCACONNECTIONMANAGERIMPL_AN_EXCEPTION_WAS_CAUGHT_WHILE_ALLOCATING_A_CONNECTION_DUE_TO_0
+              .toLocalizedString(ex.getMessage());
       throw new ResourceException(exception, ex);
     } catch (SystemException ex) {
-      throw new ResourceException(LocalizedStrings.FacetsJCAConnectionManagerImpl_FACETSJCACONNECTIONMANAGERIMPL_ALLOCATECONNECTION_SYSTEM_EXCEPTION_DUE_TO_0.toLocalizedString(ex.getMessage()), ex);
+      throw new ResourceException(
+          LocalizedStrings
+              .FacetsJCAConnectionManagerImpl_FACETSJCACONNECTIONMANAGERIMPL_ALLOCATECONNECTION_SYSTEM_EXCEPTION_DUE_TO_0
+              .toLocalizedString(ex.getMessage()),
+          ex);
     }
     return conn.getConnection(subject, reqInfo);
   }
 
   /**
    * CallBack for Connection Error.
-   * 
+   *
    * @param event ConnectionEvent
    */
   public void connectionErrorOccurred(ConnectionEvent event) {
@@ -167,7 +188,9 @@ public class FacetsJCAConnectionManagerImpl implements ConnectionManager, Connec
         mannPoolCache.expirePooledConnection(conn);
         //mannPoolCache.destroyPooledConnection(conn);
       } catch (Exception ex) {
-        String exception = "FacetsJCAConnectionManagerImpl::connectionErrorOccured: Exception occured due to " + ex.getMessage();
+        String exception =
+            "FacetsJCAConnectionManagerImpl::connectionErrorOccured: Exception occured due to "
+                + ex.getMessage();
         if (logger.isDebugEnabled()) {
           logger.debug(exception, ex);
         }
@@ -177,7 +200,7 @@ public class FacetsJCAConnectionManagerImpl implements ConnectionManager, Connec
 
   /**
    * Callback for Connection Closed.
-   * 
+   *
    * @param event ConnectionEvent Object.
    */
   public void connectionClosed(ConnectionEvent event) {
@@ -190,7 +213,9 @@ public class FacetsJCAConnectionManagerImpl implements ConnectionManager, Connec
           mannPoolCache.returnPooledConnectionToPool(conn);
         }
       } catch (Exception se) {
-        String exception = "FacetsJCAConnectionManagerImpl::connectionClosed: Exception occured due to " + se.getMessage();
+        String exception =
+            "FacetsJCAConnectionManagerImpl::connectionClosed: Exception occured due to "
+                + se.getMessage();
         if (logger.isDebugEnabled()) {
           logger.debug(exception, se);
         }
@@ -226,7 +251,7 @@ public class FacetsJCAConnectionManagerImpl implements ConnectionManager, Connec
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see javax.transaction.Synchronization#afterCompletion(int)
    */
   public void afterCompletion(int arg0) {
@@ -244,7 +269,7 @@ public class FacetsJCAConnectionManagerImpl implements ConnectionManager, Connec
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see javax.transaction.Synchronization#beforeCompletion()
    */
   public void beforeCompletion() {

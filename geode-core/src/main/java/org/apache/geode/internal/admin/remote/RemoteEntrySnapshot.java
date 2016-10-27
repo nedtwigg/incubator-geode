@@ -58,11 +58,8 @@ public class RemoteEntrySnapshot implements EntrySnapshot, DataSerializable {
     }
   }
 
-  /**
-   * This constructor is only for use by the DataSerializable mechanism
-   */
-  public RemoteEntrySnapshot() {
-  }
+  /** This constructor is only for use by the DataSerializable mechanism */
+  public RemoteEntrySnapshot() {}
 
   public Object getName() {
     return this.name;
@@ -98,8 +95,7 @@ public class RemoteEntrySnapshot implements EntrySnapshot, DataSerializable {
 
   @Override
   public boolean equals(Object other) {
-    if (other == this)
-      return true;
+    if (other == this) return true;
     if (other instanceof RemoteEntrySnapshot) {
       RemoteEntrySnapshot snap = (RemoteEntrySnapshot) other;
       return this.name.equals(snap.name);

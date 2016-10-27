@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
 
 /**
  * A Singleton instance of the memory cache for clusters.
- * 
+ *
  * @since GemFire version 7.0.Beta 2012-09-23
  */
 public class Repository {
@@ -52,15 +52,15 @@ public class Repository {
 
   private String pulseWebAppUrl;
 
-  Locale locale = new Locale(PulseConstants.APPLICATION_LANGUAGE, PulseConstants.APPLICATION_COUNTRY);
+  Locale locale =
+      new Locale(PulseConstants.APPLICATION_LANGUAGE, PulseConstants.APPLICATION_COUNTRY);
 
-  private ResourceBundle resourceBundle = ResourceBundle.getBundle(PulseConstants.LOG_MESSAGES_FILE, locale);
+  private ResourceBundle resourceBundle =
+      ResourceBundle.getBundle(PulseConstants.LOG_MESSAGES_FILE, locale);
 
   private PulseConfig pulseConfig = new PulseConfig();
 
-  private Repository() {
-
-  }
+  private Repository() {}
 
   public static Repository get() {
     return instance;
@@ -147,14 +147,14 @@ public class Repository {
   }
 
   /**
-   * we're maintaining a 1:1 mapping between webapp and cluster, there is no need for a map of clusters based on the host and port
-   * We are using this clusterMap to maintain cluster for different users now.
-   * For a single-user connection to gemfire JMX, we will use the default username/password in the pulse.properties
-   * (# JMX User Properties )
-   * pulse.jmxUserName=admin
+   * we're maintaining a 1:1 mapping between webapp and cluster, there is no need for a map of
+   * clusters based on the host and port We are using this clusterMap to maintain cluster for
+   * different users now. For a single-user connection to gemfire JMX, we will use the default
+   * username/password in the pulse.properties (# JMX User Properties ) pulse.jmxUserName=admin
    * pulse.jmxUserPassword=admin
    *
-   * But for multi-user connections to gemfireJMX, i.e pulse that uses gemfire integrated security, we will need to get the username form the context
+   * <p>But for multi-user connections to gemfireJMX, i.e pulse that uses gemfire integrated
+   * security, we will need to get the username form the context
    */
   public Cluster getCluster() {
     String username = null;
@@ -186,7 +186,8 @@ public class Repository {
           }
           data = new Cluster(this.jmxHost, this.jmxPort, username, password);
           // Assign name to thread created
-          data.setName(PulseConstants.APP_NAME + "-" + this.jmxHost + ":" + this.jmxPort + ":" + username);
+          data.setName(
+              PulseConstants.APP_NAME + "-" + this.jmxHost + ":" + this.jmxPort + ":" + username);
           // Start Thread
           data.start();
           this.clusterMap.put(key, data);
@@ -217,7 +218,8 @@ public class Repository {
       c.stopThread();
       iter.remove();
       if (LOGGER.infoEnabled()) {
-        LOGGER.info(resourceBundle.getString("LOG_MSG_REMOVE_THREAD") + " : " + clusterKey.toString());
+        LOGGER.info(
+            resourceBundle.getString("LOG_MSG_REMOVE_THREAD") + " : " + clusterKey.toString());
       }
     }
   }
@@ -233,5 +235,4 @@ public class Repository {
   public void setUseGemFireCredentials(boolean useGemFireCredentials) {
     this.useGemFireCredentials = useGemFireCredentials;
   }
-
 }

@@ -24,25 +24,21 @@ import java.util.concurrent.atomic.AtomicInteger;
  * A message processor class typically creates an instance of
  * ProcessorKeeper and holds it in a static variable.  In the
  * constructor of the processor class, do this:
- * 
+ *
  * <code>processorId = keeper.put()</code>
- *  
+ *
  * When a message is processed, do this:
- * 
+ *
  * <code>processor = <processorclass>.keeper().get(processorId);
- * 
+ *
  * <p>Processor ids are always greater than 0.</p>
  */
 public class ProcessorKeeper21 {
 
-  /** 
-   * Key is a unique id, value is an instance of some processor class
-   */
+  /** Key is a unique id, value is an instance of some processor class */
   private final ObjIdConcurrentMap<Object> map = new ObjIdConcurrentMap<Object>();
 
-  /**
-   * If true then use weak refs to reference the processors.
-   */
+  /** If true then use weak refs to reference the processors. */
   private final boolean useWeakRefs;
 
   private final AtomicInteger nextKey = new AtomicInteger(1);
@@ -72,9 +68,10 @@ public class ProcessorKeeper21 {
   }
 
   /**
-   * Save the processor in this keeper, generate an id for the processor,
-   * and return that id so it can be used to retrieve the processor later.
-   * This keeper keeps a weak reference to the processor.
+   * Save the processor in this keeper, generate an id for the processor, and return that id so it
+   * can be used to retrieve the processor later. This keeper keeps a weak reference to the
+   * processor.
+   *
    * @param processor the processor to keep
    * @return the unique id for processor
    */
@@ -94,9 +91,9 @@ public class ProcessorKeeper21 {
   }
 
   /**
-   * Retrieve a processor that was previously put() in this keeper.  The
-   * id is the value returned from put().  If there is no processor by
-   * that id, or it has been garbage collected, null is returned.
+   * Retrieve a processor that was previously put() in this keeper. The id is the value returned
+   * from put(). If there is no processor by that id, or it has been garbage collected, null is
+   * returned.
    */
   public Object retrieve(int id) {
     Object o = null;
@@ -116,12 +113,8 @@ public class ProcessorKeeper21 {
     return o;
   }
 
-  /**
-   * Remove the processor with the given id.  It's okay if no
-   * processor with that id exists.
-   */
+  /** Remove the processor with the given id. It's okay if no processor with that id exists. */
   public void remove(int id) {
     map.remove(id);
   }
-
 }

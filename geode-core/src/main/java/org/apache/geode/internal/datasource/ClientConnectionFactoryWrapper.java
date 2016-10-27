@@ -17,18 +17,14 @@
 package org.apache.geode.internal.datasource;
 
 /**
- * This class wraps the client connection factory and the corresponding
- * connection manager Object.
- * 
+ * This class wraps the client connection factory and the corresponding connection manager Object.
  */
 public class ClientConnectionFactoryWrapper {
 
   private Object clientConnFac;
   private Object manager;
 
-  /**
-   * Constructor.
-   */
+  /** Constructor. */
   public ClientConnectionFactoryWrapper(Object connFac, Object man) {
     this.clientConnFac = connFac;
     this.manager = man;

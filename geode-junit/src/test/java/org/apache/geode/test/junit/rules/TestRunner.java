@@ -20,13 +20,10 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 
-/**
- * Used by JUnit rule unit tests to execute inner test cases.
- */
+/** Used by JUnit rule unit tests to execute inner test cases. */
 public class TestRunner {
 
-  protected TestRunner() {
-  }
+  protected TestRunner() {}
 
   public static Result runTest(Class<?> test) {
     JUnitCore junitCore = new JUnitCore();

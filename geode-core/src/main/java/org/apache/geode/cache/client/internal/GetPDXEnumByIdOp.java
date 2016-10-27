@@ -22,11 +22,13 @@ import org.apache.geode.pdx.internal.EnumInfo;
 
 /**
  * Retrieve the PDXType, given an integer PDX id, from a server.
+ *
  * @since GemFire 6.6.2
  */
 public class GetPDXEnumByIdOp {
   /**
    * Get a enum from the given pool.
+   *
    * @param pool the pool to use to communicate with the server.
    */
   public static EnumInfo execute(ExecutablePool pool, int enumId) {
@@ -39,9 +41,7 @@ public class GetPDXEnumByIdOp {
   }
 
   private static class GetPDXEnumByIdOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public GetPDXEnumByIdOpImpl(int enumId) {
       super(MessageType.GET_PDX_ENUM_BY_ID, 1);
       getMessage().addIntPart(enumId);
@@ -73,8 +73,7 @@ public class GetPDXEnumByIdOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {

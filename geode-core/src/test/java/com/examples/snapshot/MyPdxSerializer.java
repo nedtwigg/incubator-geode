@@ -25,11 +25,11 @@ import org.apache.geode.pdx.PdxWriter;
 import org.apache.geode.pdx.ReflectionBasedAutoSerializer;
 
 public class MyPdxSerializer implements PdxSerializer, Declarable {
-  private final PdxSerializer auto = new ReflectionBasedAutoSerializer("com.examples.snapshot.My.*Pdx");
+  private final PdxSerializer auto =
+      new ReflectionBasedAutoSerializer("com.examples.snapshot.My.*Pdx");
 
   @Override
-  public void init(Properties props) {
-  }
+  public void init(Properties props) {}
 
   @Override
   public boolean toData(Object o, PdxWriter out) {
@@ -55,8 +55,7 @@ public class MyPdxSerializer implements PdxSerializer, Declarable {
   }
 
   public static class MyObjectPdx2 extends MyObject {
-    public MyObjectPdx2() {
-    }
+    public MyObjectPdx2() {}
 
     public MyObjectPdx2(long number, String s) {
       super(number, s);

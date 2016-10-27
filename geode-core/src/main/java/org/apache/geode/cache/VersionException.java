@@ -19,8 +19,8 @@ package org.apache.geode.cache;
 import org.apache.geode.GemFireCheckedException;
 
 /**
- * An <code>VersionException</code> is an exception that indicates
- * a client / server version mismatch exception has occurred.
+ * An <code>VersionException</code> is an exception that indicates a client / server version
+ * mismatch exception has occurred.
  *
  * @since GemFire 5.7
  */
@@ -36,9 +36,7 @@ public abstract class VersionException extends GemFireCheckedException {
     super(s);
   }
 
-  /** Constructs a <code>VersionException</code> with a message string and
-   * a base exception
-   */
+  /** Constructs a <code>VersionException</code> with a message string and a base exception */
   public VersionException(String s, Throwable cause) {
     super(s, cause);
   }

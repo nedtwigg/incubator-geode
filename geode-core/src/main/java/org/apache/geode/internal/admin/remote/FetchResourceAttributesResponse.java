@@ -27,7 +27,8 @@ public final class FetchResourceAttributesResponse extends AdminResponse {
   // instance variables
   private RemoteStat[] stats;
 
-  public static FetchResourceAttributesResponse create(DistributionManager dm, InternalDistributedMember recipient, long rsrcUniqueId) {
+  public static FetchResourceAttributesResponse create(
+      DistributionManager dm, InternalDistributedMember recipient, long rsrcUniqueId) {
     FetchResourceAttributesResponse m = new FetchResourceAttributesResponse();
     m.setRecipient(recipient);
     Statistics s = null;
@@ -51,11 +52,8 @@ public final class FetchResourceAttributesResponse extends AdminResponse {
     return stats;
   }
 
-  /**
-   * Constructor required by <code>DataSerializable</code>
-   */
-  public FetchResourceAttributesResponse() {
-  }
+  /** Constructor required by <code>DataSerializable</code> */
+  public FetchResourceAttributesResponse() {}
 
   public int getDSFID() {
     return FETCH_RESOURCE_ATTRIBUTES_RESPONSE;

@@ -35,19 +35,16 @@ import org.apache.geode.test.dunit.Assert;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * Tests the functionality of a {@link Scope#LOCAL locally scoped}
- * cache {@link Region} including its callbacks.  Note that even
- * though this test is a dunit test, it does
- * not perform any distribution.
+ * Tests the functionality of a {@link Scope#LOCAL locally scoped} cache {@link Region} including
+ * its callbacks. Note that even though this test is a dunit test, it does not perform any
+ * distribution.
  *
  * @since GemFire 3.0
  */
 @Category(DistributedTest.class)
 public class LocalRegionDUnitTest extends CacheListenerTestCase {
 
-  /**
-   * Returns the attributes of a region to be tested.
-   */
+  /** Returns the attributes of a region to be tested. */
   protected RegionAttributes getRegionAttributes() {
     AttributesFactory factory = new AttributesFactory();
     factory.setScope(Scope.LOCAL);
@@ -58,8 +55,7 @@ public class LocalRegionDUnitTest extends CacheListenerTestCase {
   /////////////////  Local Region specific tests  /////////////////
 
   /**
-   * Tests the compatibility of creating certain kinds of subregions
-   * of a local region.
+   * Tests the compatibility of creating certain kinds of subregions of a local region.
    *
    * @see Region#createSubregion
    */
@@ -102,13 +98,11 @@ public class LocalRegionDUnitTest extends CacheListenerTestCase {
     } catch (IllegalStateException ex) {
       // pass...
     }
-
   }
 
   /**
-   * Tests that if a <code>CacheLoader</code> for a local region
-   * invokes {@link LoaderHelper#netSearch}, a {@link
-   * CacheLoaderException} is thrown.
+   * Tests that if a <code>CacheLoader</code> for a local region invokes {@link
+   * LoaderHelper#netSearch}, a {@link CacheLoaderException} is thrown.
    */
   @Test
   public void testLocalLoaderNetSearch() throws CacheException {
@@ -117,19 +111,20 @@ public class LocalRegionDUnitTest extends CacheListenerTestCase {
     final String name = this.getUniqueName();
     final Object key = this.getUniqueName();
 
-    TestCacheLoader loader = new TestCacheLoader() {
-      public Object load2(LoaderHelper helper) throws CacheLoaderException {
+    TestCacheLoader loader =
+        new TestCacheLoader() {
+          public Object load2(LoaderHelper helper) throws CacheLoaderException {
 
-        try {
-          helper.netSearch(true);
+            try {
+              helper.netSearch(true);
 
-        } catch (TimeoutException ex) {
-          Assert.fail("Why did I timeout?", ex);
-        }
+            } catch (TimeoutException ex) {
+              Assert.fail("Why did I timeout?", ex);
+            }
 
-        return null;
-      }
-    };
+            return null;
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheLoader(loader);
@@ -141,16 +136,14 @@ public class LocalRegionDUnitTest extends CacheListenerTestCase {
       fail("Should have thrown a CacheLoaderException");
 
     } catch (CacheLoaderException ex) {
-      String expected = org.apache.geode.internal.cache.LoaderHelperImpl.NET_SEARCH_LOCAL.toLocalizedString();
+      String expected =
+          org.apache.geode.internal.cache.LoaderHelperImpl.NET_SEARCH_LOCAL.toLocalizedString();
       String message = ex.getMessage();
       assertTrue("Unexpected message \"" + message + "\"", message.indexOf(expected) != -1);
     }
   }
 
-  /**
-   * Tests that a local writer receives a modified version of the
-   * callback argument on a create.
-   */
+  /** Tests that a local writer receives a modified version of the callback argument on a create. */
   @Test
   public void testLocalCreateModifiedCallbackArgument() throws CacheException {
 
@@ -160,39 +153,40 @@ public class LocalRegionDUnitTest extends CacheListenerTestCase {
     final Object one = "ONE";
     final Object two = "TWO";
 
-    TestCacheLoader loader = new TestCacheLoader() {
-      public Object load2(LoaderHelper helper) throws CacheLoaderException {
+    TestCacheLoader loader =
+        new TestCacheLoader() {
+          public Object load2(LoaderHelper helper) throws CacheLoaderException {
 
-        Object[] array = (Object[]) helper.getArgument();
-        assertEquals(one, array[0]);
-        array[0] = two;
+            Object[] array = (Object[]) helper.getArgument();
+            assertEquals(one, array[0]);
+            array[0] = two;
 
-        return value;
-      }
-    };
+            return value;
+          }
+        };
 
-    TestCacheWriter writer = new TestCacheWriter() {
-      public void beforeCreate2(EntryEvent event) throws CacheWriterException {
+    TestCacheWriter writer =
+        new TestCacheWriter() {
+          public void beforeCreate2(EntryEvent event) throws CacheWriterException {
 
-        Object[] array = (Object[]) event.getCallbackArgument();
-        assertEquals(two, array[0]);
-      }
-    };
+            Object[] array = (Object[]) event.getCallbackArgument();
+            assertEquals(two, array[0]);
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheLoader(loader);
     factory.setCacheWriter(writer);
     Region region = createRegion(name, factory.create());
 
-    Object[] array = new Object[] { one };
+    Object[] array = new Object[] {one};
     assertEquals(value, region.get(key, array));
     assertTrue(loader.wasInvoked());
     assertTrue(writer.wasInvoked());
   }
 
   /**
-   * Tests that a local writer receives a modified version of the
-   * callback argument on an update.
+   * Tests that a local writer receives a modified version of the callback argument on an update.
    */
   @Test
   public void testLocalUpdateModifiedCallbackArgument() throws CacheException {
@@ -203,28 +197,28 @@ public class LocalRegionDUnitTest extends CacheListenerTestCase {
     final Object one = "ONE";
     final Object two = "TWO";
 
-    TestCacheLoader loader = new TestCacheLoader() {
-      public Object load2(LoaderHelper helper) throws CacheLoaderException {
+    TestCacheLoader loader =
+        new TestCacheLoader() {
+          public Object load2(LoaderHelper helper) throws CacheLoaderException {
 
-        Object[] array = (Object[]) helper.getArgument();
-        assertEquals(one, array[0]);
-        array[0] = two;
+            Object[] array = (Object[]) helper.getArgument();
+            assertEquals(one, array[0]);
+            array[0] = two;
 
-        return value;
-      }
-    };
+            return value;
+          }
+        };
 
-    TestCacheWriter writer = new TestCacheWriter() {
-      public void beforeCreate2(EntryEvent event) throws CacheWriterException {
+    TestCacheWriter writer =
+        new TestCacheWriter() {
+          public void beforeCreate2(EntryEvent event) throws CacheWriterException {}
 
-      }
+          public void beforeUpdate2(EntryEvent event) throws CacheWriterException {
 
-      public void beforeUpdate2(EntryEvent event) throws CacheWriterException {
-
-        Object[] array = (Object[]) event.getCallbackArgument();
-        assertEquals(two, array[0]);
-      }
-    };
+            Object[] array = (Object[]) event.getCallbackArgument();
+            assertEquals(two, array[0]);
+          }
+        };
 
     AttributesFactory factory = new AttributesFactory(getRegionAttributes());
     factory.setCacheLoader(loader);
@@ -235,7 +229,7 @@ public class LocalRegionDUnitTest extends CacheListenerTestCase {
     assertFalse(loader.wasInvoked());
     assertTrue(writer.wasInvoked());
 
-    Object[] array = new Object[] { one };
+    Object[] array = new Object[] {one};
     assertEquals(value, region.get(key, array));
     assertTrue(loader.wasInvoked());
     assertTrue(writer.wasInvoked());

@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -26,14 +26,13 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * A Filesystem like interface that stores file data in geode regions.
- * 
- * This filesystem is safe for use with multiple threads if the threads are not
- * modifying the same files. A single file is not safe to modify by multiple
- * threads, even between different members of the distributed system.
- * 
- * Changes to a file may not be visible to other members of the system until the
- * FileOutputStream is closed.
  *
+ * <p>This filesystem is safe for use with multiple threads if the threads are not modifying the
+ * same files. A single file is not safe to modify by multiple threads, even between different
+ * members of the distributed system.
+ *
+ * <p>Changes to a file may not be visible to other members of the system until the FileOutputStream
+ * is closed.
  */
 public class FileSystem {
   // private final Cache cache;
@@ -45,13 +44,18 @@ public class FileSystem {
 
   /**
    * Create filesystem that will store data in the two provided regions. The fileRegion contains
-   * metadata about the files, and the chunkRegion contains the actual data. If data from either region is missing
-   * or inconsistent, no guarantees are made about what this class will do, so it's best if these regions are colocated
-   * and in the same disk store to ensure the data remains together.
+   * metadata about the files, and the chunkRegion contains the actual data. If data from either
+   * region is missing or inconsistent, no guarantees are made about what this class will do, so
+   * it's best if these regions are colocated and in the same disk store to ensure the data remains
+   * together.
+   *
    * @param fileRegion the region to store metadata about the files
    * @param chunkRegion the region to store actual file data.
    */
-  public FileSystem(ConcurrentMap<String, File> fileRegion, ConcurrentMap<ChunkKey, byte[]> chunkRegion, FileSystemStats stats) {
+  public FileSystem(
+      ConcurrentMap<String, File> fileRegion,
+      ConcurrentMap<ChunkKey, byte[]> chunkRegion,
+      FileSystemStats stats) {
     this.fileRegion = fileRegion;
     this.chunkRegion = chunkRegion;
     this.stats = stats;
@@ -92,9 +96,9 @@ public class FileSystem {
   public void deleteFile(final String name) throws FileNotFoundException {
     // TODO locks?
 
-    // TODO - What is the state of the system if 
+    // TODO - What is the state of the system if
     // things crash in the middle of removing this file?
-    // Seems like a file will be left with some 
+    // Seems like a file will be left with some
     // dangling chunks at the end of the file
     File file = fileRegion.remove(name);
     if (file == null) {
@@ -130,7 +134,7 @@ public class FileSystem {
     destFile.id = sourceFile.id;
     updateFile(destFile);
 
-    // TODO - What is the state of the system if 
+    // TODO - What is the state of the system if
     // things crash in the middle of moving this file?
     // Seems like we will have two files pointing
     // at the same data
@@ -177,19 +181,18 @@ public class FileSystem {
     return chunkRegion;
   }
 
-  /**
-   * Export all of the files in the filesystem to the provided directory
-   */
+  /** Export all of the files in the filesystem to the provided directory */
   public void export(final java.io.File exportLocation) {
 
-    listFileNames().stream().forEach(fileName -> {
-      try {
-        getFile(fileName).export(exportLocation);
-      } catch (FileNotFoundException e) {
-        //ignore this, it was concurrently removed
-      }
-
-    });
+    listFileNames()
+        .stream()
+        .forEach(
+            fileName -> {
+              try {
+                getFile(fileName).export(exportLocation);
+              } catch (FileNotFoundException e) {
+                //ignore this, it was concurrently removed
+              }
+            });
   }
-
 }

@@ -48,9 +48,7 @@ import org.apache.geode.test.dunit.IgnoredException;
 import org.apache.geode.test.dunit.cache.internal.JUnit4CacheTestCase;
 import org.apache.geode.test.dunit.rules.DistributedRestoreSystemProperties;
 
-/**
- * Base class for all the CLI/gfsh command dunit tests.
- */
+/** Base class for all the CLI/gfsh command dunit tests. */
 public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
 
   public static final String USE_HTTP_SYSTEM_PROPERTY = "useHTTP";
@@ -67,10 +65,10 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
   protected transient String gfshDir;
 
   @Rule
-  public transient DistributedRestoreSystemProperties restoreSystemProperties = new DistributedRestoreSystemProperties();
+  public transient DistributedRestoreSystemProperties restoreSystemProperties =
+      new DistributedRestoreSystemProperties();
 
-  @Rule
-  public transient TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public transient TemporaryFolder temporaryFolder = new TemporaryFolder();
 
   @Override
   public final void postSetUp() throws Exception {
@@ -82,8 +80,7 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
     this.gfshDir = this.temporaryFolder.newFolder("gfsh_files").getCanonicalPath();
   }
 
-  protected void postSetUpCliCommandTestBase() throws Exception {
-  }
+  protected void postSetUpCliCommandTestBase() throws Exception {}
 
   @Override
   public final void preTearDownCacheTestCase() throws Exception {
@@ -91,15 +88,15 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
     destroyDefaultSetup();
   }
 
-  protected void preTearDownCliCommandTestBase() throws Exception {
-  }
+  protected void preTearDownCliCommandTestBase() throws Exception {}
 
   /**
-   * Create all of the components necessary for the default setup. The provided properties will be used when creating
-   * the default cache. This will create GFSH in the controller VM (VM[4]) (no cache) and the manager in VM[0] (with
-   * cache). When adding regions, functions, keys, whatever to your cache for tests, you'll need to use
-   * Host.getHost(0).getVM(0).invoke(new SerializableRunnable() { public void run() { ... } } in order to have this
-   * setup run in the same VM as the manager.
+   * Create all of the components necessary for the default setup. The provided properties will be
+   * used when creating the default cache. This will create GFSH in the controller VM (VM[4]) (no
+   * cache) and the manager in VM[0] (with cache). When adding regions, functions, keys, whatever to
+   * your cache for tests, you'll need to use Host.getHost(0).getVM(0).invoke(new
+   * SerializableRunnable() { public void run() { ... } } in order to have this setup run in the
+   * same VM as the manager.
    *
    * @param props the Properties used when creating the cache for this default setup.
    * @return the default testable GemFire shell.
@@ -119,56 +116,60 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
   }
 
   /**
-   * @return an object array, result[0] is jmxHost(String), result[1] is jmxPort, result[2] is httpPort
+   * @return an object array, result[0] is jmxHost(String), result[1] is jmxPort, result[2] is
+   *     httpPort
    */
   protected Object[] setUpJMXManagerOnVM(int vm, final Properties props, String jsonFile) {
-    Object[] result = Host.getHost(0).getVM(vm).invoke("setUpJmxManagerOnVm" + vm, () -> {
-      final Object[] results = new Object[3];
-      final Properties localProps = (props != null ? props : new Properties());
+    Object[] result =
+        Host.getHost(0)
+            .getVM(vm)
+            .invoke(
+                "setUpJmxManagerOnVm" + vm,
+                () -> {
+                  final Object[] results = new Object[3];
+                  final Properties localProps = (props != null ? props : new Properties());
 
-      try {
-        jmxHost = InetAddress.getLocalHost().getHostName();
-      } catch (UnknownHostException ignore) {
-        jmxHost = "localhost";
-      }
+                  try {
+                    jmxHost = InetAddress.getLocalHost().getHostName();
+                  } catch (UnknownHostException ignore) {
+                    jmxHost = "localhost";
+                  }
 
-      if (!localProps.containsKey(NAME)) {
-        localProps.setProperty(NAME, "Manager");
-      }
+                  if (!localProps.containsKey(NAME)) {
+                    localProps.setProperty(NAME, "Manager");
+                  }
 
-      if (jsonFile != null) {
-        localProps.setProperty(SampleSecurityManager.SECURITY_JSON, jsonFile);
-      }
+                  if (jsonFile != null) {
+                    localProps.setProperty(SampleSecurityManager.SECURITY_JSON, jsonFile);
+                  }
 
-      final int[] ports = AvailablePortHelper.getRandomAvailableTCPPorts(2);
+                  final int[] ports = AvailablePortHelper.getRandomAvailableTCPPorts(2);
 
-      jmxPort = ports[0];
-      httpPort = ports[1];
+                  jmxPort = ports[0];
+                  httpPort = ports[1];
 
-      localProps.setProperty(JMX_MANAGER, "true");
-      localProps.setProperty(JMX_MANAGER_START, "true");
-      localProps.setProperty(JMX_MANAGER_BIND_ADDRESS, String.valueOf(jmxHost));
-      localProps.setProperty(JMX_MANAGER_PORT, String.valueOf(jmxPort));
-      localProps.setProperty(HTTP_SERVICE_PORT, String.valueOf(httpPort));
+                  localProps.setProperty(JMX_MANAGER, "true");
+                  localProps.setProperty(JMX_MANAGER_START, "true");
+                  localProps.setProperty(JMX_MANAGER_BIND_ADDRESS, String.valueOf(jmxHost));
+                  localProps.setProperty(JMX_MANAGER_PORT, String.valueOf(jmxPort));
+                  localProps.setProperty(HTTP_SERVICE_PORT, String.valueOf(httpPort));
 
-      getSystem(localProps);
-      verifyManagementServiceStarted(getCache());
+                  getSystem(localProps);
+                  verifyManagementServiceStarted(getCache());
 
-      IgnoredException.addIgnoredException("org.eclipse.jetty.io.EofException");
-      IgnoredException.addIgnoredException("java.nio.channels.ClosedChannelException");
+                  IgnoredException.addIgnoredException("org.eclipse.jetty.io.EofException");
+                  IgnoredException.addIgnoredException("java.nio.channels.ClosedChannelException");
 
-      results[0] = jmxHost;
-      results[1] = jmxPort;
-      results[2] = httpPort;
-      return results;
-    });
+                  results[0] = jmxHost;
+                  results[1] = jmxPort;
+                  results[2] = httpPort;
+                  return results;
+                });
 
     return result;
   }
 
-  /**
-   * Destroy all of the components created for the default setup.
-   */
+  /** Destroy all of the components created for the default setup. */
   protected final void destroyDefaultSetup() {
     if (this.shell != null) {
       executeCommand(shell, "exit");
@@ -178,7 +179,9 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
 
     disconnectAllFromDS();
 
-    Host.getHost(0).getVM(0).invoke("verify service stopped", () -> verifyManagementServiceStopped());
+    Host.getHost(0)
+        .getVM(0)
+        .invoke("verify service stopped", () -> verifyManagementServiceStopped());
   }
 
   /**
@@ -209,9 +212,7 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
     }
   }
 
-  /**
-   * Stop the default management service.
-   */
+  /** Stop the default management service. */
   private void verifyManagementServiceStopped() {
     if (this.managementService != null) {
       assertFalse(this.managementService.isManager());
@@ -219,11 +220,18 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
     }
   }
 
-  protected void connect(final String host, final int jmxPort, final int httpPort, HeadlessGfsh shell) {
+  protected void connect(
+      final String host, final int jmxPort, final int httpPort, HeadlessGfsh shell) {
     connect(host, jmxPort, httpPort, shell, null, null);
   }
 
-  protected void connect(final String host, final int jmxPort, final int httpPort, HeadlessGfsh shell, String username, String password) {
+  protected void connect(
+      final String host,
+      final int jmxPort,
+      final int httpPort,
+      HeadlessGfsh shell,
+      String username,
+      String password) {
     final CommandStringBuilder command = new CommandStringBuilder(CliStrings.CONNECT);
 
     String endpoint;
@@ -246,7 +254,11 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
     CommandResult result = executeCommand(shell, command.toString());
 
     if (!shell.isConnectedAndReady()) {
-      throw new AssertionError("Connect command failed to connect to manager " + endpoint + " result=" + commandResultToString(result));
+      throw new AssertionError(
+          "Connect command failed to connect to manager "
+              + endpoint
+              + " result="
+              + commandResultToString(result));
     }
 
     info("Successfully connected to managing node using " + (useHttpOnConnect ? "HTTP" : "JMX"));
@@ -258,7 +270,7 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
    *
    * @return The default shell
    */
-  protected synchronized final HeadlessGfsh getDefaultShell() {
+  protected final synchronized HeadlessGfsh getDefaultShell() {
     if (this.shell == null) {
       this.shell = createShell();
     }
@@ -301,7 +313,7 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
   /**
    * Execute a command in the provided shell and clear the shell events before returning.
    *
-   * @param shell   Shell in which to execute the command.
+   * @param shell Shell in which to execute the command.
    * @param command Command to execute
    * @return The result of the command execution
    */
@@ -315,9 +327,9 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Execute a command using the default shell. Useful for getting additional information from the shell after the
-   * command has been executed (using getDefaultShell().???). Caller is responsible for calling
-   * getDefaultShell().clearEvents() when done.
+   * Execute a command using the default shell. Useful for getting additional information from the
+   * shell after the command has been executed (using getDefaultShell().???). Caller is responsible
+   * for calling getDefaultShell().clearEvents() when done.
    *
    * @param command Command to execute
    * @return The result of the command execution
@@ -330,11 +342,11 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Execute a command in the provided shell. Useful for getting additional information from the shell after the command
-   * has been executed (using getDefaultShell().???). Caller is responsible for calling getDefaultShell().clearEvents()
-   * when done.
+   * Execute a command in the provided shell. Useful for getting additional information from the
+   * shell after the command has been executed (using getDefaultShell().???). Caller is responsible
+   * for calling getDefaultShell().clearEvents() when done.
    *
-   * @param shell   Shell in which to execute the command.
+   * @param shell Shell in which to execute the command.
    * @param command Command to execute
    * @return The result of the command execution
    */
@@ -357,7 +369,10 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
 
     CommandResult result = null;
     try {
-      result = (CommandResult) shell.getResult(); // TODO: this can result in ClassCastException if command resulted in error
+      result =
+          (CommandResult)
+              shell
+                  .getResult(); // TODO: this can result in ClassCastException if command resulted in error
     } catch (InterruptedException ex) {
       error("shell received InterruptedException");
     }
@@ -373,7 +388,7 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
    * Utility method for viewing the results of a command.
    *
    * @param commandResult Results to dump
-   * @param printStream   Stream to dump the results to
+   * @param printStream Stream to dump the results to
    */
   protected void printResult(final CommandResult commandResult, PrintStream printStream) {
     assert (commandResult != null);
@@ -419,12 +434,12 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Utility method to determine how many times a string occurs in another string. Note that when looking for matches
-   * substrings of other matches will be counted as a match. For example, looking for "AA" in the string "AAAA" will
-   * result in a return value of 3.
+   * Utility method to determine how many times a string occurs in another string. Note that when
+   * looking for matches substrings of other matches will be counted as a match. For example,
+   * looking for "AA" in the string "AAAA" will result in a return value of 3.
    *
    * @param stringToSearch String to search
-   * @param stringToCount  String to look for and count
+   * @param stringToCount String to look for and count
    * @return The number of matches.
    */
   protected int countMatchesInString(final String stringToSearch, final String stringToCount) {
@@ -442,12 +457,12 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
   }
 
   /**
-   * Determines if a string contains a trimmed line that matches the pattern. So, any single line whose leading and
-   * trailing spaces have been removed which contains a string that exactly matches the given pattern will be considered
-   * a match.
+   * Determines if a string contains a trimmed line that matches the pattern. So, any single line
+   * whose leading and trailing spaces have been removed which contains a string that exactly
+   * matches the given pattern will be considered a match.
    *
    * @param stringToSearch String to search
-   * @param stringPattern  Pattern to search for
+   * @param stringPattern Pattern to search for
    * @return True if a match is found, false otherwise
    */
   protected boolean stringContainsLine(final String stringToSearch, final String stringPattern) {
@@ -462,7 +477,7 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
   /**
    * Counts the number of distinct lines in a String.
    *
-   * @param stringToSearch  String to search for lines.
+   * @param stringToSearch String to search for lines.
    * @param countBlankLines Whether to count blank lines (true to count)
    * @return The number of lines found.
    */
@@ -505,7 +520,7 @@ public abstract class CliCommandTestBase extends JUnit4CacheTestCase {
    * Get a specific line from the string (using \n or \r as a line separator).
    *
    * @param stringToSearch String to get the line from
-   * @param lineNumber     Line number to get
+   * @param lineNumber Line number to get
    * @return The line
    */
   protected String getLineFromString(final String stringToSearch, final int lineNumber) {

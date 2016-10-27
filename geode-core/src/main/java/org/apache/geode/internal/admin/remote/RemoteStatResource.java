@@ -44,11 +44,8 @@ public class RemoteStatResource implements StatResource, DataSerializable {
     this.typeDesc = rsrc.getType().getDescription();
   }
 
-  /**
-   * Constructor for <code>DataSerializable</code>
-   */
-  public RemoteStatResource() {
-  }
+  /** Constructor for <code>DataSerializable</code> */
+  public RemoteStatResource() {}
 
   // StatResource methods
 
@@ -150,5 +147,4 @@ public class RemoteStatResource implements StatResource, DataSerializable {
     this.typeName = DataSerializer.readString(in);
     this.typeDesc = DataSerializer.readString(in);
   }
-
 }

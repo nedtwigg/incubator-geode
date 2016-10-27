@@ -16,9 +16,7 @@
  */
 package org.apache.geode.management.internal.cli.help.format;
 
-/**
- *
- */
+/** */
 public class Block {
   private String heading;
   private Row[] rows;
@@ -40,5 +38,4 @@ public class Block {
     this.rows = rows;
     return this;
   }
-
 }

@@ -50,10 +50,8 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
- * One Client , two servers.
- * Ensure that client 1 has registered interest list on server 2.
- * Now Client does a put on server1 .
- * The Client should not receive callback of his own put.
+ * One Client , two servers. Ensure that client 1 has registered interest list on server 2. Now
+ * Client does a put on server1 . The Client should not receive callback of his own put.
  */
 @Category(DistributedTest.class)
 public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4DistributedTestCase {
@@ -64,7 +62,8 @@ public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4Distrib
 
   private int PORT1;
   private int PORT2;
-  private static final String REGION_NAME = VerifyUpdatesFromNonInterestEndPointDUnitTest.class.getSimpleName() + "_region";
+  private static final String REGION_NAME =
+      VerifyUpdatesFromNonInterestEndPointDUnitTest.class.getSimpleName() + "_region";
 
   private static Cache cache = null;
 
@@ -82,10 +81,21 @@ public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4Distrib
     vm1 = host.getVM(1);
     vm2 = host.getVM(2);
 
-    PORT1 = ((Integer) vm0.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createServerCache())).intValue();
-    PORT2 = ((Integer) vm1.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createServerCache())).intValue();
+    PORT1 =
+        ((Integer)
+                vm0.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createServerCache()))
+            .intValue();
+    PORT2 =
+        ((Integer)
+                vm1.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createServerCache()))
+            .intValue();
 
-    vm2.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.createClientCache(NetworkUtils.getServerHostName(vm0.getHost()), new Integer(PORT1), new Integer(PORT2)));
+    vm2.invoke(
+        () ->
+            VerifyUpdatesFromNonInterestEndPointDUnitTest.createClientCache(
+                NetworkUtils.getServerHostName(vm0.getHost()),
+                new Integer(PORT1),
+                new Integer(PORT2)));
   }
 
   private Cache createCache(Properties props) throws Exception {
@@ -106,7 +116,10 @@ public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4Distrib
 
     vm2.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.registerKey());
 
-    vm2.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.acquireConnectionsAndPut(new Integer(PORT2)));
+    vm2.invoke(
+        () ->
+            VerifyUpdatesFromNonInterestEndPointDUnitTest.acquireConnectionsAndPut(
+                new Integer(PORT2)));
     Wait.pause(30000);
     vm2.invoke(() -> VerifyUpdatesFromNonInterestEndPointDUnitTest.verifyPut());
   }
@@ -123,11 +136,15 @@ public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4Distrib
       ServerRegionProxy srp = new ServerRegionProxy(Region.SEPARATOR + REGION_NAME, pool);
       // put on a connection which is is not interest list ep
       if (conn1.getServer().getPort() == port.intValue()) {
-        srp.putOnForTestsOnly(conn1, "key-1", "server-value1", new EventID(new byte[] { 1 }, 1, 1), null);
-        srp.putOnForTestsOnly(conn1, "key-2", "server-value2", new EventID(new byte[] { 1 }, 1, 2), null);
+        srp.putOnForTestsOnly(
+            conn1, "key-1", "server-value1", new EventID(new byte[] {1}, 1, 1), null);
+        srp.putOnForTestsOnly(
+            conn1, "key-2", "server-value2", new EventID(new byte[] {1}, 1, 2), null);
       } else if (conn2.getServer().getPort() == port.intValue()) {
-        srp.putOnForTestsOnly(conn2, "key-1", "server-value1", new EventID(new byte[] { 1 }, 1, 1), null);
-        srp.putOnForTestsOnly(conn2, "key-2", "server-value2", new EventID(new byte[] { 1 }, 1, 2), null);
+        srp.putOnForTestsOnly(
+            conn2, "key-1", "server-value1", new EventID(new byte[] {1}, 1, 1), null);
+        srp.putOnForTestsOnly(
+            conn2, "key-2", "server-value2", new EventID(new byte[] {1}, 1, 2), null);
       }
     } catch (Exception ex) {
       fail("while setting acquireConnections  " + ex);
@@ -151,17 +168,26 @@ public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4Distrib
   }
 
   public static void createClientCache(String host, Integer port1, Integer port2) throws Exception {
-    VerifyUpdatesFromNonInterestEndPointDUnitTest test = new VerifyUpdatesFromNonInterestEndPointDUnitTest();
+    VerifyUpdatesFromNonInterestEndPointDUnitTest test =
+        new VerifyUpdatesFromNonInterestEndPointDUnitTest();
     Properties props = new Properties();
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(LOCATORS, "");
     cache = test.createCache(props);
     Pool p;
     try {
-      p = PoolManager.createFactory().addServer(host, port1.intValue()).addServer(host, port2.intValue()).setSubscriptionEnabled(true).setSubscriptionRedundancy(-1).setMinConnections(6).setSocketBufferSize(32768).setReadTimeout(2000)
-          // .setRetryInterval(250)
-          // .setRetryAttempts(5)
-          .create("UpdatePropagationDUnitTestPool");
+      p =
+          PoolManager.createFactory()
+              .addServer(host, port1.intValue())
+              .addServer(host, port2.intValue())
+              .setSubscriptionEnabled(true)
+              .setSubscriptionRedundancy(-1)
+              .setMinConnections(6)
+              .setSocketBufferSize(32768)
+              .setReadTimeout(2000)
+              // .setRetryInterval(250)
+              // .setRetryAttempts(5)
+              .create("UpdatePropagationDUnitTestPool");
     } finally {
       CacheServerTestUtil.enableShufflingOfEndpoints();
     }
@@ -171,7 +197,6 @@ public class VerifyUpdatesFromNonInterestEndPointDUnitTest extends JUnit4Distrib
     factory.setPoolName(p.getName());
     RegionAttributes attrs = factory.create();
     cache.createRegion(REGION_NAME, attrs);
-
   }
 
   public static Integer createServerCache() throws Exception {

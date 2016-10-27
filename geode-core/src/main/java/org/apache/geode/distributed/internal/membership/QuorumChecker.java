@@ -18,45 +18,36 @@
 package org.apache.geode.distributed.internal.membership;
 
 /**
- * A QuorumChecker is created after a forced-disconnect in order
- * to probe the network to see if there is a quorum of members
- * that can be contacted.
- * 
- *
+ * A QuorumChecker is created after a forced-disconnect in order to probe the network to see if
+ * there is a quorum of members that can be contacted.
  */
 public interface QuorumChecker {
 
   /**
    * Check to see if a quorum of the old members are reachable
+   *
    * @param timeoutMS time to wait for responses, in milliseconds
    */
   public boolean checkForQuorum(long timeoutMS) throws InterruptedException;
 
-  /**
-   * suspends the quorum checker for an attempt to connect to the distributed system
-   */
+  /** suspends the quorum checker for an attempt to connect to the distributed system */
   public void suspend();
 
-  /**
-   * resumes the quorum checker after having invoked suspend();
-   */
+  /** resumes the quorum checker after having invoked suspend(); */
   public void resume();
 
   /**
-   * closes the quorum checker and releases resources.  Use this if
-   * the distributed system is not going to be reconnected and you
-   * want to release resources.
+   * closes the quorum checker and releases resources. Use this if the distributed system is not
+   * going to be reconnected and you want to release resources.
    */
   public void close();
 
   /**
-   * Get the membership info from the old system that needs to be passed
-   * to the one that is reconnecting.
+   * Get the membership info from the old system that needs to be passed to the one that is
+   * reconnecting.
    */
   public Object getMembershipInfo();
 
-  /**
-   * Returns the membership view that is being used to establish a quorum
-   */
+  /** Returns the membership view that is being used to establish a quorum */
   public NetView getView();
 }

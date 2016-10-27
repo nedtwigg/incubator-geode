@@ -28,15 +28,13 @@ import org.apache.geode.internal.cache.tier.sockets.Message;
 import org.apache.geode.internal.cache.tier.sockets.Part;
 
 /**
- * TXSynchronizationOp sends JTA beforeCompletion and afterCompletion
- * messages to the server pool.
- * 
- *
+ * TXSynchronizationOp sends JTA beforeCompletion and afterCompletion messages to the server pool.
  */
 public class TXSynchronizationOp {
 
   public static enum CompletionType {
-    BEFORE_COMPLETION, AFTER_COMPLETION
+    BEFORE_COMPLETION,
+    AFTER_COMPLETION
   }
 
   /**
@@ -46,7 +44,8 @@ public class TXSynchronizationOp {
    * @param type - BEFORE_COMPLETION or AFTER_COMPLETION
    * @return the server's commit message
    */
-  public static TXCommitMessage execute(InternalPool pool, int status, int txId, CompletionType type) {
+  public static TXCommitMessage execute(
+      InternalPool pool, int status, int txId, CompletionType type) {
     Impl impl = new Impl(status, txId, type);
     pool.execute(impl);
     return impl.tXCommitMessageResponse;
@@ -75,7 +74,13 @@ public class TXSynchronizationOp {
 
     @Override
     public String toString() {
-      return "TXSynchronization(threadTxId=" + TXManagerImpl.getCurrentTXUniqueId() + "; " + this.type + "; status=" + this.status + ")";
+      return "TXSynchronization(threadTxId="
+          + TXManagerImpl.getCurrentTXUniqueId()
+          + "; "
+          + this.type
+          + "; status="
+          + this.status
+          + ")";
     }
 
     @Override
@@ -87,7 +92,8 @@ public class TXSynchronizationOp {
         Part part = msg.getPart(0);
         if (msgType == MessageType.EXCEPTION) {
           Throwable t = (Throwable) part.getObject();
-          if (t instanceof CommitConflictException || t instanceof SynchronizationCommitConflictException) {
+          if (t instanceof CommitConflictException
+              || t instanceof SynchronizationCommitConflictException) {
             throw (GemFireException) t;
           }
         }
@@ -140,8 +146,7 @@ public class TXSynchronizationOp {
     }
 
     @Override
-    protected void processSecureBytes(Connection cnx, Message message) throws Exception {
-    }
+    protected void processSecureBytes(Connection cnx, Message message) throws Exception {}
 
     @Override
     protected boolean needsUserId() {
@@ -154,5 +159,4 @@ public class TXSynchronizationOp {
       getMessage().send(false);
     }
   }
-
 }

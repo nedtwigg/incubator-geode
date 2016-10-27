@@ -37,7 +37,7 @@ public class LdapUserCredentialGenerator extends CredentialGenerator {
 
   private static final String USER_PREFIX = "gemfire";
   private static final Random RANDOM = new Random();
-  private static final String[] CIPHERS = new String[] { "", "DESede", "AES:128", "Blowfish:128" };
+  private static final String[] CIPHERS = new String[] {"", "DESede", "AES:128", "Blowfish:128"};
 
   private static boolean enableServerAuthentication = false;
 
@@ -54,7 +54,8 @@ public class LdapUserCredentialGenerator extends CredentialGenerator {
   @Override
   protected Properties initialize() throws IllegalArgumentException {
     final String ldapServer = System.getProperty("gf.ldap.server", "ldap");
-    final String ldapBaseDN = System.getProperty("gf.ldap.basedn", "ou=ldapTesting,dc=pune,dc=gemstone,dc=com");
+    final String ldapBaseDN =
+        System.getProperty("gf.ldap.basedn", "ou=ldapTesting,dc=pune,dc=gemstone,dc=com");
     final String ldapUseSSL = System.getProperty("gf.ldap.usessl");
 
     final Properties extraProps = new Properties();
@@ -66,7 +67,10 @@ public class LdapUserCredentialGenerator extends CredentialGenerator {
     }
 
     if (serverAuthEnabled) {
-      String keyStoreFile = TestUtil.getResourcePath(LdapUserCredentialGenerator.class, PKCSCredentialGenerator.keyStoreDir + "/gemfire1.keystore");
+      String keyStoreFile =
+          TestUtil.getResourcePath(
+              LdapUserCredentialGenerator.class,
+              PKCSCredentialGenerator.keyStoreDir + "/gemfire1.keystore");
       extraProps.setProperty(HandShake.PRIVATE_KEY_FILE_PROP, keyStoreFile);
       extraProps.setProperty(HandShake.PRIVATE_KEY_ALIAS_PROP, DistributionConfig.GEMFIRE_PREFIX);
       extraProps.setProperty(HandShake.PRIVATE_KEY_PASSWD_PROP, "gemfire");
@@ -102,7 +106,10 @@ public class LdapUserCredentialGenerator extends CredentialGenerator {
     props.setProperty(SECURITY_CLIENT_DHALGO, CIPHERS[RANDOM.nextInt(CIPHERS.length)]);
 
     if (serverAuthEnabled) {
-      final String keyStoreFile = TestUtil.getResourcePath(PKCSCredentialGenerator.class, PKCSCredentialGenerator.keyStoreDir + "/publickeyfile");
+      final String keyStoreFile =
+          TestUtil.getResourcePath(
+              PKCSCredentialGenerator.class,
+              PKCSCredentialGenerator.keyStoreDir + "/publickeyfile");
       props.setProperty(HandShake.PUBLIC_KEY_FILE_PROP, keyStoreFile);
       props.setProperty(HandShake.PUBLIC_KEY_PASSWD_PROP, "gemfire");
     }
@@ -139,7 +146,10 @@ public class LdapUserCredentialGenerator extends CredentialGenerator {
     props.setProperty(SECURITY_CLIENT_DHALGO, CIPHERS[RANDOM.nextInt(CIPHERS.length)]);
 
     if (serverAuthEnabled) {
-      final String keyStoreFile = TestUtil.getResourcePath(PKCSCredentialGenerator.class, PKCSCredentialGenerator.keyStoreDir + "/publickeyfile");
+      final String keyStoreFile =
+          TestUtil.getResourcePath(
+              PKCSCredentialGenerator.class,
+              PKCSCredentialGenerator.keyStoreDir + "/publickeyfile");
       props.setProperty(HandShake.PUBLIC_KEY_FILE_PROP, keyStoreFile);
       props.setProperty(HandShake.PUBLIC_KEY_PASSWD_PROP, "gemfire");
     }
@@ -155,7 +165,10 @@ public class LdapUserCredentialGenerator extends CredentialGenerator {
     props.setProperty(SECURITY_CLIENT_DHALGO, CIPHERS[RANDOM.nextInt(CIPHERS.length)]);
 
     if (serverAuthEnabled) {
-      final String keyStoreFile = TestUtil.getResourcePath(PKCSCredentialGenerator.class, PKCSCredentialGenerator.keyStoreDir + "/publickeyfile");
+      final String keyStoreFile =
+          TestUtil.getResourcePath(
+              PKCSCredentialGenerator.class,
+              PKCSCredentialGenerator.keyStoreDir + "/publickeyfile");
       props.setProperty(HandShake.PUBLIC_KEY_FILE_PROP, keyStoreFile);
       props.setProperty(HandShake.PUBLIC_KEY_PASSWD_PROP, "gemfire");
     }

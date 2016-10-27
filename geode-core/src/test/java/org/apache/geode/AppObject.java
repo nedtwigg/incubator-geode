@@ -16,9 +16,5 @@
  */
 package org.apache.geode;
 
-/**
- * A simple object to test that the LockManager doesn't need to load 
- * application classes.
- */
-public class AppObject {
-}
+/** A simple object to test that the LockManager doesn't need to load application classes. */
+public class AppObject {}

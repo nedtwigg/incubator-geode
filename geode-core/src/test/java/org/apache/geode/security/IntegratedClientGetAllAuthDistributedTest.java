@@ -30,26 +30,30 @@ import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class IntegratedClientGetAllAuthDistributedTest extends AbstractSecureServerDUnitTest {
 
   @Test
   public void testGetAll() {
-    client1.invoke("logging in Stranger", () -> {
-      ClientCache cache = createClientCache("stranger", "1234567", serverPort);
+    client1.invoke(
+        "logging in Stranger",
+        () -> {
+          ClientCache cache = createClientCache("stranger", "1234567", serverPort);
 
-      Region region = cache.getRegion(REGION_NAME);
-      Map emptyMap = region.getAll(Arrays.asList("key1", "key2", "key3", "key4"));
-      assertTrue(emptyMap.isEmpty());
-    });
+          Region region = cache.getRegion(REGION_NAME);
+          Map emptyMap = region.getAll(Arrays.asList("key1", "key2", "key3", "key4"));
+          assertTrue(emptyMap.isEmpty());
+        });
 
-    client2.invoke("logging in authRegionReader", () -> {
-      ClientCache cache = createClientCache("authRegionReader", "1234567", serverPort);
+    client2.invoke(
+        "logging in authRegionReader",
+        () -> {
+          ClientCache cache = createClientCache("authRegionReader", "1234567", serverPort);
 
-      Region region = cache.getRegion(REGION_NAME);
-      Map filledMap = region.getAll(Arrays.asList("key1", "key2", "key3", "key4"));
-      assertEquals("Map should contain 4 entries", 4, filledMap.size());
-      assertTrue(filledMap.containsKey("key1"));
-    });
+          Region region = cache.getRegion(REGION_NAME);
+          Map filledMap = region.getAll(Arrays.asList("key1", "key2", "key3", "key4"));
+          assertEquals("Map should contain 4 entries", 4, filledMap.size());
+          assertTrue(filledMap.containsKey("key1"));
+        });
   }
 }

@@ -26,42 +26,49 @@ import static org.apache.geode.distributed.ConfigurationProperties.*;
 
 /**
  * This is a member representing site 2 who wants to receive data from site 1
- * 
- * On this member a locator with distributed-system-id = 2 is created. 
- * On this member a cache is created.
- * 
- * A Region and a GatewayReceiver is created on this member through
+ *
+ * <p>On this member a locator with distributed-system-id = 2 is created. On this member a cache is
+ * created.
+ *
+ * <p>A Region and a GatewayReceiver is created on this member through
  * MyDistributedSustemListener#addedDistributedSystemConnection
- *  
- * (When this locator gets the locator information from the site 1,
- * MyDistributedSustemListener's addedDistributedSystemConnection will be
- * invoked who will create a region and a GatewayReceiver.)
- * 
- * This member expects region size to be 100. (this site received this data from site1)
- * 
- * This member also check for the receiver's running status.
- * 
- * A GatewayReceiver will be stopped through
- * MyDistributedSustemListener#removedDistributedSystem 
+ *
+ * <p>(When this locator gets the locator information from the site 1, MyDistributedSustemListener's
+ * addedDistributedSystemConnection will be invoked who will create a region and a GatewayReceiver.)
+ *
+ * <p>This member expects region size to be 100. (this site received this data from site1)
+ *
+ * <p>This member also check for the receiver's running status.
+ *
+ * <p>A GatewayReceiver will be stopped through MyDistributedSustemListener#removedDistributedSystem
  * (When a remote locator with distributed-system-id = -1 connects to this site,
- * MyDistributedSustemListener's removedDistributedSystem will be invoked who
- * will stop a GatewayReceiver.)
- * 
- * 
+ * MyDistributedSustemListener's removedDistributedSystem will be invoked who will stop a
+ * GatewayReceiver.)
  */
-
 public class WANBootStrapping_Site2_Add {
 
   public static void main(String[] args) {
 
-    System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "DistributedSystemListener", "com.main.MyDistributedSystemListener");
+    System.setProperty(
+        DistributionConfig.GEMFIRE_PREFIX + "DistributedSystemListener",
+        "com.main.MyDistributedSystemListener");
 
     //create a locator and a cache
     System.out.println("Creating cache ...It will take some time..");
-    Cache cache = new CacheFactory().set(MCAST_PORT, "0").set(DISTRIBUTED_SYSTEM_ID, "" + 2).set(LOCATORS, "localhost[" + 20202 + "]").set(START_LOCATOR, "localhost[" + 20202 + "],server=true,peer=true,hostname-for-clients=localhost").set(REMOTE_LOCATORS, "localhost[" + 10101 + "]").set(LOG_LEVEL, "warning").create();
+    Cache cache =
+        new CacheFactory()
+            .set(MCAST_PORT, "0")
+            .set(DISTRIBUTED_SYSTEM_ID, "" + 2)
+            .set(LOCATORS, "localhost[" + 20202 + "]")
+            .set(
+                START_LOCATOR,
+                "localhost[" + 20202 + "],server=true,peer=true,hostname-for-clients=localhost")
+            .set(REMOTE_LOCATORS, "localhost[" + 10101 + "]")
+            .set(LOG_LEVEL, "warning")
+            .create();
     System.out.println("Cache Created");
 
-    //get the region whose size should be 100 
+    //get the region whose size should be 100
     Region region = cache.getRegion("MyRegion");
     while (region == null) {
       region = cache.getRegion("MyRegion");

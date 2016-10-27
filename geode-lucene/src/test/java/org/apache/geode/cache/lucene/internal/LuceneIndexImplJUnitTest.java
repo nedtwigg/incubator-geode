@@ -39,8 +39,7 @@ public class LuceneIndexImplJUnitTest {
   private Cache cache;
   LuceneIndex index;
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @Rule public ExpectedException thrown = ExpectedException.none();
 
   @Before
   public void createLuceneIndex() {
@@ -61,18 +60,19 @@ public class LuceneIndexImplJUnitTest {
     when(cache.getAsyncEventQueue(eq(expectedIndexName))).thenReturn(queue);
 
     AtomicInteger callCount = new AtomicInteger();
-    when(queue.size()).thenAnswer(invocation -> {
-      if (callCount.get() == 0) {
-        // when the waitUnitFlushed() called the 2nd time, queue.size() will return 0
-        callCount.incrementAndGet();
-        return 2;
-      } else {
-        // when the waitUnitFlushed() called the 2nd time, queue.size() will return 0
-        return 0;
-      }
-    });
+    when(queue.size())
+        .thenAnswer(
+            invocation -> {
+              if (callCount.get() == 0) {
+                // when the waitUnitFlushed() called the 2nd time, queue.size() will return 0
+                callCount.incrementAndGet();
+                return 2;
+              } else {
+                // when the waitUnitFlushed() called the 2nd time, queue.size() will return 0
+                return 0;
+              }
+            });
     index.waitUntilFlushed(MAX_WAIT);
     verify(cache).getAsyncEventQueue(eq(expectedIndexName));
   }
-
 }

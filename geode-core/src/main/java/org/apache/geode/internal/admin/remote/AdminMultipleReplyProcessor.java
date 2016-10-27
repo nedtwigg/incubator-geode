@@ -28,12 +28,9 @@ import org.apache.geode.distributed.internal.ReplyProcessor21;
 import org.apache.geode.distributed.internal.membership.InternalDistributedMember;
 
 /**
- * TODO prpersist. This code really needs to be merged with the 
- * AdminReplyProcessor. However, we're getting close to the release
- * and I don't want to mess with all of the admin code right now. We
- * need this class to handle failures from admin messages that expect
- * replies from multiple members.
- *
+ * TODO prpersist. This code really needs to be merged with the AdminReplyProcessor. However, we're
+ * getting close to the release and I don't want to mess with all of the admin code right now. We
+ * need this class to handle failures from admin messages that expect replies from multiple members.
  */
 public class AdminMultipleReplyProcessor extends ReplyProcessor21 {
 
@@ -45,11 +42,17 @@ public class AdminMultipleReplyProcessor extends ReplyProcessor21 {
     super(dm, member);
   }
 
-  public AdminMultipleReplyProcessor(DM dm, InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion, boolean register) {
+  public AdminMultipleReplyProcessor(
+      DM dm,
+      InternalDistributedSystem system,
+      Collection initMembers,
+      CancelCriterion cancelCriterion,
+      boolean register) {
     super(dm, system, initMembers, cancelCriterion, register);
   }
 
-  public AdminMultipleReplyProcessor(InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion) {
+  public AdminMultipleReplyProcessor(
+      InternalDistributedSystem system, Collection initMembers, CancelCriterion cancelCriterion) {
     super(system, initMembers, cancelCriterion);
   }
 
@@ -57,11 +60,15 @@ public class AdminMultipleReplyProcessor extends ReplyProcessor21 {
     super(system, initMembers);
   }
 
-  public AdminMultipleReplyProcessor(InternalDistributedSystem system, InternalDistributedMember member, CancelCriterion cancelCriterion) {
+  public AdminMultipleReplyProcessor(
+      InternalDistributedSystem system,
+      InternalDistributedMember member,
+      CancelCriterion cancelCriterion) {
     super(system, member, cancelCriterion);
   }
 
-  public AdminMultipleReplyProcessor(InternalDistributedSystem system, InternalDistributedMember member) {
+  public AdminMultipleReplyProcessor(
+      InternalDistributedSystem system, InternalDistributedMember member) {
     super(system, member);
   }
 
@@ -77,5 +84,4 @@ public class AdminMultipleReplyProcessor extends ReplyProcessor21 {
     }
     super.process(msg, warn);
   }
-
 }

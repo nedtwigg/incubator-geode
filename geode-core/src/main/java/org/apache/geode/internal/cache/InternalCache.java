@@ -25,9 +25,9 @@ import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.internal.cache.extension.Extensible;
 
 /**
- * The InternalCache interface is contract for implementing classes for defining internal cache operations that should
- * not be part of the "public" API of the implementing class.
- * </p>
+ * The InternalCache interface is contract for implementing classes for defining internal cache
+ * operations that should not be part of the "public" API of the implementing class.
+ *
  * @see org.apache.geode.cache.Cache
  * @since GemFire 7.0
  */

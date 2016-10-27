@@ -52,9 +52,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 
-/**
- * 
- */
+/** */
 public class DestroyRegionOperation extends DistributedCacheOperation {
 
   private static final Logger logger = LogService.getLogger();
@@ -63,7 +61,7 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
   public boolean supportsDirectAck() {
     // Part of fix for bug 34450
     return false; // Changed to prevent problems with executing
-                  // basicDestroyRegion in the waiting pool.
+    // basicDestroyRegion in the waiting pool.
   }
 
   @Override
@@ -80,16 +78,16 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
 
   private static final ThreadLocal regionDepartureNotificationDisabled = new ThreadLocal();
 
-  /**
-   * This was added to fix bug 41111
-   */
+  /** This was added to fix bug 41111 */
   public static boolean isRegionDepartureNotificationOk() {
     return regionDepartureNotificationDisabled.get() != Boolean.TRUE;
   }
 
-  /** Creates new instance of DestroyRegionOperation
-   * @param notifyOfRegionDeparture was added to fix bug 41111. If false then don't
-   * deliver afterRemoteRegionDeparture events.
+  /**
+   * Creates new instance of DestroyRegionOperation
+   *
+   * @param notifyOfRegionDeparture was added to fix bug 41111. If false then don't deliver
+   *     afterRemoteRegionDeparture events.
    */
   public DestroyRegionOperation(RegionEventImpl event, boolean notifyOfRegionDeparture) {
     super(event);
@@ -112,7 +110,8 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
     DestroyRegionMessage mssg;
     if (this.event instanceof ClientRegionEventImpl) {
       mssg = new DestroyRegionWithContextMessage();
-      ((DestroyRegionWithContextMessage) mssg).context = ((ClientRegionEventImpl) this.event).getContext();
+      ((DestroyRegionWithContextMessage) mssg).context =
+          ((ClientRegionEventImpl) this.event).getContext();
     } else {
       mssg = new DestroyRegionMessage();
     }
@@ -139,10 +138,7 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
     protected HashMap subregionSerialNumbers;
 
     protected boolean notifyOfRegionDeparture;
-    /**
-     * true if need to automatically recreate region, and mark destruction as a
-     * reinitialization
-     */
+    /** true if need to automatically recreate region, and mark destruction as a reinitialization */
     protected transient LocalRegion lockRoot = null; // used for early destroy
     // lock acquisition
 
@@ -150,21 +146,26 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
     protected InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException {
       RegionEventImpl event = createRegionEvent(rgn);
       if (this.filterRouting != null) {
-        event.setLocalFilterInfo(this.filterRouting.getFilterInfo((InternalDistributedMember) rgn.getMyId()));
+        event.setLocalFilterInfo(
+            this.filterRouting.getFilterInfo((InternalDistributedMember) rgn.getMyId()));
       }
       event.setEventID(this.eventID);
       return event;
     }
 
     protected RegionEventImpl createRegionEvent(DistributedRegion rgn) {
-      RegionEventImpl event = new RegionEventImpl(rgn, getOperation(), this.callbackArg, true /* originRemote */, getSender());
+      RegionEventImpl event =
+          new RegionEventImpl(
+              rgn, getOperation(), this.callbackArg, true /* originRemote */, getSender());
       return event;
     }
 
-    private Runnable destroyOp(final DistributionManager dm, final LocalRegion lclRgn, final boolean sendReply) {
+    private Runnable destroyOp(
+        final DistributionManager dm, final LocalRegion lclRgn, final boolean sendReply) {
       return new Runnable() {
         public void run() {
-          final int oldLevel = LocalRegion.setThreadInitLevelRequirement(LocalRegion.BEFORE_INITIAL_IMAGE);
+          final int oldLevel =
+              LocalRegion.setThreadInitLevelRequirement(LocalRegion.BEFORE_INITIAL_IMAGE);
           // do this before CacheFactory.getInstance for bug 33471
 
           Throwable thr = null;
@@ -176,7 +177,11 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
               boolean waitForBucketInitializationToComplete = true;
               CacheDistributionAdvisee advisee = null;
               try {
-                advisee = PartitionedRegionHelper.getProxyBucketRegion(GemFireCacheImpl.getInstance(), regionPath, waitForBucketInitializationToComplete);
+                advisee =
+                    PartitionedRegionHelper.getProxyBucketRegion(
+                        GemFireCacheImpl.getInstance(),
+                        regionPath,
+                        waitForBucketInitializationToComplete);
               } catch (PRLocallyDestroyedException e) {
                 // region not found - it's been destroyed
               } catch (RegionDestroyedException e) {
@@ -190,7 +195,9 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
 
               if (advisee != null) {
                 boolean isDestroy = op.isRegionDestroy() && !op.isClose();
-                advisee.getDistributionAdvisor().removeIdWithSerial(getSender(), serialNum, isDestroy);
+                advisee
+                    .getDistributionAdvisor()
+                    .removeIdWithSerial(getSender(), serialNum, isDestroy);
               } else if (logger.isDebugEnabled()) {
                 logger.debug("{} region not found, nothing to do", this);
               }
@@ -200,8 +207,7 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
             // refetch to use special destroy region logic
             final LocalRegion lr = getRegionFromPath(dm.getSystem(), lclRgn.getFullPath());
             if (lr == null) {
-              if (logger.isDebugEnabled())
-                logger.debug("{} region not found, nothing to do", this);
+              if (logger.isDebugEnabled()) logger.debug("{} region not found, nothing to do", this);
               return;
             }
             // In some subclasses, lclRgn may be destroyed, so be careful not
@@ -215,7 +221,8 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
             DistributedRegion rgn = (DistributedRegion) lr;
 
             InternalCacheEvent event = createEvent(rgn);
-            if (DestroyRegionMessage.this.needsRouting && lclRgn.cache.getCacheServers().size() > 0) {
+            if (DestroyRegionMessage.this.needsRouting
+                && lclRgn.cache.getCacheServers().size() > 0) {
               lclRgn.generateLocalFilterRouting(event);
             }
 
@@ -252,10 +259,14 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
                 if (thr != null) {
                   rex = new ReplyException(thr);
                 }
-                sendReply(getSender(), DestroyRegionMessage.this.processorId, rex, getReplySender(dm));
+                sendReply(
+                    getSender(), DestroyRegionMessage.this.processorId, rex, getReplySender(dm));
               }
             } else if (thr != null) {
-              logger.error(LocalizedMessage.create(LocalizedStrings.DestroyRegionOperation_EXCEPTION_WHILE_PROCESSING__0_, this), thr);
+              logger.error(
+                  LocalizedMessage.create(
+                      LocalizedStrings.DestroyRegionOperation_EXCEPTION_WHILE_PROCESSING__0_, this),
+                  thr);
             }
           }
         } // run
@@ -298,8 +309,7 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
       if (getOperation().isDistributed()) {
         String rootName = GemFireCacheImpl.parsePath(path)[0];
         this.lockRoot = (LocalRegion) c.getRegion(rootName);
-        if (this.lockRoot == null)
-          return null;
+        if (this.lockRoot == null) return null;
         this.lockRoot.acquireDestroyLock();
       }
 
@@ -327,7 +337,8 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
         Assert.assertTrue(serialNum != DistributionAdvisor.ILLEGAL_SERIAL);
         disableRegionDepartureNotification();
         try {
-          rgn.handleRemoteLocalRegionDestroyOrClose(getSender(), serialNum, subregionSerialNumbers, !getOperation().isClose());
+          rgn.handleRemoteLocalRegionDestroyOrClose(
+              getSender(), serialNum, subregionSerialNumbers, !getOperation().isClose());
         } finally {
           enableRegionDepartureNotification();
         }
@@ -339,15 +350,19 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
         if (logger.isDebugEnabled()) {
           fullPath = rgn.getFullPath();
           StringBuffer subregionNames = new StringBuffer();
-          for (Iterator itr = rgn.debugGetSubregionNames().iterator(); itr.hasNext();) {
+          for (Iterator itr = rgn.debugGetSubregionNames().iterator(); itr.hasNext(); ) {
             subregionNames.append(itr.next());
             subregionNames.append(", ");
           }
-          logger.debug("Processing DestroyRegionOperation, about to destroy {}, has immediate subregions: {}", fullPath, subregionNames);
+          logger.debug(
+              "Processing DestroyRegionOperation, about to destroy {}, has immediate subregions: {}",
+              fullPath,
+              subregionNames);
         }
         if (getOperation() == Operation.REGION_LOAD_SNAPSHOT) {
           if (logger.isDebugEnabled()) {
-            logger.debug("Processing DestroyRegionOperation, calling reinitialize_destroy: {}", fullPath);
+            logger.debug(
+                "Processing DestroyRegionOperation, calling reinitialize_destroy: {}", fullPath);
           }
 
           // do just the destroy here, then spawn a thread to do the
@@ -358,41 +373,58 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
 
           final LocalRegion loc_lockRoot = this.lockRoot;
           this.lockRoot = null; // spawned thread will release lock, not
-                                // basicProcess
+          // basicProcess
 
-          rgn.getDistributionManager().getWaitingThreadPool().execute(new Runnable() {
-            public void run() {
-              try {
-                rgn.reinitializeFromImageTarget(getSender());
-              } catch (TimeoutException e) {
-                // dlock timed out, log message
-                logger.warn(LocalizedMessage.create(LocalizedStrings.DestroyRegionOperation_GOT_TIMEOUT_WHEN_TRYING_TO_RECREATE_REGION_DURING_REINITIALIZATION_1, rgn.getFullPath()), e);
-              } catch (IOException e) {
-                // only if loading snapshot, not here
-                InternalGemFireError assErr = new InternalGemFireError(LocalizedStrings.UNEXPECTED_EXCEPTION.toLocalizedString());
-                assErr.initCause(e);
-                throw assErr;
-              } catch (ClassNotFoundException e) {
-                // only if loading snapshot, not here
-                InternalGemFireError assErr = new InternalGemFireError(LocalizedStrings.UNEXPECTED_EXCEPTION.toLocalizedString());
-                assErr.initCause(e);
-                throw assErr;
-              } finally {
-                if (loc_lockRoot != null)
-                  loc_lockRoot.releaseDestroyLock();
-              }
-            }
-          });
+          rgn.getDistributionManager()
+              .getWaitingThreadPool()
+              .execute(
+                  new Runnable() {
+                    public void run() {
+                      try {
+                        rgn.reinitializeFromImageTarget(getSender());
+                      } catch (TimeoutException e) {
+                        // dlock timed out, log message
+                        logger.warn(
+                            LocalizedMessage.create(
+                                LocalizedStrings
+                                    .DestroyRegionOperation_GOT_TIMEOUT_WHEN_TRYING_TO_RECREATE_REGION_DURING_REINITIALIZATION_1,
+                                rgn.getFullPath()),
+                            e);
+                      } catch (IOException e) {
+                        // only if loading snapshot, not here
+                        InternalGemFireError assErr =
+                            new InternalGemFireError(
+                                LocalizedStrings.UNEXPECTED_EXCEPTION.toLocalizedString());
+                        assErr.initCause(e);
+                        throw assErr;
+                      } catch (ClassNotFoundException e) {
+                        // only if loading snapshot, not here
+                        InternalGemFireError assErr =
+                            new InternalGemFireError(
+                                LocalizedStrings.UNEXPECTED_EXCEPTION.toLocalizedString());
+                        assErr.initCause(e);
+                        throw assErr;
+                      } finally {
+                        if (loc_lockRoot != null) loc_lockRoot.releaseDestroyLock();
+                      }
+                    }
+                  });
         } else {
           if (logger.isDebugEnabled()) {
-            logger.debug("Processing DestroyRegionOperation, calling basicDestroyRegion: {}", fullPath);
+            logger.debug(
+                "Processing DestroyRegionOperation, calling basicDestroyRegion: {}", fullPath);
           }
-          rgn.basicDestroyRegion(ev, false /* cacheWrite */, false /* lock */, true/* cacheCallbacks */);
+          rgn.basicDestroyRegion(
+              ev, false /* cacheWrite */, false /* lock */, true /* cacheCallbacks */);
         }
       } catch (CacheWriterException e) {
-        throw new Error(LocalizedStrings.DestroyRegionOperation_CACHEWRITER_SHOULD_NOT_HAVE_BEEN_CALLED.toLocalizedString());
+        throw new Error(
+            LocalizedStrings.DestroyRegionOperation_CACHEWRITER_SHOULD_NOT_HAVE_BEEN_CALLED
+                .toLocalizedString());
       } catch (TimeoutException e) {
-        throw new Error(LocalizedStrings.DestroyRegionOperation_DISTRIBUTEDLOCK_SHOULD_NOT_HAVE_BEEN_ACQUIRED.toLocalizedString());
+        throw new Error(
+            LocalizedStrings.DestroyRegionOperation_DISTRIBUTEDLOCK_SHOULD_NOT_HAVE_BEEN_ACQUIRED
+                .toLocalizedString());
       } catch (RejectedExecutionException e) {
         // rejected while trying to execute recreate thread
         // must be shutting down, so what we were trying to do must not be
@@ -402,15 +434,27 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
     }
 
     @Override
-    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException {
-      Assert.assertTrue(false, LocalizedStrings.DestroyRegionOperation_REGION_DESTRUCTION_MESSAGE_IMPLEMENTATION_IS_IN_BASICPROCESS__NOT_THIS_METHOD.toLocalizedString());
+    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm)
+        throws EntryNotFoundException {
+      Assert.assertTrue(
+          false,
+          LocalizedStrings
+              .DestroyRegionOperation_REGION_DESTRUCTION_MESSAGE_IMPLEMENTATION_IS_IN_BASICPROCESS__NOT_THIS_METHOD
+              .toLocalizedString());
       return false;
     }
 
     @Override
     protected void appendFields(StringBuilder buff) {
       super.appendFields(buff);
-      buff.append("; eventID=").append(this.eventID).append("; serialNum=").append(this.serialNum).append("; subregionSerialNumbers=").append(this.subregionSerialNumbers).append("; notifyOfRegionDeparture=").append(this.notifyOfRegionDeparture);
+      buff.append("; eventID=")
+          .append(this.eventID)
+          .append("; serialNum=")
+          .append(this.serialNum)
+          .append("; subregionSerialNumbers=")
+          .append(this.subregionSerialNumbers)
+          .append("; notifyOfRegionDeparture=")
+          .append(this.notifyOfRegionDeparture);
     }
 
     public int getDSFID() {
@@ -440,8 +484,15 @@ public class DestroyRegionOperation extends DistributedCacheOperation {
     protected transient Object context;
 
     @Override
-    final public RegionEventImpl createRegionEvent(DistributedRegion rgn) {
-      ClientRegionEventImpl event = new ClientRegionEventImpl(rgn, getOperation(), this.callbackArg, true /* originRemote */, getSender(), (ClientProxyMembershipID) this.context);
+    public final RegionEventImpl createRegionEvent(DistributedRegion rgn) {
+      ClientRegionEventImpl event =
+          new ClientRegionEventImpl(
+              rgn,
+              getOperation(),
+              this.callbackArg,
+              true /* originRemote */,
+              getSender(),
+              (ClientProxyMembershipID) this.context);
       return event;
     }
 

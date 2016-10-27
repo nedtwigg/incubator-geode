@@ -23,14 +23,11 @@ import java.util.function.LongSupplier;
 import org.apache.geode.*;
 
 /**
- * An implementation of {@link Statistics} that does nothing.
- * Setting the "gemfire.statsDisabled" to true causes it to be used.
+ * An implementation of {@link Statistics} that does nothing. Setting the "gemfire.statsDisabled" to
+ * true causes it to be used.
  *
  * @see <A href="package-summary.html#statistics">Package introduction</A>
- *
- *
  * @since GemFire 3.0
- *
  */
 public class DummyStatisticsImpl implements Statistics {
 
@@ -43,8 +40,7 @@ public class DummyStatisticsImpl implements Statistics {
   /**
    * Creates a new statistics instance of the given type
    *
-   * @param type
-   *        A description of the statistics
+   * @param type A description of the statistics
    */
   public DummyStatisticsImpl(StatisticsType type, String textId, long numericId) {
     this.type = type;
@@ -52,8 +48,7 @@ public class DummyStatisticsImpl implements Statistics {
     this.numericId = numericId;
   }
 
-  public final void close() {
-  }
+  public final void close() {}
 
   ////////////////////////  accessor Methods  ///////////////////////
 
@@ -91,32 +86,23 @@ public class DummyStatisticsImpl implements Statistics {
 
   ////////////////////////  set() Methods  ///////////////////////
 
-  public final void setInt(int id, int value) {
-  }
+  public final void setInt(int id, int value) {}
 
-  public final void setInt(StatisticDescriptor descriptor, int value) {
-  }
+  public final void setInt(StatisticDescriptor descriptor, int value) {}
 
-  public final void setInt(String name, int value) {
-  }
+  public final void setInt(String name, int value) {}
 
-  public final void setLong(int id, long value) {
-  }
+  public final void setLong(int id, long value) {}
 
-  public final void setLong(StatisticDescriptor descriptor, long value) {
-  }
+  public final void setLong(StatisticDescriptor descriptor, long value) {}
 
-  public final void setLong(String name, long value) {
-  }
+  public final void setLong(String name, long value) {}
 
-  public final void setDouble(int id, double value) {
-  }
+  public final void setDouble(int id, double value) {}
 
-  public final void setDouble(StatisticDescriptor descriptor, double value) {
-  }
+  public final void setDouble(StatisticDescriptor descriptor, double value) {}
 
-  public final void setDouble(String name, double value) {
-  }
+  public final void setDouble(String name, double value) {}
 
   ///////////////////////  get() Methods  ///////////////////////
 
@@ -176,32 +162,23 @@ public class DummyStatisticsImpl implements Statistics {
 
   ////////////////////////  inc() Methods  ////////////////////////
 
-  public final void incInt(int id, int delta) {
-  }
+  public final void incInt(int id, int delta) {}
 
-  public final void incInt(StatisticDescriptor descriptor, int delta) {
-  }
+  public final void incInt(StatisticDescriptor descriptor, int delta) {}
 
-  public final void incInt(String name, int delta) {
-  }
+  public final void incInt(String name, int delta) {}
 
-  public final void incLong(int id, long delta) {
-  }
+  public final void incLong(int id, long delta) {}
 
-  public final void incLong(StatisticDescriptor descriptor, long delta) {
-  }
+  public final void incLong(StatisticDescriptor descriptor, long delta) {}
 
-  public final void incLong(String name, long delta) {
-  }
+  public final void incLong(String name, long delta) {}
 
-  public final void incDouble(int id, double delta) {
-  }
+  public final void incDouble(int id, double delta) {}
 
-  public final void incDouble(StatisticDescriptor descriptor, double delta) {
-  }
+  public final void incDouble(StatisticDescriptor descriptor, double delta) {}
 
-  public final void incDouble(String name, double delta) {
-  }
+  public final void incDouble(String name, double delta) {}
 
   @Override
   public IntSupplier setIntSupplier(final int id, final IntSupplier supplier) {
@@ -214,7 +191,8 @@ public class DummyStatisticsImpl implements Statistics {
   }
 
   @Override
-  public IntSupplier setIntSupplier(final StatisticDescriptor descriptor, final IntSupplier supplier) {
+  public IntSupplier setIntSupplier(
+      final StatisticDescriptor descriptor, final IntSupplier supplier) {
     return null;
   }
 
@@ -229,7 +207,8 @@ public class DummyStatisticsImpl implements Statistics {
   }
 
   @Override
-  public LongSupplier setLongSupplier(final StatisticDescriptor descriptor, final LongSupplier supplier) {
+  public LongSupplier setLongSupplier(
+      final StatisticDescriptor descriptor, final LongSupplier supplier) {
     return null;
   }
 
@@ -244,7 +223,8 @@ public class DummyStatisticsImpl implements Statistics {
   }
 
   @Override
-  public DoubleSupplier setDoubleSupplier(final StatisticDescriptor descriptor, final DoubleSupplier supplier) {
+  public DoubleSupplier setDoubleSupplier(
+      final StatisticDescriptor descriptor, final DoubleSupplier supplier) {
     return null;
   }
 }

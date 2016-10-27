@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
+/** */
 package org.apache.geode.internal.cache;
 
 import static org.junit.Assert.*;
@@ -36,8 +34,7 @@ import org.apache.geode.internal.cache.LocalRegion.NonTXEntry;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * This test verifies the flag's on-off switching for
- * boolean flags in AbstractRegionEntry.
+ * This test verifies the flag's on-off switching for boolean flags in AbstractRegionEntry.
  * Currently a byte array is used to maintain two flags.
  */
 @Category(IntegrationTest.class)

@@ -16,12 +16,10 @@
  *
  */
 /**
- * This test class contains automated tests for Pulse application related to
- * 1. Different grid data validations for example - Topology, Server Group, Redundancy Zone
- * 2. Data Browser
- * 3.
+ * This test class contains automated tests for Pulse application related to 1. Different grid data
+ * validations for example - Topology, Server Group, Redundancy Zone 2. Data Browser 3.
  *
- * @since GemFire   2014-04-02
+ * @since GemFire 2014-04-02
  */
 package org.apache.geode.tools.pulse.tests.ui;
 
@@ -79,7 +77,6 @@ public class PulseAutomatedTest extends PulseAbstractTest {
   public void regionDetailsGridDataValidation() {
     navigateToRegionDetailsGridView();
     validateRegionDetailsGridData();
-
   }
 
   @Test
@@ -91,49 +88,65 @@ public class PulseAutomatedTest extends PulseAbstractTest {
   @Test
   public void regionName() {
     navigateToRegionDetailsView();
-    assertEquals(getPropertyValue("region.R2.name"), getTextUsingId(PulseTestLocators.RegionDetailsView.regionNameDivId));
+    assertEquals(
+        getPropertyValue("region.R2.name"),
+        getTextUsingId(PulseTestLocators.RegionDetailsView.regionNameDivId));
   }
 
   @Test
   public void regionPath() {
     navigateToRegionDetailsView();
-    assertEquals(getPropertyValue("region.R2.fullPath"), getTextUsingId(PulseTestLocators.RegionDetailsView.regionPathId));
+    assertEquals(
+        getPropertyValue("region.R2.fullPath"),
+        getTextUsingId(PulseTestLocators.RegionDetailsView.regionPathId));
   }
 
   @Test
   public void regionType() {
     navigateToRegionDetailsView();
-    assertEquals(getPropertyValue("region.R2.regionType"), getTextUsingId(PulseTestLocators.RegionDetailsView.regionTypeId));
+    assertEquals(
+        getPropertyValue("region.R2.regionType"),
+        getTextUsingId(PulseTestLocators.RegionDetailsView.regionTypeId));
   }
 
   @Test
   public void regionMembers() {
     navigateToRegionDetailsView();
-    assertEquals(getPropertyValue("region.R2.memberCount"), getTextUsingId(PulseTestLocators.RegionDetailsView.regionMembersTextId));
+    assertEquals(
+        getPropertyValue("region.R2.memberCount"),
+        getTextUsingId(PulseTestLocators.RegionDetailsView.regionMembersTextId));
   }
 
   @Test
   public void regionEmptyNodes() {
     navigateToRegionDetailsView();
-    assertEquals(getPropertyValue("region.R2.emptyNodes"), getTextUsingId(PulseTestLocators.RegionDetailsView.regionEmptyNodesId));
+    assertEquals(
+        getPropertyValue("region.R2.emptyNodes"),
+        getTextUsingId(PulseTestLocators.RegionDetailsView.regionEmptyNodesId));
   }
 
   @Test
   public void regionEntryCount() {
     navigateToRegionDetailsView();
-    assertEquals(getPropertyValue("region.R2.systemRegionEntryCount"), getTextUsingId(PulseTestLocators.RegionDetailsView.regionEntryCountTextId));
+    assertEquals(
+        getPropertyValue("region.R2.systemRegionEntryCount"),
+        getTextUsingId(PulseTestLocators.RegionDetailsView.regionEntryCountTextId));
   }
 
   @Test
   public void regionDiskUsage() {
     navigateToRegionDetailsView();
-    assertEquals(getPropertyValue("region.R2.diskUsage"), getTextUsingId(PulseTestLocators.RegionDetailsView.regionDiskUsageId));
+    assertEquals(
+        getPropertyValue("region.R2.diskUsage"),
+        getTextUsingId(PulseTestLocators.RegionDetailsView.regionDiskUsageId));
   }
 
   @Test
   public void regionPersistence() {
     navigateToRegionDetailsView();
-    assertEquals(getPersistanceEnabled(getPropertyValue("region.R2.persistentEnabled")), getTextUsingId(PulseTestLocators.RegionDetailsView.regionPersistenceId));
+    assertEquals(
+        getPersistanceEnabled(getPropertyValue("region.R2.persistentEnabled")),
+        getTextUsingId(PulseTestLocators.RegionDetailsView.regionPersistenceId));
   }
 
   @Ignore("WIP")
@@ -146,26 +159,33 @@ public class PulseAutomatedTest extends PulseAbstractTest {
   @Test
   public void regionInMemoryRead() {
     navigateToRegionDetailsView();
-    assertEquals(getPropertyValue("region.R2.getsRate"), getTextUsingId(PulseTestLocators.RegionDetailsView.inMemoryReadsId));
-
+    assertEquals(
+        getPropertyValue("region.R2.getsRate"),
+        getTextUsingId(PulseTestLocators.RegionDetailsView.inMemoryReadsId));
   }
 
   @Test
   public void regionInMemoryWrites() {
     navigateToRegionDetailsView();
-    assertEquals(getPropertyValue("region.R2.putsRate"), getTextUsingId(PulseTestLocators.RegionDetailsView.inMemoryWritesId));
+    assertEquals(
+        getPropertyValue("region.R2.putsRate"),
+        getTextUsingId(PulseTestLocators.RegionDetailsView.inMemoryWritesId));
   }
 
   @Test
   public void regionDiskRead() {
     navigateToRegionDetailsView();
-    assertEquals(getPropertyValue("region.R2.diskReadsRate"), getTextUsingId(PulseTestLocators.RegionDetailsView.diskReadsId));
+    assertEquals(
+        getPropertyValue("region.R2.diskReadsRate"),
+        getTextUsingId(PulseTestLocators.RegionDetailsView.diskReadsId));
   }
 
   @Test
   public void regionDiskWrites() {
     navigateToRegionDetailsView();
-    assertEquals(getPropertyValue("region.R2.diskWritesRate"), getTextUsingId(PulseTestLocators.RegionDetailsView.diskWritesId));
+    assertEquals(
+        getPropertyValue("region.R2.diskWritesRate"),
+        getTextUsingId(PulseTestLocators.RegionDetailsView.diskWritesId));
   }
 
   @Test
@@ -185,11 +205,19 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     for (int i = 1; i <= 3; i++) {
       clickElementUsingXpath(PulseTestLocators.TopNavigation.clusterViewLinkXpath);
       mouseClickAndHoldOverElementById("h" + i);
-      verifyTextPresrntByXpath(PulseTestLocators.TopologyView.hostNameTTXpath, getPropertyValue("member.M" + i + ".host"));
+      verifyTextPresrntByXpath(
+          PulseTestLocators.TopologyView.hostNameTTXpath,
+          getPropertyValue("member.M" + i + ".host"));
       verifyTextPresrntByXpath(PulseTestLocators.TopologyView.cpuUsageTTXpath, "0%");
-      verifyTextPresrntByXpath(PulseTestLocators.TopologyView.memoryUsageTTXpath, getPropertyValue("member.M" + i + ".UsedMemory"));
-      verifyTextPresrntByXpath(PulseTestLocators.TopologyView.loadAvgTTXpath, getPropertyValue("member.M" + i + ".loadAverage"));
-      verifyTextPresrntByXpath(PulseTestLocators.TopologyView.soketsTTXpath, getPropertyValue("member.M" + i + ".totalFileDescriptorOpen"));
+      verifyTextPresrntByXpath(
+          PulseTestLocators.TopologyView.memoryUsageTTXpath,
+          getPropertyValue("member.M" + i + ".UsedMemory"));
+      verifyTextPresrntByXpath(
+          PulseTestLocators.TopologyView.loadAvgTTXpath,
+          getPropertyValue("member.M" + i + ".loadAverage"));
+      verifyTextPresrntByXpath(
+          PulseTestLocators.TopologyView.soketsTTXpath,
+          getPropertyValue("member.M" + i + ".totalFileDescriptorOpen"));
       mouseReleaseById("h" + i);
       driver.navigate().refresh();
     }
@@ -202,26 +230,41 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     verifyElementPresentById(PulseTestLocators.TopologyView.nodeH1Id);
     clickElementUsingId(PulseTestLocators.TopologyView.nodeH1Id);
     mouseClickAndHoldOverElementById(PulseTestLocators.TopologyView.memberM1Id);
-    verifyTextPresrntByXpath(PulseTestLocators.TopologyView.memNameTTXpath, getPropertyValue("member.M1.member"));
+    verifyTextPresrntByXpath(
+        PulseTestLocators.TopologyView.memNameTTXpath, getPropertyValue("member.M1.member"));
     //verifyTextPresrntByXpath(PulseTestLocators.TopologyView.memCpuUsageTTXpath, getPropertyValue("member.M1.cpuUsage") + "%");
-    verifyTextPresrntByXpath(PulseTestLocators.TopologyView.jvmPausesTTXpath, getPropertyValue("member.M1.JVMPauses"));
-    verifyTextPresrntByXpath(PulseTestLocators.TopologyView.regionsTTXpath, getPropertyValue("member.M1.totalRegionCount"));
+    verifyTextPresrntByXpath(
+        PulseTestLocators.TopologyView.jvmPausesTTXpath, getPropertyValue("member.M1.JVMPauses"));
+    verifyTextPresrntByXpath(
+        PulseTestLocators.TopologyView.regionsTTXpath,
+        getPropertyValue("member.M1.totalRegionCount"));
     verifyElementPresentById(PulseTestLocators.TopologyView.nodeH2Id);
     clickElementUsingId(PulseTestLocators.TopologyView.nodeH2Id);
     mouseClickAndHoldOverElementById(PulseTestLocators.TopologyView.memberM2Id);
-    verifyTextPresrntByXpath(PulseTestLocators.TopologyView.memNameTTXpath, getPropertyValue("member.M2.member"));
-    verifyTextPresrntByXpath(PulseTestLocators.TopologyView.memCpuUsageTTXpath, getPropertyValue("member.M2.cpuUsage") + "%");
-    verifyTextPresrntByXpath(PulseTestLocators.TopologyView.jvmPausesTTXpath, getPropertyValue("member.M2.JVMPauses"));
-    verifyTextPresrntByXpath(PulseTestLocators.TopologyView.regionsTTXpath, getPropertyValue("member.M2.totalRegionCount"));
+    verifyTextPresrntByXpath(
+        PulseTestLocators.TopologyView.memNameTTXpath, getPropertyValue("member.M2.member"));
+    verifyTextPresrntByXpath(
+        PulseTestLocators.TopologyView.memCpuUsageTTXpath,
+        getPropertyValue("member.M2.cpuUsage") + "%");
+    verifyTextPresrntByXpath(
+        PulseTestLocators.TopologyView.jvmPausesTTXpath, getPropertyValue("member.M2.JVMPauses"));
+    verifyTextPresrntByXpath(
+        PulseTestLocators.TopologyView.regionsTTXpath,
+        getPropertyValue("member.M2.totalRegionCount"));
 
     verifyElementPresentById(PulseTestLocators.TopologyView.nodeH3Id);
     clickElementUsingId(PulseTestLocators.TopologyView.nodeH3Id);
     mouseClickAndHoldOverElementById(PulseTestLocators.TopologyView.memberM3Id);
-    verifyTextPresrntByXpath(PulseTestLocators.TopologyView.memNameTTXpath, getPropertyValue("member.M3.member"));
-    verifyTextPresrntByXpath(PulseTestLocators.TopologyView.memCpuUsageTTXpath, getPropertyValue("member.M3.cpuUsage") + "%");
-    verifyTextPresrntByXpath(PulseTestLocators.TopologyView.jvmPausesTTXpath, getPropertyValue("member.M3.JVMPauses"));
-    verifyTextPresrntByXpath(PulseTestLocators.TopologyView.regionsTTXpath, getPropertyValue("member.M3.totalRegionCount"));
-
+    verifyTextPresrntByXpath(
+        PulseTestLocators.TopologyView.memNameTTXpath, getPropertyValue("member.M3.member"));
+    verifyTextPresrntByXpath(
+        PulseTestLocators.TopologyView.memCpuUsageTTXpath,
+        getPropertyValue("member.M3.cpuUsage") + "%");
+    verifyTextPresrntByXpath(
+        PulseTestLocators.TopologyView.jvmPausesTTXpath, getPropertyValue("member.M3.JVMPauses"));
+    verifyTextPresrntByXpath(
+        PulseTestLocators.TopologyView.regionsTTXpath,
+        getPropertyValue("member.M3.totalRegionCount"));
   }
 
   @Test
@@ -377,19 +420,25 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     //waitForElement(findElementByXpath(PulseTestLocators.ServerGroups.serverGrpsRadioXpath));
     clickElementUsingXpath(PulseTestLocators.ServerGroups.serverGrpsRadioXpath);
     clickElementUsingXpath(PulseTestLocators.ServerGroups.serverGrp1Xpath);
-    verifyElementAttributeById(PulseTestLocators.ServerGroups.serverGrp1Id, "style", "width: 720px; height: 415px;");
+    verifyElementAttributeById(
+        PulseTestLocators.ServerGroups.serverGrp1Id, "style", "width: 720px; height: 415px;");
     clickElementUsingXpath(PulseTestLocators.ServerGroups.serverGrp1Xpath);
-    verifyElementAttributeById(PulseTestLocators.ServerGroups.serverGrp1Id, "style", "width: 239.667px; height: 399px;");
+    verifyElementAttributeById(
+        PulseTestLocators.ServerGroups.serverGrp1Id, "style", "width: 239.667px; height: 399px;");
 
     clickElementUsingXpath(PulseTestLocators.ServerGroups.serverGrp2Xpath);
-    verifyElementAttributeById(PulseTestLocators.ServerGroups.serverGrp2Id, "style", "width: 720px; height: 415px;");
+    verifyElementAttributeById(
+        PulseTestLocators.ServerGroups.serverGrp2Id, "style", "width: 720px; height: 415px;");
     clickElementUsingXpath(PulseTestLocators.ServerGroups.serverGrp2Xpath);
-    verifyElementAttributeById(PulseTestLocators.ServerGroups.serverGrp2Id, "style", "width: 239.667px; height: 399px;");
+    verifyElementAttributeById(
+        PulseTestLocators.ServerGroups.serverGrp2Id, "style", "width: 239.667px; height: 399px;");
 
     clickElementUsingXpath(PulseTestLocators.ServerGroups.serverGrp3Xpath);
-    verifyElementAttributeById(PulseTestLocators.ServerGroups.serverGrp3Id, "style", "width: 720px; height: 415px;");
+    verifyElementAttributeById(
+        PulseTestLocators.ServerGroups.serverGrp3Id, "style", "width: 720px; height: 415px;");
     clickElementUsingXpath(PulseTestLocators.ServerGroups.serverGrp3Xpath);
-    verifyElementAttributeById(PulseTestLocators.ServerGroups.serverGrp3Id, "style", "width: 239.667px; height: 399px;");
+    verifyElementAttributeById(
+        PulseTestLocators.ServerGroups.serverGrp3Id, "style", "width: 239.667px; height: 399px;");
   }
 
   @Test
@@ -443,7 +492,6 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     verifyElementPresentByXpath(PulseTestLocators.ServerGroups.nameM3Xpath);
     verifyElementPresentByXpath(PulseTestLocators.ServerGroups.nameM2Xpath);
     verifyElementPresentByXpath(PulseTestLocators.ServerGroups.nameM1Xpath);
-
   }
 
   @Test
@@ -470,11 +518,12 @@ public class PulseAutomatedTest extends PulseAbstractTest {
   public void expandAndCloseRdncyZoneTest() {
     navigateToRedundancyZonesTreeView();
     clickElementUsingXpath(PulseTestLocators.RedundancyZone.zoneRZ1RZ2Xpath);
-    verifyElementAttributeById(PulseTestLocators.RedundancyZone.zoneRZ1Id, "style", "width: 720px; height: 415px;");
+    verifyElementAttributeById(
+        PulseTestLocators.RedundancyZone.zoneRZ1Id, "style", "width: 720px; height: 415px;");
     clickElementUsingXpath(PulseTestLocators.RedundancyZone.zoneRZ1RZ2Xpath);
     clickElementUsingXpath(PulseTestLocators.RedundancyZone.zoneRZ2Xpath);
-    verifyElementAttributeById(PulseTestLocators.RedundancyZone.zoneRZ2Id, "style", "width: 720px; height: 415px;");
-
+    verifyElementAttributeById(
+        PulseTestLocators.RedundancyZone.zoneRZ2Id, "style", "width: 720px; height: 415px;");
   }
 
   @Test
@@ -524,7 +573,7 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     verifyElementPresentByLinkText("CPU Usage");
   }
 
-  /* 
+  /*
    * HotSpot test scripts -
    */
   //--- Topology view
@@ -532,15 +581,21 @@ public class PulseAutomatedTest extends PulseAbstractTest {
   @Test
   public void testHotSpotOptPrsntOnTopologyView() {
     navigateToTopologyTreeView();
-    Assert.assertEquals(PulseTestData.Topology.hotSpotHeapLbl, getTextUsingId(PulseTestLocators.TopologyView.hotSpotId));
+    Assert.assertEquals(
+        PulseTestData.Topology.hotSpotHeapLbl,
+        getTextUsingId(PulseTestLocators.TopologyView.hotSpotId));
   }
 
   @Test
   public void testHotSpotOptionsTopologyView() {
     navigateToTopologyTreeView();
     clickElementUsingId(PulseTestLocators.TopologyView.hotSpotId);
-    assertEquals(PulseTestData.Topology.hotSpotHeapLbl, getTextUsingXpath(PulseTestLocators.TopologyView.heapUsageXpath));
-    assertEquals(PulseTestData.Topology.hotSpotCPULbl, getTextUsingXpath(PulseTestLocators.TopologyView.cpuUsageXpath));
+    assertEquals(
+        PulseTestData.Topology.hotSpotHeapLbl,
+        getTextUsingXpath(PulseTestLocators.TopologyView.heapUsageXpath));
+    assertEquals(
+        PulseTestData.Topology.hotSpotCPULbl,
+        getTextUsingXpath(PulseTestLocators.TopologyView.cpuUsageXpath));
   }
 
   @Test
@@ -548,7 +603,9 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     navigateToTopologyTreeView();
     clickElementUsingId(PulseTestLocators.TopologyView.hotSpotId);
     clickElementUsingXpath(PulseTestLocators.TopologyView.cpuUsageXpath);
-    assertEquals(PulseTestData.Topology.hotSpotCPULbl, getTextUsingId(PulseTestLocators.TopologyView.hotSpotId));
+    assertEquals(
+        PulseTestData.Topology.hotSpotCPULbl,
+        getTextUsingId(PulseTestLocators.TopologyView.hotSpotId));
   }
 
   @Test
@@ -556,7 +613,9 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     navigateToTopologyTreeView();
     clickElementUsingId(PulseTestLocators.TopologyView.hotSpotId);
     clickElementUsingXpath(PulseTestLocators.TopologyView.heapUsageXpath);
-    assertEquals(PulseTestData.Topology.hotSpotHeapLbl, getTextUsingId(PulseTestLocators.TopologyView.hotSpotId));
+    assertEquals(
+        PulseTestData.Topology.hotSpotHeapLbl,
+        getTextUsingId(PulseTestLocators.TopologyView.hotSpotId));
   }
 
   @Test
@@ -580,15 +639,21 @@ public class PulseAutomatedTest extends PulseAbstractTest {
   @Test
   public void testHotSpotOptPrsntOnServerGroupView() {
     navigateToServerGroupTreeView();
-    assertEquals(PulseTestData.ServerGroups.hotSpotHeapLbl, getTextUsingId(PulseTestLocators.ServerGroups.hotSpotId));
+    assertEquals(
+        PulseTestData.ServerGroups.hotSpotHeapLbl,
+        getTextUsingId(PulseTestLocators.ServerGroups.hotSpotId));
   }
 
   @Test
   public void testHotSpotOptionsServerGroupView() {
     navigateToServerGroupTreeView();
     clickElementUsingId(PulseTestLocators.ServerGroups.hotSpotId);
-    assertEquals(PulseTestData.ServerGroups.hotSpotHeapLbl, getTextUsingXpath(PulseTestLocators.ServerGroups.heapUsageXpath));
-    assertEquals(PulseTestData.ServerGroups.hotSpotCPULbl, getTextUsingXpath(PulseTestLocators.ServerGroups.cpuUsageXpath));
+    assertEquals(
+        PulseTestData.ServerGroups.hotSpotHeapLbl,
+        getTextUsingXpath(PulseTestLocators.ServerGroups.heapUsageXpath));
+    assertEquals(
+        PulseTestData.ServerGroups.hotSpotCPULbl,
+        getTextUsingXpath(PulseTestLocators.ServerGroups.cpuUsageXpath));
   }
 
   @Test
@@ -596,7 +661,9 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     navigateToServerGroupTreeView();
     clickElementUsingId(PulseTestLocators.ServerGroups.hotSpotId);
     clickElementUsingXpath(PulseTestLocators.ServerGroups.cpuUsageXpath);
-    assertEquals(PulseTestData.ServerGroups.hotSpotCPULbl, getTextUsingId(PulseTestLocators.ServerGroups.hotSpotId));
+    assertEquals(
+        PulseTestData.ServerGroups.hotSpotCPULbl,
+        getTextUsingId(PulseTestLocators.ServerGroups.hotSpotId));
   }
 
   @Test
@@ -604,7 +671,9 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     navigateToServerGroupTreeView();
     clickElementUsingId(PulseTestLocators.ServerGroups.hotSpotId);
     clickElementUsingXpath(PulseTestLocators.ServerGroups.heapUsageXpath);
-    assertEquals(PulseTestData.ServerGroups.hotSpotHeapLbl, getTextUsingId(PulseTestLocators.ServerGroups.hotSpotId));
+    assertEquals(
+        PulseTestData.ServerGroups.hotSpotHeapLbl,
+        getTextUsingId(PulseTestLocators.ServerGroups.hotSpotId));
   }
 
   @Test
@@ -628,7 +697,9 @@ public class PulseAutomatedTest extends PulseAbstractTest {
   @Test
   public void testHotSpotOptPrsntOnRedundancyZoneView() {
     navigateToRedundancyZonesTreeView();
-    assertEquals(PulseTestData.RedundancyZone.hotSpotHeapLbl, getTextUsingId(PulseTestLocators.RedundancyZone.hotSpotId));
+    assertEquals(
+        PulseTestData.RedundancyZone.hotSpotHeapLbl,
+        getTextUsingId(PulseTestLocators.RedundancyZone.hotSpotId));
   }
 
   @Test
@@ -636,8 +707,12 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     // navigate to Redundancy Zones - Tree View
     navigateToRedundancyZonesTreeView();
     clickElementUsingId(PulseTestLocators.RedundancyZone.hotSpotId);
-    assertEquals(PulseTestData.RedundancyZone.hotSpotHeapLbl, getTextUsingXpath(PulseTestLocators.RedundancyZone.heapUsageXpath));
-    assertEquals(PulseTestData.RedundancyZone.hotSpotCPULbl, getTextUsingXpath(PulseTestLocators.RedundancyZone.cpuUsageXpath));
+    assertEquals(
+        PulseTestData.RedundancyZone.hotSpotHeapLbl,
+        getTextUsingXpath(PulseTestLocators.RedundancyZone.heapUsageXpath));
+    assertEquals(
+        PulseTestData.RedundancyZone.hotSpotCPULbl,
+        getTextUsingXpath(PulseTestLocators.RedundancyZone.cpuUsageXpath));
   }
 
   @Test
@@ -646,7 +721,9 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     navigateToRedundancyZonesTreeView();
     clickElementUsingId(PulseTestLocators.RedundancyZone.hotSpotId);
     clickElementUsingXpath(PulseTestLocators.RedundancyZone.cpuUsageXpath);
-    assertEquals(PulseTestData.RedundancyZone.hotSpotCPULbl, getTextUsingId(PulseTestLocators.RedundancyZone.hotSpotId));
+    assertEquals(
+        PulseTestData.RedundancyZone.hotSpotCPULbl,
+        getTextUsingId(PulseTestLocators.RedundancyZone.hotSpotId));
   }
 
   @Test
@@ -655,7 +732,9 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     navigateToRedundancyZonesTreeView();
     clickElementUsingId(PulseTestLocators.RedundancyZone.hotSpotId);
     clickElementUsingXpath(PulseTestLocators.RedundancyZone.heapUsageXpath);
-    assertEquals(PulseTestData.RedundancyZone.hotSpotHeapLbl, getTextUsingId(PulseTestLocators.RedundancyZone.hotSpotId));
+    assertEquals(
+        PulseTestData.RedundancyZone.hotSpotHeapLbl,
+        getTextUsingId(PulseTestLocators.RedundancyZone.hotSpotId));
   }
 
   @Test
@@ -683,7 +762,12 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     List<WebElement> regionLst = getRegionsFromDataBrowser();
     String[] regionNames = new String[regionLst.size()];
     for (int regionIndex = 0; regionIndex < regionLst.size(); regionIndex++) {
-      regionNames[regionIndex] = findElementByXpath(PulseTestLocators.DataBrowser.rgnSpanFirstPart + (regionIndex + 1) + PulseTestLocators.DataBrowser.rgnSpanSecondPart).getText();
+      regionNames[regionIndex] =
+          findElementByXpath(
+                  PulseTestLocators.DataBrowser.rgnSpanFirstPart
+                      + (regionIndex + 1)
+                      + PulseTestLocators.DataBrowser.rgnSpanSecondPart)
+              .getText();
     }
     // type each region name in region filter and verify respective region(s) are displayed in region list
     for (String region : regionNames) {
@@ -693,7 +777,13 @@ public class PulseAutomatedTest extends PulseAbstractTest {
       List<WebElement> regionLst1 = getRegionsFromDataBrowser();
 
       for (int regionIndex = 1; regionIndex <= regionLst1.size(); regionIndex++) {
-        assertEquals(region, findElementByXpath(PulseTestLocators.DataBrowser.rgnSpanFirstPart + regionIndex + PulseTestLocators.DataBrowser.rgnSpanSecondPart).getText());
+        assertEquals(
+            region,
+            findElementByXpath(
+                    PulseTestLocators.DataBrowser.rgnSpanFirstPart
+                        + regionIndex
+                        + PulseTestLocators.DataBrowser.rgnSpanSecondPart)
+                .getText());
       }
     }
   }
@@ -705,11 +795,18 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     findElementById(PulseTestLocators.DataBrowser.rgnFilterTxtBoxId).clear();
 
     // type partial region name in region filter and verify that all the regions that contains that  text displays
-    findElementById(PulseTestLocators.DataBrowser.rgnFilterTxtBoxId).sendKeys(PulseTestData.DataBrowser.partialRgnName);
+    findElementById(PulseTestLocators.DataBrowser.rgnFilterTxtBoxId)
+        .sendKeys(PulseTestData.DataBrowser.partialRgnName);
     List<WebElement> regionLst = getRegionsFromDataBrowser();
 
     for (int regionIndex = 0; regionIndex < regionLst.size(); regionIndex++) {
-      assertTrue(findElementByXpath(PulseTestLocators.DataBrowser.rgnSpanFirstPart + (regionIndex + 1) + PulseTestLocators.DataBrowser.rgnSpanSecondPart).getText().contains(PulseTestData.DataBrowser.partialRgnName));
+      assertTrue(
+          findElementByXpath(
+                  PulseTestLocators.DataBrowser.rgnSpanFirstPart
+                      + (regionIndex + 1)
+                      + PulseTestLocators.DataBrowser.rgnSpanSecondPart)
+              .getText()
+              .contains(PulseTestData.DataBrowser.partialRgnName));
     }
   }
 
@@ -718,29 +815,37 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     // navigate to Data browser page
     loadDataBrowserpage();
 
-    sendKeysUsingId(PulseTestLocators.DataBrowser.queryEditorTxtBoxId, PulseTestData.DataBrowser.query1Text);
-    String editorTextBeforeClear = getTextUsingId(PulseTestLocators.DataBrowser.queryEditorTxtBoxId);
+    sendKeysUsingId(
+        PulseTestLocators.DataBrowser.queryEditorTxtBoxId, PulseTestData.DataBrowser.query1Text);
+    String editorTextBeforeClear =
+        getTextUsingId(PulseTestLocators.DataBrowser.queryEditorTxtBoxId);
     clickElementUsingXpath(PulseTestLocators.DataBrowser.btnClearXpath);
     String editorTextAfterClear = getTextUsingId(PulseTestLocators.DataBrowser.queryEditorTxtBoxId);
 
     assertFalse(PulseTestData.DataBrowser.query1Text.equals(editorTextAfterClear));
   }
 
-  @Ignore("WIP") // Data Browser's Query History not showing any data on button click, therefore this test is failing
+  @Ignore(
+      "WIP") // Data Browser's Query History not showing any data on button click, therefore this test is failing
   @Test
   public void testDataBrowserHistoryQueue() {
     // navigate to Data browser page
     loadDataBrowserpage();
 
-    List<WebElement> numOfReg = driver.findElements(By.xpath(PulseTestLocators.DataBrowser.divDataRegions));
+    List<WebElement> numOfReg =
+        driver.findElements(By.xpath(PulseTestLocators.DataBrowser.divDataRegions));
 
     for (int i = 1; i <= numOfReg.size(); i++) {
       if (getTextUsingId("treeDemo_" + i + "_span").equals(PulseTestData.DataBrowser.regName)) {
-        searchByIdAndClick("treeDemo_" + i + "_check"); //driver.findElement(By.id("treeDemo_" + i + "_check")).click();
+        searchByIdAndClick(
+            "treeDemo_"
+                + i
+                + "_check"); //driver.findElement(By.id("treeDemo_" + i + "_check")).click();
       }
     }
 
-    sendKeysUsingId(PulseTestLocators.DataBrowser.queryEditorTxtBoxId, PulseAbstractTest.QUERY_TYPE_ONE);
+    sendKeysUsingId(
+        PulseTestLocators.DataBrowser.queryEditorTxtBoxId, PulseAbstractTest.QUERY_TYPE_ONE);
     clickElementUsingId(PulseTestLocators.DataBrowser.btnExecuteQueryId);
 
     //Get required datetime format and extract date and hours from date time.
@@ -750,14 +855,20 @@ public class PulseAutomatedTest extends PulseAbstractTest {
     System.out.println("Query Time from System: " + queryTime[0]);
 
     clickElementUsingId(PulseTestLocators.DataBrowser.historyIcon);
-    List<WebElement> historyLst = driver.findElements(By.xpath(PulseTestLocators.DataBrowser.historyLst));
-    String queryText = findElementByXpath(PulseTestLocators.DataBrowser.historyLst).findElement(By.cssSelector(PulseTestLocators.DataBrowser.queryText)).getText();
-    String historyDateTime = findElementByXpath(PulseTestLocators.DataBrowser.historyLst).findElement(By.cssSelector(PulseTestLocators.DataBrowser.historyDateTime)).getText();
+    List<WebElement> historyLst =
+        driver.findElements(By.xpath(PulseTestLocators.DataBrowser.historyLst));
+    String queryText =
+        findElementByXpath(PulseTestLocators.DataBrowser.historyLst)
+            .findElement(By.cssSelector(PulseTestLocators.DataBrowser.queryText))
+            .getText();
+    String historyDateTime =
+        findElementByXpath(PulseTestLocators.DataBrowser.historyLst)
+            .findElement(By.cssSelector(PulseTestLocators.DataBrowser.historyDateTime))
+            .getText();
     System.out.println("Query Text from History Table: " + queryText);
     System.out.println("Query Time from History Table: " + historyDateTime);
     //verify the query text, query datetime in history panel
     assertTrue(PulseAbstractTest.QUERY_TYPE_ONE.equals(queryText));
     assertTrue(historyDateTime.contains(queryTime[0]));
-
   }
 }

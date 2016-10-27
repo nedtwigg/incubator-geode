@@ -22,32 +22,37 @@ import org.apache.geode.internal.cache.EventID;
 
 /**
  * Does a region destroyRegion (or create) on a server
+ *
  * @since GemFire 5.7
  */
 public class DestroyRegionOp {
   /**
-   * Does a region destroyRegion on a server using connections from the given pool
-   * to communicate with the server.
+   * Does a region destroyRegion on a server using connections from the given pool to communicate
+   * with the server.
+   *
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the destroyRegion on
    * @param eventId the event id for this destroyRegion
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    */
-  public static void execute(ExecutablePool pool, String region, EventID eventId, Object callbackArg) {
+  public static void execute(
+      ExecutablePool pool, String region, EventID eventId, Object callbackArg) {
     AbstractOp op = new DestroyRegionOpImpl(region, eventId, callbackArg);
     pool.execute(op);
   }
 
   /**
-   * Does a region destroyRegion on a server using the given connection
-   * to communicate with the server.
+   * Does a region destroyRegion on a server using the given connection to communicate with the
+   * server.
+   *
    * @param con the connection to use to send to the server
    * @param pool the pool to use to communicate with the server.
    * @param region the name of the region to do the destroyRegion on
    * @param eventId the event id for this destroyRegion
    * @param callbackArg an optional callback arg to pass to any cache callbacks
    */
-  public static void execute(Connection con, ExecutablePool pool, String region, EventID eventId, Object callbackArg) {
+  public static void execute(
+      Connection con, ExecutablePool pool, String region, EventID eventId, Object callbackArg) {
     AbstractOp op = new DestroyRegionOpImpl(region, eventId, callbackArg);
     pool.executeOn(con, op);
   }
@@ -57,9 +62,7 @@ public class DestroyRegionOp {
   }
 
   private static class DestroyRegionOpImpl extends AbstractOp {
-    /**
-     * @throws org.apache.geode.SerializationException if serialization fails
-     */
+    /** @throws org.apache.geode.SerializationException if serialization fails */
     public DestroyRegionOpImpl(String region, EventID eventId, Object callbackArg) {
       super(MessageType.DESTROY_REGION, callbackArg != null ? 3 : 2);
       getMessage().addStringPart(region);

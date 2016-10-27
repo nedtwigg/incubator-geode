@@ -39,9 +39,7 @@ import org.apache.geode.internal.cache.tier.sockets.Part;
 import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
-/**
- * 
- */
+/** */
 public class ExecuteFunction70 extends ExecuteFunction66 {
 
   private static final ExecuteFunction70 singleton = new ExecuteFunction70();
@@ -50,8 +48,7 @@ public class ExecuteFunction70 extends ExecuteFunction66 {
     return singleton;
   }
 
-  private ExecuteFunction70() {
-  }
+  private ExecuteFunction70() {}
 
   @Override
   public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException {
@@ -94,20 +91,30 @@ public class ExecuteFunction70 extends ExecuteFunction66 {
   }
 
   @Override
-  protected void executeFunctionOnGroups(Object function, Object args, String[] groups, boolean allMembers, Function functionObject, ServerToClientFunctionResultSender resultSender, boolean ignoreFailedMembers) {
+  protected void executeFunctionOnGroups(
+      Object function,
+      Object args,
+      String[] groups,
+      boolean allMembers,
+      Function functionObject,
+      ServerToClientFunctionResultSender resultSender,
+      boolean ignoreFailedMembers) {
 
     DistributedSystem ds = InternalDistributedSystem.getConnectedInstance();
     if (ds == null) {
-      throw new IllegalStateException(LocalizedStrings.ExecuteFunction_DS_NOT_CREATED_OR_NOT_READY.toLocalizedString());
+      throw new IllegalStateException(
+          LocalizedStrings.ExecuteFunction_DS_NOT_CREATED_OR_NOT_READY.toLocalizedString());
     }
     Set<DistributedMember> members = new HashSet<DistributedMember>();
     for (String group : groups) {
       if (allMembers) {
         members.addAll(ds.getGroupMembers(group));
       } else {
-        ArrayList<DistributedMember> memberList = new ArrayList<DistributedMember>(ds.getGroupMembers(group));
+        ArrayList<DistributedMember> memberList =
+            new ArrayList<DistributedMember>(ds.getGroupMembers(group));
         if (!memberList.isEmpty()) {
-          if (!FunctionServiceManager.RANDOM_onMember && memberList.contains(ds.getDistributedMember())) {
+          if (!FunctionServiceManager.RANDOM_onMember
+              && memberList.contains(ds.getDistributedMember())) {
             members.add(ds.getDistributedMember());
           } else {
             Collections.shuffle(memberList);
@@ -117,7 +124,11 @@ public class ExecuteFunction70 extends ExecuteFunction66 {
       }
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("Executing Function on Groups: {} all members: {} members are: {}", Arrays.toString(groups), allMembers, members);
+      logger.debug(
+          "Executing Function on Groups: {} all members: {} members are: {}",
+          Arrays.toString(groups),
+          allMembers,
+          members);
     }
     Execution execution = new MemberFunctionExecutor(ds, members, resultSender);
     if (args != null) {

@@ -55,16 +55,21 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
   public Region createRegion(String regionName, Class valueConstraint) {
     Region r1 = CacheUtils.createRegion(regionName, valueConstraint);
     return r1;
-
   }
 
   @Override
-  public Index createIndex(String indexName, IndexType indexType, String indexedExpression, String fromClause) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
-    return CacheUtils.getQueryService().createIndex(indexName, indexType, indexedExpression, fromClause);
+  public Index createIndex(
+      String indexName, IndexType indexType, String indexedExpression, String fromClause)
+      throws IndexInvalidException, IndexNameConflictException, IndexExistsException,
+          RegionNotFoundException, UnsupportedOperationException {
+    return CacheUtils.getQueryService()
+        .createIndex(indexName, indexType, indexedExpression, fromClause);
   }
 
   @Override
-  public Index createIndex(String indexName, String indexedExpression, String regionPath) throws IndexInvalidException, IndexNameConflictException, IndexExistsException, RegionNotFoundException, UnsupportedOperationException {
+  public Index createIndex(String indexName, String indexedExpression, String regionPath)
+      throws IndexInvalidException, IndexNameConflictException, IndexExistsException,
+          RegionNotFoundException, UnsupportedOperationException {
     return CacheUtils.getQueryService().createIndex(indexName, indexedExpression, regionPath);
   }
 
@@ -365,38 +370,39 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
     // order by field
     // its null values are reported first and then the values in ascending
     // order.
-    String queries[] = { "SELECT  distinct * FROM /portfolio1 pf1 order by pkid", // 0 null
-        // values are
-        // first in the
-        // order.
-        "SELECT  distinct * FROM /portfolio1 pf1  order by pkid asc", // 1 same
-        // as
-        // above.
-        "SELECT  distinct * FROM /portfolio1 order by pkid desc", // 2 null
-        // values are
-        // last in the
-        // order.
-        "SELECT  distinct pkid FROM /portfolio1 pf1 order by pkid", // 3 null
-        // values
-        // are first
-        // in the
-        // order.
-        "SELECT  distinct pkid FROM /portfolio1 pf1 where pkid != 'XXXX' order by pkid asc", // 4
-        "SELECT  distinct pkid FROM /portfolio1 pf1 where pkid != 'XXXX' order by pkid desc", // 5
-        // null
-        // values
-        // are
-        // last
-        // in
-        // the
-        // order.
+    String queries[] = {
+      "SELECT  distinct * FROM /portfolio1 pf1 order by pkid", // 0 null
+      // values are
+      // first in the
+      // order.
+      "SELECT  distinct * FROM /portfolio1 pf1  order by pkid asc", // 1 same
+      // as
+      // above.
+      "SELECT  distinct * FROM /portfolio1 order by pkid desc", // 2 null
+      // values are
+      // last in the
+      // order.
+      "SELECT  distinct pkid FROM /portfolio1 pf1 order by pkid", // 3 null
+      // values
+      // are first
+      // in the
+      // order.
+      "SELECT  distinct pkid FROM /portfolio1 pf1 where pkid != 'XXXX' order by pkid asc", // 4
+      "SELECT  distinct pkid FROM /portfolio1 pf1 where pkid != 'XXXX' order by pkid desc", // 5
+      // null
+      // values
+      // are
+      // last
+      // in
+      // the
+      // order.
 
-        "SELECT  distinct ID FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 6
-        "SELECT  distinct ID FROM /portfolio1 pf1 where ID > 3 order by pkid", // 7
-        "SELECT  distinct ID, pkid FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 8
-        "SELECT  distinct ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid", // 9
-        "SELECT  distinct ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid, ID asc", // 10
-        "SELECT  distinct ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid, ID desc",// 11
+      "SELECT  distinct ID FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 6
+      "SELECT  distinct ID FROM /portfolio1 pf1 where ID > 3 order by pkid", // 7
+      "SELECT  distinct ID, pkid FROM /portfolio1 pf1 where ID < 1000 order by pkid", // 8
+      "SELECT  distinct ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid", // 9
+      "SELECT  distinct ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid, ID asc", // 10
+      "SELECT  distinct ID, pkid FROM /portfolio1 pf1 where ID > 0 order by pkid, ID desc", // 11
     };
     return queries;
   }
@@ -405,10 +411,11 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
   public void testLimitApplicationOnPrimaryKeyIndex() throws Exception {
 
     String queries[] = {
-        // The PK index should be used but limit should not be applied as order by
-        // cannot be applied while data is fetched
-        // from index
-        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pf1.ID != $1 limit 10", };
+      // The PK index should be used but limit should not be applied as order by
+      // cannot be applied while data is fetched
+      // from index
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pf1.ID != $1 limit 10",
+    };
 
     Object r[][] = new Object[queries.length][2];
     QueryService qs;
@@ -428,7 +435,7 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
-        r[i][0] = q.execute(new Object[] { new Integer(10) });
+        r[i][0] = q.execute(new Object[] {new Integer(10)});
       } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
@@ -445,7 +452,7 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
         QueryObserverImpl observer = new QueryObserverImpl();
         QueryObserverHolder.setInstance(observer);
-        r[i][1] = q.execute(new Object[] { "10" });
+        r[i][1] = q.execute(new Object[] {"10"});
         int indexLimit = queries[i].indexOf("limit");
         int limit = -1;
         boolean limitQuery = indexLimit != -1;
@@ -484,7 +491,11 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
 
         int indxs = observer.indexesUsed.size();
 
-        System.out.println("**************************************************Indexes Used :::::: " + indxs + " Index Name: " + observer.indexName);
+        System.out.println(
+            "**************************************************Indexes Used :::::: "
+                + indxs
+                + " Index Name: "
+                + observer.indexName);
 
       } catch (Exception e) {
         e.printStackTrace();
@@ -501,15 +512,28 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
     type1 = ((SelectResults) r[0][0]).getCollectionType().getElementType();
     type2 = ((SelectResults) r[0][1]).getCollectionType().getElementType();
     if ((type1.getClass().getName()).equals(type2.getClass().getName())) {
-      CacheUtils.log("Both SelectResults are of the same Type i.e.--> " + ((SelectResults) r[0][0]).getCollectionType().getElementType());
+      CacheUtils.log(
+          "Both SelectResults are of the same Type i.e.--> "
+              + ((SelectResults) r[0][0]).getCollectionType().getElementType());
     } else {
-      CacheUtils.log("Classes are : " + type1.getClass().getName() + " " + type2.getClass().getName());
-      fail("FAILED:Select result Type is different in both the cases." + "; failed query=" + queries[0]);
+      CacheUtils.log(
+          "Classes are : " + type1.getClass().getName() + " " + type2.getClass().getName());
+      fail(
+          "FAILED:Select result Type is different in both the cases."
+              + "; failed query="
+              + queries[0]);
     }
     if (((SelectResults) r[0][0]).size() == ((SelectResults) r[0][1]).size()) {
-      CacheUtils.log("Both SelectResults are of Same Size i.e.  Size= " + ((SelectResults) r[0][1]).size());
+      CacheUtils.log(
+          "Both SelectResults are of Same Size i.e.  Size= " + ((SelectResults) r[0][1]).size());
     } else {
-      fail("FAILED:SelectResults size is different in both the cases. Size1=" + ((SelectResults) r[0][0]).size() + " Size2 = " + ((SelectResults) r[0][1]).size() + "; failed query=" + queries[0]);
+      fail(
+          "FAILED:SelectResults size is different in both the cases. Size1="
+              + ((SelectResults) r[0][0]).size()
+              + " Size2 = "
+              + ((SelectResults) r[0][1]).size()
+              + "; failed query="
+              + queries[0]);
     }
     coll2 = (((SelectResults) r[0][1]).asSet());
     coll1 = (((SelectResults) r[0][0]).asSet());
@@ -523,17 +547,16 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
       assertTrue((((Integer) values1[0]).intValue() != 10));
       assertTrue((((Integer) values2[0]).intValue() != 10));
     }
-
   }
 
   @Test
   public void testLimitAndOrderByApplicationOnPrimaryKeyIndexQuery() throws Exception {
     String queries[] = {
-        // The PK index should be used but limit should not be applied as order
-        // by cannot be applied while data is fetched
-        // from index
-        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pf1.ID != '10' order by ID desc limit 5 ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pf1.ID != $1 order by ID "
-
+      // The PK index should be used but limit should not be applied as order
+      // by cannot be applied while data is fetched
+      // from index
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pf1.ID != '10' order by ID desc limit 5 ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pf1.ID != $1 order by ID "
     };
 
     Object r[][] = new Object[queries.length][2];
@@ -554,7 +577,7 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
       try {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
-        r[i][0] = q.execute(new Object[] { new Integer(10) });
+        r[i][0] = q.execute(new Object[] {new Integer(10)});
       } catch (Exception e) {
         e.printStackTrace();
         fail(q.getQueryString());
@@ -571,7 +594,7 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
         QueryObserverImpl observer = new QueryObserverImpl();
         QueryObserverHolder.setInstance(observer);
-        r[i][1] = q.execute(new Object[] { "10" });
+        r[i][1] = q.execute(new Object[] {"10"});
         int indexLimit = queries[i].indexOf("limit");
         int limit = -1;
         boolean limitQuery = indexLimit != -1;
@@ -607,7 +630,11 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
 
         int indxs = observer.indexesUsed.size();
 
-        System.out.println("**************************************************Indexes Used :::::: " + indxs + " Index Name: " + observer.indexName);
+        System.out.println(
+            "**************************************************Indexes Used :::::: "
+                + indxs
+                + " Index Name: "
+                + observer.indexName);
 
       } catch (Exception e) {
         e.printStackTrace();
@@ -621,14 +648,13 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
   @Test
   public void testOrderedResultsReplicatedRegion() throws Exception {
     String queries[] = {
-        // Test case No. IUMR021
+      // Test case No. IUMR021
 
-        "select distinct status as st from /portfolio1 where ID > 0 order by status",
-
-        "select distinct p.status as st from /portfolio1 p where ID > 0 and status = 'inactive' order by p.status",
-
-        "select distinct p.position1.secId as st from /portfolio1 p where p.ID > 0 and p.position1.secId != 'IBM' order by p.position1.secId", "select distinct  key.status as st from /portfolio1 key where key.ID > 5 order by key.status", "select distinct  key.status as st from /portfolio1 key where key.status = 'inactive' order by key.status desc, key.ID"
-
+      "select distinct status as st from /portfolio1 where ID > 0 order by status",
+      "select distinct p.status as st from /portfolio1 p where ID > 0 and status = 'inactive' order by p.status",
+      "select distinct p.position1.secId as st from /portfolio1 p where p.ID > 0 and p.position1.secId != 'IBM' order by p.position1.secId",
+      "select distinct  key.status as st from /portfolio1 key where key.ID > 5 order by key.status",
+      "select distinct  key.status as st from /portfolio1 key where key.status = 'inactive' order by key.status desc, key.ID"
     };
     Object r[][] = new Object[queries.length][2];
     QueryService qs;
@@ -681,46 +707,118 @@ public class OrderByReplicatedJUnitTest extends OrderByTestImplementation {
 
   public String[] getQueriesForLimitNotAppliedIfOrderByNotUsingIndex() {
     String queries[] = {
-        // Test case No. IUMR021
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '2' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '3' and ID != 10 order by ID desc, pkid desc limit 10",
-
-        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
-        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '2' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5",
-        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '3' and ID != 10 order by ID desc, pkid desc limit 10"
-
+      // Test case No. IUMR021
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '2' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '3' and ID != 10 order by ID desc, pkid desc limit 10",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '2' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '3' and ID != 10 order by ID desc, pkid desc limit 10"
     };
     return queries;
-
   }
 
   public String[] getQueriesForMultiColOrderByWithIndexResultWithProjection() {
     String queries[] = {
-        // Test case No. IUMR021
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid desc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid desc limit 5 ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc, pkid asc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid asc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc limit 10",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid desc limit 10",
-
-        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid asc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid desc", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid asc ",
-        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid desc limit 5 ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc, pkid asc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid desc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid asc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc limit 10",
-        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid desc limit 10", };
+      // Test case No. IUMR021
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid asc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc , pkid desc",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid asc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid desc",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid asc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid desc limit 5 ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc limit 10",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid desc limit 10",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid asc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc , pkid desc",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid asc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid desc",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid asc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 order by ID desc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 order by ID asc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID asc, pkid desc limit 5 ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 10 and ID < 20 order by ID desc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID desc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID >= 10 and ID <= 20 order by ID asc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID != 10 order by ID asc , pkid desc limit 10",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID != 10 order by ID desc, pkid desc limit 10",
+    };
     return queries;
   }
 
   public String[] getQueriesForMultiColOrderByWithMultiIndexResultProjection() {
     String queries[] = {
-        // Test case No. IUMR021
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '2' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10", "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '3' and ID != 10 order by ID desc, pkid desc limit 10",
-
-        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
-        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5",
-        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10", "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '2' and ID != 10 order by ID desc, pkid desc limit 10"
-
+      // Test case No. IUMR021
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '2' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10",
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where pkid > '3' and ID != 10 order by ID desc, pkid desc limit 10",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '12' and ID > 10 order by ID desc, pkid asc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID > 10 order by ID asc, pkid desc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '13'and  ID > 10 and ID < 20 order by ID asc, pkid asc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid <'9' and ID > 10 and ID < 20 order by ID desc , pkid desc",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '15' and ID >= 10 and ID <= 20 order by ID desc, pkid desc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and pkid <='9' and ID >= 10 and ID <= 20 order by ID asc, pkid asc",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID asc, pkid asc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID != 10 order by ID desc, pkid desc ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '17' and ID > 10 order by ID desc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '17' and ID > 10 order by ID asc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid < '7' and ID > 10 and ID < 20 order by ID asc, pkid asc limit 5 ",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid = '18' and ID > 10 and ID < 20 order by ID desc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '1' and ID >= 10 and ID <= 20 order by ID desc, pkid asc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid != '17' and ID >= 10 and ID <= 20 order by ID asc, pkid desc limit 5",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '0' and ID != 10 order by ID asc, pkid asc limit 10",
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where pkid > '2' and ID != 10 order by ID desc, pkid desc limit 10"
     };
     return queries;
   }
-
 }

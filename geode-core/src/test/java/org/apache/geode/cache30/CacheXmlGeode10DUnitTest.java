@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-/**
- * 
- */
+/** */
 package org.apache.geode.cache30;
 
 import static org.apache.geode.distributed.ConfigurationProperties.*;
@@ -106,19 +104,26 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
     assertNotNull(regionBefore);
     assertEquals(true, regionBefore.getAttributes().getOffHeap());
 
-    IgnoredException expectedException = IgnoredException.addIgnoredException(LocalizedStrings.LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED.toLocalizedString("/" + regionName));
+    IgnoredException expectedException =
+        IgnoredException.addIgnoredException(
+            LocalizedStrings
+                .LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED
+                .toLocalizedString("/" + regionName));
     try {
       testXml(cache);
     } catch (IllegalStateException e) {
       // expected
-      String msg = LocalizedStrings.LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED.toLocalizedString("/" + regionName);
+      String msg =
+          LocalizedStrings
+              .LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED
+              .toLocalizedString("/" + regionName);
       assertEquals(msg, e.getMessage());
     } finally {
       expectedException.remove();
     }
   }
 
-  @SuppressWarnings({ "rawtypes", "deprecation", "unchecked" })
+  @SuppressWarnings({"rawtypes", "deprecation", "unchecked"})
   @Test
   public void testEnableOffHeapMemorySubRegionWithoutOffHeapMemoryThrowsException() {
     final String rootRegionName = getUniqueName();
@@ -140,12 +145,19 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
     assertNotNull(subRegionBefore);
     assertEquals(true, subRegionBefore.getAttributes().getOffHeap());
 
-    IgnoredException expectedException = IgnoredException.addIgnoredException(LocalizedStrings.LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED.toLocalizedString("/" + rootRegionName + "/" + subRegionName));
+    IgnoredException expectedException =
+        IgnoredException.addIgnoredException(
+            LocalizedStrings
+                .LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED
+                .toLocalizedString("/" + rootRegionName + "/" + subRegionName));
     try {
       testXml(cache);
     } catch (IllegalStateException e) {
       // expected
-      final String msg = LocalizedStrings.LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED.toLocalizedString("/" + rootRegionName + "/" + subRegionName);
+      final String msg =
+          LocalizedStrings
+              .LocalRegion_THE_REGION_0_WAS_CONFIGURED_TO_USE_OFF_HEAP_MEMORY_BUT_OFF_HEAP_NOT_CONFIGURED
+              .toLocalizedString("/" + rootRegionName + "/" + subRegionName);
       assertEquals(msg, e.getMessage());
     } finally {
       expectedException.remove();
@@ -153,8 +165,9 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
   }
 
   /**
-   * Test the ResourceManager element's critical-off-heap-percentage and 
+   * Test the ResourceManager element's critical-off-heap-percentage and
    * eviction-off-heap-percentage attributes
+   *
    * @throws Exception
    */
   @Test
@@ -196,7 +209,10 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
       rmc.setEvictionOffHeapPercentage(high);
       rmc.setCriticalOffHeapPercentage(low);
       cache.setResourceManagerCreation(rmc);
-      IgnoredException expectedException = IgnoredException.addIgnoredException(LocalizedStrings.MemoryMonitor_EVICTION_PERCENTAGE_LTE_CRITICAL_PERCENTAGE.toLocalizedString());
+      IgnoredException expectedException =
+          IgnoredException.addIgnoredException(
+              LocalizedStrings.MemoryMonitor_EVICTION_PERCENTAGE_LTE_CRITICAL_PERCENTAGE
+                  .toLocalizedString());
       try {
         testXml(cache);
         assertTrue(false);
@@ -307,11 +323,8 @@ public class CacheXmlGeode10DUnitTest extends CacheXml81DUnitTest {
       return true;
     }
 
-    public void close() {
-    }
+    public void close() {}
 
-    public void init(Properties properties) {
-    }
+    public void init(Properties properties) {}
   }
-
 }

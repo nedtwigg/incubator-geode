@@ -31,9 +31,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Unit tests for {@link SerializableTimeout}.
- */
+/** Unit tests for {@link SerializableTimeout}. */
 @Category(UnitTest.class)
 public class SerializableTimeoutTest {
 
@@ -67,11 +65,16 @@ public class SerializableTimeoutTest {
     TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     boolean lookingForStuckThread = false;
 
-    SerializableTimeout instance = SerializableTimeout.builder().withTimeout(timeout, timeUnit).withLookingForStuckThread(lookingForStuckThread).build();
+    SerializableTimeout instance =
+        SerializableTimeout.builder()
+            .withTimeout(timeout, timeUnit)
+            .withLookingForStuckThread(lookingForStuckThread)
+            .build();
 
     assertThat(readField(Timeout.class, instance, FIELD_TIMEOUT)).isEqualTo(timeout);
     assertThat(readField(Timeout.class, instance, FIELD_TIME_UNIT)).isEqualTo(timeUnit);
-    assertThat(readField(Timeout.class, instance, FIELD_LOOK_FOR_STUCK_THREAD)).isEqualTo(lookingForStuckThread);
+    assertThat(readField(Timeout.class, instance, FIELD_LOOK_FOR_STUCK_THREAD))
+        .isEqualTo(lookingForStuckThread);
   }
 
   @Test
@@ -85,16 +88,22 @@ public class SerializableTimeoutTest {
     TimeUnit timeUnit = TimeUnit.SECONDS;
     boolean lookingForStuckThread = true;
 
-    SerializableTimeout instance = SerializableTimeout.builder().withTimeout(timeout, timeUnit).withLookingForStuckThread(lookingForStuckThread).build();
+    SerializableTimeout instance =
+        SerializableTimeout.builder()
+            .withTimeout(timeout, timeUnit)
+            .withLookingForStuckThread(lookingForStuckThread)
+            .build();
 
     assertThat(readField(Timeout.class, instance, FIELD_TIMEOUT)).isEqualTo(timeout);
     assertThat(readField(Timeout.class, instance, FIELD_TIME_UNIT)).isEqualTo(timeUnit);
-    assertThat(readField(Timeout.class, instance, FIELD_LOOK_FOR_STUCK_THREAD)).isEqualTo(lookingForStuckThread);
+    assertThat(readField(Timeout.class, instance, FIELD_LOOK_FOR_STUCK_THREAD))
+        .isEqualTo(lookingForStuckThread);
 
     SerializableTimeout cloned = (SerializableTimeout) SerializationUtils.clone(instance);
 
     assertThat(readField(Timeout.class, cloned, FIELD_TIMEOUT)).isEqualTo(timeout);
     assertThat(readField(Timeout.class, cloned, FIELD_TIME_UNIT)).isEqualTo(timeUnit);
-    assertThat(readField(Timeout.class, cloned, FIELD_LOOK_FOR_STUCK_THREAD)).isEqualTo(lookingForStuckThread);
+    assertThat(readField(Timeout.class, cloned, FIELD_LOOK_FOR_STUCK_THREAD))
+        .isEqualTo(lookingForStuckThread);
   }
 }

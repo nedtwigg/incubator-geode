@@ -25,9 +25,8 @@ import org.apache.geode.test.process.ProcessWrapper;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
 /**
- * Verifies that test output containing an unexpected extra line
- * will fail with that line as the failure message.
- * 
+ * Verifies that test output containing an unexpected extra line will fail with that line as the
+ * failure message.
  */
 @Category(IntegrationTest.class)
 public class FailWithExtraLineInOutputJUnitTest extends FailOutputTestCase {
@@ -42,12 +41,20 @@ public class FailWithExtraLineInOutputJUnitTest extends FailOutputTestCase {
     System.out.println(message);
   }
 
-  /**
-   * Process output has an extra line and should fail
-   */
+  /** Process output has an extra line and should fail */
   @Test
   public void testFailWithExtraLineInOutput() throws Exception {
-    final String goldenString = "Begin " + name() + ".main" + "\n" + "Press Enter to continue." + "\n" + "End " + name() + ".main" + "\n";
+    final String goldenString =
+        "Begin "
+            + name()
+            + ".main"
+            + "\n"
+            + "Press Enter to continue."
+            + "\n"
+            + "End "
+            + name()
+            + ".main"
+            + "\n";
     debug(goldenString, "GOLDEN");
 
     final ProcessWrapper process = createProcessWrapper(new ProcessWrapper.Builder(), getClass());

@@ -37,9 +37,11 @@ import org.apache.geode.management.internal.cli.util.MemberNotFoundException;
 import org.springframework.shell.core.CommandMarker;
 
 /**
- * The AbstractCommandsSupport class is an abstract base class encapsulating common functionality for implementing
- * command classes with command for the GemFire shell (gfsh).
+ * The AbstractCommandsSupport class is an abstract base class encapsulating common functionality
+ * for implementing command classes with command for the GemFire shell (gfsh).
+ *
  * <p>
+ *
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.execute.FunctionService
  * @see org.apache.geode.distributed.DistributedMember
@@ -50,19 +52,22 @@ import org.springframework.shell.core.CommandMarker;
 @SuppressWarnings("unused")
 public abstract class AbstractCommandsSupport implements CommandMarker {
 
-  protected static void assertArgument(final boolean valid, final String message, final Object... args) {
+  protected static void assertArgument(
+      final boolean valid, final String message, final Object... args) {
     if (!valid) {
       throw new IllegalArgumentException(String.format(message, args));
     }
   }
 
-  protected static void assertNotNull(final Object obj, final String message, final Object... args) {
+  protected static void assertNotNull(
+      final Object obj, final String message, final Object... args) {
     if (obj == null) {
       throw new NullPointerException(String.format(message, args));
     }
   }
 
-  protected static void assertState(final boolean valid, final String message, final Object... args) {
+  protected static void assertState(
+      final boolean valid, final String message, final Object... args) {
     if (!valid) {
       throw new IllegalStateException(String.format(message, args));
     }
@@ -72,8 +77,11 @@ public abstract class AbstractCommandsSupport implements CommandMarker {
     return (CliMetaData.ANNOTATION_DEFAULT_VALUE.equals(from) ? to : from);
   }
 
-  protected static String toString(final Boolean condition, final String trueValue, final String falseValue) {
-    return (Boolean.TRUE.equals(condition) ? StringUtils.defaultIfBlank(trueValue, "true") : StringUtils.defaultIfBlank(falseValue, "false"));
+  protected static String toString(
+      final Boolean condition, final String trueValue, final String falseValue) {
+    return (Boolean.TRUE.equals(condition)
+        ? StringUtils.defaultIfBlank(trueValue, "true")
+        : StringUtils.defaultIfBlank(falseValue, "false"));
   }
 
   protected static String toString(final Throwable t, final boolean printStackTrace) {
@@ -111,20 +119,23 @@ public abstract class AbstractCommandsSupport implements CommandMarker {
   @SuppressWarnings("deprecated")
   protected DistributedMember getMember(final Cache cache, final String memberName) {
     for (final DistributedMember member : getMembers(cache)) {
-      if (memberName.equalsIgnoreCase(member.getName()) || memberName.equalsIgnoreCase(member.getId())) {
+      if (memberName.equalsIgnoreCase(member.getName())
+          || memberName.equalsIgnoreCase(member.getId())) {
         return member;
       }
     }
 
-    throw new MemberNotFoundException(CliStrings.format(CliStrings.MEMBER_NOT_FOUND_ERROR_MESSAGE, memberName));
+    throw new MemberNotFoundException(
+        CliStrings.format(CliStrings.MEMBER_NOT_FOUND_ERROR_MESSAGE, memberName));
   }
 
   /**
    * Gets all members in the GemFire distributed system/cache.
-   * </p>
+   *
    * @param cache the GemFire cache.
    * @return all members in the GemFire distributed system/cache.
-   * @see org.apache.geode.management.internal.cli.CliUtil#getAllMembers(org.apache.geode.cache.Cache)
+   * @see
+   *     org.apache.geode.management.internal.cli.CliUtil#getAllMembers(org.apache.geode.cache.Cache)
    * @deprecated use CliUtil.getAllMembers(org.apache.geode.cache.Cache) instead
    */
   @Deprecated
@@ -190,5 +201,4 @@ public abstract class AbstractCommandsSupport implements CommandMarker {
 
     return function;
   }
-
 }

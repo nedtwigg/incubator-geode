@@ -17,24 +17,20 @@
 package org.apache.geode.cache.execute;
 
 /**
- * Application developers can extend this class instead of implementing the
- * {@link Function} interface.
- * 
- * <p>
- * This implementation provides the following defaults
- * </p>
+ * Application developers can extend this class instead of implementing the {@link Function}
+ * interface.
+ *
+ * <p>This implementation provides the following defaults
+ *
  * <ol>
- * <li>{@link Function#hasResult()} returns true</li>
- * <li>{@link Function#optimizeForWrite()} returns false</li>
- * <li>{@link Function#isHA()} returns true</li>
+ *   <li>{@link Function#hasResult()} returns true
+ *   <li>{@link Function#optimizeForWrite()} returns false
+ *   <li>{@link Function#isHA()} returns true
  * </ol>
- * </p>
- * 
+ *
  * @since GemFire 6.0
  * @see Function
- * @deprecated Use {@link Function} instead. Function has default
- * methods that now mimic the behavior of FunctionAdapter.
- * 
+ * @deprecated Use {@link Function} instead. Function has default methods that now mimic the
+ *     behavior of FunctionAdapter.
  */
-public abstract class FunctionAdapter implements Function {
-}
+public abstract class FunctionAdapter implements Function {}

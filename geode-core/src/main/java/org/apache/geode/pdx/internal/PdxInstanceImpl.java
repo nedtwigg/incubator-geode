@@ -49,23 +49,21 @@ import org.apache.geode.pdx.PdxSerializationException;
 import org.apache.geode.pdx.WritablePdxInstance;
 
 /**
- * Implementation code in this class must be careful to not directly call
- * super class state. Instead it must call {@link #getUnmodifiableReader()} and
- * access the super class state using it.
- * This class could be changed to not extend PdxReaderImpl but to instead have
- * an instance variable that is a PdxReaderImpl but that would cause this class
- * to use more memory.
- * 
- * We do not use this normal java io serialization
- * when serializing this class in GemFire because Sendable takes precedence over Serializable.
- * 
+ * Implementation code in this class must be careful to not directly call super class state. Instead
+ * it must call {@link #getUnmodifiableReader()} and access the super class state using it. This
+ * class could be changed to not extend PdxReaderImpl but to instead have an instance variable that
+ * is a PdxReaderImpl but that would cause this class to use more memory.
  *
+ * <p>We do not use this normal java io serialization when serializing this class in GemFire because
+ * Sendable takes precedence over Serializable.
  */
-public class PdxInstanceImpl extends PdxReaderImpl implements PdxInstance, Sendable, ConvertableToBytes {
+public class PdxInstanceImpl extends PdxReaderImpl
+    implements PdxInstance, Sendable, ConvertableToBytes {
 
   private static final long serialVersionUID = -1669268527103938431L;
 
-  private static final boolean USE_STATIC_MAPPER = Boolean.getBoolean("PdxInstance.use-static-mapper");
+  private static final boolean USE_STATIC_MAPPER =
+      Boolean.getBoolean("PdxInstance.use-static-mapper");
 
   static final ObjectMapper mapper = USE_STATIC_MAPPER ? createObjectMapper() : null;
 
@@ -73,22 +71,22 @@ public class PdxInstanceImpl extends PdxReaderImpl implements PdxInstance, Senda
     ObjectMapper mapper = new ObjectMapper();
     mapper.setDateFormat(new SimpleDateFormat("MM/dd/yyyy"));
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    mapper.configure(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+    mapper.configure(
+        com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
     return mapper;
   }
 
   private transient volatile Object cachedObjectForm;
 
   /**
-   * Computes the hash code once and stores it. This is added to address the
-   * issue of identity value getting changed for each hash code call (as new objects
-   * instances are created in each call for the same object). 
-   * The value 0 means the hash code is not yet computed (this avoids using 
-   * extra variable for this), if the computation returns 0, it will be set to 1. This 
-   * doesn't break the equality rule, where hash code can be same for non-equal
-   * objects. 
+   * Computes the hash code once and stores it. This is added to address the issue of identity value
+   * getting changed for each hash code call (as new objects instances are created in each call for
+   * the same object). The value 0 means the hash code is not yet computed (this avoids using extra
+   * variable for this), if the computation returns 0, it will be set to 1. This doesn't break the
+   * equality rule, where hash code can be same for non-equal objects.
    */
   private static final int UNUSED_HASH_CODE = 0;
+
   private transient volatile int cachedHashCode = UNUSED_HASH_CODE;
 
   private static final ThreadLocal<Boolean> pdxGetObjectInProgress = new ThreadLocal<Boolean>();
@@ -146,7 +144,9 @@ public class PdxInstanceImpl extends PdxReaderImpl implements PdxInstance, Senda
   private PdxWriterImpl convertToTypeWithNoDeletedFields(PdxReaderImpl ur) {
     PdxOutputStream os = new PdxOutputStream();
     PdxType pt = new PdxType(ur.getPdxType().getClassName(), !ur.getPdxType().getNoDomainClass());
-    GemFireCacheImpl gfc = GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.");
+    GemFireCacheImpl gfc =
+        GemFireCacheImpl.getForPdx(
+            "PDX registry is unavailable because the Cache has been closed.");
     TypeRegistry tr = gfc.getPdxRegistry();
     PdxWriterImpl writer = new PdxWriterImpl(pt, tr, os);
     for (PdxField field : pt.getFields()) {
@@ -225,10 +225,12 @@ public class PdxInstanceImpl extends PdxReaderImpl implements PdxInstance, Senda
           try {
             String JSON = JSONFormatter.toJSON(this);
             ObjectMapper objMapper = USE_STATIC_MAPPER ? mapper : createObjectMapper();
-            Object classInstance = objMapper.readValue(JSON, ClassPathLoader.getLatest().forName(className));
+            Object classInstance =
+                objMapper.readValue(JSON, ClassPathLoader.getLatest().forName(className));
             return classInstance;
           } catch (Exception e) {
-            throw new PdxSerializationException("Could not deserialize as java class type could not resolved", e);
+            throw new PdxSerializationException(
+                "Could not deserialize as java class type could not resolved", e);
           }
         }
       }
@@ -260,59 +262,62 @@ public class PdxInstanceImpl extends PdxReaderImpl implements PdxInstance, Senda
     int hashCode = 1;
     for (PdxField ft : fields) {
       switch (ft.getFieldType()) {
-      case CHAR:
-      case BOOLEAN:
-      case BYTE:
-      case SHORT:
-      case INT:
-      case LONG:
-      case DATE:
-      case FLOAT:
-      case DOUBLE:
-      case STRING:
-      case BOOLEAN_ARRAY:
-      case CHAR_ARRAY:
-      case BYTE_ARRAY:
-      case SHORT_ARRAY:
-      case INT_ARRAY:
-      case LONG_ARRAY:
-      case FLOAT_ARRAY:
-      case DOUBLE_ARRAY:
-      case STRING_ARRAY:
-      case ARRAY_OF_BYTE_ARRAYS: {
-        ByteSource buffer = ur.getRaw(ft);
-        if (!buffer.equals(ByteSourceFactory.create(ft.getFieldType().getDefaultBytes()))) {
-          hashCode = hashCode * 31 + buffer.hashCode();
-        }
-        break;
-      }
-      case OBJECT_ARRAY: {
-        Object[] oArray = ur.readObjectArray(ft);
-        if (oArray != null) {
-          // default value of null does not modify hashCode.
-          hashCode = hashCode * 31 + Arrays.deepHashCode(oArray);
-        }
-        break;
-      }
-      case OBJECT: {
-        Object objectValue = ur.readObject(ft);
-        if (objectValue == null) {
-          // default value of null does not modify hashCode.
-        } else if (objectValue.getClass().isArray()) {
-          Class<?> myComponentType = objectValue.getClass().getComponentType();
-          if (myComponentType.isPrimitive()) {
-            ByteSource buffer = getRaw(ft);
-            hashCode = hashCode * 31 + buffer.hashCode();
-          } else {
-            hashCode = hashCode * 31 + Arrays.deepHashCode((Object[]) objectValue);
+        case CHAR:
+        case BOOLEAN:
+        case BYTE:
+        case SHORT:
+        case INT:
+        case LONG:
+        case DATE:
+        case FLOAT:
+        case DOUBLE:
+        case STRING:
+        case BOOLEAN_ARRAY:
+        case CHAR_ARRAY:
+        case BYTE_ARRAY:
+        case SHORT_ARRAY:
+        case INT_ARRAY:
+        case LONG_ARRAY:
+        case FLOAT_ARRAY:
+        case DOUBLE_ARRAY:
+        case STRING_ARRAY:
+        case ARRAY_OF_BYTE_ARRAYS:
+          {
+            ByteSource buffer = ur.getRaw(ft);
+            if (!buffer.equals(ByteSourceFactory.create(ft.getFieldType().getDefaultBytes()))) {
+              hashCode = hashCode * 31 + buffer.hashCode();
+            }
+            break;
           }
-        } else {
-          hashCode = hashCode * 31 + objectValue.hashCode();
-        }
-        break;
-      }
-      default:
-        throw new InternalGemFireException("Unhandled field type " + ft.getFieldType());
+        case OBJECT_ARRAY:
+          {
+            Object[] oArray = ur.readObjectArray(ft);
+            if (oArray != null) {
+              // default value of null does not modify hashCode.
+              hashCode = hashCode * 31 + Arrays.deepHashCode(oArray);
+            }
+            break;
+          }
+        case OBJECT:
+          {
+            Object objectValue = ur.readObject(ft);
+            if (objectValue == null) {
+              // default value of null does not modify hashCode.
+            } else if (objectValue.getClass().isArray()) {
+              Class<?> myComponentType = objectValue.getClass().getComponentType();
+              if (myComponentType.isPrimitive()) {
+                ByteSource buffer = getRaw(ft);
+                hashCode = hashCode * 31 + buffer.hashCode();
+              } else {
+                hashCode = hashCode * 31 + Arrays.deepHashCode((Object[]) objectValue);
+              }
+            } else {
+              hashCode = hashCode * 31 + objectValue.hashCode();
+            }
+            break;
+          }
+        default:
+          throw new InternalGemFireException("Unhandled field type " + ft.getFieldType());
       }
     }
     int result = (hashCode == UNUSED_HASH_CODE) ? (hashCode + 1) : hashCode;
@@ -322,8 +327,7 @@ public class PdxInstanceImpl extends PdxReaderImpl implements PdxInstance, Senda
 
   @Override
   public boolean equals(Object obj) {
-    if (obj == this)
-      return true;
+    if (obj == this) return true;
 
     if (obj == null) {
       //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#0 o1=<" + this + "> o2=<" + obj + ">");
@@ -361,99 +365,102 @@ public class PdxInstanceImpl extends PdxReaderImpl implements PdxInstance, Senda
       PdxField otherType = otherFieldIterator.next();
 
       switch (myType.getFieldType()) {
-      case CHAR:
-      case BOOLEAN:
-      case BYTE:
-      case SHORT:
-      case INT:
-      case LONG:
-      case DATE:
-      case FLOAT:
-      case DOUBLE:
-      case STRING:
-      case BOOLEAN_ARRAY:
-      case CHAR_ARRAY:
-      case BYTE_ARRAY:
-      case SHORT_ARRAY:
-      case INT_ARRAY:
-      case LONG_ARRAY:
-      case FLOAT_ARRAY:
-      case DOUBLE_ARRAY:
-      case STRING_ARRAY:
-      case ARRAY_OF_BYTE_ARRAYS: {
-        ByteSource myBuffer = ur1.getRaw(myType);
-        ByteSource otherBuffer = ur2.getRaw(otherType);
-        if (!myBuffer.equals(otherBuffer)) {
-          //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#4 o1=<" + this + "> o2=<" + obj + ">");
-          return false;
-        }
-      }
-        break;
-
-      case OBJECT_ARRAY: {
-        Object[] myArray = ur1.readObjectArray(myType);
-        Object[] otherArray = ur2.readObjectArray(otherType);
-        if (!Arrays.deepEquals(myArray, otherArray)) {
-          //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#5 o1=<" + this + "> o2=<" + obj + ">");
-          return false;
-        }
-      }
-        break;
-
-      case OBJECT: {
-        Object myObject = ur1.readObject(myType);
-        Object otherObject = ur2.readObject(otherType);
-        if (myObject != otherObject) {
-          if (myObject == null) {
-            //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#6 o1=<" + this + "> o2=<" + obj + ">");
-            return false;
-          }
-          if (otherObject == null) {
-            //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#7 o1=<" + this + "> o2=<" + obj + ">");
-            return false;
-          }
-          if (myObject.getClass().isArray()) { // for bug 42976
-            Class<?> myComponentType = myObject.getClass().getComponentType();
-            Class<?> otherComponentType = otherObject.getClass().getComponentType();
-            if (!myComponentType.equals(otherComponentType)) {
-              //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#8 o1=<" + this + "> o2=<" + obj + ">");
+        case CHAR:
+        case BOOLEAN:
+        case BYTE:
+        case SHORT:
+        case INT:
+        case LONG:
+        case DATE:
+        case FLOAT:
+        case DOUBLE:
+        case STRING:
+        case BOOLEAN_ARRAY:
+        case CHAR_ARRAY:
+        case BYTE_ARRAY:
+        case SHORT_ARRAY:
+        case INT_ARRAY:
+        case LONG_ARRAY:
+        case FLOAT_ARRAY:
+        case DOUBLE_ARRAY:
+        case STRING_ARRAY:
+        case ARRAY_OF_BYTE_ARRAYS:
+          {
+            ByteSource myBuffer = ur1.getRaw(myType);
+            ByteSource otherBuffer = ur2.getRaw(otherType);
+            if (!myBuffer.equals(otherBuffer)) {
+              //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#4 o1=<" + this + "> o2=<" + obj + ">");
               return false;
             }
-            if (myComponentType.isPrimitive()) {
-              ByteSource myBuffer = getRaw(myType);
-              ByteSource otherBuffer = other.getRaw(otherType);
-              if (!myBuffer.equals(otherBuffer)) {
-                //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#9 o1=<" + this + "> o2=<" + obj + ">");
+          }
+          break;
+
+        case OBJECT_ARRAY:
+          {
+            Object[] myArray = ur1.readObjectArray(myType);
+            Object[] otherArray = ur2.readObjectArray(otherType);
+            if (!Arrays.deepEquals(myArray, otherArray)) {
+              //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#5 o1=<" + this + "> o2=<" + obj + ">");
+              return false;
+            }
+          }
+          break;
+
+        case OBJECT:
+          {
+            Object myObject = ur1.readObject(myType);
+            Object otherObject = ur2.readObject(otherType);
+            if (myObject != otherObject) {
+              if (myObject == null) {
+                //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#6 o1=<" + this + "> o2=<" + obj + ">");
                 return false;
               }
-            } else {
-              if (!Arrays.deepEquals((Object[]) myObject, (Object[]) otherObject)) {
-                //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#10 o1=<" + this + "> o2=<" + obj + ">");
+              if (otherObject == null) {
+                //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#7 o1=<" + this + "> o2=<" + obj + ">");
+                return false;
+              }
+              if (myObject.getClass().isArray()) { // for bug 42976
+                Class<?> myComponentType = myObject.getClass().getComponentType();
+                Class<?> otherComponentType = otherObject.getClass().getComponentType();
+                if (!myComponentType.equals(otherComponentType)) {
+                  //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#8 o1=<" + this + "> o2=<" + obj + ">");
+                  return false;
+                }
+                if (myComponentType.isPrimitive()) {
+                  ByteSource myBuffer = getRaw(myType);
+                  ByteSource otherBuffer = other.getRaw(otherType);
+                  if (!myBuffer.equals(otherBuffer)) {
+                    //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#9 o1=<" + this + "> o2=<" + obj + ">");
+                    return false;
+                  }
+                } else {
+                  if (!Arrays.deepEquals((Object[]) myObject, (Object[]) otherObject)) {
+                    //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#10 o1=<" + this + "> o2=<" + obj + ">");
+                    return false;
+                  }
+                }
+              } else if (!myObject.equals(otherObject)) {
+                //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#11 fn=" + myType.getFieldName() + " myFieldClass=" + myObject.getClass() + " otherFieldCLass=" + otherObject.getClass() + " o1=<" + this + "> o2=<" + obj + ">" + "myObj=<" + myObject + "> otherObj=<" + otherObject + ">");
                 return false;
               }
             }
-          } else if (!myObject.equals(otherObject)) {
-            //GemFireCacheImpl.getInstance().getLogger().info("DEBUG equals#11 fn=" + myType.getFieldName() + " myFieldClass=" + myObject.getClass() + " otherFieldCLass=" + otherObject.getClass() + " o1=<" + this + "> o2=<" + obj + ">" + "myObj=<" + myObject + "> otherObj=<" + otherObject + ">");
-            return false;
           }
-        }
-      }
-        break;
+          break;
 
-      default:
-        throw new InternalGemFireException("Unhandled field type " + myType.getFieldType());
+        default:
+          throw new InternalGemFireException("Unhandled field type " + myType.getFieldType());
       }
     }
     return true;
   }
 
   /**
-   * Any fields that are in otherFields but not in myFields
-   * are added to myFields as defaults. When adding fields they
-   * are inserted in the natural sort order.
-   * Note: myFields may be modified by this call.
+   * Any fields that are in otherFields but not in myFields are added to myFields as defaults. When
+   * adding fields they are inserted in the natural sort order. Note: myFields may be modified by
+   * this call.
    */
-  private static void addDefaultFields(SortedSet<PdxField> myFields, SortedSet<PdxField> otherFields) {
+  private static void addDefaultFields(
+      SortedSet<PdxField> myFields, SortedSet<PdxField> otherFields) {
     for (PdxField f : otherFields) {
       if (!myFields.contains(f)) {
         myFields.add(new DefaultPdxField(f));
@@ -465,7 +472,11 @@ public class PdxInstanceImpl extends PdxReaderImpl implements PdxInstance, Senda
   public String toString() {
     StringBuilder result = new StringBuilder();
     PdxReaderImpl ur = getUnmodifiableReader();
-    result.append("PDX[").append(ur.getPdxType().getTypeId()).append(",").append(ur.getPdxType().getClassName())
+    result
+        .append("PDX[")
+        .append(ur.getPdxType().getTypeId())
+        .append(",")
+        .append(ur.getPdxType().getClassName())
         //.append(",limit=").append(this.dis.size())
         .append("]{");
     boolean firstElement = true;
@@ -646,12 +657,16 @@ public class PdxInstanceImpl extends PdxReaderImpl implements PdxInstance, Senda
     return getUnmodifiableReader(fieldName).readRawField(fieldName);
   }
 
-  public Object getDefaultValueIfFieldExistsInAnyPdxVersions(String fieldName, String className) throws FieldNotFoundInPdxVersion {
-    PdxType pdxType = GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.").getPdxRegistry().getPdxTypeForField(fieldName, className);
+  public Object getDefaultValueIfFieldExistsInAnyPdxVersions(String fieldName, String className)
+      throws FieldNotFoundInPdxVersion {
+    PdxType pdxType =
+        GemFireCacheImpl.getForPdx("PDX registry is unavailable because the Cache has been closed.")
+            .getPdxRegistry()
+            .getPdxTypeForField(fieldName, className);
     if (pdxType == null) {
-      throw new FieldNotFoundInPdxVersion("PdxType with field " + fieldName + " is not found for class " + className);
+      throw new FieldNotFoundInPdxVersion(
+          "PdxType with field " + fieldName + " is not found for class " + className);
     }
     return pdxType.getPdxField(fieldName).getFieldType().getDefaultValue();
   }
-
 }

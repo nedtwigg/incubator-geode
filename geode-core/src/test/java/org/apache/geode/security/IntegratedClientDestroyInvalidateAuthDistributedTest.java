@@ -29,52 +29,65 @@ import org.apache.geode.test.dunit.AsyncInvocation;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
-public class IntegratedClientDestroyInvalidateAuthDistributedTest extends AbstractSecureServerDUnitTest {
+@Category({DistributedTest.class, SecurityTest.class})
+public class IntegratedClientDestroyInvalidateAuthDistributedTest
+    extends AbstractSecureServerDUnitTest {
 
   @Test
   public void testDestroyInvalidate() throws InterruptedException {
 
     // Delete one key and invalidate another key with an authorized user.
-    AsyncInvocation ai1 = client1.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("dataUser", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai1 =
+        client1.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("dataUser", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
-      assertTrue(region.containsKeyOnServer("key1"));
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              assertTrue(region.containsKeyOnServer("key1"));
 
-      // Destroy key1
-      region.destroy("key1");
-      assertFalse(region.containsKeyOnServer("key1"));
+              // Destroy key1
+              region.destroy("key1");
+              assertFalse(region.containsKeyOnServer("key1"));
 
-      // Invalidate key2
-      assertNotNull("Value of key2 should not be null", region.get("key2"));
-      region.invalidate("key2");
-      assertNull("Value of key2 should have been null", region.get("key2"));
-
-    });
+              // Invalidate key2
+              assertNotNull("Value of key2 should not be null", region.get("key2"));
+              region.invalidate("key2");
+              assertNull("Value of key2 should have been null", region.get("key2"));
+            });
 
     // Delete one key and invalidate another key with an unauthorized user.
-    AsyncInvocation ai2 = client2.invokeAsync(() -> {
-      ClientCache cache = new ClientCacheFactory(createClientProperties("authRegionReader", "1234567")).setPoolSubscriptionEnabled(true).addPoolServer("localhost", serverPort).create();
+    AsyncInvocation ai2 =
+        client2.invokeAsync(
+            () -> {
+              ClientCache cache =
+                  new ClientCacheFactory(createClientProperties("authRegionReader", "1234567"))
+                      .setPoolSubscriptionEnabled(true)
+                      .addPoolServer("localhost", serverPort)
+                      .create();
 
-      Region region = cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
+              Region region =
+                  cache.createClientRegionFactory(ClientRegionShortcut.PROXY).create(REGION_NAME);
 
-      assertTrue(region.containsKeyOnServer("key3"));
+              assertTrue(region.containsKeyOnServer("key3"));
 
-      // Destroy key1
-      assertNotAuthorized(() -> region.destroy("key3"), "DATA:WRITE:AuthRegion");
-      assertTrue(region.containsKeyOnServer("key3"));
+              // Destroy key1
+              assertNotAuthorized(() -> region.destroy("key3"), "DATA:WRITE:AuthRegion");
+              assertTrue(region.containsKeyOnServer("key3"));
 
-      // Invalidate key2
-      assertNotNull("Value of key4 should not be null", region.get("key4"));
-      assertNotAuthorized(() -> region.invalidate("key4"), "DATA:WRITE:AuthRegion");
-      assertNotNull("Value of key4 should not be null", region.get("key4"));
-    });
+              // Invalidate key2
+              assertNotNull("Value of key4 should not be null", region.get("key4"));
+              assertNotAuthorized(() -> region.invalidate("key4"), "DATA:WRITE:AuthRegion");
+              assertNotNull("Value of key4 should not be null", region.get("key4"));
+            });
 
     ai1.join();
     ai2.join();
     ai1.checkException();
     ai2.checkException();
   }
-
 }

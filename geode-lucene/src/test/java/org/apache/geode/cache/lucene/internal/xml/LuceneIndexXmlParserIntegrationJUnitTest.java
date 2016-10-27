@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -54,8 +54,7 @@ import static org.junit.Assert.assertEquals;
 @Category(IntegrationTest.class)
 public class LuceneIndexXmlParserIntegrationJUnitTest {
 
-  @Rule
-  public TestName name = new TestName();
+  @Rule public TestName name = new TestName();
 
   @After
   public void tearDown() {
@@ -65,15 +64,13 @@ public class LuceneIndexXmlParserIntegrationJUnitTest {
     }
   }
 
-  /**
-   * Test that we parse the index fields correctly
-   */
+  /** Test that we parse the index fields correctly */
   @Test
   public void parseIndex() throws FileNotFoundException {
     RegionCreation region = createRegionCreation("region");
     Map<String, String[]> expectedIndexes = new HashMap<String, String[]>();
-    expectedIndexes.put("index1", new String[] { "a", "b", "c", "d" });
-    expectedIndexes.put("index2", new String[] { "f", "g" });
+    expectedIndexes.put("index1", new String[] {"a", "b", "c", "d"});
+    expectedIndexes.put("index2", new String[] {"f", "g"});
     validateExpectedIndexes(region, expectedIndexes);
   }
 
@@ -83,7 +80,7 @@ public class LuceneIndexXmlParserIntegrationJUnitTest {
 
     // Validate expected indexes
     Map<String, String[]> expectedIndexes = new HashMap<String, String[]>();
-    expectedIndexes.put("index", new String[] { "a", "b", "c" });
+    expectedIndexes.put("index", new String[] {"a", "b", "c"});
     validateExpectedIndexes(region, expectedIndexes);
 
     // Validate expected analyzers
@@ -102,7 +99,8 @@ public class LuceneIndexXmlParserIntegrationJUnitTest {
     return (RegionCreation) cache.getRegion(regionName);
   }
 
-  private void validateExpectedIndexes(RegionCreation region, Map<String, String[]> expectedIndexes) {
+  private void validateExpectedIndexes(
+      RegionCreation region, Map<String, String[]> expectedIndexes) {
     for (Extension extension : region.getExtensionPoint().getExtensions()) {
       LuceneIndexCreation index = (LuceneIndexCreation) extension;
       assertEquals("/region", index.getRegionPath());
@@ -111,7 +109,9 @@ public class LuceneIndexXmlParserIntegrationJUnitTest {
     assertEquals(Collections.emptyMap(), expectedIndexes);
   }
 
-  private void validateExpectedAnalyzers(RegionCreation region, Map<String, Map<String, Class<? extends Analyzer>>> expectedIndexAnalyzers) {
+  private void validateExpectedAnalyzers(
+      RegionCreation region,
+      Map<String, Map<String, Class<? extends Analyzer>>> expectedIndexAnalyzers) {
     for (Extension extension : region.getExtensionPoint().getExtensions()) {
       LuceneIndexCreation index = (LuceneIndexCreation) extension;
       expectedIndexAnalyzers.remove(index.getName());
@@ -120,8 +120,8 @@ public class LuceneIndexXmlParserIntegrationJUnitTest {
   }
 
   /**
-   * Test that the Index creation objects get appropriately translated
-   * into a real index.
+   * Test that the Index creation objects get appropriately translated into a real index.
+   *
    * @throws FileNotFoundException
    */
   @Test
@@ -136,13 +136,13 @@ public class LuceneIndexXmlParserIntegrationJUnitTest {
     LuceneIndex index1 = service.getIndex("index1", "/region");
     LuceneIndex index2 = service.getIndex("index2", "/region");
     LuceneIndex index3 = service.getIndex("index3", "/region");
-    assertArrayEquals(index1.getFieldNames(), new String[] { "a", "b", "c", "d" });
-    assertArrayEquals(index2.getFieldNames(), new String[] { "f", "g" });
-    assertArrayEquals(index3.getFieldNames(), new String[] { "h", "i", "j" });
+    assertArrayEquals(index1.getFieldNames(), new String[] {"a", "b", "c", "d"});
+    assertArrayEquals(index2.getFieldNames(), new String[] {"f", "g"});
+    assertArrayEquals(index3.getFieldNames(), new String[] {"h", "i", "j"});
   }
 
   private String getXmlFileForTest() {
-    return TestUtil.getResourcePath(getClass(), getClass().getSimpleName() + "." + name.getMethodName() + ".cache.xml");
+    return TestUtil.getResourcePath(
+        getClass(), getClass().getSimpleName() + "." + name.getMethodName() + ".cache.xml");
   }
-
 }

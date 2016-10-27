@@ -64,53 +64,52 @@ public class Bug34948DUnitTest extends JUnit4CacheTestCase {
     return host.getVM(0);
   }
 
-  static protected Object lastCallback = null;
+  protected static Object lastCallback = null;
 
   private void doCreateOtherVm() {
     VM vm = getOtherVm();
-    vm.invoke(new CacheSerializableRunnable("create root") {
-      public void run2() throws CacheException {
-        getSystem();
-        AttributesFactory af = new AttributesFactory();
-        af.setScope(Scope.DISTRIBUTED_ACK);
-        af.setDataPolicy(DataPolicy.PRELOADED);
-        CacheListener cl = new CacheListenerAdapter() {
-          public void afterCreate(EntryEvent event) {
-            //                   getLogWriter().info("afterCreate " + event.getKey());
-            if (event.getCallbackArgument() != null) {
-              lastCallback = event.getCallbackArgument();
-            }
-          }
+    vm.invoke(
+        new CacheSerializableRunnable("create root") {
+          public void run2() throws CacheException {
+            getSystem();
+            AttributesFactory af = new AttributesFactory();
+            af.setScope(Scope.DISTRIBUTED_ACK);
+            af.setDataPolicy(DataPolicy.PRELOADED);
+            CacheListener cl =
+                new CacheListenerAdapter() {
+                  public void afterCreate(EntryEvent event) {
+                    //                   getLogWriter().info("afterCreate " + event.getKey());
+                    if (event.getCallbackArgument() != null) {
+                      lastCallback = event.getCallbackArgument();
+                    }
+                  }
 
-          public void afterUpdate(EntryEvent event) {
-            //                   getLogWriter().info("afterUpdate " + event.getKey());
-            if (event.getCallbackArgument() != null) {
-              lastCallback = event.getCallbackArgument();
-            }
-          }
+                  public void afterUpdate(EntryEvent event) {
+                    //                   getLogWriter().info("afterUpdate " + event.getKey());
+                    if (event.getCallbackArgument() != null) {
+                      lastCallback = event.getCallbackArgument();
+                    }
+                  }
 
-          public void afterInvalidate(EntryEvent event) {
-            if (event.getCallbackArgument() != null) {
-              lastCallback = event.getCallbackArgument();
-            }
-          }
+                  public void afterInvalidate(EntryEvent event) {
+                    if (event.getCallbackArgument() != null) {
+                      lastCallback = event.getCallbackArgument();
+                    }
+                  }
 
-          public void afterDestroy(EntryEvent event) {
-            if (event.getCallbackArgument() != null) {
-              lastCallback = event.getCallbackArgument();
-            }
+                  public void afterDestroy(EntryEvent event) {
+                    if (event.getCallbackArgument() != null) {
+                      lastCallback = event.getCallbackArgument();
+                    }
+                  }
+                };
+            af.setCacheListener(cl);
+            createRootRegion("bug34948", af.create());
           }
-        };
-        af.setCacheListener(cl);
-        createRootRegion("bug34948", af.create());
-      }
-    });
+        });
   }
 
-  /**
-   * Make sure that value is only deserialized in cache whose application
-   * asks for the value.
-   */
+  /** Make sure that value is only deserialized in cache whose application asks for the value. */
   @Test
   public void testBug34948() throws CacheException {
     final AttributesFactory factory = new AttributesFactory();
@@ -137,8 +136,7 @@ public class Bug34948DUnitTest extends JUnit4CacheTestCase {
   }
 
   public static class HomeBoy implements DataSerializable {
-    public HomeBoy() {
-    }
+    public HomeBoy() {}
 
     public void toData(DataOutput out) throws IOException {
       DistributedMember me = InternalDistributedSystem.getAnyInstance().getDistributedMember();

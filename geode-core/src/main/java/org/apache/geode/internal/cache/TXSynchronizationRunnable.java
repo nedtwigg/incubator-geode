@@ -22,14 +22,12 @@ import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * TXSynchronizationThread manages beforeCompletion and afterCompletion
- * calls on behalf of a client cache.  The thread should be instantiated
- * with a Runnable that invokes beforeCompletion behavior.  Then you
- * must invoke runSecondRunnable() with another Runnable that invokes
- * afterCompletion behavior. 
- * 
- * @since GemFire 6.6
+ * TXSynchronizationThread manages beforeCompletion and afterCompletion calls on behalf of a client
+ * cache. The thread should be instantiated with a Runnable that invokes beforeCompletion behavior.
+ * Then you must invoke runSecondRunnable() with another Runnable that invokes afterCompletion
+ * behavior.
  *
+ * @since GemFire 6.6
  */
 public class TXSynchronizationRunnable implements Runnable {
   private static final Logger logger = LogService.getLogger();
@@ -99,9 +97,7 @@ public class TXSynchronizationRunnable implements Runnable {
     }
   }
 
-  /**
-   * wait for the initial beforeCompletion step to finish
-   */
+  /** wait for the initial beforeCompletion step to finish */
   public void waitForFirstExecution() {
     synchronized (this.firstRunnableSync) {
       while (!this.firstRunnableCompleted) {
@@ -122,9 +118,9 @@ public class TXSynchronizationRunnable implements Runnable {
   }
 
   /**
-   * run the afterCompletion portion of synchronization.  This method
-   * schedules execution of the given runnable and then waits for it to
-   * finish running
+   * run the afterCompletion portion of synchronization. This method schedules execution of the
+   * given runnable and then waits for it to finish running
+   *
    * @param r
    */
   public void runSecondRunnable(Runnable r) {
@@ -148,9 +144,7 @@ public class TXSynchronizationRunnable implements Runnable {
     }
   }
 
-  /**
-   * stop waiting for an afterCompletion to arrive and just exit
-   */
+  /** stop waiting for an afterCompletion to arrive and just exit */
   public void abort() {
     synchronized (this.secondRunnableSync) {
       this.abort = true;

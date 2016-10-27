@@ -19,9 +19,10 @@ package org.apache.geode.internal;
 import java.io.*;
 
 /**
- * Abstract class for subclasses that want to be Externalizable in
- * addition to being DataSerializableFixedID.
- * <p> Note: subclasses must also provide a zero-arg constructor
+ * Abstract class for subclasses that want to be Externalizable in addition to being
+ * DataSerializableFixedID.
+ *
+ * <p>Note: subclasses must also provide a zero-arg constructor
  *
  * @since GemFire 5.7
  */

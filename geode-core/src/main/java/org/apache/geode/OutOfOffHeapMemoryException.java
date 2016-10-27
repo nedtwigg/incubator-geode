@@ -17,28 +17,21 @@
 package org.apache.geode;
 
 /**
- * Indicates that attempts to allocate more objects in off-heap memory has
- * failed and the Cache will be closed to prevent it from losing distributed
- * consistency.
- * 
+ * Indicates that attempts to allocate more objects in off-heap memory has failed and the Cache will
+ * be closed to prevent it from losing distributed consistency.
  */
 public class OutOfOffHeapMemoryException extends CancelException {
   private static final long serialVersionUID = 4111959438738739010L;
 
-  /**
-   * Constructs an <code>OutOfOffHeapMemoryError</code> with no detail message.
-   */
-  public OutOfOffHeapMemoryException() {
-  }
+  /** Constructs an <code>OutOfOffHeapMemoryError</code> with no detail message. */
+  public OutOfOffHeapMemoryException() {}
 
   /**
-   * Constructs an <code>OutOfOffHeapMemoryError</code> with the specified
-   * detail message.
+   * Constructs an <code>OutOfOffHeapMemoryError</code> with the specified detail message.
    *
-   * @param   message   the detail message.
+   * @param message the detail message.
    */
   public OutOfOffHeapMemoryException(String message) {
     super(message);
   }
-
 }

@@ -57,7 +57,8 @@ public class ConstantsJUnitTest {
 
   @Test
   public void testTRUE() throws Exception {
-    Query query = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Portfolios where TRUE");
+    Query query =
+        CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Portfolios where TRUE");
     Object result = query.execute();
     if (!(result instanceof Collection) || ((Collection) result).size() != 4)
       fail(query.getQueryString());
@@ -65,7 +66,8 @@ public class ConstantsJUnitTest {
 
   @Test
   public void testFALSE() throws Exception {
-    Query query = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Portfolios where FALSE");
+    Query query =
+        CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Portfolios where FALSE");
     Object result = query.execute();
     if (!(result instanceof Collection) || ((Collection) result).size() != 0)
       fail(query.getQueryString());
@@ -73,7 +75,8 @@ public class ConstantsJUnitTest {
 
   @Test
   public void testUNDEFINED() throws Exception {
-    Query query = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Portfolios where UNDEFINED");
+    Query query =
+        CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Portfolios where UNDEFINED");
     Object result = query.execute();
     if (!(result instanceof Collection) || ((Collection) result).size() != 0)
       fail(query.getQueryString());
@@ -86,7 +89,8 @@ public class ConstantsJUnitTest {
 
   @Test
   public void testNULL() throws Exception {
-    Query query = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Portfolios where NULL");
+    Query query =
+        CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Portfolios where NULL");
     Object result = query.execute();
     if (!(result instanceof Collection) || ((Collection) result).size() != 0)
       fail(query.getQueryString());

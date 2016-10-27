@@ -75,12 +75,14 @@ public class MiscJUnitTest {
     region.put("1", new Portfolio(1));
     region.put("2", new Portfolio(2));
     region.put("3", new Portfolio(3));
-    Query query = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM (SELECT DISTINCT * FROM /Portfolios where status = 'active') p  where p.ID = 0");
+    Query query =
+        CacheUtils.getQueryService()
+            .newQuery(
+                "SELECT DISTINCT * FROM (SELECT DISTINCT * FROM /Portfolios where status = 'active') p  where p.ID = 0");
     //    DebuggerSupport.waitForJavaDebugger(CacheUtils.getLogger());
     Collection result = (Collection) query.execute();
     Portfolio p = (Portfolio) (result.iterator().next());
-    if (!p.status.equals("active") || p.getID() != 0)
-      fail(query.getQueryString());
+    if (!p.status.equals("active") || p.getID() != 0) fail(query.getQueryString());
   }
 
   @Ignore("TODO: test is disabled")
@@ -91,11 +93,13 @@ public class MiscJUnitTest {
     region.put("1", new Portfolio(1));
     region.put("2", new Portfolio(2));
     region.put("3", new Portfolio(3));
-    Query query = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Portfolios WHERE NOT (SELECT DISTINCT * FROM positions.values p WHERE p.secId = 'IBM').isEmpty");
+    Query query =
+        CacheUtils.getQueryService()
+            .newQuery(
+                "SELECT DISTINCT * FROM /Portfolios WHERE NOT (SELECT DISTINCT * FROM positions.values p WHERE p.secId = 'IBM').isEmpty");
     Collection result = (Collection) query.execute();
     Portfolio p = (Portfolio) (result.iterator().next());
-    if (!p.positions.containsKey("IBM"))
-      fail(query.getQueryString());
+    if (!p.positions.containsKey("IBM")) fail(query.getQueryString());
     //query = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM
     // /Portfolios where status = ELEMENT(SELECT DISTINCT * FROM /Portfolios p
     // where p.ID = 0).status");
@@ -116,25 +120,25 @@ public class MiscJUnitTest {
   public void testVoidMethods() throws Exception {
     Region region = CacheUtils.createRegion("Data", Data.class);
     region.put("0", new Data());
-    Query query = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Data where voidMethod");
+    Query query =
+        CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Data where voidMethod");
     Collection result = (Collection) query.execute();
-    if (result.size() != 0)
-      fail(query.getQueryString());
-    query = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM /Data where voidMethod = null ");
+    if (result.size() != 0) fail(query.getQueryString());
+    query =
+        CacheUtils.getQueryService()
+            .newQuery("SELECT DISTINCT * FROM /Data where voidMethod = null ");
     result = (Collection) query.execute();
-    if (result.size() != 1)
-      fail(query.getQueryString());
+    if (result.size() != 1) fail(query.getQueryString());
   }
 
   @Ignore("TODO: test is disabled")
   @Test
   public void testMiscQueries() throws Exception {
-    String testData[] = { "NULL", "UNDEFINED" };
+    String testData[] = {"NULL", "UNDEFINED"};
     for (int i = 0; i < testData.length; i++) {
       Query query = CacheUtils.getQueryService().newQuery("SELECT DISTINCT * FROM " + testData[i]);
       Object result = query.execute();
-      if (!result.equals(QueryService.UNDEFINED))
-        fail(query.getQueryString());
+      if (!result.equals(QueryService.UNDEFINED)) fail(query.getQueryString());
     }
   }
 
@@ -147,14 +151,14 @@ public class MiscJUnitTest {
     region.put("2", new Portfolio(2));
     region.put("3", new Portfolio(3));
     QueryService qs = CacheUtils.getQueryService();
-    String qStr = "SELECT DISTINCT key: key, iD: entry.value.iD, secId: posnVal.secId  FROM /pos.entries entry, entry.value.positions.values posnVal  WHERE entry.value.\"type\" = 'type0' AND posnVal.secId = 'YHOO'";
+    String qStr =
+        "SELECT DISTINCT key: key, iD: entry.value.iD, secId: posnVal.secId  FROM /pos.entries entry, entry.value.positions.values posnVal  WHERE entry.value.\"type\" = 'type0' AND posnVal.secId = 'YHOO'";
     Query q = qs.newQuery(qStr);
     SelectResults result = (SelectResults) q.execute();
     StructType type = (StructType) result.getCollectionType().getElementType();
     String names[] = type.getFieldNames();
     List list = result.asList();
-    if (list.size() < 1)
-      fail("Test failed as the resultset's size is zero");
+    if (list.size() < 1) fail("Test failed as the resultset's size is zero");
     for (int i = 0; i < list.size(); ++i) {
       Struct stc = (Struct) list.get(i);
       if (!stc.get(names[2]).equals("YHOO")) {
@@ -172,26 +176,40 @@ public class MiscJUnitTest {
     region.put("3", new Portfolio(3));
     QueryService qs = CacheUtils.getQueryService();
     /*String qStr = "Select distinct structset.sos, structset.key " +
-                   "from /portfolios pfos, pfos.positions.values outerPos, " +
-                   "(SELECT DISTINCT key: key, sos: pos.sharesOutstanding "+
-                   "from /portfolios.entries pf, pf.value.positions.values pos " +
-                   "where outerPos.secId != 'IBM' AND " +
-                   "pf.key IN (select distinct * from pf.value.collectionHolderMap['0'].arr)) structset " +
-                    "where structset.sos > 2000";*/
+    "from /portfolios pfos, pfos.positions.values outerPos, " +
+    "(SELECT DISTINCT key: key, sos: pos.sharesOutstanding "+
+    "from /portfolios.entries pf, pf.value.positions.values pos " +
+    "where outerPos.secId != 'IBM' AND " +
+    "pf.key IN (select distinct * from pf.value.collectionHolderMap['0'].arr)) structset " +
+     "where structset.sos > 2000";*/
 
-    String qStr = "Select distinct * from /portfolios pf, pf.positions.values where status = 'active' and secId = 'IBM'";
+    String qStr =
+        "Select distinct * from /portfolios pf, pf.positions.values where status = 'active' and secId = 'IBM'";
     qs.createIndex("index1", IndexType.FUNCTIONAL, "status", "/portfolios pf");
 
-    qs.createIndex("index4", IndexType.FUNCTIONAL, "itr", "/portfolios pf, pf.collectionHolderMap chm, chm.value.arr itr");
-    qs.createIndex("index2", IndexType.FUNCTIONAL, "status", "/portfolios pf, positions.values pos");
+    qs.createIndex(
+        "index4",
+        IndexType.FUNCTIONAL,
+        "itr",
+        "/portfolios pf, pf.collectionHolderMap chm, chm.value.arr itr");
+    qs.createIndex(
+        "index2", IndexType.FUNCTIONAL, "status", "/portfolios pf, positions.values pos");
     qs.createIndex("index3", IndexType.FUNCTIONAL, "secId", "/portfolios pf, positions.values pos");
-    qs.createIndex("index5", IndexType.FUNCTIONAL, "pos.secId", "/portfolios pf, pf.collectionHolderMap chm, chm.value.arr, pf.positions.values pos");
-    qs.createIndex("index6", IndexType.FUNCTIONAL, "status", "/portfolios pf, pf.collectionHolderMap chm");
-    qs.createIndex("index7", IndexType.FUNCTIONAL, "itr", "/portfolios pf, positions.values, pf.collectionHolderMap chm, chm.value.arr itr");
+    qs.createIndex(
+        "index5",
+        IndexType.FUNCTIONAL,
+        "pos.secId",
+        "/portfolios pf, pf.collectionHolderMap chm, chm.value.arr, pf.positions.values pos");
+    qs.createIndex(
+        "index6", IndexType.FUNCTIONAL, "status", "/portfolios pf, pf.collectionHolderMap chm");
+    qs.createIndex(
+        "index7",
+        IndexType.FUNCTIONAL,
+        "itr",
+        "/portfolios pf, positions.values, pf.collectionHolderMap chm, chm.value.arr itr");
     Query q = qs.newQuery(qStr);
     SelectResults result = (SelectResults) q.execute();
-    if (result.size() == 0)
-      fail("Test failed as size is zero");
+    if (result.size() == 0) fail("Test failed as size is zero");
   }
 
   @Test
@@ -202,7 +220,8 @@ public class MiscJUnitTest {
     region.put("2", new Portfolio(2));
     region.put("3", new Portfolio(3));
     QueryService qs = CacheUtils.getQueryService();
-    String qry = "select distinct getID, status from /portfolios pf where getID < 10 order by getID desc";
+    String qry =
+        "select distinct getID, status from /portfolios pf where getID < 10 order by getID desc";
     Query q = qs.newQuery(qry);
     SelectResults result = (SelectResults) q.execute();
     Iterator itr = result.iterator();
@@ -224,12 +243,14 @@ public class MiscJUnitTest {
 
   @Test
   public void testBug40428_1() throws Exception {
-    Object shortData1 = new Object() {
-      public short shortField = 4;
-    };
-    Object shortData2 = new Object() {
-      public short shortField = 5;
-    };
+    Object shortData1 =
+        new Object() {
+          public short shortField = 4;
+        };
+    Object shortData2 =
+        new Object() {
+          public short shortField = 5;
+        };
     Region region = CacheUtils.createRegion("shortFieldTest", Object.class);
     region.put("0", shortData1);
     QueryService qs = CacheUtils.getQueryService();
@@ -247,18 +268,21 @@ public class MiscJUnitTest {
 
   @Test
   public void testBug40428_2() throws Exception {
-    Object shortData1 = new Object() {
-      public short shortField = 4;
-    };
-    Object shortData2 = new Object() {
-      public short shortField = 5;
-    };
+    Object shortData1 =
+        new Object() {
+          public short shortField = 4;
+        };
+    Object shortData2 =
+        new Object() {
+          public short shortField = 5;
+        };
 
     Region region = CacheUtils.createRegion("shortFieldTest", Object.class);
     region.put("0", shortData1);
     QueryService qs = CacheUtils.getQueryService();
     String qry = "select * from /shortFieldTest.entries sf where sf.value.shortField < 10 ";
-    qs.createIndex("shortIndex", IndexType.FUNCTIONAL, "value.shortField", "/shortFieldTest.entries");
+    qs.createIndex(
+        "shortIndex", IndexType.FUNCTIONAL, "value.shortField", "/shortFieldTest.entries");
     region.put("1", shortData2);
     Query query = null;
     Object result = null;
@@ -279,7 +303,8 @@ public class MiscJUnitTest {
     region.put("6", new Portfolio(6));
     region.put("7", new Portfolio(7));
     QueryService qs = CacheUtils.getQueryService();
-    String qry = "select distinct status, getID from /portfolios pf where getID < 10 order by status asc, getID desc";
+    String qry =
+        "select distinct status, getID from /portfolios pf where getID < 10 order by status asc, getID desc";
     Query q = qs.newQuery(qry);
     SelectResults result = (SelectResults) q.execute();
     Iterator itr = result.iterator();
@@ -300,9 +325,7 @@ public class MiscJUnitTest {
     }
   }
 
-  /**
-   * Tests the where clause formed with CompiledComparison nesting
-   */
+  /** Tests the where clause formed with CompiledComparison nesting */
   @Test
   public void testBug40333_InLocalRegion_1() throws Exception {
     CacheUtils.startCache();
@@ -310,14 +333,16 @@ public class MiscJUnitTest {
     AttributesFactory attributesFactory = new AttributesFactory();
     RegionAttributes ra = attributesFactory.create();
     final Region region = cache.createRegion("new_pos", ra);
-    String queryStr = " select distinct r.name, pVal, r.\"type\"  " + " from /new_pos r , r.positions.values pVal where " + "  (r.name='name_11' OR r.name='name_12') AND pVal.mktValue >=1.00";
+    String queryStr =
+        " select distinct r.name, pVal, r.\"type\"  "
+            + " from /new_pos r , r.positions.values pVal where "
+            + "  (r.name='name_11' OR r.name='name_12') AND pVal.mktValue >=1.00";
     this.bug40333Simulation(region, queryStr);
   }
 
   /**
-   * Commented the test as it is for some reason causing OOM when run in the suite.
-   * It is due to presence of PR
-   * Tests the where clause formed with CompiledComparison nesting
+   * Commented the test as it is for some reason causing OOM when run in the suite. It is due to
+   * presence of PR Tests the where clause formed with CompiledComparison nesting
    */
   @Ignore("TODO: test is disabled")
   @Test
@@ -331,13 +356,14 @@ public class MiscJUnitTest {
     attributesFactory.setPartitionAttributes(pa);
     RegionAttributes ra = attributesFactory.create();
     final Region region = cache.createRegion("new_pos", ra);
-    String queryStr = " select distinct r.name, pVal, r.\"type\"  " + " from /new_pos r , r.positions.values pVal where " + "  (r.name='name_11' OR r.name='name_12') AND pVal.mktValue < 1.00";
+    String queryStr =
+        " select distinct r.name, pVal, r.\"type\"  "
+            + " from /new_pos r , r.positions.values pVal where "
+            + "  (r.name='name_11' OR r.name='name_12') AND pVal.mktValue < 1.00";
     this.bug40333Simulation(region, queryStr);
   }
 
-  /**
-   * Tests the where clause formed with CompiledComparison nesting with CompiledIN
-   */
+  /** Tests the where clause formed with CompiledComparison nesting with CompiledIN */
   @Test
   public void testBug40333_InLocalRegion_2() throws Exception {
     CacheUtils.startCache();
@@ -345,14 +371,16 @@ public class MiscJUnitTest {
     AttributesFactory attributesFactory = new AttributesFactory();
     RegionAttributes ra = attributesFactory.create();
     final Region region = cache.createRegion("new_pos", ra);
-    String queryStr = " select distinct r.name, pVal, r.\"type\"  " + " from /new_pos r , r.positions.values pVal where " + " ( r.name IN Set('name_11' , 'name_12') OR false ) AND pVal.mktValue = 1.00";
+    String queryStr =
+        " select distinct r.name, pVal, r.\"type\"  "
+            + " from /new_pos r , r.positions.values pVal where "
+            + " ( r.name IN Set('name_11' , 'name_12') OR false ) AND pVal.mktValue = 1.00";
     this.bug40333Simulation(region, queryStr);
   }
 
   /**
-   * Commented the test as it is for some reason causing OOM when run in the suite.
-   * It is due to presence of PR
-   * Tests the where clause formed with CompiledComparison nesting with CompiledIN
+   * Commented the test as it is for some reason causing OOM when run in the suite. It is due to
+   * presence of PR Tests the where clause formed with CompiledComparison nesting with CompiledIN
    */
   @Ignore("TODO: test is disabled")
   @Test
@@ -366,7 +394,10 @@ public class MiscJUnitTest {
     attributesFactory.setPartitionAttributes(pa);
     RegionAttributes ra = attributesFactory.create();
     final Region region = cache.createRegion("new_pos", ra);
-    String queryStr = " select distinct r.name, pVal, r.\"type\"  " + " from /new_pos r , r.positions.values pVal where " + " ( r.name IN Set('name_11' , 'name_12') OR false ) AND pVal.mktValue < 1.00";
+    String queryStr =
+        " select distinct r.name, pVal, r.\"type\"  "
+            + " from /new_pos r , r.positions.values pVal where "
+            + " ( r.name IN Set('name_11' , 'name_12') OR false ) AND pVal.mktValue < 1.00";
     this.bug40333Simulation(region, queryStr);
   }
 
@@ -378,45 +409,58 @@ public class MiscJUnitTest {
       rgn.put("name" + i, pf);
     }
     final Object lock = new Object();
-    final boolean[] expectionOccured = new boolean[] { false };
-    final boolean[] keepGoing = new boolean[] { true };
+    final boolean[] expectionOccured = new boolean[] {false};
+    final boolean[] keepGoing = new boolean[] {true};
 
-    Thread indexCreatorDestroyer = new Thread(new Runnable() {
-      public void run() {
-        boolean continueRunning = true;
-        do {
+    Thread indexCreatorDestroyer =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                boolean continueRunning = true;
+                do {
 
-          synchronized (lock) {
-            continueRunning = keepGoing[0];
-          }
-          try {
-            Index indx1 = qs.createIndex("MarketValues", IndexType.FUNCTIONAL, "itr2.mktValue", "/new_pos itr1, itr1.positions.values itr2");
-            Index indx2 = qs.createIndex("Name", IndexType.FUNCTIONAL, "itr1.name", "/new_pos itr1");
-            Index indx3 = qs.createIndex("nameIndex", IndexType.PRIMARY_KEY, "name", "/new_pos");
-            Index indx4 = qs.createIndex("idIndex", IndexType.FUNCTIONAL, "id", "/new_pos");
-            Index indx5 = qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/new_pos");
-            Index indx6 = qs.createIndex("undefinedFieldIndex", IndexType.FUNCTIONAL, "undefinedTestField.toString", "/new_pos");
-            Thread.sleep(800);
-            qs.removeIndex(indx1);
-            qs.removeIndex(indx2);
-            qs.removeIndex(indx3);
-            qs.removeIndex(indx4);
-            qs.removeIndex(indx5);
-            qs.removeIndex(indx6);
-          } catch (Throwable e) {
-            region.getCache().getLogger().error(e);
-            e.printStackTrace();
-            synchronized (lock) {
-              expectionOccured[0] = true;
-              keepGoing[0] = false;
-              continueRunning = false;
-            }
-
-          }
-        } while (continueRunning);
-      }
-
-    });
+                  synchronized (lock) {
+                    continueRunning = keepGoing[0];
+                  }
+                  try {
+                    Index indx1 =
+                        qs.createIndex(
+                            "MarketValues",
+                            IndexType.FUNCTIONAL,
+                            "itr2.mktValue",
+                            "/new_pos itr1, itr1.positions.values itr2");
+                    Index indx2 =
+                        qs.createIndex("Name", IndexType.FUNCTIONAL, "itr1.name", "/new_pos itr1");
+                    Index indx3 =
+                        qs.createIndex("nameIndex", IndexType.PRIMARY_KEY, "name", "/new_pos");
+                    Index indx4 = qs.createIndex("idIndex", IndexType.FUNCTIONAL, "id", "/new_pos");
+                    Index indx5 =
+                        qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/new_pos");
+                    Index indx6 =
+                        qs.createIndex(
+                            "undefinedFieldIndex",
+                            IndexType.FUNCTIONAL,
+                            "undefinedTestField.toString",
+                            "/new_pos");
+                    Thread.sleep(800);
+                    qs.removeIndex(indx1);
+                    qs.removeIndex(indx2);
+                    qs.removeIndex(indx3);
+                    qs.removeIndex(indx4);
+                    qs.removeIndex(indx5);
+                    qs.removeIndex(indx6);
+                  } catch (Throwable e) {
+                    region.getCache().getLogger().error(e);
+                    e.printStackTrace();
+                    synchronized (lock) {
+                      expectionOccured[0] = true;
+                      keepGoing[0] = false;
+                      continueRunning = false;
+                    }
+                  }
+                } while (continueRunning);
+              }
+            });
 
     indexCreatorDestroyer.start();
     final Query q = qs.newQuery(queryStr);
@@ -424,28 +468,30 @@ public class MiscJUnitTest {
     Thread queryThreads[] = new Thread[THREAD_COUNT];
     final int numTimesToRun = 75;
     for (int i = 0; i < THREAD_COUNT; ++i) {
-      queryThreads[i] = new Thread(new Runnable() {
-        public void run() {
-          boolean continueRunning = true;
-          for (int i = 0; i < numTimesToRun && continueRunning; ++i) {
-            synchronized (lock) {
-              continueRunning = keepGoing[0];
-            }
-            try {
-              SelectResults sr = (SelectResults) q.execute();
-            } catch (Throwable e) {
-              e.printStackTrace();
-              region.getCache().getLogger().error(e);
-              synchronized (lock) {
-                expectionOccured[0] = true;
-                keepGoing[0] = false;
-                continueRunning = false;
-              }
-              break;
-            }
-          }
-        }
-      });
+      queryThreads[i] =
+          new Thread(
+              new Runnable() {
+                public void run() {
+                  boolean continueRunning = true;
+                  for (int i = 0; i < numTimesToRun && continueRunning; ++i) {
+                    synchronized (lock) {
+                      continueRunning = keepGoing[0];
+                    }
+                    try {
+                      SelectResults sr = (SelectResults) q.execute();
+                    } catch (Throwable e) {
+                      e.printStackTrace();
+                      region.getCache().getLogger().error(e);
+                      synchronized (lock) {
+                        expectionOccured[0] = true;
+                        keepGoing[0] = false;
+                        continueRunning = false;
+                      }
+                      break;
+                    }
+                  }
+                }
+              });
     }
     synchronized (lock) {
       assertFalse(expectionOccured[0]);
@@ -466,7 +512,6 @@ public class MiscJUnitTest {
     synchronized (lock) {
       assertFalse(expectionOccured[0]);
     }
-
   }
 
   @Test
@@ -476,20 +521,33 @@ public class MiscJUnitTest {
     AttributesFactory attributesFactory = new AttributesFactory();
     RegionAttributes ra = attributesFactory.create();
     final Region region = cache.createRegion("new_pos", ra);
-    String queryStr1 = " select distinct r.name, pVal, r.\"type\"  " + " from /new_pos r , r.positions.values pVal where " + " ( r.undefinedTestField.toString = UNDEFINED  OR false ) ";//AND pVal.mktValue = 1.00";
-    String queryStr2 = " select distinct r.name, pVal, r.\"type\"  " + " from /new_pos r , r.positions.values pVal where " + " ( r.undefinedTestField.toString = UNDEFINED  AND true ) AND pVal.mktValue = 1.00";
+    String queryStr1 =
+        " select distinct r.name, pVal, r.\"type\"  "
+            + " from /new_pos r , r.positions.values pVal where "
+            + " ( r.undefinedTestField.toString = UNDEFINED  OR false ) "; //AND pVal.mktValue = 1.00";
+    String queryStr2 =
+        " select distinct r.name, pVal, r.\"type\"  "
+            + " from /new_pos r , r.positions.values pVal where "
+            + " ( r.undefinedTestField.toString = UNDEFINED  AND true ) AND pVal.mktValue = 1.00";
     final QueryService qs = CacheUtils.getQueryService();
     for (int i = 1; i < 100; ++i) {
       NewPortfolio pf = new NewPortfolio("name" + i, i);
       region.put("name" + i, pf);
     }
 
-    Index indx1 = qs.createIndex("MarketValues", IndexType.FUNCTIONAL, "itr2.mktValue", "/new_pos itr1, itr1.positions.values itr2");
+    Index indx1 =
+        qs.createIndex(
+            "MarketValues",
+            IndexType.FUNCTIONAL,
+            "itr2.mktValue",
+            "/new_pos itr1, itr1.positions.values itr2");
     Index indx2 = qs.createIndex("Name", IndexType.FUNCTIONAL, "itr1.name", "/new_pos itr1");
     Index indx3 = qs.createIndex("nameIndex", IndexType.PRIMARY_KEY, "name", "/new_pos");
     Index indx4 = qs.createIndex("idIndex", IndexType.FUNCTIONAL, "id", "/new_pos");
     Index indx5 = qs.createIndex("statusIndex", IndexType.FUNCTIONAL, "status", "/new_pos");
-    Index indx6 = qs.createIndex("undefinedFieldIndex", IndexType.FUNCTIONAL, "undefinedTestField.toString", "/new_pos");
+    Index indx6 =
+        qs.createIndex(
+            "undefinedFieldIndex", IndexType.FUNCTIONAL, "undefinedTestField.toString", "/new_pos");
     final Query q1 = qs.newQuery(queryStr1);
     final Query q2 = qs.newQuery(queryStr2);
     SelectResults sr1 = (SelectResults) q1.execute();
@@ -520,21 +578,29 @@ public class MiscJUnitTest {
     pf = (Portfolio) result.iterator().next();
     assertEquals(pf.getID(), -1);
 
-    qStr = "Select distinct * from /portfolios pf where pf.getID() = 3 and pf.getLongMinValue() = " + Long.MIN_VALUE + 'l';
+    qStr =
+        "Select distinct * from /portfolios pf where pf.getID() = 3 and pf.getLongMinValue() = "
+            + Long.MIN_VALUE
+            + 'l';
     q = qs.newQuery(qStr);
     result = (SelectResults) q.execute();
     assertEquals(result.size(), 1);
     pf = (Portfolio) result.iterator().next();
     assertEquals(pf.getID(), 3);
 
-    qStr = "Select distinct * from /portfolios pf where pf.getID() = 3 and pf.getFloatMinValue() = " + Float.MIN_VALUE + 'f';
+    qStr =
+        "Select distinct * from /portfolios pf where pf.getID() = 3 and pf.getFloatMinValue() = "
+            + Float.MIN_VALUE
+            + 'f';
     q = qs.newQuery(qStr);
     result = (SelectResults) q.execute();
     assertEquals(result.size(), 1);
     pf = (Portfolio) result.iterator().next();
     assertEquals(pf.getID(), 3);
 
-    qStr = "Select distinct * from /portfolios pf where pf.getID() = 3 and pf.getDoubleMinValue() = " + Double.MIN_VALUE;
+    qStr =
+        "Select distinct * from /portfolios pf where pf.getID() = 3 and pf.getDoubleMinValue() = "
+            + Double.MIN_VALUE;
     q = qs.newQuery(qStr);
     result = (SelectResults) q.execute();
     assertEquals(result.size(), 1);

@@ -90,30 +90,41 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
     assertNotNull(serverMember);
 
-    manager.invoke(() -> {
-      Awaitility.waitAtMost(2 * 60, TimeUnit.SECONDS).pollDelay(2, TimeUnit.SECONDS).until(() -> {
-        final SystemManagementService service = (SystemManagementService) ManagementService.getManagementService(getCache());
-        if (service == null) {
-          getLogWriter().info("waitForListClientMbean Still probing for service");
-          return false;
-        } else {
-          final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port0, serverMember);
-          CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
-          try {
-            if (bean != null) {
-              if (bean.getClientIds().length > 1) {
-                return true;
-              }
-            }
-            return false;
+    manager.invoke(
+        () -> {
+          Awaitility.waitAtMost(2 * 60, TimeUnit.SECONDS)
+              .pollDelay(2, TimeUnit.SECONDS)
+              .until(
+                  () -> {
+                    final SystemManagementService service =
+                        (SystemManagementService)
+                            ManagementService.getManagementService(getCache());
+                    if (service == null) {
+                      getLogWriter().info("waitForListClientMbean Still probing for service");
+                      return false;
+                    } else {
+                      final ObjectName cacheServerMBeanName =
+                          service.getCacheServerMBeanName(port0, serverMember);
+                      CacheServerMXBean bean =
+                          service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                      try {
+                        if (bean != null) {
+                          if (bean.getClientIds().length > 1) {
+                            return true;
+                          }
+                        }
+                        return false;
 
-          } catch (Exception e) {
-            LogWrapper.getInstance().warning("waitForListClientMbean Exception in waitForListClientMbean ::: " + CliUtil.stackTraceAsString(e));
-          }
-          return false;
-        }
-      });
-    });
+                      } catch (Exception e) {
+                        LogWrapper.getInstance()
+                            .warning(
+                                "waitForListClientMbean Exception in waitForListClientMbean ::: "
+                                    + CliUtil.stackTraceAsString(e));
+                      }
+                      return false;
+                    }
+                  });
+        });
   }
 
   public void waitForMbean() {
@@ -125,40 +136,51 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
     assertNotNull(serverMember);
 
-    manager.invoke(() -> {
-      Awaitility.waitAtMost(2 * 60, TimeUnit.SECONDS).pollDelay(2, TimeUnit.SECONDS).until(() -> {
-        final SystemManagementService service = (SystemManagementService) ManagementService.getManagementService(getCache());
-        if (service == null) {
-          getLogWriter().info("waitForMbean Still probing for service");
-          return false;
-        } else {
-          final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port0, serverMember);
-          CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
-          try {
-            ClientHealthStatus stats = bean.showClientStats(bean.getClientIds()[0]);
-            Map<String, String> poolStats = stats.getPoolStats();
-            if (poolStats.size() > 0) {
-              Iterator<Entry<String, String>> it = poolStats.entrySet().iterator();
-              while (it.hasNext()) {
-                Entry<String, String> entry = it.next();
-                String poolStatsStr = entry.getValue();
-                String str[] = poolStatsStr.split(";");
-                int numCqs = Integer.parseInt(str[3].substring(str[3].indexOf("=") + 1));
-                if (numCqs == 3) {
-                  return true;
-                }
-              }
-            }
-            return false;
+    manager.invoke(
+        () -> {
+          Awaitility.waitAtMost(2 * 60, TimeUnit.SECONDS)
+              .pollDelay(2, TimeUnit.SECONDS)
+              .until(
+                  () -> {
+                    final SystemManagementService service =
+                        (SystemManagementService)
+                            ManagementService.getManagementService(getCache());
+                    if (service == null) {
+                      getLogWriter().info("waitForMbean Still probing for service");
+                      return false;
+                    } else {
+                      final ObjectName cacheServerMBeanName =
+                          service.getCacheServerMBeanName(port0, serverMember);
+                      CacheServerMXBean bean =
+                          service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                      try {
+                        ClientHealthStatus stats = bean.showClientStats(bean.getClientIds()[0]);
+                        Map<String, String> poolStats = stats.getPoolStats();
+                        if (poolStats.size() > 0) {
+                          Iterator<Entry<String, String>> it = poolStats.entrySet().iterator();
+                          while (it.hasNext()) {
+                            Entry<String, String> entry = it.next();
+                            String poolStatsStr = entry.getValue();
+                            String str[] = poolStatsStr.split(";");
+                            int numCqs =
+                                Integer.parseInt(str[3].substring(str[3].indexOf("=") + 1));
+                            if (numCqs == 3) {
+                              return true;
+                            }
+                          }
+                        }
+                        return false;
 
-          } catch (Exception e) {
-            LogWrapper.getInstance().warning("waitForMbean Exception in waitForMbean ::: " + CliUtil.stackTraceAsString(e));
-          }
-          return false;
-
-        }
-      });
-    });
+                      } catch (Exception e) {
+                        LogWrapper.getInstance()
+                            .warning(
+                                "waitForMbean Exception in waitForMbean ::: "
+                                    + CliUtil.stackTraceAsString(e));
+                      }
+                      return false;
+                    }
+                  });
+        });
   }
 
   public void waitForListClientMbean3() {
@@ -172,56 +194,84 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
     assertNotNull(serverMember1);
 
-    manager.invoke(() -> {
-      Awaitility.waitAtMost(2 * 60, TimeUnit.SECONDS).pollDelay(2, TimeUnit.SECONDS).until(() -> {
-        final SystemManagementService service = (SystemManagementService) ManagementService.getManagementService(getCache());
-        if (service == null) {
-          getLogWriter().info("waitForListClientMbean3 Still probing for service");
-          return false;
-        } else {
-          final ObjectName cacheServerMBeanName1 = service.getCacheServerMBeanName(port0, serverMember1);
-          final ObjectName cacheServerMBeanName2 = service.getCacheServerMBeanName(port1, serverMember2);
-          CacheServerMXBean bean1 = service.getMBeanProxy(cacheServerMBeanName1, CacheServerMXBean.class);
-          CacheServerMXBean bean2 = service.getMBeanProxy(cacheServerMBeanName2, CacheServerMXBean.class);
-          try {
-            if (bean1 != null && bean2 != null) {
-              if (bean1.getClientIds().length > 0 && bean2.getClientIds().length > 0) {
-                return true;
-              }
-            }
-            return false;
+    manager.invoke(
+        () -> {
+          Awaitility.waitAtMost(2 * 60, TimeUnit.SECONDS)
+              .pollDelay(2, TimeUnit.SECONDS)
+              .until(
+                  () -> {
+                    final SystemManagementService service =
+                        (SystemManagementService)
+                            ManagementService.getManagementService(getCache());
+                    if (service == null) {
+                      getLogWriter().info("waitForListClientMbean3 Still probing for service");
+                      return false;
+                    } else {
+                      final ObjectName cacheServerMBeanName1 =
+                          service.getCacheServerMBeanName(port0, serverMember1);
+                      final ObjectName cacheServerMBeanName2 =
+                          service.getCacheServerMBeanName(port1, serverMember2);
+                      CacheServerMXBean bean1 =
+                          service.getMBeanProxy(cacheServerMBeanName1, CacheServerMXBean.class);
+                      CacheServerMXBean bean2 =
+                          service.getMBeanProxy(cacheServerMBeanName2, CacheServerMXBean.class);
+                      try {
+                        if (bean1 != null && bean2 != null) {
+                          if (bean1.getClientIds().length > 0 && bean2.getClientIds().length > 0) {
+                            return true;
+                          }
+                        }
+                        return false;
 
-          } catch (Exception e) {
-            LogWrapper.getInstance().warning("waitForListClientMbean3 Exception in waitForListClientMbean ::: " + CliUtil.stackTraceAsString(e));
-          }
-          return false;
-        }
-      });
-    });
+                      } catch (Exception e) {
+                        LogWrapper.getInstance()
+                            .warning(
+                                "waitForListClientMbean3 Exception in waitForListClientMbean ::: "
+                                    + CliUtil.stackTraceAsString(e));
+                      }
+                      return false;
+                    }
+                  });
+        });
   }
 
   @Ignore("disabled for unknown reason")
   @Test
   public void testDescribeClientWithServers3() throws Exception {
     setupSystem3();
-    String commandString = CliStrings.DESCRIBE_CLIENT + " --" + CliStrings.DESCRIBE_CLIENT__ID + "=\"" + clientId + "\"";
+    String commandString =
+        CliStrings.DESCRIBE_CLIENT
+            + " --"
+            + CliStrings.DESCRIBE_CLIENT__ID
+            + "=\""
+            + clientId
+            + "\"";
     final VM server1 = Host.getHost(0).getVM(1);
     final VM server2 = Host.getHost(0).getVM(3);
     final VM manager = Host.getHost(0).getVM(0);
-    String serverName1 = (String) server1.invoke("get DistributedMemberID ", () -> getDistributedMemberId());
+    String serverName1 =
+        (String) server1.invoke("get DistributedMemberID ", () -> getDistributedMemberId());
 
-    String serverName2 = (String) server2.invoke("get DistributedMemberID ", () -> getDistributedMemberId());
+    String serverName2 =
+        (String) server2.invoke("get DistributedMemberID ", () -> getDistributedMemberId());
 
     final DistributedMember serverMember1 = getMember(server1);
 
-    String[] clientIds = (String[]) manager.invoke("get Client Ids", () -> {
-      final SystemManagementService service = (SystemManagementService) ManagementService.getManagementService(getCache());
+    String[] clientIds =
+        (String[])
+            manager.invoke(
+                "get Client Ids",
+                () -> {
+                  final SystemManagementService service =
+                      (SystemManagementService) ManagementService.getManagementService(getCache());
 
-      final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port0, serverMember1);
-      CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                  final ObjectName cacheServerMBeanName =
+                      service.getCacheServerMBeanName(port0, serverMember1);
+                  CacheServerMXBean bean =
+                      service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
 
-      return bean.getClientIds();
-    });
+                  return bean.getClientIds();
+                });
 
     String clientId1 = "";
 
@@ -232,14 +282,21 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
     final DistributedMember serverMember2 = getMember(server2);
 
-    String[] clientIds2 = (String[]) manager.invoke("get Client Ids", () -> {
-      final SystemManagementService service = (SystemManagementService) ManagementService.getManagementService(getCache());
+    String[] clientIds2 =
+        (String[])
+            manager.invoke(
+                "get Client Ids",
+                () -> {
+                  final SystemManagementService service =
+                      (SystemManagementService) ManagementService.getManagementService(getCache());
 
-      final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port1, serverMember2);
-      CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                  final ObjectName cacheServerMBeanName =
+                      service.getCacheServerMBeanName(port1, serverMember2);
+                  CacheServerMXBean bean =
+                      service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
 
-      return bean.getClientIds();
-    });
+                  return bean.getClientIds();
+                });
 
     String clientId2 = "";
 
@@ -248,12 +305,19 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
       getLogWriter().info("testDescribeClientWithServers clientIds for server2 =" + str);
     }
 
-    commandString = CliStrings.DESCRIBE_CLIENT + " --" + CliStrings.DESCRIBE_CLIENT__ID + "=\"" + clientId1 + "\"";
+    commandString =
+        CliStrings.DESCRIBE_CLIENT
+            + " --"
+            + CliStrings.DESCRIBE_CLIENT__ID
+            + "=\""
+            + clientId1
+            + "\"";
 
     getLogWriter().info("testDescribeClientWithServers commandStr clientId1 =" + commandString);
 
     CommandResult commandResultForClient1 = executeCommand(commandString);
-    getLogWriter().info("testDescribeClientWithServers commandStr clientId1=" + commandResultForClient1);
+    getLogWriter()
+        .info("testDescribeClientWithServers commandStr clientId1=" + commandResultForClient1);
 
     String resultAsString = commandResultToString(commandResultForClient1);
     getLogWriter().info("testDescribeClientWithServers commandStr clientId1 =" + resultAsString);
@@ -261,7 +325,13 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
     verifyClientStats(commandResultForClient1, serverName1);
 
-    commandString = CliStrings.DESCRIBE_CLIENT + " --" + CliStrings.DESCRIBE_CLIENT__ID + "=\"" + clientId2 + "\"";
+    commandString =
+        CliStrings.DESCRIBE_CLIENT
+            + " --"
+            + CliStrings.DESCRIBE_CLIENT__ID
+            + "=\""
+            + clientId2
+            + "\"";
 
     getLogWriter().info("testDescribeClientWithServers commandStr1=" + commandString);
 
@@ -277,7 +347,6 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     closeNonDurableClient(Host.getHost(0).getVM(2));
     closeCacheServer(Host.getHost(0).getVM(3));
     closeCacheServer(Host.getHost(0).getVM(1));
-
   }
 
   public void verifyClientStats(CommandResult commandResultForClient, String serverName) {
@@ -291,7 +360,8 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
       List<String> minConn = tableRsultData.retrieveAllValues(CliStrings.DESCRIBE_CLIENT_MIN_CONN);
       List<String> maxConn = tableRsultData.retrieveAllValues(CliStrings.DESCRIBE_CLIENT_MAX_CONN);
-      List<String> redudancy = tableRsultData.retrieveAllValues(CliStrings.DESCRIBE_CLIENT_REDUDANCY);
+      List<String> redudancy =
+          tableRsultData.retrieveAllValues(CliStrings.DESCRIBE_CLIENT_REDUDANCY);
       List<String> numCqs = tableRsultData.retrieveAllValues(CliStrings.DESCRIBE_CLIENT_CQs);
 
       getLogWriter().info("testDescribeClientWithServers getHeader numCqs =" + numCqs);
@@ -318,7 +388,6 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
       assertTrue(Integer.parseInt(upTime) >= 0);
       String prcTime = section.retrieveString(CliStrings.DESCRIBE_CLIENT_COLUMN_PROCESS_CPU_TIME);
       assertTrue(Long.parseLong(prcTime) > 0);
-
     }
   }
 
@@ -330,11 +399,18 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     getLogWriter().info("testDescribeClient clientId=" + clientId);
     assertNotNull(clientId);
 
-    String commandString = CliStrings.DESCRIBE_CLIENT + " --" + CliStrings.DESCRIBE_CLIENT__ID + "=\"" + clientId + "\"";
+    String commandString =
+        CliStrings.DESCRIBE_CLIENT
+            + " --"
+            + CliStrings.DESCRIBE_CLIENT__ID
+            + "=\""
+            + clientId
+            + "\"";
     getLogWriter().info("testDescribeClient commandStr=" + commandString);
 
     final VM server1 = Host.getHost(0).getVM(1);
-    String serverName = (String) server1.invoke("get distributed member Id", () -> getDistributedMemberId());
+    String serverName =
+        (String) server1.invoke("get distributed member Id", () -> getDistributedMemberId());
 
     CommandResult commandResult = executeCommand(commandString);
     getLogWriter().info("testDescribeClient commandResult=" + commandResult);
@@ -380,18 +456,24 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     closeNonDurableClient(Host.getHost(0).getVM(2));
     closeCacheServer(Host.getHost(0).getVM(1));
     closeCacheServer(Host.getHost(0).getVM(3));
-
   }
 
   @Test
   public void testDescribeClientWithServers() throws Exception {
     setupSystem2();
 
-    String commandString = CliStrings.DESCRIBE_CLIENT + " --" + CliStrings.DESCRIBE_CLIENT__ID + "=\"" + clientId + "\"";
+    String commandString =
+        CliStrings.DESCRIBE_CLIENT
+            + " --"
+            + CliStrings.DESCRIBE_CLIENT__ID
+            + "=\""
+            + clientId
+            + "\"";
     getLogWriter().info("testDescribeClientWithServers commandStr=" + commandString);
 
     final VM server1 = Host.getHost(0).getVM(1);
-    String serverName = (String) server1.invoke("get Distributed Member Id", () -> getDistributedMemberId());
+    String serverName =
+        (String) server1.invoke("get Distributed Member Id", () -> getDistributedMemberId());
 
     CommandResult commandResult = executeCommand(commandString);
     getLogWriter().info("testDescribeClientWithServers commandResult=" + commandResult);
@@ -437,7 +519,6 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     closeNonDurableClient(Host.getHost(0).getVM(2));
     closeNonDurableClient(Host.getHost(0).getVM(3));
     closeCacheServer(Host.getHost(0).getVM(1));
-
   }
 
   @Category(FlakyTest.class) // GEODE-908: random ports, BindException, time sensitive, HeadlessGfsh
@@ -456,14 +537,22 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
     final DistributedMember serverMember = getMember(server1);
 
-    String[] clientIds = (String[]) manager.invoke("get client Ids", () -> {
-      final SystemManagementService service = (SystemManagementService) ManagementService.getManagementService(getCache());
-      final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port0, serverMember);
-      CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
-      return bean.getClientIds();
-    });
+    String[] clientIds =
+        (String[])
+            manager.invoke(
+                "get client Ids",
+                () -> {
+                  final SystemManagementService service =
+                      (SystemManagementService) ManagementService.getManagementService(getCache());
+                  final ObjectName cacheServerMBeanName =
+                      service.getCacheServerMBeanName(port0, serverMember);
+                  CacheServerMXBean bean =
+                      service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                  return bean.getClientIds();
+                });
 
-    String serverName = (String) server1.invoke("get distributed member Id", () -> getDistributedMemberId());
+    String serverName =
+        (String) server1.invoke("get distributed member Id", () -> getDistributedMemberId());
 
     CommandResult commandResult = executeCommand(commandString);
     getLogWriter().info("testListClient commandResult=" + commandResult);
@@ -478,8 +567,10 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     TabularResultData tableRsultData = section.retrieveTable("TableForClientList");
     assertNotNull(tableRsultData);
 
-    List<String> serverNames = tableRsultData.retrieveAllValues(CliStrings.LIST_CLIENT_COLUMN_SERVERS);
-    List<String> clientNames = tableRsultData.retrieveAllValues(CliStrings.LIST_CLIENT_COLUMN_Clients);
+    List<String> serverNames =
+        tableRsultData.retrieveAllValues(CliStrings.LIST_CLIENT_COLUMN_SERVERS);
+    List<String> clientNames =
+        tableRsultData.retrieveAllValues(CliStrings.LIST_CLIENT_COLUMN_Clients);
 
     getLogWriter().info("testListClients serverNames : " + serverNames);
     getLogWriter().info("testListClients clientNames : " + clientNames);
@@ -495,7 +586,6 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     closeNonDurableClient(Host.getHost(0).getVM(2));
     closeCacheServer(Host.getHost(0).getVM(1));
     closeCacheServer(Host.getHost(0).getVM(3));
-
   }
 
   @Test
@@ -512,16 +602,25 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
     final DistributedMember serverMember = getMember(server1);
 
-    String[] clientIds = (String[]) manager.invoke("get client Ids", () -> {
-      final SystemManagementService service = (SystemManagementService) ManagementService.getManagementService(getCache());
-      final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port0, serverMember);
-      CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
-      return bean.getClientIds();
-    });
+    String[] clientIds =
+        (String[])
+            manager.invoke(
+                "get client Ids",
+                () -> {
+                  final SystemManagementService service =
+                      (SystemManagementService) ManagementService.getManagementService(getCache());
+                  final ObjectName cacheServerMBeanName =
+                      service.getCacheServerMBeanName(port0, serverMember);
+                  CacheServerMXBean bean =
+                      service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                  return bean.getClientIds();
+                });
 
-    String serverName1 = (String) server1.invoke("get distributed member Id", () -> getDistributedMemberId());
+    String serverName1 =
+        (String) server1.invoke("get distributed member Id", () -> getDistributedMemberId());
 
-    String serverName2 = (String) server2.invoke("get distributed member Id", () -> getDistributedMemberId());
+    String serverName2 =
+        (String) server2.invoke("get distributed member Id", () -> getDistributedMemberId());
 
     CommandResult commandResult = executeCommand(commandString);
     System.out.println("testListClientForServers commandResult=" + commandResult);
@@ -536,8 +635,10 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     TabularResultData tableRsultData = section.retrieveTable("TableForClientList");
     assertNotNull(tableRsultData);
 
-    List<String> serverNames = tableRsultData.retrieveAllValues(CliStrings.LIST_CLIENT_COLUMN_SERVERS);
-    List<String> clientNames = tableRsultData.retrieveAllValues(CliStrings.LIST_CLIENT_COLUMN_Clients);
+    List<String> serverNames =
+        tableRsultData.retrieveAllValues(CliStrings.LIST_CLIENT_COLUMN_SERVERS);
+    List<String> clientNames =
+        tableRsultData.retrieveAllValues(CliStrings.LIST_CLIENT_COLUMN_Clients);
 
     serverName1 = serverName1.replace(":", "-");
     serverName2 = serverName2.replace(":", "-");
@@ -558,7 +659,6 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     closeNonDurableClient(Host.getHost(0).getVM(2));
     closeCacheServer(Host.getHost(0).getVM(1));
     closeCacheServer(Host.getHost(0).getVM(3));
-
   }
 
   private String getDistributedMemberId() {
@@ -566,7 +666,10 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
   }
 
   public DistributedMember getMember(final VM vm) {
-    return (DistributedMember) vm.invoke("Get Member", () -> GemFireCacheImpl.getInstance().getDistributedSystem().getDistributedMember());
+    return (DistributedMember)
+        vm.invoke(
+            "Get Member",
+            () -> GemFireCacheImpl.getInstance().getDistributedSystem().getDistributedMember());
   }
 
   private void setupSystemForListClient() throws Exception {
@@ -598,14 +701,22 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     setupCqsOnVM(client1);
     waitForMbean();
 
-    clientId = (String) manager.invoke("get client Id", () -> {
-      Cache cache = GemFireCacheImpl.getInstance();
-      SystemManagementService service = (SystemManagementService) ManagementService.getExistingManagementService(cache);
-      DistributedMember serverMember = getMember(server1);
-      final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port0, serverMember);
-      CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
-      return bean.getClientIds()[0];
-    });
+    clientId =
+        (String)
+            manager.invoke(
+                "get client Id",
+                () -> {
+                  Cache cache = GemFireCacheImpl.getInstance();
+                  SystemManagementService service =
+                      (SystemManagementService)
+                          ManagementService.getExistingManagementService(cache);
+                  DistributedMember serverMember = getMember(server1);
+                  final ObjectName cacheServerMBeanName =
+                      service.getCacheServerMBeanName(port0, serverMember);
+                  CacheServerMXBean bean =
+                      service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                  return bean.getClientIds()[0];
+                });
   }
 
   private void setupSystem2() throws Exception {
@@ -626,14 +737,22 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
     waitForMbean();
 
-    clientId = (String) manager.invoke("get client Id", () -> {
-      Cache cache = GemFireCacheImpl.getInstance();
-      SystemManagementService service = (SystemManagementService) ManagementService.getExistingManagementService(cache);
-      DistributedMember serverMember = getMember(server1);
-      final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port0, serverMember);
-      CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
-      return bean.getClientIds()[0];
-    });
+    clientId =
+        (String)
+            manager.invoke(
+                "get client Id",
+                () -> {
+                  Cache cache = GemFireCacheImpl.getInstance();
+                  SystemManagementService service =
+                      (SystemManagementService)
+                          ManagementService.getExistingManagementService(cache);
+                  DistributedMember serverMember = getMember(server1);
+                  final ObjectName cacheServerMBeanName =
+                      service.getCacheServerMBeanName(port0, serverMember);
+                  CacheServerMXBean bean =
+                      service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                  return bean.getClientIds()[0];
+                });
   }
 
   private void setupSystem3() throws Exception {
@@ -653,105 +772,141 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     setupCqsOnVM(client1);
     waitForListClientMbean3();
 
-    clientId = (String) manager.invoke("get client Id", () -> {
-      Cache cache = GemFireCacheImpl.getInstance();
-      SystemManagementService service = (SystemManagementService) ManagementService.getExistingManagementService(cache);
-      DistributedMember serverMember = getMember(server1);
-      final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port0, serverMember);
-      CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
-      return bean.getClientIds()[0];
-    });
-
+    clientId =
+        (String)
+            manager.invoke(
+                "get client Id",
+                () -> {
+                  Cache cache = GemFireCacheImpl.getInstance();
+                  SystemManagementService service =
+                      (SystemManagementService)
+                          ManagementService.getExistingManagementService(cache);
+                  DistributedMember serverMember = getMember(server1);
+                  final ObjectName cacheServerMBeanName =
+                      service.getCacheServerMBeanName(port0, serverMember);
+                  CacheServerMXBean bean =
+                      service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                  return bean.getClientIds()[0];
+                });
   }
 
   private void setupCqsOnVM(VM vm) {
-    vm.invoke("setup CQs", () -> {
-      Cache cache = GemFireCacheImpl.getInstance();
-      QueryService qs = cache.getQueryService();
-      CqAttributesFactory cqAf = new CqAttributesFactory();
-      try {
-        qs.newCq(cq1, "select * from /" + regionName, cqAf.create(), true).execute();
-        qs.newCq(cq2, "select * from /" + regionName + " where id = 1", cqAf.create(), true).execute();
-        qs.newCq(cq3, "select * from /" + regionName + " where id > 2", cqAf.create(), true).execute();
-        cache.getLogger().info("setupCqs on vm created cqs = " + cache.getQueryService().getCqs().length);
-      } catch (Exception e) {
-        cache.getLogger().info("setupCqs on vm Exception " + CliUtil.stackTraceAsString(e));
-      }
-      return true;
-    });
+    vm.invoke(
+        "setup CQs",
+        () -> {
+          Cache cache = GemFireCacheImpl.getInstance();
+          QueryService qs = cache.getQueryService();
+          CqAttributesFactory cqAf = new CqAttributesFactory();
+          try {
+            qs.newCq(cq1, "select * from /" + regionName, cqAf.create(), true).execute();
+            qs.newCq(cq2, "select * from /" + regionName + " where id = 1", cqAf.create(), true)
+                .execute();
+            qs.newCq(cq3, "select * from /" + regionName + " where id > 2", cqAf.create(), true)
+                .execute();
+            cache
+                .getLogger()
+                .info("setupCqs on vm created cqs = " + cache.getQueryService().getCqs().length);
+          } catch (Exception e) {
+            cache.getLogger().info("setupCqs on vm Exception " + CliUtil.stackTraceAsString(e));
+          }
+          return true;
+        });
   }
 
-  private int startCacheServer(VM server, final int port, final boolean createPR, final String regionName) throws Exception {
+  private int startCacheServer(
+      VM server, final int port, final boolean createPR, final String regionName) throws Exception {
 
-    return server.invoke("setup CacheServer", () -> {
-      getSystem(getServerProperties());
+    return server.invoke(
+        "setup CacheServer",
+        () -> {
+          getSystem(getServerProperties());
 
-      GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
-      AttributesFactory factory = new AttributesFactory();
-      if (createPR) {
-        PartitionAttributesFactory paf = new PartitionAttributesFactory();
-        paf.setRedundantCopies(1);
-        paf.setTotalNumBuckets(11);
-        factory.setPartitionAttributes(paf.create());
-      } else {
-        factory.setScope(Scope.DISTRIBUTED_ACK);
-        factory.setDataPolicy(DataPolicy.REPLICATE);
-      }
-      Region region = createRootRegion(regionName, factory.create());
-      if (createPR) {
-        assertTrue(region instanceof PartitionedRegion);
-      } else {
-        assertTrue(region instanceof DistributedRegion);
-      }
-      CacheServer cacheServer = cache.addCacheServer();
-      cacheServer.setPort(port);
-      cacheServer.start();
-      return cacheServer.getPort();
-    });
+          GemFireCacheImpl cache = (GemFireCacheImpl) getCache();
+          AttributesFactory factory = new AttributesFactory();
+          if (createPR) {
+            PartitionAttributesFactory paf = new PartitionAttributesFactory();
+            paf.setRedundantCopies(1);
+            paf.setTotalNumBuckets(11);
+            factory.setPartitionAttributes(paf.create());
+          } else {
+            factory.setScope(Scope.DISTRIBUTED_ACK);
+            factory.setDataPolicy(DataPolicy.REPLICATE);
+          }
+          Region region = createRootRegion(regionName, factory.create());
+          if (createPR) {
+            assertTrue(region instanceof PartitionedRegion);
+          } else {
+            assertTrue(region instanceof DistributedRegion);
+          }
+          CacheServer cacheServer = cache.addCacheServer();
+          cacheServer.setPort(port);
+          cacheServer.start();
+          return cacheServer.getPort();
+        });
   }
 
   private void startNonDurableClient(VM client, final VM server, final int port) {
-    client.invoke("start non-durable client", () -> {
-      Cache cache = GemFireCacheImpl.getInstance();
-      if (cache == null) {
+    client.invoke(
+        "start non-durable client",
+        () -> {
+          Cache cache = GemFireCacheImpl.getInstance();
+          if (cache == null) {
 
-        Properties props = getNonDurableClientProps();
-        props.setProperty(LOG_FILE, "client_" + OSProcess.getId() + ".log");
-        props.setProperty(LOG_LEVEL, "fine");
-        props.setProperty(STATISTIC_ARCHIVE_FILE, "client_" + OSProcess.getId() + ".gfs");
-        props.setProperty(STATISTIC_SAMPLING_ENABLED, "true");
+            Properties props = getNonDurableClientProps();
+            props.setProperty(LOG_FILE, "client_" + OSProcess.getId() + ".log");
+            props.setProperty(LOG_LEVEL, "fine");
+            props.setProperty(STATISTIC_ARCHIVE_FILE, "client_" + OSProcess.getId() + ".gfs");
+            props.setProperty(STATISTIC_SAMPLING_ENABLED, "true");
 
-        getSystem(props);
+            getSystem(props);
 
-        final ClientCacheFactory ccf = new ClientCacheFactory(props);
-        ccf.addPoolServer(getServerHostName(server.getHost()), port);
-        ccf.setPoolSubscriptionEnabled(true);
-        ccf.setPoolPingInterval(1);
-        ccf.setPoolStatisticInterval(1);
-        ccf.setPoolSubscriptionRedundancy(1);
-        ccf.setPoolMinConnections(1);
+            final ClientCacheFactory ccf = new ClientCacheFactory(props);
+            ccf.addPoolServer(getServerHostName(server.getHost()), port);
+            ccf.setPoolSubscriptionEnabled(true);
+            ccf.setPoolPingInterval(1);
+            ccf.setPoolStatisticInterval(1);
+            ccf.setPoolSubscriptionRedundancy(1);
+            ccf.setPoolMinConnections(1);
 
-        ClientCache clientCache = (ClientCache) getClientCache(ccf);
-        //Create region
-        if (clientCache.getRegion(Region.SEPARATOR + regionName) == null && clientCache.getRegion(regionName) == null) {
-          ClientRegionFactory regionFactory = clientCache.createClientRegionFactory(ClientRegionShortcut.LOCAL).setPoolName(clientCache.getDefaultPool().getName());
-          Region dataRegion = regionFactory.create(regionName);
-          assertNotNull(dataRegion);
-          dataRegion.put("k1", "v1");
-          dataRegion.put("k2", "v2");
-
-        }
-      } else {
-        String poolName = "new_pool_" + System.currentTimeMillis();
-        try {
-          PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(getServerHostName(server.getHost()), port).setThreadLocalConnections(true).setMinConnections(1).setSubscriptionEnabled(true).setPingInterval(1).setStatisticInterval(1).setMinConnections(1).setSubscriptionRedundancy(1).create(poolName);
-          System.out.println("Created new pool pool " + poolName);
-          assertNotNull(p);
-        } catch (Exception eee) {
-          System.err.println("Exception in creating pool " + poolName + "    Exception ==" + CliUtil.stackTraceAsString(eee));
-        }
-      }
-    });
+            ClientCache clientCache = (ClientCache) getClientCache(ccf);
+            //Create region
+            if (clientCache.getRegion(Region.SEPARATOR + regionName) == null
+                && clientCache.getRegion(regionName) == null) {
+              ClientRegionFactory regionFactory =
+                  clientCache
+                      .createClientRegionFactory(ClientRegionShortcut.LOCAL)
+                      .setPoolName(clientCache.getDefaultPool().getName());
+              Region dataRegion = regionFactory.create(regionName);
+              assertNotNull(dataRegion);
+              dataRegion.put("k1", "v1");
+              dataRegion.put("k2", "v2");
+            }
+          } else {
+            String poolName = "new_pool_" + System.currentTimeMillis();
+            try {
+              PoolImpl p =
+                  (PoolImpl)
+                      PoolManager.createFactory()
+                          .addServer(getServerHostName(server.getHost()), port)
+                          .setThreadLocalConnections(true)
+                          .setMinConnections(1)
+                          .setSubscriptionEnabled(true)
+                          .setPingInterval(1)
+                          .setStatisticInterval(1)
+                          .setMinConnections(1)
+                          .setSubscriptionRedundancy(1)
+                          .create(poolName);
+              System.out.println("Created new pool pool " + poolName);
+              assertNotNull(p);
+            } catch (Exception eee) {
+              System.err.println(
+                  "Exception in creating pool "
+                      + poolName
+                      + "    Exception =="
+                      + CliUtil.stackTraceAsString(eee));
+            }
+          }
+        });
   }
 
   //Closes the non-durable-client from the client side.
@@ -760,13 +915,15 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
   }
 
   private void closeCacheServer(final VM vm) {
-    vm.invoke("Stop client", () -> {
-      Iterator<CacheServer> it = CacheFactory.getAnyInstance().getCacheServers().iterator();
-      while (it.hasNext()) {
-        CacheServer cacheServer = it.next();
-        cacheServer.stop();
-      }
-    });
+    vm.invoke(
+        "Stop client",
+        () -> {
+          Iterator<CacheServer> it = CacheFactory.getAnyInstance().getCacheServers().iterator();
+          while (it.hasNext()) {
+            CacheServer cacheServer = it.next();
+            cacheServer.stop();
+          }
+        });
   }
 
   protected Properties getNonDurableClientProps() {
@@ -789,29 +946,44 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     final DistributedMember serverMember = getMember(server1);
     assertNotNull(serverMember);
 
-    manager.invoke(() -> {
-      Awaitility.waitAtMost(5 * 60, TimeUnit.SECONDS).pollDelay(2, TimeUnit.SECONDS).until(() -> {
-        try {
-          final SystemManagementService service = (SystemManagementService) ManagementService.getManagementService(getCache());
-          if (service == null) {
-            getLogWriter().info("waitForNonSubScribedClientMBean Still probing for service");
-            return false;
-          } else {
-            getLogWriter().info("waitForNonSubScribedClientMBean 1");
-            final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port0, serverMember);
-            getLogWriter().info("waitForNonSubScribedClientMBean 2 cacheServerMBeanName " + cacheServerMBeanName);
-            CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
-            getLogWriter().info("waitForNonSubScribedClientMBean 2 bean " + bean);
-            if (bean.getClientIds().length > 0) {
-              return true;
-            }
-          }
-        } catch (Exception e) {
-          LogWrapper.getInstance().warning("waitForNonSubScribedClientMBean Exception in waitForMbean ::: " + CliUtil.stackTraceAsString(e));
-        }
-        return false;
-      });
-    });
+    manager.invoke(
+        () -> {
+          Awaitility.waitAtMost(5 * 60, TimeUnit.SECONDS)
+              .pollDelay(2, TimeUnit.SECONDS)
+              .until(
+                  () -> {
+                    try {
+                      final SystemManagementService service =
+                          (SystemManagementService)
+                              ManagementService.getManagementService(getCache());
+                      if (service == null) {
+                        getLogWriter()
+                            .info("waitForNonSubScribedClientMBean Still probing for service");
+                        return false;
+                      } else {
+                        getLogWriter().info("waitForNonSubScribedClientMBean 1");
+                        final ObjectName cacheServerMBeanName =
+                            service.getCacheServerMBeanName(port0, serverMember);
+                        getLogWriter()
+                            .info(
+                                "waitForNonSubScribedClientMBean 2 cacheServerMBeanName "
+                                    + cacheServerMBeanName);
+                        CacheServerMXBean bean =
+                            service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                        getLogWriter().info("waitForNonSubScribedClientMBean 2 bean " + bean);
+                        if (bean.getClientIds().length > 0) {
+                          return true;
+                        }
+                      }
+                    } catch (Exception e) {
+                      LogWrapper.getInstance()
+                          .warning(
+                              "waitForNonSubScribedClientMBean Exception in waitForMbean ::: "
+                                  + CliUtil.stackTraceAsString(e));
+                    }
+                    return false;
+                  });
+        });
   }
 
   public void waitForMixedClients() {
@@ -823,29 +995,43 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
     assertNotNull(serverMember);
 
-    manager.invoke(() -> {
-      Awaitility.waitAtMost(5 * 60, TimeUnit.SECONDS).pollDelay(2, TimeUnit.SECONDS).until(() -> {
-        try {
-          final SystemManagementService service = (SystemManagementService) ManagementService.getManagementService(getCache());
-          if (service == null) {
-            getLogWriter().info("waitForMixedClients Still probing for service");
-            return false;
-          } else {
-            getLogWriter().info("waitForMixedClients 1");
-            final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port0, serverMember);
-            getLogWriter().info("waitForMixedClients 2 cacheServerMBeanName " + cacheServerMBeanName);
-            CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
-            getLogWriter().info("waitForMixedClients 2 bean " + bean);
-            if (bean.getClientIds().length > 1) {
-              return true;
-            }
-          }
-        } catch (Exception e) {
-          LogWrapper.getInstance().warning("waitForMixedClients Exception in waitForMbean ::: " + CliUtil.stackTraceAsString(e));
-        }
-        return false;
-      });
-    });
+    manager.invoke(
+        () -> {
+          Awaitility.waitAtMost(5 * 60, TimeUnit.SECONDS)
+              .pollDelay(2, TimeUnit.SECONDS)
+              .until(
+                  () -> {
+                    try {
+                      final SystemManagementService service =
+                          (SystemManagementService)
+                              ManagementService.getManagementService(getCache());
+                      if (service == null) {
+                        getLogWriter().info("waitForMixedClients Still probing for service");
+                        return false;
+                      } else {
+                        getLogWriter().info("waitForMixedClients 1");
+                        final ObjectName cacheServerMBeanName =
+                            service.getCacheServerMBeanName(port0, serverMember);
+                        getLogWriter()
+                            .info(
+                                "waitForMixedClients 2 cacheServerMBeanName "
+                                    + cacheServerMBeanName);
+                        CacheServerMXBean bean =
+                            service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                        getLogWriter().info("waitForMixedClients 2 bean " + bean);
+                        if (bean.getClientIds().length > 1) {
+                          return true;
+                        }
+                      }
+                    } catch (Exception e) {
+                      LogWrapper.getInstance()
+                          .warning(
+                              "waitForMixedClients Exception in waitForMbean ::: "
+                                  + CliUtil.stackTraceAsString(e));
+                    }
+                    return false;
+                  });
+        });
   }
 
   @Category(FlakyTest.class) // GEODE-910: random ports, HeadlessGfsh
@@ -856,14 +1042,21 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     getLogWriter().info("testDescribeClientForNonSubscribedClient clientId=" + clientId);
     assertNotNull(clientId);
 
-    String commandString = CliStrings.DESCRIBE_CLIENT + " --" + CliStrings.DESCRIBE_CLIENT__ID + "=\"" + clientId + "\"";
+    String commandString =
+        CliStrings.DESCRIBE_CLIENT
+            + " --"
+            + CliStrings.DESCRIBE_CLIENT__ID
+            + "=\""
+            + clientId
+            + "\"";
     getLogWriter().info("testDescribeClientForNonSubscribedClient commandStr=" + commandString);
 
     CommandResult commandResult = executeCommand(commandString);
     getLogWriter().info("testDescribeClientForNonSubscribedClient commandResult=" + commandResult);
 
     String resultAsString = commandResultToString(commandResult);
-    getLogWriter().info("testDescribeClientForNonSubscribedClient resultAsString=" + resultAsString);
+    getLogWriter()
+        .info("testDescribeClientForNonSubscribedClient resultAsString=" + resultAsString);
     assertTrue(Status.OK.equals(commandResult.getStatus()));
 
     CompositeResultData resultData = (CompositeResultData) commandResult.getResultData();
@@ -907,7 +1100,6 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     closeNonDurableClient(Host.getHost(0).getVM(2));
     closeCacheServer(Host.getHost(0).getVM(1));
     closeCacheServer(Host.getHost(0).getVM(3));
-
   }
 
   @Test
@@ -915,14 +1107,27 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     String[] clientIds = setupSystemWithSubAndNonSubClient();
 
     final VM server1 = Host.getHost(0).getVM(1);
-    String serverName = (String) server1.invoke("Get DistributedMember Id", () -> getDistributedMemberId());
+    String serverName =
+        (String) server1.invoke("Get DistributedMember Id", () -> getDistributedMemberId());
 
-    String commandString = CliStrings.DESCRIBE_CLIENT + " --" + CliStrings.DESCRIBE_CLIENT__ID + "=\"" + clientIds[0] + "\"";
+    String commandString =
+        CliStrings.DESCRIBE_CLIENT
+            + " --"
+            + CliStrings.DESCRIBE_CLIENT__ID
+            + "=\""
+            + clientIds[0]
+            + "\"";
     getLogWriter().info("testDescribeMixClientWithServers commandStr=" + commandString);
 
     executeAndVerifyResultsForMixedClients(commandString, serverName);
 
-    String commandString2 = CliStrings.DESCRIBE_CLIENT + " --" + CliStrings.DESCRIBE_CLIENT__ID + "=\"" + clientIds[1] + "\"";
+    String commandString2 =
+        CliStrings.DESCRIBE_CLIENT
+            + " --"
+            + CliStrings.DESCRIBE_CLIENT__ID
+            + "=\""
+            + clientIds[1]
+            + "\"";
     getLogWriter().info("testDescribeMixClientWithServers commandString2=" + commandString2);
 
     executeAndVerifyResultsForMixedClients(commandString2, serverName);
@@ -930,7 +1135,6 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     closeNonDurableClient(Host.getHost(0).getVM(2));
     closeNonDurableClient(Host.getHost(0).getVM(3));
     closeCacheServer(Host.getHost(0).getVM(1));
-
   }
 
   void executeAndVerifyResultsForMixedClients(String commandString, String serverName) {
@@ -950,7 +1154,8 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
     List<String> minConn = tableResultData.retrieveAllValues(CliStrings.DESCRIBE_CLIENT_MIN_CONN);
     List<String> maxConn = tableResultData.retrieveAllValues(CliStrings.DESCRIBE_CLIENT_MAX_CONN);
-    List<String> redudancy = tableResultData.retrieveAllValues(CliStrings.DESCRIBE_CLIENT_REDUDANCY);
+    List<String> redudancy =
+        tableResultData.retrieveAllValues(CliStrings.DESCRIBE_CLIENT_REDUDANCY);
 
     assertTrue(minConn.contains("1"));
     assertTrue(maxConn.contains("-1"));
@@ -979,7 +1184,6 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
     String prcTime = section.retrieveString(CliStrings.DESCRIBE_CLIENT_COLUMN_PROCESS_CPU_TIME);
     assertTrue(Long.parseLong(prcTime) > 0);
-
   }
 
   private void setUpNonSubscribedClient() throws Exception {
@@ -998,17 +1202,24 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
     setupCqsOnVM(client1);
     waitForNonSubCliMBean();
 
-    clientId = (String) manager.invoke(new SerializableCallable() {
-      @Override
-      public Object call() throws Exception {
-        Cache cache = GemFireCacheImpl.getInstance();
-        SystemManagementService service = (SystemManagementService) ManagementService.getExistingManagementService(cache);
-        DistributedMember serverMember = getMember(server1);
-        final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port0, serverMember);
-        CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
-        return bean.getClientIds()[0];
-      }
-    });
+    clientId =
+        (String)
+            manager.invoke(
+                new SerializableCallable() {
+                  @Override
+                  public Object call() throws Exception {
+                    Cache cache = GemFireCacheImpl.getInstance();
+                    SystemManagementService service =
+                        (SystemManagementService)
+                            ManagementService.getExistingManagementService(cache);
+                    DistributedMember serverMember = getMember(server1);
+                    final ObjectName cacheServerMBeanName =
+                        service.getCacheServerMBeanName(port0, serverMember);
+                    CacheServerMXBean bean =
+                        service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                    return bean.getClientIds()[0];
+                  }
+                });
   }
 
   private String[] setupSystemWithSubAndNonSubClient() throws Exception {
@@ -1026,60 +1237,90 @@ public class ClientCommandsDUnitTest extends CliCommandTestBase {
 
     waitForMixedClients();
 
-    String[] cliendIds = (String[]) manager.invoke("get client Ids", () -> {
-      Cache cache = GemFireCacheImpl.getInstance();
-      SystemManagementService service = (SystemManagementService) ManagementService.getExistingManagementService(cache);
-      DistributedMember serverMember = getMember(server1);
-      final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port0, serverMember);
-      CacheServerMXBean bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
-      return bean.getClientIds();
-    });
+    String[] cliendIds =
+        (String[])
+            manager.invoke(
+                "get client Ids",
+                () -> {
+                  Cache cache = GemFireCacheImpl.getInstance();
+                  SystemManagementService service =
+                      (SystemManagementService)
+                          ManagementService.getExistingManagementService(cache);
+                  DistributedMember serverMember = getMember(server1);
+                  final ObjectName cacheServerMBeanName =
+                      service.getCacheServerMBeanName(port0, serverMember);
+                  CacheServerMXBean bean =
+                      service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+                  return bean.getClientIds();
+                });
 
     return cliendIds;
   }
 
   private void startNonSubscribedClient(VM client, final VM server, final int port) {
-    client.invoke("Start client", () -> {
-      Cache cache = GemFireCacheImpl.getInstance();
-      if (cache == null) {
+    client.invoke(
+        "Start client",
+        () -> {
+          Cache cache = GemFireCacheImpl.getInstance();
+          if (cache == null) {
 
-        Properties props = getNonDurableClientProps();
-        props.setProperty(LOG_FILE, "client_" + OSProcess.getId() + ".log");
-        props.setProperty(LOG_LEVEL, "fine");
-        props.setProperty(STATISTIC_ARCHIVE_FILE, "client_" + OSProcess.getId() + ".gfs");
-        props.setProperty(STATISTIC_SAMPLING_ENABLED, "true");
+            Properties props = getNonDurableClientProps();
+            props.setProperty(LOG_FILE, "client_" + OSProcess.getId() + ".log");
+            props.setProperty(LOG_LEVEL, "fine");
+            props.setProperty(STATISTIC_ARCHIVE_FILE, "client_" + OSProcess.getId() + ".gfs");
+            props.setProperty(STATISTIC_SAMPLING_ENABLED, "true");
 
-        getSystem(props);
+            getSystem(props);
 
-        final ClientCacheFactory ccf = new ClientCacheFactory(props);
-        ccf.addPoolServer(getServerHostName(server.getHost()), port);
-        ccf.setPoolSubscriptionEnabled(false);
-        ccf.setPoolPingInterval(1);
-        ccf.setPoolStatisticInterval(1);
-        ccf.setPoolSubscriptionRedundancy(1);
-        ccf.setPoolMinConnections(1);
+            final ClientCacheFactory ccf = new ClientCacheFactory(props);
+            ccf.addPoolServer(getServerHostName(server.getHost()), port);
+            ccf.setPoolSubscriptionEnabled(false);
+            ccf.setPoolPingInterval(1);
+            ccf.setPoolStatisticInterval(1);
+            ccf.setPoolSubscriptionRedundancy(1);
+            ccf.setPoolMinConnections(1);
 
-        ClientCache clientCache = (ClientCache) getClientCache(ccf);
-        //Create region
-        if (clientCache.getRegion(Region.SEPARATOR + regionName) == null && clientCache.getRegion(regionName) == null) {
-          ClientRegionFactory regionFactory = clientCache.createClientRegionFactory(ClientRegionShortcut.LOCAL).setPoolName(clientCache.getDefaultPool().getName());
-          Region dataRegion = regionFactory.create(regionName);
-          assertNotNull(dataRegion);
-          dataRegion.put("k1", "v1");
-          dataRegion.put("k2", "v2");
-
-        }
-      } else {
-        String poolName = "new_pool_" + System.currentTimeMillis();
-        try {
-          PoolImpl p = (PoolImpl) PoolManager.createFactory().addServer(getServerHostName(server.getHost()), port).setThreadLocalConnections(true).setMinConnections(1).setSubscriptionEnabled(false).setPingInterval(1).setStatisticInterval(1).setMinConnections(1).setSubscriptionRedundancy(1).create(poolName);
-          cache.getLogger().info("Created new pool pool " + poolName);
-          assertNotNull(p);
-        } catch (Exception eee) {
-          cache.getLogger().info("Exception in creating pool " + poolName + "    Exception ==" + CliUtil.stackTraceAsString(eee));
-        }
-      }
-    });
+            ClientCache clientCache = (ClientCache) getClientCache(ccf);
+            //Create region
+            if (clientCache.getRegion(Region.SEPARATOR + regionName) == null
+                && clientCache.getRegion(regionName) == null) {
+              ClientRegionFactory regionFactory =
+                  clientCache
+                      .createClientRegionFactory(ClientRegionShortcut.LOCAL)
+                      .setPoolName(clientCache.getDefaultPool().getName());
+              Region dataRegion = regionFactory.create(regionName);
+              assertNotNull(dataRegion);
+              dataRegion.put("k1", "v1");
+              dataRegion.put("k2", "v2");
+            }
+          } else {
+            String poolName = "new_pool_" + System.currentTimeMillis();
+            try {
+              PoolImpl p =
+                  (PoolImpl)
+                      PoolManager.createFactory()
+                          .addServer(getServerHostName(server.getHost()), port)
+                          .setThreadLocalConnections(true)
+                          .setMinConnections(1)
+                          .setSubscriptionEnabled(false)
+                          .setPingInterval(1)
+                          .setStatisticInterval(1)
+                          .setMinConnections(1)
+                          .setSubscriptionRedundancy(1)
+                          .create(poolName);
+              cache.getLogger().info("Created new pool pool " + poolName);
+              assertNotNull(p);
+            } catch (Exception eee) {
+              cache
+                  .getLogger()
+                  .info(
+                      "Exception in creating pool "
+                          + poolName
+                          + "    Exception =="
+                          + CliUtil.stackTraceAsString(eee));
+            }
+          }
+        });
   }
 
   @Override

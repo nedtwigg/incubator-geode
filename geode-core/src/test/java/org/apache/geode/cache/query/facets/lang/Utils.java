@@ -77,8 +77,7 @@ class Utils {
   static List toTokens(String s) {
     StringTokenizer tokenizer = new StringTokenizer(s, " ");
     List l = new ArrayList();
-    while (tokenizer.hasMoreTokens())
-      l.add(tokenizer.nextToken());
+    while (tokenizer.hasMoreTokens()) l.add(tokenizer.nextToken());
     return l;
   }
 
@@ -87,15 +86,15 @@ class Utils {
   throws Exception {
     try {
       gsSession.commit();
-   
+
     } catch (GsTransactionConflictException ex) {
       gsSession.abort();
       throw new GsException("Commit Failed");
     }
-   
+
     gsSession.begin();
   }
-   
+
   static void canonicalize()
   throws Exception {
     // this step won't be necessary when we have a query layer filein
@@ -106,7 +105,7 @@ class Utils {
     org.apache.persistence.vm.VMFactory.getCurrentVM().commitReposCanonicalObjs(gsSession);
     try {
       gsSession.commit();
-   
+
     } catch (GsTransactionConflictException ex) {
       System.err.println("Commit Failed");
       return;
@@ -122,5 +121,4 @@ class Utils {
   static char randomAlphabetic() {
     return (char) randomInt('A', 'z');
   }
-
 }

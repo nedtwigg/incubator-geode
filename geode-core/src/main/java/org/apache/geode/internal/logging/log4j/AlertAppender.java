@@ -39,9 +39,8 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.tcp.ReenteredConnectException;
 
 /**
- * A Log4j Appender which will notify listeners whenever a message of the
- * requested level is written to the log file.
- * 
+ * A Log4j Appender which will notify listeners whenever a message of the requested level is written
+ * to the log file.
  */
 public final class AlertAppender extends AbstractAppender implements PropertyChangeListener {
   private static final String APPENDER_NAME = AlertAppender.class.getName();
@@ -49,12 +48,13 @@ public final class AlertAppender extends AbstractAppender implements PropertyCha
   private static final AlertAppender instance = new AlertAppender();
 
   /** Is this thread in the process of alerting? */
-  private static final ThreadLocal<Boolean> alerting = new ThreadLocal<Boolean>() {
-    @Override
-    protected Boolean initialValue() {
-      return Boolean.FALSE;
-    }
-  };
+  private static final ThreadLocal<Boolean> alerting =
+      new ThreadLocal<Boolean>() {
+        @Override
+        protected Boolean initialValue() {
+          return Boolean.FALSE;
+        }
+      };
 
   // Listeners are ordered with the narrowest levels (e.g. FATAL) at the end
   private final CopyOnWriteArrayList<Listener> listeners = new CopyOnWriteArrayList<Listener>();
@@ -73,10 +73,7 @@ public final class AlertAppender extends AbstractAppender implements PropertyCha
     return instance;
   }
 
-  /**
-   * Returns true if the current thread is in the process of delivering an
-   * alert message.
-   */
+  /** Returns true if the current thread is in the process of delivering an alert message. */
   public static boolean isThreadAlerting() {
     return alerting.get();
   }
@@ -94,10 +91,9 @@ public final class AlertAppender extends AbstractAppender implements PropertyCha
   }
 
   /**
-   * This method is optimized with the assumption that at least one listener
-   * has set a level which requires that the event be sent. This is ensured
-   * by modifying the appender's configuration whenever a listener is added
-   * or removed. 
+   * This method is optimized with the assumption that at least one listener has set a level which
+   * requires that the event be sent. This is ensured by modifying the appender's configuration
+   * whenever a listener is added or removed.
    */
   @Override
   public void append(final LogEvent event) {
@@ -139,16 +135,41 @@ public final class AlertAppender extends AbstractAppender implements PropertyCha
         }
 
         try {
-          AlertListenerMessage alertMessage = AlertListenerMessage.create(listener.getMember(), intLevel, date, connectionName, threadName, Thread.currentThread().getId(), logMessage, stackTrace);
+          AlertListenerMessage alertMessage =
+              AlertListenerMessage.create(
+                  listener.getMember(),
+                  intLevel,
+                  date,
+                  connectionName,
+                  threadName,
+                  Thread.currentThread().getId(),
+                  logMessage,
+                  stackTrace);
 
           if (listener.getMember().equals(distMgr.getDistributionManagerId())) {
             if (isDebugEnabled) {
-              logger.debug("Delivering local alert message: {}, {}, {}, {}, {}, [{}], [{}].", listener.getMember(), intLevel, date, connectionName, threadName, logMessage, stackTrace);
+              logger.debug(
+                  "Delivering local alert message: {}, {}, {}, {}, {}, [{}], [{}].",
+                  listener.getMember(),
+                  intLevel,
+                  date,
+                  connectionName,
+                  threadName,
+                  logMessage,
+                  stackTrace);
             }
             alertMessage.process(distMgr);
           } else {
             if (isDebugEnabled) {
-              logger.debug("Delivering remote alert message: {}, {}, {}, {}, {}, [{}], [{}].", listener.getMember(), intLevel, date, connectionName, threadName, logMessage, stackTrace);
+              logger.debug(
+                  "Delivering remote alert message: {}, {}, {}, {}, {}, [{}], [{}].",
+                  listener.getMember(),
+                  intLevel,
+                  date,
+                  connectionName,
+                  threadName,
+                  logMessage,
+                  stackTrace);
             }
             distMgr.putOutgoing(alertMessage);
           }
@@ -198,7 +219,8 @@ public final class AlertAppender extends AbstractAppender implements PropertyCha
     return memberWasFound;
   }
 
-  public synchronized boolean hasAlertListener(final DistributedMember member, final int alertLevel) {
+  public synchronized boolean hasAlertListener(
+      final DistributedMember member, final int alertLevel) {
     final Level level = LogService.toLevel(alertLevelToLogLevel(alertLevel));
 
     for (Listener listener : this.listeners) {
@@ -224,7 +246,8 @@ public final class AlertAppender extends AbstractAppender implements PropertyCha
   @Override
   public synchronized void propertyChange(final PropertyChangeEvent evt) {
     if (logger.isDebugEnabled()) {
-      logger.debug("Responding to a property change event. Property name is {}.", evt.getPropertyName());
+      logger.debug(
+          "Responding to a property change event. Property name is {}.", evt.getPropertyName());
     }
     if (evt.getPropertyName().equals(LoggerContext.PROPERTY_CONFIG)) {
       LoggerConfig loggerConfig = this.appenderContext.getLoggerConfig();
@@ -235,12 +258,10 @@ public final class AlertAppender extends AbstractAppender implements PropertyCha
   }
 
   /**
-   * Will add (or replace) a listener to the list of sorted listeners such that
-   * listeners with a narrower level (e.g. FATAL) will be at the end of the
-   * list.
-   * 
-   * @param listener
-   *          The listener to add to the list.
+   * Will add (or replace) a listener to the list of sorted listeners such that listeners with a
+   * narrower level (e.g. FATAL) will be at the end of the list.
+   *
+   * @param listener The listener to add to the list.
    */
   private void addListenerToSortedList(final Listener listener) {
     if (this.listeners.contains(listener)) {
@@ -259,23 +280,21 @@ public final class AlertAppender extends AbstractAppender implements PropertyCha
 
   /**
    * Converts an int alert level to an int log level.
-   * 
-   * @param alertLevel
-   *          The int value for the alert level
+   *
+   * @param alertLevel The int value for the alert level
    * @return The int value for the matching log level
-   * @throws java.lang.IllegalArgumentException
-   *           If there is no matching log level
+   * @throws java.lang.IllegalArgumentException If there is no matching log level
    */
   public static int alertLevelToLogLevel(final int alertLevel) {
     switch (alertLevel) {
-    case Alert.SEVERE:
-      return Level.FATAL.intLevel();
-    case Alert.ERROR:
-      return Level.ERROR.intLevel();
-    case Alert.WARNING:
-      return Level.WARN.intLevel();
-    case Alert.OFF:
-      return Level.OFF.intLevel();
+      case Alert.SEVERE:
+        return Level.FATAL.intLevel();
+      case Alert.ERROR:
+        return Level.ERROR.intLevel();
+      case Alert.WARNING:
+        return Level.WARN.intLevel();
+      case Alert.OFF:
+        return Level.OFF.intLevel();
     }
 
     throw new IllegalArgumentException("Unknown Alert level [" + alertLevel + "].");
@@ -283,12 +302,10 @@ public final class AlertAppender extends AbstractAppender implements PropertyCha
 
   /**
    * Converts an int log level to an int alert level.
-   * 
-   * @param logLevel
-   *          The int value for the log level
+   *
+   * @param logLevel The int value for the log level
    * @return The int value for the matching alert level
-   * @throws java.lang.IllegalArgumentException
-   *           If there is no matching log level
+   * @throws java.lang.IllegalArgumentException If there is no matching log level
    */
   public static int logLevelToAlertLevel(final int logLevel) {
     if (logLevel == Level.FATAL.intLevel()) {
@@ -310,9 +327,7 @@ public final class AlertAppender extends AbstractAppender implements PropertyCha
     this.appenderContext.getLoggerConfig().removeAppender(APPENDER_NAME);
   }
 
-  /**
-   * Simple value object which holds an InteralDistributedMember and Level pair.
-   */
+  /** Simple value object which holds an InteralDistributedMember and Level pair. */
   static class Listener {
     private Level level;
     private DistributedMember member;
@@ -330,17 +345,13 @@ public final class AlertAppender extends AbstractAppender implements PropertyCha
       this.member = member;
     }
 
-    /**
-     * Never used, but maintain the hashCode/equals contract.
-     */
+    /** Never used, but maintain the hashCode/equals contract. */
     @Override
     public int hashCode() {
       return 31 + ((this.member == null) ? 0 : this.member.hashCode());
     }
 
-    /**
-     * Ignore the level when determining equality.
-     */
+    /** Ignore the level when determining equality. */
     @Override
     public boolean equals(Object other) {
       return (this.member.equals(((Listener) other).member)) ? true : false;

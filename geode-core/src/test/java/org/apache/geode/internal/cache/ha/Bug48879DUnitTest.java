@@ -71,7 +71,7 @@ public class Bug48879DUnitTest extends JUnit4DistributedTestCase {
     int port0 = (Integer) vm0.invoke(() -> Bug48879DUnitTest.createCacheServer());
     int port1 = (Integer) vm1.invoke(() -> Bug48879DUnitTest.createCacheServer());
 
-    createClientCache(host, new Integer[] { port0, port1 }, Boolean.TRUE);
+    createClientCache(host, new Integer[] {port0, port1}, Boolean.TRUE);
   }
 
   @Override
@@ -90,7 +90,7 @@ public class Bug48879DUnitTest extends JUnit4DistributedTestCase {
     }
   }
 
-  @SuppressWarnings({ "unused", "deprecation" })
+  @SuppressWarnings({"unused", "deprecation"})
   public static Integer createCacheServer() throws Exception {
     Bug48879DUnitTest test = new Bug48879DUnitTest();
     System.setProperty(DistributionConfig.GEMFIRE_PREFIX + "MessageTimeToLive", "30");
@@ -126,17 +126,17 @@ public class Bug48879DUnitTest extends JUnit4DistributedTestCase {
     }
     cache = (GemFireCacheImpl) ccf.create();
 
-    ClientRegionFactory<String, String> crf = cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
+    ClientRegionFactory<String, String> crf =
+        cache.createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY);
 
     Region<String, String> region = crf.create(REGION_NAME);
 
     if (doRI) {
       region.registerInterest("ALL_KEYS");
     }
-
   }
 
-  @SuppressWarnings({ "unused", "unchecked" })
+  @SuppressWarnings({"unused", "unchecked"})
   public static void doPuts(Integer numOfThreads, Integer puts) throws Exception {
     Region<String, String> region = cache.getRegion(REGION_NAME);
     final int putsPerThread = puts;
@@ -145,15 +145,17 @@ public class Bug48879DUnitTest extends JUnit4DistributedTestCase {
 
     for (int i = 0; i < numOfThreads; i++) {
       final String threadId = "Thread_" + i + "X";
-      threads[i] = new Thread(new Runnable() {
-        @SuppressWarnings("rawtypes")
-        public void run() {
-          Region region = cache.getRegion(REGION_NAME);
-          for (int i = 0; i < putsPerThread; i++) {
-            region.put(threadId + i, "VALUE_" + i);
-          }
-        }
-      });
+      threads[i] =
+          new Thread(
+              new Runnable() {
+                @SuppressWarnings("rawtypes")
+                public void run() {
+                  Region region = cache.getRegion(REGION_NAME);
+                  for (int i = 0; i < putsPerThread; i++) {
+                    region.put(threadId + i, "VALUE_" + i);
+                  }
+                }
+              });
       threads[i].start();
     }
 
@@ -168,25 +170,50 @@ public class Bug48879DUnitTest extends JUnit4DistributedTestCase {
   }
 
   public static Boolean isPrimaryServer() {
-    return ((CacheClientProxy) CacheClientNotifier.getInstance().getClientProxies().toArray()[0]).isPrimary();
+    return ((CacheClientProxy) CacheClientNotifier.getInstance().getClientProxies().toArray()[0])
+        .isPrimary();
   }
 
   public static void verifyStats(Integer numOfEvents, Integer expectedTids) throws Exception {
-    HARegionQueueStats stats = ((CacheClientProxy) CacheClientNotifier.getInstance().getClientProxies().toArray()[0]).getHARegionQueue().getStatistics();
+    HARegionQueueStats stats =
+        ((CacheClientProxy) CacheClientNotifier.getInstance().getClientProxies().toArray()[0])
+            .getHARegionQueue()
+            .getStatistics();
 
     long actualExpiry = stats.getEventsExpired();
     long expectedExpiry = isPrimaryServer() ? 0 : numOfEvents + 1; // +1 for LAST key
-    assertEquals("Expected eventsExpired: " + expectedExpiry + " but actual eventsExpired: " + actualExpiry + (isPrimaryServer() ? " at primary." : " at secondary."), expectedExpiry, actualExpiry);
+    assertEquals(
+        "Expected eventsExpired: "
+            + expectedExpiry
+            + " but actual eventsExpired: "
+            + actualExpiry
+            + (isPrimaryServer() ? " at primary." : " at secondary."),
+        expectedExpiry,
+        actualExpiry);
 
     int actualTids = stats.getThreadIdentiferCount();
-    assertTrue("Expected ThreadIdentifier count <= 1 but actual: " + actualTids + (isPrimaryServer() ? " at primary." : " at secondary."), actualTids <= 1); // Sometimes we may see 1 threadIdentifier due to slow machines, but never equal to expectedTids
+    assertTrue(
+        "Expected ThreadIdentifier count <= 1 but actual: "
+            + actualTids
+            + (isPrimaryServer() ? " at primary." : " at secondary."),
+        actualTids
+            <= 1); // Sometimes we may see 1 threadIdentifier due to slow machines, but never equal to expectedTids
   }
 
   public static void verifyThreadsBeforeExpiry(Integer expectedTids) throws Exception {
-    HARegionQueueStats stats = ((CacheClientProxy) CacheClientNotifier.getInstance().getClientProxies().toArray()[0]).getHARegionQueue().getStatistics();
+    HARegionQueueStats stats =
+        ((CacheClientProxy) CacheClientNotifier.getInstance().getClientProxies().toArray()[0])
+            .getHARegionQueue()
+            .getStatistics();
 
     int actualTids = stats.getThreadIdentiferCount();
-    assertTrue("Expected ThreadIdentifier count >= " + expectedTids + " but actual: " + actualTids + (isPrimaryServer() ? " at primary." : " at secondary."), actualTids >= expectedTids);
+    assertTrue(
+        "Expected ThreadIdentifier count >= "
+            + expectedTids
+            + " but actual: "
+            + actualTids
+            + (isPrimaryServer() ? " at primary." : " at secondary."),
+        actualTids >= expectedTids);
   }
 
   @Test

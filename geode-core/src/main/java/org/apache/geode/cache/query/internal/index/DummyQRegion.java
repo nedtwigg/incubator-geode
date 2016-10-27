@@ -45,9 +45,7 @@ import org.apache.geode.internal.offheap.StoredObject;
 import org.apache.geode.internal.offheap.annotations.Released;
 import org.apache.geode.internal.offheap.annotations.Retained;
 
-/**
- *
- */
+/** */
 public class DummyQRegion extends QRegion {
 
   private RegionEntry entry = null;
@@ -63,18 +61,17 @@ public class DummyQRegion extends QRegion {
   public DummyQRegion(Region region) {
     super(region, false);
     Class constraint = region.getAttributes().getValueConstraint();
-    if (constraint != null)
-      valueType = TypeUtils.getObjectType(constraint);
+    if (constraint != null) valueType = TypeUtils.getObjectType(constraint);
 
     constraint = region.getAttributes().getKeyConstraint();
-    if (constraint != null)
-      keyType = TypeUtils.getObjectType(constraint);
+    if (constraint != null) keyType = TypeUtils.getObjectType(constraint);
     values = new ResultsBag(((GemFireCacheImpl) region.getCache()).getCachePerfStats());
     values.setElementType(valueType);
     keys = new ResultsSet();
     keys.setElementType(keyType);
     entries = new ResultsSet();
-    entries.setElementType(TypeUtils.getRegionEntryType(region)); // gets key and value types from region
+    entries.setElementType(
+        TypeUtils.getRegionEntryType(region)); // gets key and value types from region
   }
 
   @Override
@@ -244,7 +241,8 @@ public class DummyQRegion extends QRegion {
 
   @Override
   public Object[] toArray(Object[] obj) {
-    throw new RuntimeException(LocalizedStrings.DummyQRegion_NOT_YET_IMPLEMENTED.toLocalizedString());
+    throw new RuntimeException(
+        LocalizedStrings.DummyQRegion_NOT_YET_IMPLEMENTED.toLocalizedString());
   }
 
   @Override

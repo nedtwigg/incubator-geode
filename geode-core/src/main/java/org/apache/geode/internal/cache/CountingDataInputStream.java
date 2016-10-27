@@ -20,11 +20,9 @@ import java.io.*;
 
 /**
  * A data input stream that counts the bytes it plans on reading.
- * 
- * 
+ *
  * @since GemFire prPersistSprint2
  */
-
 public class CountingDataInputStream implements DataInput {
   private final long fileLength;
   private long count;

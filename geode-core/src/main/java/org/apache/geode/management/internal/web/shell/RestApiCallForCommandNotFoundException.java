@@ -18,15 +18,16 @@ package org.apache.geode.management.internal.web.shell;
 
 /**
  * The NoRestApiCallForCommandException class...
- * <p/>
+ *
+ * <p>
+ *
  * @see java.lang.RuntimeException
  * @since GemFire 8.0
  */
 @SuppressWarnings("unused")
 public class RestApiCallForCommandNotFoundException extends RuntimeException {
 
-  public RestApiCallForCommandNotFoundException() {
-  }
+  public RestApiCallForCommandNotFoundException() {}
 
   public RestApiCallForCommandNotFoundException(final String message) {
     super(message);
@@ -39,5 +40,4 @@ public class RestApiCallForCommandNotFoundException extends RuntimeException {
   public RestApiCallForCommandNotFoundException(final String message, final Throwable cause) {
     super(message, cause);
   }
-
 }

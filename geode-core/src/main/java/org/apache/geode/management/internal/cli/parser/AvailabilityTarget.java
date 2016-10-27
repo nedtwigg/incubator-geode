@@ -36,8 +36,10 @@ public class AvailabilityTarget {
   public AvailabilityTarget(Object target, Method method) {
     this.target = target;
     this.method = method;
-    AvailabilityMetadata availabilityMetadata = this.method.getAnnotation(CliMetaData.AvailabilityMetadata.class);
-    String specifiedAvailabilityDesc = CliStrings.AVAILABILITYTARGET_MSG_DEFAULT_UNAVAILABILITY_DESCRIPTION;
+    AvailabilityMetadata availabilityMetadata =
+        this.method.getAnnotation(CliMetaData.AvailabilityMetadata.class);
+    String specifiedAvailabilityDesc =
+        CliStrings.AVAILABILITYTARGET_MSG_DEFAULT_UNAVAILABILITY_DESCRIPTION;
     if (availabilityMetadata != null) {
       specifiedAvailabilityDesc = availabilityMetadata.availabilityDescription();
     }

@@ -18,17 +18,13 @@ package org.apache.geode.internal.cache;
 
 /**
  * Enumerated type for an event operation.
- * 
- * 
- * 
+ *
  * @see org.apache.geode.cache.Operation
- * 
  * @since GemFire 6.6
  */
 public final class OpType {
 
-  private OpType() {
-  }
+  private OpType() {}
 
   public static final byte CREATE = 1;
 

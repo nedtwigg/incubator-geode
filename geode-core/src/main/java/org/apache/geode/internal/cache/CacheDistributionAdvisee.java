@@ -22,35 +22,38 @@ import org.apache.geode.distributed.internal.DistributionAdvisee;
 import org.apache.geode.internal.cache.CacheDistributionAdvisor.CacheProfile;
 
 /**
- * Distributed cache object (typically a <code>Region</code>) which uses
- * a {@link CacheDistributionAdvisor}.
+ * Distributed cache object (typically a <code>Region</code>) which uses a {@link
+ * CacheDistributionAdvisor}.
+ *
  * @since GemFire 5.1
  */
 public interface CacheDistributionAdvisee extends DistributionAdvisee {
 
   /**
-   * Returns the <code>CacheDistributionAdvisor</code> that provides advice for
-   * this advisee.
+   * Returns the <code>CacheDistributionAdvisor</code> that provides advice for this advisee.
+   *
    * @return the <code>CacheDistributionAdvisor</code>
    */
   public CacheDistributionAdvisor getCacheDistributionAdvisor();
 
   /**
    * Returns the <code>Cache</code> associated with this cache object.
+   *
    * @return the Cache
    */
   public Cache getCache();
 
-  /** 
+  /**
    * Returns the <code>RegionAttributes</code> associated with this advisee.
+   *
    * @return the <code>RegionAttributes</code> of this advisee
    */
   public RegionAttributes getAttributes();
 
   /**
-   * notifies the advisee that a new remote member has registered a profile
-   * showing that it is now initialized
-   * 
+   * notifies the advisee that a new remote member has registered a profile showing that it is now
+   * initialized
+   *
    * @param profile the remote member's profile
    */
   public void remoteRegionInitialized(CacheProfile profile);

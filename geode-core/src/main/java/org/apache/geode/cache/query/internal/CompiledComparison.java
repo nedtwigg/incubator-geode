@@ -42,11 +42,9 @@ import org.apache.geode.internal.offheap.annotations.Retained;
 import org.apache.geode.pdx.PdxInstance;
 import org.apache.geode.pdx.internal.PdxString;
 
-/**
- * Comparison value: <, >, <=, >=, <>, =
- * 
- */
-public class CompiledComparison extends AbstractCompiledValue implements Negatable, OQLLexerTokenTypes, Indexable {
+/** Comparison value: <, >, <=, >=, <>, = */
+public class CompiledComparison extends AbstractCompiledValue
+    implements Negatable, OQLLexerTokenTypes, Indexable {
 
   // persistent inst vars
   public final CompiledValue _left;
@@ -58,7 +56,14 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
   CompiledComparison(CompiledValue left, CompiledValue right, int op) {
     // invariant:
     // operator must be one of <,>,<=,>=,=,<>
-    Support.Assert(op == TOK_LT || op == TOK_LE || op == TOK_GT || op == TOK_GE || op == TOK_EQ || op == TOK_NE, String.valueOf(op));
+    Support.Assert(
+        op == TOK_LT
+            || op == TOK_LE
+            || op == TOK_GT
+            || op == TOK_GE
+            || op == TOK_EQ
+            || op == TOK_NE,
+        String.valueOf(op));
     _left = left;
     _right = right;
     _operator = op;
@@ -77,7 +82,9 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
     return COMPARISON;
   }
 
-  public Object evaluate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public Object evaluate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     Object left = _left.evaluate(context);
     Object right = _right.evaluate(context);
 
@@ -95,9 +102,13 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
     // if read-serialized is not set, deserialize the pdx instance for comparison
     // only if it is of the same class as that of the object being compared
     if (!context.getCache().getPdxReadSerialized()) {
-      if (left instanceof PdxInstance && !(right instanceof PdxInstance) && ((PdxInstance) left).getClassName().equals(right.getClass().getName())) {
+      if (left instanceof PdxInstance
+          && !(right instanceof PdxInstance)
+          && ((PdxInstance) left).getClassName().equals(right.getClass().getName())) {
         left = ((PdxInstance) left).getObject();
-      } else if (right instanceof PdxInstance && !(left instanceof PdxInstance) && ((PdxInstance) right).getClassName().equals(left.getClass().getName())) {
+      } else if (right instanceof PdxInstance
+          && !(left instanceof PdxInstance)
+          && ((PdxInstance) right).getClassName().equals(left.getClass().getName())) {
         right = ((PdxInstance) right).getObject();
       }
     }
@@ -105,49 +116,57 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
     if (left instanceof PdxString) {
       if (right instanceof String) {
         switch (_right.getType()) {
-        case LITERAL:
-          right = ((CompiledLiteral) _right).getSavedPdxString();
-          break;
-        case QUERY_PARAM:
-          right = ((CompiledBindArgument) _right).getSavedPdxString(context);
-          break;
-        case FUNCTION:
-        case PATH:
-          right = new PdxString((String) right);
+          case LITERAL:
+            right = ((CompiledLiteral) _right).getSavedPdxString();
+            break;
+          case QUERY_PARAM:
+            right = ((CompiledBindArgument) _right).getSavedPdxString(context);
+            break;
+          case FUNCTION:
+          case PATH:
+            right = new PdxString((String) right);
         }
       }
     } else if (right instanceof PdxString) {
       switch (_left.getType()) {
-      case LITERAL:
-        left = ((CompiledLiteral) _left).getSavedPdxString();
-        break;
-      case QUERY_PARAM:
-        left = ((CompiledBindArgument) _left).getSavedPdxString(context);
-        break;
-      case FUNCTION:
-      case PATH:
-        left = new PdxString((String) left);
+        case LITERAL:
+          left = ((CompiledLiteral) _left).getSavedPdxString();
+          break;
+        case QUERY_PARAM:
+          left = ((CompiledBindArgument) _left).getSavedPdxString(context);
+          break;
+        case FUNCTION:
+        case PATH:
+          left = new PdxString((String) left);
       }
     }
     return TypeUtils.compare(left, right, _operator);
   }
 
   /**
-   * Asif : Evaluates as a filter taking advantage of indexes if appropriate.
-   * This function has a meaningful implementation only in CompiledComparison &
-   * CompiledUndefined . It is unsupported in other classes. The additional
-   * parameters which it takes are a boolean which is used to indicate whether
-   * the index result set needs to be expanded to the top level or not. The
-   * second is a CompiledValue representing the operands which are only iter
-   * evaluatable. The CompiledValue passed will be null except if a
-   * GroupJunction has only one filter evaluatable condition & rest are iter
-   * operands. In such cases , the iter operands will be evaluated while
-   * expanding/cutting down the index resultset
-   * 
+   * Asif : Evaluates as a filter taking advantage of indexes if appropriate. This function has a
+   * meaningful implementation only in CompiledComparison & CompiledUndefined . It is unsupported in
+   * other classes. The additional parameters which it takes are a boolean which is used to indicate
+   * whether the index result set needs to be expanded to the top level or not. The second is a
+   * CompiledValue representing the operands which are only iter evaluatable. The CompiledValue
+   * passed will be null except if a GroupJunction has only one filter evaluatable condition & rest
+   * are iter operands. In such cases , the iter operands will be evaluated while expanding/cutting
+   * down the index resultset
+   *
    * @return SelectResults
    */
   @Override
-  public SelectResults filterEvaluate(ExecutionContext context, SelectResults intermediateResults, boolean completeExpansionNeeded, @Retained CompiledValue iterOperands, RuntimeIterator[] indpndntItrs, boolean isIntersection, boolean conditioningNeeded, boolean evaluateProjection) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public SelectResults filterEvaluate(
+      ExecutionContext context,
+      SelectResults intermediateResults,
+      boolean completeExpansionNeeded,
+      @Retained CompiledValue iterOperands,
+      RuntimeIterator[] indpndntItrs,
+      boolean isIntersection,
+      boolean conditioningNeeded,
+      boolean evaluateProjection)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     // see if we're dependent on the current iterator
     // if not let super handle it
     // RuntimeIterator itr = context.getCurrentIterator();
@@ -155,28 +174,47 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
     if (!isDependentOnCurrentScope(context))
       return super.filterEvaluate(context, intermediateResults);
     IndexInfo[] idxInfo = getIndexInfo(context);
-    Support.Assert(idxInfo != null, "a comparison that is dependent, not indexed, and filter evaluated is not possible");
+    Support.Assert(
+        idxInfo != null,
+        "a comparison that is dependent, not indexed, and filter evaluated is not possible");
     if (idxInfo.length == 1) {
-      return singleBaseCollectionFilterEvaluate(context, intermediateResults, completeExpansionNeeded, iterOperands, idxInfo[0], indpndntItrs, isIntersection, conditioningNeeded, evaluateProjection);
+      return singleBaseCollectionFilterEvaluate(
+          context,
+          intermediateResults,
+          completeExpansionNeeded,
+          iterOperands,
+          idxInfo[0],
+          indpndntItrs,
+          isIntersection,
+          conditioningNeeded,
+          evaluateProjection);
     } else {
-      Support.Assert(idxInfo.length == 2, "A Composite CompiledComparison which is filter evaluatable needs to have two indexes");
-      return doubleBaseCollectionFilterEvaluate(context, intermediateResults, completeExpansionNeeded, iterOperands, idxInfo, indpndntItrs);
+      Support.Assert(
+          idxInfo.length == 2,
+          "A Composite CompiledComparison which is filter evaluatable needs to have two indexes");
+      return doubleBaseCollectionFilterEvaluate(
+          context,
+          intermediateResults,
+          completeExpansionNeeded,
+          iterOperands,
+          idxInfo,
+          indpndntItrs);
     }
   }
 
   /**
-   * evaluate as a filter, producing an intermediate result set. This may
-   * require iteration if there is no index available. Asif :The booelan true
-   * implies that CompiledComparsion when existing on its own always requires a
-   * Completeexpansion to top level iterators. This flag can get toggled to
-   * false only from inside a GroupJunction
-   * 
-   * @param intermediateResults if this parameter is provided, and we have to
-   *          iterate, then iterate over this result set instead of the entire
-   *          base collection.
+   * evaluate as a filter, producing an intermediate result set. This may require iteration if there
+   * is no index available. Asif :The booelan true implies that CompiledComparsion when existing on
+   * its own always requires a Completeexpansion to top level iterators. This flag can get toggled
+   * to false only from inside a GroupJunction
+   *
+   * @param intermediateResults if this parameter is provided, and we have to iterate, then iterate
+   *     over this result set instead of the entire base collection.
    */
   @Override
-  public SelectResults filterEvaluate(ExecutionContext context, SelectResults intermediateResults) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public SelectResults filterEvaluate(ExecutionContext context, SelectResults intermediateResults)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     // Asif : This function can be invoked only if the where clause contains
     // a single condition which is CompiledComparison.
     // If a CompiledComparison exists inside a GroupJunction, then it will
@@ -198,16 +236,24 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
       indpndntItr = (RuntimeIterator) rntmItrs.iterator().next();
     }
 
-    return filterEvaluate(context, intermediateResults, true/*
-                                                             * Complete
-                                                             * Expansion needed
-                                                             */, null, indpndntItr != null ? new RuntimeIterator[] { indpndntItr } : null/*
+    return filterEvaluate(
+        context,
+        intermediateResults,
+        true /*
+              * Complete
+              * Expansion needed
+              */,
+        null,
+        indpndntItr != null ? new RuntimeIterator[] {indpndntItr} : null /*
                                                                                                                                          * Asif :It is safe to pass null as the independent iterator
                                                                                                                                          * to which the condition belongs is required only if boolean
                                                                                                                                          * complete expansion turns out to be false, which can happen
                                                                                                                                          * only in case of CompiledComparison/CompiledUndefined
                                                                                                                                          * called from roupJunction or CompositeGroupJunction
-                                                                                                                                         */, true, this.isConditioningNeededForIndex(indpndntItr, context, true), true /*evaluate projection attribute */);
+                                                                                                                                         */,
+        true,
+        this.isConditioningNeededForIndex(indpndntItr, context, true),
+        true /*evaluate projection attribute */);
   }
 
   /*
@@ -218,8 +264,12 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
    * mistake.
    */
   @Override
-  public SelectResults auxFilterEvaluate(ExecutionContext context, SelectResults intermediateResults) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
-    Support.assertionFailed(" This auxFilterEvaluate of CompiledComparison should never have got invoked.");
+  public SelectResults auxFilterEvaluate(
+      ExecutionContext context, SelectResults intermediateResults)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
+    Support.assertionFailed(
+        " This auxFilterEvaluate of CompiledComparison should never have got invoked.");
     return null;
   }
 
@@ -229,11 +279,11 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
 
   // Invariant: the receiver is dependent on the current iterator.
   @Override
-  protected PlanInfo protGetPlanInfo(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  protected PlanInfo protGetPlanInfo(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     PlanInfo result = new PlanInfo();
     IndexInfo[] indexInfo = getIndexInfo(context);
-    if (indexInfo == null)
-      return result;
+    if (indexInfo == null) return result;
     for (int i = 0; i < indexInfo.length; ++i) {
       result.indexes.add(indexInfo[i]._index);
     }
@@ -242,7 +292,8 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
     if (preferredCondn != null) {
       //This means that the system is having only one independent iterator so equi join is ruled out.
       // thus the first index is guaranteed to be on the condition which may match our preferred index
-      if (indexInfo[0]._index.getCanonicalizedIndexedExpression().equals(preferredCondn) && indexInfo[0]._index.getType() != IndexType.PRIMARY_KEY) {
+      if (indexInfo[0]._index.getCanonicalizedIndexedExpression().equals(preferredCondn)
+          && indexInfo[0]._index.getType() != IndexType.PRIMARY_KEY) {
         result.isPreferred = true;
       }
     }
@@ -250,15 +301,15 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
   }
 
   @Override
-  public Set computeDependencies(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  public Set computeDependencies(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     context.addDependencies(this, _left.computeDependencies(context));
     return context.addDependencies(this, _right.computeDependencies(context));
   }
 
   int reflectOnOperator(CompiledValue key) {
     int operator = _operator;
-    if (key == _left)
-      operator = reflectOperator(operator);
+    if (key == _left) operator = reflectOperator(operator);
     return operator;
   }
 
@@ -269,7 +320,9 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
     return true;
   }
 
-  public int getSizeEstimate(ExecutionContext context) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public int getSizeEstimate(ExecutionContext context)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
     IndexInfo[] idxInfo = getIndexInfo(context);
     if (idxInfo == null) {
       // Asif: This implies it is an independent condition. So evaluate it first
@@ -293,16 +346,23 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
     int op = reflectOnOperator(idxInfo[0]._key());
 
     return idxInfo[0]._index.getSizeEstimate(key, op, idxInfo[0]._matchLevel);
-
   }
 
   /** **************** PRIVATE METHODS ************************** */
-  /**
-   * evaluate as a filter, involving a single iterator. Use an index if
-   * possible.
-   */
+  /** evaluate as a filter, involving a single iterator. Use an index if possible. */
   // Invariant: the receiver is dependent on the current iterator.
-  private SelectResults singleBaseCollectionFilterEvaluate(ExecutionContext context, SelectResults intermediateResults, final boolean completeExpansionNeeded, @Retained CompiledValue iterOperands, IndexInfo indexInfo, RuntimeIterator[] indpndntItr, boolean isIntersection, boolean conditioningNeeded, boolean evaluateProj) throws TypeMismatchException, AmbiguousNameException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+  private SelectResults singleBaseCollectionFilterEvaluate(
+      ExecutionContext context,
+      SelectResults intermediateResults,
+      final boolean completeExpansionNeeded,
+      @Retained CompiledValue iterOperands,
+      IndexInfo indexInfo,
+      RuntimeIterator[] indpndntItr,
+      boolean isIntersection,
+      boolean conditioningNeeded,
+      boolean evaluateProj)
+      throws TypeMismatchException, AmbiguousNameException, FunctionDomainException,
+          NameResolutionException, QueryInvocationTargetException {
     ObjectType resultType = indexInfo._index.getResultSetType();
     int indexFieldsSize = -1;
     SelectResults set = null;
@@ -329,7 +389,7 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
      * match level is zero & expand to to top level flag is true & iff the total
      * no. of iterators in current scope is greater than the no. of fields in
      * StructBag , then only we need to do any expansion.
-     * 
+     *
      */
 
     try {
@@ -356,7 +416,8 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
       }
       // ////////////////////////////////////////////////////////////////
       if (!conditioningNeeded) {
-        ObjectType projResultType = evaluateProj ? (ObjectType) context.cacheGet(RESULT_TYPE) : null;
+        ObjectType projResultType =
+            evaluateProj ? (ObjectType) context.cacheGet(RESULT_TYPE) : null;
         if (projResultType != null) {
           resultType = projResultType;
           projAttrib = (List) context.cacheGet(PROJ_ATTRIB);
@@ -365,17 +426,30 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
 
         if (isIntersection) {
           if (resultType instanceof StructType) {
-            context.getCache().getLogger().fine("StructType resultType.class=" + resultType.getClass().getName());
+            context
+                .getCache()
+                .getLogger()
+                .fine("StructType resultType.class=" + resultType.getClass().getName());
             if (useLinkedDataStructure) {
-              set = context.isDistinct() ? new LinkedStructSet((StructTypeImpl) resultType) : new SortedResultsBag<Struct>((StructTypeImpl) resultType, nullValuesAtStart);
+              set =
+                  context.isDistinct()
+                      ? new LinkedStructSet((StructTypeImpl) resultType)
+                      : new SortedResultsBag<Struct>(
+                          (StructTypeImpl) resultType, nullValuesAtStart);
             } else {
               set = QueryUtils.createStructCollection(context, (StructTypeImpl) resultType);
             }
             indexFieldsSize = ((StructTypeImpl) resultType).getFieldNames().length;
           } else {
-            context.getCache().getLogger().fine("non-StructType resultType.class=" + resultType.getClass().getName());
+            context
+                .getCache()
+                .getLogger()
+                .fine("non-StructType resultType.class=" + resultType.getClass().getName());
             if (useLinkedDataStructure) {
-              set = context.isDistinct() ? new LinkedResultSet(resultType) : new SortedResultsBag(resultType, nullValuesAtStart);
+              set =
+                  context.isDistinct()
+                      ? new LinkedResultSet(resultType)
+                      : new SortedResultsBag(resultType, nullValuesAtStart);
             } else {
               set = QueryUtils.createResultCollection(context, resultType);
             }
@@ -383,22 +457,37 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
           }
         } else {
 
-          if (intermediateResults != null && context.getQuery() != null && ((DefaultQuery) context.getQuery()).getSelect().isDistinct()) {
+          if (intermediateResults != null
+              && context.getQuery() != null
+              && ((DefaultQuery) context.getQuery()).getSelect().isDistinct()) {
             set = intermediateResults;
             intermediateResults = null;
           } else {
             if (resultType instanceof StructType) {
-              context.getCache().getLogger().fine("StructType resultType.class=" + resultType.getClass().getName());
+              context
+                  .getCache()
+                  .getLogger()
+                  .fine("StructType resultType.class=" + resultType.getClass().getName());
               if (useLinkedDataStructure) {
-                set = context.isDistinct() ? new LinkedStructSet((StructTypeImpl) resultType) : new SortedResultsBag<Struct>((StructTypeImpl) resultType, nullValuesAtStart);
+                set =
+                    context.isDistinct()
+                        ? new LinkedStructSet((StructTypeImpl) resultType)
+                        : new SortedResultsBag<Struct>(
+                            (StructTypeImpl) resultType, nullValuesAtStart);
               } else {
                 set = QueryUtils.createStructCollection(context, (StructTypeImpl) resultType);
               }
               indexFieldsSize = ((StructTypeImpl) resultType).getFieldNames().length;
             } else {
-              context.getCache().getLogger().fine("non-StructType resultType.class=" + resultType.getClass().getName());
+              context
+                  .getCache()
+                  .getLogger()
+                  .fine("non-StructType resultType.class=" + resultType.getClass().getName());
               if (useLinkedDataStructure) {
-                set = context.isDistinct() ? new LinkedResultSet(resultType) : new SortedResultsBag(resultType, nullValuesAtStart);
+                set =
+                    context.isDistinct()
+                        ? new LinkedResultSet(resultType)
+                        : new SortedResultsBag(resultType, nullValuesAtStart);
               } else {
                 set = QueryUtils.createResultCollection(context, resultType);
               }
@@ -407,22 +496,43 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
           }
         }
         if (!createEmptySet) {
-          indexInfo._index.query(key, op, set, iterOperands, indpndntItr != null ? indpndntItr[0] : null, context, projAttrib, intermediateResults, isIntersection);
+          indexInfo._index.query(
+              key,
+              op,
+              set,
+              iterOperands,
+              indpndntItr != null ? indpndntItr[0] : null,
+              context,
+              projAttrib,
+              intermediateResults,
+              isIntersection);
         }
       } else {
         if (resultType instanceof StructType) {
-          context.getCache().getLogger().fine("StructType resultType.class=" + resultType.getClass().getName());
+          context
+              .getCache()
+              .getLogger()
+              .fine("StructType resultType.class=" + resultType.getClass().getName());
           if (useLinkedDataStructure) {
-            set = context.isDistinct() ? new LinkedStructSet((StructTypeImpl) resultType) : new SortedResultsBag<Struct>((StructTypeImpl) resultType, nullValuesAtStart);
+            set =
+                context.isDistinct()
+                    ? new LinkedStructSet((StructTypeImpl) resultType)
+                    : new SortedResultsBag<Struct>((StructTypeImpl) resultType, nullValuesAtStart);
           } else {
             set = QueryUtils.createStructCollection(context, (StructTypeImpl) resultType);
           }
 
           indexFieldsSize = ((StructTypeImpl) resultType).getFieldNames().length;
         } else {
-          context.getCache().getLogger().fine("non-StructType resultType.class=" + resultType.getClass().getName());
+          context
+              .getCache()
+              .getLogger()
+              .fine("non-StructType resultType.class=" + resultType.getClass().getName());
           if (useLinkedDataStructure) {
-            set = context.isDistinct() ? new LinkedResultSet(resultType) : new SortedResultsBag(resultType, nullValuesAtStart);
+            set =
+                context.isDistinct()
+                    ? new LinkedResultSet(resultType)
+                    : new SortedResultsBag(resultType, nullValuesAtStart);
           } else {
             set = QueryUtils.createResultCollection(context, resultType);
           }
@@ -439,18 +549,33 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
       }
     }
     if (conditioningNeeded) {
-      return QueryUtils.getconditionedIndexResults(set, indexInfo, context, indexFieldsSize, completeExpansionNeeded, iterOperands, indpndntItr);
+      return QueryUtils.getconditionedIndexResults(
+          set,
+          indexInfo,
+          context,
+          indexFieldsSize,
+          completeExpansionNeeded,
+          iterOperands,
+          indpndntItr);
     } else {
       return set;
     }
   }
 
   /**
-   * evaluate as a filter, involving a two independent iterators. Use an index
-   * if possible on both. And merge theresults obtained.
+   * evaluate as a filter, involving a two independent iterators. Use an index if possible on both.
+   * And merge theresults obtained.
    */
   // Invariant: the receiver is dependent on the current iterator.
-  private SelectResults doubleBaseCollectionFilterEvaluate(ExecutionContext context, SelectResults intermediateResults, boolean completeExpansionNeeded, CompiledValue iterOperands, IndexInfo[] indxInfo, RuntimeIterator[] indpdntItrs) throws TypeMismatchException, AmbiguousNameException, FunctionDomainException, NameResolutionException, QueryInvocationTargetException {
+  private SelectResults doubleBaseCollectionFilterEvaluate(
+      ExecutionContext context,
+      SelectResults intermediateResults,
+      boolean completeExpansionNeeded,
+      CompiledValue iterOperands,
+      IndexInfo[] indxInfo,
+      RuntimeIterator[] indpdntItrs)
+      throws TypeMismatchException, AmbiguousNameException, FunctionDomainException,
+          NameResolutionException, QueryInvocationTargetException {
     //Asif : First we need to collect the results of the two indexes
     //We will be calling a function of Index & passing the other Index as a
     // parameter.
@@ -472,7 +597,7 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
      * expansion or CompsoiteGroupJunction expansion as be the case. ( ie
      * retaining the old logic of expanding the index result to top or
      * compositeGroupJunction level)
-     * 
+     *
      * The condition in which we sure are to use indexes on both LHS & RHS & the
      * the resultset expanded to CGJ or top level are 1) A stand alone
      * filterable composite condition : In such cases the independent group of
@@ -482,28 +607,29 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
      * such cases the independent grp of its passed is not null but the
      * intermediate resultset is null . This means that indexes on both LHS &
      * RHS to be used & expanded to top or CGJ level ( same as above)
-     * 
+     *
      * The case which is different from above is AND condition evaluation In
      * such cases, till the last but one filerable condition we pass complete
      * expn flag as false & group of indpndt itrs as null. Only last filterabel
      * condn is passed genuine value of expn flag & the not null grp of
      * independent itrs . The intermedaite set is not null & not empty for such
      * cases which wil help us distinguish the case from OR junction
-     * 
+     *
      * IndependentGroup Iterators being null or not null is not a definitive &
      * exclusive * criteria for knowing whether the CC result needs to be
      * expanded to Top or CGJ level as for independent grp not null will happen
      * in OR junction implying expn to CGJ level & ignoring intermediate
      * resultset as well as in evalaution of last filterable condition of AND
      * junction implying usage of intermediate resultset for cartesian.
-     * 
+     *
      * Similarly grp of indpendent itrs can be null for stand alone condition
      * implying expn to top level & ignoring intermediate set & also for
      * evaluating all the conditions except last in AND junction( which means
      * using intermediate resultset for cartesian)
-     *  
+     *
      */
-    if ((intermediateResults == null || intermediateResults.isEmpty()) && (indpdntItrs != null || completeExpansionNeeded)) {
+    if ((intermediateResults == null || intermediateResults.isEmpty())
+        && (indpdntItrs != null || completeExpansionNeeded)) {
       /*
        * Asif : First obtain the match level of index resultset. If the match
        * level happens to be zero , this implies that we just have to change the
@@ -511,9 +637,11 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
        * match level is zero & expand to to top level flag is true & iff the
        * total no. of iterators in current scope is greater than the no. of
        * fields in StructBag , then only we need to do any expansion.
-       *  
+       *
        */
-      Support.Assert(this._operator == TOK_EQ, "A relationship index is not usable for any condition other than equality");
+      Support.Assert(
+          this._operator == TOK_EQ,
+          "A relationship index is not usable for any condition other than equality");
 
       List data = null;
       try {
@@ -527,14 +655,21 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
       } finally {
         observer.afterIndexLookup(data);
       }
-      return QueryUtils.getconditionedRelationshipIndexResultsExpandedToTopOrCGJLevel(data, indxInfo, context, completeExpansionNeeded, iterOperands, indpdntItrs);
+      return QueryUtils.getconditionedRelationshipIndexResultsExpandedToTopOrCGJLevel(
+          data, indxInfo, context, completeExpansionNeeded, iterOperands, indpdntItrs);
     } else {
       // Asif . We are in this block , this itself guarantees that this
       // conditioned is being called
       // from AND junction evalauation of CompositeGroupJunction . The nature of
       // resultset obtained from here
       // will depend upon the intermediate Resultset passed etc.
-      return QueryUtils.getRelationshipIndexResultsMergedWithIntermediateResults(intermediateResults, indxInfo, context, completeExpansionNeeded, iterOperands, indpdntItrs);
+      return QueryUtils.getRelationshipIndexResultsMergedWithIntermediateResults(
+          intermediateResults,
+          indxInfo,
+          context,
+          completeExpansionNeeded,
+          iterOperands,
+          indpdntItrs);
     }
   }
 
@@ -549,7 +684,8 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
   // as key is not a meaningful entity. The 0th element will refer to LHS
   // operand
   // and 1th element will refer to RHS operannd
-  public IndexInfo[] getIndexInfo(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
+  public IndexInfo[] getIndexInfo(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException, NameResolutionException {
     IndexInfo[] indexInfo = privGetIndexInfo(context);
     if (indexInfo != null) {
       if (indexInfo == NO_INDEXES_IDENTIFIER) {
@@ -559,17 +695,25 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
       }
     }
 
-    if (!IndexUtils.indexesEnabled)
-      return null;
+    if (!IndexUtils.indexesEnabled) return null;
     // get the path and index key to try
     PathAndKey pAndK = getPathAndKey(context);
     IndexInfo newIndexInfo[] = null;
     if (pAndK == null) {
-      IndexData[] indexData = QueryUtils.getRelationshipIndexIfAny(_left, _right, context, this._operator);// findOnlyFunctionalIndex.
+      IndexData[] indexData =
+          QueryUtils.getRelationshipIndexIfAny(
+              _left, _right, context, this._operator); // findOnlyFunctionalIndex.
       if (indexData != null) {
         newIndexInfo = new IndexInfo[2];
         for (int i = 0; i < 2; ++i) {
-          newIndexInfo[i] = new IndexInfo(null, i == 0 ? _left : _right, indexData[i].getIndex(), indexData[i].getMatchLevel(), indexData[i].getMapping(), i == 0 ? this._operator : reflectOperator(this._operator));
+          newIndexInfo[i] =
+              new IndexInfo(
+                  null,
+                  i == 0 ? _left : _right,
+                  indexData[i].getIndex(),
+                  indexData[i].getMatchLevel(),
+                  indexData[i].getMapping(),
+                  i == 0 ? this._operator : reflectOperator(this._operator));
         }
       }
     } else {
@@ -578,7 +722,8 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
       IndexData indexData = null;
       // CompiledLike should not use HashIndex and PrimarKey Index.
       if (this instanceof CompiledLike) {
-        indexData = QueryUtils.getAvailableIndexIfAny(path, context, OQLLexerTokenTypes.LITERAL_like);
+        indexData =
+            QueryUtils.getAvailableIndexIfAny(path, context, OQLLexerTokenTypes.LITERAL_like);
       } else {
         indexData = QueryUtils.getAvailableIndexIfAny(path, context, this._operator);
       }
@@ -589,7 +734,14 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
       }
       if (index != null && index.isValid()) {
         newIndexInfo = new IndexInfo[1];
-        newIndexInfo[0] = new IndexInfo(indexKey, path, index, indexData.getMatchLevel(), indexData.getMapping(), reflectOnOperator(indexKey));
+        newIndexInfo[0] =
+            new IndexInfo(
+                indexKey,
+                path,
+                index,
+                indexData.getMatchLevel(),
+                indexData.getMapping(),
+                reflectOnOperator(indexKey));
       }
     }
     if (newIndexInfo != null) {
@@ -600,21 +752,22 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
     return newIndexInfo;
   }
 
-  CompiledValue getKey(ExecutionContext context) throws AmbiguousNameException, TypeMismatchException {
+  CompiledValue getKey(ExecutionContext context)
+      throws AmbiguousNameException, TypeMismatchException {
     return getPathAndKey(context)._key;
   }
 
   /**
-   * get the path to see if there's an index for, and also determine which
-   * CompiledValue is the key while we're at it
+   * get the path to see if there's an index for, and also determine which CompiledValue is the key
+   * while we're at it
    */
-  private PathAndKey getPathAndKey(ExecutionContext context) throws TypeMismatchException, AmbiguousNameException {
+  private PathAndKey getPathAndKey(ExecutionContext context)
+      throws TypeMismatchException, AmbiguousNameException {
     // RuntimeIterator lIter = context.findRuntimeIterator(_left);
     // RuntimeIterator rIter = context.findRuntimeIterator(_right);
     boolean isLeftDependent = context.isDependentOnCurrentScope(_left);
     boolean isRightDependent = context.isDependentOnCurrentScope(_right);
-    if ((isLeftDependent == false) == (isRightDependent == false))
-      return null;
+    if ((isLeftDependent == false) == (isRightDependent == false)) return null;
     CompiledValue indexKey;
     CompiledValue path;
     if (isLeftDependent == false) {
@@ -624,8 +777,7 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
       path = _left;
       indexKey = _right;
     }
-    if (indexKey.isDependentOnCurrentScope(context))
-      return null; // this check
+    if (indexKey.isDependentOnCurrentScope(context)) return null; // this check
     // seems to be
     // redunant.
     return new PathAndKey(path, indexKey);
@@ -664,13 +816,18 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
   }
 
   @Override
-  public boolean isOrderByApplicableAtIndexLevel(ExecutionContext context, String canonicalizedOrderByClause) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+  public boolean isOrderByApplicableAtIndexLevel(
+      ExecutionContext context, String canonicalizedOrderByClause)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
 
     if (this.getPlanInfo(context).evalAsFilter) {
       PlanInfo pi = this.getPlanInfo(context);
       if (pi.indexes.size() == 1) {
         IndexProtocol ip = (IndexProtocol) pi.indexes.get(0);
-        if (ip.getCanonicalizedIndexedExpression().equals(canonicalizedOrderByClause) && ip.getType() != IndexType.PRIMARY_KEY && pi.isPreferred) {
+        if (ip.getCanonicalizedIndexedExpression().equals(canonicalizedOrderByClause)
+            && ip.getType() != IndexType.PRIMARY_KEY
+            && pi.isPreferred) {
           return true;
         }
       }
@@ -678,7 +835,9 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
     return false;
   }
 
-  public boolean isConditioningNeededForIndex(RuntimeIterator independentIter, ExecutionContext context, boolean completeExpnsNeeded) throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
+  public boolean isConditioningNeededForIndex(
+      RuntimeIterator independentIter, ExecutionContext context, boolean completeExpnsNeeded)
+      throws AmbiguousNameException, TypeMismatchException, NameResolutionException {
     IndexConditioningHelper ich = null;
     IndexInfo[] idxInfo = getIndexInfo(context);
     int indexFieldsSize = -1;
@@ -695,25 +854,28 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
     }
 
     if (independentIter != null && indexFieldsSize == 1) {
-      ich = new IndexConditioningHelper(idxInfo[0], context, indexFieldsSize, completeExpnsNeeded, null, independentIter);
+      ich =
+          new IndexConditioningHelper(
+              idxInfo[0], context, indexFieldsSize, completeExpnsNeeded, null, independentIter);
     }
     return ich == null || ich.shufflingNeeded;
-
   }
 
   public int getOperator() {
     return this._operator;
   }
 
-  public boolean isBetterFilter(Filter comparedTo, ExecutionContext context, final int thisSize) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
-    //If the current filter is equality & comparedTo filter is also equality based , then 
+  public boolean isBetterFilter(Filter comparedTo, ExecutionContext context, final int thisSize)
+      throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+          QueryInvocationTargetException {
+    //If the current filter is equality & comparedTo filter is also equality based , then
     // return the one with lower size estimate is better
     boolean isThisBetter = true;
 
     int thatSize = comparedTo.getSizeEstimate(context);
     int thatOperator = comparedTo.getOperator();
 
-    //Go with the lowest cost when hint is used.  
+    //Go with the lowest cost when hint is used.
     if (context instanceof QueryExecutionContext && ((QueryExecutionContext) context).hasHints()) {
       return thisSize <= thatSize;
     }
@@ -721,53 +883,51 @@ public class CompiledComparison extends AbstractCompiledValue implements Negatab
     //There may be some hard rules that give unoptimal selections based on these switch cases.
     if (this._operator == TOK_EQ || this._operator == TOK_NE || this._operator == TOK_NE_ALT) {
       switch (thatOperator) {
-      case TOK_EQ:
-      case TOK_NE:
-      case TOK_NE_ALT:
-        isThisBetter = thisSize <= thatSize;
-        break;
-      case LITERAL_and:
-        // This is is possible only in case of RangeJunction. 
-        if (this._operator == TOK_NE || this._operator == TOK_NE_ALT) {
-          //Asif: Give preference to range as I am assuming that range will fetch less data 
-          // as compared to NOT EQUALs
-          isThisBetter = false;
-        }
-        break;
-      case TOK_LE:
-      case TOK_LT:
-      case TOK_GE:
-      case TOK_GT:
-        //Give preference to this rather than that as this is more deterministic
-        break;
-      default:
-        throw new IllegalArgumentException("The operator type =" + thatOperator + " is unknown");
+        case TOK_EQ:
+        case TOK_NE:
+        case TOK_NE_ALT:
+          isThisBetter = thisSize <= thatSize;
+          break;
+        case LITERAL_and:
+          // This is is possible only in case of RangeJunction.
+          if (this._operator == TOK_NE || this._operator == TOK_NE_ALT) {
+            //Asif: Give preference to range as I am assuming that range will fetch less data
+            // as compared to NOT EQUALs
+            isThisBetter = false;
+          }
+          break;
+        case TOK_LE:
+        case TOK_LT:
+        case TOK_GE:
+        case TOK_GT:
+          //Give preference to this rather than that as this is more deterministic
+          break;
+        default:
+          throw new IllegalArgumentException("The operator type =" + thatOperator + " is unknown");
       }
     } else {
-      //This is a inequality. If that is true the priority goes to equality & Not Equality & Range 
+      //This is a inequality. If that is true the priority goes to equality & Not Equality & Range
       switch (thatOperator) {
-      case TOK_EQ:
-      case TOK_NE:
-      case TOK_NE_ALT:
-      case LITERAL_and:
-        //Asif: Give preference to range as I am assuming that raneg will fetch less data 
-        // as compared to NOT EQUALs
-        isThisBetter = false;
-        break;
-      case TOK_LE:
-      case TOK_LT:
-      case TOK_GE:
-      case TOK_GT:
-        isThisBetter = thisSize <= thatSize;
-        break;
-      default:
-        throw new IllegalArgumentException("The operator type =" + thatOperator + " is unknown");
-
+        case TOK_EQ:
+        case TOK_NE:
+        case TOK_NE_ALT:
+        case LITERAL_and:
+          //Asif: Give preference to range as I am assuming that raneg will fetch less data
+          // as compared to NOT EQUALs
+          isThisBetter = false;
+          break;
+        case TOK_LE:
+        case TOK_LT:
+        case TOK_GE:
+        case TOK_GT:
+          isThisBetter = thisSize <= thatSize;
+          break;
+        default:
+          throw new IllegalArgumentException("The operator type =" + thatOperator + " is unknown");
       }
     }
     return isThisBetter;
   }
-
 }
 
 // IndexInfo was removed from here to its own file.

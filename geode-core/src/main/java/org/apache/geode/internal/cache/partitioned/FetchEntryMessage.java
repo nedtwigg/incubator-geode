@@ -54,11 +54,10 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.logging.log4j.LogMarker;
 
 /**
- * This message is used as the request for a
- * {@link org.apache.geode.cache.Region#getEntry(Object)}operation. The
- * reply is sent in a {@link 
+ * This message is used as the request for a {@link
+ * org.apache.geode.cache.Region#getEntry(Object)}operation. The reply is sent in a {@link
  * org.apache.geode.internal.cache.partitioned.FetchEntryMessage.FetchEntryReplyMessage}.
- * 
+ *
  * @since GemFire 5.1
  */
 public final class FetchEntryMessage extends PartitionMessage {
@@ -70,42 +69,42 @@ public final class FetchEntryMessage extends PartitionMessage {
   // reusing an unused flag for HAS_ACCESS
   protected static final int HAS_ACCESS = HAS_FILTER_INFO;
 
-  /**
-   * Empty constructor to satisfy {@link DataSerializer} requirements
-   */
-  public FetchEntryMessage() {
-  }
+  /** Empty constructor to satisfy {@link DataSerializer} requirements */
+  public FetchEntryMessage() {}
 
-  private FetchEntryMessage(InternalDistributedMember recipient, int regionId, ReplyProcessor21 processor, final Object key, boolean access) {
+  private FetchEntryMessage(
+      InternalDistributedMember recipient,
+      int regionId,
+      ReplyProcessor21 processor,
+      final Object key,
+      boolean access) {
     super(recipient, regionId, processor);
     this.key = key;
     this.access = access;
   }
 
   /**
-   * Sends a PartitionedRegion
-   * {@link org.apache.geode.cache.Region#getEntry(Object)} message
-   * 
-   * @param recipient
-   *          the member that the getEntry message is sent to
-   * @param r
-   *          the PartitionedRegion for which getEntry was performed upon
-   * @param key
-   *          the object to which the value should be feteched
+   * Sends a PartitionedRegion {@link org.apache.geode.cache.Region#getEntry(Object)} message
+   *
+   * @param recipient the member that the getEntry message is sent to
+   * @param r the PartitionedRegion for which getEntry was performed upon
+   * @param key the object to which the value should be feteched
    * @param access
-   * @return the processor used to fetch the returned value associated with the
-   *         key
-   * @throws ForceReattemptException
-   *           if the peer is no longer available
+   * @return the processor used to fetch the returned value associated with the key
+   * @throws ForceReattemptException if the peer is no longer available
    */
-  public static FetchEntryResponse send(InternalDistributedMember recipient, PartitionedRegion r, final Object key, boolean access) throws ForceReattemptException {
+  public static FetchEntryResponse send(
+      InternalDistributedMember recipient, PartitionedRegion r, final Object key, boolean access)
+      throws ForceReattemptException {
     Assert.assertTrue(recipient != null, "FetchEntryMessage NULL recipient");
-    FetchEntryResponse p = new FetchEntryResponse(r.getSystem(), Collections.singleton(recipient), r, key);
+    FetchEntryResponse p =
+        new FetchEntryResponse(r.getSystem(), Collections.singleton(recipient), r, key);
     FetchEntryMessage m = new FetchEntryMessage(recipient, r.getPRId(), p, key, access);
 
     Set failures = r.getDistributionManager().putOutgoing(m);
     if (failures != null && failures.size() > 0) {
-      throw new ForceReattemptException(LocalizedStrings.FetchEntryMessage_FAILED_SENDING_0.toLocalizedString(m));
+      throw new ForceReattemptException(
+          LocalizedStrings.FetchEntryMessage_FAILED_SENDING_0.toLocalizedString(m));
     }
 
     return p;
@@ -127,7 +126,8 @@ public final class FetchEntryMessage extends PartitionMessage {
   }
 
   @Override
-  protected final boolean operateOnPartitionedRegion(DistributionManager dm, PartitionedRegion r, long startTime) throws ForceReattemptException {
+  protected final boolean operateOnPartitionedRegion(
+      DistributionManager dm, PartitionedRegion r, long startTime) throws ForceReattemptException {
     // FetchEntryMessage is used in refreshing client caches during interest list recovery,
     // so don't be too verbose or hydra tasks may time out
 
@@ -140,22 +140,42 @@ public final class FetchEntryMessage extends PartitionMessage {
         r.getPrStats().endPartitionMessagesProcessing(startTime);
         FetchEntryReplyMessage.send(getSender(), getProcessorId(), val, dm, null);
       } catch (TransactionException tex) {
-        FetchEntryReplyMessage.send(getSender(), getProcessorId(), null, dm, new ReplyException(tex));
+        FetchEntryReplyMessage.send(
+            getSender(), getProcessorId(), null, dm, new ReplyException(tex));
       } catch (PRLocallyDestroyedException pde) {
-        FetchEntryReplyMessage.send(getSender(), getProcessorId(), null, dm, new ReplyException(new ForceReattemptException(LocalizedStrings.FetchEntryMessage_ENCOUNTERED_PRLOCALLYDESTROYED.toLocalizedString(), pde)));
+        FetchEntryReplyMessage.send(
+            getSender(),
+            getProcessorId(),
+            null,
+            dm,
+            new ReplyException(
+                new ForceReattemptException(
+                    LocalizedStrings.FetchEntryMessage_ENCOUNTERED_PRLOCALLYDESTROYED
+                        .toLocalizedString(),
+                    pde)));
       } catch (EntryNotFoundException enfe) {
-        FetchEntryReplyMessage.send(getSender(), getProcessorId(), null, dm, new ReplyException(LocalizedStrings.FetchEntryMessage_ENTRY_NOT_FOUND.toLocalizedString(), enfe));
+        FetchEntryReplyMessage.send(
+            getSender(),
+            getProcessorId(),
+            null,
+            dm,
+            new ReplyException(
+                LocalizedStrings.FetchEntryMessage_ENTRY_NOT_FOUND.toLocalizedString(), enfe));
       } catch (PrimaryBucketException pbe) {
-        FetchEntryReplyMessage.send(getSender(), getProcessorId(), null, dm, new ReplyException(pbe));
+        FetchEntryReplyMessage.send(
+            getSender(), getProcessorId(), null, dm, new ReplyException(pbe));
       } catch (ForceReattemptException pbe) {
         pbe.checkKey(key);
         // Slightly odd -- we're marshalling the retry to the peer on another host...
-        FetchEntryReplyMessage.send(getSender(), getProcessorId(), null, dm, new ReplyException(pbe));
+        FetchEntryReplyMessage.send(
+            getSender(), getProcessorId(), null, dm, new ReplyException(pbe));
       } catch (DataLocationException e) {
         FetchEntryReplyMessage.send(getSender(), getProcessorId(), null, dm, new ReplyException(e));
       }
     } else {
-      throw new InternalGemFireError(LocalizedStrings.FetchEntryMessage_FETCHENTRYMESSAGE_MESSAGE_SENT_TO_WRONG_MEMBER.toLocalizedString());
+      throw new InternalGemFireError(
+          LocalizedStrings.FetchEntryMessage_FETCHENTRYMESSAGE_MESSAGE_SENT_TO_WRONG_MEMBER
+              .toLocalizedString());
     }
 
     // Unless there was an exception thrown, this message handles sending the
@@ -199,8 +219,7 @@ public final class FetchEntryMessage extends PartitionMessage {
   @Override
   protected short computeCompressedShort(short s) {
     s = super.computeCompressedShort(s);
-    if (this.access)
-      s |= HAS_ACCESS;
+    if (this.access) s |= HAS_ACCESS;
     return s;
   }
 
@@ -210,18 +229,15 @@ public final class FetchEntryMessage extends PartitionMessage {
 
   /**
    * This message is used for the reply to a {@link FetchEntryMessage}.
-   * 
+   *
    * @since GemFire 5.0
    */
   public static final class FetchEntryReplyMessage extends ReplyMessage {
     /** Propagated exception from remote node to operation initiator */
     private EntrySnapshot value;
 
-    /**
-     * Empty constructor to conform to DataSerializable interface
-     */
-    public FetchEntryReplyMessage() {
-    }
+    /** Empty constructor to conform to DataSerializable interface */
+    public FetchEntryReplyMessage() {}
 
     public FetchEntryReplyMessage(DataInput in) throws IOException, ClassNotFoundException {
       fromData(in);
@@ -234,7 +250,12 @@ public final class FetchEntryMessage extends PartitionMessage {
     }
 
     /** Send an ack */
-    public static void send(InternalDistributedMember recipient, int processorId, EntrySnapshot value, DM dm, ReplyException re) {
+    public static void send(
+        InternalDistributedMember recipient,
+        int processorId,
+        EntrySnapshot value,
+        DM dm,
+        ReplyException re) {
       Assert.assertTrue(recipient != null, "FetchEntryReplyMessage NULL recipient");
       FetchEntryReplyMessage m = new FetchEntryReplyMessage(processorId, value, re);
       m.setRecipient(recipient);
@@ -242,17 +263,18 @@ public final class FetchEntryMessage extends PartitionMessage {
     }
 
     /**
-     * Processes this message. This method is invoked by the receiver of the
-     * message.
-     * 
-     * @param dm
-     *          the distribution manager that is processing the message.
+     * Processes this message. This method is invoked by the receiver of the message.
+     *
+     * @param dm the distribution manager that is processing the message.
      */
     @Override
     public void process(final DM dm, final ReplyProcessor21 processor) {
       final long startTime = getTimestamp();
       if (logger.isTraceEnabled(LogMarker.DM)) {
-        logger.trace(LogMarker.DM, "FetchEntryReplyMessage process invoking reply processor with processorId: {}", this.processorId);
+        logger.trace(
+            LogMarker.DM,
+            "FetchEntryReplyMessage process invoking reply processor with processorId: {}",
+            this.processorId);
       }
 
       if (processor == null) {
@@ -297,7 +319,8 @@ public final class FetchEntryMessage extends PartitionMessage {
         // since the Entry object shares state with the PartitionedRegion,
         // we have to find the region and ask it to create a new Entry instance
         // to be populated from the DataInput
-        FetchEntryResponse processor = (FetchEntryResponse) ReplyProcessor21.getProcessor(this.processorId);
+        FetchEntryResponse processor =
+            (FetchEntryResponse) ReplyProcessor21.getProcessor(this.processorId);
         if (processor == null) {
           throw new OperationCancelledException("This operation was cancelled (null processor)");
         }
@@ -316,9 +339,8 @@ public final class FetchEntryMessage extends PartitionMessage {
   }
 
   /**
-   * A processor to capture the value returned by {@link 
+   * A processor to capture the value returned by {@link
    * org.apache.geode.internal.cache.partitioned.FetchEntryMessage.FetchEntryReplyMessage}
-   * 
    */
   public static class FetchEntryResponse extends PartitionResponse {
     private volatile EntrySnapshot returnValue;
@@ -326,7 +348,8 @@ public final class FetchEntryMessage extends PartitionMessage {
     final PartitionedRegion partitionedRegion;
     final Object key;
 
-    public FetchEntryResponse(InternalDistributedSystem ds, Set recipients, PartitionedRegion theRegion, Object key) {
+    public FetchEntryResponse(
+        InternalDistributedSystem ds, Set recipients, PartitionedRegion theRegion, Object key) {
       super(ds, recipients);
       partitionedRegion = theRegion;
       this.key = key;
@@ -368,10 +391,13 @@ public final class FetchEntryMessage extends PartitionMessage {
         throw e;
       } catch (CacheException ce) {
         logger.debug("FetchEntryResponse got remote CacheException; forcing reattempt.", ce);
-        throw new ForceReattemptException(LocalizedStrings.FetchEntryMessage_FETCHENTRYRESPONSE_GOT_REMOTE_CACHEEXCEPTION_FORCING_REATTEMPT.toLocalizedString(), ce);
+        throw new ForceReattemptException(
+            LocalizedStrings
+                .FetchEntryMessage_FETCHENTRYRESPONSE_GOT_REMOTE_CACHEEXCEPTION_FORCING_REATTEMPT
+                .toLocalizedString(),
+            ce);
       }
       return this.returnValue;
     }
   }
-
 }

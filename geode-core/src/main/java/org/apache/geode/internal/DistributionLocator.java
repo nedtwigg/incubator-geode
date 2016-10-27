@@ -42,10 +42,12 @@ public class DistributionLocator {
 
   private static final Logger logger = LogService.getLogger();
 
-  public static final String TEST_OVERRIDE_DEFAULT_PORT_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "test.DistributionLocator.OVERRIDE_DEFAULT_PORT";
+  public static final String TEST_OVERRIDE_DEFAULT_PORT_PROPERTY =
+      DistributionConfig.GEMFIRE_PREFIX + "test.DistributionLocator.OVERRIDE_DEFAULT_PORT";
 
   /** Default file name for locator log: <code>"locator.log"</code> */
   public static final String DEFAULT_LOG_FILE = "locator.log";
+
   public static final String DEFAULT_STARTUP_LOG_FILE = "start_locator.log";
 
   public static final int DEFAULT_LOCATOR_PORT = 10334;
@@ -57,7 +59,10 @@ public class DistributionLocator {
     } else {
       int result = Integer.parseInt(portOption);
       if (result < 1 || result > 65535) {
-        throw new IllegalArgumentException(LocalizedStrings.DistributionLocator_THE_PORT_ARGUMENT_MUST_BE_GREATER_THAN_0_AND_LESS_THAN_65536.toLocalizedString());
+        throw new IllegalArgumentException(
+            LocalizedStrings
+                .DistributionLocator_THE_PORT_ARGUMENT_MUST_BE_GREATER_THAN_0_AND_LESS_THAN_65536
+                .toLocalizedString());
       } else {
         return result;
       }
@@ -76,9 +81,7 @@ public class DistributionLocator {
   private static File lockFile = null;
   private static final File directory = (new File("")).getAbsoluteFile();
 
-  /**
-   * Cleans up the artifacts left by this managed locator VM.
-   */
+  /** Cleans up the artifacts left by this managed locator VM. */
   protected static void shutdown(int port, InetAddress address) throws IOException {
     if (shutdown) {
       return;
@@ -98,11 +101,23 @@ public class DistributionLocator {
 
   public static void main(String args[]) {
     if (args.length == 0 || args.length > 6) {
-      System.err.println(LocalizedStrings.DistributionLocator_USAGE.toLocalizedString() + ": port [bind-address] [peerLocator] [serverLocator] [hostname-for-clients]");
-      System.err.println(LocalizedStrings.DistributionLocator_A_ZEROLENGTH_ADDRESS_WILL_BIND_TO_LOCALHOST.toLocalizedString());
-      System.err.println(LocalizedStrings.DistributionLocator_A_ZEROLENGTH_GEMFIREPROPERTIESFILE_WILL_MEAN_USE_THE_DEFAULT_SEARCH_PATH.toLocalizedString());
-      System.err.println(LocalizedStrings.DistributionLocator_PEERLOCATOR_AND_SERVERLOCATOR_BOTH_DEFAULT_TO_TRUE.toLocalizedString());
-      System.err.println(LocalizedStrings.DistributionLocator_A_ZEROLENGTH_HOSTNAMEFORCLIENTS_WILL_DEFAULT_TO_BINDADDRESS.toLocalizedString());
+      System.err.println(
+          LocalizedStrings.DistributionLocator_USAGE.toLocalizedString()
+              + ": port [bind-address] [peerLocator] [serverLocator] [hostname-for-clients]");
+      System.err.println(
+          LocalizedStrings.DistributionLocator_A_ZEROLENGTH_ADDRESS_WILL_BIND_TO_LOCALHOST
+              .toLocalizedString());
+      System.err.println(
+          LocalizedStrings
+              .DistributionLocator_A_ZEROLENGTH_GEMFIREPROPERTIESFILE_WILL_MEAN_USE_THE_DEFAULT_SEARCH_PATH
+              .toLocalizedString());
+      System.err.println(
+          LocalizedStrings.DistributionLocator_PEERLOCATOR_AND_SERVERLOCATOR_BOTH_DEFAULT_TO_TRUE
+              .toLocalizedString());
+      System.err.println(
+          LocalizedStrings
+              .DistributionLocator_A_ZEROLENGTH_HOSTNAMEFORCLIENTS_WILL_DEFAULT_TO_BINDADDRESS
+              .toLocalizedString());
       System.exit(1);
     } else {
       shutdown = false;
@@ -118,7 +133,9 @@ public class DistributionLocator {
     try {
       if (args.length > 1 && !args[1].equals("")) {
         if (!SystemAdmin.validLocalAddress(args[1])) {
-          System.err.println(LocalizedStrings.DistributionLocator__0_IS_NOT_A_VALID_IP_ADDRESS_FOR_THIS_MACHINE.toLocalizedString(args[1]));
+          System.err.println(
+              LocalizedStrings.DistributionLocator__0_IS_NOT_A_VALID_IP_ADDRESS_FOR_THIS_MACHINE
+                  .toLocalizedString(args[1]));
           System.exit(1);
         }
         address = InetAddress.getByName(args[1]);
@@ -137,15 +154,18 @@ public class DistributionLocator {
 
       if (!Boolean.getBoolean(InternalDistributedSystem.DISABLE_SHUTDOWN_HOOK_PROPERTY)) {
         final InetAddress faddress = address;
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-          public void run() {
-            try {
-              DistributionLocator.shutdown(port, faddress);
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-          }
-        }));
+        Runtime.getRuntime()
+            .addShutdownHook(
+                new Thread(
+                    new Runnable() {
+                      public void run() {
+                        try {
+                          DistributionLocator.shutdown(port, faddress);
+                        } catch (IOException e) {
+                          e.printStackTrace();
+                        }
+                      }
+                    }));
       }
 
       lockFile = ManagerInfo.setLocatorStarting(directory, port, address);
@@ -153,7 +173,19 @@ public class DistributionLocator {
 
       try {
 
-        InternalLocator locator = InternalLocator.startLocator(port, new File(DEFAULT_LOG_FILE), null, null, null, address, (Properties) null, peerLocator, serverLocator, hostnameForClients, LOAD_SHARED_CONFIGURATION);
+        InternalLocator locator =
+            InternalLocator.startLocator(
+                port,
+                new File(DEFAULT_LOG_FILE),
+                null,
+                null,
+                null,
+                address,
+                (Properties) null,
+                peerLocator,
+                serverLocator,
+                hostnameForClients,
+                LOAD_SHARED_CONFIGURATION);
 
         ManagerInfo.setLocatorStarted(directory, port, address);
         locator.waitToStop();
@@ -167,13 +199,17 @@ public class DistributionLocator {
       // No big deal.
 
     } catch (java.net.BindException ex) {
-      logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributionLocator_COULD_NOT_BIND_LOCATOR_TO__0__1, new Object[] { address, Integer.valueOf(port) }));
+      logger.fatal(
+          LocalizedMessage.create(
+              LocalizedStrings.DistributionLocator_COULD_NOT_BIND_LOCATOR_TO__0__1,
+              new Object[] {address, Integer.valueOf(port)}));
       System.exit(1);
 
     } catch (Exception ex) {
-      logger.fatal(LocalizedMessage.create(LocalizedStrings.DistributionLocator_COULD_NOT_START_LOCATOR), ex);
+      logger.fatal(
+          LocalizedMessage.create(LocalizedStrings.DistributionLocator_COULD_NOT_START_LOCATOR),
+          ex);
       System.exit(1);
     }
   }
-
 }

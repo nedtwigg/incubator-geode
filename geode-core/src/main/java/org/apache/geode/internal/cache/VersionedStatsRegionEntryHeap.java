@@ -23,7 +23,8 @@ public abstract class VersionedStatsRegionEntryHeap extends VersionedStatsRegion
     super(context, value);
   }
 
-  private static final VersionedStatsRegionEntryHeapFactory factory = new VersionedStatsRegionEntryHeapFactory();
+  private static final VersionedStatsRegionEntryHeapFactory factory =
+      new VersionedStatsRegionEntryHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;

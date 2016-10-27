@@ -16,9 +16,5 @@
  */
 package org.apache.geode.test.junit.categories;
 
-/**
- * JUnit Test Category that specifies a test involving multiple members of a
- * distributed system.
- */
-public interface DistributedTest {
-}
+/** JUnit Test Category that specifies a test involving multiple members of a distributed system. */
+public interface DistributedTest {}

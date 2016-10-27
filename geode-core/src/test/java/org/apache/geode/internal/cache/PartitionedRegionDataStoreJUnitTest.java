@@ -35,12 +35,9 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
 /**
- * This test checks functionality of the PartitionedRegionDatastore on a sinle
- * node.
- * 
- * Created on Dec 23, 2005
- * 
- *  
+ * This test checks functionality of the PartitionedRegionDatastore on a sinle node.
+ *
+ * <p>Created on Dec 23, 2005
  */
 @Category(IntegrationTest.class)
 public class PartitionedRegionDataStoreJUnitTest {
@@ -82,7 +79,7 @@ public class PartitionedRegionDataStoreJUnitTest {
     paf.setLocalProperties(null).create();
     /* PartitionedRegionDataStore prDS = */ new PartitionedRegionDataStore(pr);
     /* PartitionedRegionHelper.removeGlobalMetadataForFailedNode(PartitionedRegion.node,
-        prDS.partitionedRegion.getRegionIdentifier(), prDS.partitionedRegion.cache);*/
+    prDS.partitionedRegion.getRegionIdentifier(), prDS.partitionedRegion.cache);*/
   }
 
   @Test
@@ -105,53 +102,58 @@ public class PartitionedRegionDataStoreJUnitTest {
 
     pr.put(key, value);
     assertEquals(pr.get(key), value);
-
   }
 
   @Test
   public void testChangeCacheLoaderDuringBucketCreation() throws Exception {
-    final PartitionedRegion pr = (PartitionedRegion) cache.createRegionFactory(RegionShortcut.PARTITION).create("testChangeCacheLoaderDuringBucketCreation");
+    final PartitionedRegion pr =
+        (PartitionedRegion)
+            cache
+                .createRegionFactory(RegionShortcut.PARTITION)
+                .create("testChangeCacheLoaderDuringBucketCreation");
 
     //Add an observer which will block bucket creation and wait for a loader to be added
     final CountDownLatch loaderAdded = new CountDownLatch(1);
     final CountDownLatch bucketCreated = new CountDownLatch(1);
-    PartitionedRegionObserverHolder.setInstance(new PartitionedRegionObserverAdapter() {
-      @Override
-      public void beforeAssignBucket(PartitionedRegion partitionedRegion, int bucketId) {
-        try {
-          //Indicate that the bucket has been created
-          bucketCreated.countDown();
+    PartitionedRegionObserverHolder.setInstance(
+        new PartitionedRegionObserverAdapter() {
+          @Override
+          public void beforeAssignBucket(PartitionedRegion partitionedRegion, int bucketId) {
+            try {
+              //Indicate that the bucket has been created
+              bucketCreated.countDown();
 
-          //Wait for the loader to be added. if the synchronization
-          //is correct, this would wait for ever because setting the
-          //cache loader will wait for this method. So time out after
-          //1 second, which should be good enough to cause a failure
-          //if the synchronization is broken.
-          loaderAdded.await(1, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-          throw new RuntimeException("Interrupted");
-        }
-      }
-    });
+              //Wait for the loader to be added. if the synchronization
+              //is correct, this would wait for ever because setting the
+              //cache loader will wait for this method. So time out after
+              //1 second, which should be good enough to cause a failure
+              //if the synchronization is broken.
+              loaderAdded.await(1, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+              throw new RuntimeException("Interrupted");
+            }
+          }
+        });
 
-    Thread createBuckets = new Thread() {
-      public void run() {
-        PartitionRegionHelper.assignBucketsToPartitions(pr);
-      }
-    };
+    Thread createBuckets =
+        new Thread() {
+          public void run() {
+            PartitionRegionHelper.assignBucketsToPartitions(pr);
+          }
+        };
 
     createBuckets.start();
 
-    CacheLoader loader = new CacheLoader() {
-      @Override
-      public void close() {
-      }
+    CacheLoader loader =
+        new CacheLoader() {
+          @Override
+          public void close() {}
 
-      @Override
-      public Object load(LoaderHelper helper) throws CacheLoaderException {
-        return null;
-      }
-    };
+          @Override
+          public Object load(LoaderHelper helper) throws CacheLoaderException {
+            return null;
+          }
+        };
 
     bucketCreated.await();
     pr.getAttributesMutator().setCacheLoader(loader);
@@ -165,16 +167,23 @@ public class PartitionedRegionDataStoreJUnitTest {
   }
 
   /**
-   * This method checks whether the canAccomodateMoreBytesSafely returns false
-   * after reaching the localMax memory.
-   *  
+   * This method checks whether the canAccomodateMoreBytesSafely returns false after reaching the
+   * localMax memory.
    */
   @Test
   public void testCanAccommodateMoreBytesSafely() throws Exception {
     int key = 0;
     final int numMBytes = 5;
 
-    final PartitionedRegion regionAck = (PartitionedRegion) new RegionFactory().setPartitionAttributes(new PartitionAttributesFactory().setRedundantCopies(0).setLocalMaxMemory(numMBytes).create()).create(this.regionName);
+    final PartitionedRegion regionAck =
+        (PartitionedRegion)
+            new RegionFactory()
+                .setPartitionAttributes(
+                    new PartitionAttributesFactory()
+                        .setRedundantCopies(0)
+                        .setLocalMaxMemory(numMBytes)
+                        .create())
+                .create(this.regionName);
 
     assertTrue(regionAck.getDataStore().canAccommodateMoreBytesSafely(0));
 

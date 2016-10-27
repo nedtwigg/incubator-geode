@@ -31,9 +31,7 @@ import java.net.ServerSocket;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * multicast availability is tested in JGroupsMessengerJUnitTest
- */
+/** multicast availability is tested in JGroupsMessengerJUnitTest */
 @Category(IntegrationTest.class)
 public class AvailablePortJUnitTest {
 
@@ -52,9 +50,12 @@ public class AvailablePortJUnitTest {
     int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
     socket.bind(new InetSocketAddress(InetAddressUtil.LOOPBACK, port));
 
-    assertFalse(AvailablePort.isPortAvailable(port, AvailablePort.SOCKET, InetAddress.getByName(InetAddressUtil.LOOPBACK_ADDRESS)));
+    assertFalse(
+        AvailablePort.isPortAvailable(
+            port, AvailablePort.SOCKET, InetAddress.getByName(InetAddressUtil.LOOPBACK_ADDRESS)));
     //Get local host will return the hostname for the server, so this should succeed, since we're bound to the loopback address only.
-    assertTrue(AvailablePort.isPortAvailable(port, AvailablePort.SOCKET, InetAddress.getLocalHost()));
+    assertTrue(
+        AvailablePort.isPortAvailable(port, AvailablePort.SOCKET, InetAddress.getLocalHost()));
     //This should test all interfaces.
     assertFalse(AvailablePort.isPortAvailable(port, AvailablePort.SOCKET));
   }
@@ -65,8 +66,8 @@ public class AvailablePortJUnitTest {
     socket = new ServerSocket();
     int port = AvailablePort.getRandomAvailablePort(AvailablePort.SOCKET);
     socket.bind(new InetSocketAddress((InetAddress) null, port));
-    System.out.println("bind addr=" + System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "bind-address"));
+    System.out.println(
+        "bind addr=" + System.getProperty(DistributionConfig.GEMFIRE_PREFIX + "bind-address"));
     assertFalse(AvailablePort.isPortAvailable(port, AvailablePort.SOCKET));
   }
-
 }

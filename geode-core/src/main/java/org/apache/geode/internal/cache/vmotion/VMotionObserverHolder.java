@@ -19,28 +19,19 @@ package org.apache.geode.internal.cache.vmotion;
 import org.apache.geode.cache.query.internal.Support;
 
 /**
- * This class is intended to hold a single 'observer' which will receive
- * callbacks. There can be only one such observer at a time. If no observer is
- * needed, this member variable should point to an object with 'do-nothing'
- * methods, such as vMotionObserverAdapter.
+ * This class is intended to hold a single 'observer' which will receive callbacks. There can be
+ * only one such observer at a time. If no observer is needed, this member variable should point to
+ * an object with 'do-nothing' methods, such as vMotionObserverAdapter.
  */
-
 public class VMotionObserverHolder {
 
-  /**
-   * The default 'do-nothing' vMotion observer *
-   */
+  /** The default 'do-nothing' vMotion observer * */
   public static final VMotionObserver NO_OBSERVER = new VMotionObserverAdapter();
 
-  /**
-   * The current observer which will be notified of all query events.
-   */
+  /** The current observer which will be notified of all query events. */
   private static VMotionObserver _instance = NO_OBSERVER;
 
-  /**
-   * Set the given observer to be notified of events. Returns the current
-   * observer.
-   */
+  /** Set the given observer to be notified of events. Returns the current observer. */
   public static final VMotionObserver setInstance(VMotionObserver observer) {
     Support.assertArg(observer != null, "setInstance expects a non-null argument!");
     VMotionObserver oldObserver = _instance;
@@ -52,5 +43,4 @@ public class VMotionObserverHolder {
   public static final VMotionObserver getInstance() {
     return _instance;
   }
-
 }

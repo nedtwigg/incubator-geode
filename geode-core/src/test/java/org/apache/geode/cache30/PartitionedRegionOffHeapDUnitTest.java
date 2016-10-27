@@ -31,7 +31,7 @@ import org.apache.geode.test.junit.categories.DistributedTest;
 
 /**
  * Tests Partitioned Region with OffHeap memory.
- * 
+ *
  * @since Geode 1.0
  */
 @Category(DistributedTest.class)
@@ -39,15 +39,16 @@ public class PartitionedRegionOffHeapDUnitTest extends PartitionedRegionDUnitTes
 
   @Override
   public final void preTearDownAssertions() throws Exception {
-    SerializableRunnable checkOrphans = new SerializableRunnable() {
+    SerializableRunnable checkOrphans =
+        new SerializableRunnable() {
 
-      @Override
-      public void run() {
-        if (hasCache()) {
-          OffHeapTestUtil.checkOrphans();
-        }
-      }
-    };
+          @Override
+          public void run() {
+            if (hasCache()) {
+              OffHeapTestUtil.checkOrphans();
+            }
+          }
+        };
     Invoke.invokeInEveryVM(checkOrphans);
     checkOrphans.run();
   }
@@ -60,7 +61,7 @@ public class PartitionedRegionOffHeapDUnitTest extends PartitionedRegionDUnitTes
   }
 
   @Override
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   protected RegionAttributes getRegionAttributes() {
     RegionAttributes attrs = super.getRegionAttributes();
     AttributesFactory factory = new AttributesFactory(attrs);
@@ -69,7 +70,7 @@ public class PartitionedRegionOffHeapDUnitTest extends PartitionedRegionDUnitTes
   }
 
   @Override
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @SuppressWarnings({"rawtypes", "unchecked"})
   protected RegionAttributes getRegionAttributes(String type) {
     RegionAttributes ra = super.getRegionAttributes(type);
     AttributesFactory factory = new AttributesFactory(ra);

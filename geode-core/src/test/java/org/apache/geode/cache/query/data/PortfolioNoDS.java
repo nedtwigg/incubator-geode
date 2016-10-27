@@ -44,7 +44,7 @@ public class PortfolioNoDS implements Serializable {
   public HashMap collectionHolderMap = new HashMap();
   String type;
   public String status;
-  public String[] names = { "aaa", "bbb", "ccc", "ddd" };
+  public String[] names = {"aaa", "bbb", "ccc", "ddd"};
   public String unicodeṤtring;
   private final long longMinValue = Long.MIN_VALUE;
   private final float floatMinValue = Float.MIN_VALUE;
@@ -110,12 +110,13 @@ public class PortfolioNoDS implements Serializable {
     return status.equals("active");
   }
 
-  public static String secIds[] = { "SUN", "IBM", "YHOO", "GOOG", "MSFT", "AOL", "APPL", "ORCL", "SAP", "DELL", "RHAT", "NOVL", "HP" };
+  public static String secIds[] = {
+    "SUN", "IBM", "YHOO", "GOOG", "MSFT", "AOL", "APPL", "ORCL", "SAP", "DELL", "RHAT", "NOVL", "HP"
+  };
 
   /* public no-arg constructor required for Deserializable */
   public PortfolioNoDS() {
     instanceCount.addAndGet(1);
-
   }
 
   public PortfolioNoDS(int i) {
@@ -131,12 +132,17 @@ public class PortfolioNoDS implements Serializable {
     type = "type" + (i % 3);
     position1 = new PositionNoDS(secIds[PositionNoDS.cnt % secIds.length], PositionNoDS.cnt * 1000);
     if (i % 2 != 0) {
-      position2 = new PositionNoDS(secIds[PositionNoDS.cnt % secIds.length], PositionNoDS.cnt * 1000);
+      position2 =
+          new PositionNoDS(secIds[PositionNoDS.cnt % secIds.length], PositionNoDS.cnt * 1000);
     } else {
       position2 = null;
     }
-    positions.put(secIds[PositionNoDS.cnt % secIds.length], new PositionNoDS(secIds[PositionNoDS.cnt % secIds.length], PositionNoDS.cnt * 1000));
-    positions.put(secIds[PositionNoDS.cnt % secIds.length], new PositionNoDS(secIds[PositionNoDS.cnt % secIds.length], PositionNoDS.cnt * 1000));
+    positions.put(
+        secIds[PositionNoDS.cnt % secIds.length],
+        new PositionNoDS(secIds[PositionNoDS.cnt % secIds.length], PositionNoDS.cnt * 1000));
+    positions.put(
+        secIds[PositionNoDS.cnt % secIds.length],
+        new PositionNoDS(secIds[PositionNoDS.cnt % secIds.length], PositionNoDS.cnt * 1000));
     collectionHolderMap.put("0", new CollectionHolder());
     collectionHolderMap.put("1", new CollectionHolder());
     collectionHolderMap.put("2", new CollectionHolder());
@@ -174,7 +180,8 @@ public class PortfolioNoDS implements Serializable {
   }
 
   public String toString() {
-    String out = "Portfolio [ID=" + ID + " status=" + status + " type=" + type + " pkid=" + pkid + "\n ";
+    String out =
+        "Portfolio [ID=" + ID + " status=" + status + " type=" + type + " pkid=" + pkid + "\n ";
     Iterator iter = positions.entrySet().iterator();
     while (iter.hasNext()) {
       Map.Entry entry = (Map.Entry) iter.next();
@@ -186,7 +193,7 @@ public class PortfolioNoDS implements Serializable {
 
   /**
    * Getter for property type.S
-   * 
+   *
    * @return Value of property type.
    */
   public String getType() {
@@ -203,7 +210,7 @@ public class PortfolioNoDS implements Serializable {
 
   public String funcReturnSecId(Object o) {
     return ((PositionNoDS) o).getSecId();
-  }//added by vikramj
+  } //added by vikramj
 
   public long longFunction(long j) {
     return j;
@@ -224,5 +231,4 @@ public class PortfolioNoDS implements Serializable {
   public static void resetInstanceCount() {
     instanceCount.set(0);
   }
-
 }

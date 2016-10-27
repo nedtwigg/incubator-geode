@@ -46,9 +46,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 /**
- * This class tests the response of GemFire to various
- * occurrences of {@link VirtualMachineError}
- * 
+ * This class tests the response of GemFire to various occurrences of {@link VirtualMachineError}
+ *
  * @since GemFire 5.1
  */
 @Category(DistributedTest.class)
@@ -57,11 +56,12 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
   static final String REGION_NAME = "SystemFailureDUnitTest";
   static final Scope SCOPE = Scope.DISTRIBUTED_ACK;
 
-  volatile static Object newValue, oldValue;
+  static volatile Object newValue, oldValue;
 
   @Test
   public void testNullFailure() {
-    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("TODO: this test needs to use VM#bounce.");
+    org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+        .info("TODO: this test needs to use VM#bounce.");
     try {
       SystemFailure.initiateFailure(null);
       fail("Null failure set allowed");
@@ -70,9 +70,7 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
     }
   }
 
-  /**
-   * @see StackOverflowError
-   */
+  /** @see StackOverflowError */
   @Ignore("TODO")
   @Test
   public void testStackOverflow() throws CacheException, InterruptedException {
@@ -109,7 +107,6 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
       doMessage("<ExpectedException action=remove>" + exceptions + "</ExpectedException>");
       resetVM();
     }
-
   }
 
   /**
@@ -132,7 +129,6 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
       doMessage("<ExpectedException action=remove>" + exceptions + "</ExpectedException>");
       resetVM();
     }
-
   }
 
   /**
@@ -155,7 +151,6 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
       doMessage("<ExpectedException action=remove>" + exceptions + "</ExpectedException>");
       resetVM();
     }
-
   }
 
   /**
@@ -199,12 +194,9 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
     }
   }
 
-  /**
-   * This class can never be successfully loaded.
-   * 
-   */
+  /** This class can never be successfully loaded. */
   static class SickoClass {
-    static private boolean threeCardMonte() {
+    private static boolean threeCardMonte() {
       return true;
     }
 
@@ -218,10 +210,7 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
     }
   }
 
-  /**
-   * Create some sort of horrible failure that is <em>not</em>
-   * a VirtualMachineError.
-   */
+  /** Create some sort of horrible failure that is <em>not</em> a VirtualMachineError. */
   @Ignore("TODO")
   @Test
   public void testError() throws CacheException, InterruptedException {
@@ -241,18 +230,19 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
     }
   }
 
-  static protected final AtomicInteger listenerCount = new AtomicInteger(0);
+  protected static final AtomicInteger listenerCount = new AtomicInteger(0);
 
-  static protected Integer getListenerCount() {
+  protected static Integer getListenerCount() {
     return new Integer(listenerCount.get());
   }
 
-  static private final Runnable listener1 = new Runnable() {
-    public void run() {
-      org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Inside of preListener1");
-      listenerCount.addAndGet(1);
-    }
-  };
+  private static final Runnable listener1 =
+      new Runnable() {
+        public void run() {
+          org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Inside of preListener1");
+          listenerCount.addAndGet(1);
+        }
+      };
 
   protected static void setListener1() {
     listenerCount.set(0);
@@ -266,9 +256,7 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
     }
   }
 
-  /**
-   * Verify that listener gets called, and exactly once.
-   */
+  /** Verify that listener gets called, and exactly once. */
   @Ignore("TODO")
   @Test
   public void testListener() throws CacheException, InterruptedException {
@@ -288,7 +276,6 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
       doMessage("<ExpectedException action=remove>" + exceptions + "</ExpectedException>");
       resetVM();
     }
-
   }
 
   private void resetVM() {
@@ -308,7 +295,8 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
 
   protected Boolean verifyConnected() {
     if (SystemFailure.getFailure() != null) {
-      org.apache.geode.test.dunit.Assert.fail("System failure present!", SystemFailure.getFailure());
+      org.apache.geode.test.dunit.Assert.fail(
+          "System failure present!", SystemFailure.getFailure());
       return Boolean.FALSE;
     }
     GemFireCacheImpl gfc = (GemFireCacheImpl) cache;
@@ -346,7 +334,7 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
 
     // Allow cache time to finish disconnecting
     long done = System.currentTimeMillis() + MAX_WAIT;
-    for (;;) {
+    for (; ; ) {
       long now = System.currentTimeMillis();
       if (now >= done) {
         fail("Time out waiting for cache to close: " + cache.toString());
@@ -383,7 +371,7 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
     }
   }
 
-  static protected volatile ArrayList peskyMemory;
+  protected static volatile ArrayList peskyMemory;
 
   private Object doExec(String method) {
     Host host = Host.getHost(0);
@@ -392,7 +380,7 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
   }
 
   private void doMessage(String text) {
-    Object args[] = new Object[] { text };
+    Object args[] = new Object[] {text};
     Host host = Host.getHost(0);
     VM vm = host.getVM(0);
     vm.invoke(this.getClass(), "message", args);
@@ -405,11 +393,9 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
     cache.getLogger().info(s);
   }
 
-  /**
-   * Create a region with one entry in this test's region with the
-   * given name and attributes.
-   */
-  private static void createEntry(String name, int ttl, ExpirationAction action, GenericListener l) throws CacheException {
+  /** Create a region with one entry in this test's region with the given name and attributes. */
+  private static void createEntry(String name, int ttl, ExpirationAction action, GenericListener l)
+      throws CacheException {
 
     Region region = getRegion();
     AttributesFactory factory = new AttributesFactory(region.getAttributes());
@@ -422,193 +408,196 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
     sub.create(name, new Integer(0), sub.getCache().getDistributedSystem().getDistributedMember());
   }
 
-  static private final GenericListener listener_stackOverflow = new GenericListener() {
-    /**
-     * gratuitous and stupid recursion
-     */
-    private void forceOverflow() {
-      forceOverflow();
-    }
-
-    public void afterCreate(EntryEvent event) {
-      forceOverflow();
-    }
-  };
-
-  private static final GenericListener listener_outOfMemory = new GenericListener() {
-    /**
-     * Allocate objects until death
-     */
-    private void forceOutOfMemory() {
-      ArrayList junk = new ArrayList();
-      for (;;) {
-        junk.add(new long[100000]);
-      }
-    }
-
-    public void afterCreate(EntryEvent event) {
-      org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Invoking afterCreate on listener; name=" + event.getKey());
-      forceOutOfMemory();
-    }
-  };
-
-  static private final GenericListener listener_persistentOutOfMemory = new GenericListener() {
-    /**
-     * Allocate objects until death
-     */
-    private void forceOutOfMemory() {
-      peskyMemory = new ArrayList();
-      // Allocate this _before_ exhausting memory :-)
-      final AssertionError whoops = new AssertionError("Timeout!");
-      try {
-        for (;;) {
-          peskyMemory.add(new long[100000]);
+  private static final GenericListener listener_stackOverflow =
+      new GenericListener() {
+        /** gratuitous and stupid recursion */
+        private void forceOverflow() {
+          forceOverflow();
         }
-      } catch (OutOfMemoryError e) {
-        // Now then...while we're out of memory...
-        // ...signal failure
-        SystemFailure.setFailure(e);
 
-        // Next, wait for the listener to finish running
-        long fin = System.currentTimeMillis() + 60 * 1000;
-        for (;;) {
-          if (peskyMemory == null) {
-            break;
+        public void afterCreate(EntryEvent event) {
+          forceOverflow();
+        }
+      };
+
+  private static final GenericListener listener_outOfMemory =
+      new GenericListener() {
+        /** Allocate objects until death */
+        private void forceOutOfMemory() {
+          ArrayList junk = new ArrayList();
+          for (; ; ) {
+            junk.add(new long[100000]);
           }
-          if (System.currentTimeMillis() > fin) {
-            throw whoops;
-          }
-          synchronized (SystemFailureDUnitTest.class) {
-            try {
-              SystemFailureDUnitTest.class.wait(2000);
-            } catch (InterruptedException e2) {
-              fail("interrupted");
+        }
+
+        public void afterCreate(EntryEvent event) {
+          org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+              .info("Invoking afterCreate on listener; name=" + event.getKey());
+          forceOutOfMemory();
+        }
+      };
+
+  private static final GenericListener listener_persistentOutOfMemory =
+      new GenericListener() {
+        /** Allocate objects until death */
+        private void forceOutOfMemory() {
+          peskyMemory = new ArrayList();
+          // Allocate this _before_ exhausting memory :-)
+          final AssertionError whoops = new AssertionError("Timeout!");
+          try {
+            for (; ; ) {
+              peskyMemory.add(new long[100000]);
+            }
+          } catch (OutOfMemoryError e) {
+            // Now then...while we're out of memory...
+            // ...signal failure
+            SystemFailure.setFailure(e);
+
+            // Next, wait for the listener to finish running
+            long fin = System.currentTimeMillis() + 60 * 1000;
+            for (; ; ) {
+              if (peskyMemory == null) {
+                break;
+              }
+              if (System.currentTimeMillis() > fin) {
+                throw whoops;
+              }
+              synchronized (SystemFailureDUnitTest.class) {
+                try {
+                  SystemFailureDUnitTest.class.wait(2000);
+                } catch (InterruptedException e2) {
+                  fail("interrupted");
+                }
+              }
             }
           }
         }
-      }
-    }
 
-    public void afterCreate(EntryEvent event) {
-      org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Invoking afterCreate on listener; name=" + event.getKey());
-      forceOutOfMemory();
-    }
-  };
-
-  static private final GenericListener listener_memoryMonitor = new GenericListener() {
-
-    /**
-     * Allocate objects until we are chronically low, but don't generate
-     * OutOfMemoryError
-     */
-    private void forceLowMemory() {
-      long maxMem = Runtime.getRuntime().maxMemory();
-      long avail = Runtime.getRuntime().freeMemory();
-      long thresh = (long) (avail * 0.40);
-      long ferSure = (long) (avail * 0.30);
-      SystemFailure.setFailureMemoryThreshold(thresh);
-      SystemFailure.setFailureAction(new Runnable() {
-        public void run() {
-          peskyMemory = null;
-          System.gc();
-          synchronized (SystemFailure.class) {
-            SystemFailure.class.notify();
-          }
+        public void afterCreate(EntryEvent event) {
+          org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+              .info("Invoking afterCreate on listener; name=" + event.getKey());
+          forceOutOfMemory();
         }
-      });
+      };
 
-      peskyMemory = new ArrayList();
-      // Allocate this _before_ exhausting memory :-)
-      final AssertionError whoops = new AssertionError("Timeout!");
+  private static final GenericListener listener_memoryMonitor =
+      new GenericListener() {
 
-      // Fill up a lot of memory
-      for (;;) {
-        peskyMemory.add(new long[100000]);
-        if (Runtime.getRuntime().totalMemory() < maxMem) {
-          continue; // haven't finished allocating max allowed
-        }
-        if (Runtime.getRuntime().freeMemory() < ferSure) {
-          break;
-        }
-      } // for
+        /** Allocate objects until we are chronically low, but don't generate OutOfMemoryError */
+        private void forceLowMemory() {
+          long maxMem = Runtime.getRuntime().maxMemory();
+          long avail = Runtime.getRuntime().freeMemory();
+          long thresh = (long) (avail * 0.40);
+          long ferSure = (long) (avail * 0.30);
+          SystemFailure.setFailureMemoryThreshold(thresh);
+          SystemFailure.setFailureAction(
+              new Runnable() {
+                public void run() {
+                  peskyMemory = null;
+                  System.gc();
+                  synchronized (SystemFailure.class) {
+                    SystemFailure.class.notify();
+                  }
+                }
+              });
 
-      // Wait for the failure monitor to kick in
-      long fin = System.currentTimeMillis() + (long) (SystemFailure.MEMORY_MAX_WAIT * 1.5 * 1000);
-      for (;;) {
-        long now = System.currentTimeMillis();
-        if (now > fin) {
-          throw whoops;
-        }
-        synchronized (SystemFailure.class) {
-          try {
+          peskyMemory = new ArrayList();
+          // Allocate this _before_ exhausting memory :-)
+          final AssertionError whoops = new AssertionError("Timeout!");
+
+          // Fill up a lot of memory
+          for (; ; ) {
+            peskyMemory.add(new long[100000]);
+            if (Runtime.getRuntime().totalMemory() < maxMem) {
+              continue; // haven't finished allocating max allowed
+            }
+            if (Runtime.getRuntime().freeMemory() < ferSure) {
+              break;
+            }
+          } // for
+
+          // Wait for the failure monitor to kick in
+          long fin =
+              System.currentTimeMillis() + (long) (SystemFailure.MEMORY_MAX_WAIT * 1.5 * 1000);
+          for (; ; ) {
+            long now = System.currentTimeMillis();
+            if (now > fin) {
+              throw whoops;
+            }
+            synchronized (SystemFailure.class) {
+              try {
+                if (peskyMemory == null) {
+                  break;
+                }
+                SystemFailure.class.wait(fin - now);
+              } catch (InterruptedException e) {
+                fail("interrupted");
+              }
+            } // synchronized
             if (peskyMemory == null) {
               break;
             }
-            SystemFailure.class.wait(fin - now);
-          } catch (InterruptedException e) {
-            fail("interrupted");
-          }
-        } // synchronized
-        if (peskyMemory == null) {
-          break;
+          } // for
         }
-      } // for
-    }
 
-    public void afterCreate(EntryEvent event) {
-      org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Invoking afterCreate on listener; name=" + event.getKey());
-      forceLowMemory();
-    }
-  };
+        public void afterCreate(EntryEvent event) {
+          org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+              .info("Invoking afterCreate on listener; name=" + event.getKey());
+          forceLowMemory();
+        }
+      };
 
-  static private final GenericListener listener_internalError = new GenericListener() {
-    /**
-     * not really any good way to convince Java to do
-     * this, so I'm just gonna throw it directly.
-     */
-    private void forceInternalError() {
-      throw new InternalError("gotcha");
-    }
+  private static final GenericListener listener_internalError =
+      new GenericListener() {
+        /**
+         * not really any good way to convince Java to do this, so I'm just gonna throw it directly.
+         */
+        private void forceInternalError() {
+          throw new InternalError("gotcha");
+        }
 
-    public void afterCreate(EntryEvent event) {
-      org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Invoking afterCreate on listener; name=" + event.getKey());
-      forceInternalError();
-    }
-  };
+        public void afterCreate(EntryEvent event) {
+          org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+              .info("Invoking afterCreate on listener; name=" + event.getKey());
+          forceInternalError();
+        }
+      };
 
-  static private final GenericListener listener_unknownError = new GenericListener() {
+  private static final GenericListener listener_unknownError =
+      new GenericListener() {
 
-    /**
-     * Not actually used in current JRE?
-     */
-    private void forceInternalError() {
-      throw new UnknownError("gotcha");
-    }
+        /** Not actually used in current JRE? */
+        private void forceInternalError() {
+          throw new UnknownError("gotcha");
+        }
 
-    public void afterCreate(EntryEvent event) {
-      org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Invoking afterCreate on listener; name=" + event.getKey());
-      forceInternalError();
-    }
-  };
+        public void afterCreate(EntryEvent event) {
+          org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+              .info("Invoking afterCreate on listener; name=" + event.getKey());
+          forceInternalError();
+        }
+      };
 
-  static private final GenericListener listener_error = new GenericListener() {
-    private void forceError() {
-      new SickoClass();
-    }
+  private static final GenericListener listener_error =
+      new GenericListener() {
+        private void forceError() {
+          new SickoClass();
+        }
 
-    public void afterCreate(EntryEvent event) {
-      org.apache.geode.test.dunit.LogWriterUtils.getLogWriter().info("Invoking afterCreate on listener; name=" + event.getKey());
-      forceError();
-    }
-  };
+        public void afterCreate(EntryEvent event) {
+          org.apache.geode.test.dunit.LogWriterUtils.getLogWriter()
+              .info("Invoking afterCreate on listener; name=" + event.getKey());
+          forceError();
+        }
+      };
 
   /**
    * Set a listener that generates some sort of error
-   * 
+   *
    * @param which makes it test dependent
    * @return the listener
    */
-  static private GenericListener getListener(String which) {
+  private static GenericListener getListener(String which) {
     GenericListener listener;
     if (which.equals("testStackOverflow")) {
       listener = listener_stackOverflow;
@@ -636,7 +625,10 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
     LogWriter log = org.apache.geode.test.dunit.LogWriterUtils.getLogWriter();
     log.info("<ExpectedException action=add>" + "dunit.RMIException" + "</ExpectedException>");
 
-    Object[] args = new Object[] { name, };
+    Object[] args =
+        new Object[] {
+          name,
+        };
     Host host = Host.getHost(0);
     VM vm = host.getVM(0);
     try {
@@ -649,9 +641,9 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
   }
 
   /**
-   * Sets a listener based on the test, and then (attempts to) create 
-   * an entry in this test's region with the given name
-   * 
+   * Sets a listener based on the test, and then (attempts to) create an entry in this test's region
+   * with the given name
+   *
    * @param name the test we are running
    */
   protected static void createEntry(String name) throws CacheException {
@@ -659,9 +651,7 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
     createEntry(name, 0, ExpirationAction.INVALIDATE, l);
   }
 
-  /**
-   * Gets or creates a region used in this test
-   */
+  /** Gets or creates a region used in this test */
   private static Region getRegion() throws CacheException {
 
     Region root = getRootRegion();
@@ -676,21 +666,17 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
     return region;
   }
 
-  /**
-   * A class that provides default implementations for the methods of
-   * several listener types.
-   */
+  /** A class that provides default implementations for the methods of several listener types. */
   public static class GenericListener extends CacheListenerAdapter implements Serializable {
 
     ////////  CacheListener  ///////
 
-    public void close() {
-    }
+    public void close() {}
 
     /**
      * is called when an object is newly loaded into cache.
-     * @param oevt the ObjectEvent object representing the source object
-     * of the event.
+     *
+     * @param oevt the ObjectEvent object representing the source object of the event.
      */
     public void afterCreate(EntryEvent oevt) {
       fail("Unexpected listener callback: afterCreate");
@@ -698,8 +684,8 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
 
     /**
      * is called when an object is invalidated.
-     * @param oevt the ObjectEvent object representing the source object
-     * of the event.
+     *
+     * @param oevt the ObjectEvent object representing the source object of the event.
      */
     public void afterInvalidate(EntryEvent oevt) {
       fail("Unexpected listener callback: afterInvalidated");
@@ -707,8 +693,8 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
 
     /**
      * is called when an object is destroyed.
-     * @param oevt the ObjectEvent object representing the source object
-     * of the event.
+     *
+     * @param oevt the ObjectEvent object representing the source object of the event.
      */
     public void afterDestroy(EntryEvent oevt) {
       fail("Unexpected listener callback: afterDestroy");
@@ -716,8 +702,8 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
 
     /**
      * is called when an object is replaced.
-     * @param oevt the ObjectEvent object representing the source object
-     * of the event.
+     *
+     * @param oevt the ObjectEvent object representing the source object of the event.
      */
     public void afterUpdate(EntryEvent oevt) {
       fail("Unexpected listener callback: afterUpdate");
@@ -725,6 +711,7 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
 
     /**
      * is called when a region is invalidated.
+     *
      * @param revt a RegionEvent to represent the source region.
      * @throws CacheException if any error occurs.
      */
@@ -734,6 +721,7 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
 
     /**
      * is called when a region is destroyed.
+     *
      * @param revt a RegionEvent to represent the source region.
      * @throws CacheException if any error occurs.
      */
@@ -741,5 +729,4 @@ public class SystemFailureDUnitTest extends DistributedCacheTestCase {
       //       fail("Unexpected listener callback: afterRegionDestroy");
     }
   }
-
 }

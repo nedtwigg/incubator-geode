@@ -30,16 +30,14 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.cache.server.ServerLoad;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Integration tests extracted from LocatorLoadSnapshotJUnitTest
- */
+/** Integration tests extracted from LocatorLoadSnapshotJUnitTest */
 @Category(IntegrationTest.class)
 public class LocatorLoadSnapshotIntegrationTest {
 
   /**
-   * A basic test of concurrent functionality. Starts a number of
-   * threads making requests and expects the load to be balanced between
-   * three servers.
+   * A basic test of concurrent functionality. Starts a number of threads making requests and
+   * expects the load to be balanced between three servers.
+   *
    * @throws InterruptedException
    */
   @Test
@@ -70,18 +68,19 @@ public class LocatorLoadSnapshotIntegrationTest {
     Thread[] threads = new Thread[NUM_THREADS];
     //    final Object lock = new Object();
     for (int i = 0; i < NUM_THREADS; i++) {
-      threads[i] = new Thread("Thread-" + i) {
-        public void run() {
-          for (int ii = 0; ii < NUM_REQUESTS; ii++) {
-            ServerLocation location;
-            //            synchronized(lock) {
-            location = sn.getServerForConnection(null, Collections.EMPTY_SET);
-            //            }
-            AtomicInteger count = (AtomicInteger) loadCounts.get(location);
-            count.incrementAndGet();
-          }
-        }
-      };
+      threads[i] =
+          new Thread("Thread-" + i) {
+            public void run() {
+              for (int ii = 0; ii < NUM_REQUESTS; ii++) {
+                ServerLocation location;
+                //            synchronized(lock) {
+                location = sn.getServerForConnection(null, Collections.EMPTY_SET);
+                //            }
+                AtomicInteger count = (AtomicInteger) loadCounts.get(location);
+                count.incrementAndGet();
+              }
+            }
+          };
     }
 
     for (int i = 0; i < NUM_THREADS; i++) {
@@ -100,20 +99,30 @@ public class LocatorLoadSnapshotIntegrationTest {
       }
     }
 
-    double expectedPerServer = (initialLoad1 + initialLoad2 + initialLoad3 + NUM_REQUESTS * NUM_THREADS) / (double) loadCounts.size();
+    double expectedPerServer =
+        (initialLoad1 + initialLoad2 + initialLoad3 + NUM_REQUESTS * NUM_THREADS)
+            / (double) loadCounts.size();
     //    for(Iterator itr = loadCounts.entrySet().iterator(); itr.hasNext(); ) {
     //      Map.Entry entry = (Entry) itr.next();
     //      ServerLocation location = (ServerLocation) entry.getKey();
     //      AI count= (AI) entry.getValue();
     //    }
 
-    for (Iterator itr = loadCounts.entrySet().iterator(); itr.hasNext();) {
+    for (Iterator itr = loadCounts.entrySet().iterator(); itr.hasNext(); ) {
       Map.Entry entry = (Map.Entry) itr.next();
       ServerLocation location = (ServerLocation) entry.getKey();
       AtomicInteger count = (AtomicInteger) entry.getValue();
       int difference = (int) Math.abs(count.get() - expectedPerServer);
-      assertTrue("Count " + count + " for server " + location + " is not within " + ALLOWED_THRESHOLD + " of " + expectedPerServer, difference < ALLOWED_THRESHOLD);
+      assertTrue(
+          "Count "
+              + count
+              + " for server "
+              + location
+              + " is not within "
+              + ALLOWED_THRESHOLD
+              + " of "
+              + expectedPerServer,
+          difference < ALLOWED_THRESHOLD);
     }
   }
-
 }

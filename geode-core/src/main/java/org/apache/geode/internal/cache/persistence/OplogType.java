@@ -17,7 +17,8 @@
 package org.apache.geode.internal.cache.persistence;
 
 public enum OplogType {
-  BACKUP("BACKUP"), OVERFLOW("OVERFLOW");
+  BACKUP("BACKUP"),
+  OVERFLOW("OVERFLOW");
 
   private final String prefix;
 

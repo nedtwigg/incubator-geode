@@ -25,41 +25,32 @@ import org.apache.geode.annotations.Experimental;
 
 /**
  * An lucene index is built over the data stored in a GemFire Region.
+ *
+ * <p>An index is specified using a index name, field names, region name.
+ *
+ * <p>The index name and region name together uniquely identifies the lucene index.
+ *
  * <p>
- * An index is specified using a index name, field names, region name.
- * <p>
- * The index name and region name together uniquely identifies the lucene index.
- * <p>
- * 
  */
 @Experimental
 public interface LuceneIndex {
 
-  /**
-   * @return the index name of this index
-   */
+  /** @return the index name of this index */
   public String getName();
 
-  /**
-   * @return the region name for this index
-   */
+  /** @return the region name for this index */
   public String getRegionPath();
 
-  /**
-   * @return the indexed field names in a Set
-   */
+  /** @return the indexed field names in a Set */
   public String[] getFieldNames();
 
-  /**
-   * @return the field to analyzer map
-   */
+  /** @return the field to analyzer map */
   public Map<String, Analyzer> getFieldAnalyzers();
 
-  /* 
+  /*
    * wait until the current entries in cache are indexed
    * @param maxWaitInMilliseconds max wait time in millisecond
    * @return if entries are flushed within maxWait
    */
   public boolean waitUntilFlushed(int maxWaitInMillisecond);
-
 }

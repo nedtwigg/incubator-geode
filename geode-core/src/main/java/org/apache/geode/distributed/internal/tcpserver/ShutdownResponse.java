@@ -24,16 +24,14 @@ import java.io.IOException;
 import org.apache.geode.DataSerializable;
 
 /**
- * A response from the TCP server that it received
- * the shutdown request
+ * A response from the TCP server that it received the shutdown request
+ *
  * @since GemFire 5.7
  */
 public class ShutdownResponse implements DataSerializable {
   private static final long serialVersionUID = -7223807212380360314L;
 
-  public void fromData(DataInput in) throws IOException, ClassNotFoundException {
-  }
+  public void fromData(DataInput in) throws IOException, ClassNotFoundException {}
 
-  public void toData(DataOutput out) throws IOException {
-  }
+  public void toData(DataOutput out) throws IOException {}
 }

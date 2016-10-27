@@ -24,9 +24,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Serializable version of {@link RuleList}.
- */
+/** Serializable version of {@link RuleList}. */
 public class SerializableRuleList extends RuleList implements SerializableTestRule {
 
   public SerializableRuleList() {
@@ -60,9 +58,7 @@ public class SerializableRuleList extends RuleList implements SerializableTestRu
     return new SerializationProxy(this);
   }
 
-  /**
-   * Serialization proxy for {@code SerializableRuleList}.
-   */
+  /** Serialization proxy for {@code SerializableRuleList}. */
   private static class SerializationProxy implements Serializable {
 
     private final List<TestRule> rules;

@@ -36,7 +36,7 @@ import org.apache.geode.test.dunit.internal.JUnit4DistributedTestCase;
 import org.apache.geode.test.junit.categories.DistributedTest;
 import org.apache.geode.test.junit.categories.SecurityTest;
 
-@Category({ DistributedTest.class, SecurityTest.class })
+@Category({DistributedTest.class, SecurityTest.class})
 public class PeerAuthenticatorDUnitTest extends JUnit4DistributedTestCase {
   protected VM locator = null;
   protected VM server = null;
@@ -52,42 +52,45 @@ public class PeerAuthenticatorDUnitTest extends JUnit4DistributedTestCase {
 
   @Test
   public void testPeerAuthenticator() throws Exception {
-    int locatorPort = locator.invoke(() -> {
-      Properties props = new Properties();
-      props.setProperty(SECURITY_PEER_AUTHENTICATOR, DummyAuthenticator.class.getName());
-      props.setProperty(MCAST_PORT, "0");
-      props.put(JMX_MANAGER, "true");
-      props.put(JMX_MANAGER_START, "true");
-      props.put(JMX_MANAGER_PORT, "0");
-      Locator locatorObj = Locator.startLocatorAndDS(0, new File("locator.log"), props);
-      return locatorObj.getPort();
-    });
+    int locatorPort =
+        locator.invoke(
+            () -> {
+              Properties props = new Properties();
+              props.setProperty(SECURITY_PEER_AUTHENTICATOR, DummyAuthenticator.class.getName());
+              props.setProperty(MCAST_PORT, "0");
+              props.put(JMX_MANAGER, "true");
+              props.put(JMX_MANAGER_START, "true");
+              props.put(JMX_MANAGER_PORT, "0");
+              Locator locatorObj = Locator.startLocatorAndDS(0, new File("locator.log"), props);
+              return locatorObj.getPort();
+            });
 
     // set up server with security
     String locators = "localhost[" + locatorPort + "]";
-    server.invoke(() -> {
-      Properties props = new Properties();
-      props.setProperty(MCAST_PORT, "0");
-      props.setProperty(LOCATORS, locators);
+    server.invoke(
+        () -> {
+          Properties props = new Properties();
+          props.setProperty(MCAST_PORT, "0");
+          props.setProperty(LOCATORS, locators);
 
-      // the following are needed for peer-to-peer authentication
-      props.setProperty("security-username", "user");
-      props.setProperty("security-password", "user");
-      // this should execute without exception
-      InternalDistributedSystem ds = getSystem(props);
-    });
+          // the following are needed for peer-to-peer authentication
+          props.setProperty("security-username", "user");
+          props.setProperty("security-password", "user");
+          // this should execute without exception
+          InternalDistributedSystem ds = getSystem(props);
+        });
 
-    server1.invoke(() -> {
-      Properties props = new Properties();
-      props.setProperty(MCAST_PORT, "0");
-      props.setProperty(LOCATORS, locators);
+    server1.invoke(
+        () -> {
+          Properties props = new Properties();
+          props.setProperty(MCAST_PORT, "0");
+          props.setProperty(LOCATORS, locators);
 
-      // the following are needed for peer-to-peer authentication
-      props.setProperty("security-username", "bogus");
-      props.setProperty("security-password", "user");
+          // the following are needed for peer-to-peer authentication
+          props.setProperty("security-username", "bogus");
+          props.setProperty("security-password", "user");
 
-      assertThatThrownBy(() -> getSystem(props)).isInstanceOf(GemFireSecurityException.class);
-    });
+          assertThatThrownBy(() -> getSystem(props)).isInstanceOf(GemFireSecurityException.class);
+        });
   }
-
 }

@@ -32,10 +32,7 @@ import org.apache.geode.management.internal.beans.stats.StatType;
 import org.apache.geode.management.internal.beans.stats.StatsKey;
 import org.apache.geode.management.internal.beans.stats.StatsRate;
 
-/**
- * 
- *
- */
+/** */
 public class GatewayReceiverMBeanBridge extends ServerBridge {
 
   private GatewayReceiver rcv;
@@ -130,7 +127,6 @@ public class GatewayReceiverMBeanBridge extends ServerBridge {
       j++;
     }
     return filtersStr;
-
   }
 
   public int getStartPort() {
@@ -141,8 +137,7 @@ public class GatewayReceiverMBeanBridge extends ServerBridge {
     return rcv.getMaximumTimeBetweenPings();
   }
 
-  /** Statistics Related Counters **/
-
+  /** Statistics Related Counters * */
   private void initializeReceiverStats() {
     createRequestRate = new StatsRate(StatsKey.CREAT_REQUESTS, StatType.INT_TYPE, monitor);
     updateRequestRate = new StatsRate(StatsKey.UPDATE_REQUESTS, StatType.INT_TYPE, monitor);
@@ -191,13 +186,13 @@ public class GatewayReceiverMBeanBridge extends ServerBridge {
 
   public long getAverageBatchProcessingTime() {
     if (getStatistic(StatsKey.TOTAL_BATCHES).longValue() != 0) {
-      long processTimeInNano = getStatistic(StatsKey.BATCH_PROCESS_TIME).longValue() / getStatistic(StatsKey.TOTAL_BATCHES).longValue();
+      long processTimeInNano =
+          getStatistic(StatsKey.BATCH_PROCESS_TIME).longValue()
+              / getStatistic(StatsKey.TOTAL_BATCHES).longValue();
 
       return ManagementConstants.nanoSeconds.toMillis(processTimeInNano);
     } else {
       return 0;
     }
-
   }
-
 }

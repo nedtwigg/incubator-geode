@@ -54,8 +54,8 @@ import org.apache.geode.internal.cache.EvictionAttributesImpl;
 import org.apache.geode.internal.i18n.LocalizedStrings;
 
 /**
- * Provides an implementation of RegionAttributes that can be used from a VM
- * remote from the vm that created the cache.
+ * Provides an implementation of RegionAttributes that can be used from a VM remote from the vm that
+ * created the cache.
  */
 public class RemoteRegionAttributes implements RegionAttributes, DataSerializable {
 
@@ -106,9 +106,7 @@ public class RemoteRegionAttributes implements RegionAttributes, DataSerializabl
   private String compressorDesc;
   private boolean offHeap;
 
-  /**
-   * constructs a new default RemoteRegionAttributes.
-   */
+  /** constructs a new default RemoteRegionAttributes. */
   public RemoteRegionAttributes(RegionAttributes attr) {
     this.cacheLoaderDesc = getDesc(attr.getCacheLoader());
     this.cacheWriterDesc = getDesc(attr.getCacheWriter());
@@ -158,11 +156,8 @@ public class RemoteRegionAttributes implements RegionAttributes, DataSerializabl
     this.offHeap = attr.getOffHeap();
   }
 
-  /**
-   * For use only by DataExternalizable mechanism
-   */
-  public RemoteRegionAttributes() {
-  }
+  /** For use only by DataExternalizable mechanism */
+  public RemoteRegionAttributes() {}
 
   public CacheLoader getCacheLoader() {
     return cacheLoaderDesc.equals("") ? null : new RemoteCacheLoader(cacheLoaderDesc);
@@ -219,7 +214,9 @@ public class RemoteRegionAttributes implements RegionAttributes, DataSerializabl
     } else if (listeners.length == 1) {
       return listeners[0];
     } else {
-      throw new IllegalStateException(LocalizedStrings.RemoteRegionAttributes_MORE_THAN_ONE_CACHE_LISTENER_EXISTS.toLocalizedString());
+      throw new IllegalStateException(
+          LocalizedStrings.RemoteRegionAttributes_MORE_THAN_ONE_CACHE_LISTENER_EXISTS
+              .toLocalizedString());
     }
   }
 
@@ -327,12 +324,17 @@ public class RemoteRegionAttributes implements RegionAttributes, DataSerializabl
 
   public MirrorType getMirrorType() {
     //checkReadiness();
-    if (this.dataPolicy.isNormal() || this.dataPolicy.isPreloaded() || this.dataPolicy.isEmpty() || this.dataPolicy.withPartitioning()) {
+    if (this.dataPolicy.isNormal()
+        || this.dataPolicy.isPreloaded()
+        || this.dataPolicy.isEmpty()
+        || this.dataPolicy.withPartitioning()) {
       return MirrorType.NONE;
     } else if (this.dataPolicy.withReplication()) {
       return MirrorType.KEYS_VALUES;
     } else {
-      throw new IllegalStateException(LocalizedStrings.RemoteRegionAttributes_NO_MIRROR_TYPE_CORRESPONDS_TO_DATA_POLICY_0.toLocalizedString(this.dataPolicy));
+      throw new IllegalStateException(
+          LocalizedStrings.RemoteRegionAttributes_NO_MIRROR_TYPE_CORRESPONDS_TO_DATA_POLICY_0
+              .toLocalizedString(this.dataPolicy));
     }
   }
 
@@ -478,18 +480,13 @@ public class RemoteRegionAttributes implements RegionAttributes, DataSerializabl
     return this.indexMaintenanceSynchronous;
   }
 
-  /**
-   * A remote representation of a cache callback
-   */
+  /** A remote representation of a cache callback */
   private abstract static class RemoteCacheCallback implements CacheCallback {
 
     /** The description of this callback */
     private final String desc;
 
-    /**
-     * Creates a new <code>RemoteCacheCallback</code> with the given
-     * description.
-     */
+    /** Creates a new <code>RemoteCacheCallback</code> with the given description. */
     protected RemoteCacheCallback(String desc) {
       this.desc = desc;
     }
@@ -499,8 +496,7 @@ public class RemoteRegionAttributes implements RegionAttributes, DataSerializabl
       return desc;
     }
 
-    public final void close() {
-    }
+    public final void close() {}
   }
 
   private static class RemoteCacheListener extends RemoteCacheCallback implements CacheListener {
@@ -509,32 +505,23 @@ public class RemoteRegionAttributes implements RegionAttributes, DataSerializabl
       super(desc);
     }
 
-    public void afterCreate(EntryEvent event) {
-    }
+    public void afterCreate(EntryEvent event) {}
 
-    public void afterUpdate(EntryEvent event) {
-    }
+    public void afterUpdate(EntryEvent event) {}
 
-    public void afterInvalidate(EntryEvent event) {
-    }
+    public void afterInvalidate(EntryEvent event) {}
 
-    public void afterDestroy(EntryEvent event) {
-    }
+    public void afterDestroy(EntryEvent event) {}
 
-    public void afterRegionInvalidate(RegionEvent event) {
-    }
+    public void afterRegionInvalidate(RegionEvent event) {}
 
-    public void afterRegionDestroy(RegionEvent event) {
-    }
+    public void afterRegionDestroy(RegionEvent event) {}
 
-    public void afterRegionClear(RegionEvent event) {
-    }
+    public void afterRegionClear(RegionEvent event) {}
 
-    public void afterRegionCreate(RegionEvent event) {
-    }
+    public void afterRegionCreate(RegionEvent event) {}
 
-    public void afterRegionLive(RegionEvent event) {
-    }
+    public void afterRegionLive(RegionEvent event) {}
   }
 
   private static class RemoteCacheWriter extends RemoteCacheCallback implements CacheWriter {
@@ -543,23 +530,19 @@ public class RemoteRegionAttributes implements RegionAttributes, DataSerializabl
       super(desc);
     }
 
-    public void beforeUpdate(EntryEvent event) throws CacheWriterException {
-    }
+    public void beforeUpdate(EntryEvent event) throws CacheWriterException {}
 
-    public void beforeCreate(EntryEvent event) throws CacheWriterException {
-    }
+    public void beforeCreate(EntryEvent event) throws CacheWriterException {}
 
-    public void beforeDestroy(EntryEvent event) throws CacheWriterException {
-    }
+    public void beforeDestroy(EntryEvent event) throws CacheWriterException {}
 
-    public void beforeRegionDestroy(RegionEvent event) throws CacheWriterException {
-    }
+    public void beforeRegionDestroy(RegionEvent event) throws CacheWriterException {}
 
-    public void beforeRegionClear(RegionEvent event) throws CacheWriterException {
-    }
+    public void beforeRegionClear(RegionEvent event) throws CacheWriterException {}
   }
 
-  private static class RemoteCustomExpiry extends RemoteCacheCallback implements CustomExpiry, Declarable {
+  private static class RemoteCustomExpiry extends RemoteCacheCallback
+      implements CustomExpiry, Declarable {
 
     public RemoteCustomExpiry(String desc) {
       super(desc);
@@ -575,9 +558,7 @@ public class RemoteRegionAttributes implements RegionAttributes, DataSerializabl
     /* (non-Javadoc)
      * @see org.apache.geode.cache.Declarable#init(java.util.Properties)
      */
-    public void init(Properties props) {
-    }
-
+    public void init(Properties props) {}
   }
 
   private static class RemoteCacheLoader extends RemoteCacheCallback implements CacheLoader {
@@ -653,6 +634,5 @@ public class RemoteRegionAttributes implements RegionAttributes, DataSerializabl
       }
       return asyncEventQueues;
     }
-
   }
 }

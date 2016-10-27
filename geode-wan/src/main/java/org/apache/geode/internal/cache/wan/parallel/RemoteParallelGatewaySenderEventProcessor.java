@@ -42,10 +42,9 @@ public class RemoteParallelGatewaySenderEventProcessor extends ParallelGatewaySe
     super(sender);
   }
 
-  /**
-   * use in concurrent scenario where queue is to be shared among all the processors.
-   */
-  protected RemoteParallelGatewaySenderEventProcessor(AbstractGatewaySender sender, Set<Region> userRegions, int id, int nDispatcher) {
+  /** use in concurrent scenario where queue is to be shared among all the processors. */
+  protected RemoteParallelGatewaySenderEventProcessor(
+      AbstractGatewaySender sender, Set<Region> userRegions, int id, int nDispatcher) {
     super(sender, userRegions, id, nDispatcher);
   }
 
@@ -55,7 +54,8 @@ public class RemoteParallelGatewaySenderEventProcessor extends ParallelGatewaySe
     long startTime = statistics.startLoadBalance();
     try {
       if (this.dispatcher.isRemoteDispatcher()) {
-        GatewaySenderEventRemoteDispatcher remoteDispatcher = (GatewaySenderEventRemoteDispatcher) this.dispatcher;
+        GatewaySenderEventRemoteDispatcher remoteDispatcher =
+            (GatewaySenderEventRemoteDispatcher) this.dispatcher;
         if (remoteDispatcher.isConnectedToRemote()) {
           remoteDispatcher.stopAckReaderThread();
           remoteDispatcher.destroyConnection();
@@ -76,15 +76,16 @@ public class RemoteParallelGatewaySenderEventProcessor extends ParallelGatewaySe
   }
 
   /**
-   * Returns if corresponding receiver WAN site of this GatewaySender has
-   * GemfireVersion > 7.0.1
-   * 
+   * Returns if corresponding receiver WAN site of this GatewaySender has GemfireVersion > 7.0.1
+   *
    * @param disp
    * @return true if remote site Gemfire Version is >= 7.0.1
    */
-  private boolean shouldSendVersionEvents(GatewaySenderEventDispatcher disp) throws GatewaySenderException {
+  private boolean shouldSendVersionEvents(GatewaySenderEventDispatcher disp)
+      throws GatewaySenderException {
     try {
-      GatewaySenderEventRemoteDispatcher remoteDispatcher = (GatewaySenderEventRemoteDispatcher) disp;
+      GatewaySenderEventRemoteDispatcher remoteDispatcher =
+          (GatewaySenderEventRemoteDispatcher) disp;
       // This will create a new connection if no batch has been sent till
       // now.
       Connection conn = remoteDispatcher.getConnection(false);
@@ -96,7 +97,9 @@ public class RemoteParallelGatewaySenderEventProcessor extends ParallelGatewaySe
       }
     } catch (GatewaySenderException e) {
       Throwable cause = e.getCause();
-      if (cause instanceof IOException || e instanceof GatewaySenderConfigurationException || cause instanceof ConnectionDestroyedException) {
+      if (cause instanceof IOException
+          || e instanceof GatewaySenderConfigurationException
+          || cause instanceof ConnectionDestroyedException) {
         try {
           int sleepInterval = GatewaySender.CONNECTION_RETRY_INTERVAL;
           if (logger.isDebugEnabled()) {
@@ -114,5 +117,4 @@ public class RemoteParallelGatewaySenderEventProcessor extends ParallelGatewaySe
     }
     return false;
   }
-
 }

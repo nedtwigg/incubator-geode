@@ -36,15 +36,13 @@ import org.apache.geode.internal.cache.versions.VersionSource;
 import org.apache.geode.internal.cache.versions.VersionTag;
 import org.apache.geode.test.dunit.*;
 
-/**
- * concurrency-control tests for client/server
- * 
- *
- */
+/** concurrency-control tests for client/server */
 @Category(DistributedTest.class)
 public class RRSynchronizationDUnitTest extends JUnit4CacheTestCase {
   static enum TestType {
-    IN_MEMORY, OVERFLOW, PERSISTENT
+    IN_MEMORY,
+    OVERFLOW,
+    PERSISTENT
   };
 
   public static LocalRegion TestRegion;
@@ -75,10 +73,7 @@ public class RRSynchronizationDUnitTest extends JUnit4CacheTestCase {
     doRegionsSyncOnPeerLoss(TestType.OVERFLOW);
   }
 
-  /**
-   * We hit this problem in bug #45669.  delta-GII was not being
-   * distributed in the 7.0 release.
-   */
+  /** We hit this problem in bug #45669. delta-GII was not being distributed in the 7.0 release. */
   public void doRegionsSyncOnPeerLoss(TestType typeOfTest) {
     IgnoredException.addIgnoredException("killing member's ds");
     Host host = Host.getHost(0);
@@ -114,143 +109,168 @@ public class RRSynchronizationDUnitTest extends JUnit4CacheTestCase {
   }
 
   private boolean createEntry1(VM vm) {
-    return (Boolean) vm.invoke(new SerializableCallable("create entry1") {
-      public Object call() {
-        TestRegion.create("Object1", Integer.valueOf(1));
-        return true;
-      }
-    });
+    return (Boolean)
+        vm.invoke(
+            new SerializableCallable("create entry1") {
+              public Object call() {
+                TestRegion.create("Object1", Integer.valueOf(1));
+                return true;
+              }
+            });
   }
 
   private InternalDistributedMember getID(VM vm) {
-    return (InternalDistributedMember) vm.invoke(new SerializableCallable("get dmID") {
-      public Object call() {
-        return TestRegion.getCache().getMyId();
-      }
-    });
+    return (InternalDistributedMember)
+        vm.invoke(
+            new SerializableCallable("get dmID") {
+              public Object call() {
+                return TestRegion.getCache().getMyId();
+              }
+            });
   }
 
   private VersionSource getVersionID(VM vm) {
-    return (VersionSource) vm.invoke(new SerializableCallable("get versionID") {
-      public Object call() {
-        return TestRegion.getVersionMember();
-      }
-    });
+    return (VersionSource)
+        vm.invoke(
+            new SerializableCallable("get versionID") {
+              public Object call() {
+                return TestRegion.getVersionMember();
+              }
+            });
   }
 
-  private boolean createEntry2(VM vm, final InternalDistributedMember forMember, final VersionSource memberVersionID) {
-    return (Boolean) vm.invoke(new SerializableCallable("create entry2") {
-      public Object call() {
-        // create a fake event that looks like it came from the lost member and apply it to
-        // this cache
-        DistributedRegion dr = (DistributedRegion) TestRegion;
-        VersionTag tag = new VMVersionTag();
-        tag.setMemberID(memberVersionID);
-        tag.setRegionVersion(2);
-        tag.setEntryVersion(1);
-        tag.setIsRemoteForTesting();
-        EntryEventImpl event = EntryEventImpl.create(dr, Operation.CREATE, "Object3", true, forMember, true, false);
-        LogWriterUtils.getLogWriter().info("applying this event to the cache: " + event);
-        event.setNewValue(new VMCachedDeserializable("value3", 12));
-        event.setVersionTag(tag);
-        dr.getRegionMap().basicPut(event, System.currentTimeMillis(), true, false, null, false, false);
-        event.release();
+  private boolean createEntry2(
+      VM vm, final InternalDistributedMember forMember, final VersionSource memberVersionID) {
+    return (Boolean)
+        vm.invoke(
+            new SerializableCallable("create entry2") {
+              public Object call() {
+                // create a fake event that looks like it came from the lost member and apply it to
+                // this cache
+                DistributedRegion dr = (DistributedRegion) TestRegion;
+                VersionTag tag = new VMVersionTag();
+                tag.setMemberID(memberVersionID);
+                tag.setRegionVersion(2);
+                tag.setEntryVersion(1);
+                tag.setIsRemoteForTesting();
+                EntryEventImpl event =
+                    EntryEventImpl.create(
+                        dr, Operation.CREATE, "Object3", true, forMember, true, false);
+                LogWriterUtils.getLogWriter().info("applying this event to the cache: " + event);
+                event.setNewValue(new VMCachedDeserializable("value3", 12));
+                event.setVersionTag(tag);
+                dr.getRegionMap()
+                    .basicPut(event, System.currentTimeMillis(), true, false, null, false, false);
+                event.release();
 
-        // now create a tombstone so we can be sure these are transferred in delta-GII
-        tag = new VMVersionTag();
-        tag.setMemberID(memberVersionID);
-        tag.setRegionVersion(3);
-        tag.setEntryVersion(1);
-        tag.setIsRemoteForTesting();
-        event = EntryEventImpl.create(dr, Operation.CREATE, "Object5", true, forMember, true, false);
-        event.setNewValue(Token.TOMBSTONE);
-        event.setVersionTag(tag);
-        LogWriterUtils.getLogWriter().info("applying this event to the cache: " + event);
-        dr.getRegionMap().basicPut(event, System.currentTimeMillis(), true, false, null, false, false);
-        event.release();
+                // now create a tombstone so we can be sure these are transferred in delta-GII
+                tag = new VMVersionTag();
+                tag.setMemberID(memberVersionID);
+                tag.setRegionVersion(3);
+                tag.setEntryVersion(1);
+                tag.setIsRemoteForTesting();
+                event =
+                    EntryEventImpl.create(
+                        dr, Operation.CREATE, "Object5", true, forMember, true, false);
+                event.setNewValue(Token.TOMBSTONE);
+                event.setVersionTag(tag);
+                LogWriterUtils.getLogWriter().info("applying this event to the cache: " + event);
+                dr.getRegionMap()
+                    .basicPut(event, System.currentTimeMillis(), true, false, null, false, false);
+                event.release();
 
-        dr.dumpBackingMap();
-        LogWriterUtils.getLogWriter().info("version vector is now " + dr.getVersionVector().fullToString());
-        assertTrue("should hold entry Object3 now", dr.containsKey("Object3"));
-        return true;
-      }
-    });
+                dr.dumpBackingMap();
+                LogWriterUtils.getLogWriter()
+                    .info("version vector is now " + dr.getVersionVector().fullToString());
+                assertTrue("should hold entry Object3 now", dr.containsKey("Object3"));
+                return true;
+              }
+            });
   }
 
   private void verifySynchronized(VM vm, final InternalDistributedMember crashedMember) {
-    vm.invoke(new SerializableCallable("check that synchronization happened") {
-      public Object call() throws Exception {
-        final DistributedRegion dr = (DistributedRegion) TestRegion;
-        Wait.waitForCriterion(new WaitCriterion() {
-          String waitingFor = "crashed member is still in membership view: " + crashedMember;
-          boolean dumped = false;
+    vm.invoke(
+        new SerializableCallable("check that synchronization happened") {
+          public Object call() throws Exception {
+            final DistributedRegion dr = (DistributedRegion) TestRegion;
+            Wait.waitForCriterion(
+                new WaitCriterion() {
+                  String waitingFor =
+                      "crashed member is still in membership view: " + crashedMember;
+                  boolean dumped = false;
 
-          public boolean done() {
-            if (TestRegion.getCache().getDistributionManager().isCurrentMember(crashedMember)) {
-              LogWriterUtils.getLogWriter().info(waitingFor);
-              return false;
-            }
-            if (!TestRegion.containsKey("Object3")) {
-              waitingFor = "entry for Object3 not found";
-              LogWriterUtils.getLogWriter().info(waitingFor);
-              return false;
-            }
-            RegionEntry re = dr.getRegionMap().getEntry("Object5");
-            if (re == null) {
-              if (!dumped) {
-                dumped = true;
-                dr.dumpBackingMap();
-              }
-              waitingFor = "entry for Object5 not found";
-              LogWriterUtils.getLogWriter().info(waitingFor);
-              return false;
-            }
-            if (!re.isTombstone()) {
-              if (!dumped) {
-                dumped = true;
-                dr.dumpBackingMap();
-              }
-              waitingFor = "Object5 is not a tombstone but should be: " + re;
-              LogWriterUtils.getLogWriter().info(waitingFor);
-              return false;
-            }
-            return true;
+                  public boolean done() {
+                    if (TestRegion.getCache()
+                        .getDistributionManager()
+                        .isCurrentMember(crashedMember)) {
+                      LogWriterUtils.getLogWriter().info(waitingFor);
+                      return false;
+                    }
+                    if (!TestRegion.containsKey("Object3")) {
+                      waitingFor = "entry for Object3 not found";
+                      LogWriterUtils.getLogWriter().info(waitingFor);
+                      return false;
+                    }
+                    RegionEntry re = dr.getRegionMap().getEntry("Object5");
+                    if (re == null) {
+                      if (!dumped) {
+                        dumped = true;
+                        dr.dumpBackingMap();
+                      }
+                      waitingFor = "entry for Object5 not found";
+                      LogWriterUtils.getLogWriter().info(waitingFor);
+                      return false;
+                    }
+                    if (!re.isTombstone()) {
+                      if (!dumped) {
+                        dumped = true;
+                        dr.dumpBackingMap();
+                      }
+                      waitingFor = "Object5 is not a tombstone but should be: " + re;
+                      LogWriterUtils.getLogWriter().info(waitingFor);
+                      return false;
+                    }
+                    return true;
+                  }
+
+                  public String description() {
+                    return waitingFor;
+                  }
+                },
+                30000,
+                5000,
+                true);
+            return null;
           }
-
-          public String description() {
-            return waitingFor;
-          }
-
-        }, 30000, 5000, true);
-        return null;
-      }
-    });
+        });
   }
 
   private void createRegion(VM vm, final String regionName, final TestType typeOfTest) {
-    SerializableCallable createRegion = new SerializableCallable() {
-      @SuppressWarnings("deprecation")
-      public Object call() throws Exception {
-        //        TombstoneService.VERBOSE = true;
-        AttributesFactory af = new AttributesFactory();
-        af.setScope(Scope.DISTRIBUTED_NO_ACK);
-        switch (typeOfTest) {
-        case IN_MEMORY:
-          af.setDataPolicy(DataPolicy.REPLICATE);
-          break;
-        case PERSISTENT:
-          af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
-          break;
-        case OVERFLOW:
-          af.setDataPolicy(DataPolicy.REPLICATE);
-          af.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(5, EvictionAction.OVERFLOW_TO_DISK));
-          break;
-        }
-        TestRegion = (LocalRegion) createRootRegion(regionName, af.create());
-        return null;
-      }
-    };
+    SerializableCallable createRegion =
+        new SerializableCallable() {
+          @SuppressWarnings("deprecation")
+          public Object call() throws Exception {
+            //        TombstoneService.VERBOSE = true;
+            AttributesFactory af = new AttributesFactory();
+            af.setScope(Scope.DISTRIBUTED_NO_ACK);
+            switch (typeOfTest) {
+              case IN_MEMORY:
+                af.setDataPolicy(DataPolicy.REPLICATE);
+                break;
+              case PERSISTENT:
+                af.setDataPolicy(DataPolicy.PERSISTENT_REPLICATE);
+                break;
+              case OVERFLOW:
+                af.setDataPolicy(DataPolicy.REPLICATE);
+                af.setEvictionAttributes(
+                    EvictionAttributes.createLRUEntryAttributes(
+                        5, EvictionAction.OVERFLOW_TO_DISK));
+                break;
+            }
+            TestRegion = (LocalRegion) createRootRegion(regionName, af.create());
+            return null;
+          }
+        };
     vm.invoke(createRegion);
   }
-
 }

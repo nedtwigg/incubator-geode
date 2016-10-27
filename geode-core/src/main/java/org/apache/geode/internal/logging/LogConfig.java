@@ -20,44 +20,39 @@ import java.io.File;
 
 public interface LogConfig {
   /**
-   * Returns the value of the <a
-   * href="../DistributedSystem.html#log-level">"log-level"</a> property
+   * Returns the value of the <a href="../DistributedSystem.html#log-level">"log-level"</a> property
    *
    * @see org.apache.geode.internal.logging.LogWriterImpl
    */
   int getLogLevel();
 
   /**
-   * Returns the value of the <a
-   * href="../DistributedSystem.html#log-file">"log-file"</a> property
+   * Returns the value of the <a href="../DistributedSystem.html#log-file">"log-file"</a> property
    *
-   * @return <code>null</code> if logging information goes to standard
-   *         out
+   * @return <code>null</code> if logging information goes to standard out
    */
   File getLogFile();
 
   /**
    * Returns the value of the <a
-   * href="../DistributedSystem.html#log-file-size-limit">"log-file-size-limit"</a>
-   * property
+   * href="../DistributedSystem.html#log-file-size-limit">"log-file-size-limit"</a> property
    */
   int getLogFileSizeLimit();
 
   /**
    * Returns the value of the <a
-   * href="../DistributedSystem.html#log-disk-space-limit">"log-disk-space-limit"</a>
-   * property
+   * href="../DistributedSystem.html#log-disk-space-limit">"log-disk-space-limit"</a> property
    */
   int getLogDiskSpaceLimit();
 
   /**
-   * Returns the value of the <a
-   * href="../DistributedSystem.html#name">"name"</a> property
-   * Gets the member's name.
-   * A name is optional and by default empty.
-   * If set it must be unique in the ds.
+   * Returns the value of the <a href="../DistributedSystem.html#name">"name"</a> property Gets the
+   * member's name. A name is optional and by default empty. If set it must be unique in the ds.
    * When set its used by tools to help identify the member.
-   * <p> The default value is: {@link org.apache.geode.distributed.internal.DistributionConfig#DEFAULT_NAME}.
+   *
+   * <p>The default value is: {@link
+   * org.apache.geode.distributed.internal.DistributionConfig#DEFAULT_NAME}.
+   *
    * @return the system's name.
    */
   String getName();

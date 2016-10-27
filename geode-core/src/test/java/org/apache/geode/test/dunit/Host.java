@@ -24,15 +24,12 @@ import java.util.List;
 import org.apache.geode.test.dunit.standalone.RemoteDUnitVMIF;
 
 /**
- * <P>This class represents a host on which a remote method may be
- * invoked.  It provides access to the VMs and GemFire systems that
- * run on that host.</P>
+ * This class represents a host on which a remote method may be invoked. It provides access to the
+ * VMs and GemFire systems that run on that host.
  *
- * <P>Additionally, it provides access to the Java RMI registry that
- * runs on the host.  By default, an RMI registry is only started on
- * the host on which Hydra's Master VM runs.  RMI registries may be
- * started on other hosts via additional Hydra configuration.</P>
- *
+ * <p>Additionally, it provides access to the Java RMI registry that runs on the host. By default,
+ * an RMI registry is only started on the host on which Hydra's Master VM runs. RMI registries may
+ * be started on other hosts via additional Hydra configuration.
  */
 @SuppressWarnings("serial")
 public abstract class Host implements Serializable {
@@ -61,16 +58,12 @@ public abstract class Host implements Serializable {
 
   ////////////////////  Static Methods  /////////////////////
 
-  /**
-   * Returns the number of known hosts
-   */
+  /** Returns the number of known hosts */
   public static int getHostCount() {
     return hosts.size();
   }
 
-  /**
-   * Makes note of a new <code>Host</code>
-   */
+  /** Makes note of a new <code>Host</code> */
   protected static void addHost(Host host) {
     hosts.add(host);
   }
@@ -78,11 +71,8 @@ public abstract class Host implements Serializable {
   /**
    * Returns a given host
    *
-   * @param n
-   *        A zero-based identifier of the host
-   *
-   * @throws IllegalArgumentException
-   *         <code>n</code> is more than the number of hosts
+   * @param n A zero-based identifier of the host
+   * @throws IllegalArgumentException <code>n</code> is more than the number of hosts
    */
   public static Host getHost(int n) {
     int size = hosts.size();
@@ -97,9 +87,7 @@ public abstract class Host implements Serializable {
 
   /////////////////////  Constructors  //////////////////////
 
-  /**
-   * Creates a new <code>Host</code> with the given name
-   */
+  /** Creates a new <code>Host</code> with the given name */
   protected Host(String hostName) {
     if (hostName == null) {
       String s = "Cannot create a Host with a null name";
@@ -114,16 +102,12 @@ public abstract class Host implements Serializable {
 
   ////////////////////  Instance Methods  ////////////////////
 
-  /**
-   * Returns the machine name of this host
-   */
+  /** Returns the machine name of this host */
   public String getHostName() {
     return this.hostName;
   }
 
-  /**
-   * Returns the number of VMs that run on this host
-   */
+  /** Returns the number of VMs that run on this host */
   public int getVMCount() {
     return this.vms.size();
   }
@@ -131,11 +115,8 @@ public abstract class Host implements Serializable {
   /**
    * Returns a VM that runs on this host
    *
-   * @param n
-   *        A zero-based identifier of the VM
-   *
-   * @throws IllegalArgumentException
-   *         <code>n</code> is more than the number of VMs
+   * @param n A zero-based identifier of the VM
+   * @throws IllegalArgumentException <code>n</code> is more than the number of VMs
    */
   public VM getVM(int n) {
     int size = vms.size();
@@ -148,9 +129,7 @@ public abstract class Host implements Serializable {
     }
   }
 
-  /**
-   * Adds a VM to this <code>Host</code> with the given process id and client record.
-   */
+  /** Adds a VM to this <code>Host</code> with the given process id and client record. */
   protected void addVM(int pid, RemoteDUnitVMIF client) {
     VM vm = new VM(this, pid, client);
     this.vms.add(vm);
@@ -168,9 +147,7 @@ public abstract class Host implements Serializable {
     setLocator(new VM(this, pid, client));
   }
 
-  /**
-   * Returns the number of GemFire systems that run on this host
-   */
+  /** Returns the number of GemFire systems that run on this host */
   public int getSystemCount() {
     return this.systems.size();
   }
@@ -186,10 +163,7 @@ public abstract class Host implements Serializable {
     return sb.toString();
   }
 
-  /**
-   * Two <code>Host</code>s are considered equal if they have the same
-   * name.
-   */
+  /** Two <code>Host</code>s are considered equal if they have the same name. */
   public boolean equals(Object o) {
     if (o instanceof Host) {
       return ((Host) o).getHostName().equals(this.getHostName());
@@ -199,12 +173,8 @@ public abstract class Host implements Serializable {
     }
   }
 
-  /**
-   * A <code>Host</code>'s hash code is based on the hash code of its
-   * name. 
-   */
+  /** A <code>Host</code>'s hash code is based on the hash code of its name. */
   public int hashCode() {
     return this.getHostName().hashCode();
   }
-
 }

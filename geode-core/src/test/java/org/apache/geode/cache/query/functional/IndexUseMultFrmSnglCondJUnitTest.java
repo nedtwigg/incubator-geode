@@ -86,7 +86,9 @@ public class IndexUseMultFrmSnglCondJUnitTest {
       region.put("" + i, new Portfolio(i));
     }
     QueryService qs = CacheUtils.getQueryService();
-    String queries[] = { "SELECT DISTINCT * from /portfolios pf, pf.positions.values pos where pos.secId = 'IBM'" };
+    String queries[] = {
+      "SELECT DISTINCT * from /portfolios pf, pf.positions.values pos where pos.secId = 'IBM'"
+    };
     SelectResults r[][] = new SelectResults[queries.length][2];
 
     for (int i = 0; i < queries.length; i++) {
@@ -115,7 +117,6 @@ public class IndexUseMultFrmSnglCondJUnitTest {
           valPf1 = stc1.get(strAr1[0]);
           valPos1 = stc1.get(strAr1[1]);
           SECID1 = (((Position) valPos1).getSecId());
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -123,7 +124,8 @@ public class IndexUseMultFrmSnglCondJUnitTest {
       }
     }
     //Create an Index and Run the Same Query as above.
-    qs.createIndex("secIdIndex", IndexType.FUNCTIONAL, "b.secId", "/portfolios pf, pf.positions.values b");
+    qs.createIndex(
+        "secIdIndex", IndexType.FUNCTIONAL, "b.secId", "/portfolios pf, pf.positions.values b");
 
     for (int j = 0; j < queries.length; j++) {
       Query q2 = null;
@@ -132,8 +134,7 @@ public class IndexUseMultFrmSnglCondJUnitTest {
         QueryObserverImpl observer2 = new QueryObserverImpl();
         QueryObserverHolder.setInstance(observer2);
         r[j][1] = (SelectResults) q2.execute();
-        if (observer2.isIndexesUsed == true)
-          CacheUtils.log("YES,INDEX IS USED!!");
+        if (observer2.isIndexesUsed == true) CacheUtils.log("YES,INDEX IS USED!!");
         else {
           fail("FAILED: Index NOT Used");
         }
@@ -149,7 +150,6 @@ public class IndexUseMultFrmSnglCondJUnitTest {
           valPf2 = stc2.get(strAr2[0]);
           valPos2 = stc2.get(strAr2[1]);
           SECID2 = (((Position) valPos2).getSecId());
-
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -164,7 +164,8 @@ public class IndexUseMultFrmSnglCondJUnitTest {
     }
 
     if ((resArSize1 == resArSize2) || resArSize1 != 0) {
-      CacheUtils.log("Search Results Size is Non Zero and is of Same Size i.e.  Size= " + resArSize1);
+      CacheUtils.log(
+          "Search Results Size is Non Zero and is of Same Size i.e.  Size= " + resArSize1);
     } else {
       fail("FAILED:Search result size is different in both the cases");
     }
@@ -174,8 +175,10 @@ public class IndexUseMultFrmSnglCondJUnitTest {
       Struct stc2 = (Struct) iter2.next();
       Struct stc1 = (Struct) iter1.next();
       if (stc2.get(strAr2[0]) != stc1.get(strAr1[0]))
-        fail("FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
-      if (stc2.get(strAr2[1]) != stc1.get(strAr1[1]) || !((Position) stc1.get(strAr1[1])).secId.equals("IBM"))
+        fail(
+            "FAILED: In both the Cases the first member of StructSet i.e. Portfolio are different. ");
+      if (stc2.get(strAr2[1]) != stc1.get(strAr1[1])
+          || !((Position) stc1.get(strAr1[1])).secId.equals("IBM"))
         fail("FAILED: In both the cases either Positions Or secIds obtained are different");
     }
 
@@ -209,9 +212,11 @@ public class IndexUseMultFrmSnglCondJUnitTest {
 
     //execute query
     SelectResults sr2 = (SelectResults) query.execute();
-    assertEquals("Index result set does not match unindexed result set size", sr1.size(), sr2.size());
+    assertEquals(
+        "Index result set does not match unindexed result set size", sr1.size(), sr2.size());
     //size will be number of matching in region 1 x region 2 size
-    assertEquals("Query result set size does not match expected size", 5 * region2.size(), sr2.size());
+    assertEquals(
+        "Query result set size does not match expected size", 5 * region2.size(), sr2.size());
   }
 
   @Test
@@ -237,11 +242,14 @@ public class IndexUseMultFrmSnglCondJUnitTest {
     SelectResults sr1 = (SelectResults) query.execute();
 
     //create index
-    Index index = qs.createIndex("P1IDIndex", IndexType.FUNCTIONAL, "P1.ID", "/portfolios1 P1, P1.positions.values");
+    Index index =
+        qs.createIndex(
+            "P1IDIndex", IndexType.FUNCTIONAL, "P1.ID", "/portfolios1 P1, P1.positions.values");
 
     //execute query
     SelectResults sr2 = (SelectResults) query.execute();
-    assertEquals("Index result set does not match unindexed result set size", sr1.size(), sr2.size());
+    assertEquals(
+        "Index result set does not match unindexed result set size", sr1.size(), sr2.size());
     //size will be number of matching in region 1 x region 2 size
     assertEquals("Query result set size does not match expected size", 10, sr2.size());
   }

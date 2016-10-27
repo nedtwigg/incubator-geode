@@ -29,26 +29,19 @@ import java.util.Properties;
 import static org.apache.geode.distributed.ConfigurationProperties.LOCATORS;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 
-/**
- * This helper class is used by other test. This has functions to create region.
- * 
- *  
- */
+/** This helper class is used by other test. This has functions to create region. */
+public class PartitionedRegionTestHelper {
 
-public class PartitionedRegionTestHelper
-
-{
   static Cache cache = null;
 
   /**
-   * This method creates a partitioned region with all the default values.
-   * The cache created is a loner, so this is only suitable for single VM tests.
-   * 
+   * This method creates a partitioned region with all the default values. The cache created is a
+   * loner, so this is only suitable for single VM tests.
+   *
    * @param regionname
    * @return region
    * @throws RegionExistsException
    */
-
   public static Region createPartionedRegion(String regionname) throws RegionExistsException {
     AttributesFactory attribFactory = new AttributesFactory();
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -62,10 +55,9 @@ public class PartitionedRegionTestHelper
   }
 
   /**
-   * This method creates a local region with all the default values.
-   * The cache created is a loner, so this is only suitable for single VM tests.
+   * This method creates a local region with all the default values. The cache created is a loner,
+   * so this is only suitable for single VM tests.
    */
-
   public static Region createLocalRegion(String regionName) throws RegionExistsException {
 
     AttributesFactory attr = new AttributesFactory();
@@ -77,54 +69,72 @@ public class PartitionedRegionTestHelper
   }
 
   /**
-   * This method compares two selectResult Objects by 
-   * 1. Size
-   * 2. SelectResults#CollectionType#ElementType()
+   * This method compares two selectResult Objects by 1. Size 2.
+   * SelectResults#CollectionType#ElementType()
    */
   public static String compareResultSets(SelectResults sr1, SelectResults sr2) {
 
     ObjectType type1, type2;
     String failureString = null;
     type1 = sr1.getCollectionType().getElementType();
-    Assert.assertNotNull("PartitionedRegionTestHelper#compareResultSets: Type 1 is NULL " + type1, type1);
+    Assert.assertNotNull(
+        "PartitionedRegionTestHelper#compareResultSets: Type 1 is NULL " + type1, type1);
     type2 = sr2.getCollectionType().getElementType();
-    Assert.assertNotNull("PartitionedRegionTestHelper#compareResultSets: Type 2 is NULL " + type2, type2);
+    Assert.assertNotNull(
+        "PartitionedRegionTestHelper#compareResultSets: Type 2 is NULL " + type2, type2);
     if ((type1.getClass().getName()).equals(type2.getClass().getName())) {
 
-      getLogger().info("PartitionedRegionTestHelper#compareResultSets: Both Search Results are of the same Type i.e.--> " + type1);
+      getLogger()
+          .info(
+              "PartitionedRegionTestHelper#compareResultSets: Both Search Results are of the same Type i.e.--> "
+                  + type1);
 
     } else {
-      getLogger().error("PartitionedRegionTestHelper#compareTwoQueryResults: Classes are : " + type1.getClass().getName() + " " + type2.getClass().getName());
-      failureString = "PartitionedRegionTestHelper#compareResultSets: FAILED:Search result Type is different in both the cases" + type1.getClass().getName() + " " + type2.getClass().getName();
+      getLogger()
+          .error(
+              "PartitionedRegionTestHelper#compareTwoQueryResults: Classes are : "
+                  + type1.getClass().getName()
+                  + " "
+                  + type2.getClass().getName());
+      failureString =
+          "PartitionedRegionTestHelper#compareResultSets: FAILED:Search result Type is different in both the cases"
+              + type1.getClass().getName()
+              + " "
+              + type2.getClass().getName();
 
-      Assert.fail("PartitionedRegionTestHelper#compareResultSets: FAILED:Search result Type is different in both the cases");
+      Assert.fail(
+          "PartitionedRegionTestHelper#compareResultSets: FAILED:Search result Type is different in both the cases");
       return failureString;
     }
     if ((sr1.size()) == (sr2.size())) {
-      getLogger().info("PartitionedRegionTestHelper#compareResultSets: Both Search Results are non-zero and are of Same Size i.e.  Size= " + sr1.size());
+      getLogger()
+          .info(
+              "PartitionedRegionTestHelper#compareResultSets: Both Search Results are non-zero and are of Same Size i.e.  Size= "
+                  + sr1.size());
 
     } else {
-      getLogger().error("PartitionedRegionTestHelper#compareResultSets: FAILED:Search resultSet size are different in both the cases");
-      failureString = "PartitionedRegionTestHelper#compareResultSets: FAILED:Search resultSet size are different in both the cases" + sr1.size() + " " + sr2.size();
-      Assert.fail("PartitionedRegionTestHelper#compareResultSets: FAILED:Search resultSet size are different in both the cases");
-
+      getLogger()
+          .error(
+              "PartitionedRegionTestHelper#compareResultSets: FAILED:Search resultSet size are different in both the cases");
+      failureString =
+          "PartitionedRegionTestHelper#compareResultSets: FAILED:Search resultSet size are different in both the cases"
+              + sr1.size()
+              + " "
+              + sr2.size();
+      Assert.fail(
+          "PartitionedRegionTestHelper#compareResultSets: FAILED:Search resultSet size are different in both the cases");
     }
     return failureString;
   }
 
   /**
-   * This is a function to create partitioned region with following paramaters:
-   * </p>
-   * 1) name
-   * </p>
-   * 2) local max memory
-   * </p>
-   * 3) redundancy and scope.
-   * 
-   * The cache created is a loner, so this is only suitable for single VM tests.
+   * This is a function to create partitioned region with following paramaters: 1) name 2) local max
+   * memory 3) redundancy and scope.
+   *
+   * <p>The cache created is a loner, so this is only suitable for single VM tests.
    */
-
-  public static Region createPartitionedRegion(String regionName, String localMaxMemory, int redundancy) {
+  public static Region createPartitionedRegion(
+      String regionName, String localMaxMemory, int redundancy) {
     Region pr = null;
     PartitionAttributes pa;
     PartitionAttributesFactory paf = new PartitionAttributesFactory();
@@ -136,7 +146,8 @@ public class PartitionedRegionTestHelper
     try {
       lmax = Integer.parseInt(localMaxMemory);
     } catch (NumberFormatException nfe) {
-      throw new IllegalArgumentException("localMaxMemory must be an integer (" + localMaxMemory + ")");
+      throw new IllegalArgumentException(
+          "localMaxMemory must be an integer (" + localMaxMemory + ")");
     }
     pa = paf.setLocalMaxMemory(lmax).setRedundantCopies(redundancy).create();
     // setting attribute factor
@@ -153,9 +164,8 @@ public class PartitionedRegionTestHelper
   }
 
   /**
-   * This function is used to create serializable object for the partition
-   * region test.
-   * 
+   * This function is used to create serializable object for the partition region test.
+   *
    * @param name
    * @param id
    * @return
@@ -163,13 +173,12 @@ public class PartitionedRegionTestHelper
   public static SerializableObject createPRSerializableObject(String name, int id) {
     Object obj = new SerializableObject(name, id);
     return (SerializableObject) obj;
-
   }
 
   /**
-   * This method creates cache. The cache created
-   * is a loner, so this is only suitable for single VM tests.
-   * 
+   * This method creates cache. The cache created is a loner, so this is only suitable for single VM
+   * tests.
+   *
    * @return
    */
   public static synchronized Cache createCache() {
@@ -189,20 +198,17 @@ public class PartitionedRegionTestHelper
     return cache;
   }
 
-  /**
-  * This method closes the cache.
-  */
+  /** This method closes the cache. */
   public static synchronized void closeCache() {
     if (cache != null) {
       cache.close();
       cache = null;
     }
-
   }
 
   /**
    * This method is used to return existing region.
-   * 
+   *
    * @param PRName
    * @return
    */
@@ -212,9 +218,9 @@ public class PartitionedRegionTestHelper
   }
 
   /**
-   * Gets the log writer for the
-   * The cache created is a loner, so this is only suitable for single VM tests.
-   * 
+   * Gets the log writer for the The cache created is a loner, so this is only suitable for single
+   * VM tests.
+   *
    * @return LogWriter
    */
   public static LogWriter getLogger() {
@@ -222,26 +228,29 @@ public class PartitionedRegionTestHelper
   }
 
   public static RegionAttributes createRegionAttrsForPR(int red, int localMaxMem) {
-    return createRegionAttrsForPR(red, localMaxMem, PartitionAttributesFactory.RECOVERY_DELAY_DEFAULT);
+    return createRegionAttrsForPR(
+        red, localMaxMem, PartitionAttributesFactory.RECOVERY_DELAY_DEFAULT);
   }
 
-  public static RegionAttributes createRegionAttrsForPR(int red, int localMaxMem, PartitionResolver resolver) {
-    return createRegionAttrsForPR(red, localMaxMem, PartitionAttributesFactory.RECOVERY_DELAY_DEFAULT, null, resolver);
+  public static RegionAttributes createRegionAttrsForPR(
+      int red, int localMaxMem, PartitionResolver resolver) {
+    return createRegionAttrsForPR(
+        red, localMaxMem, PartitionAttributesFactory.RECOVERY_DELAY_DEFAULT, null, resolver);
   }
 
-  /**
-   * This function creates Region attributes with provided scope,redundancy and
-   * localmaxMemory
-   */
-  public static RegionAttributes createRegionAttrsForPR(int red, int localMaxMem, long recoveryDelay) {
+  /** This function creates Region attributes with provided scope,redundancy and localmaxMemory */
+  public static RegionAttributes createRegionAttrsForPR(
+      int red, int localMaxMem, long recoveryDelay) {
     return createRegionAttrsForPR(red, localMaxMem, recoveryDelay, null, null);
   }
 
-  /**
-   * This function creates Region attributes with provided scope,redundancy and
-   * localmaxMemory
-   */
-  public static RegionAttributes createRegionAttrsForPR(int red, int localMaxMem, long recoveryDelay, EvictionAttributes evictionAttrs, PartitionResolver resolver) {
+  /** This function creates Region attributes with provided scope,redundancy and localmaxMemory */
+  public static RegionAttributes createRegionAttrsForPR(
+      int red,
+      int localMaxMem,
+      long recoveryDelay,
+      EvictionAttributes evictionAttrs,
+      PartitionResolver resolver) {
 
     AttributesFactory attr = new AttributesFactory();
     attr.setDataPolicy(DataPolicy.PARTITION);
@@ -255,13 +264,9 @@ public class PartitionedRegionTestHelper
     attr.setEvictionAttributes(evictionAttrs);
     return attr.create();
   }
-
 }
 
-/**
- * class for creating serializable object which is used for LocalMaxMemory verification.
- */
-
+/** class for creating serializable object which is used for LocalMaxMemory verification. */
 class SerializableObject implements Serializable {
   String str;
 
@@ -273,8 +278,7 @@ class SerializableObject implements Serializable {
   }
 
   public boolean equals(Object obj) {
-    if (obj == null)
-      return false;
+    if (obj == null) return false;
     if (this.str.equals(((SerializableObject) obj).str) && this.i == ((SerializableObject) obj).i)
       return true;
     return false;

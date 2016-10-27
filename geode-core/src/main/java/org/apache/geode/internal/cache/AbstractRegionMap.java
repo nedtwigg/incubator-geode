@@ -61,14 +61,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Abstract implementation of {@link RegionMap}that has all the common
- * behavior.
+ * Abstract implementation of {@link RegionMap}that has all the common behavior.
  *
  * @since GemFire 3.5.1
- *
- *
  */
-
 public abstract class AbstractRegionMap implements RegionMap {
 
   private static final Logger logger = LogService.getLogger();
@@ -77,8 +73,8 @@ public abstract class AbstractRegionMap implements RegionMap {
   protected CustomEntryConcurrentHashMap<Object, Object> map;
 
   /**
-   * This test hook is used to force the conditions for defect 48182.
-   * This hook is used by Bug48182JUnitTest.
+   * This test hook is used to force the conditions for defect 48182. This hook is used by
+   * Bug48182JUnitTest.
    */
   static Runnable testHookRunnableFor48182 = null;
 
@@ -86,13 +82,19 @@ public abstract class AbstractRegionMap implements RegionMap {
   private Attributes attr;
   private transient Object owner; // the region that owns this map
 
-  protected AbstractRegionMap(InternalRegionArguments internalRegionArgs) {
-  }
+  protected AbstractRegionMap(InternalRegionArguments internalRegionArgs) {}
 
-  protected void initialize(Object owner, Attributes attr, InternalRegionArguments internalRegionArgs, boolean isLRU) {
+  protected void initialize(
+      Object owner, Attributes attr, InternalRegionArguments internalRegionArgs, boolean isLRU) {
     _setAttributes(attr);
     setOwner(owner);
-    _setMap(createConcurrentMap(attr.initialCapacity, attr.loadFactor, attr.concurrencyLevel, false, new AbstractRegionEntry.HashRegionEntryCreator()));
+    _setMap(
+        createConcurrentMap(
+            attr.initialCapacity,
+            attr.loadFactor,
+            attr.concurrencyLevel,
+            false,
+            new AbstractRegionEntry.HashRegionEntryCreator()));
 
     final GemFireCacheImpl cache;
     boolean isDisk;
@@ -107,20 +109,31 @@ public abstract class AbstractRegionMap implements RegionMap {
     } else if (owner instanceof PlaceHolderDiskRegion) {
       offHeap = ((PlaceHolderDiskRegion) owner).getOffHeap();
       isDisk = true;
-      withVersioning = ((PlaceHolderDiskRegion) owner).getFlags().contains(DiskRegionFlag.IS_WITH_VERSIONING);
+      withVersioning =
+          ((PlaceHolderDiskRegion) owner).getFlags().contains(DiskRegionFlag.IS_WITH_VERSIONING);
       cache = GemFireCacheImpl.getInstance();
     } else {
       throw new IllegalStateException("expected LocalRegion or PlaceHolderDiskRegion");
     }
 
-    setEntryFactory(new RegionEntryFactoryBuilder().getRegionEntryFactoryOrNull(attr.statisticsEnabled, isLRU, isDisk, withVersioning, offHeap));
+    setEntryFactory(
+        new RegionEntryFactoryBuilder()
+            .getRegionEntryFactoryOrNull(
+                attr.statisticsEnabled, isLRU, isDisk, withVersioning, offHeap));
   }
 
-  protected CustomEntryConcurrentHashMap<Object, Object> createConcurrentMap(int initialCapacity, float loadFactor, int concurrencyLevel, boolean isIdentityMap, CustomEntryConcurrentHashMap.HashEntryCreator<Object, Object> entryCreator) {
+  protected CustomEntryConcurrentHashMap<Object, Object> createConcurrentMap(
+      int initialCapacity,
+      float loadFactor,
+      int concurrencyLevel,
+      boolean isIdentityMap,
+      CustomEntryConcurrentHashMap.HashEntryCreator<Object, Object> entryCreator) {
     if (entryCreator != null) {
-      return new CustomEntryConcurrentHashMap<Object, Object>(initialCapacity, loadFactor, concurrencyLevel, isIdentityMap, entryCreator);
+      return new CustomEntryConcurrentHashMap<Object, Object>(
+          initialCapacity, loadFactor, concurrencyLevel, isIdentityMap, entryCreator);
     } else {
-      return new CustomEntryConcurrentHashMap<Object, Object>(initialCapacity, loadFactor, concurrencyLevel, isIdentityMap);
+      return new CustomEntryConcurrentHashMap<Object, Object>(
+          initialCapacity, loadFactor, concurrencyLevel, isIdentityMap);
     }
   }
 
@@ -190,12 +203,12 @@ public abstract class AbstractRegionMap implements RegionMap {
     return _getMap().keySet();
   }
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public Collection<RegionEntry> regionEntries() {
     return (Collection) _getMap().values();
   }
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
   public Collection<RegionEntry> regionEntriesInVM() {
     return (Collection) _getMap().values();
@@ -228,10 +241,16 @@ public abstract class AbstractRegionMap implements RegionMap {
 
   public final RegionEntry putEntryIfAbsent(Object key, RegionEntry re) {
     RegionEntry oldRe = (RegionEntry) _getMap().putIfAbsent(key, re);
-    if (oldRe == null && (re instanceof OffHeapRegionEntry) && _isOwnerALocalRegion() && _getOwner().isThisRegionBeingClosedOrDestroyed()) {
+    if (oldRe == null
+        && (re instanceof OffHeapRegionEntry)
+        && _isOwnerALocalRegion()
+        && _getOwner().isThisRegionBeingClosedOrDestroyed()) {
       // prevent orphan during concurrent destroy (#48068)
       Object v = re._getValue();
-      if (v != Token.REMOVED_PHASE1 && v != Token.REMOVED_PHASE2 && v instanceof StoredObject && ((StoredObject) v).hasRefCount()) {
+      if (v != Token.REMOVED_PHASE1
+          && v != Token.REMOVED_PHASE2
+          && v instanceof StoredObject
+          && ((StoredObject) v).hasRefCount()) {
         if (_getMap().remove(key, re)) {
           ((OffHeapRegionEntry) re).release();
         }
@@ -248,7 +267,9 @@ public abstract class AbstractRegionMap implements RegionMap {
 
   public final void removeEntry(Object key, RegionEntry re, boolean updateStat) {
     if (re.isTombstone() && _getMap().get(key) == re) {
-      logger.fatal(LocalizedMessage.create(LocalizedStrings.AbstractRegionMap_ATTEMPT_TO_REMOVE_TOMBSTONE), new Exception("stack trace"));
+      logger.fatal(
+          LocalizedMessage.create(LocalizedStrings.AbstractRegionMap_ATTEMPT_TO_REMOVE_TOMBSTONE),
+          new Exception("stack trace"));
       return; // can't remove tombstones except from the tombstone sweeper
     }
     if (_getMap().remove(key, re)) {
@@ -259,10 +280,17 @@ public abstract class AbstractRegionMap implements RegionMap {
     }
   }
 
-  public final void removeEntry(Object key, RegionEntry re, boolean updateStat, EntryEventImpl event, final LocalRegion owner) {
+  public final void removeEntry(
+      Object key,
+      RegionEntry re,
+      boolean updateStat,
+      EntryEventImpl event,
+      final LocalRegion owner) {
     boolean success = false;
     if (re.isTombstone() && _getMap().get(key) == re) {
-      logger.fatal(LocalizedMessage.create(LocalizedStrings.AbstractRegionMap_ATTEMPT_TO_REMOVE_TOMBSTONE), new Exception("stack trace"));
+      logger.fatal(
+          LocalizedMessage.create(LocalizedStrings.AbstractRegionMap_ATTEMPT_TO_REMOVE_TOMBSTONE),
+          new Exception("stack trace"));
       return; // can't remove tombstones except from the tombstone sweeper
     }
     if (_getMap().remove(key, re)) {
@@ -309,8 +337,8 @@ public abstract class AbstractRegionMap implements RegionMap {
   }
 
   /**
-   * Clear the region and, if an RVV is given, return a collection of the
-   * version sources in all remaining tags
+   * Clear the region and, if an RVV is given, return a collection of the version sources in all
+   * remaining tags
    */
   public Set<VersionSource> clear(RegionVersionVector rvv) {
     Set<VersionSource> result = new HashSet<VersionSource>();
@@ -334,7 +362,7 @@ public abstract class AbstractRegionMap implements RegionMap {
         int delta = 0;
         try {
           delta = sizeInVM(); // TODO soplog need to determine if stats should
-                              // reflect only size in memory or the complete thing
+          // reflect only size in memory or the complete thing
         } catch (GemFireIOException e) {
           // ignore rather than throwing an exception during cache close
         }
@@ -367,7 +395,8 @@ public abstract class AbstractRegionMap implements RegionMap {
             }
             if (rvv.contains(id, re.getVersionStamp().getRegionVersion())) {
               if (isTraceEnabled) {
-                logger.trace("region clear op is removing {} {}", re.getKey(), re.getVersionStamp());
+                logger.trace(
+                    "region clear op is removing {} {}", re.getKey(), re.getVersionStamp());
               }
 
               boolean tombstone = re.isTombstone();
@@ -436,23 +465,17 @@ public abstract class AbstractRegionMap implements RegionMap {
     // By default do nothing; LRU maps needs to override this method
   }
 
-  /**
-   * Tell an LRU that a new entry has been created
-   */
+  /** Tell an LRU that a new entry has been created */
   protected void lruEntryCreate(RegionEntry e) {
     // do nothing by default
   }
 
-  /**
-   * Tell an LRU that an existing entry has been destroyed
-   */
+  /** Tell an LRU that an existing entry has been destroyed */
   protected void lruEntryDestroy(RegionEntry e) {
     // do nothing by default
   }
 
-  /**
-   * Tell an LRU that an existing entry has been modified
-   */
+  /** Tell an LRU that an existing entry has been modified */
   protected void lruEntryUpdate(RegionEntry e) {
     // do nothing by default
   }
@@ -479,13 +502,14 @@ public abstract class AbstractRegionMap implements RegionMap {
   }
 
   /**
-   * Process an incoming version tag for concurrent operation detection.
-   * This must be done before modifying the region entry.
+   * Process an incoming version tag for concurrent operation detection. This must be done before
+   * modifying the region entry.
+   *
    * @param re the entry that is to be modified
    * @param event the modification to the entry
    * @throws InvalidDeltaException if the event contains a delta that cannot be applied
-   * @throws ConcurrentCacheModificationException if the event is in conflict
-   *    with a previously applied change
+   * @throws ConcurrentCacheModificationException if the event is in conflict with a previously
+   *     applied change
    */
   private void processVersionTag(RegionEntry re, EntryEventImpl event) {
     if (re.getVersionStamp() != null) {
@@ -506,9 +530,17 @@ public abstract class AbstractRegionMap implements RegionMap {
     }
   }
 
-  private void processVersionTagForGII(RegionEntry re, LocalRegion owner, VersionTag entryVersion, boolean isTombstone, InternalDistributedMember sender, boolean checkConflicts) {
+  private void processVersionTagForGII(
+      RegionEntry re,
+      LocalRegion owner,
+      VersionTag entryVersion,
+      boolean isTombstone,
+      InternalDistributedMember sender,
+      boolean checkConflicts) {
 
-    re.getVersionStamp().processVersionTag(_getOwner(), entryVersion, isTombstone, false, owner.getMyId(), sender, checkConflicts);
+    re.getVersionStamp()
+        .processVersionTag(
+            _getOwner(), entryVersion, isTombstone, false, owner.getMyId(), sender, checkConflicts);
   }
 
   public void copyRecoveredEntries(RegionMap rm) {
@@ -520,13 +552,16 @@ public abstract class AbstractRegionMap implements RegionMap {
       Iterator<Map.Entry<Object, Object>> it = other.entrySetWithReusableEntries().iterator();
       while (it.hasNext()) {
         Map.Entry<Object, Object> me = it.next();
-        it.remove(); // This removes the RegionEntry from "rm" but it does not decrement its refcount to an offheap value.
+        it
+            .remove(); // This removes the RegionEntry from "rm" but it does not decrement its refcount to an offheap value.
         RegionEntry oldRe = (RegionEntry) me.getValue();
         Object key = me.getKey();
 
         @Retained
         @Released
-        Object value = oldRe._getValueRetain((RegionEntryContext) ((AbstractRegionMap) rm)._getOwnerObject(), true);
+        Object value =
+            oldRe._getValueRetain(
+                (RegionEntryContext) ((AbstractRegionMap) rm)._getOwnerObject(), true);
 
         try {
           if (value == Token.NOT_AVAILABLE) {
@@ -536,7 +571,8 @@ public abstract class AbstractRegionMap implements RegionMap {
           if (value == Token.TOMBSTONE && !_getOwner().getConcurrencyChecksEnabled()) {
             continue;
           }
-          RegionEntry newRe = getEntryFactory().createEntry((RegionEntryContext) _getOwnerObject(), key, value);
+          RegionEntry newRe =
+              getEntryFactory().createEntry((RegionEntryContext) _getOwnerObject(), key, value);
           // TODO: passing value to createEntry causes a problem with the disk stats.
           //   The disk stats have already been set to track oldRe.
           //   So when we call createEntry we probably want to give it REMOVED_PHASE1
@@ -561,17 +597,19 @@ public abstract class AbstractRegionMap implements RegionMap {
         lruUpdateCallback();
       }
     } else {
-      for (Iterator<RegionEntry> iter = regionEntries().iterator(); iter.hasNext();) {
+      for (Iterator<RegionEntry> iter = regionEntries().iterator(); iter.hasNext(); ) {
         RegionEntry re = iter.next();
         if (re.isTombstone()) {
-          if (re.getVersionStamp() == null) { // bug #50992 - recovery from versioned to non-versioned
+          if (re.getVersionStamp()
+              == null) { // bug #50992 - recovery from versioned to non-versioned
             iter.remove();
             continue;
           } else {
             tombstones.put(re.getVersionStamp().asVersionTag(), re);
           }
         } else {
-          _getOwner().updateSizeOnCreate(re.getKey(), _getOwner().calculateRegionEntryValueSize(re));
+          _getOwner()
+              .updateSizeOnCreate(re.getKey(), _getOwner().calculateRegionEntryValueSize(re));
         }
       }
       incEntryCount(size());
@@ -585,7 +623,6 @@ public abstract class AbstractRegionMap implements RegionMap {
       // refresh the tombstone so it doesn't time out too soon
       _getOwner().scheduleTombstone(entry.getValue(), entry.getKey());
     }
-
   }
 
   protected void copyRecoveredEntry(RegionEntry oldRe, RegionEntry newRe) {
@@ -605,7 +642,8 @@ public abstract class AbstractRegionMap implements RegionMap {
   public final RegionEntry initRecoveredEntry(Object key, DiskEntry.RecoveredEntry value) {
     boolean needsCallback = false;
     @Retained
-    RegionEntry newRe = getEntryFactory().createEntry((RegionEntryContext) _getOwnerObject(), key, value);
+    RegionEntry newRe =
+        getEntryFactory().createEntry((RegionEntryContext) _getOwnerObject(), key, value);
     synchronized (newRe) {
       if (value.getVersionTag() != null && newRe.getVersionStamp() != null) {
         newRe.getVersionStamp().setVersions(value.getVersionTag());
@@ -630,7 +668,8 @@ public abstract class AbstractRegionMap implements RegionMap {
               ((OffHeapRegionEntry) newRe).release();
             }
 
-            throw new IllegalStateException("Could not recover entry for key " + key + ".  The entry already exists!");
+            throw new IllegalStateException(
+                "Could not recover entry for key " + key + ".  The entry already exists!");
           }
         } // synchronized
       }
@@ -642,7 +681,8 @@ public abstract class AbstractRegionMap implements RegionMap {
           _getOwner().updateSizeOnCreate(key, _getOwner().calculateRegionEntryValueSize(newRe));
         }
         // incEntryCount is called for a tombstone because scheduleTombstone does entryCount--.
-        incEntryCount(1); // we are creating an entry that was recovered from disk including tombstone
+        incEntryCount(
+            1); // we are creating an entry that was recovered from disk including tombstone
       }
       lruEntryUpdate(newRe);
       needsCallback = true;
@@ -681,20 +721,28 @@ public abstract class AbstractRegionMap implements RegionMap {
             // will dec entryCount.
           }
           final int oldSize = _getOwner().calculateRegionEntryValueSize(re);
-          re.setValue(_getOwner(), value); // OFFHEAP no need to call AbstractRegionMap.prepareValueForCache because setValue is overridden for disk and that code takes apart value (RecoveredEntry) and prepares its nested value for the cache
+          re.setValue(
+              _getOwner(),
+              value); // OFFHEAP no need to call AbstractRegionMap.prepareValueForCache because setValue is overridden for disk and that code takes apart value (RecoveredEntry) and prepares its nested value for the cache
           if (re.isTombstone()) {
             _getOwner().scheduleTombstone(re, re.getVersionStamp().asVersionTag());
             _getOwner().updateSizeOnRemove(key, oldSize);
           } else if (oldValueWasTombstone) {
             _getOwner().updateSizeOnCreate(key, _getOwner().calculateRegionEntryValueSize(re));
           } else {
-            _getOwner().updateSizeOnPut(key, oldSize, _getOwner().calculateRegionEntryValueSize(re));
+            _getOwner()
+                .updateSizeOnPut(key, oldSize, _getOwner().calculateRegionEntryValueSize(re));
           }
         } else {
-          DiskEntry.Helper.updateRecoveredEntry((PlaceHolderDiskRegion) _getOwnerObject(), (DiskEntry) re, value, (RegionEntryContext) _getOwnerObject());
+          DiskEntry.Helper.updateRecoveredEntry(
+              (PlaceHolderDiskRegion) _getOwnerObject(),
+              (DiskEntry) re,
+              value,
+              (RegionEntryContext) _getOwnerObject());
         }
       } catch (RegionClearedException rce) {
-        throw new IllegalStateException("RegionClearedException should never happen in this context", rce);
+        throw new IllegalStateException(
+            "RegionClearedException should never happen in this context", rce);
       }
       lruEntryUpdate(re);
       needsCallback = true;
@@ -708,7 +756,15 @@ public abstract class AbstractRegionMap implements RegionMap {
     return re;
   }
 
-  public final boolean initialImagePut(final Object key, final long lastModified, Object newValue, final boolean wasRecovered, boolean deferLRUCallback, VersionTag entryVersion, InternalDistributedMember sender, boolean isSynchronizing) {
+  public final boolean initialImagePut(
+      final Object key,
+      final long lastModified,
+      Object newValue,
+      final boolean wasRecovered,
+      boolean deferLRUCallback,
+      VersionTag entryVersion,
+      InternalDistributedMember sender,
+      boolean isSynchronizing) {
     boolean result = false;
     boolean done = false;
     boolean cleared = false;
@@ -728,14 +784,17 @@ public abstract class AbstractRegionMap implements RegionMap {
         }
         // Getting the instance from singleton CCN..This assumes only one bridge
         // server in the VM
-        HAContainerWrapper haContainer = (HAContainerWrapper) CacheClientNotifier.getInstance().getHaContainer();
+        HAContainerWrapper haContainer =
+            (HAContainerWrapper) CacheClientNotifier.getInstance().getHaContainer();
         if (haContainer == null) {
           return false;
         }
         HAEventWrapper original = null;
         //      synchronized (haContainer) {
         do {
-          ClientUpdateMessageImpl oldMsg = (ClientUpdateMessageImpl) haContainer.putIfAbsent(haEventWrapper, haEventWrapper.getClientUpdateMessage());
+          ClientUpdateMessageImpl oldMsg =
+              (ClientUpdateMessageImpl)
+                  haContainer.putIfAbsent(haEventWrapper, haEventWrapper.getClientUpdateMessage());
           if (oldMsg != null) {
             original = (HAEventWrapper) haContainer.getKey(haEventWrapper);
             if (original == null) {
@@ -744,9 +803,12 @@ public abstract class AbstractRegionMap implements RegionMap {
             synchronized (original) {
               if ((HAEventWrapper) haContainer.getKey(original) != null) {
                 original.incAndGetReferenceCount();
-                HARegionQueue.addClientCQsAndInterestList(oldMsg, haEventWrapper, haContainer, owner.getName());
+                HARegionQueue.addClientCQsAndInterestList(
+                    oldMsg, haEventWrapper, haContainer, owner.getName());
                 haEventWrapper.setClientUpdateMessage(null);
-                newValue = CachedDeserializableFactory.create(original, ((CachedDeserializable) newValue).getSizeInBytes());
+                newValue =
+                    CachedDeserializableFactory.create(
+                        original, ((CachedDeserializable) newValue).getSizeInBytes());
               } else {
                 original = null;
               }
@@ -811,15 +873,26 @@ public abstract class AbstractRegionMap implements RegionMap {
                 } else {
                   boolean acceptedVersionTag = false;
                   if (entryVersion != null && owner.concurrencyChecksEnabled) {
-                    Assert.assertTrue(entryVersion.getMemberID() != null, "GII entry versions must have identifiers");
+                    Assert.assertTrue(
+                        entryVersion.getMemberID() != null,
+                        "GII entry versions must have identifiers");
                     try {
                       boolean isTombstone = (newValue == Token.TOMBSTONE);
                       // don't reschedule the tombstone if it hasn't changed
-                      boolean isSameTombstone = oldRe.isTombstone() && isTombstone && oldRe.getVersionStamp().asVersionTag().equals(entryVersion);
+                      boolean isSameTombstone =
+                          oldRe.isTombstone()
+                              && isTombstone
+                              && oldRe.getVersionStamp().asVersionTag().equals(entryVersion);
                       if (isSameTombstone) {
                         return true;
                       }
-                      processVersionTagForGII(oldRe, owner, entryVersion, isTombstone, sender, !wasRecovered || isSynchronizing);
+                      processVersionTagForGII(
+                          oldRe,
+                          owner,
+                          entryVersion,
+                          isTombstone,
+                          sender,
+                          !wasRecovered || isSynchronizing);
                       acceptedVersionTag = true;
                     } catch (ConcurrentCacheModificationException e) {
                       return false;
@@ -828,7 +901,9 @@ public abstract class AbstractRegionMap implements RegionMap {
                   final boolean oldIsTombstone = oldRe.isTombstone();
                   final int oldSize = owner.calculateRegionEntryValueSize(oldRe);
                   try {
-                    result = oldRe.initialImagePut(owner, lastModified, newValue, wasRecovered, acceptedVersionTag);
+                    result =
+                        oldRe.initialImagePut(
+                            owner, lastModified, newValue, wasRecovered, acceptedVersionTag);
                     if (result) {
                       if (oldIsTombstone) {
                         owner.unscheduleTombstone(oldRe);
@@ -840,7 +915,11 @@ public abstract class AbstractRegionMap implements RegionMap {
                       }
                       if (newValue == Token.TOMBSTONE) {
                         owner.updateSizeOnRemove(key, oldSize);
-                        if (owner.getServerProxy() == null && owner.getVersionVector().isTombstoneTooOld(entryVersion.getMemberID(), entryVersion.getRegionVersion())) {
+                        if (owner.getServerProxy() == null
+                            && owner
+                                .getVersionVector()
+                                .isTombstoneTooOld(
+                                    entryVersion.getMemberID(), entryVersion.getRegionVersion())) {
                           // the received tombstone has already been reaped, so don't retain it
                           removeTombstone(oldRe, entryVersion, false, false);
                           return false;
@@ -862,9 +941,21 @@ public abstract class AbstractRegionMap implements RegionMap {
                       // Due to having no reverse map, we need to be able to generate the oldkey before doing an update
                       // Without the BEFORE_UPDATE_OP, we would see duplicate entries in the index as the update could not locate the old key
                       if (!oldRe.isRemoved()) {
-                        owner.getIndexManager().updateIndexes(oldRe, IndexManager.REMOVE_ENTRY, IndexProtocol.BEFORE_UPDATE_OP);
+                        owner
+                            .getIndexManager()
+                            .updateIndexes(
+                                oldRe, IndexManager.REMOVE_ENTRY, IndexProtocol.BEFORE_UPDATE_OP);
                       }
-                      owner.getIndexManager().updateIndexes(oldRe, oldRe.isRemoved() ? IndexManager.ADD_ENTRY : IndexManager.UPDATE_ENTRY, oldRe.isRemoved() ? IndexProtocol.OTHER_OP : IndexProtocol.AFTER_UPDATE_OP);
+                      owner
+                          .getIndexManager()
+                          .updateIndexes(
+                              oldRe,
+                              oldRe.isRemoved()
+                                  ? IndexManager.ADD_ENTRY
+                                  : IndexManager.UPDATE_ENTRY,
+                              oldRe.isRemoved()
+                                  ? IndexProtocol.OTHER_OP
+                                  : IndexProtocol.AFTER_UPDATE_OP);
                     }
                     done = true;
                   } finally {
@@ -879,16 +970,25 @@ public abstract class AbstractRegionMap implements RegionMap {
             if (!done) {
               boolean versionTagAccepted = false;
               if (entryVersion != null && owner.concurrencyChecksEnabled) {
-                Assert.assertTrue(entryVersion.getMemberID() != null, "GII entry versions must have identifiers");
+                Assert.assertTrue(
+                    entryVersion.getMemberID() != null, "GII entry versions must have identifiers");
                 try {
                   boolean isTombstone = (newValue == Token.TOMBSTONE);
-                  processVersionTagForGII(newRe, owner, entryVersion, isTombstone, sender, !wasRecovered || isSynchronizing);
+                  processVersionTagForGII(
+                      newRe,
+                      owner,
+                      entryVersion,
+                      isTombstone,
+                      sender,
+                      !wasRecovered || isSynchronizing);
                   versionTagAccepted = true;
                 } catch (ConcurrentCacheModificationException e) {
                   return false;
                 }
               }
-              result = newRe.initialImageInit(owner, lastModified, newValue, true, wasRecovered, versionTagAccepted);
+              result =
+                  newRe.initialImageInit(
+                      owner, lastModified, newValue, true, wasRecovered, versionTagAccepted);
               try {
                 if (result) {
                   if (newValue == Token.TOMBSTONE) {
@@ -906,9 +1006,19 @@ public abstract class AbstractRegionMap implements RegionMap {
                   // Due to having no reverse map, we need to be able to generate the oldkey before doing an update
                   // Without the BEFORE_UPDATE_OP, we would see duplicate entries in the index as the update could not locate the old key
                   if (oldRe != null && !oldRe.isRemoved()) {
-                    owner.getIndexManager().updateIndexes(oldRe, IndexManager.REMOVE_ENTRY, IndexProtocol.BEFORE_UPDATE_OP);
+                    owner
+                        .getIndexManager()
+                        .updateIndexes(
+                            oldRe, IndexManager.REMOVE_ENTRY, IndexProtocol.BEFORE_UPDATE_OP);
                   }
-                  owner.getIndexManager().updateIndexes(newRe, newRe.isRemoved() ? IndexManager.REMOVE_ENTRY : IndexManager.UPDATE_ENTRY, newRe.isRemoved() ? IndexProtocol.OTHER_OP : IndexProtocol.AFTER_UPDATE_OP);
+                  owner
+                      .getIndexManager()
+                      .updateIndexes(
+                          newRe,
+                          newRe.isRemoved() ? IndexManager.REMOVE_ENTRY : IndexManager.UPDATE_ENTRY,
+                          newRe.isRemoved()
+                              ? IndexProtocol.OTHER_OP
+                              : IndexProtocol.AFTER_UPDATE_OP);
                 }
                 done = true;
               } finally {
@@ -925,14 +1035,15 @@ public abstract class AbstractRegionMap implements RegionMap {
             if (!done) {
               removeEntry(key, newRe, false);
               if (owner.getIndexManager() != null) {
-                owner.getIndexManager().updateIndexes(newRe, IndexManager.REMOVE_ENTRY, IndexProtocol.OTHER_OP);
+                owner
+                    .getIndexManager()
+                    .updateIndexes(newRe, IndexManager.REMOVE_ENTRY, IndexProtocol.OTHER_OP);
               }
             }
           }
         } // synchronized
       } finally {
-        if (event != null)
-          event.release();
+        if (event != null) event.release();
         OffHeapHelper.release(oldValue);
       }
     } catch (RegionClearedException rce) {
@@ -952,8 +1063,7 @@ public abstract class AbstractRegionMap implements RegionMap {
     return result;
   }
 
-  protected void initialImagePutEntry(RegionEntry newRe) {
-  }
+  protected void initialImagePutEntry(RegionEntry newRe) {}
 
   boolean confirmEvictionDestroy(RegionEntry re) {
     /* We arn't in an LRU context, and should never get here */
@@ -961,13 +1071,25 @@ public abstract class AbstractRegionMap implements RegionMap {
     return true;
   }
 
-  public final boolean destroy(EntryEventImpl event, boolean inTokenMode, boolean duringRI, boolean cacheWrite, boolean isEviction, Object expectedOldValue, boolean removeRecoveredEntry) throws CacheWriterException, EntryNotFoundException, TimeoutException {
+  public final boolean destroy(
+      EntryEventImpl event,
+      boolean inTokenMode,
+      boolean duringRI,
+      boolean cacheWrite,
+      boolean isEviction,
+      Object expectedOldValue,
+      boolean removeRecoveredEntry)
+      throws CacheWriterException, EntryNotFoundException, TimeoutException {
 
     final LocalRegion owner = _getOwner();
 
     if (owner == null) {
-      Assert.assertTrue(false, "The owner for RegionMap " + this // "fix" for bug 32440
-          + " is null for event " + event);
+      Assert.assertTrue(
+          false,
+          "The owner for RegionMap "
+              + this // "fix" for bug 32440
+              + " is null for event "
+              + event);
     }
 
     boolean retry = true;
@@ -982,23 +1104,37 @@ public abstract class AbstractRegionMap implements RegionMap {
         boolean doPart3 = false;
 
         // We need to acquire the region entry while holding the lock to avoid #45620.
-        // The outer try/finally ensures that the lock will be released without fail.  
+        // The outer try/finally ensures that the lock will be released without fail.
         // I'm avoiding indenting just to preserve the ability
         // to track diffs since the code is fairly complex.
 
-        RegionEntry re = getOrCreateRegionEntry(owner, event, Token.REMOVED_PHASE1, null, true, true);
+        RegionEntry re =
+            getOrCreateRegionEntry(owner, event, Token.REMOVED_PHASE1, null, true, true);
         RegionEntry tombstone = null;
         boolean haveTombstone = false;
         /*
-         * Execute the test hook runnable inline (not threaded) if it is not null. 
+         * Execute the test hook runnable inline (not threaded) if it is not null.
          */
         if (null != testHookRunnableFor48182) {
           testHookRunnableFor48182.run();
         }
 
         try {
-          if (logger.isTraceEnabled(LogMarker.LRU_TOMBSTONE_COUNT) && !(owner instanceof HARegion)) {
-            logger.trace(LogMarker.LRU_TOMBSTONE_COUNT, "ARM.destroy() inTokenMode={}; duringRI={}; riLocalDestroy={}; withRepl={}; fromServer={}; concurrencyEnabled={}; isOriginRemote={}; isEviction={}; operation={}; re={}", inTokenMode, duringRI, event.isFromRILocalDestroy(), owner.dataPolicy.withReplication(), event.isFromServer(), owner.concurrencyChecksEnabled, event.isOriginRemote(), isEviction, event.getOperation(), re);
+          if (logger.isTraceEnabled(LogMarker.LRU_TOMBSTONE_COUNT)
+              && !(owner instanceof HARegion)) {
+            logger.trace(
+                LogMarker.LRU_TOMBSTONE_COUNT,
+                "ARM.destroy() inTokenMode={}; duringRI={}; riLocalDestroy={}; withRepl={}; fromServer={}; concurrencyEnabled={}; isOriginRemote={}; isEviction={}; operation={}; re={}",
+                inTokenMode,
+                duringRI,
+                event.isFromRILocalDestroy(),
+                owner.dataPolicy.withReplication(),
+                event.isFromServer(),
+                owner.concurrencyChecksEnabled,
+                event.isOriginRemote(),
+                isEviction,
+                event.getOperation(),
+                re);
           }
           if (event.isFromRILocalDestroy()) {
             // for RI local-destroy we don't want to keep tombstones.
@@ -1019,13 +1155,19 @@ public abstract class AbstractRegionMap implements RegionMap {
             // we need to create an entry if in token mode or if we've received
             // a destroy from a peer or WAN gateway and we need to retain version
             // information for concurrency checks
-            boolean retainForConcurrency = (!haveTombstone && (owner.dataPolicy.withReplication() || event.isFromServer()) && owner.concurrencyChecksEnabled
-                && (event.isOriginRemote() /* destroy received from other must create tombstone */
-                    || event.isFromWANAndVersioned() /* wan event must create a tombstone */
-                    || event.isBridgeEvent())); /* event from client must create a tombstone so client has a version # */
+            boolean retainForConcurrency =
+                (!haveTombstone
+                    && (owner.dataPolicy.withReplication() || event.isFromServer())
+                    && owner.concurrencyChecksEnabled
+                    && (event
+                            .isOriginRemote() /* destroy received from other must create tombstone */
+                        || event.isFromWANAndVersioned() /* wan event must create a tombstone */
+                        || event
+                            .isBridgeEvent())); /* event from client must create a tombstone so client has a version # */
             if (inTokenMode || retainForConcurrency) {
               // removeRecoveredEntry should be false in this case
-              RegionEntry newRe = getEntryFactory().createEntry(owner, event.getKey(), Token.REMOVED_PHASE1);
+              RegionEntry newRe =
+                  getEntryFactory().createEntry(owner, event.getKey(), Token.REMOVED_PHASE1);
               // Fix for Bug #44431. We do NOT want to update the region and wait
               // later for index INIT as region.clear() can cause inconsistency if
               // happened in parallel as it also does index INIT.
@@ -1057,19 +1199,39 @@ public abstract class AbstractRegionMap implements RegionMap {
                         try {
                           //if concurrency checks are enabled, destroy will
                           //set the version tag
-                          boolean destroyed = destroyEntry(oldRe, event, inTokenMode, cacheWrite, expectedOldValue, false, removeRecoveredEntry);
+                          boolean destroyed =
+                              destroyEntry(
+                                  oldRe,
+                                  event,
+                                  inTokenMode,
+                                  cacheWrite,
+                                  expectedOldValue,
+                                  false,
+                                  removeRecoveredEntry);
                           if (destroyed) {
                             if (retainForConcurrency) {
                               owner.basicDestroyBeforeRemoval(oldRe, event);
                             }
-                            owner.basicDestroyPart2(oldRe, event, inTokenMode, false /* conflict with clear */, duringRI, true);
+                            owner.basicDestroyPart2(
+                                oldRe,
+                                event,
+                                inTokenMode,
+                                false /* conflict with clear */,
+                                duringRI,
+                                true);
                             lruEntryDestroy(oldRe);
                             doPart3 = true;
                           }
                         } catch (RegionClearedException rce) {
                           // Ignore. The exception will ensure that we do not update
                           // the LRU List
-                          owner.basicDestroyPart2(oldRe, event, inTokenMode, true/* conflict with clear */, duringRI, true);
+                          owner.basicDestroyPart2(
+                              oldRe,
+                              event,
+                              inTokenMode,
+                              true /* conflict with clear */,
+                              duringRI,
+                              true);
                           doPart3 = true;
                         } catch (ConcurrentCacheModificationException ccme) {
                           VersionTag tag = event.getVersionTag();
@@ -1099,18 +1261,33 @@ public abstract class AbstractRegionMap implements RegionMap {
                           opCompleted = false;
                           return opCompleted;
                         }
-                        opCompleted = destroyEntry(newRe, event, inTokenMode, cacheWrite, expectedOldValue, true, removeRecoveredEntry);
+                        opCompleted =
+                            destroyEntry(
+                                newRe,
+                                event,
+                                inTokenMode,
+                                cacheWrite,
+                                expectedOldValue,
+                                true,
+                                removeRecoveredEntry);
                         if (opCompleted) {
                           // This is a new entry that was created because we are in
                           // token mode or are accepting a destroy operation by adding
                           // a tombstone.  There is no oldValue, so we don't need to
                           // call updateSizeOnRemove
                           //                    owner.recordEvent(event);
-                          event.setIsRedestroyedEntry(true); // native clients need to know if the entry didn't exist
+                          event.setIsRedestroyedEntry(
+                              true); // native clients need to know if the entry didn't exist
                           if (retainForConcurrency) {
                             owner.basicDestroyBeforeRemoval(oldRe, event);
                           }
-                          owner.basicDestroyPart2(newRe, event, inTokenMode, false /* conflict with clear */, duringRI, true);
+                          owner.basicDestroyPart2(
+                              newRe,
+                              event,
+                              inTokenMode,
+                              false /* conflict with clear */,
+                              duringRI,
+                              true);
                           doPart3 = true;
                         }
                       } catch (RegionClearedException rce) {
@@ -1118,7 +1295,13 @@ public abstract class AbstractRegionMap implements RegionMap {
                         // the LRU List
                         opCompleted = true;
                         EntryLogger.logDestroy(event);
-                        owner.basicDestroyPart2(newRe, event, inTokenMode, true /* conflict with clear*/, duringRI, true);
+                        owner.basicDestroyPart2(
+                            newRe,
+                            event,
+                            inTokenMode,
+                            true /* conflict with clear*/,
+                            duringRI,
+                            true);
                         doPart3 = true;
                       } catch (ConcurrentCacheModificationException ccme) {
                         VersionTag tag = event.getVersionTag();
@@ -1131,7 +1314,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                       // Note no need for LRU work since the entry is destroyed
                       // and will be removed when gii completes
                     } finally {
-                      if (!opCompleted && !haveTombstone /* to fix bug 51583 do this for all operations */ ) {
+                      if (!opCompleted
+                          && !haveTombstone /* to fix bug 51583 do this for all operations */) {
                         removeEntry(event.getKey(), newRe, false);
                       }
                       if (!opCompleted && isEviction) {
@@ -1152,7 +1336,11 @@ public abstract class AbstractRegionMap implements RegionMap {
                 // on the entry and leaves behind a tombstone if concurrencyChecksEnabled.
                 // It fixes bug #32467 by propagating the destroy to the server even though
                 // the entry isn't in the client
-                RegionEntry newRe = haveTombstone ? tombstone : getEntryFactory().createEntry(owner, event.getKey(), Token.REMOVED_PHASE1);
+                RegionEntry newRe =
+                    haveTombstone
+                        ? tombstone
+                        : getEntryFactory()
+                            .createEntry(owner, event.getKey(), Token.REMOVED_PHASE1);
                 synchronized (newRe) {
                   if (haveTombstone && !tombstone.isTombstone()) {
                     // we have to check this again under synchronization since it may have changed
@@ -1183,11 +1371,17 @@ public abstract class AbstractRegionMap implements RegionMap {
                         }
                       }
                       if (throwex) {
-                        if (!event.isOriginRemote() && !event.getOperation().isLocal() && (event.isFromBridgeAndVersioned() || // if this is a replayed client event that already has a version
-                            event.isFromWANAndVersioned())) { // or if this is a WAN event that has been applied in another system
+                        if (!event.isOriginRemote()
+                            && !event.getOperation().isLocal()
+                            && (event.isFromBridgeAndVersioned()
+                                || // if this is a replayed client event that already has a version
+                                event
+                                    .isFromWANAndVersioned())) { // or if this is a WAN event that has been applied in another system
                           // we must distribute these since they will update the version information in peers
                           if (logger.isDebugEnabled()) {
-                            logger.debug("ARM.destroy is allowing wan/client destroy of {} to continue", event.getKey());
+                            logger.debug(
+                                "ARM.destroy is allowing wan/client destroy of {} to continue",
+                                event.getKey());
                           }
                           throwex = false;
                           event.setIsRedestroyedEntry(true);
@@ -1211,7 +1405,9 @@ public abstract class AbstractRegionMap implements RegionMap {
                     } finally {
                       // either remove the entry or leave a tombstone
                       try {
-                        if (!event.isOriginRemote() && event.getVersionTag() != null && owner.concurrencyChecksEnabled) {
+                        if (!event.isOriginRemote()
+                            && event.getVersionTag() != null
+                            && owner.concurrencyChecksEnabled) {
                           // this shouldn't fail since we just created the entry.
                           // it will either generate a tag or apply a server's version tag
                           processVersionTag(newRe, event);
@@ -1235,12 +1431,13 @@ public abstract class AbstractRegionMap implements RegionMap {
                           } catch (RegionClearedException e) {
                             // that's okay - we just need to remove the new entry
                           }
-                        } else if (event.getVersionTag() != null) { // haveTombstone - update the tombstone version info
+                        } else if (event.getVersionTag()
+                            != null) { // haveTombstone - update the tombstone version info
                           processVersionTag(tombstone, event);
                           if (doPart3) {
                             owner.generateAndSetVersionTag(event, newRe);
                           }
-                          // This is not conflict, we need to persist the tombstone again with new version tag 
+                          // This is not conflict, we need to persist the tombstone again with new version tag
                           try {
                             tombstone.setValue(owner, Token.TOMBSTONE);
                           } catch (RegionClearedException e) {
@@ -1249,7 +1446,13 @@ public abstract class AbstractRegionMap implements RegionMap {
                           }
                           owner.recordEvent(event);
                           owner.rescheduleTombstone(tombstone, event.getVersionTag());
-                          owner.basicDestroyPart2(tombstone, event, inTokenMode, true /* conflict with clear*/, duringRI, true);
+                          owner.basicDestroyPart2(
+                              tombstone,
+                              event,
+                              inTokenMode,
+                              true /* conflict with clear*/,
+                              duringRI,
+                              true);
                           opCompleted = true;
                         }
                       } catch (ConcurrentCacheModificationException ccme) {
@@ -1277,7 +1480,11 @@ public abstract class AbstractRegionMap implements RegionMap {
                 // version stamp.  Otherwise we would retain an old version stamp and may allow
                 // an operation that is older than the destroy() to be applied to the cache
                 // Bug 45170: If removeRecoveredEntry, we treat tombstone as regular entry to be deleted
-                boolean createTombstoneForConflictChecks = (owner.concurrencyChecksEnabled && (event.isOriginRemote() || event.getContext() != null || removeRecoveredEntry));
+                boolean createTombstoneForConflictChecks =
+                    (owner.concurrencyChecksEnabled
+                        && (event.isOriginRemote()
+                            || event.getContext() != null
+                            || removeRecoveredEntry));
                 if (!re.isRemoved() || createTombstoneForConflictChecks) {
                   if (re.isRemovedPhase2()) {
                     _getMap().remove(event.getKey(), re);
@@ -1305,7 +1512,15 @@ public abstract class AbstractRegionMap implements RegionMap {
 
                   boolean removed = false;
                   try {
-                    opCompleted = destroyEntry(re, event, inTokenMode, cacheWrite, expectedOldValue, false, removeRecoveredEntry);
+                    opCompleted =
+                        destroyEntry(
+                            re,
+                            event,
+                            inTokenMode,
+                            cacheWrite,
+                            expectedOldValue,
+                            false,
+                            removeRecoveredEntry);
                     if (opCompleted) {
                       // It is very, very important for Partitioned Regions to keep
                       // the entry in the map until after distribution occurs so that other
@@ -1327,7 +1542,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                         event.inhibitCacheListenerNotification(true);
                       }
                       doPart3 = true;
-                      owner.basicDestroyPart2(re, event, inTokenMode, false /* conflict with clear*/, duringRI, true);
+                      owner.basicDestroyPart2(
+                          re, event, inTokenMode, false /* conflict with clear*/, duringRI, true);
                       //                  if (!re.isTombstone() || isEviction) {
                       lruEntryDestroy(re);
                       //                  } else {
@@ -1363,7 +1579,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                     if (inTokenMode && !duringRI) {
                       event.inhibitCacheListenerNotification(true);
                     }
-                    owner.basicDestroyPart2(re, event, inTokenMode, true /*conflict with clear*/, duringRI, true);
+                    owner.basicDestroyPart2(
+                        re, event, inTokenMode, true /*conflict with clear*/, duringRI, true);
                     doPart3 = true;
                   } finally {
                     if (re.isRemoved() && !re.isTombstone()) {
@@ -1421,7 +1638,8 @@ public abstract class AbstractRegionMap implements RegionMap {
           try {
             // If concurrency conflict is there and event contains gateway version tag then
             // do NOT distribute.
-            if (event.isConcurrencyConflict() && (event.getVersionTag() != null && event.getVersionTag().isGatewayTag())) {
+            if (event.isConcurrencyConflict()
+                && (event.getVersionTag() != null && event.getVersionTag().isGatewayTag())) {
               doPart3 = false;
             }
             // distribution and listener notification
@@ -1438,7 +1656,6 @@ public abstract class AbstractRegionMap implements RegionMap {
             }
           }
         }
-
       } // retry loop
     } finally { // failsafe on the read lock...see comment above
       releaseCacheModificationLock(owner, event);
@@ -1446,7 +1663,22 @@ public abstract class AbstractRegionMap implements RegionMap {
     return false;
   }
 
-  public final void txApplyDestroy(Object key, TransactionId txId, TXRmtEvent txEvent, boolean inTokenMode, boolean inRI, Operation op, EventID eventId, Object aCallbackArgument, List<EntryEventImpl> pendingCallbacks, FilterRoutingInfo filterRoutingInfo, ClientProxyMembershipID bridgeContext, boolean isOriginRemote, TXEntryState txEntryState, VersionTag versionTag, long tailKey) {
+  public final void txApplyDestroy(
+      Object key,
+      TransactionId txId,
+      TXRmtEvent txEvent,
+      boolean inTokenMode,
+      boolean inRI,
+      Operation op,
+      EventID eventId,
+      Object aCallbackArgument,
+      List<EntryEventImpl> pendingCallbacks,
+      FilterRoutingInfo filterRoutingInfo,
+      ClientProxyMembershipID bridgeContext,
+      boolean isOriginRemote,
+      TXEntryState txEntryState,
+      VersionTag versionTag,
+      long tailKey) {
     final boolean isDebugEnabled = logger.isDebugEnabled();
 
     final LocalRegion owner = _getOwner();
@@ -1476,7 +1708,21 @@ public abstract class AbstractRegionMap implements RegionMap {
               // for this region
               boolean invokeCallbacks = shouldCreateCBEvent(owner, isRegionReady || inRI);
               @Released
-              EntryEventImpl cbEvent = createCBEvent(owner, op, key, null, txId, txEvent, eventId, aCallbackArgument, filterRoutingInfo, bridgeContext, txEntryState, versionTag, tailKey);
+              EntryEventImpl cbEvent =
+                  createCBEvent(
+                      owner,
+                      op,
+                      key,
+                      null,
+                      txId,
+                      txEvent,
+                      eventId,
+                      aCallbackArgument,
+                      filterRoutingInfo,
+                      bridgeContext,
+                      txEntryState,
+                      versionTag,
+                      tailKey);
               try {
 
                 if (owner.isUsedForPartitionedRegionBucket()) {
@@ -1503,7 +1749,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                   } else {
                     if (!re.isTombstone()) {
                       {
-                        if (shouldPerformConcurrencyChecks(owner, cbEvent) && cbEvent.getVersionTag() != null) {
+                        if (shouldPerformConcurrencyChecks(owner, cbEvent)
+                            && cbEvent.getVersionTag() != null) {
                           re.makeTombstone(owner, cbEvent.getVersionTag());
                         } else {
                           re.removePhase1(owner, false); // fix for bug 43063
@@ -1520,11 +1767,18 @@ public abstract class AbstractRegionMap implements RegionMap {
                 } catch (RegionClearedException rce) {
                   clearOccured = true;
                 }
-                owner.txApplyDestroyPart2(re, re.getKey(), inTokenMode, clearOccured /* Clear Conflciting with the operation */);
+                owner.txApplyDestroyPart2(
+                    re,
+                    re.getKey(),
+                    inTokenMode,
+                    clearOccured /* Clear Conflciting with the operation */);
                 if (invokeCallbacks) {
                   switchEventOwnerAndOriginRemote(cbEvent, hasRemoteOrigin);
                   if (pendingCallbacks == null) {
-                    owner.invokeTXCallbacks(EnumListenerEvent.AFTER_DESTROY, cbEvent, true/*callDispatchListenerEvent*/);
+                    owner.invokeTXCallbacks(
+                        EnumListenerEvent.AFTER_DESTROY,
+                        cbEvent,
+                        true /*callDispatchListenerEvent*/);
                   } else {
                     pendingCallbacks.add(cbEvent);
                     cbEventInPending = true;
@@ -1537,8 +1791,7 @@ public abstract class AbstractRegionMap implements RegionMap {
                   txEntryState.setVersionTag(cbEvent.getVersionTag());
                 }
               } finally {
-                if (!cbEventInPending)
-                  cbEvent.release();
+                if (!cbEventInPending) cbEvent.release();
               }
             }
           }
@@ -1570,7 +1823,21 @@ public abstract class AbstractRegionMap implements RegionMap {
                 } else {
                   try {
                     boolean invokeCallbacks = shouldCreateCBEvent(owner, isRegionReady || inRI);
-                    cbEvent = createCBEvent(owner, op, key, null, txId, txEvent, eventId, aCallbackArgument, filterRoutingInfo, bridgeContext, txEntryState, versionTag, tailKey);
+                    cbEvent =
+                        createCBEvent(
+                            owner,
+                            op,
+                            key,
+                            null,
+                            txId,
+                            txEvent,
+                            eventId,
+                            aCallbackArgument,
+                            filterRoutingInfo,
+                            bridgeContext,
+                            txEntryState,
+                            versionTag,
+                            tailKey);
                     try {
                       cbEvent.setRegionEntry(oldRe);
                       cbEvent.setOldValue(Token.NOT_AVAILABLE);
@@ -1584,7 +1851,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                       if (invokeCallbacks) {
                         switchEventOwnerAndOriginRemote(cbEvent, hasRemoteOrigin);
                         if (pendingCallbacks == null) {
-                          owner.invokeTXCallbacks(EnumListenerEvent.AFTER_DESTROY, cbEvent, dispatchListenerEvent);
+                          owner.invokeTXCallbacks(
+                              EnumListenerEvent.AFTER_DESTROY, cbEvent, dispatchListenerEvent);
                         } else {
                           pendingCallbacks.add(cbEvent);
                           cbEventInPending = true;
@@ -1603,16 +1871,24 @@ public abstract class AbstractRegionMap implements RegionMap {
                         owner.unscheduleTombstone(oldRe);
                       }
                       owner.updateSizeOnRemove(oldRe.getKey(), oldSize);
-                      owner.txApplyDestroyPart2(oldRe, oldRe.getKey(), inTokenMode, false /* Clear Conflicting with the operation */);
+                      owner.txApplyDestroyPart2(
+                          oldRe,
+                          oldRe.getKey(),
+                          inTokenMode,
+                          false /* Clear Conflicting with the operation */);
                       lruEntryDestroy(oldRe);
                     } finally {
-                      if (!cbEventInPending)
-                        cbEvent.release();
+                      if (!cbEventInPending) cbEvent.release();
                     }
                   } catch (RegionClearedException rce) {
-                    owner.txApplyDestroyPart2(oldRe, oldRe.getKey(), inTokenMode, true /* Clear Conflicting with the operation */);
+                    owner.txApplyDestroyPart2(
+                        oldRe,
+                        oldRe.getKey(),
+                        inTokenMode,
+                        true /* Clear Conflicting with the operation */);
                   }
-                  if (shouldPerformConcurrencyChecks(owner, cbEvent) && cbEvent.getVersionTag() != null) {
+                  if (shouldPerformConcurrencyChecks(owner, cbEvent)
+                      && cbEvent.getVersionTag() != null) {
                     oldRe.makeTombstone(owner, cbEvent.getVersionTag());
                   } else if (!inTokenMode) {
                     // only remove for NORMAL regions if they do not generate versions see 51781
@@ -1628,7 +1904,21 @@ public abstract class AbstractRegionMap implements RegionMap {
               // already has value set to Token.DESTROYED
               opCompleted = true;
               boolean invokeCallbacks = shouldCreateCBEvent(owner, isRegionReady || inRI);
-              cbEvent = createCBEvent(owner, op, key, null, txId, txEvent, eventId, aCallbackArgument, filterRoutingInfo, bridgeContext, txEntryState, versionTag, tailKey);
+              cbEvent =
+                  createCBEvent(
+                      owner,
+                      op,
+                      key,
+                      null,
+                      txId,
+                      txEvent,
+                      eventId,
+                      aCallbackArgument,
+                      filterRoutingInfo,
+                      bridgeContext,
+                      txEntryState,
+                      versionTag,
+                      tailKey);
               try {
                 cbEvent.setRegionEntry(newRe);
                 cbEvent.setOldValue(Token.NOT_AVAILABLE);
@@ -1642,7 +1932,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                 if (invokeCallbacks) {
                   switchEventOwnerAndOriginRemote(cbEvent, hasRemoteOrigin);
                   if (pendingCallbacks == null) {
-                    owner.invokeTXCallbacks(EnumListenerEvent.AFTER_DESTROY, cbEvent, dispatchListenerEvent);
+                    owner.invokeTXCallbacks(
+                        EnumListenerEvent.AFTER_DESTROY, cbEvent, dispatchListenerEvent);
                   } else {
                     pendingCallbacks.add(cbEvent);
                     cbEventInPending = true;
@@ -1650,7 +1941,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                 }
                 EntryLogger.logTXDestroy(_getOwnerObject(), key);
                 owner.updateSizeOnCreate(newRe.getKey(), 0);
-                if (shouldPerformConcurrencyChecks(owner, cbEvent) && cbEvent.getVersionTag() != null) {
+                if (shouldPerformConcurrencyChecks(owner, cbEvent)
+                    && cbEvent.getVersionTag() != null) {
                   newRe.makeTombstone(owner, cbEvent.getVersionTag());
                 } else if (!inTokenMode) {
                   // only remove for NORMAL regions if they do not generate versions see 51781
@@ -1658,12 +1950,12 @@ public abstract class AbstractRegionMap implements RegionMap {
                   newRe.removePhase2();
                   removeEntry(key, newRe, false);
                 }
-                owner.txApplyDestroyPart2(newRe, newRe.getKey(), inTokenMode, false /*clearConflict*/);
+                owner.txApplyDestroyPart2(
+                    newRe, newRe.getKey(), inTokenMode, false /*clearConflict*/);
                 // Note no need for LRU work since the entry is destroyed
                 // and will be removed when gii completes
               } finally {
-                if (!cbEventInPending)
-                  cbEvent.release();
+                if (!cbEventInPending) cbEvent.release();
               }
             }
             if (owner.concurrencyChecksEnabled && txEntryState != null && cbEvent != null) {
@@ -1671,7 +1963,7 @@ public abstract class AbstractRegionMap implements RegionMap {
             }
           }
         } catch (RegionClearedException e) {
-          // TODO 
+          // TODO
         } finally {
           if (oqlIndexManager != null) {
             oqlIndexManager.countDownIndexUpdaters();
@@ -1679,12 +1971,26 @@ public abstract class AbstractRegionMap implements RegionMap {
         }
       } else if (re == null) {
         // Fix bug#43594
-        // In cases where bucket region is re-created, it may so happen that 
-        // the destroy is already applied on the Initial image provider, thus 
-        // causing region entry to be absent. 
+        // In cases where bucket region is re-created, it may so happen that
+        // the destroy is already applied on the Initial image provider, thus
+        // causing region entry to be absent.
         // Notify clients with client events.
         @Released
-        EntryEventImpl cbEvent = createCBEvent(owner, op, key, null, txId, txEvent, eventId, aCallbackArgument, filterRoutingInfo, bridgeContext, txEntryState, versionTag, tailKey);
+        EntryEventImpl cbEvent =
+            createCBEvent(
+                owner,
+                op,
+                key,
+                null,
+                txId,
+                txEvent,
+                eventId,
+                aCallbackArgument,
+                filterRoutingInfo,
+                bridgeContext,
+                txEntryState,
+                versionTag,
+                tailKey);
         try {
           if (owner.isUsedForPartitionedRegionBucket()) {
             txHandleWANEvent(owner, cbEvent, txEntryState);
@@ -1697,8 +2003,7 @@ public abstract class AbstractRegionMap implements RegionMap {
             cbEventInPending = true;
           }
         } finally {
-          if (!cbEventInPending)
-            cbEvent.release();
+          if (!cbEventInPending) cbEvent.release();
         }
       }
     } catch (DiskAccessException dae) {
@@ -1710,38 +2015,34 @@ public abstract class AbstractRegionMap implements RegionMap {
   }
 
   /**
-   * If true then invalidates that throw EntryNotFoundException
-   * or that are already invalid will first call afterInvalidate on CacheListeners. 
-   * The old value on the event passed to afterInvalidate will be null.
-   * If the region is not initialized then callbacks will not be done.
-   * This property only applies to non-transactional invalidates.
-   * Transactional invalidates ignore this property.
-   * Note that empty "proxy" regions on a client will not be sent invalidates
-   * from the server unless they also set the proxy InterestPolicy to ALL.
-   * If the invalidate is not sent then this property will not cause a listener 
-   * on that client to be notified of the invalidate.
-   * A non-empty "caching-proxy" will receive invalidates from the server.
+   * If true then invalidates that throw EntryNotFoundException or that are already invalid will
+   * first call afterInvalidate on CacheListeners. The old value on the event passed to
+   * afterInvalidate will be null. If the region is not initialized then callbacks will not be done.
+   * This property only applies to non-transactional invalidates. Transactional invalidates ignore
+   * this property. Note that empty "proxy" regions on a client will not be sent invalidates from
+   * the server unless they also set the proxy InterestPolicy to ALL. If the invalidate is not sent
+   * then this property will not cause a listener on that client to be notified of the invalidate. A
+   * non-empty "caching-proxy" will receive invalidates from the server.
    */
-  public static boolean FORCE_INVALIDATE_EVENT = Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "FORCE_INVALIDATE_EVENT");
+  public static boolean FORCE_INVALIDATE_EVENT =
+      Boolean.getBoolean(DistributionConfig.GEMFIRE_PREFIX + "FORCE_INVALIDATE_EVENT");
 
-  /**
-   * If the FORCE_INVALIDATE_EVENT flag is true
-   * then invoke callbacks on the given event.
-   */
+  /** If the FORCE_INVALIDATE_EVENT flag is true then invoke callbacks on the given event. */
   static void forceInvalidateEvent(EntryEventImpl event, LocalRegion owner) {
     if (FORCE_INVALIDATE_EVENT) {
       event.invokeCallbacks(owner, false, false);
     }
   }
 
-  public final boolean invalidate(EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry, boolean forceCallbacks) throws EntryNotFoundException {
+  public final boolean invalidate(
+      EntryEventImpl event, boolean invokeCallbacks, boolean forceNewEntry, boolean forceCallbacks)
+      throws EntryNotFoundException {
     final boolean isDebugEnabled = logger.isDebugEnabled();
 
     final LocalRegion owner = _getOwner();
     if (owner == null) {
       // "fix" for bug 32440
       Assert.assertTrue(false, "The owner for RegionMap " + this + " is null for event " + event);
-
     }
     boolean didInvalidate = false;
     RegionEntry invalidatedRe = null;
@@ -1761,7 +2062,8 @@ public abstract class AbstractRegionMap implements RegionMap {
         try {
           if (forceNewEntry || forceCallbacks) {
             boolean opCompleted = false;
-            RegionEntry newRe = getEntryFactory().createEntry(owner, event.getKey(), Token.REMOVED_PHASE1);
+            RegionEntry newRe =
+                getEntryFactory().createEntry(owner, event.getKey(), Token.REMOVED_PHASE1);
             synchronized (newRe) {
               try {
                 RegionEntry oldRe = putEntryIfAbsent(event.getKey(), newRe);
@@ -1781,17 +2083,23 @@ public abstract class AbstractRegionMap implements RegionMap {
                       event.setRegionEntry(oldRe);
                       if (oldRe.isDestroyed()) {
                         if (isDebugEnabled) {
-                          logger.debug("mapInvalidate: Found DESTROYED token, not invalidated; key={}", event.getKey());
+                          logger.debug(
+                              "mapInvalidate: Found DESTROYED token, not invalidated; key={}",
+                              event.getKey());
                         }
                       } else if (oldRe.isInvalid()) {
 
                         // was already invalid, do not invoke listeners or increment stat
                         if (isDebugEnabled) {
-                          logger.debug("mapInvalidate: Entry already invalid: '{}'", event.getKey());
+                          logger.debug(
+                              "mapInvalidate: Entry already invalid: '{}'", event.getKey());
                         }
                         processVersionTag(oldRe, event);
                         try {
-                          oldRe.setValue(owner, oldRe.getValueInVM(owner)); // OFFHEAP noop setting an already invalid to invalid; No need to call prepareValueForCache since it is an invalid token.
+                          oldRe.setValue(
+                              owner,
+                              oldRe.getValueInVM(
+                                  owner)); // OFFHEAP noop setting an already invalid to invalid; No need to call prepareValueForCache since it is an invalid token.
                         } catch (RegionClearedException e) {
                           // that's okay - when writing an invalid into a disk, the
                           // region has been cleared (including this token)
@@ -1808,7 +2116,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                         FilterProfile fp = owner.getFilterProfile();
                         if (!oldRe.isRemoved() && (fp != null && fp.getCqCount() > 0)) {
 
-                          Object oldValue = oldRe.getValueInVM(owner); // OFFHEAP EntryEventImpl oldValue
+                          Object oldValue =
+                              oldRe.getValueInVM(owner); // OFFHEAP EntryEventImpl oldValue
 
                           // this will not fault in the value.
                           if (oldValue == Token.NOT_AVAILABLE) {
@@ -1825,9 +2134,11 @@ public abstract class AbstractRegionMap implements RegionMap {
                             EntryLogger.logInvalidate(event);
                             owner.recordEvent(event);
                             if (!oldRe.isTombstone()) {
-                              owner.updateSizeOnPut(event.getKey(), oldSize, event.getNewValueBucketSize());
+                              owner.updateSizeOnPut(
+                                  event.getKey(), oldSize, event.getNewValueBucketSize());
                             } else {
-                              owner.updateSizeOnCreate(event.getKey(), event.getNewValueBucketSize());
+                              owner.updateSizeOnCreate(
+                                  event.getKey(), event.getNewValueBucketSize());
                               isCreate = true;
                             }
                           } else {
@@ -1835,7 +2146,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                             event.putExistingEntry(owner, oldRe);
                             EntryLogger.logInvalidate(event);
                             owner.recordEvent(event);
-                            owner.updateSizeOnPut(event.getKey(), oldSize, event.getNewValueBucketSize());
+                            owner.updateSizeOnPut(
+                                event.getKey(), oldSize, event.getNewValueBucketSize());
                           }
                         } catch (RegionClearedException e) {
                           // generate versionTag for the event
@@ -1843,7 +2155,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                           owner.recordEvent(event);
                           clearOccured = true;
                         }
-                        owner.basicInvalidatePart2(oldRe, event, clearOccured /* conflict with clear */, invokeCallbacks);
+                        owner.basicInvalidatePart2(
+                            oldRe, event, clearOccured /* conflict with clear */, invokeCallbacks);
                         if (!clearOccured) {
                           if (isCreate) {
                             lruEntryCreate(oldRe);
@@ -1887,7 +2200,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                     owner.recordEvent(event);
                     clearOccured = true;
                   }
-                  owner.basicInvalidatePart2(newRe, event, clearOccured /*conflict with clear*/, invokeCallbacks);
+                  owner.basicInvalidatePart2(
+                      newRe, event, clearOccured /*conflict with clear*/, invokeCallbacks);
                   if (!clearOccured) {
                     lruEntryCreate(newRe);
                     incEntryCount(1);
@@ -1937,7 +2251,10 @@ public abstract class AbstractRegionMap implements RegionMap {
                 if (!ownerIsInitialized) {
                   // when GII message arrived or processed later than invalidate
                   // message, the entry should be created as placeholder
-                  RegionEntry newRe = haveTombstone ? tombstone : getEntryFactory().createEntry(owner, event.getKey(), Token.INVALID);
+                  RegionEntry newRe =
+                      haveTombstone
+                          ? tombstone
+                          : getEntryFactory().createEntry(owner, event.getKey(), Token.INVALID);
                   synchronized (newRe) {
                     if (haveTombstone && !tombstone.isTombstone()) {
                       // state of the tombstone has changed so we need to retry
@@ -1972,7 +2289,10 @@ public abstract class AbstractRegionMap implements RegionMap {
                         try {
                           if (!tombstone.isTombstone()) {
                             if (isDebugEnabled) {
-                              logger.debug("tombstone is no longer a tombstone. {}:event={}", tombstone, event);
+                              logger.debug(
+                                  "tombstone is no longer a tombstone. {}:event={}",
+                                  tombstone,
+                                  event);
                             }
                           }
                           tombstone.setValue(owner, Token.TOMBSTONE);
@@ -1998,7 +2318,7 @@ public abstract class AbstractRegionMap implements RegionMap {
               if (re != null) {
                 // Gester: Race condition in GII
                 // when adding the placeholder for invalidate entry during GII,
-                // if the GII got processed earlier for this entry, then do 
+                // if the GII got processed earlier for this entry, then do
                 // normal invalidate operation
                 synchronized (re) {
                   if (!event.isOriginRemote() && event.getOperation().isExpiration()) {
@@ -2016,7 +2336,11 @@ public abstract class AbstractRegionMap implements RegionMap {
                         logger.debug("Invalidate: Entry already invalid: '{}'", event.getKey());
                       }
                       if (event.getVersionTag() != null && owner.getVersionVector() != null) {
-                        owner.getVersionVector().recordVersion((InternalDistributedMember) event.getDistributedMember(), event.getVersionTag());
+                        owner
+                            .getVersionVector()
+                            .recordVersion(
+                                (InternalDistributedMember) event.getDistributedMember(),
+                                event.getVersionTag());
                       }
                     } else { // previous value not invalid
                       event.setRegionEntry(re);
@@ -2025,7 +2349,9 @@ public abstract class AbstractRegionMap implements RegionMap {
                         // server did not perform the invalidation, so don't leave an invalid
                         // entry here
                         if (isDebugEnabled) {
-                          logger.debug("returning early because server did not generate a version stamp for this event:{}", event);
+                          logger.debug(
+                              "returning early because server did not generate a version stamp for this event:{}",
+                              event);
                         }
                         return false;
                       }
@@ -2056,7 +2382,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                         }
                         throw ccme;
                       }
-                      owner.basicInvalidatePart2(re, event, clearOccured /* conflict with clear */, invokeCallbacks);
+                      owner.basicInvalidatePart2(
+                          re, event, clearOccured /* conflict with clear */, invokeCallbacks);
                       if (!clearOccured) {
                         if (oldWasTombstone) {
                           lruEntryCreate(re);
@@ -2111,17 +2438,19 @@ public abstract class AbstractRegionMap implements RegionMap {
     } finally {
       releaseCacheModificationLock(owner, event);
     }
-
   }
 
-  protected void invalidateNewEntry(EntryEventImpl event, final LocalRegion owner, RegionEntry newRe) throws RegionClearedException {
+  protected void invalidateNewEntry(
+      EntryEventImpl event, final LocalRegion owner, RegionEntry newRe)
+      throws RegionClearedException {
     processVersionTag(newRe, event);
     event.putNewEntry(owner, newRe);
     owner.recordEvent(event);
     owner.updateSizeOnCreate(event.getKey(), event.getNewValueBucketSize());
   }
 
-  protected void invalidateEntry(EntryEventImpl event, RegionEntry re, int oldSize) throws RegionClearedException {
+  protected void invalidateEntry(EntryEventImpl event, RegionEntry re, int oldSize)
+      throws RegionClearedException {
     processVersionTag(re, event);
     event.putExistingEntry(_getOwner(), re);
     EntryLogger.logInvalidate(event);
@@ -2139,7 +2468,6 @@ public abstract class AbstractRegionMap implements RegionMap {
     if (owner == null) {
       // "fix" for bug 32440
       Assert.assertTrue(false, "The owner for RegionMap " + this + " is null for event " + event);
-
     }
 
     DiskRegion dr = owner.getDiskRegion();
@@ -2157,7 +2485,6 @@ public abstract class AbstractRegionMap implements RegionMap {
       if (re != null) {
         // process version tag
         synchronized (re) {
-
           try {
             if (re.isTombstone() || (!re.isRemoved() && !re.isDestroyed())) {
               entryExisted = true;
@@ -2169,7 +2496,6 @@ public abstract class AbstractRegionMap implements RegionMap {
           } catch (ConcurrentCacheModificationException ccme) {
             // Do nothing.
           }
-
         }
       }
       if (!entryExisted) {
@@ -2186,13 +2512,26 @@ public abstract class AbstractRegionMap implements RegionMap {
     }
   }
 
-  public final void txApplyInvalidate(Object key, Object newValue, boolean didDestroy, TransactionId txId, TXRmtEvent txEvent, boolean localOp, EventID eventId, Object aCallbackArgument, List<EntryEventImpl> pendingCallbacks, FilterRoutingInfo filterRoutingInfo, ClientProxyMembershipID bridgeContext, TXEntryState txEntryState, VersionTag versionTag, long tailKey) {
+  public final void txApplyInvalidate(
+      Object key,
+      Object newValue,
+      boolean didDestroy,
+      TransactionId txId,
+      TXRmtEvent txEvent,
+      boolean localOp,
+      EventID eventId,
+      Object aCallbackArgument,
+      List<EntryEventImpl> pendingCallbacks,
+      FilterRoutingInfo filterRoutingInfo,
+      ClientProxyMembershipID bridgeContext,
+      TXEntryState txEntryState,
+      VersionTag versionTag,
+      long tailKey) {
     //    boolean didInvalidate = false;
     final LocalRegion owner = _getOwner();
     owner.checkBeforeEntrySync(txEvent);
 
-    @Released
-    EntryEventImpl cbEvent = null;
+    @Released EntryEventImpl cbEvent = null;
     boolean forceNewEntry = !owner.isInitialized() && owner.isAllEvents();
 
     final boolean hasRemoteOrigin = !((TXId) txId).getMemberId().equals(owner.getMyId());
@@ -2229,7 +2568,21 @@ public abstract class AbstractRegionMap implements RegionMap {
                   // for this region
                   boolean invokeCallbacks = shouldCreateCBEvent(owner, owner.isInitialized());
                   boolean cbEventInPending = false;
-                  cbEvent = createCBEvent(owner, localOp ? Operation.LOCAL_INVALIDATE : Operation.INVALIDATE, key, newValue, txId, txEvent, eventId, aCallbackArgument, filterRoutingInfo, bridgeContext, txEntryState, versionTag, tailKey);
+                  cbEvent =
+                      createCBEvent(
+                          owner,
+                          localOp ? Operation.LOCAL_INVALIDATE : Operation.INVALIDATE,
+                          key,
+                          newValue,
+                          txId,
+                          txEvent,
+                          eventId,
+                          aCallbackArgument,
+                          filterRoutingInfo,
+                          bridgeContext,
+                          txEntryState,
+                          versionTag,
+                          tailKey);
                   try {
                     cbEvent.setRegionEntry(oldRe);
                     cbEvent.setOldValue(oldValue);
@@ -2242,7 +2595,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                       oldRe.txDidDestroy(owner.cacheTimeMillis());
                     }
                     if (txEvent != null) {
-                      txEvent.addInvalidate(owner, oldRe, oldRe.getKey(), newValue, aCallbackArgument);
+                      txEvent.addInvalidate(
+                          owner, oldRe, oldRe.getKey(), newValue, aCallbackArgument);
                     }
                     oldRe.setValueResultOfSearch(false);
                     processAndGenerateTXVersionTag(owner, cbEvent, oldRe, txEntryState);
@@ -2257,12 +2611,16 @@ public abstract class AbstractRegionMap implements RegionMap {
                     } catch (RegionClearedException rce) {
                       clearOccured = true;
                     }
-                    owner.txApplyInvalidatePart2(oldRe, oldRe.getKey(), didDestroy, true, clearOccured);
+                    owner.txApplyInvalidatePart2(
+                        oldRe, oldRe.getKey(), didDestroy, true, clearOccured);
                     //                  didInvalidate = true;
                     if (invokeCallbacks) {
                       switchEventOwnerAndOriginRemote(cbEvent, hasRemoteOrigin);
                       if (pendingCallbacks == null) {
-                        owner.invokeTXCallbacks(EnumListenerEvent.AFTER_INVALIDATE, cbEvent, true/*callDispatchListenerEvent*/);
+                        owner.invokeTXCallbacks(
+                            EnumListenerEvent.AFTER_INVALIDATE,
+                            cbEvent,
+                            true /*callDispatchListenerEvent*/);
                       } else {
                         pendingCallbacks.add(cbEvent);
                         cbEventInPending = true;
@@ -2275,8 +2633,7 @@ public abstract class AbstractRegionMap implements RegionMap {
                       txEntryState.setVersionTag(cbEvent.getVersionTag());
                     }
                   } finally {
-                    if (!cbEventInPending)
-                      cbEvent.release();
+                    if (!cbEventInPending) cbEvent.release();
                   }
                 }
               }
@@ -2284,7 +2641,21 @@ public abstract class AbstractRegionMap implements RegionMap {
             if (!opCompleted) {
               boolean invokeCallbacks = shouldCreateCBEvent(owner, owner.isInitialized());
               boolean cbEventInPending = false;
-              cbEvent = createCBEvent(owner, localOp ? Operation.LOCAL_INVALIDATE : Operation.INVALIDATE, key, newValue, txId, txEvent, eventId, aCallbackArgument, filterRoutingInfo, bridgeContext, txEntryState, versionTag, tailKey);
+              cbEvent =
+                  createCBEvent(
+                      owner,
+                      localOp ? Operation.LOCAL_INVALIDATE : Operation.INVALIDATE,
+                      key,
+                      newValue,
+                      txId,
+                      txEvent,
+                      eventId,
+                      aCallbackArgument,
+                      filterRoutingInfo,
+                      bridgeContext,
+                      txEntryState,
+                      versionTag,
+                      tailKey);
               try {
                 cbEvent.setRegionEntry(newRe);
                 txRemoveOldIndexEntry(Operation.INVALIDATE, newRe);
@@ -2294,7 +2665,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                   processAndGenerateTXVersionTag(owner, cbEvent, newRe, txEntryState);
                   newRe.setValue(owner, newRe.prepareValueForCache(owner, newValue, true));
                   EntryLogger.logTXInvalidate(_getOwnerObject(), key);
-                  owner.updateSizeOnCreate(newRe.getKey(), 0);//we are putting in a new invalidated entry
+                  owner.updateSizeOnCreate(
+                      newRe.getKey(), 0); //we are putting in a new invalidated entry
                 } catch (RegionClearedException rce) {
                   clearOccured = true;
                 }
@@ -2303,7 +2675,10 @@ public abstract class AbstractRegionMap implements RegionMap {
                 if (invokeCallbacks) {
                   switchEventOwnerAndOriginRemote(cbEvent, hasRemoteOrigin);
                   if (pendingCallbacks == null) {
-                    owner.invokeTXCallbacks(EnumListenerEvent.AFTER_INVALIDATE, cbEvent, true/*callDispatchListenerEvent*/);
+                    owner.invokeTXCallbacks(
+                        EnumListenerEvent.AFTER_INVALIDATE,
+                        cbEvent,
+                        true /*callDispatchListenerEvent*/);
                   } else {
                     pendingCallbacks.add(cbEvent);
                     cbEventInPending = true;
@@ -2318,8 +2693,7 @@ public abstract class AbstractRegionMap implements RegionMap {
                   txEntryState.setVersionTag(cbEvent.getVersionTag());
                 }
               } finally {
-                if (!cbEventInPending)
-                  cbEvent.release();
+                if (!cbEventInPending) cbEvent.release();
               }
             }
           } finally {
@@ -2328,7 +2702,8 @@ public abstract class AbstractRegionMap implements RegionMap {
             }
           }
         }
-      } else { /* !forceNewEntry */
+      } else {
+        /* !forceNewEntry */
         RegionEntry re = getEntry(key);
         if (re != null) {
           synchronized (re) {
@@ -2342,7 +2717,21 @@ public abstract class AbstractRegionMap implements RegionMap {
               // for this region
               boolean invokeCallbacks = shouldCreateCBEvent(owner, owner.isInitialized());
               boolean cbEventInPending = false;
-              cbEvent = createCBEvent(owner, localOp ? Operation.LOCAL_INVALIDATE : Operation.INVALIDATE, key, newValue, txId, txEvent, eventId, aCallbackArgument, filterRoutingInfo, bridgeContext, txEntryState, versionTag, tailKey);
+              cbEvent =
+                  createCBEvent(
+                      owner,
+                      localOp ? Operation.LOCAL_INVALIDATE : Operation.INVALIDATE,
+                      key,
+                      newValue,
+                      txId,
+                      txEvent,
+                      eventId,
+                      aCallbackArgument,
+                      filterRoutingInfo,
+                      bridgeContext,
+                      txEntryState,
+                      versionTag,
+                      tailKey);
               try {
                 cbEvent.setRegionEntry(re);
                 cbEvent.setOldValue(oldValue);
@@ -2371,7 +2760,10 @@ public abstract class AbstractRegionMap implements RegionMap {
                 if (invokeCallbacks) {
                   switchEventOwnerAndOriginRemote(cbEvent, hasRemoteOrigin);
                   if (pendingCallbacks == null) {
-                    owner.invokeTXCallbacks(EnumListenerEvent.AFTER_INVALIDATE, cbEvent, true/*callDispatchListenerEvent*/);
+                    owner.invokeTXCallbacks(
+                        EnumListenerEvent.AFTER_INVALIDATE,
+                        cbEvent,
+                        true /*callDispatchListenerEvent*/);
                   } else {
                     pendingCallbacks.add(cbEvent);
                     cbEventInPending = true;
@@ -2384,19 +2776,32 @@ public abstract class AbstractRegionMap implements RegionMap {
                   txEntryState.setVersionTag(cbEvent.getVersionTag());
                 }
               } finally {
-                if (!cbEventInPending)
-                  cbEvent.release();
+                if (!cbEventInPending) cbEvent.release();
               }
             }
           }
         } else { //re == null
           // Fix bug#43594
-          // In cases where bucket region is re-created, it may so happen 
-          // that the invalidate is already applied on the Initial image 
-          // provider, thus causing region entry to be absent. 
+          // In cases where bucket region is re-created, it may so happen
+          // that the invalidate is already applied on the Initial image
+          // provider, thus causing region entry to be absent.
           // Notify clients with client events.
           boolean cbEventInPending = false;
-          cbEvent = createCBEvent(owner, localOp ? Operation.LOCAL_INVALIDATE : Operation.INVALIDATE, key, newValue, txId, txEvent, eventId, aCallbackArgument, filterRoutingInfo, bridgeContext, txEntryState, versionTag, tailKey);
+          cbEvent =
+              createCBEvent(
+                  owner,
+                  localOp ? Operation.LOCAL_INVALIDATE : Operation.INVALIDATE,
+                  key,
+                  newValue,
+                  txId,
+                  txEvent,
+                  eventId,
+                  aCallbackArgument,
+                  filterRoutingInfo,
+                  bridgeContext,
+                  txEntryState,
+                  versionTag,
+                  tailKey);
           try {
             switchEventOwnerAndOriginRemote(cbEvent, hasRemoteOrigin);
             if (pendingCallbacks == null) {
@@ -2406,8 +2811,7 @@ public abstract class AbstractRegionMap implements RegionMap {
               cbEventInPending = true;
             }
           } finally {
-            if (!cbEventInPending)
-              cbEvent.release();
+            if (!cbEventInPending) cbEvent.release();
           }
         }
       }
@@ -2423,8 +2827,8 @@ public abstract class AbstractRegionMap implements RegionMap {
   }
 
   /**
-   * This code needs to be evaluated. It was added quickly to help PR persistence
-   * not to consume as much memory.
+   * This code needs to be evaluated. It was added quickly to help PR persistence not to consume as
+   * much memory.
    */
   public void evictValue(Object key) {
     final LocalRegion owner = _getOwner();
@@ -2444,7 +2848,13 @@ public abstract class AbstractRegionMap implements RegionMap {
     }
   }
 
-  private RegionEntry getOrCreateRegionEntry(Object ownerRegion, EntryEventImpl event, Object value, MapCallbackAdapter<Object, Object, Object, Object> valueCreator, boolean onlyExisting, boolean returnTombstone) {
+  private RegionEntry getOrCreateRegionEntry(
+      Object ownerRegion,
+      EntryEventImpl event,
+      Object value,
+      MapCallbackAdapter<Object, Object, Object, Object> valueCreator,
+      boolean onlyExisting,
+      boolean returnTombstone) {
     Object key = event.getKey();
     RegionEntry retVal = null;
     retVal = getEntry(event);
@@ -2474,8 +2884,15 @@ public abstract class AbstractRegionMap implements RegionMap {
   /*
    * returns null if the operation fails
    */
-  public RegionEntry basicPut(EntryEventImpl event, final long lastModified, final boolean ifNew, final boolean ifOld, Object expectedOldValue, // only non-null if ifOld
-      boolean requireOldValue, final boolean overwriteDestroyed) throws CacheWriterException, TimeoutException {
+  public RegionEntry basicPut(
+      EntryEventImpl event,
+      final long lastModified,
+      final boolean ifNew,
+      final boolean ifOld,
+      Object expectedOldValue, // only non-null if ifOld
+      boolean requireOldValue,
+      final boolean overwriteDestroyed)
+      throws CacheWriterException, TimeoutException {
     final LocalRegion owner = _getOwner();
     boolean clearOccured = false;
     if (owner == null) {
@@ -2483,14 +2900,27 @@ public abstract class AbstractRegionMap implements RegionMap {
       Assert.assertTrue(false, "The owner for RegionMap " + this + " is null for event " + event);
     }
     if (logger.isTraceEnabled(LogMarker.LRU_TOMBSTONE_COUNT) && !(owner instanceof HARegion)) {
-      logger.trace(LogMarker.LRU_TOMBSTONE_COUNT, "ARM.basicPut called for {} expectedOldValue={} requireOldValue={} ifNew={} ifOld={} initialized={} overwriteDestroyed={}", event, expectedOldValue, requireOldValue, ifNew, ifOld, owner.isInitialized(), overwriteDestroyed);
+      logger.trace(
+          LogMarker.LRU_TOMBSTONE_COUNT,
+          "ARM.basicPut called for {} expectedOldValue={} requireOldValue={} ifNew={} ifOld={} initialized={} overwriteDestroyed={}",
+          event,
+          expectedOldValue,
+          requireOldValue,
+          ifNew,
+          ifOld,
+          owner.isInitialized(),
+          overwriteDestroyed);
     }
 
     RegionEntry result = null;
     long lastModifiedTime = 0;
     // copy into local var to prevent race condition with setter
     final CacheWriter cacheWriter = owner.basicGetWriter();
-    final boolean cacheWrite = !event.isOriginRemote() && !event.isNetSearch() && event.isGenerateCallbacks() && (cacheWriter != null || owner.hasServerProxy() || owner.scope.isDistributed());
+    final boolean cacheWrite =
+        !event.isOriginRemote()
+            && !event.isNetSearch()
+            && event.isGenerateCallbacks()
+            && (cacheWriter != null || owner.hasServerProxy() || owner.scope.isDistributed());
     /*
      * For performance reason, we try to minimize object creation and do as much
      * work as we can outside of synchronization, especially getting
@@ -2499,7 +2929,8 @@ public abstract class AbstractRegionMap implements RegionMap {
     final Set netWriteRecipients;
     if (cacheWrite) {
       if (cacheWriter == null && owner.scope.isDistributed()) {
-        netWriteRecipients = ((DistributedRegion) owner).getCacheDistributionAdvisor().adviseNetWrite();
+        netWriteRecipients =
+            ((DistributedRegion) owner).getCacheDistributionAdvisor().adviseNetWrite();
       } else {
         netWriteRecipients = null;
       }
@@ -2512,7 +2943,8 @@ public abstract class AbstractRegionMap implements RegionMap {
     // reference of the diskSegmentRegion as a ThreadLocal so that if the diskRegionSegment
     // is later changed by another thread, we can do the necessary.
     boolean uninitialized = !owner.isInitialized();
-    boolean retrieveOldValueForDelta = event.getDeltaBytes() != null && event.getRawNewValue() == null;
+    boolean retrieveOldValueForDelta =
+        event.getDeltaBytes() != null && event.getRawNewValue() == null;
     IndexManager oqlIndexManager = null;
     lockForCacheModification(owner, event);
     try {
@@ -2526,16 +2958,16 @@ public abstract class AbstractRegionMap implements RegionMap {
         }
 
         // fix for bug #42169, replace must go to server if entry not on client
-        boolean replaceOnClient = event.getOperation() == Operation.REPLACE && owner.getServerProxy() != null;
+        boolean replaceOnClient =
+            event.getOperation() == Operation.REPLACE && owner.getServerProxy() != null;
         // Rather than having two different blocks for synchronizing oldRe
         // and newRe, have only one block and synchronize re
         RegionEntry re = null;
         boolean eventRecorded = false;
         boolean onlyExisting = ifOld && !replaceOnClient;
 
-        re = getOrCreateRegionEntry(owner, event,
+        re = getOrCreateRegionEntry(owner, event, Token.REMOVED_PHASE1, null, onlyExisting, false);
 
-            Token.REMOVED_PHASE1, null, onlyExisting, false);
         if (re == null) {
           return null;
         }
@@ -2547,21 +2979,24 @@ public abstract class AbstractRegionMap implements RegionMap {
             if (re.isRemovedPhase2()) {
               _getOwner().getCachePerfStats().incRetries();
               _getMap().remove(event.getKey(), re);
-              re = getOrCreateRegionEntry(owner, event, Token.REMOVED_PHASE1, null, onlyExisting, false);
+              re =
+                  getOrCreateRegionEntry(
+                      owner, event, Token.REMOVED_PHASE1, null, onlyExisting, false);
               if (re == null) {
                 // this will happen when onlyExisting is true
                 return null;
               }
               continue;
             } else {
-              @Released
-              Object oldValueForDelta = null;
+              @Released Object oldValueForDelta = null;
               if (retrieveOldValueForDelta) {
                 // defer the lruUpdateCallback to prevent a deadlock (see bug 51121).
                 final boolean disabled = disableLruUpdateCallback();
                 try {
                   // Old value is faulted in from disk if not found in memory.
-                  oldValueForDelta = re.getValue(owner); // OFFHEAP: if we are synced on oldRe no issue since we can use ARE's ref
+                  oldValueForDelta =
+                      re.getValue(
+                          owner); // OFFHEAP: if we are synced on oldRe no issue since we can use ARE's ref
                 } finally {
                   if (disabled) {
                     enableLruUpdateCallback();
@@ -2586,14 +3021,26 @@ public abstract class AbstractRegionMap implements RegionMap {
                   return null;
                 }
                 // invoke cacheWriter
-                invokeCacheWriter(re, event, cacheWrite, cacheWriter, netWriteRecipients, requireOldValue, expectedOldValue, replaceOnClient);
+                invokeCacheWriter(
+                    re,
+                    event,
+                    cacheWrite,
+                    cacheWriter,
+                    netWriteRecipients,
+                    requireOldValue,
+                    expectedOldValue,
+                    replaceOnClient);
 
                 // notify index of an update
                 notifyIndex(re, true);
                 try {
                   try {
-                    if ((cacheWrite && event.getOperation().isUpdate()) // if there is a cacheWriter, type of event has already been set
-                        || !re.isRemoved() || replaceOnClient) {
+                    if ((cacheWrite
+                            && event
+                                .getOperation()
+                                .isUpdate()) // if there is a cacheWriter, type of event has already been set
+                        || !re.isRemoved()
+                        || replaceOnClient) {
                       // update
                       updateEntry(event, requireOldValue, oldValueForDelta, re);
                     } else {
@@ -2618,7 +3065,9 @@ public abstract class AbstractRegionMap implements RegionMap {
                   }
                   updateLru(clearOccured, re, event);
 
-                  lastModifiedTime = owner.basicPutPart2(event, re, !uninitialized, lastModifiedTime, clearOccured);
+                  lastModifiedTime =
+                      owner.basicPutPart2(
+                          event, re, !uninitialized, lastModifiedTime, clearOccured);
                 } finally {
                   notifyIndex(re, false);
                 }
@@ -2638,7 +3087,7 @@ public abstract class AbstractRegionMap implements RegionMap {
         } // end while
       } catch (DiskAccessException dae) {
         //Asif:Feel that it is safe to destroy the region here as there appears
-        // to be no chance of deadlock during region destruction      
+        // to be no chance of deadlock during region destruction
         result = null;
         this._getOwner().handleDiskAccessException(dae);
         throw dae;
@@ -2650,7 +3099,16 @@ public abstract class AbstractRegionMap implements RegionMap {
           try {
             // Note we do distribution after releasing all sync to avoid deadlock
             final boolean invokeListeners = event.basicGetNewValue() != Token.TOMBSTONE;
-            owner.basicPutPart3(event, result, !uninitialized, lastModifiedTime, invokeListeners, ifNew, ifOld, expectedOldValue, requireOldValue);
+            owner.basicPutPart3(
+                event,
+                result,
+                !uninitialized,
+                lastModifiedTime,
+                invokeListeners,
+                ifNew,
+                ifOld,
+                expectedOldValue,
+                requireOldValue);
           } finally {
             // bug 32589, post update may throw an exception if exception occurs
             // for any recipients
@@ -2659,7 +3117,7 @@ public abstract class AbstractRegionMap implements RegionMap {
                 lruUpdateCallback();
               } catch (DiskAccessException dae) {
                 //Asif:Feel that it is safe to destroy the region here as there appears
-                // to be no chance of deadlock during region destruction      
+                // to be no chance of deadlock during region destruction
                 result = null;
                 this._getOwner().handleDiskAccessException(dae);
                 throw dae;
@@ -2677,8 +3135,8 @@ public abstract class AbstractRegionMap implements RegionMap {
   }
 
   /**
-   * If the value in the VM is still REMOVED_PHASE1 Token, then the operation
-   * was not completed (due to cacheWriter exception, concurrentMap operation) etc.
+   * If the value in the VM is still REMOVED_PHASE1 Token, then the operation was not completed (due
+   * to cacheWriter exception, concurrentMap operation) etc.
    */
   private boolean isOpComplete(RegionEntry re, EntryEventImpl event) {
     if (re.getValueAsToken() == Token.REMOVED_PHASE1) {
@@ -2687,14 +3145,14 @@ public abstract class AbstractRegionMap implements RegionMap {
     return true;
   }
 
-  private boolean satisfiesExpectedOldValue(EntryEventImpl event, RegionEntry re, Object expectedOldValue, boolean replaceOnClient) {
+  private boolean satisfiesExpectedOldValue(
+      EntryEventImpl event, RegionEntry re, Object expectedOldValue, boolean replaceOnClient) {
     // replace is propagated to server, so no need to check
     // satisfiesOldValue on client
     if (expectedOldValue != null && !replaceOnClient) {
       assert event.getOperation().guaranteesOldValue();
       // We already called setOldValueInEvent so the event will have the old value.
-      @Unretained
-      Object v = event.getRawOldValue();
+      @Unretained Object v = event.getRawOldValue();
       // Note that v will be null instead of INVALID because setOldValue
       // converts INVALID to null.
       // But checkExpectedOldValue handle this and says INVALID equals null.
@@ -2706,8 +3164,10 @@ public abstract class AbstractRegionMap implements RegionMap {
   }
 
   // PRECONDITION: caller must be synced on re
-  private void setOldValueInEvent(EntryEventImpl event, RegionEntry re, boolean cacheWrite, boolean requireOldValue) {
-    boolean needToSetOldValue = cacheWrite || requireOldValue || event.getOperation().guaranteesOldValue();
+  private void setOldValueInEvent(
+      EntryEventImpl event, RegionEntry re, boolean cacheWrite, boolean requireOldValue) {
+    boolean needToSetOldValue =
+        cacheWrite || requireOldValue || event.getOperation().guaranteesOldValue();
     if (needToSetOldValue) {
       if (event.getOperation().guaranteesOldValue()) {
         // In these cases we want to even get the old value from disk if it is not in memory
@@ -2726,7 +3186,9 @@ public abstract class AbstractRegionMap implements RegionMap {
 
         @Retained
         @Released
-        Object oldValueInVM = re._getValueRetain(event.getLocalRegion(), true); // OFFHEAP: re synced so can use its ref.
+        Object oldValueInVM =
+            re._getValueRetain(
+                event.getLocalRegion(), true); // OFFHEAP: re synced so can use its ref.
 
         ReferenceCountHelper.unskipRefCountTracking();
         try {
@@ -2739,7 +3201,9 @@ public abstract class AbstractRegionMap implements RegionMap {
       // if the old value is in memory then if it is a GatewaySenderEventImpl then
       // we want to set the old value.
       @Unretained
-      Object ov = re._getValue(); // OFFHEAP _getValue is ok since re is synced and we only use it if its a GatewaySenderEventImpl.
+      Object ov =
+          re
+              ._getValue(); // OFFHEAP _getValue is ok since re is synced and we only use it if its a GatewaySenderEventImpl.
       // Since GatewaySenderEventImpl is never stored in an off-heap region nor a compressed region we don't need to worry about ov being compressed.
       if (ov instanceof GatewaySenderEventImpl) {
         event.setOldValue(ov, true);
@@ -2747,7 +3211,8 @@ public abstract class AbstractRegionMap implements RegionMap {
     }
   }
 
-  protected void createEntry(EntryEventImpl event, final LocalRegion owner, RegionEntry re) throws RegionClearedException {
+  protected void createEntry(EntryEventImpl event, final LocalRegion owner, RegionEntry re)
+      throws RegionClearedException {
     final boolean wasTombstone = re.isTombstone();
     processVersionTag(re, event);
     event.putNewEntry(owner, re);
@@ -2757,13 +3222,15 @@ public abstract class AbstractRegionMap implements RegionMap {
     }
   }
 
-  protected void updateEntry(EntryEventImpl event, boolean requireOldValue, Object oldValueForDelta, RegionEntry re) throws RegionClearedException {
+  protected void updateEntry(
+      EntryEventImpl event, boolean requireOldValue, Object oldValueForDelta, RegionEntry re)
+      throws RegionClearedException {
     final int oldSize = event.getLocalRegion().calculateRegionEntryValueSize(re);
     final boolean wasTombstone = re.isTombstone();
     processVersionTag(re, event);
     event.putExistingEntry(event.getLocalRegion(), re, requireOldValue, oldValueForDelta);
     EntryLogger.logPut(event);
-    updateSize(event, oldSize, true/* isUpdate */, wasTombstone);
+    updateSize(event, oldSize, true /* isUpdate */, wasTombstone);
   }
 
   private void updateLru(boolean clearOccured, RegionEntry re, EntryEventImpl event) {
@@ -2776,7 +3243,8 @@ public abstract class AbstractRegionMap implements RegionMap {
     }
   }
 
-  private void updateSize(EntryEventImpl event, int oldSize, boolean isUpdate, boolean wasTombstone) {
+  private void updateSize(
+      EntryEventImpl event, int oldSize, boolean isUpdate, boolean wasTombstone) {
     if (isUpdate && !wasTombstone) {
       _getOwner().updateSizeOnPut(event.getKey(), oldSize, event.getNewValueBucketSize());
     } else {
@@ -2793,7 +3261,15 @@ public abstract class AbstractRegionMap implements RegionMap {
     }
   }
 
-  private void invokeCacheWriter(RegionEntry re, EntryEventImpl event, boolean cacheWrite, CacheWriter cacheWriter, Set netWriteRecipients, boolean requireOldValue, Object expectedOldValue, boolean replaceOnClient) {
+  private void invokeCacheWriter(
+      RegionEntry re,
+      EntryEventImpl event,
+      boolean cacheWrite,
+      CacheWriter cacheWriter,
+      Set netWriteRecipients,
+      boolean requireOldValue,
+      Object expectedOldValue,
+      boolean replaceOnClient) {
     // invoke listeners only if region is initialized
     if (_getOwner().isInitialized() && cacheWrite) {
       // event.setOldValue already called in setOldValueInEvent
@@ -2807,7 +3283,9 @@ public abstract class AbstractRegionMap implements RegionMap {
           event.makeUpdate();
         }
       }
-      _getOwner().cacheWriteBeforePut(event, netWriteRecipients, cacheWriter, requireOldValue, expectedOldValue);
+      _getOwner()
+          .cacheWriteBeforePut(
+              event, netWriteRecipients, cacheWriter, requireOldValue, expectedOldValue);
     }
     if (!_getOwner().isInitialized() && !cacheWrite) {
       // block setting of old value in putNewValueNoSync, don't
@@ -2816,11 +3294,13 @@ public abstract class AbstractRegionMap implements RegionMap {
     }
   }
 
-  private boolean continueOverwriteDestroyed(RegionEntry re, EntryEventImpl event, boolean overwriteDestroyed, boolean ifNew) {
+  private boolean continueOverwriteDestroyed(
+      RegionEntry re, EntryEventImpl event, boolean overwriteDestroyed, boolean ifNew) {
     Token oldValueInVM = re.getValueAsToken();
     // if region is under GII, check if token is destroyed
     if (!overwriteDestroyed) {
-      if (!_getOwner().isInitialized() && (oldValueInVM == Token.DESTROYED || oldValueInVM == Token.TOMBSTONE)) {
+      if (!_getOwner().isInitialized()
+          && (oldValueInVM == Token.DESTROYED || oldValueInVM == Token.TOMBSTONE)) {
         event.setOldValueDestroyedToken();
         return false;
       }
@@ -2831,7 +3311,8 @@ public abstract class AbstractRegionMap implements RegionMap {
     return true;
   }
 
-  private boolean continueUpdate(RegionEntry re, EntryEventImpl event, boolean ifOld, boolean replaceOnClient) {
+  private boolean continueUpdate(
+      RegionEntry re, EntryEventImpl event, boolean ifOld, boolean replaceOnClient) {
     if (ifOld) {
       // only update, so just do tombstone maintainence and exit
       if (re.isTombstone() && event.getVersionTag() != null) {
@@ -2853,10 +3334,27 @@ public abstract class AbstractRegionMap implements RegionMap {
     return true;
   }
 
-  protected boolean destroyEntry(RegionEntry re, EntryEventImpl event, boolean inTokenMode, boolean cacheWrite, @Released Object expectedOldValue, boolean forceDestroy, boolean removeRecoveredEntry) throws CacheWriterException, TimeoutException, EntryNotFoundException, RegionClearedException {
+  protected boolean destroyEntry(
+      RegionEntry re,
+      EntryEventImpl event,
+      boolean inTokenMode,
+      boolean cacheWrite,
+      @Released Object expectedOldValue,
+      boolean forceDestroy,
+      boolean removeRecoveredEntry)
+      throws CacheWriterException, TimeoutException, EntryNotFoundException,
+          RegionClearedException {
     processVersionTag(re, event);
     final int oldSize = _getOwner().calculateRegionEntryValueSize(re);
-    boolean retVal = re.destroy(event.getLocalRegion(), event, inTokenMode, cacheWrite, expectedOldValue, forceDestroy, removeRecoveredEntry);
+    boolean retVal =
+        re.destroy(
+            event.getLocalRegion(),
+            event,
+            inTokenMode,
+            cacheWrite,
+            expectedOldValue,
+            forceDestroy,
+            removeRecoveredEntry);
     if (retVal) {
       EntryLogger.logDestroy(event);
       _getOwner().updateSizeOnRemove(event.getKey(), oldSize);
@@ -2864,7 +3362,21 @@ public abstract class AbstractRegionMap implements RegionMap {
     return retVal;
   }
 
-  public void txApplyPut(Operation p_putOp, Object key, Object nv, boolean didDestroy, TransactionId txId, TXRmtEvent txEvent, EventID eventId, Object aCallbackArgument, List<EntryEventImpl> pendingCallbacks, FilterRoutingInfo filterRoutingInfo, ClientProxyMembershipID bridgeContext, TXEntryState txEntryState, VersionTag versionTag, long tailKey) {
+  public void txApplyPut(
+      Operation p_putOp,
+      Object key,
+      Object nv,
+      boolean didDestroy,
+      TransactionId txId,
+      TXRmtEvent txEvent,
+      EventID eventId,
+      Object aCallbackArgument,
+      List<EntryEventImpl> pendingCallbacks,
+      FilterRoutingInfo filterRoutingInfo,
+      ClientProxyMembershipID bridgeContext,
+      TXEntryState txEntryState,
+      VersionTag versionTag,
+      long tailKey) {
     final LocalRegion owner = _getOwner();
     if (owner == null) {
       // "fix" for bug 32440
@@ -2880,11 +3392,24 @@ public abstract class AbstractRegionMap implements RegionMap {
     final boolean isTXHost = txEntryState != null;
     final boolean isClientTXOriginator = owner.cache.isClient() && !hasRemoteOrigin;
     final boolean isRegionReady = owner.isInitialized();
-    @Released
-    EntryEventImpl cbEvent = null;
+    @Released EntryEventImpl cbEvent = null;
     boolean invokeCallbacks = shouldCreateCBEvent(owner, isRegionReady);
     boolean cbEventInPending = false;
-    cbEvent = createCBEvent(owner, putOp, key, newValue, txId, txEvent, eventId, aCallbackArgument, filterRoutingInfo, bridgeContext, txEntryState, versionTag, tailKey);
+    cbEvent =
+        createCBEvent(
+            owner,
+            putOp,
+            key,
+            newValue,
+            txId,
+            txEvent,
+            eventId,
+            aCallbackArgument,
+            filterRoutingInfo,
+            bridgeContext,
+            txEntryState,
+            versionTag,
+            tailKey);
     try {
       if (logger.isDebugEnabled()) {
         logger.debug("txApplyPut cbEvent={}", cbEvent);
@@ -2908,7 +3433,7 @@ public abstract class AbstractRegionMap implements RegionMap {
         if (hasRemoteOrigin && !isTXHost && !isClientTXOriginator) {
           // If we are not a mirror then only apply the update to existing
           // entries
-          // 
+          //
           // If we are a mirror then then only apply the update to
           // existing entries when the operation is an update and we
           // are initialized.
@@ -2945,17 +3470,20 @@ public abstract class AbstractRegionMap implements RegionMap {
                     try {
                       processAndGenerateTXVersionTag(owner, cbEvent, re, txEntryState);
                       {
-                        re.setValue(owner, re.prepareValueForCache(owner, newValue, cbEvent, !putOp.isCreate()));
+                        re.setValue(
+                            owner,
+                            re.prepareValueForCache(owner, newValue, cbEvent, !putOp.isCreate()));
                       }
                       if (putOp.isCreate()) {
                         owner.updateSizeOnCreate(key, owner.calculateRegionEntryValueSize(re));
                       } else if (putOp.isUpdate()) {
-                        // Rahul : fix for 41694. Negative bucket size can also be 
-                        // an issue with normal GFE Delta and will have to be fixed 
-                        // in a similar manner and may be this fix the the one for 
+                        // Rahul : fix for 41694. Negative bucket size can also be
+                        // an issue with normal GFE Delta and will have to be fixed
+                        // in a similar manner and may be this fix the the one for
                         // other delta can be combined.
                         {
-                          owner.updateSizeOnPut(key, oldSize, owner.calculateRegionEntryValueSize(re));
+                          owner.updateSizeOnPut(
+                              key, oldSize, owner.calculateRegionEntryValueSize(re));
                         }
                       }
                     } catch (RegionClearedException rce) {
@@ -2965,7 +3493,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                       long lastMod = owner.cacheTimeMillis();
                       EntryLogger.logTXPut(_getOwnerObject(), key, nv);
                       re.updateStatsForPut(lastMod);
-                      owner.txApplyPutPart2(re, re.getKey(), newValue, lastMod, false, didDestroy, clearOccured);
+                      owner.txApplyPutPart2(
+                          re, re.getKey(), newValue, lastMod, false, didDestroy, clearOccured);
                     }
                   } finally {
                     if (re != null && owner.indexMaintenanceSynchronous) {
@@ -2976,7 +3505,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                     cbEvent.makeUpdate();
                     switchEventOwnerAndOriginRemote(cbEvent, hasRemoteOrigin);
                     if (pendingCallbacks == null) {
-                      owner.invokeTXCallbacks(EnumListenerEvent.AFTER_UPDATE, cbEvent, hasRemoteOrigin);
+                      owner.invokeTXCallbacks(
+                          EnumListenerEvent.AFTER_UPDATE, cbEvent, hasRemoteOrigin);
                     } else {
                       pendingCallbacks.add(cbEvent);
                       cbEventInPending = true;
@@ -3030,14 +3560,18 @@ public abstract class AbstractRegionMap implements RegionMap {
                       oldRe.txDidDestroy(owner.cacheTimeMillis());
                     }
                     if (txEvent != null) {
-                      txEvent.addPut(putOp, owner, oldRe, oldRe.getKey(), newValue, aCallbackArgument);
+                      txEvent.addPut(
+                          putOp, owner, oldRe, oldRe.getKey(), newValue, aCallbackArgument);
                     }
                     oldRe.setValueResultOfSearch(putOp.isNetSearch());
                     try {
                       processAndGenerateTXVersionTag(owner, cbEvent, oldRe, txEntryState);
                       boolean wasTombstone = oldRe.isTombstone();
                       {
-                        oldRe.setValue(owner, oldRe.prepareValueForCache(owner, newValue, cbEvent, !putOp.isCreate()));
+                        oldRe.setValue(
+                            owner,
+                            oldRe.prepareValueForCache(
+                                owner, newValue, cbEvent, !putOp.isCreate()));
                         if (wasTombstone) {
                           owner.unscheduleTombstone(oldRe);
                         }
@@ -3045,12 +3579,13 @@ public abstract class AbstractRegionMap implements RegionMap {
                       if (putOp.isCreate()) {
                         owner.updateSizeOnCreate(key, owner.calculateRegionEntryValueSize(oldRe));
                       } else if (putOp.isUpdate()) {
-                        // Rahul : fix for 41694. Negative bucket size can also be 
-                        // an issue with normal GFE Delta and will have to be fixed 
-                        // in a similar manner and may be this fix the the one for 
+                        // Rahul : fix for 41694. Negative bucket size can also be
+                        // an issue with normal GFE Delta and will have to be fixed
+                        // in a similar manner and may be this fix the the one for
                         // other delta can be combined.
                         {
-                          owner.updateSizeOnPut(key, oldSize, owner.calculateRegionEntryValueSize(oldRe));
+                          owner.updateSizeOnPut(
+                              key, oldSize, owner.calculateRegionEntryValueSize(oldRe));
                         }
                       }
                     } catch (RegionClearedException rce) {
@@ -3060,7 +3595,14 @@ public abstract class AbstractRegionMap implements RegionMap {
                       long lastMod = System.currentTimeMillis();
                       EntryLogger.logTXPut(_getOwnerObject(), key, nv);
                       oldRe.updateStatsForPut(lastMod);
-                      owner.txApplyPutPart2(oldRe, oldRe.getKey(), newValue, lastMod, false, didDestroy, clearOccured);
+                      owner.txApplyPutPart2(
+                          oldRe,
+                          oldRe.getKey(),
+                          newValue,
+                          lastMod,
+                          false,
+                          didDestroy,
+                          clearOccured);
                     }
                   } finally {
                     if (oldRe != null && owner.indexMaintenanceSynchronous) {
@@ -3073,7 +3615,12 @@ public abstract class AbstractRegionMap implements RegionMap {
                     }
                     switchEventOwnerAndOriginRemote(cbEvent, hasRemoteOrigin);
                     if (pendingCallbacks == null) {
-                      owner.invokeTXCallbacks(cbEvent.op.isCreate() ? EnumListenerEvent.AFTER_CREATE : EnumListenerEvent.AFTER_UPDATE, cbEvent, true/*callDispatchListenerEvent*/);
+                      owner.invokeTXCallbacks(
+                          cbEvent.op.isCreate()
+                              ? EnumListenerEvent.AFTER_CREATE
+                              : EnumListenerEvent.AFTER_UPDATE,
+                          cbEvent,
+                          true /*callDispatchListenerEvent*/);
                     } else {
                       pendingCallbacks.add(cbEvent);
                       cbEventInPending = true;
@@ -3110,9 +3657,12 @@ public abstract class AbstractRegionMap implements RegionMap {
 
                   processAndGenerateTXVersionTag(owner, cbEvent, newRe, txEntryState);
                   {
-                    newRe.setValue(owner, newRe.prepareValueForCache(owner, newValue, cbEvent, !putOp.isCreate()));
+                    newRe.setValue(
+                        owner,
+                        newRe.prepareValueForCache(owner, newValue, cbEvent, !putOp.isCreate()));
                   }
-                  owner.updateSizeOnCreate(newRe.getKey(), owner.calculateRegionEntryValueSize(newRe));
+                  owner.updateSizeOnCreate(
+                      newRe.getKey(), owner.calculateRegionEntryValueSize(newRe));
                 } catch (RegionClearedException rce) {
                   clearOccured = true;
                 }
@@ -3120,7 +3670,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                   long lastMod = System.currentTimeMillis();
                   EntryLogger.logTXPut(_getOwnerObject(), key, nv);
                   newRe.updateStatsForPut(lastMod);
-                  owner.txApplyPutPart2(newRe, newRe.getKey(), newValue, lastMod, true, didDestroy, clearOccured);
+                  owner.txApplyPutPart2(
+                      newRe, newRe.getKey(), newValue, lastMod, true, didDestroy, clearOccured);
                 }
               } finally {
                 if (newRe != null && owner.indexMaintenanceSynchronous) {
@@ -3133,7 +3684,8 @@ public abstract class AbstractRegionMap implements RegionMap {
                 cbEvent.setOldValue(null);
                 switchEventOwnerAndOriginRemote(cbEvent, hasRemoteOrigin);
                 if (pendingCallbacks == null) {
-                  owner.invokeTXCallbacks(EnumListenerEvent.AFTER_CREATE, cbEvent, true/*callDispatchListenerEvent*/);
+                  owner.invokeTXCallbacks(
+                      EnumListenerEvent.AFTER_CREATE, cbEvent, true /*callDispatchListenerEvent*/);
                 } else {
                   pendingCallbacks.add(cbEvent);
                   cbEventInPending = true;
@@ -3163,22 +3715,21 @@ public abstract class AbstractRegionMap implements RegionMap {
         }
       }
     } finally {
-      if (!cbEventInPending)
-        cbEvent.release();
+      if (!cbEventInPending) cbEvent.release();
     }
   }
 
-  private void txHandleWANEvent(final LocalRegion owner, EntryEventImpl cbEvent, TXEntryState txEntryState) {
+  private void txHandleWANEvent(
+      final LocalRegion owner, EntryEventImpl cbEvent, TXEntryState txEntryState) {
     ((BucketRegion) owner).handleWANEvent(cbEvent);
     if (txEntryState != null) {
       txEntryState.setTailKey(cbEvent.getTailKey());
     }
   }
 
-  /**
-   * called from txApply* methods to process and generate versionTags.
-   */
-  private void processAndGenerateTXVersionTag(final LocalRegion owner, EntryEventImpl cbEvent, RegionEntry re, TXEntryState txEntryState) {
+  /** called from txApply* methods to process and generate versionTags. */
+  private void processAndGenerateTXVersionTag(
+      final LocalRegion owner, EntryEventImpl cbEvent, RegionEntry re, TXEntryState txEntryState) {
     if (shouldPerformConcurrencyChecks(owner, cbEvent)) {
       try {
         if (txEntryState != null && txEntryState.getRemoteVersionTag() != null) {
@@ -3207,17 +3758,17 @@ public abstract class AbstractRegionMap implements RegionMap {
     }
   }
 
-  /**
-   * Checks for concurrency checks enabled on Region and that cbEvent is not null.
-   */
+  /** Checks for concurrency checks enabled on Region and that cbEvent is not null. */
   private boolean shouldPerformConcurrencyChecks(LocalRegion owner, EntryEventImpl cbEvent) {
     return owner.getConcurrencyChecksEnabled() && cbEvent != null;
   }
 
   /**
-   * Switch the event's region from BucketRegion to owning PR and set originRemote to the given value
+   * Switch the event's region from BucketRegion to owning PR and set originRemote to the given
+   * value
    */
-  static EntryEventImpl switchEventOwnerAndOriginRemote(EntryEventImpl event, boolean originRemote) {
+  static EntryEventImpl switchEventOwnerAndOriginRemote(
+      EntryEventImpl event, boolean originRemote) {
     assert event != null;
     if (event.getRegion().isUsedForPartitionedRegionBucket()) {
       LocalRegion pr = event.getRegion().getPartitionedRegion();
@@ -3228,8 +3779,9 @@ public abstract class AbstractRegionMap implements RegionMap {
   }
 
   /**
-   * Removing the existing indexed value requires the current value in the cache, 
-   * that is the one prior to applying the operation.
+   * Removing the existing indexed value requires the current value in the cache, that is the one
+   * prior to applying the operation.
+   *
    * @param op
    * @param entry the RegionEntry that contains the value prior to applying the op
    */
@@ -3238,7 +3790,10 @@ public abstract class AbstractRegionMap implements RegionMap {
       IndexManager idxManager = _getOwner().getIndexManager();
       if (idxManager != null) {
         try {
-          idxManager.updateIndexes(entry, IndexManager.REMOVE_ENTRY, op.isUpdate() ? IndexProtocol.BEFORE_UPDATE_OP : IndexProtocol.OTHER_OP);
+          idxManager.updateIndexes(
+              entry,
+              IndexManager.REMOVE_ENTRY,
+              op.isUpdate() ? IndexProtocol.BEFORE_UPDATE_OP : IndexProtocol.OTHER_OP);
         } catch (QueryException e) {
           throw new IndexMaintenanceException(e);
         }
@@ -3247,8 +3802,9 @@ public abstract class AbstractRegionMap implements RegionMap {
   }
 
   public void dumpMap() {
-    logger.debug("dump of concurrent map of size {} for region {}", this._getMap().size(), this._getOwner());
-    for (Iterator it = this._getMap().values().iterator(); it.hasNext();) {
+    logger.debug(
+        "dump of concurrent map of size {} for region {}", this._getMap().size(), this._getOwner());
+    for (Iterator it = this._getMap().values().iterator(); it.hasNext(); ) {
       logger.trace("dumpMap:" + it.next().toString());
     }
   }
@@ -3265,12 +3821,28 @@ public abstract class AbstractRegionMap implements RegionMap {
       }*/
       lr = owner.getPartitionedRegion();
     }
-    return (isPartitioned || isInitialized) && (lr.shouldDispatchListenerEvent() || lr.shouldNotifyBridgeClients() || lr.getConcurrencyChecksEnabled());
+    return (isPartitioned || isInitialized)
+        && (lr.shouldDispatchListenerEvent()
+            || lr.shouldNotifyBridgeClients()
+            || lr.getConcurrencyChecksEnabled());
   }
 
   /** create a callback event for applying a transactional change to the local cache */
   @Retained
-  public static final EntryEventImpl createCBEvent(final LocalRegion re, Operation op, Object key, Object newValue, TransactionId txId, TXRmtEvent txEvent, EventID eventId, Object aCallbackArgument, FilterRoutingInfo filterRoutingInfo, ClientProxyMembershipID bridgeContext, TXEntryState txEntryState, VersionTag versionTag, long tailKey) {
+  public static final EntryEventImpl createCBEvent(
+      final LocalRegion re,
+      Operation op,
+      Object key,
+      Object newValue,
+      TransactionId txId,
+      TXRmtEvent txEvent,
+      EventID eventId,
+      Object aCallbackArgument,
+      FilterRoutingInfo filterRoutingInfo,
+      ClientProxyMembershipID bridgeContext,
+      TXEntryState txEntryState,
+      VersionTag versionTag,
+      long tailKey) {
     DistributedMember originator = null;
     //txId should not be null even on localOrigin
     Assert.assertTrue(txId != null);
@@ -3282,7 +3854,9 @@ public abstract class AbstractRegionMap implements RegionMap {
     }
 
     @Retained
-    EntryEventImpl retVal = EntryEventImpl.create(re, op, key, newValue, aCallbackArgument, txEntryState == null, originator);
+    EntryEventImpl retVal =
+        EntryEventImpl.create(
+            re, op, key, newValue, aCallbackArgument, txEntryState == null, originator);
     boolean returnedRetVal = false;
     try {
 
@@ -3322,12 +3896,17 @@ public abstract class AbstractRegionMap implements RegionMap {
         }
       }
       if (logger.isTraceEnabled()) {
-        logger.trace("createCBEvent filterRouting={} computeFilterInfo={} local routing={}", filterRoutingInfo, computeFilterInfo, localRouting);
+        logger.trace(
+            "createCBEvent filterRouting={} computeFilterInfo={} local routing={}",
+            filterRoutingInfo,
+            computeFilterInfo,
+            localRouting);
       }
 
       if (re.isUsedForPartitionedRegionBucket()) {
         BucketRegion bucket = (BucketRegion) re;
-        if (BucketRegion.FORCE_LOCAL_LISTENERS_INVOCATION || bucket.getBucketAdvisor().isPrimary()) {
+        if (BucketRegion.FORCE_LOCAL_LISTENERS_INVOCATION
+            || bucket.getBucketAdvisor().isPrimary()) {
           retVal.setInvokePRCallbacks(true);
         } else {
           retVal.setInvokePRCallbacks(false);
@@ -3416,8 +3995,7 @@ public abstract class AbstractRegionMap implements RegionMap {
   void lockForCacheModification(LocalRegion owner, EntryEventImpl event) {
     boolean lockedByBulkOp = event.isBulkOpInProgress() && owner.dataPolicy.withReplication();
 
-    if (armLockTestHook != null)
-      armLockTestHook.beforeLock(owner, event);
+    if (armLockTestHook != null) armLockTestHook.beforeLock(owner, event);
 
     if (!event.isOriginRemote() && !lockedByBulkOp && !owner.hasServerProxy()) {
       RegionVersionVector vector = owner.getVersionVector();
@@ -3426,17 +4004,14 @@ public abstract class AbstractRegionMap implements RegionMap {
       }
     }
 
-    if (armLockTestHook != null)
-      armLockTestHook.afterLock(owner, event);
-
+    if (armLockTestHook != null) armLockTestHook.afterLock(owner, event);
   }
 
   /** release version-generation permission from the region's version vector */
   void releaseCacheModificationLock(LocalRegion owner, EntryEventImpl event) {
     boolean lockedByBulkOp = event.isBulkOpInProgress() && owner.dataPolicy.withReplication();
 
-    if (armLockTestHook != null)
-      armLockTestHook.beforeRelease(owner, event);
+    if (armLockTestHook != null) armLockTestHook.beforeRelease(owner, event);
 
     if (!event.isOriginRemote() && !lockedByBulkOp && !owner.hasServerProxy()) {
       RegionVersionVector vector = owner.getVersionVector();
@@ -3445,16 +4020,13 @@ public abstract class AbstractRegionMap implements RegionMap {
       }
     }
 
-    if (armLockTestHook != null)
-      armLockTestHook.afterRelease(owner, event);
-
+    if (armLockTestHook != null) armLockTestHook.afterRelease(owner, event);
   }
 
   /** get version-generation permission from the region's version vector */
   private void lockForTXCacheModification(LocalRegion owner, VersionTag tag) {
 
-    if (armLockTestHook != null)
-      armLockTestHook.beforeLock(owner, null);
+    if (armLockTestHook != null) armLockTestHook.beforeLock(owner, null);
 
     if (!(tag != null && tag.isFromOtherMember())) {
       RegionVersionVector vector = owner.getVersionVector();
@@ -3463,16 +4035,13 @@ public abstract class AbstractRegionMap implements RegionMap {
       }
     }
 
-    if (armLockTestHook != null)
-      armLockTestHook.afterLock(owner, null);
-
+    if (armLockTestHook != null) armLockTestHook.afterLock(owner, null);
   }
 
   /** release version-generation permission from the region's version vector */
   private void releaseTXCacheModificationLock(LocalRegion owner, VersionTag tag) {
 
-    if (armLockTestHook != null)
-      armLockTestHook.beforeRelease(owner, null);
+    if (armLockTestHook != null) armLockTestHook.beforeRelease(owner, null);
 
     if (!(tag != null && tag.isFromOtherMember())) {
       RegionVersionVector vector = owner.getVersionVector();
@@ -3481,14 +4050,12 @@ public abstract class AbstractRegionMap implements RegionMap {
       }
     }
 
-    if (armLockTestHook != null)
-      armLockTestHook.afterRelease(owner, null);
-
+    if (armLockTestHook != null) armLockTestHook.afterRelease(owner, null);
   }
 
   /**
-   * for testing race conditions between threads trying to apply ops to the
-   * same entry
+   * for testing race conditions between threads trying to apply ops to the same entry
+   *
    * @param entry the entry to attempt to add to the system
    */
   protected final RegionEntry putEntryIfAbsentForTest(RegionEntry entry) {
@@ -3513,7 +4080,10 @@ public abstract class AbstractRegionMap implements RegionMap {
     if (vs == null) {
       // if we have no VersionStamp why were we even added as a tombstone?
       // We used to see an NPE here. See bug 52092.
-      logger.error("Unexpected RegionEntry scheduled as tombstone: re.getClass {} destroyedVersion {}", re.getClass(), destroyedVersion);
+      logger.error(
+          "Unexpected RegionEntry scheduled as tombstone: re.getClass {} destroyedVersion {}",
+          re.getClass(),
+          destroyedVersion);
       return true;
     }
     if (vs.getEntryVersion() != destroyedVersion) {
@@ -3525,7 +4095,8 @@ public abstract class AbstractRegionMap implements RegionMap {
   }
 
   /** removes a tombstone that has expired locally */
-  public final boolean removeTombstone(RegionEntry re, VersionHolder version, boolean isEviction, boolean isScheduledTombstone) {
+  public final boolean removeTombstone(
+      RegionEntry re, VersionHolder version, boolean isEviction, boolean isScheduledTombstone) {
     boolean result = false;
     int destroyedVersion = version.getEntryVersion();
 
@@ -3534,16 +4105,35 @@ public abstract class AbstractRegionMap implements RegionMap {
         int entryVersion = re.getVersionStamp().getEntryVersion();
         if (!re.isTombstone() || entryVersion > destroyedVersion) {
           if (logger.isTraceEnabled(LogMarker.TOMBSTONE_COUNT)) {
-            logger.trace(LogMarker.TOMBSTONE_COUNT, "tombstone for {} was resurrected with v{}; destroyed version was v{}; count is {}; entryMap size is {}", re.getKey(), re.getVersionStamp().getEntryVersion(), destroyedVersion, this._getOwner().getTombstoneCount(), size());
+            logger.trace(
+                LogMarker.TOMBSTONE_COUNT,
+                "tombstone for {} was resurrected with v{}; destroyed version was v{}; count is {}; entryMap size is {}",
+                re.getKey(),
+                re.getVersionStamp().getEntryVersion(),
+                destroyedVersion,
+                this._getOwner().getTombstoneCount(),
+                size());
           }
         } else {
           if (logger.isTraceEnabled(LogMarker.TOMBSTONE_COUNT)) {
             if (entryVersion == destroyedVersion) {
               // logging this can put tremendous pressure on the log writer in tests
               // that "wait for silence"
-              logger.trace(LogMarker.TOMBSTONE_COUNT, "removing tombstone for {} with v{} rv{}; count is {}", re.getKey(), destroyedVersion, version.getRegionVersion(), (this._getOwner().getTombstoneCount() - 1));
+              logger.trace(
+                  LogMarker.TOMBSTONE_COUNT,
+                  "removing tombstone for {} with v{} rv{}; count is {}",
+                  re.getKey(),
+                  destroyedVersion,
+                  version.getRegionVersion(),
+                  (this._getOwner().getTombstoneCount() - 1));
             } else {
-              logger.trace(LogMarker.TOMBSTONE_COUNT, "removing entry (v{}) that is older than an expiring tombstone (v{} rv{}) for {}", entryVersion, destroyedVersion, version.getRegionVersion(), re.getKey());
+              logger.trace(
+                  LogMarker.TOMBSTONE_COUNT,
+                  "removing entry (v{}) that is older than an expiring tombstone (v{} rv{}) for {}",
+                  entryVersion,
+                  destroyedVersion,
+                  version.getRegionVersion(),
+                  re.getKey());
             }
           }
           try {
@@ -3552,9 +4142,9 @@ public abstract class AbstractRegionMap implements RegionMap {
               result = true;
               incEntryCount(-1);
               // Bug 51118: When the method is called by tombstoneGC thread, current 're' is an
-              // expired tombstone. Then we detected an destroyed (due to overwritingOldTombstone() 
+              // expired tombstone. Then we detected an destroyed (due to overwritingOldTombstone()
               // returns true earlier) tombstone with bigger entry version, it's safe to delete
-              // current tombstone 're' and adjust the tombstone count. 
+              // current tombstone 're' and adjust the tombstone count.
               //              lruEntryDestroy(re); // tombstones are invisible to LRU
               if (isScheduledTombstone) {
                 _getOwner().incTombstoneCount(-1);
@@ -3584,7 +4174,7 @@ public abstract class AbstractRegionMap implements RegionMap {
   public boolean verifyTombstoneCount(AtomicInteger numTombstones) {
     int deadEntries = 0;
     try {
-      for (Iterator it = _getMap().values().iterator(); it.hasNext();) {
+      for (Iterator it = _getMap().values().iterator(); it.hasNext(); ) {
         RegionEntry re = (RegionEntry) it.next();
         if (re.isTombstone()) {
           deadEntries++;
@@ -3592,7 +4182,11 @@ public abstract class AbstractRegionMap implements RegionMap {
       }
       if (deadEntries != numTombstones.get()) {
         if (logger.isDebugEnabled()) {
-          logger.debug("tombstone count ({}) does not match actual number of tombstones ({})", numTombstones, deadEntries, new Exception());
+          logger.debug(
+              "tombstone count ({}) does not match actual number of tombstones ({})",
+              numTombstones,
+              deadEntries,
+              new Exception());
         }
         return false;
       } else {
@@ -3635,5 +4229,4 @@ public abstract class AbstractRegionMap implements RegionMap {
   public void setARMLockTestHook(ARMLockTestHook theHook) {
     armLockTestHook = theHook;
   }
-
 }

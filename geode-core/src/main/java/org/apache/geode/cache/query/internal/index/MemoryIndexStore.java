@@ -49,15 +49,16 @@ import org.apache.geode.internal.cache.persistence.query.CloseableIterator;
 
 /**
  * The in-memory index storage
- * 
+ *
  * @since GemFire 8.0
  */
 public class MemoryIndexStore implements IndexStore {
   /**
-   * Map for valueOf(indexedExpression)=>RegionEntries. SortedMap<Object,
-   * (RegionEntry | List<RegionEntry>)>. Package access for unit tests.
+   * Map for valueOf(indexedExpression)=>RegionEntries. SortedMap<Object, (RegionEntry |
+   * List<RegionEntry>)>. Package access for unit tests.
    */
-  final ConcurrentNavigableMap valueToEntriesMap = new ConcurrentSkipListMap(TypeUtils.getExtendedNumericComparator());
+  final ConcurrentNavigableMap valueToEntriesMap =
+      new ConcurrentSkipListMap(TypeUtils.getExtendedNumericComparator());
 
   // number of keys
   protected volatile AtomicInteger numIndexKeys = new AtomicInteger(0);
@@ -90,14 +91,17 @@ public class MemoryIndexStore implements IndexStore {
     // Initialize the reverse-map if in-place modification is set by the
     // application.
     if (IndexManager.isObjectModificationInplace()) {
-      this.entryToValuesMap = new ConcurrentHashMap(ra.getInitialCapacity(), ra.getLoadFactor(), ra.getConcurrencyLevel());
+      this.entryToValuesMap =
+          new ConcurrentHashMap(
+              ra.getInitialCapacity(), ra.getLoadFactor(), ra.getConcurrencyLevel());
     }
     this.internalIndexStats = internalIndexStats;
     this.cache = cache;
   }
 
   @Override
-  public void updateMapping(Object newKey, Object oldKey, RegionEntry entry, Object oldValue) throws IMQException {
+  public void updateMapping(Object newKey, Object oldKey, RegionEntry entry, Object oldValue)
+      throws IMQException {
     try {
 
       if (DefaultQuery.testHook != null) {
@@ -175,14 +179,16 @@ public class MemoryIndexStore implements IndexStore {
           IndexElemArray elemArray = (IndexElemArray) regionEntries;
           synchronized (elemArray) {
             if (elemArray.size() >= IndexManager.INDEX_ELEMARRAY_THRESHOLD) {
-              IndexConcurrentHashSet set = new IndexConcurrentHashSet(IndexManager.INDEX_ELEMARRAY_THRESHOLD + 20, 0.75f, 1);
+              IndexConcurrentHashSet set =
+                  new IndexConcurrentHashSet(IndexManager.INDEX_ELEMARRAY_THRESHOLD + 20, 0.75f, 1);
               // Replace first so that we are sure that the set is placed in
               // index then we should add old elements in the new set.
 
               if (DefaultQuery.testHook != null) {
-                DefaultQuery.testHook.doTestHook("BEGIN_TRANSITION_FROM_ELEMARRAY_TO_CONCURRENT_HASH_SET");
+                DefaultQuery.testHook.doTestHook(
+                    "BEGIN_TRANSITION_FROM_ELEMARRAY_TO_CONCURRENT_HASH_SET");
               }
-              //on a remove from the elem array, another thread could start and complete his remove 
+              //on a remove from the elem array, another thread could start and complete his remove
               //at this point, that is why we need to replace before adding the elem array elements
               //once we put this set into the forward map, we know any future removes are either captured
               //by our instance of the elem array, or the remove operations will need to do a retry?
@@ -197,11 +203,17 @@ public class MemoryIndexStore implements IndexStore {
                 if (!this.valueToEntriesMap.replace(newKey, TRANSITIONING_TOKEN, set)) {
                   //This should never happen.  If we see this in the log, then something is wrong with the TRANSITIONING TOKEN and synchronization of changing collection types
                   //we should then just go from RE to CHS and completely remove the Elem Array.
-                  region.getCache().getLogger().warning("Unable to transition from index elem to concurrent hash set.  Index needs to be recreated");
-                  throw new IndexMaintenanceException("Unable to transition from index elem to concurrent hash set.  Index needs to be recreated");
+                  region
+                      .getCache()
+                      .getLogger()
+                      .warning(
+                          "Unable to transition from index elem to concurrent hash set.  Index needs to be recreated");
+                  throw new IndexMaintenanceException(
+                      "Unable to transition from index elem to concurrent hash set.  Index needs to be recreated");
                 }
                 if (DefaultQuery.testHook != null) {
-                  DefaultQuery.testHook.doTestHook("COMPLETE_TRANSITION_FROM_ELEMARRAY_TO_CONCURRENT_HASH_SET");
+                  DefaultQuery.testHook.doTestHook(
+                      "COMPLETE_TRANSITION_FROM_ELEMARRAY_TO_CONCURRENT_HASH_SET");
                 }
               }
             } else {
@@ -234,10 +246,9 @@ public class MemoryIndexStore implements IndexStore {
   }
 
   /**
-   * Find the old key by traversing the forward map in case of in-place update
-   * modification
-   * If not found it means the value object was modified with same value. So
-   * oldKey is same as newKey.
+   * Find the old key by traversing the forward map in case of in-place update modification If not
+   * found it means the value object was modified with same value. So oldKey is same as newKey.
+   *
    * @param newKey
    * @param entry
    * @return oldKey
@@ -282,7 +293,8 @@ public class MemoryIndexStore implements IndexStore {
     }
   }
 
-  protected boolean basicRemoveMapping(Object key, RegionEntry entry, boolean findOldKey) throws IMQException {
+  protected boolean basicRemoveMapping(Object key, RegionEntry entry, boolean findOldKey)
+      throws IMQException {
     boolean found = false;
     boolean possiblyAlreadyRemoved = false;
     try {
@@ -356,7 +368,9 @@ public class MemoryIndexStore implements IndexStore {
     if (found) {
       // Update stats if entry was actually removed
       internalIndexStats.incNumValues(-1);
-    } else if ((!found && !possiblyAlreadyRemoved) && !IndexManager.isObjectModificationInplace() && key != null) {
+    } else if ((!found && !possiblyAlreadyRemoved)
+        && !IndexManager.isObjectModificationInplace()
+        && key != null) {
       // if there is an inplace-modification find old key by iterating
       // over fwd map and then remove the mapping
       if (findOldKey) {
@@ -387,10 +401,7 @@ public class MemoryIndexStore implements IndexStore {
     return newKey;
   }
 
-  /**
-   * Convert a RegionEntry or THashSet<RegionEntry> to be consistently a
-   * Collection
-   */
+  /** Convert a RegionEntry or THashSet<RegionEntry> to be consistently a Collection */
   /*private Collection regionEntryCollection(Object regionEntries) {
     if (regionEntries instanceof RegionEntry) {
       return Collections.singleton(regionEntries);
@@ -400,20 +411,32 @@ public class MemoryIndexStore implements IndexStore {
 
   @Override
   public CloseableIterator<IndexStoreEntry> get(Object indexKey) {
-    return new MemoryIndexStoreIterator(this.valueToEntriesMap.subMap(indexKey, true, indexKey, true), indexKey, null);
+    return new MemoryIndexStoreIterator(
+        this.valueToEntriesMap.subMap(indexKey, true, indexKey, true), indexKey, null);
   }
 
   @Override
-  public CloseableIterator<IndexStoreEntry> iterator(Object start, boolean startInclusive, Object end, boolean endInclusive, Collection keysToRemove) {
+  public CloseableIterator<IndexStoreEntry> iterator(
+      Object start,
+      boolean startInclusive,
+      Object end,
+      boolean endInclusive,
+      Collection keysToRemove) {
     if (start == null) {
-      return new MemoryIndexStoreIterator(this.valueToEntriesMap.headMap(end, endInclusive), null, keysToRemove);
+      return new MemoryIndexStoreIterator(
+          this.valueToEntriesMap.headMap(end, endInclusive), null, keysToRemove);
     }
-    return new MemoryIndexStoreIterator(this.valueToEntriesMap.subMap(start, startInclusive, end, endInclusive), null, keysToRemove);
+    return new MemoryIndexStoreIterator(
+        this.valueToEntriesMap.subMap(start, startInclusive, end, endInclusive),
+        null,
+        keysToRemove);
   }
 
   @Override
-  public CloseableIterator<IndexStoreEntry> iterator(Object start, boolean startInclusive, Collection keysToRemove) {
-    return new MemoryIndexStoreIterator(this.valueToEntriesMap.tailMap(start, startInclusive), null, keysToRemove);
+  public CloseableIterator<IndexStoreEntry> iterator(
+      Object start, boolean startInclusive, Collection keysToRemove) {
+    return new MemoryIndexStoreIterator(
+        this.valueToEntriesMap.tailMap(start, startInclusive), null, keysToRemove);
   }
 
   @Override
@@ -422,16 +445,27 @@ public class MemoryIndexStore implements IndexStore {
   }
 
   @Override
-  public CloseableIterator<IndexStoreEntry> descendingIterator(Object start, boolean startInclusive, Object end, boolean endInclusive, Collection keysToRemove) {
+  public CloseableIterator<IndexStoreEntry> descendingIterator(
+      Object start,
+      boolean startInclusive,
+      Object end,
+      boolean endInclusive,
+      Collection keysToRemove) {
     if (start == null) {
-      return new MemoryIndexStoreIterator(this.valueToEntriesMap.headMap(end, endInclusive).descendingMap(), null, keysToRemove);
+      return new MemoryIndexStoreIterator(
+          this.valueToEntriesMap.headMap(end, endInclusive).descendingMap(), null, keysToRemove);
     }
-    return new MemoryIndexStoreIterator(this.valueToEntriesMap.subMap(start, startInclusive, end, endInclusive).descendingMap(), null, keysToRemove);
+    return new MemoryIndexStoreIterator(
+        this.valueToEntriesMap.subMap(start, startInclusive, end, endInclusive).descendingMap(),
+        null,
+        keysToRemove);
   }
 
   @Override
-  public CloseableIterator<IndexStoreEntry> descendingIterator(Object start, boolean startInclusive, Collection keysToRemove) {
-    return new MemoryIndexStoreIterator(this.valueToEntriesMap.tailMap(start, startInclusive).descendingMap(), null, keysToRemove);
+  public CloseableIterator<IndexStoreEntry> descendingIterator(
+      Object start, boolean startInclusive, Collection keysToRemove) {
+    return new MemoryIndexStoreIterator(
+        this.valueToEntriesMap.tailMap(start, startInclusive).descendingMap(), null, keysToRemove);
   }
 
   @Override
@@ -460,8 +494,8 @@ public class MemoryIndexStore implements IndexStore {
   }
 
   /**
-   * Get the object of interest from the region entry. For now it always gets
-   * the deserialized value.
+   * Get the object of interest from the region entry. For now it always gets the deserialized
+   * value.
    */
   @Override
   public Object getTargetObject(RegionEntry entry) {
@@ -550,10 +584,8 @@ public class MemoryIndexStore implements IndexStore {
   }
 
   /**
-   * A bi-directional iterator over the CSL. Iterates over the entries of CSL
-   * where entry is a mapping (value -> Collection) as well as over the
-   * Collection.
-   * 
+   * A bi-directional iterator over the CSL. Iterates over the entries of CSL where entry is a
+   * mapping (value -> Collection) as well as over the Collection.
    */
   private class MemoryIndexStoreIterator implements CloseableIterator<IndexStoreEntry> {
     final Map map;
@@ -571,7 +603,8 @@ public class MemoryIndexStore implements IndexStore {
       this(submap, indexKey, keysToRemove, GemFireCacheImpl.getInstance().cacheTimeMillis());
     }
 
-    private MemoryIndexStoreIterator(Map submap, Object indexKey, Collection keysToRemove, long iteratorStartTime) {
+    private MemoryIndexStoreIterator(
+        Map submap, Object indexKey, Collection keysToRemove, long iteratorStartTime) {
       this.map = submap;
       this.indexKey = indexKey;
       this.keysToRemove = keysToRemove == null ? null : new HashSet(keysToRemove);
@@ -580,13 +613,12 @@ public class MemoryIndexStore implements IndexStore {
     }
 
     /**
-     * This iterator iterates over the CSL map as well as on the collection of
-     * values for each entry in the map. If the map has next element, check if
-     * the previous valuesIterator (iterator on the Collection) has been created
-     * or has finished iterating. If not created, create an iterator on the
-     * Collection. If created and not finished, return, so that the next() call
-     * would create a new InMemoryIndexStorageEntry for the current key and next
-     * RE from the collection of values.
+     * This iterator iterates over the CSL map as well as on the collection of values for each entry
+     * in the map. If the map has next element, check if the previous valuesIterator (iterator on
+     * the Collection) has been created or has finished iterating. If not created, create an
+     * iterator on the Collection. If created and not finished, return, so that the next() call
+     * would create a new InMemoryIndexStorageEntry for the current key and next RE from the
+     * collection of values.
      */
     public boolean hasNext() {
       // return previous collection of values if not over
@@ -610,7 +642,10 @@ public class MemoryIndexStore implements IndexStore {
         // into results of range queries.
         // equality and not equality for null/undefined would create
         // valuesIterator so it would not come here
-        if (currKey != indexKey && (currKey == QueryService.UNDEFINED || currKey == IndexManager.NULL || keysToRemove != null && removeFromKeysToRemove(keysToRemove, currKey))) {
+        if (currKey != indexKey
+            && (currKey == QueryService.UNDEFINED
+                || currKey == IndexManager.NULL
+                || keysToRemove != null && removeFromKeysToRemove(keysToRemove, currKey))) {
           return hasNext();
         }
         // iterator on the collection of values for the index key
@@ -629,9 +664,8 @@ public class MemoryIndexStore implements IndexStore {
     }
 
     /**
-     * returns a new InMemoryIndexStorageEntry with current index key and its
-     * next value which is the next RE in the collection. Make sure hasNext()
-     * has been called before calling this method
+     * returns a new InMemoryIndexStorageEntry with current index key and its next value which is
+     * the next RE in the collection. Make sure hasNext() has been called before calling this method
      */
     public MemoryIndexStoreEntry next() {
       if (valuesIterator == null) {
@@ -640,8 +674,7 @@ public class MemoryIndexStore implements IndexStore {
       }
 
       RegionEntry re = (RegionEntry) valuesIterator.next();
-      if (re == null)
-        throw new NoSuchElementException();
+      if (re == null) throw new NoSuchElementException();
 
       currentEntry.setMemoryIndexStoreEntry(currKey, re);
       return currentEntry;
@@ -659,7 +692,8 @@ public class MemoryIndexStore implements IndexStore {
       Iterator iterator = keysToRemove.iterator();
       while (iterator.hasNext()) {
         try {
-          if (TypeUtils.compare(key, iterator.next(), OQLLexerTokenTypes.TOK_EQ).equals(Boolean.TRUE)) {
+          if (TypeUtils.compare(key, iterator.next(), OQLLexerTokenTypes.TOK_EQ)
+              .equals(Boolean.TRUE)) {
             iterator.remove();
             return true;
           }
@@ -688,16 +722,11 @@ public class MemoryIndexStore implements IndexStore {
       }
 
       sb.append("\n");
-
     }
     return sb.toString();
   }
 
-  /**
-   * A wrapper over the entry in the CSL index map. It maps IndexKey ->
-   * RegionEntry
-   * 
-   */
+  /** A wrapper over the entry in the CSL index map. It maps IndexKey -> RegionEntry */
   class MemoryIndexStoreEntry implements IndexStoreEntry {
     private Object deserializedIndexKey;
     private RegionEntry regionEntry;
@@ -737,9 +766,10 @@ public class MemoryIndexStore implements IndexStore {
 
     @Override
     public boolean isUpdateInProgress() {
-      return updateInProgress || regionEntry.isUpdateInProgress()
-      // The index update could have started just before the iterator was created. The entry still
-      // needs to be re-evaluated in this case.
+      return updateInProgress
+          || regionEntry.isUpdateInProgress()
+          // The index update could have started just before the iterator was created. The entry still
+          // needs to be re-evaluated in this case.
           || IndexManager.needsRecalculation(iteratorStartTime, regionEntry.getLastModified());
     }
   }
@@ -762,8 +792,13 @@ public class MemoryIndexStore implements IndexStore {
     }
 
     public String toString() {
-      return new StringBuilder("CachedEntryWrapper@").append(Integer.toHexString(System.identityHashCode(this))).append(' ').append(this.key).append(' ').append(this.value).toString();
+      return new StringBuilder("CachedEntryWrapper@")
+          .append(Integer.toHexString(System.identityHashCode(this)))
+          .append(' ')
+          .append(this.key)
+          .append(' ')
+          .append(this.value)
+          .toString();
     }
   }
-
 }

@@ -17,9 +17,9 @@
 package org.apache.geode.internal;
 
 /**
- * Allows tests to expect certain exceptions without the SystemFailure watchdog getting upset.
- * See bug 46988.
- * 
+ * Allows tests to expect certain exceptions without the SystemFailure watchdog getting upset. See
+ * bug 46988.
+ *
  * @since GemFire 7.0.1
  */
 public class SystemFailureTestHook {
@@ -27,16 +27,14 @@ public class SystemFailureTestHook {
   private static Class<?> expectedClass;
 
   /**
-   * If a test sets this to a non-null value then it should also
-   * set it to "null" with a finally block.
+   * If a test sets this to a non-null value then it should also set it to "null" with a finally
+   * block.
    */
   public static void setExpectedFailureClass(Class<?> expected) {
     expectedClass = expected;
   }
 
-  /**
-   * Returns true if the given failure is expected.
-   */
+  /** Returns true if the given failure is expected. */
   public static boolean errorIsExpected(Error failure) {
     return expectedClass != null && expectedClass.isInstance(failure);
   }

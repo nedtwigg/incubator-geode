@@ -25,11 +25,11 @@ import org.apache.geode.internal.cache.LocalRegion;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * <code>Wait</code> provides static utility methods to wait for some
- * asynchronous action with intermittent polling.
- * 
- * These methods can be used directly: <code>Wait.waitForCriterion(...)</code>,
- * however, they are intended to be referenced through static import:
+ * <code>Wait</code> provides static utility methods to wait for some asynchronous action with
+ * intermittent polling.
+ *
+ * <p>These methods can be used directly: <code>Wait.waitForCriterion(...)</code>, however, they are
+ * intended to be referenced through static import:
  *
  * <pre>
  * import static org.apache.geode.test.dunit.Wait.*;
@@ -41,7 +41,9 @@ import org.apache.geode.internal.logging.LogService;
  *
  * <p>Deprecated in favor of using {@link com.jayway.awaitility.Awaitility}.
  *
- * <p>Examples of using Awaitility:<pre>
+ * <p>Examples of using Awaitility:
+ *
+ * <pre>
  *
  * import static com.jayway.awaitility.Awaitility.*;
  * import static com.jayway.awaitility.Duration.*; // optional
@@ -69,10 +71,12 @@ import org.apache.geode.internal.logging.LogService;
  * </pre>
  *
  * <p>NOTE: By default, the pollDelay is equal to the pollInterval which defaults to
- * ONE_HUNDRED_MILLISECONDS. You may want to add pollDelay(ZERO) to force
- * Awaitility to check your condition before waiting the pollInterval.
+ * ONE_HUNDRED_MILLISECONDS. You may want to add pollDelay(ZERO) to force Awaitility to check your
+ * condition before waiting the pollInterval.
  *
- * <p>Example of detailed conversion to Awaitility:<pre>
+ * <p>Example of detailed conversion to Awaitility:
+ *
+ * <pre>
  * From:
  *
  * public boolean waitForClose() {
@@ -102,7 +106,6 @@ import org.apache.geode.internal.logging.LogService;
  * </pre>
  *
  * @deprecated Use {@link com.jayway.awaitility.Awaitility} instead.
- *
  * @see com.jayway.awaitility.Awaitility
  * @see com.jayway.awaitility.Duration
  * @see com.jayway.awaitility.core.ConditionFactory
@@ -112,12 +115,11 @@ public class Wait {
 
   private static final Logger logger = LogService.getLogger();
 
-  protected Wait() {
-  }
+  protected Wait() {}
 
   /**
    * Pause for a default interval (250 milliseconds).
-   *  
+   *
    * @deprecated Please use {@link com.jayway.awaitility.Awaitility} instead.
    */
   public static void pause() {
@@ -125,9 +127,9 @@ public class Wait {
   }
 
   /**
-   * Pause for the specified milliseconds. Make sure system clock has advanced
-   * by the specified number of millis before returning.
-   * 
+   * Pause for the specified milliseconds. Make sure system clock has advanced by the specified
+   * number of millis before returning.
+   *
    * @deprecated Please use {@link com.jayway.awaitility.Awaitility} instead.
    */
   public static final void pause(final int milliseconds) {
@@ -136,7 +138,7 @@ public class Wait {
     }
     final long target = System.currentTimeMillis() + milliseconds;
     try {
-      for (;;) {
+      for (; ; ) {
         long msLeft = target - System.currentTimeMillis();
         if (msLeft <= 0) {
           break;
@@ -150,7 +152,7 @@ public class Wait {
 
   /**
    * Wait until given criterion is met
-   * 
+   *
    * @param waitCriterion criterion to wait on
    * @param timeoutMillis total time to wait, in milliseconds
    * @param pollingInterval pause interval between waits
@@ -158,10 +160,14 @@ public class Wait {
    * @deprecated Please use {@link com.jayway.awaitility.Awaitility} instead.
    */
   @Deprecated
-  public static void waitForCriterion(final WaitCriterion waitCriterion, final long timeoutMillis, final long pollingInterval, final boolean throwOnTimeout) {
+  public static void waitForCriterion(
+      final WaitCriterion waitCriterion,
+      final long timeoutMillis,
+      final long pollingInterval,
+      final boolean throwOnTimeout) {
     long waitThisTime = jitterInterval(pollingInterval);
     final long tilt = System.currentTimeMillis() + timeoutMillis;
-    for (;;) {
+    for (; ; ) {
       if (waitCriterion.done()) {
         return; // success
       }
@@ -200,24 +206,26 @@ public class Wait {
 
   /**
    * Blocks until the clock used for expiration moves forward.
-   * 
+   *
    * @param cacheTimeMillisSource region that provides cacheTimeMillis
    * @return the last time stamp observed
    * @deprecated Please use {@link com.jayway.awaitility.Awaitility} instead.
    */
   public static final long waitForExpiryClockToChange(final LocalRegion cacheTimeMillisSource) {
-    return waitForExpiryClockToChange(cacheTimeMillisSource, cacheTimeMillisSource.cacheTimeMillis());
+    return waitForExpiryClockToChange(
+        cacheTimeMillisSource, cacheTimeMillisSource.cacheTimeMillis());
   }
 
   /**
    * Blocks until the clock used for expiration moves forward.
-   * 
+   *
    * @param cacheTimeMillisSource region that provides cacheTimeMillis
    * @param baseTime the timestamp that the clock must exceed
    * @return the last time stamp observed
    * @deprecated Please use {@link com.jayway.awaitility.Awaitility} instead.
    */
-  public static final long waitForExpiryClockToChange(final LocalRegion cacheTimeMillisSource, final long baseTime) {
+  public static final long waitForExpiryClockToChange(
+      final LocalRegion cacheTimeMillisSource, final long baseTime) {
     long nowTime;
     do {
       Thread.yield();
@@ -227,9 +235,9 @@ public class Wait {
   }
 
   /**
-   * Wait on a mutex.  This is done in a loop in order to address the 
-   * "spurious wakeup" "feature" in Java.
-   * 
+   * Wait on a mutex. This is done in a loop in order to address the "spurious wakeup" "feature" in
+   * Java.
+   *
    * @param waitCriterion condition to test
    * @param mutex object to lock and wait on
    * @param milliseconds total amount of time to wait
@@ -237,11 +245,16 @@ public class Wait {
    * @param throwOnTimeout if false, no error is thrown.
    * @deprecated Please use {@link com.jayway.awaitility.Awaitility} instead.
    */
-  public static void waitMutex(final WaitCriterion waitCriterion, final Object mutex, final long milliseconds, final long pollingInterval, final boolean throwOnTimeout) {
+  public static void waitMutex(
+      final WaitCriterion waitCriterion,
+      final Object mutex,
+      final long milliseconds,
+      final long pollingInterval,
+      final boolean throwOnTimeout) {
     final long tilt = System.currentTimeMillis() + milliseconds;
     long waitThisTime = jitterInterval(pollingInterval);
     synchronized (mutex) {
-      for (;;) {
+      for (; ; ) {
         if (waitCriterion.done()) {
           break;
         }
@@ -251,7 +264,8 @@ public class Wait {
           if (!throwOnTimeout) {
             return; // not an error, but we're done
           }
-          fail("Event never occurred after " + milliseconds + " ms: " + waitCriterion.description());
+          fail(
+              "Event never occurred after " + milliseconds + " ms: " + waitCriterion.description());
         }
 
         if (waitThisTime > timeLeft) {

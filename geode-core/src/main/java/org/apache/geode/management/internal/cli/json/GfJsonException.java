@@ -18,9 +18,7 @@ package org.apache.geode.management.internal.cli.json;
 
 /**
  * Wraps GemFire JSON Exceptions
- * 
- * 
- * 
+ *
  * @since GemFire 7.0
  */
 public class GfJsonException extends Exception {

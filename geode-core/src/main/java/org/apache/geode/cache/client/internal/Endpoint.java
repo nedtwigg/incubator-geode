@@ -25,8 +25,8 @@ import org.apache.geode.distributed.internal.ServerLocation;
 
 /**
  * Represents a server. Keeps track of information about the specific server
- * @since GemFire 5.7
  *
+ * @since GemFire 5.7
  */
 public class Endpoint {
 
@@ -38,7 +38,12 @@ public class Endpoint {
   private final DistributedMember memberId;
   private volatile boolean closed;
 
-  Endpoint(EndpointManagerImpl endpointManager, DistributedSystem ds, ServerLocation location, ConnectionStats stats, DistributedMember memberId) {
+  Endpoint(
+      EndpointManagerImpl endpointManager,
+      DistributedSystem ds,
+      ServerLocation location,
+      ConnectionStats stats,
+      DistributedMember memberId) {
     this.manager = endpointManager;
     this.location = location;
     this.stats = stats;
@@ -77,9 +82,7 @@ public class Endpoint {
     references.incrementAndGet();
   }
 
-  /**
-   * @return true if this was the last reference to the endpoint
-   */
+  /** @return true if this was the last reference to the endpoint */
   public boolean removeReference() {
     boolean lastReference = (references.decrementAndGet() <= 0);
     if (lastReference) {
@@ -88,9 +91,7 @@ public class Endpoint {
     return lastReference;
   }
 
-  /**
-   * @return the location of this server
-   */
+  /** @return the location of this server */
   public ServerLocation getLocation() {
     return location;
   }
@@ -103,5 +104,4 @@ public class Endpoint {
   public DistributedMember getMemberId() {
     return memberId;
   }
-
 }

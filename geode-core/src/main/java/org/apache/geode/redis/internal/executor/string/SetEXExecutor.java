@@ -29,7 +29,8 @@ import org.apache.geode.redis.internal.executor.AbstractExecutor;
 
 public class SetEXExecutor extends StringExecutor implements Extendable {
 
-  private final String ERROR_SECONDS_NOT_A_NUMBER = "The expiration argument provided was not a number";
+  private final String ERROR_SECONDS_NOT_A_NUMBER =
+      "The expiration argument provided was not a number";
 
   private final String ERROR_SECONDS_NOT_LEGAL = "The expiration argument must be greater than 0";
 
@@ -56,17 +57,18 @@ public class SetEXExecutor extends StringExecutor implements Extendable {
     try {
       expiration = Coder.bytesToLong(expirationArray);
     } catch (NumberFormatException e) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_SECONDS_NOT_A_NUMBER));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_SECONDS_NOT_A_NUMBER));
       return;
     }
 
     if (expiration <= 0) {
-      command.setResponse(Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_SECONDS_NOT_LEGAL));
+      command.setResponse(
+          Coder.getErrorResponse(context.getByteBufAllocator(), ERROR_SECONDS_NOT_LEGAL));
       return;
     }
 
-    if (!timeUnitMillis())
-      expiration *= AbstractExecutor.millisInSecond;
+    if (!timeUnitMillis()) expiration *= AbstractExecutor.millisInSecond;
 
     checkAndSetDataType(key, context);
     r.put(key, new ByteArrayWrapper(value));
@@ -74,7 +76,6 @@ public class SetEXExecutor extends StringExecutor implements Extendable {
     context.getRegionProvider().setExpiration(key, expiration);
 
     command.setResponse(Coder.getSimpleStringResponse(context.getByteBufAllocator(), SUCCESS));
-
   }
 
   protected boolean timeUnitMillis() {
@@ -85,5 +86,4 @@ public class SetEXExecutor extends StringExecutor implements Extendable {
   public String getArgsError() {
     return ArityDef.SETEX;
   }
-
 }

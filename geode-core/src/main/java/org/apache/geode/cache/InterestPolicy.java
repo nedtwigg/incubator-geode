@@ -20,14 +20,10 @@ package org.apache.geode.cache;
 import java.io.*;
 
 /**
- * Enumerated type for region subscription interest policy.
- * The interest policy specifies what data a subscriber is interested in having
- * in it's region.
- *
- *
+ * Enumerated type for region subscription interest policy. The interest policy specifies what data
+ * a subscriber is interested in having in it's region.
  *
  * @see SubscriptionAttributes
- *
  * @since GemFire 5.0
  */
 public class InterestPolicy implements java.io.Serializable {
@@ -38,57 +34,48 @@ public class InterestPolicy implements java.io.Serializable {
   private static final InterestPolicy[] VALUES = new InterestPolicy[2];
 
   /**
-   * This subscriber is interested in all data.
-   * More specifically operations done in this cache and
+   * This subscriber is interested in all data. More specifically operations done in this cache and
    * distributed operations done in remote caches.
-   * <p>
-   * When combined with {@link DataPolicy#EMPTY} this region will receive
-   * events for every distributed operation but will not store the data.
-   * <p>
-   * When combined with {@link DataPolicy#NORMAL} or
-   * {@link DataPolicy#PRELOADED} this region will accept
-   * {@link Region#create(Object, Object)} operations done remotely. Without
-   * the <code>ALL</code> interest policy, <code>NORMAL</code> and
-   * <code>PRELOADED</code> ignore <code>creates</code> that the region
-   * does  not have an existing entry for.
-   * <p>
-   * When combined with the {@link DataPolicy#withReplication replication
-   * policies} this interest has no effect.
-   * <p>
-   * When combined with {@link DataPolicy#PARTITION} this interest policy
-   * causes cache listeners to be notified of changes regardless of the
-   * physical location of the data affected.  That is, a listener in a VM
-   * using this policy will receive notification of all changes to the
-   * partitioned region.
+   *
+   * <p>When combined with {@link DataPolicy#EMPTY} this region will receive events for every
+   * distributed operation but will not store the data.
+   *
+   * <p>When combined with {@link DataPolicy#NORMAL} or {@link DataPolicy#PRELOADED} this region
+   * will accept {@link Region#create(Object, Object)} operations done remotely. Without the <code>
+   * ALL</code> interest policy, <code>NORMAL</code> and <code>PRELOADED</code> ignore <code>creates
+   * </code> that the region does not have an existing entry for.
+   *
+   * <p>When combined with the {@link DataPolicy#withReplication replication policies} this interest
+   * has no effect.
+   *
+   * <p>When combined with {@link DataPolicy#PARTITION} this interest policy causes cache listeners
+   * to be notified of changes regardless of the physical location of the data affected. That is, a
+   * listener in a VM using this policy will receive notification of all changes to the partitioned
+   * region.
    */
   public static final InterestPolicy ALL = new InterestPolicy("ALL");
 
   /**
-   * This subscriber is interested in data that is already in its cache.
-   * More specifically operations done in this cache and
-   * distributed operations done in remote caches.
-   * <p>
-   * When combined with {@link DataPolicy#EMPTY} this region will never
-   * receive events for distributed operations since its content is always
-   * empty.  It will continue to get events for operations done locally.
-   * <p>
-   * When combined with {@link DataPolicy#NORMAL} or
-   * {@link DataPolicy#PRELOADED} this region will accept remote operations
-   * done to entries it already has in its cache.
-   * <p>
-   * When combined with the {@link DataPolicy#withReplication replication
-   * policies} * this interest has no effect.
-   * <p>
-   * When combined with {@link DataPolicy#PARTITION} this interest policy
-   * causes cache listeners to be notified in the VM holding the affected data.
-   *  That is, listeners are only notified if the affected* key-value pair is
-   * in the same process as the listener.
+   * This subscriber is interested in data that is already in its cache. More specifically
+   * operations done in this cache and distributed operations done in remote caches.
+   *
+   * <p>When combined with {@link DataPolicy#EMPTY} this region will never receive events for
+   * distributed operations since its content is always empty. It will continue to get events for
+   * operations done locally.
+   *
+   * <p>When combined with {@link DataPolicy#NORMAL} or {@link DataPolicy#PRELOADED} this region
+   * will accept remote operations done to entries it already has in its cache.
+   *
+   * <p>When combined with the {@link DataPolicy#withReplication replication policies} * this
+   * interest has no effect.
+   *
+   * <p>When combined with {@link DataPolicy#PARTITION} this interest policy causes cache listeners
+   * to be notified in the VM holding the affected data. That is, listeners are only notified if the
+   * affected* key-value pair is in the same process as the listener.
    */
   public static final InterestPolicy CACHE_CONTENT = new InterestPolicy("CACHE_CONTENT");
 
-  /**
-   * The interest policy used by default; it is {@link #CACHE_CONTENT}.
-   */
+  /** The interest policy used by default; it is {@link #CACHE_CONTENT}. */
   public static final InterestPolicy DEFAULT = CACHE_CONTENT;
 
   /** The name of this mirror type. */
@@ -115,6 +102,7 @@ public class InterestPolicy implements java.io.Serializable {
 
   /**
    * Return true if this policy is {@link #ALL}.
+   *
    * @return true if this policy is {@link #ALL}.
    */
   public boolean isAll() {
@@ -123,6 +111,7 @@ public class InterestPolicy implements java.io.Serializable {
 
   /**
    * Return true if this policy is {@link #CACHE_CONTENT}.
+   *
    * @return true if this policy is {@link #CACHE_CONTENT}.
    */
   public boolean isCacheContent() {
@@ -131,15 +120,18 @@ public class InterestPolicy implements java.io.Serializable {
 
   /**
    * Return true if this policy is the default.
+   *
    * @return true if this policy is the default.
    */
   public boolean isDefault() {
     return this == DEFAULT;
   }
 
-  /** Returns a string representation for this interest policy.
-     * @return the name of this interest policy.
-     */
+  /**
+   * Returns a string representation for this interest policy.
+   *
+   * @return the name of this interest policy.
+   */
   @Override
   public String toString() {
     return this.name;

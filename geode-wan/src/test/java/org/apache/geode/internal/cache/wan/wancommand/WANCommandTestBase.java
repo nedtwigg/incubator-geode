@@ -81,7 +81,9 @@ public abstract class WANCommandTestBase extends CliCommandTestBase {
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     props.setProperty(LOCATORS, "localhost[" + port + "]");
-    props.setProperty(START_LOCATOR, "localhost[" + port + "],server=true,peer=true,hostname-for-clients=localhost");
+    props.setProperty(
+        START_LOCATOR,
+        "localhost[" + port + "],server=true,peer=true,hostname-for-clients=localhost");
     InternalDistributedSystem ds = getSystem(props);
     cache = CacheFactory.create(ds);
     return port;
@@ -93,7 +95,9 @@ public abstract class WANCommandTestBase extends CliCommandTestBase {
     props.setProperty(MCAST_PORT, "0");
     props.setProperty(DISTRIBUTED_SYSTEM_ID, "" + dsId);
     props.setProperty(LOCATORS, "localhost[" + port + "]");
-    props.setProperty(START_LOCATOR, "localhost[" + port + "],server=true,peer=true,hostname-for-clients=localhost");
+    props.setProperty(
+        START_LOCATOR,
+        "localhost[" + port + "],server=true,peer=true,hostname-for-clients=localhost");
     props.setProperty(REMOTE_LOCATORS, "localhost[" + remoteLocPort + "]");
     getSystem(props);
     return port;
@@ -116,11 +120,21 @@ public abstract class WANCommandTestBase extends CliCommandTestBase {
     cache = CacheFactory.create(ds);
   }
 
-  public void createSender(String dsName, int remoteDsId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, GatewayEventFilter filter, boolean isManualStart) {
-    File persistentDirectory = new File(dsName + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+  public void createSender(
+      String dsName,
+      int remoteDsId,
+      boolean isParallel,
+      Integer maxMemory,
+      Integer batchSize,
+      boolean isConflation,
+      boolean isPersistent,
+      GatewayEventFilter filter,
+      boolean isManualStart) {
+    File persistentDirectory =
+        new File(dsName + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
     persistentDirectory.mkdir();
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
-    File[] dirs1 = new File[] { persistentDirectory };
+    File[] dirs1 = new File[] {persistentDirectory};
     if (isParallel) {
       GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
       gateway.setParallel(true);
@@ -245,7 +259,6 @@ public abstract class WANCommandTestBase extends CliCommandTestBase {
     fact.setManualStart(true);
     GatewayReceiver receiver = fact.create();
     return receiver.getPort();
-
   }
 
   public void startReceiver() {
@@ -298,16 +311,14 @@ public abstract class WANCommandTestBase extends CliCommandTestBase {
     return Locator.getLocators().get(0).getPort();
   }
 
-  /**
-   * Enable system property gemfire.disableManagement false in each VM.
-   */
+  /** Enable system property gemfire.disableManagement false in each VM. */
   public void enableManagement() {
-    Invoke.invokeInEveryVM(new SerializableRunnable("Enable Management") {
-      public void run() {
-        System.setProperty(InternalDistributedSystem.DISABLE_MANAGEMENT_PROPERTY, "false");
-      }
-    });
-
+    Invoke.invokeInEveryVM(
+        new SerializableRunnable("Enable Management") {
+          public void run() {
+            System.setProperty(InternalDistributedSystem.DISABLE_MANAGEMENT_PROPERTY, "false");
+          }
+        });
   }
 
   public void verifySenderState(String senderId, boolean isRunning, boolean isPaused) {
@@ -329,7 +340,24 @@ public abstract class WANCommandTestBase extends CliCommandTestBase {
     }
   }
 
-  public void verifySenderAttributes(String senderId, int remoteDsID, boolean isParallel, boolean manualStart, int socketBufferSize, int socketReadTimeout, boolean enableBatchConflation, int batchSize, int batchTimeInterval, boolean enablePersistence, boolean diskSynchronous, int maxQueueMemory, int alertThreshold, int dispatcherThreads, OrderPolicy orderPolicy, List<String> expectedGatewayEventFilters, List<String> expectedGatewayTransportFilters) {
+  public void verifySenderAttributes(
+      String senderId,
+      int remoteDsID,
+      boolean isParallel,
+      boolean manualStart,
+      int socketBufferSize,
+      int socketReadTimeout,
+      boolean enableBatchConflation,
+      int batchSize,
+      int batchTimeInterval,
+      boolean enablePersistence,
+      boolean diskSynchronous,
+      int maxQueueMemory,
+      int alertThreshold,
+      int dispatcherThreads,
+      OrderPolicy orderPolicy,
+      List<String> expectedGatewayEventFilters,
+      List<String> expectedGatewayTransportFilters) {
 
     Set<GatewaySender> senders = cache.getGatewaySenders();
     AbstractGatewaySender sender = null;
@@ -356,33 +384,48 @@ public abstract class WANCommandTestBase extends CliCommandTestBase {
 
     // verify GatewayEventFilters
     if (expectedGatewayEventFilters != null) {
-      assertEquals("gatewayEventFilters", expectedGatewayEventFilters.size(), sender.getGatewayEventFilters().size());
+      assertEquals(
+          "gatewayEventFilters",
+          expectedGatewayEventFilters.size(),
+          sender.getGatewayEventFilters().size());
 
       List<GatewayEventFilter> actualGatewayEventFilters = sender.getGatewayEventFilters();
-      List<String> actualEventFilterClassNames = new ArrayList<String>(actualGatewayEventFilters.size());
+      List<String> actualEventFilterClassNames =
+          new ArrayList<String>(actualGatewayEventFilters.size());
       for (GatewayEventFilter filter : actualGatewayEventFilters) {
         actualEventFilterClassNames.add(filter.getClass().getName());
       }
 
       for (String expectedGatewayEventFilter : expectedGatewayEventFilters) {
         if (!actualEventFilterClassNames.contains(expectedGatewayEventFilter)) {
-          fail("GatewayEventFilter " + expectedGatewayEventFilter + " is not added to the GatewaySender");
+          fail(
+              "GatewayEventFilter "
+                  + expectedGatewayEventFilter
+                  + " is not added to the GatewaySender");
         }
       }
     }
 
     // verify GatewayTransportFilters
     if (expectedGatewayTransportFilters != null) {
-      assertEquals("gatewayTransportFilters", expectedGatewayTransportFilters.size(), sender.getGatewayTransportFilters().size());
-      List<GatewayTransportFilter> actualGatewayTransportFilters = sender.getGatewayTransportFilters();
-      List<String> actualTransportFilterClassNames = new ArrayList<String>(actualGatewayTransportFilters.size());
+      assertEquals(
+          "gatewayTransportFilters",
+          expectedGatewayTransportFilters.size(),
+          sender.getGatewayTransportFilters().size());
+      List<GatewayTransportFilter> actualGatewayTransportFilters =
+          sender.getGatewayTransportFilters();
+      List<String> actualTransportFilterClassNames =
+          new ArrayList<String>(actualGatewayTransportFilters.size());
       for (GatewayTransportFilter filter : actualGatewayTransportFilters) {
         actualTransportFilterClassNames.add(filter.getClass().getName());
       }
 
       for (String expectedGatewayTransportFilter : expectedGatewayTransportFilters) {
         if (!actualTransportFilterClassNames.contains(expectedGatewayTransportFilter)) {
-          fail("GatewayTransportFilter " + expectedGatewayTransportFilter + " is not added to the GatewaySender.");
+          fail(
+              "GatewayTransportFilter "
+                  + expectedGatewayTransportFilter
+                  + " is not added to the GatewaySender.");
         }
       }
     }
@@ -395,7 +438,14 @@ public abstract class WANCommandTestBase extends CliCommandTestBase {
     }
   }
 
-  public void verifyReceiverCreationWithAttributes(boolean isRunning, int startPort, int endPort, String bindAddress, int maxTimeBetweenPings, int socketBufferSize, List<String> expectedGatewayTransportFilters) {
+  public void verifyReceiverCreationWithAttributes(
+      boolean isRunning,
+      int startPort,
+      int endPort,
+      String bindAddress,
+      int maxTimeBetweenPings,
+      int socketBufferSize,
+      List<String> expectedGatewayTransportFilters) {
 
     Set<GatewayReceiver> receivers = cache.getGatewayReceivers();
     assertEquals("Number of receivers is incorrect", 1, receivers.size());
@@ -404,21 +454,30 @@ public abstract class WANCommandTestBase extends CliCommandTestBase {
       assertEquals("startPort", startPort, receiver.getStartPort());
       assertEquals("endPort", endPort, receiver.getEndPort());
       assertEquals("bindAddress", bindAddress, receiver.getBindAddress());
-      assertEquals("maximumTimeBetweenPings", maxTimeBetweenPings, receiver.getMaximumTimeBetweenPings());
+      assertEquals(
+          "maximumTimeBetweenPings", maxTimeBetweenPings, receiver.getMaximumTimeBetweenPings());
       assertEquals("socketBufferSize", socketBufferSize, receiver.getSocketBufferSize());
 
       // verify GatewayTransportFilters
       if (expectedGatewayTransportFilters != null) {
-        assertEquals("gatewayTransportFilters", expectedGatewayTransportFilters.size(), receiver.getGatewayTransportFilters().size());
-        List<GatewayTransportFilter> actualGatewayTransportFilters = receiver.getGatewayTransportFilters();
-        List<String> actualTransportFilterClassNames = new ArrayList<String>(actualGatewayTransportFilters.size());
+        assertEquals(
+            "gatewayTransportFilters",
+            expectedGatewayTransportFilters.size(),
+            receiver.getGatewayTransportFilters().size());
+        List<GatewayTransportFilter> actualGatewayTransportFilters =
+            receiver.getGatewayTransportFilters();
+        List<String> actualTransportFilterClassNames =
+            new ArrayList<String>(actualGatewayTransportFilters.size());
         for (GatewayTransportFilter filter : actualGatewayTransportFilters) {
           actualTransportFilterClassNames.add(filter.getClass().getName());
         }
 
         for (String expectedGatewayTransportFilter : expectedGatewayTransportFilters) {
           if (!actualTransportFilterClassNames.contains(expectedGatewayTransportFilter)) {
-            fail("GatewayTransportFilter " + expectedGatewayTransportFilter + " is not added to the GatewayReceiver.");
+            fail(
+                "GatewayTransportFilter "
+                    + expectedGatewayTransportFilter
+                    + " is not added to the GatewayReceiver.");
           }
         }
       }

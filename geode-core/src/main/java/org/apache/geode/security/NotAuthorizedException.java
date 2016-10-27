@@ -23,7 +23,7 @@ import javax.naming.NamingException;
 
 /**
  * Thrown when a client/peer is unauthorized to perform a requested operation.
- * 
+ *
  * @since GemFire 5.5
  */
 public class NotAuthorizedException extends GemFireSecurityException {
@@ -33,12 +33,10 @@ public class NotAuthorizedException extends GemFireSecurityException {
   private Principal principal = null;
 
   /**
-   * Constructs a new exception with the specified detail message and
-   * principal.
+   * Constructs a new exception with the specified detail message and principal.
    *
-   * @param  message the detail message (which is saved for later retrieval
-   *         by the {@link #getMessage()} method).  (A <tt>null</tt> value
-   *         is permitted.)
+   * @param message the detail message (which is saved for later retrieval by the {@link
+   *     #getMessage()} method). (A <tt>null</tt> value is permitted.)
    */
   public NotAuthorizedException(final String message) {
     this(message, null, null);
@@ -47,55 +45,47 @@ public class NotAuthorizedException extends GemFireSecurityException {
   /**
    * Constructs a new exception with the specified detail message and cause.
    *
-   * <p>If {@code message} is null, then the detail message associated with
-   * {@code cause} <i>is</i> automatically used as this exception's detail
-   * message.
+   * <p>If {@code message} is null, then the detail message associated with {@code cause} <i>is</i>
+   * automatically used as this exception's detail message.
    *
-   * @param  message the detail message (which is saved for later retrieval
-   *         by the {@link #getMessage()} method).  (A <tt>null</tt> value
-   *         is permitted.)
-   * @param  cause the cause (which is saved for later retrieval by the
-   *         {@link #getCause()} method).  (A <tt>null</tt> value is
-   *         permitted, and indicates that the cause is nonexistent or
-   *         unknown.)
+   * @param message the detail message (which is saved for later retrieval by the {@link
+   *     #getMessage()} method). (A <tt>null</tt> value is permitted.)
+   * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+   *     (A <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or
+   *     unknown.)
    */
   public NotAuthorizedException(final String message, final Throwable cause) {
     this(message, cause, null);
   }
 
   /**
-   * Constructs a new exception with the specified detail message and
-   * principal.
+   * Constructs a new exception with the specified detail message and principal.
    *
-   * @param  message the detail message (which is saved for later retrieval
-   *         by the {@link #getMessage()} method).  (A <tt>null</tt> value
-   *         is permitted.)
-   * @param  principal the principal for which authorization failed.
-   *         (A <tt>null</tt> value is permitted.)
+   * @param message the detail message (which is saved for later retrieval by the {@link
+   *     #getMessage()} method). (A <tt>null</tt> value is permitted.)
+   * @param principal the principal for which authorization failed. (A <tt>null</tt> value is
+   *     permitted.)
    */
   public NotAuthorizedException(final String message, final Principal principal) {
     this(message, null, principal);
   }
 
   /**
-   * Constructs a new exception with the specified detail message, cause and
-   * principal.
+   * Constructs a new exception with the specified detail message, cause and principal.
    *
-   * <p>If {@code message} is null, then the detail message associated with
-   * {@code cause} <i>is</i> automatically used as this exception's detail
-   * message.
+   * <p>If {@code message} is null, then the detail message associated with {@code cause} <i>is</i>
+   * automatically used as this exception's detail message.
    *
-   * @param  message the detail message (which is saved for later retrieval
-   *         by the {@link #getMessage()} method).  (A <tt>null</tt> value
-   *         is permitted.)
-   * @param  cause the cause (which is saved for later retrieval by the
-   *         {@link #getCause()} method).  (A <tt>null</tt> value is
-   *         permitted, and indicates that the cause is nonexistent or
-   *         unknown.)
-   * @param  principal the principal for which authorization failed.
-   *         (A <tt>null</tt> value is permitted.)
+   * @param message the detail message (which is saved for later retrieval by the {@link
+   *     #getMessage()} method). (A <tt>null</tt> value is permitted.)
+   * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+   *     (A <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or
+   *     unknown.)
+   * @param principal the principal for which authorization failed. (A <tt>null</tt> value is
+   *     permitted.)
    */
-  public NotAuthorizedException(final String message, final Throwable cause, final Principal principal) {
+  public NotAuthorizedException(
+      final String message, final Throwable cause, final Principal principal) {
     super(message, cause);
     this.principal = principal;
   }

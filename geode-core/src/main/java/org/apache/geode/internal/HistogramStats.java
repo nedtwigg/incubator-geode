@@ -23,7 +23,7 @@ import org.apache.geode.StatisticsType;
 
 public class HistogramStats {
   /** stat type description */
-  private final static String hist_typeDesc = "A bucketed histogram of values with unit ";
+  private static final String hist_typeDesc = "A bucketed histogram of values with unit ";
 
   private final int statCounterIndex[];
 
@@ -33,28 +33,47 @@ public class HistogramStats {
 
   /**
    * Create a set of statistics to capture a histogram of values with the given break points.
+   *
    * @param name a unique name for the histogram type
    * @param unit the unit of data collected
    * @param factory
    * @param breakPoints the breakpoints for each bucket
    * @param largerIsBetter
    */
-  public HistogramStats(String name, String unit, StatisticsFactory factory, long[] breakPoints, boolean largerIsBetter) {
+  public HistogramStats(
+      String name,
+      String unit,
+      StatisticsFactory factory,
+      long[] breakPoints,
+      boolean largerIsBetter) {
     this.bp = breakPoints;
     StatisticDescriptor[] fieldDescriptors = new StatisticDescriptor[this.bp.length * 2];
     int k = 0;
     for (int bucketNumber = 0; bucketNumber < this.bp.length; bucketNumber++) {
-      String desc = (bucketNumber < this.bp.length - 1 ? "ForLTE" : "ForGT") + this.bp[bucketNumber];
-      fieldDescriptors[k] = factory.createIntCounter("BucketCount" + desc, "Number of data points in Bucket " + bucketNumber, "count", !largerIsBetter);
+      String desc =
+          (bucketNumber < this.bp.length - 1 ? "ForLTE" : "ForGT") + this.bp[bucketNumber];
+      fieldDescriptors[k] =
+          factory.createIntCounter(
+              "BucketCount" + desc,
+              "Number of data points in Bucket " + bucketNumber,
+              "count",
+              !largerIsBetter);
       k++;
-      fieldDescriptors[k] = factory.createLongCounter("BucketTotal" + desc, "Sum of Bucket " + bucketNumber, unit, !largerIsBetter);
+      fieldDescriptors[k] =
+          factory.createLongCounter(
+              "BucketTotal" + desc, "Sum of Bucket " + bucketNumber, unit, !largerIsBetter);
       k++;
     }
-    StatisticsType hist_type = factory.createType("HistogramWith" + breakPoints.length + "Buckets", hist_typeDesc + unit + " for " + breakPoints.length + " breakpoints", fieldDescriptors);
+    StatisticsType hist_type =
+        factory.createType(
+            "HistogramWith" + breakPoints.length + "Buckets",
+            hist_typeDesc + unit + " for " + breakPoints.length + " breakpoints",
+            fieldDescriptors);
     this.statCounterIndex = new int[this.bp.length * 2];
     k = 0;
     for (int bucketNumber = 0; bucketNumber < this.bp.length; bucketNumber++) {
-      String desc = (bucketNumber < this.bp.length - 1 ? "ForLTE" : "ForGT") + this.bp[bucketNumber];
+      String desc =
+          (bucketNumber < this.bp.length - 1 ? "ForLTE" : "ForGT") + this.bp[bucketNumber];
       this.statCounterIndex[k] = hist_type.nameToId("BucketCount" + desc);
       k++;
       this.statCounterIndex[k] = hist_type.nameToId("BucketTotal" + desc);

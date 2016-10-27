@@ -19,20 +19,19 @@ package org.apache.geode.cache;
 import org.apache.geode.internal.cache.EvictionAttributesImpl;
 
 /**
- * The EvictionAttributesMutator allows changes to be made to a 
- * {@link org.apache.geode.cache.EvictionAttributes}. It is returned
- * by {@link org.apache.geode.cache.AttributesMutator#getEvictionAttributesMutator()}
+ * The EvictionAttributesMutator allows changes to be made to a {@link
+ * org.apache.geode.cache.EvictionAttributes}. It is returned by {@link
+ * org.apache.geode.cache.AttributesMutator#getEvictionAttributesMutator()}
+ *
  * @since GemFire 5.0
  */
 public interface EvictionAttributesMutator {
   /**
-   * Sets the maximum value on the {@link EvictionAttributesImpl} that the given
-   * {@link EvictionAlgorithm} uses to determine when to perform its
-   * {@link EvictionAction}. The unit of the maximum value is determined by the
-   * {@link EvictionAlgorithm}
-   * 
-   * @param maximum
-   *          value used by the {@link EvictionAlgorithm}
+   * Sets the maximum value on the {@link EvictionAttributesImpl} that the given {@link
+   * EvictionAlgorithm} uses to determine when to perform its {@link EvictionAction}. The unit of
+   * the maximum value is determined by the {@link EvictionAlgorithm}
+   *
+   * @param maximum value used by the {@link EvictionAlgorithm}
    */
   public void setMaximum(int maximum);
 }

@@ -29,7 +29,8 @@ import org.apache.geode.internal.cache.wan.parallel.ParallelGatewaySenderOperati
 
 @SuppressWarnings("serial")
 @Category(DistributedTest.class)
-public class ParallelGatewaySenderOperationsOffHeapDUnitTest extends ParallelGatewaySenderOperationsDUnitTest {
+public class ParallelGatewaySenderOperationsOffHeapDUnitTest
+    extends ParallelGatewaySenderOperationsDUnitTest {
 
   public ParallelGatewaySenderOperationsOffHeapDUnitTest() {
     super();
@@ -39,5 +40,4 @@ public class ParallelGatewaySenderOperationsOffHeapDUnitTest extends ParallelGat
   public boolean isOffHeap() {
     return true;
   }
-
 }

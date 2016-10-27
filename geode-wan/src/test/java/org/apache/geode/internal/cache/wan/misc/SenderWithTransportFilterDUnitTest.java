@@ -56,13 +56,18 @@ public class SenderWithTransportFilterDUnitTest extends WANTestBase {
     Integer nyPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, lnPort));
 
     vm2.invoke(() -> SenderWithTransportFilterDUnitTest.createReceiverWithTransportFilters(nyPort));
-    vm2.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
+    vm2.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", null, isOffHeap()));
 
     vm3.invoke(() -> WANTestBase.createCache(lnPort));
 
-    vm3.invoke(() -> SenderWithTransportFilterDUnitTest.createSenderWithTransportFilter("ln", 2, false, 100, 1, false, false, true));
+    vm3.invoke(
+        () ->
+            SenderWithTransportFilterDUnitTest.createSenderWithTransportFilter(
+                "ln", 2, false, 100, 1, false, false, true));
 
-    vm3.invoke(() -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
+    vm3.invoke(
+        () -> WANTestBase.createReplicatedRegion(getTestMethodName() + "_RR", "ln", isOffHeap()));
 
     vm3.invoke(() -> WANTestBase.startSender("ln"));
 
@@ -78,13 +83,22 @@ public class SenderWithTransportFilterDUnitTest extends WANTestBase {
     Integer nyPort = (Integer) vm1.invoke(() -> WANTestBase.createFirstRemoteLocator(2, lnPort));
 
     vm2.invoke(() -> SenderWithTransportFilterDUnitTest.createReceiverWithTransportFilters(nyPort));
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 0, 10, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 0, 10, isOffHeap()));
 
     vm3.invoke(() -> WANTestBase.createCache(lnPort));
 
-    vm3.invoke(() -> SenderWithTransportFilterDUnitTest.createSenderWithTransportFilter("ln", 2, true, 100, 1, false, false, true));
+    vm3.invoke(
+        () ->
+            SenderWithTransportFilterDUnitTest.createSenderWithTransportFilter(
+                "ln", 2, true, 100, 1, false, false, true));
 
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 0, 10, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 0, 10, isOffHeap()));
 
     vm3.invoke(() -> WANTestBase.startSender("ln"));
 
@@ -121,11 +135,20 @@ public class SenderWithTransportFilterDUnitTest extends WANTestBase {
     return port;
   }
 
-  public static void createSenderWithTransportFilter(String dsName, int remoteDsId, boolean isParallel, Integer maxMemory, Integer batchSize, boolean isConflation, boolean isPersistent, boolean isManualStart) {
-    File persistentDirectory = new File(dsName + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
+  public static void createSenderWithTransportFilter(
+      String dsName,
+      int remoteDsId,
+      boolean isParallel,
+      Integer maxMemory,
+      Integer batchSize,
+      boolean isConflation,
+      boolean isPersistent,
+      boolean isManualStart) {
+    File persistentDirectory =
+        new File(dsName + "_disk_" + System.currentTimeMillis() + "_" + VM.getCurrentVMNum());
     persistentDirectory.mkdir();
     DiskStoreFactory dsf = cache.createDiskStoreFactory();
-    File[] dirs1 = new File[] { persistentDirectory };
+    File[] dirs1 = new File[] {persistentDirectory};
 
     if (isParallel) {
       GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
@@ -201,7 +224,6 @@ public class SenderWithTransportFilterDUnitTest extends WANTestBase {
     }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
   }
 }

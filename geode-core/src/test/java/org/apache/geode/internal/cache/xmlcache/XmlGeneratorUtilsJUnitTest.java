@@ -34,15 +34,13 @@ import org.apache.geode.test.junit.categories.UnitTest;
 
 /**
  * Unit Tests for {@link XmlGeneratorUtils}.
- * 
+ *
  * @since GemFire 8.1
  */
 @Category(UnitTest.class)
 public class XmlGeneratorUtilsJUnitTest {
 
-  /**
-   * Test method for {@link XmlGeneratorUtils#addAttribute(AttributesImpl, String, Object)}.
-   */
+  /** Test method for {@link XmlGeneratorUtils#addAttribute(AttributesImpl, String, Object)}. */
   @Test
   public void testAddAttributeAttributesImplStringObject() {
     final AttributesImpl attributes = new AttributesImpl();
@@ -79,7 +77,8 @@ public class XmlGeneratorUtilsJUnitTest {
   }
 
   /**
-   * Test method for {@link XmlGeneratorUtils#startElement(ContentHandler, String, String, AttributesImpl)}.
+   * Test method for {@link XmlGeneratorUtils#startElement(ContentHandler, String, String,
+   * AttributesImpl)}.
    */
   @Test
   public void testStartElementContentHandlerStringStringAttributesImpl() throws SAXException {
@@ -88,15 +87,17 @@ public class XmlGeneratorUtilsJUnitTest {
     final AtomicReference<String> qNameRef = new AtomicReference<String>();
     final AtomicReference<Attributes> attributesRef = new AtomicReference<Attributes>();
 
-    final ContentHandler contentHandler = new MockContentHandler() {
-      @Override
-      public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-        uriRef.set(uri);
-        localnameRef.set(localName);
-        qNameRef.set(qName);
-        attributesRef.set(atts);
-      }
-    };
+    final ContentHandler contentHandler =
+        new MockContentHandler() {
+          @Override
+          public void startElement(String uri, String localName, String qName, Attributes atts)
+              throws SAXException {
+            uriRef.set(uri);
+            localnameRef.set(localName);
+            qNameRef.set(qName);
+            attributesRef.set(atts);
+          }
+        };
 
     XmlGeneratorUtils.startElement(contentHandler, "prefix", "localname", null);
     assertEquals("localname", localnameRef.get());
@@ -105,23 +106,22 @@ public class XmlGeneratorUtilsJUnitTest {
     assertNull(attributesRef.get());
   }
 
-  /**
-   * Test method for {@link XmlGeneratorUtils#endElement(ContentHandler, String, String)}.
-   */
+  /** Test method for {@link XmlGeneratorUtils#endElement(ContentHandler, String, String)}. */
   @Test
   public void testEndElementContentHandlerStringString() throws SAXException {
     final AtomicReference<String> uriRef = new AtomicReference<String>();
     final AtomicReference<String> localnameRef = new AtomicReference<String>();
     final AtomicReference<String> qNameRef = new AtomicReference<String>();
 
-    final ContentHandler contentHandler = new MockContentHandler() {
-      @Override
-      public void endElement(String uri, String localName, String qName) throws SAXException {
-        uriRef.set(uri);
-        localnameRef.set(localName);
-        qNameRef.set(qName);
-      }
-    };
+    final ContentHandler contentHandler =
+        new MockContentHandler() {
+          @Override
+          public void endElement(String uri, String localName, String qName) throws SAXException {
+            uriRef.set(uri);
+            localnameRef.set(localName);
+            qNameRef.set(qName);
+          }
+        };
 
     XmlGeneratorUtils.endElement(contentHandler, "prefix", "localname");
     assertEquals("localname", localnameRef.get());
@@ -130,7 +130,8 @@ public class XmlGeneratorUtilsJUnitTest {
   }
 
   /**
-   * Test method for {@link XmlGeneratorUtils#emptyElement(ContentHandler, String, String, AttributesImpl)}.
+   * Test method for {@link XmlGeneratorUtils#emptyElement(ContentHandler, String, String,
+   * AttributesImpl)}.
    */
   @Test
   public void testEmptyElement() throws SAXException {
@@ -143,22 +144,24 @@ public class XmlGeneratorUtilsJUnitTest {
     final AtomicReference<String> endLocalnameRef = new AtomicReference<String>();
     final AtomicReference<String> endQNameRef = new AtomicReference<String>();
 
-    final ContentHandler contentHandler = new MockContentHandler() {
-      @Override
-      public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-        uriRef.set(uri);
-        localnameRef.set(localName);
-        qNameRef.set(qName);
-        attributesRef.set(atts);
-      }
+    final ContentHandler contentHandler =
+        new MockContentHandler() {
+          @Override
+          public void startElement(String uri, String localName, String qName, Attributes atts)
+              throws SAXException {
+            uriRef.set(uri);
+            localnameRef.set(localName);
+            qNameRef.set(qName);
+            attributesRef.set(atts);
+          }
 
-      @Override
-      public void endElement(String uri, String localName, String qName) throws SAXException {
-        endUriRef.set(uri);
-        endLocalnameRef.set(localName);
-        endQNameRef.set(qName);
-      }
-    };
+          @Override
+          public void endElement(String uri, String localName, String qName) throws SAXException {
+            endUriRef.set(uri);
+            endLocalnameRef.set(localName);
+            endQNameRef.set(qName);
+          }
+        };
 
     XmlGeneratorUtils.emptyElement(contentHandler, "prefix", "localname", null);
 
@@ -179,7 +182,8 @@ public class XmlGeneratorUtilsJUnitTest {
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes atts)
+        throws SAXException {
       throw new UnsupportedOperationException();
     }
 
@@ -228,5 +232,4 @@ public class XmlGeneratorUtilsJUnitTest {
       throw new UnsupportedOperationException();
     }
   }
-
 }

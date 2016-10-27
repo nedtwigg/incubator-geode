@@ -54,11 +54,9 @@ public class ZRemExecutor extends SortedSetExecutor {
       byte[] memberArray = commandElems.get(i);
       ByteArrayWrapper member = new ByteArrayWrapper(memberArray);
       Object oldVal = keyRegion.remove(member);
-      if (oldVal != null)
-        numDeletedMembers++;
+      if (oldVal != null) numDeletedMembers++;
     }
-    if (keyRegion.isEmpty())
-      context.getRegionProvider().removeKey(key);
+    if (keyRegion.isEmpty()) context.getRegionProvider().removeKey(key);
     command.setResponse(Coder.getIntegerResponse(context.getByteBufAllocator(), numDeletedMembers));
   }
 }

@@ -62,9 +62,9 @@ public class AbstractRegionJUnitTest {
 
   /**
    * Test method for {@link AbstractRegion#getExtensionPoint()}.
-   * 
-   * Assert that method returns a {@link SimpleExtensionPoint} instance and
-   * assume that {@link org.apache.geode.internal.cache.extension.SimpleExtensionPointJUnitTest} has covered the rest.
+   *
+   * <p>Assert that method returns a {@link SimpleExtensionPoint} instance and assume that {@link
+   * org.apache.geode.internal.cache.extension.SimpleExtensionPointJUnitTest} has covered the rest.
    */
   @Test
   public void testGetExtensionPoint() {
@@ -78,12 +78,14 @@ public class AbstractRegionJUnitTest {
   @SuppressWarnings("rawtypes")
   private static class MockRegion extends AbstractRegion {
 
-    /**
-     * @see AbstractRegion#AbstractRegion(GemFireCacheImpl, int, boolean, long,
-     *      long)
-     */
+    /** @see AbstractRegion#AbstractRegion(GemFireCacheImpl, int, boolean, long, long) */
     @SuppressWarnings("deprecation")
-    private MockRegion(GemFireCacheImpl cache, int serialNumber, boolean isPdxTypeRegion, long lastAccessedTime, long lastModifiedTime) {
+    private MockRegion(
+        GemFireCacheImpl cache,
+        int serialNumber,
+        boolean isPdxTypeRegion,
+        long lastAccessedTime,
+        long lastModifiedTime) {
       super(cache, serialNumber, isPdxTypeRegion, lastAccessedTime, lastModifiedTime);
     }
 
@@ -123,7 +125,8 @@ public class AbstractRegionJUnitTest {
     }
 
     @Override
-    public void destroyRegion(Object aCallbackArgument) throws CacheWriterException, TimeoutException {
+    public void destroyRegion(Object aCallbackArgument)
+        throws CacheWriterException, TimeoutException {
       throw new UnsupportedOperationException();
     }
 
@@ -143,7 +146,8 @@ public class AbstractRegionJUnitTest {
     }
 
     @Override
-    public void loadSnapshot(InputStream inputStream) throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException {
+    public void loadSnapshot(InputStream inputStream)
+        throws IOException, ClassNotFoundException, CacheWriterException, TimeoutException {
       throw new UnsupportedOperationException();
     }
 
@@ -153,7 +157,8 @@ public class AbstractRegionJUnitTest {
     }
 
     @Override
-    public Region createSubregion(String subregionName, RegionAttributes aRegionAttributes) throws RegionExistsException, TimeoutException {
+    public Region createSubregion(String subregionName, RegionAttributes aRegionAttributes)
+        throws RegionExistsException, TimeoutException {
       throw new UnsupportedOperationException();
     }
 
@@ -168,27 +173,32 @@ public class AbstractRegionJUnitTest {
     }
 
     @Override
-    public Object put(Object key, Object value, Object aCallbackArgument) throws TimeoutException, CacheWriterException {
+    public Object put(Object key, Object value, Object aCallbackArgument)
+        throws TimeoutException, CacheWriterException {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public void create(Object key, Object value, Object aCallbackArgument) throws TimeoutException, EntryExistsException, CacheWriterException {
+    public void create(Object key, Object value, Object aCallbackArgument)
+        throws TimeoutException, EntryExistsException, CacheWriterException {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public void invalidate(Object key, Object aCallbackArgument) throws TimeoutException, EntryNotFoundException {
+    public void invalidate(Object key, Object aCallbackArgument)
+        throws TimeoutException, EntryNotFoundException {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public void localInvalidate(Object key, Object aCallbackArgument) throws EntryNotFoundException {
+    public void localInvalidate(Object key, Object aCallbackArgument)
+        throws EntryNotFoundException {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object destroy(Object key, Object aCallbackArgument) throws TimeoutException, EntryNotFoundException, CacheWriterException {
+    public Object destroy(Object key, Object aCallbackArgument)
+        throws TimeoutException, EntryNotFoundException, CacheWriterException {
       throw new UnsupportedOperationException();
     }
 
@@ -258,7 +268,9 @@ public class AbstractRegionJUnitTest {
     }
 
     @Override
-    public SelectResults query(String queryPredicate) throws FunctionDomainException, TypeMismatchException, NameResolutionException, QueryInvocationTargetException {
+    public SelectResults query(String queryPredicate)
+        throws FunctionDomainException, TypeMismatchException, NameResolutionException,
+            QueryInvocationTargetException {
       throw new UnsupportedOperationException();
     }
 
@@ -315,37 +327,31 @@ public class AbstractRegionJUnitTest {
     @Override
     public void registerInterest(Object key) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
     public void registerInterest(Object key, InterestResultPolicy policy) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
     public void registerInterestRegex(String regex) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
     public void registerInterestRegex(String regex, InterestResultPolicy policy) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
     public void unregisterInterest(Object key) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
     public void unregisterInterestRegex(String regex) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
@@ -356,49 +362,44 @@ public class AbstractRegionJUnitTest {
     @Override
     public void registerInterest(Object key, boolean isDurable) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
     public void registerInterest(Object key, boolean isDurable, boolean receiveValues) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
-    public void registerInterest(Object key, InterestResultPolicy policy, boolean isDurable, boolean receiveValues) {
+    public void registerInterest(
+        Object key, InterestResultPolicy policy, boolean isDurable, boolean receiveValues) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
     public void registerInterest(Object key, InterestResultPolicy policy, boolean isDurable) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
     public void registerInterestRegex(String regex, boolean isDurable) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
     public void registerInterestRegex(String regex, boolean isDurable, boolean receiveValues) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
-    public void registerInterestRegex(String regex, InterestResultPolicy policy, boolean isDurable) {
+    public void registerInterestRegex(
+        String regex, InterestResultPolicy policy, boolean isDurable) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
-    public void registerInterestRegex(String regex, InterestResultPolicy policy, boolean isDurable, boolean receiveValues) {
+    public void registerInterestRegex(
+        String regex, InterestResultPolicy policy, boolean isDurable, boolean receiveValues) {
       throw new UnsupportedOperationException();
-
     }
 
     @Override
@@ -452,7 +453,9 @@ public class AbstractRegionJUnitTest {
     }
 
     @Override
-    Object get(Object key, Object aCallbackArgument, boolean generateCallbacks, EntryEventImpl clientEvent) throws TimeoutException, CacheLoaderException {
+    Object get(
+        Object key, Object aCallbackArgument, boolean generateCallbacks, EntryEventImpl clientEvent)
+        throws TimeoutException, CacheLoaderException {
       throw new UnsupportedOperationException();
     }
 

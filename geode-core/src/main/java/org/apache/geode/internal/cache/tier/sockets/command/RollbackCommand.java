@@ -27,25 +27,24 @@ import org.apache.geode.internal.cache.tier.sockets.BaseCommand;
 import org.apache.geode.internal.cache.tier.sockets.Message;
 import org.apache.geode.internal.cache.tier.sockets.ServerConnection;
 
-/**
- * Command for performing Rollback on the server
- */
+/** Command for performing Rollback on the server */
 public class RollbackCommand extends BaseCommand {
 
-  private final static RollbackCommand singleton = new RollbackCommand();
+  private static final RollbackCommand singleton = new RollbackCommand();
 
   public static Command getCommand() {
     return singleton;
   }
 
-  private RollbackCommand() {
-  }
+  private RollbackCommand() {}
 
   @Override
-  public void cmdExecute(Message msg, ServerConnection servConn, long start) throws IOException, ClassNotFoundException, InterruptedException {
+  public void cmdExecute(Message msg, ServerConnection servConn, long start)
+      throws IOException, ClassNotFoundException, InterruptedException {
     servConn.setAsTrue(REQUIRES_RESPONSE);
     TXManagerImpl txMgr = (TXManagerImpl) servConn.getCache().getCacheTransactionManager();
-    InternalDistributedMember client = (InternalDistributedMember) servConn.getProxyID().getDistributedMember();
+    InternalDistributedMember client =
+        (InternalDistributedMember) servConn.getProxyID().getDistributedMember();
     int uniqId = msg.getTransactionId();
     TXId txId = new TXId(client, uniqId);
     if (txMgr.isHostedTxRecentlyCompleted(txId)) {
@@ -88,5 +87,4 @@ public class RollbackCommand extends BaseCommand {
     writeReply(msg, servConn);
     servConn.setAsTrue(RESPONDED);
   }
-
 }

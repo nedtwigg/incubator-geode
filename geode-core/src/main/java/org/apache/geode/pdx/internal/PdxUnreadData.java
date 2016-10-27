@@ -23,17 +23,14 @@ import org.apache.geode.internal.tcp.ByteBufferInputStream.ByteSource;
 import org.apache.geode.pdx.PdxFieldAlreadyExistsException;
 import org.apache.geode.pdx.PdxUnreadFields;
 
-/**
- * 
- * @since GemFire 6.6
- */
+/** @since GemFire 6.6 */
 public class PdxUnreadData implements PdxUnreadFields {
 
   /**
-   * This is the original type of the blob that we deserialized
-   * and did not read some of its fields.
+   * This is the original type of the blob that we deserialized and did not read some of its fields.
    */
   private UnreadPdxType unreadType;
+
   private byte[][] unreadData;
 
   public PdxUnreadData() {
@@ -66,8 +63,9 @@ public class PdxUnreadData implements PdxUnreadFields {
   }
 
   /**
-   * Returns the PdxType to use when serializing this unread data.
-   * Returns null if we don't know what this type is yet.
+   * Returns the PdxType to use when serializing this unread data. Returns null if we don't know
+   * what this type is yet.
+   *
    * @return the PdxType to use when serializing this unread data.
    */
   public PdxType getSerializedType() {
@@ -79,8 +77,7 @@ public class PdxUnreadData implements PdxUnreadFields {
   }
 
   public void sendTo(PdxWriterImpl writer) {
-    if (isEmpty())
-      return;
+    if (isEmpty()) return;
     int[] indexes = this.unreadType.getUnreadFieldIndexes();
     int i = 0;
     while (i < this.unreadData.length) {
@@ -91,21 +88,23 @@ public class PdxUnreadData implements PdxUnreadFields {
         writer.writeRawField(ft, data);
       } catch (PdxFieldAlreadyExistsException ex) {
         // fix for bug 43133
-        throw new PdxFieldAlreadyExistsException("Check the toData and fromData for " + this.unreadType.getClassName() + " to see if the field \"" + ft.getFieldName() + "\" is spelled differently.");
+        throw new PdxFieldAlreadyExistsException(
+            "Check the toData and fromData for "
+                + this.unreadType.getClassName()
+                + " to see if the field \""
+                + ft.getFieldName()
+                + "\" is spelled differently.");
       }
       i++;
     }
   }
 
-  /**
-   * If o has unread data then add that unread data to copy.
-   */
+  /** If o has unread data then add that unread data to copy. */
   public static void copy(Object o, Object copy) {
     // This method is only called by CopyHelper which is public and does not require that a Cache exists.
     // So we need to call getInstance instead of getExisting.
     GemFireCacheImpl gfc = GemFireCacheImpl.getInstance();
-    if (gfc == null)
-      return;
+    if (gfc == null) return;
     TypeRegistry tr = gfc.getPdxRegistry();
     PdxUnreadData ud = tr.getUnreadData(o);
     if (ud != null && !ud.isEmpty()) {

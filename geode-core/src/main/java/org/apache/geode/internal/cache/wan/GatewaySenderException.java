@@ -22,17 +22,13 @@ import org.apache.geode.cache.OperationAbortedException;
 public class GatewaySenderException extends OperationAbortedException {
   private static final long serialVersionUID = 8090143153569084886L;
 
-  /**
-   * Constructor.
-   * Creates a new instance of <code>GatewaySenderException</code>.
-   */
-  public GatewaySenderException() {
-  }
+  /** Constructor. Creates a new instance of <code>GatewaySenderException</code>. */
+  public GatewaySenderException() {}
 
   /**
-   * Constructor.
-   * Creates an instance of <code>GatewaySenderException</code> with the
-   * specified detail message.
+   * Constructor. Creates an instance of <code>GatewaySenderException</code> with the specified
+   * detail message.
+   *
    * @param msg the detail message
    */
   public GatewaySenderException(String msg) {
@@ -40,10 +36,9 @@ public class GatewaySenderException extends OperationAbortedException {
   }
 
   /**
-   * Constructor.
-   * Creates an instance of <code>GatewaySenderException</code> with the
-   * specified detail message
-   * and cause.
+   * Constructor. Creates an instance of <code>GatewaySenderException</code> with the specified
+   * detail message and cause.
+   *
    * @param msg the detail message
    * @param cause the causal Throwable
    */
@@ -52,9 +47,9 @@ public class GatewaySenderException extends OperationAbortedException {
   }
 
   /**
-   * Constructor.
-   * Creates an instance of <code>GatewaySenderException</code> with the
-   * specified cause.
+   * Constructor. Creates an instance of <code>GatewaySenderException</code> with the specified
+   * cause.
+   *
    * @param cause the causal Throwable
    */
   public GatewaySenderException(Throwable cause) {

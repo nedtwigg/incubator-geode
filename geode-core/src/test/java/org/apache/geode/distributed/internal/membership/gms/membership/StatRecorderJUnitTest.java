@@ -46,10 +46,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
 
-/**
- * This class tests the GMS StatRecorder class, which records JGroups
- * messaging statistics
- */
+/** This class tests the GMS StatRecorder class, which records JGroups messaging statistics */
 @Category(UnitTest.class)
 public class StatRecorderJUnitTest {
 
@@ -76,9 +73,7 @@ public class StatRecorderJUnitTest {
     recorder.setDownProtocol(mockDownProtocol);
   }
 
-  /**
-   * Ensure that unicast events are recorded in DMStats
-   */
+  /** Ensure that unicast events are recorded in DMStats */
   @Test
   public void testUnicastStats() throws Exception {
     Message msg = mock(Message.class);
@@ -87,7 +82,9 @@ public class StatRecorderJUnitTest {
 
     Event evt = new Event(Event.MSG, msg);
     recorder.up(evt);
-    assertTrue("stats.ucastMessagesReceived =" + stats.ucastMessagesReceived, stats.ucastMessagesReceived == 1);
+    assertTrue(
+        "stats.ucastMessagesReceived =" + stats.ucastMessagesReceived,
+        stats.ucastMessagesReceived == 1);
     assertEquals(stats.ucastMessageBytesReceived, 150);
 
     recorder.down(evt);
@@ -127,9 +124,7 @@ public class StatRecorderJUnitTest {
     verify(mockDownProtocol, times(2)).down(isA(Event.class));
   }
 
-  /**
-   * ensure that multicast events are recorded in DMStats
-   */
+  /** ensure that multicast events are recorded in DMStats */
   @Test
   public void testMulticastStats() throws Exception {
     Message msg = mock(Message.class);
@@ -138,7 +133,8 @@ public class StatRecorderJUnitTest {
 
     Event evt = new Event(Event.MSG, msg);
     recorder.up(evt);
-    assertTrue("mcastMessagesReceived = " + stats.mcastMessagesReceived, stats.mcastMessagesReceived == 1);
+    assertTrue(
+        "mcastMessagesReceived = " + stats.mcastMessagesReceived, stats.mcastMessagesReceived == 1);
     assertEquals(stats.mcastMessageBytesReceived, 150);
 
     recorder.down(evt);
@@ -150,7 +146,9 @@ public class StatRecorderJUnitTest {
     when(msg.getHeader(any(Short.class))).thenReturn(NakAckHeader2.createXmitRequestHeader(null));
     evt = new Event(Event.MSG, msg);
     recorder.down(evt);
-    assertTrue("mcastRetransmitRequests = " + stats.mcastRetransmitRequests, stats.mcastRetransmitRequests == 1);
+    assertTrue(
+        "mcastRetransmitRequests = " + stats.mcastRetransmitRequests,
+        stats.mcastRetransmitRequests == 1);
 
     msg = mock(Message.class);
     when(msg.size()).thenReturn(150L);
@@ -161,8 +159,8 @@ public class StatRecorderJUnitTest {
   }
 
   /**
-   * Ensure that the messenger JGroups configuration XML strings contain
-   * the statistics recorder protocol
+   * Ensure that the messenger JGroups configuration XML strings contain the statistics recorder
+   * protocol
    */
   @Test
   public void messengerStackHoldsStatRecorder() throws Exception {
@@ -177,7 +175,8 @@ public class StatRecorderJUnitTest {
     DistributionConfigImpl config = new DistributionConfigImpl(nonDefault);
     when(mockConfig.getDistributionConfig()).thenReturn(config);
 
-    RemoteTransportConfig transport = new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
+    RemoteTransportConfig transport =
+        new RemoteTransportConfig(config, DistributionManager.NORMAL_DM_TYPE);
     when(mockConfig.getTransport()).thenReturn(transport);
 
     JGroupsMessenger messenger = new JGroupsMessenger();
@@ -251,5 +250,4 @@ public class StatRecorderJUnitTest {
       mcastRetransmitRequests++;
     }
   }
-
 }

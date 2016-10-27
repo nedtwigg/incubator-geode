@@ -37,51 +37,46 @@ import org.apache.geode.internal.cache.UserSpecifiedRegionAttributes;
 
 /**
  * The distributed system will always default to a loner on a client.
- * 
+ *
  * @since GemFire 6.5
  */
-
 public class ClientRegionFactoryImpl<K, V> implements ClientRegionFactory<K, V> {
   private final AttributesFactory<K, V> attrsFactory;
   private final GemFireCacheImpl cache;
 
   /**
-   * Constructs a ClientRegionFactory by creating a DistributedSystem and a Cache. If
-   * no DistributedSystem exists it creates a loner DistributedSystem,
-   * otherwise it uses the existing DistributedSystem.
-   * A default pool will be used unless ...
-   * The Region
-   * configuration is initialized using the given region shortcut.
+   * Constructs a ClientRegionFactory by creating a DistributedSystem and a Cache. If no
+   * DistributedSystem exists it creates a loner DistributedSystem, otherwise it uses the existing
+   * DistributedSystem. A default pool will be used unless ... The Region configuration is
+   * initialized using the given region shortcut.
    *
-   * @param pra
-   *          the region shortcut to use
+   * @param pra the region shortcut to use
    */
   public ClientRegionFactoryImpl(GemFireCacheImpl cache, ClientRegionShortcut pra) {
     this.cache = cache;
     RegionAttributes ra = cache.getRegionAttributes(pra.toString());
     if (ra == null) {
-      throw new IllegalStateException("The region shortcut " + pra + " has been removed from " + cache.listRegionAttributes());
+      throw new IllegalStateException(
+          "The region shortcut " + pra + " has been removed from " + cache.listRegionAttributes());
     }
     this.attrsFactory = new AttributesFactory<K, V>(ra);
     initAttributeFactoryDefaults();
   }
 
   /**
-   * Constructs a ClientRegionFactory by creating a DistributedSystem and a Cache. If
-   * no DistributedSystem exists it creates a loner DistributedSystem,
-   * otherwise it uses the existing DistributedSystem.
-   * A default pool will be used unless ...
-   * The region configuration is initialized using a region attributes
-   * whose name was given as the refid.
+   * Constructs a ClientRegionFactory by creating a DistributedSystem and a Cache. If no
+   * DistributedSystem exists it creates a loner DistributedSystem, otherwise it uses the existing
+   * DistributedSystem. A default pool will be used unless ... The region configuration is
+   * initialized using a region attributes whose name was given as the refid.
    *
-   * @param refid
-   *          the name of the region attributes to use
+   * @param refid the name of the region attributes to use
    */
   public ClientRegionFactoryImpl(GemFireCacheImpl cache, String refid) {
     this.cache = cache;
     RegionAttributes ra = cache.getRegionAttributes(refid);
     if (ra == null) {
-      throw new IllegalStateException("The named region attributes \"" + refid + "\" has not been defined.");
+      throw new IllegalStateException(
+          "The named region attributes \"" + refid + "\" has not been defined.");
     }
     this.attrsFactory = new AttributesFactory<K, V>(ra);
     initAttributeFactoryDefaults();
@@ -93,9 +88,7 @@ public class ClientRegionFactoryImpl<K, V> implements ClientRegionFactory<K, V> 
     //    this.attrsFactory.setIgnoreJTA(true);  in 6.6 and later releases client regions support JTA
   }
 
-  /**
-   * Returns the cache used by this factory.
-   */
+  /** Returns the cache used by this factory. */
   private GemFireCacheImpl getCache() {
     return this.cache;
   }
@@ -217,7 +210,8 @@ public class ClientRegionFactoryImpl<K, V> implements ClientRegionFactory<K, V> 
 
   @SuppressWarnings("unchecked")
   @Override
-  public Region<K, V> createSubregion(Region<?, ?> parent, String name) throws RegionExistsException {
+  public Region<K, V> createSubregion(Region<?, ?> parent, String name)
+      throws RegionExistsException {
     return ((LocalRegion) parent).createSubregion(name, createRegionAttributes());
   }
 

@@ -20,12 +20,11 @@ import org.apache.geode.StatisticDescriptor;
 import org.apache.geode.Statistics;
 
 /**
- * An instance of a Statistics resource. There may be zero, one or many
- * instances depending on the statistics type. The ResourceInstance holds
- * an array of the latest stat values.
- * <p/>
- * Extracted from {@link StatArchiveWriter}.
- * 
+ * An instance of a Statistics resource. There may be zero, one or many instances depending on the
+ * statistics type. The ResourceInstance holds an array of the latest stat values.
+ *
+ * <p>Extracted from {@link StatArchiveWriter}.
+ *
  * @since GemFire 7.0
  */
 public class ResourceInstance {

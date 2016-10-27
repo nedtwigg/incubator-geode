@@ -30,10 +30,7 @@ import org.junit.experimental.categories.Category;
 import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Integration tests for FastLogger when using the default log4j2 config for GemFire.
- * 
- */
+/** Integration tests for FastLogger when using the default log4j2 config for GemFire. */
 @Category(IntegrationTest.class)
 public class FastLoggerWithDefaultConfigJUnitTest {
 
@@ -51,24 +48,23 @@ public class FastLoggerWithDefaultConfigJUnitTest {
   }
 
   /**
-   * System property "log4j.configurationFile" should be "/org/apache/geode/internal/logging/log4j/log4j2-default.xml"
+   * System property "log4j.configurationFile" should be
+   * "/org/apache/geode/internal/logging/log4j/log4j2-default.xml"
    */
   @Test
   public void configurationFilePropertyIsDefaultConfig() {
-    assertThat(System.getProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY), isEmptyOrNullString());
+    assertThat(
+        System.getProperty(ConfigurationFactory.CONFIGURATION_FILE_PROPERTY),
+        isEmptyOrNullString());
   }
 
-  /**
-   * LogService isUsingGemFireDefaultConfig should be true
-   */
+  /** LogService isUsingGemFireDefaultConfig should be true */
   @Test
   public void isUsingGemFireDefaultConfig() {
     assertThat(LogService.isUsingGemFireDefaultConfig(), is(true));
   }
 
-  /**
-   * LogService getLogger should return loggers wrapped in FastLogger
-   */
+  /** LogService getLogger should return loggers wrapped in FastLogger */
   @Test
   public void logServiceReturnsFastLoggers() {
     this.logger = LogService.getLogger(TEST_LOGGER_NAME);
@@ -76,9 +72,7 @@ public class FastLoggerWithDefaultConfigJUnitTest {
     assertThat(this.logger, is(instanceOf(FastLogger.class)));
   }
 
-  /**
-   * FastLogger isDelegating should be false
-   */
+  /** FastLogger isDelegating should be false */
   @Test
   public void isDelegatingShouldBeFalse() {
     this.logger = LogService.getLogger(TEST_LOGGER_NAME);

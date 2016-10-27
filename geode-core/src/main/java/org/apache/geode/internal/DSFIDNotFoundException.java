@@ -20,8 +20,8 @@ package org.apache.geode.internal;
 import java.io.NotSerializableException;
 
 /**
- * Exception to indicate that a specified DSFID type could not be found (e.g.
- * due to class being absent in lower product versions).
+ * Exception to indicate that a specified DSFID type could not be found (e.g. due to class being
+ * absent in lower product versions).
  */
 public class DSFIDNotFoundException extends NotSerializableException {
 
@@ -32,9 +32,8 @@ public class DSFIDNotFoundException extends NotSerializableException {
 
   /**
    * Constructs a DSFIDNotFoundException object with message string.
-   * 
-   * @param msg
-   *          exception message
+   *
+   * @param msg exception message
    */
   public DSFIDNotFoundException(String msg, int dsfid) {
     super(msg);

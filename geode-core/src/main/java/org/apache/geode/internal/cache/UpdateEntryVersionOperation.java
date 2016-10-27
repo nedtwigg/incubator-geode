@@ -38,17 +38,13 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.offheap.annotations.Retained;
 
 /**
- * This operation updates Version stamp of an entry if entry is available and
- * entry version stamp has same DSID as in event's version tag.
- * 
- * 
+ * This operation updates Version stamp of an entry if entry is available and entry version stamp
+ * has same DSID as in event's version tag.
  */
 public class UpdateEntryVersionOperation extends DistributedCacheOperation {
   private static final Logger logger = LogService.getLogger();
 
-  /**
-   * @param event
-   */
+  /** @param event */
   public UpdateEntryVersionOperation(CacheEvent event) {
     super(event);
   }
@@ -78,8 +74,7 @@ public class UpdateEntryVersionOperation extends DistributedCacheOperation {
     protected EntryEventImpl event = null;
     private Long tailKey = 0L; // Used for Parallel Gateway Senders
 
-    public UpdateEntryVersionMessage() {
-    }
+    public UpdateEntryVersionMessage() {}
 
     public UpdateEntryVersionMessage(InternalCacheEvent ev) {
       this.event = (EntryEventImpl) ev;
@@ -94,7 +89,16 @@ public class UpdateEntryVersionOperation extends DistributedCacheOperation {
     @Retained
     protected InternalCacheEvent createEvent(DistributedRegion rgn) throws EntryNotFoundException {
       @Retained
-      EntryEventImpl ev = EntryEventImpl.create(rgn, getOperation(), this.key, null /* newValue */, this.callbackArg /*callbackArg*/, true /* originRemote*/ , getSender(), false /*generateCallbacks*/);
+      EntryEventImpl ev =
+          EntryEventImpl.create(
+              rgn,
+              getOperation(),
+              this.key,
+              null /* newValue */,
+              this.callbackArg /*callbackArg*/,
+              true /* originRemote*/,
+              getSender(),
+              false /*generateCallbacks*/);
       ev.setEventId(this.eventId);
       ev.setVersionTag(this.versionTag);
       ev.setTailKey(this.tailKey);
@@ -104,7 +108,14 @@ public class UpdateEntryVersionOperation extends DistributedCacheOperation {
 
     @Override
     public List getOperations() {
-      return Collections.singletonList(new QueuedOperation(getOperation(), this.key, null, null, DistributedCacheOperation.DESERIALIZATION_POLICY_NONE, this.callbackArg));
+      return Collections.singletonList(
+          new QueuedOperation(
+              getOperation(),
+              this.key,
+              null,
+              null,
+              DistributedCacheOperation.DESERIALIZATION_POLICY_NONE,
+              this.callbackArg));
     }
 
     @Override
@@ -118,7 +129,8 @@ public class UpdateEntryVersionOperation extends DistributedCacheOperation {
     }
 
     @Override
-    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm) throws EntryNotFoundException {
+    protected boolean operateOnRegion(CacheEvent event, DistributionManager dm)
+        throws EntryNotFoundException {
       EntryEventImpl ev = (EntryEventImpl) event;
       DistributedRegion rgn = (DistributedRegion) ev.region;
 
@@ -137,13 +149,21 @@ public class UpdateEntryVersionOperation extends DistributedCacheOperation {
         return true;
       } catch (ConcurrentCacheModificationException e) {
         if (logger.isTraceEnabled()) {
-          logger.trace("UpdateEntryVersionMessage.operationOnRegion; ConcurrentCacheModificationException occured for key={}", ev.getKey());
+          logger.trace(
+              "UpdateEntryVersionMessage.operationOnRegion; ConcurrentCacheModificationException occured for key={}",
+              ev.getKey());
         }
         return true; // concurrent modification problems are not reported to senders
       } catch (CacheWriterException e) {
-        throw new Error(LocalizedStrings.UpdateVersionOperation_CACHEWRITER_SHOULD_NOT_BE_CALLED.toLocalizedString(), e);
+        throw new Error(
+            LocalizedStrings.UpdateVersionOperation_CACHEWRITER_SHOULD_NOT_BE_CALLED
+                .toLocalizedString(),
+            e);
       } catch (TimeoutException e) {
-        throw new Error(LocalizedStrings.UpdateVersionOperation_DISTRIBUTEDLOCK_SHOULD_NOT_BE_ACQUIRED.toLocalizedString(), e);
+        throw new Error(
+            LocalizedStrings.UpdateVersionOperation_DISTRIBUTEDLOCK_SHOULD_NOT_BE_ACQUIRED
+                .toLocalizedString(),
+            e);
       }
     }
 

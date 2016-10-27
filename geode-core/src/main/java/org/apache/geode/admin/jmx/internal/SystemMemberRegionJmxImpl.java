@@ -24,12 +24,13 @@ import javax.management.ObjectName;
 import javax.management.modelmbean.ModelMBean;
 
 /**
- * MBean representation of {@link 
- * org.apache.geode.admin.SystemMemberRegion}.
+ * MBean representation of {@link org.apache.geode.admin.SystemMemberRegion}.
  *
- * @since GemFire     3.5
+ * @since GemFire 3.5
  */
-public class SystemMemberRegionJmxImpl extends org.apache.geode.admin.internal.SystemMemberRegionImpl implements org.apache.geode.admin.jmx.internal.ManagedResource {
+public class SystemMemberRegionJmxImpl
+    extends org.apache.geode.admin.internal.SystemMemberRegionImpl
+    implements org.apache.geode.admin.jmx.internal.ManagedResource {
 
   /** The object name of this managed resource */
   private ObjectName objectName;
@@ -38,22 +39,35 @@ public class SystemMemberRegionJmxImpl extends org.apache.geode.admin.internal.S
   //   Constructor(s)
   // -------------------------------------------------------------------------
 
-  /** 
+  /**
    * Constructs an instance of SystemMemberRegionJmxImpl.
    *
-   * @param cache   the cache this region belongs to
-   * @param region  internal region to delegate real work to
+   * @param cache the cache this region belongs to
+   * @param region internal region to delegate real work to
    */
-  public SystemMemberRegionJmxImpl(SystemMemberCacheImpl cache, Region region) throws org.apache.geode.admin.AdminException {
+  public SystemMemberRegionJmxImpl(SystemMemberCacheImpl cache, Region region)
+      throws org.apache.geode.admin.AdminException {
     super(cache, region);
     initializeMBean(cache);
   }
 
   /** Create and register the MBean to manage this resource */
-  private void initializeMBean(SystemMemberCacheImpl cache) throws org.apache.geode.admin.AdminException {
+  private void initializeMBean(SystemMemberCacheImpl cache)
+      throws org.apache.geode.admin.AdminException {
 
     GemFireVM vm = cache.getVM();
-    this.mbeanName = new StringBuffer("GemFire.Cache:").append("path=").append(MBeanUtil.makeCompliantMBeanNameProperty(getFullPath())).append(",name=").append(MBeanUtil.makeCompliantMBeanNameProperty(cache.getName())).append(",id=").append(cache.getId()).append(",owner=").append(MBeanUtil.makeCompliantMBeanNameProperty(vm.getId().toString())).append(",type=Region").toString();
+    this.mbeanName =
+        new StringBuffer("GemFire.Cache:")
+            .append("path=")
+            .append(MBeanUtil.makeCompliantMBeanNameProperty(getFullPath()))
+            .append(",name=")
+            .append(MBeanUtil.makeCompliantMBeanNameProperty(cache.getName()))
+            .append(",id=")
+            .append(cache.getId())
+            .append(",owner=")
+            .append(MBeanUtil.makeCompliantMBeanNameProperty(vm.getId().toString()))
+            .append(",type=Region")
+            .toString();
 
     this.objectName = MBeanUtil.createMBean(this);
   }
@@ -88,18 +102,15 @@ public class SystemMemberRegionJmxImpl extends org.apache.geode.admin.internal.S
     return ManagedResourceType.SYSTEM_MEMBER_REGION;
   }
 
-  public void cleanupResource() {
-  }
+  public void cleanupResource() {}
 
   /**
-   * Checks equality of the given object with <code>this</code> based on the
-   * type (Class) and the MBean Name returned by <code>getMBeanName()</code>
-   * methods.
-   * 
-   * @param obj
-   *          object to check equality with
-   * @return true if the given object is if the same type and its MBean Name is
-   *         same as <code>this</code> object's MBean Name, false otherwise
+   * Checks equality of the given object with <code>this</code> based on the type (Class) and the
+   * MBean Name returned by <code>getMBeanName()</code> methods.
+   *
+   * @param obj object to check equality with
+   * @return true if the given object is if the same type and its MBean Name is same as <code>this
+   *     </code> object's MBean Name, false otherwise
    */
   @Override
   public boolean equals(Object obj) {
@@ -113,9 +124,8 @@ public class SystemMemberRegionJmxImpl extends org.apache.geode.admin.internal.S
   }
 
   /**
-   * Returns hash code for <code>this</code> object which is based on the MBean 
-   * Name generated. 
-   * 
+   * Returns hash code for <code>this</code> object which is based on the MBean Name generated.
+   *
    * @return hash code for <code>this</code> object
    */
   @Override

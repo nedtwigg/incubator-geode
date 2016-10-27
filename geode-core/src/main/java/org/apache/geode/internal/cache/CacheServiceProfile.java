@@ -19,14 +19,15 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.cache.Region;
 
 /**
- * CacheServiceProfiles track additions to a {@link Region} made by a {@link CacheService}.
- * They are added to the {@link CacheDistributionAdvisor.CacheProfile} during {@link Region}
- * creation and are exchanged by the {@link CreateRegionProcessor}.
+ * CacheServiceProfiles track additions to a {@link Region} made by a {@link CacheService}. They are
+ * added to the {@link CacheDistributionAdvisor.CacheProfile} during {@link Region} creation and are
+ * exchanged by the {@link CreateRegionProcessor}.
  */
 public interface CacheServiceProfile {
 
   /**
    * Return the id of this profile
+   *
    * @return the id of this profile
    */
   String getId();

@@ -18,20 +18,18 @@ package org.apache.geode.management.internal.beans;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Class to give a consistent sequence number to notifications
- * 
- * 
- */
+/** Class to give a consistent sequence number to notifications */
 public class SequenceNumber {
 
-  /** Sequence number for resource related notifications **/
+  /** Sequence number for resource related notifications * */
   private static AtomicLong sequenceNumber = new AtomicLong(1);
 
   public static long next() {
     long retVal = sequenceNumber.incrementAndGet();
 
-    if (retVal == Long.MAX_VALUE || retVal < 0) {//retVal <0 is checked for cases where other threads might have incremented sequenceNumber beyond Long.MAX_VALUE
+    if (retVal == Long.MAX_VALUE
+        || retVal
+            < 0) { //retVal <0 is checked for cases where other threads might have incremented sequenceNumber beyond Long.MAX_VALUE
 
       synchronized (SequenceNumber.class) {
         long currentValue = sequenceNumber.get();
@@ -45,5 +43,4 @@ public class SequenceNumber {
     }
     return retVal;
   }
-
 }

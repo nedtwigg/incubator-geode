@@ -92,9 +92,7 @@ public class MapInterfaceJUnitTest {
     ds.disconnect();
   }
 
-  /**
-   * Make sure putAll works on Scope.LOCAL (see bug 35087)
-   */
+  /** Make sure putAll works on Scope.LOCAL (see bug 35087) */
   @Test
   public void testLocalPutAll() {
     Properties props = new Properties();
@@ -159,16 +157,17 @@ public class MapInterfaceJUnitTest {
       cache = CacheFactory.create(ds);
       factory = new AttributesFactory();
       factory.setScope(Scope.LOCAL);
-      factory.setCacheWriter(new CacheWriterAdapter() {
+      factory.setCacheWriter(
+          new CacheWriterAdapter() {
 
-        @Override
-        public void beforeRegionClear(RegionEvent event) throws CacheWriterException {
-          synchronized (this) {
-            this.notify();
-            MapInterfaceJUnitTest.this.hasBeenNotified = true;
-          }
-        }
-      });
+            @Override
+            public void beforeRegionClear(RegionEvent event) throws CacheWriterException {
+              synchronized (this) {
+                this.notify();
+                MapInterfaceJUnitTest.this.hasBeenNotified = true;
+              }
+            }
+          });
       region = cache.createRegion("testingRegion", factory.create());
       DoesClear doesClear = new DoesClear(region);
       new Thread(doesClear).start();
@@ -224,18 +223,18 @@ public class MapInterfaceJUnitTest {
       cache = CacheFactory.create(ds);
       factory = new AttributesFactory();
       factory.setScope(Scope.LOCAL);
-      factory.setCacheWriter(new CacheWriterAdapter() {
+      factory.setCacheWriter(
+          new CacheWriterAdapter() {
 
-        @Override
-        public void beforeUpdate(EntryEvent event) throws CacheWriterException {
-          synchronized (this) {
-            this.notify();
-            counter++;
-            MapInterfaceJUnitTest.this.hasBeenNotified = true;
-          }
-        }
-
-      });
+            @Override
+            public void beforeUpdate(EntryEvent event) throws CacheWriterException {
+              synchronized (this) {
+                this.notify();
+                counter++;
+                MapInterfaceJUnitTest.this.hasBeenNotified = true;
+              }
+            }
+          });
       region2 = cache.createRegion("testingRegion", factory.create());
       region2.put(new Integer(2), new Integer(2));
       this.hasBeenNotified = false;
@@ -272,12 +271,12 @@ public class MapInterfaceJUnitTest {
 
   class DoesPut implements Runnable {
 
-    DoesPut() {
-    }
+    DoesPut() {}
 
     @Override
     public void run() {
-      ((Map.Entry) (MapInterfaceJUnitTest.this.region2.entrySet().iterator().next())).setValue(new Integer(8));
+      ((Map.Entry) (MapInterfaceJUnitTest.this.region2.entrySet().iterator().next()))
+          .setValue(new Integer(8));
     }
   }
 }

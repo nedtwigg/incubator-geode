@@ -28,21 +28,19 @@ import org.apache.geode.distributed.internal.membership.InternalDistributedMembe
 
 /**
  * A bucket operator that will perform operations on a bucket asynchronously.
- * 
- * This class wraps a delegate bucket operator that is synchronous. That is, the
- * delegate bucket operator is expected to move the bucket and notify the
- * Completion within the scope of the call to create bucket.
- * 
- * What this class does in make that call asynchronous. A task to create the
- * bucket is handed to the thread pool and executed there. After it is done, the
- * completion is notified.
- * 
- * Calling waitForOperations waits for all previously submitted operations and 
- * ensures the completions are notified.
- * 
- * Note that only createRedundantBucket is asynchronous, the rest of the 
- * operations are synchronous.
- * 
+ *
+ * <p>This class wraps a delegate bucket operator that is synchronous. That is, the delegate bucket
+ * operator is expected to move the bucket and notify the Completion within the scope of the call to
+ * create bucket.
+ *
+ * <p>What this class does in make that call asynchronous. A task to create the bucket is handed to
+ * the thread pool and executed there. After it is done, the completion is notified.
+ *
+ * <p>Calling waitForOperations waits for all previously submitted operations and ensures the
+ * completions are notified.
+ *
+ * <p>Note that only createRedundantBucket is asynchronous, the rest of the operations are
+ * synchronous.
  */
 public class ParallelBucketOperator implements BucketOperator {
 
@@ -50,16 +48,23 @@ public class ParallelBucketOperator implements BucketOperator {
   private final ExecutorService executor;
   private final Semaphore operationSemaphore;
   private final int maxParallelOperations;
-  private final ConcurrentLinkedQueue<Completion> pendingSuccess = new ConcurrentLinkedQueue<BucketOperator.Completion>();
-  private final ConcurrentLinkedQueue<Completion> pendingFailure = new ConcurrentLinkedQueue<BucketOperator.Completion>();
+  private final ConcurrentLinkedQueue<Completion> pendingSuccess =
+      new ConcurrentLinkedQueue<BucketOperator.Completion>();
+  private final ConcurrentLinkedQueue<Completion> pendingFailure =
+      new ConcurrentLinkedQueue<BucketOperator.Completion>();
 
   /**
    * Create a parallel bucket operator
-   * @param maxParallelOperations The number of operations that can execute concurrently. Futher calls to createRedundantBucket will block.
-   * @param executor the executor to submit tasks to. This executor should be able to create at least maxParallelOperations threads.
-   * @param operator A bucket operator that is synchronous that will do the actual work of creating a bucket.
+   *
+   * @param maxParallelOperations The number of operations that can execute concurrently. Futher
+   *     calls to createRedundantBucket will block.
+   * @param executor the executor to submit tasks to. This executor should be able to create at
+   *     least maxParallelOperations threads.
+   * @param operator A bucket operator that is synchronous that will do the actual work of creating
+   *     a bucket.
    */
-  public ParallelBucketOperator(int maxParallelOperations, ExecutorService executor, BucketOperator operator) {
+  public ParallelBucketOperator(
+      int maxParallelOperations, ExecutorService executor, BucketOperator operator) {
     this.maxParallelOperations = maxParallelOperations;
     this.operationSemaphore = new Semaphore(maxParallelOperations);
     this.delegate = operator;
@@ -67,56 +72,70 @@ public class ParallelBucketOperator implements BucketOperator {
   }
 
   /**
-   * Create a redundant bucket asynchronously. If maxParallelOperations is not reached, this call will submit 
-   * a task and return immediately. Otherwise, it will block until an executor thread is available to 
-   * take a task.
-   * 
-   * The completion will not be notified until the caller makes another call to createRedundant bucket or
-   * waitForOperations.
+   * Create a redundant bucket asynchronously. If maxParallelOperations is not reached, this call
+   * will submit a task and return immediately. Otherwise, it will block until an executor thread is
+   * available to take a task.
+   *
+   * <p>The completion will not be notified until the caller makes another call to createRedundant
+   * bucket or waitForOperations.
    */
   @Override
-  public void createRedundantBucket(final InternalDistributedMember targetMember, final int bucketId, final Map<String, Long> colocatedRegionBytes, final Completion completion) {
+  public void createRedundantBucket(
+      final InternalDistributedMember targetMember,
+      final int bucketId,
+      final Map<String, Long> colocatedRegionBytes,
+      final Completion completion) {
     drainCompletions();
     operationSemaphore.acquireUninterruptibly();
-    executor.execute(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          delegate.createRedundantBucket(targetMember, bucketId, colocatedRegionBytes, new Completion() {
-            @Override
-            public void onSuccess() {
-              pendingSuccess.add(completion);
-            }
+    executor.execute(
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              delegate.createRedundantBucket(
+                  targetMember,
+                  bucketId,
+                  colocatedRegionBytes,
+                  new Completion() {
+                    @Override
+                    public void onSuccess() {
+                      pendingSuccess.add(completion);
+                    }
 
-            @Override
-            public void onFailure() {
-              pendingFailure.add(completion);
+                    @Override
+                    public void onFailure() {
+                      pendingFailure.add(completion);
+                    }
+                  });
+            } catch (CancelException e) {
+              //ignore
+            } catch (RegionDestroyedException e) {
+              //ignore
+            } finally {
+              operationSemaphore.release();
             }
-          });
-        } catch (CancelException e) {
-          //ignore 
-        } catch (RegionDestroyedException e) {
-          //ignore
-        } finally {
-          operationSemaphore.release();
-        }
-      }
-    });
-
+          }
+        });
   }
 
   @Override
-  public boolean removeBucket(InternalDistributedMember memberId, int id, Map<String, Long> colocatedRegionSizes) {
+  public boolean removeBucket(
+      InternalDistributedMember memberId, int id, Map<String, Long> colocatedRegionSizes) {
     return delegate.removeBucket(memberId, id, colocatedRegionSizes);
   }
 
   @Override
-  public boolean moveBucket(InternalDistributedMember sourceMember, InternalDistributedMember targetMember, int bucketId, Map<String, Long> colocatedRegionBytes) {
+  public boolean moveBucket(
+      InternalDistributedMember sourceMember,
+      InternalDistributedMember targetMember,
+      int bucketId,
+      Map<String, Long> colocatedRegionBytes) {
     return delegate.moveBucket(sourceMember, targetMember, bucketId, colocatedRegionBytes);
   }
 
   @Override
-  public boolean movePrimary(InternalDistributedMember source, InternalDistributedMember target, int bucketId) {
+  public boolean movePrimary(
+      InternalDistributedMember source, InternalDistributedMember target, int bucketId) {
     return delegate.movePrimary(source, target, bucketId);
   }
 
@@ -129,12 +148,10 @@ public class ParallelBucketOperator implements BucketOperator {
     while ((next = pendingFailure.poll()) != null) {
       next.onFailure();
     }
-
   }
 
   /**
-   * Wait for any pending operations, and notify the the completions
-   * that the operations and done.
+   * Wait for any pending operations, and notify the the completions that the operations and done.
    */
   public void waitForOperations() {
     boolean interrupted = false;
@@ -156,5 +173,4 @@ public class ParallelBucketOperator implements BucketOperator {
       }
     }
   }
-
 }

@@ -21,8 +21,11 @@ import javax.management.ObjectName;
 import javax.management.QueryExp;
 
 /**
- * The QueryParameterSource class encapsulates details in order to perform a query on an JMX MBean server.
- * <p/>
+ * The QueryParameterSource class encapsulates details in order to perform a query on an JMX MBean
+ * server.
+ *
+ * <p>
+ *
  * @see java.io.Serializable
  * @see javax.management.ObjectName
  * @see javax.management.QueryExp
@@ -58,5 +61,4 @@ public class QueryParameterSource implements Serializable {
     buffer.append(" }");
     return buffer.toString();
   }
-
 }

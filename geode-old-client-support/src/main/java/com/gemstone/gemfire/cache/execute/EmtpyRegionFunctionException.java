@@ -20,11 +20,10 @@ import org.apache.geode.distributed.DistributedMember;
 
 /**
  * Exception to indicate that Region is empty for data aware functions.
- * 
+ *
  * @author skumar
  * @since 6.5
  * @deprecated please use the org.apache.geode version of this class
- * 
  */
 public class EmtpyRegionFunctionException extends FunctionException {
 
@@ -32,9 +31,8 @@ public class EmtpyRegionFunctionException extends FunctionException {
 
   /**
    * Construct an instance of EmtpyRegionFunctionException
-   * 
-   * @param cause
-   *                a Throwable cause of this exception
+   *
+   * @param cause a Throwable cause of this exception
    */
   public EmtpyRegionFunctionException(Throwable cause) {
     super(cause);
@@ -42,9 +40,8 @@ public class EmtpyRegionFunctionException extends FunctionException {
 
   /**
    * Construct an instance of EmtpyRegionFunctionException
-   * 
-   * @param msg
-   *                Exception message
+   *
+   * @param msg Exception message
    */
   public EmtpyRegionFunctionException(String msg) {
     super(msg);
@@ -52,14 +49,11 @@ public class EmtpyRegionFunctionException extends FunctionException {
 
   /**
    * Construct an instance of EmtpyRegionFunctionException
-   * 
-   * @param msg
-   *                the error message
-   * @param cause
-   *                a Throwable cause of this exception
+   *
+   * @param msg the error message
+   * @param cause a Throwable cause of this exception
    */
   public EmtpyRegionFunctionException(String msg, Throwable cause) {
     super(msg, cause);
   }
-
 }

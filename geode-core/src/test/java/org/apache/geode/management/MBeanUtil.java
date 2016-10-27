@@ -36,9 +36,7 @@ import org.apache.geode.test.dunit.LogWriterUtils;
 import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.dunit.WaitCriterion;
 
-/**
- * Utility test class to get various proxies
- */
+/** Utility test class to get various proxies */
 public class MBeanUtil {
 
   private static final int MAX_WAIT = 8 * ManagementConstants.REFRESH_TIME;
@@ -46,37 +44,43 @@ public class MBeanUtil {
   public static MBeanServer mbeanServer = MBeanJMXAdapter.mbeanServer;
 
   /**
-   * Utility Method to obtain MemberMXBean proxy reference for a particular
-   * Member
-   * 
+   * Utility Method to obtain MemberMXBean proxy reference for a particular Member
+   *
    * @param member
    * @return a reference to MemberMXBean
    * @throws Exception
    */
   public static MemberMXBean getMemberMbeanProxy(DistributedMember member) throws Exception {
     MemberMXBean bean = null;
-    final SystemManagementService service = (SystemManagementService) ManagementTestBase.getManagementService();
+    final SystemManagementService service =
+        (SystemManagementService) ManagementTestBase.getManagementService();
     final ObjectName memberMBeanName = service.getMemberMBeanName(member);
-    Wait.waitForCriterion(new WaitCriterion() {
-      MemberMXBean bean = null;
+    Wait.waitForCriterion(
+        new WaitCriterion() {
+          MemberMXBean bean = null;
 
-      public String description() {
-        return "Waiting for the proxy to get reflected at managing node";
-      }
+          public String description() {
+            return "Waiting for the proxy to get reflected at managing node";
+          }
 
-      public boolean done() {
-        bean = service.getMBeanProxy(memberMBeanName, MemberMXBean.class);
-        boolean done = bean != null;
-        return done;
-      }
-
-    }, MAX_WAIT, 500, true);
+          public boolean done() {
+            bean = service.getMBeanProxy(memberMBeanName, MemberMXBean.class);
+            boolean done = bean != null;
+            return done;
+          }
+        },
+        MAX_WAIT,
+        500,
+        true);
 
     try {
       bean = service.getMBeanProxy(memberMBeanName, MemberMXBean.class);
     } catch (ManagementException mgz) {
       if (bean == null) {
-        InternalDistributedSystem.getLoggerI18n().fine("Undesired Result :MemberMBean Proxy Should Not be Empty for : " + memberMBeanName.getCanonicalName());
+        InternalDistributedSystem.getLoggerI18n()
+            .fine(
+                "Undesired Result :MemberMBean Proxy Should Not be Empty for : "
+                    + memberMBeanName.getCanonicalName());
       }
     }
 
@@ -84,82 +88,97 @@ public class MBeanUtil {
   }
 
   /**
-   * Utility Method to obtain CacheServerMXBean proxy reference for a particular
-   * Member
-   * 
+   * Utility Method to obtain CacheServerMXBean proxy reference for a particular Member
+   *
    * @param member
    * @return a reference to CacheServerMXBean
    * @throws Exception
    */
-  public static CacheServerMXBean getCacheServerMbeanProxy(DistributedMember member, int port) throws Exception {
+  public static CacheServerMXBean getCacheServerMbeanProxy(DistributedMember member, int port)
+      throws Exception {
     CacheServerMXBean bean = null;
-    final SystemManagementService service = (SystemManagementService) ManagementTestBase.getManagementService();
+    final SystemManagementService service =
+        (SystemManagementService) ManagementTestBase.getManagementService();
     final ObjectName cacheServerMBeanName = service.getCacheServerMBeanName(port, member);
 
-    Wait.waitForCriterion(new WaitCriterion() {
-      CacheServerMXBean bean = null;
+    Wait.waitForCriterion(
+        new WaitCriterion() {
+          CacheServerMXBean bean = null;
 
-      public String description() {
-        return "Waiting for the proxy to get reflected at managing node";
-      }
+          public String description() {
+            return "Waiting for the proxy to get reflected at managing node";
+          }
 
-      public boolean done() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        GemFireCacheImpl cacheImpl = (GemFireCacheImpl) cache;
-        bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
-        boolean done = bean != null;
-        return done;
-      }
-
-    }, MAX_WAIT, 500, true);
+          public boolean done() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            GemFireCacheImpl cacheImpl = (GemFireCacheImpl) cache;
+            bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
+            boolean done = bean != null;
+            return done;
+          }
+        },
+        MAX_WAIT,
+        500,
+        true);
 
     try {
       bean = service.getMBeanProxy(cacheServerMBeanName, CacheServerMXBean.class);
     } catch (ManagementException mgz) {
       if (bean == null) {
-        InternalDistributedSystem.getLoggerI18n().fine("Undesired Result :CacheServer Proxy Should Not be Empty for : " + cacheServerMBeanName.getCanonicalName());
+        InternalDistributedSystem.getLoggerI18n()
+            .fine(
+                "Undesired Result :CacheServer Proxy Should Not be Empty for : "
+                    + cacheServerMBeanName.getCanonicalName());
       }
     }
 
     return bean;
-
   }
 
   /**
-   * Utility Method to obtain LockServiceMXBean proxy reference for a particular
-   * lock service on a Member
-   * 
+   * Utility Method to obtain LockServiceMXBean proxy reference for a particular lock service on a
+   * Member
+   *
    * @param member
    * @return a reference to LockServiceMXBean
    * @throws Exception
    */
-  public static LockServiceMXBean getLockServiceMbeanProxy(DistributedMember member, String lockServiceName) throws Exception {
+  public static LockServiceMXBean getLockServiceMbeanProxy(
+      DistributedMember member, String lockServiceName) throws Exception {
     LockServiceMXBean bean = null;
-    final SystemManagementService service = (SystemManagementService) ManagementTestBase.getManagementService();
-    final ObjectName lockServiceMBeanName = service.getLockServiceMBeanName(member, lockServiceName);
+    final SystemManagementService service =
+        (SystemManagementService) ManagementTestBase.getManagementService();
+    final ObjectName lockServiceMBeanName =
+        service.getLockServiceMBeanName(member, lockServiceName);
 
-    Wait.waitForCriterion(new WaitCriterion() {
-      LockServiceMXBean bean = null;
+    Wait.waitForCriterion(
+        new WaitCriterion() {
+          LockServiceMXBean bean = null;
 
-      public String description() {
-        return "Waiting for the proxy to get reflected at managing node";
-      }
+          public String description() {
+            return "Waiting for the proxy to get reflected at managing node";
+          }
 
-      public boolean done() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        GemFireCacheImpl cacheImpl = (GemFireCacheImpl) cache;
-        bean = service.getMBeanProxy(lockServiceMBeanName, LockServiceMXBean.class);
-        boolean done = bean != null;
-        return done;
-      }
-
-    }, MAX_WAIT, 500, true);
+          public boolean done() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            GemFireCacheImpl cacheImpl = (GemFireCacheImpl) cache;
+            bean = service.getMBeanProxy(lockServiceMBeanName, LockServiceMXBean.class);
+            boolean done = bean != null;
+            return done;
+          }
+        },
+        MAX_WAIT,
+        500,
+        true);
 
     try {
       bean = service.getMBeanProxy(lockServiceMBeanName, LockServiceMXBean.class);
     } catch (ManagementException mgz) {
       if (bean == null) {
-        InternalDistributedSystem.getLoggerI18n().fine("Undesired Result :LockService Proxy Should Not be Empty for : " + lockServiceMBeanName.getCanonicalName());
+        InternalDistributedSystem.getLoggerI18n()
+            .fine(
+                "Undesired Result :LockService Proxy Should Not be Empty for : "
+                    + lockServiceMBeanName.getCanonicalName());
       }
     }
 
@@ -167,42 +186,49 @@ public class MBeanUtil {
   }
 
   /**
-   * Utility Method to obtain RegionMXBean proxy reference for a particular
-   * region on a member
-   * 
+   * Utility Method to obtain RegionMXBean proxy reference for a particular region on a member
+   *
    * @param member
    * @return a reference to RegionMXBean
    * @throws Exception
    */
-  public static RegionMXBean getRegionMbeanProxy(DistributedMember member, String regionPath) throws Exception {
+  public static RegionMXBean getRegionMbeanProxy(DistributedMember member, String regionPath)
+      throws Exception {
 
-    final SystemManagementService service = (SystemManagementService) ManagementTestBase.getManagementService();
+    final SystemManagementService service =
+        (SystemManagementService) ManagementTestBase.getManagementService();
 
     final ObjectName regionMBeanName = service.getRegionMBeanName(member, regionPath);
 
-    Wait.waitForCriterion(new WaitCriterion() {
+    Wait.waitForCriterion(
+        new WaitCriterion() {
 
-      RegionMXBean bean = null;
+          RegionMXBean bean = null;
 
-      public String description() {
-        return "Waiting for the proxy to get reflected at managing node";
-      }
+          public String description() {
+            return "Waiting for the proxy to get reflected at managing node";
+          }
 
-      public boolean done() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        bean = service.getMBeanProxy(regionMBeanName, RegionMXBean.class);
-        boolean done = (bean != null);
-        return done;
-      }
-
-    }, MAX_WAIT, 500, true);
+          public boolean done() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            bean = service.getMBeanProxy(regionMBeanName, RegionMXBean.class);
+            boolean done = (bean != null);
+            return done;
+          }
+        },
+        MAX_WAIT,
+        500,
+        true);
 
     RegionMXBean bean = null;
     try {
       bean = service.getMBeanProxy(regionMBeanName, RegionMXBean.class);
     } catch (ManagementException mgz) {
       if (bean == null) {
-        InternalDistributedSystem.getLoggerI18n().fine("Undesired Result :RegionMBean Proxy Should Not be Empty for : " + regionMBeanName.getCanonicalName());
+        InternalDistributedSystem.getLoggerI18n()
+            .fine(
+                "Undesired Result :RegionMBean Proxy Should Not be Empty for : "
+                    + regionMBeanName.getCanonicalName());
       }
     }
 
@@ -210,45 +236,51 @@ public class MBeanUtil {
   }
 
   /**
-   * Utility Method to obtain GatewaySenderMXBean proxy reference for a
-   * particular sender id on a member
-   * 
-   * @param member
-   *          distributed member
-   * @param gatwaySenderId
-   *          sender id
+   * Utility Method to obtain GatewaySenderMXBean proxy reference for a particular sender id on a
+   * member
+   *
+   * @param member distributed member
+   * @param gatwaySenderId sender id
    * @return a reference to GatewaySenderMXBean
    * @throws Exception
    */
-  public static GatewaySenderMXBean getGatewaySenderMbeanProxy(DistributedMember member, String gatwaySenderId) throws Exception {
+  public static GatewaySenderMXBean getGatewaySenderMbeanProxy(
+      DistributedMember member, String gatwaySenderId) throws Exception {
 
-    final SystemManagementService service = (SystemManagementService) ManagementTestBase.getManagementService();
+    final SystemManagementService service =
+        (SystemManagementService) ManagementTestBase.getManagementService();
 
     final ObjectName senderMBeanName = service.getGatewaySenderMBeanName(member, gatwaySenderId);
 
-    Wait.waitForCriterion(new WaitCriterion() {
+    Wait.waitForCriterion(
+        new WaitCriterion() {
 
-      GatewaySenderMXBean bean = null;
+          GatewaySenderMXBean bean = null;
 
-      public String description() {
-        return "Waiting for the proxy to get reflected at managing node";
-      }
+          public String description() {
+            return "Waiting for the proxy to get reflected at managing node";
+          }
 
-      public boolean done() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        bean = service.getMBeanProxy(senderMBeanName, GatewaySenderMXBean.class);
-        boolean done = (bean != null);
-        return done;
-      }
-
-    }, MAX_WAIT, 500, true);
+          public boolean done() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            bean = service.getMBeanProxy(senderMBeanName, GatewaySenderMXBean.class);
+            boolean done = (bean != null);
+            return done;
+          }
+        },
+        MAX_WAIT,
+        500,
+        true);
 
     GatewaySenderMXBean bean = null;
     try {
       bean = service.getMBeanProxy(senderMBeanName, GatewaySenderMXBean.class);
     } catch (ManagementException mgz) {
       if (bean == null) {
-        InternalDistributedSystem.getLoggerI18n().fine("Undesired Result :GatewaySender MBean Proxy Should Not be Empty for : " + senderMBeanName.getCanonicalName());
+        InternalDistributedSystem.getLoggerI18n()
+            .fine(
+                "Undesired Result :GatewaySender MBean Proxy Should Not be Empty for : "
+                    + senderMBeanName.getCanonicalName());
       }
     }
 
@@ -256,45 +288,51 @@ public class MBeanUtil {
   }
 
   /**
-   * Utility Method to obtain AsyncEventQueueMXBean proxy reference for a
-   * particular queue id on a member
-   * 
-   * @param member
-   *          distributed member
-   * @param queueId
-   *          Queue id
+   * Utility Method to obtain AsyncEventQueueMXBean proxy reference for a particular queue id on a
+   * member
+   *
+   * @param member distributed member
+   * @param queueId Queue id
    * @return a reference to AsyncEventQueueMXBean
    * @throws Exception
    */
-  public static AsyncEventQueueMXBean getAsyncEventQueueMBeanProxy(DistributedMember member, String queueId) throws Exception {
+  public static AsyncEventQueueMXBean getAsyncEventQueueMBeanProxy(
+      DistributedMember member, String queueId) throws Exception {
 
-    final SystemManagementService service = (SystemManagementService) ManagementTestBase.getManagementService();
+    final SystemManagementService service =
+        (SystemManagementService) ManagementTestBase.getManagementService();
 
     final ObjectName queueMBeanName = service.getAsyncEventQueueMBeanName(member, queueId);
 
-    Wait.waitForCriterion(new WaitCriterion() {
+    Wait.waitForCriterion(
+        new WaitCriterion() {
 
-      AsyncEventQueueMXBean bean = null;
+          AsyncEventQueueMXBean bean = null;
 
-      public String description() {
-        return "Waiting for the proxy to get reflected at managing node";
-      }
+          public String description() {
+            return "Waiting for the proxy to get reflected at managing node";
+          }
 
-      public boolean done() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        bean = service.getMBeanProxy(queueMBeanName, AsyncEventQueueMXBean.class);
-        boolean done = (bean != null);
-        return done;
-      }
-
-    }, MAX_WAIT, 500, true);
+          public boolean done() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            bean = service.getMBeanProxy(queueMBeanName, AsyncEventQueueMXBean.class);
+            boolean done = (bean != null);
+            return done;
+          }
+        },
+        MAX_WAIT,
+        500,
+        true);
 
     AsyncEventQueueMXBean bean = null;
     try {
       bean = service.getMBeanProxy(queueMBeanName, AsyncEventQueueMXBean.class);
     } catch (ManagementException mgz) {
       if (bean == null) {
-        InternalDistributedSystem.getLoggerI18n().fine("Undesired Result :Async Event Queue MBean Proxy Should Not be Empty for : " + queueMBeanName.getCanonicalName());
+        InternalDistributedSystem.getLoggerI18n()
+            .fine(
+                "Undesired Result :Async Event Queue MBean Proxy Should Not be Empty for : "
+                    + queueMBeanName.getCanonicalName());
       }
     }
 
@@ -303,41 +341,48 @@ public class MBeanUtil {
 
   /**
    * Utility Method to obtain GatewayReceiverMXBean proxy reference for a member
-   * 
-   * @param member
-   *          distributed member
+   *
+   * @param member distributed member
    * @return a reference to GatewayReceiverMXBean
    * @throws Exception
    */
-  public static GatewayReceiverMXBean getGatewayReceiverMbeanProxy(DistributedMember member) throws Exception {
+  public static GatewayReceiverMXBean getGatewayReceiverMbeanProxy(DistributedMember member)
+      throws Exception {
 
-    final SystemManagementService service = (SystemManagementService) ManagementTestBase.getManagementService();
+    final SystemManagementService service =
+        (SystemManagementService) ManagementTestBase.getManagementService();
 
     final ObjectName receiverMBeanName = service.getGatewayReceiverMBeanName(member);
 
-    Wait.waitForCriterion(new WaitCriterion() {
+    Wait.waitForCriterion(
+        new WaitCriterion() {
 
-      GatewayReceiverMXBean bean = null;
+          GatewayReceiverMXBean bean = null;
 
-      public String description() {
-        return "Waiting for the proxy to get reflected at managing node";
-      }
+          public String description() {
+            return "Waiting for the proxy to get reflected at managing node";
+          }
 
-      public boolean done() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        bean = service.getMBeanProxy(receiverMBeanName, GatewayReceiverMXBean.class);
-        boolean done = (bean != null);
-        return done;
-      }
-
-    }, MAX_WAIT, 500, true);
+          public boolean done() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            bean = service.getMBeanProxy(receiverMBeanName, GatewayReceiverMXBean.class);
+            boolean done = (bean != null);
+            return done;
+          }
+        },
+        MAX_WAIT,
+        500,
+        true);
 
     GatewayReceiverMXBean bean = null;
     try {
       bean = service.getMBeanProxy(receiverMBeanName, GatewayReceiverMXBean.class);
     } catch (ManagementException mgz) {
       if (bean == null) {
-        InternalDistributedSystem.getLoggerI18n().fine("Undesired Result :GatewaySender MBean Proxy Should Not be Empty for : " + receiverMBeanName.getCanonicalName());
+        InternalDistributedSystem.getLoggerI18n()
+            .fine(
+                "Undesired Result :GatewaySender MBean Proxy Should Not be Empty for : "
+                    + receiverMBeanName.getCanonicalName());
       }
     }
 
@@ -345,70 +390,78 @@ public class MBeanUtil {
   }
 
   /**
-   * Utility Method to obtain DistributedRegionMXBean proxy reference for a
-   * particular region
-   * 
-   * @param regionName
-   *          name of the region
+   * Utility Method to obtain DistributedRegionMXBean proxy reference for a particular region
+   *
+   * @param regionName name of the region
    * @return a reference to DistributedRegionMXBean
    * @throws Exception
    */
-  public static DistributedRegionMXBean getDistributedRegionMbean(final String regionName, final int expectedMembers) throws Exception {
+  public static DistributedRegionMXBean getDistributedRegionMbean(
+      final String regionName, final int expectedMembers) throws Exception {
     DistributedRegionMXBean bean = null;
 
     final ManagementService service = ManagementTestBase.getManagementService();
 
-    Wait.waitForCriterion(new WaitCriterion() {
+    Wait.waitForCriterion(
+        new WaitCriterion() {
 
-      DistributedRegionMXBean bean = null;
+          DistributedRegionMXBean bean = null;
 
-      public String description() {
-        return "Waiting for " + regionName + " With " + expectedMembers + " proxies to get reflected at managing node";
-      }
+          public String description() {
+            return "Waiting for "
+                + regionName
+                + " With "
+                + expectedMembers
+                + " proxies to get reflected at managing node";
+          }
 
-      public boolean done() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        bean = service.getDistributedRegionMXBean(regionName);
+          public boolean done() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            bean = service.getDistributedRegionMXBean(regionName);
 
-        boolean done = (bean != null && bean.getMemberCount() == expectedMembers);
-        return done;
-      }
-
-    }, MAX_WAIT, 1000, true);
+            boolean done = (bean != null && bean.getMemberCount() == expectedMembers);
+            return done;
+          }
+        },
+        MAX_WAIT,
+        1000,
+        true);
 
     bean = service.getDistributedRegionMXBean(regionName);
     return bean;
   }
 
   /**
-   * Utility Method to obtain DistributedRegionMXBean proxy reference for a
-   * particular region
-   * 
-   * @param lockServiceName
-   *          name of the lock service
+   * Utility Method to obtain DistributedRegionMXBean proxy reference for a particular region
+   *
+   * @param lockServiceName name of the lock service
    * @return a reference to DistributedLockServiceMXBean
    * @throws Exception
    */
-  public static DistributedLockServiceMXBean getDistributedLockMbean(final String lockServiceName, final int expectedMembers) throws Exception {
+  public static DistributedLockServiceMXBean getDistributedLockMbean(
+      final String lockServiceName, final int expectedMembers) throws Exception {
     DistributedLockServiceMXBean bean = null;
 
     final ManagementService service = ManagementTestBase.getManagementService();
-    Wait.waitForCriterion(new WaitCriterion() {
+    Wait.waitForCriterion(
+        new WaitCriterion() {
 
-      DistributedLockServiceMXBean bean = null;
+          DistributedLockServiceMXBean bean = null;
 
-      public String description() {
-        return "Waiting for " + expectedMembers + " proxies to get reflected at managing node";
-      }
+          public String description() {
+            return "Waiting for " + expectedMembers + " proxies to get reflected at managing node";
+          }
 
-      public boolean done() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        bean = service.getDistributedLockServiceMXBean(lockServiceName);
-        boolean done = (bean != null && bean.getMemberCount() == expectedMembers);
-        return done;
-      }
-
-    }, MAX_WAIT, 500, true);
+          public boolean done() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            bean = service.getDistributedLockServiceMXBean(lockServiceName);
+            boolean done = (bean != null && bean.getMemberCount() == expectedMembers);
+            return done;
+          }
+        },
+        MAX_WAIT,
+        500,
+        true);
 
     bean = service.getDistributedLockServiceMXBean(lockServiceName);
     return bean;
@@ -416,41 +469,47 @@ public class MBeanUtil {
 
   /**
    * Utility Method to obtain GatewayReceiverMXBean proxy reference for a member
-   * 
-   * @param member
-   *          distributed member
+   *
+   * @param member distributed member
    * @return a reference to GatewayReceiverMXBean
    * @throws Exception
    */
   public static LocatorMXBean getLocatorMbeanProxy(DistributedMember member) throws Exception {
 
-    final SystemManagementService service = (SystemManagementService) ManagementTestBase.getManagementService();
+    final SystemManagementService service =
+        (SystemManagementService) ManagementTestBase.getManagementService();
 
     final ObjectName locatorMBeanName = service.getLocatorMBeanName(member);
 
-    Wait.waitForCriterion(new WaitCriterion() {
+    Wait.waitForCriterion(
+        new WaitCriterion() {
 
-      LocatorMXBean bean = null;
+          LocatorMXBean bean = null;
 
-      public String description() {
-        return "Waiting for the proxy to get reflected at managing node";
-      }
+          public String description() {
+            return "Waiting for the proxy to get reflected at managing node";
+          }
 
-      public boolean done() {
-        GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
-        bean = service.getMBeanProxy(locatorMBeanName, LocatorMXBean.class);
-        boolean done = (bean != null);
-        return done;
-      }
-
-    }, MAX_WAIT, 500, true);
+          public boolean done() {
+            GemFireCacheImpl cache = GemFireCacheImpl.getInstance();
+            bean = service.getMBeanProxy(locatorMBeanName, LocatorMXBean.class);
+            boolean done = (bean != null);
+            return done;
+          }
+        },
+        MAX_WAIT,
+        500,
+        true);
 
     LocatorMXBean bean = null;
     try {
       bean = service.getMBeanProxy(locatorMBeanName, LocatorMXBean.class);
     } catch (ManagementException mgz) {
       if (bean == null) {
-        InternalDistributedSystem.getLoggerI18n().fine("Undesired Result :Locator MBean Proxy Should Not be Empty for : " + locatorMBeanName.getCanonicalName());
+        InternalDistributedSystem.getLoggerI18n()
+            .fine(
+                "Undesired Result :Locator MBean Proxy Should Not be Empty for : "
+                    + locatorMBeanName.getCanonicalName());
       }
     }
 
@@ -479,11 +538,12 @@ public class MBeanUtil {
       try {
         propertyName = attributeInfo.getName();
         propertyValue = mbeanServer.getAttribute(objName, propertyName);
-        LogWriterUtils.getLogWriter().info("<ExpectedString> " + propertyName + " = " + propertyValue + "</ExpectedString> ");
+        LogWriterUtils.getLogWriter()
+            .info(
+                "<ExpectedString> " + propertyName + " = " + propertyValue + "</ExpectedString> ");
       } catch (Exception e) {
 
       }
     }
-
   }
 }

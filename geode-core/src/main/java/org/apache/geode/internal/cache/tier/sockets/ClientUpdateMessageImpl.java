@@ -60,9 +60,8 @@ import org.apache.geode.internal.logging.LogService;
 import org.apache.geode.internal.offheap.MemoryAllocatorImpl;
 
 /**
- * Class <code>ClientUpdateMessageImpl</code> is a message representing a cache
- * operation that is sent from a server to an interested client.
- *
+ * Class <code>ClientUpdateMessageImpl</code> is a message representing a cache operation that is
+ * sent from a server to an interested client.
  *
  * @since GemFire 4.2
  */
@@ -71,83 +70,58 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
   private static final Logger logger = LogService.getLogger();
 
   /**
-   * The operation performed (e.g. AFTER_CREATE, AFTER_UPDATE, AFTER_DESTROY,
-   * AFTER_INVALIDATE, AFTER_REGION_DESTROY)
+   * The operation performed (e.g. AFTER_CREATE, AFTER_UPDATE, AFTER_DESTROY, AFTER_INVALIDATE,
+   * AFTER_REGION_DESTROY)
    */
   protected EnumListenerEvent _operation;
 
-  /**
-   * The name of the <code>Region</code> that was updated
-   */
+  /** The name of the <code>Region</code> that was updated */
   private String _regionName;
 
-  /**
-   * The key that was updated
-   */
+  /** The key that was updated */
   private Object _keyOfInterest;
 
-  /**
-   * The new value
-   */
+  /** The new value */
   private Object _value;
 
-  /**
-   * Whether the value is a serialized object or just a byte[]
-   */
+  /** Whether the value is a serialized object or just a byte[] */
   protected byte _valueIsObject;
 
-  /**
-   * The callback argument
-   */
+  /** The callback argument */
   protected Object _callbackArgument;
 
-  /**
-   * The membership id of the originator of the event
-   */
+  /** The membership id of the originator of the event */
   protected ClientProxyMembershipID _membershipId;
 
-  /**
-   * The event id of the event
-   */
+  /** The event id of the event */
   protected EventID _eventIdentifier;
 
   private boolean _shouldConflate = false;
 
-  /**
-   * To determine if this client message is part of InterestList.
-   */
+  /** To determine if this client message is part of InterestList. */
   private volatile boolean _isInterestListPassed;
 
-  /**
-   * To determine if this client message is part of CQs.
-   */
+  /** To determine if this client message is part of CQs. */
   private volatile boolean _hasCqs = false;
 
-  /**
-   * Map containing clientId and the cqs satisfied for the client.
-   */
+  /** Map containing clientId and the cqs satisfied for the client. */
   private ClientCqConcurrentMap _clientCqs = null;
 
-  /**
-   * Client list satisfying the interestList who want values
-   */
+  /** Client list satisfying the interestList who want values */
   private volatile Set<ClientProxyMembershipID> _clientInterestList;
 
-  /**
-   * Client list satisfying the interestList who want invalidations
-   */
+  /** Client list satisfying the interestList who want invalidations */
   private volatile Set<ClientProxyMembershipID> _clientInterestListInv;
 
   /**
-   * To determine if the message is result of netLoad. 
-   * If its net load the message is not delivered to the client that has 
-   * requested the load.
+   * To determine if the message is result of netLoad. If its net load the message is not delivered
+   * to the client that has requested the load.
    */
   private transient boolean _isNetLoad = false;
 
   /**
    * Represents the changed bytes of this event's _value.
-   * 
+   *
    * @since GemFire 6.1
    */
   private byte[] deltaBytes = null;
@@ -160,26 +134,48 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
   /**
    * Constructor.
    *
-   * @param operation
-   *          The operation performed (e.g. AFTER_CREATE, AFTER_UPDATE,
-   *          AFTER_DESTROY, AFTER_INVALIDATE, AFTER_REGION_DESTROY)
-   * @param region
-   *          The <code>Region</code> that was updated
-   * @param keyOfInterest
-   *          The key that was updated
-   * @param value
-   *          The new value
+   * @param operation The operation performed (e.g. AFTER_CREATE, AFTER_UPDATE, AFTER_DESTROY,
+   *     AFTER_INVALIDATE, AFTER_REGION_DESTROY)
+   * @param region The <code>Region</code> that was updated
+   * @param keyOfInterest The key that was updated
+   * @param value The new value
    * @param valueIsObject false if value is an actual byte[] that isn't serialized info
-   * @param callbackArgument
-   *          The callback argument
-   * @param memberId
-   *          membership id of the originator of the event
+   * @param callbackArgument The callback argument
+   * @param memberId membership id of the originator of the event
    */
-  public ClientUpdateMessageImpl(EnumListenerEvent operation, LocalRegion region, Object keyOfInterest, Object value, byte valueIsObject, Object callbackArgument, ClientProxyMembershipID memberId, EventID eventIdentifier) {
-    this(operation, region, keyOfInterest, value, null, valueIsObject, callbackArgument, memberId, eventIdentifier, null);
+  public ClientUpdateMessageImpl(
+      EnumListenerEvent operation,
+      LocalRegion region,
+      Object keyOfInterest,
+      Object value,
+      byte valueIsObject,
+      Object callbackArgument,
+      ClientProxyMembershipID memberId,
+      EventID eventIdentifier) {
+    this(
+        operation,
+        region,
+        keyOfInterest,
+        value,
+        null,
+        valueIsObject,
+        callbackArgument,
+        memberId,
+        eventIdentifier,
+        null);
   }
 
-  public ClientUpdateMessageImpl(EnumListenerEvent operation, LocalRegion region, Object keyOfInterest, Object value, byte[] delta, byte valueIsObject, Object callbackArgument, ClientProxyMembershipID memberId, EventID eventIdentifier, VersionTag versionTag) {
+  public ClientUpdateMessageImpl(
+      EnumListenerEvent operation,
+      LocalRegion region,
+      Object keyOfInterest,
+      Object value,
+      byte[] delta,
+      byte valueIsObject,
+      Object callbackArgument,
+      ClientProxyMembershipID memberId,
+      EventID eventIdentifier,
+      VersionTag versionTag) {
     //    this._clientInterestList = new HashSet();
     //    this._clientInterestListInv = new HashSet();
     this._operation = operation;
@@ -198,15 +194,13 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
   /**
    * Constructor used by ClientInstantiatorMessage
    *
-   * @param operation
-   *          The operation performed (e.g. AFTER_CREATE, AFTER_UPDATE,
-   *          AFTER_DESTROY, AFTER_INVALIDATE, AFTER_REGION_DESTROY)
-   * @param memberId
-   *          membership id of the originator of the event
-   * @param eventIdentifier
-   *          EventID of this message
+   * @param operation The operation performed (e.g. AFTER_CREATE, AFTER_UPDATE, AFTER_DESTROY,
+   *     AFTER_INVALIDATE, AFTER_REGION_DESTROY)
+   * @param memberId membership id of the originator of the event
+   * @param eventIdentifier EventID of this message
    */
-  protected ClientUpdateMessageImpl(EnumListenerEvent operation, ClientProxyMembershipID memberId, EventID eventIdentifier) {
+  protected ClientUpdateMessageImpl(
+      EnumListenerEvent operation, ClientProxyMembershipID memberId, EventID eventIdentifier) {
     //    this._clientInterestList = new HashSet();
     //    this._clientInterestListInv = new HashSet();
     this._operation = operation;
@@ -214,13 +208,8 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     this._eventIdentifier = eventIdentifier;
   }
 
-  /**
-   * default constructor
-   *
-   */
-  public ClientUpdateMessageImpl() {
-
-  }
+  /** default constructor */
+  public ClientUpdateMessageImpl() {}
 
   public String getRegionName() {
     return this._regionName;
@@ -242,9 +231,7 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     return (this._valueIsObject == 0x01);
   }
 
-  /**
-   * @return the callback argument
-   */
+  /** @return the callback argument */
   public Object getCallbackArgument() {
     return this._callbackArgument;
   }
@@ -252,11 +239,10 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
   /// Conflatable interface methods ///
 
   /**
-   * Determines whether or not to conflate this message. This method will answer
-   * true IFF the message's operation is AFTER_UPDATE and its region has enabled
-   * are conflation. Otherwise, this method will answer false. Messages whose
-   * operation is AFTER_CREATE, AFTER_DESTROY, AFTER_INVALIDATE or
-   * AFTER_REGION_DESTROY are not conflated.
+   * Determines whether or not to conflate this message. This method will answer true IFF the
+   * message's operation is AFTER_UPDATE and its region has enabled are conflation. Otherwise, this
+   * method will answer false. Messages whose operation is AFTER_CREATE, AFTER_DESTROY,
+   * AFTER_INVALIDATE or AFTER_REGION_DESTROY are not conflated.
    *
    * @return Whether to conflate this message
    */
@@ -292,11 +278,9 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
   }
 
   /**
-   * Returns the unqiue event eventifier for event corresponding to this
-   * message.
+   * Returns the unqiue event eventifier for event corresponding to this message.
    *
-   * @return the unqiue event eventifier for event corresponding to this
-   *         message.
+   * @return the unqiue event eventifier for event corresponding to this message.
    */
   public EventID getEventId() {
     return this._eventIdentifier;
@@ -344,32 +328,31 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
   }
 
   /**
-   * Returns a <code>Message</code> generated from the fields of this
-   * <code>ClientUpdateMessage</code>.
-   * 
-   * @param latestValue
-   *          Object containing the latest value to use. This could be the
-   *          original value if conflation is not enabled, or it could be a
-   *          conflated value if conflation is enabled.
-   * @return a <code>Message</code> generated from the fields of this
-   *         <code>ClientUpdateMessage</code>
+   * Returns a <code>Message</code> generated from the fields of this <code>ClientUpdateMessage
+   * </code>.
+   *
+   * @param latestValue Object containing the latest value to use. This could be the original value
+   *     if conflation is not enabled, or it could be a conflated value if conflation is enabled.
+   * @return a <code>Message</code> generated from the fields of this <code>ClientUpdateMessage
+   *     </code>
    * @throws IOException
    * @see org.apache.geode.internal.cache.tier.sockets.Message
    */
-
   protected Message getMessage(CacheClientProxy proxy, byte[] latestValue) throws IOException {
     Version clientVersion = proxy.getVersion();
     byte[] serializedValue = null;
     Message message = null;
     boolean conflation = false;
-    conflation = (proxy.clientConflation == HandShake.CONFLATION_ON) || (proxy.clientConflation == HandShake.CONFLATION_DEFAULT && this.shouldBeConflated());
+    conflation =
+        (proxy.clientConflation == HandShake.CONFLATION_ON)
+            || (proxy.clientConflation == HandShake.CONFLATION_DEFAULT && this.shouldBeConflated());
 
     if (latestValue != null) {
       serializedValue = latestValue;
     } else {
       /**
-       * This means latestValue is instance of Delta, and its delta has already
-       * been extracted and put into deltaBytes. We serialize the value.
+       * This means latestValue is instance of Delta, and its delta has already been extracted and
+       * put into deltaBytes. We serialize the value.
        */
       if (this.deltaBytes == null || isCreate()) {
         // Delta could not be extracted. We would need to send full value.
@@ -387,13 +370,16 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     } else if (clientVersion.compareTo(Version.GFE_57) >= 0) {
       message = getGFEMessage(proxy.getProxyID(), latestValue, clientVersion);
     } else {
-      throw new IOException("Unsupported client version for server-to-client message creation: " + clientVersion);
+      throw new IOException(
+          "Unsupported client version for server-to-client message creation: " + clientVersion);
     }
 
     return message;
   }
 
-  protected Message getGFEMessage(ClientProxyMembershipID proxyId, byte[] latestValue, Version clientVersion) throws IOException {
+  protected Message getGFEMessage(
+      ClientProxyMembershipID proxyId, byte[] latestValue, Version clientVersion)
+      throws IOException {
     Message message = null;
     // Add CQ info.
     int cqMsgParts = 0;
@@ -500,7 +486,9 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     return message;
   }
 
-  protected Message getGFE61Message(CacheClientProxy proxy, byte[] latestValue, boolean conflation, Version clientVersion) throws IOException {
+  protected Message getGFE61Message(
+      CacheClientProxy proxy, byte[] latestValue, boolean conflation, Version clientVersion)
+      throws IOException {
     Message message = null;
     ClientProxyMembershipID proxyId = proxy.getProxyID();
 
@@ -567,7 +555,10 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
           // is put in the queue so that it can be conflated it later
           message.addStringOrObjPart(this._keyOfInterest);
 
-          if (this.deltaBytes != null && !conflation && !proxy.isMarkerEnqueued() && !proxy.getRegionsWithEmptyDataPolicy().containsKey(_regionName)) {
+          if (this.deltaBytes != null
+              && !conflation
+              && !proxy.isMarkerEnqueued()
+              && !proxy.getRegionsWithEmptyDataPolicy().containsKey(_regionName)) {
             message.addObjPart(Boolean.TRUE);
             message.addBytesPart(this.deltaBytes);
             proxy.getStatistics().incDeltaMessagesSent();
@@ -662,7 +653,9 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     return message;
   }
 
-  protected Message getGFE65Message(CacheClientProxy proxy, byte[] p_latestValue, boolean conflation, Version clientVersion) throws IOException {
+  protected Message getGFE65Message(
+      CacheClientProxy proxy, byte[] p_latestValue, boolean conflation, Version clientVersion)
+      throws IOException {
     byte[] latestValue = p_latestValue;
     Message message = null;
     ClientProxyMembershipID proxyId = proxy.getProxyID();
@@ -723,7 +716,10 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
           // is put in the queue so that it can be conflated it later
           message.addStringOrObjPart(this._keyOfInterest);
 
-          if (this.deltaBytes != null && !conflation && !proxy.isMarkerEnqueued() && !proxy.getRegionsWithEmptyDataPolicy().containsKey(_regionName)) {
+          if (this.deltaBytes != null
+              && !conflation
+              && !proxy.isMarkerEnqueued()
+              && !proxy.getRegionsWithEmptyDataPolicy().containsKey(_regionName)) {
             message.addObjPart(Boolean.TRUE);
             message.addBytesPart(this.deltaBytes);
             proxy.getStatistics().incDeltaMessagesSent();
@@ -758,7 +754,7 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
         message.setMessageType(MessageType.LOCAL_DESTROY);
       } else {
         if (clientHasCq) {
-          cqMsgParts++;/* To store the region operation for CQ */
+          cqMsgParts++; /* To store the region operation for CQ */
         }
         message = new Message(6 + cqMsgParts, clientVersion);
         message.setMessageType(MessageType.LOCAL_INVALIDATE);
@@ -820,7 +816,9 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     return message;
   }
 
-  protected Message getGFE70Message(CacheClientProxy proxy, byte[] p_latestValue, boolean conflation, Version clientVersion) throws IOException {
+  protected Message getGFE70Message(
+      CacheClientProxy proxy, byte[] p_latestValue, boolean conflation, Version clientVersion)
+      throws IOException {
     byte[] latestValue = p_latestValue;
     Message message = null;
     ClientProxyMembershipID proxyId = proxy.getProxyID();
@@ -859,7 +857,10 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
           message.addStringPart(this._regionName, true);
           message.addStringOrObjPart(this._keyOfInterest);
 
-          if (this.deltaBytes != null && !conflation && !proxy.isMarkerEnqueued() && !proxy.getRegionsWithEmptyDataPolicy().containsKey(_regionName)) {
+          if (this.deltaBytes != null
+              && !conflation
+              && !proxy.isMarkerEnqueued()
+              && !proxy.getRegionsWithEmptyDataPolicy().containsKey(_regionName)) {
             message.addObjPart(Boolean.TRUE);
             message.addBytesPart(this.deltaBytes);
             proxy.getStatistics().incDeltaMessagesSent();
@@ -898,7 +899,7 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
         message.setMessageType(MessageType.LOCAL_DESTROY);
       } else {
         if (clientHasCq) {
-          cqMsgParts++;/* To store the region operation for CQ */
+          cqMsgParts++; /* To store the region operation for CQ */
         }
         message = getMessage(7 + cqMsgParts, clientVersion);
         message.setMessageType(MessageType.LOCAL_INVALIDATE);
@@ -961,11 +962,12 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     return message;
   }
 
-  private static final ThreadLocal<Map<Integer, Message>> CACHED_MESSAGES = new ThreadLocal<Map<Integer, Message>>() {
-    protected Map<Integer, Message> initialValue() {
-      return new HashMap<Integer, Message>();
-    };
-  };
+  private static final ThreadLocal<Map<Integer, Message>> CACHED_MESSAGES =
+      new ThreadLocal<Map<Integer, Message>>() {
+        protected Map<Integer, Message> initialValue() {
+          return new HashMap<Integer, Message>();
+        };
+      };
 
   private Message getMessage(int numParts, Version clientVersion) {
     Message m = CACHED_MESSAGES.get().get(numParts);
@@ -978,23 +980,17 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     return m;
   }
 
-  /**
-   * @return boolean true if the event is due to net load.
-   */
+  /** @return boolean true if the event is due to net load. */
   public boolean isNetLoad() {
     return this._isNetLoad;
   }
 
-  /**
-   * @param isNetLoad boolean true if the event is due to net load.
-   */
+  /** @param isNetLoad boolean true if the event is due to net load. */
   public void setIsNetLoad(boolean isNetLoad) {
     this._isNetLoad = isNetLoad;
   }
 
-  /**
-   * @return boolean true if cq info is present for the given proxy.
-   */
+  /** @return boolean true if cq info is present for the given proxy. */
   public boolean hasCqs(ClientProxyMembershipID clientId) {
     if (this._clientCqs != null) {
       CqNameToOp cqs = this._clientCqs.get(clientId);
@@ -1005,15 +1001,14 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     return false;
   }
 
-  /**
-   * @return boolean true if cq info is present.
-   */
+  /** @return boolean true if cq info is present. */
   public boolean hasCqs() {
     return this._hasCqs;
   }
 
   /**
    * Returns the cqs for the given client.
+   *
    * @return cqNames
    */
   public String[] getCqs(ClientProxyMembershipID clientId) {
@@ -1034,6 +1029,7 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
 
   /**
    * Add cqs for the given client.
+   *
    * @param clientId
    * @param filteredCqs
    */
@@ -1084,9 +1080,7 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     }
   }
 
-  /**
-   * Set the region name that was updated.
-   */
+  /** Set the region name that was updated. */
   public void setRegionName(String regionName) {
     this._regionName = regionName;
   }
@@ -1121,11 +1115,11 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     Iterator entries = this._clientCqs.entrySet().iterator();
     while (entries.hasNext()) {
       Map.Entry entry = (Map.Entry)entries.next();
-  
+
       // Write ProxyId.
       ClientProxyMembershipID proxyId = (ClientProxyMembershipID)entry.getKey();
       proxyId.toData(out);
-  
+
       HashMap cqs = (HashMap)entry.getValue();
       // Write CQ size for each Client.
       out.writeInt(cqs.size());
@@ -1144,33 +1138,33 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
   */
 
   /*
-  private void readCqInfo(ObjectInput in) throws IOException, 
+  private void readCqInfo(ObjectInput in) throws IOException,
       ClassNotFoundException {
-    // Read Client CQ Size    
+    // Read Client CQ Size
   int numClientIds = in.readInt();
   this._clientCqs = new HashMap();
-      
+
   // For each Client.
   for (int cCnt=0; cCnt < numClientIds; cCnt++){
     ClientProxyMembershipID proxyId = new ClientProxyMembershipID();
-        
+
     // Read Proxy id.
     proxyId.fromData(in);
     // read CQ size for each Client.
     int numCqs = in.readInt();
     HashMap cqs = new HashMap();
-        
+
     for (int cqCnt=0; cqCnt < numCqs; cqCnt++){
       // Get CQ Name and CQ Op.
       // Read CQ Name.
       String cqName = (String)in.readObject();
       int cqOp = in.readInt();
-          
+
       // Read CQ Op.
       cqs.put(cqName, Integer.valueOf(cqOp));
     }
     this._clientCqs.put(proxyId, cqs);
-  }    
+  }
   }
   */
 
@@ -1213,7 +1207,8 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
   }
 
   public boolean isClientInterested(ClientProxyMembershipID clientId) {
-    return (this._clientInterestList != null && this._clientInterestList.contains(clientId)) || (this._clientInterestListInv != null && this._clientInterestListInv.contains(clientId));
+    return (this._clientInterestList != null && this._clientInterestList.contains(clientId))
+        || (this._clientInterestListInv != null && this._clientInterestListInv.contains(clientId));
   }
 
   public boolean isClientInterestedInUpdates(ClientProxyMembershipID clientId) {
@@ -1239,11 +1234,35 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("ClientUpdateMessageImpl[").append("op=").append(this._operation).append(";region=").append(this._regionName).append(";key=").append(this._keyOfInterest);
+    buffer
+        .append("ClientUpdateMessageImpl[")
+        .append("op=")
+        .append(this._operation)
+        .append(";region=")
+        .append(this._regionName)
+        .append(";key=")
+        .append(this._keyOfInterest);
     if (logger.isTraceEnabled()) {
-      buffer.append(";value=").append((this._value instanceof byte[]) ? deserialize((byte[]) this._value) : this._value);
+      buffer
+          .append(";value=")
+          .append(
+              (this._value instanceof byte[]) ? deserialize((byte[]) this._value) : this._value);
     }
-    buffer.append(";isObject=").append(_valueIsObject).append(";cbArg=").append(this._callbackArgument).append(";memberId=").append(this._membershipId).append(";eventId=").append(_eventIdentifier).append(";shouldConflate=").append(_shouldConflate).append(";versionTag=").append(this.versionTag).append(";hasCqs=").append(this._hasCqs)
+    buffer
+        .append(";isObject=")
+        .append(_valueIsObject)
+        .append(";cbArg=")
+        .append(this._callbackArgument)
+        .append(";memberId=")
+        .append(this._membershipId)
+        .append(";eventId=")
+        .append(_eventIdentifier)
+        .append(";shouldConflate=")
+        .append(_shouldConflate)
+        .append(";versionTag=")
+        .append(this.versionTag)
+        .append(";hasCqs=")
+        .append(this._hasCqs)
         // skip _logger :-)
         .append("]");
     return buffer.toString();
@@ -1354,32 +1373,32 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     size += Sizeable.PER_OBJECT_OVERHEAD;
 
     // Add object references
-    //_operation reference = 4 bytes 
-    //_regionName reference = 4 bytes  
+    //_operation reference = 4 bytes
+    //_regionName reference = 4 bytes
     //_keyOfInterest reference = 4 bytes
     //_value reference = 4 bytes
     //_callbackArgument reference = 4 bytes
-    //_membershipId reference = 4 bytes 
-    //_eventIdentifier reference = 4 bytes 
-    //_logger reference = 4 bytes 
-    //_clientCqs reference = 4 bytes 
-    //_clientInterestList reference = 4 bytes 
+    //_membershipId reference = 4 bytes
+    //_eventIdentifier reference = 4 bytes
+    //_logger reference = 4 bytes
+    //_clientCqs reference = 4 bytes
+    //_clientInterestList reference = 4 bytes
     size += 40;
 
     // Add primitive references
-    // byte _valueIsObject = 1 byte 
-    // boolean _shouldConflate = 1 byte 
-    // boolean _isInterestListPassed = 1 byte 
-    // boolean _hasCqs = 1 byte 
-    // boolean _isNetLoad = 1 byte 
+    // byte _valueIsObject = 1 byte
+    // boolean _shouldConflate = 1 byte
+    // boolean _isInterestListPassed = 1 byte
+    // boolean _hasCqs = 1 byte
+    // boolean _isNetLoad = 1 byte
     size += 5;
 
     // not sure on the kind on wrapper is around callbackArgument
     // The callback argument (a GatewayEventCallbackArgument wrapping an Object
     // which is the original callback argument)
-    // The hardcoded value below represents the GatewayEventCallbackArgument 
-    // and was estimated using a NullDataOutputStream 
-    size += Sizeable.PER_OBJECT_OVERHEAD + 194; // do we need it 
+    // The hardcoded value below represents the GatewayEventCallbackArgument
+    // and was estimated using a NullDataOutputStream
+    size += Sizeable.PER_OBJECT_OVERHEAD + 194; // do we need it
     // add overhead for callback Argument
     size += Sizeable.PER_OBJECT_OVERHEAD;
     // total overhead
@@ -1439,11 +1458,12 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
   }
 
   /**
-   * Even though this class is just a ConcurrentHashMap I wanted it to be
-   * its own class so it could be easily identified in heap dumps.
-   * The concurrency level on these should be 1 to keep their memory footprint down.
+   * Even though this class is just a ConcurrentHashMap I wanted it to be its own class so it could
+   * be easily identified in heap dumps. The concurrency level on these should be 1 to keep their
+   * memory footprint down.
    */
-  public static class ClientCqConcurrentMap extends ConcurrentHashMap<ClientProxyMembershipID, CqNameToOp> {
+  public static class ClientCqConcurrentMap
+      extends ConcurrentHashMap<ClientProxyMembershipID, CqNameToOp> {
     public ClientCqConcurrentMap(int initialCapacity, float loadFactor, int concurrencyLevel) {
       super(initialCapacity, loadFactor, concurrencyLevel);
     }
@@ -1453,15 +1473,11 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     }
   }
 
-  /**
-   * Replaces what used to be a HashMap<String, Integer>.
-   */
+  /** Replaces what used to be a HashMap<String, Integer>. */
   public interface CqNameToOp extends Sendable {
     public boolean isEmpty();
 
-    /**
-     * Returns true if calling add would fail.
-     */
+    /** Returns true if calling add would fail. */
     public boolean isFull();
 
     public void addToMessage(Message message);
@@ -1476,9 +1492,8 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
   }
 
   /**
-   * Contains either zero or one String to int tuples.
-   * This is a common case and this impl has a much smaller
-   * memory footprint than a HashMap with one entry.
+   * Contains either zero or one String to int tuples. This is a common case and this impl has a
+   * much smaller memory footprint than a HashMap with one entry.
    */
   public static class CqNameToOpSingleEntry implements CqNameToOp {
     private String name;
@@ -1496,7 +1511,7 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     private void initializeName(String name) {
       this.name = name;
       if (!NAMES_ARRAY.containsKey(name)) {
-        NAMES_ARRAY.put(name, new String[] { name });
+        NAMES_ARRAY.put(name, new String[] {name});
       }
     }
 
@@ -1560,10 +1575,7 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     }
   }
 
-  /**
-   * Basically just a HashMap<String, Integer> but limits itself to the
-   * CqNameToOp interface.
-   */
+  /** Basically just a HashMap<String, Integer> but limits itself to the CqNameToOp interface. */
   public static class CqNameToOpHashMap extends HashMap<String, Integer> implements CqNameToOp {
     public CqNameToOpHashMap(int initialCapacity) {
       super(initialCapacity, 1.0f);
@@ -1651,5 +1663,4 @@ public class ClientUpdateMessageImpl implements ClientUpdateMessage, Sizeable, N
     }
     this._value = nv;
   }
-
 }

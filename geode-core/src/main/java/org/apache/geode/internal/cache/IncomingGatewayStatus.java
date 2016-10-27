@@ -21,10 +21,8 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 /**
- * Class <code>IncomingGatewayStatus</code> provides status about an incoming
- * <code>Gateway</code> client from the server's perspective. This class is
- * used by the monitoring tool.
- *
+ * Class <code>IncomingGatewayStatus</code> provides status about an incoming <code>Gateway</code>
+ * client from the server's perspective. This class is used by the monitoring tool.
  *
  * @since GemFire 4.3
  */
@@ -68,7 +66,15 @@ public class IncomingGatewayStatus implements Serializable {
   @Override
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append("IncomingGatewayStatus[").append("memberId=").append(this._memberId).append("; socketAddress=").append(this._socketAddress).append("; socketPort=").append(this._socketPort).append("]");
+    buffer
+        .append("IncomingGatewayStatus[")
+        .append("memberId=")
+        .append(this._memberId)
+        .append("; socketAddress=")
+        .append(this._socketAddress)
+        .append("; socketPort=")
+        .append(this._socketPort)
+        .append("]");
     return buffer.toString();
   }
 }

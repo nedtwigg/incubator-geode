@@ -23,9 +23,9 @@ import java.util.Collections;
 import org.apache.geode.cache.operations.OperationContext;
 
 /**
- * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#REMOVEALL} operation for both the
- * pre-operation and post-operation cases.
- * 
+ * Encapsulates a {@link org.apache.geode.cache.operations.OperationContext.OperationCode#REMOVEALL}
+ * operation for both the pre-operation and post-operation cases.
+ *
  * @since GemFire 8.1
  */
 public class RemoveAllOperationContext extends OperationContext {
@@ -38,18 +38,14 @@ public class RemoveAllOperationContext extends OperationContext {
 
   private Object callbackArg;
 
-  /**
-   * Constructor for the operation.
-   * 
-   */
+  /** Constructor for the operation. */
   public RemoveAllOperationContext(Collection<?> keys) {
     this.keys = keys;
   }
 
   /**
-   * Return the operation associated with the <code>OperationContext</code>
-   * object.
-   * 
+   * Return the operation associated with the <code>OperationContext</code> object.
+   *
    * @return <code>OperationCode.RemoveAll</code>.
    */
   @Override
@@ -57,31 +53,25 @@ public class RemoveAllOperationContext extends OperationContext {
     return OperationCode.REMOVEALL;
   }
 
-  /**
-   * True if the context is for post-operation.
-   */
+  /** True if the context is for post-operation. */
   @Override
   public boolean isPostOperation() {
     return this.postOperation;
   }
 
-  /**
-   * Set the post-operation flag to true.
-   */
+  /** Set the post-operation flag to true. */
   protected void setPostOperation() {
     this.postOperation = true;
   }
 
-  /**
-   * Returns the keys for this removeAll in an unmodifiable collection.
-   */
+  /** Returns the keys for this removeAll in an unmodifiable collection. */
   public Collection<?> getKeys() {
     return Collections.unmodifiableCollection(this.keys);
   }
 
   /**
    * Get the callback argument object for this operation.
-   * 
+   *
    * @return the callback argument object for this operation.
    */
   public Object getCallbackArg() {
@@ -90,9 +80,8 @@ public class RemoveAllOperationContext extends OperationContext {
 
   /**
    * Set the callback argument object for this operation.
-   * 
-   * @param callbackArg
-   *                the callback argument object for this operation.
+   *
+   * @param callbackArg the callback argument object for this operation.
    */
   public void setCallbackArg(Object callbackArg) {
     this.callbackArg = callbackArg;

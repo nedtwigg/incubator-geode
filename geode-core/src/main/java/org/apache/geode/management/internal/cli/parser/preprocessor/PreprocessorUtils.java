@@ -24,9 +24,9 @@ import org.apache.geode.internal.lang.SystemUtils;
 import org.apache.geode.management.internal.cli.parser.SyntaxConstants;
 
 /**
- * The methods in this class will be used by the {@link Preprocessor} class to
- * perform various trivial operations
- * 
+ * The methods in this class will be used by the {@link Preprocessor} class to perform various
+ * trivial operations
+ *
  * @since GemFire 7.0
  */
 public class PreprocessorUtils {
@@ -45,13 +45,10 @@ public class PreprocessorUtils {
   }
 
   /**
-   * 
-   * This function will trim the given input string. It will not only remove the
-   * spaces and tabs at the end but also compress multiple spaces and tabs to a
-   * single space
-   * 
-   * @param input
-   *          The input string on which the trim operation needs to be performed
+   * This function will trim the given input string. It will not only remove the spaces and tabs at
+   * the end but also compress multiple spaces and tabs to a single space
+   *
+   * @param input The input string on which the trim operation needs to be performed
    * @return String
    */
   public static TrimmedInput trim(final String input) {
@@ -59,16 +56,11 @@ public class PreprocessorUtils {
   }
 
   /**
-   * 
-   * This function will trim the given input string. It will not only remove the
-   * spaces and tabs at the end but also compress multiple spaces and tabs to a
-   * single space
-   * 
-   * @param input
-   *          The input string on which the trim operation needs to be performed
-   * @param retainLineSeparator
-   *          whether to retain the line separator.
-   * 
+   * This function will trim the given input string. It will not only remove the spaces and tabs at
+   * the end but also compress multiple spaces and tabs to a single space
+   *
+   * @param input The input string on which the trim operation needs to be performed
+   * @param retainLineSeparator whether to retain the line separator.
    * @return String
    */
   public static TrimmedInput trim(final String input, final boolean retainLineSeparator) {
@@ -139,11 +131,9 @@ public class PreprocessorUtils {
   }
 
   /**
-   * This function just does the simple job of removing white spaces from the
-   * given input string
-   * 
-   * @param input
-   *          The input String from which the spaces need to be removed
+   * This function just does the simple job of removing white spaces from the given input string
+   *
+   * @param input The input String from which the spaces need to be removed
    * @return String
    */
   public static String removeWhiteSpaces(String input) {
@@ -165,14 +155,12 @@ public class PreprocessorUtils {
   }
 
   /**
-   * 
    * This function will check for the validity of the input provided.
-   * 
-   * For e.g; '" input"' is valid but '" input' is not a valid input same is the
-   * case with input like a JSON string
-   * 
-   * @param input
-   *          The input string which needs to be checked for proper syntax
+   *
+   * <p>For e.g; '" input"' is valid but '" input' is not a valid input same is the case with input
+   * like a JSON string
+   *
+   * @param input The input string which needs to be checked for proper syntax
    * @return Boolean
    */
   public static Boolean isSyntaxValid(String input) {
@@ -247,7 +235,8 @@ public class PreprocessorUtils {
 
   private static boolean matches(Character popped, char ch) {
     if (popped != null) {
-      outer: {
+      outer:
+      {
         if (isOpeningBracket(popped)) {
           if (EnclosingCharacters.OPENING_SQUARE_BRACKET == popped) {
             if (EnclosingCharacters.CLOSING_SQUARE_BRACKET == ch) {
@@ -281,7 +270,9 @@ public class PreprocessorUtils {
   // Not used at present
   @SuppressWarnings("unused")
   private static boolean isClosingBracket(char ch) {
-    if (EnclosingCharacters.CLOSING_SQUARE_BRACKET == ch || EnclosingCharacters.CLOSING_CIRCULAR_BRACKET == ch || EnclosingCharacters.CLOSING_CURLY_BRACE == ch) {
+    if (EnclosingCharacters.CLOSING_SQUARE_BRACKET == ch
+        || EnclosingCharacters.CLOSING_CIRCULAR_BRACKET == ch
+        || EnclosingCharacters.CLOSING_CURLY_BRACE == ch) {
       return true;
     } else {
       return false;
@@ -289,7 +280,9 @@ public class PreprocessorUtils {
   }
 
   private static boolean isOpeningBracket(char ch) {
-    if (EnclosingCharacters.OPENING_SQUARE_BRACKET == ch || EnclosingCharacters.OPENING_CIRCULAR_BRACKET == ch || EnclosingCharacters.OPENING_CURLY_BRACE == ch) {
+    if (EnclosingCharacters.OPENING_SQUARE_BRACKET == ch
+        || EnclosingCharacters.OPENING_CIRCULAR_BRACKET == ch
+        || EnclosingCharacters.OPENING_CURLY_BRACE == ch) {
       return true;
     } else {
       return false;
@@ -297,7 +290,14 @@ public class PreprocessorUtils {
   }
 
   private static boolean isValueEnclosingChar(char ch) {
-    if (EnclosingCharacters.OPENING_SQUARE_BRACKET == ch || EnclosingCharacters.CLOSING_SQUARE_BRACKET == ch || EnclosingCharacters.OPENING_CIRCULAR_BRACKET == ch || EnclosingCharacters.CLOSING_CIRCULAR_BRACKET == ch || EnclosingCharacters.OPENING_CURLY_BRACE == ch || EnclosingCharacters.CLOSING_CURLY_BRACE == ch || EnclosingCharacters.DOUBLE_QUOTATION == ch || EnclosingCharacters.SINGLE_QUOTATION == ch) {
+    if (EnclosingCharacters.OPENING_SQUARE_BRACKET == ch
+        || EnclosingCharacters.CLOSING_SQUARE_BRACKET == ch
+        || EnclosingCharacters.OPENING_CIRCULAR_BRACKET == ch
+        || EnclosingCharacters.CLOSING_CIRCULAR_BRACKET == ch
+        || EnclosingCharacters.OPENING_CURLY_BRACE == ch
+        || EnclosingCharacters.CLOSING_CURLY_BRACE == ch
+        || EnclosingCharacters.DOUBLE_QUOTATION == ch
+        || EnclosingCharacters.SINGLE_QUOTATION == ch) {
       return true;
     }
     return false;

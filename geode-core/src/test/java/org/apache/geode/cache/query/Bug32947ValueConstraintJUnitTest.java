@@ -32,9 +32,7 @@ import java.util.Set;
 import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.fail;
 
-/**
- * Junit test for checking the value constraint region attributes.
- */
+/** Junit test for checking the value constraint region attributes. */
 @Category(IntegrationTest.class)
 public class Bug32947ValueConstraintJUnitTest {
 
@@ -96,7 +94,8 @@ public class Bug32947ValueConstraintJUnitTest {
     regionAttributes = factory.create();
     Region employeeRegion = cache.createRegion("employees", regionAttributes);
 
-    employeeRegion.put("key1", manager); //This is perfectly valid, as Manager is Derived from Employee
+    employeeRegion.put(
+        "key1", manager); //This is perfectly valid, as Manager is Derived from Employee
 
     flag = false;
 

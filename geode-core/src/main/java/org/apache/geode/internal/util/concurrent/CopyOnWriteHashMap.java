@@ -27,18 +27,15 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * A copy on write hash map.
- * 
- * Note that the entryKey and keySet of this map are unmodifable.
- * Should be easy to make them modifiable at a future time.
- * 
  *
+ * <p>Note that the entryKey and keySet of this map are unmodifable. Should be easy to make them
+ * modifiable at a future time.
  */
-public class CopyOnWriteHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
-  private volatile Map<K, V> map = Collections.<K, V> emptyMap();
+public class CopyOnWriteHashMap<K, V> extends AbstractMap<K, V>
+    implements ConcurrentMap<K, V>, Serializable {
+  private volatile Map<K, V> map = Collections.<K, V>emptyMap();
 
-  public CopyOnWriteHashMap() {
-
-  }
+  public CopyOnWriteHashMap() {}
 
   public CopyOnWriteHashMap(Map map) {
     this.putAll(map);

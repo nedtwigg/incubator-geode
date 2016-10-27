@@ -23,7 +23,8 @@ public abstract class VMStatsLRURegionEntryHeap extends VMStatsLRURegionEntry {
     super(context, value);
   }
 
-  private static final VMStatsLRURegionEntryHeapFactory factory = new VMStatsLRURegionEntryHeapFactory();
+  private static final VMStatsLRURegionEntryHeapFactory factory =
+      new VMStatsLRURegionEntryHeapFactory();
 
   public static RegionEntryFactory getEntryFactory() {
     return factory;

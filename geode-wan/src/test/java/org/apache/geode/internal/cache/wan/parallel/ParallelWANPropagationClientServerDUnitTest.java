@@ -26,9 +26,7 @@ import org.apache.geode.test.junit.categories.FlakyTest;
 @Category(DistributedTest.class)
 public class ParallelWANPropagationClientServerDUnitTest extends WANTestBase {
 
-  /**
-   * Normal happy scenario test case.
-   */
+  /** Normal happy scenario test case. */
   @Category(FlakyTest.class) // GEODE-1775: fails intermittently
   @Test
   public void testParallelPropagationWithClientServer() throws Exception {
@@ -37,20 +35,36 @@ public class ParallelWANPropagationClientServerDUnitTest extends WANTestBase {
 
     vm2.invoke(() -> WANTestBase.createReceiverAndServer(nyPort));
     vm3.invoke(() -> WANTestBase.createReceiverAndServer(nyPort));
-    vm2.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
-    vm3.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm2.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
+    vm3.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", null, 1, 100, isOffHeap()));
 
-    vm4.invoke(() -> WANTestBase.createClientWithLocator(nyPort, "localhost", getTestMethodName() + "_PR"));
+    vm4.invoke(
+        () ->
+            WANTestBase.createClientWithLocator(nyPort, "localhost", getTestMethodName() + "_PR"));
     vm4.invoke(() -> WANTestBase.doPuts(getTestMethodName() + "_PR", 100));
 
     vm5.invoke(() -> WANTestBase.createServer(lnPort));
     vm6.invoke(() -> WANTestBase.createServer(lnPort));
     vm5.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
     vm6.invoke(() -> WANTestBase.createSender("ln", 2, true, 100, 10, false, false, null, true));
-    vm5.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
-    vm6.invoke(() -> WANTestBase.createPartitionedRegion(getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm5.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
+    vm6.invoke(
+        () ->
+            WANTestBase.createPartitionedRegion(
+                getTestMethodName() + "_PR", "ln", 1, 100, isOffHeap()));
 
-    vm7.invoke(() -> WANTestBase.createClientWithLocator(lnPort, "localhost", getTestMethodName() + "_PR"));
+    vm7.invoke(
+        () ->
+            WANTestBase.createClientWithLocator(lnPort, "localhost", getTestMethodName() + "_PR"));
 
     startSenderInVMsAsync("ln", vm5, vm6);
 
@@ -75,6 +89,5 @@ public class ParallelWANPropagationClientServerDUnitTest extends WANTestBase {
     vm7.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 10000));
 
     vm4.invoke(() -> WANTestBase.validateRegionSize(getTestMethodName() + "_PR", 10000));
-
   }
 }

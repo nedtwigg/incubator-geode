@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -39,10 +39,11 @@ import org.apache.geode.internal.Version;
 import org.apache.geode.internal.logging.LogService;
 
 /**
- * An implementation of {@link CollectorManager} for managing {@link TopEntriesCollector}. This is used by a member to
- * collect top matching entries from local buckets
+ * An implementation of {@link CollectorManager} for managing {@link TopEntriesCollector}. This is
+ * used by a member to collect top matching entries from local buckets
  */
-public class TopEntriesCollectorManager implements CollectorManager<TopEntriesCollector>, DataSerializableFixedID {
+public class TopEntriesCollectorManager
+    implements CollectorManager<TopEntriesCollector>, DataSerializableFixedID {
   private static final Logger logger = LogService.getLogger();
 
   private int limit;
@@ -77,25 +78,30 @@ public class TopEntriesCollectorManager implements CollectorManager<TopEntriesCo
     final EntryScoreComparator scoreComparator = new TopEntries().new EntryScoreComparator();
 
     // orders a entry with higher score above a doc with lower score
-    Comparator<ListScanner> entryListComparator = new Comparator<ListScanner>() {
-      @Override
-      public int compare(ListScanner l1, ListScanner l2) {
-        EntryScore o1 = l1.peek();
-        EntryScore o2 = l2.peek();
-        return scoreComparator.compare(o1, o2);
-      }
-    };
+    Comparator<ListScanner> entryListComparator =
+        new Comparator<ListScanner>() {
+          @Override
+          public int compare(ListScanner l1, ListScanner l2) {
+            EntryScore o1 = l1.peek();
+            EntryScore o2 = l2.peek();
+            return scoreComparator.compare(o1, o2);
+          }
+        };
 
     // The queue contains iterators for all bucket results. The queue puts the entry with the highest score at the head
     // using score comparator.
     PriorityQueue<ListScanner> entryListsPriorityQueue;
-    entryListsPriorityQueue = new PriorityQueue<ListScanner>(collectors.size(), Collections.reverseOrder(entryListComparator));
+    entryListsPriorityQueue =
+        new PriorityQueue<ListScanner>(
+            collectors.size(), Collections.reverseOrder(entryListComparator));
 
     for (IndexResultCollector collector : collectors) {
-      logger.debug("Number of entries found in collector {} is {}", collector.getName(), collector.size());
+      logger.debug(
+          "Number of entries found in collector {} is {}", collector.getName(), collector.size());
 
       if (collector.size() > 0) {
-        entryListsPriorityQueue.add(new ListScanner(((TopEntriesCollector) collector).getEntries().getHits()));
+        entryListsPriorityQueue.add(
+            new ListScanner(((TopEntriesCollector) collector).getEntries().getHits()));
       }
     }
 
@@ -161,16 +167,12 @@ public class TopEntriesCollectorManager implements CollectorManager<TopEntriesCo
     limit = in.readInt();
   }
 
-  /**
-   * @return Id of this collector, if any
-   */
+  /** @return Id of this collector, if any */
   public String getId() {
     return id;
   }
 
-  /**
-   * @return Result limit enforced by the collectors created by this manager
-   */
+  /** @return Result limit enforced by the collectors created by this manager */
   public int getLimit() {
     return limit;
   }

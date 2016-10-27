@@ -34,17 +34,15 @@ import org.apache.geode.cache.query.types.*;
 
 /**
  * Implementation of CollectionType
+ *
  * @since GemFire 4.0
  */
 public class CollectionTypeImpl extends ObjectTypeImpl implements CollectionType {
   private static final long serialVersionUID = 892402666471396897L;
   private ObjectType elementType;
 
-  /**
-   * Empty constructor to satisfy <code>DataSerializer</code> requirements
-   */
-  public CollectionTypeImpl() {
-  }
+  /** Empty constructor to satisfy <code>DataSerializer</code> requirements */
+  public CollectionTypeImpl() {}
 
   /** Creates a new instance of ObjectTypeImpl */
   public CollectionTypeImpl(Class clazz, ObjectType elementType) {
@@ -52,14 +50,17 @@ public class CollectionTypeImpl extends ObjectTypeImpl implements CollectionType
     this.elementType = elementType;
   }
 
-  public CollectionTypeImpl(String className, ObjectType elementType) throws ClassNotFoundException {
+  public CollectionTypeImpl(String className, ObjectType elementType)
+      throws ClassNotFoundException {
     super(className);
     this.elementType = elementType;
   }
 
   @Override
   public boolean equals(Object obj) {
-    return super.equals(obj) && (obj instanceof CollectionTypeImpl) && this.elementType.equals(((CollectionTypeImpl) obj).elementType);
+    return super.equals(obj)
+        && (obj instanceof CollectionTypeImpl)
+        && this.elementType.equals(((CollectionTypeImpl) obj).elementType);
   }
 
   @Override
@@ -74,7 +75,13 @@ public class CollectionTypeImpl extends ObjectTypeImpl implements CollectionType
 
   public boolean allowsDuplicates() {
     Class cls = resolveClass();
-    return !Set.class.isAssignableFrom(cls) && !Map.class.isAssignableFrom(cls) && !Region.class.isAssignableFrom(cls) && !StructSet.class.isAssignableFrom(cls) && !SortedStructSet.class.isAssignableFrom(cls) && !SortedResultSet.class.isAssignableFrom(cls) && !ResultsSet.class.isAssignableFrom(cls);
+    return !Set.class.isAssignableFrom(cls)
+        && !Map.class.isAssignableFrom(cls)
+        && !Region.class.isAssignableFrom(cls)
+        && !StructSet.class.isAssignableFrom(cls)
+        && !SortedStructSet.class.isAssignableFrom(cls)
+        && !SortedResultSet.class.isAssignableFrom(cls)
+        && !ResultsSet.class.isAssignableFrom(cls);
   }
 
   public ObjectType getElementType() {
@@ -83,7 +90,13 @@ public class CollectionTypeImpl extends ObjectTypeImpl implements CollectionType
 
   public boolean isOrdered() {
     Class cls = resolveClass();
-    return List.class.isAssignableFrom(cls) || cls.isArray() || Ordered.class.isAssignableFrom(cls) || TreeSet.class.isAssignableFrom(cls) || TreeMap.class.isAssignableFrom(cls) || LinkedHashSet.class.isAssignableFrom(cls) || LinkedHashMap.class.isAssignableFrom(cls);
+    return List.class.isAssignableFrom(cls)
+        || cls.isArray()
+        || Ordered.class.isAssignableFrom(cls)
+        || TreeSet.class.isAssignableFrom(cls)
+        || TreeMap.class.isAssignableFrom(cls)
+        || LinkedHashSet.class.isAssignableFrom(cls)
+        || LinkedHashMap.class.isAssignableFrom(cls);
   }
 
   @Override

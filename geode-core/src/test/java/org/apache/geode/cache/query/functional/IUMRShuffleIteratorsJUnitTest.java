@@ -88,7 +88,10 @@ public class IUMRShuffleIteratorsJUnitTest {
   public void testQueryWithNOIndexes1() throws Exception {
     CacheUtils.getQueryService();
 
-    String queries[] = { "select distinct * from /portfolios p, /employees e", "Select distinct * from /portfolios pf,/employees e  where pf.status='active'" };
+    String queries[] = {
+      "select distinct * from /portfolios p, /employees e",
+      "Select distinct * from /portfolios pf,/employees e  where pf.status='active'"
+    };
 
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -101,7 +104,7 @@ public class IUMRShuffleIteratorsJUnitTest {
         fail("Index is uesd");
       }
     }
-  }//end of test 1
+  } //end of test 1
 
   @Test
   public void testQueryWithIndexOnFirstReg2() throws Exception {
@@ -109,7 +112,9 @@ public class IUMRShuffleIteratorsJUnitTest {
     QueryService qs;
     qs = CacheUtils.getQueryService();
 
-    String queries[] = { "Select distinct * from /portfolios pf,/employees e  where pf.status='active'" };
+    String queries[] = {
+      "Select distinct * from /portfolios pf,/employees e  where pf.status='active'"
+    };
 
     //Execute Queries without Indexes
     for (int i = 0; i < queries.length; i++) {
@@ -146,8 +151,9 @@ public class IUMRShuffleIteratorsJUnitTest {
     QueryService qs;
     qs = CacheUtils.getQueryService();
     String queries[] = {
-        //Test Case No. IUMR001
-        "Select distinct * from /portfolios pf, /employees e  where e.name ='empName'", };
+      //Test Case No. IUMR001
+      "Select distinct * from /portfolios pf, /employees e  where e.name ='empName'",
+    };
     //Execute Queries without Indexes
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -176,7 +182,6 @@ public class IUMRShuffleIteratorsJUnitTest {
     //Verifying the query results
     StructSetOrResultsSet ssORrs = new StructSetOrResultsSet();
     ssORrs.CompareQueryResultsWithoutAndWithIndexes(r, queries.length, queries);
-
   } //end of test3
 
   @Test
@@ -186,8 +191,9 @@ public class IUMRShuffleIteratorsJUnitTest {
     qs = CacheUtils.getQueryService();
 
     String queries[] = {
-        //Test Case No. IUMR002
-        "Select distinct * from /portfolios pf, /employees e  where e.name ='empName' and pf.status='active'", };
+      //Test Case No. IUMR002
+      "Select distinct * from /portfolios pf, /employees e  where e.name ='empName' and pf.status='active'",
+    };
 
     //Execute Query without Indexes
     for (int i = 0; i < queries.length; i++) {
@@ -214,7 +220,10 @@ public class IUMRShuffleIteratorsJUnitTest {
       int indxs = observer.indexesUsed.size();
       CacheUtils.log("***********Indexes Used :::: " + indxs + " IndexName::" + observer.IndexName);
       if (indxs != 2) {
-        fail("FAILED: Both The Indexes should be used. Presently only " + indxs + " Index(es) is used");
+        fail(
+            "FAILED: Both The Indexes should be used. Presently only "
+                + indxs
+                + " Index(es) is used");
       }
 
       Iterator itr = observer.indexesUsed.iterator();
@@ -228,7 +237,10 @@ public class IUMRShuffleIteratorsJUnitTest {
         } else if (temp.equals("statusIndex")) {
           break;
         } else {
-          fail("indices used do not match with those which are expected to be used" + "<nameIndex> and <statusIndex> were expected but found " + itr.next());
+          fail(
+              "indices used do not match with those which are expected to be used"
+                  + "<nameIndex> and <statusIndex> were expected but found "
+                  + itr.next());
         }
       }
     }
@@ -244,10 +256,11 @@ public class IUMRShuffleIteratorsJUnitTest {
     qs = CacheUtils.getQueryService();
 
     String queries[] = {
-        //Scenaerio A: If the Order of the Regions in Query are changed Index is not being used.
-        "select distinct * from /portfolios p, /employees e, /address a, a.street s where s.street ='DPStreet1'", "select distinct * from /address a, /portfolios p, /employees e, a.street s  where s.street ='DPStreet1'",
-        //Scenario B: Only Index on the first region in the Query is used
-        //"select distinct * from /address a, /portfolios p, /employees e, a.street s where p.status='active' and s.street ='DPStreet1'",
+      //Scenaerio A: If the Order of the Regions in Query are changed Index is not being used.
+      "select distinct * from /portfolios p, /employees e, /address a, a.street s where s.street ='DPStreet1'",
+      "select distinct * from /address a, /portfolios p, /employees e, a.street s  where s.street ='DPStreet1'",
+      //Scenario B: Only Index on the first region in the Query is used
+      //"select distinct * from /address a, /portfolios p, /employees e, a.street s where p.status='active' and s.street ='DPStreet1'",
     };
 
     //Execute queries without Indexes
@@ -272,7 +285,8 @@ public class IUMRShuffleIteratorsJUnitTest {
         fail("Index is NOT uesd");
       }
       int indxs = observer.indexesUsed.size();
-      CacheUtils.log("*******************Indexes Used::: " + indxs + " IndexName::" + observer.IndexName);
+      CacheUtils.log(
+          "*******************Indexes Used::: " + indxs + " IndexName::" + observer.IndexName);
       Iterator itr = observer.indexesUsed.iterator();
       assertEquals("streetIndex", itr.next().toString());
     }
@@ -287,7 +301,10 @@ public class IUMRShuffleIteratorsJUnitTest {
     QueryService qs;
     qs = CacheUtils.getQueryService();
 
-    String queries[] = { "select distinct * from /address itr1,itr1.phoneNo itr2,itr1.street itr3 where itr2.mobile>333", "select distinct * from /address itr1,itr1.street itr2,itr1.phoneNo itr3 where itr3.mobile>333", };
+    String queries[] = {
+      "select distinct * from /address itr1,itr1.phoneNo itr2,itr1.street itr3 where itr2.mobile>333",
+      "select distinct * from /address itr1,itr1.street itr2,itr1.phoneNo itr3 where itr3.mobile>333",
+    };
 
     //Execute the query without index
     for (int i = 0; i < queries.length; i++) {
@@ -297,7 +314,11 @@ public class IUMRShuffleIteratorsJUnitTest {
       r[i][0] = q.execute();
     }
     //Create index and Execute the query
-    qs.createIndex("mobileIndex", IndexType.FUNCTIONAL, "itr2.mobile", "/address itr1,itr1.phoneNo itr2,itr1.street itr3");
+    qs.createIndex(
+        "mobileIndex",
+        IndexType.FUNCTIONAL,
+        "itr2.mobile",
+        "/address itr1,itr1.phoneNo itr2,itr1.street itr3");
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
       q = CacheUtils.getQueryService().newQuery(queries[i]);
@@ -309,7 +330,8 @@ public class IUMRShuffleIteratorsJUnitTest {
         fail("Index is NOT uesd");
       }
       int indxs = observer.indexesUsed.size();
-      CacheUtils.log("*******************Indexes Used::: " + indxs + " IndexName::" + observer.IndexName);
+      CacheUtils.log(
+          "*******************Indexes Used::: " + indxs + " IndexName::" + observer.IndexName);
 
       Iterator itr = observer.indexesUsed.iterator();
       assertEquals("mobileIndex", itr.next().toString());
@@ -326,8 +348,9 @@ public class IUMRShuffleIteratorsJUnitTest {
     qs = CacheUtils.getQueryService();
 
     String queries[] = {
-        //Only Index on the first region in the Query is used
-        "select distinct * from /address a, /portfolios p, /employees e, a.street s where p.status='active' and s.street ='DPStreet1'", };
+      //Only Index on the first region in the Query is used
+      "select distinct * from /address a, /portfolios p, /employees e, a.street s where p.status='active' and s.street ='DPStreet1'",
+    };
     //Execute queries without Indexes
     for (int i = 0; i < queries.length; i++) {
       Query q = null;
@@ -350,7 +373,8 @@ public class IUMRShuffleIteratorsJUnitTest {
         fail("Index is NOT uesd");
       }
       int indxs = observer.indexesUsed.size();
-      CacheUtils.log("*******************Indexes Used::: " + indxs + " IndexName::" + observer.IndexName);
+      CacheUtils.log(
+          "*******************Indexes Used::: " + indxs + " IndexName::" + observer.IndexName);
 
       Iterator itr = observer.indexesUsed.iterator();
       String temp;
@@ -363,7 +387,10 @@ public class IUMRShuffleIteratorsJUnitTest {
         } else if (temp.equals("statusIndex")) {
           break;
         } else {
-          fail("indices used do not match with those which are expected to be used" + "<streetIndex> and <statusIndex> were expected but found " + itr.next());
+          fail(
+              "indices used do not match with those which are expected to be used"
+                  + "<streetIndex> and <statusIndex> were expected but found "
+                  + itr.next());
         }
       }
     }
@@ -391,5 +418,4 @@ public class IUMRShuffleIteratorsJUnitTest {
       }
     }
   }
-
-}//End of Class
+} //End of Class

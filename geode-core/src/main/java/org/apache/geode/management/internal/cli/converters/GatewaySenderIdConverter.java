@@ -30,10 +30,7 @@ import org.springframework.shell.core.Completion;
 import org.springframework.shell.core.Converter;
 import org.springframework.shell.core.MethodTarget;
 
-/**
- * 
- * @since GemFire 7.0
- */
+/** @since GemFire 7.0 */
 public class GatewaySenderIdConverter implements Converter<String> {
 
   @Override
@@ -47,7 +44,12 @@ public class GatewaySenderIdConverter implements Converter<String> {
   }
 
   @Override
-  public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData, String optionContext, MethodTarget target) {
+  public boolean getAllPossibleValues(
+      List<Completion> completions,
+      Class<?> targetType,
+      String existingData,
+      String optionContext,
+      MethodTarget target) {
     if (String.class.equals(targetType) && ConverterHint.GATEWAY_SENDER_ID.equals(optionContext)) {
       Set<String> gatewaySenderIds = getGatewaySenderIds();
 
@@ -64,7 +66,14 @@ public class GatewaySenderIdConverter implements Converter<String> {
 
     Gfsh gfsh = Gfsh.getCurrentInstance();
     if (gfsh != null && gfsh.isConnectedAndReady()) {
-      final String[] gatewaySenderIdArray = (String[]) gfsh.getOperationInvoker().invoke(ManagementConstants.OBJECTNAME__DISTRIBUTEDSYSTEM_MXBEAN, "listGatwaySenders", new Object[0], new String[0]);
+      final String[] gatewaySenderIdArray =
+          (String[])
+              gfsh.getOperationInvoker()
+                  .invoke(
+                      ManagementConstants.OBJECTNAME__DISTRIBUTEDSYSTEM_MXBEAN,
+                      "listGatwaySenders",
+                      new Object[0],
+                      new String[0]);
       if (gatewaySenderIdArray != null && gatewaySenderIdArray.length != 0) {
         gatewaySenderIds = new TreeSet<String>(Arrays.asList(gatewaySenderIdArray));
       }
@@ -72,5 +81,4 @@ public class GatewaySenderIdConverter implements Converter<String> {
 
     return gatewaySenderIds;
   }
-
 }

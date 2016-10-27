@@ -45,7 +45,6 @@ public class OrderByComparatorJUnitTest {
   @Before
   public void setUp() throws java.lang.Exception {
     CacheUtils.startCache();
-
   }
 
   @After
@@ -57,8 +56,8 @@ public class OrderByComparatorJUnitTest {
   public void testOrderByComparatorUnmapped() throws Exception {
 
     String queries[] = {
-
-        "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 0 order by ID desc, pkid desc ", };
+      "SELECT  distinct ID, description, createTime FROM /portfolio1 pf1 where ID > 0 order by ID desc, pkid desc ",
+    };
     Object r[][] = new Object[queries.length][2];
     QueryService qs;
     qs = CacheUtils.getQueryService();
@@ -78,7 +77,8 @@ public class OrderByComparatorJUnitTest {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
         r[i][0] = q.execute();
-        ResultsCollectionPdxDeserializerWrapper wrapper = (ResultsCollectionPdxDeserializerWrapper) r[i][0];
+        ResultsCollectionPdxDeserializerWrapper wrapper =
+            (ResultsCollectionPdxDeserializerWrapper) r[i][0];
         ResultsCollectionWrapper rcw = (ResultsCollectionWrapper) wrapper.results;
         Field baseField = rcw.getClass().getDeclaredField("base");
         baseField.setAccessible(true);
@@ -98,8 +98,8 @@ public class OrderByComparatorJUnitTest {
   public void testOrderByComparatorMapped() throws Exception {
 
     String queries[] = {
-
-        "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 0 order by ID desc, pkid desc ", };
+      "SELECT  distinct ID, description, createTime, pkid FROM /portfolio1 pf1 where ID > 0 order by ID desc, pkid desc ",
+    };
     Object r[][] = new Object[queries.length][2];
     QueryService qs;
     qs = CacheUtils.getQueryService();
@@ -119,7 +119,8 @@ public class OrderByComparatorJUnitTest {
         q = CacheUtils.getQueryService().newQuery(queries[i]);
         CacheUtils.getLogger().info("Executing query: " + queries[i]);
         r[i][0] = q.execute();
-        ResultsCollectionPdxDeserializerWrapper wrapper = (ResultsCollectionPdxDeserializerWrapper) r[i][0];
+        ResultsCollectionPdxDeserializerWrapper wrapper =
+            (ResultsCollectionPdxDeserializerWrapper) r[i][0];
         ResultsCollectionWrapper rcw = (ResultsCollectionWrapper) wrapper.results;
         Field baseField = rcw.getClass().getDeclaredField("base");
         baseField.setAccessible(true);
@@ -139,8 +140,8 @@ public class OrderByComparatorJUnitTest {
   @Test
   public void testUnsupportedOrderByForPR() throws Exception {
 
-    String unsupportedQueries[] = { "select distinct p.status from /portfolio1 p order by p.status, p.ID",
-
+    String unsupportedQueries[] = {
+      "select distinct p.status from /portfolio1 p order by p.status, p.ID",
     };
     Object r[][] = new Object[unsupportedQueries.length][2];
     QueryService qs;
@@ -173,8 +174,8 @@ public class OrderByComparatorJUnitTest {
   @Test
   public void testSupportedOrderByForRR() throws Exception {
 
-    String unsupportedQueries[] = { "select distinct p.status from /portfolio1 p order by p.status, p.ID",
-
+    String unsupportedQueries[] = {
+      "select distinct p.status from /portfolio1 p order by p.status, p.ID",
     };
     Object r[][] = new Object[unsupportedQueries.length][2];
     QueryService qs;
@@ -202,5 +203,4 @@ public class OrderByComparatorJUnitTest {
       }
     }
   }
-
 }

@@ -35,7 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category({ IntegrationTest.class, SecurityTest.class })
+@Category({IntegrationTest.class, SecurityTest.class})
 public class IntegratedSecurityCacheLifecycleIntegrationTest {
 
   private Properties securityProps;
@@ -72,5 +72,4 @@ public class IntegratedSecurityCacheLifecycleIntegrationTest {
     cache.close();
     assertThat(ssm.closeInvoked).isEqualTo(1);
   }
-
 }

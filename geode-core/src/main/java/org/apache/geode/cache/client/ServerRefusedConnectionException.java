@@ -20,9 +20,8 @@ import org.apache.geode.cache.OperationAbortedException;
 import org.apache.geode.distributed.DistributedMember;
 
 /**
- * A <code>ServerRefusedConnectionException</code> indicates a client attempted
- * to connect to a server, but the handshake was rejected.
- *
+ * A <code>ServerRefusedConnectionException</code> indicates a client attempted to connect to a
+ * server, but the handshake was rejected.
  *
  * @since GemFire 5.7
  */
@@ -30,8 +29,9 @@ public class ServerRefusedConnectionException extends OperationAbortedException 
   private static final long serialVersionUID = 1794959225832197946L;
 
   /**
-   * Constructs an instance of <code>ServerRefusedConnectionException</code> with the
-   * specified detail message.
+   * Constructs an instance of <code>ServerRefusedConnectionException</code> with the specified
+   * detail message.
+   *
    * @param server the server that rejected the connection
    * @param msg the detail message
    */

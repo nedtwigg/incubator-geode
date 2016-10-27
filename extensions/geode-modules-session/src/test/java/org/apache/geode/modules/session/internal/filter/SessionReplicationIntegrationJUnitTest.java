@@ -1,19 +1,19 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.geode.modules.session.internal.filter;
 
 import org.apache.geode.cache.Region;
@@ -50,8 +50,8 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.*;
 
 /**
- * In-container testing using Jetty. This allows us to test context listener
- * events as well as dispatching actions.
+ * In-container testing using Jetty. This allows us to test context listener events as well as
+ * dispatching actions.
  */
 @Category(IntegrationTest.class)
 @RunWith(PerTestClassLoaderRunner.class)
@@ -68,8 +68,7 @@ public class SessionReplicationIntegrationJUnitTest {
 
   private FilterHolder filterHolder;
 
-  @Rule
-  public TemporaryFolder tmpdir = new TemporaryFolder();
+  @Rule public TemporaryFolder tmpdir = new TemporaryFolder();
 
   @Before
   public void setUp() throws Exception {
@@ -80,17 +79,19 @@ public class SessionReplicationIntegrationJUnitTest {
     tester = new MyServletTester();
     tester.setContextPath("/test");
 
-    filterHolder = tester.addFilter(SessionCachingFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+    filterHolder =
+        tester.addFilter(SessionCachingFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
     filterHolder.setInitParameter(DistributionConfig.GEMFIRE_PREFIX + "property.mcast-port", "0");
-    filterHolder.setInitParameter(DistributionConfig.GEMFIRE_PREFIX + "property.log-file", gemfireLogFile.getAbsolutePath());
+    filterHolder.setInitParameter(
+        DistributionConfig.GEMFIRE_PREFIX + "property.log-file", gemfireLogFile.getAbsolutePath());
     filterHolder.setInitParameter("cache-type", "peer-to-peer");
 
     servletHolder = tester.addServlet(BasicServlet.class, "/hello");
     servletHolder.setInitParameter("test.callback", "callback_1");
 
     /**
-     * This starts the servlet. Our wrapped servlets *must* start
-     * immediately otherwise the ServletContext is not captured correctly.
+     * This starts the servlet. Our wrapped servlets *must* start immediately otherwise the
+     * ServletContext is not captured correctly.
      */
     servletHolder.setInitOrder(0);
   }
@@ -102,13 +103,15 @@ public class SessionReplicationIntegrationJUnitTest {
 
   @Test
   public void testSanity() throws Exception {
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        PrintWriter out = response.getWriter();
-        out.write("Hello World");
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            PrintWriter out = response.getWriter();
+            out.write("Hello World");
+          }
+        };
 
     tester.setAttribute("callback_1", c);
     tester.start();
@@ -128,13 +131,15 @@ public class SessionReplicationIntegrationJUnitTest {
 
   @Test
   public void testSessionGenerated() throws Exception {
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        PrintWriter out = response.getWriter();
-        out.write(request.getSession().getId());
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            PrintWriter out = response.getWriter();
+            out.write(request.getSession().getId());
+          }
+        };
 
     tester.setAttribute("callback_1", c);
     tester.start();
@@ -151,29 +156,30 @@ public class SessionReplicationIntegrationJUnitTest {
     assertTrue("Not a correctly generated session id", response.getContent().endsWith("-GF"));
 
     List<Cookie> cookies = getCookies(response);
-    assertEquals("Session id != JSESSIONID from cookie", response.getContent(), cookies.get(0).getValue());
+    assertEquals(
+        "Session id != JSESSIONID from cookie", response.getContent(), cookies.get(0).getValue());
 
     Region r = getRegion();
     assertNotNull("Session not found in region", r.get(cookies.get(0).getValue()));
   }
 
-  /**
-   * Test that getSession(false) does not create a new session
-   */
+  /** Test that getSession(false) does not create a new session */
   @Test
   public void testSessionNotGenerated() throws Exception {
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String output = "OK";
-        HttpSession s = request.getSession(false);
-        if (s != null) {
-          output = s.getId();
-        }
-        PrintWriter out = response.getWriter();
-        out.write(output);
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            String output = "OK";
+            HttpSession s = request.getSession(false);
+            if (s != null) {
+              output = s.getId();
+            }
+            PrintWriter out = response.getWriter();
+            out.write(output);
+          }
+        };
 
     tester.setAttribute("callback_1", c);
     tester.start();
@@ -192,18 +198,20 @@ public class SessionReplicationIntegrationJUnitTest {
 
   @Test
   public void testUnknownAttributeIsNull() throws Exception {
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Object o = request.getSession().getAttribute("unknown");
-        PrintWriter out = response.getWriter();
-        if (o == null) {
-          out.write("null");
-        } else {
-          out.write(o.toString());
-        }
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            Object o = request.getSession().getAttribute("unknown");
+            PrintWriter out = response.getWriter();
+            if (o == null) {
+              out.write("null");
+            } else {
+              out.write(o.toString());
+            }
+          }
+        };
 
     tester.setAttribute("callback_1", c);
     tester.start();
@@ -222,24 +230,26 @@ public class SessionReplicationIntegrationJUnitTest {
 
   @Test
   public void testSessionRemains1() throws Exception {
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String output = "null";
-        HttpSession session = request.getSession();
-        if (session.isNew()) {
-          output = "new";
-          session.setAttribute("foo", output);
-        } else {
-          output = (String) session.getAttribute("foo");
-          if (output != null) {
-            output = "old";
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            String output = "null";
+            HttpSession session = request.getSession();
+            if (session.isNew()) {
+              output = "new";
+              session.setAttribute("foo", output);
+            } else {
+              output = (String) session.getAttribute("foo");
+              if (output != null) {
+                output = "old";
+              }
+            }
+            PrintWriter out = response.getWriter();
+            out.write(output);
           }
-        }
-        PrintWriter out = response.getWriter();
-        out.write(output);
-      }
-    };
+        };
 
     tester.setAttribute("callback_1", c);
     tester.start();
@@ -263,31 +273,34 @@ public class SessionReplicationIntegrationJUnitTest {
     assertEquals("Session should be old", "old", response.getContent());
 
     List<Cookie> cookies2 = getCookies(response);
-    assertEquals("Session IDs should be the same", cookies.get(0).getValue(), cookies2.get(0).getValue());
+    assertEquals(
+        "Session IDs should be the same", cookies.get(0).getValue(), cookies2.get(0).getValue());
 
     Region r = getRegion();
     assertNotNull("Session object should exist in region", r.get(cookies.get(0).getValue()));
   }
 
-  /**
-   * Test that attributes are updated on the backend
-   */
+  /** Test that attributes are updated on the backend */
   @Test
   public void testAttributesUpdatedInRegion() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.getSession().setAttribute("foo", "bar");
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            request.getSession().setAttribute("foo", "bar");
+          }
+        };
 
     // This is the callback used to invalidate the session
-    Callback c_2 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.getSession().setAttribute("foo", "baz");
-      }
-    };
+    Callback c_2 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            request.getSession().setAttribute("foo", "baz");
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
     tester.setAttribute("callback_2", c_2);
@@ -319,26 +332,30 @@ public class SessionReplicationIntegrationJUnitTest {
     assertEquals("baz", ((HttpSession) r.get(cookies.get(0).getValue())).getAttribute("foo"));
   }
 
-  /**
-   * Test setting an attribute to null deletes it
-  */
-  @Category(FlakyTest.class) // GEODE-1015: uses Jetty HttpTester, uses static vars with class loader isolation, TODO: rewrite test with JUnit 4 rules including TemporaryFolder
+  /** Test setting an attribute to null deletes it */
+  @Category(
+      FlakyTest
+          .class) // GEODE-1015: uses Jetty HttpTester, uses static vars with class loader isolation, TODO: rewrite test with JUnit 4 rules including TemporaryFolder
   @Test
   public void testSetAttributeNullDeletesIt() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.getSession().setAttribute("foo", "bar");
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            request.getSession().setAttribute("foo", "bar");
+          }
+        };
 
     // This is the callback used to invalidate the session
-    Callback c_2 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.getSession().setAttribute("foo", null);
-      }
-    };
+    Callback c_2 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            request.getSession().setAttribute("foo", null);
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
     tester.setAttribute("callback_2", c_2);
@@ -442,27 +459,30 @@ public class SessionReplicationIntegrationJUnitTest {
   //        assertNull("Region should not contain session", r.get(id));
   //    }
 
-  /**
-   * Test that invalidating a session destroys it as well as the backend
-   * object.
-   */
-  @Category(FlakyTest.class) // GEODE-1015: uses Jetty HttpTester, uses static vars with class loader isolation, TODO: rewrite test with JUnit 4 rules including TemporaryFolder
+  /** Test that invalidating a session destroys it as well as the backend object. */
+  @Category(
+      FlakyTest
+          .class) // GEODE-1015: uses Jetty HttpTester, uses static vars with class loader isolation, TODO: rewrite test with JUnit 4 rules including TemporaryFolder
   @Test
   public void testInvalidateSession1() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.getSession().setAttribute("foo", "bar");
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            request.getSession().setAttribute("foo", "bar");
+          }
+        };
 
     // This is the callback used to invalidate the session
-    Callback c_2 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.getSession(false).invalidate();
-      }
-    };
+    Callback c_2 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            request.getSession(false).invalidate();
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
     tester.setAttribute("callback_2", c_2);
@@ -493,24 +513,24 @@ public class SessionReplicationIntegrationJUnitTest {
     assertNull("Region should not contain session", r.get(cookies.get(0).getValue()));
   }
 
-  /**
-   * Test that invalidating a session throws an exception on subsequent access.
-   */
+  /** Test that invalidating a session throws an exception on subsequent access. */
   @Test
   public void testInvalidateSession2() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
-        PrintWriter out = response.getWriter();
-        try {
-          s.getAttribute("foo");
-        } catch (IllegalStateException iex) {
-          out.write("OK");
-        }
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
+            PrintWriter out = response.getWriter();
+            try {
+              s.getAttribute("foo");
+            } catch (IllegalStateException iex) {
+              out.write("OK");
+            }
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
 
@@ -529,25 +549,27 @@ public class SessionReplicationIntegrationJUnitTest {
     assertEquals("OK", response.getContent());
   }
 
-  /**
-   * Test that invalidating a session throws an exception on subsequent access.
-   */
-  @Category(FlakyTest.class) // GEODE-1015: uses Jetty HttpTester, uses static vars with class loader isolation, TODO: rewrite test with JUnit 4 rules including TemporaryFolder
+  /** Test that invalidating a session throws an exception on subsequent access. */
+  @Category(
+      FlakyTest
+          .class) // GEODE-1015: uses Jetty HttpTester, uses static vars with class loader isolation, TODO: rewrite test with JUnit 4 rules including TemporaryFolder
   @Test
   public void testInvalidateSession3() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
-        PrintWriter out = response.getWriter();
-        try {
-          s.getAttributeNames();
-        } catch (IllegalStateException iex) {
-          out.write("OK");
-        }
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
+            PrintWriter out = response.getWriter();
+            try {
+              s.getAttributeNames();
+            } catch (IllegalStateException iex) {
+              out.write("OK");
+            }
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
 
@@ -566,24 +588,93 @@ public class SessionReplicationIntegrationJUnitTest {
     assertEquals("OK", response.getContent());
   }
 
-  /**
-   * Test that invalidating a session throws an exception on subsequent access.
-   */
+  /** Test that invalidating a session throws an exception on subsequent access. */
   @Test
   public void testInvalidateSession4() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
-        PrintWriter out = response.getWriter();
-        try {
-          s.getCreationTime();
-        } catch (IllegalStateException iex) {
-          out.write("OK");
-        }
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
+            PrintWriter out = response.getWriter();
+            try {
+              s.getCreationTime();
+            } catch (IllegalStateException iex) {
+              out.write("OK");
+            }
+          }
+        };
+
+    tester.setAttribute("callback_1", c_1);
+
+    servletHolder.setInitParameter("test.callback", "callback_1");
+
+    tester.start();
+    //    ContextManager.getInstance().putContext(
+    //        servletHolder.getServlet().getServletConfig().getServletContext());
+
+    request.setMethod("GET");
+    request.setURI("/test/hello");
+    request.setHeader("Host", "tester");
+    request.setVersion("HTTP/1.0");
+    response = HttpTester.parseResponse(tester.getResponses(request.generate()));
+
+    assertEquals("OK", response.getContent());
+  }
+
+  /** Test that invalidating a session does not throw an exception for subsequent getId calls. */
+  @Test
+  public void testInvalidateSession5() throws Exception {
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
+            s.getId();
+            PrintWriter out = response.getWriter();
+            out.write("OK");
+          }
+        };
+
+    tester.setAttribute("callback_1", c_1);
+
+    servletHolder.setInitParameter("test.callback", "callback_1");
+
+    tester.start();
+    //    ContextManager.getInstance().putContext(
+    //        servletHolder.getServlet().getServletConfig().getServletContext());
+
+    request.setMethod("GET");
+    request.setURI("/test/hello");
+    request.setHeader("Host", "tester");
+    request.setVersion("HTTP/1.0");
+    response = HttpTester.parseResponse(tester.getResponses(request.generate()));
+
+    assertEquals("OK", response.getContent());
+  }
+
+  /** Test that invalidating a session throws an exception on subsequent access. */
+  @Test
+  public void testInvalidateSession6() throws Exception {
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
+            PrintWriter out = response.getWriter();
+            try {
+              s.getLastAccessedTime();
+            } catch (IllegalStateException iex) {
+              out.write("OK");
+            }
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
 
@@ -604,93 +695,25 @@ public class SessionReplicationIntegrationJUnitTest {
 
   /**
    * Test that invalidating a session does not throw an exception for subsequent
-   * getId calls.
-   */
-  @Test
-  public void testInvalidateSession5() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
-        s.getId();
-        PrintWriter out = response.getWriter();
-        out.write("OK");
-      }
-    };
-
-    tester.setAttribute("callback_1", c_1);
-
-    servletHolder.setInitParameter("test.callback", "callback_1");
-
-    tester.start();
-    //    ContextManager.getInstance().putContext(
-    //        servletHolder.getServlet().getServletConfig().getServletContext());
-
-    request.setMethod("GET");
-    request.setURI("/test/hello");
-    request.setHeader("Host", "tester");
-    request.setVersion("HTTP/1.0");
-    response = HttpTester.parseResponse(tester.getResponses(request.generate()));
-
-    assertEquals("OK", response.getContent());
-  }
-
-  /**
-   * Test that invalidating a session throws an exception on subsequent access.
-   */
-  @Test
-  public void testInvalidateSession6() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
-        PrintWriter out = response.getWriter();
-        try {
-          s.getLastAccessedTime();
-        } catch (IllegalStateException iex) {
-          out.write("OK");
-        }
-      }
-    };
-
-    tester.setAttribute("callback_1", c_1);
-
-    servletHolder.setInitParameter("test.callback", "callback_1");
-
-    tester.start();
-    //    ContextManager.getInstance().putContext(
-    //        servletHolder.getServlet().getServletConfig().getServletContext());
-
-    request.setMethod("GET");
-    request.setURI("/test/hello");
-    request.setHeader("Host", "tester");
-    request.setVersion("HTTP/1.0");
-    response = HttpTester.parseResponse(tester.getResponses(request.generate()));
-
-    assertEquals("OK", response.getContent());
-  }
-
-  /**
-   * Test that invalidating a session does not throw an exception for
-   * subsequent getMaxInactiveInterval calls.
+   * getMaxInactiveInterval calls.
    */
 
   // I've commented this out for now as Jetty seems to want to throw an
   // Exception here where the HttpServlet api doesn't specify that.
   @Test
   public void testInvalidateSession7() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
-        s.getMaxInactiveInterval();
-        PrintWriter out = response.getWriter();
-        out.write("OK");
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
+            s.getMaxInactiveInterval();
+            PrintWriter out = response.getWriter();
+            out.write("OK");
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
 
@@ -710,21 +733,23 @@ public class SessionReplicationIntegrationJUnitTest {
   }
 
   /**
-   * Test that invalidating a session does not throw an exception for subsequent
-   * getServletContext calls.
+   * Test that invalidating a session does not throw an exception for subsequent getServletContext
+   * calls.
    */
   @Test
   public void testInvalidateSession8() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
-        s.getServletContext();
-        PrintWriter out = response.getWriter();
-        out.write("OK");
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
+            s.getServletContext();
+            PrintWriter out = response.getWriter();
+            out.write("OK");
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
 
@@ -743,25 +768,25 @@ public class SessionReplicationIntegrationJUnitTest {
     assertEquals("OK", response.getContent());
   }
 
-  /**
-   * Test that invalidating a session throws an exception on subsequent access.
-   */
+  /** Test that invalidating a session throws an exception on subsequent access. */
   @Category(FlakyTest.class) // GEODE-1943
   @Test
   public void testInvalidateSession9() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
-        PrintWriter out = response.getWriter();
-        try {
-          s.isNew();
-        } catch (IllegalStateException iex) {
-          out.write("OK");
-        }
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
+            PrintWriter out = response.getWriter();
+            try {
+              s.isNew();
+            } catch (IllegalStateException iex) {
+              out.write("OK");
+            }
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
 
@@ -780,24 +805,24 @@ public class SessionReplicationIntegrationJUnitTest {
     assertEquals("OK", response.getContent());
   }
 
-  /**
-   * Test that invalidating a session throws an exception on subsequent access.
-   */
+  /** Test that invalidating a session throws an exception on subsequent access. */
   @Test
   public void testInvalidateSession10() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
-        PrintWriter out = response.getWriter();
-        try {
-          s.removeAttribute("foo");
-        } catch (IllegalStateException iex) {
-          out.write("OK");
-        }
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
+            PrintWriter out = response.getWriter();
+            try {
+              s.removeAttribute("foo");
+            } catch (IllegalStateException iex) {
+              out.write("OK");
+            }
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
 
@@ -816,24 +841,24 @@ public class SessionReplicationIntegrationJUnitTest {
     assertEquals("OK", response.getContent());
   }
 
-  /**
-   * Test that invalidating a session throws an exception on subsequent access.
-   */
+  /** Test that invalidating a session throws an exception on subsequent access. */
   @Test
   public void testInvalidateSession11() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
-        PrintWriter out = response.getWriter();
-        try {
-          s.setAttribute("foo", "bar");
-        } catch (IllegalStateException iex) {
-          out.write("OK");
-        }
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
+            PrintWriter out = response.getWriter();
+            try {
+              s.setAttribute("foo", "bar");
+            } catch (IllegalStateException iex) {
+              out.write("OK");
+            }
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
 
@@ -858,16 +883,18 @@ public class SessionReplicationIntegrationJUnitTest {
    */
   @Test
   public void testInvalidateSession12() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
-        s.setMaxInactiveInterval(1);
-        PrintWriter out = response.getWriter();
-        out.write("OK");
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
+            s.setMaxInactiveInterval(1);
+            PrintWriter out = response.getWriter();
+            out.write("OK");
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
 
@@ -887,25 +914,27 @@ public class SessionReplicationIntegrationJUnitTest {
   }
 
   /**
-   * Test that invalidating a session results in null being returned on
-   * subsequent getSession(false) calls.
+   * Test that invalidating a session results in null being returned on subsequent getSession(false)
+   * calls.
    */
   @Test
   public void testInvalidateSession13() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
-        s = request.getSession(false);
-        PrintWriter out = response.getWriter();
-        if (s == null) {
-          out.write("OK");
-        } else {
-          out.write(s.toString());
-        }
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
+            s = request.getSession(false);
+            PrintWriter out = response.getWriter();
+            if (s == null) {
+              out.write("OK");
+            } else {
+              out.write(s.toString());
+            }
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
 
@@ -924,30 +953,32 @@ public class SessionReplicationIntegrationJUnitTest {
     assertEquals("OK", response.getContent());
   }
 
-  /**
-   * Test that we can invalidate and then recreate a new session
-   */
+  /** Test that we can invalidate and then recreate a new session */
   @Test
   public void testInvalidateAndRecreateSession() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
 
-        PrintWriter out = response.getWriter();
-        out.write(request.getSession().getId());
-      }
-    };
+            PrintWriter out = response.getWriter();
+            out.write(request.getSession().getId());
+          }
+        };
 
-    Callback c_2 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.invalidate();
+    Callback c_2 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.invalidate();
 
-        PrintWriter out = response.getWriter();
-        out.write(request.getSession().getId());
-      }
-    };
+            PrintWriter out = response.getWriter();
+            out.write(request.getSession().getId());
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
     tester.setAttribute("callback_2", c_2);
@@ -972,22 +1003,23 @@ public class SessionReplicationIntegrationJUnitTest {
     response = HttpTester.parseResponse(tester.getResponses(request.generate()));
 
     String session12 = response.getContent();
-    assertFalse("First and subsequent session ids must not be the same", session1.equals(session12));
+    assertFalse(
+        "First and subsequent session ids must not be the same", session1.equals(session12));
   }
 
-  /**
-   * Test that creation time does not change on subsequent access
-   */
+  /** Test that creation time does not change on subsequent access */
   @Test
   public void testGetCreationTime() throws Exception {
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession();
-        PrintWriter out = response.getWriter();
-        out.write(Long.toString(session.getCreationTime()));
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession session = request.getSession();
+            PrintWriter out = response.getWriter();
+            out.write(Long.toString(session.getCreationTime()));
+          }
+        };
 
     tester.setAttribute("callback_1", c);
     tester.start();
@@ -1017,19 +1049,19 @@ public class SessionReplicationIntegrationJUnitTest {
     assertTrue("Creation time should be the same across requests", time1 == time2);
   }
 
-  /**
-   * Test that the last accessed time is updated on subsequent access
-   */
+  /** Test that the last accessed time is updated on subsequent access */
   @Test
   public void testGetLastAccessedTime() throws Exception {
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession();
-        PrintWriter out = response.getWriter();
-        out.write(Long.toString(session.getLastAccessedTime()));
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession session = request.getSession();
+            PrintWriter out = response.getWriter();
+            out.write(Long.toString(session.getLastAccessedTime()));
+          }
+        };
 
     tester.setAttribute("callback_1", c);
     tester.start();
@@ -1056,19 +1088,19 @@ public class SessionReplicationIntegrationJUnitTest {
     assertTrue("Last accessed time should be increasing across requests", time2 > time1);
   }
 
-  /**
-   * Test that the underlying native session remains the same across requests
-   */
+  /** Test that the underlying native session remains the same across requests */
   @Test
   public void testNativeSessionRemainsUnchanged() throws Exception {
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        GemfireHttpSession session = (GemfireHttpSession) request.getSession();
-        PrintWriter out = response.getWriter();
-        out.write(session.getNativeSession().getId());
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            GemfireHttpSession session = (GemfireHttpSession) request.getSession();
+            PrintWriter out = response.getWriter();
+            out.write(session.getNativeSession().getId());
+          }
+        };
 
     tester.setAttribute("callback_1", c);
     tester.start();
@@ -1087,27 +1119,33 @@ public class SessionReplicationIntegrationJUnitTest {
     String sessionId = cookies.get(0).getValue();
     Region r = getRegion();
 
-    assertEquals("Cached native session id does not match servlet returned native session id", nativeSessionId, ((GemfireHttpSession) r.get(sessionId)).getNativeSession().getId());
+    assertEquals(
+        "Cached native session id does not match servlet returned native session id",
+        nativeSessionId,
+        ((GemfireHttpSession) r.get(sessionId)).getNativeSession().getId());
 
     request.setHeader("Cookie", "JSESSIONID=" + cookies.get(0).getValue());
     response = HttpTester.parseResponse(tester.getResponses(request.generate()));
 
-    assertEquals("Underlying native sessions must remain the same across requests", nativeSessionId, ((GemfireHttpSession) r.get(sessionId)).getNativeSession().getId());
+    assertEquals(
+        "Underlying native sessions must remain the same across requests",
+        nativeSessionId,
+        ((GemfireHttpSession) r.get(sessionId)).getNativeSession().getId());
   }
 
-  /**
-   * Test session id embedded in the URL
-   */
+  /** Test session id embedded in the URL */
   @Test
   public void testSessionIdEmbeddedInUrl() throws Exception {
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        GemfireHttpSession session = (GemfireHttpSession) request.getSession();
-        PrintWriter out = response.getWriter();
-        out.write(session.getId());
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            GemfireHttpSession session = (GemfireHttpSession) request.getSession();
+            PrintWriter out = response.getWriter();
+            out.write(session.getId());
+          }
+        };
 
     tester.setAttribute("callback_1", c);
     tester.start();
@@ -1131,32 +1169,36 @@ public class SessionReplicationIntegrationJUnitTest {
     assertEquals("Session ids should be the same", sessionId, cookies.get(0).getValue());
   }
 
-  /**
-   * Test that request forward dispatching works
-   */
-  @Category(FlakyTest.class) // GEODE-1015: uses Jetty HttpTester, uses static vars with class loader isolation, TODO: rewrite test with JUnit 4 rules including TemporaryFolder
+  /** Test that request forward dispatching works */
+  @Category(
+      FlakyTest
+          .class) // GEODE-1015: uses Jetty HttpTester, uses static vars with class loader isolation, TODO: rewrite test with JUnit 4 rules including TemporaryFolder
   @Test
   public void testDispatchingForward1() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("dispatch");
-        dispatcher.forward(request, response);
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException, ServletException {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("dispatch");
+            dispatcher.forward(request, response);
 
-        // This should not appear in the output
-        PrintWriter out = response.getWriter();
-        out.write("bang");
-      }
-    };
+            // This should not appear in the output
+            PrintWriter out = response.getWriter();
+            out.write("bang");
+          }
+        };
 
     // This is the callback used by the forward servlet
-    Callback c_2 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        PrintWriter out = response.getWriter();
-        out.write("dispatched");
-      }
-    };
+    Callback c_2 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException, ServletException {
+            PrintWriter out = response.getWriter();
+            out.write("dispatched");
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
     tester.setAttribute("callback_2", c_2);
@@ -1180,31 +1222,33 @@ public class SessionReplicationIntegrationJUnitTest {
     //        sh.getServlet().getServletConfig().getServletContext());
   }
 
-  /**
-   * Test that request include dispatching works
-   */
+  /** Test that request include dispatching works */
   @Test
   public void testDispatchingInclude() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("dispatch");
-        dispatcher.include(request, response);
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException, ServletException {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("dispatch");
+            dispatcher.include(request, response);
 
-        // This *should* appear in the output
-        PrintWriter out = response.getWriter();
-        out.write("_bang");
-      }
-    };
+            // This *should* appear in the output
+            PrintWriter out = response.getWriter();
+            out.write("_bang");
+          }
+        };
 
     // This is the callback used by the include servlet
-    Callback c_2 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        PrintWriter out = response.getWriter();
-        out.write("dispatched");
-      }
-    };
+    Callback c_2 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException, ServletException {
+            PrintWriter out = response.getWriter();
+            out.write("dispatched");
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
     tester.setAttribute("callback_2", c_2);
@@ -1228,31 +1272,33 @@ public class SessionReplicationIntegrationJUnitTest {
     //        sh.getServlet().getServletConfig().getServletContext());
   }
 
-  /**
-   * Test to try and simulate a failover scenario
-   */
+  /** Test to try and simulate a failover scenario */
   @Test
   public void testFailover1() throws Exception {
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        HttpSession s = request.getSession();
-        s.setAttribute("foo", "bar");
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException, ServletException {
+            HttpSession s = request.getSession();
+            s.setAttribute("foo", "bar");
 
-        PrintWriter out = response.getWriter();
-        out.write(request.getSession().getId());
-      }
-    };
+            PrintWriter out = response.getWriter();
+            out.write(request.getSession().getId());
+          }
+        };
 
-    Callback c_2 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        HttpSession s = request.getSession();
+    Callback c_2 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException, ServletException {
+            HttpSession s = request.getSession();
 
-        PrintWriter out = response.getWriter();
-        out.write((String) s.getAttribute("foo"));
-      }
-    };
+            PrintWriter out = response.getWriter();
+            out.write((String) s.getAttribute("foo"));
+          }
+        };
 
     tester.setAttribute("callback_1", c_1);
     tester.setAttribute("callback_2", c_2);
@@ -1292,15 +1338,17 @@ public class SessionReplicationIntegrationJUnitTest {
     HttpSessionListenerImpl listener = new HttpSessionListenerImpl();
     tester.getContext().getSessionHandler().addEventListener(listener);
 
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        // This is set in HttpSessionListenerImpl
-        String result = (String) s.getAttribute("gemfire-session-id");
-        response.getWriter().write(result);
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            // This is set in HttpSessionListenerImpl
+            String result = (String) s.getAttribute("gemfire-session-id");
+            response.getWriter().write(result);
+          }
+        };
 
     tester.setAttribute("callback_1", c);
     tester.start();
@@ -1332,16 +1380,18 @@ public class SessionReplicationIntegrationJUnitTest {
     HttpSessionListenerImpl2 listener = new HttpSessionListenerImpl2();
     tester.getContext().getSessionHandler().addEventListener(listener);
 
-    Callback c = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession s = request.getSession();
-        s.setAttribute("test01", "test01");
-        s = request.getSession(false);
-        s.invalidate();
-        response.getWriter().write(s.getId());
-      }
-    };
+    Callback c =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException {
+            HttpSession s = request.getSession();
+            s.setAttribute("test01", "test01");
+            s = request.getSession(false);
+            s.invalidate();
+            response.getWriter().write(s.getId());
+          }
+        };
 
     tester.setAttribute("callback_1", c);
     tester.start();
@@ -1375,15 +1425,17 @@ public class SessionReplicationIntegrationJUnitTest {
 
     jspHolder.setInitParameter("scratchdir", tmpdir.toString());
 
-    Callback c_1 = new Callback() {
-      @Override
-      public void call(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.getSession().setAttribute("foo", "bar");
-        request.setAttribute("foo", "baz");
-        RequestDispatcher dispatcher = request.getRequestDispatcher("pagecontext.jsp");
-        dispatcher.forward(request, response);
-      }
-    };
+    Callback c_1 =
+        new Callback() {
+          @Override
+          public void call(HttpServletRequest request, HttpServletResponse response)
+              throws IOException, ServletException {
+            request.getSession().setAttribute("foo", "bar");
+            request.setAttribute("foo", "baz");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("pagecontext.jsp");
+            dispatcher.forward(request, response);
+          }
+        };
 
     tester.getContext().setClassLoader(Thread.currentThread().getContextClassLoader());
     tester.setAttribute("callback_1", c_1);
@@ -1404,9 +1456,7 @@ public class SessionReplicationIntegrationJUnitTest {
   ////////////////////////////////////////////////////////////////////
   // Private methods
 
-  /**
-   * Why doesn't HttpTester do this already??
-   */
+  /** Why doesn't HttpTester do this already?? */
   private List<Cookie> getCookies(HttpTester.Response response) {
     List<Cookie> cookies = new ArrayList<Cookie>();
 
@@ -1459,6 +1509,10 @@ public class SessionReplicationIntegrationJUnitTest {
 
   private Region getRegion() {
     // Yuck...
-    return ((GemfireSessionManager) ((SessionCachingFilter) filterHolder.getFilter()).getSessionManager()).getCache().getCache().getRegion("gemfire_modules_sessions");
+    return ((GemfireSessionManager)
+            ((SessionCachingFilter) filterHolder.getFilter()).getSessionManager())
+        .getCache()
+        .getCache()
+        .getRegion("gemfire_modules_sessions");
   }
 }

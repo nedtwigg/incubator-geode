@@ -20,14 +20,13 @@ package org.apache.geode.internal.cache;
 import org.apache.geode.internal.cache.lru.LRUEntry;
 
 /**
- * Abstract implementation class of RegionEntry interface.
- * This adds LRU support behavior to entries that already have Disk support.
+ * Abstract implementation class of RegionEntry interface. This adds LRU support behavior to entries
+ * that already have Disk support.
  *
  * @since GemFire 3.5.1
- *
- *
  */
-public abstract class AbstractDiskLRURegionEntry extends AbstractOplogDiskRegionEntry implements LRUEntry {
+public abstract class AbstractDiskLRURegionEntry extends AbstractOplogDiskRegionEntry
+    implements LRUEntry {
   protected AbstractDiskLRURegionEntry(RegionEntryContext context, Object value) {
     super(context, value);
   }

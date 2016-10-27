@@ -27,10 +27,9 @@ import org.apache.geode.internal.Version;
 import org.apache.geode.internal.VersionedDataStream;
 
 /**
- * A reusable {@link DataInput} implementation that wraps a given byte array. It
- * also implements {@link VersionedDataStream} for a stream coming from a
- * different product version.
- * 
+ * A reusable {@link DataInput} implementation that wraps a given byte array. It also implements
+ * {@link VersionedDataStream} for a stream coming from a different product version.
+ *
  * @since GemFire 7.1
  */
 public class ByteArrayDataInput extends InputStream implements DataInput, VersionedDataStream {
@@ -40,23 +39,18 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
   private int pos;
   /** reusable buffer for readUTF */
   private char[] charBuf;
+
   private Version version;
 
-  /**
-   * Create a {@link DataInput} whose contents are empty.
-   */
-  public ByteArrayDataInput() {
-  }
+  /** Create a {@link DataInput} whose contents are empty. */
+  public ByteArrayDataInput() {}
 
   /**
    * Initialize this byte array stream with given byte array and version.
-   * 
-   * @param bytes
-   *          the content of this stream. Note that this byte array will be read
-   *          by this class (a copy is not made) so it should not be changed
-   *          externally.
-   * @param version
-   *          the product version that serialized the object on given bytes
+   *
+   * @param bytes the content of this stream. Note that this byte array will be read by this class
+   *     (a copy is not made) so it should not be changed externally.
+   * @param version the product version that serialized the object on given bytes
    */
   public final void initialize(byte[] bytes, Version version) {
     this.bytes = bytes;
@@ -65,9 +59,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     this.version = version;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final Version getVersion() {
     return this.version;
@@ -84,9 +76,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final int read() throws IOException {
     if (this.pos < this.nBytes) {
@@ -96,9 +86,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final int read(byte[] b, int off, int len) {
     if (b == null) {
@@ -120,39 +108,29 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final long skip(long n) {
     return skipOver(n);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final int available() {
     return (this.nBytes - this.pos);
   }
 
-  /**
-   * Get the current position in the byte[].
-   */
+  /** Get the current position in the byte[]. */
   public final int position() {
     return this.pos;
   }
 
-  /**
-   * Set the current position in the byte[].
-   */
+  /** Set the current position in the byte[]. */
   public final void setPosition(int pos) {
     this.pos = pos;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final void readFully(byte[] b) throws IOException {
     final int len = b.length;
@@ -160,9 +138,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     this.pos += len;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final void readFully(byte[] b, int off, int len) throws IOException {
     if (len > 0) {
@@ -177,17 +153,13 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final int skipBytes(int n) {
     return skipOver(n);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final boolean readBoolean() throws IOException {
     if (this.pos < this.nBytes) {
@@ -197,9 +169,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final byte readByte() throws IOException {
     if (this.pos < this.nBytes) {
@@ -209,17 +179,13 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final int readUnsignedByte() throws IOException {
     return read();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final short readShort() throws IOException {
     if ((this.pos + 1) < this.nBytes) {
@@ -230,9 +196,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final int readUnsignedShort() throws IOException {
     if ((this.pos + 1) < this.nBytes) {
@@ -243,9 +207,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public char readChar() throws IOException {
     if ((this.pos + 1) < this.nBytes) {
@@ -256,9 +218,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int readInt() throws IOException {
     if ((this.pos + 3) < this.nBytes) {
@@ -271,9 +231,7 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final long readLong() throws IOException {
     if ((this.pos + 7) < this.nBytes) {
@@ -290,25 +248,19 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final float readFloat() throws IOException {
     return Float.intBitsToFloat(readInt());
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final double readDouble() throws IOException {
     return Double.longBitsToDouble(readLong());
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public final String readUTF() throws IOException {
     final int utfLen = readUnsignedShort();
@@ -341,52 +293,55 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
         char1 = (bytes[index] & 0xff);
         // classify based on the high order 3 bits
         switch (char1 >> 5) {
-        case 6:
-          if ((index + 1) < limit) {
-            // two byte encoding
-            // 110yyyyy 10xxxxxx
-            // use low order 6 bits of the next byte
-            // It should have high order bits 10.
-            char2 = bytes[++index];
-            if ((char2 & 0xc0) == 0x80) {
-              // 00000yyy yyxxxxxx
-              chars[nChars] = (char) ((char1 & 0x1f) << 6 | (char2 & 0x3f));
-            } else {
-              throwUTFEncodingError(index, char1, char2, null, 2);
-            }
-          } else {
-            throw new UTFDataFormatException("partial 2-byte character at end (char1=" + char1 + ')');
-          }
-          break;
-        case 7:
-          if ((index + 2) < limit) {
-            // three byte encoding
-            // 1110zzzz 10yyyyyy 10xxxxxx
-            // use low order 6 bits of the next byte
-            // It should have high order bits 10.
-            char2 = bytes[++index];
-            if ((char2 & 0xc0) == 0x80) {
+          case 6:
+            if ((index + 1) < limit) {
+              // two byte encoding
+              // 110yyyyy 10xxxxxx
               // use low order 6 bits of the next byte
               // It should have high order bits 10.
-              char3 = bytes[++index];
-              if ((char3 & 0xc0) == 0x80) {
-                // zzzzyyyy yyxxxxxx
-                chars[nChars] = (char) (((char1 & 0x0f) << 12) | ((char2 & 0x3f) << 6) | (char3 & 0x3f));
+              char2 = bytes[++index];
+              if ((char2 & 0xc0) == 0x80) {
+                // 00000yyy yyxxxxxx
+                chars[nChars] = (char) ((char1 & 0x1f) << 6 | (char2 & 0x3f));
               } else {
-                throwUTFEncodingError(index, char1, char2, char3, 3);
+                throwUTFEncodingError(index, char1, char2, null, 2);
               }
             } else {
-              throwUTFEncodingError(index, char1, char2, null, 3);
+              throw new UTFDataFormatException(
+                  "partial 2-byte character at end (char1=" + char1 + ')');
             }
-          } else {
-            throw new UTFDataFormatException("partial 3-byte character at end (char1=" + char1 + ')');
-          }
-          break;
-        default:
-          // one byte encoding
-          // 0xxxxxxx
-          chars[nChars] = (char) char1;
-          break;
+            break;
+          case 7:
+            if ((index + 2) < limit) {
+              // three byte encoding
+              // 1110zzzz 10yyyyyy 10xxxxxx
+              // use low order 6 bits of the next byte
+              // It should have high order bits 10.
+              char2 = bytes[++index];
+              if ((char2 & 0xc0) == 0x80) {
+                // use low order 6 bits of the next byte
+                // It should have high order bits 10.
+                char3 = bytes[++index];
+                if ((char3 & 0xc0) == 0x80) {
+                  // zzzzyyyy yyxxxxxx
+                  chars[nChars] =
+                      (char) (((char1 & 0x0f) << 12) | ((char2 & 0x3f) << 6) | (char3 & 0x3f));
+                } else {
+                  throwUTFEncodingError(index, char1, char2, char3, 3);
+                }
+              } else {
+                throwUTFEncodingError(index, char1, char2, null, 3);
+              }
+            } else {
+              throw new UTFDataFormatException(
+                  "partial 3-byte character at end (char1=" + char1 + ')');
+            }
+            break;
+          default:
+            // one byte encoding
+            // 0xxxxxxx
+            chars[nChars] = (char) char1;
+            break;
         }
       }
       this.pos = limit;
@@ -396,17 +351,13 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String readLine() throws IOException {
     throw new UnsupportedOperationException();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void close() {
     this.bytes = null;
@@ -415,15 +366,23 @@ public class ByteArrayDataInput extends InputStream implements DataInput, Versio
     this.version = null;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return this.version == null ? super.toString() : (super.toString() + " (" + this.version + ')');
   }
 
-  private void throwUTFEncodingError(int index, int char1, int char2, Integer char3, int enc) throws UTFDataFormatException {
-    throw new UTFDataFormatException("malformed input for " + enc + "-byte encoding at " + index + " (char1=" + char1 + " char2=" + char2 + (char3 == null ? ")" : (" char3=" + char3 + ')')));
+  private void throwUTFEncodingError(int index, int char1, int char2, Integer char3, int enc)
+      throws UTFDataFormatException {
+    throw new UTFDataFormatException(
+        "malformed input for "
+            + enc
+            + "-byte encoding at "
+            + index
+            + " (char1="
+            + char1
+            + " char2="
+            + char2
+            + (char3 == null ? ")" : (" char3=" + char3 + ')')));
   }
 }

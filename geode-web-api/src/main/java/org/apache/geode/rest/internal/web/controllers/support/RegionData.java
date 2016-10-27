@@ -49,12 +49,13 @@ import org.springframework.util.StringUtils;
 
 /**
  * The RegionData class is a container for data fetched from a GemFire Cache Region.
- * <p/>
+ *
+ * <p>
+ *
  * @see com.fasterxml.jackson.databind.JsonSerializable
  * @see java.lang.Iterable
  * @since GemFire 8.0
  */
-
 @SuppressWarnings("unused")
 @XmlRootElement(name = "region")
 @XmlType(name = "org.gopivotal.app.web.controllers.support.RegionData")
@@ -64,15 +65,16 @@ public class RegionData<T> implements Iterable<T>, JsonSerializable {
 
   private String regionNamePath;
 
-  public RegionData() {
-  }
+  public RegionData() {}
 
   public RegionData(final String regionNamePath) {
     setRegionNamePath(regionNamePath);
   }
 
   public String getRegionNamePath() {
-    Assert.state(StringUtils.hasText(this.regionNamePath), "The Region name/path was not properly initialized!");
+    Assert.state(
+        StringUtils.hasText(this.regionNamePath),
+        "The Region name/path was not properly initialized!");
     return regionNamePath;
   }
 
@@ -138,7 +140,9 @@ public class RegionData<T> implements Iterable<T>, JsonSerializable {
     return (pdxObj != null ? JSONFormatter.toJSON(pdxObj) : null);
   }
 
-  public void serialize(final JsonGenerator jsonGenerator, final SerializerProvider serializerProvider) throws IOException {
+  public void serialize(
+      final JsonGenerator jsonGenerator, final SerializerProvider serializerProvider)
+      throws IOException {
 
     //if(this!=null && this.size() > 1) {
     jsonGenerator.writeStartObject();
@@ -152,12 +156,15 @@ public class RegionData<T> implements Iterable<T>, JsonSerializable {
     //if(this!=null && this.size() > 1) {
     jsonGenerator.writeEndArray();
     jsonGenerator.writeEndObject();
-    //}   
+    //}
   }
 
-  public void serializeWithType(final JsonGenerator jsonGenerator, final SerializerProvider serializerProvider, final TypeSerializer typeSerializer) throws IOException {
+  public void serializeWithType(
+      final JsonGenerator jsonGenerator,
+      final SerializerProvider serializerProvider,
+      final TypeSerializer typeSerializer)
+      throws IOException {
     // NOTE serializing "type" meta-data is not necessary in this case; just call serialize.
     serialize(jsonGenerator, serializerProvider);
   }
-
 }

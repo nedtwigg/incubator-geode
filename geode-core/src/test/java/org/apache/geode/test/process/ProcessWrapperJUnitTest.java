@@ -24,10 +24,7 @@ import org.junit.experimental.categories.Category;
 
 import org.apache.geode.test.junit.categories.IntegrationTest;
 
-/**
- * Integration tests for ProcessWrapper.
- * 
- */
+/** Integration tests for ProcessWrapper. */
 @Category(IntegrationTest.class)
 public class ProcessWrapperJUnitTest {
 
@@ -44,15 +41,22 @@ public class ProcessWrapperJUnitTest {
   @Test
   public void testClassPath() throws Exception {
     final String classPath = System.getProperty("java.class.path");
-    assertTrue("Classpath is missing log4j-api: " + classPath, classPath.toLowerCase().contains("log4j-api"));
-    assertTrue("Classpath is missing log4j-core: " + classPath, classPath.toLowerCase().contains("log4j-core"));
-    assertTrue("Classpath is missing fastutil: " + classPath, classPath.toLowerCase().contains("fastutil"));
+    assertTrue(
+        "Classpath is missing log4j-api: " + classPath,
+        classPath.toLowerCase().contains("log4j-api"));
+    assertTrue(
+        "Classpath is missing log4j-core: " + classPath,
+        classPath.toLowerCase().contains("log4j-core"));
+    assertTrue(
+        "Classpath is missing fastutil: " + classPath,
+        classPath.toLowerCase().contains("fastutil"));
 
     this.process = new ProcessWrapper.Builder().mainClass(getClass()).build();
     this.process.execute();
     this.process.waitFor();
 
-    assertTrue("Output is wrong: " + process.getOutput(), process.getOutput().contains(OUTPUT_OF_MAIN));
+    assertTrue(
+        "Output is wrong: " + process.getOutput(), process.getOutput().contains(OUTPUT_OF_MAIN));
   }
 
   @Test

@@ -31,21 +31,20 @@ public class MyAuthenticator implements Authenticator {
     return new MyAuthenticator();
   }
 
-  public MyAuthenticator() {
-  }
+  public MyAuthenticator() {}
 
-  public void init(Properties systemProps, LogWriter systemLogger, LogWriter securityLogger) throws AuthenticationFailedException {
-  }
+  public void init(Properties systemProps, LogWriter systemLogger, LogWriter securityLogger)
+      throws AuthenticationFailedException {}
 
-  public Principal authenticate(Properties props, DistributedMember member, InetAddress addr) throws AuthenticationFailedException {
+  public Principal authenticate(Properties props, DistributedMember member, InetAddress addr)
+      throws AuthenticationFailedException {
     return MyPrincipal.create();
   }
 
-  public Principal authenticate(Properties props, DistributedMember member) throws AuthenticationFailedException {
+  public Principal authenticate(Properties props, DistributedMember member)
+      throws AuthenticationFailedException {
     return MyPrincipal.create();
   }
 
-  public void close() {
-  }
-
+  public void close() {}
 }

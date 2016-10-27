@@ -122,8 +122,10 @@ public class ConnectionPoolFactoryJUnitTest {
     Pool defaultAttr = cpf.create("defaults");
     try {
       // now add a source and try defaults again
-      assertEquals(PoolFactory.DEFAULT_FREE_CONNECTION_TIMEOUT, defaultAttr.getFreeConnectionTimeout());
-      assertEquals(PoolFactory.DEFAULT_THREAD_LOCAL_CONNECTIONS, defaultAttr.getThreadLocalConnections());
+      assertEquals(
+          PoolFactory.DEFAULT_FREE_CONNECTION_TIMEOUT, defaultAttr.getFreeConnectionTimeout());
+      assertEquals(
+          PoolFactory.DEFAULT_THREAD_LOCAL_CONNECTIONS, defaultAttr.getThreadLocalConnections());
       assertEquals(PoolFactory.DEFAULT_READ_TIMEOUT, defaultAttr.getReadTimeout());
       assertEquals(PoolFactory.DEFAULT_MIN_CONNECTIONS, defaultAttr.getMinConnections());
       assertEquals(PoolFactory.DEFAULT_MAX_CONNECTIONS, defaultAttr.getMaxConnections());
@@ -245,16 +247,46 @@ public class ConnectionPoolFactoryJUnitTest {
 
     /* none of those should take effect so this should still match default */
     defaultAttr = cpf.create("default");
-    assertEquals("Attribute should match default, but doesn't", defaultAttr.getFreeConnectionTimeout(), PoolFactory.DEFAULT_FREE_CONNECTION_TIMEOUT);
-    assertEquals("Attribute should match default, but doesn't", defaultAttr.getLoadConditioningInterval(), PoolFactory.DEFAULT_LOAD_CONDITIONING_INTERVAL);
-    assertEquals("Attribute should match default, but doesn't", defaultAttr.getThreadLocalConnections(), PoolFactory.DEFAULT_THREAD_LOCAL_CONNECTIONS);
-    assertEquals("Attribute should match default, but doesn't", defaultAttr.getReadTimeout(), PoolFactory.DEFAULT_READ_TIMEOUT);
-    assertEquals("Attribute should match default, but doesn't", defaultAttr.getMinConnections(), PoolFactory.DEFAULT_MIN_CONNECTIONS);
-    assertEquals("Attribute should match default, but doesn't", defaultAttr.getMaxConnections(), PoolFactory.DEFAULT_MAX_CONNECTIONS);
-    assertEquals("Attribute should match default, but doesn't", defaultAttr.getRetryAttempts(), PoolFactory.DEFAULT_RETRY_ATTEMPTS);
-    assertEquals("Attribute should match default, but doesn't", defaultAttr.getIdleTimeout(), PoolFactory.DEFAULT_IDLE_TIMEOUT);
-    assertEquals("Attribute should match default, but doesn't", defaultAttr.getPingInterval(), PoolFactory.DEFAULT_PING_INTERVAL);
-    assertEquals("Attribute should match default, but doesn't", defaultAttr.getSocketBufferSize(), PoolFactory.DEFAULT_SOCKET_BUFFER_SIZE);
+    assertEquals(
+        "Attribute should match default, but doesn't",
+        defaultAttr.getFreeConnectionTimeout(),
+        PoolFactory.DEFAULT_FREE_CONNECTION_TIMEOUT);
+    assertEquals(
+        "Attribute should match default, but doesn't",
+        defaultAttr.getLoadConditioningInterval(),
+        PoolFactory.DEFAULT_LOAD_CONDITIONING_INTERVAL);
+    assertEquals(
+        "Attribute should match default, but doesn't",
+        defaultAttr.getThreadLocalConnections(),
+        PoolFactory.DEFAULT_THREAD_LOCAL_CONNECTIONS);
+    assertEquals(
+        "Attribute should match default, but doesn't",
+        defaultAttr.getReadTimeout(),
+        PoolFactory.DEFAULT_READ_TIMEOUT);
+    assertEquals(
+        "Attribute should match default, but doesn't",
+        defaultAttr.getMinConnections(),
+        PoolFactory.DEFAULT_MIN_CONNECTIONS);
+    assertEquals(
+        "Attribute should match default, but doesn't",
+        defaultAttr.getMaxConnections(),
+        PoolFactory.DEFAULT_MAX_CONNECTIONS);
+    assertEquals(
+        "Attribute should match default, but doesn't",
+        defaultAttr.getRetryAttempts(),
+        PoolFactory.DEFAULT_RETRY_ATTEMPTS);
+    assertEquals(
+        "Attribute should match default, but doesn't",
+        defaultAttr.getIdleTimeout(),
+        PoolFactory.DEFAULT_IDLE_TIMEOUT);
+    assertEquals(
+        "Attribute should match default, but doesn't",
+        defaultAttr.getPingInterval(),
+        PoolFactory.DEFAULT_PING_INTERVAL);
+    assertEquals(
+        "Attribute should match default, but doesn't",
+        defaultAttr.getSocketBufferSize(),
+        PoolFactory.DEFAULT_SOCKET_BUFFER_SIZE);
 
     /* Lets do a legitimate one now */
 
@@ -334,7 +366,15 @@ public class ConnectionPoolFactoryJUnitTest {
 
     PoolFactory cpf = PoolManager.createFactory();
     ((PoolFactoryImpl) cpf).setStartDisabled(true);
-    cpf.addServer("localhost", 40907).setFreeConnectionTimeout(connectionTimeout).setThreadLocalConnections(threadLocalConnections).setReadTimeout(readTimeout).setSubscriptionEnabled(true).setSubscriptionRedundancy(redundancy).setSubscriptionMessageTrackingTimeout(messageTrackingTimeout).setSubscriptionAckInterval(ackInterval).setSocketBufferSize(bufferSize);
+    cpf.addServer("localhost", 40907)
+        .setFreeConnectionTimeout(connectionTimeout)
+        .setThreadLocalConnections(threadLocalConnections)
+        .setReadTimeout(readTimeout)
+        .setSubscriptionEnabled(true)
+        .setSubscriptionRedundancy(redundancy)
+        .setSubscriptionMessageTrackingTimeout(messageTrackingTimeout)
+        .setSubscriptionAckInterval(ackInterval)
+        .setSocketBufferSize(bufferSize);
 
     Pool pool1 = cpf.create("myfriendlypool");
 
@@ -365,7 +405,8 @@ public class ConnectionPoolFactoryJUnitTest {
     pools = PoolManager.getAll();
     assertEquals("there should be two pools", 2, pools.size());
     assertNotNull("pool myfriendlypool should exist and be non null", pools.get("myfriendlypool"));
-    assertNotNull("pool myfriendlypool2 should exist and be non null", pools.get("myfriendlypool2"));
+    assertNotNull(
+        "pool myfriendlypool2 should exist and be non null", pools.get("myfriendlypool2"));
 
     /* lets remove them one by one */
 
@@ -375,7 +416,8 @@ public class ConnectionPoolFactoryJUnitTest {
     pools = PoolManager.getAll();
     assertEquals("there should be one pool", 1, pools.size());
     assertNull("pool myfriendlypool should NOT exist", pools.get("myfriendlypool"));
-    assertNotNull("pool myfriendlypool2 should exist and be non null", pools.get("myfriendlypool2"));
+    assertNotNull(
+        "pool myfriendlypool2 should exist and be non null", pools.get("myfriendlypool2"));
 
     assertEquals(pool2, PoolManager.find("myfriendlypool2"));
     pool2.destroy();
@@ -383,8 +425,8 @@ public class ConnectionPoolFactoryJUnitTest {
     pools = PoolManager.getAll();
     assertEquals("there should be 0 pools", 0, pools.size());
     assertNull("pool myfriendlypool should NOT exist", pools.get("myfriendlypool"));
-    assertNull("pool myfriendlypool2 should NOT exist and be non null", pools.get("myfriendlypool2"));
+    assertNull(
+        "pool myfriendlypool2 should NOT exist and be non null", pools.get("myfriendlypool2"));
     cache.close();
   }
-
 }

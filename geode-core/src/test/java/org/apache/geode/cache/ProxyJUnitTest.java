@@ -39,8 +39,9 @@ import static org.apache.geode.distributed.ConfigurationProperties.MCAST_PORT;
 import static org.junit.Assert.*;
 
 /**
- * Unit test for basic DataPolicy.EMPTY feature.
- * NOTE: these tests using a loner DistributedSystem and local scope regions
+ * Unit test for basic DataPolicy.EMPTY feature. NOTE: these tests using a loner DistributedSystem
+ * and local scope regions
+ *
  * @since GemFire 5.0
  */
 @Category(IntegrationTest.class)
@@ -75,47 +76,27 @@ public class ProxyJUnitTest {
     return ((GemFireCacheImpl) this.c).getCachePerfStats();
   }
 
-  /**
-   * last event a cache listener saw
-   */
+  /** last event a cache listener saw */
   private CacheEvent clLastEvent;
-  /**
-   * number of cache listener invocations
-   */
+  /** number of cache listener invocations */
   private int clInvokeCount;
-  /**
-   * true if cache listener close called
-   */
+  /** true if cache listener close called */
   private boolean clClosed;
-  /**
-   * last event a cache writer saw
-   */
+  /** last event a cache writer saw */
   private CacheEvent cwLastEvent;
-  /**
-   * number of cache writer invocations
-   */
+  /** number of cache writer invocations */
   private int cwInvokeCount;
-  /**
-   * true if cache writer close called
-   */
+  /** true if cache writer close called */
   private boolean cwClosed;
 
-  /**
-   * last getEvents() a transaction listener saw
-   */
+  /** last getEvents() a transaction listener saw */
   private List tlLastEvents;
-  /**
-   * number of transaction listener invocations
-   */
+  /** number of transaction listener invocations */
   private int tlInvokeCount;
-  /**
-   * true if transaction listener close called
-   */
+  /** true if transaction listener close called */
   private boolean tlClosed;
 
-  /**
-   * Clears the all the callback state this test has received.
-   */
+  /** Clears the all the callback state this test has received. */
   private void clearCallbackState() {
     this.clLastEvent = null;
     this.clInvokeCount = 0;
@@ -128,9 +109,7 @@ public class ProxyJUnitTest {
     this.tlClosed = false;
   }
 
-  /**
-   * Used to check to see if CacheEvent was what was expected
-   */
+  /** Used to check to see if CacheEvent was what was expected */
   private abstract class ExpectedCacheEvent implements CacheEvent {
     public Region r;
     public Operation op;
@@ -182,9 +161,7 @@ public class ProxyJUnitTest {
     }
   }
 
-  /**
-   * Used to check to see if EntryEvent was what was expected
-   */
+  /** Used to check to see if EntryEvent was what was expected */
   private class ExpectedEntryEvent extends ExpectedCacheEvent implements EntryEvent {
     public void check(EntryEvent other) {
       super.check(other);
@@ -262,9 +239,7 @@ public class ProxyJUnitTest {
     }
   }
 
-  /**
-   * Used to check to see if EntryEvent was what was expected
-   */
+  /** Used to check to see if EntryEvent was what was expected */
   private class ExpectedRegionEvent extends ExpectedCacheEvent implements RegionEvent {
     public void check(RegionEvent other) {
       super.check(other);
@@ -335,107 +310,108 @@ public class ProxyJUnitTest {
   }
 
   private void setCallbacks(AttributesFactory af) {
-    CacheListener cl1 = new CacheListener() {
-      public void afterUpdate(EntryEvent e) {
-        clLastEvent = e;
-        clInvokeCount++;
-      }
+    CacheListener cl1 =
+        new CacheListener() {
+          public void afterUpdate(EntryEvent e) {
+            clLastEvent = e;
+            clInvokeCount++;
+          }
 
-      public void afterCreate(EntryEvent e) {
-        clLastEvent = e;
-        clInvokeCount++;
-      }
+          public void afterCreate(EntryEvent e) {
+            clLastEvent = e;
+            clInvokeCount++;
+          }
 
-      public void afterInvalidate(EntryEvent e) {
-        clLastEvent = e;
-        clInvokeCount++;
-      }
+          public void afterInvalidate(EntryEvent e) {
+            clLastEvent = e;
+            clInvokeCount++;
+          }
 
-      public void afterDestroy(EntryEvent e) {
-        clLastEvent = e;
-        clInvokeCount++;
-      }
+          public void afterDestroy(EntryEvent e) {
+            clLastEvent = e;
+            clInvokeCount++;
+          }
 
-      public void afterRegionInvalidate(RegionEvent e) {
-        clLastEvent = e;
-        clInvokeCount++;
-      }
+          public void afterRegionInvalidate(RegionEvent e) {
+            clLastEvent = e;
+            clInvokeCount++;
+          }
 
-      public void afterRegionDestroy(RegionEvent e) {
-        clLastEvent = e;
-        clInvokeCount++;
-      }
+          public void afterRegionDestroy(RegionEvent e) {
+            clLastEvent = e;
+            clInvokeCount++;
+          }
 
-      public void afterRegionClear(RegionEvent e) {
-        clLastEvent = e;
-        clInvokeCount++;
-      }
+          public void afterRegionClear(RegionEvent e) {
+            clLastEvent = e;
+            clInvokeCount++;
+          }
 
-      public void afterRegionCreate(RegionEvent e) {
-        clLastEvent = e;
-        clInvokeCount++;
-      }
+          public void afterRegionCreate(RegionEvent e) {
+            clLastEvent = e;
+            clInvokeCount++;
+          }
 
-      public void afterRegionLive(RegionEvent e) {
-        clLastEvent = e;
-        clInvokeCount++;
-      }
+          public void afterRegionLive(RegionEvent e) {
+            clLastEvent = e;
+            clInvokeCount++;
+          }
 
-      public void close() {
-        clClosed = true;
-      }
-    };
-    CacheWriter cw = new CacheWriter() {
-      public void beforeUpdate(EntryEvent e) throws CacheWriterException {
-        cwLastEvent = e;
-        cwInvokeCount++;
-      }
+          public void close() {
+            clClosed = true;
+          }
+        };
+    CacheWriter cw =
+        new CacheWriter() {
+          public void beforeUpdate(EntryEvent e) throws CacheWriterException {
+            cwLastEvent = e;
+            cwInvokeCount++;
+          }
 
-      public void beforeCreate(EntryEvent e) throws CacheWriterException {
-        cwLastEvent = e;
-        cwInvokeCount++;
-      }
+          public void beforeCreate(EntryEvent e) throws CacheWriterException {
+            cwLastEvent = e;
+            cwInvokeCount++;
+          }
 
-      public void beforeDestroy(EntryEvent e) throws CacheWriterException {
-        cwLastEvent = e;
-        cwInvokeCount++;
-      }
+          public void beforeDestroy(EntryEvent e) throws CacheWriterException {
+            cwLastEvent = e;
+            cwInvokeCount++;
+          }
 
-      public void beforeRegionDestroy(RegionEvent e) throws CacheWriterException {
-        cwLastEvent = e;
-        cwInvokeCount++;
-      }
+          public void beforeRegionDestroy(RegionEvent e) throws CacheWriterException {
+            cwLastEvent = e;
+            cwInvokeCount++;
+          }
 
-      public void beforeRegionClear(RegionEvent e) throws CacheWriterException {
-        cwLastEvent = e;
-        cwInvokeCount++;
-      }
+          public void beforeRegionClear(RegionEvent e) throws CacheWriterException {
+            cwLastEvent = e;
+            cwInvokeCount++;
+          }
 
-      public void close() {
-        cwClosed = true;
-      }
-    };
+          public void close() {
+            cwClosed = true;
+          }
+        };
     af.addCacheListener(cl1);
     af.setCacheWriter(cw);
     {
-      TransactionListener tl = new TransactionListenerAdapter() {
-        public void afterCommit(TransactionEvent e) {
-          tlLastEvents = e.getEvents();
-          tlInvokeCount++;
-        }
+      TransactionListener tl =
+          new TransactionListenerAdapter() {
+            public void afterCommit(TransactionEvent e) {
+              tlLastEvents = e.getEvents();
+              tlInvokeCount++;
+            }
 
-        public void close() {
-          tlClosed = true;
-        };
-      };
+            public void close() {
+              tlClosed = true;
+            };
+          };
       CacheTransactionManager ctm = this.c.getCacheTransactionManager();
       ctm.addListener(tl);
     }
   }
 
-  /**
-   * Confirms region (non-map) methods
-   */
+  /** Confirms region (non-map) methods */
   @Test
   public void testRegionMethods() throws Exception {
     Object cbArg = new Object();
@@ -761,14 +737,14 @@ public class ProxyJUnitTest {
 
     // check to see if a local loader works
     {
-      CacheLoader cl = new CacheLoader() {
-        public Object load(LoaderHelper helper) throws CacheLoaderException {
-          return "loadedValue";
-        }
+      CacheLoader cl =
+          new CacheLoader() {
+            public Object load(LoaderHelper helper) throws CacheLoaderException {
+              return "loadedValue";
+            }
 
-        public void close() {
-        }
-      };
+            public void close() {}
+          };
       r.getAttributesMutator().setCacheLoader(cl);
       r.get("key", cbArg);
       gets++;
@@ -783,9 +759,7 @@ public class ProxyJUnitTest {
     }
   }
 
-  /**
-   * Confirms map methods
-   */
+  /** Confirms map methods */
   @Test
   public void testMapMethods() throws Exception {
     AttributesFactory af = new AttributesFactory();
@@ -872,9 +846,7 @@ public class ProxyJUnitTest {
     checkCL(expre);
   }
 
-  /**
-   * Check region ops on a proxy region done from a tx.
-   */
+  /** Check region ops on a proxy region done from a tx. */
   @Test
   public void testAllMethodsWithTX() throws Exception {
     Object cbArg = new Object();
@@ -928,7 +900,7 @@ public class ProxyJUnitTest {
     checkNoCL();
     clearCallbackState();
     ctm.commit();
-    checkCL(expee, false/*ClearCallbacks*/);
+    checkCL(expee, false /*ClearCallbacks*/);
     checkTL(expee);
     creates++;
     assertEquals(creates, getStats().getCreates());
@@ -944,7 +916,7 @@ public class ProxyJUnitTest {
     checkNoCL();
     clearCallbackState();
     ctm.commit();
-    checkCL(expee, false/*ClearCallbacks*/);
+    checkCL(expee, false /*ClearCallbacks*/);
     checkTL(expee);
     creates++;
     assertEquals(creates, getStats().getCreates());
@@ -960,7 +932,7 @@ public class ProxyJUnitTest {
     checkNoCL();
     clearCallbackState();
     ctm.commit();
-    checkCL(expee, false/*ClearCallbacks*/);
+    checkCL(expee, false /*ClearCallbacks*/);
     invalidates++;
     assertEquals(invalidates, getStats().getInvalidates());
     checkTL(expee);
@@ -976,7 +948,7 @@ public class ProxyJUnitTest {
     checkNoCL();
     clearCallbackState();
     ctm.commit();
-    checkCL(expee, false/*ClearCallbacks*/);
+    checkCL(expee, false /*ClearCallbacks*/);
     destroys++;
     assertEquals(destroys, getStats().getDestroys());
     checkTL(expee);
@@ -1015,18 +987,19 @@ public class ProxyJUnitTest {
   }
 
   /**
-   * Make sure a proxy region can be lru and that it makes no difference
-   * since proxies are always empty
+   * Make sure a proxy region can be lru and that it makes no difference since proxies are always
+   * empty
    */
   @Test
   public void testLRU() throws Exception {
     AttributesFactory af = new AttributesFactory();
     af.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1));
-    CacheListener cl1 = new CacheListenerAdapter() {
-      public void afterDestroy(EntryEvent e) {
-        clInvokeCount++;
-      }
-    };
+    CacheListener cl1 =
+        new CacheListenerAdapter() {
+          public void afterDestroy(EntryEvent e) {
+            clInvokeCount++;
+          }
+        };
     af.addCacheListener(cl1);
 
     //     // first make sure this test is valid by confirming we see evictions
@@ -1060,9 +1033,7 @@ public class ProxyJUnitTest {
     }
   }
 
-  /**
-   * Make sure a proxy region expiration behaves as expected
-   */
+  /** Make sure a proxy region expiration behaves as expected */
   @Test
   public void testExpiration() throws Exception {
     System.setProperty(LocalRegion.EXPIRY_MS_PROPERTY, "true");
@@ -1083,19 +1054,21 @@ public class ProxyJUnitTest {
 
       // make sure regionIdleTimeout works on proxy
       {
-        CacheListener cl1 = new CacheListenerAdapter() {
-          public void afterRegionDestroy(RegionEvent e) {
-            clInvokeCount++;
-          }
+        CacheListener cl1 =
+            new CacheListenerAdapter() {
+              public void afterRegionDestroy(RegionEvent e) {
+                clInvokeCount++;
+              }
 
-          public void afterRegionInvalidate(RegionEvent e) {
-            clInvokeCount++;
-          }
-        };
+              public void afterRegionInvalidate(RegionEvent e) {
+                clInvokeCount++;
+              }
+            };
         AttributesFactory af = new AttributesFactory();
         af.setStatisticsEnabled(true);
         final int EXPIRE_MS = 500;
-        af.setRegionIdleTimeout(new ExpirationAttributes(EXPIRE_MS, ExpirationAction.LOCAL_DESTROY));
+        af.setRegionIdleTimeout(
+            new ExpirationAttributes(EXPIRE_MS, ExpirationAction.LOCAL_DESTROY));
         af.addCacheListener(cl1);
         af.setDataPolicy(DataPolicy.EMPTY);
         clearCallbackState();
@@ -1110,7 +1083,9 @@ public class ProxyJUnitTest {
         Thread.sleep(EXPIRE_MS * 2);
         boolean done = false;
         try {
-          for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < 1000; done = (ProxyJUnitTest.this.clInvokeCount == 1)) {
+          for (StopWatch time = new StopWatch(true);
+              !done && time.elapsedTimeMillis() < 1000;
+              done = (ProxyJUnitTest.this.clInvokeCount == 1)) {
             Thread.sleep(200);
           }
         } catch (InterruptedException e) {
@@ -1121,15 +1096,16 @@ public class ProxyJUnitTest {
 
       // make sure regionTimeToLive works on proxy
       {
-        CacheListener cl1 = new CacheListenerAdapter() {
-          public void afterRegionDestroy(RegionEvent e) {
-            clInvokeCount++;
-          }
+        CacheListener cl1 =
+            new CacheListenerAdapter() {
+              public void afterRegionDestroy(RegionEvent e) {
+                clInvokeCount++;
+              }
 
-          public void afterRegionInvalidate(RegionEvent e) {
-            clInvokeCount++;
-          }
-        };
+              public void afterRegionInvalidate(RegionEvent e) {
+                clInvokeCount++;
+              }
+            };
         AttributesFactory af = new AttributesFactory();
         af.setStatisticsEnabled(true);
         final int EXPIRE_MS = 500;
@@ -1148,7 +1124,9 @@ public class ProxyJUnitTest {
         Thread.sleep(EXPIRE_MS * 2);
         boolean done = false;
         try {
-          for (StopWatch time = new StopWatch(true); !done && time.elapsedTimeMillis() < 1000; done = (ProxyJUnitTest.this.clInvokeCount == 1)) {
+          for (StopWatch time = new StopWatch(true);
+              !done && time.elapsedTimeMillis() < 1000;
+              done = (ProxyJUnitTest.this.clInvokeCount == 1)) {
             Thread.sleep(200);
           }
         } catch (InterruptedException e) {
@@ -1163,14 +1141,13 @@ public class ProxyJUnitTest {
     }
   }
 
-  /**
-   * Make sure a disk region and proxy play nice.
-   */
+  /** Make sure a disk region and proxy play nice. */
   @Test
   public void testDiskProxy() throws Exception {
     AttributesFactory af = new AttributesFactory();
     af.setDataPolicy(DataPolicy.EMPTY);
-    af.setEvictionAttributes(EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
+    af.setEvictionAttributes(
+        EvictionAttributes.createLRUEntryAttributes(1, EvictionAction.OVERFLOW_TO_DISK));
     try {
       af.create();
       fail("expected IllegalStateException");
@@ -1178,9 +1155,7 @@ public class ProxyJUnitTest {
     }
   }
 
-  /**
-   * Make sure a CachStatistics work on proxy
-   */
+  /** Make sure a CachStatistics work on proxy */
   @Test
   public void testCacheStatisticsOnProxy() throws Exception {
     AttributesFactory af = new AttributesFactory();
@@ -1215,12 +1190,9 @@ public class ProxyJUnitTest {
     assertEquals(missCount + 1, stats.getMissCount());
   }
 
-  /**
-   * Waits (hot) until the system time changes.
-   */
+  /** Waits (hot) until the system time changes. */
   private void waitForSystemTimeChange() {
     long start = System.currentTimeMillis();
-    while (System.currentTimeMillis() == start)
-      ;
+    while (System.currentTimeMillis() == start) ;
   }
 }

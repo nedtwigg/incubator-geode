@@ -48,31 +48,32 @@ public class Bug45164DUnitTest extends JUnit4CacheTestCase {
 
   @Test
   public void testIterateWhileDestroy() throws Throwable {
-    SerializableRunnable destroy = new SerializableRunnable() {
-      @Override
-      public void run() {
-        Region<Integer, Object> region = getCache().getRegion("test");
-        for (int j = 0; j < count / stride; j += stride) {
-          region.destroy(j);
-        }
-      }
-    };
-
-    SerializableRunnable iterate = new SerializableRunnable() {
-      @Override
-      public void run() {
-        Region<Integer, Object> region = getCache().getRegion("test");
-
-        int i = 0;
-        for (Entry<Integer, Object> entry : region.entrySet()) {
-          i++;
-          if (entry == null) {
-            fail("Element " + i + " is null");
-
+    SerializableRunnable destroy =
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            Region<Integer, Object> region = getCache().getRegion("test");
+            for (int j = 0; j < count / stride; j += stride) {
+              region.destroy(j);
+            }
           }
-        }
-      }
-    };
+        };
+
+    SerializableRunnable iterate =
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            Region<Integer, Object> region = getCache().getRegion("test");
+
+            int i = 0;
+            for (Entry<Integer, Object> entry : region.entrySet()) {
+              i++;
+              if (entry == null) {
+                fail("Element " + i + " is null");
+              }
+            }
+          }
+        };
 
     Host h = Host.getHost(0);
     AsyncInvocation async1 = h.getVM(1).invokeAsync(destroy);
@@ -84,26 +85,29 @@ public class Bug45164DUnitTest extends JUnit4CacheTestCase {
 
   @Override
   public final void postSetUp() throws Exception {
-    SerializableRunnable create = new SerializableRunnable() {
-      @Override
-      public void run() {
-        Cache cache = getCache(new CacheFactory());
-        Region<Integer, Object> region = cache.<Integer, Object> createRegionFactory(RegionShortcut.PARTITION).create("test");
-        if (region == null) {
-          LogWriterUtils.getLogWriter().error("oops!");
-        }
-      }
-    };
+    SerializableRunnable create =
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            Cache cache = getCache(new CacheFactory());
+            Region<Integer, Object> region =
+                cache.<Integer, Object>createRegionFactory(RegionShortcut.PARTITION).create("test");
+            if (region == null) {
+              LogWriterUtils.getLogWriter().error("oops!");
+            }
+          }
+        };
 
-    SerializableRunnable load = new SerializableRunnable() {
-      @Override
-      public void run() {
-        Region<Integer, Object> region = getCache().getRegion("test");
-        for (int i = 0; i < count; i++) {
-          region.put(i, i);
-        }
-      }
-    };
+    SerializableRunnable load =
+        new SerializableRunnable() {
+          @Override
+          public void run() {
+            Region<Integer, Object> region = getCache().getRegion("test");
+            for (int i = 0; i < count; i++) {
+              region.put(i, i);
+            }
+          }
+        };
 
     Host h = Host.getHost(0);
     h.getVM(1).invoke(create);

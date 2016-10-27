@@ -35,10 +35,8 @@ import org.apache.geode.internal.util.concurrent.CustomEntryConcurrentHashMap.Ha
 // key string1: KEY_STRING1
 // key string2: KEY_STRING2
 /**
- * Do not modify this class. It was generated.
- * Instead modify LeafRegionEntry.cpp and then run
- * bin/generateRegionEntryClasses.sh from the directory
- * that contains your build.xml.
+ * Do not modify this class. It was generated. Instead modify LeafRegionEntry.cpp and then run
+ * bin/generateRegionEntryClasses.sh from the directory that contains your build.xml.
  */
 public class VMThinRegionEntryHeapUUIDKey extends VMThinRegionEntryHeap {
   public VMThinRegionEntryHeapUUIDKey(RegionEntryContext context, UUID key, Object value) {
@@ -52,9 +50,12 @@ public class VMThinRegionEntryHeapUUIDKey extends VMThinRegionEntryHeap {
   // common code
   protected int hash;
   private HashEntry<Object, Object> next;
+
   @SuppressWarnings("unused")
   private volatile long lastModified;
-  private static final AtomicLongFieldUpdater<VMThinRegionEntryHeapUUIDKey> lastModifiedUpdater = AtomicLongFieldUpdater.newUpdater(VMThinRegionEntryHeapUUIDKey.class, "lastModified");
+
+  private static final AtomicLongFieldUpdater<VMThinRegionEntryHeapUUIDKey> lastModifiedUpdater =
+      AtomicLongFieldUpdater.newUpdater(VMThinRegionEntryHeapUUIDKey.class, "lastModified");
   private volatile Object value;
 
   @Override
@@ -75,9 +76,7 @@ public class VMThinRegionEntryHeapUUIDKey extends VMThinRegionEntryHeap {
     return lastModifiedUpdater.compareAndSet(this, expectedValue, newValue);
   }
 
-  /**
-   * @see HashEntry#getEntryHash()
-   */
+  /** @see HashEntry#getEntryHash() */
   public final int getEntryHash() {
     return this.hash;
   }
@@ -86,16 +85,12 @@ public class VMThinRegionEntryHeapUUIDKey extends VMThinRegionEntryHeap {
     this.hash = v;
   }
 
-  /**
-   * @see HashEntry#getNextEntry()
-   */
+  /** @see HashEntry#getNextEntry() */
   public final HashEntry<Object, Object> getNextEntry() {
     return this.next;
   }
 
-  /**
-   * @see HashEntry#setNextEntry
-   */
+  /** @see HashEntry#setNextEntry */
   public final void setNextEntry(final HashEntry<Object, Object> n) {
     this.next = n;
   }
@@ -114,7 +109,8 @@ public class VMThinRegionEntryHeapUUIDKey extends VMThinRegionEntryHeap {
   public boolean isKeyEqual(Object k) {
     if (k instanceof UUID) {
       UUID uuid = (UUID) k;
-      return uuid.getLeastSignificantBits() == this.keyLeastSigBits && uuid.getMostSignificantBits() == this.keyMostSigBits;
+      return uuid.getLeastSignificantBits() == this.keyLeastSigBits
+          && uuid.getMostSignificantBits() == this.keyMostSigBits;
     }
     return false;
   }

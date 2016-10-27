@@ -35,37 +35,35 @@ import org.apache.geode.internal.memcached.RequestReader;
 import org.apache.geode.memcached.GemFireMemcachedServer.Protocol;
 
 /**
-  * general format of the command is:<br/>
-  * <code>
-  * &lt;command name&gt; &lt;key&gt; &lt;flags&gt; &lt;exptime&gt; &lt;bytes&gt; [noreply]\r\n
-  * </code><br/>
-  * After this line, the client sends the data block:<br/>
-  * <code>
-  * &lt;data block&gt;\r\n
-  * </code>
-  * 
-  */
-
+ * general format of the command is:<br>
+ * <code>
+ * &lt;command name&gt; &lt;key&gt; &lt;flags&gt; &lt;exptime&gt; &lt;bytes&gt; [noreply]\r\n
+ * </code><br>
+ * After this line, the client sends the data block:<br>
+ * <code>
+ * &lt;data block&gt;\r\n
+ * </code>
+ */
 public abstract class StorageCommand extends AbstractCommand {
 
-  /**
-   * thread pool for scheduling expiration tasks
-   */
-  private static ScheduledExecutorService expiryExecutor = new ScheduledThreadPoolExecutor(1, new ThreadFactory() {
-    @Override
-    public Thread newThread(Runnable r) {
-      Thread t = new Thread(r);
-      t.setName("memcached-expiryExecutor");
-      t.setDaemon(true);
-      return t;
-    }
-  });
+  /** thread pool for scheduling expiration tasks */
+  private static ScheduledExecutorService expiryExecutor =
+      new ScheduledThreadPoolExecutor(
+          1,
+          new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+              Thread t = new Thread(r);
+              t.setName("memcached-expiryExecutor");
+              t.setDaemon(true);
+              return t;
+            }
+          });
 
-  private static ConcurrentMap<Object, ScheduledFuture> expiryFutures = new ConcurrentHashMap<Object, ScheduledFuture>();
+  private static ConcurrentMap<Object, ScheduledFuture> expiryFutures =
+      new ConcurrentHashMap<Object, ScheduledFuture>();
 
-  /**
-   * number of seconds in 30 days
-   */
+  /** number of seconds in 30 days */
   private static final long secsIn30Days = 60 * 60 * 24 * 30;
 
   @Override
@@ -141,14 +139,12 @@ public abstract class StorageCommand extends AbstractCommand {
   }
 
   /**
-   * Schedules the entry to expire based on the following:
-   * the expiration time sent may either be
-   * Unix time (number of seconds since January 1, 1970, as a 32-bit
-   * value), or a number of seconds starting from current time. In the
-   * latter case, this number of seconds may not exceed 60*60*24*30 (number
-   * of seconds in 30 days); if the number sent by a client is larger than
-   * that, the server will consider it to be real Unix time value rather
-   * than an offset from current time.
+   * Schedules the entry to expire based on the following: the expiration time sent may either be
+   * Unix time (number of seconds since January 1, 1970, as a 32-bit value), or a number of seconds
+   * starting from current time. In the latter case, this number of seconds may not exceed
+   * 60*60*24*30 (number of seconds in 30 days); if the number sent by a client is larger than that,
+   * the server will consider it to be real Unix time value rather than an offset from current time.
+   *
    * @param key
    * @param p_expTime
    * @param cache
@@ -163,13 +159,16 @@ public abstract class StorageCommand extends AbstractCommand {
         return;
       }
     }
-    ScheduledFuture f = expiryExecutor.schedule(new ExpiryTask(cache, key), expTime, TimeUnit.SECONDS);
+    ScheduledFuture f =
+        expiryExecutor.schedule(new ExpiryTask(cache, key), expTime, TimeUnit.SECONDS);
     expiryFutures.put(key, f);
   }
 
-  public abstract ByteBuffer processStorageCommand(String key, byte[] value, int flags, Cache cache);
+  public abstract ByteBuffer processStorageCommand(
+      String key, byte[] value, int flags, Cache cache);
 
-  public abstract ByteBuffer processBinaryStorageCommand(Object key, byte[] value, long cas, int flags, Cache cache, RequestReader request);
+  public abstract ByteBuffer processBinaryStorageCommand(
+      Object key, byte[] value, long cas, int flags, Cache cache, RequestReader request);
 
   protected static ScheduledExecutorService getExpiryExecutor() {
     return expiryExecutor;
@@ -177,6 +176,7 @@ public abstract class StorageCommand extends AbstractCommand {
 
   /**
    * reschedules expiration for a key only if one was previously scheduled
+   *
    * @param key
    * @param newExpTime
    * @return true if successfully rescheduled, false otherwise
@@ -185,7 +185,8 @@ public abstract class StorageCommand extends AbstractCommand {
     ScheduledFuture f = expiryFutures.get(key);
     if (f != null) {
       if (f.cancel(false)) {
-        ScheduledFuture f2 = expiryExecutor.schedule(new ExpiryTask(cache, key), newExpTime, TimeUnit.SECONDS);
+        ScheduledFuture f2 =
+            expiryExecutor.schedule(new ExpiryTask(cache, key), newExpTime, TimeUnit.SECONDS);
         expiryFutures.put(key, f2);
         return true;
       }
@@ -193,9 +194,7 @@ public abstract class StorageCommand extends AbstractCommand {
     return false;
   }
 
-  /**
-   * Removes key from the cache and expiryFuture
-   */
+  /** Removes key from the cache and expiryFuture */
   public static class ExpiryTask implements Runnable {
     private final Cache cache;
     private final Object key;

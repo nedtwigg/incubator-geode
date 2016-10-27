@@ -34,8 +34,7 @@ public class LogCollator {
   private GfManagerAgent system;
   private List logTails;
 
-  public LogCollator() {
-  }
+  public LogCollator() {}
 
   public String collateLogs(GfManagerAgent system) {
     try {
@@ -131,5 +130,4 @@ public class LogCollator {
       this.tail = tail;
     }
   }
-
 }
